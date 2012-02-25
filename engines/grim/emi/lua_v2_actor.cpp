@@ -398,9 +398,12 @@ void Lua_V2::PlayActorChore() {
 
 	const char *choreName = lua_getstring(choreObj);
 	const char *costumeName = lua_getstring(costumeObj);
-
-	actor->setCostume(costumeName);
 	Costume *costume = actor->getCurrentCostume();
+	if (!(costume && costume->getFilename() == costumeName)) {
+		actor->setCostume(costumeName);
+		costume = actor->getCurrentCostume();
+	}
+
 	Chore *chore = costume->getChore(choreName);
 	costume->playChore(choreName);
 	if (chore) {
