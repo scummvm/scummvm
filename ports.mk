@@ -163,8 +163,8 @@ osxsnap: bundle
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
 	cp $(srcdir)/README ./ResidualVM-snapshot/Residual\ ReadMe
-	mkdir ScummVM-snapshot/doc
-	cp $(srcdir)/doc/QuickStart ./RsidualVM-snapshot/doc/QuickStart
+	mkdir ResidualVM-snapshot/doc
+	cp $(srcdir)/doc/QuickStart ./ResidualVM-snapshot/doc/QuickStart
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ResidualVM-snapshot/
 	#cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
