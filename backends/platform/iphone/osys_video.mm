@@ -62,10 +62,7 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_videoContext->screenHeight = height;
 	_videoContext->shakeOffsetY = 0;
 
-	free(_gameScreenRaw);
-
-	_gameScreenRaw = (byte *)malloc(width * height);
-	bzero(_gameScreenRaw, width * height);
+	_framebuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	_fullScreenIsDirty = false;
 	dirtyFullScreen();
@@ -134,12 +131,12 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 		y = 0;
 	}
 
-	if (w > (int)_videoContext->screenWidth - x) {
-		w = _videoContext->screenWidth - x;
+	if (w > (int)_framebuffer.w - x) {
+		w = _framebuffer.w - x;
 	}
 
-	if (h > (int)_videoContext->screenHeight - y) {
-		h = _videoContext->screenHeight - y;
+	if (h > (int)_framebuffer.h - y) {
+		h = _framebuffer.h - y;
 	}
 
 	if (w <= 0 || h <= 0)
@@ -150,14 +147,14 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 	}
 
 
-	byte *dst = _gameScreenRaw + y * _videoContext->screenWidth + x;
-	if ((int)_videoContext->screenWidth == pitch && pitch == w)
+	byte *dst = (byte *)_framebuffer.getBasePtr(x, y);
+	if (_framebuffer.pitch == pitch && pitch == w)
 		memcpy(dst, buf, h * w);
 	else {
 		do {
 			memcpy(dst, buf, w);
 			buf += pitch;
-			dst += _videoContext->screenWidth;
+			dst += _framebuffer.pitch;
 		} while (--h);
 	}
 }
@@ -207,7 +204,7 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 	int h = dirtyRect.bottom - dirtyRect.top;
 	int w = dirtyRect.right - dirtyRect.left;
 
-	byte *src = &_gameScreenRaw[dirtyRect.top * _videoContext->screenWidth + dirtyRect.left];
+	const byte *src = (const byte *)_framebuffer.getBasePtr(dirtyRect.left, dirtyRect.top);
 	byte *dstRaw = (byte *)_videoContext->screenTexture.getBasePtr(dirtyRect.left, dirtyRect.top);
 	for (int y = h; y > 0; y--) {
 		uint16 *dst = (uint16 *)dstRaw;
@@ -215,19 +212,12 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 			*dst++ = _gamePalette[*src++];
 
 		dstRaw += _videoContext->screenTexture.pitch;
-		src += _videoContext->screenWidth - w;
+		src += _framebuffer.pitch - w;
 	}
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {
 	//printf("lockScreen()\n");
-
-	_framebuffer.pixels = _gameScreenRaw;
-	_framebuffer.w = _videoContext->screenWidth;
-	_framebuffer.h = _videoContext->screenHeight;
-	_framebuffer.pitch = _videoContext->screenWidth;
-	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
-
 	return &_framebuffer;
 }
 

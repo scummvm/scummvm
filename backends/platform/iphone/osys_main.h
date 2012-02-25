@@ -64,7 +64,6 @@ protected:
 	VideoContext *_videoContext;
 
 	Graphics::Surface _framebuffer;
-	byte *_gameScreenRaw;
 
 	// For use with the game texture
 	uint16  _gamePalette[256];
