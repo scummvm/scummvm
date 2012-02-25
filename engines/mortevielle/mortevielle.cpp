@@ -212,7 +212,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	// Close the file
 	f.close();
 
-	assert(_staticStrings.size() > 0);
+	assert(_engineStrings.size() > 0);
 	return Common::kNoError;
 }
 
@@ -240,7 +240,7 @@ void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize) {
 		while ((ch = (char)f.readByte()) != '\0')
 			s += ch;
 		
-		_staticStrings.push_back(s);
+		_engineStrings.push_back(s);
 		dataSize -= s.size() + 1;
 	}
 	assert(dataSize == 0);
@@ -565,19 +565,19 @@ void MortevielleEngine::handleAction() {
 			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
-		if (choisi && (msg[3] == sauve)) {
+		if (choisi && (msg[3] == MENU_SAVE)) {
 			Common::String saveName = Common::String::format("Savegame #%d", msg[4] & 7);
 			g_vm->_savegameManager.saveGame(msg[4] & 7, saveName);
 		}
-		if (choisi && (msg[3] == charge))
+		if (choisi && (msg[3] == MENU_LOAD))
 			g_vm->_savegameManager.loadGame((msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = Alert::show(stpou, 1);
 			return;
 		} else if (inkey == '\77') {
-			if ((mnumo != OPCODE_NONE) && ((msg[3] == action) || (msg[3] == saction))) {
+			if ((mnumo != OPCODE_NONE) && ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SUB_ACTION))) {
 				msg[4] = mnumo;
-				ecr3(g_vm->getString(S_IDEM));
+				ecr3(g_vm->getEngineString(S_IDEM));
 			} else
 				return;
 		} else if (inkey == '\104') {
@@ -598,7 +598,7 @@ void MortevielleEngine::handleAction() {
 				num = 0;
 		} else {
 			mnumo = msg[3];
-			if ((msg[3] == action) || (msg[3] == saction))
+			if ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SUB_ACTION))
 				mnumo = msg[4];
 			if (! anyone) {
 				if ((fouil) || (obpart)) {

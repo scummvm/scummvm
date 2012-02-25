@@ -244,11 +244,11 @@ void clsf10() {
 	}
 	g_vm->_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
 	if (s.conf < 33)
-		st = g_vm->getString(S_COOL);
+		st = g_vm->getEngineString(S_COOL);
 	else if (s.conf < 66)
-		st = g_vm->getString(S_LOURDE);
+		st = g_vm->getEngineString(S_LOURDE);
 	else if (s.conf > 65)
-		st = g_vm->getString(S_MALSAINE);
+		st = g_vm->getEngineString(S_MALSAINE);
 	
 	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
 	g_vm->_screenSurface.putxy(co, 92);
@@ -598,9 +598,9 @@ void person() {
 	for (int cf = 1; cf <= 8; ++cf)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cf]);
 
-	Common::String sYou = g_vm->getString(S_YOU);
-	Common::String sAre = g_vm->getString(S_ARE);
-	Common::String sAlone = g_vm->getString(S_ALONE);
+	Common::String sYou = g_vm->getEngineString(S_YOU);
+	Common::String sAre = g_vm->getEngineString(S_ARE);
+	Common::String sAlone = g_vm->getEngineString(S_ALONE);
 
 	clsf10();
 	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sYou) / 2), 30);
@@ -661,7 +661,7 @@ void drawClock() {
 
 	g_vm->_screenSurface.putxy(550, 160);
 	if ((_day >= 0) && (_day <= 8)) {
-		Common::String tmp = g_vm->getString(S_DAY);
+		Common::String tmp = g_vm->getEngineString(S_DAY);
 		tmp.insertChar((char)(_day + 49), 0);
 		g_vm->_screenSurface.writeg(tmp, 1);
 	}
@@ -1306,12 +1306,14 @@ void cavegre() {
 		s.conf += (s.conf / 10);
 	clsf3();
 	ecrf2();
-	ecr3(g_vm->getString(S_SOMEONE_ENTERS));
+	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
 	haz = (hazard(0, 4)) - 2;
 	parole(2, haz, 1);
 
 	// Useless?
-	for (haz = 0; haz <= 3000; ++haz);
+	for (haz = 0; haz <= 3000; ++haz)
+		;
+
 	clsf3();
 	person();
 }

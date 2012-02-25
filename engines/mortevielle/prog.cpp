@@ -174,7 +174,7 @@ void tsitu() {
 		fctMove();
 	if (msg[3] == MENU_DISCUSS)
 		fctDiscuss();
-	if (msg[3] == invent)
+	if (msg[3] == MENU_INVENTORY)
 		tsprendre(); //Translation: inventory/take
 	if (msg[4] == OPCODE_ATTACH)
 		fctAttach();

@@ -80,7 +80,7 @@ private:
 	bool _mouseClick;
 	Common::Point _mousePos;
 	bool _inMainGameLoop;	// Flag when the main game loop is active
-	Common::StringArray _staticStrings;
+	Common::StringArray _engineStrings;
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
@@ -124,7 +124,7 @@ public:
 	bool getMouseClick() const { return _mouseClick; }
 	void setMouseClick(bool v) { _mouseClick = v; }
 	void delay(int amount);
-	Common::String getString(int idx) const { return _staticStrings[idx]; }
+	Common::String getEngineString(int idx) const { return _engineStrings[idx]; }
 
 	void endGame();
 	void loseGame();

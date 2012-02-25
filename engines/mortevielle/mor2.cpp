@@ -40,12 +40,12 @@
 namespace Mortevielle {
 
 void tinke() {
-	Common::String d1 = g_vm->getString(S_SHOULD_HAVE_NOTICED);
-	Common::String d2 = g_vm->getString(S_NUMBER_OF_HINTS);
+	Common::String d1 = g_vm->getEngineString(S_SHOULD_HAVE_NOTICED);
+	Common::String d2 = g_vm->getEngineString(S_NUMBER_OF_HINTS);
 	const char d3 = '[';
 	const char d4 = ']';
 	const char d5 = '1';
-	Common::String d6 = g_vm->getString(S_OK);
+	Common::String d6 = g_vm->getEngineString(S_OK);
 	int cx, haz, nh, cf, j, h, m;
 	Common::String stpo;
 	bool am;
@@ -169,7 +169,7 @@ void tinke() {
 						if (haz < 5) {
 							clsf3();
 							ecrf2();
-							ecr3(g_vm->getString(S_HEAR_NOISE));
+							ecr3(g_vm->getEngineString(S_HEAR_NOISE));
 							haz = (hazard(0, 4)) - 2;
 							parole(1, haz, 1);
 							clsf3();
@@ -286,8 +286,8 @@ void mfouen() {
 	for (cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.enableMenuItem(men[cx]);
 
-	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getString(S_PROBE));
-	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getString(S_RAISE));
+	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getEngineString(S_PROBE));
+	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getEngineString(S_RAISE));
 }
 
 /* NIVEAU 6 */
@@ -434,8 +434,8 @@ void mfoudi() {
 	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.disableMenuItem(men[cx]);
 
-	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getString(S_SUITE));
-	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getString(S_STOP));
+	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getEngineString(S_SUITE));
+	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getEngineString(S_STOP));
 }
 
 void mennor() {
@@ -812,7 +812,7 @@ void st13(int ob) {
 }
 
 void aldepl() {
-	Alert::show(g_vm->getString(S_USE_DEP_MENU), 1);
+	Alert::show(g_vm->getEngineString(S_USE_DEP_MENU), 1);
 }
 
 } // End of namespace Mortevielle
