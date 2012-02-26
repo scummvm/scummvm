@@ -137,11 +137,8 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 				strcpy(string, s);
 			} else if (code[strlen(code) - 1] == 's') {
 				char *string = (char*)var;
-				char size[10];
-				strncpy(size, code, strlen(code) - 1);
-				size[strlen(code) - 1] = '\0';
-
-				strncpy(string, s, atoi(size));
+				strncpy(string, s, 10);
+				string[10] = '\0';
 			} else {
 				error("Code not handled: \"%s\" \"%s\"\n\"%s\" \"%s\"", code, s, line, fmt);
 			}
