@@ -28,6 +28,7 @@
 #include "common/util.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/rendermode.h"
 #include "common/stack.h"
 #include "common/system.h"
 

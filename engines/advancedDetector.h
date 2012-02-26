@@ -26,6 +26,8 @@
 #include "engines/metaengine.h"
 #include "engines/engine.h"
 
+#include "common/gui_options.h" // FIXME: Temporary hack?
+
 namespace Common {
 class Error;
 class FSList;

@@ -8,44 +8,59 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
-#ifndef COMMON_LOCALIZATION_H
-#define COMMON_LOCALIZATION_H
+#ifndef COMMON_RENDERMODE_H
+#define COMMON_RENDERMODE_H
 
-#include "common/language.h"
-#include "common/keyboard.h"
+#include "common/scummsys.h"
 
 namespace Common {
 
-/**
- * Get localized equivalents for Y/N buttons of the specified language. In
- * case there is no specialized keys for the given language it will fall back
- * to the English keys.
- *
- * @param id Language id
- * @param keyYes Key code for yes
- * @param keyYes Key code for no
- */
-void getLanguageYesNo(Language id, KeyCode &keyYes, KeyCode &keyNo);
+class String;
 
 /**
- * Get localized equivalents for Y/N buttons of the current translation
- * language of the ScummVM GUI.
- *
- * @param keyYes Key code for yes
- * @param keyYes Key code for no
+ * List of render modes. It specifies which original graphics mode
+ * to use. Some targets used postprocessing dithering routines for
+ * reducing color depth of final image which let it to be rendered on
+ * such low-level adapters as CGA or Hercules.
  */
-void getLanguageYesNo(KeyCode &keyYes, KeyCode &keyNo);
+enum RenderMode {
+	kRenderDefault = 0,
+	kRenderVGA = 1,
+	kRenderEGA = 2,
+	kRenderCGA = 3,
+	kRenderHercG = 4,
+	kRenderHercA = 5,
+	kRenderAmiga = 6,
+	kRenderFMTowns = 7,
+	kRenderPC9821 = 8,
+	kRenderPC9801 = 9
+};
+
+struct RenderModeDescription {
+	const char *code;
+	const char *description;
+	RenderMode id;
+};
+
+extern const RenderModeDescription g_renderModes[];
+
+/** Convert a string containing a render mode name into a RenderingMode enum value. */
+extern RenderMode parseRenderMode(const String &str);
+extern const char *getRenderModeCode(RenderMode id);
+extern const char *getRenderModeDescription(RenderMode id);
+
 
 } // End of namespace Common
 

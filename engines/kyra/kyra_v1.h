@@ -28,8 +28,9 @@
 #include "common/array.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/random.h"
 #include "common/hashmap.h"
+#include "common/random.h"
+#include "common/rendermode.h"
 
 #include "audio/mixer.h"
 
