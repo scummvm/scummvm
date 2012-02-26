@@ -1571,7 +1571,9 @@ AnimationSplices::~AnimationSplices() {
 void AnimationSplices::load(Common::File &f) {
 	f.skip(4);
 	_dataSize = f.readUint32LE();
-	f.skip(40);
+	f.skip(8);
+	_dataSize2 = f.readUint32LE();
+	f.skip(28);
 
 	// Load the four splice indexes
 	for (int idx = 0; idx < 4; ++idx)
@@ -1623,17 +1625,14 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
 	_paletteMode = 0;
 	_field3A = 1;
-	_sliceHeight = 0;
-	_field58 = 0;
+	_sliceHeight = 1;
+	_field58 = 1;
 	_endAction = NULL;
 }
 
 AnimationPlayer::~AnimationPlayer() {
 	if (!method3())
-		method4();
-
-	delete[] _animData;
-	delete[] _animData2;
+		close();
 }
 
 void AnimationPlayer::synchronize(Serializer &s) {
@@ -1707,28 +1706,28 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	debugC(1, ktSageDebugGraphics, "Data needed %d", _dataNeeded);
 
 	// Set up animation data array
-	_animData1 = new AnimationData[_dataNeeded / 60];
-	_animData = _animData1;
+	_animData1 = new AnimationData();
+	_sliceCurrent = _animData1;
 
 	if (_subData._fieldC <= 1) {
 		_animData2 = NULL;
-		_animPtr = _animData;
+		_sliceNext = _sliceCurrent;
 	} else {
-		_animData2 = new AnimationData[_dataNeeded / 60];
-		_animPtr = _animData2;
+		_animData2 = new AnimationData();
+		_sliceNext = _animData2;
 	}
 
 	_field90C = 0;
 	_field90E = 1;
 
 	// Load up the first splices set
-	_animData->_dataSize = _subData._splices._dataSize;
-	_animData->_splices = _subData._splices;
-	int splicesSize = _animData->_dataSize - 96;
-	int readSize = _animData->_splices.loadPixels(_resourceFile, splicesSize);
-	_animData->_animSlicesSize = readSize + 96;
+	_sliceCurrent->_dataSize = _subData._splices._dataSize;
+	_sliceCurrent->_splices = _subData._splices;
+	int splicesSize = _sliceCurrent->_dataSize - 96;
+	int readSize = _sliceCurrent->_splices.loadPixels(_resourceFile, splicesSize);
+	_sliceCurrent->_animSlicesSize = readSize + 96;
 
-	if (_animPtr != _animData) {
+	if (_sliceNext != _sliceCurrent) {
 		getSlices();
 	}
 
@@ -1767,8 +1766,8 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 
 void AnimationPlayer::drawFrame(int spliceIndex) {
 	assert(spliceIndex < 4);
-	AnimationSplices &splices = _animData->_splices;
-	AnimationSplice &splice = _animData->_splices._splices[spliceIndex];
+	AnimationSplices &splices = _sliceCurrent->_splices;
+	AnimationSplice &splice = _sliceCurrent->_splices._splices[spliceIndex];
 
 	byte *sliceDataStart = &splices._pixelData[splice._spliceOffset];
 	byte *sliceData1 = sliceDataStart;
@@ -1827,7 +1826,7 @@ void AnimationPlayer::drawFrame(int spliceIndex) {
 			break;
 		default: {
 			// Draw from two splice sets simultaneously
-			AnimationSplice &splice2 = _animData->_splices._splices[splice._secondaryIndex];
+			AnimationSplice &splice2 = _sliceCurrent->_splices._splices[splice._secondaryIndex];
 			byte *sliceData2 = &splices._pixelData[splice2._spliceOffset];
 
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
@@ -1856,14 +1855,29 @@ void AnimationPlayer::drawFrame(int spliceIndex) {
 }
 
 void AnimationPlayer::method2() {
+	_field90C = _field90E++;
+	_field904 = _field90C * _subData._fieldC;
+	_field908 = _field904 - 1;
 
+	if (_sliceNext == _sliceCurrent) {
+		int dataSize = _sliceCurrent->_splices._dataSize2;
+		_sliceCurrent->_dataSize = dataSize;
+
+		dataSize -= 96;
+		assert(dataSize >= 0);
+		_sliceCurrent->_splices.load(_resourceFile);
+		_sliceCurrent->_animSlicesSize = _sliceCurrent->_splices.loadPixels(_resourceFile, dataSize);
+	} else {
+		SWAP(_sliceCurrent, _sliceNext);
+		getSlices();
+	}
 }
 
 bool AnimationPlayer::method3() {
 	return (_field90C >= _subData._field6);
 }
 
-void AnimationPlayer::method4() {
+void AnimationPlayer::close() {
 	if (_field38) {
 		switch (_paletteMode) {
 		case 0:
@@ -1872,7 +1886,7 @@ void AnimationPlayer::method4() {
 			R2_GLOBALS._sceneManager._hasPalette = true;
 			break;
 		case 2:
-			proc14();
+			closing();
 			break;
 		default:
 			changePane();
@@ -1880,7 +1894,21 @@ void AnimationPlayer::method4() {
 		}
 	}
 
-// TODO
+	// Close the resource file
+	_resourceFile.close();
+
+	if (_field56 != 42) {
+		// flip screen in original
+	}
+
+	// Free animation objects
+	delete _animData1;
+	delete _animData2;
+	_animData1 = NULL;
+	_animData2 = NULL;
+
+	_field38 = 0;
+	R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr, 0);
 }
 
 void AnimationPlayer::rleDecode(const byte *pSrc, byte *pDest, int size) {
@@ -1906,6 +1934,21 @@ void AnimationPlayer::rleDecode(const byte *pSrc, byte *pDest, int size) {
 			}
 		}
 	}
+}
+
+void AnimationPlayer::getSlices() {
+	assert((_sliceNext == _animData1) || (_sliceNext == _animData2));
+	assert((_sliceCurrent == _animData1) || (_sliceCurrent == _animData2));
+
+	_sliceNext->_dataSize = _sliceCurrent->_splices._dataSize2;
+	if (_sliceNext->_dataSize) {
+		if (_sliceNext->_dataSize >= _dataNeeded)
+			error("Bogus dataNeeded == %d / %d", _sliceNext->_dataSize, _dataNeeded);
+	}
+
+	int dataSize = _sliceNext->_dataSize - 96;
+	_sliceNext->_splices.load(_resourceFile);
+	_sliceNext->_animSlicesSize = _sliceNext->_splices.loadPixels(_resourceFile, dataSize);
 }
 
 /*--------------------------------------------------------------------------*/

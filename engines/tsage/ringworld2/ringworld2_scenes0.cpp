@@ -1900,7 +1900,7 @@ void Scene180::dispatch() {
 	if (_animationPlayer._v) {
 		if (_animationPlayer.method3()) {
 			_animationPlayer._v = 0;
-			_animationPlayer.method4();
+			_animationPlayer.close();
 			_animationPlayer.remove();
 
 			signal();

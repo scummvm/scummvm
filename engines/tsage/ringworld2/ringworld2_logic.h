@@ -339,6 +339,7 @@ public:
 class AnimationSplices {
 public:
 	int _dataSize;
+	int _dataSize2;
 	AnimationSplice _splices[4];
 	byte *_pixelData;
 public:
@@ -377,10 +378,14 @@ public:
 class AnimationPlayer: public EventHandler {
 private:
 	void rleDecode(const byte *pSrc, byte *pDest, int size);
+
+	void drawFrame(int spliceIndex);
+	void method2();
+	void getSlices();
 public:
-	AnimationData *_animData;
 	AnimationData *_animData1, *_animData2;
-	AnimationData *_animPtr;
+	AnimationData *_sliceCurrent;
+	AnimationData *_sliceNext;
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
 	int _field38;
@@ -408,15 +413,11 @@ public:
 	virtual void dispatch();
 	virtual void flipPane() {}
 	virtual void changePane() {}
-	virtual void proc14() {}
+	virtual void closing() {}
 
 	bool load(int animId, Action *endAction = NULL);
-	void drawFrame(int spliceIndex);
-	void method2();
 	bool method3();
-	void method4();
-	void method5() {}
-	void getSlices() {}
+	void close();
 };
 
 class AnimationPlayerExt: public AnimationPlayer {
