@@ -134,8 +134,13 @@ void deline(int num, char *line , int &length) {
 
 	if (!g_vm->_txxFileFl) {
 		delig = g_vm->getGameString(num);
+/*		if (delig.size() < 255)
+			// Remove trailing '$'
+			delig.deleteLastChar();
+*/
 		if (line) {
-			strcpy(line, delig.c_str());
+			line[0] = ' ';
+			strcpy(line + 1, delig.c_str());
 			length = delig.size();
 		}
 
@@ -169,11 +174,21 @@ void deline(int num, char *line , int &length) {
 	warning("deline: delig %s - line %s", delig.c_str(), line);
 }
 
+Common::String delin2(int num) {
+	char tmpStr[1410];
+	int length;
 
-void afftex(char *ch, int x, int y, int dx, int dy, int typ);
+	deline(num, tmpStr, length);
+	
+	Common::String resStr = delig;
+	delig = "";
+	return resStr;
+}
+
+void afftex(const char *ch, int x, int y, int dx, int dy, int typ);
 
 
-static int l_motsuiv(int p, char *ch, int &tab) {
+static int l_motsuiv(int p, const char *ch, int &tab) {
 	int c = p;
 
 	while ((ch[p] != ' ') && (ch[p] != '$') && (ch[p] != '@'))
@@ -182,12 +197,14 @@ static int l_motsuiv(int p, char *ch, int &tab) {
 	return tab * (p - c);
 }
 
-void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
+void afftex(Common::String ch, int x, int y, int dx, int dy, int typ) {
 	bool the_end;
 	int tab;
 	Common::String s;
 	int i, j;
 
+	// Safeguard: add $ just in case
+	ch += '$'; 
 
 	/*    debug('  .. Afftex');*/
 	g_vm->_screenSurface.putxy(x, y);
@@ -201,7 +218,8 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 	int yc = y;
 	int xf = x + dx;
 	int yf = y + dy;
-	int p = 1;
+//	int p = 1;
+	int p = 0;
 	the_end = (ch[p] == '$');
 	s = "";
 	while (!the_end) {
@@ -218,7 +236,7 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 			s += ' ';
 			xc += tab;
 			++p;
-			if (l_motsuiv(p, ch, tab) + xc > xf) {
+			if (l_motsuiv(p, ch.c_str(), tab) + xc > xf) {
 				g_vm->_screenSurface.writeg(s, typ);
 				s = "";
 				xc = x;

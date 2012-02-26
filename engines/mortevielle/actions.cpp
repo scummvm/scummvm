@@ -47,7 +47,6 @@ namespace Mortevielle {
  * @remarks	Originally called 'taller'
  */
 void fctMove() {
-	//int mx, cx, cy;
 	int cx;
 
 	if ((s.mlieu == 26) && (msg[4] == g_vm->_menu._depl[6])) {
@@ -180,7 +179,6 @@ L2:
  * @remarks	Originally called 'tprendre'
  */
 void fctTake() {
-	//int cx, cy, cz;
 	int cx;
 
 	if (caff > 99) {
@@ -354,8 +352,6 @@ void fctLift() {
  * @remarks	Originally called 'tlire'
  */
 void fctRead() {
-//	int iaff;
-
 	if (caff > 99)
 		st4(caff);
 	else {
@@ -622,9 +618,8 @@ void fctOpen() {
  */
 void fctPlace() {
 	bool enterPassageFl;
-	char st[1410];
 	Common::String str_;
-	int i, tay;
+	int i;
 
 	if (s.derobj == 0) {
 		crep = 186;
@@ -673,8 +668,9 @@ void fctPlace() {
 					// Do you want to enter the hidden passage?
 					int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 					if (answer== 1)  {
-						deline(582, st, tay);
-						i = Alert::show(delig, 1);
+						Common::String alertTxt = delin2(582);
+						i = Alert::show(alertTxt, 1);
+
 						tesok = false;
 						enterPassageFl = Ques::show();
 						hideMouse();
@@ -700,8 +696,8 @@ void fctPlace() {
 							dessin(0);
 							aniof(1, 2);
 							aniof(1, 1);
-							deline(577, st, tay);
-							i = Alert::show(delig, 1);
+							alertTxt = delin2(577);
+							i = Alert::show(alertTxt, 1);
 							aniof(2, 1);
 							crep = 166;
 						}
@@ -1289,11 +1285,9 @@ void fctSound() {
  */
 void fctDiscuss() {
 	bool te[47];
-	int cy, cx, max, haz, suj, co, lig, icm,
-	        i, tay, choi, x, y, c;
+	int cy, cx, max, haz, suj, co, lig, icm, i, choi, x, y, c;
 	char tou;
 	Common::String lib[47];
-	char st[1410];
 	bool f;
 
 	finfouil();
@@ -1319,9 +1313,8 @@ void fctDiscuss() {
 	for (int ix = 1; ix <= 46; ++ix)
 		te[ix] = false;
 	for (int ix = 1; ix <= 45; ++ix) {
-		deline(ix + c_tparler, st, tay);
-		lib[ix] = delig;
-		for (i = tay; i <= 40; ++i)
+		lib[ix] = delin2(ix + c_tparler);
+		for (i = lib[ix].size(); i <= 40; ++i)
 			lib[ix] = lib[ix] + ' ';
 	}
 	lib[46] = lib[45];

@@ -1112,18 +1112,22 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		a = (float)((x - xx)) / (y - yy);
 		b = (yr * xro - yro * xr) / (y - yy);
 		i = y;
-		if (y > yy)  step = -1;
-		else step = 1;
+		if (y > yy)
+			step = -1;
+		else
+			step = 1;
 		do {
 			g_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
-			i = i + step;
+			i += step;
 		} while (i != yy);
 	} else {
 		a = (float)((y - yy)) / (x - xx);
 		b = ((yro * xr) - (yr * xro)) / (x - xx);
 		i = x;
-		if (x > xx)  step = -1;
-		else step = 1;
+		if (x > xx)
+			step = -1;
+		else
+			step = 1;
 		do {
 			g_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
 			i = i + step;

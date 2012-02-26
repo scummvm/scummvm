@@ -130,20 +130,16 @@ void text_color(int c) {
 
 
 void text1(int x, int y, int nb, int m) {
-	char st[1410];
-	int tay;
 	int co;
 
-
-	/* debug('text'); */
 	if (res == 1)
 		co = 10;
 	else
 		co = 6;
-	deline(m, st, tay);
-	if ((y == 182) && (tay * co > nb * 6))
+	Common::String tmpStr = delin2(m);
+	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
-	afftex(st, x, y, nb, 20, color_txt);
+	afftex(tmpStr, x, y, nb, 20, color_txt);
 }
 
 void initouv() {
@@ -313,31 +309,26 @@ void okpas() {
 }
 
 void modobj(int m) {
-	char str_[1410];
-	int tay;
-
 	Common::String strp = Common::String(' ');
-	if (m != 500) {
-		deline(m - 501 + c_st41, str_, tay);
-		strp = delig;
-	}
+
+	if (m != 500)
+		strp = delin2(m - 501 + c_st41);
+
 	g_vm->_menu.menut(g_vm->_menu._invt[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._invt[8]);
 }
 
 void modobj2(int m, bool t1, bool t2) {
-	char str_[1410];
-	int tay;
-
 	Common::String strp = Common::String(' ');
+
 	if (t1 || t2)
 		okpas();
 	else
 		tesok = false;;
-	if (m != 500) {
-		deline(m - 501 + c_st41, str_, tay);
-		strp = delig;
-	}
+
+	if (m != 500)
+		strp = delin2(m - 501 + c_st41);
+
 	g_vm->_menu.menut(g_vm->_menu._invt[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._invt[8]);
 }
@@ -346,17 +337,19 @@ void modobj2(int m, bool t1, bool t2) {
 void repon(int f, int m) {
 	Common::String str_;
 	Common::String str1;
-	char st[1410];
-	int i, xco, dx, caspe, tay;
+	Common::String tmpStr;
+	int i, xco, dx, caspe;
 
 	if ((m > 499) && (m < 563)) {
-		deline(m - 501 + c_st41, st, tay);
-		if (tay > ((58 + (res - 1) * 37) << 1))
+		tmpStr = delin2(m - 501 + c_st41);
+
+		if ((int) tmpStr.size() > ((58 + (res - 1) * 37) << 1))
 			f2_all = true;
 		else
 			f2_all = false;
+
 		clsf2();
-		afftex(st, 8, 176, 85, 3, 5);
+		afftex(tmpStr, 8, 176, 85, 3, 5);
 	} else {
 		modif(m);
 		if (f == 8)
@@ -378,33 +371,37 @@ void repon(int f, int m) {
 			}
 		}
 		if ((f >= 6) && (f <= 9)) {
-			deline(m, st, tay);
 			if (f == 6)
 				i = 4;
 			else
 				i = 5;
-			afftex(st, 80, 40, 60, 25, i);
+
+			tmpStr = delin2(m);
+			afftex(tmpStr, 80, 40, 60, 25, i);
+
 			if (m == 180)
 				s.pourc[6] = '*';
+
 			if (m == 179)
 				s.pourc[10] = '*';
 		}
 		if (f == 7) {         /* messint */
 			ecrf7();
-			deline(m, st, tay);
+			tmpStr = delin2(m);
 			if (res == 1) {
-				xco = 252 - tay * 5;
+				xco = 252 - tmpStr.size() * 5;
 				caspe = 100;
 				dx = 80;
 			} else {
-				xco = 252 - tay * 3;
+				xco = 252 - tmpStr.size() * 3;
 				caspe = 144;
 				dx = 50;
 			}
-			if (tay < 40)
-				afftex(st, xco, 86, dx, 3, 5);
+
+			if (tmpStr.size() < 40)
+				afftex(tmpStr, xco, 86, dx, 3, 5);
 			else
-				afftex(st, caspe, 86, dx, 3, 5);
+				afftex(tmpStr, caspe, 86, dx, 3, 5);
 		}
 	}
 }
@@ -443,7 +440,6 @@ void t5(int cx) {
 void affper(int per) {
 	int cx;
 
-	/* debug('affper'); */
 	for (cx = 1; cx <= 8; ++cx)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cx]);
 	clsf10();
@@ -905,7 +901,6 @@ void quelq20(int h, int &per) {
 void frap() {
 	int j, h, m, haz;
 
-	/* debug('o1 frap'); */
 	calch(j, h, m);
 	if ((h >= 0) && (h < 8))
 		crep = 190;
@@ -968,7 +963,6 @@ void tip(int ip, int &cx) {
 
 
 void ecfren(int &p, int &haz, int cf, int l) {
-	/* debug('o1 ecfren'); */
 	if (l == 0)
 		person();
 	p = -500;
@@ -996,7 +990,6 @@ void ecfren(int &p, int &haz, int cf, int l) {
 void becfren(int l) {
 	int haz;
 
-	/* debug('o1 becfren'); */
 	if ((l == 1) || (l == 4)) {
 		haz = hazard(1, 2);
 		if (l == 1)
@@ -1029,13 +1022,11 @@ void becfren(int l) {
 void init_nbrepm() {
 	const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
 
-	/* debug('init_nbrepm'); */
 	for (int idx = 0; idx < 9; ++idx)
 		nbrepm[idx] = ipm[idx];
 }
 
 void phaz(int &haz, int &p, int cf) {
-	/* debug('phaz'); */
 	p += cf;
 	haz = hazard(1, 100);
 }
@@ -1043,7 +1034,6 @@ void phaz(int &haz, int &p, int cf) {
 void inzon() {
 	int cx;
 
-	/* debug('o2 inzon'); */
 	copcha();
 
 	s.ipre  = false;
@@ -1088,9 +1078,7 @@ void inzon() {
 }
 
 void dprog() {
-	/* debug('o2 dprog'); */
 	li = 21;
-	/* jh:= t_settime(0);*/
 	jh = 0;
 	if (! s.ipre)
 		blo = true;
@@ -1101,7 +1089,6 @@ void dprog() {
 void pl1(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl1'); */
 	if (((li == 1) && (! bh1) && (! bf1)) || ((li == 4) && (! bh4) && (! bf4))) {
 		cpl1(p);
 		phaz(haz, p, cf);
@@ -1115,7 +1102,6 @@ void pl1(int cf) {
 void pl2(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl2'); */
 	if (! bh2) {
 		cpl2(p);
 		phaz(haz, p, cf);
@@ -1129,7 +1115,6 @@ void pl2(int cf) {
 void pl5(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl5'); */
 	if (! bh5) {
 		cpl5(p);
 		phaz(haz, p, cf);
@@ -1143,7 +1128,6 @@ void pl5(int cf) {
 void pl6(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl6'); */
 	if (((li == 6) && (! bh6)) || ((li == 8) && (! bh8))) {
 		cpl6(p);
 		phaz(haz, p, cf);
@@ -1157,7 +1141,6 @@ void pl6(int cf) {
 void pl9(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl9'); */
 	if (! bh9) {
 		cf = -10;
 		phaz(haz, p, cf);
@@ -1171,7 +1154,6 @@ void pl9(int cf) {
 void pl10(int cf) {
 	int p, h, haz;
 
-	/* debug('o2 pl10'); */
 	cpl10(p, h);
 	phaz(haz, p, cf);
 	if (haz > p)
@@ -1183,7 +1165,6 @@ void pl10(int cf) {
 void pl11(int cf) {
 	int p, h, haz;
 
-	/* debug('o2 pl11'); */
 	cpl11(p, h);
 	phaz(haz, p, cf);
 	if (haz > p)
@@ -1195,7 +1176,6 @@ void pl11(int cf) {
 void pl12(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl12'); */
 	cpl12(p);
 	phaz(haz, p, cf);
 	if (haz > p)
@@ -1207,7 +1187,6 @@ void pl12(int cf) {
 void pl13(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl13'); */
 	cpl13(p);
 	phaz(haz, p, cf);
 	if (haz > p)
@@ -1219,7 +1198,6 @@ void pl13(int cf) {
 void pl15(int cf) {
 	int p, haz;
 
-	/* debug('o2 pl15'); */
 	cpl15(p);
 	phaz(haz, p, cf);
 	if (haz > p)
@@ -1231,7 +1209,6 @@ void pl15(int cf) {
 void pl20(int cf) {
 	int p, h, haz;
 
-	/* debug('o2 pl20'); */
 	cpl20(p, h);
 	phaz(haz, p, cf);
 	if (haz > p)
@@ -1243,7 +1220,6 @@ void pl20(int cf) {
 void t11(int l11, int &a) {
 	int p, haz, h = 0;
 
-	/* debug('o2 t11'); */
 	ecfren(p, haz, s.conf, l11);
 	li = l11;
 	if ((l11 > 0) && (l11 < 10)) {
@@ -1300,7 +1276,6 @@ void t11(int l11, int &a) {
 void cavegre() {
 	int haz;
 
-	/* debug('cavegre'); */
 	s.conf = s.conf + 2;
 	if (s.conf > 69)
 		s.conf += (s.conf / 10);
@@ -1362,8 +1337,8 @@ void musique(int so) {
 	bool i;
 	int haz;
 
-	/* debug('musique'); */
-	if (so == 0) { /*musik(0)*/
+	if (so == 0) {
+		/* musik(0) */
 		;
 	} else if ((prebru == 0) && (! s.ipre)) {
 		parole(10, 1, 1);
