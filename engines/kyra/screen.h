@@ -28,6 +28,7 @@
 #include "common/list.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/rendermode.h"
 #include "common/stream.h"
 
 class OSystem;

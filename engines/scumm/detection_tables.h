@@ -24,6 +24,7 @@
 #define SCUMM_DETECTION_TABLES_H
 
 #include "engines/obsolete.h"
+#include "common/gui_options.h"
 #include "common/rect.h"
 #include "common/util.h"
 

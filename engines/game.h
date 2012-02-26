@@ -26,7 +26,8 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/str.h"
-#include "common/util.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 /**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to

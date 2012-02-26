@@ -24,6 +24,7 @@
 #define SCUMM_HELP_H
 
 #include "common/str.h"
+#include "common/platform.h"
 
 namespace Scumm {
 

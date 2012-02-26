@@ -24,6 +24,7 @@
 #define SCUMM_H
 
 #include "engines/engine.h"
+
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -31,6 +32,7 @@
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"
+#include "common/rendermode.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
