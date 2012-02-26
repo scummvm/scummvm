@@ -443,13 +443,17 @@ const char *iPhone_getDocumentsDir() {
 	}
 }
 
-- (void)initSurface {
-	uint screenTexWidth = getSizeNextPOT(_videoContext.screenWidth);
-	uint screenTexHeight = getSizeNextPOT(_videoContext.screenHeight);
+- (void)createScreenTexture {
+	const uint screenTexWidth = getSizeNextPOT(_videoContext.screenWidth);
+	const uint screenTexHeight = getSizeNextPOT(_videoContext.screenHeight);
 
 	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _videoContext.screenWidth / (GLfloat)screenTexWidth;
 	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _videoContext.screenHeight / (GLfloat)screenTexHeight;
 
+	_videoContext.screenTexture.create(screenTexWidth, screenTexHeight, Graphics::createPixelFormat<565>());
+}
+
+- (void)initSurface {
 	int screenWidth, screenHeight;
 	[self setUpOrientation:[[UIDevice currentDevice] orientation] width:&screenWidth height:&screenHeight];
 
@@ -466,8 +470,6 @@ const char *iPhone_getDocumentsDir() {
 
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
 	[self setFilterModeForTexture:_overlayTexture];
-
-	_videoContext.screenTexture.create(screenTexWidth, screenTexHeight, Graphics::createPixelFormat<565>());
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 

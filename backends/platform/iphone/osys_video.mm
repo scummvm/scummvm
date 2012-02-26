@@ -74,6 +74,16 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_videoContext->screenHeight = height;
 	_videoContext->shakeOffsetY = 0;
 
+	// In case we use the screen texture as frame buffer we reset the pixels
+	// pointer here to avoid freeing the screen texture.
+	if (_framebuffer.pixels == _videoContext->screenTexture.pixels)
+		_framebuffer.pixels = 0;
+
+	// Create the screen texture right here. We need to do this here, since
+	// when a game requests hi-color mode, we actually set the framebuffer
+	// to the texture buffer to avoid an additional copy step.
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(createScreenTexture) withObject:nil waitUntilDone: YES];
+
 	if (!format || format->bytesPerPixel == 1) {
 		_framebuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
@@ -82,8 +92,13 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 		       format->rLoss, format->gLoss, format->bLoss, format->aLoss,
 		       format->rShift, format->gShift, format->bShift, format->aShift);
 #endif
-		assert(Graphics::createPixelFormat<565>() == *format);
-		_framebuffer.create(width, height, *format);
+		assert(_videoContext->screenTexture.format == *format);
+		// We directly draw on the screen texture in hi-color mode. Thus
+		// we copy over its settings here and just replace the width and
+		// height to avoid any problems.
+		_framebuffer = _videoContext->screenTexture;
+		_framebuffer.w = width;
+		_framebuffer.h = height;
 	}
 
 	_fullScreenIsDirty = false;
@@ -222,28 +237,24 @@ void OSystem_IPHONE::internUpdateScreen() {
 }
 
 void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
+	// We only need to do a color look up for CLUT8
+	if (_framebuffer.format.bytesPerPixel != 1)
+		return;
+
 	int h = dirtyRect.bottom - dirtyRect.top;
 	int w = dirtyRect.right - dirtyRect.left;
 
 	const byte *src = (const byte *)_framebuffer.getBasePtr(dirtyRect.left, dirtyRect.top);
 	byte *dstRaw = (byte *)_videoContext->screenTexture.getBasePtr(dirtyRect.left, dirtyRect.top);
 
-	if (_framebuffer.format.bytesPerPixel == 1) {
-		// When we use CLUT8 do a color look up
-		for (int y = h; y > 0; y--) {
-			uint16 *dst = (uint16 *)dstRaw;
-			for (int x = w; x > 0; x--)
-				*dst++ = _gamePalette[*src++];
+	// When we use CLUT8 do a color look up
+	for (int y = h; y > 0; y--) {
+		uint16 *dst = (uint16 *)dstRaw;
+		for (int x = w; x > 0; x--)
+			*dst++ = _gamePalette[*src++];
 
-			dstRaw += _videoContext->screenTexture.pitch;
-			src += _framebuffer.pitch - w;
-		}
-	} else {
-		do {
-			memcpy(dstRaw, src, w * _framebuffer.format.bytesPerPixel);
-			dstRaw += _videoContext->screenTexture.pitch;
-			src += _framebuffer.pitch;
-		} while (--h);
+		dstRaw += _videoContext->screenTexture.pitch;
+		src += _framebuffer.pitch - w;
 	}
 }
 

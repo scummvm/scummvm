@@ -75,6 +75,7 @@
 
 - (void)drawRect:(CGRect)frame;
 
+- (void)createScreenTexture;
 - (void)initSurface;
 - (void)setViewTransformation;
 
