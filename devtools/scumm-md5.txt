@@ -555,7 +555,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	ebd324dcf06a4c49e1ba5c231eee1060	-1	us	All	HE 99	Demo	-	sev
 	688328c5bdc4c8ec4145688dfa077bf2	-1	de	All	HE 99	Demo	-	Joachim Eberhard
 	03d3b18ee3fd68114e2a687c871e38d5	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn
-	16effd200aa6b8abe9c569c3e578814d	-1	nl	Windows	HE 99	Demo	-	joostp
+	16effd200aa6b8abe9c569c3e578814d	-1	nl	All	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	-1	nl	Windows	HE 99	Demo	-	adutchguy
 	5fdb2ac2483908b065c6e77988338a54	-1	nl	Windows	HE 99	Demo	-	Ben
 	e03ed1474ec14de78359970e0457a820	-1	gb	Windows	HE 99	Demo	-	eriktorbjorn
@@ -586,6 +586,7 @@ water	Freddi Fish and Luther's Water Worries
 
 FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 	16542a7342a918bfe4ba512007d36c47	-1	us	All	HE 99L	-	-	Kirben
+	4d3fbc888de4e6565013f61dc83da6b6	36245	nl	All	HE 99	-	-	Ben Castricum
 
 catalog	Humongous Interactive Catalog
 	11e6e244078ff09b0f3832e35420e0a7	-1	en	Windows	-	Demo	-	khalek, sev
@@ -806,6 +807,7 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 
 dog	Putt-Putt and Pep's Dog on a Stick
 	bd5fd7835335dfce03064d5f77b7f0ae	19681	nl	Windows	-	-	-	George Kormendi
+	1b720def35ecfa07032ddf1efb34c368	19681	nl	All	-	-	-	Ben Castricum
 	eae95b2b3546d8ba86ae1d397c383253	-1	en	All	-	-	-	Kirben
 	839a658f7d22de00787ebc945348cdb6	19681	de	Windows	-	-	-	George Kormendi
 	d4b8ee426b1afd3e53bc0cf020418cf6	-1	en	Windows	HE 99	-	-	sev
