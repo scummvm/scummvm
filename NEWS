@@ -29,6 +29,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Changed "F5 (menu)" gesture to open up the global main menu instead.
    - Added support for custom cursor palettes, this makes the moderm theme use
      the red pointer cursor for example.
+   - Added aspect ratio correction feature.
+   - Implemented 16 bits per pixel support for games.
 
  Windows port:
    - Changed default savegames location for Windows NT4/2000/XP/Vista/7.
