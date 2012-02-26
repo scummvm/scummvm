@@ -100,45 +100,52 @@ void charpal() {
 }
 
 void chartex() {
-	Common::File f;
+	Common::File inpFile;
+	Common::File ntpFile;
 	char s[1410];
 
-	/* debug('o3 chartex'); */
-	if (!f.open("TXX.INP"))
-		if (!f.open("TXX.MOR"))
-			error("Missing file - TXX.INP or .MOR");
-
-	assert(f.size() <= (maxti * 2));
-	for (int i = 0; i < f.size() / 2; ++i)
-		t_mot[i] = f.readUint16LE();
-
-	f.close();
-
-	if (!f.open("TXX.NTP"))
-		if (!f.open("TXX.IND"))
-			error("Missing file - TXX.NTP or .IND");
-	
-	assert(f.size() <= (maxtd * 3));
-	int i;
-	for (i = 0; i < (f.size() / 3); ++i) {
-		t_rec[i].indis = f.readSint16LE();
-		t_rec[i].point = f.readByte();
+	g_vm->_txxFileFl = false;
+	if (g_vm->getLanguage() == Common::EN_ANY) {
+		warning("English version expected - Switching to DAT file");
+		return;
 	}
 
-	f.close();
+	if (!inpFile.open("TXX.INP")) {
+		if (!inpFile.open("TXX.MOR")) {
+			warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
+			return;
+		}
+	}
 
-	deline(578, s, i);
-	al_mess = delig;
-	deline(579, s, i);
-	err_mess = delig;
-	deline(580, s, i);
-	ind_mess = delig;
-	deline(581, s, i);
-	al_mess2 = delig;
+	if (!ntpFile.open("TXX.NTP")) {
+		if (!ntpFile.open("TXX.IND")) {
+			warning("Missing file - TXX.NTP or .IND - Switching to DAT file");
+			return;
+		}
+	}
+
+	if ((inpFile.size() > (maxti * 2)) || (ntpFile.size() > (maxtd * 3))) {
+		warning("TXX file - Unexpected format - Switching to DAT file");
+		return;
+	}
+
+	for (int i = 0; i < inpFile.size() / 2; ++i)
+		t_mot[i] = inpFile.readUint16LE();
+
+	inpFile.close();
+
+	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
+		t_rec[i].indis = ntpFile.readSint16LE();
+		t_rec[i].point = ntpFile.readByte();
+	}
+
+	ntpFile.close();
+
+	g_vm->_txxFileFl = true;
 }
 
 /**
- * The original engine used this method to display a starting text screen letting the palyer
+ * The original engine used this method to display a starting text screen letting the player
  * select the graphics mode to use
  */
 void dialpre() {

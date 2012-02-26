@@ -132,6 +132,16 @@ void deline(int num, char *line , int &length) {
 		return;
 	}
 
+	if (!g_vm->_txxFileFl) {
+		delig = g_vm->getGameString(num);
+		if (line) {
+			strcpy(line, delig.c_str());
+			length = delig.size();
+		}
+
+		return;
+	}
+
 	// DETEX
 	delig = "";
 	int ts = t_rec[num].indis;
@@ -155,6 +165,8 @@ void deline(int num, char *line , int &length) {
 	if (length < 255)
 		// Remove trailing '$'
 		delig.deleteLastChar();
+
+	warning("deline: delig %s - line %s", delig.c_str(), line);
 }
 
 

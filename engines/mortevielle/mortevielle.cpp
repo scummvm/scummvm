@@ -38,6 +38,7 @@
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/prog.h"
@@ -123,10 +124,27 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_currGraphicalDevice = MODE_EGA;
 	res = 2;
 
+	_txxFileFl = false;
+	// Load texts from TXX files
+	chartex();
+
 	// Load the mort.dat resource
 	Common::ErrorCode result = loadMortDat();
 	if (result != Common::kNoError)
 		return result;
+
+	// Load some error messages (was previously in chartex())
+	int length = 0;
+	char str[1410];
+
+	deline(578, str, length);
+	al_mess = delig;
+	deline(579, str, length);
+	err_mess = delig;
+	deline(580, str, length);
+	ind_mess = delig;
+	deline(581, str, length);
+	al_mess2 = delig;
 
 	// Set default EGA palette
 	_paletteManager.setDefaultPalette();
@@ -138,7 +156,6 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_newGraphicalDevice = _currGraphicalDevice;
 	zuul = false;
 	tesok = false;
-	chartex();
 	charpal();
 	charge_cfiph();
 	charge_cfiec();
@@ -202,7 +219,9 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 			// Font resource
 			_screenSurface.readFontData(f, dataSize);
 		} else if (!strncmp(dataType, "SSTR", 4)) {
-			readStaticStrings(f, dataSize);
+			readStaticStrings(f, dataSize, kStaticStrings);
+		} else if ((!strncmp(dataType, "GSTR", 4)) && (!_txxFileFl)) {
+			readStaticStrings(f, dataSize, kGameStrings);
 		} else {
 			// Unknown section
 			f.skip(dataSize);
@@ -219,7 +238,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 /**
  * Read in a static strings block, and if the language matches, load up the static strings
  */
-void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize) {
+void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize, DataType dataType) {
 	// Figure out what language Id is needed
 	byte desiredLanguageId = (getLanguage() == Common::EN_ANY) ? LANG_ENGLISH : LANG_FRENCH;
 
@@ -240,7 +259,11 @@ void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize) {
 		while ((ch = (char)f.readByte()) != '\0')
 			s += ch;
 		
-		_engineStrings.push_back(s);
+		if (dataType == kStaticStrings)
+			_engineStrings.push_back(s);
+		else if (dataType == kGameStrings)
+			_gameStrings.push_back(s);
+
 		dataSize -= s.size() + 1;
 	}
 	assert(dataSize == 0);

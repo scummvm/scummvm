@@ -31,6 +31,11 @@ enum AccessMode {
 	kFileWriteMode = 2
 };
 
+enum DataType {
+	kStaticStrings = 0,
+	kGameStrings = 1
+};
+
 #define MORT_DAT "mort.dat"
 
 class File {
