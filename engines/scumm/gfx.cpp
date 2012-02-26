@@ -680,11 +680,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				srcPtr += vsPitch;
 				textPtr += _textSurface.pitch - width * m;
 			}
-		}
+		} else {
 #ifdef USE_ARM_GFX_ASM
-		asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
+			asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
 #else
-		else {
 			// We blit four pixels at a time, for improved performance.
 			const uint32 *src32 = (const uint32 *)src;
 			uint32 *dst32 = (uint32 *)_compositeBuf;
@@ -715,8 +714,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				src32 += vsPitch;
 				text32 += textPitch;
 			}
-		}
 #endif
+		}
 		src = _compositeBuf;
 		pitch = width * vs->format.bytesPerPixel;
 
