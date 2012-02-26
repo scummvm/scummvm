@@ -48,7 +48,8 @@ enum {
 // Game languages
 enum {
 	LANG_FRENCH = 0,
-	LANG_ENGLISH = 1
+	LANG_ENGLISH = 1,
+	LANG_GERMAN = 2
 };
 
 // Static string list
@@ -63,6 +64,11 @@ enum {
 	S_HIT = 37, S_POSE = 38, S_SMASH = 39,
 
 	S_SMELL = 40, S_SCRATCH = 41, S_PROBE2 = 42, S_BEFORE_USE_DEP_MENU = 43, S_DAY = 44
+};
+
+enum DataType {
+	kStaticStrings = 0,
+	kGameStrings = 1
 };
 
 #define SCREEN_WIDTH 640
@@ -81,10 +87,10 @@ private:
 	Common::Point _mousePos;
 	bool _inMainGameLoop;	// Flag when the main game loop is active
 	Common::StringArray _engineStrings;
-
+	Common::StringArray _gameStrings;
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
-	void readStaticStrings(Common::File &f, int dataSize);
+	void readStaticStrings(Common::File &f, int dataSize, DataType dataType);
 	void loadFont(Common::File &f);
 	bool handleEvents();
 	void addKeypress(Common::Event &evt);
@@ -105,6 +111,7 @@ public:
 	bool _quitGame;			// Quit game flag. Originally called 'arret'
 	bool _endGame;			// End game flag. Originally called 'solu'
 	bool _loseGame;			// Lose game flag. Originally called 'perdu'
+	bool _txxFileFl;        // Flag used to determine if texts are from the original files or from a DAT file
 public:
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
@@ -125,6 +132,7 @@ public:
 	void setMouseClick(bool v) { _mouseClick = v; }
 	void delay(int amount);
 	Common::String getEngineString(int idx) const { return _engineStrings[idx]; }
+	Common::String getGameString(int idx) const { return _gameStrings[idx]; }
 
 	void endGame();
 	void loseGame();

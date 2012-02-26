@@ -82,10 +82,15 @@ void writeFontBlock() {
 	outputFile.write(fontBuffer, 121 * 6);
 }
 
-void writeStaticStrings(const char **strings, int languageId) {
+void writeStaticStrings(const char **strings, DataType dataType, int languageId) {
 	// Write out a section header 
 	char sStaticStrings[4] = { 'S', 'S', 'T', 'R' };
-	outputFile.write(sStaticStrings, 4);
+	char sGameStrings[4] = { 'G', 'S', 'T', 'R' };
+
+	if (dataType == kStaticStrings)
+		outputFile.write(sStaticStrings, 4);
+	else if (dataType == kGameStrings)
+		outputFile.write(sGameStrings, 4);
 
 	// Figure out the block size
 	int blockSize = 1;
@@ -112,22 +117,22 @@ void writeStaticStrings(const char **strings, int languageId) {
  * Write out the strings previously hard-coded into the engine
  */
 void writeEngineStrings() {
-	writeStaticStrings(engineDataEn, 1);
-	writeStaticStrings(engineDataFr, 0);
+	writeStaticStrings(engineDataEn, kStaticStrings, 1);
+	writeStaticStrings(engineDataFr, kStaticStrings, 0);
 }
 
 /**
  * Write out the strings used in the game
  */
 void writeGameStrings() {
-	writeStaticStrings(gameDataEn, 1);
-	writeStaticStrings(gameDataFr, 0);
+	writeStaticStrings(gameDataEn, kGameStrings, 1);
+	writeStaticStrings(gameDataFr, kGameStrings, 0);
 }
 
 void process() {
 	writeFontBlock();
-	writeEngineStrings();
 	writeGameStrings();
+	writeEngineStrings();
 }
 
 /**
