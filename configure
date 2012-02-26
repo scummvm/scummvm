@@ -2366,8 +2366,10 @@ if test -n "$_host"; then
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
 			_backend="iphone"
-			_build_hq_scalers=no
+			_build_scalers=no
+			_mt32emu=no
 			_seq_midi=no
+			_timidity=no
 			;;
 		m68k-atari-mint)
 			DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2639,7 +2641,6 @@ case $_backend in
 	gph)
 		;;
 	iphone)
-		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		LIBS="$LIBS -framework QuartzCore -framework GraphicsServices -framework CoreFoundation"
 		LIBS="$LIBS -framework Foundation -framework AudioToolbox -framework CoreAudio"
