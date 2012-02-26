@@ -378,7 +378,7 @@ public:
 	void setPalette(int index, int count);
 	void getEntry(int index, uint *r, uint *g, uint *b);
 	void setEntry(int index, uint r, uint g, uint b);
-	uint8 indexOf(uint r, uint g, uint b, int threshold = 0xffff);
+	uint8 indexOf(uint r, uint g, uint b, int threshold = 0xffff, int start = 0, int count = 256);
 	void getPalette(int start = 0, int count = 256);
 	void signalListeners();
 	void clearListeners();

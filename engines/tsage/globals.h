@@ -260,6 +260,7 @@ public:
 	Rect _v5589E;
 	Rect _v558B6;
 	int _v558C2;
+	int _animationCtr;
 	int _v565E1;
 	int _v565E3;
 	int _v565E5;

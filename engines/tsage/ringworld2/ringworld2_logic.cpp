@@ -1551,14 +1551,52 @@ void Scene1200::sub9DAD6(int indx) {
 
 /*--------------------------------------------------------------------------*/
 
+void AnimationSplice::load(Common::File &f) {
+	_spliceOffset = f.readUint32LE();
+	f.skip(6);
+	_drawMode = f.readByte();
+	_fieldB = f.readByte();
+}
+
+/*--------------------------------------------------------------------------*/
+
+AnimationSplices::AnimationSplices() {
+	_pixelData = NULL;
+}
+
+AnimationSplices::~AnimationSplices() {
+	delete[] _pixelData;
+}
+
+void AnimationSplices::load(Common::File &f) {
+	f.skip(4);
+	_dataSize = f.readUint32LE();
+	f.skip(40);
+
+	// Load the four splice indexes
+	for (int idx = 0; idx < 4; ++idx)
+		_splices[idx].load(f);
+}
+
+int AnimationSplices::loadPixels(Common::File &f, int splicesSize) {
+	delete[] _pixelData;
+	_pixelData = new byte[splicesSize];
+	return f.read(_pixelData, splicesSize);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void AnimationPlayerSubData::load(Common::File &f) {
+	uint32 posStart = f.pos();
+
 	f.skip(6);
 	_field6 = f.readUint16LE();
 	f.skip(2);
 	_fieldA = f.readUint16LE();
 	_fieldC = f.readUint16LE();
-	f.skip(4);
-	_field12 = f.readUint16LE();
+	_fieldE = f.readUint16LE();
+	f.skip(2);
+	_sliceSize = f.readUint16LE();
 	_field14 = f.readUint16LE();
 	_field16 = f.readUint16LE();
 	f.skip(4);
@@ -1567,7 +1605,10 @@ void AnimationPlayerSubData::load(Common::File &f) {
 	f.read(_palData, 768);
 	_field320 = f.readSint32LE();
 	f.skip(12);
-	f.read(_field330, 96);
+	_splices.load(f);
+
+	uint32 posEnd = f.pos();
+	assert((posEnd - posStart) == 0x390);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1575,14 +1616,14 @@ void AnimationPlayerSubData::load(Common::File &f) {
 AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_endAction = NULL;
 
-	_fieldA = NULL;
-	_field16 = NULL;
+	_animData1 = NULL;
+	_animData2 = NULL;
 
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
-	_field3C = 0;
+	_paletteMode = 0;
 	_field3A = 1;
-	_field5A = 0;
+	_sliceHeight = 0;
 	_field58 = 0;
 	_endAction = NULL;
 }
@@ -1590,6 +1631,9 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 AnimationPlayer::~AnimationPlayer() {
 	if (!method3())
 		method4();
+
+	delete[] _animData;
+	delete[] _animData2;
 }
 
 void AnimationPlayer::synchronize(Serializer &s) {
@@ -1654,33 +1698,71 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_gameFrame = R2_GLOBALS._events.getFrameNumber() - _field910;
 
 	if (_subData._field320) {
-		_field900 = _subData._field320;
+		_dataNeeded = _subData._field320;
 	} else {
-		int v = (_subData._field12 + 2) * _subData._field14 * _subData._fieldC;
-		_field900 = (_subData._field16 / _subData._fieldC) + v + 96;
+		int v = (_subData._sliceSize + 2) * _subData._field14 * _subData._fieldC;
+		_dataNeeded = (_subData._field16 / _subData._fieldC) + v + 96;
 	}
+	
+	debugC(1, ktSageDebugGraphics, "Data needed %d", _dataNeeded);
 
-	_animData = _fieldA = new byte[_field900];
+	// Set up animation data array
+	_animData1 = new AnimationData[_dataNeeded / 60];
+	_animData = _animData1;
 
 	if (_subData._fieldC <= 1) {
-		_subData._field16 = NULL;
+		_animData2 = NULL;
 		_animPtr = _animData;
 	} else {
-		_field16 = new byte[_field900];
-		_animPtr = _field16;
+		_animData2 = new AnimationData[_dataNeeded / 60];
+		_animPtr = _animData2;
 	}
 
 	_field90C = 0;
 	_field90E = 1;
 
-	// TODO: Stuff
+	// Load up the first splices set
+	_animData->_dataSize = _subData._splices._dataSize;
+	_animData->_splices = _subData._splices;
+	int splicesSize = _animData->_dataSize - 96;
+	int readSize = _animData->_splices.loadPixels(_resourceFile, splicesSize);
+	_animData->_animSlicesSize = readSize + 96;
 
-	if (_field3C) {
-
+	if (_animPtr != _animData) {
+		getSlices();
 	}
 
+	// Handle starting palette
+	switch (_paletteMode) {
+	case 0:
+		// Use existing active palette
+		_palette.getPalette();
+		for (int idx = _subData._palStart; idx < (_subData._palStart + _subData._palSize); ++idx) {
+			uint r, g, b;
+			_palette.getEntry(idx, &r, &g, &b);
+			R2_GLOBALS._scenePalette.setEntry(idx, r, g, b);
+		}
 
-	return false;
+		R2_GLOBALS._sceneManager._hasPalette = true;
+		break;
+	case 2:
+		break;
+
+	default:
+		for (int idx = _subData._palStart; idx < (_subData._palStart + _subData._palSize); ++idx) {
+			byte r = _subData._palData[idx * 3];
+			byte g = _subData._palData[idx * 3 + 1];
+			byte b = _subData._palData[idx * 3 + 2];
+		
+			int palIndex = R2_GLOBALS._scenePalette.indexOf(r, g, b);
+			_palIndexes[idx] = palIndex;
+		}
+		break;
+	}
+
+	++R2_GLOBALS._animationCtr;
+	_field38 = 1;
+	return true;
 }
 
 void AnimationPlayer::drawFrame(int frameIndex) {
@@ -1713,7 +1795,7 @@ bool AnimationPlayer::method3() {
 
 void AnimationPlayer::method4() {
 	if (_field38) {
-		switch (_field3C) {
+		switch (_paletteMode) {
 		case 0:
 			R2_GLOBALS._scenePalette.replace(&_palette);
 			changePane();

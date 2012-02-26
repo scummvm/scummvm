@@ -325,38 +325,71 @@ public:
 	virtual Common::String getClassName() { return "UnkObject1200"; }
 };
 
+/*--------------------------------------------------------------------------*/
+
+class AnimationSplice {
+public:
+	int _spliceOffset;
+	int _drawMode;
+	int _fieldB;
+public:
+	void load(Common::File &f);
+};
+
+class AnimationSplices {
+public:
+	int _dataSize;
+	AnimationSplice _splices[4];
+	byte *_pixelData;
+public:
+	AnimationSplices();
+	~AnimationSplices();
+
+	void load(Common::File &f);
+	int loadPixels(Common::File &f, int splicesSize);
+};
+
 class AnimationPlayerSubData {
 public:
 	int _field6;
 	int _fieldA;
 	int _fieldC;
-	int _field12;
+	int _fieldE;
+	int _sliceSize;
 	int _field14;
 	int _field16;
 	int _palStart;
 	int _palSize;
 	byte _palData[256 * 3];
 	int32 _field320;
-	byte _field330[96];
+	AnimationSplices _splices;
 public:
 	void load(Common::File &f);
 };
 
+class AnimationData {
+public:
+	AnimationSplices _splices;
+	int _dataSize;
+	int _animSlicesSize;
+};
+
 class AnimationPlayer: public EventHandler {
 public:
-	byte *_fieldA;
-	byte *_field16;
-	byte *_animData, *_animPtr;
+	AnimationData *_animData;
+	AnimationData *_animData1, *_animData2;
+	AnimationData *_animPtr;
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
 	int _field38;
-	int _field3A, _field3C;
+	int _field3A, _paletteMode;
 	int _field56;
-	int _field58, _field5A;
+	int _field58, _sliceHeight;
+	byte _palIndexes[256];
 	ScenePalette _palette;
 	AnimationPlayerSubData _subData;
 	Action *_endAction;
-	int _field900;
+	int _dataNeeded;
 	int _field904;
 	int _field908;
 	int _field90C;
@@ -381,6 +414,7 @@ public:
 	bool method3();
 	void method4();
 	void method5() {}
+	void getSlices() {}
 };
 
 class AnimationPlayerExt: public AnimationPlayer {

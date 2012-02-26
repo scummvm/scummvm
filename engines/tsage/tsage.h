@@ -54,7 +54,8 @@ enum {
 enum {
 	kRingDebugScripts = 1 << 0,
 	ktSageSound = 1 << 1,
-	ktSageCore = 1 << 2
+	ktSageCore = 1 << 2,
+	ktSageDebugGraphics = 1 << 3
 };
 
 struct tSageGameDescription;

@@ -1354,13 +1354,15 @@ void ScenePalette::setEntry(int index, uint r, uint g, uint b) {
  * @param g			G component
  * @param b			B component
  * @param threshold	Closeness threshold.
+ * @param start		Starting index
+ * @param count		Number of indexes to scan
  * @remarks	A threshold may be provided to specify how close the matching color must be
  */
-uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
+uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold, int start, int count) {
 	int palIndex = -1;
 	byte *palData = &_palette[0];
 
-	for (int i = 0; i < 256; ++i) {
+	for (int i = start; i < (start + count); ++i) {
 		byte ir = *palData++;
 		byte ig = *palData++;
 		byte ib = *palData++;
