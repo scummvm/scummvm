@@ -259,17 +259,17 @@ void Lua_V2::PopText() {
 
 void Lua_V2::GetSectorName() {
 	lua_Object xObj = lua_getparam(1);
-	/*lua_Object yObj =*/ lua_getparam(2);
-	/*lua_Object zObj =*/ lua_getparam(3);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object zObj = lua_getparam(3);
 
-	if (!lua_isnumber(xObj) || !lua_isnumber(xObj) || !lua_isnumber(xObj)) {
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj)) {
 		lua_pushnil();
 		return;
 	}
 	float x, y, z;
 	x = lua_getnumber(xObj);
-	y = lua_getnumber(xObj);
-	z = lua_getnumber(xObj);
+	y = lua_getnumber(yObj);
+	z = lua_getnumber(zObj);
 
 	Math::Vector3d pos(x, y, z);
 	Set *set = g_grim->getCurrSet();
