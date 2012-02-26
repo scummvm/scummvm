@@ -331,7 +331,7 @@ class AnimationSplice {
 public:
 	int _spliceOffset;
 	int _drawMode;
-	int _fieldB;
+	int _secondaryIndex;
 public:
 	void load(Common::File &f);
 };
@@ -356,7 +356,7 @@ public:
 	int _fieldC;
 	int _fieldE;
 	int _sliceSize;
-	int _field14;
+	int _ySlices;
 	int _field16;
 	int _palStart;
 	int _palSize;
@@ -375,6 +375,8 @@ public:
 };
 
 class AnimationPlayer: public EventHandler {
+private:
+	void rleDecode(const byte *pSrc, byte *pDest, int size);
 public:
 	AnimationData *_animData;
 	AnimationData *_animData1, *_animData2;
@@ -409,7 +411,7 @@ public:
 	virtual void proc14() {}
 
 	bool load(int animId, Action *endAction = NULL);
-	void drawFrame(int frameIndex);
+	void drawFrame(int spliceIndex);
 	void method2();
 	bool method3();
 	void method4();
