@@ -290,13 +290,12 @@ bool Ques::show() {
 	const int correctAnswerArr[11] = {0, 4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
 
 	int optionPosY;
-	int curLength, maxLength;
+	int maxLength;
 	int rep;
 	int firstOption, lastOption;
 	char key;
 	rectangle coor[max_rect];
 	Common::String choiceArray[15];
-	char st[1410];
 
 	int currChoice, prevChoice;
 	int indx = 0;
@@ -308,14 +307,15 @@ bool Ques::show() {
 		hirs();
 		showMouse();
 		++indx;
-		deline(textIndexArr[indx], st, curLength);
 		int dialogHeight;
 		if (res == 1)
 			dialogHeight = 29;
 		else
 			dialogHeight = 23;
 		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
-		afftex(st, 20, 15, 100, 2, 0);
+		Common::String tmpStr = delin2(textIndexArr[indx]);
+		afftex(tmpStr, 20, 15, 100, 2, 0);
+
 		if (indx != 10) {
 			firstOption = textIndexArr[indx] + 1;
 			lastOption = textIndexArr[indx + 1] - 1;
@@ -327,11 +327,11 @@ bool Ques::show() {
 		maxLength = 0;
 
 		for (int j = firstOption, prevChoice = 1; j <= lastOption; ++j, ++prevChoice) {
-			deline(j, st, curLength);
-			if (curLength > maxLength)
-				maxLength = curLength;
-			afftex(st, 100, optionPosY, 100, 1, 0);
-			choiceArray[prevChoice] = delig;
+			tmpStr = delin2(j);
+			if ((int) tmpStr.size() > maxLength)
+				maxLength = tmpStr.size();
+			afftex(tmpStr, 100, optionPosY, 100, 1, 0);
+			choiceArray[prevChoice] = tmpStr;
 			optionPosY += 8;
 		}
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
@@ -356,6 +356,7 @@ bool Ques::show() {
 		rep = 0;
 
 		prevChoice = 0;
+		warning("Expected answer: %d", correctAnswerArr[indx]);
 		do {
 			g_vm->setMouseClick(false);
 			tesok = false;
@@ -368,34 +369,21 @@ bool Ques::show() {
 				++currChoice;
 			if (coor[currChoice].enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
-					st[0] = ' ';
-//					for (j = 0; j <= maxLength; ++j)
-//						st[j + 1] = choiceArray[prevChoice][j];
-					strncpy(st + 1, choiceArray[prevChoice].c_str(), maxLength);
-					st[1 + maxLength] = '$';
-					afftex(st, 100, 27 + (prevChoice * 8), 100, 1, 0);
+					Common::String tmpStr = choiceArray[prevChoice] + '$';
+					afftex(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				}
 				if (prevChoice != currChoice) {
-					st[0] = ' ';
-//					for (j = 0; j <= maxLength; ++j)
-//						st[j + 1] = choiceArray[currChoice][j];
-					strncpy(st + 1, choiceArray[currChoice].c_str(), maxLength);
-					st[1 + maxLength] = '$';
-					afftex(st, 100, 27 + (currChoice * 8), 100, 1, 1);
+					Common::String tmpStr = choiceArray[currChoice] + '$';
+					afftex(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
 					prevChoice = currChoice;
 				}
 			} else if (prevChoice != 0) {
-					st[0] = ' ';
-//				for (j = 0; j <= maxLength; ++j)
-//					st[j + 1] = choiceArray[prevChoice][j];
-				strncpy(st + 1, choiceArray[prevChoice].c_str(), maxLength);
-				st[1 + maxLength] = '$';
-				afftex(st, 100, 27 + (prevChoice * 8), 100, 1, 0);
+				Common::String tmpStr = choiceArray[prevChoice] + '$';
+				afftex(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				prevChoice = 0;
 			}
 		} while (!((prevChoice != 0) && g_vm->getMouseClick()));
 
-		warning("Expected answer: %d, answer: %d", prevChoice, correctAnswerArr[indx]);
 		if (prevChoice == correctAnswerArr[indx])
 			// Answer is correct
 			++correctCount;

@@ -134,17 +134,10 @@ Common::ErrorCode MortevielleEngine::initialise() {
 		return result;
 
 	// Load some error messages (was previously in chartex())
-	int length = 0;
-	char str[1410];
-
-	deline(578, str, length);
-	al_mess = delig;
-	deline(579, str, length);
-	err_mess = delig;
-	deline(580, str, length);
-	ind_mess = delig;
-	deline(581, str, length);
-	al_mess2 = delig;
+	al_mess  = delin2(578);  // Insert floppy #1
+	err_mess = delin2(579);  // Floppy error
+	ind_mess = delin2(580);  // You should have noticed %d hints
+	al_mess2 = delin2(581);  // Insert floppy #2
 
 	// Set default EGA palette
 	_paletteManager.setDefaultPalette();

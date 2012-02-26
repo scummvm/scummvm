@@ -102,7 +102,6 @@ void charpal() {
 void chartex() {
 	Common::File inpFile;
 	Common::File ntpFile;
-	char s[1410];
 
 	g_vm->_txxFileFl = false;
 	if (g_vm->getLanguage() == Common::EN_ANY) {

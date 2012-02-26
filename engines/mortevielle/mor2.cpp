@@ -238,26 +238,21 @@ void tkey1(bool d) {
 }
 
 void tmlieu(int mli) {
-	int cx, i, tail;
 	Common::String nomp;
-	char st[1410];
-
 
 	if (mli == 26)
 		mli = 15;
 
-	i = 1;
+	int i = 1;
 	while ((i < 8) && (v_lieu[i][mli] != 0)) {
-		cx = v_lieu[i][mli];
-		deline(cx + c_tmlieu, st, tail);
-		nomp = delig;
+		nomp = delin2(v_lieu[i][mli] + c_tmlieu);
 		while (nomp.size() < 20)
 			nomp += ' ';
 		g_vm->_menu.menut(g_vm->_menu._depl[i], nomp);
 		++i;
 	}
 	nomp = "*                   ";
-	for (cx = 7; cx >= i; --cx)
+	for (int cx = 7; cx >= i; --cx)
 		g_vm->_menu.menut(g_vm->_menu._depl[cx], nomp);
 }
 
@@ -377,8 +372,7 @@ void st1sama() {
 }
 
 void modinv() {
-	int tay, r;
-	char nom[1410];
+	int r;
 	Common::String nomp;
 
 	int cy = 0;
@@ -386,8 +380,7 @@ void modinv() {
 		if (s.sjer[cx] != chr(0)) {
 			++cy;
 			r = (ord(s.sjer[cx]) + 400);
-			deline(r - 501 + c_st41, nom, tay);
-			nomp = delig;
+			nomp = delin2(r - 501 + c_st41);
 			g_vm->_menu.menut(g_vm->_menu._invt[cy], nomp);
 			g_vm->_menu.enableMenuItem(g_vm->_menu._invt[cx]);
 		}
@@ -400,13 +393,12 @@ void modinv() {
 
 void sparl(float adr, float rep) {
 	const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
-	int key, tay, repint;
-	char st[1410];
+	int key, repint;
 
 	repint = abs((int)rep);
 	hideMouse();
-	deline(repint + c_paroles, st, tay);
-	afftex(st, 230, 4, 65, 24, 5);
+	Common::String tmpStr = delin2(repint + c_paroles);
+	afftex(tmpStr, 230, 4, 65, 24, 5);
 	f3f8::draw();
 	
 	key = 0;
@@ -449,8 +441,6 @@ void premtet() {
 
 /* NIVEAU 5 */
 void ajchai() {
-
-
 	int cy = acha + ((mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
@@ -484,12 +474,12 @@ void t1sama() {    //Entering manor
 	calch(j, h, m);
 	if ((h < 5) && (s.mlieu > 18)) {
 		cherjer(137, d);
-		if (!d) {        /* On n'a pas les cl‚s et il est tard */   //Translation: You don't have the keys, and it's late
+		if (!d) {        //You don't have the keys, and it's late
 			crep = 1511;
 			tperd();
 		} else
 			st1sama();
-	} else if (!s.ipre) {     /* c'est votre premiŠre fois ? */   //Translation: Is it your first time?
+	} else if (!s.ipre) {     //Is it your first time?
 		ipers = 255;
 		affper(ipers);
 		caff = 77;

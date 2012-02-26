@@ -389,11 +389,9 @@ void Menu::eraseMenu() {
  * Handle updates to the menu
  */
 void Menu::mdn() {
-	//int x, y, c, a, ix;
 	int x, y, ix;
 	bool tes;
 
-	/* debug('mdn'); */
 	if (!_menuActive)
 		return;
 
@@ -466,8 +464,7 @@ void Menu::mdn() {
 }
 
 void Menu::initMenu() {
-	int i, tai;
-	char st[1410];
+	int i;
 	Common::File f;
 
 	if (!f.open("menufr.mor"))
@@ -488,20 +485,18 @@ void Menu::initMenu() {
 		_dep[i] = "*                       ";
 	i = 1;
 	do {
-		deline(i + c_action, st, tai);
-		_act[i] = delig;
+		_act[i] = delin2(i + c_action);
+
 		while (_act[i].size() < 10)
 			_act[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
-				deline(i + c_saction, st, tai);
-				_self[i] = delig;
+				_self[i] = delin2(i + c_saction);
 				while (_self[i].size() < 10)
 					_self[i] += ' ';
 			}
-			deline(i + c_dis, st, tai);
-			_dis[i] = delig + ' ';
+			_dis[i] = delin2(i + c_dis) + ' ';
 		}
 		++i;
 	} while (i != 22);
