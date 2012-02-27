@@ -57,7 +57,7 @@ HardwareInputSet *OSystem_SDL_WebOS::getHardwareInputSet() {
 	HardwareInputSet *inputSet = OSystem_SDL::getHardwareInputSet();
 
 	// Add WebOS specific keys
-	keySet->addHardwareInput(new HardwareInput("FORWARD",
+	inputSet->addHardwareInput(new HardwareInput("FORWARD",
 		KeyState((KeyCode) 229, 229, 0), "Forward"));
 
 	// Return the modified hardware key set
