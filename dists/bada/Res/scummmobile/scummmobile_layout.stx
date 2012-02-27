@@ -621,6 +621,32 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GameOptions_Engine' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<widget name = 'customOption1Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption2Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption3Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption4Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption5Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption6Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption7Checkbox'
+					type = 'Checkbox'
+			/>
+		</layout>
+	</dialog>
+	
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' center = 'true'>
 			<widget name = 'Logo'
