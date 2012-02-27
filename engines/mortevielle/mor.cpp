@@ -314,8 +314,8 @@ void modobj(int m) {
 	if (m != 500)
 		strp = delin2(m - 501 + c_st41);
 
-	g_vm->_menu.menut(g_vm->_menu._invt[8], strp);
-	g_vm->_menu.disableMenuItem(g_vm->_menu._invt[8]);
+	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
+	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
 }
 
 void modobj2(int m, bool t1, bool t2) {
@@ -329,8 +329,8 @@ void modobj2(int m, bool t1, bool t2) {
 	if (m != 500)
 		strp = delin2(m - 501 + c_st41);
 
-	g_vm->_menu.menut(g_vm->_menu._invt[8], strp);
-	g_vm->_menu.disableMenuItem(g_vm->_menu._invt[8]);
+	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
+	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
 }
 
 
@@ -441,47 +441,47 @@ void affper(int per) {
 	int cx;
 
 	for (cx = 1; cx <= 8; ++cx)
-		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cx]);
+		g_vm->_menu.disableMenuItem(g_vm->_menu._discussMenu[cx]);
 	clsf10();
 	if ((per & 128) == 128) {
 		g_vm->_screenSurface.putxy(560, 24);
 		g_vm->_screenSurface.writeg("LEO", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[1]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[1]);
 	}
 	if ((per & 64) == 64) {
 		g_vm->_screenSurface.putxy(560, 32);
 		g_vm->_screenSurface.writeg("PAT", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[2]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[2]);
 	}
 	if ((per & 32) == 32) {
 		g_vm->_screenSurface.putxy(560, 40);
 		g_vm->_screenSurface.writeg("GUY", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[3]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[3]);
 	}
 	if ((per & 16) == 16) {
 		g_vm->_screenSurface.putxy(560, 48);
 		g_vm->_screenSurface.writeg("EVA", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[4]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[4]);
 	}
 	if ((per & 8) == 8) {
 		g_vm->_screenSurface.putxy(560, 56);
 		g_vm->_screenSurface.writeg("BOB", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[5]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[5]);
 	}
 	if ((per & 4) == 4) {
 		g_vm->_screenSurface.putxy(560, 64);
 		g_vm->_screenSurface.writeg("LUC", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[6]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[6]);
 	}
 	if ((per & 2) == 2) {
 		g_vm->_screenSurface.putxy(560, 72);
 		g_vm->_screenSurface.writeg("IDA", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[7]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[7]);
 	}
 	if ((per & 1) == 1) {
 		g_vm->_screenSurface.putxy(560, 80);
 		g_vm->_screenSurface.writeg("MAX", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._disc[8]);
+		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[8]);
 	}
 	ipers = per;
 }
@@ -592,7 +592,7 @@ void cpl6(int &p) {
  */
 void person() {
 	for (int cf = 1; cf <= 8; ++cf)
-		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cf]);
+		g_vm->_menu.disableMenuItem(g_vm->_menu._discussMenu[cf]);
 
 	Common::String sYou = g_vm->getEngineString(S_YOU);
 	Common::String sAre = g_vm->getEngineString(S_ARE);

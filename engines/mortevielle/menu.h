@@ -39,16 +39,16 @@ private:
 	void menuDown(int ii);
 public:
 	bool _menuActive;
-	Common::String _inv[9];
-	Common::String _dep[8];
-	Common::String _act[22];
-	Common::String _self[7];
-	Common::String _dis[9];
-	int _disc[9];
-	int _invt[9];
-	int _depl[8];
+	Common::String _inventoryStringArray[9];
+	Common::String _moveStringArray[8];
+	Common::String _actionStringArray[22];
+	Common::String _selfStringArray[7];
+	Common::String _discussStringArray[9];
+	int _discussMenu[9];
+	int _inventoryMenu[9];
+	int _moveMenu[8];
 public:
-	void menut(int no, Common::String nom);
+	void menut(int no, Common::String name);
 	void disableMenuItem(int no);
 	void enableMenuItem(int no);
 	void menu_aff();

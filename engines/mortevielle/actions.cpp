@@ -49,13 +49,13 @@ namespace Mortevielle {
 void fctMove() {
 	int cx;
 
-	if ((s.mlieu == 26) && (msg[4] == g_vm->_menu._depl[6])) {
+	if ((s.mlieu == 26) && (msg[4] == g_vm->_menu._moveMenu[6])) {
 		s.mlieu = 15;
 		caff = s.mlieu;
 		afdes(0);
 		repon(2, s.mlieu);
 	}
-	if ((s.mlieu == 15) && (msg[4] == g_vm->_menu._depl[6])) {
+	if ((s.mlieu == 15) && (msg[4] == g_vm->_menu._moveMenu[6])) {
 		if (!syn)
 			ecr3(g_vm->getEngineString(S_GO_TO));
 		tfleche();
@@ -88,7 +88,7 @@ void fctMove() {
 	cx = 0;
 	do {
 		++cx;
-	} while (g_vm->_menu._depl[cx] != msg[4]);
+	} while (g_vm->_menu._moveMenu[cx] != msg[4]);
 	if (s.mlieu == 19) {
 		if (cx == 1)
 			t1deva();
@@ -295,7 +295,7 @@ void tsprendre() {
 	cx = 0;
 	do {
 		++cx;
-	} while (g_vm->_menu._invt[cx] != msg[4]);
+	} while (g_vm->_menu._inventoryMenu[cx] != msg[4]);
 	cz = 0;
 	cy = 0;
 	do {
@@ -1100,7 +1100,7 @@ void fctEnter() {
 				++s.conf;
 				s.mlieu = 15;
 				msg[3] = MENU_DISCUSS;
-				msg[4] = g_vm->_menu._disc[x];
+				msg[4] = g_vm->_menu._discussMenu[x];
 				syn = true;
 				if (ment == 9) {
 					col = true;
@@ -1297,7 +1297,7 @@ void fctDiscuss() {
 		cx = 0;
 		do {
 			++cx;
-		} while (g_vm->_menu._disc[cx] != msg[4]);
+		} while (g_vm->_menu._discussMenu[cx] != msg[4]);
 		caff = 69 + cx;
 		afdes(0);
 		repon(2, caff);
