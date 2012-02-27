@@ -33,7 +33,7 @@ static bool isCodeSeparator(char c) {
 }
 
 static bool isSeparator(char c) {
-	return (c == ' ' || c == ',' || c == ':');
+	return (c == ' ' || c == ',' || c == ':' || c == '"');
 }
 
 int power(int base, int exp) {
@@ -132,18 +132,9 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 				*(float*)var = str2float(s);
 			} else if (strcmp(code, "c") == 0) {
 				*(char*)var = s[0];
-			} else if (strcmp(code, "s") == 0) {
+			} else if (strcmp(code, "s") == 0 || code[strlen(code) - 1] == 's') {
 				char *string = (char*)var;
 				strcpy(string, s);
-			} else if (code[strlen(code) - 1] == 's') {
-				char *string = (char*)var;
-				int slen = strlen(s);
-				strncpy(string, s, slen);
-				if (s[slen - 1] == '"') {
-					string[slen - 1] = '\0';
-				} else {
-					string[slen] = '\0';
-				}
 			} else {
 				error("Code not handled: \"%s\" \"%s\"\n\"%s\" \"%s\"", code, s, line, fmt);
 			}
