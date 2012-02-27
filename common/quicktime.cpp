@@ -66,7 +66,7 @@ bool QuickTimeParser::parseFile(const String &filename) {
 	_foundMOOV = false;
 	_disposeFileHandle = DisposeAfterUse::YES;
 
-	Atom atom = { 0, 0, 0xffffffff };
+	Atom atom = { 0, 0, 0 };
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
@@ -80,14 +80,12 @@ bool QuickTimeParser::parseFile(const String &filename) {
 			if (readDefault(atom) < 0 || !_foundMOOV)
 				return false;
 		}
-		delete _fd;
 
-		atom.type = 0;
-		atom.offset = 0;
-		atom.size = 0xffffffff;
+		delete _fd;
 	}
 
 	_fd = _resFork->getDataFork();
+	atom.size = _fd->size();
 
 	if (readDefault(atom) < 0 || !_foundMOOV)
 		return false;
