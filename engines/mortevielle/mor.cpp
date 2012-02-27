@@ -136,7 +136,7 @@ void text1(int x, int y, int nb, int m) {
 		co = 10;
 	else
 		co = 6;
-	Common::String tmpStr = delin2(m);
+	Common::String tmpStr = deline(m);
 	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
 	afftex(tmpStr, x, y, nb, 20, color_txt);
@@ -312,7 +312,7 @@ void modobj(int m) {
 	Common::String strp = Common::String(' ');
 
 	if (m != 500)
-		strp = delin2(m - 501 + c_st41);
+		strp = deline(m - 501 + c_st41);
 
 	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
@@ -327,7 +327,7 @@ void modobj2(int m, bool t1, bool t2) {
 		tesok = false;;
 
 	if (m != 500)
-		strp = delin2(m - 501 + c_st41);
+		strp = deline(m - 501 + c_st41);
 
 	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
@@ -341,7 +341,7 @@ void repon(int f, int m) {
 	int i, xco, dx, caspe;
 
 	if ((m > 499) && (m < 563)) {
-		tmpStr = delin2(m - 501 + c_st41);
+		tmpStr = deline(m - 501 + c_st41);
 
 		if ((int) tmpStr.size() > ((58 + (res - 1) * 37) << 1))
 			f2_all = true;
@@ -376,7 +376,7 @@ void repon(int f, int m) {
 			else
 				i = 5;
 
-			tmpStr = delin2(m);
+			tmpStr = deline(m);
 			afftex(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
@@ -387,7 +387,7 @@ void repon(int f, int m) {
 		}
 		if (f == 7) {         /* messint */
 			ecrf7();
-			tmpStr = delin2(m);
+			tmpStr = deline(m);
 			if (res == 1) {
 				xco = 252 - tmpStr.size() * 5;
 				caspe = 100;

@@ -668,7 +668,7 @@ void fctPlace() {
 					// Do you want to enter the hidden passage?
 					int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 					if (answer== 1)  {
-						Common::String alertTxt = delin2(582);
+						Common::String alertTxt = deline(582);
 						i = Alert::show(alertTxt, 1);
 
 						tesok = false;
@@ -696,7 +696,7 @@ void fctPlace() {
 							dessin(0);
 							aniof(1, 2);
 							aniof(1, 1);
-							alertTxt = delin2(577);
+							alertTxt = deline(577);
 							i = Alert::show(alertTxt, 1);
 							aniof(2, 1);
 							crep = 166;
@@ -1313,7 +1313,7 @@ void fctDiscuss() {
 	for (int ix = 1; ix <= 46; ++ix)
 		te[ix] = false;
 	for (int ix = 1; ix <= 45; ++ix) {
-		lib[ix] = delin2(ix + c_tparler);
+		lib[ix] = deline(ix + c_tparler);
 		for (i = lib[ix].size(); i <= 40; ++i)
 			lib[ix] = lib[ix] + ' ';
 	}

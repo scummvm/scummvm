@@ -487,18 +487,18 @@ void Menu::initMenu() {
 		_moveStringArray[i] = "*                       ";
 	i = 1;
 	do {
-		_actionStringArray[i] = delin2(i + c_action);
+		_actionStringArray[i] = deline(i + c_action);
 
 		while (_actionStringArray[i].size() < 10)
 			_actionStringArray[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
-				_selfStringArray[i] = delin2(i + c_saction);
+				_selfStringArray[i] = deline(i + c_saction);
 				while (_selfStringArray[i].size() < 10)
 					_selfStringArray[i] += ' ';
 			}
-			_discussStringArray[i] = delin2(i + c_dis) + ' ';
+			_discussStringArray[i] = deline(i + c_dis) + ' ';
 		}
 		++i;
 	} while (i != 22);

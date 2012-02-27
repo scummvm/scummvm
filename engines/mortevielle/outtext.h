@@ -32,10 +32,7 @@
 
 namespace Mortevielle {
 
-extern Common::String delig;
-
-extern void deline(int num , char *line , int &length);
-extern Common::String delin2(int num);
+extern Common::String deline(int num);
 extern void afftex(Common::String ch, int x, int y, int dx, int dy, int typ);
 
 } // End of namespace Mortevielle
