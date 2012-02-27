@@ -324,13 +324,9 @@ extern int x,
 extern int t_cph[6401];
 extern byte tabdon[4001];
 
-extern Common::String stpou;                               /* donne le % d'indices */
+extern Common::String _hintPctMessage;      // gives the pct of hints found
 extern byte is;
 extern byte mode;
-extern Common::String al_mess,
-       err_mess,
-       ind_mess,
-       al_mess2;
 
 extern int nbrep[9];
 extern int nbrepm[9];

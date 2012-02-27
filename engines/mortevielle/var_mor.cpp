@@ -174,13 +174,9 @@ int x,
 int t_cph[6401];
 byte tabdon[4001];
 
-Common::String stpou;               // Provides the % of hints
+Common::String _hintPctMessage;               // Provides the % of hints
 byte is;
 byte mode;
-Common::String al_mess,
-       err_mess,
-       ind_mess,
-       al_mess2;
 
 int nbrep[9];
 int nbrepm[9];

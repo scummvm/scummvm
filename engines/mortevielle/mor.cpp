@@ -47,7 +47,8 @@ const int ioresult = 0;
 
 void testfi() {
 	if (ioresult != 0) {
-		caff = Alert::show(err_mess, 1);
+		// Theoritical message
+		warning("IO Error");
 		g_vm->quitGame();
 	}
 }

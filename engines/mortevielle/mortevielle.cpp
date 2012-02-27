@@ -134,10 +134,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 		return result;
 
 	// Load some error messages (was previously in chartex())
-	al_mess  = deline(578);  // Insert floppy #1
-	err_mess = deline(579);  // Floppy error
-	ind_mess = deline(580);  // You should have noticed %d hints
-	al_mess2 = deline(581);  // Insert floppy #2
+	_hintPctMessage = deline(580);  // You should have noticed %d hints
 
 	// Set default EGA palette
 	_paletteManager.setDefaultPalette();
@@ -588,7 +585,7 @@ void MortevielleEngine::handleAction() {
 		if (choisi && (msg[3] == MENU_LOAD))
 			g_vm->_savegameManager.loadGame((msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
-			temps = Alert::show(stpou, 1);
+			temps = Alert::show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
 			if ((mnumo != OPCODE_NONE) && ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SUB_ACTION))) {
