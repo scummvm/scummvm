@@ -133,7 +133,7 @@ ResourceLoader::ResourceLoader() {
 				}
 			}
 
-			SearchMan.listMatchingMembers(files, "local.m4b");
+			SearchMan.listMatchingMembers(files, "patch.m4b");
 			SearchMan.listMatchingMembers(files, "i9n.m4b");
 			SearchMan.listMatchingMembers(files, "art???.m4b");
 			SearchMan.listMatchingMembers(files, "lip.m4b");
