@@ -327,32 +327,32 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class AnimationSplice {
+class AnimationSlice {
 public:
-	int _spliceOffset;
+	int _sliceOffset;
 	int _drawMode;
 	int _secondaryIndex;
 public:
 	void load(Common::File &f);
 };
 
-class AnimationSplices {
+class AnimationSlices {
 public:
 	int _dataSize;
 	int _dataSize2;
-	AnimationSplice _splices[4];
+	AnimationSlice _slices[4];
 	byte *_pixelData;
 public:
-	AnimationSplices();
-	~AnimationSplices();
+	AnimationSlices();
+	~AnimationSlices();
 
 	void load(Common::File &f);
-	int loadPixels(Common::File &f, int splicesSize);
+	int loadPixels(Common::File &f, int slicesSize);
 };
 
 class AnimationPlayerSubData {
 public:
-	int _field6;
+	int _duration;
 	int _fieldA;
 	int _fieldC;
 	int _fieldE;
@@ -363,14 +363,14 @@ public:
 	int _palSize;
 	byte _palData[256 * 3];
 	int32 _field320;
-	AnimationSplices _splices;
+	AnimationSlices _slices;
 public:
 	void load(Common::File &f);
 };
 
 class AnimationData {
 public:
-	AnimationSplices _splices;
+	AnimationSlices _slices;
 	int _dataSize;
 	int _animSlicesSize;
 };
@@ -379,8 +379,8 @@ class AnimationPlayer: public EventHandler {
 private:
 	void rleDecode(const byte *pSrc, byte *pDest, int size);
 
-	void drawFrame(int spliceIndex);
-	void method2();
+	void drawFrame(int sliceIndex);
+	void nextSlices();
 	void getSlices();
 public:
 	AnimationData *_animData1, *_animData2;
@@ -399,7 +399,7 @@ public:
 	int _dataNeeded;
 	int _field904;
 	int _field908;
-	int _field90C;
+	int _position;
 	int _field90E;
 	uint _field910;
 	uint32 _gameFrame;
@@ -416,7 +416,7 @@ public:
 	virtual void closing() {}
 
 	bool load(int animId, Action *endAction = NULL);
-	bool method3();
+	bool isCompleted();
 	void close();
 };
 

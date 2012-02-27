@@ -1898,7 +1898,7 @@ void Scene180::dispatch() {
 	}
 
 	if (_animationPlayer._v) {
-		if (_animationPlayer.method3()) {
+		if (_animationPlayer.isCompleted()) {
 			_animationPlayer._v = 0;
 			_animationPlayer.close();
 			_animationPlayer.remove();

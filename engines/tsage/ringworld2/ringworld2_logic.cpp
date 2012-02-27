@@ -1551,8 +1551,9 @@ void Scene1200::sub9DAD6(int indx) {
 
 /*--------------------------------------------------------------------------*/
 
-void AnimationSplice::load(Common::File &f) {
-	_spliceOffset = f.readUint32LE();
+void AnimationSlice::load(Common::File &f) {
+	f.skip(2);
+	_sliceOffset = f.readUint16LE();
 	f.skip(6);
 	_drawMode = f.readByte();
 	_secondaryIndex = f.readByte();
@@ -1560,30 +1561,30 @@ void AnimationSplice::load(Common::File &f) {
 
 /*--------------------------------------------------------------------------*/
 
-AnimationSplices::AnimationSplices() {
+AnimationSlices::AnimationSlices() {
 	_pixelData = NULL;
 }
 
-AnimationSplices::~AnimationSplices() {
+AnimationSlices::~AnimationSlices() {
 	delete[] _pixelData;
 }
 
-void AnimationSplices::load(Common::File &f) {
+void AnimationSlices::load(Common::File &f) {
 	f.skip(4);
 	_dataSize = f.readUint32LE();
 	f.skip(8);
 	_dataSize2 = f.readUint32LE();
 	f.skip(28);
 
-	// Load the four splice indexes
+	// Load the four slice indexes
 	for (int idx = 0; idx < 4; ++idx)
-		_splices[idx].load(f);
+		_slices[idx].load(f);
 }
 
-int AnimationSplices::loadPixels(Common::File &f, int splicesSize) {
+int AnimationSlices::loadPixels(Common::File &f, int slicesSize) {
 	delete[] _pixelData;
-	_pixelData = new byte[splicesSize];
-	return f.read(_pixelData, splicesSize);
+	_pixelData = new byte[slicesSize];
+	return f.read(_pixelData, slicesSize);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1592,8 +1593,7 @@ void AnimationPlayerSubData::load(Common::File &f) {
 	uint32 posStart = f.pos();
 
 	f.skip(6);
-	_field6 = f.readUint16LE();
-	f.skip(2);
+	_duration = f.readUint32LE();
 	_fieldA = f.readUint16LE();
 	_fieldC = f.readUint16LE();
 	_fieldE = f.readUint16LE();
@@ -1607,7 +1607,7 @@ void AnimationPlayerSubData::load(Common::File &f) {
 	f.read(_palData, 768);
 	_field320 = f.readSint32LE();
 	f.skip(12);
-	_splices.load(f);
+	_slices.load(f);
 
 	uint32 posEnd = f.pos();
 	assert((posEnd - posStart) == 0x390);
@@ -1631,7 +1631,7 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 }
 
 AnimationPlayer::~AnimationPlayer() {
-	if (!method3())
+	if (!isCompleted())
 		close();
 }
 
@@ -1650,7 +1650,7 @@ void AnimationPlayer::remove() {
 void AnimationPlayer::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
 			(_field3A)) {
-		_field90C = _subData._field6;
+		_position = _subData._duration;
 	}
 }
 
@@ -1661,10 +1661,10 @@ void AnimationPlayer::dispatch() {
 	if (gameDiff >= _field910) {
 		drawFrame(_field904 % _subData._fieldC);
 		++_field904;
-		_field90C = _field904 / _subData._fieldC;
+		_position = _field904 / _subData._fieldC;
 
-		if (_field90C == _field90E)
-			method2();
+		if (_position == _field90E)
+			nextSlices();
 
 		_field908 = _field904;
 		_gameFrame = gameFrame;
@@ -1717,14 +1717,14 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 		_sliceNext = _animData2;
 	}
 
-	_field90C = 0;
+	_position = 0;
 	_field90E = 1;
 
-	// Load up the first splices set
-	_sliceCurrent->_dataSize = _subData._splices._dataSize;
-	_sliceCurrent->_splices = _subData._splices;
-	int splicesSize = _sliceCurrent->_dataSize - 96;
-	int readSize = _sliceCurrent->_splices.loadPixels(_resourceFile, splicesSize);
+	// Load up the first slices set
+	_sliceCurrent->_dataSize = _subData._slices._dataSize;
+	_sliceCurrent->_slices = _subData._slices;
+	int slicesSize = _sliceCurrent->_dataSize - 96;
+	int readSize = _sliceCurrent->_slices.loadPixels(_resourceFile, slicesSize);
 	_sliceCurrent->_animSlicesSize = readSize + 96;
 
 	if (_sliceNext != _sliceCurrent) {
@@ -1764,12 +1764,12 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	return true;
 }
 
-void AnimationPlayer::drawFrame(int spliceIndex) {
-	assert(spliceIndex < 4);
-	AnimationSplices &splices = _sliceCurrent->_splices;
-	AnimationSplice &splice = _sliceCurrent->_splices._splices[spliceIndex];
+void AnimationPlayer::drawFrame(int sliceIndex) {
+	assert(sliceIndex < 4);
+	AnimationSlices &slices = _sliceCurrent->_slices;
+	AnimationSlice &slice = _sliceCurrent->_slices._slices[sliceIndex];
 
-	byte *sliceDataStart = &splices._pixelData[splice._spliceOffset];
+	byte *sliceDataStart = &slices._pixelData[slice._sliceOffset - 96];
 	byte *sliceData1 = sliceDataStart;
 
 	Rect playerBounds = _screenBounds;
@@ -1779,7 +1779,7 @@ void AnimationPlayer::drawFrame(int spliceIndex) {
 	Graphics::Surface surface = R2_GLOBALS._screenSurface.lockSurface();
 
 	// Handle different drawing modes
-	switch (splice._drawMode) {
+	switch (slice._drawMode) {
 	case 0:
 		// Draw from uncompressed source
 		for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
@@ -1795,18 +1795,19 @@ void AnimationPlayer::drawFrame(int spliceIndex) {
 		break;
 
 	case 1:
-		switch (splice._secondaryIndex) {
+		switch (slice._secondaryIndex) {
 		case 0xfe:
 			// Draw from uncompressed source with optional skipped rows
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
-				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex) {
+				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, playerBounds.top++) {
 					int offset = READ_LE_UINT16(sliceData1 + sliceNum * 2);
 
 					if (offset) {
 						const byte *pSrc = (const byte *)sliceDataStart + offset;
-						byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, y++);
+						byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, playerBounds.top);
 
-						Common::copy(pSrc, pSrc + _subData._sliceSize, pDest);
+						//Common::copy(pSrc, pSrc + playerBounds.width(), pDest);
+						rleDecode(pSrc, pDest, playerBounds.width());
 					}
 				}
 			}
@@ -1814,20 +1815,20 @@ void AnimationPlayer::drawFrame(int spliceIndex) {
 		case 0xff:
 			// Draw from RLE compressed source
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
-				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex) {
+				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, playerBounds.top++) {
 					// TODO: Check of _subData._fieldE was done for two different kinds of
 					// line slice drawing in original
 					const byte *pSrc = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
-					byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, y++);
+					byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, playerBounds.top);
 
 					rleDecode(pSrc, pDest, _subData._sliceSize);
 				}
 			}
 			break;
 		default: {
-			// Draw from two splice sets simultaneously
-			AnimationSplice &splice2 = _sliceCurrent->_splices._splices[splice._secondaryIndex];
-			byte *sliceData2 = &splices._pixelData[splice2._spliceOffset];
+			// Draw from two slice sets simultaneously
+			AnimationSlice &slice2 = _sliceCurrent->_slices._slices[slice._secondaryIndex];
+			byte *sliceData2 = &slices._pixelData[slice2._sliceOffset - 96];
 
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
 				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex) {
@@ -1835,7 +1836,7 @@ void AnimationPlayer::drawFrame(int spliceIndex) {
 					const byte *pSrc2 = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
 					byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, y++);
 
-					if (splice2._drawMode == 0) {
+					if (slice2._drawMode == 0) {
 						// Uncompressed background, foreground compressed
 						Common::copy(pSrc1, pSrc1 + _subData._sliceSize, pDest);
 						rleDecode(pSrc2, pDest, _subData._sliceSize);
@@ -1852,29 +1853,41 @@ void AnimationPlayer::drawFrame(int spliceIndex) {
 	default:
 		break;
 	}
+
+	if (_field56 == 42) {
+		_screenBounds.expandPanes();
+		R2_GLOBALS._sceneObjects->draw();
+	} else {
+		if (R2_GLOBALS._sceneManager._hasPalette)
+			R2_GLOBALS._scenePalette.refresh();
+	}
 }
 
-void AnimationPlayer::method2() {
-	_field90C = _field90E++;
-	_field904 = _field90C * _subData._fieldC;
+/**
+ * Read the next frame's slice set
+ */
+void AnimationPlayer::nextSlices() {
+	_position = _field90E++;
+	_field904 = _position * _subData._fieldC;
 	_field908 = _field904 - 1;
 
 	if (_sliceNext == _sliceCurrent) {
-		int dataSize = _sliceCurrent->_splices._dataSize2;
+		int dataSize = _sliceCurrent->_slices._dataSize2;
 		_sliceCurrent->_dataSize = dataSize;
+		debugC(1, ktSageDebugGraphics, "Next frame size = %xh", dataSize);
 
 		dataSize -= 96;
 		assert(dataSize >= 0);
-		_sliceCurrent->_splices.load(_resourceFile);
-		_sliceCurrent->_animSlicesSize = _sliceCurrent->_splices.loadPixels(_resourceFile, dataSize);
+		_sliceCurrent->_slices.load(_resourceFile);
+		_sliceCurrent->_animSlicesSize = _sliceCurrent->_slices.loadPixels(_resourceFile, dataSize);
 	} else {
 		SWAP(_sliceCurrent, _sliceNext);
 		getSlices();
 	}
 }
 
-bool AnimationPlayer::method3() {
-	return (_field90C >= _subData._field6);
+bool AnimationPlayer::isCompleted() {
+	return (_position >= _subData._duration);
 }
 
 void AnimationPlayer::close() {
@@ -1940,15 +1953,15 @@ void AnimationPlayer::getSlices() {
 	assert((_sliceNext == _animData1) || (_sliceNext == _animData2));
 	assert((_sliceCurrent == _animData1) || (_sliceCurrent == _animData2));
 
-	_sliceNext->_dataSize = _sliceCurrent->_splices._dataSize2;
+	_sliceNext->_dataSize = _sliceCurrent->_slices._dataSize2;
 	if (_sliceNext->_dataSize) {
 		if (_sliceNext->_dataSize >= _dataNeeded)
 			error("Bogus dataNeeded == %d / %d", _sliceNext->_dataSize, _dataNeeded);
 	}
 
 	int dataSize = _sliceNext->_dataSize - 96;
-	_sliceNext->_splices.load(_resourceFile);
-	_sliceNext->_animSlicesSize = _sliceNext->_splices.loadPixels(_resourceFile, dataSize);
+	_sliceNext->_slices.load(_resourceFile);
+	_sliceNext->_animSlicesSize = _sliceNext->_slices.loadPixels(_resourceFile, dataSize);
 }
 
 /*--------------------------------------------------------------------------*/

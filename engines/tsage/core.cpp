@@ -4259,8 +4259,10 @@ void SceneHandler::dispatch() {
 	}
 
 	// Handle drawing the contents of the scene
-	if (g_globals->_sceneManager._scene)
-		g_globals->_sceneObjects->draw();
+	if ((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._animationCtr == 0)) {
+		if (g_globals->_sceneManager._scene)
+			g_globals->_sceneObjects->draw();
+	}
 
 	// Check to see if any scene change is required
 	g_globals->_sceneManager.checkScene();
