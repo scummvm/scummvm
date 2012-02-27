@@ -417,7 +417,7 @@ void DreamWebEngine::loadPalFromIFF() {
 	uint8 *dst = _mainPal;
 	for (size_t i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;
-		if (_brightness == 1) {
+		if (_brightPalette) {
 			if (c) {
 				c = c + c / 2 + c / 4;
 				if (c > 63)

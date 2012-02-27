@@ -341,7 +341,7 @@ public:
 	uint8 _speechCount;
 	uint16 _charShift;
 	uint8 _kerning;
-	uint8 _brightness;
+	bool _brightPalette;
 	uint8 _roomLoaded;
 	uint8 _didZoom;
 	uint16 _lineSpacing;
@@ -952,7 +952,6 @@ public:
 	void screenUpdate();
 	void startup1();
 	void readOneBlock();
-	void seeCommandTail();
 	bool checkIfPerson(uint8 x, uint8 y);
 	bool checkIfFree(uint8 x, uint8 y);
 	bool checkIfEx(uint8 x, uint8 y);

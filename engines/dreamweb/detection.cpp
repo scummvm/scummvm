@@ -24,6 +24,7 @@
 
 #include "common/algorithm.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -62,6 +63,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -191,6 +193,32 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 	}
 
 	return SaveStateDescriptor();
+}
+
+const ExtraGuiOptions DreamWebMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static const ExtraGuiOption optionsList[] = {
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			"dreamweb_originalsaveload",
+			false
+		},
+		{
+			_s("Use bright palette mode"),
+			_s("Display graphics using the game's bright palette"),
+			"bright_palette",
+			true
+		},
+		{ 0, 0, 0, 0 }
+	};
+
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DREAMWEB)
