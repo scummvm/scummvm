@@ -245,7 +245,7 @@ void tmlieu(int mli) {
 
 	int i = 1;
 	while ((i < 8) && (v_lieu[i][mli] != 0)) {
-		nomp = delin2(v_lieu[i][mli] + c_tmlieu);
+		nomp = deline(v_lieu[i][mli] + c_tmlieu);
 		while (nomp.size() < 20)
 			nomp += ' ';
 		g_vm->_menu.menut(g_vm->_menu._moveMenu[i], nomp);
@@ -380,7 +380,7 @@ void modinv() {
 		if (s.sjer[cx] != chr(0)) {
 			++cy;
 			r = (ord(s.sjer[cx]) + 400);
-			nomp = delin2(r - 501 + c_st41);
+			nomp = deline(r - 501 + c_st41);
 			g_vm->_menu.menut(g_vm->_menu._inventoryMenu[cy], nomp);
 			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[cx]);
 		}
@@ -397,7 +397,7 @@ void sparl(float adr, float rep) {
 
 	repint = abs((int)rep);
 	hideMouse();
-	Common::String tmpStr = delin2(repint + c_paroles);
+	Common::String tmpStr = deline(repint + c_paroles);
 	afftex(tmpStr, 230, 4, 65, 24, 5);
 	f3f8::draw();
 	

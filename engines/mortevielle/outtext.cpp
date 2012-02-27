@@ -60,7 +60,7 @@ const byte tab31[32]= {
 	119,   0,   0,   0,   0,   0,   0,   0
 };
 
-void deline(int num , char *l , int &tl);
+Common::String deline(int num);
 typedef unsigned char uchar;
 
 static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
@@ -126,63 +126,32 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 /**
  * Decode and extract the line with the given Id
  */
-void deline(int num, char *line , int &length) {
+Common::String deline(int num) {
+	Common::String wrkStr = "";
+
 	if (num < 0) {
 		warning("deline: num < 0! Skipping");
-		return;
+	} else if (!g_vm->_txxFileFl) {
+		wrkStr = g_vm->getGameString(num);
+	} else {
+		int i = t_rec[num].indis;
+		byte k = t_rec[num].point;
+		int length = 0;
+		bool endFl = false;
+		char let;
+		do {
+			cinq_huit(let, i, k, endFl);
+			if (length < 254)
+				wrkStr += let;
+			++length;
+		} while (!endFl);
 	}
 
-	if (!g_vm->_txxFileFl) {
-		delig = g_vm->getGameString(num);
-/*		if (delig.size() < 255)
-			// Remove trailing '$'
-			delig.deleteLastChar();
-*/
-		if (line) {
-			line[0] = ' ';
-			strcpy(line + 1, delig.c_str());
-			length = delig.size();
-		}
-
-		return;
-	}
-
-	// DETEX
-	delig = "";
-	int ts = t_rec[num].indis;
-	byte ps = t_rec[num].point;
-	int i = ts;
-	length = 1;
-	int j = 1;
-	// Initialize properly first string character
-	line[0] = ' ';
-	byte k = ps;
-	bool endFl = false;
-	char let;
-	do {
-		cinq_huit(let, i, k, endFl);
-		line[j] = let;
-		if (j < 254)
-			delig += let;
-		++j;
-	} while (!endFl);
-	length = j - 1;
-	if (length < 255)
+	if (wrkStr.lastChar() == '$')
 		// Remove trailing '$'
-		delig.deleteLastChar();
+		wrkStr.deleteLastChar();
 
-	warning("deline: delig %s - line %s", delig.c_str(), line);
-}
-
-Common::String delin2(int num) {
-	char tmpStr[1410];
-	int length;
-
-	deline(num, tmpStr, length);
-	
-	Common::String resStr = delig;
-	delig = "";
-	return resStr;
+	return wrkStr;
 }
 
 void afftex(const char *ch, int x, int y, int dx, int dy, int typ);

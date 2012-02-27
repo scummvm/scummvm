@@ -313,7 +313,7 @@ bool Ques::show() {
 		else
 			dialogHeight = 23;
 		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
-		Common::String tmpStr = delin2(textIndexArr[indx]);
+		Common::String tmpStr = deline(textIndexArr[indx]);
 		afftex(tmpStr, 20, 15, 100, 2, 0);
 
 		if (indx != 10) {
@@ -327,7 +327,7 @@ bool Ques::show() {
 		maxLength = 0;
 
 		for (int j = firstOption, prevChoice = 1; j <= lastOption; ++j, ++prevChoice) {
-			tmpStr = delin2(j);
+			tmpStr = deline(j);
 			if ((int) tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
 			afftex(tmpStr, 100, optionPosY, 100, 1, 0);
