@@ -30,6 +30,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -80,6 +81,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -243,6 +245,88 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 	desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
 
 	return desc;
+}
+
+const ExtraGuiOptions KyraMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static const ExtraGuiOption optionsList[] = {
+		// Kyrandia 3 options
+		{
+			_s("Studio audience"),
+			_s("Enable studio audience"),
+			"studio_audience",
+			true
+		},
+		{
+			_s("Skip support"),
+			_s("Allow text and cutscenes to be skipped"),
+			"skip_support",
+			true
+		},
+		{
+			_s("Helium mode"),
+			_s("Enable helium mode"),
+			"helium_mode",
+			false
+		},
+#ifdef ENABLE_LOL
+		// LoL options
+		{
+			_s("Smooth scrolling"),
+			_s("Enable smooth scrolling when walking"),
+			"smooth_scrolling",
+			true
+		},
+		{
+			_s("Floating cursors"),
+			_s("Enable floating cursors"),
+			"floating_cursors",
+			false
+		},
+#endif
+#ifdef ENABLE_EOB
+		// EOB options
+		{
+			_s("HP bar graphs"),
+			_s("Enable hit point bar graphs"),
+			"hpbargraphs",
+			true
+		},
+#endif
+		{ 0, 0, 0, 0 }
+	};
+
+	Common::String gameId = ConfMan.getDomain(target)->getVal("gameid");
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		Common::String curOption = optionsList[i].configOption;
+		// Only add game specific options to the games that apply
+		if (curOption == "studio_audience" || curOption == "skip_support" || curOption == "helium_mode") {
+			if (!gameId.equalsIgnoreCase("kyra3")) {
+				i++;
+				continue;
+			}
+		}
+#ifdef ENABLE_LOL
+		if (curOption == "smooth_scrolling" || curOption == "floating_cursors") {
+			if (!gameId.equalsIgnoreCase("lol")) {
+				i++;
+				continue;
+			}
+		}
+#endif
+#ifdef ENABLE_EOB
+		if (curOption == "hpbargraphs") {
+			if (!!gameId.equalsIgnoreCase("eob")) {
+				i++;
+				continue;
+			}
+		}
+#endif
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)
