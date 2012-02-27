@@ -94,7 +94,7 @@ bool Patchr::patchFile(Common::SeekableReadStream *&file, const Common::String &
 	//Search a BEGIN statement with the right md5
 	fileSize = file->size();
 	for (line = _patch.begin(); line != _patch.end(); ++line)
-		if (line->ist == BEGIN)
+		if (line->ist == BEGIN && line->args.size() >= 2)
 			if (md5.equalsIgnoreCase(line->args[0]) && str2num(line->args[1]) == fileSize) {
 				++line;
 				break;
