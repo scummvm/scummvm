@@ -43,10 +43,10 @@ namespace Mortevielle {
 /**
  * Setup a menu's contents
  */
-void Menu::menut(int no, Common::String nom) {
+void Menu::menut(int no, Common::String name) {
 	byte h = hi(no);
 	byte l = lo(no);
-	Common::String s = nom;
+	Common::String s = name;
 
 	if (! tesok)
 		g_vm->quitGame();
@@ -58,21 +58,21 @@ void Menu::menut(int no, Common::String nom) {
 	switch (h) {
 	case MENU_INVENTORY:
 		if (l != 7) {
-			_inv[l] = s;
-			_inv[l].insertChar(' ', 0);
+			_inventoryStringArray[l] = s;
+			_inventoryStringArray[l].insertChar(' ', 0);
 		}
 		break;
 	case MENU_MOVE:
-		_dep[l] = s;
+		_moveStringArray[l] = s;
 		break;
 	case MENU_ACTION:
-		_act[l] = s;
+		_actionStringArray[l] = s;
 		break;
 	case MENU_SUB_ACTION:
-		_self[l] = s;
+		_selfStringArray[l] = s;
 		break;
 	case MENU_DISCUSS:
-		_dis[l] = s;
+		_discussStringArray[l] = s;
 		break;
 	default:
 		break;
@@ -90,22 +90,22 @@ void Menu::disableMenuItem(int no) {
 	switch (h) {
 	case MENU_INVENTORY:
 		if (l > 6) {
-			_inv[l].setChar('<', 0);
-			_inv[l].setChar('>', 21);
+			_inventoryStringArray[l].setChar('<', 0);
+			_inventoryStringArray[l].setChar('>', 21);
 		} else
-			_inv[l].setChar('*', 0);
+			_inventoryStringArray[l].setChar('*', 0);
 		break;
 	case MENU_MOVE:
-		_dep[l].setChar('*', 0);
+		_moveStringArray[l].setChar('*', 0);
 		break;
 	case MENU_ACTION:
-		_act[l].setChar('*', 0);
+		_actionStringArray[l].setChar('*', 0);
 		break;
 	case MENU_SUB_ACTION:
-		_self[l].setChar('*', 0);
+		_selfStringArray[l].setChar('*', 0);
 		break;
 	case MENU_DISCUSS:
-		_dis[l].setChar('*', 0);
+		_discussStringArray[l].setChar('*', 0);
 		break;
 	default:
 		break;
@@ -115,6 +115,7 @@ void Menu::disableMenuItem(int no) {
 /**
  * Enable a menu item
  * @param no	Hi byte represents menu number, lo byte reprsents item index
+ * @remarks	Originally called menu_enable
  */
 void Menu::enableMenuItem(int no) {
 	byte h = hi(no);
@@ -122,21 +123,22 @@ void Menu::enableMenuItem(int no) {
 
 	switch (h) {
 	case MENU_INVENTORY:
-		_inv[l].setChar(' ', 0);
-		_inv[l].setChar(' ', 21);
+		_inventoryStringArray[l].setChar(' ', 0);
+		_inventoryStringArray[l].setChar(' ', 21);
 		break;
 	case MENU_MOVE:
-		_dep[l].setChar(' ', 0);
+		_moveStringArray[l].setChar(' ', 0);
 		break;
 	case MENU_ACTION:
-		_act[l].setChar(' ', 0);
+		_actionStringArray[l].setChar(' ', 0);
 		break;
 	case MENU_SUB_ACTION:
-		_self[l].setChar(' ', 0);
-		_self[l].setChar(' ', 0);
+		_selfStringArray[l].setChar(' ', 0);
+		// The original sets two times the same value. Skipped
+		// _selfStringArray[l].setChar(' ', 0);
 		break;
 	case MENU_DISCUSS:
-		_dis[l].setChar(' ', 0);
+		_discussStringArray[l].setChar(' ', 0);
 		break;
 	default:
 		break;
@@ -207,19 +209,19 @@ void Menu::invers(int ix) {
 	g_vm->_screenSurface.putxy(don[msg3][1] << 3, (lo(msg4) + 1) << 3);
 	switch (msg3) {
 	case 1:
-		s = _inv[lo(msg4)];
+		s = _inventoryStringArray[lo(msg4)];
 		break;
 	case 2:
-		s = _dep[lo(msg4)];
+		s = _moveStringArray[lo(msg4)];
 		break;
 	case 3:
-		s = _act[lo(msg4)];
+		s = _actionStringArray[lo(msg4)];
 		break;
 	case 4:
-		s = _self[lo(msg4)];
+		s = _selfStringArray[lo(msg4)];
 		break;
 	case 5:
-		s = _dis[lo(msg4)];
+		s = _discussStringArray[lo(msg4)];
 		break;
 	case 6:
 		s = g_vm->getEngineString(S_SAVE_LOAD + lo(msg4));
@@ -304,24 +306,24 @@ void Menu::menuDown(int ii) {
 		++cx;
 		switch (ii) {
 		case 1:
-			if (_inv[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_inv[cx], 4);
+			if (_inventoryStringArray[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_inventoryStringArray[cx], 4);
 			break;
 		case 2:
-			if (_dep[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_dep[cx], 4);
+			if (_moveStringArray[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_moveStringArray[cx], 4);
 			break;
 		case 3:
-			if (_act[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_act[cx], 4);
+			if (_actionStringArray[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_actionStringArray[cx], 4);
 			break;
 		case 4:
-			if (_self[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_self[cx], 4);
+			if (_selfStringArray[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_selfStringArray[cx], 4);
 			break;
 		case 5:
-			if (_dis[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_dis[cx], 4);
+			if (_discussStringArray[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_discussStringArray[cx], 4);
 			break;
 		case 6:
 			g_vm->_screenSurface.writeg(g_vm->getEngineString(S_SAVE_LOAD + cx), 4);
@@ -479,34 +481,34 @@ void Menu::initMenu() {
 	dem2();
 
 	for (i = 1; i <= 8; ++i)
-		_inv[i] = "*                     ";
-	_inv[7] = "< -*-*-*-*-*-*-*-*-*- ";
+		_inventoryStringArray[i] = "*                     ";
+	_inventoryStringArray[7] = "< -*-*-*-*-*-*-*-*-*- ";
 	for (i = 1; i <= 7; ++i)
-		_dep[i] = "*                       ";
+		_moveStringArray[i] = "*                       ";
 	i = 1;
 	do {
-		_act[i] = delin2(i + c_action);
+		_actionStringArray[i] = delin2(i + c_action);
 
-		while (_act[i].size() < 10)
-			_act[i] += ' ';
+		while (_actionStringArray[i].size() < 10)
+			_actionStringArray[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
-				_self[i] = delin2(i + c_saction);
-				while (_self[i].size() < 10)
-					_self[i] += ' ';
+				_selfStringArray[i] = delin2(i + c_saction);
+				while (_selfStringArray[i].size() < 10)
+					_selfStringArray[i] += ' ';
 			}
-			_dis[i] = delin2(i + c_dis) + ' ';
+			_discussStringArray[i] = delin2(i + c_dis) + ' ';
 		}
 		++i;
 	} while (i != 22);
 	for (i = 1; i <= 8; ++i) {
-		_disc[i] = 0x500 + i;
+		_discussMenu[i] = 0x500 + i;
 		if (i < 8)
-			_depl[i] = 0x200 + i;
-		_invt[i] = 0x100 + i;
+			_moveMenu[i] = 0x200 + i;
+		_inventoryMenu[i] = 0x100 + i;
 		if (i > 6)
-			g_vm->_menu.disableMenuItem(_invt[i]);
+			g_vm->_menu.disableMenuItem(_inventoryMenu[i]);
 	}
 	msg3 = OPCODE_NONE;
 	msg4 = OPCODE_NONE;

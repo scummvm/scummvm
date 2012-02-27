@@ -248,12 +248,12 @@ void tmlieu(int mli) {
 		nomp = delin2(v_lieu[i][mli] + c_tmlieu);
 		while (nomp.size() < 20)
 			nomp += ' ';
-		g_vm->_menu.menut(g_vm->_menu._depl[i], nomp);
+		g_vm->_menu.menut(g_vm->_menu._moveMenu[i], nomp);
 		++i;
 	}
 	nomp = "*                   ";
 	for (int cx = 7; cx >= i; --cx)
-		g_vm->_menu.menut(g_vm->_menu._depl[cx], nomp);
+		g_vm->_menu.menut(g_vm->_menu._moveMenu[cx], nomp);
 }
 
 
@@ -279,7 +279,7 @@ void mfouen() {
 
 	tmlieu(s.mlieu);
 	for (cx = 1; cx <= 11; ++cx)
-		g_vm->_menu.enableMenuItem(men[cx]);
+		g_vm->_menu.enableMenuItem(_actionMenu[cx]);
 
 	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getEngineString(S_PROBE));
 	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getEngineString(S_RAISE));
@@ -381,13 +381,13 @@ void modinv() {
 			++cy;
 			r = (ord(s.sjer[cx]) + 400);
 			nomp = delin2(r - 501 + c_st41);
-			g_vm->_menu.menut(g_vm->_menu._invt[cy], nomp);
-			g_vm->_menu.enableMenuItem(g_vm->_menu._invt[cx]);
+			g_vm->_menu.menut(g_vm->_menu._inventoryMenu[cy], nomp);
+			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[cx]);
 		}
 	if (cy < 6)
 		for (int cx = cy + 1; cx <= 6; ++cx) {
-			g_vm->_menu.menut(g_vm->_menu._invt[cx], "                       ");
-			g_vm->_menu.disableMenuItem(g_vm->_menu._invt[cx]);
+			g_vm->_menu.menut(g_vm->_menu._inventoryMenu[cx], "                       ");
+			g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[cx]);
 		}
 }
 
@@ -421,10 +421,10 @@ void finfouil() {
 
 void mfoudi() {
 	for (int cx = 1; cx <= 7; ++cx) 
-		g_vm->_menu.disableMenuItem(g_vm->_menu._depl[cx]);
+		g_vm->_menu.disableMenuItem(g_vm->_menu._moveMenu[cx]);
 
 	for (int cx = 1; cx <= 11; ++cx)
-		g_vm->_menu.disableMenuItem(men[cx]);
+		g_vm->_menu.disableMenuItem(_actionMenu[cx]);
 
 	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getEngineString(S_SUITE));
 	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getEngineString(S_STOP));
@@ -576,7 +576,7 @@ L1:
 		caff = 69 + cx;
 		crep = caff;
 		msg[3] = MENU_DISCUSS;
-		msg[4] = g_vm->_menu._disc[cx];
+		msg[4] = g_vm->_menu._discussMenu[cx];
 		syn = true;
 		col = true;
 	} else {
