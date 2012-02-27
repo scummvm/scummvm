@@ -77,18 +77,18 @@ void tinke() {
 		else
 			stpo = chr(cf + 48);
 
-		stpou = Common::String(d3);
-		stpou += d5;
-		stpou += d4;
-		stpou += d3;
-		stpou += d1;
-		stpou += stpo;
-		stpou += '0';
-		stpou += d2;
-		stpou += d4;
-		stpou += d3;
-		stpou += d6;
-		stpou += d4;
+		_hintPctMessage = Common::String(d3);
+		_hintPctMessage += d5;
+		_hintPctMessage += d4;
+		_hintPctMessage += d3;
+		_hintPctMessage += d1;
+		_hintPctMessage += stpo;
+		_hintPctMessage += '0';
+		_hintPctMessage += d2;
+		_hintPctMessage += d4;
+		_hintPctMessage += d3;
+		_hintPctMessage += d6;
+		_hintPctMessage += d4;
 	}
 	if (m > _minute) {
 		_minute = 30;
@@ -648,7 +648,7 @@ void tfleche() {
 		} while (!(qust || rect || anyone));
 
 		if (qust && (touch == '\103'))
-			Alert::show(stpou, 1);
+			Alert::show(_hintPctMessage, 1);
 	} while (!((touch == '\73') || ((touch == '\104') && (x != 0) && (y != 0)) || (anyone) || (rect)));
 
 	if (touch == '\73')

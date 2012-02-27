@@ -35,6 +35,7 @@
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/outtext.h"
 
 namespace Mortevielle {
 
@@ -112,7 +113,7 @@ void MortevielleEngine::gameLoaded() {
 	iouv = 0;
 	dobj = 0;
 	affrep();
-	stpou = ind_mess;
+	_hintPctMessage = deline(580);
 	while ((test[k] == false) && (k < 2)) {
 		++k;
 
