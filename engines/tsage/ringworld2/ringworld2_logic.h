@@ -353,16 +353,16 @@ public:
 class AnimationPlayerSubData {
 public:
 	int _duration;
-	int _fieldA;
-	int _fieldC;
-	int _fieldE;
+	int _frameRate;
+	int _framesPerSlices;
+	int _drawType;
 	int _sliceSize;
 	int _ySlices;
 	int _field16;
 	int _palStart;
 	int _palSize;
 	byte _palData[256 * 3];
-	int32 _field320;
+	int32 _totalSize;
 	AnimationSlices _slices;
 public:
 	void load(Common::File &f);
@@ -397,11 +397,11 @@ public:
 	AnimationPlayerSubData _subData;
 	Action *_endAction;
 	int _dataNeeded;
-	int _field904;
-	int _field908;
+	int _playbackTick;
+	int _playbackTickPrior;
 	int _position;
-	int _field90E;
-	uint _field910;
+	int _ticksPerSlices;
+	uint _frameDelay;
 	uint32 _gameFrame;
 public:
 	AnimationPlayer();

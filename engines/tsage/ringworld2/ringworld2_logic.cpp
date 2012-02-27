@@ -1594,18 +1594,18 @@ void AnimationPlayerSubData::load(Common::File &f) {
 
 	f.skip(6);
 	_duration = f.readUint32LE();
-	_fieldA = f.readUint16LE();
-	_fieldC = f.readUint16LE();
-	_fieldE = f.readUint16LE();
+	_frameRate = f.readUint16LE();
+	_framesPerSlices = f.readUint16LE();
+	_drawType = f.readUint16LE();
 	f.skip(2);
 	_sliceSize = f.readUint16LE();
 	_ySlices = f.readUint16LE();
-	_field16 = f.readUint16LE();
-	f.skip(4);
+	_field16 = f.readUint32LE();
+	f.skip(2);
 	_palStart = f.readUint16LE();
 	_palSize = f.readUint16LE();
 	f.read(_palData, 768);
-	_field320 = f.readSint32LE();
+	_totalSize = f.readSint32LE();
 	f.skip(12);
 	_slices.load(f);
 
@@ -1650,6 +1650,7 @@ void AnimationPlayer::remove() {
 void AnimationPlayer::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
 			(_field3A)) {
+		// Move the current position to the end
 		_position = _subData._duration;
 	}
 }
@@ -1658,15 +1659,15 @@ void AnimationPlayer::dispatch() {
 	uint32 gameFrame = R2_GLOBALS._events.getFrameNumber();
 	uint32 gameDiff = (gameFrame > _gameFrame) ? gameFrame - _gameFrame : _gameFrame - gameFrame;
 
-	if (gameDiff >= _field910) {
-		drawFrame(_field904 % _subData._fieldC);
-		++_field904;
-		_position = _field904 / _subData._fieldC;
+	if (gameDiff >= _frameDelay) {
+		drawFrame(_playbackTick % _subData._framesPerSlices);
+		++_playbackTick;
+		_position = _playbackTick / _subData._framesPerSlices;
 
-		if (_position == _field90E)
+		if (_position == _ticksPerSlices)
 			nextSlices();
 
-		_field908 = _field904;
+		_playbackTickPrior = _playbackTick;
 		_gameFrame = gameFrame;
 	}
 }
@@ -1691,16 +1692,16 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_subData.load(_resourceFile);
 
 	// Set other properties
-	_field908 = -1;
-	_field904 = 0;
-	_field910 = 60 / _subData._fieldA;
-	_gameFrame = R2_GLOBALS._events.getFrameNumber() - _field910;
+	_playbackTickPrior = -1;
+	_playbackTick = 0;
+	_frameDelay = 60 / _subData._frameRate;
+	_gameFrame = R2_GLOBALS._events.getFrameNumber() - _frameDelay;
 
-	if (_subData._field320) {
-		_dataNeeded = _subData._field320;
+	if (_subData._totalSize) {
+		_dataNeeded = _subData._totalSize;
 	} else {
-		int v = (_subData._sliceSize + 2) * _subData._ySlices * _subData._fieldC;
-		_dataNeeded = (_subData._field16 / _subData._fieldC) + v + 96;
+		int v = (_subData._sliceSize + 2) * _subData._ySlices * _subData._framesPerSlices;
+		_dataNeeded = (_subData._field16 / _subData._framesPerSlices) + v + 96;
 	}
 	
 	debugC(1, ktSageDebugGraphics, "Data needed %d", _dataNeeded);
@@ -1709,7 +1710,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_animData1 = new AnimationData();
 	_sliceCurrent = _animData1;
 
-	if (_subData._fieldC <= 1) {
+	if (_subData._framesPerSlices <= 1) {
 		_animData2 = NULL;
 		_sliceNext = _sliceCurrent;
 	} else {
@@ -1718,7 +1719,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	}
 
 	_position = 0;
-	_field90E = 1;
+	_ticksPerSlices = 1;
 
 	// Load up the first slices set
 	_sliceCurrent->_dataSize = _subData._slices._dataSize;
@@ -1784,7 +1785,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 		// Draw from uncompressed source
 		for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
 			for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex) {
-				// TODO: Check of _subData._fieldE was done for two different kinds of
+				// TODO: Check of _subData._drawType was done for two different kinds of
 				// line slice drawing in original
 				const byte *pSrc = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
 				byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, y++);
@@ -1816,7 +1817,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 			// Draw from RLE compressed source
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
 				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, playerBounds.top++) {
-					// TODO: Check of _subData._fieldE was done for two different kinds of
+					// TODO: Check of _subData._drawType was done for two different kinds of
 					// line slice drawing in original
 					const byte *pSrc = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
 					byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, playerBounds.top);
@@ -1867,14 +1868,16 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
  * Read the next frame's slice set
  */
 void AnimationPlayer::nextSlices() {
-	_position = _field90E++;
-	_field904 = _position * _subData._fieldC;
-	_field908 = _field904 - 1;
+	_position = _ticksPerSlices++;
+	_playbackTick = _position * _subData._framesPerSlices;
+	_playbackTickPrior = _playbackTick - 1;
 
 	if (_sliceNext == _sliceCurrent) {
 		int dataSize = _sliceCurrent->_slices._dataSize2;
 		_sliceCurrent->_dataSize = dataSize;
 		debugC(1, ktSageDebugGraphics, "Next frame size = %xh", dataSize);
+		if (dataSize == 0)
+			return;
 
 		dataSize -= 96;
 		assert(dataSize >= 0);
