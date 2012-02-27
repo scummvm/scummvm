@@ -33,7 +33,7 @@ static bool isCodeSeparator(char c) {
 }
 
 static bool isSeparator(char c) {
-	return (c == ' ' || c == ',' || c == ':' || c == '"');
+	return (c == ' ' || c == ',' || c == ':');
 }
 
 int power(int base, int exp) {
@@ -72,6 +72,12 @@ static float str2float(const char *str) {
 	return num;
 }
 
+static bool isNum(char c) {
+	return (c >= '0' && c <= '9');
+}
+
+// This function is modelled after sscanf, and supports a subset of its features. See sscanf documentation
+// for information about the syntax it accepts.
 static void parse(const char *line, const char *fmt, int field_count, va_list va) {
 	char *str = strdup(line);
 	const int len = strlen(str);
@@ -93,11 +99,25 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 	for (int i = 0; i < formatlen; ++i) {
 		if (format[i] == '%') {
 			char code[10];
+			char width[10];
 			int j = 0;
+			int jw = 0;
+			bool inBrackets = false;
 			while (++i < formatlen && !isCodeSeparator(format[i])) {
-				code[j++] = format[i];
+				char c = format[i];
+				if (c == '[') {
+					inBrackets = true;
+				} else if (inBrackets && c == ']') {
+					inBrackets = false;
+				}
+				if (!inBrackets && isNum(c)) {
+					width[jw++] = c;
+				} else {
+					code[j++] = c;
+				}
 			}
-			code[j++] = '\0';
+			code[j] = '\0';
+			width[jw] = '\0';
 
 			void *var = va_arg(va, void *);
 			if (strcmp(code, "n") == 0) {
@@ -107,22 +127,35 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 
 			char s[2000];
 
+			unsigned int fieldWidth = 1;
+			if (width[0] != '\0') {
+				fieldWidth = atoi(width);
+			}
+
 			j = 0;
 			if (code[0] != 'c') {
 				char nextchar = format[i];
-				while (src[0] == ' ') { //skip initial whitespace
-					++src;
+				if (code[0] != '[') {
+					while (src[0] == ' ') { //skip initial whitespace
+						++src;
+					}
 				}
 				while (src != end && src[0] != nextchar && !isSeparator(src[0])) {
 					s[j++] = src[0];
 					++src;
 				}
 			} else {
-				s[j++] = src[0];
-				++src;
+				for (unsigned int n = 0; n < fieldWidth; ++n) {
+					s[j++] = src[0];
+					++src;
+				}
 			}
-			s[j++] = '\0';
+			s[j] = '\0';
 			--i;
+
+			if (width[0] == '\0') {
+				fieldWidth = strlen(s);
+			}
 
 			if (strcmp(code, "d") == 0) {
 				*(int*)var = atoi(s);
@@ -132,9 +165,39 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 				*(float*)var = str2float(s);
 			} else if (strcmp(code, "c") == 0) {
 				*(char*)var = s[0];
-			} else if (strcmp(code, "s") == 0 || code[strlen(code) - 1] == 's') {
+			} else if (strcmp(code, "s") == 0) {
 				char *string = (char*)var;
-				strcpy(string, s);
+				strncpy(string, s, fieldWidth);
+				if (fieldWidth <= strlen(s)) {
+					// add terminating \0
+					string[fieldWidth] = '\0';
+				}
+			} else if (code[0] == '[') {
+				// This doesn't supporty hyphen (-) yet.
+				bool circumflex = code[1] == '^';
+				char *chars = new char[strlen(code)];
+
+				j = 0;
+				unsigned int k = (circumflex ? 2 : 1);
+				for (; k < strlen(code) && code[k] != ']'; ++k) {
+					assert(code[k] != '[' && code[k] != '-');
+					chars[j++] = code[k];
+				}
+				chars[j++] = '\0';
+
+				k = j = 0;
+				char *string = (char*)var;
+				for (; k < strlen(s) && k < fieldWidth; ++k) {
+					char c = s[k];
+					bool inSet = index(chars, c) != NULL;
+					if ((circumflex && inSet) || (!circumflex && !inSet)) {
+						break;
+					}
+
+					string[j++] = s[k];
+				}
+				string[j++] = '\0';
+				delete[] chars;
 			} else {
 				error("Code not handled: \"%s\" \"%s\"\n\"%s\" \"%s\"", code, s, line, fmt);
 			}
