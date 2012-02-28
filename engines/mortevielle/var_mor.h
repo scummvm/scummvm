@@ -149,7 +149,7 @@ extern const byte typcon[26];
 extern const byte intcon[26];
 extern const byte tnocon[364];
 
-extern const byte don[9][5];
+extern const byte _menuConstants[8][4];
 
 extern const byte addv[2];
 

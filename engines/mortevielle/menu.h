@@ -51,7 +51,7 @@ public:
 	void menut(int no, Common::String name);
 	void disableMenuItem(int no);
 	void enableMenuItem(int no);
-	void menu_aff();
+	void displayMenu();
 	void drawMenu();
 	void menuUp(int xx);
 	void eraseMenu();

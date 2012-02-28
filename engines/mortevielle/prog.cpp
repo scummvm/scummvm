@@ -61,7 +61,7 @@ void changeGraphicalDevice(int newDevice) {
 	_maff = 68;
 	afdes(0);
 	repon(2, crep);
-	g_vm->_menu.menu_aff();
+	g_vm->_menu.displayMenu();
 }
 
 /**

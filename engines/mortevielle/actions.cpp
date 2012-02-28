@@ -686,7 +686,7 @@ void fctPlace() {
 						else 
 							person();
 
-						g_vm->_menu.menu_aff();
+						g_vm->_menu.displayMenu();
 						if (enterPassageFl) {
 							s.mlieu = 17;
 							tmlieu(17);
