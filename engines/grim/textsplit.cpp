@@ -189,7 +189,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 				char *string = (char*)var;
 				for (; k < strlen(s) && k < fieldWidth; ++k) {
 					char c = s[k];
-					bool inSet = index(chars, c) != NULL;
+					bool inSet = strchr(chars, c) != NULL;
 					if ((circumflex && inSet) || (!circumflex && !inSet)) {
 						break;
 					}
