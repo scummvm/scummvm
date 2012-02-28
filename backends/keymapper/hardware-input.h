@@ -85,12 +85,11 @@ public:
 
 	/**
 	 * Add hardware input keys to the set out of key and modifier tables.
-	 * @param keys       table of available keys
-	 * @param modifiers  table of available modifiers
+	 * @param useDefault	auto-add the built-in default inputs
+	 * @param keys       	table of available keys
+	 * @param modifiers  	table of available modifiers
 	 */
-	HardwareInputSet(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]);
-
-	HardwareInputSet() { }
+	HardwareInputSet(bool useDefault = false, const KeyTableEntry keys[] = 0, const ModifierTableEntry modifiers[] = 0);
 
 	virtual ~HardwareInputSet();
 
@@ -100,13 +99,9 @@ public:
 
 	const HardwareInput *findHardwareInput(const KeyState& keystate) const;
 
-	const List<const HardwareInput *> &getHardwareInputs() const {
-		return _inputs;
-	}
+	const List<const HardwareInput *> &getHardwareInputs() const { return _inputs; }
 
-	uint size() const {
-		return _inputs.size();
-	}
+	uint size() const { return _inputs.size(); }
 
 	/**
 	 * Add hardware inputs to the set out of key and modifier tables.
@@ -115,9 +110,16 @@ public:
 	 */
 	void addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]);
 
-private:
+	/**
+	 * Add hardware inputs to the set out of a key table.
+	 * The default modifiers are applied to the key entries
+	 * @param keys       table of available keys
+	 */
+	void addHardwareInputs(const KeyTableEntry keys[]);
 
-	void checkForInput(const HardwareInput *input);
+	void removeHardwareInput(const HardwareInput *input);
+
+private:
 
 	List<const HardwareInput *> _inputs;
 };

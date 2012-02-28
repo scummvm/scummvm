@@ -69,8 +69,8 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 		error("Hardware input set already registered");
 
 	if (!inputs) {
-		warning("No hardware input are supplied");
-		return;
+		warning("No hardware input were defined, using defaults");
+		inputs = new HardwareInputSet(true);
 	}
 
 	_hardwareInputs = inputs;
