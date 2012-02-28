@@ -751,6 +751,16 @@ const ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &ta
 	};
 	
 	Common::String gameId = ConfMan.getDomain(target)->getVal("gameid");
+	// We can't get a game ID in SCI, as _singleId will always overwrite game
+	// IDs with "sci". Therefore, we fiddle with the target ID instead.
+	// HACK: In this case, we just set the game ID to "kq6" or "jones" depending
+	// on the target. Everything else is left as "sci" (the default setting from
+	// _singleId).
+	if (target.hasPrefix("jones"))
+		gameId = "jones";
+	if (target.hasPrefix("kq6"))
+		gameId = "kq6";
+
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 	Common::String guiOptions;
 	if (ConfMan.hasKey("guioptions", target)) {
