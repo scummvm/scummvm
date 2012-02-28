@@ -145,7 +145,7 @@ void Menu::enableMenuItem(int no) {
 	}
 }
 
-void Menu::menu_aff() {
+void Menu::displayMenu() {
 	int ind_tabl, k, col;
 
 	int pt, x, y, color, msk, num_letr;
@@ -191,7 +191,7 @@ void Menu::menu_aff() {
  * Show the menu
  */
 void Menu::drawMenu() {
-	menu_aff();
+	displayMenu();
 	_menuActive = true;
 	msg4 = OPCODE_NONE;
 	msg3 = OPCODE_NONE;
@@ -206,38 +206,40 @@ void Menu::invers(int ix) {
 	if (msg4 == OPCODE_NONE)
 		return;
 
-	g_vm->_screenSurface.putxy(don[msg3][1] << 3, (lo(msg4) + 1) << 3);
+	int menuIndex = lo(msg4);
+
+	g_vm->_screenSurface.putxy(_menuConstants[msg3 - 1][0] << 3, (menuIndex + 1) << 3);
 	switch (msg3) {
 	case 1:
-		s = _inventoryStringArray[lo(msg4)];
+		s = _inventoryStringArray[menuIndex];
 		break;
 	case 2:
-		s = _moveStringArray[lo(msg4)];
+		s = _moveStringArray[menuIndex];
 		break;
 	case 3:
-		s = _actionStringArray[lo(msg4)];
+		s = _actionStringArray[menuIndex];
 		break;
 	case 4:
-		s = _selfStringArray[lo(msg4)];
+		s = _selfStringArray[menuIndex];
 		break;
 	case 5:
-		s = _discussStringArray[lo(msg4)];
+		s = _discussStringArray[menuIndex];
 		break;
 	case 6:
-		s = g_vm->getEngineString(S_SAVE_LOAD + lo(msg4));
+		s = g_vm->getEngineString(S_SAVE_LOAD + menuIndex);
 		break;
 	case 7:
 		s = g_vm->getEngineString(S_SAVE_LOAD + 1);
 		s += ' ';
-		s += (char)(48 + lo(msg4));
+		s += (char)(48 + menuIndex);
 		break;
 	case 8:
-		if (lo(msg4) == 1) {
+		if (menuIndex == 1) {
 			s = g_vm->getEngineString(S_RESTART);
 		} else {
 			s = g_vm->getEngineString(S_SAVE_LOAD + 2);
 			s += ' ';
-			s += (char)(47 + lo(msg4));
+			s += (char)(47 + menuIndex);
 		}
 		break;
 	default:
@@ -251,9 +253,9 @@ void Menu::invers(int ix) {
 
 void Menu::util(int x, int y) {
 
-	int ymx = (don[msg3][4] << 3) + 16;
-	int dxcar = don[msg3][3];
-	int xmn = (don[msg3][1] << 2) * res;
+	int ymx = (_menuConstants[msg3 - 1][3] << 3) + 16;
+	int dxcar = _menuConstants[msg3 - 1][2];
+	int xmn = (_menuConstants[msg3 - 1][0] << 2) * res;
 
 	int ix;
 	if (res == 1)
@@ -287,19 +289,19 @@ void Menu::menuDown(int ii) {
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
 
 	// Draw the menu
-	xco = don[ii][1];
-	nb_lig = don[ii][4];
+	xco = _menuConstants[ii - 1][0];
+	nb_lig = _menuConstants[ii - 1][3];
 	hideMouse();
-	sauvecr(10, (don[ii][2] + 1) << 1);
+	sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
 	if (res == 1)
 		cx = 10;
 	else
 		cx = 6;
-	xcc = xco + (don[ii][3] * cx) + 6;
-	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (don[ii][2] << 1)));
-	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (don[ii][2] << 1)));
-	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (don[ii][2] << 1), xcc + 4, 12 + (don[ii][2] << 1)));
+	xcc = xco + (_menuConstants[ii - 1][2] * cx) + 6;
+	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (_menuConstants[ii - 1][1] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (_menuConstants[ii - 1][1] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (_menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (_menuConstants[ii - 1][1] << 1)));
 	g_vm->_screenSurface.putxy(xco, 16);
 	cx = 0;
 	do {
@@ -360,7 +362,7 @@ void Menu::menuDown(int ii) {
 void Menu::menuUp(int xx) {
 	/* debug('menuUp'); */
 	if (test0) {
-		charecr(10, (don[xx][2] + 1) << 1);
+		charecr(10, (_menuConstants[xx - 1][1] + 1) << 1);
 
 		/* Restore the background area */
 		assert(g_vm->_screenSurface.pitch == g_vm->_backgroundSurface.pitch);
