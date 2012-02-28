@@ -588,7 +588,7 @@ void MortevielleEngine::handleAction() {
 			temps = Alert::show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
-			if ((mnumo != OPCODE_NONE) && ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SUB_ACTION))) {
+			if ((mnumo != OPCODE_NONE) && ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SELF))) {
 				msg[4] = mnumo;
 				ecr3(g_vm->getEngineString(S_IDEM));
 			} else
@@ -611,7 +611,7 @@ void MortevielleEngine::handleAction() {
 				num = 0;
 		} else {
 			mnumo = msg[3];
-			if ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SUB_ACTION))
+			if ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SELF))
 				mnumo = msg[4];
 			if (! anyone) {
 				if ((fouil) || (obpart)) {

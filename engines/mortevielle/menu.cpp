@@ -68,7 +68,7 @@ void Menu::menut(int no, Common::String name) {
 	case MENU_ACTION:
 		_actionStringArray[l] = s;
 		break;
-	case MENU_SUB_ACTION:
+	case MENU_SELF:
 		_selfStringArray[l] = s;
 		break;
 	case MENU_DISCUSS:
@@ -101,7 +101,7 @@ void Menu::disableMenuItem(int no) {
 	case MENU_ACTION:
 		_actionStringArray[l].setChar('*', 0);
 		break;
-	case MENU_SUB_ACTION:
+	case MENU_SELF:
 		_selfStringArray[l].setChar('*', 0);
 		break;
 	case MENU_DISCUSS:
@@ -132,7 +132,7 @@ void Menu::enableMenuItem(int no) {
 	case MENU_ACTION:
 		_actionStringArray[l].setChar(' ', 0);
 		break;
-	case MENU_SUB_ACTION:
+	case MENU_SELF:
 		_selfStringArray[l].setChar(' ', 0);
 		// The original sets two times the same value. Skipped
 		// _selfStringArray[l].setChar(' ', 0);
@@ -422,7 +422,7 @@ void Menu::mdn() {
 			else if (x < 172 * res)
 				ix = MENU_ACTION;
 			else if (x < 220 * res)
-				ix = MENU_SUB_ACTION;
+				ix = MENU_SELF;
 			else if (x < 268 * res)
 				ix = MENU_DISCUSS;
 			else
