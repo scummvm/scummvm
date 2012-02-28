@@ -171,7 +171,8 @@ protected:
 	/**
 	 * Name of single gameid (optional).
 	 *
-	 * @todo Properly explain this -- what does it do?
+	 * If set, the target ID will always be set to this one. Probably useful
+	 * for engines with few game targets.
 	 */
 	const char *_singleid;
 
