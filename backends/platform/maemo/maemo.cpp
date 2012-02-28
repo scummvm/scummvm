@@ -28,7 +28,6 @@
 #include "common/config-manager.h"
 
 #include "backends/platform/maemo/maemo.h"
-#include "backends/platform/maemo/maemo-keys.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
 #include "backends/keymapper/keymapper.h"
@@ -181,9 +180,20 @@ void OSystem_SDL_Maemo::setupIcon() {
 	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
 }
 
+static const Common::KeyTableEntry maemoKeys[] = {
+	// Function keys
+	{"MENU", Common::KEYCODE_F11, 0, "Menu", false},
+	{"HOME", Common::KEYCODE_F12, 0, "Home", false},
+	{"FULLSCREEN", Common::KEYCODE_F13, 0, "FullScreen", false},
+	{"ZOOMPLUS", Common::KEYCODE_F14, 0, "Zoom+", false},
+	{"ZOOMMINUS", Common::KEYCODE_F15, 0, "Zoom-", false},
+
+	{0, Common::KEYCODE_INVALID, 0, 0, false}
+};
+
 #ifdef ENABLE_KEYMAPPER
 Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
-	return new Common::HardwareInputSet(false, Common::maemoKeys, Common::maemoModifiers);
+	return new Common::HardwareInputSet(true, maemoKeys);
 }
 
 Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
