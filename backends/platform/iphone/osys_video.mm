@@ -84,6 +84,13 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	// to the texture buffer to avoid an additional copy step.
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(createScreenTexture) withObject:nil waitUntilDone: YES];
 
+	// In case the client code tries to set up a non supported mode, we will
+	// fall back to CLUT8 and set the transaction error accordingly.
+	if (format && format->bytesPerPixel != 1 && *format != _videoContext->screenTexture.format) {
+		format = 0;
+		_gfxTransactionError = kTransactionFormatNotSupported;
+	}
+
 	if (!format || format->bytesPerPixel == 1) {
 		_framebuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
@@ -92,7 +99,6 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 		       format->rLoss, format->gLoss, format->bLoss, format->aLoss,
 		       format->rShift, format->gShift, format->bShift, format->aShift);
 #endif
-		assert(_videoContext->screenTexture.format == *format);
 		// We directly draw on the screen texture in hi-color mode. Thus
 		// we copy over its settings here and just replace the width and
 		// height to avoid any problems.
@@ -107,6 +113,7 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 }
 
 void OSystem_IPHONE::beginGFXTransaction() {
+	_gfxTransactionError = kTransactionSuccess;
 }
 
 OSystem::TransactionError OSystem_IPHONE::endGFXTransaction() {
@@ -114,8 +121,7 @@ OSystem::TransactionError OSystem_IPHONE::endGFXTransaction() {
 	updateOutputSurface();
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
 
-	// TODO: Can we return better error codes?
-	return kTransactionSuccess;
+	return _gfxTransactionError;
 }
 
 void OSystem_IPHONE::updateOutputSurface() {

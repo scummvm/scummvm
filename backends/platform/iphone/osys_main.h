@@ -65,6 +65,9 @@ protected:
 
 	Graphics::Surface _framebuffer;
 
+	// For signaling that screen format set up might have failed.
+	TransactionError _gfxTransactionError;
+
 	// For use with the game texture
 	uint16  _gamePalette[256];
 	// For use with the mouse texture
