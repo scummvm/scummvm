@@ -1621,14 +1621,16 @@ void Scene180::signal() {
 		break;
 
 	case 7:
+		// Title screen. Wait until title music finishes playing
 		R2_GLOBALS._scene180Mode = 2;
-		if (R2_GLOBALS._sound1.isPaused())
+		if (R2_GLOBALS._sound1.isPlaying())
 			_sceneMode = 7;
 		setFrameInc(1);
 		break;
 
 	case 9:
 		R2_GLOBALS._sound1.play(3);
+		clearScreen();
 		setFrameInc(2);
 		break;
 
