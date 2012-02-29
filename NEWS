@@ -17,6 +17,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Broken Sword 1:
    - Fixed incorrect sound effects in the DOS/Windows demo.
+   - Added support for PlayStation videos.
+
+ Broken Sword 2:
+   - Added support for PlayStation videos.
 
  Cine:
    - Implemented Roland MT-32 output driver.
