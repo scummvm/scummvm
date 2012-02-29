@@ -193,16 +193,16 @@ void taffich() {
 		npal = a;
 
 		for (cx = 0; cx <= (a - 1); ++cx)
-			lgt = lgt + l[cx];
-		handle = l[a];
+			lgt = lgt + g_l[cx];
+		handle = g_l[a];
 
 		filename = "DXX.mor";
 	} else {
 		filename = "DZZ.mor";
-		handle = l[87];
+		handle = g_l[87];
 		if (a == 51) {
 			lgt = handle;
-			handle = l[88];
+			handle = g_l[88];
 		}
 		_maff = a;
 		npal = a + 37;
@@ -235,8 +235,8 @@ void taffich() {
 			else if (b > 15)
 				--b;
 			for (cx = 0; cx <= (b - 1); ++cx)
-				lgt += l[cx + 89];
-			handle = l[b + 89];
+				lgt += g_l[cx + 89];
+			handle = g_l[b + 89];
 			filename = "AXX.mor";
 		} else if (b == 50) {
 			filename = "AZZ.mor";

@@ -94,7 +94,7 @@ void MortevielleEngine::gameLoaded() {
 	mnumo = 0;
 	prebru = 0;
 	g[4] = 'T';
-	x = 0;
+	g_x = 0;
 	y = 0;
 	num = 0;
 	hdb = 0;

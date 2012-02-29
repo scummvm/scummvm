@@ -674,7 +674,7 @@ void drawClock() {
 
 void debloc(int l) {
 	num = 0;
-	x = 0;
+	g_x = 0;
 	y = 0;
 	if ((l != 26) && (l != 15))
 		t5(l);

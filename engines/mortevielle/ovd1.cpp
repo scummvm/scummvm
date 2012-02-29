@@ -61,7 +61,7 @@ void charpal() {
 	if (!ft.open("fxx.mor"))
 		error("Missing file - fxx.mor");
 	for (int i = 0; i < 108; ++i)
-		l[i] = ft.readSint16LE();
+		g_l[i] = ft.readSint16LE();
 	ft.close();
 
 	if (!f.open("plxx.mor"))

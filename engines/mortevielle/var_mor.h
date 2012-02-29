@@ -182,12 +182,6 @@ struct chariot {
 		rep;
 };
 
-/*
-struct doublet {
-	byte x, y;
-};
-*/
-
 struct rectangle {
 	int x1, x2, y1, y2;
 	bool enabled;
@@ -259,7 +253,7 @@ extern bool blo,
         rech_cfiec;
 
 
-extern int x,
+extern int g_x,
         y,
         t,
         vj,
@@ -340,7 +334,7 @@ extern ind t_rec[maxtd + 1];
 //file<ind> sauv_t;
 //untyped_file fibyte;
 extern byte v_lieu[8][25];
-extern int l[108];
+extern int g_l[108];
 extern int tbi[256];
 extern chariot c1, c2, c3;
 extern float addfix;

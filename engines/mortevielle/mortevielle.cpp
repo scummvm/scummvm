@@ -594,7 +594,7 @@ void MortevielleEngine::handleAction() {
 			} else
 				return;
 		} else if (inkey == '\104') {
-			if ((x != 0) && (y != 0))
+			if ((g_x != 0) && (y != 0))
 				num = 9999;
 			return;
 		}

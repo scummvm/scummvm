@@ -649,45 +649,49 @@ void tfleche() {
 
 		if (qust && (touch == '\103'))
 			Alert::show(_hintPctMessage, 1);
-	} while (!((touch == '\73') || ((touch == '\104') && (x != 0) && (y != 0)) || (anyone) || (rect)));
+	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (y != 0)) || (anyone) || (rect)));
 
 	if (touch == '\73')
 		iesc = true;
 
 	if (rect) {
-		x = x_s;
+		g_x = x_s;
 		y = y_s;
 	}
 }
 
 void tcoord(int sx) {
-	int sy, ix, iy, cb, cy, ib;
-	int a, b, atdon;
+	int sy, ix, iy;
+	int ib;
 
 
 	num = 0;
 	crep = 999;
-	a = 0;
-	atdon = amzon + 3;
-	cy = 0;
+	int a = 0;
+	int atdon = amzon + 3;
+	int cy = 0;
 	while (cy < caff) {
 		a += tabdon[atdon];
 		atdon += 4;
 		++cy;
 	}
 
-	b = tabdon[atdon];
-	if (b == 0)
-		goto L1;
+	if (tabdon[atdon] == 0) {
+		crep = 997;
+		return;
+	}
+
 	a += fleche;
-	cb = 0;
+	int cb = 0;
 	for (cy = 0; cy <= (sx - 2); ++cy) {
 		ib = (tabdon[a + cb] << 8) + tabdon[(a + cb + 1)];
 		cb += (ib * 4) + 2;
 	}
 	ib = (tabdon[a + cb] << 8) + tabdon[(a + cb + 1)];
-	if (ib == 0)
-		goto L1;
+	if (ib == 0) {
+		crep = 997;
+		return;
+	}
 
 	cy = 1;
 	do {
@@ -698,14 +702,13 @@ void tcoord(int sx) {
 		ix = tabdon[a + cb] * res;
 		iy = tabdon[(a + cb + 1)];
 		++cy;
-	} while (!(((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy)) || (cy > ib)));
+	} while (!(((g_x >= sx) && (g_x <= ix) && (y >= sy) && (y <= iy)) || (cy > ib)));
 
-	if ((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy)) {
+	if ((g_x >= sx) && (g_x <= ix) && (y >= sy) && (y <= iy)) {
 		num = cy - 1;
 		return;
 	}
 
-L1:
 	crep = 997;
 }
 
@@ -733,10 +736,9 @@ void st7(int ob) {
 }
 
 void treg(int ob) {
-	int mdes;
-
-	mdes = caff;
+	int mdes = caff;
 	caff = ob;
+
 	if (((caff > 29) && (caff < 33)) || (caff == 144) || (caff == 147) || (caff == 149) || (msg[4] == OPCODE_SLOOK)) {
 		afdes(0);
 		if ((caff > 29) && (caff < 33))
@@ -758,6 +760,7 @@ void avpoing(int &ob) {
 	crep = 999;
 	if (s.derobj != 0)
 		ajjer(s.derobj);
+
 	if (crep != 139) {
 		modobj(ob + 400);
 		s.derobj = ob;
@@ -766,9 +769,8 @@ void avpoing(int &ob) {
 }
 
 void rechai(int &ch) {
-	int cx;
+	int cx = s.mlieu;
 
-	cx = s.mlieu;
 	if (s.mlieu == 16)
 		cx = 14;
 	ch = tabdon[achai + (cx * 7) + num - 1];

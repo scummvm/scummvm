@@ -113,7 +113,7 @@ bool blo,
         rech_cfiec;
 
 
-int x,
+int g_x,
         y,
         t,
         vj,
@@ -194,7 +194,7 @@ ind t_rec[maxtd + 1];
 //file<ind> sauv_t;
 //untyped_file fibyte;
 byte v_lieu[8][25];
-int l[108];
+int g_l[108];
 int tbi[256];
 chariot c1, c2, c3;
 float addfix;
