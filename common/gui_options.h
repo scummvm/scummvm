@@ -75,6 +75,8 @@
 #define GUIO4(a,b,c,d) (a b c d)
 #define GUIO5(a,b,c,d,e) (a b c d e)
 #define GUIO6(a,b,c,d,e,f) (a b c d e f)
+#define GUIO7(a,b,c,d,e,f,g) (a b c d e f g)
+#define GUIO8(a,b,c,d,e,f,g,h) (a b c d e f g h)
 
 namespace Common {
 
