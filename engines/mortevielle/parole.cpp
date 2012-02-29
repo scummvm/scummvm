@@ -36,7 +36,7 @@ void spfrac(int wor) {
 	c3.rep = (uint)wor >> 12;
 	if ((typlec == 0) && (c3.code != 9))
 		if (((c3.code > 4) && (c3.val != 20) && ((c3.rep != 3) && (c3.rep != 6) && (c3.rep != 9)) ||
-				((c3.code < 5) && ((c3.rep != 19) && (c3.rep != 22) && (c3.rep != 4) && (c3.rep != 9))))) {
+				((c3.code < 5) && ((c3.val != 19) && (c3.val != 22) && (c3.rep != 4) && (c3.rep != 9))))) {
 			++c3.rep;
 		}
 
