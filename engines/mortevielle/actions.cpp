@@ -288,8 +288,11 @@ void fctTake() {
 			crep = 120;
 	}
 }
-
-void tsprendre() {
+/**
+ * Engine function - Inventory / Take
+ * @remarks	Originally called 'tsprendre'
+ */
+void fctInventoryTake() {
 	int cx, cy, cz;
 
 	cx = 0;
@@ -366,7 +369,11 @@ void fctRead() {
 	}
 }
 
-void tslire() {
+/**
+ * Engine function - Self / Read
+ * @remarks	Originally called 'tslire'
+ */
+void fctSelfRead() {
 	if (s.derobj == 0)
 		crep = 186;
 	else
@@ -451,7 +458,11 @@ void fctLook() {
 		treg(31);
 }
 
-void tsregarder() {
+/**
+ * Engine function - Self / Look
+ * @remarks	Originally called 'tsregarder'
+ */
+void fctSelftLook() {
 	if (s.derobj != 0)
 		treg(s.derobj);
 	else
@@ -544,7 +555,11 @@ void fctSearch() {
 	}
 }
 
-void tsfouiller() {
+/**
+ * Engine function - Self / Search
+ * @remarks	Originally called 'tsfouiller'
+ */
+void fctSelfSearch() {
 	if (s.derobj != 0)
 		st7(s.derobj);
 	else
@@ -782,7 +797,7 @@ void fctTurn() {
  * Engine function - Hide Self
  * @remarks	Originally called 'tcacher'
  */
-void fctHideSelf() {
+void fctSelfHide() {
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_HIDE_SELF));
 	tfleche();
@@ -906,10 +921,10 @@ void fctKnock() {
 }
 
 /**
- * Engine function - Put
+ * Engine function - Self / Put
  * @remarks	Originally called 'tposer'
  */
-void fctPut() {
+void fctSelfPut() {
 	int cx, chai;
 
 	if (!syn)
