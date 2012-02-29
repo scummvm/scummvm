@@ -171,16 +171,13 @@ protected:
 	/**
 	 * Name of single gameid (optional).
 	 *
-	 * If set, the target ID will always be set to this one. This is necessary
-	 * for engines that define a lot of game targets, so that the global
-	 * namespace won't be polluted with loads of IDs, which could lead to a
-	 * situation where two different engines define the same game ID.
+	 * Used to override gameid.
+	 * This is a recommended setting to prevent global gameid pollution.
+	 * With this option set, the gameid effectively turns into engineid. 
 	 *
-	 * FIXME: This field actually removes a feature (game IDs) in order to
-	 * address a more generic problem. Another way to address this issue without
-	 * disabling game IDs altogether would be to distinguish targets with an
-	 * engineId-gameId combination, so that there will never be a duplicate
-	 * game ID across different engines.
+	 * FIXME: This field actually removes a feature (gameid) in order to
+	 * address a more generic problem. We should find a better way to
+	 * disambiguate gameids.
 	 */
 	const char *_singleid;
 
