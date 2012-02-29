@@ -56,6 +56,16 @@
 #define GUIO_RENDERPC9821	"\037"
 #define GUIO_RENDERPC9801	"\040"
 
+// Special GUIO flags for the AdvancedDetector's caching of game specific 
+// options. These need to be defined continuously!
+#define GUIO_GAMEOPTIONS1	"\041"
+#define GUIO_GAMEOPTIONS2	"\042"
+#define GUIO_GAMEOPTIONS3	"\043"
+#define GUIO_GAMEOPTIONS4	"\044"
+#define GUIO_GAMEOPTIONS5	"\045"
+#define GUIO_GAMEOPTIONS6	"\046"
+#define GUIO_GAMEOPTIONS7	"\047"
+
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
 #define GUIO2(a,b) (a b)

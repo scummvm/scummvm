@@ -167,6 +167,31 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectedGames;
 }
 
+const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	if (!_extraGuiOptions)
+		return ExtraGuiOptions();
+
+	// Query the GUI options
+	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
+	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
+
+	ExtraGuiOptions options;
+
+	// This code assumes that the GUIO flags for the extra options indicies
+	// are continuous values.
+	for (uint i = 0; i < guiOptions.size(); ++i) {
+		if ((byte)guiOptions[i] >= (byte)GUIO_GAMEOPTIONS1[0] && (byte)guiOptions[i] <= (byte)GUIO_GAMEOPTIONS7[0]) {
+			const uint entry = (byte)guiOptions[i] - (byte)GUIO_GAMEOPTIONS1[0];
+			if (entry < _extraGuiOptionsCount)
+				options.push_back(_extraGuiOptions[entry]);
+			else
+				warning("Trying to query unsupported game option %u for target \"%s\"", entry, target.c_str());
+		}
+	}
+
+	return options;
+}
+
 Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 
@@ -562,8 +587,9 @@ GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids)
-	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameids(gameids) {
+AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids, const ExtraGuiOption *extraGuiOptions, const uint extraGuiOptionsCount)
+	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameids(gameids),
+	  _extraGuiOptions(extraGuiOptions), _extraGuiOptionsCount(extraGuiOptionsCount) {
 
 	_md5Bytes = 5000;
 	_singleid = NULL;
