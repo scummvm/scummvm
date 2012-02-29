@@ -163,81 +163,80 @@ void tsitu() {
 		clsf2();
 	syn = false;
 	iesc = false;
-	if (anyone)
-		goto L1;
-	if (brt)
-		if ((msg[3] == MENU_MOVE) || (msg[4] == OPCODE_LEAVE) || (msg[4] == OPCODE_SLEEP) || (msg[4] == OPCODE_EAT)) {
-			ctrm = 4;
+	if (!anyone) {
+		if (brt)
+			if ((msg[3] == MENU_MOVE) || (msg[4] == OPCODE_LEAVE) || (msg[4] == OPCODE_SLEEP) || (msg[4] == OPCODE_EAT)) {
+				ctrm = 4;
+				mennor();
+				return;
+			}
+		if (msg[3] == MENU_MOVE)
+			fctMove();
+		if (msg[3] == MENU_DISCUSS)
+			fctDiscuss();
+		if (msg[3] == MENU_INVENTORY)
+			fctInventoryTake();
+		if (msg[4] == OPCODE_ATTACH)
+			fctAttach();
+		if (msg[4] == OPCODE_WAIT)
+			fctWait();
+		if (msg[4] == OPCODE_FORCE)
+			fctForce();
+		if (msg[4] == OPCODE_SLEEP)
+			fctSleep();
+		if (msg[4] == OPCODE_LISTEN)
+			fctListen();
+		if (msg[4] == OPCODE_ENTER)
+			fctEnter();
+		if (msg[4] == OPCODE_CLOSE)
+			fctClose();
+		if (msg[4] == OPCODE_SEARCH)
+			fctSearch();
+		if (msg[4] == OPCODE_KNOCK)
+			fctKnock();
+		if (msg[4] == OPCODE_SCRATCH)
+			fctScratch();
+		if (msg[4] == OPCODE_READ)
+			fctRead();
+		if (msg[4] == OPCODE_EAT)
+			fctEat();
+		if (msg[4] == OPCODE_PLACE)
+			fctPlace();
+		if (msg[4] == OPCODE_OPEN)
+			fctOpen();
+		if (msg[4] == OPCODE_TAKE)
+			fctTake();
+		if (msg[4] == OPCODE_LOOK)
+			fctLook();
+		if (msg[4] == OPCODE_SMELL)
+			fctSmell();
+		if (msg[4] == OPCODE_SOUND)
+			fctSound();
+		if (msg[4] == OPCODE_LEAVE)
+			fctLeave();
+		if (msg[4] == OPCODE_LIFT)
+			fctLift();
+		if (msg[4] == OPCODE_TURN)
+			fctTurn();
+		if (msg[4] == OPCODE_SSEARCH)
+			fctSelfSearch();
+		if (msg[4] == OPCODE_SREAD)
+			fctSelfRead();
+		if (msg[4] == OPCODE_SPUT)
+			fctSelfPut();
+		if (msg[4] == OPCODE_SLOOK)
+			fctSelftLook();
+		cache = false;
+
+		if (msg[4] == OPCODE_SHIDE)
+			fctSelfHide();
+	} else {
+		if (anyone) {
+			quelquun();
+			anyone = false;
 			mennor();
 			return;
 		}
-	if (msg[3] == MENU_MOVE)
-		fctMove();
-	if (msg[3] == MENU_DISCUSS)
-		fctDiscuss();
-	if (msg[3] == MENU_INVENTORY)
-		tsprendre(); //Translation: inventory/take
-	if (msg[4] == OPCODE_ATTACH)
-		fctAttach();
-	if (msg[4] == OPCODE_WAIT)
-		fctWait();
-	if (msg[4] == OPCODE_FORCE)
-		fctForce();
-	if (msg[4] == OPCODE_SLEEP)
-		fctSleep();
-	if (msg[4] == OPCODE_LISTEN)
-		fctListen();
-	if (msg[4] == OPCODE_ENTER)
-		fctEnter();
-	if (msg[4] == OPCODE_CLOSE)
-		fctClose();
-	if (msg[4] == OPCODE_SEARCH)
-		fctSearch();
-	if (msg[4] == OPCODE_KNOCK)
-		fctKnock();
-	if (msg[4] == OPCODE_SCRATCH)
-		fctScratch();
-	if (msg[4] == OPCODE_READ)
-		fctRead();
-	if (msg[4] == OPCODE_EAT)
-		fctEat();
-	if (msg[4] == OPCODE_PLACE)
-		fctPlace();
-	if (msg[4] == OPCODE_OPEN)
-		fctOpen();
-	if (msg[4] == OPCODE_TAKE)
-		fctTake();
-	if (msg[4] == OPCODE_LOOK)
-		fctLook();
-	if (msg[4] == OPCODE_SMELL)
-		fctSmell();
-	if (msg[4] == OPCODE_SOUND)
-		fctSound();
-	if (msg[4] == OPCODE_LEAVE)
-		fctLeave();
-	if (msg[4] == OPCODE_LIFT)
-		fctLift();
-	if (msg[4] == OPCODE_TURN)
-		fctTurn();
-	if (msg[4] == OPCODE_HIDE_SELF) {
-		fctHideSelf();
-		goto L1;
-	}
-	if (msg[4] == sfouiller)
-		tsfouiller();//Translation: search 
-	if (msg[4] == slire)
-		tslire();    //Translation: read
-	if (msg[4] == OPCODE_PUT)
-		fctPut();
-	if (msg[4] == sregarder)
-		tsregarder();//Translation: look
-	cache = false;
-L1:
-	if (anyone) {
-		quelquun();
-		anyone = false;
-		mennor();
-		return;
 	}
 	calch(j, h, m);
 	if ((((h == 12) || (h == 13) || (h == 19)) && (s.mlieu != 10)) ||

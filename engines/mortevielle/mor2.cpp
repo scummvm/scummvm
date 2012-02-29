@@ -737,7 +737,7 @@ void treg(int ob) {
 
 	mdes = caff;
 	caff = ob;
-	if (((caff > 29) && (caff < 33)) || (caff == 144) || (caff == 147) || (caff == 149) || (msg[4] == sregarder)) {
+	if (((caff > 29) && (caff < 33)) || (caff == 144) || (caff == 147) || (caff == 149) || (msg[4] == OPCODE_SLOOK)) {
 		afdes(0);
 		if ((caff > 29) && (caff < 33))
 			repon(2, caff);
