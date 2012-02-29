@@ -64,6 +64,14 @@ const struct GameOpt {
 	{ GUIO_RENDERPC9821,	"pc9821" },
 	{ GUIO_RENDERPC9801,	"pc9801" },
 
+	{ GUIO_GAMEOPTIONS1, "gameOption1" },
+	{ GUIO_GAMEOPTIONS2, "gameOption2" },
+	{ GUIO_GAMEOPTIONS3, "gameOption3" },
+	{ GUIO_GAMEOPTIONS4, "gameOption4" },
+	{ GUIO_GAMEOPTIONS5, "gameOption5" },
+	{ GUIO_GAMEOPTIONS6, "gameOption6" },
+	{ GUIO_GAMEOPTIONS7, "gameOption7" },
+
 	{ GUIO_NONE, 0 }
 };
 
