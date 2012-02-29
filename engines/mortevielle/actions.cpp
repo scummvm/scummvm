@@ -179,10 +179,8 @@ L2:
  * @remarks	Originally called 'tprendre'
  */
 void fctTake() {
-	int cx;
-
 	if (caff > 99) {
-		cx = caff;
+		int cx = caff;
 		avpoing(cx);
 		if (crep != 139) {
 			if (ipers > 0)
@@ -475,27 +473,30 @@ void fctSelftLook() {
  */
 void fctSearch() {
 	const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
-	int cx;
 
 	if (caff > 99) {
 		st7(caff);
 		return;
 	}
+
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_SEARCH));
+
 	tfleche();
 	if (anyone || iesc)
 		return;
+
 	if (s.mlieu == 23) {
 		crep = 1504;
 		tperd();
 		return;
 	}
+
 	tcoord(6);
 	if (num == 0) {
 		tcoord(7);
 		if (num != 0) {
-			cx = 0;
+			int cx = 0;
 			do {
 				++cx;
 			} while ((cx <= 6) && (num != ord(touv[cx])));
@@ -504,6 +505,7 @@ void fctSearch() {
 			else {
 				if (ipers > 0)
 					s.conf += 3;
+
 				rechai(mchai);
 				if (mchai != 0) {
 					cs = 0;
@@ -540,14 +542,17 @@ void fctSearch() {
 		crep = 997;
 		if (s.mlieu < 14)
 			crep = r[s.mlieu];
+
 		if ((s.mlieu == 3) && (num == 2))
 			crep = 162;
+
 		if (s.mlieu == 12) {
 			if ((num == 3) || (num == 4))
 				crep = 162;
 			else if (num == 5)
 				crep = 159;
 		}
+
 		if (s.mlieu == 19)
 			crep = 104;
 		else if (s.mlieu == 16)
@@ -571,10 +576,9 @@ void fctSelfSearch() {
  * @remarks	Originally called 'touvrir'
  */
 void fctOpen() {
-	int cx, haz;
-
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_OPEN));
+
 	if (caff == 26) {
 		if (ment != 0) {
 			msg[4] = OPCODE_ENTER;
@@ -583,19 +587,22 @@ void fctOpen() {
 			crep = 997;
 		return;
 	}
+
 	if (caff == 15) {
 		aldepl();
 		return;
 	}
+
 	tfleche();
 	if ((anyone) || (iesc))
 		return;
+
 	tcoord(7);
 	if (num != 0) {
 		if (ipers > 0)
 			s.conf += 2;
 		++iouv;
-		cx = 0;
+		int cx = 0;
 		do {
 			++cx;
 		} while (!((cx > 6) || (ord(touv[cx]) == 0) || (ord(touv[cx]) == num)));
@@ -609,8 +616,7 @@ void fctOpen() {
 				if ( ((s.mlieu > 10) && (s.mlieu < 14))
 				  || ((s.mlieu > 6) && (s.mlieu < 10))
 				  || (s.mlieu == 0) || (s.mlieu == 2) || (s.mlieu == 5)) {
-					haz = hazard(1, 4);
-					if (haz == 3)
+					if (hazard(1, 4) == 3)
 						parole(7, 9, 1);
 				}
 				touv[cx] = chr(num);
@@ -632,10 +638,6 @@ void fctOpen() {
  * @remarks	Originally called 'tmettre'
  */
 void fctPlace() {
-	bool enterPassageFl;
-	Common::String str_;
-	int i;
-
 	if (s.derobj == 0) {
 		crep = 186;
 		return;
@@ -684,10 +686,10 @@ void fctPlace() {
 					int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 					if (answer== 1)  {
 						Common::String alertTxt = deline(582);
-						i = Alert::show(alertTxt, 1);
+						Alert::show(alertTxt, 1);
 
 						tesok = false;
-						enterPassageFl = Ques::show();
+						bool enterPassageFl = Ques::show();
 						hideMouse();
 						hirs();
 						dessine_rouleau();
@@ -712,7 +714,7 @@ void fctPlace() {
 							aniof(1, 2);
 							aniof(1, 1);
 							alertTxt = deline(577);
-							i = Alert::show(alertTxt, 1);
+							Alert::show(alertTxt, 1);
 							aniof(2, 1);
 							crep = 166;
 						}
@@ -844,10 +846,9 @@ void fctAttach() {
  * @remarks	Originally called 'tfermer'
  */
 void fctClose() {
-	int cx, chai;
-
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_CLOSE));
+
 	if (caff < 26) {
 		tfleche();
 		if (iesc)
@@ -856,7 +857,7 @@ void fctClose() {
 			return;
 		tcoord(7);
 		if (num != 0) {
-			cx = 0;
+			int cx = 0;
 			do {
 				++cx;
 			} while ((cx <= 6) && (num != ord(touv[cx])));
@@ -867,7 +868,7 @@ void fctClose() {
 				iouv = iouv - 1;
 				if (iouv < 0)
 					iouv = 0;
-				chai = 9999;
+				int chai = 9999;
 				rechai(chai);
 				if (mchai == chai)
 					mchai = 0;
@@ -883,14 +884,14 @@ void fctClose() {
  * @remarks	Originally called 'tfrapper'
  */
 void fctKnock() {
-	int l, p, haz;
-
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_HIT));
+
 	if (s.mlieu == 15) {
-		l = Alert::show(g_vm->getEngineString(S_BEFORE_USE_DEP_MENU), 1);
+		Alert::show(g_vm->getEngineString(S_BEFORE_USE_DEP_MENU), 1);
 		return;
 	}
+
 	if (s.mlieu < 25) {
 		tfleche();
 		if (!(anyone) && !(iesc))
@@ -900,12 +901,14 @@ void fctKnock() {
 				crep = 997;
 		return;
 	}
+
 	if (s.mlieu == 26) {
-		haz = (hazard(0, 8)) - 4;
+		int haz = (hazard(0, 8)) - 4;
 		parole(11, haz, 1);
+		int p;
 		ecfren(p, haz, s.conf, ment);
-		l = ment;
-		if (l != 0)
+		int l = ment;
+		if (l != 0) {
 			if (p != -500) {
 				if (haz > p)
 					crep = 190;
@@ -915,6 +918,8 @@ void fctKnock() {
 				}
 			} else
 				frap();
+		}
+
 		if (ment == 8)
 			crep = 190;
 	}
@@ -925,8 +930,6 @@ void fctKnock() {
  * @remarks	Originally called 'tposer'
  */
 void fctSelfPut() {
-	int cx, chai;
-
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_POSE));
 	if (s.derobj == 0)
@@ -945,11 +948,12 @@ void fctSelfPut() {
 		tcoord(7);
 		crep = 124;
 		if (num != 0) {
+			int chai;
 			rechai(chai);
 			if (chai == 0)
 				crep = 997;
 			else {
-				cx = 0;
+				int cx = 0;
 				do {
 					++cx;
 				} while ((cx <= 6) && (num != ord(touv[cx])));
@@ -1014,21 +1018,21 @@ void fctSelfPut() {
  * @remarks	Originally called 'tecouter'
  */
 void fctListen() {
-	int l, p, haz, j, h, m;
-
 	if (s.mlieu != 26)
 		crep = 101;
 	else {
 		if (ipers != 0)
 			++s.conf;
+		int p, haz;
 		ecfren(p, haz, s.conf, ment);
-		l = ment;
+		int l = ment;
 		if (l != 0) {
 			if (p != -500) {
 				if (haz > p)
 					crep = 101;
 				else {
 					becfren(l);
+					int j, h, m;
 					calch(j, h, m);
 					haz = hazard(1, 100);
 					if ((h >= 0) && (h < 8)) {
@@ -1052,8 +1056,6 @@ void fctListen() {
  * @remarks	Originally called 'tmanger'
  */
 void fctEat() {
-	int j, h, m;
-
 	if ((s.mlieu > 15) && (s.mlieu < 26))
 		crep = 148;
 	else {
@@ -1062,6 +1064,8 @@ void fctEat() {
 		caff = 10;
 		debloc(s.mlieu);
 		tmlieu(s.mlieu);
+
+		int j, h, m;
 		calch(j, h, m);
 		if ((h == 12) || (h == 13) || (h == 19)) {
 			s.conf = s.conf - (s.conf / 7);
@@ -1088,7 +1092,7 @@ void fctEat() {
  * @remarks	Originally called 'tentrer'
  */
 void fctEnter() {
-	int x, z = 0;
+//	int x;
 
 	if ((s.mlieu == 21) || (s.mlieu == 22)) {
 		t1sama();
@@ -1101,21 +1105,22 @@ void fctEnter() {
 			crep = 189;
 			s.teauto[8] = '*';
 	} else {
+		int z = 0;
 		if (! blo)
 			t11(ment, z);
 		if (z != 0) {
 			if ((ment == 3) || (ment == 7))
 				crep = 179;
 			else {
-				x = (hazard(0, 10)) - 5;
-				parole(7, x, 1);
+				g_x = (hazard(0, 10)) - 5;
+				parole(7, g_x, 1);
 				aniof(1, 1);
 				
-				tip(z, x);
+				tip(z, g_x);
 				++s.conf;
 				s.mlieu = 15;
 				msg[3] = MENU_DISCUSS;
-				msg[4] = g_vm->_menu._discussMenu[x];
+				msg[4] = g_vm->_menu._discussMenu[g_x];
 				syn = true;
 				if (ment == 9) {
 					col = true;
@@ -1128,8 +1133,8 @@ void fctEnter() {
 				ment = 0;
 			}
 		} else {
-			x = (hazard(0, 10)) - 5;
-			parole(7, x, 1);
+			g_x = (hazard(0, 10)) - 5;
+			parole(7, g_x, 1);
 			aniof(1, 1);
 			
 			s.mlieu = ment;
@@ -1213,13 +1218,13 @@ void fctForce() {
  * @remarks	Originally called 'tsortir'
  */
 void fctLeave() {
-	int lx = 0;
-
 	tsort();
 	crep = 0;
 	if ((s.mlieu == 19) || (s.mlieu == 21) || (s.mlieu == 22) || (s.mlieu == 24))
 		crep = 997;
 	else {
+		int lx = 0;
+
 		if ((s.mlieu < 16) || (s.mlieu == 26))
 			lx = 10;
 		if ((s.mlieu == 10) || (s.mlieu == 20))

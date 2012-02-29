@@ -154,9 +154,6 @@ Common::String deline(int num) {
 	return wrkStr;
 }
 
-void afftex(const char *ch, int x, int y, int dx, int dy, int typ);
-
-
 static int l_motsuiv(int p, const char *ch, int &tab) {
 	int c = p;
 

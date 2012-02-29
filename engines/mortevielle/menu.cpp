@@ -393,14 +393,11 @@ void Menu::eraseMenu() {
  * Handle updates to the menu
  */
 void Menu::mdn() {
-	int x, y, ix;
-	bool tes;
-
 	if (!_menuActive)
 		return;
 
-	x = x_s;
-	y = y_s;
+	int x = x_s;
+	int y = y_s;
 	if (!g_vm->getMouseClick()) {
 		if ((x == xprec) && (y == yprec))
 			return;
@@ -409,7 +406,7 @@ void Menu::mdn() {
 			yprec = y;
 		}
 		
-		tes =  (y < 11) 
+		bool tes =  (y < 11) 
 		   && ((x >= (28 * res) && x <= (28 * res + 24)) 
 		   ||  (x >= (76 * res) && x <= (76 * res + 24))
 		   || ((x > 124 * res) && (x < 124 * res + 24))
@@ -417,6 +414,8 @@ void Menu::mdn() {
 		   || ((x > 220 * res) && (x < 220 * res + 24))
 		   || ((x > 268 * res) && (x < 268 * res + 24)));
 		if (tes) {
+			int ix;
+
 			if (x < 76 * res)
 				ix = MENU_INVENTORY;
 			else if (x < 124 * res)
