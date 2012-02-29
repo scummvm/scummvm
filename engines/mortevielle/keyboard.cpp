@@ -45,7 +45,7 @@ int testou() {
 		_soundOff = !_soundOff;
 		break;
 	case '\26' :
-		if ((c_zzz == 1) && (c_zzz == 2)) {
+		if ((c_zzz == 1) || (c_zzz == 2)) {
 			zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 			++c_zzz;
 
