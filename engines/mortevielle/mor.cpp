@@ -371,7 +371,7 @@ void repon(int f, int m) {
 				}
 			}
 		}
-		if ((f >= 6) && (f <= 9)) {
+		if ((f == 6) || (f == 9)) {
 			if (f == 6)
 				i = 4;
 			else
@@ -615,6 +615,10 @@ void chlm(int &per) {
 	if (per == 2)  per = 128;
 }
 
+/**
+ * Engine function - Draw Clock
+ * @remarks	Originally called 'pendule'
+ */
 void drawClock() {
 	const int cv[3][13] = {
 		{ 0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0 },
