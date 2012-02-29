@@ -400,7 +400,7 @@ public:
 	int _playbackTick;
 	int _playbackTickPrior;
 	int _position;
-	int _ticksPerSlices;
+	int _nextSlicesPosition;
 	uint _frameDelay;
 	uint32 _gameFrame;
 public:

@@ -1657,14 +1657,14 @@ void AnimationPlayer::process(Event &event) {
 
 void AnimationPlayer::dispatch() {
 	uint32 gameFrame = R2_GLOBALS._events.getFrameNumber();
-	uint32 gameDiff = (gameFrame > _gameFrame) ? gameFrame - _gameFrame : _gameFrame - gameFrame;
+	uint32 gameDiff = gameFrame - _gameFrame;
 
 	if (gameDiff >= _frameDelay) {
 		drawFrame(_playbackTick % _subData._framesPerSlices);
 		++_playbackTick;
 		_position = _playbackTick / _subData._framesPerSlices;
 
-		if (_position == _ticksPerSlices)
+		if (_position == _nextSlicesPosition)
 			nextSlices();
 
 		_playbackTickPrior = _playbackTick;
@@ -1694,8 +1694,11 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	// Set other properties
 	_playbackTickPrior = -1;
 	_playbackTick = 0;
-	_frameDelay = 60 / _subData._frameRate;
-	_gameFrame = R2_GLOBALS._events.getFrameNumber() - _frameDelay;
+
+	// The final multiplication is used to deliberately slow down playback, since the original 
+	// was slowed down by the amount of time spent to decode and display the frames
+	_frameDelay = (60 / _subData._frameRate) * 8;
+	_gameFrame = R2_GLOBALS._events.getFrameNumber();
 
 	if (_subData._totalSize) {
 		_dataNeeded = _subData._totalSize;
@@ -1719,7 +1722,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	}
 
 	_position = 0;
-	_ticksPerSlices = 1;
+	_nextSlicesPosition = 1;
 
 	// Load up the first slices set
 	_sliceCurrent->_dataSize = _subData._slices._dataSize;
@@ -1868,7 +1871,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
  * Read the next frame's slice set
  */
 void AnimationPlayer::nextSlices() {
-	_position = _ticksPerSlices++;
+	_position = _nextSlicesPosition++;
 	_playbackTick = _position * _subData._framesPerSlices;
 	_playbackTickPrior = _playbackTick - 1;
 
