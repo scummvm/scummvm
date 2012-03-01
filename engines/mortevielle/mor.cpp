@@ -622,16 +622,14 @@ void chlm(int &per) {
  * @remarks	Originally called 'pendule'
  */
 void drawClock() {
-	const int cv[3][13] = {
-		{ 0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0 },
-		{ 0,  5,  8, 10,  8,  5,  0, -5, -8, -10, -8, -5,  0 },
-		{ 0, -5, -3,  0,  3,  5,  6,  5,  3,   0, -3, -5, -6 }
+	const int cv[2][12] = {
+		{  5,  8, 10,  8,  5,  0, -5, -8, -10, -8, -5,  0 },
+		{ -5, -3,  0,  3,  5,  6,  5,  3,   0, -3, -5, -6 }
 	};
 	const int x = 580;
 	const int y = 123;
 	const int rg = 9;
 	int h, co;
-
 
 	hideMouse();
 	
@@ -653,7 +651,7 @@ void drawClock() {
 	if (h == 0)
 		h = 12;
 
-	g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
+	g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)(x + cv[0][h - 1]) >> 1)*res, y + cv[1][h - 1], co);
 	showMouse();
 	g_vm->_screenSurface.putxy(568, 154);
 
