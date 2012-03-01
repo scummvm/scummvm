@@ -21,6 +21,8 @@
  */
 
 #include "common/events.h"
+
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Common {
@@ -60,5 +62,31 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	return events;
 }
 
+
+void DefaultEventMapper::addDelayedEvent(uint32 millis, Event ev) {
+	if (_delayedEvents.empty()) {
+		_delayedEffectiveTime = g_system->getMillis() + millis;
+		millis = 0;
+	}
+	DelayedEventsEntry entry = DelayedEventsEntry(millis, ev);
+	_delayedEvents.push(entry);
+}
+
+List<Event> DefaultEventMapper::getDelayedEvents() {
+	List<Event> events;
+
+	if (_delayedEvents.empty())
+		return events;
+
+	uint32 now = g_system->getMillis();
+
+	while (!_delayedEvents.empty() && now >= _delayedEffectiveTime) {
+		DelayedEventsEntry entry = _delayedEvents.pop();
+		if (!_delayedEvents.empty())
+			_delayedEffectiveTime += _delayedEvents.front().timerOffset;
+		events.push_back(entry.event);
+	}
+	return events;
+}
 
 } // namespace Common

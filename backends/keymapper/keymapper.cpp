@@ -25,8 +25,13 @@
 #ifdef ENABLE_KEYMAPPER
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Common {
+
+// These magic numbers are provided by fuzzie and WebOS
+static const uint32 kDelayKeyboardEventMillis = 250;
+static const uint32 kDelayMouseEventMillis = 50;
 
 void Keymapper::Domain::addKeymap(Keymap *map) {
 	iterator it = find(map->getName());
@@ -281,9 +286,9 @@ Action *Keymapper::getAction(const KeyState& key) {
 List<Event> Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
 	List<Event> mappedEvents;
 	List<Event>::const_iterator it;
-
+	Event evt;
 	for (it = action->events.begin(); it != action->events.end(); ++it) {
-		Event evt = Event(*it);
+		evt = Event(*it);
 		EventType convertedType = convertDownToUp(evt.type);
 
 		// hardware keys need to send up instead when they are up
@@ -294,15 +299,23 @@ List<Event> Keymapper::executeAction(const Action *action, IncomingEventType inc
 		}
 
 		evt.mouse = _eventMan->getMousePos();
-		mappedEvents.push_back(evt);
+
+		// Check if the event is coming from a non-key hardware event
+		// that is mapped to a key event
+		if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID)
+			// WORKAROUND: Delay the down events coming from non-key hardware events
+			// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
+			addDelayedEvent(0, evt);
+		else
+			mappedEvents.push_back(evt);
 
 		// non-keys need to send up as well
-		// TODO: implement a way to add a delay
-		if (incomingType == kIncomingNonKey) {
-			if (convertedType == EVENT_INVALID)
-				continue; // don't send any non-down-converted events on up they were already sent on down
+		if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID) {
+			// WORKAROUND: Delay the up events coming from non-key hardware events
+			// This is for engines that run scripts that check on key being down
 			evt.type = convertedType;
-			mappedEvents.push_back(evt);
+			const uint32 delay = (convertedType == EVENT_KEYUP ? kDelayKeyboardEventMillis : kDelayMouseEventMillis);
+			addDelayedEvent(delay, evt);
 		}
 	}
 	return mappedEvents;
