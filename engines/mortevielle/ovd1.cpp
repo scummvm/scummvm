@@ -172,9 +172,6 @@ void music() {
 	Common::File fic;
 	int k;
 	bool fin;
-	char ch;
-//	float x, y;
-
 
 	/* debug('o3 music'); */
 	if (_soundOff)
@@ -202,7 +199,7 @@ void music() {
 		fin = fin | keypressed() | (k >= 5);
 	} while (!fin);
 	while (keypressed())
-		ch = get_ch();	// input >> kbd >> ch;
+		get_ch();	// input >> kbd >> ch;
 }
 
 

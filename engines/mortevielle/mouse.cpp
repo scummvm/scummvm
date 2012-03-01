@@ -82,16 +82,13 @@ void initMouse() {
  * @remarks	Originally called 'hide_mouse'
  */
 void hideMouse() {
-	int i, j, k, ps;;
-	bool imp;
-
 	--mouse_shwn;
 	if (mouse_shwn == 0) {
-		imp = odd(y_s);
-		j = p_o_s;
+		bool imp = odd(y_s);
+		int j = p_o_s;
 		switch (_currGraphicalDevice) {
-		case MODE_CGA:
-			k = 0;
+		case MODE_CGA: {
+			int k = 0;
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 			do {
 				WRITE_LE_UINT16(&mem[0xb000 * 16 + j], s_s[0][k]);
@@ -101,11 +98,12 @@ void hideMouse() {
 				j += 80;
 				++k;
 			} while (k < 5);
+			}
 			break;
 		case MODE_AMSTRAD1512:
-			for (i = 0; i <= 3; ++i) {
+			for (int i = 0; i <= 3; ++i) {
 				port[0x3dd] = 1 << i;
-				k = 0;
+				int k = 0;
 				j = p_o_s;
 				do {
 					if (imp) {
@@ -120,45 +118,50 @@ void hideMouse() {
 				} while (k < 8);
 			}
 			break;
-		case MODE_EGA:
+		case MODE_EGA: {
 			port[0x3c4] = 2;
 			port[0x3ce] = 8;
 			port[0x3cf] = 255;
-			i = 0;
+			int i = 0;
 			do {
 				port[0x3c5] = 1 << i;
-				k = 0;
+				int k = 0;
 				j = p_o_s;
 				do {
-					ps = mem[0xa000 * 16 + j];
+					// Useless ?
+					// ps = mem[0xa000 * 16 + j];
 					mem[0xa000 * 16 + j] = lo(s_s[i][k]);
-					ps = mem[0xa000 * 16 + j + 1];
+
+					// Useless ??
+					// ps = mem[0xa000 * 16 + j + 1];
 					mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
 					j += 80;
 					++k;
 				} while (k < 8);
 				++i;
 			} while (i != 4);
+			}
 			break;
 		case MODE_HERCULES:
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
-			for (i = 0; i <= 5; ++i) {
-				for (k = 0; k <= 3; ++k) 
+			for (int i = 0; i <= 5; ++i) {
+				for (int k = 0; k <= 3; ++k) 
 					WRITE_LE_UINT16(&mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
 				j += 80;
 			}
 			break;
-		case MODE_TANDY:
+		case MODE_TANDY: {
 			j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
-			k = 0;
+			int k = 0;
 			do {
-				for (i = 0; i <= 3; ++i) {
+				for (int i = 0; i <= 3; ++i) {
 					WRITE_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
 					WRITE_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
 				}
 				j += 160;
 				++k;
 			} while (k != 3);
+			}
 			break;
 		default:
 			break;

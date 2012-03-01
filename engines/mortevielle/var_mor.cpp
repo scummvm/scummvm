@@ -231,7 +231,7 @@ Common::String copy(const Common::String &s, int idx, size_t size) {
 	tmp[size] = '\0';
 
 	Common::String result(tmp);
-	delete tmp;
+	delete[] tmp;
 	return result;
 }
 

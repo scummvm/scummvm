@@ -46,9 +46,8 @@ void tinke() {
 	const char d4 = ']';
 	const char d5 = '1';
 	Common::String d6 = g_vm->getEngineString(S_OK);
-	int cx, haz, nh, cf, j, h, m;
+	int cx, cf, j, h, m;
 	Common::String stpo;
-	bool am;
 
 	anyone = false;
 	calch(j, h, m);
@@ -109,9 +108,9 @@ void tinke() {
 		if (cf > 65)
 			t -= ((t / 3) * 2);
 
-		nh = readclock();
+		int nh = readclock();
 		if ((nh - mh) > t) {
-			am = g_vm->_menu._menuActive;
+			bool activeMenu = g_vm->_menu._menuActive;
 			g_vm->_menu.eraseMenu();
 			jh += ((nh - mh) / t);
 			mh = nh;
@@ -165,7 +164,7 @@ void tinke() {
 					if (! brt) {
 						brt = true;
 						hdb = readclock();
-						haz = hazard(1, 5);
+						int haz = hazard(1, 5);
 						if (haz < 5) {
 							clsf3();
 							ecrf2();
@@ -176,7 +175,7 @@ void tinke() {
 						}
 					}
 				}
-			if (am)
+			if (activeMenu)
 				g_vm->_menu.drawMenu();
 		}
 	}
@@ -217,7 +216,6 @@ void afdes(int ad) {
 void tkey1(bool d) {
 	bool quest;
 	int x, y, c;
-	int key;
 
 	hideMouse();
 	fenat('K');
@@ -232,7 +230,7 @@ void tkey1(bool d) {
 		CHECK_QUIT;
 	} while (!(quest || (c != 0) || (d && anyone)));
 	if (quest)
-		key = testou();
+		testou();
 	g_vm->setMouseClick(false);
 	showMouse();
 }
@@ -288,15 +286,16 @@ void mfouen() {
 /* NIVEAU 6 */
 
 void tperd() {
-	int cx;
-
 	initouv();
 	ment = 0;
 	iouv = 0;
 	mchai = 0;
 	mfouen();
-	if (!blo)
+	if (!blo) {
+		int cx;
 		t11(21, cx);
+	}
+
 	g_vm->_loseGame = true;
 	clsf1();
 	g_vm->_screenSurface.drawBox(60, 35, 400, 50, 15);
@@ -469,10 +468,10 @@ void ajjer(int ob) {
 
 void t1sama() {    //Entering manor
 	int j, h, m;
-	bool d;
 
 	calch(j, h, m);
 	if ((h < 5) && (s.mlieu > 18)) {
+		bool d;
 		cherjer(137, d);
 		if (!d) {        //You don't have the keys, and it's late
 			crep = 1511;
@@ -548,10 +547,9 @@ void tctrm() {
 
 
 void quelquun() {
-	int haz, cx;
-
 	if (imen)
 		g_vm->_menu.eraseMenu();
+
 	finfouil();
 	crep = 997;
 L1:
@@ -572,6 +570,7 @@ L1:
 			s.conf += 3 * (s.conf / 10);
 		tsort();
 		tmlieu(15);
+		int cx;
 		tip(ipers, cx);
 		caff = 69 + cx;
 		crep = caff;
@@ -580,7 +579,7 @@ L1:
 		syn = true;
 		col = true;
 	} else {
-		haz = hazard(1, 3);
+		int haz = hazard(1, 3);
 		if (haz == 2) {
 			cache = false;
 			crep = 137;
