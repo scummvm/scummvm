@@ -156,10 +156,10 @@ void tinke() {
 			if ((mpers != 0) && (ipers != 10))
 				mpers = ipers;
 
-			if ((mpers == 0) && (ipers > 0))
-				if ((s.mlieu == 13) || (s.mlieu == 14))
+			if ((mpers == 0) && (ipers > 0)) {
+				if ((s.mlieu == 13) || (s.mlieu == 14)) {
 					cavegre();
-				else if (ipers == 10) {
+				} else if (ipers == 10) {
 					ipers = 0;
 					if (! brt) {
 						brt = true;
@@ -175,6 +175,8 @@ void tinke() {
 						}
 					}
 				}
+			}
+
 			if (activeMenu)
 				g_vm->_menu.drawMenu();
 		}

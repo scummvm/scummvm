@@ -642,37 +642,42 @@ void fctPlace() {
 		crep = 186;
 		return;
 	}
+
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_PUT));
+
 	tfleche();
 	if (iesc)
 		crep = 998;
+
 	if ((anyone) || (iesc))
 		return;
+
 	tcoord(8);
 	if (num != 0) {
 		crep = 999;
 		if (caff == 13) {
 			if (num == 1) {
-				if (s.iboul != 0)
+				if (s.iboul != 0) {
 					crep = 188;
-				else {
+				} else {
 					s.iboul = s.derobj;
 					if (s.derobj == 141)
 						aniof(1, 7);
 				}
-			} else if (s.ibag != 0)
+			} else if (s.ibag != 0) {
 				crep = 188;
-			else {
+			} else {
 				s.ibag = s.derobj;
 				if (s.derobj == 159)
 					aniof(1, 6);
 			}
 		}
-		if (caff == 14)
-			if (s.icave != 0)
+
+		if (caff == 14) {
+			if (s.icave != 0) {
 				crep = 188;
-			else {
+			} else {
 				s.icave = s.derobj;
 				if (s.derobj == 151) {
 					// Open hidden passage
@@ -684,7 +689,7 @@ void fctPlace() {
 
 					// Do you want to enter the hidden passage?
 					int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
-					if (answer== 1)  {
+					if (answer== 1) {
 						Common::String alertTxt = deline(582);
 						Alert::show(alertTxt, 1);
 
@@ -727,29 +732,38 @@ void fctPlace() {
 					return;
 				}
 			}
-		if (caff == 16)
+		}
+
+		if (caff == 16) {
 			if (s.icryp == 0)
 				s.icryp = s.derobj;
 			else
 				crep = 188;
-		if (caff == 17)
-			if (s.ivier != 0)
+		}
+
+		if (caff == 17) {
+			if (s.ivier != 0) {
 				crep = 188;
-			else if (s.derobj == 143) {
+			} else if (s.derobj == 143) {
 				s.ivier = 143;
 				aniof(1, 1);
 			} else {
 				crep = 1512;
 				tperd();
 			}
-		if (caff == 24)
-			if (s.ipuit != 0)
+		}
+
+		if (caff == 24) {
+			if (s.ipuit != 0) {
 				crep = 188;
-			else if ((s.derobj == 140) || (s.derobj == 120)) {
+			} else if ((s.derobj == 140) || (s.derobj == 120)) {
 				s.ipuit = s.derobj;
 				aniof(1, 1);
-			} else
+			} else {
 				crep = 185;
+			}
+		}
+
 		if (crep != 188)
 			maivid();
 	}
@@ -894,11 +908,13 @@ void fctKnock() {
 
 	if (s.mlieu < 25) {
 		tfleche();
-		if (!(anyone) && !(iesc))
+		if (!(anyone) && !(iesc)) {
 			if ((s.mlieu < 19) && (s.mlieu != 15))
 				crep = 133;
 			else
 				crep = 997;
+		}
+
 		return;
 	}
 
@@ -968,27 +984,33 @@ void fctSelfPut() {
 			tcoord(8);
 			if (num != 0) {
 				crep = 998;
-				if (caff == 2)
+				if (caff == 2) {
 					if (s.iloic != 0)
 						crep = 188;
 					else
 						s.iloic = s.derobj;
+				}
+
 				if (caff == 13) {
 					if (num == 1) {
 						if (s.iboul != 0)
 							crep = 188;
 						else
 							s.iboul = s.derobj;
-					} else if (s.ibag != 0)
+					} else if (s.ibag != 0) {
 						crep = 188;
-					else
+					} else {
 						s.ibag = s.derobj;
+					}
 				}
-				if (caff == 16)
+
+				if (caff == 16) {
 					if (s.icryp != 0)
 						crep = 188;
 					else
 						s.icryp = s.derobj;
+				}
+
 				if (caff == 24)
 					crep = 185;
 				if ((caff == 14) || (caff == 17))
@@ -1056,9 +1078,9 @@ void fctListen() {
  * @remarks	Originally called 'tmanger'
  */
 void fctEat() {
-	if ((s.mlieu > 15) && (s.mlieu < 26))
+	if ((s.mlieu > 15) && (s.mlieu < 26)) {
 		crep = 148;
-	else {
+	} else {
 		tsort();
 		s.mlieu = 10;
 		caff = 10;
@@ -1069,21 +1091,26 @@ void fctEat() {
 		calch(j, h, m);
 		if ((h == 12) || (h == 13) || (h == 19)) {
 			s.conf = s.conf - (s.conf / 7);
-			if (h == 12)
+			if (h == 12) {
 				if (m == 0)
 					h = 4;
 				else
 					h = 3;
-			if ((h == 13) || (h == 19))
+			}
+
+			if ((h == 13) || (h == 19)) {
 				if (m == 0)
 					h = 2;
 				else
 					h = 1;
+			}
+			
 			jh += h;
 			crep = 135;
 			tinke();
-		} else
+		} else {
 			crep = 134;
+		}
 	}
 }
 
@@ -1204,13 +1231,15 @@ void fctForce() {
 		ecr3(g_vm->getEngineString(S_SMASH));
 	if (caff < 25)
 		tfleche();
-	if ((! anyone) && (! iesc))
+
+	if ((! anyone) && (! iesc)) {
 		if (s.mlieu != 26)
 			crep = 997;
 		else {
 			crep = 143;
 			s.conf += 2;
 		}
+	}
 }
 
 /**
@@ -1443,10 +1472,10 @@ void fctDiscuss() {
 				}
 			} else if (nbrep[caff - 69] < nbrepm[caff - 69]) {
 				suj = tabdon[arep + (ix << 3) + (caff - 70)];
-				s.conf = s.conf + tabdon[arcf + ix];
-				nbrep[caff - 69] = nbrep[caff - 69] + 1;
+				s.conf += tabdon[arcf + ix];
+				++nbrep[caff - 69];
 			} else {
-				s.conf = s.conf + 3;
+				s.conf += 3;
 				suj = 139;
 			}
 			hideMouse();
@@ -1459,8 +1488,8 @@ void fctDiscuss() {
 				s.teauto[7] = '*';
 			}
 			if ((suj == 106) || (suj == 108) || (suj == 94)) {
-				for (int ix = 29; ix <= 31; ++ix)
-					s.teauto[ix] = '*';
+				for (int indx = 29; indx <= 31; ++indx)
+					s.teauto[indx] = '*';
 				s.pourc[7] = '*';
 			}
 			if (suj == 70) {
