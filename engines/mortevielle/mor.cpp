@@ -992,16 +992,17 @@ void ecfren(int &p, int &haz, int cf, int l) {
 void becfren(int l) {
 	if ((l == 1) || (l == 4)) {
 		int haz = hazard(1, 2);
-		if (l == 1)
+		if (l == 1) {
 			if (haz == 1)
 				bh1 = true;
 			else
 				bf1 = true;
-		if (l == 4)
+		} else { // l == 4
 			if (haz == 1)
 				bh4 = true;
 			else
 				bf4 = true;
+		}
 	} else if (l == 2)
 		bh2 = true;
 	else if (l == 3)
