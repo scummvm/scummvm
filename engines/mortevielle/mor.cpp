@@ -178,14 +178,10 @@ void ecrf2() {
 }
 
 void ecr2(Common::String str_) {
-	int tab;
-
-	if (res == 1)
-		tab = 10;
-	else
-		tab = 6;
+	// Some dead code was present in the original: removed
 	g_vm->_screenSurface.putxy(8, 177);
 	int tlig = 59 + (res - 1) * 36;
+
 	if ((int)str_.size() < tlig)
 		g_vm->_screenSurface.writeg(str_, 5);
 	else if ((int)str_.size() < (tlig << 1)) {
@@ -339,7 +335,6 @@ void repon(int f, int m) {
 	Common::String str_;
 	Common::String str1;
 	Common::String tmpStr;
-	int i, xco, dx, caspe;
 
 	if ((m > 499) && (m < 563)) {
 		tmpStr = deline(m - 501 + c_st41);
@@ -372,6 +367,7 @@ void repon(int f, int m) {
 			}
 		}
 		if ((f == 6) || (f == 9)) {
+			int i;
 			if (f == 6)
 				i = 4;
 			else
@@ -389,6 +385,8 @@ void repon(int f, int m) {
 		if (f == 7) {         /* messint */
 			ecrf7();
 			tmpStr = deline(m);
+
+			int xco, dx, caspe;
 			if (res == 1) {
 				xco = 252 - tmpStr.size() * 5;
 				caspe = 100;
@@ -516,7 +514,11 @@ void cpl1(int &p) {
 	int j, h, m;
 
 	calch(j, h, m);
-	if ((h > 7) || (h < 11))
+	// The original uses an || instead of an &&, resulting 
+	// in an always true condition. Based on the other tests, 
+	// and on other scenes, we use an && instead.
+	// if ((h > 7) || (h < 11))
+	if ((h > 7) && (h < 11))
 		p = 25;
 	else if ((h > 10) && (h < 14))
 		p = 35;
@@ -810,11 +812,10 @@ void quelq6(int l) {
 }
 
 void quelq10(int h, int &per) {
-	int min = 0, max = 0;
-
 	if ((h >= 0) && (h < 8))
 		chlm(per);
 	else {
+		int min = 0, max = 0;
 		if ((h > 7) && (h < 10)) {
 			min = 5;
 			max = 7;
@@ -834,11 +835,10 @@ void quelq10(int h, int &per) {
 }
 
 void quelq11(int h, int &per) {
-	int min = 0, max = 0;
-
 	if ((h >= 0) && (h < 8))
 		chlm(per);
 	else {
+		int min = 0, max = 0;
 		if (((h > 7) && (h < 10)) || ((h > 20) && (h < 24))) {
 			min = 1;
 			max = 3;
@@ -882,11 +882,10 @@ void quelq15(int &per) {
 }
 
 void quelq20(int h, int &per) {
-	int min = 0, max = 0;
-
 	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))
 		chlm(per);
 	else {
+		int min = 0, max = 0;
 		if ((h > 9) && (h < 12)) {
 			min = 3;
 			max = 7;
@@ -904,13 +903,13 @@ void quelq20(int h, int &per) {
 
 
 void frap() {
-	int j, h, m, haz;
+	int j, h, m;
 
 	calch(j, h, m);
 	if ((h >= 0) && (h < 8))
 		crep = 190;
 	else {
-		haz = hazard(1, 100);
+		int haz = hazard(1, 100);
 		if (haz > 70)
 			crep = 190;
 		else
@@ -993,10 +992,8 @@ void ecfren(int &p, int &haz, int cf, int l) {
 }
 
 void becfren(int l) {
-	int haz;
-
 	if ((l == 1) || (l == 4)) {
-		haz = hazard(1, 2);
+		int haz = hazard(1, 2);
 		if (l == 1)
 			if (haz == 1)
 				bh1 = true;
@@ -1092,11 +1089,11 @@ void dprog() {
 }
 
 void pl1(int cf) {
-	int p, haz;
-
 	if (((li == 1) && (! bh1) && (! bf1)) || ((li == 4) && (! bh4) && (! bf4))) {
+		int p, haz;
 		cpl1(p);
 		phaz(haz, p, cf);
+
 		if (haz > p)
 			person();
 		else
@@ -1105,11 +1102,11 @@ void pl1(int cf) {
 }
 
 void pl2(int cf) {
-	int p, haz;
-
 	if (! bh2) {
+		int p, haz;
 		cpl2(p);
 		phaz(haz, p, cf);
+
 		if (haz > p)
 			person();
 		else
@@ -1118,11 +1115,11 @@ void pl2(int cf) {
 }
 
 void pl5(int cf) {
-	int p, haz;
-
 	if (! bh5) {
+		int p, haz;
 		cpl5(p);
 		phaz(haz, p, cf);
+
 		if (haz > p)
 			person();
 		else
@@ -1131,11 +1128,11 @@ void pl5(int cf) {
 }
 
 void pl6(int cf) {
-	int p, haz;
-
 	if (((li == 6) && (! bh6)) || ((li == 8) && (! bh8))) {
+		int p, haz;
 		cpl6(p);
 		phaz(haz, p, cf);
+
 		if (haz > p)
 			person();
 		else
@@ -1144,11 +1141,11 @@ void pl6(int cf) {
 }
 
 void pl9(int cf) {
-	int p, haz;
-
 	if (! bh9) {
 		cf = -10;
+		int p, haz;
 		phaz(haz, p, cf);
+
 		if (haz > p)
 			person();
 		else
@@ -1158,9 +1155,9 @@ void pl9(int cf) {
 
 void pl10(int cf) {
 	int p, h, haz;
-
 	cpl10(p, h);
 	phaz(haz, p, cf);
+
 	if (haz > p)
 		person();
 	else
@@ -1223,7 +1220,7 @@ void pl20(int cf) {
 }
 
 void t11(int l11, int &a) {
-	int p, haz, h = 0;
+	int p, haz;
 
 	ecfren(p, haz, s.conf, l11);
 	li = l11;
@@ -1244,6 +1241,7 @@ void t11(int l11, int &a) {
 		if ((l11 > 15) && (l11 != 20) && (l11 != 26))
 			person();
 		else {
+			int h = 0;
 			if (l11 == 10)
 				cpl10(p, h);
 			if (l11 == 11)
@@ -1312,6 +1310,7 @@ void writetp(Common::String s, int t) {
  */
 void messint(int nu) {
 	// Method is deprecated
+	warning("DEPRECATED: messint");
 }
 
 void aniof(int ouf, int num) {
@@ -1339,9 +1338,6 @@ void aniof(int ouf, int num) {
 }
 
 void musique(int so) {
-	bool i;
-	int haz;
-
 	if (so == 0) {
 		/* musik(0) */
 		;
@@ -1349,9 +1345,9 @@ void musique(int so) {
 		parole(10, 1, 1);
 		++prebru;
 	} else {
-		i = false;
+		bool i = false;
 		if ((s.mlieu == 19) || (s.mlieu == 21) || (s.mlieu == 22)) {
-			haz = hazard(1, 3);
+			int haz = hazard(1, 3);
 			if (haz == 2) {
 				haz = hazard(2, 4);
 				parole(9, haz, 1);
@@ -1359,14 +1355,14 @@ void musique(int so) {
 			}
 		}
 		if (s.mlieu == 20) {
-			haz = hazard(1, 2);
+			int haz = hazard(1, 2);
 			if (haz == 1) {
 				parole(8, 1, 1);
 				i = true;
 			}
 		}
 		if (s.mlieu == 24) {
-			haz = hazard(1, 2);
+			int haz = hazard(1, 2);
 			if (haz == 2) {
 				parole(12, 1, 1);
 				i = true;
@@ -1377,7 +1373,7 @@ void musique(int so) {
 			i = true;
 		}
 		if (! i) {
-			haz = hazard(1, 17);
+			int haz = hazard(1, 17);
 			parole(haz, 1, 2);
 		}
 	}

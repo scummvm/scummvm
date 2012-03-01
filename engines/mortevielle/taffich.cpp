@@ -95,9 +95,8 @@ void taffich() {
 	byte tran1[] = { 121, 121, 138, 139, 120 };	// array<136, 140, byte>
 	byte tran2[] = { 150, 150, 152, 152, 100, 110, 159, 100, 100 };	// array<153, 161, byte>
 
-	int i, m, cx, handle, npal;
+	int cx, handle, npal;
 	int32 lgt;
-	int palh, k, j;
 	int alllum[16];
 
 
@@ -154,7 +153,7 @@ void taffich() {
 	Common::String filename;
 
 	if ((a != 50) && (a != 51)) {
-		m = a + 2000;
+		int m = a + 2000;
 		if ((m > 2001) && (m < 2010))
 			m = 2001;
 		if (m == 2011)
@@ -209,13 +208,13 @@ void taffich() {
 	}
 	chardes(filename, lgt, handle);
 	if (_currGraphicalDevice == MODE_HERCULES) {
-		for (i = 0; i <= 15; ++i) {
-			palh = READ_LE_UINT16(&mem[(0x7000 * 16) + ((i + 1) << 1)]);
+		for (int i = 0; i <= 15; ++i) {
+			int palh = READ_LE_UINT16(&mem[(0x7000 * 16) + ((i + 1) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
-		for (i = 0; i <= 15; ++i) {
-			k = 0;
-			for (j = 0; j <= 15; ++j)
+		for (int i = 0; i <= 15; ++i) {
+			int k = 0;
+			for (int j = 0; j <= 15; ++j)
 				if (alllum[j] > alllum[k])
 					k = j;
 			mem[(0x7000 * 16) + 2 + (k << 1)] = rang[i];
