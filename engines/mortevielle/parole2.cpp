@@ -54,27 +54,27 @@ void init_chariot() {
 void trait_ph() {
 	const int deca[3] = {300, 30, 40};
 
-	ptr_tcph = num_ph - 1;
-	ledeb = swap(t_cph[ptr_tcph]) + deca[typlec];
-	lefin = swap(t_cph[ptr_tcph + 1]) + deca[typlec];
-	nb_word = lefin - ledeb;
-	ptr_tcph = (uint)ledeb >> 1;
-	ptr_word = 0;
+	g_ptr_tcph = g_num_ph - 1;
+	g_ledeb = swap(t_cph[g_ptr_tcph]) + deca[g_typlec];
+	g_lefin = swap(t_cph[g_ptr_tcph + 1]) + deca[g_typlec];
+	g_nb_word = g_lefin - g_ledeb;
+	g_ptr_tcph = (uint)g_ledeb >> 1;
+	g_ptr_word = 0;
 	do {
-		WRITE_LE_UINT16(&mem[adword + ptr_word], t_cph[ptr_tcph]);
-		ptr_word = ptr_word + 2;
-		ptr_tcph = ptr_tcph + 1;
-	} while (ptr_tcph < (int)((uint)lefin >> 1));
+		WRITE_LE_UINT16(&mem[adword + g_ptr_word], t_cph[g_ptr_tcph]);
+		g_ptr_word += 2;
+		++g_ptr_tcph;
+	} while (g_ptr_tcph < (int)((uint)g_lefin >> 1));
 
-	ptr_oct = 0;
-	ptr_word = 0;
+	g_ptr_oct = 0;
+	g_ptr_word = 0;
 	init_chariot();
 
 	do {
 		rot_chariot();
 		charg_car();
 		trait_car();
-	} while (ptr_word < nb_word);
+	} while (g_ptr_word < g_nb_word);
 
 	rot_chariot();
 	trait_car();
@@ -90,10 +90,10 @@ void parole(int rep, int ht, int typ) {
 	if (g_soundOff)
 		return;
 
-	num_ph = rep;
+	g_num_ph = rep;
 	g_haut = ht;
-	typlec = typ;
-	if (typlec != 0) {
+	g_typlec = typ;
+	if (g_typlec != 0) {
 		for (int i = 0; i <= 500; ++i)
 			savph[i] = t_cph[i];
 		tempo = tempo_bruit;
@@ -118,12 +118,12 @@ void parole(int rep, int ht, int typ) {
 	}
 	trait_ph();
 	g_vm->_soundManager.litph(tbi, typ, tempo);
-	if (typlec != 0)
+	if (g_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
 			t_cph[i] = savph[i];
-			mlec = typlec;
+			g_mlec = g_typlec;
 		}
-	writepal(numpal);
+	writepal(g_numpal);
 }
 
 } // End of namespace Mortevielle

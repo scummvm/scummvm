@@ -100,7 +100,7 @@ void taffich() {
 	int alllum[16];
 
 
-	int a = caff;
+	int a = g_caff;
 	if ((a >= 153) && (a <= 161))
 		a = tran2[a - 153];
 	else if ((a >= 136) && (a <= 140))
@@ -147,7 +147,7 @@ void taffich() {
 		break;
 	}
 
-	okdes = true;
+	g_okdes = true;
 	hideMouse();
 	lgt = 0;
 	Common::String filename;
@@ -221,7 +221,7 @@ void taffich() {
 			alllum[k] = -1;
 		}
 	}
-	numpal = npal;
+	g_numpal = npal;
 	writepal(npal);
 
 	if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26) || (b == 50)) {
@@ -247,9 +247,9 @@ void taffich() {
 	if ((a < 27) && ((g_maff < 27) || (g_s.mlieu == 15)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			person();
-		else if (! blo)
+		else if (!g_blo)
 			t11(g_s.mlieu, cx);
-		mpers =  0;
+		g_mpers =  0;
 	}
 }
 

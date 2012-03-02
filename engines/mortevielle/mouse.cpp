@@ -260,8 +260,8 @@ void showMouse() {
  * @remarks	Originally called 'pos_mouse'
  */
 void setMousePos(int x, int y) {
-	if (x > 314 * res)
-		x = 314 * res;
+	if (x > 314 * g_res)
+		x = 314 * g_res;
 	else if (x < 0)
 		x = 0;
 	if (y > 199)
@@ -331,16 +331,16 @@ void moveMouse(bool &funct, char &key) {
 			cy = 190;
 			break;
 		case '9':
-			cx = 315 * res;
+			cx = 315 * g_res;
 			cy = 1;
 			break;
 		case '3':
 			cy = 190;
-			cx = 315 * res;
+			cx = 315 * g_res;
 			break;
 		case '5':
 			cy = 100;
-			cx = 155 * res;
+			cx = 155 * g_res;
 			break;
 		case ' ':
 		case '\15':
@@ -394,27 +394,27 @@ void moveMouse(bool &funct, char &key) {
 			}
 			break;
 		case 'I':
-			cx = res * 32;
+			cx = g_res * 32;
 			cy = 8;
 			break;
 		case 'D':
-			cx = 80 * res;
+			cx = 80 * g_res;
 			cy = 8;
 			break;
 		case 'A':
-			cx = 126 * res;
+			cx = 126 * g_res;
 			cy = 8;
 			break;
 		case 'S':
-			cx = 174 * res;
+			cx = 174 * g_res;
 			cy = 8;
 			break;
 		case 'P':
-			cx = 222 * res;
+			cx = 222 * g_res;
 			cy = 8;
 			break;
 		case 'F':
-			cx = res * 270;
+			cx = g_res * 270;
 			cy = 8;
 			break;
 		case '\23':
@@ -422,7 +422,7 @@ void moveMouse(bool &funct, char &key) {
 			return;
 			break;
 		case '\26':
-			zuul = true;
+			g_zuul = true;
 			return;
 			break;
 		case '\24':           // ^T => mode tandy

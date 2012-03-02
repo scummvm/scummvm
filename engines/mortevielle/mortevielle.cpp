@@ -122,7 +122,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	// Set the screen mode
 	g_currGraphicalDevice = MODE_EGA;
-	res = 2;
+	g_res = 2;
 
 	_txxFileFl = false;
 	// Load texts from TXX files
@@ -144,19 +144,19 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	g_currGraphicalDevice = MODE_EGA;
 	g_newGraphicalDevice = g_currGraphicalDevice;
-	zuul = false;
-	tesok = false;
+	g_zuul = false;
+	g_tesok = false;
 	charpal();
 	charge_cfiph();
 	charge_cfiec();
 	zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
-	c_zzz = 1;
+	g_c_zzz = 1;
 	init_nbrepm();
 	initMouse();
 
 	init_lieu();
 	g_soundOff = false;
-	f2_all = false;
+	g_f2_all = false;
 
 	teskbd();
 	dialpre();
@@ -165,7 +165,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	if (g_newGraphicalDevice != g_currGraphicalDevice)
 		g_currGraphicalDevice = g_newGraphicalDevice;
 	hirs();
-	ades = 0x7000;
+	g_ades = 0x7000;
 
 	return Common::kNoError;
 }
@@ -481,7 +481,7 @@ Common::Error MortevielleEngine::run() {
  */
 void MortevielleEngine::showIntroduction() {
 	f3f8::aff50(false);
-	mlec = 0;
+	g_mlec = 0;
 	f3f8::checkForF8(142, false);
 	CHECK_QUIT;
 
@@ -500,10 +500,10 @@ void MortevielleEngine::showIntroduction() {
  * loses, and chooses to start playing the game again.
  */
 void MortevielleEngine::mainGame() {
-	if (rech_cfiec)
+	if (g_rech_cfiec)
 		charge_cfiec();
 
-	for (crep = 1; crep <= c_zzz; ++crep) 
+	for (g_crep = 1; g_crep <= g_c_zzz; ++g_crep) 
 		zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	charge_bruit5();
@@ -553,10 +553,10 @@ void MortevielleEngine::handleAction() {
 
 	clsf3();
 	oo = false;
-	ctrm = 0;
-	if (! iesc) {
+	g_ctrm = 0;
+	if (!g_iesc) {
 		g_vm->_menu.drawMenu();
-		imen = true;
+		g_imen = true;
 		temps = 0;
 		g_key = 0;
 		funct = false;
@@ -569,27 +569,27 @@ void MortevielleEngine::handleAction() {
 			moveMouse(funct, inkey);
 			CHECK_QUIT;
 			temps = temps + 1;
-		} while (!((choisi) || (temps > lim) || (funct) || (anyone)));
+		} while (!((g_choisi) || (temps > lim) || (funct) || (g_anyone)));
 		_inMainGameLoop = false;
 
 		g_vm->_menu.eraseMenu();
-		imen = false;
+		g_imen = false;
 		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
 			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
-		if (choisi && (g_msg[3] == MENU_SAVE)) {
+		if (g_choisi && (g_msg[3] == MENU_SAVE)) {
 			Common::String saveName = Common::String::format("Savegame #%d", g_msg[4] & 7);
 			g_vm->_savegameManager.saveGame(g_msg[4] & 7, saveName);
 		}
-		if (choisi && (g_msg[3] == MENU_LOAD))
+		if (g_choisi && (g_msg[3] == MENU_LOAD))
 			g_vm->_savegameManager.loadGame((g_msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = Alert::show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
-			if ((mnumo != OPCODE_NONE) && ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))) {
-				g_msg[4] = mnumo;
+			if ((g_mnumo != OPCODE_NONE) && ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))) {
+				g_msg[4] = g_mnumo;
 				ecr3(g_vm->getEngineString(S_IDEM));
 			} else
 				return;
@@ -610,20 +610,20 @@ void MortevielleEngine::handleAction() {
 			if (g_num == 9999)
 				g_num = 0;
 		} else {
-			mnumo = g_msg[3];
+			g_mnumo = g_msg[3];
 			if ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))
-				mnumo = g_msg[4];
-			if (! anyone) {
-				if ((fouil) || (obpart)) {
+				g_mnumo = g_msg[4];
+			if (!g_anyone) {
+				if ((g_fouil) || (g_obpart)) {
 					if (y_s < 12)
 						return;
 
 					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {
 						oo = true;
-						if ((g_msg[4] == OPCODE_LIFT) || (obpart)) {
+						if ((g_msg[4] == OPCODE_LIFT) || (g_obpart)) {
 							finfouil();
-							caff = g_s.mlieu;
-							crep = 998;
+							g_caff = g_s.mlieu;
+							g_crep = 998;
 						} else
 							tsuiv();
 						mennor();
@@ -634,17 +634,17 @@ void MortevielleEngine::handleAction() {
 				if (! oo)
 					tsitu();
 
-				if ((ctrm == 0) && (! _loseGame) && (! _endGame)) {
+				if ((g_ctrm == 0) && (! _loseGame) && (! _endGame)) {
 					taffich();
-					if (okdes) {
-						okdes = false;
+					if (g_okdes) {
+						g_okdes = false;
 						dessin(0);
 					}
-					if ((! syn) || (g_col))
-						repon(2, crep);
+					if ((!g_syn) || (g_col))
+						repon(2, g_crep);
 				}
-			} while (syn);
-			if (ctrm != 0)
+			} while (g_syn);
+			if (g_ctrm != 0)
 				tctrm();
 		}
 	}

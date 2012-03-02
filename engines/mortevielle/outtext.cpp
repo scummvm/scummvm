@@ -174,7 +174,7 @@ void afftex(Common::String ch, int x, int y, int dx, int dy, int typ) {
 
 	/*    debug('  .. Afftex');*/
 	g_vm->_screenSurface.putxy(x, y);
-	if (res == 1)
+	if (g_res == 1)
 		tab = 10;
 	else
 		tab = 6;

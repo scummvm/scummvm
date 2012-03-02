@@ -52,15 +52,15 @@ void changeGraphicalDevice(int newDevice) {
 	dessine_rouleau();
 	tinke();
 	drawClock();
-	if (ipers != 0)
-		affper(ipers);
+	if (g_ipers != 0)
+		affper(g_ipers);
 	else
 		person();
 	clsf2();
 	clsf3();
 	g_maff = 68;
 	afdes(0);
-	repon(2, crep);
+	repon(2, g_crep);
 	g_vm->_menu.displayMenu();
 }
 
@@ -74,44 +74,44 @@ void MortevielleEngine::gameLoaded() {
 	char g[8];
 
 	hideMouse();
-	imen = false;
+	g_imen = false;
 	g[1] = 'M';
 	_loseGame = true;
-	anyone = false;
-	okdes = true;
+	g_anyone = false;
+	g_okdes = true;
 	test[0] = false;
 	test[1] = false;
 	g[0] = '\040';
 	g_col = false;
-	tesok = true;
+	g_tesok = true;
 	test[2] = false;
 	g[7] = g[0];
 	g[2] = 'A';
-	cache = false;
-	brt = false;
+	g_cache = false;
+	g_brt = false;
 	g_maff = 68;
 	g[5] = 'E';
-	mnumo = 0;
-	prebru = 0;
+	g_mnumo = 0;
+	g_prebru = 0;
 	g[4] = 'T';
 	g_x = 0;
 	g_y = 0;
 	g_num = 0;
-	hdb = 0;
-	hfb = 0;
-	cs = 0;
+	g_hdb = 0;
+	g_hfb = 0;
+	g_cs = 0;
 	is = 0;
 	k = 0;
-	ment = 0;
-	syn = true;
-	fouil = true;
-	mchai = 0;
-	inei = 0;
+	g_ment = 0;
+	g_syn = true;
+	g_fouil = true;
+	g_mchai = 0;
+	g_inei = 0;
 	initouv();
 	g[3] = 'S';
 	g[6] = 'R';
-	iouv = 0;
-	dobj = 0;
+	g_iouv = 0;
+	g_dobj = 0;
 	affrep();
 	_hintPctMessage = deline(580);
 	while ((test[k] == false) && (k < 2)) {
@@ -121,16 +121,16 @@ void MortevielleEngine::gameLoaded() {
 		// presumably for copy protection. This has been replaced with hardcoded success
 		test[k] = true;
 
-		okdes = false;
+		g_okdes = false;
 		_endGame = true;
 		_loseGame = false;
-		fouil = false;
+		g_fouil = false;
 	}
 	person();
 	tinke();
 	drawClock();
 	afdes(0);
-	repon(2, crep);
+	repon(2, g_crep);
 	clsf3();
 	_endGame = false;
 	tmlieu(g_s.mlieu);
@@ -138,7 +138,7 @@ void MortevielleEngine::gameLoaded() {
 	if (g_s.derobj != 0)
 		modobj2(g_s.derobj + 400, test[1], test[2]);
 	else
-		tesok = test[1] || test[2];
+		g_tesok = test[1] || test[2];
 	showMouse();
 }
 
@@ -161,12 +161,12 @@ void tsitu() {
 
 	if (!g_col)
 		clsf2();
-	syn = false;
-	iesc = false;
-	if (!anyone) {
-		if (brt)
+	g_syn = false;
+	g_iesc = false;
+	if (!g_anyone) {
+		if (g_brt)
 			if ((g_msg[3] == MENU_MOVE) || (g_msg[4] == OPCODE_LEAVE) || (g_msg[4] == OPCODE_SLEEP) || (g_msg[4] == OPCODE_EAT)) {
-				ctrm = 4;
+				g_ctrm = 4;
 				mennor();
 				return;
 			}
@@ -226,14 +226,14 @@ void tsitu() {
 			fctSelfPut();
 		if (g_msg[4] == OPCODE_SLOOK)
 			fctSelftLook();
-		cache = false;
+		g_cache = false;
 
 		if (g_msg[4] == OPCODE_SHIDE)
 			fctSelfHide();
 	} else {
-		if (anyone) {
+		if (g_anyone) {
 			quelquun();
-			anyone = false;
+			g_anyone = false;
 			mennor();
 			return;
 		}
@@ -245,15 +245,15 @@ void tsitu() {
 	if (((g_s.mlieu < 16) || (g_s.mlieu > 19)) && (g_s.mlieu != 23)
 	        && (g_s.mlieu != 0) && (g_s.derobj != 152) && (!g_vm->_loseGame)) {
 		if ((g_s.conf > 99) && (h > 8) && (h < 16)) {
-			crep = 1501;
+			g_crep = 1501;
 			tperd();
 		}
 		if ((g_s.conf > 99) && (h > 0) && (h < 9)) {
-			crep = 1508;
+			g_crep = 1508;
 			tperd();
 		}
 		if ((j > 1) && (h > 8) && (!g_vm->_loseGame)) {
-			crep = 1502;
+			g_crep = 1502;
 			tperd();
 		}
 	}
@@ -263,13 +263,13 @@ void tsitu() {
 /* NIVEAU 1 */
 
 void theure() {
-	vj = ord(g_s.heure);
-	vh = vj % 48;
-	vj /= 48;
-	vm = vh % 2;
-	vh /= 2;
-	g_hour = vh;
-	if (vm == 1)
+	g_vj = ord(g_s.heure);
+	g_vh = g_vj % 48;
+	g_vj /= 48;
+	g_vm__ = g_vh % 2;
+	g_vh /= 2;
+	g_hour = g_vh;
+	if (g_vm__ == 1)
 		g_minute = 30;
 	else
 		g_minute = 0;

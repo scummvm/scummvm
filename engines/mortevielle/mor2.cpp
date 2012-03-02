@@ -49,7 +49,7 @@ void tinke() {
 	int cx, cf, j, h, m;
 	Common::String stpo;
 
-	anyone = false;
+	g_anyone = false;
 	calch(j, h, m);
 	if (j != g_day) {
 		g_day = j;
@@ -96,7 +96,7 @@ void tinke() {
 	if (y_s < 12)
 		return;
 
-	if (! blo) {
+	if (!g_blo) {
 		if ((h == 12) || ((h > 18) && (h < 21)) || ((h >= 0) && (h < 7)))
 			g_t = ti2;
 		else
@@ -109,12 +109,12 @@ void tinke() {
 			g_t -= ((g_t / 3) * 2);
 
 		int nh = readclock();
-		if ((nh - mh) > g_t) {
+		if ((nh - g_mh) > g_t) {
 			bool activeMenu = g_vm->_menu._menuActive;
 			g_vm->_menu.eraseMenu();
-			jh += ((nh - mh) / g_t);
-			mh = nh;
-			switch (li) {
+			g_jh += ((nh - g_mh) / g_t);
+			g_mh = nh;
+			switch (g_li) {
 			case 1:
 			case 4 :
 				pl1(cf);
@@ -153,17 +153,17 @@ void tinke() {
 				pl20(cf);
 				break;
 			}
-			if ((mpers != 0) && (ipers != 10))
-				mpers = ipers;
+			if ((g_mpers != 0) && (g_ipers != 10))
+				g_mpers = g_ipers;
 
-			if ((mpers == 0) && (ipers > 0)) {
+			if ((g_mpers == 0) && (g_ipers > 0)) {
 				if ((g_s.mlieu == 13) || (g_s.mlieu == 14)) {
 					cavegre();
-				} else if (ipers == 10) {
-					ipers = 0;
-					if (! brt) {
-						brt = true;
-						hdb = readclock();
+				} else if (g_ipers == 10) {
+					g_ipers = 0;
+					if (!g_brt) {
+						g_brt = true;
+						g_hdb = readclock();
 						int haz = hazard(1, 5);
 						if (haz < 5) {
 							clsf3();
@@ -181,13 +181,13 @@ void tinke() {
 				g_vm->_menu.drawMenu();
 		}
 	}
-	hfb = readclock();
-	if ((brt) && ((hfb - hdb) > 17)) {
-		nouvp(li, cx);
-		brt = false;
-		hdb = 0;
+	g_hfb = readclock();
+	if ((g_brt) && ((g_hfb - g_hdb) > 17)) {
+		nouvp(g_li, cx);
+		g_brt = false;
+		g_hdb = 0;
 		if ((g_s.mlieu > 0) && (g_s.mlieu < 10))
-			anyone = true;
+			g_anyone = true;
 	}
 }
 
@@ -212,7 +212,7 @@ void fenat(char ans) {
 void afdes(int ad) {
 	taffich();
 	dessin(ad);
-	okdes = false;
+	g_okdes = false;
 }
 
 void tkey1(bool d) {
@@ -230,7 +230,7 @@ void tkey1(bool d) {
 		quest = keypressed();
 		getMousePos(x, y, c);
 		CHECK_QUIT;
-	} while (!(quest || (c != 0) || (d && anyone)));
+	} while (!(quest || (c != 0) || (d && g_anyone)));
 	if (quest)
 		testou();
 	g_vm->setMouseClick(false);
@@ -259,19 +259,19 @@ void tmlieu(int mli) {
 
 /* NIVEAU 7 */
 void tlu(int af, int ob) {
-	caff = 32;
+	g_caff = 32;
 	afdes(0);
 	repon(6, ob + 4000);
 	repon(2, 999);
 	tkey1(true);
-	caff = af;
+	g_caff = af;
 	g_msg[3] = OPCODE_NONE;
-	crep = 998;
+	g_crep = 998;
 }
 
 void affrep() {
-	caff = g_s.mlieu;
-	crep = g_s.mlieu;
+	g_caff = g_s.mlieu;
+	g_crep = g_s.mlieu;
 }
 
 void mfouen() {
@@ -287,11 +287,11 @@ void mfouen() {
 
 void tperd() {
 	initouv();
-	ment = 0;
-	iouv = 0;
-	mchai = 0;
+	g_ment = 0;
+	g_iouv = 0;
+	g_mchai = 0;
 	mfouen();
-	if (!blo) {
+	if (!g_blo) {
 		int cx;
 		t11(21, cx);
 	}
@@ -299,17 +299,17 @@ void tperd() {
 	g_vm->_loseGame = true;
 	clsf1();
 	g_vm->_screenSurface.drawBox(60, 35, 400, 50, 15);
-	repon(9, crep);
+	repon(9, g_crep);
 	clsf2();
 	clsf3();
 	g_col = false;
-	syn = false;
-	okdes = false;
+	g_syn = false;
+	g_okdes = false;
 }
 
 void tsort() {
 
-	if ((iouv > 0) && (g_s.mlieu != 0)) {
+	if ((g_iouv > 0) && (g_s.mlieu != 0)) {
 		if (g_s.conf < 50)
 			g_s.conf += 2;
 		else
@@ -318,24 +318,24 @@ void tsort() {
 
 	for (int cx = 1; cx <= 7; ++cx)
 		touv[cx] = chr(0);
-	ment = 0;
-	iouv = 0;
-	mchai = 0;
+	g_ment = 0;
+	g_iouv = 0;
+	g_mchai = 0;
 	debloc(g_s.mlieu);
 }
 
 void st4(int ob) {
-	crep = 997;
+	g_crep = 997;
 
 	switch (ob) {
 	case 114 :
-		crep = 109;
+		g_crep = 109;
 		break;
 	case 110 :
-		crep = 107;
+		g_crep = 107;
 		break;
 	case 158 :
-		crep = 113;
+		g_crep = 113;
 		break;
 	case 152:
 	case 153:
@@ -347,7 +347,7 @@ void st4(int ob) {
 	case 157:
 	case 160:
 	case 161 :
-		tlu(caff, ob);
+		tlu(g_caff, ob);
 		break;
 	default:
 		break;
@@ -402,7 +402,7 @@ void sparl(float adr, float rep) {
 	
 	key = 0;
 	do {
-		parole(repint, haut[caff - 69], 0);
+		parole(repint, haut[g_caff - 69], 0);
 		f3f8::waitForF3F8(key);
 		CHECK_QUIT;
 	} while (key != 66);
@@ -411,9 +411,9 @@ void sparl(float adr, float rep) {
 }
 
 void finfouil() {
-	fouil = false;
-	obpart = false;
-	cs = 0;
+	g_fouil = false;
+	g_obpart = false;
+	g_cs = 0;
 	is = 0;
 	mfouen();
 }
@@ -434,13 +434,13 @@ void mennor() {
 }
 
 void premtet() {
-	dessine(ades, 10, 80);
+	dessine(g_ades, 10, 80);
 	g_vm->_screenSurface.drawBox(18, 79, 155, 91, 15);
 }
 
 /* NIVEAU 5 */
 void ajchai() {
-	int cy = acha + ((mchai - 1) * 10) - 1;
+	int cy = acha + ((g_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;
@@ -450,7 +450,7 @@ void ajchai() {
 		int lderobj = g_s.derobj;
 		tabdon[cy + cx] = lderobj;
 	} else
-		crep = 192;
+		g_crep = 192;
 }
 
 void ajjer(int ob) {
@@ -463,7 +463,7 @@ void ajjer(int ob) {
 		g_s.sjer[(cx)] = chr(ob);
 		modinv();
 	} else
-		crep = 139;
+		g_crep = 139;
 }
 
 void t1sama() {    //Entering manor
@@ -474,14 +474,14 @@ void t1sama() {    //Entering manor
 		bool d;
 		cherjer(137, d);
 		if (!d) {        //You don't have the keys, and it's late
-			crep = 1511;
+			g_crep = 1511;
 			tperd();
 		} else
 			st1sama();
 	} else if (!g_s.ipre) {     //Is it your first time?
-		ipers = 255;
-		affper(ipers);
-		caff = 77;
+		g_ipers = 255;
+		affper(g_ipers);
+		g_caff = 77;
 		afdes(0);
 		g_vm->_screenSurface.drawBox(223, 47, 155, 91, 15);
 		repon(2, 33);
@@ -497,10 +497,10 @@ void t1sama() {    //Entering manor
 		g_s.mlieu = 0;
 		affrep();
 		t5(10);
-		if (! blo)
+		if (!g_blo)
 			t11(0, m);
-		ipers = 0;
-		mpers = 0;
+		g_ipers = 0;
+		g_mpers = 0;
 		g_s.ipre = true;
 		/*chech;*/
 	} else
@@ -513,19 +513,19 @@ void t1vier() {
 }
 
 void t1neig() {
-	++inei;
-	if (inei > 2) {
-		crep = 1506;
+	++g_inei;
+	if (g_inei > 2) {
+		g_crep = 1506;
 		tperd();
 	} else {
-		okdes = true;
+		g_okdes = true;
 		g_s.mlieu = 19;
 		affrep();
 	}
 }
 
 void t1deva() {
-	inei = 0;
+	g_inei = 0;
 	g_s.mlieu = 21;
 	affrep();
 }
@@ -536,33 +536,33 @@ void t1derr() {
 }
 
 void t1deau() {
-	crep = 1503;
+	g_crep = 1503;
 	tperd();
 }
 
 void tctrm() {
-	repon(2, (3000 + ctrm));
-	ctrm = 0;
+	repon(2, (3000 + g_ctrm));
+	g_ctrm = 0;
 }
 
 
 void quelquun() {
-	if (imen)
+	if (g_imen)
 		g_vm->_menu.eraseMenu();
 
 	finfouil();
-	crep = 997;
+	g_crep = 997;
 L1:
-	if (! cache) {
-		if (crep == 997)
-			crep = 138;
-		repon(2, crep);
-		if (crep == 138)
+	if (!g_cache) {
+		if (g_crep == 997)
+			g_crep = 138;
+		repon(2, g_crep);
+		if (g_crep == 138)
 			parole(5, 2, 1);
 		else
 			parole(4, 4, 1);
 
-		if (iouv == 0)
+		if (g_iouv == 0)
 			g_s.conf += 2;
 		else if (g_s.conf < 50)
 			g_s.conf += 4;
@@ -571,18 +571,18 @@ L1:
 		tsort();
 		tmlieu(15);
 		int cx;
-		tip(ipers, cx);
-		caff = 69 + cx;
-		crep = caff;
+		tip(g_ipers, cx);
+		g_caff = 69 + cx;
+		g_crep = g_caff;
 		g_msg[3] = MENU_DISCUSS;
 		g_msg[4] = g_vm->_menu._discussMenu[cx];
-		syn = true;
+		g_syn = true;
 		g_col = true;
 	} else {
 		int haz = hazard(1, 3);
 		if (haz == 2) {
-			cache = false;
-			crep = 137;
+			g_cache = false;
+			g_crep = 137;
 			goto L1;
 		} else {
 			repon(2, 136);
@@ -594,7 +594,7 @@ L1:
 			affrep();
 		}
 	}
-	if (imen)
+	if (g_imen)
 		g_vm->_menu.drawMenu();
 }
 
@@ -602,26 +602,26 @@ void tsuiv() {
 	int tbcl;
 	int cl;
 
-	int cy = acha + ((mchai - 1) * 10) - 1;
+	int cy = acha + ((g_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		cx = cx + 1;
-		cs = cs + 1;
-		cl = cy + cs;
+		g_cs = g_cs + 1;
+		cl = cy + g_cs;
 		tbcl = tabdon[cl];
-	} while ((tbcl == 0) && (cs <= 9));
+	} while ((tbcl == 0) && (g_cs <= 9));
 
-	if ((tbcl != 0) && (cs < 11)) {
+	if ((tbcl != 0) && (g_cs < 11)) {
 		is = is + 1;
-		caff = tbcl;
-		crep = caff + 400;
-		if (ipers != 0)
+		g_caff = tbcl;
+		g_crep = g_caff + 400;
+		if (g_ipers != 0)
 			g_s.conf = g_s.conf + 2;
 	} else {
 		affrep();
 		finfouil();
 		if (cx > 9)
-			crep = 131;
+			g_crep = 131;
 	}
 }
 
@@ -633,7 +633,7 @@ void tfleche() {
 		return;
 
 	fenat(chr(152));
-	rect = false;
+	g_rect = false;
 	do {
 		touch = '\0';
 
@@ -642,18 +642,18 @@ void tfleche() {
 			CHECK_QUIT;
 
 			if (g_vm->getMouseClick())
-				rect = (x_s < 256 * res) && (y_s < 176) && (y_s > 12);
+				g_rect = (x_s < 256 * g_res) && (y_s < 176) && (y_s > 12);
 			tinke();
-		} while (!(qust || rect || anyone));
+		} while (!(qust || g_rect || g_anyone));
 
 		if (qust && (touch == '\103'))
 			Alert::show(_hintPctMessage, 1);
-	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (anyone) || (rect)));
+	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (g_anyone) || (g_rect)));
 
 	if (touch == '\73')
-		iesc = true;
+		g_iesc = true;
 
-	if (rect) {
+	if (g_rect) {
 		g_x = x_s;
 		g_y = y_s;
 	}
@@ -665,18 +665,18 @@ void tcoord(int sx) {
 
 
 	g_num = 0;
-	crep = 999;
+	g_crep = 999;
 	int a = 0;
 	int atdon = amzon + 3;
 	int cy = 0;
-	while (cy < caff) {
+	while (cy < g_caff) {
 		a += tabdon[atdon];
 		atdon += 4;
 		++cy;
 	}
 
 	if (tabdon[atdon] == 0) {
-		crep = 997;
+		g_crep = 997;
 		return;
 	}
 
@@ -688,17 +688,17 @@ void tcoord(int sx) {
 	}
 	ib = (tabdon[a + cb] << 8) + tabdon[(a + cb + 1)];
 	if (ib == 0) {
-		crep = 997;
+		g_crep = 997;
 		return;
 	}
 
 	cy = 1;
 	do {
 		cb += 2;
-		sx = tabdon[a + cb] * res;
+		sx = tabdon[a + cb] * g_res;
 		sy = tabdon[(a + cb + 1)];
 		cb += 2;
-		ix = tabdon[a + cb] * res;
+		ix = tabdon[a + cb] * g_res;
 		iy = tabdon[(a + cb + 1)];
 		++cy;
 	} while (!(((g_x >= sx) && (g_x <= ix) && (g_y >= sy) && (g_y <= iy)) || (cy > ib)));
@@ -708,7 +708,7 @@ void tcoord(int sx) {
 		return;
 	}
 
-	crep = 997;
+	g_crep = 997;
 }
 
 
@@ -716,51 +716,51 @@ void st7(int ob) {
 	switch (ob) {
 	case 116:
 	case 144:
-		crep = 104;
+		g_crep = 104;
 		break;
 	case 126:
 	case 111:
-		crep = 108;
+		g_crep = 108;
 		break;
 	case 132:
-		crep = 111;
+		g_crep = 111;
 		break;
 	case 142:
-		crep = 112;
+		g_crep = 112;
 		break;
 	default:
-		crep = 183;
+		g_crep = 183;
 		st4(ob);
 	}
 }
 
 void treg(int ob) {
-	int mdes = caff;
-	caff = ob;
+	int mdes = g_caff;
+	g_caff = ob;
 
-	if (((caff > 29) && (caff < 33)) || (caff == 144) || (caff == 147) || (caff == 149) || (g_msg[4] == OPCODE_SLOOK)) {
+	if (((g_caff > 29) && (g_caff < 33)) || (g_caff == 144) || (g_caff == 147) || (g_caff == 149) || (g_msg[4] == OPCODE_SLOOK)) {
 		afdes(0);
-		if ((caff > 29) && (caff < 33))
-			repon(2, caff);
+		if ((g_caff > 29) && (g_caff < 33))
+			repon(2, g_caff);
 		else
-			repon(2, (caff + 400));
+			repon(2, g_caff + 400);
 		tkey1(true);
-		caff = mdes;
+		g_caff = mdes;
 		g_msg[3] = 0;
-		crep = 998;
+		g_crep = 998;
 	} else {
-		obpart = true;
-		crep = caff + 400;
+		g_obpart = true;
+		g_crep = g_caff + 400;
 		mfoudi();
 	}
 }
 
 void avpoing(int &ob) {
-	crep = 999;
+	g_crep = 999;
 	if (g_s.derobj != 0)
 		ajjer(g_s.derobj);
 
-	if (crep != 139) {
+	if (g_crep != 139) {
 		modobj(ob + 400);
 		g_s.derobj = ob;
 		ob = 0;
@@ -781,7 +781,7 @@ void t23coul(int &l) {
 	cherjer(143, d);
 	l = 14;
 	if (!d) {
-		crep = 1512;
+		g_crep = 1512;
 		tperd();
 	}
 }
@@ -797,9 +797,9 @@ void st13(int ob) {
 	    (ob == 110) || (ob == 153) || (ob == 154) || (ob == 155) ||
 	    (ob == 156) || (ob == 157) || (ob == 144) || (ob == 158) ||
 	    (ob == 150) || (ob == 152))
-		crep = 999;
+		g_crep = 999;
 	else
-		crep = 105;
+		g_crep = 105;
 }
 
 void aldepl() {

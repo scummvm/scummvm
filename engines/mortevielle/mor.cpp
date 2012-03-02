@@ -107,7 +107,7 @@ void modif(int &nu) {
 
 void dessine(int ad, int x, int y) {
 	hideMouse();
-	writepal(numpal);
+	writepal(g_numpal);
 	pictout(ad, 0, x, y);
 	showMouse();
 }
@@ -124,7 +124,7 @@ void dessine_rouleau() {
 
 
 void text_color(int c) {
-	color_txt = c;
+	g_color_txt = c;
 }
 
 /* NIVEAU 13 */
@@ -133,14 +133,14 @@ void text_color(int c) {
 void text1(int x, int y, int nb, int m) {
 	int co;
 
-	if (res == 1)
+	if (g_res == 1)
 		co = 10;
 	else
 		co = 6;
 	Common::String tmpStr = deline(m);
 	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
-	afftex(tmpStr, x, y, nb, 20, color_txt);
+	afftex(tmpStr, x, y, nb, 20, g_color_txt);
 }
 
 void initouv() {
@@ -162,10 +162,10 @@ void clsf1() {
 
 void clsf2() {
 	hideMouse();
-	if (f2_all) {
+	if (g_f2_all) {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
-		f2_all = false;
+		g_f2_all = false;
 	} else {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
@@ -180,7 +180,7 @@ void ecrf2() {
 void ecr2(Common::String str_) {
 	// Some dead code was present in the original: removed
 	g_vm->_screenSurface.putxy(8, 177);
-	int tlig = 59 + (res - 1) * 36;
+	int tlig = 59 + (g_res - 1) * 36;
 
 	if ((int)str_.size() < tlig)
 		g_vm->_screenSurface.writeg(str_, 5);
@@ -190,7 +190,7 @@ void ecr2(Common::String str_) {
 		g_vm->_screenSurface.putxy(8, 182);
 		g_vm->_screenSurface.writeg(copy(str_, tlig, tlig << 1), 5);
 	} else {
-		f2_all = true;
+		g_f2_all = true;
 		clsf2();
 		g_vm->_screenSurface.putxy(8, 176);
 		g_vm->_screenSurface.writeg(copy(str_, 1, (tlig - 1)), 5);
@@ -228,7 +228,7 @@ void clsf10() {
 	Common::String st;
 
 	hideMouse();
-	if (res == 1) {
+	if (g_res == 1) {
 		co = 634;
 		cod = 534;
 	} else {
@@ -247,7 +247,7 @@ void clsf10() {
 	g_vm->_screenSurface.putxy(co, 92);
 	g_vm->_screenSurface.writeg(st, 4);
 
-	if (res == 1)
+	if (g_res == 1)
 		co = 620;
 	else
 		co = 584;
@@ -280,15 +280,15 @@ int hazard(int min, int max) {
 
 void calch(int &j, int &h, int &m) {
 	int nh = readclock();
-	int th = jh + ((nh - mh) / g_t);
-	m = ((th % 2) + vm) * 30;
-	h = ((uint)th >> 1) + vh;
+	int th = g_jh + ((nh - g_mh) / g_t);
+	m = ((th % 2) + g_vm__) * 30;
+	h = ((uint)th >> 1) + g_vh;
 	if (m == 60) {
 		m = 0;
 		h = h + 1;
 	}
-	j = (h / 24) + vj;
-	h = h - ((j - vj) * 24);
+	j = (h / 24) + g_vj;
+	h = h - ((j - g_vj) * 24);
 }
 
 void conv(int x, int &y) {
@@ -302,7 +302,7 @@ void conv(int x, int &y) {
 
 /* NIVEAU 12 */
 void okpas() {
-	tesok = true;
+	g_tesok = true;
 }
 
 void modobj(int m) {
@@ -321,7 +321,7 @@ void modobj2(int m, bool t1, bool t2) {
 	if (t1 || t2)
 		okpas();
 	else
-		tesok = false;;
+		g_tesok = false;;
 
 	if (m != 500)
 		strp = deline(m - 501 + c_st41);
@@ -339,10 +339,10 @@ void repon(int f, int m) {
 	if ((m > 499) && (m < 563)) {
 		tmpStr = deline(m - 501 + c_st41);
 
-		if ((int) tmpStr.size() > ((58 + (res - 1) * 37) << 1))
-			f2_all = true;
+		if ((int) tmpStr.size() > ((58 + (g_res - 1) * 37) << 1))
+			g_f2_all = true;
 		else
-			f2_all = false;
+			g_f2_all = false;
 
 		clsf2();
 		afftex(tmpStr, 8, 176, 85, 3, 5);
@@ -358,7 +358,7 @@ void repon(int f, int m) {
 			text1(8, 182, 103, m);
 			if ((m == 68) || (m == 69))
 				g_s.teauto[40] = '*';
-			if ((m == 104) && (caff == 14)) {
+			if ((m == 104) && (g_caff == 14)) {
 				g_s.teauto[36] = '*';
 				if (g_s.teauto[39] == '*') {
 					g_s.pourc[3] = '*';
@@ -387,7 +387,7 @@ void repon(int f, int m) {
 			tmpStr = deline(m);
 
 			int xco, dx, caspe;
-			if (res == 1) {
+			if (g_res == 1) {
 				xco = 252 - tmpStr.size() * 5;
 				caspe = 100;
 				dx = 80;
@@ -407,33 +407,33 @@ void repon(int f, int m) {
 
 void t5(int cx) {
 	if (cx == 10)
-		blo = false;
+		g_blo = false;
 
 	if (cx != 1) {
-		bh1 = false;
-		bf1 = false;
+		g_bh1 = false;
+		g_bf1 = false;
 	}
 
 	if (cx != 2)
-		bh2 = false;
+		g_bh2 = false;
 
 	if (cx != 4) {
-		bh4 = false;
-		bf4 = false;
+		g_bh4 = false;
+		g_bf4 = false;
 	}
 
 	if (cx != 5)
-		bh5 = false;
+		g_bh5 = false;
 	if (cx != 6)
-		bh6 = false;
+		g_bh6 = false;
 	if (cx != 8)
-		bh8 = false;
+		g_bh8 = false;
 	if (cx != 3)
-		bt3 = false;
+		g_bt3 = false;
 	if (cx != 7)
-		bt7 = false;
+		g_bt7 = false;
 	if (cx != 9)
-		bh9 = false;
+		g_bh9 = false;
 }
 
 void affper(int per) {
@@ -482,7 +482,7 @@ void affper(int per) {
 		g_vm->_screenSurface.writeg("MAX", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[8]);
 	}
-	ipers = per;
+	g_ipers = per;
 }
 
 void choix(int min, int max, int &per) {
@@ -609,7 +609,7 @@ void person() {
 	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sAlone) / 2), 70);
 	g_vm->_screenSurface.writeg(sAlone, 4);
 
-	ipers = 0;
+	g_ipers = 0;
 }
 
 void chlm(int &per) {
@@ -641,9 +641,9 @@ void drawClock() {
 		co = 1;
 
 	if (g_minute == 0)
-		g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
+		g_vm->_screenSurface.drawLine(((uint)x >> 1) * g_res, y, ((uint)x >> 1) * g_res, (y - rg), co);
 	else 
-		g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
+		g_vm->_screenSurface.drawLine(((uint)x >> 1) * g_res, y, ((uint)x >> 1) * g_res, (y + rg), co);
 
 	h = g_hour;
 	if (h > 12)
@@ -651,7 +651,7 @@ void drawClock() {
 	if (h == 0)
 		h = 12;
 
-	g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)(x + cv[0][h - 1]) >> 1)*res, y + cv[1][h - 1], co);
+	g_vm->_screenSurface.drawLine(((uint)x >> 1) * g_res, y, ((uint)(x + cv[0][h - 1]) >> 1) * g_res, y + cv[1][h - 1], co);
 	showMouse();
 	g_vm->_screenSurface.putxy(568, 154);
 
@@ -678,7 +678,7 @@ void debloc(int l) {
 	g_y = 0;
 	if ((l != 26) && (l != 15))
 		t5(l);
-	mpers = ipers;
+	g_mpers = g_ipers;
 }
 
 void cpl10(int &p, int &h) {
@@ -773,40 +773,40 @@ void quelq1(int l) {
 	per = hazard(1, 2);
 	if (l == 1) {
 		if (per == 1)
-			bh1 = true;
+			g_bh1 = true;
 		else
-			bf1 = true;
+			g_bf1 = true;
 	} else if (l == 4) {
 		if (per == 1)
-			bh4 = true;
+			g_bh4 = true;
 		else
-			bf4 = true;
+			g_bf4 = true;
 	}
 
-	ipers = 10;
+	g_ipers = 10;
 }
 
 void quelq2() {
-	if (li == 2)
-		bh2 = true;
+	if (g_li == 2)
+		g_bh2 = true;
 	else
-		bh9 = true;
+		g_bh9 = true;
 
-	ipers = 10;
+	g_ipers = 10;
 }
 
 void quelq5() {
-	bh5 = true;
-	ipers = 10;
+	g_bh5 = true;
+	g_ipers = 10;
 }
 
 void quelq6(int l) {
 	if (l == 6)
-		bh6 = true;
+		g_bh6 = true;
 	else if (l == 8)
-		bh8 = true;
+		g_bh8 = true;
 
-	ipers = 10;
+	g_ipers = 10;
 }
 
 void quelq10(int h, int &per) {
@@ -865,14 +865,14 @@ void quelq15(int &per) {
 
 	do {
 		cx = hazard(1, 8);
-		test = (((cx == 1) && (bh2 || bh9)) ||
-		        ((cx == 2) && bh8) ||
-		        ((cx == 3) && bh4) ||
-		        ((cx == 4) && bf4) ||
-		        ((cx == 5) && bh6) ||
-		        ((cx == 6) && bh1) ||
-		        ((cx == 7) && bf1) ||
-		        ((cx == 8) && bh5));
+		test = (((cx == 1) && (g_bh2 || g_bh9)) ||
+		        ((cx == 2) && g_bh8) ||
+		        ((cx == 3) && g_bh4) ||
+		        ((cx == 4) && g_bf4) ||
+		        ((cx == 5) && g_bh6) ||
+		        ((cx == 6) && g_bh1) ||
+		        ((cx == 7) && g_bf1) ||
+		        ((cx == 8) && g_bh5));
 	} while (test);
 
 	conv(cx, per);
@@ -905,37 +905,37 @@ void frap() {
 
 	calch(j, h, m);
 	if ((h >= 0) && (h < 8))
-		crep = 190;
+		g_crep = 190;
 	else {
 		int haz = hazard(1, 100);
 		if (haz > 70)
-			crep = 190;
+			g_crep = 190;
 		else
-			crep = 147;
+			g_crep = 147;
 	}
 }
 
 void nouvp(int l, int &p) {
 	p = 0;
 	if (l == 1) {
-		if (bh1)
+		if (g_bh1)
 			p = 4;
-		if (bf1)
+		if (g_bf1)
 			p = 2;
-	} else if (((l == 2) && (bh2)) || ((l == 9) && (bh9)))
+	} else if (((l == 2) && (g_bh2)) || ((l == 9) && (g_bh9)))
 		p = 128;
 	else if (l == 4) {
-		if (bh4)
+		if (g_bh4)
 			p = 32;
-		if (bf4)
+		if (g_bf4)
 			p = 16;
-	} else if ((l == 5) && (bh5))
+	} else if ((l == 5) && (g_bh5))
 		p = 1;
-	else if ((l == 6) && (bh6))
+	else if ((l == 6) && (g_bh6))
 		p = 8;
-	else if ((l == 8) && (bh8))
+	else if ((l == 8) && (g_bh8))
 		p = 64;
-	else if (((l == 3) && (bt3)) || ((l == 7) && (bt7)))
+	else if (((l == 3) && (g_bt3)) || ((l == 7) && (g_bt7)))
 		p = 9;
 
 	if (p != 9)
@@ -969,19 +969,19 @@ void ecfren(int &p, int &haz, int cf, int l) {
 		person();
 	p = -500;
 	haz = 0;
-	if (((l == 1) && (! bh1) && (! bf1)) || ((l == 4) && (! bh4) && (! bf4)))
+	if (((l == 1) && (!g_bh1) && (!g_bf1)) || ((l == 4) && (!g_bh4) && (!g_bf4)))
 		cpl1(p);
-	if ((l == 2) && (! bh2) && (! bh9))
+	if ((l == 2) && (!g_bh2) && (!g_bh9))
 		cpl2(p);
-	if (((l == 3) && (! bt3)) || ((l == 7) && (! bt7)))
+	if (((l == 3) && (!g_bt3)) || ((l == 7) && (!g_bt7)))
 		cpl3(p);
-	if ((l == 5) && (! bh5))
+	if ((l == 5) && (!g_bh5))
 		cpl5(p);
-	if (((l == 6) && (! bh6)) || ((l == 8) && (! bh8)))
+	if (((l == 6) && (!g_bh6)) || ((l == 8) && (!g_bh8)))
 		cpl6(p);
-	if ((l == 9) && (! bh9) && (! bh2))
+	if ((l == 9) && (!g_bh9) && (!g_bh2))
 		p = 10;
-	if (((l == 2) && (bh9)) || ((l == 9) && (bh2)))
+	if (((l == 2) && (g_bh9)) || ((l == 9) && (g_bh2)))
 		p = -400;
 	if (p != -500) {
 		p = p + cf;
@@ -994,29 +994,29 @@ void becfren(int l) {
 		int haz = hazard(1, 2);
 		if (l == 1) {
 			if (haz == 1)
-				bh1 = true;
+				g_bh1 = true;
 			else
-				bf1 = true;
+				g_bf1 = true;
 		} else { // l == 4
 			if (haz == 1)
-				bh4 = true;
+				g_bh4 = true;
 			else
-				bf4 = true;
+				g_bf4 = true;
 		}
 	} else if (l == 2)
-		bh2 = true;
+		g_bh2 = true;
 	else if (l == 3)
-		bt3 = true;
+		g_bt3 = true;
 	else if (l == 5)
-		bh5 = true;
+		g_bh5 = true;
 	else if (l == 6)
-		bh6 = true;
+		g_bh6 = true;
 	else if (l == 7)
-		bt7 = true;
+		g_bt7 = true;
 	else if (l == 8)
-		bh8 = true;
+		g_bh8 = true;
 	else if (l == 9)
-		bh9 = true;
+		g_bh9 = true;
 }
 
 /* NIVEAU 10 */
@@ -1077,16 +1077,16 @@ void inzon() {
 }
 
 void dprog() {
-	li = 21;
-	jh = 0;
+	g_li = 21;
+	g_jh = 0;
 	if (!g_s.ipre)
-		blo = true;
+		g_blo = true;
 	g_t = ti1;
-	mh = readclock();
+	g_mh = readclock();
 }
 
 void pl1(int cf) {
-	if (((li == 1) && (! bh1) && (! bf1)) || ((li == 4) && (! bh4) && (! bf4))) {
+	if (((g_li == 1) && (!g_bh1) && (!g_bf1)) || ((g_li == 4) && (!g_bh4) && (!g_bf4))) {
 		int p, haz;
 		cpl1(p);
 		phaz(haz, p, cf);
@@ -1094,12 +1094,12 @@ void pl1(int cf) {
 		if (haz > p)
 			person();
 		else
-			quelq1(li);
+			quelq1(g_li);
 	}
 }
 
 void pl2(int cf) {
-	if (! bh2) {
+	if (!g_bh2) {
 		int p, haz;
 		cpl2(p);
 		phaz(haz, p, cf);
@@ -1112,7 +1112,7 @@ void pl2(int cf) {
 }
 
 void pl5(int cf) {
-	if (! bh5) {
+	if (!g_bh5) {
 		int p, haz;
 		cpl5(p);
 		phaz(haz, p, cf);
@@ -1125,7 +1125,7 @@ void pl5(int cf) {
 }
 
 void pl6(int cf) {
-	if (((li == 6) && (! bh6)) || ((li == 8) && (! bh8))) {
+	if (((g_li == 6) && (!g_bh6)) || ((g_li == 8) && (!g_bh8))) {
 		int p, haz;
 		cpl6(p);
 		phaz(haz, p, cf);
@@ -1133,12 +1133,12 @@ void pl6(int cf) {
 		if (haz > p)
 			person();
 		else
-			quelq6(li);
+			quelq6(g_li);
 	}
 }
 
 void pl9(int cf) {
-	if (! bh9) {
+	if (!g_bh9) {
 		cf = -10;
 		int p, haz;
 		phaz(haz, p, cf);
@@ -1220,18 +1220,18 @@ void t11(int l11, int &a) {
 	int p, haz;
 
 	ecfren(p, haz, g_s.conf, l11);
-	li = l11;
+	g_li = l11;
 	if ((l11 > 0) && (l11 < 10)) {
 		if (p != -500) {
 			if (haz > p) {
 				person();
 				a = 0;
 			} else {
-				becfren(li);
-				nouvp(li, a);
+				becfren(g_li);
+				nouvp(g_li, a);
 			}
 		} else
-			nouvp(li, a);
+			nouvp(g_li, a);
 	}
 
 	if (l11 > 9) {
@@ -1291,7 +1291,7 @@ void cavegre() {
 }
 
 void writetp(Common::String s, int t) {
-	if (res == 2)
+	if (g_res == 2)
 		g_vm->_screenSurface.writeg(s, t);
 	else
 		g_vm->_screenSurface.writeg(copy(s, 1, 25), t);
@@ -1308,13 +1308,13 @@ void messint(int nu) {
 }
 
 void aniof(int ouf, int num) {
-	if ((caff == 7) && ((num == 4) || (num == 5)))
+	if ((g_caff == 7) && ((num == 4) || (num == 5)))
 		return;
 	
-	if ((caff == 10) && (num == 7))
+	if ((g_caff == 10) && (num == 7))
 		num = 6;
 
-	if (caff == 12) {
+	if (g_caff == 12) {
 		if (num == 3)
 			num = 4;
 		else if (num == 4)
@@ -1335,9 +1335,9 @@ void musique(int so) {
 	if (so == 0) {
 		/* musik(0) */
 		;
-	} else if ((prebru == 0) && (!g_s.ipre)) {
+	} else if ((g_prebru == 0) && (!g_s.ipre)) {
 		parole(10, 1, 1);
-		++prebru;
+		++g_prebru;
 	} else {
 		bool i = false;
 		if ((g_s.mlieu == 19) || (g_s.mlieu == 21) || (g_s.mlieu == 22)) {
@@ -1378,42 +1378,42 @@ void musique(int so) {
 /* NIVEAU 9 */
 void dessin(int ad) {
 	if (ad != 0)
-		dessine(ades, ((ad % 160) * 2), (ad / 160));
+		dessine(g_ades, ((ad % 160) * 2), (ad / 160));
 	else {
 		clsf1();
-		if (caff > 99) {
-			dessine(ades, 60, 33);
+		if (g_caff > 99) {
+			dessine(g_ades, 60, 33);
 			g_vm->_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
-		} else if (caff > 69) {
-			dessine(ades, 112, 48);           // Heads
+		} else if (g_caff > 69) {
+			dessine(g_ades, 112, 48);           // Heads
 			g_vm->_screenSurface.drawBox(222, 47, 155, 91, 15);
 		} else {
-			dessine(ades, 0, 12);
+			dessine(g_ades, 0, 12);
 			ecrf1();
-			if ((caff < 30) || (caff > 32)) {
+			if ((g_caff < 30) || (g_caff > 32)) {
 				for (int cx = 1; cx <= 6; ++cx) {
 					if (ord(touv[cx]) != 0)
 						aniof(1, ord(touv[cx]));
 				}
 
-				if (caff == 13) {
+				if (g_caff == 13) {
 					if (g_s.iboul == 141)
 						aniof(1, 7);
 
 					if (g_s.ibag == 159)
 						aniof(1, 6);
 				}
-				if ((caff == 14) && (g_s.icave == 151))
+				if ((g_caff == 14) && (g_s.icave == 151))
 					aniof(1, 2);
 
-				if ((caff == 17) && (g_s.ivier == 143))
+				if ((g_caff == 17) && (g_s.ivier == 143))
 					aniof(1, 1);
 
-				if ((caff == 24) && (g_s.ipuit != 0))
+				if ((g_caff == 24) && (g_s.ipuit != 0))
 					aniof(1, 1);
 			}
 			
-			if (caff < 26)
+			if (g_caff < 26)
 				musique(1);
 		}
 	}
