@@ -174,7 +174,7 @@ void music() {
 	bool fin;
 
 	/* debug('o3 music'); */
-	if (_soundOff)
+	if (g_soundOff)
 		return;
 
 	rech_cfiec = true;
@@ -244,8 +244,8 @@ void suite() {
 	caff = 51;
 	taffich();
 	teskbd();
-	if (_newGraphicalDevice != _currGraphicalDevice)
-		_currGraphicalDevice = _newGraphicalDevice;
+	if (g_newGraphicalDevice != g_currGraphicalDevice)
+		g_currGraphicalDevice = g_newGraphicalDevice;
 	hirs();
 	dessine(ades, 0, 0);
 

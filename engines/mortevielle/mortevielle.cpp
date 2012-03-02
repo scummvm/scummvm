@@ -121,7 +121,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Set the screen mode
-	_currGraphicalDevice = MODE_EGA;
+	g_currGraphicalDevice = MODE_EGA;
 	res = 2;
 
 	_txxFileFl = false;
@@ -142,8 +142,8 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	// Setup the mouse cursor
 	initMouse();
 
-	_currGraphicalDevice = MODE_EGA;
-	_newGraphicalDevice = _currGraphicalDevice;
+	g_currGraphicalDevice = MODE_EGA;
+	g_newGraphicalDevice = g_currGraphicalDevice;
 	zuul = false;
 	tesok = false;
 	charpal();
@@ -155,15 +155,15 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	initMouse();
 
 	init_lieu();
-	_soundOff = false;
+	g_soundOff = false;
 	f2_all = false;
 
 	teskbd();
 	dialpre();
-	_newGraphicalDevice = _currGraphicalDevice;
+	g_newGraphicalDevice = g_currGraphicalDevice;
 	teskbd();
-	if (_newGraphicalDevice != _currGraphicalDevice)
-		_currGraphicalDevice = _newGraphicalDevice;
+	if (g_newGraphicalDevice != g_currGraphicalDevice)
+		g_currGraphicalDevice = g_newGraphicalDevice;
 	hirs();
 	ades = 0x7000;
 
@@ -558,7 +558,7 @@ void MortevielleEngine::handleAction() {
 		g_vm->_menu.drawMenu();
 		imen = true;
 		temps = 0;
-		key = 0;
+		g_key = 0;
 		funct = false;
 		inkey = '.';
 
@@ -578,24 +578,24 @@ void MortevielleEngine::handleAction() {
 			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
-		if (choisi && (msg[3] == MENU_SAVE)) {
-			Common::String saveName = Common::String::format("Savegame #%d", msg[4] & 7);
-			g_vm->_savegameManager.saveGame(msg[4] & 7, saveName);
+		if (choisi && (g_msg[3] == MENU_SAVE)) {
+			Common::String saveName = Common::String::format("Savegame #%d", g_msg[4] & 7);
+			g_vm->_savegameManager.saveGame(g_msg[4] & 7, saveName);
 		}
-		if (choisi && (msg[3] == MENU_LOAD))
-			g_vm->_savegameManager.loadGame((msg[4] & 7) - 1);
+		if (choisi && (g_msg[3] == MENU_LOAD))
+			g_vm->_savegameManager.loadGame((g_msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = Alert::show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
-			if ((mnumo != OPCODE_NONE) && ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SELF))) {
-				msg[4] = mnumo;
+			if ((mnumo != OPCODE_NONE) && ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))) {
+				g_msg[4] = mnumo;
 				ecr3(g_vm->getEngineString(S_IDEM));
 			} else
 				return;
 		} else if (inkey == '\104') {
-			if ((g_x != 0) && (y != 0))
-				num = 9999;
+			if ((g_x != 0) && (g_y != 0))
+				g_num = 9999;
 			return;
 		}
 	}
@@ -607,22 +607,22 @@ void MortevielleEngine::handleAction() {
 			return;
 		if (temps > lim) {
 			repon(2, 141);
-			if (num == 9999)
-				num = 0;
+			if (g_num == 9999)
+				g_num = 0;
 		} else {
-			mnumo = msg[3];
-			if ((msg[3] == MENU_ACTION) || (msg[3] == MENU_SELF))
-				mnumo = msg[4];
+			mnumo = g_msg[3];
+			if ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))
+				mnumo = g_msg[4];
 			if (! anyone) {
 				if ((fouil) || (obpart)) {
 					if (y_s < 12)
 						return;
 
-					if ((msg[4] == OPCODE_SOUND) || (msg[4] == OPCODE_LIFT)) {
+					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {
 						oo = true;
-						if ((msg[4] == OPCODE_LIFT) || (obpart)) {
+						if ((g_msg[4] == OPCODE_LIFT) || (obpart)) {
 							finfouil();
-							caff = s.mlieu;
+							caff = g_s.mlieu;
 							crep = 998;
 						} else
 							tsuiv();
@@ -640,7 +640,7 @@ void MortevielleEngine::handleAction() {
 						okdes = false;
 						dessin(0);
 					}
-					if ((! syn) || (col))
+					if ((! syn) || (g_col))
 						repon(2, crep);
 				}
 			} while (syn);

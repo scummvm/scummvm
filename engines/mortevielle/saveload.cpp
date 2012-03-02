@@ -85,7 +85,7 @@ void SavegameManager::takesav(int n) {
 	Common::File f;
 	if (stream == NULL) {
 		if (!f.open(filename))
-			error("Unable to open save file '%s'", filename);
+			error("Unable to open save file '%s'", filename.c_str());
 
 		stream = f.readStream(f.size());
 		f.close();
@@ -107,7 +107,7 @@ void SavegameManager::takesav(int n) {
 	Common::Serializer sz(stream, NULL);
 	sync_save(sz);
 
-	s = s1;
+	g_s = s1;
 	for (i = 0; i <= 389; ++i)
 		tabdon[i + acha] = bufcha[i];
 
@@ -143,7 +143,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	
 	for (i = 0; i <= 389; ++i)
 		bufcha[i] = tabdon[i + acha];
-	s1 = s;
+	s1 = g_s;
 	if (s1.mlieu == 26)
 		s1.mlieu = 15;
 	

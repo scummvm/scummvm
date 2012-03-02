@@ -51,8 +51,8 @@ void tinke() {
 
 	anyone = false;
 	calch(j, h, m);
-	if (j != _day) {
-		_day = j;
+	if (j != g_day) {
+		g_day = j;
 		cx = 0;
 		do {
 			++cx;
@@ -61,13 +61,13 @@ void tinke() {
 			nbrep[cx] = 0;
 		} while (cx != 8);
 	}
-	if ((h > _hour) || ((h == 0) && (_hour == 23))) {
-		_hour = h;
-		_minute = 0;
+	if ((h > g_hour) || ((h == 0) && (g_hour == 23))) {
+		g_hour = h;
+		g_minute = 0;
 		drawClock();
 		cf = 0;
 		for (cx = 1; cx <= 10; ++cx) {
-			if (s.pourc[cx] == '*')
+			if (g_s.pourc[cx] == '*')
 				++cf;
 		}
 
@@ -89,8 +89,8 @@ void tinke() {
 		_hintPctMessage += d6;
 		_hintPctMessage += d4;
 	}
-	if (m > _minute) {
-		_minute = 30;
+	if (m > g_minute) {
+		g_minute = 30;
 		drawClock();
 	}
 	if (y_s < 12)
@@ -98,21 +98,21 @@ void tinke() {
 
 	if (! blo) {
 		if ((h == 12) || ((h > 18) && (h < 21)) || ((h >= 0) && (h < 7)))
-			t = ti2;
+			g_t = ti2;
 		else
-			t = ti1;
-		cf = s.conf;
+			g_t = ti1;
+		cf = g_s.conf;
 		if ((cf > 33) && (cf < 66))
-			t -= (t / 3);
+			g_t -= (g_t / 3);
 
 		if (cf > 65)
-			t -= ((t / 3) * 2);
+			g_t -= ((g_t / 3) * 2);
 
 		int nh = readclock();
-		if ((nh - mh) > t) {
+		if ((nh - mh) > g_t) {
 			bool activeMenu = g_vm->_menu._menuActive;
 			g_vm->_menu.eraseMenu();
-			jh += ((nh - mh) / t);
+			jh += ((nh - mh) / g_t);
 			mh = nh;
 			switch (li) {
 			case 1:
@@ -157,7 +157,7 @@ void tinke() {
 				mpers = ipers;
 
 			if ((mpers == 0) && (ipers > 0)) {
-				if ((s.mlieu == 13) || (s.mlieu == 14)) {
+				if ((g_s.mlieu == 13) || (g_s.mlieu == 14)) {
 					cavegre();
 				} else if (ipers == 10) {
 					ipers = 0;
@@ -186,7 +186,7 @@ void tinke() {
 		nouvp(li, cx);
 		brt = false;
 		hdb = 0;
-		if ((s.mlieu > 0) && (s.mlieu < 10))
+		if ((g_s.mlieu > 0) && (g_s.mlieu < 10))
 			anyone = true;
 	}
 }
@@ -195,9 +195,9 @@ void fenat(char ans) {
 	int coul;
 
 	hideMouse();
-	if (_currGraphicalDevice == MODE_CGA)
+	if (g_currGraphicalDevice == MODE_CGA)
 		coul = 2;
-	else if (_currGraphicalDevice == MODE_HERCULES)
+	else if (g_currGraphicalDevice == MODE_HERCULES)
 		coul = 1;
 	else
 		coul = 12;
@@ -222,7 +222,7 @@ void tkey1(bool d) {
 	hideMouse();
 	fenat('K');
 	while (keypressed())
-		key = testou();
+		g_key = testou();
 
 	do {
 		if (d)
@@ -265,20 +265,18 @@ void tlu(int af, int ob) {
 	repon(2, 999);
 	tkey1(true);
 	caff = af;
-	msg[3] = OPCODE_NONE;
+	g_msg[3] = OPCODE_NONE;
 	crep = 998;
 }
 
 void affrep() {
-	caff = s.mlieu;
-	crep = s.mlieu;
+	caff = g_s.mlieu;
+	crep = g_s.mlieu;
 }
 
 void mfouen() {
-	int cx;
-
-	tmlieu(s.mlieu);
-	for (cx = 1; cx <= 11; ++cx)
+	tmlieu(g_s.mlieu);
+	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.enableMenuItem(_actionMenu[cx]);
 
 	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getEngineString(S_PROBE));
@@ -304,18 +302,18 @@ void tperd() {
 	repon(9, crep);
 	clsf2();
 	clsf3();
-	col = false;
+	g_col = false;
 	syn = false;
 	okdes = false;
 }
 
 void tsort() {
 
-	if ((iouv > 0) && (s.mlieu != 0)) {
-		if (s.conf < 50)
-			s.conf += 2;
+	if ((iouv > 0) && (g_s.mlieu != 0)) {
+		if (g_s.conf < 50)
+			g_s.conf += 2;
 		else
-			s.conf += (s.conf / 10);
+			g_s.conf += (g_s.conf / 10);
 	}
 
 	for (int cx = 1; cx <= 7; ++cx)
@@ -323,7 +321,7 @@ void tsort() {
 	ment = 0;
 	iouv = 0;
 	mchai = 0;
-	debloc(s.mlieu);
+	debloc(g_s.mlieu);
 }
 
 void st4(int ob) {
@@ -361,14 +359,14 @@ void cherjer(int ob, bool &d) {
 
 	d = false;
 	for (cx = 1; cx <= 6; ++cx)
-		d = (d || (ord(s.sjer[cx]) == ob));
+		d = (d || (ord(g_s.sjer[cx]) == ob));
 
-	if (s.derobj == ob)
+	if (g_s.derobj == ob)
 		d = true;
 }
 
 void st1sama() {
-	s.mlieu = 10;
+	g_s.mlieu = 10;
 	affrep();
 }
 
@@ -378,9 +376,9 @@ void modinv() {
 
 	int cy = 0;
 	for (int cx = 1; cx <= 6; ++cx)
-		if (s.sjer[cx] != chr(0)) {
+		if (g_s.sjer[cx] != chr(0)) {
 			++cy;
-			r = (ord(s.sjer[cx]) + 400);
+			r = (ord(g_s.sjer[cx]) + 400);
 			nomp = deline(r - 501 + c_st41);
 			g_vm->_menu.menut(g_vm->_menu._inventoryMenu[cy], nomp);
 			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[cx]);
@@ -432,7 +430,7 @@ void mfoudi() {
 }
 
 void mennor() {
-	g_vm->_menu.menuUp(msg[3]);
+	g_vm->_menu.menuUp(g_msg[3]);
 }
 
 void premtet() {
@@ -449,7 +447,7 @@ void ajchai() {
 	} while ((cx <= 9) && (tabdon[cy + cx] != 0));
 
 	if (tabdon[cy + cx] == 0) {
-		int lderobj = s.derobj;
+		int lderobj = g_s.derobj;
 		tabdon[cy + cx] = lderobj;
 	} else
 		crep = 192;
@@ -459,10 +457,10 @@ void ajjer(int ob) {
 	int cx = 0;
 	do {
 		++cx;
-	} while ((cx <= 5) && (ord(s.sjer[cx]) != 0));
+	} while ((cx <= 5) && (ord(g_s.sjer[cx]) != 0));
 
-	if (ord(s.sjer[cx]) == 0) {
-		s.sjer[(cx)] = chr(ob);
+	if (ord(g_s.sjer[cx]) == 0) {
+		g_s.sjer[(cx)] = chr(ob);
 		modinv();
 	} else
 		crep = 139;
@@ -472,7 +470,7 @@ void t1sama() {    //Entering manor
 	int j, h, m;
 
 	calch(j, h, m);
-	if ((h < 5) && (s.mlieu > 18)) {
+	if ((h < 5) && (g_s.mlieu > 18)) {
 		bool d;
 		cherjer(137, d);
 		if (!d) {        //You don't have the keys, and it's late
@@ -480,7 +478,7 @@ void t1sama() {    //Entering manor
 			tperd();
 		} else
 			st1sama();
-	} else if (!s.ipre) {     //Is it your first time?
+	} else if (!g_s.ipre) {     //Is it your first time?
 		ipers = 255;
 		affper(ipers);
 		caff = 77;
@@ -496,21 +494,21 @@ void t1sama() {    //Entering manor
 		dessine_rouleau();
 		drawClock();
 		showMouse();
-		s.mlieu = 0;
+		g_s.mlieu = 0;
 		affrep();
 		t5(10);
 		if (! blo)
 			t11(0, m);
 		ipers = 0;
 		mpers = 0;
-		s.ipre = true;
+		g_s.ipre = true;
 		/*chech;*/
 	} else
 		st1sama();
 }
 
 void t1vier() {
-	s.mlieu = 17;
+	g_s.mlieu = 17;
 	affrep();
 }
 
@@ -521,19 +519,19 @@ void t1neig() {
 		tperd();
 	} else {
 		okdes = true;
-		s.mlieu = 19;
+		g_s.mlieu = 19;
 		affrep();
 	}
 }
 
 void t1deva() {
 	inei = 0;
-	s.mlieu = 21;
+	g_s.mlieu = 21;
 	affrep();
 }
 
 void t1derr() {
-	s.mlieu = 22;
+	g_s.mlieu = 22;
 	affrep();
 }
 
@@ -565,21 +563,21 @@ L1:
 			parole(4, 4, 1);
 
 		if (iouv == 0)
-			s.conf += 2;
-		else if (s.conf < 50)
-			s.conf += 4;
+			g_s.conf += 2;
+		else if (g_s.conf < 50)
+			g_s.conf += 4;
 		else
-			s.conf += 3 * (s.conf / 10);
+			g_s.conf += 3 * (g_s.conf / 10);
 		tsort();
 		tmlieu(15);
 		int cx;
 		tip(ipers, cx);
 		caff = 69 + cx;
 		crep = caff;
-		msg[3] = MENU_DISCUSS;
-		msg[4] = g_vm->_menu._discussMenu[cx];
+		g_msg[3] = MENU_DISCUSS;
+		g_msg[4] = g_vm->_menu._discussMenu[cx];
 		syn = true;
-		col = true;
+		g_col = true;
 	} else {
 		int haz = hazard(1, 3);
 		if (haz == 2) {
@@ -618,7 +616,7 @@ void tsuiv() {
 		caff = tbcl;
 		crep = caff + 400;
 		if (ipers != 0)
-			s.conf = s.conf + 2;
+			g_s.conf = g_s.conf + 2;
 	} else {
 		affrep();
 		finfouil();
@@ -631,7 +629,7 @@ void tfleche() {
 	bool qust;
 	char touch;
 
-	if (num == 9999)
+	if (g_num == 9999)
 		return;
 
 	fenat(chr(152));
@@ -650,14 +648,14 @@ void tfleche() {
 
 		if (qust && (touch == '\103'))
 			Alert::show(_hintPctMessage, 1);
-	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (y != 0)) || (anyone) || (rect)));
+	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (anyone) || (rect)));
 
 	if (touch == '\73')
 		iesc = true;
 
 	if (rect) {
 		g_x = x_s;
-		y = y_s;
+		g_y = y_s;
 	}
 }
 
@@ -666,7 +664,7 @@ void tcoord(int sx) {
 	int ib;
 
 
-	num = 0;
+	g_num = 0;
 	crep = 999;
 	int a = 0;
 	int atdon = amzon + 3;
@@ -703,10 +701,10 @@ void tcoord(int sx) {
 		ix = tabdon[a + cb] * res;
 		iy = tabdon[(a + cb + 1)];
 		++cy;
-	} while (!(((g_x >= sx) && (g_x <= ix) && (y >= sy) && (y <= iy)) || (cy > ib)));
+	} while (!(((g_x >= sx) && (g_x <= ix) && (g_y >= sy) && (g_y <= iy)) || (cy > ib)));
 
-	if ((g_x >= sx) && (g_x <= ix) && (y >= sy) && (y <= iy)) {
-		num = cy - 1;
+	if ((g_x >= sx) && (g_x <= ix) && (g_y >= sy) && (g_y <= iy)) {
+		g_num = cy - 1;
 		return;
 	}
 
@@ -740,7 +738,7 @@ void treg(int ob) {
 	int mdes = caff;
 	caff = ob;
 
-	if (((caff > 29) && (caff < 33)) || (caff == 144) || (caff == 147) || (caff == 149) || (msg[4] == OPCODE_SLOOK)) {
+	if (((caff > 29) && (caff < 33)) || (caff == 144) || (caff == 147) || (caff == 149) || (g_msg[4] == OPCODE_SLOOK)) {
 		afdes(0);
 		if ((caff > 29) && (caff < 33))
 			repon(2, caff);
@@ -748,7 +746,7 @@ void treg(int ob) {
 			repon(2, (caff + 400));
 		tkey1(true);
 		caff = mdes;
-		msg[3] = 0;
+		g_msg[3] = 0;
 		crep = 998;
 	} else {
 		obpart = true;
@@ -759,22 +757,22 @@ void treg(int ob) {
 
 void avpoing(int &ob) {
 	crep = 999;
-	if (s.derobj != 0)
-		ajjer(s.derobj);
+	if (g_s.derobj != 0)
+		ajjer(g_s.derobj);
 
 	if (crep != 139) {
 		modobj(ob + 400);
-		s.derobj = ob;
+		g_s.derobj = ob;
 		ob = 0;
 	}
 }
 
 void rechai(int &ch) {
-	int cx = s.mlieu;
+	int cx = g_s.mlieu;
 
-	if (s.mlieu == 16)
+	if (g_s.mlieu == 16)
 		cx = 14;
-	ch = tabdon[achai + (cx * 7) + num - 1];
+	ch = tabdon[achai + (cx * 7) + g_num - 1];
 }
 
 void t23coul(int &l) {
@@ -789,7 +787,7 @@ void t23coul(int &l) {
 }
 
 void maivid() {
-	s.derobj = 0;
+	g_s.derobj = 0;
 	modobj(500);
 }
 

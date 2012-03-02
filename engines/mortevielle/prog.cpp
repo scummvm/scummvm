@@ -45,7 +45,7 @@ namespace Mortevielle {
  */
 void changeGraphicalDevice(int newDevice) {
 	hideMouse();
-	_currGraphicalDevice = newDevice;
+	g_currGraphicalDevice = newDevice;
 	hirs();
 	initMouse();
 	showMouse();
@@ -58,7 +58,7 @@ void changeGraphicalDevice(int newDevice) {
 		person();
 	clsf2();
 	clsf3();
-	_maff = 68;
+	g_maff = 68;
 	afdes(0);
 	repon(2, crep);
 	g_vm->_menu.displayMenu();
@@ -82,21 +82,21 @@ void MortevielleEngine::gameLoaded() {
 	test[0] = false;
 	test[1] = false;
 	g[0] = '\040';
-	col = false;
+	g_col = false;
 	tesok = true;
 	test[2] = false;
 	g[7] = g[0];
 	g[2] = 'A';
 	cache = false;
 	brt = false;
-	_maff = 68;
+	g_maff = 68;
 	g[5] = 'E';
 	mnumo = 0;
 	prebru = 0;
 	g[4] = 'T';
 	g_x = 0;
-	y = 0;
-	num = 0;
+	g_y = 0;
+	g_num = 0;
 	hdb = 0;
 	hfb = 0;
 	cs = 0;
@@ -133,10 +133,10 @@ void MortevielleEngine::gameLoaded() {
 	repon(2, crep);
 	clsf3();
 	_endGame = false;
-	tmlieu(s.mlieu);
+	tmlieu(g_s.mlieu);
 	modinv();
-	if (s.derobj != 0)
-		modobj2(s.derobj + 400, test[1], test[2]);
+	if (g_s.derobj != 0)
+		modobj2(g_s.derobj + 400, test[1], test[2]);
 	else
 		tesok = test[1] || test[2];
 	showMouse();
@@ -153,82 +153,82 @@ void tmaj3() {
 		m = 1;
 	h += j * 24;
 	m += h * 2;
-	s.heure = chr(m);
+	g_s.heure = chr(m);
 }
 
 void tsitu() {
 	int h, j, m;
 
-	if (! col)
+	if (!g_col)
 		clsf2();
 	syn = false;
 	iesc = false;
 	if (!anyone) {
 		if (brt)
-			if ((msg[3] == MENU_MOVE) || (msg[4] == OPCODE_LEAVE) || (msg[4] == OPCODE_SLEEP) || (msg[4] == OPCODE_EAT)) {
+			if ((g_msg[3] == MENU_MOVE) || (g_msg[4] == OPCODE_LEAVE) || (g_msg[4] == OPCODE_SLEEP) || (g_msg[4] == OPCODE_EAT)) {
 				ctrm = 4;
 				mennor();
 				return;
 			}
-		if (msg[3] == MENU_MOVE)
+		if (g_msg[3] == MENU_MOVE)
 			fctMove();
-		if (msg[3] == MENU_DISCUSS)
+		if (g_msg[3] == MENU_DISCUSS)
 			fctDiscuss();
-		if (msg[3] == MENU_INVENTORY)
+		if (g_msg[3] == MENU_INVENTORY)
 			fctInventoryTake();
-		if (msg[4] == OPCODE_ATTACH)
+		if (g_msg[4] == OPCODE_ATTACH)
 			fctAttach();
-		if (msg[4] == OPCODE_WAIT)
+		if (g_msg[4] == OPCODE_WAIT)
 			fctWait();
-		if (msg[4] == OPCODE_FORCE)
+		if (g_msg[4] == OPCODE_FORCE)
 			fctForce();
-		if (msg[4] == OPCODE_SLEEP)
+		if (g_msg[4] == OPCODE_SLEEP)
 			fctSleep();
-		if (msg[4] == OPCODE_LISTEN)
+		if (g_msg[4] == OPCODE_LISTEN)
 			fctListen();
-		if (msg[4] == OPCODE_ENTER)
+		if (g_msg[4] == OPCODE_ENTER)
 			fctEnter();
-		if (msg[4] == OPCODE_CLOSE)
+		if (g_msg[4] == OPCODE_CLOSE)
 			fctClose();
-		if (msg[4] == OPCODE_SEARCH)
+		if (g_msg[4] == OPCODE_SEARCH)
 			fctSearch();
-		if (msg[4] == OPCODE_KNOCK)
+		if (g_msg[4] == OPCODE_KNOCK)
 			fctKnock();
-		if (msg[4] == OPCODE_SCRATCH)
+		if (g_msg[4] == OPCODE_SCRATCH)
 			fctScratch();
-		if (msg[4] == OPCODE_READ)
+		if (g_msg[4] == OPCODE_READ)
 			fctRead();
-		if (msg[4] == OPCODE_EAT)
+		if (g_msg[4] == OPCODE_EAT)
 			fctEat();
-		if (msg[4] == OPCODE_PLACE)
+		if (g_msg[4] == OPCODE_PLACE)
 			fctPlace();
-		if (msg[4] == OPCODE_OPEN)
+		if (g_msg[4] == OPCODE_OPEN)
 			fctOpen();
-		if (msg[4] == OPCODE_TAKE)
+		if (g_msg[4] == OPCODE_TAKE)
 			fctTake();
-		if (msg[4] == OPCODE_LOOK)
+		if (g_msg[4] == OPCODE_LOOK)
 			fctLook();
-		if (msg[4] == OPCODE_SMELL)
+		if (g_msg[4] == OPCODE_SMELL)
 			fctSmell();
-		if (msg[4] == OPCODE_SOUND)
+		if (g_msg[4] == OPCODE_SOUND)
 			fctSound();
-		if (msg[4] == OPCODE_LEAVE)
+		if (g_msg[4] == OPCODE_LEAVE)
 			fctLeave();
-		if (msg[4] == OPCODE_LIFT)
+		if (g_msg[4] == OPCODE_LIFT)
 			fctLift();
-		if (msg[4] == OPCODE_TURN)
+		if (g_msg[4] == OPCODE_TURN)
 			fctTurn();
-		if (msg[4] == OPCODE_SSEARCH)
+		if (g_msg[4] == OPCODE_SSEARCH)
 			fctSelfSearch();
-		if (msg[4] == OPCODE_SREAD)
+		if (g_msg[4] == OPCODE_SREAD)
 			fctSelfRead();
-		if (msg[4] == OPCODE_SPUT)
+		if (g_msg[4] == OPCODE_SPUT)
 			fctSelfPut();
-		if (msg[4] == OPCODE_SLOOK)
+		if (g_msg[4] == OPCODE_SLOOK)
 			fctSelftLook();
 		cache = false;
 
-		if (msg[4] == OPCODE_SHIDE)
+		if (g_msg[4] == OPCODE_SHIDE)
 			fctSelfHide();
 	} else {
 		if (anyone) {
@@ -239,16 +239,16 @@ void tsitu() {
 		}
 	}
 	calch(j, h, m);
-	if ((((h == 12) || (h == 13) || (h == 19)) && (s.mlieu != 10)) ||
-	        ((h > 0) && (h < 6) && (s.mlieu != 0)))
-		s.conf = s.conf + 1;
-	if (((s.mlieu < 16) || (s.mlieu > 19)) && (s.mlieu != 23)
-	        && (s.mlieu != 0) && (s.derobj != 152) && (!g_vm->_loseGame)) {
-		if ((s.conf > 99) && (h > 8) && (h < 16)) {
+	if ((((h == 12) || (h == 13) || (h == 19)) && (g_s.mlieu != 10)) ||
+	        ((h > 0) && (h < 6) && (g_s.mlieu != 0)))
+		++g_s.conf;
+	if (((g_s.mlieu < 16) || (g_s.mlieu > 19)) && (g_s.mlieu != 23)
+	        && (g_s.mlieu != 0) && (g_s.derobj != 152) && (!g_vm->_loseGame)) {
+		if ((g_s.conf > 99) && (h > 8) && (h < 16)) {
 			crep = 1501;
 			tperd();
 		}
-		if ((s.conf > 99) && (h > 0) && (h < 9)) {
+		if ((g_s.conf > 99) && (h > 0) && (h < 9)) {
 			crep = 1508;
 			tperd();
 		}
@@ -263,16 +263,16 @@ void tsitu() {
 /* NIVEAU 1 */
 
 void theure() {
-	vj = ord(s.heure);
+	vj = ord(g_s.heure);
 	vh = vj % 48;
 	vj /= 48;
 	vm = vh % 2;
 	vh /= 2;
-	_hour = vh;
+	g_hour = vh;
 	if (vm == 1)
-		_minute = 30;
+		g_minute = 30;
 	else
-		_minute = 0;
+		g_minute = 0;
 }
 
 } // End of namespace Mortevielle
