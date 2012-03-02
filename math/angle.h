@@ -52,6 +52,13 @@ public:
 	 * \param low The lower bound of the range, in degrees.
 	 */
 	Angle &normalize(float low);
+	
+	/**
+	 * Clamp the angle to range [-mag, mag]
+	 *
+	 * \param mag The maximum distance from 0, in degrees.
+	 */
+	Angle &clampDegrees(float mag);
 
 	void setDegrees(float degrees);
 	void setRadians(float radians);

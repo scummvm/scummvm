@@ -42,6 +42,16 @@ Angle &Angle::normalize(float low) {
 	return *this;
 }
 
+Angle &Angle::clampDegrees(float mag) {
+    _degrees = getDegrees(-180.f);
+    if (_degrees >= mag)
+		setDegrees(mag);
+	if (_degrees <= -mag)
+		setDegrees(-mag);
+    
+    return *this;
+}
+
 void Angle::setDegrees(float degrees) {
 	_degrees = degrees;
 }

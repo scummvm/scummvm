@@ -54,30 +54,6 @@ void Head::setMaxAngles(float maxPitch, float maxYaw, float maxRoll) {
 	_maxYaw = maxYaw;
 }
 
-/**
- * Subtracts off extra multiples of the given angle in degrees, and returns 
- * the same angle represented in the [-180, 180] range.
- */
-static Math::Angle to180Range(Math::Angle angle)
-{
-	float deg = angle.getDegrees(-180.f);
-	angle.setDegrees(deg);
-	return angle;
-}
-	
-/**
- * Returns val clamped to range [-mag, mag]. 
- */
-static Math::Angle clampMagnitude(Math::Angle val, float mag)
-{
-	val = to180Range(val);
-	if (val.getDegrees() >= mag)
-		return mag;
-	if (val.getDegrees() <= -mag)
-		return -mag;
-	return val;
-}
-	
 void setCol(Math::Matrix4 &m, int col, const Math::Vector3d &vec)
 {
 	m.setValue(0, col, vec.x());
@@ -286,8 +262,8 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		extractEulerZXY(lookAtTM, y, pt, r);
 		
 		// Constrain the maximum head movement, as desired by the game LUA scripts.
-		y = clampMagnitude(y, _maxYaw);
-		pt = clampMagnitude(pt, _maxPitch);
+		y.clampDegrees(_maxYaw);
+		pt.clampDegrees(_maxPitch);
 		// NOTE: By default, the _head.maxRoll for Manny's head is constrained to 165 degrees, which 
 		// comes in from the orignal Lua data scripts. (also, maxYaw == 80, maxPitch == 28).
 		// The very small maxPitch angle, and a very large maxRoll angle causes problems when Manny
@@ -299,8 +275,8 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		//    right above the stairs, and Manny looks dead up.
 		// B) Year 3, when Manny and Meche are imprisoned in the vault. Walk inside the room where Meche
 		//    is in, to look straight up to the sprinklers.
-		r = clampMagnitude(r, 30);
-		//		r = clampMagnitude(r, _head.maxRoll); // For original, use this.
+		r.clampDegrees(30);
+		//		r.clampDegrees(_head.maxRoll); // For original, use this.
 		
 		// Also limit yaw, pitch and roll to make at most a movement as large as the given max step size during this frame.
 		// This will produce a slow head-turning animation instead of immediately snapping to the
