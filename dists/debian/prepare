@@ -4,7 +4,7 @@
 # calls "make deb".  It adds a changelog entry to the top of debian/changelog
 # so that the version number is correct.
 
-VERSION=`cat base/internal_version.h | grep RESIDUALVM_VERSION | cut -d\" -f2`-`date +%Y%m%d`
+VERSION=`cat base/internal_version.h | grep SCUMMVM_VERSION | cut -d\" -f2`-`date +%Y%m%d`
 USERNAME=`whoami`
 GECOS=`getent passwd $USERNAME | awk '-F[,:]' '{print $5}'`
 DOMAIN=`hostname --fqdn`
