@@ -78,7 +78,7 @@ int Alert::show(const Common::String &msg, int n) {
 			while ((chaine[i + 1] != '\174') && (chaine[i + 1] != '\135')) {
 				++i;
 				st = st + chaine[i];
-				if (res == 2)
+				if (g_res == 2)
 					cx -= 3;
 				else
 					cx -= 5;
@@ -95,12 +95,12 @@ int Alert::show(const Common::String &msg, int n) {
 		esp = (uint)(nbcol - caseNumb * 40) >> 1;
 	coldep = 320 - ((uint)nbcol >> 1) + ((uint)esp >> 1);
 	setButtonText(cas, coldep, caseNumb, &s[0], esp);
-	limit[1][1] = ((uint)(coldep) >> 1) * res;
+	limit[1][1] = ((uint)(coldep) >> 1) * g_res;
 	limit[1][2] = limit[1][1] + 40;
 	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * res;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * g_res;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
 	showMouse();
@@ -221,7 +221,7 @@ void Alert::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &li
 	}
 	++i;
 	choiceListStr = copy(inputStr, i, 30);
-	if (res == 2)
+	if (g_res == 2)
 		col *= 6;
 	else
 		col *= 10;
@@ -308,7 +308,7 @@ bool Ques::show() {
 		showMouse();
 		++indx;
 		int dialogHeight;
-		if (res == 1)
+		if (g_res == 1)
 			dialogHeight = 29;
 		else
 			dialogHeight = 23;
@@ -338,8 +338,8 @@ bool Ques::show() {
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
 			rectangle &with = coor[j];
 
-			with.x1 = 45 * res;
-			with.x2 = (maxLength * 3 + 55) * res;
+			with.x1 = 45 * g_res;
+			with.x2 = (maxLength * 3 + 55) * g_res;
 			with.y1 = 27 + j * 8;
 			with.y2 = 34 + j * 8;
 			with.enabled = true;
@@ -349,7 +349,7 @@ bool Ques::show() {
 			}
 		}
 		coor[lastOption - firstOption + 2].enabled = false;
-		if (res == 1)
+		if (g_res == 1)
 			rep = 10;
 		else
 			rep = 6;
@@ -360,7 +360,7 @@ bool Ques::show() {
 		warning("Expected answer: %d", correctAnswerArr[indx]);
 		do {
 			g_vm->setMouseClick(false);
-			tesok = false;
+			g_tesok = false;
 			bool flag;
 			moveMouse(flag, key);
 			CHECK_QUIT0;
@@ -400,7 +400,7 @@ bool Ques::show() {
 			warning("Skipping protection check: testprot()");
 			protectionCheck = true;
 			// tesok is set to true in testprot()
-			tesok = true;
+			g_tesok = true;
 		}
 	} while (indx != 10);
 
@@ -462,10 +462,10 @@ void f3f8::waitForF3F8(int &key) {
 }
 
 void f3f8::aff50(bool drawAni50Fl) {
-	caff = 50;
+	g_caff = 50;
 	g_maff = 0;
 	taffich();
-	dessine(ades, 63, 12);
+	dessine(g_ades, 63, 12);
 	if (drawAni50Fl)
 		ani50();
 	else
@@ -476,11 +476,11 @@ void f3f8::aff50(bool drawAni50Fl) {
 }
 
 void f3f8::ani50() {
-	crep = animof(1, 1);
-	pictout(adani, crep, 63, 12);
-	crep = animof(2, 1);
-	pictout(adani, crep, 63, 12);
-	f2_all = (res == 1);
+	g_crep = animof(1, 1);
+	pictout(adani, g_crep, 63, 12);
+	g_crep = animof(2, 1);
+	pictout(adani, g_crep, 63, 12);
+	g_f2_all = (g_res == 1);
 	repon(2, c_paroles + 143);
 }
 

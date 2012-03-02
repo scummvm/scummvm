@@ -34,7 +34,7 @@ namespace Mortevielle {
 
 void spfrac(int wor) {
 	c3.rep = (uint)wor >> 12;
-	if ((typlec == 0) && (c3.code != 9))
+	if ((g_typlec == 0) && (c3.code != 9))
 		if (((c3.code > 4) && (c3.val != 20) && (c3.rep != 3) && (c3.rep != 6) && (c3.rep != 9)) ||
 				((c3.code < 5) && ((c3.val != 19) && (c3.val != 22) && (c3.rep != 4) && (c3.rep != 9)))) {
 			++c3.rep;
@@ -47,7 +47,7 @@ void spfrac(int wor) {
 void charg_car() {
 	int wor, int_;
 
-	wor = swap(READ_LE_UINT16(&mem[adword + ptr_word]));
+	wor = swap(READ_LE_UINT16(&mem[adword + g_ptr_word]));
 	int_ = wor & 0x3f;
 
 	if ((int_ >= 0) && (int_ <= 13)) {
@@ -82,13 +82,13 @@ void charg_car() {
 	}
 
 	spfrac(wor);
-	ptr_word = ptr_word + 2;
+	g_ptr_word += 2;
 }
 
 
 void entroct(byte o) {
-	mem[adtroct * 16 + ptr_oct] = o;
-	++ptr_oct;
+	mem[adtroct * 16 + g_ptr_oct] = o;
+	++g_ptr_oct;
 }
 
 void veracf(byte b) {

@@ -101,7 +101,7 @@ void pictout(int seg, int dep, int x, int y) {
 		mem[0x7000 * 16 + 32] = 15;
 	}
 
-	if ((caff != 51) && (READ_LE_UINT16(&mem[0x7000 * 16 + 0x4138]) > 0x100))
+	if ((g_caff != 51) && (READ_LE_UINT16(&mem[0x7000 * 16 + 0x4138]) > 0x100))
 		WRITE_LE_UINT16(&mem[0x7000 * 16 + 0x4138], 0x100);
 
 	g_vm->_screenSurface.drawPicture(surface, x, y);

@@ -149,7 +149,7 @@ void chartex() {
  */
 void dialpre() {
 	/* debug('o3 dialpre'); */
-	crep = 998;
+	g_crep = 998;
 	int_m = true;
 }
 
@@ -177,7 +177,7 @@ void music() {
 	if (g_soundOff)
 		return;
 
-	rech_cfiec = true;
+	g_rech_cfiec = true;
 	
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
@@ -222,7 +222,7 @@ void charge_cfiec() {
 	f.read(&adcfiec[0], 822 * 128);
 	f.close();
 
-	rech_cfiec = false;
+	g_rech_cfiec = false;
 }
 
 
@@ -241,16 +241,16 @@ void charge_cfiph() {
 void suite() {
 	hirs();
 	repon(7, 2035);
-	caff = 51;
+	g_caff = 51;
 	taffich();
 	teskbd();
 	if (g_newGraphicalDevice != g_currGraphicalDevice)
 		g_currGraphicalDevice = g_newGraphicalDevice;
 	hirs();
-	dessine(ades, 0, 0);
+	dessine(g_ades, 0, 0);
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
-	g_vm->_screenSurface.putxy(104 + 72 * res, 185);
+	g_vm->_screenSurface.putxy(104 + 72 * g_res, 185);
 	g_vm->_screenSurface.writeg(cpr, 0);
 }
 

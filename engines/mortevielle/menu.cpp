@@ -48,7 +48,7 @@ void Menu::menut(int no, Common::String name) {
 	byte l = lo(no);
 	Common::String s = name;
 
-	if (! tesok)
+	if (!g_tesok)
 		g_vm->quitGame();
 
 
@@ -153,7 +153,7 @@ void Menu::displayMenu() {
 	hideMouse();
 	
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
-	col = 28 * res;
+	col = 28 * g_res;
 	if (g_currGraphicalDevice == MODE_CGA)
 		color = 1;
 	else
@@ -182,7 +182,7 @@ void Menu::displayMenu() {
 			} while (k != 3);
 			++y;
 		} while (y != 9);
-		col += 48 * res;
+		col += 48 * g_res;
 	} while (num_letr != 6);
 	showMouse();
 }
@@ -193,23 +193,23 @@ void Menu::displayMenu() {
 void Menu::drawMenu() {
 	displayMenu();
 	_menuActive = true;
-	msg4 = OPCODE_NONE;
-	msg3 = OPCODE_NONE;
-	choisi = false;
+	g_msg4 = OPCODE_NONE;
+	g_msg3 = OPCODE_NONE;
+	g_choisi = false;
 	g_vm->setMouseClick(false);
-	test0 = false;
+	g_test0 = false;
 }
 
 void Menu::invers(int ix) {
 	Common::String s;
 
-	if (msg4 == OPCODE_NONE)
+	if (g_msg4 == OPCODE_NONE)
 		return;
 
-	int menuIndex = lo(msg4);
+	int menuIndex = lo(g_msg4);
 
-	g_vm->_screenSurface.putxy(_menuConstants[msg3 - 1][0] << 3, (menuIndex + 1) << 3);
-	switch (msg3) {
+	g_vm->_screenSurface.putxy(_menuConstants[g_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
+	switch (g_msg3) {
 	case 1:
 		s = _inventoryStringArray[menuIndex];
 		break;
@@ -248,31 +248,31 @@ void Menu::invers(int ix) {
 	if ((s[0] != '*') && (s[0] != '<'))
 		g_vm->_screenSurface.writeg(s, ix);
 	else
-		msg4 = OPCODE_NONE;
+		g_msg4 = OPCODE_NONE;
 }
 
 void Menu::util(int x, int y) {
 
-	int ymx = (_menuConstants[msg3 - 1][3] << 3) + 16;
-	int dxcar = _menuConstants[msg3 - 1][2];
-	int xmn = (_menuConstants[msg3 - 1][0] << 2) * res;
+	int ymx = (_menuConstants[g_msg3 - 1][3] << 3) + 16;
+	int dxcar = _menuConstants[g_msg3 - 1][2];
+	int xmn = (_menuConstants[g_msg3 - 1][0] << 2) * g_res;
 
 	int ix;
-	if (res == 1)
+	if (g_res == 1)
 		ix = 5;
 	else
 		ix = 3;
-	int xmx = dxcar * ix * res + xmn + 2;
+	int xmx = dxcar * ix * g_res + xmn + 2;
 	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
-		ix = (((uint)y >> 3) - 1) + (msg3 << 8);
-		if (ix != msg4) {
+		ix = (((uint)y >> 3) - 1) + (g_msg3 << 8);
+		if (ix != g_msg4) {
 			invers(1);
-			msg4 = ix;
+			g_msg4 = ix;
 			invers(0);
 		}
-	} else if (msg4 != OPCODE_NONE) {
+	} else if (g_msg4 != OPCODE_NONE) {
 		invers(1);
-		msg4 = OPCODE_NONE;
+		g_msg4 = OPCODE_NONE;
 	}
 }
 
@@ -294,7 +294,7 @@ void Menu::menuDown(int ii) {
 	hideMouse();
 	sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
-	if (res == 1)
+	if (g_res == 1)
 		cx = 10;
 	else
 		cx = 6;
@@ -352,7 +352,7 @@ void Menu::menuDown(int ii) {
 		}
 		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
 	} while (cx != nb_lig);
-	test0 = true;
+	g_test0 = true;
 	showMouse();
 }
 
@@ -361,7 +361,7 @@ void Menu::menuDown(int ii) {
  */
 void Menu::menuUp(int xx) {
 	/* debug('menuUp'); */
-	if (test0) {
+	if (g_test0) {
 		charecr(10, (_menuConstants[xx - 1][1] + 1) << 1);
 
 		/* Restore the background area */
@@ -375,7 +375,7 @@ void Menu::menuUp(int xx) {
 		// Copy the data
 		Common::copy(pSrc, pSrc + (400 - 10) * SCREEN_WIDTH, pDest);
 
-		test0 = false;
+		g_test0 = false;
 	}
 }
 
@@ -386,7 +386,7 @@ void Menu::eraseMenu() {
 	/* debug('eraseMenu'); */
 	_menuActive = false;
 	g_vm->setMouseClick(false);
-	menuUp(msg3);
+	menuUp(g_msg3);
 }
 
 /**
@@ -399,67 +399,67 @@ void Menu::mdn() {
 	int x = x_s;
 	int y = y_s;
 	if (!g_vm->getMouseClick()) {
-		if ((x == xprec) && (y == yprec))
+		if ((x == g_xprec) && (y == g_yprec))
 			return;
 		else {
-			xprec = x;
-			yprec = y;
+			g_xprec = x;
+			g_yprec = y;
 		}
 		
 		bool tes =  (y < 11) 
-		   && ((x >= (28 * res) && x <= (28 * res + 24)) 
-		   ||  (x >= (76 * res) && x <= (76 * res + 24))
-		   || ((x > 124 * res) && (x < 124 * res + 24))
-		   || ((x > 172 * res) && (x < 172 * res + 24))
-		   || ((x > 220 * res) && (x < 220 * res + 24))
-		   || ((x > 268 * res) && (x < 268 * res + 24)));
+		   && ((x >= (28 * g_res) && x <= (28 * g_res + 24)) 
+		   ||  (x >= (76 * g_res) && x <= (76 * g_res + 24))
+		   || ((x > 124 * g_res) && (x < 124 * g_res + 24))
+		   || ((x > 172 * g_res) && (x < 172 * g_res + 24))
+		   || ((x > 220 * g_res) && (x < 220 * g_res + 24))
+		   || ((x > 268 * g_res) && (x < 268 * g_res + 24)));
 		if (tes) {
 			int ix;
 
-			if (x < 76 * res)
+			if (x < 76 * g_res)
 				ix = MENU_INVENTORY;
-			else if (x < 124 * res)
+			else if (x < 124 * g_res)
 				ix = MENU_MOVE;
-			else if (x < 172 * res)
+			else if (x < 172 * g_res)
 				ix = MENU_ACTION;
-			else if (x < 220 * res)
+			else if (x < 220 * g_res)
 				ix = MENU_SELF;
-			else if (x < 268 * res)
+			else if (x < 268 * g_res)
 				ix = MENU_DISCUSS;
 			else
 				ix = MENU_FILE;
 
-			if ((ix != msg3) || (! test0))
-				if (!((ix == MENU_FILE) && ((msg3 == MENU_SAVE) || (msg3 == MENU_LOAD)))) {
-					menuUp(msg3);
+			if ((ix != g_msg3) || (!g_test0))
+				if (!((ix == MENU_FILE) && ((g_msg3 == MENU_SAVE) || (g_msg3 == MENU_LOAD)))) {
+					menuUp(g_msg3);
 					menuDown(ix);
-					msg3 = ix;
-					msg4 = OPCODE_NONE;
+					g_msg3 = ix;
+					g_msg4 = OPCODE_NONE;
 				}
 		} else { // Not in the MenuTitle line
-			if ((y > 11) && (test0))
+			if ((y > 11) && (g_test0))
 				util(x, y);
 		}
 	} else {       // There was a click
-		if ((msg3 == MENU_FILE) && (msg4 != OPCODE_NONE)) {
+		if ((g_msg3 == MENU_FILE) && (g_msg4 != OPCODE_NONE)) {
 			// Another menu to be _displayed
 			g_vm->setMouseClick(false);
-			menuUp(msg3);
-			if (lo(msg4) == 1)
-				msg3 = 7;
+			menuUp(g_msg3);
+			if (lo(g_msg4) == 1)
+				g_msg3 = 7;
 			else
-				msg3 = 8;
-			menuDown(msg3);
+				g_msg3 = 8;
+			menuDown(g_msg3);
 
 			g_vm->setMouseClick(false);
 		} else { 
 			//  A menu was clicked on
-			choisi = (test0) && (msg4 != OPCODE_NONE);
-			menuUp(msg3);
-			g_msg[4] = msg4;
-			g_msg[3] = msg3;
-			msg3 = OPCODE_NONE;
-			msg4 = OPCODE_NONE;
+			g_choisi = (g_test0) && (g_msg4 != OPCODE_NONE);
+			menuUp(g_msg3);
+			g_msg[4] = g_msg4;
+			g_msg[3] = g_msg3;
+			g_msg3 = OPCODE_NONE;
+			g_msg4 = OPCODE_NONE;
 
 			g_vm->setMouseClick(false);
 		}
@@ -511,8 +511,8 @@ void Menu::initMenu() {
 		if (i > 6)
 			g_vm->_menu.disableMenuItem(_inventoryMenu[i]);
 	}
-	msg3 = OPCODE_NONE;
-	msg4 = OPCODE_NONE;
+	g_msg3 = OPCODE_NONE;
+	g_msg4 = OPCODE_NONE;
 	g_msg[3] = OPCODE_NONE;
 	g_msg[4] = OPCODE_NONE;
 	g_vm->setMouseClick(false);
