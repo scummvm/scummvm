@@ -183,14 +183,12 @@ void invertAffineOrthonormal(Math::Matrix4 &m) {
 	m2.setValue(3, 3, 1.f);
 	m2.setPosition(Math::Vector3d(0,0,0));
 	
-	Math::Matrix<4,1> v;
-	v.setValue(0, -m.getValue(0, 3)); 
-	v.setValue(1, -m.getValue(1, 3)); 
-	v.setValue(2, -m.getValue(2, 3)); 
-	v.setValue(3, 0.f); 
 	
+	Math::Vector4d v;
+	v.set(-m.getValue(0, 3), -m.getValue(1, 3), -m.getValue(2, 3), 0.f);
+
 	m2.transformVector(&v);
-	m2.setPosition(Math::Vector3d(v.getData()[0],v.getData()[1],v.getData()[2]));
+	m2.setPosition(Math::Vector3d(v.x(),v.y(),v.z()));
 	m = m2;
 }
 	
