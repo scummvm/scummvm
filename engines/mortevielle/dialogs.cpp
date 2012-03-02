@@ -326,7 +326,8 @@ bool Ques::show() {
 		optionPosY = 35;
 		maxLength = 0;
 
-		for (int j = firstOption, prevChoice = 1; j <= lastOption; ++j, ++prevChoice) {
+		prevChoice = 1;
+		for (int j = firstOption; j <= lastOption; ++j, ++prevChoice) {
 			tmpStr = deline(j);
 			if ((int) tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
@@ -369,16 +370,16 @@ bool Ques::show() {
 				++currChoice;
 			if (coor[currChoice].enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
-					Common::String tmpStr = choiceArray[prevChoice] + '$';
+					tmpStr = choiceArray[prevChoice] + '$';
 					afftex(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				}
 				if (prevChoice != currChoice) {
-					Common::String tmpStr = choiceArray[currChoice] + '$';
+					tmpStr = choiceArray[currChoice] + '$';
 					afftex(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
 					prevChoice = currChoice;
 				}
 			} else if (prevChoice != 0) {
-				Common::String tmpStr = choiceArray[prevChoice] + '$';
+				tmpStr = choiceArray[prevChoice] + '$';
 				afftex(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				prevChoice = 0;
 			}
@@ -438,15 +439,15 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	teskbd();
 	do {
 		parole(SpeechNum, 0, 0);
-		waitForF3F8(key);
+		waitForF3F8(g_key);
 		CHECK_QUIT;
 
-		if (_newGraphicalDevice != _currGraphicalDevice) {
-			_currGraphicalDevice = _newGraphicalDevice;
+		if (g_newGraphicalDevice != g_currGraphicalDevice) {
+			g_currGraphicalDevice = g_newGraphicalDevice;
 			hirs();
 			aff50(drawAni50Fl);
 		}
-	} while (key != 66); // keycode for F8
+	} while (g_key != 66); // keycode for F8
 }
 
 /**
@@ -462,7 +463,7 @@ void f3f8::waitForF3F8(int &key) {
 
 void f3f8::aff50(bool drawAni50Fl) {
 	caff = 50;
-	_maff = 0;
+	g_maff = 0;
 	taffich();
 	dessine(ades, 63, 12);
 	if (drawAni50Fl)

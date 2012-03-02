@@ -87,17 +87,17 @@ void parole(int rep, int ht, int typ) {
 	int savph[501];
 	int tempo;
 
-	if (_soundOff)
+	if (g_soundOff)
 		return;
 
 	num_ph = rep;
-	haut = ht;
+	g_haut = ht;
 	typlec = typ;
 	if (typlec != 0) {
 		for (int i = 0; i <= 500; ++i)
 			savph[i] = t_cph[i];
 		tempo = tempo_bruit;
-	} else if (haut > 5)
+	} else if (g_haut > 5)
 		tempo = tempo_f;
 	else
 		tempo = tempo_m;

@@ -49,13 +49,13 @@ namespace Mortevielle {
 void fctMove() {
 	int cx;
 
-	if ((s.mlieu == 26) && (msg[4] == g_vm->_menu._moveMenu[6])) {
-		s.mlieu = 15;
-		caff = s.mlieu;
+	if ((g_s.mlieu == 26) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
+		g_s.mlieu = 15;
+		caff = g_s.mlieu;
 		afdes(0);
-		repon(2, s.mlieu);
+		repon(2, g_s.mlieu);
 	}
-	if ((s.mlieu == 15) && (msg[4] == g_vm->_menu._moveMenu[6])) {
+	if ((g_s.mlieu == 15) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
 		if (!syn)
 			ecr3(g_vm->getEngineString(S_GO_TO));
 		tfleche();
@@ -64,21 +64,21 @@ void fctMove() {
 		if ((anyone) || (iesc))
 			return;
 		tcoord(1);
-		if (num == 0)
+		if (g_num == 0)
 			return;
-		if (num == 1) {
-			s.mlieu = 0;
+		if (g_num == 1) {
+			g_s.mlieu = 0;
 			tmlieu(0);
-		} else if (num == 7) {
-			s.mlieu = 13;
+		} else if (g_num == 7) {
+			g_s.mlieu = 13;
 			tmlieu(13);
-		} else if (num != 6)
-			s.mlieu = 26;
-		if ((num > 1) && (num < 6))
-			ment = num - 1;
-		if (num > 7)
-			ment = num - 3;
-		if (num != 6)
+		} else if (g_num != 6)
+			g_s.mlieu = 26;
+		if ((g_num > 1) && (g_num < 6))
+			ment = g_num - 1;
+		if (g_num > 7)
+			ment = g_num - 3;
+		if (g_num != 6)
 			affrep();
 		else
 			aldepl();
@@ -88,56 +88,56 @@ void fctMove() {
 	cx = 0;
 	do {
 		++cx;
-	} while (g_vm->_menu._moveMenu[cx] != msg[4]);
-	if (s.mlieu == 19) {
+	} while (g_vm->_menu._moveMenu[cx] != g_msg[4]);
+	if (g_s.mlieu == 19) {
 		if (cx == 1)
 			t1deva();
 		if (cx == 2)
 			t1neig();
 		goto L2;
 	}
-	if (s.mlieu == 23) {
+	if (g_s.mlieu == 23) {
 		if (cx == 1)
 			t1deau();
 		if (cx == 2)
 			t1derr();
 		goto L2;
 	}
-	if ((s.mlieu == 11) && (cx == 1))
+	if ((g_s.mlieu == 11) && (cx == 1))
 		cx = 6;
-	if (s.mlieu == 12) {
+	if (g_s.mlieu == 12) {
 		if (cx == 2)
 			cx = 6;
 		if (cx == 5)
 			cx = 16;
 	}
-	if ((s.mlieu == 14) && (cx == 3))
+	if ((g_s.mlieu == 14) && (cx == 3))
 		cx = 6;
-	if (((s.mlieu == 15) || (s.mlieu == 26)) && (cx == 4))
+	if (((g_s.mlieu == 15) || (g_s.mlieu == 26)) && (cx == 4))
 		cx = 6;
-	if ((s.mlieu > 19) && (s.mlieu != 26))
+	if ((g_s.mlieu > 19) && (g_s.mlieu != 26))
 		cx += 10;
-	if ((s.mlieu == 20) && (cx == 13))
+	if ((g_s.mlieu == 20) && (cx == 13))
 		cx = 16;
-	if (s.mlieu == 21) {
+	if (g_s.mlieu == 21) {
 		if (cx == 12)
 			cx = 16;
 		else if (cx > 13)
 			cx = 15;
 	}
-	if ((s.mlieu == 22) && (cx > 14))
+	if ((g_s.mlieu == 22) && (cx > 14))
 		cx = 15;
-	if ((s.mlieu == 24) && (cx != 17))
+	if ((g_s.mlieu == 24) && (cx != 17))
 		if (cx > 13)
 			cx = 15;
 	if (cx == 1)
-		s.mlieu = 11;
+		g_s.mlieu = 11;
 	else if (cx == 2)
-		s.mlieu = 12;
+		g_s.mlieu = 12;
 	else if (cx == 3)
-		s.mlieu = 14;
+		g_s.mlieu = 14;
 	else if (cx == 4)
-		s.mlieu = 15;
+		g_s.mlieu = 15;
 	else if (cx == 5)
 		cx = 12;
 	if (cx == 6)
@@ -147,31 +147,31 @@ void fctMove() {
 	else if (cx == 12)
 		t1deva();
 	else if (cx == 13)
-		s.mlieu = 20;
+		g_s.mlieu = 20;
 	else if (cx == 14)
-		s.mlieu = 24;
+		g_s.mlieu = 24;
 	else if (cx == 15)
 		t1neig();
 	else if (cx == 16)
 		t1derr();
 	else if (cx == 17) {
-		if ((s.ipuit != 120) && (s.ipuit != 140))
+		if ((g_s.ipuit != 120) && (g_s.ipuit != 140))
 			crep = 997;
-		else if (s.ipuit == 120)
+		else if (g_s.ipuit == 120)
 			crep = 181;
-		else if (s.conf > 80) {
+		else if (g_s.conf > 80) {
 			crep = 1505;
 			tperd();
 		} else {
-			s.mlieu = 23;
+			g_s.mlieu = 23;
 			affrep();
 		}
 	}
 	if ((cx < 5) || (cx == 13) || (cx == 14))
 		affrep();
-	debloc(s.mlieu);
+	debloc(g_s.mlieu);
 L2:
-	tmlieu(s.mlieu);
+	tmlieu(g_s.mlieu);
 }
 
 /**
@@ -184,24 +184,24 @@ void fctTake() {
 		avpoing(cx);
 		if (crep != 139) {
 			if (ipers > 0)
-				s.conf += 3;
+				g_s.conf += 3;
 			if (obpart) {
-				if (s.mlieu == 2)
-					s.iloic = 0;
-				if (s.mlieu == 13) {
-					if (s.iboul == caff)
-						s.iboul = 0;
-					if (s.ibag == caff)
-						s.ibag = 0;
+				if (g_s.mlieu == 2)
+					g_s.iloic = 0;
+				if (g_s.mlieu == 13) {
+					if (g_s.iboul == caff)
+						g_s.iboul = 0;
+					if (g_s.ibag == caff)
+						g_s.ibag = 0;
 				}
-				if (s.mlieu == 14)
-					s.icave = 0;
-				if (s.mlieu == 16)
-					s.icryp = 0;
-				if (s.mlieu == 17)
-					s.ivier = 0;
-				if (s.mlieu == 24)
-					s.ipuit = 0;
+				if (g_s.mlieu == 14)
+					g_s.icave = 0;
+				if (g_s.mlieu == 16)
+					g_s.icryp = 0;
+				if (g_s.mlieu == 17)
+					g_s.ivier = 0;
+				if (g_s.mlieu == 24)
+					g_s.ipuit = 0;
 				mfouen();
 				obpart = false;
 				affrep();
@@ -210,7 +210,7 @@ void fctTake() {
 				tsuiv();
 				++dobj;
 				if (dobj > 6) {
-					s.conf += 2;
+					g_s.conf += 2;
 					dobj = 0;
 				}
 			}
@@ -224,46 +224,46 @@ void fctTake() {
 		return;
 	if (caff == 3) {
 		tcoord(2);
-		if (num == 1) {
+		if (g_num == 1) {
 			crep = 152;
 			return;
 		}
 	}
 	tcoord(5);
-	if ((num == 0) || ((num == 1) && (s.mlieu == 16))) {
+	if ((g_num == 0) || ((g_num == 1) && (g_s.mlieu == 16))) {
 		tcoord(8);
-		if (num != 0) {
+		if (g_num != 0) {
 			if (ipers > 0)
-				s.conf += 3;
+				g_s.conf += 3;
 			crep = 997;
-			if ((s.mlieu == 2) && (s.iloic != 0))
-				avpoing(s.iloic);
-			if ((s.mlieu == 13) && (num == 1) && (s.iboul != 0)) {
-				avpoing(s.iboul);
+			if ((g_s.mlieu == 2) && (g_s.iloic != 0))
+				avpoing(g_s.iloic);
+			if ((g_s.mlieu == 13) && (g_num == 1) && (g_s.iboul != 0)) {
+				avpoing(g_s.iboul);
 				if ((crep != 997) && (crep != 139))
 					aniof(2, 7);
 			}
-			if ((s.mlieu == 13) && (num == 2) && (s.ibag != 0)) {
-				avpoing(s.ibag);
+			if ((g_s.mlieu == 13) && (g_num == 2) && (g_s.ibag != 0)) {
+				avpoing(g_s.ibag);
 				if ((crep != 997) && (crep != 139))
 					aniof(2, 6);
 			}
-			if ((s.mlieu == 14) && (s.icave != 0)) {
-				avpoing(s.icave);
+			if ((g_s.mlieu == 14) && (g_s.icave != 0)) {
+				avpoing(g_s.icave);
 				if ((crep != 997) && (crep != 139))
 					aniof(2, 2);
 			}
-			if ((s.mlieu == 16) && (s.icryp != 0))
-				avpoing(s.icryp);
-			if ((s.mlieu == 17) && (s.ivier != 0)) {
-				avpoing(s.ivier);
+			if ((g_s.mlieu == 16) && (g_s.icryp != 0))
+				avpoing(g_s.icryp);
+			if ((g_s.mlieu == 17) && (g_s.ivier != 0)) {
+				avpoing(g_s.ivier);
 				if ((crep != 997) && (crep != 139)) {
 					crep = 182;
 					aniof(2, 1);
 				}
 			}
-			if ((s.mlieu == 24) && (s.ipuit != 0)) {
-				avpoing(s.ipuit);
+			if ((g_s.mlieu == 24) && (g_s.ipuit != 0)) {
+				avpoing(g_s.ipuit);
 				if ((crep != 997) && (crep != 139))
 					aniof(2, 1);
 			}
@@ -271,15 +271,15 @@ void fctTake() {
 				crep = 999;
 		}
 	} else {
-		if ( ((s.mlieu == 0)  && (num == 3)) || ((s.mlieu == 1)  && (num == 4))
-		  || ((s.mlieu == 2)  && (num == 1)) || ((s.mlieu == 4)  && (num == 3))
-		  || ((s.mlieu == 5)  && (num == 6)) || ((s.mlieu == 6)  && (num == 2))
-		  || ((s.mlieu == 7)  && (num == 6)) || ((s.mlieu == 8)  && (num == 4))
-		  || ((s.mlieu == 9)  && (num == 4)) || ((s.mlieu == 10) && (num > 2))
-		  || ((s.mlieu == 11) && (num == 7)) || ((s.mlieu == 12) && (num == 6))
-		  || ((s.mlieu == 13) && (num > 4))  || ((s.mlieu > 13)  && (s.mlieu != 23)) )
+		if ( ((g_s.mlieu == 0)  && (g_num == 3)) || ((g_s.mlieu == 1)  && (g_num == 4))
+		  || ((g_s.mlieu == 2)  && (g_num == 1)) || ((g_s.mlieu == 4)  && (g_num == 3))
+		  || ((g_s.mlieu == 5)  && (g_num == 6)) || ((g_s.mlieu == 6)  && (g_num == 2))
+		  || ((g_s.mlieu == 7)  && (g_num == 6)) || ((g_s.mlieu == 8)  && (g_num == 4))
+		  || ((g_s.mlieu == 9)  && (g_num == 4)) || ((g_s.mlieu == 10) && (g_num > 2))
+		  || ((g_s.mlieu == 11) && (g_num == 7)) || ((g_s.mlieu == 12) && (g_num == 6))
+		  || ((g_s.mlieu == 13) && (g_num > 4))  || ((g_s.mlieu > 13)  && (g_s.mlieu != 23)) )
 		  crep = 997;
-		else if (s.mlieu == 23) {
+		else if (g_s.mlieu == 23) {
 			crep = 1504;
 			tperd();
 		} else
@@ -296,16 +296,16 @@ void fctInventoryTake() {
 	cx = 0;
 	do {
 		++cx;
-	} while (g_vm->_menu._inventoryMenu[cx] != msg[4]);
+	} while (g_vm->_menu._inventoryMenu[cx] != g_msg[4]);
 	cz = 0;
 	cy = 0;
 	do {
 		++cy;
-		if (ord(s.sjer[cy]) != 0)
+		if (ord(g_s.sjer[cy]) != 0)
 			++cz;
 	} while (cz != cx);
-	cz = ord(s.sjer[cy]);
-	s.sjer[cy] = chr(0);
+	cz = ord(g_s.sjer[cy]);
+	g_s.sjer[cy] = chr(0);
 	modinv();
 	avpoing(cz);
 	crep = 998;
@@ -325,25 +325,25 @@ void fctLift() {
 	if ((anyone) || (iesc))
 		return;
 	tcoord(3);
-	if (num == 0) {
+	if (g_num == 0) {
 		tcoord(8);
-		if (num != 0) {
+		if (g_num != 0) {
 			if (ipers > 0)
-				++s.conf;
+				++g_s.conf;
 			crep = 997;
-			if ((s.mlieu == 2) && (s.iloic != 0))
-				treg(s.iloic);
+			if ((g_s.mlieu == 2) && (g_s.iloic != 0))
+				treg(g_s.iloic);
 		}
 		return;
 	}
 	if (ipers > 0)
-		++s.conf;
-	cx = s.mlieu;
-	if (s.mlieu == 16)
+		++g_s.conf;
+	cx = g_s.mlieu;
+	if (g_s.mlieu == 16)
 		cx = 14;
-	else if (s.mlieu == 19)
+	else if (g_s.mlieu == 19)
 		cx = 15;
-	crep = tabdon[asoul + (cx << 3) + (num - 1)];
+	crep = tabdon[asoul + (cx << 3) + (g_num - 1)];
 	if (crep == 255)
 		crep = 997;
 }
@@ -361,7 +361,7 @@ void fctRead() {
 		tfleche();
 		if (!(anyone) && !(iesc)) {
 			tcoord(4);
-			if (num != 0)
+			if (g_num != 0)
 				crep = 107;
 		}
 	}
@@ -372,10 +372,10 @@ void fctRead() {
  * @remarks	Originally called 'tslire'
  */
 void fctSelfRead() {
-	if (s.derobj == 0)
+	if (g_s.derobj == 0)
 		crep = 186;
 	else
-		st4(s.derobj);
+		st4(g_s.derobj);
 }
 
 /**
@@ -395,64 +395,64 @@ void fctLook() {
 	if ((anyone) || (iesc))
 		return;
 	tcoord(5);
-	if (num == 0) {
+	if (g_num == 0) {
 		tcoord(8);
 		crep = 131;
-		if (num != 0) {
-			if (s.mlieu == 13) {
-				if (num == 1) {
+		if (g_num != 0) {
+			if (g_s.mlieu == 13) {
+				if (g_num == 1) {
 					crep = 164;
-					if (s.ibag != 0)
-						treg(s.ibag);
-					else if (s.iboul != 0)
-						treg(s.iboul);
+					if (g_s.ibag != 0)
+						treg(g_s.ibag);
+					else if (g_s.iboul != 0)
+						treg(g_s.iboul);
 				} else {
 					crep = 193;
-					if (s.ibag != 0)
-						treg(s.ibag);
+					if (g_s.ibag != 0)
+						treg(g_s.ibag);
 				}
 			}
-			if (s.mlieu == 14) {
+			if (g_s.mlieu == 14) {
 				crep = 164;
-				if (s.icave != 0)
-					treg(s.icave);
+				if (g_s.icave != 0)
+					treg(g_s.icave);
 			}
-			if (s.mlieu == 17) {
+			if (g_s.mlieu == 17) {
 				crep = 174;
-				if (s.ivier != 0)
-					treg(s.ivier);
+				if (g_s.ivier != 0)
+					treg(g_s.ivier);
 			}
-			if (s.mlieu == 24) {
+			if (g_s.mlieu == 24) {
 				crep = 131;
-				if (s.ipuit != 0)
-					treg(s.ipuit);
+				if (g_s.ipuit != 0)
+					treg(g_s.ipuit);
 			}
 		}
 		return;
 	}
-	cx = s.mlieu;
-	if (s.mlieu == 20)
+	cx = g_s.mlieu;
+	if (g_s.mlieu == 20)
 		cx = 17;
-	if ((s.mlieu > 21) && (s.mlieu < 25))
+	if ((g_s.mlieu > 21) && (g_s.mlieu < 25))
 		cx -= 4;
-	if (s.mlieu == 26)
+	if (g_s.mlieu == 26)
 		cx = 21;
-	crep = tabdon[arega + (cx * 7) + num - 1];
-	if ((s.mlieu == 13) && (num == 8))
+	crep = tabdon[arega + (cx * 7) + g_num - 1];
+	if ((g_s.mlieu == 13) && (g_num == 8))
 		crep = 126;
-	if (s.mlieu == 19)
+	if (g_s.mlieu == 19)
 		crep = 103;
 	if (crep == 255)
 		crep = 131;
-	if ((s.mlieu == 1) && (num == 1))
+	if ((g_s.mlieu == 1) && (g_num == 1))
 		treg(144);
-	if ((s.mlieu == 5) && (num == 3))
+	if ((g_s.mlieu == 5) && (g_num == 3))
 		treg(147);
-	if ((s.mlieu == 8) && (num == 3))
+	if ((g_s.mlieu == 8) && (g_num == 3))
 		treg(149);
-	if ((s.mlieu == 9) && (num == 2))
+	if ((g_s.mlieu == 9) && (g_num == 2))
 		treg(30);
-	if ((s.mlieu == 10) && (num == 3))
+	if ((g_s.mlieu == 10) && (g_num == 3))
 		treg(31);
 }
 
@@ -461,8 +461,8 @@ void fctLook() {
  * @remarks	Originally called 'tsregarder'
  */
 void fctSelftLook() {
-	if (s.derobj != 0)
-		treg(s.derobj);
+	if (g_s.derobj != 0)
+		treg(g_s.derobj);
 	else
 		crep = 186;
 }
@@ -486,25 +486,25 @@ void fctSearch() {
 	if (anyone || iesc)
 		return;
 
-	if (s.mlieu == 23) {
+	if (g_s.mlieu == 23) {
 		crep = 1504;
 		tperd();
 		return;
 	}
 
 	tcoord(6);
-	if (num == 0) {
+	if (g_num == 0) {
 		tcoord(7);
-		if (num != 0) {
+		if (g_num != 0) {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (num != ord(touv[cx])));
-			if (num != ord(touv[cx]))
+			} while ((cx <= 6) && (g_num != ord(touv[cx])));
+			if (g_num != ord(touv[cx]))
 				crep = 187;
 			else {
 				if (ipers > 0)
-					s.conf += 3;
+					g_s.conf += 3;
 
 				rechai(mchai);
 				if (mchai != 0) {
@@ -519,43 +519,43 @@ void fctSearch() {
 		} else {
 			tcoord(8);
 			crep = 997;
-			if (num != 0) {
+			if (g_num != 0) {
 				if (ipers > 0)
-					s.conf += 3;
-				if ((s.mlieu != 24) && (s.mlieu != 17) && (s.mlieu != 13)) {
-					if (s.mlieu == 2) {
+					g_s.conf += 3;
+				if ((g_s.mlieu != 24) && (g_s.mlieu != 17) && (g_s.mlieu != 13)) {
+					if (g_s.mlieu == 2) {
 						crep = 123;
-						if (s.iloic != 0)
-							treg(s.iloic);
+						if (g_s.iloic != 0)
+							treg(g_s.iloic);
 					}
-					if (s.mlieu == 16) {
+					if (g_s.mlieu == 16) {
 						crep = 123;
-						if (s.icryp != 0)
-							treg(s.icryp);
+						if (g_s.icryp != 0)
+							treg(g_s.icryp);
 					}
 				}
 			}
 		}
 	} else {
 		if (ipers > 0)
-			s.conf += 3;
+			g_s.conf += 3;
 		crep = 997;
-		if (s.mlieu < 14)
-			crep = r[s.mlieu];
+		if (g_s.mlieu < 14)
+			crep = r[g_s.mlieu];
 
-		if ((s.mlieu == 3) && (num == 2))
+		if ((g_s.mlieu == 3) && (g_num == 2))
 			crep = 162;
 
-		if (s.mlieu == 12) {
-			if ((num == 3) || (num == 4))
+		if (g_s.mlieu == 12) {
+			if ((g_num == 3) || (g_num == 4))
 				crep = 162;
-			else if (num == 5)
+			else if (g_num == 5)
 				crep = 159;
 		}
 
-		if (s.mlieu == 19)
+		if (g_s.mlieu == 19)
 			crep = 104;
-		else if (s.mlieu == 16)
+		else if (g_s.mlieu == 16)
 			crep = 155;
 	}
 }
@@ -565,8 +565,8 @@ void fctSearch() {
  * @remarks	Originally called 'tsfouiller'
  */
 void fctSelfSearch() {
-	if (s.derobj != 0)
-		st7(s.derobj);
+	if (g_s.derobj != 0)
+		st7(g_s.derobj);
 	else
 		crep = 186;
 }
@@ -581,7 +581,7 @@ void fctOpen() {
 
 	if (caff == 26) {
 		if (ment != 0) {
-			msg[4] = OPCODE_ENTER;
+			g_msg[4] = OPCODE_ENTER;
 			syn = true;
 		} else
 			crep = 997;
@@ -598,34 +598,34 @@ void fctOpen() {
 		return;
 
 	tcoord(7);
-	if (num != 0) {
+	if (g_num != 0) {
 		if (ipers > 0)
-			s.conf += 2;
+			g_s.conf += 2;
 		++iouv;
 		int cx = 0;
 		do {
 			++cx;
-		} while (!((cx > 6) || (ord(touv[cx]) == 0) || (ord(touv[cx]) == num)));
-		if (ord(touv[cx]) != num) {
-			if (!( ((num == 3) && ((s.mlieu == 0) || (s.mlieu == 9) || (s.mlieu == 5) || (s.mlieu == 7)))
-			    || ((num == 4) && ((s.mlieu == 1) || (s.mlieu == 2) || (s.mlieu == 6)))
-				|| ((s.mlieu == 4) && (num == 5))
-				|| ((num == 6) && ((s.mlieu == 7) || (s.mlieu == 10) || (s.mlieu == 8) || (s.mlieu == 13)))
-				|| ((s.mlieu == 8) && (num == 2))
-				|| ((s.mlieu == 12) && (num == 7))) ) {
-				if ( ((s.mlieu > 10) && (s.mlieu < 14))
-				  || ((s.mlieu > 6) && (s.mlieu < 10))
-				  || (s.mlieu == 0) || (s.mlieu == 2) || (s.mlieu == 5)) {
+		} while (!((cx > 6) || (ord(touv[cx]) == 0) || (ord(touv[cx]) == g_num)));
+		if (ord(touv[cx]) != g_num) {
+			if (!( ((g_num == 3) && ((g_s.mlieu == 0) || (g_s.mlieu == 9) || (g_s.mlieu == 5) || (g_s.mlieu == 7)))
+			    || ((g_num == 4) && ((g_s.mlieu == 1) || (g_s.mlieu == 2) || (g_s.mlieu == 6)))
+				|| ((g_s.mlieu == 4) && (g_num == 5))
+				|| ((g_num == 6) && ((g_s.mlieu == 7) || (g_s.mlieu == 10) || (g_s.mlieu == 8) || (g_s.mlieu == 13)))
+				|| ((g_s.mlieu == 8) && (g_num == 2))
+				|| ((g_s.mlieu == 12) && (g_num == 7))) ) {
+				if ( ((g_s.mlieu > 10) && (g_s.mlieu < 14))
+				  || ((g_s.mlieu > 6) && (g_s.mlieu < 10))
+				  || (g_s.mlieu == 0) || (g_s.mlieu == 2) || (g_s.mlieu == 5)) {
 					if (hazard(1, 4) == 3)
 						parole(7, 9, 1);
 				}
-				touv[cx] = chr(num);
-				aniof(1, num);
+				touv[cx] = chr(g_num);
+				aniof(1, g_num);
 			}
-			cx = s.mlieu;
-			if (s.mlieu == 16)
+			cx = g_s.mlieu;
+			if (g_s.mlieu == 16)
 				cx = 14;
-			crep = tabdon[aouvr + (cx * 7) + num - 1];
+			crep = tabdon[aouvr + (cx * 7) + g_num - 1];
 			if (crep == 254)
 				crep = 999;
 		} else
@@ -638,7 +638,7 @@ void fctOpen() {
  * @remarks	Originally called 'tmettre'
  */
 void fctPlace() {
-	if (s.derobj == 0) {
+	if (g_s.derobj == 0) {
 		crep = 186;
 		return;
 	}
@@ -654,32 +654,32 @@ void fctPlace() {
 		return;
 
 	tcoord(8);
-	if (num != 0) {
+	if (g_num != 0) {
 		crep = 999;
 		if (caff == 13) {
-			if (num == 1) {
-				if (s.iboul != 0) {
+			if (g_num == 1) {
+				if (g_s.iboul != 0) {
 					crep = 188;
 				} else {
-					s.iboul = s.derobj;
-					if (s.derobj == 141)
+					g_s.iboul = g_s.derobj;
+					if (g_s.derobj == 141)
 						aniof(1, 7);
 				}
-			} else if (s.ibag != 0) {
+			} else if (g_s.ibag != 0) {
 				crep = 188;
 			} else {
-				s.ibag = s.derobj;
-				if (s.derobj == 159)
+				g_s.ibag = g_s.derobj;
+				if (g_s.derobj == 159)
 					aniof(1, 6);
 			}
 		}
 
 		if (caff == 14) {
-			if (s.icave != 0) {
+			if (g_s.icave != 0) {
 				crep = 188;
 			} else {
-				s.icave = s.derobj;
-				if (s.derobj == 151) {
+				g_s.icave = g_s.derobj;
+				if (g_s.derobj == 151) {
 					// Open hidden passage
 					aniof(1, 2);
 					aniof(1, 1);
@@ -710,10 +710,10 @@ void fctPlace() {
 
 						g_vm->_menu.displayMenu();
 						if (enterPassageFl) {
-							s.mlieu = 17;
+							g_s.mlieu = 17;
 							tmlieu(17);
 						} else {
-							tmlieu(s.mlieu);
+							tmlieu(g_s.mlieu);
 							writepal(14);
 							dessin(0);
 							aniof(1, 2);
@@ -735,17 +735,17 @@ void fctPlace() {
 		}
 
 		if (caff == 16) {
-			if (s.icryp == 0)
-				s.icryp = s.derobj;
+			if (g_s.icryp == 0)
+				g_s.icryp = g_s.derobj;
 			else
 				crep = 188;
 		}
 
 		if (caff == 17) {
-			if (s.ivier != 0) {
+			if (g_s.ivier != 0) {
 				crep = 188;
-			} else if (s.derobj == 143) {
-				s.ivier = 143;
+			} else if (g_s.derobj == 143) {
+				g_s.ivier = 143;
 				aniof(1, 1);
 			} else {
 				crep = 1512;
@@ -754,10 +754,10 @@ void fctPlace() {
 		}
 
 		if (caff == 24) {
-			if (s.ipuit != 0) {
+			if (g_s.ipuit != 0) {
 				crep = 188;
-			} else if ((s.derobj == 140) || (s.derobj == 120)) {
-				s.ipuit = s.derobj;
+			} else if ((g_s.derobj == 140) || (g_s.derobj == 120)) {
+				g_s.ipuit = g_s.derobj;
 				aniof(1, 1);
 			} else {
 				crep = 185;
@@ -784,9 +784,9 @@ void fctTurn() {
 	if ((anyone) || (iesc))
 		return;
 	tcoord(9);
-	if (num != 0) {
+	if (g_num != 0) {
 		crep = 997;
-		if ((s.mlieu == 13) && (s.ibag == 159) && (s.iboul == 141)) {
+		if ((g_s.mlieu == 13) && (g_s.ibag == 159) && (g_s.iboul == 141)) {
 			repon(2, 167);
 			parole(7, 9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
@@ -795,13 +795,13 @@ void fctTurn() {
 			else
 				crep = 168;
 		}
-		if ((s.mlieu == 17) && (s.ivier == 143)) {
+		if ((g_s.mlieu == 17) && (g_s.ivier == 143)) {
 			repon(2, 175);
 			clsf3();
 			parole(6, -9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1) {
-				s.mlieu = 16;
+				g_s.mlieu = 16;
 				affrep();
 			} else
 				crep = 176;
@@ -819,7 +819,7 @@ void fctSelfHide() {
 	tfleche();
 	if (!(anyone) && !(iesc)) {
 		tcoord(10);
-		if (num == 0)
+		if (g_num == 0)
 			cache = false;
 		else {
 			cache = true;
@@ -833,7 +833,7 @@ void fctSelfHide() {
  * @remarks	Originally called 'tattacher'
  */
 void fctAttach() {
-	if (s.derobj == 0)
+	if (g_s.derobj == 0)
 		crep = 186;
 	else {
 		if (!syn)
@@ -842,10 +842,10 @@ void fctAttach() {
 		if (!(anyone) && !(iesc)) {
 			tcoord(8);
 			crep = 997;
-			if ((num != 0) && (s.mlieu == 24)) {
+			if ((g_num != 0) && (g_s.mlieu == 24)) {
 				crep = 999;
-				if ((s.derobj == 120) || (s.derobj == 140)) {
-					s.ipuit = s.derobj;
+				if ((g_s.derobj == 120) || (g_s.derobj == 140)) {
+					g_s.ipuit = g_s.derobj;
 					aniof(1, 1);
 				} else
 					crep = 185;
@@ -870,13 +870,13 @@ void fctClose() {
 		if ((anyone) || (iesc))
 			return;
 		tcoord(7);
-		if (num != 0) {
+		if (g_num != 0) {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (num != ord(touv[cx])));
-			if (num == ord(touv[cx])) {
-				aniof(2, num);
+			} while ((cx <= 6) && (g_num != ord(touv[cx])));
+			if (g_num == ord(touv[cx])) {
+				aniof(2, g_num);
 				crep = 998;
 				touv[cx] = chr(0);
 				iouv = iouv - 1;
@@ -901,15 +901,15 @@ void fctKnock() {
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_HIT));
 
-	if (s.mlieu == 15) {
+	if (g_s.mlieu == 15) {
 		Alert::show(g_vm->getEngineString(S_BEFORE_USE_DEP_MENU), 1);
 		return;
 	}
 
-	if (s.mlieu < 25) {
+	if (g_s.mlieu < 25) {
 		tfleche();
 		if (!(anyone) && !(iesc)) {
-			if ((s.mlieu < 19) && (s.mlieu != 15))
+			if ((g_s.mlieu < 19) && (g_s.mlieu != 15))
 				crep = 133;
 			else
 				crep = 997;
@@ -918,11 +918,11 @@ void fctKnock() {
 		return;
 	}
 
-	if (s.mlieu == 26) {
+	if (g_s.mlieu == 26) {
 		int haz = (hazard(0, 8)) - 4;
 		parole(11, haz, 1);
 		int p;
-		ecfren(p, haz, s.conf, ment);
+		ecfren(p, haz, g_s.conf, ment);
 		int l = ment;
 		if (l != 0) {
 			if (p != -500) {
@@ -948,7 +948,7 @@ void fctKnock() {
 void fctSelfPut() {
 	if (!syn)
 		ecr3(g_vm->getEngineString(S_POSE));
-	if (s.derobj == 0)
+	if (g_s.derobj == 0)
 		crep = 186;
 	else {
 		if (caff > 99) {
@@ -963,7 +963,7 @@ void fctSelfPut() {
 			return;
 		tcoord(7);
 		crep = 124;
-		if (num != 0) {
+		if (g_num != 0) {
 			int chai;
 			rechai(chai);
 			if (chai == 0)
@@ -972,8 +972,8 @@ void fctSelfPut() {
 				int cx = 0;
 				do {
 					++cx;
-				} while ((cx <= 6) && (num != ord(touv[cx])));
-				if (num != ord(touv[cx]))
+				} while ((cx <= 6) && (g_num != ord(touv[cx])));
+				if (g_num != ord(touv[cx]))
 					crep = 187;
 				else {
 					mchai = chai;
@@ -982,33 +982,33 @@ void fctSelfPut() {
 			}
 		} else {
 			tcoord(8);
-			if (num != 0) {
+			if (g_num != 0) {
 				crep = 998;
 				if (caff == 2) {
-					if (s.iloic != 0)
+					if (g_s.iloic != 0)
 						crep = 188;
 					else
-						s.iloic = s.derobj;
+						g_s.iloic = g_s.derobj;
 				}
 
 				if (caff == 13) {
-					if (num == 1) {
-						if (s.iboul != 0)
+					if (g_num == 1) {
+						if (g_s.iboul != 0)
 							crep = 188;
 						else
-							s.iboul = s.derobj;
-					} else if (s.ibag != 0) {
+							g_s.iboul = g_s.derobj;
+					} else if (g_s.ibag != 0) {
 						crep = 188;
 					} else {
-						s.ibag = s.derobj;
+						g_s.ibag = g_s.derobj;
 					}
 				}
 
 				if (caff == 16) {
-					if (s.icryp != 0)
+					if (g_s.icryp != 0)
 						crep = 188;
 					else
-						s.icryp = s.derobj;
+						g_s.icryp = g_s.derobj;
 				}
 
 				if (caff == 24)
@@ -1019,7 +1019,7 @@ void fctSelfPut() {
 				crep = 124;
 				if (caff == 24) {
 					tcoord(5);
-					if (num != 0)
+					if (g_num != 0)
 						crep = 185;
 				}
 			}
@@ -1040,13 +1040,13 @@ void fctSelfPut() {
  * @remarks	Originally called 'tecouter'
  */
 void fctListen() {
-	if (s.mlieu != 26)
+	if (g_s.mlieu != 26)
 		crep = 101;
 	else {
 		if (ipers != 0)
-			++s.conf;
+			++g_s.conf;
 		int p, haz;
-		ecfren(p, haz, s.conf, ment);
+		ecfren(p, haz, g_s.conf, ment);
 		int l = ment;
 		if (l != 0) {
 			if (p != -500) {
@@ -1078,19 +1078,19 @@ void fctListen() {
  * @remarks	Originally called 'tmanger'
  */
 void fctEat() {
-	if ((s.mlieu > 15) && (s.mlieu < 26)) {
+	if ((g_s.mlieu > 15) && (g_s.mlieu < 26)) {
 		crep = 148;
 	} else {
 		tsort();
-		s.mlieu = 10;
+		g_s.mlieu = 10;
 		caff = 10;
-		debloc(s.mlieu);
-		tmlieu(s.mlieu);
+		debloc(g_s.mlieu);
+		tmlieu(g_s.mlieu);
 
 		int j, h, m;
 		calch(j, h, m);
 		if ((h == 12) || (h == 13) || (h == 19)) {
-			s.conf = s.conf - (s.conf / 7);
+			g_s.conf -= (g_s.conf / 7);
 			if (h == 12) {
 				if (m == 0)
 					h = 4;
@@ -1121,16 +1121,16 @@ void fctEat() {
 void fctEnter() {
 //	int x;
 
-	if ((s.mlieu == 21) || (s.mlieu == 22)) {
+	if ((g_s.mlieu == 21) || (g_s.mlieu == 22)) {
 		t1sama();
-		tmlieu(s.mlieu);
-	} else if (s.mlieu == 15)
+		tmlieu(g_s.mlieu);
+	} else if (g_s.mlieu == 15)
 		aldepl();
 	else if (ment == 0)
 		crep = 997;
-	else if ((ment == 9) && (s.derobj != 136)) {
+	else if ((ment == 9) && (g_s.derobj != 136)) {
 			crep = 189;
-			s.teauto[8] = '*';
+			g_s.teauto[8] = '*';
 	} else {
 		int z = 0;
 		if (! blo)
@@ -1144,18 +1144,18 @@ void fctEnter() {
 				aniof(1, 1);
 				
 				tip(z, g_x);
-				++s.conf;
-				s.mlieu = 15;
-				msg[3] = MENU_DISCUSS;
-				msg[4] = g_vm->_menu._discussMenu[g_x];
+				++g_s.conf;
+				g_s.mlieu = 15;
+				g_msg[3] = MENU_DISCUSS;
+				g_msg[4] = g_vm->_menu._discussMenu[g_x];
 				syn = true;
 				if (ment == 9) {
-					col = true;
+					g_col = true;
 					caff = 70;
 					afdes(0);
 					repon(2, caff);
 				} else
-					col = false;
+					g_col = false;
 				debloc(ment);
 				ment = 0;
 			}
@@ -1164,10 +1164,10 @@ void fctEnter() {
 			parole(7, g_x, 1);
 			aniof(1, 1);
 			
-			s.mlieu = ment;
+			g_s.mlieu = ment;
 			affrep();
-			debloc(s.mlieu);
-			tmlieu(s.mlieu);
+			debloc(g_s.mlieu);
+			tmlieu(g_s.mlieu);
 			ment = 0;
 			mpers = 0;
 			ipers = 0;
@@ -1182,17 +1182,17 @@ void fctEnter() {
 void fctSleep() {
 	int z, j, h, m;
 
-	if ((s.mlieu > 15) && (s.mlieu < 26)) {
+	if ((g_s.mlieu > 15) && (g_s.mlieu < 26)) {
 		crep = 148;
 		return;
 	}
-	if (s.mlieu != 0) {
+	if (g_s.mlieu != 0) {
 		tsort();
-		s.mlieu = 0;
+		g_s.mlieu = 0;
 		affrep();
 		afdes(0);
-		debloc(s.mlieu);
-		tmlieu(s.mlieu);
+		debloc(g_s.mlieu);
+		tmlieu(g_s.mlieu);
 	}
 	clsf3();
 	clsf2();
@@ -1203,7 +1203,7 @@ void fctSleep() {
 	int answer;
 	do {
 		if (h < 8) {
-			s.conf = s.conf - (s.conf / 20);
+			g_s.conf -= (g_s.conf / 20);
 			z = (7 - h) * 2;
 			if (m == 30)
 				--z;
@@ -1219,7 +1219,7 @@ void fctSleep() {
 		anyone = false;
 	} while (answer != 1);
 	crep = 998;
-	num = 0;
+	g_num = 0;
 }
 
 /**
@@ -1233,11 +1233,11 @@ void fctForce() {
 		tfleche();
 
 	if ((! anyone) && (! iesc)) {
-		if (s.mlieu != 26)
+		if (g_s.mlieu != 26)
 			crep = 997;
 		else {
 			crep = 143;
-			s.conf += 2;
+			g_s.conf += 2;
 		}
 	}
 }
@@ -1249,27 +1249,27 @@ void fctForce() {
 void fctLeave() {
 	tsort();
 	crep = 0;
-	if ((s.mlieu == 19) || (s.mlieu == 21) || (s.mlieu == 22) || (s.mlieu == 24))
+	if ((g_s.mlieu == 19) || (g_s.mlieu == 21) || (g_s.mlieu == 22) || (g_s.mlieu == 24))
 		crep = 997;
 	else {
 		int lx = 0;
 
-		if ((s.mlieu < 16) || (s.mlieu == 26))
+		if ((g_s.mlieu < 16) || (g_s.mlieu == 26))
 			lx = 10;
-		if ((s.mlieu == 10) || (s.mlieu == 20))
+		if ((g_s.mlieu == 10) || (g_s.mlieu == 20))
 			lx = 21;
-		if ((s.mlieu < 10) || (s.mlieu == 13))
+		if ((g_s.mlieu < 10) || (g_s.mlieu == 13))
 			lx = 15;
-		if (s.mlieu == 16) {
+		if (g_s.mlieu == 16) {
 			lx = 17;
 			crep = 176;
 		}
-		if (s.mlieu == 17)
+		if (g_s.mlieu == 17)
 			t23coul(lx);
-		if (s.mlieu == 23)
+		if (g_s.mlieu == 23)
 			lx = 24;
 		if (crep != 997)
-			s.mlieu = lx;
+			g_s.mlieu = lx;
 		caff = lx;
 		if (crep == 0)
 			crep = lx;
@@ -1293,12 +1293,12 @@ void fctWait() {
 		++jh;
 		tinke();
 		if (!blo)
-			t11(s.mlieu, quel);
+			t11(g_s.mlieu, quel);
 		if ((ipers != 0) && (mpers == 0)) {
 			crep = 998;
-			if ((s.mlieu == 13) || (s.mlieu == 14))
+			if ((g_s.mlieu == 13) || (g_s.mlieu == 14))
 				cavegre();
-			if ((s.mlieu > 0) && (s.mlieu < 10))
+			if ((g_s.mlieu > 0) && (g_s.mlieu < 10))
 				anyone = true;
 			mpers = ipers;
 			if (!anyone)
@@ -1324,7 +1324,7 @@ void fctSound() {
 		tfleche();
 		if (!(anyone) && (!iesc))
 			crep = 145;
-		num = 0;
+		g_num = 0;
 	}
 }
 
@@ -1340,13 +1340,13 @@ void fctDiscuss() {
 	bool f;
 
 	finfouil();
-	if (col)
+	if (g_col)
 		suj = 128;
 	else {
 		cx = 0;
 		do {
 			++cx;
-		} while (g_vm->_menu._discussMenu[cx] != msg[4]);
+		} while (g_vm->_menu._discussMenu[cx] != g_msg[4]);
 		caff = 69 + cx;
 		afdes(0);
 		repon(2, caff);
@@ -1377,11 +1377,13 @@ void fctDiscuss() {
 		do {
 			++icm;
 			g_vm->_screenSurface.putxy(co, lig);
-			if (s.teauto[icm] == '*')
+			if (g_s.teauto[icm] == '*') {
 				if (te[icm])
 					writetp(lib[icm], 1);
 				else
 					writetp(lib[icm], 0);
+			}
+
 			if (icm == 23)  {
 				lig = 0;
 				co = 320;
@@ -1396,7 +1398,7 @@ void fctDiscuss() {
 			CHECK_QUIT;
 
 			getMousePos(x, y, c);
-			x = x * (3 - res);
+			x *= (3 - res);
 			if (x > 319)
 				cx = 41;
 			else
@@ -1435,7 +1437,7 @@ void fctDiscuss() {
 							writetp(lib[choi], 1);
 						te[choi] = ! te[choi];
 					}
-					if ((s.teauto[ix] == '*') || (ix == 46)) {
+					if ((g_s.teauto[ix] == '*') || (ix == 46)) {
 						lig = ((ix - 1) % 23) << 3;
 						if (ix > 23)
 							co = 320;
@@ -1456,9 +1458,9 @@ void fctDiscuss() {
 		g_vm->setMouseClick(false);
 		if (choi != 46) {
 			int ix = choi - 1;
-			if (col) {
-				col = false;
-				s.mlieu = 15;
+			if (g_col) {
+				g_col = false;
+				g_s.mlieu = 15;
 				if (iouv > 0)
 					max = 8;
 				else
@@ -1468,14 +1470,14 @@ void fctDiscuss() {
 					suj = 129;
 				else {
 					suj = 138;
-					s.conf = s.conf + (3 * (s.conf / 10));
+					g_s.conf += (3 * (g_s.conf / 10));
 				}
 			} else if (nbrep[caff - 69] < nbrepm[caff - 69]) {
 				suj = tabdon[arep + (ix << 3) + (caff - 70)];
-				s.conf += tabdon[arcf + ix];
+				g_s.conf += tabdon[arcf + ix];
 				++nbrep[caff - 69];
 			} else {
-				s.conf += 3;
+				g_s.conf += 3;
 				suj = 139;
 			}
 			hideMouse();
@@ -1484,32 +1486,32 @@ void fctDiscuss() {
 			sparl(0, suj);
 			showMouse();
 			if ((suj == 84) || (suj == 86)) {
-				s.pourc[5] = '*';
-				s.teauto[7] = '*';
+				g_s.pourc[5] = '*';
+				g_s.teauto[7] = '*';
 			}
 			if ((suj == 106) || (suj == 108) || (suj == 94)) {
 				for (int indx = 29; indx <= 31; ++indx)
-					s.teauto[indx] = '*';
-				s.pourc[7] = '*';
+					g_s.teauto[indx] = '*';
+				g_s.pourc[7] = '*';
 			}
 			if (suj == 70) {
-				s.pourc[8] = '*';
-				s.teauto[32] = '*';
+				g_s.pourc[8] = '*';
+				g_s.teauto[32] = '*';
 			}
 			hideMouse();
 			hirs();
 			showMouse();
 		}
 	} while ((choi != 46) && (suj != 138));
-	if (col) {
-		s.conf = s.conf + (3 * (s.conf / 10));
+	if (g_col) {
+		g_s.conf += (3 * (g_s.conf / 10));
 		hideMouse();
 		hirs();
 		premtet();
 		sparl(0, 138);
 		showMouse();
-		col = false;
-		s.mlieu = 15;
+		g_col = false;
+		g_s.mlieu = 15;
 	}
 	ctrm = 0;
 	hideMouse();
@@ -1521,7 +1523,7 @@ void fctDiscuss() {
 	drawClock();
 	affrep();
 	/* chech;*/
-	tmlieu(s.mlieu);
+	tmlieu(g_s.mlieu);
 	clsf3();
 }
 
@@ -1540,7 +1542,7 @@ void fctSmell() {
 				crep = 153;
 	} else if (caff == 123)
 		crep = 110;
-	num = 0;
+	g_num = 0;
 }
 
 /**
@@ -1554,7 +1556,7 @@ void fctScratch() {
 			ecr3(g_vm->getEngineString(S_SCRATCH));
 		tfleche();
 	}
-	num = 0;
+	g_num = 0;
 }
 
 /**
@@ -1608,9 +1610,9 @@ void MortevielleEngine::loseGame() {
 	vh = 10;
 	vm = 0;
 	vj = 0;
-	_minute = 0;
-	_hour = 10;
-	_day = 0;
+	g_minute = 0;
+	g_hour = 10;
+	g_day = 0;
 	repon(2, 180);
 	answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 	_quitGame = (answer != 1);

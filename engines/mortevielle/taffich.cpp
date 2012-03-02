@@ -106,42 +106,42 @@ void taffich() {
 	else if ((a >= 136) && (a <= 140))
 		a = tran1[a - 136];
 	int b = a;
-	if (_maff == a)
+	if (g_maff == a)
 		return;
 
 	switch (a) {
 	case 16:
-		s.pourc[9] = '*';
-		s.teauto[42] = '*';
+		g_s.pourc[9] = '*';
+		g_s.teauto[42] = '*';
 		break;
 	case 20:
-		s.teauto[39] = '*';
-		if (s.teauto[36] == '*') {
-			s.pourc[3] = '*';
-			s.teauto[38] = '*';
+		g_s.teauto[39] = '*';
+		if (g_s.teauto[36] == '*') {
+			g_s.pourc[3] = '*';
+			g_s.teauto[38] = '*';
 		}
 		break;
 	case 24:
-		s.teauto[37] = '*';
+		g_s.teauto[37] = '*';
 		break;
 	case 30:
-		s.teauto[9] = '*';
+		g_s.teauto[9] = '*';
 		break;
 	case 31:
-		s.pourc[4] = '*';
-		s.teauto[35] = '*';
+		g_s.pourc[4] = '*';
+		g_s.teauto[35] = '*';
 		break;
 	case 118:
-		s.teauto[41] = '*';
+		g_s.teauto[41] = '*';
 		break;
 	case 143:
-		s.pourc[1] = '*';
+		g_s.pourc[1] = '*';
 		break;
 	case 150:
-		s.teauto[34] = '*';
+		g_s.teauto[34] = '*';
 		break;
 	case 151:
-		s.pourc[2] = '*';
+		g_s.pourc[2] = '*';
 		break;
 	default:
 		break;
@@ -160,7 +160,7 @@ void taffich() {
 			m = 2010;
 		if (a == 32)
 			m = 2034;
-		if ((a == 17) && (_maff == 14))
+		if ((a == 17) && (g_maff == 14))
 			m = 2018;
 		if (a > 99)
 			if ((is == 1) || (is == 0))
@@ -169,10 +169,10 @@ void taffich() {
 				m = 2032;
 		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
 			m = 2030;
-		if (((a < 27) && (((_maff > 69) && (! s.ipre)) || (_maff > 99))) || ((_maff > 29) && (_maff < 33)))
+		if (((a < 27) && (((g_maff > 69) && (!g_s.ipre)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
 			m = 2033;
 		messint(m);
-		_maff = a;
+		g_maff = a;
 		if (a == 159)
 			a = 86;
 		else if (a > 140)
@@ -203,11 +203,11 @@ void taffich() {
 			lgt = handle;
 			handle = g_l[88];
 		}
-		_maff = a;
+		g_maff = a;
 		npal = a + 37;
 	}
 	chardes(filename, lgt, handle);
-	if (_currGraphicalDevice == MODE_HERCULES) {
+	if (g_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
 			int palh = READ_LE_UINT16(&mem[(0x7000 * 16) + ((i + 1) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
@@ -244,11 +244,11 @@ void taffich() {
 		charani(filename, lgt, handle);
 	}
 	showMouse();
-	if ((a < 27) && ((_maff < 27) || (s.mlieu == 15)) && (msg[4] != OPCODE_ENTER)) {
+	if ((a < 27) && ((g_maff < 27) || (g_s.mlieu == 15)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			person();
 		else if (! blo)
-			t11(s.mlieu, cx);
+			t11(g_s.mlieu, cx);
 		mpers =  0;
 	}
 }

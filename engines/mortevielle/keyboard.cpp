@@ -42,7 +42,7 @@ int testou() {
 
 	switch (ch)  {
 	case '\23' :
-		_soundOff = !_soundOff;
+		g_soundOff = !g_soundOff;
 		break;
 	case '\26' :
 		if ((c_zzz == 1) || (c_zzz == 2)) {

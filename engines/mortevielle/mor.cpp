@@ -114,7 +114,7 @@ void dessine(int ad, int x, int y) {
 
 void dessine_rouleau() {
 	writepal(89);
-	if (_currGraphicalDevice == MODE_HERCULES) {
+	if (g_currGraphicalDevice == MODE_HERCULES) {
 		mem[0x7000 * 16 + 14] = 15;
 	}
 	hideMouse();
@@ -236,11 +236,11 @@ void clsf10() {
 		cod = 544;
 	}
 	g_vm->_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
-	if (s.conf < 33)
+	if (g_s.conf < 33)
 		st = g_vm->getEngineString(S_COOL);
-	else if (s.conf < 66)
+	else if (g_s.conf < 66)
 		st = g_vm->getEngineString(S_LOURDE);
-	else if (s.conf > 65)
+	else if (g_s.conf > 65)
 		st = g_vm->getEngineString(S_MALSAINE);
 	
 	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
@@ -259,7 +259,7 @@ void clsf10() {
 
 void stop() {
 	hirs();
-	_currGraphicalDevice = MODE_AMSTRAD1512;
+	g_currGraphicalDevice = MODE_AMSTRAD1512;
 	hirs();
 	g_vm->quitGame();
 }
@@ -267,7 +267,7 @@ void stop() {
 void paint_rect(int x, int y, int dx, int dy) {
 	int co;
 
-	if (_currGraphicalDevice == MODE_CGA)
+	if (g_currGraphicalDevice == MODE_CGA)
 		co = 3;
 	else
 		co = 11;
@@ -280,7 +280,7 @@ int hazard(int min, int max) {
 
 void calch(int &j, int &h, int &m) {
 	int nh = readclock();
-	int th = jh + ((nh - mh) / t);
+	int th = jh + ((nh - mh) / g_t);
 	m = ((th % 2) + vm) * 30;
 	h = ((uint)th >> 1) + vh;
 	if (m == 60) {
@@ -357,12 +357,12 @@ void repon(int f, int m) {
 			ecrf2();
 			text1(8, 182, 103, m);
 			if ((m == 68) || (m == 69))
-				s.teauto[40] = '*';
+				g_s.teauto[40] = '*';
 			if ((m == 104) && (caff == 14)) {
-				s.teauto[36] = '*';
-				if (s.teauto[39] == '*') {
-					s.pourc[3] = '*';
-					s.teauto[38] = '*';
+				g_s.teauto[36] = '*';
+				if (g_s.teauto[39] == '*') {
+					g_s.pourc[3] = '*';
+					g_s.teauto[38] = '*';
 				}
 			}
 		}
@@ -377,10 +377,10 @@ void repon(int f, int m) {
 			afftex(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
-				s.pourc[6] = '*';
+				g_s.pourc[6] = '*';
 
 			if (m == 179)
-				s.pourc[10] = '*';
+				g_s.pourc[10] = '*';
 		}
 		if (f == 7) {         /* messint */
 			ecrf7();
@@ -635,17 +635,17 @@ void drawClock() {
 	
 	paint_rect(570, 118, 20, 10);
 	paint_rect(578, 114, 6, 18);
-	if ((_currGraphicalDevice == MODE_CGA) || (_currGraphicalDevice == MODE_HERCULES))
+	if ((g_currGraphicalDevice == MODE_CGA) || (g_currGraphicalDevice == MODE_HERCULES))
 		co = 0;
 	else
 		co = 1;
 
-	if (_minute == 0)
+	if (g_minute == 0)
 		g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
 	else 
 		g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
 
-	h = _hour;
+	h = g_hour;
 	if (h > 12)
 		h -= 12;
 	if (h == 0)
@@ -655,15 +655,15 @@ void drawClock() {
 	showMouse();
 	g_vm->_screenSurface.putxy(568, 154);
 
-	if (_hour > 11)
+	if (g_hour > 11)
 		g_vm->_screenSurface.writeg("PM ", 1);
 	else
 		g_vm->_screenSurface.writeg("AM ", 1);
 
 	g_vm->_screenSurface.putxy(550, 160);
-	if ((_day >= 0) && (_day <= 8)) {
+	if ((g_day >= 0) && (g_day <= 8)) {
 		Common::String tmp = g_vm->getEngineString(S_DAY);
-		tmp.insertChar((char)(_day + 49), 0);
+		tmp.insertChar((char)(g_day + 49), 0);
 		g_vm->_screenSurface.writeg(tmp, 1);
 	}
 }
@@ -673,9 +673,9 @@ void drawClock() {
  *************/
 
 void debloc(int l) {
-	num = 0;
+	g_num = 0;
 	g_x = 0;
-	y = 0;
+	g_y = 0;
 	if ((l != 26) && (l != 15))
 		t5(l);
 	mpers = ipers;
@@ -1033,46 +1033,44 @@ void phaz(int &haz, int &p, int cf) {
 }
 
 void inzon() {
-	int cx;
-
 	copcha();
 
-	s.ipre  = false;
-	s.derobj = 0;
-	s.icave = 0;
-	s.iboul = 0;
-	s.ibag  = 0;
-	s.ipuit = 0;
-	s.ivier = 0;
-	s.iloic = 136;
-	s.icryp = 141;
-	s.conf  = hazard(4, 10);
-	s.mlieu = 21;
+	g_s.ipre  = false;
+	g_s.derobj = 0;
+	g_s.icave = 0;
+	g_s.iboul = 0;
+	g_s.ibag  = 0;
+	g_s.ipuit = 0;
+	g_s.ivier = 0;
+	g_s.iloic = 136;
+	g_s.icryp = 141;
+	g_s.conf  = hazard(4, 10);
+	g_s.mlieu = 21;
 
-	for (cx = 2; cx <= 6; ++cx)
-		s.sjer[cx] = chr(0);
+	for (int cx = 2; cx <= 6; ++cx)
+		g_s.sjer[cx] = chr(0);
 
-	s.sjer[1] = chr(113);
-	s.heure = chr(20);
+	g_s.sjer[1] = chr(113);
+	g_s.heure = chr(20);
 
-	for (cx = 1; cx <= 10; ++cx)
-		s.pourc[cx] = ' ';
+	for (int cx = 1; cx <= 10; ++cx)
+		g_s.pourc[cx] = ' ';
 
-	for (cx = 1; cx <= 6; ++cx)
-		s.teauto[cx] = '*';
+	for (int cx = 1; cx <= 6; ++cx)
+		g_s.teauto[cx] = '*';
 
-	for (cx = 7; cx <= 9; ++cx)
-		s.teauto[cx] = ' ';
+	for (int cx = 7; cx <= 9; ++cx)
+		g_s.teauto[cx] = ' ';
 
-	for (cx = 10; cx <= 28; ++cx)
-		s.teauto[cx] = '*';
+	for (int cx = 10; cx <= 28; ++cx)
+		g_s.teauto[cx] = '*';
 
-	for (cx = 29; cx <= 42; ++cx)
-		s.teauto[cx] = ' ';
+	for (int cx = 29; cx <= 42; ++cx)
+		g_s.teauto[cx] = ' ';
 
-	s.teauto[33] = '*';
+	g_s.teauto[33] = '*';
 
-	for (cx = 1; cx <= 8; ++cx)
+	for (int cx = 1; cx <= 8; ++cx)
 		nbrep[cx] = 0;
 
 	init_nbrepm();
@@ -1081,9 +1079,9 @@ void inzon() {
 void dprog() {
 	li = 21;
 	jh = 0;
-	if (! s.ipre)
+	if (!g_s.ipre)
 		blo = true;
-	t = ti1;
+	g_t = ti1;
 	mh = readclock();
 }
 
@@ -1221,7 +1219,7 @@ void pl20(int cf) {
 void t11(int l11, int &a) {
 	int p, haz;
 
-	ecfren(p, haz, s.conf, l11);
+	ecfren(p, haz, g_s.conf, l11);
 	li = l11;
 	if ((l11 > 0) && (l11 < 10)) {
 		if (p != -500) {
@@ -1253,7 +1251,7 @@ void t11(int l11, int &a) {
 				cpl15(p);
 			if (l11 == 20)
 				cpl20(p, h);
-			p = p + s.conf;
+			p += g_s.conf;
 			haz = hazard(1, 100);
 			if (haz > p) {
 				person();
@@ -1276,20 +1274,17 @@ void t11(int l11, int &a) {
 }
 
 void cavegre() {
-	int haz;
-
-	s.conf = s.conf + 2;
-	if (s.conf > 69)
-		s.conf += (s.conf / 10);
+	g_s.conf += 2;
+	if (g_s.conf > 69)
+		g_s.conf += (g_s.conf / 10);
 	clsf3();
 	ecrf2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
-	haz = (hazard(0, 4)) - 2;
+	int haz = (hazard(0, 4)) - 2;
 	parole(2, haz, 1);
 
-	// Useless?
-	for (haz = 0; haz <= 3000; ++haz)
-		;
+	// The original was doing here a useless loop.
+	// It has been removed
 
 	clsf3();
 	person();
@@ -1340,12 +1335,12 @@ void musique(int so) {
 	if (so == 0) {
 		/* musik(0) */
 		;
-	} else if ((prebru == 0) && (! s.ipre)) {
+	} else if ((prebru == 0) && (!g_s.ipre)) {
 		parole(10, 1, 1);
 		++prebru;
 	} else {
 		bool i = false;
-		if ((s.mlieu == 19) || (s.mlieu == 21) || (s.mlieu == 22)) {
+		if ((g_s.mlieu == 19) || (g_s.mlieu == 21) || (g_s.mlieu == 22)) {
 			int haz = hazard(1, 3);
 			if (haz == 2) {
 				haz = hazard(2, 4);
@@ -1353,21 +1348,23 @@ void musique(int so) {
 				i = true;
 			}
 		}
-		if (s.mlieu == 20) {
+		if (g_s.mlieu == 20) {
 			int haz = hazard(1, 2);
 			if (haz == 1) {
 				parole(8, 1, 1);
 				i = true;
 			}
 		}
-		if (s.mlieu == 24) {
+
+		if (g_s.mlieu == 24) {
 			int haz = hazard(1, 2);
 			if (haz == 2) {
 				parole(12, 1, 1);
 				i = true;
 			}
 		}
-		if (s.mlieu == 23) {
+
+		if (g_s.mlieu == 23) {
 			parole(13, 1, 1);
 			i = true;
 		}
@@ -1400,19 +1397,19 @@ void dessin(int ad) {
 				}
 
 				if (caff == 13) {
-					if (s.iboul == 141)
+					if (g_s.iboul == 141)
 						aniof(1, 7);
 
-					if (s.ibag == 159)
+					if (g_s.ibag == 159)
 						aniof(1, 6);
 				}
-				if ((caff == 14) && (s.icave == 151))
+				if ((caff == 14) && (g_s.icave == 151))
 					aniof(1, 2);
 
-				if ((caff == 17) && (s.ivier == 143))
+				if ((caff == 17) && (g_s.ivier == 143))
 					aniof(1, 1);
 
-				if ((caff == 24) && (s.ipuit != 0))
+				if ((caff == 24) && (g_s.ipuit != 0))
 					aniof(1, 1);
 			}
 			

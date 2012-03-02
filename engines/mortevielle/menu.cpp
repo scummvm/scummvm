@@ -154,7 +154,7 @@ void Menu::displayMenu() {
 	
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * res;
-	if (_currGraphicalDevice == MODE_CGA)
+	if (g_currGraphicalDevice == MODE_CGA)
 		color = 1;
 	else
 		color = 9;
@@ -456,8 +456,8 @@ void Menu::mdn() {
 			//  A menu was clicked on
 			choisi = (test0) && (msg4 != OPCODE_NONE);
 			menuUp(msg3);
-			msg[4] = msg4;
-			msg[3] = msg3;
+			g_msg[4] = msg4;
+			g_msg[3] = msg3;
 			msg3 = OPCODE_NONE;
 			msg4 = OPCODE_NONE;
 
@@ -513,8 +513,8 @@ void Menu::initMenu() {
 	}
 	msg3 = OPCODE_NONE;
 	msg4 = OPCODE_NONE;
-	msg[3] = OPCODE_NONE;
-	msg[4] = OPCODE_NONE;
+	g_msg[3] = OPCODE_NONE;
+	g_msg[4] = OPCODE_NONE;
 	g_vm->setMouseClick(false);
 }
 
