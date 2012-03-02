@@ -145,7 +145,7 @@ void text1(int x, int y, int nb, int m) {
 
 void initouv() {
 	for (int cx = 1; cx <= 7; ++cx)
-		touv[cx] = chr(0);
+		g_touv[cx] = chr(0);
 }
 
 void ecrf1() {
@@ -236,11 +236,11 @@ void clsf10() {
 		cod = 544;
 	}
 	g_vm->_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
-	if (g_s.conf < 33)
+	if (g_s._conf < 33)
 		st = g_vm->getEngineString(S_COOL);
-	else if (g_s.conf < 66)
+	else if (g_s._conf < 66)
 		st = g_vm->getEngineString(S_LOURDE);
-	else if (g_s.conf > 65)
+	else if (g_s._conf > 65)
 		st = g_vm->getEngineString(S_MALSAINE);
 	
 	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
@@ -309,7 +309,7 @@ void modobj(int m) {
 	Common::String strp = Common::String(' ');
 
 	if (m != 500)
-		strp = deline(m - 501 + c_st41);
+		strp = deline(m - 501 + kInventoryStringIndex);
 
 	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
@@ -324,7 +324,7 @@ void modobj2(int m, bool t1, bool t2) {
 		g_tesok = false;;
 
 	if (m != 500)
-		strp = deline(m - 501 + c_st41);
+		strp = deline(m - 501 + kInventoryStringIndex);
 
 	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
@@ -337,7 +337,7 @@ void repon(int f, int m) {
 	Common::String tmpStr;
 
 	if ((m > 499) && (m < 563)) {
-		tmpStr = deline(m - 501 + c_st41);
+		tmpStr = deline(m - 501 + kInventoryStringIndex);
 
 		if ((int) tmpStr.size() > ((58 + (g_res - 1) * 37) << 1))
 			g_f2_all = true;
@@ -357,12 +357,12 @@ void repon(int f, int m) {
 			ecrf2();
 			text1(8, 182, 103, m);
 			if ((m == 68) || (m == 69))
-				g_s.teauto[40] = '*';
+				g_s._teauto[40] = '*';
 			if ((m == 104) && (g_caff == 14)) {
-				g_s.teauto[36] = '*';
-				if (g_s.teauto[39] == '*') {
-					g_s.pourc[3] = '*';
-					g_s.teauto[38] = '*';
+				g_s._teauto[36] = '*';
+				if (g_s._teauto[39] == '*') {
+					g_s._pourc[3] = '*';
+					g_s._teauto[38] = '*';
 				}
 			}
 		}
@@ -377,10 +377,10 @@ void repon(int f, int m) {
 			afftex(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
-				g_s.pourc[6] = '*';
+				g_s._pourc[6] = '*';
 
 			if (m == 179)
-				g_s.pourc[10] = '*';
+				g_s._pourc[10] = '*';
 		}
 		if (f == 7) {         /* messint */
 			ecrf7();
@@ -1024,7 +1024,7 @@ void init_nbrepm() {
 	const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
 
 	for (int idx = 0; idx < 9; ++idx)
-		nbrepm[idx] = ipm[idx];
+		g_nbrepm[idx] = ipm[idx];
 }
 
 void phaz(int &haz, int &p, int cf) {
@@ -1035,43 +1035,43 @@ void phaz(int &haz, int &p, int cf) {
 void inzon() {
 	copcha();
 
-	g_s.ipre  = false;
-	g_s.derobj = 0;
-	g_s.icave = 0;
-	g_s.iboul = 0;
-	g_s.ibag  = 0;
-	g_s.ipuit = 0;
-	g_s.ivier = 0;
-	g_s.iloic = 136;
-	g_s.icryp = 141;
-	g_s.conf  = hazard(4, 10);
-	g_s.mlieu = 21;
+	g_s._ipre  = false;
+	g_s._derobj = 0;
+	g_s._icave = 0;
+	g_s._iboul = 0;
+	g_s._ibag  = 0;
+	g_s._ipuit = 0;
+	g_s._ivier = 0;
+	g_s._iloic = 136;
+	g_s._icryp = 141;
+	g_s._conf  = hazard(4, 10);
+	g_s._mlieu = 21;
 
 	for (int cx = 2; cx <= 6; ++cx)
-		g_s.sjer[cx] = chr(0);
+		g_s._sjer[cx] = chr(0);
 
-	g_s.sjer[1] = chr(113);
-	g_s.heure = chr(20);
+	g_s._sjer[1] = chr(113);
+	g_s._heure = chr(20);
 
 	for (int cx = 1; cx <= 10; ++cx)
-		g_s.pourc[cx] = ' ';
+		g_s._pourc[cx] = ' ';
 
 	for (int cx = 1; cx <= 6; ++cx)
-		g_s.teauto[cx] = '*';
+		g_s._teauto[cx] = '*';
 
 	for (int cx = 7; cx <= 9; ++cx)
-		g_s.teauto[cx] = ' ';
+		g_s._teauto[cx] = ' ';
 
 	for (int cx = 10; cx <= 28; ++cx)
-		g_s.teauto[cx] = '*';
+		g_s._teauto[cx] = '*';
 
 	for (int cx = 29; cx <= 42; ++cx)
-		g_s.teauto[cx] = ' ';
+		g_s._teauto[cx] = ' ';
 
-	g_s.teauto[33] = '*';
+	g_s._teauto[33] = '*';
 
 	for (int cx = 1; cx <= 8; ++cx)
-		nbrep[cx] = 0;
+		g_nbrep[cx] = 0;
 
 	init_nbrepm();
 }
@@ -1079,7 +1079,7 @@ void inzon() {
 void dprog() {
 	g_li = 21;
 	g_jh = 0;
-	if (!g_s.ipre)
+	if (!g_s._ipre)
 		g_blo = true;
 	g_t = ti1;
 	g_mh = readclock();
@@ -1219,7 +1219,7 @@ void pl20(int cf) {
 void t11(int l11, int &a) {
 	int p, haz;
 
-	ecfren(p, haz, g_s.conf, l11);
+	ecfren(p, haz, g_s._conf, l11);
 	g_li = l11;
 	if ((l11 > 0) && (l11 < 10)) {
 		if (p != -500) {
@@ -1251,7 +1251,7 @@ void t11(int l11, int &a) {
 				cpl15(p);
 			if (l11 == 20)
 				cpl20(p, h);
-			p += g_s.conf;
+			p += g_s._conf;
 			haz = hazard(1, 100);
 			if (haz > p) {
 				person();
@@ -1274,9 +1274,9 @@ void t11(int l11, int &a) {
 }
 
 void cavegre() {
-	g_s.conf += 2;
-	if (g_s.conf > 69)
-		g_s.conf += (g_s.conf / 10);
+	g_s._conf += 2;
+	if (g_s._conf > 69)
+		g_s._conf += (g_s._conf / 10);
 	clsf3();
 	ecrf2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
@@ -1335,12 +1335,12 @@ void musique(int so) {
 	if (so == 0) {
 		/* musik(0) */
 		;
-	} else if ((g_prebru == 0) && (!g_s.ipre)) {
+	} else if ((g_prebru == 0) && (!g_s._ipre)) {
 		parole(10, 1, 1);
 		++g_prebru;
 	} else {
 		bool i = false;
-		if ((g_s.mlieu == 19) || (g_s.mlieu == 21) || (g_s.mlieu == 22)) {
+		if ((g_s._mlieu == 19) || (g_s._mlieu == 21) || (g_s._mlieu == 22)) {
 			int haz = hazard(1, 3);
 			if (haz == 2) {
 				haz = hazard(2, 4);
@@ -1348,7 +1348,7 @@ void musique(int so) {
 				i = true;
 			}
 		}
-		if (g_s.mlieu == 20) {
+		if (g_s._mlieu == 20) {
 			int haz = hazard(1, 2);
 			if (haz == 1) {
 				parole(8, 1, 1);
@@ -1356,7 +1356,7 @@ void musique(int so) {
 			}
 		}
 
-		if (g_s.mlieu == 24) {
+		if (g_s._mlieu == 24) {
 			int haz = hazard(1, 2);
 			if (haz == 2) {
 				parole(12, 1, 1);
@@ -1364,7 +1364,7 @@ void musique(int so) {
 			}
 		}
 
-		if (g_s.mlieu == 23) {
+		if (g_s._mlieu == 23) {
 			parole(13, 1, 1);
 			i = true;
 		}
@@ -1392,24 +1392,24 @@ void dessin(int ad) {
 			ecrf1();
 			if ((g_caff < 30) || (g_caff > 32)) {
 				for (int cx = 1; cx <= 6; ++cx) {
-					if (ord(touv[cx]) != 0)
-						aniof(1, ord(touv[cx]));
+					if (ord(g_touv[cx]) != 0)
+						aniof(1, ord(g_touv[cx]));
 				}
 
 				if (g_caff == 13) {
-					if (g_s.iboul == 141)
+					if (g_s._iboul == 141)
 						aniof(1, 7);
 
-					if (g_s.ibag == 159)
+					if (g_s._ibag == 159)
 						aniof(1, 6);
 				}
-				if ((g_caff == 14) && (g_s.icave == 151))
+				if ((g_caff == 14) && (g_s._icave == 151))
 					aniof(1, 2);
 
-				if ((g_caff == 17) && (g_s.ivier == 143))
+				if ((g_caff == 17) && (g_s._ivier == 143))
 					aniof(1, 1);
 
-				if ((g_caff == 24) && (g_s.ipuit != 0))
+				if ((g_caff == 24) && (g_s._ipuit != 0))
 					aniof(1, 1);
 			}
 			

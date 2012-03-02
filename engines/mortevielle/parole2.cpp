@@ -38,14 +38,14 @@ namespace Mortevielle {
 void rot_chariot() {
 	c1 = c2;
 	c2 = c3;
-	c3.val = 32;
-	c3.code = 9;
+	c3._val = 32;
+	c3._code = 9;
 }
 
 void init_chariot() {
-	c3.rep = 0;
-	c3.freq = 0;
-	c3.acc = 0;
+	c3._rep = 0;
+	c3._freq = 0;
+	c3._acc = 0;
 	rot_chariot();
 	rot_chariot();
 }
@@ -55,13 +55,13 @@ void trait_ph() {
 	const int deca[3] = {300, 30, 40};
 
 	g_ptr_tcph = g_num_ph - 1;
-	g_ledeb = swap(t_cph[g_ptr_tcph]) + deca[g_typlec];
-	g_lefin = swap(t_cph[g_ptr_tcph + 1]) + deca[g_typlec];
+	g_ledeb = swap(g_t_cph[g_ptr_tcph]) + deca[g_typlec];
+	g_lefin = swap(g_t_cph[g_ptr_tcph + 1]) + deca[g_typlec];
 	g_nb_word = g_lefin - g_ledeb;
 	g_ptr_tcph = (uint)g_ledeb >> 1;
 	g_ptr_word = 0;
 	do {
-		WRITE_LE_UINT16(&mem[adword + g_ptr_word], t_cph[g_ptr_tcph]);
+		WRITE_LE_UINT16(&mem[adword + g_ptr_word], g_t_cph[g_ptr_tcph]);
 		g_ptr_word += 2;
 		++g_ptr_tcph;
 	} while (g_ptr_tcph < (int)((uint)g_lefin >> 1));
@@ -95,13 +95,13 @@ void parole(int rep, int ht, int typ) {
 	g_typlec = typ;
 	if (g_typlec != 0) {
 		for (int i = 0; i <= 500; ++i)
-			savph[i] = t_cph[i];
-		tempo = tempo_bruit;
+			savph[i] = g_t_cph[i];
+		tempo = kTempoNoise;
 	} else if (g_haut > 5)
-		tempo = tempo_f;
+		tempo = kTempoF;
 	else
-		tempo = tempo_m;
-	addfix = (float)((tempo - addv[0])) / 256;
+		tempo = kTempoM;
+	addfix = (float)((tempo - g_addv[0])) / 256;
 	cctable(tbi);
 	switch (typ) {
 	case 1:
@@ -120,7 +120,7 @@ void parole(int rep, int ht, int typ) {
 	g_vm->_soundManager.litph(tbi, typ, tempo);
 	if (g_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
-			t_cph[i] = savph[i];
+			g_t_cph[i] = savph[i];
 			g_mlec = g_typlec;
 		}
 	writepal(g_numpal);

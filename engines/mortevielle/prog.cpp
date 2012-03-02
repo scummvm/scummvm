@@ -100,7 +100,7 @@ void MortevielleEngine::gameLoaded() {
 	g_hdb = 0;
 	g_hfb = 0;
 	g_cs = 0;
-	is = 0;
+	g_is = 0;
 	k = 0;
 	g_ment = 0;
 	g_syn = true;
@@ -113,7 +113,7 @@ void MortevielleEngine::gameLoaded() {
 	g_iouv = 0;
 	g_dobj = 0;
 	affrep();
-	_hintPctMessage = deline(580);
+	g_hintPctMessage = deline(580);
 	while ((test[k] == false) && (k < 2)) {
 		++k;
 
@@ -133,10 +133,10 @@ void MortevielleEngine::gameLoaded() {
 	repon(2, g_crep);
 	clsf3();
 	_endGame = false;
-	tmlieu(g_s.mlieu);
+	tmlieu(g_s._mlieu);
 	modinv();
-	if (g_s.derobj != 0)
-		modobj2(g_s.derobj + 400, test[1], test[2]);
+	if (g_s._derobj != 0)
+		modobj2(g_s._derobj + 400, test[1], test[2]);
 	else
 		g_tesok = test[1] || test[2];
 	showMouse();
@@ -153,7 +153,7 @@ void tmaj3() {
 		m = 1;
 	h += j * 24;
 	m += h * 2;
-	g_s.heure = chr(m);
+	g_s._heure = chr(m);
 }
 
 void tsitu() {
@@ -239,16 +239,16 @@ void tsitu() {
 		}
 	}
 	calch(j, h, m);
-	if ((((h == 12) || (h == 13) || (h == 19)) && (g_s.mlieu != 10)) ||
-	        ((h > 0) && (h < 6) && (g_s.mlieu != 0)))
-		++g_s.conf;
-	if (((g_s.mlieu < 16) || (g_s.mlieu > 19)) && (g_s.mlieu != 23)
-	        && (g_s.mlieu != 0) && (g_s.derobj != 152) && (!g_vm->_loseGame)) {
-		if ((g_s.conf > 99) && (h > 8) && (h < 16)) {
+	if ((((h == 12) || (h == 13) || (h == 19)) && (g_s._mlieu != 10)) ||
+	        ((h > 0) && (h < 6) && (g_s._mlieu != 0)))
+		++g_s._conf;
+	if (((g_s._mlieu < 16) || (g_s._mlieu > 19)) && (g_s._mlieu != 23)
+	        && (g_s._mlieu != 0) && (g_s._derobj != 152) && (!g_vm->_loseGame)) {
+		if ((g_s._conf > 99) && (h > 8) && (h < 16)) {
 			g_crep = 1501;
 			tperd();
 		}
-		if ((g_s.conf > 99) && (h > 0) && (h < 9)) {
+		if ((g_s._conf > 99) && (h > 0) && (h < 9)) {
 			g_crep = 1508;
 			tperd();
 		}
@@ -263,7 +263,7 @@ void tsitu() {
 /* NIVEAU 1 */
 
 void theure() {
-	g_vj = ord(g_s.heure);
+	g_vj = ord(g_s._heure);
 	g_vh = g_vj % 48;
 	g_vj /= 48;
 	g_vm__ = g_vh % 2;

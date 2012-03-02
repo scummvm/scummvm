@@ -39,35 +39,37 @@ namespace Mortevielle {
 void copcha() {
 	int i = acha;
 	do {
-		tabdon[i] = tabdon[i + 390];
+		g_tabdon[i] = g_tabdon[i + 390];
 		++i;
 	} while (i != acha + 390);
 }
 
-bool dans_rect(rectangle r) {
+/**
+ * Engine function : Is mouse in a given rect?
+ * @remarks	Originally called 'dans_rect'
+ */
+bool isMouseIn(rectangle r) {
 	int x, y, c;
 
 	getMousePos(x, y, c);
-	if ((x > r.x1) && (x < r.x2) && (y > r.y1) && (y < r.y2))
+	if ((x > r._x1) && (x < r._x2) && (y > r._y1) && (y < r._y2))
 		return true;
 
 	return false;
 }
 
-void outbloc(int n, pattern p, t_nhom pal) {
+void outbloc(int n, pattern p, nhom *pal) {
 	int ad = n * 404 + 0xd700;
 
-	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad], p.tax);
-	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad + 2], p.tay);
+	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad], p._tax);
+	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad + 2], p._tay);
 	ad += 4;
-	for (int i = 1; i <= p.tax; ++i)
-		for (int j = 1; j <= p.tay; ++j)
-			mem[(0x6000 * 16) + ad + (j - 1) * p.tax + i - 1] = pal[n].hom[p.des[i][j]];
+	for (int i = 1; i <= p._tax; ++i)
+		for (int j = 1; j <= p._tay; ++j)
+			mem[(0x6000 * 16) + ad + (j - 1) * p._tax + i - 1] = pal[n]._hom[p._des[i][j]];
 }
 
 void writepal(int n) {
-	t_nhom pal;
-
 	switch (g_currGraphicalDevice) {
 	case MODE_TANDY:
 	case MODE_EGA:
@@ -77,14 +79,19 @@ void writepal(int n) {
 			mem[(0x7000 * 16) + (2 * i) + 1] = tabpal[n][i].y;
 		}
 		break;
-	case MODE_CGA:
+	case MODE_CGA: {
 		warning("TODO: If this code is needed, resolve the incompatible types");
-//		pal = palcga[n].a;
+		nhom pal[16];
+		for (int i = 0; i < 16; ++i) {
+			pal[i] = palcga[n]._a[i];
+		}
+//		nhom pal[16] = palcga[n]._a;
 		if (n < 89)
-			palette(palcga[n].p);
+			palette(palcga[n]._p);
 		
 		for (int i = 0; i <= 15; ++i)
-			outbloc(i, tpt[pal[i].n], pal);
+			outbloc(i, tpt[pal[i]._id], pal);
+		}
 		break;
 	default:
 		break;
@@ -125,13 +132,13 @@ void adzon() {
 	if (!f.open("don.mor"))
 		error("Missing file - don.mor");
 
-	f.read(tabdon, 7 * 256);
+	f.read(g_tabdon, 7 * 256);
 	f.close();
 
 	if (!f.open("bmor.mor"))
 		error("Missing file - bmor.mor");
 
-	f.read(&tabdon[fleche], 1 * 1916);
+	f.read(&g_tabdon[fleche], 1 * 1916);
 	f.close();
 
 	if (!f.open("dec.mor"))

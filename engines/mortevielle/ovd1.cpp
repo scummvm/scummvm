@@ -78,23 +78,23 @@ void charpal() {
 		error("Missing file - cxx.mor");
 
 	for (int j = 0; j <= 90; ++j) {
-		palcga[j].p = fb.readByte();
+		palcga[j]._p = fb.readByte();
 		for (int i = 0; i <= 15; ++i) {
-			nhom &with = palcga[j].a[i];
+			nhom &with = palcga[j]._a[i];
 
 			b = fb.readByte();
-			with.n = (uint)b >> 4;
-			with.hom[0] = ((uint)b >> 2) & 3;
-			with.hom[1] = b & 3;
+			with._id = (uint)b >> 4;
+			with._hom[0] = ((uint)b >> 2) & 3;
+			with._hom[1] = b & 3;
 		}
 	}
-	palcga[10].a[9] = palcga[10].a[5];
+	palcga[10]._a[9] = palcga[10]._a[5];
 	for (int j = 0; j <= 14; ++j) {
-		tpt[j].tax = fb.readByte();
-		tpt[j].tay = fb.readByte();
+		tpt[j]._tax = fb.readByte();
+		tpt[j]._tay = fb.readByte();
 		for (int i = 1; i <= 20; ++i)
 			for (int k = 1; k <= 20; ++k)
-				tpt[j].des[i][k] = fb.readByte();
+				tpt[j]._des[i][k] = fb.readByte();
 	}
 	fb.close();
 }
@@ -134,8 +134,8 @@ void chartex() {
 	inpFile.close();
 
 	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
-		t_rec[i].indis = ntpFile.readSint16LE();
-		t_rec[i].point = ntpFile.readByte();
+		t_rec[i]._indis = ntpFile.readSint16LE();
+		t_rec[i]._point = ntpFile.readByte();
 	}
 
 	ntpFile.close();
@@ -187,14 +187,14 @@ void music() {
 	fic.close();
 
 	g_vm->_soundManager.decodeMusic(&mem[0x3800 * 16], &mem[0x5000 * 16], 623);
-	addfix = (float)((tempo_mus - addv[1])) / 256;
+	addfix = (float)((kTempoMusic - g_addv[1])) / 256;
 	cctable(tbi);
 
 	fin = false;
 	k = 0;
 	do {
 		fin = keypressed();
-		g_vm->_soundManager.musyc(tbi, 9958 , tempo_mus);
+		g_vm->_soundManager.musyc(tbi, 9958, kTempoMusic);
 		++k;
 		fin = fin | keypressed() | (k >= 5);
 	} while (!fin);
@@ -233,7 +233,7 @@ void charge_cfiph() {
 		error("Missing file - cfiph.mor");
 
 	for (int i = 0; i < (f.size() / 2); ++i)
-		t_cph[i] = f.readSint16LE();
+		g_t_cph[i] = f.readSint16LE();
 
 	f.close();
 }

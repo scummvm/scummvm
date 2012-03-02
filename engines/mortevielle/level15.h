@@ -34,8 +34,8 @@ namespace Mortevielle {
 
 /* NIVEAU 15 */
 extern void copcha();
-extern bool dans_rect(rectangle r);
-extern void outbloc(int n, pattern p, t_nhom pal);
+extern bool isMouseIn(rectangle r);
+extern void outbloc(int n, pattern p, nhom *pal);
 extern void writepal(int n);
 extern void pictout(int seg, int dep, int x, int y);
 // extern int calad(int x, int y);

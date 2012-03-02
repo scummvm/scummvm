@@ -169,7 +169,7 @@ void Menu::displayMenu() {
 			do {   // One line after the other
 				msk = 0x80;
 				for (pt = 0; pt <= 7; ++pt) {
-					if ((lettres[num_letr - 1][ind_tabl] & msk) != 0) {
+					if ((g_lettres[num_letr - 1][ind_tabl] & msk) != 0) {
 						g_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
 						g_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
 						g_vm->_screenSurface.setPixel(Common::Point(x, y), color);
@@ -208,7 +208,7 @@ void Menu::invers(int ix) {
 
 	int menuIndex = lo(g_msg4);
 
-	g_vm->_screenSurface.putxy(_menuConstants[g_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
+	g_vm->_screenSurface.putxy(g_menuConstants[g_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
 	switch (g_msg3) {
 	case 1:
 		s = _inventoryStringArray[menuIndex];
@@ -253,9 +253,9 @@ void Menu::invers(int ix) {
 
 void Menu::util(int x, int y) {
 
-	int ymx = (_menuConstants[g_msg3 - 1][3] << 3) + 16;
-	int dxcar = _menuConstants[g_msg3 - 1][2];
-	int xmn = (_menuConstants[g_msg3 - 1][0] << 2) * g_res;
+	int ymx = (g_menuConstants[g_msg3 - 1][3] << 3) + 16;
+	int dxcar = g_menuConstants[g_msg3 - 1][2];
+	int xmn = (g_menuConstants[g_msg3 - 1][0] << 2) * g_res;
 
 	int ix;
 	if (g_res == 1)
@@ -289,19 +289,19 @@ void Menu::menuDown(int ii) {
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
 
 	// Draw the menu
-	xco = _menuConstants[ii - 1][0];
-	nb_lig = _menuConstants[ii - 1][3];
+	xco = g_menuConstants[ii - 1][0];
+	nb_lig = g_menuConstants[ii - 1][3];
 	hideMouse();
-	sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
+	sauvecr(10, (g_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
 	if (g_res == 1)
 		cx = 10;
 	else
 		cx = 6;
-	xcc = xco + (_menuConstants[ii - 1][2] * cx) + 6;
-	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (_menuConstants[ii - 1][1] << 1)));
-	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (_menuConstants[ii - 1][1] << 1)));
-	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (_menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (_menuConstants[ii - 1][1] << 1)));
+	xcc = xco + (g_menuConstants[ii - 1][2] * cx) + 6;
+	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (g_menuConstants[ii - 1][1] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (g_menuConstants[ii - 1][1] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (g_menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (g_menuConstants[ii - 1][1] << 1)));
 	g_vm->_screenSurface.putxy(xco, 16);
 	cx = 0;
 	do {
@@ -362,7 +362,7 @@ void Menu::menuDown(int ii) {
 void Menu::menuUp(int xx) {
 	/* debug('menuUp'); */
 	if (g_test0) {
-		charecr(10, (_menuConstants[xx - 1][1] + 1) << 1);
+		charecr(10, (g_menuConstants[xx - 1][1] + 1) << 1);
 
 		/* Restore the background area */
 		assert(g_vm->_screenSurface.pitch == g_vm->_backgroundSurface.pitch);
@@ -475,7 +475,7 @@ void Menu::initMenu() {
 			if (!f.open("menu.mor"))
 				error("Missing file - menufr.mor or menual.mor or menu.mor");
 
-	f.read(lettres, 7 * 24);
+	f.read(g_lettres, 7 * 24);
 	f.close();
 
 	// Ask to swap floppy
@@ -488,18 +488,18 @@ void Menu::initMenu() {
 		_moveStringArray[i] = "*                       ";
 	i = 1;
 	do {
-		_actionStringArray[i] = deline(i + c_action);
+		_actionStringArray[i] = deline(i + kMenuActionStringIndex);
 
 		while (_actionStringArray[i].size() < 10)
 			_actionStringArray[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
-				_selfStringArray[i] = deline(i + c_saction);
+				_selfStringArray[i] = deline(i + kMenuSelfStringIndex);
 				while (_selfStringArray[i].size() < 10)
 					_selfStringArray[i] += ' ';
 			}
-			_discussStringArray[i] = deline(i + c_dis) + ' ';
+			_discussStringArray[i] = deline(i + kMenuSayStringIndex) + ' ';
 		}
 		++i;
 	} while (i != 22);

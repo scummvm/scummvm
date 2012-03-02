@@ -134,7 +134,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 		return result;
 
 	// Load some error messages (was previously in chartex())
-	_hintPctMessage = deline(580);  // You should have noticed %d hints
+	g_hintPctMessage = deline(580);  // You should have noticed %d hints
 
 	// Set default EGA palette
 	_paletteManager.setDefaultPalette();
@@ -585,7 +585,7 @@ void MortevielleEngine::handleAction() {
 		if (g_choisi && (g_msg[3] == MENU_LOAD))
 			g_vm->_savegameManager.loadGame((g_msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
-			temps = Alert::show(_hintPctMessage, 1);
+			temps = Alert::show(g_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
 			if ((g_mnumo != OPCODE_NONE) && ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))) {
@@ -622,7 +622,7 @@ void MortevielleEngine::handleAction() {
 						oo = true;
 						if ((g_msg[4] == OPCODE_LIFT) || (g_obpart)) {
 							finfouil();
-							g_caff = g_s.mlieu;
+							g_caff = g_s._mlieu;
 							g_crep = 998;
 						} else
 							tsuiv();

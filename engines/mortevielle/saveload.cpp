@@ -49,23 +49,23 @@ Common::String SavegameManager::generateSaveName(int slotNumber) {
  * Handle saving or loading savegame data
  */
 void SavegameManager::sync_save(Common::Serializer &sz) {
-	sz.syncAsSint16LE(s1.conf);
-	sz.syncBytes((byte *)&s1.pourc[0], 11);
-	sz.syncBytes((byte *)&s1.teauto[0], 43);
-	sz.syncBytes((byte *)&s1.sjer[0], 31);
-	sz.syncAsSint16LE(s1.mlieu);
-	sz.syncAsSint16LE(s1.iboul);
-	sz.syncAsSint16LE(s1.ibag);
-	sz.syncAsSint16LE(s1.icave);
-	sz.syncAsSint16LE(s1.ivier);
-	sz.syncAsSint16LE(s1.ipuit);
-	sz.syncAsSint16LE(s1.derobj);
-	sz.syncAsSint16LE(s1.iloic);
-	sz.syncAsSint16LE(s1.icryp);
-	sz.syncAsByte(s1.ipre);
-	sz.syncAsByte(s1.heure);
+	sz.syncAsSint16LE(g_s1._conf);
+	sz.syncBytes((byte *)&g_s1._pourc[0], 11);
+	sz.syncBytes((byte *)&g_s1._teauto[0], 43);
+	sz.syncBytes((byte *)&g_s1._sjer[0], 31);
+	sz.syncAsSint16LE(g_s1._mlieu);
+	sz.syncAsSint16LE(g_s1._iboul);
+	sz.syncAsSint16LE(g_s1._ibag);
+	sz.syncAsSint16LE(g_s1._icave);
+	sz.syncAsSint16LE(g_s1._ivier);
+	sz.syncAsSint16LE(g_s1._ipuit);
+	sz.syncAsSint16LE(g_s1._derobj);
+	sz.syncAsSint16LE(g_s1._iloic);
+	sz.syncAsSint16LE(g_s1._icryp);
+	sz.syncAsByte(g_s1._ipre);
+	sz.syncAsByte(g_s1._heure);
 
-	sz.syncBytes(bufcha, 391);
+	sz.syncBytes(g_bufcha, 391);
 }
 
 /**
@@ -107,9 +107,9 @@ void SavegameManager::takesav(int n) {
 	Common::Serializer sz(stream, NULL);
 	sync_save(sz);
 
-	g_s = s1;
+	g_s = g_s1;
 	for (i = 0; i <= 389; ++i)
-		tabdon[i + acha] = bufcha[i];
+		g_tabdon[i + acha] = g_bufcha[i];
 
 	// Close the stream
 	delete stream;	
@@ -142,10 +142,10 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	tmaj3();
 	
 	for (i = 0; i <= 389; ++i)
-		bufcha[i] = tabdon[i + acha];
-	s1 = g_s;
-	if (s1.mlieu == 26)
-		s1.mlieu = 15;
+		g_bufcha[i] = g_tabdon[i + acha];
+	g_s1 = g_s;
+	if (g_s1._mlieu == 26)
+		g_s1._mlieu = 15;
 	
 	Common::String filename = generateSaveName(n);
 	f = g_system->getSavefileManager()->openForSaving(filename);
