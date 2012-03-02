@@ -111,37 +111,37 @@ void taffich() {
 
 	switch (a) {
 	case 16:
-		g_s.pourc[9] = '*';
-		g_s.teauto[42] = '*';
+		g_s._pourc[9] = '*';
+		g_s._teauto[42] = '*';
 		break;
 	case 20:
-		g_s.teauto[39] = '*';
-		if (g_s.teauto[36] == '*') {
-			g_s.pourc[3] = '*';
-			g_s.teauto[38] = '*';
+		g_s._teauto[39] = '*';
+		if (g_s._teauto[36] == '*') {
+			g_s._pourc[3] = '*';
+			g_s._teauto[38] = '*';
 		}
 		break;
 	case 24:
-		g_s.teauto[37] = '*';
+		g_s._teauto[37] = '*';
 		break;
 	case 30:
-		g_s.teauto[9] = '*';
+		g_s._teauto[9] = '*';
 		break;
 	case 31:
-		g_s.pourc[4] = '*';
-		g_s.teauto[35] = '*';
+		g_s._pourc[4] = '*';
+		g_s._teauto[35] = '*';
 		break;
 	case 118:
-		g_s.teauto[41] = '*';
+		g_s._teauto[41] = '*';
 		break;
 	case 143:
-		g_s.pourc[1] = '*';
+		g_s._pourc[1] = '*';
 		break;
 	case 150:
-		g_s.teauto[34] = '*';
+		g_s._teauto[34] = '*';
 		break;
 	case 151:
-		g_s.pourc[2] = '*';
+		g_s._pourc[2] = '*';
 		break;
 	default:
 		break;
@@ -162,15 +162,20 @@ void taffich() {
 			m = 2034;
 		if ((a == 17) && (g_maff == 14))
 			m = 2018;
-		if (a > 99)
-			if ((is == 1) || (is == 0))
+
+		if (a > 99) {
+			if ((g_is == 1) || (g_is == 0))
 				m = 2031;
 			else
 				m = 2032;
+		}
+
 		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
 			m = 2030;
-		if (((a < 27) && (((g_maff > 69) && (!g_s.ipre)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
+
+		if (((a < 27) && (((g_maff > 69) && (!g_s._ipre)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
 			m = 2033;
+
 		messint(m);
 		g_maff = a;
 		if (a == 159)
@@ -217,7 +222,7 @@ void taffich() {
 			for (int j = 0; j <= 15; ++j)
 				if (alllum[j] > alllum[k])
 					k = j;
-			mem[(0x7000 * 16) + 2 + (k << 1)] = rang[i];
+			mem[(0x7000 * 16) + 2 + (k << 1)] = g_rang[i];
 			alllum[k] = -1;
 		}
 	}
@@ -244,11 +249,11 @@ void taffich() {
 		charani(filename, lgt, handle);
 	}
 	showMouse();
-	if ((a < 27) && ((g_maff < 27) || (g_s.mlieu == 15)) && (g_msg[4] != OPCODE_ENTER)) {
+	if ((a < 27) && ((g_maff < 27) || (g_s._mlieu == 15)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			person();
 		else if (!g_blo)
-			t11(g_s.mlieu, cx);
+			t11(g_s._mlieu, cx);
 		g_mpers =  0;
 	}
 }

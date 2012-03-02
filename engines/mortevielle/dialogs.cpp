@@ -294,7 +294,7 @@ bool Ques::show() {
 	int rep;
 	int firstOption, lastOption;
 	char key;
-	rectangle coor[max_rect];
+	rectangle coor[kMaxRect];
 	Common::String choiceArray[15];
 
 	int currChoice, prevChoice;
@@ -336,19 +336,17 @@ bool Ques::show() {
 			optionPosY += 8;
 		}
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			rectangle &with = coor[j];
-
-			with.x1 = 45 * g_res;
-			with.x2 = (maxLength * 3 + 55) * g_res;
-			with.y1 = 27 + j * 8;
-			with.y2 = 34 + j * 8;
-			with.enabled = true;
+			coor[j]._x1 = 45 * g_res;
+			coor[j]._x2 = (maxLength * 3 + 55) * g_res;
+			coor[j]._y1 = 27 + j * 8;
+			coor[j]._y2 = 34 + j * 8;
+			coor[j]._enabled = true;
 
 			while ((int)choiceArray[j].size() < maxLength) {
 				choiceArray[j] += ' ';
 			}
 		}
-		coor[lastOption - firstOption + 2].enabled = false;
+		coor[lastOption - firstOption + 2]._enabled = false;
 		if (g_res == 1)
 			rep = 10;
 		else
@@ -366,9 +364,9 @@ bool Ques::show() {
 			CHECK_QUIT0;
 
 			currChoice = 1;
-			while (coor[currChoice].enabled && !dans_rect(coor[currChoice]))
+			while (coor[currChoice]._enabled && !isMouseIn(coor[currChoice]))
 				++currChoice;
-			if (coor[currChoice].enabled) {
+			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
 					tmpStr = choiceArray[prevChoice] + '$';
 					afftex(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
@@ -469,7 +467,7 @@ void f3f8::aff50(bool drawAni50Fl) {
 	if (drawAni50Fl)
 		ani50();
 	else
-		repon(2, c_paroles + 142);
+		repon(2, kDialogStringIndex + 142);
 	
 	// Draw the f3/f8 dialog
 	draw();
@@ -481,7 +479,7 @@ void f3f8::ani50() {
 	g_crep = animof(2, 1);
 	pictout(adani, g_crep, 63, 12);
 	g_f2_all = (g_res == 1);
-	repon(2, c_paroles + 143);
+	repon(2, kDialogStringIndex + 143);
 }
 
 

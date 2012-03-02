@@ -37,11 +37,11 @@ namespace Mortevielle {
 /*------------------------------   CONSTANTS   ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-const byte tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
-const byte tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
-const byte typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
-const byte intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
-const byte tnocon[364] = {
+const byte g_tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
+const byte g_tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
+const byte g_typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
+const byte g_intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+const byte g_tnocon[364] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -59,7 +59,7 @@ const byte tnocon[364] = {
 };
 
 
-const byte _menuConstants[8][4] = {
+const byte g_menuConstants[8][4] = {
 	{ 7, 37, 22,  8},
 	{19, 33, 23,  7},
 	{31, 89, 10, 21},
@@ -70,9 +70,9 @@ const byte _menuConstants[8][4] = {
 	{62, 25, 13,  5}
 };
 
-const byte addv[2] = {8, 8};
+const byte g_addv[2] = {8, 8};
 
-const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
+const byte g_rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 
 /*---------------------------------------------------------------------------*/
 /*------------------------------   VARIABLES   ------------------------------*/
@@ -168,21 +168,20 @@ int g_x,
         g_ptr_word,
         g_color_txt;
 
-int t_cph[6401];
-byte tabdon[4001];
+int g_t_cph[6401];
+byte g_tabdon[4001];
 
-Common::String _hintPctMessage;               // Provides the % of hints
-byte is;
-byte mode;
+Common::String g_hintPctMessage;               // Provides the % of hints
+byte g_is;
 
-int nbrep[9];
-int nbrepm[9];
+int g_nbrep[9];
+int g_nbrepm[9];
 int g_msg[5];
-byte touv[8];
-sav_chaine g_s, s1;
-byte bufcha[391];
+byte g_touv[8];
+sav_chaine g_s, g_s1;
+byte g_bufcha[391];
 
-byte lettres[7][24];
+byte g_lettres[7][24];
 
 byte palher[16];
 

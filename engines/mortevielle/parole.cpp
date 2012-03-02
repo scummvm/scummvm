@@ -33,15 +33,15 @@
 namespace Mortevielle {
 
 void spfrac(int wor) {
-	c3.rep = (uint)wor >> 12;
-	if ((g_typlec == 0) && (c3.code != 9))
-		if (((c3.code > 4) && (c3.val != 20) && (c3.rep != 3) && (c3.rep != 6) && (c3.rep != 9)) ||
-				((c3.code < 5) && ((c3.val != 19) && (c3.val != 22) && (c3.rep != 4) && (c3.rep != 9)))) {
-			++c3.rep;
+	c3._rep = (uint)wor >> 12;
+	if ((g_typlec == 0) && (c3._code != 9))
+		if (((c3._code > 4) && (c3._val != 20) && (c3._rep != 3) && (c3._rep != 6) && (c3._rep != 9)) ||
+				((c3._code < 5) && ((c3._val != 19) && (c3._val != 22) && (c3._rep != 4) && (c3._rep != 9)))) {
+			++c3._rep;
 		}
 
-	c3.freq = ((uint)wor >> 6) & 7;
-	c3.acc = ((uint)wor >> 9) & 7;
+	c3._freq = ((uint)wor >> 6) & 7;
+	c3._acc = ((uint)wor >> 9) & 7;
 }
 
 void charg_car() {
@@ -51,31 +51,31 @@ void charg_car() {
 	int_ = wor & 0x3f;
 
 	if ((int_ >= 0) && (int_ <= 13)) {
-		c3.val = int_;
-		c3.code = 5;
+		c3._val = int_;
+		c3._code = 5;
 	} else if ((int_ >= 14) && (int_ <= 21)) {
-		c3.val = int_;
-		c3.code = 6;
+		c3._val = int_;
+		c3._code = 6;
 	} else if ((int_ >= 22) && (int_ <= 47)) {
 		int_ = int_ - 22;
-		c3.val = int_;
-		c3.code = typcon[int_];
+		c3._val = int_;
+		c3._code = g_typcon[int_];
 	} else if ((int_ >= 48) && (int_ <= 56)) {
-		c3.val = int_ - 22;
-		c3.code = 4;
+		c3._val = int_ - 22;
+		c3._code = 4;
 	} else {
 		switch (int_) {
 		case 60:
-			c3.val = 32;  /*  " "  */
-			c3.code = 9;
+			c3._val = 32;  /*  " "  */
+			c3._code = 9;
 			break;
 		case 61:
-			c3.val = 46;  /*  "."  */
-			c3.code = 9;
+			c3._val = 46;  /*  "."  */
+			c3._code = 9;
 			break;
 		case 62:
-			c3.val = 35;  /*  "#"  */
-			c3.code = 9;
+			c3._val = 35;  /*  "#"  */
+			c3._code = 9;
 		default:
 			break;
 		}
@@ -109,7 +109,7 @@ void regenbruit() {
 	int i = offsetb3 + 8590;
 	int j = 0;
 	do {
-		t_cph[j] = READ_LE_UINT16(&mem[adbruit3 + i]);
+		g_t_cph[j] = READ_LE_UINT16(&mem[adbruit3 + i]);
 		i += 2;
 		++j;
 	} while (i < offsetb3 + 8790);
@@ -134,7 +134,7 @@ void charge_phbruit() {
 		error("Missing file - phbrui.mor");
 
 	for (int i = 1; i <= 3; ++i)
-		t_cph[i] = f.readSint16LE();
+		g_t_cph[i] = f.readSint16LE();
 
 	f.close();
 }
@@ -158,40 +158,40 @@ void trait_car() {
 	byte d3;
 	int d2, i;
 
-	switch (c2.code) {
+	switch (c2._code) {
 	case 9:
-		if (c2.val != ord('#'))
-			for (i = 0; i <= c2.rep; ++i)
-				entroct(c2.val);
+		if (c2._val != ord('#'))
+			for (i = 0; i <= c2._rep; ++i)
+				entroct(c2._val);
 		break;
 	case 5:
 	case 6:
-		if (c2.code == 6)
-			d3 = tabdph[(c2.val - 14) << 1];
+		if (c2._code == 6)
+			d3 = g_tabdph[(c2._val - 14) << 1];
 		else
 			d3 = null;
-		if (c1.code >= 5) {
-			veracf(c2.acc);
-			if (c1.code == 9) {
+		if (c1._code >= 5) {
+			veracf(c2._acc);
+			if (c1._code == 9) {
 				entroct(4);
 				if (d3 == null)
-					entroct(c2.val);
+					entroct(c2._val);
 				else
 					entroct(d3);
 				entroct(22);
 			}
 		}
 
-		switch (c2.rep) {
+		switch (c2._rep) {
 		case 0:
 			entroct(0);
-			entroct(c2.val);
+			entroct(c2._val);
 			if (d3 == null)
-				if (c3.code == 9)
+				if (c3._code == 9)
 					entroct(2);
 				else
 					entroct(4);
-			else if (c3.code == 9)
+			else if (c3._code == 9)
 				entroct(0);
 			else
 				entroct(1);
@@ -199,13 +199,13 @@ void trait_car() {
 		case 4:
 		case 5:
 		case 6:
-			if (c2.rep != 4) {
-				i = c2.rep - 5;
+			if (c2._rep != 4) {
+				i = c2._rep - 5;
 				do {
 					--i;
 					entroct(0);
 					if (d3 == null)
-						entroct(c2.val);
+						entroct(c2._val);
 					else
 						entroct(d3);
 					entroct(3);
@@ -213,24 +213,24 @@ void trait_car() {
 			}
 			if (d3 == null) {
 				entroct(4);
-				entroct(c2.val);
+				entroct(c2._val);
 				entroct(0);
 			} else {
 				entroct(0);
-				entroct(c2.val);
+				entroct(c2._val);
 				entroct(3);
 			}
 			break;
 		case 7:
 		case 8:
 		case 9:
-			if (c2.rep != 7) {
-				i = c2.rep - 8;
+			if (c2._rep != 7) {
+				i = c2._rep - 8;
 				do {
 					--i;
 					entroct(0);
 					if (d3 == null)
-						entroct(c2.val);
+						entroct(c2._val);
 					else
 						entroct(d3);
 					entroct(3);
@@ -238,32 +238,32 @@ void trait_car() {
 			}
 			if (d3 == null) {
 				entroct(0);
-				entroct(c2.val);
+				entroct(c2._val);
 				entroct(2);
 			} else {
 				entroct(0);
-				entroct(c2.val);
+				entroct(c2._val);
 				entroct(0);
 			}
 			break;
 		case 1:
 		case 2:
 		case 3:
-			if (c2.rep != 1) {
-				i = c2.rep - 2;
+			if (c2._rep != 1) {
+				i = c2._rep - 2;
 				do {
 					--i;
 					entroct(0);
 					if (d3 == null)
-						entroct(c2.val);
+						entroct(c2._val);
 					else
 						entroct(d3);
 					entroct(3);
 				} while (i >= 0);
 			}
 			entroct(0);
-			entroct(c2.val);
-			if (c3.code == 9)
+			entroct(c2._val);
+			if (c3._code == 9)
 				entroct(0);
 			else
 				entroct(1);
@@ -275,16 +275,16 @@ void trait_car() {
 
 	case 2:
 	case 3:
-		d3 = c2.code + 5; //  7 ou 8  => Corresponding vowel
-		if (c1.code > 4) {
-			veracf(c2.acc);
-			if (c1.code == 9) {
+		d3 = c2._code + 5; //  7 ou 8  => Corresponding vowel
+		if (c1._code > 4) {
+			veracf(c2._acc);
+			if (c1._code == 9) {
 				entroct(4);
 				entroct(d3);
 				entroct(22);
 			}
 		}
-		i = c2.rep;
+		i = c2._rep;
 		assert(i >= 0);
 		if (i != 0) {
 			do {
@@ -294,24 +294,24 @@ void trait_car() {
 				entroct(3);
 			} while (i > 0);
 		}
-		veracf(c3.acc);
-		if (c3.code == 6) {
+		veracf(c3._acc);
+		if (c3._code == 6) {
 			entroct(4);
-			entroct(tabdph[(c3.val - 14) << 1]);
-			entroct(c2.val);
+			entroct(g_tabdph[(c3._val - 14) << 1]);
+			entroct(c2._val);
 		} else {
 			entroct(4);
-			if (c3.val == 4)
+			if (c3._val == 4)
 				entroct(3);
 			else
-				entroct(c3.val);
-			entroct(c2.val);
+				entroct(c3._val);
+			entroct(c2._val);
 		}
 		break;
 	case 0:
 	case 1: 
-		veracf(c2.acc);
-		switch (c3.code) {
+		veracf(c2._acc);
+		switch (c3._code) {
 		case 2:
 			d2 = 7;
 			break;
@@ -319,130 +319,130 @@ void trait_car() {
 			d2 = 8;
 			break;
 		case 6:
-			d2 = tabdph[(c3.val - 14) << 1];
+			d2 = g_tabdph[(c3._val - 14) << 1];
 			break;
 		case 5:
-			d2 = c3.val;
+			d2 = c3._val;
 			break;
 		default:
 			d2 = 10;
 			break;
-		}       //  switch  c3.code
-		d2 = d2 * 26 + c2.val;
-		if (tnocon[d2] == 0)
+		}       //  switch  c3._code
+		d2 = d2 * 26 + c2._val;
+		if (g_tnocon[d2] == 0)
 			d3 = 2;
 		else
 			d3 = 6;
-		if (c2.rep >= 5) {
-			c2.rep = c2.rep - 5;
+		if (c2._rep >= 5) {
+			c2._rep = c2._rep - 5;
 			d3 = 8 - d3;       // Swap 2 and 6
 		}
-		if (c2.code == 0) {
-			i = c2.rep;
+		if (c2._code == 0) {
+			i = c2._rep;
 			if (i != 0) {
 				do {
 					--i;
 					entroct(d3);
-					entroct(c2.val);
+					entroct(c2._val);
 					entroct(3);
 				} while (i > 0);
 			}
 			entroct(d3);
-			entroct(c2.val);
+			entroct(c2._val);
 			entroct(4);
 		} else {
 			entroct(d3);
-			entroct(c2.val);
+			entroct(c2._val);
 			entroct(3);
-			i = c2.rep;
+			i = c2._rep;
 			if (i != 0) {
 				do {
 					--i;
 					entroct(d3);
-					entroct(c2.val);
+					entroct(c2._val);
 					entroct(4);
 				} while (i > 0);
 			}
 		}
-		if (c3.code == 9) {
+		if (c3._code == 9) {
 			entroct(d3);
-			entroct(c2.val);
+			entroct(c2._val);
 			entroct(5);
-		} else if ((c3.code != 0) && (c3.code != 1) && (c3.code != 4)) {
-			veracf(c3.acc);
-			switch (c3.code) {
+		} else if ((c3._code != 0) && (c3._code != 1) && (c3._code != 4)) {
+			veracf(c3._acc);
+			switch (c3._code) {
 			case 3:
 				d2 = 8;
 				break;
 			case 6:
-				d2 = tabdph[(c3.val - 14) << 1];
+				d2 = g_tabdph[(c3._val - 14) << 1];
 				break;
 			case 5:
-				d2 = c3.val;
+				d2 = c3._val;
 				break;
 			default:
 				d2 = 7;
 				break;
-			}     //  switch c3.code
+			}     //  switch c3._code
 			if (d2 == 4)
 				d2 = 3;
 
-			if (intcon[c2.val] != 0)
-				++c2.val;
+			if (g_intcon[c2._val] != 0)
+				++c2._val;
 
-			if ((c2.val == 17) || (c2.val == 18))
-				c2.val = 16;
+			if ((c2._val == 17) || (c2._val == 18))
+				c2._val = 16;
 
 			entroct(4);
 			entroct(d2);
-			entroct(c2.val);
+			entroct(c2._val);
 		}
 	
 		break;
 	case 4:
-		veracf(c2.acc);
-		i = c2.rep;
+		veracf(c2._acc);
+		i = c2._rep;
 		if (i != 0) {
 			do {
 				--i;
 				entroct(2);
-				entroct(c2.val);
+				entroct(c2._val);
 				entroct(3);
 			} while (i > 0);
 		}
 		entroct(2);
-		entroct(c2.val);
+		entroct(c2._val);
 		entroct(4);
-		if (c3.code == 9) {
+		if (c3._code == 9) {
 			entroct(2);
-			entroct(c2.val);
+			entroct(c2._val);
 			entroct(5);
-		} else if ((c3.code != 0) && (c3.code != 1) && (c3.code != 4)) {
-			veracf(c3.acc);
-			switch (c3.code) {
+		} else if ((c3._code != 0) && (c3._code != 1) && (c3._code != 4)) {
+			veracf(c3._acc);
+			switch (c3._code) {
 			case 3:
 				d2 = 8;
 				break;
 			case 6:
-				d2 = tabdph[(c3.val - 14) << 1];
+				d2 = g_tabdph[(c3._val - 14) << 1];
 				break;
 			case 5:
-				d2 = c3.val;
+				d2 = c3._val;
 				break;
 			default:
 				d2 = 7;
 				break;
-			}     //  switch c3.code
+			}     //  switch c3._code
 
 			if (d2 == 4)
 				d2 = 3;
 
-			if (intcon[c2.val] != 0)
-				++c2.val;
+			if (g_intcon[c2._val] != 0)
+				++c2._val;
 
 			entroct(4);
 			entroct(d2);
-			entroct(tabdbc[((c2.val - 26) << 1) + 1]);
+			entroct(g_tabdbc[((c2._val - 26) << 1) + 1]);
 		}
 	
 		break;

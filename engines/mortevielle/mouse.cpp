@@ -64,13 +64,13 @@ void initMouse() {
 		int_m = false;
 
 	if (int_m) {
-		reg.ax = 0;
+		reg._ax = 0;
 		intr(0x33, reg);
-		int_m = (reg.ax == -1);
+		int_m = (reg._ax == -1);
 		if (int_m) {
-			reg.ax = 4;
-			reg.cx = 0;
-			reg.dx = 0;
+			reg._ax = 4;
+			reg._cx = 0;
+			reg._dx = 0;
 
 			intr(0x33, reg);
 		}

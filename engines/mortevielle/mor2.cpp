@@ -56,9 +56,9 @@ void tinke() {
 		cx = 0;
 		do {
 			++cx;
-			if (nbrepm[cx] != 0)
-				--nbrepm[cx];
-			nbrep[cx] = 0;
+			if (g_nbrepm[cx] != 0)
+				--g_nbrepm[cx];
+			g_nbrep[cx] = 0;
 		} while (cx != 8);
 	}
 	if ((h > g_hour) || ((h == 0) && (g_hour == 23))) {
@@ -67,7 +67,7 @@ void tinke() {
 		drawClock();
 		cf = 0;
 		for (cx = 1; cx <= 10; ++cx) {
-			if (g_s.pourc[cx] == '*')
+			if (g_s._pourc[cx] == '*')
 				++cf;
 		}
 
@@ -76,18 +76,18 @@ void tinke() {
 		else
 			stpo = chr(cf + 48);
 
-		_hintPctMessage = Common::String(d3);
-		_hintPctMessage += d5;
-		_hintPctMessage += d4;
-		_hintPctMessage += d3;
-		_hintPctMessage += d1;
-		_hintPctMessage += stpo;
-		_hintPctMessage += '0';
-		_hintPctMessage += d2;
-		_hintPctMessage += d4;
-		_hintPctMessage += d3;
-		_hintPctMessage += d6;
-		_hintPctMessage += d4;
+		g_hintPctMessage = Common::String(d3);
+		g_hintPctMessage += d5;
+		g_hintPctMessage += d4;
+		g_hintPctMessage += d3;
+		g_hintPctMessage += d1;
+		g_hintPctMessage += stpo;
+		g_hintPctMessage += '0';
+		g_hintPctMessage += d2;
+		g_hintPctMessage += d4;
+		g_hintPctMessage += d3;
+		g_hintPctMessage += d6;
+		g_hintPctMessage += d4;
 	}
 	if (m > g_minute) {
 		g_minute = 30;
@@ -101,7 +101,7 @@ void tinke() {
 			g_t = ti2;
 		else
 			g_t = ti1;
-		cf = g_s.conf;
+		cf = g_s._conf;
 		if ((cf > 33) && (cf < 66))
 			g_t -= (g_t / 3);
 
@@ -157,7 +157,7 @@ void tinke() {
 				g_mpers = g_ipers;
 
 			if ((g_mpers == 0) && (g_ipers > 0)) {
-				if ((g_s.mlieu == 13) || (g_s.mlieu == 14)) {
+				if ((g_s._mlieu == 13) || (g_s._mlieu == 14)) {
 					cavegre();
 				} else if (g_ipers == 10) {
 					g_ipers = 0;
@@ -186,7 +186,7 @@ void tinke() {
 		nouvp(g_li, cx);
 		g_brt = false;
 		g_hdb = 0;
-		if ((g_s.mlieu > 0) && (g_s.mlieu < 10))
+		if ((g_s._mlieu > 0) && (g_s._mlieu < 10))
 			g_anyone = true;
 	}
 }
@@ -245,7 +245,7 @@ void tmlieu(int mli) {
 
 	int i = 1;
 	while ((i < 8) && (v_lieu[i][mli] != 0)) {
-		nomp = deline(v_lieu[i][mli] + c_tmlieu);
+		nomp = deline(v_lieu[i][mli] + kMenuPlaceStringIndex);
 		while (nomp.size() < 20)
 			nomp += ' ';
 		g_vm->_menu.menut(g_vm->_menu._moveMenu[i], nomp);
@@ -270,12 +270,12 @@ void tlu(int af, int ob) {
 }
 
 void affrep() {
-	g_caff = g_s.mlieu;
-	g_crep = g_s.mlieu;
+	g_caff = g_s._mlieu;
+	g_crep = g_s._mlieu;
 }
 
 void mfouen() {
-	tmlieu(g_s.mlieu);
+	tmlieu(g_s._mlieu);
 	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.enableMenuItem(_actionMenu[cx]);
 
@@ -309,19 +309,19 @@ void tperd() {
 
 void tsort() {
 
-	if ((g_iouv > 0) && (g_s.mlieu != 0)) {
-		if (g_s.conf < 50)
-			g_s.conf += 2;
+	if ((g_iouv > 0) && (g_s._mlieu != 0)) {
+		if (g_s._conf < 50)
+			g_s._conf += 2;
 		else
-			g_s.conf += (g_s.conf / 10);
+			g_s._conf += (g_s._conf / 10);
 	}
 
 	for (int cx = 1; cx <= 7; ++cx)
-		touv[cx] = chr(0);
+		g_touv[cx] = chr(0);
 	g_ment = 0;
 	g_iouv = 0;
 	g_mchai = 0;
-	debloc(g_s.mlieu);
+	debloc(g_s._mlieu);
 }
 
 void st4(int ob) {
@@ -359,14 +359,14 @@ void cherjer(int ob, bool &d) {
 
 	d = false;
 	for (cx = 1; cx <= 6; ++cx)
-		d = (d || (ord(g_s.sjer[cx]) == ob));
+		d = (d || (ord(g_s._sjer[cx]) == ob));
 
-	if (g_s.derobj == ob)
+	if (g_s._derobj == ob)
 		d = true;
 }
 
 void st1sama() {
-	g_s.mlieu = 10;
+	g_s._mlieu = 10;
 	affrep();
 }
 
@@ -376,10 +376,10 @@ void modinv() {
 
 	int cy = 0;
 	for (int cx = 1; cx <= 6; ++cx)
-		if (g_s.sjer[cx] != chr(0)) {
+		if (g_s._sjer[cx] != chr(0)) {
 			++cy;
-			r = (ord(g_s.sjer[cx]) + 400);
-			nomp = deline(r - 501 + c_st41);
+			r = (ord(g_s._sjer[cx]) + 400);
+			nomp = deline(r - 501 + kInventoryStringIndex);
 			g_vm->_menu.menut(g_vm->_menu._inventoryMenu[cy], nomp);
 			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[cx]);
 		}
@@ -396,7 +396,7 @@ void sparl(float adr, float rep) {
 
 	repint = abs((int)rep);
 	hideMouse();
-	Common::String tmpStr = deline(repint + c_paroles);
+	Common::String tmpStr = deline(repint + kDialogStringIndex);
 	afftex(tmpStr, 230, 4, 65, 24, 5);
 	f3f8::draw();
 	
@@ -414,7 +414,7 @@ void finfouil() {
 	g_fouil = false;
 	g_obpart = false;
 	g_cs = 0;
-	is = 0;
+	g_is = 0;
 	mfouen();
 }
 
@@ -444,12 +444,11 @@ void ajchai() {
 	int cx = 0;
 	do {
 		++cx;
-	} while ((cx <= 9) && (tabdon[cy + cx] != 0));
+	} while ((cx <= 9) && (g_tabdon[cy + cx] != 0));
 
-	if (tabdon[cy + cx] == 0) {
-		int lderobj = g_s.derobj;
-		tabdon[cy + cx] = lderobj;
-	} else
+	if (g_tabdon[cy + cx] == 0)
+		g_tabdon[cy + cx] = g_s._derobj;
+	else
 		g_crep = 192;
 }
 
@@ -457,10 +456,10 @@ void ajjer(int ob) {
 	int cx = 0;
 	do {
 		++cx;
-	} while ((cx <= 5) && (ord(g_s.sjer[cx]) != 0));
+	} while ((cx <= 5) && (ord(g_s._sjer[cx]) != 0));
 
-	if (ord(g_s.sjer[cx]) == 0) {
-		g_s.sjer[(cx)] = chr(ob);
+	if (ord(g_s._sjer[cx]) == 0) {
+		g_s._sjer[(cx)] = chr(ob);
 		modinv();
 	} else
 		g_crep = 139;
@@ -470,7 +469,7 @@ void t1sama() {    //Entering manor
 	int j, h, m;
 
 	calch(j, h, m);
-	if ((h < 5) && (g_s.mlieu > 18)) {
+	if ((h < 5) && (g_s._mlieu > 18)) {
 		bool d;
 		cherjer(137, d);
 		if (!d) {        //You don't have the keys, and it's late
@@ -478,7 +477,7 @@ void t1sama() {    //Entering manor
 			tperd();
 		} else
 			st1sama();
-	} else if (!g_s.ipre) {     //Is it your first time?
+	} else if (!g_s._ipre) {     //Is it your first time?
 		g_ipers = 255;
 		affper(g_ipers);
 		g_caff = 77;
@@ -494,21 +493,21 @@ void t1sama() {    //Entering manor
 		dessine_rouleau();
 		drawClock();
 		showMouse();
-		g_s.mlieu = 0;
+		g_s._mlieu = 0;
 		affrep();
 		t5(10);
 		if (!g_blo)
 			t11(0, m);
 		g_ipers = 0;
 		g_mpers = 0;
-		g_s.ipre = true;
+		g_s._ipre = true;
 		/*chech;*/
 	} else
 		st1sama();
 }
 
 void t1vier() {
-	g_s.mlieu = 17;
+	g_s._mlieu = 17;
 	affrep();
 }
 
@@ -519,19 +518,19 @@ void t1neig() {
 		tperd();
 	} else {
 		g_okdes = true;
-		g_s.mlieu = 19;
+		g_s._mlieu = 19;
 		affrep();
 	}
 }
 
 void t1deva() {
 	g_inei = 0;
-	g_s.mlieu = 21;
+	g_s._mlieu = 21;
 	affrep();
 }
 
 void t1derr() {
-	g_s.mlieu = 22;
+	g_s._mlieu = 22;
 	affrep();
 }
 
@@ -563,11 +562,11 @@ L1:
 			parole(4, 4, 1);
 
 		if (g_iouv == 0)
-			g_s.conf += 2;
-		else if (g_s.conf < 50)
-			g_s.conf += 4;
+			g_s._conf += 2;
+		else if (g_s._conf < 50)
+			g_s._conf += 4;
 		else
-			g_s.conf += 3 * (g_s.conf / 10);
+			g_s._conf += 3 * (g_s._conf / 10);
 		tsort();
 		tmlieu(15);
 		int cx;
@@ -605,18 +604,18 @@ void tsuiv() {
 	int cy = acha + ((g_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
-		cx = cx + 1;
-		g_cs = g_cs + 1;
+		++cx;
+		++g_cs;
 		cl = cy + g_cs;
-		tbcl = tabdon[cl];
+		tbcl = g_tabdon[cl];
 	} while ((tbcl == 0) && (g_cs <= 9));
 
 	if ((tbcl != 0) && (g_cs < 11)) {
-		is = is + 1;
+		++g_is;
 		g_caff = tbcl;
 		g_crep = g_caff + 400;
 		if (g_ipers != 0)
-			g_s.conf = g_s.conf + 2;
+			g_s._conf += 2;
 	} else {
 		affrep();
 		finfouil();
@@ -647,7 +646,7 @@ void tfleche() {
 		} while (!(qust || g_rect || g_anyone));
 
 		if (qust && (touch == '\103'))
-			Alert::show(_hintPctMessage, 1);
+			Alert::show(g_hintPctMessage, 1);
 	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (g_anyone) || (g_rect)));
 
 	if (touch == '\73')
@@ -670,12 +669,12 @@ void tcoord(int sx) {
 	int atdon = amzon + 3;
 	int cy = 0;
 	while (cy < g_caff) {
-		a += tabdon[atdon];
+		a += g_tabdon[atdon];
 		atdon += 4;
 		++cy;
 	}
 
-	if (tabdon[atdon] == 0) {
+	if (g_tabdon[atdon] == 0) {
 		g_crep = 997;
 		return;
 	}
@@ -683,10 +682,10 @@ void tcoord(int sx) {
 	a += fleche;
 	int cb = 0;
 	for (cy = 0; cy <= (sx - 2); ++cy) {
-		ib = (tabdon[a + cb] << 8) + tabdon[(a + cb + 1)];
+		ib = (g_tabdon[a + cb] << 8) + g_tabdon[(a + cb + 1)];
 		cb += (ib * 4) + 2;
 	}
-	ib = (tabdon[a + cb] << 8) + tabdon[(a + cb + 1)];
+	ib = (g_tabdon[a + cb] << 8) + g_tabdon[(a + cb + 1)];
 	if (ib == 0) {
 		g_crep = 997;
 		return;
@@ -695,11 +694,11 @@ void tcoord(int sx) {
 	cy = 1;
 	do {
 		cb += 2;
-		sx = tabdon[a + cb] * g_res;
-		sy = tabdon[(a + cb + 1)];
+		sx = g_tabdon[a + cb] * g_res;
+		sy = g_tabdon[(a + cb + 1)];
 		cb += 2;
-		ix = tabdon[a + cb] * g_res;
-		iy = tabdon[(a + cb + 1)];
+		ix = g_tabdon[a + cb] * g_res;
+		iy = g_tabdon[(a + cb + 1)];
 		++cy;
 	} while (!(((g_x >= sx) && (g_x <= ix) && (g_y >= sy) && (g_y <= iy)) || (cy > ib)));
 
@@ -757,22 +756,22 @@ void treg(int ob) {
 
 void avpoing(int &ob) {
 	g_crep = 999;
-	if (g_s.derobj != 0)
-		ajjer(g_s.derobj);
+	if (g_s._derobj != 0)
+		ajjer(g_s._derobj);
 
 	if (g_crep != 139) {
 		modobj(ob + 400);
-		g_s.derobj = ob;
+		g_s._derobj = ob;
 		ob = 0;
 	}
 }
 
 void rechai(int &ch) {
-	int cx = g_s.mlieu;
+	int cx = g_s._mlieu;
 
-	if (g_s.mlieu == 16)
+	if (g_s._mlieu == 16)
 		cx = 14;
-	ch = tabdon[achai + (cx * 7) + g_num - 1];
+	ch = g_tabdon[achai + (cx * 7) + g_num - 1];
 }
 
 void t23coul(int &l) {
@@ -787,7 +786,7 @@ void t23coul(int &l) {
 }
 
 void maivid() {
-	g_s.derobj = 0;
+	g_s._derobj = 0;
 	modobj(500);
 }
 

@@ -95,27 +95,26 @@ const int offsetb3 = 6;
 
 const int null = 255;
 
-const int tempo_mus = 71;
-const int tempo_bruit = 78;
-const int tempo_f = 80;
-const int tempo_m = 89;
+const int kTempoMusic = 71;
+const int kTempoNoise = 78;
+const int kTempoF = 80;
+const int kTempoM = 89;
 
 const int ti1 = 410;
 const int ti2 = 250;
 const int maxti = 7975;
 const int maxtd = 600;
-const int max_rect = 14;
+const int kMaxRect = 14;
 
-const int c_repon = 0;
-const int c_st41 = 186;
-const int c_tparler = 247;
-const int c_paroles = 292;
-const int c_tmlieu = 435;
-const int c_dialpre = 456;
-const int c_action = 476;
-const int c_saction = 497;
-const int c_dis = 502;
-const int c_fin = 510;    /*  =>   n'existe pas  ; si !! */
+const int kDescriptionStringIndex = 0;                // Unused
+const int kInventoryStringIndex = 186;
+const int kQuestionStringIndex = 247;
+const int kDialogStringIndex = 292;
+const int kMenuPlaceStringIndex = 435;
+const int kMenuActionStringIndex = 476;
+const int kMenuSelfStringIndex = 497;
+const int kMenuSayStringIndex = 502;
+const int kSecretPassageQuestionStringIndex = 510;    // Unusued?
 
 const int arega = 0;
 const int asoul = 154;
@@ -128,7 +127,6 @@ const int amzon = 1650;
 const int fleche = 1758;
 
 const int OPCODE_NONE = 0;
-
 enum verbs {OPCODE_ATTACH = 0x301, OPCODE_WAIT = 0x302,  OPCODE_FORCE = 0x303,   OPCODE_SLEEP = 0x304, OPCODE_LISTEN = 0x305, 
             OPCODE_ENTER = 0x306,  OPCODE_CLOSE = 0x307, OPCODE_SEARCH = 0x308,  OPCODE_KNOCK = 0x309, OPCODE_SCRATCH = 0x30a,
 			OPCODE_READ = 0x30b,   OPCODE_EAT = 0x30c,   OPCODE_PLACE = 0x30d,   OPCODE_OPEN = 0x30e,  OPCODE_TAKE = 0x30f,
@@ -136,73 +134,71 @@ enum verbs {OPCODE_ATTACH = 0x301, OPCODE_WAIT = 0x302,  OPCODE_FORCE = 0x303,  
 			OPCODE_TURN = 0x315,   OPCODE_SHIDE = 0x401, OPCODE_SSEARCH = 0x402, OPCODE_SREAD = 0x403, OPCODE_SPUT = 0x404,
 			OPCODE_SLOOK = 0x405};
 
-const int max_patt = 20;
+const int kMaxPatt = 20;
 
-extern const byte tabdbc[18];
-extern const byte tabdph[16];
-extern const byte typcon[26];
-extern const byte intcon[26];
-extern const byte tnocon[364];
+extern const byte g_tabdbc[18];
+extern const byte g_tabdph[16];
+extern const byte g_typcon[26];
+extern const byte g_intcon[26];
+extern const byte g_tnocon[364];
 
-extern const byte _menuConstants[8][4];
+extern const byte g_menuConstants[8][4];
 
-extern const byte addv[2];
+extern const byte g_addv[2];
 
-extern const byte rang[16];
+extern const byte g_rang[16];
 
 /*---------------------------------------------------------------------------*/
 /*--------------------------------   TYPES   --------------------------------*/
 /*---------------------------------------------------------------------------*/
 
 struct sav_chaine {
-	int conf;
-	byte pourc[11];
-	byte teauto[43];
-	byte sjer[31];
-	int mlieu, iboul, ibag, icave, ivier, ipuit;
-	int derobj, iloic, icryp;
-	bool ipre;
-	byte heure;
+	int _conf;
+	byte _pourc[11];
+	byte _teauto[43];
+	byte _sjer[31];
+	int _mlieu, _iboul, _ibag, _icave, _ivier, _ipuit;
+	int _derobj, _iloic, _icryp;
+	bool _ipre;
+	byte _heure;
 };
 
 struct registres {
-	int ax, bx, cx, dx, bp, si, di, ds, es, flags;
+	int _ax, _bx, _cx, _dx, _bp, _si, _di, _ds, _es, _flags;
 };
 
 struct ind {
-	int indis;
-	byte point;
+	int _indis;
+	byte _point;
 };
 
 struct chariot {
-	int val,
-		code,
-		acc,
-		freq,
-		rep;
+	int _val,
+		_code,
+		_acc,
+		_freq,
+		_rep;
 };
 
 struct rectangle {
-	int x1, x2, y1, y2;
-	bool enabled;
+	int _x1, _x2, _y1, _y2;
+	bool _enabled;
 };
 
 struct pattern {
-	byte tay, tax;
-	byte des[max_patt+1][max_patt+1];
+	byte _tay, _tax;
+	byte _des[kMaxPatt + 1][kMaxPatt + 1];
 };
 
 
 struct nhom {
-	byte n;     /* numero entre 0 et 32 */
-	byte hom[4];
+	byte _id;     /* number betwwen 0 and 32 */
+	byte _hom[4];
 };
 
-typedef nhom t_nhom[16];
-
 struct t_pcga {
-	byte p;
-	nhom a[16];
+	byte _p;
+	nhom _a[16];
 };
 
 typedef int tablint[256];
@@ -308,21 +304,20 @@ extern int g_x,
         g_ptr_word,
         g_color_txt;
 
-extern int t_cph[6401];
-extern byte tabdon[4001];
+extern int g_t_cph[6401];
+extern byte g_tabdon[4001];
 
-extern Common::String _hintPctMessage;      // gives the pct of hints found
-extern byte is;
-extern byte mode;
+extern Common::String g_hintPctMessage;      // gives the pct of hints found
+extern byte g_is;
 
-extern int nbrep[9];
-extern int nbrepm[9];
+extern int g_nbrep[9];
+extern int g_nbrepm[9];
 extern int g_msg[5];
-extern byte touv[8];
-extern sav_chaine g_s, s1;
-extern byte bufcha[391];
+extern byte g_touv[8];
+extern sav_chaine g_s, g_s1;
+extern byte g_bufcha[391];
 
-extern byte lettres[7][24];
+extern byte g_lettres[7][24];
 
 extern byte palher[16];
 
