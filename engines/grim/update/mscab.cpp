@@ -292,7 +292,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 		}
 
 		//Check the CK header
-		if (_compressedBlock[0] != 'C' && _compressedBlock[1] == 'K')
+		if (_compressedBlock[0] != 'C' || _compressedBlock[1] != 'K')
 			return false;
 
 		//Decompress the block. If it isn't the first, provide the previous block as dictonary
