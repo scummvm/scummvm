@@ -38,16 +38,10 @@ extern bool isMouseIn(rectangle r);
 extern void outbloc(int n, pattern p, nhom *pal);
 extern void writepal(int n);
 extern void pictout(int seg, int dep, int x, int y);
-// extern int calad(int x, int y);
 extern void sauvecr(int y, int dy);
 extern void charecr(int y, int dy);
-// extern int peek(int ad);
-// extern int peekw(int ad);
-// extern real peekl(int ad);
-// extern void procedure poke(int ad, int n);
 extern void adzon();
 extern int animof(int ouf, int num);
-// extern void affgd(int offs, int dep, int x, int y);
 
 } // End of namespace Mortevielle
 #endif

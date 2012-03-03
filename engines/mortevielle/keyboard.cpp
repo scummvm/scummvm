@@ -46,7 +46,7 @@ int testou() {
 		break;
 	case '\26' :
 		if ((g_c_zzz == 1) || (g_c_zzz == 2)) {
-			zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+			zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 			++g_c_zzz;
 
 			return 61;

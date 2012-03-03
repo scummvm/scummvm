@@ -68,8 +68,8 @@ void charpal() {
 		error("Missing file - plxx.mor");
 	for (int i = 0; i <= 90; ++i) {
 		for (int j = 1; j <= 16; ++j) {
-			tabpal[i][j].x = f.readByte();
-			tabpal[i][j].y = f.readByte();
+			g_tabpal[i][j].x = f.readByte();
+			g_tabpal[i][j].y = f.readByte();
 		}
 	}
 	f.close();
@@ -78,9 +78,9 @@ void charpal() {
 		error("Missing file - cxx.mor");
 
 	for (int j = 0; j <= 90; ++j) {
-		palcga[j]._p = fb.readByte();
+		g_palcga[j]._p = fb.readByte();
 		for (int i = 0; i <= 15; ++i) {
-			nhom &with = palcga[j]._a[i];
+			nhom &with = g_palcga[j]._a[i];
 
 			b = fb.readByte();
 			with._id = (uint)b >> 4;
@@ -88,13 +88,13 @@ void charpal() {
 			with._hom[1] = b & 3;
 		}
 	}
-	palcga[10]._a[9] = palcga[10]._a[5];
+	g_palcga[10]._a[9] = g_palcga[10]._a[5];
 	for (int j = 0; j <= 14; ++j) {
-		tpt[j]._tax = fb.readByte();
-		tpt[j]._tay = fb.readByte();
+		g_tpt[j]._tax = fb.readByte();
+		g_tpt[j]._tay = fb.readByte();
 		for (int i = 1; i <= 20; ++i)
 			for (int k = 1; k <= 20; ++k)
-				tpt[j]._des[i][k] = fb.readByte();
+				g_tpt[j]._des[i][k] = fb.readByte();
 	}
 	fb.close();
 }
@@ -112,35 +112,29 @@ void chartex() {
 	if (!inpFile.open("TXX.INP")) {
 		if (!inpFile.open("TXX.MOR")) {
 			warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
-			return;
 		}
+	} else if ((inpFile.size() > (maxti * 2)) || (ntpFile.size() > (maxtd * 3))) {
+		warning("TXX file - Unexpected format - Switching to DAT file");
+		return;
+	} else {
+		for (int i = 0; i < inpFile.size() / 2; ++i)
+			g_t_mot[i] = inpFile.readUint16LE();
+	
+		inpFile.close();
+		g_vm->_txxFileFl = true;
 	}
 
 	if (!ntpFile.open("TXX.NTP")) {
-		if (!ntpFile.open("TXX.IND")) {
-			warning("Missing file - TXX.NTP or .IND - Switching to DAT file");
-			return;
-		}
+		error("Missing file - TXX.NTP");
 	}
-
-	if ((inpFile.size() > (maxti * 2)) || (ntpFile.size() > (maxtd * 3))) {
-		warning("TXX file - Unexpected format - Switching to DAT file");
-		return;
-	}
-
-	for (int i = 0; i < inpFile.size() / 2; ++i)
-		t_mot[i] = inpFile.readUint16LE();
-
-	inpFile.close();
 
 	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
-		t_rec[i]._indis = ntpFile.readSint16LE();
-		t_rec[i]._point = ntpFile.readByte();
+		g_t_rec[i]._indis = ntpFile.readSint16LE();
+		g_t_rec[i]._point = ntpFile.readByte();
 	}
 
 	ntpFile.close();
 
-	g_vm->_txxFileFl = true;
 }
 
 /**
@@ -154,17 +148,17 @@ void dialpre() {
 }
 
 void init_lieu() {
-	Common::File f_lieu;	// tab_mlieu
+	Common::File f;
 
-	/* debug('o3 init_lieu'); */
-	if (!f_lieu.open("MXX.mor"))
+	if (!f.open("MXX.mor"))
 		error("Missing file - MXX.mor");
 
-	for (int i = 1; i < 8; ++i)
+	for (int i = 1; i < 8; ++i) {
 		for (int j = 0; j < 25; ++j)
-			v_lieu[i][j] = f_lieu.readByte(); 
+			g_v_lieu[i][j] = f.readByte(); 
+	}
 
-	f_lieu.close();
+	f.close();
 }
 
 
@@ -182,19 +176,19 @@ void music() {
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
 
-	fic.read(&mem[0x3800 * 16 + 0], 500);
-	fic.read(&mem[0x47a0 * 16 + 0], 123);
+	fic.read(&g_mem[0x3800 * 16 + 0], 500);
+	fic.read(&g_mem[0x47a0 * 16 + 0], 123);
 	fic.close();
 
-	g_vm->_soundManager.decodeMusic(&mem[0x3800 * 16], &mem[0x5000 * 16], 623);
-	addfix = (float)((kTempoMusic - g_addv[1])) / 256;
-	cctable(tbi);
+	g_vm->_soundManager.decodeMusic(&g_mem[0x3800 * 16], &g_mem[0x5000 * 16], 623);
+	g_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
+	cctable(g_tbi);
 
 	fin = false;
 	k = 0;
 	do {
 		fin = keypressed();
-		g_vm->_soundManager.musyc(tbi, 9958, kTempoMusic);
+		g_vm->_soundManager.musyc(g_tbi, 9958, kTempoMusic);
 		++k;
 		fin = fin | keypressed() | (k >= 5);
 	} while (!fin);
@@ -209,7 +203,7 @@ void charge_bruit5() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(&mem[adbruit5 * 16 + 0], 149 * 128);
+	f.read(&g_mem[adbruit5 * 16 + 0], 149 * 128);
 	f.close();
 }
 
@@ -219,7 +213,7 @@ void charge_cfiec() {
 	if (!f.open("cfiec.mor"))
 		error("Missing file - cfiec.mor");
 
-	f.read(&adcfiec[0], 822 * 128);
+	f.read(&g_adcfiec[0], 822 * 128);
 	f.close();
 
 	g_rech_cfiec = false;

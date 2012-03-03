@@ -76,13 +76,13 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 	uint16 oct, ocd;
 
 	/* 5-8 */
-	oct = t_mot[idx];
+	oct = g_t_mot[idx];
 	oct = ((uint16)(oct << (16 - pt))) >> (16 - pt);
 	if (pt < 6) {
 		++idx;
 		oct = oct << (5 - pt);
 		pt += 11;
-		oct = oct | ((uint)t_mot[idx] >> pt);
+		oct = oct | ((uint)g_t_mot[idx] >> pt);
 	} else {
 		pt -= 5;
 		oct = (uint)oct >> pt;
@@ -95,13 +95,13 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 		break;
 	case 30:
 	case 31:
-		ocd = t_mot[idx];
+		ocd = g_t_mot[idx];
 		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
 			++idx;
 			ocd = ocd << (5 - pt);
 			pt += 11;
-			ocd = ocd | ((uint)t_mot[idx] >> pt);
+			ocd = ocd | ((uint)g_t_mot[idx] >> pt);
 		} else {
 			pt -= 5;
 			ocd = (uint)ocd >> pt;
@@ -134,8 +134,8 @@ Common::String deline(int num) {
 	} else if (!g_vm->_txxFileFl) {
 		wrkStr = g_vm->getGameString(num);
 	} else {
-		int i = t_rec[num]._indis;
-		byte k = t_rec[num]._point;
+		int i = g_t_rec[num]._indis;
+		byte k = g_t_rec[num]._point;
 		int length = 0;
 		bool endFl = false;
 		char let;

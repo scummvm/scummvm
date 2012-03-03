@@ -183,24 +183,19 @@ byte g_bufcha[391];
 
 byte g_lettres[7][24];
 
-byte palher[16];
-
-uint16 t_mot[maxti + 1];
-int tay_tchar;
-ind t_rec[maxtd + 1];
-//file<ind> sauv_t;
-//untyped_file fibyte;
-byte v_lieu[8][25];
+uint16 g_t_mot[maxti + 1];
+int g_tay_tchar;
+ind g_t_rec[maxtd + 1];
+byte g_v_lieu[8][25];
 int g_l[108];
-int tbi[256];
-chariot c1, c2, c3;
-float addfix;
-t_pcga palsav[91];
-Common::Point tabpal[91][17];
-t_pcga palcga[91];
-pattern tpt[15];
+int g_tbi[256];
+chariot g_c1, g_c2, g_c3;
+float g_addfix;
+Common::Point g_tabpal[91][17];
+t_pcga g_palcga[91];
+pattern g_tpt[15];
 
-byte adcfiec[(4088 * 16) + (311 * 0x80)];
+byte g_adcfiec[(4088 * 16) + (311 * 0x80)];
 
 /*---------------------------------------------------------------------------*/
 /*--------------------   PROCEDURES  AND  FONCTIONS   -----------------------*/
@@ -236,8 +231,8 @@ Common::String copy(const Common::String &s, int idx, size_t size) {
 /*------------------------------     STUBS     ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-int port[0xfff];
-byte mem[65536 * 16];
+int g_port[0xfff];
+byte g_mem[65536 * 16];
 
 void intr(int intNum, registres &regs) {
 	warning("STUBBED: Call to DOS interrupt #%d", intNum);
