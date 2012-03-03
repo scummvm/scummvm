@@ -699,7 +699,7 @@ void fctPlace() {
 						Alert::show(alertTxt, 1);
 
 						g_tesok = false;
-						bool enterPassageFl = Ques::show();
+						bool enterPassageFl = KnowledgeCheck::show();
 						hideMouse();
 						hirs();
 						dessine_rouleau();

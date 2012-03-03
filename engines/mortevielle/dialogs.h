@@ -44,7 +44,7 @@ public:
 	static int show(const Common::String &s, int n);
 };
 
-class Ques {
+class KnowledgeCheck {
 public:
 	static bool show();
 };
