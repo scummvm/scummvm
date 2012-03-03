@@ -27,7 +27,7 @@ residualvm ($VERSION) experimental; urgency=low
     system, use the ResidualVM team's own bug tracker instead.  You can find this
     tracker at <https://www.github.com/residualvm/residualvm/issues>.
 
- -- Pawel Kolodziejski <aquadran@users.sourceforge.net>  $DATE
+ -- Pawel Kolodziejski <aquadran@residualvm.org>  $DATE
 
 __eof
 
