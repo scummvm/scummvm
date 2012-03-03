@@ -298,11 +298,9 @@ bool KnowledgeCheck::show() {
 	Common::String choiceArray[15];
 
 	int currChoice, prevChoice;
-	int indx = 0;
 	int correctCount = 0;
-	bool protectionCheck = false;
 
-	for (indx = 0; indx < 10; ++indx) {
+	for (int indx = 0; indx < 10; ++indx) {
 		hideMouse();
 		hirs();
 		showMouse();
@@ -358,7 +356,6 @@ bool KnowledgeCheck::show() {
 		warning("Expected answer: %d", correctAnswerArr[indx]);
 		do {
 			g_vm->setMouseClick(false);
-			g_tesok = false;
 			bool flag;
 			moveMouse(flag, key);
 			CHECK_QUIT0;
@@ -395,14 +392,7 @@ bool KnowledgeCheck::show() {
 		}
 	}
 
-	if (correctCount == 10) {
-		warning("Skipping protection check: testprot()");
-		protectionCheck = true;
-		// tesok is set to true in testprot()
-		g_tesok = true;
-	}
-
-	return (correctCount == 10) && protectionCheck;
+	return (correctCount == 10);
 }
 
 /*------------------------------------------------------------------------*/

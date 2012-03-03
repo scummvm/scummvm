@@ -48,10 +48,6 @@ void Menu::menut(int no, Common::String name) {
 	byte l = lo(no);
 	Common::String s = name;
 
-	if (!g_tesok)
-		g_vm->quitGame();
-
-
 	while (s.size() < 20)
 		s += ' ';
 

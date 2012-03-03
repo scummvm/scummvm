@@ -83,7 +83,6 @@ void MortevielleEngine::gameLoaded() {
 	test[1] = false;
 	g[0] = '\040';
 	g_col = false;
-	g_tesok = true;
 	test[2] = false;
 	g[7] = g[0];
 	g[2] = 'A';
@@ -136,9 +135,7 @@ void MortevielleEngine::gameLoaded() {
 	tmlieu(g_s._mlieu);
 	modinv();
 	if (g_s._derobj != 0)
-		modobj2(g_s._derobj + 400, test[1], test[2]);
-	else
-		g_tesok = test[1] || test[2];
+		modobj(g_s._derobj + 400);
 	showMouse();
 }
 

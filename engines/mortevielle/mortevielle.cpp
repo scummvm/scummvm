@@ -145,7 +145,6 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	g_currGraphicalDevice = MODE_EGA;
 	g_newGraphicalDevice = g_currGraphicalDevice;
 	g_zuul = false;
-	g_tesok = false;
 	charpal();
 	charge_cfiph();
 	charge_cfiec();
