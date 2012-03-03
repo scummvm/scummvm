@@ -43,7 +43,7 @@ extern void fenat(char ans);
 /* NIVEAU 8 */
 extern void afdes(int ad);
 extern void tkey1(bool d);
-extern void tmlieu(int mli);
+extern void tmlieu(int roomId);
 /* NIVEAU 7 */
 extern void tlu(int af, int ob);
 extern void affrep();

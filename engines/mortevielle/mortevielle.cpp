@@ -149,7 +149,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	charpal();
 	charge_cfiph();
 	charge_cfiec();
-	zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+	zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	g_c_zzz = 1;
 	init_nbrepm();
 	initMouse();
@@ -504,7 +504,7 @@ void MortevielleEngine::mainGame() {
 		charge_cfiec();
 
 	for (g_crep = 1; g_crep <= g_c_zzz; ++g_crep) 
-		zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+		zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	charge_bruit5();
 	_menu.initMenu();

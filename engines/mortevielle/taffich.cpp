@@ -52,7 +52,7 @@ void chardes(Common::String filename, int32 skipSize, int length) {
 	int totalLength = length + remainingSkipSize;
 	int memIndx = 0x6000 * 16;
 	while (totalLength > 0) {
-		f.read(&mem[memIndx], 128);
+		f.read(&g_mem[memIndx], 128);
 		testfi();
 		totalLength -= 128;
 		memIndx += 128;
@@ -60,7 +60,7 @@ void chardes(Common::String filename, int32 skipSize, int length) {
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i) 
-		mem[0x7000 * 16 + i - remainingSkipSize] = mem[0x6000 * 16 + i];
+		g_mem[0x7000 * 16 + i - remainingSkipSize] = g_mem[0x6000 * 16 + i];
 }
 
 void charani(Common::String filename, int32 skipSize, int length) {
@@ -80,7 +80,7 @@ void charani(Common::String filename, int32 skipSize, int length) {
 	int fullLength = length + remainingSkipSize;
 	int memIndx = 0x6000 * 16;
 	while (fullLength > 0) {
-		f.read(&mem[memIndx], 128);
+		f.read(&g_mem[memIndx], 128);
 		testfi();
 		fullLength -= 128;
 		memIndx += 128;
@@ -88,7 +88,7 @@ void charani(Common::String filename, int32 skipSize, int length) {
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		mem[0x7314 * 16 + i - remainingSkipSize] = mem[0x6000 * 16 + i];
+		g_mem[0x7314 * 16 + i - remainingSkipSize] = g_mem[0x6000 * 16 + i];
 }
 
 void taffich() {
@@ -214,7 +214,7 @@ void taffich() {
 	chardes(filename, lgt, handle);
 	if (g_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&mem[(0x7000 * 16) + ((i + 1) << 1)]);
+			int palh = READ_LE_UINT16(&g_mem[(0x7000 * 16) + ((i + 1) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (int i = 0; i <= 15; ++i) {
@@ -222,7 +222,7 @@ void taffich() {
 			for (int j = 0; j <= 15; ++j)
 				if (alllum[j] > alllum[k])
 					k = j;
-			mem[(0x7000 * 16) + 2 + (k << 1)] = g_rang[i];
+			g_mem[(0x7000 * 16) + 2 + (k << 1)] = g_rang[i];
 			alllum[k] = -1;
 		}
 	}

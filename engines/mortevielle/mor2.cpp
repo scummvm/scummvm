@@ -237,15 +237,15 @@ void tkey1(bool d) {
 	showMouse();
 }
 
-void tmlieu(int mli) {
+void tmlieu(int roomId) {
 	Common::String nomp;
 
-	if (mli == 26)
-		mli = 15;
+	if (roomId == 26)
+		roomId = 15;
 
 	int i = 1;
-	while ((i < 8) && (v_lieu[i][mli] != 0)) {
-		nomp = deline(v_lieu[i][mli] + kMenuPlaceStringIndex);
+	while ((i < 8) && (g_v_lieu[i][roomId] != 0)) {
+		nomp = deline(g_v_lieu[i][roomId] + kMenuPlaceStringIndex);
 		while (nomp.size() < 20)
 			nomp += ' ';
 		g_vm->_menu.menut(g_vm->_menu._moveMenu[i], nomp);

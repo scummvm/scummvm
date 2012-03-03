@@ -319,24 +319,19 @@ extern byte g_bufcha[391];
 
 extern byte g_lettres[7][24];
 
-extern byte palher[16];
-
-extern uint16 t_mot[maxti + 1];
-extern int tay_tchar;
-extern ind t_rec[maxtd + 1];
-//file<ind> sauv_t;
-//untyped_file fibyte;
-extern byte v_lieu[8][25];
+extern uint16 g_t_mot[maxti + 1];
+extern int g_tay_tchar;
+extern ind g_t_rec[maxtd + 1];
+extern byte g_v_lieu[8][25];
 extern int g_l[108];
-extern int tbi[256];
-extern chariot c1, c2, c3;
-extern float addfix;
-extern t_pcga palsav[91];
-extern Common::Point tabpal[91][17];
-extern t_pcga palcga[91];
-extern pattern tpt[15];
+extern int g_tbi[256];
+extern chariot g_c1, g_c2, g_c3;
+extern float g_addfix;
+extern Common::Point g_tabpal[91][17];
+extern t_pcga g_palcga[91];
+extern pattern g_tpt[15];
 
-extern byte adcfiec[822 * 128];
+extern byte g_adcfiec[822 * 128];
 
 /*---------------------------------------------------------------------------*/
 /*-------------------   PROCEDURES  AND  FONCTIONS   ------------------------*/
@@ -351,8 +346,8 @@ void Val(const Common::String &s, int &V, int Code);
 /*---------------------------------------------------------------------------*/
 // TODO: Replace the following with proper implementations, or refactor out the code using them
 
-extern int port[0xfff];
-extern byte mem[65536 * 16];
+extern int g_port[0xfff];
+extern byte g_mem[65536 * 16];
 
 #define hires {}
 

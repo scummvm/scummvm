@@ -115,7 +115,7 @@ void dessine(int ad, int x, int y) {
 void dessine_rouleau() {
 	writepal(89);
 	if (g_currGraphicalDevice == MODE_HERCULES) {
-		mem[0x7000 * 16 + 14] = 15;
+		g_mem[0x7000 * 16 + 14] = 15;
 	}
 	hideMouse();
 	pictout(0x73a2, 0, 0, 0);
@@ -1325,7 +1325,7 @@ void aniof(int ouf, int num) {
 	int offset = animof(ouf, num);
 
 	GfxSurface surface;
-	surface.decode(&mem[ad * 16 + offset]);
+	surface.decode(&g_mem[ad * 16 + offset]);
 	g_vm->_screenSurface.drawPicture(surface, 0, 12);
 
 	ecrf1();

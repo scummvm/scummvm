@@ -36,16 +36,16 @@
 namespace Mortevielle {
 
 void rot_chariot() {
-	c1 = c2;
-	c2 = c3;
-	c3._val = 32;
-	c3._code = 9;
+	g_c1 = g_c2;
+	g_c2 = g_c3;
+	g_c3._val = 32;
+	g_c3._code = 9;
 }
 
 void init_chariot() {
-	c3._rep = 0;
-	c3._freq = 0;
-	c3._acc = 0;
+	g_c3._rep = 0;
+	g_c3._freq = 0;
+	g_c3._acc = 0;
 	rot_chariot();
 	rot_chariot();
 }
@@ -61,7 +61,7 @@ void trait_ph() {
 	g_ptr_tcph = (uint)g_ledeb >> 1;
 	g_ptr_word = 0;
 	do {
-		WRITE_LE_UINT16(&mem[adword + g_ptr_word], g_t_cph[g_ptr_tcph]);
+		WRITE_LE_UINT16(&g_mem[adword + g_ptr_word], g_t_cph[g_ptr_tcph]);
 		g_ptr_word += 2;
 		++g_ptr_tcph;
 	} while (g_ptr_tcph < (int)((uint)g_lefin >> 1));
@@ -101,8 +101,8 @@ void parole(int rep, int ht, int typ) {
 		tempo = kTempoF;
 	else
 		tempo = kTempoM;
-	addfix = (float)((tempo - g_addv[0])) / 256;
-	cctable(tbi);
+	g_addfix = (float)((tempo - g_addv[0])) / 256;
+	cctable(g_tbi);
 	switch (typ) {
 	case 1:
 		charge_bruit();
@@ -117,7 +117,7 @@ void parole(int rep, int ht, int typ) {
 		break;
 	}
 	trait_ph();
-	g_vm->_soundManager.litph(tbi, typ, tempo);
+	g_vm->_soundManager.litph(g_tbi, typ, tempo);
 	if (g_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
 			g_t_cph[i] = savph[i];

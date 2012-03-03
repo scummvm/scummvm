@@ -61,12 +61,13 @@ bool isMouseIn(rectangle r) {
 void outbloc(int n, pattern p, nhom *pal) {
 	int ad = n * 404 + 0xd700;
 
-	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad], p._tax);
-	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad + 2], p._tay);
+	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + ad], p._tax);
+	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + ad + 2], p._tay);
 	ad += 4;
-	for (int i = 1; i <= p._tax; ++i)
+	for (int i = 1; i <= p._tax; ++i) {
 		for (int j = 1; j <= p._tay; ++j)
-			mem[(0x6000 * 16) + ad + (j - 1) * p._tax + i - 1] = pal[n]._hom[p._des[i][j]];
+			g_mem[(0x6000 * 16) + ad + (j - 1) * p._tax + i - 1] = pal[n]._hom[p._des[i][j]];
+	}
 }
 
 void writepal(int n) {
@@ -75,22 +76,22 @@ void writepal(int n) {
 	case MODE_EGA:
 	case MODE_AMSTRAD1512:
 		for (int i = 1; i <= 16; ++i) {
-			mem[(0x7000 * 16) + (2 * i)] = tabpal[n][i].x;
-			mem[(0x7000 * 16) + (2 * i) + 1] = tabpal[n][i].y;
+			g_mem[(0x7000 * 16) + (2 * i)] = g_tabpal[n][i].x;
+			g_mem[(0x7000 * 16) + (2 * i) + 1] = g_tabpal[n][i].y;
 		}
 		break;
 	case MODE_CGA: {
 		warning("TODO: If this code is needed, resolve the incompatible types");
 		nhom pal[16];
 		for (int i = 0; i < 16; ++i) {
-			pal[i] = palcga[n]._a[i];
+			pal[i] = g_palcga[n]._a[i];
 		}
 //		nhom pal[16] = palcga[n]._a;
 		if (n < 89)
-			palette(palcga[n]._p);
+			palette(g_palcga[n]._p);
 		
 		for (int i = 0; i <= 15; ++i)
-			outbloc(i, tpt[pal[i]._id], pal);
+			outbloc(i, g_tpt[pal[i]._id], pal);
 		}
 		break;
 	default:
@@ -101,15 +102,15 @@ void writepal(int n) {
 
 void pictout(int seg, int dep, int x, int y) {
 	GfxSurface surface;
-	surface.decode(&mem[seg * 16 + dep]);
+	surface.decode(&g_mem[seg * 16 + dep]);
 
 	if (g_currGraphicalDevice == MODE_HERCULES) {
-		mem[0x7000 * 16 + 2] = 0;
-		mem[0x7000 * 16 + 32] = 15;
+		g_mem[0x7000 * 16 + 2] = 0;
+		g_mem[0x7000 * 16 + 32] = 15;
 	}
 
-	if ((g_caff != 51) && (READ_LE_UINT16(&mem[0x7000 * 16 + 0x4138]) > 0x100))
-		WRITE_LE_UINT16(&mem[0x7000 * 16 + 0x4138], 0x100);
+	if ((g_caff != 51) && (READ_LE_UINT16(&g_mem[0x7000 * 16 + 0x4138]) > 0x100))
+		WRITE_LE_UINT16(&g_mem[0x7000 * 16 + 0x4138], 0x100);
 
 	g_vm->_screenSurface.drawPicture(surface, x, y);
 }
@@ -144,7 +145,7 @@ void adzon() {
 	if (!f.open("dec.mor"))
 		error("Missing file - dec.mor");
 
-	f.read(&mem[0x73a2 * 16 + 0], 1 * 1664);
+	f.read(&g_mem[0x73a2 * 16 + 0], 1 * 1664);
 	f.close();
 }
 
@@ -152,12 +153,12 @@ void adzon() {
  * Returns the offset within the compressed image data resource of the desired image
  */
 int animof(int ouf, int num) {
-	int nani = mem[adani * 16 + 1];
+	int nani = g_mem[adani * 16 + 1];
 	int aux = num;
 	if (ouf != 1)
 		aux += nani;
 
-	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&mem[adani * 16 + (aux << 1)]);
+	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&g_mem[adani * 16 + (aux << 1)]);
 
 	return animof_result;
 }
