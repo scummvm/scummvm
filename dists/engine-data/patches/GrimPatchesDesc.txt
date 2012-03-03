@@ -53,6 +53,11 @@ List of fixed bugs in GF scripts:
 	prevents the correct load of this script.
 	See http://forums.residualvm.org/viewtopic.php?t=108
 
++Others modifications:
+	-Blacklist of v1.00
+	Version 1.00 of Grim Fandango is not completable on modern machines, so we blacklist
+	it by setting game_needs_update to TRUE in _system.lua
+
 Contents of residualvm-grim-patches.lab and its rebuild:
 
 residualvm-grim-patches.lab contains all .patchr files in the

@@ -1,9 +1,16 @@
-#Fix issue with cd check function and the lua override of dofile (which cause a lot of warnings)
+#In v1.01 Fix issue with cd check function and the lua override of dofile (which cause a lot of warnings)
+#In v1.00 Set game_needs_update to TRUE, in order to blacklist this specific version and force the user
+#to update
 
 BEGIN 9ca3e57ac3a372da8e3f610053f980d3 b84d  #v1.00
-REPLACE A945 6D 3B			#Cd check
-REPLACE 941F 68				#DoFile
-FILL 9420 24 FF
+replace 25 d8				#Increase the size of function code block
+insert 06f9 4				#Make space for code
+replace 06f9 22 53 3a 01	#game_needs_update = TRUE
+
+#Const value
+replace 6ff 3b		#Increase the counter of constants by one
+insert 139f 15		#Make space for one new string
+replace 139f 53 00 12 98 9E 92 9A A0 91 9A 9A 9B 8C A0 8A 8F 9B 9E 8B 9A FF		#Set string game_needs_update (number 0x013a)
 END
 
 BEGIN 00cad86d3eba11c54a2515381a1169d5 b934  #v1.01
