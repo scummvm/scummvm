@@ -285,9 +285,9 @@ void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::Stri
 /**
  * Questions asked before entering the hidden passage
  */
-bool Ques::show() {
-	const int textIndexArr[11] = {0, 511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
-	const int correctAnswerArr[11] = {0, 4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
+bool KnowledgeCheck::show() {
+	const int textIndexArr[10] = {511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
+	const int correctAnswerArr[10] = {4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
 
 	int optionPosY;
 	int maxLength;
@@ -302,11 +302,10 @@ bool Ques::show() {
 	int correctCount = 0;
 	bool protectionCheck = false;
 
-	do {
+	for (indx = 0; indx < 10; ++indx) {
 		hideMouse();
 		hirs();
 		showMouse();
-		++indx;
 		int dialogHeight;
 		if (g_res == 1)
 			dialogHeight = 29;
@@ -316,7 +315,7 @@ bool Ques::show() {
 		Common::String tmpStr = deline(textIndexArr[indx]);
 		afftex(tmpStr, 20, 15, 100, 2, 0);
 
-		if (indx != 10) {
+		if (indx != 9) {
 			firstOption = textIndexArr[indx] + 1;
 			lastOption = textIndexArr[indx + 1] - 1;
 		} else {
@@ -335,6 +334,7 @@ bool Ques::show() {
 			choiceArray[prevChoice] = tmpStr;
 			optionPosY += 8;
 		}
+
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
 			coor[j]._x1 = 45 * g_res;
 			coor[j]._x2 = (maxLength * 3 + 55) * g_res;
@@ -388,19 +388,19 @@ bool Ques::show() {
 			++correctCount;
 		else {
 			// Skip questions that may give hints on previous wrong answer
-			if (indx == 5)
+			if (indx == 4)
 				++indx;
+			else if ((indx == 6) || (indx == 7))
+				indx = 9;
+		}
+	}
 
-			if ((indx == 7) || (indx == 8))
-				indx = 10;
-		}
-		if (indx == 10) {
-			warning("Skipping protection check: testprot()");
-			protectionCheck = true;
-			// tesok is set to true in testprot()
-			g_tesok = true;
-		}
-	} while (indx != 10);
+	if (correctCount == 10) {
+		warning("Skipping protection check: testprot()");
+		protectionCheck = true;
+		// tesok is set to true in testprot()
+		g_tesok = true;
+	}
 
 	return (correctCount == 10) && protectionCheck;
 }
