@@ -1927,7 +1927,8 @@ void AnimationPlayer::close() {
 	_animData2 = NULL;
 
 	_field38 = 0;
-	R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr, 0);
+	if (g_globals != NULL)
+		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr, 0);
 }
 
 void AnimationPlayer::rleDecode(const byte *pSrc, byte *pDest, int size) {
