@@ -104,8 +104,8 @@ void DreamWebEngine::splitIntoLines(uint8 x, uint8 y) {
 		}
 
 		rain.size = length;
-		rain.w3 = (randomNumber() << 8) | randomNumber();
-		rain.b5 = (randomNumber() & 3) + 4;
+		rain.w3 = _rnd.getRandomNumber(65535);
+		rain.b5 = _rnd.getRandomNumberRng(4, 7);
 		_rainList.push_back(rain);
 	} while (x > 0 && y < _mapYSize);
 }
@@ -170,11 +170,7 @@ void DreamWebEngine::initRain() {
 	// start lines of rain from top of screen
 	uint8 x = 4;
 	do {
-		uint8 delta;
-		do {
-			delta = (randomNumber() & 31) + 3;
-		} while (delta >= rainSpacing);
-
+		uint8 delta = _rnd.getRandomNumberRng(3, rainSpacing - 1);
 		x += delta;
 		if (x >= _mapXSize)
 			break;
@@ -185,11 +181,7 @@ void DreamWebEngine::initRain() {
 	// start lines of rain from side of screen
 	uint8 y = 0;
 	do {
-		uint8 delta;
-		do {
-			delta = (randomNumber() & 31) + 3;
-		} while (delta >= rainSpacing);
-
+		uint8 delta = _rnd.getRandomNumberRng(3, rainSpacing - 1);
 		y += delta;
 		if (y >= _mapYSize)
 			break;
