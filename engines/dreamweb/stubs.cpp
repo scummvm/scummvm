@@ -565,7 +565,6 @@ void DreamWebEngine::dreamweb() {
 		break;
 	}
 
-	seeCommandTail();
 	allocateBuffers();
 
 	// setMouse
@@ -875,10 +874,6 @@ void DreamWebEngine::hangOnCurs(uint16 frameCount) {
 		vSync();
 		delCurs();
 	}
-}
-
-void DreamWebEngine::seeCommandTail() {
-	_brightness = 1;
 }
 
 void DreamWebEngine::readMouse() {

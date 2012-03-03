@@ -89,7 +89,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_speechCount = 0;
 	_charShift = 0;
 	_kerning = 0;
-	_brightness = 0;
+	_brightPalette = false;
 	_roomLoaded = 0;
 	_didZoom = 0;
 	_lineSpacing = 10;
@@ -366,7 +366,9 @@ Common::Error DreamWebEngine::run() {
 	_console = new DreamWebConsole(this);
 
 	ConfMan.registerDefault("dreamweb_originalsaveload", "false");
+	ConfMan.registerDefault("bright_palette", true);
 	_hasSpeech = Common::File::exists("speech/r01c0000.raw") && !ConfMan.getBool("speech_mute");
+	_brightPalette = ConfMan.getBool("bright_palette");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	dreamweb();
