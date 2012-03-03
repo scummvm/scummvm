@@ -263,8 +263,8 @@ void DreamWebEngine::constant(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamWebEngine::randomSprite(Sprite *sprite, SetObject *objData) {
-	uint8 r = randomNumber();
-	sprite->frameNumber = objData->frames[r&7];
+	uint8 r = _rnd.getRandomNumber(7);
+	sprite->frameNumber = objData->frames[r];
 }
 
 void DreamWebEngine::doorway(Sprite *sprite, SetObject *objData) {

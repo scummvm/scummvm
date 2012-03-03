@@ -262,7 +262,7 @@ void DreamWebEngine::gamer(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint8 v;
 		do {
-			v = 20 + randomNumber() % 5;
+			v = _rnd.getRandomNumberRng(20, 24);
 		} while (v == routine.reelPointer());
 		routine.setReelPointer(v);
 	}

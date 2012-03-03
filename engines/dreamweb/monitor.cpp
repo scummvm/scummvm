@@ -320,7 +320,7 @@ void DreamWebEngine::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
 		vSync();
 		vSync();
-		uint16 v = randomNumber() & 15;
+		uint16 v = _rnd.getRandomNumber(15);
 		if (v < 10)
 			accessLightOff();
 		else
