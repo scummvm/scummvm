@@ -698,7 +698,6 @@ void fctPlace() {
 						Common::String alertTxt = deline(582);
 						Alert::show(alertTxt, 1);
 
-						g_tesok = false;
 						bool enterPassageFl = KnowledgeCheck::show();
 						hideMouse();
 						hirs();
@@ -732,7 +731,6 @@ void fctPlace() {
 					} else {
 						aniof(2, 1);
 						g_crep = 166;
-						g_tesok = true;
 					}
 					return;
 				}

@@ -301,10 +301,6 @@ void conv(int x, int &y) {
 }
 
 /* NIVEAU 12 */
-void okpas() {
-	g_tesok = true;
-}
-
 void modobj(int m) {
 	Common::String strp = Common::String(' ');
 
@@ -314,22 +310,6 @@ void modobj(int m) {
 	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
 }
-
-void modobj2(int m, bool t1, bool t2) {
-	Common::String strp = Common::String(' ');
-
-	if (t1 || t2)
-		okpas();
-	else
-		g_tesok = false;;
-
-	if (m != 500)
-		strp = deline(m - 501 + kInventoryStringIndex);
-
-	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
-	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
-}
-
 
 void repon(int f, int m) {
 	Common::String str_;

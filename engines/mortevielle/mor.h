@@ -58,9 +58,7 @@ extern int hazard(int min, int max);
 extern void calch(int &j, int &h, int &m);
 extern void conv(int x, int &y);
 /* NIVEAU 12 */
-extern void okpas();
 extern void modobj(int m);
-extern void modobj2(int m, bool t1, bool t2);
 extern void repon(int f, int m);
 extern void t5(int cx);
 extern void affper(int per);
