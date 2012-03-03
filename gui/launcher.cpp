@@ -119,7 +119,7 @@ class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 public:
-	EditGameDialog(const String &domain, const String &desc);
+	EditGameDialog(const String &domain, const String &desc, const ExtraGuiOptions &engineOptions);
 
 	void open();
 	void close();
@@ -145,10 +145,16 @@ protected:
 	CheckboxWidget *_globalMIDIOverride;
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
+
+	ExtraGuiOptions _engineOptions;
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const String &desc)
+EditGameDialog::EditGameDialog(const String &domain, const String &desc, const ExtraGuiOptions &engineOptions)
 	: OptionsDialog(domain, "GameOptions") {
+
+	for (uint i = 0; i < engineOptions.size(); i++) {
+		_engineOptions.push_back(engineOptions[i]);
+	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -208,7 +214,16 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	//
-	// 2) The graphics tab
+	// 2) The engine tab (shown only if there are custom engine options)
+	//
+	if (_engineOptions.size() > 0) {
+		tab->addTab(_("Engine"));
+
+		addEngineControls(tab, "GameOptions_Engine.", _engineOptions);
+	}
+
+	//
+	// 3) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
@@ -220,7 +235,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addGraphicControls(tab, "GameOptions_Graphics.");
 
 	//
-	// 3) The audio tab
+	// 4) The audio tab
 	//
 	tab->addTab(_("Audio"));
 
@@ -233,7 +248,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addSubtitleControls(tab, "GameOptions_Audio.");
 
 	//
-	// 4) The volume tab
+	// 5) The volume tab
 	//
 	if (g_system->getOverlayWidth() > 320)
 		tab->addTab(_("Volume"));
@@ -248,7 +263,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addVolumeControls(tab, "GameOptions_Volume.");
 
 	//
-	// 5) The MIDI tab
+	// 6) The MIDI tab
 	//
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		tab->addTab(_("MIDI"));
@@ -262,7 +277,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	//
-	// 6) The MT-32 tab
+	// 7) The MT-32 tab
 	//
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		tab->addTab(_("MT-32"));
@@ -276,7 +291,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	//
-	// 7) The Paths tab
+	// 8) The Paths tab
 	//
 	if (g_system->getOverlayWidth() > 320)
 		tab->addTab(_("Paths"));
@@ -310,7 +325,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your savegames are put"));
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
-
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -386,6 +400,19 @@ void EditGameDialog::open() {
 		_langPopUp->setEnabled(false);
 	}
 
+	// Set the state of engine-specific checkboxes
+	for (uint i = 0; i < _engineOptions.size(); i++) {
+		// The default values for engine-specific checkboxes are not set when
+		// ScummVM starts, as this would require us to load and poll all of the
+		// engine plugins on startup. Thus, we set the state of each custom
+		// option checkbox to what is specified by the engine plugin, and
+		// update it only if a value has been set in the configuration of the
+		// currently selected game.
+		bool isChecked = _engineOptions[i].defaultState;
+		if (ConfMan.hasKey(_engineOptions[i].configOption, _domain))
+			isChecked = ConfMan.getBool(_engineOptions[i].configOption, _domain);
+		_engineCheckboxes[i]->setState(isChecked);
+	}
 
 	const Common::PlatformDescription *p = Common::g_platforms;
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
@@ -429,6 +456,11 @@ void EditGameDialog::close() {
 			ConfMan.removeKey("platform", _domain);
 		else
 			ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
+
+		// Set the state of engine-specific checkboxes
+		for (uint i = 0; i < _engineOptions.size(); i++) {
+			ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
+		}
 	}
 	OptionsDialog::close();
 }
@@ -832,7 +864,12 @@ void LauncherDialog::addGame() {
 				Common::String domain = addGameToConf(result);
 
 				// Display edit dialog for the new entry
-				EditGameDialog editDialog(domain, result.description());
+				const EnginePlugin *plugin = 0;
+				GameDescriptor gameInfo = EngineMan.findGame(result.gameid(), &plugin);
+				// At this point, the plugin should always be set, as the game
+				// that will be added has been detected successfully.
+				assert(plugin);
+				EditGameDialog editDialog(domain, result.description(), (*plugin)->getExtraGuiOptions(domain));
 				if (editDialog.runModal() > 0) {
 					// User pressed OK, so make changes permanent
 
@@ -917,10 +954,18 @@ void LauncherDialog::editGame(int item) {
 	// This is useful because e.g. MonkeyVGA needs AdLib music to have decent
 	// music support etc.
 	assert(item >= 0);
-	String gameId(ConfMan.get("gameid", _domains[item]));
+	Common::String target = _domains[item];
+	String gameId(ConfMan.get("gameid", target));
 	if (gameId.empty())
-		gameId = _domains[item];
-	EditGameDialog editDialog(_domains[item], EngineMan.findGame(gameId).description());
+		gameId = target;
+
+	const EnginePlugin *plugin = 0;
+	GameDescriptor gameInfo = EngineMan.findGame(gameId, &plugin);
+	// The plugin may be null, e.g. in platforms that use engine
+	// plugins. One could have game entries in the config file, for
+	// which the engine plugin is no longer installed.
+	const ExtraGuiOptions extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target) : ExtraGuiOptions();
+	EditGameDialog editDialog(target, gameInfo.description(), extraOptions);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 

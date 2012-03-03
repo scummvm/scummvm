@@ -32,6 +32,7 @@
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/metaengine.h"
 
@@ -76,6 +77,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -266,6 +268,38 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	}
 	if (ioFailed)
 		warning("Unable to store Savegame names to file SKY-VM.SAV. (%s)", saveFileMan->popErrorDesc().c_str());
+}
+
+const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static const ExtraGuiOption optionsList[] = {
+		{
+			_s("Show alternative intro"),
+			_s("Show the intro of the floppy version in the CD version"),
+			"alt_intro",
+			false
+		},
+		{ 0, 0, 0, 0 }
+	};
+
+	Common::String guiOptions;
+	if (ConfMan.hasKey("guioptions", target)) {
+		guiOptions = ConfMan.get("guioptions", target);
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
+
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		Common::String curOption = optionsList[i].configOption;
+		// Only add game specific options to the games that apply
+		if (curOption == "alt_intro" && guiOptions.contains(GUIO_NOSPEECH)) {
+			i++;
+			continue;
+		}
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)

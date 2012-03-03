@@ -32,6 +32,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/metaengine.h"
 #include "engines/util.h"
@@ -90,6 +91,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -239,6 +241,26 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	}
 
 	return Common::kNoGameDataFoundError;
+}
+
+const ExtraGuiOptions Sword2MetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static const ExtraGuiOption optionsList[] = {
+		{
+			_s("Show object labels"),
+			_s("Show labels for objects on mouse hover"),
+			"object_labels",
+			false
+		},
+		{ 0, 0, 0, 0 }
+	};
+
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD2)

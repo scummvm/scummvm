@@ -565,7 +565,7 @@ void DreamWebEngine::dreamweb() {
 		break;
 	}
 
-	seeCommandTail();
+	_brightPalette = ConfMan.getBool("bright_palette");
 	allocateBuffers();
 
 	// setMouse
@@ -875,10 +875,6 @@ void DreamWebEngine::hangOnCurs(uint16 frameCount) {
 		vSync();
 		delCurs();
 	}
-}
-
-void DreamWebEngine::seeCommandTail() {
-	_brightness = 1;
 }
 
 void DreamWebEngine::readMouse() {
