@@ -250,18 +250,22 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 const ExtraGuiOptions KyraMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	static const ExtraGuiOption optionsList[] = {
 		// Kyrandia 3 options
+		// Studio audience adds an applause and cheering sounds whenever
+		// Malcolm makes a joke.
 		{
 			_s("Studio audience"),
 			_s("Enable studio audience"),
 			"studio_audience",
 			true
 		},
+		// When enabled, this option allows the user to skip text and cutscenes.
 		{
 			_s("Skip support"),
 			_s("Allow text and cutscenes to be skipped"),
 			"skip_support",
 			true
 		},
+		// Helium mode makes Malcolm sound like he's inhaled Helium.
 		{
 			_s("Helium mode"),
 			_s("Enable helium mode"),
@@ -270,12 +274,17 @@ const ExtraGuiOptions KyraMetaEngine::getExtraGuiOptions(const Common::String &t
 		},
 #ifdef ENABLE_LOL
 		// LoL options
+		// When enabled, this option makes scrolling smoother when changing
+		// from one screen to another.
 		{
 			_s("Smooth scrolling"),
 			_s("Enable smooth scrolling when walking"),
 			"smooth_scrolling",
 			true
 		},
+		// When enabled, this option changes the cursor when it floats to the
+		// edge of the screen to a directional arrow. The player can then click
+		// to walk towards that direction.
 		{
 			_s("Floating cursors"),
 			_s("Enable floating cursors"),
