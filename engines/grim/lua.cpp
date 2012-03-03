@@ -245,9 +245,18 @@ void LuaBase::registerOpcodes() {
 	luaL_openlib(baseOpcodes, ARRAYSIZE(baseOpcodes));
 }
 
-void LuaBase::boot() {
+void LuaBase::loadSystemScript() {
 	dofile("_system.lua");
+}
 
+bool LuaBase::supportedVersion() {
+	if (lua_isnil(lua_getglobal("game_needs_update")))
+		return true;
+	else
+		return false;
+}
+
+void LuaBase::boot() {
 	lua_pushnil();		// resumeSave
 	lua_pushnil();		// bootParam - not used in scripts
 	lua_call("BOOT");

@@ -1398,10 +1398,6 @@ void Lua_V1::registerOpcodes() {
 }
 
 void Lua_V1::postRestoreHandle() {
-	// Apply the patch, only if it wasn't applied already.
-	if (lua_isnil(lua_getglobal("  service_release.lua")))
-		dofile("patch05.bin");
-
 	lua_beginblock();
 	// Set the developerMode, since the save contains the value of
 	// the installation it was made with.
