@@ -49,13 +49,13 @@ namespace Mortevielle {
 void fctMove() {
 	int cx;
 
-	if ((g_s._mlieu == 26) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
-		g_s._mlieu = LANDING;
-		g_caff = g_s._mlieu;
+	if ((g_s._currPlace == 26) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
+		g_s._currPlace = LANDING;
+		g_caff = g_s._currPlace;
 		afdes(0);
-		repon(2, g_s._mlieu);
+		repon(2, g_s._currPlace);
 	}
-	if ((g_s._mlieu == LANDING) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
+	if ((g_s._currPlace == LANDING) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
 		if (!g_syn)
 			ecr3(g_vm->getEngineString(S_GO_TO));
 		tfleche();
@@ -67,13 +67,13 @@ void fctMove() {
 		if (g_num == 0)
 			return;
 		if (g_num == 1) {
-			g_s._mlieu = OWN_ROOM;
+			g_s._currPlace = OWN_ROOM;
 			tmlieu(0);
 		} else if (g_num == 7) {
-			g_s._mlieu = ATTIC;
+			g_s._currPlace = ATTIC;
 			tmlieu(13);
 		} else if (g_num != 6)
-			g_s._mlieu = 26;
+			g_s._currPlace = 26;
 		if ((g_num > 1) && (g_num < 6))
 			g_ment = g_num - 1;
 		if (g_num > 7)
@@ -90,7 +90,7 @@ void fctMove() {
 		++cx;
 	} while (g_vm->_menu._moveMenu[cx] != g_msg[4]);
 
-	if (g_s._mlieu == MOUNTAIN) {
+	if (g_s._currPlace == MOUNTAIN) {
 		if (cx == 1)
 			t1deva();
 		if (cx == 2)
@@ -98,7 +98,7 @@ void fctMove() {
 		goto L2;
 	}
 
-	if (g_s._mlieu == 23) {
+	if (g_s._currPlace == 23) {
 		if (cx == 1)
 			t1deau();
 		if (cx == 2)
@@ -106,43 +106,43 @@ void fctMove() {
 		goto L2;
 	}
 
-	if ((g_s._mlieu == BUREAU) && (cx == 1))
+	if ((g_s._currPlace == BUREAU) && (cx == 1))
 		cx = 6;
 
-	if (g_s._mlieu == KITCHEN) {
+	if (g_s._currPlace == KITCHEN) {
 		if (cx == 2)
 			cx = 6;
 		if (cx == 5)
 			cx = 16;
 	}
 
-	if ((g_s._mlieu == CELLAR) && (cx == 3))
+	if ((g_s._currPlace == CELLAR) && (cx == 3))
 		cx = 6;
-	if (((g_s._mlieu == LANDING) || (g_s._mlieu == 26)) && (cx == 4))
+	if (((g_s._currPlace == LANDING) || (g_s._currPlace == 26)) && (cx == 4))
 		cx = 6;
-	if ((g_s._mlieu > MOUNTAIN) && (g_s._mlieu != 26))
+	if ((g_s._currPlace > MOUNTAIN) && (g_s._currPlace != 26))
 		cx += 10;
-	if ((g_s._mlieu == CHAPEL) && (cx == 13))
+	if ((g_s._currPlace == CHAPEL) && (cx == 13))
 		cx = 16;
-	if (g_s._mlieu == MANOR_FRONT) {
+	if (g_s._currPlace == MANOR_FRONT) {
 		if (cx == 12)
 			cx = 16;
 		else if (cx > 13)
 			cx = 15;
 	}
-	if ((g_s._mlieu == MANOR_BACK) && (cx > 14))
+	if ((g_s._currPlace == MANOR_BACK) && (cx > 14))
 		cx = 15;
-	if ((g_s._mlieu == WELL) && (cx != 17))
+	if ((g_s._currPlace == WELL) && (cx != 17))
 		if (cx > 13)
 			cx = 15;
 	if (cx == 1)
-		g_s._mlieu = BUREAU;
+		g_s._currPlace = BUREAU;
 	else if (cx == 2)
-		g_s._mlieu = KITCHEN;
+		g_s._currPlace = KITCHEN;
 	else if (cx == 3)
-		g_s._mlieu = CELLAR;
+		g_s._currPlace = CELLAR;
 	else if (cx == 4)
-		g_s._mlieu = LANDING;
+		g_s._currPlace = LANDING;
 	else if (cx == 5)
 		cx = 12;
 	if (cx == 6)
@@ -152,31 +152,31 @@ void fctMove() {
 	else if (cx == 12)
 		t1deva();
 	else if (cx == 13)
-		g_s._mlieu = CHAPEL;
+		g_s._currPlace = CHAPEL;
 	else if (cx == 14)
-		g_s._mlieu = WELL;
+		g_s._currPlace = WELL;
 	else if (cx == 15)
 		t1neig();
 	else if (cx == 16)
 		t1derr();
 	else if (cx == 17) {
-		if ((g_s._ipuit != 120) && (g_s._ipuit != 140))
+		if ((g_s._wellObjectId != 120) && (g_s._wellObjectId != 140))
 			g_crep = 997;
-		else if (g_s._ipuit == 120)
+		else if (g_s._wellObjectId == 120)
 			g_crep = 181;
 		else if (g_s._conf > 80) {
 			g_crep = 1505;
 			tperd();
 		} else {
-			g_s._mlieu = 23;
+			g_s._currPlace = 23;
 			affrep();
 		}
 	}
 	if ((cx < 5) || (cx == 13) || (cx == 14))
 		affrep();
-	debloc(g_s._mlieu);
+	debloc(g_s._currPlace);
 L2:
-	tmlieu(g_s._mlieu);
+	tmlieu(g_s._currPlace);
 }
 
 /**
@@ -191,22 +191,22 @@ void fctTake() {
 			if (g_ipers > 0)
 				g_s._conf += 3;
 			if (g_obpart) {
-				if (g_s._mlieu == PURPLE_ROOM)
-					g_s._iloic = 0;
-				if (g_s._mlieu == ATTIC) {
-					if (g_s._iboul == g_caff)
-						g_s._iboul = 0;
-					if (g_s._ibag == g_caff)
-						g_s._ibag = 0;
+				if (g_s._currPlace == PURPLE_ROOM)
+					g_s._purpleRoomObjectId = 0;
+				if (g_s._currPlace == ATTIC) {
+					if (g_s._atticBallHoleObjectId == g_caff)
+						g_s._atticBallHoleObjectId = 0;
+					if (g_s._atticRodHoleObjectId == g_caff)
+						g_s._atticRodHoleObjectId = 0;
 				}
-				if (g_s._mlieu == CELLAR)
-					g_s._icave = 0;
-				if (g_s._mlieu == CRYPT)
-					g_s._icryp = 0;
-				if (g_s._mlieu == SECRET_PASSAGE)
-					g_s._ivier = 0;
-				if (g_s._mlieu == WELL)
-					g_s._ipuit = 0;
+				if (g_s._currPlace == CELLAR)
+					g_s._cellarObjectId = 0;
+				if (g_s._currPlace == CRYPT)
+					g_s._cryptObjectId = 0;
+				if (g_s._currPlace == SECRET_PASSAGE)
+					g_s._secretPassageObjectId = 0;
+				if (g_s._currPlace == WELL)
+					g_s._wellObjectId = 0;
 				unsetSearchMenu();
 				g_obpart = false;
 				affrep();
@@ -235,40 +235,41 @@ void fctTake() {
 		}
 	}
 	tcoord(5);
-	if ((g_num == 0) || ((g_num == 1) && (g_s._mlieu == CRYPT))) {
+	if ((g_num == 0) || ((g_num == 1) && (g_s._currPlace == CRYPT))) {
 		tcoord(8);
 		if (g_num != 0) {
 			if (g_ipers > 0)
 				g_s._conf += 3;
 			g_crep = 997;
-			if ((g_s._mlieu == PURPLE_ROOM) && (g_s._iloic != 0))
-				avpoing(g_s._iloic);
-			if ((g_s._mlieu == ATTIC) && (g_num == 1) && (g_s._iboul != 0)) {
-				avpoing(g_s._iboul);
+			if ((g_s._currPlace == PURPLE_ROOM) && (g_s._purpleRoomObjectId != 0))
+				avpoing(g_s._purpleRoomObjectId);
+			if ((g_s._currPlace == ATTIC) && (g_num == 1) && (g_s._atticBallHoleObjectId != 0)) {
+				avpoing(g_s._atticBallHoleObjectId);
 				if ((g_crep != 997) && (g_crep != 139))
 					aniof(2, 7);
 			}
-			if ((g_s._mlieu == ATTIC) && (g_num == 2) && (g_s._ibag != 0)) {
-				avpoing(g_s._ibag);
+			if ((g_s._currPlace == ATTIC) && (g_num == 2) && (g_s._atticRodHoleObjectId != 0)) {
+				avpoing(g_s._atticRodHoleObjectId);
 				if ((g_crep != 997) && (g_crep != 139))
 					aniof(2, 6);
 			}
-			if ((g_s._mlieu == CELLAR) && (g_s._icave != 0)) {
-				avpoing(g_s._icave);
+			if ((g_s._currPlace == CELLAR) && (g_s._cellarObjectId != 0)) {
+				avpoing(g_s._cellarObjectId);
 				if ((g_crep != 997) && (g_crep != 139))
 					aniof(2, 2);
 			}
-			if ((g_s._mlieu == CRYPT) && (g_s._icryp != 0))
-				avpoing(g_s._icryp);
-			if ((g_s._mlieu == SECRET_PASSAGE) && (g_s._ivier != 0)) {
-				avpoing(g_s._ivier);
+			if ((g_s._currPlace == CRYPT) && (g_s._cryptObjectId != 0))
+				avpoing(g_s._cryptObjectId);
+
+			if ((g_s._currPlace == SECRET_PASSAGE) && (g_s._secretPassageObjectId != 0)) {
+				avpoing(g_s._secretPassageObjectId);
 				if ((g_crep != 997) && (g_crep != 139)) {
 					g_crep = 182;
 					aniof(2, 1);
 				}
 			}
-			if ((g_s._mlieu == WELL) && (g_s._ipuit != 0)) {
-				avpoing(g_s._ipuit);
+			if ((g_s._currPlace == WELL) && (g_s._wellObjectId != 0)) {
+				avpoing(g_s._wellObjectId);
 				if ((g_crep != 997) && (g_crep != 139))
 					aniof(2, 1);
 			}
@@ -276,15 +277,15 @@ void fctTake() {
 				g_crep = 999;
 		}
 	} else {
-		if ( ((g_s._mlieu == OWN_ROOM)  && (g_num == 3)) || ((g_s._mlieu == GREEN_ROOM)  && (g_num == 4))
-		  || ((g_s._mlieu == PURPLE_ROOM)  && (g_num == 1)) || ((g_s._mlieu == DARKBLUE_ROOM)  && (g_num == 3))
-		  || ((g_s._mlieu == BLUE_ROOM)  && (g_num == 6)) || ((g_s._mlieu == RED_ROOM)  && (g_num == 2))
-		  || ((g_s._mlieu == BATHROOM)  && (g_num == 6)) || ((g_s._mlieu == GREEN_ROOM2)  && (g_num == 4))
-		  || ((g_s._mlieu == 9)  && (g_num == 4)) || ((g_s._mlieu == DINING_ROOM) && (g_num > 2))
-		  || ((g_s._mlieu == BUREAU) && (g_num == 7)) || ((g_s._mlieu == KITCHEN) && (g_num == 6))
-		  || ((g_s._mlieu == ATTIC) && (g_num > 4))  || ((g_s._mlieu > ATTIC)  && (g_s._mlieu != 23)) )
+		if ( ((g_s._currPlace == OWN_ROOM)  && (g_num == 3)) || ((g_s._currPlace == GREEN_ROOM)  && (g_num == 4))
+		  || ((g_s._currPlace == PURPLE_ROOM)  && (g_num == 1)) || ((g_s._currPlace == DARKBLUE_ROOM)  && (g_num == 3))
+		  || ((g_s._currPlace == BLUE_ROOM)  && (g_num == 6)) || ((g_s._currPlace == RED_ROOM)  && (g_num == 2))
+		  || ((g_s._currPlace == BATHROOM)  && (g_num == 6)) || ((g_s._currPlace == GREEN_ROOM2)  && (g_num == 4))
+		  || ((g_s._currPlace == 9)  && (g_num == 4)) || ((g_s._currPlace == DINING_ROOM) && (g_num > 2))
+		  || ((g_s._currPlace == BUREAU) && (g_num == 7)) || ((g_s._currPlace == KITCHEN) && (g_num == 6))
+		  || ((g_s._currPlace == ATTIC) && (g_num > 4))  || ((g_s._currPlace > ATTIC)  && (g_s._currPlace != 23)) )
 		  g_crep = 997;
-		else if (g_s._mlieu == 23) {
+		else if (g_s._currPlace == 23) {
 			g_crep = 1504;
 			tperd();
 		} else
@@ -322,7 +323,7 @@ void fctInventoryTake() {
  * @remarks	Originally called 'tsoulever'
  */
 void fctLift() {
-	int cx;
+//	int cx;
 
 	if (!g_syn)
 		ecr3(g_vm->getEngineString(S_LIFT));
@@ -336,19 +337,19 @@ void fctLift() {
 			if (g_ipers > 0)
 				++g_s._conf;
 			g_crep = 997;
-			if ((g_s._mlieu == PURPLE_ROOM) && (g_s._iloic != 0))
-				treg(g_s._iloic);
+			if ((g_s._currPlace == PURPLE_ROOM) && (g_s._purpleRoomObjectId != 0))
+				treg(g_s._purpleRoomObjectId);
 		}
 		return;
 	}
 	if (g_ipers > 0)
 		++g_s._conf;
-	cx = g_s._mlieu;
-	if (g_s._mlieu == CRYPT)
-		cx = 14;
-	else if (g_s._mlieu == MOUNTAIN)
-		cx = 15;
-	g_crep = g_tabdon[asoul + (cx << 3) + (g_num - 1)];
+	int tmpPlace = g_s._currPlace;
+	if (g_s._currPlace == CRYPT)
+		tmpPlace = 14;
+	else if (g_s._currPlace == MOUNTAIN)
+		tmpPlace = 15;
+	g_crep = g_tabdon[asoul + (tmpPlace << 3) + (g_num - 1)];
 	if (g_crep == 255)
 		g_crep = 997;
 }
@@ -404,60 +405,60 @@ void fctLook() {
 		tcoord(8);
 		g_crep = 131;
 		if (g_num != 0) {
-			if (g_s._mlieu == ATTIC) {
+			if (g_s._currPlace == ATTIC) {
 				if (g_num == 1) {
 					g_crep = 164;
-					if (g_s._ibag != 0)
-						treg(g_s._ibag);
-					else if (g_s._iboul != 0)
-						treg(g_s._iboul);
+					if (g_s._atticRodHoleObjectId != 0)
+						treg(g_s._atticRodHoleObjectId);
+					else if (g_s._atticBallHoleObjectId != 0)
+						treg(g_s._atticBallHoleObjectId);
 				} else {
 					g_crep = 193;
-					if (g_s._ibag != 0)
-						treg(g_s._ibag);
+					if (g_s._atticRodHoleObjectId != 0)
+						treg(g_s._atticRodHoleObjectId);
 				}
 			}
-			if (g_s._mlieu == CELLAR) {
+			if (g_s._currPlace == CELLAR) {
 				g_crep = 164;
-				if (g_s._icave != 0)
-					treg(g_s._icave);
+				if (g_s._cellarObjectId != 0)
+					treg(g_s._cellarObjectId);
 			}
-			if (g_s._mlieu == SECRET_PASSAGE) {
+			if (g_s._currPlace == SECRET_PASSAGE) {
 				g_crep = 174;
-				if (g_s._ivier != 0)
-					treg(g_s._ivier);
+				if (g_s._secretPassageObjectId != 0)
+					treg(g_s._secretPassageObjectId);
 			}
-			if (g_s._mlieu == WELL) {
+			if (g_s._currPlace == WELL) {
 				g_crep = 131;
-				if (g_s._ipuit != 0)
-					treg(g_s._ipuit);
+				if (g_s._wellObjectId != 0)
+					treg(g_s._wellObjectId);
 			}
 		}
 		return;
 	}
-	cx = g_s._mlieu;
-	if (g_s._mlieu == CHAPEL)
+	cx = g_s._currPlace;
+	if (g_s._currPlace == CHAPEL)
 		cx = 17;
-	if ((g_s._mlieu > MANOR_FRONT) && (g_s._mlieu < DOOR))
+	if ((g_s._currPlace > MANOR_FRONT) && (g_s._currPlace < DOOR))
 		cx -= 4;
-	if (g_s._mlieu == 26)
+	if (g_s._currPlace == 26)
 		cx = 21;
 	g_crep = g_tabdon[arega + (cx * 7) + g_num - 1];
-	if ((g_s._mlieu == ATTIC) && (g_num == 8))
+	if ((g_s._currPlace == ATTIC) && (g_num == 8))
 		g_crep = 126;
-	if (g_s._mlieu == MOUNTAIN)
+	if (g_s._currPlace == MOUNTAIN)
 		g_crep = 103;
 	if (g_crep == 255)
 		g_crep = 131;
-	if ((g_s._mlieu == GREEN_ROOM) && (g_num == 1))
+	if ((g_s._currPlace == GREEN_ROOM) && (g_num == 1))
 		treg(144);
-	if ((g_s._mlieu == BLUE_ROOM) && (g_num == 3))
+	if ((g_s._currPlace == BLUE_ROOM) && (g_num == 3))
 		treg(147);
-	if ((g_s._mlieu == GREEN_ROOM2) && (g_num == 3))
+	if ((g_s._currPlace == GREEN_ROOM2) && (g_num == 3))
 		treg(149);
-	if ((g_s._mlieu == 9) && (g_num == 2))
+	if ((g_s._currPlace == 9) && (g_num == 2))
 		treg(30);
-	if ((g_s._mlieu == DINING_ROOM) && (g_num == 3))
+	if ((g_s._currPlace == DINING_ROOM) && (g_num == 3))
 		treg(31);
 }
 
@@ -491,7 +492,7 @@ void fctSearch() {
 	if (g_anyone || g_iesc)
 		return;
 
-	if (g_s._mlieu == 23) {
+	if (g_s._currPlace == 23) {
 		g_crep = 1504;
 		tperd();
 		return;
@@ -527,16 +528,16 @@ void fctSearch() {
 			if (g_num != 0) {
 				if (g_ipers > 0)
 					g_s._conf += 3;
-				if ((g_s._mlieu != WELL) && (g_s._mlieu != SECRET_PASSAGE) && (g_s._mlieu != ATTIC)) {
-					if (g_s._mlieu == PURPLE_ROOM) {
+				if ((g_s._currPlace != WELL) && (g_s._currPlace != SECRET_PASSAGE) && (g_s._currPlace != ATTIC)) {
+					if (g_s._currPlace == PURPLE_ROOM) {
 						g_crep = 123;
-						if (g_s._iloic != 0)
-							treg(g_s._iloic);
+						if (g_s._purpleRoomObjectId != 0)
+							treg(g_s._purpleRoomObjectId);
 					}
-					if (g_s._mlieu == CRYPT) {
+					if (g_s._currPlace == CRYPT) {
 						g_crep = 123;
-						if (g_s._icryp != 0)
-							treg(g_s._icryp);
+						if (g_s._cryptObjectId != 0)
+							treg(g_s._cryptObjectId);
 					}
 				}
 			}
@@ -545,22 +546,22 @@ void fctSearch() {
 		if (g_ipers > 0)
 			g_s._conf += 3;
 		g_crep = 997;
-		if (g_s._mlieu < CELLAR)
-			g_crep = r[g_s._mlieu];
+		if (g_s._currPlace < CELLAR)
+			g_crep = r[g_s._currPlace];
 
-		if ((g_s._mlieu == TOILETS) && (g_num == 2))
+		if ((g_s._currPlace == TOILETS) && (g_num == 2))
 			g_crep = 162;
 
-		if (g_s._mlieu == KITCHEN) {
+		if (g_s._currPlace == KITCHEN) {
 			if ((g_num == 3) || (g_num == 4))
 				g_crep = 162;
 			else if (g_num == 5)
 				g_crep = 159;
 		}
 
-		if (g_s._mlieu == MOUNTAIN)
+		if (g_s._currPlace == MOUNTAIN)
 			g_crep = 104;
-		else if (g_s._mlieu == CRYPT)
+		else if (g_s._currPlace == CRYPT)
 			g_crep = 155;
 	}
 }
@@ -607,30 +608,30 @@ void fctOpen() {
 		if (g_ipers > 0)
 			g_s._conf += 2;
 		++g_iouv;
-		int cx = 0;
+		int tmpPlace = 0;
 		do {
-			++cx;
-		} while (!((cx > 6) || (ord(g_touv[cx]) == 0) || (ord(g_touv[cx]) == g_num)));
-		if (ord(g_touv[cx]) != g_num) {
-			if (!( ((g_num == 3) && ((g_s._mlieu == OWN_ROOM) || (g_s._mlieu == 9) || (g_s._mlieu == BLUE_ROOM) || (g_s._mlieu == BATHROOM)))
-			    || ((g_num == 4) && ((g_s._mlieu == GREEN_ROOM) || (g_s._mlieu == PURPLE_ROOM) || (g_s._mlieu == RED_ROOM)))
-				|| ((g_s._mlieu == DARKBLUE_ROOM) && (g_num == 5))
-				|| ((g_num == 6) && ((g_s._mlieu == BATHROOM) || (g_s._mlieu == DINING_ROOM) || (g_s._mlieu == GREEN_ROOM2) || (g_s._mlieu == ATTIC)))
-				|| ((g_s._mlieu == GREEN_ROOM2) && (g_num == 2))
-				|| ((g_s._mlieu == KITCHEN) && (g_num == 7))) ) {
-				if ( ((g_s._mlieu > DINING_ROOM) && (g_s._mlieu < CELLAR))
-				  || ((g_s._mlieu > RED_ROOM) && (g_s._mlieu < DINING_ROOM))
-				  || (g_s._mlieu == OWN_ROOM) || (g_s._mlieu == PURPLE_ROOM) || (g_s._mlieu == BLUE_ROOM)) {
+			++tmpPlace;
+		} while (!((tmpPlace > 6) || (ord(g_touv[tmpPlace]) == 0) || (ord(g_touv[tmpPlace]) == g_num)));
+		if (ord(g_touv[tmpPlace]) != g_num) {
+			if (!( ((g_num == 3) && ((g_s._currPlace == OWN_ROOM) || (g_s._currPlace == 9) || (g_s._currPlace == BLUE_ROOM) || (g_s._currPlace == BATHROOM)))
+			    || ((g_num == 4) && ((g_s._currPlace == GREEN_ROOM) || (g_s._currPlace == PURPLE_ROOM) || (g_s._currPlace == RED_ROOM)))
+				|| ((g_s._currPlace == DARKBLUE_ROOM) && (g_num == 5))
+				|| ((g_num == 6) && ((g_s._currPlace == BATHROOM) || (g_s._currPlace == DINING_ROOM) || (g_s._currPlace == GREEN_ROOM2) || (g_s._currPlace == ATTIC)))
+				|| ((g_s._currPlace == GREEN_ROOM2) && (g_num == 2))
+				|| ((g_s._currPlace == KITCHEN) && (g_num == 7))) ) {
+				if ( ((g_s._currPlace > DINING_ROOM) && (g_s._currPlace < CELLAR))
+				  || ((g_s._currPlace > RED_ROOM) && (g_s._currPlace < DINING_ROOM))
+				  || (g_s._currPlace == OWN_ROOM) || (g_s._currPlace == PURPLE_ROOM) || (g_s._currPlace == BLUE_ROOM)) {
 					if (getRandomNumber(1, 4) == 3)
 						parole(7, 9, 1);
 				}
-				g_touv[cx] = chr(g_num);
+				g_touv[tmpPlace] = chr(g_num);
 				aniof(1, g_num);
 			}
-			cx = g_s._mlieu;
-			if (g_s._mlieu == CRYPT)
-				cx = 14;
-			g_crep = g_tabdon[aouvr + (cx * 7) + g_num - 1];
+			tmpPlace = g_s._currPlace;
+			if (g_s._currPlace == CRYPT)
+				tmpPlace = CELLAR;
+			g_crep = g_tabdon[aouvr + (tmpPlace * 7) + g_num - 1];
 			if (g_crep == 254)
 				g_crep = 999;
 		} else
@@ -663,27 +664,27 @@ void fctPlace() {
 		g_crep = 999;
 		if (g_caff == 13) {
 			if (g_num == 1) {
-				if (g_s._iboul != 0) {
+				if (g_s._atticBallHoleObjectId != 0) {
 					g_crep = 188;
 				} else {
-					g_s._iboul = g_s._selectedObjectId;
+					g_s._atticBallHoleObjectId = g_s._selectedObjectId;
 					if (g_s._selectedObjectId == 141)
 						aniof(1, 7);
 				}
-			} else if (g_s._ibag != 0) {
+			} else if (g_s._atticRodHoleObjectId != 0) {
 				g_crep = 188;
 			} else {
-				g_s._ibag = g_s._selectedObjectId;
+				g_s._atticRodHoleObjectId = g_s._selectedObjectId;
 				if (g_s._selectedObjectId == 159)
 					aniof(1, 6);
 			}
 		}
 
 		if (g_caff == 14) {
-			if (g_s._icave != 0) {
+			if (g_s._cellarObjectId != 0) {
 				g_crep = 188;
 			} else {
-				g_s._icave = g_s._selectedObjectId;
+				g_s._cellarObjectId = g_s._selectedObjectId;
 				if (g_s._selectedObjectId == 151) {
 					// Open hidden passage
 					aniof(1, 2);
@@ -714,10 +715,10 @@ void fctPlace() {
 
 						g_vm->_menu.displayMenu();
 						if (enterPassageFl) {
-							g_s._mlieu = SECRET_PASSAGE;
+							g_s._currPlace = SECRET_PASSAGE;
 							tmlieu(17);
 						} else {
-							tmlieu(g_s._mlieu);
+							tmlieu(g_s._currPlace);
 							writepal(14);
 							dessin(0);
 							aniof(1, 2);
@@ -738,17 +739,17 @@ void fctPlace() {
 		}
 
 		if (g_caff == 16) {
-			if (g_s._icryp == 0)
-				g_s._icryp = g_s._selectedObjectId;
+			if (g_s._cryptObjectId == 0)
+				g_s._cryptObjectId = g_s._selectedObjectId;
 			else
 				g_crep = 188;
 		}
 
 		if (g_caff == 17) {
-			if (g_s._ivier != 0) {
+			if (g_s._secretPassageObjectId != 0) {
 				g_crep = 188;
 			} else if (g_s._selectedObjectId == 143) {
-				g_s._ivier = 143;
+				g_s._secretPassageObjectId = 143;
 				aniof(1, 1);
 			} else {
 				g_crep = 1512;
@@ -757,10 +758,10 @@ void fctPlace() {
 		}
 
 		if (g_caff == 24) {
-			if (g_s._ipuit != 0) {
+			if (g_s._wellObjectId != 0) {
 				g_crep = 188;
 			} else if ((g_s._selectedObjectId == 140) || (g_s._selectedObjectId == 120)) {
-				g_s._ipuit = g_s._selectedObjectId;
+				g_s._wellObjectId = g_s._selectedObjectId;
 				aniof(1, 1);
 			} else {
 				g_crep = 185;
@@ -789,7 +790,7 @@ void fctTurn() {
 	tcoord(9);
 	if (g_num != 0) {
 		g_crep = 997;
-		if ((g_s._mlieu == ATTIC) && (g_s._ibag == 159) && (g_s._iboul == 141)) {
+		if ((g_s._currPlace == ATTIC) && (g_s._atticRodHoleObjectId == 159) && (g_s._atticBallHoleObjectId == 141)) {
 			repon(2, 167);
 			parole(7, 9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
@@ -798,13 +799,13 @@ void fctTurn() {
 			else
 				g_crep = 168;
 		}
-		if ((g_s._mlieu == SECRET_PASSAGE) && (g_s._ivier == 143)) {
+		if ((g_s._currPlace == SECRET_PASSAGE) && (g_s._secretPassageObjectId == 143)) {
 			repon(2, 175);
 			clsf3();
 			parole(6, -9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1) {
-				g_s._mlieu = CRYPT;
+				g_s._currPlace = CRYPT;
 				affrep();
 			} else
 				g_crep = 176;
@@ -845,10 +846,10 @@ void fctAttach() {
 		if (!(g_anyone) && !(g_iesc)) {
 			tcoord(8);
 			g_crep = 997;
-			if ((g_num != 0) && (g_s._mlieu == WELL)) {
+			if ((g_num != 0) && (g_s._currPlace == WELL)) {
 				g_crep = 999;
 				if ((g_s._selectedObjectId == 120) || (g_s._selectedObjectId == 140)) {
-					g_s._ipuit = g_s._selectedObjectId;
+					g_s._wellObjectId = g_s._selectedObjectId;
 					aniof(1, 1);
 				} else
 					g_crep = 185;
@@ -903,20 +904,20 @@ void fctClose() {
  * @remarks	Originally called 'tfrapper'
  */
 void fctKnock() {
-	warning("Knock - mlieu %d", g_s._mlieu);
+	warning("Knock - _currPlace %d", g_s._currPlace);
 
 	if (!g_syn)
 		ecr3(g_vm->getEngineString(S_HIT));
 
-	if (g_s._mlieu == LANDING) {
+	if (g_s._currPlace == LANDING) {
 		Alert::show(g_vm->getEngineString(S_BEFORE_USE_DEP_MENU), 1);
 		return;
 	}
 
-	if (g_s._mlieu < DOOR) {
+	if (g_s._currPlace < DOOR) {
 		tfleche();
 		if (!(g_anyone) && !(g_iesc)) {
-			if ((g_s._mlieu < MOUNTAIN) && (g_s._mlieu != LANDING))
+			if ((g_s._currPlace < MOUNTAIN) && (g_s._currPlace != LANDING))
 				g_crep = 133;
 			else
 				g_crep = 997;
@@ -925,7 +926,7 @@ void fctKnock() {
 		return;
 	}
 
-	if (g_s._mlieu == 26) {
+	if (g_s._currPlace == 26) {
 		int rand = (getRandomNumber(0, 8)) - 4;
 		parole(11, rand, 1);
 		int p;
@@ -991,40 +992,40 @@ void fctSelfPut() {
 			tcoord(8);
 			if (g_num != 0) {
 				g_crep = 998;
-				if (g_caff == 2) {
-					if (g_s._iloic != 0)
+				if (g_caff == PURPLE_ROOM) {
+					if (g_s._purpleRoomObjectId != 0)
 						g_crep = 188;
 					else
-						g_s._iloic = g_s._selectedObjectId;
+						g_s._purpleRoomObjectId = g_s._selectedObjectId;
 				}
 
-				if (g_caff == 13) {
+				if (g_caff == ATTIC) {
 					if (g_num == 1) {
-						if (g_s._iboul != 0)
+						if (g_s._atticBallHoleObjectId != 0)
 							g_crep = 188;
 						else
-							g_s._iboul = g_s._selectedObjectId;
-					} else if (g_s._ibag != 0) {
+							g_s._atticBallHoleObjectId = g_s._selectedObjectId;
+					} else if (g_s._atticRodHoleObjectId != 0) {
 						g_crep = 188;
 					} else {
-						g_s._ibag = g_s._selectedObjectId;
+						g_s._atticRodHoleObjectId = g_s._selectedObjectId;
 					}
 				}
 
-				if (g_caff == 16) {
-					if (g_s._icryp != 0)
+				if (g_caff == CRYPT) {
+					if (g_s._cryptObjectId != 0)
 						g_crep = 188;
 					else
-						g_s._icryp = g_s._selectedObjectId;
+						g_s._cryptObjectId = g_s._selectedObjectId;
 				}
 
-				if (g_caff == 24)
+				if (g_caff == WELL)
 					g_crep = 185;
-				if ((g_caff == 14) || (g_caff == 17))
+				if ((g_caff == CELLAR) || (g_caff == SECRET_PASSAGE))
 					g_crep = 124;
 			} else {
 				g_crep = 124;
-				if (g_caff == 24) {
+				if (g_caff == WELL) {
 					tcoord(5);
 					if (g_num != 0)
 						g_crep = 185;
@@ -1047,7 +1048,7 @@ void fctSelfPut() {
  * @remarks	Originally called 'tecouter'
  */
 void fctListen() {
-	if (g_s._mlieu != 26)
+	if (g_s._currPlace != 26)
 		g_crep = 101;
 	else {
 		if (g_ipers != 0)
@@ -1085,14 +1086,14 @@ void fctListen() {
  * @remarks	Originally called 'tmanger'
  */
 void fctEat() {
-	if ((g_s._mlieu > LANDING) && (g_s._mlieu < 26)) {
+	if ((g_s._currPlace > LANDING) && (g_s._currPlace < 26)) {
 		g_crep = 148;
 	} else {
 		tsort();
-		g_s._mlieu = DINING_ROOM;
+		g_s._currPlace = DINING_ROOM;
 		g_caff = 10;
-		debloc(g_s._mlieu);
-		tmlieu(g_s._mlieu);
+		debloc(g_s._currPlace);
+		tmlieu(g_s._currPlace);
 
 		int j, h, m;
 		calch(j, h, m);
@@ -1126,10 +1127,10 @@ void fctEat() {
  * @remarks	Originally called 'tentrer'
  */
 void fctEnter() {
-	if ((g_s._mlieu == MANOR_FRONT) || (g_s._mlieu == MANOR_BACK)) {
+	if ((g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) {
 		t1sama();
-		tmlieu(g_s._mlieu);
-	} else if (g_s._mlieu == LANDING)
+		tmlieu(g_s._currPlace);
+	} else if (g_s._currPlace == LANDING)
 		aldepl();
 	else if (g_ment == 0)
 		g_crep = 997;
@@ -1150,7 +1151,7 @@ void fctEnter() {
 				
 				tip(z, g_x);
 				++g_s._conf;
-				g_s._mlieu = LANDING;
+				g_s._currPlace = LANDING;
 				g_msg[3] = MENU_DISCUSS;
 				g_msg[4] = g_vm->_menu._discussMenu[g_x];
 				g_syn = true;
@@ -1169,10 +1170,10 @@ void fctEnter() {
 			parole(7, g_x, 1);
 			aniof(1, 1);
 			
-			g_s._mlieu = g_ment;
+			g_s._currPlace = g_ment;
 			affrep();
-			debloc(g_s._mlieu);
-			tmlieu(g_s._mlieu);
+			debloc(g_s._currPlace);
+			tmlieu(g_s._currPlace);
 			g_ment = 0;
 			g_mpers = 0;
 			g_ipers = 0;
@@ -1187,17 +1188,17 @@ void fctEnter() {
 void fctSleep() {
 	int z, j, h, m;
 
-	if ((g_s._mlieu > LANDING) && (g_s._mlieu < 26)) {
+	if ((g_s._currPlace > LANDING) && (g_s._currPlace < 26)) {
 		g_crep = 148;
 		return;
 	}
-	if (g_s._mlieu != OWN_ROOM) {
+	if (g_s._currPlace != OWN_ROOM) {
 		tsort();
-		g_s._mlieu = OWN_ROOM;
+		g_s._currPlace = OWN_ROOM;
 		affrep();
 		afdes(0);
-		debloc(g_s._mlieu);
-		tmlieu(g_s._mlieu);
+		debloc(g_s._currPlace);
+		tmlieu(g_s._currPlace);
 	}
 	clsf3();
 	clsf2();
@@ -1238,7 +1239,7 @@ void fctForce() {
 		tfleche();
 
 	if ((!g_anyone) && (!g_iesc)) {
-		if (g_s._mlieu != 26)
+		if (g_s._currPlace != 26)
 			g_crep = 997;
 		else {
 			g_crep = 143;
@@ -1254,27 +1255,27 @@ void fctForce() {
 void fctLeave() {
 	tsort();
 	g_crep = 0;
-	if ((g_s._mlieu == MOUNTAIN) || (g_s._mlieu == MANOR_FRONT) || (g_s._mlieu == MANOR_BACK) || (g_s._mlieu == WELL))
+	if ((g_s._currPlace == MOUNTAIN) || (g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK) || (g_s._currPlace == WELL))
 		g_crep = 997;
 	else {
 		int lx = 0;
 
-		if ((g_s._mlieu < CRYPT) || (g_s._mlieu == 26))
+		if ((g_s._currPlace < CRYPT) || (g_s._currPlace == 26))
 			lx = 10;
-		if ((g_s._mlieu == DINING_ROOM) || (g_s._mlieu == CHAPEL))
+		if ((g_s._currPlace == DINING_ROOM) || (g_s._currPlace == CHAPEL))
 			lx = 21;
-		if ((g_s._mlieu < DINING_ROOM) || (g_s._mlieu == ATTIC))
+		if ((g_s._currPlace < DINING_ROOM) || (g_s._currPlace == ATTIC))
 			lx = 15;
-		if (g_s._mlieu == CRYPT) {
+		if (g_s._currPlace == CRYPT) {
 			lx = 17;
 			g_crep = 176;
 		}
-		if (g_s._mlieu == SECRET_PASSAGE)
+		if (g_s._currPlace == SECRET_PASSAGE)
 			t23coul(lx);
-		if (g_s._mlieu == 23)
+		if (g_s._currPlace == 23)
 			lx = 24;
 		if (g_crep != 997)
-			g_s._mlieu = lx;
+			g_s._currPlace = lx;
 		g_caff = lx;
 		if (g_crep == 0)
 			g_crep = lx;
@@ -1298,12 +1299,12 @@ void fctWait() {
 		++g_jh;
 		tinke();
 		if (!g_blo)
-			t11(g_s._mlieu, quel);
+			t11(g_s._currPlace, quel);
 		if ((g_ipers != 0) && (g_mpers == 0)) {
 			g_crep = 998;
-			if ((g_s._mlieu == ATTIC) || (g_s._mlieu == CELLAR))
+			if ((g_s._currPlace == ATTIC) || (g_s._currPlace == CELLAR))
 				cavegre();
-			if ((g_s._mlieu > OWN_ROOM) && (g_s._mlieu < DINING_ROOM))
+			if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
 				g_anyone = true;
 			g_mpers = g_ipers;
 			if (!g_anyone)
@@ -1465,7 +1466,7 @@ void fctDiscuss() {
 			int ix = choi - 1;
 			if (g_col) {
 				g_col = false;
-				g_s._mlieu = 15;
+				g_s._currPlace = 15;
 				if (g_iouv > 0)
 					max = 8;
 				else
@@ -1515,7 +1516,7 @@ void fctDiscuss() {
 		sparl(0, 138);
 		showMouse();
 		g_col = false;
-		g_s._mlieu = 15;
+		g_s._currPlace = 15;
 	}
 	g_ctrm = 0;
 	hideMouse();
@@ -1527,7 +1528,7 @@ void fctDiscuss() {
 	drawClock();
 	affrep();
 	/* chech;*/
-	tmlieu(g_s._mlieu);
+	tmlieu(g_s._currPlace);
 	clsf3();
 }
 
@@ -1593,8 +1594,11 @@ void MortevielleEngine::endGame() {
 	repon(2, 35);
 	musique(0);
 	tkey1(false);
-	messint(2036);
-	tkey1(false);
+	// A wait message was displayed. 
+	// tkey1 was called before and after.
+	// Most likely the double call is useless, thus removed
+	//
+	// tkey1(false);
 	inzon();
 }
 

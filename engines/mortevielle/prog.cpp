@@ -122,7 +122,7 @@ void MortevielleEngine::gameLoaded() {
 	repon(2, g_crep);
 	clsf3();
 	_endGame = false;
-	tmlieu(g_s._mlieu);
+	tmlieu(g_s._currPlace);
 	modinv();
 	if (g_s._selectedObjectId != 0)
 		modobj(g_s._selectedObjectId + 400);
@@ -226,11 +226,11 @@ void tsitu() {
 		}
 	}
 	calch(j, h, m);
-	if ((((h == 12) || (h == 13) || (h == 19)) && (g_s._mlieu != 10)) ||
-	        ((h > 0) && (h < 6) && (g_s._mlieu != 0)))
+	if ((((h == 12) || (h == 13) || (h == 19)) && (g_s._currPlace != 10)) ||
+	        ((h > 0) && (h < 6) && (g_s._currPlace != 0)))
 		++g_s._conf;
-	if (((g_s._mlieu < CRYPT) || (g_s._mlieu > MOUNTAIN)) && (g_s._mlieu != 23)
-	        && (g_s._mlieu != 0) && (g_s._selectedObjectId != 152) && (!g_vm->_loseGame)) {
+	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != 23)
+	        && (g_s._currPlace != 0) && (g_s._selectedObjectId != 152) && (!g_vm->_loseGame)) {
 		if ((g_s._conf > 99) && (h > 8) && (h < 16)) {
 			g_crep = 1501;
 			tperd();

@@ -165,8 +165,8 @@ struct sav_chaine {
 	byte _pourc[11];
 	byte _teauto[43];
 	byte _sjer[31];
-	int _mlieu, _iboul, _ibag, _icave, _ivier, _ipuit;
-	int _selectedObjectId, _iloic, _icryp;
+	int _currPlace, _atticBallHoleObjectId, _atticRodHoleObjectId, _cellarObjectId, _secretPassageObjectId, _wellObjectId;
+	int _selectedObjectId, _purpleRoomObjectId, _cryptObjectId;
 	bool _ipre;
 	byte _heure;
 };
