@@ -24,6 +24,7 @@
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 #include "math/quat.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/emi/animationemi.h"
 #include "engines/grim/emi/skeleton.h"
 
@@ -98,20 +99,25 @@ void Skeleton::setAnim(AnimationEmi *anim) {
 		return;
 	}
 	for (int i = 0; i < _numJoints; i++) {
-		_joints[i]._animIndex = -1;
+		_joints[i]._animIndex[0] = -1;
+		_joints[i]._animIndex[1] = -1;
 	}
 	
 	for(int i = 0; i < _anim->_numBones; i++) {
 		int index = findJointIndex(_anim->_bones[i]->_boneName, _numJoints);
-		_joints[index]._animIndex = i;
+		if (_anim->_bones[i]->_operation == 3) {
+			_joints[index]._animIndex[0] = i;
+		} else {
+			_joints[index]._animIndex[1] = i;
+		}
 	}
 	resetAnim();
 }
 
 int Skeleton::findJointIndex(Common::String name, int max) {
 	if (_numJoints > 0) {
-		for(int i = 0; i < max; i++) {
-			if(_joints[i]._name == name) {
+		for (int i = 0; i < max; i++) {
+			if (_joints[i]._name == name) {
 				return i;
 			}
 		}
@@ -126,82 +132,76 @@ void Skeleton::animate(float delta) {
 	if (_time > _anim->_duration) {
 		resetAnim();
 	}
-
-	int curJoint = 0;
-	int animIdx = 0;
-	int prevKeyfIdx = 0;
-	int keyfIdx = 0;
-	int curKeyFrame = 0;
-	float timeDelta = 0.0f;
-	float interpVal = 0.0f;
 	
-	Math::Matrix4 relFinal;
 	Math::Vector3d vec;
-	
-	for (curJoint = 0; curJoint < _numJoints; curJoint++) {
-		animIdx = _joints[curJoint]._animIndex;
+
+	for (int curJoint = 0; curJoint < _numJoints; curJoint++) {
+		int transIdx = _joints[curJoint]._animIndex[0];
+		int rotIdx = _joints[curJoint]._animIndex[1];
+
+		float timeDelta = 0.0f;
+		float interpVal = 0.0f;
+
+		Math::Matrix4 relFinal = _joints[curJoint]._relMatrix;
 		
-		if (animIdx >= 0) {
-			prevKeyfIdx = -1;
-			keyfIdx = 0;
-
-			Bone *_curBone = _anim->_bones[animIdx];
-			// Find the right keyframe
-			for (curKeyFrame = 0; curKeyFrame < _curBone->_count; curKeyFrame++) {
-				if (_curBone->_operation == ROTATE_OP) {
-					if (_curBone->_rotations[curKeyFrame]->_time >= _time) {
-						keyfIdx = curKeyFrame;
-						break;
-					}
-				} else if (_curBone->_operation == TRANSLATE_OP) {
-					if (_curBone->_translations[curKeyFrame]->_time >= _time) {
-						keyfIdx = curKeyFrame;
-						break;
-					}
-					
-				}
-			}
-
-			relFinal = _joints[curJoint]._relMatrix;
+		if (rotIdx >= 0) {
+			int keyfIdx = 0;
 			Math::Quaternion quat;
+			Bone *curBone = _anim->_bones[rotIdx];
+			Math::Vector3d relPos = relFinal.getPosition();
 
-			if (_curBone->_operation == ROTATE_OP) {
-				if (keyfIdx == 0) {
-					quat = _curBone->_rotations[keyfIdx]->_quat;
-				} else if (keyfIdx == _curBone->_count - 1) {
-					quat = _curBone->_rotations[keyfIdx-1]->_quat;
-				} else {
-					timeDelta = _curBone->_rotations[keyfIdx-1]->_time - _curBone->_rotations[keyfIdx]->_time;
-					interpVal = (_time - _curBone->_rotations[keyfIdx]->_time) / timeDelta;
-					
-					// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
-					quat = _curBone->_rotations[keyfIdx]->_quat.slerpQuat(_curBone->_rotations[keyfIdx - 1]->_quat, interpVal);
+			// Find the right keyframe
+			for (int curKeyFrame = 0; curKeyFrame < curBone->_count; curKeyFrame++) {
+				if (curBone->_rotations[curKeyFrame]->_time >= _time) {
+					keyfIdx = curKeyFrame;
+					break;
 				}
-				quat.toMatrix(relFinal);
-			} else if (_curBone->_operation == TRANSLATE_OP) {
-				if (keyfIdx == 0) {
-					vec = _curBone->_translations[keyfIdx]->_vec;
-				} else if (keyfIdx == _curBone->_count - 1) {
-					vec = _curBone->_translations[keyfIdx-1]->_vec;
-				} else {
-					timeDelta = _curBone->_translations[keyfIdx-1]->_time - _curBone->_translations[keyfIdx]->_time;
-					interpVal = (_time - _curBone->_translations[keyfIdx]->_time) / timeDelta;
-					
-					vec.x() = _curBone->_translations[keyfIdx-1]->_vec.x() +
-					(_curBone->_translations[keyfIdx]->_vec.x() - _curBone->_translations[keyfIdx-1]->_vec.x()) * interpVal;
-					
-					vec.y() = _curBone->_translations[keyfIdx-1]->_vec.y() +
-					(_curBone->_translations[keyfIdx]->_vec.y() - _curBone->_translations[keyfIdx-1]->_vec.y()) * interpVal;
-					
-					vec.z() = _curBone->_translations[keyfIdx-1]->_vec.z() +
-					(_curBone->_translations[keyfIdx]->_vec.z() - _curBone->_translations[keyfIdx-1]->_vec.z()) * interpVal;
-				}
-				relFinal.setPosition(vec);
-			} else {
-				error("Skeleton::Animate, invalid operation %d", _curBone->_operation);
 			}
-		} else {
-			relFinal = _joints[curJoint]._relMatrix;
+
+			if (keyfIdx == 0) {
+				quat = curBone->_rotations[keyfIdx]->_quat;
+			} else if (keyfIdx == curBone->_count - 1) {
+				quat = curBone->_rotations[keyfIdx-1]->_quat;
+			} else {
+				timeDelta = curBone->_rotations[keyfIdx-1]->_time - curBone->_rotations[keyfIdx]->_time;
+				interpVal = (_time - curBone->_rotations[keyfIdx]->_time) / timeDelta;
+
+				// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
+				quat = curBone->_rotations[keyfIdx]->_quat.slerpQuat(curBone->_rotations[keyfIdx - 1]->_quat, interpVal);
+			}
+			quat.toMatrix(relFinal);
+			relFinal.setPosition(relPos);
+		}
+
+		if (transIdx >= 0) {
+			int keyfIdx = 0;
+			Bone *curBone = _anim->_bones[transIdx];
+			// Find the right keyframe
+			for (int curKeyFrame = 0; curKeyFrame < curBone->_count; curKeyFrame++) {
+				if (curBone->_translations[curKeyFrame]->_time >= _time) {
+					keyfIdx = curKeyFrame;
+					break;
+				}
+			}
+
+			if (keyfIdx == 0) {
+				vec = curBone->_translations[keyfIdx]->_vec;
+			} else if (keyfIdx == curBone->_count - 1) {
+				vec = curBone->_translations[keyfIdx-1]->_vec;
+			} else {
+				timeDelta = curBone->_translations[keyfIdx-1]->_time - curBone->_translations[keyfIdx]->_time;
+				interpVal = (_time - curBone->_translations[keyfIdx]->_time) / timeDelta;
+
+				vec.x() = curBone->_translations[keyfIdx-1]->_vec.x() +
+					(curBone->_translations[keyfIdx]->_vec.x() - curBone->_translations[keyfIdx-1]->_vec.x()) * interpVal;
+
+				vec.y() = curBone->_translations[keyfIdx-1]->_vec.y() +
+					(curBone->_translations[keyfIdx]->_vec.y() - curBone->_translations[keyfIdx-1]->_vec.y()) * interpVal;
+
+				vec.z() = curBone->_translations[keyfIdx-1]->_vec.z() +
+					(curBone->_translations[keyfIdx]->_vec.z() - curBone->_translations[keyfIdx-1]->_vec.z()) * interpVal;
+			}
+			relFinal.setPosition(vec);
 		}
 		
 		if (_joints[curJoint]._parentIndex == -1) {

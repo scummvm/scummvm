@@ -41,7 +41,7 @@ struct Joint {
 	Math::Vector3d _trans;
 	Math::Quaternion _quat;
 	// calculated;
-	int _animIndex;
+	int _animIndex[2];
 	int _parentIndex;
 	Math::Matrix4 _absMatrix;
 	Math::Matrix4 _relMatrix;
