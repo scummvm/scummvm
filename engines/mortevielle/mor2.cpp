@@ -274,7 +274,11 @@ void affrep() {
 	g_crep = g_s._mlieu;
 }
 
-void mfouen() {
+/**
+ * Engine function - Switch action menu from "Search" mode back to normal mode
+ * @remarks	Originally called 'mfouen'
+ */
+void unsetSearchMenu() {
 	tmlieu(g_s._mlieu);
 	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.enableMenuItem(_actionMenu[cx]);
@@ -290,7 +294,7 @@ void tperd() {
 	g_ment = 0;
 	g_iouv = 0;
 	g_mchai = 0;
-	mfouen();
+	unsetSearchMenu();
 	if (!g_blo) {
 		int cx;
 		t11(21, cx);
@@ -361,7 +365,7 @@ void cherjer(int ob, bool &d) {
 	for (cx = 1; cx <= 6; ++cx)
 		d = (d || (ord(g_s._sjer[cx]) == ob));
 
-	if (g_s._derobj == ob)
+	if (g_s._selectedObjectId == ob)
 		d = true;
 }
 
@@ -397,7 +401,7 @@ void sparl(float adr, float rep) {
 	repint = abs((int)rep);
 	hideMouse();
 	Common::String tmpStr = deline(repint + kDialogStringIndex);
-	afftex(tmpStr, 230, 4, 65, 24, 5);
+	displayStr(tmpStr, 230, 4, 65, 24, 5);
 	f3f8::draw();
 	
 	key = 0;
@@ -410,15 +414,23 @@ void sparl(float adr, float rep) {
 	showMouse();
 }
 
-void finfouil() {
-	g_fouil = false;
+/**
+ * Engine function - End of Search: reset globals
+ * @remarks	Originally called 'finfouill'
+ */
+void endSearch() {
+	g_heroSearching = false;
 	g_obpart = false;
 	g_cs = 0;
 	g_is = 0;
-	mfouen();
+	unsetSearchMenu();
 }
 
-void mfoudi() {
+/**
+ * Engine function - Switch action menu to "Search" mode
+ * @remarks	Originally called 'mfoudi'
+ */
+void setSearchMenu() {
 	for (int cx = 1; cx <= 7; ++cx) 
 		g_vm->_menu.disableMenuItem(g_vm->_menu._moveMenu[cx]);
 
@@ -447,7 +459,7 @@ void ajchai() {
 	} while ((cx <= 9) && (g_tabdon[cy + cx] != 0));
 
 	if (g_tabdon[cy + cx] == 0)
-		g_tabdon[cy + cx] = g_s._derobj;
+		g_tabdon[cy + cx] = g_s._selectedObjectId;
 	else
 		g_crep = 192;
 }
@@ -549,7 +561,7 @@ void quelquun() {
 	if (g_imen)
 		g_vm->_menu.eraseMenu();
 
-	finfouil();
+	endSearch();
 	g_crep = 997;
 L1:
 	if (!g_cache) {
@@ -618,7 +630,7 @@ void tsuiv() {
 			g_s._conf += 2;
 	} else {
 		affrep();
-		finfouil();
+		endSearch();
 		if (cx > 9)
 			g_crep = 131;
 	}
@@ -750,18 +762,18 @@ void treg(int ob) {
 	} else {
 		g_obpart = true;
 		g_crep = g_caff + 400;
-		mfoudi();
+		setSearchMenu();
 	}
 }
 
 void avpoing(int &ob) {
 	g_crep = 999;
-	if (g_s._derobj != 0)
-		ajjer(g_s._derobj);
+	if (g_s._selectedObjectId != 0)
+		ajjer(g_s._selectedObjectId);
 
 	if (g_crep != 139) {
 		modobj(ob + 400);
-		g_s._derobj = ob;
+		g_s._selectedObjectId = ob;
 		ob = 0;
 	}
 }
@@ -786,7 +798,7 @@ void t23coul(int &l) {
 }
 
 void maivid() {
-	g_s._derobj = 0;
+	g_s._selectedObjectId = 0;
 	modobj(500);
 }
 

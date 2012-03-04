@@ -70,7 +70,6 @@ void changeGraphicalDevice(int newDevice) {
  */
 void MortevielleEngine::gameLoaded() {
 	int k;
-	bool test[3];
 	char g[8];
 
 	hideMouse();
@@ -79,11 +78,8 @@ void MortevielleEngine::gameLoaded() {
 	_loseGame = true;
 	g_anyone = false;
 	g_okdes = true;
-	test[0] = false;
-	test[1] = false;
 	g[0] = '\040';
 	g_col = false;
-	test[2] = false;
 	g[7] = g[0];
 	g[2] = 'A';
 	g_cache = false;
@@ -103,7 +99,7 @@ void MortevielleEngine::gameLoaded() {
 	k = 0;
 	g_ment = 0;
 	g_syn = true;
-	g_fouil = true;
+	g_heroSearching = true;
 	g_mchai = 0;
 	g_inei = 0;
 	initouv();
@@ -113,18 +109,12 @@ void MortevielleEngine::gameLoaded() {
 	g_dobj = 0;
 	affrep();
 	g_hintPctMessage = deline(580);
-	while ((test[k] == false) && (k < 2)) {
-		++k;
 
-		// Original read in the boot sector here of each drive and did some calculations -
-		// presumably for copy protection. This has been replaced with hardcoded success
-		test[k] = true;
+	g_okdes = false;
+	_endGame = true;
+	_loseGame = false;
+	g_heroSearching = false;
 
-		g_okdes = false;
-		_endGame = true;
-		_loseGame = false;
-		g_fouil = false;
-	}
 	person();
 	tinke();
 	drawClock();
@@ -134,8 +124,8 @@ void MortevielleEngine::gameLoaded() {
 	_endGame = false;
 	tmlieu(g_s._mlieu);
 	modinv();
-	if (g_s._derobj != 0)
-		modobj(g_s._derobj + 400);
+	if (g_s._selectedObjectId != 0)
+		modobj(g_s._selectedObjectId + 400);
 	showMouse();
 }
 
@@ -240,7 +230,7 @@ void tsitu() {
 	        ((h > 0) && (h < 6) && (g_s._mlieu != 0)))
 		++g_s._conf;
 	if (((g_s._mlieu < 16) || (g_s._mlieu > 19)) && (g_s._mlieu != 23)
-	        && (g_s._mlieu != 0) && (g_s._derobj != 152) && (!g_vm->_loseGame)) {
+	        && (g_s._mlieu != 0) && (g_s._selectedObjectId != 152) && (!g_vm->_loseGame)) {
 		if ((g_s._conf > 99) && (h > 8) && (h < 16)) {
 			g_crep = 1501;
 			tperd();

@@ -311,7 +311,7 @@ bool KnowledgeCheck::show() {
 			dialogHeight = 23;
 		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = deline(textIndexArr[indx]);
-		afftex(tmpStr, 20, 15, 100, 2, 0);
+		displayStr(tmpStr, 20, 15, 100, 2, 0);
 
 		if (indx != 9) {
 			firstOption = textIndexArr[indx] + 1;
@@ -328,7 +328,7 @@ bool KnowledgeCheck::show() {
 			tmpStr = deline(j);
 			if ((int) tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
-			afftex(tmpStr, 100, optionPosY, 100, 1, 0);
+			displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
 			choiceArray[prevChoice] = tmpStr;
 			optionPosY += 8;
 		}
@@ -366,16 +366,16 @@ bool KnowledgeCheck::show() {
 			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
 					tmpStr = choiceArray[prevChoice] + '$';
-					afftex(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+					displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				}
 				if (prevChoice != currChoice) {
 					tmpStr = choiceArray[currChoice] + '$';
-					afftex(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
+					displayStr(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
 					prevChoice = currChoice;
 				}
 			} else if (prevChoice != 0) {
 				tmpStr = choiceArray[prevChoice] + '$';
-				afftex(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+				displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				prevChoice = 0;
 			}
 		} while (!((prevChoice != 0) && g_vm->getMouseClick()));

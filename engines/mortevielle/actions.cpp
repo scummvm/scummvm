@@ -207,7 +207,7 @@ void fctTake() {
 					g_s._ivier = 0;
 				if (g_s._mlieu == 24)
 					g_s._ipuit = 0;
-				mfouen();
+				unsetSearchMenu();
 				g_obpart = false;
 				affrep();
 			} else {
@@ -377,10 +377,10 @@ void fctRead() {
  * @remarks	Originally called 'tslire'
  */
 void fctSelfRead() {
-	if (g_s._derobj == 0)
+	if (g_s._selectedObjectId == 0)
 		g_crep = 186;
 	else
-		st4(g_s._derobj);
+		st4(g_s._selectedObjectId);
 }
 
 /**
@@ -466,8 +466,8 @@ void fctLook() {
  * @remarks	Originally called 'tsregarder'
  */
 void fctSelftLook() {
-	if (g_s._derobj != 0)
-		treg(g_s._derobj);
+	if (g_s._selectedObjectId != 0)
+		treg(g_s._selectedObjectId);
 	else
 		g_crep = 186;
 }
@@ -515,8 +515,8 @@ void fctSearch() {
 				if (g_mchai != 0) {
 					g_cs = 0;
 					g_is = 0;
-					g_fouil = true;
-					mfoudi();
+					g_heroSearching = true;
+					setSearchMenu();
 					tsuiv();
 				} else
 					g_crep = 997;
@@ -570,8 +570,8 @@ void fctSearch() {
  * @remarks	Originally called 'tsfouiller'
  */
 void fctSelfSearch() {
-	if (g_s._derobj != 0)
-		st7(g_s._derobj);
+	if (g_s._selectedObjectId != 0)
+		st7(g_s._selectedObjectId);
 	else
 		g_crep = 186;
 }
@@ -643,7 +643,7 @@ void fctOpen() {
  * @remarks	Originally called 'tmettre'
  */
 void fctPlace() {
-	if (g_s._derobj == 0) {
+	if (g_s._selectedObjectId == 0) {
 		g_crep = 186;
 		return;
 	}
@@ -666,15 +666,15 @@ void fctPlace() {
 				if (g_s._iboul != 0) {
 					g_crep = 188;
 				} else {
-					g_s._iboul = g_s._derobj;
-					if (g_s._derobj == 141)
+					g_s._iboul = g_s._selectedObjectId;
+					if (g_s._selectedObjectId == 141)
 						aniof(1, 7);
 				}
 			} else if (g_s._ibag != 0) {
 				g_crep = 188;
 			} else {
-				g_s._ibag = g_s._derobj;
-				if (g_s._derobj == 159)
+				g_s._ibag = g_s._selectedObjectId;
+				if (g_s._selectedObjectId == 159)
 					aniof(1, 6);
 			}
 		}
@@ -683,8 +683,8 @@ void fctPlace() {
 			if (g_s._icave != 0) {
 				g_crep = 188;
 			} else {
-				g_s._icave = g_s._derobj;
-				if (g_s._derobj == 151) {
+				g_s._icave = g_s._selectedObjectId;
+				if (g_s._selectedObjectId == 151) {
 					// Open hidden passage
 					aniof(1, 2);
 					aniof(1, 1);
@@ -739,7 +739,7 @@ void fctPlace() {
 
 		if (g_caff == 16) {
 			if (g_s._icryp == 0)
-				g_s._icryp = g_s._derobj;
+				g_s._icryp = g_s._selectedObjectId;
 			else
 				g_crep = 188;
 		}
@@ -747,7 +747,7 @@ void fctPlace() {
 		if (g_caff == 17) {
 			if (g_s._ivier != 0) {
 				g_crep = 188;
-			} else if (g_s._derobj == 143) {
+			} else if (g_s._selectedObjectId == 143) {
 				g_s._ivier = 143;
 				aniof(1, 1);
 			} else {
@@ -759,8 +759,8 @@ void fctPlace() {
 		if (g_caff == 24) {
 			if (g_s._ipuit != 0) {
 				g_crep = 188;
-			} else if ((g_s._derobj == 140) || (g_s._derobj == 120)) {
-				g_s._ipuit = g_s._derobj;
+			} else if ((g_s._selectedObjectId == 140) || (g_s._selectedObjectId == 120)) {
+				g_s._ipuit = g_s._selectedObjectId;
 				aniof(1, 1);
 			} else {
 				g_crep = 185;
@@ -836,7 +836,7 @@ void fctSelfHide() {
  * @remarks	Originally called 'tattacher'
  */
 void fctAttach() {
-	if (g_s._derobj == 0)
+	if (g_s._selectedObjectId == 0)
 		g_crep = 186;
 	else {
 		if (!g_syn)
@@ -847,8 +847,8 @@ void fctAttach() {
 			g_crep = 997;
 			if ((g_num != 0) && (g_s._mlieu == 24)) {
 				g_crep = 999;
-				if ((g_s._derobj == 120) || (g_s._derobj == 140)) {
-					g_s._ipuit = g_s._derobj;
+				if ((g_s._selectedObjectId == 120) || (g_s._selectedObjectId == 140)) {
+					g_s._ipuit = g_s._selectedObjectId;
 					aniof(1, 1);
 				} else
 					g_crep = 185;
@@ -953,7 +953,7 @@ void fctKnock() {
 void fctSelfPut() {
 	if (!g_syn)
 		ecr3(g_vm->getEngineString(S_POSE));
-	if (g_s._derobj == 0)
+	if (g_s._selectedObjectId == 0)
 		g_crep = 186;
 	else {
 		if (g_caff > 99) {
@@ -993,7 +993,7 @@ void fctSelfPut() {
 					if (g_s._iloic != 0)
 						g_crep = 188;
 					else
-						g_s._iloic = g_s._derobj;
+						g_s._iloic = g_s._selectedObjectId;
 				}
 
 				if (g_caff == 13) {
@@ -1001,11 +1001,11 @@ void fctSelfPut() {
 						if (g_s._iboul != 0)
 							g_crep = 188;
 						else
-							g_s._iboul = g_s._derobj;
+							g_s._iboul = g_s._selectedObjectId;
 					} else if (g_s._ibag != 0) {
 						g_crep = 188;
 					} else {
-						g_s._ibag = g_s._derobj;
+						g_s._ibag = g_s._selectedObjectId;
 					}
 				}
 
@@ -1013,7 +1013,7 @@ void fctSelfPut() {
 					if (g_s._icryp != 0)
 						g_crep = 188;
 					else
-						g_s._icryp = g_s._derobj;
+						g_s._icryp = g_s._selectedObjectId;
 				}
 
 				if (g_caff == 24)
@@ -1133,7 +1133,7 @@ void fctEnter() {
 		aldepl();
 	else if (g_ment == 0)
 		g_crep = 997;
-	else if ((g_ment == 9) && (g_s._derobj != 136)) {
+	else if ((g_ment == 9) && (g_s._selectedObjectId != 136)) {
 			g_crep = 189;
 			g_s._teauto[8] = '*';
 	} else {
@@ -1344,7 +1344,7 @@ void fctDiscuss() {
 	Common::String lib[47];
 	bool f;
 
-	finfouil();
+	endSearch();
 	if (g_col)
 		suj = 128;
 	else {

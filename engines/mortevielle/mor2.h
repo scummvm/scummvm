@@ -47,7 +47,7 @@ extern void tmlieu(int roomId);
 /* NIVEAU 7 */
 extern void tlu(int af, int ob);
 extern void affrep();
-extern void mfouen();
+extern void unsetSearchMenu();
 /* NIVEAU 6 */
 extern void tperd();
 extern void tsort();
@@ -56,8 +56,8 @@ extern void cherjer(int ob, bool &d);
 extern void st1sama();
 extern void modinv();
 extern void sparl(float adr, float rep);
-extern void finfouil();
-extern void mfoudi();
+extern void endSearch();
+extern void setSearchMenu();
 extern void mennor();
 extern void premtet();
 /* NIVEAU 5 */
