@@ -54,7 +54,6 @@ extern void ecrf7();
 extern void clsf10();
 extern void stop();
 extern void paint_rect(int x, int y, int dx, int dy);
-extern int hazard(int min, int max);
 extern void calch(int &j, int &h, int &m);
 extern void conv(int x, int &y);
 /* NIVEAU 12 */
@@ -69,7 +68,7 @@ extern void cpl3(int &p);
 extern void cpl5(int &p);
 extern void cpl6(int &p);
 extern void person();
-extern void chlm(int &per);
+extern int chlm();
 extern void drawClock();
 /*************
  * NIVEAU 11 *
@@ -93,11 +92,11 @@ extern void quelq20(int h, int &per);
 extern void frap();
 extern void nouvp(int l, int &p);
 extern void tip(int ip, int &cx);
-extern void ecfren(int &p, int &haz, int cf, int l);
+extern void ecfren(int &p, int &rand, int cf, int l);
 extern void becfren(int l);
 /* NIVEAU 10 */
 extern void init_nbrepm();
-extern void phaz(int &haz, int &p, int cf);
+extern void phaz(int &rand, int &p, int cf);
 extern void inzon();
 extern void dprog();
 extern void pl1(int cf);

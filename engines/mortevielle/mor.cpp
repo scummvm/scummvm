@@ -274,10 +274,6 @@ void paint_rect(int x, int y, int dx, int dy) {
 	g_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
 }
 
-int hazard(int min, int max) {
-	return get_random_number(min, max);
-}
-
 void calch(int &j, int &h, int &m) {
 	int nh = readclock();
 	int th = g_jh + ((nh - g_mh) / g_t);
@@ -469,17 +465,17 @@ void choix(int min, int max, int &per) {
 	bool i;
 	int cz;
 
-	int haz = hazard(min, max);
-	if (haz > 4) {
-		haz = 8 - haz;
+	int rand = getRandomNumber(min, max);
+	if (rand > 4) {
+		rand = 8 - rand;
 		i = true;
 	} else
 		i = false;
 
 	int cx = 0;
 	per = 0;
-	while (cx < haz) {
-		int cy = hazard(1, 8);
+	while (cx < rand) {
+		int cy = getRandomNumber(1, 8);
 		conv(cy, cz);
 		if ((per & cz) != cz) {
 			++cx;
@@ -592,9 +588,12 @@ void person() {
 	g_ipers = 0;
 }
 
-void chlm(int &per) {
-	per = hazard(1, 2);
-	if (per == 2)  per = 128;
+int chlm() {
+	int retval = getRandomNumber(1, 2);
+	if (retval == 2)
+		retval = 128;
+	
+	return retval;
 }
 
 /**
@@ -750,7 +749,7 @@ void cpl20(int &p, int &h) {
 void quelq1(int l) {
 	int per;
 
-	per = hazard(1, 2);
+	per = getRandomNumber(1, 2);
 	if (l == 1) {
 		if (per == 1)
 			g_bh1 = true;
@@ -791,7 +790,7 @@ void quelq6(int l) {
 
 void quelq10(int h, int &per) {
 	if ((h >= 0) && (h < 8))
-		chlm(per);
+		per = chlm();
 	else {
 		int min = 0, max = 0;
 		if ((h > 7) && (h < 10)) {
@@ -814,7 +813,7 @@ void quelq10(int h, int &per) {
 
 void quelq11(int h, int &per) {
 	if ((h >= 0) && (h < 8))
-		chlm(per);
+		per = chlm();
 	else {
 		int min = 0, max = 0;
 		if (((h > 7) && (h < 10)) || ((h > 20) && (h < 24))) {
@@ -833,7 +832,7 @@ void quelq11(int h, int &per) {
 }
 
 void quelq12(int &per) {
-	chlm(per);
+	per = chlm();
 	affper(per);
 }
 
@@ -844,7 +843,7 @@ void quelq15(int &per) {
 	per = 0;
 
 	do {
-		cx = hazard(1, 8);
+		cx = getRandomNumber(1, 8);
 		test = (((cx == 1) && (g_bh2 || g_bh9)) ||
 		        ((cx == 2) && g_bh8) ||
 		        ((cx == 3) && g_bh4) ||
@@ -861,7 +860,7 @@ void quelq15(int &per) {
 
 void quelq20(int h, int &per) {
 	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))
-		chlm(per);
+		per = chlm();
 	else {
 		int min = 0, max = 0;
 		if ((h > 9) && (h < 12)) {
@@ -887,8 +886,7 @@ void frap() {
 	if ((h >= 0) && (h < 8))
 		g_crep = 190;
 	else {
-		int haz = hazard(1, 100);
-		if (haz > 70)
+		if (getRandomNumber(1, 100) > 70)
 			g_crep = 190;
 		else
 			g_crep = 147;
@@ -944,11 +942,11 @@ void tip(int ip, int &cx) {
 }
 
 
-void ecfren(int &p, int &haz, int cf, int l) {
+void ecfren(int &p, int &rand, int cf, int l) {
 	if (l == 0)
 		person();
 	p = -500;
-	haz = 0;
+	rand = 0;
 	if (((l == 1) && (!g_bh1) && (!g_bf1)) || ((l == 4) && (!g_bh4) && (!g_bf4)))
 		cpl1(p);
 	if ((l == 2) && (!g_bh2) && (!g_bh9))
@@ -965,20 +963,20 @@ void ecfren(int &p, int &haz, int cf, int l) {
 		p = -400;
 	if (p != -500) {
 		p = p + cf;
-		haz = hazard(1, 100);
+		rand = getRandomNumber(1, 100);
 	}
 }
 
 void becfren(int l) {
 	if ((l == 1) || (l == 4)) {
-		int haz = hazard(1, 2);
+		int rand = getRandomNumber(1, 2);
 		if (l == 1) {
-			if (haz == 1)
+			if (rand == 1)
 				g_bh1 = true;
 			else
 				g_bf1 = true;
 		} else { // l == 4
-			if (haz == 1)
+			if (rand == 1)
 				g_bh4 = true;
 			else
 				g_bf4 = true;
@@ -1007,9 +1005,9 @@ void init_nbrepm() {
 		g_nbrepm[idx] = ipm[idx];
 }
 
-void phaz(int &haz, int &p, int cf) {
+void phaz(int &rand, int &p, int cf) {
 	p += cf;
-	haz = hazard(1, 100);
+	rand = getRandomNumber(1, 100);
 }
 
 void inzon() {
@@ -1024,7 +1022,7 @@ void inzon() {
 	g_s._ivier = 0;
 	g_s._iloic = 136;
 	g_s._icryp = 141;
-	g_s._conf  = hazard(4, 10);
+	g_s._conf  = getRandomNumber(4, 10);
 	g_s._mlieu = MANOR_FRONT;
 
 	for (int cx = 2; cx <= 6; ++cx)
@@ -1067,11 +1065,11 @@ void dprog() {
 
 void pl1(int cf) {
 	if (((g_li == 1) && (!g_bh1) && (!g_bf1)) || ((g_li == 4) && (!g_bh4) && (!g_bf4))) {
-		int p, haz;
+		int p, rand;
 		cpl1(p);
-		phaz(haz, p, cf);
+		phaz(rand, p, cf);
 
-		if (haz > p)
+		if (rand > p)
 			person();
 		else
 			quelq1(g_li);
@@ -1080,11 +1078,11 @@ void pl1(int cf) {
 
 void pl2(int cf) {
 	if (!g_bh2) {
-		int p, haz;
+		int p, rand;
 		cpl2(p);
-		phaz(haz, p, cf);
+		phaz(rand, p, cf);
 
-		if (haz > p)
+		if (rand > p)
 			person();
 		else
 			quelq2();
@@ -1093,11 +1091,11 @@ void pl2(int cf) {
 
 void pl5(int cf) {
 	if (!g_bh5) {
-		int p, haz;
+		int p, rand;
 		cpl5(p);
-		phaz(haz, p, cf);
+		phaz(rand, p, cf);
 
-		if (haz > p)
+		if (rand > p)
 			person();
 		else
 			quelq5();
@@ -1106,11 +1104,11 @@ void pl5(int cf) {
 
 void pl6(int cf) {
 	if (((g_li == 6) && (!g_bh6)) || ((g_li == 8) && (!g_bh8))) {
-		int p, haz;
+		int p, rand;
 		cpl6(p);
-		phaz(haz, p, cf);
+		phaz(rand, p, cf);
 
-		if (haz > p)
+		if (rand > p)
 			person();
 		else
 			quelq6(g_li);
@@ -1120,10 +1118,10 @@ void pl6(int cf) {
 void pl9(int cf) {
 	if (!g_bh9) {
 		cf = -10;
-		int p, haz;
-		phaz(haz, p, cf);
+		int p, rand;
+		phaz(rand, p, cf);
 
-		if (haz > p)
+		if (rand > p)
 			person();
 		else
 			quelq2();
@@ -1131,79 +1129,79 @@ void pl9(int cf) {
 }
 
 void pl10(int cf) {
-	int p, h, haz;
+	int p, h, rand;
 	cpl10(p, h);
-	phaz(haz, p, cf);
+	phaz(rand, p, cf);
 
-	if (haz > p)
+	if (rand > p)
 		person();
 	else
 		quelq10(h, p);
 }
 
 void pl11(int cf) {
-	int p, h, haz;
+	int p, h, rand;
 
 	cpl11(p, h);
-	phaz(haz, p, cf);
-	if (haz > p)
+	phaz(rand, p, cf);
+	if (rand > p)
 		person();
 	else
 		quelq11(h, p);
 }
 
 void pl12(int cf) {
-	int p, haz;
+	int p, rand;
 
 	cpl12(p);
-	phaz(haz, p, cf);
-	if (haz > p)
+	phaz(rand, p, cf);
+	if (rand > p)
 		person();
 	else
 		quelq12(p);
 }
 
 void pl13(int cf) {
-	int p, haz;
+	int p, rand;
 
 	cpl13(p);
-	phaz(haz, p, cf);
-	if (haz > p)
+	phaz(rand, p, cf);
+	if (rand > p)
 		person();
 	else
 		quelq12(p);
 }
 
 void pl15(int cf) {
-	int p, haz;
+	int p, rand;
 
 	cpl15(p);
-	phaz(haz, p, cf);
-	if (haz > p)
+	phaz(rand, p, cf);
+	if (rand > p)
 		person();
 	else
 		quelq15(p);
 }
 
 void pl20(int cf) {
-	int p, h, haz;
+	int p, h, rand;
 
 	cpl20(p, h);
-	phaz(haz, p, cf);
-	if (haz > p)
+	phaz(rand, p, cf);
+	if (rand > p)
 		person();
 	else
 		quelq20(h, p);
 }
 
 void t11(int l11, int &a) {
-	int p, haz;
+	int p, rand;
 
-	ecfren(p, haz, g_s._conf, l11);
+	ecfren(p, rand, g_s._conf, l11);
 	g_li = l11;
 	if ((l11 > 0) && (l11 < 10)) {
 		if (p != -500) {
-			if (haz > p) {
+			if (rand > p) {
 				person();
 				a = 0;
 			} else {
@@ -1232,8 +1230,8 @@ void t11(int l11, int &a) {
 			if (l11 == 20)
 				cpl20(p, h);
 			p += g_s._conf;
-			haz = hazard(1, 100);
-			if (haz > p) {
+			rand = getRandomNumber(1, 100);
+			if (rand > p) {
 				person();
 				a = 0;
 			} else {
@@ -1260,8 +1258,8 @@ void cavegre() {
 	clsf3();
 	ecrf2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
-	int haz = (hazard(0, 4)) - 2;
-	parole(2, haz, 1);
+	int rand = (getRandomNumber(0, 4)) - 2;
+	parole(2, rand, 1);
 
 	// The original was doing here a useless loop.
 	// It has been removed
@@ -1321,24 +1319,20 @@ void musique(int so) {
 	} else {
 		bool i = false;
 		if ((g_s._mlieu == MOUNTAIN) || (g_s._mlieu == MANOR_FRONT) || (g_s._mlieu == MANOR_BACK)) {
-			int haz = hazard(1, 3);
-			if (haz == 2) {
-				haz = hazard(2, 4);
-				parole(9, haz, 1);
+			if (getRandomNumber(1, 3) == 2) {
+				parole(9, getRandomNumber(2, 4), 1);
 				i = true;
 			}
 		}
 		if (g_s._mlieu == CHAPEL) {
-			int haz = hazard(1, 2);
-			if (haz == 1) {
+			if (getRandomNumber(1, 2) == 1) {
 				parole(8, 1, 1);
 				i = true;
 			}
 		}
 
 		if (g_s._mlieu == WELL) {
-			int haz = hazard(1, 2);
-			if (haz == 2) {
+			if (getRandomNumber(1, 2) == 2) {
 				parole(12, 1, 1);
 				i = true;
 			}
@@ -1348,10 +1342,8 @@ void musique(int so) {
 			parole(13, 1, 1);
 			i = true;
 		}
-		if (! i) {
-			int haz = hazard(1, 17);
-			parole(haz, 1, 2);
-		}
+		if (!i)
+			parole(getRandomNumber(1, 17), 1, 2);
 	}
 }
 

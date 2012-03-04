@@ -238,9 +238,10 @@ void intr(int intNum, registres &regs) {
 }
 
 /**
- * Get a random number between two values
+ * Engine function - Get a random number between two values
+ * @remarks	Originally called 'get_random_number' and 'hazard'
  */
-int get_random_number(int minval, int maxval) {
+int getRandomNumber(int minval, int maxval) {
 	return g_vm->_randomSource.getRandomNumber(maxval - minval) + minval;
 }
 

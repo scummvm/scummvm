@@ -164,13 +164,12 @@ void tinke() {
 					if (!g_brt) {
 						g_brt = true;
 						g_hdb = readclock();
-						int haz = hazard(1, 5);
-						if (haz < 5) {
+						if (getRandomNumber(1, 5) < 5) {
 							clsf3();
 							ecrf2();
 							ecr3(g_vm->getEngineString(S_HEAR_NOISE));
-							haz = (hazard(0, 4)) - 2;
-							parole(1, haz, 1);
+							int rand = (getRandomNumber(0, 4)) - 2;
+							parole(1, rand, 1);
 							clsf3();
 						}
 					}
@@ -590,15 +589,14 @@ L1:
 		g_syn = true;
 		g_col = true;
 	} else {
-		int haz = hazard(1, 3);
-		if (haz == 2) {
+		if (getRandomNumber(1, 3) == 2) {
 			g_cache = false;
 			g_crep = 137;
 			goto L1;
 		} else {
 			repon(2, 136);
-			haz = (hazard(0, 4)) - 2;
-			parole(3, haz, 1);
+			int rand = (getRandomNumber(0, 4)) - 2;
+			parole(3, rand, 1);
 			clsf2();
 			person();
 			debloc(21);
