@@ -140,7 +140,7 @@ void text1(int x, int y, int nb, int m) {
 	Common::String tmpStr = deline(m);
 	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
-	afftex(tmpStr, x, y, nb, 20, g_color_txt);
+	displayStr(tmpStr, x, y, nb, 20, g_color_txt);
 }
 
 void initouv() {
@@ -325,7 +325,7 @@ void repon(int f, int m) {
 			g_f2_all = false;
 
 		clsf2();
-		afftex(tmpStr, 8, 176, 85, 3, 5);
+		displayStr(tmpStr, 8, 176, 85, 3, 5);
 	} else {
 		modif(m);
 		if (f == 8)
@@ -354,7 +354,7 @@ void repon(int f, int m) {
 				i = 5;
 
 			tmpStr = deline(m);
-			afftex(tmpStr, 80, 40, 60, 25, i);
+			displayStr(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
 				g_s._pourc[6] = '*';
@@ -366,21 +366,21 @@ void repon(int f, int m) {
 			ecrf7();
 			tmpStr = deline(m);
 
-			int xco, dx, caspe;
+			int xSmallStr, xLargeStr, dx;
 			if (g_res == 1) {
-				xco = 252 - tmpStr.size() * 5;
-				caspe = 100;
+				xSmallStr = 252 - tmpStr.size() * 5;
+				xLargeStr = 100;
 				dx = 80;
 			} else {
-				xco = 252 - tmpStr.size() * 3;
-				caspe = 144;
+				xSmallStr = 252 - tmpStr.size() * 3;
+				xLargeStr = 144;
 				dx = 50;
 			}
 
 			if (tmpStr.size() < 40)
-				afftex(tmpStr, xco, 86, dx, 3, 5);
+				displayStr(tmpStr, xSmallStr, 86, dx, 3, 5);
 			else
-				afftex(tmpStr, caspe, 86, dx, 3, 5);
+				displayStr(tmpStr, xLargeStr, 86, dx, 3, 5);
 		}
 	}
 }
@@ -1016,7 +1016,7 @@ void inzon() {
 	copcha();
 
 	g_s._ipre  = false;
-	g_s._derobj = 0;
+	g_s._selectedObjectId = 0;
 	g_s._icave = 0;
 	g_s._iboul = 0;
 	g_s._ibag  = 0;

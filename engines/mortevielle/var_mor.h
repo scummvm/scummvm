@@ -158,7 +158,7 @@ struct sav_chaine {
 	byte _teauto[43];
 	byte _sjer[31];
 	int _mlieu, _iboul, _ibag, _icave, _ivier, _ipuit;
-	int _derobj, _iloic, _icryp;
+	int _selectedObjectId, _iloic, _icryp;
 	bool _ipre;
 	byte _heure;
 };
@@ -238,7 +238,7 @@ extern bool g_blo,
         g_iesc,
         g_col,
         g_syn,
-        g_fouil,
+        g_heroSearching,
         g_zuul,
         g_obpart,
         g_okdes,

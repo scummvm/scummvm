@@ -163,16 +163,18 @@ static int l_motsuiv(int p, const char *ch, int &tab) {
 	return tab * (p - c);
 }
 
-void afftex(Common::String ch, int x, int y, int dx, int dy, int typ) {
-	bool the_end;
+/**
+ * Engine function - Display Text
+ * @remarks	Originally called 'afftex'
+ */
+void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) {
 	int tab;
 	Common::String s;
 	int i, j;
 
 	// Safeguard: add $ just in case
-	ch += '$'; 
+	inputStr += '$'; 
 
-	/*    debug('  .. Afftex');*/
 	g_vm->_screenSurface.putxy(x, y);
 	if (g_res == 1)
 		tab = 10;
@@ -184,12 +186,11 @@ void afftex(Common::String ch, int x, int y, int dx, int dy, int typ) {
 	int yc = y;
 	int xf = x + dx;
 	int yf = y + dy;
-//	int p = 1;
 	int p = 0;
-	the_end = (ch[p] == '$');
+	bool stringParsed = (inputStr[p] == '$');
 	s = "";
-	while (!the_end) {
-		switch (ch[p]) {
+	while (!stringParsed) {
+		switch (inputStr[p]) {
 		case '@':
 			g_vm->_screenSurface.writeg(s, typ);
 			s = "";
@@ -202,15 +203,14 @@ void afftex(Common::String ch, int x, int y, int dx, int dy, int typ) {
 			s += ' ';
 			xc += tab;
 			++p;
-			if (l_motsuiv(p, ch.c_str(), tab) + xc > xf) {
+			if (l_motsuiv(p, inputStr.c_str(), tab) + xc > xf) {
 				g_vm->_screenSurface.writeg(s, typ);
 				s = "";
 				xc = x;
 				yc += 6;
 				if (yc > yf) {
-					do {
+					while (!keypressed())
 						;
-					} while (!keypressed());
 					i = y;
 					do {
 						j = x;
@@ -227,15 +227,15 @@ void afftex(Common::String ch, int x, int y, int dx, int dy, int typ) {
 			}
 			break;
 		case '$':
-			the_end = true;
+			stringParsed = true;
 			g_vm->_screenSurface.writeg(s, typ);
 			break;
 		default:
-			s += ch[p];
+			s += inputStr[p];
 			++p;
 			xc += tab;
 			break;
-		}     /* case */
+		}
 	}
 }
 

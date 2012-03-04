@@ -59,7 +59,7 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
 	sz.syncAsSint16LE(g_s1._icave);
 	sz.syncAsSint16LE(g_s1._ivier);
 	sz.syncAsSint16LE(g_s1._ipuit);
-	sz.syncAsSint16LE(g_s1._derobj);
+	sz.syncAsSint16LE(g_s1._selectedObjectId);
 	sz.syncAsSint16LE(g_s1._iloic);
 	sz.syncAsSint16LE(g_s1._icryp);
 	sz.syncAsByte(g_s1._ipre);

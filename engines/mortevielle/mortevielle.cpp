@@ -613,14 +613,14 @@ void MortevielleEngine::handleAction() {
 			if ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))
 				g_mnumo = g_msg[4];
 			if (!g_anyone) {
-				if ((g_fouil) || (g_obpart)) {
+				if ((g_heroSearching) || (g_obpart)) {
 					if (y_s < 12)
 						return;
 
 					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {
 						oo = true;
 						if ((g_msg[4] == OPCODE_LIFT) || (g_obpart)) {
-							finfouil();
+							endSearch();
 							g_caff = g_s._mlieu;
 							g_crep = 998;
 						} else

@@ -33,7 +33,7 @@
 namespace Mortevielle {
 
 extern Common::String deline(int num);
-extern void afftex(Common::String ch, int x, int y, int dx, int dy, int typ);
+extern void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
 
 } // End of namespace Mortevielle
 #endif
