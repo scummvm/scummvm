@@ -49,6 +49,16 @@
 
 namespace Grim {
 
+bool Actor::_isTalkingBackground = false;
+
+void Actor::saveStaticState(SaveGame *state) {
+	state->writeBool(_isTalkingBackground);
+}
+
+void Actor::restoreStaticState(SaveGame *state) {
+	_isTalkingBackground = state->readBool();
+}
+
 Actor::Actor(const Common::String &actorName) :
 		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
 		_talkColor(255, 255, 255), _pos(0, 0, 0),
@@ -138,6 +148,9 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeBool(_puckOrient);
 
 	savedState->writeString(_talkSoundName);
+	// SAVECHANGE
+// 	savedState->writeBool(_talking);
+// 	savedState->writeBool(_backgroundTalk);
 
 	savedState->writeLEUint32((uint32)_collisionMode);
 	savedState->writeFloat(_collisionScale);
@@ -253,6 +266,10 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	_talkSoundName 		= savedState->readString();
 	_talking = _talkSoundName != "";
+
+	// SAVECHANGE
+// 	_talking = savedState->readBool();
+// 	_backgroundTalk = savedState->readBool();
 
 	_collisionMode      = (CollisionMode)savedState->readLEUint32();
 	_collisionScale     = savedState->readFloat();
@@ -802,7 +819,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	if (_talkSoundName == soundName)
 		return;
 
-	if (g_sound->getSoundStatus(_talkSoundName.c_str()) || msg.empty())
+	if (_talking || msg.empty())
 		shutUp();
 
 	_talkSoundName = soundName;
@@ -836,8 +853,12 @@ void Actor::sayLine(const char *msgId, bool background) {
 		_talkAnim = -1;
 	}
 
-	g_grim->setTalkingActor(this);
 	_talking = true;
+	g_grim->addTalkingActor(this);
+
+	_backgroundTalk = background;
+	if (background)
+		_isTalkingBackground = true;
 
 	if (_sayLineText) {
 		delete TextObject::getPool().getObject(_sayLineText);
@@ -888,15 +909,8 @@ bool Actor::isTalking() {
 		return false;
 	}
 
-	// If there's no sound file then we're obviously not talking
-	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
-	TextObject *textObject = NULL;
-	if (_sayLineText)
-		textObject = TextObject::getPool().getObject(_sayLineText);
-	if ((m == GrimEngine::TextOnly && !textObject) ||
-			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str())))) {
-		return false;
-	}
+	if (_backgroundTalk)
+		return _isTalkingBackground;
 
 	return true;
 }
@@ -923,9 +937,15 @@ void Actor::shutUp() {
 		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
-	if (g_grim->getTalkingActor() == this) {
-		g_grim->setTalkingActor(NULL);
-	}
+	g_grim->removeTalkingActor(this);
+
+	// The actors talking in background have a special behaviour: if there are two or more of them
+	// talking at the same time, after one of them finishes talking calling isTalking() an *all*
+	// of them must return false. This is necessary for the angelitos in set fo: when they start crying
+	// they talk in background, and the lua script that hangs on IsMessageGoing() must return before they
+	// stop, since they can go on forever.
+	if (_backgroundTalk)
+		_isTalkingBackground = false;
 
 	_talking = false;
 }
@@ -1162,6 +1182,23 @@ void Actor::update(uint frameTime) {
 					stopTalking();
 				}
 			}
+		}
+	}
+
+	if (_talking) {
+		if (_backgroundTalk && !_isTalkingBackground) {
+			g_grim->removeTalkingActor(this);
+		}
+
+		// If there's no sound file then we're obviously not talking
+		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
+		TextObject *textObject = NULL;
+		if (_sayLineText)
+			textObject = TextObject::getPool().getObject(_sayLineText);
+		if ((m == GrimEngine::TextOnly && !textObject) ||
+			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str())))) {
+
+			shutUp();
 		}
 	}
 

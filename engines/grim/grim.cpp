@@ -111,7 +111,6 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 
 	_currSet = NULL;
 	_selectedActor = NULL;
-	_talkingActor = NULL;
 	_controlsEnabled = new bool[KEYCODE_EXTRA_LAST];
 	_controlsState = new bool[KEYCODE_EXTRA_LAST];
 	for (int i = 0; i < KEYCODE_EXTRA_LAST; i++) {
@@ -543,10 +542,7 @@ void GrimEngine::updateDisplayScene() {
 			if (a->isVisible())
 				a->draw();
 		}
-		foreach (Actor *a, Actor::getPool()) {
-			if (!a->isTalking())
-				a->shutUp();
-		}
+
 		flagRefreshShadowMask(false);
 
 		// Draw overlying scene components
@@ -745,7 +741,6 @@ void GrimEngine::savegameRestore() {
 	g_movie->pause(true);
 
 	_selectedActor = NULL;
-	_talkingActor = NULL;
 	delete _currSet;
 	_currSet = NULL;
 
@@ -817,7 +812,8 @@ void GrimEngine::restoreGRIM() {
 	if (id != 0) {
 		_selectedActor = Actor::getPool().getObject(id);
 	}
-	_talkingActor = Actor::getPool().getObject(_savedState->readLESint32());
+	// SAVECHANGE
+	_savedState->readLESint32();
 
 	//TextObject stuff
 	_sayLineDefaults.setFGColor(_savedState->readColor());
@@ -946,11 +942,8 @@ void GrimEngine::saveGRIM() {
 	} else {
 		_savedState->writeLESint32(0);
 	}
-	if (_talkingActor) {
-		_savedState->writeLESint32(_talkingActor->getId());
-	} else {
-		_savedState->writeLESint32(0);
-	}
+	// SAVECHANGE
+	_savedState->writeLESint32(0);
 
 	//TextObject stuff
 	_savedState->writeColor(_sayLineDefaults.getFGColor());
@@ -1068,14 +1061,6 @@ float GrimEngine::getPerSecond(float rate) const {
 	return rate * _frameTime / 1000;
 }
 
-Actor *GrimEngine::getTalkingActor() const {
-	return _talkingActor;
-}
-
-void GrimEngine::setTalkingActor(Actor *a) {
-	_talkingActor = a;
-}
-
 void GrimEngine::invalidateActiveActorsList() {
 	_buildActiveActorsList = true;
 }
@@ -1092,6 +1077,18 @@ void GrimEngine::buildActiveActorsList() {
 		}
 	}
 	_buildActiveActorsList = false;
+}
+
+void GrimEngine::addTalkingActor(Actor *a) {
+	_talkingActors.push_back(a);
+}
+
+void GrimEngine::removeTalkingActor(Actor *a) {
+	_talkingActors.remove(a);
+}
+
+bool GrimEngine::areActorsTalking() const {
+	return !_talkingActors.empty();
 }
 
 const Common::String &GrimEngine::getSetName() const {

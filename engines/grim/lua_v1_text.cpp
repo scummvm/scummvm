@@ -375,10 +375,8 @@ void Lua_V1::IsMessageGoing() {
 				pushbool(actor->isTalking());
 			}
 		} else {
-			// NOTE: i'm not sure this currentTextObject stuff is totally right.
-			// if you do changes test them against the crying angelitos in the fo set.
-			// the dialog menu should appear few secods after they start crying.
-			pushbool(g_grim->getTalkingActor() != NULL);
+			// NOTE: this part is quite delicate. If you do changes test the crying angelitos in set fo.
+			pushbool(g_grim->areActorsTalking());
 		}
 	} else
 		lua_pushnil();

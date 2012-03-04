@@ -127,6 +127,9 @@ public:
 protected:
 	PoolObject();
 
+	static void saveStaticState(SaveGame *state) {}
+	static void restoreStaticState(SaveGame *state) {}
+
 private:
 	void setId(int id);
 	void addPointer(Ptr *pointer) { _pointers.push_back(pointer); }
@@ -278,6 +281,8 @@ template <class T, int32 tag>
 void PoolObject<T, tag>::Pool::saveObjects(SaveGame *state) {
 	state->beginSection(tag);
 
+	T::saveStaticState(state);
+
 	state->writeLEUint32(_map.size());
 	for (iterator i = begin(); i != end(); ++i) {
 		T *a = *i;
@@ -292,6 +297,8 @@ void PoolObject<T, tag>::Pool::saveObjects(SaveGame *state) {
 template <class T, int32 tag>
 void PoolObject<T, tag>::Pool::restoreObjects(SaveGame *state) {
 	state->beginSection(tag);
+
+	T::restoreStaticState(state);
 
 	int32 size = state->readLEUint32();
 	_restoring = true;

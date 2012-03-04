@@ -142,9 +142,6 @@ public:
 	void flagRefreshShadowMask(bool flag) { _refreshShadowMask = flag; }
 	bool getFlagRefreshShadowMask() { return _refreshShadowMask; }
 
-	Actor *getTalkingActor() const;
-	void setTalkingActor(Actor *actor);
-
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *getSelectedActor() { return _selectedActor; }
 
@@ -157,6 +154,13 @@ public:
 	 * Return a list of the currently active actors, i. e. the actors in the current set.
 	 */
 	const Common::List<Actor *> &getActiveActors() const { return _activeActors; }
+
+	/**
+	 * Add an actor to the list of actors that are talking
+	 */
+	void addTalkingActor(Actor *actor);
+	void removeTalkingActor(Actor *actor);
+	bool areActorsTalking() const;
 
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
@@ -222,11 +226,11 @@ private:
 	bool _changeFullscreenState;
 
 	Actor *_selectedActor;
-	Actor *_talkingActor;
 	Iris *_iris;
 
 	bool _buildActiveActorsList;
 	Common::List<Actor *> _activeActors;
+	Common::List<Actor *> _talkingActors;
 
 	uint32 _gameFlags;
 	GrimGameType _gameType;

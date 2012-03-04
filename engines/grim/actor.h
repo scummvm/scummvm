@@ -449,6 +449,9 @@ public:
 
 	bool handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const;
 
+	static void saveStaticState(SaveGame *state);
+	static void restoreStaticState(SaveGame *state);
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -487,6 +490,7 @@ private:
 	bool _lookingMode;
 	Common::String _talkSoundName;
 	bool _talking;
+	bool _backgroundTalk;
 	ObjectPtr<LipSync> _lipSync;
 	Common::List<Costume *> _costumeStack;
 
@@ -571,6 +575,8 @@ private:
 	float _collisionScale;
 
 	bool _puckOrient;
+
+	static bool _isTalkingBackground;
 
 	friend class GrimEngine;
 };
