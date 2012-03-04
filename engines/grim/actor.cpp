@@ -52,11 +52,13 @@ namespace Grim {
 bool Actor::_isTalkingBackground = false;
 
 void Actor::saveStaticState(SaveGame *state) {
-	state->writeBool(_isTalkingBackground);
+	// SAVECHANGE
+// 	state->writeBool(_isTalkingBackground);
 }
 
 void Actor::restoreStaticState(SaveGame *state) {
-	_isTalkingBackground = state->readBool();
+	// SAVECHANGE
+// 	_isTalkingBackground = state->readBool();
 }
 
 Actor::Actor(const Common::String &actorName) :
