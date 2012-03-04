@@ -53,15 +53,15 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
 	sz.syncBytes((byte *)&g_s1._pourc[0], 11);
 	sz.syncBytes((byte *)&g_s1._teauto[0], 43);
 	sz.syncBytes((byte *)&g_s1._sjer[0], 31);
-	sz.syncAsSint16LE(g_s1._mlieu);
-	sz.syncAsSint16LE(g_s1._iboul);
-	sz.syncAsSint16LE(g_s1._ibag);
-	sz.syncAsSint16LE(g_s1._icave);
-	sz.syncAsSint16LE(g_s1._ivier);
-	sz.syncAsSint16LE(g_s1._ipuit);
+	sz.syncAsSint16LE(g_s1._currPlace);
+	sz.syncAsSint16LE(g_s1._atticBallHoleObjectId);
+	sz.syncAsSint16LE(g_s1._atticRodHoleObjectId);
+	sz.syncAsSint16LE(g_s1._cellarObjectId);
+	sz.syncAsSint16LE(g_s1._secretPassageObjectId);
+	sz.syncAsSint16LE(g_s1._wellObjectId);
 	sz.syncAsSint16LE(g_s1._selectedObjectId);
-	sz.syncAsSint16LE(g_s1._iloic);
-	sz.syncAsSint16LE(g_s1._icryp);
+	sz.syncAsSint16LE(g_s1._purpleRoomObjectId);
+	sz.syncAsSint16LE(g_s1._cryptObjectId);
 	sz.syncAsByte(g_s1._ipre);
 	sz.syncAsByte(g_s1._heure);
 
@@ -144,8 +144,8 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	for (i = 0; i <= 389; ++i)
 		g_bufcha[i] = g_tabdon[i + acha];
 	g_s1 = g_s;
-	if (g_s1._mlieu == 26)
-		g_s1._mlieu = 15;
+	if (g_s1._currPlace == 26)
+		g_s1._currPlace = 15;
 	
 	Common::String filename = generateSaveName(n);
 	f = g_system->getSavefileManager()->openForSaving(filename);

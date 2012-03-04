@@ -176,7 +176,6 @@ void taffich() {
 		if (((a < 27) && (((g_maff > 69) && (!g_s._ipre)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
 			m = 2033;
 
-		messint(m);
 		g_maff = a;
 		if (a == 159)
 			a = 86;
@@ -249,11 +248,11 @@ void taffich() {
 		charani(filename, lgt, handle);
 	}
 	showMouse();
-	if ((a < 27) && ((g_maff < 27) || (g_s._mlieu == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
+	if ((a < 27) && ((g_maff < 27) || (g_s._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			person();
 		else if (!g_blo)
-			t11(g_s._mlieu, cx);
+			t11(g_s._currPlace, cx);
 		g_mpers =  0;
 	}
 }

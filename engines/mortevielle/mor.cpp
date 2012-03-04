@@ -1015,15 +1015,15 @@ void inzon() {
 
 	g_s._ipre  = false;
 	g_s._selectedObjectId = 0;
-	g_s._icave = 0;
-	g_s._iboul = 0;
-	g_s._ibag  = 0;
-	g_s._ipuit = 0;
-	g_s._ivier = 0;
-	g_s._iloic = 136;
-	g_s._icryp = 141;
+	g_s._cellarObjectId = 0;
+	g_s._atticBallHoleObjectId = 0;
+	g_s._atticRodHoleObjectId = 0;
+	g_s._wellObjectId = 0;
+	g_s._secretPassageObjectId = 0;
+	g_s._purpleRoomObjectId = 136;
+	g_s._cryptObjectId = 141;
 	g_s._conf  = getRandomNumber(4, 10);
-	g_s._mlieu = MANOR_FRONT;
+	g_s._currPlace = MANOR_FRONT;
 
 	for (int cx = 2; cx <= 6; ++cx)
 		g_s._sjer[cx] = chr(0);
@@ -1275,16 +1275,6 @@ void writetp(Common::String s, int t) {
 		g_vm->_screenSurface.writeg(copy(s, 1, 25), t);
 }
 
-/**
- * Shows the waiting message when changing scenes.
- * @remarks	Because modern computesr are so much quicker. There's no point in showing
- * a waiting message between scenes.
- */
-void messint(int nu) {
-	// Method is deprecated
-	warning("DEPRECATED: messint");
-}
-
 void aniof(int ouf, int num) {
 	if ((g_caff == 7) && ((num == 4) || (num == 5)))
 		return;
@@ -1318,27 +1308,27 @@ void musique(int so) {
 		++g_prebru;
 	} else {
 		bool i = false;
-		if ((g_s._mlieu == MOUNTAIN) || (g_s._mlieu == MANOR_FRONT) || (g_s._mlieu == MANOR_BACK)) {
+		if ((g_s._currPlace == MOUNTAIN) || (g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) {
 			if (getRandomNumber(1, 3) == 2) {
 				parole(9, getRandomNumber(2, 4), 1);
 				i = true;
 			}
 		}
-		if (g_s._mlieu == CHAPEL) {
+		if (g_s._currPlace == CHAPEL) {
 			if (getRandomNumber(1, 2) == 1) {
 				parole(8, 1, 1);
 				i = true;
 			}
 		}
 
-		if (g_s._mlieu == WELL) {
+		if (g_s._currPlace == WELL) {
 			if (getRandomNumber(1, 2) == 2) {
 				parole(12, 1, 1);
 				i = true;
 			}
 		}
 
-		if (g_s._mlieu == 23) {
+		if (g_s._currPlace == 23) {
 			parole(13, 1, 1);
 			i = true;
 		}
@@ -1369,19 +1359,19 @@ void dessin(int ad) {
 				}
 
 				if (g_caff == 13) {
-					if (g_s._iboul == 141)
+					if (g_s._atticBallHoleObjectId == 141)
 						aniof(1, 7);
 
-					if (g_s._ibag == 159)
+					if (g_s._atticRodHoleObjectId == 159)
 						aniof(1, 6);
 				}
-				if ((g_caff == 14) && (g_s._icave == 151))
+				if ((g_caff == 14) && (g_s._cellarObjectId == 151))
 					aniof(1, 2);
 
-				if ((g_caff == 17) && (g_s._ivier == 143))
+				if ((g_caff == 17) && (g_s._secretPassageObjectId == 143))
 					aniof(1, 1);
 
-				if ((g_caff == 24) && (g_s._ipuit != 0))
+				if ((g_caff == 24) && (g_s._wellObjectId != 0))
 					aniof(1, 1);
 			}
 			

@@ -621,7 +621,7 @@ void MortevielleEngine::handleAction() {
 						oo = true;
 						if ((g_msg[4] == OPCODE_LIFT) || (g_obpart)) {
 							endSearch();
-							g_caff = g_s._mlieu;
+							g_caff = g_s._currPlace;
 							g_crep = 998;
 						} else
 							tsuiv();

@@ -157,7 +157,7 @@ void tinke() {
 				g_mpers = g_ipers;
 
 			if ((g_mpers == 0) && (g_ipers > 0)) {
-				if ((g_s._mlieu == ATTIC) || (g_s._mlieu == CELLAR)) {
+				if ((g_s._currPlace == ATTIC) || (g_s._currPlace == CELLAR)) {
 					cavegre();
 				} else if (g_ipers == 10) {
 					g_ipers = 0;
@@ -185,7 +185,7 @@ void tinke() {
 		nouvp(g_li, cx);
 		g_brt = false;
 		g_hdb = 0;
-		if ((g_s._mlieu > OWN_ROOM) && (g_s._mlieu < DINING_ROOM))
+		if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
 			g_anyone = true;
 	}
 }
@@ -269,8 +269,8 @@ void tlu(int af, int ob) {
 }
 
 void affrep() {
-	g_caff = g_s._mlieu;
-	g_crep = g_s._mlieu;
+	g_caff = g_s._currPlace;
+	g_crep = g_s._currPlace;
 }
 
 /**
@@ -278,7 +278,7 @@ void affrep() {
  * @remarks	Originally called 'mfouen'
  */
 void unsetSearchMenu() {
-	tmlieu(g_s._mlieu);
+	tmlieu(g_s._currPlace);
 	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.enableMenuItem(_actionMenu[cx]);
 
@@ -312,7 +312,7 @@ void tperd() {
 
 void tsort() {
 
-	if ((g_iouv > 0) && (g_s._mlieu != 0)) {
+	if ((g_iouv > 0) && (g_s._currPlace != 0)) {
 		if (g_s._conf < 50)
 			g_s._conf += 2;
 		else
@@ -324,7 +324,7 @@ void tsort() {
 	g_ment = 0;
 	g_iouv = 0;
 	g_mchai = 0;
-	debloc(g_s._mlieu);
+	debloc(g_s._currPlace);
 }
 
 void st4(int ob) {
@@ -369,7 +369,7 @@ void cherjer(int ob, bool &d) {
 }
 
 void st1sama() {
-	g_s._mlieu = DINING_ROOM;
+	g_s._currPlace = DINING_ROOM;
 	affrep();
 }
 
@@ -480,7 +480,7 @@ void t1sama() {    //Entering manor
 	int j, h, m;
 
 	calch(j, h, m);
-	if ((h < 5) && (g_s._mlieu > 18)) {
+	if ((h < 5) && (g_s._currPlace > 18)) {
 		bool d;
 		cherjer(137, d);
 		if (!d) {        //You don't have the keys, and it's late
@@ -504,7 +504,7 @@ void t1sama() {    //Entering manor
 		dessine_rouleau();
 		drawClock();
 		showMouse();
-		g_s._mlieu = OWN_ROOM;
+		g_s._currPlace = OWN_ROOM;
 		affrep();
 		t5(10);
 		if (!g_blo)
@@ -518,7 +518,7 @@ void t1sama() {    //Entering manor
 }
 
 void t1vier() {
-	g_s._mlieu = SECRET_PASSAGE;
+	g_s._currPlace = SECRET_PASSAGE;
 	affrep();
 }
 
@@ -529,19 +529,19 @@ void t1neig() {
 		tperd();
 	} else {
 		g_okdes = true;
-		g_s._mlieu = MOUNTAIN;
+		g_s._currPlace = MOUNTAIN;
 		affrep();
 	}
 }
 
 void t1deva() {
 	g_inei = 0;
-	g_s._mlieu = MANOR_FRONT;
+	g_s._currPlace = MANOR_FRONT;
 	affrep();
 }
 
 void t1derr() {
-	g_s._mlieu = MANOR_BACK;
+	g_s._currPlace = MANOR_BACK;
 	affrep();
 }
 
@@ -777,11 +777,11 @@ void avpoing(int &ob) {
 }
 
 void rechai(int &ch) {
-	int cx = g_s._mlieu;
+	int tmpPlace = g_s._currPlace;
 
-	if (g_s._mlieu == CRYPT)
-		cx = 14;
-	ch = g_tabdon[achai + (cx * 7) + g_num - 1];
+	if (g_s._currPlace == CRYPT)
+		tmpPlace = CELLAR;
+	ch = g_tabdon[achai + (tmpPlace * 7) + g_num - 1];
 }
 
 void t23coul(int &l) {

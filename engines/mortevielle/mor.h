@@ -113,7 +113,6 @@ extern void pl20(int cf);
 extern void t11(int l11, int &a);
 extern void cavegre();
 extern void writetp(Common::String s, int t);
-extern void messint(int nu);
 extern void aniof(int ouf, int num);
 extern void musique(int so);
 /* NIVEAU 9 */
