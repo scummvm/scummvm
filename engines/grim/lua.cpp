@@ -441,7 +441,7 @@ void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol,
 	lua_pushobject(lua_getref(refTextObjectX));
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
-		if (*x)
+		if (x)
 			*x = (int)lua_getnumber(tableObj);
 	}
 
@@ -449,7 +449,7 @@ void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol,
 	lua_pushobject(lua_getref(refTextObjectY));
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
-		if (*y)
+		if (y)
 			*y = (int)lua_getnumber(tableObj);
 	}
 
@@ -457,7 +457,7 @@ void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol,
 	lua_pushobject(lua_getref(refTextObjectBackground));
 	tableObj = lua_gettable();
 	if (tableObj) {
-		if (*background)
+		if (background)
 			*background = (int)lua_getnumber(tableObj);
 	}
 
@@ -465,7 +465,7 @@ void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol,
 	lua_pushobject(lua_getref(refTextObjectVolume));
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
-		if (*vol)
+		if (vol)
 			*vol = (int)lua_getnumber(tableObj);
 	}
 
@@ -473,7 +473,7 @@ void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol,
 	lua_pushobject(lua_getref(refTextObjectPan));
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
-		if (*pan)
+		if (pan)
 			*pan = (int)lua_getnumber(tableObj);
 	}
 }
