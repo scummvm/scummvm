@@ -621,7 +621,7 @@ void fctOpen() {
 				if ( ((g_s._mlieu > DINING_ROOM) && (g_s._mlieu < CELLAR))
 				  || ((g_s._mlieu > RED_ROOM) && (g_s._mlieu < DINING_ROOM))
 				  || (g_s._mlieu == OWN_ROOM) || (g_s._mlieu == PURPLE_ROOM) || (g_s._mlieu == BLUE_ROOM)) {
-					if (hazard(1, 4) == 3)
+					if (getRandomNumber(1, 4) == 3)
 						parole(7, 9, 1);
 				}
 				g_touv[cx] = chr(g_num);
@@ -926,14 +926,14 @@ void fctKnock() {
 	}
 
 	if (g_s._mlieu == 26) {
-		int haz = (hazard(0, 8)) - 4;
-		parole(11, haz, 1);
+		int rand = (getRandomNumber(0, 8)) - 4;
+		parole(11, rand, 1);
 		int p;
-		ecfren(p, haz, g_s._conf, g_ment);
+		ecfren(p, rand, g_s._conf, g_ment);
 		int l = g_ment;
 		if (l != 0) {
 			if (p != -500) {
-				if (haz > p)
+				if (rand > p)
 					g_crep = 190;
 				else {
 					becfren(l);
@@ -1052,24 +1052,24 @@ void fctListen() {
 	else {
 		if (g_ipers != 0)
 			++g_s._conf;
-		int p, haz;
-		ecfren(p, haz, g_s._conf, g_ment);
+		int p, rand;
+		ecfren(p, rand, g_s._conf, g_ment);
 		int l = g_ment;
 		if (l != 0) {
 			if (p != -500) {
-				if (haz > p)
+				if (rand > p)
 					g_crep = 101;
 				else {
 					becfren(l);
 					int j, h, m;
 					calch(j, h, m);
-					haz = hazard(1, 100);
+					rand = getRandomNumber(1, 100);
 					if ((h >= 0) && (h < 8)) {
-						if (haz > 30)
+						if (rand > 30)
 							g_crep = 101;
 						else
 							g_crep = 178;
-					} else if (haz > 70)
+					} else if (rand > 70)
 						g_crep = 101;
 					else
 						g_crep = 178;
@@ -1144,7 +1144,7 @@ void fctEnter() {
 			if ((g_ment == 3) || (g_ment == 7))
 				g_crep = 179;
 			else {
-				g_x = (hazard(0, 10)) - 5;
+				g_x = (getRandomNumber(0, 10)) - 5;
 				parole(7, g_x, 1);
 				aniof(1, 1);
 				
@@ -1165,7 +1165,7 @@ void fctEnter() {
 				g_ment = 0;
 			}
 		} else {
-			g_x = (hazard(0, 10)) - 5;
+			g_x = (getRandomNumber(0, 10)) - 5;
 			parole(7, g_x, 1);
 			aniof(1, 1);
 			
@@ -1339,7 +1339,7 @@ void fctSound() {
  */
 void fctDiscuss() {
 	bool te[47];
-	int cy, cx, max, haz, suj, co, lig, icm, i, choi, x, y, c;
+	int cy, cx, max, suj, co, lig, icm, i, choi, x, y, c;
 	char tou;
 	Common::String lib[47];
 	bool f;
@@ -1470,8 +1470,7 @@ void fctDiscuss() {
 					max = 8;
 				else
 					max = 4;
-				haz = hazard(1, max);
-				if (haz == 2)
+				if (getRandomNumber(1, max) == 2)
 					suj = 129;
 				else {
 					suj = 138;

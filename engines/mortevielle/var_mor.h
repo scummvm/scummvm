@@ -364,7 +364,7 @@ extern char get_ch();
 
 extern void palette(int v1);
 extern void intr(int intNum, registres &regs);
-extern int get_random_number(int minval, int maxval);
+extern int getRandomNumber(int minval, int maxval);
 
 // (* external 'c:\mc\charecr.com'; *)
 extern void s_char(int Gd, int y, int dy);
