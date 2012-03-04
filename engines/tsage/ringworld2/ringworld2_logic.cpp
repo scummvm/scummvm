@@ -1623,7 +1623,7 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
-	_paletteMode = 0;
+	_paletteMode = ANIMPALMODE_REPLACE_PALETTE;
 	_field3A = 1;
 	_sliceHeight = 1;
 	_field58 = 1;
@@ -1709,7 +1709,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	
 	debugC(1, ktSageDebugGraphics, "Data needed %d", _dataNeeded);
 
-	// Set up animation data array
+	// Set up animation data objects
 	_animData1 = new AnimationData();
 	_sliceCurrent = _animData1;
 
@@ -1737,21 +1737,25 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 
 	// Handle starting palette
 	switch (_paletteMode) {
-	case 0:
-		// Use existing active palette
+	case ANIMPALMODE_REPLACE_PALETTE:
+		// Use the palette provided with the animation directly
 		_palette.getPalette();
 		for (int idx = _subData._palStart; idx < (_subData._palStart + _subData._palSize); ++idx) {
-			uint r, g, b;
-			_palette.getEntry(idx, &r, &g, &b);
+			byte r = _subData._palData[idx * 3];
+			byte g = _subData._palData[idx * 3 + 1];
+			byte b = _subData._palData[idx * 3 + 2];
+
 			R2_GLOBALS._scenePalette.setEntry(idx, r, g, b);
 		}
 
 		R2_GLOBALS._sceneManager._hasPalette = true;
 		break;
-	case 2:
+	case ANIMPALMODE_NONE:
 		break;
 
 	default:
+		// ANIMPALMODE_CURR_PALETTE
+		// Use the closest matching colours in the currently active palette to those specified in the animation
 		for (int idx = _subData._palStart; idx < (_subData._palStart + _subData._palSize); ++idx) {
 			byte r = _subData._palData[idx * 3];
 			byte g = _subData._palData[idx * 3 + 1];
@@ -1858,12 +1862,26 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 		break;
 	}
 
-	if (_field56 == 42) {
+	// Unlock the screen surface
+	R2_GLOBALS._screenSurface.unlockSurface();
+
+	if (_objectMode == 42) {
 		_screenBounds.expandPanes();
+
+		// Copy the drawn frame to the back surface
+		Rect srcRect = R2_GLOBALS._screenSurface.getBounds();
+		Rect destRect = srcRect;
+		destRect.translate(-g_globals->_sceneOffset.x, -g_globals->_sceneOffset.y);
+		R2_GLOBALS._sceneManager._scene->_backSurface.copyFrom(R2_GLOBALS._screenSurface,
+			srcRect, destRect);
+
+		// Draw any objects into the scene
 		R2_GLOBALS._sceneObjects->draw();
 	} else {
-		if (R2_GLOBALS._sceneManager._hasPalette)
+		if (R2_GLOBALS._sceneManager._hasPalette) {
+			R2_GLOBALS._sceneManager._hasPalette = false;
 			R2_GLOBALS._scenePalette.refresh();
+		}
 	}
 }
 
@@ -1916,7 +1934,7 @@ void AnimationPlayer::close() {
 	// Close the resource file
 	_resourceFile.close();
 
-	if (_field56 != 42) {
+	if (_objectMode != 42) {
 		// flip screen in original
 	}
 

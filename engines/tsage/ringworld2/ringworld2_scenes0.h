@@ -195,7 +195,7 @@ class Scene180: public SceneExt {
 		void signal();
 	};
 private:
-	void setFrameInc(int v);
+	void setSceneDelay(int v);
 public:
 	SpeakerWebbster _webbsterSpeaker;
 	SpeakerDutyOfficer _dutyOfficerSpeaker;

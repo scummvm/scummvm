@@ -1549,18 +1549,18 @@ void Scene180::signal() {
 
 	switch (_sceneMode++) {
 	case 0:
-		setFrameInc(6);
+		setSceneDelay(6);
 		break;
 
 	case 1:
 		_field412 = 1;
 		R2_GLOBALS._sceneManager._hasPalette = true;
-		_animationPlayer._paletteMode = 2;
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._v = 1;
-		_animationPlayer._field56 = 1;
+		_animationPlayer._objectMode = 1;
 		R2_GLOBALS._scene180Mode = 1;
 
-		_animationPlayer.load(1, NULL);
+		_animationPlayer.load(1);
 		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 
 		R2_GLOBALS._sound1.play(1);
@@ -1571,9 +1571,9 @@ void Scene180::signal() {
 		R2_GLOBALS._paneRefreshFlag[0] = 3;
 
 		if (R2_GLOBALS._sound1.isPlaying()) {
-			setFrameInc(1);
+			setSceneDelay(1);
 		} else {
-			setFrameInc(180);
+			setSceneDelay(180);
 		}
 		break;
 
@@ -1583,7 +1583,7 @@ void Scene180::signal() {
 		if (R2_GLOBALS._sound1.isPlaying())
 			_sceneMode = 3;
 
-		setFrameInc(1);
+		setSceneDelay(1);
 		break;
 
 	case 4:
@@ -1598,9 +1598,9 @@ void Scene180::signal() {
 		break;
 
 	case 5:
-		_animationPlayer._paletteMode = 2;
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._v = 1;
-		_animationPlayer._field56 = 1;
+		_animationPlayer._objectMode = 1;
 		R2_GLOBALS._scene180Mode = 2;
 		_animationPlayer.load(2);
 
@@ -1614,9 +1614,9 @@ void Scene180::signal() {
 		R2_GLOBALS._paneRefreshFlag[0] = 3;
 
 		if (R2_GLOBALS._sound1.isPlaying()) {
-			setFrameInc(1);
+			setSceneDelay(1);
 		} else {
-			setFrameInc(180);
+			setSceneDelay(180);
 		}
 		break;
 
@@ -1625,19 +1625,19 @@ void Scene180::signal() {
 		R2_GLOBALS._scene180Mode = 2;
 		if (R2_GLOBALS._sound1.isPlaying())
 			_sceneMode = 7;
-		setFrameInc(1);
+		setSceneDelay(1);
 		break;
 
 	case 9:
 		R2_GLOBALS._sound1.play(3);
 		clearScreen();
-		setFrameInc(2);
+		setSceneDelay(2);
 		break;
 
 	case 10:
 		loadScene(4002);
 		R2_GLOBALS._scenePalette.loadPalette(0);
-		setFrameInc(6);
+		setSceneDelay(6);
 		break;
 
 	case 11:
@@ -1656,7 +1656,7 @@ void Scene180::signal() {
 	case 24:
 	case 26:
 	case 46:
-		setFrameInc((R2_GLOBALS._speechSubtitles & 1) ? 1 : 18);
+		setSceneDelay((R2_GLOBALS._speechSubtitles & 1) ? 1 : 18);
 		break;
 
 	case 13:
@@ -1691,7 +1691,7 @@ void Scene180::signal() {
 		_field412 = 0;
 		_object4.remove();
 		_object5.remove();
-		setFrameInc(2);
+		setSceneDelay(2);
 		break;
 
 	case 28:
@@ -1703,9 +1703,9 @@ void Scene180::signal() {
 
 	case 29:
 		_field412 = 1;
-		_animationPlayer._paletteMode = 0;
+		_animationPlayer._paletteMode = ANIMPALMODE_REPLACE_PALETTE;
 		_animationPlayer._v = 1;
-		_animationPlayer._field56 = 42;
+		_animationPlayer._objectMode = 42;
 		R2_GLOBALS._scene180Mode = 3;
 		_animationPlayer.load(3);
 		break;
@@ -1727,7 +1727,7 @@ void Scene180::signal() {
 
 		if (R2_GLOBALS._sceneManager._hasPalette)
 			R2_GLOBALS._scenePalette.refresh();
-		setFrameInc(6);
+		setSceneDelay(6);
 		break;
 
 	case 32:
@@ -1799,19 +1799,19 @@ void Scene180::signal() {
 
 	case 39:
 		R2_GLOBALS._sound1.changeSound(8);
-		setFrameInc(1);
+		setSceneDelay(1);
 		break;
 
 	case 40:
-		_animationPlayer._paletteMode = 2;
-		_animationPlayer._field56 = 1;
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
+		_animationPlayer._objectMode = 1;
 		R2_GLOBALS._scene180Mode = 4;
 		if (_animationPlayer.load(4)) {
 			_animationPlayer.dispatch();
 			R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 8, this);
 		} else {
 			_sceneMode = 43;
-			setFrameInc(1);
+			setSceneDelay(1);
 		}
 		break;
 
@@ -1823,7 +1823,7 @@ void Scene180::signal() {
 	case 42:
 		R2_GLOBALS._scene180Mode = 4;
 		R2_GLOBALS._paneRefreshFlag[0] = 3;
-		setFrameInc(1);
+		setSceneDelay(1);
 		break;
 
 	case 44:
@@ -1832,7 +1832,7 @@ void Scene180::signal() {
 		if (R2_GLOBALS._sceneManager._hasPalette)
 			R2_GLOBALS._scenePalette.refresh();
 
-		setFrameInc(6);
+		setSceneDelay(6);
 		break;
 
 	case 45:
@@ -1841,9 +1841,9 @@ void Scene180::signal() {
 
 	case 48:
 		_field412 = 1;
-		_animationPlayer._paletteMode = 2;
+		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._v = 1;
-		_animationPlayer._field56 = 1;
+		_animationPlayer._objectMode = 1;
 		R2_GLOBALS._scene180Mode = 15;
 		_animationPlayer.load(15, NULL);
 
@@ -1854,7 +1854,7 @@ void Scene180::signal() {
 	case 49:
 		R2_GLOBALS._scene180Mode = 15;
 		R2_GLOBALS._paneRefreshFlag[0] = 3;
-		setFrameInc(1);
+		setSceneDelay(1);
 		break;
 
 	case 50:
@@ -1865,7 +1865,7 @@ void Scene180::signal() {
 	}
 }
 
-void Scene180::setFrameInc(int v) {
+void Scene180::setSceneDelay(int v) {
 	_frameInc = v;
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
 }

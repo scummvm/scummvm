@@ -375,6 +375,9 @@ public:
 	int _animSlicesSize;
 };
 
+enum AnimationPaletteMode { ANIMPALMODE_REPLACE_PALETTE = 0, ANIMPALMODE_CURR_PALETTE = 1,
+		ANIMPALMODE_NONE = 2 };
+
 class AnimationPlayer: public EventHandler {
 private:
 	void rleDecode(const byte *pSrc, byte *pDest, int size);
@@ -390,7 +393,7 @@ public:
 	Rect _rect1, _screenBounds;
 	int _field38;
 	int _field3A, _paletteMode;
-	int _field56;
+	int _objectMode;
 	int _field58, _sliceHeight;
 	byte _palIndexes[256];
 	ScenePalette _palette;
