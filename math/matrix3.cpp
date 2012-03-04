@@ -34,4 +34,14 @@ Matrix<3, 3>::Matrix(const MatrixBase<3, 3> &m) :
 
 }
 
+void swap (float &a, float &b) {
+    float c=a; a=b; b=c;
+}
+
+void Matrix<3, 3>::transpose() {
+    swap(operator()(0,1), operator()(1,0));
+    swap(operator()(0,2), operator()(2,0));
+    swap(operator()(1,2), operator()(2,1));
+}
+
 } // end of namespace Math

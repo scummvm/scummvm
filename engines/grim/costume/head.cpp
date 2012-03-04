@@ -135,38 +135,8 @@ void extractEulerZXY(const Math::Matrix4 &m, Math::Angle &Z, Math::Angle &X, Mat
 	Z = Math::Angle::fromRadians(z);
 }
 
-/** 
- * Inverts a matrix in place.
- *	This function avoid having to do generic Gaussian elimination on the matrix
- *	by assuming that the top-left 3x3 part of the matrix is orthonormal
- *	(columns and rows 0, 1 and 2 orthogonal and unit length).
- *	See e.g. Eric Lengyel's Mathematics for 3D Game Programming and Computer Graphics, p. 82. 
- */
-void invertAffineOrthonormal(Math::Matrix4 &m) {
-	Math::Matrix4 m2;
-	m2.setValue(0, 0, m.getValue(0, 0));
-	m2.setValue(0, 1, m.getValue(1, 0));
-	m2.setValue(0, 2, m.getValue(2, 0));
-	m2.setValue(1, 0, m.getValue(0, 1));
-	m2.setValue(1, 1, m.getValue(1, 1));
-	m2.setValue(1, 2, m.getValue(2, 1));
-	m2.setValue(2, 0, m.getValue(0, 2));
-	m2.setValue(2, 1, m.getValue(1, 2));
-	m2.setValue(2, 2, m.getValue(2, 2));
-	m2.setValue(3, 0, 0.f);
-	m2.setValue(3, 1, 0.f);
-	m2.setValue(3, 2, 0.f);
-	m2.setValue(3, 3, 1.f);
-	m2.setPosition(Math::Vector3d(0,0,0));
-	
-	
-	Math::Vector4d v;
-	v.set(-m.getValue(0, 3), -m.getValue(1, 3), -m.getValue(2, 3), 0.f);
 
-	m2.transformVector(&v);
-	m2.setPosition(Math::Vector3d(v.x(),v.y(),v.z()));
-	m = m2;
-}
+
 	
 void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix, const Common::String &fname) {
 	if (_joint1Node) {
@@ -251,7 +221,7 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		animFrame.buildFromPitchYawRoll(_joint3Node->_pitch, _joint3Node->_yaw, _joint3Node->_roll);
 		animFrame.setPosition(Math::Vector3d(0, 0 ,0));
 		parentWorldTM = parentWorldTM * animFrame;
-		invertAffineOrthonormal(parentWorldTM);
+		parentWorldTM.invertAffineOrthonormal();
 		
 		// Convert lookAtTM orientation from world space to parent-with-keyframe-animation space.
 		lookAtTM = parentWorldTM * lookAtTM;

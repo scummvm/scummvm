@@ -35,6 +35,8 @@ public:
 	Matrix();
 	Matrix(const MatrixBase<3, 3> &m);
 
+    void transpose();
+
 };
 
 typedef Matrix<3, 3> Matrix3;

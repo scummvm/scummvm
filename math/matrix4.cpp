@@ -57,6 +57,34 @@ void Matrix<4, 4>::setPosition(const Vector3d &v) {
 	setValue(2, 3, v.z());
 }
 
+Matrix3 Matrix<4, 4>::getRotation() const{
+    Matrix3 m2;
+    
+    m2.setValue(0, 0, getValue(0, 0));
+	m2.setValue(0, 1, getValue(0, 1));
+	m2.setValue(0, 2, getValue(0, 2));
+	m2.setValue(1, 0, getValue(1, 0));
+	m2.setValue(1, 1, getValue(1, 1));
+	m2.setValue(1, 2, getValue(1, 2));
+	m2.setValue(2, 0, getValue(2, 0));
+	m2.setValue(2, 1, getValue(2, 1));
+	m2.setValue(2, 2, getValue(2, 2));
+	
+	return m2;
+}
+
+void Matrix<4, 4>::setRotation(const Matrix3 &m) {
+    setValue(0, 0, m.getValue(0, 0));
+	setValue(0, 1, m.getValue(0, 1));
+	setValue(0, 2, m.getValue(0, 2));
+	setValue(1, 0, m.getValue(1, 0));
+	setValue(1, 1, m.getValue(1, 1));
+	setValue(1, 2, m.getValue(1, 2));
+	setValue(2, 0, m.getValue(2, 0));
+	setValue(2, 1, m.getValue(2, 1));
+	setValue(2, 2, m.getValue(2, 2));
+}
+
 void Matrix<4, 4>::translate(const Vector3d &vec) {
 	Vector3d v(vec);
 	transform(&v, false);
@@ -64,6 +92,17 @@ void Matrix<4, 4>::translate(const Vector3d &vec) {
 	operator()(0, 3) += v.x();
 	operator()(1, 3) += v.y();
 	operator()(2, 3) += v.z();
+}
+
+void Matrix<4, 4>::invertAffineOrthonormal() {
+    Matrix3 rotation(getRotation());
+    rotation.transpose();
+    
+    Vector3d position(getPosition().getNegative());
+    
+    rotation.transformVector(&position);
+    setRotation(rotation);
+    setPosition(position);
 }
 
 // The following functions are adapted from Portalib3d, which no longer is 
