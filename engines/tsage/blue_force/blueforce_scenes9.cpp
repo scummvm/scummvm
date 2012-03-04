@@ -3375,6 +3375,7 @@ void Scene930::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.fixPriority(80);
 	BF_GLOBALS._player.changeZoom(-1);
 	BF_GLOBALS._player.enableControl();
+	BF_GLOBALS._events.setCursor(CURSOR_WALK);
 
 	_item1.setDetails(  1, 930,  0,  1,  2, 1);
 	_item2.setDetails(  2, 930,  4,  5,  6, 1);
