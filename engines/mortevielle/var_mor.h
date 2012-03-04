@@ -33,15 +33,6 @@
 
 namespace Mortevielle {
 
-/*         Constantes, Types et Variables pour le
-
-              M A N O I R   DE   M O R T E V I E L L E
-
-                                                    ( version Nov 1988
-                                                             +
-                                                  musique & paroles Oct 88 )
-                                                                             */
-
 /*---------------------------------------------------------------------------*/
 /*-------------------           MEMORY  MAP          ------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -151,6 +142,23 @@ extern const byte g_rang[16];
 /*---------------------------------------------------------------------------*/
 /*--------------------------------   TYPES   --------------------------------*/
 /*---------------------------------------------------------------------------*/
+
+/*
+9   "A glance at the forbidden$",
+18  "It's already open$",
+23  "Strange horoscope$",
+26  "A photograph$",
+27  "The coat of arms$",
+*/
+
+enum places {
+	OWN_ROOM = 0,     GREEN_ROOM = 1,   PURPLE_ROOM = 2,     TOILETS = 3,     DARKBLUE_ROOM = 4,
+	BLUE_ROOM = 5,    RED_ROOM = 6,     BATHROOM = 7,        GREEN_ROOM2 = 8, 
+	DINING_ROOM = 10, BUREAU = 11,      KITCHEN = 12,        ATTIC = 13,      CELLAR = 14, 
+	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17,                  MOUNTAIN = 19, 
+	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,                      WELL = 24,
+	DOOR = 25
+};
 
 struct sav_chaine {
 	int _conf;
