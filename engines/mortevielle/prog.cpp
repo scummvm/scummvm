@@ -229,7 +229,7 @@ void tsitu() {
 	if ((((h == 12) || (h == 13) || (h == 19)) && (g_s._mlieu != 10)) ||
 	        ((h > 0) && (h < 6) && (g_s._mlieu != 0)))
 		++g_s._conf;
-	if (((g_s._mlieu < 16) || (g_s._mlieu > 19)) && (g_s._mlieu != 23)
+	if (((g_s._mlieu < CRYPT) || (g_s._mlieu > MOUNTAIN)) && (g_s._mlieu != 23)
 	        && (g_s._mlieu != 0) && (g_s._selectedObjectId != 152) && (!g_vm->_loseGame)) {
 		if ((g_s._conf > 99) && (h > 8) && (h < 16)) {
 			g_crep = 1501;

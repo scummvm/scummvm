@@ -1025,7 +1025,7 @@ void inzon() {
 	g_s._iloic = 136;
 	g_s._icryp = 141;
 	g_s._conf  = hazard(4, 10);
-	g_s._mlieu = 21;
+	g_s._mlieu = MANOR_FRONT;
 
 	for (int cx = 2; cx <= 6; ++cx)
 		g_s._sjer[cx] = chr(0);
@@ -1320,7 +1320,7 @@ void musique(int so) {
 		++g_prebru;
 	} else {
 		bool i = false;
-		if ((g_s._mlieu == 19) || (g_s._mlieu == 21) || (g_s._mlieu == 22)) {
+		if ((g_s._mlieu == MOUNTAIN) || (g_s._mlieu == MANOR_FRONT) || (g_s._mlieu == MANOR_BACK)) {
 			int haz = hazard(1, 3);
 			if (haz == 2) {
 				haz = hazard(2, 4);
@@ -1328,7 +1328,7 @@ void musique(int so) {
 				i = true;
 			}
 		}
-		if (g_s._mlieu == 20) {
+		if (g_s._mlieu == CHAPEL) {
 			int haz = hazard(1, 2);
 			if (haz == 1) {
 				parole(8, 1, 1);
@@ -1336,7 +1336,7 @@ void musique(int so) {
 			}
 		}
 
-		if (g_s._mlieu == 24) {
+		if (g_s._mlieu == WELL) {
 			int haz = hazard(1, 2);
 			if (haz == 2) {
 				parole(12, 1, 1);

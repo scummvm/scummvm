@@ -157,7 +157,7 @@ void tinke() {
 				g_mpers = g_ipers;
 
 			if ((g_mpers == 0) && (g_ipers > 0)) {
-				if ((g_s._mlieu == 13) || (g_s._mlieu == 14)) {
+				if ((g_s._mlieu == ATTIC) || (g_s._mlieu == CELLAR)) {
 					cavegre();
 				} else if (g_ipers == 10) {
 					g_ipers = 0;
@@ -186,7 +186,7 @@ void tinke() {
 		nouvp(g_li, cx);
 		g_brt = false;
 		g_hdb = 0;
-		if ((g_s._mlieu > 0) && (g_s._mlieu < 10))
+		if ((g_s._mlieu > OWN_ROOM) && (g_s._mlieu < DINING_ROOM))
 			g_anyone = true;
 	}
 }
@@ -370,7 +370,7 @@ void cherjer(int ob, bool &d) {
 }
 
 void st1sama() {
-	g_s._mlieu = 10;
+	g_s._mlieu = DINING_ROOM;
 	affrep();
 }
 
@@ -505,7 +505,7 @@ void t1sama() {    //Entering manor
 		dessine_rouleau();
 		drawClock();
 		showMouse();
-		g_s._mlieu = 0;
+		g_s._mlieu = OWN_ROOM;
 		affrep();
 		t5(10);
 		if (!g_blo)
@@ -519,7 +519,7 @@ void t1sama() {    //Entering manor
 }
 
 void t1vier() {
-	g_s._mlieu = 17;
+	g_s._mlieu = SECRET_PASSAGE;
 	affrep();
 }
 
@@ -530,19 +530,19 @@ void t1neig() {
 		tperd();
 	} else {
 		g_okdes = true;
-		g_s._mlieu = 19;
+		g_s._mlieu = MOUNTAIN;
 		affrep();
 	}
 }
 
 void t1deva() {
 	g_inei = 0;
-	g_s._mlieu = 21;
+	g_s._mlieu = MANOR_FRONT;
 	affrep();
 }
 
 void t1derr() {
-	g_s._mlieu = 22;
+	g_s._mlieu = MANOR_BACK;
 	affrep();
 }
 
@@ -781,7 +781,7 @@ void avpoing(int &ob) {
 void rechai(int &ch) {
 	int cx = g_s._mlieu;
 
-	if (g_s._mlieu == 16)
+	if (g_s._mlieu == CRYPT)
 		cx = 14;
 	ch = g_tabdon[achai + (cx * 7) + g_num - 1];
 }
