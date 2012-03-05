@@ -43,7 +43,7 @@ void EMISpriteComponent::init() {
 	uint32 namelength = stream->readUint32LE();
 	char *name = new char[namelength];
 	stream->read(name, namelength);
-	delete name;
+	delete[] name;
 	stream->seek(40, SEEK_CUR);
 	uint32 texnamelength = stream->readUint32LE();
 	char *texname = new char[texnamelength];
@@ -57,7 +57,7 @@ void EMISpriteComponent::init() {
 	_sprite->_visible = true;
 	_sprite->_pos.set(0.5, 0.5, 0.5);
 
-	delete texname;
+	delete[] texname;
 	delete stream;
 
 }
