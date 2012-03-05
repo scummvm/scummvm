@@ -55,7 +55,7 @@ void changeGraphicalDevice(int newDevice) {
 	if (g_ipers != 0)
 		showPeoplePresent(g_ipers);
 	else
-		person();
+		displayAloneText();
 	clsf2();
 	clsf3();
 	g_maff = 68;
@@ -115,7 +115,7 @@ void MortevielleEngine::gameLoaded() {
 	_loseGame = false;
 	g_heroSearching = false;
 
-	person();
+	displayAloneText();
 	tinke();
 	drawClock();
 	afdes(0);
@@ -133,19 +133,17 @@ void MortevielleEngine::gameLoaded() {
 /* NIVEAU 3 */
 /* procedure PROGRAMME */
 void tmaj3() {
-	int j, h, m;
+	int day, hour, minute;
 
-	calch(j, h, m);
-	if (m == 30)
-		m = 1;
-	h += j * 24;
-	m += h * 2;
-	g_s._heure = chr(m);
+	updateHour(day, hour, minute);
+	if (minute == 30)
+		minute = 1;
+	hour += day * 24;
+	minute += hour * 2;
+	g_s._heure = chr(minute);
 }
 
 void tsitu() {
-	int h, j, m;
-
 	if (!g_col)
 		clsf2();
 	g_syn = false;
@@ -225,21 +223,22 @@ void tsitu() {
 			return;
 		}
 	}
-	calch(j, h, m);
-	if ((((h == 12) || (h == 13) || (h == 19)) && (g_s._currPlace != 10)) ||
-	        ((h > 0) && (h < 6) && (g_s._currPlace != 0)))
+	int hour, day, minute;
+	updateHour(day, hour, minute);
+	if ((((hour == 12) || (hour == 13) || (hour == 19)) && (g_s._currPlace != 10)) ||
+	        ((hour > 0) && (hour < 6) && (g_s._currPlace != 0)))
 		++g_s._faithScore;
 	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != 23)
 	        && (g_s._currPlace != 0) && (g_s._selectedObjectId != 152) && (!g_vm->_loseGame)) {
-		if ((g_s._faithScore > 99) && (h > 8) && (h < 16)) {
+		if ((g_s._faithScore > 99) && (hour > 8) && (hour < 16)) {
 			g_crep = 1501;
 			tperd();
 		}
-		if ((g_s._faithScore > 99) && (h > 0) && (h < 9)) {
+		if ((g_s._faithScore > 99) && (hour > 0) && (hour < 9)) {
 			g_crep = 1508;
 			tperd();
 		}
-		if ((j > 1) && (h > 8) && (!g_vm->_loseGame)) {
+		if ((day > 1) && (hour > 8) && (!g_vm->_loseGame)) {
 			g_crep = 1502;
 			tperd();
 		}

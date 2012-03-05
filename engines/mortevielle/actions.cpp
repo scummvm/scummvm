@@ -711,7 +711,7 @@ void fctPlace() {
 						if (g_ipers != 0)
 							showPeoplePresent(g_ipers);
 						else 
-							person();
+							displayAloneText();
 
 						g_vm->_menu.displayMenu();
 						if (enterPassageFl) {
@@ -1063,7 +1063,7 @@ void fctListen() {
 				else {
 					becfren(l);
 					int j, h, m;
-					calch(j, h, m);
+					updateHour(j, h, m);
 					rand = getRandomNumber(1, 100);
 					if ((h >= 0) && (h < 8)) {
 						if (rand > 30)
@@ -1096,7 +1096,7 @@ void fctEat() {
 		tmlieu(g_s._currPlace);
 
 		int j, h, m;
-		calch(j, h, m);
+		updateHour(j, h, m);
 		if ((h == 12) || (h == 13) || (h == 19)) {
 			g_s._faithScore -= (g_s._faithScore / 7);
 			if (h == 12) {
@@ -1204,7 +1204,7 @@ void fctSleep() {
 	clsf2();
 	ecrf2();
 	ecr2(g_vm->getEngineString(S_WANT_TO_WAKE_UP));
-	calch(j, h, m);
+	updateHour(j, h, m);
 
 	int answer;
 	do {
