@@ -188,11 +188,6 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			_textDimData[sdx].column = (_screen->getFontWidth() + _screen->_charWidth) * dv;
 			break;
 
-		case 11:
-			_sjisLineBreakFlag = _sjisLineBreakFlag;
-			// TODO (UNUSED)
-			break;
-
 		case 12:
 			if (isPc98)
 				_sjisLineBreakFlag = true;
@@ -203,29 +198,12 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			_textDimData[sdx].line++;
 			break;
 
-		case 18:
-			_sjisLineBreakFlag = _sjisLineBreakFlag;
-			// TODO (UNUSED)
-			break;
-
-		case 23:
-			_sjisLineBreakFlag = _sjisLineBreakFlag;
-			// TODO (UNUSED)
-			break;
-
-		case 24:
-			_sjisLineBreakFlag = _sjisLineBreakFlag;
-			// TODO (UNUSED)
-			break;
-
-		case 26:
-			_sjisLineBreakFlag = _sjisLineBreakFlag;
-			// TODO (UNUSED)
-			break;
-
-		case 28:
-			_sjisLineBreakFlag = _sjisLineBreakFlag;
-			// TODO (UNUSED)
+		case 11: case 18: case 23:
+		case 24: case 26: case 28:
+			// These are at the time of writing this comment not known to be
+			// used. In case there is some use of them in some odd version
+			// we display this warning here.
+			warning("TextDisplayer_rpg::displayText: Triggered stub function %d", c - 1);
 			break;
 
 		default:
