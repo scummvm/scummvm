@@ -87,5 +87,4 @@ void EMIMeshComponent::draw() {
 	//translateObject(true);
 }
 
-
 } // end of namespace Grim

@@ -94,4 +94,5 @@ Bone::~Bone() {
 		delete[] _rotations;
 	}
 }
+
 } // end of namespace Grim

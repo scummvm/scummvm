@@ -54,8 +54,6 @@ void EMISkelComponent::reset() {
 }
 	
 void EMISkelComponent::draw() {
-	
 }
-
 
 } // end of namespace Grim

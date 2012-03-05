@@ -66,7 +66,7 @@ public:
 	int findJointIndex(Common::String name, int max);
 	float _time;
 };
-	
+
 } // end of namespace Grim
 
 #endif

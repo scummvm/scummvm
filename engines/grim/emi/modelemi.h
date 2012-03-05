@@ -114,7 +114,7 @@ public:
 	void prepare();
 	void draw();
 };
-	
+
 } // end of namespace Grim
 
 #endif

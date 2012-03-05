@@ -156,6 +156,6 @@ protected:
 	DECLARE_LUA_OPCODE(GetTextObjectDimensions);
 };
 
-}
+} // end of namespace Grim
 
 #endif

@@ -63,20 +63,16 @@ void EMISpriteComponent::init() {
 }
 
 int EMISpriteComponent::update(uint time) {
-
 	return 0;
 }
 
 void EMISpriteComponent::reset() {
-
 }
-	
+
 void EMISpriteComponent::draw() {
 	if (_sprite) {
 		_sprite->draw();
 	}
-	
 }
-
 
 } // end of namespace Grim
