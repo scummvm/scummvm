@@ -122,6 +122,6 @@ void KyraRpgEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
 	delete[] p;
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB || ENABLE_LOL

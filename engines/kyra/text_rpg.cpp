@@ -46,7 +46,7 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 
 	_textDimData = new TextDimData[_screen->screenDimTableCount()];
 
-	for (int i = 0; i < _screen->screenDimTableCount(); i++){
+	for (int i = 0; i < _screen->screenDimTableCount(); i++) {
 		const ScreenDim *d = _screen->getScreenDim(i);
 		_textDimData[i].color1 = d->unk8;
 		_textDimData[i].color2 = d->unkA;
@@ -189,7 +189,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			break;
 
 		case 11:
-			_sjisLineBreakFlag=_sjisLineBreakFlag;
+			_sjisLineBreakFlag = _sjisLineBreakFlag;
 			// TODO (UNUSED)
 			break;
 
@@ -204,27 +204,27 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			break;
 
 		case 18:
-			_sjisLineBreakFlag=_sjisLineBreakFlag;
+			_sjisLineBreakFlag = _sjisLineBreakFlag;
 			// TODO (UNUSED)
 			break;
 
 		case 23:
-			_sjisLineBreakFlag=_sjisLineBreakFlag;
+			_sjisLineBreakFlag = _sjisLineBreakFlag;
 			// TODO (UNUSED)
 			break;
 
 		case 24:
-			_sjisLineBreakFlag=_sjisLineBreakFlag;
+			_sjisLineBreakFlag = _sjisLineBreakFlag;
 			// TODO (UNUSED)
 			break;
 
 		case 26:
-			_sjisLineBreakFlag=_sjisLineBreakFlag;
+			_sjisLineBreakFlag = _sjisLineBreakFlag;
 			// TODO (UNUSED)
 			break;
 
 		case 28:
-			_sjisLineBreakFlag=_sjisLineBreakFlag;
+			_sjisLineBreakFlag = _sjisLineBreakFlag;
 			// TODO (UNUSED)
 			break;
 
@@ -286,14 +286,16 @@ void TextDisplayer_rpg::readNextPara() {
 	// All necessary conversions take place somewhere else. This code actually causes issues if the character conversions
 	// don't take place before calling displayText(). So we disable it for now. If some (not yet supported) localized
 	// versions depend on this code we'll have to look at this again.
-	/* if ((_vm->game() != GI_LOL) && (d & 0x80)) {
+#if 0
+	if ((_vm->game() != GI_LOL) && (d & 0x80)) {
 		d &= 0x7f;
 		c = d & 7;
 		d = (d & 0x78) >> 3;
 		uint8 l = d;
 		c = _table1[(l << 3) + c];
 		d = _table2[l];
-	}*/
+	}
+#endif
 
 	_ctrl[1] = d;
 	_ctrl[2] = c;
@@ -465,8 +467,8 @@ void TextDisplayer_rpg::printLine(char *str) {
 }
 
 void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakString) {
-	const char * str = (const char *)(_screen->getCPagePtr(5) + READ_LE_UINT16(&_screen->getCPagePtr(5)[(stringId - 1) << 1]));
-	assert (strlen(str) < kEoBTextBufferSize);
+	const char *str = (const char *)(_screen->getCPagePtr(5) + READ_LE_UINT16(&_screen->getCPagePtr(5)[(stringId - 1) << 1]));
+	assert(strlen(str) < kEoBTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
 	displayText(_dialogueBuffer);
@@ -481,7 +483,7 @@ void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakStr
 }
 
 void TextDisplayer_rpg::printDialogueText(const char *str, bool wait) {
-	assert (strlen(str) < kEoBTextBufferSize);
+	assert(strlen(str) < kEoBTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
 	strcpy(_dialogueBuffer, str);

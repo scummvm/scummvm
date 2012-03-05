@@ -40,7 +40,8 @@ void KyraRpgEngine::removeInputTop() {
 }
 
 void KyraRpgEngine::gui_drawBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor) {
-	w--; h--;
+	w--;
+	h--;
 	if (fillColor != -1)
 		screen()->fillRect(x + 1, y + 1, x + w - 1, y + h - 1, fillColor);
 
@@ -128,6 +129,6 @@ bool KyraRpgEngine::clickedShape(int shapeIndex) {
 	return false;
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // defined(ENABLE_EOB) || defined(ENABLE_LOL)

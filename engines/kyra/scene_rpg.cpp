@@ -133,7 +133,7 @@ void KyraRpgEngine::generateBlockDrawingBuffer() {
 	_sceneDrawVarLeft = _dscBlockMap[_currentDirection + 8];
 
 	/*******************************************
-    *             _visibleBlocks map           *
+	*             _visibleBlocks map           *
 	*                                          *
 	*     |     |     |     |     |     |      *
 	*  00 |  01 |  02 |  03 |  04 |  05 |  06  *
@@ -337,7 +337,7 @@ bool KyraRpgEngine::checkSceneUpdateNeed(int block) {
 		}
 	}
 
-	if (_currentBlock == block){
+	if (_currentBlock == block) {
 		_sceneUpdateRequired = true;
 		return true;
 	}
@@ -626,7 +626,7 @@ void KyraRpgEngine::completeDoorOperations() {
 		do {
 			_levelBlockProperties[b].walls[_openDoorState[i].wall] += _openDoorState[i].state;
 			_levelBlockProperties[b].walls[_openDoorState[i].wall ^ 2] += _openDoorState[i].state;
-		} while	(!(_wllWallFlags[_levelBlockProperties[b].walls[_openDoorState[i].wall]] & 0x30));
+		} while (!(_wllWallFlags[_levelBlockProperties[b].walls[_openDoorState[i].wall]] & 0x30));
 
 		_openDoorState[i].block = 0;
 	}

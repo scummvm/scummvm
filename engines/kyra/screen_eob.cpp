@@ -147,7 +147,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	uint8 *cursor = new uint8[mouseW * _pageScaleFactor[6] * mouseH * _pageScaleFactor[6]];
 	// We use memset and copyBlockToPage instead of fillRect to make sure that the
 	// color key 0xFF doesn't get converted into EGA color
-	memset (cursor, colorKey, mouseW * _pageScaleFactor[6] * mouseH * _pageScaleFactor[6]);
+	memset(cursor, colorKey, mouseW * _pageScaleFactor[6] * mouseH * _pageScaleFactor[6]);
 	copyBlockToPage(6, 0, 0, mouseW, mouseH, cursor);
 	drawShape(6, shape, 0, 0, 0, 2, ovl);
 	CursorMan.showMouse(false);
