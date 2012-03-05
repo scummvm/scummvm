@@ -295,6 +295,10 @@ void Menu::menuDown(int ii) {
 	else
 		cx = 6;
 	xcc = xco + (g_menuConstants[ii - 1][2] * cx) + 6;
+	if ((ii == 4) && (g_vm->getLanguage() == Common::EN_ANY))
+		// Extra width needed for Self menu in English version
+		xcc = 435;
+
 	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (g_menuConstants[ii - 1][1] << 1)));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (g_menuConstants[ii - 1][1] << 1)));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (g_menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (g_menuConstants[ii - 1][1] << 1)));
