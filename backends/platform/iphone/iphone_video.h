@@ -67,6 +67,9 @@
 	GLfloat _mouseScaleX, _mouseScaleY;
 
 	int _scaledShakeOffsetY;
+
+	UITouch *_firstTouch;
+	UITouch *_secondTouch;
 }
 
 - (id)initWithFrame:(struct CGRect)frame;

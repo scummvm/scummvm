@@ -33,9 +33,6 @@ static int g_fullHeight;
 
 static int g_needsScreenUpdate = 0;
 
-static UITouch *g_firstTouch = NULL;
-static UITouch *g_secondTouch = NULL;
-
 #if 0
 static long g_lastTick = 0;
 static int g_frames = 0;
@@ -196,6 +193,9 @@ const char *iPhone_getDocumentsDir() {
 	_mouseCursorTexture = 0;
 
 	_scaledShakeOffsetY = 0;
+
+	_firstTouch = NULL;
+	_secondTouch = NULL;
 
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
 	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
@@ -685,7 +685,7 @@ const char *iPhone_getDocumentsDir() {
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
-		g_firstTouch = touch;
+		_firstTouch = touch;
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseDown], @"type",
@@ -703,7 +703,7 @@ const char *iPhone_getDocumentsDir() {
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
-		g_secondTouch = touch;
+		_secondTouch = touch;
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
@@ -722,7 +722,7 @@ const char *iPhone_getDocumentsDir() {
 	int x, y;
 
 	for (UITouch *touch in touches) {
-		if (touch == g_firstTouch) {
+		if (touch == _firstTouch) {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
@@ -735,7 +735,7 @@ const char *iPhone_getDocumentsDir() {
 			  nil
 			  ]
 			 ];
-		} else if (touch == g_secondTouch) {
+		} else if (touch == _secondTouch) {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
