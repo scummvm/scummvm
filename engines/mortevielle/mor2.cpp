@@ -101,7 +101,7 @@ void tinke() {
 			g_t = ti2;
 		else
 			g_t = ti1;
-		cf = g_s._conf;
+		cf = g_s._faithScore;
 		if ((cf > 33) && (cf < 66))
 			g_t -= (g_t / 3);
 
@@ -313,10 +313,10 @@ void tperd() {
 void tsort() {
 
 	if ((g_iouv > 0) && (g_s._currPlace != 0)) {
-		if (g_s._conf < 50)
-			g_s._conf += 2;
+		if (g_s._faithScore < 50)
+			g_s._faithScore += 2;
 		else
-			g_s._conf += (g_s._conf / 10);
+			g_s._faithScore += (g_s._faithScore / 10);
 	}
 
 	for (int cx = 1; cx <= 7; ++cx)
@@ -573,11 +573,11 @@ L1:
 			parole(4, 4, 1);
 
 		if (g_iouv == 0)
-			g_s._conf += 2;
-		else if (g_s._conf < 50)
-			g_s._conf += 4;
+			g_s._faithScore += 2;
+		else if (g_s._faithScore < 50)
+			g_s._faithScore += 4;
 		else
-			g_s._conf += 3 * (g_s._conf / 10);
+			g_s._faithScore += 3 * (g_s._faithScore / 10);
 		tsort();
 		tmlieu(15);
 		int cx;
@@ -625,7 +625,7 @@ void tsuiv() {
 		g_caff = tbcl;
 		g_crep = g_caff + 400;
 		if (g_ipers != 0)
-			g_s._conf += 2;
+			g_s._faithScore += 2;
 	} else {
 		affrep();
 		endSearch();

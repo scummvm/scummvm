@@ -236,11 +236,11 @@ void clsf10() {
 		cod = 544;
 	}
 	g_vm->_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
-	if (g_s._conf < 33)
+	if (g_s._faithScore < 33)
 		st = g_vm->getEngineString(S_COOL);
-	else if (g_s._conf < 66)
+	else if (g_s._faithScore < 66)
 		st = g_vm->getEngineString(S_LOURDE);
-	else if (g_s._conf > 65)
+	else if (g_s._faithScore > 65)
 		st = g_vm->getEngineString(S_MALSAINE);
 	
 	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
@@ -746,10 +746,12 @@ void cpl20(int &p, int &h) {
 		p = -5;
 }
 
-void quelq1(int l) {
-	int per;
-
-	per = getRandomNumber(1, 2);
+/**
+ * Engine function - Check who is in the Green Room
+ * @remarks	Originally called 'quelq1'
+ */
+void setPresenceGreenRoom(int l) {
+	int per = getRandomNumber(1, 2);
 	if (l == 1) {
 		if (per == 1)
 			g_bh1 = true;
@@ -765,7 +767,11 @@ void quelq1(int l) {
 	g_ipers = 10;
 }
 
-void quelq2() {
+/**
+ * Engine function - Check who is in the Purple Room
+ * @remarks	Originally called 'quelq2'
+ */
+void setPresencePurpleRoom() {
 	if (g_li == 2)
 		g_bh2 = true;
 	else
@@ -774,12 +780,20 @@ void quelq2() {
 	g_ipers = 10;
 }
 
-void quelq5() {
+/**
+ * Engine function - Check who is in the Blue Room
+ * @remarks	Originally called 'quelq5'
+ */
+void setPresenceBlueRoom() {
 	g_bh5 = true;
 	g_ipers = 10;
 }
 
-void quelq6(int l) {
+/**
+ * Engine function - Check who is in the Red Room
+ * @remarks	Originally called 'quelq6'
+ */
+void setPresenceRedRoom(int l) {
 	if (l == 6)
 		g_bh6 = true;
 	else if (l == 8)
@@ -788,9 +802,15 @@ void quelq6(int l) {
 	g_ipers = 10;
 }
 
-void quelq10(int h, int &per) {
+/**
+ * Engine function - Check who is in the Dining Room
+ * @remarks	Originally called 'quelq10'
+ */
+int setPresenceDiningRoom(int h) {
+	int retVal = 0;
+
 	if ((h >= 0) && (h < 8))
-		per = chlm();
+		retVal = chlm();
 	else {
 		int min = 0, max = 0;
 		if ((h > 7) && (h < 10)) {
@@ -806,14 +826,22 @@ void quelq10(int h, int &per) {
 			min = 1;
 			max = 5;
 		}
-		choix(min, max, per);
+		choix(min, max, retVal);
 	}
-	affper(per);
+	affper(retVal);
+
+	return retVal;
 }
 
-void quelq11(int h, int &per) {
+/**
+ * Engine function - Check who is in the Bureau
+ * @remarks	Originally called 'quelq11'
+ */
+int setPresenceBureau(int h) {
+	int retVal = 0;
+
 	if ((h >= 0) && (h < 8))
-		per = chlm();
+		retVal = chlm();
 	else {
 		int min = 0, max = 0;
 		if (((h > 7) && (h < 10)) || ((h > 20) && (h < 24))) {
@@ -826,41 +854,59 @@ void quelq11(int h, int &per) {
 			min = 1;
 			max = 2;
 		}
-		choix(min, max, per);
+		choix(min, max, retVal);
 	}
-	affper(per);
+	affper(retVal);
+
+	return retVal;
 }
 
-void quelq12(int &per) {
-	per = chlm();
-	affper(per);
+/**
+ * Engine function - Check who is in the Kitchen
+ * @remarks	Originally called 'quelq12'
+ */
+int setPresenceKitchen() {
+	int retVal = chlm();
+	affper(retVal);
+
+	return retVal;
 }
 
-void quelq15(int &per) {
-	int cx;
-	bool test;
-
-	per = 0;
-
+/**
+ * Engine function - Check who is in the Landing
+ * @remarks	Originally called 'quelq15'
+ */
+int setPresenceLanding() {
+	bool test = false;
+	int rand = 0;
 	do {
-		cx = getRandomNumber(1, 8);
-		test = (((cx == 1) && (g_bh2 || g_bh9)) ||
-		        ((cx == 2) && g_bh8) ||
-		        ((cx == 3) && g_bh4) ||
-		        ((cx == 4) && g_bf4) ||
-		        ((cx == 5) && g_bh6) ||
-		        ((cx == 6) && g_bh1) ||
-		        ((cx == 7) && g_bf1) ||
-		        ((cx == 8) && g_bh5));
+		rand = getRandomNumber(1, 8);
+		test = (((rand == 1) && (g_bh2 || g_bh9)) ||
+		        ((rand == 2) && g_bh8) ||
+		        ((rand == 3) && g_bh4) ||
+		        ((rand == 4) && g_bf4) ||
+		        ((rand == 5) && g_bh6) ||
+		        ((rand == 6) && g_bh1) ||
+		        ((rand == 7) && g_bf1) ||
+		        ((rand == 8) && g_bh5));
 	} while (test);
 
-	conv(cx, per);
-	affper(per);
+	int retVal = 0;
+	conv(rand, retVal);
+	affper(retVal);
+
+	return retVal;
 }
 
-void quelq20(int h, int &per) {
+/**
+ * Engine function - Check who is in the chapel
+ * @remarks	Originally called 'quelq20'
+ */
+int setPresenceChapel(int h) {
+	int retVal = 0;
+
 	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))
-		per = chlm();
+		retVal = chlm();
 	else {
 		int min = 0, max = 0;
 		if ((h > 9) && (h < 12)) {
@@ -873,9 +919,11 @@ void quelq20(int h, int &per) {
 			min = 2;
 			max = 4;
 		}
-		choix(min, max, per);
+		choix(min, max, retVal);
 	}
-	affper(per);
+	affper(retVal);
+
+	return retVal;
 }
 
 
@@ -1022,7 +1070,7 @@ void inzon() {
 	g_s._secretPassageObjectId = 0;
 	g_s._purpleRoomObjectId = 136;
 	g_s._cryptObjectId = 141;
-	g_s._conf  = getRandomNumber(4, 10);
+	g_s._faithScore = getRandomNumber(4, 10);
 	g_s._currPlace = MANOR_FRONT;
 
 	for (int cx = 2; cx <= 6; ++cx)
@@ -1072,7 +1120,7 @@ void pl1(int cf) {
 		if (rand > p)
 			person();
 		else
-			quelq1(g_li);
+			setPresenceGreenRoom(g_li);
 	}
 }
 
@@ -1085,7 +1133,7 @@ void pl2(int cf) {
 		if (rand > p)
 			person();
 		else
-			quelq2();
+			setPresencePurpleRoom();
 	}
 }
 
@@ -1098,7 +1146,7 @@ void pl5(int cf) {
 		if (rand > p)
 			person();
 		else
-			quelq5();
+			setPresenceBlueRoom();
 	}
 }
 
@@ -1111,7 +1159,7 @@ void pl6(int cf) {
 		if (rand > p)
 			person();
 		else
-			quelq6(g_li);
+			setPresenceRedRoom(g_li);
 	}
 }
 
@@ -1124,7 +1172,7 @@ void pl9(int cf) {
 		if (rand > p)
 			person();
 		else
-			quelq2();
+			setPresencePurpleRoom();
 	}
 }
 
@@ -1136,7 +1184,7 @@ void pl10(int cf) {
 	if (rand > p)
 		person();
 	else
-		quelq10(h, p);
+		p = setPresenceDiningRoom(h);
 }
 
 void pl11(int cf) {
@@ -1147,7 +1195,7 @@ void pl11(int cf) {
 	if (rand > p)
 		person();
 	else
-		quelq11(h, p);
+		p = setPresenceBureau(h);
 }
 
 void pl12(int cf) {
@@ -1158,7 +1206,7 @@ void pl12(int cf) {
 	if (rand > p)
 		person();
 	else
-		quelq12(p);
+		p = setPresenceKitchen();
 }
 
 void pl13(int cf) {
@@ -1169,7 +1217,7 @@ void pl13(int cf) {
 	if (rand > p)
 		person();
 	else
-		quelq12(p);
+		p = setPresenceKitchen();
 }
 
 void pl15(int cf) {
@@ -1180,7 +1228,7 @@ void pl15(int cf) {
 	if (rand > p)
 		person();
 	else
-		quelq15(p);
+		p = setPresenceLanding();
 }
 
 void pl20(int cf) {
@@ -1191,13 +1239,13 @@ void pl20(int cf) {
 	if (rand > p)
 		person();
 	else
-		quelq20(h, p);
+		p = setPresenceChapel(h);
 }
 
 void t11(int l11, int &a) {
 	int p, rand;
 
-	ecfren(p, rand, g_s._conf, l11);
+	ecfren(p, rand, g_s._faithScore, l11);
 	g_li = l11;
 	if ((l11 > 0) && (l11 < 10)) {
 		if (p != -500) {
@@ -1229,22 +1277,22 @@ void t11(int l11, int &a) {
 				cpl15(p);
 			if (l11 == 20)
 				cpl20(p, h);
-			p += g_s._conf;
+			p += g_s._faithScore;
 			rand = getRandomNumber(1, 100);
 			if (rand > p) {
 				person();
 				a = 0;
 			} else {
 				if (l11 == 10)
-					quelq10(h, p);
+					p = setPresenceDiningRoom(h);
 				if (l11 == 11)
-					quelq11(h, p);
+					p = setPresenceBureau(h);
 				if ((l11 == 12) || (l11 == 13) || (l11 == 14))
-					quelq12(p);
+					p = setPresenceKitchen();
 				if ((l11 == 15) || (l11 == 26))
-					quelq15(p);
+					p = setPresenceLanding();
 				if (l11 == 20)
-					quelq20(h, p);
+					p = setPresenceChapel(h);
 				a = p;
 			}
 		}
@@ -1252,9 +1300,9 @@ void t11(int l11, int &a) {
 }
 
 void cavegre() {
-	g_s._conf += 2;
-	if (g_s._conf > 69)
-		g_s._conf += (g_s._conf / 10);
+	g_s._faithScore += 2;
+	if (g_s._faithScore > 69)
+		g_s._faithScore += (g_s._faithScore / 10);
 	clsf3();
 	ecrf2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));

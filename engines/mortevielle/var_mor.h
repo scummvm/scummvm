@@ -161,7 +161,7 @@ enum places {
 };
 
 struct sav_chaine {
-	int _conf;
+	int _faithScore;
 	byte _pourc[11];
 	byte _teauto[43];
 	byte _sjer[31];
