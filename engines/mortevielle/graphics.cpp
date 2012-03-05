@@ -83,6 +83,8 @@ void PaletteManager::setDefaultPalette() {
 
 void GfxSurface::decode(const byte *pSrc) {
 	_width = _height = 0;
+	// If no transparency, use invalid (for EGA) palette index of 16. Otherwise get index to use
+	_transparency = (*pSrc == 0) ? 16 : *(pSrc + 2);
 	bool offsetFlag = *pSrc++ == 0;
 	int entryCount = *pSrc++;
 	pSrc += 2;
@@ -114,7 +116,7 @@ void GfxSurface::decode(const byte *pSrc) {
 
 	// Temporary output buffer
 	byte outputBuffer[65536];
-	Common::fill(&outputBuffer[0], &outputBuffer[65536], 0);
+	Common::fill(&outputBuffer[0], &outputBuffer[65536], _transparency);
 
 	byte *pDest = &outputBuffer[0];
 	const byte *pSrcStart = pSrc;
@@ -922,15 +924,20 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 		byte *pDest = (byte *)destSurface.getBasePtr(0, yp * 2);
 
 		for (int xp = 0; xp < surface.w; ++xp, ++pSrc) {
-			// Draw the pixel using the specified index in the palette map
-			*pDest = paletteMap[*pSrc * 2];
-			*(pDest + SCREEN_WIDTH) = paletteMap[*pSrc * 2];
-			++pDest;
+			if (*pSrc == surface._transparency) {
+				// Transparent point, so skip pixels
+				pDest += 2;
+			} else {
+				// Draw the pixel using the specified index in the palette map
+				*pDest = paletteMap[*pSrc * 2];
+				*(pDest + SCREEN_WIDTH) = paletteMap[*pSrc * 2];
+				++pDest;
 
-			// Use the secondary mapping value to draw the secondary column pixel
-			*pDest = paletteMap[*pSrc * 2 + 1];
-			*(pDest + SCREEN_WIDTH) = paletteMap[*pSrc * 2 + 1];
-			++pDest;
+				// Use the secondary mapping value to draw the secondary column pixel
+				*pDest = paletteMap[*pSrc * 2 + 1];
+				*(pDest + SCREEN_WIDTH) = paletteMap[*pSrc * 2 + 1];
+				++pDest;
+			}
 		}
 	}
 }
