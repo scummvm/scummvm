@@ -39,15 +39,16 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 
 #ifdef ENABLE_SFX_TYPE_SELECTION
 	// Check if the user wants synthesized or digital sound effects in SCI1.1
-	// or later games
-	_useDigitalSFX = ConfMan.getBool("multi_midi");
+	// games based on the multi_midi config setting
 
 	// In SCI2 and later games, this check should always be true - there was
 	// always only one version of each sound effect or digital music track
 	// (e.g. the menu music in GK1 - there is a sound effect with the same
 	// resource number, but it's totally unrelated to the menu music).
-	if (getSciVersion() >= SCI_VERSION_2)
-		_useDigitalSFX = true;
+	// The GK1 demo (very late SCI1.1) does the same thing
+	// TODO: Check the QFG4 demo
+
+	_useDigitalSFX = (getSciVersion() >= SCI_VERSION_2 || g_sci->getGameId() == GID_GK1 || ConfMan.getBool("multi_midi"));
 #else
 	// Always prefer digital sound effects
 	_useDigitalSFX = true;
@@ -93,9 +94,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 	// effects map)
 	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
 	// Hoyle 4 has garbled audio resources in place of the sound resources.
-	// The demo of GK1 has no alternate sound effects.
-	if ((g_sci->getGameId() == GID_HOYLE4) || 
-		(g_sci->getGameId() == GID_GK1 && g_sci->isDemo()))
+	if (g_sci->getGameId() == GID_HOYLE4)
 		checkAudioResource = false;
 
 	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
