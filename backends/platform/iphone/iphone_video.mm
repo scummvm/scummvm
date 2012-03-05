@@ -234,8 +234,6 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)dealloc {
-	[super dealloc];
-
 	if (_keyboardView != nil) {
 		[_keyboardView dealloc];
 	}
@@ -243,6 +241,8 @@ const char *iPhone_getDocumentsDir() {
 	_videoContext.screenTexture.free();
 	_videoContext.overlayTexture.free();
 	_videoContext.mouseTexture.free();
+
+	[super dealloc];
 }
 
 - (void)drawRect:(CGRect)frame {
