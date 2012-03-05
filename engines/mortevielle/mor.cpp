@@ -247,12 +247,7 @@ void clsf10() {
 	g_vm->_screenSurface.putxy(co, 92);
 	g_vm->_screenSurface.writeg(st, 4);
 
-	if (g_res == 1)
-		co = 620;
-	else
-		co = 584;
-
-	g_vm->_screenSurface.fillRect(15, Common::Rect(560, 24, co, 86));
+	g_vm->_screenSurface.fillRect(15, Common::Rect(560, 24, 610, 86));
 	/* rempli(69,12,32,5,255);*/
 	showMouse();
 }
@@ -412,49 +407,54 @@ void t5(int cx) {
 		g_bh9 = false;
 }
 
-void affper(int per) {
+/**
+ * Engine function - Show the people present in the given room 
+ * @remarks	Originally called 'affper'
+ */
+void showPeoplePresent(int per) {
 	int cx;
+	int xp = 580 - (g_vm->_screenSurface.getStringWidth("LEO") / 2);
 
 	for (cx = 1; cx <= 8; ++cx)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._discussMenu[cx]);
 	clsf10();
 	if ((per & 128) == 128) {
-		g_vm->_screenSurface.putxy(560, 24);
+		g_vm->_screenSurface.putxy(xp, 24);
 		g_vm->_screenSurface.writeg("LEO", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[1]);
 	}
 	if ((per & 64) == 64) {
-		g_vm->_screenSurface.putxy(560, 32);
+		g_vm->_screenSurface.putxy(xp, 32);
 		g_vm->_screenSurface.writeg("PAT", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[2]);
 	}
 	if ((per & 32) == 32) {
-		g_vm->_screenSurface.putxy(560, 40);
+		g_vm->_screenSurface.putxy(xp, 40);
 		g_vm->_screenSurface.writeg("GUY", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[3]);
 	}
 	if ((per & 16) == 16) {
-		g_vm->_screenSurface.putxy(560, 48);
+		g_vm->_screenSurface.putxy(xp, 48);
 		g_vm->_screenSurface.writeg("EVA", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[4]);
 	}
 	if ((per & 8) == 8) {
-		g_vm->_screenSurface.putxy(560, 56);
+		g_vm->_screenSurface.putxy(xp, 56);
 		g_vm->_screenSurface.writeg("BOB", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[5]);
 	}
 	if ((per & 4) == 4) {
-		g_vm->_screenSurface.putxy(560, 64);
+		g_vm->_screenSurface.putxy(xp, 64);
 		g_vm->_screenSurface.writeg("LUC", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[6]);
 	}
 	if ((per & 2) == 2) {
-		g_vm->_screenSurface.putxy(560, 72);
+		g_vm->_screenSurface.putxy(xp, 72);
 		g_vm->_screenSurface.writeg("IDA", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[7]);
 	}
 	if ((per & 1) == 1) {
-		g_vm->_screenSurface.putxy(560, 80);
+		g_vm->_screenSurface.putxy(xp, 80);
 		g_vm->_screenSurface.writeg("MAX", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[8]);
 	}
@@ -828,7 +828,7 @@ int setPresenceDiningRoom(int h) {
 		}
 		choix(min, max, retVal);
 	}
-	affper(retVal);
+	showPeoplePresent(retVal);
 
 	return retVal;
 }
@@ -856,7 +856,7 @@ int setPresenceBureau(int h) {
 		}
 		choix(min, max, retVal);
 	}
-	affper(retVal);
+	showPeoplePresent(retVal);
 
 	return retVal;
 }
@@ -867,7 +867,7 @@ int setPresenceBureau(int h) {
  */
 int setPresenceKitchen() {
 	int retVal = chlm();
-	affper(retVal);
+	showPeoplePresent(retVal);
 
 	return retVal;
 }
@@ -893,7 +893,7 @@ int setPresenceLanding() {
 
 	int retVal = 0;
 	conv(rand, retVal);
-	affper(retVal);
+	showPeoplePresent(retVal);
 
 	return retVal;
 }
@@ -921,7 +921,7 @@ int setPresenceChapel(int h) {
 		}
 		choix(min, max, retVal);
 	}
-	affper(retVal);
+	showPeoplePresent(retVal);
 
 	return retVal;
 }
@@ -965,7 +965,7 @@ void nouvp(int l, int &p) {
 		p = 9;
 
 	if (p != 9)
-		affper(p);
+		showPeoplePresent(p);
 }
 
 

@@ -709,7 +709,7 @@ void fctPlace() {
 						tinke();
 						drawClock();
 						if (g_ipers != 0)
-							affper(g_ipers);
+							showPeoplePresent(g_ipers);
 						else 
 							person();
 
@@ -1523,7 +1523,7 @@ void fctDiscuss() {
 	hirs();
 	dessine_rouleau();
 	showMouse();
-	affper(g_ipers);
+	showPeoplePresent(g_ipers);
 	tinke();
 	drawClock();
 	affrep();

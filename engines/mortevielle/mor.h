@@ -60,7 +60,7 @@ extern void conv(int x, int &y);
 extern void modobj(int m);
 extern void repon(int f, int m);
 extern void t5(int cx);
-extern void affper(int per);
+extern void showPeoplePresent(int per);
 extern void choix(int min, int max, int &per);
 extern void cpl1(int &p);
 extern void cpl2(int &p);
