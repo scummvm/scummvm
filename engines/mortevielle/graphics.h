@@ -67,6 +67,8 @@ private:
 public:
 	// Specifies offset when drawing the image
 	Common::Point _offset;
+	// Transparency palette index
+	int _transparency;
 public:
 	~GfxSurface();
 
