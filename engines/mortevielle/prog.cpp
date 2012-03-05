@@ -69,26 +69,17 @@ void changeGraphicalDevice(int newDevice) {
  * @remarks	Originally called 'antegame'
  */
 void MortevielleEngine::gameLoaded() {
-	int k;
-	char g[8];
-
 	hideMouse();
 	g_imen = false;
-	g[1] = 'M';
 	_loseGame = true;
 	g_anyone = false;
 	g_okdes = true;
-	g[0] = '\040';
 	g_col = false;
-	g[7] = g[0];
-	g[2] = 'A';
 	g_cache = false;
 	g_brt = false;
 	g_maff = 68;
-	g[5] = 'E';
 	g_mnumo = 0;
 	g_prebru = 0;
-	g[4] = 'T';
 	g_x = 0;
 	g_y = 0;
 	g_num = 0;
@@ -96,15 +87,12 @@ void MortevielleEngine::gameLoaded() {
 	g_hfb = 0;
 	g_cs = 0;
 	g_is = 0;
-	k = 0;
 	g_ment = 0;
 	g_syn = true;
 	g_heroSearching = true;
 	g_mchai = 0;
 	g_inei = 0;
 	initouv();
-	g[3] = 'S';
-	g[6] = 'R';
 	g_iouv = 0;
 	g_dobj = 0;
 	affrep();
