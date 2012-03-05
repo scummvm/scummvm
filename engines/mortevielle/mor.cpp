@@ -269,17 +269,21 @@ void paint_rect(int x, int y, int dx, int dy) {
 	g_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
 }
 
-void calch(int &j, int &h, int &m) {
-	int nh = readclock();
-	int th = g_jh + ((nh - g_mh) / g_t);
-	m = ((th % 2) + g_vm__) * 30;
-	h = ((uint)th >> 1) + g_vh;
-	if (m == 60) {
-		m = 0;
-		h = h + 1;
+/**
+ * Engine function - Update hour
+ * @remarks	Originally called 'calch'
+ */
+void updateHour(int &day, int &hour, int &minute) {
+	int newHour = readclock();
+	int th = g_jh + ((newHour - g_mh) / g_t);
+	minute = ((th % 2) + g_vm__) * 30;
+	hour = ((uint)th >> 1) + g_vh;
+	if (minute == 60) {
+		minute = 0;
+		++hour;
 	}
-	j = (h / 24) + g_vj;
-	h = h - ((j - g_vj) * 24);
+	day = (hour / 24) + g_vj;
+	hour = hour - ((day - g_vj) * 24);
 }
 
 void conv(int x, int &y) {
@@ -486,90 +490,106 @@ void choix(int min, int max, int &per) {
 		per = 255 - per;
 }
 
-void cpl1(int &p) {
-	int j, h, m;
+int cpl1() {
+	int day, hour, minute;
+	int retVal = 0;
 
-	calch(j, h, m);
+	updateHour(day, hour, minute);
 	// The original uses an || instead of an &&, resulting 
 	// in an always true condition. Based on the other tests, 
 	// and on other scenes, we use an && instead.
-	// if ((h > 7) || (h < 11))
-	if ((h > 7) && (h < 11))
-		p = 25;
-	else if ((h > 10) && (h < 14))
-		p = 35;
-	else if ((h > 13) && (h < 16))
-		p = 50;
-	else if ((h > 15) && (h < 18))
-		p = 5;
-	else if ((h > 17) && (h < 22))
-		p = 35;
-	else if ((h > 21) && (h < 24))
-		p = 50;
-	else if ((h >= 0) && (h < 8))
-		p = 70;
+	if ((hour > 7) && (hour < 11))
+		retVal = 25;
+	else if ((hour > 10) && (hour < 14))
+		retVal = 35;
+	else if ((hour > 13) && (hour < 16))
+		retVal = 50;
+	else if ((hour > 15) && (hour < 18))
+		retVal = 5;
+	else if ((hour > 17) && (hour < 22))
+		retVal = 35;
+	else if ((hour > 21) && (hour < 24))
+		retVal = 50;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = 70;
 
 	g_vm->_menu.mdn();
+
+	return retVal;
 }
 
-void cpl2(int &p) {
-	int j, h, m;
+int cpl2() {
+	int day, hour, minute;
+	int retVal = 0;
 
-	calch(j, h, m);
-	if ((h > 7) && (h < 11))
-		p = -2;
-	if (h == 11)
-		p = 100;
-	if ((h > 11) && (h < 23))
-		p = 10;
-	if (h == 23)
-		p = 20;
-	if ((h >= 0) && (h < 8))
-		p = 50;
+	updateHour(day, hour, minute);
+	if ((hour > 7) && (hour < 11))
+		retVal = -2;
+	else if (hour == 11)
+		retVal = 100;
+	else if ((hour > 11) && (hour < 23))
+		retVal = 10;
+	else if (hour == 23)
+		retVal = 20;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = 50;
+	
+	return retVal;
 }
 
-void cpl3(int &p) {
-	int j, h, m;
+int cpl3() {
+	int day, hour, minute;
+	int retVal = 0;
 
-	calch(j, h, m);
-	if (((h > 8) && (h < 10)) || ((h > 19) && (h < 24)))
-		p = 34;
-	if (((h > 9) && (h < 20)) || ((h >= 0) && (h < 9)))
-		p = 0;
+	updateHour(day, hour, minute);
+	if (((hour > 8) && (hour < 10)) || ((hour > 19) && (hour < 24)))
+		retVal = 34;
+	else if (((hour > 9) && (hour < 20)) || ((hour >= 0) && (hour < 9)))
+		retVal = 0;
+
+	return retVal;
 }
 
-void cpl5(int &p) {
-	int j, h, m;
+int cpl5() {
+	int day, hour, minute;
+	int retVal = 0;
 
-	calch(j, h, m);
-	if ((h > 6) && (h < 10))
-		p = 0;
-	if (h == 10)
-		p = 100;
-	if ((h > 10) && (h < 24))
-		p = 15;
-	if ((h >= 0) && (h < 7))
-		p = 50;
+	updateHour(day, hour, minute);
+	if ((hour > 6) && (hour < 10))
+		retVal = 0;
+	else if (hour == 10)
+		retVal = 100;
+	else if ((hour > 10) && (hour < 24))
+		retVal = 15;
+	else if ((hour >= 0) && (hour < 7))
+		retVal = 50;
+
+	return retVal;
 }
 
-void cpl6(int &p) {
-	int j, h, m;
+int cpl6() {
+	int day, hour, minute;
+	int retVal = 0;
 
-	calch(j, h, m);
-	if (((h > 7) && (h < 13)) || ((h > 17) && (h < 20)))
-		p = -2;
-	if (((h > 12) && (h < 17)) || ((h > 19) && (h < 24)))
-		p = 35;
-	if (h == 17)
-		p = 100;
-	if ((h >= 0) && (h < 8))
-		p = 60;
+	updateHour(day, hour, minute);
+	if (((hour > 7) && (hour < 13)) || ((hour > 17) && (hour < 20)))
+		retVal = -2;
+	else if (((hour > 12) && (hour < 17)) || ((hour > 19) && (hour < 24)))
+		retVal = 35;
+	else if (hour == 17)
+		retVal = 100;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = 60;
+
+	return retVal;
 }
 
 /**
- * Shows the you are alone message in the status area on the right hand side of the screen
+ * Shows the "you are alone" message in the status area
+ * on the right hand side of the screen
+ * @remarks	Originally called 'person'
  */
-void person() {
+void displayAloneText() {
 	for (int cf = 1; cf <= 8; ++cf)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._discussMenu[cf]);
 
@@ -660,89 +680,95 @@ void debloc(int l) {
 	g_mpers = g_ipers;
 }
 
-void cpl10(int &p, int &h) {
-	int j, m;
+void cpl10(int &p, int &hour) {
+	int day, minute;
 
-	calch(j, h, m);
-	if (((h > 7) && (h < 11)) || ((h > 11) && (h < 14)) || ((h > 18) && (h < 21)))
+	updateHour(day, hour, minute);
+	if (((hour > 7) && (hour < 11)) || ((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21)))
 		p = 100;
-	if ((h == 11) || ((h > 20) && (h < 24)))
+	else if ((hour == 11) || ((hour > 20) && (hour < 24)))
 		p = 45;
-	if (((h > 13) && (h < 17)) || (h == 18))
+	else if (((hour > 13) && (hour < 17)) || (hour == 18))
 		p = 35;
-	if (h == 17)
+	else if (hour == 17)
 		p = 60;
-	if ((h >= 0) && (h < 8))
+	else if ((hour >= 0) && (hour < 8))
 		p = 5;
 }
 
-void cpl11(int &p, int &h) {
-	int j, m;
+void cpl11(int &p, int &hour) {
+	int day, minute;
 
-	calch(j, h, m);
-	if (((h > 8) && (h < 12)) || ((h > 20) && (h < 24)))
+	updateHour(day, hour, minute);
+	if (((hour > 8) && (hour < 12)) || ((hour > 20) && (hour < 24)))
 		p = 25;
-	if (((h > 11) && (h < 14)) || ((h > 18) && (h < 21)))
+	else if (((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21)))
 		p = 5;
-	if ((h > 13) && (h < 17))
+	else if ((hour > 13) && (hour < 17))
 		p = 55;
-	if ((h > 16) && (h < 19))
+	else if ((hour > 16) && (hour < 19))
 		p = 45;
-	if ((h >= 0) && (h < 9))
+	else if ((hour >= 0) && (hour < 9))
 		p = 0;
 }
 
-void cpl12(int &p) {
-	int j, h, m;
+int cpl12() {
+	int day, hour, minute;
+	int retVal = 0;
 
-	calch(j, h, m);
-	if (((h > 8) && (h < 15)) || ((h > 16) && (h < 22)))
-		p = 55;
-	if (((h > 14) && (h < 17)) || ((h > 21) && (h < 24)))
-		p = 25;
-	if ((h >= 0) && (h < 5))
-		p = 0;
-	if ((h > 4) && (h < 9))
-		p = 15;
+	updateHour(day, hour, minute);
+	if (((hour > 8) && (hour < 15)) || ((hour > 16) && (hour < 22)))
+		retVal = 55;
+	else if (((hour > 14) && (hour < 17)) || ((hour > 21) && (hour < 24)))
+		retVal = 25;
+	else if ((hour >= 0) && (hour < 5))
+		retVal = 0;
+	else if ((hour > 4) && (hour < 9))
+		retVal = 15;
+
+	return retVal;
 }
 
-void cpl13(int &p) {
-	p = 0;
+int cpl13() {
+	return 0;
 }
 
-void cpl15(int &p) {
-	int j, h, m;
+int cpl15() {
+	int day, hour, minute;
+	int retVal = 0;
 
-	calch(j, h, m);
-	if ((h > 7) && (h < 12))
-		p = 25;
-	else if ((h > 11) && (h < 14))
-		p = 0;
-	else if ((h > 13) && (h < 18))
-		p = 10;
-	else if ((h > 17) && (h < 20))
-		p = 55;
-	else if ((h > 19) && (h < 22))
-		p = 5;
-	else if ((h > 21) && (h < 24))
-		p = 15;
-	else if ((h >= 0) && (h < 8))
-		p = -15;
+	updateHour(day, hour, minute);
+	if ((hour > 7) && (hour < 12))
+		retVal = 25;
+	else if ((hour > 11) && (hour < 14))
+		retVal = 0;
+	else if ((hour > 13) && (hour < 18))
+		retVal = 10;
+	else if ((hour > 17) && (hour < 20))
+		retVal = 55;
+	else if ((hour > 19) && (hour < 22))
+		retVal = 5;
+	else if ((hour > 21) && (hour < 24))
+		retVal = 15;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = -15;
+
+	return retVal;
 }
 
-void cpl20(int &p, int &h) {
-	int j, m;
+void cpl20(int &p, int &hour) {
+	int day, minute;
 
-	calch(j, h, m);
-	if (h == 10)
+	updateHour(day, hour, minute);
+	if (hour == 10)
 		p = 65;
-	else if ((h > 10) && (h < 21))
+	else if ((hour > 10) && (hour < 21))
 		p = 5;
-	else if ((h > 20) && (h < 24))
+	else if ((hour > 20) && (hour < 24))
 		p = -15;
-	else if ((h >= 0) && (h < 5))
+	else if ((hour >= 0) && (hour < 5))
 		p = -300;
-	else if ((h > 4) && (h < 10))
+	else if ((hour > 4) && (hour < 10))
 		p = -5;
 }
 
@@ -806,23 +832,23 @@ void setPresenceRedRoom(int l) {
  * Engine function - Check who is in the Dining Room
  * @remarks	Originally called 'quelq10'
  */
-int setPresenceDiningRoom(int h) {
+int setPresenceDiningRoom(int hour) {
 	int retVal = 0;
 
-	if ((h >= 0) && (h < 8))
+	if ((hour >= 0) && (hour < 8))
 		retVal = chlm();
 	else {
 		int min = 0, max = 0;
-		if ((h > 7) && (h < 10)) {
+		if ((hour > 7) && (hour < 10)) {
 			min = 5;
 			max = 7;
-		} else if ((h > 9) && (h < 12)) {
+		} else if ((hour > 9) && (hour < 12)) {
 			min = 1;
 			max = 4;
-		} else if (((h > 11) && (h < 15)) || ((h > 18) && (h < 21))) {
+		} else if (((hour > 11) && (hour < 15)) || ((hour > 18) && (hour < 21))) {
 			min = 6;
 			max = 8;
-		} else if (((h > 14) && (h < 19)) || ((h > 20) && (h < 24))) {
+		} else if (((hour > 14) && (hour < 19)) || ((hour > 20) && (hour < 24))) {
 			min = 1;
 			max = 5;
 		}
@@ -837,20 +863,20 @@ int setPresenceDiningRoom(int h) {
  * Engine function - Check who is in the Bureau
  * @remarks	Originally called 'quelq11'
  */
-int setPresenceBureau(int h) {
+int setPresenceBureau(int hour) {
 	int retVal = 0;
 
-	if ((h >= 0) && (h < 8))
+	if ((hour >= 0) && (hour < 8))
 		retVal = chlm();
 	else {
 		int min = 0, max = 0;
-		if (((h > 7) && (h < 10)) || ((h > 20) && (h < 24))) {
+		if (((hour > 7) && (hour < 10)) || ((hour > 20) && (hour < 24))) {
 			min = 1;
 			max = 3;
-		} else if (((h > 9) && (h < 12)) || ((h > 13) && (h < 19))) {
+		} else if (((hour > 9) && (hour < 12)) || ((hour > 13) && (hour < 19))) {
 			min = 1;
 			max = 4;
-		} else if (((h > 11) && (h < 14)) || ((h > 18) && (h < 21))) {
+		} else if (((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21))) {
 			min = 1;
 			max = 2;
 		}
@@ -902,20 +928,20 @@ int setPresenceLanding() {
  * Engine function - Check who is in the chapel
  * @remarks	Originally called 'quelq20'
  */
-int setPresenceChapel(int h) {
+int setPresenceChapel(int hour) {
 	int retVal = 0;
 
-	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))
+	if (((hour >= 0) && (hour < 10)) || ((hour > 18) && (hour < 24)))
 		retVal = chlm();
 	else {
 		int min = 0, max = 0;
-		if ((h > 9) && (h < 12)) {
+		if ((hour > 9) && (hour < 12)) {
 			min = 3;
 			max = 7;
-		} else if ((h > 11) && (h < 18)) {
+		} else if ((hour > 11) && (hour < 18)) {
 			min = 1;
 			max = 2;
-		} else if (h == 18) {
+		} else if (hour == 18) {
 			min = 2;
 			max = 4;
 		}
@@ -928,10 +954,10 @@ int setPresenceChapel(int h) {
 
 
 void frap() {
-	int j, h, m;
+	int day, hour, minute;
 
-	calch(j, h, m);
-	if ((h >= 0) && (h < 8))
+	updateHour(day, hour, minute);
+	if ((hour >= 0) && (hour < 8))
 		g_crep = 190;
 	else {
 		if (getRandomNumber(1, 100) > 70)
@@ -992,25 +1018,25 @@ void tip(int ip, int &cx) {
 
 void ecfren(int &p, int &rand, int cf, int l) {
 	if (l == 0)
-		person();
+		displayAloneText();
 	p = -500;
 	rand = 0;
 	if (((l == 1) && (!g_bh1) && (!g_bf1)) || ((l == 4) && (!g_bh4) && (!g_bf4)))
-		cpl1(p);
+		p = cpl1();
 	if ((l == 2) && (!g_bh2) && (!g_bh9))
-		cpl2(p);
+		p = cpl2();
 	if (((l == 3) && (!g_bt3)) || ((l == 7) && (!g_bt7)))
-		cpl3(p);
+		p = cpl3();
 	if ((l == 5) && (!g_bh5))
-		cpl5(p);
+		p = cpl5();
 	if (((l == 6) && (!g_bh6)) || ((l == 8) && (!g_bh8)))
-		cpl6(p);
+		p = cpl6();
 	if ((l == 9) && (!g_bh9) && (!g_bh2))
 		p = 10;
 	if (((l == 2) && (g_bh9)) || ((l == 9) && (g_bh2)))
 		p = -400;
 	if (p != -500) {
-		p = p + cf;
+		p += cf;
 		rand = getRandomNumber(1, 100);
 	}
 }
@@ -1113,12 +1139,12 @@ void dprog() {
 
 void pl1(int cf) {
 	if (((g_li == 1) && (!g_bh1) && (!g_bf1)) || ((g_li == 4) && (!g_bh4) && (!g_bf4))) {
-		int p, rand;
-		cpl1(p);
+		int p = cpl1();
+		int rand;
 		phaz(rand, p, cf);
 
 		if (rand > p)
-			person();
+			displayAloneText();
 		else
 			setPresenceGreenRoom(g_li);
 	}
@@ -1126,12 +1152,12 @@ void pl1(int cf) {
 
 void pl2(int cf) {
 	if (!g_bh2) {
-		int p, rand;
-		cpl2(p);
+		int p = cpl2();
+		int rand;
 		phaz(rand, p, cf);
 
 		if (rand > p)
-			person();
+			displayAloneText();
 		else
 			setPresencePurpleRoom();
 	}
@@ -1139,12 +1165,13 @@ void pl2(int cf) {
 
 void pl5(int cf) {
 	if (!g_bh5) {
-		int p, rand;
-		cpl5(p);
+		int p = cpl5();
+		int rand;
+
 		phaz(rand, p, cf);
 
 		if (rand > p)
-			person();
+			displayAloneText();
 		else
 			setPresenceBlueRoom();
 	}
@@ -1152,12 +1179,13 @@ void pl5(int cf) {
 
 void pl6(int cf) {
 	if (((g_li == 6) && (!g_bh6)) || ((g_li == 8) && (!g_bh8))) {
-		int p, rand;
-		cpl6(p);
+		int p = cpl6();
+		int rand;
+
 		phaz(rand, p, cf);
 
 		if (rand > p)
-			person();
+			displayAloneText();
 		else
 			setPresenceRedRoom(g_li);
 	}
@@ -1170,7 +1198,7 @@ void pl9(int cf) {
 		phaz(rand, p, cf);
 
 		if (rand > p)
-			person();
+			displayAloneText();
 		else
 			setPresencePurpleRoom();
 	}
@@ -1182,9 +1210,9 @@ void pl10(int cf) {
 	phaz(rand, p, cf);
 
 	if (rand > p)
-		person();
+		displayAloneText();
 	else
-		p = setPresenceDiningRoom(h);
+		setPresenceDiningRoom(h);
 }
 
 void pl11(int cf) {
@@ -1193,42 +1221,42 @@ void pl11(int cf) {
 	cpl11(p, h);
 	phaz(rand, p, cf);
 	if (rand > p)
-		person();
+		displayAloneText();
 	else
-		p = setPresenceBureau(h);
+		setPresenceBureau(h);
 }
 
 void pl12(int cf) {
 	int p, rand;
 
-	cpl12(p);
+	p = cpl12();
 	phaz(rand, p, cf);
 	if (rand > p)
-		person();
+		displayAloneText();
 	else
-		p = setPresenceKitchen();
+		setPresenceKitchen();
 }
 
 void pl13(int cf) {
 	int p, rand;
 
-	cpl13(p);
+	p = cpl13();
 	phaz(rand, p, cf);
 	if (rand > p)
-		person();
+		displayAloneText();
 	else
-		p = setPresenceKitchen();
+		setPresenceKitchen();
 }
 
 void pl15(int cf) {
 	int p, rand;
 
-	cpl15(p);
+	p = cpl15();
 	phaz(rand, p, cf);
 	if (rand > p)
-		person();
+		displayAloneText();
 	else
-		p = setPresenceLanding();
+		setPresenceLanding();
 }
 
 void pl20(int cf) {
@@ -1237,9 +1265,9 @@ void pl20(int cf) {
 	cpl20(p, h);
 	phaz(rand, p, cf);
 	if (rand > p)
-		person();
+		displayAloneText();
 	else
-		p = setPresenceChapel(h);
+		setPresenceChapel(h);
 }
 
 void t11(int l11, int &a) {
@@ -1250,7 +1278,7 @@ void t11(int l11, int &a) {
 	if ((l11 > 0) && (l11 < 10)) {
 		if (p != -500) {
 			if (rand > p) {
-				person();
+				displayAloneText();
 				a = 0;
 			} else {
 				becfren(g_li);
@@ -1262,36 +1290,36 @@ void t11(int l11, int &a) {
 
 	if (l11 > 9) {
 		if ((l11 > 15) && (l11 != 20) && (l11 != 26))
-			person();
+			displayAloneText();
 		else {
 			int h = 0;
 			if (l11 == 10)
 				cpl10(p, h);
-			if (l11 == 11)
+			else if (l11 == 11)
 				cpl11(p, h);
-			if (l11 == 12)
-				cpl12(p);
-			if ((l11 == 13) || (l11 == 14))
-				cpl13(p);
-			if ((l11 == 15) || (l11 == 26))
-				cpl15(p);
-			if (l11 == 20)
+			else if (l11 == 12)
+				p = cpl12();
+			else if ((l11 == 13) || (l11 == 14))
+				p = cpl13();
+			else if ((l11 == 15) || (l11 == 26))
+				p = cpl15();
+			else if (l11 == 20)
 				cpl20(p, h);
 			p += g_s._faithScore;
 			rand = getRandomNumber(1, 100);
 			if (rand > p) {
-				person();
+				displayAloneText();
 				a = 0;
 			} else {
 				if (l11 == 10)
 					p = setPresenceDiningRoom(h);
-				if (l11 == 11)
+				else if (l11 == 11)
 					p = setPresenceBureau(h);
-				if ((l11 == 12) || (l11 == 13) || (l11 == 14))
+				else if ((l11 == 12) || (l11 == 13) || (l11 == 14))
 					p = setPresenceKitchen();
-				if ((l11 == 15) || (l11 == 26))
+				else if ((l11 == 15) || (l11 == 26))
 					p = setPresenceLanding();
-				if (l11 == 20)
+				else if (l11 == 20)
 					p = setPresenceChapel(h);
 				a = p;
 			}
@@ -1313,7 +1341,7 @@ void cavegre() {
 	// It has been removed
 
 	clsf3();
-	person();
+	displayAloneText();
 }
 
 void writetp(Common::String s, int t) {
@@ -1329,8 +1357,7 @@ void aniof(int ouf, int num) {
 	
 	if ((g_caff == 10) && (num == 7))
 		num = 6;
-
-	if (g_caff == 12) {
+	else if (g_caff == 12) {
 		if (num == 3)
 			num = 4;
 		else if (num == 4)
@@ -1362,24 +1389,23 @@ void musique(int so) {
 				i = true;
 			}
 		}
-		if (g_s._currPlace == CHAPEL) {
+		else if (g_s._currPlace == CHAPEL) {
 			if (getRandomNumber(1, 2) == 1) {
 				parole(8, 1, 1);
 				i = true;
 			}
 		}
-
-		if (g_s._currPlace == WELL) {
+		else if (g_s._currPlace == WELL) {
 			if (getRandomNumber(1, 2) == 2) {
 				parole(12, 1, 1);
 				i = true;
 			}
 		}
-
-		if (g_s._currPlace == 23) {
+		else if (g_s._currPlace == 23) {
 			parole(13, 1, 1);
 			i = true;
 		}
+
 		if (!i)
 			parole(getRandomNumber(1, 17), 1, 2);
 	}
@@ -1412,14 +1438,11 @@ void dessin(int ad) {
 
 					if (g_s._atticRodHoleObjectId == 159)
 						aniof(1, 6);
-				}
-				if ((g_caff == 14) && (g_s._cellarObjectId == 151))
+				} else if ((g_caff == 14) && (g_s._cellarObjectId == 151))
 					aniof(1, 2);
-
-				if ((g_caff == 17) && (g_s._secretPassageObjectId == 143))
+				else if ((g_caff == 17) && (g_s._secretPassageObjectId == 143))
 					aniof(1, 1);
-
-				if ((g_caff == 24) && (g_s._wellObjectId != 0))
+				else if ((g_caff == 24) && (g_s._wellObjectId != 0))
 					aniof(1, 1);
 			}
 			

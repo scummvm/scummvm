@@ -46,13 +46,13 @@ void tinke() {
 	const char d4 = ']';
 	const char d5 = '1';
 	Common::String d6 = g_vm->getEngineString(S_OK);
-	int cx, cf, j, h, m;
+	int cx, cf, day, hour, minute;
 	Common::String stpo;
 
 	g_anyone = false;
-	calch(j, h, m);
-	if (j != g_day) {
-		g_day = j;
+	updateHour(day, hour, minute);
+	if (day != g_day) {
+		g_day = day;
 		cx = 0;
 		do {
 			++cx;
@@ -61,8 +61,8 @@ void tinke() {
 			g_nbrep[cx] = 0;
 		} while (cx != 8);
 	}
-	if ((h > g_hour) || ((h == 0) && (g_hour == 23))) {
-		g_hour = h;
+	if ((hour > g_hour) || ((hour == 0) && (g_hour == 23))) {
+		g_hour = hour;
 		g_minute = 0;
 		drawClock();
 		cf = 0;
@@ -89,7 +89,7 @@ void tinke() {
 		g_hintPctMessage += d6;
 		g_hintPctMessage += d4;
 	}
-	if (m > g_minute) {
+	if (minute > g_minute) {
 		g_minute = 30;
 		drawClock();
 	}
@@ -97,7 +97,7 @@ void tinke() {
 		return;
 
 	if (!g_blo) {
-		if ((h == 12) || ((h > 18) && (h < 21)) || ((h >= 0) && (h < 7)))
+		if ((hour == 12) || ((hour > 18) && (hour < 21)) || ((hour >= 0) && (hour < 7)))
 			g_t = ti2;
 		else
 			g_t = ti1;
@@ -484,10 +484,10 @@ void ajjer(int ob) {
 }
 
 void t1sama() {    //Entering manor
-	int j, h, m;
+	int day, hour, minute;
 
-	calch(j, h, m);
-	if ((h < 5) && (g_s._currPlace > 18)) {
+	updateHour(day, hour, minute);
+	if ((hour < 5) && (g_s._currPlace > 18)) {
 		bool d;
 		cherjer(137, d);
 		if (!d) {        //You don't have the keys, and it's late
@@ -515,11 +515,10 @@ void t1sama() {    //Entering manor
 		affrep();
 		t5(10);
 		if (!g_blo)
-			t11(0, m);
+			t11(0, minute);
 		g_ipers = 0;
 		g_mpers = 0;
 		g_s._ipre = true;
-		/*chech;*/
 	} else
 		st1sama();
 }
@@ -605,7 +604,7 @@ L1:
 			int rand = (getRandomNumber(0, 4)) - 2;
 			parole(3, rand, 1);
 			clsf2();
-			person();
+			displayAloneText();
 			debloc(21);
 			affrep();
 		}
