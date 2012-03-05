@@ -49,7 +49,7 @@ Common::String SavegameManager::generateSaveName(int slotNumber) {
  * Handle saving or loading savegame data
  */
 void SavegameManager::sync_save(Common::Serializer &sz) {
-	sz.syncAsSint16LE(g_s1._conf);
+	sz.syncAsSint16LE(g_s1._faithScore);
 	sz.syncBytes((byte *)&g_s1._pourc[0], 11);
 	sz.syncBytes((byte *)&g_s1._teauto[0], 43);
 	sz.syncBytes((byte *)&g_s1._sjer[0], 31);

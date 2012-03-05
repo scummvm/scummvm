@@ -164,7 +164,7 @@ void fctMove() {
 			g_crep = 997;
 		else if (g_s._wellObjectId == 120)
 			g_crep = 181;
-		else if (g_s._conf > 80) {
+		else if (g_s._faithScore > 80) {
 			g_crep = 1505;
 			tperd();
 		} else {
@@ -189,7 +189,7 @@ void fctTake() {
 		avpoing(cx);
 		if (g_crep != 139) {
 			if (g_ipers > 0)
-				g_s._conf += 3;
+				g_s._faithScore += 3;
 			if (g_obpart) {
 				if (g_s._currPlace == PURPLE_ROOM)
 					g_s._purpleRoomObjectId = 0;
@@ -215,7 +215,7 @@ void fctTake() {
 				tsuiv();
 				++g_dobj;
 				if (g_dobj > 6) {
-					g_s._conf += 2;
+					g_s._faithScore += 2;
 					g_dobj = 0;
 				}
 			}
@@ -239,7 +239,7 @@ void fctTake() {
 		tcoord(8);
 		if (g_num != 0) {
 			if (g_ipers > 0)
-				g_s._conf += 3;
+				g_s._faithScore += 3;
 			g_crep = 997;
 			if ((g_s._currPlace == PURPLE_ROOM) && (g_s._purpleRoomObjectId != 0))
 				avpoing(g_s._purpleRoomObjectId);
@@ -335,7 +335,7 @@ void fctLift() {
 		tcoord(8);
 		if (g_num != 0) {
 			if (g_ipers > 0)
-				++g_s._conf;
+				++g_s._faithScore;
 			g_crep = 997;
 			if ((g_s._currPlace == PURPLE_ROOM) && (g_s._purpleRoomObjectId != 0))
 				treg(g_s._purpleRoomObjectId);
@@ -343,7 +343,7 @@ void fctLift() {
 		return;
 	}
 	if (g_ipers > 0)
-		++g_s._conf;
+		++g_s._faithScore;
 	int tmpPlace = g_s._currPlace;
 	if (g_s._currPlace == CRYPT)
 		tmpPlace = 14;
@@ -510,7 +510,7 @@ void fctSearch() {
 				g_crep = 187;
 			else {
 				if (g_ipers > 0)
-					g_s._conf += 3;
+					g_s._faithScore += 3;
 
 				rechai(g_mchai);
 				if (g_mchai != 0) {
@@ -527,7 +527,7 @@ void fctSearch() {
 			g_crep = 997;
 			if (g_num != 0) {
 				if (g_ipers > 0)
-					g_s._conf += 3;
+					g_s._faithScore += 3;
 				if ((g_s._currPlace != WELL) && (g_s._currPlace != SECRET_PASSAGE) && (g_s._currPlace != ATTIC)) {
 					if (g_s._currPlace == PURPLE_ROOM) {
 						g_crep = 123;
@@ -544,7 +544,7 @@ void fctSearch() {
 		}
 	} else {
 		if (g_ipers > 0)
-			g_s._conf += 3;
+			g_s._faithScore += 3;
 		g_crep = 997;
 		if (g_s._currPlace < CELLAR)
 			g_crep = r[g_s._currPlace];
@@ -606,7 +606,7 @@ void fctOpen() {
 	tcoord(7);
 	if (g_num != 0) {
 		if (g_ipers > 0)
-			g_s._conf += 2;
+			g_s._faithScore += 2;
 		++g_iouv;
 		int tmpPlace = 0;
 		do {
@@ -930,7 +930,7 @@ void fctKnock() {
 		int rand = (getRandomNumber(0, 8)) - 4;
 		parole(11, rand, 1);
 		int p;
-		ecfren(p, rand, g_s._conf, g_ment);
+		ecfren(p, rand, g_s._faithScore, g_ment);
 		int l = g_ment;
 		if (l != 0) {
 			if (p != -500) {
@@ -1052,9 +1052,9 @@ void fctListen() {
 		g_crep = 101;
 	else {
 		if (g_ipers != 0)
-			++g_s._conf;
+			++g_s._faithScore;
 		int p, rand;
-		ecfren(p, rand, g_s._conf, g_ment);
+		ecfren(p, rand, g_s._faithScore, g_ment);
 		int l = g_ment;
 		if (l != 0) {
 			if (p != -500) {
@@ -1098,7 +1098,7 @@ void fctEat() {
 		int j, h, m;
 		calch(j, h, m);
 		if ((h == 12) || (h == 13) || (h == 19)) {
-			g_s._conf -= (g_s._conf / 7);
+			g_s._faithScore -= (g_s._faithScore / 7);
 			if (h == 12) {
 				if (m == 0)
 					h = 4;
@@ -1150,7 +1150,7 @@ void fctEnter() {
 				aniof(1, 1);
 				
 				tip(z, g_x);
-				++g_s._conf;
+				++g_s._faithScore;
 				g_s._currPlace = LANDING;
 				g_msg[3] = MENU_DISCUSS;
 				g_msg[4] = g_vm->_menu._discussMenu[g_x];
@@ -1209,7 +1209,7 @@ void fctSleep() {
 	int answer;
 	do {
 		if (h < 8) {
-			g_s._conf -= (g_s._conf / 20);
+			g_s._faithScore -= (g_s._faithScore / 20);
 			z = (7 - h) * 2;
 			if (m == 30)
 				--z;
@@ -1243,7 +1243,7 @@ void fctForce() {
 			g_crep = 997;
 		else {
 			g_crep = 143;
-			g_s._conf += 2;
+			g_s._faithScore += 2;
 		}
 	}
 }
@@ -1475,14 +1475,14 @@ void fctDiscuss() {
 					suj = 129;
 				else {
 					suj = 138;
-					g_s._conf += (3 * (g_s._conf / 10));
+					g_s._faithScore += (3 * (g_s._faithScore / 10));
 				}
 			} else if (g_nbrep[g_caff - 69] < g_nbrepm[g_caff - 69]) {
 				suj = g_tabdon[arep + (ix << 3) + (g_caff - 70)];
-				g_s._conf += g_tabdon[arcf + ix];
+				g_s._faithScore += g_tabdon[arcf + ix];
 				++g_nbrep[g_caff - 69];
 			} else {
-				g_s._conf += 3;
+				g_s._faithScore += 3;
 				suj = 139;
 			}
 			hideMouse();
@@ -1509,7 +1509,7 @@ void fctDiscuss() {
 		}
 	} while ((choi != 46) && (suj != 138));
 	if (g_col) {
-		g_s._conf += (3 * (g_s._conf / 10));
+		g_s._faithScore += (3 * (g_s._faithScore / 10));
 		hideMouse();
 		hirs();
 		premtet();
