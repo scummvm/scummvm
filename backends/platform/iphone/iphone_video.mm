@@ -28,17 +28,17 @@
 #include "graphics/colormasks.h"
 
 iPhoneView *g_iPhoneViewInstance = nil;
-static int _fullWidth;
-static int _fullHeight;
+static int g_fullWidth;
+static int g_fullHeight;
 
-static int _needsScreenUpdate = 0;
+static int g_needsScreenUpdate = 0;
 
-static UITouch *_firstTouch = NULL;
-static UITouch *_secondTouch = NULL;
+static UITouch *g_firstTouch = NULL;
+static UITouch *g_secondTouch = NULL;
 
 #if 0
-static long lastTick = 0;
-static int frames = 0;
+static long g_lastTick = 0;
+static int g_frames = 0;
 #endif
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
@@ -57,13 +57,13 @@ int printOglError(const char *file, int line) {
 }
 
 bool iPhone_isHighResDevice() {
-	return _fullHeight > 480;
+	return g_fullHeight > 480;
 }
 
 void iPhone_updateScreen() {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
-	if (!_needsScreenUpdate) {
-		_needsScreenUpdate = 1;
+	if (!g_needsScreenUpdate) {
+		g_needsScreenUpdate = 1;
 		[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
 	}
 }
@@ -142,7 +142,7 @@ const char *iPhone_getDocumentsDir() {
 		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 
 		// Retrieve the render buffer size. This *should* match the frame size,
-		// i.e. _fullWidth and _fullHeight.
+		// i.e. g_fullWidth and g_fullHeight.
 		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
 		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
 
@@ -185,8 +185,8 @@ const char *iPhone_getDocumentsDir() {
 		}
 	}
 
-	_fullWidth = (int)frame.size.width;
-	_fullHeight = (int)frame.size.height;
+	g_fullWidth = (int)frame.size.width;
+	g_fullHeight = (int)frame.size.height;
 
 	g_iPhoneViewInstance = self;
 
@@ -247,15 +247,15 @@ const char *iPhone_getDocumentsDir() {
 
 - (void)drawRect:(CGRect)frame {
 #if 0
-	if (lastTick == 0) {
-		lastTick = time(0);
+	if (g_lastTick == 0) {
+		g_lastTick = time(0);
 	}
 
-	frames++;
-	if (time(0) > lastTick) {
-		lastTick = time(0);
-		printf("FPS: %i\n", frames);
-		frames = 0;
+	g_frames++;
+	if (time(0) > g_lastTick) {
+		g_lastTick = time(0);
+		printf("FPS: %i\n", g_frames);
+		g_frames = 0;
 	}
 #endif
 }
@@ -289,10 +289,10 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)updateSurface {
-	if (!_needsScreenUpdate) {
+	if (!g_needsScreenUpdate) {
 		return;
 	}
-	_needsScreenUpdate = 0;
+	g_needsScreenUpdate = 0;
 
 	glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
 
@@ -685,7 +685,7 @@ const char *iPhone_getDocumentsDir() {
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
-		_firstTouch = touch;
+		g_firstTouch = touch;
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseDown], @"type",
@@ -703,7 +703,7 @@ const char *iPhone_getDocumentsDir() {
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
-		_secondTouch = touch;
+		g_secondTouch = touch;
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
@@ -722,7 +722,7 @@ const char *iPhone_getDocumentsDir() {
 	int x, y;
 
 	for (UITouch *touch in touches) {
-		if (touch == _firstTouch) {
+		if (touch == g_firstTouch) {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
@@ -735,7 +735,7 @@ const char *iPhone_getDocumentsDir() {
 			  nil
 			  ]
 			 ];
-		} else if (touch == _secondTouch) {
+		} else if (touch == g_secondTouch) {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
