@@ -220,9 +220,16 @@ void tkey1(bool d) {
 
 	hideMouse();
 	fenat('K');
+
+	// Wait for release from any key or mouse button
 	while (keypressed())
 		g_key = testou();
-
+	do {
+		getMousePos(x, y, c);
+		keypressed();
+	} while (c != 0);
+	
+	// Event loop
 	do {
 		if (d)
 			tinke();
