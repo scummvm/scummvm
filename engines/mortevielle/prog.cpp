@@ -53,7 +53,7 @@ void changeGraphicalDevice(int newDevice) {
 	tinke();
 	drawClock();
 	if (g_ipers != 0)
-		affper(g_ipers);
+		showPeoplePresent(g_ipers);
 	else
 		person();
 	clsf2();

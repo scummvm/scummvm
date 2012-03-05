@@ -490,7 +490,7 @@ void t1sama() {    //Entering manor
 			st1sama();
 	} else if (!g_s._ipre) {     //Is it your first time?
 		g_ipers = 255;
-		affper(g_ipers);
+		showPeoplePresent(g_ipers);
 		g_caff = 77;
 		afdes(0);
 		g_vm->_screenSurface.drawBox(223, 47, 155, 91, 15);
