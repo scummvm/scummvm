@@ -1,7 +1,11 @@
 MODULE := engines/wintermute
  
 MODULE_OBJS := \
+	BBase.o \
+	BParser.o \
 	detection.o \
+	SysClass.o \
+	SysInstance.o \
 	wintermute.o
  
 MODULE_DIRS += \
