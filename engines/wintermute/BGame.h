@@ -92,10 +92,10 @@ public:
 	virtual HRESULT MiniUpdate() {} // <- TODO Unstub
 #if 0
 	virtual HRESULT MiniUpdate();
-
+#endif
 	void GetMousePos(POINT *Pos);
 	RECT m_MouseLockRect;
-#endif
+
 	bool m_ShuttingDown;
 
 	virtual HRESULT DisplayDebugInfo();
@@ -318,9 +318,7 @@ public:
 	uint32 m_LiveTimerLast;
 
 	CBObject *m_CapturedObject;
-#if 0
 	POINT m_MousePos;
-#endif
 	bool ValidObject(CBObject *Object);
 	HRESULT UnregisterObject(CBObject *Object);
 	HRESULT RegisterObject(CBObject *Object);
@@ -332,7 +330,7 @@ public:
 	HRESULT UpdateMusicCrossfade();
 
 	CBArray<CBObject *, CBObject *> m_RegObjects;
-
+#endif
 public:
 	virtual HRESULT DisplayContent(bool Update = true, bool DisplayAll = false);
 	virtual HRESULT DisplayContentSimple();
@@ -340,6 +338,7 @@ public:
 	void ResetMousePos();
 	int m_SubtitlesSpeed;
 	void SetInteractive(bool State);
+#if 0
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
 	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name);
 #endif
@@ -357,11 +356,12 @@ public:
 	CBSaveThumbHelper *m_CachedThumbnail;
 #if 0
 	AnsiString GetDataDir();
-
+#endif
 	void AddMem(int bytes);
 
 	bool m_TouchInterface;
 	bool m_ConstrainedMemory;
+#if 0
 	AnsiString GetDeviceType() const;
 
 private:

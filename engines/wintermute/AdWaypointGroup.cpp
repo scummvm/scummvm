@@ -29,7 +29,7 @@
 #include "AdWaypointGroup.h"
 #include "BParser.h"
 #include "BDynBuffer.h"
-#include "ScValue.h"
+#include "engines/wintermute/scriptables/ScValue.h"
 #include "BGame.h"
 #include "BRegion.h"
 #include "BFileManager.h"

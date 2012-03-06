@@ -53,9 +53,9 @@
 #include "BSprite.h"
 #include "BViewport.h"
 #include "PlatformSDL.h"
-#include "ScStack.h"
-#include "ScValue.h"
-#include "ScScript.h"
+#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScScript.h"
 #include "UIWindow.h"
 #include "utils.h"
 #include <math.h>

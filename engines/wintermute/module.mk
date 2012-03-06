@@ -8,6 +8,30 @@ MODULE_OBJS := \
 	scriptables/SXDate.o \
 	scriptables/SXMath.o \
 	scriptables/SXMemBuffer.o \
+	AdActor.o \
+	AdActorDir.o \
+	AdInventory.o \
+	AdInventoryBox.o \
+	AdItem.o \
+	AdLayer.o \
+	AdNodeState.o \
+	AdObject.o \
+	AdPath.o \
+	AdPathPoint.o \
+	AdRegion.o \
+	AdResponse.o \
+	AdResponseBox.o \
+	AdRotLevel.o \
+	AdScaleLevel.o \
+	AdScene.o \
+	AdSceneNode.o \
+	AdSceneState.o \
+	AdSentence.o \
+	AdSpriteSet.o \
+	AdTalkDef.o \
+	AdTalkHolder.o \
+	AdTalkNode.o \
+	AdWaypointGroup.o \
 	BActiveRect.o \
 	BDebugger.o \
 	BDynBuffer.o \

@@ -26,17 +26,17 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 #include "dcgf.h"
+#include "AdGame.h"
 #include "AdInventoryBox.h"
 #include "AdInventory.h"
+#include "AdItem.h"
+#include "BGame.h"
 #include "BParser.h"
+#include "BFileManager.h"
+#include "BViewport.h"
+#include "BDynBuffer.h"
 #include "UIButton.h"
 #include "UIWindow.h"
-#include "BDynBuffer.h"
-#include "BGame.h"
-#include "AdGame.h"
-#include "AdItem.h"
-#include "BViewport.h"
-#include "BFileManager.h"
 #include "PlatformSDL.h"
 #include "common/str.h"
 #include <cmath>

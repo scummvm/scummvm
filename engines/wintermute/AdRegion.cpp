@@ -30,8 +30,8 @@
 #include "AdRegion.h"
 #include "BParser.h"
 #include "BDynBuffer.h"
-#include "ScValue.h"
-#include "ScScript.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScScript.h"
 #include "BGame.h"
 #include "BFileManager.h"
 

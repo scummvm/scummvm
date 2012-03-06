@@ -32,6 +32,7 @@
 #include "BDynBuffer.h"
 #include "BGame.h"
 #include "BFileManager.h"
+
 namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CAdSpriteSet, false)
