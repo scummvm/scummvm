@@ -26,49 +26,30 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTHOLDER_H
-#define WINTERMUTE_BSCRIPTHOLDER_H
+#ifndef WINTERMUTE_ADTALKHOLDER_H
+#define WINTERMUTE_ADTALKHOLDER_H
 
-#include "coll_templ.h"
-#include "persistent.h"
-#include "BScriptable.h"
+#include "AdObject.h"
 
 namespace WinterMute {
 
-class CBScriptHolder : public CBScriptable {
+class CAdTalkHolder : public CAdObject {
 public:
-	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
-
-	CBScriptHolder(CBGame *inGame);
-	virtual ~CBScriptHolder();
-	virtual CScScript *InvokeMethodThread(char *MethodName);
-	virtual void MakeFreezable(bool Freezable);
-	bool CanHandleEvent(char *EventName);
-	virtual bool CanHandleMethod(char *EventMethod);
-	HRESULT Cleanup();
-	HRESULT RemoveScript(CScScript *Script);
-	HRESULT AddScript(char *Filename);
+	DECLARE_PERSISTENT(CAdTalkHolder, CAdObject)
+	virtual CBSprite *GetTalkStance(char *Stance);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
-	void SetFilename(char *Filename);
-	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-	char *m_Filename;
-	bool m_Freezable;
-	bool m_Ready;
+	CBSprite *m_Sprite;
+	CBArray<CBSprite *, CBSprite *> m_TalkSprites;
+	CBArray<CBSprite *, CBSprite *> m_TalkSpritesEx;
+	CAdTalkHolder(CBGame *inGame);
+	virtual ~CAdTalkHolder();
 
-	CBArray<CScScript *, CScScript *> m_Scripts;
-#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
-	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-#endif
-	// IWmeObject
-public:
-	virtual bool SendEvent(const char *EventName);
+
 };
 
 } // end of namespace WinterMute

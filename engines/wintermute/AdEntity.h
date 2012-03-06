@@ -26,49 +26,40 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTHOLDER_H
-#define WINTERMUTE_BSCRIPTHOLDER_H
+#ifndef WINTERMUTE_ADENTITY_H
+#define WINTERMUTE_ADENTITY_H
 
-#include "coll_templ.h"
-#include "persistent.h"
-#include "BScriptable.h"
+#include "AdTalkHolder.h"
 
 namespace WinterMute {
 
-class CBScriptHolder : public CBScriptable {
+class CAdEntity : public CAdTalkHolder {
 public:
-	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
-
-	CBScriptHolder(CBGame *inGame);
-	virtual ~CBScriptHolder();
-	virtual CScScript *InvokeMethodThread(char *MethodName);
-	virtual void MakeFreezable(bool Freezable);
-	bool CanHandleEvent(char *EventName);
-	virtual bool CanHandleMethod(char *EventMethod);
-	HRESULT Cleanup();
-	HRESULT RemoveScript(CScScript *Script);
-	HRESULT AddScript(char *Filename);
+	HRESULT SetSprite(char *Filename);
+	int m_WalkToX;
+	int m_WalkToY;
+	TDirection m_WalkToDir;
+	void SetItem(char *ItemName);
+	char *m_Item;
+	DECLARE_PERSISTENT(CAdEntity, CAdTalkHolder)
+	void UpdatePosition();
+	virtual int GetHeight();
+	CBRegion *m_Region;
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
-	void SetFilename(char *Filename);
-	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-	char *m_Filename;
-	bool m_Freezable;
-	bool m_Ready;
+	virtual HRESULT Update();
+	virtual HRESULT Display();
+	CAdEntity(CBGame *inGame);
+	virtual ~CAdEntity();
+	HRESULT LoadFile(char *Filename);
+	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	TEntityType m_Subtype;
 
-	CBArray<CScScript *, CScScript *> m_Scripts;
-#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
-	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-#endif
-	// IWmeObject
-public:
-	virtual bool SendEvent(const char *EventName);
+
 };
 
 } // end of namespace WinterMute

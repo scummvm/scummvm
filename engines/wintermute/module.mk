@@ -42,6 +42,10 @@ MODULE_OBJS := \
 	StringUtil.o \
 	SysClass.o \
 	SysInstance.o \
+	UIButton.o \
+	UIEntity.o \
+	UIObject.o \
+	UITiledImage.o \
 	utils.o \
 	wintermute.o
  

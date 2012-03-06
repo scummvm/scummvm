@@ -26,49 +26,44 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTHOLDER_H
-#define WINTERMUTE_BSCRIPTHOLDER_H
+#ifndef WINTERMUTE_UIEDIT_H
+#define WINTERMUTE_UIEDIT_H
 
-#include "coll_templ.h"
 #include "persistent.h"
-#include "BScriptable.h"
+#include "UIObject.h"
 
 namespace WinterMute {
-
-class CBScriptHolder : public CBScriptable {
+class CBFont;
+class CUIEdit : public CUIObject {
 public:
-	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
+	DECLARE_PERSISTENT(CUIEdit, CUIObject)
+	int m_MaxLength;
+	int InsertChars(int Pos, byte *Chars, int Num);
+	int DeleteChars(int Start, int End);
+	bool m_CursorVisible;
+	uint32 m_LastBlinkTime;
+	virtual HRESULT Display(int OffsetX, int OffsetY);
+	virtual bool HandleKeypress(SDL_Event *event);
+	int m_ScrollOffset;
+	int m_FrameWidth;
+	uint32 m_CursorBlinkRate;
+	void SetCursorChar(char *Char);
+	char *m_CursorChar;
+	int m_SelEnd;
+	int m_SelStart;
+	CBFont *m_FontSelected;
+	CUIEdit(CBGame *inGame);
+	virtual ~CUIEdit();
 
-	CBScriptHolder(CBGame *inGame);
-	virtual ~CBScriptHolder();
-	virtual CScScript *InvokeMethodThread(char *MethodName);
-	virtual void MakeFreezable(bool Freezable);
-	bool CanHandleEvent(char *EventName);
-	virtual bool CanHandleMethod(char *EventMethod);
-	HRESULT Cleanup();
-	HRESULT RemoveScript(CScScript *Script);
-	HRESULT AddScript(char *Filename);
+	HRESULT LoadFile(char *Filename);
+	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
-	void SetFilename(char *Filename);
-	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-	char *m_Filename;
-	bool m_Freezable;
-	bool m_Ready;
 
-	CBArray<CScScript *, CScScript *> m_Scripts;
-#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
-	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-#endif
-	// IWmeObject
-public:
-	virtual bool SendEvent(const char *EventName);
 };
 
 } // end of namespace WinterMute

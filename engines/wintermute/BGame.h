@@ -170,10 +170,8 @@ public:
 #endif
 	uint32 m_CurrentTime;
 	uint32 m_DeltaTime;
-#if 0
 	CBFont *m_SystemFont;
 	CBFont *m_VideoFont;
-#endif 
 	HRESULT Initialize1();
 	HRESULT Initialize2();
 	HRESULT Initialize3();
@@ -265,10 +263,12 @@ public:
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
 #if 0
 	virtual bool HandleKeypress(SDL_Event *event);
+#endif
 	int m_FreezeLevel;
 	HRESULT Unfreeze();
 	HRESULT Freeze(bool IncludingMusic = true);
 	HRESULT FocusWindow(CUIWindow *Window);
+
 	bool m_LoadInProgress;
 	CUIWindow *m_FocusedWindow;
 	bool m_EditorForceScripts;
@@ -278,6 +278,7 @@ public:
 	static void AfterLoadFont(void *Font, void *Data);
 	static void AfterLoadScript(void *script, void *data);
 	static void InvalidateValues(void *Value, void *Data);
+#if 0
 	HRESULT LoadSettings(char *Filename);
 	HRESULT ResumeMusic(int Channel);
 	HRESULT SetMusicStartTime(int Channel, uint32 Time);
@@ -315,13 +316,14 @@ public:
 	uint32 m_LiveTimer;
 	uint32 m_LiveTimerDelta;
 	uint32 m_LiveTimerLast;
-#if 0
+
 	CBObject *m_CapturedObject;
+#if 0
 	POINT m_MousePos;
+#endif
 	bool ValidObject(CBObject *Object);
 	HRESULT UnregisterObject(CBObject *Object);
 	HRESULT RegisterObject(CBObject *Object);
-#endif
 	void QuickMessage(char *Text);
 #if 0
 	void QuickMessageForm(LPSTR fmt, ...);

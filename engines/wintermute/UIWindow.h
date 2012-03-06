@@ -26,49 +26,65 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTHOLDER_H
-#define WINTERMUTE_BSCRIPTHOLDER_H
+#ifndef WINTERMUTE_UIWINDOW_H
+#define WINTERMUTE_UIWINDOW_H
 
-#include "coll_templ.h"
-#include "persistent.h"
-#include "BScriptable.h"
+
+#include "UIObject.h"
 
 namespace WinterMute {
 
-class CBScriptHolder : public CBScriptable {
+class CUIButton;
+class CBViewport;
+class CUIWindow : public CUIObject {
 public:
-	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
+	HRESULT GetWindowObjects(CBArray<CUIObject *, CUIObject *>& Objects, bool InteractiveOnly);
 
-	CBScriptHolder(CBGame *inGame);
-	virtual ~CBScriptHolder();
-	virtual CScScript *InvokeMethodThread(char *MethodName);
+	bool m_PauseMusic;
+	void Cleanup();
 	virtual void MakeFreezable(bool Freezable);
-	bool CanHandleEvent(char *EventName);
-	virtual bool CanHandleMethod(char *EventMethod);
-	HRESULT Cleanup();
-	HRESULT RemoveScript(CScScript *Script);
-	HRESULT AddScript(char *Filename);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	CBViewport *m_Viewport;
+	bool m_ClipContents;
+	bool m_InGame;
+	bool m_IsMenu;
+	bool m_FadeBackground;
+	uint32 m_FadeColor;
+	virtual bool HandleMouseWheel(int Delta);
+	CUIWindow *m_ShieldWindow;
+	CUIButton *m_ShieldButton;
+	HRESULT Close();
+	HRESULT GoSystemExclusive();
+	HRESULT GoExclusive();
+	TWindowMode m_Mode;
+	HRESULT MoveFocus(bool Forward = true);
+	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
+	POINT m_DragFrom;
+	bool m_Dragging;
+	DECLARE_PERSISTENT(CUIWindow, CUIObject)
+	bool m_Transparent;
+	HRESULT ShowWidget(char *Name, bool Visible = true);
+	HRESULT EnableWidget(char *Name, bool Enable = true);
+	RECT m_TitleRect;
+	RECT m_DragRect;
+	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
+	CUIWindow(CBGame *inGame);
+	virtual ~CUIWindow();
+	virtual bool HandleKeypress(SDL_Event *event);
+	CBArray<CUIObject *, CUIObject *> m_Widgets;
+	TTextAlign m_TitleAlign;
+	HRESULT LoadFile(char *Filename);
+	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	CUITiledImage *m_BackInactive;
+	CBFont *m_FontInactive;
+	CBSprite *m_ImageInactive;
 	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
-	void SetFilename(char *Filename);
-	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-	char *m_Filename;
-	bool m_Freezable;
-	bool m_Ready;
+	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 
-	CBArray<CScScript *, CScScript *> m_Scripts;
-#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
-	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-#endif
-	// IWmeObject
-public:
-	virtual bool SendEvent(const char *EventName);
 };
 
 } // end of namespace WinterMute

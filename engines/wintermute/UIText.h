@@ -26,49 +26,32 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTHOLDER_H
-#define WINTERMUTE_BSCRIPTHOLDER_H
+#ifndef WINTERMUTE_UITEXT_H
+#define WINTERMUTE_UITEXT_H
 
-#include "coll_templ.h"
-#include "persistent.h"
-#include "BScriptable.h"
+
+#include "UIObject.h"
 
 namespace WinterMute {
 
-class CBScriptHolder : public CBScriptable {
+class CUIText : public CUIObject {
 public:
-	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
-
-	CBScriptHolder(CBGame *inGame);
-	virtual ~CBScriptHolder();
-	virtual CScScript *InvokeMethodThread(char *MethodName);
-	virtual void MakeFreezable(bool Freezable);
-	bool CanHandleEvent(char *EventName);
-	virtual bool CanHandleMethod(char *EventMethod);
-	HRESULT Cleanup();
-	HRESULT RemoveScript(CScScript *Script);
-	HRESULT AddScript(char *Filename);
+	HRESULT SizeToFit();
+	virtual HRESULT Display(int OffsetX, int OffsetY);
+	DECLARE_PERSISTENT(CUIText, CUIObject)
+	CUIText(CBGame *inGame = NULL);
+	virtual ~CUIText();
+	TTextAlign m_TextAlign;
+	TVerticalAlign m_VerticalAlign;
+	HRESULT LoadFile(char *Filename);
+	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
-	void SetFilename(char *Filename);
-	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-	char *m_Filename;
-	bool m_Freezable;
-	bool m_Ready;
 
-	CBArray<CScScript *, CScScript *> m_Scripts;
-#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
-	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-#endif
-	// IWmeObject
-public:
-	virtual bool SendEvent(const char *EventName);
 };
 
 } // end of namespace WinterMute
