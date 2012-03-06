@@ -1,8 +1,17 @@
 MODULE := engines/wintermute
  
 MODULE_OBJS := \
+	scriptables/ScScript.o \
+	scriptables/ScStack.o \
+	scriptables/ScValue.o \
+	scriptables/SXArray.o \
+	scriptables/SXDate.o \
+	scriptables/SXMath.o \
+	scriptables/SXMemBuffer.o \
 	BBase.o \
+	BNamedObject.o \
 	BParser.o \
+	BScriptable.o \
 	detection.o \
 	SysClass.o \
 	SysInstance.o \

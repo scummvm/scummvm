@@ -1,0 +1,188 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME Lite.
+ * http://dead-code.org/redir.php?target=wmelite
+ * Copyright (c) 2011 Jan Nedoma
+ */
+
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/BScriptable.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/BPersistMgr.h"
+
+namespace WinterMute {
+
+IMPLEMENT_PERSISTENT(CBScriptable, false)
+
+//////////////////////////////////////////////////////////////////////////
+CBScriptable::CBScriptable(CBGame *inGame, bool NoValue, bool Persistable): CBNamedObject(inGame) {
+	m_RefCount = 0;
+
+	if (NoValue) m_ScValue = NULL;
+	else m_ScValue = new CScValue(Game);
+
+	m_Persistable = Persistable;
+
+	m_ScProp = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+CBScriptable::~CBScriptable() {
+	//if(m_RefCount>0) Game->LOG(0, "Warning: Destroying object, m_RefCount=%d", m_RefCount);
+	delete m_ScValue;
+	delete m_ScProp;
+	m_ScValue = NULL;
+	m_ScProp = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// high level scripting interface
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBScriptable::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+	/*
+	Stack->CorrectParams(0);
+	Stack->PushNULL();
+	Script->RuntimeError("Call to undefined method '%s'.", Name);
+
+	return S_OK;
+	*/
+	return E_FAIL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+CScValue *CBScriptable::ScGetProperty(char *Name) {
+	if (!m_ScProp) m_ScProp = new CScValue(Game);
+	if (m_ScProp) return m_ScProp->GetProp(Name);
+	else return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBScriptable::ScSetProperty(char *Name, CScValue *Value) {
+	if (!m_ScProp) m_ScProp = new CScValue(Game);
+	if (m_ScProp) return m_ScProp->SetProp(Name, Value);
+	else return E_FAIL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+char *CBScriptable::ScToString() {
+	return "[native object]";
+}
+
+//////////////////////////////////////////////////////////////////////////
+void *CBScriptable::ScToMemBuffer() {
+	return (void *)NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+int CBScriptable::ScToInt() {
+	return 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+double CBScriptable::ScToFloat() {
+	return 0.0f;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptable::ScToBool() {
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void CBScriptable::ScSetString(const char *Val) {
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void CBScriptable::ScSetInt(int Val) {
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void CBScriptable::ScSetFloat(double Val) {
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void CBScriptable::ScSetBool(bool Val) {
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBScriptable::Persist(CBPersistMgr *PersistMgr) {
+	PersistMgr->Transfer(TMEMBER(Game));
+	PersistMgr->Transfer(TMEMBER(m_RefCount));
+	PersistMgr->Transfer(TMEMBER(m_ScProp));
+	PersistMgr->Transfer(TMEMBER(m_ScValue));
+
+	return S_OK;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+int CBScriptable::ScCompare(CBScriptable *Val) {
+	if (this < Val) return -1;
+	else if (this > Val) return 1;
+	else return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CBScriptable::ScDebuggerDesc(char *Buf, int BufSize) {
+	strcpy(Buf, ScToString());
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptable::CanHandleMethod(char *EventMethod) {
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+CScScript *CBScriptable::InvokeMethodThread(char *MethodName) {
+	return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// IWmeDebugObject
+//////////////////////////////////////////////////////////////////////////
+const char *CBScriptable::DbgGetNativeClass() {
+	return GetClassName();
+}
+
+//////////////////////////////////////////////////////////////////////////
+IWmeDebugProp *CBScriptable::DbgGetProperty(const char *Name) {
+	return ScGetProperty((char *)Name);
+}
+
+} // end of namespace WinterMute

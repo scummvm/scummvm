@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_BGAME_H
 #define WINTERMUTE_BGAME_H
 
-//#include "BDebugger.h"
+#include "BDebugger.h"
 //#include "BSaveThumbHelper.h"
 //#include "BFader.h"
 //#include "BRenderer.h"
@@ -43,6 +43,7 @@ namespace WinterMute {
 typedef void (*ENGINE_LOG_CALLBACK)(char *Text, HRESULT Result, void *Data);
 
 class CBSoundMgr;
+class CBFader;
 class CBFont;
 class CBFileManager;
 class CBTransitionMgr;
@@ -171,8 +172,8 @@ public:
 	HRESULT Initialize3();
 	CBFileManager *m_FileManager;
 	CBTransitionMgr *m_TransMgr;
-	CBDebugger *GetDebugMgr();
 #endif //TODO: STUB
+	CBDebugger *GetDebugMgr();
 	void LOG(HRESULT res, LPCSTR fmt, ...) {}
 #if 0
 	CBRenderer *m_Renderer;
@@ -195,6 +196,7 @@ public:
 	CBArray<CBQuickMsg *, CBQuickMsg *> m_QuickMessages;
 	CBArray<CUIWindow *, CUIWindow *> m_Windows;
 	CBArray<CBViewport *, CBViewport *> m_ViewportStack;
+#endif
 	int m_ViewportSP;
 	bool m_MouseLeftDown;
 	bool m_MouseRightDown;
@@ -214,13 +216,13 @@ public:
 	char *m_SettingsGameFile;
 	CBFader *m_Fader;
 	bool m_SuppressScriptErrors;
-
+#if 0
 	virtual HRESULT InvalidateDeviceObjects();
 	virtual HRESULT RestoreDeviceObjects();
-
+#endif
 	virtual void PublishNatives();
 	virtual HRESULT ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
-
+#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
@@ -289,6 +291,7 @@ public:
 	virtual HRESULT LoadGame(char *Filename);
 	virtual HRESULT SaveGame(int slot, char *desc, bool quickSave = false);
 	virtual HRESULT ShowCursor();
+#endif
 	CBSprite *m_CursorNoninteractive;
 	CBObject *m_ActiveObject;
 	CBKeyboardState *m_KeyboardState;
@@ -303,13 +306,15 @@ public:
 	uint32 m_LiveTimer;
 	uint32 m_LiveTimerDelta;
 	uint32 m_LiveTimerLast;
-
+#if 0
 	CBObject *m_CapturedObject;
 	POINT m_MousePos;
 	bool ValidObject(CBObject *Object);
 	HRESULT UnregisterObject(CBObject *Object);
 	HRESULT RegisterObject(CBObject *Object);
+#endif
 	void QuickMessage(char *Text);
+#if 0
 	void QuickMessageForm(LPSTR fmt, ...);
 	HRESULT DisplayQuickMsg();
 	uint32 m_Fps;

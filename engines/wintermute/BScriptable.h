@@ -26,50 +26,53 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTHOLDER_H
-#define WINTERMUTE_BSCRIPTHOLDER_H
+#ifndef WINTERMUTE_BSCRIPTABLE_H
+#define WINTERMUTE_BSCRIPTABLE_H
 
-#include "coll_templ.h"
-#include "persistent.h"
-#include "BScriptable.h"
+
+#include "engines/wintermute/BNamedObject.h"
+#include "engines/wintermute/wme_debugger.h"
+#include "engines/wintermute/persistent.h"
 
 namespace WinterMute {
 
-class CBScriptHolder : public CBScriptable {
+class CScValue;
+class CScStack;
+class CScScript;
+
+class CBScriptable : public CBNamedObject, public IWmeDebugObject {
 public:
-	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
-#if 0
-	CBScriptHolder(CBGame *inGame);
-	virtual ~CBScriptHolder();
-
 	virtual CScScript *InvokeMethodThread(char *MethodName);
-	virtual void MakeFreezable(bool Freezable);
-	bool CanHandleEvent(char *EventName);
+	DECLARE_PERSISTENT(CBScriptable, CBNamedObject)
+
+	CBScriptable(CBGame *inGame, bool NoValue = false, bool Persistable = true);
+	virtual ~CBScriptable();
+
+	// high level scripting interface
 	virtual bool CanHandleMethod(char *EventMethod);
-	HRESULT Cleanup();
-	HRESULT RemoveScript(CScScript *Script);
-	HRESULT AddScript(char *Filename);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
-	void SetFilename(char *Filename);
-	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-
-	char *m_Filename;
-	bool m_Freezable;
-	bool m_Ready;
-	CBArray<CScScript *, CScScript *> m_Scripts;
-
-	// scripting interface
-	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
+	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
+	virtual void *ScToMemBuffer();
+	virtual int ScToInt();
+	virtual double ScToFloat();
+	virtual bool ScToBool();
+	virtual void ScSetString(const char *Val);
+	virtual void ScSetInt(int Val);
+	virtual void ScSetFloat(double Val);
+	virtual void ScSetBool(bool Val);
+	virtual int ScCompare(CBScriptable *Val);
 	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-#endif
-	// IWmeObject
+	int m_RefCount;
+	CScValue *m_ScValue;
+	CScValue *m_ScProp;
+
 public:
-	virtual bool SendEvent(const char *EventName);
+	// IWmeDebugObject
+	const char *DbgGetNativeClass();
+	IWmeDebugProp *DbgGetProperty(const char *Name);
+
 };
 
 } // end of namespace WinterMute
