@@ -26,46 +26,31 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_UTILS_H
-#define WINTERMUTE_UTILS_H
+#ifndef WINTERMUTE_BPATHUTILS_H
+#define WINTERMUTE_BPATHUTILS_H
 
-#include "wintypes.h"
+#include "PlatformSDL.h"
 
 namespace WinterMute {
 
-class CBGame;
-
-class CBUtils {
+class PathUtil {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
+	static AnsiString UnifySeparators(const AnsiString &path);
+	static AnsiString NormalizeFileName(const AnsiString &path);
+	static AnsiString Combine(const AnsiString &path1, const AnsiString &path2);
+	static AnsiString GetDirectoryName(const AnsiString &path);
+	static AnsiString GetFileName(const AnsiString &path);
+	static AnsiString GetFileNameWithoutExtension(const AnsiString &path);
+	static AnsiString GetExtension(const AnsiString &path);
+	static bool CreateDirectory(const AnsiString &path);
+	static bool MatchesMask(const AnsiString &fileName, const AnsiString &mask);
 
-	static void CreatePath(const char *Path, bool PathOnly = false);
+	static bool FileExists(const AnsiString &fileName);
 
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
-
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
-
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
-
-	static bool MatchesPattern(const char *pattern, const char *string);
-
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
-
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
-	static uint32 HSLtoRGB(byte  H, byte S, byte L);
-
-private:
-	static float Hue2RGB(float v1, float v2, float vH);
+	static AnsiString GetSafeLogFileName();
+	static AnsiString GetUserDirectory();
 };
 
 } // end of namespace WinterMute
 
-#endif
+#endif // __WmePathUtils_H__

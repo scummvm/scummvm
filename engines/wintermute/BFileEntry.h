@@ -26,44 +26,30 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_UTILS_H
-#define WINTERMUTE_UTILS_H
+#ifndef WINTERMUTE_BFILEENTRY_H
+#define WINTERMUTE_BFILEENTRY_H
 
-#include "wintypes.h"
+
+#include "BBase.h"
 
 namespace WinterMute {
 
-class CBGame;
+class CBPackage;
 
-class CBUtils {
+class CBFileEntry : public CBBase {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
+	uint32 m_TimeDate2;
+	uint32 m_TimeDate1;
+	uint32 m_Flags;
+	uint32 m_JournalTime;
+	std::string m_Filename;
+	uint32 m_CompressedLength;
+	uint32 m_Length;
+	uint32 m_Offset;
+	CBPackage *m_Package;
+	CBFileEntry(CBGame *inGame);
+	virtual ~CBFileEntry();
 
-	static void CreatePath(const char *Path, bool PathOnly = false);
-
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
-
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
-
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
-
-	static bool MatchesPattern(const char *pattern, const char *string);
-
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
-
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
-	static uint32 HSLtoRGB(byte  H, byte S, byte L);
-
-private:
-	static float Hue2RGB(float v1, float v2, float vH);
 };
 
 } // end of namespace WinterMute

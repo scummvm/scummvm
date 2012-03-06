@@ -24,7 +24,6 @@
  * This file is based on WME Lite.
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
- 
  */
 
 #ifndef WINTERMUTE_PERSISTENT_H

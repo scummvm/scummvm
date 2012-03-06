@@ -26,44 +26,34 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_UTILS_H
-#define WINTERMUTE_UTILS_H
+#ifndef WINTERMUTE_BFONT_H
+#define WINTERMUTE_BFONT_H
 
-#include "wintypes.h"
+#include "BObject.h"
+
+#define NUM_CHARACTERS 256
 
 namespace WinterMute {
 
-class CBGame;
-
-class CBUtils {
+class CBFont: public CBObject {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
+	DECLARE_PERSISTENT(CBFont, CBObject)
+	virtual int GetTextWidth(byte  *text, int MaxLenght = -1);
+	virtual int GetTextHeight(byte  *text, int width);
+	virtual void DrawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int MaxLenght = -1);
+	virtual int GetLetterHeight();
 
-	static void CreatePath(const char *Path, bool PathOnly = false);
+	virtual void InitLoop() {};
 
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
+	CBFont(CBGame *inGame);
+	virtual ~CBFont();
 
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
-
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
-
-	static bool MatchesPattern(const char *pattern, const char *string);
-
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
-
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
-	static uint32 HSLtoRGB(byte  H, byte S, byte L);
+	static CBFont *CreateFromFile(CBGame *Game, char *Filename);
 
 private:
-	static float Hue2RGB(float v1, float v2, float vH);
+	//HRESULT LoadBuffer(byte * Buffer);
+	//HRESULT LoadFile(char* Filename);
+	static bool IsTrueType(CBGame *Game, char *Filename);
 };
 
 } // end of namespace WinterMute

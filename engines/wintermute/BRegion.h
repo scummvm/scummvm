@@ -26,44 +26,41 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_UTILS_H
-#define WINTERMUTE_UTILS_H
+#ifndef WINTERMUTE_BREGION_H
+#define WINTERMUTE_BREGION_H
 
-#include "wintypes.h"
+#include "BPoint.h"
+#include "BObject.h"
 
 namespace WinterMute {
 
-class CBGame;
-
-class CBUtils {
+class CBRegion : public CBObject {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
+	float m_LastMimicScale;
+	int m_LastMimicX;
+	int m_LastMimicY;
+	void Cleanup();
+	HRESULT Mimic(CBRegion *Region, float Scale = 100.0f, int X = 0, int Y = 0);
+	HRESULT GetBoundingRect(RECT *Rect);
+	bool PtInPolygon(int X, int Y);
+	DECLARE_PERSISTENT(CBRegion, CBObject)
+	bool m_Active;
+	int m_EditorSelectedPoint;
+	CBRegion(CBGame *inGame);
+	virtual ~CBRegion();
+	bool PointInRegion(int X, int Y);
+	bool CreateRegion();
+	HRESULT LoadFile(char *Filename);
+	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	RECT m_Rect;
+	CBArray<CBPoint *, CBPoint *> m_Points;
+	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent, char *NameOverride = NULL);
 
-	static void CreatePath(const char *Path, bool PathOnly = false);
-
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
-
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
-
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
-
-	static bool MatchesPattern(const char *pattern, const char *string);
-
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
-
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
-	static uint32 HSLtoRGB(byte  H, byte S, byte L);
-
-private:
-	static float Hue2RGB(float v1, float v2, float vH);
+	// scripting interface
+	virtual CScValue *ScGetProperty(char *Name);
+	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
+	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
+	virtual char *ScToString();
 };
 
 } // end of namespace WinterMute

@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	BNamedObject.o \
 	BParser.o \
 	BScriptable.o \
+	BViewport.o \
 	detection.o \
 	SysClass.o \
 	SysInstance.o \

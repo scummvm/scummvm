@@ -25,45 +25,24 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
+#ifndef WINTERMUTE_BSAVETHUMBHELPER_H
+#define WINTERMUTE_BSAVETHUMBHELPER_H
 
-#ifndef WINTERMUTE_UTILS_H
-#define WINTERMUTE_UTILS_H
 
-#include "wintypes.h"
+#include "BBase.h"
 
 namespace WinterMute {
 
-class CBGame;
+class CBImage;
 
-class CBUtils {
+class CBSaveThumbHelper : public CBBase {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
+	CBSaveThumbHelper(CBGame *inGame);
+	virtual ~CBSaveThumbHelper(void);
+	HRESULT StoreThumbnail(bool DoFlip = false);
 
-	static void CreatePath(const char *Path, bool PathOnly = false);
-
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
-
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
-
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
-
-	static bool MatchesPattern(const char *pattern, const char *string);
-
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
-
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
-	static uint32 HSLtoRGB(byte  H, byte S, byte L);
-
-private:
-	static float Hue2RGB(float v1, float v2, float vH);
+	CBImage *m_Thumbnail;
+	CBImage *m_RichThumbnail;
 };
 
 } // end of namespace WinterMute

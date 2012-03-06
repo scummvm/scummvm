@@ -26,44 +26,32 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_UTILS_H
-#define WINTERMUTE_UTILS_H
+#ifndef WINTERMUTE_BACTIVERECT_H
+#define WINTERMUTE_BACTIVERECT_H
 
-#include "wintypes.h"
+#include "BBase.h"
 
 namespace WinterMute {
-
-class CBGame;
-
-class CBUtils {
+class CBRegion;
+class CBSubFrame;
+class CBObject;
+class CBActiveRect: CBBase {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
+	void ClipRect();
+	bool m_Precise;
+	float m_ZoomX;
+	float m_ZoomY;
+	CBSubFrame *m_Frame;
+	CBObject *m_Owner;
+	CBRegion *m_Region;
+	int m_OffsetX;
+	int m_OffsetY;
+	RECT m_Rect;
+	CBActiveRect(CBGame *inGameOwner = NULL);
+	CBActiveRect(CBGame *inGameOwner, CBObject *Owner, CBSubFrame *Frame, int X, int Y, int Width, int Height, float ZoomX = 100, float ZoomY = 100, bool Precise = true);
+	CBActiveRect(CBGame *inGame, CBObject *Owner, CBRegion *Region, int OffsetX, int OffsetY);
+	virtual ~CBActiveRect();
 
-	static void CreatePath(const char *Path, bool PathOnly = false);
-
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
-
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
-
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
-
-	static bool MatchesPattern(const char *pattern, const char *string);
-
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
-
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
-	static uint32 HSLtoRGB(byte  H, byte S, byte L);
-
-private:
-	static float Hue2RGB(float v1, float v2, float vH);
 };
 
 } // end of namespace WinterMute

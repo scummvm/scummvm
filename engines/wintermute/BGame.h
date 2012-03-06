@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BGAME_H
 #define WINTERMUTE_BGAME_H
 
-#include "BDebugger.h"
+#include "engines/wintermute/BDebugger.h"
 //#include "BSaveThumbHelper.h"
 //#include "BFader.h"
-//#include "BRenderer.h"
+#include "engines/wintermute/BRenderer.h"
 //#include "BSurfaceStorage.h"
 #include "engines/wintermute/BObject.h"
 #include "engines/wintermute/persistent.h"
@@ -53,7 +53,9 @@ class CBStringTable;
 class CBQuickMsg;
 class CUIWindow;
 class CBViewport;
+class CBRenderer;
 class CBRegistry;
+class CBSurfaceStorage;
 class CSXStore;
 class CSXMath;
 class CBKeyboardState;
@@ -63,7 +65,7 @@ class CBKeyboardState;
 class CBGame: public CBObject {
 public:
 	DECLARE_PERSISTENT(CBGame, CBObject)
-#if 0
+
 	virtual HRESULT OnScriptShutdown(CScScript *Script);
 
 	virtual HRESULT OnActivate(bool Activate, bool RefreshMouse);
@@ -80,7 +82,7 @@ public:
 
 	bool IsLeftDoubleClick();
 	bool IsRightDoubleClick();
-#endif
+
 	bool m_AutorunDisabled;
 
 	uint32 m_LastMiniUpdate;
@@ -175,7 +177,7 @@ public:
 #endif //TODO: STUB
 	CBDebugger *GetDebugMgr();
 	void LOG(HRESULT res, LPCSTR fmt, ...) {}
-#if 0
+
 	CBRenderer *m_Renderer;
 	CBSoundMgr *m_SoundMgr;
 	CScEngine *m_ScEngine;
@@ -184,6 +186,7 @@ public:
 	CBSurfaceStorage *m_SurfaceStorage;
 	CBFontStorage *m_FontStorage;
 	CBGame();
+#if 0
 	virtual ~CBGame();
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *Filename = NULL);
@@ -216,19 +219,17 @@ public:
 	char *m_SettingsGameFile;
 	CBFader *m_Fader;
 	bool m_SuppressScriptErrors;
-#if 0
+
 	virtual HRESULT InvalidateDeviceObjects();
 	virtual HRESULT RestoreDeviceObjects();
-#endif
+
 	virtual void PublishNatives();
 	virtual HRESULT ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
-#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
-
 	// compatibility bits
 	bool m_CompatKillMethodThreads;
 
@@ -248,6 +249,7 @@ public:
 	int m_ScheduledLoadSlot;
 	bool m_Loading;
 	bool m_PersonalizedSave;
+#if 0
 	HRESULT EmptySaveSlot(int Slot);
 	bool IsSaveSlotUsed(int Slot);
 	HRESULT GetSaveSlotDescription(int Slot, char *Buffer);

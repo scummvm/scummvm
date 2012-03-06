@@ -26,44 +26,23 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_UTILS_H
-#define WINTERMUTE_UTILS_H
+#ifndef WINTERMUTE_BRESOURCEFILE_H
+#define WINTERMUTE_BRESOURCEFILE_H
 
-#include "wintypes.h"
+#include "BFile.h"
 
 namespace WinterMute {
 
-class CBGame;
-
-class CBUtils {
+class CBResourceFile : public CBFile {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
-
-	static void CreatePath(const char *Path, bool PathOnly = false);
-
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
-
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
-
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
-
-	static bool MatchesPattern(const char *pattern, const char *string);
-
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
-
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
-	static uint32 HSLtoRGB(byte  H, byte S, byte L);
-
+	CBResourceFile(CBGame *inGame);
+	virtual ~CBResourceFile();
+	virtual HRESULT Seek(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
+	virtual HRESULT Read(void *Buffer, uint32 Size);
+	virtual HRESULT Close();
+	virtual HRESULT Open(Common::String Filename);
 private:
-	static float Hue2RGB(float v1, float v2, float vH);
+	byte *m_Data;
 };
 
 } // end of namespace WinterMute
