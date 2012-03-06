@@ -54,22 +54,6 @@ void Head::setMaxAngles(float maxPitch, float maxYaw, float maxRoll) {
 	_maxYaw = maxYaw;
 }
 
-void setCol(Math::Matrix4 &m, int col, const Math::Vector3d &vec)
-{
-	m.setValue(0, col, vec.x());
-	m.setValue(1, col, vec.y());
-	m.setValue(2, col, vec.z());
-	m.setValue(3, col, col == 3 ? 1.f : 0.f);
-}
-
-void setRow(Math::Matrix4 &m, int row, const Math::Vector3d &vec)
-{
-	m.setValue(row, 0, vec.x());
-	m.setValue(row, 1, vec.y());
-	m.setValue(row, 2, vec.z());
-	m.setValue(row, 3, row == 3 ? 1.f : 0.f);
-}
-
 /** 
  * Generates a lookat matrix with position at origin. For reference, see 
  * http://clb.demon.fi/MathGeoLib/docs/float3x3_LookAt.php 
@@ -84,58 +68,23 @@ Math::Matrix4 lookAtMatrix(const Math::Vector3d &localForward, const Math::Vecto
 	Math::Vector3d perpWorldUp = Math::Vector3d::crossProduct(targetDirection, worldRight);
 	perpWorldUp.normalize();
 	
-	Math::Matrix4 m1;
-	setCol(m1, 0, worldRight);
-	setCol(m1, 1, perpWorldUp);
-	setCol(m1, 2, targetDirection);
-	setCol(m1, 3, Math::Vector3d(0,0,0));
+	Math::Matrix3 m1;
+	m1.getRow(0) << worldRight.x() << worldRight.y() << worldRight.z();
+	m1.getRow(1) << perpWorldUp.x() << perpWorldUp.y() << perpWorldUp.z();
+	m1.getRow(2) << targetDirection.x() << targetDirection.y() << targetDirection.z();
+	m1.transpose();
 	
-	Math::Matrix4 m2;
-	setRow(m2, 0, localRight);
-	setRow(m2, 1, localUp);
-	setRow(m2, 2, localForward);
-	setRow(m2, 3, Math::Vector3d(0,0,0));
+	Math::Matrix3 m2;
+	m2.getRow(0) << localRight.x() << localRight.y() << localRight.z();
+	m2.getRow(1) << localUp.x() << localUp.y() << localUp.z();
+	m2.getRow(2) << localForward.x() << localForward.y() << localForward.z();
 	
-	return m1 * m2;
+	Math::Matrix4 m3;
+	m3.setToIdentity();
+	m3.setRotation(m1 * m2);
+	
+	return m3;
 }
-
-/** 
- * Decomposes the matrix M to form M = R_z * R_x * R_y (R_D being the cardinal rotation 
- * matrix about the axis +D), and outputs the angles of rotation in parameters Z, X and Y.
- * In the convention of the coordinate system used in Grim Fandango characters:
- *	+Z is the yaw rotation (up axis)
- *	+X is the pitch rotation (right axis)
- *	+Y is the roll rotation (forward axis)
- * This function was adapted from http://www.geometrictools.com/Documentation/EulerAngles.pdf
- * The matrix M must be orthonormal. 
- */
-void extractEulerZXY(const Math::Matrix4 &m, Math::Angle &Z, Math::Angle &X, Math::Angle &Y) {
-	float x,y,z;
-	if (m.getValue(2, 1) < 1.f) {
-		if (m.getValue(2, 1) > -1.f) {
-			x = asin(m.getValue(2, 1));
-			z = atan2(-m.getValue(0, 1), m.getValue(1, 1));
-			y = atan2(-m.getValue(2, 0), m.getValue(2, 2));
-		}
-		else {
-			// Not a unique solution. Pick an arbitrary one.
-			x = -3.141592654f/2.f;
-			z = -atan2(-m.getValue(0, 2), m.getValue(0, 0));
-			y = 0;
-		}
-	}
-	else {
-		// Not a unique solution. Pick an arbitrary one.
-		x = 3.141592654f/2.f;
-		z = atan2(m.getValue(0, 2), m.getValue(0, 0));
-		y = 0;
-	}
-	X = Math::Angle::fromRadians(x);
-	Y = Math::Angle::fromRadians(y);
-	Z = Math::Angle::fromRadians(z);
-}
-
-
 
 	
 void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix, const Common::String &fname) {
@@ -197,10 +146,10 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// orientation.
 		Math::Matrix4 lookAtTM;
 		const Math::Vector3d worldUp(0,0,1); // The Residual scene convention: +Z is world space up.
-		if (Math::Vector3d::dotProduct(v, Math::Vector3d(0,0,1)) >= 0.98f) // Avoid singularity if trying to look straight up.
+		if (Math::Vector3d::dotProduct(v, worldUp) >= 0.98f) // Avoid singularity if trying to look straight up.
 			lookAtTM = lookAtMatrix(localFront, v, localUp, -frontDir); // Instead of orienting head towards scene up, orient head towards character "back",
 		                                                                // i.e. when you look straight up, your head up vector tilts/arches to point straight backwards.
-		else if (Math::Vector3d::dotProduct(v, Math::Vector3d(0,0,1)) <= -0.98f) // Avoid singularity if trying to look straight down.
+		else if (Math::Vector3d::dotProduct(v, worldUp) <= -0.98f) // Avoid singularity if trying to look straight down.
 			lookAtTM = lookAtMatrix(localFront, v, localUp, frontDir); // Instead of orienting head towards scene down, orient head towards character "front",
 																	   // i.e. when you look straight down, your head up vector tilts/arches to point straight forwards.
 		else
@@ -229,7 +178,7 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// Decompose to yaw-pitch-roll (+Z, +X, +Y).
 		// In this space, Yaw is +Z. Pitch is +X. Roll is +Y.
 		Math::Angle y, pt, r;
-		extractEulerZXY(lookAtTM, y, pt, r);
+		lookAtTM.getPitchYawRoll(&pt, &y, &r);
 		
 		// Constrain the maximum head movement, as desired by the game LUA scripts.
 		y.clampDegrees(_maxYaw);
@@ -283,7 +232,7 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// be deleted, and this function can simply output the contents of pt, y and r variables above. 
 		lookAtTM = animFrame * lookAtTM;
 		
-		extractEulerZXY(lookAtTM, y, pt, r);
+		lookAtTM.getPitchYawRoll(&pt, &y, &r);
 		_joint3Node->_animYaw = y;
 		_joint3Node->_animPitch = pt;
 		_joint3Node->_animRoll = r;
