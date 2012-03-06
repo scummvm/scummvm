@@ -446,10 +446,10 @@ void GrimEngine::luaUpdate() {
 		}
 
 		_iris->update(_frameTime);
-	}
 
-	foreach (TextObject *t, TextObject::getPool()) {
-		t->update();
+		foreach (TextObject *t, TextObject::getPool()) {
+			t->update();
+		}
 	}
 }
 
@@ -664,6 +664,9 @@ void GrimEngine::mainLoop() {
 				if (type == Common::EVENT_KEYDOWN) {
 					if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
 						handleExit();
+						break;
+					} else if (_mode != DrawMode && (event.kbd.keycode == Common::KEYCODE_PAUSE)) {
+						handlePause();
 						break;
 					} else {
 						handleChars(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
