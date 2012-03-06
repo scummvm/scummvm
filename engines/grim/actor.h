@@ -426,6 +426,7 @@ public:
 		_constrain = constrain;
 	}
 	void update(uint frameTime);
+	void updateTalk();
 	void draw();
 
 	bool isLookAtVectorZero() {

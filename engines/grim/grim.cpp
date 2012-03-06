@@ -444,6 +444,9 @@ void GrimEngine::luaUpdate() {
 			// when he needs to perform certain chores
 			a->update(_frameTime);
 		}
+		foreach (Actor *a, _talkingActors) {
+			a->updateTalk();
+		}
 
 		_iris->update(_frameTime);
 

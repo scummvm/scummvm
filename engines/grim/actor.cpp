@@ -1187,23 +1187,6 @@ void Actor::update(uint frameTime) {
 		}
 	}
 
-	if (_talking) {
-		if (_backgroundTalk && !_isTalkingBackground) {
-			g_grim->removeTalkingActor(this);
-		}
-
-		// If there's no sound file then we're obviously not talking
-		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
-		TextObject *textObject = NULL;
-		if (_sayLineText)
-			textObject = TextObject::getPool().getObject(_sayLineText);
-		if ((m == GrimEngine::TextOnly && !textObject) ||
-			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str())))) {
-
-			shutUp();
-		}
-	}
-
 	frameTime = (uint)(frameTime * _timeScale);
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
@@ -1222,6 +1205,27 @@ void Actor::update(uint frameTime) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->moveHead(_lookingMode, _lookAtVector);
+	}
+}
+
+// Not all the talking actors are in the current set, and so on not all the talking actors
+// update() is called. For example, Don when he comes out of his office after reaping Meche.
+void Actor::updateTalk() {
+	if (_talking) {
+		if (_backgroundTalk && !_isTalkingBackground) {
+			g_grim->removeTalkingActor(this);
+		}
+
+		// If there's no sound file then we're obviously not talking
+		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
+		TextObject *textObject = NULL;
+		if (_sayLineText)
+			textObject = TextObject::getPool().getObject(_sayLineText);
+		if ((m == GrimEngine::TextOnly && !textObject) ||
+			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str())))) {
+
+			shutUp();
+		}
 	}
 }
 
