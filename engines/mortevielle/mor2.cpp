@@ -586,8 +586,7 @@ L1:
 			g_s._faithScore += 3 * (g_s._faithScore / 10);
 		tsort();
 		tmlieu(15);
-		int cx;
-		tip(g_ipers, cx);
+		int cx = convertBitIndexToCharacterIndex(g_ipers);
 		g_caff = 69 + cx;
 		g_crep = g_caff;
 		g_msg[3] = MENU_DISCUSS;

@@ -1067,26 +1067,27 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 
 	switch (c) {
 	case 1:
-	case 3  : {
+	case 3: {
 		cecr = 0;
 		g_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
-	}
-	break;
-	case 4 : {
+		}
+		break;
+	case 4:
 		cecr = 0;
-	}
-	break;
-	case 5 : {
+		break;
+	case 5:
 		cecr = 15;
-	}
-	break;
+		break;
 	case 0:
-	case 2 : {
+	case 2: {
 		cecr = 15;
 		g_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
+		}
+		break;
+	default:
+		break;
 	}
-	break;
-	}
+
 	pt.x += 1;
 	pt.y += 1;
 	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
