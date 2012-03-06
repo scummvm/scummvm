@@ -938,10 +938,10 @@ void fctKnock() {
 					g_crep = 190;
 				else {
 					becfren(l);
-					frap();
+					getKnockAnswer();
 				}
 			} else
-				frap();
+				getKnockAnswer();
 		}
 
 		if (g_ment == 8)

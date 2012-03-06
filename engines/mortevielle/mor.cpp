@@ -489,7 +489,11 @@ int selectCharacters(int min, int max) {
 	return retVal;
 }
 
-int cpl1() {
+/**
+ * Engine function - Get Presence Statistics - Green Room
+ * @remarks	Originally called 'cpl1'
+ */
+int getPresenceStatsGreenRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -516,8 +520,11 @@ int cpl1() {
 
 	return retVal;
 }
-
-int cpl2() {
+/**
+ * Engine function - Get Presence Statistics - Purple Room
+ * @remarks	Originally called 'cpl2'
+ */
+int getPresenceStatsPurpleRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -536,7 +543,11 @@ int cpl2() {
 	return retVal;
 }
 
-int cpl3() {
+/**
+ * Engine function - Get Presence Statistics - Toilets
+ * @remarks	Originally called 'cpl3'
+ */
+int getPresenceStatsToilets() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -549,7 +560,11 @@ int cpl3() {
 	return retVal;
 }
 
-int cpl5() {
+/**
+ * Engine function - Get Presence Statistics - Blue Room
+ * @remarks	Originally called 'cpl5'
+ */
+int getPresenceStatsBlueRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -566,7 +581,11 @@ int cpl5() {
 	return retVal;
 }
 
-int cpl6() {
+/**
+ * Engine function - Get Presence Statistics - Red Room
+ * @remarks	Originally called 'cpl6'
+ */
+int getPresenceStatsRedRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -679,39 +698,57 @@ void debloc(int l) {
 	g_mpers = g_ipers;
 }
 
-void cpl10(int &p, int &hour) {
+/**
+ * Engine function - Get Presence Statistics - Room Bureau
+ * @remarks	Originally called 'cpl10'
+ */
+int getPresenceStatsDiningRoom(int &hour) {
 	int day, minute;
 
+	int retVal = 0;
 	updateHour(day, hour, minute);
 	if (((hour > 7) && (hour < 11)) || ((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21)))
-		p = 100;
+		retVal = 100;
 	else if ((hour == 11) || ((hour > 20) && (hour < 24)))
-		p = 45;
+		retVal = 45;
 	else if (((hour > 13) && (hour < 17)) || (hour == 18))
-		p = 35;
+		retVal = 35;
 	else if (hour == 17)
-		p = 60;
+		retVal = 60;
 	else if ((hour >= 0) && (hour < 8))
-		p = 5;
+		retVal = 5;
+
+	return retVal;
 }
 
-void cpl11(int &p, int &hour) {
+/**
+ * Engine function - Get Presence Statistics - Room Bureau
+ * @remarks	Originally called 'cpl11'
+ */
+int getPresenceStatsBureau(int &hour) {
 	int day, minute;
+	int retVal = 0;
 
 	updateHour(day, hour, minute);
 	if (((hour > 8) && (hour < 12)) || ((hour > 20) && (hour < 24)))
-		p = 25;
+		retVal = 25;
 	else if (((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21)))
-		p = 5;
+		retVal = 5;
 	else if ((hour > 13) && (hour < 17))
-		p = 55;
+		retVal = 55;
 	else if ((hour > 16) && (hour < 19))
-		p = 45;
+		retVal = 45;
 	else if ((hour >= 0) && (hour < 9))
-		p = 0;
+		retVal = 0;
+
+	return retVal;
 }
 
-int cpl12() {
+/**
+ * Engine function - Get Presence Statistics - Room Kitchen
+ * @remarks	Originally called 'cpl12'
+ */
+int getPresenceStatsKitchen() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -728,11 +765,19 @@ int cpl12() {
 	return retVal;
 }
 
-int cpl13() {
+/**
+ * Engine function - Get Presence Statistics - Room Attic
+ * @remarks	Originally called 'cpl13'
+ */
+int getPresenceStatsAttic() {
 	return 0;
 }
 
-int cpl15() {
+/**
+ * Engine function - Get Presence Statistics - Room Landing
+ * @remarks	Originally called 'cpl15'
+ */
+int getPresenceStatsLanding() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -755,20 +800,27 @@ int cpl15() {
 	return retVal;
 }
 
-void cpl20(int &p, int &hour) {
+/**
+ * Engine function - Get Presence Statistics - Room Chapel
+ * @remarks	Originally called 'cpl20'
+ */
+int getPresenceStatsChapel(int &hour) {
 	int day, minute;
+	int retVal = 0;
 
 	updateHour(day, hour, minute);
 	if (hour == 10)
-		p = 65;
+		retVal = 65;
 	else if ((hour > 10) && (hour < 21))
-		p = 5;
+		retVal = 5;
 	else if ((hour > 20) && (hour < 24))
-		p = -15;
+		retVal = -15;
 	else if ((hour >= 0) && (hour < 5))
-		p = -300;
+		retVal = -300;
 	else if ((hour > 4) && (hour < 10))
-		p = -5;
+		retVal = -5;
+
+	return retVal;
 }
 
 /**
@@ -950,8 +1002,11 @@ int setPresenceChapel(int hour) {
 	return retVal;
 }
 
-
-void frap() {
+/**
+ * Engine function - Get the answer after you known a door
+ * @remarks	Originally called 'frap'
+ */
+void getKnockAnswer() {
 	int day, hour, minute;
 
 	updateHour(day, hour, minute);
@@ -1026,15 +1081,15 @@ void ecfren(int &p, int &rand, int cf, int l) {
 	p = -500;
 	rand = 0;
 	if (((l == 1) && (!g_bh1) && (!g_bf1)) || ((l == 4) && (!g_bh4) && (!g_bf4)))
-		p = cpl1();
+		p = getPresenceStatsGreenRoom();
 	if ((l == 2) && (!g_bh2) && (!g_bh9))
-		p = cpl2();
+		p = getPresenceStatsPurpleRoom();
 	if (((l == 3) && (!g_bt3)) || ((l == 7) && (!g_bt7)))
-		p = cpl3();
+		p = getPresenceStatsToilets();
 	if ((l == 5) && (!g_bh5))
-		p = cpl5();
+		p = getPresenceStatsBlueRoom();
 	if (((l == 6) && (!g_bh6)) || ((l == 8) && (!g_bh8)))
-		p = cpl6();
+		p = getPresenceStatsRedRoom();
 	if ((l == 9) && (!g_bh9) && (!g_bh2))
 		p = 10;
 	if (((l == 2) && (g_bh9)) || ((l == 9) && (g_bh2)))
@@ -1147,7 +1202,7 @@ void dprog() {
 
 void pl1(int cf) {
 	if (((g_li == 1) && (!g_bh1) && (!g_bf1)) || ((g_li == 4) && (!g_bh4) && (!g_bf4))) {
-		int p = cpl1();
+		int p = getPresenceStatsGreenRoom();
 		int rand;
 		phaz(rand, p, cf);
 
@@ -1160,7 +1215,7 @@ void pl1(int cf) {
 
 void pl2(int cf) {
 	if (!g_bh2) {
-		int p = cpl2();
+		int p = getPresenceStatsPurpleRoom();
 		int rand;
 		phaz(rand, p, cf);
 
@@ -1173,7 +1228,7 @@ void pl2(int cf) {
 
 void pl5(int cf) {
 	if (!g_bh5) {
-		int p = cpl5();
+		int p = getPresenceStatsBlueRoom();
 		int rand;
 
 		phaz(rand, p, cf);
@@ -1187,7 +1242,7 @@ void pl5(int cf) {
 
 void pl6(int cf) {
 	if (((g_li == 6) && (!g_bh6)) || ((g_li == 8) && (!g_bh8))) {
-		int p = cpl6();
+		int p = getPresenceStatsRedRoom();
 		int rand;
 
 		phaz(rand, p, cf);
@@ -1213,8 +1268,8 @@ void pl9(int cf) {
 }
 
 void pl10(int cf) {
-	int p, h, rand;
-	cpl10(p, h);
+	int h, rand;
+	int p = getPresenceStatsDiningRoom(h);
 	phaz(rand, p, cf);
 
 	if (rand > p)
@@ -1224,9 +1279,9 @@ void pl10(int cf) {
 }
 
 void pl11(int cf) {
-	int p, h, rand;
+	int h, rand;
 
-	cpl11(p, h);
+	int p = getPresenceStatsBureau(h);
 	phaz(rand, p, cf);
 	if (rand > p)
 		displayAloneText();
@@ -1237,7 +1292,7 @@ void pl11(int cf) {
 void pl12(int cf) {
 	int p, rand;
 
-	p = cpl12();
+	p = getPresenceStatsKitchen();
 	phaz(rand, p, cf);
 	if (rand > p)
 		displayAloneText();
@@ -1248,7 +1303,7 @@ void pl12(int cf) {
 void pl13(int cf) {
 	int p, rand;
 
-	p = cpl13();
+	p = getPresenceStatsAttic();
 	phaz(rand, p, cf);
 	if (rand > p)
 		displayAloneText();
@@ -1259,7 +1314,7 @@ void pl13(int cf) {
 void pl15(int cf) {
 	int p, rand;
 
-	p = cpl15();
+	p = getPresenceStatsLanding();
 	phaz(rand, p, cf);
 	if (rand > p)
 		displayAloneText();
@@ -1268,9 +1323,9 @@ void pl15(int cf) {
 }
 
 void pl20(int cf) {
-	int p, h, rand;
+	int h, rand;
 
-	cpl20(p, h);
+	int p = getPresenceStatsChapel(h);
 	phaz(rand, p, cf);
 	if (rand > p)
 		displayAloneText();
@@ -1302,17 +1357,17 @@ void t11(int l11, int &a) {
 		else {
 			int h = 0;
 			if (l11 == 10)
-				cpl10(p, h);
+				p = getPresenceStatsDiningRoom(h);
 			else if (l11 == 11)
-				cpl11(p, h);
+				p = getPresenceStatsBureau(h);
 			else if (l11 == 12)
-				p = cpl12();
+				p = getPresenceStatsKitchen();
 			else if ((l11 == 13) || (l11 == 14))
-				p = cpl13();
+				p = getPresenceStatsAttic();
 			else if ((l11 == 15) || (l11 == 26))
-				p = cpl15();
+				p = getPresenceStatsLanding();
 			else if (l11 == 20)
-				cpl20(p, h);
+				p = getPresenceStatsChapel(h);
 			p += g_s._faithScore;
 			rand = getRandomNumber(1, 100);
 			if (rand > p) {
