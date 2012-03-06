@@ -154,6 +154,11 @@ protected:
 	DECLARE_LUA_OPCODE(FRUTEY_End);
 	DECLARE_LUA_OPCODE(RenderModeUser);
 	DECLARE_LUA_OPCODE(GetTextObjectDimensions);
+	DECLARE_LUA_OPCODE(SetActorRestChore);
+	DECLARE_LUA_OPCODE(SetActorWalkChore);
+	DECLARE_LUA_OPCODE(SetActorTurnChores);
+	DECLARE_LUA_OPCODE(SetActorTalkChore);
+	DECLARE_LUA_OPCODE(SetActorMumblechore);
 };
 
 } // end of namespace Grim
