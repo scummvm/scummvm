@@ -286,13 +286,12 @@ void updateHour(int &day, int &hour, int &minute) {
 	hour = hour - ((day - g_vj) * 24);
 }
 
-void conv(int x, int &y) {
-	int cx = 1;
-	y = 128;
-	while (cx < x) {
-		y = (uint)y >> 1;
-		++cx;
-	}
+/**
+ * Engine function - Convert character index to bit index
+ * @remarks	Originally called 'conv'
+ */
+int convertCharacterIndexToBitIndex(int characterIndex) {
+	return 128 >> (characterIndex - 1);
 }
 
 /* NIVEAU 12 */
@@ -465,29 +464,29 @@ void showPeoplePresent(int per) {
 	g_ipers = per;
 }
 
-void choix(int min, int max, int &per) {
-	bool i;
-	int cz;
-
+int selectCharacters(int min, int max) {
+	bool invertSelection = false;
 	int rand = getRandomNumber(min, max);
+
 	if (rand > 4) {
 		rand = 8 - rand;
-		i = true;
-	} else
-		i = false;
+		invertSelection = true;
+	}
 
 	int cx = 0;
-	per = 0;
+	int retVal = 0;
 	while (cx < rand) {
-		int cy = getRandomNumber(1, 8);
-		conv(cy, cz);
-		if ((per & cz) != cz) {
+		int charIndex = getRandomNumber(1, 8);
+		int charBitIndex = convertCharacterIndexToBitIndex(charIndex);
+		if ((retVal & charBitIndex) != charBitIndex) {
 			++cx;
-			per |= cz;
+			retVal |= charBitIndex;
 		}
 	}
-	if (i)
-		per = 255 - per;
+	if (invertSelection)
+		retVal = 255 - retVal;
+
+	return retVal;
 }
 
 int cpl1() {
@@ -852,7 +851,7 @@ int setPresenceDiningRoom(int hour) {
 			min = 1;
 			max = 5;
 		}
-		choix(min, max, retVal);
+		retVal = selectCharacters(min, max);
 	}
 	showPeoplePresent(retVal);
 
@@ -880,7 +879,7 @@ int setPresenceBureau(int hour) {
 			min = 1;
 			max = 2;
 		}
-		choix(min, max, retVal);
+		retVal = selectCharacters(min, max);
 	}
 	showPeoplePresent(retVal);
 
@@ -917,8 +916,7 @@ int setPresenceLanding() {
 		        ((rand == 8) && g_bh5));
 	} while (test);
 
-	int retVal = 0;
-	conv(rand, retVal);
+	int retVal = convertCharacterIndexToBitIndex(rand);
 	showPeoplePresent(retVal);
 
 	return retVal;
@@ -945,7 +943,7 @@ int setPresenceChapel(int hour) {
 			min = 2;
 			max = 4;
 		}
-		choix(min, max, retVal);
+		retVal = selectCharacters(min, max);
 	}
 	showPeoplePresent(retVal);
 
@@ -994,25 +992,31 @@ void nouvp(int l, int &p) {
 		showPeoplePresent(p);
 }
 
+/**
+ * Engine function - Convert bit index to character index
+ * @remarks	Originally called 'tip'
+ */
+int convertBitIndexToCharacterIndex(int bitIndex) {
+	int retVal = 0;
 
+	if (bitIndex == 128)
+		retVal = 1;
+	else if (bitIndex == 64)
+		retVal = 2;
+	else if (bitIndex == 32)
+		retVal = 3;
+	else if (bitIndex == 16)
+		retVal = 4;
+	else if (bitIndex == 8)
+		retVal = 5;
+	else if (bitIndex == 4)
+		retVal = 6;
+	else if (bitIndex == 2)
+		retVal = 7;
+	else if (bitIndex == 1)
+		retVal = 8;
 
-void tip(int ip, int &cx) {
-	if (ip == 128)
-		cx = 1;
-	else if (ip == 64)
-		cx = 2;
-	else if (ip == 32)
-		cx = 3;
-	else if (ip == 16)
-		cx = 4;
-	else if (ip == 8)
-		cx = 5;
-	else if (ip == 4)
-		cx = 6;
-	else if (ip == 2)
-		cx = 7;
-	else if (ip == 1)
-		cx = 8;
+	return retVal;
 }
 
 
@@ -1084,7 +1088,11 @@ void phaz(int &rand, int &p, int cf) {
 	rand = getRandomNumber(1, 100);
 }
 
-void inzon() {
+/**
+ * Engine function - When restarting the game, reset the main variables used by the engine
+ * @remarks	Originally called 'inzon'
+ */
+void resetVariables() {
 	copcha();
 
 	g_s._ipre  = false;

@@ -1149,7 +1149,7 @@ void fctEnter() {
 				parole(7, g_x, 1);
 				aniof(1, 1);
 				
-				tip(z, g_x);
+				g_x = convertBitIndexToCharacterIndex(z);
 				++g_s._faithScore;
 				g_s._currPlace = LANDING;
 				g_msg[3] = MENU_DISCUSS;
@@ -1599,7 +1599,7 @@ void MortevielleEngine::endGame() {
 	// Most likely the double call is useless, thus removed
 	//
 	// tkey1(false);
-	inzon();
+	resetVariables();
 }
 
 /**
@@ -1611,7 +1611,7 @@ void MortevielleEngine::loseGame() {
 	musique(0);
 	tkey1(false);
 	maivid();
-	inzon();
+	resetVariables();
 	dprog();
 	g_vh = 10;
 	g_vm__ = 0;
