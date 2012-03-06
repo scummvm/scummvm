@@ -766,7 +766,7 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 		}
 		return Handled;
 	}
-
+#if 0
 	else if (event->type == SDL_TEXTINPUT) {
 		if (m_SelStart != m_SelEnd) DeleteChars(m_SelStart, m_SelEnd);
 
@@ -778,7 +778,7 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 
 		return true;
 	}
-
+#endif
 	return false;
 }
 

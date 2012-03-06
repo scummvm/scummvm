@@ -24,13 +24,13 @@ THE SOFTWARE.
 */
 
 #include "dcgf.h"
-#include "AdGame.h"
-#include "BScriptHolder.h"
-#include "BParser.h"
-#include "ScValue.h"
-#include "ScEngine.h"
-#include "ScScript.h"
-#include "ScStack.h"
+#include "engines/wintermute/AdGame.h"
+#include "engines/wintermute/BScriptHolder.h"
+#include "engines/wintermute/BParser.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScEngine.h"
+#include "engines/wintermute/scriptables/ScScript.h"
+#include "engines/wintermute/scriptables/ScStack.h"
 
 namespace WinterMute {
 

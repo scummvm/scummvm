@@ -256,9 +256,8 @@ public:
 	virtual bool HandleMouseWheel(int Delta);
 	bool m_Quitting;
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
-#if 0
+
 	virtual bool HandleKeypress(SDL_Event *event);
-#endif
 	int m_FreezeLevel;
 	HRESULT Unfreeze();
 	HRESULT Freeze(bool IncludingMusic = true);

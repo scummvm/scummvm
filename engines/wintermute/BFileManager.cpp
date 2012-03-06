@@ -43,7 +43,7 @@
 #include "PlatformSDL.h"
 #include "common/str.h"
 #include "common/textconsole.h"
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
 
 #ifdef __WIN32__
 #   include <direct.h>
@@ -356,7 +356,7 @@ HRESULT CBFileManager::RegisterPackages() {
 
 	Game->LOG(0, "Scanning packages...");
 	warning("Scanning packages");
-
+#if 0
 	AnsiString extension = AnsiString(".") + AnsiString(PACKAGE_EXTENSION);
 
 	for (int i = 0; i < m_PackagePaths.GetSize(); i++) {
@@ -386,7 +386,7 @@ HRESULT CBFileManager::RegisterPackages() {
 
 
 	Game->LOG(0, "  Registered %d files in %d package(s)", m_Files.size(), m_Packages.GetSize());
-
+#endif
 	return S_OK;
 }
 

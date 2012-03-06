@@ -27,26 +27,26 @@
  */
 
 #include "dcgf.h"
-#include "UIWindow.h"
-#include "BGame.h"
-#include "BParser.h"
-#include "BActiveRect.h"
-#include "BDynBuffer.h"
-#include "BKeyboardState.h"
-#include "ScValue.h"
-#include "UIButton.h"
-#include "UIEdit.h"
-#include "UIText.h"
-#include "UITiledImage.h"
-#include "BViewport.h"
-#include "BFontStorage.h"
-#include "BFont.h"
-#include "BStringTable.h"
-#include "ScScript.h"
-#include "ScStack.h"
-#include "BSprite.h"
-#include "BFileManager.h"
-#include "PlatformSDL.h"
+#include "engines/wintermute/UIWindow.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/BParser.h"
+#include "engines/wintermute/BActiveRect.h"
+#include "engines/wintermute/BDynBuffer.h"
+#include "engines/wintermute/BKeyboardState.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/UIButton.h"
+#include "engines/wintermute/UIEdit.h"
+#include "engines/wintermute/UIText.h"
+#include "engines/wintermute/UITiledImage.h"
+#include "engines/wintermute/BViewport.h"
+#include "engines/wintermute/BFontStorage.h"
+#include "engines/wintermute/BFont.h"
+#include "engines/wintermute/BStringTable.h"
+#include "engines/wintermute/scriptables/ScScript.h"
+#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/BSprite.h"
+#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/PlatformSDL.h"
 
 namespace WinterMute {
 
@@ -1090,14 +1090,15 @@ char *CUIWindow::ScToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CUIWindow::HandleKeypress(SDL_Event *event) {
-
+//TODO
+#if 0
 	if (event->type == SDL_KEYDOWN && event->key.keysym.scancode == SDL_SCANCODE_TAB) {
 		return SUCCEEDED(MoveFocus(!CBKeyboardState::IsShiftDown()));
 	} else {
 		if (m_FocusedWidget) return m_FocusedWidget->HandleKeypress(event);
 		else return false;
 	}
-
+#endif
 	return false;
 }
 

@@ -32,7 +32,7 @@
 
 #include "engines/util.h"
 
-#include "WinterMute/WinterMute.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace WinterMute {
 	

@@ -32,6 +32,7 @@
 
 #include "BBase.h"
 #include "BScriptable.h"
+#include "common/keyboard.h"
 #include <SDL.h>
 
 namespace WinterMute {
@@ -63,7 +64,7 @@ public:
 
 private:
 	uint32 KeyCodeToVKey(SDL_Event *event);
-	SDL_Keycode VKeyToKeyCode(uint32 vkey);
+	Common::KeyCode VKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
 
 } // end of namespace WinterMute

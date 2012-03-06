@@ -3712,7 +3712,8 @@ bool CBGame::HandleKeypress(SDL_Event *event) {
 
 
 	m_KeyboardState->ReadKey(event);
-
+// TODO
+#if 0
 	if (m_FocusedWindow) {
 		if (!Game->m_FocusedWindow->HandleKeypress(event)) {
 			if (event->type != SDL_TEXTINPUT) {
@@ -3727,6 +3728,8 @@ bool CBGame::HandleKeypress(SDL_Event *event) {
 		ApplyEvent("Keypress");
 		return true;
 	} else return true;
+#endif
+	return false;
 }
 
 
@@ -3792,7 +3795,10 @@ void CBGame::SetWindowTitle() {
 		}
 
 		CBRenderSDL *renderer = static_cast<CBRenderSDL *>(m_Renderer);
+		// TODO
+#if 0
 		SDL_SetWindowTitle(renderer->GetSdlWindow(), title.c_str());
+#endif
 	}
 }
 

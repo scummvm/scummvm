@@ -10,6 +10,8 @@ MODULE_OBJS := \
 	scriptables/SXMemBuffer.o \
 	AdActor.o \
 	AdActorDir.o \
+	AdEntity.o \
+	AdGame.o \
 	AdInventory.o \
 	AdInventoryBox.o \
 	AdItem.o \
@@ -33,44 +35,64 @@ MODULE_OBJS := \
 	AdTalkNode.o \
 	AdWaypointGroup.o \
 	BActiveRect.o \
+	BBase.o \
 	BDebugger.o \
 	BDynBuffer.o \
-	BBase.o \
 	BFader.o \
 	BFile.o \
 	BFileEntry.o \
+	BFileManager.o \
+	BGame.o \
+	BFont.o \
+	BFontBitmap.o \
+	BFontStorage.o \
+	BFontTT.o \
 	BFrame.o \
 	BImage.o \
 	BNamedObject.o \
+	BObject.o \
 	BPackage.o \
 	BParser.o \
 	BPersistMgr.o \
+	BPkgFile.o \
 	BPoint.o \
 	BQuickMsg.o \
 	BRegion.o \
+	BRegistry.o \
 	BResources.o \
 	BResourceFile.o \
 	BSaveThumbFile.o \
 	BScriptable.o \
+	BScriptHolder.o \
 	BSound.o \
 	BSoundBuffer.o \
 	BSoundMgr.o \
 	BSprite.o \
+	BStringTable.o \
 	BSubFrame.o \
+	BSurface.o \
 	BSurfaceStorage.o \
 	BTransitionMgr.o \
 	BViewport.o \
 	ConvertUTF.o \
 	detection.o \
+	FontGlyphCache.o \
+	MathUtil.o \
 	PathUtil.o \
 	StringUtil.o \
 	SysClass.o \
+	SysClassRegistry.o \
 	SysInstance.o \
+	tinyxml.o \
 	UIButton.o \
+	UIEdit.o \
 	UIEntity.o \
 	UIObject.o \
+	UIText.o \
 	UITiledImage.o \
+	UIWindow.o \
 	utils.o \
+	Vector2.o \
 	wintermute.o
  
 MODULE_DIRS += \
