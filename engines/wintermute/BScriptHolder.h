@@ -38,14 +38,15 @@ namespace WinterMute {
 class CBScriptHolder : public CBScriptable {
 public:
 	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
-#if 0
+
 	CBScriptHolder(CBGame *inGame);
 	virtual ~CBScriptHolder();
-
+#if 0
 	virtual CScScript *InvokeMethodThread(char *MethodName);
 	virtual void MakeFreezable(bool Freezable);
 	bool CanHandleEvent(char *EventName);
 	virtual bool CanHandleMethod(char *EventMethod);
+#endif
 	HRESULT Cleanup();
 	HRESULT RemoveScript(CScScript *Script);
 	HRESULT AddScript(char *Filename);
@@ -54,12 +55,12 @@ public:
 	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
 	void SetFilename(char *Filename);
 	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-
 	char *m_Filename;
 	bool m_Freezable;
 	bool m_Ready;
-	CBArray<CScScript *, CScScript *> m_Scripts;
 
+	CBArray<CScScript *, CScScript *> m_Scripts;
+#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);

@@ -26,16 +26,17 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "dcgf.h"
-#include "BParser.h"
-#include "BSubFrame.h"
-#include "BActiveRect.h"
-#include "BDynBuffer.h"
-#include "BSurface.h"
-#include "ScValue.h"
-#include "ScStack.h"
-#include "BGame.h"
-#include "PlatformSDL.h"
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/BParser.h"
+#include "engines/wintermute/BSubFrame.h"
+#include "engines/wintermute/BActiveRect.h"
+#include "engines/wintermute/BDynBuffer.h"
+#include "engines/wintermute/BSurface.h"
+#include "engines/wintermute/BSurfaceStorage.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScStack.h"
 
 namespace WinterMute {
 

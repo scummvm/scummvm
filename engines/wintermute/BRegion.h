@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_BREGION_H
 #define WINTERMUTE_BREGION_H
 
-#include "BPoint.h"
-#include "BObject.h"
+#include "engines/wintermute/BPoint.h"
+#include "engines/wintermute/BObject.h"
 
 namespace WinterMute {
 

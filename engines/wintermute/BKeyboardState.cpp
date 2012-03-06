@@ -28,8 +28,8 @@
 
 #include "dcgf.h"
 #include "BKeyboardState.h"
-#include "ScValue.h"
-#include "ScStack.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScStack.h"
 
 namespace WinterMute {
 

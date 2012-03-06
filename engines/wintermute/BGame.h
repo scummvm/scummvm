@@ -55,6 +55,7 @@ class CUIWindow;
 class CBViewport;
 class CBRenderer;
 class CBRegistry;
+class CBSaveThumbHelper;
 class CBSurfaceStorage;
 class CSXStore;
 class CSXMath;
@@ -94,7 +95,7 @@ public:
 
 	void GetMousePos(POINT *Pos);
 	RECT m_MouseLockRect;
-
+#endif
 	bool m_ShuttingDown;
 
 	virtual HRESULT DisplayDebugInfo();
@@ -102,7 +103,7 @@ public:
 
 	bool m_SuspendedRendering;
 	int m_SoundBufferSizeSec;
-
+#if 0
 	TTextEncoding m_TextEncoding;
 	bool m_TextRTL;
 
@@ -153,7 +154,7 @@ public:
 	void *m_EngineLogCallbackData;
 #endif
 	bool m_EditorMode;
-#if 0
+
 	bool m_DoNotExpandStrings;
 	void GetOffset(int *OffsetX, int *OffsetY);
 	void SetOffset(int OffsetX, int OffsetY);
@@ -163,19 +164,23 @@ public:
 	float m_OffsetPercentX;
 	float m_OffsetPercentY;
 	CBObject *m_MainObject;
+#if 0
 	HRESULT InitInput(HINSTANCE hInst, HWND hWnd);
 	HRESULT InitLoop();
+#endif
 	uint32 m_CurrentTime;
 	uint32 m_DeltaTime;
+#if 0
 	CBFont *m_SystemFont;
 	CBFont *m_VideoFont;
+#endif 
 	HRESULT Initialize1();
 	HRESULT Initialize2();
 	HRESULT Initialize3();
 	CBFileManager *m_FileManager;
 	CBTransitionMgr *m_TransMgr;
-#endif //TODO: STUB
 	CBDebugger *GetDebugMgr();
+//TODO: STUB
 	void LOG(HRESULT res, LPCSTR fmt, ...) {}
 
 	CBRenderer *m_Renderer;
@@ -186,12 +191,13 @@ public:
 	CBSurfaceStorage *m_SurfaceStorage;
 	CBFontStorage *m_FontStorage;
 	CBGame();
-#if 0
+
 	virtual ~CBGame();
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *Filename = NULL);
 	bool m_DEBUG_DebugMode;
 	bool m_DEBUG_AbsolutePathWarning;
+#if 0
 	FILE *m_DEBUG_LogFile;
 	int m_Sequence;
 	virtual HRESULT LoadFile(const char *Filename);
@@ -249,7 +255,6 @@ public:
 	int m_ScheduledLoadSlot;
 	bool m_Loading;
 	bool m_PersonalizedSave;
-#if 0
 	HRESULT EmptySaveSlot(int Slot);
 	bool IsSaveSlotUsed(int Slot);
 	HRESULT GetSaveSlotDescription(int Slot, char *Buffer);
@@ -258,6 +263,7 @@ public:
 	virtual bool HandleMouseWheel(int Delta);
 	bool m_Quitting;
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
+#if 0
 	virtual bool HandleKeypress(SDL_Event *event);
 	int m_FreezeLevel;
 	HRESULT Unfreeze();
@@ -286,6 +292,7 @@ public:
 	int m_MusicCrossfadeChannel1;
 	int m_MusicCrossfadeChannel2;
 	HRESULT DisplayWindows(bool InGame = false);
+#endif
 	CBRegistry *m_Registry;
 	bool m_UseD3D;
 	virtual HRESULT Cleanup();
@@ -293,7 +300,7 @@ public:
 	virtual HRESULT LoadGame(char *Filename);
 	virtual HRESULT SaveGame(int slot, char *desc, bool quickSave = false);
 	virtual HRESULT ShowCursor();
-#endif
+
 	CBSprite *m_CursorNoninteractive;
 	CBObject *m_ActiveObject;
 	CBKeyboardState *m_KeyboardState;
@@ -333,19 +340,20 @@ public:
 	void SetInteractive(bool State);
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
 	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name);
+#endif
 	HRESULT GetCurrentViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
 	HRESULT GetCurrentViewportRect(RECT *Rect, bool *Custom = NULL);
 	HRESULT PopViewport();
 	HRESULT PushViewport(CBViewport *Viewport);
 	HRESULT SetActiveObject(CBObject *Obj);
-
+#if 0
 	CBSprite *m_LastCursor;
 	HRESULT DrawCursor(CBSprite *Cursor);
 
 	virtual HRESULT InitAfterLoad();
-
+#endif
 	CBSaveThumbHelper *m_CachedThumbnail;
-
+#if 0
 	AnsiString GetDataDir();
 
 	void AddMem(int bytes);

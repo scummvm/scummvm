@@ -30,8 +30,8 @@
 #define WINTERMUTE_BSPRITE_H
 
 
-#include "coll_templ.h"
-#include "BScriptHolder.h"
+#include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/BScriptHolder.h"
 
 namespace WinterMute {
 class CBFrame;
