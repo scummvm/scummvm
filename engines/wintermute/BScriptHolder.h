@@ -58,14 +58,12 @@ public:
 	bool m_Ready;
 
 	CBArray<CScScript *, CScScript *> m_Scripts;
-#if 0
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
 	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-#endif
 	// IWmeObject
 public:
 	virtual bool SendEvent(const char *EventName);

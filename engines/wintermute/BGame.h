@@ -89,10 +89,8 @@ public:
 	uint32 m_LastMiniUpdate;
 	bool m_MiniUpdateEnabled;
 	
-	virtual HRESULT MiniUpdate() {} // <- TODO Unstub
-#if 0
 	virtual HRESULT MiniUpdate();
-#endif
+
 	void GetMousePos(POINT *Pos);
 	RECT m_MouseLockRect;
 
@@ -103,7 +101,7 @@ public:
 
 	bool m_SuspendedRendering;
 	int m_SoundBufferSizeSec;
-#if 0
+
 	TTextEncoding m_TextEncoding;
 	bool m_TextRTL;
 
@@ -116,7 +114,6 @@ public:
 
 	void DEBUG_DumpClassRegistry();
 	HRESULT SetWaitCursor(char *Filename);
-
 	char *m_LocalSaveDir;
 	bool m_SaveDirChecked;
 
@@ -152,7 +149,6 @@ public:
 	void SetEngineLogCallback(ENGINE_LOG_CALLBACK Callback = NULL, void *Data = NULL);
 	ENGINE_LOG_CALLBACK m_EngineLogCallback;
 	void *m_EngineLogCallbackData;
-#endif
 	bool m_EditorMode;
 
 	bool m_DoNotExpandStrings;
@@ -164,10 +160,9 @@ public:
 	float m_OffsetPercentX;
 	float m_OffsetPercentY;
 	CBObject *m_MainObject;
-#if 0
+
 	HRESULT InitInput(HINSTANCE hInst, HWND hWnd);
 	HRESULT InitLoop();
-#endif
 	uint32 m_CurrentTime;
 	uint32 m_DeltaTime;
 	CBFont *m_SystemFont;
@@ -178,8 +173,8 @@ public:
 	CBFileManager *m_FileManager;
 	CBTransitionMgr *m_TransMgr;
 	CBDebugger *GetDebugMgr();
-//TODO: STUB
-	void LOG(HRESULT res, LPCSTR fmt, ...) {}
+
+	void LOG(HRESULT res, LPCSTR fmt, ...);
 
 	CBRenderer *m_Renderer;
 	CBSoundMgr *m_SoundMgr;
@@ -195,7 +190,7 @@ public:
 	void DEBUG_DebugEnable(const char *Filename = NULL);
 	bool m_DEBUG_DebugMode;
 	bool m_DEBUG_AbsolutePathWarning;
-#if 0
+
 	FILE *m_DEBUG_LogFile;
 	int m_Sequence;
 	virtual HRESULT LoadFile(const char *Filename);
@@ -203,7 +198,7 @@ public:
 	CBArray<CBQuickMsg *, CBQuickMsg *> m_QuickMessages;
 	CBArray<CUIWindow *, CUIWindow *> m_Windows;
 	CBArray<CBViewport *, CBViewport *> m_ViewportStack;
-#endif
+
 	int m_ViewportSP;
 	bool m_MouseLeftDown;
 	bool m_MouseRightDown;
@@ -278,7 +273,7 @@ public:
 	static void AfterLoadFont(void *Font, void *Data);
 	static void AfterLoadScript(void *script, void *data);
 	static void InvalidateValues(void *Value, void *Data);
-#if 0
+
 	HRESULT LoadSettings(char *Filename);
 	HRESULT ResumeMusic(int Channel);
 	HRESULT SetMusicStartTime(int Channel, uint32 Time);
@@ -293,7 +288,6 @@ public:
 	int m_MusicCrossfadeChannel1;
 	int m_MusicCrossfadeChannel2;
 	HRESULT DisplayWindows(bool InGame = false);
-#endif
 	CBRegistry *m_Registry;
 	bool m_UseD3D;
 	virtual HRESULT Cleanup();
@@ -323,14 +317,12 @@ public:
 	HRESULT UnregisterObject(CBObject *Object);
 	HRESULT RegisterObject(CBObject *Object);
 	void QuickMessage(char *Text);
-#if 0
 	void QuickMessageForm(LPSTR fmt, ...);
 	HRESULT DisplayQuickMsg();
 	uint32 m_Fps;
 	HRESULT UpdateMusicCrossfade();
 
 	CBArray<CBObject *, CBObject *> m_RegObjects;
-#endif
 public:
 	virtual HRESULT DisplayContent(bool Update = true, bool DisplayAll = false);
 	virtual HRESULT DisplayContentSimple();
@@ -338,30 +330,23 @@ public:
 	void ResetMousePos();
 	int m_SubtitlesSpeed;
 	void SetInteractive(bool State);
-#if 0
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
 	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name);
-#endif
 	HRESULT GetCurrentViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
 	HRESULT GetCurrentViewportRect(RECT *Rect, bool *Custom = NULL);
 	HRESULT PopViewport();
 	HRESULT PushViewport(CBViewport *Viewport);
 	HRESULT SetActiveObject(CBObject *Obj);
-#if 0
 	CBSprite *m_LastCursor;
 	HRESULT DrawCursor(CBSprite *Cursor);
 
 	virtual HRESULT InitAfterLoad();
-#endif
 	CBSaveThumbHelper *m_CachedThumbnail;
-#if 0
 	AnsiString GetDataDir();
-#endif
 	void AddMem(int bytes);
 
 	bool m_TouchInterface;
 	bool m_ConstrainedMemory;
-#if 0
 	AnsiString GetDeviceType() const;
 
 private:
@@ -392,7 +377,6 @@ protected:
 
 public:
 	void AutoSaveOnExit();
-#endif
 
 };
 

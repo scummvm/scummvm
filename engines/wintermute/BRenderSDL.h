@@ -32,6 +32,9 @@
 #include "BRenderer.h"
 #include "SDL.h"
 
+class SDL_Window;
+class SDL_Renderer;
+
 namespace WinterMute {
 
 class CBRenderSDL : public CBRenderer {
