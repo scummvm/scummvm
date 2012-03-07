@@ -747,8 +747,8 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 		bitmap->convertToColorFormat(_pixelFormat);
 	}
 	if (bitmap->_format != 1) {
-		uint32 *buf = new uint32[bitmap->_width * bitmap->_height];
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
+			uint32 *buf = new uint32[bitmap->_width * bitmap->_height];
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
 				uint16 val = READ_LE_UINT16(bufPtr + i);
