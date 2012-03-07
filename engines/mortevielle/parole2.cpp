@@ -87,7 +87,7 @@ void startSpeech(int rep, int ht, int typ) {
 	int savph[501];
 	int tempo;
 
-	if (g_soundOff)
+	if (g_vm->_soundOff)
 		return;
 
 	g_num_ph = rep;

@@ -1138,8 +1138,8 @@ void fctEnter() {
 			g_s._teauto[8] = '*';
 	} else {
 		int z = 0;
-		if (!g_blo)
-			t11(g_ment, z);
+		if (!g_vm->g_blo)
+			z = t11(g_ment);
 		if (z != 0) {
 			if ((g_ment == 3) || (g_ment == 7))
 				g_crep = 179;
@@ -1297,8 +1297,8 @@ void fctWait() {
 	do {
 		++g_jh;
 		tinke();
-		if (!g_blo)
-			t11(g_s._currPlace, quel);
+		if (!g_vm->g_blo)
+			quel = t11(g_s._currPlace);
 		if ((g_ipers != 0) && (g_mpers == 0)) {
 			g_crep = 998;
 			if ((g_s._currPlace == ATTIC) || (g_s._currPlace == CELLAR))

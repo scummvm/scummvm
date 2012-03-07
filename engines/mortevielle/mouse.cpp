@@ -417,7 +417,7 @@ void moveMouse(bool &funct, char &key) {
 			cy = 8;
 			break;
 		case '\23':
-			g_soundOff = !g_soundOff;
+			g_vm->_soundOff = !g_vm->_soundOff;
 			return;
 			break;
 		case '\26':

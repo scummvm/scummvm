@@ -96,7 +96,7 @@ void tinke() {
 	if (y_s < 12)
 		return;
 
-	if (!g_blo) {
+	if (!g_vm->g_blo) {
 		if ((hour == 12) || ((hour > 18) && (hour < 21)) || ((hour >= 0) && (hour < 7)))
 			g_t = kTime2;
 		else
@@ -182,7 +182,7 @@ void tinke() {
 	}
 	g_hfb = readclock();
 	if ((g_brt) && ((g_hfb - g_hdb) > 17)) {
-		nouvp(g_li, cx);
+		cx = nouvp(g_li);
 		g_brt = false;
 		g_hdb = 0;
 		if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
@@ -301,9 +301,9 @@ void tperd() {
 	g_iouv = 0;
 	g_mchai = 0;
 	unsetSearchMenu();
-	if (!g_blo) {
+	if (!g_vm->g_blo) {
 		int cx;
-		t11(21, cx);
+		cx = t11(21);
 	}
 
 	g_vm->_loseGame = true;
@@ -514,8 +514,8 @@ void t1sama() {    //Entering manor
 		g_s._currPlace = OWN_ROOM;
 		affrep();
 		t5(10);
-		if (!g_blo)
-			t11(0, minute);
+		if (!g_vm->g_blo)
+			minute = t11(0);
 		g_ipers = 0;
 		g_mpers = 0;
 		g_s._ipre = true;

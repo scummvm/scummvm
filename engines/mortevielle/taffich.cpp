@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "common/str.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
@@ -251,8 +252,8 @@ void taffich() {
 	if ((a < 27) && ((g_maff < 27) || (g_s._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			displayAloneText();
-		else if (!g_blo)
-			t11(g_s._currPlace, cx);
+		else if (!g_vm->g_blo)
+			cx = t11(g_s._currPlace);
 		g_mpers =  0;
 	}
 }
