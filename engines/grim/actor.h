@@ -426,7 +426,10 @@ public:
 		_constrain = constrain;
 	}
 	void update(uint frameTime);
-	void updateTalk();
+	/**
+	 * Check if the actor is still talking. If it is returns true, otherwise false.
+	 */
+	bool updateTalk();
 	void draw();
 
 	bool isLookAtVectorZero() {

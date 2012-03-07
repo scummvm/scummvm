@@ -159,7 +159,6 @@ public:
 	 * Add an actor to the list of actors that are talking
 	 */
 	void addTalkingActor(Actor *actor);
-	void removeTalkingActor(Actor *actor);
 	bool areActorsTalking() const;
 
 	void saveGame(const Common::String &file);

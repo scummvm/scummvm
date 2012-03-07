@@ -444,8 +444,11 @@ void GrimEngine::luaUpdate() {
 			// when he needs to perform certain chores
 			a->update(_frameTime);
 		}
-		foreach (Actor *a, _talkingActors) {
-			a->updateTalk();
+		for (Common::List<Actor *>::iterator i = _talkingActors.begin(); i != _talkingActors.end(); ++i) {
+			Actor *a = *i;
+			if (!a->updateTalk()) {
+				i = _talkingActors.reverse_erase(i);
+			}
 		}
 
 		_iris->update(_frameTime);
@@ -1087,10 +1090,6 @@ void GrimEngine::buildActiveActorsList() {
 
 void GrimEngine::addTalkingActor(Actor *a) {
 	_talkingActors.push_back(a);
-}
-
-void GrimEngine::removeTalkingActor(Actor *a) {
-	_talkingActors.remove(a);
 }
 
 bool GrimEngine::areActorsTalking() const {

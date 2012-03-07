@@ -939,7 +939,6 @@ void Actor::shutUp() {
 		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
-	g_grim->removeTalkingActor(this);
 
 	// The actors talking in background have a special behaviour: if there are two or more of them
 	// talking at the same time, after one of them finishes talking calling isTalking() an *all*
@@ -1210,10 +1209,10 @@ void Actor::update(uint frameTime) {
 
 // Not all the talking actors are in the current set, and so on not all the talking actors
 // update() is called. For example, Don when he comes out of his office after reaping Meche.
-void Actor::updateTalk() {
+bool Actor::updateTalk() {
 	if (_talking) {
 		if (_backgroundTalk && !_isTalkingBackground) {
-			g_grim->removeTalkingActor(this);
+			return false;
 		}
 
 		// If there's no sound file then we're obviously not talking
@@ -1225,8 +1224,10 @@ void Actor::updateTalk() {
 			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str())))) {
 
 			shutUp();
+			return false;
 		}
 	}
+	return true;
 }
 
 void Actor::draw() {
