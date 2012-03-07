@@ -29,46 +29,84 @@ namespace Grim {
 
 class Registry {
 public:
-	const char *get(const char *key, const char *defval) const;
-	void set(const char *key, const char *val);
+	enum ValueType {
+		String,
+		Integer,
+		Boolean
+	};
+
+	const Common::String &getString(const Common::String &key) const;
+	int getInt(const Common::String &key) const;
+	bool getBool(const Common::String &key) const;
+
+	void setString(const Common::String &key, const Common::String &val);
+	void setInt(const Common::String &key, int val);
+	void setBool(const Common::String &key, bool val);
+
+	ValueType getValueType(const Common::String &key) const;
+
 	void save();
 
 	Registry();
 	~Registry() { }
 
 private:
-
 	static Registry *_instance;
 
-	Common::String _develMode;
-	Common::String _dataPath;
-	Common::String _savePath;
-	Common::String _lastSet;
-	Common::String _musicVolume;
-	Common::String _sfxVolume;
-	Common::String _voiceVolume;
-	Common::String _lastSavedGame;
-	Common::String _gamma;
-	Common::String _voiceEffects;
-	Common::String _textSpeed;
-	Common::String _speechMode;
-	Common::String _movement;
-	Common::String _joystick;
-	Common::String _spewOnError;
-	Common::String _showFps;
-	Common::String _softRenderer;
-	Common::String _fullscreen;
-	Common::String _engineSpeed;
+	class Value {
+	public:
+		void setString(const Common::String &str);
+		void setInt(int num);
+		void setBool(bool val);
+
+		const Common::String &getString() const;
+		int getInt() const;
+		bool getBool() const;
+
+		ValueType getType() const;
+
+	private:
+		struct {
+			Common::String _str;
+			int _num;
+			bool _bool;
+		} _val;
+		ValueType _type;
+	};
+
+	const Value &value(const Common::String &key) const;
+	Value &value(const Common::String &key);
+
+	Value _develMode;
+	Value _dataPath;
+	Value _savePath;
+	Value _lastSet;
+	Value _musicVolume;
+	Value _sfxVolume;
+	Value _voiceVolume;
+	Value _lastSavedGame;
+	Value _gamma;
+	Value _voiceEffects;
+	Value _textSpeed;
+	Value _speechMode;
+	Value _movement;
+	Value _joystick;
+	Value _spewOnError;
+	Value _showFps;
+	Value _softRenderer;
+	Value _fullscreen;
+	Value _engineSpeed;
+	Value _transcript;
 
 	bool _dirty;
 
-	uint convertVolumeToMixer(const Common::String &volume);
-	Common::String convertVolumeFromMixer(uint volume);
-	uint convertTalkSpeedToGUI(const Common::String &talkspeed);
-	Common::String convertTalkSpeedFromGUI(uint talkspeed);
-	bool convertSubtitlesToGUI(const Common::String &speechmode);
-	bool convertSpeechMuteToGUI(const Common::String &speechmode);
-	Common::String convertSpeechModeFromGUI(bool subtitles, bool speechMute);
+	uint convertVolumeToMixer(uint volume);
+	uint convertVolumeFromMixer(uint volume);
+	uint convertTalkSpeedToGUI(uint talkspeed);
+	uint convertTalkSpeedFromGUI(uint talkspeed);
+	bool convertSubtitlesToGUI(uint speechmode);
+	bool convertSpeechMuteToGUI(uint speechmode);
+	uint convertSpeechModeFromGUI(bool subtitles, bool speechMute);
 };
 
 extern Registry *g_registry;

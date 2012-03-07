@@ -204,12 +204,19 @@ void Lua_V1::ReadRegistryValue() {
 		return;
 	}
 	const char *key = lua_getstring(keyObj);
-	const char *val = g_registry->get(key, "");
-	// this opcode can return lua_pushnumber due binary nature of some registry entries, but not implemented
-	if (val[0] == 0)
-		lua_pushnil();
-	else
-		lua_pushstring(const_cast<char *>(val));
+
+	Registry::ValueType type = g_registry->getValueType(key);
+	switch (type) {
+	case Registry::String:
+		lua_pushstring(g_registry->getString(key).c_str());
+		break;
+	case Registry::Integer:
+		lua_pushnumber(g_registry->getInt(key));
+		break;
+	case Registry::Boolean:
+		pushbool(g_registry->getBool(key));
+		break;
+	}
 }
 
 void Lua_V1::WriteRegistryValue() {
@@ -219,13 +226,17 @@ void Lua_V1::WriteRegistryValue() {
 	if (!lua_isstring(keyObj))
 		return;
 
-	if (!lua_isstring(valObj))
+	const char *key = lua_getstring(keyObj);
+	if (strcmp(key, "GrimMannyState") == 0) //This isn't used. it's probably a left over from testing phase.
 		return;
 
-	// this opcode can get lua_getnumber due binary nature of some registry entries, but not implemented
-	const char *key = lua_getstring(keyObj);
-	const char *val = lua_getstring(valObj);
-	g_registry->set(key, val);
+	if (lua_isstring(valObj)) {
+		const char *val = lua_getstring(valObj);
+		g_registry->setString(key, val);
+	} else if (lua_isnumber(valObj)) {
+		int val = (int)lua_getnumber(valObj);
+		g_registry->setInt(key, val);
+	}
 }
 
 void Lua_V1::GetAngleBetweenVectors() {
@@ -281,10 +292,7 @@ void Lua_V1::Is3DHardwareEnabled() {
 void Lua_V1::SetHardwareState() {
 	// changing only in config setup (software/hardware rendering)
 	bool accel = getbool(1);
-	if (accel)
-		g_registry->set("soft_renderer", "false");
-	else
-		g_registry->set("soft_renderer", "true");
+	g_registry->setBool("soft_renderer", !accel);
 	g_grim->changeHardwareState();
 }
 
@@ -1424,11 +1432,8 @@ void Lua_V1::postRestoreHandle() {
 	// Set the developerMode, since the save contains the value of
 	// the installation it was made with.
 	lua_pushobject(lua_getglobal("developerMode"));
-	const char *devMode = g_registry->get("good_times", "");
-	if (devMode[0] == 0)
-		lua_pushnil();
-	else
-		lua_pushstring(devMode);
+	bool devMode = g_registry->getBool("good_times");
+	pushbool(devMode);
 	lua_setglobal("developerMode");
 	lua_endblock();
 }

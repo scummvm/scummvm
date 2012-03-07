@@ -96,10 +96,10 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	g_movie = NULL;
 	g_imuse = NULL;
 
-	_showFps = (tolower(g_registry->get("show_fps", "false")[0]) == 't');
+	_showFps = g_registry->getBool("show_fps");
 
 #ifdef USE_OPENGL
-	_softRenderer = (tolower(g_registry->get("soft_renderer", "false")[0]) == 't');
+	_softRenderer = g_registry->getBool("soft_renderer");
 #else
 	_softRenderer = true;
 #endif
@@ -121,14 +121,14 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_textSpeed = 7;
 	_mode = _previousMode = NormalMode;
 	_flipEnable = true;
-	int speed = atol(g_registry->get("engine_speed", "30"));
+	int speed = g_registry->getInt("engine_speed");
 	if (speed <= 0 || speed > 100)
 		_speedLimitMs = 30;
 	else
 		_speedLimitMs = 1000 / speed;
 	char buf[20];
 	sprintf(buf, "%d", 1000 / _speedLimitMs);
-	g_registry->set("engine_speed", buf);
+	g_registry->setString("engine_speed", buf);
 	_refreshDrawNeeded = true;
 	_listFilesIter = NULL;
 	_savedState = NULL;
@@ -236,7 +236,7 @@ Common::Error GrimEngine::run() {
 	g_imuse = new Imuse(20, demo);
 	g_sound = new SoundPlayer();
 
-	bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
+	bool fullscreen = g_registry->getBool("fullscreen");
 
 	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)){
 		warning("gfx backend doesn't support hardware rendering");
@@ -630,7 +630,7 @@ void GrimEngine::mainLoop() {
 				fullscreen = !fullscreen;
 			}
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
-			g_registry->set("fullscreen", (fullscreen ? "true" : "false"));
+			g_registry->setBool("fullscreen", fullscreen);
 
 			uint screenWidth = g_driver->getScreenWidth();
 			uint screenHeight = g_driver->getScreenHeight();
@@ -642,7 +642,7 @@ void GrimEngine::mainLoop() {
 			clearPools();
 
 			delete g_driver;
-			if (tolower(g_registry->get("soft_renderer", "false")[0]) == 't') {
+			if (g_registry->getBool("soft_renderer")) {
 				g_driver = CreateGfxTinyGL();
 			} else {
 				g_driver = CreateGfxOpenGL();
