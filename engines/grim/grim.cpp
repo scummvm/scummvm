@@ -435,6 +435,15 @@ void GrimEngine::luaUpdate() {
 	LuaBase::instance()->update(_frameTime, _movieTime);
 
 	if (_currSet && (_mode == NormalMode || _mode == SmushMode)) {
+		// call updateTalk() before calling update(), since it may modify costumes state, and
+		// the costumes are updated in update().
+		for (Common::List<Actor *>::iterator i = _talkingActors.begin(); i != _talkingActors.end(); ++i) {
+			Actor *a = *i;
+			if (!a->updateTalk()) {
+				i = _talkingActors.reverse_erase(i);
+			}
+		}
+
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
 		buildActiveActorsList();
@@ -443,12 +452,6 @@ void GrimEngine::luaUpdate() {
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
 			a->update(_frameTime);
-		}
-		for (Common::List<Actor *>::iterator i = _talkingActors.begin(); i != _talkingActors.end(); ++i) {
-			Actor *a = *i;
-			if (!a->updateTalk()) {
-				i = _talkingActors.reverse_erase(i);
-			}
 		}
 
 		_iris->update(_frameTime);
