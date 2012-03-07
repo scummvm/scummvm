@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-02-16 12:32+0200\n"
-"PO-Revision-Date: 2011-12-27 17:46+0100\n"
+"PO-Revision-Date: 2012-02-17 16:28+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
-"Language: Cesky\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: Cesky\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
@@ -81,9 +81,8 @@ msgid "Remap keys"
 msgstr "Pøemapovat klávesy"
 
 #: gui/gui-manager.cpp:127 base/main.cpp:295
-#, fuzzy
 msgid "Toggle FullScreen"
-msgstr "Zapnout celou obrazovku"
+msgstr "Pøepnout celou obrazovku"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
@@ -2274,9 +2273,8 @@ msgid "Keymap:"
 msgstr "Mapa Kláves:"
 
 #: backends/keymapper/remap-dialog.cpp:66
-#, fuzzy
 msgid " (Effective)"
-msgstr "(Aktivní)"
+msgstr " (Aktivní)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
@@ -2384,7 +2382,7 @@ msgstr "Touchpad re¾im vypnut"
 
 #: backends/platform/maemo/maemo.cpp:178
 msgid "Click Mode"
-msgstr ""
+msgstr "Re¾im kliknutí"
 
 #: backends/platform/maemo/maemo.cpp:184
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2395,9 +2393,8 @@ msgid "Left Click"
 msgstr "Levé Kliknutí"
 
 #: backends/platform/maemo/maemo.cpp:187
-#, fuzzy
 msgid "Middle Click"
-msgstr "Polo¾ka vlevo uprostøed"
+msgstr "Kliknutí prostøedním tlaèítkem"
 
 #: backends/platform/maemo/maemo.cpp:190
 #: backends/platform/symbian/src/SymbianActions.cpp:43
