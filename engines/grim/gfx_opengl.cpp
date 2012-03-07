@@ -57,6 +57,7 @@ PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
 PFNGLBINDPROGRAMARBPROC glBindProgramARB;
 PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
 PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
+PFNGLPROGRAMLOCALPARAMETER4FARBPROC glProgramLocalParameter4fARB;
 
 #endif
 
@@ -74,6 +75,23 @@ static char fragSrc[] =
 	MOV result.depth, d.r;\n\
 	END\n";
 
+static char dimFragSrc[] =
+	"!!ARBfp1.0\n\
+	PARAM level = program.local[0];\n\
+	TEMP color;\n\
+	TEMP d;\n\
+	TEX d, fragment.texcoord[0], texture[0], 2D;\n\
+	TEMP sum;\n\
+	MOV sum, d.r;\n\
+	ADD sum, sum, d.g;\n\
+	ADD sum, sum, d.b;\n\
+	MUL sum, sum, 0.33;\n\
+	MUL sum, sum, level.x;\n\
+	MOV result.color.r, sum;\n\
+	MOV result.color.g, sum;\n\
+	MOV result.color.b, sum;\n\
+	END\n";
+
 GfxOpenGL::GfxOpenGL() {
 	g_driver = this;
 	_storedDisplay = NULL;
@@ -89,6 +107,9 @@ GfxOpenGL::~GfxOpenGL() {
 #ifdef GL_ARB_fragment_program
 	if (_useDepthShader)
 		glDeleteProgramsARB(1, &_fragmentProgram);
+
+	if (_useDimShader)
+		glDeleteProgramsARB(1, &_dimFragProgram);
 #endif
 }
 
@@ -102,6 +123,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 	_useDepthShader = false;
+	_useDimShader = false;
 
 	g_system->showMouse(!fullscreen);
 
@@ -148,10 +170,13 @@ void GfxOpenGL::initExtensions()
 	glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)u.func_ptr;
 	u.obj_ptr = SDL_GL_GetProcAddress("glDeleteProgramsARB");
 	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glProgramLocalParameter4fARB");
+	glProgramLocalParameter4fARB = (PFNGLPROGRAMLOCALPARAMETER4FARBPROC)u.func_ptr;
 
 	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "ARB_fragment_program")) {
 		_useDepthShader = true;
+		_useDimShader = true;
 	}
 
 	if (_useDepthShader) {
@@ -162,8 +187,19 @@ void GfxOpenGL::initExtensions()
 		glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(fragSrc), fragSrc);
 		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errorPos);
 		if (errorPos != -1) {
-			warning("Error compiling fragment program:\n%s", glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+			warning("Error compiling depth fragment program:\n%s", glGetString(GL_PROGRAM_ERROR_STRING_ARB));
 			_useDepthShader = false;
+		}
+
+
+		glGenProgramsARB(1, &_dimFragProgram);
+		glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, _dimFragProgram);
+
+		glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(dimFragSrc), dimFragSrc);
+		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errorPos);
+		if (errorPos != -1) {
+			warning("Error compiling dim fragment program:\n%s", glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+			_useDimShader = false;
 		}
 	}
 #endif
@@ -780,6 +816,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy) {
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		glDepthMask(GL_TRUE);
 #ifdef GL_ARB_fragment_program
+		glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, _fragmentProgram);
 		glEnable(GL_FRAGMENT_PROGRAM_ARB);
 #endif
 	}
@@ -1303,8 +1340,66 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	yReal = (int)(yReal *_scaleH);
 	w = (int)(w * _scaleW);
 	h = (int)(h * _scaleH);
+	int y = _screenHeight - yReal - h;
+
+#ifdef GL_ARB_fragment_program
+	if (_useDimShader) {
+		GLuint texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glViewport(0, 0, _screenWidth, _screenHeight);
+
+		// copy the data over to the texture
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, w, h, 0);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, _screenWidth, 0, _screenHeight, 0, 1);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_ALPHA_TEST);
+		glDepthMask(GL_FALSE);
+		glEnable(GL_SCISSOR_TEST);
+
+		glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, _dimFragProgram);
+		glEnable(GL_FRAGMENT_PROGRAM_ARB);
+		glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, level, 0, 0, 0);
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
+		glVertex2f(x, y);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2f(x + w, y);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex2f(x + w, y + h);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex2f(x, y + h);
+		glEnd();
+
+		glDisable(GL_FRAGMENT_PROGRAM_ARB);
+
+		glDeleteTextures(1, &texture);
+
+		return;
+	}
+#endif
+
 	uint32 *data = new uint32[w * h];
-	int y = _screenHeight - yReal;
+	y = _screenHeight - yReal;
 
 	// collect the requested area and generate the dimmed version
 	glReadPixels(x, y - h, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);

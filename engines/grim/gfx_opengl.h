@@ -131,6 +131,8 @@ private:
 	byte *_storedDisplay;
 	bool _useDepthShader;
 	GLuint _fragmentProgram;
+	bool _useDimShader;
+	GLuint _dimFragProgram;
 	int _maxLights;
 };
 
