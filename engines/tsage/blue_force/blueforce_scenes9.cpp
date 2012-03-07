@@ -35,7 +35,7 @@ namespace BlueForce {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene900::Item1::startAction(CursorType action, Event &event) {
+bool Scene900::Exterior::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(900, 6);
 		return true;
@@ -44,7 +44,7 @@ bool Scene900::Item1::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene900::Item4::startAction(CursorType action, Event &event) {
+bool Scene900::WestExit::startAction(CursorType action, Event &event) {
 	Scene900 *scene = (Scene900 *)BF_GLOBALS._sceneManager._scene;
 
 	BF_GLOBALS._player.disableControl();
@@ -458,7 +458,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_jakeJacketSpeaker);
 	_stripManager.addSpeaker(&_lyleHatSpeaker);
 
-	_item4.setDetails(Rect(0, 85, 20, 130), 900, -1, -1, -1, 1, 0);
+	_westExit.setDetails(Rect(0, 85, 20, 130), 900, -1, -1, -1, 1, 0);
 	BF_GLOBALS._player.postInit();
 
 	_dog.postInit();
@@ -559,11 +559,11 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			setAction(&_sequenceManager1, this, 9002, &BF_GLOBALS._player, &_door, NULL);
 	}
 
-	_gate.setDetails(900, 0, -1, 1, 1, 0);
-	_door.setDetails(900, 2, -1, 5, 1, 0);
+	_gate.setDetails(900, 0, -1, 1, 1, (SceneItem *)NULL);
+	_door.setDetails(900, 2, -1, 5, 1, (SceneItem *)NULL);
 	_item2.setDetails(Rect(0, 0, 225, 21), 666, 25, -1, -1, 1, NULL);
 	_item3.setDetails(Rect(37, 21, 324, 50), 666, 26, -1, -1, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 960, 200), 900, 7, -1, -1, 1, NULL);
+	_exterior.setDetails(Rect(0, 0, 960, 200), 900, 7, -1, -1, 1, NULL);
 }
 
 void Scene900::signal() {
@@ -692,7 +692,7 @@ void Scene900::process(Event &event) {
 	SceneExt::process(event);
 
 	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
-		if (_item4.contains(event.mousePos)) {
+		if (_westExit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_W);
 			BF_GLOBALS._events.setCursor(surface);
 		} else {
