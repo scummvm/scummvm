@@ -2039,9 +2039,11 @@ msgid "Move Back"
 msgstr "Reculer"
 
 #: engines/kyra/lol.cpp:483
+msgid "Slide Left"
 msgstr "Faire un pas vers la Gauche"
 
 #: engines/kyra/lol.cpp:484
+msgid "Slide Right"
 msgstr "Faire un pas vers la Droite"
 
 #: engines/kyra/lol.cpp:485
