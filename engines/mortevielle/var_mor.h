@@ -223,20 +223,7 @@ enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCU
 /*------------------------------   VARIABLES   ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-extern bool g_blo,
-        g_bh1,
-        g_bf1,
-        g_bh2,
-        g_bh4,
-        g_bf4,
-        g_bh5,
-        g_bh6,
-        g_bh8,
-        g_bt3,
-        g_bt7,
-        g_bh9,
-
-        g_soundOff,
+extern bool 
         g_main1,
         g_choisi,
         g_test0,

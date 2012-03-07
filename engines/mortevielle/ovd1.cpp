@@ -161,7 +161,7 @@ void music() {
 	bool fin;
 
 	/* debug('o3 music'); */
-	if (g_soundOff)
+	if (g_vm->_soundOff)
 		return;
 
 	g_rech_cfiec = true;

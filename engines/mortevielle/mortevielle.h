@@ -88,6 +88,8 @@ private:
 	bool _inMainGameLoop;	// Flag when the main game loop is active
 	Common::StringArray _engineStrings;
 	Common::StringArray _gameStrings;
+
+
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
 	void readStaticStrings(Common::File &f, int dataSize, DataType dataType);
@@ -100,6 +102,21 @@ private:
 	void playGame();
 	void handleAction();
 public:
+	bool g_blo;
+	bool _roomPresenceLuc;
+	bool _roomPresenceIda;
+	bool _purpleRoomPresenceLeo;
+	bool _roomPresenceGuy;
+	bool _roomPresenceEva;
+	bool _roomPresenceMax;
+	bool _roomPresenceBob;
+	bool _roomPresencePat;
+	bool _toiletsPresenceBobMax;
+	bool _bathRoomPresenceBobMax;
+	bool _room9PresenceLeo;
+
+	bool _soundOff;
+
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;

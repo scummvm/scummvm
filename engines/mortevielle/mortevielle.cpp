@@ -154,7 +154,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	initMouse();
 
 	init_lieu();
-	g_soundOff = false;
+	g_vm->_soundOff = false;
 	g_largestClearScreen = false;
 
 	teskbd();

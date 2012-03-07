@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/var_mor.h"
 #include "mortevielle/asm.h"
@@ -42,7 +43,7 @@ int testou() {
 
 	switch (ch)  {
 	case '\23' :
-		g_soundOff = !g_soundOff;
+		g_vm->_soundOff = !g_vm->_soundOff;
 		break;
 	case '\26' :
 		if ((g_c_zzz == 1) || (g_c_zzz == 2)) {

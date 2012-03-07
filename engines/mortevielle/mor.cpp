@@ -385,33 +385,33 @@ void repon(int f, int m) {
 
 void t5(int cx) {
 	if (cx == 10)
-		g_blo = false;
+		g_vm->g_blo = false;
 
 	if (cx != 1) {
-		g_bh1 = false;
-		g_bf1 = false;
+		g_vm->_roomPresenceLuc = false;
+		g_vm->_roomPresenceIda = false;
 	}
 
 	if (cx != 2)
-		g_bh2 = false;
+		g_vm->_purpleRoomPresenceLeo = false;
 
 	if (cx != 4) {
-		g_bh4 = false;
-		g_bf4 = false;
+		g_vm->_roomPresenceGuy = false;
+		g_vm->_roomPresenceEva = false;
 	}
 
 	if (cx != 5)
-		g_bh5 = false;
+		g_vm->_roomPresenceMax = false;
 	if (cx != 6)
-		g_bh6 = false;
+		g_vm->_roomPresenceBob = false;
 	if (cx != 8)
-		g_bh8 = false;
+		g_vm->_roomPresencePat = false;
 	if (cx != 3)
-		g_bt3 = false;
+		g_vm->_toiletsPresenceBobMax = false;
 	if (cx != 7)
-		g_bt7 = false;
+		g_vm->_bathRoomPresenceBobMax = false;
 	if (cx != 9)
-		g_bh9 = false;
+		g_vm->_room9PresenceLeo = false;
 }
 
 /**
@@ -831,18 +831,18 @@ int getPresenceStatsChapel(int &hour) {
  * Engine function - Check who is in the Green Room
  * @remarks	Originally called 'quelq1'
  */
-void setPresenceGreenRoom(int l) {
-	int per = getRandomNumber(1, 2);
-	if (l == 1) {
-		if (per == 1)
-			g_bh1 = true;
+void setPresenceGreenRoom(int roomId) {
+	int rand = getRandomNumber(1, 2);
+	if (roomId == GREEN_ROOM) {
+		if (rand == 1)
+			g_vm->_roomPresenceLuc = true;
 		else
-			g_bf1 = true;
-	} else if (l == 4) {
-		if (per == 1)
-			g_bh4 = true;
+			g_vm->_roomPresenceIda = true;
+	} else if (roomId == DARKBLUE_ROOM) {
+		if (rand == 1)
+			g_vm->_roomPresenceGuy = true;
 		else
-			g_bf4 = true;
+			g_vm->_roomPresenceEva = true;
 	}
 
 	g_ipers = 10;
@@ -854,9 +854,9 @@ void setPresenceGreenRoom(int l) {
  */
 void setPresencePurpleRoom() {
 	if (g_li == 2)
-		g_bh2 = true;
+		g_vm->_purpleRoomPresenceLeo = true;
 	else
-		g_bh9 = true;
+		g_vm->_room9PresenceLeo = true;
 
 	g_ipers = 10;
 }
@@ -866,7 +866,7 @@ void setPresencePurpleRoom() {
  * @remarks	Originally called 'quelq5'
  */
 void setPresenceBlueRoom() {
-	g_bh5 = true;
+	g_vm->_roomPresenceMax = true;
 	g_ipers = 10;
 }
 
@@ -876,9 +876,9 @@ void setPresenceBlueRoom() {
  */
 void setPresenceRedRoom(int l) {
 	if (l == 6)
-		g_bh6 = true;
+		g_vm->_roomPresenceBob = true;
 	else if (l == 8)
-		g_bh8 = true;
+		g_vm->_roomPresencePat = true;
 
 	g_ipers = 10;
 }
@@ -962,14 +962,14 @@ int setPresenceLanding() {
 	int rand = 0;
 	do {
 		rand = getRandomNumber(1, 8);
-		test = (((rand == 1) && (g_bh2 || g_bh9)) ||
-		        ((rand == 2) && g_bh8) ||
-		        ((rand == 3) && g_bh4) ||
-		        ((rand == 4) && g_bf4) ||
-		        ((rand == 5) && g_bh6) ||
-		        ((rand == 6) && g_bh1) ||
-		        ((rand == 7) && g_bf1) ||
-		        ((rand == 8) && g_bh5));
+		test = (((rand == 1) && (g_vm->_purpleRoomPresenceLeo || g_vm->_room9PresenceLeo)) ||
+		        ((rand == 2) && g_vm->_roomPresencePat) ||
+		        ((rand == 3) && g_vm->_roomPresenceGuy) ||
+		        ((rand == 4) && g_vm->_roomPresenceEva) ||
+		        ((rand == 5) && g_vm->_roomPresenceBob) ||
+		        ((rand == 6) && g_vm->_roomPresenceLuc) ||
+		        ((rand == 7) && g_vm->_roomPresenceIda) ||
+		        ((rand == 8) && g_vm->_roomPresenceMax));
 	} while (test);
 
 	int retVal = convertCharacterIndexToBitIndex(rand);
@@ -1024,31 +1024,33 @@ void getKnockAnswer() {
 	}
 }
 
-void nouvp(int l, int &p) {
-	p = 0;
+int nouvp(int l) {
+	int bitIndex = 0;
 	if (l == 1) {
-		if (g_bh1)
-			p = 4;
-		if (g_bf1)
-			p = 2;
-	} else if (((l == 2) && (g_bh2)) || ((l == 9) && (g_bh9)))
-		p = 128;
+		if (g_vm->_roomPresenceLuc)
+			bitIndex = 4;  // LUC
+		if (g_vm->_roomPresenceIda)
+			bitIndex = 2;  // IDA
+	} else if (((l == 2) && (g_vm->_purpleRoomPresenceLeo)) || ((l == 9) && (g_vm->_room9PresenceLeo)))
+		bitIndex = 128;    // LEO
 	else if (l == 4) {
-		if (g_bh4)
-			p = 32;
-		if (g_bf4)
-			p = 16;
-	} else if ((l == 5) && (g_bh5))
-		p = 1;
-	else if ((l == 6) && (g_bh6))
-		p = 8;
-	else if ((l == 8) && (g_bh8))
-		p = 64;
-	else if (((l == 3) && (g_bt3)) || ((l == 7) && (g_bt7)))
-		p = 9;
+		if (g_vm->_roomPresenceGuy)
+			bitIndex = 32; // GUY
+		if (g_vm->_roomPresenceEva)
+			bitIndex = 16; // EVA
+	} else if ((l == 5) && (g_vm->_roomPresenceMax))
+		bitIndex = 1;      // MAX
+	else if ((l == 6) && (g_vm->_roomPresenceBob))
+		bitIndex = 8;      // BOB
+	else if ((l == 8) && (g_vm->_roomPresencePat))
+		bitIndex = 64;     // PAT
+	else if (((l == 3) && (g_vm->_toiletsPresenceBobMax)) || ((l == 7) && (g_vm->_bathRoomPresenceBobMax)))
+		bitIndex = 9;      // BOB + MAX
 
-	if (p != 9)
-		showPeoplePresent(p);
+	if (bitIndex != 9)
+		showPeoplePresent(bitIndex);
+
+	return bitIndex;
 }
 
 /**
@@ -1084,19 +1086,19 @@ void ecfren(int &p, int &rand, int cf, int l) {
 		displayAloneText();
 	p = -500;
 	rand = 0;
-	if (((l == 1) && (!g_bh1) && (!g_bf1)) || ((l == 4) && (!g_bh4) && (!g_bf4)))
+	if (((l == 1) && (!g_vm->_roomPresenceLuc) && (!g_vm->_roomPresenceIda)) || ((l == 4) && (!g_vm->_roomPresenceGuy) && (!g_vm->_roomPresenceEva)))
 		p = getPresenceStatsGreenRoom();
-	if ((l == 2) && (!g_bh2) && (!g_bh9))
+	if ((l == 2) && (!g_vm->_purpleRoomPresenceLeo) && (!g_vm->_room9PresenceLeo))
 		p = getPresenceStatsPurpleRoom();
-	if (((l == 3) && (!g_bt3)) || ((l == 7) && (!g_bt7)))
+	if (((l == 3) && (!g_vm->_toiletsPresenceBobMax)) || ((l == 7) && (!g_vm->_bathRoomPresenceBobMax)))
 		p = getPresenceStatsToilets();
-	if ((l == 5) && (!g_bh5))
+	if ((l == 5) && (!g_vm->_roomPresenceMax))
 		p = getPresenceStatsBlueRoom();
-	if (((l == 6) && (!g_bh6)) || ((l == 8) && (!g_bh8)))
+	if (((l == 6) && (!g_vm->_roomPresenceBob)) || ((l == 8) && (!g_vm->_roomPresencePat)))
 		p = getPresenceStatsRedRoom();
-	if ((l == 9) && (!g_bh9) && (!g_bh2))
+	if ((l == 9) && (!g_vm->_room9PresenceLeo) && (!g_vm->_purpleRoomPresenceLeo))
 		p = 10;
-	if (((l == 2) && (g_bh9)) || ((l == 9) && (g_bh2)))
+	if (((l == 2) && (g_vm->_room9PresenceLeo)) || ((l == 9) && (g_vm->_purpleRoomPresenceLeo)))
 		p = -400;
 	if (p != -500) {
 		p += cf;
@@ -1109,29 +1111,29 @@ void becfren(int l) {
 		int rand = getRandomNumber(1, 2);
 		if (l == 1) {
 			if (rand == 1)
-				g_bh1 = true;
+				g_vm->_roomPresenceLuc = true;
 			else
-				g_bf1 = true;
+				g_vm->_roomPresenceIda = true;
 		} else { // l == 4
 			if (rand == 1)
-				g_bh4 = true;
+				g_vm->_roomPresenceGuy = true;
 			else
-				g_bf4 = true;
+				g_vm->_roomPresenceEva = true;
 		}
 	} else if (l == 2)
-		g_bh2 = true;
+		g_vm->_purpleRoomPresenceLeo = true;
 	else if (l == 3)
-		g_bt3 = true;
+		g_vm->_toiletsPresenceBobMax = true;
 	else if (l == 5)
-		g_bh5 = true;
+		g_vm->_roomPresenceMax = true;
 	else if (l == 6)
-		g_bh6 = true;
+		g_vm->_roomPresenceBob = true;
 	else if (l == 7)
-		g_bt7 = true;
+		g_vm->_bathRoomPresenceBobMax = true;
 	else if (l == 8)
-		g_bh8 = true;
+		g_vm->_roomPresencePat = true;
 	else if (l == 9)
-		g_bh9 = true;
+		g_vm->_room9PresenceLeo = true;
 }
 
 /* NIVEAU 10 */
@@ -1199,13 +1201,13 @@ void dprog() {
 	g_li = 21;
 	g_jh = 0;
 	if (!g_s._ipre)
-		g_blo = true;
+		g_vm->g_blo = true;
 	g_t = kTime1;
 	g_mh = readclock();
 }
 
 void pl1(int cf) {
-	if (((g_li == 1) && (!g_bh1) && (!g_bf1)) || ((g_li == 4) && (!g_bh4) && (!g_bf4))) {
+	if (((g_li == 1) && (!g_vm->_roomPresenceLuc) && (!g_vm->_roomPresenceIda)) || ((g_li == 4) && (!g_vm->_roomPresenceGuy) && (!g_vm->_roomPresenceEva))) {
 		int p = getPresenceStatsGreenRoom();
 		int rand;
 		phaz(rand, p, cf);
@@ -1218,7 +1220,7 @@ void pl1(int cf) {
 }
 
 void pl2(int cf) {
-	if (!g_bh2) {
+	if (!g_vm->_purpleRoomPresenceLeo) {
 		int p = getPresenceStatsPurpleRoom();
 		int rand;
 		phaz(rand, p, cf);
@@ -1231,7 +1233,7 @@ void pl2(int cf) {
 }
 
 void pl5(int cf) {
-	if (!g_bh5) {
+	if (!g_vm->_roomPresenceMax) {
 		int p = getPresenceStatsBlueRoom();
 		int rand;
 
@@ -1245,7 +1247,7 @@ void pl5(int cf) {
 }
 
 void pl6(int cf) {
-	if (((g_li == 6) && (!g_bh6)) || ((g_li == 8) && (!g_bh8))) {
+	if (((g_li == 6) && (!g_vm->_roomPresenceBob)) || ((g_li == 8) && (!g_vm->_roomPresencePat))) {
 		int p = getPresenceStatsRedRoom();
 		int rand;
 
@@ -1259,7 +1261,7 @@ void pl6(int cf) {
 }
 
 void pl9(int cf) {
-	if (!g_bh9) {
+	if (!g_vm->_room9PresenceLeo) {
 		cf = -10;
 		int p, rand;
 		phaz(rand, p, cf);
@@ -1337,7 +1339,8 @@ void pl20(int cf) {
 		setPresenceChapel(h);
 }
 
-void t11(int l11, int &a) {
+int t11(int l11) {
+	int retVal = 0;
 	int p, rand;
 
 	ecfren(p, rand, g_s._faithScore, l11);
@@ -1346,13 +1349,13 @@ void t11(int l11, int &a) {
 		if (p != -500) {
 			if (rand > p) {
 				displayAloneText();
-				a = 0;
+				retVal = 0;
 			} else {
 				becfren(g_li);
-				nouvp(g_li, a);
+				retVal = nouvp(g_li);
 			}
 		} else
-			nouvp(g_li, a);
+			retVal = nouvp(g_li);
 	}
 
 	if (l11 > 9) {
@@ -1376,7 +1379,7 @@ void t11(int l11, int &a) {
 			rand = getRandomNumber(1, 100);
 			if (rand > p) {
 				displayAloneText();
-				a = 0;
+				retVal = 0;
 			} else {
 				if (l11 == 10)
 					p = setPresenceDiningRoom(h);
@@ -1388,10 +1391,12 @@ void t11(int l11, int &a) {
 					p = setPresenceLanding();
 				else if (l11 == 20)
 					p = setPresenceChapel(h);
-				a = p;
+				retVal = p;
 			}
 		}
 	}
+
+	return retVal;
 }
 
 void cavegre() {
