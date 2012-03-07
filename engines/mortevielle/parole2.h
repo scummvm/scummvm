@@ -33,7 +33,7 @@ namespace Mortevielle {
 extern void rot_chariot();
 extern void init_chariot();
 extern void trait_ph();
-extern void parole(int rep, int ht, int typ);
+extern void startSpeech(int rep, int ht, int typ);
 
 } // End of namespace Mortevielle
 

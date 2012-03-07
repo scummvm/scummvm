@@ -91,8 +91,8 @@ const int kTempoNoise = 78;
 const int kTempoF = 80;
 const int kTempoM = 89;
 
-const int ti1 = 410;
-const int ti2 = 250;
+const int kTime1 = 410;
+const int kTime2 = 250;
 const int maxti = 7975;
 const int maxtd = 600;
 const int kMaxRect = 14;
@@ -240,7 +240,7 @@ extern bool g_blo,
         g_main1,
         g_choisi,
         g_test0,
-        g_f2_all,
+        g_largestClearScreen,
         g_imen,
         g_cache,
         g_iesc,

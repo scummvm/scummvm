@@ -98,9 +98,9 @@ void tinke() {
 
 	if (!g_blo) {
 		if ((hour == 12) || ((hour > 18) && (hour < 21)) || ((hour >= 0) && (hour < 7)))
-			g_t = ti2;
+			g_t = kTime2;
 		else
-			g_t = ti1;
+			g_t = kTime1;
 		cf = g_s._faithScore;
 		if ((cf > 33) && (cf < 66))
 			g_t -= (g_t / 3);
@@ -169,7 +169,7 @@ void tinke() {
 							ecrf2();
 							ecr3(g_vm->getEngineString(S_HEAR_NOISE));
 							int rand = (getRandomNumber(0, 4)) - 2;
-							parole(1, rand, 1);
+							startSpeech(1, rand, 1);
 							clsf3();
 						}
 					}
@@ -254,12 +254,12 @@ void tmlieu(int roomId) {
 		nomp = deline(g_v_lieu[i][roomId] + kMenuPlaceStringIndex);
 		while (nomp.size() < 20)
 			nomp += ' ';
-		g_vm->_menu.menut(g_vm->_menu._moveMenu[i], nomp);
+		g_vm->_menu.setText(g_vm->_menu._moveMenu[i], nomp);
 		++i;
 	}
 	nomp = "*                   ";
 	for (int cx = 7; cx >= i; --cx)
-		g_vm->_menu.menut(g_vm->_menu._moveMenu[cx], nomp);
+		g_vm->_menu.setText(g_vm->_menu._moveMenu[cx], nomp);
 }
 
 
@@ -289,8 +289,8 @@ void unsetSearchMenu() {
 	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.enableMenuItem(_actionMenu[cx]);
 
-	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getEngineString(S_PROBE));
-	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getEngineString(S_RAISE));
+	g_vm->_menu.setText(OPCODE_SOUND, g_vm->getEngineString(S_PROBE));
+	g_vm->_menu.setText(OPCODE_LIFT, g_vm->getEngineString(S_RAISE));
 }
 
 /* NIVEAU 6 */
@@ -310,7 +310,7 @@ void tperd() {
 	clsf1();
 	g_vm->_screenSurface.drawBox(60, 35, 400, 50, 15);
 	repon(9, g_crep);
-	clsf2();
+	clearScreenType2();
 	clsf3();
 	g_col = false;
 	g_syn = false;
@@ -390,12 +390,12 @@ void modinv() {
 			++cy;
 			r = (ord(g_s._sjer[cx]) + 400);
 			nomp = deline(r - 501 + kInventoryStringIndex);
-			g_vm->_menu.menut(g_vm->_menu._inventoryMenu[cy], nomp);
+			g_vm->_menu.setText(g_vm->_menu._inventoryMenu[cy], nomp);
 			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[cx]);
 		}
 	if (cy < 6)
 		for (int cx = cy + 1; cx <= 6; ++cx) {
-			g_vm->_menu.menut(g_vm->_menu._inventoryMenu[cx], "                       ");
+			g_vm->_menu.setText(g_vm->_menu._inventoryMenu[cx], "                       ");
 			g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[cx]);
 		}
 }
@@ -412,7 +412,7 @@ void sparl(float adr, float rep) {
 	
 	key = 0;
 	do {
-		parole(repint, haut[g_caff - 69], 0);
+		startSpeech(repint, haut[g_caff - 69], 0);
 		f3f8::waitForF3F8(key);
 		CHECK_QUIT;
 	} while (key != 66);
@@ -443,8 +443,8 @@ void setSearchMenu() {
 	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.disableMenuItem(_actionMenu[cx]);
 
-	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getEngineString(S_SUITE));
-	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getEngineString(S_STOP));
+	g_vm->_menu.setText(OPCODE_SOUND, g_vm->getEngineString(S_SUITE));
+	g_vm->_menu.setText(OPCODE_LIFT, g_vm->getEngineString(S_STOP));
 }
 
 void mennor() {
@@ -574,9 +574,9 @@ L1:
 			g_crep = 138;
 		repon(2, g_crep);
 		if (g_crep == 138)
-			parole(5, 2, 1);
+			startSpeech(5, 2, 1);
 		else
-			parole(4, 4, 1);
+			startSpeech(4, 4, 1);
 
 		if (g_iouv == 0)
 			g_s._faithScore += 2;
@@ -601,8 +601,8 @@ L1:
 		} else {
 			repon(2, 136);
 			int rand = (getRandomNumber(0, 4)) - 2;
-			parole(3, rand, 1);
-			clsf2();
+			startSpeech(3, rand, 1);
+			clearScreenType2();
 			displayAloneText();
 			debloc(21);
 			affrep();

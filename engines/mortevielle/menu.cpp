@@ -42,13 +42,14 @@ namespace Mortevielle {
 
 /**
  * Setup a menu's contents
+ * @remarks	Originally called 'menut'
  */
-void Menu::menut(int no, Common::String name) {
-	byte h = hi(no);
-	byte l = lo(no);
+void Menu::setText(int menuId, Common::String name) {
+	byte h = hi(menuId);
+	byte l = lo(menuId);
 	Common::String s = name;
 
-	while (s.size() < 20)
+	while (s.size() < 30)
 		s += ' ';
 
 	switch (h) {
@@ -77,11 +78,11 @@ void Menu::menut(int no, Common::String name) {
 
 /**
  * _disable a menu item
- * @param no	Hi byte represents menu number, lo byte reprsents item index
+ * @param menuId	Hi byte represents menu number, lo byte reprsents item index
  */
-void Menu::disableMenuItem(int no) {
-	byte h = hi(no);
-	byte l = lo(no);
+void Menu::disableMenuItem(int menuId) {
+	byte h = hi(menuId);
+	byte l = lo(menuId);
 
 	switch (h) {
 	case MENU_INVENTORY:
@@ -110,12 +111,12 @@ void Menu::disableMenuItem(int no) {
 
 /**
  * Enable a menu item
- * @param no	Hi byte represents menu number, lo byte reprsents item index
+ * @param menuId	Hi byte represents menu number, lo byte reprsents item index
  * @remarks	Originally called menu_enable
  */
-void Menu::enableMenuItem(int no) {
-	byte h = hi(no);
-	byte l = lo(no);
+void Menu::enableMenuItem(int menuId) {
+	byte h = hi(menuId);
+	byte l = lo(menuId);
 
 	switch (h) {
 	case MENU_INVENTORY:
@@ -242,7 +243,7 @@ void Menu::invers(int ix) {
 		break;
 	}
 	if ((s[0] != '*') && (s[0] != '<'))
-		g_vm->_screenSurface.writeg(s, ix);
+		g_vm->_screenSurface.drawString(s, ix);
 	else
 		g_msg4 = OPCODE_NONE;
 }
@@ -309,42 +310,42 @@ void Menu::menuDown(int ii) {
 		switch (ii) {
 		case 1:
 			if (_inventoryStringArray[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_inventoryStringArray[cx], 4);
+				g_vm->_screenSurface.drawString(_inventoryStringArray[cx], 4);
 			break;
 		case 2:
 			if (_moveStringArray[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_moveStringArray[cx], 4);
+				g_vm->_screenSurface.drawString(_moveStringArray[cx], 4);
 			break;
 		case 3:
 			if (_actionStringArray[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_actionStringArray[cx], 4);
+				g_vm->_screenSurface.drawString(_actionStringArray[cx], 4);
 			break;
 		case 4:
 			if (_selfStringArray[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_selfStringArray[cx], 4);
+				g_vm->_screenSurface.drawString(_selfStringArray[cx], 4);
 			break;
 		case 5:
 			if (_discussStringArray[cx][0] != '*')
-				g_vm->_screenSurface.writeg(_discussStringArray[cx], 4);
+				g_vm->_screenSurface.drawString(_discussStringArray[cx], 4);
 			break;
 		case 6:
-			g_vm->_screenSurface.writeg(g_vm->getEngineString(S_SAVE_LOAD + cx), 4);
+			g_vm->_screenSurface.drawString(g_vm->getEngineString(S_SAVE_LOAD + cx), 4);
 			break;
 		case 7: {
 			Common::String s = g_vm->getEngineString(S_SAVE_LOAD + 1);
 			s += ' ';
 			s += (char)(48 + cx);
-			g_vm->_screenSurface.writeg(s, 4);
+			g_vm->_screenSurface.drawString(s, 4);
 			}
 			break;
 		case 8:
 			if (cx == 1)
-				g_vm->_screenSurface.writeg(g_vm->getEngineString(S_RESTART), 4);
+				g_vm->_screenSurface.drawString(g_vm->getEngineString(S_RESTART), 4);
 			else {
 				Common::String s = g_vm->getEngineString(S_SAVE_LOAD + 2);
 				s += ' ';
 				s += (char)(47 + cx);
-				g_vm->_screenSurface.writeg(s, 4);
+				g_vm->_screenSurface.drawString(s, 4);
 			}
 			break;
 		default:
@@ -360,7 +361,6 @@ void Menu::menuDown(int ii) {
  * Menu is being removed, so restore the previous background area.
  */
 void Menu::menuUp(int xx) {
-	/* debug('menuUp'); */
 	if (g_test0) {
 		charecr(10, (g_menuConstants[xx - 1][1] + 1) << 1);
 
@@ -383,7 +383,6 @@ void Menu::menuUp(int xx) {
  * Erase the menu
  */
 void Menu::eraseMenu() {
-	/* debug('eraseMenu'); */
 	_menuActive = false;
 	g_vm->setMouseClick(false);
 	menuUp(g_msg3);
@@ -478,8 +477,7 @@ void Menu::initMenu() {
 	f.read(g_lettres, 7 * 24);
 	f.close();
 
-	// Ask to swap floppy
-	dem2();
+	// Skipped: dialog asking to swap floppy
 
 	for (i = 1; i <= 8; ++i)
 		_inventoryStringArray[i] = "*                     ";

@@ -160,12 +160,16 @@ void clsf1() {
 	showMouse();
 }
 
-void clsf2() {
+/**
+ * Engine function - Clear Screen - Type 2
+ * @remarks	Originally called 'clsf2'
+ */
+void clearScreenType2() {
 	hideMouse();
-	if (g_f2_all) {
+	if (g_largestClearScreen) {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
-		g_f2_all = false;
+		g_largestClearScreen = false;
 	} else {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
@@ -183,21 +187,21 @@ void ecr2(Common::String str_) {
 	int tlig = 59 + (g_res - 1) * 36;
 
 	if ((int)str_.size() < tlig)
-		g_vm->_screenSurface.writeg(str_, 5);
+		g_vm->_screenSurface.drawString(str_, 5);
 	else if ((int)str_.size() < (tlig << 1)) {
 		g_vm->_screenSurface.putxy(8, 176);
-		g_vm->_screenSurface.writeg(copy(str_, 1, (tlig - 1)), 5);
+		g_vm->_screenSurface.drawString(copy(str_, 1, (tlig - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 182);
-		g_vm->_screenSurface.writeg(copy(str_, tlig, tlig << 1), 5);
+		g_vm->_screenSurface.drawString(copy(str_, tlig, tlig << 1), 5);
 	} else {
-		g_f2_all = true;
-		clsf2();
+		g_largestClearScreen = true;
+		clearScreenType2();
 		g_vm->_screenSurface.putxy(8, 176);
-		g_vm->_screenSurface.writeg(copy(str_, 1, (tlig - 1)), 5);
+		g_vm->_screenSurface.drawString(copy(str_, 1, (tlig - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 182);
-		g_vm->_screenSurface.writeg(copy(str_, tlig, ((tlig << 1) - 1)), 5);
+		g_vm->_screenSurface.drawString(copy(str_, tlig, ((tlig << 1) - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 190);
-		g_vm->_screenSurface.writeg(copy(str_, tlig << 1, tlig * 3), 5);
+		g_vm->_screenSurface.drawString(copy(str_, tlig << 1, tlig * 3), 5);
 	}
 }
 
@@ -211,7 +215,7 @@ void clsf3() {
 void ecr3(Common::String text) {
 	clsf3();
 	g_vm->_screenSurface.putxy(8, 192);
-	g_vm->_screenSurface.writeg(text, 5);
+	g_vm->_screenSurface.drawString(text, 5);
 }
 
 void ecrf6() {
@@ -245,7 +249,7 @@ void clsf10() {
 	
 	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
 	g_vm->_screenSurface.putxy(co, 92);
-	g_vm->_screenSurface.writeg(st, 4);
+	g_vm->_screenSurface.drawString(st, 4);
 
 	g_vm->_screenSurface.fillRect(15, Common::Rect(560, 24, 610, 86));
 	/* rempli(69,12,32,5,255);*/
@@ -301,7 +305,7 @@ void modobj(int m) {
 	if (m != 500)
 		strp = deline(m - 501 + kInventoryStringIndex);
 
-	g_vm->_menu.menut(g_vm->_menu._inventoryMenu[8], strp);
+	g_vm->_menu.setText(g_vm->_menu._inventoryMenu[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
 }
 
@@ -314,11 +318,11 @@ void repon(int f, int m) {
 		tmpStr = deline(m - 501 + kInventoryStringIndex);
 
 		if ((int) tmpStr.size() > ((58 + (g_res - 1) * 37) << 1))
-			g_f2_all = true;
+			g_largestClearScreen = true;
 		else
-			g_f2_all = false;
+			g_largestClearScreen = false;
 
-		clsf2();
+		clearScreenType2();
 		displayStr(tmpStr, 8, 176, 85, 3, 5);
 	} else {
 		modif(m);
@@ -327,7 +331,7 @@ void repon(int f, int m) {
 		if (f == 1)
 			f = 6;
 		if (f == 2) {
-			clsf2();
+			clearScreenType2();
 			ecrf2();
 			text1(8, 182, 103, m);
 			if ((m == 68) || (m == 69))
@@ -423,42 +427,42 @@ void showPeoplePresent(int per) {
 	clsf10();
 	if ((per & 128) == 128) {
 		g_vm->_screenSurface.putxy(xp, 24);
-		g_vm->_screenSurface.writeg("LEO", 4);
+		g_vm->_screenSurface.drawString("LEO", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[1]);
 	}
 	if ((per & 64) == 64) {
 		g_vm->_screenSurface.putxy(xp, 32);
-		g_vm->_screenSurface.writeg("PAT", 4);
+		g_vm->_screenSurface.drawString("PAT", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[2]);
 	}
 	if ((per & 32) == 32) {
 		g_vm->_screenSurface.putxy(xp, 40);
-		g_vm->_screenSurface.writeg("GUY", 4);
+		g_vm->_screenSurface.drawString("GUY", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[3]);
 	}
 	if ((per & 16) == 16) {
 		g_vm->_screenSurface.putxy(xp, 48);
-		g_vm->_screenSurface.writeg("EVA", 4);
+		g_vm->_screenSurface.drawString("EVA", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[4]);
 	}
 	if ((per & 8) == 8) {
 		g_vm->_screenSurface.putxy(xp, 56);
-		g_vm->_screenSurface.writeg("BOB", 4);
+		g_vm->_screenSurface.drawString("BOB", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[5]);
 	}
 	if ((per & 4) == 4) {
 		g_vm->_screenSurface.putxy(xp, 64);
-		g_vm->_screenSurface.writeg("LUC", 4);
+		g_vm->_screenSurface.drawString("LUC", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[6]);
 	}
 	if ((per & 2) == 2) {
 		g_vm->_screenSurface.putxy(xp, 72);
-		g_vm->_screenSurface.writeg("IDA", 4);
+		g_vm->_screenSurface.drawString("IDA", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[7]);
 	}
 	if ((per & 1) == 1) {
 		g_vm->_screenSurface.putxy(xp, 80);
-		g_vm->_screenSurface.writeg("MAX", 4);
+		g_vm->_screenSurface.drawString("MAX", 4);
 		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[8]);
 	}
 	g_ipers = per;
@@ -617,11 +621,11 @@ void displayAloneText() {
 
 	clsf10();
 	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sYou) / 2), 30);
-	g_vm->_screenSurface.writeg(sYou, 4);
+	g_vm->_screenSurface.drawString(sYou, 4);
 	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sAre) / 2), 50);
-	g_vm->_screenSurface.writeg(sAre, 4);
+	g_vm->_screenSurface.drawString(sAre, 4);
 	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sAlone) / 2), 70);
-	g_vm->_screenSurface.writeg(sAlone, 4);
+	g_vm->_screenSurface.drawString(sAlone, 4);
 
 	g_ipers = 0;
 }
@@ -673,15 +677,15 @@ void drawClock() {
 	g_vm->_screenSurface.putxy(568, 154);
 
 	if (g_hour > 11)
-		g_vm->_screenSurface.writeg("PM ", 1);
+		g_vm->_screenSurface.drawString("PM ", 1);
 	else
-		g_vm->_screenSurface.writeg("AM ", 1);
+		g_vm->_screenSurface.drawString("AM ", 1);
 
 	g_vm->_screenSurface.putxy(550, 160);
 	if ((g_day >= 0) && (g_day <= 8)) {
 		Common::String tmp = g_vm->getEngineString(S_DAY);
 		tmp.insertChar((char)(g_day + 49), 0);
-		g_vm->_screenSurface.writeg(tmp, 1);
+		g_vm->_screenSurface.drawString(tmp, 1);
 	}
 }
 
@@ -1196,7 +1200,7 @@ void dprog() {
 	g_jh = 0;
 	if (!g_s._ipre)
 		g_blo = true;
-	g_t = ti1;
+	g_t = kTime1;
 	g_mh = readclock();
 }
 
@@ -1398,7 +1402,7 @@ void cavegre() {
 	ecrf2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
 	int rand = (getRandomNumber(0, 4)) - 2;
-	parole(2, rand, 1);
+	startSpeech(2, rand, 1);
 
 	// The original was doing here a useless loop.
 	// It has been removed
@@ -1409,9 +1413,9 @@ void cavegre() {
 
 void writetp(Common::String s, int t) {
 	if (g_res == 2)
-		g_vm->_screenSurface.writeg(s, t);
+		g_vm->_screenSurface.drawString(s, t);
 	else
-		g_vm->_screenSurface.writeg(copy(s, 1, 25), t);
+		g_vm->_screenSurface.drawString(copy(s, 1, 25), t);
 }
 
 void aniof(int ouf, int num) {
@@ -1442,35 +1446,35 @@ void musique(int so) {
 		/* musik(0) */
 		;
 	} else if ((g_prebru == 0) && (!g_s._ipre)) {
-		parole(10, 1, 1);
+		startSpeech(10, 1, 1);
 		++g_prebru;
 	} else {
 		bool i = false;
 		if ((g_s._currPlace == MOUNTAIN) || (g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) {
 			if (getRandomNumber(1, 3) == 2) {
-				parole(9, getRandomNumber(2, 4), 1);
+				startSpeech(9, getRandomNumber(2, 4), 1);
 				i = true;
 			}
 		}
 		else if (g_s._currPlace == CHAPEL) {
 			if (getRandomNumber(1, 2) == 1) {
-				parole(8, 1, 1);
+				startSpeech(8, 1, 1);
 				i = true;
 			}
 		}
 		else if (g_s._currPlace == WELL) {
 			if (getRandomNumber(1, 2) == 2) {
-				parole(12, 1, 1);
+				startSpeech(12, 1, 1);
 				i = true;
 			}
 		}
 		else if (g_s._currPlace == 23) {
-			parole(13, 1, 1);
+			startSpeech(13, 1, 1);
 			i = true;
 		}
 
 		if (!i)
-			parole(getRandomNumber(1, 17), 1, 2);
+			startSpeech(getRandomNumber(1, 17), 1, 2);
 	}
 }
 

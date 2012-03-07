@@ -44,7 +44,7 @@ extern void text1(int x, int y, int nb, int m);
 extern void initouv();
 extern void ecrf1();
 extern void clsf1();
-extern void clsf2();
+extern void clearScreenType2();
 extern void ecrf2();
 extern void ecr2(Common::String str_);
 extern void clsf3();

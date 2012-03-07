@@ -30,8 +30,6 @@
 
 namespace Mortevielle {
 
-extern void dem2();
-//extern void apzuul();
 extern void charpal();
 extern void chartex();
 extern void dialpre();

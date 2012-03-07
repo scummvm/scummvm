@@ -83,7 +83,7 @@ void trait_ph() {
 
 
 
-void parole(int rep, int ht, int typ) {
+void startSpeech(int rep, int ht, int typ) {
 	int savph[501];
 	int tempo;
 

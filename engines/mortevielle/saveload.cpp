@@ -164,8 +164,9 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	// Close the save file
 	f->finalize();
 	delete f;
+	
+	// Skipped: dialog asking to swap floppy
 
-	dem2();
 	showMouse();
 	return Common::kNoError;
 }

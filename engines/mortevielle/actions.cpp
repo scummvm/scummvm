@@ -47,8 +47,6 @@ namespace Mortevielle {
  * @remarks	Originally called 'taller'
  */
 void fctMove() {
-	int cx;
-
 	if ((g_s._currPlace == 26) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
 		g_s._currPlace = LANDING;
 		g_caff = g_s._currPlace;
@@ -85,7 +83,7 @@ void fctMove() {
 		return;
 	}
 	tsort();
-	cx = 0;
+	int cx = 0;
 	do {
 		++cx;
 	} while (g_vm->_menu._moveMenu[cx] != g_msg[4]);
@@ -95,7 +93,8 @@ void fctMove() {
 			t1deva();
 		if (cx == 2)
 			t1neig();
-		goto L2;
+		tmlieu(g_s._currPlace);
+		return;
 	}
 
 	if (g_s._currPlace == 23) {
@@ -103,7 +102,8 @@ void fctMove() {
 			t1deau();
 		if (cx == 2)
 			t1derr();
-		goto L2;
+		tmlieu(g_s._currPlace);
+		return;
 	}
 
 	if ((g_s._currPlace == BUREAU) && (cx == 1))
@@ -175,7 +175,6 @@ void fctMove() {
 	if ((cx < 5) || (cx == 13) || (cx == 14))
 		affrep();
 	debloc(g_s._currPlace);
-L2:
 	tmlieu(g_s._currPlace);
 }
 
@@ -315,7 +314,7 @@ void fctInventoryTake() {
 	modinv();
 	avpoing(cz);
 	g_crep = 998;
-	clsf2();
+	clearScreenType2();
 }
 
 /**
@@ -623,7 +622,7 @@ void fctOpen() {
 				  || ((g_s._currPlace > RED_ROOM) && (g_s._currPlace < DINING_ROOM))
 				  || (g_s._currPlace == OWN_ROOM) || (g_s._currPlace == PURPLE_ROOM) || (g_s._currPlace == BLUE_ROOM)) {
 					if (getRandomNumber(1, 4) == 3)
-						parole(7, 9, 1);
+						startSpeech(7, 9, 1);
 				}
 				g_touv[tmpPlace] = chr(g_num);
 				aniof(1, g_num);
@@ -691,7 +690,7 @@ void fctPlace() {
 					aniof(1, 1);
 					repon(2, 165);
 					maivid();
-					parole(6, -9, 1);
+					startSpeech(6, -9, 1);
 
 					// Do you want to enter the hidden passage?
 					int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
@@ -703,7 +702,7 @@ void fctPlace() {
 						hideMouse();
 						hirs();
 						dessine_rouleau();
-						clsf2();
+						clearScreenType2();
 						clsf3();
 						showMouse();
 						tinke();
@@ -792,7 +791,7 @@ void fctTurn() {
 		g_crep = 997;
 		if ((g_s._currPlace == ATTIC) && (g_s._atticRodHoleObjectId == 159) && (g_s._atticBallHoleObjectId == 141)) {
 			repon(2, 167);
-			parole(7, 9, 1);
+			startSpeech(7, 9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1)
 				g_vm->_endGame = true;
@@ -802,7 +801,7 @@ void fctTurn() {
 		if ((g_s._currPlace == SECRET_PASSAGE) && (g_s._secretPassageObjectId == 143)) {
 			repon(2, 175);
 			clsf3();
-			parole(6, -9, 1);
+			startSpeech(6, -9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1) {
 				g_s._currPlace = CRYPT;
@@ -928,7 +927,7 @@ void fctKnock() {
 
 	if (g_s._currPlace == 26) {
 		int rand = (getRandomNumber(0, 8)) - 4;
-		parole(11, rand, 1);
+		startSpeech(11, rand, 1);
 		int p;
 		ecfren(p, rand, g_s._faithScore, g_ment);
 		int l = g_ment;
@@ -1146,7 +1145,7 @@ void fctEnter() {
 				g_crep = 179;
 			else {
 				g_x = (getRandomNumber(0, 10)) - 5;
-				parole(7, g_x, 1);
+				startSpeech(7, g_x, 1);
 				aniof(1, 1);
 				
 				g_x = convertBitIndexToCharacterIndex(z);
@@ -1167,7 +1166,7 @@ void fctEnter() {
 			}
 		} else {
 			g_x = (getRandomNumber(0, 10)) - 5;
-			parole(7, g_x, 1);
+			startSpeech(7, g_x, 1);
 			aniof(1, 1);
 			
 			g_s._currPlace = g_ment;
@@ -1201,7 +1200,7 @@ void fctSleep() {
 		tmlieu(g_s._currPlace);
 	}
 	clsf3();
-	clsf2();
+	clearScreenType2();
 	ecrf2();
 	ecr2(g_vm->getEngineString(S_WANT_TO_WAKE_UP));
 	updateHour(j, h, m);
@@ -1573,7 +1572,7 @@ void MortevielleEngine::endGame() {
 	tlu(13, 152);
 	maivid();
 	clsf1();
-	clsf2();
+	clearScreenType2();
 	clsf3();
 	repon(9, 1509);
 	tkey1(false);
@@ -1607,7 +1606,7 @@ void MortevielleEngine::endGame() {
  * @remarks	Originally called 'tencore'
  */
 void MortevielleEngine::loseGame() {
-	clsf2();
+	clearScreenType2();
 	musique(0);
 	tkey1(false);
 	maivid();

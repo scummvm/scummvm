@@ -92,7 +92,7 @@ public:
 	void fillRect(int colour, const Common::Rect &bounds);
 	void clearScreen();
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
-	void writeg(const Common::String &l, int c);
+	void drawString(const Common::String &l, int command);
 	int getStringWidth(const Common::String &s);
 	void drawLine(int x, int y, int xx, int yy, int coul);
 
