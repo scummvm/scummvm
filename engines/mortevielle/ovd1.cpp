@@ -45,13 +45,6 @@ namespace Mortevielle {
 // For ScummVM, we need to do check for file errors where we do the file access
 const int ioresult = 0;
 
-/**
- * Check for disk 2 being in the drive
- */
-void dem2() {
-	// Deprecated under ScummVM
-}
-
 void charpal() {
 	Common::File f;		// tabdb records
 	Common::File ft;	// tfxx
@@ -245,7 +238,7 @@ void suite() {
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
 	g_vm->_screenSurface.putxy(104 + 72 * g_res, 185);
-	g_vm->_screenSurface.writeg(cpr, 0);
+	g_vm->_screenSurface.drawString(cpr, 0);
 }
 
 } // End of namespace Mortevielle

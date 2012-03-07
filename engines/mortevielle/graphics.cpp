@@ -1046,16 +1046,16 @@ void ScreenSurface::setPixel(const Common::Point &pt, int palIndex) {
 
 /**
  * Write out a string
+ * @remarks	Originally called 'writeg'
  */
-void ScreenSurface::writeg(const Common::String &l, int c) {
+void ScreenSurface::drawString(const Common::String &l, int command) {
 	int i, x;
 	Common::Point pt;
 	int cecr = 0;
 
-	/*  debug('writeg : '+l);*/
-
 	if (l == "")
 		return;
+
 	hideMouse();
 	pt = _textPos;
 
@@ -1065,7 +1065,7 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 		i = 10;
 	x = pt.x + i * l.size();
 
-	switch (c) {
+	switch (command) {
 	case 1:
 	case 3: {
 		cecr = 0;

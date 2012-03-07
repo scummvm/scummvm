@@ -48,9 +48,9 @@ public:
 	int _inventoryMenu[9];
 	int _moveMenu[8];
 public:
-	void menut(int no, Common::String name);
-	void disableMenuItem(int no);
-	void enableMenuItem(int no);
+	void setText(int menuId, Common::String name);
+	void disableMenuItem(int menuId);
+	void enableMenuItem(int menuId);
 	void displayMenu();
 	void drawMenu();
 	void menuUp(int xx);

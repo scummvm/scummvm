@@ -192,7 +192,7 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 	while (!stringParsed) {
 		switch (inputStr[p]) {
 		case '@':
-			g_vm->_screenSurface.writeg(s, typ);
+			g_vm->_screenSurface.drawString(s, typ);
 			s = "";
 			++p;
 			xc = x;
@@ -204,7 +204,7 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 			xc += tab;
 			++p;
 			if (l_motsuiv(p, inputStr.c_str(), tab) + xc > xf) {
-				g_vm->_screenSurface.writeg(s, typ);
+				g_vm->_screenSurface.drawString(s, typ);
 				s = "";
 				xc = x;
 				yc += 6;
@@ -216,7 +216,7 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 						j = x;
 						do {
 							g_vm->_screenSurface.putxy(j, i);
-							g_vm->_screenSurface.writeg(" ", 0);
+							g_vm->_screenSurface.drawString(" ", 0);
 							j += 6;
 						} while (j <= xf);
 						i += 6;
@@ -228,7 +228,7 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 			break;
 		case '$':
 			stringParsed = true;
-			g_vm->_screenSurface.writeg(s, typ);
+			g_vm->_screenSurface.drawString(s, typ);
 			break;
 		default:
 			s += inputStr[p];

@@ -56,7 +56,7 @@ void changeGraphicalDevice(int newDevice) {
 		showPeoplePresent(g_ipers);
 	else
 		displayAloneText();
-	clsf2();
+	clearScreenType2();
 	clsf3();
 	g_maff = 68;
 	afdes(0);
@@ -133,7 +133,7 @@ void tmaj3() {
 
 void tsitu() {
 	if (!g_col)
-		clsf2();
+		clearScreenType2();
 	g_syn = false;
 	g_iesc = false;
 	if (!g_anyone) {

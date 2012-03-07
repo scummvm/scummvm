@@ -155,7 +155,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	init_lieu();
 	g_soundOff = false;
-	g_f2_all = false;
+	g_largestClearScreen = false;
 
 	teskbd();
 	dialpre();

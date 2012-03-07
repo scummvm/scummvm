@@ -174,15 +174,14 @@ void hideMouse() {
  * @remarks	Originally called 'show_mouse'
  */
 void showMouse() {
-	int i, j, k, l;
-	bool imp;
+	int k, l;
 
 	mouse_shwn = mouse_shwn + 1;
 	if (mouse_shwn != 1)
 		return;
-	j = p_o_s;
-	imp = odd(y_s);
-	i = x_s & 7;
+	int j = p_o_s;
+	bool imp = odd(y_s);
+	int i = x_s & 7;
 	switch (g_currGraphicalDevice) {
 	case MODE_CGA:
 		k = 0;

@@ -85,7 +85,7 @@ int Alert::show(const Common::String &msg, int n) {
 			}
 			g_vm->_screenSurface.putxy(cx, g_vm->_screenSurface._textPos.y);
 			g_vm->_screenSurface._textPos.y += 6;
-			g_vm->_screenSurface.writeg(st, 4);
+			g_vm->_screenSurface.drawString(st, 4);
 			++i;
 		} while (chaine[i] != ']');
 	}
@@ -134,14 +134,14 @@ int Alert::show(const Common::String &msg, int n) {
 						Common::String tmp(" ");
 						tmp += s[quoi];
 						tmp += " ";
-						g_vm->_screenSurface.writeg(tmp, 0);
+						g_vm->_screenSurface.drawString(tmp, 0);
 					}
 					setPosition(ix, coldep, esp);
 
 					Common::String tmp2 = " ";
 					tmp2 += s[ix];
 					tmp2 += " ";
-					g_vm->_screenSurface.writeg(tmp2, 1);
+					g_vm->_screenSurface.drawString(tmp2, 1);
 
 					quoi = ix;
 					showMouse();
@@ -155,7 +155,7 @@ int Alert::show(const Common::String &msg, int n) {
 			Common::String tmp3(" ");
 			tmp3 += s[quoi];
 			tmp3 += " ";
-			g_vm->_screenSurface.writeg(tmp3, 0);
+			g_vm->_screenSurface.drawString(tmp3, 0);
 
 			quoi = 0;
 			showMouse();
@@ -171,7 +171,7 @@ int Alert::show(const Common::String &msg, int n) {
 		Common::String tmp4(" ");
 		tmp4 += s[n];
 		tmp4 += " ";
-		g_vm->_screenSurface.writeg(tmp4, 1);
+		g_vm->_screenSurface.drawString(tmp4, 1);
 	}
 	charecr(50, (NUM_LINES + 1) << 4);
 	showMouse();
@@ -275,7 +275,7 @@ void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::Stri
 		tmp += str[l];
 		tmp += " ";
 
-		g_vm->_screenSurface.writeg(tmp, 0);
+		g_vm->_screenSurface.drawString(tmp, 0);
 		x += esp + 40;
 	}
 }
@@ -406,9 +406,9 @@ void f3f8::draw() {
 
 	// Write the F3 and F8 text strings
 	g_vm->_screenSurface.putxy(3, 44);
-	g_vm->_screenSurface.writeg(f3, 5);
+	g_vm->_screenSurface.drawString(f3, 5);
 	g_vm->_screenSurface._textPos.y = 51;
-	g_vm->_screenSurface.writeg(f8, 5);
+	g_vm->_screenSurface.drawString(f8, 5);
 
 	// Get the width of the written text strings
 	int f3Width = g_vm->_screenSurface.getStringWidth(f3);
@@ -426,7 +426,7 @@ void f3f8::draw() {
 void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	teskbd();
 	do {
-		parole(SpeechNum, 0, 0);
+		startSpeech(SpeechNum, 0, 0);
 		waitForF3F8(g_key);
 		CHECK_QUIT;
 
@@ -468,7 +468,7 @@ void f3f8::ani50() {
 	pictout(adani, g_crep, 63, 12);
 	g_crep = animof(2, 1);
 	pictout(adani, g_crep, 63, 12);
-	g_f2_all = (g_res == 1);
+	g_largestClearScreen = (g_res == 1);
 	repon(2, kDialogStringIndex + 143);
 }
 
