@@ -2082,7 +2082,12 @@ King's Quest VI Windows adds the following non-standard keyword:
                                 ones. If false, the DOS cursors are used in the
                                 Windows version, upscaled to match the rest of
                                 the upscaled graphics
-    
+
+Space Quest IV CD adds the following non-standard keyword:
+
+     silver_cursors    bool     If true, an alternate set of silver mouse cursors
+	                            is used instead of the original golden ones
+
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
     music_mute         bool     If true, music is muted

@@ -59,10 +59,16 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	_zoomColor = 0;
 	_zoomMultiplier = 0;
 	_cursorSurface = 0;
+
 	if (g_sci && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformWindows)
 		_useOriginalKQ6WinCursors = ConfMan.getBool("windows_cursors");
 	else
 		_useOriginalKQ6WinCursors = false;
+
+	if (g_sci && g_sci->getGameId() == GID_SQ4 && getSciVersion() == SCI_VERSION_1_1)
+		_useSilverSQ4CDCursors = ConfMan.getBool("silver_cursors");
+	else
+		_useSilverSQ4CDCursors = false;
 }
 
 GfxCursor::~GfxCursor() {
@@ -204,6 +210,26 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		// Phantasmagoria 2 views.
 		warning("TODO: Cursor views for Phantasmagoria 2");
 		return;
+	}
+
+	// Use the alternate silver cursors in SQ4 CD, if requested
+	if (_useSilverSQ4CDCursors) {
+		switch(viewNum) {
+		case 850:
+		case 852:
+		case 854:
+		case 856:
+			celNum = 3;
+			break;
+		case 851:
+		case 853:
+		case 855:
+		case 999:
+			celNum = 2;
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (!_cachedCursors.contains(viewNum))
