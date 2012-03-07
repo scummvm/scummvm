@@ -387,6 +387,10 @@ Pokyny pro hry Broken Sword jsou pro verze od Sold-Out Software, kde každá hra
 ------ -------------------------
 Videa pro hry Broken Sword mají v sobě trochu historie (viz další oddíl, pokud jste zvědaví), ale obecně jediné, co potřebujete udělat, je zkopírovat soubory .SMK ze složek "SMACKS" nebo "SMACKSHI" na CD do stejné složky jako ostatní datové soubory hry. (Broken Sword má také složku "SMACKSLO" se stejnými videi, ale ty jsou nižší kvality.) Můžete je umístit do podsložky s názvem "video", pokud Vám to přijde hezčí.
 
+Ve verzích pro PlayStation, můžete původní videa vypsat z disku. Každý soubor, který má příponu "STR", byste měli vypsat jako *čist* sektory z disku (všech 2352 bajtů na sektor). Můžete také míst toho použít přeformátovaná videa, která jsou zmíněna níže, ale to nebude fungovat pro všechny videa v Broken Sword II. Pro více informací si prohlédněte:
+
+  http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
+
 Některá vydání hry, a také verze pro PlayStation, Smacker videa nemají. Revolution Software nám laskavě dovolilo poskytovat přeformátovaná videa ke stažení na naší stránce:
 
   http://www.scummvm.org/downloads.php
@@ -395,7 +399,7 @@ Tato videa jsou poskytována ve formátu DXA se zvukem ve formátu FLAC. Jejich 
 
 Pro systémy, které jsou příliš pomalé, aby zvládli dekódovat formát FLAC byl zvuk videí také poskytnut odděleně ve formátu OGG Vorbis audio. Toto vyžaduje, aby verze ScummVM byla sestavena s podporou libVorbis a zlib.
 
-Pro Broken Sword také poskytujeme přídavek pro titulky. Jednoduše ho rozbalte a následujte pokyny v souboru readme.txt. (Broken Sword II již titulky má; není třeba další práce pro jejich přidání.)
+Pro Broken Sword také poskytujeme přídavek pro titulky. Jednoduše ho rozbalte a následujte pokyny v souboru readme.txt. Balíček v současnosti nefunguje ve videích na PlayStation. (Broken Sword II již titulky má; není třeba další práce pro jejich přidání.)
 
 
 3.7.2) Videa her Broken Sword ve zpětném pohledu:
@@ -1614,4 +1618,5 @@ Hodně Štěstí a Šťastné Adventurování!
 Tým ScummVM.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
+
 
