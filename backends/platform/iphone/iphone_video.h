@@ -34,10 +34,20 @@
 #include "iphone_keyboard.h"
 #include "iphone_common.h"
 
+#include "common/list.h"
+
+struct InternalEvent {
+	InternalEvent() : type(), value1(), value2() {}
+	InternalEvent(InputEvent t, int v1, int v2) : type(t), value1(v1), value2(v2) {}
+
+	InputEvent type;
+	int value1, value2;
+};
+
 @interface iPhoneView : UIView {
 	VideoContext _videoContext;
 
-	NSMutableArray *_events;
+	Common::List<InternalEvent> _events;
 	SoftKeyboard *_keyboardView;
 
 	EAGLContext *_context;
@@ -93,8 +103,6 @@
 - (void)notifyMouseMove;
 - (void)updateMouseCursorScaling;
 - (void)updateMouseCursor;
-
-- (id)getEvent;
 
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation;
 
