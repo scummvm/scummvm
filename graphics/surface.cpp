@@ -20,6 +20,7 @@
  */
 
 #include "common/algorithm.h"
+#include "common/endian.h"
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -281,8 +282,11 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 		return surface;
 	}
 
+	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
+		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
+
 	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
-		error("Surface::convertTo(): Only 2Bpp and 4Bpp supported");
+		error("Surface::convertTo(): Can only convert to 2Bpp and 4Bpp");
 
 	surface->create(w, h, dstFormat);
 
@@ -319,9 +323,11 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 			for (int x = 0; x < w; x++) {
 				uint32 srcColor;
 				if (format.bytesPerPixel == 2)
-					srcColor = *((uint16 *)srcRow);
+					srcColor = READ_UINT16(srcRow);
+				else if (format.bytesPerPixel == 3)
+					srcColor = READ_UINT24(srcRow);
 				else
-					srcColor = *((uint32 *)srcRow);
+					srcColor = READ_UINT32(srcRow);
 
 				srcRow += format.bytesPerPixel;
 
