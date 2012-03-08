@@ -1406,25 +1406,21 @@ void Lua_V1::registerOpcodes() {
 }
 
 void Lua_V1::boot() {
-	LuaBase::boot();
-
 	// The default value of these globals, defined in _controls.lua, is 256, 257, 258, 259.
 	// These values clash with the numpad 0, 1, 2 and 3 keycodes, so we set them here.
-	lua_pushobject(lua_getglobal("JOYSTICK_X_LEFT"));
 	lua_pushnumber(KEYCODE_JOY1_HLEFT);
 	lua_setglobal("JOYSTICK_X_LEFT");
 
-	lua_pushobject(lua_getglobal("JOYSTICK_X_RIGHT"));
 	lua_pushnumber(KEYCODE_JOY1_HRIGHT);
 	lua_setglobal("JOYSTICK_X_RIGHT");
 
-	lua_pushobject(lua_getglobal("JOYSTICK_Y_UP"));
 	lua_pushnumber(KEYCODE_JOY1_HUP);
 	lua_setglobal("JOYSTICK_Y_UP");
 
-	lua_pushobject(lua_getglobal("JOYSTICK_Y_DOWN"));
 	lua_pushnumber(KEYCODE_JOY1_HDOWN);
 	lua_setglobal("JOYSTICK_Y_DOWN");
+
+	LuaBase::boot();
 }
 
 void Lua_V1::postRestoreHandle() {
