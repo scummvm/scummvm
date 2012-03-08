@@ -497,7 +497,8 @@ void Actor::walkTo(const Math::Vector3d &p) {
 					while (!bridges.empty()) {
 						Math::Line3d bridge = bridges.back();
 						Math::Vector3d pos;
-						if (!bridge.intersectLine2d(l, &pos)) {
+						const bool useXZ = (g_grim->getGameType() == GType_MONKEY4);
+						if (!bridge.intersectLine2d(l, &pos, useXZ)) {
 							pos = bridge.middle();
 						}
 						float dist = (pos - closestPoint).getMagnitude();

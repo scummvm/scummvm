@@ -344,7 +344,7 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 				it = bridges.erase(it);
 				continue;
 			} else if (b1_out) {
-				if (bridge.intersectLine2d(line, &pos), useXZ) {
+				if (bridge.intersectLine2d(line, &pos, useXZ)) {
 					bridge = Math::Line3d(pos, bridge.end());
 				}
 			} else if (b2_out) {
