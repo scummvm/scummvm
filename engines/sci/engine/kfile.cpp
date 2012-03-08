@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/str.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -1079,6 +1080,14 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		exists = !outFile->err();	// check whether we managed to create the file.
 		delete outFile;
 	}
+
+	// Special case for KQ6 Mac: The game checks for two video files to see
+	// if they exist before it plays them. Since we support multiple naming
+	// schemes for resource fork files, we also need to support that here in
+	// case someone has a "HalfDome.bin" file, etc. 
+	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
+			(name == "HalfDome" || name == "Kq6Movie"))
+		exists = Common::MacResManager::exists(name);
 
 	debugC(kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
 	return make_reg(0, exists);
