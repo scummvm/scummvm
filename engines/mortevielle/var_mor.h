@@ -224,14 +224,6 @@ enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCU
 /*---------------------------------------------------------------------------*/
 
 extern bool 
-        g_main1,
-        g_choisi,
-        g_test0,
-        g_largestClearScreen,
-        g_imen,
-        g_cache,
-        g_iesc,
-        g_col,
         g_syn,
         g_heroSearching,
         g_zuul,

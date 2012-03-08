@@ -154,8 +154,8 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	initMouse();
 
 	init_lieu();
-	g_vm->_soundOff = false;
-	g_largestClearScreen = false;
+	_soundOff = false;
+	_largestClearScreen = false;
 
 	teskbd();
 	dialpre();
@@ -553,9 +553,9 @@ void MortevielleEngine::handleAction() {
 	clsf3();
 	oo = false;
 	g_ctrm = 0;
-	if (!g_iesc) {
+	if (!_keyPressedEsc) {
 		g_vm->_menu.drawMenu();
-		g_imen = true;
+		g_vm->_menu._menuDisplayed = true;
 		temps = 0;
 		g_key = 0;
 		funct = false;
@@ -568,20 +568,20 @@ void MortevielleEngine::handleAction() {
 			moveMouse(funct, inkey);
 			CHECK_QUIT;
 			temps = temps + 1;
-		} while (!((g_choisi) || (temps > lim) || (funct) || (g_anyone)));
+		} while (!((g_vm->_menu._menuSelected) || (temps > lim) || (funct) || (g_anyone)));
 		_inMainGameLoop = false;
 
 		g_vm->_menu.eraseMenu();
-		g_imen = false;
+		g_vm->_menu._menuDisplayed = false;
 		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
 			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
-		if (g_choisi && (g_msg[3] == MENU_SAVE)) {
+		if (g_vm->_menu._menuSelected && (g_msg[3] == MENU_SAVE)) {
 			Common::String saveName = Common::String::format("Savegame #%d", g_msg[4] & 7);
 			g_vm->_savegameManager.saveGame(g_msg[4] & 7, saveName);
 		}
-		if (g_choisi && (g_msg[3] == MENU_LOAD))
+		if (g_vm->_menu._menuSelected && (g_msg[3] == MENU_LOAD))
 			g_vm->_savegameManager.loadGame((g_msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = Alert::show(g_hintPctMessage, 1);
@@ -639,7 +639,7 @@ void MortevielleEngine::handleAction() {
 						g_okdes = false;
 						dessin(0);
 					}
-					if ((!g_syn) || (g_col))
+					if ((!g_syn) || (_col))
 						repon(2, g_crep);
 				}
 			} while (g_syn);

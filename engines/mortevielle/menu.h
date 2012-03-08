@@ -39,6 +39,9 @@ private:
 	void menuDown(int ii);
 public:
 	bool _menuActive;
+	bool _menuSelected;
+	bool _multiTitle;
+	bool _menuDisplayed;
 	Common::String _inventoryStringArray[9];
 	Common::String _moveStringArray[8];
 	Common::String _actionStringArray[22];
@@ -47,7 +50,7 @@ public:
 	int _discussMenu[9];
 	int _inventoryMenu[9];
 	int _moveMenu[8];
-public:
+
 	void setText(int menuId, Common::String name);
 	void disableMenuItem(int menuId);
 	void enableMenuItem(int menuId);
