@@ -297,6 +297,10 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	int16 maxTextWidth = 0, textWidth;
 	int16 totalHeight = 0, textHeight;
 
+	// Adjust maxWidth if we're using an upscaled font
+	if (_screen->fontIsUpscaled())
+		maxWidth = maxWidth * _screen->getDisplayWidth() / _screen->getWidth();
+
 	rect.top = rect.left = 0;
 	GfxFont *font = _cache->getFont(fontId);
 
@@ -323,6 +327,14 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
 	}
+
+	// Adjust the width/height if we're using an upscaled font
+	// for the scripts
+	if (_screen->fontIsUpscaled()) {
+		rect.right = rect.right * _screen->getWidth() / _screen->getDisplayWidth();
+		rect.bottom = rect.bottom * _screen->getHeight() / _screen->getDisplayHeight();
+	}
+
 	return rect.right;
 }
 
