@@ -59,11 +59,14 @@ static float str2float(const char *str) {
 	}
 	int_part[j++] = '\0';
 
-	float num = atoi(int_part);
+	// Must use double here. float doesn't have enough precision for the sector
+	// vertices, and the pathfinder may break, like when olivia returns from
+	// the microphone after reciting a poem.
+	double num = atoi(int_part);
 	int sign = (str[0] == '-' ? -1 : 1);
 	j = 0;
 	for (int i = dotpos + 1; i < len; ++i) {
-		float part = (float)(str[i] - 48) / (float)power(10, ++j);
+		double part = (double)(str[i] - 48) / (double)power(10, ++j);
 		num += part * sign;
 	}
 
