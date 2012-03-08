@@ -609,7 +609,7 @@ int ResourceManager::addAppropriateSources() {
 		if (Common::File::exists("alt.map") && Common::File::exists("resource.alt"))
 			addSource(new VolumeResourceSource("resource.alt", addExternalMap("alt.map", 10), 10));
 #endif
-	} else if (Common::File::exists("Data1")) {
+	} else if (Common::MacResManager::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
 		SearchMan.listMatchingMembers(files, "Data?*");
 
