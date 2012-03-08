@@ -252,7 +252,7 @@ void taffich() {
 	if ((a < 27) && ((g_maff < 27) || (g_s._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			displayAloneText();
-		else if (!g_vm->g_blo)
+		else if (!g_vm->_blo)
 			cx = t11(g_s._currPlace);
 		g_mpers =  0;
 	}

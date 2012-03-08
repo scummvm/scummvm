@@ -468,7 +468,7 @@ void f3f8::ani50() {
 	pictout(adani, g_crep, 63, 12);
 	g_crep = animof(2, 1);
 	pictout(adani, g_crep, 63, 12);
-	g_largestClearScreen = (g_res == 1);
+	g_vm->_largestClearScreen = (g_res == 1);
 	repon(2, kDialogStringIndex + 143);
 }
 

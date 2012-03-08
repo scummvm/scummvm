@@ -166,10 +166,10 @@ void clsf1() {
  */
 void clearScreenType2() {
 	hideMouse();
-	if (g_largestClearScreen) {
+	if (g_vm->_largestClearScreen) {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
-		g_largestClearScreen = false;
+		g_vm->_largestClearScreen = false;
 	} else {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
@@ -194,7 +194,7 @@ void ecr2(Common::String str_) {
 		g_vm->_screenSurface.putxy(8, 182);
 		g_vm->_screenSurface.drawString(copy(str_, tlig, tlig << 1), 5);
 	} else {
-		g_largestClearScreen = true;
+		g_vm->_largestClearScreen = true;
 		clearScreenType2();
 		g_vm->_screenSurface.putxy(8, 176);
 		g_vm->_screenSurface.drawString(copy(str_, 1, (tlig - 1)), 5);
@@ -318,9 +318,9 @@ void repon(int f, int m) {
 		tmpStr = deline(m - 501 + kInventoryStringIndex);
 
 		if ((int) tmpStr.size() > ((58 + (g_res - 1) * 37) << 1))
-			g_largestClearScreen = true;
+			g_vm->_largestClearScreen = true;
 		else
-			g_largestClearScreen = false;
+			g_vm->_largestClearScreen = false;
 
 		clearScreenType2();
 		displayStr(tmpStr, 8, 176, 85, 3, 5);
@@ -385,7 +385,7 @@ void repon(int f, int m) {
 
 void t5(int cx) {
 	if (cx == 10)
-		g_vm->g_blo = false;
+		g_vm->_blo = false;
 
 	if (cx != 1) {
 		g_vm->_roomPresenceLuc = false;
@@ -1201,7 +1201,7 @@ void dprog() {
 	g_li = 21;
 	g_jh = 0;
 	if (!g_s._ipre)
-		g_vm->g_blo = true;
+		g_vm->_blo = true;
 	g_t = kTime1;
 	g_mh = readclock();
 }

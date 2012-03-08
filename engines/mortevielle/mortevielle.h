@@ -102,7 +102,6 @@ private:
 	void playGame();
 	void handleAction();
 public:
-	bool g_blo;
 	bool _roomPresenceLuc;
 	bool _roomPresenceIda;
 	bool _purpleRoomPresenceLeo;
@@ -116,6 +115,13 @@ public:
 	bool _room9PresenceLeo;
 
 	bool _soundOff;
+	bool _largestClearScreen;
+	bool _hiddenHero;
+	bool _keyPressedEsc;
+
+	bool _blo;
+	bool _col;
+
 
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;

@@ -192,9 +192,9 @@ void Menu::drawMenu() {
 	_menuActive = true;
 	g_msg4 = OPCODE_NONE;
 	g_msg3 = OPCODE_NONE;
-	g_choisi = false;
+	_menuSelected = false;
 	g_vm->setMouseClick(false);
-	g_test0 = false;
+	_multiTitle = false;
 }
 
 void Menu::invers(int ix) {
@@ -353,7 +353,7 @@ void Menu::menuDown(int ii) {
 		}
 		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
 	} while (cx != nb_lig);
-	g_test0 = true;
+	_multiTitle = true;
 	showMouse();
 }
 
@@ -361,7 +361,7 @@ void Menu::menuDown(int ii) {
  * Menu is being removed, so restore the previous background area.
  */
 void Menu::menuUp(int xx) {
-	if (g_test0) {
+	if (_multiTitle) {
 		charecr(10, (g_menuConstants[xx - 1][1] + 1) << 1);
 
 		/* Restore the background area */
@@ -375,7 +375,7 @@ void Menu::menuUp(int xx) {
 		// Copy the data
 		Common::copy(pSrc, pSrc + (400 - 10) * SCREEN_WIDTH, pDest);
 
-		g_test0 = false;
+		_multiTitle = false;
 	}
 }
 
@@ -428,7 +428,7 @@ void Menu::mdn() {
 			else
 				ix = MENU_FILE;
 
-			if ((ix != g_msg3) || (!g_test0))
+			if ((ix != g_msg3) || (!_multiTitle))
 				if (!((ix == MENU_FILE) && ((g_msg3 == MENU_SAVE) || (g_msg3 == MENU_LOAD)))) {
 					menuUp(g_msg3);
 					menuDown(ix);
@@ -436,7 +436,7 @@ void Menu::mdn() {
 					g_msg4 = OPCODE_NONE;
 				}
 		} else { // Not in the MenuTitle line
-			if ((y > 11) && (g_test0))
+			if ((y > 11) && (_multiTitle))
 				util(x, y);
 		}
 	} else {       // There was a click
@@ -453,7 +453,7 @@ void Menu::mdn() {
 			g_vm->setMouseClick(false);
 		} else { 
 			//  A menu was clicked on
-			g_choisi = (g_test0) && (g_msg4 != OPCODE_NONE);
+			_menuSelected = (_multiTitle) && (g_msg4 != OPCODE_NONE);
 			menuUp(g_msg3);
 			g_msg[4] = g_msg4;
 			g_msg[3] = g_msg3;

@@ -70,12 +70,12 @@ void changeGraphicalDevice(int newDevice) {
  */
 void MortevielleEngine::gameLoaded() {
 	hideMouse();
-	g_imen = false;
+	_menu._menuDisplayed = false;
 	_loseGame = true;
 	g_anyone = false;
 	g_okdes = true;
-	g_col = false;
-	g_cache = false;
+	_col = false;
+	_hiddenHero = false;
 	g_brt = false;
 	g_maff = 68;
 	g_mnumo = 0;
@@ -132,10 +132,10 @@ void tmaj3() {
 }
 
 void tsitu() {
-	if (!g_col)
+	if (!g_vm->_col)
 		clearScreenType2();
 	g_syn = false;
-	g_iesc = false;
+	g_vm->_keyPressedEsc = false;
 	if (!g_anyone) {
 		if (g_brt)
 			if ((g_msg[3] == MENU_MOVE) || (g_msg[4] == OPCODE_LEAVE) || (g_msg[4] == OPCODE_SLEEP) || (g_msg[4] == OPCODE_EAT)) {
@@ -199,7 +199,7 @@ void tsitu() {
 			fctSelfPut();
 		if (g_msg[4] == OPCODE_SLOOK)
 			fctSelftLook();
-		g_cache = false;
+		g_vm->_hiddenHero = false;
 
 		if (g_msg[4] == OPCODE_SHIDE)
 			fctSelfHide();

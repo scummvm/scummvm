@@ -96,7 +96,7 @@ void tinke() {
 	if (y_s < 12)
 		return;
 
-	if (!g_vm->g_blo) {
+	if (!g_vm->_blo) {
 		if ((hour == 12) || ((hour > 18) && (hour < 21)) || ((hour >= 0) && (hour < 7)))
 			g_t = kTime2;
 		else
@@ -301,7 +301,7 @@ void tperd() {
 	g_iouv = 0;
 	g_mchai = 0;
 	unsetSearchMenu();
-	if (!g_vm->g_blo) {
+	if (!g_vm->_blo) {
 		int cx;
 		cx = t11(21);
 	}
@@ -312,7 +312,7 @@ void tperd() {
 	repon(9, g_crep);
 	clearScreenType2();
 	clsf3();
-	g_col = false;
+	g_vm->_col = false;
 	g_syn = false;
 	g_okdes = false;
 }
@@ -514,7 +514,7 @@ void t1sama() {    //Entering manor
 		g_s._currPlace = OWN_ROOM;
 		affrep();
 		t5(10);
-		if (!g_vm->g_blo)
+		if (!g_vm->_blo)
 			minute = t11(0);
 		g_ipers = 0;
 		g_mpers = 0;
@@ -563,13 +563,13 @@ void tctrm() {
 
 
 void quelquun() {
-	if (g_imen)
+	if (g_vm->_menu._menuDisplayed)
 		g_vm->_menu.eraseMenu();
 
 	endSearch();
 	g_crep = 997;
 L1:
-	if (!g_cache) {
+	if (!g_vm->_hiddenHero) {
 		if (g_crep == 997)
 			g_crep = 138;
 		repon(2, g_crep);
@@ -592,10 +592,10 @@ L1:
 		g_msg[3] = MENU_DISCUSS;
 		g_msg[4] = g_vm->_menu._discussMenu[cx];
 		g_syn = true;
-		g_col = true;
+		g_vm->_col = true;
 	} else {
 		if (getRandomNumber(1, 3) == 2) {
-			g_cache = false;
+			g_vm->_hiddenHero = false;
 			g_crep = 137;
 			goto L1;
 		} else {
@@ -608,7 +608,7 @@ L1:
 			affrep();
 		}
 	}
-	if (g_imen)
+	if (g_vm->_menu._menuDisplayed)
 		g_vm->_menu.drawMenu();
 }
 
@@ -665,7 +665,7 @@ void tfleche() {
 	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (g_anyone) || (g_rect)));
 
 	if (touch == '\73')
-		g_iesc = true;
+		g_vm->_keyPressedEsc = true;
 
 	if (g_rect) {
 		g_x = x_s;
