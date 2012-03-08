@@ -137,6 +137,7 @@ int16 OSystem_IPHONE::getWidth() {
 }
 
 void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
+	//printf("setPalette(%p, %u, %u)\n", colors, start, num);
 	assert(start + num <= 256);
 	const byte *b = colors;
 
@@ -150,6 +151,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
+	//printf("grabPalette(%p, %u, %u)\n", colors, start, num);
 	assert(start + num <= 256);
 	byte *b = colors;
 
@@ -160,7 +162,7 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	//printf("copyRectToScreen(%i, %i, %i, %i)\n", x, y, w, h);
+	//printf("copyRectToScreen(%p, %d, %i, %i, %i, %i)\n", buf, pitch, x, y, w, h);
 	//Clip the coordinates
 	if (x < 0) {
 		w += x;
@@ -202,10 +204,10 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 }
 
 void OSystem_IPHONE::updateScreen() {
-	//printf("updateScreen(): %i dirty rects.\n", _dirtyRects.size());
-
 	if (_dirtyRects.size() == 0 && _dirtyOverlayRects.size() == 0 && !_mouseDirty)
 		return;
+
+	//printf("updateScreen(): %i dirty rects.\n", _dirtyRects.size());
 
 	internUpdateScreen();
 	_mouseDirty = false;
@@ -319,7 +321,7 @@ void OSystem_IPHONE::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
 void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	//printf("copyRectToOverlay(buf, pitch=%i, x=%i, y=%i, w=%i, h=%i)\n", pitch, x, y, w, h);
+	//printf("copyRectToOverlay(%p, pitch=%i, x=%i, y=%i, w=%i, h=%i)\n", (const void *)buf, pitch, x, y, w, h);
 
 	//Clip the coordinates
 	if (x < 0) {
@@ -364,6 +366,7 @@ int16 OSystem_IPHONE::getOverlayWidth() {
 }
 
 bool OSystem_IPHONE::showMouse(bool visible) {
+	//printf("showMouse(%d)\n", visible);
 	bool last = _videoContext->mouseIsVisible;
 	_videoContext->mouseIsVisible = visible;
 	_mouseDirty = true;
@@ -372,7 +375,7 @@ bool OSystem_IPHONE::showMouse(bool visible) {
 }
 
 void OSystem_IPHONE::warpMouse(int x, int y) {
-	//printf("warpMouse()\n");
+	//printf("warpMouse(%d, %d)\n", x, y);
 	_videoContext->mouseX = x;
 	_videoContext->mouseY = y;
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(notifyMouseMove) withObject:nil waitUntilDone: YES];
@@ -396,7 +399,7 @@ void OSystem_IPHONE::dirtyFullOverlayScreen() {
 }
 
 void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-	//printf("setMouseCursor(%i, %i, scale %u)\n", hotspotX, hotspotY, cursorTargetScale);
+	//printf("setMouseCursor(%p, %u, %u, %i, %i, %u, %d, %p)\n", (const void *)buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, (const void *)format);
 
 	const Graphics::PixelFormat pixelFormat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 #if 0
@@ -424,6 +427,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 }
 
 void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) {
+	//printf("setCursorPalette(%p, %u, %u)\n", (const void *)colors, start, num);
 	assert(start + num <= 256);
 
 	for (uint i = start; i < start + num; ++i, colors += 3)
