@@ -238,6 +238,27 @@ bool MacResManager::open(FSNode path, String filename) {
 	return false;
 }
 
+bool MacResManager::exists(const String &filename) {
+	// Try the file name by itself
+	if (Common::File::exists(filename))
+		return true;
+
+	// Try the .rsrc extension
+	if (Common::File::exists(filename + ".rsrc"))
+		return true;
+
+	// Check if we have a MacBinary file
+	Common::File tempFile;
+	if (tempFile.open(filename + ".bin") && isMacBinary(tempFile))
+		return true;
+
+	// Check if we have an AppleDouble file
+	if (tempFile.open("._" + filename) && tempFile.readUint32BE() == 0x00051607)
+		return true;
+
+	return false;
+}
+
 bool MacResManager::loadFromAppleDouble(SeekableReadStream &stream) {
 	if (stream.readUint32BE() != 0x00051607) // tag
 		return false;

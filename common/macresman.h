@@ -69,6 +69,13 @@ public:
 	bool open(FSNode path, String filename);
 
 	/**
+	 * See if a Mac data/resource fork pair exists.
+	 * @param filename The base file name of the file
+	 * @return True if either a data fork or resource fork with this name exists
+	 */
+	static bool exists(const String &filename);
+
+	/**
 	 * Close the Mac data/resource fork pair.
 	 */
 	void close();
