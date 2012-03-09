@@ -35,9 +35,9 @@ extern void chartex();
 extern void dialpre();
 extern void init_lieu();
 extern void music();
-extern void charge_bruit5();
-extern void charge_cfiec();
-extern void charge_cfiph();
+extern void loadBRUIT5();
+extern void loadCFIEC();
+extern void loadCFIPH();
 extern void suite();
 
 } // End of namespace Mortevielle

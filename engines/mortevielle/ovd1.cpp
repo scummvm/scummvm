@@ -167,7 +167,7 @@ void music() {
 	if (g_vm->_soundOff)
 		return;
 
-	g_rech_cfiec = true;
+	g_vm->_reloadCFIEC = true;
 	
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
@@ -193,7 +193,7 @@ void music() {
 }
 
 
-void charge_bruit5() {
+void loadBRUIT5() {
 	Common::File f;
 
 	if (!f.open("bruit5"))
@@ -203,7 +203,7 @@ void charge_bruit5() {
 	f.close();
 }
 
-void charge_cfiec() {
+void loadCFIEC() {
 	Common::File f;
 
 	if (!f.open("cfiec.mor"))
@@ -212,11 +212,11 @@ void charge_cfiec() {
 	f.read(&g_adcfiec[0], 822 * 128);
 	f.close();
 
-	g_rech_cfiec = false;
+	g_vm->_reloadCFIEC = false;
 }
 
 
-void charge_cfiph() {
+void loadCFIPH() {
 	Common::File f;
 
 	if (!f.open("cfiph.mor"))

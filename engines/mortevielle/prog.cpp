@@ -72,11 +72,11 @@ void MortevielleEngine::gameLoaded() {
 	hideMouse();
 	_menu._menuDisplayed = false;
 	_loseGame = true;
-	g_anyone = false;
-	g_okdes = true;
+	_anyone = false;
+	_okdes = true;
 	_col = false;
 	_hiddenHero = false;
-	g_brt = false;
+	_brt = false;
 	g_maff = 68;
 	g_mnumo = 0;
 	g_prebru = 0;
@@ -88,8 +88,8 @@ void MortevielleEngine::gameLoaded() {
 	g_cs = 0;
 	g_is = 0;
 	g_ment = 0;
-	g_vm->_syn = true;
-	g_vm->_heroSearching = true;
+	_syn = true;
+	_heroSearching = true;
 	g_mchai = 0;
 	g_inei = 0;
 	initouv();
@@ -98,10 +98,10 @@ void MortevielleEngine::gameLoaded() {
 	affrep();
 	g_hintPctMessage = deline(580);
 
-	g_okdes = false;
+	_okdes = false;
 	_endGame = true;
 	_loseGame = false;
-	g_vm->_heroSearching = false;
+	_heroSearching = false;
 
 	displayAloneText();
 	tinke();
@@ -136,8 +136,8 @@ void tsitu() {
 		clearScreenType2();
 	g_vm->_syn = false;
 	g_vm->_keyPressedEsc = false;
-	if (!g_anyone) {
-		if (g_brt)
+	if (!g_vm->_anyone) {
+		if (g_vm->_brt)
 			if ((g_msg[3] == MENU_MOVE) || (g_msg[4] == OPCODE_LEAVE) || (g_msg[4] == OPCODE_SLEEP) || (g_msg[4] == OPCODE_EAT)) {
 				g_ctrm = 4;
 				mennor();
@@ -204,9 +204,9 @@ void tsitu() {
 		if (g_msg[4] == OPCODE_SHIDE)
 			fctSelfHide();
 	} else {
-		if (g_anyone) {
+		if (g_vm->_anyone) {
 			quelquun();
-			g_anyone = false;
+			g_vm->_anyone = false;
 			mennor();
 			return;
 		}

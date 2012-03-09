@@ -223,14 +223,6 @@ enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCU
 /*------------------------------   VARIABLES   ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-extern bool 
-        g_okdes,
-        g_anyone,
-        g_brt,
-        g_rect,
-        g_rech_cfiec;
-
-
 extern int g_x,
         g_y,
         g_t,

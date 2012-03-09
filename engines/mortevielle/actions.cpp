@@ -58,8 +58,8 @@ void fctMove() {
 			ecr3(g_vm->getEngineString(S_GO_TO));
 		tfleche();
 		if (g_vm->_keyPressedEsc)
-			g_okdes = false;
-		if ((g_anyone) || (g_vm->_keyPressedEsc))
+			g_vm->_okdes = false;
+		if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 			return;
 		tcoord(1);
 		if (g_num == 0)
@@ -224,7 +224,7 @@ void fctTake() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_TAKE));
 	tfleche();
-	if ((g_anyone) || (g_vm->_keyPressedEsc))
+	if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 		return;
 	if (g_caff == 3) {
 		tcoord(2);
@@ -325,7 +325,7 @@ void fctLift() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_LIFT));
 	tfleche();
-	if ((g_anyone) || (g_vm->_keyPressedEsc))
+	if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 		return;
 	tcoord(3);
 	if (g_num == 0) {
@@ -362,7 +362,7 @@ void fctRead() {
 		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_READ));
 		tfleche();
-		if (!(g_anyone) && !(g_vm->_keyPressedEsc)) {
+		if (!(g_vm->_anyone) && !(g_vm->_keyPressedEsc)) {
 			tcoord(4);
 			if (g_num != 0)
 				g_crep = 107;
@@ -395,7 +395,7 @@ void fctLook() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_LOOK));
 	tfleche();
-	if ((g_anyone) || (g_vm->_keyPressedEsc))
+	if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 		return;
 	tcoord(5);
 	if (g_num == 0) {
@@ -486,7 +486,7 @@ void fctSearch() {
 		ecr3(g_vm->getEngineString(S_SEARCH));
 
 	tfleche();
-	if (g_anyone || g_vm->_keyPressedEsc)
+	if (g_vm->_anyone || g_vm->_keyPressedEsc)
 		return;
 
 	if (g_s._currPlace == 23) {
@@ -597,7 +597,7 @@ void fctOpen() {
 	}
 
 	tfleche();
-	if ((g_anyone) || (g_vm->_keyPressedEsc))
+	if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 		return;
 
 	tcoord(7);
@@ -653,7 +653,7 @@ void fctPlace() {
 	if (g_vm->_keyPressedEsc)
 		g_crep = 998;
 
-	if ((g_anyone) || (g_vm->_keyPressedEsc))
+	if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 		return;
 
 	tcoord(8);
@@ -782,7 +782,7 @@ void fctTurn() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_TURN));
 	tfleche();
-	if ((g_anyone) || (g_vm->_keyPressedEsc))
+	if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 		return;
 	tcoord(9);
 	if (g_num != 0) {
@@ -818,7 +818,7 @@ void fctSelfHide() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_HIDE_SELF));
 	tfleche();
-	if (!(g_anyone) && !(g_vm->_keyPressedEsc)) {
+	if (!(g_vm->_anyone) && !(g_vm->_keyPressedEsc)) {
 		tcoord(10);
 		if (g_num == 0)
 			g_vm->_hiddenHero = false;
@@ -840,7 +840,7 @@ void fctAttach() {
 		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_TIE));
 		tfleche();
-		if (!(g_anyone) && !(g_vm->_keyPressedEsc)) {
+		if (!(g_vm->_anyone) && !(g_vm->_keyPressedEsc)) {
 			tcoord(8);
 			g_crep = 997;
 			if ((g_num != 0) && (g_s._currPlace == WELL)) {
@@ -868,7 +868,7 @@ void fctClose() {
 		tfleche();
 		if (g_vm->_keyPressedEsc)
 			g_crep = 998;
-		if ((g_anyone) || (g_vm->_keyPressedEsc))
+		if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 			return;
 		tcoord(7);
 		if (g_num != 0) {
@@ -913,7 +913,7 @@ void fctKnock() {
 
 	if (g_s._currPlace < DOOR) {
 		tfleche();
-		if (!(g_anyone) && !(g_vm->_keyPressedEsc)) {
+		if (!(g_vm->_anyone) && !(g_vm->_keyPressedEsc)) {
 			if ((g_s._currPlace < MOUNTAIN) && (g_s._currPlace != LANDING))
 				g_crep = 133;
 			else
@@ -964,7 +964,7 @@ void fctSelfPut() {
 			return;
 		}
 		tfleche();
-		if ((g_anyone) || (g_vm->_keyPressedEsc))
+		if ((g_vm->_anyone) || (g_vm->_keyPressedEsc))
 			return;
 		tcoord(7);
 		g_crep = 124;
@@ -1219,7 +1219,7 @@ void fctSleep() {
 			h = 0;
 		tinke();
 		answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
-		g_anyone = false;
+		g_vm->_anyone = false;
 	} while (answer != 1);
 	g_crep = 998;
 	g_num = 0;
@@ -1235,7 +1235,7 @@ void fctForce() {
 	if (g_caff < 25)
 		tfleche();
 
-	if ((!g_anyone) && (!g_vm->_keyPressedEsc)) {
+	if ((!g_vm->_anyone) && (!g_vm->_keyPressedEsc)) {
 		if (g_s._currPlace != 26)
 			g_crep = 997;
 		else {
@@ -1300,9 +1300,9 @@ void fctWait() {
 			if ((g_s._currPlace == ATTIC) || (g_s._currPlace == CELLAR))
 				cavegre();
 			if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
-				g_anyone = true;
+				g_vm->_anyone = true;
 			g_mpers = g_ipers;
-			if (!g_anyone)
+			if (!g_vm->_anyone)
 				tinke();
 			return;
 		}
@@ -1310,7 +1310,7 @@ void fctWait() {
 		answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 	} while (answer != 2);
 	g_crep = 998;
-	if (!g_anyone)
+	if (!g_vm->_anyone)
 		tinke();
 }
 
@@ -1323,7 +1323,7 @@ void fctSound() {
 		ecr3(g_vm->getEngineString(S_PROBE2));
 	if (g_caff < 27) {
 		tfleche();
-		if (!(g_anyone) && (!g_vm->_keyPressedEsc))
+		if (!(g_vm->_anyone) && (!g_vm->_keyPressedEsc))
 			g_crep = 145;
 		g_num = 0;
 	}
@@ -1537,7 +1537,7 @@ void fctSmell() {
 		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_SMELL));
 		tfleche();
-		if (!(g_anyone) && !(g_vm->_keyPressedEsc))
+		if (!(g_vm->_anyone) && !(g_vm->_keyPressedEsc))
 			if (g_caff == 16)
 				g_crep = 153;
 	} else if (g_caff == 123)
