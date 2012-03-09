@@ -123,7 +123,6 @@ public:
 	bool _blo;
 	bool _col;
 	bool _syn;
-	bool _zuul;
 	bool _obpart;
 
 
