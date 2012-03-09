@@ -827,8 +827,6 @@ void GrimEngine::restoreGRIM() {
 	if (id != 0) {
 		_selectedActor = Actor::getPool().getObject(id);
 	}
-	// SAVECHANGE
-	_savedState->readLESint32();
 
 	//TextObject stuff
 	_sayLineDefaults.setFGColor(_savedState->readColor());
@@ -957,8 +955,6 @@ void GrimEngine::saveGRIM() {
 	} else {
 		_savedState->writeLESint32(0);
 	}
-	// SAVECHANGE
-	_savedState->writeLESint32(0);
 
 	//TextObject stuff
 	_savedState->writeColor(_sayLineDefaults.getFGColor());

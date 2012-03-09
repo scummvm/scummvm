@@ -52,13 +52,11 @@ namespace Grim {
 bool Actor::_isTalkingBackground = false;
 
 void Actor::saveStaticState(SaveGame *state) {
-	// SAVECHANGE
-// 	state->writeBool(_isTalkingBackground);
+	state->writeBool(_isTalkingBackground);
 }
 
 void Actor::restoreStaticState(SaveGame *state) {
-	// SAVECHANGE
-// 	_isTalkingBackground = state->readBool();
+	_isTalkingBackground = state->readBool();
 }
 
 Actor::Actor(const Common::String &actorName) :
@@ -150,9 +148,8 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeBool(_puckOrient);
 
 	savedState->writeString(_talkSoundName);
-	// SAVECHANGE
-// 	savedState->writeBool(_talking);
-// 	savedState->writeBool(_backgroundTalk);
+	savedState->writeBool(_talking);
+	savedState->writeBool(_backgroundTalk);
 
 	savedState->writeLEUint32((uint32)_collisionMode);
 	savedState->writeFloat(_collisionScale);
@@ -267,11 +264,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_puckOrient         = savedState->readBool();
 
 	_talkSoundName 		= savedState->readString();
-	_talking = _talkSoundName != "";
-
-	// SAVECHANGE
-// 	_talking = savedState->readBool();
-// 	_backgroundTalk = savedState->readBool();
+	_talking = savedState->readBool();
+	_backgroundTalk = savedState->readBool();
+	if (isTalking()) {
+		g_grim->addTalkingActor(this);
+	}
 
 	_collisionMode      = (CollisionMode)savedState->readLEUint32();
 	_collisionScale     = savedState->readFloat();
