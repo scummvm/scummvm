@@ -301,10 +301,8 @@ void tperd() {
 	g_iouv = 0;
 	g_mchai = 0;
 	unsetSearchMenu();
-	if (!g_vm->_blo) {
-		int cx;
-		cx = t11(21);
-	}
+	if (!g_vm->_blo)
+		t11(21);
 
 	g_vm->_loseGame = true;
 	clsf1();
@@ -313,7 +311,7 @@ void tperd() {
 	clearScreenType2();
 	clsf3();
 	g_vm->_col = false;
-	g_syn = false;
+	g_vm->_syn = false;
 	g_okdes = false;
 }
 
@@ -425,8 +423,8 @@ void sparl(float adr, float rep) {
  * @remarks	Originally called 'finfouill'
  */
 void endSearch() {
-	g_heroSearching = false;
-	g_obpart = false;
+	g_vm->_heroSearching = false;
+	g_vm->_obpart = false;
 	g_cs = 0;
 	g_is = 0;
 	unsetSearchMenu();
@@ -591,7 +589,7 @@ L1:
 		g_crep = g_caff;
 		g_msg[3] = MENU_DISCUSS;
 		g_msg[4] = g_vm->_menu._discussMenu[cx];
-		g_syn = true;
+		g_vm->_syn = true;
 		g_vm->_col = true;
 	} else {
 		if (getRandomNumber(1, 3) == 2) {
@@ -763,7 +761,7 @@ void treg(int ob) {
 		g_msg[3] = 0;
 		g_crep = 998;
 	} else {
-		g_obpart = true;
+		g_vm->_obpart = true;
 		g_crep = g_caff + 400;
 		setSearchMenu();
 	}

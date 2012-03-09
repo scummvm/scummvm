@@ -88,8 +88,8 @@ void MortevielleEngine::gameLoaded() {
 	g_cs = 0;
 	g_is = 0;
 	g_ment = 0;
-	g_syn = true;
-	g_heroSearching = true;
+	g_vm->_syn = true;
+	g_vm->_heroSearching = true;
 	g_mchai = 0;
 	g_inei = 0;
 	initouv();
@@ -101,7 +101,7 @@ void MortevielleEngine::gameLoaded() {
 	g_okdes = false;
 	_endGame = true;
 	_loseGame = false;
-	g_heroSearching = false;
+	g_vm->_heroSearching = false;
 
 	displayAloneText();
 	tinke();
@@ -134,7 +134,7 @@ void tmaj3() {
 void tsitu() {
 	if (!g_vm->_col)
 		clearScreenType2();
-	g_syn = false;
+	g_vm->_syn = false;
 	g_vm->_keyPressedEsc = false;
 	if (!g_anyone) {
 		if (g_brt)
