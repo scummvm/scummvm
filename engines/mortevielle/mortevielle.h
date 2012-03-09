@@ -117,10 +117,14 @@ public:
 	bool _soundOff;
 	bool _largestClearScreen;
 	bool _hiddenHero;
+	bool _heroSearching;
 	bool _keyPressedEsc;
 
 	bool _blo;
 	bool _col;
+	bool _syn;
+	bool _zuul;
+	bool _obpart;
 
 
 	ScreenSurface _screenSurface;

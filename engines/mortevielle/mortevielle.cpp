@@ -144,7 +144,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	g_currGraphicalDevice = MODE_EGA;
 	g_newGraphicalDevice = g_currGraphicalDevice;
-	g_zuul = false;
+	_zuul = false;
 	charpal();
 	charge_cfiph();
 	charge_cfiec();
@@ -613,13 +613,13 @@ void MortevielleEngine::handleAction() {
 			if ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))
 				g_mnumo = g_msg[4];
 			if (!g_anyone) {
-				if ((g_heroSearching) || (g_obpart)) {
+				if ((g_vm->_heroSearching) || (_obpart)) {
 					if (y_s < 12)
 						return;
 
 					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {
 						oo = true;
-						if ((g_msg[4] == OPCODE_LIFT) || (g_obpart)) {
+						if ((g_msg[4] == OPCODE_LIFT) || (_obpart)) {
 							endSearch();
 							g_caff = g_s._currPlace;
 							g_crep = 998;
@@ -639,10 +639,10 @@ void MortevielleEngine::handleAction() {
 						g_okdes = false;
 						dessin(0);
 					}
-					if ((!g_syn) || (_col))
+					if ((!g_vm->_syn) || (_col))
 						repon(2, g_crep);
 				}
-			} while (g_syn);
+			} while (g_vm->_syn);
 			if (g_ctrm != 0)
 				tctrm();
 		}

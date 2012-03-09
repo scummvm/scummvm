@@ -54,7 +54,7 @@ void fctMove() {
 		repon(2, g_s._currPlace);
 	}
 	if ((g_s._currPlace == LANDING) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
-		if (!g_syn)
+		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_GO_TO));
 		tfleche();
 		if (g_vm->_keyPressedEsc)
@@ -189,7 +189,7 @@ void fctTake() {
 		if (g_crep != 139) {
 			if (g_ipers > 0)
 				g_s._faithScore += 3;
-			if (g_obpart) {
+			if (g_vm->_obpart) {
 				if (g_s._currPlace == PURPLE_ROOM)
 					g_s._purpleRoomObjectId = 0;
 				if (g_s._currPlace == ATTIC) {
@@ -207,7 +207,7 @@ void fctTake() {
 				if (g_s._currPlace == WELL)
 					g_s._wellObjectId = 0;
 				unsetSearchMenu();
-				g_obpart = false;
+				g_vm->_obpart = false;
 				affrep();
 			} else {
 				g_tabdon[acha + ((g_mchai - 1) * 10) + g_cs - 1] = 0;
@@ -221,7 +221,7 @@ void fctTake() {
 		}
 		return;
 	}
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_TAKE));
 	tfleche();
 	if ((g_anyone) || (g_vm->_keyPressedEsc))
@@ -322,7 +322,7 @@ void fctInventoryTake() {
  * @remarks	Originally called 'tsoulever'
  */
 void fctLift() {
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_LIFT));
 	tfleche();
 	if ((g_anyone) || (g_vm->_keyPressedEsc))
@@ -359,7 +359,7 @@ void fctRead() {
 	if (g_caff > 99)
 		st4(g_caff);
 	else {
-		if (!g_syn)
+		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_READ));
 		tfleche();
 		if (!(g_anyone) && !(g_vm->_keyPressedEsc)) {
@@ -392,7 +392,7 @@ void fctLook() {
 		g_crep = 103;
 		return;
 	}
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_LOOK));
 	tfleche();
 	if ((g_anyone) || (g_vm->_keyPressedEsc))
@@ -482,7 +482,7 @@ void fctSearch() {
 		return;
 	}
 
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_SEARCH));
 
 	tfleche();
@@ -513,7 +513,7 @@ void fctSearch() {
 				if (g_mchai != 0) {
 					g_cs = 0;
 					g_is = 0;
-					g_heroSearching = true;
+					g_vm->_heroSearching = true;
 					setSearchMenu();
 					tsuiv();
 				} else
@@ -579,13 +579,13 @@ void fctSelfSearch() {
  * @remarks	Originally called 'touvrir'
  */
 void fctOpen() {
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_OPEN));
 
 	if (g_caff == 26) {
 		if (g_ment != 0) {
 			g_msg[4] = OPCODE_ENTER;
-			g_syn = true;
+			g_vm->_syn = true;
 		} else
 			g_crep = 997;
 		return;
@@ -646,7 +646,7 @@ void fctPlace() {
 		return;
 	}
 
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_PUT));
 
 	tfleche();
@@ -779,7 +779,7 @@ void fctTurn() {
 		g_crep = 149;
 		return;
 	}
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_TURN));
 	tfleche();
 	if ((g_anyone) || (g_vm->_keyPressedEsc))
@@ -815,7 +815,7 @@ void fctTurn() {
  * @remarks	Originally called 'tcacher'
  */
 void fctSelfHide() {
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_HIDE_SELF));
 	tfleche();
 	if (!(g_anyone) && !(g_vm->_keyPressedEsc)) {
@@ -837,7 +837,7 @@ void fctAttach() {
 	if (g_s._selectedObjectId == 0)
 		g_crep = 186;
 	else {
-		if (!g_syn)
+		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_TIE));
 		tfleche();
 		if (!(g_anyone) && !(g_vm->_keyPressedEsc)) {
@@ -861,7 +861,7 @@ void fctAttach() {
  * @remarks	Originally called 'tfermer'
  */
 void fctClose() {
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_CLOSE));
 
 	if (g_caff < 26) {
@@ -903,7 +903,7 @@ void fctClose() {
 void fctKnock() {
 	warning("Knock - _currPlace %d", g_s._currPlace);
 
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_HIT));
 
 	if (g_s._currPlace == LANDING) {
@@ -951,7 +951,7 @@ void fctKnock() {
  * @remarks	Originally called 'tposer'
  */
 void fctSelfPut() {
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_POSE));
 	if (g_s._selectedObjectId == 0)
 		g_crep = 186;
@@ -1151,7 +1151,7 @@ void fctEnter() {
 				g_s._currPlace = LANDING;
 				g_msg[3] = MENU_DISCUSS;
 				g_msg[4] = g_vm->_menu._discussMenu[g_x];
-				g_syn = true;
+				g_vm->_syn = true;
 				if (g_ment == 9) {
 					g_vm->_col = true;
 					g_caff = 70;
@@ -1230,7 +1230,7 @@ void fctSleep() {
  * @remarks	Originally called 'tdefoncer'
  */
 void fctForce() {
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_SMASH));
 	if (g_caff < 25)
 		tfleche();
@@ -1286,8 +1286,6 @@ void fctLeave() {
  * @remarks	Originally called 'tattendre'
  */
 void fctWait() {
-	int quel;
-
 	g_mpers = 0;
 	clsf3();
 
@@ -1296,7 +1294,7 @@ void fctWait() {
 		++g_jh;
 		tinke();
 		if (!g_vm->_blo)
-			quel = t11(g_s._currPlace);
+			t11(g_s._currPlace);
 		if ((g_ipers != 0) && (g_mpers == 0)) {
 			g_crep = 998;
 			if ((g_s._currPlace == ATTIC) || (g_s._currPlace == CELLAR))
@@ -1321,7 +1319,7 @@ void fctWait() {
  * @remarks	Originally called 'tsonder'
  */
 void fctSound() {
-	if (!g_syn)
+	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_PROBE2));
 	if (g_caff < 27) {
 		tfleche();
@@ -1536,7 +1534,7 @@ void fctDiscuss() {
 void fctSmell() {
 	g_crep = 119;
 	if (g_caff < 26) {
-		if (!g_syn)
+		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_SMELL));
 		tfleche();
 		if (!(g_anyone) && !(g_vm->_keyPressedEsc))
@@ -1554,7 +1552,7 @@ void fctSmell() {
 void fctScratch() {
 	g_crep = 155;
 	if (g_caff < 27) {
-		if (!g_syn)
+		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_SCRATCH));
 		tfleche();
 	}

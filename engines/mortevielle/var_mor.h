@@ -224,10 +224,6 @@ enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCU
 /*---------------------------------------------------------------------------*/
 
 extern bool 
-        g_syn,
-        g_heroSearching,
-        g_zuul,
-        g_obpart,
         g_okdes,
         g_anyone,
         g_brt,

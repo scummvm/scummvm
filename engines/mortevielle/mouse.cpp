@@ -421,7 +421,7 @@ void moveMouse(bool &funct, char &key) {
 			return;
 			break;
 		case '\26':
-			g_zuul = true;
+			g_vm->_zuul = true;
 			return;
 			break;
 		case '\24':           // ^T => mode tandy
