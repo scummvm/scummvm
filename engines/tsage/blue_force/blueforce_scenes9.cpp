@@ -1285,9 +1285,9 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 		}
 
 		if (_mode != 1)
-			BF_GLOBALS._breakerBoxStatusArr[_state - 1] = (_state + 251) % 256;
+			BF_GLOBALS._breakerBoxStatusArr[_state - 1] = (_frame + 251) % 256;
 		else
-			BF_GLOBALS._breakerBoxStatusArr[_state - 1] = _state;
+			BF_GLOBALS._breakerBoxStatusArr[_state - 1] = _frame;
 
 		switch (_state) {
 		case 1:
