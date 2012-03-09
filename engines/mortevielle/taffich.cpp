@@ -148,7 +148,7 @@ void taffich() {
 		break;
 	}
 
-	g_okdes = true;
+	g_vm->_okdes = true;
 	hideMouse();
 	lgt = 0;
 	Common::String filename;

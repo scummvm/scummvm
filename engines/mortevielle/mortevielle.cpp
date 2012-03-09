@@ -58,6 +58,33 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_mouseClick = false;
 	_inMainGameLoop = false;
 	_quitGame = false;
+
+	_roomPresenceLuc = false;
+	_roomPresenceIda = false;
+	_purpleRoomPresenceLeo = false;
+	_roomPresenceGuy = false;
+	_roomPresenceEva = false;
+	_roomPresenceMax = false;
+	_roomPresenceBob = false;
+	_roomPresencePat = false;
+	_toiletsPresenceBobMax = false;
+	_bathRoomPresenceBobMax = false;
+	_room9PresenceLeo = false;
+	
+	_soundOff = false;
+	_largestClearScreen = false;
+	_hiddenHero = false;
+	_heroSearching = false;
+	_keyPressedEsc = false;
+	_reloadCFIEC = false;
+
+	_blo = false;
+	_col = false;
+	_syn = false;
+	_obpart = false;
+	_okdes = false;
+	_anyone = false;
+	_brt = false;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -145,8 +172,8 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	g_currGraphicalDevice = MODE_EGA;
 	g_newGraphicalDevice = g_currGraphicalDevice;
 	charpal();
-	charge_cfiph();
-	charge_cfiec();
+	loadCFIPH();
+	loadCFIEC();
 	zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	g_c_zzz = 1;
 	init_nbrepm();
@@ -498,13 +525,13 @@ void MortevielleEngine::showIntroduction() {
  * loses, and chooses to start playing the game again.
  */
 void MortevielleEngine::mainGame() {
-	if (g_rech_cfiec)
-		charge_cfiec();
+	if (_reloadCFIEC)
+		loadCFIEC();
 
 	for (g_crep = 1; g_crep <= g_c_zzz; ++g_crep) 
 		zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
-	charge_bruit5();
+	loadBRUIT5();
 	_menu.initMenu();
 
 	theure();
@@ -567,7 +594,7 @@ void MortevielleEngine::handleAction() {
 			moveMouse(funct, inkey);
 			CHECK_QUIT;
 			temps = temps + 1;
-		} while (!((g_vm->_menu._menuSelected) || (temps > lim) || (funct) || (g_anyone)));
+		} while (!((g_vm->_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));
 		_inMainGameLoop = false;
 
 		g_vm->_menu.eraseMenu();
@@ -611,7 +638,7 @@ void MortevielleEngine::handleAction() {
 			g_mnumo = g_msg[3];
 			if ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))
 				g_mnumo = g_msg[4];
-			if (!g_anyone) {
+			if (!_anyone) {
 				if ((g_vm->_heroSearching) || (_obpart)) {
 					if (y_s < 12)
 						return;
@@ -634,8 +661,8 @@ void MortevielleEngine::handleAction() {
 
 				if ((g_ctrm == 0) && (! _loseGame) && (! _endGame)) {
 					taffich();
-					if (g_okdes) {
-						g_okdes = false;
+					if (g_vm->_okdes) {
+						g_vm->_okdes = false;
 						dessin(0);
 					}
 					if ((!g_vm->_syn) || (_col))

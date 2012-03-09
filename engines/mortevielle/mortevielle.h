@@ -119,11 +119,15 @@ public:
 	bool _hiddenHero;
 	bool _heroSearching;
 	bool _keyPressedEsc;
+	bool _reloadCFIEC;
 
 	bool _blo;
 	bool _col;
 	bool _syn;
 	bool _obpart;
+	bool _okdes;
+	bool _anyone;
+	bool _brt;
 
 
 	ScreenSurface _screenSurface;

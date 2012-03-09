@@ -49,7 +49,7 @@ void tinke() {
 	int cx, cf, day, hour, minute;
 	Common::String stpo;
 
-	g_anyone = false;
+	g_vm->_anyone = false;
 	updateHour(day, hour, minute);
 	if (day != g_day) {
 		g_day = day;
@@ -161,8 +161,8 @@ void tinke() {
 					cavegre();
 				} else if (g_ipers == 10) {
 					g_ipers = 0;
-					if (!g_brt) {
-						g_brt = true;
+					if (!g_vm->_brt) {
+						g_vm->_brt = true;
 						g_hdb = readclock();
 						if (getRandomNumber(1, 5) < 5) {
 							clsf3();
@@ -181,12 +181,12 @@ void tinke() {
 		}
 	}
 	g_hfb = readclock();
-	if ((g_brt) && ((g_hfb - g_hdb) > 17)) {
+	if ((g_vm->_brt) && ((g_hfb - g_hdb) > 17)) {
 		cx = nouvp(g_li);
-		g_brt = false;
+		g_vm->_brt = false;
 		g_hdb = 0;
 		if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
-			g_anyone = true;
+			g_vm->_anyone = true;
 	}
 }
 
@@ -211,7 +211,7 @@ void fenat(char ans) {
 void afdes(int ad) {
 	taffich();
 	dessin(ad);
-	g_okdes = false;
+	g_vm->_okdes = false;
 }
 
 void tkey1(bool d) {
@@ -236,7 +236,7 @@ void tkey1(bool d) {
 		quest = keypressed();
 		getMousePos(x, y, c);
 		CHECK_QUIT;
-	} while (!(quest || (c != 0) || (d && g_anyone)));
+	} while (!(quest || (c != 0) || (d && g_vm->_anyone)));
 	if (quest)
 		testou();
 	g_vm->setMouseClick(false);
@@ -312,7 +312,7 @@ void tperd() {
 	clsf3();
 	g_vm->_col = false;
 	g_vm->_syn = false;
-	g_okdes = false;
+	g_vm->_okdes = false;
 }
 
 void tsort() {
@@ -532,7 +532,7 @@ void t1neig() {
 		g_crep = 1506;
 		tperd();
 	} else {
-		g_okdes = true;
+		g_vm->_okdes = true;
 		g_s._currPlace = MOUNTAIN;
 		affrep();
 	}
@@ -645,7 +645,7 @@ void tfleche() {
 		return;
 
 	fenat(chr(152));
-	g_rect = false;
+	bool inRect = false;
 	do {
 		touch = '\0';
 
@@ -654,18 +654,18 @@ void tfleche() {
 			CHECK_QUIT;
 
 			if (g_vm->getMouseClick())
-				g_rect = (x_s < 256 * g_res) && (y_s < 176) && (y_s > 12);
+				inRect = (x_s < 256 * g_res) && (y_s < 176) && (y_s > 12);
 			tinke();
-		} while (!(qust || g_rect || g_anyone));
+		} while (!(qust || inRect || g_vm->_anyone));
 
 		if (qust && (touch == '\103'))
 			Alert::show(g_hintPctMessage, 1);
-	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (g_anyone) || (g_rect)));
+	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (g_vm->_anyone) || (inRect)));
 
 	if (touch == '\73')
 		g_vm->_keyPressedEsc = true;
 
-	if (g_rect) {
+	if (inRect) {
 		g_x = x_s;
 		g_y = y_s;
 	}
