@@ -27,6 +27,7 @@
 
 #include "common/str-array.h"
 #include "common/hashmap.h"
+#include "common/events.h"
 
 #include "engines/advancedDetector.h"
 
@@ -175,8 +176,8 @@ public:
 	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
 
 private:
-	void handleControls(int operation, int key, int keyModifier, uint16 ascii);
-	void handleChars(int operation, int key, int keyModifier, uint16 ascii);
+	void handleControls(Common::EventType type, const Common::KeyState &key);
+	void handleChars(Common::EventType type, const Common::KeyState &key);
 	void handleExit();
 	void handlePause();
 	void handleUserPaint();

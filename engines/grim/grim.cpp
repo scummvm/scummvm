@@ -39,7 +39,6 @@
 
 #include "common/archive.h"
 #include "common/debug-channels.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -678,11 +677,11 @@ void GrimEngine::mainLoop() {
 						handlePause();
 						break;
 					} else {
-						handleChars(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+						handleChars(type, event.kbd);
 					}
 				}
 
-				handleControls(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+				handleControls(type, event.kbd);
 
 				// Allow lua to react to the event.
 				// Without this lua_update switching the entries in the menu is slow because

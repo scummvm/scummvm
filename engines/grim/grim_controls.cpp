@@ -271,34 +271,34 @@ const ControlDescriptor controls[] = {
 // a "character" handler or a "button" handler
 #define CHAR_KEY(k) ((k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' ')
 
-void GrimEngine::handleChars(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	if (!CHAR_KEY(ascii))
+void GrimEngine::handleChars(Common::EventType operation, const Common::KeyState &key) {
+	if (!CHAR_KEY(key.ascii))
 		return;
 
 	char keychar[2];
-	keychar[0] = ascii;
+	keychar[0] = key.ascii;
 	keychar[1] = 0;
-	
+
 	LuaObjects objects;
 	objects.add(keychar);
-	
+
 	if (!LuaBase::instance()->callback("characterHandler", objects)) {
 		error("handleChars: invalid handler");
 	}
 }
 
-void GrimEngine::handleControls(int operation, int key, int keyModifier, uint16 ascii) {
+void GrimEngine::handleControls(Common::EventType operation, const Common::KeyState &key) {
 	// Might also want to support keypad-enter?
-	if (keyModifier == Common::KBD_ALT && key == Common::KEYCODE_RETURN && operation == Common::EVENT_KEYDOWN) {
+	if (key.hasFlags(Common::KBD_ALT) && key.keycode == Common::KEYCODE_RETURN && operation == Common::EVENT_KEYDOWN) {
 		_changeFullscreenState = true;
 	}
 
-	// If we're not supposed to handle the key then don't	
-	if (!_controlsEnabled[key])
+	// If we're not supposed to handle the key then don't
+	if (!_controlsEnabled[key.keycode])
 		return;
 
 	LuaObjects objects;
-	objects.add(key);
+	objects.add(key.keycode);
 	if (operation == Common::EVENT_KEYDOWN) {
 		objects.add(1);
 		objects.add(1);
@@ -315,9 +315,9 @@ void GrimEngine::handleControls(int operation, int key, int keyModifier, uint16 
 	// 	}
 
 	if (operation == Common::EVENT_KEYDOWN)
-		_controlsState[key] = true;
+		_controlsState[key.keycode] = true;
 	else if (operation == Common::EVENT_KEYUP)
-		_controlsState[key] = false;
+		_controlsState[key.keycode] = false;
 }
 
 } // end of namespace Grim
