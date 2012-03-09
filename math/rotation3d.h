@@ -139,9 +139,13 @@ void Rotation3D<T>::getPitchYawRoll(Angle *pPitch, Angle *pYaw, Angle *pRoll) co
 		z = atan2(m->getValue(0, 2), m->getValue(0, 0));
 		y = 0;
 	}
-	*pPitch = Math::Angle::fromRadians(x);
-	*pRoll = Math::Angle::fromRadians(y);
-	*pYaw = Math::Angle::fromRadians(z);
+	
+	if (pPitch)
+        *pPitch = Math::Angle::fromRadians(x);
+    if (pRoll)
+        *pRoll = Math::Angle::fromRadians(y);
+    if (pYaw)
+        *pYaw = Math::Angle::fromRadians(z);
 }
 
 template<class T>
