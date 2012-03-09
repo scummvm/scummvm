@@ -269,7 +269,10 @@ Common::Error GrimEngine::run() {
 	if (splash_bm != NULL)
 		splash_bm->draw();
 
-	g_driver->flipBuffer();
+	// This flipBuffer() may make the OpenGL renderer show garbage instead of the splash,
+	// while the TinyGL renderer needs it.
+	if (_softRenderer)
+		g_driver->flipBuffer();
 
 	LuaBase *lua = NULL;
 	if (getGameType() == GType_GRIM) {
