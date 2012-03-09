@@ -811,6 +811,7 @@ void GrimEngine::savegameRestore() {
 	_shortFrame = true;
 	clearEventQueue();
 	invalidateActiveActorsList();
+	buildActiveActorsList();
 }
 
 void GrimEngine::restoreGRIM() {
