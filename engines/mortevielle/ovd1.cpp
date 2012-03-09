@@ -105,21 +105,24 @@ void chartex() {
 	if (!inpFile.open("TXX.INP")) {
 		if (!inpFile.open("TXX.MOR")) {
 			warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
+			return;
 		}
-	} else if ((inpFile.size() > (maxti * 2)) || (ntpFile.size() > (maxtd * 3))) {
+	} 
+	if (!ntpFile.open("TXX.NTP")) {
+		warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
+		return;
+	}
+	
+	if ((inpFile.size() > (maxti * 2)) || (ntpFile.size() > (maxtd * 3))) {
 		warning("TXX file - Unexpected format - Switching to DAT file");
 		return;
-	} else {
-		for (int i = 0; i < inpFile.size() / 2; ++i)
-			g_t_mot[i] = inpFile.readUint16LE();
-	
-		inpFile.close();
-		g_vm->_txxFileFl = true;
-	}
+	} 
 
-	if (!ntpFile.open("TXX.NTP")) {
-		error("Missing file - TXX.NTP");
-	}
+	for (int i = 0; i < inpFile.size() / 2; ++i)
+		g_t_mot[i] = inpFile.readUint16LE();
+
+	inpFile.close();
+	g_vm->_txxFileFl = true;
 
 	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
 		g_t_rec[i]._indis = ntpFile.readSint16LE();
