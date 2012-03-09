@@ -462,7 +462,7 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0) {
 			SaveGame *savedState = SaveGame::openForLoading(*file);
 			if (savedState) {
-				if (savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
+				if (!savedState->isCompatible()) {
 					delete savedState;
 					continue;
 				}

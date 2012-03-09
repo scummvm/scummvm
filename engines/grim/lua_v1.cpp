@@ -866,7 +866,7 @@ void Lua_V1::GetSaveGameImage() {
 	}
 	const char *filename = lua_getstring(param);
 	SaveGame *savedState = SaveGame::openForLoading(filename);
-	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
+	if (!savedState || !savedState->isCompatible()) {
 		lua_pushnil();
 		return;
 	}
@@ -924,7 +924,7 @@ void Lua_V1::GetSaveGameData() {
 	SaveGame *savedState = SaveGame::openForLoading(filename);
 	lua_Object result = lua_createtable();
 
-	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
+	if (!savedState || !savedState->isCompatible()) {
 		lua_pushobject(result);
 		lua_pushnumber(2);
 		lua_pushstring("mo.set"); // Just a placeholder to not make it throw a lua error
@@ -934,7 +934,7 @@ void Lua_V1::GetSaveGameData() {
 		if (!savedState) {
 			warning("Savegame %s is invalid", filename);
 		} else {
-			warning("Savegame %s is incompatible with this Residual build. Save version: %d; current version: %d", filename, savedState->saveVersion(), SaveGame::SAVEGAME_VERSION);
+			warning("Savegame %s is incompatible with this Residual build. Save version: %d; current version: %d", filename, savedState->saveMajorVersion(), SaveGame::SAVEGAME_MAJOR_VERSION);
 		}
 		delete savedState;
 		return;

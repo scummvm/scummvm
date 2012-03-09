@@ -33,7 +33,8 @@ namespace Grim {
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
 
-int SaveGame::SAVEGAME_VERSION = 21;
+uint SaveGame::SAVEGAME_MAJOR_VERSION = 22;
+uint SaveGame::SAVEGAME_MINOR_VERSION = 0;
 
 SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	Common::InSaveFile *inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
@@ -52,7 +53,8 @@ SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 		delete save;
 		return NULL;
 	}
-	save->_version = inSaveFile->readUint32BE();
+	save->_majorVersion = inSaveFile->readUint32BE();
+	save->_minorVersion = inSaveFile->readUint32BE();
 
 	return save;
 }
@@ -70,9 +72,11 @@ SaveGame *SaveGame::openForSaving(const Common::String &filename) {
 	save->_outSaveFile = outSaveFile;
 
 	outSaveFile->writeUint32BE(SAVEGAME_HEADERTAG);
-	outSaveFile->writeUint32BE(SAVEGAME_VERSION);
+	outSaveFile->writeUint32BE(SAVEGAME_MAJOR_VERSION);
+	outSaveFile->writeUint32BE(SAVEGAME_MINOR_VERSION);
 
-	save->_version = SAVEGAME_VERSION;
+	save->_majorVersion = SAVEGAME_MAJOR_VERSION;
+	save->_minorVersion = SAVEGAME_MINOR_VERSION;
 
 	return save;
 }
@@ -95,12 +99,20 @@ SaveGame::~SaveGame() {
 	free(_sectionBuffer);
 }
 
-int SaveGame::saveVersion() const {
-	return _version;
+bool SaveGame::isCompatible() const {
+	return _majorVersion == SAVEGAME_MAJOR_VERSION;
+}
+
+uint SaveGame::saveMajorVersion() const {
+	return _majorVersion;
+}
+
+uint SaveGame::saveMinorVersion() const {
+	return _minorVersion;
 }
 
 uint32 SaveGame::beginSection(uint32 sectionTag) {
-	assert(_version == SAVEGAME_VERSION);
+	assert(_majorVersion == SAVEGAME_MAJOR_VERSION);
 
 	if (_currentSection != 0)
 		error("Tried to begin a new save game section with ending old section");
