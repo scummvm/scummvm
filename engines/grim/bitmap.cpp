@@ -234,7 +234,7 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 
 BitmapData::BitmapData() :
 	_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0),
-	_bpp(0), _colorFormat(0), _texIds(0), _hasTransparency(false), _data(NULL), _refCount(1) {
+	_bpp(0), _colorFormat(0), _texIds(0), _hasTransparency(false), _data(NULL), _refCount(1), _loaded(false) {
 }
 
 BitmapData::~BitmapData() {
