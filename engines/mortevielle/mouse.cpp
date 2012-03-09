@@ -420,10 +420,6 @@ void moveMouse(bool &funct, char &key) {
 			g_vm->_soundOff = !g_vm->_soundOff;
 			return;
 			break;
-		case '\26':
-			g_vm->_zuul = true;
-			return;
-			break;
 		case '\24':           // ^T => mode tandy
 			funct = true;
 			key = '\11';
