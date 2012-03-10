@@ -178,5 +178,15 @@ extern void t23coul(int &l);
 extern void maivid();
 extern void st13(int ob);
 extern void aldepl();
+
+extern void changeGraphicalDevice(int newDevice);
+
+/* NIVEAU 3 */
+/* procedure PROGRAMME */
+extern void tmaj3();
+extern void tsitu();
+
+/* NIVEAU 1 */
+extern void theure();
 } // End of namespace Mortevielle
 #endif

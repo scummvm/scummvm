@@ -38,7 +38,6 @@
 
 namespace Mortevielle {
 
-
 /**
  * Engine function - Move
  * @remarks	Originally called 'taller'
