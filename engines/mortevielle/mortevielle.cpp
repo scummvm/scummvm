@@ -38,7 +38,6 @@
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
-#include "mortevielle/prog.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/var_mor.h"

@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	mouse.o \
 	outtext.o \
 	ovd1.o \
-	prog.o \
 	saveload.o \
 	sound.o \
 	speech.o \
