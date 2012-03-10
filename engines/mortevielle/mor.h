@@ -184,7 +184,6 @@ extern void changeGraphicalDevice(int newDevice);
 /* NIVEAU 3 */
 /* procedure PROGRAMME */
 extern void tmaj3();
-extern void tsitu();
 
 /* NIVEAU 1 */
 extern void theure();

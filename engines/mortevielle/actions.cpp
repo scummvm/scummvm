@@ -26,7 +26,6 @@
  */
 
 #include "common/scummsys.h"
-#include "mortevielle/actions.h"
 #include "mortevielle/dialogs.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
@@ -42,7 +41,7 @@ namespace Mortevielle {
  * Engine function - Move
  * @remarks	Originally called 'taller'
  */
-void fctMove() {
+void MortevielleEngine::fctMove() {
 	if ((g_s._currPlace == 26) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
 		g_s._currPlace = LANDING;
 		g_caff = g_s._currPlace;
@@ -178,7 +177,7 @@ void fctMove() {
  * Engine function - Take
  * @remarks	Originally called 'tprendre'
  */
-void fctTake() {
+void MortevielleEngine::fctTake() {
 	if (g_caff > 99) {
 		int cx = g_caff;
 		avpoing(cx);
@@ -291,7 +290,7 @@ void fctTake() {
  * Engine function - Inventory / Take
  * @remarks	Originally called 'tsprendre'
  */
-void fctInventoryTake() {
+void MortevielleEngine::fctInventoryTake() {
 	int cx, cy, cz;
 
 	cx = 0;
@@ -317,7 +316,7 @@ void fctInventoryTake() {
  * Engine function - Lift
  * @remarks	Originally called 'tsoulever'
  */
-void fctLift() {
+void MortevielleEngine::fctLift() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_LIFT));
 	tfleche();
@@ -351,7 +350,7 @@ void fctLift() {
  * Engine function - Read
  * @remarks	Originally called 'tlire'
  */
-void fctRead() {
+void MortevielleEngine::fctRead() {
 	if (g_caff > 99)
 		st4(g_caff);
 	else {
@@ -370,7 +369,7 @@ void fctRead() {
  * Engine function - Self / Read
  * @remarks	Originally called 'tslire'
  */
-void fctSelfRead() {
+void MortevielleEngine::fctSelfRead() {
 	if (g_s._selectedObjectId == 0)
 		g_crep = 186;
 	else
@@ -381,7 +380,7 @@ void fctSelfRead() {
  * Engine function - Look
  * @remarks	Originally called 'tregarder'
  */
-void fctLook() {
+void MortevielleEngine::fctLook() {
 	int cx;
 
 	if (g_caff > 99) {
@@ -459,7 +458,7 @@ void fctLook() {
  * Engine function - Self / Look
  * @remarks	Originally called 'tsregarder'
  */
-void fctSelftLook() {
+void MortevielleEngine::fctSelftLook() {
 	if (g_s._selectedObjectId != 0)
 		treg(g_s._selectedObjectId);
 	else
@@ -470,7 +469,7 @@ void fctSelftLook() {
  * Engine function - Search
  * @remarks	Originally called 'tfouiller'
  */
-void fctSearch() {
+void MortevielleEngine::fctSearch() {
 	const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 
 	if (g_caff > 99) {
@@ -563,7 +562,7 @@ void fctSearch() {
  * Engine function - Self / Search
  * @remarks	Originally called 'tsfouiller'
  */
-void fctSelfSearch() {
+void MortevielleEngine::fctSelfSearch() {
 	if (g_s._selectedObjectId != 0)
 		st7(g_s._selectedObjectId);
 	else
@@ -574,7 +573,7 @@ void fctSelfSearch() {
  * Engine function - Open
  * @remarks	Originally called 'touvrir'
  */
-void fctOpen() {
+void MortevielleEngine::fctOpen() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_OPEN));
 
@@ -636,7 +635,7 @@ void fctOpen() {
  * Engine function - Place
  * @remarks	Originally called 'tmettre'
  */
-void fctPlace() {
+void MortevielleEngine::fctPlace() {
 	if (g_s._selectedObjectId == 0) {
 		g_crep = 186;
 		return;
@@ -770,7 +769,7 @@ void fctPlace() {
  * Engine function - Turn
  * @remarks	Originally called 'ttourner'
  */
-void fctTurn() {
+void MortevielleEngine::fctTurn() {
 	if (g_caff > 99) {
 		g_crep = 149;
 		return;
@@ -810,7 +809,7 @@ void fctTurn() {
  * Engine function - Hide Self
  * @remarks	Originally called 'tcacher'
  */
-void fctSelfHide() {
+void MortevielleEngine::fctSelfHide() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_HIDE_SELF));
 	tfleche();
@@ -829,7 +828,7 @@ void fctSelfHide() {
  * Engine function - Attach
  * @remarks	Originally called 'tattacher'
  */
-void fctAttach() {
+void MortevielleEngine::fctAttach() {
 	if (g_s._selectedObjectId == 0)
 		g_crep = 186;
 	else {
@@ -856,7 +855,7 @@ void fctAttach() {
  * Engine function - Close
  * @remarks	Originally called 'tfermer'
  */
-void fctClose() {
+void MortevielleEngine::fctClose() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_CLOSE));
 
@@ -896,7 +895,7 @@ void fctClose() {
  * Engine function - Knock
  * @remarks	Originally called 'tfrapper'
  */
-void fctKnock() {
+void MortevielleEngine::fctKnock() {
 	warning("Knock - _currPlace %d", g_s._currPlace);
 
 	if (!g_vm->_syn)
@@ -946,7 +945,7 @@ void fctKnock() {
  * Engine function - Self / Put
  * @remarks	Originally called 'tposer'
  */
-void fctSelfPut() {
+void MortevielleEngine::fctSelfPut() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_POSE));
 	if (g_s._selectedObjectId == 0)
@@ -1040,7 +1039,7 @@ void fctSelfPut() {
  * Engine function - Listen
  * @remarks	Originally called 'tecouter'
  */
-void fctListen() {
+void MortevielleEngine::fctListen() {
 	if (g_s._currPlace != 26)
 		g_crep = 101;
 	else {
@@ -1078,7 +1077,7 @@ void fctListen() {
  * Engine function - Eat
  * @remarks	Originally called 'tmanger'
  */
-void fctEat() {
+void MortevielleEngine::fctEat() {
 	if ((g_s._currPlace > LANDING) && (g_s._currPlace < 26)) {
 		g_crep = 148;
 	} else {
@@ -1119,7 +1118,7 @@ void fctEat() {
  * Engine function - Enter
  * @remarks	Originally called 'tentrer'
  */
-void fctEnter() {
+void MortevielleEngine::fctEnter() {
 	if ((g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) {
 		t1sama();
 		tmlieu(g_s._currPlace);
@@ -1178,7 +1177,7 @@ void fctEnter() {
  * Engine function - Sleep
  * @remarks	Originally called 'tdormir'
  */
-void fctSleep() {
+void MortevielleEngine::fctSleep() {
 	int z, j, h, m;
 
 	if ((g_s._currPlace > LANDING) && (g_s._currPlace < 26)) {
@@ -1225,7 +1224,7 @@ void fctSleep() {
  * Engine function - Force
  * @remarks	Originally called 'tdefoncer'
  */
-void fctForce() {
+void MortevielleEngine::fctForce() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_SMASH));
 	if (g_caff < 25)
@@ -1245,7 +1244,7 @@ void fctForce() {
  * Engine function - Leave
  * @remarks	Originally called 'tsortir'
  */
-void fctLeave() {
+void MortevielleEngine::fctLeave() {
 	tsort();
 	g_crep = 0;
 	if ((g_s._currPlace == MOUNTAIN) || (g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK) || (g_s._currPlace == WELL))
@@ -1281,7 +1280,7 @@ void fctLeave() {
  * Engine function - Wait
  * @remarks	Originally called 'tattendre'
  */
-void fctWait() {
+void MortevielleEngine::fctWait() {
 	g_mpers = 0;
 	clsf3();
 
@@ -1314,7 +1313,7 @@ void fctWait() {
  * Engine function - Sound
  * @remarks	Originally called 'tsonder'
  */
-void fctSound() {
+void MortevielleEngine::fctSound() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_PROBE2));
 	if (g_caff < 27) {
@@ -1329,7 +1328,7 @@ void fctSound() {
  * Engine function - Discuss
  * @remarks	Originally called 'tparler'
  */
-void fctDiscuss() {
+void MortevielleEngine::fctDiscuss() {
 	bool te[47];
 	int cy, cx, max, suj, co, lig, icm, i, choi, x, y, c;
 	char tou;
@@ -1394,7 +1393,7 @@ void fctDiscuss() {
 			moveMouse(f, tou);
 			CHECK_QUIT;
 
-			getMousePos(x, y, c);
+			getMousePos_(x, y, c);
 			x *= (3 - g_res);
 			if (x > 319)
 				cx = 41;
@@ -1527,7 +1526,7 @@ void fctDiscuss() {
  * Engine function - Smell
  * @remarks	Originally called 'tsentir'
  */
-void fctSmell() {
+void MortevielleEngine::fctSmell() {
 	g_crep = 119;
 	if (g_caff < 26) {
 		if (!g_vm->_syn)
@@ -1545,7 +1544,7 @@ void fctSmell() {
  * Engine function - Scratch
  * @remarks	Originally called 'tgratter'
  */
-void fctScratch() {
+void MortevielleEngine::fctScratch() {
 	g_crep = 155;
 	if (g_caff < 27) {
 		if (!g_vm->_syn)

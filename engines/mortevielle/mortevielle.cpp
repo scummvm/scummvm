@@ -29,7 +29,6 @@
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/actions.h"
 #include "mortevielle/dialogs.h"
 #include "mortevielle/asm.h"
 #include "mortevielle/keyboard.h"
@@ -552,7 +551,7 @@ void MortevielleEngine::mainGame() {
 
 /**
  * This method handles playing a loaded game
- * @remarks	Originally called tojouer
+ * @remarks	Originally called tjouer
  */
 void MortevielleEngine::playGame() {
 	gameLoaded();
@@ -660,7 +659,7 @@ void MortevielleEngine::handleAction() {
 			}
 			do {
 				if (! oo)
-					tsitu();
+					handleOpcode();
 
 				if ((g_ctrm == 0) && (! _loseGame) && (! _endGame)) {
 					taffich();

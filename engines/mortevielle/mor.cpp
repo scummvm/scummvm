@@ -30,7 +30,6 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "mortevielle/actions.h"
 #include "mortevielle/dialogs.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/menu.h"
@@ -61,7 +60,7 @@ void copcha() {
 bool isMouseIn(rectangle r) {
 	int x, y, c;
 
-	getMousePos(x, y, c);
+	getMousePos_(x, y, c);
 	if ((x > r._x1) && (x < r._x2) && (y > r._y1) && (y < r._y2))
 		return true;
 
@@ -91,12 +90,11 @@ void writepal(int n) {
 		}
 		break;
 	case MODE_CGA: {
-		warning("TODO: If this code is needed, resolve the incompatible types");
 		nhom pal[16];
 		for (int i = 0; i < 16; ++i) {
 			pal[i] = g_palcga[n]._a[i];
 		}
-//		nhom pal[16] = palcga[n]._a;
+
 		if (n < 89)
 			palette(g_palcga[n]._p);
 		
@@ -1833,7 +1831,7 @@ void tkey1(bool d) {
 	while (keypressed())
 		g_key = testou();
 	do {
-		getMousePos(x, y, c);
+		getMousePos_(x, y, c);
 		keypressed();
 	} while (c != 0);
 	
@@ -1842,7 +1840,7 @@ void tkey1(bool d) {
 		if (d)
 			tinke();
 		quest = keypressed();
-		getMousePos(x, y, c);
+		getMousePos_(x, y, c);
 		CHECK_QUIT;
 	} while (!(quest || (c != 0) || (d && g_vm->_anyone)));
 	if (quest)
@@ -2518,18 +2516,23 @@ void tmaj3() {
 	g_s._heure = chr(minute);
 }
 
-void tsitu() {
-	if (!g_vm->_col)
+/**
+ * Engine function - Handle OpCodes
+ * @remarks	Originally called 'tsitu'
+ */
+void MortevielleEngine::handleOpcode() {
+	if (!_col)
 		clearScreenType2();
-	g_vm->_syn = false;
-	g_vm->_keyPressedEsc = false;
-	if (!g_vm->_anyone) {
-		if (g_vm->_brt)
+	_syn = false;
+	_keyPressedEsc = false;
+	if (!_anyone) {
+		if (_brt) {
 			if ((g_msg[3] == MENU_MOVE) || (g_msg[4] == OPCODE_LEAVE) || (g_msg[4] == OPCODE_SLEEP) || (g_msg[4] == OPCODE_EAT)) {
 				g_ctrm = 4;
 				mennor();
 				return;
 			}
+		}
 		if (g_msg[3] == MENU_MOVE)
 			fctMove();
 		if (g_msg[3] == MENU_DISCUSS)
@@ -2586,14 +2589,14 @@ void tsitu() {
 			fctSelfPut();
 		if (g_msg[4] == OPCODE_SLOOK)
 			fctSelftLook();
-		g_vm->_hiddenHero = false;
+		_hiddenHero = false;
 
 		if (g_msg[4] == OPCODE_SHIDE)
 			fctSelfHide();
 	} else {
-		if (g_vm->_anyone) {
+		if (_anyone) {
 			quelquun();
-			g_vm->_anyone = false;
+			_anyone = false;
 			mennor();
 			return;
 		}
@@ -2604,7 +2607,7 @@ void tsitu() {
 	        ((hour > 0) && (hour < 6) && (g_s._currPlace != 0)))
 		++g_s._faithScore;
 	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != 23)
-	        && (g_s._currPlace != 0) && (g_s._selectedObjectId != 152) && (!g_vm->_loseGame)) {
+	        && (g_s._currPlace != 0) && (g_s._selectedObjectId != 152) && (!_loseGame)) {
 		if ((g_s._faithScore > 99) && (hour > 8) && (hour < 16)) {
 			g_crep = 1501;
 			tperd();
@@ -2613,7 +2616,7 @@ void tsitu() {
 			g_crep = 1508;
 			tperd();
 		}
-		if ((day > 1) && (hour > 8) && (!g_vm->_loseGame)) {
+		if ((day > 1) && (hour > 8) && (!_loseGame)) {
 			g_crep = 1502;
 			tperd();
 		}
