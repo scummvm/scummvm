@@ -34,7 +34,7 @@
 namespace Mortevielle {
 
 extern void spfrac(int wor);
-extern void charg_car();
+extern void charg_car(int &currWordNumb);
 extern void entroct(byte o);
 extern void veracf(byte b);
 extern void cctable(tablint &t);

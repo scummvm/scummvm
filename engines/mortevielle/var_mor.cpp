@@ -78,9 +78,6 @@ const byte g_rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 /*------------------------------   VARIABLES   ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-bool    g_rech_cfiec;
-
-
 int g_x,
         g_y,
         g_t,
@@ -91,7 +88,6 @@ int g_x,
         g_jh,
         g_mh,
         g_cs,
-        g_currGraphicalDevice,
         g_hdb,
         g_hfb,
         g_hour,
@@ -113,13 +109,9 @@ int g_x,
         g_msg3,
         g_msg4,
         g_mlec,
-        g_newGraphicalDevice,
-        g_c_zzz,
         g_mchai,
         g_menup,
         g_ipers,
-        g_ledeb,
-        g_lefin,
         g_mpers,
         g_mnumo,
         g_xprec,
@@ -129,12 +121,8 @@ int g_x,
         g_typlec,
         g_num_ph,
         g_numpal,
-        g_nb_word,
         g_ptr_oct,
-        g_k_tempo,
-        g_ptr_tcph,
-        g_ptr_word,
-        g_color_txt;
+        g_k_tempo;
 
 int g_t_cph[6401];
 byte g_tabdon[4001];

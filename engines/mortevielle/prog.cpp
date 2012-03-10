@@ -45,7 +45,7 @@ namespace Mortevielle {
  */
 void changeGraphicalDevice(int newDevice) {
 	hideMouse();
-	g_currGraphicalDevice = newDevice;
+	g_vm->_currGraphicalDevice = newDevice;
 	hirs();
 	initMouse();
 	showMouse();

@@ -114,7 +114,7 @@ void dessine(int ad, int x, int y) {
 
 void dessine_rouleau() {
 	writepal(89);
-	if (g_currGraphicalDevice == MODE_HERCULES) {
+	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
 		g_mem[0x7000 * 16 + 14] = 15;
 	}
 	hideMouse();
@@ -122,9 +122,12 @@ void dessine_rouleau() {
 	showMouse();
 }
 
-
-void text_color(int c) {
-	g_color_txt = c;
+/**
+ * Set Text Color
+ * @remarks	Originally called 'text_color'
+ */
+void setTextColor(int c) {
+	g_vm->_textColor = c;
 }
 
 /* NIVEAU 13 */
@@ -140,7 +143,7 @@ void text1(int x, int y, int nb, int m) {
 	Common::String tmpStr = deline(m);
 	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
-	displayStr(tmpStr, x, y, nb, 20, g_color_txt);
+	displayStr(tmpStr, x, y, nb, 20, g_vm->_textColor);
 }
 
 void initouv() {
@@ -178,7 +181,7 @@ void clearScreenType2() {
 }
 
 void ecrf2() {
-	text_color(5);
+	setTextColor(5);
 }
 
 void ecr2(Common::String str_) {
@@ -219,12 +222,12 @@ void ecr3(Common::String text) {
 }
 
 void ecrf6() {
-	text_color(5);
+	setTextColor(5);
 	g_vm->_screenSurface.drawBox(62, 33, 363, 80, 15);
 }
 
 void ecrf7() {
-	text_color(4);
+	setTextColor(4);
 }
 
 void clsf10() {
@@ -258,7 +261,7 @@ void clsf10() {
 
 void stop() {
 	hirs();
-	g_currGraphicalDevice = MODE_AMSTRAD1512;
+	g_vm->_currGraphicalDevice = MODE_AMSTRAD1512;
 	hirs();
 	g_vm->quitGame();
 }
@@ -266,7 +269,7 @@ void stop() {
 void paint_rect(int x, int y, int dx, int dy) {
 	int co;
 
-	if (g_currGraphicalDevice == MODE_CGA)
+	if (g_vm->_currGraphicalDevice == MODE_CGA)
 		co = 3;
 	else
 		co = 11;
@@ -656,7 +659,7 @@ void drawClock() {
 	
 	paint_rect(570, 118, 20, 10);
 	paint_rect(578, 114, 6, 18);
-	if ((g_currGraphicalDevice == MODE_CGA) || (g_currGraphicalDevice == MODE_HERCULES))
+	if ((g_vm->_currGraphicalDevice == MODE_CGA) || (g_vm->_currGraphicalDevice == MODE_HERCULES))
 		co = 0;
 	else
 		co = 1;

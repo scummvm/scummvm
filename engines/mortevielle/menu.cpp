@@ -151,7 +151,7 @@ void Menu::displayMenu() {
 	
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * g_res;
-	if (g_currGraphicalDevice == MODE_CGA)
+	if (g_vm->_currGraphicalDevice == MODE_CGA)
 		color = 1;
 	else
 		color = 9;

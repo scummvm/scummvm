@@ -38,7 +38,7 @@ extern int readclock();
 extern void modif(int &nu);
 extern void dessine(int ad, int x, int y);
 extern void dessine_rouleau();
-extern void text_color(int c);
+extern void setTextColor(int c);
 /* NIVEAU 13 */
 extern void text1(int x, int y, int nb, int m);
 extern void initouv();

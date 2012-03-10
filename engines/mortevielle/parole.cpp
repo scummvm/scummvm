@@ -44,10 +44,10 @@ void spfrac(int wor) {
 	g_c3._acc = ((uint)wor >> 9) & 7;
 }
 
-void charg_car() {
+void charg_car(int &currWordNumb) {
 	int wor, int_;
 
-	wor = swap(READ_LE_UINT16(&g_mem[adword + g_ptr_word]));
+	wor = swap(READ_LE_UINT16(&g_mem[adword + currWordNumb]));
 	int_ = wor & 0x3f;
 
 	if ((int_ >= 0) && (int_ <= 13)) {
@@ -82,7 +82,7 @@ void charg_car() {
 	}
 
 	spfrac(wor);
-	g_ptr_word += 2;
+	currWordNumb += 2;
 }
 
 

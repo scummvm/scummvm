@@ -46,9 +46,9 @@ int testou() {
 		g_vm->_soundOff = !g_vm->_soundOff;
 		break;
 	case '\26' :
-		if ((g_c_zzz == 1) || (g_c_zzz == 2)) {
+		if ((g_vm->_c_zzz == 1) || (g_vm->_c_zzz == 2)) {
 			zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
-			++g_c_zzz;
+			++g_vm->_c_zzz;
 
 			return 61;
 		}

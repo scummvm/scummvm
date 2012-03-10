@@ -159,16 +159,12 @@ void init_lieu() {
 
 
 void music() {
-	Common::File fic;
-	int k;
-	bool fin;
-
-	/* debug('o3 music'); */
 	if (g_vm->_soundOff)
 		return;
 
 	g_vm->_reloadCFIEC = true;
 	
+	Common::File fic;
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
 
@@ -180,8 +176,8 @@ void music() {
 	g_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
 	cctable(g_tbi);
 
-	fin = false;
-	k = 0;
+	bool fin = false;
+	int k = 0;
 	do {
 		fin = keypressed();
 		g_vm->_soundManager.musyc(g_tbi, 9958, kTempoMusic);
@@ -234,8 +230,8 @@ void suite() {
 	g_caff = 51;
 	taffich();
 	teskbd();
-	if (g_newGraphicalDevice != g_currGraphicalDevice)
-		g_currGraphicalDevice = g_newGraphicalDevice;
+	if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice)
+		g_vm->_currGraphicalDevice = g_vm->_newGraphicalDevice;
 	hirs();
 	dessine(g_ades, 0, 0);
 
