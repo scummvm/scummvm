@@ -103,6 +103,9 @@ public:
  * at the same time; they won't mess up each other. They will, however,
  * reposition the parent stream, so don't depend on its position to be
  * the same after a read() or seek() on one of its SafeSeekableSubReadStream.
+ *
+ * Note that this stream is *not* threading safe. Calling read from the audio
+ * thread and from the main thread might mess up the data retrieved.
  */
 class SafeSeekableSubReadStream : public SeekableSubReadStream {
 public:
