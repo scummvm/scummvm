@@ -27,11 +27,11 @@
 #include "common/system.h"
 
 #include "mohawk/cursors.h"
-#include "mohawk/graphics.h"
 #include "mohawk/installer_archive.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
+#include "mohawk/riven_graphics.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/sound.h"

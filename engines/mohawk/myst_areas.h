@@ -20,11 +20,13 @@
  *
  */
 
+#ifndef MYST_AREAS_H
+#define MYST_AREAS_H
+
 #include "mohawk/myst.h"
 #include "mohawk/video.h"
 
-#ifndef MYST_AREAS_H
-#define MYST_AREAS_H
+#include "common/rect.h"
 
 namespace Mohawk {
 

@@ -20,8 +20,8 @@
  *
  */
 
-#include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
