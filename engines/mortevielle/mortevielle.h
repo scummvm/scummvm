@@ -129,6 +129,12 @@ public:
 	bool _anyone;
 	bool _brt;
 
+	int _textColor;
+	int _currGraphicalDevice;
+	int _newGraphicalDevice;
+
+	int _c_zzz;
+	int ptr_word;
 
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;

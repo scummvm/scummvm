@@ -430,8 +430,8 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 		waitForF3F8(g_key);
 		CHECK_QUIT;
 
-		if (g_newGraphicalDevice != g_currGraphicalDevice) {
-			g_currGraphicalDevice = g_newGraphicalDevice;
+		if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice) {
+			g_vm->_currGraphicalDevice = g_vm->_newGraphicalDevice;
 			hirs();
 			aff50(drawAni50Fl);
 		}

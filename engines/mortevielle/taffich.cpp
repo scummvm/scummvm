@@ -212,7 +212,7 @@ void taffich() {
 		npal = a + 37;
 	}
 	chardes(filename, lgt, handle);
-	if (g_currGraphicalDevice == MODE_HERCULES) {
+	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
 			int palh = READ_LE_UINT16(&g_mem[(0x7000 * 16) + ((i + 1) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);

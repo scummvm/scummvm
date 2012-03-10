@@ -54,27 +54,22 @@ void init_chariot() {
 void trait_ph() {
 	const int deca[3] = {300, 30, 40};
 
-	g_ptr_tcph = g_num_ph - 1;
-	g_ledeb = swap(g_t_cph[g_ptr_tcph]) + deca[g_typlec];
-	g_lefin = swap(g_t_cph[g_ptr_tcph + 1]) + deca[g_typlec];
-	g_nb_word = g_lefin - g_ledeb;
-	g_ptr_tcph = (uint)g_ledeb >> 1;
-	g_ptr_word = 0;
-	do {
-		WRITE_LE_UINT16(&g_mem[adword + g_ptr_word], g_t_cph[g_ptr_tcph]);
-		g_ptr_word += 2;
-		++g_ptr_tcph;
-	} while (g_ptr_tcph < (int)((uint)g_lefin >> 1));
+	int ptr_tcph = g_num_ph - 1;
+	int startPos = swap(g_t_cph[ptr_tcph]) + deca[g_typlec];
+	int endPos = swap(g_t_cph[ptr_tcph + 1]) + deca[g_typlec];
+	int wordCount = endPos - startPos;
+	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
+		WRITE_LE_UINT16(&g_mem[adword + currWord], g_t_cph[i]);
 
 	g_ptr_oct = 0;
-	g_ptr_word = 0;
+	int currWord = 0;
 	init_chariot();
 
 	do {
 		rot_chariot();
-		charg_car();
+		charg_car(currWord);
 		trait_car();
-	} while (g_ptr_word < g_nb_word);
+	} while (currWord < wordCount);
 
 	rot_chariot();
 	trait_car();

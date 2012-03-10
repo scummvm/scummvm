@@ -85,6 +85,13 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_okdes = false;
 	_anyone = false;
 	_brt = false;
+
+	_textColor = 0;
+	_currGraphicalDevice = -1;
+	_newGraphicalDevice = -1;
+
+	_c_zzz = -1;
+
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -148,7 +155,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Set the screen mode
-	g_currGraphicalDevice = MODE_EGA;
+	g_vm->_currGraphicalDevice = MODE_EGA;
 	g_res = 2;
 
 	_txxFileFl = false;
@@ -169,13 +176,13 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	// Setup the mouse cursor
 	initMouse();
 
-	g_currGraphicalDevice = MODE_EGA;
-	g_newGraphicalDevice = g_currGraphicalDevice;
+	g_vm->_currGraphicalDevice = MODE_EGA;
+	g_vm->_newGraphicalDevice = g_vm->_currGraphicalDevice;
 	charpal();
 	loadCFIPH();
 	loadCFIEC();
 	zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
-	g_c_zzz = 1;
+	g_vm->_c_zzz = 1;
 	init_nbrepm();
 	initMouse();
 
@@ -185,10 +192,10 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	teskbd();
 	dialpre();
-	g_newGraphicalDevice = g_currGraphicalDevice;
+	g_vm->_newGraphicalDevice = g_vm->_currGraphicalDevice;
 	teskbd();
-	if (g_newGraphicalDevice != g_currGraphicalDevice)
-		g_currGraphicalDevice = g_newGraphicalDevice;
+	if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice)
+		g_vm->_currGraphicalDevice = g_vm->_newGraphicalDevice;
 	hirs();
 	g_ades = 0x7000;
 
@@ -528,7 +535,7 @@ void MortevielleEngine::mainGame() {
 	if (_reloadCFIEC)
 		loadCFIEC();
 
-	for (g_crep = 1; g_crep <= g_c_zzz; ++g_crep) 
+	for (g_crep = 1; g_crep <= g_vm->_c_zzz; ++g_crep) 
 		zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	loadBRUIT5();
