@@ -106,14 +106,14 @@ public:
  */
 class SafeSubReadStream : public SeekableSubReadStream {
 public:
- SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO) :
-		SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
+	SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
+		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
 	}
 
- virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif
