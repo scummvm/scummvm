@@ -169,10 +169,42 @@ public:
 	void delay(int amount);
 	Common::String getEngineString(int idx) const { return _engineStrings[idx]; }
 	Common::String getGameString(int idx) const { return _gameStrings[idx]; }
+	void handleOpcode();
 
 	void endGame();
 	void loseGame();
 	void gameLoaded();
+
+/* NIVEAU 4 */
+	void fctMove();
+	void fctTake();
+	void fctInventoryTake();
+	void fctLift();
+	void fctRead();
+	void fctSelfRead();
+	void fctLook();
+	void fctSelftLook();
+	void fctSearch();
+	void fctSelfSearch();
+	void fctOpen();
+	void fctPlace();
+	void fctTurn();
+	void fctSelfHide();
+	void fctAttach();
+	void fctClose();
+	void fctKnock();
+	void fctSelfPut();
+	void fctListen();
+	void fctEat();
+	void fctEnter();
+	void fctSleep();
+	void fctForce();
+	void fctLeave();
+	void fctWait();
+	void fctSound();
+	void fctDiscuss();
+	void fctSmell();
+	void fctScratch();
 };
 
 extern MortevielleEngine *g_vm;

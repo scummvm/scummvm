@@ -278,7 +278,7 @@ void setMousePos(int x, int y) {
  * Get mouse poisition
  * @remarks	Originally called 'read_pos_mouse'
  */
-void getMousePos(int &x, int &y, int &c) {
+void getMousePos_(int &x, int &y, int &c) {
 	x = g_vm->getMousePos().x;
 	y = g_vm->getMousePos().y;
 	c = g_vm->getMouseClick() ? 1 : 0;
@@ -307,7 +307,7 @@ void moveMouse(bool &funct, char &key) {
 		CHECK_QUIT;
 
 		in1 = get_ch();
-		getMousePos(cx, cy, cd);
+		getMousePos_(cx, cy, cd);
 		switch (toupper(in1)) {
 		case '4':
 			cx = cx - 8;

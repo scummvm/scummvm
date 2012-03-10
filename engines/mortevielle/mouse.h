@@ -44,7 +44,7 @@ void initMouse();
 extern void hideMouse();
 extern void showMouse();
 extern void setMousePos(int x, int y);
-extern void getMousePos(int &x, int &y, int &c);
+extern void getMousePos_(int &x, int &y, int &c);
 extern void moveMouse(bool &funct, char &key);
 
 } // End of namespace Mortevielle
