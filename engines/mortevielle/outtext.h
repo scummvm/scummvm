@@ -28,12 +28,17 @@
 #ifndef MORTEVIELLE_OUTTEXT_H
 #define MORTEVIELLE_OUTTEXT_H
 
+#include "common/str.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
 extern Common::String deline(int num);
 extern void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
+
+extern void chardes(Common::String filename, int32 passe, int long_);
+extern void charani(Common::String filename, int32 skipSize, int length);
+extern void taffich();
 
 } // End of namespace Mortevielle
 #endif

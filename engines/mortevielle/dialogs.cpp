@@ -28,13 +28,11 @@
 #include "common/str.h"
 #include "mortevielle/dialogs.h"
 #include "mortevielle/keyboard.h"
-#include "mortevielle/level15.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/parole2.h"
-#include "mortevielle/taffich.h"
+#include "mortevielle/speech.h"
 
 namespace Mortevielle {
 

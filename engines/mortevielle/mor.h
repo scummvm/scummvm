@@ -29,11 +29,21 @@
 #define MORTEVIELLE_MOR_H
 
 #include "common/str.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
+/* NIVEAU 15 */
+extern void copcha();
+extern bool isMouseIn(rectangle r);
+extern void outbloc(int n, pattern p, nhom *pal);
+extern void writepal(int n);
+extern void pictout(int seg, int dep, int x, int y);
+extern void sauvecr(int y, int dy);
+extern void charecr(int y, int dy);
+extern void adzon();
+extern int animof(int ouf, int num);
 /* Niveau 14 suite */
-extern void testfi();
 extern int readclock();
 extern void modif(int &nu);
 extern void dessine(int ad, int x, int y);
@@ -118,5 +128,55 @@ extern void musique(int so);
 /* NIVEAU 9 */
 extern void dessin(int ad);
 
+static const int _actionMenu[12] = { OPCODE_NONE,
+		OPCODE_SHIDE, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP, 
+		OPCODE_ENTER, OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
+		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
+};
+
+extern void tinke();
+extern void fenat(char ans);
+/* NIVEAU 8 */
+extern void afdes(int ad);
+extern void tkey1(bool d);
+extern void tmlieu(int roomId);
+/* NIVEAU 7 */
+extern void tlu(int af, int ob);
+extern void affrep();
+extern void unsetSearchMenu();
+/* NIVEAU 6 */
+extern void tperd();
+extern void tsort();
+extern void st4(int ob);
+extern void cherjer(int ob, bool &d);
+extern void st1sama();
+extern void modinv();
+extern void sparl(float adr, float rep);
+extern void endSearch();
+extern void setSearchMenu();
+extern void mennor();
+extern void premtet();
+/* NIVEAU 5 */
+extern void ajchai();
+extern void ajjer(int ob);
+extern void t1sama();
+extern void t1vier();
+extern void t1neig();
+extern void t1deva();
+extern void t1derr();
+extern void t1deau();
+extern void tctrm();
+extern void quelquun();
+extern void tsuiv();
+extern void tfleche();
+extern void tcoord(int sx);
+extern void st7(int ob);
+extern void treg(int ob);
+extern void avpoing(int &ob);
+extern void rechai(int &ch);
+extern void t23coul(int &l);
+extern void maivid();
+extern void st13(int ob);
+extern void aldepl();
 } // End of namespace Mortevielle
 #endif

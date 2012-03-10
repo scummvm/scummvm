@@ -25,10 +25,13 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/endian.h"
 #include "common/file.h"
-#include "mortevielle/parole.h"
+#include "mortevielle/speech.h"
 #include "mortevielle/sound.h"
 #include "mortevielle/mortevielle.h"
+#include "mortevielle/mor.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
@@ -449,6 +452,92 @@ void trait_car() {
 	default:
 		break;
 	}     // switch c2.code
+}
+
+void rot_chariot() {
+	g_c1 = g_c2;
+	g_c2 = g_c3;
+	g_c3._val = 32;
+	g_c3._code = 9;
+}
+
+void init_chariot() {
+	g_c3._rep = 0;
+	g_c3._freq = 0;
+	g_c3._acc = 0;
+	rot_chariot();
+	rot_chariot();
+}
+
+
+void trait_ph() {
+	const int deca[3] = {300, 30, 40};
+
+	int ptr_tcph = g_num_ph - 1;
+	int startPos = swap(g_t_cph[ptr_tcph]) + deca[g_typlec];
+	int endPos = swap(g_t_cph[ptr_tcph + 1]) + deca[g_typlec];
+	int wordCount = endPos - startPos;
+	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
+		WRITE_LE_UINT16(&g_mem[adword + currWord], g_t_cph[i]);
+
+	g_ptr_oct = 0;
+	int currWord = 0;
+	init_chariot();
+
+	do {
+		rot_chariot();
+		charg_car(currWord);
+		trait_car();
+	} while (currWord < wordCount);
+
+	rot_chariot();
+	trait_car();
+	entroct(ord('#'));
+}
+
+
+
+void startSpeech(int rep, int ht, int typ) {
+	int savph[501];
+	int tempo;
+
+	if (g_vm->_soundOff)
+		return;
+
+	g_num_ph = rep;
+	g_haut = ht;
+	g_typlec = typ;
+	if (g_typlec != 0) {
+		for (int i = 0; i <= 500; ++i)
+			savph[i] = g_t_cph[i];
+		tempo = kTempoNoise;
+	} else if (g_haut > 5)
+		tempo = kTempoF;
+	else
+		tempo = kTempoM;
+	g_addfix = (float)((tempo - g_addv[0])) / 256;
+	cctable(g_tbi);
+	switch (typ) {
+	case 1:
+		charge_bruit();
+		/*if zuul then zzuul(adbruit,0,1095);*/
+		regenbruit();
+		break;
+	case 2:
+		charge_son();
+		charge_phbruit();
+		break;
+	default:
+		break;
+	}
+	trait_ph();
+	g_vm->_soundManager.litph(g_tbi, typ, tempo);
+	if (g_typlec != 0)
+		for (int i = 0; i <= 500; ++i) {
+			g_t_cph[i] = savph[i];
+			g_mlec = g_typlec;
+		}
+	writepal(g_numpal);
 }
 
 } // End of namespace Mortevielle
