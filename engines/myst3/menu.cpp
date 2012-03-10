@@ -180,7 +180,7 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
 	_texture = _vm->_gfx->createTexture(frame);
 
-	_vm->_sound->play(699, 10);
+	_vm->_sound->playEffect(699, 10);
 }
 
 Dialog::~Dialog() {

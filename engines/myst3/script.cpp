@@ -2312,14 +2312,14 @@ void Script::runPuzzle4(Context &c, const Opcode &cmd) {
 void Script::soundPlay(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Play sound %d", cmd.op, cmd.args[0]);
 
-	_vm->_sound->play(cmd.args[0], 100);
+	_vm->_sound->playEffect(cmd.args[0], 100);
 }
 
 void Script::soundPlayVolume(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Play sound %d at volume %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
-	_vm->_sound->play(cmd.args[0], volume);
+	_vm->_sound->playEffect(cmd.args[0], volume);
 }
 
 void Script::soundPlayVolumeDirection(Context &c, const Opcode &cmd) {
@@ -2328,7 +2328,7 @@ void Script::soundPlayVolumeDirection(Context &c, const Opcode &cmd) {
 
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
 	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
-	_vm->_sound->play(cmd.args[0], volume, heading, 85);
+	_vm->_sound->playEffect(cmd.args[0], volume, heading, 85);
 }
 
 void Script::soundPlayVolumeDirectionAtt(Context &c, const Opcode &cmd) {
@@ -2338,7 +2338,7 @@ void Script::soundPlayVolumeDirectionAtt(Context &c, const Opcode &cmd) {
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
 	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
 	int32 att = _vm->_state->valueOrVarValue(cmd.args[3]);
-	_vm->_sound->play(cmd.args[0], volume, heading, att);
+	_vm->_sound->playEffect(cmd.args[0], volume, heading, att);
 }
 
 void Script::runSoundScriptNode(Context &c, const Opcode &cmd) {

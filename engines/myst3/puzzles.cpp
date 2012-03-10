@@ -232,7 +232,7 @@ void Puzzles::leversBall(int16 var) {
 	if (!position)
 		error("Unable to find position with levers l:%d r:%d", newLeverLeft, newLeverRight);
 
-	_vm->_sound->play(789, 50);
+	_vm->_sound->playEffect(789, 50);
 	_drawForVarHelper(35, position->movieStart, position->movieEnd);
 
 	if (position->newBallPosition != oldPosition) {
@@ -245,7 +245,7 @@ void Puzzles::leversBall(int16 var) {
 			sound = 791;
 		}
 
-		_vm->_sound->play(sound, 50);
+		_vm->_sound->playEffect(sound, 50);
 		_drawForVarHelper(35, position->movieBallStart, position->movieBallEnd);
 	}
 
@@ -286,14 +286,14 @@ void Puzzles::tesla(int16 movie, int16 var, int16 move) {
 	_vm->_state->setVar(33, node % 100 + 10000);
 
 	if (movie) {
-		_vm->_sound->play(1243, 100);
+		_vm->_sound->playEffect(1243, 100);
 		_vm->_state->setMovieSynchronized(true);
 		_vm->playSimpleMovie(movie);
 	}
 
 	if (move) {
 		uint16 sound = _vm->_rnd->getRandomNumberRng(1244, 1245);
-		_vm->_sound->play(sound, 100);
+		_vm->_sound->playEffect(sound, 100);
 	}
 
 	if (move > 0) {
@@ -418,7 +418,7 @@ void Puzzles::resonanceRingsLaunchBall() {
 				} else {
 					// Incorrect ring order, shatter ball
 					ballShattered = true;
-					_vm->_sound->play(1010, 50);
+					_vm->_sound->playEffect(1010, 50);
 
 					_vm->_state->setVar(28, tracks[part].shatterStartFrame);
 					_vm->_state->setVar(29, tracks[part].shatterEndFrame);
@@ -656,7 +656,7 @@ void Puzzles::pinball(int16 var) {
 
 
 	// Launch sound
-	_vm->_sound->play(1021, 50);
+	_vm->_sound->playEffect(1021, 50);
 	_drawForVarHelper(-34, 2, 15);
 	_drawXFrames(30);
 
@@ -689,7 +689,7 @@ void Puzzles::pinball(int16 var) {
 			// sound fade stop 1025, 7
 		} else {
 			shouldRotate = true;
-			_vm->_sound->play(1025, 50, ballOnLeftSide != 0 ? 150 : 210, 95);
+			_vm->_sound->playEffect(1025, 50, ballOnLeftSide != 0 ? 150 : 210, 95);
 		}
 
 		if (ballOnLeftSide && shouldRotate) {
@@ -726,7 +726,7 @@ void Puzzles::pinball(int16 var) {
 
 			for (uint i = 0; i < 3; i++)
 				if (leftComb->pegFrames[i] == leftPanelFrame) {
-					_vm->_sound->play(1027, 50);
+					_vm->_sound->playEffect(1027, 50);
 					leftToRightJumpCountDown = 5;
 				}
 
@@ -742,7 +742,7 @@ void Puzzles::pinball(int16 var) {
 
 			for (uint i = 0; i < 3; i++)
 				if (rightComb->pegFrames[i] == rightPanelFrame) {
-					_vm->_sound->play(1027, 50);
+					_vm->_sound->playEffect(1027, 50);
 					rightToLeftJumpCountdown = 5;
 				}
 
@@ -829,7 +829,7 @@ void Puzzles::pinball(int16 var) {
 
 			int32 sound = jump->sound;
 			if (sound)
-				_vm->_sound->play(sound, 50);
+				_vm->_sound->playEffect(sound, 50);
 
 			int32 jumpStartFrame = jump->startFrame;
 			if (jumpStartFrame)
@@ -837,7 +837,7 @@ void Puzzles::pinball(int16 var) {
 
 			if (jumpType == 3) {
 				_drawXFrames(6);
-				_vm->_sound->play(1028, 50);
+				_vm->_sound->playEffect(1028, 50);
 			} else if (jumpType == 1 || jumpType == 4) {
 				_vm->_state->setVar(26, jumpType);
 				_vm->_state->setVar(93, 1);
@@ -869,7 +869,7 @@ void Puzzles::pinball(int16 var) {
 			// sound fade stop 1025, 7
 			// Sound same as opcode 213 : 1005, 65, 0, 0, 5, 60, 20
 			_drawXFrames(55);
-			_vm->_sound->play(1010, 50);
+			_vm->_sound->playEffect(1010, 50);
 
 			for (uint i = 0; i < ARRAYSIZE(ballExpireFrames); i++) {
 				if (ballJumpedFromLeftSide && ballExpireFrames[i].leftPosition == leftSideFrame) {
@@ -920,7 +920,7 @@ void Puzzles::pinball(int16 var) {
 
 				for (uint i = 0; i < 3; i++)
 					if (leftComb->pegFrames[i] == leftSideFrame) {
-						_vm->_sound->play(1027, 50);
+						_vm->_sound->playEffect(1027, 50);
 						leftToRightJumpCountDown = 5;
 					}
 
@@ -946,7 +946,7 @@ void Puzzles::pinball(int16 var) {
 
 					for (uint i = 0; i < 3; i++)
 						if (rightComb->pegFrames[i] == rightSideFrame) {
-							_vm->_sound->play(1027, 50);
+							_vm->_sound->playEffect(1027, 50);
 							rightToLeftJumpCountdown = 5;
 						}
 
@@ -1032,7 +1032,7 @@ void Puzzles::weightDrag(uint16 var, uint16 movie) {
 
 		_vm->_state->setDraggedWeight(var);
 		_vm->dragItem(var, movie, 1, 2, 26);
-		_vm->_sound->play(sound, 25);
+		_vm->_sound->playEffect(sound, 25);
 	}
 
 	for (uint i = 0; i < 4; i++) {

@@ -29,16 +29,25 @@ namespace Myst3 {
 
 class Myst3Engine;
 
+enum SoundType {
+	kUnk0,
+	kUnk1,
+	kUnk2,
+	kEffect,
+	kMusic
+};
+
 class SoundChannel {
 public:
 	SoundChannel(Myst3Engine *vm);
 	virtual ~SoundChannel();
 
-	void play(uint32 id, uint32 volume);
+	void play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, uint unk3, SoundType type);
 	void update();
 
-	bool _playing;
 	uint32 _id;
+	bool _playing;
+	SoundType _type;
 
 private:
 	Myst3Engine *_vm;
@@ -56,7 +65,7 @@ public:
 	Sound(Myst3Engine *vm);
 	virtual ~Sound();
 
-	void play(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
+	void playEffect(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
 	void update();
 
 private:
@@ -65,7 +74,7 @@ private:
 	Myst3Engine *_vm;
 	SoundChannel *_channels[kNumChannels];
 
-	SoundChannel *getChannelForSound(uint32 id, uint priority);
+	SoundChannel *getChannelForSound(uint32 id, SoundType priority);
 };
 
 } /* namespace Myst3 */

@@ -389,7 +389,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			}
 
 			// Bad click
-			_sound->play(697, 5);
+			_sound->playEffect(697, 5);
 		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 			// Skip the event when in look only mode
 			if (lookOnly) continue;

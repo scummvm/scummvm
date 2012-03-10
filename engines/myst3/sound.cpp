@@ -41,14 +41,14 @@ Sound::~Sound() {
 		delete _channels[i];
 }
 
-void Sound::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
+void Sound::playEffect(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
 	id = _vm->_state->valueOrVarValue(id);
 
-	SoundChannel *channel = getChannelForSound(id, 3);
-	channel->play(id, volume);
+	SoundChannel *channel = getChannelForSound(id, kEffect);
+	channel->play(id, volume, heading, attenuation, 0, 0, 0, kEffect);
 }
 
-SoundChannel *Sound::getChannelForSound(uint32 id, uint priority) {
+SoundChannel *Sound::getChannelForSound(uint32 id, SoundType priority) {
 	// if the sound is already playing, return that channel
 	for (uint i = 0; i < kNumChannels; i++)
 		if (_channels[i]->_id == id && _channels[i]->_playing)
@@ -79,7 +79,7 @@ SoundChannel::SoundChannel(Myst3Engine *vm) :
 SoundChannel::~SoundChannel() {
 }
 
-void SoundChannel::play(uint32 id, uint32 volume) {
+void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, uint unk3, SoundType type) {
 	// TODO: Should stop and start again
 	if (_playing)
 		return;
@@ -101,6 +101,7 @@ void SoundChannel::play(uint32 id, uint32 volume) {
 
 	// Update state
 	_id = id;
+	_type = type;
 	_playing = true;
 	_vm->_state->setVar(id, 1);
 }
