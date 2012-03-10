@@ -28,15 +28,12 @@
 #include "common/scummsys.h"
 #include "mortevielle/actions.h"
 #include "mortevielle/dialogs.h"
-#include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
-#include "mortevielle/mor2.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/parole2.h"
-#include "mortevielle/taffich.h"
+#include "mortevielle/speech.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {

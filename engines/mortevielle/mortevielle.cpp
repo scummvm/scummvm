@@ -33,17 +33,14 @@
 #include "mortevielle/dialogs.h"
 #include "mortevielle/asm.h"
 #include "mortevielle/keyboard.h"
-#include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
-#include "mortevielle/mor2.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
-#include "mortevielle/parole2.h"
 #include "mortevielle/prog.h"
 #include "mortevielle/saveload.h"
-#include "mortevielle/taffich.h"
+#include "mortevielle/outtext.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {

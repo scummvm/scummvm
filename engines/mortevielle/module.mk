@@ -7,20 +7,16 @@ MODULE_OBJS := \
 	dialogs.o \
 	graphics.o \
 	keyboard.o \
-	level15.o \
 	menu.o \
 	mor.o \
-	mor2.o \
 	mortevielle.o \
 	mouse.o \
 	outtext.o \
 	ovd1.o \
-	parole.o \
-	parole2.o \
 	prog.o \
 	saveload.o \
 	sound.o \
-	taffich.o \
+	speech.o \
 	var_mor.o
 
 # This module can be built as a plugin

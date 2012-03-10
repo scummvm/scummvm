@@ -25,23 +25,29 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#ifndef MORTEVIELLE_LEVEL15_H
-#define MORTEVIELLE_LEVEL15_H
+#ifndef MORTEVIELLE_PAROLE_H
+#define MORTEVIELLE_PAROLE_H
 
+#include "common/scummsys.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
-/* NIVEAU 15 */
-extern void copcha();
-extern bool isMouseIn(rectangle r);
-extern void outbloc(int n, pattern p, nhom *pal);
-extern void writepal(int n);
-extern void pictout(int seg, int dep, int x, int y);
-extern void sauvecr(int y, int dy);
-extern void charecr(int y, int dy);
-extern void adzon();
-extern int animof(int ouf, int num);
+extern void spfrac(int wor);
+extern void charg_car(int &currWordNumb);
+extern void entroct(byte o);
+extern void veracf(byte b);
+extern void cctable(tablint &t);
+extern void regenbruit();
+extern void charge_son();
+extern void charge_phbruit();
+extern void charge_bruit();
+extern void trait_car();
+
+extern void rot_chariot();
+extern void init_chariot();
+extern void trait_ph();
+extern void startSpeech(int rep, int ht, int typ);
 
 } // End of namespace Mortevielle
 #endif

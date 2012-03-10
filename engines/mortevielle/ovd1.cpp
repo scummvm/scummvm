@@ -28,22 +28,17 @@
 #include "common/file.h"
 #include "mortevielle/dialogs.h"
 #include "mortevielle/keyboard.h"
-#include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
-#include "mortevielle/parole.h"
+#include "mortevielle/speech.h"
 #include "mortevielle/sound.h"
-#include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
-
-// For ScummVM, we need to do check for file errors where we do the file access
-const int ioresult = 0;
 
 void charpal() {
 	Common::File f;		// tabdb records
