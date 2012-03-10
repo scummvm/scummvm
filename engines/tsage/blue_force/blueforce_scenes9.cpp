@@ -2209,7 +2209,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_fakeWall.hide();
 		if (BF_GLOBALS._v4CECC != 2)
 			_yellowCord.setPosition(Common::Point(291, -30));
-		BF_GLOBALS._walkRegions.disableRegion(10);
+		BF_GLOBALS._walkRegions.enableRegion(10);
 	}
 
 	if (BF_GLOBALS._breakerBoxStatusArr[17] != 0) {
