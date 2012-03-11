@@ -45,6 +45,10 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 
+#include "engines/grim/emi/costumeemi.h"
+#include "engines/grim/emi/skeleton.h"
+#include "engines/grim/emi/costume/emiskel_component.h"
+
 #include "common/foreach.h"
 
 namespace Grim {
@@ -73,7 +77,7 @@ Actor::Actor(const Common::String &actorName) :
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_lastTurnDir(0), _currTurnDir(0),
-		_sayLineText(0) {
+		_sayLineText(0), _attachedActor(NULL), _attachedJoint("") {
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
@@ -106,6 +110,9 @@ Actor::Actor() :
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
 	_collisionScale = 1.f;
+
+	_attachedActor = NULL;
+	_attachedJoint = "";
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -1636,6 +1643,33 @@ void Actor::collisionHandlerCallback(Actor *other) const {
 	LuaBase::instance()->callback("collisionHandler", objects);
 }
 
+void Actor::attachToActor(Actor *other, const char *joint) {
+	assert(other != NULL);
+	if (other == _attachedActor)
+		return;
+	if (_attachedActor != NULL)
+		detach();
+
+	EMICostume * cost = dynamic_cast<EMICostume *>(other->getCurrentCostume());
+	assert(cost != NULL);
+
+	Common::String jointStr = joint ? joint : "";
+	// If 'other' has a skeleton, check if it has the joint.
+	// Some models (pile o' boulders) don't have a skeleton,
+	// so we don't make the check in that case.
+	if (cost->_emiSkel && cost->_emiSkel->_obj)
+		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
+
+	_attachedActor = other;
+	_attachedJoint = jointStr;
+}
+
+void Actor::detach() {
+	if (_attachedActor != NULL) {
+		_attachedJoint = "";
+		_attachedActor = NULL;
+	}
+}
 
 unsigned const int Actor::Chore::fadeTime = 150;
 

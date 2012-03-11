@@ -712,7 +712,7 @@ void Lua_V2::AttachActor() {
 	// Missing lua parts
 	lua_Object attachedObj = lua_getparam(1);
 	lua_Object actorObj = lua_getparam(2);
-	lua_Object targetObj = lua_getparam(3);
+	lua_Object jointObj = lua_getparam(3);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -728,22 +728,13 @@ void Lua_V2::AttachActor() {
 	if (!attached)
 		return;
 
-	const char * target = NULL;
-	if (!lua_isnil(targetObj)) {
-		target = lua_getstring(targetObj);
+	const char * joint = NULL;
+	if (!lua_isnil(jointObj)) {
+		joint = lua_getstring(jointObj);
 	}
 
-	bool hasJoint = true;
-	if (target != NULL) {
-		EMICostume * cost = dynamic_cast<EMICostume *>(actor->getCurrentCostume());
-		EMISkelComponent * skelc = cost->_emiSkel;
-		if (!skelc) goto blah;
-		Skeleton * skel = skelc->_obj;
-		if (!skel) goto blah;
-		hasJoint = skel->hasJoint(target);
-	}
-blah:
-	warning("Lua_V2::AttachActor: attaching %s to %s (on %s) joint %s", attached->getName().c_str(), actor->getName().c_str(), target ? target : "(none)", hasJoint ? "FOUND" : "NOT FOUND");
+	attached->attachToActor(actor, joint);
+	warning("Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
 }
 
 void Lua_V2::DetachActor() {
@@ -758,6 +749,7 @@ void Lua_V2::DetachActor() {
 		return;
 
 	warning("Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
+	attached->detach();
 }
 
 } // end of namespace Grim

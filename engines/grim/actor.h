@@ -37,6 +37,7 @@ class Costume;
 class LipSync;
 class Font;
 class Set;
+class Joint;
 
 struct Plane {
 	Common::String setName;
@@ -455,6 +456,8 @@ public:
 
 	static void saveStaticState(SaveGame *state);
 	static void restoreStaticState(SaveGame *state);
+	void attachToActor(Actor *other, const char *joint);
+	void detach();
 
 private:
 	void costumeMarkerCallback(int marker);
@@ -581,6 +584,8 @@ private:
 	bool _puckOrient;
 
 	static bool _isTalkingBackground;
+	Actor *_attachedActor;
+	Common::String _attachedJoint;
 
 	friend class GrimEngine;
 };
