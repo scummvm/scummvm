@@ -1,29 +1,33 @@
-ResidualVM Team
-*************
+ResidualVM
+**********
   Project Leader
   --------------
      Pawel Kolodziejski
 
-  Engine Teams
-  ------------
-    Grim:
-       James Brown           - Core developer  (retired)
+  Teams
+  -----
+    Grim Team:
+       James Brown           - Core developer (retired)
        Giulio Camuffo        - Core developer
        Pawel Kolodziejski    - Core developer (suspended)
-       Einar Johan T. Somaae - Initial EMI support, various code fixes and
+       Einar Johan T. Somaen - Initial EMI support, various code fixes and
                                improvements
 
-    Grim Contributors:
-       If you have contributed to this engine then you deserve to be on this
-       list. Contact us and we'll add you.
+    Myst 3 Team:
+       Bastien Bouclet       - Core developer
 
+  Contributors
+  ------------
+     If you have contributed to this engine then you deserve to be on this
+     list. Contact us and we'll add you.
+
+    Grim:
        Torbjorn Andersson    - Various code fixes
        Ori Avtalion          - Lipsync, LAF support, various code fixes
        Robert Biro           - Fixes to antiliasing
        Bastien Bouclet       - Various fixes to engine
        Marcus Comstedt       - Initial Dreamcast port
-       Andrea Corna          - Improved font support, patch extractor, few
-                               code improvements
+       Andrea Corna          - Patcher module, various engine improvements
        Jonathan Gray         - Various code fixes
        Vincent Hamm          - Various engine code fixes and improvements
        Sven Hesse            - Various compilation fixes
@@ -33,16 +37,17 @@ ResidualVM Team
                                improvements
        Max Horn              - Minor code fixes
        Travis Howell         - Various code fixes, Windows port
+       Guillem Jover         - Few code improvements
        Filippos Karapetis    - Compilation fixes
        Joost Peters          - Various code fixes
        George Macon          - Compilation fixes
        Josh Matthews         - Few fixes to engine
-       Matthieu Milan        - Few code improvements
+       Matthieu Milan        - Various engine improvements
        Christian Neumair     - Various optimisation patches
-       Vincent Pelletier     - Various engine improvementts and code fixes
+       Vincent Pelletier     - Various engine improvements and code fixes
        Daniel Schepler       - Initial engine codebase, LUA support
        Yaron Tausky          - Fixes to subtitles
-       Joel Teichroeb        - Initial EMI support, various code fixes and
+       Joel Teichroeb        - Initial EMI support, various engine fixes and
                                improvements
        Julien Templier       - create_project tool
        Pino Toscano          - Debian GNU/Linux package files
@@ -50,9 +55,12 @@ ResidualVM Team
        Joni Vahamaki         - A lot engine improvements and fixes
        JenniBee              - Compilation fixes
 
+    Myst 3:
+       Matthew Hoops         - Various engine improvements and code fixes
+
 ScummVM code
 ************
-   Residual use a lot of ScummVM code. For a list of authors look into
+   ResidualVM use a lot of ScummVM code. For a list of authors look into
    COPYRIGHT file. 
 
 Website code
