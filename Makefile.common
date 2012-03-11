@@ -155,7 +155,7 @@ endif
 # Get the current version information
 ######################################################################
 
-VERSION = $(shell grep RESIDUALVM_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
+VERSION = $(shell grep SCUMMVM_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
