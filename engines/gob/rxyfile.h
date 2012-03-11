@@ -58,6 +58,8 @@ public:
 
 	const Coordinates &operator[](uint i) const;
 
+	uint16 add(uint16 left, uint16 top, uint16 right, uint16 bottom);
+
 private:
 	typedef Common::Array<Coordinates> CoordArray;
 

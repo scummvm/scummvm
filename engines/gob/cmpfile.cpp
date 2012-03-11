@@ -230,4 +230,17 @@ void CMPFile::draw(Surface &dest, uint16 left, uint16 top, uint16 right, uint16 
 	dest.blit(*_surface, left, top, right, bottom, x, y, transp);
 }
 
+uint16 CMPFile::addSprite(uint16 left, uint16 top, uint16 right, uint16 bottom) {
+	if (empty())
+		return 0;
+
+	const uint16 height = bottom - top  + 1;
+	const uint16 width  = right  - left + 1;
+
+	_maxWidth  = MAX(_maxWidth , width);
+	_maxHeight = MAX(_maxHeight, height);
+
+	return _coordinates->add(left, top, right, bottom);
+}
+
 } // End of namespace Gob

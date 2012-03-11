@@ -68,6 +68,8 @@ public:
 	void draw(Surface &dest, uint16 left, uint16 top, uint16 right, uint16 bottom,
 	          uint16 x, uint16 y, int32 transp = -1) const;
 
+	uint16 addSprite(uint16 left, uint16 top, uint16 right, uint16 bottom);
+
 private:
 	GobEngine *_vm;
 

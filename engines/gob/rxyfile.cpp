@@ -88,4 +88,15 @@ void RXYFile::load(Common::SeekableReadStream &rxy) {
 	}
 }
 
+uint16 RXYFile::add(uint16 left, uint16 top, uint16 right, uint16 bottom) {
+	_coords.resize(_coords.size() + 1);
+
+	_coords.back().left   = left;
+	_coords.back().top    = top;
+	_coords.back().right  = right;
+	_coords.back().bottom = bottom;
+
+	return _coords.size() - 1;
+}
+
 } // End of namespace Gob
