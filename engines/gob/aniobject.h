@@ -28,6 +28,7 @@
 namespace Gob {
 
 class ANIFile;
+class CMPFile;
 class Surface;
 
 /** An ANI object, controlling an animation within an ANI file. */
@@ -38,7 +39,10 @@ public:
 		kModeOnce        ///< Play the animation only once.
 	};
 
+	/** Create an animation object from an ANI file. */
 	ANIObject(const ANIFile &ani);
+	/** Create an animation object from a CMP sprite. */
+	ANIObject(const CMPFile &cmp);
 	virtual ~ANIObject();
 
 	/** Make the object visible/invisible. */
@@ -98,6 +102,7 @@ public:
 
 private:
 	const ANIFile *_ani; ///< The managed ANI file.
+	const CMPFile *_cmp; ///< The managed CMP file.
 
 	uint16 _animation; ///< The current animation number
 	uint16 _frame;     ///< The current frame.
@@ -117,6 +122,9 @@ private:
 	int16 _backgroundTop;    ///< The top of the saved background.
 	int16 _backgroundRight;  ///< The right position of the saved background.
 	int16 _backgroundBottom; ///< The bottom position of the saved background.
+
+	void drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	void drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 };
 
 } // End of namespace Gob

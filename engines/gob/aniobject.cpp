@@ -22,11 +22,20 @@
 
 #include "gob/surface.h"
 #include "gob/anifile.h"
+#include "gob/cmpfile.h"
 #include "gob/aniobject.h"
 
 namespace Gob {
 
-ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani),
+ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani), _cmp(0),
+	_visible(false), _paused(false), _mode(kModeContinuous),
+	_x(0), _y(0), _background(0), _drawn(false) {
+
+	setAnimation(0);
+	setPosition();
+}
+
+ANIObject::ANIObject(const CMPFile &cmp) : _ani(0), _cmp(&cmp),
 	_visible(false), _paused(false), _mode(kModeContinuous),
 	_x(0), _y(0), _background(0), _drawn(false) {
 
@@ -68,6 +77,10 @@ void ANIObject::rewind() {
 }
 
 void ANIObject::setPosition() {
+	// CMP "animations" have no default position
+	if (_cmp)
+		return;
+
 	if (_animation >= _ani->getAnimationCount())
 		return;
 
@@ -88,6 +101,12 @@ void ANIObject::getPosition(int16 &x, int16 &y) const {
 }
 
 void ANIObject::getFramePosition(int16 &x, int16 &y) const {
+	// CMP "animations" have no specific frame positions
+	if (_cmp) {
+		getPosition(x, y);
+		return;
+	}
+
 	if (_animation >= _ani->getAnimationCount())
 		return;
 
@@ -100,6 +119,13 @@ void ANIObject::getFramePosition(int16 &x, int16 &y) const {
 }
 
 void ANIObject::getFrameSize(int16 &width, int16 &height) const {
+	if (_cmp) {
+		width  = _cmp->getWidth (_animation);
+		height = _cmp->getHeight(_animation);
+
+		return;
+	}
+
 	if (_animation >= _ani->getAnimationCount())
 		return;
 
@@ -146,6 +172,47 @@ void ANIObject::draw(Surface &dest, int16 &left, int16 &top,
 
 	if (!_visible)
 		return;
+
+	if      (_cmp)
+		drawCMP(dest, left, top, right, bottom);
+	else if (_ani)
+		drawANI(dest, left, top, right, bottom);
+}
+
+void ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
+                                       int16 &right, int16 &bottom) {
+
+	if (!_background) {
+		uint16 width, height;
+
+		_cmp->getMaxSize(width, height);
+
+		_background = new Surface(width, height, dest.getBPP());
+	}
+
+	const uint16 cR = _cmp->getWidth (_animation) - 1;
+	const uint16 cB = _cmp->getHeight(_animation) - 1;
+
+	_backgroundLeft   = CLIP<int16>(   + _x, 0, dest.getWidth () - 1);
+	_backgroundTop    = CLIP<int16>(   + _y, 0, dest.getHeight() - 1);
+	_backgroundRight  = CLIP<int16>(cR + _x, 0, dest.getWidth () - 1);
+	_backgroundBottom = CLIP<int16>(cB + _y, 0, dest.getHeight() - 1);
+
+	_background->blit(dest, _backgroundLeft , _backgroundTop,
+	                        _backgroundRight, _backgroundBottom, 0, 0);
+
+	_cmp->draw(dest, _animation, _x, _y, 0);
+
+	_drawn = true;
+
+	left   = _backgroundLeft;
+	top    = _backgroundTop;
+	right  = _backgroundRight;
+	bottom = _backgroundBottom;
+}
+
+void ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
+                                       int16 &right, int16 &bottom) {
 
 	if (!_background) {
 		uint16 width, height;
@@ -202,6 +269,10 @@ void ANIObject::advance() {
 	if (_paused)
 		return;
 
+	// CMP "animations" have only one frame
+	if (_cmp)
+		return;
+
 	if (_animation >= _ani->getAnimationCount())
 		return;
 
@@ -229,6 +300,10 @@ uint16 ANIObject::getFrame() const {
 }
 
 bool ANIObject::lastFrame() const {
+	// CMP "animations" have only one frame
+	if (_cmp)
+		return true;
+
 	if (_animation >= _ani->getAnimationCount())
 		return true;
 
