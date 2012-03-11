@@ -23,8 +23,6 @@ A software renderer is also included for machines without hardware OpenGL.
 ----------------------------
 2. Current state of ResidualVM
 ----------------------------
-ResidualVM is a fairly slow developing project and is still very much considered
-alpha. 
 
 2.1 - Which games does ResidualVM support?
 ----------------------------------------
@@ -39,7 +37,7 @@ Grim Fandango (demo)             - Completable with glitches
 
 2.1.2 . Other games support
 -----------------------------------
-Myst 3				- Partially playable
+Myst 3                           - Partially playable
 
 Specifics can be found at
 http://www.residualvm.org/compatibility/
@@ -47,17 +45,8 @@ http://www.residualvm.org/compatibility/
 * It is possible, but far from promised, that 'Escape from Monkey Island'
   may be supported in the distant future.
 
-2.2 - What is the state of ResidualVM? 
-------------------------------------
-Basic gameplay works, including cutscenes.  Grim Fandango is completable 
-but many features are either missing or unstable. Crashes are likely.
-
-Also beware that since ResidualVM is currently in an alpha-state, there is
-no guarantee that your saves will continue to work with newer builds.
-
 For more information, see the page on ResidualVM at the wiki page:
 http://wiki.residualvm.org/
-
 
 ---------------------
 3. Running ResidualVM
@@ -175,7 +164,7 @@ some of them might make ResidualVM crash, or behave in weird ways.
 Grim Fandango had a few issues when it came out, and a few new and exciting 
 issues when you try to run it on newer hardware. ResidualVM also has a few issues
 that we know about, look here for help with them, and if you can't find help here
-try either the forums at our homepage, or IRC: #residual at freenode
+try either the forums at our homepage, or IRC: #residualvm at freenode
 
 6.1 - The game runs really slow !
 ----------------------------------------
@@ -194,8 +183,8 @@ go to your configuration file, and clean out the last-save and last-set entries.
 
 6.3 - My Save Games don't work any more
 ---------------------------------------
-Did you recently update to a newer build of ResidualVM? ResidualVM is still alpha,
-so the save game format still is a work in progress, which means that it might
+Did you recently update to a newer build of ResidualVM? 
+Grim engine is still a work in progress, which means that it might
 change between builds. 
 
 
