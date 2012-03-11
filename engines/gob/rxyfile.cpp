@@ -30,6 +30,15 @@ RXYFile::RXYFile(Common::SeekableReadStream &rxy) : _width(0), _height(0) {
 	load(rxy);
 }
 
+RXYFile::RXYFile(uint16 width, uint16 height) : _realCount(1), _width(width), _height(height) {
+	_coords.resize(1);
+
+	_coords[0].left   = 0;
+	_coords[0].top    = 0;
+	_coords[0].right  = _width  - 1;
+	_coords[0].bottom = _height - 1;
+}
+
 RXYFile::~RXYFile() {
 }
 

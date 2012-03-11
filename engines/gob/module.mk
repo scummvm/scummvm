@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	aniobject.o \
 	cheater.o \
 	cheater_geisha.o \
+	cmpfile.o \
 	console.o \
 	dataio.o \
 	databases.o \

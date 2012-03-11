@@ -46,6 +46,7 @@ public:
 	};
 
 	RXYFile(Common::SeekableReadStream &rxy);
+	RXYFile(uint16 width, uint16 height);
 	~RXYFile();
 
 	uint size() const;
