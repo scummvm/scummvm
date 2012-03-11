@@ -142,11 +142,9 @@ extern void fenat(char ans);
 /* NIVEAU 8 */
 extern void afdes(int ad);
 extern void tkey1(bool d);
-extern void tmlieu(int roomId);
 /* NIVEAU 7 */
 extern void tlu(int af, int ob);
 extern void affrep();
-extern void unsetSearchMenu();
 /* NIVEAU 6 */
 extern void tperd();
 extern void tsort();
@@ -156,7 +154,6 @@ extern void st1sama();
 extern void modinv();
 extern void sparl(float adr, float rep);
 extern void endSearch();
-extern void setSearchMenu();
 extern void mennor();
 extern void premtet();
 /* NIVEAU 5 */

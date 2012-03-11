@@ -181,7 +181,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	init_nbrepm();
 	initMouse();
 
-	init_lieu();
+	loadPlaces();
 	_soundOff = false;
 	_largestClearScreen = false;
 
@@ -675,6 +675,24 @@ void MortevielleEngine::handleAction() {
 				tctrm();
 		}
 	}
+}
+
+/**
+ * Engine function - Init Places
+ * @remarks	Originally called 'init_lieu'
+ */
+void MortevielleEngine::loadPlaces() {
+	Common::File f;
+
+	if (!f.open("MXX.mor"))
+		error("Missing file - MXX.mor");
+
+	for (int i = 0; i < 7; ++i) {
+		for (int j = 0; j < 25; ++j)
+			_v_lieu[i][j] = f.readByte(); 
+	}
+
+	f.close();
 }
 
 } // End of namespace Mortevielle

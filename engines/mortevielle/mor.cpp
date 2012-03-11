@@ -1849,26 +1849,6 @@ void tkey1(bool d) {
 	showMouse();
 }
 
-void tmlieu(int roomId) {
-	Common::String nomp;
-
-	if (roomId == 26)
-		roomId = 15;
-
-	int i = 1;
-	while ((i < 8) && (g_v_lieu[i][roomId] != 0)) {
-		nomp = deline(g_v_lieu[i][roomId] + kMenuPlaceStringIndex);
-		while (nomp.size() < 20)
-			nomp += ' ';
-		g_vm->_menu.setText(g_vm->_menu._moveMenu[i], nomp);
-		++i;
-	}
-	nomp = "*                   ";
-	for (int cx = 7; cx >= i; --cx)
-		g_vm->_menu.setText(g_vm->_menu._moveMenu[cx], nomp);
-}
-
-
 /* NIVEAU 7 */
 void tlu(int af, int ob) {
 	g_caff = 32;
@@ -1886,19 +1866,6 @@ void affrep() {
 	g_crep = g_s._currPlace;
 }
 
-/**
- * Engine function - Switch action menu from "Search" mode back to normal mode
- * @remarks	Originally called 'mfouen'
- */
-void unsetSearchMenu() {
-	tmlieu(g_s._currPlace);
-	for (int cx = 1; cx <= 11; ++cx)
-		g_vm->_menu.enableMenuItem(_actionMenu[cx]);
-
-	g_vm->_menu.setText(OPCODE_SOUND, g_vm->getEngineString(S_PROBE));
-	g_vm->_menu.setText(OPCODE_LIFT, g_vm->getEngineString(S_RAISE));
-}
-
 /* NIVEAU 6 */
 
 void tperd() {
@@ -1906,7 +1873,7 @@ void tperd() {
 	g_ment = 0;
 	g_iouv = 0;
 	g_mchai = 0;
-	unsetSearchMenu();
+	g_vm->_menu.unsetSearchMenu();
 	if (!g_vm->_blo)
 		t11(21);
 
@@ -2033,22 +2000,7 @@ void endSearch() {
 	g_vm->_obpart = false;
 	g_cs = 0;
 	g_is = 0;
-	unsetSearchMenu();
-}
-
-/**
- * Engine function - Switch action menu to "Search" mode
- * @remarks	Originally called 'mfoudi'
- */
-void setSearchMenu() {
-	for (int cx = 1; cx <= 7; ++cx) 
-		g_vm->_menu.disableMenuItem(g_vm->_menu._moveMenu[cx]);
-
-	for (int cx = 1; cx <= 11; ++cx)
-		g_vm->_menu.disableMenuItem(_actionMenu[cx]);
-
-	g_vm->_menu.setText(OPCODE_SOUND, g_vm->getEngineString(S_SUITE));
-	g_vm->_menu.setText(OPCODE_LIFT, g_vm->getEngineString(S_STOP));
+	g_vm->_menu.unsetSearchMenu();
 }
 
 void mennor() {
@@ -2189,7 +2141,7 @@ L1:
 		else
 			g_s._faithScore += 3 * (g_s._faithScore / 10);
 		tsort();
-		tmlieu(15);
+		g_vm->_menu.setDestinationMenuText(LANDING);
 		int cx = convertBitIndexToCharacterIndex(g_ipers);
 		g_caff = 69 + cx;
 		g_crep = g_caff;
@@ -2369,7 +2321,7 @@ void treg(int ob) {
 	} else {
 		g_vm->_obpart = true;
 		g_crep = g_caff + 400;
-		setSearchMenu();
+		g_vm->_menu.setSearchMenu();
 	}
 }
 
@@ -2495,7 +2447,7 @@ void MortevielleEngine::gameLoaded() {
 	repon(2, g_crep);
 	clsf3();
 	_endGame = false;
-	tmlieu(g_s._currPlace);
+	g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 	modinv();
 	if (g_s._selectedObjectId != 0)
 		modobj(g_s._selectedObjectId + 400);

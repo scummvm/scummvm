@@ -33,7 +33,6 @@ namespace Mortevielle {
 extern void charpal();
 extern void chartex();
 extern void dialpre();
-extern void init_lieu();
 extern void music();
 extern void loadBRUIT5();
 extern void loadCFIEC();

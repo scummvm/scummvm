@@ -41,16 +41,14 @@
 namespace Mortevielle {
 
 void charpal() {
-	Common::File f;		// tabdb records
-	Common::File ft;	// tfxx
-	Common::File fb;	// byte values
+	Common::File f;
 	byte b;
 
-	if (!ft.open("fxx.mor"))
+	if (!f.open("fxx.mor"))
 		error("Missing file - fxx.mor");
 	for (int i = 0; i < 108; ++i)
-		g_l[i] = ft.readSint16LE();
-	ft.close();
+		g_l[i] = f.readSint16LE();
+	f.close();
 
 	if (!f.open("plxx.mor"))
 		error("Missing file - plxx.mor");
@@ -62,29 +60,30 @@ void charpal() {
 	}
 	f.close();
 	
-	if (!fb.open("cxx.mor"))
+	if (!f.open("cxx.mor"))
 		error("Missing file - cxx.mor");
 
 	for (int j = 0; j <= 90; ++j) {
-		g_palcga[j]._p = fb.readByte();
+		g_palcga[j]._p = f.readByte();
 		for (int i = 0; i <= 15; ++i) {
 			nhom &with = g_palcga[j]._a[i];
 
-			b = fb.readByte();
+			b = f.readByte();
 			with._id = (uint)b >> 4;
 			with._hom[0] = ((uint)b >> 2) & 3;
 			with._hom[1] = b & 3;
 		}
 	}
+
 	g_palcga[10]._a[9] = g_palcga[10]._a[5];
 	for (int j = 0; j <= 14; ++j) {
-		g_tpt[j]._tax = fb.readByte();
-		g_tpt[j]._tay = fb.readByte();
+		g_tpt[j]._tax = f.readByte();
+		g_tpt[j]._tay = f.readByte();
 		for (int i = 1; i <= 20; ++i)
 			for (int k = 1; k <= 20; ++k)
-				g_tpt[j]._des[i][k] = fb.readByte();
+				g_tpt[j]._des[i][k] = f.readByte();
 	}
-	fb.close();
+	f.close();
 }
 
 void chartex() {
@@ -137,21 +136,6 @@ void dialpre() {
 	g_crep = 998;
 	int_m = true;
 }
-
-void init_lieu() {
-	Common::File f;
-
-	if (!f.open("MXX.mor"))
-		error("Missing file - MXX.mor");
-
-	for (int i = 1; i < 8; ++i) {
-		for (int j = 0; j < 25; ++j)
-			g_v_lieu[i][j] = f.readByte(); 
-	}
-
-	f.close();
-}
-
 
 void music() {
 	if (g_vm->_soundOff)

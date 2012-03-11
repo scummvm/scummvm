@@ -77,6 +77,28 @@ void Menu::setText(int menuId, Common::String name) {
 }
 
 /**
+ * Init destination menu
+ * @remarks	Originally called 'tmlieu'
+ */
+void Menu::setDestinationMenuText(int roomId) {
+	Common::String nomp;
+
+	if (roomId == 26)
+		roomId = LANDING;
+
+	int destinationId = 0;
+	for (; (destinationId < 7) && (g_vm->_v_lieu[destinationId][roomId]); ++destinationId) {
+		nomp = deline(g_vm->_v_lieu[destinationId][roomId] + kMenuPlaceStringIndex);
+		while (nomp.size() < 20)
+			nomp += ' ';
+		setText(_moveMenu[destinationId + 1], nomp);
+	}
+	nomp = "*                   ";
+	for (int i = 7; i >= destinationId + 1; --i)
+		setText(_moveMenu[i], nomp);
+}
+
+/**
  * _disable a menu item
  * @param menuId	Hi byte represents menu number, lo byte reprsents item index
  */
@@ -514,6 +536,34 @@ void Menu::initMenu() {
 	g_msg[3] = OPCODE_NONE;
 	g_msg[4] = OPCODE_NONE;
 	g_vm->setMouseClick(false);
+}
+
+/**
+ * Engine function - Switch action menu to "Search" mode
+ * @remarks	Originally called 'mfoudi'
+ */
+void Menu::setSearchMenu() {
+	for (int i = 1; i <= 7; ++i) 
+		disableMenuItem(_moveMenu[i]);
+
+	for (int i = 1; i <= 11; ++i)
+		disableMenuItem(_actionMenu[i]);
+
+	setText(OPCODE_SOUND, g_vm->getEngineString(S_SUITE));
+	setText(OPCODE_LIFT, g_vm->getEngineString(S_STOP));
+}
+
+/**
+ * Engine function - Switch action menu from "Search" mode back to normal mode
+ * @remarks	Originally called 'mfouen'
+ */
+void Menu::unsetSearchMenu() {
+	setDestinationMenuText(g_s._currPlace);
+	for (int i = 1; i <= 11; ++i)
+		enableMenuItem(_actionMenu[i]);
+
+	setText(OPCODE_SOUND, g_vm->getEngineString(S_PROBE));
+	setText(OPCODE_LIFT, g_vm->getEngineString(S_RAISE));
 }
 
 } // End of namespace Mortevielle

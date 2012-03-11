@@ -49,7 +49,6 @@ const int kTempoNoise = 78;
 const int kTempoF = 80;
 const int kTempoM = 89;
 
-
 // Useless constants
 //const int segdon = 0x6c00;
 //const int adbruit2 = 0x6b30;/*3A80;*/
@@ -69,9 +68,9 @@ extern void loadPhonemeSounds();
 extern void loadNoise();
 extern void trait_car();
 
-extern void rot_chariot();
-extern void init_chariot();
-extern void trait_ph();
+extern void moveQueue();
+extern void initQueue();
+extern void handlePhoneme();
 extern void startSpeech(int rep, int ht, int typ);
 
 } // End of namespace Mortevielle
