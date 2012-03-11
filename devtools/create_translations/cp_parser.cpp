@@ -42,9 +42,11 @@ Codepage *parseCodepageMapping(const std::string &filename) {
 	size_t start = filename.find_last_of("/\\");
 	if (start == std::string::npos)
 		start = 0;
+	else
+		++start;
 	// Strip off the filename extension
 	const size_t pos = filename.find_last_of('.');
-	const std::string charset(filename.substr(start + 1, pos != std::string::npos ? (pos - start - 1) : std::string::npos));
+	const std::string charset(filename.substr(start, pos != std::string::npos ? (pos - start) : std::string::npos));
 
 	std::ifstream in(filename.c_str());
 	if (!in) {
