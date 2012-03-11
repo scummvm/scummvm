@@ -146,6 +146,8 @@ public:
 	int _c_zzz;
 	int ptr_word;
 
+	byte _v_lieu[7][25];
+
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;
@@ -215,6 +217,8 @@ public:
 	void fctDiscuss();
 	void fctSmell();
 	void fctScratch();
+
+	void loadPlaces();
 };
 
 extern MortevielleEngine *g_vm;

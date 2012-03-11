@@ -49,7 +49,7 @@ void spfrac(int wor) {
 
 void charg_car(int &currWordNumb) {
 	int wor = swap(READ_LE_UINT16(&g_mem[kAdrWord + currWordNumb]));
-	int int_ = wor & 0x3f;
+	int int_ = wor & 0x3f; // 63
 
 	if ((int_ >= 0) && (int_ <= 13)) {
 		g_c3._val = int_;
@@ -464,43 +464,53 @@ void trait_car() {
 	}     // switch c2.code
 }
 
-void rot_chariot() {
+/**
+ * Make the queue evolve by 1 value
+ * @remarks	Originally called 'rot_chariot'
+ */
+void moveQueue() {
 	g_c1 = g_c2;
 	g_c2 = g_c3;
 	g_c3._val = 32;
 	g_c3._code = 9;
 }
 
-void init_chariot() {
+/**
+ * initialize the queue
+ * @remarks	Originally called 'init_chariot'
+ */
+void initQueue() {
 	g_c3._rep = 0;
 	g_c3._freq = 0;
 	g_c3._acc = 0;
-	rot_chariot();
-	rot_chariot();
+	moveQueue();
+	moveQueue();
 }
 
-
-void trait_ph() {
+/**
+ * Handle a phoneme
+ * @remarks	Originally called 'trait_ph'
+ */
+void handlePhoneme() {
 	const int deca[3] = {300, 30, 40};
 
-	int ptr_tcph = g_num_ph - 1;
-	int startPos = swap(g_t_cph[ptr_tcph]) + deca[g_typlec];
-	int endPos = swap(g_t_cph[ptr_tcph + 1]) + deca[g_typlec];
+	int startPos = swap(g_t_cph[g_phonemeNumb - 1]) + deca[g_typlec];
+	int endPos = swap(g_t_cph[g_phonemeNumb]) + deca[g_typlec];
 	int wordCount = endPos - startPos;
 	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
 		WRITE_LE_UINT16(&g_mem[kAdrWord + currWord], g_t_cph[i]);
 
 	g_ptr_oct = 0;
 	int currWord = 0;
-	init_chariot();
+	initQueue();
 
 	do {
-		rot_chariot();
+		moveQueue();
 		charg_car(currWord);
 		trait_car();
 	} while (currWord < wordCount);
 
-	rot_chariot();
+	moveQueue();
 	trait_car();
 	entroct(ord('#'));
 }
@@ -516,7 +526,7 @@ void startSpeech(int rep, int ht, int typ) {
 	if (g_vm->_soundOff)
 		return;
 
-	g_num_ph = rep;
+	g_phonemeNumb = rep;
 	g_haut = ht;
 	g_typlec = typ;
 	if (g_typlec != 0) {
@@ -542,7 +552,7 @@ void startSpeech(int rep, int ht, int typ) {
 	default:
 		break;
 	}
-	trait_ph();
+	handlePhoneme();
 	g_vm->_soundManager.litph(g_tbi, typ, tempo);
 	if (g_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {

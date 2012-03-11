@@ -224,13 +224,13 @@ extern int g_x,
         g_yprec,
         g_perdep,
         g_prebru,
-        g_typlec,
-        g_num_ph,
+        g_typlec, // Speech
+        g_phonemeNumb, // Speech
         g_numpal,
         g_ptr_oct,
         g_k_tempo;
 
-extern int g_t_cph[6401];
+extern int g_t_cph[6401]; // Speech
 extern byte g_tabdon[4001];
 
 extern Common::String g_hintPctMessage;      // gives the pct of hints found
@@ -248,7 +248,6 @@ extern byte g_lettres[7][24];
 extern uint16 g_t_mot[maxti + 1];
 extern int g_tay_tchar;
 extern ind g_t_rec[maxtd + 1];
-extern byte g_v_lieu[8][25];
 extern int g_l[108];
 extern int g_tbi[256];
 extern chariot g_c1, g_c2, g_c3;

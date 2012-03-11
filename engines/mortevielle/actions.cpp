@@ -61,10 +61,10 @@ void MortevielleEngine::fctMove() {
 			return;
 		if (g_num == 1) {
 			g_s._currPlace = OWN_ROOM;
-			tmlieu(0);
+			g_vm->_menu.setDestinationMenuText(OWN_ROOM);
 		} else if (g_num == 7) {
 			g_s._currPlace = ATTIC;
-			tmlieu(13);
+			g_vm->_menu.setDestinationMenuText(ATTIC);
 		} else if (g_num != 6)
 			g_s._currPlace = 26;
 		if ((g_num > 1) && (g_num < 6))
@@ -88,7 +88,7 @@ void MortevielleEngine::fctMove() {
 			t1deva();
 		if (cx == 2)
 			t1neig();
-		tmlieu(g_s._currPlace);
+		g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 		return;
 	}
 
@@ -97,7 +97,7 @@ void MortevielleEngine::fctMove() {
 			t1deau();
 		if (cx == 2)
 			t1derr();
-		tmlieu(g_s._currPlace);
+		g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 		return;
 	}
 
@@ -170,7 +170,7 @@ void MortevielleEngine::fctMove() {
 	if ((cx < 5) || (cx == 13) || (cx == 14))
 		affrep();
 	debloc(g_s._currPlace);
-	tmlieu(g_s._currPlace);
+	g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 }
 
 /**
@@ -201,7 +201,7 @@ void MortevielleEngine::fctTake() {
 					g_s._secretPassageObjectId = 0;
 				if (g_s._currPlace == WELL)
 					g_s._wellObjectId = 0;
-				unsetSearchMenu();
+				g_vm->_menu.unsetSearchMenu();
 				g_vm->_obpart = false;
 				affrep();
 			} else {
@@ -509,7 +509,7 @@ void MortevielleEngine::fctSearch() {
 					g_cs = 0;
 					g_is = 0;
 					g_vm->_heroSearching = true;
-					setSearchMenu();
+					g_vm->_menu.setSearchMenu();
 					tsuiv();
 				} else
 					g_crep = 997;
@@ -708,9 +708,9 @@ void MortevielleEngine::fctPlace() {
 						g_vm->_menu.displayMenu();
 						if (enterPassageFl) {
 							g_s._currPlace = SECRET_PASSAGE;
-							tmlieu(17);
+							g_vm->_menu.setDestinationMenuText(SECRET_PASSAGE);
 						} else {
-							tmlieu(g_s._currPlace);
+							g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 							writepal(14);
 							dessin(0);
 							aniof(1, 2);
@@ -1085,7 +1085,7 @@ void MortevielleEngine::fctEat() {
 		g_s._currPlace = DINING_ROOM;
 		g_caff = 10;
 		debloc(g_s._currPlace);
-		tmlieu(g_s._currPlace);
+		g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 
 		int j, h, m;
 		updateHour(j, h, m);
@@ -1121,7 +1121,7 @@ void MortevielleEngine::fctEat() {
 void MortevielleEngine::fctEnter() {
 	if ((g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) {
 		t1sama();
-		tmlieu(g_s._currPlace);
+		g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 	} else if (g_s._currPlace == LANDING)
 		aldepl();
 	else if (g_ment == 0)
@@ -1165,7 +1165,7 @@ void MortevielleEngine::fctEnter() {
 			g_s._currPlace = g_ment;
 			affrep();
 			debloc(g_s._currPlace);
-			tmlieu(g_s._currPlace);
+			g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 			g_ment = 0;
 			g_mpers = 0;
 			g_ipers = 0;
@@ -1190,7 +1190,7 @@ void MortevielleEngine::fctSleep() {
 		affrep();
 		afdes(0);
 		debloc(g_s._currPlace);
-		tmlieu(g_s._currPlace);
+		g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 	}
 	clsf3();
 	clearScreenType2();
@@ -1272,7 +1272,7 @@ void MortevielleEngine::fctLeave() {
 		if (g_crep == 0)
 			g_crep = lx;
 		debloc(lx);
-		tmlieu(lx);
+		g_vm->_menu.setDestinationMenuText(lx);
 	}
 }
 
@@ -1518,7 +1518,7 @@ void MortevielleEngine::fctDiscuss() {
 	drawClock();
 	affrep();
 	/* chech;*/
-	tmlieu(g_s._currPlace);
+	g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 	clsf3();
 }
 

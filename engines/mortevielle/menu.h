@@ -52,6 +52,7 @@ public:
 	int _moveMenu[8];
 
 	void setText(int menuId, Common::String name);
+	void setDestinationMenuText(int roomId);
 	void disableMenuItem(int menuId);
 	void enableMenuItem(int menuId);
 	void displayMenu();
@@ -60,6 +61,9 @@ public:
 	void eraseMenu();
 	void mdn();
 	void initMenu();
+
+	void setSearchMenu();
+	void unsetSearchMenu();
 };
 
 enum {

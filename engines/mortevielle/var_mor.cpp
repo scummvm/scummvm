@@ -119,7 +119,7 @@ int g_x,
         g_perdep,
         g_prebru,
         g_typlec,
-        g_num_ph,
+        g_phonemeNumb,
         g_numpal,
         g_ptr_oct,
         g_k_tempo;
@@ -142,7 +142,6 @@ byte g_lettres[7][24];
 uint16 g_t_mot[maxti + 1];
 int g_tay_tchar;
 ind g_t_rec[maxtd + 1];
-byte g_v_lieu[8][25];
 int g_l[108];
 int g_tbi[256];
 chariot g_c1, g_c2, g_c3;
