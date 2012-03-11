@@ -78,6 +78,16 @@ enum DataType {
 #define MORT_DAT "mort.dat"
 #define GAME_FRAME_DELAY (1000 / 50)
 
+const int asoul = 154;
+const int aouvr = 282;
+const int achai = 387;
+const int acha = 492;
+const int arcf = 1272;
+const int arep = 1314;
+const int amzon = 1650;
+const int fleche = 1758;
+const int arega = 0;
+
 class MortevielleEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;

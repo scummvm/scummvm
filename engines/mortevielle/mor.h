@@ -33,6 +33,9 @@
 
 namespace Mortevielle {
 
+const int kTime1 = 410;
+const int kTime2 = 250;
+
 /* NIVEAU 15 */
 extern void copcha();
 extern bool isMouseIn(rectangle r);

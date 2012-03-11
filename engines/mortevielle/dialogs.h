@@ -33,6 +33,7 @@
 namespace Mortevielle {
 
 static const int NUM_LINES = 7;
+const int kMaxRect = 14;
 
 class Alert {
 private:

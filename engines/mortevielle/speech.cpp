@@ -48,10 +48,8 @@ void spfrac(int wor) {
 }
 
 void charg_car(int &currWordNumb) {
-	int wor, int_;
-
-	wor = swap(READ_LE_UINT16(&g_mem[adword + currWordNumb]));
-	int_ = wor & 0x3f;
+	int wor = swap(READ_LE_UINT16(&g_mem[kAdrWord + currWordNumb]));
+	int int_ = wor & 0x3f;
 
 	if ((int_ >= 0) && (int_ <= 13)) {
 		g_c3._val = int_;
@@ -90,7 +88,7 @@ void charg_car(int &currWordNumb) {
 
 
 void entroct(byte o) {
-	g_mem[adtroct * 16 + g_ptr_oct] = o;
+	g_mem[kAdrTroct * 16 + g_ptr_oct] = o;
 	++g_ptr_oct;
 }
 
@@ -109,16 +107,20 @@ void cctable(tablint &t) {
 }
 
 void regenbruit() {
-	int i = offsetb3 + 8590;
+	int i = kOffsetB3 + 8590;
 	int j = 0;
 	do {
-		g_t_cph[j] = READ_LE_UINT16(&g_mem[adbruit3 + i]);
+		g_t_cph[j] = READ_LE_UINT16(&g_mem[kAdrNoise3 + i]);
 		i += 2;
 		++j;
-	} while (i < offsetb3 + 8790);
+	} while (i < kOffsetB3 + 8790);
 }
 
-void charge_son() {
+/**
+ * Load sonmus.mor file
+ * @remarks	Originally called 'charge_son'
+ */
+void loadMusicSound() {
 	Common::File f;
 
 	if (!f.open("sonmus.mor"))
@@ -126,11 +128,15 @@ void charge_son() {
 	
 	f.read(&g_mem[0x7414 * 16 + 0], 273);
 
-	g_vm->_soundManager.decodeMusic(&g_mem[0x7414 * 16], &g_mem[adson * 16], 273);
+	g_vm->_soundManager.decodeMusic(&g_mem[0x7414 * 16], &g_mem[kAdrNoise * 16], 273);
 	f.close();
 }
 
-void charge_phbruit() {
+/**
+ * Load phoneme sound file
+ * @remarks	Originally called 'charge_phbruit'
+ */
+void loadPhonemeSounds() {
 	Common::File f;
 
 	if (!f.open("phbrui.mor"))
@@ -142,17 +148,21 @@ void charge_phbruit() {
 	f.close();
 }
 
-void charge_bruit() {
+/**
+ * Speech function - Load Noise file
+ * @remarks	Originally called 'charge_bruit'
+ */
+void loadNoise() {
 	Common::File f;
 	int i;
 
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
-	f.read(&g_mem[adbruit * 16 + 0], 250);
+	f.read(&g_mem[kAdrNoise * 16 + 0], 250);
 	for (i = 0; i <= 19013; ++i)
-		g_mem[adbruit * 16 + 32000 + i] = g_mem[adbruit5 + i];
-	f.read(&g_mem[adbruit1 * 16 + offsetb1], 149);
+		g_mem[kAdrNoise * 16 + 32000 + i] = g_mem[kAdrNoise5 + i];
+	f.read(&g_mem[kAdrNoise1 * 16 + kOffsetB1], 149);
 
 	f.close();
 }
@@ -172,12 +182,12 @@ void trait_car() {
 		if (g_c2._code == 6)
 			d3 = g_tabdph[(g_c2._val - 14) << 1];
 		else
-			d3 = null;
+			d3 = kNullValue;
 		if (g_c1._code >= 5) {
 			veracf(g_c2._acc);
 			if (g_c1._code == 9) {
 				entroct(4);
-				if (d3 == null)
+				if (d3 == kNullValue)
 					entroct(g_c2._val);
 				else
 					entroct(d3);
@@ -189,7 +199,7 @@ void trait_car() {
 		case 0:
 			entroct(0);
 			entroct(g_c2._val);
-			if (d3 == null)
+			if (d3 == kNullValue)
 				if (g_c3._code == 9)
 					entroct(2);
 				else
@@ -207,14 +217,14 @@ void trait_car() {
 				do {
 					--i;
 					entroct(0);
-					if (d3 == null)
+					if (d3 == kNullValue)
 						entroct(g_c2._val);
 					else
 						entroct(d3);
 					entroct(3);
 				} while (i >= 0);
 			}
-			if (d3 == null) {
+			if (d3 == kNullValue) {
 				entroct(4);
 				entroct(g_c2._val);
 				entroct(0);
@@ -232,14 +242,14 @@ void trait_car() {
 				do {
 					--i;
 					entroct(0);
-					if (d3 == null)
+					if (d3 == kNullValue)
 						entroct(g_c2._val);
 					else
 						entroct(d3);
 					entroct(3);
 				} while (i >= 0);
 			}
-			if (d3 == null) {
+			if (d3 == kNullValue) {
 				entroct(0);
 				entroct(g_c2._val);
 				entroct(2);
@@ -257,7 +267,7 @@ void trait_car() {
 				do {
 					--i;
 					entroct(0);
-					if (d3 == null)
+					if (d3 == kNullValue)
 						entroct(g_c2._val);
 					else
 						entroct(d3);
@@ -478,7 +488,7 @@ void trait_ph() {
 	int endPos = swap(g_t_cph[ptr_tcph + 1]) + deca[g_typlec];
 	int wordCount = endPos - startPos;
 	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
-		WRITE_LE_UINT16(&g_mem[adword + currWord], g_t_cph[i]);
+		WRITE_LE_UINT16(&g_mem[kAdrWord + currWord], g_t_cph[i]);
 
 	g_ptr_oct = 0;
 	int currWord = 0;
@@ -495,8 +505,10 @@ void trait_ph() {
 	entroct(ord('#'));
 }
 
-
-
+/**
+ * Start speech
+ * @remarks	Originally called 'parole'
+ */
 void startSpeech(int rep, int ht, int typ) {
 	int savph[501];
 	int tempo;
@@ -519,13 +531,13 @@ void startSpeech(int rep, int ht, int typ) {
 	cctable(g_tbi);
 	switch (typ) {
 	case 1:
-		charge_bruit();
-		/*if zuul then zzuul(adbruit,0,1095);*/
+		loadNoise();
+		/*if zuul then zzuul(kAdrNoise,0,1095);*/
 		regenbruit();
 		break;
 	case 2:
-		charge_son();
-		charge_phbruit();
+		loadMusicSound();
+		loadPhonemeSounds();
 		break;
 	default:
 		break;
