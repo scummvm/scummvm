@@ -148,9 +148,8 @@ indy3	Indiana Jones and the Last Crusade
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	-1	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
-	39cb9dec16fa16f38d79acd80effb059	-1	fr	Amiga	EGA	EGA	same as IT?!?	Gerald Vincent
+	39cb9dec16fa16f38d79acd80effb059	-1	All	Amiga	EGA	EGA	IT and FR	Gerald Vincent (IT), Andrea Petrucci (FR)
 	2fe369ad70f52a8cf7ad6077ee64f81a	-1	de	Amiga	EGA	EGA	-	Norbert Lange
-	39cb9dec16fa16f38d79acd80effb059	-1	it	Amiga	EGA	EGA	same as FR?!?	Andrea Petrucci
 	48b9f04b348bc5013327753f0d12a144	-1	es	Amiga	EGA	EGA	-	VooD
 	a0a7dea72003933b8b3f8b99b9f7ddeb	-1	en	Atari	No AdLib	EGA	-	
 	0e9b01430e31d9fcd94071d433bbc6bf	-1	fr	Atari	No AdLib	EGA	-	
