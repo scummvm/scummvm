@@ -64,6 +64,7 @@ public:
 	void setAnim(AnimationEmi *anim);
 	void animate(float time);
 	int findJointIndex(Common::String name, int max);
+	bool hasJoint(const Common::String & name) { return findJointIndex(name, _numJoints) >= 0; }
 	float _time;
 };
 

@@ -33,6 +33,10 @@
 #include "engines/grim/costume.h"
 #include "engines/grim/costume/chore.h"
 
+#include "engines/grim/emi/costumeemi.h"
+#include "engines/grim/emi/skeleton.h"
+#include "engines/grim/emi/costume/emiskel_component.h"
+
 namespace Grim {
 
 void Lua_V2::SetActorLocalAlpha() {
@@ -706,12 +710,54 @@ void Lua_V2::SetActorFOV() {
 
 void Lua_V2::AttachActor() {
 	// Missing lua parts
-	warning("Lua_V2::AttachActor: implement opcode");
+	lua_Object attachedObj = lua_getparam(1);
+	lua_Object actorObj = lua_getparam(2);
+	lua_Object targetObj = lua_getparam(3);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	if (!lua_isuserdata(attachedObj) || lua_tag(attachedObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *attached = getactor(attachedObj);
+	if (!attached)
+		return;
+
+	const char * target = NULL;
+	if (!lua_isnil(targetObj)) {
+		target = lua_getstring(targetObj);
+	}
+
+	bool hasJoint = true;
+	if (target != NULL) {
+		EMICostume * cost = dynamic_cast<EMICostume *>(actor->getCurrentCostume());
+		EMISkelComponent * skelc = cost->_emiSkel;
+		if (!skelc) goto blah;
+		Skeleton * skel = skelc->_obj;
+		if (!skel) goto blah;
+		hasJoint = skel->hasJoint(target);
+	}
+blah:
+	warning("Lua_V2::AttachActor: attaching %s to %s (on %s) joint %s", attached->getName().c_str(), actor->getName().c_str(), target ? target : "(none)", hasJoint ? "FOUND" : "NOT FOUND");
 }
 
 void Lua_V2::DetachActor() {
 	// Missing lua parts
-	warning("Lua_V2::DetachActor: implement opcode");
+	lua_Object attachedObj = lua_getparam(1);
+
+	if (!lua_isuserdata(attachedObj) || lua_tag(attachedObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *attached = getactor(attachedObj);
+	if (!attached)
+		return;
+
+	warning("Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
 }
 
 } // end of namespace Grim
