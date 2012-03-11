@@ -456,6 +456,9 @@ public:
 
 	static void saveStaticState(SaveGame *state);
 	static void restoreStaticState(SaveGame *state);
+
+	bool isAttached() const { return _attachedActor != NULL; }
+	Math::Vector3d getWorldPos() const;
 	void attachToActor(Actor *other, const char *joint);
 	void detach();
 

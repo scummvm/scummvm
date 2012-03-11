@@ -1643,6 +1643,30 @@ void Actor::collisionHandlerCallback(Actor *other) const {
 	LuaBase::instance()->callback("collisionHandler", objects);
 }
 
+Math::Vector3d Actor::getWorldPos() const {
+	if (! isAttached())
+		return getPos();
+
+	EMICostume * cost = dynamic_cast<EMICostume *>(_attachedActor->getCurrentCostume());
+	assert(cost != NULL);
+
+	Math::Matrix4 attachedToWorld;
+	attachedToWorld.setPosition(_attachedActor->getPos());
+	attachedToWorld.buildFromPitchYawRoll(_attachedActor->getPitch(), _attachedActor->getYaw(), _attachedActor->getRoll());
+
+	// If we were attached to a joint, factor in the joint's position & rotation,
+	// relative to its actor.
+	if (cost->_emiSkel && cost->_emiSkel->_obj) {
+		Joint * j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+		const Math::Matrix4 & jointToAttached = j->_finalMatrix;
+		attachedToWorld = attachedToWorld * jointToAttached;
+	}
+
+	Math::Vector3d myPos = getPos();
+	attachedToWorld.transform(&myPos, true);
+	return myPos;
+}
+
 void Actor::attachToActor(Actor *other, const char *joint) {
 	assert(other != NULL);
 	if (other == _attachedActor)
