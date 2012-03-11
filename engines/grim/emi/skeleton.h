@@ -26,6 +26,7 @@
 #include "math/mathfwd.h"
 #include "math/quat.h"
 #include "engines/grim/object.h"
+#include "engines/grim/actor.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -63,7 +64,9 @@ public:
 	void resetAnim();
 	void setAnim(AnimationEmi *anim);
 	void animate(float time);
-	int findJointIndex(Common::String name, int max);
+	int findJointIndex(const Common::String & name, int max) const;
+	bool hasJoint(const Common::String & name) const;
+	Joint * getJointNamed(const Common::String & name) const;
 	float _time;
 };
 

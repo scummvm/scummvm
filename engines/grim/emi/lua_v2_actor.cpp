@@ -33,6 +33,10 @@
 #include "engines/grim/costume.h"
 #include "engines/grim/costume/chore.h"
 
+#include "engines/grim/emi/costumeemi.h"
+#include "engines/grim/emi/skeleton.h"
+#include "engines/grim/emi/costume/emiskel_component.h"
+
 namespace Grim {
 
 void Lua_V2::SetActorLocalAlpha() {
@@ -304,8 +308,20 @@ void Lua_V2::PutActorInOverworld() {
 }
 
 void Lua_V2::GetActorWorldPos() {
-	warning("Lua_V2::GetActorWorldPos: Currently runs Lua_V1::GetActorPos");
 	Lua_V1::GetActorPos();
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	Math::Vector3d pos = actor->getWorldPos();
+	lua_pushnumber(pos.x());
+	lua_pushnumber(pos.y());
+	lua_pushnumber(pos.z());
 }
 
 void Lua_V2::PutActorInSet() {
@@ -706,12 +722,46 @@ void Lua_V2::SetActorFOV() {
 
 void Lua_V2::AttachActor() {
 	// Missing lua parts
-	warning("Lua_V2::AttachActor: implement opcode");
+	lua_Object attachedObj = lua_getparam(1);
+	lua_Object actorObj = lua_getparam(2);
+	lua_Object jointObj = lua_getparam(3);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	if (!lua_isuserdata(attachedObj) || lua_tag(attachedObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *attached = getactor(attachedObj);
+	if (!attached)
+		return;
+
+	const char * joint = NULL;
+	if (!lua_isnil(jointObj)) {
+		joint = lua_getstring(jointObj);
+	}
+
+	attached->attachToActor(actor, joint);
+	warning("Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
 }
 
 void Lua_V2::DetachActor() {
 	// Missing lua parts
-	warning("Lua_V2::DetachActor: implement opcode");
+	lua_Object attachedObj = lua_getparam(1);
+
+	if (!lua_isuserdata(attachedObj) || lua_tag(attachedObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *attached = getactor(attachedObj);
+	if (!attached)
+		return;
+
+	warning("Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
+	attached->detach();
 }
 
 } // end of namespace Grim
