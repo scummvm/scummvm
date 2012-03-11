@@ -11,6 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented support for TrueType fonts via FreeType2 in our GUI. Along
      with it GNU FreeFont was also added to our modern theme. Note that not all
      ports take advantage of this.
+   - Added Basque translation
 
  SDL ports:
    - Added support for OpenGL (GSoC Task).
