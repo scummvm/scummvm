@@ -28,8 +28,6 @@
 #include "common/array.h"
 #include "common/list.h"
 
-#include "gob/rxyfile.h"
-
 namespace Common {
 	class SeekableSubReadStreamEndian;
 }
@@ -38,6 +36,7 @@ namespace Gob {
 
 class GobEngine;
 class Surface;
+class CMPFile;
 
 /** An ANI file, describing an animation.
  *
@@ -94,16 +93,7 @@ public:
 	void draw(Surface &dest, uint16 animation, uint16 frame, int16 x, int16 y) const;
 
 private:
-	/** A sprite layer. */
-	struct Layer {
-		Surface *surface;     ///< The surface containing the layer sprite.
-		RXYFile *coordinates; ///< The coordinates describing the layer sprite parts.
-
-		Layer();
-		~Layer();
-	};
-
-	typedef Common::Array<Layer> LayerArray;
+	typedef Common::Array<CMPFile *> LayerArray;
 	typedef Common::Array<Animation> AnimationArray;
 
 	/** A "chunk" of an animation frame. */
@@ -139,9 +129,7 @@ private:
 
 	void load(Common::SeekableSubReadStreamEndian &ani, const Common::String &fileName);
 
-	void loadLayer(Layer &layer, Common::SeekableSubReadStreamEndian &ani);
-	void loadLayer(Layer &layer, const Common::String &fileRXY,
-	                             const Common::String &fileCMP);
+	CMPFile *loadLayer(Common::SeekableSubReadStreamEndian &ani);
 
 	void loadAnimation(Animation &animation, FrameArray &frames,
 	                   Common::SeekableSubReadStreamEndian &ani);
@@ -149,8 +137,8 @@ private:
 
 	// Drawing helpers
 
-	bool getPart(uint16 layer, uint16 part,
-	             const Layer *&l, const RXYFile::Coordinates *&c) const;
+	bool getCoordinates(uint16 layer, uint16 part,
+	                    uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) const;
 
 	void drawLayer(Surface &dest, uint16 layer, uint16 part,
 	              int16 x, int16 y, int32 transp) const;
