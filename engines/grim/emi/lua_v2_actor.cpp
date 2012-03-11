@@ -308,8 +308,20 @@ void Lua_V2::PutActorInOverworld() {
 }
 
 void Lua_V2::GetActorWorldPos() {
-	warning("Lua_V2::GetActorWorldPos: Currently runs Lua_V1::GetActorPos");
 	Lua_V1::GetActorPos();
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	Math::Vector3d pos = actor->getWorldPos();
+	lua_pushnumber(pos.x());
+	lua_pushnumber(pos.y());
+	lua_pushnumber(pos.z());
 }
 
 void Lua_V2::PutActorInSet() {
