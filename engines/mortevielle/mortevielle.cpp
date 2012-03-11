@@ -150,7 +150,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Set the screen mode
-	g_vm->_currGraphicalDevice = MODE_EGA;
+	_currGraphicalDevice = MODE_EGA;
 	g_res = 2;
 
 	_txxFileFl = false;
@@ -171,13 +171,13 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	// Setup the mouse cursor
 	initMouse();
 
-	g_vm->_currGraphicalDevice = MODE_EGA;
-	g_vm->_newGraphicalDevice = g_vm->_currGraphicalDevice;
+	_currGraphicalDevice = MODE_EGA;
+	_newGraphicalDevice = _currGraphicalDevice;
 	charpal();
 	loadCFIPH();
 	loadCFIEC();
 	zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
-	g_vm->_c_zzz = 1;
+	_c_zzz = 1;
 	init_nbrepm();
 	initMouse();
 
@@ -187,10 +187,10 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	teskbd();
 	dialpre();
-	g_vm->_newGraphicalDevice = g_vm->_currGraphicalDevice;
+	_newGraphicalDevice = _currGraphicalDevice;
 	teskbd();
-	if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice)
-		g_vm->_currGraphicalDevice = g_vm->_newGraphicalDevice;
+	if (_newGraphicalDevice != _currGraphicalDevice)
+		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
 	g_ades = 0x7000;
 
@@ -294,7 +294,7 @@ bool MortevielleEngine::keyPressed() {
 	if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 		_lastGameFrame = g_system->getMillis();
 	
-		g_vm->_screenSurface.updateScreen();
+		_screenSurface.updateScreen();
 	}
 
 	// Delay briefly to keep CPU usage down
@@ -466,7 +466,7 @@ void MortevielleEngine::delay(int amount) {
 	while (g_system->getMillis() < endTime) {
 		if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 			_lastGameFrame = g_system->getMillis();
-			g_vm->_screenSurface.updateScreen();
+			_screenSurface.updateScreen();
 		}
 
 		g_system->delayMillis(10);
@@ -530,7 +530,7 @@ void MortevielleEngine::mainGame() {
 	if (_reloadCFIEC)
 		loadCFIEC();
 
-	for (g_crep = 1; g_crep <= g_vm->_c_zzz; ++g_crep) 
+	for (g_crep = 1; g_crep <= _c_zzz; ++g_crep) 
 		zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	loadBRUIT5();
@@ -582,8 +582,8 @@ void MortevielleEngine::handleAction() {
 	oo = false;
 	g_ctrm = 0;
 	if (!_keyPressedEsc) {
-		g_vm->_menu.drawMenu();
-		g_vm->_menu._menuDisplayed = true;
+		_menu.drawMenu();
+		_menu._menuDisplayed = true;
 		temps = 0;
 		g_key = 0;
 		funct = false;
@@ -591,33 +591,33 @@ void MortevielleEngine::handleAction() {
 
 		_inMainGameLoop = true;
 		do {
-			g_vm->_menu.mdn();
+			_menu.mdn();
 			tinke();
 			moveMouse(funct, inkey);
 			CHECK_QUIT;
 			temps = temps + 1;
-		} while (!((g_vm->_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));
+		} while (!((_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));
 		_inMainGameLoop = false;
 
-		g_vm->_menu.eraseMenu();
-		g_vm->_menu._menuDisplayed = false;
+		_menu.eraseMenu();
+		_menu._menuDisplayed = false;
 		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
 			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
-		if (g_vm->_menu._menuSelected && (g_msg[3] == MENU_SAVE)) {
+		if (_menu._menuSelected && (g_msg[3] == MENU_SAVE)) {
 			Common::String saveName = Common::String::format("Savegame #%d", g_msg[4] & 7);
-			g_vm->_savegameManager.saveGame(g_msg[4] & 7, saveName);
+			_savegameManager.saveGame(g_msg[4] & 7, saveName);
 		}
-		if (g_vm->_menu._menuSelected && (g_msg[3] == MENU_LOAD))
-			g_vm->_savegameManager.loadGame((g_msg[4] & 7) - 1);
+		if (_menu._menuSelected && (g_msg[3] == MENU_LOAD))
+			_savegameManager.loadGame((g_msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = Alert::show(g_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
 			if ((g_mnumo != OPCODE_NONE) && ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))) {
 				g_msg[4] = g_mnumo;
-				ecr3(g_vm->getEngineString(S_IDEM));
+				ecr3(getEngineString(S_IDEM));
 			} else
 				return;
 		} else if (inkey == '\104') {
@@ -641,7 +641,7 @@ void MortevielleEngine::handleAction() {
 			if ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))
 				g_mnumo = g_msg[4];
 			if (!_anyone) {
-				if ((g_vm->_heroSearching) || (_obpart)) {
+				if ((_heroSearching) || (_obpart)) {
 					if (y_s < 12)
 						return;
 
@@ -663,14 +663,14 @@ void MortevielleEngine::handleAction() {
 
 				if ((g_ctrm == 0) && (! _loseGame) && (! _endGame)) {
 					taffich();
-					if (g_vm->_okdes) {
-						g_vm->_okdes = false;
+					if (_okdes) {
+						_okdes = false;
 						dessin(0);
 					}
-					if ((!g_vm->_syn) || (_col))
+					if ((!_syn) || (_col))
 						repon(2, g_crep);
 				}
-			} while (g_vm->_syn);
+			} while (_syn);
 			if (g_ctrm != 0)
 				tctrm();
 		}
