@@ -463,9 +463,9 @@ void f3f8::aff50(bool drawAni50Fl) {
 
 void f3f8::ani50() {
 	g_crep = animof(1, 1);
-	pictout(adani, g_crep, 63, 12);
+	pictout(kAdrAni, g_crep, 63, 12);
 	g_crep = animof(2, 1);
-	pictout(adani, g_crep, 63, 12);
+	pictout(kAdrAni, g_crep, 63, 12);
 	g_vm->_largestClearScreen = (g_res == 1);
 	repon(2, kDialogStringIndex + 143);
 }

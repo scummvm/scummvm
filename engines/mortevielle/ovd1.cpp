@@ -190,7 +190,7 @@ void loadBRUIT5() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(&g_mem[adbruit5 * 16 + 0], 149 * 128);
+	f.read(&g_mem[kAdrNoise5 * 16 + 0], 149 * 128);
 	f.close();
 }
 

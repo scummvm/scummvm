@@ -161,12 +161,12 @@ void adzon() {
  * Returns the offset within the compressed image data resource of the desired image
  */
 int animof(int ouf, int num) {
-	int nani = g_mem[adani * 16 + 1];
+	int nani = g_mem[kAdrAni * 16 + 1];
 	int aux = num;
 	if (ouf != 1)
 		aux += nani;
 
-	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&g_mem[adani * 16 + (aux << 1)]);
+	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&g_mem[kAdrAni * 16 + (aux << 1)]);
 
 	return animof_result;
 }
@@ -1557,7 +1557,7 @@ void aniof(int ouf, int num) {
 			num = 3;
 	}
 
-	int ad = adani;
+	int ad = kAdrAni;
 	int offset = animof(ouf, num);
 
 	GfxSurface surface;

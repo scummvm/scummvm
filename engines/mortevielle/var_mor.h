@@ -64,38 +64,8 @@ namespace Mortevielle {
 /*-------------------------    CONSTANTS   ----------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-const float freq0 = 1.19318e6;
-
-const int adani = 0x7314;
-const int adbruit = 0x5cb0;/*2C00;*/
-const int adbruit1 = 0x6924;
-const int adbruit3 = 0x6ba6;/*3AF6;*/
-const int adbruit5 = 0x3b50;
-const int adson = 0x5cb0;/*2C00;*/
-const int adtroct = 0x406b;
-const int adword = 0x4000;
-const int offsetb1 = 6;
-const int offsetb3 = 6;
-
-// Useless constants
-//const int segdon = 0x6c00;
-//const int adbruit2 = 0x6b30;/*3A80;*/
-//const int adson2 = 0x60b0;/*3000;*/
-//const int seg_syst = 0x6fed;
-//const int offsetb2 = 4;
-
-const int null = 255;
-
-const int kTempoMusic = 71;
-const int kTempoNoise = 78;
-const int kTempoF = 80;
-const int kTempoM = 89;
-
-const int kTime1 = 410;
-const int kTime2 = 250;
 const int maxti = 7975;
 const int maxtd = 600;
-const int kMaxRect = 14;
 
 const int kDescriptionStringIndex = 0;                // Unused
 const int kInventoryStringIndex = 186;
@@ -107,15 +77,6 @@ const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
 const int kSecretPassageQuestionStringIndex = 510;    // Unusued?
 
-const int arega = 0;
-const int asoul = 154;
-const int aouvr = 282;
-const int achai = 387;
-const int acha = 492;
-const int arcf = 1272;
-const int arep = 1314;
-const int amzon = 1650;
-const int fleche = 1758;
 
 const int OPCODE_NONE = 0;
 enum verbs {OPCODE_ATTACH = 0x301, OPCODE_WAIT = 0x302,  OPCODE_FORCE = 0x303,   OPCODE_SLEEP = 0x304, OPCODE_LISTEN = 0x305, 

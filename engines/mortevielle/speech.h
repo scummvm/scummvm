@@ -33,15 +33,40 @@
 
 namespace Mortevielle {
 
+const int kAdrNoise  = 0x5cb0;/*2C00;*/
+const int kAdrNoise1 = 0x6924;
+const int kAdrNoise3 = 0x6ba6;/*3AF6;*/
+const int kAdrNoise5 = 0x3b50;
+const int kAdrTroct  = 0x406b;
+const int kAdrWord   = 0x4000;
+const int kOffsetB1  = 6;
+const int kOffsetB3  = 6;
+
+const float freq0 = 1.19318e6;
+const int kNullValue = 255;
+const int kTempoMusic = 71;
+const int kTempoNoise = 78;
+const int kTempoF = 80;
+const int kTempoM = 89;
+
+
+// Useless constants
+//const int segdon = 0x6c00;
+//const int adbruit2 = 0x6b30;/*3A80;*/
+//const int adson2 = 0x60b0;/*3000;*/
+//const int seg_syst = 0x6fed;
+//const int offsetb2 = 4;
+
+
 extern void spfrac(int wor);
 extern void charg_car(int &currWordNumb);
 extern void entroct(byte o);
 extern void veracf(byte b);
 extern void cctable(tablint &t);
 extern void regenbruit();
-extern void charge_son();
-extern void charge_phbruit();
-extern void charge_bruit();
+extern void loadMusicSound();
+extern void loadPhonemeSounds();
+extern void loadNoise();
 extern void trait_car();
 
 extern void rot_chariot();

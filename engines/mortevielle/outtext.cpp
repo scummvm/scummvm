@@ -292,7 +292,7 @@ void charani(Common::String filename, int32 skipSize, int length) {
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		g_mem[0x7314 * 16 + i - remainingSkipSize] = g_mem[0x6000 * 16 + i];
+		g_mem[kAdrAni * 16 + i - remainingSkipSize] = g_mem[0x6000 * 16 + i];
 }
 
 void taffich() {

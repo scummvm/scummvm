@@ -33,9 +33,10 @@
 
 namespace Mortevielle {
 
+const int kAdrAni = 0x7314;
+
 extern Common::String deline(int num);
 extern void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
-
 extern void chardes(Common::String filename, int32 passe, int long_);
 extern void charani(Common::String filename, int32 skipSize, int length);
 extern void taffich();
