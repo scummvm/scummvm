@@ -419,10 +419,6 @@ void Bitmap::saveState(SaveGame *state) const {
 	state->writeString(getFilename());
 
 	state->writeLESint32(getActiveImage());
-
-	//SAVECHANGE
-	state->writeLESint32(0);
-	state->writeLESint32(0);
 }
 
 void Bitmap::restoreState(SaveGame *state) {
@@ -432,10 +428,6 @@ void Bitmap::restoreState(SaveGame *state) {
 	_data = BitmapData::getBitmapData(fname);
 
 	_currImage = state->readLESint32();
-
-	//SAVECHANGE
-	state->readLESint32();
-	state->readLESint32();
 }
 
 void Bitmap::draw() {

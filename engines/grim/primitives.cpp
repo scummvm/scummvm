@@ -46,9 +46,6 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 
 	savedState->writeLEUint32(_filled);
 
-	//SAVECHANGE
-	savedState->writeLESint32(0);
-
 	savedState->writeLEUint16(_p1.x);
 	savedState->writeLEUint16(_p1.y);
 	savedState->writeLEUint16(_p2.x);
@@ -65,9 +62,6 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 	_color = savedState->readColor();
 
 	_filled = savedState->readLEUint32();
-
-	//SAVECHANGE
-	savedState->readLESint32();
 
 	_p1.x = savedState->readLEUint16();
 	_p1.y = savedState->readLEUint16();
