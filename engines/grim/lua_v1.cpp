@@ -934,7 +934,7 @@ void Lua_V1::GetSaveGameData() {
 		if (!savedState) {
 			warning("Savegame %s is invalid", filename);
 		} else {
-			warning("Savegame %s is incompatible with this Residual build. Save version: %d; current version: %d", filename, savedState->saveMajorVersion(), SaveGame::SAVEGAME_MAJOR_VERSION);
+			warning("Savegame %s is incompatible with this ResidualVM build. Save version: %d; current version: %d", filename, savedState->saveMajorVersion(), SaveGame::SAVEGAME_MAJOR_VERSION);
 		}
 		delete savedState;
 		return;
