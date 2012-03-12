@@ -250,6 +250,7 @@ endif
 # Special target to create a win32 snapshot binary under Debian Linux using cross mingw32 toolchain
 crosswin32dist: $(EXECUTABLE)
 	mkdir -p ResidualVMWin32
+	mkdir -p ResidualVMWin32/doc
 	$(STRIP) $(EXECUTABLE) -o ResidualVMWin32/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) ResidualVMWin32
 ifdef DIST_FILES_ENGINEDATA
@@ -267,7 +268,7 @@ endif
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32
 	toms ResidualVMWin32/*.txt
-	toms ResidualVMWin32/residualvm.iss
+	toms ResidualVMWin32/ResidualVM.iss
 
 #
 # AmigaOS specific
