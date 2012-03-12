@@ -36,6 +36,7 @@
 #include "mortevielle/menu.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
+#include "mortevielle/speech.h"
 
 namespace Mortevielle {
 
@@ -99,7 +100,6 @@ private:
 	Common::StringArray _engineStrings;
 	Common::StringArray _gameStrings;
 
-
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
 	void readStaticStrings(Common::File &f, int dataSize, DataType dataType);
@@ -154,6 +154,7 @@ public:
 	Common::RandomSource _randomSource;
 	SoundManager _soundManager;
 	SavegameManager _savegameManager;
+	SpeechManager _speechManager;
 	Menu _menu;
 
 	bool _quitGame;			// Quit game flag. Originally called 'arret'

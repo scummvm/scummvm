@@ -539,7 +539,7 @@ void MortevielleEngine::mainGame() {
 	theure();
 	dprog();
 	hirs();
-	dessine_rouleau();
+	drawRightFrame();
 	showMouse();
 
 	// Loop to play the game
@@ -578,7 +578,7 @@ void MortevielleEngine::handleAction() {
 	char inkey = '\0';
 	bool oo, funct = 0;
 
-	clsf3();
+	clearScreenType3();
 	oo = false;
 	g_ctrm = 0;
 	if (!_keyPressedEsc) {
