@@ -633,7 +633,7 @@ int selectCharacters(int min, int max) {
  * Engine function - Get Presence Statistics - Green Room
  * @remarks	Originally called 'cpl1'
  */
-int getPresenceStatsGreenRoom() {
+int MortevielleEngine::getPresenceStatsGreenRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -664,7 +664,7 @@ int getPresenceStatsGreenRoom() {
  * Engine function - Get Presence Statistics - Purple Room
  * @remarks	Originally called 'cpl2'
  */
-int getPresenceStatsPurpleRoom() {
+int MortevielleEngine::getPresenceStatsPurpleRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -687,7 +687,7 @@ int getPresenceStatsPurpleRoom() {
  * Engine function - Get Presence Statistics - Toilets
  * @remarks	Originally called 'cpl3'
  */
-int getPresenceStatsToilets() {
+int MortevielleEngine::getPresenceStatsToilets() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -704,7 +704,7 @@ int getPresenceStatsToilets() {
  * Engine function - Get Presence Statistics - Blue Room
  * @remarks	Originally called 'cpl5'
  */
-int getPresenceStatsBlueRoom() {
+int MortevielleEngine::getPresenceStatsBlueRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -725,7 +725,7 @@ int getPresenceStatsBlueRoom() {
  * Engine function - Get Presence Statistics - Red Room
  * @remarks	Originally called 'cpl6'
  */
-int getPresenceStatsRedRoom() {
+int MortevielleEngine::getPresenceStatsRedRoom() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -842,7 +842,7 @@ void debloc(int roomId) {
  * Engine function - Get Presence Statistics - Room Bureau
  * @remarks	Originally called 'cpl10'
  */
-int getPresenceStatsDiningRoom(int &hour) {
+int MortevielleEngine::getPresenceStatsDiningRoom(int &hour) {
 	int day, minute;
 
 	int retVal = 0;
@@ -865,7 +865,7 @@ int getPresenceStatsDiningRoom(int &hour) {
  * Engine function - Get Presence Statistics - Room Bureau
  * @remarks	Originally called 'cpl11'
  */
-int getPresenceStatsBureau(int &hour) {
+int MortevielleEngine::getPresenceStatsBureau(int &hour) {
 	int day, minute;
 	int retVal = 0;
 
@@ -888,7 +888,7 @@ int getPresenceStatsBureau(int &hour) {
  * Engine function - Get Presence Statistics - Room Kitchen
  * @remarks	Originally called 'cpl12'
  */
-int getPresenceStatsKitchen() {
+int MortevielleEngine::getPresenceStatsKitchen() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -909,7 +909,7 @@ int getPresenceStatsKitchen() {
  * Engine function - Get Presence Statistics - Room Attic
  * @remarks	Originally called 'cpl13'
  */
-int getPresenceStatsAttic() {
+int MortevielleEngine::getPresenceStatsAttic() {
 	return 0;
 }
 
@@ -917,7 +917,7 @@ int getPresenceStatsAttic() {
  * Engine function - Get Presence Statistics - Room Landing
  * @remarks	Originally called 'cpl15'
  */
-int getPresenceStatsLanding() {
+int MortevielleEngine::getPresenceStatsLanding() {
 	int day, hour, minute;
 	int retVal = 0;
 
@@ -944,7 +944,7 @@ int getPresenceStatsLanding() {
  * Engine function - Get Presence Statistics - Room Chapel
  * @remarks	Originally called 'cpl20'
  */
-int getPresenceStatsChapel(int &hour) {
+int MortevielleEngine::getPresenceStatsChapel(int &hour) {
 	int day, minute;
 	int retVal = 0;
 
@@ -967,18 +967,18 @@ int getPresenceStatsChapel(int &hour) {
  * Engine function - Check who is in the Green Room
  * @remarks	Originally called 'quelq1'
  */
-void setPresenceGreenRoom(int roomId) {
+void MortevielleEngine::setPresenceGreenRoom(int roomId) {
 	int rand = getRandomNumber(1, 2);
 	if (roomId == GREEN_ROOM) {
 		if (rand == 1)
-			g_vm->_roomPresenceLuc = true;
+			_roomPresenceLuc = true;
 		else
-			g_vm->_roomPresenceIda = true;
+			_roomPresenceIda = true;
 	} else if (roomId == DARKBLUE_ROOM) {
 		if (rand == 1)
-			g_vm->_roomPresenceGuy = true;
+			_roomPresenceGuy = true;
 		else
-			g_vm->_roomPresenceEva = true;
+			_roomPresenceEva = true;
 	}
 
 	g_ipers = 10;
@@ -988,11 +988,11 @@ void setPresenceGreenRoom(int roomId) {
  * Engine function - Check who is in the Purple Room
  * @remarks	Originally called 'quelq2'
  */
-void setPresencePurpleRoom() {
-	if (g_li == 2)
-		g_vm->_purpleRoomPresenceLeo = true;
+void MortevielleEngine::setPresencePurpleRoom() {
+	if (_place == PURPLE_ROOM)
+		_purpleRoomPresenceLeo = true;
 	else
-		g_vm->_room9PresenceLeo = true;
+		_room9PresenceLeo = true;
 
 	g_ipers = 10;
 }
@@ -1001,8 +1001,8 @@ void setPresencePurpleRoom() {
  * Engine function - Check who is in the Blue Room
  * @remarks	Originally called 'quelq5'
  */
-void setPresenceBlueRoom() {
-	g_vm->_roomPresenceMax = true;
+void MortevielleEngine::setPresenceBlueRoom() {
+	_roomPresenceMax = true;
 	g_ipers = 10;
 }
 
@@ -1010,11 +1010,11 @@ void setPresenceBlueRoom() {
  * Engine function - Check who is in the Red Room
  * @remarks	Originally called 'quelq6'
  */
-void setPresenceRedRoom(int l) {
-	if (l == 6)
-		g_vm->_roomPresenceBob = true;
-	else if (l == 8)
-		g_vm->_roomPresencePat = true;
+void MortevielleEngine::setPresenceRedRoom(int roomId) {
+	if (roomId == RED_ROOM)
+		_roomPresenceBob = true;
+	else if (roomId == GREEN_ROOM2)
+		_roomPresencePat = true;
 
 	g_ipers = 10;
 }
@@ -1023,7 +1023,7 @@ void setPresenceRedRoom(int l) {
  * Engine function - Check who is in the Dining Room
  * @remarks	Originally called 'quelq10'
  */
-int setPresenceDiningRoom(int hour) {
+int MortevielleEngine::setPresenceDiningRoom(int hour) {
 	int retVal = 0;
 
 	if ((hour >= 0) && (hour < 8))
@@ -1054,7 +1054,7 @@ int setPresenceDiningRoom(int hour) {
  * Engine function - Check who is in the Bureau
  * @remarks	Originally called 'quelq11'
  */
-int setPresenceBureau(int hour) {
+int MortevielleEngine::setPresenceBureau(int hour) {
 	int retVal = 0;
 
 	if ((hour >= 0) && (hour < 8))
@@ -1082,7 +1082,7 @@ int setPresenceBureau(int hour) {
  * Engine function - Check who is in the Kitchen
  * @remarks	Originally called 'quelq12'
  */
-int setPresenceKitchen() {
+int MortevielleEngine::setPresenceKitchen() {
 	int retVal = chlm();
 	showPeoplePresent(retVal);
 
@@ -1093,7 +1093,7 @@ int setPresenceKitchen() {
  * Engine function - Check who is in the Landing
  * @remarks	Originally called 'quelq15'
  */
-int setPresenceLanding() {
+int MortevielleEngine::setPresenceLanding() {
 	bool test = false;
 	int rand = 0;
 	do {
@@ -1118,7 +1118,7 @@ int setPresenceLanding() {
  * Engine function - Check who is in the chapel
  * @remarks	Originally called 'quelq20'
  */
-int setPresenceChapel(int hour) {
+int MortevielleEngine::setPresenceChapel(int hour) {
 	int retVal = 0;
 
 	if (((hour >= 0) && (hour < 10)) || ((hour > 18) && (hour < 24)))
@@ -1226,17 +1226,17 @@ void ecfren(int &p, int &rand, int cf, int roomId) {
 	rand = 0;
 	if ( ((roomId == GREEN_ROOM) && (!g_vm->_roomPresenceLuc) && (!g_vm->_roomPresenceIda))
 	  || ((roomId == DARKBLUE_ROOM) && (!g_vm->_roomPresenceGuy) && (!g_vm->_roomPresenceEva)) )
-		p = getPresenceStatsGreenRoom();
+		p = g_vm->getPresenceStatsGreenRoom();
 	if ((roomId == PURPLE_ROOM) && (!g_vm->_purpleRoomPresenceLeo) && (!g_vm->_room9PresenceLeo))
-		p = getPresenceStatsPurpleRoom();
+		p = g_vm->getPresenceStatsPurpleRoom();
 	if ( ((roomId == TOILETS) && (!g_vm->_toiletsPresenceBobMax))
 	  || ((roomId == BATHROOM) && (!g_vm->_bathRoomPresenceBobMax)) )
-		p = getPresenceStatsToilets();
+		p = g_vm->getPresenceStatsToilets();
 	if ((roomId == BLUE_ROOM) && (!g_vm->_roomPresenceMax))
-		p = getPresenceStatsBlueRoom();
+		p = g_vm->getPresenceStatsBlueRoom();
 	if ( ((roomId == RED_ROOM) && (!g_vm->_roomPresenceBob))
 	  || ((roomId == GREEN_ROOM2) && (!g_vm->_roomPresencePat)))
-		p = getPresenceStatsRedRoom();
+		p = g_vm->getPresenceStatsRedRoom();
 	if ((roomId == ROOM9) && (!g_vm->_room9PresenceLeo) && (!g_vm->_purpleRoomPresenceLeo))
 		p = 10;
 	if ( ((roomId == PURPLE_ROOM) && (g_vm->_room9PresenceLeo))
@@ -1339,17 +1339,26 @@ void resetVariables() {
 	init_nbrepm();
 }
 
-void dprog() {
-	g_li = 21;
+/**
+ * Engine function - initGame
+ * @remarks	Originally called 'dprog'
+ */
+void MortevielleEngine::initGame() {
+	_place = MANOR_FRONT;
 	g_jh = 0;
 	if (!g_s._ipre)
-		g_vm->_blo = true;
+		_blo = true;
 	g_t = kTime1;
 	g_mh = readclock();
 }
 
-void pl1(int cf) {
-	if (((g_li == 1) && (!g_vm->_roomPresenceLuc) && (!g_vm->_roomPresenceIda)) || ((g_li == 4) && (!g_vm->_roomPresenceGuy) && (!g_vm->_roomPresenceEva))) {
+/**
+ * Engine function - Set Random Presence - Green Room
+ * @remarks	Originally called 'pl1'
+ */
+void MortevielleEngine::setRandomPresenceGreenRoom(int cf) {
+	if ( ((_place == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda))
+	  || ((_place == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)) ) {
 		int p = getPresenceStatsGreenRoom();
 		int rand;
 		phaz(rand, p, cf);
@@ -1357,12 +1366,16 @@ void pl1(int cf) {
 		if (rand > p)
 			displayAloneText();
 		else
-			setPresenceGreenRoom(g_li);
+			setPresenceGreenRoom(_place);
 	}
 }
 
-void pl2(int cf) {
-	if (!g_vm->_purpleRoomPresenceLeo) {
+/**
+ * Engine function - Set Random Presence - Purple Room
+ * @remarks	Originally called 'pl2'
+ */
+void MortevielleEngine::setRandomPresencePurpleRoom(int cf) {
+	if (!_purpleRoomPresenceLeo) {
 		int p = getPresenceStatsPurpleRoom();
 		int rand;
 		phaz(rand, p, cf);
@@ -1374,7 +1387,11 @@ void pl2(int cf) {
 	}
 }
 
-void pl5(int cf) {
+/**
+ * Engine function - Set Random Presence - Blue Room
+ * @remarks	Originally called 'pl5'
+ */
+void MortevielleEngine::setRandomPresenceBlueRoom(int cf) {
 	if (!g_vm->_roomPresenceMax) {
 		int p = getPresenceStatsBlueRoom();
 		int rand;
@@ -1388,8 +1405,13 @@ void pl5(int cf) {
 	}
 }
 
-void pl6(int cf) {
-	if (((g_li == 6) && (!g_vm->_roomPresenceBob)) || ((g_li == 8) && (!g_vm->_roomPresencePat))) {
+/**
+ * Engine function - Set Random Presence - Red Room
+ * @remarks	Originally called 'pl6'
+ */
+void MortevielleEngine::setRandomPresenceRedRoom(int cf) {
+	if ( ((_place == RED_ROOM) && (!_roomPresenceBob))
+	  || ((_place == GREEN_ROOM2) && (!_roomPresencePat)) ) {
 		int p = getPresenceStatsRedRoom();
 		int rand;
 
@@ -1398,12 +1420,16 @@ void pl6(int cf) {
 		if (rand > p)
 			displayAloneText();
 		else
-			setPresenceRedRoom(g_li);
+			setPresenceRedRoom(_place);
 	}
 }
 
-void pl9(int cf) {
-	if (!g_vm->_room9PresenceLeo) {
+/**
+ * Engine function - Set Random Presence - Room 9
+ * @remarks	Originally called 'pl9'
+ */
+void MortevielleEngine::setRandomPresenceRoom9(int cf) {
+	if (!_room9PresenceLeo) {
 		cf = -10;
 		int p, rand;
 		phaz(rand, p, cf);
@@ -1415,7 +1441,11 @@ void pl9(int cf) {
 	}
 }
 
-void pl10(int cf) {
+/**
+ * Engine function - Set Random Presence - Dining Room
+ * @remarks	Originally called 'pl10'
+ */
+void MortevielleEngine::setRandomPresenceDiningRoom(int cf) {
 	int h, rand;
 	int p = getPresenceStatsDiningRoom(h);
 	phaz(rand, p, cf);
@@ -1426,7 +1456,11 @@ void pl10(int cf) {
 		setPresenceDiningRoom(h);
 }
 
-void pl11(int cf) {
+/**
+ * Engine function - Set Random Presence - Bureau
+ * @remarks	Originally called 'pl11'
+ */
+void MortevielleEngine::setRandomPresenceBureau(int cf) {
 	int h, rand;
 
 	int p = getPresenceStatsBureau(h);
@@ -1437,7 +1471,11 @@ void pl11(int cf) {
 		setPresenceBureau(h);
 }
 
-void pl12(int cf) {
+/**
+ * Engine function - Set Random Presence - Kitchen
+ * @remarks	Originally called 'pl12'
+ */
+void MortevielleEngine::setRandomPresenceKitchen(int cf) {
 	int p, rand;
 
 	p = getPresenceStatsKitchen();
@@ -1448,7 +1486,11 @@ void pl12(int cf) {
 		setPresenceKitchen();
 }
 
-void pl13(int cf) {
+/**
+ * Engine function - Set Random Presence - Attic / Cellar
+ * @remarks	Originally called 'pl13'
+ */
+void MortevielleEngine::setRandomPresenceAttic(int cf) {
 	int p, rand;
 
 	p = getPresenceStatsAttic();
@@ -1459,7 +1501,11 @@ void pl13(int cf) {
 		setPresenceKitchen();
 }
 
-void pl15(int cf) {
+/**
+ * Engine function - Set Random Presence - Landing
+ * @remarks	Originally called 'pl15'
+ */
+void MortevielleEngine::setRandomPresenceLanding(int cf) {
 	int p, rand;
 
 	p = getPresenceStatsLanding();
@@ -1470,7 +1516,11 @@ void pl15(int cf) {
 		setPresenceLanding();
 }
 
-void pl20(int cf) {
+/**
+ * Engine function - Set Random Presence - Chapel
+ * @remarks	Originally called 'pl20'
+ */
+void MortevielleEngine::setRandomPresenceChapel(int cf) {
 	int h, rand;
 
 	int p = getPresenceStatsChapel(h);
@@ -1486,18 +1536,18 @@ int t11(int roomId) {
 	int p, rand;
 
 	ecfren(p, rand, g_s._faithScore, roomId);
-	g_li = roomId;
+	g_vm->_place = roomId;
 	if ((roomId > OWN_ROOM) && (roomId < DINING_ROOM)) {
 		if (p != -500) {
 			if (rand > p) {
 				displayAloneText();
 				retVal = 0;
 			} else {
-				becfren(g_li);
-				retVal = nouvp(g_li);
+				becfren(g_vm->_place);
+				retVal = nouvp(g_vm->_place);
 			}
 		} else
-			retVal = nouvp(g_li);
+			retVal = nouvp(g_vm->_place);
 	}
 
 	if (roomId > ROOM9) {
@@ -1506,17 +1556,17 @@ int t11(int roomId) {
 		else {
 			int h = 0;
 			if (roomId == DINING_ROOM)
-				p = getPresenceStatsDiningRoom(h);
+				p = g_vm->getPresenceStatsDiningRoom(h);
 			else if (roomId == BUREAU)
-				p = getPresenceStatsBureau(h);
+				p = g_vm->getPresenceStatsBureau(h);
 			else if (roomId == KITCHEN)
-				p = getPresenceStatsKitchen();
+				p = g_vm->getPresenceStatsKitchen();
 			else if ((roomId == ATTIC) || (roomId == CELLAR))
-				p = getPresenceStatsAttic();
+				p = g_vm->getPresenceStatsAttic();
 			else if ((roomId == LANDING) || (roomId == 26))
-				p = getPresenceStatsLanding();
+				p = g_vm->getPresenceStatsLanding();
 			else if (roomId == CHAPEL)
-				p = getPresenceStatsChapel(h);
+				p = g_vm->getPresenceStatsChapel(h);
 			p += g_s._faithScore;
 			rand = getRandomNumber(1, 100);
 			if (rand > p) {
@@ -1524,15 +1574,15 @@ int t11(int roomId) {
 				retVal = 0;
 			} else {
 				if (roomId == DINING_ROOM)
-					p = setPresenceDiningRoom(h);
+					p = g_vm->setPresenceDiningRoom(h);
 				else if (roomId == BUREAU)
-					p = setPresenceBureau(h);
+					p = g_vm->setPresenceBureau(h);
 				else if ((roomId == KITCHEN) || (roomId == ATTIC) || (roomId == CELLAR))
-					p = setPresenceKitchen();
+					p = g_vm->setPresenceKitchen();
 				else if ((roomId == LANDING) || (roomId == 26))
-					p = setPresenceLanding();
+					p = g_vm->setPresenceLanding();
 				else if (roomId == CHAPEL)
-					p = setPresenceChapel(h);
+					p = g_vm->setPresenceChapel(h);
 				retVal = p;
 			}
 		}
@@ -1602,20 +1652,17 @@ void musique(int so) {
 				g_vm->_speechManager.startSpeech(9, getRandomNumber(2, 4), 1);
 				i = true;
 			}
-		}
-		else if (g_s._currPlace == CHAPEL) {
+		} else if (g_s._currPlace == CHAPEL) {
 			if (getRandomNumber(1, 2) == 1) {
 				g_vm->_speechManager.startSpeech(8, 1, 1);
 				i = true;
 			}
-		}
-		else if (g_s._currPlace == WELL) {
+		} else if (g_s._currPlace == WELL) {
 			if (getRandomNumber(1, 2) == 2) {
 				g_vm->_speechManager.startSpeech(12, 1, 1);
 				i = true;
 			}
-		}
-		else if (g_s._currPlace == 23) {
+		} else if (g_s._currPlace == 23) {
 			g_vm->_speechManager.startSpeech(13, 1, 1);
 			i = true;
 		}
@@ -1673,28 +1720,28 @@ void tinke() {
 	const char d4 = ']';
 	const char d5 = '1';
 	Common::String d6 = g_vm->getEngineString(S_OK);
-	int cx, cf, day, hour, minute;
+	int cf, day, hour, minute;
 	Common::String stpo;
 
 	g_vm->_anyone = false;
 	updateHour(day, hour, minute);
 	if (day != g_day) {
 		g_day = day;
-		cx = 0;
+		int i = 0;
 		do {
-			++cx;
-			if (g_nbrepm[cx] != 0)
-				--g_nbrepm[cx];
-			g_nbrep[cx] = 0;
-		} while (cx != 8);
+			++i;
+			if (g_nbrepm[i] != 0)
+				--g_nbrepm[i];
+			g_nbrep[i] = 0;
+		} while (i != 8);
 	}
 	if ((hour > g_hour) || ((hour == 0) && (g_hour == 23))) {
 		g_hour = hour;
 		g_minute = 0;
 		drawClock();
 		cf = 0;
-		for (cx = 1; cx <= 10; ++cx) {
-			if (g_s._pourc[cx] == '*')
+		for (int i = 1; i <= 10; ++i) {
+			if (g_s._pourc[i] == '*')
 				++cf;
 		}
 
@@ -1741,43 +1788,43 @@ void tinke() {
 			g_vm->_menu.eraseMenu();
 			g_jh += ((nh - g_mh) / g_t);
 			g_mh = nh;
-			switch (g_li) {
-			case 1:
-			case 4 :
-				pl1(cf);
+			switch (g_vm->_place) {
+			case GREEN_ROOM:
+			case DARKBLUE_ROOM:
+				g_vm->setRandomPresenceGreenRoom(cf);
 				break;
-			case 2 :
-				pl2(cf);
+			case PURPLE_ROOM:
+				g_vm->setRandomPresencePurpleRoom(cf);
 				break;
-			case 5 :
-				pl5(cf);
+			case BLUE_ROOM:
+				g_vm->setRandomPresenceBlueRoom(cf);
 				break;
-			case 6:
-			case 8 :
-				pl6(cf);
+			case RED_ROOM:
+			case GREEN_ROOM2:
+				g_vm->setRandomPresenceRedRoom(cf);
 				break;
-			case 9 :
-				pl9(cf);
+			case ROOM9:
+				g_vm->setRandomPresenceRoom9(cf);
 				break;
-			case 10 :
-				pl10(cf);
+			case DINING_ROOM:
+				g_vm->setRandomPresenceDiningRoom(cf);
 				break;
-			case 11 :
-				pl11(cf);
+			case BUREAU:
+				g_vm->setRandomPresenceBureau(cf);
 				break;
-			case 12 :
-				pl12(cf);
+			case KITCHEN:
+				g_vm->setRandomPresenceKitchen(cf);
 				break;
-			case 13:
-			case 14 :
-				pl13(cf);
+			case ATTIC:
+			case CELLAR:
+				g_vm->setRandomPresenceAttic(cf);
 				break;
-			case 15:
-			case 26 :
-				pl15(cf);
+			case LANDING:
+			case 26:
+				g_vm->setRandomPresenceLanding(cf);
 				break;
-			case 20 :
-				pl20(cf);
+			case CHAPEL:
+				g_vm->setRandomPresenceChapel(cf);
 				break;
 			}
 			if ((g_mpers != 0) && (g_ipers != 10))
@@ -1809,7 +1856,7 @@ void tinke() {
 	}
 	g_hfb = readclock();
 	if ((g_vm->_brt) && ((g_hfb - g_hdb) > 17)) {
-		cx = nouvp(g_li);
+		nouvp(g_vm->_place);
 		g_vm->_brt = false;
 		g_hdb = 0;
 		if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
@@ -2436,7 +2483,7 @@ void MortevielleEngine::gameLoaded() {
 	_hiddenHero = false;
 	_brt = false;
 	g_maff = 68;
-	g_mnumo = 0;
+	g_mnumo = OPCODE_NONE;
 	g_prebru = 0;
 	g_x = 0;
 	g_y = 0;

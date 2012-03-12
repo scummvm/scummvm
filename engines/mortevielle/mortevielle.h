@@ -142,6 +142,7 @@ public:
 	int _textColor;
 	int _currGraphicalDevice;
 	int _newGraphicalDevice;
+	int _place;
 
 	int _c_zzz;
 	int ptr_word;
@@ -219,7 +220,40 @@ public:
 	void fctSmell();
 	void fctScratch();
 
+	int  getPresenceStatsGreenRoom();
+	int  getPresenceStatsPurpleRoom();
+	int  getPresenceStatsToilets();
+	int  getPresenceStatsBlueRoom();
+	int  getPresenceStatsRedRoom();
+	int  getPresenceStatsDiningRoom(int &hour);
+	int  getPresenceStatsBureau(int &hour);
+	int  getPresenceStatsKitchen();
+	int  getPresenceStatsAttic();
+	int  getPresenceStatsLanding();
+	int  getPresenceStatsChapel(int &hour);
+	void setPresenceGreenRoom(int roomId);
+	void setPresencePurpleRoom();
+	void setPresenceBlueRoom();
+	void setPresenceRedRoom(int roomId);
+	int setPresenceDiningRoom(int hour);
+	int setPresenceBureau(int hour);
+	int setPresenceKitchen();
+	int setPresenceLanding();
+	int setPresenceChapel(int hour);
+	void setRandomPresenceGreenRoom(int cf);
+	void setRandomPresencePurpleRoom(int cf);
+	void setRandomPresenceBlueRoom(int cf);
+	void setRandomPresenceRedRoom(int cf);
+	void setRandomPresenceRoom9(int cf);
+	void setRandomPresenceDiningRoom(int cf);
+	void setRandomPresenceBureau(int cf);
+	void setRandomPresenceKitchen(int cf);
+	void setRandomPresenceAttic(int cf);
+	void setRandomPresenceLanding(int cf);
+	void setRandomPresenceChapel(int cf);
+
 	void loadPlaces();
+	void initGame();
 };
 
 extern MortevielleEngine *g_vm;

@@ -57,7 +57,11 @@ const int kTempoM = 89;
 //const int offsetb2 = 4;
 
 class SpeechManager {
+private:
+	int _typlec;
+	int _phonemeNumb;
 public:
+	SpeechManager();
 	void spfrac(int wor);
 	void charg_car(int &currWordNumb);
 	void entroct(byte o);

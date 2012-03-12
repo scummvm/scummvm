@@ -123,7 +123,7 @@ Common::Error SavegameManager::loadGame(int n) {
 	
 	/* Initialization */
 	theure();
-	dprog();
+	g_vm->initGame();
 	g_vm->gameLoaded();
 	showMouse();
 	return Common::kNoError;

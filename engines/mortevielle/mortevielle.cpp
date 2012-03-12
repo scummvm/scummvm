@@ -84,6 +84,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_textColor = 0;
 	_currGraphicalDevice = -1;
 	_newGraphicalDevice = -1;
+	_place = -1;
 
 	_c_zzz = -1;
 
@@ -537,7 +538,7 @@ void MortevielleEngine::mainGame() {
 	_menu.initMenu();
 
 	theure();
-	dprog();
+	initGame();
 	hirs();
 	drawRightFrame();
 	showMouse();
