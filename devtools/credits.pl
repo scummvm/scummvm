@@ -536,6 +536,9 @@ begin_credits("Credits");
 	  "Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine, ".
 	  "and avoiding the horrible hack it could have been.");
 
+	  add_paragraph(
+	  "Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from. ");
+
   end_section();
 
 end_credits();
