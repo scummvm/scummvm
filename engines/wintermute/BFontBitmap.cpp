@@ -62,8 +62,10 @@ CBFontBitmap::CBFontBitmap(CBGame *inGame): CBFont(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBFontBitmap::~CBFontBitmap() {
-	SAFE_DELETE(m_Subframe);
-	SAFE_DELETE(m_Sprite);
+	delete m_Subframe;
+	delete m_Sprite;
+	m_Subframe = NULL;
+	m_Sprite = NULL;
 }
 
 
@@ -395,7 +397,7 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 	}
 
 	if (sprite_file != NULL) {
-		SAFE_DELETE(m_Sprite);
+		delete m_Sprite;
 		m_Sprite = new CBSprite(Game, this);
 		if (!m_Sprite || FAILED(m_Sprite->LoadFile(sprite_file))) SAFE_DELETE(m_Sprite);
 	}

@@ -49,13 +49,14 @@ CBNamedObject::CBNamedObject(TDynamicConstructor, TDynamicConstructor) {
 
 //////////////////////////////////////////////////////////////////////////
 CBNamedObject::~CBNamedObject(void) {
-	SAFE_DELETE_ARRAY(m_Name);
+	delete[] m_Name;
+	m_Name = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 void CBNamedObject::SetName(char *Name) {
-	SAFE_DELETE_ARRAY(m_Name);
+	delete[] m_Name;
 
 	m_Name = new char [strlen(Name) + 1];
 	if (m_Name != NULL) strcpy(m_Name, Name);

@@ -329,37 +329,41 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_BACK:
-			SAFE_DELETE(m_Back);
+			delete m_Back;
 			m_Back = new CUITiledImage(Game);
 			if (!m_Back || FAILED(m_Back->LoadFile((char *)params))) {
-				SAFE_DELETE(m_Back);
+				delete m_Back;
+				m_Back = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_INACTIVE:
-			SAFE_DELETE(m_BackInactive);
+			delete m_BackInactive;
 			m_BackInactive = new CUITiledImage(Game);
 			if (!m_BackInactive || FAILED(m_BackInactive->LoadFile((char *)params))) {
-				SAFE_DELETE(m_BackInactive);
+				delete m_BackInactive;
+				m_BackInactive = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			SAFE_DELETE(m_Image);
+			delete m_Image;
 			m_Image = new CBSprite(Game);
 			if (!m_Image || FAILED(m_Image->LoadFile((char *)params))) {
-				SAFE_DELETE(m_Image);
+				delete m_Image;
+				m_Image = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_INACTIVE:
-			SAFE_DELETE(m_ImageInactive),
+			delete m_ImageInactive,
 			m_ImageInactive = new CBSprite(Game);
 			if (!m_ImageInactive || FAILED(m_ImageInactive->LoadFile((char *)params))) {
-				SAFE_DELETE(m_ImageInactive);
+				delete m_ImageInactive;
+				m_ImageInactive = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -412,10 +416,11 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			SAFE_DELETE(m_Cursor);
+			delete m_Cursor;
 			m_Cursor = new CBSprite(Game);
 			if (!m_Cursor || FAILED(m_Cursor->LoadFile((char *)params))) {
-				SAFE_DELETE(m_Cursor);
+				delete m_Cursor;
+				m_Cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -423,7 +428,8 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_BUTTON: {
 			CUIButton *btn = new CUIButton(Game);
 			if (!btn || FAILED(btn->LoadBuffer(params, false))) {
-				SAFE_DELETE(btn);
+				delete btn;
+				btn = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
 				btn->m_Parent = this;
@@ -435,7 +441,8 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_STATIC: {
 			CUIText *text = new CUIText(Game);
 			if (!text || FAILED(text->LoadBuffer(params, false))) {
-				SAFE_DELETE(text);
+				delete text;
+				text = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
 				text->m_Parent = this;
@@ -447,7 +454,8 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_EDIT: {
 			CUIEdit *edit = new CUIEdit(Game);
 			if (!edit || FAILED(edit->LoadBuffer(params, false))) {
-				SAFE_DELETE(edit);
+				delete edit;
+				edit = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
 				edit->m_Parent = this;
@@ -459,7 +467,8 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_WINDOW: {
 			CUIWindow *win = new CUIWindow(Game);
 			if (!win || FAILED(win->LoadBuffer(params, false))) {
-				SAFE_DELETE(win);
+				delete win;
+				win = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
 				win->m_Parent = this;

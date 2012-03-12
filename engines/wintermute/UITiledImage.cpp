@@ -58,7 +58,8 @@ CUITiledImage::CUITiledImage(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CUITiledImage::~CUITiledImage() {
-	SAFE_DELETE(m_Image);
+	delete m_Image;
+	m_Image = NULL;
 }
 
 
@@ -198,10 +199,11 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_IMAGE:
-			SAFE_DELETE(m_Image);
+			delete m_Image;
 			m_Image = new CBSubFrame(Game);
 			if (!m_Image || FAILED(m_Image->SetSurface((char *)params))) {
-				SAFE_DELETE(m_Image);
+				delete m_Image;
+				m_Image = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
