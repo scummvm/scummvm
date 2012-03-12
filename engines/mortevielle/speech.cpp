@@ -35,9 +35,14 @@
 
 namespace Mortevielle {
 
+SpeechManager::SpeechManager() {
+	_typlec = 0;
+	_phonemeNumb = 0;
+}
+
 void SpeechManager::spfrac(int wor) {
 	g_c3._rep = (uint)wor >> 12;
-	if ((g_typlec == 0) && (g_c3._code != 9))
+	if ((_typlec == 0) && (g_c3._code != 9))
 		if (((g_c3._code > 4) && (g_c3._val != 20) && (g_c3._rep != 3) && (g_c3._rep != 6) && (g_c3._rep != 9)) ||
 				((g_c3._code < 5) && ((g_c3._val != 19) && (g_c3._val != 22) && (g_c3._rep != 4) && (g_c3._rep != 9)))) {
 			++g_c3._rep;
@@ -494,8 +499,8 @@ void SpeechManager::initQueue() {
 void SpeechManager::handlePhoneme() {
 	const int deca[3] = {300, 30, 40};
 
-	int startPos = swap(g_t_cph[g_phonemeNumb - 1]) + deca[g_typlec];
-	int endPos = swap(g_t_cph[g_phonemeNumb]) + deca[g_typlec];
+	int startPos = swap(g_t_cph[_phonemeNumb - 1]) + deca[_typlec];
+	int endPos = swap(g_t_cph[_phonemeNumb]) + deca[_typlec];
 	int wordCount = endPos - startPos;
 	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
 		WRITE_LE_UINT16(&g_mem[kAdrWord + currWord], g_t_cph[i]);
@@ -526,10 +531,10 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	if (g_vm->_soundOff)
 		return;
 
-	g_phonemeNumb = rep;
+	_phonemeNumb = rep;
 	g_haut = ht;
-	g_typlec = typ;
-	if (g_typlec != 0) {
+	_typlec = typ;
+	if (_typlec != 0) {
 		for (int i = 0; i <= 500; ++i)
 			savph[i] = g_t_cph[i];
 		tempo = kTempoNoise;
@@ -554,10 +559,10 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	}
 	handlePhoneme();
 	g_vm->_soundManager.litph(g_tbi, typ, tempo);
-	if (g_typlec != 0)
+	if (_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
 			g_t_cph[i] = savph[i];
-			g_mlec = g_typlec;
+			g_mlec = _typlec;
 		}
 	writepal(g_numpal);
 }

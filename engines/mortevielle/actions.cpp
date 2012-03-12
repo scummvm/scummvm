@@ -1602,7 +1602,7 @@ void MortevielleEngine::loseGame() {
 	tkey1(false);
 	maivid();
 	resetVariables();
-	dprog();
+	initGame();
 	g_vh = 10;
 	g_vm__ = 0;
 	g_vj = 0;
