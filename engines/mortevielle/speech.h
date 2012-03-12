@@ -56,22 +56,24 @@ const int kTempoM = 89;
 //const int seg_syst = 0x6fed;
 //const int offsetb2 = 4;
 
+class SpeechManager {
+public:
+	void spfrac(int wor);
+	void charg_car(int &currWordNumb);
+	void entroct(byte o);
+	void veracf(byte b);
+	void cctable(tablint &t);
+	void regenbruit();
+	void loadMusicSound();
+	void loadPhonemeSounds();
+	void loadNoise();
+	void trait_car();
 
-extern void spfrac(int wor);
-extern void charg_car(int &currWordNumb);
-extern void entroct(byte o);
-extern void veracf(byte b);
-extern void cctable(tablint &t);
-extern void regenbruit();
-extern void loadMusicSound();
-extern void loadPhonemeSounds();
-extern void loadNoise();
-extern void trait_car();
-
-extern void moveQueue();
-extern void initQueue();
-extern void handlePhoneme();
-extern void startSpeech(int rep, int ht, int typ);
+	void moveQueue();
+	void initQueue();
+	void handlePhoneme();
+	void startSpeech(int rep, int ht, int typ);
+};
 
 } // End of namespace Mortevielle
 #endif

@@ -35,7 +35,7 @@
 
 namespace Mortevielle {
 
-void spfrac(int wor) {
+void SpeechManager::spfrac(int wor) {
 	g_c3._rep = (uint)wor >> 12;
 	if ((g_typlec == 0) && (g_c3._code != 9))
 		if (((g_c3._code > 4) && (g_c3._val != 20) && (g_c3._rep != 3) && (g_c3._rep != 6) && (g_c3._rep != 9)) ||
@@ -47,7 +47,7 @@ void spfrac(int wor) {
 	g_c3._acc = ((uint)wor >> 9) & 7;
 }
 
-void charg_car(int &currWordNumb) {
+void SpeechManager::charg_car(int &currWordNumb) {
 	int wor = swap(READ_LE_UINT16(&g_mem[kAdrWord + currWordNumb]));
 	int int_ = wor & 0x3f; // 63
 
@@ -87,16 +87,16 @@ void charg_car(int &currWordNumb) {
 }
 
 
-void entroct(byte o) {
+void SpeechManager::entroct(byte o) {
 	g_mem[kAdrTroct * 16 + g_ptr_oct] = o;
 	++g_ptr_oct;
 }
 
-void veracf(byte b) {
+void SpeechManager::veracf(byte b) {
 	;
 }
 
-void cctable(tablint &t) {
+void SpeechManager::cctable(tablint &t) {
 	float tb[257];
 
 	tb[0] = 0;
@@ -106,7 +106,7 @@ void cctable(tablint &t) {
 	}
 }
 
-void regenbruit() {
+void SpeechManager::regenbruit() {
 	int i = kOffsetB3 + 8590;
 	int j = 0;
 	do {
@@ -120,7 +120,7 @@ void regenbruit() {
  * Load sonmus.mor file
  * @remarks	Originally called 'charge_son'
  */
-void loadMusicSound() {
+void SpeechManager::loadMusicSound() {
 	Common::File f;
 
 	if (!f.open("sonmus.mor"))
@@ -136,7 +136,7 @@ void loadMusicSound() {
  * Load phoneme sound file
  * @remarks	Originally called 'charge_phbruit'
  */
-void loadPhonemeSounds() {
+void SpeechManager::loadPhonemeSounds() {
 	Common::File f;
 
 	if (!f.open("phbrui.mor"))
@@ -152,7 +152,7 @@ void loadPhonemeSounds() {
  * Speech function - Load Noise file
  * @remarks	Originally called 'charge_bruit'
  */
-void loadNoise() {
+void SpeechManager::loadNoise() {
 	Common::File f;
 	int i;
 
@@ -167,7 +167,7 @@ void loadNoise() {
 	f.close();
 }
 
-void trait_car() {
+void SpeechManager::trait_car() {
 	byte d3;
 	int d2, i;
 
@@ -468,7 +468,7 @@ void trait_car() {
  * Make the queue evolve by 1 value
  * @remarks	Originally called 'rot_chariot'
  */
-void moveQueue() {
+void SpeechManager::moveQueue() {
 	g_c1 = g_c2;
 	g_c2 = g_c3;
 	g_c3._val = 32;
@@ -479,7 +479,7 @@ void moveQueue() {
  * initialize the queue
  * @remarks	Originally called 'init_chariot'
  */
-void initQueue() {
+void SpeechManager::initQueue() {
 	g_c3._rep = 0;
 	g_c3._freq = 0;
 	g_c3._acc = 0;
@@ -491,7 +491,7 @@ void initQueue() {
  * Handle a phoneme
  * @remarks	Originally called 'trait_ph'
  */
-void handlePhoneme() {
+void SpeechManager::handlePhoneme() {
 	const int deca[3] = {300, 30, 40};
 
 	int startPos = swap(g_t_cph[g_phonemeNumb - 1]) + deca[g_typlec];
@@ -519,7 +519,7 @@ void handlePhoneme() {
  * Start speech
  * @remarks	Originally called 'parole'
  */
-void startSpeech(int rep, int ht, int typ) {
+void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	int savph[501];
 	int tempo;
 

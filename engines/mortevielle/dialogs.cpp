@@ -424,7 +424,7 @@ void f3f8::draw() {
 void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	teskbd();
 	do {
-		startSpeech(SpeechNum, 0, 0);
+		g_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
 		waitForF3F8(g_key);
 		CHECK_QUIT;
 

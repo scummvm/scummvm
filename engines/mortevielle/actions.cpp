@@ -615,7 +615,7 @@ void MortevielleEngine::fctOpen() {
 				  || ((g_s._currPlace > RED_ROOM) && (g_s._currPlace < DINING_ROOM))
 				  || (g_s._currPlace == OWN_ROOM) || (g_s._currPlace == PURPLE_ROOM) || (g_s._currPlace == BLUE_ROOM)) {
 					if (getRandomNumber(1, 4) == 3)
-						startSpeech(7, 9, 1);
+						g_vm->_speechManager.startSpeech(7, 9, 1);
 				}
 				g_touv[tmpPlace] = chr(g_num);
 				aniof(1, g_num);
@@ -683,7 +683,7 @@ void MortevielleEngine::fctPlace() {
 					aniof(1, 1);
 					repon(2, 165);
 					maivid();
-					startSpeech(6, -9, 1);
+					g_vm->_speechManager.startSpeech(6, -9, 1);
 
 					// Do you want to enter the hidden passage?
 					int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
@@ -694,9 +694,9 @@ void MortevielleEngine::fctPlace() {
 						bool enterPassageFl = KnowledgeCheck::show();
 						hideMouse();
 						hirs();
-						dessine_rouleau();
+						drawRightFrame();
 						clearScreenType2();
-						clsf3();
+						clearScreenType3();
 						showMouse();
 						tinke();
 						drawClock();
@@ -784,7 +784,7 @@ void MortevielleEngine::fctTurn() {
 		g_crep = 997;
 		if ((g_s._currPlace == ATTIC) && (g_s._atticRodHoleObjectId == 159) && (g_s._atticBallHoleObjectId == 141)) {
 			repon(2, 167);
-			startSpeech(7, 9, 1);
+			g_vm->_speechManager.startSpeech(7, 9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1)
 				g_vm->_endGame = true;
@@ -793,8 +793,8 @@ void MortevielleEngine::fctTurn() {
 		}
 		if ((g_s._currPlace == SECRET_PASSAGE) && (g_s._secretPassageObjectId == 143)) {
 			repon(2, 175);
-			clsf3();
-			startSpeech(6, -9, 1);
+			clearScreenType3();
+			g_vm->_speechManager.startSpeech(6, -9, 1);
 			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1) {
 				g_s._currPlace = CRYPT;
@@ -920,7 +920,7 @@ void MortevielleEngine::fctKnock() {
 
 	if (g_s._currPlace == 26) {
 		int rand = (getRandomNumber(0, 8)) - 4;
-		startSpeech(11, rand, 1);
+		g_vm->_speechManager.startSpeech(11, rand, 1);
 		int p;
 		ecfren(p, rand, g_s._faithScore, g_ment);
 		int l = g_ment;
@@ -1138,7 +1138,7 @@ void MortevielleEngine::fctEnter() {
 				g_crep = 179;
 			else {
 				g_x = (getRandomNumber(0, 10)) - 5;
-				startSpeech(7, g_x, 1);
+				g_vm->_speechManager.startSpeech(7, g_x, 1);
 				aniof(1, 1);
 				
 				g_x = convertBitIndexToCharacterIndex(z);
@@ -1159,7 +1159,7 @@ void MortevielleEngine::fctEnter() {
 			}
 		} else {
 			g_x = (getRandomNumber(0, 10)) - 5;
-			startSpeech(7, g_x, 1);
+			_speechManager.startSpeech(7, g_x, 1);
 			aniof(1, 1);
 			
 			g_s._currPlace = g_ment;
@@ -1192,7 +1192,7 @@ void MortevielleEngine::fctSleep() {
 		debloc(g_s._currPlace);
 		g_vm->_menu.setDestinationMenuText(g_s._currPlace);
 	}
-	clsf3();
+	clearScreenType3();
 	clearScreenType2();
 	ecrf2();
 	ecr2(g_vm->getEngineString(S_WANT_TO_WAKE_UP));
@@ -1282,7 +1282,7 @@ void MortevielleEngine::fctLeave() {
  */
 void MortevielleEngine::fctWait() {
 	g_mpers = 0;
-	clsf3();
+	clearScreenType3();
 
 	int answer;
 	do {
@@ -1511,7 +1511,7 @@ void MortevielleEngine::fctDiscuss() {
 	g_ctrm = 0;
 	hideMouse();
 	hirs();
-	dessine_rouleau();
+	drawRightFrame();
 	showMouse();
 	showPeoplePresent(g_ipers);
 	tinke();
@@ -1519,7 +1519,7 @@ void MortevielleEngine::fctDiscuss() {
 	affrep();
 	/* chech;*/
 	g_vm->_menu.setDestinationMenuText(g_s._currPlace);
-	clsf3();
+	clearScreenType3();
 }
 
 /**
@@ -1562,9 +1562,9 @@ void MortevielleEngine::endGame() {
 	_quitGame = true;
 	tlu(13, 152);
 	maivid();
-	clsf1();
+	clearScreenType1();
 	clearScreenType2();
-	clsf3();
+	clearScreenType3();
 	repon(9, 1509);
 	tkey1(false);
 	hideMouse();
@@ -1574,7 +1574,7 @@ void MortevielleEngine::endGame() {
 	premtet();
 	sparl(0, 141);
 	showMouse();
-	clsf1();
+	clearScreenType1();
 	repon(9, 1509);
 	repon(2, 142);
 	tkey1(false);

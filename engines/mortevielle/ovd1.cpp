@@ -153,7 +153,7 @@ void music() {
 
 	g_vm->_soundManager.decodeMusic(&g_mem[0x3800 * 16], &g_mem[0x5000 * 16], 623);
 	g_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
-	cctable(g_tbi);
+	g_vm->_speechManager.cctable(g_tbi);
 
 	bool fin = false;
 	int k = 0;

@@ -50,21 +50,21 @@ extern int animof(int ouf, int num);
 extern int readclock();
 extern void modif(int &nu);
 extern void dessine(int ad, int x, int y);
-extern void dessine_rouleau();
+extern void drawRightFrame();
 extern void setTextColor(int c);
 /* NIVEAU 13 */
 extern void text1(int x, int y, int nb, int m);
 extern void initouv();
 extern void ecrf1();
-extern void clsf1();
+extern void clearScreenType1();
 extern void clearScreenType2();
+extern void clearScreenType3();
+extern void clearScreenType10();
 extern void ecrf2();
 extern void ecr2(Common::String str_);
-extern void clsf3();
 extern void ecr3(Common::String text);
 extern void ecrf6();
 extern void ecrf7();
-extern void clsf10();
 extern void stop();
 extern void paint_rect(int x, int y, int dx, int dy);
 extern void updateHour(int &day, int &hour, int &minute);
@@ -72,7 +72,7 @@ extern int convertCharacterIndexToBitIndex(int characterIndex);
 /* NIVEAU 12 */
 extern void modobj(int m);
 extern void repon(int f, int m);
-extern void t5(int cx);
+extern void t5(int roomId);
 extern void showPeoplePresent(int per);
 extern int selectCharacters(int min, int max);
 extern int getPresenceStatsGreenRoom();
@@ -86,7 +86,7 @@ extern void drawClock();
 /*************
  * NIVEAU 11 *
  *************/
-extern void debloc(int l);
+extern void debloc(int roomId);
 extern int  getPresenceStatsDiningRoom(int &hour);
 extern int  getPresenceStatsBureau(int &hour);
 extern int  getPresenceStatsKitchen();
@@ -103,10 +103,10 @@ extern int setPresenceKitchen();
 extern int setPresenceLanding();
 extern int setPresenceChapel(int hour);
 extern void getKnockAnswer();
-extern int nouvp(int l);
+extern int nouvp(int roomId);
 extern int convertBitIndexToCharacterIndex(int bitIndex);
-extern void ecfren(int &p, int &rand, int cf, int l);
-extern void becfren(int l);
+extern void ecfren(int &p, int &rand, int cf, int roomId);
+extern void becfren(int roomId);
 /* NIVEAU 10 */
 extern void init_nbrepm();
 extern void phaz(int &rand, int &p, int cf);
@@ -123,7 +123,7 @@ extern void pl12(int cf);
 extern void pl13(int cf);
 extern void pl15(int cf);
 extern void pl20(int cf);
-extern int t11(int l11);
+extern int t11(int roomId);
 extern void cavegre();
 extern void writetp(Common::String s, int t);
 extern void aniof(int ouf, int num);
