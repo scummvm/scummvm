@@ -159,7 +159,9 @@ osxsnap: bundle
 	$(srcdir)/devtools/credits.pl --text > $(srcdir)/AUTHORS
 	cp $(srcdir)/AUTHORS ./ResidualVM-snapshot/Authors
 	cp $(srcdir)/COPYING ./ResidualVM-snapshot/License\ \(GPL\)
+	cp $(srcdir)/COPYING.BSD ./ResidualVM-snapshot/License\ \(BSD\)
 	cp $(srcdir)/COPYING.LGPL ./ResidualVM-snapshot/License\ \(LGPL\)
+	cp $(srcdir)/COPYING.FREEFONT ./ResidualVM-snapshot/License\ \(FREEFONT\)
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
 	cp $(srcdir)/README ./ResidualVM-snapshot/Residual\ ReadMe
@@ -196,6 +198,7 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
+	cp $(srcdir)/COPYING.BSD $(WIN32PATH)/COPYING.BSD.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
@@ -258,6 +261,7 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 	cp $(srcdir)/AUTHORS ResidualVMWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING ResidualVMWin32/COPYING.txt
+	cp $(srcdir)/COPYING.BSD ResidualVMWin32/COPYING.BSD.txt
 	cp $(srcdir)/COPYING.LGPL ResidualVMWin32/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.FREEFONT ResidualVMWin32/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
