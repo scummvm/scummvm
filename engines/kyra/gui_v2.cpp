@@ -360,7 +360,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 
 			if (buttonList->buttonCallback) {
 				_vm->removeInputTop();
-				if ((*buttonList->buttonCallback.get())(buttonList))
+				if ((*buttonList->buttonCallback)(buttonList))
 					break;
 			}
 

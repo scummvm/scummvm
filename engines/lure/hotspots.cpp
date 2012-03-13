@@ -1169,30 +1169,30 @@ bool Hotspot::doorCloseCheck(uint16 doorId) {
 	HotspotList::iterator i;
 	HotspotList &lst = res.activeHotspots();
 	for (i = lst.begin(); i != lst.end(); ++i) {
-		Hotspot *hsCurrent = (*i).get();
+		Hotspot const &hsCurrent = **i;
 
 		// Skip entry if it's the door or the character
-		if ((hsCurrent->hotspotId() == hotspotId()) ||
-			(hsCurrent->hotspotId() == doorHotspot->hotspotId()))
+		if ((hsCurrent.hotspotId() == hotspotId()) ||
+			(hsCurrent.hotspotId() == doorHotspot->hotspotId()))
 			continue;
 
 		// Skip entry if it doesn't meet certain criteria
-		if ((hsCurrent->layer() == 0) ||
-			(hsCurrent->roomNumber() != doorHotspot->roomNumber()) ||
-			(hsCurrent->hotspotId() < PLAYER_ID) ||
-			((hsCurrent->hotspotId() >= 0x408) && (hsCurrent->hotspotId() < 0x2710)))
+		if ((hsCurrent.layer() == 0) ||
+			(hsCurrent.roomNumber() != doorHotspot->roomNumber()) ||
+			(hsCurrent.hotspotId() < PLAYER_ID) ||
+			((hsCurrent.hotspotId() >= 0x408) && (hsCurrent.hotspotId() < 0x2710)))
 			continue;
 
 		// Also skip entry if special Id
-		if ((hsCurrent->hotspotId() == 0xfffe) || (hsCurrent->hotspotId() == 0xffff))
+		if ((hsCurrent.hotspotId() == 0xfffe) || (hsCurrent.hotspotId() == 0xffff))
 			continue;
 
 		// Check to see if the character is intersecting the door area
-		int tempY = hsCurrent->y() + hsCurrent->heightCopy();
-		if ((hsCurrent->x() >= bounds.right) ||
-			(hsCurrent->x() + hsCurrent->widthCopy() <= bounds.left) ||
-			(tempY + hsCurrent->charRectY() < bounds.top) ||
-			(tempY - hsCurrent->yCorrection() - hsCurrent->charRectY() > bounds.bottom))
+		int tempY = hsCurrent.y() + hsCurrent.heightCopy();
+		if ((hsCurrent.x() >= bounds.right) ||
+			(hsCurrent.x() + hsCurrent.widthCopy() <= bounds.left) ||
+			(tempY + hsCurrent.charRectY() < bounds.top) ||
+			(tempY - hsCurrent.yCorrection() - hsCurrent.charRectY() > bounds.bottom))
 			continue;
 
 		// At this point we know a character is blocking door, so return false
@@ -1883,12 +1883,12 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 	HotspotDataList &list = res.hotspotData();
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		HotspotData *rec = (*i).get();
+		HotspotData const &rec = **i;
 
-		if (rec->roomNumber == PLAYER_ID) {
+		if (rec.roomNumber == PLAYER_ID) {
 			if (numItems++ == 0) strcat(buffer, ": ");
 			else strcat(buffer, ", ");
-			strings.getString(rec->nameId, buffer + strlen(buffer));
+			strings.getString(rec.nameId, buffer + strlen(buffer));
 		}
 	}
 
@@ -4385,8 +4385,8 @@ Common::String PathFinder::getDebugInfo() const {
 
 	WalkingActionList::const_iterator i;
 	for (i = _list.begin(); i != _list.end(); ++i) {
-		WalkingActionEntry *e = (*i).get();
-		buffer += Common::String::format("Direction=%d, numSteps=%d\n", e->direction(), e->numSteps());
+		WalkingActionEntry const &e = **i;
+		buffer += Common::String::format("Direction=%d, numSteps=%d\n", e.direction(), e.numSteps());
 	}
 
 	return buffer;
@@ -4505,9 +4505,9 @@ void PathFinder::saveToStream(Common::WriteStream *stream) const {
 
 		// Save any active step sequence
 		for (WalkingActionList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
-			WalkingActionEntry *entry = (*i).get();
-			stream->writeByte(entry->direction());
-			stream->writeSint16LE(entry->rawSteps());
+			WalkingActionEntry &entry = **i;
+			stream->writeByte(entry.direction());
+			stream->writeSint16LE(entry.rawSteps());
 		}
 		stream->writeByte(0xff);
 		stream->writeSint16LE(_stepCtr);
@@ -4684,15 +4684,15 @@ bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
 
 void HotspotList::saveToStream(Common::WriteStream *stream) const {
 	for (HotspotList::const_iterator i = begin(); i != end(); ++i) {
-		Hotspot *hotspot = (*i).get();
-		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Saving hotspot %xh", hotspot->hotspotId());
-		bool dynamicObject = hotspot->hotspotId() != hotspot->originalId();
-		stream->writeUint16LE(hotspot->originalId());
+		Hotspot const &hotspot = **i;
+		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Saving hotspot %xh", hotspot.hotspotId());
+		bool dynamicObject = hotspot.hotspotId() != hotspot.originalId();
+		stream->writeUint16LE(hotspot.originalId());
 		stream->writeByte(dynamicObject);
-		stream->writeUint16LE(hotspot->destHotspotId());
-		hotspot->saveToStream(stream);
+		stream->writeUint16LE(hotspot.destHotspotId());
+		hotspot.saveToStream(stream);
 
-		debugC(ERROR_DETAILED, kLureDebugAnimations, "Saved hotspot %xh", hotspot->hotspotId());
+		debugC(ERROR_DETAILED, kLureDebugAnimations, "Saved hotspot %xh", hotspot.hotspotId());
 	}
 	stream->writeUint16LE(0);
 }

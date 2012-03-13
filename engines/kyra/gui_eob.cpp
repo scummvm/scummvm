@@ -1460,7 +1460,7 @@ void GUI_EoB::processButton(Button *button) {
 				// nullsub (at least EOBII)
 			} else if (button->data0Val1 == 4) {
 				if (button->data1Callback)
-					(*button->data1Callback.get())(button);
+					(*button->data1Callback)(button);
 			}
 		} else if (button->data1Val1 == 2) {
 			if (!(button->flags2 & 4))
@@ -1469,7 +1469,7 @@ void GUI_EoB::processButton(Button *button) {
 			// nullsub (at least EOBII)
 		} else if (button->data1Val1 == 4) {
 			if (button->data1Callback)
-				(*button->data1Callback.get())(button);
+				(*button->data1Callback)(button);
 		}
 	}
 
@@ -1486,7 +1486,7 @@ void GUI_EoB::processButton(Button *button) {
 				// nullsub (at least EOBII)
 			} else if (button->data0Val1 == 4) {
 				if (button->data2Callback)
-					(*button->data2Callback.get())(button);
+					(*button->data2Callback)(button);
 			}
 		} else if (button->data2Val1 == 2) {
 			_screen->drawBox(sx, sy, fx2, fy2, (button->flags2 & 1) ? button->data3Val2 : button->data2Val2);
@@ -1494,7 +1494,7 @@ void GUI_EoB::processButton(Button *button) {
 			// nullsub (at least EOBII)
 		} else if (button->data2Val1 == 4) {
 			if (button->data2Callback)
-				(*button->data2Callback.get())(button);
+				(*button->data2Callback)(button);
 		}
 	}
 
@@ -1507,7 +1507,7 @@ void GUI_EoB::processButton(Button *button) {
 			// nullsub (at least EOBII)
 		} else if (button->data0Val1 == 4) {
 			if (button->data0Callback)
-				(*button->data0Callback.get())(button);
+				(*button->data0Callback)(button);
 		} else if (button->data0Val1 == 5) {
 			_screen->drawBox(sx, sy, fx2, fy2, button->data0Val2);
 		} else {
@@ -1876,7 +1876,7 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 			processButton(buttonList);
 
 		if (v6 && buttonList->buttonCallback)
-			runLoop = !(*buttonList->buttonCallback.get())(buttonList);
+			runLoop = !(*buttonList->buttonCallback)(buttonList);
 
 		if ((flgs2 & 2) && (flgs & 0x20))
 			runLoop = false;

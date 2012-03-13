@@ -138,8 +138,8 @@ void Room::leaveRoom() {
 	HotspotList &list = r.activeHotspots();
 	HotspotList::iterator i = list.begin();
 	while (i != list.end()) {
-		Hotspot *h = i->get();
-		if (!h->persistant()) {
+		Hotspot const &h = **i;
+		if (!h.persistant()) {
 			i = list.erase(i);
 		} else {
 			++i;
@@ -153,11 +153,11 @@ void Room::loadRoomHotspots() {
 
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		HotspotData *rec = (*i).get();
+		HotspotData const &rec = **i;
 
-		if ((rec->hotspotId < 0x7530) && (rec->roomNumber == _roomNumber) &&
-			(rec->layer != 0))
-			r.activateHotspot(rec->hotspotId);
+		if ((rec.hotspotId < 0x7530) && (rec.roomNumber == _roomNumber) &&
+			(rec.layer != 0))
+			r.activateHotspot(rec.hotspotId);
 	}
 }
 
@@ -252,24 +252,24 @@ CursorType Room::checkRoomExits() {
 
 	RoomExitHotspotList::iterator i;
 	for (i = exits.begin(); i != exits.end(); ++i) {
-		RoomExitHotspotData *rec = (*i).get();
+		RoomExitHotspotData const &rec = **i;
 		skipFlag = false;
 
-		if (rec->hotspotId != 0) {
-			join = res.getExitJoin(rec->hotspotId);
+		if (rec.hotspotId != 0) {
+			join = res.getExitJoin(rec.hotspotId);
 			if ((join) && (join->blocked != 0))
 				skipFlag = true;
 		}
 
-		if (!skipFlag && (m.x() >= rec->xs) && (m.x() <= rec->xe) &&
-			(m.y() >= rec->ys) && (m.y() <= rec->ye)) {
+		if (!skipFlag && (m.x() >= rec.xs) && (m.x() <= rec.xe) &&
+			(m.y() >= rec.ys) && (m.y() <= rec.ye)) {
 			// Cursor is within exit area
-			CursorType cursorNum = (CursorType)rec->cursorNum;
-			_destRoomNumber = rec->destRoomNumber;
+			CursorType cursorNum = (CursorType)rec.cursorNum;
+			_destRoomNumber = rec.destRoomNumber;
 
 			// If it's a hotspotted exit, change arrow to the + arrow
-			if (rec->hotspotId != 0) {
-				_hotspotId = rec->hotspotId;
+			if (rec.hotspotId != 0) {
+				_hotspotId = rec.hotspotId;
 				_hotspot = res.getHotspot(_hotspotId);
 				_hotspotNameId = _hotspot->nameId;
 				_isExit = true;

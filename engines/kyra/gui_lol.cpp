@@ -2165,7 +2165,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 			if (buttonList->buttonCallback) {
 				//_vm->removeInputTop();
-				if ((*buttonList->buttonCallback.get())(buttonList))
+				if ((*buttonList->buttonCallback)(buttonList))
 					break;
 			}
 

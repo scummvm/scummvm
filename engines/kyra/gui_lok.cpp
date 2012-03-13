@@ -243,7 +243,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 		}
 
 		if (mouseWheel && list->mouseWheel == mouseWheel && list->buttonCallback) {
-			if ((*list->buttonCallback.get())(list))
+			if ((*list->buttonCallback)(list))
 				break;
 		}
 
@@ -282,7 +282,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 
 			if (processMouseClick) {
 				if (list->buttonCallback) {
-					if ((*list->buttonCallback.get())(list))
+					if ((*list->buttonCallback)(list))
 						break;
 				}
 			}
@@ -349,7 +349,7 @@ void GUI_LoK::processButton(Button *button) {
 	if (processType == 1 && shape)
 		_screen->drawShape(_screen->_curPage, shape, x, y, button->dimTableIndex, 0x10);
 	else if (processType == 4 && callback)
-		(*callback.get())(button);
+		(*callback)(button);
 }
 
 void GUI_LoK::setGUILabels() {

@@ -107,8 +107,7 @@ void SoundManager::saveToStream(Common::WriteStream *stream) {
 	SoundListIterator i;
 
 	for (i = _activeSounds.begin(); i != _activeSounds.end(); ++i) {
-		SoundDescResource *rec = (*i).get();
-		stream->writeByte(rec->soundNumber);
+		stream->writeByte((*i)->soundNumber);
 	}
 	stream->writeByte(0xff);
 }
@@ -335,14 +334,14 @@ void SoundManager::tidySounds() {
 	SoundListIterator i = _activeSounds.begin();
 
 	while (i != _activeSounds.end()) {
-		SoundDescResource *rec = (*i).get();
+		SoundDescResource const &rec = **i;
 
-		if (musicInterface_CheckPlaying(rec->soundNumber))
+		if (musicInterface_CheckPlaying(rec.soundNumber))
 			// Still playing, so move to next entry
 			++i;
 		else {
 			// Mark the channels that it used as now being free
-			Common::fill(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, false);
+			Common::fill(_channelsInUse + rec.channel, _channelsInUse + rec.channel + rec.numChannels, false);
 
 			i = _activeSounds.erase(i);
 		}
@@ -356,10 +355,10 @@ void SoundManager::removeSounds() {
 	SoundListIterator i = _activeSounds.begin();
 
 	while (i != _activeSounds.end()) {
-		SoundDescResource *rec = (*i).get();
+		SoundDescResource const &rec = **i;
 
-		if ((rec->flags & SF_IN_USE) != 0)
-			musicInterface_Stop(rec->soundNumber);
+		if ((rec.flags & SF_IN_USE) != 0)
+			musicInterface_Stop(rec.soundNumber);
 
 		++i;
 	}
@@ -370,13 +369,13 @@ void SoundManager::restoreSounds() {
 	SoundListIterator i = _activeSounds.begin();
 
 	while (i != _activeSounds.end()) {
-		SoundDescResource *rec = (*i).get();
+		SoundDescResource const &rec = **i;
 
-		if ((rec->numChannels != 0) && ((rec->flags & SF_RESTORE) != 0)) {
-			Common::fill(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, true);
+		if ((rec.numChannels != 0) && ((rec.flags & SF_RESTORE) != 0)) {
+			Common::fill(_channelsInUse + rec.channel, _channelsInUse + rec.channel + rec.numChannels, true);
 
-			musicInterface_Play(rec->soundNumber, rec->channel, rec->numChannels);
-			musicInterface_SetVolume(rec->channel, rec->volume);
+			musicInterface_Play(rec.soundNumber, rec.channel, rec.numChannels);
+			musicInterface_SetVolume(rec.channel, rec.volume);
 		}
 
 		++i;
@@ -397,10 +396,10 @@ void SoundManager::fadeOut() {
 		g_system->lockMutex(_soundMutex);
 		MusicListIterator i;
 		for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-			MidiMusic *music = (*i).get();
-			if (music->getVolume() > 0) {
+			MidiMusic &music = **i;
+			if (music.getVolume() > 0) {
 				inProgress = true;
-				music->setVolume(music->getVolume() >= 10 ? (music->getVolume() - 10) : 0);
+				music.setVolume(music.getVolume() >= 10 ? music.getVolume() - 10 : 0);
 			}
 		}
 
@@ -468,8 +467,7 @@ void SoundManager::musicInterface_Stop(uint8 soundNumber) {
 	g_system->lockMutex(_soundMutex);
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = (*i).get();
-		if (music->soundNumber() == soundNum) {
+		if ((*i)->soundNumber() == soundNum) {
 			_playingSounds.erase(i);
 			break;
 		}
@@ -489,8 +487,7 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 	g_system->lockMutex(_soundMutex);
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = (*i).get();
-		if (music->soundNumber() == soundNum) {
+		if ((*i)->soundNumber() == soundNum) {
 			result = true;
 			break;
 		}
@@ -511,9 +508,9 @@ void SoundManager::musicInterface_SetVolume(uint8 channelNum, uint8 volume) {
 	g_system->lockMutex(_soundMutex);
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = (*i).get();
-		if (music->channelNumber() == channelNum)
-			music->setVolume(volume);
+		MidiMusic &music = **i;
+		if (music.channelNumber() == channelNum)
+			music.setVolume(volume);
 	}
 	g_system->unlockMutex(_soundMutex);
 }
@@ -528,8 +525,7 @@ void SoundManager::musicInterface_KillAll() {
 	g_system->lockMutex(_soundMutex);
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = (*i).get();
-		music->stopMusic();
+		(*i)->stopMusic();
 	}
 
 	_playingSounds.clear();
@@ -561,8 +557,7 @@ void SoundManager::musicInterface_TidySounds() {
 	g_system->lockMutex(_soundMutex);
 	MusicListIterator i = _playingSounds.begin();
 	while (i != _playingSounds.end()) {
-		MidiMusic *music = (*i).get();
-		if (!music->isPlaying())
+		if (!(*i)->isPlaying())
 			i = _playingSounds.erase(i);
 		else
 			++i;
@@ -583,9 +578,9 @@ void SoundManager::doTimer() {
 
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = (*i).get();
-		if (music->isPlaying())
-			music->onTimer();
+		MidiMusic &music = **i;
+		if (music.isPlaying())
+			music.onTimer();
 	}
 
 	g_system->unlockMutex(_soundMutex);

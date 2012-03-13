@@ -280,9 +280,9 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 
 void RoomDataList::saveToStream(Common::WriteStream *stream) const {
 	for (RoomDataList::const_iterator i = begin(); i != end(); ++i) {
-		RoomData *rec = (*i).get();
-		stream->writeByte(rec->flags);
-		const byte *pathData = rec->paths.data();
+		RoomData const &rec = **i;
+		stream->writeByte(rec.flags);
+		const byte *pathData = rec.paths.data();
 		stream->write(pathData, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
 	}
 }
@@ -292,10 +292,10 @@ void RoomDataList::loadFromStream(Common::ReadStream *stream) {
 	byte data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
 
 	for (i = begin(); i != end(); ++i) {
-		RoomData *rec = (*i).get();
-		rec->flags = stream->readByte();
+		RoomData &rec = **i;
+		rec.flags = stream->readByte();
 		stream->read(data, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
-		rec->paths.load(data);
+		rec.paths.load(data);
 	}
 }
 
@@ -317,15 +317,15 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 
 void RoomExitJoinList::saveToStream(Common::WriteStream *stream) const {
 	for (RoomExitJoinList::const_iterator i = begin(); i != end(); ++i) {
-		RoomExitJoinData *rec = (*i).get();
+		RoomExitJoinData const &rec = **i;
 
-		stream->writeUint16LE(rec->hotspots[0].hotspotId);
-		stream->writeUint16LE(rec->hotspots[1].hotspotId);
-		stream->writeByte(rec->hotspots[0].currentFrame);
-		stream->writeByte(rec->hotspots[0].destFrame);
-		stream->writeByte(rec->hotspots[1].currentFrame);
-		stream->writeByte(rec->hotspots[1].destFrame);
-		stream->writeByte(rec->blocked);
+		stream->writeUint16LE(rec.hotspots[0].hotspotId);
+		stream->writeUint16LE(rec.hotspots[1].hotspotId);
+		stream->writeByte(rec.hotspots[0].currentFrame);
+		stream->writeByte(rec.hotspots[0].destFrame);
+		stream->writeByte(rec.hotspots[1].currentFrame);
+		stream->writeByte(rec.hotspots[1].destFrame);
+		stream->writeByte(rec.blocked);
 	}
 
 	// Write end of list marker
@@ -334,21 +334,21 @@ void RoomExitJoinList::saveToStream(Common::WriteStream *stream) const {
 
 void RoomExitJoinList::loadFromStream(Common::ReadStream *stream) {
 	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
-		RoomExitJoinData *rec = (*i).get();
+		RoomExitJoinData &rec = **i;
 
 		uint16 hotspot1Id = stream->readUint16LE();
 		if (hotspot1Id == 0xffff) error("Invalid room exit join list");
 		uint16 hotspot2Id = stream->readUint16LE();
 
-		if ((rec->hotspots[0].hotspotId != hotspot1Id) ||
-			(rec->hotspots[1].hotspotId != hotspot2Id))
+		if ((rec.hotspots[0].hotspotId != hotspot1Id) ||
+			(rec.hotspots[1].hotspotId != hotspot2Id))
 			break;
 
-		rec->hotspots[0].currentFrame = stream->readByte();
-		rec->hotspots[0].destFrame = stream->readByte();
-		rec->hotspots[1].currentFrame = stream->readByte();
-		rec->hotspots[1].destFrame = stream->readByte();
-		rec->blocked = stream->readByte();
+		rec.hotspots[0].currentFrame = stream->readByte();
+		rec.hotspots[0].destFrame    = stream->readByte();
+		rec.hotspots[1].currentFrame = stream->readByte();
+		rec.hotspots[1].destFrame    = stream->readByte();
+		rec.blocked = stream->readByte();
 	}
 
 	// Read final end of list marker
@@ -366,8 +366,8 @@ HotspotActionData::HotspotActionData(HotspotActionResource *rec) {
 uint16 HotspotActionList::getActionOffset(Action action) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		HotspotActionData *rec = (*i).get();
-		if (rec->action == action) return rec->sequenceOffset;
+		HotspotActionData const &rec = **i;
+		if (rec.action == action) return rec.sequenceOffset;
 	}
 
 	return 0;
@@ -534,9 +534,9 @@ void HotspotData::loadFromStream(Common::ReadStream *stream) {
 
 void HotspotDataList::saveToStream(Common::WriteStream *stream) const {
 	for (const_iterator i = begin(); i != end(); ++i) {
-		HotspotData *hotspot = (*i).get();
-		stream->writeUint16LE(hotspot->hotspotId);
-		hotspot->saveToStream(stream);
+		HotspotData const &hotspot = **i;
+		stream->writeUint16LE(hotspot.hotspotId);
+		hotspot.saveToStream(stream);
 	}
 	stream->writeUint16LE(0);
 }
@@ -579,14 +579,14 @@ bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange,
 	iterator i;
 
 	for (i = begin(); i != end(); ++i) {
-		MovementData *rec = (*i).get();
+		MovementData const &rec = **i;
 		if (foundFlag || (i == begin())) {
-			xChange = rec->xChange;
-			yChange = rec->yChange;
-			nextFrame = rec->frameNumber;
+			xChange = rec.xChange;
+			yChange = rec.yChange;
+			nextFrame = rec.frameNumber;
 			if (foundFlag) return true;
 		}
-		if (rec->frameNumber == currentFrame) foundFlag = true;
+		if (rec.frameNumber == currentFrame) foundFlag = true;
 	}
 
 	return true;
@@ -698,11 +698,10 @@ TalkEntryData *TalkData::getResponse(int index) {
 
 void TalkDataList::saveToStream(Common::WriteStream *stream) const {
 	for (TalkDataList::const_iterator i = begin(); i != end(); ++i) {
-		TalkData *rec = (*i).get();
+		TalkData const &rec = **i;
 
-		for (TalkEntryList::const_iterator i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
-			TalkEntryData *entry = (*i2).get();
-			stream->writeUint16LE(entry->descId);
+		for (TalkEntryList::const_iterator i2 = rec.entries.begin(); i2 != rec.entries.end(); ++i2) {
+			stream->writeUint16LE((*i2)->descId);
 		}
 	}
 }
@@ -710,11 +709,10 @@ void TalkDataList::saveToStream(Common::WriteStream *stream) const {
 void TalkDataList::loadFromStream(Common::ReadStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
-		TalkData *rec = (*i).get();
+		TalkData const &rec = **i;
 
-		for (TalkEntryList::const_iterator i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
-			TalkEntryData *entry = (*i2).get();
-			entry->descId = stream->readUint16LE();
+		for (TalkEntryList::const_iterator i2 = rec.entries.begin(); i2 != rec.entries.end(); ++i2) {
+			(*i2)->descId = stream->readUint16LE();
 		}
 	}
 }
@@ -779,17 +777,17 @@ void SequenceDelayList::tick() {
 		g_system->getMillis());
 
 	for (i = begin(); i != end(); ++i) {
-		SequenceDelayData *entry = (*i).get();
-		debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check %xh at time %d", entry->sequenceOffset, entry->timeoutCtr);
+		SequenceDelayData &entry = **i;
+		debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check %xh at time %d", entry.sequenceOffset, entry.timeoutCtr);
 
-		if (entry->timeoutCtr <= GAME_FRAME_DELAY) {
+		if (entry.timeoutCtr <= GAME_FRAME_DELAY) {
 			// Timeout reached - delete entry from list and execute the sequence
-			uint16 seqOffset = entry->sequenceOffset;
+			uint16 seqOffset = entry.sequenceOffset;
 			erase(i);
 			Script::execute(seqOffset);
 			return;
 		} else {
-			entry->timeoutCtr -= GAME_FRAME_DELAY;
+			entry.timeoutCtr -= GAME_FRAME_DELAY;
 		}
 	}
 }
@@ -798,8 +796,7 @@ void SequenceDelayList::clear(bool forceClear) {
 	SequenceDelayList::iterator i = begin();
 
 	while (i != end()) {
-		SequenceDelayData *entry = (*i).get();
-		if (entry->canClear || forceClear)
+		if ((*i)->canClear || forceClear)
 			i = erase(i);
 		else
 			++i;
@@ -808,10 +805,10 @@ void SequenceDelayList::clear(bool forceClear) {
 
 void SequenceDelayList::saveToStream(Common::WriteStream *stream) const {
 	for (SequenceDelayList::const_iterator i = begin(); i != end(); ++i) {
-		SequenceDelayData *entry = (*i).get();
-		stream->writeUint16LE(entry->sequenceOffset);
-		stream->writeUint32LE(entry->timeoutCtr);
-		stream->writeByte(entry->canClear);
+		SequenceDelayData const &entry = **i;
+		stream->writeUint16LE(entry.sequenceOffset);
+		stream->writeUint32LE(entry.timeoutCtr);
+		stream->writeByte(entry.canClear);
 	}
 
 	stream->writeUint16LE(0);
@@ -1044,9 +1041,9 @@ RoomExitIndexedHotspotData::RoomExitIndexedHotspotData(RoomExitIndexedHotspotRes
 uint16 RoomExitIndexedHotspotList::getHotspot(uint16 roomNumber, uint8 hotspotIndexId) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		RoomExitIndexedHotspotData *entry = (*i).get();
-		if ((entry->roomNumber == roomNumber) && (entry->hotspotIndex == hotspotIndexId))
-			return entry->hotspotId;
+		RoomExitIndexedHotspotData const &entry = **i;
+		if ((entry.roomNumber == roomNumber) && (entry.hotspotIndex == hotspotIndexId))
+			return entry.hotspotId;
 	}
 
 	// No hotspot
@@ -1066,12 +1063,12 @@ PausedCharacter::PausedCharacter(uint16 SrcCharId, uint16 DestCharId) {
 void PausedCharacterList::reset(uint16 hotspotId) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
-		PausedCharacter *rec = (*i).get();
+		PausedCharacter &rec = **i;
 
-		if (rec->srcCharId == hotspotId) {
-			rec->counter = 1;
-			if (rec->destCharId < START_EXIT_ID)
-				rec->charHotspot->pauseCtr = 1;
+		if (rec.srcCharId == hotspotId) {
+			rec.counter = 1;
+			if (rec.destCharId < START_EXIT_ID)
+				rec.charHotspot->pauseCtr = 1;
 		}
 	}
 }
@@ -1080,15 +1077,15 @@ void PausedCharacterList::countdown() {
 	iterator i = begin();
 
 	while (i != end()) {
-		PausedCharacter *rec = (*i).get();
-		--rec->counter;
+		PausedCharacter &rec = **i;
+		--rec.counter;
 
 		// Handle reflecting counter to hotspot
-		if (rec->destCharId < START_EXIT_ID)
-			rec->charHotspot->pauseCtr = rec->counter + 1;
+		if (rec.destCharId < START_EXIT_ID)
+			rec.charHotspot->pauseCtr = rec.counter + 1;
 
 		// If counter has reached zero, remove entry from list
-		if (rec->counter == 0)
+		if (rec.counter == 0)
 			i = erase(i);
 		else
 			++i;
@@ -1101,13 +1098,13 @@ void PausedCharacterList::scan(Hotspot &h) {
 	if (h.blockedState() != BS_NONE) {
 
 		for (i = begin(); i != end(); ++i) {
-			PausedCharacter *rec = (*i).get();
+			PausedCharacter &rec = **i;
 
-			if (rec->srcCharId == h.hotspotId()) {
-				rec->counter = IDLE_COUNTDOWN_SIZE;
+			if (rec.srcCharId == h.hotspotId()) {
+				rec.counter = IDLE_COUNTDOWN_SIZE;
 
-				if (rec->destCharId < START_EXIT_ID)
-					rec->charHotspot->pauseCtr = IDLE_COUNTDOWN_SIZE;
+				if (rec.destCharId < START_EXIT_ID)
+					rec.charHotspot->pauseCtr = IDLE_COUNTDOWN_SIZE;
 			}
 		}
 	}
@@ -1131,9 +1128,9 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 		// calling character and the impinging list entry
 		bool foundEntry = false;
 		for (i = res.pausedList().begin(); !foundEntry && (i != res.pausedList().end()); ++i) {
-			PausedCharacter *rec = (*i).get();
-			foundEntry = (rec->srcCharId == charId) &&
-				(rec->destCharId == hotspot->hotspotId());
+			PausedCharacter const &rec = **i;
+			foundEntry = (rec.srcCharId == charId) &&
+				(rec.destCharId == hotspot->hotspotId());
 		}
 
 		if (foundEntry)
@@ -1435,11 +1432,11 @@ Common::String CurrentActionStack::getDebugInfo() const {
 	buffer += Common::String::format("CurrentActionStack::list num_actions=%d\n", size());
 
 	for (i = _actions.begin(); i != _actions.end(); ++i) {
-		CurrentActionEntry *entry = (*i).get();
-		buffer += Common::String::format("style=%d room#=%d", entry->action(), entry->roomNumber());
+		CurrentActionEntry const &entry = **i;
+		buffer += Common::String::format("style=%d room#=%d", entry.action(), entry.roomNumber());
 
-		if (entry->hasSupportData()) {
-			CharacterScheduleEntry &rec = entry->supportData();
+		if (entry.hasSupportData()) {
+			CharacterScheduleEntry &rec = entry.supportData();
 
 			buffer += Common::String::format(", action=%d params=", rec.action());
 
@@ -1464,8 +1461,7 @@ void CurrentActionStack::saveToStream(Common::WriteStream *stream) const {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer.c_str());
 
 	for (ActionsList::const_iterator i = _actions.begin(); i != _actions.end(); ++i) {
-		CurrentActionEntry *rec = (*i).get();
-		rec->saveToStream(stream);
+		(*i)->saveToStream(stream);
 	}
 	stream->writeByte(0xff);      // End of list marker
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action stack");
