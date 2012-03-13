@@ -26,16 +26,19 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "dcgf.h"
-#include "BRenderSDL.h"
-#include "BRegistry.h"
-#include "BSurfaceSDL.h"
-#include "BImage.h"
-#include "MathUtil.h"
-#include "BGame.h"
-#include "BSprite.h"
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/BRenderSDL.h"
+#include "engines/wintermute/BRegistry.h"
+#include "engines/wintermute/BSurfaceSDL.h"
+#include "engines/wintermute/BSurfaceStorage.h"
+#include "engines/wintermute/BImage.h"
+#include "engines/wintermute/MathUtil.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/BSprite.h"
 
 namespace WinterMute {
+
+// TODO: Redo everything here.	
 
 //////////////////////////////////////////////////////////////////////////
 CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
@@ -48,9 +51,10 @@ CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBRenderSDL::~CBRenderSDL() {
+#if 0
 	if (m_Renderer) SDL_DestroyRenderer(m_Renderer);
 	if (m_Win) SDL_DestroyWindow(m_Win);
-
+#endif
 	SDL_Quit();
 }
 
@@ -58,10 +62,10 @@ CBRenderSDL::~CBRenderSDL() {
 HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) return E_FAIL;
 
-
+#if 0
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 	SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
-
+#endif
 
 	m_Width = width;
 	m_Height = height;
@@ -120,22 +124,23 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	m_RatioX = (float)(m_RealWidth - m_BorderLeft - m_BorderRight) / (float)m_Width;
 	m_RatioY = (float)(m_RealHeight - m_BorderTop - m_BorderBottom) / (float)m_Height;
 
-
+#if 0
 	Uint32 flags = SDL_WINDOW_SHOWN;
+#endif
 #ifdef __IPHONEOS__
 	flags |= SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS;
 #endif
 
 	//m_Windowed = Game->m_Registry->ReadBool("Video", "Windowed", true);
-	if (!windowed) flags |= SDL_WINDOW_FULLSCREEN;
+//	if (!windowed) flags |= SDL_WINDOW_FULLSCREEN;
 
-
+#if 0
 	m_Win = SDL_CreateWindow("WME Lite",
 	                         SDL_WINDOWPOS_UNDEFINED,
 	                         SDL_WINDOWPOS_UNDEFINED,
 	                         m_RealWidth, m_RealHeight,
 	                         flags);
-
+#endif
 	if (!m_Win) return E_FAIL;
 
 	SDL_ShowCursor(SDL_DISABLE);
@@ -146,8 +151,9 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 #else
 	//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif
-
+#if 0
 	m_Renderer = SDL_CreateRenderer(m_Win, -1, 0);
+#endif
 	if (!m_Renderer) return E_FAIL;
 
 	m_Active = true;
@@ -200,15 +206,15 @@ HRESULT CBRenderSDL::Flip() {
 #endif
 
 
-	SDL_RenderPresent(m_Renderer);
+	//SDL_RenderPresent(m_Renderer);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::Fill(byte  r, byte g, byte b, RECT *rect) {
-	SDL_SetRenderDrawColor(m_Renderer, r, g, b, 0xFF);
-	SDL_RenderClear(m_Renderer);
+	//SDL_SetRenderDrawColor(m_Renderer, r, g, b, 0xFF);
+	//SDL_RenderClear(m_Renderer);
 
 	return S_OK;
 }
@@ -244,9 +250,9 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
 	byte b = D3DCOLGetB(Color);
 	byte a = D3DCOLGetA(Color);
 
-	SDL_SetRenderDrawColor(m_Renderer, r, g, b, a);
-	SDL_SetRenderDrawBlendMode(m_Renderer, SDL_BLENDMODE_BLEND);
-	SDL_RenderFillRect(m_Renderer, &fillRect);
+	//SDL_SetRenderDrawColor(m_Renderer, r, g, b, a);
+	//SDL_SetRenderDrawBlendMode(m_Renderer, SDL_BLENDMODE_BLEND);
+	//SDL_RenderFillRect(m_Renderer, &fillRect);
 
 	return S_OK;
 }
@@ -258,8 +264,8 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	byte b = D3DCOLGetB(Color);
 	byte a = D3DCOLGetA(Color);
 
-	SDL_SetRenderDrawColor(m_Renderer, r, g, b, a);
-	SDL_SetRenderDrawBlendMode(m_Renderer, SDL_BLENDMODE_BLEND);
+	//SDL_SetRenderDrawColor(m_Renderer, r, g, b, a);
+	//SDL_SetRenderDrawBlendMode(m_Renderer, SDL_BLENDMODE_BLEND);
 
 	POINT point1, point2;
 	point1.x = X1;
@@ -271,7 +277,7 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	PointToScreen(&point2);
 
 
-	SDL_RenderDrawLine(m_Renderer, point1.x, point1.y, point2.x, point2.y);
+	//SDL_RenderDrawLine(m_Renderer, point1.x, point1.y, point2.x, point2.y);
 	return S_OK;
 }
 
@@ -305,11 +311,11 @@ CBImage *CBRenderSDL::TakeScreenshot() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::SwitchFullscreen() {
-	if (m_Windowed) SDL_SetWindowFullscreen(m_Win, SDL_TRUE);
+	/*if (m_Windowed) SDL_SetWindowFullscreen(m_Win, SDL_TRUE);
 	else SDL_SetWindowFullscreen(m_Win, SDL_FALSE);
 
 	m_Windowed = !m_Windowed;
-
+*/
 	Game->m_Registry->WriteBool("Video", "Windowed", m_Windowed);
 
 	return S_OK;
@@ -319,9 +325,11 @@ HRESULT CBRenderSDL::SwitchFullscreen() {
 const char *CBRenderSDL::GetName() {
 	if (m_Name.empty()) {
 		if (m_Renderer) {
+#if 0
 			SDL_RendererInfo info;
 			SDL_GetRendererInfo(m_Renderer, &info);
 			m_Name = AnsiString(info.name);
+#endif
 		}
 	}
 	return m_Name.c_str();
@@ -337,13 +345,14 @@ HRESULT CBRenderSDL::SetViewport(int left, int top, int right, int bottom) {
 
 	// TODO fix this once viewports work correctly in SDL/landscape
 #ifndef __IPHONEOS__
-	SDL_RenderSetViewport(GetSdlRenderer(), &rect);
+	//SDL_RenderSetViewport(GetSdlRenderer(), &rect);
 #endif
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRenderSDL::ModTargetRect(SDL_Rect *rect) {
+#if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
 
@@ -351,26 +360,30 @@ void CBRenderSDL::ModTargetRect(SDL_Rect *rect) {
 	rect->y = MathUtil::Round(rect->y * m_RatioY + m_BorderTop - viewportRect.y);
 	rect->w = MathUtil::RoundUp(rect->w * m_RatioX);
 	rect->h = MathUtil::RoundUp(rect->h * m_RatioY);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRenderSDL::PointFromScreen(POINT *point) {
+#if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
 
 	point->x = point->x / m_RatioX - m_BorderLeft / m_RatioX + viewportRect.x;
 	point->y = point->y / m_RatioY - m_BorderTop / m_RatioY + viewportRect.y;
+#endif
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CBRenderSDL::PointToScreen(POINT *point) {
+#if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
 
 	point->x = MathUtil::RoundUp(point->x * m_RatioX) + m_BorderLeft - viewportRect.x;
 	point->y = MathUtil::RoundUp(point->y * m_RatioY) + m_BorderTop - viewportRect.y;
-
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

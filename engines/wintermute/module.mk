@@ -64,6 +64,8 @@ MODULE_OBJS := \
 	BQuickMsg.o \
 	BRegion.o \
 	BRegistry.o \
+	BRenderer.o \
+	BRenderSDL.o \
 	BResources.o \
 	BResourceFile.o \
 	BSaveThumbFile.o \
