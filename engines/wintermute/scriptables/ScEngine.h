@@ -168,7 +168,7 @@ private:
 	bool m_IsProfiling;
 	uint32 m_ProfilingStartTime;
 
-	typedef std::map<std::string, uint32> ScriptTimes;
+	typedef Common::HashMap<Common::String, uint32> ScriptTimes;
 	ScriptTimes m_ScriptTimes;
 
 };

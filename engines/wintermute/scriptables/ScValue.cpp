@@ -170,7 +170,7 @@ CScValue *CScValue::GetProp(char *Name) {
 			Game->m_ScValue->SetInt(strlen(m_ValString));
 		} else {
 			WideString wstr = StringUtil::Utf8ToWide(m_ValString);
-			Game->m_ScValue->SetInt(wstr.length());
+			Game->m_ScValue->SetInt(wstr.size());
 		}
 
 		return Game->m_ScValue;

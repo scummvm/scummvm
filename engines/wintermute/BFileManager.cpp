@@ -43,6 +43,7 @@
 #include "PlatformSDL.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 //#include <boost/filesystem.hpp>
 
 #ifdef __WIN32__
@@ -106,7 +107,7 @@ HRESULT CBFileManager::Cleanup() {
 	// delete file entries
 	m_FilesIter = m_Files.begin();
 	while (m_FilesIter != m_Files.end()) {
-		delete m_FilesIter->second;
+		delete m_FilesIter->_value;
 		m_FilesIter++;
 	}
 	m_Files.clear();
@@ -491,7 +492,6 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 				fread(&TimeDate1, sizeof(uint32), 1, f);
 				fread(&TimeDate2, sizeof(uint32), 1, f);
 			}
-
 			m_FilesIter = m_Files.find(Name);
 			if (m_FilesIter == m_Files.end()) {
 				CBFileEntry *file = new CBFileEntry(Game);
@@ -504,12 +504,12 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 				m_Files[Name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
-				if (pkg->m_CD < m_FilesIter->second->m_Package->m_CD || pkg->m_Priority > m_FilesIter->second->m_Package->m_Priority) {
-					m_FilesIter->second->m_Package = pkg;
-					m_FilesIter->second->m_Offset = Offset;
-					m_FilesIter->second->m_Length = Length;
-					m_FilesIter->second->m_CompressedLength = CompLength;
-					m_FilesIter->second->m_Flags = Flags;
+				if (pkg->m_CD < m_FilesIter->_value->m_Package->m_CD || pkg->m_Priority > m_FilesIter->_value->m_Package->m_Priority) {
+					m_FilesIter->_value->m_Package = pkg;
+					m_FilesIter->_value->m_Offset = Offset;
+					m_FilesIter->_value->m_Length = Length;
+					m_FilesIter->_value->m_CompressedLength = CompLength;
+					m_FilesIter->_value->m_Flags = Flags;
 				}
 			}
 			delete [] Name;
@@ -605,7 +605,7 @@ CBFileEntry *CBFileManager::GetPackageEntry(const char *Filename) {
 
 	CBFileEntry *ret = NULL;
 	m_FilesIter = m_Files.find(upc_name);
-	if (m_FilesIter != m_Files.end()) ret = m_FilesIter->second;
+	if (m_FilesIter != m_Files.end()) ret = m_FilesIter->_value;
 
 	delete [] upc_name;
 
@@ -721,7 +721,7 @@ bool CBFileManager::FindPackageSignature(FILE *f, uint32 *Offset) {
 	int BytesRead = StartPos;
 
 	while (BytesRead < FileSize - 16) {
-		int ToRead = MIN(32768, FileSize - BytesRead);
+		int ToRead = MIN((unsigned int)32768, FileSize - BytesRead);
 		fseek(f, StartPos, SEEK_SET);
 		int ActuallyRead = fread(buf, 1, ToRead, f);
 		if (ActuallyRead != ToRead) return false;

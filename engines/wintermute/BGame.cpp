@@ -68,6 +68,7 @@
 #include "engines/wintermute/scriptables/SXStore.h"
 #include "engines/wintermute/scriptables/SXString.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #ifdef __IPHONEOS__
 #   include "ios_utils.h"
@@ -514,7 +515,7 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 		m_DEBUG_LogFile = fopen(safeLogFileName.c_str(), "a+");
 	}
 
-	if (m_DEBUG_LogFile != NULL) fprintf(m_DEBUG_LogFile, "\n");
+	if (m_DEBUG_LogFile != NULL) fprintf((FILE*)m_DEBUG_LogFile, "\n");
 #endif
 
 	time_t timeNow;
@@ -540,7 +541,7 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 void CBGame::DEBUG_DebugDisable() {
 	if (m_DEBUG_LogFile != NULL) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
-		fclose(m_DEBUG_LogFile);
+		fclose((FILE*)m_DEBUG_LogFile);
 		m_DEBUG_LogFile = NULL;
 	}
 	m_DEBUG_DebugMode = false;
@@ -576,8 +577,8 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 	if (m_DebugMgr) m_DebugMgr->OnLog(res, buff);
 
 	warning("%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
-	fprintf(m_DEBUG_LogFile, "%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
-	fflush(m_DEBUG_LogFile);
+	fprintf((FILE*)m_DEBUG_LogFile, "%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
+	fflush((FILE*)m_DEBUG_LogFile);
 #endif
 
 	//QuickMessage(buff);
@@ -615,12 +616,12 @@ HRESULT CBGame::InitLoop() {
 
 	m_LiveTimerDelta = m_LiveTimer - m_LiveTimerLast;
 	m_LiveTimerLast = m_LiveTimer;
-	m_LiveTimer += MIN(1000, m_DeltaTime);
+	m_LiveTimer += MIN((uint32)1000, m_DeltaTime);
 
 	if (m_State != GAME_FROZEN) {
 		m_TimerDelta = m_Timer - m_TimerLast;
 		m_TimerLast = m_Timer;
-		m_Timer += MIN(1000, m_DeltaTime);
+		m_Timer += MIN((uint32)1000, m_DeltaTime);
 	} else m_TimerDelta = 0;
 
 	m_FramesRendered++;
@@ -2015,7 +2016,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			int BytesRead = 0;
 
 			while (BytesRead < File->GetSize()) {
-				int BufSize = MIN(1024, File->GetSize() - BytesRead);
+				int BufSize = MIN((uint32)1024, File->GetSize() - BytesRead);
 				BytesRead += BufSize;
 
 				File->Read(Buf, BufSize);

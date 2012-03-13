@@ -27,6 +27,7 @@
  */
 
 #include "SysInstance.h"
+#include "SysClassRegistry.h"
 #include "SysClass.h"
 
 namespace WinterMute {

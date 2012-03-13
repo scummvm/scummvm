@@ -191,7 +191,7 @@ public:
 	bool m_DEBUG_DebugMode;
 	bool m_DEBUG_AbsolutePathWarning;
 
-	FILE *m_DEBUG_LogFile;
+	void *m_DEBUG_LogFile;
 	int m_Sequence;
 	virtual HRESULT LoadFile(const char *Filename);
 	virtual HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);

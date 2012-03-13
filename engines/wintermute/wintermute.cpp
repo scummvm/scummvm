@@ -31,7 +31,7 @@
 #include "common/fs.h"
 
 #include "engines/util.h"
-
+#include "engines/wintermute/BGame.h"
 #include "engines/wintermute/wintermute.h"
 
 namespace WinterMute {
@@ -103,6 +103,8 @@ namespace WinterMute {
 		debugC(3, kWinterMuteDebugExample | kWinterMuteDebugExample2, "Example debug call two");
 		
 		return Common::kNoError;
+		
+		CBGame game;
 	}
 	
 } // End of namespace WinterMute

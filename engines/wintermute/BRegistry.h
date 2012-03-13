@@ -57,8 +57,8 @@ public:
 private:
 	char *m_IniName;
 
-	typedef std::map<AnsiString, AnsiString> KeyValuePair;
-	typedef std::map<AnsiString, KeyValuePair> PathValueMap;
+	typedef Common::HashMap<AnsiString, AnsiString> KeyValuePair;
+	typedef Common::HashMap<AnsiString, KeyValuePair> PathValueMap;
 
 	PathValueMap m_LocalValues;
 	PathValueMap m_Values;

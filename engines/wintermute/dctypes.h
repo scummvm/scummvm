@@ -29,22 +29,29 @@
 #ifndef WINTERMUTE_DCTYPES_H
 #define WINTERMUTE_DCTYPES_H
 
-#include <string>
-#include <list>
-#include <vector>
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/str.h"
+#include "common/list.h"
+#include "common/array.h"
+//#include <string>
+//#include <list>
+//#include <vector>
 
 namespace WinterMute {
 
-typedef std::string AnsiString;
-typedef std::string Utf8String;
-typedef std::wstring WideString;
+//typedef std::string AnsiString;
+//typedef std::string Utf8String;
+//typedef std::wstring WideString;
+typedef Common::String AnsiString;
+typedef Common::String Utf8String;
+typedef Common::String WideString; // NB: Not actually true I presume.
 
+typedef Common::List<WideString> WideStringList;
+typedef Common::List<AnsiString> AnsiStringList;
 
-typedef std::list<WideString> WideStringList;
-typedef std::list<AnsiString> AnsiStringList;
-
-typedef std::vector<WideString> WideStringArray;
-typedef std::vector<AnsiString> AnsiStringArray;
+typedef Common::Array<WideString> WideStringArray;
+typedef Common::Array<AnsiString> AnsiStringArray;
 
 
 enum TGameState {

@@ -77,40 +77,48 @@ AnsiString PathUtil::Combine(const AnsiString &path1, const AnsiString &path2) {
 AnsiString PathUtil::GetDirectoryName(const AnsiString &path) {
 	AnsiString newPath = UnifySeparators(path);
 
-	size_t pos = newPath.find_last_of(L'/');
-
-	if (pos == AnsiString::npos) return "";
-	else return newPath.substr(0, pos + 1);
+	//size_t pos = newPath.find_last_of(L'/');
+	Common::String filename = GetFileName(path);
+	return Common::String(path.c_str(), path.size() - filename.size());
+	//if (pos == AnsiString::npos) return "";
+	//else return newPath.substr(0, pos + 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::GetFileName(const AnsiString &path) {
 	AnsiString newPath = UnifySeparators(path);
 
-	size_t pos = newPath.find_last_of(L'/');
-
-	if (pos == AnsiString::npos) return path;
-	else return newPath.substr(pos + 1);
+	//size_t pos = newPath.find_last_of(L'/'); TODO REMOVE.
+	Common::String lastPart = Common::lastPathComponent(path,'/');
+	if (lastPart[lastPart.size() - 1 ] != '/')
+		return lastPart;
+	else
+		return path;
+	//if (pos == AnsiString::npos) return path;
+	//else return newPath.substr(pos + 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::GetFileNameWithoutExtension(const AnsiString &path) {
 	AnsiString fileName = GetFileName(path);
 
-	size_t pos = fileName.find_last_of('.');
-
-	if (pos == AnsiString::npos) return fileName;
-	else return fileName.substr(0, pos);
+	//size_t pos = fileName.find_last_of('.'); //TODO REMOVE!
+	// TODO: Prettify this.
+	Common::String extension = Common::lastPathComponent(path, '.');
+	Common::String filename = Common::String(path.c_str(), path.size() - extension.size());
+	return filename;
+	//if (pos == AnsiString::npos) return fileName;
+	//else return fileName.substr(0, pos);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::GetExtension(const AnsiString &path) {
 	AnsiString fileName = GetFileName(path);
 
-	size_t pos = fileName.find_last_of('.');
-
-	if (pos == AnsiString::npos) return "";
-	else return fileName.substr(pos);
+	//size_t pos = fileName.find_last_of('.');
+	return Common::lastPathComponent(path, '.');
+	//if (pos == AnsiString::npos) return "";
+	//else return fileName.substr(pos);
 }
 
 

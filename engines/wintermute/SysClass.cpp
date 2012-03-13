@@ -35,6 +35,8 @@
 
 namespace WinterMute {
 
+// TODO: Note that the set was removed, this might have bizarre side-effects.
+
 //////////////////////////////////////////////////////////////////////////
 CSysClass::CSysClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class) {
 	m_Name = name;
@@ -58,11 +60,11 @@ CSysClass::~CSysClass() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CSysClass::RemoveAllInstances() {
-	Instances::iterator it;
-	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
-		delete(*it);
+	InstanceMap::iterator it;
+	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+		delete(it->_value);
 	}
-	m_Instances.clear();
+	//m_Instances.clear();
 	m_InstanceMap.clear();
 
 	return true;
@@ -72,7 +74,7 @@ bool CSysClass::RemoveAllInstances() {
 CSysInstance *CSysClass::AddInstance(void *instance, int id, int savedId) {
 	CSysInstance *inst = new CSysInstance(instance, id, this);
 	inst->SetSavedID(savedId);
-	m_Instances.insert(inst);
+	//m_Instances.insert(inst);
 
 	m_InstanceMap[instance] = inst;
 
@@ -86,13 +88,14 @@ CSysInstance *CSysClass::AddInstance(void *instance, int id, int savedId) {
 bool CSysClass::RemoveInstance(void *instance) {
 	InstanceMap::iterator mapIt = m_InstanceMap.find(instance);
 	if (mapIt == m_InstanceMap.end()) return false;
-
+/*
 	Instances::iterator it = m_Instances.find((*mapIt).second);
 	if (it != m_Instances.end()) {
 		delete(*it);
 		m_Instances.erase(it);
-	}
+	}*/
 
+	delete mapIt->_value;
 	m_InstanceMap.erase(mapIt);
 
 	return false;
@@ -102,39 +105,49 @@ bool CSysClass::RemoveInstance(void *instance) {
 int CSysClass::GetInstanceID(void *pointer) {
 	InstanceMap::iterator mapIt = m_InstanceMap.find(pointer);
 	if (mapIt == m_InstanceMap.end()) return -1;
-	else return (*mapIt).second->GetID();
+	else return (*mapIt)._value->GetID();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void *CSysClass::IDToPointer(int savedID) {
 	//slow
-	Instances::iterator it;
+	/*Instances::iterator it;
 	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
 		if ((*it)->GetSavedID() == savedID) return (*it)->GetInstance();
+	}*/
+	InstanceMap::iterator it;
+	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+		if ((it->_value)->GetSavedID() == savedID) return (it->_value)->GetInstance();
 	}
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 int CSysClass::GetNumInstances() {
-	return m_Instances.size();
+	//return m_Instances.size();
+	return m_InstanceMap.size(); // TODO: This might break, if we have multiple keys per value.
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::Dump(FILE *stream) {
-	fprintf(stream, "%03d %c %-20s instances: %d\n", m_ID, m_Persistent ? 'p' : ' ', m_Name.c_str(), GetNumInstances());
+void CSysClass::Dump(void *stream) {
+	fprintf((FILE*)stream, "%03d %c %-20s instances: %d\n", m_ID, m_Persistent ? 'p' : ' ', m_Name.c_str(), GetNumInstances());
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 	PersistMgr->PutString(m_Name.c_str());
 	PersistMgr->PutDWORD(m_ID);
-	PersistMgr->PutDWORD(m_Instances.size());
+	PersistMgr->PutDWORD(m_InstanceMap.size());
 
+	InstanceMap::iterator it;
+	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+		PersistMgr->PutDWORD((it->_value)->GetID());
+	}
+	/*
 	Instances::iterator it;
 	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
 		PersistMgr->PutDWORD((*it)->GetID());
-	}
+	}*/
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,10 +164,11 @@ void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 				continue;
 			}
 
-			Instances::iterator it = m_Instances.begin();
-			if (it != m_Instances.end()) {
-				(*it)->SetSavedID(instId);
-				CSysClassRegistry::GetInstance()->AddInstanceToTable((*it), (*it)->GetInstance());
+			InstanceMap::iterator it = m_InstanceMap.begin();
+/*			Instances::iterator it = m_Instances.begin();*/
+			if (it != m_InstanceMap.end()) {
+				(it->_value)->SetSavedID(instId);
+				CSysClassRegistry::GetInstance()->AddInstanceToTable((it->_value), (it->_value)->GetInstance());
 			} else Game->LOG(0, "Warning: instance %d of persistent class %s not found", i, m_Name.c_str());
 		}
 		// normal instances, create empty objects
@@ -168,13 +182,13 @@ void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr) {
-	Instances::iterator it;
-	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
+	InstanceMap::iterator it;
+	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
 		// write instace header
 		PersistMgr->PutDWORD(m_ID);
-		PersistMgr->PutDWORD((*it)->GetID());
+		PersistMgr->PutDWORD((it->_value)->GetID());
 
-		m_Load((*it)->GetInstance(), PersistMgr);
+		m_Load((it->_value)->GetInstance(), PersistMgr);
 	}
 }
 
@@ -186,17 +200,17 @@ void CSysClass::LoadInstance(void *instance, CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::ResetSavedIDs() {
-	Instances::iterator it;
-	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
-		(*it)->SetSavedID(-1);
+	InstanceMap::iterator it;
+	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+		(it->_value)->SetSavedID(-1);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::InstanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData) {
-	Instances::iterator it;
-	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
-		lpCallback((*it)->GetInstance(), lpData);
+	InstanceMap::iterator it;
+	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+		lpCallback((it->_value)->GetInstance(), lpData);
 	}
 }
 

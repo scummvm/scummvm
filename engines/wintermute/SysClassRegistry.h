@@ -32,14 +32,30 @@
 #include "wintypes.h"
 #include "dctypes.h"
 #include "persistent.h"
-#include <set>
-#include <map>
+//#include <set>
+//#include <map>
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "common/func.h"
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
+namespace WinterMute {
+class CSysClass;
+}
+
+namespace Common {
+template<typename T> struct Hash;	
+template<> struct Hash<WinterMute::CSysClass*> : public UnaryFunction<WinterMute::CSysClass*, uint> {
+	uint operator()(WinterMute::CSysClass* val) const { return (uint)((size_t)val); }
+};
+
+}
 
 namespace WinterMute {
 
 class CBGame;
 class CBPersistMgr;
-class CSysClass;
 class CSysInstance;
 
 class CSysClassRegistry {
@@ -57,7 +73,7 @@ public:
 	bool UnregisterClass(CSysClass *classObj);
 	bool RegisterInstance(const char *className, void *instance);
 	bool UnregisterInstance(const char *className, void *instance);
-	void DumpClasses(FILE *stream);
+	void DumpClasses(void *stream);
 	int GetNextID();
 	void AddInstanceToTable(CSysInstance *instance, void *pointer);
 
@@ -67,19 +83,19 @@ public:
 	bool m_Disabled;
 	int m_Count;
 
-	typedef std::set<CSysClass *> Classes;
+	typedef Common::HashMap<CSysClass *, CSysClass *> Classes;
 	Classes m_Classes;
 
-	typedef std::map<AnsiString, CSysClass *> NameMap;
+	typedef Common::HashMap<AnsiString, CSysClass *> NameMap;
 	NameMap m_NameMap;
 
-	typedef std::map<int, CSysClass *> IdMap;
+	typedef Common::HashMap<int, CSysClass *> IdMap;
 	IdMap m_IdMap;
 
-	typedef std::map<void *, CSysInstance *> InstanceMap;
+	typedef Common::HashMap<void *, CSysInstance *> InstanceMap;
 	InstanceMap m_InstanceMap;
 
-	typedef std::map<int, CSysInstance *> SavedInstanceMap;
+	typedef Common::HashMap<int, CSysInstance *> SavedInstanceMap;
 	SavedInstanceMap m_SavedInstanceMap;
 
 };

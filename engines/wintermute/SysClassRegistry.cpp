@@ -53,7 +53,8 @@ CSysClassRegistry *CSysClassRegistry::GetInstance() {
 //////////////////////////////////////////////////////////////////////////
 bool CSysClassRegistry::RegisterClass(CSysClass *classObj) {
 	classObj->SetID(m_Count++);
-	m_Classes.insert(classObj);
+	//m_Classes.insert(classObj);
+	m_Classes[classObj] = classObj;
 
 	m_NameMap[classObj->GetName()] = classObj;
 	m_IdMap[classObj->GetID()] = classObj;
@@ -93,7 +94,7 @@ bool CSysClassRegistry::RegisterInstance(const char *className, void *instance) 
 	NameMap::iterator mapIt = m_NameMap.find(className);
 	if (mapIt == m_NameMap.end()) return false;
 
-	CSysInstance *inst = (*mapIt).second->AddInstance(instance, m_Count++);
+	CSysInstance *inst = (*mapIt)._value->AddInstance(instance, m_Count++);
 	return (inst != NULL);
 }
 
@@ -114,7 +115,7 @@ int CSysClassRegistry::GetNextID() {
 bool CSysClassRegistry::UnregisterInstance(const char *className, void *instance) {
 	NameMap::iterator mapIt = m_NameMap.find(className);
 	if (mapIt == m_NameMap.end()) return false;
-	(*mapIt).second->RemoveInstance(instance);
+	(*mapIt)._value->RemoveInstance(instance);
 
 	InstanceMap::iterator instIt = m_InstanceMap.find(instance);
 	if (instIt != m_InstanceMap.end()) {
@@ -132,7 +133,7 @@ bool CSysClassRegistry::GetPointerID(void *pointer, int *classID, int *instanceI
 	if (it == m_InstanceMap.end()) return false;
 
 
-	CSysInstance *inst = (*it).second;
+	CSysInstance *inst = (*it)._value;
 	*instanceID = inst->GetID();
 	*classID = inst->GetClass()->GetID();
 
@@ -143,7 +144,7 @@ bool CSysClassRegistry::GetPointerID(void *pointer, int *classID, int *instanceI
 void *CSysClassRegistry::IDToPointer(int classID, int instanceID) {
 	SavedInstanceMap::iterator it = m_SavedInstanceMap.find(instanceID);
 	if (it == m_SavedInstanceMap.end()) return NULL;
-	else return (*it).second->GetInstance();
+	else return (*it)._value->GetInstance();
 }
 
 
@@ -163,7 +164,7 @@ HRESULT CSysClassRegistry::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr, boo
 			Game->m_Renderer->Flip();
 		}
 
-		(*it)->SaveTable(Game, PersistMgr);
+		(it->_value)->SaveTable(Game, PersistMgr);
 	}
 
 	return S_OK;
@@ -176,12 +177,12 @@ HRESULT CSysClassRegistry::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 
 	// reset SavedID of current instances
 	for (it = m_Classes.begin(); it != m_Classes.end(); ++it) {
-		(*it)->ResetSavedIDs();
+		(it->_value)->ResetSavedIDs();
 	}
 
 	for (it = m_Classes.begin(); it != m_Classes.end(); ++it) {
-		if ((*it)->IsPersistent()) continue;
-		(*it)->RemoveAllInstances();
+		if ((it->_value)->IsPersistent()) continue;
+		(it->_value)->RemoveAllInstances();
 	}
 
 	m_InstanceMap.clear();
@@ -196,7 +197,7 @@ HRESULT CSysClassRegistry::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 
 		char *className = PersistMgr->GetString();
 		NameMap::iterator mapIt = m_NameMap.find(className);
-		if (mapIt != m_NameMap.end())(*mapIt).second->LoadTable(Game, PersistMgr);
+		if (mapIt != m_NameMap.end())(*mapIt)._value->LoadTable(Game, PersistMgr);
 	}
 
 	return S_OK;
@@ -211,7 +212,7 @@ HRESULT CSysClassRegistry::SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr,
 	// count total instances
 	int numInstances = 0;
 	for (it = m_Classes.begin(); it != m_Classes.end(); ++it) {
-		numInstances += (*it)->GetNumInstances();
+		numInstances += (it->_value)->GetNumInstances();
 	}
 
 	PersistMgr->PutDWORD(numInstances);
@@ -229,7 +230,7 @@ HRESULT CSysClassRegistry::SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr,
 		}
 		Game->MiniUpdate();
 
-		(*it)->SaveInstances(Game, PersistMgr);
+		(it->_value)->SaveInstances(Game, PersistMgr);
 	}
 
 	return S_OK;
@@ -255,8 +256,8 @@ HRESULT CSysClassRegistry::LoadInstances(CBGame *Game, CBPersistMgr *PersistMgr)
 
 		Classes::iterator it;
 		for (it = m_Classes.begin(); it != m_Classes.end(); ++it) {
-			if ((*it)->GetSavedID() == classID) {
-				(*it)->LoadInstance(instance, PersistMgr);
+			if ((it->_value)->GetSavedID() == classID) {
+				(it->_value)->LoadInstance(instance, PersistMgr);
 			}
 		}
 	}
@@ -272,16 +273,16 @@ HRESULT CSysClassRegistry::EnumInstances(SYS_INSTANCE_CALLBACK lpCallback, const
 	NameMap::iterator mapIt = m_NameMap.find(className);
 	if (mapIt == m_NameMap.end()) return E_FAIL;
 
-	(*mapIt).second->InstanceCallback(lpCallback, lpData);
+	(*mapIt)._value->InstanceCallback(lpCallback, lpData);
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClassRegistry::DumpClasses(FILE *stream) {
+void CSysClassRegistry::DumpClasses(void *stream) {
 	Classes::iterator it;
 	for (it = m_Classes.begin(); it != m_Classes.end(); ++it)
-		(*it)->Dump(stream);
+		(it->_value)->Dump(stream);
 }
 
 } // end of namespace WinterMute

@@ -159,26 +159,27 @@ AnsiString CBRegistry::GetValue(PathValueMap &values, const AnsiString path, con
 	PathValueMap::iterator it = values.find(path);
 	if (it == values.end()) return "";
 
-	KeyValuePair pairs = (*it).second;
+	KeyValuePair pairs = (*it)._value;
 	KeyValuePair::iterator keyIt = pairs.find(key);
 	if (keyIt == pairs.end()) return "";
 	else {
 		found = true;
-		return (*keyIt).second;
+		return (*keyIt)._value;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::LoadXml(const AnsiString fileName, PathValueMap &values) {
-	TiXmlDocument doc(fileName);
+	TiXmlDocument doc(fileName.c_str());
 	if (!doc.LoadFile()) return;
 
 	TiXmlElement *rootElem = doc.RootElement();
-	if (!rootElem || rootElem->ValueStr() != "Settings") return;
+	if (!rootElem || Common::String(rootElem->Value()) != "Settings") // TODO: Avoid this strcmp-use. (Hack for now, since we might drop TinyXML all together)
+		return;
 
 	for (TiXmlElement *pathElem = rootElem->FirstChildElement(); pathElem != NULL; pathElem = pathElem->NextSiblingElement()) {
 		for (TiXmlElement *keyElem = pathElem->FirstChildElement(); keyElem != NULL; keyElem = keyElem->NextSiblingElement()) {
-			values[pathElem->ValueStr()][keyElem->ValueStr()] = keyElem->GetText();
+			values[Common::String(pathElem->Value())][Common::String(keyElem->Value())] = keyElem->GetText();
 		}
 	}
 }
@@ -196,17 +197,17 @@ void CBRegistry::SaveXml(const AnsiString fileName, PathValueMap &values) {
 
 	PathValueMap::iterator pathIt;
 	for (pathIt = m_Values.begin(); pathIt != m_Values.end(); ++pathIt) {
-		TiXmlElement *pathElem = new TiXmlElement((*pathIt).first);
+		TiXmlElement *pathElem = new TiXmlElement((*pathIt)._key.c_str());
 		root->LinkEndChild(pathElem);
 
 
-		KeyValuePair pairs = (*pathIt).second;
+		KeyValuePair pairs = (*pathIt)._value;
 		KeyValuePair::iterator keyIt;
 		for (keyIt = pairs.begin(); keyIt != pairs.end(); ++keyIt) {
-			TiXmlElement *keyElem = new TiXmlElement((*keyIt).first);
+			TiXmlElement *keyElem = new TiXmlElement((*keyIt)._key.c_str());
 			pathElem->LinkEndChild(keyElem);
 
-			keyElem->LinkEndChild(new TiXmlText((*keyIt).second));
+			keyElem->LinkEndChild(new TiXmlText((*keyIt)._value.c_str()));
 		}
 	}
 
@@ -219,7 +220,7 @@ void CBRegistry::SaveXml(const AnsiString fileName, PathValueMap &values) {
 
 	if (!stream.is_open()) return;
 	else {
-		stream << printer.Str();
+		stream << printer.CStr();
 		stream.close();
 	}
 }

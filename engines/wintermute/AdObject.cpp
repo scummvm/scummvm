@@ -27,29 +27,30 @@
  */
 
 #include "dcgf.h"
-#include "AdObject.h"
-#include "AdScene.h"
-#include "BGame.h"
-#include "BFrame.h"
-#include "BSound.h"
-#include "BSurfaceStorage.h"
-#include "engines/wintermute/scriptables/ScValue.h"
-#include "AdGame.h"
-#include "AdLayer.h"
-#include "AdSceneNode.h"
-#include "AdInventory.h"
-#include "AdWaypointGroup.h"
-#include "AdItem.h"
-#include "BSubFrame.h"
-#include "BFont.h"
-#include "BFontStorage.h"
+#include "engines/wintermute/AdGame.h"
+#include "engines/wintermute/AdItem.h"
+#include "engines/wintermute/AdObject.h"
+#include "engines/wintermute/AdInventory.h"
+#include "engines/wintermute/AdLayer.h"
+#include "engines/wintermute/AdScene.h"
+#include "engines/wintermute/AdSceneNode.h"
+#include "engines/wintermute/AdSentence.h"
+#include "engines/wintermute/AdWaypointGroup.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/BFrame.h"
+#include "engines/wintermute/BSound.h"
+#include "engines/wintermute/BSurfaceStorage.h"
+#include "engines/wintermute/BSubFrame.h"
+#include "engines/wintermute/BFont.h"
+#include "engines/wintermute/BFontStorage.h"
+#include "engines/wintermute/BSprite.h"
+#include "engines/wintermute/BStringTable.h"
 #include "engines/wintermute/scriptables/ScEngine.h"
-#include "BStringTable.h"
-#include "AdSentence.h"
 #include "engines/wintermute/scriptables/ScScript.h"
-#include "BSprite.h"
 #include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/scriptables/ScValue.h"
 #include "common/str.h"
+#include "common/util.h"
 
 namespace WinterMute {
 
@@ -860,8 +861,8 @@ void CAdObject::Talk(char *Text, char *Sound, uint32 Duration, char *Stances, TT
 	}
 
 	// set duration by text length
-	if (m_Sentence->m_Duration <= 0) {
-		m_Sentence->m_Duration = MAX(1000, Game->m_SubtitlesSpeed * strlen(m_Sentence->m_Text));
+	if (m_Sentence->m_Duration <= 0) {// TODO: Avoid longs.
+		m_Sentence->m_Duration = MAX((unsigned long)1000, Game->m_SubtitlesSpeed * strlen(m_Sentence->m_Text));
 	}
 
 

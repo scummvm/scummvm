@@ -30,9 +30,20 @@
 #define WINTERMUTE_SYSCLASS_H
 
 #include "persistent.h"
-#include <set>
-#include <map>
 #include "dctypes.h"
+
+//#include <set>
+//#include <map>
+#include "common/hashmap.h"
+#include "common/func.h"
+namespace Common {
+template<typename T> struct Hash;
+
+template<> struct Hash<void*> : public UnaryFunction<void*, uint> {
+	uint operator()(void* val) const { return (uint)((size_t)val); }
+};
+
+}
 
 namespace WinterMute {
 class CSysInstance;
@@ -80,7 +91,7 @@ public:
 
 	void ResetSavedIDs();
 
-	void Dump(FILE *stream);
+	void Dump(void *stream);
 
 private:
 	int m_NumInst;
@@ -92,10 +103,10 @@ private:
 	PERSISTBUILD m_Build;
 	PERSISTLOAD m_Load;
 
-	typedef std::set<CSysInstance *> Instances;
-	Instances m_Instances;
+	//typedef std::set<CSysInstance *> Instances;
+	//Instances m_Instances;
 
-	typedef std::map<void *, CSysInstance *> InstanceMap;
+	typedef Common::HashMap<void *, CSysInstance *> InstanceMap;
 	InstanceMap m_InstanceMap;
 };
 

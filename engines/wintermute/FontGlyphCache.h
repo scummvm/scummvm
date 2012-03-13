@@ -111,7 +111,8 @@ public:
 	void AddGlyph(wchar_t ch, int glyphIndex, FT_GlyphSlot glyphSlot, size_t width, size_t height, byte *pixels, size_t stride = 0);
 
 private:
-	typedef std::map<wchar_t, GlyphInfo *> GlyphInfoMap;
+	//typedef Common::HashMap<wchar_t, GlyphInfo *> GlyphInfoMap;
+	typedef Common::HashMap<char, GlyphInfo *> GlyphInfoMap; // TODO
 	GlyphInfoMap m_Glyphs;
 };
 

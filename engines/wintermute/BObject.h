@@ -30,9 +30,11 @@
 #define WINTERMUTE_BOBJECT_H
 
 
-#include "SDL.h"
+//#include "SDL.h"
 #include "BScriptHolder.h"
 #include "persistent.h"
+
+union SDL_Event;
 
 namespace WinterMute {
 

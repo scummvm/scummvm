@@ -33,8 +33,8 @@
 #include "common/scummsys.h"
 
 //namespace WinterMute {
-#include <cstdio>
-#include <stdio.h>
+//#include <cstdio>
+//#include <stdio.h>
 #ifndef __WIN32__
 
 #define WINAPI

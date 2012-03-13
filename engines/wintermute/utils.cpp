@@ -238,7 +238,7 @@ char *CBUtils::GetPath(char *Filename) {
 	//path = boost::filesystem::system_complete(path).string();
 	warning("CBUtils::GetPath: (%s), not implemented", Filename);
 	return Filename;
-	char *ret = new char[path.length() + 1];
+	char *ret = new char[path.size() + 1];
 	strcpy(ret, path.c_str());
 
 	return ret;
@@ -247,7 +247,7 @@ char *CBUtils::GetPath(char *Filename) {
 //////////////////////////////////////////////////////////////////////////
 char *CBUtils::GetFilename(char *Filename) {
 	AnsiString path = PathUtil::GetFileName(Filename);
-	char *ret = new char[path.length() + 1];
+	char *ret = new char[path.size() + 1];
 	strcpy(ret, path.c_str());
 	return ret;
 }
@@ -259,12 +259,12 @@ void CBUtils::RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL) {
 	float var_B = (D3DCOLGetB(RGBColor) / 255.0f);
 
 	//Min. value of RGB
-	float var_Min = std::min(var_R, var_G);
-	var_Min = std::min(var_Min, var_B);
+	float var_Min = MIN(var_R, var_G);
+	var_Min = MIN(var_Min, var_B);
 
 	//Max. value of RGB
-	float var_Max = std::max(var_R, var_G);
-	var_Max = std::max(var_Max, var_B);
+	float var_Max = MAX(var_R, var_G);
+	var_Max = MAX(var_Max, var_B);
 
 	//Delta RGB value
 	float del_Max = var_Max - var_Min;

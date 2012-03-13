@@ -58,7 +58,7 @@ HRESULT CBStringTable::AddString(const char *Key, const char *Val, bool ReportDu
 		return S_OK;
 	}
 
-	std::string final_key = Key;
+	Common::String final_key = Key;
 	StringUtil::ToLowerCase(final_key);
 
 	m_StringsIter = m_Strings.find(final_key);
@@ -85,8 +85,8 @@ char *CBStringTable::GetKey(const char *Str) {
 
 	m_StringsIter = m_Strings.find(key);
 	if (m_StringsIter != m_Strings.end()) {
-		new_str = new char[m_StringsIter->second.length() + 1];
-		strcpy(new_str, m_StringsIter->second.c_str());
+		new_str = new char[m_StringsIter->_value.size() + 1];
+		strcpy(new_str, m_StringsIter->_value.c_str());
 		if (strlen(new_str) > 0 && new_str[0] == '/' && strchr(new_str + 1, '/')) {
 			delete [] key;
 			char *Ret = GetKey(new_str);
@@ -121,8 +121,8 @@ void CBStringTable::Expand(char **Str, bool ForceExpand) {
 
 	m_StringsIter = m_Strings.find(key);
 	if (m_StringsIter != m_Strings.end()) {
-		new_str = new char[m_StringsIter->second.length() + 1];
-		strcpy(new_str, m_StringsIter->second.c_str());
+		new_str = new char[m_StringsIter->_value.size() + 1];
+		strcpy(new_str, m_StringsIter->_value.c_str());
 	} else {
 		new_str = new char[strlen(value) + 1];
 		strcpy(new_str, value);
@@ -156,7 +156,7 @@ const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
 
 	m_StringsIter = m_Strings.find(key);
 	if (m_StringsIter != m_Strings.end()) {
-		new_str = m_StringsIter->second.c_str();
+		new_str = m_StringsIter->_value.c_str();
 	} else {
 		new_str = value;
 	}

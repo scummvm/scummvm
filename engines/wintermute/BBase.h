@@ -31,8 +31,11 @@
 
 #include "wintypes.h"
 #include "dctypes.h"
-#include <map>
-#include <string>
+#include "common/str.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+//#include <map>
+//#include <string>
 
 namespace WinterMute {
 
@@ -52,8 +55,10 @@ public:
 	CBBase(CBGame *GameOwner);
 	virtual ~CBBase();
 
-	std::map<std::string, std::string> m_EditorProps;
-	std::map<std::string, std::string>::iterator m_EditorPropsIter;
+	Common::HashMap<Common::String, Common::String> m_EditorProps;
+	Common::HashMap<Common::String, Common::String>::iterator m_EditorPropsIter;
+/*	std::map<std::string, std::string> m_EditorProps;
+	std::map<std::string, std::string>::iterator m_EditorPropsIter;*/
 };
 
 } // end of namespace WinterMute

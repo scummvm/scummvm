@@ -65,10 +65,10 @@ HRESULT CBViewport::Persist(CBPersistMgr *PersistMgr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBViewport::SetRect(int left, int top, int right, int bottom, bool NoCheck) {
 	if (!NoCheck) {
-		left = std::max(left, 0);
-		top = std::max(top, 0);
-		right = std::min(right, Game->m_Renderer->m_Width);
-		bottom = std::min(bottom, Game->m_Renderer->m_Height);
+		left = MAX(left, 0);
+		top = MAX(top, 0);
+		right = MIN(right, Game->m_Renderer->m_Width);
+		bottom = MIN(bottom, Game->m_Renderer->m_Height);
 	}
 
 	CBPlatform::SetRect(&m_Rect, left, top, right, bottom);

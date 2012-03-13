@@ -124,7 +124,9 @@ int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 	if (Game->m_TextEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	else text = StringUtil::AnsiToWide((char *)Text);
 
-	if (MaxLength >= 0 && text.length() > MaxLength) text = text.substr(0, MaxLength);
+	if (MaxLength >= 0 && text.size() > MaxLength) 
+		text = Common::String(text.c_str(), MaxLength);
+		//text = text.substr(0, MaxLength); // TODO: Remove
 
 	int textWidth, textHeight;
 	MeasureText(text, -1, -1, textWidth, textHeight);
@@ -156,7 +158,9 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 	if (Game->m_TextEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	else text = StringUtil::AnsiToWide((char *)Text);
 
-	if (MaxLength >= 0 && text.length() > MaxLength) text = text.substr(0, MaxLength);
+	if (MaxLength >= 0 && text.size() > MaxLength) 
+		text = Common::String(text.c_str(), MaxLength);
+		//text = text.substr(0, MaxLength); // TODO: Remove
 
 	CBRenderSDL *m_Renderer = (CBRenderSDL *)Game->m_Renderer;
 
@@ -258,7 +262,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 
 
 		textOffset = 0;
-		for (size_t i = 0; i < line->GetText().length(); i++) {
+		for (size_t i = 0; i < line->GetText().size(); i++) {
 			wchar_t ch = line->GetText()[i];
 
 			GlyphInfo *glyph = m_GlyphCache->GetGlyph(ch);
@@ -271,7 +275,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 		int origPosX = posX;
 
 		wchar_t prevChar = L'\0';
-		for (size_t i = 0; i < line->GetText().length(); i++) {
+		for (size_t i = 0; i < line->GetText().size(); i++) {
 			wchar_t ch = line->GetText()[i];
 
 			GlyphInfo *glyph = m_GlyphCache->GetGlyph(ch);
@@ -700,7 +704,7 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 
 	PrepareGlyphs(text);
 
-	for (size_t i = 0; i < text.length(); i++) {
+	for (size_t i = 0; i < text.size(); i++) {
 		wchar_t ch = text[i];
 
 		if (ch == L' ') {
@@ -728,7 +732,7 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 		if (lineTooLong && currWidth == 0) break;
 
 
-		if (ch == L'\n' || i == text.length() - 1 || lineTooLong) {
+		if (ch == L'\n' || i == text.size() - 1 || lineTooLong) {
 			int breakPoint, breakWidth;
 
 			if (prevSpaceIndex >= 0 && lineTooLong) {
@@ -742,7 +746,7 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 				breakOnSpace = (ch == L'\n');
 
 				// we're at the end
-				if (i == text.length() - 1) {
+				if (i == text.size() - 1) {
 					breakPoint++;
 					breakWidth += charWidth;
 				}
@@ -750,7 +754,8 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 
 			if (maxHeight >= 0 && (lines.size() + 1) * GetLineHeight() > maxHeight) break;
 
-			WideString line = text.substr(lineStartIndex, breakPoint - lineStartIndex);
+			//WideString line = text.substr(lineStartIndex, breakPoint - lineStartIndex); // TODO: Remove
+			WideString line = Common::String(text.c_str() + lineStartIndex, breakPoint - lineStartIndex);
 			lines.push_back(new TextLine(line, breakWidth));
 
 			currWidth = 0;
@@ -805,7 +810,7 @@ float CBFontTT::GetKerning(wchar_t leftChar, wchar_t rightChar) {
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::PrepareGlyphs(const WideString &text) {
 	// make sure we have all the glyphs we need
-	for (size_t i = 0; i < text.length(); i++) {
+	for (size_t i = 0; i < text.size(); i++) {
 		wchar_t ch = text[i];
 		if (!m_GlyphCache->HasGlyph(ch)) CacheGlyph(ch);
 	}

@@ -36,8 +36,8 @@ FontGlyphCache::~FontGlyphCache() {
 	GlyphInfoMap::iterator it;
 
 	for (it = m_Glyphs.begin(); it != m_Glyphs.end(); ++it) {
-		delete it->second;
-		it->second = NULL;
+		delete it->_value;
+		it->_value = NULL;
 	}
 }
 
@@ -56,7 +56,7 @@ GlyphInfo *FontGlyphCache::GetGlyph(wchar_t ch) {
 	it = m_Glyphs.find(ch);
 	if (it == m_Glyphs.end()) return NULL;
 
-	return it->second;
+	return it->_value;
 }
 
 //////////////////////////////////////////////////////////////////////////

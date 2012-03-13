@@ -57,7 +57,9 @@ CBBase::~CBBase() {
 //////////////////////////////////////////////////////////////////////////
 const char *CBBase::GetEditorProp(const char *PropName, const char *InitVal) {
 	m_EditorPropsIter = m_EditorProps.find(PropName);
-	if (m_EditorPropsIter != m_EditorProps.end()) return m_EditorPropsIter->second.c_str();
+	if (m_EditorPropsIter != m_EditorProps.end())
+		return m_EditorPropsIter->_value.c_str();
+		//return m_EditorPropsIter->second.c_str(); // <- TODO Clean
 	else return InitVal;
 }
 
@@ -161,8 +163,10 @@ HRESULT CBBase::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	while (m_EditorPropsIter != m_EditorProps.end()) {
 		Buffer->PutTextIndent(Indent, "EDITOR_PROPERTY\n");
 		Buffer->PutTextIndent(Indent, "{\n");
-		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_EditorPropsIter->first.c_str());
-		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_EditorPropsIter->second.c_str());
+		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_EditorPropsIter->_key.c_str());
+		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_EditorPropsIter->_value.c_str());
+		//Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_EditorPropsIter->first.c_str()); // <- TODO, remove
+		//Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_EditorPropsIter->second.c_str()); // <- TODO, remove
 		Buffer->PutTextIndent(Indent, "}\n\n");
 
 		m_EditorPropsIter++;

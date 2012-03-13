@@ -30,7 +30,7 @@
 #define WINTERMUTE_BSTRINGTABLE_H
 
 
-#include <map>
+#include "common/hashmap.h"
 #include "BBase.h"
 
 namespace WinterMute {
@@ -43,10 +43,10 @@ public:
 	HRESULT AddString(const char *Key, const char *Val, bool ReportDuplicities = true);
 	CBStringTable(CBGame *inGame);
 	virtual ~CBStringTable();
-	std::map<std::string, std::string> m_Strings;
+	Common::HashMap<Common::String, Common::String> m_Strings;
 	char *GetKey(const char *Str);
 private:
-	std::map<std::string, std::string>::iterator m_StringsIter;
+	Common::HashMap<Common::String, Common::String>::iterator m_StringsIter;
 
 };
 

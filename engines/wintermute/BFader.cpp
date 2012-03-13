@@ -30,6 +30,7 @@
 #include "BFader.h"
 #include "BGame.h"
 #include "PlatformSDL.h"
+#include "common/util.h"
 
 namespace WinterMute {
 
@@ -73,7 +74,7 @@ HRESULT CBFader::Update() {
 	else {
 		m_CurrentAlpha = m_SourceAlpha + (float)time / (float)m_Duration * AlphaDelta;
 	}
-	m_CurrentAlpha = MIN(255, std::max(m_CurrentAlpha, (byte )0));
+	m_CurrentAlpha = MIN((unsigned char)255, MAX(m_CurrentAlpha, (byte )0)); // TODO: clean
 
 	m_Ready = time >= m_Duration;
 	if (m_Ready && m_CurrentAlpha == 0x00) m_Active = false;

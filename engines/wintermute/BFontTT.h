@@ -35,6 +35,7 @@
 
 #define NUM_CACHED_TEXTS 30
 class SDL_Surface;
+class SDL_Rect;
 namespace WinterMute {
 
 class FontGlyphCache;
@@ -55,7 +56,8 @@ private:
 		bool m_Marked;
 
 		CBCachedTTFontText() {
-			m_Text = L"";
+			//m_Text = L"";
+			m_Text = "";
 			m_Width = m_MaxHeight = m_MaxLength = -1;
 			m_Align = TAL_LEFT;
 			m_Surface = NULL;
@@ -108,7 +110,7 @@ public:
 		WideString m_Text;
 		int m_Width;
 	};
-	typedef std::list<TextLine *> TextLineList;
+	typedef Common::List<TextLine *> TextLineList;
 
 
 public:

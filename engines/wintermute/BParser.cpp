@@ -31,6 +31,7 @@
 #include "BGame.h"
 #include "PlatformSDL.h"
 #include "common/str.h"
+#include "common/util.h"
 
 #define WHITESPACE " \t\n\r"
 
@@ -88,7 +89,7 @@ long CBParser::GetObject(char **buf, TokenDesc *tokens, char **name, char **data
 	if (tokens->id == 0) {
 		char *p = strchr(*buf, '\n');
 		if (p && p > *buf) {
-			strncpy(m_LastOffender, *buf, MIN(255, p - *buf));
+			strncpy(m_LastOffender, *buf, MIN((long int)255, p - *buf)); // TODO, clean
 		} else strcpy(m_LastOffender, "");
 
 		return PARSERR_TOKENNOTFOUND;

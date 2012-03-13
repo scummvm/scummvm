@@ -31,6 +31,7 @@
 #include "BPkgFile.h"
 #include "BGame.h"
 #include "BFileManager.h"
+#include "common/util.h"
 
 #if _DEBUG
 #pragma comment(lib, "zlib_d.lib")
@@ -131,7 +132,7 @@ HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
 		while (m_Stream.total_out - InitOut < Size && m_Stream.total_in < m_FileEntry->m_CompressedLength) {
 			// needs to read more data?
 			if (m_Stream.avail_in == 0) {
-				m_Stream.avail_in = MIN(COMPRESSED_BUFFER_SIZE, m_FileEntry->m_CompressedLength - m_Stream.total_in);
+				m_Stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, m_FileEntry->m_CompressedLength - m_Stream.total_in); // TODO: long unsigned int????
 				m_FileEntry->m_Package->Read(m_File, m_FileEntry->m_Offset + m_Stream.total_in, m_CompBuffer, m_Stream.avail_in);
 				m_Stream.next_in = m_CompBuffer;
 			}
@@ -192,7 +193,7 @@ HRESULT CBPkgFile::SeekToPos(uint32 NewPos) {
 
 		m_Stream.avail_in = 0;
 		m_Stream.next_in = m_CompBuffer;
-		m_Stream.avail_out = MIN(STREAM_BUFFER_SIZE, NewPos);
+		m_Stream.avail_out = MIN((uint32)STREAM_BUFFER_SIZE, NewPos); //TODO: remove cast.
 		m_Stream.next_out = StreamBuffer;
 		inflateInit(&m_Stream);
 		m_InflateInit = true;
@@ -200,7 +201,7 @@ HRESULT CBPkgFile::SeekToPos(uint32 NewPos) {
 		while (m_Stream.total_out < NewPos && m_Stream.total_in < m_FileEntry->m_CompressedLength) {
 			// needs to read more data?
 			if (m_Stream.avail_in == 0) {
-				m_Stream.avail_in = MIN(COMPRESSED_BUFFER_SIZE, m_FileEntry->m_CompressedLength - m_Stream.total_in);
+				m_Stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, m_FileEntry->m_CompressedLength - m_Stream.total_in); // TODO: long unsigned int???
 				m_FileEntry->m_Package->Read(m_File, m_FileEntry->m_Offset + m_Stream.total_in, m_CompBuffer, m_Stream.avail_in);
 				m_Stream.next_in = m_CompBuffer;
 			}
@@ -208,7 +209,7 @@ HRESULT CBPkgFile::SeekToPos(uint32 NewPos) {
 			// needs more space?
 			if (m_Stream.avail_out == 0) {
 				m_Stream.next_out = StreamBuffer;
-				m_Stream.avail_out = MIN(STREAM_BUFFER_SIZE, NewPos - m_Stream.total_out);
+				m_Stream.avail_out = MIN((long unsigned int)STREAM_BUFFER_SIZE, NewPos - m_Stream.total_out); // TODO: long unsigned int???.
 			}
 
 			// stream on!

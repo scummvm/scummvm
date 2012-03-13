@@ -68,10 +68,10 @@ public:
 	CBArray<CBPackage *, CBPackage *> m_Packages;
 	CBArray<CBFile *, CBFile *> m_OpenFiles;
 
-	std::map<std::string, CBFileEntry *> m_Files;
+	Common::HashMap<Common::String, CBFileEntry *> m_Files;
 private:
 	HRESULT RegisterPackage(const char *Path, const char *Name, bool SearchSignature = false);
-	std::map<std::string, CBFileEntry *>::iterator m_FilesIter;
+	Common::HashMap<Common::String, CBFileEntry *>::iterator m_FilesIter;
 	bool IsValidPackage(const AnsiString &fileName) const;
 
 };
