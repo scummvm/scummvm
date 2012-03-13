@@ -116,9 +116,9 @@ enum places {
 	OWN_ROOM = 0,     GREEN_ROOM = 1,   PURPLE_ROOM = 2,     TOILETS = 3,     DARKBLUE_ROOM = 4,
 	BLUE_ROOM = 5,    RED_ROOM = 6,     BATHROOM = 7,        GREEN_ROOM2 = 8, ROOM9 = 9,
 	DINING_ROOM = 10, BUREAU = 11,      KITCHEN = 12,        ATTIC = 13,      CELLAR = 14, 
-	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17,                  MOUNTAIN = 19, 
-	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,                      WELL = 24,
-	DOOR = 25
+	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17, ROOM18 = 18,     MOUNTAIN = 19, 
+	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,     ROOM23 = 23,     WELL = 24,
+	DOOR = 25,        ROOM26 = 26
 };
 
 struct sav_chaine {
