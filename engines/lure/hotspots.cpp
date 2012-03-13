@@ -430,7 +430,7 @@ bool Hotspot::isActiveAnimation() {
 	return ((_numFrames != 0) && (_layer != 0));
 }
 
-uint16 Hotspot::nameId() {
+uint16 Hotspot::nameId() const {
 	if (_data == NULL)
 		return 0;
 	else
@@ -2286,7 +2286,7 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 			charHotspot->hotspotId, id);
 }
 
-void Hotspot::saveToStream(Common::WriteStream *stream) {
+void Hotspot::saveToStream(Common::WriteStream *stream) const {
 	if (_data)
 		_data->npcSchedule.saveToStream(stream);
 	else
@@ -4113,7 +4113,7 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 
 // This method performs rounding of the number of steps depending on direciton
 
-int WalkingActionEntry::numSteps() {
+int WalkingActionEntry::numSteps() const {
 	switch (_direction) {
 	case UP:
 	case DOWN:
@@ -4496,7 +4496,7 @@ void PathFinder::initVars() {
 	_countdownCtr -= 700;
 }
 
-void PathFinder::saveToStream(Common::WriteStream *stream) {
+void PathFinder::saveToStream(Common::WriteStream *stream) const {
 	stream->writeByte(_inUse);
 
 	if (_inUse) {
@@ -4504,8 +4504,7 @@ void PathFinder::saveToStream(Common::WriteStream *stream) {
 		stream->write(_layer, sizeof(RoomPathsDecompressedData));
 
 		// Save any active step sequence
-		WalkingActionList::iterator i;
-		for (i = _list.begin(); i != _list.end(); ++i) {
+		for (WalkingActionList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
 			WalkingActionEntry *entry = (*i).get();
 			stream->writeByte(entry->direction());
 			stream->writeSint16LE(entry->rawSteps());
@@ -4683,9 +4682,8 @@ bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
 	return false;
 }
 
-void HotspotList::saveToStream(Common::WriteStream *stream) {
-	HotspotList::iterator i;
-	for (i = begin(); i != end(); ++i) {
+void HotspotList::saveToStream(Common::WriteStream *stream) const {
+	for (HotspotList::const_iterator i = begin(); i != end(); ++i) {
 		Hotspot *hotspot = (*i).get();
 		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Saving hotspot %xh", hotspot->hotspotId());
 		bool dynamicObject = hotspot->hotspotId() != hotspot->originalId();

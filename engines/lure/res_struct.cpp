@@ -278,10 +278,8 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 
 // Room data class
 
-void RoomDataList::saveToStream(Common::WriteStream *stream) {
-	RoomDataList::iterator i;
-
-	for (i = begin(); i != end(); ++i) {
+void RoomDataList::saveToStream(Common::WriteStream *stream) const {
+	for (RoomDataList::const_iterator i = begin(); i != end(); ++i) {
 		RoomData *rec = (*i).get();
 		stream->writeByte(rec->flags);
 		const byte *pathData = rec->paths.data();
@@ -317,8 +315,8 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 	blocked = rec->blocked;
 }
 
-void RoomExitJoinList::saveToStream(Common::WriteStream *stream) {
-	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
+void RoomExitJoinList::saveToStream(Common::WriteStream *stream) const {
+	for (RoomExitJoinList::const_iterator i = begin(); i != end(); ++i) {
 		RoomExitJoinData *rec = (*i).get();
 
 		stream->writeUint16LE(rec->hotspots[0].hotspotId);
@@ -435,7 +433,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	npcScheduleId = READ_LE_UINT16(&rec->npcSchedule);
 }
 
-void HotspotData::saveToStream(Common::WriteStream *stream) {
+void HotspotData::saveToStream(Common::WriteStream *stream) const {
 	// Write out the basic fields
 	stream->writeUint16LE(nameId);
 	stream->writeUint16LE(descId);
@@ -534,9 +532,8 @@ void HotspotData::loadFromStream(Common::ReadStream *stream) {
 
 // Hotspot data list
 
-void HotspotDataList::saveToStream(Common::WriteStream *stream) {
-	iterator i;
-	for (i = begin(); i != end(); ++i) {
+void HotspotDataList::saveToStream(Common::WriteStream *stream) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
 		HotspotData *hotspot = (*i).get();
 		stream->writeUint16LE(hotspot->hotspotId);
 		hotspot->saveToStream(stream);
@@ -699,13 +696,11 @@ TalkEntryData *TalkData::getResponse(int index) {
 
 // The following class acts as a container for all the NPC conversations
 
-void TalkDataList::saveToStream(Common::WriteStream *stream) {
-	TalkDataList::iterator i;
-	for (i = begin(); i != end(); ++i) {
+void TalkDataList::saveToStream(Common::WriteStream *stream) const {
+	for (TalkDataList::const_iterator i = begin(); i != end(); ++i) {
 		TalkData *rec = (*i).get();
-		TalkEntryList::iterator i2;
 
-		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
+		for (TalkEntryList::const_iterator i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
 			TalkEntryData *entry = (*i2).get();
 			stream->writeUint16LE(entry->descId);
 		}
@@ -716,9 +711,8 @@ void TalkDataList::loadFromStream(Common::ReadStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		TalkData *rec = (*i).get();
-		TalkEntryList::iterator i2;
 
-		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
+		for (TalkEntryList::const_iterator i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
 			TalkEntryData *entry = (*i2).get();
 			entry->descId = stream->readUint16LE();
 		}
@@ -812,10 +806,8 @@ void SequenceDelayList::clear(bool forceClear) {
 	}
 }
 
-void SequenceDelayList::saveToStream(Common::WriteStream *stream) {
-	SequenceDelayList::iterator i;
-
-	for (i = begin(); i != end(); ++i) {
+void SequenceDelayList::saveToStream(Common::WriteStream *stream) const {
+	for (SequenceDelayList::const_iterator i = begin(); i != end(); ++i) {
 		SequenceDelayData *entry = (*i).get();
 		stream->writeUint16LE(entry->sequenceOffset);
 		stream->writeUint32LE(entry->timeoutCtr);
@@ -1016,7 +1008,7 @@ RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
 	return NULL;
 }
 
-void RandomActionSet::saveToStream(Common::WriteStream *stream) {
+void RandomActionSet::saveToStream(Common::WriteStream *stream) const {
 	stream->writeByte(numActions());
 	for (int actionIndex = 0; actionIndex < _numActions; ++actionIndex)
 		stream->writeByte((byte)_types[actionIndex]);
@@ -1030,8 +1022,8 @@ void RandomActionSet::loadFromStream(Common::ReadStream *stream) {
 }
 
 
-void RandomActionList::saveToStream(Common::WriteStream *stream) {
-	for (iterator i = begin(); i != end(); ++i)
+void RandomActionList::saveToStream(Common::WriteStream *stream) const {
+	for (const_iterator i = begin(); i != end(); ++i)
 		(*i)->saveToStream(stream);
 }
 
@@ -1196,7 +1188,7 @@ BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
 	error("Invalid room %d specified for barman details retrieval", roomNumber);
 }
 
-void BarmanLists::saveToStream(Common::WriteStream *stream) {
+void BarmanLists::saveToStream(Common::WriteStream *stream) const {
 	for (int index = 0; index < 3; ++index) {
 		uint16 value = (_barList[index].currentCustomer == NULL) ? 0 :
 			(_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry) + 1;
@@ -1296,7 +1288,7 @@ void ValueTableData::setField(FieldName fieldName, uint16 value) {
 	setField((uint16) fieldName, value);
 }
 
-void ValueTableData::saveToStream(Common::WriteStream *stream) {
+void ValueTableData::saveToStream(Common::WriteStream *stream) const {
 	// Write out the special fields
 	stream->writeUint16LE(_numGroats);
 	stream->writeSint16LE(_playerNewPos.position.x);
@@ -1371,7 +1363,7 @@ void CurrentActionEntry::setSupportData(uint16 entryId) {
 	setSupportData(newEntry);
 }
 
-void CurrentActionEntry::saveToStream(Common::WriteStream *stream) {
+void CurrentActionEntry::saveToStream(Common::WriteStream *stream) const {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action entry dyn=%d id=%d",
 		hasSupportData(), hasSupportData() ? supportData().id() : 0);
 	stream->writeByte((uint8) _action);
@@ -1466,14 +1458,12 @@ Common::String CurrentActionStack::getDebugInfo() const {
 	return buffer;
 }
 
-void CurrentActionStack::saveToStream(Common::WriteStream *stream) {
-	ActionsList::iterator i;
-
+void CurrentActionStack::saveToStream(Common::WriteStream *stream) const {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action stack");
 	Common::String buffer = getDebugInfo();
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer.c_str());
 
-	for (i = _actions.begin(); i != _actions.end(); ++i) {
+	for (ActionsList::const_iterator i = _actions.begin(); i != _actions.end(); ++i) {
 		CurrentActionEntry *rec = (*i).get();
 		rec->saveToStream(stream);
 	}
