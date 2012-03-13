@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	AdRegion.o \
 	AdResponse.o \
 	AdResponseBox.o \
+	AdResponseContext.o \
 	AdRotLevel.o \
 	AdScaleLevel.o \
 	AdScene.o \
@@ -90,7 +91,11 @@ MODULE_OBJS := \
 	detection.o \
 	FontGlyphCache.o \
 	MathUtil.o \
+	Matrix4.o \
 	PathUtil.o \
+	PartParticle.o \
+	PartEmitter.o \
+	PartForce.o \
 	PlatformSDL.o \
 	StringUtil.o \
 	SysClass.o \

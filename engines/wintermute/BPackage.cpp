@@ -30,6 +30,7 @@
 #include "BPackage.h"
 #include "BGame.h"
 #include "BFileManager.h"
+#include "common/file.h"
 
 namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
@@ -66,26 +67,26 @@ HRESULT CBPackage::Open() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPackage::Close() {
-	if (m_File) fclose(m_File);
+	delete m_File;
 	m_File = NULL;
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPackage::Read(FILE *file, uint32 offset, byte *buffer, uint32 size) {
+HRESULT CBPackage::Read(Common::File *file, uint32 offset, byte *buffer, uint32 size) {
 	HRESULT ret;
 	if (FAILED(ret = Open())) return ret;
 	else {
-		if (fseek(file, offset, SEEK_SET)) return E_FAIL;
-		if (fread(buffer, size, 1, file) != 1) return E_FAIL;
+		if (file->seek(offset, SEEK_SET)) return E_FAIL;
+		if (file->read(buffer, size) != 1) return E_FAIL;
 		else return S_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-FILE *CBPackage::GetFilePointer() {
-	FILE *file = Game->m_FileManager->OpenPackage(m_Name);
+Common::File *CBPackage::GetFilePointer() {
+	Common::File *file = Game->m_FileManager->OpenPackage(m_Name);
 	if (!file) {
 		Game->m_FileManager->RequestCD(m_CD, m_Name, "");
 		file = Game->m_FileManager->OpenPackage(m_Name);
@@ -94,8 +95,8 @@ FILE *CBPackage::GetFilePointer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPackage::CloseFilePointer(FILE*& file) {
-	if (file) fclose(file);
+void CBPackage::CloseFilePointer(Common::File*& file) {
+	delete file;
 	file = NULL;
 }
 

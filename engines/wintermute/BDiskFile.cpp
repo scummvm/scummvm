@@ -32,6 +32,7 @@
 #include "BPkgFile.h"
 #include "BDiskFile.h"
 #include "common/stream.h"
+#include "common/file.h"
 #include "BFileManager.h"
 
 namespace WinterMute {
@@ -61,20 +62,37 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 		sprintf(FullPath, "%s%s", Game->m_FileManager->m_SinglePaths[i], Filename.c_str());
 		CorrectSlashes(FullPath);
 		
-		error("Tried to open %s, TODO: add SearchMan-support", Filename.c_str());
 		//m_File = Common::createFileStream(FullPath);
-		if (m_File != NULL) 
+		Common::File *tempFile = new Common::File();
+		if(tempFile->open(FullPath)) {
+			m_File = tempFile;
+		} else {
+			delete tempFile;
+		}
+/*		if (m_File != NULL) {
+			error("Tried to open %s, but failed", Filename.c_str());
 			break;
+		}*/
 	}
 
 	// if we didn't find it in search paths, try to open directly
 	if (!m_File) {
 		strcpy(FullPath, Filename.c_str());
 		CorrectSlashes(FullPath);
-		error("Tried to open %s, TODO: add SearchMan-support", Filename.c_str());
+		//error("Tried to open %s, TODO: add SearchMan-support", Filename.c_str());
 		//m_File = Common::createFileStream(FullPath);
+		Common::File *tempFile = new Common::File();
+		if (tempFile->open(FullPath)) {
+			m_File = tempFile;
+		} else {
+			delete tempFile;
+		}
 	}
 
+	if (!m_File) {
+		warning("Couldn't load %s", Filename.c_str());
+	}
+	
 	if (m_File) {
 		uint32 magic1, magic2;
 		magic1 = m_File->readUint32LE();

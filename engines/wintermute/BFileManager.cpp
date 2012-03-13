@@ -26,6 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+
+
 #include "dcgf.h"
 #include "BFileManager.h"
 #include "StringUtil.h"
@@ -44,6 +46,10 @@
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "common/config-manager.h"
+#include "common/system.h"
+#include "common/fs.h"
+#include "common/file.h"
 //#include <boost/filesystem.hpp>
 
 #ifdef __WIN32__
@@ -178,6 +184,9 @@ byte *CBFileManager::ReadWholeFile(const char *Filename, uint32 *Size, bool Must
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::SaveFile(char *Filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
+	// TODO
+	warning("Implement SaveFile");
+#if 0
 	RestoreCurrentDir();
 
 	CBUtils::CreatePath(Filename, false);
@@ -224,7 +233,7 @@ HRESULT CBFileManager::SaveFile(char *Filename, byte *Buffer, uint32 BufferSize,
 	if (!Compressed) fwrite(Buffer, BufferSize, 1, f);
 
 	fclose(f);
-
+#endif
 	return S_OK;
 }
 
@@ -357,6 +366,10 @@ HRESULT CBFileManager::RegisterPackages() {
 
 	Game->LOG(0, "Scanning packages...");
 	warning("Scanning packages");
+	
+// TODO: Actually scan the folder, for now we just hardcode the files for Dirty Split.
+	RegisterPackage("data.dcp");
+	RegisterPackage("english.dcp");
 #if 0
 	AnsiString extension = AnsiString(".") + AnsiString(PACKAGE_EXTENSION);
 
@@ -385,15 +398,144 @@ HRESULT CBFileManager::RegisterPackages() {
 		}
 	}
 
-
+	warning("  Registered %d files in %d package(s)", m_Files.size(), m_Packages.GetSize());
 	Game->LOG(0, "  Registered %d files in %d package(s)", m_Files.size(), m_Packages.GetSize());
 #endif
+	warning("  Registered %d files in %d package(s)", m_Files.size(), m_Packages.GetSize());
 	return S_OK;
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSignature) {
+//	FILE *f = fopen(Filename, "rb");
+	Common::File *package = new Common::File();
+	package->open(Filename);
+	if (!package->isOpen()) {
+		Game->LOG(0, "  Error opening package file '%s'. Ignoring.", Filename.c_str());
+		return S_OK;
+	}
+	
+	uint32 AbsoluteOffset = 0;
+	bool BoundToExe = false;
+	
+	if (SearchSignature) {
+		uint32 Offset;
+		if (!FindPackageSignature(package, &Offset)) {
+			delete package;
+			return S_OK;
+		} else {
+			package->seek(Offset, SEEK_SET);
+			AbsoluteOffset = Offset;
+			BoundToExe = true;
+		}
+	}
+	
+	TPackageHeader hdr;
+	hdr.readFromStream(package);
+//	package->read(&hdr, sizeof(TPackageHeader), 1, f);
+	if (hdr.Magic1 != PACKAGE_MAGIC_1 || hdr.Magic2 != PACKAGE_MAGIC_2 || hdr.PackageVersion > PACKAGE_VERSION) {
+		Game->LOG(0, "  Invalid header in package file '%s'. Ignoring.", Filename);
+		delete package;
+		return S_OK;
+	}
+	
+	if (hdr.PackageVersion != PACKAGE_VERSION) {
+		Game->LOG(0, "  Warning: package file '%s' is outdated.", Filename);
+	}
+	
+	// new in v2
+	if (hdr.PackageVersion == PACKAGE_VERSION) {
+		uint32 DirOffset;
+		DirOffset = package->readUint32LE();
+		DirOffset += AbsoluteOffset;
+		package->seek(DirOffset, SEEK_SET);
+	}
+	
+	for (int i = 0; i < hdr.NumDirs; i++) {
+		CBPackage *pkg = new CBPackage(Game);
+		if (!pkg) return E_FAIL;
+		
+		pkg->m_BoundToExe = BoundToExe;
+		
+		// read package info
+		byte NameLength = package->readByte();
+		pkg->m_Name = new char[NameLength];
+		package->read(pkg->m_Name, NameLength);
+		pkg->m_CD = package->readByte();
+		pkg->m_Priority = hdr.Priority;
+		
+		if (!hdr.MasterIndex) pkg->m_CD = 0; // override CD to fixed disk
+		m_Packages.Add(pkg);
+		
+		
+		// read file entries
+		uint32 NumFiles = package->readUint32LE();
+		
+		for (int j = 0; j < NumFiles; j++) {
+			char *Name;
+			uint32 Offset, Length, CompLength, Flags, TimeDate1, TimeDate2;
+			
+			NameLength = package->readByte();
+			Name = new char[NameLength];
+			package->read(Name, NameLength);
+			
+			// v2 - xor name
+			if (hdr.PackageVersion == PACKAGE_VERSION) {
+				for (int k = 0; k < NameLength; k++) {
+					((byte  *)Name)[k] ^= 'D';
+				}
+			}
+			
+			// some old version of ProjectMan writes invalid directory entries
+			// so at least prevent strupr from corrupting memory
+			Name[NameLength - 1] = '\0';
+			
+			
+			CBPlatform::strupr(Name);
+			
+			Offset = package->readUint32LE();
+			Offset += AbsoluteOffset;
+			Length = package->readUint32LE();
+			CompLength = package->readUint32LE();
+			Flags = package->readUint32LE();
+			
+			if (hdr.PackageVersion == PACKAGE_VERSION) {
+				TimeDate1 = package->readUint32LE();
+				TimeDate2 = package->readUint32LE();
+			}
+			m_FilesIter = m_Files.find(Name);
+			if (m_FilesIter == m_Files.end()) {
+				CBFileEntry *file = new CBFileEntry(Game);
+				file->m_Package = pkg;
+				file->m_Offset = Offset;
+				file->m_Length = Length;
+				file->m_CompressedLength = CompLength;
+				file->m_Flags = Flags;
+				
+				m_Files[Name] = file;
+			} else {
+				// current package has lower CD number or higher priority, than the registered
+				if (pkg->m_CD < m_FilesIter->_value->m_Package->m_CD || pkg->m_Priority > m_FilesIter->_value->m_Package->m_Priority) {
+					m_FilesIter->_value->m_Package = pkg;
+					m_FilesIter->_value->m_Offset = Offset;
+					m_FilesIter->_value->m_Length = Length;
+					m_FilesIter->_value->m_CompressedLength = CompLength;
+					m_FilesIter->_value->m_Flags = Flags;
+				}
+			}
+			delete [] Name;
+		}
+	}
+	
+	
+	delete package;
+	return S_OK;
+}
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool SearchSignature) {
+// TODO
+	error("Implement RegisterPackage, this is the old one");
+#if 0
 	char Filename[MAX_PATH];
 	sprintf(Filename, "%s%s", Path, Name);
 
@@ -403,7 +545,7 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 		return S_OK;
 	}
 
-	uint32 AbosulteOffset = 0;
+	uint32 AbsoluteOffset = 0;
 	bool BoundToExe = false;
 
 	if (SearchSignature) {
@@ -413,7 +555,7 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 			return S_OK;
 		} else {
 			fseek(f, Offset, SEEK_SET);
-			AbosulteOffset = Offset;
+			AbsoluteOffset = Offset;
 			BoundToExe = true;
 		}
 	}
@@ -434,7 +576,7 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 	if (hdr.PackageVersion == PACKAGE_VERSION) {
 		uint32 DirOffset;
 		fread(&DirOffset, sizeof(uint32), 1, f);
-		DirOffset += AbosulteOffset;
+		DirOffset += AbsoluteOffset;
 		fseek(f, DirOffset, SEEK_SET);
 	}
 
@@ -483,7 +625,7 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 			CBPlatform::strupr(Name);
 
 			fread(&Offset, sizeof(uint32), 1, f);
-			Offset += AbosulteOffset;
+			Offset += AbsoluteOffset;
 			fread(&Length, sizeof(uint32), 1, f);
 			fread(&CompLength, sizeof(uint32), 1, f);
 			fread(&Flags, sizeof(uint32), 1, f);
@@ -518,7 +660,7 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 
 
 	fclose(f);
-
+#endif
 	return S_OK;
 }
 
@@ -534,36 +676,50 @@ bool CBFileManager::IsValidPackage(const AnsiString &fileName) const {
 }
 
 //////////////////////////////////////////////////////////////////////////
-FILE *CBFileManager::OpenPackage(char *Name) {
-	RestoreCurrentDir();
+Common::File *CBFileManager::OpenPackage(char *Name) {
+	//TODO
+	warning("Implement OpenPackage %s", Name);
+	
+	//RestoreCurrentDir();
 
-	FILE *ret = NULL;
+	Common::File *ret = new Common::File();
 	char Filename[MAX_PATH];
 
 	for (int i = 0; i < m_PackagePaths.GetSize(); i++) {
 		sprintf(Filename, "%s%s.%s", m_PackagePaths[i], Name, PACKAGE_EXTENSION);
-		ret = fopen(Filename, "rb");
-		if (ret != NULL) return ret;
+		//ret = fopen(Filename, "rb");
+		ret->open(Filename);
+		if (ret->isOpen()) {
+			return ret;
+		}
 	}
+	delete ret;
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-FILE *CBFileManager::OpenSingleFile(char *Name) {
+Common::File *CBFileManager::OpenSingleFile(char *Name) {
 	RestoreCurrentDir();
-
-	FILE *ret = NULL;
+	
+	Common::File *ret = NULL;
 	char Filename[MAX_PATH];
-
+	
 	for (int i = 0; i < m_SinglePaths.GetSize(); i++) {
 		sprintf(Filename, "%s%s", m_SinglePaths[i], Name);
-		ret = fopen(Filename, "rb");
-		if (ret != NULL) return ret;
+		ret->open(Filename);
+		if (ret->isOpen()) 
+			return ret;
 	}
-
+	
 	// didn't find in search paths, try to open directly
-	return fopen(Name, "rb");
+	ret->open(Name);
+	if (ret->isOpen()) {
+		return ret;
+	} else {
+		delete ret;
+		return NULL;
+	}
 }
 
 
@@ -706,15 +862,14 @@ HRESULT CBFileManager::SetBasePath(char *Path) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::FindPackageSignature(FILE *f, uint32 *Offset) {
+bool CBFileManager::FindPackageSignature(Common::File *f, uint32 *Offset) {
 	byte buf[32768];
 
 	byte Signature[8];
 	((uint32 *)Signature)[0] = PACKAGE_MAGIC_1;
 	((uint32 *)Signature)[1] = PACKAGE_MAGIC_2;
 
-	fseek(f, 0, SEEK_END);
-	uint32 FileSize = ftell(f);
+	uint32 FileSize = f->size();
 
 	int StartPos = 1024 * 1024;
 
@@ -722,8 +877,8 @@ bool CBFileManager::FindPackageSignature(FILE *f, uint32 *Offset) {
 
 	while (BytesRead < FileSize - 16) {
 		int ToRead = MIN((unsigned int)32768, FileSize - BytesRead);
-		fseek(f, StartPos, SEEK_SET);
-		int ActuallyRead = fread(buf, 1, ToRead, f);
+		f->seek(StartPos, SEEK_SET);
+		int ActuallyRead = f->read(buf, ToRead);
 		if (ActuallyRead != ToRead) return false;
 
 		for (int i = 0; i < ToRead - 8; i++)

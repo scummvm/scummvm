@@ -36,6 +36,10 @@
 
 #define COMPRESSED_BUFFER_SIZE 4096
 
+namespace Common {
+	class File;
+}
+
 namespace WinterMute {
 
 class CBPkgFile : public CBFile {
@@ -53,7 +57,7 @@ private:
 	CBFileEntry *m_FileEntry;
 	z_stream m_Stream;
 	byte m_CompBuffer[COMPRESSED_BUFFER_SIZE];
-	FILE *m_File;
+	Common::File *m_File;
 };
 
 } // end of namespace WinterMute

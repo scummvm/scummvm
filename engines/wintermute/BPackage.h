@@ -32,21 +32,25 @@
 
 #include "BBase.h"
 
+namespace Common {
+	class File;
+}
+
 namespace WinterMute {
 
 class CBPackage : public CBBase {
 public:
-	FILE *GetFilePointer();
-	void CloseFilePointer(FILE*& file);
+	Common::File *GetFilePointer();
+	void CloseFilePointer(Common::File*& file);
 
 	bool m_BoundToExe;
 	byte m_Priority;
-	HRESULT Read(FILE *file, uint32 offset, byte *buffer, uint32 size);
+	HRESULT Read(Common::File *file, uint32 offset, byte *buffer, uint32 size);
 	HRESULT Close();
 	HRESULT Open();
 	char *m_Name;
 	int m_CD;
-	FILE *m_File;
+	Common::File *m_File;
 	CBPackage(CBGame *inGame);
 	virtual ~CBPackage();
 

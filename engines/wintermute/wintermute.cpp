@@ -31,8 +31,9 @@
 #include "common/fs.h"
 
 #include "engines/util.h"
-#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/ADGame.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/PlatformSDL.h"
 
 namespace WinterMute {
 	
@@ -102,7 +103,8 @@ namespace WinterMute {
 		// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
 		debugC(3, kWinterMuteDebugExample | kWinterMuteDebugExample2, "Example debug call two");
 		
-		CBGame game;
+		CAdGame *game = new CAdGame;
+		CBPlatform::Initialize(game, NULL, 0);
 		
 		return Common::kNoError;
 	}

@@ -33,10 +33,11 @@ THE SOFTWARE.
 #define PACKAGE_EXTENSION "dcp"
 
 #include <time.h>
+#include "common/stream.h"
 
 namespace WinterMute {
 
-typedef struct {
+struct TPackageHeader {
 	uint32 Magic1;
 	uint32 Magic2;
 	uint32 PackageVersion;
@@ -51,7 +52,25 @@ typedef struct {
 #endif
 	char Desc[100];
 	uint32 NumDirs;
-} TPackageHeader;
+	// TODO: Move this out of the header.
+	void readFromStream(Common::ReadStream *stream) {
+		Magic1 = stream->readUint32LE();
+		Magic2 = stream->readUint32LE();
+		PackageVersion = stream->readUint32LE();
+
+		GameVersion = stream->readUint32LE();
+		
+		Priority = stream->readByte();
+		CD = stream->readByte();
+		MasterIndex = stream->readByte();
+		stream->readByte(); // To align the next byte...
+
+		CreationTime = stream->readUint32LE();
+
+		stream->read(Desc, 100);
+		NumDirs = stream->readUint32LE();
+	}
+};
 
 /*
 v2:  uint32 DirOffset

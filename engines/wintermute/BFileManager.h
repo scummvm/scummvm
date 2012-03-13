@@ -35,11 +35,15 @@
 #include "BFileEntry.h"
 #include "common/archive.h"
 
+namespace Common {
+	class File;
+}
+
 namespace WinterMute {
 class CBFile;
 class CBFileManager: CBBase {
 public:
-	bool FindPackageSignature(FILE *f, uint32 *Offset);
+	bool FindPackageSignature(Common::File *f, uint32 *Offset);
 	HRESULT Cleanup();
 	HRESULT SetBasePath(char *Path);
 	HRESULT RestoreCurrentDir();
@@ -49,8 +53,8 @@ public:
 	HRESULT CloseFile(CBFile *File);
 	CBFile *OpenFile(const char *Filename, bool AbsPathWarning = true);
 	CBFileEntry *GetPackageEntry(const char *Filename);
-	FILE *OpenSingleFile(char *Name);
-	FILE *OpenPackage(char *Name);
+	Common::File *OpenSingleFile(char *Name);
+	Common::File *OpenPackage(char *Name);
 	HRESULT RegisterPackages();
 	HRESULT InitPaths();
 	HRESULT ReloadPaths();
@@ -71,6 +75,7 @@ public:
 	Common::HashMap<Common::String, CBFileEntry *> m_Files;
 private:
 	HRESULT RegisterPackage(const char *Path, const char *Name, bool SearchSignature = false);
+	HRESULT RegisterPackage(Common::String Filename, bool SearchSignature = false);
 	Common::HashMap<Common::String, CBFileEntry *>::iterator m_FilesIter;
 	bool IsValidPackage(const AnsiString &fileName) const;
 
