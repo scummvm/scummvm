@@ -60,8 +60,9 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 	for (int i = 0; i < Game->m_FileManager->m_SinglePaths.GetSize(); i++) {
 		sprintf(FullPath, "%s%s", Game->m_FileManager->m_SinglePaths[i], Filename.c_str());
 		CorrectSlashes(FullPath);
-
-		m_File = Common::createFileStream(FullPath);
+		
+		error("Tried to open %s, TODO: add SearchMan-support", Filename.c_str());
+		//m_File = Common::createFileStream(FullPath);
 		if (m_File != NULL) 
 			break;
 	}
@@ -70,7 +71,8 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 	if (!m_File) {
 		strcpy(FullPath, Filename.c_str());
 		CorrectSlashes(FullPath);
-		m_File = Common::createFileStream(FullPath);
+		error("Tried to open %s, TODO: add SearchMan-support", Filename.c_str());
+		//m_File = Common::createFileStream(FullPath);
 	}
 
 	if (m_File) {

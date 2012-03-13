@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	BActiveRect.o \
 	BBase.o \
 	BDebugger.o \
+	BDiskFile.o \
 	BDynBuffer.o \
 	BFader.o \
 	BFile.o \
