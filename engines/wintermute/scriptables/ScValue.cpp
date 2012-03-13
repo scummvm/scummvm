@@ -230,8 +230,8 @@ HRESULT CScValue::SetProp(char *Name, CScValue *Val, bool CopyWhole, bool SetAsC
 		/*
 		m_ValIter = m_ValObject.find(Name);
 		if (m_ValIter != m_ValObject.end()){
-		    delete m_ValIter->second;
-		    m_ValIter->second = NULL;
+		    delete m_ValIter->_value;
+		    m_ValIter->_value = NULL;
 		}
 		CScValue* val = new CScValue(Game);
 		val->Copy(Val, CopyWhole);
