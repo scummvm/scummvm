@@ -260,7 +260,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (val->IsNULL()) Align = TAL_CENTER;
 		else Align = val->GetInt();
 
-		Align = std::min(std::max(0, Align), NUM_TEXT_ALIGN - 1);
+		Align = MIN(MAX(0, Align), NUM_TEXT_ALIGN - 1);
 
 		char *Sound = SoundVal->IsNULL() ? NULL : SoundVal->GetString();
 
@@ -802,7 +802,7 @@ int CAdObject::GetHeight() {
 		CBFrame *frame = m_CurrentSprite->m_Frames[m_CurrentSprite->m_CurrentFrame];
 		int ret = 0;
 		for (int i = 0; i < frame->m_Subframes.GetSize(); i++) {
-			ret = std::max(ret, frame->m_Subframes[i]->m_HotspotY);
+			ret = MAX(ret, frame->m_Subframes[i]->m_HotspotY);
 		}
 
 		if (m_Zoomable) {
@@ -880,7 +880,7 @@ void CAdObject::Talk(char *Text, char *Sound, uint32 Duration, char *Stances, TT
 	if (m_SubtitlesWidth > 0) width = m_SubtitlesWidth;
 	else {
 		if ((x < Game->m_Renderer->m_Width / 4 || x > Game->m_Renderer->m_Width * 0.75) && !Game->m_TouchInterface) {
-			width = std::max(Game->m_Renderer->m_Width / 4, std::min(x * 2, (Game->m_Renderer->m_Width - x) * 2));
+			width = MAX(Game->m_Renderer->m_Width / 4, MIN(x * 2, (Game->m_Renderer->m_Width - x) * 2));
 		} else width = Game->m_Renderer->m_Width / 2;
 	}
 
@@ -898,8 +898,8 @@ void CAdObject::Talk(char *Text, char *Sound, uint32 Duration, char *Stances, TT
 		x = x - width / 2;
 
 
-	x = std::min(std::max(0, x), Game->m_Renderer->m_Width - width);
-	y = std::min(std::max(0, y), Game->m_Renderer->m_Height - height);
+	x = MIN(MAX(0, x), Game->m_Renderer->m_Width - width);
+	y = MIN(MAX(0, y), Game->m_Renderer->m_Height - height);
 
 	m_Sentence->m_Width = width;
 

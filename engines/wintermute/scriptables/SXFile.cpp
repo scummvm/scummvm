@@ -23,17 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "SysClassRegistry.h"
-#include "SysClass.h"
-#include "ScStack.h"
-#include "ScValue.h"
-#include "ScScript.h"
-#include "utils.h"
-#include "BGame.h"
-#include "BFile.h"
-#include "BFileManager.h"
-#include "PlatformSDL.h"
-#include "scriptables/SXFile.h"
+#include "engines/wintermute/SysClassRegistry.h"
+#include "engines/wintermute/SysClass.h"
+#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScScript.h"
+#include "engines/wintermute/utils.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/BFile.h"
+#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/scriptables/SXFile.h"
 
 namespace WinterMute {
 

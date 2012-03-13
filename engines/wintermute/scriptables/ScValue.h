@@ -33,8 +33,8 @@
 #include "engines/wintermute/BBase.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/dcscript.h"   // Added by ClassView
-#include <map>
-#include <string>
+//#include <map>
+//#include <string>
 #include "engines/wintermute/wme_debugger.h"
 #include "common/str.h"
 
@@ -100,8 +100,8 @@ public:
 	CScValue(CBGame *inGame, double Val);
 	CScValue(CBGame *inGame, const char *Val);
 	virtual ~CScValue();
-	std::map<std::string, CScValue *> m_ValObject;
-	std::map<std::string, CScValue *>::iterator m_ValIter;
+	Common::HashMap<Common::String, CScValue *> m_ValObject;
+	Common::HashMap<Common::String, CScValue *>::iterator m_ValIter;
 
 	bool SetProperty(const char *PropName, int Value);
 	bool SetProperty(const char *PropName, const char *Value);

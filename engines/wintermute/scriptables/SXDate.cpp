@@ -34,7 +34,7 @@ IMPLEMENT_PERSISTENT(CSXDate, false)
 //////////////////////////////////////////////////////////////////////////
 CSXDate::CSXDate(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	Stack->CorrectParams(6);
-
+#if 0
 	memset(&m_tm, 0, sizeof(m_tm));
 
 	CScValue *valYear = Stack->Pop();
@@ -52,6 +52,7 @@ CSXDate::CSXDate(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	}
 
 	mktime(&m_tm);
+#endif
 }
 
 
@@ -63,12 +64,16 @@ CSXDate::~CSXDate() {
 
 //////////////////////////////////////////////////////////////////////////
 char *CSXDate::ScToString() {
+#if 0
 	return asctime(&m_tm);
+#endif
+	return "";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
 	//////////////////////////////////////////////////////////////////////////
@@ -202,7 +207,9 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		return S_OK;
 	}
 
-	else return E_FAIL;
+	else
+#endif
+		return E_FAIL;
 }
 
 
@@ -241,24 +248,27 @@ HRESULT CSXDate::ScSetProperty(char *Name, CScValue *Value) {
 HRESULT CSXDate::Persist(CBPersistMgr *PersistMgr) {
 
 	CBScriptable::Persist(PersistMgr);
-
+#if 0
 	if (PersistMgr->m_Saving)
 		PersistMgr->PutBytes((byte  *)&m_tm, sizeof(m_tm));
 	else
 		PersistMgr->GetBytes((byte  *)&m_tm, sizeof(m_tm));
-
+#endif
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 int CSXDate::ScCompare(CBScriptable *Value) {
+#if 0
 	time_t time1 = mktime(&m_tm);
 	time_t time2 = mktime(&((CSXDate *)Value)->m_tm);
 
 	if (time1 < time2) return -1;
 	else if (time1 > time2) return 1;
-	else return 0;
+	else
+#endif
+		return 0;
 }
 
 } // end of namespace WinterMute

@@ -23,13 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "BGame.h"
-#include "BRegistry.h"
-#include "scriptables/SXStore.h"
-#include "ScValue.h"
-#include "ScScript.h"
-#include "ScStack.h"
-#include "StringUtil.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/BRegistry.h"
+#include "engines/wintermute/scriptables/SXStore.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScScript.h"
+#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/StringUtil.h"
 
 #ifdef __IPHONEOS__
 #   include "IOS_StoreKit_interface.h"

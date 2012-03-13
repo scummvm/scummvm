@@ -26,17 +26,17 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "dcgf.h"
-#include "ScEngine.h"
-#include "StringUtil.h"
-#include "ScValue.h"
-#include "ScScript.h"
-#include "ScStack.h"
-#include "SXMath.h"
-#include "BRegistry.h"
-#include "BGame.h"
-#include "BSound.h"
-#include "BFileManager.h"
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/scriptables/ScEngine.h"
+#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/scriptables/ScScript.h"
+#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/scriptables/SXMath.h"
+#include "engines/wintermute/BRegistry.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/BSound.h"
+#include "engines/wintermute/BFileManager.h"
 #include <algorithm>
 #include <vector>
 
@@ -150,7 +150,8 @@ CScEngine::~CScEngine() {
 	Cleanup();
 
 	for (int i = 0; i < m_Breakpoints.GetSize(); i++) {
-		SAFE_DELETE(m_Breakpoints[i]);
+		delete m_Breakpoints[i];
+		m_Breakpoints[i] = NULL;
 	}
 	m_Breakpoints.RemoveAll();
 }
@@ -167,14 +168,15 @@ HRESULT CScEngine::Cleanup() {
 
 	m_Scripts.RemoveAll();
 
-
-	SAFE_DELETE(m_Globals);
+	delete m_Globals;
+	m_Globals = NULL;
 
 	EmptyScriptCache();
 
 	m_CurrentScript = NULL; // ref only
 
-	SAFE_DELETE_ARRAY(m_FileToCompile);
+	delete[] m_FileToCompile;
+	m_FileToCompile = NULL;
 
 	m_CompileErrorCallback = NULL;
 	m_CompileErrorCallbackData = NULL;
@@ -523,7 +525,8 @@ int CScEngine::GetNumScripts(int *Running, int *Waiting, int *Persistent) {
 HRESULT CScEngine::EmptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 		if (m_CachedScripts[i]) {
-			SAFE_DELETE(m_CachedScripts[i]);
+			delete m_CachedScripts[i];
+			m_CachedScripts[i] = NULL;
 		}
 	}
 	return S_OK;
@@ -602,7 +605,7 @@ HRESULT CScEngine::ResumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::SetFileToCompile(char *Filename) {
-	SAFE_DELETE_ARRAY(m_FileToCompile);
+	delete[] m_FileToCompile;
 	m_FileToCompile = new char[strlen(Filename) + 1];
 	if (m_FileToCompile) {
 		strcpy(m_FileToCompile, Filename);
@@ -695,7 +698,7 @@ HRESULT CScEngine::RemoveBreakpoint(char *ScriptFilename, int Line) {
 				if (m_Breakpoints[i]->m_Lines[j] == Line) {
 					m_Breakpoints[i]->m_Lines.RemoveAt(j);
 					if (m_Breakpoints[i]->m_Lines.GetSize() == 0) {
-						SAFE_DELETE(m_Breakpoints[i]);
+						delete m_Breakpoints[i];
 						m_Breakpoints.RemoveAt(i);
 					}
 					// refresh changes
@@ -776,8 +779,10 @@ HRESULT CScEngine::LoadBreakpoints() {
 		char *Line = CBUtils::StrEntry(1, breakpoint.c_str(), ':');
 
 		if (Path != NULL && Line != NULL) AddBreakpoint(Path, atoi(Line));
-		SAFE_DELETE_ARRAY(Path);
-		SAFE_DELETE_ARRAY(Line);
+		delete[] Path;
+		delete[] Line;
+		Path = NULL;
+		Line = NULL;
 	}
 
 	return S_OK;
@@ -817,14 +822,15 @@ void CScEngine::DisableProfiling() {
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::DumpStats() {
-	uint32 totalTime = CBPlatform::GetTime() - m_ProfilingStartTime;
+	error("DumpStats not ported to ScummVM yet");
+/*	uint32 totalTime = CBPlatform::GetTime() - m_ProfilingStartTime;
 
 	typedef std::vector <std::pair<uint32, std::string> > TimeVector;
 	TimeVector times;
 
 	ScriptTimes::iterator it;
 	for (it = m_ScriptTimes.begin(); it != m_ScriptTimes.end(); it++) {
-		times.push_back(std::pair<uint32, std::string> (it->second, it->first));
+		times.push_back(std::pair<uint32, std::string> (it->_value, it->_key));
 	}
 	std::sort(times.begin(), times.end());
 
@@ -836,7 +842,7 @@ void CScEngine::DumpStats() {
 
 	for (tit = times.rbegin(); tit != times.rend(); tit++) {
 		Game->LOG(0, "  %-40s %fs (%f%%)", tit->second.c_str(), (float)tit->first / 1000, (float)tit->first / (float)totalTime * 100);
-	}
+	}*/
 }
 
 } // end of namespace WinterMute

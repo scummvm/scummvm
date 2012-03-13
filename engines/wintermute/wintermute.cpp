@@ -46,7 +46,7 @@ namespace WinterMute {
 		
 		// However this is the place to specify all default directories
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
-		SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
+		//SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 		
 		// Here is the right place to set up the engine specific debug channels
 		DebugMan.addDebugChannel(kWinterMuteDebugExample, "example", "this is just an example for a engine specific debug channel");
@@ -102,9 +102,9 @@ namespace WinterMute {
 		// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
 		debugC(3, kWinterMuteDebugExample | kWinterMuteDebugExample2, "Example debug call two");
 		
-		return Common::kNoError;
-		
 		CBGame game;
+		
+		return Common::kNoError;
 	}
 	
 } // End of namespace WinterMute

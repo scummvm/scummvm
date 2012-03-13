@@ -23,13 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "BGame.h"
-#include "ScStack.h"
-#include "ScValue.h"
-#include "utils.h"
-#include "scriptables/SXString.h"
-#include "scriptables/SXArray.h"
-#include "StringUtil.h"
+#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/scriptables/ScValue.h"
+#include "engines/wintermute/utils.h"
+#include "engines/wintermute/scriptables/SXString.h"
+#include "engines/wintermute/scriptables/SXArray.h"
+#include "engines/wintermute/StringUtil.h"
 
 namespace WinterMute {
 
@@ -44,7 +44,7 @@ CSXString::CSXString(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	CScValue *Val = Stack->Pop();
 
 	if (Val->IsInt()) {
-		_capacity = std::max(0, Val->GetInt());
+		_capacity = MAX(0, Val->GetInt());
 		if (_capacity > 0) {
 			_string = new char[_capacity];
 			memset(_string, 0, _capacity);
@@ -102,22 +102,23 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		if (end < start) CBUtils::Swap(&start, &end);
 
-		try {
+		//try {
 			WideString str;
 			if (Game->m_TextEncoding == TEXT_UTF8)
 				str = StringUtil::Utf8ToWide(_string);
 			else
 				str = StringUtil::AnsiToWide(_string);
 
-			WideString subStr = str.substr(start, end - start + 1);
+			//WideString subStr = str.substr(start, end - start + 1);
+			WideString subStr(str.c_str() + start, end - start + 1);
 
 			if (Game->m_TextEncoding == TEXT_UTF8)
 				Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
 			else
 				Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
-		} catch (std::exception &) {
-			Stack->PushNULL();
-		}
+	//	} catch (std::exception &) {
+	//		Stack->PushNULL();
+	//	}
 
 		return S_OK;
 	}
@@ -139,22 +140,23 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		if (val->IsNULL()) len = strlen(_string) - start;
 
-		try {
+//		try {
 			WideString str;
 			if (Game->m_TextEncoding == TEXT_UTF8)
 				str = StringUtil::Utf8ToWide(_string);
 			else
 				str = StringUtil::AnsiToWide(_string);
 
-			WideString subStr = str.substr(start, len);
+//			WideString subStr = str.substr(start, len);
+			WideString subStr(str.c_str() + start, len);
 
 			if (Game->m_TextEncoding == TEXT_UTF8)
 				Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
 			else
 				Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
-		} catch (std::exception &) {
-			Stack->PushNULL();
-		}
+//		} catch (std::exception &) {
+//			Stack->PushNULL();
+//		}
 
 		return S_OK;
 	}
@@ -258,27 +260,29 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		else
 			delims = StringUtil::AnsiToWide(Separators);
 
-		std::vector<WideString> parts;
+		Common::Array<WideString> parts;
 
 
 		size_t start, pos;
 		start = 0;
 		do {
-			pos = str.find_first_of(delims, start);
+			pos = StringUtil::IndexOf(Common::String(str.c_str() + start), delims, start);
+			//pos = str.find_first_of(delims, start);
 			if (pos == start) {
 				start = pos + 1;
-			} else if (pos == WideString::npos) {
-				parts.push_back(str.substr(start));
+			} else if (pos == str.size()) {
+				parts.push_back(Common::String(str.c_str() + start));
 				break;
 			} else {
-				parts.push_back(str.substr(start, pos - start));
+				parts.push_back(Common::String(str.c_str() + start, pos - start));
 				start = pos + 1;
 			}
-			start = str.find_first_not_of(delims, start);
+			//start = str.find_first_not_of(delims, start);
+			start = StringUtil::LastIndexOf(Common::String(str.c_str() + start), delims, start) + 1;
 
-		} while (pos != WideString::npos);
+		} while (pos != str.size());
 
-		for (std::vector<WideString>::iterator it = parts.begin(); it != parts.end(); ++it) {
+		for (Common::Array<WideString>::iterator it = parts.begin(); it != parts.end(); ++it) {
 			WideString &part = (*it);
 
 			if (Game->m_TextEncoding == TEXT_UTF8)
@@ -316,7 +320,7 @@ CScValue *CSXString::ScGetProperty(char *Name) {
 	else if (strcmp(Name, "Length") == 0) {
 		if (Game->m_TextEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::Utf8ToWide(_string);
-			m_ScValue->SetInt(wstr.length());
+			m_ScValue->SetInt(wstr.size());
 		} else
 			m_ScValue->SetInt(strlen(_string));
 

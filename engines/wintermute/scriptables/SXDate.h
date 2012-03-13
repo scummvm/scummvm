@@ -45,7 +45,7 @@ public:
 	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	char *ScToString();
 	char *m_String;
-	struct tm m_tm;
+	//struct tm m_tm; // TODO!
 };
 
 } // end of namespace WinterMute

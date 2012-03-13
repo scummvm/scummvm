@@ -315,7 +315,7 @@ int StringUtil::IndexOf(const WideString &str, const WideString &toFind, size_t 
 	if (index == NULL)
 		return -1;
 	else
-		return str.c_str() - index;
+		return index - str.c_str();
 }
 
 //////////////////////////////////////////////////////////////////////////

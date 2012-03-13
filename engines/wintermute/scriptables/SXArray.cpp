@@ -168,7 +168,7 @@ HRESULT CSXArray::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Length") == 0) {
 		int OrigLength = m_Length;
-		m_Length = std::max(Value->GetInt(0), 0);
+		m_Length = MAX(Value->GetInt(0), 0);
 
 		char PropName[20];
 		if (m_Length < OrigLength) {

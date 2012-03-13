@@ -182,7 +182,7 @@ CScValue *CScValue::GetProp(char *Name) {
 
 	if (ret == NULL) {
 		m_ValIter = m_ValObject.find(Name);
-		if (m_ValIter != m_ValObject.end()) ret = m_ValIter->second;
+		if (m_ValIter != m_ValObject.end()) ret = m_ValIter->_value;
 	}
 	return ret;
 }
@@ -193,8 +193,8 @@ HRESULT CScValue::DeleteProp(char *Name) {
 
 	m_ValIter = m_ValObject.find(Name);
 	if (m_ValIter != m_ValObject.end()) {
-		delete m_ValIter->second;
-		m_ValIter->second = NULL;
+		delete m_ValIter->_value;
+		m_ValIter->_value = NULL;
 	}
 
 	return S_OK;
@@ -216,7 +216,7 @@ HRESULT CScValue::SetProp(char *Name, CScValue *Val, bool CopyWhole, bool SetAsC
 
 		m_ValIter = m_ValObject.find(Name);
 		if (m_ValIter != m_ValObject.end()) {
-			val = m_ValIter->second;
+			val = m_ValIter->_value;
 		}
 		if (!val) val = new CScValue(Game);
 		else val->Cleanup();
@@ -259,7 +259,7 @@ bool CScValue::PropExists(char *Name) {
 void CScValue::DeleteProps() {
 	m_ValIter = m_ValObject.begin();
 	while (m_ValIter != m_ValObject.end()) {
-		delete(CScValue *)m_ValIter->second;
+		delete(CScValue *)m_ValIter->_value;
 		m_ValIter++;
 	}
 	m_ValObject.clear();
@@ -270,7 +270,7 @@ void CScValue::DeleteProps() {
 void CScValue::CleanProps(bool IncludingNatives) {
 	m_ValIter = m_ValObject.begin();
 	while (m_ValIter != m_ValObject.end()) {
-		if (!m_ValIter->second->m_IsConstVar && (!m_ValIter->second->IsNative() || IncludingNatives)) m_ValIter->second->SetNULL();
+		if (!m_ValIter->_value->m_IsConstVar && (!m_ValIter->_value->IsNative() || IncludingNatives)) m_ValIter->_value->SetNULL();
 		m_ValIter++;
 	}
 }
@@ -671,8 +671,8 @@ void CScValue::Copy(CScValue *orig, bool CopyWhole) {
 	if (orig->m_Type == VAL_OBJECT && orig->m_ValObject.size() > 0) {
 		orig->m_ValIter = orig->m_ValObject.begin();
 		while (orig->m_ValIter != orig->m_ValObject.end()) {
-			m_ValObject[orig->m_ValIter->first] = new CScValue(Game);
-			m_ValObject[orig->m_ValIter->first]->Copy(orig->m_ValIter->second);
+			m_ValObject[orig->m_ValIter->_key] = new CScValue(Game);
+			m_ValObject[orig->m_ValIter->_key]->Copy(orig->m_ValIter->_value);
 			orig->m_ValIter++;
 		}
 	} else m_ValObject.clear();
@@ -727,9 +727,9 @@ HRESULT CScValue::Persist(CBPersistMgr *PersistMgr) {
 		PersistMgr->Transfer("", &size);
 		m_ValIter = m_ValObject.begin();
 		while (m_ValIter != m_ValObject.end()) {
-			str = (char *)m_ValIter->first.c_str();
+			str = (char *)m_ValIter->_key.c_str();
 			PersistMgr->Transfer("", &str);
-			PersistMgr->Transfer("", &m_ValIter->second);
+			PersistMgr->Transfer("", &m_ValIter->_value);
 
 			m_ValIter++;
 		}
@@ -797,8 +797,8 @@ HRESULT CScValue::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	m_ValIter = m_ValObject.begin();
 	while (m_ValIter != m_ValObject.end()) {
 		Buffer->PutTextIndent(Indent, "PROPERTY {\n");
-		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_ValIter->first.c_str());
-		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_ValIter->second->GetString());
+		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_ValIter->_key.c_str());
+		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_ValIter->_value->GetString());
 		Buffer->PutTextIndent(Indent, "}\n\n");
 
 		m_ValIter++;
@@ -855,7 +855,7 @@ int CScValue::CompareStrict(CScValue *Val1, CScValue *Val2) {
 HRESULT CScValue::DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *Script, unsigned int ScopeID) {
 	m_ValIter = m_ValObject.begin();
 	while (m_ValIter != m_ValObject.end()) {
-		Client->OnVariableInit(Type, Script, ScopeID, m_ValIter->second, m_ValIter->first.c_str());
+		Client->OnVariableInit(Type, Script, ScopeID, m_ValIter->_value, m_ValIter->_key.c_str());
 		m_ValIter++;
 	}
 	return S_OK;
@@ -999,8 +999,8 @@ bool CScValue::DbgGetProperty(int Index, const char **Name, IWmeDebugProp **Valu
 		m_ValIter = m_ValObject.begin();
 		while (m_ValIter != m_ValObject.end()) {
 			if (Count == Index) {
-				*Name = m_ValIter->first.c_str();
-				*Value = m_ValIter->second;
+				*Name = m_ValIter->_key.c_str();
+				*Value = m_ValIter->_value;
 				return true;
 			}
 			m_ValIter++;
