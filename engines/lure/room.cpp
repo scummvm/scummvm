@@ -138,7 +138,7 @@ void Room::leaveRoom() {
 	HotspotList &list = r.activeHotspots();
 	HotspotList::iterator i = list.begin();
 	while (i != list.end()) {
-		Hotspot *h = (i.operator*()).get();
+		Hotspot *h = i->get();
 		if (!h->persistant()) {
 			i = list.erase(i);
 		} else {
@@ -437,7 +437,7 @@ void Room::update() {
 
 	// Handle first layer (layer 3)
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		Hotspot &h = *i.operator*();
+		Hotspot &h = **i;
 
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 3)) {
 			addAnimation(h);
@@ -449,28 +449,28 @@ void Room::update() {
 	Common::List<Hotspot *> tempList;
 	Common::List<Hotspot *>::iterator iTemp;
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		Hotspot *h = (i.operator*()).get();
+		Hotspot *h = i->get();
 		if ((h->layer() != 1) || (h->roomNumber() != _roomNumber) ||
 			h->skipFlag() || !h->isActiveAnimation())
 			continue;
 		int16 endY = h->y() + h->heightCopy();
 
 		for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
-			Hotspot *hTemp = iTemp.operator*();
+			Hotspot *hTemp = *iTemp;
 			int16 tempY = hTemp->y() + hTemp->heightCopy();
 			if (endY < tempY) break;
 		}
 		tempList.insert(iTemp, h);
 	}
 	for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
-		Hotspot &h = *iTemp.operator*();
+		Hotspot &h = **iTemp;
 		addAnimation(h);
 		addLayers(h);
 	}
 
 	// Handle third layer (layer 2)
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		Hotspot &h = *i.operator*();
+		Hotspot &h = **i;
 
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 2)) {
 			addAnimation(h);

@@ -134,7 +134,7 @@ const Common::String MystResourceType5::describe() {
 		desc += " ops:";
 
 		for (uint i = 0; i < _script->size(); i++)
-			desc += " " + _vm->_scriptParser->getOpcodeDesc(_script->operator[](i).opcode);
+			desc += " " + _vm->_scriptParser->getOpcodeDesc((*_script)[i].opcode);
 	}
 
 	return desc;

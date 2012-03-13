@@ -230,7 +230,7 @@ GfxSurface::GfxSurface(const GfxSurface &s) {
 	_lockSurfaceCtr = 0;
 	_customSurface = NULL;
 	_trackDirtyRects = false;
-	this->operator =(s);
+	*this = s;
 }
 
 GfxSurface::~GfxSurface() {
