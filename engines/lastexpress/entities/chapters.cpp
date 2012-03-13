@@ -1805,7 +1805,7 @@ void Chapters::enterExitHelper(bool isEnteringStation) {
 	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, isEnteringStation ? kCursorNormal : kCursorHand);
 	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, isEnteringStation ? kCursorNormal : kCursorHand);
 
-	getProgress().isTrainRunning = isEnteringStation ? false : true;
+	getProgress().isTrainRunning = !isEnteringStation;
 
 	if (isEnteringStation) {
 		ENTITY_PARAM(0, 2) = 1;

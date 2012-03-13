@@ -32,7 +32,7 @@ namespace Kyra {
 void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 	seq_init();
 
-	bool allowSkip = (!(_flags.isDemo && !_flags.isTalkie) && (startSeq == kSequenceTitle)) ? false : true;
+	bool allowSkip = (_flags.isDemo && !_flags.isTalkie) || startSeq != kSequenceTitle;
 
 	if (endSeq == -1)
 		endSeq = startSeq;
@@ -74,7 +74,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		_seqFrameCounter = 0;
 		_seqStartTime = _system->getMillis();
 
-		allowSkip = (!(_flags.isDemo && !_flags.isTalkie) && (seqNum == kSequenceTitle)) ? false : true;
+		allowSkip = (_flags.isDemo && !_flags.isTalkie) || seqNum != kSequenceTitle;
 
 		Sequence cseq = _sequences->seq[seqNum];
 		SeqProc cb = _callbackS[seqNum];

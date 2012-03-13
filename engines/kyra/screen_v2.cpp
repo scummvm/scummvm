@@ -365,7 +365,7 @@ bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, i
 		}
 	}
 
-	return (w1 == -1) ? false : true;
+	return w1 != -1;
 }
 
 void Screen_v2::checkedPageUpdate(int srcPage, int dstPage) {

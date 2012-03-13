@@ -248,7 +248,7 @@ bool LoLEngine::updateMonsterAdjustBlocks(LoLMonster *monster) {
 	int16 fx2 = 0;
 	setLevelShapesDim(x2 + dims[y2], fx1, fx2, 13);
 
-	return (fx1 >= fx2) ? false : true;
+	return fx1 < fx2;
 }
 
 void LoLEngine::placeMonster(LoLMonster *monster, uint16 x, uint16 y) {
@@ -1447,7 +1447,7 @@ void LoLEngine::rearrangeAttackingMonster(LoLMonster *monster) {
 	uint16 mx = monster->x;
 	uint16 my = monster->y;
 	uint16 *c = (t & 1) ? &my : &mx;
-	bool centered = (*c & 0x7f) ? false : true;
+	bool centered = (*c & 0x7f) == 0;
 
 	bool posFlag = true;
 	if (monster->properties->maxWidth <= 63) {

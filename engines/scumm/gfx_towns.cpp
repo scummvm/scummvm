@@ -271,7 +271,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 
 	l->enabled = true;
 	_layers[0].onBottom = true;
-	_layers[1].onBottom = _layers[0].enabled ? false : true;
+	_layers[1].onBottom = !_layers[0].enabled;
 	l->ready = true;
 }
 
@@ -424,7 +424,7 @@ void TownsScreen::toggleLayers(int flag) {
 	_layers[0].enabled = (flag & 1) ? true : false;
 	_layers[0].onBottom = true;
 	_layers[1].enabled = (flag & 2) ? true : false;
-	_layers[1].onBottom = _layers[0].enabled ? false : true;
+	_layers[1].onBottom = !_layers[0].enabled;
 
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));

@@ -86,7 +86,7 @@ void InputPersistenceBlock::read(bool &value) {
 	if (checkMarker(BOOL_MARKER)) {
 		uint uintBool = READ_LE_UINT32(_iter);
 		_iter += 4;
-		value = uintBool == 0 ? false : true;
+		value = uintBool != 0;
 	} else {
 		value = false;
 	}

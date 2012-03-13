@@ -1876,7 +1876,7 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 			processButton(buttonList);
 
 		if (v6 && buttonList->buttonCallback)
-			runLoop = ((*buttonList->buttonCallback.get())(buttonList)) ? false : true;
+			runLoop = !(*buttonList->buttonCallback.get())(buttonList);
 
 		if ((flgs2 & 2) && (flgs & 0x20))
 			runLoop = false;
@@ -2331,7 +2331,7 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 	_screen->setFont(of);
 	_screen->setScreenDim(od);
 
-	return newHighlight ? false : true;
+	return newHighlight == 0;
 }
 
 void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
@@ -3548,7 +3548,7 @@ bool GUI_EoB::confirmDialogue(int id) {
 		_vm->removeInputTop();
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
-			result = lastHighlight ? false : true;
+			result = lastHighlight == 0;
 			inputFlag = 0x8021 + lastHighlight;
 			runLoop = false;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
