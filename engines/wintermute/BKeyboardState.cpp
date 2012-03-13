@@ -71,11 +71,12 @@ HRESULT CBKeyboardState::ScCallMethod(CScScript *Script, CScStack *Stack, CScSta
 			vKey = (int)str[0];
 		} else vKey = val->GetInt();
 
-		Uint8 *state = SDL_GetKeyboardState(NULL);
-		SDL_Scancode scanCode = SDL_GetScancodeFromKey(VKeyToKeyCode(vKey));
-		bool isDown = state[scanCode] > 0;
+		warning("BKeyboardState doesnt yet have state-support"); //TODO;
+//		Uint8 *state = SDL_GetKeyboardState(NULL);
+//		SDL_Scancode scanCode = SDL_GetScancodeFromKey(VKeyToKeyCode(vKey));
+//		bool isDown = state[scanCode] > 0;
 
-		Stack->PushBool(isDown);
+//		Stack->PushBool(isDown);
 		return S_OK;
 	}
 
@@ -177,7 +178,7 @@ char *CBKeyboardState::ScToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBKeyboardState::ReadKey(SDL_Event *event) {
-	m_CurrentPrintable = (event->type == SDL_TEXTINPUT);
+	//m_CurrentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	m_CurrentCharCode = KeyCodeToVKey(event);
 	//m_CurrentKeyData = KeyData;
 
@@ -235,9 +236,9 @@ uint32 CBKeyboardState::KeyCodeToVKey(SDL_Event *event) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SDL_Keycode CBKeyboardState::VKeyToKeyCode(uint32 vkey) {
+Common::KeyCode CBKeyboardState::VKeyToKeyCode(uint32 vkey) {
 	// todo
-	return (SDL_Keycode)vkey;
+	return (Common::KeyCode)vkey;
 }
 
 } // end of namespace WinterMute

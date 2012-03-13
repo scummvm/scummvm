@@ -55,6 +55,7 @@ MODULE_OBJS := \
 	BFontTT.o \
 	BFrame.o \
 	BImage.o \
+	BKeyboardState.o \
 	BNamedObject.o \
 	BObject.o \
 	BPackage.o \
@@ -70,6 +71,7 @@ MODULE_OBJS := \
 	BResources.o \
 	BResourceFile.o \
 	BSaveThumbFile.o \
+	BSaveThumbHelper.o \
 	BScriptable.o \
 	BScriptHolder.o \
 	BSound.o \
