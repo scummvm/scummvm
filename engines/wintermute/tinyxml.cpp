@@ -29,7 +29,7 @@ distribution.
 #include <iostream>
 #endif
 
-#include "tinyxml.h"
+#include "engines/wintermute/tinyxml.h"
 
 
 bool TiXmlBase::condenseWhiteSpace = true;

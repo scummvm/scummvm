@@ -98,6 +98,8 @@ MODULE_OBJS := \
 	SysInstance.o \
 	tinyxml.o \
 	tinystr.o \
+	tinyxmlparser.o \
+	tinyxmlerror.o \
 	UIButton.o \
 	UIEdit.o \
 	UIEntity.o \
