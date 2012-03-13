@@ -386,7 +386,6 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 	for (i = _roomData.begin(); i != _roomData.end(); ++i) {
 		RoomData *rec = (*i).get();
 		if (rec->roomNumber == roomNumber) return rec;
-		++rec;
 	}
 
 	return NULL;
