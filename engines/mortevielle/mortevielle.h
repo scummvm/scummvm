@@ -231,6 +231,7 @@ public:
 	int  getPresenceStatsAttic();
 	int  getPresenceStatsLanding();
 	int  getPresenceStatsChapel(int &hour);
+	int  getPresenceBitIndex(int roomId);
 	void setPresenceGreenRoom(int roomId);
 	void setPresencePurpleRoom();
 	void setPresenceBlueRoom();
@@ -254,6 +255,10 @@ public:
 
 	void loadPlaces();
 	void initGame();
+	void resetPresenceInRooms(int roomId);
+	void showPeoplePresent(int per);
+	int selectCharacters(int min, int max);
+	void displayAloneText();
 };
 
 extern MortevielleEngine *g_vm;

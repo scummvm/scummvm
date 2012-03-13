@@ -72,10 +72,6 @@ extern int convertCharacterIndexToBitIndex(int characterIndex);
 /* NIVEAU 12 */
 extern void modobj(int m);
 extern void repon(int f, int m);
-extern void t5(int roomId);
-extern void showPeoplePresent(int per);
-extern int selectCharacters(int min, int max);
-extern void displayAloneText();
 extern int chlm();
 extern void drawClock();
 /*************
@@ -83,7 +79,6 @@ extern void drawClock();
  *************/
 extern void debloc(int roomId);
 extern void getKnockAnswer();
-extern int nouvp(int roomId);
 extern int convertBitIndexToCharacterIndex(int bitIndex);
 extern void ecfren(int &p, int &rand, int cf, int roomId);
 extern void becfren(int roomId);

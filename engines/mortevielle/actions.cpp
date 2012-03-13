@@ -42,7 +42,7 @@ namespace Mortevielle {
  * @remarks	Originally called 'taller'
  */
 void MortevielleEngine::fctMove() {
-	if ((g_s._currPlace == 26) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
+	if ((g_s._currPlace == ROOM26) && (g_msg[4] == g_vm->_menu._moveMenu[6])) {
 		g_s._currPlace = LANDING;
 		g_caff = g_s._currPlace;
 		afdes(0);
@@ -66,7 +66,7 @@ void MortevielleEngine::fctMove() {
 			g_s._currPlace = ATTIC;
 			g_vm->_menu.setDestinationMenuText(ATTIC);
 		} else if (g_num != 6)
-			g_s._currPlace = 26;
+			g_s._currPlace = ROOM26;
 		if ((g_num > 1) && (g_num < 6))
 			g_ment = g_num - 1;
 		if (g_num > 7)
@@ -92,7 +92,7 @@ void MortevielleEngine::fctMove() {
 		return;
 	}
 
-	if (g_s._currPlace == 23) {
+	if (g_s._currPlace == ROOM23) {
 		if (cx == 1)
 			t1deau();
 		if (cx == 2)
@@ -113,9 +113,9 @@ void MortevielleEngine::fctMove() {
 
 	if ((g_s._currPlace == CELLAR) && (cx == 3))
 		cx = 6;
-	if (((g_s._currPlace == LANDING) || (g_s._currPlace == 26)) && (cx == 4))
+	if (((g_s._currPlace == LANDING) || (g_s._currPlace == ROOM26)) && (cx == 4))
 		cx = 6;
-	if ((g_s._currPlace > MOUNTAIN) && (g_s._currPlace != 26))
+	if ((g_s._currPlace > MOUNTAIN) && (g_s._currPlace != ROOM26))
 		cx += 10;
 	if ((g_s._currPlace == CHAPEL) && (cx == 13))
 		cx = 16;
@@ -163,7 +163,7 @@ void MortevielleEngine::fctMove() {
 			g_crep = 1505;
 			tperd();
 		} else {
-			g_s._currPlace = 23;
+			g_s._currPlace = ROOM23;
 			affrep();
 		}
 	}
@@ -277,9 +277,9 @@ void MortevielleEngine::fctTake() {
 		  || ((g_s._currPlace == BATHROOM)  && (g_num == 6)) || ((g_s._currPlace == GREEN_ROOM2)  && (g_num == 4))
 		  || ((g_s._currPlace == 9)  && (g_num == 4)) || ((g_s._currPlace == DINING_ROOM) && (g_num > 2))
 		  || ((g_s._currPlace == BUREAU) && (g_num == 7)) || ((g_s._currPlace == KITCHEN) && (g_num == 6))
-		  || ((g_s._currPlace == ATTIC) && (g_num > 4))  || ((g_s._currPlace > ATTIC)  && (g_s._currPlace != 23)) )
+		  || ((g_s._currPlace == ATTIC) && (g_num > 4))  || ((g_s._currPlace > ATTIC)  && (g_s._currPlace != ROOM23)) )
 		  g_crep = 997;
-		else if (g_s._currPlace == 23) {
+		else if (g_s._currPlace == ROOM23) {
 			g_crep = 1504;
 			tperd();
 		} else
@@ -433,7 +433,7 @@ void MortevielleEngine::fctLook() {
 		cx = 17;
 	if ((g_s._currPlace > MANOR_FRONT) && (g_s._currPlace < DOOR))
 		cx -= 4;
-	if (g_s._currPlace == 26)
+	if (g_s._currPlace == ROOM26)
 		cx = 21;
 	g_crep = g_tabdon[arega + (cx * 7) + g_num - 1];
 	if ((g_s._currPlace == ATTIC) && (g_num == 8))
@@ -484,7 +484,7 @@ void MortevielleEngine::fctSearch() {
 	if (g_vm->_anyone || g_vm->_keyPressedEsc)
 		return;
 
-	if (g_s._currPlace == 23) {
+	if (g_s._currPlace == ROOM23) {
 		g_crep = 1504;
 		tperd();
 		return;
@@ -577,7 +577,7 @@ void MortevielleEngine::fctOpen() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_OPEN));
 
-	if (g_caff == 26) {
+	if (g_caff == ROOM26) {
 		if (g_ment != 0) {
 			g_msg[4] = OPCODE_ENTER;
 			g_vm->_syn = true;
@@ -859,7 +859,7 @@ void MortevielleEngine::fctClose() {
 	if (!g_vm->_syn)
 		ecr3(g_vm->getEngineString(S_CLOSE));
 
-	if (g_caff < 26) {
+	if (g_caff < ROOM26) {
 		tfleche();
 		if (g_vm->_keyPressedEsc)
 			g_crep = 998;
@@ -887,7 +887,7 @@ void MortevielleEngine::fctClose() {
 			}
 		}
 	}
-	if (g_caff == 26)
+	if (g_caff == ROOM26)
 		g_crep = 999;
 }
 
@@ -918,7 +918,7 @@ void MortevielleEngine::fctKnock() {
 		return;
 	}
 
-	if (g_s._currPlace == 26) {
+	if (g_s._currPlace == ROOM26) {
 		int rand = (getRandomNumber(0, 8)) - 4;
 		g_vm->_speechManager.startSpeech(11, rand, 1);
 		int p;
@@ -1024,7 +1024,7 @@ void MortevielleEngine::fctSelfPut() {
 				}
 			}
 		}
-		if (g_caff == 23)
+		if (g_caff == ROOM23)
 			g_crep = 185;
 		if ((g_crep == 999) || (g_crep == 185) || (g_crep == 998)) {
 			if (g_crep == 999)
@@ -1040,7 +1040,7 @@ void MortevielleEngine::fctSelfPut() {
  * @remarks	Originally called 'tecouter'
  */
 void MortevielleEngine::fctListen() {
-	if (g_s._currPlace != 26)
+	if (g_s._currPlace != ROOM26)
 		g_crep = 101;
 	else {
 		if (g_ipers != 0)
@@ -1078,7 +1078,7 @@ void MortevielleEngine::fctListen() {
  * @remarks	Originally called 'tmanger'
  */
 void MortevielleEngine::fctEat() {
-	if ((g_s._currPlace > LANDING) && (g_s._currPlace < 26)) {
+	if ((g_s._currPlace > LANDING) && (g_s._currPlace < ROOM26)) {
 		g_crep = 148;
 	} else {
 		tsort();
@@ -1180,7 +1180,7 @@ void MortevielleEngine::fctEnter() {
 void MortevielleEngine::fctSleep() {
 	int z, j, h, m;
 
-	if ((g_s._currPlace > LANDING) && (g_s._currPlace < 26)) {
+	if ((g_s._currPlace > LANDING) && (g_s._currPlace < ROOM26)) {
 		g_crep = 148;
 		return;
 	}
@@ -1231,7 +1231,7 @@ void MortevielleEngine::fctForce() {
 		tfleche();
 
 	if ((!g_vm->_anyone) && (!g_vm->_keyPressedEsc)) {
-		if (g_s._currPlace != 26)
+		if (g_s._currPlace != ROOM26)
 			g_crep = 997;
 		else {
 			g_crep = 143;
@@ -1252,7 +1252,7 @@ void MortevielleEngine::fctLeave() {
 	else {
 		int lx = 0;
 
-		if ((g_s._currPlace < CRYPT) || (g_s._currPlace == 26))
+		if ((g_s._currPlace < CRYPT) || (g_s._currPlace == ROOM26))
 			lx = 10;
 		if ((g_s._currPlace == DINING_ROOM) || (g_s._currPlace == CHAPEL))
 			lx = 21;
@@ -1264,7 +1264,7 @@ void MortevielleEngine::fctLeave() {
 		}
 		if (g_s._currPlace == SECRET_PASSAGE)
 			t23coul(lx);
-		if (g_s._currPlace == 23)
+		if (g_s._currPlace == ROOM23)
 			lx = 24;
 		if (g_crep != 997)
 			g_s._currPlace = lx;
@@ -1418,7 +1418,7 @@ void MortevielleEngine::fctDiscuss() {
 			} else {
 				int ix = cy;
 				if (cx == 41)
-					ix = ix + 23;
+					ix += 23;
 				if (ix != choi) {
 					if (choi != 0) {
 						lig = ((choi - 1) % 23) << 3;
@@ -1528,7 +1528,7 @@ void MortevielleEngine::fctDiscuss() {
  */
 void MortevielleEngine::fctSmell() {
 	g_crep = 119;
-	if (g_caff < 26) {
+	if (g_caff < ROOM26) {
 		if (!g_vm->_syn)
 			ecr3(g_vm->getEngineString(S_SMELL));
 		tfleche();

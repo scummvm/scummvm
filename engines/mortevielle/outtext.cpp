@@ -454,7 +454,7 @@ void taffich() {
 	showMouse();
 	if ((a < 27) && ((g_maff < 27) || (g_s._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
-			displayAloneText();
+			g_vm->displayAloneText();
 		else if (!g_vm->_blo)
 			cx = t11(g_s._currPlace);
 		g_mpers =  0;

@@ -519,92 +519,100 @@ void repon(int f, int m) {
 	}
 }
 
-void t5(int roomId) {
+/**
+ * Engine function - Reset presence in other rooms
+ * @remarks	Originally called 't5'
+ */
+void MortevielleEngine::resetPresenceInRooms(int roomId) {
 	if (roomId == DINING_ROOM)
-		g_vm->_blo = false;
+		_blo = false;
 
 	if (roomId != GREEN_ROOM) {
-		g_vm->_roomPresenceLuc = false;
-		g_vm->_roomPresenceIda = false;
+		_roomPresenceLuc = false;
+		_roomPresenceIda = false;
 	}
 
 	if (roomId != PURPLE_ROOM)
-		g_vm->_purpleRoomPresenceLeo = false;
+		_purpleRoomPresenceLeo = false;
 
 	if (roomId != DARKBLUE_ROOM) {
-		g_vm->_roomPresenceGuy = false;
-		g_vm->_roomPresenceEva = false;
+		_roomPresenceGuy = false;
+		_roomPresenceEva = false;
 	}
 
 	if (roomId != BLUE_ROOM)
-		g_vm->_roomPresenceMax = false;
+		_roomPresenceMax = false;
 	if (roomId != RED_ROOM)
-		g_vm->_roomPresenceBob = false;
+		_roomPresenceBob = false;
 	if (roomId != GREEN_ROOM2)
-		g_vm->_roomPresencePat = false;
+		_roomPresencePat = false;
 	if (roomId != TOILETS)
-		g_vm->_toiletsPresenceBobMax = false;
+		_toiletsPresenceBobMax = false;
 	if (roomId != BATHROOM)
-		g_vm->_bathRoomPresenceBobMax = false;
+		_bathRoomPresenceBobMax = false;
 	if (roomId != ROOM9)
-		g_vm->_room9PresenceLeo = false;
+		_room9PresenceLeo = false;
 }
 
 /**
  * Engine function - Show the people present in the given room 
  * @remarks	Originally called 'affper'
  */
-void showPeoplePresent(int per) {
-	int cx;
-	int xp = 580 - (g_vm->_screenSurface.getStringWidth("LEO") / 2);
+void MortevielleEngine::showPeoplePresent(int per) {
+	int xp = 580 - (_screenSurface.getStringWidth("LEO") / 2);
 
-	for (cx = 1; cx <= 8; ++cx)
-		g_vm->_menu.disableMenuItem(g_vm->_menu._discussMenu[cx]);
+	for (int i = 1; i <= 8; ++i)
+		_menu.disableMenuItem(_menu._discussMenu[i]);
+
 	clearScreenType10();
 	if ((per & 128) == 128) {
-		g_vm->_screenSurface.putxy(xp, 24);
-		g_vm->_screenSurface.drawString("LEO", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[1]);
+		_screenSurface.putxy(xp, 24);
+		_screenSurface.drawString("LEO", 4);
+		_menu.enableMenuItem(_menu._discussMenu[1]);
 	}
 	if ((per & 64) == 64) {
-		g_vm->_screenSurface.putxy(xp, 32);
-		g_vm->_screenSurface.drawString("PAT", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[2]);
+		_screenSurface.putxy(xp, 32);
+		_screenSurface.drawString("PAT", 4);
+		_menu.enableMenuItem(_menu._discussMenu[2]);
 	}
 	if ((per & 32) == 32) {
-		g_vm->_screenSurface.putxy(xp, 40);
-		g_vm->_screenSurface.drawString("GUY", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[3]);
+		_screenSurface.putxy(xp, 40);
+		_screenSurface.drawString("GUY", 4);
+		_menu.enableMenuItem(_menu._discussMenu[3]);
 	}
 	if ((per & 16) == 16) {
-		g_vm->_screenSurface.putxy(xp, 48);
-		g_vm->_screenSurface.drawString("EVA", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[4]);
+		_screenSurface.putxy(xp, 48);
+		_screenSurface.drawString("EVA", 4);
+		_menu.enableMenuItem(_menu._discussMenu[4]);
 	}
 	if ((per & 8) == 8) {
-		g_vm->_screenSurface.putxy(xp, 56);
-		g_vm->_screenSurface.drawString("BOB", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[5]);
+		_screenSurface.putxy(xp, 56);
+		_screenSurface.drawString("BOB", 4);
+		_menu.enableMenuItem(_menu._discussMenu[5]);
 	}
 	if ((per & 4) == 4) {
-		g_vm->_screenSurface.putxy(xp, 64);
-		g_vm->_screenSurface.drawString("LUC", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[6]);
+		_screenSurface.putxy(xp, 64);
+		_screenSurface.drawString("LUC", 4);
+		_menu.enableMenuItem(_menu._discussMenu[6]);
 	}
 	if ((per & 2) == 2) {
-		g_vm->_screenSurface.putxy(xp, 72);
-		g_vm->_screenSurface.drawString("IDA", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[7]);
+		_screenSurface.putxy(xp, 72);
+		_screenSurface.drawString("IDA", 4);
+		_menu.enableMenuItem(_menu._discussMenu[7]);
 	}
 	if ((per & 1) == 1) {
-		g_vm->_screenSurface.putxy(xp, 80);
-		g_vm->_screenSurface.drawString("MAX", 4);
-		g_vm->_menu.enableMenuItem(g_vm->_menu._discussMenu[8]);
+		_screenSurface.putxy(xp, 80);
+		_screenSurface.drawString("MAX", 4);
+		_menu.enableMenuItem(_menu._discussMenu[8]);
 	}
 	g_ipers = per;
 }
 
-int selectCharacters(int min, int max) {
+/**
+ * Engine function - Select random characters
+ * @remarks	Originally called 'choix'
+ */
+int MortevielleEngine::selectCharacters(int min, int max) {
 	bool invertSelection = false;
 	int rand = getRandomNumber(min, max);
 
@@ -613,13 +621,13 @@ int selectCharacters(int min, int max) {
 		invertSelection = true;
 	}
 
-	int cx = 0;
+	int i = 0;
 	int retVal = 0;
-	while (cx < rand) {
+	while (i < rand) {
 		int charIndex = getRandomNumber(1, 8);
 		int charBitIndex = convertCharacterIndexToBitIndex(charIndex);
 		if ((retVal & charBitIndex) != charBitIndex) {
-			++cx;
+			++i;
 			retVal |= charBitIndex;
 		}
 	}
@@ -656,7 +664,7 @@ int MortevielleEngine::getPresenceStatsGreenRoom() {
 	else if ((hour >= 0) && (hour < 8))
 		retVal = 70;
 
-	g_vm->_menu.mdn();
+	_menu.mdn();
 
 	return retVal;
 }
@@ -747,21 +755,21 @@ int MortevielleEngine::getPresenceStatsRedRoom() {
  * on the right hand side of the screen
  * @remarks	Originally called 'person'
  */
-void displayAloneText() {
+void MortevielleEngine::displayAloneText() {
 	for (int cf = 1; cf <= 8; ++cf)
-		g_vm->_menu.disableMenuItem(g_vm->_menu._discussMenu[cf]);
+		_menu.disableMenuItem(_menu._discussMenu[cf]);
 
-	Common::String sYou = g_vm->getEngineString(S_YOU);
-	Common::String sAre = g_vm->getEngineString(S_ARE);
-	Common::String sAlone = g_vm->getEngineString(S_ALONE);
+	Common::String sYou = getEngineString(S_YOU);
+	Common::String sAre = getEngineString(S_ARE);
+	Common::String sAlone = getEngineString(S_ALONE);
 
 	clearScreenType10();
-	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sYou) / 2), 30);
-	g_vm->_screenSurface.drawString(sYou, 4);
-	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sAre) / 2), 50);
-	g_vm->_screenSurface.drawString(sAre, 4);
-	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sAlone) / 2), 70);
-	g_vm->_screenSurface.drawString(sAlone, 4);
+	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sYou) / 2), 30);
+	_screenSurface.drawString(sYou, 4);
+	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sAre) / 2), 50);
+	_screenSurface.drawString(sAre, 4);
+	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sAlone) / 2), 70);
+	_screenSurface.drawString(sAlone, 4);
 
 	g_ipers = 0;
 }
@@ -833,8 +841,8 @@ void debloc(int roomId) {
 	g_num = 0;
 	g_x = 0;
 	g_y = 0;
-	if ((roomId != 26) && (roomId != LANDING))
-		t5(roomId);
+	if ((roomId != ROOM26) && (roomId != LANDING))
+		g_vm->resetPresenceInRooms(roomId);
 	g_mpers = g_ipers;
 }
 
@@ -1160,29 +1168,33 @@ void getKnockAnswer() {
 	}
 }
 
-int nouvp(int roomId) {
+/**
+ * Engine function - Get Room Presence Bit Index
+ * @remarks	Originally called 'nouvp'
+ */
+int MortevielleEngine::getPresenceBitIndex(int roomId) {
 	int bitIndex = 0;
 	if (roomId == GREEN_ROOM) {
-		if (g_vm->_roomPresenceLuc)
+		if (_roomPresenceLuc)
 			bitIndex = 4;  // LUC
-		if (g_vm->_roomPresenceIda)
+		if (_roomPresenceIda)
 			bitIndex = 2;  // IDA
-	} else if ( ((roomId == PURPLE_ROOM) && (g_vm->_purpleRoomPresenceLeo))
-			 || ((roomId == ROOM9) && (g_vm->_room9PresenceLeo)))
+	} else if ( ((roomId == PURPLE_ROOM) && (_purpleRoomPresenceLeo))
+			 || ((roomId == ROOM9) && (_room9PresenceLeo)))
 		bitIndex = 128;    // LEO
 	else if (roomId == DARKBLUE_ROOM) {
-		if (g_vm->_roomPresenceGuy)
+		if (_roomPresenceGuy)
 			bitIndex = 32; // GUY
-		if (g_vm->_roomPresenceEva)
+		if (_roomPresenceEva)
 			bitIndex = 16; // EVA
-	} else if ((roomId == BLUE_ROOM) && (g_vm->_roomPresenceMax))
+	} else if ((roomId == BLUE_ROOM) && (_roomPresenceMax))
 		bitIndex = 1;      // MAX
-	else if ((roomId == RED_ROOM) && (g_vm->_roomPresenceBob))
+	else if ((roomId == RED_ROOM) && (_roomPresenceBob))
 		bitIndex = 8;      // BOB
-	else if ((roomId == GREEN_ROOM2) && (g_vm->_roomPresencePat))
+	else if ((roomId == GREEN_ROOM2) && (_roomPresencePat))
 		bitIndex = 64;     // PAT
-	else if ( ((roomId == TOILETS) && (g_vm->_toiletsPresenceBobMax))
-		   || ((roomId == BATHROOM) && (g_vm->_bathRoomPresenceBobMax)) )
+	else if ( ((roomId == TOILETS) && (_toiletsPresenceBobMax))
+		   || ((roomId == BATHROOM) && (_bathRoomPresenceBobMax)) )
 		bitIndex = 9;      // BOB + MAX
 
 	if (bitIndex != 9)
@@ -1221,7 +1233,7 @@ int convertBitIndexToCharacterIndex(int bitIndex) {
 
 void ecfren(int &p, int &rand, int cf, int roomId) {
 	if (roomId == OWN_ROOM)
-		displayAloneText();
+		g_vm->displayAloneText();
 	p = -500;
 	rand = 0;
 	if ( ((roomId == GREEN_ROOM) && (!g_vm->_roomPresenceLuc) && (!g_vm->_roomPresenceIda))
@@ -1540,19 +1552,19 @@ int t11(int roomId) {
 	if ((roomId > OWN_ROOM) && (roomId < DINING_ROOM)) {
 		if (p != -500) {
 			if (rand > p) {
-				displayAloneText();
+				g_vm->displayAloneText();
 				retVal = 0;
 			} else {
 				becfren(g_vm->_place);
-				retVal = nouvp(g_vm->_place);
+				retVal = g_vm->getPresenceBitIndex(g_vm->_place);
 			}
 		} else
-			retVal = nouvp(g_vm->_place);
+			retVal = g_vm->getPresenceBitIndex(g_vm->_place);
 	}
 
 	if (roomId > ROOM9) {
-		if ((roomId > LANDING) && (roomId != CHAPEL) && (roomId != 26))
-			displayAloneText();
+		if ((roomId > LANDING) && (roomId != CHAPEL) && (roomId != ROOM26))
+			g_vm->displayAloneText();
 		else {
 			int h = 0;
 			if (roomId == DINING_ROOM)
@@ -1563,14 +1575,14 @@ int t11(int roomId) {
 				p = g_vm->getPresenceStatsKitchen();
 			else if ((roomId == ATTIC) || (roomId == CELLAR))
 				p = g_vm->getPresenceStatsAttic();
-			else if ((roomId == LANDING) || (roomId == 26))
+			else if ((roomId == LANDING) || (roomId == ROOM26))
 				p = g_vm->getPresenceStatsLanding();
 			else if (roomId == CHAPEL)
 				p = g_vm->getPresenceStatsChapel(h);
 			p += g_s._faithScore;
 			rand = getRandomNumber(1, 100);
 			if (rand > p) {
-				displayAloneText();
+				g_vm->displayAloneText();
 				retVal = 0;
 			} else {
 				if (roomId == DINING_ROOM)
@@ -1579,7 +1591,7 @@ int t11(int roomId) {
 					p = g_vm->setPresenceBureau(h);
 				else if ((roomId == KITCHEN) || (roomId == ATTIC) || (roomId == CELLAR))
 					p = g_vm->setPresenceKitchen();
-				else if ((roomId == LANDING) || (roomId == 26))
+				else if ((roomId == LANDING) || (roomId == ROOM26))
 					p = g_vm->setPresenceLanding();
 				else if (roomId == CHAPEL)
 					p = g_vm->setPresenceChapel(h);
@@ -1605,7 +1617,7 @@ void cavegre() {
 	// It has been removed
 
 	clearScreenType3();
-	displayAloneText();
+	g_vm->displayAloneText();
 }
 
 void writetp(Common::String s, int t) {
@@ -1662,7 +1674,7 @@ void musique(int so) {
 				g_vm->_speechManager.startSpeech(12, 1, 1);
 				i = true;
 			}
-		} else if (g_s._currPlace == 23) {
+		} else if (g_s._currPlace == ROOM23) {
 			g_vm->_speechManager.startSpeech(13, 1, 1);
 			i = true;
 		}
@@ -1707,7 +1719,7 @@ void dessin(int ad) {
 					aniof(1, 1);
 			}
 			
-			if (g_caff < 26)
+			if (g_caff < ROOM26)
 				musique(1);
 		}
 	}
@@ -1820,7 +1832,7 @@ void tinke() {
 				g_vm->setRandomPresenceAttic(cf);
 				break;
 			case LANDING:
-			case 26:
+			case ROOM26:
 				g_vm->setRandomPresenceLanding(cf);
 				break;
 			case CHAPEL:
@@ -1856,7 +1868,7 @@ void tinke() {
 	}
 	g_hfb = readclock();
 	if ((g_vm->_brt) && ((g_hfb - g_hdb) > 17)) {
-		nouvp(g_vm->_place);
+		g_vm->getPresenceBitIndex(g_vm->_place);
 		g_vm->_brt = false;
 		g_hdb = 0;
 		if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
@@ -2111,7 +2123,7 @@ void t1sama() {    //Entering manor
 	int day, hour, minute;
 
 	updateHour(day, hour, minute);
-	if ((hour < 5) && (g_s._currPlace > 18)) {
+	if ((hour < 5) && (g_s._currPlace > ROOM18)) {
 		bool d;
 		cherjer(137, d);
 		if (!d) {        //You don't have the keys, and it's late
@@ -2121,7 +2133,7 @@ void t1sama() {    //Entering manor
 			st1sama();
 	} else if (!g_s._ipre) {     //Is it your first time?
 		g_ipers = 255;
-		showPeoplePresent(g_ipers);
+		g_vm->showPeoplePresent(g_ipers);
 		g_caff = 77;
 		afdes(0);
 		g_vm->_screenSurface.drawBox(223, 47, 155, 91, 15);
@@ -2137,7 +2149,7 @@ void t1sama() {    //Entering manor
 		showMouse();
 		g_s._currPlace = OWN_ROOM;
 		affrep();
-		t5(DINING_ROOM);
+		g_vm->resetPresenceInRooms(DINING_ROOM);
 		if (!g_vm->_blo)
 			minute = t11(OWN_ROOM);
 		g_ipers = 0;
@@ -2227,7 +2239,7 @@ L1:
 			int rand = (getRandomNumber(0, 4)) - 2;
 			g_vm->_speechManager.startSpeech(3, rand, 1);
 			clearScreenType2();
-			displayAloneText();
+			g_vm->displayAloneText();
 			debloc(21);
 			affrep();
 		}
@@ -2458,9 +2470,9 @@ void changeGraphicalDevice(int newDevice) {
 	tinke();
 	drawClock();
 	if (g_ipers != 0)
-		showPeoplePresent(g_ipers);
+		g_vm->showPeoplePresent(g_ipers);
 	else
-		displayAloneText();
+		g_vm->displayAloneText();
 	clearScreenType2();
 	clearScreenType3();
 	g_maff = 68;
@@ -2626,7 +2638,7 @@ void MortevielleEngine::handleOpcode() {
 	if ((((hour == 12) || (hour == 13) || (hour == 19)) && (g_s._currPlace != 10)) ||
 	        ((hour > 0) && (hour < 6) && (g_s._currPlace != 0)))
 		++g_s._faithScore;
-	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != 23)
+	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != ROOM23)
 	        && (g_s._currPlace != 0) && (g_s._selectedObjectId != 152) && (!_loseGame)) {
 		if ((g_s._faithScore > 99) && (hour > 8) && (hour < 16)) {
 			g_crep = 1501;
