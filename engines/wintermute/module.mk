@@ -7,7 +7,9 @@ MODULE_OBJS := \
 	scriptables/ScValue.o \
 	scriptables/SXArray.o \
 	scriptables/SXDate.o \
+	scriptables/SXFile.o \
 	scriptables/SXMath.o \
+	scriptables/SxObject.o \
 	scriptables/SXMemBuffer.o \
 	scriptables/SXStore.o \
 	scriptables/SXString.o \
@@ -78,6 +80,7 @@ MODULE_OBJS := \
 	BTransitionMgr.o \
 	BViewport.o \
 	ConvertUTF.o \
+	crc.o \
 	detection.o \
 	FontGlyphCache.o \
 	MathUtil.o \
