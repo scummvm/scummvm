@@ -31,7 +31,7 @@
 #include "BGame.h"
 #include "BSurfaceSDL.h"
 #include "BRenderSDL.h"
-#include "SdlUtil.h"
+//#include "SdlUtil.h"
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/bmp.h"
 #include "graphics/pixelformat.h"
@@ -53,11 +53,14 @@ CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSurfaceSDL::~CBSurfaceSDL() {
+	//TODO
+#if 0
 	if (m_Texture) SDL_DestroyTexture(m_Texture);
 	delete[] m_AlphaMask;
 	m_AlphaMask = NULL;
 
 	Game->AddMem(-m_Width * m_Height * 4);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,8 +130,10 @@ HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte 
 	if (surface->format.bytesPerPixel != 4)
 		SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
+	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
 	//m_Texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
+	warning("Surface-textures not fully ported yet");
+#if 0
 	m_Texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 	if (!m_Texture) {
 		SDL_FreeSurface(surf);
@@ -160,7 +165,7 @@ HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte 
 	m_Valid = true;
 
 	Game->AddMem(m_Width * m_Height * 4);
-
+#endif
 
 	return S_OK;
 }
@@ -176,11 +181,11 @@ void CBSurfaceSDL::GenAlphaMask(SDL_Surface *surface) {
 	bool hasColorKey;
 	Uint32 colorKey;
 	Uint8 ckRed, ckGreen, ckBlue;
-	if (SDL_GetColorKey(surface, &colorKey) == 0) {
+/*	if (SDL_GetColorKey(surface, &colorKey) == 0) {
 		hasColorKey = true;
 		SDL_GetRGB(colorKey, surface->format, &ckRed, &ckGreen, &ckBlue);
 	} else hasColorKey = false;
-
+*/ //TODO
 	m_AlphaMask = new byte[surface->w * surface->h];
 
 	bool hasTransparency = false;
@@ -240,6 +245,8 @@ Uint32 CBSurfaceSDL::GetPixel(SDL_Surface *surface, int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSurfaceSDL::Create(int Width, int Height) {
+	warning("SurfaceSDL::Create not ported yet"); //TODO
+#if 0
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->m_Renderer);
 	m_Texture = SDL_CreateTexture(renderer->GetSdlRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, Width, Height);
 
@@ -249,12 +256,14 @@ HRESULT CBSurfaceSDL::Create(int Width, int Height) {
 	Game->AddMem(m_Width * m_Height * 4);
 
 	m_Valid = true;
-
+#endif
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSurfaceSDL::CreateFromSDLSurface(SDL_Surface *surface) {
+	warning("CBSurfaceSDL::CreateFromSDLSurface not ported yet"); //TODO
+#if 0
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->m_Renderer);
 	m_Texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surface);
 
@@ -264,7 +273,7 @@ HRESULT CBSurfaceSDL::CreateFromSDLSurface(SDL_Surface *surface) {
 	Game->AddMem(m_Width * m_Height * 4);
 
 	m_Valid = true;
-
+#endif
 	return S_OK;
 }
 
@@ -272,7 +281,8 @@ HRESULT CBSurfaceSDL::CreateFromSDLSurface(SDL_Surface *surface) {
 bool CBSurfaceSDL::IsTransparentAt(int X, int Y) {
 	int access;
 	int width, height;
-	SDL_QueryTexture(m_Texture, NULL, &access, &width, &height);
+	warning("CBSurfaceSDL::IsTransparentAt not ported yet");
+	//SDL_QueryTexture(m_Texture, NULL, &access, &width, &height); //TODO
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
 	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
 
@@ -291,7 +301,8 @@ bool CBSurfaceSDL::IsTransparentAtLite(int X, int Y) {
 	Uint32 format;
 	int access;
 	int width, height;
-	SDL_QueryTexture(m_Texture, &format, &access, &width, &height);
+	warning("CBSurfaceSDL::IsTransparentAtLite not ported yet");
+	//SDL_QueryTexture(m_Texture, &format, &access, &width, &height);
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
 	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
 
@@ -368,6 +379,8 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 	byte b = D3DCOLGetB(Alpha);
 	byte a = D3DCOLGetA(Alpha);
 
+	warning("CBSurfaceSDL::DrawSprite not ported yet"); // TODO.
+#if 0
 	SDL_SetTextureColorMod(m_Texture, r, g, b);
 	SDL_SetTextureAlphaMod(m_Texture, a);
 
@@ -394,7 +407,7 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 	position.y += offsetY;
 
 	SDL_RenderCopy(renderer->GetSdlRenderer(), m_Texture, &srcRect, &position);
-
+#endif
 
 	return S_OK;
 }

@@ -76,6 +76,7 @@ MODULE_OBJS := \
 	BStringTable.o \
 	BSubFrame.o \
 	BSurface.o \
+	BSurfaceSDL.o \
 	BSurfaceStorage.o \
 	BTransitionMgr.o \
 	BViewport.o \
