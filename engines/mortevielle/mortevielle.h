@@ -143,6 +143,8 @@ public:
 	int _currGraphicalDevice;
 	int _newGraphicalDevice;
 	int _place;
+	int _manorDistance;
+
 
 	int _c_zzz;
 	int ptr_word;
@@ -162,7 +164,8 @@ public:
 	bool _endGame;			// End game flag. Originally called 'solu'
 	bool _loseGame;			// Lose game flag. Originally called 'perdu'
 	bool _txxFileFl;        // Flag used to determine if texts are from the original files or from a DAT file
-public:
+
+
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
 	virtual bool hasFeature(EngineFeature f) const;
@@ -186,10 +189,9 @@ public:
 	void handleOpcode();
 
 	void endGame();
-	void loseGame();
+	void askRestart();
 	void gameLoaded();
 
-/* NIVEAU 4 */
 	void fctMove();
 	void fctTake();
 	void fctInventoryTake();
@@ -259,6 +261,14 @@ public:
 	void showPeoplePresent(int per);
 	int selectCharacters(int min, int max);
 	void displayAloneText();
+
+	void checkManorDistance();
+	void gotoManorFront();
+	void gotoManorBack();
+	void gotoDiningRoom();
+	bool checkInventory(int objectId);
+	void loseGame();
+
 };
 
 extern MortevielleEngine *g_vm;
