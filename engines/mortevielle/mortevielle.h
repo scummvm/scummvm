@@ -269,7 +269,7 @@ public:
 	bool checkInventory(int objectId);
 	void loseGame();
 	void floodedInWell();
-
+	void displayDiningRoom();
 };
 
 extern MortevielleEngine *g_vm;
