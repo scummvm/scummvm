@@ -66,7 +66,7 @@ msgstr "Itxi"
 
 #: gui/gui-manager.cpp:118
 msgid "Mouse click"
-msgstr "Sagu-klik-a"
+msgstr "Sagu-klika"
 
 #: gui/gui-manager.cpp:122 base/main.cpp:288
 msgid "Display keyboard"
@@ -77,9 +77,8 @@ msgid "Remap keys"
 msgstr "Teklak esleitu"
 
 #: gui/gui-manager.cpp:129 base/main.cpp:295
-#, fuzzy
 msgid "Toggle FullScreen"
-msgstr "Pantaila osoa jarri / kendu"
+msgstr "Txandakatu pantaila osoa"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
@@ -272,7 +271,7 @@ msgstr "Bide-izenak"
 #: gui/launcher.cpp:284 gui/options.cpp:1140
 msgctxt "lowres"
 msgid "Paths"
-msgstr "Bide-izenak"
+msgstr "Bideak"
 
 #: gui/launcher.cpp:291
 msgid "Game Path:"
@@ -324,7 +323,7 @@ msgstr "Bat ere ez"
 #: gui/options.cpp:1277 gui/options.cpp:1321 gui/options.cpp:1439
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
-msgstr "Defektuz"
+msgstr "Lehenetsia"
 
 #: gui/launcher.cpp:462 gui/options.cpp:1442
 msgid "Select SoundFont"
@@ -364,15 +363,15 @@ msgstr "ScummVM-i buruz"
 
 #: gui/launcher.cpp:581
 msgid "~O~ptions..."
-msgstr "~E~zarpenak"
+msgstr "~A~ukerak"
 
 #: gui/launcher.cpp:581
 msgid "Change global ScummVM options"
-msgstr "ScummVM-ren ezarpen globalak aldatu"
+msgstr "ScummVM-ren aukera globalak aldatu"
 
 #: gui/launcher.cpp:583
 msgid "~S~tart"
-msgstr "~J~olastu"
+msgstr "~H~asi"
 
 #: gui/launcher.cpp:583
 msgid "Start selected game"
@@ -396,15 +395,15 @@ msgstr "Shift mantendu sakaturik hainbat joko gehitzeko"
 
 #: gui/launcher.cpp:593
 msgid "~E~dit Game..."
-msgstr "E~d~itatu..."
+msgstr "~E~ditatu..."
 
 #: gui/launcher.cpp:593 gui/launcher.cpp:600
 msgid "Change game options"
-msgstr "Aldatu jokoaren ezarpenak"
+msgstr "Aldatu jokoaren aukerak"
 
 #: gui/launcher.cpp:595
 msgid "~R~emove Game"
-msgstr "~K~endu"
+msgstr "~K~endu jokoa"
 
 #: gui/launcher.cpp:595 gui/launcher.cpp:602
 msgid "Remove game from the list. The game data files stay intact"
@@ -418,7 +417,7 @@ msgstr "~G~ehitu..."
 #: gui/launcher.cpp:600
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "E~d~itatu..."
+msgstr "~E~ditatu..."
 
 #: gui/launcher.cpp:602
 msgctxt "lowres"
@@ -577,7 +576,7 @@ msgstr "Bat ere ez"
 
 #: gui/options.cpp:393
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "Ezin izan da ezarpen grafikoetako batzuk aplikatu:"
+msgstr "Ezin izan da grafikoen aukeretako batzuk aplikatu:"
 
 #: gui/options.cpp:405
 msgid "the video mode could not be changed."
@@ -931,15 +930,15 @@ msgstr ""
 
 #: gui/saveload.cpp:58 gui/saveload.cpp:239
 msgid "No date saved"
-msgstr "Ez dago gordetako datarik"
+msgstr "Ez dago datarik gordeta"
 
 #: gui/saveload.cpp:59 gui/saveload.cpp:240
 msgid "No time saved"
-msgstr "Ez dago gordetako ordurik"
+msgstr "Ez dago ordurik gordeta"
 
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No playtime saved"
-msgstr "Ez dago gordetako denborarik"
+msgstr "Ez dago denborarik gordeta"
 
 #: gui/saveload.cpp:67 gui/saveload.cpp:155
 msgid "Delete"
@@ -1011,7 +1010,7 @@ msgstr "Menua"
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
-msgstr "Salto"
+msgstr "Saltatu"
 
 #: base/main.cpp:281 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
@@ -1113,7 +1112,7 @@ msgstr "~J~arraitu"
 
 #: engines/dialogs.cpp:86
 msgid "~L~oad"
-msgstr "~K~argatu"
+msgstr "Ka~r~gatu"
 
 #: engines/dialogs.cpp:90
 msgid "~S~ave"
@@ -1121,7 +1120,7 @@ msgstr "~G~orde"
 
 #: engines/dialogs.cpp:94
 msgid "~O~ptions"
-msgstr "~E~zarpenak"
+msgstr "~A~ukerak"
 
 #: engines/dialogs.cpp:99
 msgid "~H~elp"
@@ -1138,7 +1137,7 @@ msgstr "It~z~uli abiarazlera"
 #: engines/dialogs.cpp:106 engines/dialogs.cpp:184
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "~I~tzuli abiarazlera"
+msgstr "It~z~uli abiarazlera"
 
 #: engines/dialogs.cpp:116 engines/cruise/menu.cpp:214
 #: engines/sci/engine/kfile.cpp:566
@@ -1165,13 +1164,13 @@ msgstr ""
 "README-ra oinarrizko informaziorako eta laguntza gehiago nola jaso jakiteko."
 
 #: engines/dialogs.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Barkatu, motore honek ez du joko barruan laguntzarik eskaintzen. Jo ezazu "
-"README-ra oinarrizko informaziorako eta laguntza gehiago nola jaso jakiteko."
+"Jokoaren egoera gordetzeak huts egin du (%s)! Jo ezazu README-ra oinarrizko "
+"informaziorako eta laguntza gehiago nola jaso jakiteko."
 
 #: engines/dialogs.cpp:321 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
@@ -1232,13 +1231,13 @@ msgstr ""
 "xehetasunetarako."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Barkatu, motore honek ez du joko barruan laguntzarik eskaintzen. Jo ezazu "
-"README-ra oinarrizko informaziorako eta laguntza gehiago nola jaso jakiteko."
+"Jokoaren egoera kargatzeak huts egin du (%s)! Jo ezazu README-ra oinarrizko "
+"informaziorako eta laguntza gehiago nola jaso jakiteko."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1278,12 +1277,12 @@ msgstr "Joko pausatua. Sakatu ZURIUNEA jarraitzeko."
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:182
 msgid "Are you sure you want to restart?  (Y/N)"
-msgstr "Ziur zaude berrabiarazi nahi duzula (B/E)B/E"
+msgstr "Ziur zaude berrabiarazi nahi duzula (B/E)B"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:184
 msgid "Are you sure you want to quit?  (Y/N)"
-msgstr "Ziur zaude irten nahi duzula? (Y/N)"
+msgstr "Ziur zaude irten nahi duzula? (B/E)B"
 
 #: engines/scumm/dialogs.cpp:189
 msgid "Play"
@@ -1370,24 +1369,23 @@ msgstr "Ahotsak & azpit."
 
 #: engines/scumm/dialogs.cpp:653
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "Zailtasuna aukeratu."
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "Loom(TM)-ko eskuliburura jo ezazu laguntza lortzeko."
 
 #: engines/scumm/dialogs.cpp:658
-#, fuzzy
 msgid "Standard"
-msgstr "Estandarra (16bpp)"
+msgstr "Estandarra"
 
 #: engines/scumm/dialogs.cpp:659
 msgid "Practice"
-msgstr ""
+msgstr "Entrenamendua"
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Expert"
-msgstr ""
+msgstr "Aditua"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -1505,7 +1503,7 @@ msgstr "Eskala faktorea handitu / txikitu"
 
 #: engines/scumm/help.cpp:102
 msgid "Toggle aspect-ratio correction"
-msgstr "Formatu-ratioaren zuzenketa"
+msgstr "Txandakatu fFormatu-ratioaren zuzenketa"
 
 #: engines/scumm/help.cpp:107
 msgid "* Note that using ctrl-f and"
@@ -1759,7 +1757,7 @@ msgstr "Comm"
 
 #: engines/scumm/help.cpp:246
 msgid "Save / Load / Options"
-msgstr "Gorde / Kargatu / Ezarpenak"
+msgstr "Gorde / Kargatu / Aukerak"
 
 #: engines/scumm/help.cpp:255
 msgid "Other game controls:"
@@ -2052,7 +2050,7 @@ msgstr "Kargatu"
 
 #: engines/kyra/lol.cpp:488
 msgid "Options"
-msgstr "Ezarpenak"
+msgstr "Aukerak"
 
 #: engines/kyra/lol.cpp:489
 msgid "Choose Spell"
@@ -2147,11 +2145,11 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Hau Broken Sword 1 Demoaren amaiera da"
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"DXA bideoak aurkitu dira, baina ScummVM zlib euskarri gabe konpilatu da"
+"PSX eszenak aurkitu dira, baina ScummVM RGB kolorearen euskarri gabe "
+"konpilatu da"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2293,9 +2291,8 @@ msgid "Keymap:"
 msgstr "Teklen esleipena:"
 
 #: backends/keymapper/remap-dialog.cpp:66
-#, fuzzy
 msgid " (Effective)"
-msgstr "(Aktiboa)"
+msgstr "(Egiazkoa)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
@@ -2303,7 +2300,7 @@ msgstr "(Aktiboa)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr "(Blokeaturik)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
@@ -2407,7 +2404,7 @@ msgstr "Touchpad modua desgaituta."
 
 #: backends/platform/maemo/maemo.cpp:205
 msgid "Click Mode"
-msgstr ""
+msgstr "Klikatzeko modua"
 
 #: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2418,9 +2415,8 @@ msgid "Left Click"
 msgstr "Ezker-klika"
 
 #: backends/platform/maemo/maemo.cpp:214
-#, fuzzy
 msgid "Middle Click"
-msgstr "Erdiko ezkereko objektua"
+msgstr "Erdiko klika"
 
 #: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
@@ -2452,12 +2448,12 @@ msgstr "Minimizatu"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
-msgstr "Normal (eskalatu gabe)"
+msgstr "Normala (eskalatu gabe)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:64
 msgctxt "lowres"
 msgid "Normal (no scaling)"
-msgstr "Normal"
+msgstr "Normala"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2147
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
@@ -2821,11 +2817,11 @@ msgstr "Ziur zaude abiarazlera itzuli nahi duzula?"
 
 #: backends/events/default/default-events.cpp:191
 msgid "Launcher"
-msgstr "Abiarazlea?"
+msgstr "Abiarazlea"
 
 #: backends/events/default/default-events.cpp:213
 msgid "Do you really want to quit?"
-msgstr "Benetan irten nahi duzu?"
+msgstr "Benetan irten?"
 
 #: backends/events/gph/gph-events.cpp:338
 #: backends/events/gph/gph-events.cpp:381
@@ -2863,7 +2859,7 @@ msgstr "Bolumena jaisten"
 
 #: backends/updates/macosx/macosx-updates.mm:65
 msgid "Check for Updates..."
-msgstr "Eguneraketak bilatzen"
+msgstr "Eguneraketak bilatzen..."
 
 #: backends/platform/bada/form.cpp:269
 msgid "Right Click Once"
