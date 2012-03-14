@@ -144,6 +144,7 @@ public:
 	int _newGraphicalDevice;
 	int _place;
 	int _manorDistance;
+	int _currBitIndex;
 
 
 	int _c_zzz;
@@ -164,7 +165,6 @@ public:
 	bool _endGame;			// End game flag. Originally called 'solu'
 	bool _loseGame;			// Lose game flag. Originally called 'perdu'
 	bool _txxFileFl;        // Flag used to determine if texts are from the original files or from a DAT file
-
 
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
@@ -258,7 +258,7 @@ public:
 	void loadPlaces();
 	void initGame();
 	void resetPresenceInRooms(int roomId);
-	void showPeoplePresent(int per);
+	void showPeoplePresent(int bitIndex);
 	int selectCharacters(int min, int max);
 	void displayAloneText();
 
@@ -268,6 +268,7 @@ public:
 	void gotoDiningRoom();
 	bool checkInventory(int objectId);
 	void loseGame();
+	void floodedInWell();
 
 };
 

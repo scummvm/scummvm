@@ -121,7 +121,6 @@ extern void premtet();
 extern void ajchai();
 extern void ajjer(int ob);
 extern void t1vier();
-extern void t1deau();
 extern void tctrm();
 extern void quelquun();
 extern void tsuiv();
