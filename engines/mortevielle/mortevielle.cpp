@@ -566,7 +566,7 @@ void MortevielleEngine::playGame() {
 	if (_endGame)
 		endGame();
 	else if (_loseGame)
-		loseGame();
+		askRestart();
 }
 
 /**

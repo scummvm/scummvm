@@ -118,7 +118,7 @@ enum places {
 	DINING_ROOM = 10, BUREAU = 11,      KITCHEN = 12,        ATTIC = 13,      CELLAR = 14, 
 	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17, ROOM18 = 18,     MOUNTAIN = 19, 
 	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,     ROOM23 = 23,     WELL = 24,
-	DOOR = 25,        ROOM26 = 26
+	DOOR = 25,        ROOM26 = 26,      ROOM27 = 27
 };
 
 struct sav_chaine {
@@ -208,7 +208,6 @@ extern int g_x,
         g_crep,
         g_ades,
         g_iouv,
-        g_inei,
 		g_ctrm,
         g_dobj,
         g_msg3,

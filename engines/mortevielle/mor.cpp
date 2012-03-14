@@ -1946,26 +1946,28 @@ void affrep() {
 	g_crep = g_s._currPlace;
 }
 
-/* NIVEAU 6 */
-
-void tperd() {
+/**
+ * Engine function - You lose!
+ * @remarks	Originally called 'tperd'
+ */
+void MortevielleEngine::loseGame() {
 	initouv();
 	g_ment = 0;
 	g_iouv = 0;
 	g_mchai = 0;
-	g_vm->_menu.unsetSearchMenu();
-	if (!g_vm->_blo)
+	_menu.unsetSearchMenu();
+	if (!_blo)
 		t11(MANOR_FRONT);
 
-	g_vm->_loseGame = true;
+	_loseGame = true;
 	clearScreenType1();
-	g_vm->_screenSurface.drawBox(60, 35, 400, 50, 15);
+	_screenSurface.drawBox(60, 35, 400, 50, 15);
 	repon(9, g_crep);
 	clearScreenType2();
 	clearScreenType3();
-	g_vm->_col = false;
-	g_vm->_syn = false;
-	g_vm->_okdes = false;
+	_col = false;
+	_syn = false;
+	_okdes = false;
 }
 
 void tsort() {
@@ -2015,15 +2017,19 @@ void st4(int ob) {
 	}
 }
 
-void cherjer(int ob, bool &d) {
-	int cx;
+/**
+ * Engine function - Check inventory for a given object
+ * @remarks	Originally called 'cherjer'
+ */
+bool MortevielleEngine::checkInventory(int objectId) {
+	bool retVal = false;
+	for (int i = 1; i <= 6; ++i)
+		retVal = (retVal || (ord(g_s._sjer[i]) == objectId));
 
-	d = false;
-	for (cx = 1; cx <= 6; ++cx)
-		d = (d || (ord(g_s._sjer[cx]) == ob));
+	if (g_s._selectedObjectId == objectId)
+		retVal = true;
 
-	if (g_s._selectedObjectId == ob)
-		d = true;
+	return retVal;
 }
 
 void st1sama() {
@@ -2036,19 +2042,22 @@ void modinv() {
 	Common::String nomp;
 
 	int cy = 0;
-	for (int cx = 1; cx <= 6; ++cx)
-		if (g_s._sjer[cx] != chr(0)) {
+	for (int i = 1; i <= 6; ++i) {
+		if (g_s._sjer[i] != chr(0)) {
 			++cy;
-			r = (ord(g_s._sjer[cx]) + 400);
+			r = (ord(g_s._sjer[i]) + 400);
 			nomp = deline(r - 501 + kInventoryStringIndex);
 			g_vm->_menu.setText(g_vm->_menu._inventoryMenu[cy], nomp);
-			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[cx]);
+			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[i]);
 		}
-	if (cy < 6)
-		for (int cx = cy + 1; cx <= 6; ++cx) {
-			g_vm->_menu.setText(g_vm->_menu._inventoryMenu[cx], "                       ");
-			g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[cx]);
+	}
+
+	if (cy < 6) {
+		for (int i = cy + 1; i <= 6; ++i) {
+			g_vm->_menu.setText(g_vm->_menu._inventoryMenu[i], "                       ");
+			g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[i]);
 		}
+	}
 }
 
 void sparl(float adr, float rep) {
@@ -2119,16 +2128,18 @@ void ajjer(int ob) {
 		g_crep = 139;
 }
 
-void t1sama() {    //Entering manor
+/**
+ * Engine function - Go to Dining room
+ * @remarks	Originally called 't1sama'
+ */
+void MortevielleEngine::gotoDiningRoom() {
 	int day, hour, minute;
 
 	updateHour(day, hour, minute);
 	if ((hour < 5) && (g_s._currPlace > ROOM18)) {
-		bool d;
-		cherjer(137, d);
-		if (!d) {        //You don't have the keys, and it's late
+		if (!checkInventory(137)) {        //You don't have the keys, and it's late
 			g_crep = 1511;
-			tperd();
+			loseGame();
 		} else
 			st1sama();
 	} else if (!g_s._ipre) {     //Is it your first time?
@@ -2164,32 +2175,44 @@ void t1vier() {
 	affrep();
 }
 
-void t1neig() {
-	++g_inei;
-	if (g_inei > 2) {
+/**
+ * Engine function - Check Manor distance (in the mountains)
+ * @remarks	Originally called 't1neig'
+ */
+void MortevielleEngine::checkManorDistance() {
+	++_manorDistance;
+	if (_manorDistance > 2) {
 		g_crep = 1506;
-		tperd();
+		loseGame();
 	} else {
-		g_vm->_okdes = true;
+		_okdes = true;
 		g_s._currPlace = MOUNTAIN;
 		affrep();
 	}
 }
 
-void t1deva() {
-	g_inei = 0;
+/**
+ * Engine function - Go to Manor front
+ * @remarks	Originally called 't1deva'
+ */
+void MortevielleEngine::gotoManorFront() {
+	_manorDistance = 0;
 	g_s._currPlace = MANOR_FRONT;
 	affrep();
 }
 
-void t1derr() {
+/**
+ * Engine function - Go to Manor back
+ * @remarks	Originally called 't1derr'
+ */
+void MortevielleEngine::gotoManorBack() {
 	g_s._currPlace = MANOR_BACK;
 	affrep();
 }
 
 void t1deau() {
 	g_crep = 1503;
-	tperd();
+	g_vm->loseGame();
 }
 
 void tctrm() {
@@ -2425,15 +2448,13 @@ void rechai(int &ch) {
 	ch = g_tabdon[achai + (tmpPlace * 7) + g_num - 1];
 }
 
-void t23coul(int &l) {
-	bool d;
-
-	cherjer(143, d);
-	l = 14;
-	if (!d) {
+int t23coul() {
+	if (!g_vm->checkInventory(143)) {
 		g_crep = 1512;
-		tperd();
+		g_vm->loseGame();
 	}
+
+	return CELLAR;
 }
 
 void maivid() {
@@ -2508,7 +2529,7 @@ void MortevielleEngine::gameLoaded() {
 	_syn = true;
 	_heroSearching = true;
 	g_mchai = 0;
-	g_inei = 0;
+	_manorDistance = 0;
 	initouv();
 	g_iouv = 0;
 	g_dobj = 0;
@@ -2642,15 +2663,15 @@ void MortevielleEngine::handleOpcode() {
 	        && (g_s._currPlace != 0) && (g_s._selectedObjectId != 152) && (!_loseGame)) {
 		if ((g_s._faithScore > 99) && (hour > 8) && (hour < 16)) {
 			g_crep = 1501;
-			tperd();
+			loseGame();
 		}
 		if ((g_s._faithScore > 99) && (hour > 0) && (hour < 9)) {
 			g_crep = 1508;
-			tperd();
+			loseGame();
 		}
 		if ((day > 1) && (hour > 8) && (!_loseGame)) {
 			g_crep = 1502;
-			tperd();
+			loseGame();
 		}
 	}
 	mennor();
