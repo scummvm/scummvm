@@ -111,7 +111,7 @@ extern void affrep();
 /* NIVEAU 6 */
 extern void tsort();
 extern void st4(int ob);
-extern void st1sama();
+extern void displayDiningRoom();
 extern void modinv();
 extern void sparl(float adr, float rep);
 extern void endSearch();
@@ -120,7 +120,6 @@ extern void premtet();
 /* NIVEAU 5 */
 extern void ajchai();
 extern void ajjer(int ob);
-extern void t1vier();
 extern void tctrm();
 extern void quelquun();
 extern void tsuiv();

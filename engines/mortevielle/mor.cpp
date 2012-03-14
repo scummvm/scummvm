@@ -1106,14 +1106,14 @@ int MortevielleEngine::setPresenceLanding() {
 	int rand = 0;
 	do {
 		rand = getRandomNumber(1, 8);
-		test = (((rand == 1) && (g_vm->_purpleRoomPresenceLeo || g_vm->_room9PresenceLeo)) ||
-		        ((rand == 2) && g_vm->_roomPresencePat) ||
-		        ((rand == 3) && g_vm->_roomPresenceGuy) ||
-		        ((rand == 4) && g_vm->_roomPresenceEva) ||
-		        ((rand == 5) && g_vm->_roomPresenceBob) ||
-		        ((rand == 6) && g_vm->_roomPresenceLuc) ||
-		        ((rand == 7) && g_vm->_roomPresenceIda) ||
-		        ((rand == 8) && g_vm->_roomPresenceMax));
+		test = (((rand == 1) && (_purpleRoomPresenceLeo || _room9PresenceLeo)) ||
+		        ((rand == 2) && _roomPresencePat) ||
+		        ((rand == 3) && _roomPresenceGuy) ||
+		        ((rand == 4) && _roomPresenceEva) ||
+		        ((rand == 5) && _roomPresenceBob) ||
+		        ((rand == 6) && _roomPresenceLuc) ||
+		        ((rand == 7) && _roomPresenceIda) ||
+		        ((rand == 8) && _roomPresenceMax));
 	} while (test);
 
 	int retVal = convertCharacterIndexToBitIndex(rand);
@@ -1404,7 +1404,7 @@ void MortevielleEngine::setRandomPresencePurpleRoom(int cf) {
  * @remarks	Originally called 'pl5'
  */
 void MortevielleEngine::setRandomPresenceBlueRoom(int cf) {
-	if (!g_vm->_roomPresenceMax) {
+	if (!_roomPresenceMax) {
 		int p = getPresenceStatsBlueRoom();
 		int rand;
 
@@ -2032,7 +2032,11 @@ bool MortevielleEngine::checkInventory(int objectId) {
 	return retVal;
 }
 
-void st1sama() {
+/**
+ * Engine function - Display Dining Room
+ * @remarks	Originally called 'st1sama'
+ */
+void MortevielleEngine::displayDiningRoom() {
 	g_s._currPlace = DINING_ROOM;
 	affrep();
 }
@@ -2141,13 +2145,13 @@ void MortevielleEngine::gotoDiningRoom() {
 			g_crep = 1511;
 			loseGame();
 		} else
-			st1sama();
+			displayDiningRoom();
 	} else if (!g_s._alreadyEnteredManor) {     //Is it your first time?
 		_currBitIndex = 255; // Everybody is present
-		g_vm->showPeoplePresent(_currBitIndex);
+		showPeoplePresent(_currBitIndex);
 		g_caff = 77;
 		afdes(0);
-		g_vm->_screenSurface.drawBox(223, 47, 155, 91, 15);
+		_screenSurface.drawBox(223, 47, 155, 91, 15);
 		repon(2, 33);
 		tkey1(false);
 		mennor();
@@ -2160,19 +2164,14 @@ void MortevielleEngine::gotoDiningRoom() {
 		showMouse();
 		g_s._currPlace = OWN_ROOM;
 		affrep();
-		g_vm->resetPresenceInRooms(DINING_ROOM);
-		if (!g_vm->_blo)
+		resetPresenceInRooms(DINING_ROOM);
+		if (!_blo)
 			minute = t11(OWN_ROOM);
 		_currBitIndex = 0;
 		g_mpers = 0;
 		g_s._alreadyEnteredManor = true;
 	} else
-		st1sama();
-}
-
-void t1vier() {
-	g_s._currPlace = SECRET_PASSAGE;
-	affrep();
+		displayDiningRoom();
 }
 
 /**
@@ -2216,7 +2215,7 @@ void MortevielleEngine::gotoManorBack() {
  */
 void MortevielleEngine::floodedInWell() {
 	g_crep = 1503;
-	g_vm->loseGame();
+	loseGame();
 }
 
 void tctrm() {
@@ -2552,7 +2551,7 @@ void MortevielleEngine::gameLoaded() {
 	repon(2, g_crep);
 	clearScreenType3();
 	_endGame = false;
-	g_vm->_menu.setDestinationMenuText(g_s._currPlace);
+	_menu.setDestinationMenuText(g_s._currPlace);
 	modinv();
 	if (g_s._selectedObjectId != 0)
 		modobj(g_s._selectedObjectId + 400);

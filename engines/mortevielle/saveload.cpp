@@ -48,9 +48,13 @@ Common::String SavegameManager::generateSaveName(int slotNumber) {
  */
 void SavegameManager::sync_save(Common::Serializer &sz) {
 	sz.syncAsSint16LE(g_s1._faithScore);
-	sz.syncBytes((byte *)&g_s1._pourc[0], 11);
-	sz.syncBytes((byte *)&g_s1._teauto[0], 43);
-	sz.syncBytes((byte *)&g_s1._sjer[0], 31);
+	for (int i = 0; i < 11; ++i)
+		sz.syncAsByte(g_s1._pourc[i]);
+	for (int i = 0; i < 43; ++i)
+		sz.syncAsByte(g_s1._teauto[i]);
+	for (int i = 0; i < 31; ++i)
+		sz.syncAsByte(g_s1._sjer[i]);
+
 	sz.syncAsSint16LE(g_s1._currPlace);
 	sz.syncAsSint16LE(g_s1._atticBallHoleObjectId);
 	sz.syncAsSint16LE(g_s1._atticRodHoleObjectId);
