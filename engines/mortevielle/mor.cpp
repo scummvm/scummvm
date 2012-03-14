@@ -558,54 +558,54 @@ void MortevielleEngine::resetPresenceInRooms(int roomId) {
  * Engine function - Show the people present in the given room 
  * @remarks	Originally called 'affper'
  */
-void MortevielleEngine::showPeoplePresent(int per) {
+void MortevielleEngine::showPeoplePresent(int bitIndex) {
 	int xp = 580 - (_screenSurface.getStringWidth("LEO") / 2);
 
 	for (int i = 1; i <= 8; ++i)
 		_menu.disableMenuItem(_menu._discussMenu[i]);
 
 	clearScreenType10();
-	if ((per & 128) == 128) {
+	if ((bitIndex & 128) == 128) {
 		_screenSurface.putxy(xp, 24);
 		_screenSurface.drawString("LEO", 4);
 		_menu.enableMenuItem(_menu._discussMenu[1]);
 	}
-	if ((per & 64) == 64) {
+	if ((bitIndex & 64) == 64) {
 		_screenSurface.putxy(xp, 32);
 		_screenSurface.drawString("PAT", 4);
 		_menu.enableMenuItem(_menu._discussMenu[2]);
 	}
-	if ((per & 32) == 32) {
+	if ((bitIndex & 32) == 32) {
 		_screenSurface.putxy(xp, 40);
 		_screenSurface.drawString("GUY", 4);
 		_menu.enableMenuItem(_menu._discussMenu[3]);
 	}
-	if ((per & 16) == 16) {
+	if ((bitIndex & 16) == 16) {
 		_screenSurface.putxy(xp, 48);
 		_screenSurface.drawString("EVA", 4);
 		_menu.enableMenuItem(_menu._discussMenu[4]);
 	}
-	if ((per & 8) == 8) {
+	if ((bitIndex & 8) == 8) {
 		_screenSurface.putxy(xp, 56);
 		_screenSurface.drawString("BOB", 4);
 		_menu.enableMenuItem(_menu._discussMenu[5]);
 	}
-	if ((per & 4) == 4) {
+	if ((bitIndex & 4) == 4) {
 		_screenSurface.putxy(xp, 64);
 		_screenSurface.drawString("LUC", 4);
 		_menu.enableMenuItem(_menu._discussMenu[6]);
 	}
-	if ((per & 2) == 2) {
+	if ((bitIndex & 2) == 2) {
 		_screenSurface.putxy(xp, 72);
 		_screenSurface.drawString("IDA", 4);
 		_menu.enableMenuItem(_menu._discussMenu[7]);
 	}
-	if ((per & 1) == 1) {
+	if ((bitIndex & 1) == 1) {
 		_screenSurface.putxy(xp, 80);
 		_screenSurface.drawString("MAX", 4);
 		_menu.enableMenuItem(_menu._discussMenu[8]);
 	}
-	g_ipers = per;
+	_currBitIndex = bitIndex;
 }
 
 /**
@@ -771,7 +771,7 @@ void MortevielleEngine::displayAloneText() {
 	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sAlone) / 2), 70);
 	_screenSurface.drawString(sAlone, 4);
 
-	g_ipers = 0;
+	_currBitIndex = 0;
 }
 
 int chlm() {
@@ -843,7 +843,7 @@ void debloc(int roomId) {
 	g_y = 0;
 	if ((roomId != ROOM26) && (roomId != LANDING))
 		g_vm->resetPresenceInRooms(roomId);
-	g_mpers = g_ipers;
+	g_mpers = g_vm->_currBitIndex;
 }
 
 /**
@@ -989,7 +989,7 @@ void MortevielleEngine::setPresenceGreenRoom(int roomId) {
 			_roomPresenceEva = true;
 	}
 
-	g_ipers = 10;
+	_currBitIndex = 10;
 }
 
 /**
@@ -1002,7 +1002,7 @@ void MortevielleEngine::setPresencePurpleRoom() {
 	else
 		_room9PresenceLeo = true;
 
-	g_ipers = 10;
+	_currBitIndex = 10;
 }
 
 /**
@@ -1011,7 +1011,7 @@ void MortevielleEngine::setPresencePurpleRoom() {
  */
 void MortevielleEngine::setPresenceBlueRoom() {
 	_roomPresenceMax = true;
-	g_ipers = 10;
+	_currBitIndex = 10;
 }
 
 /**
@@ -1024,7 +1024,7 @@ void MortevielleEngine::setPresenceRedRoom(int roomId) {
 	else if (roomId == GREEN_ROOM2)
 		_roomPresencePat = true;
 
-	g_ipers = 10;
+	_currBitIndex = 10;
 }
 
 /**
@@ -1310,7 +1310,7 @@ void phaz(int &rand, int &p, int cf) {
 void resetVariables() {
 	copcha();
 
-	g_s._ipre  = false;
+	g_s._alreadyEnteredManor = false;
 	g_s._selectedObjectId = 0;
 	g_s._cellarObjectId = 0;
 	g_s._atticBallHoleObjectId = 0;
@@ -1358,7 +1358,7 @@ void resetVariables() {
 void MortevielleEngine::initGame() {
 	_place = MANOR_FRONT;
 	g_jh = 0;
-	if (!g_s._ipre)
+	if (!g_s._alreadyEnteredManor)
 		_blo = true;
 	g_t = kTime1;
 	g_mh = readclock();
@@ -1654,7 +1654,7 @@ void musique(int so) {
 	if (so == 0) {
 		/* musik(0) */
 		;
-	} else if ((g_prebru == 0) && (!g_s._ipre)) {
+	} else if ((g_prebru == 0) && (!g_s._alreadyEnteredManor)) {
 		g_vm->_speechManager.startSpeech(10, 1, 1);
 		++g_prebru;
 	} else {
@@ -1674,7 +1674,7 @@ void musique(int so) {
 				g_vm->_speechManager.startSpeech(12, 1, 1);
 				i = true;
 			}
-		} else if (g_s._currPlace == ROOM23) {
+		} else if (g_s._currPlace == INSIDE_WELL) {
 			g_vm->_speechManager.startSpeech(13, 1, 1);
 			i = true;
 		}
@@ -1839,14 +1839,14 @@ void tinke() {
 				g_vm->setRandomPresenceChapel(cf);
 				break;
 			}
-			if ((g_mpers != 0) && (g_ipers != 10))
-				g_mpers = g_ipers;
+			if ((g_mpers != 0) && (g_vm->_currBitIndex != 10))
+				g_mpers = g_vm->_currBitIndex;
 
-			if ((g_mpers == 0) && (g_ipers > 0)) {
+			if ((g_mpers == 0) && (g_vm->_currBitIndex > 0)) {
 				if ((g_s._currPlace == ATTIC) || (g_s._currPlace == CELLAR)) {
 					cavegre();
-				} else if (g_ipers == 10) {
-					g_ipers = 0;
+				} else if (g_vm->_currBitIndex == 10) {
+					g_vm->_currBitIndex = 0;
 					if (!g_vm->_brt) {
 						g_vm->_brt = true;
 						g_hdb = readclock();
@@ -1901,7 +1901,7 @@ void afdes(int ad) {
 }
 
 void tkey1(bool d) {
-	bool quest;
+	bool quest = false;
 	int x, y, c;
 
 	hideMouse();
@@ -2142,9 +2142,9 @@ void MortevielleEngine::gotoDiningRoom() {
 			loseGame();
 		} else
 			st1sama();
-	} else if (!g_s._ipre) {     //Is it your first time?
-		g_ipers = 255;
-		g_vm->showPeoplePresent(g_ipers);
+	} else if (!g_s._alreadyEnteredManor) {     //Is it your first time?
+		_currBitIndex = 255; // Everybody is present
+		g_vm->showPeoplePresent(_currBitIndex);
 		g_caff = 77;
 		afdes(0);
 		g_vm->_screenSurface.drawBox(223, 47, 155, 91, 15);
@@ -2163,9 +2163,9 @@ void MortevielleEngine::gotoDiningRoom() {
 		g_vm->resetPresenceInRooms(DINING_ROOM);
 		if (!g_vm->_blo)
 			minute = t11(OWN_ROOM);
-		g_ipers = 0;
+		_currBitIndex = 0;
 		g_mpers = 0;
-		g_s._ipre = true;
+		g_s._alreadyEnteredManor = true;
 	} else
 		st1sama();
 }
@@ -2210,7 +2210,11 @@ void MortevielleEngine::gotoManorBack() {
 	affrep();
 }
 
-void t1deau() {
+/**
+ * Engine function - Dead : Flooded in Well 
+ * @remarks	Originally called 't1deau'
+ */
+void MortevielleEngine::floodedInWell() {
 	g_crep = 1503;
 	g_vm->loseGame();
 }
@@ -2245,7 +2249,7 @@ L1:
 			g_s._faithScore += 3 * (g_s._faithScore / 10);
 		tsort();
 		g_vm->_menu.setDestinationMenuText(LANDING);
-		int cx = convertBitIndexToCharacterIndex(g_ipers);
+		int cx = convertBitIndexToCharacterIndex(g_vm->_currBitIndex);
 		g_caff = 69 + cx;
 		g_crep = g_caff;
 		g_msg[3] = MENU_DISCUSS;
@@ -2288,7 +2292,7 @@ void tsuiv() {
 		++g_is;
 		g_caff = tbcl;
 		g_crep = g_caff + 400;
-		if (g_ipers != 0)
+		if (g_vm->_currBitIndex != 0)
 			g_s._faithScore += 2;
 	} else {
 		affrep();
@@ -2490,8 +2494,8 @@ void changeGraphicalDevice(int newDevice) {
 	drawRightFrame();
 	tinke();
 	drawClock();
-	if (g_ipers != 0)
-		g_vm->showPeoplePresent(g_ipers);
+	if (g_vm->_currBitIndex != 0)
+		g_vm->showPeoplePresent(g_vm->_currBitIndex);
 	else
 		g_vm->displayAloneText();
 	clearScreenType2();
@@ -2659,8 +2663,8 @@ void MortevielleEngine::handleOpcode() {
 	if ((((hour == 12) || (hour == 13) || (hour == 19)) && (g_s._currPlace != 10)) ||
 	        ((hour > 0) && (hour < 6) && (g_s._currPlace != 0)))
 		++g_s._faithScore;
-	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != ROOM23)
-	        && (g_s._currPlace != 0) && (g_s._selectedObjectId != 152) && (!_loseGame)) {
+	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != INSIDE_WELL)
+	        && (g_s._currPlace != OWN_ROOM) && (g_s._selectedObjectId != 152) && (!_loseGame)) {
 		if ((g_s._faithScore > 99) && (hour > 8) && (hour < 16)) {
 			g_crep = 1501;
 			loseGame();

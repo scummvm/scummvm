@@ -377,7 +377,7 @@ void taffich() {
 		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
 			m = 2030;
 
-		if (((a < 27) && (((g_maff > 69) && (!g_s._ipre)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
+		if (((a < 27) && (((g_maff > 69) && (!g_s._alreadyEnteredManor)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
 			m = 2033;
 
 		g_maff = a;
