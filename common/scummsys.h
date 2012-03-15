@@ -271,7 +271,7 @@
 #ifndef FORCEINLINE
 	#if defined(_MSC_VER)
 		#define FORCEINLINE __forceinline
-	#elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+	#elif GCC_ATLEAST(3, 1)
 		#define FORCEINLINE inline __attribute__((__always_inline__))
 	#else
 		#define FORCEINLINE inline
