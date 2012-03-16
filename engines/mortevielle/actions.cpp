@@ -1200,7 +1200,7 @@ void MortevielleEngine::fctSleep() {
 	}
 	clearScreenType3();
 	clearScreenType2();
-	ecrf2();
+	prepareScreenType2();
 	ecr2(getEngineString(S_WANT_TO_WAKE_UP));
 	updateHour(j, h, m);
 
@@ -1589,7 +1589,7 @@ void MortevielleEngine::endGame() {
 	afdes(0);
 	repon(6, 34);
 	repon(2, 35);
-	musique(0);
+	startMusicOrSpeech(0);
 	tkey1(false);
 	// A wait message was displayed. 
 	// tkey1 was called before and after.
@@ -1605,17 +1605,17 @@ void MortevielleEngine::endGame() {
  */
 void MortevielleEngine::askRestart() {
 	clearScreenType2();
-	musique(0);
+	startMusicOrSpeech(0);
 	tkey1(false);
 	maivid();
 	resetVariables();
 	initGame();
-	g_vh = 10;
-	g_vm__ = 0;
-	g_vj = 0;
-	g_minute = 0;
-	g_hour = 10;
-	g_day = 0;
+	_currHour = 10;
+	_currHalfHour = 0;
+	_currDay = 0;
+	_minute = 0;
+	_hour = 10;
+	_day = 0;
 	repon(2, 180);
 
 	int answer = Alert::show(getEngineString(S_YES_NO), 1);
