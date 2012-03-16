@@ -128,7 +128,7 @@ struct sav_chaine {
 	int _currPlace, _atticBallHoleObjectId, _atticRodHoleObjectId, _cellarObjectId, _secretPassageObjectId, _wellObjectId;
 	int _selectedObjectId, _purpleRoomObjectId, _cryptObjectId;
 	bool _alreadyEnteredManor;
-	byte _heure;
+	byte _fullHour;
 };
 
 struct registres {
@@ -186,18 +186,12 @@ enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCU
 extern int g_x,
         g_y,
         g_t,
-        g_vj,
-        g_vh,
-        g_vm__,
         g_jh,
         g_mh,
         g_cs,
         g_hdb,
         g_hfb,
-        g_hour,
-        g_day,
         g_key,
-        g_minute,
         g_num,
         g_res,
         g_ment,

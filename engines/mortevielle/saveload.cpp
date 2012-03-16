@@ -65,7 +65,7 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
 	sz.syncAsSint16LE(g_s1._purpleRoomObjectId);
 	sz.syncAsSint16LE(g_s1._cryptObjectId);
 	sz.syncAsByte(g_s1._alreadyEnteredManor);
-	sz.syncAsByte(g_s1._heure);
+	sz.syncAsByte(g_s1._fullHour);
 
 	sz.syncBytes(g_bufcha, 391);
 }

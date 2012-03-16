@@ -145,6 +145,12 @@ public:
 	int _place;
 	int _manorDistance;
 	int _currBitIndex;
+	int _currDay;
+	int _currHour;
+	int _currHalfHour;
+	int _day;
+	int _hour;
+	int _minute;
 
 
 	int _c_zzz;
@@ -270,6 +276,12 @@ public:
 	void loseGame();
 	void floodedInWell();
 	void displayDiningRoom();
+	void startMusicOrSpeech(int so);
+	void setTextColor(int col);
+	void prepareScreenType1();
+	void prepareScreenType2();
+	void prepareScreenType3();
+
 };
 
 extern MortevielleEngine *g_vm;

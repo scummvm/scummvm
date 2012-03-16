@@ -248,8 +248,8 @@ void drawRightFrame() {
  * Set Text Color
  * @remarks	Originally called 'text_color'
  */
-void setTextColor(int c) {
-	g_vm->_textColor = c;
+void MortevielleEngine::setTextColor(int col) {
+	_textColor = col;
 }
 
 /* NIVEAU 13 */
@@ -271,11 +271,6 @@ void text1(int x, int y, int nb, int m) {
 void initouv() {
 	for (int cx = 1; cx <= 7; ++cx)
 		g_touv[cx] = chr(0);
-}
-
-void ecrf1() {
-	// Large drawing
-	g_vm->_screenSurface.drawBox(0, 11, 512, 163, 15);
 }
 
 /**
@@ -349,10 +344,6 @@ void clearScreenType10() {
 	showMouse();
 }
 
-void ecrf2() {
-	setTextColor(5);
-}
-
 void ecr2(Common::String str_) {
 	// Some dead code was present in the original: removed
 	g_vm->_screenSurface.putxy(8, 177);
@@ -383,12 +374,28 @@ void ecr3(Common::String text) {
 	g_vm->_screenSurface.drawString(text, 5);
 }
 
-void ecrf6() {
-	setTextColor(5);
-	g_vm->_screenSurface.drawBox(62, 33, 363, 80, 15);
+/**
+ * Prepare screen - Type 1!
+ * @remarks	Originally called 'ecrf1'
+ */
+void MortevielleEngine::prepareScreenType1() {
+	// Large drawing
+	_screenSurface.drawBox(0, 11, 512, 163, 15);
 }
 
-void ecrf7() {
+/**
+ * Prepare room - Type 2!
+ * @remarks	Originally called 'ecrf2'
+ */
+void MortevielleEngine::prepareScreenType2() {
+	setTextColor(5);
+}
+
+/**
+ * Prepare room - Type 3!
+ * @remarks	Originally called 'ecrf7'
+ */
+void MortevielleEngine::prepareScreenType3() {
 	setTextColor(4);
 }
 
@@ -416,14 +423,14 @@ void paint_rect(int x, int y, int dx, int dy) {
 void updateHour(int &day, int &hour, int &minute) {
 	int newHour = readclock();
 	int th = g_jh + ((newHour - g_mh) / g_t);
-	minute = ((th % 2) + g_vm__) * 30;
-	hour = ((uint)th >> 1) + g_vh;
+	minute = ((th % 2) + g_vm->_currHalfHour) * 30;
+	hour = ((uint)th >> 1) + g_vm->_currHour;
 	if (minute == 60) {
 		minute = 0;
 		++hour;
 	}
-	day = (hour / 24) + g_vj;
-	hour = hour - ((day - g_vj) * 24);
+	day = (hour / 24) + g_vm->_currDay;
+	hour = hour - ((day - g_vm->_currDay) * 24);
 }
 
 /**
@@ -462,13 +469,9 @@ void repon(int f, int m) {
 		displayStr(tmpStr, 8, 176, 85, 3, 5);
 	} else {
 		modif(m);
-		if (f == 8)
-			f = 2;
-		if (f == 1)
-			f = 6;
-		if (f == 2) {
+		if ((f == 2) || (f == 8)) {
 			clearScreenType2();
-			ecrf2();
+			g_vm->prepareScreenType2();
 			text1(8, 182, 103, m);
 			if ((m == 68) || (m == 69))
 				g_s._teauto[40] = '*';
@@ -479,10 +482,9 @@ void repon(int f, int m) {
 					g_s._teauto[38] = '*';
 				}
 			}
-		}
-		if ((f == 6) || (f == 9)) {
+		} else if ((f == 1) || (f == 6) || (f == 9)) {
 			int i;
-			if (f == 6)
+			if ((f == 1) || (f == 6))
 				i = 4;
 			else
 				i = 5;
@@ -495,9 +497,8 @@ void repon(int f, int m) {
 
 			if (m == 179)
 				g_s._pourc[10] = '*';
-		}
-		if (f == 7) {         /* messint */
-			ecrf7();
+		} else if (f == 7) {         /* messint */
+			g_vm->prepareScreenType3();
 			tmpStr = deline(m);
 
 			int xSmallStr, xLargeStr, dx;
@@ -805,12 +806,12 @@ void drawClock() {
 	else
 		co = 1;
 
-	if (g_minute == 0)
+	if (g_vm->_minute == 0)
 		g_vm->_screenSurface.drawLine(((uint)x >> 1) * g_res, y, ((uint)x >> 1) * g_res, (y - rg), co);
 	else 
 		g_vm->_screenSurface.drawLine(((uint)x >> 1) * g_res, y, ((uint)x >> 1) * g_res, (y + rg), co);
 
-	h = g_hour;
+	h = g_vm->_hour;
 	if (h > 12)
 		h -= 12;
 	if (h == 0)
@@ -820,15 +821,15 @@ void drawClock() {
 	showMouse();
 	g_vm->_screenSurface.putxy(568, 154);
 
-	if (g_hour > 11)
+	if (g_vm->_hour > 11)
 		g_vm->_screenSurface.drawString("PM ", 1);
 	else
 		g_vm->_screenSurface.drawString("AM ", 1);
 
 	g_vm->_screenSurface.putxy(550, 160);
-	if ((g_day >= 0) && (g_day <= 8)) {
+	if ((g_vm->_day >= 0) && (g_vm->_day <= 8)) {
 		Common::String tmp = g_vm->getEngineString(S_DAY);
-		tmp.insertChar((char)(g_day + 49), 0);
+		tmp.insertChar((char)(g_vm->_day + 49), 0);
 		g_vm->_screenSurface.drawString(tmp, 1);
 	}
 }
@@ -1326,7 +1327,7 @@ void resetVariables() {
 		g_s._sjer[i] = chr(0);
 
 	g_s._sjer[1] = chr(113);
-	g_s._heure = chr(20);
+	g_s._fullHour = chr(20);
 
 	for (int i = 1; i <= 10; ++i)
 		g_s._pourc[i] = ' ';
@@ -1608,7 +1609,7 @@ void cavegre() {
 	if (g_s._faithScore > 69)
 		g_s._faithScore += (g_s._faithScore / 10);
 	clearScreenType3();
-	ecrf2();
+	g_vm->prepareScreenType2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
 	int rand = (getRandomNumber(0, 4)) - 2;
 	g_vm->_speechManager.startSpeech(2, rand, 1);
@@ -1647,40 +1648,37 @@ void aniof(int ouf, int num) {
 	surface.decode(&g_mem[ad * 16 + offset]);
 	g_vm->_screenSurface.drawPicture(surface, 0, 12);
 
-	ecrf1();
+	g_vm->prepareScreenType1();
 }
 
-void musique(int so) {
+/**
+ * Start music or speech
+ * @remarks	Originally called 'musique'
+ */
+void MortevielleEngine::startMusicOrSpeech(int so) {
 	if (so == 0) {
 		/* musik(0) */
 		;
 	} else if ((g_prebru == 0) && (!g_s._alreadyEnteredManor)) {
-		g_vm->_speechManager.startSpeech(10, 1, 1);
+		// Type 1: Speech
+		_speechManager.startSpeech(10, 1, 1);
 		++g_prebru;
 	} else {
-		bool i = false;
-		if ((g_s._currPlace == MOUNTAIN) || (g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) {
-			if (getRandomNumber(1, 3) == 2) {
-				g_vm->_speechManager.startSpeech(9, getRandomNumber(2, 4), 1);
-				i = true;
-			}
-		} else if (g_s._currPlace == CHAPEL) {
-			if (getRandomNumber(1, 2) == 1) {
-				g_vm->_speechManager.startSpeech(8, 1, 1);
-				i = true;
-			}
-		} else if (g_s._currPlace == WELL) {
-			if (getRandomNumber(1, 2) == 2) {
-				g_vm->_speechManager.startSpeech(12, 1, 1);
-				i = true;
-			}
-		} else if (g_s._currPlace == INSIDE_WELL) {
-			g_vm->_speechManager.startSpeech(13, 1, 1);
-			i = true;
-		}
-
-		if (!i)
-			g_vm->_speechManager.startSpeech(getRandomNumber(1, 17), 1, 2);
+		if (((g_s._currPlace == MOUNTAIN) || (g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) && (getRandomNumber(1, 3) == 2))
+			// Type 1: Speech
+			_speechManager.startSpeech(9, getRandomNumber(2, 4), 1);
+		else if ((g_s._currPlace == CHAPEL) && (getRandomNumber(1, 2) == 1))
+			// Type 1: Speech
+			_speechManager.startSpeech(8, 1, 1);
+		else if ((g_s._currPlace == WELL) && (getRandomNumber(1, 2) == 2))
+			// Type 1: Speech
+			_speechManager.startSpeech(12, 1, 1);
+		else if (g_s._currPlace == INSIDE_WELL)
+			// Type 1: Speech
+			_speechManager.startSpeech(13, 1, 1);
+		else
+			// Type 2 : music
+			_speechManager.startSpeech(getRandomNumber(1, 17), 1, 2);
 	}
 }
 
@@ -1698,7 +1696,7 @@ void dessin(int ad) {
 			g_vm->_screenSurface.drawBox(222, 47, 155, 91, 15);
 		} else {
 			dessine(g_ades, 0, 12);
-			ecrf1();
+			g_vm->prepareScreenType1();
 			if ((g_caff < 30) || (g_caff > 32)) {
 				for (int cx = 1; cx <= 6; ++cx) {
 					if (ord(g_touv[cx]) != 0)
@@ -1720,7 +1718,7 @@ void dessin(int ad) {
 			}
 			
 			if (g_caff < ROOM26)
-				musique(1);
+				g_vm->startMusicOrSpeech(1);
 		}
 	}
 }
@@ -1737,8 +1735,8 @@ void tinke() {
 
 	g_vm->_anyone = false;
 	updateHour(day, hour, minute);
-	if (day != g_day) {
-		g_day = day;
+	if (day != g_vm->_day) {
+		g_vm->_day = day;
 		int i = 0;
 		do {
 			++i;
@@ -1747,9 +1745,9 @@ void tinke() {
 			g_nbrep[i] = 0;
 		} while (i != 8);
 	}
-	if ((hour > g_hour) || ((hour == 0) && (g_hour == 23))) {
-		g_hour = hour;
-		g_minute = 0;
+	if ((hour > g_vm->_hour) || ((hour == 0) && (g_vm->_hour == 23))) {
+		g_vm->_hour = hour;
+		g_vm->_minute = 0;
 		drawClock();
 		cf = 0;
 		for (int i = 1; i <= 10; ++i) {
@@ -1775,8 +1773,8 @@ void tinke() {
 		g_hintPctMessage += d6;
 		g_hintPctMessage += d4;
 	}
-	if (minute > g_minute) {
-		g_minute = 30;
+	if (minute > g_vm->_minute) {
+		g_vm->_minute = 30;
 		drawClock();
 	}
 	if (y_s < 12)
@@ -1852,7 +1850,7 @@ void tinke() {
 						g_hdb = readclock();
 						if (getRandomNumber(1, 5) < 5) {
 							clearScreenType3();
-							ecrf2();
+							g_vm->prepareScreenType2();
 							ecr3(g_vm->getEngineString(S_HEAR_NOISE));
 							int rand = (getRandomNumber(0, 4)) - 2;
 							g_vm->_speechManager.startSpeech(1, rand, 1);
@@ -2569,7 +2567,7 @@ void tmaj3() {
 		minute = 1;
 	hour += day * 24;
 	minute += hour * 2;
-	g_s._heure = chr(minute);
+	g_s._fullHour = chr(minute);
 }
 
 /**
@@ -2683,15 +2681,15 @@ void MortevielleEngine::handleOpcode() {
 /* NIVEAU 1 */
 
 void theure() {
-	g_vj = ord(g_s._heure);
-	g_vh = g_vj % 48;
-	g_vj /= 48;
-	g_vm__ = g_vh % 2;
-	g_vh /= 2;
-	g_hour = g_vh;
-	if (g_vm__ == 1)
-		g_minute = 30;
+	int fullHour = ord(g_s._fullHour);
+	int tmpHour = fullHour % 48;
+	g_vm->_currDay = fullHour / 48;
+	g_vm->_currHalfHour = tmpHour % 2;
+	g_vm->_currHour = tmpHour / 2;
+	g_vm->_hour = g_vm->_currHour;
+	if (g_vm->_currHalfHour == 1)
+		g_vm->_minute = 30;
 	else
-		g_minute = 0;
+		g_vm->_minute = 0;
 }
 } // End of namespace Mortevielle

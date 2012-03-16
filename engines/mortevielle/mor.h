@@ -36,6 +36,12 @@ namespace Mortevielle {
 const int kTime1 = 410;
 const int kTime2 = 250;
 
+static const int _actionMenu[12] = { OPCODE_NONE,
+		OPCODE_SHIDE, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP, 
+		OPCODE_ENTER, OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
+		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
+};
+
 /* NIVEAU 15 */
 extern void copcha();
 extern bool isMouseIn(rectangle r);
@@ -51,20 +57,15 @@ extern int readclock();
 extern void modif(int &nu);
 extern void dessine(int ad, int x, int y);
 extern void drawRightFrame();
-extern void setTextColor(int c);
 /* NIVEAU 13 */
 extern void text1(int x, int y, int nb, int m);
 extern void initouv();
-extern void ecrf1();
 extern void clearScreenType1();
 extern void clearScreenType2();
 extern void clearScreenType3();
 extern void clearScreenType10();
-extern void ecrf2();
 extern void ecr2(Common::String str_);
 extern void ecr3(Common::String text);
-extern void ecrf6();
-extern void ecrf7();
 extern void stop();
 extern void paint_rect(int x, int y, int dx, int dy);
 extern void updateHour(int &day, int &hour, int &minute);
@@ -90,15 +91,8 @@ extern int t11(int roomId);
 extern void cavegre();
 extern void writetp(Common::String s, int t);
 extern void aniof(int ouf, int num);
-extern void musique(int so);
 /* NIVEAU 9 */
 extern void dessin(int ad);
-
-static const int _actionMenu[12] = { OPCODE_NONE,
-		OPCODE_SHIDE, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP, 
-		OPCODE_ENTER, OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
-		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
-};
 
 extern void tinke();
 extern void fenat(char ans);
