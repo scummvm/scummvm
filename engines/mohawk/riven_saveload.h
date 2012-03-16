@@ -42,8 +42,8 @@ public:
 	~RivenSaveLoad();
 
 	Common::StringArray generateSaveGameList();
-	bool loadGame(Common::String);
-	bool saveGame(Common::String);
+	Common::Error loadGame(Common::String);
+	Common::Error saveGame(Common::String);
 	void deleteSave(Common::String);
 
 private:
