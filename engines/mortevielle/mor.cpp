@@ -453,12 +453,8 @@ void modobj(int m) {
 }
 
 void repon(int f, int m) {
-	Common::String str_;
-	Common::String str1;
-	Common::String tmpStr;
-
 	if ((m > 499) && (m < 563)) {
-		tmpStr = deline(m - 501 + kInventoryStringIndex);
+		Common::String tmpStr = deline(m - 501 + kInventoryStringIndex);
 
 		if ((int) tmpStr.size() > ((58 + (g_res - 1) * 37) << 1))
 			g_vm->_largestClearScreen = true;
@@ -489,7 +485,7 @@ void repon(int f, int m) {
 			else
 				i = 5;
 
-			tmpStr = deline(m);
+			Common::String tmpStr = deline(m);
 			displayStr(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
@@ -497,25 +493,6 @@ void repon(int f, int m) {
 
 			if (m == 179)
 				g_s._pourc[10] = '*';
-		} else if (f == 7) {         /* messint */
-			g_vm->prepareScreenType3();
-			tmpStr = deline(m);
-
-			int xSmallStr, xLargeStr, dx;
-			if (g_res == 1) {
-				xSmallStr = 252 - tmpStr.size() * 5;
-				xLargeStr = 100;
-				dx = 80;
-			} else {
-				xSmallStr = 252 - tmpStr.size() * 3;
-				xLargeStr = 144;
-				dx = 50;
-			}
-
-			if (tmpStr.size() < 40)
-				displayStr(tmpStr, xSmallStr, 86, dx, 3, 5);
-			else
-				displayStr(tmpStr, xLargeStr, 86, dx, 3, 5);
 		}
 	}
 }
