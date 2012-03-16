@@ -214,8 +214,14 @@ void Sound::stopMidi() {
 	_midiParser->unloadMusic();
 }
 
+byte Sound::convertRivenVolume(uint16 volume, uint16 globalVolume) {
+	uint32 vol = (volume * globalVolume) / 255;
+	debug(2, "Convert volume %d with global volume %d = %d", volume, globalVolume, vol);
+	return (vol > 255) ? 255 : vol;
+}
+
 byte Sound::convertRivenVolume(uint16 volume) {
-	return (volume == 256) ? 255 : volume;
+	return (volume > 255) ? 255 : volume;
 }
 
 void Sound::playSLST(uint16 index, uint16 card) {
@@ -283,9 +289,17 @@ void Sound::playSLST(uint16 index, uint16 card) {
 	// the previous ambient sounds continue.
 }
 
+static int8 convertBalance(int16 balance) {
+	return CLIP<int16>(balance, -128, 128);
+}
+
 void Sound::playSLST(SLSTRecord slstRecord) {
 	// End old sounds
 	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++) {
+		// If the sound is flagged for removal it can be ignored
+		if (_currentSLSTSounds[i].volumeFade.flag & (1 << 2))
+			continue;
+
 		bool noLongerPlay = true;
 		for (uint16 j = 0; j < slstRecord.sound_count; j++)
 			if (_currentSLSTSounds[i].id == slstRecord.sound_ids[j])
@@ -298,41 +312,60 @@ void Sound::playSLST(SLSTRecord slstRecord) {
 	for (uint16 i = 0; i < slstRecord.sound_count; i++) {
 		bool alreadyPlaying = false;
 		for (uint16 j = 0; j < _currentSLSTSounds.size(); j++) {
-			if (_currentSLSTSounds[j].id == slstRecord.sound_ids[i])
+			if (_currentSLSTSounds[j].id == slstRecord.sound_ids[i]) {
 				alreadyPlaying = true;
+
+				// If the volume/balance is different activate fading again
+				byte volume = convertRivenVolume(slstRecord.volumes[i], slstRecord.global_volume);
+				int8 balance = convertBalance(slstRecord.balances[i]);
+				if (_currentSLSTSounds[j].volumeFade.end != volume)
+					setVolumeFadingSLST(j, _vm->_mixer->getChannelVolume(*_currentSLSTSounds[j].handle), volume);
+
+				if (_currentSLSTSounds[j].balanceFade.end != balance)
+					setBalanceFadingSLST(j, _vm->_mixer->getChannelBalance(*_currentSLSTSounds[j].handle), balance);
+
+			}
 		}
 		if (!alreadyPlaying) {
 			playSLSTSound(slstRecord.sound_ids[i],
 						 (slstRecord.fade_flags & (1 << 1)) != 0,
 						 slstRecord.loop != 0,
-						 slstRecord.volumes[i],
-						 slstRecord.balances[i]);
+						 convertRivenVolume(slstRecord.volumes[i], slstRecord.global_volume),
+						 convertBalance(slstRecord.balances[i]));
 		}
 	}
 }
 
 void Sound::stopAllSLST(bool fade) {
 	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++) {
-		// TODO: Fade out, if requested
-		_vm->_mixer->stopHandle(*_currentSLSTSounds[i].handle);
-		delete _currentSLSTSounds[i].handle;
+		if (fade) {
+			setVolumeFadingSLST(i, _vm->_mixer->getChannelVolume(*_currentSLSTSounds[i].handle), 0, true);
+		} else {
+			_vm->_mixer->stopHandle(*_currentSLSTSounds[i].handle);
+			delete _currentSLSTSounds[i].handle;
+		}
 	}
 
 	_currentSLSTSounds.clear();
 }
 
-static int8 convertBalance(int16 balance) {
-	return (int8)(balance >> 8);
-}
-
-void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 balance) {
+void Sound::playSLSTSound(uint16 id, bool fade, bool loop, byte volume, int8 balance) {
 	// WORKAROUND: Some Riven SLST entries have a volume of 0, so we just ignore them.
 	if (volume == 0)
 		return;
 
+	debug(2, "Play SLST sound %d, fading: %d, looping: %d, volume: %d, balance: %d", id, fade, loop, volume, balance);
+
+	byte vol = volume;
+	int8 bal = balance;
+
 	SLSTSndHandle sndHandle;
 	sndHandle.handle = new Audio::SoundHandle();
 	sndHandle.id = id;
+	sndHandle.volumeFade.flag = 0;
+	sndHandle.balanceFade.flag = 0;
+	sndHandle.volumeFade.end = volume;
+	sndHandle.balanceFade.end = balance;
 	_currentSLSTSounds.push_back(sndHandle);
 
 	Audio::AudioStream *audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id));
@@ -341,16 +374,50 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 	if (loop)
 		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
 
-	// TODO: Handle fading, possibly just raise the volume of the channel in increments?
+	// Start fading, if requested
+	if (fade) {
+		setVolumeFadingSLST(_currentSLSTSounds.size() - 1, 0, vol);
+		vol = 0;
+	}
 
-	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, sndHandle.handle, audStream, -1, convertRivenVolume(volume), convertBalance(balance));
+	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, sndHandle.handle, audStream, -1, vol, bal);
 }
 
 void Sound::stopSLSTSound(uint16 index, bool fade) {
-	// TODO: Fade out, if requested
+	debug(2, "Stop SLST sound %d, fading: %d", index, fade);
+	// Fade out, if requested
+	if (fade) {
+		setVolumeFadingSLST(index, _vm->_mixer->getChannelVolume(*_currentSLSTSounds[index].handle), 0, true);
+	} else {
+		removeSLSTSound(index);
+	}
+}
+
+void Sound::removeSLSTSound(uint16 index) {
 	_vm->_mixer->stopHandle(*_currentSLSTSounds[index].handle);
 	delete _currentSLSTSounds[index].handle;
 	_currentSLSTSounds.remove_at(index);
+}
+
+void Sound::updateSLST() {
+	int16 balance = 0;
+	int16 volume = 0;
+	bool remove = false;
+	// Update volume and balance if needed
+	for (uint16 i = 0; i < _currentSLSTSounds.size();) {
+		if (doFadeSLST(&_currentSLSTSounds[i].balanceFade, &balance))
+			_vm->_mixer->setChannelBalance(*_currentSLSTSounds[i].handle, balance);
+
+		if (doFadeSLST(&_currentSLSTSounds[i].volumeFade, &volume, &remove))
+			_vm->_mixer->setChannelVolume(*_currentSLSTSounds[i].handle, volume);
+
+		if (remove) {
+			debug(2, "Remove sound %d", i);
+			removeSLSTSound(i);
+		} else {
+			++i;
+		}
+	}
 }
 
 void Sound::pauseSLST() {
@@ -361,6 +428,47 @@ void Sound::pauseSLST() {
 void Sound::resumeSLST() {
 	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++)
 		_vm->_mixer->pauseHandle(*_currentSLSTSounds[i].handle, false);
+}
+
+void Sound::setVolumeFadingSLST(uint16 index, byte startVolume, byte endVolume, bool remove) {
+	byte flag = (1 << 1);
+	if (remove)
+		flag |= (1 << 2);
+
+	initFadeSLST(&_currentSLSTSounds[index].volumeFade, flag, startVolume, endVolume, 5000);
+	debug(2, "Set volume fading for %d, remove: %d, duration: %d, start: %d, end: %d", index, remove, _currentSLSTSounds[index].volumeFade.durationMillis, startVolume, endVolume);
+}
+
+void Sound::setBalanceFadingSLST(uint16 index, int8 startBalance, int8 endBalance) {
+	initFadeSLST(&_currentSLSTSounds[index].balanceFade, (1 << 1), startBalance, endBalance, 5000);
+	debug(2, "Set balance fading for %d, duration: %d, start: %d, end: %d", index, _currentSLSTSounds[index].balanceFade.durationMillis, startBalance, endBalance);
+}
+
+void Sound::initFadeSLST(SLSTSndFade *fade, byte flag, int16 start, int16 end, int32 duration) {
+	fade->flag = flag;
+	fade->startMillis = _vm->_system->getMillis();
+	fade->durationMillis = (ABS<int16>(end - start) * duration) / 255;
+	fade->start = start;
+	fade->end = end;
+}
+
+bool Sound::doFadeSLST(SLSTSndFade *fade, int16 *result, bool *remove) {
+	if (remove) *remove = false;
+	if (fade->flag == 0) return false;
+	if (!(fade->flag & (1 << 4))) { // Initialize sound
+		fade->flag |= (1 << 4);
+		fade->startMillis = _vm->_system->getMillis();
+	}
+	int32 elapsed = _vm->_system->getMillis() - fade->startMillis;
+	if (elapsed < fade->durationMillis) {
+		*result = fade->start + ((fade->end - fade->start) * elapsed) / fade->durationMillis;
+	} else {
+		// Fade completed
+		if (remove) *remove = fade->flag & (1 << 2);
+		*result = fade->end;
+		fade->flag = 0;
+	}
+	return true;
 }
 
 Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList) {
