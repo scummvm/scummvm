@@ -376,7 +376,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		GType_RIVEN,
 		GF_DEMO,
