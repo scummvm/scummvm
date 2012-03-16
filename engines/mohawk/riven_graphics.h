@@ -97,6 +97,7 @@ private:
 
 	// Screen Related
 	Graphics::Surface *_mainScreen;
+	Graphics::Surface *_previousScreen;
 	bool _dirtyScreen;
 	Graphics::PixelFormat _pixelFormat;
 	void clearMainScreen();

@@ -23,6 +23,7 @@
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/cursors.h"
 
 #include "common/system.h"
 #include "engines/util.h"
@@ -43,6 +44,8 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	// occupies the rest of the screen and we don't use the buffer to hold that.
 	_mainScreen = new Graphics::Surface();
 	_mainScreen->create(608, 392, _pixelFormat);
+	_previousScreen = new Graphics::Surface();
+	_previousScreen->create(608, 392, _pixelFormat);
 
 	_updatesEnabled = true;
 	_scheduledTransition = -1;	// no transition
@@ -56,6 +59,8 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 RivenGraphics::~RivenGraphics() {
 	_mainScreen->free();
 	delete _mainScreen;
+	_previousScreen->free();
+	delete _previousScreen;
 	delete _bitmapDecoder;
 }
 
@@ -221,8 +226,10 @@ bool RivenGraphics::runScheduledWaterEffects() {
 }
 
 void RivenGraphics::scheduleTransition(uint16 id, Common::Rect rect) {
-	_scheduledTransition = id;
-	_transitionRect = rect;
+	if (_scheduledTransition < 0) { // If a transition has been scheduled we don't want to overwrite it
+		_scheduledTransition = id;
+		_transitionRect = rect;
+	}
 }
 
 void RivenGraphics::runScheduledTransition() {
@@ -235,26 +242,178 @@ void RivenGraphics::runScheduledTransition() {
 	// There's no point in implementing them if they're not used. These extra
 	// transitions were found by hacking scripts.
 
-	switch (_scheduledTransition) {
-	case 0:  // Swipe Left
-	case 1:  // Swipe Right
-	case 2:  // Swipe Up
-	case 3:  // Swipe Down
-	case 12: // Pan Left
-	case 13: // Pan Right
-	case 14: // Pan Up
-	case 15: // Pan Down
-	case 16: // Dissolve
-	case 17: // Dissolve (tspit CARD 155)
-		break;
-	default:
-		if (_scheduledTransition >= 4 && _scheduledTransition <= 11)
-			error("Found unused transition %d", _scheduledTransition);
-		else
-			error("Found unknown transition %d", _scheduledTransition);
+	// Note: The transition rectangle doesn't seem to be used at all in the game, so currently it's ignored.
+	if (_transitionSpeed != kRivenTransitionSpeedNone) {
+		_vm->_cursor->hideCursor();
+		uint32 panDuration = 0;
+		uint32 swipeDuration = 0;
+		uint32 dissolveDuration = 0;
+		// FIXME: Those values could use some tweaking
+		if (_transitionSpeed == kRivenTransitionSpeedFastest) {
+			swipeDuration = 150;
+			panDuration = 150;
+			dissolveDuration = 100;
+		} else if (_transitionSpeed == kRivenTransitionSpeedNormal) {
+			swipeDuration = 500;
+			panDuration = 500;
+			dissolveDuration = 250;
+		} else if (_transitionSpeed == kRivenTransitionSpeedBest) {
+			swipeDuration = 1000;
+			panDuration = 1000;
+			dissolveDuration = 500;
+		}
+
+		Graphics::Surface *surface = _vm->_system->lockScreen();
+		memcpy(_previousScreen->getBasePtr(0, 0), surface->getBasePtr(0, 0), _previousScreen->w * _previousScreen->h * surface->format.bytesPerPixel);
+		_vm->_system->unlockScreen();
+
+		uint32 startMillis = _vm->_system->getMillis();
+
+		switch (_scheduledTransition) {
+		case 0: { // Swipe Left
+			int x;
+			for (uint32 elapsed = 0; elapsed < swipeDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				x = MAX<int>(0, (_mainScreen->w - 1) - ((_mainScreen->w - 1) * elapsed) / swipeDuration);
+
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(x, 0), _mainScreen->pitch, x, 0, _mainScreen->w - x, _mainScreen->h);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 1: { // Swipe Right
+			int x;
+			for (uint32 elapsed = 0; elapsed < swipeDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				x = MAX<int>(0, (_mainScreen->w - 1) - ((_mainScreen->w - 1) * elapsed) / swipeDuration);
+
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w - x, _mainScreen->h);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 2: { // Swipe Up
+			int y;
+			for (uint32 elapsed = 0; elapsed < swipeDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				y = MAX<int>(0, (_mainScreen->h - 1) - ((_mainScreen->h - 1) * elapsed) / swipeDuration);
+
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(0, y), _mainScreen->pitch, 0, y, _mainScreen->w, _mainScreen->h - y);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 3: { // Swipe Down
+			int y;
+			for (uint32 elapsed = 0; elapsed < swipeDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				y = MAX<int>(0, (_mainScreen->h - 1) - ((_mainScreen->h - 1) * elapsed) / swipeDuration);
+
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h - y);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 12: { // Pan Left
+			int x, px;
+			for (uint32 elapsed = 0; elapsed < panDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				x = MAX<int>(0, (_mainScreen->w - 1) - ((_mainScreen->w - 1) * elapsed) / panDuration);
+
+				px = _mainScreen->w - x - 1;
+
+				_vm->_system->copyRectToScreen((byte *)_previousScreen->getBasePtr(px, 0), _previousScreen->pitch, 0, 0, _previousScreen->w - px, _previousScreen->h);
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, x, 0, _mainScreen->w - x, _mainScreen->h);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 13: { // Pan Right
+			int x, px;
+			for (uint32 elapsed = 0; elapsed < panDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				x = MAX<int>(0, (_mainScreen->w - 1) - ((_mainScreen->w - 1) * elapsed) / panDuration);
+
+				px = _mainScreen->w - x - 1;
+
+				_vm->_system->copyRectToScreen((byte *)_previousScreen->pixels, _previousScreen->pitch, px, 0, _previousScreen->w - px, _previousScreen->h);
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(x, 0), _mainScreen->pitch, 0, 0, _mainScreen->w - x, _mainScreen->h);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 14: { // Pan Up
+			int y, py;
+			for (uint32 elapsed = 0; elapsed < panDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				y = MAX<int>(0, (_mainScreen->h - 1) - ((_mainScreen->h - 1) * elapsed) / panDuration);
+
+				py = _mainScreen->h - y - 1;
+
+				_vm->_system->copyRectToScreen((byte *)_previousScreen->getBasePtr(0, py), _previousScreen->pitch, 0, 0, _previousScreen->w, _previousScreen->h - py);
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, y, _mainScreen->w, _mainScreen->h - y);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 15: { // Pan Down
+			int y, py;
+			for (uint32 elapsed = 0; elapsed < panDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				y = MAX<int>(0, (_mainScreen->h - 1) - ((_mainScreen->h - 1) * elapsed) / panDuration);
+
+				py = _mainScreen->h - y - 1;
+
+				_vm->_system->copyRectToScreen((byte *)_previousScreen->pixels, _previousScreen->pitch, 0, py, _previousScreen->w, _previousScreen->h - py);
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(0, y), _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h - y);
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		case 16:   // Dissolve, falling through to the next since they should be the same
+		case 17: { // Dissolve (tspit CARD 155)
+			uint16 alpha = 0;
+			uint32 colorSrc, colorDst;
+			uint8 rSrc, gSrc, bSrc, rDst, gDst, bDst;
+			Graphics::Surface* screen = NULL;
+			for (uint32 elapsed = 0; elapsed < dissolveDuration; elapsed = _vm->_system->getMillis() - startMillis) {
+				screen = _vm->_system->lockScreen();
+				alpha = MIN<uint16>(255, (255 * elapsed) / dissolveDuration);
+
+				for (uint16 x = 0; x < _mainScreen->w; x++) {
+					for (uint16 y = 0; y < _mainScreen->h; y++) {
+
+						if (_pixelFormat.bytesPerPixel == 2) {
+							colorSrc = *(const uint16 *)_previousScreen->getBasePtr(x, y);
+							colorDst = *(const uint16 *)_mainScreen->getBasePtr(x, y);
+						} else {
+							colorSrc = *(const uint32 *)_previousScreen->getBasePtr(x, y);
+							colorDst = *(const uint32 *)_mainScreen->getBasePtr(x, y);
+						}
+
+						_pixelFormat.colorToRGB(colorSrc, rSrc, gSrc, bSrc);
+						_pixelFormat.colorToRGB(colorDst, rDst, gDst, bDst);
+
+						rDst = CLIP<int16>((int16)((rDst * alpha + rSrc * (255 - alpha)) / 255), 0, 255);
+						gDst = CLIP<int16>((int16)((gDst * alpha + gSrc * (255 - alpha)) / 255), 0, 255);
+						bDst = CLIP<int16>((int16)((bDst * alpha + bSrc * (255 - alpha)) / 255), 0, 255);
+
+						colorDst = _pixelFormat.RGBToColor(rDst, gDst, bDst);
+
+						if (_pixelFormat.bytesPerPixel == 2) {
+							*(uint16 *)screen->getBasePtr(x, y) = colorDst;
+						} else {
+							*(uint32 *)screen->getBasePtr(x, y) = colorDst;
+						}
+					}
+				}
+				_vm->_system->unlockScreen();
+				_vm->_system->updateScreen();
+			}
+			break;
+		}
+		default:
+			if (_scheduledTransition >= 4 && _scheduledTransition <= 11)
+				error("Found unused transition %d", _scheduledTransition);
+			else
+				error("Found unknown transition %d", _scheduledTransition);
+			break;
+		}
+		_vm->_cursor->showCursor();
 	}
 
-	// For now, just copy the image to screen without doing any transition.
 	_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
 	_vm->_system->updateScreen();
 
