@@ -63,6 +63,8 @@ QuickTimeDecoder::QuickTimeDecoder() {
 	_palette = 0;
 	_width = _height = 0;
 	_needUpdate = false;
+	_volume = Audio::Mixer::kMaxChannelVolume;
+	_balance = 0;
 }
 
 QuickTimeDecoder::~QuickTimeDecoder() {
@@ -94,10 +96,24 @@ uint32 QuickTimeDecoder::getFrameCount() const {
 	return count;
 }
 
+void QuickTimeDecoder::setVolume(byte volume) {
+	_volume = volume;
+	if (g_system->getMixer()->isSoundHandleActive(_audHandle))
+		g_system->getMixer()->setChannelVolume(_audHandle, volume);
+
+}
+
+void QuickTimeDecoder::setBalance(int8 balance) {
+	_balance = balance;
+	if (g_system->getMixer()->isSoundHandleActive(_audHandle))
+		g_system->getMixer()->setChannelBalance(_audHandle, balance);
+
+}
+
 void QuickTimeDecoder::startAudio() {
 	if (_audStream) {
 		updateAudioBuffer();
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream, -1, _volume, _balance, DisposeAfterUse::NO);
 	} // else no audio or the audio compression is not supported
 }
 
