@@ -148,9 +148,8 @@ indy3	Indiana Jones and the Last Crusade
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	-1	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
-	39cb9dec16fa16f38d79acd80effb059	-1	fr	Amiga	EGA	EGA	same as IT?!?	Gerald Vincent
+	39cb9dec16fa16f38d79acd80effb059	-1	All	Amiga	EGA	EGA	IT and FR	Gerald Vincent (IT), Andrea Petrucci (FR)
 	2fe369ad70f52a8cf7ad6077ee64f81a	-1	de	Amiga	EGA	EGA	-	Norbert Lange
-	39cb9dec16fa16f38d79acd80effb059	-1	it	Amiga	EGA	EGA	same as FR?!?	Andrea Petrucci
 	48b9f04b348bc5013327753f0d12a144	-1	es	Amiga	EGA	EGA	-	VooD
 	a0a7dea72003933b8b3f8b99b9f7ddeb	-1	en	Atari	No AdLib	EGA	-	
 	0e9b01430e31d9fcd94071d433bbc6bf	-1	fr	Atari	No AdLib	EGA	-	
@@ -645,7 +644,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	d4e79c3d8645b8266cd78c325bc35154	60557	us	All	-	-	-	Kirben
 	6a60d395b78b205c93a956100b1bf5ae	-1	de	All	HE 98.5	-	-	EdDammer
-	513f91a9dbe8d5490b39e56a3ac5bbdf	-1	nl	Mac	HE 98.5	-	-	daniel9
+	513f91a9dbe8d5490b39e56a3ac5bbdf	-1	nl	All	HE 98.5	-	-	daniel9
 	55f4e9402bec2bded383843123f37c5c	-1	de	Windows	HE 98.5	-	-	WindlePoons
 	e5563c8358443c4352fcddf7402a5e0a	-1	fr	Windows	HE 98.5	-	-	gist974
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
@@ -801,7 +800,8 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 	bab0fb81dcb12b8930c5d850b8f2a7de	12800	de	Windows	HE 80	-	-	George Kormendi
 	145bd3373574feb668cc2eea2ec6cf86	-1	ru	Windows	HE 80	-	-	sev
 	27b2ef1653089fe5b897d9cc89ce784f	-1	ru	Windows	HE 80	-	-	George Kormendi
-	2232b0b9411575b1f9961713ebc9de61	-1	es	Windows	HE 80	-	-	exiltd
+	2232b0b9411575b1f9961713ebc9de61	-1	All	Windows	HE 80	-	ES and NL	exiltd (ES), Ben Castricum (NL)
+	a56a05c6b865b9956639f8c51269e5ab	-1	nl	Mac	HE 80	-	-	Ben Castricum
 	d7b247c26bf1f01f8f7daf142be84de3	-1	en	Windows	HE 99	Updated	-	iziku
 	8e3241ddd6c8dadf64305e8740d45e13	-1	en	All	HE 100	Updated	-	Kirben
 
