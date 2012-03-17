@@ -99,7 +99,7 @@ const char *getRenderModeDescription(RenderMode id) {
 }
 
 String renderMode2GUIO(RenderMode id) {
-	Common::String res;
+	String res;
 
 	for (int i = 0; i < ARRAYSIZE(s_renderGUIOMapping); i++) {
 		if (id == s_renderGUIOMapping[i].id)
@@ -110,7 +110,7 @@ String renderMode2GUIO(RenderMode id) {
 }
 
 String allRenderModesGUIOs() {
-	Common::String res;
+	String res;
 
 	for (int i = 0; i < ARRAYSIZE(s_renderGUIOMapping); i++) {
 		res += s_renderGUIOMapping[i].guio;
