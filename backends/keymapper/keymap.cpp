@@ -33,14 +33,17 @@
 
 namespace Common {
 
-Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDomain(0) {
+Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _nonkeymap(), _configDomain(0) {
 	List<Action *>::iterator it;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		const HardwareInput *hwInput = (*it)->getMappedInput();
 
 		if (hwInput) {
-			_keymap[hwInput->key] = *it;
+			if (hwInput->type == kHardwareInputTypeKeyboard)
+				_keymap[hwInput->key] = *it;
+			else if (hwInput->type == kHardwareInputTypeGeneric)
+				_nonkeymap[hwInput->inputCode] = *it;
 		}
 	}
 }
@@ -60,23 +63,31 @@ void Keymap::addAction(Action *action) {
 }
 
 void Keymap::registerMapping(Action *action, const HardwareInput *hwInput) {
-	HashMap<KeyState, Action *>::iterator it;
-
-	it = _keymap.find(hwInput->key);
-
-	// if key is already mapped to a different action then un-map it
-	if (it != _keymap.end() && action != it->_value) {
-		it->_value->mapInput(0);
+	if (hwInput->type == kHardwareInputTypeKeyboard) {
+		HashMap<KeyState, Action *>::iterator it = _keymap.find(hwInput->key);
+		// if input is already mapped to a different action then unmap it from there
+		if (it != _keymap.end() && action != it->_value)
+			it->_value->mapInput(0);
+		// now map it
+		_keymap[hwInput->key] = action;
+	} else if (hwInput->type == kHardwareInputTypeGeneric) {
+		HashMap<HardwareInputCode, Action *>::iterator it = _nonkeymap.find(hwInput->inputCode);
+		// if input is already mapped to a different action then unmap it from there
+		if (it != _nonkeymap.end() && action != it->_value)
+			it->_value->mapInput(0);
+		// now map it
+		_nonkeymap[hwInput->inputCode] = action;
 	}
-
-	_keymap[hwInput->key] = action;
 }
 
 void Keymap::unregisterMapping(Action *action) {
 	const HardwareInput *hwInput = action->getMappedInput();
 
 	if (hwInput) {
-		_keymap.erase(hwInput->key);
+		if (hwInput->type == kHardwareInputTypeKeyboard)
+			_keymap.erase(hwInput->key);
+		else if (hwInput->type == kHardwareInputTypeGeneric)
+			_nonkeymap.erase(hwInput->inputCode);
 	}
 }
 
@@ -111,6 +122,17 @@ Action *Keymap::getMappedAction(const KeyState& ks) const {
 	it = _keymap.find(ks);
 
 	if (it == _keymap.end())
+		return 0;
+	else
+		return it->_value;
+}
+
+Action *Keymap::getMappedAction(const HardwareInputCode code) const {
+	HashMap<HardwareInputCode, Action *>::iterator it;
+
+	it = _nonkeymap.find(code);
+
+	if (it == _nonkeymap.end())
 		return 0;
 	else
 		return it->_value;

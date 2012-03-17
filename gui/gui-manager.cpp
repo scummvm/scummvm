@@ -366,6 +366,9 @@ void GuiManager::runLoop() {
 				screenChange();
 				break;
 			default:
+#ifdef ENABLE_KEYMAPPER
+				activeDialog->handleOtherEvent(event);
+#endif
 				break;
 			}
 
