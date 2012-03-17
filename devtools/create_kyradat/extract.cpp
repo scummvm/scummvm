@@ -24,6 +24,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "extract.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 #include <algorithm>
 

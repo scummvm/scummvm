@@ -24,6 +24,7 @@
 #define CREATE_LURE_DAT_H
 
 #include "common/endian.h"
+#include "common/language.h"
 #include "common/util.h"
 
 #define VERSION_MAJOR 1

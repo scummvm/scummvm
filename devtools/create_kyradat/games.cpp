@@ -24,6 +24,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "create_kyradat.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 // Game tables
 

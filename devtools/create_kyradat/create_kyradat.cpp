@@ -38,6 +38,8 @@
 #include "extract.h"
 
 #include "md5.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 #include <string>
 #include <map>

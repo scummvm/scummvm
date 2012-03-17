@@ -25,6 +25,8 @@
 
 #include "tables.h"
 #include "create_kyradat.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 #define EXTRACT_END_ENTRY { UNK_LANG, kPlatformUnknown, { 0, 0, { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } } } }
 
