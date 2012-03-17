@@ -26,7 +26,6 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-#include "audio/audiostream.h"
 #include "audio/decoders/codec.h"
 #include "audio/decoders/quicktime.h"
 #include "audio/decoders/quicktime_intern.h"
@@ -39,12 +38,70 @@
 
 namespace Audio {
 
+/**
+ * An AudioStream that just returns silent samples and runs infinitely.
+ * Used to fill in the "empty edits" in the track queue which are just
+ * supposed to be no sound playing.
+ */
+class SilentAudioStream : public AudioStream {
+public:
+	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		memset(buffer, 0, numSamples * 2);
+		return numSamples;
+	}
+
+	bool endOfData() const { return false; } // it never ends!
+	bool isStereo() const { return _isStereo; }
+	int getRate() const { return _rate; }
+
+private:
+	int _rate;
+	bool _isStereo;
+};
+
+/**
+ * An AudioStream wrapper that cuts off the amount of samples read after a
+ * given time length is reached.
+ */
+class LimitingAudioStream : public AudioStream {
+public:
+	LimitingAudioStream(AudioStream *parentStream, const Audio::Timestamp &length,
+			DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) :
+			_parentStream(parentStream), _samplesRead(0), _disposeAfterUse(disposeAfterUse),
+			_totalSamples(length.convertToFramerate(getRate()).totalNumberOfFrames() * getChannels()) {}
+
+	~LimitingAudioStream() {
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete _parentStream;
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		// Cap us off so we don't read past _totalSamples					
+		int samplesRead = _parentStream->readBuffer(buffer, MIN<int>(numSamples, _totalSamples - _samplesRead));
+		_samplesRead += samplesRead;
+		return samplesRead;
+	}
+
+	bool endOfData() const { return _parentStream->endOfData() || _samplesRead >= _totalSamples; }
+	bool isStereo() const { return _parentStream->isStereo(); }
+	int getRate() const { return _parentStream->getRate(); }
+
+private:
+	int getChannels() const { return isStereo() ? 2 : 1; } 
+
+	AudioStream *_parentStream;
+	DisposeAfterUse::Flag _disposeAfterUse;
+	uint32 _totalSamples, _samplesRead;
+};
+
 QuickTimeAudioDecoder::QuickTimeAudioDecoder() : Common::QuickTimeParser() {
-	_audStream = 0;
 }
 
 QuickTimeAudioDecoder::~QuickTimeAudioDecoder() {
-	delete _audStream;
+	for (uint32 i = 0; i < _audioTracks.size(); i++)
+		delete _audioTracks[i];
 }
 
 bool QuickTimeAudioDecoder::loadAudioFile(const Common::String &filename) {
@@ -66,32 +123,11 @@ bool QuickTimeAudioDecoder::loadAudioStream(Common::SeekableReadStream *stream, 
 void QuickTimeAudioDecoder::init() {
 	Common::QuickTimeParser::init();
 
-	_audioTrackIndex = -1;
-
-	// Find an audio stream
+	// Initialize all the audio streams
+	// But ignore any streams we don't support
 	for (uint32 i = 0; i < _tracks.size(); i++)
-		if (_tracks[i]->codecType == CODEC_TYPE_AUDIO && _audioTrackIndex < 0)
-			_audioTrackIndex = i;
-
-	// Initialize audio, if present
-	if (_audioTrackIndex >= 0) {
-		AudioSampleDesc *entry = (AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
-
-		if (entry->isAudioCodecSupported()) {
-			_audStream = makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
-			_curAudioChunk = 0;
-
-			// Make sure the bits per sample transfers to the sample size
-			if (entry->getCodecTag() == MKTAG('r', 'a', 'w', ' ') || entry->getCodecTag() == MKTAG('t', 'w', 'o', 's'))
-				_tracks[_audioTrackIndex]->sampleSize = (entry->_bitsPerSample / 8) * entry->_channels;
-
-			// Initialize the codec (if necessary)
-			entry->initCodec();
-
-			if (_tracks[_audioTrackIndex]->editCount > 1)
-				warning("Multiple edit list entries in an audio track. Things may go awry");
-		}
-	}
+		if (_tracks[i]->codecType == CODEC_TYPE_AUDIO && ((AudioSampleDesc *)_tracks[i]->sampleDescs[0])->isAudioCodecSupported())
+			_audioTracks.push_back(new QuickTimeAudioTrack(this, _tracks[i]));
 }
 
 Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track *track, uint32 format) {
@@ -130,8 +166,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track
 			return 0;
 		}
 
-		// Version 0 videos (such as the Riven ones) don't have this set,
-		// but we need it later on. Add it in here.
+		// Version 0 files don't have some variables set, so we'll do that here
 		if (format == MKTAG('i', 'm', 'a', '4')) {
 			entry->_samplesPerFrame = 64;
 			entry->_bytesPerFrame = 34 * entry->_channels;
@@ -146,20 +181,164 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track
 	return 0;
 }
 
-bool QuickTimeAudioDecoder::isOldDemuxing() const {
-	assert(_audioTrackIndex >= 0);
-	return _tracks[_audioTrackIndex]->timeToSampleCount == 1 && _tracks[_audioTrackIndex]->timeToSample[0].duration == 1;
+QuickTimeAudioDecoder::QuickTimeAudioTrack::QuickTimeAudioTrack(QuickTimeAudioDecoder *decoder, Common::QuickTimeParser::Track *parentTrack) {
+	_decoder = decoder;
+	_parentTrack = parentTrack;
+	_queue = createStream();
+	_samplesQueued = 0;
+
+	AudioSampleDesc *entry = (AudioSampleDesc *)_parentTrack->sampleDescs[0];
+
+	if (entry->getCodecTag() == MKTAG('r', 'a', 'w', ' ') || entry->getCodecTag() == MKTAG('t', 'w', 'o', 's'))
+		_parentTrack->sampleSize = (entry->_bitsPerSample / 8) * entry->_channels;
+	
+	// Initialize our edit parser too
+	_curEdit = 0;
+	enterNewEdit(Timestamp());
+
+	// If the edit doesn't start on a nice boundary, set us up to skip some samples
+	Timestamp editStartTime(0, _parentTrack->editList[_curEdit].mediaTime, _parentTrack->timeScale);
+	Timestamp trackPosition = getCurrentTrackTime();
+	if (_parentTrack->editList[_curEdit].mediaTime != -1 && trackPosition != editStartTime)
+		_skipSamples = editStartTime.convertToFramerate(getRate()) - trackPosition;
 }
 
-void QuickTimeAudioDecoder::queueNextAudioChunk() {
-	AudioSampleDesc *entry = (AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
+QuickTimeAudioDecoder::QuickTimeAudioTrack::~QuickTimeAudioTrack() {
+	delete _queue;
+}
+
+void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueAudio(const Timestamp &length) {
+	if (allDataRead() || (length.totalNumberOfFrames() != 0 && Timestamp(0, _samplesQueued, getRate()) >= length))
+		return;
+
+	do {
+		Timestamp nextEditTime(0, _parentTrack->editList[_curEdit].timeOffset + _parentTrack->editList[_curEdit].trackDuration, _decoder->_timeScale);
+
+		if (_parentTrack->editList[_curEdit].mediaTime == -1) {
+			// We've got an empty edit, so fill it with silence
+			Timestamp editLength(0, _parentTrack->editList[_curEdit].trackDuration, _decoder->_timeScale);
+
+			// If we seek into the middle of an empty edit, we need to adjust
+			if (_skipSamples != Timestamp()) {
+				editLength = editLength - _skipSamples;
+				_skipSamples = Timestamp();
+			}
+
+			queueStream(new LimitingAudioStream(new SilentAudioStream(getRate(), isStereo()), editLength), editLength);
+			_curEdit++;
+			enterNewEdit(nextEditTime);
+		} else {
+			// Normal audio
+			AudioStream *stream = readAudioChunk(_curChunk);
+			Timestamp chunkLength = getChunkLength(_curChunk, _skipAACPrimer);
+			_skipAACPrimer = false;
+			_curChunk++;
+
+			// If we have any samples that we need to skip (ie. we seeked into
+			// the middle of a chunk), skip them here.
+			if (_skipSamples != Timestamp()) {
+				skipSamples(_skipSamples, stream);
+				_curMediaPos = _curMediaPos + _skipSamples;
+				chunkLength = chunkLength - _skipSamples;
+				_skipSamples = Timestamp();
+			}
+
+			// Calculate our overall position within the media
+			Timestamp trackPosition = getCurrentTrackTime() + chunkLength;
+
+			// If we have reached the end of this edit (or have no more media to read),
+			// we move on to the next edit
+			if (trackPosition >= nextEditTime || _curChunk >= _parentTrack->chunkCount) {
+				chunkLength = nextEditTime.convertToFramerate(getRate()) - getCurrentTrackTime();
+				stream = new LimitingAudioStream(stream, chunkLength);
+				_curEdit++;
+				enterNewEdit(nextEditTime);
+
+				// Next time around, we'll know how much to skip
+				trackPosition = getCurrentTrackTime();
+				if (!allDataRead() && _parentTrack->editList[_curEdit].mediaTime != -1 && nextEditTime != trackPosition)
+					_skipSamples = nextEditTime.convertToFramerate(getRate()) - trackPosition;
+			} else {
+				_curMediaPos = _curMediaPos + chunkLength.convertToFramerate(_curMediaPos.framerate());
+			}
+
+			queueStream(stream, chunkLength);
+		}
+	} while (!allDataRead() && Timestamp(0, _samplesQueued, getRate()) < length);
+}
+
+Timestamp QuickTimeAudioDecoder::QuickTimeAudioTrack::getCurrentTrackTime() const {
+	if (allDataRead())
+		return getLength().convertToFramerate(getRate());
+
+	return Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale).convertToFramerate(getRate())
+			+ _curMediaPos - Timestamp(0, _parentTrack->editList[_curEdit].mediaTime, _parentTrack->timeScale).convertToFramerate(getRate());
+}
+
+void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueRemainingAudio() {
+	queueAudio(getLength());
+}
+
+int QuickTimeAudioDecoder::QuickTimeAudioTrack::readBuffer(int16 *buffer, const int numSamples) {
+	int samplesRead = _queue->readBuffer(buffer, numSamples);
+	_samplesQueued -= samplesRead / (isStereo() ? 2 : 1);
+	return samplesRead;
+}
+
+bool QuickTimeAudioDecoder::QuickTimeAudioTrack::allDataRead() const {
+	return _curEdit == _parentTrack->editCount;
+}
+
+bool QuickTimeAudioDecoder::QuickTimeAudioTrack::endOfData() const {
+	return allDataRead() && _queue->endOfData();
+}
+
+bool QuickTimeAudioDecoder::QuickTimeAudioTrack::seek(const Timestamp &where) {
+	// Recreate the queue
+	delete _queue;
+	_queue = createStream();
+	_samplesQueued = 0;
+
+	if (where > getLength()) {
+		// We're done
+		_curEdit = _parentTrack->editCount;
+		return true;
+	}
+
+	// Find where we are in the stream
+	findEdit(where);
+
+	// Now queue up some audio and skip whatever we need to skip
+	Timestamp samplesToSkip = where.convertToFramerate(getRate()) - getCurrentTrackTime();
+	queueAudio();
+	if (_parentTrack->editList[_curEdit].mediaTime != -1)
+		skipSamples(samplesToSkip, _queue);
+
+	return true;
+}
+
+Timestamp QuickTimeAudioDecoder::QuickTimeAudioTrack::getLength() const {
+	return Timestamp(0, _parentTrack->duration, _decoder->_timeScale);
+}
+
+QueuingAudioStream *QuickTimeAudioDecoder::QuickTimeAudioTrack::createStream() const {
+	AudioSampleDesc *entry = (AudioSampleDesc *)_parentTrack->sampleDescs[0];
+	return makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
+}
+
+bool QuickTimeAudioDecoder::QuickTimeAudioTrack::isOldDemuxing() const {
+	return _parentTrack->timeToSampleCount == 1 && _parentTrack->timeToSample[0].duration == 1;
+}
+
+AudioStream *QuickTimeAudioDecoder::QuickTimeAudioTrack::readAudioChunk(uint chunk) {
+	AudioSampleDesc *entry = (AudioSampleDesc *)_parentTrack->sampleDescs[0];
 	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
 
-	_fd->seek(_tracks[_audioTrackIndex]->chunkOffsets[_curAudioChunk]);
+	_decoder->_fd->seek(_parentTrack->chunkOffsets[chunk]);
 
 	// First, we have to get the sample count
-	uint32 sampleCount = entry->getAudioChunkSampleCount(_curAudioChunk);
-	assert(sampleCount);
+	uint32 sampleCount = getAudioChunkSampleCount(chunk);
+	assert(sampleCount != 0);
 
 	if (isOldDemuxing()) {
 		// Old-style audio demuxing
@@ -176,12 +355,12 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 				size = (samples / entry->_samplesPerFrame) * entry->_bytesPerFrame;
 			} else {
 				samples = MIN<uint32>(1024, sampleCount);
-				size = samples * _tracks[_audioTrackIndex]->sampleSize;
+				size = samples * _parentTrack->sampleSize;
 			}
 
 			// Now, we read in the data for this data and output it
 			byte *data = (byte *)malloc(size);
-			_fd->read(data, size);
+			_decoder->_fd->read(data, size);
 			wStream->write(data, size);
 			free(data);
 			sampleCount -= samples;
@@ -191,41 +370,87 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 
 		// Find our starting sample
 		uint32 startSample = 0;
-		for (uint32 i = 0; i < _curAudioChunk; i++)
-			startSample += entry->getAudioChunkSampleCount(i);
+		for (uint32 i = 0; i < chunk; i++)
+			startSample += getAudioChunkSampleCount(i);
 
 		for (uint32 i = 0; i < sampleCount; i++) {
-			uint32 size = (_tracks[_audioTrackIndex]->sampleSize != 0) ? _tracks[_audioTrackIndex]->sampleSize : _tracks[_audioTrackIndex]->sampleSizes[i + startSample];
+			uint32 size = (_parentTrack->sampleSize != 0) ? _parentTrack->sampleSize : _parentTrack->sampleSizes[i + startSample];
 
 			// Now, we read in the data for this data and output it
 			byte *data = (byte *)malloc(size);
-			_fd->read(data, size);
+			_decoder->_fd->read(data, size);
 			wStream->write(data, size);
 			free(data);
 		}
 	}
 
-	// Now queue the buffer
-	_audStream->queueAudioStream(entry->createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
+	AudioStream *audioStream = entry->createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES));
 	delete wStream;
 
-	_curAudioChunk++;
+	return audioStream;
 }
 
-void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
-	if (!_audStream)
+void QuickTimeAudioDecoder::QuickTimeAudioTrack::skipSamples(const Timestamp &length, AudioStream *stream) {
+	uint32 sampleCount = length.convertToFramerate(getRate()).totalNumberOfFrames();
+
+	if (sampleCount == 0)
 		return;
 
-	// Re-create the audio stream
-	delete _audStream;
-	Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
-	_audStream = Audio::makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
+	if (isStereo())
+		sampleCount *= 2;
+
+	int16 *tempBuffer = new int16[sampleCount];
+	uint32 result = stream->readBuffer(tempBuffer, sampleCount);
+	delete[] tempBuffer;
+
+	// If this is the queue, make sure we subtract this number from the
+	// amount queued
+	if (stream == _queue)
+		_samplesQueued -= result / (isStereo() ? 2 : 1);
+}
+
+void QuickTimeAudioDecoder::QuickTimeAudioTrack::findEdit(const Timestamp &position) {
+	for (_curEdit = 0; _curEdit < _parentTrack->editCount && position < Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale); _curEdit++)
+		;
+
+	enterNewEdit(position);
+}
+
+void QuickTimeAudioDecoder::QuickTimeAudioTrack::enterNewEdit(const Timestamp &position) {
+	_skipSamples = Timestamp(); // make sure our skip variable doesn't remain around
+
+	// If we're at the end of the edit list, there's nothing else for us to do here
+	if (allDataRead())
+		return;
+	
+	// For an empty edit, we may need to adjust the start time
+	if (_parentTrack->editList[_curEdit].mediaTime == -1) {
+		// Just invalidate the current media position (and make sure the scale
+		// is in terms of our rate so it simplifies things later)
+		_curMediaPos = Timestamp(0, 0, getRate());
+
+		// Also handle shortening of the empty edit if needed
+		if (position != Timestamp())
+			_skipSamples = position.convertToFramerate(_decoder->_timeScale) - Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale);
+		return;
+	}
+
+	// I really hope I never need to implement this :P
+	// But, I'll throw in this error just to make sure I catch anything with this...
+	if (_parentTrack->editList[_curEdit].mediaRate != 1)
+		error("Unhandled QuickTime audio rate change");
 
 	// Reinitialize the codec
-	entry->initCodec();
+	((AudioSampleDesc *)_parentTrack->sampleDescs[0])->initCodec();
+	_skipAACPrimer = true;
 
 	// First, we need to track down what audio sample we need
-	Audio::Timestamp curAudioTime = where.convertToFramerate(_tracks[_audioTrackIndex]->timeScale);
+	// Convert our variables from the media time (position) and the edit time (based on position)
+	// and the media time
+	Timestamp curAudioTime = Timestamp(0, _parentTrack->editList[_curEdit].mediaTime, _parentTrack->timeScale)
+		+ position.convertToFramerate(_parentTrack->timeScale)
+		- Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale).convertToFramerate(_parentTrack->timeScale);
+
 	uint32 sample = curAudioTime.totalNumberOfFrames();
 	uint32 seekSample = sample;
 
@@ -236,24 +461,24 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 		uint32 curSample = 0;
 		seekSample = 0;
 
-		for (int32 i = 0; i < _tracks[_audioTrackIndex]->timeToSampleCount; i++) {
-			uint32 sampleCount = _tracks[_audioTrackIndex]->timeToSample[i].count * _tracks[_audioTrackIndex]->timeToSample[i].duration;
+		for (int32 i = 0; i < _parentTrack->timeToSampleCount; i++) {
+			uint32 sampleCount = _parentTrack->timeToSample[i].count * _parentTrack->timeToSample[i].duration;
 
 			if (sample < curSample + sampleCount) {
-				seekSample += (sample - curSample) / _tracks[_audioTrackIndex]->timeToSample[i].duration;
+				seekSample += (sample - curSample) / _parentTrack->timeToSample[i].duration;
 				break;
 			}
 
-			seekSample += _tracks[_audioTrackIndex]->timeToSample[i].count;
+			seekSample += _parentTrack->timeToSample[i].count;
 			curSample += sampleCount;
 		}
 	}
 
 	// Now to track down what chunk it's in
 	uint32 totalSamples = 0;
-	_curAudioChunk = 0;
-	for (uint32 i = 0; i < _tracks[_audioTrackIndex]->chunkCount; i++, _curAudioChunk++) {
-		uint32 chunkSampleCount = entry->getAudioChunkSampleCount(i);
+	_curChunk = 0;
+	for (uint32 i = 0; i < _parentTrack->chunkCount; i++, _curChunk++) {
+		uint32 chunkSampleCount = getAudioChunkSampleCount(i);
 
 		if (seekSample < totalSamples + chunkSampleCount)
 			break;
@@ -261,17 +486,68 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 		totalSamples += chunkSampleCount;
 	}
 
-	// Reposition the audio stream
-	queueNextAudioChunk();
-	if (sample != totalSamples) {
-		// HACK: Skip a certain amount of samples from the stream
-		// (There's got to be a better way to do this!)
-		int skipSamples = (sample - totalSamples) * entry->_channels;
+	// Now we get to have fun and convert *back* to an actual time
+	// We don't want the sample count to be modified at this point, though
+	if (!isOldDemuxing())
+		totalSamples = getAACSampleTime(totalSamples);
 
-		int16 *tempBuffer = new int16[skipSamples];
-		_audStream->readBuffer(tempBuffer, skipSamples);
-		delete[] tempBuffer;
+	_curMediaPos = Timestamp(0, totalSamples, getRate());
+}
+
+void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueStream(AudioStream *stream, const Timestamp &length) {
+	_queue->queueAudioStream(stream, DisposeAfterUse::YES);
+	_samplesQueued += length.convertToFramerate(getRate()).totalNumberOfFrames();
+}
+
+uint32 QuickTimeAudioDecoder::QuickTimeAudioTrack::getAudioChunkSampleCount(uint chunk) const {
+	uint32 sampleCount = 0;
+
+	for (uint32 i = 0; i < _parentTrack->sampleToChunkCount; i++)
+		if (chunk >= _parentTrack->sampleToChunk[i].first)
+			sampleCount = _parentTrack->sampleToChunk[i].count;
+
+	return sampleCount;
+}
+
+Timestamp QuickTimeAudioDecoder::QuickTimeAudioTrack::getChunkLength(uint chunk, bool skipAACPrimer) const {
+	uint32 chunkSampleCount = getAudioChunkSampleCount(chunk);
+
+	if (isOldDemuxing())
+		return Timestamp(0, chunkSampleCount, getRate());
+
+	// AAC needs some extra handling, of course
+	return Timestamp(0, getAACSampleTime(chunkSampleCount, skipAACPrimer), getRate());
+}
+
+uint32 QuickTimeAudioDecoder::QuickTimeAudioTrack::getAACSampleTime(uint32 totalSampleCount, bool skipAACPrimer) const{
+	uint32 curSample = 0;
+	uint32 time = 0;
+
+	for (int32 i = 0; i < _parentTrack->timeToSampleCount; i++) {
+		uint32 sampleCount = _parentTrack->timeToSample[i].count;
+
+		if (totalSampleCount < curSample + sampleCount) {
+			time += (totalSampleCount - curSample) * _parentTrack->timeToSample[i].duration;
+			break;
+		}
+
+		time += _parentTrack->timeToSample[i].count * _parentTrack->timeToSample[i].duration;
+		curSample += sampleCount;
 	}
+
+	// The first chunk of AAC contains "duration" samples that are used as a primer
+	// We need to subtract that number from the duration for the first chunk. See:
+	// http://developer.apple.com/library/mac/#documentation/QuickTime/QTFF/QTFFAppenG/QTFFAppenG.html#//apple_ref/doc/uid/TP40000939-CH2-SW1
+	// The skipping of both the primer and the remainder are handled by the AAC code,
+	// whereas the timing of the remainder are handled by this time-to-sample chunk
+	// code already.
+	// We have to do this after each time we reinitialize the codec
+	if (skipAACPrimer) {
+		assert(_parentTrack->timeToSampleCount > 0);
+		time -= _parentTrack->timeToSample[0].duration;
+	}
+
+	return time;
 }
 
 QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
@@ -312,20 +588,11 @@ bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
 			break;
 		}
 		warning("No MPEG-4 audio (%s) support", audioType.c_str());
-	} else
+	} else {
 		warning("Audio Codec Not Supported: \'%s\'", tag2str(_codecTag));
+	}
 
 	return false;
-}
-
-uint32 QuickTimeAudioDecoder::AudioSampleDesc::getAudioChunkSampleCount(uint chunk) const {
-	uint32 sampleCount = 0;
-
-	for (uint32 j = 0; j < _parentTrack->sampleToChunkCount; j++)
-		if (chunk >= _parentTrack->sampleToChunk[j].first)
-			sampleCount = _parentTrack->sampleToChunk[j].count;
-
-	return sampleCount;
 }
 
 AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::SeekableReadStream *stream) const {
@@ -381,7 +648,7 @@ void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
 }
 
 /**
- * A wrapper around QuickTimeAudioDecoder that implements the RewindableAudioStream API
+ * A wrapper around QuickTimeAudioDecoder that implements the SeekableAudioStream API
  */
 class QuickTimeAudioStream : public SeekableAudioStream, public QuickTimeAudioDecoder {
 public:
@@ -389,11 +656,11 @@ public:
 	~QuickTimeAudioStream() {}
 
 	bool openFromFile(const Common::String &filename) {
-		return QuickTimeAudioDecoder::loadAudioFile(filename) && _audioTrackIndex >= 0 && _audStream;
+		return QuickTimeAudioDecoder::loadAudioFile(filename) && !_audioTracks.empty();
 	}
 
 	bool openFromStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
-		return QuickTimeAudioDecoder::loadAudioStream(stream, disposeFileHandle) && _audioTrackIndex >= 0 && _audStream;
+		return QuickTimeAudioDecoder::loadAudioStream(stream, disposeFileHandle) && !_audioTracks.empty();
 	}
 
 	// AudioStream API
@@ -401,33 +668,21 @@ public:
 		int samples = 0;
 
 		while (samples < numSamples && !endOfData()) {
-			if (_audStream->numQueuedStreams() == 0)
-				queueNextAudioChunk();
-
-			samples += _audStream->readBuffer(buffer + samples, numSamples - samples);
+			if (!_audioTracks[0]->hasDataInQueue())
+				_audioTracks[0]->queueAudio();
+			samples += _audioTracks[0]->readBuffer(buffer + samples, numSamples - samples);
 		}
 
 		return samples;
 	}
 
-	bool isStereo() const { return _audStream->isStereo(); }
-	int getRate() const { return _audStream->getRate(); }
-	bool endOfData() const { return _curAudioChunk >= _tracks[_audioTrackIndex]->chunkCount && _audStream->endOfData(); }
+	bool isStereo() const { return _audioTracks[0]->isStereo(); }
+	int getRate() const { return _audioTracks[0]->getRate(); }
+	bool endOfData() const { return _audioTracks[0]->endOfData(); }
 
 	// SeekableAudioStream API
-	bool seek(const Timestamp &where) {
-		if (where > getLength())
-			return false;
-
-		setAudioStreamPos(where);
-		return true;
-	}
-
-	Timestamp getLength() const {
-		// TODO: Switch to the other one when audio edits are supported
-		//return Timestamp(0, _tracks[_audioTrackIndex]->duration, _timeScale);
-		return Timestamp(0, _tracks[_audioTrackIndex]->mediaDuration, _tracks[_audioTrackIndex]->timeScale);
-	}
+	bool seek(const Timestamp &where) { return _audioTracks[0]->seek(where); }
+	Timestamp getLength() const { return _audioTracks[0]->getLength(); }
 };
 
 SeekableAudioStream *makeQuickTimeStream(const Common::String &filename) {

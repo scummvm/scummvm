@@ -34,6 +34,8 @@
 #include "common/scummsys.h"
 #include "common/types.h"
 
+#include "audio/audiostream.h"
+
 namespace Common {
 	class SeekableReadStream;
 	class String;
@@ -41,9 +43,7 @@ namespace Common {
 
 namespace Audio {
 
-class AudioStream;
 class Codec;
-class QueuingAudioStream;
 
 class QuickTimeAudioDecoder : public Common::QuickTimeParser {
 public:
@@ -63,13 +63,59 @@ public:
 	bool loadAudioStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle);
 
 protected:
+	class QuickTimeAudioTrack : public SeekableAudioStream {
+	public:
+		QuickTimeAudioTrack(QuickTimeAudioDecoder *decoder, Track *parentTrack);
+		~QuickTimeAudioTrack();
+
+		// AudioStream API
+		int readBuffer(int16 *buffer, const int numSamples);
+		bool isStereo() const { return _queue->isStereo(); }
+		int getRate() const { return _queue->getRate(); }
+		bool endOfData() const;
+
+		// SeekableAudioStream API
+		bool seek(const Timestamp &where);
+		Timestamp getLength() const;
+
+		// Queue *at least* "length" audio
+		// If length is zero, it queues the next logical block of audio whether
+		// that be a whole edit or just one chunk within an edit
+		void queueAudio(const Timestamp &length = Timestamp());
+		Track *getParent() const { return _parentTrack; }
+		void queueRemainingAudio();
+		bool hasDataInQueue() const { return _samplesQueued != 0; }
+
+	private:
+		QuickTimeAudioDecoder *_decoder;
+		Track *_parentTrack; 
+		QueuingAudioStream *_queue;
+		uint _curChunk;
+		Timestamp _curMediaPos, _skipSamples;
+		uint32 _curEdit, _samplesQueued;
+		bool _skipAACPrimer;
+
+		QueuingAudioStream *createStream() const;
+		AudioStream *readAudioChunk(uint chunk);
+		bool isOldDemuxing() const;
+		void skipSamples(const Timestamp &length, AudioStream *stream);
+		void findEdit(const Timestamp &position);
+		bool allDataRead() const;
+		void enterNewEdit(const Timestamp &position);
+		void queueStream(AudioStream *stream, const Timestamp &length);
+		uint32 getAudioChunkSampleCount(uint chunk) const;
+		Timestamp getChunkLength(uint chunk, bool skipAACPrimer = false) const;
+		uint32 getAACSampleTime(uint32 totalSampleCount, bool skipAACPrimer = false) const;
+		Timestamp getCurrentTrackTime() const;
+	};
+
 	class AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
 		AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
 		~AudioSampleDesc();
 
 		bool isAudioCodecSupported() const;
-		uint32 getAudioChunkSampleCount(uint chunk) const;
+		
 		AudioStream *createAudioStream(Common::SeekableReadStream *stream) const;
 		void initCodec();
 
@@ -80,6 +126,7 @@ protected:
 		uint32 _samplesPerFrame;
 		uint32 _bytesPerFrame;
 
+	private:
 		Codec *_codec;
 	};
 
@@ -87,13 +134,8 @@ protected:
 	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
 
 	void init();
-	void setAudioStreamPos(const Timestamp &where);
-	bool isOldDemuxing() const;
-	void queueNextAudioChunk();
 
-	int _audioTrackIndex;
-	uint _curAudioChunk;
-	QueuingAudioStream *_audStream;
+	Common::Array<QuickTimeAudioTrack *> _audioTracks;
 };
 
 } // End of namespace Audio
