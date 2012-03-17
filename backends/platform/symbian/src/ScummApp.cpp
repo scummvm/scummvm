@@ -24,7 +24,7 @@
 
 #define _PAGESIZE_ 0x1000
 
-#if defined (__WINS__) && !defined (S60V3) && !defined (UIQ3)
+#if defined(__WINS__) && !defined(S60V3) && !defined(UIQ3)
 extern "C" int _chkstk(int /*a*/) {
 _asm {
 	push ecx
@@ -62,7 +62,7 @@ _asm {
 #ifdef EPOC_AS_APP
 
 // this function is called automatically by the SymbianOS to deliver the new CApaApplication object
-#if !defined (UIQ3) && !defined (S60V3)
+#if !defined(UIQ3) && !defined(S60V3)
 EXPORT_C
 #endif
 CApaApplication* NewApplication() {
@@ -70,7 +70,7 @@ CApaApplication* NewApplication() {
 	return new CScummApp;
 }
 
-#if defined (UIQ3) || defined (S60V3)
+#if defined(UIQ3) || defined(S60V3)
 #include <eikstart.h>
 // E32Main() contains the program's start up code, the entry point for an EXE.
 GLDEF_C TInt E32Main() {
@@ -80,7 +80,7 @@ GLDEF_C TInt E32Main() {
 
 #endif // EPOC_AS_APP
 
-#if !defined (UIQ3) && !defined (S60V3)
+#if !defined(UIQ3) && !defined(S60V3)
 GLDEF_C  TInt E32Dll(TDllReason) {
 	return KErrNone;
 }
@@ -92,7 +92,7 @@ CScummApp::CScummApp() {
 CScummApp::~CScummApp() {
 }
 
-#if defined (UIQ3)
+#if defined(UIQ3)
 #include <scummvm.rsg>
 /**
  * Returns the resource id to be used to declare the views supported by this UIQ3 app

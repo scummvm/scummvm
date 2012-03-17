@@ -42,7 +42,7 @@ typedef   signed char      Bit8s;
 // Since sysex allows this memory to be written to in blocks of bytes,
 // we keep this packed so that we can copy data into the various
 // banks directly
-#if defined(_MSC_VER) || defined (__MINGW32__)
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #pragma pack(push, 1)
 #else
 #pragma pack(1)
@@ -172,7 +172,7 @@ struct MemParams {
 	} MT32EMU_ALIGN_PACKED system;
 };
 
-#if defined(_MSC_VER) || defined (__MINGW32__)
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #pragma pack(pop)
 #else
 #pragma pack()
