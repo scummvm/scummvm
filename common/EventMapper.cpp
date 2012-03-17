@@ -50,7 +50,7 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	if (mappedEvent.type == EVENT_INVALID)
 		mappedEvent = ev;
 
-#ifdef ENABLE_VKEYBD
+#ifdef ENABLE_KEYMAPPER
 	// TODO: this check is not needed post-split
 	if (mappedEvent.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
 		warning("EVENT_CUSTOM_BACKEND_HARDWARE was not mapped");
