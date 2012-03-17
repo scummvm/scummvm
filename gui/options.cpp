@@ -750,7 +750,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// RenderMode popup
-	const Common::String allFlags = renderType2GUIO((uint32)-1);
+	const Common::String allFlags = Common::allRenderModesGUIOs();
 	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
 	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
@@ -759,7 +759,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
-		Common::String renderGuiOption = renderType2GUIO(rm->id);
+		Common::String renderGuiOption = Common::renderMode2GUIO(rm->id);
 		if ((_domain == Common::ConfigManager::kApplicationDomain) || (_domain != Common::ConfigManager::kApplicationDomain && !renderingTypeDefined) || (_guioptions.contains(renderGuiOption)))
 			_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
 	}
@@ -1038,31 +1038,6 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 
 	if (!found)
 		ConfMan.removeKey(setting, _domain);
-}
-
-Common::String OptionsDialog::renderType2GUIO(uint32 renderType) {
-	static const struct {
-		Common::RenderMode type;
-		const char *guio;
-	} renderGUIOMapping[] = {
-		{ Common::kRenderHercG,		GUIO_RENDERHERCGREEN },
-		{ Common::kRenderHercA,		GUIO_RENDERHERCAMBER },
-		{ Common::kRenderCGA,		GUIO_RENDERCGA },
-		{ Common::kRenderEGA,		GUIO_RENDEREGA },
-		{ Common::kRenderVGA,		GUIO_RENDERVGA },
-		{ Common::kRenderAmiga,		GUIO_RENDERAMIGA },
-		{ Common::kRenderFMTowns,	GUIO_RENDERFMTOWNS },
-		{ Common::kRenderPC9821,	GUIO_RENDERPC9821 },
-		{ Common::kRenderPC9801,	GUIO_RENDERPC9801 }
-	};
-	Common::String res;
-
-	for (int i = 0; i < ARRAYSIZE(renderGUIOMapping); i++) {
-		if (renderType == renderGUIOMapping[i].type || renderType == (uint32)-1)
-			res += renderGUIOMapping[i].guio;
-	}
-
-	return res;
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {

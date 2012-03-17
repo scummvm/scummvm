@@ -23,8 +23,6 @@
 #ifndef COMMON_GUI_OPTIONS_H
 #define COMMON_GUI_OPTIONS_H
 
-#include "common/language.h"
-
 #define GUIO_NONE			"\000"
 #define GUIO_NOSUBTITLES	"\001"
 #define GUIO_NOMUSIC		"\002"
@@ -68,12 +66,11 @@
 
 namespace Common {
 
+class String;
 
 bool checkGameGUIOption(const String &option, const String &str);
-bool checkGameGUIOptionLanguage(Common::Language lang, const String &str);
 String parseGameGUIOptions(const String &str);
 const String getGameGUIOptionsDescription(const String &options);
-const String getGameGUIOptionsDescriptionLanguage(Common::Language lang);
 
 /**
  * Updates the GUI options of the current config manager

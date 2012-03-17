@@ -85,8 +85,6 @@ protected:
 	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
 	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
 
-	Common::String renderType2GUIO(uint32 renderType);
-
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
 	int _midiTabId;
