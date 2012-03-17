@@ -111,19 +111,29 @@ bool QuickTimeParser::parseStream(SeekableReadStream *stream, DisposeAfterUse::F
 }
 
 void QuickTimeParser::init() {
-	// Remove unknown/unhandled tracks
 	for (uint32 i = 0; i < _tracks.size(); i++) {
+		// Remove unknown/unhandled tracks
 		if (_tracks[i]->codecType == CODEC_TYPE_MOV_OTHER) {
 			delete _tracks[i];
 			_tracks.remove_at(i);
 			i--;
+		} else {
+			// If this track doesn't have a declared scale, use the movie scale
+			if (_tracks[i]->timeScale == 0)
+				_tracks[i]->timeScale = _timeScale;
+
+			// If this track doesn't have an edit list (like in MPEG-4 files),
+			// fake an entry of one edit that takes up the entire sample
+			if (_tracks[i]->editCount == 0) {
+				_tracks[i]->editCount = 1;
+				_tracks[i]->editList = new EditListEntry[1];
+				_tracks[i]->editList[0].trackDuration = _tracks[i]->duration;
+				_tracks[i]->editList[0].timeOffset = 0;
+				_tracks[i]->editList[0].mediaTime = 0;
+				_tracks[i]->editList[0].mediaRate = 1;
+			}
 		}
 	}
-
-	// Adjust time scale
-	for (uint32 i = 0; i < _tracks.size(); i++)
-		if (!_tracks[i]->timeScale)
-			_tracks[i]->timeScale = _timeScale;
 }
 
 void QuickTimeParser::initParseTable() {
