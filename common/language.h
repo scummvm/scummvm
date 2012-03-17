@@ -75,6 +75,12 @@ extern const char *getLanguageCode(Language id);
 extern const char *getLanguageLocale(Language id);
 extern const char *getLanguageDescription(Language id);
 
+// TODO: Document this GUIO related function
+const String getGameGUIOptionsDescriptionLanguage(Common::Language lang);
+
+// TODO: Document this GUIO related function
+bool checkGameGUIOptionLanguage(Common::Language lang, const String &str);
+
 }	// End of namespace Common
 
 #endif

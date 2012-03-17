@@ -79,23 +79,6 @@ bool checkGameGUIOption(const String &option, const String &str) {
 	return false;
 }
 
-bool checkGameGUIOptionLanguage(Language lang, const String &str) {
-	if (!str.contains("lang_")) // If no languages are specified
-		return true;
-
-	if (str.contains(getGameGUIOptionsDescriptionLanguage(lang)))
-		return true;
-
-	return false;
-}
-
-const String getGameGUIOptionsDescriptionLanguage(Language lang) {
-	if (lang == UNK_LANG)
-		return "";
-
-	return String("lang_") + getLanguageDescription(lang);
-}
-
 String parseGameGUIOptions(const String &str) {
 	String res;
 
