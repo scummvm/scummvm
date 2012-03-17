@@ -358,7 +358,7 @@ char *stripLine(char *const line) {
 			case '\\': c = '\\'; break;
 			default:
 				// Just skip
-				fprintf(stdout, "Unsupported special character \"\\%c\" in string. Please contact ScummVM developers.\n", c);
+				fprintf(stderr, "Unsupported special character \"\\%c\" in string. Please contact ScummVM developers.\n", c);
 				continue;
 			}
 		}
