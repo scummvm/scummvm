@@ -211,7 +211,7 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 				xc = x;
 				yc += 6;
 				if (yc > yf) {
-					while (!keypressed())
+					while (!g_vm->keyPressed())
 						;
 					i = y;
 					do {
@@ -302,7 +302,6 @@ void taffich() {
 	int cx, handle, npal;
 	int32 lgt;
 	int alllum[16];
-
 
 	int a = g_caff;
 	if ((a >= 153) && (a <= 161))

@@ -68,7 +68,6 @@ extern void ecr2(Common::String str_);
 extern void ecr3(Common::String text);
 extern void stop();
 extern void paint_rect(int x, int y, int dx, int dy);
-extern void updateHour(int &day, int &hour, int &minute);
 extern int convertCharacterIndexToBitIndex(int characterIndex);
 /* NIVEAU 12 */
 extern void modobj(int m);
@@ -79,7 +78,6 @@ extern void drawClock();
  * NIVEAU 11 *
  *************/
 extern void debloc(int roomId);
-extern void getKnockAnswer();
 extern int convertBitIndexToCharacterIndex(int bitIndex);
 extern void ecfren(int &p, int &rand, int cf, int roomId);
 extern void becfren(int roomId);
@@ -97,7 +95,7 @@ extern void dessin(int ad);
 extern void tinke();
 extern void fenat(char ans);
 /* NIVEAU 8 */
-extern void afdes(int ad);
+extern void afdes();
 extern void tkey1(bool d);
 /* NIVEAU 7 */
 extern void tlu(int af, int ob);
@@ -128,13 +126,5 @@ extern void maivid();
 extern void st13(int ob);
 extern void aldepl();
 
-extern void changeGraphicalDevice(int newDevice);
-
-/* NIVEAU 3 */
-/* procedure PROGRAMME */
-extern void tmaj3();
-
-/* NIVEAU 1 */
-extern void theure();
 } // End of namespace Mortevielle
 #endif

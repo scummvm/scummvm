@@ -51,7 +51,7 @@ class SavegameManager {
 private:
 	void sync_save(Common::Serializer &sz);
 public:
-	void takesav(int n);
+	void loadSavegame(int n);
 	Common::Error loadGame(int n);
 	Common::Error saveGame(int n, const Common::String &saveName);
 

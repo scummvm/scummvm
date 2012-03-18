@@ -164,7 +164,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 		return result;
 
 	// Load some error messages (was previously in chartex())
-	g_hintPctMessage = deline(580);  // You should have noticed %d hints
+	_hintPctMessage = deline(580);  // You should have noticed %d hints
 
 	// Set default EGA palette
 	_paletteManager.setDefaultPalette();
@@ -287,6 +287,11 @@ void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize, DataTyp
 	assert(dataSize == 0);
 }
 
+/**
+ * Check is a key was pressed
+ * It also delays the engine and check if the screen has to be updated
+ * @remarks	Originally called 'keypressed'
+ */
 bool MortevielleEngine::keyPressed() {
 	// Check for any pending key presses
 	handleEvents();
@@ -305,10 +310,14 @@ bool MortevielleEngine::keyPressed() {
 	return !_keypresses.empty(); 
 }
 
+/**
+ * Wait for a keypress
+ * @remarks	Originally called 'get_ch'
+ */
 int MortevielleEngine::getChar() {
 	// If there isn't any pending keypress, wait until there is
 	while (!shouldQuit() && _keypresses.empty()) {
-		keypressed();
+		keyPressed();
 	}
 
 	// Return the top keypress
@@ -496,7 +505,7 @@ Common::Error MortevielleEngine::run() {
 
 	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
-	_savegameManager.takesav(loadSlot);
+	_savegameManager.loadSavegame(loadSlot);
 
 	// Run the main game loop
 	mainGame();
@@ -537,7 +546,7 @@ void MortevielleEngine::mainGame() {
 	loadBRUIT5();
 	_menu.initMenu();
 
-	theure();
+	charToHour();
 	initGame();
 	hirs();
 	drawRightFrame();
@@ -613,7 +622,7 @@ void MortevielleEngine::handleAction() {
 		if (_menu._menuSelected && (g_msg[3] == MENU_LOAD))
 			_savegameManager.loadGame((g_msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
-			temps = Alert::show(g_hintPctMessage, 1);
+			temps = Alert::show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
 			if ((g_mnumo != OPCODE_NONE) && ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))) {
@@ -629,7 +638,7 @@ void MortevielleEngine::handleAction() {
 	}
 	if (inkey == '\73') {
 		_quitGame = true;
-		tmaj3();
+		hourToChar();
 	} else {
 		if ((funct) && (inkey != '\77'))
 			return;

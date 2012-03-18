@@ -33,13 +33,13 @@
 namespace Mortevielle {
 
 char readkey1() {
-	char c = get_ch();
+	char c = g_vm->getChar();
 
 	return c;
 }
 
 int testou() {
-	char ch = get_ch();
+	char ch = g_vm->getChar();
 
 	switch (ch)  {
 	case '\23' :
@@ -54,8 +54,8 @@ int testou() {
 		}
 		break;
 	case '\33' :
-		if (keypressed())
-			ch = get_ch();
+		if (g_vm->keyPressed())
+			ch = g_vm->getChar();
 		break;
 	default:
 		break;
@@ -65,7 +65,7 @@ int testou() {
 }
 
 void teskbd() {
-	if (keypressed())
+	if (g_vm->keyPressed())
 		testou();
 }
 

@@ -56,8 +56,8 @@ int Alert::show(const Common::String &msg, int n) {
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 	int do_alert_result;
 	hideMouse();
-	while (keypressed())
-		dumi = get_ch();	// input >> kbd >> dumi;
+	while (g_vm->keyPressed())
+		dumi = g_vm->getChar();
 
 	g_vm->setMouseClick(false);
 	decodeAlertDetails(msg, caseNumb, lignNumb, nbcol, chaine, cas);
