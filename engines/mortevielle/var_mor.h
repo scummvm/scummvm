@@ -221,7 +221,6 @@ extern int g_x,
 extern int g_t_cph[6401]; // Speech
 extern byte g_tabdon[4001];
 
-extern Common::String g_hintPctMessage;      // gives the pct of hints found
 extern byte g_is;
 
 extern int g_nbrep[9];
@@ -264,17 +263,11 @@ extern byte g_mem[65536 * 16];
 
 #define hires {}
 
-// Stubs for input functions
-extern bool keypressed();
-extern char get_ch();
-
 extern void palette(int v1);
 extern void intr(int intNum, registres &regs);
 extern int getRandomNumber(int minval, int maxval);
 
-// (* external 'c:\mc\charecr.com'; *)
 extern void s_char(int Gd, int y, int dy);
-// (* external 'c:\mc\sauvecr.com'; *)
 extern void s_sauv(int Gd, int y, int dy);
 
 } // End of namespace Mortevielle

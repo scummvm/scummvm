@@ -158,13 +158,13 @@ void music() {
 	bool fin = false;
 	int k = 0;
 	do {
-		fin = keypressed();
+		fin = g_vm->keyPressed();
 		g_vm->_soundManager.musyc(g_tbi, 9958, kTempoMusic);
 		++k;
-		fin = fin | keypressed() | (k >= 5);
+		fin = fin | g_vm->keyPressed() | (k >= 5);
 	} while (!fin);
-	while (keypressed())
-		get_ch();	// input >> kbd >> ch;
+	while (g_vm->keyPressed())
+		g_vm->getChar();
 }
 
 

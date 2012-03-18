@@ -45,7 +45,7 @@ void MortevielleEngine::fctMove() {
 	if ((g_s._currPlace == ROOM26) && (g_msg[4] == _menu._moveMenu[6])) {
 		g_s._currPlace = LANDING;
 		g_caff = g_s._currPlace;
-		afdes(0);
+		afdes();
 		repon(2, g_s._currPlace);
 	}
 	if ((g_s._currPlace == LANDING) && (g_msg[4] == _menu._moveMenu[6])) {
@@ -1156,7 +1156,7 @@ void MortevielleEngine::fctEnter() {
 				if (g_ment == 9) {
 					_col = true;
 					g_caff = 70;
-					afdes(0);
+					afdes();
 					repon(2, g_caff);
 				} else
 					_col = false;
@@ -1194,7 +1194,7 @@ void MortevielleEngine::fctSleep() {
 		tsort();
 		g_s._currPlace = OWN_ROOM;
 		affrep();
-		afdes(0);
+		afdes();
 		debloc(g_s._currPlace);
 		_menu.setDestinationMenuText(g_s._currPlace);
 	}
@@ -1351,7 +1351,7 @@ void MortevielleEngine::fctDiscuss() {
 			++cx;
 		} while (_menu._discussMenu[cx] != g_msg[4]);
 		g_caff = 69 + cx;
-		afdes(0);
+		afdes();
 		repon(2, g_caff);
 		suj = g_caff + 60;
 	}
@@ -1586,7 +1586,7 @@ void MortevielleEngine::endGame() {
 	repon(2, 142);
 	tkey1(false);
 	g_caff = 32;
-	afdes(0);
+	afdes();
 	repon(6, 34);
 	repon(2, 35);
 	startMusicOrSpeech(0);

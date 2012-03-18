@@ -296,7 +296,7 @@ void moveMouse(bool &funct, char &key) {
 	// Set defaults and check pending events
 	funct = false;
 	key = '\377';
-	p_key = keypressed();
+	p_key = g_vm->keyPressed();
 
 	// If mouse button clicked, return it
 	if (g_vm->getMouseClick())
@@ -306,7 +306,7 @@ void moveMouse(bool &funct, char &key) {
 	while (p_key) {
 		CHECK_QUIT;
 
-		in1 = get_ch();
+		in1 = g_vm->getChar();
 		getMousePos_(cx, cy, cd);
 		switch (toupper(in1)) {
 		case '4':
@@ -347,10 +347,10 @@ void moveMouse(bool &funct, char &key) {
 			return;
 			break;
 		case '\33':
-			p_key = keypressed();
+			p_key = g_vm->keyPressed();
 
 			if (p_key) {
-				in2 = get_ch();
+				in2 = g_vm->getChar();
 
 				if ((in2 >= ';') && (in2 <= 'D')) {
 					funct = true;
@@ -439,7 +439,7 @@ void moveMouse(bool &funct, char &key) {
 		}
 
 		setMousePos(cx, cy);
-		p_key = keypressed();
+		p_key = g_vm->keyPressed();
 	}
 }
 

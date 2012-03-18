@@ -115,8 +115,6 @@ int g_x,
 
 int g_t_cph[6401];
 byte g_tabdon[4001];
-
-Common::String g_hintPctMessage;               // Provides the % of hints
 byte g_is;
 
 int g_nbrep[9];
@@ -188,13 +186,6 @@ void intr(int intNum, registres &regs) {
  */
 int getRandomNumber(int minval, int maxval) {
 	return g_vm->_randomSource.getRandomNumber(maxval - minval) + minval;
-}
-
-bool keypressed() {
-	return g_vm->keyPressed();
-}
-char get_ch() {
-	return g_vm->getChar();
 }
 
 /**

@@ -420,17 +420,17 @@ void paint_rect(int x, int y, int dx, int dy) {
  * Engine function - Update hour
  * @remarks	Originally called 'calch'
  */
-void updateHour(int &day, int &hour, int &minute) {
+void MortevielleEngine::updateHour(int &day, int &hour, int &minute) {
 	int newHour = readclock();
 	int th = g_jh + ((newHour - g_mh) / g_t);
-	minute = ((th % 2) + g_vm->_currHalfHour) * 30;
-	hour = ((uint)th >> 1) + g_vm->_currHour;
+	minute = ((th % 2) + _currHalfHour) * 30;
+	hour = ((uint)th >> 1) + _currHour;
 	if (minute == 60) {
 		minute = 0;
 		++hour;
 	}
-	day = (hour / 24) + g_vm->_currDay;
-	hour = hour - ((day - g_vm->_currDay) * 24);
+	day = (hour / 24) + _currDay;
+	hour = hour - ((day - _currDay) * 24);
 }
 
 /**
@@ -465,7 +465,9 @@ void repon(int f, int m) {
 		displayStr(tmpStr, 8, 176, 85, 3, 5);
 	} else {
 		modif(m);
-		if ((f == 2) || (f == 8)) {
+		switch (f) {
+		case 2:
+		case 8:
 			clearScreenType2();
 			g_vm->prepareScreenType2();
 			text1(8, 182, 103, m);
@@ -478,7 +480,10 @@ void repon(int f, int m) {
 					g_s._teauto[38] = '*';
 				}
 			}
-		} else if ((f == 1) || (f == 6) || (f == 9)) {
+			break;
+		case 1:
+		case 6:
+		case 9: {
 			int i;
 			if ((f == 1) || (f == 6))
 				i = 4;
@@ -490,9 +495,12 @@ void repon(int f, int m) {
 
 			if (m == 180)
 				g_s._pourc[6] = '*';
-
-			if (m == 179)
+			else if (m == 179)
 				g_s._pourc[10] = '*';
+			}
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -1132,7 +1140,7 @@ int MortevielleEngine::setPresenceChapel(int hour) {
  * Engine function - Get the answer after you known a door
  * @remarks	Originally called 'frap'
  */
-void getKnockAnswer() {
+void MortevielleEngine::getKnockAnswer() {
 	int day, hour, minute;
 
 	updateHour(day, hour, minute);
@@ -1711,7 +1719,7 @@ void tinke() {
 	Common::String stpo;
 
 	g_vm->_anyone = false;
-	updateHour(day, hour, minute);
+	g_vm->updateHour(day, hour, minute);
 	if (day != g_vm->_day) {
 		g_vm->_day = day;
 		int i = 0;
@@ -1737,18 +1745,18 @@ void tinke() {
 		else
 			stpo = chr(cf + 48);
 
-		g_hintPctMessage = Common::String(d3);
-		g_hintPctMessage += d5;
-		g_hintPctMessage += d4;
-		g_hintPctMessage += d3;
-		g_hintPctMessage += d1;
-		g_hintPctMessage += stpo;
-		g_hintPctMessage += '0';
-		g_hintPctMessage += d2;
-		g_hintPctMessage += d4;
-		g_hintPctMessage += d3;
-		g_hintPctMessage += d6;
-		g_hintPctMessage += d4;
+		g_vm->_hintPctMessage = Common::String(d3);
+		g_vm->_hintPctMessage += d5;
+		g_vm->_hintPctMessage += d4;
+		g_vm->_hintPctMessage += d3;
+		g_vm->_hintPctMessage += d1;
+		g_vm->_hintPctMessage += stpo;
+		g_vm->_hintPctMessage += '0';
+		g_vm->_hintPctMessage += d2;
+		g_vm->_hintPctMessage += d4;
+		g_vm->_hintPctMessage += d3;
+		g_vm->_hintPctMessage += d6;
+		g_vm->_hintPctMessage += d4;
 	}
 	if (minute > g_vm->_minute) {
 		g_vm->_minute = 30;
@@ -1869,9 +1877,9 @@ void fenat(char ans) {
 
 
 /* NIVEAU 8 */
-void afdes(int ad) {
+void afdes() {
 	taffich();
-	dessin(ad);
+	dessin(0);
 	g_vm->_okdes = false;
 }
 
@@ -1883,18 +1891,18 @@ void tkey1(bool d) {
 	fenat('K');
 
 	// Wait for release from any key or mouse button
-	while (keypressed())
+	while (g_vm->keyPressed())
 		g_key = testou();
 	do {
 		getMousePos_(x, y, c);
-		keypressed();
+		g_vm->keyPressed();
 	} while (c != 0);
 	
 	// Event loop
 	do {
 		if (d)
 			tinke();
-		quest = keypressed();
+		quest = g_vm->keyPressed();
 		getMousePos_(x, y, c);
 		CHECK_QUIT;
 	} while (!(quest || (c != 0) || (d && g_vm->_anyone)));
@@ -1907,7 +1915,7 @@ void tkey1(bool d) {
 /* NIVEAU 7 */
 void tlu(int af, int ob) {
 	g_caff = 32;
-	afdes(0);
+	afdes();
 	repon(6, ob + 4000);
 	repon(2, 999);
 	tkey1(true);
@@ -2125,7 +2133,7 @@ void MortevielleEngine::gotoDiningRoom() {
 		_currBitIndex = 255; // Everybody is present
 		showPeoplePresent(_currBitIndex);
 		g_caff = 77;
-		afdes(0);
+		afdes();
 		_screenSurface.drawBox(223, 47, 155, 91, 15);
 		repon(2, 33);
 		tkey1(false);
@@ -2298,7 +2306,7 @@ void tfleche() {
 		} while (!(qust || inRect || g_vm->_anyone));
 
 		if (qust && (touch == '\103'))
-			Alert::show(g_hintPctMessage, 1);
+			Alert::show(g_vm->_hintPctMessage, 1);
 	} while (!((touch == '\73') || ((touch == '\104') && (g_x != 0) && (g_y != 0)) || (g_vm->_anyone) || (inRect)));
 
 	if (touch == '\73')
@@ -2390,7 +2398,7 @@ void treg(int ob) {
 	g_caff = ob;
 
 	if (((g_caff > 29) && (g_caff < 33)) || (g_caff == 144) || (g_caff == 147) || (g_caff == 149) || (g_msg[4] == OPCODE_SLOOK)) {
-		afdes(0);
+		afdes();
 		if ((g_caff > 29) && (g_caff < 33))
 			repon(2, g_caff);
 		else
@@ -2459,25 +2467,25 @@ void aldepl() {
  * Engine function - Change Graphical Device
  * @remarks	Originally called 'change_gd'
  */
-void changeGraphicalDevice(int newDevice) {
+void MortevielleEngine::changeGraphicalDevice(int newDevice) {
 	hideMouse();
-	g_vm->_currGraphicalDevice = newDevice;
+	_currGraphicalDevice = newDevice;
 	hirs();
 	initMouse();
 	showMouse();
 	drawRightFrame();
 	tinke();
 	drawClock();
-	if (g_vm->_currBitIndex != 0)
-		g_vm->showPeoplePresent(g_vm->_currBitIndex);
+	if (_currBitIndex != 0)
+		showPeoplePresent(_currBitIndex);
 	else
-		g_vm->displayAloneText();
+		displayAloneText();
 	clearScreenType2();
 	clearScreenType3();
 	g_maff = 68;
-	afdes(0);
+	afdes();
 	repon(2, g_crep);
-	g_vm->_menu.displayMenu();
+	_menu.displayMenu();
 }
 
 /**
@@ -2512,7 +2520,7 @@ void MortevielleEngine::gameLoaded() {
 	g_iouv = 0;
 	g_dobj = 0;
 	affrep();
-	g_hintPctMessage = deline(580);
+	_hintPctMessage = deline(580);
 
 	_okdes = false;
 	_endGame = true;
@@ -2522,7 +2530,7 @@ void MortevielleEngine::gameLoaded() {
 	displayAloneText();
 	tinke();
 	drawClock();
-	afdes(0);
+	afdes();
 	repon(2, g_crep);
 	clearScreenType3();
 	_endGame = false;
@@ -2531,20 +2539,6 @@ void MortevielleEngine::gameLoaded() {
 	if (g_s._selectedObjectId != 0)
 		modobj(g_s._selectedObjectId + 400);
 	showMouse();
-}
-
-
-/* NIVEAU 3 */
-/* procedure PROGRAMME */
-void tmaj3() {
-	int day, hour, minute;
-
-	updateHour(day, hour, minute);
-	if (minute == 30)
-		minute = 1;
-	hour += day * 24;
-	minute += hour * 2;
-	g_s._fullHour = chr(minute);
 }
 
 /**
@@ -2655,9 +2649,26 @@ void MortevielleEngine::handleOpcode() {
 	mennor();
 }
 
-/* NIVEAU 1 */
+/**
+ * Engine function - Transform time into a char
+ * @remarks	Originally called 'tmaj3'
+ */
+void MortevielleEngine::hourToChar() {
+	int day, hour, minute;
 
-void theure() {
+	g_vm->updateHour(day, hour, minute);
+	if (minute == 30)
+		minute = 1;
+	hour += day * 24;
+	minute += hour * 2;
+	g_s._fullHour = chr(minute);
+}
+
+/**
+ * Engine function - extract time from a char
+ * @remarks	Originally called 'theure'
+ */
+void MortevielleEngine::charToHour() {
 	int fullHour = ord(g_s._fullHour);
 	int tmpHour = fullHour % 48;
 	g_vm->_currDay = fullHour / 48;

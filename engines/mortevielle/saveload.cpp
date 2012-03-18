@@ -72,11 +72,9 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
 
 /**
  * Inner code for loading a saved game
+ * @remarks	Originally called 'takesav'
  */
-void SavegameManager::takesav(int n) {
-	int i;
-	Common::String st;
-
+void SavegameManager::loadSavegame(int n) {
 	// -- Load the file
 	Common::String filename = generateSaveName(n);
 
@@ -110,7 +108,7 @@ void SavegameManager::takesav(int n) {
 	sync_save(sz);
 
 	g_s = g_s1;
-	for (i = 0; i <= 389; ++i)
+	for (int i = 0; i <= 389; ++i)
 		g_tabdon[i + acha] = g_bufcha[i];
 
 	// Close the stream
@@ -123,10 +121,10 @@ void SavegameManager::takesav(int n) {
 Common::Error SavegameManager::loadGame(int n) {
 	hideMouse();
 	maivid();
-	takesav(n);
+	loadSavegame(n);
 	
 	/* Initialization */
-	theure();
+	g_vm->charToHour();
 	g_vm->initGame();
 	g_vm->gameLoaded();
 	showMouse();
@@ -141,7 +139,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	int i;
 
 	hideMouse();
-	tmaj3();
+	g_vm->hourToChar();
 	
 	for (i = 0; i <= 389; ++i)
 		g_bufcha[i] = g_tabdon[i + acha];

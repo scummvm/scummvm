@@ -112,6 +112,8 @@ private:
 	void playGame();
 	void handleAction();
 public:
+	Common::String _hintPctMessage;
+
 	bool _roomPresenceLuc;
 	bool _roomPresenceIda;
 	bool _purpleRoomPresenceLeo;
@@ -281,6 +283,12 @@ public:
 	void prepareScreenType1();
 	void prepareScreenType2();
 	void prepareScreenType3();
+	void updateHour(int &day, int &hour, int &minute);
+	void getKnockAnswer();
+	void charToHour();
+	void hourToChar();
+
+	void changeGraphicalDevice(int newDevice);
 
 };
 
