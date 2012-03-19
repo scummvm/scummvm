@@ -338,7 +338,7 @@ void TTFFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const
 		return;
 
 	if (y < 0) {
-		srcPos += y * glyph.image.pitch;
+		srcPos -= y * glyph.image.pitch;
 		h += y;
 		y = 0;
 	}
