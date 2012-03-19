@@ -169,7 +169,7 @@ void Menu::displayMenu() {
 
 	int pt, x, y, color, msk, num_letr;
 
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * g_res;
@@ -203,7 +203,7 @@ void Menu::displayMenu() {
 		} while (y != 9);
 		col += 48 * g_res;
 	} while (num_letr != 6);
-	showMouse();
+	g_vm->_mouse.showMouse();
 }
 
 /**
@@ -310,7 +310,7 @@ void Menu::menuDown(int ii) {
 	// Draw the menu
 	xco = g_menuConstants[ii - 1][0];
 	nb_lig = g_menuConstants[ii - 1][3];
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	sauvecr(10, (g_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
 	if (g_res == 1)
@@ -376,7 +376,7 @@ void Menu::menuDown(int ii) {
 		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
 	} while (cx != nb_lig);
 	_multiTitle = true;
-	showMouse();
+	g_vm->_mouse.showMouse();
 }
 
 /**
@@ -417,8 +417,8 @@ void Menu::mdn() {
 	if (!_menuActive)
 		return;
 
-	int x = x_s;
-	int y = y_s;
+	int x = g_vm->_mouse.x_s;
+	int y = g_vm->_mouse.y_s;
 	if (!g_vm->getMouseClick()) {
 		if ((x == g_xprec) && (y == g_yprec))
 			return;

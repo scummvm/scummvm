@@ -351,7 +351,7 @@ void taffich() {
 	}
 
 	g_vm->_okdes = true;
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	lgt = 0;
 	Common::String filename;
 
@@ -450,7 +450,7 @@ void taffich() {
 		}
 		charani(filename, lgt, handle);
 	}
-	showMouse();
+	g_vm->_mouse.showMouse();
 	if ((a < 27) && ((g_maff < 27) || (g_s._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			g_vm->displayAloneText();

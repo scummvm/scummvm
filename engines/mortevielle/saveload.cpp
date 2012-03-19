@@ -119,7 +119,7 @@ void SavegameManager::loadSavegame(int n) {
  * Load a saved game
  */
 Common::Error SavegameManager::loadGame(int n) {
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	maivid();
 	loadSavegame(n);
 	
@@ -127,7 +127,7 @@ Common::Error SavegameManager::loadGame(int n) {
 	g_vm->charToHour();
 	g_vm->initGame();
 	g_vm->gameLoaded();
-	showMouse();
+	g_vm->_mouse.showMouse();
 	return Common::kNoError;
 }
 
@@ -138,7 +138,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	Common::OutSaveFile *f;
 	int i;
 
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	g_vm->hourToChar();
 	
 	for (i = 0; i <= 389; ++i)
@@ -167,7 +167,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	
 	// Skipped: dialog asking to swap floppy
 
-	showMouse();
+	g_vm->_mouse.showMouse();
 	return Common::kNoError;
 }
 

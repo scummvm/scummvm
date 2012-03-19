@@ -42,9 +42,7 @@ static const int _actionMenu[12] = { OPCODE_NONE,
 		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
 };
 
-/* NIVEAU 15 */
 extern void copcha();
-extern bool isMouseIn(rectangle r);
 extern void outbloc(int n, pattern p, nhom *pal);
 extern void writepal(int n);
 extern void pictout(int seg, int dep, int x, int y);
@@ -60,15 +58,10 @@ extern void drawRightFrame();
 /* NIVEAU 13 */
 extern void text1(int x, int y, int nb, int m);
 extern void initouv();
-extern void clearScreenType1();
-extern void clearScreenType2();
-extern void clearScreenType3();
-extern void clearScreenType10();
 extern void ecr2(Common::String str_);
 extern void ecr3(Common::String text);
 extern void stop();
 extern void paint_rect(int x, int y, int dx, int dy);
-extern int convertCharacterIndexToBitIndex(int characterIndex);
 /* NIVEAU 12 */
 extern void modobj(int m);
 extern void repon(int f, int m);
@@ -78,7 +71,6 @@ extern void drawClock();
  * NIVEAU 11 *
  *************/
 extern void debloc(int roomId);
-extern int convertBitIndexToCharacterIndex(int bitIndex);
 extern void ecfren(int &p, int &rand, int cf, int roomId);
 extern void becfren(int roomId);
 /* NIVEAU 10 */
@@ -105,8 +97,6 @@ extern void tsort();
 extern void st4(int ob);
 extern void displayDiningRoom();
 extern void modinv();
-extern void sparl(float adr, float rep);
-extern void endSearch();
 extern void mennor();
 extern void premtet();
 /* NIVEAU 5 */
