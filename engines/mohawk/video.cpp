@@ -23,13 +23,12 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
 #include "mohawk/video.h"
+#include "mohawk/sound.h"
 
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/textconsole.h"
 #include "common/system.h"
-
-#include "graphics/surface.h"
 
 #include "video/qt_decoder.h"
 
@@ -46,6 +45,7 @@ void VideoEntry::clear() {
 	end = Audio::Timestamp(0xFFFFFFFF, 1); // Largest possible, there is an endOfVideo() check anyway
 	filename.clear();
 	id = -1;
+	surface.free();
 }
 
 bool VideoEntry::endOfVideo() {
@@ -78,8 +78,8 @@ void VideoManager::stopVideos() {
 	_videoStreams.clear();
 }
 
-void VideoManager::playMovieBlocking(const Common::String &filename, uint16 x, uint16 y, bool clearScreen) {
-	VideoHandle videoHandle = createVideoHandle(filename, x, y, false);
+void VideoManager::playMovieBlocking(const Common::String &filename, uint16 x, uint16 y, bool clearScreen, byte volume) {
+	VideoHandle videoHandle = createVideoHandle(filename, x, y, false, volume);
 	if (videoHandle == NULL_VID_HANDLE)
 		return;
 
@@ -92,8 +92,8 @@ void VideoManager::playMovieBlocking(const Common::String &filename, uint16 x, u
 	waitUntilMovieEnds(videoHandle);
 }
 
-void VideoManager::playMovieBlockingCentered(const Common::String &filename, bool clearScreen) {
-	VideoHandle videoHandle = createVideoHandle(filename, 0, 0, false);
+void VideoManager::playMovieBlockingCentered(const Common::String &filename, bool clearScreen, byte volume) {
+	VideoHandle videoHandle = createVideoHandle(filename, 0, 0, false, volume);
 	if (videoHandle == NULL_VID_HANDLE)
 		return;
 
@@ -116,6 +116,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	bool continuePlaying = true;
 
 	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+		_vm->_sound->updateSLST(); // Must update ambient sound fading for Riven while movie is playing
 		if (updateMovies())
 			_vm->_system->updateScreen();
 
@@ -164,8 +165,8 @@ void VideoManager::delayUntilMovieEnds(VideoHandle videoHandle) {
 	_videoStreams[videoHandle].clear();
 }
 
-VideoHandle VideoManager::playMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
-	VideoHandle videoHandle = createVideoHandle(filename, x, y, loop);
+VideoHandle VideoManager::playMovie(const Common::String &filename, int16 x, int16 y, bool loop, byte volume) {
+	VideoHandle videoHandle = createVideoHandle(filename, x, y, loop, volume);
 	if (videoHandle == NULL_VID_HANDLE)
 		return NULL_VID_HANDLE;
 
@@ -180,8 +181,8 @@ VideoHandle VideoManager::playMovie(const Common::String &filename, int16 x, int
 	return videoHandle;
 }
 
-VideoHandle VideoManager::playMovie(uint16 id, int16 x, int16 y, bool loop) {
-	VideoHandle videoHandle = createVideoHandle(id, x, y, loop);
+VideoHandle VideoManager::playMovie(uint16 id, int16 x, int16 y, bool loop, byte volume) {
+	VideoHandle videoHandle = createVideoHandle(id, x, y, loop, volume);
 	if (videoHandle == NULL_VID_HANDLE)
 		return NULL_VID_HANDLE;
 
@@ -227,9 +228,14 @@ bool VideoManager::updateMovies() {
 			Graphics::Surface *convertedFrame = 0;
 
 			if (frame && _videoStreams[i].enabled) {
-				// Convert from 8bpp to the current screen format if necessary
 				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 
+				// Create (or resize) the off-screen surface
+				if (frame->w > _videoStreams[i].surface.w || frame->h > _videoStreams[i].surface.h) {
+					_videoStreams[i].surface.create(frame->w, frame->h, pixelFormat);
+				}
+
+				// Convert from 8bpp to the current screen format if necessary
 				if (frame->format.bytesPerPixel == 1) {
 					if (pixelFormat.bytesPerPixel == 1) {
 						if (_videoStreams[i]->hasDirtyPalette())
@@ -258,13 +264,10 @@ bool VideoManager::updateMovies() {
 					}
 				}
 
-				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
-				uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
-				uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
-				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
-
-				// We've drawn something to the screen, make sure we update it
-				updateScreen = true;
+				// Copy frame to the off-screen surface
+				for (int y = 0; y < frame->h; ++y) {
+					memcpy(_videoStreams[i].surface.getBasePtr(0, y), frame->getBasePtr(0, y), frame->w * pixelFormat.bytesPerPixel);
+				}
 
 				// Delete 8bpp conversion surface
 				if (convertedFrame) {
@@ -273,6 +276,17 @@ bool VideoManager::updateMovies() {
 				}
 			}
 		}
+
+		// Don't draw anything until we have a valid surface
+		if (_videoStreams[i].surface.w == 0 || _videoStreams[i].surface.h == 0) continue;
+
+		// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
+		uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
+		uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
+
+		// Render the off-screen surface
+		_vm->_system->copyRectToScreen((byte *)_videoStreams[i].surface.pixels, _videoStreams[i].surface.pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
+		updateScreen = true;
 
 		// Check the video time
 		_vm->doVideoTimer(i, false);
@@ -333,7 +347,7 @@ VideoHandle VideoManager::playMovieRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping");
-			return createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0);
+			return createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0, Sound::convertRivenVolume(_mlstRecords[i].volume));
 		}
 
 	return NULL_VID_HANDLE;
@@ -343,7 +357,7 @@ void VideoManager::playMovieBlockingRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
-			VideoHandle videoHandle = createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, false);
+			VideoHandle videoHandle = createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, false, Sound::convertRivenVolume(_mlstRecords[i].volume));
 			waitUntilMovieEnds(videoHandle);
 			return;
 		}
@@ -389,7 +403,7 @@ void VideoManager::disableAllMovies() {
 		_videoStreams[i].enabled = false;
 }
 
-VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop) {
+VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, byte volume) {
 	// First, check to see if that video is already playing
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (_videoStreams[i].id == id)
@@ -399,6 +413,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	Video::QuickTimeDecoder *decoder = new Video::QuickTimeDecoder();
 	decoder->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
 	decoder->loadStream(_vm->getResource(ID_TMOV, id));
+	decoder->setVolume(volume);
 
 	VideoEntry entry;
 	entry.clear();
@@ -407,6 +422,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	entry.y = y;
 	entry.id = id;
 	entry.loop = loop;
+	entry.volume = volume;
 	entry.enabled = true;
 
 	// Search for any deleted videos so we can take a formerly used slot
@@ -421,21 +437,25 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	return _videoStreams.size() - 1;
 }
 
-VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop) {
+VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop, byte volume) {
 	// First, check to see if that video is already playing
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (_videoStreams[i].filename == filename)
 			return i;
 
+	Video::QuickTimeDecoder* decoder = new Video::QuickTimeDecoder();
+	decoder->setVolume(volume);
+
 	// Otherwise, create a new entry
 	VideoEntry entry;
 	entry.clear();
-	entry.video = new Video::QuickTimeDecoder();
+	entry.video = decoder;
 	entry.x = x;
 	entry.y = y;
 	entry.filename = filename;
 	entry.loop = loop;
 	entry.enabled = true;
+	entry.volume = volume;
 
 	Common::File *file = new Common::File();
 	if (!file->open(filename)) {

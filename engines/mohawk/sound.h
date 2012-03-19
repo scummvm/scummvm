@@ -66,9 +66,19 @@ struct SndHandle {
 	uint16 id;
 };
 
+struct SLSTSndFade {
+	int16 start;
+	int16 end;
+	byte flag;
+	uint32 startMillis;
+	int32 durationMillis;
+};
+
 struct SLSTSndHandle {
 	Audio::SoundHandle *handle;
 	uint16 id;
+	SLSTSndFade volumeFade;
+	SLSTSndFade balanceFade;
 };
 
 struct ADPCMStatus { // Holds ADPCM status data, but is irrelevant for us.
@@ -148,6 +158,8 @@ public:
 	void pauseSLST();
 	void resumeSLST();
 	void stopAllSLST(bool fade = false);
+	void updateSLST();
+	static byte convertRivenVolume(uint16 volume, uint16 globalVolume);
 	static byte convertRivenVolume(uint16 volume);
 
 private:
@@ -169,8 +181,13 @@ private:
 	SndHandle _mystBackgroundSound;
 
 	// Riven-specific
-	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);
+	void playSLSTSound(uint16 index, bool fade, bool loop, byte volume, int8 balance);
 	void stopSLSTSound(uint16 id, bool fade);
+	void removeSLSTSound(uint16 id);
+	void setVolumeFadingSLST(uint16 id, byte start, byte end, bool remove = false);
+	void setBalanceFadingSLST(uint16 id, int8 start, int8 end);
+	void initFadeSLST(SLSTSndFade *fade, byte flag, int16 start, int16 end, int32 duration);
+	bool doFadeSLST(SLSTSndFade *fade, int16 *result, bool *remove = NULL);
 	Common::Array<SLSTSndHandle> _currentSLSTSounds;
 };
 

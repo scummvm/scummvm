@@ -26,6 +26,8 @@
 #include "common/array.h"
 #include "graphics/pixelformat.h"
 #include "video/video_decoder.h"
+#include "audio/mixer.h"
+#include "graphics/surface.h"
 
 namespace Mohawk {
 
@@ -50,6 +52,8 @@ struct VideoEntry {
 	uint16 y;
 	bool loop;
 	bool enabled;
+	byte volume;
+	Graphics::Surface surface;
 	Audio::Timestamp start, end;
 
 	// Identification
@@ -74,10 +78,10 @@ public:
 	~VideoManager();
 
 	// Generic movie functions
-	void playMovieBlocking(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
-	void playMovieBlockingCentered(const Common::String &filename, bool clearScreen = true);
-	VideoHandle playMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
-	VideoHandle playMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false);
+	void playMovieBlocking(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false, byte volume = Audio::Mixer::kMaxChannelVolume);
+	void playMovieBlockingCentered(const Common::String &filename, bool clearScreen = true, byte volume = Audio::Mixer::kMaxChannelVolume);
+	VideoHandle playMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false, byte volume = Audio::Mixer::kMaxChannelVolume);
+	VideoHandle playMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false, byte volume = Audio::Mixer::kMaxChannelVolume);
 	bool updateMovies();
 	void pauseVideos();
 	void resumeVideos();
@@ -120,8 +124,8 @@ private:
 	// Keep tabs on any videos playing
 	Common::Array<VideoEntry> _videoStreams;
 
-	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop);
-	VideoHandle createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop);
+	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, byte volume);
+	VideoHandle createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop, byte volume);
 };
 
 } // End of namespace Mohawk

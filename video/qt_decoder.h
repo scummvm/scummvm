@@ -115,6 +115,11 @@ public:
 	void seekToTime(Audio::Timestamp time);
 	uint32 getDuration() const { return _duration * 1000 / _timeScale; }
 
+	void setVolume(byte volume);
+	void setBalance(int8 balance);
+
+	byte getVolume() { return _volume; }
+	int8 getBalance() { return _balance; }
 protected:
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
@@ -152,6 +157,9 @@ private:
 	bool _needUpdate;
 
 	uint16 _width, _height;
+
+	byte _volume;
+	int8 _balance;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
