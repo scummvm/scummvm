@@ -338,7 +338,7 @@ void TTFFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const
 		return;
 
 	if (y < 0) {
-		srcPos += y * glyph.image.pitch;
+		srcPos -= y * glyph.image.pitch;
 		h += y;
 		y = 0;
 	}
@@ -395,11 +395,11 @@ bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
 
 	FT_Glyph_Metrics &metrics = _face->glyph->metrics;
 
-	glyph.xOffset = ftFloor26_6(metrics.horiBearingX);
+	glyph.xOffset = _face->glyph->bitmap_left;
 	int xMax = glyph.xOffset + ftCeil26_6(metrics.width);
-	glyph.yOffset = _ascent - ftFloor26_6(metrics.horiBearingY);
+	glyph.yOffset = _ascent - _face->glyph->bitmap_top;
 
-	glyph.advance = ftCeil26_6(metrics.horiAdvance);
+	glyph.advance = ftCeil26_6(_face->glyph->advance.x);
 
 	// In case we got a negative xMin we adjust that, this might make some
 	// characters make a bit odd, but it's the only way we can assure no
