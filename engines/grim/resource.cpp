@@ -90,7 +90,13 @@ ResourceLoader::ResourceLoader() {
 				error("residualvm-grim-patch.lab not found");
 
 			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
-			SearchMan.listMatchingMembers(files, "data???.lab");
+			SearchMan.listMatchingMembers(files, "datausr.lab");
+			SearchMan.listMatchingMembers(files, "data005.lab");
+			SearchMan.listMatchingMembers(files, "data004.lab");
+			SearchMan.listMatchingMembers(files, "data003.lab");
+			SearchMan.listMatchingMembers(files, "data002.lab");
+			SearchMan.listMatchingMembers(files, "data001.lab");
+			SearchMan.listMatchingMembers(files, "data000.lab");
 			SearchMan.listMatchingMembers(files, "movie??.lab");
 			SearchMan.listMatchingMembers(files, "vox????.lab");
 			SearchMan.listMatchingMembers(files, "year?mus.lab");
