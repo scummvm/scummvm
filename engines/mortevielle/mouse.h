@@ -28,24 +28,30 @@
 #ifndef MORTEVIELLE_MOUSE_H
 #define MORTEVIELLE_MOUSE_H
 
+#include "mortevielle/var_mor.h"
+
 namespace Mortevielle {
 
-extern bool int_m;
+class MouseHandler {
+protected:
+	int s_s[12][6];
+public:
+	bool int_m;
 
-extern int m_show,
-        x_s,
-        y_s,
-        p_o_s,
-        mouse_shwn;
+	int m_show;
+	int x_s;
+	int y_s;
+	int p_o_s;
+	int mouse_shwn;
 
-void initMouse();
-//extern void change_mouse(int t);
-//extern void dessine_souris(int xf, int yf);
-extern void hideMouse();
-extern void showMouse();
-extern void setMousePos(int x, int y);
-extern void getMousePos_(int &x, int &y, int &c);
-extern void moveMouse(bool &funct, char &key);
+	void initMouse();
+	void hideMouse();
+	void showMouse();
+	void setMousePos(int x, int y);
+	void getMousePos_(int &x, int &y, int &c);
+	void moveMouse(bool &funct, char &key);
+	bool isMouseIn(rectangle r);
+};
 
 } // End of namespace Mortevielle
 #endif

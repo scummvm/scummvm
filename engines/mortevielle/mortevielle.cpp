@@ -339,8 +339,8 @@ bool MortevielleEngine::handleEvents() {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_MOUSEMOVE:
 		_mousePos = Common::Point(event.mouse.x, event.mouse.y / 2);
-		x_s = event.mouse.x;
-		y_s = event.mouse.y / 2;
+		g_vm->_mouse.x_s = event.mouse.x;
+		g_vm->_mouse.y_s = event.mouse.y / 2;
 
 		if (event.type == Common::EVENT_LBUTTONDOWN)
 			_mouseClick = true;
@@ -550,7 +550,7 @@ void MortevielleEngine::mainGame() {
 	initGame();
 	hirs();
 	drawRightFrame();
-	showMouse();
+	g_vm->_mouse.showMouse();
 
 	// Loop to play the game
 	do {
@@ -603,7 +603,7 @@ void MortevielleEngine::handleAction() {
 		do {
 			_menu.mdn();
 			tinke();
-			moveMouse(funct, inkey);
+			g_vm->_mouse.moveMouse(funct, inkey);
 			CHECK_QUIT;
 			temps = temps + 1;
 		} while (!((_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));
@@ -652,7 +652,7 @@ void MortevielleEngine::handleAction() {
 				g_mnumo = g_msg[4];
 			if (!_anyone) {
 				if ((_heroSearching) || (_obpart)) {
-					if (y_s < 12)
+					if (g_vm->_mouse.y_s < 12)
 						return;
 
 					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {
@@ -703,6 +703,1386 @@ void MortevielleEngine::loadPlaces() {
 	}
 
 	f.close();
+}
+
+/**
+ * Set Text Color
+ * @remarks	Originally called 'text_color'
+ */
+void MortevielleEngine::setTextColor(int col) {
+	_textColor = col;
+}
+
+/**
+ * Prepare screen - Type 1!
+ * @remarks	Originally called 'ecrf1'
+ */
+void MortevielleEngine::prepareScreenType1() {
+	// Large drawing
+	_screenSurface.drawBox(0, 11, 512, 163, 15);
+}
+
+/**
+ * Prepare room - Type 2!
+ * @remarks	Originally called 'ecrf2'
+ */
+void MortevielleEngine::prepareScreenType2() {
+	setTextColor(5);
+}
+
+/**
+ * Prepare room - Type 3!
+ * @remarks	Originally called 'ecrf7'
+ */
+void MortevielleEngine::prepareScreenType3() {
+	setTextColor(4);
+}
+
+/**
+ * Engine function - Update hour
+ * @remarks	Originally called 'calch'
+ */
+void MortevielleEngine::updateHour(int &day, int &hour, int &minute) {
+	int newHour = readclock();
+	int th = g_jh + ((newHour - g_mh) / g_t);
+	minute = ((th % 2) + _currHalfHour) * 30;
+	hour = ((uint)th >> 1) + _currHour;
+	if (minute == 60) {
+		minute = 0;
+		++hour;
+	}
+	day = (hour / 24) + _currDay;
+	hour = hour - ((day - _currDay) * 24);
+}
+
+/**
+ * Engine function - Convert character index to bit index
+ * @remarks	Originally called 'conv'
+ */
+int MortevielleEngine::convertCharacterIndexToBitIndex(int characterIndex) {
+	return 128 >> (characterIndex - 1);
+}
+
+/**
+ * Engine function - Convert bit index to character index
+ * @remarks	Originally called 'tip'
+ */
+int MortevielleEngine::convertBitIndexToCharacterIndex(int bitIndex) {
+	int retVal = 0;
+
+	if (bitIndex == 128)
+		retVal = 1;
+	else if (bitIndex == 64)
+		retVal = 2;
+	else if (bitIndex == 32)
+		retVal = 3;
+	else if (bitIndex == 16)
+		retVal = 4;
+	else if (bitIndex == 8)
+		retVal = 5;
+	else if (bitIndex == 4)
+		retVal = 6;
+	else if (bitIndex == 2)
+		retVal = 7;
+	else if (bitIndex == 1)
+		retVal = 8;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Reset presence in other rooms
+ * @remarks	Originally called 't5'
+ */
+void MortevielleEngine::resetPresenceInRooms(int roomId) {
+	if (roomId == DINING_ROOM)
+		_blo = false;
+
+	if (roomId != GREEN_ROOM) {
+		_roomPresenceLuc = false;
+		_roomPresenceIda = false;
+	}
+
+	if (roomId != PURPLE_ROOM)
+		_purpleRoomPresenceLeo = false;
+
+	if (roomId != DARKBLUE_ROOM) {
+		_roomPresenceGuy = false;
+		_roomPresenceEva = false;
+	}
+
+	if (roomId != BLUE_ROOM)
+		_roomPresenceMax = false;
+	if (roomId != RED_ROOM)
+		_roomPresenceBob = false;
+	if (roomId != GREEN_ROOM2)
+		_roomPresencePat = false;
+	if (roomId != TOILETS)
+		_toiletsPresenceBobMax = false;
+	if (roomId != BATHROOM)
+		_bathRoomPresenceBobMax = false;
+	if (roomId != ROOM9)
+		_room9PresenceLeo = false;
+}
+
+/**
+ * Engine function - Show the people present in the given room 
+ * @remarks	Originally called 'affper'
+ */
+void MortevielleEngine::showPeoplePresent(int bitIndex) {
+	int xp = 580 - (_screenSurface.getStringWidth("LEO") / 2);
+
+	for (int i = 1; i <= 8; ++i)
+		_menu.disableMenuItem(_menu._discussMenu[i]);
+
+	clearScreenType10();
+	if ((bitIndex & 128) == 128) {
+		_screenSurface.putxy(xp, 24);
+		_screenSurface.drawString("LEO", 4);
+		_menu.enableMenuItem(_menu._discussMenu[1]);
+	}
+	if ((bitIndex & 64) == 64) {
+		_screenSurface.putxy(xp, 32);
+		_screenSurface.drawString("PAT", 4);
+		_menu.enableMenuItem(_menu._discussMenu[2]);
+	}
+	if ((bitIndex & 32) == 32) {
+		_screenSurface.putxy(xp, 40);
+		_screenSurface.drawString("GUY", 4);
+		_menu.enableMenuItem(_menu._discussMenu[3]);
+	}
+	if ((bitIndex & 16) == 16) {
+		_screenSurface.putxy(xp, 48);
+		_screenSurface.drawString("EVA", 4);
+		_menu.enableMenuItem(_menu._discussMenu[4]);
+	}
+	if ((bitIndex & 8) == 8) {
+		_screenSurface.putxy(xp, 56);
+		_screenSurface.drawString("BOB", 4);
+		_menu.enableMenuItem(_menu._discussMenu[5]);
+	}
+	if ((bitIndex & 4) == 4) {
+		_screenSurface.putxy(xp, 64);
+		_screenSurface.drawString("LUC", 4);
+		_menu.enableMenuItem(_menu._discussMenu[6]);
+	}
+	if ((bitIndex & 2) == 2) {
+		_screenSurface.putxy(xp, 72);
+		_screenSurface.drawString("IDA", 4);
+		_menu.enableMenuItem(_menu._discussMenu[7]);
+	}
+	if ((bitIndex & 1) == 1) {
+		_screenSurface.putxy(xp, 80);
+		_screenSurface.drawString("MAX", 4);
+		_menu.enableMenuItem(_menu._discussMenu[8]);
+	}
+	_currBitIndex = bitIndex;
+}
+
+/**
+ * Engine function - Select random characters
+ * @remarks	Originally called 'choix'
+ */
+int MortevielleEngine::selectCharacters(int min, int max) {
+	bool invertSelection = false;
+	int rand = getRandomNumber(min, max);
+
+	if (rand > 4) {
+		rand = 8 - rand;
+		invertSelection = true;
+	}
+
+	int i = 0;
+	int retVal = 0;
+	while (i < rand) {
+		int charIndex = getRandomNumber(1, 8);
+		int charBitIndex = convertCharacterIndexToBitIndex(charIndex);
+		if ((retVal & charBitIndex) != charBitIndex) {
+			++i;
+			retVal |= charBitIndex;
+		}
+	}
+	if (invertSelection)
+		retVal = 255 - retVal;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Green Room
+ * @remarks	Originally called 'cpl1'
+ */
+int MortevielleEngine::getPresenceStatsGreenRoom() {
+	int day, hour, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	// The original uses an || instead of an &&, resulting 
+	// in an always true condition. Based on the other tests, 
+	// and on other scenes, we use an && instead.
+	if ((hour > 7) && (hour < 11))
+		retVal = 25;
+	else if ((hour > 10) && (hour < 14))
+		retVal = 35;
+	else if ((hour > 13) && (hour < 16))
+		retVal = 50;
+	else if ((hour > 15) && (hour < 18))
+		retVal = 5;
+	else if ((hour > 17) && (hour < 22))
+		retVal = 35;
+	else if ((hour > 21) && (hour < 24))
+		retVal = 50;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = 70;
+
+	_menu.mdn();
+
+	return retVal;
+}
+/**
+ * Engine function - Get Presence Statistics - Purple Room
+ * @remarks	Originally called 'cpl2'
+ */
+int MortevielleEngine::getPresenceStatsPurpleRoom() {
+	int day, hour, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if ((hour > 7) && (hour < 11))
+		retVal = -2;
+	else if (hour == 11)
+		retVal = 100;
+	else if ((hour > 11) && (hour < 23))
+		retVal = 10;
+	else if (hour == 23)
+		retVal = 20;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = 50;
+	
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Toilets
+ * @remarks	Originally called 'cpl3'
+ */
+int MortevielleEngine::getPresenceStatsToilets() {
+	int day, hour, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if (((hour > 8) && (hour < 10)) || ((hour > 19) && (hour < 24)))
+		retVal = 34;
+	else if (((hour > 9) && (hour < 20)) || ((hour >= 0) && (hour < 9)))
+		retVal = 0;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Blue Room
+ * @remarks	Originally called 'cpl5'
+ */
+int MortevielleEngine::getPresenceStatsBlueRoom() {
+	int day, hour, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if ((hour > 6) && (hour < 10))
+		retVal = 0;
+	else if (hour == 10)
+		retVal = 100;
+	else if ((hour > 10) && (hour < 24))
+		retVal = 15;
+	else if ((hour >= 0) && (hour < 7))
+		retVal = 50;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Red Room
+ * @remarks	Originally called 'cpl6'
+ */
+int MortevielleEngine::getPresenceStatsRedRoom() {
+	int day, hour, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if (((hour > 7) && (hour < 13)) || ((hour > 17) && (hour < 20)))
+		retVal = -2;
+	else if (((hour > 12) && (hour < 17)) || ((hour > 19) && (hour < 24)))
+		retVal = 35;
+	else if (hour == 17)
+		retVal = 100;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = 60;
+
+	return retVal;
+}
+
+/**
+ * Shows the "you are alone" message in the status area
+ * on the right hand side of the screen
+ * @remarks	Originally called 'person'
+ */
+void MortevielleEngine::displayAloneText() {
+	for (int cf = 1; cf <= 8; ++cf)
+		_menu.disableMenuItem(_menu._discussMenu[cf]);
+
+	Common::String sYou = getEngineString(S_YOU);
+	Common::String sAre = getEngineString(S_ARE);
+	Common::String sAlone = getEngineString(S_ALONE);
+
+	clearScreenType10();
+	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sYou) / 2), 30);
+	_screenSurface.drawString(sYou, 4);
+	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sAre) / 2), 50);
+	_screenSurface.drawString(sAre, 4);
+	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sAlone) / 2), 70);
+	_screenSurface.drawString(sAlone, 4);
+
+	_currBitIndex = 0;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Room Bureau
+ * @remarks	Originally called 'cpl10'
+ */
+int MortevielleEngine::getPresenceStatsDiningRoom(int &hour) {
+	int day, minute;
+
+	int retVal = 0;
+	updateHour(day, hour, minute);
+	if (((hour > 7) && (hour < 11)) || ((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21)))
+		retVal = 100;
+	else if ((hour == 11) || ((hour > 20) && (hour < 24)))
+		retVal = 45;
+	else if (((hour > 13) && (hour < 17)) || (hour == 18))
+		retVal = 35;
+	else if (hour == 17)
+		retVal = 60;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = 5;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Room Bureau
+ * @remarks	Originally called 'cpl11'
+ */
+int MortevielleEngine::getPresenceStatsBureau(int &hour) {
+	int day, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if (((hour > 8) && (hour < 12)) || ((hour > 20) && (hour < 24)))
+		retVal = 25;
+	else if (((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21)))
+		retVal = 5;
+	else if ((hour > 13) && (hour < 17))
+		retVal = 55;
+	else if ((hour > 16) && (hour < 19))
+		retVal = 45;
+	else if ((hour >= 0) && (hour < 9))
+		retVal = 0;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Room Kitchen
+ * @remarks	Originally called 'cpl12'
+ */
+int MortevielleEngine::getPresenceStatsKitchen() {
+	int day, hour, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if (((hour > 8) && (hour < 15)) || ((hour > 16) && (hour < 22)))
+		retVal = 55;
+	else if (((hour > 14) && (hour < 17)) || ((hour > 21) && (hour < 24)))
+		retVal = 25;
+	else if ((hour >= 0) && (hour < 5))
+		retVal = 0;
+	else if ((hour > 4) && (hour < 9))
+		retVal = 15;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Room Attic
+ * @remarks	Originally called 'cpl13'
+ */
+int MortevielleEngine::getPresenceStatsAttic() {
+	return 0;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Room Landing
+ * @remarks	Originally called 'cpl15'
+ */
+int MortevielleEngine::getPresenceStatsLanding() {
+	int day, hour, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if ((hour > 7) && (hour < 12))
+		retVal = 25;
+	else if ((hour > 11) && (hour < 14))
+		retVal = 0;
+	else if ((hour > 13) && (hour < 18))
+		retVal = 10;
+	else if ((hour > 17) && (hour < 20))
+		retVal = 55;
+	else if ((hour > 19) && (hour < 22))
+		retVal = 5;
+	else if ((hour > 21) && (hour < 24))
+		retVal = 15;
+	else if ((hour >= 0) && (hour < 8))
+		retVal = -15;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get Presence Statistics - Room Chapel
+ * @remarks	Originally called 'cpl20'
+ */
+int MortevielleEngine::getPresenceStatsChapel(int &hour) {
+	int day, minute;
+	int retVal = 0;
+
+	updateHour(day, hour, minute);
+	if (hour == 10)
+		retVal = 65;
+	else if ((hour > 10) && (hour < 21))
+		retVal = 5;
+	else if ((hour > 20) && (hour < 24))
+		retVal = -15;
+	else if ((hour >= 0) && (hour < 5))
+		retVal = -300;
+	else if ((hour > 4) && (hour < 10))
+		retVal = -5;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Check who is in the Green Room
+ * @remarks	Originally called 'quelq1'
+ */
+void MortevielleEngine::setPresenceGreenRoom(int roomId) {
+	int rand = getRandomNumber(1, 2);
+	if (roomId == GREEN_ROOM) {
+		if (rand == 1)
+			_roomPresenceLuc = true;
+		else
+			_roomPresenceIda = true;
+	} else if (roomId == DARKBLUE_ROOM) {
+		if (rand == 1)
+			_roomPresenceGuy = true;
+		else
+			_roomPresenceEva = true;
+	}
+
+	_currBitIndex = 10;
+}
+
+/**
+ * Engine function - Check who is in the Purple Room
+ * @remarks	Originally called 'quelq2'
+ */
+void MortevielleEngine::setPresencePurpleRoom() {
+	if (_place == PURPLE_ROOM)
+		_purpleRoomPresenceLeo = true;
+	else
+		_room9PresenceLeo = true;
+
+	_currBitIndex = 10;
+}
+
+/**
+ * Engine function - Check who is in the Blue Room
+ * @remarks	Originally called 'quelq5'
+ */
+void MortevielleEngine::setPresenceBlueRoom() {
+	_roomPresenceMax = true;
+	_currBitIndex = 10;
+}
+
+/**
+ * Engine function - Check who is in the Red Room
+ * @remarks	Originally called 'quelq6'
+ */
+void MortevielleEngine::setPresenceRedRoom(int roomId) {
+	if (roomId == RED_ROOM)
+		_roomPresenceBob = true;
+	else if (roomId == GREEN_ROOM2)
+		_roomPresencePat = true;
+
+	_currBitIndex = 10;
+}
+
+/**
+ * Engine function - Check who is in the Dining Room
+ * @remarks	Originally called 'quelq10'
+ */
+int MortevielleEngine::setPresenceDiningRoom(int hour) {
+	int retVal = 0;
+
+	if ((hour >= 0) && (hour < 8))
+		retVal = chlm();
+	else {
+		int min = 0, max = 0;
+		if ((hour > 7) && (hour < 10)) {
+			min = 5;
+			max = 7;
+		} else if ((hour > 9) && (hour < 12)) {
+			min = 1;
+			max = 4;
+		} else if (((hour > 11) && (hour < 15)) || ((hour > 18) && (hour < 21))) {
+			min = 6;
+			max = 8;
+		} else if (((hour > 14) && (hour < 19)) || ((hour > 20) && (hour < 24))) {
+			min = 1;
+			max = 5;
+		}
+		retVal = selectCharacters(min, max);
+	}
+	showPeoplePresent(retVal);
+
+	return retVal;
+}
+
+/**
+ * Engine function - Check who is in the Bureau
+ * @remarks	Originally called 'quelq11'
+ */
+int MortevielleEngine::setPresenceBureau(int hour) {
+	int retVal = 0;
+
+	if ((hour >= 0) && (hour < 8))
+		retVal = chlm();
+	else {
+		int min = 0, max = 0;
+		if (((hour > 7) && (hour < 10)) || ((hour > 20) && (hour < 24))) {
+			min = 1;
+			max = 3;
+		} else if (((hour > 9) && (hour < 12)) || ((hour > 13) && (hour < 19))) {
+			min = 1;
+			max = 4;
+		} else if (((hour > 11) && (hour < 14)) || ((hour > 18) && (hour < 21))) {
+			min = 1;
+			max = 2;
+		}
+		retVal = selectCharacters(min, max);
+	}
+	showPeoplePresent(retVal);
+
+	return retVal;
+}
+
+/**
+ * Engine function - Check who is in the Kitchen
+ * @remarks	Originally called 'quelq12'
+ */
+int MortevielleEngine::setPresenceKitchen() {
+	int retVal = chlm();
+	showPeoplePresent(retVal);
+
+	return retVal;
+}
+
+/**
+ * Engine function - Check who is in the Landing
+ * @remarks	Originally called 'quelq15'
+ */
+int MortevielleEngine::setPresenceLanding() {
+	bool test = false;
+	int rand = 0;
+	do {
+		rand = getRandomNumber(1, 8);
+		test = (((rand == 1) && (_purpleRoomPresenceLeo || _room9PresenceLeo)) ||
+		        ((rand == 2) && _roomPresencePat) ||
+		        ((rand == 3) && _roomPresenceGuy) ||
+		        ((rand == 4) && _roomPresenceEva) ||
+		        ((rand == 5) && _roomPresenceBob) ||
+		        ((rand == 6) && _roomPresenceLuc) ||
+		        ((rand == 7) && _roomPresenceIda) ||
+		        ((rand == 8) && _roomPresenceMax));
+	} while (test);
+
+	int retVal = convertCharacterIndexToBitIndex(rand);
+	showPeoplePresent(retVal);
+
+	return retVal;
+}
+
+/**
+ * Engine function - Check who is in the chapel
+ * @remarks	Originally called 'quelq20'
+ */
+int MortevielleEngine::setPresenceChapel(int hour) {
+	int retVal = 0;
+
+	if (((hour >= 0) && (hour < 10)) || ((hour > 18) && (hour < 24)))
+		retVal = chlm();
+	else {
+		int min = 0, max = 0;
+		if ((hour > 9) && (hour < 12)) {
+			min = 3;
+			max = 7;
+		} else if ((hour > 11) && (hour < 18)) {
+			min = 1;
+			max = 2;
+		} else if (hour == 18) {
+			min = 2;
+			max = 4;
+		}
+		retVal = selectCharacters(min, max);
+	}
+	showPeoplePresent(retVal);
+
+	return retVal;
+}
+
+/**
+ * Engine function - Get the answer after you known a door
+ * @remarks	Originally called 'frap'
+ */
+void MortevielleEngine::getKnockAnswer() {
+	int day, hour, minute;
+
+	updateHour(day, hour, minute);
+	if ((hour >= 0) && (hour < 8))
+		g_crep = 190;
+	else {
+		if (getRandomNumber(1, 100) > 70)
+			g_crep = 190;
+		else
+			g_crep = 147;
+	}
+}
+
+/**
+ * Engine function - Get Room Presence Bit Index
+ * @remarks	Originally called 'nouvp'
+ */
+int MortevielleEngine::getPresenceBitIndex(int roomId) {
+	int bitIndex = 0;
+	if (roomId == GREEN_ROOM) {
+		if (_roomPresenceLuc)
+			bitIndex = 4;  // LUC
+		if (_roomPresenceIda)
+			bitIndex = 2;  // IDA
+	} else if ( ((roomId == PURPLE_ROOM) && (_purpleRoomPresenceLeo))
+			 || ((roomId == ROOM9) && (_room9PresenceLeo)))
+		bitIndex = 128;    // LEO
+	else if (roomId == DARKBLUE_ROOM) {
+		if (_roomPresenceGuy)
+			bitIndex = 32; // GUY
+		if (_roomPresenceEva)
+			bitIndex = 16; // EVA
+	} else if ((roomId == BLUE_ROOM) && (_roomPresenceMax))
+		bitIndex = 1;      // MAX
+	else if ((roomId == RED_ROOM) && (_roomPresenceBob))
+		bitIndex = 8;      // BOB
+	else if ((roomId == GREEN_ROOM2) && (_roomPresencePat))
+		bitIndex = 64;     // PAT
+	else if ( ((roomId == TOILETS) && (_toiletsPresenceBobMax))
+		   || ((roomId == BATHROOM) && (_bathRoomPresenceBobMax)) )
+		bitIndex = 9;      // BOB + MAX
+
+	if (bitIndex != 9)
+		showPeoplePresent(bitIndex);
+
+	return bitIndex;
+}
+
+/**
+ * Engine function - initGame
+ * @remarks	Originally called 'dprog'
+ */
+void MortevielleEngine::initGame() {
+	_place = MANOR_FRONT;
+	g_jh = 0;
+	if (!g_s._alreadyEnteredManor)
+		_blo = true;
+	g_t = kTime1;
+	g_mh = readclock();
+}
+
+/**
+ * Engine function - Set Random Presence - Green Room
+ * @remarks	Originally called 'pl1'
+ */
+void MortevielleEngine::setRandomPresenceGreenRoom(int cf) {
+	if ( ((_place == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda))
+	  || ((_place == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)) ) {
+		int p = getPresenceStatsGreenRoom();
+		int rand;
+		phaz(rand, p, cf);
+
+		if (rand > p)
+			displayAloneText();
+		else
+			setPresenceGreenRoom(_place);
+	}
+}
+
+/**
+ * Engine function - Set Random Presence - Purple Room
+ * @remarks	Originally called 'pl2'
+ */
+void MortevielleEngine::setRandomPresencePurpleRoom(int cf) {
+	if (!_purpleRoomPresenceLeo) {
+		int p = getPresenceStatsPurpleRoom();
+		int rand;
+		phaz(rand, p, cf);
+
+		if (rand > p)
+			displayAloneText();
+		else
+			setPresencePurpleRoom();
+	}
+}
+
+/**
+ * Engine function - Set Random Presence - Blue Room
+ * @remarks	Originally called 'pl5'
+ */
+void MortevielleEngine::setRandomPresenceBlueRoom(int cf) {
+	if (!_roomPresenceMax) {
+		int p = getPresenceStatsBlueRoom();
+		int rand;
+
+		phaz(rand, p, cf);
+
+		if (rand > p)
+			displayAloneText();
+		else
+			setPresenceBlueRoom();
+	}
+}
+
+/**
+ * Engine function - Set Random Presence - Red Room
+ * @remarks	Originally called 'pl6'
+ */
+void MortevielleEngine::setRandomPresenceRedRoom(int cf) {
+	if ( ((_place == RED_ROOM) && (!_roomPresenceBob))
+	  || ((_place == GREEN_ROOM2) && (!_roomPresencePat)) ) {
+		int p = getPresenceStatsRedRoom();
+		int rand;
+
+		phaz(rand, p, cf);
+
+		if (rand > p)
+			displayAloneText();
+		else
+			setPresenceRedRoom(_place);
+	}
+}
+
+/**
+ * Engine function - Set Random Presence - Room 9
+ * @remarks	Originally called 'pl9'
+ */
+void MortevielleEngine::setRandomPresenceRoom9(int cf) {
+	if (!_room9PresenceLeo) {
+		cf = -10;
+		int p, rand;
+		phaz(rand, p, cf);
+
+		if (rand > p)
+			displayAloneText();
+		else
+			setPresencePurpleRoom();
+	}
+}
+
+/**
+ * Engine function - Set Random Presence - Dining Room
+ * @remarks	Originally called 'pl10'
+ */
+void MortevielleEngine::setRandomPresenceDiningRoom(int cf) {
+	int h, rand;
+	int p = getPresenceStatsDiningRoom(h);
+	phaz(rand, p, cf);
+
+	if (rand > p)
+		displayAloneText();
+	else
+		setPresenceDiningRoom(h);
+}
+
+/**
+ * Engine function - Set Random Presence - Bureau
+ * @remarks	Originally called 'pl11'
+ */
+void MortevielleEngine::setRandomPresenceBureau(int cf) {
+	int h, rand;
+
+	int p = getPresenceStatsBureau(h);
+	phaz(rand, p, cf);
+	if (rand > p)
+		displayAloneText();
+	else
+		setPresenceBureau(h);
+}
+
+/**
+ * Engine function - Set Random Presence - Kitchen
+ * @remarks	Originally called 'pl12'
+ */
+void MortevielleEngine::setRandomPresenceKitchen(int cf) {
+	int p, rand;
+
+	p = getPresenceStatsKitchen();
+	phaz(rand, p, cf);
+	if (rand > p)
+		displayAloneText();
+	else
+		setPresenceKitchen();
+}
+
+/**
+ * Engine function - Set Random Presence - Attic / Cellar
+ * @remarks	Originally called 'pl13'
+ */
+void MortevielleEngine::setRandomPresenceAttic(int cf) {
+	int p, rand;
+
+	p = getPresenceStatsAttic();
+	phaz(rand, p, cf);
+	if (rand > p)
+		displayAloneText();
+	else
+		setPresenceKitchen();
+}
+
+/**
+ * Engine function - Set Random Presence - Landing
+ * @remarks	Originally called 'pl15'
+ */
+void MortevielleEngine::setRandomPresenceLanding(int cf) {
+	int p, rand;
+
+	p = getPresenceStatsLanding();
+	phaz(rand, p, cf);
+	if (rand > p)
+		displayAloneText();
+	else
+		setPresenceLanding();
+}
+
+/**
+ * Engine function - Set Random Presence - Chapel
+ * @remarks	Originally called 'pl20'
+ */
+void MortevielleEngine::setRandomPresenceChapel(int cf) {
+	int h, rand;
+
+	int p = getPresenceStatsChapel(h);
+	phaz(rand, p, cf);
+	if (rand > p)
+		displayAloneText();
+	else
+		setPresenceChapel(h);
+}
+
+/**
+ * Start music or speech
+ * @remarks	Originally called 'musique'
+ */
+void MortevielleEngine::startMusicOrSpeech(int so) {
+	if (so == 0) {
+		/* musik(0) */
+		;
+	} else if ((g_prebru == 0) && (!g_s._alreadyEnteredManor)) {
+		// Type 1: Speech
+		_speechManager.startSpeech(10, 1, 1);
+		++g_prebru;
+	} else {
+		if (((g_s._currPlace == MOUNTAIN) || (g_s._currPlace == MANOR_FRONT) || (g_s._currPlace == MANOR_BACK)) && (getRandomNumber(1, 3) == 2))
+			// Type 1: Speech
+			_speechManager.startSpeech(9, getRandomNumber(2, 4), 1);
+		else if ((g_s._currPlace == CHAPEL) && (getRandomNumber(1, 2) == 1))
+			// Type 1: Speech
+			_speechManager.startSpeech(8, 1, 1);
+		else if ((g_s._currPlace == WELL) && (getRandomNumber(1, 2) == 2))
+			// Type 1: Speech
+			_speechManager.startSpeech(12, 1, 1);
+		else if (g_s._currPlace == INSIDE_WELL)
+			// Type 1: Speech
+			_speechManager.startSpeech(13, 1, 1);
+		else
+			// Type 2 : music
+			_speechManager.startSpeech(getRandomNumber(1, 17), 1, 2);
+	}
+}
+
+/**
+ * Engine function - You lose!
+ * @remarks	Originally called 'tperd'
+ */
+void MortevielleEngine::loseGame() {
+	initouv();
+	g_ment = 0;
+	g_iouv = 0;
+	g_mchai = 0;
+	_menu.unsetSearchMenu();
+	if (!_blo)
+		t11(MANOR_FRONT);
+
+	_loseGame = true;
+	clearScreenType1();
+	_screenSurface.drawBox(60, 35, 400, 50, 15);
+	repon(9, g_crep);
+	clearScreenType2();
+	clearScreenType3();
+	_col = false;
+	_syn = false;
+	_okdes = false;
+}
+
+/**
+ * Engine function - Check inventory for a given object
+ * @remarks	Originally called 'cherjer'
+ */
+bool MortevielleEngine::checkInventory(int objectId) {
+	bool retVal = false;
+	for (int i = 1; i <= 6; ++i)
+		retVal = (retVal || (ord(g_s._sjer[i]) == objectId));
+
+	if (g_s._selectedObjectId == objectId)
+		retVal = true;
+
+	return retVal;
+}
+
+/**
+ * Engine function - Display Dining Room
+ * @remarks	Originally called 'st1sama'
+ */
+void MortevielleEngine::displayDiningRoom() {
+	g_s._currPlace = DINING_ROOM;
+	affrep();
+}
+
+/**
+ * Engine function - Start non interactive Dialog
+ * @remarks	Originally called 'sparl'
+ */
+void MortevielleEngine::startDialog(int16 rep) {
+	const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
+	int key;
+
+	assert(rep >= 0);
+
+	_mouse.hideMouse();
+	Common::String dialogStr = deline(rep + kDialogStringIndex);
+	displayStr(dialogStr, 230, 4, 65, 24, 5);
+	f3f8::draw();
+	
+	key = 0;
+	do {
+		_speechManager.startSpeech(rep, haut[g_caff - 69], 0);
+		key = f3f8::waitForF3F8();
+		CHECK_QUIT;
+	} while (key != 66);
+	hirs();
+	_mouse.showMouse();
+}
+
+/**
+ * Engine function - End of Search: reset globals
+ * @remarks	Originally called 'finfouill'
+ */
+void MortevielleEngine::endSearch() {
+	_heroSearching = false;
+	_obpart = false;
+	g_cs = 0;
+	g_is = 0;
+	_menu.unsetSearchMenu();
+}
+
+/**
+ * Engine function - Go to Dining room
+ * @remarks	Originally called 't1sama'
+ */
+void MortevielleEngine::gotoDiningRoom() {
+	int day, hour, minute;
+
+	updateHour(day, hour, minute);
+	if ((hour < 5) && (g_s._currPlace > ROOM18)) {
+		if (!checkInventory(137)) {        //You don't have the keys, and it's late
+			g_crep = 1511;
+			loseGame();
+		} else
+			displayDiningRoom();
+	} else if (!g_s._alreadyEnteredManor) {     //Is it your first time?
+		_currBitIndex = 255; // Everybody is present
+		showPeoplePresent(_currBitIndex);
+		g_caff = 77;
+		afdes();
+		_screenSurface.drawBox(223, 47, 155, 91, 15);
+		repon(2, 33);
+		tkey1(false);
+		mennor();
+		_mouse.hideMouse();
+		hirs();
+		premtet();
+		startDialog(140);
+		drawRightFrame();
+		drawClock();
+		_mouse.showMouse();
+		g_s._currPlace = OWN_ROOM;
+		affrep();
+		resetPresenceInRooms(DINING_ROOM);
+		if (!_blo)
+			minute = t11(OWN_ROOM);
+		_currBitIndex = 0;
+		g_mpers = 0;
+		g_s._alreadyEnteredManor = true;
+	} else
+		displayDiningRoom();
+}
+
+/**
+ * Engine function - Check Manor distance (in the mountains)
+ * @remarks	Originally called 't1neig'
+ */
+void MortevielleEngine::checkManorDistance() {
+	++_manorDistance;
+	if (_manorDistance > 2) {
+		g_crep = 1506;
+		loseGame();
+	} else {
+		_okdes = true;
+		g_s._currPlace = MOUNTAIN;
+		affrep();
+	}
+}
+
+/**
+ * Engine function - Go to Manor front
+ * @remarks	Originally called 't1deva'
+ */
+void MortevielleEngine::gotoManorFront() {
+	_manorDistance = 0;
+	g_s._currPlace = MANOR_FRONT;
+	affrep();
+}
+
+/**
+ * Engine function - Go to Manor back
+ * @remarks	Originally called 't1derr'
+ */
+void MortevielleEngine::gotoManorBack() {
+	g_s._currPlace = MANOR_BACK;
+	affrep();
+}
+
+/**
+ * Engine function - Dead : Flooded in Well 
+ * @remarks	Originally called 't1deau'
+ */
+void MortevielleEngine::floodedInWell() {
+	g_crep = 1503;
+	loseGame();
+}
+
+/**
+ * Engine function - Change Graphical Device
+ * @remarks	Originally called 'change_gd'
+ */
+void MortevielleEngine::changeGraphicalDevice(int newDevice) {
+	_mouse.hideMouse();
+	_currGraphicalDevice = newDevice;
+	hirs();
+	_mouse.initMouse();
+	_mouse.showMouse();
+	drawRightFrame();
+	tinke();
+	drawClock();
+	if (_currBitIndex != 0)
+		showPeoplePresent(_currBitIndex);
+	else
+		displayAloneText();
+	clearScreenType2();
+	clearScreenType3();
+	g_maff = 68;
+	afdes();
+	repon(2, g_crep);
+	_menu.displayMenu();
+}
+
+/**
+ * Called when a savegame has been loaded.
+ * @remarks	Originally called 'antegame'
+ */
+void MortevielleEngine::gameLoaded() {
+	_mouse.hideMouse();
+	_menu._menuDisplayed = false;
+	_loseGame = true;
+	_anyone = false;
+	_okdes = true;
+	_col = false;
+	_hiddenHero = false;
+	_brt = false;
+	g_maff = 68;
+	g_mnumo = OPCODE_NONE;
+	g_prebru = 0;
+	g_x = 0;
+	g_y = 0;
+	g_num = 0;
+	g_hdb = 0;
+	g_hfb = 0;
+	g_cs = 0;
+	g_is = 0;
+	g_ment = 0;
+	_syn = true;
+	_heroSearching = true;
+	g_mchai = 0;
+	_manorDistance = 0;
+	initouv();
+	g_iouv = 0;
+	g_dobj = 0;
+	affrep();
+	_hintPctMessage = deline(580);
+
+	_okdes = false;
+	_endGame = true;
+	_loseGame = false;
+	_heroSearching = false;
+
+	displayAloneText();
+	tinke();
+	drawClock();
+	afdes();
+	repon(2, g_crep);
+	clearScreenType3();
+	_endGame = false;
+	_menu.setDestinationMenuText(g_s._currPlace);
+	modinv();
+	if (g_s._selectedObjectId != 0)
+		modobj(g_s._selectedObjectId + 400);
+	_mouse.showMouse();
+}
+
+/**
+ * Engine function - Handle OpCodes
+ * @remarks	Originally called 'tsitu'
+ */
+void MortevielleEngine::handleOpcode() {
+	if (!_col)
+		clearScreenType2();
+	_syn = false;
+	_keyPressedEsc = false;
+	if (!_anyone) {
+		if (_brt) {
+			if ((g_msg[3] == MENU_MOVE) || (g_msg[4] == OPCODE_LEAVE) || (g_msg[4] == OPCODE_SLEEP) || (g_msg[4] == OPCODE_EAT)) {
+				g_ctrm = 4;
+				mennor();
+				return;
+			}
+		}
+		if (g_msg[3] == MENU_MOVE)
+			fctMove();
+		if (g_msg[3] == MENU_DISCUSS)
+			fctDiscuss();
+		if (g_msg[3] == MENU_INVENTORY)
+			fctInventoryTake();
+		if (g_msg[4] == OPCODE_ATTACH)
+			fctAttach();
+		if (g_msg[4] == OPCODE_WAIT)
+			fctWait();
+		if (g_msg[4] == OPCODE_FORCE)
+			fctForce();
+		if (g_msg[4] == OPCODE_SLEEP)
+			fctSleep();
+		if (g_msg[4] == OPCODE_LISTEN)
+			fctListen();
+		if (g_msg[4] == OPCODE_ENTER)
+			fctEnter();
+		if (g_msg[4] == OPCODE_CLOSE)
+			fctClose();
+		if (g_msg[4] == OPCODE_SEARCH)
+			fctSearch();
+		if (g_msg[4] == OPCODE_KNOCK)
+			fctKnock();
+		if (g_msg[4] == OPCODE_SCRATCH)
+			fctScratch();
+		if (g_msg[4] == OPCODE_READ)
+			fctRead();
+		if (g_msg[4] == OPCODE_EAT)
+			fctEat();
+		if (g_msg[4] == OPCODE_PLACE)
+			fctPlace();
+		if (g_msg[4] == OPCODE_OPEN)
+			fctOpen();
+		if (g_msg[4] == OPCODE_TAKE)
+			fctTake();
+		if (g_msg[4] == OPCODE_LOOK)
+			fctLook();
+		if (g_msg[4] == OPCODE_SMELL)
+			fctSmell();
+		if (g_msg[4] == OPCODE_SOUND)
+			fctSound();
+		if (g_msg[4] == OPCODE_LEAVE)
+			fctLeave();
+		if (g_msg[4] == OPCODE_LIFT)
+			fctLift();
+		if (g_msg[4] == OPCODE_TURN)
+			fctTurn();
+		if (g_msg[4] == OPCODE_SSEARCH)
+			fctSelfSearch();
+		if (g_msg[4] == OPCODE_SREAD)
+			fctSelfRead();
+		if (g_msg[4] == OPCODE_SPUT)
+			fctSelfPut();
+		if (g_msg[4] == OPCODE_SLOOK)
+			fctSelftLook();
+		_hiddenHero = false;
+
+		if (g_msg[4] == OPCODE_SHIDE)
+			fctSelfHide();
+	} else {
+		if (_anyone) {
+			quelquun();
+			_anyone = false;
+			mennor();
+			return;
+		}
+	}
+	int hour, day, minute;
+	updateHour(day, hour, minute);
+	if ((((hour == 12) || (hour == 13) || (hour == 19)) && (g_s._currPlace != 10)) ||
+	        ((hour > 0) && (hour < 6) && (g_s._currPlace != 0)))
+		++g_s._faithScore;
+	if (((g_s._currPlace < CRYPT) || (g_s._currPlace > MOUNTAIN)) && (g_s._currPlace != INSIDE_WELL)
+	        && (g_s._currPlace != OWN_ROOM) && (g_s._selectedObjectId != 152) && (!_loseGame)) {
+		if ((g_s._faithScore > 99) && (hour > 8) && (hour < 16)) {
+			g_crep = 1501;
+			loseGame();
+		}
+		if ((g_s._faithScore > 99) && (hour > 0) && (hour < 9)) {
+			g_crep = 1508;
+			loseGame();
+		}
+		if ((day > 1) && (hour > 8) && (!_loseGame)) {
+			g_crep = 1502;
+			loseGame();
+		}
+	}
+	mennor();
+}
+
+/**
+ * Engine function - Transform time into a char
+ * @remarks	Originally called 'tmaj3'
+ */
+void MortevielleEngine::hourToChar() {
+	int day, hour, minute;
+
+	g_vm->updateHour(day, hour, minute);
+	if (minute == 30)
+		minute = 1;
+	hour += day * 24;
+	minute += hour * 2;
+	g_s._fullHour = chr(minute);
+}
+
+/**
+ * Engine function - extract time from a char
+ * @remarks	Originally called 'theure'
+ */
+void MortevielleEngine::charToHour() {
+	int fullHour = ord(g_s._fullHour);
+	int tmpHour = fullHour % 48;
+	g_vm->_currDay = fullHour / 48;
+	g_vm->_currHalfHour = tmpHour % 2;
+	g_vm->_currHour = tmpHour / 2;
+	g_vm->_hour = g_vm->_currHour;
+	if (g_vm->_currHalfHour == 1)
+		g_vm->_minute = 30;
+	else
+		g_vm->_minute = 0;
+}
+
+/**
+ * Engine function - Clear Screen - Type 1
+ * @remarks	Originally called 'clsf1'
+ */
+void MortevielleEngine::clearScreenType1() {
+	g_vm->_mouse.hideMouse();
+	g_vm->_screenSurface.fillRect(0, Common::Rect(0, 11, 514, 175));
+	g_vm->_mouse.showMouse();
+}
+
+/**
+ * Engine function - Clear Screen - Type 2
+ * @remarks	Originally called 'clsf2'
+ */
+void MortevielleEngine::clearScreenType2() {
+	g_vm->_mouse.hideMouse();
+	if (g_vm->_largestClearScreen) {
+		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
+		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
+		g_vm->_largestClearScreen = false;
+	} else {
+		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
+		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
+	}
+	g_vm->_mouse.showMouse();
+}
+
+/**
+ * Engine function - Clear Screen - Type 3
+ * @remarks	Originally called 'clsf3'
+ */
+void MortevielleEngine::clearScreenType3() {
+	g_vm->_mouse.hideMouse();
+	g_vm->_screenSurface.fillRect(0, Common::Rect(1, 192, 633, 199));
+	g_vm->_screenSurface.drawBox(0, 191, 634, 8, 15);
+	g_vm->_mouse.showMouse();
+}
+
+/**
+ * Engine function - Clear Screen - Type 10
+ * @remarks	Originally called 'clsf10'
+ */
+void MortevielleEngine::clearScreenType10() {
+	int co, cod;
+	Common::String st;
+
+	g_vm->_mouse.hideMouse();
+	if (g_res == 1) {
+		co = 634;
+		cod = 534;
+	} else {
+		co = 600;
+		cod = 544;
+	}
+	g_vm->_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
+	if (g_s._faithScore < 33)
+		st = g_vm->getEngineString(S_COOL);
+	else if (g_s._faithScore < 66)
+		st = g_vm->getEngineString(S_LOURDE);
+	else if (g_s._faithScore > 65)
+		st = g_vm->getEngineString(S_MALSAINE);
+	
+	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
+	g_vm->_screenSurface.putxy(co, 92);
+	g_vm->_screenSurface.drawString(st, 4);
+
+	g_vm->_screenSurface.fillRect(15, Common::Rect(560, 24, 610, 86));
+	/* rempli(69,12,32,5,255);*/
+	g_vm->_mouse.showMouse();
 }
 
 } // End of namespace Mortevielle

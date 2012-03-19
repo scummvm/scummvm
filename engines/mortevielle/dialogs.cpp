@@ -44,7 +44,6 @@ int Alert::show(const Common::String &msg, int n) {
 	int coldep, esp, i, caseNumb, quoi, ix;
 	Common::String st, chaine;
 	int limit[3][3];
-	char dumi;
 	Common::String s[3];
 	int cx, cy, nbcol, lignNumb;
 	bool newaff, test, test1, test2, test3, dum;
@@ -55,9 +54,9 @@ int Alert::show(const Common::String &msg, int n) {
 
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 	int do_alert_result;
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	while (g_vm->keyPressed())
-		dumi = g_vm->getChar();
+		g_vm->getChar();
 
 	g_vm->setMouseClick(false);
 	decodeAlertDetails(msg, caseNumb, lignNumb, nbcol, chaine, cas);
@@ -101,16 +100,16 @@ int Alert::show(const Common::String &msg, int n) {
 		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * g_res;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
-	showMouse();
+	g_vm->_mouse.showMouse();
 	quoi = 0;
 	dum = false;
 	do {
-		dumi = '\377';
-		moveMouse(dum, dumi);
+		char dummyKey = '\377';
+		g_vm->_mouse.moveMouse(dum, dummyKey);
 		CHECK_QUIT0;
 
-		cx = x_s;
-		cy = y_s;
+		cx = g_vm->_mouse.x_s;
+		cy = g_vm->_mouse.y_s;
 		test = (cy > 95) && (cy < 105);
 		newaff = false;
 		if (test) {
@@ -125,7 +124,7 @@ int Alert::show(const Common::String &msg, int n) {
 				else
 					ix = 2;
 				if (ix != quoi) {
-					hideMouse();
+					g_vm->_mouse.hideMouse();
 					if (quoi != 0) {
 						setPosition(quoi, coldep, esp);
 
@@ -142,12 +141,12 @@ int Alert::show(const Common::String &msg, int n) {
 					g_vm->_screenSurface.drawString(tmp2, 1);
 
 					quoi = ix;
-					showMouse();
+					g_vm->_mouse.showMouse();
 				}
 			}
 		}
 		if ((quoi != 0) && ! newaff) {
-			hideMouse();
+			g_vm->_mouse.hideMouse();
 			setPosition(quoi, coldep, esp);
 
 			Common::String tmp3(" ");
@@ -156,13 +155,13 @@ int Alert::show(const Common::String &msg, int n) {
 			g_vm->_screenSurface.drawString(tmp3, 0);
 
 			quoi = 0;
-			showMouse();
+			g_vm->_mouse.showMouse();
 		}
 		test3 = (cy > 95) && (cy < 105) && (((cx > limit[1][1]) && (cx < limit[1][2]))
 		                                    || ((cx > limit[2][1]) && (cx < limit[2][2])));
 	} while (!g_vm->getMouseClick());
 	g_vm->setMouseClick(false);
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	if (!test3)  {
 		quoi = n;
 		setPosition(n, coldep, esp);
@@ -172,7 +171,7 @@ int Alert::show(const Common::String &msg, int n) {
 		g_vm->_screenSurface.drawString(tmp4, 1);
 	}
 	charecr(50, (NUM_LINES + 1) << 4);
-	showMouse();
+	g_vm->_mouse.showMouse();
 
 	/* Restore the background area */
 	g_vm->_screenSurface.copyFrom(g_vm->_backgroundSurface, 0, 0);
@@ -299,9 +298,9 @@ bool KnowledgeCheck::show() {
 	int correctCount = 0;
 
 	for (int indx = 0; indx < 10; ++indx) {
-		hideMouse();
+		g_vm->_mouse.hideMouse();
 		hirs();
-		showMouse();
+		g_vm->_mouse.showMouse();
 		int dialogHeight;
 		if (g_res == 1)
 			dialogHeight = 29;
@@ -355,11 +354,11 @@ bool KnowledgeCheck::show() {
 		do {
 			g_vm->setMouseClick(false);
 			bool flag;
-			moveMouse(flag, key);
+			g_vm->_mouse.moveMouse(flag, key);
 			CHECK_QUIT0;
 
 			currChoice = 1;
-			while (coor[currChoice]._enabled && !isMouseIn(coor[currChoice]))
+			while (coor[currChoice]._enabled && !g_vm->_mouse.isMouseIn(coor[currChoice]))
 				++currChoice;
 			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
@@ -425,7 +424,7 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	teskbd();
 	do {
 		g_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
-		waitForF3F8(g_key);
+		g_key = waitForF3F8();
 		CHECK_QUIT;
 
 		if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice) {
@@ -440,11 +439,16 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
  * Alert function - Loop until F3 or F8 is pressed
  * @remarks	Originally called 'atf3f8'
  */
-void f3f8::waitForF3F8(int &key) {
+int f3f8::waitForF3F8() {
+	int key;
+
 	do {
 		key = testou();
-		CHECK_QUIT;
+		if (g_vm->shouldQuit())
+			return key;
 	} while ((key != 61) && (key != 66));
+
+	return key;
 }
 
 void f3f8::aff50(bool drawAni50Fl) {

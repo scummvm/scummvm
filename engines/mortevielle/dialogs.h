@@ -54,7 +54,7 @@ class f3f8 {
 public:
 	static void draw();
 	static void checkForF8(int SpeechNum, bool drawAni50Fl);
-	static void waitForF3F8(int &key);
+	static int waitForF3F8();
 	static void aff50(bool drawAni50Fl);
 	static void ani50();
 };

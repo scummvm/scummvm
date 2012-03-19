@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/menu.h"
+#include "mortevielle/mouse.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
 #include "mortevielle/speech.h"
@@ -168,6 +169,7 @@ public:
 	SavegameManager _savegameManager;
 	SpeechManager _speechManager;
 	Menu _menu;
+	MouseHandler _mouse;
 
 	bool _quitGame;			// Quit game flag. Originally called 'arret'
 	bool _endGame;			// End game flag. Originally called 'solu'
@@ -289,6 +291,14 @@ public:
 	void hourToChar();
 
 	void changeGraphicalDevice(int newDevice);
+	void startDialog(int16 rep);
+	void endSearch();
+	int convertCharacterIndexToBitIndex(int characterIndex);
+	int convertBitIndexToCharacterIndex(int bitIndex);
+	void clearScreenType1();
+	void clearScreenType2();
+	void clearScreenType3();
+	void clearScreenType10();
 
 };
 

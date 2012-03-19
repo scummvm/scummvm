@@ -1056,7 +1056,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	if (l == "")
 		return;
 
-	hideMouse();
+	g_vm->_mouse.hideMouse();
 	pt = _textPos;
 
 	if (g_res == 2)
@@ -1094,7 +1094,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 		g_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), cecr);
 		pt.x += i;
 	}
-	showMouse();
+	g_vm->_mouse.showMouse();
 }
 
 /**

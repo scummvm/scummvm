@@ -700,12 +700,12 @@ void MortevielleEngine::fctPlace() {
 						Alert::show(alertTxt, 1);
 
 						bool enterPassageFl = KnowledgeCheck::show();
-						hideMouse();
+						_mouse.hideMouse();
 						hirs();
 						drawRightFrame();
 						clearScreenType2();
 						clearScreenType3();
-						showMouse();
+						_mouse.showMouse();
 						tinke();
 						drawClock();
 						if (_currBitIndex != 0)
@@ -1357,10 +1357,10 @@ void MortevielleEngine::fctDiscuss() {
 	}
 	tkey1(false);
 	mennor();
-	hideMouse();
+	_mouse.hideMouse();
 	hirs();
 	premtet();
-	sparl(0, suj);
+	startDialog(suj);
 	hirs();
 	for (int ix = 1; ix <= 46; ++ix)
 		te[ix] = false;
@@ -1371,7 +1371,7 @@ void MortevielleEngine::fctDiscuss() {
 	}
 	lib[46] = lib[45];
 	lib[45] = ' ';
-	showMouse();
+	_mouse.showMouse();
 	do {
 		choi = 0;
 		icm = 0;
@@ -1397,10 +1397,10 @@ void MortevielleEngine::fctDiscuss() {
 		writetp(lib[46], 0);
 		tou = '\0';
 		do {
-			moveMouse(f, tou);
+			_mouse.moveMouse(f, tou);
 			CHECK_QUIT;
 
-			getMousePos_(x, y, c);
+			_mouse.getMousePos_(x, y, c);
 			x *= (3 - g_res);
 			if (x > 319)
 				cx = 41;
@@ -1482,11 +1482,11 @@ void MortevielleEngine::fctDiscuss() {
 				g_s._faithScore += 3;
 				suj = 139;
 			}
-			hideMouse();
+			_mouse.hideMouse();
 			hirs();
 			premtet();
-			sparl(0, suj);
-			showMouse();
+			startDialog(suj);
+			_mouse.showMouse();
 			if ((suj == 84) || (suj == 86)) {
 				g_s._pourc[5] = '*';
 				g_s._teauto[7] = '*';
@@ -1500,26 +1500,26 @@ void MortevielleEngine::fctDiscuss() {
 				g_s._pourc[8] = '*';
 				g_s._teauto[32] = '*';
 			}
-			hideMouse();
+			_mouse.hideMouse();
 			hirs();
-			showMouse();
+			_mouse.showMouse();
 		}
 	} while ((choi != 46) && (suj != 138));
 	if (_col) {
 		g_s._faithScore += (3 * (g_s._faithScore / 10));
-		hideMouse();
+		_mouse.hideMouse();
 		hirs();
 		premtet();
-		sparl(0, 138);
-		showMouse();
+		startDialog(138);
+		_mouse.showMouse();
 		_col = false;
 		g_s._currPlace = LANDING;
 	}
 	g_ctrm = 0;
-	hideMouse();
+	_mouse.hideMouse();
 	hirs();
 	drawRightFrame();
-	showMouse();
+	_mouse.showMouse();
 	showPeoplePresent(_currBitIndex);
 	tinke();
 	drawClock();
@@ -1574,13 +1574,13 @@ void MortevielleEngine::endGame() {
 	clearScreenType3();
 	repon(9, 1509);
 	tkey1(false);
-	hideMouse();
+	_mouse.hideMouse();
 	g_caff = 70;
 	taffich();
 	hirs();
 	premtet();
-	sparl(0, 141);
-	showMouse();
+	startDialog(141);
+	_mouse.showMouse();
 	clearScreenType1();
 	repon(9, 1509);
 	repon(2, 142);

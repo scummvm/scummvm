@@ -36,21 +36,11 @@ namespace Mortevielle {
 const int m_arrow = 0;
 const int m_point_hand = 1;
 
-bool int_m, clic;
-
-int m_show,
-        x_s,
-        y_s,
-        p_o_s,
-        mouse_shwn;
-
-int s_s[12][6];
-
 /**
  * Initialize the mouse
  * @remarks	Originally called 'init_mouse'
  */
-void initMouse() {
+void MouseHandler::initMouse() {
 	registres reg;
 
 	mouse_shwn = 0;
@@ -81,7 +71,7 @@ void initMouse() {
  * Hide the mouse
  * @remarks	Originally called 'hide_mouse'
  */
-void hideMouse() {
+void MouseHandler::hideMouse() {
 	--mouse_shwn;
 	if (mouse_shwn == 0) {
 		bool imp = odd(y_s);
@@ -173,7 +163,7 @@ void hideMouse() {
  * Show mouse
  * @remarks	Originally called 'show_mouse'
  */
-void showMouse() {
+void MouseHandler::showMouse() {
 	int k, l;
 
 	mouse_shwn = mouse_shwn + 1;
@@ -258,7 +248,7 @@ void showMouse() {
  * Set mouse position
  * @remarks	Originally called 'pos_mouse'
  */
-void setMousePos(int x, int y) {
+void MouseHandler::setMousePos(int x, int y) {
 	if (x > 314 * g_res)
 		x = 314 * g_res;
 	else if (x < 0)
@@ -278,7 +268,7 @@ void setMousePos(int x, int y) {
  * Get mouse poisition
  * @remarks	Originally called 'read_pos_mouse'
  */
-void getMousePos_(int &x, int &y, int &c) {
+void MouseHandler::getMousePos_(int &x, int &y, int &c) {
 	x = g_vm->getMousePos().x;
 	y = g_vm->getMousePos().y;
 	c = g_vm->getMouseClick() ? 1 : 0;
@@ -288,7 +278,7 @@ void getMousePos_(int &x, int &y, int &c) {
  * Move mouse
  * @remarks	Originally called 'mov_mouse'
  */
-void moveMouse(bool &funct, char &key) {
+void MouseHandler::moveMouse(bool &funct, char &key) {
 	bool p_key;
 	char in1, in2;
 	int cx, cy, cd;
@@ -441,6 +431,20 @@ void moveMouse(bool &funct, char &key) {
 		setMousePos(cx, cy);
 		p_key = g_vm->keyPressed();
 	}
+}
+
+/**
+ * Engine function : Is mouse in a given rect?
+ * @remarks	Originally called 'dans_rect'
+ */
+bool MouseHandler::isMouseIn(rectangle r) {
+	int x, y, c;
+
+	getMousePos_(x, y, c);
+	if ((x > r._x1) && (x < r._x2) && (y > r._y1) && (y < r._y2))
+		return true;
+
+	return false;
 }
 
 } // End of namespace Mortevielle
