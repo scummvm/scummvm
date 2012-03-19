@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -360,6 +361,55 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 	return sierraId;
 }
 
+static const ExtraGuiOption optionsList[] = {
+	{
+		_s("Prefer digital sound effects"),
+		_s("Prefer digital sound effects instead of synthesized ones"),
+		"prefer_digitalsfx",
+		true
+	},
+
+	{
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens, instead of the ScummVM ones"),
+		"sci_originalsaveload",
+		false
+	},
+
+	{
+		_s("Use IMF/Yahama FB-01 for MIDI output"),
+		_s("Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI output"),
+		"native_fb01",
+		false
+	},
+
+	// Jones in the Fast Lane - CD audio tracks or resource.snd
+	{
+		_s("Use CD audio"),
+		_s("Use CD audio instead of in-game audio, if available"),
+		"use_cdaudio",
+		true
+	},
+
+	// KQ6 Windows - windows cursors
+	{
+		_s("Use Windows cursors"),
+		_s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
+		"windows_cursors",
+		false
+	},
+
+	// SQ4 CD - silver cursors
+	{
+		_s("Use silver cursors"),
+		_s("Use the alternate set of silver cursors, instead of the normal golden ones"),
+		"silver_cursors",
+		false
+	},
+
+	{ 0, 0, 0, 0 }
+};
+
 #include "sci/detection_tables.h"
 
 /**
@@ -373,7 +423,7 @@ static ADGameDescription s_fallbackDesc = {
 	Common::UNK_LANG,
 	Common::kPlatformPC,
 	ADGF_NO_FLAGS,
-	GUIO0()
+	GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
 };
 
 static char s_fallbackGameIdBuf[256];
@@ -435,7 +485,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.flags = ADGF_NO_FLAGS;
 	s_fallbackDesc.platform = Common::kPlatformPC;	// default to PC platform
 	s_fallbackDesc.gameid = "sci";
-	s_fallbackDesc.guioptions = GUIO0();
+	s_fallbackDesc.guioptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 
 	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
 	    || allFiles.contains("resmap.001") || allFiles.contains("resmap.001")) {
@@ -565,7 +615,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	const bool isCD = (s_fallbackDesc.flags & ADGF_CD);
 
 	if (!isCD)
-		s_fallbackDesc.guioptions = GUIO1(GUIO_NOSPEECH);
+		s_fallbackDesc.guioptions = GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 
 	if (gameId.hasSuffix("sci")) {
 		s_fallbackDesc.extra = "SCI";
