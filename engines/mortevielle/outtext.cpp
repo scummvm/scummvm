@@ -136,7 +136,7 @@ Common::String deline(int num) {
 	} else if (!g_vm->_txxFileFl) {
 		wrkStr = g_vm->getGameString(num);
 	} else {
-		int i = g_t_rec[num]._indis;
+		int i = g_t_rec[num]._hintId;
 		byte k = g_t_rec[num]._point;
 		int length = 0;
 		bool endFl = false;

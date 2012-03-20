@@ -38,7 +38,16 @@
 
 namespace Mortevielle {
 
-/* NIVEAU 14*/
+const byte _menuConstants[8][4] = {
+	{ 7, 37, 22,  8},
+	{19, 33, 23,  7},
+	{31, 89, 10, 21},
+	{43, 25, 11,  5},
+	{55, 37,  5,  8},
+	{64, 13, 11,  2},
+	{62, 22, 13,  4},
+	{62, 25, 13,  5}
+};
 
 /**
  * Setup a menu's contents
@@ -219,62 +228,66 @@ void Menu::drawMenu() {
 	_multiTitle = false;
 }
 
-void Menu::invers(int ix) {
-	Common::String s;
-
+/**
+ * Menu function - Invert a menu entry
+ * @remarks	Originally called 'invers'
+ */
+void Menu::invert(int indx) {
 	if (g_msg4 == OPCODE_NONE)
 		return;
 
 	int menuIndex = lo(g_msg4);
 
-	g_vm->_screenSurface.putxy(g_menuConstants[g_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
+	g_vm->_screenSurface.putxy(_menuConstants[g_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
+
+	Common::String str;
 	switch (g_msg3) {
 	case 1:
-		s = _inventoryStringArray[menuIndex];
+		str = _inventoryStringArray[menuIndex];
 		break;
 	case 2:
-		s = _moveStringArray[menuIndex];
+		str = _moveStringArray[menuIndex];
 		break;
 	case 3:
-		s = _actionStringArray[menuIndex];
+		str = _actionStringArray[menuIndex];
 		break;
 	case 4:
-		s = _selfStringArray[menuIndex];
+		str = _selfStringArray[menuIndex];
 		break;
 	case 5:
-		s = _discussStringArray[menuIndex];
+		str = _discussStringArray[menuIndex];
 		break;
 	case 6:
-		s = g_vm->getEngineString(S_SAVE_LOAD + menuIndex);
+		str = g_vm->getEngineString(S_SAVE_LOAD + menuIndex);
 		break;
 	case 7:
-		s = g_vm->getEngineString(S_SAVE_LOAD + 1);
-		s += ' ';
-		s += (char)(48 + menuIndex);
+		str = g_vm->getEngineString(S_SAVE_LOAD + 1);
+		str += ' ';
+		str += (char)(48 + menuIndex);
 		break;
 	case 8:
 		if (menuIndex == 1) {
-			s = g_vm->getEngineString(S_RESTART);
+			str = g_vm->getEngineString(S_RESTART);
 		} else {
-			s = g_vm->getEngineString(S_SAVE_LOAD + 2);
-			s += ' ';
-			s += (char)(47 + menuIndex);
+			str = g_vm->getEngineString(S_SAVE_LOAD + 2);
+			str += ' ';
+			str += (char)(47 + menuIndex);
 		}
 		break;
 	default:
 		break;
 	}
-	if ((s[0] != '*') && (s[0] != '<'))
-		g_vm->_screenSurface.drawString(s, ix);
+	if ((str[0] != '*') && (str[0] != '<'))
+		g_vm->_screenSurface.drawString(str, indx);
 	else
 		g_msg4 = OPCODE_NONE;
 }
 
 void Menu::util(Common::Point pos) {
 
-	int ymx = (g_menuConstants[g_msg3 - 1][3] << 3) + 16;
-	int dxcar = g_menuConstants[g_msg3 - 1][2];
-	int xmn = (g_menuConstants[g_msg3 - 1][0] << 2) * g_res;
+	int ymx = (_menuConstants[g_msg3 - 1][3] << 3) + 16;
+	int dxcar = _menuConstants[g_msg3 - 1][2];
+	int xmn = (_menuConstants[g_msg3 - 1][0] << 2) * g_res;
 
 	int ix;
 	if (g_res == 1)
@@ -285,12 +298,12 @@ void Menu::util(Common::Point pos) {
 	if ((pos.x > xmn) && (pos.x < xmx) && (pos.y < ymx) && (pos.y > 15)) {
 		ix = (((uint)pos.y >> 3) - 1) + (g_msg3 << 8);
 		if (ix != g_msg4) {
-			invers(1);
+			invert(1);
 			g_msg4 = ix;
-			invers(0);
+			invert(0);
 		}
 	} else if (g_msg4 != OPCODE_NONE) {
-		invers(1);
+		invert(1);
 		g_msg4 = OPCODE_NONE;
 	}
 }
@@ -299,8 +312,8 @@ void Menu::util(Common::Point pos) {
  * Draw a menu
  */
 void Menu::menuDown(int ii) {
-	int cx, xcc;
-	int xco, nb_lig;
+	int cx, xcc, xco;
+	int lignNumb;
 
 	/* debug('menuDown'); */
 
@@ -308,23 +321,23 @@ void Menu::menuDown(int ii) {
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
 
 	// Draw the menu
-	xco = g_menuConstants[ii - 1][0];
-	nb_lig = g_menuConstants[ii - 1][3];
+	xco = _menuConstants[ii - 1][0];
+	lignNumb = _menuConstants[ii - 1][3];
 	g_vm->_mouse.hideMouse();
-	sauvecr(10, (g_menuConstants[ii - 1][1] + 1) << 1);
+	sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
 	if (g_res == 1)
 		cx = 10;
 	else
 		cx = 6;
-	xcc = xco + (g_menuConstants[ii - 1][2] * cx) + 6;
+	xcc = xco + (_menuConstants[ii - 1][2] * cx) + 6;
 	if ((ii == 4) && (g_vm->getLanguage() == Common::EN_ANY))
 		// Extra width needed for Self menu in English version
 		xcc = 435;
 
-	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (g_menuConstants[ii - 1][1] << 1)));
-	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (g_menuConstants[ii - 1][1] << 1)));
-	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (g_menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (g_menuConstants[ii - 1][1] << 1)));
+	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (_menuConstants[ii - 1][1] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (_menuConstants[ii - 1][1] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (_menuConstants[ii - 1][1] << 1), xcc + 4, 12 + (_menuConstants[ii - 1][1] << 1)));
 	g_vm->_screenSurface.putxy(xco, 16);
 	cx = 0;
 	do {
@@ -374,7 +387,7 @@ void Menu::menuDown(int ii) {
 			break;
 		}
 		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
-	} while (cx != nb_lig);
+	} while (cx != lignNumb);
 	_multiTitle = true;
 	g_vm->_mouse.showMouse();
 }
@@ -384,7 +397,7 @@ void Menu::menuDown(int ii) {
  */
 void Menu::menuUp(int xx) {
 	if (_multiTitle) {
-		charecr(10, (g_menuConstants[xx - 1][1] + 1) << 1);
+		charecr(10, (_menuConstants[xx - 1][1] + 1) << 1);
 
 		/* Restore the background area */
 		assert(g_vm->_screenSurface.pitch == g_vm->_backgroundSurface.pitch);

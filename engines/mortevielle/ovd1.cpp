@@ -119,7 +119,7 @@ void chartex() {
 	g_vm->_txxFileFl = true;
 
 	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
-		g_t_rec[i]._indis = ntpFile.readSint16LE();
+		g_t_rec[i]._hintId = ntpFile.readSint16LE();
 		g_t_rec[i]._point = ntpFile.readByte();
 	}
 
@@ -151,7 +151,7 @@ void music() {
 	fic.close();
 
 	g_vm->_soundManager.decodeMusic(&g_mem[0x3800 * 16], &g_mem[0x5000 * 16], 623);
-	g_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
+	g_vm->_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
 	g_vm->_speechManager.cctable(g_tbi);
 
 	bool fin = false;

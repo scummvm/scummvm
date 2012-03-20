@@ -109,18 +109,6 @@ void pictout(int seg, int dep, int x, int y) {
 	g_vm->_screenSurface.drawPicture(surface, x, y);
 }
 
-void sauvecr(int y, int dy) {
-	g_vm->_mouse.hideMouse();
-	s_sauv(g_vm->_currGraphicalDevice, y, dy);
-	g_vm->_mouse.showMouse();
-}
-
-void charecr(int y, int dy) {
-	g_vm->_mouse.hideMouse();
-	s_char(g_vm->_currGraphicalDevice, y, dy);
-	g_vm->_mouse.showMouse();
-}
-
 void adzon() {
 	Common::File f;
 
@@ -363,7 +351,7 @@ void repon(int f, int m) {
 }
 
 int chlm() {
-	int retval = getRandomNumber(1, 2);
+	int retval = g_vm->getRandomNumber(1, 2);
 	if (retval == 2)
 		retval = 128;
 	
@@ -459,13 +447,13 @@ void ecfren(int &p, int &rand, int cf, int roomId) {
 		p = -400;
 	if (p != -500) {
 		p += cf;
-		rand = getRandomNumber(1, 100);
+		rand = g_vm->getRandomNumber(1, 100);
 	}
 }
 
 void becfren(int roomId) {
 	if ((roomId == GREEN_ROOM) || (roomId == DARKBLUE_ROOM)) {
-		int rand = getRandomNumber(1, 2);
+		int rand = g_vm->getRandomNumber(1, 2);
 		if (roomId == GREEN_ROOM) {
 			if (rand == 1)
 				g_vm->_roomPresenceLuc = true;
@@ -503,7 +491,7 @@ void init_nbrepm() {
 
 void phaz(int &rand, int &p, int cf) {
 	p += cf;
-	rand = getRandomNumber(1, 100);
+	rand = g_vm->getRandomNumber(1, 100);
 }
 
 /**
@@ -522,7 +510,7 @@ void resetVariables() {
 	g_s._secretPassageObjectId = 0;
 	g_s._purpleRoomObjectId = 136;
 	g_s._cryptObjectId = 141;
-	g_s._faithScore = getRandomNumber(4, 10);
+	g_s._faithScore = g_vm->getRandomNumber(4, 10);
 	g_s._currPlace = MANOR_FRONT;
 
 	for (int i = 2; i <= 6; ++i)
@@ -591,7 +579,7 @@ int t11(int roomId) {
 			else if (roomId == CHAPEL)
 				p = g_vm->getPresenceStatsChapel(h);
 			p += g_s._faithScore;
-			rand = getRandomNumber(1, 100);
+			rand = g_vm->getRandomNumber(1, 100);
 			if (rand > p) {
 				g_vm->displayAloneText();
 				retVal = 0;
@@ -621,7 +609,7 @@ void cavegre() {
 	g_vm->clearScreenType3();
 	g_vm->prepareScreenType2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
-	int rand = (getRandomNumber(0, 4)) - 2;
+	int rand = (g_vm->getRandomNumber(0, 4)) - 2;
 	g_vm->_speechManager.startSpeech(2, rand, 1);
 
 	// The original was doing here a useless loop.
@@ -827,11 +815,11 @@ void tinke() {
 					if (!g_vm->_brt) {
 						g_vm->_brt = true;
 						g_hdb = readclock();
-						if (getRandomNumber(1, 5) < 5) {
+						if (g_vm->getRandomNumber(1, 5) < 5) {
 							g_vm->clearScreenType3();
 							g_vm->prepareScreenType2();
 							ecr3(g_vm->getEngineString(S_HEAR_NOISE));
-							int rand = (getRandomNumber(0, 4)) - 2;
+							int rand = (g_vm->getRandomNumber(0, 4)) - 2;
 							g_vm->_speechManager.startSpeech(1, rand, 1);
 							g_vm->clearScreenType3();
 						}
@@ -1067,13 +1055,13 @@ L1:
 		g_vm->_syn = true;
 		g_vm->_col = true;
 	} else {
-		if (getRandomNumber(1, 3) == 2) {
+		if (g_vm->getRandomNumber(1, 3) == 2) {
 			g_vm->_hiddenHero = false;
 			g_crep = 137;
 			goto L1;
 		} else {
 			repon(2, 136);
-			int rand = (getRandomNumber(0, 4)) - 2;
+			int rand = (g_vm->getRandomNumber(0, 4)) - 2;
 			g_vm->_speechManager.startSpeech(3, rand, 1);
 			g_vm->clearScreenType2();
 			g_vm->displayAloneText();
@@ -1287,8 +1275,14 @@ void st13(int ob) {
 		g_crep = 105;
 }
 
-void aldepl() {
-	Alert::show(g_vm->getEngineString(S_USE_DEP_MENU), 1);
+void sauvecr(int y, int dy) {
+//	g_vm->_mouse.hideMouse();
+//	g_vm->_mouse.showMouse();
+}
+
+void charecr(int y, int dy) {
+//	g_vm->_mouse.hideMouse();
+//	g_vm->_mouse.showMouse();
 }
 
 } // End of namespace Mortevielle

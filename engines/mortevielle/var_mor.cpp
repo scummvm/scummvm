@@ -58,18 +58,6 @@ const byte g_tnocon[364] = {
 		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-
-const byte g_menuConstants[8][4] = {
-	{ 7, 37, 22,  8},
-	{19, 33, 23,  7},
-	{31, 89, 10, 21},
-	{43, 25, 11,  5},
-	{55, 37,  5,  8},
-	{64, 13, 11,  2},
-	{62, 22, 13,  4},
-	{62, 25, 13,  5}
-};
-
 const byte g_addv[2] = {8, 8};
 
 const byte g_rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
@@ -119,18 +107,16 @@ int g_nbrep[9];
 int g_nbrepm[9];
 int g_msg[5];
 byte g_touv[8];
-sav_chaine g_s, g_s1;
+SaveStruct g_s, g_s1;
 byte g_bufcha[391];
 
 byte g_lettres[7][24];
 
 uint16 g_t_mot[maxti + 1];
 int g_tay_tchar;
-ind g_t_rec[maxtd + 1];
+Hint g_t_rec[maxtd + 1];
 int g_l[108];
 int g_tbi[256];
-chariot g_c1, g_c2, g_c3;
-float g_addfix;
 Common::Point g_tabpal[91][17];
 t_pcga g_palcga[91];
 pattern g_tpt[15];
@@ -174,36 +160,10 @@ Common::String copy(const Common::String &s, int idx, size_t size) {
 int g_port[0xfff];
 byte g_mem[65536 * 16];
 
-/**
- * Engine function - Get a random number between two values
- * @remarks	Originally called 'get_random_number' and 'hazard'
- */
-int getRandomNumber(int minval, int maxval) {
-	return g_vm->_randomSource.getRandomNumber(maxval - minval) + minval;
-}
-
-/**
- * Restore a screen sectio
- */
-void s_sauv(int Gd, int y, int dy) {
-	// Note: May no longer be necessary, since the backgorund restore code 
-	// is being handled slightly differently now in the menuUp() method
-}
-
 void palette(int v1) {
 	warning("TODO: palette");
 }
 
-/**
- * Restore a screen area
- * @remarks	Currently implemented differently in ScummVM, so this method is redundant.
- * Original assembly was present in 'charecr.asm'
- */
-void s_char(int Gd, int y, int dy) {
-	debugC(1, kMortevielleCore, "s_char called");
-}
-
-// (* external 'c:\mc\reusint.com'; *)
 void musyc(tablint &tb, int nbseg, int att) {
 	warning("TODO: musyc");
 }

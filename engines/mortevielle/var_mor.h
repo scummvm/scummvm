@@ -76,7 +76,7 @@ const int kMenuActionStringIndex = 476;
 const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
 const int kSecretPassageQuestionStringIndex = 510;    // Unusued?
-
+const int kMaxPatt = 20;
 
 const int OPCODE_NONE = 0;
 enum verbs {OPCODE_ATTACH = 0x301, OPCODE_WAIT = 0x302,  OPCODE_FORCE = 0x303,   OPCODE_SLEEP = 0x304, OPCODE_LISTEN = 0x305, 
@@ -86,31 +86,12 @@ enum verbs {OPCODE_ATTACH = 0x301, OPCODE_WAIT = 0x302,  OPCODE_FORCE = 0x303,  
 			OPCODE_TURN = 0x315,   OPCODE_SHIDE = 0x401, OPCODE_SSEARCH = 0x402, OPCODE_SREAD = 0x403, OPCODE_SPUT = 0x404,
 			OPCODE_SLOOK = 0x405};
 
-const int kMaxPatt = 20;
-
-extern const byte g_tabdbc[18];
-extern const byte g_tabdph[16];
-extern const byte g_typcon[26];
-extern const byte g_intcon[26];
-extern const byte g_tnocon[364];
-
-extern const byte g_menuConstants[8][4];
-
-extern const byte g_addv[2];
-
-extern const byte g_rang[16];
-
-/*---------------------------------------------------------------------------*/
-/*--------------------------------   TYPES   --------------------------------*/
-/*---------------------------------------------------------------------------*/
-
 /*
 9   "A glance at the forbidden$",
 18  "It's already open$",
 26  "A photograph$",
 27  "The coat of arms$",
 */
-
 enum places {
 	OWN_ROOM = 0,     GREEN_ROOM = 1,   PURPLE_ROOM = 2,     TOILETS = 3,      DARKBLUE_ROOM = 4,
 	BLUE_ROOM = 5,    RED_ROOM = 6,     BATHROOM = 7,        GREEN_ROOM2 = 8,  ROOM9 = 9,
@@ -120,28 +101,43 @@ enum places {
 	DOOR = 25,        ROOM26 = 26,      ROOM27 = 27
 };
 
-struct sav_chaine {
+extern const byte g_tabdbc[18];
+extern const byte g_tabdph[16];
+extern const byte g_typcon[26];
+extern const byte g_intcon[26];
+extern const byte g_tnocon[364];
+extern const byte g_addv[2];
+extern const byte g_rang[16];
+
+struct Hint {
+	int _hintId;
+	byte _point;
+};
+
+struct SaveStruct {
 	int _faithScore;
 	byte _pourc[11];
 	byte _teauto[43];
 	byte _sjer[31];
-	int _currPlace, _atticBallHoleObjectId, _atticRodHoleObjectId, _cellarObjectId, _secretPassageObjectId, _wellObjectId;
-	int _selectedObjectId, _purpleRoomObjectId, _cryptObjectId;
+	int _currPlace;
+	int _atticBallHoleObjectId;
+	int _atticRodHoleObjectId;
+	int _cellarObjectId;
+	int _secretPassageObjectId;
+	int _wellObjectId;
+	int _selectedObjectId;
+	int _purpleRoomObjectId;
+	int _cryptObjectId;
 	bool _alreadyEnteredManor;
 	byte _fullHour;
 };
 
-struct ind {
-	int _indis;
-	byte _point;
-};
-
-struct chariot {
-	int _val,
-		_code,
-		_acc,
-		_freq,
-		_rep;
+struct SpeechQueue {
+	int _val;
+	int _code;
+	int _acc;
+	int _freq;
+	int _rep;
 };
 
 struct rectangle {
@@ -221,18 +217,16 @@ extern int g_nbrep[9];
 extern int g_nbrepm[9];
 extern int g_msg[5];
 extern byte g_touv[8];
-extern sav_chaine g_s, g_s1;
+extern SaveStruct g_s, g_s1;
 extern byte g_bufcha[391];
 
 extern byte g_lettres[7][24];
 
 extern uint16 g_t_mot[maxti + 1];
 extern int g_tay_tchar;
-extern ind g_t_rec[maxtd + 1];
+extern Hint g_t_rec[maxtd + 1];
 extern int g_l[108];
 extern int g_tbi[256];
-extern chariot g_c1, g_c2, g_c3;
-extern float g_addfix;
 extern Common::Point g_tabpal[91][17];
 extern t_pcga g_palcga[91];
 extern pattern g_tpt[15];
@@ -258,10 +252,6 @@ extern byte g_mem[65536 * 16];
 #define hires {}
 
 extern void palette(int v1);
-extern int getRandomNumber(int minval, int maxval);
-
-extern void s_char(int Gd, int y, int dy);
-extern void s_sauv(int Gd, int y, int dy);
 
 } // End of namespace Mortevielle
 

@@ -114,7 +114,6 @@ extern void rechai(int &ch);
 extern int t23coul();
 extern void maivid();
 extern void st13(int ob);
-extern void aldepl();
 
 } // End of namespace Mortevielle
 #endif

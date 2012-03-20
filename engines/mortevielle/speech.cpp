@@ -41,15 +41,15 @@ SpeechManager::SpeechManager() {
 }
 
 void SpeechManager::spfrac(int wor) {
-	g_c3._rep = (uint)wor >> 12;
-	if ((_typlec == 0) && (g_c3._code != 9))
-		if (((g_c3._code > 4) && (g_c3._val != 20) && (g_c3._rep != 3) && (g_c3._rep != 6) && (g_c3._rep != 9)) ||
-				((g_c3._code < 5) && ((g_c3._val != 19) && (g_c3._val != 22) && (g_c3._rep != 4) && (g_c3._rep != 9)))) {
-			++g_c3._rep;
+	_queue[2]._rep = (uint)wor >> 12;
+	if ((_typlec == 0) && (_queue[2]._code != 9))
+		if (((_queue[2]._code > 4) && (_queue[2]._val != 20) && (_queue[2]._rep != 3) && (_queue[2]._rep != 6) && (_queue[2]._rep != 9)) ||
+				((_queue[2]._code < 5) && ((_queue[2]._val != 19) && (_queue[2]._val != 22) && (_queue[2]._rep != 4) && (_queue[2]._rep != 9)))) {
+			++_queue[2]._rep;
 		}
 
-	g_c3._freq = ((uint)wor >> 6) & 7;
-	g_c3._acc = ((uint)wor >> 9) & 7;
+	_queue[2]._freq = ((uint)wor >> 6) & 7;
+	_queue[2]._acc = ((uint)wor >> 9) & 7;
 }
 
 void SpeechManager::charg_car(int &currWordNumb) {
@@ -57,31 +57,31 @@ void SpeechManager::charg_car(int &currWordNumb) {
 	int int_ = wor & 0x3f; // 63
 
 	if ((int_ >= 0) && (int_ <= 13)) {
-		g_c3._val = int_;
-		g_c3._code = 5;
+		_queue[2]._val = int_;
+		_queue[2]._code = 5;
 	} else if ((int_ >= 14) && (int_ <= 21)) {
-		g_c3._val = int_;
-		g_c3._code = 6;
+		_queue[2]._val = int_;
+		_queue[2]._code = 6;
 	} else if ((int_ >= 22) && (int_ <= 47)) {
 		int_ = int_ - 22;
-		g_c3._val = int_;
-		g_c3._code = g_typcon[int_];
+		_queue[2]._val = int_;
+		_queue[2]._code = g_typcon[int_];
 	} else if ((int_ >= 48) && (int_ <= 56)) {
-		g_c3._val = int_ - 22;
-		g_c3._code = 4;
+		_queue[2]._val = int_ - 22;
+		_queue[2]._code = 4;
 	} else {
 		switch (int_) {
 		case 60:
-			g_c3._val = 32;  /*  " "  */
-			g_c3._code = 9;
+			_queue[2]._val = 32;  /*  " "  */
+			_queue[2]._code = 9;
 			break;
 		case 61:
-			g_c3._val = 46;  /*  "."  */
-			g_c3._code = 9;
+			_queue[2]._val = 46;  /*  "."  */
+			_queue[2]._code = 9;
 			break;
 		case 62:
-			g_c3._val = 35;  /*  "#"  */
-			g_c3._code = 9;
+			_queue[2]._val = 35;  /*  "#"  */
+			_queue[2]._code = 9;
 		default:
 			break;
 		}
@@ -106,7 +106,7 @@ void SpeechManager::cctable(tablint &t) {
 
 	tb[0] = 0;
 	for (int k = 0; k <= 255; ++k) {
-		tb[k + 1] = g_addfix + tb[k];
+		tb[k + 1] = g_vm->_addfix + tb[k];
 		t[255 - k] = abs((int)tb[k] + 1);
 	}
 }
@@ -176,40 +176,40 @@ void SpeechManager::trait_car() {
 	byte d3;
 	int d2, i;
 
-	switch (g_c2._code) {
+	switch (_queue[1]._code) {
 	case 9:
-		if (g_c2._val != ord('#'))
-			for (i = 0; i <= g_c2._rep; ++i)
-				entroct(g_c2._val);
+		if (_queue[1]._val != ord('#'))
+			for (i = 0; i <= _queue[1]._rep; ++i)
+				entroct(_queue[1]._val);
 		break;
 	case 5:
 	case 6:
-		if (g_c2._code == 6)
-			d3 = g_tabdph[(g_c2._val - 14) << 1];
+		if (_queue[1]._code == 6)
+			d3 = g_tabdph[(_queue[1]._val - 14) << 1];
 		else
 			d3 = kNullValue;
-		if (g_c1._code >= 5) {
-			veracf(g_c2._acc);
-			if (g_c1._code == 9) {
+		if (_queue[0]._code >= 5) {
+			veracf(_queue[1]._acc);
+			if (_queue[0]._code == 9) {
 				entroct(4);
 				if (d3 == kNullValue)
-					entroct(g_c2._val);
+					entroct(_queue[1]._val);
 				else
 					entroct(d3);
 				entroct(22);
 			}
 		}
 
-		switch (g_c2._rep) {
+		switch (_queue[1]._rep) {
 		case 0:
 			entroct(0);
-			entroct(g_c2._val);
+			entroct(_queue[1]._val);
 			if (d3 == kNullValue)
-				if (g_c3._code == 9)
+				if (_queue[2]._code == 9)
 					entroct(2);
 				else
 					entroct(4);
-			else if (g_c3._code == 9)
+			else if (_queue[2]._code == 9)
 				entroct(0);
 			else
 				entroct(1);
@@ -217,13 +217,13 @@ void SpeechManager::trait_car() {
 		case 4:
 		case 5:
 		case 6:
-			if (g_c2._rep != 4) {
-				i = g_c2._rep - 5;
+			if (_queue[1]._rep != 4) {
+				i = _queue[1]._rep - 5;
 				do {
 					--i;
 					entroct(0);
 					if (d3 == kNullValue)
-						entroct(g_c2._val);
+						entroct(_queue[1]._val);
 					else
 						entroct(d3);
 					entroct(3);
@@ -231,24 +231,24 @@ void SpeechManager::trait_car() {
 			}
 			if (d3 == kNullValue) {
 				entroct(4);
-				entroct(g_c2._val);
+				entroct(_queue[1]._val);
 				entroct(0);
 			} else {
 				entroct(0);
-				entroct(g_c2._val);
+				entroct(_queue[1]._val);
 				entroct(3);
 			}
 			break;
 		case 7:
 		case 8:
 		case 9:
-			if (g_c2._rep != 7) {
-				i = g_c2._rep - 8;
+			if (_queue[1]._rep != 7) {
+				i = _queue[1]._rep - 8;
 				do {
 					--i;
 					entroct(0);
 					if (d3 == kNullValue)
-						entroct(g_c2._val);
+						entroct(_queue[1]._val);
 					else
 						entroct(d3);
 					entroct(3);
@@ -256,32 +256,32 @@ void SpeechManager::trait_car() {
 			}
 			if (d3 == kNullValue) {
 				entroct(0);
-				entroct(g_c2._val);
+				entroct(_queue[1]._val);
 				entroct(2);
 			} else {
 				entroct(0);
-				entroct(g_c2._val);
+				entroct(_queue[1]._val);
 				entroct(0);
 			}
 			break;
 		case 1:
 		case 2:
 		case 3:
-			if (g_c2._rep != 1) {
-				i = g_c2._rep - 2;
+			if (_queue[1]._rep != 1) {
+				i = _queue[1]._rep - 2;
 				do {
 					--i;
 					entroct(0);
 					if (d3 == kNullValue)
-						entroct(g_c2._val);
+						entroct(_queue[1]._val);
 					else
 						entroct(d3);
 					entroct(3);
 				} while (i >= 0);
 			}
 			entroct(0);
-			entroct(g_c2._val);
-			if (g_c3._code == 9)
+			entroct(_queue[1]._val);
+			if (_queue[2]._code == 9)
 				entroct(0);
 			else
 				entroct(1);
@@ -293,16 +293,16 @@ void SpeechManager::trait_car() {
 
 	case 2:
 	case 3:
-		d3 = g_c2._code + 5; //  7 ou 8  => Corresponding vowel
-		if (g_c1._code > 4) {
-			veracf(g_c2._acc);
-			if (g_c1._code == 9) {
+		d3 = _queue[1]._code + 5; //  7 ou 8  => Corresponding vowel
+		if (_queue[0]._code > 4) {
+			veracf(_queue[1]._acc);
+			if (_queue[0]._code == 9) {
 				entroct(4);
 				entroct(d3);
 				entroct(22);
 			}
 		}
-		i = g_c2._rep;
+		i = _queue[1]._rep;
 		assert(i >= 0);
 		if (i != 0) {
 			do {
@@ -312,24 +312,24 @@ void SpeechManager::trait_car() {
 				entroct(3);
 			} while (i > 0);
 		}
-		veracf(g_c3._acc);
-		if (g_c3._code == 6) {
+		veracf(_queue[2]._acc);
+		if (_queue[2]._code == 6) {
 			entroct(4);
-			entroct(g_tabdph[(g_c3._val - 14) << 1]);
-			entroct(g_c2._val);
+			entroct(g_tabdph[(_queue[2]._val - 14) << 1]);
+			entroct(_queue[1]._val);
 		} else {
 			entroct(4);
-			if (g_c3._val == 4)
+			if (_queue[2]._val == 4)
 				entroct(3);
 			else
-				entroct(g_c3._val);
-			entroct(g_c2._val);
+				entroct(_queue[2]._val);
+			entroct(_queue[1]._val);
 		}
 		break;
 	case 0:
 	case 1: 
-		veracf(g_c2._acc);
-		switch (g_c3._code) {
+		veracf(_queue[1]._acc);
+		switch (_queue[2]._code) {
 		case 2:
 			d2 = 7;
 			break;
@@ -337,66 +337,66 @@ void SpeechManager::trait_car() {
 			d2 = 8;
 			break;
 		case 6:
-			d2 = g_tabdph[(g_c3._val - 14) << 1];
+			d2 = g_tabdph[(_queue[2]._val - 14) << 1];
 			break;
 		case 5:
-			d2 = g_c3._val;
+			d2 = _queue[2]._val;
 			break;
 		default:
 			d2 = 10;
 			break;
 		}       //  switch  c3._code
-		d2 = (d2 * 26) + g_c2._val;
+		d2 = (d2 * 26) + _queue[1]._val;
 		if (g_tnocon[d2] == 0)
 			d3 = 2;
 		else
 			d3 = 6;
-		if (g_c2._rep >= 5) {
-			g_c2._rep = g_c2._rep - 5;
+		if (_queue[1]._rep >= 5) {
+			_queue[1]._rep -= 5;
 			d3 = 8 - d3;       // Swap 2 and 6
 		}
-		if (g_c2._code == 0) {
-			i = g_c2._rep;
+		if (_queue[1]._code == 0) {
+			i = _queue[1]._rep;
 			if (i != 0) {
 				do {
 					--i;
 					entroct(d3);
-					entroct(g_c2._val);
+					entroct(_queue[1]._val);
 					entroct(3);
 				} while (i > 0);
 			}
 			entroct(d3);
-			entroct(g_c2._val);
+			entroct(_queue[1]._val);
 			entroct(4);
 		} else {
 			entroct(d3);
-			entroct(g_c2._val);
+			entroct(_queue[1]._val);
 			entroct(3);
-			i = g_c2._rep;
+			i = _queue[1]._rep;
 			if (i != 0) {
 				do {
 					--i;
 					entroct(d3);
-					entroct(g_c2._val);
+					entroct(_queue[1]._val);
 					entroct(4);
 				} while (i > 0);
 			}
 		}
-		if (g_c3._code == 9) {
+		if (_queue[2]._code == 9) {
 			entroct(d3);
-			entroct(g_c2._val);
+			entroct(_queue[1]._val);
 			entroct(5);
-		} else if ((g_c3._code != 0) && (g_c3._code != 1) && (g_c3._code != 4)) {
-			veracf(g_c3._acc);
-			switch (g_c3._code) {
+		} else if ((_queue[2]._code != 0) && (_queue[2]._code != 1) && (_queue[2]._code != 4)) {
+			veracf(_queue[2]._acc);
+			switch (_queue[2]._code) {
 			case 3:
 				d2 = 8;
 				break;
 			case 6:
-				d2 = g_tabdph[(g_c3._val - 14) << 1];
+				d2 = g_tabdph[(_queue[2]._val - 14) << 1];
 				break;
 			case 5:
-				d2 = g_c3._val;
+				d2 = _queue[2]._val;
 				break;
 			default:
 				d2 = 7;
@@ -405,47 +405,47 @@ void SpeechManager::trait_car() {
 			if (d2 == 4)
 				d2 = 3;
 
-			if (g_intcon[g_c2._val] != 0)
-				++g_c2._val;
+			if (g_intcon[_queue[1]._val] != 0)
+				++_queue[1]._val;
 
-			if ((g_c2._val == 17) || (g_c2._val == 18))
-				g_c2._val = 16;
+			if ((_queue[1]._val == 17) || (_queue[1]._val == 18))
+				_queue[1]._val = 16;
 
 			entroct(4);
 			entroct(d2);
-			entroct(g_c2._val);
+			entroct(_queue[1]._val);
 		}
 	
 		break;
 	case 4:
-		veracf(g_c2._acc);
-		i = g_c2._rep;
+		veracf(_queue[1]._acc);
+		i = _queue[1]._rep;
 		if (i != 0) {
 			do {
 				--i;
 				entroct(2);
-				entroct(g_c2._val);
+				entroct(_queue[1]._val);
 				entroct(3);
 			} while (i > 0);
 		}
 		entroct(2);
-		entroct(g_c2._val);
+		entroct(_queue[1]._val);
 		entroct(4);
-		if (g_c3._code == 9) {
+		if (_queue[2]._code == 9) {
 			entroct(2);
-			entroct(g_c2._val);
+			entroct(_queue[1]._val);
 			entroct(5);
-		} else if ((g_c3._code != 0) && (g_c3._code != 1) && (g_c3._code != 4)) {
-			veracf(g_c3._acc);
-			switch (g_c3._code) {
+		} else if ((_queue[2]._code != 0) && (_queue[2]._code != 1) && (_queue[2]._code != 4)) {
+			veracf(_queue[2]._acc);
+			switch (_queue[2]._code) {
 			case 3:
 				d2 = 8;
 				break;
 			case 6:
-				d2 = g_tabdph[(g_c3._val - 14) << 1];
+				d2 = g_tabdph[(_queue[2]._val - 14) << 1];
 				break;
 			case 5:
-				d2 = g_c3._val;
+				d2 = _queue[2]._val;
 				break;
 			default:
 				d2 = 7;
@@ -455,12 +455,12 @@ void SpeechManager::trait_car() {
 			if (d2 == 4)
 				d2 = 3;
 
-			if (g_intcon[g_c2._val] != 0)
-				++g_c2._val;
+			if (g_intcon[_queue[1]._val] != 0)
+				++_queue[1]._val;
 
 			entroct(4);
 			entroct(d2);
-			entroct(g_tabdbc[((g_c2._val - 26) << 1) + 1]);
+			entroct(g_tabdbc[((_queue[1]._val - 26) << 1) + 1]);
 		}
 	
 		break;
@@ -474,10 +474,10 @@ void SpeechManager::trait_car() {
  * @remarks	Originally called 'rot_chariot'
  */
 void SpeechManager::moveQueue() {
-	g_c1 = g_c2;
-	g_c2 = g_c3;
-	g_c3._val = 32;
-	g_c3._code = 9;
+	_queue[0] = _queue[1];
+	_queue[1] = _queue[2];
+	_queue[2]._val = 32;
+	_queue[2]._code = 9;
 }
 
 /**
@@ -485,9 +485,9 @@ void SpeechManager::moveQueue() {
  * @remarks	Originally called 'init_chariot'
  */
 void SpeechManager::initQueue() {
-	g_c3._rep = 0;
-	g_c3._freq = 0;
-	g_c3._acc = 0;
+	_queue[2]._rep = 0;
+	_queue[2]._freq = 0;
+	_queue[2]._acc = 0;
 	moveQueue();
 	moveQueue();
 }
@@ -542,7 +542,7 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		tempo = kTempoF;
 	else
 		tempo = kTempoM;
-	g_addfix = (float)((tempo - g_addv[0])) / 256;
+	g_vm->_addfix = (float)((tempo - g_addv[0])) / 256;
 	cctable(g_tbi);
 	switch (typ) {
 	case 1:

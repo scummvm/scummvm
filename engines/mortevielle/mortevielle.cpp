@@ -339,8 +339,8 @@ bool MortevielleEngine::handleEvents() {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_MOUSEMOVE:
 		_mousePos = Common::Point(event.mouse.x, event.mouse.y / 2);
-		g_vm->_mouse._pos.x = event.mouse.x;
-		g_vm->_mouse._pos.y = event.mouse.y / 2;
+		_mouse._pos.x = event.mouse.x;
+		_mouse._pos.y = event.mouse.y / 2;
 
 		if (event.type == Common::EVENT_LBUTTONDOWN)
 			_mouseClick = true;
@@ -550,7 +550,7 @@ void MortevielleEngine::mainGame() {
 	initGame();
 	hirs();
 	drawRightFrame();
-	g_vm->_mouse.showMouse();
+	_mouse.showMouse();
 
 	// Loop to play the game
 	do {
@@ -603,7 +603,7 @@ void MortevielleEngine::handleAction() {
 		do {
 			_menu.mdn();
 			tinke();
-			g_vm->_mouse.moveMouse(funct, inkey);
+			_mouse.moveMouse(funct, inkey);
 			CHECK_QUIT;
 			temps = temps + 1;
 		} while (!((_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));
@@ -652,7 +652,7 @@ void MortevielleEngine::handleAction() {
 				g_mnumo = g_msg[4];
 			if (!_anyone) {
 				if ((_heroSearching) || (_obpart)) {
-					if (g_vm->_mouse._pos.y < 12)
+					if (_mouse._pos.y < 12)
 						return;
 
 					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {
@@ -1989,7 +1989,7 @@ void MortevielleEngine::handleOpcode() {
 void MortevielleEngine::hourToChar() {
 	int day, hour, minute;
 
-	g_vm->updateHour(day, hour, minute);
+	updateHour(day, hour, minute);
 	if (minute == 30)
 		minute = 1;
 	hour += day * 24;
@@ -2004,14 +2004,14 @@ void MortevielleEngine::hourToChar() {
 void MortevielleEngine::charToHour() {
 	int fullHour = ord(g_s._fullHour);
 	int tmpHour = fullHour % 48;
-	g_vm->_currDay = fullHour / 48;
-	g_vm->_currHalfHour = tmpHour % 2;
-	g_vm->_currHour = tmpHour / 2;
-	g_vm->_hour = g_vm->_currHour;
-	if (g_vm->_currHalfHour == 1)
-		g_vm->_minute = 30;
+	_currDay = fullHour / 48;
+	_currHalfHour = tmpHour % 2;
+	_currHour = tmpHour / 2;
+	_hour = _currHour;
+	if (_currHalfHour == 1)
+		_minute = 30;
 	else
-		g_vm->_minute = 0;
+		_minute = 0;
 }
 
 /**
@@ -2019,9 +2019,9 @@ void MortevielleEngine::charToHour() {
  * @remarks	Originally called 'clsf1'
  */
 void MortevielleEngine::clearScreenType1() {
-	g_vm->_mouse.hideMouse();
-	g_vm->_screenSurface.fillRect(0, Common::Rect(0, 11, 514, 175));
-	g_vm->_mouse.showMouse();
+	_mouse.hideMouse();
+	_screenSurface.fillRect(0, Common::Rect(0, 11, 514, 175));
+	_mouse.showMouse();
 }
 
 /**
@@ -2029,16 +2029,16 @@ void MortevielleEngine::clearScreenType1() {
  * @remarks	Originally called 'clsf2'
  */
 void MortevielleEngine::clearScreenType2() {
-	g_vm->_mouse.hideMouse();
-	if (g_vm->_largestClearScreen) {
-		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
-		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
-		g_vm->_largestClearScreen = false;
+	_mouse.hideMouse();
+	if (_largestClearScreen) {
+		_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
+		_screenSurface.drawBox(0, 175, 634, 24, 15);
+		_largestClearScreen = false;
 	} else {
-		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
-		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
+		_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
+		_screenSurface.drawBox(0, 175, 634, 15, 15);
 	}
-	g_vm->_mouse.showMouse();
+	_mouse.showMouse();
 }
 
 /**
@@ -2046,10 +2046,10 @@ void MortevielleEngine::clearScreenType2() {
  * @remarks	Originally called 'clsf3'
  */
 void MortevielleEngine::clearScreenType3() {
-	g_vm->_mouse.hideMouse();
-	g_vm->_screenSurface.fillRect(0, Common::Rect(1, 192, 633, 199));
-	g_vm->_screenSurface.drawBox(0, 191, 634, 8, 15);
-	g_vm->_mouse.showMouse();
+	_mouse.hideMouse();
+	_screenSurface.fillRect(0, Common::Rect(1, 192, 633, 199));
+	_screenSurface.drawBox(0, 191, 634, 8, 15);
+	_mouse.showMouse();
 }
 
 /**
@@ -2060,7 +2060,7 @@ void MortevielleEngine::clearScreenType10() {
 	int co, cod;
 	Common::String st;
 
-	g_vm->_mouse.hideMouse();
+	_mouse.hideMouse();
 	if (g_res == 1) {
 		co = 634;
 		cod = 534;
@@ -2068,21 +2068,37 @@ void MortevielleEngine::clearScreenType10() {
 		co = 600;
 		cod = 544;
 	}
-	g_vm->_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
+	_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
 	if (g_s._faithScore < 33)
-		st = g_vm->getEngineString(S_COOL);
+		st = getEngineString(S_COOL);
 	else if (g_s._faithScore < 66)
-		st = g_vm->getEngineString(S_LOURDE);
+		st = getEngineString(S_LOURDE);
 	else if (g_s._faithScore > 65)
-		st = g_vm->getEngineString(S_MALSAINE);
+		st = getEngineString(S_MALSAINE);
 	
-	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
-	g_vm->_screenSurface.putxy(co, 92);
-	g_vm->_screenSurface.drawString(st, 4);
+	co = 580 - (_screenSurface.getStringWidth(st) / 2);
+	_screenSurface.putxy(co, 92);
+	_screenSurface.drawString(st, 4);
 
-	g_vm->_screenSurface.fillRect(15, Common::Rect(560, 24, 610, 86));
+	_screenSurface.fillRect(15, Common::Rect(560, 24, 610, 86));
 	/* rempli(69,12,32,5,255);*/
-	g_vm->_mouse.showMouse();
+	_mouse.showMouse();
+}
+
+/**
+ * Engine function - Get a random number between two values
+ * @remarks	Originally called 'get_random_number' and 'hazard'
+ */
+int MortevielleEngine::getRandomNumber(int minval, int maxval) {
+	return _randomSource.getRandomNumber(maxval - minval) + minval;
+}
+
+/**
+ * Engine function - Show alert "use move menu"
+ * @remarks	Originally called 'aldepl'
+ */
+void MortevielleEngine::showMoveMenuAlert() {
+	Alert::show(getEngineString(S_USE_DEP_MENU), 1);
 }
 
 } // End of namespace Mortevielle
