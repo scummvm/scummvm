@@ -106,33 +106,11 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		Math::Vector3d localUp; // Character up direction vector in local space.
 		Math::Vector3d frontDir; // Character front facing direction vector in world space (global scene coordinate space)
 
-		if (fname.compareTo("gunar_meshes.cos") == 0 || fname.compareTo("slisko_meshes.cos") == 0) {
-			// For these characters, the head coordinate frame is: -Z front, -X up, +Y right.
-			frontDir = Math::Vector3d(-_joint3Node->_matrix(0,2), -_joint3Node->_matrix(1,2), -_joint3Node->_matrix(2,2)); // Look straight ahead. (-Z)
-			localFront = Math::Vector3d(0,0,-1);
-			localUp = Math::Vector3d(-1,0,0);
-		} else if (fname.compareTo("meche_island.cos") == 0)	{
-			// For Meche inside her office, the head coordinate frame is: -Y forward, +Z up, -X right.
-			// NOTE: I suspect that the above is not strictly correct, but that the coordinate frame here
-			// is the same as for most of the characters (the case below), but it seems that the LUA scripts
-			// actually are asking for Meche to look straight backwards! Which causes the maxYaw/maxPitch/maxRoll logic
-			// to constrain the head in an awkward angle. Instead, try to orient the back of Meche's head towards the
-			// desired direction.
-			frontDir = Math::Vector3d(-_joint3Node->_matrix(0,1), -_joint3Node->_matrix(1,1), -_joint3Node->_matrix(2,1)); // Look straight ahead. (-Y)
-			localFront = Math::Vector3d(0,-1,0);
-			localUp = Math::Vector3d(0,0,1);
-		} else {
-			// the character head coordinate frame is: +Y forward, +Z up, +X right.
-			frontDir = Math::Vector3d(_joint3Node->_matrix(0,1), _joint3Node->_matrix(1,1), _joint3Node->_matrix(2,1)); // Look straight ahead. (+Y)
-			localFront = Math::Vector3d(0,1,0);
-			localUp = Math::Vector3d(0,0,1);
-		}
-		
-		// yFront == true for about every character in the game.
-		// yFront == false for those two revolutionistas in Blue Casket. Perhaps the artist wanted to be 
-		//                 a revolutionist as well ;) OR, there is a bug in the way how transform hierarchies
-		//                 are concatenated. (it is possible, at the present I do not understand all the details of
-		//                 the animation mechanism)
+		// the character head coordinate frame is: +Y forward, +Z up, +X right.
+		frontDir = Math::Vector3d(_joint3Node->_matrix(0,1), _joint3Node->_matrix(1,1), _joint3Node->_matrix(2,1)); // Look straight ahead. (+Y)
+		localFront = Math::Vector3d(0,1,0);
+		localUp = Math::Vector3d(0,0,1);
+				
 		// v is the world space direction vector this character should be looking towards.
 		Math::Vector3d v = point - _joint3Node->_pivotMatrix.getPosition();
 		if (!entering)
@@ -233,15 +211,10 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		lookAtTM = animFrame * lookAtTM;
 		
 		lookAtTM.getPitchYawRoll(&pt, &y, &r);
-		_joint3Node->_animYaw = y;
-		_joint3Node->_animPitch = pt;
-		_joint3Node->_animRoll = r;
+		_joint3Node->_animYaw = y - _joint3Node->_yaw;
+		_joint3Node->_animPitch = pt - _joint3Node->_pitch;
+		_joint3Node->_animRoll = r - _joint3Node->_roll;
 		
-		// hack hack:
-		_joint1Node->_animYaw -= _joint1Node->_yaw;
-		_joint1Node->_animPitch -= _joint1Node->_pitch;
-		_joint1Node->_animRoll -= _joint1Node->_roll;
-
 	}
 }
 
