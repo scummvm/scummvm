@@ -270,7 +270,7 @@ void Menu::invers(int ix) {
 		g_msg4 = OPCODE_NONE;
 }
 
-void Menu::util(int x, int y) {
+void Menu::util(Common::Point pos) {
 
 	int ymx = (g_menuConstants[g_msg3 - 1][3] << 3) + 16;
 	int dxcar = g_menuConstants[g_msg3 - 1][2];
@@ -282,8 +282,8 @@ void Menu::util(int x, int y) {
 	else
 		ix = 3;
 	int xmx = dxcar * ix * g_res + xmn + 2;
-	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
-		ix = (((uint)y >> 3) - 1) + (g_msg3 << 8);
+	if ((pos.x > xmn) && (pos.x < xmx) && (pos.y < ymx) && (pos.y > 15)) {
+		ix = (((uint)pos.y >> 3) - 1) + (g_msg3 << 8);
 		if (ix != g_msg4) {
 			invers(1);
 			g_msg4 = ix;
@@ -417,35 +417,32 @@ void Menu::mdn() {
 	if (!_menuActive)
 		return;
 
-	int x = g_vm->_mouse.x_s;
-	int y = g_vm->_mouse.y_s;
+	Common::Point curPos = g_vm->_mouse._pos;
 	if (!g_vm->getMouseClick()) {
-		if ((x == g_xprec) && (y == g_yprec))
+		if (curPos == g_vm->_prevPos)
 			return;
-		else {
-			g_xprec = x;
-			g_yprec = y;
-		}
+		else
+			g_vm->_prevPos = curPos;
 		
-		bool tes =  (y < 11) 
-		   && ((x >= (28 * g_res) && x <= (28 * g_res + 24)) 
-		   ||  (x >= (76 * g_res) && x <= (76 * g_res + 24))
-		   || ((x > 124 * g_res) && (x < 124 * g_res + 24))
-		   || ((x > 172 * g_res) && (x < 172 * g_res + 24))
-		   || ((x > 220 * g_res) && (x < 220 * g_res + 24))
-		   || ((x > 268 * g_res) && (x < 268 * g_res + 24)));
+		bool tes =  (curPos.y < 11) 
+		   && ((curPos.x >= (28 * g_res) && curPos.x <= (28 * g_res + 24)) 
+		   ||  (curPos.x >= (76 * g_res) && curPos.x <= (76 * g_res + 24))
+		   || ((curPos.x > 124 * g_res) && (curPos.x < 124 * g_res + 24))
+		   || ((curPos.x > 172 * g_res) && (curPos.x < 172 * g_res + 24))
+		   || ((curPos.x > 220 * g_res) && (curPos.x < 220 * g_res + 24))
+		   || ((curPos.x > 268 * g_res) && (curPos.x < 268 * g_res + 24)));
 		if (tes) {
 			int ix;
 
-			if (x < 76 * g_res)
+			if (curPos.x < 76 * g_res)
 				ix = MENU_INVENTORY;
-			else if (x < 124 * g_res)
+			else if (curPos.x < 124 * g_res)
 				ix = MENU_MOVE;
-			else if (x < 172 * g_res)
+			else if (curPos.x < 172 * g_res)
 				ix = MENU_ACTION;
-			else if (x < 220 * g_res)
+			else if (curPos.x < 220 * g_res)
 				ix = MENU_SELF;
-			else if (x < 268 * g_res)
+			else if (curPos.x < 268 * g_res)
 				ix = MENU_DISCUSS;
 			else
 				ix = MENU_FILE;
@@ -458,8 +455,8 @@ void Menu::mdn() {
 					g_msg4 = OPCODE_NONE;
 				}
 		} else { // Not in the MenuTitle line
-			if ((y > 11) && (_multiTitle))
-				util(x, y);
+			if ((curPos.y > 11) && (_multiTitle))
+				util(curPos);
 		}
 	} else {       // There was a click
 		if ((g_msg3 == MENU_FILE) && (g_msg4 != OPCODE_NONE)) {

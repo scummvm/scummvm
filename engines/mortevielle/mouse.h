@@ -33,21 +33,17 @@
 namespace Mortevielle {
 
 class MouseHandler {
-protected:
+private:
 	int s_s[12][6];
-public:
-	bool int_m;
+	int _counter;
 
-	int m_show;
-	int x_s;
-	int y_s;
-	int p_o_s;
-	int mouse_shwn;
+public:
+	Common::Point _pos;
 
 	void initMouse();
 	void hideMouse();
 	void showMouse();
-	void setMousePos(int x, int y);
+	void setMousePos(Common::Point newPos);
 	void getMousePos_(int &x, int &y, int &c);
 	void moveMouse(bool &funct, char &key);
 	bool isMouseIn(rectangle r);

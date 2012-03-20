@@ -339,8 +339,8 @@ bool MortevielleEngine::handleEvents() {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_MOUSEMOVE:
 		_mousePos = Common::Point(event.mouse.x, event.mouse.y / 2);
-		g_vm->_mouse.x_s = event.mouse.x;
-		g_vm->_mouse.y_s = event.mouse.y / 2;
+		g_vm->_mouse._pos.x = event.mouse.x;
+		g_vm->_mouse._pos.y = event.mouse.y / 2;
 
 		if (event.type == Common::EVENT_LBUTTONDOWN)
 			_mouseClick = true;
@@ -652,7 +652,7 @@ void MortevielleEngine::handleAction() {
 				g_mnumo = g_msg[4];
 			if (!_anyone) {
 				if ((_heroSearching) || (_obpart)) {
-					if (g_vm->_mouse.y_s < 12)
+					if (g_vm->_mouse._pos.y < 12)
 						return;
 
 					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {

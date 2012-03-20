@@ -134,7 +134,6 @@ void chartex() {
 void dialpre() {
 	/* debug('o3 dialpre'); */
 	g_crep = 998;
-	g_vm->_mouse.int_m = true;
 }
 
 void music() {

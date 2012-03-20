@@ -131,10 +131,6 @@ struct sav_chaine {
 	byte _fullHour;
 };
 
-struct registres {
-	int _ax, _bx, _cx, _dx, _bp, _si, _di, _ds, _es, _flags;
-};
-
 struct ind {
 	int _indis;
 	byte _point;
@@ -210,8 +206,6 @@ extern int g_x,
         g_menup,
         g_mpers,
         g_mnumo,
-        g_xprec,
-        g_yprec,
         g_perdep,
         g_prebru,
         g_numpal,
@@ -264,7 +258,6 @@ extern byte g_mem[65536 * 16];
 #define hires {}
 
 extern void palette(int v1);
-extern void intr(int intNum, registres &regs);
 extern int getRandomNumber(int minval, int maxval);
 
 extern void s_char(int Gd, int y, int dy);

@@ -105,8 +105,6 @@ int g_x,
         g_menup,
         g_mpers,
         g_mnumo,
-        g_xprec,
-        g_yprec,
         g_perdep,
         g_prebru,
         g_numpal,
@@ -175,10 +173,6 @@ Common::String copy(const Common::String &s, int idx, size_t size) {
 
 int g_port[0xfff];
 byte g_mem[65536 * 16];
-
-void intr(int intNum, registres &regs) {
-	warning("STUBBED: Call to DOS interrupt #%d", intNum);
-}
 
 /**
  * Engine function - Get a random number between two values
