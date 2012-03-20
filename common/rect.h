@@ -244,11 +244,12 @@ struct Rect {
 
 	/**
 	 * Create a rectangle around the given center.
+	 * @note the center point is rounded up and left when given an odd width and height
 	 */
 	static Rect center(int16 cx, int16 cy, int16 w, int16 h) {
-		w /= 2;
-		h /= 2;
-		return Rect(cx - w, cy - h, cx + w, cy + h);
+		int dx = w / 2;
+		int dy = h / 2;
+		return Rect(cx - dx, cy - dy, cx + dx + (w & 1), cy + dy + (h & 1));
 	}
 };
 
