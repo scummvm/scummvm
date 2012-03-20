@@ -154,6 +154,7 @@ public:
 	int _day;
 	int _hour;
 	int _minute;
+	float _addfix;
 
 
 	int _c_zzz;
@@ -299,6 +300,8 @@ public:
 	void clearScreenType2();
 	void clearScreenType3();
 	void clearScreenType10();
+	int getRandomNumber(int minval, int maxval);
+	void showMoveMenuAlert();
 
 };
 

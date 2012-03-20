@@ -33,10 +33,15 @@
 
 namespace Mortevielle {
 
+enum {
+	MENU_INVENTORY = 1, MENU_MOVE = 2, MENU_ACTION = 3, MENU_SELF = 4,
+	MENU_DISCUSS = 5,   MENU_FILE = 6, MENU_SAVE = 7,   MENU_LOAD = 8
+};
+
 class Menu {
 private:
 	void util(Common::Point pos);
-	void invers(int ix);
+	void invert(int indx);
 	void menuDown(int ii);
 public:
 	bool _menuActive;
@@ -65,11 +70,6 @@ public:
 
 	void setSearchMenu();
 	void unsetSearchMenu();
-};
-
-enum {
-	MENU_INVENTORY = 1, MENU_MOVE = 2, MENU_ACTION = 3, MENU_SELF = 4,
-	MENU_DISCUSS = 5,   MENU_FILE = 6, MENU_SAVE = 7,   MENU_LOAD = 8
 };
 
 } // End of namespace Mortevielle

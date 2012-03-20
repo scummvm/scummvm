@@ -83,7 +83,7 @@ void MortevielleEngine::fctMove() {
 		if (g_num != 6)
 			affrep();
 		else
-			aldepl();
+			showMoveMenuAlert();
 		return;
 	}
 	tsort();
@@ -598,7 +598,7 @@ void MortevielleEngine::fctOpen() {
 	}
 
 	if (g_caff == 15) {
-		aldepl();
+		showMoveMenuAlert();
 		return;
 	}
 
@@ -1132,7 +1132,7 @@ void MortevielleEngine::fctEnter() {
 		gotoDiningRoom();
 		_menu.setDestinationMenuText(g_s._currPlace);
 	} else if (g_s._currPlace == LANDING)
-		aldepl();
+		showMoveMenuAlert();
 	else if (g_ment == 0)
 		g_crep = 997;
 	else if ((g_ment == 9) && (g_s._selectedObjectId != 136)) {

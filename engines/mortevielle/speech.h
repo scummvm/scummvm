@@ -60,6 +60,8 @@ class SpeechManager {
 private:
 	int _typlec;
 	int _phonemeNumb;
+	SpeechQueue _queue[3];
+
 public:
 	SpeechManager();
 	void spfrac(int wor);
