@@ -28,13 +28,14 @@
 #ifndef MORTEVIELLE_MENU_H
 #define MORTEVIELLE_MENU_H
 
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Mortevielle {
 
 class Menu {
 private:
-	void util(int x, int y);
+	void util(Common::Point pos);
 	void invers(int ix);
 	void menuDown(int ii);
 public:

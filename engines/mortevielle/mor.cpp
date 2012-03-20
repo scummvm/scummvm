@@ -756,7 +756,7 @@ void tinke() {
 		g_vm->_minute = 30;
 		drawClock();
 	}
-	if (g_vm->_mouse.y_s < 12)
+	if (g_vm->_mouse._pos.y < 12)
 		return;
 
 	if (!g_vm->_blo) {
@@ -1129,7 +1129,7 @@ void tfleche() {
 			CHECK_QUIT;
 
 			if (g_vm->getMouseClick())
-				inRect = (g_vm->_mouse.x_s < 256 * g_res) && (g_vm->_mouse.y_s < 176) && (g_vm->_mouse.y_s > 12);
+				inRect = (g_vm->_mouse._pos.x < 256 * g_res) && (g_vm->_mouse._pos.y < 176) && (g_vm->_mouse._pos.y > 12);
 			tinke();
 		} while (!(qust || inRect || g_vm->_anyone));
 
@@ -1141,8 +1141,8 @@ void tfleche() {
 		g_vm->_keyPressedEsc = true;
 
 	if (inRect) {
-		g_x = g_vm->_mouse.x_s;
-		g_y = g_vm->_mouse.y_s;
+		g_x = g_vm->_mouse._pos.x;
+		g_y = g_vm->_mouse._pos.y;
 	}
 }
 

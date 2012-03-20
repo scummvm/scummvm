@@ -45,7 +45,8 @@ int Alert::show(const Common::String &msg, int n) {
 	Common::String st, chaine;
 	int limit[3][3];
 	Common::String s[3];
-	int cx, cy, nbcol, lignNumb;
+	Common::Point curPos;
+	int nbcol, lignNumb;
 	bool newaff, test, test1, test2, test3, dum;
 	Common::String cas;
 
@@ -70,17 +71,17 @@ int Alert::show(const Common::String &msg, int n) {
 		i = 0;
 		g_vm->_screenSurface._textPos.y = 70;
 		do {
-			cx = 320;
+			curPos.x = 320;
 			st = "";
 			while ((chaine[i + 1] != '\174') && (chaine[i + 1] != '\135')) {
 				++i;
 				st = st + chaine[i];
 				if (g_res == 2)
-					cx -= 3;
+					curPos.x -= 3;
 				else
-					cx -= 5;
+					curPos.x -= 5;
 			}
-			g_vm->_screenSurface.putxy(cx, g_vm->_screenSurface._textPos.y);
+			g_vm->_screenSurface.putxy(curPos.x, g_vm->_screenSurface._textPos.y);
 			g_vm->_screenSurface._textPos.y += 6;
 			g_vm->_screenSurface.drawString(st, 4);
 			++i;
@@ -108,15 +109,14 @@ int Alert::show(const Common::String &msg, int n) {
 		g_vm->_mouse.moveMouse(dum, dummyKey);
 		CHECK_QUIT0;
 
-		cx = g_vm->_mouse.x_s;
-		cy = g_vm->_mouse.y_s;
-		test = (cy > 95) && (cy < 105);
+		curPos = g_vm->_mouse._pos;
+		test = (curPos.y > 95) && (curPos.y < 105);
 		newaff = false;
 		if (test) {
-			test1 = (cx > limit[1][1]) && (cx < limit[1][2]);
+			test1 = (curPos.x > limit[1][1]) && (curPos.x < limit[1][2]);
 			test2 = test1;
 			if (caseNumb > 1)
-				test2 = test1 || ((cx > limit[2][1]) && (cx < limit[2][2]));
+				test2 = test1 || ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2]));
 			if (test2) {
 				newaff = true;
 				if (test1)
@@ -157,8 +157,8 @@ int Alert::show(const Common::String &msg, int n) {
 			quoi = 0;
 			g_vm->_mouse.showMouse();
 		}
-		test3 = (cy > 95) && (cy < 105) && (((cx > limit[1][1]) && (cx < limit[1][2]))
-		                                    || ((cx > limit[2][1]) && (cx < limit[2][2])));
+		test3 = (curPos.y > 95) && (curPos.y < 105) && (((curPos.x > limit[1][1]) && (curPos.x < limit[1][2]))
+		                                    || ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2])));
 	} while (!g_vm->getMouseClick());
 	g_vm->setMouseClick(false);
 	g_vm->_mouse.hideMouse();

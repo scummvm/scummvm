@@ -114,6 +114,7 @@ private:
 	void handleAction();
 public:
 	Common::String _hintPctMessage;
+	Common::Point _prevPos;
 
 	bool _roomPresenceLuc;
 	bool _roomPresenceIda;
@@ -126,7 +127,6 @@ public:
 	bool _toiletsPresenceBobMax;
 	bool _bathRoomPresenceBobMax;
 	bool _room9PresenceLeo;
-
 	bool _soundOff;
 	bool _largestClearScreen;
 	bool _hiddenHero;

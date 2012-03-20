@@ -33,38 +33,15 @@
 
 namespace Mortevielle {
 
-const int m_arrow = 0;
-const int m_point_hand = 1;
-
 /**
  * Initialize the mouse
  * @remarks	Originally called 'init_mouse'
  */
 void MouseHandler::initMouse() {
-	registres reg;
-
-	mouse_shwn = 0;
-	x_s = 0;
-	y_s = 0;
-	p_o_s = 0;
+	_counter = 0;
+	_pos = Common::Point(0, 0);
 	
 	g_vm->setMouseClick(false);
-	m_show = m_arrow;
-	if ((READ_LE_UINT16(&g_mem[0xcc]) == 0) && (READ_LE_UINT16(&g_mem[0xce]) == 0))
-		int_m = false;
-
-	if (int_m) {
-		reg._ax = 0;
-		intr(0x33, reg);
-		int_m = (reg._ax == -1);
-		if (int_m) {
-			reg._ax = 4;
-			reg._cx = 0;
-			reg._dx = 0;
-
-			intr(0x33, reg);
-		}
-	}
 }
 
 /**
@@ -72,14 +49,13 @@ void MouseHandler::initMouse() {
  * @remarks	Originally called 'hide_mouse'
  */
 void MouseHandler::hideMouse() {
-	--mouse_shwn;
-	if (mouse_shwn == 0) {
-		bool imp = odd(y_s);
-		int j = p_o_s;
+	--_counter;
+	if (_counter == 0) {
+		int j = 0;
 		switch (g_vm->_currGraphicalDevice) {
 		case MODE_CGA: {
 			int k = 0;
-			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
+			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
 			do {
 				WRITE_LE_UINT16(&g_mem[0xb000 * 16 + j], s_s[0][k]);
 				WRITE_LE_UINT16(&g_mem[0xb800 * 16 + j + 2], s_s[1][k]);
@@ -90,11 +66,12 @@ void MouseHandler::hideMouse() {
 			} while (k < 5);
 			}
 			break;
-		case MODE_AMSTRAD1512:
+		case MODE_AMSTRAD1512: {
+			bool imp = odd(_pos.y);
 			for (int i = 0; i <= 3; ++i) {
 				g_port[0x3dd] = 1 << i;
 				int k = 0;
-				j = p_o_s;
+				j = 0;
 				do {
 					if (imp) {
 						WRITE_LE_UINT16(&g_mem[0xb800 * 16 + j], s_s[i][k]);
@@ -108,6 +85,7 @@ void MouseHandler::hideMouse() {
 				} while (k < 8);
 			}
 			break;
+			}
 		case MODE_EGA: {
 			g_port[0x3c4] = 2;
 			g_port[0x3ce] = 8;
@@ -116,7 +94,7 @@ void MouseHandler::hideMouse() {
 			do {
 				g_port[0x3c5] = 1 << i;
 				int k = 0;
-				j = p_o_s;
+				j = 0;
 				do {
 					// Useless ?
 					// ps = mem[0xa000 * 16 + j];
@@ -133,7 +111,7 @@ void MouseHandler::hideMouse() {
 			}
 			break;
 		case MODE_HERCULES:
-			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
+			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
 			for (int i = 0; i <= 5; ++i) {
 				for (int k = 0; k <= 3; ++k) 
 					WRITE_LE_UINT16(&g_mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
@@ -141,7 +119,7 @@ void MouseHandler::hideMouse() {
 			}
 			break;
 		case MODE_TANDY: {
-			j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
+			j = ((uint)_pos.y >> 2) * 160 + ((uint)_pos.x >> 1);
 			int k = 0;
 			do {
 				for (int i = 0; i <= 3; ++i) {
@@ -166,16 +144,15 @@ void MouseHandler::hideMouse() {
 void MouseHandler::showMouse() {
 	int k, l;
 
-	mouse_shwn = mouse_shwn + 1;
-	if (mouse_shwn != 1)
+	++_counter;
+	if (_counter != 1)
 		return;
-	int j = p_o_s;
-	bool imp = odd(y_s);
-	int i = x_s & 7;
+	int j = 0;
+	int i = _pos.x & 7;
 	switch (g_vm->_currGraphicalDevice) {
 	case MODE_CGA:
 		k = 0;
-		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
+		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
 		do {
 			s_s[0][k] = READ_LE_UINT16(&g_mem[0xb800 * 16 + j]);
 			s_s[1][k] = READ_LE_UINT16(&g_mem[0xb800 * 16 + j + 2]);
@@ -185,10 +162,11 @@ void MouseHandler::showMouse() {
 			++k;
 		} while (k < 5);
 		break;
-	case MODE_AMSTRAD1512:
+	case MODE_AMSTRAD1512: {
+		bool imp = odd(_pos.y);
 		for (i = 0; i <= 3; ++i) {
-			j = p_o_s;
-			imp = odd(y_s);
+			j = 0;
+			imp = odd(_pos.y);
 			g_port[0x3de] = i;
 			k = 0;
 			do {
@@ -204,13 +182,14 @@ void MouseHandler::showMouse() {
 			} while (k < 8);
 		}
 		break;
+		}
 	case MODE_EGA:
 		g_port[0x3ce] = 4;
 		l = 0;
 		do {
 			g_port[0x3cf] = l;
 			k = 0;
-			j = p_o_s;
+			j = 0;
 			do {
 				s_s[l][k] = g_mem[0xa000 * 16 + j] + (g_mem[(0xa000 * 16) + j + 1] << 8);
 				j += 80;
@@ -220,7 +199,7 @@ void MouseHandler::showMouse() {
 		} while (l != 4);
 		break;
 	case MODE_HERCULES:
-		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
+		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
 		for (i = 0; i <= 5; ++i) {
 			for (k = 0; k <= 3; ++k)
 				s_s[i][k] = READ_LE_UINT16(&g_mem[0xb000 * 16 + k * 0x200 + j]);
@@ -228,7 +207,7 @@ void MouseHandler::showMouse() {
 		}
 		break;
 	case MODE_TANDY:
-		j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
+		j = ((uint)_pos.y >> 2) * 160 + ((uint)_pos.x >> 1);
 		k = 0;
 		do {
 			for (i = 0; i <= 3; ++i) {
@@ -248,20 +227,20 @@ void MouseHandler::showMouse() {
  * Set mouse position
  * @remarks	Originally called 'pos_mouse'
  */
-void MouseHandler::setMousePos(int x, int y) {
-	if (x > 314 * g_res)
-		x = 314 * g_res;
-	else if (x < 0)
-		x = 0;
-	if (y > 199)
-		y = 199;
-	else if (y < 0)
-		y = 0;
-	if ((x == x_s) && (y == y_s))
+void MouseHandler::setMousePos(Common::Point newPos) {
+	if (newPos.x > 314 * g_res)
+		newPos.x = 314 * g_res;
+	else if (newPos.x < 0)
+		newPos.x = 0;
+	if (newPos.y > 199)
+		newPos.y = 199;
+	else if (newPos.y < 0)
+		newPos.y = 0;
+	if (newPos == _pos)
 		return;
 
 	// Set the new position
-	g_vm->setMousePos(Common::Point(x, y));
+	g_vm->setMousePos(newPos);
 }
 
 /**
@@ -300,16 +279,16 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 		getMousePos_(cx, cy, cd);
 		switch (toupper(in1)) {
 		case '4':
-			cx = cx - 8;
+			cx -= 8;
 			break;
 		case '2':
-			cy = cy + 8;
+			cy += 8;
 			break;
 		case '6':
-			cx = cx + 8;
+			cx += 8;
 			break;
 		case '8':
-			cy = cy - 8;
+			cy -= 8;
 			break;
 		case '7':
 			cy = 1;
@@ -428,7 +407,7 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			break;
 		}
 
-		setMousePos(cx, cy);
+		setMousePos(Common::Point(cx, cy));
 		p_key = g_vm->keyPressed();
 	}
 }
