@@ -135,6 +135,17 @@ struct Surface {
 	void copyFrom(const Surface &surf);
 
 	/**
+	 * Convert the data to another pixel format.
+	 *
+	 * The calling code must call free on the returned surface and then delete
+	 * it.
+	 *
+	 * @param dstFormat The desired format
+	 * @param palette   The palette (in RGB888), if the source format has a Bpp of 1
+	 */
+	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
+
+	/**
 	 * Draw a line.
 	 *
 	 * @param x0 The x coordinate of the start point.

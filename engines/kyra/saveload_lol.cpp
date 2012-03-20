@@ -27,6 +27,7 @@
 
 #include "common/savefile.h"
 #include "common/substream.h"
+#include "common/memstream.h"
 
 #include "graphics/scaler.h"
 
@@ -44,6 +45,9 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		return Common::kNoError;
 	}
 
+	if (header.originalSave)
+		warning("Trying to load savegame from original interpreter, while this is possible, it is not officially supported");
+
 	_screen->fadeClearSceneWindow(10);
 	completeDoorOperations();
 	_screen->fillRect(112, 0, 287, 119, 0, 0);
@@ -53,38 +57,40 @@ Common::Error LoLEngine::loadGameState(int slot) {
 
 	for (int i = 0; i < 4; i++) {
 		LoLCharacter *c = &_characters[i];
-		c->flags = in.readUint16BE();
+		c->flags = in.readUint16();
 		in.read(c->name, 11);
 		c->raceClassSex = in.readByte();
-		c->id = in.readSint16BE();
+		c->id = in.readSint16();
 		c->curFaceFrame = in.readByte();
 		c->tempFaceFrame = in.readByte();
 		c->screamSfx = in.readByte();
+		if (header.originalSave)
+			in.skip(4);
 		for (int ii = 0; ii < 8; ii++)
-			c->itemsMight[ii] = in.readUint16BE();
+			c->itemsMight[ii] = in.readUint16();
 		for (int ii = 0; ii < 8; ii++)
-			c->protectionAgainstItems[ii] = in.readUint16BE();
-		c->itemProtection = in.readUint16BE();
-		c->hitPointsCur = in.readSint16BE();
-		c->hitPointsMax = in.readUint16BE();
-		c->magicPointsCur = in.readSint16BE();
-		c->magicPointsMax = in.readUint16BE();
+			c->protectionAgainstItems[ii] = in.readUint16();
+		c->itemProtection = in.readUint16();
+		c->hitPointsCur = in.readSint16();
+		c->hitPointsMax = in.readUint16();
+		c->magicPointsCur = in.readSint16();
+		c->magicPointsMax = in.readUint16();
 		c->field_41 = in.readByte();
-		c->damageSuffered = in.readUint16BE();
-		c->weaponHit = in.readUint16BE();
-		c->totalMightModifier = in.readUint16BE();
-		c->totalProtectionModifier = in.readUint16BE();
-		c->might = in.readUint16BE();
-		c->protection = in.readUint16BE();
-		c->nextAnimUpdateCountdown = in.readSint16BE();
+		c->damageSuffered = in.readUint16();
+		c->weaponHit = in.readUint16();
+		c->totalMightModifier = in.readUint16();
+		c->totalProtectionModifier = in.readUint16();
+		c->might = in.readUint16();
+		c->protection = in.readUint16();
+		c->nextAnimUpdateCountdown = in.readSint16();
 		for (int ii = 0; ii < 11; ii++)
-			c->items[ii] = in.readUint16BE();
+			c->items[ii] = in.readUint16();
 		for (int ii = 0; ii < 3; ii++)
 			c->skillLevels[ii] = in.readByte();
 		for (int ii = 0; ii < 3; ii++)
 			c->skillModifiers[ii] = in.readSByte();
 		for (int ii = 0; ii < 3; ii++)
-			c->experiencePts[ii] = in.readUint32BE();
+			c->experiencePts[ii] = in.readUint32();
 		for (int ii = 0; ii < 5; ii++)
 			c->characterUpdateEvents[ii] = in.readByte();
 		for (int ii = 0; ii < 5; ii++)
@@ -96,39 +102,48 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		}
 	}
 
-	in.read(_wllBuffer4, 80);
+	if (header.version < 17)
+		in.skip(80);
 
-	_currentBlock = in.readUint16BE();
-	_partyPosX = in.readUint16BE();
-	_partyPosY = in.readUint16BE();
-	_updateFlags = in.readUint16BE();
+	_currentBlock = in.readUint16();
+	_partyPosX = in.readUint16();
+	_partyPosY = in.readUint16();
+	_updateFlags = in.readUint16();
 	_scriptDirection = in.readByte();
 	_selectedSpell = in.readByte();
+
+	if (header.originalSave)
+		in.skip(2);
+
 	_sceneDefaultUpdate = in.readByte();
 	_compassBroken = in.readByte();
 	_drainMagic = in.readByte();
-	_currentDirection = in.readUint16BE();
-	_compassDirection = in.readUint16BE();
+	_currentDirection = in.readUint16();
+	_compassDirection = in.readUint16();
 	_selectedCharacter = in.readSByte();
+
+	if (header.originalSave)
+		in.skip(1);
+
 	_currentLevel = in.readByte();
 	for (int i = 0; i < 48; i++)
-		_inventory[i] = in.readSint16BE();
-	_inventoryCurItem = in.readSint16BE();
-	_itemInHand = in.readSint16BE();
-	_lastMouseRegion = in.readSint16BE();
+		_inventory[i] = in.readSint16();
+	_inventoryCurItem = in.readSint16();
+	_itemInHand = in.readSint16();
+	_lastMouseRegion = in.readSint16();
 
-	if (header.version <= 15) {
+	if (header.originalSave || header.version <= 15) {
 		uint16 flags[40];
 		memset(flags, 0, sizeof(flags));
 
 		if (header.version == 14) {
 			for (int i = 0; i < 16; i++)
-				flags[i] = in.readUint16BE();
-			flags[26] = in.readUint16BE();
-			flags[36] = in.readUint16BE();
-		} else if (header.version == 15) {
+				flags[i] = in.readUint16();
+			flags[26] = in.readUint16();
+			flags[36] = in.readUint16();
+		} else if (header.originalSave || header.version == 15) {
 			for (int i = 0; i < 40; i++)
-				flags[i] = in.readUint16BE();
+				flags[i] = in.readUint16();
 		}
 
 		memset(_flagsTable, 0, sizeof(_flagsTable));
@@ -139,37 +154,52 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			}
 		}
 	} else {
-		uint32 flagsSize = in.readUint32BE();
+		uint32 flagsSize = in.readUint32();
 		assert(flagsSize <= sizeof(_flagsTable));
 		in.read(_flagsTable, flagsSize);
 	}
 
+	if (header.originalSave)
+		in.skip(120);
+
 	for (int i = 0; i < 24; i++)
-		_globalScriptVars[i] = in.readUint16BE();
+		_globalScriptVars[i] = in.readUint16();
+
+	if (header.originalSave)
+		in.skip(152);
+
 	_brightness = in.readByte();
 	_lampOilStatus = in.readByte();
 	_lampEffect = in.readSByte();
-	_credits = in.readUint16BE();
+
+	if (header.originalSave)
+		in.skip(1);
+
+	_credits = in.readUint16();
 	for (int i = 0; i < 8; i++)
-		_globalScriptVars2[i] = in.readUint16BE();
+		_globalScriptVars2[i] = in.readUint16();
 	in.read(_availableSpells, 7);
-	_hasTempDataFlags = in.readUint32BE();
+	_hasTempDataFlags = in.readUint32();
+
+	uint8 *origCmp = 0;
+	if (header.originalSave) {
+		in.skip(6);
+		origCmp = new uint8[2496];
+	}
 
 	for (int i = 0; i < 400; i++) {
-		ItemInPlay *t = &_itemsInPlay[i];
-		t->nextAssignedObject = in.readUint16BE();
-		t->nextDrawObject = in.readUint16BE();
+		LoLItem *t = &_itemsInPlay[i];
+		t->nextAssignedObject = in.readUint16();
+		t->nextDrawObject = in.readUint16();
 		t->flyingHeight = in.readByte();
-		t->block = in.readUint16BE();
-		t->x = in.readUint16BE();
-		t->y = in.readUint16BE();
+		t->block = in.readUint16();
+		t->x = in.readUint16();
+		t->y = in.readUint16();
 		t->level = in.readSByte();
-		t->itemPropertyIndex = in.readUint16BE();
-		t->shpCurFrame_flg = in.readUint16BE();
-		t->destDirection = in.readByte();
-		t->hitOffsX = in.readSByte();
-		t->hitOffsY = in.readSByte();
-		t->currentSubFrame = in.readByte();
+		t->itemPropertyIndex = in.readUint16();
+		t->shpCurFrame_flg = in.readUint16();
+		if (header.version < 17)
+			in.skip(4);
 	}
 
 	for (int i = 0; i < 1024; i++) {
@@ -179,38 +209,61 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	}
 
 	for (int i = 0; i < 29; i++) {
-		if (!(_hasTempDataFlags & (1 << i)))
+		if (!(_hasTempDataFlags & (1 << i))) {
+			if (header.originalSave) {
+				if (in.size() - in.pos() >= 2500)
+					in.skip(2500);
+			}
 			continue;
+		}
 
 		if (_lvlTempData[i]) {
 			delete[] _lvlTempData[i]->wallsXorData;
 			delete[] _lvlTempData[i]->flags;
-			delete[] _lvlTempData[i]->monsters;
-			delete[] _lvlTempData[i]->flyingObjects;
+			releaseMonsterTempData(_lvlTempData[i]);
+			releaseFlyingObjectTempData(_lvlTempData[i]);
+			releaseWallOfForceTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 		}
 
 		_lvlTempData[i] = new LevelTempData;
 		_lvlTempData[i]->wallsXorData = new uint8[4096];
-		_lvlTempData[i]->flags = new uint8[1024];
-		_lvlTempData[i]->monsters = new MonsterInPlay[30];
-		_lvlTempData[i]->flyingObjects = new FlyingObject[8];
+		_lvlTempData[i]->flags = new uint16[1024];
+		LoLMonster *lm = new LoLMonster[30];
+		_lvlTempData[i]->monsters = lm;
+		FlyingObject *lf = new FlyingObject[_numFlyingObjects];
+		_lvlTempData[i]->flyingObjects = lf;
 		LevelTempData *l = _lvlTempData[i];
 
-		in.read(l->wallsXorData, 4096);
-		in.read(l->flags, 1024);
+		uint32 next = in.pos() + 2500;
+
+		if (header.originalSave) {
+			in.skip(4);
+			in.read(origCmp, in.readUint16());
+			_screen->decodeFrame4(origCmp, _tempBuffer5120, 5120);
+			memcpy(l->wallsXorData, _tempBuffer5120, 4096);
+			for (int ii = 0; ii < 1024; ii++)
+				l->flags[ii] = _tempBuffer5120[4096 + ii];
+		} else {
+			in.read(l->wallsXorData, 4096);
+			for (int ii = 0; ii < 1024; ii++)
+				l->flags[ii] = in.readByte();
+		}
+
+		if (header.originalSave)
+			l->monsterDifficulty =  in.readUint16();
 
 		for (int ii = 0; ii < 30; ii++) {
-			MonsterInPlay *m = &l->monsters[ii];
-			m->nextAssignedObject = in.readUint16BE();
-			m->nextDrawObject = in.readUint16BE();
+			LoLMonster *m = &lm[ii];
+			m->nextAssignedObject = in.readUint16();
+			m->nextDrawObject = in.readUint16();
 			m->flyingHeight = in.readByte();
-			m->block = in.readUint16BE();
-			m->x = in.readUint16BE();
-			m->y = in.readUint16BE();
+			m->block = in.readUint16();
+			m->x = in.readUint16();
+			m->y = in.readUint16();
 			m->shiftStep = in.readSByte();
-			m->destX = in.readUint16BE();
-			m->destY = in.readUint16BE();
+			m->destX = in.readUint16();
+			m->destY = in.readUint16();
 			m->destDirection = in.readByte();
 			m->hitOffsX = in.readSByte();
 			m->hitOffsY = in.readSByte();
@@ -220,27 +273,31 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			m->id = in.readByte();
 			m->direction = in.readByte();
 			m->facing = in.readByte();
-			m->flags = in.readUint16BE();
-			m->damageReceived = in.readUint16BE();
-			m->hitPoints = in.readSint16BE();
+			m->flags = in.readUint16();
+			m->damageReceived = in.readUint16();
+			m->hitPoints = in.readSint16();
 			m->speedTick = in.readByte();
 			m->type = in.readByte();
+
+			if (header.originalSave)
+				in.skip(4);
+
 			m->numDistAttacks = in.readByte();
 			m->curDistWeapon = in.readByte();
 			m->distAttackTick = in.readSByte();
-			m->assignedItems = in.readUint16BE();
+			m->assignedItems = in.readUint16();
 			m->properties = &_monsterProperties[m->type];
 			in.read(m->equipmentShapes, 4);
 		}
 
-		for (int ii = 0; ii < 8; ii++) {
-			FlyingObject *m = &l->flyingObjects[ii];
+		for (int ii = 0; ii < _numFlyingObjects; ii++) {
+			FlyingObject *m = &lf[ii];
 			m->enable = in.readByte();
 			m->objectType = in.readByte();
-			m->attackerId = in.readUint16BE();
-			m->item = in.readSint16BE();
-			m->x = in.readUint16BE();
-			m->y = in.readUint16BE();
+			m->attackerId = in.readUint16();
+			m->item = in.readSint16();
+			m->x = in.readUint16();
+			m->y = in.readUint16();
 			m->flyingHeight = in.readByte();
 			m->direction = in.readByte();
 			m->distance = in.readByte();
@@ -249,8 +306,14 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			m->flags = in.readByte();
 			m->wallFlags = in.readByte();
 		}
-		l->monsterDifficulty = in.readByte();
+
+		if (header.originalSave)
+			in.seek(next, SEEK_SET);
+		else
+			l->monsterDifficulty =  in.readByte();
 	}
+
+	delete[] origCmp;
 
 	calcCharPortraitXpos();
 	memset(_moneyColumnHeight, 0, sizeof(_moneyColumnHeight));
@@ -319,8 +382,6 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 			out->writeByte(c->characterUpdateDelay[ii]);
 	}
 
-	out->write(_wllBuffer4, 80);
-
 	out->writeUint16BE(_currentBlock);
 	out->writeUint16BE(_partyPosX);
 	out->writeUint16BE(_partyPosY);
@@ -355,7 +416,7 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 	resetItems(0);
 
 	for (int i = 0; i < 400; i++) {
-		ItemInPlay *t = &_itemsInPlay[i];
+		LoLItem *t = &_itemsInPlay[i];
 		out->writeUint16BE(t->nextAssignedObject);
 		out->writeUint16BE(t->nextDrawObject);
 		out->writeByte(t->flyingHeight);
@@ -365,10 +426,6 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 		out->writeSByte(t->level);
 		out->writeUint16BE(t->itemPropertyIndex);
 		out->writeUint16BE(t->shpCurFrame_flg);
-		out->writeByte(t->destDirection);
-		out->writeSByte(t->hitOffsX);
-		out->writeSByte(t->hitOffsY);
-		out->writeByte(t->currentSubFrame);
 	}
 
 	addLevelItems();
@@ -379,10 +436,14 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 			continue;
 
 		out->write(l->wallsXorData, 4096);
-		out->write(l->flags, 1024);
+		for (int ii = 0; ii < 1024; ii++)
+			out->writeByte(l->flags[ii] & 0xff);
+
+		LoLMonster *lm = (LoLMonster *)_lvlTempData[i]->monsters;
+		FlyingObject *lf = (FlyingObject *)_lvlTempData[i]->flyingObjects;
 
 		for (int ii = 0; ii < 30; ii++) {
-			MonsterInPlay *m = &l->monsters[ii];
+			LoLMonster *m = &lm[ii];
 			out->writeUint16BE(m->nextAssignedObject);
 			out->writeUint16BE(m->nextDrawObject);
 			out->writeByte(m->flyingHeight);
@@ -413,8 +474,8 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 			out->write(m->equipmentShapes, 4);
 		}
 
-		for (int ii = 0; ii < 8; ii++) {
-			FlyingObject *m = &l->flyingObjects[ii];
+		for (int ii = 0; ii < _numFlyingObjects; ii++) {
+			FlyingObject *m = &lf[ii];
 			out->writeByte(m->enable);
 			out->writeByte(m->objectType);
 			out->writeUint16BE(m->attackerId);
@@ -467,6 +528,54 @@ Graphics::Surface *LoLEngine::generateSaveThumbnail() const {
 	delete[] screenBuf;
 	delete[] screenPal;
 	return dst;
+}
+
+void LoLEngine::restoreBlockTempData(int levelIndex) {
+	memset(_tempBuffer5120, 0, 5120);
+	KyraRpgEngine::restoreBlockTempData(levelIndex);
+	restoreTempDataAdjustMonsterStrength(levelIndex - 1);
+}
+
+void *LoLEngine::generateMonsterTempData(LevelTempData *tmp) {
+	LoLMonster *m = new LoLMonster[30];
+	memcpy(m, _monsters,  sizeof(LoLMonster) * 30);
+	tmp->monsterDifficulty = _monsterDifficulty;
+	return m;
+}
+
+void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
+	if (_lvlTempData[index]->monsterDifficulty == _monsterDifficulty)
+		return;
+
+	uint16 d = (_monsterModifiers[_lvlTempData[index]->monsterDifficulty] << 8) / _monsterModifiers[_monsterDifficulty];
+
+	for (int i = 0; i < 30; i++) {
+		if (_monsters[i].mode >= 14 || _monsters[i].block == 0 || _monsters[i].hitPoints <= 0)
+			continue;
+
+		_monsters[i].hitPoints = (d * _monsters[i].hitPoints) >> 8;
+		if (_monsterDifficulty < _lvlTempData[index]->monsterDifficulty)
+			_monsters[i].hitPoints++;
+		if (_monsters[i].hitPoints == 0)
+			_monsters[i].hitPoints = 1;
+	}
+}
+
+void LoLEngine::restoreMonsterTempData(LevelTempData *tmp) {
+	memcpy(_monsters, tmp->monsters, sizeof(LoLMonster) * 30);
+
+	for (int i = 0; i < 30; i++) {
+		if (_monsters[i].block) {
+			_monsters[i].block = 0;
+			_monsters[i].properties = &_monsterProperties[_monsters[i].type];
+			placeMonster(&_monsters[i], _monsters[i].x, _monsters[i].y);
+		}
+	}
+}
+
+void LoLEngine::releaseMonsterTempData(LevelTempData *tmp) {
+	LoLMonster *p = (LoLMonster *)tmp->monsters;
+	delete[] p;
 }
 
 } // End of namespace Kyra

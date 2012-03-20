@@ -57,7 +57,6 @@ public:
 	virtual ~Player_SID();
 
 	virtual void setMusicVolume(int vol) { _maxvol = vol; }
-	void startMusic(int songResIndex);
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
@@ -95,7 +94,7 @@ private:
 	void initMusic(int songResIndex); // $7de6
 	int initSound(int soundResID); // $4D0A
 	void stopSound_intern(int soundResID); // $5093
-	void stopAllSounds_intern(); // $4CAA
+	void stopMusic_intern(); // $4CAA
 
 	void resetSID(); // $48D8
 	void update(); // $481B

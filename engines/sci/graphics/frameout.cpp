@@ -61,12 +61,13 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 }
 
 GfxFrameout::~GfxFrameout() {
+	clear();
 }
 
 void GfxFrameout::clear() {
-	_screenItems.clear();
+	deletePlaneItems(NULL_REG);
 	_planes.clear();
-	_planePictures.clear();
+	deletePlanePictures(NULL_REG);
 }
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
@@ -101,7 +102,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 }
 
 void GfxFrameout::kernelUpdatePlane(reg_t object) {
-	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
 		if (it->object == object) {
 			// Read some information
 			it->priority = readSelectorValue(_segMan, object, SELECTOR(priority));
@@ -178,8 +179,10 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 }
 
 void GfxFrameout::kernelDeletePlane(reg_t object) {
+	deletePlaneItems(object);
 	deletePlanePictures(object);
-	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
+
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
 		if (it->object == object) {
 			_planes.erase(it);
 			Common::Rect planeRect;
@@ -193,10 +196,6 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.left = (planeRect.left * screenRect.width()) / _scriptsRunningWidth;
 			planeRect.bottom = (planeRect.bottom * screenRect.height()) / _scriptsRunningHeight;
 			planeRect.right = (planeRect.right * screenRect.width()) / _scriptsRunningWidth;
-			planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
-			// FIXME: The code above incorrectly added 1 pixel to the plane's
-			// bottom and right, so probably the plane clipping code is no
-			// longer necessary
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
 			return;
@@ -216,12 +215,15 @@ void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 
 }
 
 void GfxFrameout::deletePlanePictures(reg_t object) {
-	for (PlanePictureList::iterator it = _planePictures.begin(); it != _planePictures.end(); it++) {
-		if (it->object == object) {
+	PlanePictureList::iterator it = _planePictures.begin();
+
+	while (it != _planePictures.end()) {
+		if (it->object == object || object.isNull()) {
+			delete it->pictureCels;
 			delete it->picture;
-			_planePictures.erase(it);
-			deletePlanePictures(object);
-			return;
+			it = _planePictures.erase(it);
+		} else {
+			++it;
 		}
 	}
 }
@@ -274,6 +276,29 @@ void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
 	}
 
 	_screenItems.remove(itemEntry);
+	delete itemEntry;
+}
+
+void GfxFrameout::deletePlaneItems(reg_t planeObject) {
+	FrameoutList::iterator listIterator = _screenItems.begin();
+
+	while (listIterator != _screenItems.end()) {
+		bool objectMatches = false;
+		if (!planeObject.isNull()) {
+			reg_t itemPlane = readSelector(_segMan, (*listIterator)->object, SELECTOR(plane));
+			objectMatches = (planeObject == itemPlane);
+		} else {
+			objectMatches = true;
+		}
+		
+		if (objectMatches) {
+			FrameoutEntry *itemEntry = *listIterator;
+			listIterator = _screenItems.erase(listIterator);
+			delete itemEntry;
+		} else {
+			++listIterator;
+		}
+	}
 }
 
 FrameoutEntry *GfxFrameout::findScreenItem(reg_t object) {
@@ -498,7 +523,8 @@ void GfxFrameout::kernelFrameout() {
 		// There is a race condition lurking in SQ6, which causes the game to hang in the intro, when teleporting to Polysorbate LX.
 		// Since I first wrote the patch, the race has stopped occurring for me though.
 		// I'll leave this for investigation later, when someone can reproduce.
-		if (it->pictureId == 0xffff)
+		//if (it->pictureId == 0xffff)	// FIXME: This is what SSCI does, and fixes the intro of LSL7, but breaks the dialogs in GK1 (adds black boxes)
+		if (it->planeBack)
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		GuiResourceId planeMainPictureId = it->pictureId;

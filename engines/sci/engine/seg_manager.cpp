@@ -691,7 +691,7 @@ void SegManager::memcpy(reg_t dest, const byte* src, size_t n) {
 
 	if (dest_r.isRaw) {
 		// raw -> raw
-		::memcpy((char*)dest_r.raw, src, n);
+		::memcpy((char *)dest_r.raw, src, n);
 	} else {
 		// raw -> non-raw
 		for (uint i = 0; i < n; i++)

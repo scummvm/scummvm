@@ -39,7 +39,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	int m = _textSurfaceMultiplier;
 
 	uint8 *src1 = vs->getPixels(srcX, srcY);
-	uint8 *src2 = (uint8*)_textSurface.getBasePtr(srcX * m, (srcY + vs->topline - _screenTop) * m);
+	uint8 *src2 = (uint8 *)_textSurface.getBasePtr(srcX * m, (srcY + vs->topline - _screenTop) * m);
 	uint8 *dst1 = _townsScreen->getLayerPixels(0, dstX, dstY);
 	uint8 *dst2 = _townsScreen->getLayerPixels(1, dstX * m, dstY * m);
 
@@ -52,7 +52,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 		for (int h = 0; h < height; ++h) {
 			if (_outputPixelFormat.bytesPerPixel == 2) {
 				for (int w = 0; w < width; ++w) {
-					*(uint16*)dst1 = _16BitPalette[*src1++];
+					*(uint16 *)dst1 = _16BitPalette[*src1++];
 					dst1 += _outputPixelFormat.bytesPerPixel;
 				}
 
@@ -245,7 +245,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 	l->numCol = numCol;
 	l->bpp = ((numCol - 1) & 0xff00) ? 2 : 1;
 	l->pitch = width * l->bpp;
-	l->palette = (uint8*)pal;
+	l->palette = (uint8 *)pal;
 
 	if (l->palette && _pixelFormat.bytesPerPixel == 1)
 		warning("TownsScreen::setupLayer(): Layer palette usage requires 16 bit graphics setting.\nLayer palette will be ignored.");
@@ -271,7 +271,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 
 	l->enabled = true;
 	_layers[0].onBottom = true;
-	_layers[1].onBottom = _layers[0].enabled ? false : true;
+	_layers[1].onBottom = !_layers[0].enabled;
 	l->ready = true;
 }
 
@@ -304,7 +304,7 @@ void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) 
 	for (int i = 0; i < h; ++i) {
 		if (l->bpp == 2) {
 			for (int ii = 0; ii < w; ++ii) {
-				*(uint16*)pos = col;
+				*(uint16 *)pos = col;
 				pos += 2;
 			}
 			pos += (l->pitch - w * 2);
@@ -424,7 +424,7 @@ void TownsScreen::toggleLayers(int flag) {
 	_layers[0].enabled = (flag & 1) ? true : false;
 	_layers[0].onBottom = true;
 	_layers[1].enabled = (flag & 2) ? true : false;
-	_layers[1].onBottom = _layers[0].enabled ? false : true;
+	_layers[1].onBottom = !_layers[0].enabled;
 
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
@@ -472,10 +472,10 @@ void TownsScreen::updateOutputBuffer() {
 							if (col || l->onBottom) {
 								if (l->numCol == 16)
 									col = (col >> 4) & (col & 0x0f);
-								*(uint16*)dst = l->bltTmpPal[col];
+								*(uint16 *)dst = l->bltTmpPal[col];
 							}
 						} else {
-							*(uint16*)dst = *(uint16*)src;
+							*(uint16 *)dst = *(uint16 *)src;
 						}
 						dst += 2;
 					}

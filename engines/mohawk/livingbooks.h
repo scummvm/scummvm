@@ -25,7 +25,7 @@
 
 #include "mohawk/mohawk.h"
 #include "mohawk/console.h"
-#include "mohawk/graphics.h"
+#include "mohawk/livingbooks_graphics.h"
 #include "mohawk/sound.h"
 
 #include "common/config-file.h"

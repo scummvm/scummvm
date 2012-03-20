@@ -197,8 +197,12 @@ public:
 	void registerArchive(const Common::String &filename, int priority);
 #endif
 
-	bool hasFile(const Common::String &name);
-	Common::SeekableReadStream *open(const Common::String &filename);
+	virtual bool hasFile(const Common::String &name) const;
+	virtual int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const;
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &filename) const;
 
 private:
 	bool _fallBack;

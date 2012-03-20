@@ -128,7 +128,7 @@ public:
 	 *
 	 * @param track sound effect id
 	 */
-	virtual void playSoundEffect(uint8 track) = 0;
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff) = 0;
 
 	/**
 	 * Stop playback of all sfx tracks.
@@ -217,6 +217,16 @@ public:
 	 * Stops playback of the current voice.
 	 */
 	void voiceStop(const Audio::SoundHandle *handle = 0);
+
+	/**
+	 * Receive notifications from a song at certain points.
+	 */
+	virtual int checkTrigger() { return 0; }
+
+	/**
+	 * Reset sound trigger.
+	 */
+	virtual void resetTrigger() {}
 protected:
 	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->fileListLen) ? _soundDataList->fileList[file] : ""; }
 	int fileListLen() const { return _soundDataList->fileListLen; }
@@ -273,7 +283,7 @@ public:
 	virtual void haltTrack();
 	virtual bool isPlaying() const;
 
-	virtual void playSoundEffect(uint8 track);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
 
 	virtual void stopAllSoundEffects();
 

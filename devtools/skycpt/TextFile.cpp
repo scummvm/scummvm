@@ -60,7 +60,7 @@ char *TextFile::giveLine(uint32 num) {
 }
 
 void TextFile::read(FILE *inf) {
-	char *line = (char*)malloc(4096);
+	char *line = (char *)malloc(4096);
 	_lines = (char**)malloc(4096 * sizeof(char *));
 	_numLines = 0;
 	uint32 linesMax = 4096;
@@ -78,7 +78,7 @@ void TextFile::read(FILE *inf) {
 				start++;
 		}
 		uint32 length = crop(start);
-		_lines[_numLines] = (char*)malloc(length + 1);
+		_lines[_numLines] = (char *)malloc(length + 1);
 		memcpy(_lines[_numLines], start, length + 1);
 		_numLines++;
 	}

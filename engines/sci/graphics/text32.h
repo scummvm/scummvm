@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/sci/graphics/text16.h $
- * $Id: text16.h 55178 2011-01-08 23:16:44Z thebluegr $
- *
  */
 
 #ifndef SCI_GRAPHICS_TEXT32_H
@@ -37,7 +34,7 @@ public:
 	~GfxText32();
 	reg_t createTextBitmap(reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0, reg_t prevHunk = NULL_REG);
 	void disposeTextBitmap(reg_t hunkId);
-	void drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t textObject);
+	void drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject);
 	int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font);
 
 	void kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);

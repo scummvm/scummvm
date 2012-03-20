@@ -68,7 +68,7 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 		// assertion failure termination
 		String *message = NULL;
 		if (args) {
-			message = (String*)args->GetAt(0);
+			message = (String *)args->GetAt(0);
 		}
 		if (!message) {
 			message = new String("Unknown error");

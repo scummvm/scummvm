@@ -37,11 +37,11 @@ PlainArchive::PlainArchive(Common::ArchiveMemberPtr file)
 	: _file(file), _files() {
 }
 
-bool PlainArchive::hasFile(const Common::String &name) {
+bool PlainArchive::hasFile(const Common::String &name) const {
 	return (_files.find(name) != _files.end());
 }
 
-int PlainArchive::listMembers(Common::ArchiveMemberList &list) {
+int PlainArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
@@ -52,7 +52,7 @@ int PlainArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr PlainArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr PlainArchive::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -92,11 +92,11 @@ TlkArchive::~TlkArchive() {
 	delete[] _fileEntries;
 }
 
-bool TlkArchive::hasFile(const Common::String &name) {
+bool TlkArchive::hasFile(const Common::String &name) const {
 	return (findFile(name) != 0);
 }
 
-int TlkArchive::listMembers(Common::ArchiveMemberList &list) {
+int TlkArchive::listMembers(Common::ArchiveMemberList &list) const {
 	uint count = 0;
 
 	for (; count < _entryCount; ++count) {
@@ -107,7 +107,7 @@ int TlkArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr TlkArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr TlkArchive::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -186,11 +186,11 @@ CachedArchive::~CachedArchive() {
 	_files.clear();
 }
 
-bool CachedArchive::hasFile(const Common::String &name) {
+bool CachedArchive::hasFile(const Common::String &name) const {
 	return (_files.find(name) != _files.end());
 }
 
-int CachedArchive::listMembers(Common::ArchiveMemberList &list) {
+int CachedArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
@@ -201,7 +201,7 @@ int CachedArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr CachedArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr CachedArchive::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -254,6 +254,8 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 		offset = SWAP_BYTES_32(offset);
 	}
 
+	int32 firstOffset = offset;
+
 	Common::String file;
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
@@ -276,7 +278,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 		firstFile = false;
 		offset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
 
-		if (!offset || offset == filesize)
+		if (!offset || offset == filesize || firstOffset == stream.pos())
 			break;
 	}
 
@@ -297,6 +299,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 	bool firstFile = true;
 
 	startoffset = stream.readUint32LE();
+	int32 firstOffset = startoffset;
 	if (startoffset > filesize || startoffset < 0) {
 		switchEndian = true;
 		startoffset = SWAP_BYTES_32(startoffset);
@@ -330,12 +333,12 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 		firstFile = false;
 		endoffset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
 
-		if (endoffset < 0) {
+		if (endoffset < 0 && stream.pos() != firstOffset) {
 			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
 			return 0;
 		}
 
-		if (!endoffset)
+		if (!endoffset || stream.pos() == firstOffset)
 			endoffset = filesize;
 
 		if (startoffset != endoffset)
@@ -353,7 +356,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 
 		const uint32 magic = stream.readUint32BE();
 
-		if (magic != MKTAG('S','C','V','M'))
+		if (magic != MKTAG('S', 'C', 'V', 'M'))
 			error("LINKLIST file does not contain 'SCVM' header");
 
 		const uint32 links = stream.readUint32BE();
@@ -388,10 +391,10 @@ bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::See
 	stream.seek(3, SEEK_SET);
 	int32 size = stream.readUint32LE();
 
-	if (size+7 > stream.size())
+	if (size + 7 > stream.size())
 		return false;
 
-	stream.seek(size+5, SEEK_SET);
+	stream.seek(size + 5, SEEK_SET);
 	uint8 buffer[2];
 	stream.read(&buffer, 2);
 
@@ -493,7 +496,7 @@ public:
 	void advSrcBitsBy1();
 	void advSrcBitsByIndex(uint8 newIndex);
 
-	uint8 getKeyLower() { return _key & 0xff; }
+	uint8 getKeyLower() const { return _key & 0xff; }
 	void setIndex(uint8 index) { _index = index; }
 	uint16 getKeyMasked(uint8 newIndex);
 	uint16 keyMaskedAlign(uint16 val);
@@ -697,7 +700,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 			_src->copyBytes(d);
 			postprocess = false;
 			needrefresh = true;
-		} else if (mode == 0){
+		} else if (mode == 0) {
 			uint8 *d2 = _tables[0];
 			memset(d2, 8, 144);
 			memset(d2 + 144, 9, 112);
@@ -841,7 +844,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 	cnt--;
 	s = tbl1 + cnt;
 	d = &_tables16[2][cnt];
-	uint16 * bt = (uint16 *)tbl3;
+	uint16 *bt = (uint16 *)tbl3;
 	uint16 inc = 0;
 	uint16 cnt2 = 0;
 

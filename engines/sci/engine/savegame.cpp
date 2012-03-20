@@ -66,7 +66,7 @@ void syncWithSerializer(Common::Serializer &s, T &obj) {
 }
 
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
-template <typename T>
+template<typename T>
 struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 	void operator()(Common::Serializer &s, T &obj) const {
 		//obj.saveLoadWithSerializer(s);
@@ -87,7 +87,7 @@ struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
  *
  * TODO: Add something like this for lists, queues....
  */
-template <typename T, class Syncer = DefaultSyncer<T> >
+template<typename T, class Syncer = DefaultSyncer<T> >
 struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 	void operator()(Common::Serializer &s, Common::Array<T> &arr) const {
 		uint len = arr.size();
@@ -113,13 +113,13 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 }
 
 
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 	s.syncAsUint16LE(obj.segment);
 	s.syncAsUint16LE(obj.offset);
 }
 
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, synonym_t &obj) {
 	s.syncAsUint16LE(obj.replaceant);
 	s.syncAsUint16LE(obj.replacement);
@@ -247,7 +247,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	s.syncAsSint32LE(obj.script);
 	syncWithSerializer(s, obj.reg);
@@ -326,14 +326,14 @@ void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<reg_t>(s, _variables);
 }
 
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Clone>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
 	syncWithSerializer<Object>(s, obj);
 }
 
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, SegmentObjTable<List>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
@@ -341,7 +341,7 @@ void syncWithSerializer(Common::Serializer &s, SegmentObjTable<List>::Entry &obj
 	syncWithSerializer(s, obj.last);
 }
 
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Node>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
@@ -352,7 +352,7 @@ void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Node>::Entry &obj
 }
 
 #ifdef ENABLE_SCI32
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciArray<reg_t> >::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
@@ -388,7 +388,7 @@ void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciArray<reg_t> >
 	}
 }
 
-template <>
+template<>
 void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciString>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
@@ -416,7 +416,7 @@ void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciString>::Entry
 }
 #endif
 
-template <typename T>
+template<typename T>
 void sync_Table(Common::Serializer &s, T &obj) {
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);

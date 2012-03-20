@@ -322,9 +322,10 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		int32 endY = MIN<int32>(curY + 1, _height - 1);
 		int32 startX = MAX<int32>(curX - 1, 0);
 		int32 startY = MAX<int32>(curY - 1, 0);
+		bool next = false;
 
-		for (int32 px = startX; px <= endX; px++) {
-			for (int py = startY; py <= endY; py++) {
+		for (int32 px = startX; px <= endX && !next; px++) {
+			for (int py = startY; py <= endY && !next; py++) {
 				if (px != curX || py != curY) {
 					wei = ((abs(px - curX) + abs(py - curY)));
 
@@ -336,15 +337,13 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 							sq[curPNode] = sum;
 							_heap->push(px, py, sq[curPNode] + newWeight);
 							if (!newWeight)
-								goto next; // we found it !
+								next = true; // we found it !
 						}
 					}
 				}
 			}
 		}
 	}
-
-next:
 
 	// let's see if we found a result !
 	if (!_gridTemp[destx + desty * _width]) {

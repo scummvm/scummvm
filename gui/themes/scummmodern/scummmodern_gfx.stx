@@ -105,27 +105,38 @@
 	<fonts>
 		<font	id = 'text_default'
 				file = 'helvb12.bdf'
+				scalable_file = 'FreeSansBold.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_default'
 				file = 'clR6x12.bdf'
+				scalable_file = 'FreeSans.ttf'
+				point_size = '11'
 		/>
 		<font	id = 'text_button'
 				file = 'helvb12.bdf'
+				scalable_file = 'FreeSansBold.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_button'
 				file = 'clR6x12.bdf'
+				scalable_file = 'FreeSans.ttf'
+				point_size = '11'
 		/>
 		<font	id = 'text_normal'
 				file = 'helvb12.bdf'
+				scalable_file = 'FreeSans.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_normal'
 				file = 'clR6x12.bdf'
+				scalable_file = 'FreeSans.ttf'
+				point_size = '11'
 		/>
 		<font	id = 'tooltip_normal'
 				file = 'fixed5x8.bdf'
+				scalable_file = 'FreeMonoBold.ttf'
+				point_size = '8'
 		/>
 
 		<text_color	id = 'color_normal'
@@ -387,7 +398,7 @@
 	<!-- Background of the slider widget -->
 	<drawdata id = 'widget_slider' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = '0'
+					stroke = '1'
 					radius = '5'
 					fill = 'foreground'
 					fg_color = 'paleyellow'
@@ -676,6 +687,7 @@
 					radius = '5'
 					fg_color = 'paleyellow'
 					shadow = '0'
+					stroke = '1'
 					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>

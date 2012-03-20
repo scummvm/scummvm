@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/gui_options.h"
 #include "common/util.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -90,7 +91,7 @@ public:
 
 protected:
 	bool tryInsertChar(byte c, int pos) {
-		if (isalnum(c) || c == '-' || c == '_') {
+		if (Common::isAlnum(c) || c == '-' || c == '_') {
 			_editString.insertChar(c, pos);
 			return true;
 		}
@@ -1084,7 +1085,7 @@ void LauncherDialog::updateButtons() {
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlign)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
 			ver->setLabel(gScummVMVersionDate);
@@ -1095,7 +1096,7 @@ void LauncherDialog::reflowLayout() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 	} else {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlign)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
 			ver->setLabel(gScummVMFullVersion);

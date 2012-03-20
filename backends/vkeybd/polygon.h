@@ -46,13 +46,13 @@ struct Polygon {
 		}
 	}
 
-	void addPoint(const Point& p) {
+	void addPoint(const Point &p) {
 		_points.push_back(p);
 		_bound.extend(Rect(p.x, p.y, p.x, p.y));
 	}
 
 	void addPoint(int16 x, int16 y) {
-		addPoint(Point(x,y));
+		addPoint(Point(x, y));
 	}
 
 	uint getPointCount() {

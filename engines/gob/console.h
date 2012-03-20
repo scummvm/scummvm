@@ -28,14 +28,20 @@
 namespace Gob {
 
 class GobEngine;
+class Cheater;
 
 class GobConsole : public GUI::Debugger {
 public:
 	GobConsole(GobEngine *vm);
 	virtual ~GobConsole(void);
 
+	void registerCheater(Cheater *cheater);
+	void unregisterCheater();
+
 private:
 	GobEngine *_vm;
+
+	Cheater *_cheater;
 
 	bool cmd_varSize(int argc, const char **argv);
 	bool cmd_dumpVars(int argc, const char **argv);
@@ -43,6 +49,8 @@ private:
 	bool cmd_var16(int argc, const char **argv);
 	bool cmd_var32(int argc, const char **argv);
 	bool cmd_varString(int argc, const char **argv);
+
+	bool cmd_cheat(int argc, const char **argv);
 
 	bool cmd_listArchives(int argc, const char **argv);
 };

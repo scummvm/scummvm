@@ -32,7 +32,7 @@ ScummVM Team
        Max Horn              - (retired)
        Travis Howell
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
-       Gregory Montoir
+       Gregory Montoir       - (retired)
        Eugene Sandulenko     - FT INSANE, MM NES, MM C64, game detection,
                                Herc/CGA
        Ludvig Strigeus       - (retired)
@@ -40,7 +40,7 @@ ScummVM Team
     HE:
        Jonathan Gray         - (retired)
        Travis Howell
-       Gregory Montoir
+       Gregory Montoir       - (retired)
        Eugene Sandulenko
 
     AGI:
@@ -67,7 +67,7 @@ ScummVM Team
     Cine:
        Vincent Hamm          - (retired)
        Pawel Kolodziejski
-       Gregory Montoir
+       Gregory Montoir       - (retired)
        Kari Salminen
        Eugene Sandulenko
 
@@ -111,7 +111,7 @@ ScummVM Team
        Torbjorn Andersson    - VQA Player
        Oystein Eftevaag
        Florian Kagerer
-       Gregory Montoir
+       Gregory Montoir       - (retired)
        Johannes Schickel
 
     Lastexpress:
@@ -139,11 +139,13 @@ ScummVM Team
 
     Queen:
        David Eriksson        - (retired)
-       Gregory Montoir
+       Gregory Montoir       - (retired)
        Joost Peters
 
     SAGA:
        Torbjorn Andersson
+       Daniel Balsom         - Original engine reimplementation author
+                               (retired)
        Filippos Karapetis
        Andrew Kurushin
        Eugene Sandulenko
@@ -198,14 +200,14 @@ ScummVM Team
        Sylvain Dupont
 
     Touche:
-       Gregory Montoir
+       Gregory Montoir       - (retired)
 
     TsAGE:
        Arnaud Boutonne
        Paul Gilbert
 
     Tucker:
-       Gregory Montoir
+       Gregory Montoir       - (retired)
 
   Backend Teams
   -------------
@@ -389,6 +391,9 @@ Other contributions
   ------------
      Thierry Crozat        - Translation Lead
 
+    Basque:
+       Mikel Iturbe Urretxa
+
     Catalan:
        Jordi Vilalta Prat
 
@@ -477,6 +482,7 @@ Other contributions
      Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                              support
      Andre Souza           - SDL-based OpenGL renderer
+     Tom Frost             - WebOS port contributions
 
   FreeSCI Contributors
   --------------------
@@ -535,6 +541,7 @@ Other contributions
 
 Special thanks to
 *****************
+   Daniel Balsom    - For the original Reinherit (SAGA) code
    Sander Buskens   - For his work on the initial reversing of Monkey2
    Canadacow        - For the original MT-32 emulator
    Kevin Carnes     - For Scumm16, the basis of ScummVM's older gfx codecs

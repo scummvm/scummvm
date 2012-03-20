@@ -434,7 +434,7 @@ void Scene810::Action2::signal() {
 		scene->_lyle.setVisage(813);
 		scene->_lyle.setStrip(2);
 		scene->_lyle.setFrame(1);
-		
+
 		ADD_PLAYER_MOVER(84, 113);
 		break;
 	case 5:
@@ -611,7 +611,7 @@ bool Scene810::Lyle::startAction(CursorType action, Event &event) {
 	default:
 		return NamedObjectExt::startAction(action, event);
 	}
-}		
+}
 
 bool Scene810::Chair::startAction(CursorType action, Event &event) {
 	switch (action) {
@@ -709,7 +709,7 @@ bool Scene810::Object5::startAction(CursorType action, Event &event) {
 	case CURSOR_USE: {
 		scene->_sceneMode = 8195;
 		BF_GLOBALS._player.disableControl();
-		
+
 		PlayerMover *mover = new PlayerMover();
 		Common::Point destPos(67, 111);
 		BF_GLOBALS._player.addMover(mover, &destPos, scene);
@@ -804,7 +804,7 @@ bool Scene810::FaxMachine::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 811;
 
 			if (BF_GLOBALS._sceneObjects->contains(&scene->_lyle)) {
-				scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105, 
+				scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105,
 					&BF_GLOBALS._player, &scene->_object6, NULL);
 			} else {
 				scene->setAction(&scene->_sequenceManager1, scene, 8111, &BF_GLOBALS._player,
@@ -1058,12 +1058,12 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 	case 820:
 		BF_GLOBALS._player.setStrip(7);
 		BF_GLOBALS._player.setPosition(Common::Point(278, 116));
-		
+
 		_lyle.setVisage(845);
 		_lyle.setPosition(Common::Point(340, 175));
 		_lyle.setObjectWrapper(new SceneObjectWrapper());
 		_lyle.animate(ANIM_MODE_1, NULL);
-		
+
 		_chair.show();
 
 		BF_GLOBALS._player.disableControl();
@@ -1121,7 +1121,7 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 	_item12._sceneRegionId = 8;
 	BF_GLOBALS._sceneItems.push_back(&_item12);
 
-	BF_GLOBALS._sceneItems.addItems(&_microficheReader, &_map, &_window, &_bookcase, &_garbageCan, 
+	BF_GLOBALS._sceneItems.addItems(&_microficheReader, &_map, &_window, &_bookcase, &_garbageCan,
 		&_fileCabinets, &_coffeeMaker, &_shelves, &_background, NULL);
 	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y));
 }
@@ -1276,7 +1276,7 @@ void Scene810::dispatch() {
 		_lyle.updateAngle(BF_GLOBALS._player._position);
 	}
 
-	if (BF_GLOBALS._sceneObjects->contains(&_faxMachineInset) && (BF_GLOBALS._player._position.x != 67) && 
+	if (BF_GLOBALS._sceneObjects->contains(&_faxMachineInset) && (BF_GLOBALS._player._position.x != 67) &&
 			(BF_GLOBALS._player._position.y != 111)) {
 		_faxMachineInset.remove();
 	}
@@ -1341,7 +1341,7 @@ bool Scene820::PowerButton::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._scenePalette.loadPalette(821);
 			BF_GLOBALS._scenePalette.refresh();
 
-			SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+			SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
 				SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 		} else {
 			BF_GLOBALS._scenePalette.loadPalette(820);
@@ -1388,7 +1388,7 @@ bool Scene820::BackButton::startAction(CursorType action, Event &event) {
 			scene->_object5.hide();
 		}
 
-		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
 			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 		return true;
 	default:
@@ -1419,7 +1419,7 @@ bool Scene820::ForwardButton::startAction(CursorType action, Event &event) {
 		if (scene->_pageNumber < 4)
 			++scene->_pageNumber;
 
-		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
 			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 
 		if (scene->_pageNumber == 4) {
@@ -1447,7 +1447,7 @@ void Scene820::synchronize(Serializer &s) {
 void Scene820::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(820);
-	
+
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 
 	_powerButton.postInit();
@@ -1672,12 +1672,12 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 		_rentalBoat.setStrip(1);
 		_rentalBoat.setPosition(Common::Point(271, 146));
 		_rentalBoat.fixPriority(90);
-		_rentalBoat.setDetails(830, 0, 1, 2, 1, NULL);
+		_rentalBoat.setDetails(830, 0, 1, 2, 1, (SceneItem *)NULL);
 	}
 
 	_door.postInit();
 	_door.setVisage(830);
-	_door.setDetails(830, 3, 4, -1, 1, NULL);
+	_door.setDetails(830, 3, 4, -1, 1, (SceneItem *)NULL);
 	_door.setStrip((BF_GLOBALS._dayNumber == 2) ? 4 : 3);
 	_door.setPosition(Common::Point(182, 97));
 
@@ -1702,7 +1702,7 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 			_object5.setStrip(2);
 			_object5.setFrame(2);
 			_object5.setPosition(Common::Point(126, 133));
-			_object5.setDetails(830, 7, 8, -1, 1, NULL);
+			_object5.setDetails(830, 7, 8, -1, 1, (SceneItem *)NULL);
 		}
 		break;
 	case 5:
@@ -1718,7 +1718,7 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 			_lyle.setStrip(4);
 			_lyle.setPosition(Common::Point(180, 154));
 			_lyle._moveDiff = Common::Point(2, 0);
-			_lyle.setDetails(830, 28, -1, 29, 1, NULL);
+			_lyle.setDetails(830, 28, -1, 29, 1, (SceneItem *)NULL);
 
 			_field18AC = 1;
 		}
@@ -1950,7 +1950,7 @@ void Scene840::BoatKeysInset::postInit(SceneObjectList *OwnerList) {
 		_rentalKeys.setFrame(3);
 		_rentalKeys.setPosition(Common::Point(120, 132));
 		_rentalKeys.fixPriority(255);
-		_rentalKeys.setDetails(840, 52, 8, -1, 2, NULL);
+		_rentalKeys.setDetails(840, 52, 8, -1, 2, (SceneItem *)NULL);
 	}
 
 	if (BF_INVENTORY.getObjectScene(INV_WAVE_KEYS) != 1) {
@@ -1960,7 +1960,7 @@ void Scene840::BoatKeysInset::postInit(SceneObjectList *OwnerList) {
 		_waveKeys.setFrame(2);
 		_waveKeys.setPosition(Common::Point(201, 91));
 		_waveKeys.fixPriority(255);
-		_waveKeys.setDetails(840, 53, 8, -1, 2, NULL);
+		_waveKeys.setDetails(840, 53, 8, -1, 2, (SceneItem *)NULL);
 	}
 
 	_v1B4 = _v1B6 = 0;
@@ -2035,7 +2035,7 @@ bool Scene840::BoatKeysInset::startAction(CursorType action, Event &event) {
 				_rentalKeys.setFrame(3);
 				_rentalKeys.setPosition(Common::Point(120, 132));
 				_rentalKeys.fixPriority(255);
-				_rentalKeys.setDetails(840, 52, 8, -1, 2, NULL);
+				_rentalKeys.setDetails(840, 52, 8, -1, 2, (SceneItem *)NULL);
 			}
 
 			if (BF_INVENTORY.getObjectScene(INV_WAVE_KEYS) == 1) {
@@ -2046,7 +2046,7 @@ bool Scene840::BoatKeysInset::startAction(CursorType action, Event &event) {
 				_waveKeys.setFrame(2);
 				_waveKeys.setPosition(Common::Point(201, 91));
 				_waveKeys.fixPriority(255);
-				_waveKeys.setDetails(840, 53, 8, -1, 2, NULL);
+				_waveKeys.setDetails(840, 53, 8, -1, 2, (SceneItem *)NULL);
 			}
 
 			BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 0);
@@ -2259,7 +2259,7 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	_doors.setVisage(840);
 	_doors.setStrip(3);
 	_doors.setPosition(Common::Point(157, 81));
-	_doors.setDetails(840, 0, 1, 2, 1, NULL);
+	_doors.setDetails(840, 0, 1, 2, 1, (SceneItem *)NULL);
 
 	_carter.postInit();
 	_carter.setVisage(843);
@@ -2279,7 +2279,7 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	_item10.setDetails(Rect(199, 56, 236, 80), 840, 24, 14, 12, 1, NULL);
 	_item11.setDetails(Rect(256, 94, 319, 118), 840, 25, 15, 13, 1, NULL);
 	_item18.setDetails(6, 840, 38, 39, 40, 1);
-	_carter.setDetails(840, 3, 4, 5, 1, NULL);
+	_carter.setDetails(840, 3, 4, 5, 1, (SceneItem *)NULL);
 	_item8.setDetails(Rect(259, 4, 319, 87), 840, 22, 15, 13, 1, NULL);
 	_item15.setDetails(2, 840, 32, 33, 34, 1);
 	_coins.setDetails(3, 840, -1, 6, 7, 1);
@@ -2295,7 +2295,7 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 		_boatKeys.setFrame(1);
 		_boatKeys.setPosition(Common::Point(250, 83));
 		_boatKeys.fixPriority(120);
-		_boatKeys.setDetails(840, -1, 8, 9, 2, NULL);
+		_boatKeys.setDetails(840, -1, 8, 9, 2, (SceneItem *)NULL);
 		_field1AC0 = 1;
 	}
 
@@ -2387,7 +2387,7 @@ void Scene840::signal() {
 	case 4:
 		_sceneMode = 8403;
 		_boatKeys.postInit();
-		_boatKeys.setDetails(840, -1, 8, 9, 2, NULL);
+		_boatKeys.setDetails(840, -1, 8, 9, 2, (SceneItem *)NULL);
 		setAction(&_sequenceManager1, this, 8403, &_carter, &_boatKeys, NULL);
 		break;
 	case 5:
@@ -2679,7 +2679,7 @@ void Scene860::postInit(SceneObjectList *OwnerList) {
 		_object2.setVisage(880);
 		_object2.setPosition(Common::Point(196, 81));
 		BF_GLOBALS._sceneItems.push_back(&_object2);
-		_object2.setDetails(860, 0, 1, -1, 1, NULL);
+		_object2.setDetails(860, 0, 1, -1, 1, (SceneItem *)NULL);
 		_object2.fixPriority(20);
 
 		_neRect = Rect(0, 0, 0, 0);
@@ -2876,7 +2876,7 @@ void Scene870::CrateInset::initContents() {
 		_jar.setPosition(Common::Point(scene->_crateInset._position.x + 5,
 			scene->_crateInset._position.y - 26));
 		_jar.fixPriority(251);
-		_jar.setDetails(870, 39, 40, 41, 1, NULL);
+		_jar.setDetails(870, 39, 40, 41, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.remove(&_jar);
 		BF_GLOBALS._sceneItems.push_front(&_jar);
 	}
@@ -2890,7 +2890,7 @@ void Scene870::CrateInset::initContents() {
 		_rags.setPosition(Common::Point(scene->_crateInset._position.x - 18,
 			scene->_crateInset._position.y - 18));
 		_rags.fixPriority(251);
-		_rags.setDetails(870, 42, 43, 44, 1, NULL);
+		_rags.setDetails(870, 42, 43, 44, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.remove(&_rags);
 		BF_GLOBALS._sceneItems.push_front(&_rags);
 	}
@@ -3063,7 +3063,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 			_lyle.setObjectWrapper(new SceneObjectWrapper());
 			_lyle.animate(ANIM_MODE_1, NULL);
 			_lyle._moveDiff = Common::Point(2, 1);
-			_lyle.setDetails(870, 27, 28, 29, 1, NULL);
+			_lyle.setDetails(870, 27, 28, 29, 1, (SceneItem *)NULL);
 		}
 
 		_yacht.postInit();
@@ -3071,7 +3071,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 		_yacht.setStrip(4);
 		_yacht.setFrame(4);
 		_yacht.setPosition(Common::Point(232, 19));
-		_yacht.setDetails(870, 30, 31, 32, 1, NULL);
+		_yacht.setDetails(870, 30, 31, 32, 1, (SceneItem *)NULL);
 
 		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_FLARE) == 0) &&
 				(BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 355)) {
@@ -3081,9 +3081,9 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 			_green.setPosition(Common::Point(127, 109));
 
 			if (BF_GLOBALS._bookmark == bFinishedWGreen) {
-				_green.setDetails(870, 51, 54, 53, 1, NULL);
+				_green.setDetails(870, 51, 54, 53, 1, (SceneItem *)NULL);
 			} else {
-				_green.setDetails(870, 51, 52, 53, 1, NULL);
+				_green.setDetails(870, 51, 52, 53, 1, (SceneItem *)NULL);
 			}
 		}
 	}
@@ -3115,7 +3115,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 			_lyle.setPosition(Common::Point(156, 148));
 			_lyle.fixPriority(149);
 		}
-	
+
 		if ((BF_INVENTORY.getObjectScene(INV_HANDCUFFS) != 1) &&
 				(BF_INVENTORY.getObjectScene(INV_GRENADES) == 355)) {
 			_object4.postInit();
@@ -3135,7 +3135,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	}
-	
+
 	_boat.setDetails(7, 870, 3, 4, 5, 1);
 	_crate.setDetails(14, 870, 12, 13, 14, 1);
 	_water.setDetails(5, 870, 24, 25, 26, 1);
@@ -3358,11 +3358,11 @@ void Scene880::postInit(SceneObjectList *OwnerList) {
 		_object2.postInit();
 		_object2.setVisage(880);
 		_object2.setPosition(Common::Point(209, 76));
-		_object2.setDetails(880, 4, 5, 6, 1, NULL);
+		_object2.setDetails(880, 4, 5, 6, 1, (SceneItem *)NULL);
 
 		_object4.postInit();
 		_object4.setVisage(875);
-		_object4.setDetails(880, 7, -1, 9, 1, NULL);
+		_object4.setDetails(880, 7, -1, 9, 1, (SceneItem *)NULL);
 
 		_object5.postInit();
 		_object5.setVisage(874);
@@ -3393,7 +3393,7 @@ void Scene880::postInit(SceneObjectList *OwnerList) {
 			_object4.setFrame2(_object4.getFrameCount());
 			_object4.fixPriority(160);
 			_object4.setPosition(Common::Point(255, 148));
-			
+
 			_seqNumber = 8816;
 		} else if (BF_GLOBALS.getFlag(fBlowUpGoon)) {
 			_object4.setStrip(7);
@@ -3405,7 +3405,7 @@ void Scene880::postInit(SceneObjectList *OwnerList) {
 		} else {
 			_object4.setStrip(2);
 			_object4.setPosition(Common::Point(258, 147));
-		
+
 			_object3.postInit();
 			_object3.setVisage(871);
 			_object3.setStrip(4);
@@ -3600,7 +3600,7 @@ void Scene880::handleAction(Action *action) {
 		action->_owner = NULL;
 	}
 }
-	
+
 void Scene880::dispatch() {
 	SceneExt::dispatch();
 

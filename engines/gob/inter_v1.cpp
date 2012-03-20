@@ -658,20 +658,6 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		return;
 	}
 
-	// A cheat to get around the stupid mastermind puzzle in Geisha,
-	// while we're still testing it
-	if ((_vm->getGameType() == kGameTypeGeisha) && (offset == 12934) &&
-	    _vm->isCurrentTot("hard.tot") && _vm->_inter->_variables) {
-
-		uint32 digit1 = READ_VARO_UINT32(0x768);
-		uint32 digit2 = READ_VARO_UINT32(0x76C);
-		uint32 digit3 = READ_VARO_UINT32(0x770);
-		uint32 digit4 = READ_VARO_UINT32(0x774);
-		uint32 digit5 = READ_VARO_UINT32(0x778);
-
-		warning("Mastermind solution: %d %d %d %d %d", digit1, digit2, digit3, digit4, digit5);
-	}
-
 	// Skipping the copy protection screen in Gobliiins
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905) &&
 	    _vm->isCurrentTot(_vm->_startTot)) {

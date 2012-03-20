@@ -81,6 +81,23 @@ public:
 		// Both lead to some problems in our IFF parser, either reading after the end
 		// of file or producing a "Chunk overread" error message. To work around this
 		// we need to adjust the size field properly.
+
+		// Fix for certain Russian fan translations:
+		// Westwood's original code completely ignores the FORM chunk and its size
+		// setting. After opening a TIM or EMC file they just check whether the FORM
+		// chunk exists (as a kind of file type verification) and then immediately seek
+		// behind the FORM chunk.
+		// This means that their parser is immune to weird fan translation scripts
+		// where the file size doesn't match the form chunk size. In our implemetation
+		// this would produce "Chunk overread" errors.
+		// Westwood also always pads all chunk sizes to 2 byte alignment after reading
+		// them from the file (not with FORM though, since they completely ignore it).
+		// This seems to do the trick for our FORM chunk size issue with the Russian
+		// fan translations. Another method which I have tried and which seems to work
+		// well would be simply setting _formChunk.size to the file size (-12 for TIM).
+
+		_formChunk.size = (_formChunk.size + 1) & ~1;
+
 		if (_formType == MKTAG('E','M','C','2'))
 			_formChunk.size -= 8;
 		else if (_formType == MKTAG('A','V','F','S'))

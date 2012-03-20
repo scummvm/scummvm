@@ -22,83 +22,71 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-uint8 *DreamBase::mainPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kMaingamepal, 256 * 3);
+void DreamWebEngine::clearStartPal() {
+	memset(_startPal, 0, 256 * 3);
 }
 
-uint8 *DreamBase::startPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kStartpal, 256 * 3);
+void DreamWebEngine::clearEndPal() {
+	memset(_endPal, 0, 256 * 3);
 }
 
-uint8 *DreamBase::endPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kEndpal, 256 * 3);
+void DreamWebEngine::palToStartPal() {
+	memcpy(_startPal, _mainPal, 256 * 3);
 }
 
-void DreamBase::clearStartPal() {
-	memset(startPalette(), 0, 256 * 3);
+void DreamWebEngine::endPalToStart() {
+	memcpy(_startPal, _endPal, 256 * 3);
 }
 
-void DreamBase::clearEndPal() {
-	memset(endPalette(), 0, 256 * 3);
+void DreamWebEngine::startPalToEnd() {
+	memcpy(_endPal, _startPal, 256 * 3);
 }
 
-void DreamBase::palToStartPal() {
-	memcpy(startPalette(), mainPalette(), 256 * 3);
+void DreamWebEngine::palToEndPal() {
+	memcpy(_endPal, _mainPal, 256 * 3);
 }
 
-void DreamBase::endPalToStart() {
-	memcpy(startPalette(), endPalette(), 256 * 3);
-}
-
-void DreamBase::startPalToEnd() {
-	memcpy(endPalette(), startPalette(), 256 * 3);
-}
-
-void DreamBase::palToEndPal() {
-	memcpy(endPalette(), mainPalette(), 256 * 3);
-}
-
-void DreamBase::fadeDOS() {
+void DreamWebEngine::fadeDOS() {
 	return; // FIXME later
 
-	engine->waitForVSync();
+	waitForVSync();
 	//processEvents will be called from vsync
-	uint8 *dst = startPalette();
-	engine->getPalette(dst, 0, 64);
+	uint8 *dst = _startPal;
+	getPalette(dst, 0, 64);
 	for (int fade = 0; fade < 64; ++fade) {
 		for (int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
 			if (dst[c]) {
 				--dst[c];
 			}
 		}
-		engine->setPalette(dst, 0, 64);
-		engine->waitForVSync();
+		setPalette(dst, 0, 64);
+		waitForVSync();
 	}
 }
 
-void DreamBase::doFade() {
-	if (data.byte(kFadedirection) == 0)
+void DreamWebEngine::doFade() {
+	if (_fadeDirection == 0)
 		return;
 
-	engine->processEvents();
-	uint8 *src = startPalette() + 3 * data.byte(kColourpos);
-	engine->setPalette(src, data.byte(kColourpos), data.byte(kNumtofade));
+	processEvents();
+	uint8 *src = _startPal + 3 * _colourPos;
+	setPalette(src, _colourPos, _numToFade);
 
-	data.byte(kColourpos) += data.byte(kNumtofade);
-	if (data.byte(kColourpos) == 0)
+	_colourPos += _numToFade;
+	if (_colourPos == 0)
 		fadeCalculation();
 }
 
-void DreamBase::fadeCalculation() {
-	if (data.byte(kFadecount) == 0) {
-		data.byte(kFadedirection) = 0;
+void DreamWebEngine::fadeCalculation() {
+	if (_fadeCount == 0) {
+		_fadeDirection = 0;
 		return;
 	}
 
-	uint8 *startPal = startPalette();
-	const uint8 *endPal = endPalette();
+	uint8 *startPal = _startPal;
+	const uint8 *endPal = _endPal;
 	for (size_t i = 0; i < 256 * 3; ++i) {
 		uint8 s = startPal[i];
 		uint8 e = endPal[i];
@@ -107,94 +95,148 @@ void DreamBase::fadeCalculation() {
 		else if (s > e)
 			--startPal[i];
 		else {
-			if (data.byte(kFadecount) <= e)
+			if (_fadeCount <= e)
 				++startPal[i];
 		}
 	}
-	--data.byte(kFadecount);
+	--_fadeCount;
 }
 
-void DreamGenContext::fadeupYellows() {
+void DreamWebEngine::fadeUpYellows() {
 	palToEndPal();
-	memset(endPalette() + 231 * 3, 0, 8 * 3);
-	memset(endPalette() + 246 * 3, 0, 1 * 3);
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	memset(_endPal + 231 * 3, 0, 8 * 3);
+	memset(_endPal + 246 * 3, 0, 1 * 3);
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 	hangOn(128);
 }
 
-void DreamGenContext::fadeupMonFirst() {
+void DreamWebEngine::fadeUpMonFirst() {
 	palToStartPal();
 	palToEndPal();
-	memset(startPalette() + 231 * 3, 0, 8 * 3);
-	memset(startPalette() + 246 * 3, 0, 1 * 3);
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	memset(_startPal + 231 * 3, 0, 8 * 3);
+	memset(_startPal + 246 * 3, 0, 1 * 3);
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 	hangOn(64);
 	playChannel1(26);
 	hangOn(64);
 }
 
-void DreamBase::fadeScreenUp() {
-	clearStartPal();
+
+void DreamWebEngine::fadeDownMon() {
+	palToStartPal();
 	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	memset(_endPal + 231 * 3, 0, 8 * 3);
+	memset(_endPal + 246 * 3, 0, 1 * 3);
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
+	hangOn(64);
 }
 
-void DreamBase::fadeScreenUps() {
-	clearStartPal();
+void DreamWebEngine::fadeUpMon() {
+	palToStartPal();
 	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 64;
+	memset(_startPal + 231 * 3, 0, 8 * 3);
+	memset(_startPal + 246 * 3, 0, 1 * 3);
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
+	hangOn(128);
 }
 
-void DreamBase::fadeScreenUpHalf() {
+void DreamWebEngine::initialMonCols() {
+	palToStartPal();
+	memset(_startPal + 230 * 3, 0, 9 * 3);
+	memset(_startPal + 246 * 3, 0, 1 * 3);
+	processEvents();
+	setPalette(_startPal + 230 * 3, 230, 18);
+}
+
+void DreamWebEngine::fadeScreenUp() {
+	clearStartPal();
+	palToEndPal();
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
+}
+
+void DreamWebEngine::fadeScreenUps() {
+	clearStartPal();
+	palToEndPal();
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 64;
+}
+
+void DreamWebEngine::fadeScreenUpHalf() {
 	endPalToStart();
 	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 31;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 32;
+	_fadeDirection = 1;
+	_fadeCount = 31;
+	_colourPos = 0;
+	_numToFade = 32;
 }
 
-void DreamBase::fadeScreenDown() {
+void DreamWebEngine::fadeScreenDown() {
 	palToStartPal();
 	clearEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 }
 
-void DreamBase::fadeScreenDowns() {
+void DreamWebEngine::fadeScreenDowns() {
 	palToStartPal();
 	clearEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 64;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 64;
 }
 
-void DreamGenContext::clearPalette() {
-	data.byte(kFadedirection) = 0;
+void DreamWebEngine::fadeScreenDownHalf() {
+	palToStartPal();
+	palToEndPal();
+
+	const uint8 *startPal = _startPal;
+	uint8 *endPal = _endPal;
+	for (int i = 0; i < 256 * 3; ++i) {
+		*endPal >>= 1;
+		endPal++;
+	}
+
+	memcpy(endPal + (56*3), startPal + (56*3), 3*5);
+	memcpy(endPal + (77*3), startPal + (77*3), 3*2);
+
+	_fadeDirection = 1;
+	_fadeCount = 31;
+	_colourPos = 0;
+	_numToFade = 32;
+}
+
+
+void DreamWebEngine::clearPalette() {
+	_fadeDirection = 0;
 	clearStartPal();
 	dumpCurrent();
 }
 
 // Converts palette to grey scale, summed using formula
 // .20xred + .59xGreen + .11xBlue
-void DreamBase::greyscaleSum() {
-	byte *src = mainPalette();
-	byte *dst = endPalette();
+void DreamWebEngine::greyscaleSum() {
+	byte *src = _mainPal;
+	byte *dst = _endPal;
 
 	for (int i = 0; i < 256; ++i) {
 		const unsigned int r = 20 * *src++;
@@ -205,51 +247,38 @@ void DreamBase::greyscaleSum() {
 
 		tmp = grey;
 		//if (tmp != 0)	// FIXME: The assembler code has this check commented out. Bug or feature?
-			tmp += data.byte(kAddtored);
+			tmp += _addToRed;
 		*dst++ = tmp;
 
 		tmp = grey;
 		if (tmp != 0)
-			tmp += data.byte(kAddtogreen);
+			tmp += _addToGreen;
 		*dst++ = tmp;
 
 		tmp = grey;
 		if (tmp != 0)
-			tmp += data.byte(kAddtoblue);
+			tmp += _addToBlue;
 		*dst++ = tmp;
 	}
 }
 
-void DreamBase::allPalette() {
-	memcpy(startPalette(), mainPalette(), 3 * 256);
+void DreamWebEngine::allPalette() {
+	memcpy(_startPal, _mainPal, 3 * 256);
 	dumpCurrent();
 }
 
-void DreamBase::dumpCurrent() {
-	uint8 *pal = startPalette();
+void DreamWebEngine::dumpCurrent() {
+	uint8 *pal = _startPal;
 
-	engine->waitForVSync();
-	engine->processEvents();
-	engine->setPalette(pal, 0, 128);
+	waitForVSync();
+	processEvents();
+	setPalette(pal, 0, 128);
 
 	pal += 128 * 3;
 
-	engine->waitForVSync();
-	engine->processEvents();
-	engine->setPalette(pal, 128, 128);
+	waitForVSync();
+	processEvents();
+	setPalette(pal, 128, 128);
 }
 
-void DreamGenContext::showGroup() {
-	engine->processEvents();
-	unsigned n = (uint16)cx;
-	uint8 *src = ds.ptr(si, n * 3);
-	engine->setPalette(src, al, n);
-	si += n * 3;
-	cx = 0;
-}
-
-void DreamGenContext::rollEndCredits2() {
-	rollEm();
-}
-
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

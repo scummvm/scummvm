@@ -42,6 +42,14 @@ namespace Scumm {
 
 byte Actor::kInvalidBox = 0;
 
+static const byte v0ActorTalkArray[0x19] = {
+	0x00, 0x06, 0x06, 0x06, 0x06,
+	0x06, 0x06, 0x00, 0x46, 0x06,
+	0x06, 0x06, 0x06, 0xFF, 0xFF,
+	0x06, 0xC0, 0x06, 0x06, 0x00,
+	0xC0, 0xC0, 0x00, 0x06, 0x06
+};
+
 Actor::Actor(ScummEngine *scumm, int id) :
 	_vm(scumm), _number(id) {
 	assert(_vm != 0);
@@ -167,6 +175,21 @@ void Actor_v2::initActor(int mode) {
 	_talkStopFrame = 4;
 }
 
+void Actor_v0::initActor(int mode) {
+	Actor_v2::initActor(mode);
+
+	_costCommandNew = 0xFF;
+	_costCommand = 0xFF;
+	_miscflags = 0;
+	_speaking = 0;
+
+	_animFrameRepeat = 0;
+	for (int i = 0; i < 8; ++i) {
+		_limbFrameRepeatNew[i] = 0;
+		_limbFrameRepeat[i] = 0;
+		_limb_flipped[i] = false;
+	}
+}
 
 void Actor::setBox(int box) {
 	_walkbox = box;
@@ -226,12 +249,9 @@ void Actor::stopActorMoving() {
 	if (_walkScript)
 		_vm->stopScript(_walkScript);
 
-	// V0 Games will walk on the spot if the actor is stopped mid-walk
-	// So we must set the stand still frame
-	if (_vm->_game.version == 0)
-		startWalkAnim(3, -1);
-
 	_moving = 0;
+	if (_vm->_game.version == 0)
+		setDirection(_facing);
 }
 
 void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
@@ -286,7 +306,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 		deltaYFactor = 0;
 	}
 
-	if ((uint) ABS((int)(deltaXFactor >> 16)) > _speedx) {
+	if ((uint) ABS(deltaXFactor) > (_speedx << 16))	{
 		deltaXFactor = _speedx << 16;
 		if (diffX < 0)
 			deltaXFactor = -deltaXFactor;
@@ -319,6 +339,9 @@ int Actor::actorWalkStep() {
 	int distX, distY;
 	int nextFacing;
 
+	if (_vm->_game.version == 0)
+		((Actor_v0 *)this)->_animFrameRepeat = -1;
+
 	_needRedraw = true;
 
 	nextFacing = updateActorDirection(true);
@@ -327,6 +350,10 @@ int Actor::actorWalkStep() {
 			startWalkAnim(1, nextFacing);
 		}
 		_moving |= MF_IN_LEG;
+
+		// V0: Don't move during the turn
+		if (_vm->_game.version == 0)
+			return 0;
 	}
 
 	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y)) {
@@ -361,6 +388,10 @@ int Actor::actorWalkStep() {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
+
+	if (_vm->_game.version == 0)
+		((Actor_v0 *)this)->animateActor(newDirToOldDir(_facing));
+
 	return 1;
 }
 
@@ -536,23 +567,101 @@ void Actor::walkActor() {
 	calcMovementFactor(_walkdata.dest);
 }
 
+bool Actor_v2::checkWalkboxesHaveDirectPath(Common::Point &foundPath) {
+	// only MM v0 supports walking in direct line between walkboxes.
+	// MM v1 already does not support it anymore.
+	return false;
+}
+
+bool Actor_v0::intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End, 
+	const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result) 
+{
+	const Common::Point v1 = line1End - line1Start; // line1(n1) = line1Start + n1 * v1
+	const Common::Point v2 = line2End - line2Start; // line2(n2) = line2Start + n2 * v2
+	
+	double det = v2.x * v1.y - v1.x * v2.y;
+	if (det == 0)
+		return false;
+
+	double n1 = ((double)v2.x * (line2Start.y - line1Start.y) - 
+		         (double)v2.y * (line2Start.x - line1Start.x)) / det;
+	double n2 = ((double)v1.x * (line2Start.y - line1Start.y) - 
+		         (double)v1.y * (line2Start.x - line1Start.x)) / det;
+
+	// both coefficients have to be in [0, 1], otherwise the intersection is
+	// not inside of at least one of the two line segments
+	if (n1 < 0.0 || n1 > 1.0 || n2 < 0.0 || n2 > 1.0)
+		return false;
+
+	result.x = line1Start.x + (int)(n1 * v1.x);
+	result.y = line1Start.y + (int)(n1 * v1.y);
+	return true;
+}
+
+/*
+ * MM v0 allows the actor to walk in a direct line between boxes to the target 
+ * if actor and target share a horizontal or vertical corridor.
+ * If such a corridor is found the actor is not forced to go horizontally or 
+ * vertically from one box to the next but can also walk diagonally.
+ *
+ * Note: the original v0 interpreter sets the target destination for diagonal 
+ * walking only once and then rechecks whenever the actor reaches a new box if the
+ * walk destination is still suitable for the current box. 
+ * ScummVM does not perform such a check, so it is possible to leave the walkboxes 
+ * in some cases, for example L-shaped rooms like the swimming pool (actor walks over water) 
+ * or the medical room (actor walks over examination table).
+ * To solve this we intersect the new walk destination with the actor's walkbox borders,
+ * so a recheck is done when the actor leaves his box. This is done by the
+ * intersectLineSegments() routine calls.
+ */
+bool Actor_v0::checkWalkboxesHaveDirectPath(Common::Point &foundPath) {
+	BoxCoords boxCoords = _vm->getBoxCoordinates(_walkbox);
+	BoxCoords curBoxCoords = _vm->getBoxCoordinates(_walkdata.curbox);
+
+	// check if next walkbox is left or right to actor's box
+	if (boxCoords.ll.x > curBoxCoords.lr.x || boxCoords.lr.x < curBoxCoords.ll.x) {
+		// determine horizontal corridor gates
+		int gateUpper = MAX(boxCoords.ul.y, curBoxCoords.ul.y);
+		int gateLower = MIN(boxCoords.ll.y, curBoxCoords.ll.y);
+
+		// check if actor and target are in the same horizontal corridor between the boxes
+		if ((_pos.y >= gateUpper && _pos.y <= gateLower) &&
+			(_walkdata.dest.y >= gateUpper && _walkdata.dest.y <= gateLower)) {
+			if (boxCoords.ll.x > curBoxCoords.lr.x) // next box is left
+				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.ll, boxCoords.ul, foundPath);
+			else // next box is right
+				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.lr, boxCoords.ur, foundPath);
+		}
+	// check if next walkbox is above or below actor's box
+	} else if (boxCoords.ul.y > curBoxCoords.ll.y || boxCoords.ll.y < curBoxCoords.ul.y) {
+		// determine vertical corridor gates
+		int gateLeft = MAX(boxCoords.ll.x, curBoxCoords.ll.x);
+		int gateRight = MIN(boxCoords.lr.x, curBoxCoords.lr.x);
+
+		// check if actor and target are in the same vertical corridor between the boxes
+		if ((_pos.x >= gateLeft && _pos.x <= gateRight) &&
+			(_walkdata.dest.x >= gateLeft && _walkdata.dest.x <= gateRight)) {
+			if (boxCoords.ul.y > curBoxCoords.ll.y) // next box is above
+				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.ul, boxCoords.ur, foundPath);
+			else // next box is below
+				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.ll, boxCoords.lr, foundPath);
+		}
+	}
+
+	return false;
+}
+
 void Actor_v2::walkActor() {
 	Common::Point foundPath, tmp;
 	int new_dir, next_box;
 
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
-		// FIXME: is this correct?
 		if (_facing != new_dir) {
-
-			// Actor never stops walking when an object has been selected without this
-			if (_vm->_game.version ==0)
-				_moving = 0;
-
 			setDirection(new_dir);
-
-		} else
+		} else {
 			_moving = 0;
+		}
 		return;
 	}
 
@@ -588,14 +697,7 @@ void Actor_v2::walkActor() {
 
 				_walkdata.curbox = next_box;
 
-				// WORKAROUND: The route of the meteor landing in the introduction isn't correct.
-				// MM V0 in contrast to MM V2 uses two walkboxes instead of just one. Hence a route
-				// from walkbox 1 to 0 is calculated first. This causes the meteor to fly on a
-				// horizontal line to walkbox 0 then vertically to the ground.
-				// To fix this problem, the box-to-box routing has been disabled in room 33.
-				if (_vm->_game.version == 0 && _vm->_currentRoom == 33) {
-					foundPath = _walkdata.dest;
-				} else {
+				if (!checkWalkboxesHaveDirectPath(foundPath)) {
 					getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, tmp.x, tmp.y);
 					getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, foundPath.x, foundPath.y);
 				}
@@ -781,7 +883,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			return 180;
 		}
 
-		// MM C64 stores flags as a part of the mask
+		// MM v0 stores flags as a part of the mask
 		if (_vm->_game.version == 0) {
 			mask = _vm->getMaskFromBox(_walkbox);
 			// face the wall if climbing/descending a ladder
@@ -857,16 +959,6 @@ void Actor::setDirection(int direction) {
 	if (_costume == 0)
 		return;
 
-	// V0 MM
-	if (_vm->_game.version == 0) {
-		if (_moving)
-			_vm->_costumeLoader->costumeDecodeData(this, _walkFrame, 0);
-		else
-			_vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
-		_needRedraw = true;
-		return;
-	}
-
 	// Update the costume for the new direction (and mark the actor for redraw)
 	aMask = 0x8000;
 	for (i = 0; i < 16; i++, aMask >>= 1) {
@@ -877,6 +969,34 @@ void Actor::setDirection(int direction) {
 	}
 
 	_needRedraw = true;
+}
+
+void Actor_v0::setDirection(int direction) {
+	int dir = newDirToOldDir( direction );
+	int res = 0;
+
+	switch (dir) {
+		case 0:
+			res = 4;	// Left
+			break;
+
+		case 1:
+			res = 5;	// Right
+			break;
+
+		case 2:
+			res = 6;	// Face Away
+			break;
+
+		default:
+			res = 7;	// Face Camera
+			break;
+	}
+	
+	_animFrameRepeat = -1;
+	animateActor(res);
+	if (_moving)
+		animateCostume();
 }
 
 void Actor::faceToObject(int obj) {
@@ -963,6 +1083,10 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 		if (isInCurrentRoom())
 			showActor();
 	}
+
+	// V0 always sets the actor to face the camera upon entering a room
+	if (_vm->_game.version == 0)
+		setDirection(oldDirToNewDir(2));
 }
 
 static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
@@ -1062,16 +1186,11 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 	// yDist must be divided by 4, as we are using 8x2 pixels
 	// blocks for actor coordinates).
 	int xDist = ABS(x - destX);
-	int yDist;
+	int yDist = ABS(y - destY) / 4;
 	int dist;
 
-	// MM C64: This fixes the trunk bug (#3070065), as well
-	// as the fruit bowl, however im not sure if its
-	// the proper solution or not.
-	if( g_scumm->_game.version == 0 )
-		yDist = ABS(y - destY);
-	else
-		yDist = ABS(y - destY) / 4;
+	if (g_scumm->_game.version == 0)
+		xDist *= 2;
 
 	if (xDist < yDist)
 		dist = (xDist >> 1) + yDist;
@@ -1090,7 +1209,9 @@ AdjustBoxResult Actor_v2::adjustXYToBeInBox(const int dstX, const int dstY) {
 
 	int numBoxes = _vm->getNumBoxes() - 1;
 	int bestDist = 0xFF;
-	for (int box = numBoxes; box >= 0; box--) {
+	for (int i = 0; i <= numBoxes; i++) {
+		// MM v0 prioritizes lower boxes, other engines higher boxes
+		int box = (_vm->_game.version == 0 ? i : numBoxes - i);
 		int foundX, foundY;
 		int flags = _vm->getBoxFlags(box);
 		if ((flags & kBoxInvisible) && !((flags & kBoxPlayerOnly) && !isPlayer()))
@@ -1286,8 +1407,24 @@ void Actor::showActor() {
 	_vm->ensureResourceLoaded(rtCostume, _costume);
 
 	if (_vm->_game.version == 0) {
+		Actor_v0 *a = ((Actor_v0 *)this);
+		
+		a->_costCommand = a->_costCommandNew = 0xFF;
+
+		for (int i = 0; i < 8; ++i) {
+			a->_limbFrameRepeat[i] = 0;
+			a->_limbFrameRepeatNew[i] = 0;
+		}
+
 		_cost.reset();
+
+		a->_animFrameRepeat = 1;
+		a->_speaking = 0;
+
 		startAnimActor(_standFrame);
+		_visible = true;
+		return;
+
 	} else if (_vm->_game.version <= 2) {
 		_cost.reset();
 		startAnimActor(_standFrame);
@@ -1323,23 +1460,23 @@ static const byte v0ActorSounds[24] = {
 	0x06, // Bernard
 	0x06, // Wendy
 	0x00, // Jeff
-	0x46, // ???
+	0x46, // Radiation Suit
 	0x06, // Dr Fred
 	0x06, // Nurse Edna
 	0x06, // Weird Ed
 	0x06, // Dead Cousin Ted
 	0xFF, // Purple Tentacle
 	0xFF, // Green Tentacle
-	0x06, // Meteor
-	0xC0, // Plant
-	0x06, // ???
-	0x06, // ???
-	0x00, // ???
-	0xC0, // ???
-	0xC0, // ???
-	0x00, // ???
-	0x06, // Sandy
-	0x06, // ???
+	0x06, // Meteor police
+	0xC0, // Meteor
+	0x06, // Mark Eteer
+	0x06, // Talkshow Host
+	0x00, // Plant
+	0xC0, // Meteor Radiation
+	0xC0, // Edsel (small, outro)
+	0x00, // Meteor (small, intro)
+	0x06, // Sandy (Lab)
+	0x06, // Sandy (Cut-Scene)
 };
 
 /* Used in Scumm v5 only. Play sounds associated with actors */
@@ -1355,7 +1492,10 @@ void ScummEngine::playActorSounds() {
 			} else {
 				sound = _actors[i]->_sound[0];
 			}
-			_sound->addSoundToQueue(sound);
+			// fast mode will flood the queue with walk sounds
+			if (!_fastMode) {
+				_sound->addSoundToQueue(sound);
+			}
 			for (j = 1; j < _numActors; j++) {
 				_actors[j]->_cost.soundCounter = 0;
 			}
@@ -1462,6 +1602,18 @@ void ScummEngine::processActors() {
 				}
 			}
 		}
+	} else if (_game.version == 0) {
+		for (int j = 0; j < numactors; ++j) {
+			for (int i = 0; i < numactors; ++i) {
+				// Note: the plant is handled different in v0, the y value is not used.
+				// In v1/2 this is done by the actor's elevation instead.
+				int sc_actor1 = (_sortedActors[j]->_number == 19 ? 0 : _sortedActors[j]->getPos().y);
+				int sc_actor2 = (_sortedActors[i]->_number == 19 ? 0 : _sortedActors[i]->getPos().y);
+				if (sc_actor1 < sc_actor2) {
+					SWAP(_sortedActors[i], _sortedActors[j]);
+				}
+			}
+		}
 	} else {
 		for (int j = 0; j < numactors; ++j) {
 			for (int i = 0; i < numactors; ++i) {
@@ -1479,11 +1631,26 @@ void ScummEngine::processActors() {
 	for (Actor** ac = _sortedActors; ac != end; ++ac) {
 		Actor* a = *ac;
 
-		// V0 MM: 0x057B
 		if (_game.version == 0) {
-			ActorC64 *A = (ActorC64*) a;
-			if ((A->_speaking & 1))
-				A->_speaking ^= 0xFE;
+			// 0x057B
+			Actor_v0 *a0 = (Actor_v0*) a;
+			if (a0->_speaking & 1)
+				a0->_speaking ^= 0xFE;
+
+			// 0x22B5
+			if (a0->_miscflags & kActorMiscFlagHide)
+				continue;
+
+			// Sound
+			if (a0->_moving  && _currentRoom != 1 && _currentRoom != 44) {
+				if (a0->_cost.soundPos == 0)
+					a0->_cost.soundCounter++;
+
+				// Is this the correct location?
+				// 0x073C
+				if (v0ActorTalkArray[a0->_number] & 0x3F)
+					a0->_cost.soundPos = (a0->_cost.soundPos + 1) % 3;
+			}
 		}
 		// Draw and animate the actors, except those w/o a costume.
 		// Note: We could 'optimize' this a little bit by only putting
@@ -1779,6 +1946,25 @@ void Actor::startAnimActor(int f) {
 	}
 }
 
+void Actor_v0::startAnimActor(int f) {
+	if (f == _talkStartFrame) {
+		if (v0ActorTalkArray[_number] & 0x40)
+			return;
+
+		_speaking = 1;
+		return;
+	}
+
+	if (f == _talkStopFrame) {
+
+		_speaking = 0;
+		return;
+	}
+
+	if (f == _standFrame)
+		setDirection(_facing);
+}
+
 void Actor::animateActor(int anim) {
 	int cmd, dir;
 
@@ -1839,6 +2025,47 @@ void Actor::animateCostume() {
 			_needRedraw = true;
 		}
 	}
+}
+
+void Actor_v0::limbFrameCheck(int limb) {
+	if (_cost.frame[limb] == 0xFFFF)
+		return;
+
+	if (_cost.start[limb] == _cost.frame[limb])
+		return;
+
+	// 0x25A4
+	_cost.start[limb] = _cost.frame[limb];
+
+	_limbFrameRepeat[limb] = _limbFrameRepeatNew[limb];
+
+	// 0x25C3
+	_cost.active[limb] = ((V0CostumeLoader *)_vm->_costumeLoader)->getFrame(this, limb);
+	_cost.curpos[limb] = 0;
+
+	_needRedraw = true;
+}
+
+void Actor_v0::animateCostume() {
+	speakCheck();
+
+	if (_vm->_costumeLoader->increaseAnims(this))
+		_needRedraw = true;
+}
+
+void Actor_v0::speakCheck() {
+	if (v0ActorTalkArray[_number] & 0x80)
+		return;
+	
+	int cmd = newDirToOldDir(_facing);
+
+	if (_speaking & 0x80)
+		cmd += 0x0C;
+	else
+		cmd += 0x10;
+
+	_animFrameRepeat = -1;
+	animateActor(cmd);
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1994,7 +2221,7 @@ void ScummEngine::setTalkingActor(int i) {
 		VAR(VAR_TALK_ACTOR) = i;
 }
 
-static const int c64MMActorTalkColor[25] = {
+static const int v0MMActorTalkColor[25] = {
 	1, 7, 2, 14, 8, 15, 3, 7, 7, 15, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 1, 7
 };
 static const int v1MMActorTalkColor[25] = {
@@ -2006,7 +2233,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 
 	for (i = 1; i < _numActors; i++) {
 		if (_game.version == 0) {
-			_actors[i]->_talkColor = c64MMActorTalkColor[i];
+			_actors[i]->_talkColor = v0MMActorTalkColor[i];
 		} else {
 			_actors[i]->_talkColor = v1MMActorTalkColor[i];
 		}
@@ -2295,22 +2522,23 @@ static const char *const v0ActorNames_English[25] = {
 	"Bernard",
 	"Wendy",
 	"Jeff",
-	"",
+	"", // Radiation Suit
 	"Dr Fred",
 	"Nurse Edna",
 	"Weird Ed",
 	"Dead Cousin Ted",
 	"Purple Tentacle",
 	"Green Tentacle",
+	"", // Meteor Police
 	"Meteor",
-	"",
-	"",
-	"",
+	"", // Mark Eteer
+	"", // Talkshow Host
 	"Plant",
-	"",
-	"",
-	"",
-	"Sandy"
+	"", // Meteor Radiation
+	"", // Edsel (small, outro)
+	"", // Meteor (small, intro)
+	"Sandy", // (Lab)
+	"", // Sandy (Cut-Scene)
 };
 
 static const char *const v0ActorNames_German[25] = {
@@ -2328,15 +2556,16 @@ static const char *const v0ActorNames_German[25] = {
 	"Ted",
 	"Lila Tentakel",
 	"Gr<nes Tentakel",
-	"Meteor",
 	"",
+	"Meteor",
 	"",
 	"",
 	"Pflanze",
 	"",
 	"",
 	"",
-	"Sandy"
+	"Sandy",
+	"",
 };
 
 const byte *Actor::getActorName() {
@@ -2467,6 +2696,8 @@ bool Actor::isPlayer() {
 }
 
 bool Actor_v2::isPlayer() {
+	// isPlayer() is not supported by v0
+	assert(_vm->_game.version != 0);
 	return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
 }
 
@@ -2621,16 +2852,64 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 }
 #endif
 
+void Actor_v0::animateActor(int anim) {
+	int dir = -1;
 
-void ActorC64::saveLoadWithSerializer(Serializer *ser) {
+	switch (anim) {
+		case 0x00:
+		case 0x04:
+			dir = 0;
+			break;
+
+		case 0x01:
+		case 0x05:
+			dir = 1;
+			break;
+
+		case 0x02:
+		case 0x06:
+			dir = 2;
+			break;
+
+		case 0x03:
+		case 0x07:
+			dir = 3;
+			break;
+
+		default:
+			break;
+	}
+
+	if (isInCurrentRoom()) {
+
+		_costCommandNew = anim;
+		_vm->_costumeLoader->costumeDecodeData(this, 0, 0);
+		
+		if (dir == -1)
+			return;
+
+		_facing = normalizeAngle(oldDirToNewDir(dir));
+
+	} else {
+
+		if (anim > 4 && anim <= 7)
+			_facing = normalizeAngle(oldDirToNewDir(dir));
+	}
+}
+
+void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
 	Actor::saveLoadWithSerializer(ser);
 
 	static const SaveLoadEntry actorEntries[] = {
-		MKLINE(ActorC64, _costCommand, sleByte, VER(84)),
-		MKLINE(ActorC64, _costFrame, sleByte, VER(84)),
-		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
-		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
-		MKLINE(ActorC64, _speakingPrev, sleByte, VER(84)),
+		MKLINE(Actor_v0, _costCommand, sleByte, VER(84)),
+		MK_OBSOLETE(Actor_v0, _costFrame, sleByte, VER(84), VER(89)),
+		MKLINE(Actor_v0, _miscflags, sleByte, VER(84)),
+		MKLINE(Actor_v0, _speaking, sleByte, VER(84)),
+		MK_OBSOLETE(Actor_v0, _speakingPrev, sleByte, VER(84), VER(89)),
+		MK_OBSOLETE(Actor_v0, _limbTemp, sleByte, VER(89), VER(89)),
+		MKLINE(Actor_v0, _animFrameRepeat, sleByte, VER(89)),
+		MKARRAY(Actor_v0, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
+		MKARRAY(Actor_v0, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
 		MKEND()
 	};
 

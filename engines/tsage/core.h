@@ -372,11 +372,13 @@ public:
 	~ScenePalette();
 
 	bool loadPalette(int paletteNum);
+	void loadPalette(const byte *pSrc, int start, int count);
+	void replace(const ScenePalette *src) { loadPalette(src->_palette, 0, 256); }
 	void refresh();
 	void setPalette(int index, int count);
 	void getEntry(int index, uint *r, uint *g, uint *b);
 	void setEntry(int index, uint r, uint g, uint b);
-	uint8 indexOf(uint r, uint g, uint b, int threshold = 0xffff);
+	uint8 indexOf(uint r, uint g, uint b, int threshold = 0xffff, int start = 0, int count = 256);
 	void getPalette(int start = 0, int count = 256);
 	void signalListeners();
 	void clearListeners();
@@ -421,7 +423,6 @@ public:
 	virtual void destroy() {}
 	virtual bool startAction(CursorType action, Event &event);
 	virtual void doAction(int action);
-	virtual bool performAction(CursorType action, Event &event) { return startAction(action, event); }
 
 	bool contains(const Common::Point &pt);
 	void setBounds(const Rect &newBounds) { _bounds = newBounds; }
@@ -444,10 +445,19 @@ public:
 
 class SceneHotspot : public SceneItem {
 public:
-	SceneHotspot() : SceneItem() {}
+	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
+public:
+	SceneHotspot();
+	virtual void synchronize(Serializer &s);
 	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "SceneHotspot"; }
 	virtual void doAction(int action);
+
+	void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
+	void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode = 0);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
@@ -508,8 +518,8 @@ private:
 
 	int getNewFrame();
 	void animEnded();
-	int changeFrame();
 public:
+	int changeFrame();
 	uint32 _updateStartFrame;
 	uint32 _walkStartFrame;
 	Common::Point _field2E;
@@ -532,12 +542,15 @@ public:
 	EventHandler *_mover;
 	Common::Point _moveDiff;
 	int _moveRate;
+	Common::Point _field8A;
 	Action *_endAction;
 	uint32 _regionBitList;
 
 	// Ringworld 2 specific fields
-	int _shade;
+	byte *_field9C;
+	int _shade, _shade2;
 	int _effect;
+	SceneObject *_linkedActor;
 public:
 	SceneObject();
 	SceneObject(const SceneObject &so);
@@ -597,6 +610,8 @@ public:
 	virtual Common::String getClassName() { return "BackgroundSceneObject"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
+	void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10);
+	void proc27();
 };
 
 class SceneText : public SceneObject {
@@ -647,7 +662,8 @@ public:
 
 	void disableControl();
 	void enableControl();
-	void enableControl(CursorType cursor);
+	void disableControl(CursorType cursorId, CursorType objectId = CURSOR_NONE);
+	void enableControl(CursorType cursorId, CursorType objectId = CURSOR_NONE);
 };
 
 /*--------------------------------------------------------------------------*/

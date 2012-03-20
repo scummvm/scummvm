@@ -452,7 +452,7 @@ static const char *const dimpSoundList[32] = {
 void AGOSEngine::loadSoundFile(const char* filename) {
 	Common::SeekableReadStream *in;
 
-	in = _archives.open(filename);
+	in = _archives.createReadStreamForMember(filename);
 	if (!in)
 		error("loadSound: Can't load %s", filename);
 
@@ -475,7 +475,7 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 		assert(sound >= 1 && sound <= 32);
 		sprintf(filename, "%s.wav", dimpSoundList[sound - 1]);
 
-		in = _archives.open(filename);
+		in = _archives.createReadStreamForMember(filename);
 		if (!in)
 			error("loadSound: Can't load %s", filename);
 

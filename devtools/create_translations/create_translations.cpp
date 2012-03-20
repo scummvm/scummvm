@@ -25,6 +25,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <vector>
 
  // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
@@ -34,8 +36,23 @@
 
 #include "create_translations.h"
 #include "po_parser.h"
+#include "cp_parser.h"
 
-#define TRANSLATIONS_DAT_VER 2	// 1 byte
+#define TRANSLATIONS_DAT_VER 3	// 1 byte
+
+// Portable implementation of stricmp / strcasecmp / strcmpi.
+int scumm_stricmp(const char *s1, const char *s2) {
+	uint8 l1, l2;
+	do {
+		// Don't use ++ inside tolower, in case the macro uses its
+		// arguments more than once.
+		l1 = (uint8)*s1++;
+		l1 = tolower(l1);
+		l2 = (uint8)*s2++;
+		l2 = tolower(l2);
+	} while (l1 == l2 && l1 != 0);
+	return l1 - l2;
+}
 
 // Padding buffer (filled with 0) used if we want to aligned writes
 // static uint8 padBuf[DATAALIGNMENT];
@@ -49,6 +66,13 @@ void writeByte(FILE *fp, uint8 b) {
 
 void writeUint16BE(FILE *fp, uint16 value) {
 	writeByte(fp, (uint8)(value >> 8));
+	writeByte(fp, (uint8)(value & 0xFF));
+}
+
+void writeUint32BE(FILE *fp, uint32 value) {
+	writeByte(fp, (uint8)(value >> 24));
+	writeByte(fp, (uint8)(value >> 16));
+	writeByte(fp, (uint8)(value >>  8));
 	writeByte(fp, (uint8)(value & 0xFF));
 }
 
@@ -82,14 +106,51 @@ void writeString(FILE *fp, const char *string) {
 
 // Main
 int main(int argc, char *argv[]) {
-	// Build the translation list
+	std::vector<Codepage *> codepages;
+	// Add default codepages, we won't store them in the output later on
+	codepages.push_back(new Codepage("ascii", 0));
+	codepages.push_back(new Codepage("iso-8859-1", 0));
+
+	// Build the translation and codepage list
 	PoMessageList messageIds;
-	PoMessageEntryList **translations = new PoMessageEntryList*[argc - 1];
+	std::vector<PoMessageEntryList *> translations;
 	int numLangs = 0;
 	for (int i = 1; i < argc; ++i) {
-		translations[numLangs] = parsePoFile(argv[i], messageIds);
-		if (translations[numLangs] != NULL)
-			++numLangs;
+		// Check file extension
+		int len = strlen(argv[i]);
+		if (scumm_stricmp(argv[i] + len - 2, "po") == 0) {
+			PoMessageEntryList *po = parsePoFile(argv[i], messageIds);
+			if (po != NULL) {
+				translations.push_back(po);
+				++numLangs;
+			}
+		} else if (scumm_stricmp(argv[i] + len - 2, "cp") == 0) {
+			// Else try to parse an codepage
+			Codepage *co = parseCodepageMapping(argv[i]);
+			if (co)
+				codepages.push_back(co);
+		}
+	}
+
+	// Parse all charset mappings
+	for (int i = 0; i < numLangs; ++i) {
+		bool found = false;
+		for (size_t j = 0; j < codepages.size(); ++j) {
+			if (scumm_stricmp(codepages[j]->getName().c_str(), translations[i]->charset()) == 0) {
+				found = true;
+				break;
+			}
+		}
+
+		// In case the codepage was not found error out
+		if (!found) {
+			fprintf(stderr, "ERROR: No codepage mapping for codepage \"%s\" present!\n", translations[i]->charset());
+			for (size_t j = 0; j < translations.size(); ++j)
+				delete translations[j];
+			for (size_t j = 0; j < codepages.size(); ++j)
+				delete codepages[j];
+			return -1;
+		}
 	}
 
 	FILE *outFile;
@@ -110,6 +171,8 @@ int main(int argc, char *argv[]) {
 
 	// Write number of translations
 	writeUint16BE(outFile, numLangs);
+	// Write number of codepages, we don't save ascii and iso-8859-1
+	writeUint16BE(outFile, codepages.size() - 2);
 
 	// Write the length of each data block here.
 	// We could write it at the start of each block but that would mean that
@@ -119,9 +182,14 @@ int main(int argc, char *argv[]) {
 	// file and can then skip to the block we want.
 	// Blocks are:
 	//   1. List of languages with the language name
-	//   2. Original messages (i.e. english)
-	//   3. First translation
-	//   4. Second translation
+	//   2. List of codepages
+	//   3. Original messages (i.e. english)
+	//   4. First translation
+	//   5. Second translation
+	//   ...
+	//   n. First codepage (These don't have any data size, since they are all
+	//                      256 * 4 bytes long)
+	//   n+1. Second codepage
 	//   ...
 
 	// Write length for translation description
@@ -130,6 +198,12 @@ int main(int argc, char *argv[]) {
 		len += stringSize(translations[lang]->language());
 		len += stringSize(translations[lang]->languageName());
 	}
+	writeUint16BE(outFile, len);
+
+	// Write length for the codepage names
+	len = 0;
+	for (size_t j = 2; j < codepages.size(); ++j)
+		len += stringSize(codepages[j]->getName().c_str());
 	writeUint16BE(outFile, len);
 
 	// Write size for the original language (english) block
@@ -159,6 +233,11 @@ int main(int argc, char *argv[]) {
 		writeString(outFile, translations[lang]->languageName());
 	}
 
+	// Write list of codepages
+	for (size_t j = 2; j < codepages.size(); ++j) {
+		writeString(outFile, codepages[j]->getName().c_str());
+	}
+
 	// Write original messages
 	writeUint16BE(outFile, messageIds.size());
 	for (i = 0; i < messageIds.size(); ++i) {
@@ -176,12 +255,18 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	// Write codepages
+	for (size_t j = 2; j < codepages.size(); ++j) {
+		const Codepage *cp = codepages[j];
+		for (i = 0; i < 256; ++i)
+			writeUint32BE(outFile, cp->getMapping(i));
+	}
+
 	fclose(outFile);
 
 	// Clean the memory
 	for (i = 0; i < numLangs; ++i)
 		delete translations[i];
-	delete[] translations;
 
 	return 0;
 }

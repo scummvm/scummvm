@@ -94,6 +94,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 Sound::~Sound() {
 	stopCDTimer();
 	g_system->getAudioCDManager()->stop();
+	free(_offsetTable);
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {

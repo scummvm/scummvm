@@ -29,7 +29,6 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "common/system.h"
-#include "graphics/pict.h"
 #include "graphics/surface.h"
 
 #include "pegasus/constants.h"

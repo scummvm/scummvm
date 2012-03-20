@@ -34,10 +34,6 @@ friend class Debugger_v2;
 public:
 	Screen_HoF(KyraEngine_HoF *vm, OSystem *system);
 
-	void setScreenDim(int dim);
-	const ScreenDim *getScreenDim(int dim);
-	int screenDimTableCount() const { return _screenDimTableCount; }
-
 	// sequence player
 	void generateGrayOverlay(const Palette &pal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
 	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,	int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);

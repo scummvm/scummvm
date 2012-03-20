@@ -26,7 +26,7 @@
 #include <e32base.h>
 #include <sdlapp.h>
 
-#if defined (EPOC_AS_APP) && !defined (UIQ3) && !defined (S60V3)
+#if defined(EPOC_AS_APP) && !defined(UIQ3) && !defined(S60V3)
 #include "ECompXL.h"
 #endif
 
@@ -34,7 +34,7 @@ class CScummApp : public CSDLApp {
 public:
 	CScummApp();
 	~CScummApp();
-#if defined (UIQ3)
+#if defined(UIQ3)
 	/**
 	 * Returns the resource id to be used to declare the views supported by this UIQ3 app
 	 * @return TInt, resource id
@@ -43,7 +43,7 @@ public:
 #endif
 	TUid AppDllUid() const;
 	void GetDataFolder(TDes& aDataFolder);
-#if defined (EPOC_AS_APP) && !defined (UIQ3) && !defined (S60V3)
+#if defined(EPOC_AS_APP) && !defined(UIQ3) && !defined(S60V3)
 	TECompXL    iECompXL;
 #endif
 };

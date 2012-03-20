@@ -206,7 +206,7 @@ struct PBMLoader {
 		case ID_BODY:
 			if (_surface) {
 				_surface->create(_decoder._header.width, _decoder._header.height, PixelFormat::createFormatCLUT8());
-				_decoder.loadBitmap((byte*)_surface->pixels, chunk._stream);
+				_decoder.loadBitmap((byte *)_surface->pixels, chunk._stream);
 			}
 			return true;	// stop the parser
 		}
@@ -234,7 +234,7 @@ bool PackBitsReadStream::eos() const {
 }
 
 uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
-	byte *out = (byte*)dataPtr;
+	byte *out = (byte *)dataPtr;
 	uint32 left = dataSize;
 
 	uint32 lenR = 0, lenW = 0;

@@ -157,7 +157,7 @@ protected:
 	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles) { }
 };
 
-typedef Common::List<ResourceContext*> ResourceContextList;
+typedef Common::List<ResourceContext *> ResourceContextList;
 
 struct MetaResource {
 	int16 sceneIndex;

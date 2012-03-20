@@ -23,6 +23,7 @@
 /**
  * @file
  * YUV to RGB conversion used in engines:
+ * - mohawk
  * - scumm (he)
  * - sword25
  */
@@ -34,6 +35,20 @@
 #include "graphics/surface.h"
 
 namespace Graphics {
+
+/**
+ * Convert a YUV444 image to an RGB surface
+ *
+ * @param dst     the destination surface
+ * @param ySrc    the source of the y component
+ * @param uSrc    the source of the u component
+ * @param vSrc    the source of the v component
+ * @param yWidth  the width of the y surface
+ * @param yHeight the height of the y surface
+ * @param yPitch  the pitch of the y surface
+ * @param uvPitch the pitch of the u and v surfaces
+ */
+void convertYUV444ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
 /**
  * Convert a YUV420 image to an RGB surface

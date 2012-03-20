@@ -33,11 +33,9 @@
 #include "common/keyboard.h"
 #include "common/list.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-input.h"
 
 namespace Common {
-
-struct HardwareKey;
-class HardwareKeySet;
 
 /**
  * Hash function for KeyState
@@ -52,7 +50,7 @@ template<> struct Hash<KeyState>
 
 class Keymap {
 public:
-	Keymap(const String& name, Keymap *parent = 0) : _name(name), _parent(parent) {}
+	Keymap(const String& name) : _name(name) {}
 	Keymap(const Keymap& km);
 	~Keymap();
 
@@ -67,7 +65,7 @@ public:
 	/**
 	 * Get the list of all the Actions contained in this Keymap
 	 */
-	List<Action*>& getActions() { return _actions; }
+	List<Action *>& getActions() { return _actions; }
 
 	/**
 	 * Find the Action that a key is mapped to
@@ -76,13 +74,20 @@ public:
 	 */
 	Action *getMappedAction(const KeyState& ks) const;
 
+	/**
+	 * Find the Action that a generic input is mapped to
+	 * @param code	the input code that is mapped to the required Action
+	 * @return			a pointer to the Action or 0 if no
+	 */
+	Action *getMappedAction(const HardwareInputCode code) const;
+
 	void setConfigDomain(ConfigManager::Domain *dom);
 
 	/**
 	 * Load this keymap's mappings from the config manager.
-	 * @param hwKeys	the set to retrieve hardware key pointers from
+	 * @param hwInputs	the set to retrieve hardware input pointers from
 	 */
-	void loadMappings(const HardwareKeySet *hwKeys);
+	void loadMappings(const HardwareInputSet *hwInputs);
 
 	/**
 	 * Save this keymap's mappings to the config manager
@@ -91,17 +96,13 @@ public:
 	 */
 	void saveMappings();
 
-
-	void automaticMapping(HardwareKeySet *hwKeys);
-
 	/**
 	 * Returns true if all UserAction's in Keymap are mapped, or,
-	 * all HardwareKey's from the given set have been used up.
+	 * all HardwareInputs from the given set have been used up.
 	 */
-	bool isComplete(const HardwareKeySet *hwKeys);
+	bool isComplete(const HardwareInputSet *hwInputs);
 
 	const String& getName() { return _name; }
-	Keymap *getParent() { return _parent; }
 
 private:
 	friend struct Action;
@@ -114,15 +115,15 @@ private:
 	void addAction(Action *action);
 
 	/**
-	* Registers a HardwareKey to the given Action
+	* Registers a HardwareInput to the given Action
 	* @param action Action in this Keymap
-	* @param key pointer to HardwareKey to map
+	* @param key pointer to HardwareInput to map
 	* @see Action::mapKey
 	*/
-	void registerMapping(Action *action, const HardwareKey *key);
+	void registerMapping(Action *action, const HardwareInput *input);
 
 	/**
-	* Unregisters a HardwareKey from the given Action (if one is mapped)
+	* Unregisters a HardwareInput from the given Action (if one is mapped)
 	* @param action Action in this Keymap
 	* @see Action::mapKey
 	*/
@@ -131,14 +132,10 @@ private:
 	Action *findAction(const char *id);
 	const Action *findAction(const char *id) const;
 
-	void internalMapKey(Action *action, HardwareKey *hwKey);
-
-	Action *getParentMappedAction(KeyState key);
-
 	String _name;
-	Keymap *_parent;
-	List<Action*> _actions;
-	HashMap<KeyState, Action*> _keymap;
+	List<Action *> _actions;
+	HashMap<KeyState, Action *> _keymap;
+	HashMap<HardwareInputCode, Action *> _nonkeymap;
 	ConfigManager::Domain *_configDomain;
 
 };

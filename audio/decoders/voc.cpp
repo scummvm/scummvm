@@ -54,7 +54,7 @@ bool checkVOCHeader(Common::ReadStream &stream) {
 	if (memcmp(fileHeader.desc, "Creative Voice File", 19) != 0)
 		return false;
 	//if (fileHeader.desc[19] != 0x1A)
-	//	debug(3, "loadVOCFromStream: Partially invalid header");
+	//	debug(3, "checkVOCHeader: Partially invalid header");
 
 	int32 offset = FROM_LE_16(fileHeader.datablock_offset);
 	int16 version = FROM_LE_16(fileHeader.version);
@@ -321,14 +321,21 @@ void VocStream::preProcess() {
 		// In case we hit a "Terminator" block we also break here.
 		if (_stream->eos() || block.code == 0)
 			break;
+		// We also allow 128 as terminator, since Simon 1 Amiga CD32 uses it.
+		if (block.code == 128) {
+			debug(3, "VocStream::preProcess: Caught 128 as terminator");
+			break;
+		}
 
 		block.length = _stream->readByte();
 		block.length |= _stream->readByte() << 8;
 		block.length |= _stream->readByte() << 16;
 
 		// Premature end of stream => error!
-		if (_stream->eos() || _stream->err())
+		if (_stream->eos() || _stream->err()) {
+			warning("VocStream::preProcess: Reading failed");
 			return;
+		}
 
 		uint32 skip = 0;
 
@@ -338,17 +345,26 @@ void VocStream::preProcess() {
 		// Sound data (New format)
 		case 9:
 			if (block.code == 1) {
+				if (block.length < 2) {
+					warning("Invalid sound data block length %d in VOC file", block.length);
+					return;
+				}
+
 				// Read header data
 				int freqDiv = _stream->readByte();
 				// Prevent division through 0
-				if (freqDiv == 256)
+				if (freqDiv == 256) {
+					warning("Invalid frequency divisor 256 in VOC file");
 					return;
+				}
 				block.sampleBlock.rate = getSampleRateFromVOCRate(freqDiv);
 
 				int codec = _stream->readByte();
 				// We only support 8bit PCM
-				if (codec != 0)
+				if (codec != 0) {
+					warning("Unhandled codec %d in VOC file", codec);
 					return;
+				}
 
 				block.sampleBlock.samples = skip = block.length - 2;
 				block.sampleBlock.offset = _stream->pos();
@@ -366,11 +382,18 @@ void VocStream::preProcess() {
 					}
 				}
 			} else {
+				if (block.length < 12) {
+					warning("Invalid sound data (wew format) block length %d in VOC file", block.length);
+					return;
+				}
+
 				block.sampleBlock.rate = _stream->readUint32LE();
 				int bitsPerSample = _stream->readByte();
 				// We only support 8bit PCM
-				if (bitsPerSample != 8)
+				if (bitsPerSample != 8) {
+					warning("Unhandled bits per sample %d in VOC file", bitsPerSample);
 					return;
+				}
 				int channels = _stream->readByte();
 				// We only support mono
 				if (channels != 1) {
@@ -395,23 +418,29 @@ void VocStream::preProcess() {
 
 		// Silence
 		case 3: {
-			if (block.length != 3)
+			if (block.length != 3) {
+				warning("Invalid silence block length %d in VOC file", block.length);
 				return;
+			}
 
 			block.sampleBlock.offset = 0;
 
 			block.sampleBlock.samples = _stream->readUint16LE() + 1;
 			int freqDiv = _stream->readByte();
 			// Prevent division through 0
-			if (freqDiv == 256)
+			if (freqDiv == 256) {
+				warning("Invalid frequency divisor 256 in VOC file");
 				return;
+			}
 			block.sampleBlock.rate = getSampleRateFromVOCRate(freqDiv);
 			} break;
 
 		// Repeat start
 		case 6:
-			if (block.length != 2)
+			if (block.length != 2) {
+				warning("Invalid repeat start block length %d in VOC file", block.length);
 				return;
+			}
 
 			block.loopBlock.count = _stream->readUint16LE() + 1;
 			break;
@@ -427,8 +456,10 @@ void VocStream::preProcess() {
 
 			int freqDiv = _stream->readUint16LE();
 			// Prevent division through 0
-			if (freqDiv == 65536)
+			if (freqDiv == 65536) {
+				warning("Invalid frequency divisor 65536 in VOC file");
 				return;
+			}
 
 			int codec = _stream->readByte();
 			// We only support RAW 8bit PCM.
@@ -455,8 +486,10 @@ void VocStream::preProcess() {
 		}
 
 		// Premature end of stream => error!
-		if (_stream->eos() || _stream->err())
+		if (_stream->eos() || _stream->err()) {
+			warning("VocStream::preProcess: Reading failed");
 			return;
+		}
 
 		// Skip the rest of the block
 		if (skip)
@@ -509,128 +542,6 @@ int getSampleRateFromVOCRate(int vocSR) {
 		//warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
 		return sr;
 	}
-}
-
-byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
-	VocFileHeader fileHeader;
-
-	debug(2, "loadVOCFromStream");
-
-	if (stream.read(&fileHeader, 8) != 8)
-		goto invalid;
-
-	if (!memcmp(&fileHeader, "VTLK", 4)) {
-		if (stream.read(&fileHeader, sizeof(VocFileHeader)) != sizeof(VocFileHeader))
-			goto invalid;
-	} else if (!memcmp(&fileHeader, "Creative", 8)) {
-		if (stream.read(((byte *)&fileHeader) + 8, sizeof(VocFileHeader) - 8) != sizeof(VocFileHeader) - 8)
-			goto invalid;
-	} else {
-	invalid:;
-		warning("loadVOCFromStream: Invalid header");
-		return NULL;
-	}
-
-	if (memcmp(fileHeader.desc, "Creative Voice File", 19) != 0)
-		error("loadVOCFromStream: Invalid header");
-	if (fileHeader.desc[19] != 0x1A)
-		debug(3, "loadVOCFromStream: Partially invalid header");
-
-	int32 offset = FROM_LE_16(fileHeader.datablock_offset);
-	int16 version = FROM_LE_16(fileHeader.version);
-	int16 code = FROM_LE_16(fileHeader.id);
-	assert(offset == sizeof(VocFileHeader));
-	// 0x100 is an invalid VOC version used by German version of DOTT (Disk) and
-	// French version of Simon the Sorcerer 2 (CD)
-	assert(version == 0x010A || version == 0x0114 || version == 0x0100);
-	assert(code == ~version + 0x1234);
-
-	int len;
-	byte *ret_sound = 0;
-	size = 0;
-
-	while ((code = stream.readByte())) {
-		len = stream.readByte();
-		len |= stream.readByte() << 8;
-		len |= stream.readByte() << 16;
-
-		debug(2, "Block code %d, len %d", code, len);
-
-		switch (code) {
-		case 1:
-		case 9: {
-			int packing;
-			if (code == 1) {
-				int time_constant = stream.readByte();
-				packing = stream.readByte();
-				len -= 2;
-				rate = getSampleRateFromVOCRate(time_constant);
-			} else {
-				rate = stream.readUint32LE();
-				int bits = stream.readByte();
-				int channels = stream.readByte();
-				if (bits != 8 || channels != 1) {
-					warning("Unsupported VOC file format (%d bits per sample, %d channels)", bits, channels);
-					break;
-				}
-				packing = stream.readUint16LE();
-				stream.readUint32LE();
-				len -= 12;
-			}
-			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
-			if (packing == 0) {
-				if (size) {
-					byte *tmp = (byte *)realloc(ret_sound, size + len);
-					if (!tmp)
-						error("Cannot reallocate memory for VOC Data Block");
-
-					ret_sound = tmp;
-				} else {
-					ret_sound = (byte *)malloc(len);
-				}
-				stream.read(ret_sound + size, len);
-				size += len;
-			} else {
-				warning("VOC file packing %d unsupported", packing);
-			}
-			} break;
-		case 3: // silence
-			// occur with a few Igor sounds, voc file starts with a silence block with a
-			// frequency different from the data block. Just ignore fow now (implementing
-			// it wouldn't make a big difference anyway...)
-			assert(len == 3);
-			stream.readUint16LE();
-			stream.readByte();
-			break;
-		case 6:	// begin of loop
-			assert(len == 2);
-			stream.readUint16LE();
-			break;
-		case 7:	// end of loop
-			assert(len == 0);
-			break;
-		case 8: { // "Extended"
-			// This occures in the LoL Intro demo.
-			// This block overwrites the next parameters of a block 1 "Sound data".
-			// To assure we never get any bad data here, we will assert in case
-			// this tries to define a stereo sound block or tries to use something
-			// different than 8bit unsigned sound data.
-			// TODO: Actually we would need to check the frequency divisor (the
-			// first word) here too. It is used in the following equation:
-			// sampleRate = 256000000/(channels * (65536 - frequencyDivisor))
-			assert(len == 4);
-			stream.readUint16LE();
-			uint8 codec = stream.readByte();
-			uint8 channels = stream.readByte() + 1;
-			assert(codec == 0 && channels == 1);
-			} break;
-		default:
-			warning("Unhandled code %d in VOC file (len %d)", code, len);
-			return ret_sound;
-		}
-	}
-	debug(4, "VOC Data Size : %d", size);
-	return ret_sound;
 }
 
 SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {

@@ -388,10 +388,13 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 	}
 
 	// TODO: fading between pages
+#if 0
 	bool fade = false;
 	if (leftover.contains("fade")) {
 		fade = true;
 	}
+#endif
+
 	if (leftover.contains("read")) {
 		_readOnly = true;
 	}

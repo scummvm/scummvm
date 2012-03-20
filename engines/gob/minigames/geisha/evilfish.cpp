@@ -39,19 +39,6 @@ EvilFish::EvilFish(const ANIFile &ani, uint16 screenWidth,
 EvilFish::~EvilFish() {
 }
 
-bool EvilFish::isIn(int16 x, int16 y) const {
-	int16 frameX, frameY, frameWidth, frameHeight;
-	getFramePosition(frameX, frameY);
-	getFrameSize(frameWidth, frameHeight);
-
-	if ((x < frameX) || (y < frameY))
-		return false;
-	if ((x > (frameX + frameWidth)) || (y > (frameY + frameHeight)))
-		return false;
-
-	return true;
-}
-
 void EvilFish::enter(Direction from, int16 y) {
 	_shouldLeave = false;
 
@@ -182,6 +169,10 @@ void EvilFish::mutate(uint16 animSwimLeft, uint16 animSwimRight,
 	default:
 		break;
 	}
+}
+
+bool EvilFish::isDead() {
+	return !isVisible() || (_state == kStateNone) || (_state == kStateDie);
 }
 
 } // End of namespace Geisha

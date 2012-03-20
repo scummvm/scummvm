@@ -28,7 +28,9 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/util.h"
+#include "scumm/scumm_v0.h"
 #include "scumm/scumm_v2.h"
+#include "scumm/sound.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
@@ -130,8 +132,6 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 
 	initializeLocals(slot, vars);
 
-	// V0 Ensure we don't try and access objects via index inside the script
-	_v0ObjectIndex = false;
 	runScriptNested(slot);
 }
 
@@ -195,9 +195,10 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
 	} else if (_game.version <= 2) {
 		do {
+			const int kFallbackEntry = (_game.version == 0 ? 0x0F : 0xFF);
 			if (!*verbptr)
 				return 0;
-			if (*verbptr == entry || *verbptr == 0xFF)
+			if (*verbptr == entry || *verbptr == kFallbackEntry)
 				break;
 			verbptr += 2;
 		} while (1);
@@ -935,6 +936,17 @@ void ScummEngine::runExitScript() {
 	}
 	if (VAR_EXIT_SCRIPT2 != 0xFF && VAR(VAR_EXIT_SCRIPT2))
 		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
+
+#ifdef ENABLE_SCUMM_7_8
+	// WORKAROUND: The spider lair (room 44) will optionally play the sound
+	// of trickling water (sound 215), but it never stops it. The same sound
+	// effect is also used in room 33, so let's do the same fade out that it
+	// does in that room's exit script.
+	if (_game.id == GID_DIG && _currentRoom == 44) {
+		int scriptCmds[] = { 14, 215, 0x600, 0, 30, 0, 0, 0 };
+		_sound->soundKludge(scriptCmds, ARRAYSIZE(scriptCmds));
+	}
+#endif
 }
 
 void ScummEngine::runEntryScript() {
@@ -988,7 +1000,7 @@ void ScummEngine::killScriptsAndResources() {
 		for (i = 0; i < _numNewNames; i++) {
 			const int obj = _newNames[i];
 			if (obj) {
-				const int owner = getOwner(obj);
+				const int owner = getOwner((_game.version != 0 ? obj : OBJECT_V0_ID(obj)));
 				// We can delete custom name resources if either the object is
 				// no longer in use (i.e. not owned by anyone anymore); or if
 				// it is an object which is owned by a room.
@@ -1116,6 +1128,183 @@ void ScummEngine::checkAndRunSentenceScript() {
 	_currentScript = 0xFF;
 	if (sentenceScript)
 		runScript(sentenceScript, 0, 0, localParamList);
+}
+
+void ScummEngine_v0::walkToActorOrObject(int object) {
+	int x, y, dir;
+	Actor_v0 *a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "walkToObject");
+
+	_walkToObject = object;
+	_walkToObjectState = kWalkToObjectStateWalk;
+
+	if (OBJECT_V0_TYPE(object) == kObjectV0TypeActor) {
+		walkActorToActor(VAR(VAR_EGO), OBJECT_V0_ID(object), 4);
+		x = a->getRealPos().x;
+		y = a->getRealPos().y;
+	} else {
+		walkActorToObject(VAR(VAR_EGO), object);
+		getObjectXYPos(object, x, y, dir);
+	}
+
+	VAR(6) = x;
+	VAR(7) = y;
+
+	// actor must not move if frozen
+	if (a->_miscflags & kActorMiscFlagFreeze)
+		a->stopActorMoving();
+}
+
+bool ScummEngine_v0::checkPendingWalkAction() {
+	// before a sentence script is executed, it might be necessary to walk to
+	// and pickup objects before. Check if such an action is pending and handle
+	// it if available.
+	if (_walkToObjectState == kWalkToObjectStateDone)
+		return false;
+
+	int actor = VAR(VAR_EGO);
+	Actor_v0 *a = (Actor_v0 *)derefActor(actor, "checkPendingWalkAction");
+
+	// wait until walking or turning action is finished
+	if (a->_moving)
+		return true;
+
+	// after walking and turning finally execute the script
+	if (_walkToObjectState == kWalkToObjectStateTurn) {
+		runSentenceScript();
+	// change actor facing
+	} else {
+		int x, y, distX, distY;
+		if (objIsActor(_walkToObject)) {
+			Actor *b = derefActor(objToActor(_walkToObject), "checkPendingWalkAction(2)");
+			x = b->getRealPos().x;
+			y = b->getRealPos().y;
+			if (x < a->getRealPos().x)
+				x += 4;
+			else
+				x -= 4;
+		} else {
+			getObjectXYPos(_walkToObject, x, y);
+		}
+		AdjustBoxResult abr = a->adjustXYToBeInBox(x, y);
+		distX = ABS(a->getRealPos().x - abr.x);
+		distY = ABS(a->getRealPos().y - abr.y);
+
+		if (distX <= 4 && distY <= 8) {
+			if (objIsActor(_walkToObject)) { // walk to actor finished
+				// make actors turn to each other
+				a->faceToObject(_walkToObject);
+				int otherActor = objToActor(_walkToObject);
+				// ignore the plant
+				if (otherActor != 19) {
+					Actor *b = derefActor(otherActor, "checkPendingWalkAction(3)");
+					b->faceToObject(actorToObj(actor));
+				}
+			} else { // walk to object finished
+				int tmpX, tmpY, dir;
+				getObjectXYPos(_walkToObject, tmpX, tmpY, dir);
+				a->turnToDirection(dir);
+			}
+			_walkToObjectState = kWalkToObjectStateTurn;
+			return true;
+		}
+	}
+
+	_walkToObjectState = kWalkToObjectStateDone;
+	return false;
+}
+
+void ScummEngine_v0::checkAndRunSentenceScript() {
+	if (checkPendingWalkAction())
+		return;
+
+	if (!_sentenceNum || _sentence[_sentenceNum - 1].freezeCount)
+		return;
+
+	SentenceTab &st = _sentence[_sentenceNum - 1];
+
+	if (st.preposition && st.objectB == st.objectA) {
+		_sentenceNum--;
+		return;
+	}
+
+	_currentScript = 0xFF;
+
+	assert(st.objectA);
+
+	// If two objects are involved, at least one must be in the actors inventory
+	if (st.objectB &&
+		(OBJECT_V0_TYPE(st.objectA) != kObjectV0TypeFG || _objectOwnerTable[st.objectA] != VAR(VAR_EGO)) &&
+		(OBJECT_V0_TYPE(st.objectB) != kObjectV0TypeFG || _objectOwnerTable[st.objectB] != VAR(VAR_EGO)))
+	{
+		if (getVerbEntrypoint(st.objectA, kVerbPickUp))
+			doSentence(kVerbPickUp, st.objectA, 0);
+		else if (getVerbEntrypoint(st.objectB, kVerbPickUp))
+			doSentence(kVerbPickUp, st.objectB, 0);
+		else
+			_sentenceNum--;
+		return;
+	}
+
+	_cmdVerb = st.verb;
+	_cmdObject = st.objectA;
+	_cmdObject2 = st.objectB;
+	_sentenceNum--;
+
+	// abort sentence execution if the number of nested scripts is too high.
+	// This might happen for instance if the sentence command depends on an
+	// object that the actor has to pick-up in a nested doSentence() call.
+	// If the actor is not able to pick-up the object (e.g. because it is not
+	// reachable or pickupable) a nested pick-up command is triggered again
+	// and again, so the actual sentence command will never be executed.
+	// In this case the sentence command has to be aborted.
+	_sentenceNestedCount++;
+	if (_sentenceNestedCount > 6) {
+		_sentenceNestedCount = 0;
+		_sentenceNum = 0;
+		return;
+	}
+
+	if (whereIsObject(st.objectA) != WIO_INVENTORY) {
+		if (_currentMode != kModeKeypad) {
+			walkToActorOrObject(st.objectA);
+			return;
+		}
+	} else if (st.objectB && whereIsObject(st.objectB) != WIO_INVENTORY) {
+		walkToActorOrObject(st.objectB);
+		return;
+	}
+
+	runSentenceScript();
+	if (_currentMode == kModeKeypad) {
+		_walkToObjectState = kWalkToObjectStateDone;
+	}
+}
+
+void ScummEngine_v0::runSentenceScript() {
+	_redrawSentenceLine = true;
+
+	if (getVerbEntrypoint(_cmdObject, _cmdVerb) != 0) {
+		// do not read in the dark
+		if (!(_cmdVerb == kVerbRead && _currentLights == 0)) {
+			VAR(VAR_ACTIVE_OBJECT2) = OBJECT_V0_ID(_cmdObject2);
+			runObjectScript(_cmdObject, _cmdVerb, false, false, NULL);
+			return;
+		}
+	} else {
+		if (_cmdVerb == kVerbGive) {
+			// no "give to"-script: give to other kid or ignore
+			int actor = OBJECT_V0_ID(_cmdObject2);
+			if (actor < 8)
+				setOwnerOf(_cmdObject, actor);
+			return;
+		}
+	}
+
+	if (_cmdVerb != kVerbWalkTo) {
+		// perform verb's fallback action
+		VAR(VAR_ACTIVE_VERB) = _cmdVerb;
+		runScript(3, 0, 0, 0);
+	}
 }
 
 void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {

@@ -17,12 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "kyra/kyra_lok.h"
 #include "kyra/lol.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
+#include "kyra/eob.h"
+#include "kyra/darkmoon.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -42,7 +45,7 @@ struct KYRAGameDescription {
 
 namespace {
 
-const char * const directoryGlobs[] = {
+const char *const directoryGlobs[] = {
 	"malcolm",
 	0
 };
@@ -63,9 +66,12 @@ public:
 	const char *getOriginalCopyright() const {
 		return "The Legend of Kyrandia (C) Westwood Studios"
 #ifdef ENABLE_LOL
-				"\nLands of Lore (C) Westwood Studios"
+		       "\nLands of Lore (C) Westwood Studios"
 #endif
-		    ;
+#ifdef ENABLE_EOB
+		       "\nEye of the Beholder (C) TSR, Inc., (C) Strategic Simulations, Inc."
+#endif
+		       ;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const;
@@ -78,19 +84,19 @@ public:
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-	  	(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail);
 }
 
 bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+	    (f == kSupportsRTL) ||
+	    (f == kSupportsLoadingDuringRuntime) ||
+	    (f == kSupportsSavingDuringRuntime) ||
+	    (f == kSupportsSubtitleOptions);
 }
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -129,6 +135,16 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Kyra::LoLEngine(syst, flags);
 		break;
 #endif // ENABLE_LOL
+#ifdef ENABLE_EOB
+	case Kyra::GI_EOB1:
+		*engine = new Kyra::EoBEngine(syst, flags);
+		break;
+	case Kyra::GI_EOB2:
+		 if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
+			 flags.useHiRes = true;
+		*engine = new Kyra::DarkMoonEngine(syst, flags);
+		break;
+#endif // ENABLE_EOB
 	default:
 		res = false;
 		warning("Kyra engine: unknown gameID");
@@ -145,10 +161,14 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern);
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Skip automatic final saves made by EOB for the purpose of party transfer
+		if (!scumm_stricmp(file->c_str() + file->size() - 3, "fin"))
+			continue;
+
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
@@ -171,13 +191,15 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int KyraMetaEngine::getMaximumSaveSlot() const { return 999; }
+int KyraMetaEngine::getMaximumSaveSlot() const {
+	return 999;
+}
 
 void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s).
 	// An exception makes Lands of Lore here, it does not have any way to restart the
 	// game except via its main menu.
-	if (slot == 0 && !ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("lol"))
+	if (slot == 0 && !ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("lol") && !ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob") && !ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob2"))
 		return;
 
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
@@ -187,7 +209,7 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-	const bool lolGame = ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("lol");
+	const bool nonKyraGame = ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("lol") || ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob") || ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob2");
 
 	if (in) {
 		Kyra::KyraEngine_v1::SaveHeader header;
@@ -201,12 +223,12 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 
 			// Slot 0 is used for the 'restart game' save in all three Kyrandia games, thus
 			// we prevent it from being deleted.
-			desc.setDeletableFlag(slot != 0 || lolGame);
+			desc.setDeletableFlag(slot != 0 || nonKyraGame);
 
 			// We don't allow quick saves (slot 990 till 998) to be overwritten.
 			// The same goes for the 'Autosave', which is slot 999. Slot 0 will also
 			// be protected in Kyra 1-3, since it's the 'restart game' save.
-			desc.setWriteProtectedFlag((slot == 0 && !lolGame) || slot >= 990);
+			desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
 			desc.setThumbnail(header.thumbnail);
 
 			return desc;
@@ -218,7 +240,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 	// We don't allow quick saves (slot 990 till 998) to be overwritten.
 	// The same goes for the 'Autosave', which is slot 999. Slot 0 will also
 	// be protected in Kyra 1-3, since it's the 'restart game' save.
-	desc.setWriteProtectedFlag((slot == 0 && !lolGame) || slot >= 990);
+	desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
 
 	return desc;
 }

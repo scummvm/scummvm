@@ -924,10 +924,10 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 			if (ptr) {
 				ASSERT(0);
-				//*(int16*)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16*)(currentcellHead->datas+0xE));
+				//*(int16 *)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16 *)(currentcellHead->datas+0xE));
 			} else {
 				ASSERT(0);
-				//*(int16*)(currentcellHead->datas+0x2E) = 0;
+				//*(int16 *)(currentcellHead->datas+0x2E) = 0;
 			}
 		}
 

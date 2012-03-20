@@ -726,8 +726,12 @@ voices.wav von CD4 in voices4.wav
 3.14) Hinweise zu The Legend of Kyrandia:
 ----- -----------------------------------
 Um The Legend of Kyrandia unter ScummVM laufen zu lassen, benötigen Sie die
-Datei „kyra.dat“, welche auf der Seite „Downloads“ der ScummVM-Website gefunden
-werden kann.
+Datei „kyra.dat“. Die Datei sollte immer in offiziellen ScummVM-Paketen
+enthalten sein. Wenn ScummVM beanstandet, dass die Datei fehlt, können Sie sie
+auf der Seite „Downloads“ der ScummVM-Website finden. Beachten Sie, dass in der
+momentanen Windows-Version von ScummVM diese Datei in der ausführbaren Datei
+eingebettet sein sollte. Also müssen Sie sich nur diese besorgen, wenn sich
+ScummVM darüber beschwert, dass diese Datei fehlt.
 
 
 3.15) Hinweise zum vorhersagenden Eingabedialog bei Sierras AGI-Spielen:
@@ -862,10 +866,6 @@ Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
 
   FM-TOWNS-Versionen:
     - Die Kanji-Versionen erfordern die Schriftart-ROM-Datei von FM-TOWNS.
-    - ScummVM stürzt bei Kanji-Versionen der folgenden Spielen zufällig ab, wenn
-      die Schriftart-ROM-Datei von FM-TOWNS verwendet wird:
-      The Secret of Monkey Island, Monkey Island 2: LeChuck's Revenge
-      und Indiana Jones and the Fate of Atlantis
 
   Loom:
     - Das Abschalten der Untertitel über die Spieleinstellungen funktioniert
@@ -920,7 +920,6 @@ Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
     - Keine Musik oder Sound-Effekte in der Macintosh-Diskettenversion
     - Die Macintosh-CD-Version verwendet eingebundene DOS-Musik und
       DOS-Sound-Effekte.
-    - PC-9821-Versionen fehlt Unterstützung für Sound-Effekte.
 
   Spiele von Humongous Entertainment:
     - Nur die Originaloberfläche kann zum Laden und Speichern verwendet werden.
@@ -1030,6 +1029,7 @@ gestartet werden -- siehe nächster Abschnitt.
   --list-themes            Zeigt Liste aller verwendbaren Oberflächenthemen.
   -e, --music-driver=MODUS
                            Wählt Musiktreiber (siehe auch Abschnitt 7.0).
+  --list-audio-devices     Listet alle verfügbaren Audiogeräte auf.
   -q, --language=SPRACHE   Wählt Spielsprache (siehe auch Abschnitt 5.2).
   -m, --music-volume=ZAHL  Wählt Musiklautstärke, 0-255 (Standard: 192).
   -s, --sfx-volume=ZAHL    Wählt Effektlautstärke, 0-255 (Standard: 192).
@@ -1233,19 +1233,28 @@ Die Engines, die momentan das Zurückkehren zur Spieleliste unterstützen, sind:
     AGI
     AGOS
     CINE
+    COMPOSER
+    CRUISE
     DRACI
+    DRASCULA
     GOB
     GROOVIE
+    HUGO
     KYRA
     LURE
+    MADE
+    MOHAWK
     PARALLACTION
     QUEEN
     SAGA
+    SCI
     SCUMM
     SKY
     SWORD1
     SWORD2
+    TEENAGENT
     TOUCHE
+    TSAGE
     TUCKER
 
 
@@ -1428,8 +1437,22 @@ Verzeichnis gespeichert und bei anderen in voreingestellten Verzeichnissen.
 Sehen Sie sich das Beispiel weiter unten in dieser Liesmich-Datei an.
 
 Die folgenden Plattformen haben ein anderes Standardverzeichnis:
-    Mac OS X:            $HOME/Documents/ScummVM Savegames/
-    Andere UNIX-Systeme: $HOME/.scummvm/
+    Mac OS X:
+    $HOME/Documents/ScummVM Savegames/
+
+    Andere UNIX-Systeme:
+    $HOME/.scummvm/
+
+    Windows Vista/7:
+    \Users\Benutzername\AppData\Roaming\ScummVM\Saved games\
+
+    Windows 2000/XP:
+    \Dokumente und Einstellungen\Benutzername\Anwendungsdaten\
+    ScummVM\Saved games\
+
+    Windows NT4:
+    <Windows-Verzeichnis>\Profiles\Benutzername\
+    Application Data\ScummVM\Saved games\
 
 
 6.1) Automatische Spielstände:
@@ -1442,6 +1465,11 @@ Speichern] kann dies geändert werden). Bei AGI- und SCUMM-Spielen werden diese
 automatischen Spielstände auf Platz 0 abgelegt. Bei der SCUMM-Engine kann dieser
 Speicherstand über die Tastenkombination Strg+0 oder über das F5-Menü geladen
 werden.
+
+Spielstände werden unter Windows NT4/2000/XP/Vista/7 in einem versteckten
+Bereich gespeichert, auf den durch Aufruf von „%APPDATA%\ScummVM\Saved Games\“
+zugegriffen werden kann oder indem das Anzeigen versteckter Dateien im Windows
+Explorer aktiviert wird.
 
 
 6.2) Spielstände umwandeln:
@@ -1495,20 +1523,28 @@ der Spielstand unter ScummVM befinden soll.
 
        AGI
        AGOS
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
+       MOHAWK
        PARALLACTION
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
        TUCKER
 
 --save-slot/-x:
@@ -1522,20 +1558,28 @@ der Spielstand unter ScummVM befinden soll.
    Die Engines, die momentan --save-slot/-x unterstützen, sind:
 
        AGI
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
-       PARALLACTION
+       MOHAWK
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
+       TUCKER
 
 
 7.0) Musik und Sound:
@@ -2009,7 +2053,7 @@ Ausgabefrequenz ein Vielfaches der Originalfrequenz ist.
 ---- --------------------
 Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
 
-    Windows Vista:
+    Windows Vista/7:
     \Users\Benutzername\AppData\Roaming\ScummVM\scummvm.ini
 
     Windows 2000/XP:
@@ -2190,6 +2234,13 @@ Schlüsselwort:
 
     walkspeed          Zahl     Bewegungsgeschwindigkeit (0-4)
 
+The 7th Guest verfügt zusätzlich über folgendes nicht standardmäßiges
+Schlüsselwort:
+
+    t7g_speed          Text     Videowiedergabe-Geschwindigkeit
+                                (normal, tweaked [optimiert],
+                                im_an_ios [ich bin ein iOS])
+
 
 9.0) Kompilierung:
 ---- -------------
@@ -2243,17 +2294,6 @@ Debug-Nachrichten zu durchsuchen
     * Bitte lesen Sie:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
-  Debian GNU/Linux:
-    * Installieren Sie die Pakete „build-essential“, „fakeroot“, „debhelper“,
-      und „libsdl1.2-dev“ auf Ihrem Betriebssystem.
-    * Installieren Sie beliebig viele der folgenden Pakete (optional):
-      „libvorbis-dev“ (für Ogg-Vorbis-Unterstützung), „libasound2-dev“ (für
-      ALSA-Sequenzer-Unterstützung), „libmad0-dev“ (für MAD-MP3-Unterstützung),
-      „zlib1g-dev“ (für Unterstützung von komprimierten Spielständen)
-    * Rufen Sie „make deb“ auf.
-    * Rufen Sie zum Schluss „dpkg -i ../scummvm-cvs*deb“ auf und
-      Sie sind fertig.
-
   Mac OS X:
     * Stellen Sie sicher, dass Sie die „Developer“-Tools installiert haben.
     * Das „Developer“-Paket von SDL für OS X, das auf der SDL-Website
@@ -2304,4 +2344,4 @@ http://www.scummvm.org/
 
 
 (Deutscher Text basiert auf README mit SHA1-ID:
-264240eb5da43b8b1fbe309bbafb00aff7e1b51b)
+d1de75a6ca828ab2fcdbce6352a12337f93fc21c)

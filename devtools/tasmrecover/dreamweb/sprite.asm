@@ -1,4 +1,4 @@
-;Copyright (c) 1990-2011 by Neil Dodwell
+;Copyright (c) 1990-2012 by Neil Dodwell
 ;Released with permission from Neil Dodwell under GPLv2
 ;See LICENSE file for full license text
 ;------------------------------------------------------------People Routines----
@@ -244,7 +244,7 @@ Reelroutines	db	1,44,0 	;Room number and x,y
 	db	255
 
 
-Lenofreelrouts	equ	$-reelroutines
+Lenofreelrouts	equ 457 ; $-reelroutines
 
 
 Reelcalls	dw	gamer,sparkydrip,eden,edeninbath,sparky,smokebloke

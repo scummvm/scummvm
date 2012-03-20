@@ -743,7 +743,7 @@ static void node_print_desc(ParseTreeNode* node) {
 	}
 }
 #else
-static void node_print_desc(ParseTreeNode*) { }
+static void node_print_desc(ParseTreeNode *) { }
 #endif
 
 

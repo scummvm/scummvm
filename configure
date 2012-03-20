@@ -94,8 +94,9 @@ add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"
 add_engine groovie2 "Groovie 2 games" no
 add_engine hugo "Hugo Trilogy" yes
-add_engine kyra "Legend of Kyrandia" yes "lol"
+add_engine kyra "Legend of Kyrandia" yes "lol eob"
 add_engine lol "Lands of Lore" yes
+add_engine eob "Eye of the Beholder" no
 add_engine lastexpress "The Last Express" no
 add_engine lure "Lure of the Temptress" yes
 add_engine made "MADE" yes
@@ -138,13 +139,14 @@ _seq_midi=auto
 _timidity=auto
 _zlib=auto
 _sparkle=auto
-_png=auto
+_png=no
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
 _opengl=auto
 _opengles=auto
 _readline=auto
+_freetype2=auto
 _taskbar=yes
 _updates=no
 _libunity=auto
@@ -188,7 +190,9 @@ _win32path="c:/scummvm"
 _aos4path="Games:ScummVM"
 _staticlibpath=/sw
 _sdlconfig=sdl-config
+_freetypeconfig=freetype-config
 _sdlpath="$PATH"
+_freetypepath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -380,6 +384,40 @@ find_sdlconfig() {
 	if test -z "$_sdlconfig"; then
 		echo "none found!"
 		exit 1
+	fi
+}
+
+#
+# Determine freetype-config
+#
+find_freetypeconfig() {
+	echo_n "Looking for freetype-config... "
+	freetypeconfigs="$_freetypeconfig"
+	_freetypeconfig=
+
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
+	for path_dir in $_freetypepath; do
+		#reset separator to parse freetypeconfigs
+		IFS=":"
+		for freetypeconfig in $freetypeconfigs; do
+			if test -f "$path_dir/$freetypeconfig" ; then
+				_freetypeconfig="$path_dir/$freetypeconfig"
+				echo $_freetypeconfig
+				# Save the prefix
+				_freetypepath=$path_dir
+				if test `basename $path_dir` = bin ; then
+					_freetypepath=`dirname $path_dir`
+				fi
+				# break at first freetype-config found in path
+				break 2
+			fi
+		done
+	done
+
+	IFS="$ac_save_ifs"
+
+	if test -z "$_freetypeconfig"; then
+		echo "none found!"
 	fi
 }
 
@@ -846,6 +884,9 @@ Optional Libraries:
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
 
+  --with-freetype-prefix=DIR Prefix where the freetype-config script is
+                           installed (optional)
+
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
@@ -905,6 +946,8 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-freetype2)       _freetype2=yes  ;;
+	--disable-freetype2)      _freetype2=no   ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
 	--enable-updates)         _updates=yes    ;;
@@ -1041,6 +1084,10 @@ for ac_option in $@; do
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_sdlpath="$arg:$arg/bin"
+		;;
+	--with-freetype2-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_freetypepath="$arg:$arg/bin"
 		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1280,7 +1327,7 @@ wii)
 wince)
 	_host_os=wince
 	_host_cpu=arm
-	_host_alias=arm-wince-mingw32ce
+	_host_alias=arm-mingw32ce
 	;;
 *)
 	if test -n "$_host"; then
@@ -1619,7 +1666,7 @@ fi;
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | gamecube | psp | wii)
+android | gamecube | psp | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -1682,7 +1729,7 @@ esac
 # Determine a data type with the given length
 #
 find_type_with_size() {
-	for datatype in int short char long unknown; do
+	for datatype in int short char long "long long" unknown; do
 		cat > tmp_find_type_with_size.cpp << EOF
 typedef $datatype ac__type_sizeof_;
 int main() {
@@ -1706,6 +1753,35 @@ EOF
 }
 
 #
+# Check whether the system is 32-bit
+#
+pointer_is_32bit() {
+	cat > tmp_pointer_is_32bit.cpp << EOF
+int main() {
+	static int test_array[1 - 2 * !(sizeof(void *) == 4)];
+	test_array[0] = 0;
+	return 0;
+}
+EOF
+	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
+	status=$?
+	cc_check_clean tmp_pointer_is_32bit.cpp
+	return $status
+}
+
+echo_n "Checking 64-bitness... "
+pointer_is_32bit
+if test $? -eq 0; then
+	type_ptr=int32
+	echo "no"
+	add_line_to_config_h "/* #define SCUMM_64BITS */"
+else
+	type_ptr=int64
+	echo "yes"
+	add_line_to_config_h "#define SCUMM_64BITS"
+fi
+
+#
 # Determine data type sizes
 #
 echo_n "Type with 1 byte... "
@@ -1725,6 +1801,17 @@ type_4_byte=`find_type_with_size 4`
 TMPR="$?"
 echo "$type_4_byte"
 test $TMPR -eq 0 || exit 1	# check exit code of subshell
+
+echo_n "Type with 8 bytes... "
+type_8_byte=`find_type_with_size 8`
+TMPR="$?"
+echo "$type_8_byte"
+if test $TMPR -eq 0; then
+	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
+	_def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
+fi
+# force cleanup after check for 8 bytes type
+cc_check_clean tmp_find_type_with_size.cpp
 
 #
 # Check whether memory alignment is required
@@ -1892,7 +1979,7 @@ case $_host_os in
 		# Now we may have MacPorts or Fink installed
 		# Which put libraries and headers in non-standard places
 		# Checking them here
-		
+
 		# MacPorts
 		# There is no way to get the prefix, so implementing a hack here
 		macport_version=`port version 2>/dev/null`
@@ -2048,6 +2135,7 @@ case $_host_os in
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
 	webos)
+		CXXFLAGS="$CXXFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include/SDL"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/device/usr/include"
@@ -2279,8 +2367,10 @@ if test -n "$_host"; then
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
 			_backend="iphone"
-			_build_hq_scalers=no
+			_build_scalers=no
+			_mt32emu=no
 			_seq_midi=no
+			_timidity=no
 			;;
 		m68k-atari-mint)
 			DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2293,7 +2383,6 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			INCLUDES="$INCLUDES -I/usr/X11R6/include"
-			LIBS="$LIBS -lpthread"
 			LIBS="$LIBS -lX11"
 			LIBS="$LIBS -L/usr/lib"
 			
@@ -2553,7 +2642,6 @@ case $_backend in
 	gph)
 		;;
 	iphone)
-		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		LIBS="$LIBS -framework QuartzCore -framework GraphicsServices -framework CoreFoundation"
 		LIBS="$LIBS -framework Foundation -framework AudioToolbox -framework CoreAudio"
@@ -2670,7 +2758,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | bada | dingux | dreamcast | gph | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dreamcast | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3373,6 +3461,50 @@ fi
 echo "$_libunity"
 
 #
+# Check for FreeType2 to be present
+#
+if test "$_freetype2" != "no"; then
+
+	# Look for the freetype-config script
+	find_freetypeconfig
+
+	if test -z "$_freetypeconfig"; then
+		_freetype2=no
+	else
+		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$_freetypepath" --libs`
+		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$_freetypepath" --cflags`
+
+		if test "$_freetype2" = "auto"; then
+			_freetype2=no
+
+			cat > $TMPC << EOF
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+int main(int argc, char *argv[]) {
+	FT_Library library;
+	FT_Error error = FT_Init_FreeType(&library);
+	FT_Done_FreeType(library);
+}
+EOF
+
+			cc_check $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+		fi
+
+		if test "$_freetype2" = "yes"; then
+			LIBS="$LIBS $FREETYPE2_LIBS"
+			INCLUDES="$INCLUDES $FREETYPE2_CFLAGS"
+		fi
+	fi
+
+fi
+
+echocheck "FreeType2"
+echo "$_freetype2"
+
+define_in_config_h_if_yes "$_freetype2" "USE_FREETYPE2"
+
+#
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
@@ -3853,6 +3985,25 @@ typedef unsigned $type_4_byte uint32;
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
+EOF
+
+if test -n "$_def_64bit_type_unsigned"  ; then
+cat >> config.h << EOF
+
+/* 64-bit stuff */
+$_def_64bit_type_signed
+#if defined(__APPLE__) && !defined(__ppc__)
+#ifndef _UINT64
+#define _UINT64
+$_def_64bit_type_unsigned
+#endif
+#else
+$_def_64bit_type_unsigned
+#endif
+EOF
+fi
+
+cat >> config.h << EOF
 
 #endif /* CONFIG_H */
 EOF

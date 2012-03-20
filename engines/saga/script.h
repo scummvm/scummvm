@@ -196,9 +196,9 @@ public:
 		case kAddressModule:
 			return _moduleBase;
 		case kAddressStack:
-			return (byte*)&_stackBuf[_frameIndex];
+			return (byte *)&_stackBuf[_frameIndex];
 		case kAddressThread:
-			return (byte*)_threadVars;
+			return (byte *)_threadVars;
 		default:
 			return _commonBase;
 		}

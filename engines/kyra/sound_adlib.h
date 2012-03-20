@@ -76,17 +76,20 @@ public:
 	virtual void haltTrack();
 	virtual bool isPlaying() const;
 
-	virtual void playSoundEffect(uint8 track);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
 
 	virtual void beginFadeOut();
+
+	virtual int checkTrigger();
+	virtual void resetTrigger();
 private:
 	void internalLoadFile(Common::String file);
 
-	void play(uint8 track);
+	void play(uint8 track, uint8 volume);
 
 	AdLibDriver *_driver;
 
-	bool _v2;
+	int _version;
 	uint8 _trackEntries[500];
 	uint8 *_soundDataPtr;
 	int _sfxPlayingSound;

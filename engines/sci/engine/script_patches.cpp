@@ -366,7 +366,7 @@ const uint16 freddypharkasPatchLadderEvent[] = {
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature freddypharkasSignatures[] = {
 	{      0, "CD: score early disposal",                    1, PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{    235, "CD: canister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCanisterHang, freddypharkasPatchCanisterHang },
+	{    235, "CD: canister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),     -4, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
 	{    320, "ladder event issue",                          2, PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -437,8 +437,68 @@ const uint16 gk1PatchDay5PhoneFreeze[] = {
 	PATCH_END
 };
 
+// Floppy version: Interrogation::dispose() compares an object reference
+// (stored in the view selector) with a number, leading to a crash (this kind
+// of comparison was not used in SCI32). The view selector is used to store
+// both a view number (in some cases), and a view reference (in other cases).
+// In the floppy version, the checks are in the wrong order, so there is a
+// comparison between a number an an object. In the CD version, the checks are
+// in the correct order, thus the comparison is correct, thus we use the code
+// from the CD version in the floppy one.
+const byte gk1SignatureInterrogationBug[] = {
+	43,
+	0x65, 0x4c,        // aTop 4c
+	0x67, 0x50,        // pTos 50
+	0x34, 0x10, 0x27,  // ldi 2710
+	0x1e,              // gt?
+	0x31, 0x08,        // bnt 08  [05a0]
+	0x67, 0x50,        // pTos 50
+	0x34, 0x10, 0x27,  // ldi 2710
+	0x04,              // sub
+	0x65, 0x50,        // aTop 50
+	0x63, 0x50,        // pToa 50
+	0x31, 0x15,        // bnt 15  [05b9]
+	0x39, 0x0e,        // pushi 0e
+	0x76,              // push0
+	0x4a, 0x04, 0x00,  // send 0004
+	0xa5, 0x00,        // sat 00
+	0x38, 0x93, 0x00,  // pushi 0093
+	0x76,              // push0
+	0x63, 0x50,        // pToa 50
+	0x4a, 0x04, 0x00,  // send 0004
+	0x85, 0x00,        // lat 00
+	0x65, 0x50,        // aTop 50
+	0
+};
+
+const uint16 gk1PatchInterrogationBug[] = {
+	0x65, 0x4c,        // aTop 4c
+	0x63, 0x50,        // pToa 50
+	0x31, 0x15,        // bnt 15  [05b9]
+	0x39, 0x0e,        // pushi 0e
+	0x76,              // push0
+	0x4a, 0x04, 0x00,  // send 0004
+	0xa5, 0x00,        // sat 00
+	0x38, 0x93, 0x00,  // pushi 0093
+	0x76,              // push0
+	0x63, 0x50,        // pToa 50
+	0x4a, 0x04, 0x00,  // send 0004
+	0x85, 0x00,        // lat 00
+	0x65, 0x50,        // aTop 50
+	0x67, 0x50,        // pTos 50
+	0x34, 0x10, 0x27,  // ldi 2710
+	0x1e,              // gt?
+	0x31, 0x08,        // bnt 08  [05b9]
+	0x67, 0x50,        // pTos 50
+	0x34, 0x10, 0x27,  // ldi 2710
+	0x04,              // sub
+	0x65, 0x50,        // aTop 50
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature gk1Signatures[] = {
+	{     51, "interrogation bug",                           1, PATCH_MAGICDWORD(0x65, 0x4c, 0x67, 0x50),     0, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
 	{    212, "day 5 phone freeze",                          1, PATCH_MAGICDWORD(0x35, 0x03, 0x65, 0x1a),     0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
 	{    230, "day 6 police beignet timer issue",            1, PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),   -16, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
 	{    230, "day 6 police sleep timer issue",              1, PATCH_MAGICDWORD(0x34, 0xdc, 0x00, 0x65),    -5, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },

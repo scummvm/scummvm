@@ -28,8 +28,9 @@
 #include "common/array.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/random.h"
 #include "common/hashmap.h"
+#include "common/random.h"
+#include "common/rendermode.h"
 
 #include "audio/mixer.h"
 
@@ -118,7 +119,7 @@ struct GameFlags {
 	bool useAltShapeHeader    : 1;    // alternative shape header (uses 2 bytes more, those are unused though)
 	bool isTalkie             : 1;
 	bool isOldFloppy          : 1;
-	bool useHiResOverlay      : 1;
+	bool useHiRes             : 1;
 	bool use16ColorMode       : 1;
 	bool useDigSound          : 1;
 	bool useInstallerPackage  : 1;
@@ -134,7 +135,9 @@ enum {
 	GI_KYRA1 = 0,
 	GI_KYRA2 = 1,
 	GI_KYRA3 = 2,
-	GI_LOL = 4
+	GI_LOL = 4,
+	GI_EOB1 = 5,
+	GI_EOB2 = 6
 };
 
 struct AudioDataStruct {
@@ -182,7 +185,10 @@ class KyraEngine_v1 : public Engine {
 friend class Debugger;
 friend class ::KyraMetaEngine;
 friend class GUI;
+friend class GUI_v1;
+friend class GUI_EoB;
 friend class SoundMidiPC;    // For _eventMan
+friend class TransferPartyWiz; // For save state API
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine_v1();
@@ -205,7 +211,7 @@ public:
 
 	// input
 	void setMousePos(int x, int y);
-	Common::Point getMousePos() const;
+	Common::Point getMousePos();
 
 	// config specific
 	bool speechEnabled();
@@ -300,6 +306,8 @@ protected:
 	int _configMusic;
 	bool _configSounds;
 	uint8 _configVoice;
+
+	Common::RenderMode _configRenderMode;
 
 	// game speed
 	virtual bool skipFlag() const;
@@ -421,7 +429,7 @@ protected:
 	Common::Error saveGameState(int slot, const Common::String &desc) { return saveGameStateIntern(slot, desc.c_str(), 0); }
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
-	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
+	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header, bool checkID = true);
 	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;
 
 	// TODO: Consider moving this to Screen

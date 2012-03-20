@@ -1122,7 +1122,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 	}
 	case 26: { // saveGameWrite
 		// FIXME: This doesn't work
-		char *address = (char*)getStringAddress(args[2]);
+		char *address = (char *)getStringAddress(args[2]);
 		debug(0, "o8_kernelSetFunctions: saveGame(%d, %s)", args[1], address);
 		break;
 	}

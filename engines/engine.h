@@ -24,6 +24,8 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 class OSystem;
 
@@ -181,9 +183,14 @@ public:
 	virtual void syncSoundSettings();
 
 	/*
-	 * Initialize the engine-specific keymap
+	 * Initialize any engine-specific keymaps.
 	 */
 	virtual void initKeymap() {}
+
+	/*
+	 * Cleanup any engine-specific keymaps.
+	 */
+	virtual void deinitKeymap();
 
 	/**
 	 * Flip mute all sound option.

@@ -28,10 +28,8 @@
 
 namespace Common {
 
-Action::Action(Keymap *boss, const char *i,	String des, ActionType typ,
-			   KeyType prefKey, int pri, int flg)
-	: _boss(boss), description(des), type(typ), preferredKey(prefKey),
-	priority(pri), flags(flg), _hwKey(0) {
+Action::Action(Keymap *boss, const char *i,	String des)
+	: _boss(boss), description(des), _hwInput(0) {
 	assert(i);
 	assert(_boss);
 
@@ -40,18 +38,18 @@ Action::Action(Keymap *boss, const char *i,	String des, ActionType typ,
 	_boss->addAction(this);
 }
 
-void Action::mapKey(const HardwareKey *key) {
-	if (_hwKey)
+void Action::mapInput(const HardwareInput *input) {
+	if (_hwInput)
 		_boss->unregisterMapping(this);
 
-	_hwKey = key;
+	_hwInput = input;
 
-	if (_hwKey)
-		_boss->registerMapping(this, _hwKey);
+	if (_hwInput)
+		_boss->registerMapping(this, _hwInput);
 }
 
-const HardwareKey *Action::getMappedKey() const {
-	return _hwKey;
+const HardwareInput *Action::getMappedInput() const {
+	return _hwInput;
 }
 
 } // End of namespace Common

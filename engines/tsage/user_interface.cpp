@@ -82,7 +82,7 @@ void UIQuestion::showDescription(CursorType cursor) {
 		}
 		break;
 	case GType_Ringworld2:
-		if ((cursor == R2_9) || (cursor == R2_39)) {
+		if ((cursor == R2_COM_SCANNER) || (cursor == R2_COM_SCANNER_2)) {
 			// Show communicator
 			warning("TODO: Communicator");
 		} else {
@@ -199,9 +199,9 @@ void UIInventoryScroll::process(Event &event) {
 		// Draw the button as selected
 		toggle(true);
 
-		event.handled = true;
-		break;
-	case EVENT_BUTTON_UP:
+		// Wait for the mouse to be released
+		BF_GLOBALS._events.waitForPress(EVENT_BUTTON_UP);
+
 		// Restore unselected version
 		toggle(false);
 
@@ -316,7 +316,7 @@ void UIElements::synchronize(Serializer &s) {
 }
 
 void UIElements::process(Event &event) {
-	if (_clearScreen && GLOBALS._player._enabled && 
+	if (_clearScreen && GLOBALS._player._enabled &&
 			((g_vm->getGameID() != GType_BlueForce) || (GLOBALS._sceneManager._sceneNumber != 50))) {
 		if (_bounds.contains(event.mousePos)) {
 			// Cursor inside UI area

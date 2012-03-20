@@ -610,6 +610,12 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(DeletePic),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                 NULL,            NULL },
 
+	// Unused / debug functions in the in-between SCI2.1 interpreters
+	{ MAP_DUMMY(PreloadResource),   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_DUMMY(CheckCDisc),        SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_DUMMY(GetSaveCDisc),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_DUMMY(TestPoly),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+
 	// SCI2.1 unmapped functions - TODO!
 
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons

@@ -1421,6 +1421,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO1(GUIO_NOSPEECH)	},
 
+	// King's Quest 6 - French DOS Floppy (supplied by misterhands in bug #3503425)
+	// SCI interpreter version ???
+	{"kq6", "", {
+		{"resource.map", 0, "a362063318eebe7d6423b1d9dc6213e1", 8703},
+		{"resource.000", 0, "f2b7f753992c56a0c7a08d6a5077c895", 7863324},
+		{"resource.msg", 0, "adc2aa8adbdcc97507d44a6f492fbd77", 265194},
+		AD_LISTEND},
+	 	Common::FR_FRA, Common::kPlatformPC, 0, GUIO1(GUIO_NOSPEECH)	},
+
 	// King's Quest 6 - German DOS Floppy (supplied by markcoolio in bug report #2727156)
 	// SCI interpreter version 1.001.054
 	{"kq6", "", {

@@ -62,7 +62,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
-			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			_screen->drawShape(0, _shapes[216 + _itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			setMouseItem(inventoryItem);
 			// TODO: Proper support for both taken strings in Amiga version
 			if (_flags.platform == Common::kPlatformAmiga)
@@ -75,7 +75,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 		} else {
 			snd_playSoundEffect(0x32);
 			_screen->hideMouse();
-			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			_screen->drawShape(0, _shapes[216 + _itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			_screen->setMouseCursor(1, 1, _shapes[0]);
 			updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _placedList[0], 179);
 			_screen->showMouse();
@@ -107,7 +107,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 		characterSays(2001, _waitForAmulet[0], 0, -2);
 		return 1;
 	}
-	if (!queryGameFlag(0x55+jewel)) {
+	if (!queryGameFlag(0x55 + jewel)) {
 		assert(_blackJewel);
 		_animator->makeBrandonFaceMouse();
 		drawJewelPress(jewel, 1);
@@ -130,7 +130,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 		return 1;
 
 	_unkAmuletVar = 1;
-	switch (jewel-1) {
+	switch (jewel - 1) {
 	case 0:
 		if (_brandonStatusBit & 1) {
 			seq_brandonHealing2();
@@ -184,7 +184,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 
 #pragma mark -
 
-GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI(vm), _vm(vm), _screen(screen) {
+GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), _screen(screen) {
 	_lastScreenUpdate = 0;
 	_menu = 0;
 	_pressFlag = false;
@@ -198,7 +198,7 @@ GUI_LoK::~GUI_LoK() {
 }
 
 void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
-	uint8 *screen = new uint8[Screen::SCREEN_W*Screen::SCREEN_H];
+	uint8 *screen = new uint8[Screen::SCREEN_W * Screen::SCREEN_H];
 	if (screen) {
 		_screen->queryPageFromDisk("SEENPAGE.TMP", 0, screen);
 		uint8 screenPal[768];
@@ -243,7 +243,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 		}
 
 		if (mouseWheel && list->mouseWheel == mouseWheel && list->buttonCallback) {
-			if ((*list->buttonCallback.get())(list))
+			if ((*list->buttonCallback)(list))
 				break;
 		}
 
@@ -282,7 +282,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 
 			if (processMouseClick) {
 				if (list->buttonCallback) {
-					if ((*list->buttonCallback.get())(list))
+					if ((*list->buttonCallback)(list))
 						break;
 				}
 			}
@@ -349,7 +349,7 @@ void GUI_LoK::processButton(Button *button) {
 	if (processType == 1 && shape)
 		_screen->drawShape(_screen->_curPage, shape, x, y, button->dimTableIndex, 0x10);
 	else if (processType == 4 && callback)
-		(*callback.get())(button);
+		(*callback)(button);
 }
 
 void GUI_LoK::setGUILabels() {
@@ -579,7 +579,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 			// Trim long GMM save descriptions to fit our save slots
 			_screen->_charWidth = -2;
 			int fC = _screen->getTextWidth(_savegameNames[i]);
-			while (_savegameNames[i][0] && (fC > 240 )) {
+			while (_savegameNames[i][0] && (fC > 240)) {
 				_savegameNames[i][strlen(_savegameNames[i]) - 1] = 0;
 				fC = _screen->getTextWidth(_savegameNames[i]);
 			}
@@ -596,7 +596,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 }
 
 int GUI_LoK::saveGameMenu(Button *button) {
-	updateSaveList();
+	updateSaveFileList(_vm->_targetName);
 
 	updateMenuButton(button);
 	_menu[2].item[5].enabled = true;
@@ -605,7 +605,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
 	_menu[2].menuNameString = _vm->_guiStrings[8]; // Select a position to save to:
-	_specialSavegameString = _vm->_guiStrings[_vm->gameFlags().platform == Common::kPlatformPC98 ? 10: 9]; // [ EMPTY SLOT ]
+	_specialSavegameString = _vm->_guiStrings[_vm->gameFlags().platform == Common::kPlatformPC98 ? 10 : 9]; // [ EMPTY SLOT ]
 	for (int i = 0; i < 5; i++)
 		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGame);
 
@@ -636,7 +636,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 }
 
 int GUI_LoK::loadGameMenu(Button *button) {
-	updateSaveList();
+	updateSaveFileList(_vm->_targetName);
 
 	if (_vm->_menuDirectlyToLoad) {
 		_menu[2].item[5].enabled = false;
@@ -710,15 +710,15 @@ void GUI_LoK::updateSavegameString() {
 		Util::convertISOToDOS(inputKey);
 
 		if ((uint8)inputKey > 31 && (uint8)inputKey < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
-			if ((length < ARRAYSIZE(_savegameName)-1) && (width <= 240)) {
+			if ((length < ARRAYSIZE(_savegameName) - 1) && (width <= 240)) {
 				_savegameName[length] = inputKey;
-				_savegameName[length+1] = 0;
+				_savegameName[length + 1] = 0;
 				redrawTextfield();
 			}
 		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE ||
 		           _keyPressed.keycode == Common::KEYCODE_DELETE) {
 			if (length > 0) {
-				_savegameName[length-1] = 0;
+				_savegameName[length - 1] = 0;
 				redrawTextfield();
 			}
 		} else if (_keyPressed.keycode == Common::KEYCODE_RETURN ||
@@ -733,7 +733,7 @@ void GUI_LoK::updateSavegameString() {
 int GUI_LoK::saveGame(Button *button) {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	updateMenuButton(button);
-	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
+	_vm->_gameToLoad = _menu[2].item[button->index - 0xC].saveSlot;
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
@@ -800,7 +800,7 @@ int GUI_LoK::savegameConfirm(Button *button) {
 int GUI_LoK::loadGame(Button *button) {
 	updateMenuButton(button);
 	_displaySubMenu = false;
-	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
+	_vm->_gameToLoad = _menu[2].item[button->index - 0xC].saveSlot;
 
 	return 0;
 }
@@ -914,15 +914,15 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 
 void GUI_LoK::setupControls(Menu &menu) {
 	switch (_vm->_configMusic) {
-		case 0:
-			menu.item[0].itemString = _offString; //"Off"
-			break;
-		case 1:
-			menu.item[0].itemString = _onString; //"On"
-			break;
-		case 2:
-			menu.item[0].itemString = _onCDString; //"On + CD"
-			break;
+	case 0:
+		menu.item[0].itemString = _offString; //"Off"
+		break;
+	case 1:
+		menu.item[0].itemString = _onString; //"On"
+		break;
+	case 2:
+		menu.item[0].itemString = _onCDString; //"On + CD"
+		break;
 	}
 
 	if (_vm->_configSounds)

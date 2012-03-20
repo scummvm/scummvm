@@ -151,8 +151,8 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev,
 			event.type = Common::EVENT_LBUTTONDOWN;
 			processMouseEvent(event, _curX, _curY);
 		}
-		// If we're not in touchpad mode, move the cursor to the tap
-		if (!_touchpadMode) {
+		// If we're not in trackpad mode, move the cursor to the tap
+		if (!_trackpadMode) {
 			_curX = MIN(_screenX, MAX(0, 0 + ev.motion.x));
 			_curY = MIN(_screenY, MAX(0, 0 + ev.motion.y));
 			// If we're already clicking, hold it until after the move.
@@ -254,7 +254,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 			// If only one finger is on the screen and moving, that's
 			// the mouse pointer.
 			if (!_fingerDown[1] && !_fingerDown[2]) {
-				if (_touchpadMode) {
+				if (_trackpadMode) {
 					_curX = MIN(_screenX, MAX(0, _curX + ev.motion.xrel));
 					_curY = MIN(_screenY, MAX(0, _curY + ev.motion.yrel));
 				} else {
@@ -301,16 +301,16 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 						_queuedEscapeUpTime = g_system->getMillis() +
 							QUEUED_KEY_DELAY;
 					} else if (_dragDiffX[0] > 0 && _dragDiffX[1] > 0) {
-						// A swipe right toggles touchpad mode
-						_touchpadMode = !_touchpadMode;
-						g_system->showMouse(_touchpadMode);
-						// I18N: Touchpad mode toggle status.
-						Common::String dialogMsg(_("Touchpad mode is now"));
+						// A swipe right toggles trackpad mode
+						_trackpadMode = !_trackpadMode;
+						g_system->showMouse(_trackpadMode);
+						// I18N: Trackpad mode toggle status.
+						Common::String dialogMsg(_("Trackpad mode is now"));
 						dialogMsg += " ";
-						// I18N: Touchpad mode on or off.
-						dialogMsg += (_touchpadMode ? _("ON") : _("OFF"));
+						// I18N: Trackpad mode on or off.
+						dialogMsg += (_trackpadMode ? _("ON") : _("OFF"));
 						dialogMsg += ".\n";
-						// I18N: Instructions to toggle Touchpad mode.
+						// I18N: Instructions to toggle Trackpad mode.
 						dialogMsg +=
 							_("Swipe two fingers to the right to toggle.");
 						GUI::TimedMessageDialog dialog(dialogMsg, 1500);
@@ -376,12 +376,12 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 	if (_firstPoll) {
 		// Set the initial dimensions
 		calculateDimensions();
-		
-		// Having a mouse pointer on screen when not in Touchpad mode is poor
+
+		// Having a mouse pointer on screen when not in Trackpad mode is poor
 		// interface design, because the user won't know whether to tap buttons
 		// or drag the pointer to them.  On the first poll, set the appropriate
 		// pointer visibility.
-		g_system->showMouse(_touchpadMode);
+		g_system->showMouse(_trackpadMode);
 		_firstPoll = false;
 	}
 

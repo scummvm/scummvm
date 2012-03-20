@@ -300,7 +300,7 @@ public:
 	void load(byte *srcData) {
 		memcpy(_data, srcData, ROOM_PATHS_SIZE);
 	}
-	const byte *data() { return _data; }
+	const byte *data() const { return _data; }
 	bool isOccupied(int x, int y);
 	bool isOccupied(int x, int y, int width);
 	void setOccupied(int x, int y, int width);
@@ -334,7 +334,7 @@ public:
 
 class RoomDataList: public Common::List<Common::SharedPtr<RoomData> > {
 public:
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -357,7 +357,7 @@ public:
 
 class RoomExitJoinList: public Common::List<Common::SharedPtr<RoomExitJoinData> > {
 public:
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -433,13 +433,13 @@ public:
 		if (_dynamicSupportData) delete _supportData;
 	}
 
-	CurrentAction action() { return _action; }
-	CharacterScheduleEntry &supportData() {
+	CurrentAction action() const { return _action; }
+	CharacterScheduleEntry &supportData() const {
 		if (!_supportData) error("Access made to non-defined action support record");
 		return *_supportData;
 	}
-	bool hasSupportData() { return _supportData != NULL; }
-	uint16 roomNumber() { return _roomNumber; }
+	bool hasSupportData() const { return _supportData != NULL; }
+	uint16 roomNumber() const { return _roomNumber; }
 	void setAction(CurrentAction newAction) { _action = newAction; }
 	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
 	void setSupportData(CharacterScheduleEntry *newRec) {
@@ -452,7 +452,7 @@ public:
 	}
 	void setSupportData(uint16 entryId);
 
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	static CurrentActionEntry *loadFromStream(Common::ReadStream *stream);
 };
 
@@ -505,7 +505,7 @@ public:
 		validateStack();
 	}
 
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 	void copyFrom(CurrentActionStack &stack);
 };
@@ -569,13 +569,13 @@ public:
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
 	Direction nonVisualDirection() { return (Direction) scriptLoadFlag; }
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
 class HotspotDataList: public Common::List<Common::SharedPtr<HotspotData> > {
 public:
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -663,7 +663,7 @@ public:
 
 class TalkDataList: public Common::List<Common::SharedPtr<TalkData> > {
 public:
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -722,7 +722,7 @@ public:
 	void tick();
 	void clear(bool forceClear = false);
 
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -760,8 +760,8 @@ public:
 	RandomActionSet(uint16 *&offset);
 	~RandomActionSet();
 
-	uint16 roomNumber() { return _roomNumber; }
-	int numActions() { return _numActions; }
+	uint16 roomNumber() const { return _roomNumber; }
+	int numActions() const { return _numActions; }
 	void getEntry(int index, RandomActionType &actionType, uint16 &id) {
 		assert((index >= 0) && (index < _numActions));
 		actionType = _types[index];
@@ -772,14 +772,14 @@ public:
 		assert(_types[index] == REPEAT_ONCE);
 		_types[index] = REPEAT_ONCE_DONE;
 	}
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
 class RandomActionList: public Common::List<Common::SharedPtr<RandomActionSet> > {
 public:
 	RandomActionSet *getRoom(uint16 roomNumber);
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -828,7 +828,7 @@ public:
 
 	void reset();
 	BarEntry &getDetails(uint16 roomNumber);
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -923,7 +923,7 @@ public:
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 

@@ -490,57 +490,57 @@ void ScriptInterpreter::execScriptFunction(uint16 index) {
 
 VarType ScriptInterpreter::getGameVarType(uint variable) {
 	switch (variable) {
-		case 0:	 return vtByte;
-		case 1:	 return vtWord;
-		case 2:	 return vtWord;
-		case 3:	 return vtByte;
-		case 4:	 return vtWord;
-		case 5:	 return vtWord;
-		case 6:	 return vtWord;
-		case 7:	 return vtWord;
-		case 8:	 return vtWord;
-		case 9:	 return vtWord;
-		case 10:	 return vtWord;
-		case 11:	 return vtWord;
-		case 12:	 return vtByte;
-		case 13:	 return vtWord;
-		case 14:	 return vtWord;
-		case 15:	 return vtWord;
-		case 16:	 return vtWord;
-		case 17:	 return vtWord;
-		case 18:	 return vtWord;
-		case 19:	 return vtWord;
-		case 20:	 return vtWord;
-		case 21:	 return vtWord;
-		default:
-			error("Invalid game variable");
+	case 0:	 return vtByte;
+	case 1:	 return vtWord;
+	case 2:	 return vtWord;
+	case 3:	 return vtByte;
+	case 4:	 return vtWord;
+	case 5:	 return vtWord;
+	case 6:	 return vtWord;
+	case 7:	 return vtWord;
+	case 8:	 return vtWord;
+	case 9:	 return vtWord;
+	case 10:	 return vtWord;
+	case 11:	 return vtWord;
+	case 12:	 return vtByte;
+	case 13:	 return vtWord;
+	case 14:	 return vtWord;
+	case 15:	 return vtWord;
+	case 16:	 return vtWord;
+	case 17:	 return vtWord;
+	case 18:	 return vtWord;
+	case 19:	 return vtWord;
+	case 20:	 return vtWord;
+	case 21:	 return vtWord;
+	default:
+		error("Invalid game variable");
 	}
 }
 
 const char *getVarName(uint variable) {
 	switch (variable) {
-		case 0: return "mouseDisabled";
-		case 1: return "mouseY";
-		case 2: return "mouseX";
-		case 3: return "mouseButton";
-		case 4: return "verbLineY";
-		case 5: return "verbLineX";
-		case 6: return "verbLineWidth";
-		case 7: return "verbLineCount";
-		case 8: return "verbLineNum";
-		case 9: return "talkTextItemNum";
-		case 10: return "talkTextY";
-		case 11: return "talkTextX";
-		case 12: return "talkTextFontColor";
-		case 13: return "cameraY";
-		case 14: return "cameraX";
-		case 15: return "walkSpeedY";
-		case 16: return "walkSpeedX";
-		case 17: return "flag01";
-		case 18: return "sceneResIndex";
-		case 19: return "guiHeight";
-		case 20: return "sceneHeight";
-		case 21: return "sceneWidth";
+	case 0: return "mouseDisabled";
+	case 1: return "mouseY";
+	case 2: return "mouseX";
+	case 3: return "mouseButton";
+	case 4: return "verbLineY";
+	case 5: return "verbLineX";
+	case 6: return "verbLineWidth";
+	case 7: return "verbLineCount";
+	case 8: return "verbLineNum";
+	case 9: return "talkTextItemNum";
+	case 10: return "talkTextY";
+	case 11: return "talkTextX";
+	case 12: return "talkTextFontColor";
+	case 13: return "cameraY";
+	case 14: return "cameraX";
+	case 15: return "walkSpeedY";
+	case 16: return "walkSpeedX";
+	case 17: return "flag01";
+	case 18: return "sceneResIndex";
+	case 19: return "guiHeight";
+	case 20: return "sceneHeight";
+	case 21: return "sceneWidth";
 	}
 	return "(invalid)";
 }
@@ -549,31 +549,31 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 	debug(0, "ScriptInterpreter::getGameVar(%d{%s})", variable, getVarName(variable));
 	
 	switch (variable) {
-		case  0: return _vm->_mouseDisabled;
-		case  1: return _vm->_mouseY;
-		case  2: return _vm->_mouseX;
-		case  3: return _vm->_mouseButton;
-		case  4: return _vm->_screen->_verbLineY;
-		case  5: return _vm->_screen->_verbLineX;
-		case  6: return _vm->_screen->_verbLineWidth;
-		case  7: return _vm->_screen->_verbLineCount;
-		case  8: return _vm->_screen->_verbLineNum;
-		case  9: return _vm->_screen->_talkTextItemNum;
-		case 10: return _vm->_screen->_talkTextY;
-		case 11: return _vm->_screen->_talkTextX;
-		case 12: return _vm->_screen->_talkTextFontColor;
-		case 13: return _vm->_cameraY;
-		case 14: return _vm->_cameraX;
-		case 15: return _vm->_walkSpeedY;
-		case 16: return _vm->_walkSpeedX;
-		case 17: return _vm->_flag01;
-		case 18: return _vm->_sceneResIndex;
-		case 19: return _vm->_guiHeight;
-		case 20: return _vm->_sceneHeight;
-		case 21: return _vm->_sceneWidth;
-		default:
-			warning("Getting unimplemented game variable %s (%d)", getVarName(variable), variable);
-			return 0;
+	case  0: return _vm->_mouseDisabled;
+	case  1: return _vm->_mouseY;
+	case  2: return _vm->_mouseX;
+	case  3: return _vm->_mouseButton;
+	case  4: return _vm->_screen->_verbLineY;
+	case  5: return _vm->_screen->_verbLineX;
+	case  6: return _vm->_screen->_verbLineWidth;
+	case  7: return _vm->_screen->_verbLineCount;
+	case  8: return _vm->_screen->_verbLineNum;
+	case  9: return _vm->_screen->_talkTextItemNum;
+	case 10: return _vm->_screen->_talkTextY;
+	case 11: return _vm->_screen->_talkTextX;
+	case 12: return _vm->_screen->_talkTextFontColor;
+	case 13: return _vm->_cameraY;
+	case 14: return _vm->_cameraX;
+	case 15: return _vm->_walkSpeedY;
+	case 16: return _vm->_walkSpeedX;
+	case 17: return _vm->_flag01;
+	case 18: return _vm->_sceneResIndex;
+	case 19: return _vm->_guiHeight;
+	case 20: return _vm->_sceneHeight;
+	case 21: return _vm->_sceneWidth;
+	default:
+		warning("Getting unimplemented game variable %s (%d)", getVarName(variable), variable);
+		return 0;
 	}
 }
 
@@ -581,72 +581,72 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 	debug(0, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, getVarName(variable), value);
 	
 	switch (variable) {
-		case 0:
-			_vm->_mouseDisabled = value;
-			CursorMan.showMouse(value == 0);
-			break;
-		case 3:
-			_vm->_mouseButton = value;
-			break;
-		case 4:
-			_vm->_screen->_verbLineY = value;
-			break;
-		case 5:
-			_vm->_screen->_verbLineX = value;
-			break;
-		case 6:
-			_vm->_screen->_verbLineWidth = value;
-			break;
-		case 7:
-			_vm->_screen->_verbLineCount = value;
-			break;
-		case 8:
-			_vm->_screen->_verbLineNum = value;
-			break;
-		case 9:
-			_vm->_screen->_talkTextItemNum = value;
-			break;
-		case 10:
-			_vm->_screen->_talkTextY = value;
-			break;
-		case 11:
-			_vm->_screen->_talkTextX = value;
-			break;
-		case 12:
-			_vm->_screen->_talkTextFontColor = value;
-			break;
-		case 13:
-			_vm->_cameraY = value;
-			break;
-		case 14:
-			_vm->_cameraX = value;
-			break;
-		case 15:
-			_vm->_walkSpeedY = value;
-			break;
-		case 16:
-			_vm->_walkSpeedX = value;
-			break;
-		case 17:
-			_vm->_flag01 = value != 0;
-			break;
-		case 18:
-			_vm->_sceneResIndex = value;
-			break;
-		case 19:
-			_vm->_guiHeight = value;
-			break;
-		case 20:
-			_vm->_sceneHeight = value;
-			break;
-		case 21:
-			_vm->_sceneWidth = value;
-			break;
-		case 1:
-		case 2:
-		default:
-			warning("Setting unimplemented game variable %s (%d) to %d", getVarName(variable), variable, value);
-			break;
+	case 0:
+		_vm->_mouseDisabled = value;
+		CursorMan.showMouse(value == 0);
+		break;
+	case 3:
+		_vm->_mouseButton = value;
+		break;
+	case 4:
+		_vm->_screen->_verbLineY = value;
+		break;
+	case 5:
+		_vm->_screen->_verbLineX = value;
+		break;
+	case 6:
+		_vm->_screen->_verbLineWidth = value;
+		break;
+	case 7:
+		_vm->_screen->_verbLineCount = value;
+		break;
+	case 8:
+		_vm->_screen->_verbLineNum = value;
+		break;
+	case 9:
+		_vm->_screen->_talkTextItemNum = value;
+		break;
+	case 10:
+		_vm->_screen->_talkTextY = value;
+		break;
+	case 11:
+		_vm->_screen->_talkTextX = value;
+		break;
+	case 12:
+		_vm->_screen->_talkTextFontColor = value;
+		break;
+	case 13:
+		_vm->_cameraY = value;
+		break;
+	case 14:
+		_vm->_cameraX = value;
+		break;
+	case 15:
+		_vm->_walkSpeedY = value;
+		break;
+	case 16:
+		_vm->_walkSpeedX = value;
+		break;
+	case 17:
+		_vm->_flag01 = value != 0;
+		break;
+	case 18:
+		_vm->_sceneResIndex = value;
+		break;
+	case 19:
+		_vm->_guiHeight = value;
+		break;
+	case 20:
+		_vm->_sceneHeight = value;
+		break;
+	case 21:
+		_vm->_sceneWidth = value;
+		break;
+	case 1:
+	case 2:
+	default:
+		warning("Setting unimplemented game variable %s (%d) to %d", getVarName(variable), variable, value);
+		break;
 	}
 
 }
@@ -786,7 +786,7 @@ void ScriptInterpreter::sfGetRandomNumber() {
 }
 
 void ScriptInterpreter::sfDrawGuiTextMulti() {
-	_vm->_screen->drawGuiTextMulti((byte*)localPtr(arg16(3)));
+	_vm->_screen->drawGuiTextMulti((byte *)localPtr(arg16(3)));
 }
 
 void ScriptInterpreter::sfUpdateVerbLine() {
@@ -907,11 +907,11 @@ void ScriptInterpreter::sfDrawGuiImage() {
 }
 
 void ScriptInterpreter::sfAddAnimatedSpriteNoLoop() {
-	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), false, 2);
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte *)localPtr(0), (int16 *)localPtr(arg16(9)), false, 2);
 }
 
 void ScriptInterpreter::sfAddAnimatedSprite() {
-	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 2);
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte *)localPtr(0), (int16 *)localPtr(arg16(9)), true, 2);
 }
 
 void ScriptInterpreter::sfAddStaticSprite() {
@@ -919,11 +919,11 @@ void ScriptInterpreter::sfAddStaticSprite() {
 }
 
 void ScriptInterpreter::sfAddAnimatedSpriteScaled() {
-	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 1);
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte *)localPtr(0), (int16 *)localPtr(arg16(9)), true, 1);
 }
 
 void ScriptInterpreter::sfFindPath() {
-	_vm->_segmap->findPath((int16*)(getSlotData(arg16(13)) + arg16(11)), arg16(9), arg16(7), arg16(5), arg16(3));
+	_vm->_segmap->findPath((int16 *)(getSlotData(arg16(13)) + arg16(11)), arg16(9), arg16(7), arg16(5), arg16(3));
 }
 
 void ScriptInterpreter::sfWalk() {

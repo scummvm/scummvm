@@ -684,7 +684,7 @@ bool SoundMidiPC::isPlaying() const {
 	return _music->isPlaying();
 }
 
-void SoundMidiPC::playSoundEffect(uint8 track) {
+void SoundMidiPC::playSoundEffect(uint8 track, uint8) {
 	if (!_sfxEnabled)
 		return;
 

@@ -25,7 +25,7 @@
 #ifndef KYRA_LOL_H
 #define KYRA_LOL_H
 
-#include "kyra/kyra_v1.h"
+#include "kyra/kyra_rpg.h"
 #include "kyra/script_tim.h"
 #include "kyra/script.h"
 #include "kyra/gui_lol.h"
@@ -86,15 +86,7 @@ struct SpellProperty {
 	uint16 flags;
 };
 
-struct LevelBlockProperty {
-	uint8 walls[4];
-	uint16 assignedObjects;
-	uint16 drawObjects;
-	uint8 direction;
-	uint8 flags;
-};
-
-struct MonsterProperty {
+struct LoLMonsterProperty {
 	uint8 shapeIndex;
 	uint8 maxWidth;
 	uint16 fightingStats[9];
@@ -116,21 +108,24 @@ struct MonsterProperty {
 	uint8 sounds[3];
 };
 
-struct MonsterInPlay {
+struct LoLObject {
 	uint16 nextAssignedObject;
 	uint16 nextDrawObject;
 	uint8 flyingHeight;
 	uint16 block;
 	uint16 x;
 	uint16 y;
+};
+
+struct LoLMonster : public LoLObject {
+	uint8 destDirection;
 	int8 shiftStep;
 	uint16 destX;
 	uint16 destY;
-	uint8 destDirection;
+
 	int8 hitOffsX;
 	int8 hitOffsY;
 	uint8 currentSubFrame;
-
 	uint8 mode;
 	int8 fightCurTick;
 	uint8 id;
@@ -138,11 +133,10 @@ struct MonsterInPlay {
 	uint8 facing;
 	uint16 flags;
 	uint16 damageReceived;
-	//uint8 field_1C;
 	int16 hitPoints;
 	uint8 speedTick;
 	uint8 type;
-	MonsterProperty *properties;
+	LoLMonsterProperty *properties;
 	uint8 numDistAttacks;
 	uint8 curDistWeapon;
 	int8 distAttackTick;
@@ -150,20 +144,10 @@ struct MonsterInPlay {
 	uint8 equipmentShapes[4];
 };
 
-struct ItemInPlay {
-	uint16 nextAssignedObject;
-	uint16 nextDrawObject;
-	uint8 flyingHeight;
-	uint16 block;
-	uint16 x;
-	uint16 y;
+struct LoLItem : public LoLObject {
 	int8 level;
 	uint16 itemPropertyIndex;
 	uint16 shpCurFrame_flg;
-	uint8 destDirection;
-	int8 hitOffsX;
-	int8 hitOffsY;
-	uint8 currentSubFrame;
 };
 
 struct ItemProperty {
@@ -179,15 +163,6 @@ struct ItemProperty {
 	uint8 unkD;
 };
 
-struct LevelShapeProperty {
-	uint16 shapeIndex[10];
-	uint8 scaleFlag[10];
-	int16 shapeX[10];
-	int16 shapeY[10];
-	int8 next;
-	uint8 flags;
-};
-
 struct CompassDef {
 	uint8 shapeIndex;
 	int8 x;
@@ -195,7 +170,7 @@ struct CompassDef {
 	uint8 flags;
 };
 
-struct ButtonDef {
+struct LoLButtonDef {
 	uint16 buttonflags;
 	uint16 keyCode;
 	uint16 keyCode2;
@@ -205,12 +180,6 @@ struct ButtonDef {
 	uint16 h;
 	uint16 index;
 	uint16 screenDim;
-};
-
-struct OpenDoorState {
-	uint16 block;
-	int8 wall;
-	int8 state;
 };
 
 struct ActiveSpell {
@@ -243,14 +212,6 @@ struct FlyingObjectShape {
 	uint8 shapeLeft;
 	uint8 drawFlags;
 	uint8 flipFlags;
-};
-
-struct LevelTempData {
-	uint8 *wallsXorData;
-	uint8 *flags;
-	MonsterInPlay *monsters;
-	FlyingObject *flyingObjects;
-	uint8 monsterDifficulty;
 };
 
 struct MapLegendData {
@@ -296,7 +257,7 @@ struct MistOfDoomAnimData {
 	uint8 sound;
 };
 
-class LoLEngine : public KyraEngine_v1 {
+class LoLEngine : public KyraRpgEngine {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
 friend class TIMInterpreter_LoL;
@@ -305,7 +266,7 @@ friend class Debugger_LoL;
 friend class HistoryPlayer;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
-	~LoLEngine();
+	virtual ~LoLEngine();
 
 	virtual void initKeymap();
 
@@ -348,13 +309,11 @@ private:
 	// main loop
 	void runLoop();
 	void update();
-	void updateEnvironmentalSfx(int soundId);
 
 	// mouse
 	void setMouseCursorToIcon(int icon);
 	void setMouseCursorToItemInHand();
 	uint8 *getItemIconShapePtr(int index);
-	bool posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2);
 
 	void checkFloatingPointerRegions();
 	int _floatingCursorControl;
@@ -443,11 +402,7 @@ private:
 
 	// timers
 	void setupTimers();
-	void enableTimer(int id);
-	void enableSysTimer(int sysTimer);
-	void disableSysTimer(int sysTimer);
 
-	void timerProcessDoors(int timerNum);
 	void timerProcessMonsters(int timerNum);
 	void timerSpecialCharacterUpdate(int timerNum);
 	void timerProcessFlyingObjects(int timerNum);
@@ -456,6 +411,9 @@ private:
 	void timerUpdatePortraitAnimations(int skipUpdate);
 	void timerUpdateLampState(int timerNum);
 	void timerFadeMessageText(int timerNum);
+
+	uint8 getClock2Timer(int index) { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
+	uint8 getNumClock2Timers()  { return _numClock2Timers; }
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
@@ -470,7 +428,7 @@ private:
 	int snd_updateCharacterSpeech();
 	void snd_stopSpeech(bool setFlag);
 	void snd_playSoundEffect(int track, int volume);
-	void snd_processEnvironmentalSoundEffect(int soundId, int block);
+	bool snd_processEnvironmentalSoundEffect(int soundId, int block);
 	void snd_queueEnvironmentalSoundEffect(int soundId, int block);
 	void snd_playQueuedEffects();
 	void snd_loadSoundFile(int track);
@@ -479,14 +437,10 @@ private:
 
 	int _lastSpeechId;
 	int _lastSpeaker;
-	uint32 _activeVoiceFileTotalTime;
 	int _lastSfxTrack;
 	int _lastMusicTrack;
 	int _curMusicFileIndex;
 	char _curMusicFileExt;
-	int _environmentSfx;
-	int _environmentSfxVol;
-	int _envSfxDistThreshold;
 	bool _envSfxUseQueue;
 	int _envSfxNumTracksInQueue;
 	uint16 _envSfxQueuedTracks[10];
@@ -502,9 +456,7 @@ private:
 	int _ingameSoundListSize;
 
 	const uint8 *_musicTrackMap;
-	int _musicTrackMapSize;
 	const uint16 *_ingameSoundIndex;
-	int _ingameSoundIndexSize;
 	const uint8 *_ingameGMSoundIndex;
 	int _ingameGMSoundIndexSize;
 	const uint8 *_ingameMT32SoundIndex;
@@ -519,7 +471,6 @@ private:
 	void gui_drawScene(int pageNum);
 	void gui_drawAllCharPortraitsWithStats();
 	void gui_drawCharPortraitWithStats(int charNum);
-	void gui_drawBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor);
 	void gui_drawCharFaceShape(int charNum, int x, int y, int pageNum);
 	void gui_highlightPortraitFrame(int charNum);
 	void gui_drawLiveMagicBar(int x, int y, int curPoints, int unk, int maxPoints, int w, int h, int col1, int col2, int flag);
@@ -534,7 +485,6 @@ private:
 	void gui_printCharacterStats(int index, int redraw, int value);
 	void gui_changeCharacterStats(int charNum);
 	void gui_drawCharInventoryItem(int itemIndex);
-	void gui_drawBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2);
 
 	int gui_enableControls();
 	int gui_disableControls(int controlMode);
@@ -548,37 +498,27 @@ private:
 	int _lastButtonShape;
 	uint32 _buttonPressTimer;
 	int _selectedCharacter;
-	int _compassDirection;
 	int _compassStep;
 	int _compassDirectionIndex;
 	uint32 _compassTimer;
 	int _charInventoryUnk;
 
 	const CompassDef *_compassDefs;
-	int _compassDefsSize;
 
 	void gui_updateInput();
 	void gui_triggerEvent(int eventType);
-	void removeInputTop();
 	void gui_enableDefaultPlayfieldButtons();
 	void gui_enableSequenceButtons(int x, int y, int w, int h, int enableFlags);
 	void gui_specialSceneRestoreButtons();
 	void gui_enableCharInventoryButtons(int charNum);
 
-	void gui_resetButtonList();
-	void gui_initButtonsFromList(const int16 *list);
 	void gui_setFaceFramesControlButtons(int index, int xOffs);
 	void gui_initCharInventorySpecialButtons(int charNum);
 	void gui_initMagicScrollButtons();
 	void gui_initMagicSubmenu(int charNum);
 	void gui_initButton(int index, int x = -1, int y = -1, int val = -1);
-	void gui_notifyButtonListChanged();
 
-	Common::Array<Button::Callback> _buttonCallbacks;
-	Button *_activeButtons;
-	Button _activeButtonData[70];
-	ButtonDef _sceneWindowButton;
-	bool _preserveEvents;
+	LoLButtonDef _sceneWindowButton;
 
 	int clickedUpArrow(Button *button);
 	int clickedDownArrow(Button *button);
@@ -613,45 +553,33 @@ private:
 	int clickedLamp(Button *button);
 	int clickedStatusIcon(Button *button);
 
-	const ButtonDef *_buttonData;
-	int _buttonDataSize;
+	const LoLButtonDef *_buttonData;
 	const int16 *_buttonList1;
-	int _buttonList1Size;
 	const int16 *_buttonList2;
-	int _buttonList2Size;
 	const int16 *_buttonList3;
-	int _buttonList3Size;
 	const int16 *_buttonList4;
-	int _buttonList4Size;
 	const int16 *_buttonList5;
-	int _buttonList5Size;
 	const int16 *_buttonList6;
-	int _buttonList6Size;
 	const int16 *_buttonList7;
-	int _buttonList7Size;
 	const int16 *_buttonList8;
-	int _buttonList8Size;
 
 	// text
 	int characterSays(int track, int charId, bool redraw);
 	int playCharacterScriptChat(int charId, int mode, int restorePortrait, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
+	void setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3);
 
 	TextDisplayer_LoL *_txt;
+	TextDisplayer_rpg *txt() { return _txt; }
 
 	// emc scripts
 	void runInitScript(const char *filename, int optionalFunc);
 	void runInfScript(const char *filename);
 	void runLevelScript(int block, int flags);
 	void runLevelScriptCustom(int block, int flags, int charNum, int item, int reg3, int reg4);
-	bool checkSceneUpdateNeed(int func);
 
 	EMCData _scriptData;
 	bool _suspendScript;
 	uint16 _scriptDirection;
-	uint16 _currentDirection;
-	uint16 _currentBlock;
-	bool _sceneUpdateRequired;
-	int16 _visibleBlockIndex[18];
 	int16 _globalScriptVars[24];
 
 	// emc opcode
@@ -702,7 +630,7 @@ private:
 	int olol_checkEquippedItemScriptFlags(EMCState *script);
 	int olol_setDoorState(EMCState *script);
 	int olol_updateBlockAnimations(EMCState *script);
-	int olol_mapShapeToBlock(EMCState *script);
+	int olol_assignLevelDecorationShape(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
 	int olol_copyRegion(EMCState *script);
 	int olol_initMonster(EMCState *script);
@@ -716,7 +644,7 @@ private:
 	int olol_battleHitSkillTest(EMCState *script);
 	int olol_inflictDamage(EMCState *script);
 	int olol_moveMonster(EMCState *script);
-	int olol_dialogueBox(EMCState *script);
+	int olol_setupDialogueButtons(EMCState *script);
 	int olol_giveTakeMoney(EMCState *script);
 	int olol_checkMoney(EMCState *script);
 	int olol_setScriptTimer(EMCState *script);
@@ -792,7 +720,7 @@ private:
 	int olol_assignCustomSfx(EMCState *script);
 	int olol_findAssignedMonster(EMCState *script);
 	int olol_checkBlockForMonster(EMCState *script);
-	int olol_transformRegion(EMCState *script);
+	int olol_crossFadeRegion(EMCState *script);
 	int olol_calcCoordinatesAddDirectionOffset(EMCState *script);
 	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
@@ -820,7 +748,7 @@ private:
 	int olol_shakeScene(EMCState *script);
 	int olol_gasExplosion(EMCState *script);
 	int olol_calcNewBlockPosition(EMCState *script);
-	int olol_fadeScene(EMCState *script);
+	int olol_crossFadeScene(EMCState *script);
 	int olol_updateDrawPage2(EMCState *script);
 	int olol_setMouseCursor(EMCState *script);
 	int olol_characterSays(EMCState *script);
@@ -900,7 +828,6 @@ private:
 	void createTransparencyTables();
 	void updateSequenceBackgroundAnimations();
 
-	bool _dialogueField;
 	uint8 **_itemIconShapes;
 	int _numItemIconShapes;
 	uint8 **_itemShapes;
@@ -913,7 +840,6 @@ private:
 	int _numEffectShapes;
 
 	const int8 *_gameShapeMap;
-	int _gameShapeMapSize;
 
 	uint8 *_characterFaceShapes[40][3];
 
@@ -942,19 +868,13 @@ private:
 
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
-	int _updateFlags;
-	int _updateCharNum;
-	int _updatePortraitSpeechAnimDuration;
+
 	int _portraitSpeechAnimMode;
-	int _resetPortraitAfterSpeechAnim;
 	int _textColorFlag;
-	bool _fadeText;
-	int _needSceneRestore;
 	uint32 _palUpdateTimer;
 	uint32 _updatePortraitNext;
 
 	int _loadLevelFlag;
-	int _hasTempDataFlags;
 	int _activeMagicMenu;
 	uint16 _scriptCharacterCycle;
 	int _charStatsTemp[5];
@@ -963,15 +883,10 @@ private:
 	int _charDefaultsSize;
 
 	const uint16 *_charDefsMan;
-	int _charDefsManSize;
 	const uint16 *_charDefsWoman;
-	int _charDefsWomanSize;
 	const uint16 *_charDefsKieran;
-	int _charDefsKieranSize;
 	const uint16 *_charDefsAkshel;
-	int _charDefsAkshelSize;
 	const int32 *_expRequirements;
-	int _expRequirementsSize;
 
 	// lamp
 	void resetLampStatus();
@@ -983,18 +898,18 @@ private:
 	int _lampOilStatus;
 	uint32 _lampStatusTimer;
 	bool _lampStatusSuspended;
-	uint8 _blockBrightness;
 
 	// level
 	void loadLevel(int index);
 	void addLevelItems();
-	void loadLevelWallData(int index, bool mapShapes);
-	void assignBlockObject(LevelBlockProperty *l, uint16 item);
-	int assignLevelShapes(int index);
-	uint8 *getLevelShapes(int index);
-	void restoreBlockTempData(int index);
+	void loadLevelWallData(int fileIndex, bool mapShapes);
+	void assignBlockItem(LevelBlockProperty *l, uint16 item);
+	int assignLevelDecorationShapes(int index);
+	uint8 *getLevelDecorationShapes(int index);
+	void releaseDecorations(int first = 0, int num = 400);
 	void restoreTempDataAdjustMonsterStrength(int index);
 	void loadBlockProperties(const char *cmzFile);
+	const uint8 *getBlockFileData(int levelIndex);
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
 
@@ -1006,17 +921,7 @@ private:
 
 	void drawScene(int pageNum);
 
-	void generateBlockDrawingBuffer();
-	void generateVmpTileData(int16 startBlockX, uint8 startBlockY, uint8 wllVmpIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY);
-	void generateVmpTileDataFlipped(int16 startBlockX, uint8 startBlockY, uint8 wllVmpIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY);
-	bool hasWall(int index);
-	void assignVisibleBlocks(int block, int direction);
-
-	void drawVcnBlocks();
-	void drawSceneShapes();
-	void setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim);
-	void scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim);
-	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
+	void drawSceneShapes(int start = 0);
 	void drawDecorations(int index);
 	void drawBlockEffects(int index, int type);
 	void drawSpecialGuiShape(int pageNum);
@@ -1033,26 +938,16 @@ private:
 	void updateCompass();
 
 	void moveParty(uint16 direction, int unk1, int unk2, int buttonShape);
-	bool checkBlockPassability(uint16 block, uint16 direction);
 	void notifyBlockNotPassable(int scrollFlag);
+	virtual bool checkBlockPassability(uint16 block, uint16 direction);
 
-	uint16 calcNewBlockPosition(uint16 curBlock, uint16 direction);
 	uint16 calcBlockIndex(uint16 x, uint16 y);
 	void calcCoordinates(uint16 &x, uint16 &y, int block, uint16 xOffs, uint16 yOffs);
 	void calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16 &y);
 	void calcCoordinatesAddDirectionOffset(uint16 &x, uint16 &y, int direction);
 
-	int clickedWallShape(uint16 block, uint16 direction);
-	int clickedLeverOn(uint16 block, uint16 direction);
-	int clickedLeverOff(uint16 block, uint16 direction);
-	int clickedWallOnlyScript(uint16 block);
 	int clickedDoorSwitch(uint16 block, uint16 direction);
 	int clickedNiche(uint16 block, uint16 direction);
-
-	bool clickedShape(int shapeIndex);
-	void processDoorSwitch(uint16 block, int unk);
-	void openCloseDoor(uint16 block, int openClose);
-	void completeDoorOperations();
 
 	void movePartySmoothScrollBlocked(int speed);
 	void movePartySmoothScrollUp(int speed);
@@ -1069,79 +964,40 @@ private:
 
 	int smoothScrollDrawSpecialGuiShape(int pageNum);
 
-	OpenDoorState _openDoorState[3];
 	int _blockDoor;
 
 	int _smoothScrollModeNormal;
 
 	const uint8 *_scrollXTop;
-	int _scrollXTopSize;
 	const uint8 *_scrollYTop;
-	int _scrollYTopSize;
 	const uint8 *_scrollXBottom;
-	int _scrollXBottomSize;
 	const uint8 *_scrollYBottom;
-	int _scrollYBottomSize;
 
 	int _nextScriptFunc;
-	uint8 _currentLevel;
-	int _sceneDefaultUpdate;
-	int _lvlBlockIndex;
 	int _lvlShapeIndex;
 	bool _partyAwake;
-	uint8 *_vcnBlocks;
-	uint8 *_vcnShift;
-	uint8 *_vcnExpTable;
-	uint16 *_vmpPtr;
-	uint8 *_vcfBlocks;
-	uint16 *_blockDrawingBuffer;
-	uint8 *_sceneWindowBuffer;
-	LevelShapeProperty *_levelShapeProperties;
-	uint8 **_levelShapes;
 
 	uint8 *_specialGuiShape;
 	uint16 _specialGuiShapeX;
 	uint16 _specialGuiShapeY;
 	uint16 _specialGuiShapeMirrorFlag;
 
-	char _lastBlockDataFile[12];
 	char _lastOverridePalFile[12];
 	char *_lastOverridePalFilePtr;
 	int _lastSpecialColor;
 	int _lastSpecialColorWeight;
 
-	int _sceneDrawVarDown;
-	int _sceneDrawVarRight;
-	int _sceneDrawVarLeft;
-	int _wllProcessFlag;
-
 	uint8 *_transparencyTable2;
 	uint8 *_transparencyTable1;
 
 	int _loadSuppFilesFlag;
-
-	uint8 *_wllVmpMap;
-	int8 *_wllShapeMap;
-	uint8 *_specialWallTypes;
-	uint8 *_wllBuffer4;
-	uint8 *_wllWallFlags;
-
-	int16 *_lvlShapeTop;
-	int16 *_lvlShapeBottom;
-	int16 *_lvlShapeLeftRight;
-
-	LevelBlockProperty *_levelBlockProperties;
-	LevelBlockProperty *_visibleBlocks[18];
+	uint8 *_wllAutomapData;
 
 	uint16 _partyPosX;
 	uint16 _partyPosY;
 
 	Common::SeekableReadStream *_lvlShpFileHandle;
-	uint16 _lvlShpNum;
-	uint16 _levelFileDataSize;
-	LevelShapeProperty *_levelFileData;
 
-	uint8 *_doorShapes[2];
 	int _shpDmX;
 	int _shpDmY;
 	uint16 _dmScaleW;
@@ -1154,55 +1010,27 @@ private:
 	uint8 *_tempBuffer5120;
 
 	const char * const *_levelDatList;
-	int _levelDatListSize;
 	const char * const *_levelShpList;
-	int _levelShpListSize;
 
-	const int8 *_dscUnk1;
-	int _dscUnk1Size;
-	const int8 *_dscShapeIndex;
-	int _dscShapeIndexSize;
+	const int8 *_dscWalls;
+
 	const uint8 *_dscOvlMap;
-	int _dscOvlMapSize;
-	const uint16 *_dscShapeScaleW;
-	int _dscShapeScaleWSize;
-	const uint16 *_dscShapeScaleH;
-	int _dscShapeScaleHSize;
-	const int16 *_dscShapeX;
-	int _dscShapeXSize;
-	const int8 *_dscShapeY;
-	int _dscShapeYSize;
-	const uint8 *_dscTileIndex;
-	int _dscTileIndexSize;
-	const uint8 *_dscUnk2;
-	int _dscUnk2Size;
-	const uint8 *_dscDoorShpIndex;
-	int _dscDoorShpIndexSize;
-	const int8 *_dscDim1;
-	int _dscDim1Size;
-	const int8 *_dscDim2;
-	int _dscDim2Size;
-	const uint8 *_dscBlockMap;
-	int _dscBlockMapSize;
-	const uint8 *_dscDimMap;
-	int _dscDimMapSize;
-	const uint16 *_dscDoorMonsterScaleTable;
-	int _dscDoorMonsterScaleTableSize;
-	const uint16 *_dscDoor4;
-	int _dscDoor4Size;
 	const uint8 *_dscShapeOvlIndex;
-	int _dscShapeOvlIndexSize;
-	const int8 *_dscBlockIndex;
-	int _dscBlockIndexSize;
-	const uint8 *_dscDoor1;
-	int _dscDoor1Size;
-	const int16 *_dscDoorMonsterX;
-	int _dscDoorMonsterXSize;
-	const int16 *_dscDoorMonsterY;
-	int _dscDoorMonsterYSize;
+	const uint16 *_dscShapeScaleW;
+	const uint16 *_dscShapeScaleH;
+	const int8 *_dscShapeY;
 
-	int _sceneDrawPage1;
-	int _sceneDrawPage2;
+	const uint16 *_dscDoorMonsterScaleTable;
+	const uint16 *_dscDoor4;
+	const int16 *_dscDoorMonsterX;
+	const int16 *_dscDoorMonsterY;
+
+	// objects (item/monster common)
+	LoLObject *findObject(uint16 index);
+	int calcObjectPosition(LoLObject *obj, uint16 direction);
+	void removeAssignedObjectFromBlock(LevelBlockProperty *l, uint16 id);
+	void removeDrawObjectFromBlock(LevelBlockProperty *l, uint16 id);
+	void assignObjectToBlock(uint16 *assignedBlockObjects, uint16 id);
 
 	// items
 	void giveCredits(int credits, int redraw);
@@ -1212,7 +1040,6 @@ private:
 	bool addItemToInventory(Item itemIndex);
 	bool isItemMoveable(Item itemIndex);
 	void deleteItem(Item itemIndex);
-	ItemInPlay *findObject(uint16 index);
 	void runItemScript(int charNum, Item item, int flags, int next, int reg4);
 	void setHandItem(Item itemIndex);
 	bool itemEquipped(int charNum, uint16 itemType);
@@ -1233,14 +1060,13 @@ private:
 	uint8 _moneyColumnHeight[5];
 	uint16 _credits;
 
-	ItemInPlay *_itemsInPlay;
+	LoLItem *_itemsInPlay;
 	ItemProperty *_itemProperties;
 
 	Item _itemInHand;
 	Item _inventory[48];
 	Item _inventoryCurItem;
-	int _currentControlMode;
-	int _specialSceneFlag;
+
 	int _lastCharInventory;
 	uint16 _charStatusFlags[3];
 	int _emcLastItem;
@@ -1250,34 +1076,24 @@ private:
 	EMCData _itemScript;
 
 	const uint8 *_charInvIndex;
-	int _charInvIndexSize;
 	const uint8 *_charInvDefs;
-	int _charInvDefsSize;
 	const uint16 *_inventorySlotDesc;
-	int _inventorySlotDescSize;
 	const uint16 *_itemCost;
-	int _itemCostSize;
 	const uint8 *_stashSetupData;
-	int _stashSetupDataSize;
 	const int8 *_sceneItemOffs;
-	int _sceneItemOffsSize;
 	const FlyingObjectShape *_flyingItemShapes;
-	int _flyingItemShapesSize;
 
 	// monsters
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
 	void releaseMonsterShapes(int monsterIndex);
 	int deleteMonstersFromBlock(int block);
-	void setMonsterMode(MonsterInPlay *monster, int mode);
-	bool updateMonsterAdjustBlocks(MonsterInPlay *monster);
-	void placeMonster(MonsterInPlay *monster, uint16 x, uint16 y);
+	void setMonsterMode(LoLMonster *monster, int mode);
+	bool updateMonsterAdjustBlocks(LoLMonster *monster);
+	void placeMonster(LoLMonster *monster, uint16 x, uint16 y);
 	int calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void setMonsterDirection(MonsterInPlay *monster, int dir);
-	void monsterDropItems(MonsterInPlay *monster);
-	void removeAssignedObjectFromBlock(LevelBlockProperty *l, uint16 id);
-	void removeDrawObjectFromBlock(LevelBlockProperty *l, uint16 id);
-	void assignMonsterToBlock(uint16 *assignedBlockObjects, uint16 id);
-	void giveItemToMonster(MonsterInPlay *monster, Item item);
+	void setMonsterDirection(LoLMonster *monster, int dir);
+	void monsterDropItems(LoLMonster *monster);
+	void giveItemToMonster(LoLMonster *monster, Item item);
 	int checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 objectWidth, uint16 testFlag, uint16 wallFlag);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
@@ -1288,57 +1104,46 @@ private:
 
 	void drawBlockObjects(int blockArrayIndex);
 	void drawMonster(uint16 id);
-	int getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags);
+	int getMonsterCurFrame(LoLMonster *m, uint16 dirFlags);
 	void reassignDrawObjects(uint16 direction, uint16 itemIndex, LevelBlockProperty *l, bool flag);
 	void redrawSceneItem();
-	int calcItemMonsterPosition(ItemInPlay *i, uint16 direction);
 	void calcSpriteRelPosition(uint16 x1, uint16 y1, int &x2, int &y2, uint16 direction);
 	void drawDoor(uint8 *shape, uint8 *doorPalette, int index, int unk2, int w, int h, int flags);
 	void drawDoorOrMonsterEquipment(uint8 *shape, uint8 *objectPalette, int x, int y, int flags, const uint8 *brightnessOverlay);
 	uint8 *drawItemOrMonster(uint8 *shape, uint8 *monsterPalette, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip);
 	int calcDrawingLayerParameters(int srcX, int srcY, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int vflip);
 
-	void updateMonster(MonsterInPlay *monster);
-	void moveMonster(MonsterInPlay *monster);
-	void walkMonster(MonsterInPlay *monster);
-	bool chasePartyWithDistanceAttacks(MonsterInPlay *monster);
-	void chasePartyWithCloseAttacks(MonsterInPlay *monster);
-	int walkMonsterCalcNextStep(MonsterInPlay *monster);
-	int getMonsterDistance(uint16 block1, uint16 block2);
+	void updateMonster(LoLMonster *monster);
+	void moveMonster(LoLMonster *monster);
+	void walkMonster(LoLMonster *monster);
+	bool chasePartyWithDistanceAttacks(LoLMonster *monster);
+	void chasePartyWithCloseAttacks(LoLMonster *monster);
+	int walkMonsterCalcNextStep(LoLMonster *monster);
 	int checkForPossibleDistanceAttack(uint16 monsterBlock, int direction, int distance, uint16 curBlock);
-	int walkMonsterCheckDest(int x, int y, MonsterInPlay *monster, int unk);
+	int walkMonsterCheckDest(int x, int y, LoLMonster *monster, int unk);
 	void getNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 direction);
-	void rearrangeAttackingMonster(MonsterInPlay *monster);
-	void moveStrayingMonster(MonsterInPlay *monster);
-	void killMonster(MonsterInPlay *monster);
+	void rearrangeAttackingMonster(LoLMonster *monster);
+	void moveStrayingMonster(LoLMonster *monster);
+	void killMonster(LoLMonster *monster);
 
-	MonsterInPlay *_monsters;
-	MonsterProperty *_monsterProperties;
-	uint8 **_monsterShapes;
-	uint8 **_monsterPalettes;
-	uint8 **_monsterShapesEx;
+	LoLMonster *_monsters;
+	LoLMonsterProperty *_monsterProperties;
+	uint8 **_monsterDecorationShapes;
 	uint8 _monsterAnimType[3];
 	uint16 _monsterCurBlock;
 	int _objectLastDirection;
-	int _monsterStepCounter;
-	int _monsterStepMode;
 
 	const uint16 *_monsterModifiers;
-	int _monsterModifiersSize;
 	const int8 *_monsterShiftOffs;
-	int _monsterShiftOffsSize;
 	const uint8 *_monsterDirFlags;
-	int _monsterDirFlagsSize;
 	const uint8 *_monsterScaleX;
-	int _monsterScaleXSize;
 	const uint8 *_monsterScaleY;
-	int _monsterScaleYSize;
 	const uint16 *_monsterScaleWH;
-	int _monsterScaleWHSize;
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
-	int rollDice(int times, int pips);
+
+	const KyraRpgGUISettings *guiSettings();
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;
@@ -1346,6 +1151,8 @@ private:
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
+
+	static const KyraRpgGUISettings _guiSettings;
 
 	// spells
 	typedef Common::Functor1Mem<ActiveSpell *, int, LoLEngine> SpellProc;
@@ -1398,7 +1205,7 @@ private:
 	int8 _availableSpells[8];
 	int _selectedSpell;
 	const SpellProperty *_spellProperties;
-	int _spellPropertiesSize;
+	//int _spellPropertiesSize;
 	int _subMenuIndex;
 
 	LightningProperty *_lightningProps;
@@ -1420,13 +1227,9 @@ private:
 	static const MistOfDoomAnimData _mistAnimData[];
 
 	const uint8 *_updateSpellBookCoords;
-	int _updateSpellBookCoordsSize;
 	const uint8 *_updateSpellBookAnimData;
-	int _updateSpellBookAnimDataSize;
 	const uint8 *_healShapeFrames;
-	int _healShapeFramesSize;
 	const int16 *_fireBallCoords;
-	int _fireBallCoordsSize;
 
 	// fight
 	int battleHitSkillTest(int16 attacker, int16 target, int skill);
@@ -1437,8 +1240,8 @@ private:
 	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);
 	void checkForPartyDeath();
 
-	void applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage);
-	void applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int flags, int skill, int damage);
+	void applyMonsterAttackSkill(LoLMonster *monster, int16 target, int16 damage);
+	void applyMonsterDefenseSkill(LoLMonster *monster, int16 attacker, int flags, int skill, int damage);
 	int removeCharacterItem(int charNum, int itemFlags);
 	int paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
 	void paralyzePoisonAllCharacters(int typeFlag, int immunityFlags, int hitChance);
@@ -1478,7 +1281,6 @@ private:
 	uint8 *_mapOverlay;
 	const uint8 **_automapShapes;
 	const uint16 *_autoMapStrings;
-	int _autoMapStringsSize;
 	MapLegendData *_defaultLegendData;
 	uint8 *_mapCursorOverlay;
 	uint8 _automapTopLeftX;
@@ -1495,10 +1297,12 @@ private:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
-	Graphics::Surface *generateSaveThumbnail() const;
+	void *generateMonsterTempData(LevelTempData *tmp);
+	void restoreBlockTempData(int levelIndex);
+	void restoreMonsterTempData(LevelTempData *tmp);
+	void releaseMonsterTempData(LevelTempData *tmp);
 
-	void generateTempData();
-	LevelTempData *_lvlTempData[29];
+	Graphics::Surface *generateSaveThumbnail() const;
 };
 
 class HistoryPlayer {

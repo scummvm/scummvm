@@ -130,8 +130,8 @@ public:
 
 	GUI::Debugger *getDebugger();
 
-	bool canLoadGameStateCurrently() { return true; }
-	bool canSaveGameStateCurrently() { return true; }
+	bool canLoadGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
+	bool canSaveGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;

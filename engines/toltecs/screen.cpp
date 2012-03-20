@@ -658,7 +658,7 @@ void Screen::drawSurface(int16 x, int16 y, Graphics::Surface *surface) {
 	int16 skipX = 0;
 	int16 width = surface->w;
 	int16 height = surface->h;
-	byte *surfacePixels = (byte*)surface->getBasePtr(0, 0);
+	byte *surfacePixels = (byte *)surface->getBasePtr(0, 0);
 	byte *frontScreen;
 
 	// Not on screen, skip

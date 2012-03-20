@@ -165,7 +165,7 @@ void DosSoundMan_ns::playCharacterMusic(const char *character) {
 		return;
 	}
 
-	char *name = const_cast<char*>(character);
+	char *name = const_cast<char *>(character);
 	const char *newMusicFile = 0;
 
 	if (!scumm_stricmp(name, _dinoName)) {

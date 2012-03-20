@@ -65,9 +65,6 @@ protected:
  */
 class Overlay : public DefaultDisplayClient {
 public:
-	Overlay() {}
-	~Overlay() {}
-
 	void init();
 	bool allocate();
 	void setBytesPerPixel(uint32 size);
@@ -85,7 +82,6 @@ public:
 		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
 		memset(&_frameBuffer, 0, sizeof(_frameBuffer));
 	}
-	~Screen() {}
 
 	void init();
 	bool allocate();

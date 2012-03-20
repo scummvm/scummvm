@@ -49,7 +49,7 @@ void Scene600::Action1::signal() {
 		break;
 	case 2:
 		scene->_sound1.play(59);
-		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_ryan, 
+		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_ryan,
 			&BF_GLOBALS._player, &scene->_skidMarks, NULL);
 		break;
 	case 3:
@@ -149,7 +149,7 @@ void Scene600::remove() {
 void Scene620::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(999);
-	
+
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.disableControl();
 	BF_GLOBALS._player.setVisage(621);
@@ -176,14 +176,14 @@ void Scene620::signal() {
 	case 13:
 	case 16:
 	case 19:
-		addFader((const byte *)&black, 2, this);	
+		addFader((const byte *)&black, 2, this);
 		break;
 	case 2:
 		BF_GLOBALS._player.remove();
 		_object1.postInit();
 		_object1.setVisage(622);
 		_object1.setPosition(Common::Point(101, 41));
-		add2Faders((const byte *)&black, 2, 622, this);	
+		add2Faders((const byte *)&black, 2, 622, this);
 		break;
 	case 5:
 		_object1.remove();
@@ -410,7 +410,7 @@ bool Scene690::Object2::startAction(CursorType action, Event &event) {
 			scene->_object6.postInit();
 			scene->_object6.hide();
 			scene->_object6.fixPriority(1);
-			scene->_object6.setDetails(690, 21, 17, 23, 1, NULL);
+			scene->_object6.setDetails(690, 21, 17, 23, 1, (SceneItem *)NULL);
 
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 6902;
@@ -441,36 +441,36 @@ void Scene690::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._dayNumber = 1;
 
 	_stripManager.addSpeaker(&_jakeSpeaker);
-	
+
 	_object1.postInit();
 	_object1.setVisage(690);
 	_object1.setStrip2(2);
 	_object1.fixPriority(188);
 	_object1.setPosition(Common::Point(50, 166));
-	_object1.setDetails(690, 4, 17, 26, 1, NULL);
+	_object1.setDetails(690, 4, 17, 26, 1, (SceneItem *)NULL);
 
 	_object3.postInit();
 	_object3.setVisage(690);
 	_object3.fixPriority(100);
 	_object3.setPosition(Common::Point(238, 125));
-	_object3.setDetails(690, 7, 17, 28, 1, NULL);
+	_object3.setDetails(690, 7, 17, 28, 1, (SceneItem *)NULL);
 
 	_object2.postInit();
 	_object2.setVisage(694);
 	_object2.setStrip2(3);
 	_object2.fixPriority(125);
 	_object2.setPosition(Common::Point(100, 134));
-	_object2.setDetails(690, 12, -1, 11, 1, NULL);
+	_object2.setDetails(690, 12, -1, 11, 1, (SceneItem *)NULL);
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.disableControl();
 	BF_GLOBALS._player._moveDiff.x = 8;
 
 	_object4.postInit();
-	_object4.setDetails(690, 13, -1, -1, 1, NULL);
+	_object4.setDetails(690, 13, -1, -1, 1, (SceneItem *)NULL);
 
 	_object5.postInit();
-	_object5.setDetails(690, 14, -1, -1, 1, NULL);
+	_object5.setDetails(690, 14, -1, -1, 1, (SceneItem *)NULL);
 
 	_sceneMode = 6903;
 	setAction(&_sequenceManager, this, 6903, &BF_GLOBALS._player, &_object3, &_object4, &_object5, NULL);

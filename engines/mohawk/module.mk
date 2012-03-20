@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	installer_archive.o \
 	livingbooks.o \
 	livingbooks_code.o \
+	livingbooks_graphics.o \
 	livingbooks_lbx.o \
 	mohawk.o \
 	resource.o \
@@ -22,6 +23,7 @@ MODULE_OBJS += \
 	cstime.o \
 	cstime_cases.o \
 	cstime_game.o \
+	cstime_graphics.o \
 	cstime_ui.o \
 	cstime_view.o
 endif
@@ -30,6 +32,7 @@ ifdef ENABLE_MYST
 MODULE_OBJS += \
 	myst.o \
 	myst_areas.o \
+	myst_graphics.o \
 	myst_scripts.o \
 	myst_state.o \
 	resource_cache.o \
@@ -51,6 +54,7 @@ ifdef ENABLE_RIVEN
 MODULE_OBJS += \
 	riven.o \
 	riven_external.o \
+	riven_graphics.o \
 	riven_saveload.o \
 	riven_scripts.o \
 	riven_vars.o

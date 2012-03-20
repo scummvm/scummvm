@@ -117,7 +117,7 @@ protected:
 	void restoreSeq(object_t *obj);
 
 	inline bool checkBoundary(int16 x, int16 y);
-	template <typename T>
+	template<typename T>
 	inline int sign(T a) { if ( a < 0) return -1; else return 1; }
 };
 

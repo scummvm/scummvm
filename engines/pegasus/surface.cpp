@@ -27,8 +27,8 @@
 #include "common/macresman.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/pict.h"
 #include "graphics/surface.h"
+#include "graphics/decoders/pict.h"
 #include "video/video_decoder.h"
 
 #include "pegasus/pegasus.h"
@@ -98,35 +98,12 @@ void Surface::getImageFromPICTResource(Common::MacResManager *resFork, uint16 id
 }
 
 void Surface::getImageFromPICTStream(Common::SeekableReadStream *stream) {
-	Graphics::PictDecoder pict(g_system->getScreenFormat());
-	byte pal[256 * 3];
+	Graphics::PICTDecoder pict;
 
-	Graphics::Surface *surface = pict.decodeImage(stream, pal);
+	if (!pict.loadStream(*stream))
+		error("Failed to load PICT image");
 
-	// Create the surface if not present
-	if (!_surface)
-		_surface = new Graphics::Surface();
-
-	// Update
-	if (surface->format.bytesPerPixel == 1) {
-		// Convert to true color
-		_surface->create(surface->w, surface->h, g_system->getScreenFormat());
-		
-		for (int y = 0; y < surface->h; y++) {
-			for (int x = 0; x < surface->w; x++) {
-				byte index = *((byte *)surface->getBasePtr(x, y));
-				uint32 color = _surface->format.RGBToColor(pal[index * 3], pal[index * 3 + 1], pal[index * 3 + 2]);
-				if (_surface->format.bytesPerPixel == 2)
-					*((uint16 *)_surface->getBasePtr(x, y)) = color;
-				else
-					*((uint32 *)_surface->getBasePtr(x, y)) = color;
-			}
-		}
-	} else {
-		// Just a copy
-		_surface->copyFrom(*surface);
-	}
-
+	_surface = pict.getSurface()->convertTo(g_system->getScreenFormat(), pict.getPalette());
 	_ownsSurface = true;
 	_bounds = Common::Rect(0, 0, _surface->w, _surface->h);
 }

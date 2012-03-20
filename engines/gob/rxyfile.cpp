@@ -30,6 +30,15 @@ RXYFile::RXYFile(Common::SeekableReadStream &rxy) : _width(0), _height(0) {
 	load(rxy);
 }
 
+RXYFile::RXYFile(uint16 width, uint16 height) : _realCount(1), _width(width), _height(height) {
+	_coords.resize(1);
+
+	_coords[0].left   = 0;
+	_coords[0].top    = 0;
+	_coords[0].right  = _width  - 1;
+	_coords[0].bottom = _height - 1;
+}
+
 RXYFile::~RXYFile() {
 }
 
@@ -77,6 +86,17 @@ void RXYFile::load(Common::SeekableReadStream &rxy) {
 			_height = MAX<uint16>(_height, c->bottom + 1);
 		}
 	}
+}
+
+uint16 RXYFile::add(uint16 left, uint16 top, uint16 right, uint16 bottom) {
+	_coords.resize(_coords.size() + 1);
+
+	_coords.back().left   = left;
+	_coords.back().top    = top;
+	_coords.back().right  = right;
+	_coords.back().bottom = bottom;
+
+	return _coords.size() - 1;
 }
 
 } // End of namespace Gob

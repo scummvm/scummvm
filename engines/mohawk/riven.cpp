@@ -27,11 +27,11 @@
 #include "common/system.h"
 
 #include "mohawk/cursors.h"
-#include "mohawk/graphics.h"
 #include "mohawk/installer_archive.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
+#include "mohawk/riven_graphics.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/sound.h"
@@ -171,7 +171,7 @@ Common::Error MohawkEngine_Riven::run() {
 			error ("Could not find saved game");
 
 		// Attempt to load the game. On failure, just send us to the main menu.
-		if (!_saveLoad->loadGame(savedGamesList[gameToLoad])) {
+		if (_saveLoad->loadGame(savedGamesList[gameToLoad]).getCode() != Common::kNoError) {
 			changeToStack(aspit);
 			changeToCard(1);
 		}
@@ -729,7 +729,7 @@ void MohawkEngine_Riven::runLoadDialog() {
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
-	return _saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]) ? Common::kNoError : Common::kUnknownError;
+	return _saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]);
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
@@ -738,7 +738,7 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &
 	if ((uint)slot < saveList.size())
 		_saveLoad->deleteSave(saveList[slot]);
 
-	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
+	return _saveLoad->saveGame(desc);
 }
 
 Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {

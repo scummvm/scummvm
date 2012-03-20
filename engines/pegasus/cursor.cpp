@@ -27,8 +27,8 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
-#include "graphics/pict.h"
 #include "graphics/surface.h"
+#include "graphics/decoders/pict.h"
 
 #include "pegasus/cursor.h"
 #include "pegasus/graphics.h"
@@ -143,7 +143,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 		error("Failed to find color icon %d", cursorInfo.tag);
 	
 	// PixMap section
-	Graphics::PictDecoder::PixMap pixMap = Graphics::PictDecoder::readPixMap(cicnStream);
+	Graphics::PICTDecoder::PixMap pixMap = Graphics::PICTDecoder::readPixMap(*cicnStream);
 	
 	// Mask section
 	cicnStream->readUint32BE(); // mask baseAddr

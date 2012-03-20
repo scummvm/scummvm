@@ -53,9 +53,12 @@ Common::Language ComposerEngine::getLanguage() const {
 
 static const PlainGameDescriptor composerGames[] = {
 	{"composer", "Composer Game"},
+	{"babayaga", "Magic Tales: Baba Yaga and the Magic Geese"},
 	{"darby", "Darby the Dragon"},
 	{"gregory", "Gregory and the Hot Air Balloon"},
+	{"imoking", "Magic Tales: Imo and the King"},
 	{"liam", "Magic Tales: Liam Finds a Story"},
+	{"littlesamurai", "Magic Tales: The Little Samurai"},
 	{"princess", "The Princess and the Crab"},
 	{"sleepingcub", "Sleeping Cub's Test of Courage"},
 	{0, 0}
@@ -64,6 +67,90 @@ static const PlainGameDescriptor composerGames[] = {
 namespace Composer {
 
 static const ComposerGameDescription gameDescriptions[] = {
+	// Magic Tales: Baba Yaga and the Magic Geese - from bug #3485018
+	{
+		{
+			"babayaga",
+			"",
+			AD_ENTRY1s("book.ini", "412b7f4b0ef07f442009d28e3a819974", 3852),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402
+	{
+		{
+			"babayaga",
+			"",
+			AD_ENTRY1("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Imo and the King - from bug #3485018
+	{
+		{
+			"imoking",
+			"",
+			AD_ENTRY1s("book.ini", "62b52a1763cce7d7d6ccde9f9d32fd4b", 3299),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Imo and the King Mac - from bug #3466402
+	{
+		{
+			"imoking",
+			"",
+			AD_ENTRY1("imo and the king", "b0277885fec943b5f19409f35b33964c"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: The Little Samurai - from bug #3485018
+	{
+		{
+			"littlesamurai",
+			"",
+			AD_ENTRY1s("book.ini", "7a851869d022a9041e0dd11e5bace09b", 3747),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: The Little Samurai Mac - from bug #3466402
+	{
+		{
+			"littlesamurai",
+			"",
+			AD_ENTRY1("The Little Samurai", "38121dd649c24e8676aa108cf35d44b5"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
 	// from Liam Finds a Story CD
 	{
 		{
@@ -85,6 +172,24 @@ static const ComposerGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("book.ini", "fc9d9b9e72e7301d011b808606eaa15b", 834),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
+	// Liam Finds a Story Mac - from bug #3463201
+	{
+		{
+			"liam",
+			0,
+			{
+				{"liam finds a story.ini", 0, "85a1ca6002ded8572920bbdb73d35b0a", -1},
+				{"page99.rsc", 0, "11b0a19c6b6d73c39e2bd289a457c1dc", -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -208,6 +313,24 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	// The Princess and the Crab Mac - From Bug #3461984
+	{
+		{
+			"princess",
+			0,
+			{
+				{"the princess and the crab.ini", 0, "f6b551a7304643004bd5e4df7ac1e76e", -1},
+				{"page99.rsc", 0, "fd5ebd3b5e36c4651c50241619525355", -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ // Provided by sev
 		{
 			"sleepingcub",
@@ -225,6 +348,24 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	// Sleeping Cub Mac - From Bug #3461369
+	{
+		{
+			"sleepingcub",
+			0,
+			{
+				{"sleeping cub.ini", 0, "39642a4036cb51443f5e90052c3ad0b2", -1},
+				{"page99.rsc", 0, "219fbd9bd2ff87c7023814405d753145", -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
@@ -235,6 +376,7 @@ using namespace Composer;
 // we match from data too, to stop detection from a non-top-level directory
 const static char *directoryGlobs[] = {
 	"data",
+	"liam",
 	"programs",
 	"princess",
 	"sleepcub",

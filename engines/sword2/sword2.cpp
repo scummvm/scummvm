@@ -25,9 +25,10 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/events.h"
+#include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -255,6 +256,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sword2");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "smacks");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX video
 
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		_features = GF_DEMO;

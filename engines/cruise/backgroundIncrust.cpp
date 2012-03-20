@@ -46,7 +46,7 @@ void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width
 	pIncrust->savedX = X;
 	pIncrust->savedY = Y;
 
-	pIncrust->ptr = (uint8*)MemAlloc(width * height);
+	pIncrust->ptr = (uint8 *)MemAlloc(width * height);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			int xp = j + X;
@@ -169,7 +169,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 			int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
 
 			// this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
-			flipPoly(params.fileIdx, (int16*)filesDatabase[params.fileIdx].subData.ptr, params.scale, &newFrame, newElement->X, newElement->Y, &newX, &newY, &newScale);
+			flipPoly(params.fileIdx, (int16 *)filesDatabase[params.fileIdx].subData.ptr, params.scale, &newFrame, newElement->X, newElement->Y, &newX, &newY, &newScale);
 
 			// this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
 			getPolySize(newX, newY, newScale, sizeTable, (unsigned char*)newFrame);
@@ -213,7 +213,7 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 				drawSprite(width, height, NULL, filesDatabase[frame].subData.ptr, pl->Y, pl->X, backgroundScreens[pl->backgroundIdx], filesDatabase[frame].subData.ptrMask);
 			} else {
 				// Poly
-				addBackgroundIncrustSub1(frame, pl->X, pl->Y, NULL, pl->scale, (char*)backgroundScreens[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptr);
+				addBackgroundIncrustSub1(frame, pl->X, pl->Y, NULL, pl->scale, (char *)backgroundScreens[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptr);
 			}
 
 			backgroundChanged[pl->backgroundIdx] = true;

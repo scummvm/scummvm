@@ -242,7 +242,7 @@ uint16 AutoRoute::autoRoute(Compact *cpt) {
 	clipCoordX(cpt->arTargetX, destX, initDestX);
 	clipCoordY(cpt->arTargetY, destY, initDestY);
 
-	uint16 *routeDest = (uint16*)_skyCompact->fetchCpt(cpt->animScratchId);
+	uint16 *routeDest = (uint16 *)_skyCompact->fetchCpt(cpt->animScratchId);
 	memset(routeDest, 0, 64);
 	if ((startX == destX) && (startY == destY))
 		return 2;

@@ -42,7 +42,7 @@ struct Box {				/* Internal walkbox file format */
 			byte y1;
 			byte y2;
 			byte mask;
-		} c64;
+		} v0;
 
 		struct {
 			byte uy;
@@ -181,7 +181,7 @@ byte ScummEngine::getMaskFromBox(int box) {
 	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.mask);
 	else if (_game.version == 0)
-		return ptr->c64.mask;
+		return ptr->v0.mask;
 	else if (_game.version <= 2)
 		return ptr->v2.mask;
 	else
@@ -479,7 +479,7 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 
 	assertRange(0, box, ptr[0] - 1, "box");
 	if (_game.version == 0)
-		return (Box *)(ptr + box * SIZEOF_BOX_C64 + 1);
+		return (Box *)(ptr + box * SIZEOF_BOX_V0 + 1);
 	else if (_game.version <= 2)
 		return (Box *)(ptr + box * SIZEOF_BOX_V2 + 1);
 	else if (_game.version == 3)
@@ -602,19 +602,19 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 			SWAP(box->ll, box->lr);
 		}
 	} else if (_game.version == 0) {
-		box->ul.x = bp->c64.x1;
-		box->ul.y = bp->c64.y1;
-		box->ur.x = bp->c64.x2;
-		box->ur.y = bp->c64.y1;
+		box->ul.x = bp->v0.x1;
+		box->ul.y = bp->v0.y1;
+		box->ur.x = bp->v0.x2;
+		box->ur.y = bp->v0.y1;
 
-		box->ll.x = bp->c64.x1;
-		box->ll.y = bp->c64.y2;
-		box->lr.x = bp->c64.x2;
-		box->lr.y = bp->c64.y2;
+		box->ll.x = bp->v0.x1;
+		box->ll.y = bp->v0.y2;
+		box->lr.x = bp->v0.x2;
+		box->lr.y = bp->v0.y2;
 
-		if ((bp->c64.mask & 0x88) == 0x88) {
+		if ((bp->v0.mask & 0x88) == 0x88) {
 			// walkbox for (right/left) corner
-			if (bp->c64.mask & 0x04)
+			if (bp->v0.mask & 0x04)
 				box->ur = box->ul;
 			else
 				box->ul = box->ur;

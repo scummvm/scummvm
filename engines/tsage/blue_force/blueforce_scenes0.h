@@ -88,7 +88,11 @@ public:
 	Tooltip _location6, _location7, _location8, _location9;
 	Timer _timer;
 public:
+	Scene50();
+
 	virtual Common::String getClassName() { return "Scene50"; }
+	virtual void synchronize(Serializer &s);
+
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void signal();

@@ -209,7 +209,7 @@ FLACStream::FLACStream(Common::SeekableReadStream *inStream, bool dispose)
 	::FLAC__seekable_stream_decoder_set_write_callback(_decoder, &FLACStream::callWrapWrite);
 	::FLAC__seekable_stream_decoder_set_metadata_callback(_decoder, &FLACStream::callWrapMetadata);
 	::FLAC__seekable_stream_decoder_set_error_callback(_decoder, &FLACStream::callWrapError);
-	::FLAC__seekable_stream_decoder_set_client_data(_decoder, (void*)this);
+	::FLAC__seekable_stream_decoder_set_client_data(_decoder, (void *)this);
 
 	success = (::FLAC__seekable_stream_decoder_init(_decoder) == FLAC__SEEKABLE_STREAM_DECODER_OK);
 #else
@@ -223,7 +223,7 @@ FLACStream::FLACStream(Common::SeekableReadStream *inStream, bool dispose)
 		&FLACStream::callWrapWrite,
 		&FLACStream::callWrapMetadata,
 		&FLACStream::callWrapError,
-		(void*)this
+		(void *)this
 	) == FLAC__STREAM_DECODER_INIT_STATUS_OK);
 #endif
 	if (success) {

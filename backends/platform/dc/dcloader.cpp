@@ -385,8 +385,8 @@ void *DLObject::symbol(const char *name)
   for (int c = symbol_cnt; c--; s++)
     if ((s->st_info>>4 == 1 || s->st_info>>4 == 2) &&
        strtab[s->st_name] == '_' && !strcmp(name, strtab+s->st_name+1)) {
-      DBG(("=> %p\n", (void*)s->st_value));
-      return (void*)s->st_value;
+      DBG(("=> %p\n", (void *)s->st_value));
+      return (void *)s->st_value;
     }
 
   seterror("Symbol \"%s\" not found.", name);

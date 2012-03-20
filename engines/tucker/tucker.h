@@ -563,7 +563,7 @@ protected:
 	void updateSprite_locationNum81_1(int i);
 	void updateSprite_locationNum82(int i);
 
-	template <class S> void saveOrLoadGameStateData(S &s);
+	template<class S> void saveOrLoadGameStateData(S &s);
 	virtual Common::Error loadGameState(int num);
 	virtual Common::Error saveGameState(int num, const Common::String &description);
 	virtual bool canLoadGameStateCurrently();

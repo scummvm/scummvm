@@ -155,7 +155,7 @@ void KyraEngine_LoK::setTextFadeTimerCountdown(int16 countdown) {
 	if (countdown == -1)
 		countdown = 32000;
 
-	_timer->setCountdown(31, countdown*60);
+	_timer->setCountdown(31, countdown * 60);
 }
 
 void KyraEngine_LoK::timerAsInvisibleTimeout(int timerNum) {

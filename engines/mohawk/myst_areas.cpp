@@ -20,8 +20,8 @@
  *
  */
 
-#include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
@@ -134,7 +134,7 @@ const Common::String MystResourceType5::describe() {
 		desc += " ops:";
 
 		for (uint i = 0; i < _script->size(); i++)
-			desc += " " + _vm->_scriptParser->getOpcodeDesc(_script->operator[](i).opcode);
+			desc += " " + _vm->_scriptParser->getOpcodeDesc((*_script)[i].opcode);
 	}
 
 	return desc;

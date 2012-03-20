@@ -51,7 +51,11 @@ class UpdateManager;
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
-class HardwareKeySet;
+#ifdef ENABLE_KEYMAPPER
+class HardwareInputSet;
+class Keymap;
+class KeymapperDefaultBindings;
+#endif
 }
 
 class AudioCDManager;
@@ -932,15 +936,42 @@ public:
 		return _eventManager;
 	}
 
+#ifdef ENABLE_KEYMAPPER
 	/**
-	 * Register hardware keys with keymapper
+	 * Register hardware inputs with keymapper
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
 	 *
-	 * @return HardwareKeySet with all keys and recommended mappings
+	 * @return HardwareInputSet with all keys and recommended mappings
 	 *
 	 * See keymapper documentation for further reference.
 	 */
-	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
+	virtual Common::HardwareInputSet *getHardwareInputSet() { return 0; }
 
+	/**
+	 * Return a platform-specific global keymap
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
+	 *
+	 * @return Keymap with actions appropriate for the platform
+	 *
+	 * The caller will use and delete the return object.
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::Keymap *getGlobalKeymap() { return 0; }
+
+	/**
+	 * Return platform-specific default keybindings
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
+	 *
+	 * @return KeymapperDefaultBindings populated with keybindings
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return 0; }
+#endif
 	//@}
 
 

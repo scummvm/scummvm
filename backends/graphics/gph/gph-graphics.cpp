@@ -245,7 +245,7 @@ void GPHGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG)
+#if defined(DEBUG)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif

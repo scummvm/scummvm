@@ -30,12 +30,17 @@
 #include "saga/sound.h"
 
 #include "common/file.h"
+#include "common/substream.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/aiff.h"
+#include "audio/decoders/flac.h"
+#include "audio/decoders/mac_snd.h"
+#include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
+#include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 #ifdef ENABLE_SAGA2
 #include "saga/shorten.h"
@@ -97,9 +102,6 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 		// TODO
 #endif
 	}
-}
-
-SndRes::~SndRes() {
 }
 
 void SndRes::setVoiceBank(int serial) {
@@ -167,14 +169,31 @@ void SndRes::playVoice(uint32 resourceId) {
 	_vm->_sound->playVoice(buffer);
 }
 
+enum GameSoundType {
+	kSoundPCM = 0,
+	kSoundVOX = 1,
+	kSoundVOC = 2,
+	kSoundWAV = 3,
+	kSoundMP3 = 4,
+	kSoundOGG = 5,
+	kSoundFLAC = 6,
+	kSoundAIFF = 7,
+	kSoundShorten = 8,
+	kSoundMacSND = 9
+};
+
+// Use a macro to read in the sound data based on if we actually want to buffer it or not
+#define READ_STREAM(streamSize) \
+	(onlyHeader \
+	? new Common::SeekableSubReadStream(&readS, readS.pos(), readS.pos() + (streamSize)) \
+	: readS.readStream(streamSize))
+
 bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader) {
-	Audio::AudioStream *voxStream;
 	size_t soundResourceLength;
 	bool result = false;
-	GameSoundTypes resourceType = kSoundPCM;
-	byte *data = 0;
+	GameSoundType resourceType = kSoundPCM;
 	int rate = 0, size = 0;
-	Common::File* file;
+	Common::File *file;
 
 	if (resourceId == (uint32)-1) {
 		return false;
@@ -210,7 +229,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		soundResourceLength = resourceData->size;
 	}
 
-	Common::SeekableReadStream& readS = *file;
+	Common::SeekableReadStream &readS = *file;
 	bool uncompressedSound = false;
 
 	if (soundResourceLength >= 8) {
@@ -250,160 +269,141 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	}
 
-	// Default sound type is 16-bit signed PCM, used in ITE by PCM and VOX files
-	buffer.isCompressed = context->isCompressed();
-	buffer.soundType = resourceType;
-	buffer.originalSize = 0;
-	// Set default flags and frequency for PCM, VOC and VOX files, which got no header
-	buffer.flags = Audio::FLAG_16BITS;
-	buffer.frequency = 22050;
+	// Default sound type is 16-bit signed PCM, used in ITE
+	byte rawFlags = Audio::FLAG_16BITS;
+
 	if (_vm->getGameId() == GID_ITE) {
-		if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
-			buffer.flags |= Audio::FLAG_UNSIGNED;
-			buffer.flags &= ~Audio::FLAG_16BITS;
-		} else {
+		if (context->fileType() & GAME_MACBINARY) {
+			// ITE Mac has sound in the Mac snd format
+			resourceType = kSoundMacSND;
+		} else if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
+			rawFlags |= Audio::FLAG_UNSIGNED;
+			rawFlags &= ~Audio::FLAG_16BITS;
+		} else if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc")) {
 			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded.
-			// These are LE in all the Windows and Mac demos
-			if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc")) {
-				resourceType = kSoundVOX;
-				buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
-			}
+			resourceType = kSoundVOX;
 		}
 	}
-	buffer.buffer = NULL;
+
+	buffer.stream = 0;
 
 	// Check for LE sounds
 	if (!context->isBigEndian())
-		buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
-
-	// Older Mac versions of ITE were Macbinary packed
-	int soundOffset = (context->fileType() & GAME_MACBINARY) ? 36 : 0;
+		rawFlags |= Audio::FLAG_LITTLE_ENDIAN;
 
 	switch (resourceType) {
-	case kSoundPCM:
-		buffer.size = soundResourceLength - soundOffset;
-		if (!onlyHeader) {
-			buffer.buffer = (byte *) malloc(buffer.size);
-			if (soundOffset > 0)
-				readS.skip(soundOffset);
-			readS.read(buffer.buffer, buffer.size);
-		}
+	case kSoundPCM: {
+		// In ITE CD German, some voices are absent and contain just 5 zero bytes.
+		// Round down to an even number when the audio is 16-bit so makeRawStream
+		// will accept the data (needs to be an even size for 16-bit data).
+		// See bug #1256701
+
+		if ((soundResourceLength & 1) && (rawFlags & Audio::FLAG_16BITS))
+			soundResourceLength &= ~1;
+
+		Audio::SeekableAudioStream *audStream = Audio::makeRawStream(READ_STREAM(soundResourceLength), 22050, rawFlags);
+		buffer.stream = audStream;
+		buffer.streamLength = audStream->getLength();
 		result = true;
-		break;
+		} break;
 	case kSoundVOX:
-		buffer.size = soundResourceLength * 4;
-		if (!onlyHeader) {
-			voxStream = Audio::makeADPCMStream(&readS, DisposeAfterUse::NO, soundResourceLength, Audio::kADPCMOki);
-			buffer.buffer = (byte *)malloc(buffer.size);
-			voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
-			delete voxStream;
-		}
+		buffer.stream = Audio::makeADPCMStream(READ_STREAM(soundResourceLength), DisposeAfterUse::YES, soundResourceLength, Audio::kADPCMOki, 22050, 1);
+		buffer.streamLength = Audio::Timestamp(0, soundResourceLength * 2, buffer.stream->getRate());
 		result = true;
 		break;
+	case kSoundMacSND: {
+		Audio::SeekableAudioStream *audStream = Audio::makeMacSndStream(READ_STREAM(soundResourceLength), DisposeAfterUse::YES);
+		buffer.stream = audStream;
+		buffer.streamLength = audStream->getLength();
+		result = true;
+		} break;
+	case kSoundAIFF: {
+		Audio::SeekableAudioStream *audStream = Audio::makeAIFFStream(READ_STREAM(soundResourceLength), DisposeAfterUse::YES);
+		buffer.stream = audStream;
+		buffer.streamLength = audStream->getLength();
+		result = true;
+		} break;
+	case kSoundVOC: {
+		Audio::SeekableAudioStream *audStream = Audio::makeVOCStream(READ_STREAM(soundResourceLength), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		buffer.stream = audStream;
+		buffer.streamLength = audStream->getLength();
+		result = true;
+		} break;
 	case kSoundWAV:
-	case kSoundAIFF:
 	case kSoundShorten:
-	case kSoundVOC:
 		if (resourceType == kSoundWAV) {
-			result = Audio::loadWAVFromStream(readS, size, rate, buffer.flags);
-		} else if (resourceType == kSoundAIFF) {
-			result = Audio::loadAIFFFromStream(readS, size, rate, buffer.flags);
+			result = Audio::loadWAVFromStream(readS, size, rate, rawFlags);
 #ifdef ENABLE_SAGA2
 		} else if (resourceType == kSoundShorten) {
-			result = loadShortenFromStream(readS, size, rate, buffer.flags);
+			result = loadShortenFromStream(readS, size, rate, rawFlags);
 #endif
-		} else if (resourceType == kSoundVOC) {
-			data = Audio::loadVOCFromStream(readS, size, rate);
-			result = (data != NULL);
-			if (onlyHeader)
-				free(data);
-			buffer.flags |= Audio::FLAG_UNSIGNED;
-			buffer.flags &= ~Audio::FLAG_16BITS;
-			buffer.flags &= ~Audio::FLAG_STEREO;
 		}
 
 		if (result) {
-			buffer.frequency = rate;
-			buffer.size = size;
-
-			if (!onlyHeader) {
-				if (resourceType == kSoundVOC) {
-					buffer.buffer = data;
-				} else {
-					buffer.buffer = (byte *)malloc(size);
-					readS.read(buffer.buffer, size);
-				}
-			}
+			Audio::SeekableAudioStream *audStream = Audio::makeRawStream(READ_STREAM(size), rate, rawFlags);
+			buffer.stream = audStream;
+			buffer.streamLength = audStream->getLength();
 		}
 		break;
 	case kSoundMP3:
 	case kSoundOGG:
-	case kSoundFLAC:
-		ResourceData *resourceData;
-		resourceData = context->getResourceData(resourceId);
+	case kSoundFLAC: {
+		readS.skip(9); // skip sfx header
 
-		// Read compressed sfx header
-		readS.readByte();	// Skip compression identifier byte
-		buffer.frequency = readS.readUint16LE();
-		buffer.originalSize = readS.readUint32LE();
-		if (readS.readByte() == 8)	// read sample bits
-			buffer.flags &= ~Audio::FLAG_16BITS;
-		if (readS.readByte() != 0)	// read stereo flag
-			buffer.flags |= Audio::FLAG_STEREO;
+		Audio::SeekableAudioStream *audStream = 0;
+		Common::SeekableReadStream *memStream = READ_STREAM(soundResourceLength - 9);
 
-		buffer.size = soundResourceLength;
-		buffer.soundType = resourceType;
-		buffer.fileOffset = resourceData->offset + 9; // skip compressed sfx header: byte + uint16 + uint32 + byte + byte
-
-		if (!onlyHeader) {
-			buffer.buffer = (byte *)malloc(buffer.size);
-			readS.read(buffer.buffer, buffer.size);
+		if (resourceType == kSoundMP3) {
+#ifdef USE_MAD
+			audStream = Audio::makeMP3Stream(memStream, DisposeAfterUse::YES);
+#endif
+		} else if (resourceType == kSoundOGG) {
+#ifdef USE_VORBIS
+			audStream = Audio::makeVorbisStream(memStream, DisposeAfterUse::YES);
+#endif
+		} else /* if (resourceType == kSoundFLAC) */ {
+#ifdef USE_FLAC
+			audStream = Audio::makeFLACStream(memStream, DisposeAfterUse::YES);
+#endif
 		}
 
-		result = true;
-		break;
+		if (audStream) {
+			buffer.stream = audStream;
+			buffer.streamLength = audStream->getLength();
+			result = true;
+		} else {
+			delete memStream;
+		}
+
+		} break;
 	default:
 		error("SndRes::load Unknown sound type");
 	}
-
 
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		delete file;
 	}
 
-
-	// In ITE CD De some voices are absent and contain just 5 bytes header
-	// Round it to even number so soundmanager will not crash.
-	// See bug #1256701
-	buffer.size &= ~(0x1);
+	if (onlyHeader) {
+		delete buffer.stream;
+		buffer.stream = 0;
+	}
 
 	return result;
 }
 
+#undef READ_STREAM
+
 int SndRes::getVoiceLength(uint32 resourceId) {
-	double msDouble;
 	SoundBuffer buffer;
 
 	if (!(_vm->_voiceFilesExist))
 		return -1;
 
-	if (!load(_voiceContext, resourceId, buffer, true)) {
+	if (!load(_voiceContext, resourceId, buffer, true))
 		return -1;
-	}
 
-	if (!_voiceContext->isCompressed() || buffer.originalSize == 0)
-		msDouble = (double)buffer.size;
-	else
-		msDouble = (double)buffer.originalSize;
-
-	if (buffer.flags & Audio::FLAG_16BITS)
-		msDouble /= 2.0;
-
-	if (buffer.flags & Audio::FLAG_STEREO)
-		msDouble /= 2.0;
-
-	msDouble = msDouble / buffer.frequency * 1000.0;
-	return (int)msDouble;
+	return buffer.streamLength.msecs();
 }
 
 } // End of namespace Saga

@@ -197,6 +197,8 @@ int MidiDriver_TIMIDITY::open() {
 
 	/* should read something like "200 63017 is ready acceptable",
 	 * where 63017 is port for data connection */
+	// FIXME: The following looks like a cheap endian test. If this is true, then
+	// it should be replaced by suitable #ifdef SCUMM_LITTLE_ENDIAN.
 	i = 1;
 	if (*(char *)&i == 1)
 		res = timidity_ctl_command("OPEN lsb");
@@ -557,4 +559,4 @@ Common::Error TimidityMusicPlugin::createInstance(MidiDriver **mididriver, MidiD
 	REGISTER_PLUGIN_STATIC(TIMIDITY, PLUGIN_TYPE_MUSIC, TimidityMusicPlugin);
 //#endif
 
-#endif // defined (USE_TIMIDITY)
+#endif // defined(USE_TIMIDITY)

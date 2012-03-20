@@ -112,7 +112,7 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	InfoDialog dialog(this, (char*)buf);
+	InfoDialog dialog(this, (char *)buf);
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
 }
 
@@ -1389,10 +1389,10 @@ void ScummEngine_v7::loadLanguageBundle() {
 			} else if (*ptr == '#') {
 				// Number of subtags following a given basetag. We don't need that
 				// information so we just skip it
-			} else if (isdigit(static_cast<unsigned char>(*ptr))) {
+			} else if (Common::isDigit(*ptr)) {
 				int idx = 0;
 				// A number (up to three digits)...
-				while (isdigit(static_cast<unsigned char>(*ptr))) {
+				while (Common::isDigit(*ptr)) {
 					idx = idx * 10 + (*ptr - '0');
 					ptr++;
 				}
@@ -1430,12 +1430,12 @@ void ScummEngine_v7::loadLanguageBundle() {
 		for (i = 0; i < _languageIndexSize; i++) {
 			// First 8 chars in the line give the string ID / 'tag'
 			int j;
-			for (j = 0; j < 8 && !isspace(static_cast<unsigned char>(*ptr)); j++, ptr++)
+			for (j = 0; j < 8 && !Common::isSpace(*ptr); j++, ptr++)
 				_languageIndex[i].tag[j] = toupper(*ptr);
 			_languageIndex[i].tag[j] = 0;
 
 			// After that follows a single space which we skip
-			assert(isspace(static_cast<unsigned char>(*ptr)));
+			assert(Common::isSpace(*ptr));
 			ptr++;
 
 			// Then comes the translated string: we record an offset to that.

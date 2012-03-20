@@ -23,7 +23,7 @@
 #ifndef KYRA_GUI_V2_H
 #define KYRA_GUI_V2_H
 
-#include "kyra/gui.h"
+#include "kyra/gui_v1.h"
 
 namespace Kyra {
 
@@ -99,7 +99,7 @@ namespace Kyra {
 class KyraEngine_v2;
 class Screen_v2;
 
-class GUI_v2 : public GUI {
+class GUI_v2 : public GUI_v1 {
 public:
 	GUI_v2(KyraEngine_v2 *vm);
 

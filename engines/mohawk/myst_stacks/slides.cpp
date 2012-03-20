@@ -22,8 +22,8 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
-#include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_graphics.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/slides.h"

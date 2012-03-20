@@ -61,7 +61,7 @@ static inline GLfixed xdiv(int numerator, int denominator) {
 	return (numerator << 16) / denominator;
 }
 
-template <class T>
+template<class T>
 static T nextHigher2(T k) {
 	if (k == 0)
 		return 1;

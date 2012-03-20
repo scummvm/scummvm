@@ -22,44 +22,116 @@
 
 #include "dreamweb/dreamweb.h"
 #include "engines/metaengine.h"
+#include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/serializer.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 // Temporary storage for loading the room from a savegame
 Room g_madeUpRoomDat;
 
-void DreamGenContext::loadGame() {
-	if (data.byte(kCommandtype) != 246) {
-		data.byte(kCommandtype) = 246;
-		commandOnly(41);
-	}
-	if (data.word(kMousebutton) == data.word(kOldbutton))
+
+void syncReelRoutine(Common::Serializer &s, ReelRoutine *reel) {
+	s.syncAsByte(reel->reallocation);
+	s.syncAsByte(reel->mapX);
+	s.syncAsByte(reel->mapY);
+	s.syncAsUint16LE(reel->_reelPointer);
+	s.syncAsByte(reel->period);
+	s.syncAsByte(reel->counter);
+	s.syncAsByte(reel->b7);
+}
+
+void syncGameVars(Common::Serializer &s, GameVars &vars) {
+	s.syncAsByte(vars._startVars);
+	s.syncAsByte(vars._progressPoints);
+	s.syncAsByte(vars._watchOn);
+	s.syncAsByte(vars._shadesOn);
+	s.syncAsByte(vars._secondCount);
+	s.syncAsByte(vars._minuteCount);
+	s.syncAsByte(vars._hourCount);
+	s.syncAsByte(vars._zoomOn);
+	s.syncAsByte(vars._location);
+	s.syncAsByte(vars._exPos);
+	s.syncAsUint16LE(vars._exFramePos);
+	s.syncAsUint16LE(vars._exTextPos);
+	s.syncAsUint16LE(vars._card1Money);
+	s.syncAsUint16LE(vars._listPos);
+	s.syncAsByte(vars._ryanPage);
+	s.syncAsUint16LE(vars._watchingTime);
+	s.syncAsUint16LE(vars._reelToWatch);
+	s.syncAsUint16LE(vars._endWatchReel);
+	s.syncAsByte(vars._speedCount);
+	s.syncAsByte(vars._watchSpeed);
+	s.syncAsUint16LE(vars._reelToHold);
+	s.syncAsUint16LE(vars._endOfHoldReel);
+	s.syncAsByte(vars._watchMode);
+	s.syncAsByte(vars._destAfterHold);
+	s.syncAsByte(vars._newsItem);
+	s.syncAsByte(vars._liftFlag);
+	s.syncAsByte(vars._liftPath);
+	s.syncAsByte(vars._lockStatus);
+	s.syncAsByte(vars._doorPath);
+	s.syncAsByte(vars._countToOpen);
+	s.syncAsByte(vars._countToClose);
+	s.syncAsByte(vars._rockstarDead);
+	s.syncAsByte(vars._generalDead);
+	s.syncAsByte(vars._sartainDead);
+	s.syncAsByte(vars._aideDead);
+	s.syncAsByte(vars._beenMugged);
+	s.syncAsByte(vars._gunPassFlag);
+	s.syncAsByte(vars._canMoveAltar);
+	s.syncAsByte(vars._talkedToAttendant);
+	s.syncAsByte(vars._talkedToSparky);
+	s.syncAsByte(vars._talkedToBoss);
+	s.syncAsByte(vars._talkedToRecep);
+	s.syncAsByte(vars._cardPassFlag);
+	s.syncAsByte(vars._madmanFlag);
+	s.syncAsByte(vars._keeperFlag);
+	s.syncAsByte(vars._lastTrigger);
+	s.syncAsByte(vars._manDead);
+	s.syncAsByte(vars._seed1);
+	s.syncAsByte(vars._seed2);
+	s.syncAsByte(vars._seed3);
+	s.syncAsByte(vars._needToTravel);
+	s.syncAsByte(vars._throughDoor);
+	s.syncAsByte(vars._newObs);
+	s.syncAsByte(vars._ryanOn);
+	s.syncAsByte(vars._combatCount);
+	s.syncAsByte(vars._lastWeapon);
+	s.syncAsByte(vars._dreamNumber);
+	s.syncAsByte(vars._roomAfterDream);
+	s.syncAsByte(vars._shakeCounter);
+}
+
+void DreamWebEngine::loadGame() {
+	commandOnlyCond(41, 246);
+	if (_mouseButton == _oldButton)
 		return; // "noload"
-	if (data.word(kMousebutton) == 1)
+	if (_mouseButton == 1)
 		doLoad(-1);
 }
 
 // if -1, open menu to ask for slot to load
 // if >= 0, directly load from that slot
-void DreamGenContext::doLoad(int savegameId) {
-	data.byte(kLoadingorsave) = 1;
+void DreamWebEngine::doLoad(int savegameId) {
+	_loadingOrSave = 1;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
 		showOpBox();
 		showLoadOps();
-		data.byte(kCurrentslot) = 0;
+		_currentSlot = 0;
 		showSlots();
 		showNames();
-		data.byte(kPointerframe) = 0;
+		_pointerFrame = 0;
 		workToScreenM();
 		namesToOld();
-		data.byte(kGetback) = 0;
+		_getBack = 0;
 
-		while (data.byte(kGetback) == 0) {
-			if (quitRequested())
+		while (_getBack == 0) {
+			if (_quitRequested)
 				return;
 			delPointer();
 			readMouse();
@@ -68,14 +140,15 @@ void DreamGenContext::doLoad(int savegameId) {
 			dumpPointer();
 			dumpTextLine();
 			RectWithCallback loadlist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualLoad },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
-				{ 0,320,0,200,&DreamGenContext::blank },
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualLoad },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
+				{ kOpsx+158,kOpsx+158+(18*3),kOpsy-17,kOpsy-1,&DreamWebEngine::selectSaveLoadPage },
+				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(loadlist);
-			if (data.byte(kGetback) == 2)
+			if (_getBack == 2)
 				return; // "quitloaded"
 		}
 	} else {
@@ -93,67 +166,62 @@ void DreamGenContext::doLoad(int savegameId) {
 		}
 
 		if (savegameId < 0) {
-			data.byte(kGetback) = 0;
+			_getBack = 0;
 			return;
 		}
 
 		loadPosition(savegameId);
 
-		data.byte(kGetback) = 1;
+		_getBack = 1;
 	}
 
 	// If we reach this point, loadPosition() has just been called.
 	// Among other things, it will have filled g_MadeUpRoomDat.
 
-	// kTempgraphics might not have been allocated if we bypassed all menus
-	if (data.word(kTempgraphics) != 0xFFFF)
-		getRidOfTemp();
+	_saveGraphics.clear();
 
 	startLoading(g_madeUpRoomDat);
 	loadRoomsSample();
-	data.byte(kRoomloaded) = 1;
-	data.byte(kNewlocation) = 255;
+	_roomLoaded = 1;
+	_newLocation = 255;
 	clearSprites();
 	initMan();
 	initRain();
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 240;
 	startup();
-	workToScreenCPP();
-	data.byte(kGetback) = 4;
+	workToScreen();
+	_getBack = 4;
 }
 
 
-void DreamGenContext::saveGame() {
-	if (data.byte(kMandead) == 2) {
+void DreamWebEngine::saveGame() {
+	if (_vars._manDead == 2) {
 		blank();
 		return;
 	}
 
-	if (data.byte(kCommandtype) != 247) {
-		data.byte(kCommandtype) = 247;
-		commandOnly(44);
-	}
-	if (data.word(kMousebutton) != 1)
+	commandOnlyCond(44, 247);
+	if (_mouseButton != 1)
 		return;
 
-	data.byte(kLoadingorsave) = 2;
+	_loadingOrSave = 2;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload")) {
 		showOpBox();
 		showSaveOps();
-		data.byte(kCurrentslot) = 0;
+		_currentSlot = 0;
 		showSlots();
 		showNames();
 		workToScreenM();
 		namesToOld();
-		data.word(kBufferin) = 0;
-		data.word(kBufferout) = 0;
-		data.byte(kGetback) = 0;
+		_bufferIn = 0;
+		_bufferOut = 0;
+		_getBack = 0;
 
-		while (data.byte(kGetback) == 0) {
-			if (quitRequested())
+		while (_getBack == 0) {
+			if (_quitRequested)
 				return;
 			delPointer();
 			checkInput();
@@ -164,10 +232,11 @@ void DreamGenContext::saveGame() {
 			dumpTextLine();
 
 			RectWithCallback savelist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualSave },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
-				{ 0,320,0,200,&DreamGenContext::blank },
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualSave },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
+				{ kOpsx+158,kOpsx+158+(18*3),kOpsy-17,kOpsy-1,&DreamWebEngine::selectSaveLoadPage },
+				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(savelist);
@@ -186,80 +255,194 @@ void DreamGenContext::saveGame() {
 		delete dialog;
 
 		if (savegameId < 0) {
-			data.byte(kGetback) = 0;
+			_getBack = 0;
 			return;
 		}
 
 		char descbuf[17] = { 2, 0 };
-		strncpy((char*)descbuf+1, game_description.c_str(), 16);
+		Common::strlcpy((char *)descbuf + 1, game_description.c_str(), 16);
 		unsigned int desclen = game_description.size();
 		if (desclen > 15)
 			desclen = 15;
 		// zero terminate, and pad with ones
 		descbuf[++desclen] = 0;
-		while (desclen < 17)
+		while (desclen < 16)
 			descbuf[++desclen] = 1;
-		if (savegameId < 7)
-			memcpy(&_saveNames[17*savegameId], descbuf, 17);
-
-		savePosition(savegameId, descbuf);
 
 		// TODO: The below is copied from actualsave
-		getRidOfTemp();
+		_saveGraphics.clear();
 		restoreAll(); // reels
-		data.word(kTextaddressx) = 13;
-		data.word(kTextaddressy) = 182;
-		data.byte(kTextlen) = 240;
+		_textAddressX = 13;
+		_textAddressY = 182;
+		_textLen = 240;
 		redrawMainScrn();
+		workToScreen();	// show the main screen without the mouse pointer
+
+		// We need to save after the scene has been redrawn, to capture the
+		// correct screen thumbnail
+		savePosition(savegameId, descbuf);
+
 		workToScreenM();
-		data.byte(kGetback) = 4;
+		_getBack = 4;
 	}
 }
 
-void DreamGenContext::namesToOld() {
-	memcpy(_saveNamesOld, _saveNames, 17*7);
+void DreamWebEngine::namesToOld() {
+	memcpy(_saveNamesOld, _saveNames, 17*21);
 }
 
-void DreamGenContext::oldToNames() {
-	memcpy(_saveNames, _saveNamesOld, 17*7);
+void DreamWebEngine::oldToNames() {
+	memcpy(_saveNames, _saveNamesOld, 17*21);
 }
 
-void DreamGenContext::saveLoad() {
-	if (data.word(kWatchingtime) || (data.byte(kPointermode) == 2)) {
+void DreamWebEngine::saveLoad() {
+	if (_vars._watchingTime || (_pointerMode == 2)) {
 		blank();
 		return;
 	}
-	if (data.byte(kCommandtype) != 253) {
-		data.byte(kCommandtype) = 253;
-		commandOnly(43);
-	}
-	if ((data.word(kMousebutton) != data.word(kOldbutton)) && (data.word(kMousebutton) & 1))
+	commandOnlyCond(43, 253);
+	if ((_mouseButton != _oldButton) && (_mouseButton & 1))
 		doSaveLoad();
 }
 
-void DreamGenContext::showMainOps() {
-	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 8, 0);
-	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 7, 0);
-	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
-}
+void DreamWebEngine::doSaveLoad() {
+	_pointerFrame = 0;
+	_textAddressX = 70;
+	_textAddressY = 182-8;
+	_textLen = 181;
+	_manIsOffScreen = 1;
+	clearWork();
+	createPanel2();
+	underTextLine();
+	getRidOfAll();
+	loadSaveBox();
+	showOpBox();
+	showMainOps();
+	workToScreen();
 
-void DreamGenContext::showDiscOps() {
-	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
-	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 9, 0);
-	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 10, 0);
-	showFrame(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
-}
+	RectWithCallback opsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamWebEngine::getBackFromOps },
+		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
+		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamWebEngine::discOps },
+		{ 0,320,0,200,&DreamWebEngine::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
 
-void DreamGenContext::actualSave() {
-	if (data.byte(kCommandtype) != 222) {
-		data.byte(kCommandtype) = 222;
-		commandOnly(44);
+	bool firstOps = true;
+
+	do {	// restart ops
+		if (firstOps) {
+			firstOps = false;
+		} else {
+			showOpBox();
+			showMainOps();
+			workToScreenM();
+		}
+		_getBack = 0;
+
+		do {	// wait ops
+			if (_quitRequested) {
+				_manIsOffScreen = 0;
+				return;
+			}
+
+			readMouse();
+			showPointer();
+			vSync();
+			dumpPointer();
+			dumpTextLine();
+			delPointer();
+			checkCoords(opsList);
+		} while (!_getBack);
+	} while (_getBack == 2);
+
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 240;
+	if (_getBack != 4) {
+		_saveGraphics.clear();
+		restoreAll();
+		redrawMainScrn();
+		workToScreenM();
+		_commandType = 200;
 	}
+	_manIsOffScreen = 0;
+}
 
-	if (!(data.word(kMousebutton) & 1))
+void DreamWebEngine::getBackFromOps() {
+	if (_vars._manDead == 2)
+		blank();
+	else
+		getBack1();
+}
+
+void DreamWebEngine::getBackToOps() {
+	commandOnlyCond(42, 201);
+
+	if (_mouseButton != _oldButton) {
+		if (_mouseButton & 1) {
+			oldToNames();
+			_getBack = 2;
+		}
+	}
+}
+
+void DreamWebEngine::showMainOps() {
+	showFrame(_saveGraphics, kOpsx+10, kOpsy+10, 8, 0);
+	showFrame(_saveGraphics, kOpsx+59, kOpsy+30, 7, 0);
+	showFrame(_saveGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
+}
+
+void DreamWebEngine::showDiscOps() {
+	showFrame(_saveGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
+	showFrame(_saveGraphics, kOpsx+10, kOpsy+10, 9, 0);
+	showFrame(_saveGraphics, kOpsx+59, kOpsy+30, 10, 0);
+	showFrame(_saveGraphics, kOpsx+176+2, kOpsy+60-4, 5, 0);
+}
+
+void DreamWebEngine::discOps() {
+	commandOnlyCond(43, 249);
+
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
-	unsigned int slot = data.byte(kCurrentslot);
+	scanForNames();
+	_loadingOrSave = 2;
+	showOpBox();
+	showDiscOps();
+	_currentSlot = 0;
+	workToScreenM();
+	_getBack = 0;
+
+	RectWithCallback discOpsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamWebEngine::loadGame },
+		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamWebEngine::saveGame },
+		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
+		{ 0,320,0,200,&DreamWebEngine::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	do {
+		if (_quitRequested)
+			return; // quitdiscops
+
+		delPointer();
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		checkCoords(discOpsList);
+	} while (!_getBack);
+}
+
+void DreamWebEngine::actualSave() {
+	commandOnlyCond(44, 222);
+
+	if (!(_mouseButton & 1))
+		return;
+
+	unsigned int slot = _currentSlot + 7 * _saveLoadPage;
 
 	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
@@ -267,54 +450,48 @@ void DreamGenContext::actualSave() {
 
 	savePosition(slot, desc);
 
-	getRidOfTemp();
+	_saveGraphics.clear();
 	restoreAll(); // reels
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 240;
 	redrawMainScrn();
 	workToScreenM();
-	data.byte(kGetback) = 4;
+	_getBack = 4;
 }
 
-void DreamGenContext::actualLoad() {
-	if (data.byte(kCommandtype) != 221) {
-		data.byte(kCommandtype) = 221;
-		commandOnly(41);
-	}
+void DreamWebEngine::actualLoad() {
+	commandOnlyCond(41, 221);
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || data.word(kMousebutton) != 1)
+	if (_mouseButton == _oldButton || _mouseButton != 1)
 		return;
 
-	unsigned int slot = data.byte(kCurrentslot);
+	unsigned int slot = _currentSlot + 7 * _saveLoadPage;
 
 	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
-	loadPosition(data.byte(kCurrentslot));
-	data.byte(kGetback) = 1;
+	loadPosition(slot);
+	_getBack = 1;
 }
 
-void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
+void DreamWebEngine::savePosition(unsigned int slot, const char *descbuf) {
 
-	const Room &currentRoom = g_roomData[data.byte(kLocation)];
+	const Room &currentRoom = g_roomData[_vars._location];
 
 	Room madeUpRoom = currentRoom;
-	madeUpRoom.roomsSample = data.byte(kRoomssample);
-	madeUpRoom.mapX = data.byte(kMapx);
-	madeUpRoom.mapY = data.byte(kMapy);
-	madeUpRoom.liftFlag = data.byte(kLiftflag);
-	madeUpRoom.b21 = data.byte(kManspath);
-	madeUpRoom.facing = data.byte(kFacing);
+	madeUpRoom.roomsSample = _roomsSample;
+	madeUpRoom.mapX = _mapX;
+	madeUpRoom.mapY = _mapY;
+	madeUpRoom.liftFlag = _vars._liftFlag;
+	madeUpRoom.b21 = _mansPath;
+	madeUpRoom.facing = _facing;
 	madeUpRoom.b27 = 255;
 
-
-	engine->processEvents();	// TODO: Is this necessary?
-
-	Common::String filename = engine->getSavegameFilename(slot);
+	Common::String filename = getSavegameFilename(slot);
 	debug(1, "savePosition: slot %d filename %s", slot, filename.c_str());
-	Common::OutSaveFile *outSaveFile = engine->getSaveFileManager()->openForSaving(filename);
+	Common::OutSaveFile *outSaveFile = getSaveFileManager()->openForSaving(filename);
 	if (!outSaveFile)	// TODO: Do proper error handling!
 		error("save could not be opened for writing");
 
@@ -330,21 +507,52 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 
 	// fill length fields in savegame file header
 	uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
-	                  4*kNumchanges, 48, kLenofreelrouts };
+	                  4*kNumChanges, 48, kNumReelRoutines*8+1 };
 	for (int i = 0; i < 6; ++i)
 		header.setLen(i, len[i]);
 
+	// Write a new section with data that we need for ScummVM (version,
+	// thumbnail, played time etc). We don't really care for its size,
+	// so we just set it to a magic number.
+	header.setLen(6, SCUMMVM_BLOCK_MAGIC_SIZE);
+
 	outSaveFile->write((const uint8 *)&header, sizeof(FileHeader));
 	outSaveFile->write(descbuf, len[0]);
-	outSaveFile->write(data.ptr(kStartvars, len[1]), len[1]);
-	outSaveFile->write(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	outSaveFile->write(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	// TODO: Convert more to serializer?
+	Common::Serializer s(0, outSaveFile);
+	syncGameVars(s, _vars);
+
+	// the Extras segment:
+	outSaveFile->write((const uint8 *)_exFrames._frames, kFrameBlocksize);
+	outSaveFile->write((const uint8 *)_exFrames._data, kExframeslen);
+	outSaveFile->write((const uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
+	outSaveFile->write((const uint8 *)_exText._offsetsLE, 2*(kNumExObjects+2));
+	outSaveFile->write((const uint8 *)_exText._text, kExtextlen);
+
+	outSaveFile->write(_listOfChanges, len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
 	outSaveFile->write((const uint8 *)&madeUpRoom, sizeof(Room));
-	outSaveFile->write(data.ptr(kRoomscango, 16), 16);
+	outSaveFile->write(_roomsCanGo, 16);
 
-	outSaveFile->write(data.ptr(kReelroutines, len[5]), len[5]);
+	for (unsigned int i = 0; i < kNumReelRoutines; ++i) {
+		syncReelRoutine(s, &_reelRoutines[i]);
+	}
+	// Terminator
+	s.syncAsByte(_reelRoutines[kNumReelRoutines].reallocation);
+
+	// ScummVM data block
+	outSaveFile->writeUint32BE(SCUMMVM_HEADER);
+	outSaveFile->writeByte(SAVEGAME_VERSION);
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint32 saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
+	outSaveFile->writeUint32LE(saveDate);
+	outSaveFile->writeUint32LE(saveTime);
+	outSaveFile->writeUint32LE(playTime);
+	Graphics::saveThumbnail(*outSaveFile);
 
 	outSaveFile->finalize();
 	if (outSaveFile->err()) {
@@ -355,13 +563,13 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 	delete outSaveFile;
 }
 
-void DreamGenContext::loadPosition(unsigned int slot) {
-	data.word(kTimecount) = 0;
+void DreamWebEngine::loadPosition(unsigned int slot) {
+	_timeCount = 0;
 	clearChanges();
 
-	Common::String filename = engine->getSavegameFilename(slot);
+	Common::String filename = getSavegameFilename(slot);
 	debug(1, "loadPosition: slot %d filename %s", slot, filename.c_str());
-	Common::InSaveFile *inSaveFile = engine->getSaveFileManager()->openForLoading(filename);
+	Common::InSaveFile *inSaveFile = getSaveFileManager()->openForLoading(filename);
 	if (!inSaveFile)	// TODO: Do proper error handling!
 		error("save could not be opened for reading");
 
@@ -376,143 +584,188 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	if (len[0] != 17)
 		::error("Error loading save: description buffer isn't 17 bytes");
 
-	if (slot < 7) {
+	if (slot < 21) {
 		inSaveFile->read(&_saveNames[17*slot], len[0]);
 	} else {
-		// The savenames buffer only has room for 7 descriptions
+		// The savenames buffer only has room for 21 descriptions
 		uint8 namebuf[17];
 		inSaveFile->read(namebuf, 17);
 	}
-	inSaveFile->read(data.ptr(kStartvars, len[1]), len[1]);
-	inSaveFile->read(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	inSaveFile->read(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+
+	// TODO: Use serializer for more?
+	Common::Serializer s(inSaveFile, 0);
+	syncGameVars(s, _vars);
+
+	// the Extras segment:
+	inSaveFile->read((uint8 *)_exFrames._frames, kFrameBlocksize);
+	inSaveFile->read((uint8 *)_exFrames._data, kExframeslen);
+	inSaveFile->read((uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
+	inSaveFile->read((uint8 *)_exText._offsetsLE, 2*(kNumExObjects+2));
+	inSaveFile->read((uint8 *)_exText._text, kExtextlen);
+
+	inSaveFile->read(_listOfChanges, len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
 	// Note: the values read into g_madeUpRoomDat are only used in actualLoad,
 	// which is (almost) immediately called after this function
 	inSaveFile->read((uint8 *)&g_madeUpRoomDat, sizeof(Room));
-	inSaveFile->read(data.ptr(kRoomscango, 16), 16);
+	inSaveFile->read(_roomsCanGo, 16);
 
-	inSaveFile->read(data.ptr(kReelroutines, len[5]), len[5]);
+	for (unsigned int i = 0; i < kNumReelRoutines; ++i) {
+		syncReelRoutine(s, &_reelRoutines[i]);
+	}
+	// Terminator
+	s.syncAsByte(_reelRoutines[kNumReelRoutines].reallocation);
+
+	// Check if there's a ScummVM data block
+	if (header.len(6) == SCUMMVM_BLOCK_MAGIC_SIZE) {
+		uint32 tag = inSaveFile->readUint32BE();
+		if (tag != SCUMMVM_HEADER) {
+			warning("ScummVM data block found, but the block header is incorrect - skipping");
+			delete inSaveFile;
+			return;
+		}
+
+		byte version = inSaveFile->readByte();
+		if (version > SAVEGAME_VERSION) {
+			warning("ScummVM data block found, but it has been saved with a newer version of ScummVM - skipping");
+			delete inSaveFile;
+			return;
+		}
+
+		inSaveFile->skip(4);	// saveDate
+		inSaveFile->skip(4);	// saveTime
+		uint32 playTime = inSaveFile->readUint32LE();
+		g_engine->setTotalPlayTime(playTime * 1000);
+
+		// The thumbnail data follows, but we don't need it here
+	}
 
 	delete inSaveFile;
 }
 
 // Count number of save files, and load their descriptions into _saveNames
-unsigned int DreamGenContext::scanForNames() {
-	unsigned int count = 0;
-
-	FileHeader header;
-
-	// TODO: Change this to use SaveFileManager::listSavefiles()
-	for (unsigned int slot = 0; slot < 7; ++slot) {
-		_saveNames[17*slot+0] = 2;
-		_saveNames[17*slot+1] = 0;
+uint DreamWebEngine::scanForNames() {
+	// There are 21 save slots, each of which are 17 bytes. The first byte
+	// doesn't seem to be used. The name starts at the second byte. All the
+	// slots are initialized to be empty.
+	for (unsigned int slot = 0; slot < 21; ++slot) {
+		_saveNames[17 * slot + 0] = 2;
+		_saveNames[17 * slot + 1] = 0;
 		for (int i = 2; i < 17; ++i)
-			_saveNames[17*slot+i] = 1;
-
-		// Try opening savegame with the given slot id
-		Common::String filename = engine->getSavegameFilename(slot);
-		Common::InSaveFile *inSaveFile = engine->getSaveFileManager()->openForLoading(filename);
-		if (!inSaveFile)
-			continue;
-
-		++count;
-
-		inSaveFile->read((uint8 *)&header, sizeof(FileHeader));
-
-		if (header.len(0) != 17) {
-			::warning("Error loading save: description buffer isn't 17 bytes");
-			delete inSaveFile;
-			continue;
-		}
-
-		// NB: Only possible if slot < 7
-		inSaveFile->read(&_saveNames[17*slot], 17);
-
-		delete inSaveFile;
+			_saveNames[17 * slot + i] = 1;	// initialize with 1'sdrea
 	}
 
-	al = (uint8)count;
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D??");
+	Common::sort(files.begin(), files.end());
 
-	return count;
+	SaveStateList saveList;
+	for (uint i = 0; i < files.size(); ++i) {
+		const Common::String &file = files[i];
+		Common::InSaveFile *stream = saveFileMan->openForLoading(file);
+		if (!stream)
+			error("cannot open save file %s", file.c_str());
+		char name[17] = {};
+		stream->seek(0x61);
+		stream->read(name, sizeof(name) - 1);
+		delete stream;
+
+		int slotNum = atoi(file.c_str() + file.size() - 2);
+		SaveStateDescriptor sd(slotNum, name);
+		saveList.push_back(sd);
+		if (slotNum < 21)
+			Common::strlcpy(&_saveNames[17 * slotNum + 1], name, 16);	// the first character is unused
+	}
+
+	// FIXME: Can the following be safely removed?
+//	al = saveList.size() <= 7 ? (uint8)saveList.size() : 7;
+
+	return saveList.size();
 }
 
-void DreamGenContext::loadOld() {
-	if (data.byte(kCommandtype) != 252) {
-		data.byte(kCommandtype) = 252;
-		commandOnly(48);
-	}
+void DreamWebEngine::loadOld() {
+	commandOnlyCond(48, 252);
 
-	if (!(data.word(kMousebutton) & 1))
+	if (!(_mouseButton & 1))
 		return;
 
 	doLoad(-1);
 
-	if (data.byte(kGetback) == 4 || quitRequested())
+	if (_getBack == 4 || _quitRequested)
 		return;
 
 	showDecisions();
 	workToScreenM();
-	data.byte(kGetback) = 0;
+	_getBack = 0;
 }
 
-void DreamGenContext::loadSaveBox() {
-	loadIntoTemp("DREAMWEB.G08");
+void DreamWebEngine::showDecisions() {
+	createPanel2();
+	showOpBox();
+	showFrame(_saveGraphics, kOpsx + 17, kOpsy + 13, 6, 0);
+	underTextLine();
+}
+
+void DreamWebEngine::loadSaveBox() {
+	loadGraphicsFile(_saveGraphics, "G08");
 }
 
 // show savegame names (original interface), and set kCursorpos
-void DreamBase::showNames() {
+void DreamWebEngine::showNames() {
+	unsigned int offset = 7 * _saveLoadPage;
 	for (int slot = 0; slot < 7; ++slot) {
 		// The first character of the savegame name is unused
-		Common::String name(&_saveNames[17*slot + 1]);
+		Common::String name(&_saveNames[17 * (slot + offset) + 1]);
 
-		if (slot != data.byte(kCurrentslot)) {
+		if (slot != _currentSlot) {
 			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
 			continue;
 		}
-		if (data.byte(kLoadingorsave) != 2) {
-			data.word(kCharshift) = 91;
+		if (_loadingOrSave != 2) {
+			_charShift = 91;
 			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
-			data.word(kCharshift) = 0;
+			_charShift = 0;
 			continue;
 		}
 
 		int pos = name.size();
-		data.byte(kCursorpos) = pos;
+		_cursorPos = pos;
 		name += '/'; // cursor character
 		printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
 	}
 }
 
-void DreamGenContext::checkInput() {
-	if (data.byte(kLoadingorsave) == 3)
+void DreamWebEngine::checkInput() {
+	if (_loadingOrSave == 3)
 		return;
 
 	readKey();
 
+	unsigned int slot = _currentSlot + 7 * _saveLoadPage;
+
 	// The first character of the savegame name is unused
-	char *name = &_saveNames[17*data.byte(kCurrentslot) + 1];
+	char *name = &_saveNames[17*slot + 1];
 
-	if (data.byte(kCurrentkey) == 0) {
+	if (_currentKey == 0) {
 		return;
-	} else if (data.byte(kCurrentkey) == 13) {
-		data.byte(kLoadingorsave) = 3;
-	} else if (data.byte(kCurrentkey) == 8) {
-		if (data.byte(kCursorpos) == 0)
+	} else if (_currentKey == 13) {
+		_loadingOrSave = 3;
+	} else if (_currentKey == 8) {
+		if (_cursorPos == 0)
 			return;
 
-		--data.byte(kCursorpos);
-		name[data.byte(kCursorpos)] = 0;
-		name[data.byte(kCursorpos)+1] = 1;
+		--_cursorPos;
+		name[_cursorPos] = 0;
+		name[_cursorPos+1] = 1;
 	} else {
-		if (data.byte(kCursorpos) == 14)
+		if (_cursorPos == 14)
 			return;
 
-		name[data.byte(kCursorpos)] = data.byte(kCurrentkey);
-		name[data.byte(kCursorpos)+1] = 0;
-		name[data.byte(kCursorpos)+2] = 1;
-		++data.byte(kCursorpos);
+		name[_cursorPos] = _currentKey;
+		name[_cursorPos+1] = 0;
+		name[_cursorPos+2] = 1;
+		++_cursorPos;
 	}
 
 	showOpBox();
@@ -522,5 +775,85 @@ void DreamGenContext::checkInput() {
 	workToScreenM();
 }
 
+void DreamWebEngine::selectSaveLoadPage() {
+	commandOnlyCond(31, 254);
 
-} // End of namespace DreamGen
+	if (_mouseButton != 1 || _mouseButton == _oldButton)
+		return;
+	uint saveLoadPage = (_mouseX - (kOpsx + 158)) / 18;
+	if (saveLoadPage != _saveLoadPage) {
+		_saveLoadPage = saveLoadPage;
+		// This will also make the first slot the selected one, based
+		// on the mouse Y position. I can't decide if this is a feature
+		// or not.
+		selectSlot();
+	}
+}
+
+void DreamWebEngine::selectSlot() {
+	commandOnlyCond(45, 244);
+
+	if (_mouseButton != 1 || _mouseButton == _oldButton)
+		return; // noselslot
+	if (_loadingOrSave == 3)
+		_loadingOrSave--;
+
+	oldToNames();
+	int y = _mouseY - (kOpsy + 4);
+	if (y < 11)
+		_currentSlot = 0;
+	else
+		_currentSlot = y / 11;
+
+	delPointer();
+	showOpBox();
+	showSlots();
+	showNames();
+	if (_loadingOrSave == 1)
+		showLoadOps();
+	else
+		showSaveOps();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamWebEngine::showSlots() {
+	showFrame(_icons1, kOpsx + 158, kOpsy - 11, 12, 0);
+	showFrame(_icons1, kOpsx + 158 + 18 * _saveLoadPage, kOpsy - 11, 13 + _saveLoadPage, 0);
+	showFrame(_saveGraphics, kOpsx + 7, kOpsy + 8, 2, 0);
+
+	uint16 y = kOpsy + 11;
+
+	for (int slot = 0; slot < 7; slot++) {
+		if (slot == _currentSlot)
+			showFrame(_saveGraphics, kOpsx + 10, y, 3, 0);
+
+		y += 10;
+	}
+}
+
+void DreamWebEngine::showOpBox() {
+	showFrame(_saveGraphics, kOpsx, kOpsy, 0, 0);
+
+	// This call displays half of the ops dialog in the CD version. It's not
+	// in the floppy version, and if it's called, a stray red dot is shown in
+	// the game dialogs.
+	if (isCD())
+		showFrame(_saveGraphics, kOpsx, kOpsy + 55, 4, 0);
+}
+
+void DreamWebEngine::showLoadOps() {
+	showFrame(_saveGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(_saveGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	printMessage(kOpsx + 104, kOpsy + 14, 55, 101, (101 & 1));
+}
+
+void DreamWebEngine::showSaveOps() {
+	showFrame(_saveGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(_saveGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
+}
+
+} // End of namespace DreamWeb

@@ -130,10 +130,10 @@ SeekableReadStream *FSNode::createReadStream() const {
 
 	if (!_realNode->exists()) {
 		warning("FSNode::createReadStream: '%s' does not exist", getName().c_str());
-		return false;
+		return 0;
 	} else if (_realNode->isDirectory()) {
 		warning("FSNode::createReadStream: '%s' is a directory", getName().c_str());
-		return false;
+		return 0;
 	}
 
 	return _realNode->createReadStream();
@@ -197,7 +197,7 @@ FSNode *FSDirectory::lookupCache(NodeCache &cache, const String &name) const {
 	return 0;
 }
 
-bool FSDirectory::hasFile(const String &name) {
+bool FSDirectory::hasFile(const String &name) const {
 	if (name.empty() || !_node.isDirectory())
 		return false;
 
@@ -205,7 +205,7 @@ bool FSDirectory::hasFile(const String &name) {
 	return node && node->exists();
 }
 
-ArchiveMemberPtr FSDirectory::getMember(const String &name) {
+const ArchiveMemberPtr FSDirectory::getMember(const String &name) const {
 	if (name.empty() || !_node.isDirectory())
 		return ArchiveMemberPtr();
 
@@ -295,7 +295,7 @@ void FSDirectory::ensureCached() const  {
 	_cached = true;
 }
 
-int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
+int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
 	if (!_node.isDirectory())
 		return 0;
 
@@ -308,7 +308,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	lowercasePattern.toLowercase();
 
 	int matches = 0;
-	NodeCache::iterator it = _fileCache.begin();
+	NodeCache::const_iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); ++it) {
 		if (it->_key.matchString(lowercasePattern, false, true)) {
 			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
@@ -318,7 +318,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	return matches;
 }
 
-int FSDirectory::listMembers(ArchiveMemberList &list) {
+int FSDirectory::listMembers(ArchiveMemberList &list) const {
 	if (!_node.isDirectory())
 		return 0;
 
@@ -326,7 +326,7 @@ int FSDirectory::listMembers(ArchiveMemberList &list) {
 	ensureCached();
 
 	int files = 0;
-	for (NodeCache::iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
+	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
 		list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 		++files;
 	}

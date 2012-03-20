@@ -346,7 +346,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 			if (offset + sizeof(int16) > _multiTableData.size() * sizeof(int16)) {
 				error("wrong multiTileEntryData->offset");
 			}
-			tiles = (int16*)((byte*)&_multiTableData.front() + offset);
+			tiles = (int16 *)((byte *)&_multiTableData.front() + offset);
 			tileIndex = *tiles;
 			if (tileIndex >= 256) {
 				warning("something terrible happened");

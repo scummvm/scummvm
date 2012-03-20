@@ -269,20 +269,20 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		_object17.setVisage(301);
 		_object17.setStrip(1);
 		_object17.setPosition(Common::Point(87, 88));
-		_object17.setDetails(300, 11, 13, 2, 1, NULL);
+		_object17.setDetails(300, 11, 13, 2, 1, (SceneItem *)NULL);
 
 		_object18.postInit();
 		_object18.setVisage(301);
 		_object18.setStrip(1);
 		_object18.setPosition(Common::Point(137, 92));
-		_object18.setDetails(300, 11, 13, 3, 1, NULL);
+		_object18.setDetails(300, 11, 13, 3, 1, (SceneItem *)NULL);
 	}
 
 	_object19.postInit();
 	_object19.setVisage(301);
 	_object19.setStrip(1);
 	_object19.setPosition(Common::Point(175, 99));
-	_object19.setDetails(300, 11, 13, 34, 1, NULL);
+	_object19.setDetails(300, 11, 13, 34, 1, (SceneItem *)NULL);
 
 	_object11.postInit();
 	_object11.setVisage(301);
@@ -945,7 +945,7 @@ void Scene315::Action1::signal() {
 			T2_GLOBALS._uiElements.addScore(30);
 			BF_INVENTORY.setObjectScene(INV_MUG_SHOT, 1);
 			//HACK: This has to be checked wether or not it occurs in the original.
-			//When the _sceneMode is set to 3169, the value desn't change. 
+			//When the _sceneMode is set to 3169, the value desn't change.
 			//If you show the forest rapsheet, it gives points (and again... and again...)
 			scene->_sceneMode = 3154;
 		}
@@ -1015,7 +1015,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_atfMemo.setStrip(4);
 		_atfMemo.setFrame(4);
 		_atfMemo.fixPriority(82);
-		_atfMemo.setDetails(315, -1, -1, -1, 1, NULL);
+		_atfMemo.setDetails(315, -1, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	if (BF_GLOBALS._dayNumber == 1) {
@@ -1026,7 +1026,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 			_bulletinMemo.setStrip(4);
 			_bulletinMemo.setFrame(2);
 			_bulletinMemo.fixPriority(82);
-			_bulletinMemo.setDetails(315, -1, -1, -1, 1, NULL);
+			_bulletinMemo.setDetails(315, -1, -1, -1, 1, (SceneItem *)NULL);
 		}
 	} else if ((BF_INVENTORY._daNote._sceneNumber != 1) && (BF_GLOBALS._dayNumber < 3)) {
 		_object2.postInit();
@@ -1035,7 +1035,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_object2.setFrame(2);
 		_object2.setPosition(Common::Point(304, 31));
 		_object2.fixPriority(70);
-		_object2.setDetails(315, 3, 4, -1, 1, NULL);
+		_object2.setDetails(315, 3, 4, -1, 1, (SceneItem *)NULL);
 	}
 
 	_sutterSlot.setDetails(12, 315, 35, -1, 36, 1);
@@ -2686,7 +2686,7 @@ void Scene350::postInit(SceneObjectList *OwnerList) {
 			_harrison.setObjectWrapper(new SceneObjectWrapper());
 			_harrison.animate(ANIM_MODE_1, NULL);
 			_harrison.changeZoom(-1);
-			_harrison.setDetails(350, 12, 13, 14, 1, NULL);
+			_harrison.setDetails(350, 12, 13, 14, 1, (SceneItem *)NULL);
 			_harrison._moveDiff = Common::Point(2, 1);
 
 			_stripManager.addSpeaker(&_harrisonSpeaker);
@@ -3586,7 +3586,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 			_lyle.setStrip(1);
 			_lyle.setAction(&_action1);
 			_lyle._flag = BF_GLOBALS.getFlag(fTookTrailerAmmo) ? 1 : 0;
-			_lyle.setDetails(355, 40, 42, 41, 1, NULL);
+			_lyle.setDetails(355, 40, 42, 41, 1, (SceneItem *)NULL);
 		}
 
 		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_JAR) == 0) &&
@@ -3671,7 +3671,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_item3._sceneRegionId = 18;
-	_harrison.setDetails(355, 18, 20, 19, 1, NULL);
+	_harrison.setDetails(355, 18, 20, 19, 1, (SceneItem *)NULL);
 	_item6.setDetails(10, 355, 2, -1, 14, 1);
 	_item7.setDetails(11, 355, 3, -1, 15, 1);
 	_item8.setDetails(12, 355, 4, -1, 8, 1);
@@ -4509,12 +4509,12 @@ void Scene360::signal() {
 		break;
 	case 3607:
 	case 3609:
-		// Original game was only using at this place visage 1363. 
+		// Original game was only using at this place visage 1363.
 		// This workaround allow Harrison to keep his gun handy
 		// when entering the romm (if required)
 		if (! BF_GLOBALS.getFlag(gunDrawn))
 			_harrison.setVisage(1363);
-		else 
+		else
 			_harrison.setVisage(363);
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -4944,7 +4944,7 @@ void Scene370::signal() {
 	case 3:
 		break;
 	case 3707:
-		_object5.setDetails(370, 6, -1, 7, 1, NULL);
+		_object5.setDetails(370, 6, -1, 7, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.push_back(&_object5);
 		// Deliberate fall-through
 	case 3700:
@@ -5138,7 +5138,7 @@ void Scene380::postInit(SceneObjectList *OwnerList) {
 	_door.setVisage(380);
 	_door.setStrip(4);
 	_door.setPosition(Common::Point(132, 66));
-	_door.setDetails(380, 12, 13, -1, 1, NULL);
+	_door.setDetails(380, 12, 13, -1, 1, (SceneItem *)NULL);
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
@@ -5153,7 +5153,7 @@ void Scene380::postInit(SceneObjectList *OwnerList) {
 		// Show vechile as car
 		_vechile.setStrip(3);
 		_vechile.setPosition(Common::Point(273, 125));
-		_vechile.setDetails(580, 2, 3, -1, 1, NULL);
+		_vechile.setDetails(580, 2, 3, -1, 1, (SceneItem *)NULL);
 
 		BF_GLOBALS._player.setVisage(129);
 		BF_GLOBALS._walkRegions.disableRegion(12);
@@ -5166,14 +5166,14 @@ void Scene380::postInit(SceneObjectList *OwnerList) {
 	} else if (BF_GLOBALS.getFlag(onDuty)) {
 		// Show on duty motorcycle
 		_vechile.setStrip(2);
-		_vechile.setDetails(300, 11, 13, -1, 1, NULL);
+		_vechile.setDetails(300, 11, 13, -1, 1, (SceneItem *)NULL);
 		_vechile.setPosition(Common::Point(252, 115));
 
 		BF_GLOBALS._player.setVisage(1341);
 	} else {
 		// Show off duty motorcycle
 		_vechile.setStrip(1);
-		_vechile.setDetails(580, 0, 1, -1, 1, NULL);
+		_vechile.setDetails(580, 0, 1, -1, 1, (SceneItem *)NULL);
 		_vechile.setPosition(Common::Point(249, 110));
 
 		BF_GLOBALS._player.setVisage(129);
@@ -5365,7 +5365,7 @@ bool Scene385::Jim::startAction(CursorType action, Event &event) {
 	} else if (action < CURSOR_WALK)
 		// Any other inventory item
 		return false;
-	else 
+	else
 		return NamedObject::startAction(action, event);
 }
 
@@ -5479,19 +5479,19 @@ void Scene385::postInit(SceneObjectList *OwnerList) {
 	_jim.setVisage(385);
 	_jim.setStrip(3);
 	_jim.setPosition(Common::Point(304, 113));
-	_jim.setDetails(385, 1, -1, 2, 1, NULL);
+	_jim.setDetails(385, 1, -1, 2, 1, (SceneItem *)NULL);
 
 	_dezi.postInit();
 	_dezi.setVisage(385);
 	_dezi.setStrip(2);
 	_dezi.setPosition(Common::Point(235, 93));
 	_dezi.fixPriority(120);
-	_dezi.setDetails(385, 3, -1, 2, 1, NULL);
+	_dezi.setDetails(385, 3, -1, 2, 1, (SceneItem *)NULL);
 
 	_door.postInit();
 	_door.setVisage(385);
 	_door.setPosition(Common::Point(107, 27));
-	_door.setDetails(385, 0, -1, -1, 1, NULL);
+	_door.setDetails(385, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	BF_GLOBALS._walkRegions.disableRegion(6);
 
@@ -5875,13 +5875,13 @@ void Scene390::postInit(TsAGE::SceneObjectList *OwnerList) {
 	_object2.setPosition(Common::Point(38, 84));
 	_object2.fixPriority(50);
 	_object2._flag = 0;
-	_object2.setDetails(390, 10, 17, 10, 1, NULL);
+	_object2.setDetails(390, 10, 17, 10, 1, (SceneItem *)NULL);
 
 	_door.postInit();
 	_door.setVisage(390);
 	_door.setStrip(2);
 	_door.setPosition(Common::Point(151, 18));
-	_door.setDetails(390, 5, -1, -1, 1, NULL);
+	_door.setDetails(390, 5, -1, -1, 1, (SceneItem *)NULL);
 
 	BF_GLOBALS._player.disableControl();
 	_sceneMode = 3901;
@@ -5892,7 +5892,7 @@ void Scene390::postInit(TsAGE::SceneObjectList *OwnerList) {
 		_green.setVisage(392);
 		_green.setPosition(Common::Point(241, 164));
 		_green.fixPriority(153);
-		_green.setDetails(390, 12, -1, 13, 1, NULL);
+		_green.setDetails(390, 12, -1, 13, 1, (SceneItem *)NULL);
 		_green._flag = 0;
 	}
 
@@ -5902,7 +5902,7 @@ void Scene390::postInit(TsAGE::SceneObjectList *OwnerList) {
 		_gangMember1.setPosition(Common::Point(273, 169));
 		_gangMember1.fixPriority(152);
 		_gangMember1._flag = 0;
-		_gangMember1.setDetails(390, 19, -1, 20, 1, NULL);
+		_gangMember1.setDetails(390, 19, -1, 20, 1, (SceneItem *)NULL);
 
 		_gangMember2.postInit();
 		_gangMember2.setVisage(396);
@@ -5910,7 +5910,7 @@ void Scene390::postInit(TsAGE::SceneObjectList *OwnerList) {
 		_gangMember2.setPosition(Common::Point(241, 153));
 		_gangMember2.fixPriority(152);
 		_gangMember2._flag = 0;
-		_gangMember2.setDetails(390, 19, -1, 20, 1, NULL);
+		_gangMember2.setDetails(390, 19, -1, 20, 1, (SceneItem *)NULL);
 	}
 
 	_item1.setDetails(Rect(22, 40, 77, 67), 390, 0, -1, 1, 1, NULL);
@@ -5944,7 +5944,7 @@ void Scene390::signal() {
 		_object3.setVisage(390);
 		_object3.setPosition(Common::Point(250, 60));
 		_object3.fixPriority(255);
-		_object3.setDetails(390, 8, -1, 9, 2, NULL);
+		_object3.setDetails(390, 8, -1, 9, 2, (SceneItem *)NULL);
 
 		BF_GLOBALS._player.enableControl();
 		break;

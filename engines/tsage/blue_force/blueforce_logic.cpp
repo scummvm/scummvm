@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
@@ -42,8 +43,25 @@ namespace TsAGE {
 namespace BlueForce {
 
 void BlueForceGame::start() {
-	// Start the game
-	g_globals->_sceneManager.changeScene(20);
+	int slot = -1;
+
+	// Check for a savegame to load straight from the launcher
+	if (ConfMan.hasKey("save_slot")) {
+		slot = ConfMan.getInt("save_slot");
+		Common::String file = g_vm->generateSaveName(slot);
+		Common::InSaveFile *in = g_vm->_system->getSavefileManager()->openForLoading(file);
+		if (in)
+			delete in;
+		else
+			slot = -1;
+	}
+
+	if (slot >= 0)
+		// Set the savegame slot to load in the main loop
+		g_globals->_sceneHandler->_loadGameSlot = slot;
+	else
+		// Switch to the title screen
+		g_globals->_sceneManager.setNewScene(20);
 }
 
 Scene *BlueForceGame::createScene(int sceneNumber) {
@@ -255,14 +273,16 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
  * Returns true if it is currently okay to restore a game
  */
 bool BlueForceGame::canLoadGameStateCurrently() {
-	return true;
+	// Don't allow a game to be loaded if a dialog is active
+	return g_globals->_gfxManagers.size() == 1;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool BlueForceGame::canSaveGameStateCurrently() {
-	return true;
+	// Don't allow a game to be saved if a dialog is active
+	return g_globals->_gfxManagers.size() == 1;
 }
 
 void BlueForceGame::rightClick() {
@@ -533,35 +553,6 @@ bool NamedObject::startAction(CursorType action, Event &event) {
 	return handled;
 }
 
-void NamedObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	switch (mode) {
-	case 2:
-		g_globals->_sceneItems.push_front(this);
-		break;
-	case 4:
-		g_globals->_sceneItems.addBefore(item, this);
-		break;
-	case 5:
-		g_globals->_sceneItems.addAfter(item, this);
-		break;
-	default:
-		g_globals->_sceneItems.push_back(this);
-		break;
-	}
-}
-
-void NamedObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-}
-
 /*--------------------------------------------------------------------------*/
 
 CountdownObject::CountdownObject(): NamedObject() {
@@ -742,7 +733,7 @@ void SceneExt::remove() {
 			_action->_endHandler = NULL;
 		_action->remove();
 	}
-	
+
 	_focusObject = NULL;
 }
 
@@ -1335,7 +1326,7 @@ bool BlueForceInvObjectList::SelectItem(int objectNumber) {
 		AmmoBeltDialog *dlg = new AmmoBeltDialog();
 		dlg->execute();
 		delete dlg;
-	
+
 		return true;
 	}
 
@@ -1374,58 +1365,6 @@ bool NamedHotspot::startAction(CursorType action, Event &event) {
 		return true;
 	default:
 		return SceneHotspot::startAction(action, event);
-	}
-}
-
-void NamedHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
-	setBounds(ys, xe, ye, xs);
-	_resNum = resnum;
-	_lookLineNum = lookLineNum;
-	_useLineNum = useLineNum;
-	_talkLineNum = -1;
-	g_globals->_sceneItems.addItems(this, NULL);
-}
-
-void NamedHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
-	setBounds(bounds);
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	switch (mode) {
-	case 2:
-		g_globals->_sceneItems.push_front(this);
-		break;
-	case 4:
-		g_globals->_sceneItems.addBefore(item, this);
-		break;
-	case 5:
-		g_globals->_sceneItems.addAfter(item, this);
-		break;
-	default:
-		g_globals->_sceneItems.push_back(this);
-		break;
-	}
-}
-
-void NamedHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
-	_sceneRegionId = sceneRegionId;
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	// Handle adding hotspot to scene items list as necessary
-	switch (mode) {
-	case 2:
-		GLOBALS._sceneItems.push_front(this);
-		break;
-	case 3:
-		break;
-	default:
-		GLOBALS._sceneItems.push_back(this);
-		break;
 	}
 }
 
@@ -1469,7 +1408,7 @@ void SceneMessage::signal() {
 }
 
 void SceneMessage::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) || 
+	if ((event.eventType == EVENT_BUTTON_DOWN) ||
 		((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
 		signal();
 	}
@@ -1500,7 +1439,7 @@ void SceneMessage::draw() {
 
 void SceneMessage::clear() {
 	// Fade out the text display
-	static const uint32 black = 0;	
+	static const uint32 black = 0;
 	BF_GLOBALS._scenePalette.fade((const byte *)&black, false, 100);
 
 	// Refresh the background

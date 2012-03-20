@@ -1104,7 +1104,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 		if ((index == -1) && (subElem == -1))
 			_events[i].action = 0;
 		else
-			_events[i].action = (act*)&_actListArr[index][subElem];
+			_events[i].action = (act *)&_actListArr[index][subElem];
 
 		_events[i].localActionFl = (f->readByte() == 1) ? true : false;
 		_events[i].time = f->readUint32BE();

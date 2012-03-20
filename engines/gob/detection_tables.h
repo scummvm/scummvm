@@ -4057,6 +4057,24 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640x480,
 		"intro2.stk", 0, 0
 	},
+	{ // Supplied by Hkz
+		{
+			"playtoons2",
+			"",
+			{
+				{"playtoon.stk", 0, "2572685400852d12759a2fbf09ec88eb", 9698780},
+				{"spirou.stk", 0, "d3cfeff920b6343a2ece55088f530dba", 7076608},
+				{0, 0, 0, 0}
+			},
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+		},
+		kGameTypePlaytoons,
+		kFeatures640x480,
+		"intro2.stk", 0, 0
+	},
 	{ // Supplied by scoriae in the forums
 		{
 			"playtoons2",

@@ -108,6 +108,21 @@ protected:
 };
 #endif // ENABLE_LOL
 
+#ifdef ENABLE_EOB
+class EoBCoreEngine;
+
+class Debugger_EoB : public Debugger {
+public:
+	Debugger_EoB(EoBCoreEngine *vm);
+
+	virtual void initialize();
+protected:
+	EoBCoreEngine *_vm;
+
+	bool cmd_importSaveFile(int argc, const char **argv);
+};
+#endif // ENABLE_EOB
+
 } // End of namespace Kyra
 
 #endif

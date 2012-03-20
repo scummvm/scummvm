@@ -997,7 +997,7 @@ bool Character::loadShadowAnimation(const Common::String &animName) {
 
 void Character::plotPath(Graphics::Surface& surface) {
 	for (int i = 0; i < _currentPathNodeCount; i++) {
-		 *(byte*)surface.getBasePtr(_currentPathX[i], _currentPathY[i]) = ( i < _currentPathNode);
+		 *(byte *)surface.getBasePtr(_currentPathX[i], _currentPathY[i]) = ( i < _currentPathNode);
 	}
 }
 

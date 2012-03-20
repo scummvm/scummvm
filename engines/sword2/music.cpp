@@ -115,7 +115,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		fh->idxLen = fh->file.readUint32LE();
 		fh->file.seek(entrySize * 4);
 
-		fh->idxTab = (uint32*)malloc(fh->idxLen * 3 * sizeof(uint32));
+		fh->idxTab = (uint32 *)malloc(fh->idxLen * 3 * sizeof(uint32));
 		for (uint32 cnt = 0; cnt < fh->idxLen; cnt++) {
 			fh->idxTab[cnt * 3 + 0] = fh->file.readUint32LE();
 			fh->idxTab[cnt * 3 + 1] = fh->file.readUint32LE();
@@ -160,19 +160,19 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 			return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode: {
-		Common::SafeSubReadStream *tmp = new Common::SafeSubReadStream(&fh->file, pos, pos + enc_len);
+		Common::SafeSeekableSubReadStream *tmp = new Common::SafeSeekableSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
 		}
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode: {
-		Common::SafeSubReadStream *tmp = new Common::SafeSubReadStream(&fh->file, pos, pos + enc_len);
+		Common::SafeSeekableSubReadStream *tmp = new Common::SafeSeekableSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 		}
 #endif
 #ifdef USE_FLAC
 	case kFLACMode: {
-		Common::SafeSubReadStream *tmp = new Common::SafeSubReadStream(&fh->file, pos, pos + enc_len);
+		Common::SafeSeekableSubReadStream *tmp = new Common::SafeSeekableSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 		}
 #endif

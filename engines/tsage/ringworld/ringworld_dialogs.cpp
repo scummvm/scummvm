@@ -183,8 +183,10 @@ void RightClickDialog::execute() {
 		}
 
 		g_system->delayMillis(10);
-		g_system->updateScreen();
+		GLOBALS._screenSurface.updateScreen();
 	}
+
+	_gfxManager.deactivate();
 
 	// Execute the specified action
 	switch (_selectedAction) {
@@ -213,8 +215,6 @@ void RightClickDialog::execute() {
 		Ringworld::OptionsDialog::show();
 		break;
 	}
-
-	_gfxManager.deactivate();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -394,7 +394,7 @@ void InventoryDialog::execute() {
 		Event event;
 		while (!g_globals->_events.getEvent(event) && !g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 		}
 		if (g_vm->shouldQuit())
 			break;

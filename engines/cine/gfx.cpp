@@ -1801,7 +1801,7 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 	for (it = g_cine->_bgIncrustList.begin(); it != g_cine->_bgIncrustList.end(); ++it) {
 		tmpWidth = g_cine->_animDataTable[it->frame]._realWidth;
 		tmpHeight = g_cine->_animDataTable[it->frame]._height;
-		mask = (byte*)malloc(tmpWidth * tmpHeight);
+		mask = (byte *)malloc(tmpWidth * tmpHeight);
 
 		if (it->param == 0) {
 			generateMask(g_cine->_animDataTable[it->frame].data(), mask, tmpWidth * tmpHeight, it->part);

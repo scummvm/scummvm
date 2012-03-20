@@ -43,8 +43,6 @@ class GuiObject;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
 
-ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd);
-
 class OptionsDialog : public Dialog {
 public:
 	OptionsDialog(const Common::String &domain, int x, int y, int w, int h);
@@ -89,6 +87,8 @@ protected:
 
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
+	int _midiTabId;
+	int _pathsTabId;
 
 private:
 	//
@@ -192,6 +192,8 @@ public:
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+	virtual void reflowLayout();
 
 protected:
 #ifdef SMALL_SCREEN_DEVICE

@@ -25,6 +25,7 @@
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
+#include "graphics/palette.h"	// temporary, for the fadeIn()/fadeOut() functions below
 
 #include "gui/message.h"
 
@@ -58,11 +59,13 @@
 namespace Sci {
 
 static int16 adjustGraphColor(int16 color) {
-	// WORKAROUND: SCI1 EGA and Amiga games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (getSciVersion() >= SCI_VERSION_1_EARLY && g_sci->getResMan()->getViewType() == kViewEga)
+	// WORKAROUND: EGA and Amiga games can set invalid colors (above 0 - 15).
+	// It seems only the lower nibble was used in these games.
+	// bug #3048908, #3486899.
+	// Confirmed in EGA games KQ4(late), QFG1(ega), LB1 that
+	// at least FillBox (only one of the functions using adjustGraphColor)
+	// behaves like this.
+	if (g_sci->getResMan()->getViewType() == kViewEga)
 		return color & 0x0F;	// 0 - 15
 	else
 		return color;
@@ -1212,7 +1215,8 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	switch (operation) {
 	case 0:	{ // Set remapping to base. 0 turns remapping off.
 		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
-		warning("kRemapColors: Set remapping to base %d", base);
+		if (base != 0)	// 0 is the default behavior when changing rooms in GK1, thus silencing the warning
+			warning("kRemapColors: Set remapping to base %d", base);
 		}
 		break;
 	case 1:	{ // unknown
@@ -1440,6 +1444,46 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// Taken from the SCI16 GfxTransitions class
+static void fadeOut() {
+	byte oldPalette[3 * 256], workPalette[3 * 256];
+	int16 stepNr, colorNr;
+	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
+	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
+
+	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
+
+	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
+		for (colorNr = 1; colorNr <= tillColorNr; colorNr++) {
+			if (g_sci->_gfxPalette->colorIsFromMacClut(colorNr)) {
+				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3];
+				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1];
+				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2];
+			} else {
+				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3] * stepNr / 100;
+				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1] * stepNr / 100;
+				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2] * stepNr / 100;
+			}
+		}
+		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, tillColorNr);
+		g_sci->getEngineState()->wait(2);
+	}
+}
+
+// Taken from the SCI16 GfxTransitions class
+static void fadeIn() {
+	int16 stepNr;
+	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
+	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
+
+	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
+		g_sci->_gfxPalette->kernelSetIntensity(1, tillColorNr + 1, stepNr, true);
+		g_sci->getEngineState()->wait(2);
+	}
+}
+
 /**
  * Used for scene transitions, replacing (but reusing parts of) the old
  * transition code.
@@ -1450,31 +1494,65 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// tables inside graphics/transitions.cpp
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
 	reg_t planeObj = argv[1];	// the affected plane
-	//argv[2]	// seconds that the transition lasts
-	//argv[3]	// back color to be used(?)
-	//int16 priority = argv[4].toSint16();
-	//argv[5]	// boolean, animate or not while the transition lasts
-	//argv[6]	// refFrame
+	uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
+	uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
+	int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
+	uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
+	uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
+	int16 divisions;
 
 	// If the game has the pFadeArray selector, another parameter is used here,
 	// before the optional last parameter
-	/*bool hasFadeArray = g_sci->getKernel()->findSelector("pFadeArray") > 0;
+	bool hasFadeArray = g_sci->getKernel()->findSelector("pFadeArray") > 0;
 	if (hasFadeArray) {
 		// argv[7]
-		//int16 unk7 = (argc >= 9) ? argv[8].toSint16() : 0;	// divisions (transition steps?)
+		divisions = (argc >= 9) ? argv[8].toSint16() : -1;	// divisions (transition steps?)
 	} else {
-		//int16 unk7 = (argc >= 8) ? argv[7].toSint16() : 0;	// divisions (transition steps?)
-	}*/
+		divisions = (argc >= 8) ? argv[7].toSint16() : -1;	// divisions (transition steps?)
+	}
 
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
 		return s->r_acc;
 	}
 
+	// TODO: Proper implementation. This is a very basic version. I'm not even
+	// sure if the rest of the styles will work with this mechanism.
+
+	// Check if the passed parameters are the ones we expect
+	if (showStyle == 13 || showStyle == 14) {	// fade out / fade in
+		if (seconds != 1)
+			warning("kSetShowStyle(fade): seconds isn't 1, it's %d", seconds);
+		if (backColor != 0 && backColor != 0xFFFF)
+			warning("kSetShowStyle(fade): backColor isn't 0 or 0xFFFF, it's %d", backColor);
+		if (priority != 200)
+			warning("kSetShowStyle(fade): priority isn't 200, it's %d", priority);
+		if (animate != 0)
+			warning("kSetShowStyle(fade): animate isn't 0, it's %d", animate);
+		if (refFrame != 0)
+			warning("kSetShowStyle(fade): refFrame isn't 0, it's %d", refFrame);
+		if (divisions >= 0 && divisions != 20)
+			warning("kSetShowStyle(fade): divisions isn't 20, it's %d", divisions);
+	}
+
 	// TODO: Check if the plane is in the list of planes to draw
 
-	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-	kStub(s, argc, argv);
+	switch (showStyle) {
+	//case 0:	// no transition, perhaps? (like in the previous SCI versions)
+	case 13:	// fade out
+		// TODO: Temporary implementation, which ignores all additional parameters
+		fadeOut();
+		break;
+	case 14:	// fade in
+		// TODO: Temporary implementation, which ignores all additional parameters
+		g_sci->_gfxFrameout->kernelFrameout();	// draw new scene before fading in
+		fadeIn();
+		break;
+	default:
+		// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+		kStub(s, argc, argv);
+		break;
+	}
 
 	return s->r_acc;
 }

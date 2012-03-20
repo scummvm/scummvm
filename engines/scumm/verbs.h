@@ -57,6 +57,34 @@ struct VerbSlot {
 	uint16 imgindex;
 };
 
+enum VerbsV0 {
+	kVerbNone    = 0,
+	kVerbOpen    = 1,
+	kVerbClose   = 2,
+	kVerbGive    = 3,
+	kVerbTurnOn  = 4,
+	kVerbTurnOff = 5,
+	kVerbFix     = 6,
+	kVerbNewKid  = 7,
+	kVerbUnlock  = 8,
+	kVerbPush    = 9,
+	kVerbPull    = 10,
+	kVerbUse     = 11,
+	kVerbRead    = 12,
+	kVerbWalkTo  = 13,
+	kVerbPickUp  = 14,
+	kVerbWhatIs  = 15
+};
+
+enum VerbPrepsV0 {
+	kVerbPrepNone   = 0,
+	kVerbPrepIn     = 1,
+	kVerbPrepWith   = 2,
+	kVerbPrepOn     = 3,
+	kVerbPrepTo     = 4,
+	kVerbPrepObject = 0xFF // prep depends on object (USE)
+};
+
 } // End of namespace Scumm
 
 #endif

@@ -105,13 +105,6 @@ public:
 
 	//@}
 
-	/** @name Events and Time */
-	//@{
-
-	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
-
-	//@}
-
 	/** @name Mutex handling */
 	//@{
 

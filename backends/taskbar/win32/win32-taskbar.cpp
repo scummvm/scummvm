@@ -29,12 +29,8 @@
 #if defined(WIN32) && defined(USE_TASKBAR)
 
 // Needed for taskbar functions
-#if defined(__GNUC__)
-#ifdef __MINGW32__
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
 	#include "backends/taskbar/win32/mingw-compat.h"
-#else
-	#error Only compilation with MingW is supported
-#endif
 #else
 	// We need certain functions that are excluded by default
 	#undef NONLS
@@ -44,9 +40,12 @@
 		#undef ARRAYSIZE
 	#endif
 
-	// Default MSVC headers for ITaskbarList3 and IShellLink
-	#include <SDKDDKVer.h>
+	#if defined(_MSC_VER)
+		// Default MSVC headers for ITaskbarList3 and IShellLink
+		#include <SDKDDKVer.h>
+	#endif
 #endif
+
 #include <shlobj.h>
 
 // For HWND
@@ -75,7 +74,7 @@ Win32TaskbarManager::Win32TaskbarManager() : _taskbar(NULL), _count(0), _icon(NU
 	                              0,
 	                              CLSCTX_INPROC_SERVER,
 	                              IID_ITaskbarList3,
-	                              reinterpret_cast<void**> (&(_taskbar)));
+	                              reinterpret_cast<void **> (&(_taskbar)));
 
 	if (SUCCEEDED(hr)) {
 		// Initialize taskbar object
@@ -275,7 +274,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 
 	// Create a shell link.
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC, IID_IShellLinkW, reinterpret_cast<void**> (&link)))) {
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC, IID_IShellLinkW, reinterpret_cast<void **> (&link)))) {
 		// Convert game name and description to Unicode.
 		LPWSTR game = ansiToUnicode(name.c_str());
 		LPWSTR desc = ansiToUnicode(description.c_str());
@@ -297,7 +296,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 
 		// The link's display name must be set via property store.
 		IPropertyStore* propStore;
-		HRESULT hr = link->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**> (&(propStore)));
+		HRESULT hr = link->QueryInterface(IID_IPropertyStore, reinterpret_cast<void **> (&(propStore)));
 		if (SUCCEEDED(hr)) {
 			PROPVARIANT pv;
 			pv.vt = VT_LPWSTR;

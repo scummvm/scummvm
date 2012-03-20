@@ -585,7 +585,6 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 					// Print some debug info
 					int filesize = tmp->size();
-					if (d.md5Entry->filesize != filesize)
 					debug(1, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
 						file.c_str(), md5str.c_str(), filesize);
 
@@ -599,7 +598,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			}
 
 			if (isDiskImg)
-				closeDiskImage((ScummDiskImage*)tmp);
+				closeDiskImage((ScummDiskImage *)tmp);
 			delete tmp;
 		}
 
@@ -972,9 +971,6 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 	::detectGames(fslist, results, 0);
 
-	// TODO: We still don't handle the FM-TOWNS demos (like zakloom) very well.
-	// In particular, they are detected as ZakTowns, which is bad.
-
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
@@ -987,26 +983,6 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
 		dg["preferredtarget"] = generatePreferredTarget(*x);
-
-		// HACK: Detect and distinguish the FM-TOWNS demos
-		if (x->game.platform == Common::kPlatformFMTowns && (x->game.features & GF_DEMO)) {
-			if (x->md5 == "2d388339d6050d8ccaa757b64633954e") {
-				// Indy + Loom demo
-				dg.description() = "Indiana Jones and the Last Crusade & Loom";
-				dg.updateDesc(x->extra);
-				dg["preferredtarget"] = "indyloom";
-			} else if (x->md5 == "77f5c9cc0986eb729c1a6b4c8823bbae") {
-				// Zak + Loom demo
-				dg.description() = "Zak McKracken & Loom";
-				dg.updateDesc(x->extra);
-				dg["preferredtarget"] = "zakloom";
-			} else if (x->md5 == "3938ee1aa4433fca9d9308c9891172b1") {
-				// Indy + Zak demo
-				dg.description() = "Indiana Jones and the Last Crusade & Zak McKracken";
-				dg.updateDesc(x->extra);
-				dg["preferredtarget"] = "indyzak";
-			}
-		}
 
 		dg.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
 		dg.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));

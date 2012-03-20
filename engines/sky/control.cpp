@@ -535,7 +535,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 		return saveRestorePanel(true); // texts can be edited
 	case SAVE_A_GAME:
 		animClick(pButton);
-		return saveGameToFile();
+		return saveGameToFile(true);
 	case RESTORE_A_GAME:
 		animClick(pButton);
 		return restoreGameFromFile(false);
@@ -878,6 +878,8 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			clickRes = handleClick(lookList[0]);
 			if (clickRes == GAME_SAVED)
 				saveDescriptions(saveGameTexts);
+			else if (clickRes == NO_DISK_SPACE)
+				displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 			quitPanel = true;
 			_mouseClicked = false;
 			_keyPressed.reset();
@@ -972,7 +974,7 @@ void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
 
 		// Allow the key only if is a letter, a digit, or one of a selected
 		// list of extra characters
-		if (isalnum(kbd.ascii) || strchr(" ,().='-&+!?\"", kbd.ascii) != 0) {
+		if (Common::isAlnum(kbd.ascii) || strchr(" ,().='-&+!?\"", kbd.ascii) != 0) {
 			textBuf += kbd.ascii;
 		}
 	}
@@ -1092,34 +1094,32 @@ void Control::doAutoSave() {
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-	Common::OutSaveFile *outf;
 
-	outf = _saveFileMan->openForSaving(fName);
-	if (outf == NULL) {
-		displayMessage(0, "Unable to create autosave file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
-		return;
-	}
-	uint8 *saveData = (uint8 *)malloc(0x20000);
-	uint32 fSize = prepareSaveData(saveData);
+	uint16 res = saveGameToFile(false, fName);
 
-	outf->write(saveData, fSize);
-	outf->finalize();
+	if (res != GAME_SAVED)
+		displayMessage(0, "Unable to perform autosave to '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 
-	if (outf->err())
-		displayMessage(0, "Unable to write autosave file '%s'. Disk full? (%s)", fName, _saveFileMan->popErrorDesc().c_str());
-
-	delete outf;
-	free(saveData);
 }
 
-uint16 Control::saveGameToFile() {
+uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename) {
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	if (!filename) {
+		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+		filename = fName;
+	}
 
 	Common::OutSaveFile *outf;
-	outf = _saveFileMan->openForSaving(fName);
+	outf = _saveFileMan->openForSaving(filename);
 	if (outf == NULL)
 		return NO_DISK_SPACE;
+
+	if (!fromControlPanel) {
+		// These variables are usually set when entering the control panel,
+		// but not when using the GMM.
+		_savedCharSet = _skyText->giveCurrentCharSet();
+		_savedMouse = _skyMouse->giveCurrentMouseType();
+	}
 
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
@@ -1160,7 +1160,7 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 
 	for (cnt = 0; cnt < _skyCompact->_numSaveIds; cnt++) {
 		uint16 numElems;
-		uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
+		uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
 		for (uint16 elemCnt = 0; elemCnt < numElems; elemCnt++)
 			STOSW(destPos, rawCpt[elemCnt]);
 	}
@@ -1209,9 +1209,9 @@ void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems
 		else if (graphType == OG_COMPACT)
 			destCpt->grafixProgId = target;
 		else if (graphType == OG_TALKTABLE)
-			destCpt->grafixProgId = ((uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST))[target];
+			destCpt->grafixProgId = ((uint16 *)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST))[target];
 		else if (graphType == OG_COMPACTELEM)
-			destCpt->grafixProgId = *(uint16*)_skyCompact->getCompactElem(destCpt, target);
+			destCpt->grafixProgId = *(uint16 *)_skyCompact->getCompactElem(destCpt, target);
 		else
 			error("Illegal GrafixProg type encountered for compact %s", name);
 	}
@@ -1330,7 +1330,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSD(srcPos, mouseType);
 	LODSD(srcPos, palette);
 
-	_skyLogic->parseSaveData((uint32*)srcPos);
+	_skyLogic->parseSaveData((uint32 *)srcPos);
 	srcPos += NUM_SKY_SCRIPTVARS * sizeof(uint32);
 
 	for (cnt = 0; cnt < 60; cnt++)
@@ -1339,7 +1339,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	if (saveRev == SAVE_FILE_REVISION) {
 		for (cnt = 0; cnt < _skyCompact->_numSaveIds; cnt++) {
 			uint16 numElems;
-			uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
+			uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
 			for (uint16 elemCnt = 0; elemCnt < numElems; elemCnt++)
 				LODSW(srcPos, rawCpt[elemCnt]);
 		}
@@ -1348,19 +1348,19 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 			uint16 numElems;
 			uint16 type;
 			char name[128];
-			uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, &type, name);
+			uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, &type, name);
 			if (type == COMPACT) {
-				importOldCompact((Compact*)rawCpt, &srcPos, numElems, type, name);
+				importOldCompact((Compact *)rawCpt, &srcPos, numElems, type, name);
 			} else if (type == ROUTEBUF) {
 				assert(numElems == 32);
 				for (uint32 elemCnt = 0; elemCnt < numElems; elemCnt++)
 					LODSW(srcPos, rawCpt[elemCnt]);
 			}
 		}
-		uint16 *rawCpt = (uint16*)_skyCompact->fetchCpt(0xBF);
+		uint16 *rawCpt = (uint16 *)_skyCompact->fetchCpt(0xBF);
 		for (cnt = 0; cnt < 3; cnt++)
 			LODSW(srcPos, rawCpt[cnt]);
-		rawCpt = (uint16*)_skyCompact->fetchCpt(0xC2);
+		rawCpt = (uint16 *)_skyCompact->fetchCpt(0xC2);
 		for (cnt = 0; cnt < 13; cnt++)
 			LODSW(srcPos, rawCpt[cnt]);
 	}
@@ -1467,7 +1467,7 @@ void Control::restartGame() {
 		return; // no restart for floppy demo
 
 	uint8 *resetData = _skyCompact->createResetData((uint16)SkyEngine::_systemVars.gameVersion);
-	parseSaveData((uint8*)resetData);
+	parseSaveData((uint8 *)resetData);
 	free(resetData);
 	_skyScreen->forceRefresh();
 

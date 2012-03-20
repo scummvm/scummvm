@@ -42,7 +42,7 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 
 	while (_system->getMillis() <= nextTime) {
 		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() &&
-			!_specialSceneScriptState[_lastProcessedSceneScript]) {
+		        !_specialSceneScriptState[_lastProcessedSceneScript]) {
 			_specialSceneScriptRunFlag = true;
 
 			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
@@ -52,7 +52,7 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 		}
 
 		if (!_emc->isValid(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
-			_emc->start(&_sceneSpecialScripts[_lastProcessedSceneScript], _desc.firstAnimSceneScript+_lastProcessedSceneScript);
+			_emc->start(&_sceneSpecialScripts[_lastProcessedSceneScript], _desc.firstAnimSceneScript + _lastProcessedSceneScript);
 			_specialSceneScriptRunFlag = false;
 		}
 
@@ -155,14 +155,14 @@ int KyraEngine_v2::pathfinderInitPositionTable(int *moveTable) {
 	}
 
 	lastEntry = pathfinderAddToPositionTable(lastEntry, newX, newY);
-	_pathfinderPositionTable[lastEntry*2+0] = -1;
-	_pathfinderPositionTable[lastEntry*2+1] = -1;
+	_pathfinderPositionTable[lastEntry * 2 + 0] = -1;
+	_pathfinderPositionTable[lastEntry * 2 + 1] = -1;
 	return lastEntry;
 }
 
 int KyraEngine_v2::pathfinderAddToPositionTable(int index, int v1, int v2) {
-	_pathfinderPositionTable[index<<1] = v1;
-	_pathfinderPositionTable[(index<<1)+1] = v2;
+	_pathfinderPositionTable[index << 1] = v1;
+	_pathfinderPositionTable[(index << 1) + 1] = v2;
 	++index;
 	if (index >= 199)
 		--index;
@@ -173,23 +173,23 @@ int KyraEngine_v2::pathfinderInitPositionIndexTable(int tableLen, int x, int y) 
 	int x1 = 0, y1 = 0;
 	int x2 = 0, y2 = 0;
 	int lastEntry = 0;
-	int index2 = tableLen-1, index1 = 0;
+	int index2 = tableLen - 1, index1 = 0;
 	while (index2 > index1) {
-		x1 = _pathfinderPositionTable[index1*2+0] + x;
-		y1 = _pathfinderPositionTable[index1*2+1] + y;
-		x2 = _pathfinderPositionTable[index2*2+0] + x;
-		y2 = _pathfinderPositionTable[index2*2+1] + y;
+		x1 = _pathfinderPositionTable[index1 * 2 + 0] + x;
+		y1 = _pathfinderPositionTable[index1 * 2 + 1] + y;
+		x2 = _pathfinderPositionTable[index2 * 2 + 0] + x;
+		y2 = _pathfinderPositionTable[index2 * 2 + 1] + y;
 
 		if (directLinePassable(x1, y1, x2, y2)) {
 			lastEntry = pathfinderAddToPositionIndexTable(lastEntry, index2);
-			if (tableLen-1 == index2)
+			if (tableLen - 1 == index2)
 				break;
 			index1 = index2;
-			index2 = tableLen-1;
-		} else if (index1+1 == index2) {
+			index2 = tableLen - 1;
+		} else if (index1 + 1 == index2) {
 			lastEntry = pathfinderAddToPositionIndexTable(lastEntry, index2);
 			index1 = index2;
-			index2 = tableLen-1;
+			index2 = tableLen - 1;
 		} else {
 			--index2;
 		}
@@ -212,14 +212,14 @@ void KyraEngine_v2::pathfinderFinializePath(int *moveTable, int tableLen, int x,
 	int sizeLeft = moveTableSize;
 	for (int i = 0; i < tableLen; ++i) {
 		index2 = _pathfinderPositionIndexTable[i];
-		x1 = _pathfinderPositionTable[index1*2+0] + x;
-		y1 = _pathfinderPositionTable[index1*2+1] + y;
-		x2 = _pathfinderPositionTable[index2*2+0] + x;
-		y2 = _pathfinderPositionTable[index2*2+1] + y;
+		x1 = _pathfinderPositionTable[index1 * 2 + 0] + x;
+		y1 = _pathfinderPositionTable[index1 * 2 + 1] + y;
+		x2 = _pathfinderPositionTable[index2 * 2 + 0] + x;
+		y2 = _pathfinderPositionTable[index2 * 2 + 1] + y;
 
 		int wayLen = findWay(x1, y1, x2, y2, moveTable, sizeLeft);
 		moveTable += wayLen;
-		sizeLeft -= wayLen;	// unlike the original we want to be sure that the size left is correct
+		sizeLeft -= wayLen; // unlike the original we want to be sure that the size left is correct
 		index1 = index2;
 	}
 }

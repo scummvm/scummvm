@@ -34,7 +34,7 @@
 #include "common/tokenizer.h"
 #include "common/stream.h"
 
-#include "graphics/imagedec.h"
+#include "graphics/decoders/bmp.h"
 
 namespace Common {
 
@@ -116,7 +116,7 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 		_keyboard->_initialMode = _mode;
 
 	String resolutions = node->values["resolutions"];
-	StringTokenizer tok (resolutions, " ,");
+	StringTokenizer tok(resolutions, " ,");
 
 	// select best resolution simply by minimising the difference between the
 	// overlay size and the resolution dimensions.
@@ -189,7 +189,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 		}
 		evt->type = VirtualKeyboard::kVKEventKey;
 
-		KeyState *ks = (KeyState*) malloc(sizeof(KeyState));
+		KeyState *ks = (KeyState *)malloc(sizeof(KeyState));
 		ks->keycode = (KeyCode)atoi(node->values["code"].c_str());
 		ks->ascii = atoi(node->values["ascii"].c_str());
 		ks->flags = 0;
@@ -204,7 +204,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 		}
 
 		evt->type = VirtualKeyboard::kVKEventModifier;
-		byte *flags = (byte*) malloc(sizeof(byte));
+		byte *flags = (byte *)malloc(sizeof(byte));
 		if (!flags)
 			error("[VirtualKeyboardParser::parserCallback_event] Cannot allocate memory");
 
@@ -218,8 +218,8 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 		}
 
 		evt->type = VirtualKeyboard::kVKEventSwitchMode;
-		String& mode = node->values["mode"];
-		char *str = (char*) malloc(sizeof(char) * mode.size() + 1);
+		String &mode = node->values["mode"];
+		char *str = (char *)malloc(sizeof(char) * mode.size() + 1);
 		if (!str)
 			error("[VirtualKeyboardParser::parserCallback_event] Cannot allocate memory");
 
@@ -266,11 +266,15 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 
 	const Graphics::PixelFormat format = g_system->getOverlayFormat();
 
-	_mode->image = Graphics::ImageDecoder::loadFile(*file, format);
-	delete file;
+	{
+		Graphics::BitmapDecoder bmp;
+		if (!bmp.loadStream(*file))
+			return parserError("Error loading bitmap '" + _mode->bitmapName + "'");
 
-	if (!_mode->image)
-		return parserError("Error loading bitmap '" + _mode->bitmapName + "'");
+		_mode->image = bmp.getSurface()->convertTo(format);
+	}
+
+	delete file;
 
 	int r, g, b;
 	if (node->values.contains("transparent_color")) {
@@ -302,9 +306,9 @@ bool VirtualKeyboardParser::parserCallback_map(ParserNode *node) {
 }
 
 bool VirtualKeyboardParser::parserCallback_area(ParserNode *node) {
-	String& shape = node->values["shape"];
-	String& target = node->values["target"];
-	String& coords = node->values["coords"];
+	String &shape = node->values["shape"];
+	String &target = node->values["target"];
+	String &coords = node->values["coords"];
 
 	if (target.equalsIgnoreCase("display_area")) {
 		if (!shape.equalsIgnoreCase("rect"))
@@ -313,15 +317,21 @@ bool VirtualKeyboardParser::parserCallback_area(ParserNode *node) {
 		return parseRect(_mode->displayArea, coords);
 	} else if (shape.equalsIgnoreCase("rect")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
-		return parseRectAsPolygon(*poly, coords);
+		if (!poly)
+			return parserError(Common::String::format("Cannot define area '%s' again", target.c_str()));
+		else
+			return parseRectAsPolygon(*poly, coords);
 	} else if (shape.equalsIgnoreCase("poly")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
-		return parsePolygon(*poly, coords);
+		if (!poly)
+			return parserError(Common::String::format("Cannot define area '%s' again", target.c_str()));
+		else
+			return parsePolygon(*poly, coords);
 	}
 	return parserError("Area shape '" + shape + "' not known");
 }
 
-byte VirtualKeyboardParser::parseFlags(const String& flags) {
+byte VirtualKeyboardParser::parseFlags(const String &flags) {
 	if (flags.empty())
 		return 0;
 
@@ -338,7 +348,7 @@ byte VirtualKeyboardParser::parseFlags(const String& flags) {
 	return val;
 }
 
-bool VirtualKeyboardParser::parseRect(Rect &rect, const String& coords) {
+bool VirtualKeyboardParser::parseRect(Rect &rect, const String &coords) {
 	int x1, y1, x2, y2;
 	if (!parseIntegerKey(coords, 4, &x1, &y1, &x2, &y2))
 		return parserError("Invalid coords for rect area");
@@ -351,7 +361,7 @@ bool VirtualKeyboardParser::parseRect(Rect &rect, const String& coords) {
 	return true;
 }
 
-bool VirtualKeyboardParser::parsePolygon(Polygon &poly, const String& coords) {
+bool VirtualKeyboardParser::parsePolygon(Polygon &poly, const String &coords) {
 	StringTokenizer tok(coords, ", ");
 	for (String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
 		int x, y;
@@ -368,7 +378,7 @@ bool VirtualKeyboardParser::parsePolygon(Polygon &poly, const String& coords) {
 	return true;
 }
 
-bool VirtualKeyboardParser::parseRectAsPolygon(Polygon &poly, const String& coords) {
+bool VirtualKeyboardParser::parseRectAsPolygon(Polygon &poly, const String &coords) {
 	Rect rect;
 	if (!parseRect(rect, coords))
 		return false;

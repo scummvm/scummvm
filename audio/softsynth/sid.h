@@ -55,7 +55,7 @@ class WaveformGenerator {
 public:
 	WaveformGenerator();
 
-	void set_sync_source(WaveformGenerator*);
+	void set_sync_source(WaveformGenerator *);
 
 	void updateClock(cycle_count delta_t);
 	void synchronize();
@@ -272,7 +272,7 @@ class Voice {
 public:
 	Voice();
 
-	void set_sync_source(Voice*);
+	void set_sync_source(Voice *);
 	void reset();
 
 	void writeCONTROL_REG(reg8);

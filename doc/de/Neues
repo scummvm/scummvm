@@ -1,8 +1,61 @@
-Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
+﻿Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-1.4.0 (??.??.????)
+1.5.0 (??.??.????)
+ Neue Spiele:
+   - Unterstützung für Soltys hinzugefügt.
+
+ SDL-Portierungen:
+   - Unterstützung für OpenGL hinzugefügt. (GSoC-Aufgabe)
+
+ Cine:
+   - Roland-MT-32-Ausgabetreiber integriert.
+
+ SCUMM:
+   - Unterstützung für die Macintosh-Version von SPY Fox in Hold the Mustard
+     hinzugefügt.
+   - Dialog zur Auswahl des Schwierigkeitsgrads für Loom FM-TOWNS hinzugefügt.
+
+ Sword1:
+   - Falsche Soundeffekte in der DOS-/Windows-Demo korrigiert.
+
+ Windows-Portierung:
+   - Standardmäßiger Speicherort für Spielstände bei
+     Windows NT4/2000/XP/Vista/7 geändert.
+
+1.4.1 (27.01.2012)
+ AGOS:
+   - Das Laden von Videos direkt aus InstallShield-Archiven in der
+     Windows-Version von Floyd - Es gibt noch Helden korrigiert.
+
+ BASS:
+   - Unterstützung für verbesserte Musik von James Woodcock hinzugefügt
+     (http://www.jameswoodcock.co.uk/?p=7695).
+
+ KYRA:
+   - Fehler in der originalen Benutzeroberfläche von Lands of Lore beseitigt,
+     der dazu führte, dass ScummVM abstürzte, wenn der Anwender keine
+     durchgehend fortlaufenden Speicherplätze verwendete.
+   - Unterstützung für originale DOS-Speicherstände von Lands of Lore
+     hinzugefügt (trifft auch auf Speicherstände zu, die mit der GOG-Version
+     gemacht wurden).
+
+ SCI:
+   - Abfolgebedingung bei SCI1.1-Palettenänderungen korrigiert. Dies behebt
+     einen Fehler in QFG1VGA, wenn man in Erana's Peace schläft.
+   - Die Option, um zwischen digitalisierten und synthetisierten
+     Soundeffekten auszuwählen, wurde bis auf Weiteres deaktiviert, bis eine
+     anwenderfreundlichere Benutzeroberflächen-Option möglich ist.
+     Digitale Soundeffekte werden vorerst immer bevorzugt.
+   - Fehler in einem Fall beseitigt, bei welchem bei Beginn eines neuen Liedes
+     nicht alle Kanäle zurückgesetzt wurden und somit einige Noten falsch
+     klangen.
+
+ Sword2:
+   - Leichte Grafikverbesserung für PSX-Version.
+
+1.4.0 (11.11.2011)
  Neue Spiele:
    - Unterstützung für Lands of Lore: The Throne of Chaos hinzugefügt.
    - Unterstützung für Blue's Birthday Adventure hinzugefügt.
@@ -12,6 +65,11 @@ Sie auf Englisch unter:
 
  Neue Portierungen:
    - Portierung für PlayStation 3 hinzugefügt.
+
+ Allgemein:
+   - ARM-Assembler-Routinen für Stereo-Umkehr bei Audio repariert.
+   - Unterstützung für unkomplizierte Zusammenstellung mit MacPorts
+     hinzugefügt.
 
  AGI:
    - Sound-Unterstützung für die DOS-Version von Winnie the Pooh in the
@@ -47,15 +105,20 @@ Sie auf Englisch unter:
    - Palettenhandhabung in der Amiga-Version von Indiana Jones and the
      Fate of Atlantis verbessert.
 
-
- SDL-Portierungen:
-   - Unterstützung für OpenGL hinzugefügt. (GSoC-Aufgabe)
+ Sword1:
+   - Aufhängen in Windows-Demo beseitigt.
+   - Absturz beseitigt, wenn Untertitelpaket für Zwischensequenzen in
+     Macintosh-Version verwendet wird.
 
  Tinsel:
    - Löschen von Spielständen aus der Liste der Speicherstände korrigiert (im
      Startmenü und im ScummVM-Menü innerhalb des Spiels).
    - Die US-Version von Discworld II zeigt nun den korrekten Titelbildschirm und
      die richtige Sprachenflagge.
+
+ Android-Portierung:
+   - Plugins bei Android 3.x repariert.
+   - Standardmäßigen Speicherort für Spielstände auf SD-Karte verschoben.
 
 1.3.1 (12.07.2011)
  Allgemein:
@@ -1607,4 +1670,4 @@ Sie auf Englisch unter:
 
 
 (Deutscher Text basiert auf NEWS mit SHA1-ID:
-744f8507d714da5710c020bf56aa49dd0662acf6)
+ab2b020ff10b2e5d25cc93757029838c7eac6b41)

@@ -134,6 +134,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_enable_zoning(false),
 	_mixer(0),
 	_shake_offset(0),
+	_queuedEventTime(0),
 	_event_queue_lock(createMutex()),
 	_touch_pt_down(),
 	_touch_pt_scroll(),

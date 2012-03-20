@@ -31,7 +31,7 @@ class SeekableReadStream;
 }
 
 namespace Graphics {
-class JPEG;
+struct Surface;
 }
 
 namespace Video {
@@ -50,7 +50,6 @@ public:
 
 private:
 	Graphics::PixelFormat _pixelFormat;
-	Graphics::JPEG *_jpeg;
 	Graphics::Surface *_surface;
 };
 

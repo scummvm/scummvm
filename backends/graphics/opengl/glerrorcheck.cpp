@@ -26,6 +26,7 @@
 
 #include "backends/graphics/opengl/glerrorcheck.h"
 #include "common/textconsole.h"
+#include "common/str.h"
 
 #ifdef WIN32
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
@@ -44,7 +45,7 @@
 #include <GL/gl.h>
 #endif
 
-static const char *getGlErrStr(GLenum error) {
+static Common::String getGlErrStr(GLenum error) {
 	switch (error) {
 	case GL_NO_ERROR:           return "GL_NO_ERROR";
 	case GL_INVALID_ENUM:       return "GL_INVALID_ENUM";
@@ -54,16 +55,13 @@ static const char *getGlErrStr(GLenum error) {
 	case GL_OUT_OF_MEMORY:      return "GL_OUT_OF_MEMORY";
 	}
 
-	// FIXME: Convert to use Common::String::format()
-	static char buf[40];
-	snprintf(buf, sizeof(buf), "(Unknown GL error code 0x%x)", error);
-	return buf;
+	return Common::String::format("(Unknown GL error code 0x%x)", error);
 }
 
 void checkGlError(const char *file, int line) {
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
-		warning("%s:%d: GL error: %s", file, line, getGlErrStr(error));
+		warning("%s:%d: GL error: %s", file, line, getGlErrStr(error).c_str());
 }
 
 #endif

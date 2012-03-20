@@ -48,25 +48,23 @@ void EventDispatcher::dispatch() {
 	dispatchPoll();
 
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
-		const bool allowMapping = i->source->allowMapping();
-
 		while (i->source->pollEvent(event)) {
 			// We only try to process the events via the setup event mapper, when
 			// we have a setup mapper and when the event source allows mapping.
-			if (_mapper && allowMapping) {
-				if (_mapper->notifyEvent(event)) {
-					// We allow the event mapper to create multiple events, when
-					// eating an event.
-					while (_mapper->pollEvent(event))
-						dispatchEvent(event);
+			assert(_mapper);
+			List<Event> mappedEvents = _mapper->mapEvent(event, i->source);
 
-					// Try getting another event from the current EventSource.
-					continue;
-				}
+			for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {
+				const Event mappedEvent = *j;
+				dispatchEvent(mappedEvent);
 			}
-
-			dispatchEvent(event);
 		}
+	}
+
+	List<Event> delayedEvents = _mapper->getDelayedEvents();
+	for (List<Event>::iterator k = delayedEvents.begin(); k != delayedEvents.end(); ++k) {
+		const Event delayedEvent = *k;
+		dispatchEvent(delayedEvent);
 	}
 }
 

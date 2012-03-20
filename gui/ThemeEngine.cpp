@@ -30,10 +30,11 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
-#include "graphics/imagedec.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
+#include "graphics/fonts/ttf.h"
+#include "graphics/decoders/bmp.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
@@ -261,7 +262,8 @@ void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
 ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_system(0), _vectorRenderer(0),
 	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
-	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0) {
+	_font(0), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
+	_cursor(0) {
 
 	_system = g_system;
 	_parser = new ThemeParser(this);
@@ -294,6 +296,9 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_graphicsMode = mode;
 	_themeArchive = 0;
 	_initOk = false;
+
+	// We prefer files in archive bundles over the common search paths.
+	_themeFiles.add("default", &SearchMan, 0, false);
 }
 
 ThemeEngine::~ThemeEngine() {
@@ -317,7 +322,6 @@ ThemeEngine::~ThemeEngine() {
 	delete _parser;
 	delete _themeEval;
 	delete[] _cursor;
-	delete _themeArchive;
 }
 
 
@@ -406,6 +410,9 @@ bool ThemeEngine::init() {
 				}
 			}
 		}
+
+		if (_themeArchive)
+			_themeFiles.add("theme_archive", _themeArchive, 1, true);
 	}
 
 	// Load the theme
@@ -551,7 +558,7 @@ bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId,
 	return true;
 }
 
-bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
+bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Common::String &scalableFile, const int pointsize) {
 	if (textId == -1)
 		return false;
 
@@ -564,35 +571,26 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 		_texts[textId]->_fontPtr = _font;
 	} else {
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
-		// Try built-in fonts
-		_texts[textId]->_fontPtr = FontMan.getFontByName(localized);
+		const Common::String charset
+#ifdef USE_TRANSLATION
+		                            (TransMan.getCurrentCharset())
+#endif
+		                            ;
+
+		// Try localized fonts
+		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, charset, pointsize, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
-			// First try to load localized font
-			_texts[textId]->_fontPtr = loadFont(localized);
+			// Try standard fonts
+			_texts[textId]->_fontPtr = loadFont(file, scalableFile, Common::String(), pointsize, textId == kTextDataDefault);
 
-			if (_texts[textId]->_fontPtr)
-				FontMan.assignFontToName(localized, _texts[textId]->_fontPtr);
+			if (!_texts[textId]->_fontPtr)
+				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
 
-			// Fallback to non-localized font and default translation
-			else {
-				// Try built-in fonts
-				_texts[textId]->_fontPtr = FontMan.getFontByName(file);
-
-				// Try to load it
-				if (!_texts[textId]->_fontPtr) {
-					_texts[textId]->_fontPtr = loadFont(file);
-
-					if (!_texts[textId]->_fontPtr)
-						error("Couldn't load font '%s'", file.c_str());
-
-					FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
-				}
 #ifdef USE_TRANSLATION
-				TransMan.setLanguage("C");
+			TransMan.setLanguage("C");
 #endif
-				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", localized.c_str());
-			}
+			warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", localized.c_str());
 		}
 	}
 
@@ -622,15 +620,24 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 	if (surf)
 		return true;
 
-	// If not, try to load the bitmap via the ImageDecoder class.
-	surf = Graphics::ImageDecoder::loadFile(filename, _overlayFormat);
-	if (!surf && _themeArchive) {
-		Common::SeekableReadStream *stream = _themeArchive->createReadStreamForMember(filename);
+	// If not, try to load the bitmap via the BitmapDecoder class.
+	Graphics::BitmapDecoder bitmapDecoder;
+	const Graphics::Surface *srcSurface = 0;
+	Common::ArchiveMemberList members;
+	_themeFiles.listMatchingMembers(members, filename);
+	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
-			surf = Graphics::ImageDecoder::loadFile(*stream, _overlayFormat);
+			bitmapDecoder.loadStream(*stream);
+			srcSurface = bitmapDecoder.getSurface();
 			delete stream;
+			if (srcSurface)
+				break;
 		}
 	}
+
+	if (srcSurface && srcSurface->format.bytesPerPixel != 1)
+		surf = srcSurface->convertTo(_overlayFormat);
 
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
@@ -845,7 +852,7 @@ void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rec
 	ThemeItemBitmap *q = new ThemeItemBitmap(this, area, bitmap, alpha);
 
 	if (_buffering) {
-		_bufferQueue.push_back(q);
+		_screenQueue.push_back(q);
 	} else {
 		q->drawSelf(true, false);
 		delete q;
@@ -904,7 +911,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 
-	queueDDText(getTextData(dd), getTextColor(dd), r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
@@ -930,7 +937,7 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 
-	queueDDText(getTextData(dd), getTextColor(dd), r2, str, false, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
@@ -1371,6 +1378,10 @@ int ThemeEngine::getCharWidth(byte c, FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
 }
 
+int ThemeEngine::getKerningOffset(byte left, byte right, FontStyle font) const {
+	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getKerningOffset(left, right) : 0;
+}
+
 TextData ThemeEngine::getTextData(DrawData ddId) const {
 	return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
 }
@@ -1391,66 +1402,90 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
  * External data loading
  *********************************************************/
 
-const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &filename) {
-	Common::SeekableReadStream *stream = 0;
-	const Graphics::Font *font = 0;
+const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filename, const Common::String &charset, const int pointsize, Common::String &name) {
+#ifdef USE_FREETYPE2
+	name = Common::String::format("%s-%s@%d", filename.c_str(), charset.c_str(), pointsize);
 
-	if (_themeArchive)
-		stream = _themeArchive->createReadStreamForMember(filename);
-	if (stream) {
-		font = Graphics::BdfFont::loadFont(*stream);
-		delete stream;
-	}
+	// Try already loaded fonts.
+	const Graphics::Font *font = FontMan.getFontByName(name);
+	if (font)
+		return font;
 
-	return font;
-}
+	Common::ArchiveMemberList members;
+	_themeFiles.listMatchingMembers(members, filename);
 
-const Graphics::Font *ThemeEngine::loadCachedFontFromArchive(const Common::String &filename) {
-	Common::SeekableReadStream *stream = 0;
-	const Graphics::Font *font = 0;
+	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+		Common::SeekableReadStream *stream = (*i)->createReadStream();
+		if (stream) {
+			font = Graphics::loadTTFFont(*stream, pointsize, false,
+#ifdef USE_TRANSLATION
+			                             TransMan.getCharsetMapping()
+#else
+			                             0
+#endif
+			                             );
+			delete stream;
 
-	if (_themeArchive)
-		stream = _themeArchive->createReadStreamForMember(filename);
-	if (stream) {
-		font = Graphics::BdfFont::loadFromCache(*stream);
-		delete stream;
-	}
-
-	return font;
-}
-
-const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
-	const Graphics::Font *font = 0;
-	Common::String cacheFilename = genCacheFilename(filename);
-	Common::File fontFile;
-
-	if (!cacheFilename.empty()) {
-		if (fontFile.open(cacheFilename)) {
-			font = Graphics::BdfFont::loadFromCache(fontFile);
+			if (font)
+				return font;
 		}
-
-		if (font)
-			return font;
-
-		if ((font = loadCachedFontFromArchive(cacheFilename)))
-			return font;
 	}
+#endif
+	return 0;
+}
 
-	// normal open
-	if (fontFile.open(filename)) {
-		font = Graphics::BdfFont::loadFont(fontFile);
-	}
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, Common::String &name) {
+	name = filename;
 
-	if (!font) {
-		font = loadFontFromArchive(filename);
-	}
+	// Try already loaded fonts.
+	const Graphics::Font *font = FontMan.getFontByName(name);
+	if (font)
+		return font;
 
-	if (font) {
-		if (!cacheFilename.empty()) {
-			if (!Graphics::BdfFont::cacheFontData(*(const Graphics::BdfFont *)font, cacheFilename)) {
-				warning("Couldn't create cache file for font '%s'", filename.c_str());
+	Common::ArchiveMemberList members;
+	const Common::String cacheFilename(genCacheFilename(filename));
+	_themeFiles.listMatchingMembers(members, cacheFilename);
+	_themeFiles.listMatchingMembers(members, filename);
+
+	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+		Common::SeekableReadStream *stream = (*i)->createReadStream();
+		if (stream) {
+			if ((*i)->getName().equalsIgnoreCase(cacheFilename)) {
+				font = Graphics::BdfFont::loadFromCache(*stream);
+			} else {
+				font = Graphics::BdfFont::loadFont(*stream);
+				if (font && !cacheFilename.empty()) {
+					if (!Graphics::BdfFont::cacheFontData(*(const Graphics::BdfFont *)font, cacheFilename))
+						warning("Couldn't create cache file for font '%s'", filename.c_str());
+				}
 			}
+			delete stream;
+
+			if (font)
+				return font;
 		}
+	}
+
+	return 0;
+}
+
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const Common::String &scalableFilename, const Common::String &charset, const int pointsize, const bool makeLocalizedFont) {
+	Common::String fontName;
+
+	const Graphics::Font *font = 0;
+
+	// Prefer scalable fonts over non-scalable fonts
+	font = loadScalableFont(scalableFilename, charset, pointsize, fontName);
+	if (!font)
+		font = loadFont(filename, fontName);
+
+	// If the font is successfully loaded store it in the font manager.
+	if (font) {
+		FontMan.assignFontToName(fontName, font);
+		// If this font should be the new default localized font, we set it up
+		// for that.
+		if (makeLocalizedFont)
+			FontMan.setLocalizedFont(fontName);
 	}
 
 	return font;

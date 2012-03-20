@@ -30,16 +30,21 @@
 #include "common/timer.h"
 #include "common/util.h"
 
+#include "engines/advancedDetector.h"
+
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "dreamweb/dreamweb.h"
-#include "dreamweb/dreamgen.h"
 
 namespace DreamWeb {
 
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"), _context(this), _base(_context) {
+	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"),
+	_exText(kNumExTexts),
+	_setDesc(kNumSetTexts), _blockDesc(kNumBlockTexts),
+	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
+	_personText(kNumPersonTexts) {
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -51,25 +56,176 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_console = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-	_inSaveFile = 0;
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
 	_channel0 = 0;
 	_channel1 = 0;
 
-	_icons1 = NULL;
-	_icons2 = NULL;
-	_tempCharset = NULL;
+	_datafilePrefix = "DREAMWEB.";
 
-	_language = gameDesc->desc.language;
+	_openChangeSize = kInventx+(4*kItempicsize);
+	_quitRequested = false;
+
+	_currentSample = 0xff;
+	_channel0Playing = 0;
+	_channel0Repeat = 0;
+	_channel1Playing = 0xff;
+
+	_volume = 0;
+	_volumeTo = 0;
+	_volumeDirection = 0;
+	_volumeCount = 0;
+
+	_speechLoaded = false;
+
+	_backdropBlocks = 0;
+	_reelList = 0;
+
+	_oldSubject._type = 0;
+	_oldSubject._index = 0;
+
+	// misc variables
+	_speechCount = 0;
+	_charShift = 0;
+	_kerning = 0;
+	_brightPalette = false;
+	_roomLoaded = 0;
+	_didZoom = 0;
+	_lineSpacing = 10;
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 0;
+	_lastXPos = 0;
+	_itemFrame = 0;
+	_withObject = 0;
+	_withType = 0;
+	_lookCounter = 0;
+	_command = 0;
+	_commandType = 0;
+	_objectType = 0;
+	_getBack = 0;
+	_invOpen = 0;
+	_mainMode = 0;
+	_pickUp = 0;
+	_lastInvPos = 0;
+	_examAgain = 0;
+	_newTextLine = 0;
+	_openedOb = 0;
+	_openedType = 0;
+	_mapAdX = 0;
+	_mapAdY = 0;
+	_mapOffsetX = 104;
+	_mapOffsetY = 38;
+	_mapXStart = 0;
+	_mapYStart = 0;
+	_mapXSize = 0;
+	_mapYSize = 0;
+	_haveDoneObs = 0;
+	_manIsOffScreen = 0;
+	_facing = 0;
+	_leaveDirection = 0;
+	_turnToFace = 0;
+	_turnDirection = 0;
+	_mainTimer = 0;
+	_introCount = 0;
+	_currentKey = 0;
+	_timerCount = 0;
+	_mapX = 0;
+	_mapY = 0;
+	_ryanX = 0;
+	_ryanY = 0;
+	_lastFlag = 0;
+	_destPos = 0;
+	_realLocation = 0;
+	_roomNum = 0;
+	_nowInNewRoom = 0;
+	_resetManXY = 0;
+	_newLocation = 0xFF;
+	_autoLocation = 0xFF;
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseButton = 0;
+	_oldButton = 0;
+	_oldX = 0;
+	_oldY = 0;
+	_oldPointerX = 0;
+	_oldPointerY = 0;
+	_delHereX = 0;
+	_delHereY = 0;
+	_pointerXS = 32;
+	_pointerYS = 32;
+	_delXS = 0;
+	_delYS = 0;
+	_pointerFrame = 0;
+	_pointerPower = 0;
+	_pointerMode = 0;
+	_pointerSpeed = 0;
+	_pointerCount = 0;
+	_inMapArea = 0;
+	_talkMode = 0;
+	_talkPos = 0;
+	_character = 0;
+	_watchDump = 0;
+	_logoNum = 0;
+	_oldLogoNum = 0;
+	_pressed = 0;
+	_pressPointer = 0;
+	_graphicPress = 0;
+	_pressCount = 0;
+	_lightCount = 0;
+	_folderPage = 0;
+	_diaryPage = 0;
+	_menuCount = 0;
+	_symbolTopX = 0;
+	_symbolTopNum = 0;
+	_symbolTopDir = 0;
+	_symbolBotX = 0;
+	_symbolBotNum = 0;
+	_symbolBotDir = 0;
+	_walkAndExam = 0;
+	_walkExamType = 0;
+	_walkExamNum = 0;
+	_cursLocX = 0;
+	_cursLocY = 0;
+	_curPos = 0;
+	_monAdX = 0;
+	_monAdY = 0;
+	_timeCount = 0;
+	_needToDumpTimed = 0;
+	_loadingOrSave = 0;
+	_saveLoadPage = 0;
+	_currentSlot = 0;
+	_cursorPos = 0;
+	_colourPos = 0;
+	_fadeDirection = 0;
+	_numToFade = 0;
+	_fadeCount = 0;
+	_addToGreen = 0;
+	_addToRed = 0;
+	_addToBlue = 0;
+	_lastSoundReel = 0;
+	_lastHardKey = 0;
+	_bufferIn = 0;
+	_bufferOut = 0;
+	_blinkFrame = 23;
+	_blinkCount = 0;
+	_reAssesChanges = 0;
+	_pointersPath = 0;
+	_mansPath = 0;
+	_pointerFirstPath = 0;
+	_finalDest = 0;
+	_destination = 0;
+	_lineStartX = 0;
+	_lineStartY = 0;
+	_lineEndX = 0;
+	_lineEndY = 0;
+	_linePointer = 0;
+	_lineDirection = 0;
+	_lineLength = 0;
 }
 
 DreamWebEngine::~DreamWebEngine() {
-	assert(_icons1 == NULL);
-	assert(_icons2 == NULL);
-	assert(_tempCharset == NULL);
-
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 }
@@ -96,14 +252,14 @@ void DreamWebEngine::waitForVSync() {
 		setVSyncInterrupt(false);
 	}
 
-	_base.doShake();
-	_base.doFade();
+	doShake();
+	doFade();
 	_system->updateScreen();
 }
 
 void DreamWebEngine::quit() {
-	_base.data.byte(DreamGen::kQuitrequested) = 1;
-	_base.data.byte(DreamGen::kLasthardkey) = 1;
+	_quitRequested = true;
+	_lastHardKey = 1;
 }
 
 void DreamWebEngine::processEvents() {
@@ -138,8 +294,8 @@ void DreamWebEngine::processEvents() {
 					break;
 
 				case Common::KEYCODE_c: //skip statue puzzle
-					_base.data.byte(DreamGen::kSymbolbotnum) = 3;
-					_base.data.byte(DreamGen::kSymboltopnum) = 5;
+					_symbolBotNum = 3;
+					_symbolTopNum = 5;
 					break;
 
 				default:
@@ -169,7 +325,7 @@ void DreamWebEngine::processEvents() {
 				break;
 			}
 
-			_base.data.byte(DreamGen::kLasthardkey) = hardKey;
+			_lastHardKey = hardKey;
 
 			// The rest of the keys are converted to ASCII. This
 			// is fairly restrictive, and eventually we may want
@@ -209,11 +365,15 @@ Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	ConfMan.registerDefault("dreamweb_originalsaveload", "true");
+	ConfMan.registerDefault("dreamweb_originalsaveload", "false");
+	ConfMan.registerDefault("bright_palette", true);
+	_hasSpeech = Common::File::exists("speech/r01c0000.raw") && !ConfMan.getBool("speech_mute");
+	_brightPalette = ConfMan.getBool("bright_palette");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
-	_context.__start();
-	_base.data.byte(DreamGen::kQuitrequested) = 0;
+	dreamweb();
+	dreamwebFinalize();
+	_quitRequested = false;
 
 	_timer->removeTimerProc(vSyncInterrupt);
 
@@ -227,43 +387,6 @@ void DreamWebEngine::setSpeed(uint speed) {
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
 }
 
-void DreamWebEngine::openFile(const Common::String &name) {
-	processEvents();
-	closeFile();
-	if (_file.open(name))
-		return;
-	// File not found? See if there is a save state with this name
-	// FIXME: Is this really needed? If yes, document why; if not,
-	// remove all traces of _inSaveFile.
-	_inSaveFile = _saveFileMan->openForLoading(name);
-	if (_inSaveFile)
-		return;
-	error("cannot open file %s", name.c_str());
-}
-
-uint32 DreamWebEngine::skipBytes(uint32 bytes) {
-	if (!_file.seek(bytes, SEEK_CUR))
-		error("seek failed");
-	return _file.pos();
-}
-
-uint32 DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
-	processEvents();
-	if (_file.isOpen())
-		return _file.read(dst, size);
-	if (_inSaveFile)
-		return _inSaveFile->read(dst, size);
-	error("file was not opened (read before open)");
-}
-
-void DreamWebEngine::closeFile() {
-	processEvents();
-	if (_file.isOpen())
-		_file.close();
-	delete _inSaveFile;
-	_inSaveFile = 0;
-}
-
 Common::String DreamWebEngine::getSavegameFilename(int slot) const {
 	// TODO: Are saves from all versions of Dreamweb compatible with each other?
 	// Then we can can consider keeping the filenames as DREAMWEB.Dnn.
@@ -275,14 +398,14 @@ Common::String DreamWebEngine::getSavegameFilename(int slot) const {
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
-	uint16 in = (_base.data.word(DreamGen::kBufferin) + 1) & 0x0f;
-	uint16 out = _base.data.word(DreamGen::kBufferout);
+	uint16 in = (_bufferIn + 1) & 0x0f;
+	uint16 out = _bufferOut;
 	if (in == out) {
 		warning("keyboard buffer is full");
 		return;
 	}
-	_base.data.word(DreamGen::kBufferin) = in;
-	DreamGen::g_keyBuffer[in] = ascii;
+	_bufferIn = in;
+	DreamWeb::g_keyBuffer[in] = ascii;
 }
 
 void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
@@ -330,7 +453,7 @@ void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int 
 }
 
 void DreamWebEngine::printUnderMonitor() {
-	uint8 *dst = _base._workspace + DreamGen::kScreenwidth * 43 + 76;
+	uint8 *dst = workspace() + kScreenwidth * 43 + 76;
 
 	Graphics::Surface *s = _system->lockScreen();
 	if (!s)
@@ -345,7 +468,7 @@ void DreamWebEngine::printUnderMonitor() {
 				++dst; ++src;
 			}
 		}
-		dst += DreamGen::kScreenwidth - 170;
+		dst += kScreenwidth - 170;
 	}
 	_system->unlockScreen();
 }
@@ -358,10 +481,9 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	if (c < 128)
 		return c;
 
-	switch(_language) {
+	switch(getLanguage()) {
 	case Common::DE_DEU:
-		switch(c)
-		{
+		switch(c) {
 		case 129:
 			return 'Z' + 3;
 		case 132:
@@ -407,6 +529,10 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	default:
 		return c;
 	}
+}
+
+bool DreamWebEngine::hasSpeech() {
+	return isCD() && _hasSpeech;
 }
 
 } // End of namespace DreamWeb

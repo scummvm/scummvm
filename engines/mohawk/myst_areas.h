@@ -20,11 +20,13 @@
  *
  */
 
+#ifndef MYST_AREAS_H
+#define MYST_AREAS_H
+
 #include "mohawk/myst.h"
 #include "mohawk/video.h"
 
-#ifndef MYST_AREAS_H
-#define MYST_AREAS_H
+#include "common/rect.h"
 
 namespace Mohawk {
 
@@ -137,7 +139,7 @@ public:
 protected:
 	uint16 _var7;
 	uint16 _numSubResources;
-	Common::Array<MystResource*> _subResources;
+	Common::Array<MystResource *> _subResources;
 };
 
 class MystResourceType8 : public MystResourceType7 {

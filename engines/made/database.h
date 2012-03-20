@@ -151,9 +151,9 @@ public:
 	void dumpObject(int16 index);
 
 protected:
-	typedef Common::HashMap<uint32, int16*> ObjectPropertyCacheMap;
+	typedef Common::HashMap<uint32, int16 *> ObjectPropertyCacheMap;
 	MadeEngine *_vm;
-	Common::Array<Object*> _objects;
+	Common::Array<Object *> _objects;
 	ObjectPropertyCacheMap _objectPropertyCache;
 	byte *_gameState;
 	uint32 _gameStateSize;

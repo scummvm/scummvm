@@ -72,14 +72,6 @@ static const int v1MMNESLookup[25] = {
 	0x17, 0x00, 0x01, 0x05, 0x16
 };
 
-static const byte v0ActorTalkArray[0x19] = {
-	0x00, 0x06, 0x06, 0x06, 0x06,
-	0x06, 0x06, 0x00, 0x46, 0x06,
-	0x06, 0x06, 0x06, 0xFF, 0xFF,
-	0x06, 0xC0, 0x06, 0x06, 0x00,
-	0xC0, 0xC0, 0x00, 0x06, 0x06
-};
-
 byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int i, skip = 0;
 	byte drawFlag = 1;
@@ -676,7 +668,7 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 							 (v1.mask_ptr && (mask[0] & maskbit));
 
 					if (pcolor && !masked) {
-						WRITE_UINT16(dst, ((uint16*)_palette)[pcolor]);
+						WRITE_UINT16(dst, ((uint16 *)_palette)[pcolor]);
 					}
 
 					xPos += xStep;
@@ -1171,7 +1163,7 @@ byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
 	return (a->_cost.curpos[slot] != oldframe);
 }
 
-static const byte actorColorsMMC64[25] = {
+static const byte actorV0Colors[25] = {
 	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
 };
 
@@ -1186,24 +1178,25 @@ static const byte actorColorsMMC64[25] = {
 			dst[p + 1] = palette[pcolor]; \
 	}
 
-byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
-	if (limb >= 8)
-		return 0;
+byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
+	const Actor_v0* a0 = (const Actor_v0 *)a;
 
-	if (a->_cost.start[limb] == 0xFFFF)
+	if (limb >= 8)
 		return 0;
 
 	if (limb == 0) {
 		_draw_top = 200;
 		_draw_bottom = 0;
 	}
-
-	bool flipped = (a->_cost.start[limb] & 0x80) != 0;
-	byte frameStart = _loaded._frameOffsets[a->_cost.frame[limb]];
-	byte frame = _loaded._frameOffsets[frameStart + a->_cost.curpos[limb]];
-	if (frame == 0xFF)
+	
+	// Invalid current position?
+	if (a->_cost.curpos[limb] == 0xFFFF)
 		return 0;
 
+	_loaded.loadCostume(a->_costume);
+	byte frame = _loaded._frameOffsets[a->_cost.curpos[limb] + a->_cost.active[limb]];
+
+	// Get the frame ptr
 	byte ptrLow = _loaded._baseptr[frame];
 	byte ptrHigh = ptrLow + _loaded._dataOffsets[4];
 	int frameOffset = (_loaded._baseptr[ptrHigh] << 8) + _loaded._baseptr[ptrLow + 2];			// 0x23EF / 0x2400
@@ -1214,7 +1207,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	byte palette[4] = { 0, 0, 0, 0 };
 	if (_vm->getCurrentLights() & LIGHTMODE_actor_use_colors) {
 		palette[1] = 10;
-		palette[2] = actorColorsMMC64[_actorID];
+		palette[2] = actorV0Colors[_actorID];
 	} else {
 		palette[2] = 11;
 		palette[3] = 11;
@@ -1231,7 +1224,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (!width || !height)
 		return 0;
 
-	int xpos = _actorX + (flipped ? -1 : +1) * (offsetX * 8 - a->_width / 2);
+	int xpos = _actorX + (a0->_limb_flipped[limb] ? -1 : +1) * (offsetX * 8 - a->_width / 2);
 	// +1 as we appear to be 1 pixel away from the original interpreter
 	int ypos = _actorY - offsetY + 1;
 
@@ -1241,13 +1234,13 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 			byte color = data[y * width + x];
 			byte pcolor;
 
-			int destX = xpos + (flipped ? -(x + 1) : x) * 8;
+			int destX = xpos + (a0->_limb_flipped[limb] ? -(x + 1) : x) * 8;
 			int destY = ypos + y;
 
 			if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
 				byte *dst = (byte *)_out.pixels + destY * _out.pitch + destX;
 				byte *mask = _vm->getMaskBuffer(0, destY, _zbuf);
-				if (flipped) {
+				if (a0->_limb_flipped[limb]) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
 					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
@@ -1258,7 +1251,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	_draw_top = MIN(_draw_top, ypos);
 	_draw_bottom = MAX(_draw_bottom, ypos + height);
-	if (flipped)
+	if (a0->_limb_flipped[limb])
 		_vm->markRectAsDirty(kMainVirtScreen, xpos - (width * 8), xpos, ypos, ypos + height, _actorID);
 	else
 		_vm->markRectAsDirty(kMainVirtScreen, xpos, xpos + (width * 8), ypos, ypos + height, _actorID);
@@ -1268,11 +1261,11 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 #undef LINE
 #undef MASK_AT
 
-void C64CostumeRenderer::setCostume(int costume, int shadow) {
+void V0CostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);
 }
 
-void C64CostumeLoader::loadCostume(int id) {
+void V0CostumeLoader::loadCostume(int id) {
 	const byte *ptr = _vm->getResourceAddress(rtCostume, id);
 
 	_id = id;
@@ -1282,165 +1275,127 @@ void C64CostumeLoader::loadCostume(int id) {
 	_numColors = 0;
 	_numAnim = 0;
 	_mirror = 0;
-	_palette = &actorColorsMMC64[id];
+	_palette = &actorV0Colors[id];
 
 	_frameOffsets = _baseptr + READ_LE_UINT16(ptr + 5);
 	_dataOffsets = ptr;
 	_animCmds = _baseptr + READ_LE_UINT16(ptr + 7);
-
-	_maxHeight = 0;
 }
 
-void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
-	byte limbFrames = 0;
+void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
+	Actor_v0 *a0 = (Actor_v0 *)a;
+
+	if (!a->_costume)
+		return;
+
+	loadCostume(a->_costume);
+
+	// Invalid costume command?
+	if (a0->_costCommandNew == 0xFF || (a0->_costCommand == a0->_costCommandNew))
+		return;
+
+	a0->_costCommand = a0->_costCommandNew;
+
+	int cmd = a0->_costCommand;
+	byte limbFrameNumber = 0;
 
 	// Each costume-command has 8 limbs  (0x2622)
 	cmd <<= 3;
 
-	for (int limb = 0, pos = 0; limb < 8; ++limb, pos = 0) {
-		// get a limb frames ptr from the costume command
-		limbFrames = ((_animCmds + cmd)[limb]);
+	for (int limb = 0; limb < 8; ++limb) {
 
-		// Dont change limb if entry is invalid
-		if (limbFrames == 0xFF)
-			continue;
+		// get the frame number for the beginning of the costume command
+		limbFrameNumber = ((_animCmds + cmd)[limb]);
 
-		// Has limb frames ptr changed since last update?
-		if (a->_cost.start[limb] == limbFrames)
-			continue;
+		// Is this limb flipped?
+		if (limbFrameNumber & 0x80) {
 
-		// Set new limb command addresses
-		a->_cost.start[limb]	= limbFrames;
-		a->_cost.frame[limb]	= _frameOffsets[limb] + (limbFrames & 0x7f);			// limb animation-frames ptr
+			// Invalid frame?
+			if (limbFrameNumber == 0xFF)
+				continue;
 
-		// Get first entry of a limbs' frames
-		byte frameStart = _frameOffsets[ a->_cost.frame[limb]];
+			// Store the limb frame number (clear the flipped status)
+			a->_cost.frame[limb] = (limbFrameNumber & 0x7f);
 
-		// Loop each frame in this limb until we reach the end marker
-		while (pos != 0xFF) {	// This is just so we dont overflow
-			byte frame = _frameOffsets[frameStart + pos];
+			if (a0->_limb_flipped[limb] != true)
+				a->_cost.start[limb] = 0xFFFF;
 
-			// Each animation-frame until we find end
-			if (frame == 0xFF)
-				break;
+			a0->_limb_flipped[limb] = true;
 
-			byte ptrLow = _baseptr[frame];
-			byte ptrHigh = ptrLow + _dataOffsets[4];
-			int  frameOffset = (_baseptr[ptrHigh] << 8) + _baseptr[ptrLow + 2];			// 0x23EF / 0x2400
+		} else {
+			//Store the limb frame number
+			a->_cost.frame[limb] = limbFrameNumber;
 
-			const byte *data = _baseptr + frameOffset;
+			if (a0->_limb_flipped[limb] != false)
+				a->_cost.start[limb] = 0xFFFF;
 
-			if (data[3] > _maxHeight)
-				_maxHeight = data[3] + 1;
-
-			++pos;
+			a0->_limb_flipped[limb] = false;
 		}
 
-		// Set ending position of limb frames
-		a->_cost.end[limb] = pos - 1;
-		a->_cost.curpos[limb] = 0;
+		// Set the repeat value
+		a0->_limbFrameRepeatNew[limb] = a0->_animFrameRepeat;
 	}
 }
 
-// based on 0x2BCA, doesn't match disassembly because 'oldDir' variable
-// is not the same value as stored in the original interpreter
-int C64CostumeLoader::dirToDirStop(int oldDir) {
-	switch (oldDir) {
-		case 0:
-			return 4;	// Left
-		case 1:
-			return 5;	// Right
-		case 2:
-			return 6;	// Face Camera
-		case 3:
-			return 7;	// Face Away
+byte V0CostumeLoader::getFrame(Actor *a, int limb) {
+	loadCostume(a->_costume);
+
+	// Get the frame number for the current limb / Command
+	return _frameOffsets[_frameOffsets[limb] + a->_cost.start[limb]];
+}
+
+byte V0CostumeLoader::increaseAnims(Actor *a) {
+	Actor_v0 *a0 = (Actor_v0 *)a;
+	int i;
+	byte r = 0;
+
+	for (i = 0; i != 8; i++) {
+		a0->limbFrameCheck(i);
+		r += increaseAnim(a, i);
 	}
-	// shouldnt' be reached
-	return 4;
+	return r;
 }
 
-void C64CostumeLoader::actorSpeak(ActorC64 *a, int &cmd) {
-	if (v0ActorTalkArray[a->_number] & 0x80)
-		return;
-
-	if ((a->_speaking & 0x80))
-		cmd += 0x0C;
-	else
-		cmd += 0x10;
-}
-
-void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
-	ActorC64 *A = (ActorC64 *)a;
-	int dir = newDirToOldDir(a->getFacing());
-	int command = dir;
+byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
+	Actor_v0 *a0 = (Actor_v0 *)a;
+	const uint16 limbPrevious = a->_cost.curpos[limb]++;
 
 	loadCostume(a->_costume);
 
-	// Enable/Disable speaking flag
-	if (frame == a->_talkStartFrame) {
-		if (v0ActorTalkArray[a->_number] & 0x40)
-			return;
+	// 0x2543
+	byte frame = _frameOffsets[a->_cost.curpos[limb] + a->_cost.active[limb]];
 
-		A->_speaking = 1;
-		return;
-	}
-	if (frame == a->_talkStopFrame) {
-		A->_speaking = 0;
-		return;
-	}
+	// Is this frame invalid?
+	if (frame == 0xFF) {
 
-	// Different command for stand frame
-	if (frame == a->_standFrame)
-		command = dirToDirStop(dir);
+		// Repeat timer has reached 0?
+		if (a0->_limbFrameRepeat[limb] == 0) {
 
-	// Update the limb frames
-	frameUpdate(A, command);
+			// Use the previous frame
+			--a0->_cost.curpos[limb];
 
-	// Keep current command/frame mode
-	A->_costCommand = dir;
-	A->_costFrame = frame;
+			// Reset the comstume command
+			a0->_costCommandNew = 0xFF;
+			a0->_costCommand = 0xFF;
+			
+			// Set the frame/start to invalid
+			a0->_cost.frame[limb] = 0xFFFF;
+			a0->_cost.start[limb] = 0xFFFF;
 
-	// Update 'speaking' frames?
-	if (A->_speaking) {
-		command = dir;	// Incase standing frame was set as cmd
-		actorSpeak(A, command);
+		} else {
 
-		// Update the limb speak frames
-		frameUpdate(A, command);
-	}
-}
+			// Repeat timer enabled?
+			if (a0->_limbFrameRepeat[limb] != -1)
+				--a0->_limbFrameRepeat[limb];
 
-byte C64CostumeLoader::increaseAnims(Actor *a) {
-	ActorC64 *A = (ActorC64 *)a;
-
-	// check if the actor speak flag has changed since last frame increase
-	if (A->_speaking != A->_speakingPrev) {
-		int cmd = A->_costCommand;
-		A->_speakingPrev = A->_speaking;
-
-		actorSpeak(A, cmd);
-
-		// Update the limb frames
-		frameUpdate(A, cmd);
-	}
-
-	if (A->_moving  && _vm->_currentRoom != 1 && _vm->_currentRoom != 44) {
-		if (a->_cost.soundPos == 0)
-			a->_cost.soundCounter++;
-
-		// Is this the correct location?
-		// 0x073C
-		if (v0ActorTalkArray[a->_number] & 0x3F)
-			a->_cost.soundPos = (a->_cost.soundPos + 1) % 3;
-	}
-
-	// increase each frame pos
-	for (int limb = 0; limb < 8; ++limb) {
-		if (a->_cost.curpos[limb] < a->_cost.end[limb])
-			a->_cost.curpos[limb]++;
-		else
+			// No, restart at frame 0
 			a->_cost.curpos[limb] = 0;
+		}
 	}
+
+	// Limb frame has changed?
+	if (limbPrevious == a->_cost.curpos[limb])
+		return 0;
 
 	return 1;
 }

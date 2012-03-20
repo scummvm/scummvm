@@ -748,6 +748,19 @@ void DrasculaEngine::animation_14_2() {
 	loadPic(99, backSurface);
 }
 
+void DrasculaEngine::asco() {
+	loadPic(roomDisk, drawSurface3);
+	loadPic(roomNumber, bgSurface, HALF_PAL);
+	black();
+	updateRoom();
+	updateScreen();
+	fadeFromBlack(0);
+	if (roomMusic != 0)
+		playMusic(roomMusic);
+	else
+		stopMusic();
+}
+
 // The drunk tells us about Von Braun
 void DrasculaEngine::animation_16_2() {
 	debug(4, "animation_16_2()");
@@ -763,8 +776,10 @@ void DrasculaEngine::animation_16_2() {
 	else
 		playMusic(32);
 
-	if (getScan() != 0)
-		goto asco;
+	if (getScan() != 0) {
+		asco();
+		return;
+	}
 
 	color_abc(kColorDarkGreen);
 
@@ -778,16 +793,20 @@ void DrasculaEngine::animation_16_2() {
 		centerText(_texthis[i], 180, 180);
 		updateScreen();
 
-		if (getScan() != 0)
-			goto asco;
+		if (getScan() != 0) {
+			asco();
+			return;
+		}
 
 		delay(3000);
 
 		if (i < 4) {
 			fadeToBlack(1);
 
-			if (getScan() != 0)
-				goto asco;
+			if (getScan() != 0) {
+				asco();
+				return;
+			}
 
 			clearRoom();
 		}
@@ -800,25 +819,17 @@ void DrasculaEngine::animation_16_2() {
 		copyBackground(0, 0, 0, l, 320, 200 - l, drawSurface3, screenSurface);
 		copyBackground(0, 200 - l, 0, 0, 320, l, bgSurface, screenSurface);
 		updateScreen();
-		if (getScan() != 0)
-			goto asco;
+		if (getScan() != 0) {
+			asco();
+			return;
+		}
 	}
 
 	pause(5);
 	fadeToBlack(2);
 	clearRoom();
 
-asco:
-	loadPic(roomDisk, drawSurface3);
-	loadPic(roomNumber, bgSurface, HALF_PAL);
-	black();
-	updateRoom();
-	updateScreen();
-	fadeFromBlack(0);
-	if (roomMusic != 0)
-		playMusic(roomMusic);
-	else
-		stopMusic();
+	asco();
 }
 
 void DrasculaEngine::animation_20_2() {

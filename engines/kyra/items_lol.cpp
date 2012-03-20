@@ -27,6 +27,68 @@
 
 namespace Kyra {
 
+LoLObject *LoLEngine::findObject(uint16 index) {
+	if (index & 0x8000)
+		return &_monsters[index & 0x7fff];
+	else
+		return &_itemsInPlay[index];
+}
+
+int LoLEngine::calcObjectPosition(LoLObject *i, uint16 direction) {
+	int x = i->x;
+	int y = i->y;
+
+	calcSpriteRelPosition(_partyPosX, _partyPosY, x, y, direction);
+
+	if (y < 0)
+		y = 0;
+
+	int res = (i->flyingHeight << 12);
+	res |= (4095 - y);
+
+	return res;
+}
+
+void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, uint16 id) {
+	uint16 *blockItemIndex = &l->assignedObjects;
+	LoLObject *i = 0;
+
+	while (*blockItemIndex) {
+		if (*blockItemIndex == id) {
+			i = findObject(id);
+			*blockItemIndex = i->nextAssignedObject;
+			i->nextAssignedObject = 0;
+			return;
+		}
+
+		i = findObject(*blockItemIndex);
+		blockItemIndex = &i->nextAssignedObject;
+	}
+}
+
+void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, uint16 id) {
+	uint16 *blockItemIndex = &l->drawObjects;
+	LoLObject *i = 0;
+
+	while (*blockItemIndex) {
+		if (*blockItemIndex == id) {
+			i = findObject(id);
+			*blockItemIndex = i->nextDrawObject;
+			i->nextDrawObject = 0;
+			return;
+		}
+
+		i = findObject(*blockItemIndex);
+		blockItemIndex = &i->nextDrawObject;
+	}
+}
+
+void LoLEngine::assignObjectToBlock(uint16 *assignedBlockObjects, uint16 id) {
+	LoLObject *t = findObject(id);
+	t->nextAssignedObject = *assignedBlockObjects;
+	*assignedBlockObjects = id;
+}
+
 void LoLEngine::giveCredits(int credits, int redraw) {
 	if (redraw)
 		snd_playSoundEffect(101, -1);
@@ -156,7 +218,7 @@ Item LoLEngine::makeItem(int itemType, int curFrame, int flags) {
 		}
 	}
 
-	memset(&_itemsInPlay[slot], 0, sizeof(ItemInPlay));
+	memset(&_itemsInPlay[slot], 0, sizeof(LoLItem));
 
 	_itemsInPlay[slot].itemPropertyIndex = itemType;
 	_itemsInPlay[slot].shpCurFrame_flg = (curFrame & 0x1fff) | flags;
@@ -221,15 +283,8 @@ bool LoLEngine::isItemMoveable(Item itemIndex) {
 }
 
 void LoLEngine::deleteItem(Item itemIndex) {
-	memset(&_itemsInPlay[itemIndex], 0, sizeof(ItemInPlay));
+	memset(&_itemsInPlay[itemIndex], 0, sizeof(LoLItem));
 	_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x8000;
-}
-
-ItemInPlay *LoLEngine::findObject(uint16 index) {
-	if (index & 0x8000)
-		return (ItemInPlay *)&_monsters[index & 0x7fff];
-	else
-		return &_itemsInPlay[index];
 }
 
 void LoLEngine::runItemScript(int charNum, Item item, int flags, int next, int reg4) {
@@ -342,7 +397,7 @@ bool LoLEngine::launchObject(int objectType, Item item, int startX, int startY, 
 		}
 
 		int csp = checkDrawObjectSpace(_partyPosX, _partyPosY, t->x, t->y);
-		if (csp > sp){
+		if (csp > sp) {
 			sp = csp;
 			slot = i;
 		}
@@ -443,7 +498,7 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 		if (_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000) {
 			int o = _levelBlockProperties[_itemsInPlay[t->item].block].assignedObjects;
 			while (o & 0x8000) {
-				ItemInPlay *i = findObject(o);
+				LoLObject *i = findObject(o);
 				o = i->nextAssignedObject;
 				runItemScript(t->attackerId, t->item, 0x8000, o, 0);
 			}
@@ -473,7 +528,7 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	getNextStepCoords(t->x, t->y, x, y, t->direction);
 	/* WORKAROUND:
 	Large fireballs cast by the "birds" in white tower level 2 and by the "wraith knights" in castle cimmeria
-	level 1	(or possible other objects with flag 0x4000) could not fly through corridors in ScummVM and would
+	level 1 (or possible other objects with flag 0x4000) could not fly through corridors in ScummVM and would
 	be terminated prematurely. The original code (all versions) involuntarily circumvents this via a bug in the
 	next line of code.
 	The original checks for _itemProperties[t->item].flags instead of _itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags.
@@ -484,7 +539,7 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	at least.
 
 	Other methods of working around this issue don't make too much sense. An object with a width of 256
-	could never	fly through corridors, since 256 is also the width of a block. Aligning the fireballs to the
+	could never fly through corridors, since 256 is also the width of a block. Aligning the fireballs to the
 	middle of a block (or making the monsters align to the middle before casting them) wouldn't help here
 	(and wouldn't be faithful to the original either).
 	*/
@@ -502,13 +557,13 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 
 void LoLEngine::assignItemToBlock(uint16 *assignedBlockObjects, int id) {
 	while (*assignedBlockObjects & 0x8000) {
-		ItemInPlay *tmp = findObject(*assignedBlockObjects);
+		LoLObject *tmp = findObject(*assignedBlockObjects);
 		assignedBlockObjects = &tmp->nextAssignedObject;
 	}
 
-	ItemInPlay *newObject = findObject(id);
+	LoLObject *newObject = findObject(id);
 	newObject->nextAssignedObject = *assignedBlockObjects;
-	newObject->level = -1;
+	((LoLItem *)newObject)->level = -1;
 	*assignedBlockObjects = id;
 }
 
@@ -531,7 +586,7 @@ int LoLEngine::checkSceneForItems(uint16 *blockDrawObjects, int color) {
 				return *blockDrawObjects;
 		}
 
-		ItemInPlay *i = findObject(*blockDrawObjects);
+		LoLObject *i = findObject(*blockDrawObjects);
 		blockDrawObjects = &i->nextDrawObject;
 	}
 

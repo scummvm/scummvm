@@ -26,17 +26,7 @@
 namespace Kyra {
 
 Screen_HoF::Screen_HoF(KyraEngine_HoF *vm, OSystem *system)
-	: Screen_v2(vm, system), _vm(vm) {
-}
-
-void Screen_HoF::setScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	_curDim = &_screenDimTable[dim];
-}
-
-const ScreenDim *Screen_HoF::getScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	return &_screenDimTable[dim];
+	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount), _vm(vm) {
 }
 
 void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag) {

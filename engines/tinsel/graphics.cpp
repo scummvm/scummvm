@@ -40,7 +40,7 @@ namespace Tinsel {
 #define CHAR_WIDTH 4
 #define CHAR_HEIGHT 4
 
-extern uint8 transPalette[MAX_COLORS];
+extern uint8 g_transPalette[MAX_COLORS];
 
 //----------------- SUPPORT FUNCTIONS ---------------------
 
@@ -67,7 +67,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 	// Calculate needed index numbers, align width and height not next multiple of four
 	imageWidth = (imageWidth % 4) ? ((imageWidth / 4) + 1) * 4 : imageWidth;
 	imageHeight = (imageHeight % 4) ? ((imageHeight / 4) + 1) * 4 : imageHeight;
-	destinationBuffer = (uint8*)malloc((imageWidth * imageHeight) / 8);
+	destinationBuffer = (uint8 *)malloc((imageWidth * imageHeight) / 8);
 	dstIdx = destinationBuffer;
 	remainingBlocks = (imageWidth * imageHeight) / 16;
 
@@ -559,7 +559,7 @@ static void WrtTrans(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 	// Loop through any remaining lines
 	while (pObj->height > 0) {
 		for (int i = 0; i < pObj->width; ++i, ++destP)
-			*destP = transPalette[*destP];
+			*destP = g_transPalette[*destP];
 
 		--pObj->height;
 		destP += lineOffset;

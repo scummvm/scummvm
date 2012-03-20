@@ -40,98 +40,66 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		_timerCallbackNext = curTime + _timerCallbackTimer;
 	}
 
-	if (_queuedInputEvent.type != (Common::EventType)0 && curTime >= _queuedEventTime) {
+	if (_queuedInputEvent.type != Common::EVENT_INVALID && curTime >= _queuedEventTime) {
 		event = _queuedInputEvent;
-		_queuedInputEvent.type = (Common::EventType)0;
+		_queuedInputEvent.type = Common::EVENT_INVALID;
 		return true;
 	}
 
 	int eventType;
-	float xUnit, yUnit;
+	int x, y;
 
-	if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit)) {
-		int x = 0;
-		int y = 0;
-		switch (_screenOrientation) {
-			case kScreenOrientationPortrait:
-				if (_overlayVisible) {
-					x = (int)(xUnit * _overlayWidth);
-					y = (int)(yUnit * _overlayHeight);
-				} else {
-					x = (int)(xUnit * _screenWidth);
-					y = (int)(yUnit * _screenHeight);
-				}
-				break;
-			case kScreenOrientationLandscape:
-				if (_overlayVisible) {
-					x = (int)(yUnit * _overlayWidth);
-					y = (int)((1.0 - xUnit) * _overlayHeight);
-				} else {
-					x = (int)(yUnit * _screenWidth);
-					y = (int)((1.0 - xUnit) * _screenHeight);
-				}
-				break;
-			case kScreenOrientationFlippedLandscape:
-				if (_overlayVisible) {
-					x = (int)((1.0 - yUnit) * _overlayWidth);
-					y = (int)(xUnit * _overlayHeight);
-				} else {
-					x = (int)((1.0 - yUnit) * _screenWidth);
-					y = (int)(xUnit * _screenHeight);
-				}
-				break;
-		}
-
+	if (iPhone_fetchEvent(&eventType, &x, &y)) {
 		switch ((InputEvent)eventType) {
-			case kInputMouseDown:
-				if (!handleEvent_mouseDown(event, x, y))
-					return false;
-				break;
+		case kInputMouseDown:
+			if (!handleEvent_mouseDown(event, x, y))
+				return false;
+			break;
 
-			case kInputMouseUp:
+		case kInputMouseUp:
 			if (!handleEvent_mouseUp(event, x, y))
 				return false;
-				break;
+			break;
 
-			case kInputMouseDragged:
-				if (!handleEvent_mouseDragged(event, x, y))
-					return false;
-				break;
-			case kInputMouseSecondDragged:
-				if (!handleEvent_mouseSecondDragged(event, x, y))
-					return false;
-				break;
-			case kInputMouseSecondDown:
-				_secondaryTapped = true;
-				if (!handleEvent_secondMouseDown(event, x, y))
-					return false;
-				break;
-			case kInputMouseSecondUp:
-				_secondaryTapped = false;
-				if (!handleEvent_secondMouseUp(event, x, y))
-					return false;
-				break;
-			case kInputOrientationChanged:
-				handleEvent_orientationChanged((int)xUnit);
+		case kInputMouseDragged:
+			if (!handleEvent_mouseDragged(event, x, y))
 				return false;
-				break;
-
-			case kInputApplicationSuspended:
-				suspendLoop();
+			break;
+		case kInputMouseSecondDragged:
+			if (!handleEvent_mouseSecondDragged(event, x, y))
 				return false;
-				break;
+			break;
+		case kInputMouseSecondDown:
+			_secondaryTapped = true;
+			if (!handleEvent_secondMouseDown(event, x, y))
+				return false;
+			break;
+		case kInputMouseSecondUp:
+			_secondaryTapped = false;
+			if (!handleEvent_secondMouseUp(event, x, y))
+				return false;
+			break;
+		case kInputOrientationChanged:
+			handleEvent_orientationChanged(x);
+			return false;
+			break;
 
-			case kInputKeyPressed:
-				handleEvent_keyPressed(event, (int)xUnit);
-				break;
+		case kInputApplicationSuspended:
+			suspendLoop();
+			return false;
+			break;
 
-			case kInputSwipe:
-				if (!handleEvent_swipe(event, (int)xUnit))
-					return false;
-				break;
+		case kInputKeyPressed:
+			handleEvent_keyPressed(event, x);
+			break;
 
-			default:
-				break;
+		case kInputSwipe:
+			if (!handleEvent_swipe(event, x))
+				return false;
+			break;
+
+		default:
+			break;
 		}
 
 		return true;
@@ -154,8 +122,8 @@ bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		event.mouse.x = _mouseX;
-		event.mouse.y = _mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 		return true;
 	} else {
 		_lastMouseDown = getMillis();
@@ -170,20 +138,19 @@ bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {
 		_secondaryTapped = false;
 		if (!handleEvent_secondMouseUp(event, x, y))
 			return false;
-	}
-	else if (_mouseClickAndDragEnabled) {
+	} else if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse.x = _mouseX;
-		event.mouse.y = _mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 	} else {
 		if (getMillis() - _lastMouseDown < 250) {
 			event.type = Common::EVENT_LBUTTONDOWN;
-			event.mouse.x = _mouseX;
-			event.mouse.y = _mouseY;
+			event.mouse.x = _videoContext->mouseX;
+			event.mouse.y = _videoContext->mouseY;
 
 			_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
-			_queuedInputEvent.mouse.x = _mouseX;
-			_queuedInputEvent.mouse.y = _mouseY;
+			_queuedInputEvent.mouse.x = _videoContext->mouseX;
+			_queuedInputEvent.mouse.y = _videoContext->mouseY;
 			_lastMouseTap = getMillis();
 			_queuedEventTime = _lastMouseTap + kQueuedInputEventDelay;
 		} else
@@ -200,14 +167,13 @@ bool OSystem_IPHONE::handleEvent_secondMouseDown(Common::Event &event, int x, in
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse.x = _mouseX;
-		event.mouse.y = _mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 
 		_queuedInputEvent.type = Common::EVENT_RBUTTONDOWN;
-		_queuedInputEvent.mouse.x = _mouseX;
-		_queuedInputEvent.mouse.y = _mouseY;
-	}
-	else
+		_queuedInputEvent.mouse.x = _videoContext->mouseX;
+		_queuedInputEvent.mouse.y = _videoContext->mouseY;
+	} else
 		return false;
 
 	return true;
@@ -216,9 +182,9 @@ bool OSystem_IPHONE::handleEvent_secondMouseDown(Common::Event &event, int x, in
 bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int y) {
 	int curTime = getMillis();
 
-	if (curTime - _lastSecondaryDown < 400 ) {
+	if (curTime - _lastSecondaryDown < 400) {
 		//printf("Right tap!\n");
-		if (curTime - _lastSecondaryTap < 400 && !_overlayVisible) {
+		if (curTime - _lastSecondaryTap < 400 && !_videoContext->overlayVisible) {
 			//printf("Right escape!\n");
 			event.type = Common::EVENT_KEYDOWN;
 			_queuedInputEvent.type = Common::EVENT_KEYUP;
@@ -231,11 +197,11 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 		} else if (!_mouseClickAndDragEnabled) {
 			//printf("Rightclick!\n");
 			event.type = Common::EVENT_RBUTTONDOWN;
-			event.mouse.x = _mouseX;
-			event.mouse.y = _mouseY;
+			event.mouse.x = _videoContext->mouseX;
+			event.mouse.y = _videoContext->mouseY;
 			_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
-			_queuedInputEvent.mouse.x = _mouseX;
-			_queuedInputEvent.mouse.y = _mouseY;
+			_queuedInputEvent.mouse.x = _videoContext->mouseX;
+			_queuedInputEvent.mouse.y = _videoContext->mouseY;
 			_lastSecondaryTap = curTime;
 			_queuedEventTime = curTime + kQueuedInputEventDelay;
 		} else {
@@ -245,8 +211,8 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 	}
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_RBUTTONUP;
-		event.mouse.x = _mouseX;
-		event.mouse.y = _mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 	}
 
 	return true;
@@ -262,17 +228,17 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 	//printf("Mouse dragged at (%u, %u)\n", x, y);
 	int mouseNewPosX;
 	int mouseNewPosY;
-	if (_touchpadModeEnabled ) {
+	if (_touchpadModeEnabled) {
 		int deltaX = _lastPadX - x;
 		int deltaY = _lastPadY - y;
 		_lastPadX = x;
 		_lastPadY = y;
 
-		mouseNewPosX = (int)(_mouseX - deltaX / 0.5f);
-		mouseNewPosY = (int)(_mouseY - deltaY / 0.5f);
+		mouseNewPosX = (int)(_videoContext->mouseX - deltaX / 0.5f);
+		mouseNewPosY = (int)(_videoContext->mouseY - deltaY / 0.5f);
 
-		int widthCap = _overlayVisible ? _overlayWidth : _screenWidth;
-		int heightCap = _overlayVisible ? _overlayHeight : _screenHeight;
+		int widthCap = _videoContext->overlayVisible ? _videoContext->overlayWidth : _videoContext->screenWidth;
+		int heightCap = _videoContext->overlayVisible ? _videoContext->overlayHeight : _videoContext->screenHeight;
 
 		if (mouseNewPosX < 0)
 			mouseNewPosX = 0;
@@ -319,12 +285,9 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 
 		if (absX < kMaxDeviation && vecY >= kNeededLength) {
 			// Swipe down
-			event.type = Common::EVENT_KEYDOWN;
-			_queuedInputEvent.type = Common::EVENT_KEYUP;
+			event.type = Common::EVENT_MAINMENU;
+			_queuedInputEvent.type = Common::EVENT_INVALID;
 
-			event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_F5;
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 			return true;
 		}
@@ -371,26 +334,26 @@ void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 
 	ScreenOrientation newOrientation;
 	switch (orientation) {
-		case 1:
-			newOrientation = kScreenOrientationPortrait;
-			break;
-		case 3:
-			newOrientation = kScreenOrientationLandscape;
-			break;
-		case 4:
-			newOrientation = kScreenOrientationFlippedLandscape;
-			break;
-		default:
-			return;
+	case 1:
+		newOrientation = kScreenOrientationPortrait;
+		break;
+	case 3:
+		newOrientation = kScreenOrientationLandscape;
+		break;
+	case 4:
+		newOrientation = kScreenOrientationFlippedLandscape;
+		break;
+	default:
+		return;
 	}
 
 
 	if (_screenOrientation != newOrientation) {
 		_screenOrientation = newOrientation;
-		iPhone_initSurface(_screenWidth, _screenHeight);
+		updateOutputSurface();
 
 		dirtyFullScreen();
-		if (_overlayVisible)
+		if (_videoContext->overlayVisible)
 			dirtyFullOverlayScreen();
 		updateScreen();
 	}
@@ -403,50 +366,50 @@ void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPresse
 	// We remap some of the iPhone keyboard keys.
 	// The first ten here are the row of symbols below the numeric keys.
 	switch (keyPressed) {
-		case 45:
-			keyPressed = Common::KEYCODE_F1;
-			ascii = Common::ASCII_F1;
-			break;
-		case 47:
-			keyPressed = Common::KEYCODE_F2;
-			ascii = Common::ASCII_F2;
-			break;
-		case 58:
-			keyPressed = Common::KEYCODE_F3;
-			ascii = Common::ASCII_F3;
-			break;
-		case 59:
-			keyPressed = Common::KEYCODE_F4;
-			ascii = Common::ASCII_F4;
-			break;
-		case 40:
-			keyPressed = Common::KEYCODE_F5;
-			ascii = Common::ASCII_F5;
-			break;
-		case 41:
-			keyPressed = Common::KEYCODE_F6;
-			ascii = Common::ASCII_F6;
-			break;
-		case 36:
-			keyPressed = Common::KEYCODE_F7;
-			ascii = Common::ASCII_F7;
-			break;
-		case 38:
-			keyPressed = Common::KEYCODE_F8;
-			ascii = Common::ASCII_F8;
-			break;
-		case 64:
-			keyPressed = Common::KEYCODE_F9;
-			ascii = Common::ASCII_F9;
-			break;
-		case 34:
-			keyPressed = Common::KEYCODE_F10;
-			ascii = Common::ASCII_F10;
-			break;
-		case 10:
-			keyPressed = Common::KEYCODE_RETURN;
-			ascii = Common::ASCII_RETURN;
-			break;
+	case 45:
+		keyPressed = Common::KEYCODE_F1;
+		ascii = Common::ASCII_F1;
+		break;
+	case 47:
+		keyPressed = Common::KEYCODE_F2;
+		ascii = Common::ASCII_F2;
+		break;
+	case 58:
+		keyPressed = Common::KEYCODE_F3;
+		ascii = Common::ASCII_F3;
+		break;
+	case 59:
+		keyPressed = Common::KEYCODE_F4;
+		ascii = Common::ASCII_F4;
+		break;
+	case 40:
+		keyPressed = Common::KEYCODE_F5;
+		ascii = Common::ASCII_F5;
+		break;
+	case 41:
+		keyPressed = Common::KEYCODE_F6;
+		ascii = Common::ASCII_F6;
+		break;
+	case 36:
+		keyPressed = Common::KEYCODE_F7;
+		ascii = Common::ASCII_F7;
+		break;
+	case 38:
+		keyPressed = Common::KEYCODE_F8;
+		ascii = Common::ASCII_F8;
+		break;
+	case 64:
+		keyPressed = Common::KEYCODE_F9;
+		ascii = Common::ASCII_F9;
+		break;
+	case 34:
+		keyPressed = Common::KEYCODE_F10;
+		ascii = Common::ASCII_F10;
+		break;
+	case 10:
+		keyPressed = Common::KEYCODE_RETURN;
+		ascii = Common::ASCII_RETURN;
+		break;
 	}
 	event.type = Common::EVENT_KEYDOWN;
 	_queuedInputEvent.type = Common::EVENT_KEYUP;
@@ -460,60 +423,60 @@ void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPresse
 bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction) {
 	Common::KeyCode keycode = Common::KEYCODE_INVALID;
 	switch (_screenOrientation) {
-		case kScreenOrientationPortrait:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_UP;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				default:
-					return false;
-			}
+	case kScreenOrientationPortrait:
+		switch ((UIViewSwipeDirection)direction) {
+		case kUIViewSwipeUp:
+			keycode = Common::KEYCODE_UP;
 			break;
-		case kScreenOrientationLandscape:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_UP;
-					break;
-				default:
-					return false;
-			}
+		case kUIViewSwipeDown:
+			keycode = Common::KEYCODE_DOWN;
 			break;
-		case kScreenOrientationFlippedLandscape:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_UP;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				default:
-					return false;
-			}
+		case kUIViewSwipeLeft:
+			keycode = Common::KEYCODE_LEFT;
 			break;
+		case kUIViewSwipeRight:
+			keycode = Common::KEYCODE_RIGHT;
+			break;
+		default:
+			return false;
+		}
+		break;
+	case kScreenOrientationLandscape:
+		switch ((UIViewSwipeDirection)direction) {
+		case kUIViewSwipeUp:
+			keycode = Common::KEYCODE_LEFT;
+			break;
+		case kUIViewSwipeDown:
+			keycode = Common::KEYCODE_RIGHT;
+			break;
+		case kUIViewSwipeLeft:
+			keycode = Common::KEYCODE_DOWN;
+			break;
+		case kUIViewSwipeRight:
+			keycode = Common::KEYCODE_UP;
+			break;
+		default:
+			return false;
+		}
+		break;
+	case kScreenOrientationFlippedLandscape:
+		switch ((UIViewSwipeDirection)direction) {
+		case kUIViewSwipeUp:
+			keycode = Common::KEYCODE_RIGHT;
+			break;
+		case kUIViewSwipeDown:
+			keycode = Common::KEYCODE_LEFT;
+			break;
+		case kUIViewSwipeLeft:
+			keycode = Common::KEYCODE_UP;
+			break;
+		case kUIViewSwipeRight:
+			keycode = Common::KEYCODE_DOWN;
+			break;
+		default:
+			return false;
+		}
+		break;
 	}
 
 	event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;

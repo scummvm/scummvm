@@ -276,11 +276,11 @@ uint16 PopupMenu::ShowInventory() {
 
 	HotspotDataList::iterator i;
 	for (i = rsc.hotspotData().begin(); i != rsc.hotspotData().end(); ++i) {
-		HotspotData *hotspot = (*i).get();
-		if (hotspot->roomNumber == PLAYER_ID) {
-			idList[itemCtr] = hotspot->hotspotId;
+		HotspotData const &hotspot = **i;
+		if (hotspot.roomNumber == PLAYER_ID) {
+			idList[itemCtr] = hotspot.hotspotId;
 			char *hotspotName = itemNames[itemCtr++] = (char *) malloc(MAX_HOTSPOT_NAME_SIZE);
-			strings.getString(hotspot->nameId, hotspotName);
+			strings.getString(hotspot.nameId, hotspotName);
 		}
 	}
 
@@ -317,52 +317,52 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 
 	// Loop for rooms
 	for (ir = rooms.begin(); ir != rooms.end(); ++ir) {
-		RoomData *roomData = (*ir).get();
+		RoomData const &roomData = **ir;
 		// Pre-condition checks for whether to skip room
-		if ((roomData->hdrFlags != 15) && ((roomData->hdrFlags & fields.hdrFlagMask()) == 0))
+		if ((roomData.hdrFlags != 15) && ((roomData.hdrFlags & fields.hdrFlagMask()) == 0))
 			continue;
-		if (((roomData->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((roomData->flags & HOTSPOTFLAG_FOUND) == 0))
+		if (((roomData.flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((roomData.flags & HOTSPOTFLAG_FOUND) == 0))
 			continue;
-		if ((roomData->actions & contextBitflag) == 0)
+		if ((roomData.actions & contextBitflag) == 0)
 			continue;
 
 		// Add room to list of entries to display
 		if (numItems == MAX_NUM_DISPLAY_ITEMS) error("Out of space in ask list");
-		entryIds[numItems] = roomData->roomNumber;
-		nameIds[numItems] = roomData->roomNumber;
+		entryIds[numItems] = roomData.roomNumber;
+		nameIds[numItems] = roomData.roomNumber;
 		entryNames[numItems] = (char *) Memory::alloc(MAX_HOTSPOT_NAME_SIZE);
-		strings.getString(roomData->roomNumber, entryNames[numItems]);
+		strings.getString(roomData.roomNumber, entryNames[numItems]);
 		++numItems;
 	}
 
 	// Loop for hotspots
 	for (ih = hotspots.begin(); ih != hotspots.end(); ++ih) {
-		HotspotData *hotspot = (*ih).get();
+		HotspotData const &hotspot = **ih;
 
-		if ((hotspot->headerFlags != 15) &&
-			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))
+		if ((hotspot.headerFlags != 15) &&
+			((hotspot.headerFlags & fields.hdrFlagMask()) == 0))
 			continue;
 
-		if (((hotspot->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((hotspot->flags & HOTSPOTFLAG_FOUND) == 0))
+		if (((hotspot.flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((hotspot.flags & HOTSPOTFLAG_FOUND) == 0))
 			// Skip the current hotspot
 			continue;
 
 		// If the hotspot is room specific, skip if the character will not be in the specified room
-		if (((hotspot->flags & HOTSPOTFLAG_ROOM_SPECIFIC) != 0) &&
-			(hotspot->roomNumber != roomNumber))
+		if (((hotspot.flags & HOTSPOTFLAG_ROOM_SPECIFIC) != 0) &&
+			(hotspot.roomNumber != roomNumber))
 			continue;
 
 		// If hotspot does not allow action, then skip it
-		if ((hotspot->actions & contextBitflag) == 0)
+		if ((hotspot.actions & contextBitflag) == 0)
 			continue;
 
 		// If a special hotspot Id, then skip displaying
-		if ((hotspot->nameId == 0x17A) || (hotspot->nameId == 0x147))
+		if ((hotspot.nameId == 0x17A) || (hotspot.nameId == 0x147))
 			continue;
 
 		// Check if the hotspot's name is already used in an already set item
 		itemCtr = 0;
-		while ((itemCtr < numItems) && (nameIds[itemCtr] != hotspot->nameId))
+		while ((itemCtr < numItems) && (nameIds[itemCtr] != hotspot.nameId))
 			++itemCtr;
 		if (itemCtr != numItems)
 			// Item's name is already present - skip hotspot
@@ -370,10 +370,10 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 
 		// Add hotspot to list of entries to display
 		if (numItems == MAX_NUM_DISPLAY_ITEMS) error("Out of space in ask list");
-		entryIds[numItems] = hotspot->hotspotId;
-		nameIds[numItems] = hotspot->nameId;
+		entryIds[numItems] = hotspot.hotspotId;
+		nameIds[numItems] = hotspot.nameId;
 		entryNames[numItems] = (char *) Memory::alloc(MAX_HOTSPOT_NAME_SIZE);
-		strings.getString(hotspot->nameId, entryNames[numItems]);
+		strings.getString(hotspot.nameId, entryNames[numItems]);
 		++numItems;
 	}
 
@@ -515,7 +515,9 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	r.top = Surface::textY();
 	r.bottom = s->height() - Surface::textY() + 1;
 
-	for (;;) {
+	bool bailOut = false;
+
+	while (!bailOut) {
 		if (refreshFlag) {
 			// Set up the contents of the menu
 			s->fillRect(r, bgColor);
@@ -546,8 +548,8 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 		while (e.pollEvent()) {
 			if (engine.shouldQuit()) {
 				selectedIndex = 0xffff;
-				goto bail_out;
-
+				bailOut = true;
+				break;
 			} else if (e.type() == Common::EVENT_WHEELUP) {
 				// Scroll upwards
 				if (selectedIndex > 0) {
@@ -571,10 +573,12 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					++selectedIndex;
 					refreshFlag = true;
 				} else if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
-					goto bail_out;
+					bailOut = true;
+					break;
 				} else if (keycode == Common::KEYCODE_ESCAPE) {
 					selectedIndex = 0xffff;
-					goto bail_out;
+					bailOut = true;
+					break;
 				}
 
 #ifdef LURE_CLICKABLE_MENUS
@@ -586,46 +590,51 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				if (r.contains(x, y)) {
 					selectedIndex = (y - r.top) / FONT_HEIGHT;
 					if (e.type() == Common::EVENT_LBUTTONDOWN)
-						goto bail_out;
+						bailOut = true;
+						break;
 				}
 #else
 			} else if ((e.type() == Common::EVENT_LBUTTONDOWN) ||
 					(e.type() == Common::EVENT_MBUTTONDOWN)) {
 				//mouse.waitForRelease();
-				goto bail_out;
+				bailOut = true;
+				break;
 #endif
 			} else if (e.type() == Common::EVENT_RBUTTONDOWN) {
 				mouse.waitForRelease();
 				selectedIndex = 0xffff;
-				goto bail_out;
+				bailOut = true;
+				break;
 			}
 		}
 
+		if (!bailOut) {
 #ifndef LURE_CLICKABLE_MENUS
-		// Warping the mouse to "neutral" even if the top/bottom menu
-		// entry has been reached has both pros and cons. It makes the
-		// menu behave a bit more sensibly, but it also makes it harder
-		// to move the mouse pointer out of the ScummVM window.
+			// Warping the mouse to "neutral" even if the top/bottom menu
+			// entry has been reached has both pros and cons. It makes the
+			// menu behave a bit more sensibly, but it also makes it harder
+			// to move the mouse pointer out of the ScummVM window.
 
-		if (mouse.y() < yMiddle - POPMENU_CHANGE_SENSITIVITY) {
-			if (selectedIndex > 0) {
-				--selectedIndex;
-				refreshFlag = true;
+			if (mouse.y() < yMiddle - POPMENU_CHANGE_SENSITIVITY) {
+				if (selectedIndex > 0) {
+					--selectedIndex;
+					refreshFlag = true;
+				}
+				mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
+			} else if (mouse.y() > yMiddle + POPMENU_CHANGE_SENSITIVITY) {
+				if (selectedIndex < numEntries - 1) {
+					++selectedIndex;
+					refreshFlag = true;
+				}
+				mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
 			}
-			mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
-		} else if (mouse.y() > yMiddle + POPMENU_CHANGE_SENSITIVITY) {
-			if (selectedIndex < numEntries - 1) {
-				++selectedIndex;
-				refreshFlag = true;
-			}
-			mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
-		}
 #endif
 
-		system.delayMillis(20);
+			system.delayMillis(20);
+		}
 	}
 
-bail_out:
+	// bailOut
 	delete s;
 
 #ifndef LURE_CLICKABLE_MENUS

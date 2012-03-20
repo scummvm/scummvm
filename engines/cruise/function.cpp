@@ -142,7 +142,7 @@ int16 Op_AddProc() {
 
 	if (procBss) {
 		for (long int i = 0; i < pop1; i++) {
-			int16* ptr = (int16*)(procBss + i * 2);
+			int16* ptr = (int16 *)(procBss + i * 2);
 			*ptr = param[i];
 			bigEndianShortToNative(ptr);
 		}
@@ -1046,7 +1046,7 @@ int16 Op_ComputeLine() {
 	int y1 = popVar();
 	int x1 = popVar();
 
-	point* pDest = (point*)popPtr();
+	point* pDest = (point *)popPtr();
 
 	int maxValue = cor_droite(x1, y1, x2, y2, pDest);
 
@@ -1334,7 +1334,7 @@ int16 Op_TrackAnim() {		// setup actor position
 }
 
 int16 Op_BgName() {
-	char* bgName = (char*)popPtr();
+	char* bgName = (char *)popPtr();
 	int bgIdx = popVar();
 
 	if ((bgIdx >= 0) && (bgIdx < NBSCREENS) && bgName) {
@@ -1524,7 +1524,7 @@ int16 Op_Itoa() {
 		param[i] = popVar();
 
 	int val = popVar();
-	char* pDest = (char*)popPtr();
+	char* pDest = (char *)popPtr();
 
 	if (!nbp)
 		sprintf(txt, "%d", val);
@@ -1645,7 +1645,7 @@ int16 Op_SetVolume() {
 }
 
 int16 Op_SongExist() {
-	const char *songName = (char*)popPtr();
+	const char *songName = (char *)popPtr();
 
 	if (songName) {
 		char name[33];

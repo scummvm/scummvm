@@ -20,12 +20,15 @@
  *
  */
 
-#ifdef ENABLE_LOL
-
 #ifndef KYRA_TEXT_LOL_H
 #define KYRA_TEXT_LOL_H
 
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+#include "kyra/text_rpg.h"
+#endif
 #include "common/scummsys.h"
+
+#ifdef ENABLE_LOL
 
 namespace Kyra {
 
@@ -33,17 +36,13 @@ class Screen_LoL;
 class LoLEngine;
 struct EMCState;
 
-class TextDisplayer_LoL {
-friend class LoLEngine;
+class TextDisplayer_LoL : public TextDisplayer_rpg {
 public:
-	TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen);
+	TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL);
 	~TextDisplayer_LoL();
 
 	void setupField(bool mode);
 	void expandField();
-
-	int clearDim(int dim);
-	void resetDimTextPositions(int dim);
 
 	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void printMessage(uint16 type, const char *str, ...) GCC_PRINTF(3, 4);
@@ -51,49 +50,21 @@ public:
 	int16 _scriptTextParameter;
 
 private:
-	void displayText(char *str, ...);
-	char parseCommand();
-	void readNextPara();
-	void printLine(char *str);
+	virtual KyraRpgEngine *vm();
+	virtual Screen *screen();
+
 	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void textPageBreak();
 
-	void clearCurDim();
-
 	char *_stringParameters[15];
 	char *_buffer;
-	char *_dialogueBuffer;
-	char *_tempString1;
-	char *_tempString2;
-	char *_currentLine;
-	char _ctrl[3];
-
-	char _scriptParaString[11];
-
-	uint16 _lineWidth;
-	int _lineCount;
-	uint32 _numCharsTotal;
-	uint32 _numCharsLeft;
-	uint32 _numCharsPrinted;
-
-	bool _printFlag;
-	bool _sjisLineBreakFlag;
 
 	LoLEngine *_vm;
 	Screen_LoL *_screen;
-
-	struct TextDimData {
-		uint8 color1;
-		uint8 color2;
-		uint16 column;
-		uint8 line;
-	};
-
-	TextDimData *_textDimData;
 };
 
 } // End of namespace Kyra
 
-#endif
-
 #endif // ENABLE_LOL
+
+#endif

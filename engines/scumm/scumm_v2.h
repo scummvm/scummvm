@@ -44,17 +44,13 @@ protected:
 	Common::String _sentenceBuf;
 	uint16 _inventoryOffset;
 
-	int _activeInventory;
-	int _activeObject;
-	int _activeVerb;
-
 public:
 	ScummEngine_v2(OSystem *syst, const DetectorResult &dr);
 
 	virtual void resetScumm();
 
 	void checkV2MouseOver(Common::Point pos);
-	void checkV2Inventory(int x, int y);
+	int checkV2Inventory(int x, int y);
 	void redrawV2Inventory();
 
 protected:
@@ -89,8 +85,9 @@ protected:
 	void ifNotStateCommon(byte type);
 	void setStateCommon(byte type);
 	void clearStateCommon(byte type);
+	void stopScriptCommon(int script);
 
-	virtual void resetSentence(bool walking);
+	void resetSentence();
 	void setUserState(byte state);
 
 	virtual void handleMouseOver(bool updateInventory);
@@ -99,6 +96,10 @@ protected:
 	void initNESMouseOver();
 
 	virtual void setBuiltinCursor(int index);
+
+	void drawPreposition(int index);
+
+	void walkActorToObject(int actor, int obj);
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();

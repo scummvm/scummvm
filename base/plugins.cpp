@@ -358,8 +358,6 @@ void PluginManagerUncached::init() {
 	unloadAllPlugins();
 	_allEnginePlugins.clear();
 
-	// Resize our pluginsInMem list to prevent fragmentation
-	_pluginsInMem[PLUGIN_TYPE_ENGINE].resize(2);
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);	// empty the engine plugins
 
 	for (ProviderList::iterator pp = _providers.begin();

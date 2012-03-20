@@ -513,7 +513,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETGREYEDOUTPUT:
-			_ports->textGreyedOutput(argv[0].isNull() ? false : true);
+			_ports->textGreyedOutput(!argv[0].isNull());
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETFONT:

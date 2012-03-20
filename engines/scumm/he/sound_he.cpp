@@ -652,7 +652,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			 * even addresses, so the use of (void *) in the
 			 * following cast shuts the compiler from warning
 			 * unnecessarily. */
-			size = voxStream->readBuffer((int16*)(void *)sound, size * 2);
+			size = voxStream->readBuffer((int16 *)(void *)sound, size * 2);
 			size *= 2; // 16bits.
 			delete voxStream;
 

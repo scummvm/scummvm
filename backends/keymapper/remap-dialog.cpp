@@ -39,7 +39,7 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("KeyMapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
+	: Dialog("KeyMapper"), _keymapTable(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
@@ -57,12 +57,13 @@ RemapDialog::~RemapDialog() {
 }
 
 void RemapDialog::open() {
-	bool divider = false;
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
 	if (activeKeymaps.size() > 0) {
-		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Active)"));
-		divider = true;
+		if (activeKeymaps.top().keymap->getName() == Common::kGuiKeymapName)
+			_topKeymapIsGui = true;
+		// Add the entry for the "effective" special view. See RemapDialog::loadKeymap()
+		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Effective)"));
 	}
 
 	Keymapper::Domain *_globalKeymaps = &_keymapper->getGlobalDomain();
@@ -84,27 +85,45 @@ void RemapDialog::open() {
 			keymapCount += _gameKeymaps->size();
 	}
 
+	if (activeKeymaps.size() > 1) {
+		keymapCount += activeKeymaps.size() - 1;
+	}
+
 	debug(3, "RemapDialog::open keymaps: %d", keymapCount);
 
-	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
+	_keymapTable = (Keymap **)malloc(sizeof(Keymap *) * keymapCount);
 
 	Keymapper::Domain::iterator it;
 	uint32 idx = 0;
 
+	if (activeKeymaps.size() > 1) {
+		int topIndex = activeKeymaps.size() - 1;
+		bool active = activeKeymaps[topIndex].transparent;
+		for (int i = topIndex - 1; i >= 0; --i) {
+			Keymapper::MapRecord mr = activeKeymaps[i];
+			// Add an entry for each keymap in the stack after the top keymap. Mark it Active if it is
+			// reachable or Blocked if an opaque keymap is on top of it thus blocking access to it.
+			_kmPopUp->appendEntry(mr.keymap->getName() + (active ? _(" (Active)") : _(" (Blocked)")), idx);
+			_keymapTable[idx++] = mr.keymap;
+			active &= mr.transparent;
+		}
+	}
+
+	_kmPopUp->appendEntry("");
+
+	// Now add entries for all known keymaps. Note that there will be duplicates with the stack entries.
+
 	if (_globalKeymaps) {
-		if (divider)
-			_kmPopUp->appendEntry("");
 		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); ++it) {
+			// "global" means its keybindings apply to all games; saved in a global conf domain
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Global)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
-		divider = true;
 	}
 
 	if (_gameKeymaps) {
-		if (divider)
-			_kmPopUp->appendEntry("");
 		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); ++it) {
+			// "game" means its keybindings are saved per-target
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Game)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
@@ -138,18 +157,19 @@ void RemapDialog::reflowLayout() {
 
 	int16 areaX, areaY;
 	uint16 areaW, areaH;
+	g_gui.xmlEval()->getWidgetData((const String&)String("KeyMapper.KeymapArea"), areaX, areaY, areaW, areaH);
+
 	int spacing = g_gui.xmlEval()->getVar("Globals.KeyMapper.Spacing");
-	int labelWidth =  g_gui.xmlEval()->getVar("Globals.KeyMapper.LabelWidth");
 	int keyButtonWidth = g_gui.xmlEval()->getVar("Globals.KeyMapper.ButtonWidth");
 	int clearButtonWidth = g_gui.xmlEval()->getVar("Globals.Line.Height");
 	int clearButtonHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
-	int colWidth = labelWidth + keyButtonWidth + clearButtonWidth + spacing;
 
-	g_gui.xmlEval()->getWidgetData((const String&)String("KeyMapper.KeymapArea"), areaX, areaY, areaW, areaH);
+	int colWidth = areaW - scrollbarWidth;
+	int labelWidth =  colWidth - (keyButtonWidth + spacing + clearButtonWidth + spacing);
 
-	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
-	if (_colCount <= 0 || _rowCount <= 0)
+	debug(7, "rowCount = %d" , _rowCount);
+	if (colWidth <= 0  || _rowCount <= 0)
 		error("Remap dialog too small to display any keymaps");
 
 	_scrollBar->resize(areaX + areaW - scrollbarWidth, areaY, scrollbarWidth, areaH);
@@ -160,7 +180,7 @@ void RemapDialog::reflowLayout() {
 	uint textYOff = (buttonHeight - kLineHeight) / 2;
 	uint clearButtonYOff = (buttonHeight - clearButtonHeight) / 2;
 	uint oldSize = _keymapWidgets.size();
-	uint newSize = _rowCount * _colCount;
+	uint newSize = _rowCount;
 
 	_keymapWidgets.reserve(newSize);
 
@@ -169,30 +189,22 @@ void RemapDialog::reflowLayout() {
 
 		if (i >= _keymapWidgets.size()) {
 			widg.actionText =
-				new GUI::StaticTextWidget(this, 0, 0, 0, 0, "", Graphics::kTextAlignRight);
+				new GUI::StaticTextWidget(this, 0, 0, 0, 0, "", Graphics::kTextAlignLeft);
 			widg.keyButton =
 				new GUI::ButtonWidget(this, 0, 0, 0, 0, "", 0, kRemapCmd + i);
-#ifndef DISABLE_FANCY_THEMES
-			if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-				widg.clearButton = new GUI::PicButtonWidget(this, 0, 0, clearButtonWidth, clearButtonHeight, _("Clear value"), kClearCmd + i);
-				((GUI::PicButtonWidget *)widg.clearButton)->useThemeTransparency(true);
-				((GUI::PicButtonWidget *)widg.clearButton)->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageEraser));
-			}
-			else
-#endif
-				widg.clearButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, "C", _("Clear value"), kClearCmd + i);
-
+			widg.clearButton = addClearButton(this, "", kClearCmd + i, 0, 0, clearButtonWidth, clearButtonHeight);
 			_keymapWidgets.push_back(widg);
 		} else {
 			widg = _keymapWidgets[i];
 		}
 
-		uint x = areaX + (i % _colCount) * colWidth;
-		uint y = areaY + (i / _colCount) * (buttonHeight + spacing);
+		uint x = areaX;
+		uint y = areaY + (i) * (buttonHeight + spacing);
 
-		widg.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
-		widg.keyButton->resize(x + labelWidth, y, keyButtonWidth, buttonHeight);
-		widg.clearButton->resize(x + labelWidth + keyButtonWidth + spacing, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
+		widg.keyButton->resize(x, y, keyButtonWidth, buttonHeight);
+		widg.clearButton->resize(x + keyButtonWidth + spacing, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
+		widg.actionText->resize(x + keyButtonWidth + spacing + clearButtonWidth + spacing, y + textYOff, labelWidth, kLineHeight);
+
 	}
 	while (oldSize > newSize) {
 		ActionWidgets widg = _keymapWidgets.remove_at(--oldSize);
@@ -231,16 +243,14 @@ void RemapDialog::clearMapping(uint i) {
 		return;
 
 	debug(3, "clear the mapping %u", i);
-	_activeRemapAction = _currentActions[_topAction + i].action;
-	_activeRemapAction->mapKey(0);
-	_activeRemapAction->getParent()->saveMappings();
+	Action *activeRemapAction = _currentActions[_topAction + i].action;
+	activeRemapAction->mapInput(0);
+	activeRemapAction->getParent()->saveMappings();
 	_changes = true;
 
 	// force refresh
-	_topAction = -1;
+	stopRemapping(true);
 	refreshKeymap();
-
-	_activeRemapAction = 0;
 }
 
 void RemapDialog::startRemapping(uint i) {
@@ -248,57 +258,56 @@ void RemapDialog::startRemapping(uint i) {
 		return;
 
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
-	_activeRemapAction = _currentActions[_topAction + i].action;
+	Action *activeRemapAction = _currentActions[_topAction + i].action;
 	_keymapWidgets[i].keyButton->setLabel("...");
 	_keymapWidgets[i].keyButton->draw();
-	_keymapper->setEnabled(false);
+	_keymapper->startRemappingMode(activeRemapAction);
 
 }
 
-void RemapDialog::stopRemapping() {
+void RemapDialog::stopRemapping(bool force) {
 	_topAction = -1;
 
 	refreshKeymap();
 
-	_activeRemapAction = 0;
-
-	_keymapper->setEnabled(true);
+	if (force)
+		_keymapper->stopRemappingMode();
 }
 
 void RemapDialog::handleKeyDown(Common::KeyState state) {
-	if (_activeRemapAction)
+	if (_keymapper->isRemapping())
 		return;
 
 	GUI::Dialog::handleKeyDown(state);
 }
 
 void RemapDialog::handleKeyUp(Common::KeyState state) {
-	if (_activeRemapAction) {
-		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
+	if (_keymapper->isRemapping())
+		return;
 
-		debug(4, "RemapDialog::handleKeyUp Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
+	GUI::Dialog::handleKeyUp(state);
+}
 
-		if (hwkey) {
-			_activeRemapAction->mapKey(hwkey);
-			_activeRemapAction->getParent()->saveMappings();
-			_changes = true;
-			stopRemapping();
-		}
+void RemapDialog::handleOtherEvent(Event ev) {
+	if (ev.type == EVENT_GUI_REMAP_COMPLETE_ACTION) {
+		// _keymapper is telling us that something changed
+		_changes = true;
+		stopRemapping();
 	} else {
-		GUI::Dialog::handleKeyUp(state);
+		GUI::Dialog::handleOtherEvent(ev);
 	}
 }
 
 void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (_activeRemapAction)
+	if (_keymapper->isRemapping())
 		stopRemapping();
 	else
 		Dialog::handleMouseDown(x, y, button, clickCount);
 }
 
 void RemapDialog::handleTickle() {
-	if (_activeRemapAction && g_system->getMillis() > _remapTimeout)
-		stopRemapping();
+	if (_keymapper->isRemapping() && g_system->getMillis() > _remapTimeout)
+		stopRemapping(true);
 	Dialog::handleTickle();
 }
 
@@ -309,19 +318,22 @@ void RemapDialog::loadKeymap() {
 	debug(3, "RemapDialog::loadKeymap active keymaps: %u", activeKeymaps.size());
 
 	if (!activeKeymaps.empty() && _kmPopUp->getSelected() == 0) {
-		// load active keymaps
+		// This is the "effective" view which shows all effective actions:
+		// - all of the topmost keymap action
+		// - all mapped actions that are reachable
 
-		List<const HardwareKey*> freeKeys(_keymapper->getHardwareKeys());
+		List<const HardwareInput *> freeInputs(_keymapper->getHardwareInputs());
 
 		int topIndex = activeKeymaps.size() - 1;
-		// skip the top gui keymap since it is for the keymapper itself
-		// TODO: Don't use the keymap name as a way to discriminate GUI maps
-		if (topIndex > 0 && activeKeymaps[topIndex].keymap->getName().equals(kGuiKeymapName))
+
+		// This is a WORKAROUND for changing the popup list selected item and changing it back
+		// to the top entry. Upon changing it back, the top keymap is always "gui".
+		if (!_topKeymapIsGui && activeKeymaps[topIndex].keymap->getName() == kGuiKeymapName)
 			--topIndex;
 
 		// add most active keymap's keys
 		Keymapper::MapRecord top = activeKeymaps[topIndex];
-		List<Action*>::iterator actIt;
+		List<Action *>::iterator actIt;
 		debug(3, "RemapDialog::loadKeymap top keymap: %s", top.keymap->getName().c_str());
 		for (actIt = top.keymap->getActions().begin(); actIt != top.keymap->getActions().end(); ++actIt) {
 			Action *act = *actIt;
@@ -329,38 +341,46 @@ void RemapDialog::loadKeymap() {
 
 			_currentActions.push_back(info);
 
-			if (act->getMappedKey())
-				freeKeys.remove(act->getMappedKey());
+			if (act->getMappedInput())
+				freeInputs.remove(act->getMappedInput());
 		}
 
 		// loop through remaining finding mappings for unmapped keys
-		if (top.inherit && topIndex >= 0) {
+		if (top.transparent && topIndex >= 0) {
 			for (int i = topIndex - 1; i >= 0; --i) {
 				Keymapper::MapRecord mr = activeKeymaps[i];
 				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
-				List<const HardwareKey*>::iterator keyIt = freeKeys.begin();
+				List<const HardwareInput *>::iterator inputIt = freeInputs.begin();
+				const HardwareInput *input = *inputIt;
+				while (inputIt != freeInputs.end()) {
 
-				while (keyIt != freeKeys.end()) {
-					Action *act = mr.keymap->getMappedAction((*keyIt)->key);
+					Action *act = 0;
+					if (input->type == kHardwareInputTypeKeyboard)
+						act = mr.keymap->getMappedAction(input->key);
+					else if (input->type == kHardwareInputTypeGeneric)
+						act = mr.keymap->getMappedAction(input->inputCode);
 
 					if (act) {
 						ActionInfo info = {act, true, act->description + " (" + mr.keymap->getName() + ")"};
 						_currentActions.push_back(info);
-						freeKeys.erase(keyIt++);
+						freeInputs.erase(inputIt);
 					} else {
-						++keyIt;
+						++inputIt;
 					}
 				}
 
-				if (mr.inherit == false || freeKeys.empty())
+				if (mr.transparent == false || freeInputs.empty())
 					break;
 			}
 		}
 
 	} else if (_kmPopUp->getSelected() != -1) {
+		// This is the regular view of a keymap that isn't the topmost one.
+		// It shows all of that keymap's actions
+
 		Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
 
-		List<Action*>::iterator it;
+		List<Action *>::iterator it;
 
 		for (it = km->getActions().begin(); it != km->getActions().end(); ++it) {
 			ActionInfo info = {*it, false, (*it)->description};
@@ -371,7 +391,7 @@ void RemapDialog::loadKeymap() {
 
 	// refresh scroll bar
 	_scrollBar->_currentPos = 0;
-	_scrollBar->_numEntries = (_currentActions.size() + _colCount - 1) / _colCount;
+	_scrollBar->_numEntries = _currentActions.size();
 	_scrollBar->recalc();
 
 	// force refresh
@@ -380,7 +400,7 @@ void RemapDialog::loadKeymap() {
 }
 
 void RemapDialog::refreshKeymap() {
-	int newTopAction = _scrollBar->_currentPos * _colCount;
+	int newTopAction = _scrollBar->_currentPos;
 
 	if (newTopAction == _topAction)
 		return;
@@ -399,13 +419,13 @@ void RemapDialog::refreshKeymap() {
 			debug(8, "RemapDialog::refreshKeymap actionI=%u", actionI);
 			ActionInfo&    info = _currentActions[actionI];
 
-			widg.actionText->setLabel(info.description + ": ");
+			widg.actionText->setLabel(info.description);
 			widg.actionText->setEnabled(!info.inherited);
 
-			const HardwareKey *mappedKey = info.action->getMappedKey();
+			const HardwareInput *mappedInput = info.action->getMappedInput();
 
-			if (mappedKey)
-				widg.keyButton->setLabel(mappedKey->description);
+			if (mappedInput)
+				widg.keyButton->setLabel(mappedInput->description);
 			else
 				widg.keyButton->setLabel("-");
 

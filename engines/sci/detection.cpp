@@ -303,29 +303,29 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
 		demoThreshold = 150;
 
-	Common::ScopedPtr<Common::List<ResourceId> > resources(resMan.listResources(kResourceTypeScript, -1));
-	if (resources->size() < demoThreshold) {
+	Common::List<ResourceId> resources = resMan.listResources(kResourceTypeScript, -1);
+	if (resources.size() < demoThreshold) {
 		*gameFlags |= ADGF_DEMO;
 
 		// Crazy Nick's Picks
-		if (sierraId == "lsl1" && resources->size() == 34)
+		if (sierraId == "lsl1" && resources.size() == 34)
 			return "cnick-lsl";
-		if (sierraId == "sq4" && resources->size() == 34)
+		if (sierraId == "sq4" && resources.size() == 34)
 			return "cnick-sq";
-		if (sierraId == "hoyle3" && resources->size() == 42)
+		if (sierraId == "hoyle3" && resources.size() == 42)
 			return "cnick-kq";
-		if (sierraId == "rh budget" && resources->size() == 39)
+		if (sierraId == "rh budget" && resources.size() == 39)
 			return "cnick-longbow";
 		// TODO: cnick-laurabow (the name of the game object contains junk)
 
 		// Handle Astrochicken 1 (SQ3) and 2 (SQ4)
-		if (sierraId == "sq3" && resources->size() == 20)
+		if (sierraId == "sq3" && resources.size() == 20)
 			return "astrochicken";
 		if (sierraId == "sq4")
 			return "msastrochicken";
 	}
 
-	if (sierraId == "torin" && resources->size() == 226)	// Torin's Passage demo
+	if (sierraId == "torin" && resources.size() == 226)	// Torin's Passage demo
 		*gameFlags |= ADGF_DEMO;
 
 	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
@@ -350,7 +350,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 			return "qfg4";
 
 		// qfg4 demo has less than 50 scripts
-		if (resources->size() < 50)
+		if (resources.size() < 50)
 			return "qfg4";
 
 		// Otherwise it's qfg3

@@ -100,9 +100,9 @@ void refillAudioBuffers(void) {
 	Audio::MixerImpl *localmixer = (Audio::MixerImpl *)osys->getMixer();
 
 	while (_requiredSoundSlots) {
-		sndBuf = (byte*)getAIBuffer();
+		sndBuf = (byte *)getAIBuffer();
 
-		localmixer->mixCallback((byte*)sndBuf, osys->_audioBufferSize);
+		localmixer->mixCallback((byte *)sndBuf, osys->_audioBufferSize);
 
 		putAIBuffer();
 

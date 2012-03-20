@@ -30,7 +30,7 @@
 
 namespace Kyra {
 
-GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
+GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _specialProcessButton = 0;
 	_buttonListChanged = false;
 	_lastScreenUpdate = 0;
@@ -48,7 +48,7 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 }
 
 Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
-	list = GUI::addButtonToList(list, newButton);
+	list = GUI_v1::addButtonToList(list, newButton);
 	_buttonListChanged = true;
 	return list;
 }
@@ -211,7 +211,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 
 		bool progress = false;
 
-		if (mouseX >= x && mouseY >= y && mouseX <= x+buttonList->width && mouseY <= y+buttonList->height)
+		if (mouseX >= x && mouseY >= y && mouseX <= x + buttonList->width && mouseY <= y + buttonList->height)
 			progress = true;
 
 		buttonList->flags2 &= ~0x80;
@@ -360,7 +360,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 
 			if (buttonList->buttonCallback) {
 				_vm->removeInputTop();
-				if ((*buttonList->buttonCallback.get())(buttonList))
+				if ((*buttonList->buttonCallback)(buttonList))
 					break;
 			}
 
@@ -425,7 +425,7 @@ void GUI_v2::renewHighlight(Menu &menu) {
 	int x = item.x + menu.x; int y = item.y + menu.y;
 	int x2 = x + item.width - 1; int y2 = y + item.height - 1;
 	redrawText(menu);
-	_screen->fillRect(x+2, y+2, x2-2, y2-2, item.bkgdColor);
+	_screen->fillRect(x + 2, y + 2, x2 - 2, y2 - 2, item.bkgdColor);
 	redrawHighlight(menu);
 	_screen->updateScreen();
 }
@@ -594,7 +594,7 @@ int GUI_v2::cancelLoadMenu(Button *caller) {
 }
 
 int GUI_v2::saveMenu(Button *caller) {
-	updateSaveList();
+	updateSaveFileList(_vm->_targetName);
 
 	updateMenuButton(caller);
 
@@ -690,7 +690,7 @@ int GUI_v2::cancelSaveMenu(Button *caller) {
 }
 
 int GUI_v2::deleteMenu(Button *caller) {
-	updateSaveList();
+	updateSaveFileList(_vm->_targetName);
 
 	updateMenuButton(caller);
 	if (_saveSlots.size() < 2) {
@@ -736,10 +736,10 @@ int GUI_v2::deleteMenu(Button *caller) {
 			break;
 		// We are only renaming all savefiles until we get some slots missing
 		// Also not rename quicksave slot filenames
-		if (*(i-1) != *i || *i >= 990)
+		if (*(i - 1) != *i || *i >= 990)
 			break;
 		Common::String oldName = _vm->getSavegameFilename(*i);
-		Common::String newName = _vm->getSavegameFilename(*i-1);
+		Common::String newName = _vm->getSavegameFilename(*i - 1);
 		_vm->_saveFileMan->renameSavefile(oldName, newName);
 	}
 	_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 9 : 17;
@@ -845,7 +845,7 @@ int GUI_v2::getCharWidth(uint8 c) {
 }
 
 void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {
-	_screen->fillRect(x+1, y+1, x+7, y+8, c);
+	_screen->fillRect(x + 1, y + 1, x + 7, y + 8, c);
 }
 
 bool GUI_v2::choiceDialog(int name, bool type) {

@@ -221,8 +221,8 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 	// Save image stack
 
-	for (i = 0; i < _imageStack.size(); i++) {
-		ImageStackElement ise = _imageStack[i];
+	for (Common::Stack<ImageStackElement>::size_type j = 0; j < _imageStack.size(); ++j) {
+		const ImageStackElement &ise = _imageStack[j];
 		out->writeByte(ise.type);
 		out->writeSint16BE(ise.parm1);
 		out->writeSint16BE(ise.parm2);
@@ -609,8 +609,8 @@ int AgiEngine::selectSlot() {
 	AllowSyntheticEvents on(this);
 	int oldFirstSlot = _firstSlot + 1;
 	int oldActive = active + 1;
-
-	while (!(shouldQuit() || _restartGame)) {
+	bool exitSelectSlot = false;
+	while (!exitSelectSlot && !(shouldQuit() || _restartGame)) {
 		int sbPos = 0;
 
 		// Use the extreme scrollbar positions only if the extreme
@@ -661,119 +661,122 @@ int AgiEngine::selectSlot() {
 		// out of the dead loop
 		if (getflag(fRestoreJustRan)) {
 			rc = -2;
-			goto getout;
+			exitSelectSlot = true;
 		}
 
-		switch (key) {
-		case KEY_ENTER:
-			rc = active;
-			strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
-			goto press;
-		case KEY_ESCAPE:
-			rc = -1;
-			goto getout;
-		case BUTTON_LEFT:
-			if (_gfx->testButton(buttonX[0], buttonY, buttonText[0])) {
+		if (!exitSelectSlot) {
+			switch (key) {
+			case KEY_ENTER:
 				rc = active;
 				strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
-				goto press;
-			}
-			if (_gfx->testButton(buttonX[1], buttonY, buttonText[1])) {
+				debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
+				exitSelectSlot = true;
+				break;
+			case KEY_ESCAPE:
 				rc = -1;
-				goto getout;
-			}
-			slotClicked = ((int)_mouse.y - 1) / CHAR_COLS - (vm + 4);
-			xmin = (hm + 1) * CHAR_COLS;
-			xmax = xmin + CHAR_COLS * 34;
-			if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
-				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS)
-					active = slotClicked;
-			}
-			xmin = (hm + 36) * CHAR_COLS;
-			xmax = xmin + CHAR_COLS;
-			if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
-				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS) {
-					if (slotClicked == 0)
-						keyEnqueue(KEY_UP);
-					else if (slotClicked == NUM_VISIBLE_SLOTS - 1)
-						keyEnqueue(KEY_DOWN);
-					else if (slotClicked < sbPos)
-						keyEnqueue(KEY_UP_RIGHT);
-					else if (slotClicked > sbPos)
-						keyEnqueue(KEY_DOWN_RIGHT);
+				exitSelectSlot = true;
+				break;
+			case BUTTON_LEFT:
+				if (_gfx->testButton(buttonX[0], buttonY, buttonText[0])) {
+					rc = active;
+					strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
+					debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
+					exitSelectSlot = true;
+				} else if (_gfx->testButton(buttonX[1], buttonY, buttonText[1])) {
+					rc = -1;
+					exitSelectSlot = true;
+				} else {
+					slotClicked = ((int)_mouse.y - 1) / CHAR_COLS - (vm + 4);
+					xmin = (hm + 1) * CHAR_COLS;
+					xmax = xmin + CHAR_COLS * 34;
+					if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
+						if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS)
+							active = slotClicked;
+					}
+					xmin = (hm + 36) * CHAR_COLS;
+					xmax = xmin + CHAR_COLS;
+					if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
+						if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS) {
+							if (slotClicked == 0)
+								keyEnqueue(KEY_UP);
+							else if (slotClicked == NUM_VISIBLE_SLOTS - 1)
+								keyEnqueue(KEY_DOWN);
+							else if (slotClicked < sbPos)
+								keyEnqueue(KEY_UP_RIGHT);
+							else if (slotClicked > sbPos)
+								keyEnqueue(KEY_DOWN_RIGHT);
+						}
+					}
 				}
-			}
-			break;
-		case KEY_DOWN:
-			active++;
-			if (active >= NUM_VISIBLE_SLOTS) {
-				if (_firstSlot + NUM_VISIBLE_SLOTS < NUM_SLOTS) {
+				break;
+
+			case KEY_DOWN:
+				active++;
+				if (active >= NUM_VISIBLE_SLOTS) {
+					if (_firstSlot + NUM_VISIBLE_SLOTS < NUM_SLOTS) {
+						_firstSlot++;
+						for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
+							memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
+						getSavegameDescription(_firstSlot + NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
+					}
+					active = NUM_VISIBLE_SLOTS - 1;
+				}
+				break;
+			case KEY_UP:
+				active--;
+				if (active < 0) {
+					active = 0;
+					if (_firstSlot > 0) {
+						_firstSlot--;
+						for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
+							memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
+						getSavegameDescription(_firstSlot, desc[0]);
+					}
+				}
+				break;
+
+			// Page Up/Down and mouse wheel scrolling all leave 'active'
+			// unchanged so that a visible slot will remain selected.
+
+			case WHEEL_DOWN:
+				if (_firstSlot < NUM_SLOTS - NUM_VISIBLE_SLOTS) {
 					_firstSlot++;
 					for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
 						memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
 					getSavegameDescription(_firstSlot + NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
 				}
-				active = NUM_VISIBLE_SLOTS - 1;
-			}
-			break;
-		case KEY_UP:
-			active--;
-			if (active < 0) {
-				active = 0;
+				break;
+			case WHEEL_UP:
 				if (_firstSlot > 0) {
 					_firstSlot--;
 					for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
 						memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
 					getSavegameDescription(_firstSlot, desc[0]);
 				}
+				break;
+			case KEY_DOWN_RIGHT:
+				// This is probably triggered by Page Down.
+				_firstSlot += NUM_VISIBLE_SLOTS;
+				if (_firstSlot > NUM_SLOTS - NUM_VISIBLE_SLOTS) {
+					_firstSlot = NUM_SLOTS - NUM_VISIBLE_SLOTS;
+				}
+				for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
+					getSavegameDescription(_firstSlot + i, desc[i]);
+				break;
+			case KEY_UP_RIGHT:
+				// This is probably triggered by Page Up.
+				_firstSlot -= NUM_VISIBLE_SLOTS;
+				if (_firstSlot < 0) {
+					_firstSlot = 0;
+				}
+				for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
+					getSavegameDescription(_firstSlot + i, desc[i]);
+				break;
 			}
-			break;
-
-		// Page Up/Down and mouse wheel scrolling all leave 'active'
-		// unchanged so that a visible slot will remain selected.
-
-		case WHEEL_DOWN:
-			if (_firstSlot < NUM_SLOTS - NUM_VISIBLE_SLOTS) {
-				_firstSlot++;
-				for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
-					memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
-				getSavegameDescription(_firstSlot + NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
-			}
-			break;
-		case WHEEL_UP:
-			if (_firstSlot > 0) {
-				_firstSlot--;
-				for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
-					memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
-				getSavegameDescription(_firstSlot, desc[0]);
-			}
-			break;
-		case KEY_DOWN_RIGHT:
-			// This is probably triggered by Page Down.
-			_firstSlot += NUM_VISIBLE_SLOTS;
-			if (_firstSlot > NUM_SLOTS - NUM_VISIBLE_SLOTS) {
-				_firstSlot = NUM_SLOTS - NUM_VISIBLE_SLOTS;
-			}
-			for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
-				getSavegameDescription(_firstSlot + i, desc[i]);
-			break;
-		case KEY_UP_RIGHT:
-			// This is probably triggered by Page Up.
-			_firstSlot -= NUM_VISIBLE_SLOTS;
-			if (_firstSlot < 0) {
-				_firstSlot = 0;
-			}
-			for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
-				getSavegameDescription(_firstSlot + i, desc[i]);
-			break;
 		}
 		_gfx->doUpdate();
 	}
 
-press:
-	debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
-
-getout:
 	closeWindow();
 
 	_noSaveLoadAllowed = false;

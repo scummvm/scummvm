@@ -430,19 +430,16 @@ SciVersion GameFeatures::detectMessageFunctionType() {
 		return _messageFunctionType;
 	}
 
-	Common::List<ResourceId> *resources = g_sci->getResMan()->listResources(kResourceTypeMessage, -1);
+	Common::List<ResourceId> resources = g_sci->getResMan()->listResources(kResourceTypeMessage, -1);
 
-	if (resources->empty()) {
-		delete resources;
-
+	if (resources.empty()) {
 		// No messages found, so this doesn't really matter anyway...
 		_messageFunctionType = SCI_VERSION_1_1;
 		return _messageFunctionType;
 	}
 
-	Resource *res = g_sci->getResMan()->findResource(*resources->begin(), false);
+	Resource *res = g_sci->getResMan()->findResource(*resources.begin(), false);
 	assert(res);
-	delete resources;
 
 	// Only v2 Message resources use the kGetMessage kernel function.
 	// v3-v5 use the kMessage kernel function.

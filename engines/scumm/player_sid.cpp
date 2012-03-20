@@ -683,7 +683,7 @@ void Player_SID::stopSound_intern(int soundResID) { // $5093
 	releaseResource(soundResID);
 }
 
-void Player_SID::stopAllSounds_intern() { // $4CAA
+void Player_SID::stopMusic_intern() { // $4CAA
 	statusBits1B = 0;
 	isMusicPlaying = false;
 
@@ -1293,7 +1293,7 @@ int Player_SID::readBuffer(int16 *buffer, const int numSamples) {
 			_cpuCyclesLeft = timingProps[_videoSystem].cyclesPerFrame;
 		}
 		// fetch samples
-		int sampleCount = _sid->updateClock(_cpuCyclesLeft, (short*)buffer, samplesLeft);
+		int sampleCount = _sid->updateClock(_cpuCyclesLeft, (short *)buffer, samplesLeft);
 		samplesLeft -= sampleCount;
 		buffer += sampleCount;
 	}
@@ -1352,7 +1352,7 @@ void Player_SID::stopSound(int nr) {
 
 void Player_SID::stopAllSounds() {
 	Common::StackLock lock(_mutex);
-	stopAllSounds_intern();
+	resetPlayerState();
 }
 
 int Player_SID::getSoundStatus(int nr) const {

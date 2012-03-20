@@ -136,7 +136,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	textNr &= 0x1F;
 
 	if (blockNr) {
-		uint16 *blockPtr = (uint16*)(textDataPtr + 4);
+		uint16 *blockPtr = (uint16 *)(textDataPtr + 4);
 		uint32 nr32MsgBlocks = blockNr >> 5;
 
 		do {
@@ -298,7 +298,7 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	uint32 numBytes = (dtLineSize * numLines) + sizeof(DataFileHeader) + 4;
 
 	if (!dest)
-		dest = (uint8*)malloc(numBytes);
+		dest = (uint8 *)malloc(numBytes);
 
 	// clear text sprite buffer
 	memset(dest + sizeof(DataFileHeader), 0, numBytes - sizeof(DataFileHeader));

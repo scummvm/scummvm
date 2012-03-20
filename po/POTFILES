@@ -13,6 +13,7 @@ gui/options.cpp
 gui/saveload.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
+gui/widget.cpp
 
 base/main.cpp
 
@@ -63,6 +64,7 @@ backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
 backends/platform/ds/arm9/source/dsoptions.cpp
 backends/platform/iphone/osys_events.cpp
+backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/opengl/opengl-graphics.cpp

@@ -345,7 +345,7 @@ bool MessageState::stringLit(Common::String &outStr, const Common::String &inStr
 }
 
 bool MessageState::stringStage(Common::String &outstr, const Common::String &inStr, uint &index) {
-	// Stage directions of the form (n*), where n is anything but a digit or a lowercase character
+	// Stage directions of the form (n *), where n is anything but a digit or a lowercase character
 	if (inStr[index] != '(')
 		return false;
 

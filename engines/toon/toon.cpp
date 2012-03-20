@@ -2297,8 +2297,7 @@ void ToonEngine::processConversationClick(Conversation *conv, int32 status) {
 	if (v8 == -1) {
 		_gameState->_mouseHidden = false;
 	} else {
-retry:
-		while (1) {
+		while (v8 != -1) {
 			v7 += 1;
 			int16 *v14 = (int16 *)((char *)_conversationData + v8);
 
@@ -2315,15 +2314,10 @@ retry:
 					v8 = READ_LE_INT16(v7);
 					if (v8 == -1)
 						return;
-
-					goto retry;
+					else
+						break; // restarts while loop;
 				}
 			}
-
-			if (v8 != -1)
-				continue;
-
-			break;
 		}
 	}
 }
@@ -4672,10 +4666,10 @@ void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom 
 	top = MIN<int32>(MAX<int32>(top, 0), TOON_BACKBUFFER_HEIGHT);
 	bottom = MIN<int32>(MAX<int32>(bottom, 0), TOON_BACKBUFFER_HEIGHT);
 
-	Common::Rect rect(left, top, right, bottom);
-
 	if (bottom - top <= 0 || right - left <= 0)
 		return;
+
+	Common::Rect rect(left, top, right, bottom);
 
 	for (uint32 i = 0; i < _dirtyRects.size(); i++) {
 		if (_dirtyRects[i].contains(rect))

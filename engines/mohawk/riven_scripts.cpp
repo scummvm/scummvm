@@ -21,9 +21,9 @@
  */
 
 #include "mohawk/cursors.h"
-#include "mohawk/graphics.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
+#include "mohawk/riven_graphics.h"
 #include "mohawk/riven_scripts.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"

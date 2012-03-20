@@ -113,12 +113,17 @@ private:
 
 	bool _isVisible;
 
-	// KQ6 Windows has different black and white cursors. If this is
-	// true (set from the sci_originalkq6wincursors ini setting), then
-	// we use these, and don't scale them by 2x like the rest of the
-	// graphics, like SSCI did. These look very ugly, which is why
-	// they aren't enabled by default.
+	// KQ6 Windows has different black and white cursors. If this is true (set
+	// from the windows_cursors ini setting), then we use these and don't scale
+	// them by 2x like the rest of the graphics, like SSCI did. These look very
+	// ugly, which is why they aren't enabled by default.
 	bool _useOriginalKQ6WinCursors;
+
+	// The CD version of SQ4 contains a complete set of silver mouse cursors.
+	// If this is true (set from the silver_cursors ini setting), then we use
+	// these instead and replace the game's gold cursors with their silver
+	// equivalents.
+	bool _useSilverSQ4CDCursors;
 
 	// Mac versions of games use a remap list to remap their cursors
 	Common::Array<uint16> _macCursorRemap;

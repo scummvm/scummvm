@@ -32,20 +32,35 @@ namespace Scumm {
  */
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
+	enum CurrentMode {
+		kModeCutscene = 0,   // cutscene active
+		kModeKeypad = 1,     // kid selection / dial pad / save-load dialog
+		kModeNoNewKid = 2,   // verb "new kid" disabled (e.g. when entering lab)
+		kModeNormal = 3      // normal playing mode
+	};
+
+	enum WalkToObjectState {
+		kWalkToObjectStateDone = 0,
+		kWalkToObjectStateWalk = 1,
+		kWalkToObjectStateTurn = 2
+	};
+
+protected:
 	byte _currentMode;
-	bool _verbExecuting;			// is a verb executing
-	bool _verbPickup;				// are we picking up an object during a verb execute
+	byte _currentLights;
 
-	int _activeActor;				// Actor Number
-	int _activeObject2;				// 2nd Object Number
+	int _activeVerb;		// selected verb
+	int _activeObject;		// 1st selected object (see OBJECT_V0())
+	int _activeObject2;		// 2nd selected object or actor (see OBJECT_V0())
 
-	bool _activeInvExecute;			// is activeInventory first to be executed
-	bool _activeObject2Inv;			// is activeobject2 in the inventory
-	bool _activeObjectObtained;		// collected _activeobject?
-	bool _activeObject2Obtained;	// collected _activeObject2?
+	int _cmdVerb;			// script verb
+	int _cmdObject;			// 1st script object (see OBJECT_V0())
+	int _cmdObject2;		// 2nd script object or actor (see OBJECT_V0())
+	int _sentenceNestedCount;
 
-	int _activeObjectIndex;
-	int _activeObject2Index;
+	int _walkToObject;
+	int _walkToObjectState;
+	bool _redrawSentenceLine;
 
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
@@ -64,26 +79,33 @@ protected:
 
 	virtual void processInput();
 
-	virtual void runObject(int obj, int entry);
 	virtual void saveOrLoad(Serializer *s);
 
+	virtual bool objIsActor(int obj);
+	virtual int objToActor(int obj);
+	virtual int actorToObj(int actor);
+
 	// V0 MM Verb commands
-	int  verbPrep(int object);
-	bool verbMove(int object, int objectIndex, bool invObject);
-	bool verbMoveToActor(int actor);
-	bool verbObtain(int object, int objIndex);
-	bool verbExecutes(int object, bool inventory = false);
-	bool verbExec();
+	int getVerbPrepId();
+	int activeVerbPrep();
+	void walkToActorOrObject(int object);
+	void verbExec();
 
-	int findObjectIndex(int x, int y);
-
+	virtual void runSentenceScript();
+	virtual void checkAndRunSentenceScript();
+	bool checkPendingWalkAction();
+	bool checkSentenceComplete();
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
+	int verbPrepIdType(int verbid);
 	void resetVerbs();
-	void setNewKidVerbs();
 
-	void drawSentenceWord(int object, bool usePrep, bool objInInventory);
-	void drawSentence();
+	void clearSentenceLine();
+	void flushSentenceLine();
+	void drawSentenceObject(int object);
+	void drawSentenceLine();
+
+	void setMode(byte mode);
 
 	void switchActor(int slot);
 
@@ -92,12 +114,17 @@ protected:
 
 	virtual int getActiveObject();
 
-	virtual void resetSentence(bool walking);
+	void resetSentence();
 
 	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
 
-	/* Version C64 script opcodes */
+	bool ifEqualActiveObject2Common(bool checkType);
+
+	virtual int getCurrentLights() const;
+
+	/* Version 0 script opcodes */
 	void o_stopCurrentScript();
+	void o_walkActorToObject();
 	void o_loadSound();
 	void o_getActorMoving();
 	void o_animateActor();
@@ -112,30 +139,30 @@ protected:
 	void o_lockScript();
 	void o_loadScript();
 	void o_lockRoom();
-	void o_cursorCommand();
+	void o_setMode();
 	void o_lights();
 	void o_unlockCostume();
 	void o_unlockScript();
 	void o_decrement();
 	void o_nop();
+	void o_getObjectOwner();
 	void o_getActorBitVar();
 	void o_setActorBitVar();
 	void o_getBitVar();
 	void o_setBitVar();
 	void o_doSentence();
-	void o_unknown2();
-	void o_ifActiveObject();
-	void o_getClosestObjActor();
-	void o_printEgo_c64();
-	void o_print_c64();
+	void o_ifEqualActiveObject2();
+	void o_ifNotEqualActiveObject2();
+	void o_getClosestActor();
+	void o_printEgo();
+	void o_print();
 	void o_unlockRoom();
 	void o_unlockSound();
 	void o_cutscene();
 	void o_endCutscene();
-	void o_beginOverride();
 	void o_setOwnerOf();
 
-	byte VAR_ACTIVE_ACTOR;
+	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_IS_SOUND_RUNNING;
 	byte VAR_ACTIVE_VERB;
 };

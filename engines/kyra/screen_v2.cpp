@@ -26,7 +26,8 @@
 
 namespace Kyra {
 
-Screen_v2::Screen_v2(KyraEngine_v1 *vm, OSystem *system) : Screen(vm, system), _wsaFrameAnimBuffer(0) {
+Screen_v2::Screen_v2(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
+	: Screen(vm, system, dimTable, dimTableSize), _wsaFrameAnimBuffer(0) {
 	_wsaFrameAnimBuffer = new uint8[1024];
 	assert(_wsaFrameAnimBuffer);
 }
@@ -186,7 +187,7 @@ uint8 *Screen_v2::getPtrToShape(uint8 *shpFile, int shape) {
 int Screen_v2::getShapeScaledWidth(const uint8 *shpFile, int scale) {
 	if (!shpFile)
 		return 0;
-	int width = READ_LE_UINT16(shpFile+3);
+	int width = READ_LE_UINT16(shpFile + 3);
 	return (width * scale) >> 8;
 }
 
@@ -200,7 +201,7 @@ int Screen_v2::getShapeScaledHeight(const uint8 *shpFile, int scale) {
 uint16 Screen_v2::getShapeSize(const uint8 *shp) {
 	if (!shp)
 		return 0;
-	return READ_LE_UINT16(shp+6);
+	return READ_LE_UINT16(shp + 6);
 }
 
 uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
@@ -241,7 +242,7 @@ int Screen_v2::getLayer(int x, int y) {
 int Screen_v2::getRectSize(int w, int h) {
 	if (w > 320 || h > 200)
 		return 0;
-	return w*h;
+	return w * h;
 }
 
 void Screen_v2::setTextColorMap(const uint8 *cmap) {
@@ -249,7 +250,7 @@ void Screen_v2::setTextColorMap(const uint8 *cmap) {
 }
 
 void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
-	int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim) {
+                                      int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim) {
 
 	if (!(w1 || h1 || w2 || h2))
 		return;
@@ -280,7 +281,7 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 				memcpy(dt, s, w2);
 			} else if (t > 0) {
 				if (w1 == 1) {
-                    memset(dt, *s, w2);
+					memset(dt, *s, w2);
 				} else {
 					t = ((((((w2 - w1 + 1) & 0xffff) << 8) / w1) + 0x100) & 0xffff) << 8;
 					int bp = 0;
@@ -352,7 +353,7 @@ bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, i
 					h1 = t;
 					y1 = 0;
 				}
-                t = h0 - y1;
+				t = h0 - y1;
 				if (t < 1) {
 					w1 = h1 = -1;
 				} else {
@@ -364,7 +365,7 @@ bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, i
 		}
 	}
 
-	return (w1 == -1) ? false : true;
+	return w1 != -1;
 }
 
 void Screen_v2::checkedPageUpdate(int srcPage, int dstPage) {

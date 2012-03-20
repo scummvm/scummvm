@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
+#define BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
+
 #include "graphics/surface.h"
 #include "iphone_common.h"
 #include "backends/base-backend.h"
@@ -42,16 +45,15 @@
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
 
-typedef struct AQCallbackStruct {
-    AudioQueueRef queue;
-    uint32 frameCount;
-    AudioQueueBufferRef buffers[AUDIO_BUFFERS];
-    AudioStreamBasicDescription dataFormat;
-} AQCallbackStruct;
+struct AQCallbackStruct {
+	AudioQueueRef queue;
+	uint32 frameCount;
+	AudioQueueBufferRef buffers[AUDIO_BUFFERS];
+	AudioStreamBasicDescription dataFormat;
+};
 
 class OSystem_IPHONE : public EventsBaseBackend, public PaletteManager {
 protected:
-
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
@@ -59,33 +61,31 @@ protected:
 
 	Audio::MixerImpl *_mixer;
 
+	VideoContext *_videoContext;
+
 	Graphics::Surface _framebuffer;
-	byte *_offscreen;
-	OverlayColor  *_overlayBuffer;
-	uint16 _overlayHeight;
-	uint16 _overlayWidth;
 
-	uint16 *_fullscreen;
+	// For signaling that screen format set up might have failed.
+	TransactionError _gfxTransactionError;
 
-	uint16  _palette[256];
-	bool _overlayVisible;
-	uint16 _screenWidth;
-	uint16 _screenHeight;
+	// For use with the game texture
+	uint16  _gamePalette[256];
+	// For use with the mouse texture
+	uint16  _gamePaletteRGBA5551[256];
 
 	struct timeval _startTime;
 	uint32 _timeSuspended;
 
-	bool _mouseVisible;
-	byte *_mouseBuf;
-	byte _mouseKeyColor;
-	uint _mouseWidth, _mouseHeight;
-	uint _mouseX, _mouseY;
-	int _mouseHotspotX, _mouseHotspotY;
+	bool _mouseCursorPaletteEnabled;
+	uint16 _mouseCursorPalette[256];
+	Graphics::Surface _mouseBuffer;
+	uint16 _mouseKeyColor;
 	bool _mouseDirty;
+	bool _mouseNeedTextureUpdate;
+
 	long _lastMouseDown;
 	long _lastMouseTap;
 	long _queuedEventTime;
-	Common::Rect _lastDrawnMouseRect;
 	Common::Event _queuedInputEvent;
 	bool _secondaryTapped;
 	long _lastSecondaryDown;
@@ -121,12 +121,20 @@ public:
 	virtual bool getFeatureState(Feature f);
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(const char *name);
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
+
+	virtual void beginGFXTransaction();
+	virtual TransactionError endGFXTransaction();
+
 	virtual int16 getHeight();
 	virtual int16 getWidth();
+
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const { return _framebuffer.format; }
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+#endif
 
 	virtual PaletteManager *getPaletteManager() { return this; }
 protected:
@@ -154,6 +162,7 @@ public:
 
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
@@ -167,7 +176,7 @@ public:
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);
 	virtual void setTimerCallback(TimerProc callback, int interval);
- 	virtual int getScreenChangeID() const { return _screenChangeCount; }
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
@@ -183,15 +192,15 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 protected:
+	void initVideoContext();
+	void updateOutputSurface();
+
 	void internUpdateScreen();
 	void dirtyFullScreen();
 	void dirtyFullOverlayScreen();
-	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
 	void suspendLoop();
-	void drawDirtyRect(const Common::Rect& dirtyRect);
-	void drawDirtyOverlayRect(const Common::Rect& dirtyRect);
-	void drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect);
-	void updateHardwareSurfaceForRect(const Common::Rect& updatedRect);
+	void drawDirtyRect(const Common::Rect &dirtyRect);
+	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 
@@ -208,3 +217,5 @@ protected:
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
 	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
 };
+
+#endif

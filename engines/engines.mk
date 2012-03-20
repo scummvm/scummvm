@@ -87,6 +87,10 @@ MODULES += engines/kyra
 ifdef ENABLE_LOL
 DEFINES += -DENABLE_LOL
 endif
+
+ifdef ENABLE_EOB
+DEFINES += -DENABLE_EOB
+endif
 endif
 
 ifdef ENABLE_LASTEXPRESS

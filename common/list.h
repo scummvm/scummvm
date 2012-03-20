@@ -43,6 +43,7 @@ public:
 	typedef ListInternal::ConstIterator<t_T>	const_iterator;
 
 	typedef t_T value_type;
+	typedef uint size_type;
 
 public:
 	List() {
@@ -181,8 +182,8 @@ public:
 		return *this;
 	}
 
-	uint size() const {
-		uint n = 0;
+	size_type size() const {
+		size_type n = 0;
 		for (const NodeBase *cur = _anchor._next; cur != &_anchor; cur = cur->_next)
 			++n;
 		return n;
@@ -226,7 +227,7 @@ public:
 	}
 
 	const_iterator	end() const {
-		return const_iterator(const_cast<NodeBase*>(&_anchor));
+		return const_iterator(const_cast<NodeBase *>(&_anchor));
 	}
 
 protected:

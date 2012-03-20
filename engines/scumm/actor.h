@@ -202,13 +202,13 @@ public:
 	void adjustActorPos();
 	virtual AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
 
-	void setDirection(int direction);
+	virtual void setDirection(int direction);
 	void faceToObject(int obj);
 	void turnToDirection(int newdir);
 	virtual void walkActor();
 	void drawActorCostume(bool hitTestMode = false);
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
-	void animateCostume();
+	virtual void animateCostume();
 	virtual void setActorCostume(int c);
 
 	void animateLimb(int limb, int f);
@@ -222,7 +222,7 @@ protected:
 	void startWalkAnim(int cmd, int angle);
 public:
 	void runActorTalkScript(int f);
-	void startAnimActor(int frame);
+	virtual void startAnimActor(int frame);
 
 	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);
 	void remapActorPaletteColor(int slot, int color);
@@ -333,33 +333,53 @@ public:
 protected:
 	virtual bool isPlayer();
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
+	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
-class ActorC64 : public Actor_v2 {
+enum ActorV0MiscFlags {
+	kActorMiscFlagStrong    = 0x01, // Kid is strong (Hunk-O-Matic used)
+	kActorMiscFlagGTFriend  = 0x02, // Kid is green tentacle's friend (recording contract)
+	kActorMiscFlagWatchedTV = 0x04, // Kid knows publisher's address (watched TV)
+	kActorMiscFlagEdsEnemy  = 0x08, // Kid is not Weird Ed's friend
+	kActorMiscFlag_10       = 0x10, // ???
+	kActorMiscFlag_20       = 0x20, // ???
+	kActorMiscFlagFreeze    = 0x40, // Stop moving
+	kActorMiscFlagHide      = 0x80  // Kid is invisible (dead or in radiation suit)
+};
+
+class Actor_v0 : public Actor_v2 {
 public:
-	byte _costCommand, _costFrame;
-	byte _miscflags; // 0x1: strong, 0x8: Ed's enemy, 0x40: stop moving, 0x80: hide(dead/radiation suit)
-	byte _speaking, _speakingPrev;
+	byte _costCommandNew;
+	byte _costCommand;
+	byte _miscflags;
+	byte _speaking;
+
+	int8 _animFrameRepeat;
+	int8 _limbFrameRepeatNew[8];
+	int8 _limbFrameRepeat[8];
+
+	bool _limb_flipped[8];
 
 public:
-	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
-		 _costCommand = 0;
-		 _costFrame = 0;
-		 _speaking = 0;
-		 _speakingPrev = 0;
-	}
-	virtual void initActor(int mode) {
-		Actor_v2::initActor(mode);
-		if (mode == -1) {
-			_miscflags = 0;
-		}
-	}
+	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
+
+	virtual void initActor(int mode);
+	virtual void animateActor(int anim);
+	virtual void animateCostume();
+
+	void limbFrameCheck(int limb);
+
+	void speakCheck();
+	virtual void setDirection(int direction);
+	void startAnimActor(int f);
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);
 
 protected:
-
+	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End, 
+		const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result);
+	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 

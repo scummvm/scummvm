@@ -74,17 +74,13 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 	case 0 :
 		if (id.getNumber() == 0xFFFF) {
 			// Unlock all resources of the requested type
-			Common::List<ResourceId> *resources = g_sci->getResMan()->listResources(type);
-			Common::List<ResourceId>::iterator itr = resources->begin();
-
-			while (itr != resources->end()) {
+			Common::List<ResourceId> resources = g_sci->getResMan()->listResources(type);
+			Common::List<ResourceId>::iterator itr;
+			for (itr = resources.begin(); itr != resources.end(); ++itr) {
 				Resource *res = g_sci->getResMan()->testResource(*itr);
 				if (res->isLocked())
 					g_sci->getResMan()->unlockResource(res);
-				++itr;
 			}
-
-			delete resources;
 		} else {
 			which = g_sci->getResMan()->findResource(id, 0);
 

@@ -32,7 +32,7 @@
 /* Choose to print to file/screen/both */
 #ifdef __PSP_PRINT_TO_FILE__
 	#define __PSP_PRINT__(format,...)			PspDebugTrace(false, format, ## __VA_ARGS__)
-#elif defined __PSP_PRINT_TO_FILE_AND_SCREEN__
+#elif defined(__PSP_PRINT_TO_FILE_AND_SCREEN__)
 	#define __PSP_PRINT__(format,...)			PspDebugTrace(true, format, ## __VA_ARGS__)
 #else /* default - print to screen */
 	#define __PSP_PRINT__(format,...)			fprintf(stderr, format, ## __VA_ARGS__)

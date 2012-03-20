@@ -29,6 +29,7 @@
 #include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/decoders/bmp.h"
 
 namespace Mohawk {
 
@@ -631,97 +632,37 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 
 MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	uint32 uncompressedSize = stream->readUint32LE();
-	Common::SeekableReadStream* bmpStream = decompressLZ(stream, uncompressedSize);
+	Common::SeekableReadStream *bmpStream = decompressLZ(stream, uncompressedSize);
 	delete stream;
 
-	_header.type = bmpStream->readUint16BE();
+	Graphics::BitmapDecoder bitmapDecoder;
+	if (!bitmapDecoder.loadStream(*bmpStream))
+		error("Could not decode Myst bitmap");
 
-	if (_header.type != 'BM')
-		error("BMP header not detected");
+	const Graphics::Surface *bmpSurface = bitmapDecoder.getSurface();
+	Graphics::Surface *newSurface = 0;
 
-	_header.size = bmpStream->readUint32LE();
-	assert (_header.size > 0);
-	_header.res1 = bmpStream->readUint16LE();
-	_header.res2 = bmpStream->readUint16LE();
-	_header.imageOffset = bmpStream->readUint32LE();
-
-	_info.size = bmpStream->readUint32LE();
-
-	if (_info.size != 40)
-		error("Only Windows v3 BMP's are supported");
-
-	_info.width = bmpStream->readUint32LE();
-	_info.height = bmpStream->readUint32LE();
-	_info.planes = bmpStream->readUint16LE();
-	_info.bitsPerPixel = bmpStream->readUint16LE();
-	_info.compression = bmpStream->readUint32LE();
-	_info.imageSize = bmpStream->readUint32LE();
-	_info.pixelsPerMeterX = bmpStream->readUint32LE();
-	_info.pixelsPerMeterY = bmpStream->readUint32LE();
-	_info.colorsUsed = bmpStream->readUint32LE();
-	_info.colorsImportant = bmpStream->readUint32LE();
-
-	if (_info.compression != 0)
-		error("Unhandled BMP compression %d", _info.compression);
-
-	if (_info.colorsUsed == 0)
-		_info.colorsUsed = 256;
-
-	if (_info.bitsPerPixel != 8 && _info.bitsPerPixel != 24)
-		error("%dbpp Bitmaps not supported", _info.bitsPerPixel);
-
-	byte *palData = NULL;
-
-	if (_info.bitsPerPixel == 8) {
-		palData = (byte *)malloc(256 * 3);
-		for (uint16 i = 0; i < _info.colorsUsed; i++) {
-			palData[i * 3 + 2] = bmpStream->readByte();
-			palData[i * 3 + 1] = bmpStream->readByte();
-			palData[i * 3 + 0] = bmpStream->readByte();
-			bmpStream->readByte();
-		}
+	if (bmpSurface->format.bytesPerPixel == 1) {
+		_bitsPerPixel = 8;
+		newSurface = new Graphics::Surface();
+		newSurface->copyFrom(*bmpSurface);
+	} else {
+		_bitsPerPixel = 24;
+		newSurface = bmpSurface->convertTo(g_system->getScreenFormat());
 	}
 
-	bmpStream->seek(_header.imageOffset);
+	// Copy the palette to one of our own
+	const byte *palette = bitmapDecoder.getPalette();
+	byte *newPal = 0;
 
-	Graphics::Surface *surface = createSurface(_info.width, _info.height);
-	int srcPitch = _info.width * (_info.bitsPerPixel >> 3);
-	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
-
-	if (_info.bitsPerPixel == 8) {
-		byte *dst = (byte *)surface->pixels;
-
-		for (uint32 i = 0; i < _info.height; i++) {
-			bmpStream->read(dst + (_info.height - i - 1) * _info.width, _info.width);
-			bmpStream->skip(extraDataLength);
-		}
-	} else {
-		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-
-		byte *dst = (byte *)surface->pixels + (surface->h - 1) * surface->pitch;
-
-		for (uint32 i = 0; i < _info.height; i++) {
-			for (uint32 j = 0; j < _info.width; j++) {
-				byte b = bmpStream->readByte();
-				byte g = bmpStream->readByte();
-				byte r = bmpStream->readByte();
-
-				if (pixelFormat.bytesPerPixel == 2)
-					*((uint16 *)dst) = pixelFormat.RGBToColor(r, g, b);
-				else
-					*((uint32 *)dst) = pixelFormat.RGBToColor(r, g, b);
-
-				dst += pixelFormat.bytesPerPixel;
-			}
-
-			bmpStream->skip(extraDataLength);
-			dst -= surface->pitch * 2;
-		}
+	if (palette) {
+		newPal = (byte *)malloc(256 * 3);
+		memcpy(newPal, palette, 256 * 3);
 	}
 
 	delete bmpStream;
 
-	return new MohawkSurface(surface, palData);
+	return new MohawkSurface(newSurface, newPal);
 }
 
 #endif

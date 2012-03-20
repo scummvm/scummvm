@@ -60,7 +60,7 @@ static void saveOrLoadPtr(Common::ReadStream &stream, int16 *&p, int16 *base) {
 	p = base + offset;
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, Common::Rect &r) {
 	saveOrLoad(s, r.left);
 	saveOrLoad(s, r.top);
@@ -68,13 +68,13 @@ static void saveOrLoad(S &s, Common::Rect &r) {
 	saveOrLoad(s, r.bottom);
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, SequenceEntry &seq) {
 	saveOrLoad(s, seq.sprNum);
 	saveOrLoad(s, seq.seqNum);
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, KeyChar &key) {
 	saveOrLoad(s, key.num);
 	saveOrLoad(s, key.flags);
@@ -134,14 +134,14 @@ static void saveOrLoad(S &s, KeyChar &key) {
 	}
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, TalkEntry &entry) {
 	saveOrLoad(s, entry.otherKeyChar);
 	saveOrLoad(s, entry.talkingKeyChar);
 	saveOrLoad(s, entry.num);
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, ProgramHitBoxData &data) {
 	saveOrLoad(s, data.item);
 	saveOrLoad(s, data.talk);
@@ -156,14 +156,14 @@ static void saveOrLoad(S &s, ProgramHitBoxData &data) {
 	}
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, Area &area) {
 	saveOrLoad(s, area.r);
 	saveOrLoad(s, area.srcX);
 	saveOrLoad(s, area.srcY);
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, ProgramBackgroundData &data) {
 	saveOrLoad(s, data.area);
 	saveOrLoad(s, data.type);
@@ -172,7 +172,7 @@ static void saveOrLoad(S &s, ProgramBackgroundData &data) {
 	saveOrLoad(s, data.scaleDiv);
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, ProgramAreaData &data) {
 	saveOrLoad(s, data.area);
 	saveOrLoad(s, data.id);
@@ -181,7 +181,7 @@ static void saveOrLoad(S &s, ProgramAreaData &data) {
 	saveOrLoad(s, data.animNext);
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, ProgramWalkData &data) {
 	saveOrLoad(s, data.point1);
 	saveOrLoad(s, data.point2);
@@ -190,7 +190,7 @@ static void saveOrLoad(S &s, ProgramWalkData &data) {
 	saveOrLoad(s, data.area2);
 }
 
-template <class S>
+template<class S>
 static void saveOrLoad(S &s, ProgramPointData &data) {
 	saveOrLoad(s, data.x);
 	saveOrLoad(s, data.y);
@@ -198,7 +198,7 @@ static void saveOrLoad(S &s, ProgramPointData &data) {
 	saveOrLoad(s, data.order);
 }
 
-template <class A>
+template<class A>
 static void saveOrLoadCommonArray(Common::WriteStream &stream, A &array) {
 	uint count = array.size();
 	assert(count < 0xFFFF);
@@ -208,7 +208,7 @@ static void saveOrLoadCommonArray(Common::WriteStream &stream, A &array) {
 	}
 }
 
-template <class A>
+template<class A>
 static void saveOrLoadCommonArray(Common::ReadStream &stream, A &array) {
 	uint count = stream.readUint16LE();
 	if (count == array.size()) {
@@ -218,7 +218,7 @@ static void saveOrLoadCommonArray(Common::ReadStream &stream, A &array) {
 	}
 }
 
-template <class S, class A>
+template<class S, class A>
 static void saveOrLoadStaticArray(S &s, A &array, uint count) {
 	for (uint i = 0; i < count; ++i) {
 		saveOrLoad(s, array[i]);

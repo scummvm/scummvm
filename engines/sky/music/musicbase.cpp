@@ -117,10 +117,6 @@ void MusicBase::loadNewMusic() {
 	} else if (section == 5 && song == 6) {
 		section = 4;
 		song = 4;
-	} else if (section == 0 && song == 1) {
-		// floppy intro
-		section = 5;
-		song = 3;
 	}
 	Common::String trackName = Common::String::format("music_%d%02d", section, song);
 	Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);

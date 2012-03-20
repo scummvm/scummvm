@@ -386,7 +386,6 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 	for (i = _roomData.begin(); i != _roomData.end(); ++i) {
 		RoomData *rec = (*i).get();
 		if (rec->roomNumber == roomNumber) return rec;
-		++rec;
 	}
 
 	return NULL;
@@ -678,9 +677,9 @@ void Resources::deactivateHotspot(uint16 hotspotId, bool isDestId) {
 	HotspotList::iterator i = _activeHotspots.begin();
 
 	while (i != _activeHotspots.end()) {
-		Hotspot *h = (*i).get();
-		if ((!isDestId && (h->hotspotId() == hotspotId)) ||
-			(isDestId && (h->destHotspotId() == hotspotId) && (h->hotspotId() == 0xffff))) {
+		Hotspot const &h = **i;
+		if ((!isDestId && (h.hotspotId() == hotspotId)) ||
+			(isDestId && (h.destHotspotId() == hotspotId) && (h.hotspotId() == 0xffff))) {
 			_activeHotspots.erase(i);
 			break;
 		}
@@ -708,8 +707,7 @@ uint16 Resources::numInventoryItems() {
 	HotspotDataList &list = _hotspotData;
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		HotspotData *rec = (*i).get();
-		if (rec->roomNumber == PLAYER_ID) ++numItems;
+		if ((*i)->roomNumber == PLAYER_ID) ++numItems;
 	}
 
 	return numItems;
@@ -754,12 +752,12 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 	// Save out the schedule for any non-active NPCs
 	HotspotDataList::iterator i;
 	for (i = _hotspotData.begin(); i != _hotspotData.end(); ++i) {
-		HotspotData *rec = (*i).get();
-		if (!rec->npcSchedule.isEmpty()) {
-			Hotspot *h = getActiveHotspot(rec->hotspotId);
+		HotspotData const &rec = **i;
+		if (!rec.npcSchedule.isEmpty()) {
+			Hotspot *h = getActiveHotspot(rec.hotspotId);
 			if (h == NULL) {
-				stream->writeUint16LE(rec->hotspotId);
-				rec->npcSchedule.saveToStream(stream);
+				stream->writeUint16LE(rec.hotspotId);
+				rec.npcSchedule.saveToStream(stream);
 			}
 		}
 	}

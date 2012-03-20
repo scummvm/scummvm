@@ -46,6 +46,7 @@ public:
 	};
 
 	RXYFile(Common::SeekableReadStream &rxy);
+	RXYFile(uint16 width, uint16 height);
 	~RXYFile();
 
 	uint size() const;
@@ -56,6 +57,8 @@ public:
 	uint16 getRealCount() const;
 
 	const Coordinates &operator[](uint i) const;
+
+	uint16 add(uint16 left, uint16 top, uint16 right, uint16 bottom);
 
 private:
 	typedef Common::Array<Coordinates> CoordArray;

@@ -231,10 +231,10 @@ void ScreenEffects::copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, i
 
 	vfxY1 = y1 & 7;
 
-	byte *source = (byte*)surface->getBasePtr(x1, y1);
+	byte *source = (byte *)surface->getBasePtr(x1, y1);
 
 	Graphics::Surface *vgaScreen = _screen->lockScreen();
-	byte *dest = (byte*)vgaScreen->getBasePtr(x1, y1);
+	byte *dest = (byte *)vgaScreen->getBasePtr(x1, y1);
 
 	int16 addX = x2 / 16;
 

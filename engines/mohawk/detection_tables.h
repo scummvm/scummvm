@@ -376,7 +376,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		GType_RIVEN,
 		GF_DEMO,
@@ -1011,6 +1011,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Tortoise and the Hare Hebrew variant - From georgeqgreg on bug #3441928
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTB.LB", "23135777370cf1ff00aa7247e93642d3"),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// From afholman in bug#3309308
 	{
 		{
@@ -1285,6 +1301,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("OUTLINE", "159c18b663c58d1aa17ad5e1ab1f0e12"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Just Grandma and Me 2.0 Macintosh
+	// From aluff in bug #3461368
+	{
+		{
+			"grandma",
+			"v2.0",
+			AD_ENTRY1("BookOutline", "99fe5c8ace79f0542e6390bc3b58f25a"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -1782,6 +1815,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Arthur Birthday (English) Version 2.0 Macintosh
+	// From aluff in bug #3461368
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("BookOutline", "8e4fddb5b761c8cf2a3b448dd38422be"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	{
 		{
 			"arthurbday",
@@ -1960,6 +2010,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"lilmonster",
 			"Demo",
 			AD_ENTRY1("MONSTER.512", "029e57f1fc8dd1f93f6623a1841f0df2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"MONSTER.EXE"
+	},
+
+	// From GeorgeQGreg
+	{
+		{
+			"lilmonster",
+			"Demo",
+			AD_ENTRY1("MONSTER.512", "f603f04c1824d1034ec0366416a059c9"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -2225,6 +2291,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"beardark",
 			"",
 			AD_ENTRY1("BookOutline", "95b2e43778ca9cfaee37bdde843e7681"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From aluff in bug #3461368
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("BookOutline", "b56746b3b2c062c8588bfb6b28e137c1"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,

@@ -170,17 +170,17 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 			uint32 available = bufferLength - bufferIndex;
 			if (len <= available) {
 				// use allocation
-				memcpy((byte*)ptr, &buffer[bufferIndex], len);
+				memcpy((byte *)ptr, &buffer[bufferIndex], len);
 				bufferIndex += len;
 				result = len;
 			} else {
 				// use remaining allocation
-				memcpy((byte*)ptr, &buffer[bufferIndex], available);
+				memcpy((byte *)ptr, &buffer[bufferIndex], available);
 				uint32 remaining = len - available;
 				result = available;
 
 				if (remaining) {
-					result += file->Read(((byte*)ptr) + available, remaining);
+					result += file->Read(((byte *)ptr) + available, remaining);
 				}
 				bufferIndex = bufferLength = 0;
 			}
@@ -192,11 +192,11 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 				if (bufferLength < len) {
 					len = bufferLength;
 				}
-				memcpy((byte*)ptr, buffer, len);
+				memcpy((byte *)ptr, buffer, len);
 				result = bufferIndex = len;
 			}
 		} else {
-			result = file->Read((byte*)ptr, len);
+			result = file->Read((byte *)ptr, len);
 			bufferIndex = bufferLength = 0;
 		}
 	} else {

@@ -49,32 +49,32 @@ AdLibChannel::AdLibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		//instrumentDataLoc = (_musicData[0x11D0] << 8) | _musicData[0x11CF];
-		//_frequenceTable = (uint16*)(_musicData + 0x835);
+		//_frequenceTable = (uint16 *)(_musicData + 0x835);
 		//_registerTable = _musicData + 0xE35;
 		//_opOutputTable = _musicData + 0xE47;
 		//_adlibRegMirror = _musicData + 0xF4A;
 
 		instrumentDataLoc = READ_LE_UINT16(_musicData + 0x1204);
-		_frequenceTable = (uint16*)(_musicData + 0x868);
+		_frequenceTable = (uint16 *)(_musicData + 0x868);
 		_registerTable = _musicData + 0xE68;
 		_opOutputTable = _musicData + 0xE7A;
 		_adlibRegMirror = _musicData + 0xF7D;
 	} else if (SkyEngine::_systemVars.gameVersion == 267) {
 		instrumentDataLoc = READ_LE_UINT16(_musicData + 0x11FB);
-		_frequenceTable = (uint16*)(_musicData + 0x7F4);
+		_frequenceTable = (uint16 *)(_musicData + 0x7F4);
 		_registerTable = _musicData + 0xDF4;
 		_opOutputTable = _musicData + 0xE06;
 		_adlibRegMirror = _musicData + 0xF55;
 	} else {
 		instrumentDataLoc = READ_LE_UINT16(_musicData + 0x1205);
-		_frequenceTable = (uint16*)(_musicData + 0x7FE);
+		_frequenceTable = (uint16 *)(_musicData + 0x7FE);
 		_registerTable = _musicData + 0xDFE;
 		_opOutputTable = _musicData + 0xE10;
 		_adlibRegMirror = _musicData + 0xF5F;
 	}
 
 	_instrumentMap = _musicData+instrumentDataLoc;
-	_instruments = (InstrumentStruct*)(_instrumentMap+0x80);
+	_instruments = (InstrumentStruct *)(_instrumentMap+0x80);
 }
 
 AdLibChannel::~AdLibChannel() {

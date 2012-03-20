@@ -350,7 +350,7 @@ void ScummEngine_v4::loadIQPoints(byte *ptr, int size) {
 
 	file = _saveFileMan->openForLoading(filename);
 	if (file != NULL) {
-		byte *tmp = (byte*)malloc(size);
+		byte *tmp = (byte *)malloc(size);
 		int nread = file->read(tmp, size);
 		if (nread == size) {
 			memcpy(ptr, tmp, size);
@@ -414,7 +414,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 				// use name entered by the user
 				char* ptr;
 				int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
-				ptr = (char*)getStringAddress(slot + firstSlot - 1);
+				ptr = (char *)getStringAddress(slot + firstSlot - 1);
 				strncpy(name, ptr, sizeof(name));
 			}
 

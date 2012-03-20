@@ -21,108 +21,87 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "dreamweb/dreamgen.h"
 
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
 #include "common/config-manager.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamGenContext::loadSpeech() {
-	loadSpeech((uint8)dl, (uint8)dh, (uint8)cl, (uint16)ax);
-}
-
-bool DreamBase::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
+bool DreamWebEngine::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 	cancelCh1();
 
 	Common::String name = Common::String::format("%c%02d%c%04d.RAW", type1, idx1, type2, idx2);
 	//debug("name = %s", name.c_str());
-	bool result = engine->loadSpeech(name);
+	bool result = loadSpeech(name);
 
-	data.byte(kSpeechloaded) = result;
+	_speechLoaded = result;
 	return result;
 }
 
 
-void DreamBase::volumeAdjust() {
-	if (data.byte(kVolumedirection) == 0)
+void DreamWebEngine::volumeAdjust() {
+	if (_volumeDirection == 0)
 		return;
-	if (data.byte(kVolume) != data.byte(kVolumeto)) {
-		data.byte(kVolumecount) += 64;
+	if (_volume != _volumeTo) {
+		_volumeCount += 64;
 		// Only modify the volume every 256/64 = 4th time around
-		if (data.byte(kVolumecount) == 0)
-			data.byte(kVolume) += data.byte(kVolumedirection);
+		if (_volumeCount == 0)
+			_volume += _volumeDirection;
 	} else {
-		data.byte(kVolumedirection) = 0;
+		_volumeDirection = 0;
 	}
 }
 
-void DreamBase::playChannel0(uint8 index, uint8 repeat) {
-	data.byte(kCh0playing) = index;
-	Sound *soundBank;
-	if (index >= 12) {
-		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
+void DreamWebEngine::playChannel0(uint8 index, uint8 repeat) {
+	_channel0Playing = index;
+	if (index >= 12)
 		index -= 12;
-	} else
-		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 
-	data.byte(kCh0repeat) = repeat;
-	data.word(kCh0blockstocopy) = soundBank[index].blockCount();
+	_channel0Repeat = repeat;
 }
 
-void DreamBase::playChannel1(uint8 index) {
-	if (data.byte(kCh1playing) == 7)
+void DreamWebEngine::playChannel1(uint8 index) {
+	if (_channel1Playing == 7)
 		return;
 
-	data.byte(kCh1playing) = index;
-	Sound *soundBank;
-	if (index >= 12) {
-		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
+	_channel1Playing = index;
+	if (index >= 12)
 		index -= 12;
-	} else
-		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
-
-	data.word(kCh1blockstocopy) = soundBank[index].blockCount();
 }
 
-void DreamGenContext::playChannel1() {
-	playChannel1(al);
+void DreamWebEngine::cancelCh0() {
+	_channel0Repeat = 0;
+	_channel0Playing = 255;
+	stopSound(0);
 }
 
-void DreamBase::cancelCh0() {
-	data.byte(kCh0repeat) = 0;
-	data.word(kCh0blockstocopy) = 0;
-	data.byte(kCh0playing) = 255;
-	engine->stopSound(0);
+void DreamWebEngine::cancelCh1() {
+	_channel1Playing = 255;
+	stopSound(1);
 }
 
-void DreamBase::cancelCh1() {
-	data.word(kCh1blockstocopy) = 0;
-	data.byte(kCh1playing) = 255;
-	engine->stopSound(1);
-}
+void DreamWebEngine::loadRoomsSample() {
+	uint8 sample = _roomsSample;
 
-void DreamBase::loadRoomsSample() {
-	uint8 sample = data.byte(kRoomssample);
-
-	if (sample == 255 || data.byte(kCurrentsample) == sample)
+	if (sample == 255 || _currentSample == sample)
 		return; // loaded already
 
 	assert(sample < 100);
-	Common::String sampleName = Common::String::format("DREAMWEB.V%02d", sample);
+	Common::String sampleSuffix = Common::String::format("V%02d", sample);
+	_currentSample = sample;
 
-	uint8 ch0 = data.byte(kCh0playing);
+	uint8 ch0 = _channel0Playing;
 	if (ch0 >= 12 && ch0 != 255)
 		cancelCh0();
-	uint8 ch1 = data.byte(kCh1playing);
+	uint8 ch1 = _channel1Playing;
 	if (ch1 >= 12)
 		cancelCh1();
-	engine->loadSounds(1, sampleName.c_str());
+	loadSounds(1, sampleSuffix.c_str());
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb
 
 
 namespace DreamWeb {
@@ -194,7 +173,7 @@ void DreamWebEngine::stopSound(uint8 channel) {
 }
 
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {
-	if (ConfMan.getBool("speech_mute"))
+	if (!hasSpeech())
 		return false;
 
 	Common::File file;
@@ -211,10 +190,10 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 }
 
 void DreamWebEngine::soundHandler() {
-	_base.data.byte(DreamGen::kSubtitles) = ConfMan.getBool("subtitles");
-	_base.volumeAdjust();
+	_subtitles = ConfMan.getBool("subtitles");
+	volumeAdjust();
 
-	uint volume = _base.data.byte(DreamGen::kVolume);
+	uint volume = _volume;
 	//.vol file loaded into soundbuf:0x4000
 	//volume table at (volume * 0x100 + 0x3f00)
 	//volume value could be from 1 to 7
@@ -230,13 +209,13 @@ void DreamWebEngine::soundHandler() {
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
 	_mixer->setChannelVolume(_channelHandle[0], volume);
 
-	uint8 ch0 = _base.data.byte(DreamGen::kCh0playing);
+	uint8 ch0 = _channel0Playing;
 	if (ch0 == 255)
 		ch0 = 0;
-	uint8 ch1 = _base.data.byte(DreamGen::kCh1playing);
+	uint8 ch1 = _channel1Playing;
 	if (ch1 == 255)
 		ch1 = 0;
-	uint8 ch0loop = _base.data.byte(DreamGen::kCh0repeat);
+	uint8 ch0loop = _channel0Repeat;
 
 	if (_channel0 != ch0) {
 		_channel0 = ch0;
@@ -251,17 +230,18 @@ void DreamWebEngine::soundHandler() {
 		}
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
-		_base.data.byte(DreamGen::kCh0playing) = 255;
+		_channel0Playing = 255;
 		_channel0 = 0;
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[1])) {
-		_base.data.byte(DreamGen::kCh1playing) = 255;
+		_channel1Playing = 255;
 		_channel1 = 0;
 	}
 
 }
 
-void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
+void DreamWebEngine::loadSounds(uint bank, const Common::String &suffix) {
+	Common::String filename = getDatafilePrefix() + suffix;
 	debug(1, "loadSounds(%u, %s)", bank, filename.c_str());
 	Common::File file;
 	if (!file.open(filename)) {

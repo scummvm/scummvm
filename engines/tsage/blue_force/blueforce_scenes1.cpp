@@ -430,7 +430,7 @@ void Scene110::Action1::signal() {
 	case 6:
 		// Play "Vroum"
 		scene->_sound.play(31);
-		// The guy starts the engine 
+		// The guy starts the engine
 		scene->_object4.setStrip(3);
 		scene->_object4._frame = 1;
 		scene->_object4.animate(ANIM_MODE_5, NULL);
@@ -837,7 +837,7 @@ void Scene110::postInit(SceneObjectList *OwnerList) {
 	_object10._moveDiff.y = 10;
 	_object10.setPosition(_object9._position);
 	_object10.hide();
-	
+
 	setAction(&_action1);
 }
 /*--------------------------------------------------------------------------
@@ -921,7 +921,7 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 	_lyle._moveDiff.x = 2;
 	_lyle._moveDiff.y = 1;
 	_lyle.hide();
-	_lyle.setDetails(114, 2, -1, -1, 1, NULL);
+	_lyle.setDetails(114, 2, -1, -1, 1, (SceneItem *)NULL);
 
 	_vechile.postInit();
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -962,7 +962,7 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.enableControl();
 	}
 
-	_item1.setDetails(Rect(0, 0, 320, 200), 114, 3, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(0, 0, 320, 200), 114, 3, -1, -1, 1, (SceneItem *)NULL);
 }
 
 void Scene114::signal() {
@@ -987,7 +987,7 @@ void Scene114::signal() {
  *--------------------------------------------------------------------------*/
 bool Scene115::Kate::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 8, SET_WIDTH, 312,
@@ -1061,7 +1061,7 @@ bool Scene115::Kate::startAction(CursorType action, Event &event) {
 
 bool Scene115::Tony::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 7, SET_WIDTH, 312,
@@ -1164,7 +1164,7 @@ bool Scene115::Tony::startAction(CursorType action, Event &event) {
 
 bool Scene115::Object3::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 9, SET_WIDTH, 312,
@@ -1195,7 +1195,7 @@ bool Scene115::Object3::startAction(CursorType action, Event &event) {
 
 bool Scene115::Object4::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 42, SET_WIDTH, 312,
@@ -1217,7 +1217,7 @@ bool Scene115::Object4::startAction(CursorType action, Event &event) {
 
 void Scene115::Jukebox::signal() {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	if (_jokeboxPlayingCtr == 2)
 		_jokeboxPlayingCtr = 0;
 	else if (_jokeboxPlayingCtr == 1) {
@@ -1228,7 +1228,7 @@ void Scene115::Jukebox::signal() {
 
 bool Scene115::Jukebox::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	if (action == CURSOR_USE) {
 		if (_jokeboxPlayingCtr == 0) {
 			_jokeboxPlayingCtr = 1;
@@ -1241,7 +1241,7 @@ bool Scene115::Jukebox::startAction(CursorType action, Event &event) {
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
-	} else 
+	} else
 		return NamedHotspot::startAction(action, event);
 }
 
@@ -1265,7 +1265,7 @@ void Scene115::EventHandler1::dispatch() {
 
 bool Scene115::Item10::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
 		scene->_object4.setStrip2(6);
 		Common::Point pt(-20, 122);
@@ -1591,7 +1591,7 @@ Scene115::Scene115() : SceneExt () {
 
 void Scene115::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
-	
+
 	BF_GLOBALS._sound1.fadeSound(15);
 	loadScene(115);
 	setZoomPercents(98, 85, 115, 100);
@@ -1641,7 +1641,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 
 	_object11.postInit();
 	_object11.hide();
-	
+
 	_object12.postInit();
 	_object12.hide();
 
@@ -1817,7 +1817,7 @@ void Scene125::Action1::signal() {
 	case 0:
 	// No break on purpose
 	default:
-		break;		
+		break;
 	}
 }
 
@@ -2054,7 +2054,7 @@ void Scene125::Action3::dispatch() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
 
 	Action::dispatch();
-	
+
 	if ((_actionIndex == 9) && (owner->_percent > 70))
 		owner->changeZoom(owner->_percent - 1);
 }
@@ -2095,7 +2095,7 @@ void Scene125::Action4::dispatch() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
 
 	Action::dispatch();
-	
+
 	if ((_actionIndex == 4) && (owner->_percent > 80))
 		owner->changeZoom(owner->_percent - 1);
 }
@@ -2134,7 +2134,7 @@ void Scene125::Action6::dispatch() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
 
 	Action::dispatch();
-	
+
 	if ((_actionIndex == 2) && (owner->_percent < 100))
 		owner->changeZoom(owner->_percent + 1);
 }
@@ -2169,7 +2169,7 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player._moveDiff.x = 6;
 	BF_GLOBALS._player._moveDiff.y = 6;
 	BF_GLOBALS._player.disableControl();
-	
+
 	_object5.postInit();
 	_object5.setVisage(128);
 	_object5.setPosition(Common::Point(150, 117));
@@ -2457,7 +2457,7 @@ void Scene160::Action1::signal() {
 		scene->_kid.setStrip(2);
 		scene->_kid.animate(ANIM_MODE_5, this);
 
-		scene->_kidBody.setPosition(scene->_kid._position); 
+		scene->_kidBody.setPosition(scene->_kid._position);
 		scene->_kidBody.setFrame(1);
 		scene->_kidBody.setStrip(3);
 		break;
@@ -2630,7 +2630,7 @@ void Scene160::Action2::signal() {
 		break;
 	case 25:
 		BF_GLOBALS._sound1.fade(0, 10, 10, true, this);
-// FIXME: Currently, fade() doesn't end properly with this song, 
+// FIXME: Currently, fade() doesn't end properly with this song,
 //        thus never returns here. This hack skips the wait and changes
 //        directly to the next scene
 // Start of hack
@@ -2830,7 +2830,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		_vechile.setStrip(2);
 		_vechile.setPosition(Common::Point(262, 131));
 		_vechile.setZoom(65);
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 		_object1.setVisage(182);
@@ -2845,7 +2845,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.disableControl();
 
 		_vechile.postInit();
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 
@@ -2895,7 +2895,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 				_vechile.setStrip(3);
 				_vechile._frame = 5;
 				_vechile.changeZoom(75);
-				
+
 				_dispatchMode = 1;
 				_vechile._moveDiff.x = 45;
 			} else {
@@ -2997,7 +2997,7 @@ void Scene180::signal() {
 		BF_GLOBALS._player.disableControl();
 
 		_vechile.postInit();
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 		_sceneMode = 1801;
@@ -3249,7 +3249,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	_flag.fixPriority(200);
 	_flag.setPosition(Common::Point(170, 31));
 	_flag.animate(ANIM_MODE_7, 0, NULL);
-	_flag.setDetails(190, 8, 26, 19, 1, NULL);
+	_flag.setDetails(190, 8, 26, 19, 1, (SceneItem *)NULL);
 
 	_fieldB52 = true;
 
@@ -3263,7 +3263,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		_lyleCar.setVisage(444);
 		_lyleCar.setFrame(2);
 		_lyleCar.setPosition(Common::Point(54, 114));
-		_lyleCar.setDetails(190, -1, -1, -1, 1, NULL);
+		_lyleCar.setDetails(190, -1, -1, -1, 1, (SceneItem *)NULL);
 
 		switch (BF_GLOBALS._sceneManager._previousScene) {
 		case 300: {

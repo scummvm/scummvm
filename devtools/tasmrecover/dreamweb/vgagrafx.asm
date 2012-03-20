@@ -1,4 +1,4 @@
-;Copyright (c) 1990-2011 by Neil Dodwell
+;Copyright (c) 1990-2012 by Neil Dodwell
 ;Released with permission from Neil Dodwell under GPLv2
 ;See LICENSE file for full license text
 Screenwidth	equ	320		;physical width of screen

@@ -42,10 +42,9 @@ namespace Kyra {
 
 const char *const LoLEngine::kKeymapName = "lol";
 
-LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags) {
+LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags) {
 	_screen = 0;
 	_gui = 0;
-	_txt = 0;
 	_tim = 0;
 
 	_lang = 0;
@@ -97,15 +96,11 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_inventory, 0, sizeof(_inventory));
 	memset(_charStatusFlags, 0, sizeof(_charStatusFlags));
 	_inventoryCurItem = 0;
-	_currentControlMode = 0;
-	_specialSceneFlag = 0;
 	_lastCharInventory = -1;
 	_emcLastItem = -1;
 
 	_itemIconShapes = _itemShapes = _gameShapes = _thrownShapes = _effectShapes = _fireballShapes = _healShapes = _healiShapes = 0;
 	_levelShpList = _levelDatList = 0;
-	_monsterShapes = _monsterPalettes = 0;
-	_monsterShapesEx = 0;
 	_gameShapeMap = 0;
 	memset(_monsterAnimType, 0, 3);
 	_healOverlay = 0;
@@ -116,10 +111,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_charSelection = -1;
 	_characters = 0;
 	_spellProperties = 0;
-	_updateFlags = 0;
 	_selectedSpell = 0;
-	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _resetPortraitAfterSpeechAnim = _textColorFlag = _needSceneRestore = 0;
-	_fadeText = false;
+	_updateCharNum = _portraitSpeechAnimMode = _textColorFlag = 0;
 	_palUpdateTimer = _updatePortraitNext = 0;
 	_lampStatusTimer = 0xffffffff;
 
@@ -128,66 +121,42 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lastButtonShape = 0;
 	_buttonPressTimer = 0;
 	_selectedCharacter = 0;
-	_suspendScript = _sceneUpdateRequired = false;
+	_suspendScript = false;
 	_scriptDirection = 0;
-	_currentDirection = 0;
-	_currentBlock = 0;
-	_compassDirection = _compassDirectionIndex = -1;
+	_compassDirectionIndex = -1;
 	_compassStep = 0;
-	memset(_visibleBlockIndex, 0, sizeof(_visibleBlockIndex));
 
 	_smoothScrollModeNormal = 1;
-	_wllVmpMap = _specialWallTypes = _wllBuffer4 = _wllWallFlags = 0;
-	_wllShapeMap = 0;
-	_lvlShapeTop = _lvlShapeBottom = _lvlShapeLeftRight = 0;
-	_levelBlockProperties = 0;
+	_wllAutomapData = 0;
+	_sceneXoffset = 112;
+	_sceneShpDim = 13;
 	_monsters = 0;
 	_monsterProperties = 0;
-	_lvlBlockIndex = _lvlShapeIndex = 0;
+	_lvlShapeIndex = 0;
 	_partyAwake = true;
-	_vcnBlocks = 0;
-	_vcnShift = 0;
-	_vcnExpTable = 0;
-	_vmpPtr = 0;
-	_vcfBlocks = 0;
 	_transparencyTable2 = 0;
 	_transparencyTable1 = 0;
-	_levelShapeProperties = 0;
-	_levelShapes = 0;
 	_specialGuiShape = 0;
 	_specialGuiShapeX = _specialGuiShapeY = _specialGuiShapeMirrorFlag = 0;
-	_blockDrawingBuffer = 0;
-	_sceneWindowBuffer = 0;
-	memset(_doorShapes, 0, sizeof(_doorShapes));
 	memset(_characterFaceShapes, 0, sizeof(_characterFaceShapes));
 
 	_lampEffect = _brightness = _lampOilStatus = 0;
 	_lampStatusSuspended = false;
-	_blockBrightness = 0;
 	_tempBuffer5120 = 0;
 	_flyingObjects = 0;
 	_monsters = 0;
 	_lastMouseRegion = 0;
-	_objectLastDirection = _monsterStepCounter = _monsterStepMode = 0;
+	_objectLastDirection = 0;
 	_monsterCurBlock = 0;
 	_seqWindowX1 = _seqWindowY1 = _seqWindowX2 = _seqWindowY2 = _seqTrigger = 0;
 	_spsWindowX = _spsWindowY = _spsWindowW = _spsWindowH = 0;
 
-	_dscUnk1 = 0;
-	_dscShapeIndex = 0;
+	_dscWalls = 0;
 	_dscOvlMap = 0;
 	_dscShapeScaleW = 0;
 	_dscShapeScaleH = 0;
-	_dscShapeX = 0;
 	_dscShapeY = 0;
-	_dscTileIndex = 0;
-	_dscUnk2 = 0;
-	_dscDoorShpIndex = 0;
-	_dscDim1 = 0;
-	_dscDim2 = 0;
-	_dscBlockMap = _dscDoor1 = _dscShapeOvlIndex = 0;
-	_dscBlockIndex = 0;
-	_dscDimMap = 0;
+	_dscShapeOvlIndex = 0;
 	_dscDoorMonsterX = _dscDoorMonsterY = 0;
 	_dscDoor4 = 0;
 
@@ -198,37 +167,28 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_curMusicTheme = -1;
 	_curMusicFileExt = 0;
 	_curMusicFileIndex = -1;
-	_environmentSfx = _environmentSfxVol = _envSfxDistThreshold = 0;
 	_envSfxUseQueue = false;
 	_envSfxNumTracksInQueue = 0;
 	memset(_envSfxQueuedTracks, 0, sizeof(_envSfxQueuedTracks));
 	memset(_envSfxQueuedBlocks, 0, sizeof(_envSfxQueuedBlocks));
 
-	_sceneDrawVarDown = _sceneDrawVarRight = _sceneDrawVarLeft = _wllProcessFlag = 0;
 	_partyPosX = _partyPosY = 0;
 	_shpDmX = _shpDmY = _dmScaleW = _dmScaleH = 0;
 
 	_floatingCursorControl = _currentFloatingCursor = 0;
 
 	memset(_activeTim, 0, sizeof(_activeTim));
-	memset(_openDoorState, 0, sizeof(_openDoorState));
 	memset(&_activeSpell, 0, sizeof(_activeSpell));
 
-	_activeVoiceFileTotalTime = 0;
 	_pageBuffer1 = _pageBuffer2 = 0;
 
 	memset(_charStatsTemp, 0, sizeof(_charStatsTemp));
 
 	_compassBroken = _drainMagic = 0;
-	_dialogueField = false;
 
 	_buttonData = 0;
-	_activeButtons = 0;
-	gui_resetButtonList();
 	_preserveEvents = false;
 	_buttonList1 = _buttonList2 = _buttonList3 = _buttonList4 = _buttonList5 = _buttonList6 = _buttonList7 = _buttonList8 = 0;
-
-	memset(_lvlTempData, 0, sizeof(_lvlTempData));
 
 	_mapOverlay = 0;
 	_automapShapes = 0;
@@ -250,10 +210,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
-
-#ifdef ENABLE_KEYMAPPER
-	_eventMan->getKeymapper()->cleanupGameKeymaps();
-#endif
+	releaseTempData();
 
 	delete[] _landsFile;
 	delete[] _levelLangFile;
@@ -322,12 +279,24 @@ LoLEngine::~LoLEngine() {
 		delete[] _healiShapes;
 	}
 
-	for (int i = 0; i < 3; i++)
-		releaseMonsterShapes(i);
+	if (_monsterDecorationShapes) {
+		for (int i = 0; i < 3; i++)
+			releaseMonsterShapes(i);
 
-	delete[] _monsterShapes;
-	delete[] _monsterPalettes;
-	delete[] _monsterShapesEx;
+		delete[] _monsterShapes;
+		_monsterShapes = 0;
+		delete[] _monsterPalettes;
+		_monsterPalettes = 0;
+		delete[] _monsterDecorationShapes;
+		_monsterDecorationShapes = 0;
+	}
+
+	for (int i = 0; i < 6; i++) {
+		delete[] _doorShapes[i];
+		_doorShapes[i] = 0;
+	}
+
+	releaseDecorations();
 
 	delete[] _automapShapes;
 
@@ -343,42 +312,15 @@ LoLEngine::~LoLEngine() {
 		delete *i;
 	_timIngameOpcodes.clear();
 
-
-	delete[] _wllVmpMap;
-	delete[] _wllShapeMap;
-	delete[] _specialWallTypes;
-	delete[] _wllBuffer4;
-	delete[] _wllWallFlags;
-	delete[] _lvlShapeTop;
-	delete[] _lvlShapeBottom;
-	delete[] _lvlShapeLeftRight;
+	delete[] _wllAutomapData;
 	delete[] _tempBuffer5120;
 	delete[] _flyingObjects;
 	delete[] _monsters;
-	delete[] _levelBlockProperties;
 	delete[] _monsterProperties;
 
-	delete[] _levelFileData;
-	delete[] _vcnExpTable;
-	delete[] _vcnBlocks;
-	delete[] _vcnShift;
-	delete[] _vmpPtr;
-	delete[] _vcfBlocks;
 	delete[] _transparencyTable2;
 	delete[] _transparencyTable1;
-	delete[] _levelShapeProperties;
-	delete[] _blockDrawingBuffer;
-	delete[] _sceneWindowBuffer;
 	delete[] _lightningProps;
-
-	if (_levelShapes) {
-		for (int i = 0; i < 400; i++)
-			delete[]  _levelShapes[i];
-		delete[] _levelShapes;
-	}
-
-	for (int i = 0; i < 2; i++)
-		delete[] _doorShapes[i];
 
 	delete _lvlShpFileHandle;
 
@@ -386,16 +328,6 @@ LoLEngine::~LoLEngine() {
 		for (int i = 0; i < _ingameSoundListSize; i++)
 			delete[] _ingameSoundList[i];
 		delete[] _ingameSoundList;
-	}
-
-	for (int i = 0; i < 29; i++) {
-		if (_lvlTempData[i]) {
-			delete[] _lvlTempData[i]->wallsXorData;
-			delete[] _lvlTempData[i]->flags;
-			delete[] _lvlTempData[i]->monsters;
-			delete[] _lvlTempData[i]->flyingObjects;
-			delete _lvlTempData[i];
-		}
 	}
 
 	for (int i = 0; i < 3; i++) {
@@ -440,8 +372,6 @@ Common::Error LoLEngine::init() {
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	_envSfxDistThreshold = _sound->getSfxType() == Sound::kAdLib ? 15 : 3;
-
 	_gui = new GUI_LoL(this);
 	assert(_gui);
 	_gui->initStaticData();
@@ -456,8 +386,8 @@ Common::Error LoLEngine::init() {
 	_pageBuffer2 = new uint8[0xfa00];
 	memset(_pageBuffer2, 0, 0xfa00);
 
-	_itemsInPlay = new ItemInPlay[400];
-	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
+	_itemsInPlay = new LoLItem[400];
+	memset(_itemsInPlay, 0, sizeof(LoLItem) * 400);
 
 	_characters = new LoLCharacter[4];
 	memset(_characters, 0, sizeof(LoLCharacter) * 4);
@@ -465,69 +395,46 @@ Common::Error LoLEngine::init() {
 	if (!_sound->init())
 		error("Couldn't init sound");
 
-	_wllVmpMap = new uint8[80];
-	memset(_wllVmpMap, 0, 80);
-	_wllShapeMap = new int8[80];
-	memset(_wllShapeMap, 0, 80);
-	_specialWallTypes = new uint8[80];
-	memset(_specialWallTypes, 0, 80);
-	_wllBuffer4 = new uint8[80];
-	memset(_wllBuffer4, 0, 80);
-	_wllWallFlags = new uint8[80];
-	memset(_wllWallFlags, 0, 80);
-	_lvlShapeTop = new int16[18];
-	memset(_lvlShapeTop, 0, 18 * sizeof(int16));
-	_lvlShapeBottom = new int16[18];
-	memset(_lvlShapeBottom, 0, 18 * sizeof(int16));
-	_lvlShapeLeftRight = new int16[36];
-	memset(_lvlShapeLeftRight, 0, 36 * sizeof(int16));
-	_levelShapeProperties = new LevelShapeProperty[100];
-	memset(_levelShapeProperties, 0, 100 * sizeof(LevelShapeProperty));
-	_levelShapes = new uint8 *[400];
-	memset(_levelShapes, 0, 400 * sizeof(uint8 *));
-	_blockDrawingBuffer = new uint16[1320];
-	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));
-	_sceneWindowBuffer = new uint8[21120];
-	memset(_sceneWindowBuffer, 0, 21120);
+	KyraRpgEngine::init();
 
-	_levelBlockProperties = new LevelBlockProperty[1025];
-	memset(_levelBlockProperties, 0, 1025 * sizeof(LevelBlockProperty));
-	_monsters = new MonsterInPlay[30];
-	memset(_monsters, 0, 30 * sizeof(MonsterInPlay));
-	_monsterProperties = new MonsterProperty[5];
-	memset(_monsterProperties, 0, 5 * sizeof(MonsterProperty));
+	_wllAutomapData = new uint8[80];
+	memset(_wllAutomapData, 0, 80);
 
-	_vcnExpTable = new uint8[128];
-	for (int i = 0; i < 128; i++)
-		_vcnExpTable[i] = i & 0x0f;
+	_monsters = new LoLMonster[30];
+	memset(_monsters, 0, 30 * sizeof(LoLMonster));
+	_monsterProperties = new LoLMonsterProperty[5];
+	memset(_monsterProperties, 0, 5 * sizeof(LoLMonsterProperty));
 
 	_tempBuffer5120 = new uint8[5120];
 	memset(_tempBuffer5120, 0, 5120);
 
-	_flyingObjects = new FlyingObject[8];
-	memset(_flyingObjects, 0, 8 * sizeof(FlyingObject));
+	_flyingObjects = new FlyingObject[_numFlyingObjects];
+	_flyingObjectsPtr = _flyingObjects;
+	_flyingObjectStructSize = sizeof(FlyingObject);
+	memset(_flyingObjects, 0, _numFlyingObjects * sizeof(FlyingObject));
 
 	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
 
-	_levelFileData = 0;
 	_lvlShpFileHandle = 0;
 
 	_sceneDrawPage1 = 2;
 	_sceneDrawPage2 = 6;
 
-	_monsterShapes = new uint8 *[48];
-	memset(_monsterShapes, 0, 48 * sizeof(uint8 *));
-	_monsterPalettes = new uint8 *[48];
-	memset(_monsterPalettes, 0, 48 * sizeof(uint8 *));
+	_clickedShapeXOffs = 136;
+	_clickedShapeYOffs = 8;
+	_clickedSpecialFlag = 0x40;
 
-	_monsterShapesEx = new uint8 *[576];
-	memset(_monsterShapesEx, 0, 576 * sizeof(uint8 *));
+	_monsterShapes = new uint8*[48];
+	memset(_monsterShapes, 0, 48 * sizeof(uint8 *));
+	_monsterPalettes = new uint8*[48];
+	memset(_monsterPalettes, 0, 48 * sizeof(uint8 *));
+	_monsterDecorationShapes = new uint8*[576];
+	memset(_monsterDecorationShapes, 0, 576 * sizeof(uint8 *));
 	memset(&_scriptData, 0, sizeof(EMCData));
 
-	_hasTempDataFlags = 0;
 	_activeMagicMenu = -1;
 
-	_automapShapes = new const uint8 *[109];
+	_automapShapes = new const uint8*[109];
 	_mapOverlay = new uint8[256];
 
 	memset(_availableSpells, -1, 8);
@@ -550,64 +457,45 @@ Common::Error LoLEngine::init() {
 	_spellProcs.push_back(new SpellProc(this, 0));
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castGuardian));
 
-	initKeymap();
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->pushKeymap(kKeymapName, true);
+#endif
 
 	return Common::kNoError;
 }
 
 void LoLEngine::initKeymap() {
 #ifdef ENABLE_KEYMAPPER
-
-	bool tmp;
-	Common::Keymapper *mapper = _eventMan->getKeymapper();
+	Common::Keymapper *const mapper = _eventMan->getKeymapper();
 
 	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName, tmp) != 0)
+	if (mapper->getKeymap(kKeymapName) != 0)
 		return;
 
-	Common::Action *act;
-	Common::Keymap *engineKeyMap = new Common::Keymap(kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
 
-	act = new Common::Action(engineKeyMap, "AT1", _("Attack 1"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
+	const Common::KeyActionEntry keyActionEntries[] = {
+		{Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "AT1", _("Attack 1")},
+		{Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2), "AT2", _("Attack 2")},
+		{Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3), "AT3", _("Attack 3")},
+		{Common::KeyState(Common::KEYCODE_UP), "MVF", _("Move Forward")},
+		{Common::KeyState(Common::KEYCODE_DOWN), "MVB", _("Move Back")},
+		{Common::KeyState(Common::KEYCODE_LEFT), "SLL", _("Slide Left")},
+		{Common::KeyState(Common::KEYCODE_RIGHT), "SLR", _("Slide Right")},
+		{Common::KeyState(Common::KEYCODE_HOME), "TL", _("Turn Left")},
+		{Common::KeyState(Common::KEYCODE_PAGEUP), "TR", _("Turn Right")},
+		{Common::KeyState(Common::KEYCODE_r), "RST", _("Rest")},
+		{Common::KeyState(Common::KEYCODE_o), "OPT", _("Options")},
+		{Common::KeyState(Common::KEYCODE_SLASH), "SPL", _("Choose Spell")},
+		{Common::KeyState(), 0, 0}
+	};
 
-	act = new Common::Action(engineKeyMap, "AT2", _("Attack 2"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2 , 0));
-
-	act = new Common::Action(engineKeyMap, "AT3", _("Attack 3"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3 , 0));
-
-	act = new Common::Action(engineKeyMap, "MVF", _("Move Forward"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_UP));
-
-	act = new Common::Action(engineKeyMap, "MVB", _("Move Back"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_DOWN));
-
-	act = new Common::Action(engineKeyMap, "SLL", _("Slide Left"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_LEFT));
-
-	act = new Common::Action(engineKeyMap, "SLR", _("Slide Right"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_RIGHT));
-
-	act = new Common::Action(engineKeyMap, "TL", _("Turn Left"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_HOME));
-
-	act = new Common::Action(engineKeyMap, "TR", _("Turn Right"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_PAGEUP));
-
-	act = new Common::Action(engineKeyMap, "RST", _("Rest"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_r));
-
-	act = new Common::Action(engineKeyMap, "OPT", _("Options"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_o));
-
-	act = new Common::Action(engineKeyMap, "SPL", _("Choose Spell"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_SLASH));
+	for (const Common::KeyActionEntry *entry = keyActionEntries; entry->id; ++entry) {
+		Common::Action *const act = new Common::Action(engineKeyMap, entry->id, entry->description);
+		act->addKeyEvent(entry->ks);
+	}
 
 	mapper->addGameKeymap(engineKeyMap);
-
-	mapper->pushKeymap(kKeymapName, true);
-
 #endif
 }
 
@@ -701,7 +589,7 @@ void LoLEngine::loadItemIconShapes() {
 	_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
 	const uint8 *shp = _screen->getCPagePtr(3);
 	_numItemIconShapes = READ_LE_UINT16(shp);
-	_itemIconShapes = new uint8 *[_numItemIconShapes];
+	_itemIconShapes = new uint8*[_numItemIconShapes];
 	for (int i = 0; i < _numItemIconShapes; i++)
 		_itemIconShapes[i] = _screen->makeShapeCopy(shp, i);
 
@@ -711,7 +599,7 @@ void LoLEngine::loadItemIconShapes() {
 		_screen->loadBitmap("GAMESHP.SHP", 3, 3, 0);
 		shp = _screen->getCPagePtr(3);
 		_numGameShapes = READ_LE_UINT16(shp);
-		_gameShapes = new uint8 *[_numGameShapes];
+		_gameShapes = new uint8*[_numGameShapes];
 		for (int i = 0; i < _numGameShapes; i++)
 			_gameShapes[i] = _screen->makeShapeCopy(shp, i);
 	}
@@ -729,12 +617,6 @@ void LoLEngine::setMouseCursorToItemInHand() {
 	_flagsTable[31] &= 0xFD;
 	int o = (_itemInHand == 0) ? 0 : 10;
 	_screen->setMouseCursor(o, o, getItemIconShapePtr(_itemInHand));
-}
-
-bool LoLEngine::posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2) {
-	if (mouseX < x1 || mouseX > x2 || mouseY < y1 || mouseY > y2)
-		return false;
-	return true;
 }
 
 void LoLEngine::checkFloatingPointerRegions() {
@@ -891,46 +773,46 @@ void LoLEngine::startup() {
 	_screen->loadBitmap("ITEMSHP.SHP", 3, 3, 0);
 	const uint8 *shp = _screen->getCPagePtr(3);
 	_numItemShapes = READ_LE_UINT16(shp);
-	_itemShapes = new uint8 *[_numItemShapes];
+	_itemShapes = new uint8*[_numItemShapes];
 	for (int i = 0; i < _numItemShapes; i++)
 		_itemShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("THROWN.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numThrownShapes = READ_LE_UINT16(shp);
-	_thrownShapes = new uint8 *[_numThrownShapes];
+	_thrownShapes = new uint8*[_numThrownShapes];
 	for (int i = 0; i < _numThrownShapes; i++)
 		_thrownShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("ICE.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numEffectShapes = READ_LE_UINT16(shp);
-	_effectShapes = new uint8 *[_numEffectShapes];
+	_effectShapes = new uint8*[_numEffectShapes];
 	for (int i = 0; i < _numEffectShapes; i++)
 		_effectShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("FIREBALL.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numFireballShapes = READ_LE_UINT16(shp);
-	_fireballShapes = new uint8 *[_numFireballShapes];
+	_fireballShapes = new uint8*[_numFireballShapes];
 	for (int i = 0; i < _numFireballShapes; i++)
 		_fireballShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("HEAL.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numHealShapes = READ_LE_UINT16(shp);
-	_healShapes = new uint8 *[_numHealShapes];
+	_healShapes = new uint8*[_numHealShapes];
 	for (int i = 0; i < _numHealShapes; i++)
 		_healShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("HEALI.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numHealiShapes = READ_LE_UINT16(shp);
-	_healiShapes = new uint8 *[_numHealiShapes];
+	_healiShapes = new uint8*[_numHealiShapes];
 	for (int i = 0; i < _numHealiShapes; i++)
 		_healiShapes[i] = _screen->makeShapeCopy(shp, i);
 
-	memset(_itemsInPlay, 0, 400 * sizeof(ItemInPlay));
+	memset(_itemsInPlay, 0, 400 * sizeof(LoLItem));
 	for (int i = 0; i < 400; i++)
 		_itemsInPlay[i].shpCurFrame_flg |= 0x8000;
 
@@ -983,10 +865,9 @@ void LoLEngine::runLoop() {
 
 	enableSysTimer(2);
 
-	bool _runFlag = true;
 	_flagsTable[73] |= 0x08;
 
-	while (!shouldQuit() && _runFlag) {
+	while (!shouldQuit()) {
 		if (_gameToLoad != -1) {
 			// FIXME: Instead of throwing away the error returned by
 			// loadGameState, we should use it / augment it.
@@ -1132,7 +1013,7 @@ uint8 *LoLEngine::getTableEntry(uint8 *buffer, uint16 id) {
 	if (!buffer)
 		return 0;
 
-	return buffer + READ_LE_UINT16(buffer + (id<<1));
+	return buffer + READ_LE_UINT16(buffer + (id << 1));
 }
 
 void LoLEngine::decodeSjis(const char *src, char *dst) {
@@ -1160,7 +1041,7 @@ void LoLEngine::decodeSjis(const char *src, char *dst) {
 
 int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 	static const uint8 decodeTable1[] = {
-		0x20, 0xAE, 0xA5, 0xA0, 0xE2, 0xAD,	0xA8, 0xE0, 0xE1, 0xAB, 0xA2,
+		0x20, 0xAE, 0xA5, 0xA0, 0xE2, 0xAD, 0xA8, 0xE0, 0xE1, 0xAB, 0xA2,
 		0xA4, 0xAC, 0xAA, 0xE3, 0x2E
 	};
 
@@ -1191,7 +1072,7 @@ int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 			assert(cChar < sizeof(decodeTable2));
 			cChar = decodeTable2[cChar];
 		} else if (cChar >= 0x70) {
-			cChar = *src++;			
+			cChar = *src++;
 		} else if (cChar >= 0x30) {
 			if (cChar < 0x60)
 				cChar -= 0x30;
@@ -1207,8 +1088,10 @@ int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 }
 
 bool LoLEngine::addCharacter(int id) {
-	const uint16 *cdf[] = { _charDefsMan, _charDefsMan, _charDefsMan, _charDefsWoman,
-		_charDefsMan, _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsAkshel };
+	const uint16 *cdf[] = {
+		_charDefsMan, _charDefsMan, _charDefsMan, _charDefsWoman,
+		_charDefsMan, _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsAkshel
+	};
 
 	int numChars = countActiveCharacters();
 	if (numChars == 4)
@@ -1267,6 +1150,7 @@ void LoLEngine::setCharacterUpdateEvent(int charNum, int updateType, int updateD
 		l->characterUpdateEvents[i] = updateType;
 		l->characterUpdateDelay[i] = updateDelay;
 		_timer->setNextRun(3, _system->getMillis());
+		_timer->resetNextRun();
 		_timer->enable(3);
 		break;
 	}
@@ -1798,44 +1682,6 @@ void LoLEngine::fadeText() {
 	_fadeText = false;
 }
 
-void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
-	uint16 *p1 = (uint16 *)_tempBuffer5120;
-	uint16 *p2 = (uint16 *)(_tempBuffer5120 + 640);
-
-	for (int i = 0; i < w; i++)
-		p1[i] = i;
-
-	for (int i = 0; i < h; i++)
-		p2[i] = i;
-
-	for (int i = 0; i < w; i++)
-		SWAP(p1[_rnd.getRandomNumberRng(0, w - 1)], p1[i]);
-
-	for (int i = 0; i < h; i++)
-		SWAP(p2[_rnd.getRandomNumberRng(0, h - 1)], p2[i]);
-
-	for (int i = 0; i < h; i++) {
-		int i2 = i;
-
-		for (int ii = 0; ii < w; ii++) {
-			int dx1 = x1 + p1[ii];
-			int dy1 = y1 + p2[i2];
-			int dx2 = x2 + p1[ii];
-			int dy2 = y2 + p2[i2];
-
-			if (++i2 == h)
-				i2 = 0;
-
-			_screen->setPagePixel(dstPage, dx2, dy2, _screen->getPagePixel(srcPage, dx1, dy1));
-		}
-
-		if (!dstPage && (i & 5) == 5) {
-			updateInput();
-			_screen->updateScreen();
-		}
-	}
-}
-
 void LoLEngine::setPaletteBrightness(const Palette &srcPal, int brightness, int modifier) {
 	generateBrightnessPalette(srcPal, _screen->getPalette(1), brightness, modifier);
 	_screen->fadePalette(_screen->getPalette(1), 5, 0);
@@ -1959,7 +1805,7 @@ int LoLEngine::characterSays(int track, int charId, bool redraw) {
 		charId = 0;
 	} else {
 		int i = 0;
-		for (;i < 4; i++) {
+		for (; i < 4; i++) {
 			if (charId != _characters[i].id || !(_characters[i].flags & 1))
 				continue;
 			charId = i;
@@ -2054,7 +1900,46 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 	return 1;
 }
 
-void LoLEngine::giveItemToMonster(MonsterInPlay *monster, Item item) {
+void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3) {
+	screen()->setScreenDim(5);
+
+	if (numStr == 1 && speechEnabled()) {
+		_dialogueNumButtons = 0;
+		_dialogueButtonString[0] = _dialogueButtonString[1] = _dialogueButtonString[2] = 0;
+	} else {
+		_dialogueNumButtons = numStr;
+		_dialogueButtonString[0] = s1;
+		_dialogueButtonString[1] = s2;
+		_dialogueButtonString[2] = s3;
+		_dialogueHighlightedButton = 0;
+
+		const ScreenDim *d = screen()->getScreenDim(5);
+
+		static uint16 posX[3];
+		static uint8 posY[3];
+
+		memset(posY, d->sy + d->h - 9, 3);
+
+		_dialogueButtonPosX = posX;
+		_dialogueButtonPosY = posY;
+
+		if (numStr == 1) {
+			posX[0] = posX[1] = posX[2] = d->sx + d->w - (_dialogueButtonWidth + 3);
+		} else {
+			int xOffs = d->w / numStr;
+			posX[0] = d->sx + (xOffs >> 1) - 37;
+			posX[1] = posX[0] + xOffs;
+			posX[2] = posX[1] + xOffs;
+		}
+
+		drawDialogueButtons();
+	}
+
+	if (!shouldQuit())
+		removeInputTop();
+}
+
+void LoLEngine::giveItemToMonster(LoLMonster *monster, Item item) {
 	uint16 *c = &monster->assignedItems;
 	while (*c)
 		c = &_itemsInPlay[*c].nextAssignedObject;
@@ -2087,19 +1972,8 @@ void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 	}
 }
 
-int LoLEngine::rollDice(int times, int pips) {
-	if (times <= 0 || pips <= 0)
-		return 0;
-
-	int res = 0;
-	while (times--)
-		res += _rnd.getRandomNumberRng(1, pips);
-
-	return res;
-}
-
-void LoLEngine::updateEnvironmentalSfx(int soundId) {
-	snd_processEnvironmentalSoundEffect(soundId, _currentBlock);
+const KyraRpgGUISettings *LoLEngine::guiSettings() {
+	return &_guiSettings;
 }
 
 // spells
@@ -2332,7 +2206,7 @@ int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	int ch = 0;
 	int n = 4;
 
-	if (charNum != -1){
+	if (charNum != -1) {
 		ch = charNum;
 		n = charNum + 1;
 	}
@@ -2516,7 +2390,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 			int might = rollDice(iceDamageMin[spellLevel], iceDamageMax[spellLevel]) + iceDamageAdd[spellLevel];
 			int dmg = calcInflictableDamagePerItem(charNum, 0, might, 3, 2);
 
-			MonsterInPlay *m = &_monsters[o & 0x7fff];
+			LoLMonster *m = &_monsters[o & 0x7fff];
 			if (m->hitPoints <= dmg) {
 				increaseExperience(charNum, 2, m->hitPoints);
 				o = m->nextAssignedObject;
@@ -2595,7 +2469,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 			while (o & 0x8000) {
 				static const uint8 fireballDamage[] = { 20, 40, 80, 100 };
 				int dmg = calcInflictableDamagePerItem(charNum, o, fireballDamage[spellLevel], 4, 1);
-				MonsterInPlay *m = &_monsters[o & 0x7fff];
+				LoLMonster *m = &_monsters[o & 0x7fff];
 				o = m->nextAssignedObject;
 				_envSfxUseQueue = true;
 				inflictDamage(m->id | 0x8000, dmg, charNum, 2, 4);
@@ -2760,7 +2634,7 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 				uint16 o = _levelBlockProperties[b1].assignedObjects;
 				while (o & 0x8000) {
 					uint16 o2 = o;
-					MonsterInPlay *m = &_monsters[o & 0x7fff];
+					LoLMonster *m = &_monsters[o & 0x7fff];
 					o = findObject(o)->nextAssignedObject;
 					int nX = 0;
 					int nY = 0;
@@ -2993,7 +2867,7 @@ int LoLEngine::processMagicVaelansCube() {
 			uint16 a = sp1[i * 3 + 1] + 16;
 			tmpPal2[i * 3 + 1] = (a > 58) ? 58 : a;
 			tmpPal2[i * 3] = sp1[i * 3];
-			a =	sp1[i * 3 + 2] + 16;
+			a = sp1[i * 3 + 2] + 16;
 			tmpPal2[i * 3 + 2] = (a > 63) ? 63 : a;
 		}
 	} else {
@@ -3001,7 +2875,7 @@ int LoLEngine::processMagicVaelansCube() {
 			uint16 a = sp1[i * 3] + 16;
 			tmpPal2[i * 3] = (a > 60) ? 60 : a;
 			tmpPal2[i * 3 + 1] = sp1[i * 3 + 1];
-			a =	sp1[i * 3 + 2] + 19;
+			a = sp1[i * 3 + 2] + 19;
 			tmpPal2[i * 3 + 2] = (a > 60) ? 60 : a;
 		}
 	}
@@ -3029,7 +2903,7 @@ int LoLEngine::processMagicVaelansCube() {
 
 	uint16 o = _levelBlockProperties[bl].assignedObjects;
 	while (o & 0x8000) {
-		MonsterInPlay *m = &_monsters[o & 0x7fff];
+		LoLMonster *m = &_monsters[o & 0x7fff];
 		if (m->properties->flags & 0x1000) {
 			inflictDamage(o, 100, 0xffff, 0, 0x80);
 			v = 1;
@@ -3509,7 +3383,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 }
 
 int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int flags) {
-	MonsterInPlay *m = 0;
+	LoLMonster *m = 0;
 	LoLCharacter *c = 0;
 
 	if (target & 0x8000) {
@@ -3726,7 +3600,7 @@ void LoLEngine::checkForPartyDeath() {
 	}
 }
 
-void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage) {
+void LoLEngine::applyMonsterAttackSkill(LoLMonster *monster, int16 target, int16 damage) {
 	if (rollDice(1, 100) > monster->properties->attackSkillChance)
 		return;
 
@@ -3796,7 +3670,7 @@ void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, in
 	}
 }
 
-void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int flags, int skill, int damage) {
+void LoLEngine::applyMonsterDefenseSkill(LoLMonster *monster, int16 attacker, int flags, int skill, int damage) {
 	if (rollDice(1, 100) > monster->properties->defenseSkillChance)
 		return;
 
@@ -4055,7 +3929,7 @@ uint16 LoLEngine::getNearestMonsterFromCharacterForBlock(uint16 block, int charN
 	int o = _levelBlockProperties[block].assignedObjects;
 
 	while (o & 0x8000) {
-		MonsterInPlay *m = &_monsters[o & 0x7fff];
+		LoLMonster *m = &_monsters[o & 0x7fff];
 		if (m->mode >= 13) {
 			o = m->nextAssignedObject;
 			continue;
@@ -4121,7 +3995,7 @@ void LoLEngine::displayAutomap() {
 
 	_currentMapLevel = _currentLevel;
 	uint8 *tmpWll = new uint8[80];
-	memcpy(tmpWll, _wllBuffer4, 80);
+	memcpy(tmpWll, _wllAutomapData, 80);
 
 	_screen->loadBitmap("parch.cps", 2, 2, &_screen->getPalette(3));
 	_screen->loadBitmap("autobut.shp", 3, 5, 0);
@@ -4185,7 +4059,7 @@ void LoLEngine::displayAutomap() {
 
 		if (f == 0x30) {
 			for (int i = 0; i < 1024; i++)
-				 _levelBlockProperties[i].flags |= 7;
+				_levelBlockProperties[i].flags |= 7;
 			_mapUpdateNeeded = true;
 		} else if (f == _keyMap[Common::KEYCODE_ESCAPE]) {
 			exitAutomap = true;
@@ -4202,7 +4076,7 @@ void LoLEngine::displayAutomap() {
 
 	_screen->fadeToBlack(10);
 	loadLevelWallData(_currentLevel, false);
-	memcpy(_wllBuffer4, tmpWll, 80);
+	memcpy(_wllAutomapData, tmpWll, 80);
 	delete[] tmpWll;
 	restoreBlockTempData(_currentLevel);
 	addLevelItems();
@@ -4243,7 +4117,7 @@ bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOff
 	uint16 b = block + blockPosTable[6 + xOffs];
 
 	if (fx != -1) {
-		if (_wllBuffer4[_levelBlockProperties[b].walls[fx]] & 0xc0)
+		if (_wllAutomapData[_levelBlockProperties[b].walls[fx]] & 0xc0)
 			return false;
 	}
 
@@ -4251,13 +4125,13 @@ bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOff
 	b = block + blockPosTable[9 + yOffs];
 
 	if (fy != -1) {
-		if (_wllBuffer4[_levelBlockProperties[b].walls[fy]] & 0xc0)
+		if (_wllAutomapData[_levelBlockProperties[b].walls[fy]] & 0xc0)
 			return false;
 	}
 
 	b = block + blockPosTable[6 + xOffs] + blockPosTable[9 + yOffs];
 
-	if ((fx != -1) && (fy != -1) && (_wllBuffer4[_levelBlockProperties[b].walls[fx]] & 0xc0) && (_wllBuffer4[_levelBlockProperties[b].walls[fy]] & 0xc0))
+	if ((fx != -1) && (fy != -1) && (_wllAutomapData[_levelBlockProperties[b].walls[fx]] & 0xc0) && (_wllAutomapData[_levelBlockProperties[b].walls[fy]] & 0xc0))
 		return false;
 
 	_levelBlockProperties[b].flags |= 7;
@@ -4320,7 +4194,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 
 		for (; bl < 1024; bl++) {
 			uint8 *w = _levelBlockProperties[bl].walls;
-			if ((_levelBlockProperties[bl].flags & 7) == 7 && (!(_wllBuffer4[w[0]] & 0xc0)) && (!(_wllBuffer4[w[2]] & 0xc0)) && (!(_wllBuffer4[w[1]] & 0xc0))&& (!(_wllBuffer4[w[3]] & 0xc0))) {
+			if ((_levelBlockProperties[bl].flags & 7) == 7 && (!(_wllAutomapData[w[0]] & 0xc0)) && (!(_wllAutomapData[w[2]] & 0xc0)) && (!(_wllAutomapData[w[1]] & 0xc0)) && (!(_wllAutomapData[w[3]] & 0xc0))) {
 				uint16 b0 = calcNewBlockPosition(bl, 0);
 				uint16 b2 = calcNewBlockPosition(bl, 2);
 				uint16 b1 = calcNewBlockPosition(bl, 1);
@@ -4337,25 +4211,25 @@ void LoLEngine::drawMapPage(int pageNum) {
 				// draw north wall
 				drawMapBlockWall(b3, w31, sx, sy, 3);
 				drawMapShape(w31, sx, sy, 3);
-				if (_wllBuffer4[w31] & 0xc0)
+				if (_wllAutomapData[w31] & 0xc0)
 					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 1, 6, 0, _mapOverlay);
 
 				// draw west wall
 				drawMapBlockWall(b1, w13, sx, sy, 1);
 				drawMapShape(w13, sx, sy, 1);
-				if (_wllBuffer4[w13] & 0xc0)
+				if (_wllAutomapData[w13] & 0xc0)
 					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx + 6, sy, _screen->_curPage, sx + 6, sy, 1, 6, 0, _mapOverlay);
 
 				// draw east wall
 				drawMapBlockWall(b0, w02, sx, sy, 0);
 				drawMapShape(w02, sx, sy, 0);
-				if (_wllBuffer4[w02] & 0xc0)
+				if (_wllAutomapData[w02] & 0xc0)
 					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 7, 1, 0, _mapOverlay);
 
 				//draw south wall
 				drawMapBlockWall(b2, w20, sx, sy, 2);
 				drawMapShape(w20, sx, sy, 2);
-				if (_wllBuffer4[w20] & 0xc0)
+				if (_wllAutomapData[w20] & 0xc0)
 					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx, sy + 5, _screen->_curPage, sx, sy + 5, 7, 1, 0, _mapOverlay);
 			}
 
@@ -4522,7 +4396,7 @@ void LoLEngine::redrawMapCursor() {
 }
 
 void LoLEngine::drawMapBlockWall(uint16 block, uint8 wall, int x, int y, int direction) {
-	if (((1 << direction) & _levelBlockProperties[block].flags) || ((_wllBuffer4[wall] & 0x1f) != 13))
+	if (((1 << direction) & _levelBlockProperties[block].flags) || ((_wllAutomapData[wall] & 0x1f) != 13))
 		return;
 
 	int cp = _screen->_curPage;
@@ -4532,7 +4406,7 @@ void LoLEngine::drawMapBlockWall(uint16 block, uint8 wall, int x, int y, int dir
 }
 
 void LoLEngine::drawMapShape(uint8 wall, int x, int y, int direction) {
-	int l = _wllBuffer4[wall] & 0x1f;
+	int l = _wllAutomapData[wall] & 0x1f;
 	if (l == 0x1f)
 		return;
 
@@ -4625,48 +4499,7 @@ void LoLEngine::printMapExitButtonText() {
 	_screen->setCurPage(cp);
 }
 
-void LoLEngine::generateTempData() {
-	int l = _currentLevel - 1;
-	if (_lvlTempData[l]) {
-		delete[] _lvlTempData[l]->wallsXorData;
-		delete[] _lvlTempData[l]->flags;
-		delete[] _lvlTempData[l]->monsters;
-		delete[] _lvlTempData[l]->flyingObjects;
-		delete _lvlTempData[l];
-	}
 
-	_lvlTempData[l] = new LevelTempData;
-
-	_lvlTempData[l]->wallsXorData = new uint8[4096];
-	_lvlTempData[l]->flags = new uint8[1024];
-	_lvlTempData[l]->monsters = new MonsterInPlay[30];
-	_lvlTempData[l]->flyingObjects = new FlyingObject[8];
-
-	Common::String filename = Common::String::format("LEVEL%d.CMZ", _currentLevel);
-
-	_screen->loadBitmap(filename.c_str(), 15, 15, 0);
-	const uint8 *p = _screen->getCPagePtr(14);
-	uint16 len = READ_LE_UINT16(p + 4);
-	p += 6;
-
-	memset(_lvlTempData[l]->wallsXorData, 0, 4096);
-	memset(_lvlTempData[l]->flags, 0, 1024);
-	uint8 *d = _lvlTempData[l]->wallsXorData;
-	uint8 *df = _lvlTempData[l]->flags;
-
-	for (int i = 0; i < 1024; i++) {
-		for (int ii = 0; ii < 4; ii++)
-			*d++ = p[i * len + ii] ^ _levelBlockProperties[i].walls[ii];
-		*df++ = _levelBlockProperties[i].flags;
-	}
-
-	memcpy(_lvlTempData[l]->monsters, _monsters,  sizeof(MonsterInPlay) * 30);
-	memcpy(_lvlTempData[l]->flyingObjects, _flyingObjects,  sizeof(FlyingObject) * 8);
-
-	_lvlTempData[l]->monsterDifficulty =_monsterDifficulty;
-
-	_hasTempDataFlags |= (1 << l);
-}
 
 } // End of namespace Kyra
 

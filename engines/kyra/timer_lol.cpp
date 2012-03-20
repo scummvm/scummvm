@@ -45,58 +45,7 @@ void LoLEngine::setupTimers() {
 	_timer->addTimer(9, TimerV2(timerUpdatePortraitAnimations), 10, true);
 	_timer->addTimer(10, TimerV2(timerUpdateLampState), 360, true);
 	_timer->addTimer(11, TimerV2(timerFadeMessageText), 360, false);
-}
-
-void LoLEngine::enableTimer(int id) {
-	_timer->enable(id);
-	_timer->setCountdown(id, _timer->getDelay(id));
-}
-
-void LoLEngine::enableSysTimer(int sysTimer) {
-	if (sysTimer != 2)
-		return;
-
-	for (int i = 0; i < _numClock2Timers; i++)
-		_timer->pauseSingleTimer(_clock2Timers[i], false);
-}
-
-void LoLEngine::disableSysTimer(int sysTimer) {
-	if (sysTimer != 2)
-		return;
-
-	for (int i = 0; i < _numClock2Timers; i++)
-		_timer->pauseSingleTimer(_clock2Timers[i], true);
-}
-
-void LoLEngine::timerProcessDoors(int timerNum) {
-	for (int i = 0; i < 3; i++) {
-		uint16 b = _openDoorState[i].block;
-		if (!b)
-			continue;
-
-		int v = _openDoorState[i].state;
-		int c = _openDoorState[i].wall;
-
-		_levelBlockProperties[b].walls[c] += v;
-		_levelBlockProperties[b].walls[c ^ 2] += v;
-
-		int snd = 31;
-
-		int flg = _wllWallFlags[_levelBlockProperties[b].walls[c]];
-		if (flg & 0x20)
-			snd = 33;
-		else if (v == -1)
-			snd = 32;
-
-		if (!(_updateFlags & 1)) {
-			snd_processEnvironmentalSoundEffect(snd, b);
-			if (!checkSceneUpdateNeed(b))
-				updateEnvironmentalSfx(0);
-		}
-
-		if (flg & 0x30)
-			_openDoorState[i].block = 0;
-	}
+	_timer->resetNextRun();
 }
 
 void LoLEngine::timerProcessMonsters(int timerNum) {
@@ -209,7 +158,7 @@ void LoLEngine::timerRegeneratePoints(int timerNum) {
 		int hInc = (_characters[i].flags & 8) ? 0 : (itemEquipped(i, 228) ? 4 : 1);
 		// check for Talba ring
 		int mInc = _drainMagic ? ((_characters[i].magicPointsMax >> 5) * -1) :
-			((_characters[i].flags & 8) ? 0 : (itemEquipped(i, 227) ? (_characters[i].magicPointsMax / 10) : 1));
+		           ((_characters[i].flags & 8) ? 0 : (itemEquipped(i, 227) ? (_characters[i].magicPointsMax / 10) : 1));
 
 		_characters[i].magicPointsCur = CLIP<int16>(_characters[i].magicPointsCur + mInc, 0, _characters[i].magicPointsMax);
 

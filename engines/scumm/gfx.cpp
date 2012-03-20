@@ -26,6 +26,7 @@
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/resource.h"
+#include "scumm/scumm_v0.h"
 #include "scumm/scumm_v5.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/usage_bits.h"
@@ -239,7 +240,7 @@ GdiPCEngine::~GdiPCEngine() {
 #endif
 
 GdiV1::GdiV1(ScummEngine *vm) : Gdi(vm) {
-	memset(&_C64, 0, sizeof(_C64));
+	memset(&_V1, 0, sizeof(_V1));
 }
 
 GdiV2::GdiV2(ScummEngine *vm) : Gdi(vm) {
@@ -296,17 +297,17 @@ void GdiPCEngine::loadTiles(byte *roomptr) {
 
 void GdiV1::roomChanged(byte *roomptr) {
 	for (int i = 0; i < 4; i++){
-		_C64.colors[i] = roomptr[6 + i];
+		_V1.colors[i] = roomptr[6 + i];
 	}
-	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), _C64.charMap, 2048);
-	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _C64.picMap, roomptr[4] * roomptr[5]);
-	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _C64.colorMap, roomptr[4] * roomptr[5]);
-	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
+	decodeV1Gfx(roomptr + READ_LE_UINT16(roomptr + 10), _V1.charMap, 2048);
+	decodeV1Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _V1.picMap, roomptr[4] * roomptr[5]);
+	decodeV1Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _V1.colorMap, roomptr[4] * roomptr[5]);
+	decodeV1Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _V1.maskMap, roomptr[4] * roomptr[5]);
 
 	// Read the mask data. The 16bit length value seems to always be 8 too big.
 	// See bug #1837375 for details on this.
 	const byte *maskPtr = roomptr + READ_LE_UINT16(roomptr + 18);
-	decodeC64Gfx(maskPtr + 2, _C64.maskChar, READ_LE_UINT16(maskPtr) - 8);
+	decodeV1Gfx(maskPtr + 2, _V1.maskChar, READ_LE_UINT16(maskPtr) - 8);
 	_objectMode = true;
 }
 
@@ -679,11 +680,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				srcPtr += vsPitch;
 				textPtr += _textSurface.pitch - width * m;
 			}
-		}
+		} else {
 #ifdef USE_ARM_GFX_ASM
-		asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
+			asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
 #else
-		else {
 			// We blit four pixels at a time, for improved performance.
 			const uint32 *src32 = (const uint32 *)src;
 			uint32 *dst32 = (uint32 *)_compositeBuf;
@@ -714,8 +714,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				src32 += vsPitch;
 				text32 += textPitch;
 			}
-		}
 #endif
+		}
 		src = _compositeBuf;
 		pitch = width * vs->format.bytesPerPixel;
 
@@ -1135,7 +1135,7 @@ void ScummEngine::clearTextSurface() {
 		_townsScreen->fillLayerRect(1, 0, 0, _textSurface.w, _textSurface.h, 0);
 #endif
 
-	fill((byte*)_textSurface.pixels,  _textSurface.pitch,
+	fill((byte *)_textSurface.pixels,  _textSurface.pitch,
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		_game.platform == Common::kPlatformFMTowns ? 0 :
 #endif
@@ -1487,15 +1487,17 @@ void ScummEngine_v5::drawFlashlight() {
 	_flashlight.isDrawn = true;
 }
 
-// V0 Maniac doesn't have a ScummVar for VAR_CURRENT_LIGHTS, and just uses
-// an internal variable. Emulate this to prevent overwriting script vars...
-// And V6 games do not use the "lights" at all. There, the whole screen is
-// always visible, and actors are always colored, so we fake the correct
-// light value for it.
+int ScummEngine_v0::getCurrentLights() const {
+	// V0 Maniac doesn't have a ScummVar for VAR_CURRENT_LIGHTS, and just uses
+	// an internal variable. Emulate this to prevent overwriting script vars...
+	// And V6 games do not use the "lights" at all. There, the whole screen is
+	// always visible, and actors are always colored, so we fake the correct
+	// light value for it.
+	return _currentLights;
+}
+
 int ScummEngine::getCurrentLights() const {
-	if (_game.id == GID_MANIAC && _game.version == 0)
-		return _currentLights;
-	else if (_game.version >= 6)
+	if (_game.version >= 6)
 		return LIGHTMODE_room_lights_on | LIGHTMODE_actor_use_colors;
 	else
 		return VAR(VAR_CURRENT_LIGHTS);
@@ -1538,7 +1540,7 @@ void GdiV1::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
 	                int stripnr, int numstrip) {
 	if (_objectMode) {
-		decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
+		decodeV1Gfx(ptr, _V1.objectMap, (width / 8) * (height / 8) * 3);
 	}
 }
 
@@ -1925,9 +1927,9 @@ bool GdiPCEngine::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const in
 bool GdiV1::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width, const int height,
 					int stripnr, const byte *smap_ptr) {
 	if (_objectMode)
-		drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
+		drawStripV1Object(dstPtr, vs->pitch, stripnr, width, height);
 	else
-		drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
+		drawStripV1Background(dstPtr, vs->pitch, stripnr, height);
 
 	return false;
 }
@@ -2068,7 +2070,7 @@ void GdiV1::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
 	                bool transpStrip, byte flag) {
 	byte *mask_ptr = getMaskBuffer(x, y, 1);
-	drawStripC64Mask(mask_ptr, stripnr, width, height);
+	drawStripV1Mask(mask_ptr, stripnr, width, height);
 }
 
 void GdiV2::decodeMask(int x, int y, const int width, const int height,
@@ -2770,7 +2772,7 @@ void GdiNES::drawStripNESMask(byte *dst, int stripnr, int top, int height) const
 void readOffsetTable(const byte *ptr, uint16 **table, int *count) {
 	int pos = 0;
 	*count = READ_LE_UINT16(ptr) / 2 + 1;
-	*table = (uint16*)malloc(*count * sizeof(uint16));
+	*table = (uint16 *)malloc(*count * sizeof(uint16));
 	for (int i = 0; i < *count; i++) {
 		(*table)[i] = READ_LE_UINT16(ptr + pos) + pos + 2;
 		pos += 2;
@@ -2974,10 +2976,10 @@ void GdiPCEngine::decodePCEngineTileData(const byte *ptr) {
 
 	if (_distaff) {
 		free(_PCE.staffTiles);
-		_PCE.staffTiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+		_PCE.staffTiles = (byte *)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
 	} else {
 		free(_PCE.roomTiles);
-		_PCE.roomTiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+		_PCE.roomTiles = (byte *)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
 	}
 
 	for (int i = 0; i < _PCE.numTiles; ++i) {
@@ -3020,7 +3022,7 @@ void GdiPCEngine::decodePCEngineMaskData(const byte *ptr) {
 	readOffsetTable(ptr, &maskOffsets, &_PCE.numMasks);
 
 	free(_PCE.masks);
-	_PCE.masks = (byte*)malloc(_PCE.numMasks * 8 * sizeof(byte));
+	_PCE.masks = (byte *)malloc(_PCE.numMasks * 8 * sizeof(byte));
 
 	for (int i = 0; i < _PCE.numMasks; ++i) {
 		mask = &_PCE.masks[i * 8];
@@ -3086,67 +3088,67 @@ void GdiPCEngine::drawStripPCEngineMask(byte *dst, int stripnr, int top, int hei
 }
 #endif
 
-void GdiV1::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height) {
+void GdiV1::drawStripV1Background(byte *dst, int dstPitch, int stripnr, int height) {
 	int charIdx;
 	height /= 8;
 	for (int y = 0; y < height; y++) {
-		_C64.colors[3] = (_C64.colorMap[y + stripnr * height] & 7);
+		_V1.colors[3] = (_V1.colorMap[y + stripnr * height] & 7);
 		// Check for room color change in V1 zak
 		if (_roomPalette[0] == 255) {
-			_C64.colors[2] = _roomPalette[2];
-			_C64.colors[1] = _roomPalette[1];
+			_V1.colors[2] = _roomPalette[2];
+			_V1.colors[1] = _roomPalette[1];
 		}
 
-		charIdx = _C64.picMap[y + stripnr * height] * 8;
+		charIdx = _V1.picMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64.charMap[charIdx + i];
-			dst[0] = dst[1] = _C64.colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _C64.colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _C64.colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _C64.colors[(c >> 0) & 3];
+			byte c = _V1.charMap[charIdx + i];
+			dst[0] = dst[1] = _V1.colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _V1.colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _V1.colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _V1.colors[(c >> 0) & 3];
 			dst += dstPitch;
 		}
 	}
 }
 
-void GdiV1::drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height) {
+void GdiV1::drawStripV1Object(byte *dst, int dstPitch, int stripnr, int width, int height) {
 	int charIdx;
 	height /= 8;
 	width /= 8;
 	for (int y = 0; y < height; y++) {
-		_C64.colors[3] = (_C64.objectMap[(y + height) * width + stripnr] & 7);
-		charIdx = _C64.objectMap[y * width + stripnr] * 8;
+		_V1.colors[3] = (_V1.objectMap[(y + height) * width + stripnr] & 7);
+		charIdx = _V1.objectMap[y * width + stripnr] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64.charMap[charIdx + i];
-			dst[0] = dst[1] = _C64.colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _C64.colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _C64.colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _C64.colors[(c >> 0) & 3];
+			byte c = _V1.charMap[charIdx + i];
+			dst[0] = dst[1] = _V1.colors[(c >> 6) & 3];
+			dst[2] = dst[3] = _V1.colors[(c >> 4) & 3];
+			dst[4] = dst[5] = _V1.colors[(c >> 2) & 3];
+			dst[6] = dst[7] = _V1.colors[(c >> 0) & 3];
 			dst += dstPitch;
 		}
 	}
 }
 
-void GdiV1::drawStripC64Mask(byte *dst, int stripnr, int width, int height) const {
+void GdiV1::drawStripV1Mask(byte *dst, int stripnr, int width, int height) const {
 	int maskIdx;
 	height /= 8;
 	width /= 8;
 	for (int y = 0; y < height; y++) {
 		if (_objectMode)
-			maskIdx = _C64.objectMap[(y + 2 * height) * width + stripnr] * 8;
+			maskIdx = _V1.objectMap[(y + 2 * height) * width + stripnr] * 8;
 		else
-			maskIdx = _C64.maskMap[y + stripnr * height] * 8;
+			maskIdx = _V1.maskMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64.maskChar[maskIdx + i];
+			byte c = _V1.maskChar[maskIdx + i];
 
-			// V1/C64 masks are inverted compared to what ScummVM expects
+			// V1/V0 masks are inverted compared to what ScummVM expects
 			*dst = c ^ 0xFF;
 			dst += _numStrips;
 		}
 	}
 }
 
-void GdiV1::decodeC64Gfx(const byte *src, byte *dst, int size) const {
+void GdiV1::decodeV1Gfx(const byte *src, byte *dst, int size) const {
 	int x, z;
 	byte color, run, common[4];
 

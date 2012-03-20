@@ -229,8 +229,8 @@ bool MixedSoundDriver::isPlaying() const {
 	return _music->isPlaying() | _sfx->isPlaying();
 }
 
-void MixedSoundDriver::playSoundEffect(uint8 track) {
-	_sfx->playSoundEffect(track);
+void MixedSoundDriver::playSoundEffect(uint8 track, uint8 volume) {
+	_sfx->playSoundEffect(track, volume);
 }
 
 void MixedSoundDriver::stopAllSoundEffects() {
@@ -266,7 +266,7 @@ void KyraEngine_v1::snd_playTheme(int file, int track) {
 }
 
 void KyraEngine_v1::snd_playSoundEffect(int track, int volume) {
-	_sound->playSoundEffect(track);
+	_sound->playSoundEffect(track, volume);
 }
 
 void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {

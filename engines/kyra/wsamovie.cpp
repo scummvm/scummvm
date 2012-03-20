@@ -28,10 +28,12 @@
 namespace Kyra {
 
 WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm)
-    : Movie(vm), _frameData(0), _frameOffsTable(0), _offscreenBuffer(0), _deltaBuffer(0) {
+	: Movie(vm), _frameData(0), _frameOffsTable(0), _offscreenBuffer(0), _deltaBuffer(0) {
 }
 
-WSAMovie_v1::~WSAMovie_v1() { close(); }
+WSAMovie_v1::~WSAMovie_v1() {
+	close();
+}
 
 int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf) {
 	close();
@@ -95,7 +97,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 
 	for (int i = 1; i < _numFrames + 2; ++i) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData);
-	   	if (_frameOffsTable[i])
+		if (_frameOffsTable[i])
 			_frameOffsTable[i] -= frameDataOffs;
 		wsaData += 4;
 	}
@@ -251,7 +253,7 @@ void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, uint16
 
 	uint8 *dst;
 	dst = _buffer;
-	memset(_buffer, 0, _width*_height);
+	memset(_buffer, 0, _width * _height);
 
 	if (_currentFrame == _numFrames) {
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
@@ -330,7 +332,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 		return;
 	assert(frameNum <= _numFrames);
 
-	memset(dst, 0, _width*_height);
+	memset(dst, 0, _width * _height);
 
 	const uint8 *src = _frameData + _frameOffsTable[frameNum];
 	Screen::decodeFrame4(src, _deltaBuffer, _deltaBufferSize);

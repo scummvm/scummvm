@@ -22,17 +22,242 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-uint16 DreamGenContext::getPersFrame(uint8 index) {
-	return getSegment(data.word(kPeople)).word(kPersonframes + index * 2);
+void DreamWebEngine::talk() {
+	_talkPos = 0;
+	_inMapArea = 0;
+	_character = _command;
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	underTextLine();
+	convIcons();
+	startTalk();
+	_commandType = 255;
+	readMouse();
+	showPointer();
+	workToScreen();
+
+	RectWithCallback talkList[] = {
+		{ 273,320,157,198,&DreamWebEngine::getBack1 },
+		{ 240,290,2,44,&DreamWebEngine::moreTalk },
+		{ 0,320,0,200,&DreamWebEngine::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	do {
+		delPointer();
+		readMouse();
+		animPointer();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		_getBack = 0;
+		checkCoords(talkList);
+		if (_quitRequested)
+			break;
+	} while (!_getBack);
+
+	if (_talkPos >= 4)
+		_personData->b7 |= 128;
+
+	redrawMainScrn();
+	workToScreenM();
+	if (_speechLoaded) {
+		cancelCh1();
+		_volumeDirection = -1;
+		_volumeTo = 0;
+	}
 }
 
-void DreamGenContext::convIcons() {
-	uint8 index = data.byte(kCharacter) & 127;
+void DreamWebEngine::convIcons() {
+	uint8 index = _character & 127;
 	uint16 frame = getPersFrame(index);
-	const Frame *base = findSource(frame);
-	showFrame(base, 234, 2, frame, 0);
+	const GraphicsFile *base = findSource(frame);
+	showFrame(*base, 234, 2, frame, 0);
 }
 
-} // End of namespace DreamGen
+uint16 DreamWebEngine::getPersFrame(uint8 index) {
+	return READ_LE_UINT16(&_personFramesLE[index]);
+}
+
+void DreamWebEngine::startTalk() {
+	_talkMode = 0;
+
+	const uint8 *str = getPersonText(_character & 0x7F, 0);
+	uint16 y;
+
+	_charShift = 91+91;
+	y = 64;
+	printDirect(&str, 66, &y, 241, true);
+
+	_charShift = 0;
+	y = 80;
+	printDirect(&str, 66, &y, 241, true);
+
+	if (hasSpeech()) {
+		_speechLoaded = false;
+		loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
+		if (_speechLoaded) {
+			_volumeDirection = 1;
+			_volumeTo = 6;
+			playChannel1(50 + 12);
+		}
+	}
+}
+
+const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
+	return (const uint8 *)_personText.getString(index*64 + talkPos);
+}
+
+void DreamWebEngine::moreTalk() {
+	if (_talkMode != 0) {
+		redes();
+		return;
+	}
+
+	commandOnlyCond(49, 215);
+
+	if (_mouseButton == _oldButton)
+		return;	// nomore
+
+	if (!(_mouseButton & 1))
+		return;
+
+	_talkMode = 2;
+	_talkPos = 4;
+
+	if (_character >= 100)
+		_talkPos = 48; // second part
+	doSomeTalk();
+}
+
+void DreamWebEngine::doSomeTalk() {
+	// FIXME: This is for the CD version only
+
+	while (true) {
+		const uint8 *str = getPersonText(_character & 0x7F, _talkPos);
+
+		if (*str == 0) {
+			// endheartalk
+			_pointerMode = 0;
+			return;
+		}
+
+		createPanel();
+		showPanel();
+		showMan();
+		showExit();
+		convIcons();
+
+		printDirect(str, 164, 64, 144, false);
+
+		loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
+		if (_speechLoaded)
+			playChannel1(62);
+
+		_pointerMode = 3;
+		workToScreenM();
+		if (hangOnPQ())
+			return;
+
+		_talkPos++;
+
+		str = getPersonText(_character & 0x7F, _talkPos);
+		if (*str == 0) {
+			// endheartalk
+			_pointerMode = 0;
+			return;
+		}
+
+		if (*str != ':' && *str != 32) {
+			createPanel();
+			showPanel();
+			showMan();
+			showExit();
+			convIcons();
+			printDirect(str, 48, 128, 144, false);
+
+			loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
+			if (_speechLoaded)
+				playChannel1(62);
+
+			_pointerMode = 3;
+			workToScreenM();
+			if (hangOnPQ())
+				return;
+		}
+
+		_talkPos++;
+	}
+}
+
+bool DreamWebEngine::hangOnPQ() {
+	_getBack = 0;
+
+	RectWithCallback quitList[] = {
+		{ 273,320,157,198,&DreamWebEngine::getBack1 },
+		{ 0,320,0,200,&DreamWebEngine::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	uint16 speechFlag = 0;
+
+	do {
+		delPointer();
+		readMouse();
+		animPointer();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		checkCoords(quitList);
+
+		if (_getBack == 1 || _quitRequested) {
+			// Quit conversation
+			delPointer();
+			_pointerMode = 0;
+			cancelCh1();
+			return true;
+		}
+
+		if (_speechLoaded && _channel1Playing == 255) {
+			speechFlag++;
+			if (speechFlag == 40)
+				break;
+		}
+	} while (!_mouseButton || _oldButton);
+
+	delPointer();
+	_pointerMode = 0;
+	return false;
+}
+
+void DreamWebEngine::redes() {
+	if (_channel1Playing != 255 || _talkMode != 2) {
+		blank();
+		return;
+	}
+
+	commandOnlyCond(50, 217);
+
+	if (!(_mouseButton & 1))
+		return;
+
+	delPointer();
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	convIcons();
+	startTalk();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+} // End of namespace DreamWeb

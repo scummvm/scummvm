@@ -235,7 +235,7 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 }
 
 void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
-	byte *dst = (byte*)surf->getBasePtr(x, y);
+	byte *dst = (byte *)surf->getBasePtr(x, y);
 	font->setColor(color);
 	font->drawString(dst, surf->w, text);
 }
@@ -308,7 +308,7 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 	dp.y = dstRect.top;
 
 	byte *s = data + srcRect.left + srcRect.top * width;
-	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
+	byte *d = (byte *)surf->getBasePtr(dp.x, dp.y);
 
 	uint line = 0, col = 0;
 
@@ -380,7 +380,7 @@ void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *s
 	q.translate(-r.left, -r.top);
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
+	byte *d = (byte *)surf->getBasePtr(dp.x, dp.y);
 
 	uint sPitch = r.width() - q.width();
 	uint dPitch = surf->w - q.width();
@@ -422,7 +422,7 @@ void Gfx::bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface 
 	q.translate(-r.left, -r.top);
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
+	byte *d = (byte *)surf->getBasePtr(dp.x, dp.y);
 
 	uint sPitch = r.width() - q.width();
 	uint dPitch = surf->w - q.width();

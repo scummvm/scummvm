@@ -318,23 +318,23 @@ public:
 	 * Checks for existence in the cache. A full match of relative path and filename is needed
 	 * for success.
 	 */
-	virtual bool hasFile(const String &name);
+	virtual bool hasFile(const String &name) const;
 
 	/**
 	 * Returns a list of matching file names. Pattern can use GLOB wildcards.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
 
 	/**
 	 * Returns a list of all the files in the cache.
 	 */
-	virtual int listMembers(ArchiveMemberList &list);
+	virtual int listMembers(ArchiveMemberList &list) const;
 
 	/**
 	 * Get a ArchiveMember representation of the specified file. A full match of relative
 	 * path and filename is needed for success.
 	 */
-	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual const ArchiveMemberPtr getMember(const String &name) const;
 
 	/**
 	 * Open the specified file. A full match of relative path and filename is needed

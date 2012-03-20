@@ -351,8 +351,8 @@ parse_again:
 			*_value_ptr_2 = _start_2;
 		}
 		debug(6, "chunk 1: %lu: %d step %d for %d, %lu: %d step %d for %d",
-			  (long)(_value_ptr - (uint*)_channels), _start, _delta, _time_left,
-			  (long)(_value_ptr_2 - (uint*)_channels), _start_2, _delta_2, _time_left_2);
+			  (long)(_value_ptr - (uint *)_channels), _start, _delta, _time_left,
+			  (long)(_value_ptr_2 - (uint *)_channels), _start_2, _delta_2, _time_left_2);
 		break;
 
 	case 2:

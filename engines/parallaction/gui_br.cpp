@@ -488,10 +488,10 @@ public:
 		_font->setColor(0);
 		int x = (w - questionW)/2;
 		int y = 13;
-		_font->drawString((byte*)surf->getBasePtr(x, y), surf->pitch, question);
+		_font->drawString((byte *)surf->getBasePtr(x, y), surf->pitch, question);
 		x = (w - optionW)/2;
 		y = 13 + _font->height()*2;
-		_font->drawString((byte*)surf->getBasePtr(x,y), surf->pitch, option);
+		_font->drawString((byte *)surf->getBasePtr(x,y), surf->pitch, option);
 
 		_obj = new GfxObj(kGfxObjTypeMenu, new SurfaceToFrames(surf), "quitdialog");
 		assert(_obj);

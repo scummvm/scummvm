@@ -83,7 +83,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 	if ((maskFlags != 0) && (maskFlags != 2) && (pixelFlags != 0) && (pixelFlags != 2) && (cmdFlags != 0))
 		error("decompressImage() Unsupported flags: cmdFlags = %02X; maskFlags = %02X, pixelFlags = %02X", cmdFlags, maskFlags, pixelFlags);
 
-	byte *destPtr = (byte*)surface.getBasePtr(0, 0);
+	byte *destPtr = (byte *)surface.getBasePtr(0, 0);
 
 	byte lineBuf[640 * 4];
 	byte bitBuf[40];
@@ -196,7 +196,7 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 	byte *maskBuffer = source + maskOffs;
 	byte *pixelBuffer = source + pixelOffs;
 
-	byte *destPtr = (byte*)surface.getBasePtr(0, 0);
+	byte *destPtr = (byte *)surface.getBasePtr(0, 0);
 
 	byte bitBuf[40];
 

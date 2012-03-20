@@ -65,10 +65,10 @@ class Archive;
  * is destroyed.
  */
 class GenericArchiveMember : public ArchiveMember {
-	Archive *_parent;
-	String _name;
+	const Archive *_parent;
+	const String _name;
 public:
-	GenericArchiveMember(String name, Archive *parent);
+	GenericArchiveMember(const String &name, const Archive *parent);
 	String getName() const;
 	SeekableReadStream *createReadStream() const;
 };
@@ -88,7 +88,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const String &name) = 0;
+	virtual bool hasFile(const String &name) const = 0;
 
 	/**
 	 * Add all members of the Archive matching the specified pattern to list.
@@ -96,7 +96,7 @@ public:
 	 *
 	 * @return the number of members added to list
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -104,12 +104,12 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(ArchiveMemberList &list) = 0;
+	virtual int listMembers(ArchiveMemberList &list) const = 0;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual ArchiveMemberPtr getMember(const String &name) = 0;
+	virtual const ArchiveMemberPtr getMember(const String &name) const = 0;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
@@ -230,11 +230,11 @@ public:
 	 */
 	void setPriority(const String& name, int priority);
 
-	virtual bool hasFile(const String &name);
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
-	virtual int listMembers(ArchiveMemberList &list);
+	virtual bool hasFile(const String &name) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMembers(ArchiveMemberList &list) const;
 
-	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual const ArchiveMemberPtr getMember(const String &name) const;
 
 	/**
 	 * Implements createReadStreamForMember from Archive base class. The current policy is

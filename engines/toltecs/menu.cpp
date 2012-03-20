@@ -118,7 +118,7 @@ void MenuSystem::handleEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
-	switch (event.type) {
+		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			handleKeyDown(event.kbd);
 			break;
@@ -406,7 +406,7 @@ void MenuSystem::clickItem(ItemID id) {
 }
 
 void MenuSystem::restoreRect(int x, int y, int w, int h) {
-	byte *src = (byte*)_background->getBasePtr(x, y);
+	byte *src = (byte *)_background->getBasePtr(x, y);
 	byte *dst = _vm->_screen->_frontScreen + x + y * 640;
 	while (h--) {
 		memcpy(dst, src, w);
@@ -416,7 +416,7 @@ void MenuSystem::restoreRect(int x, int y, int w, int h) {
 }
 
 void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2) {
-	byte *src = (byte*)_background->getBasePtr(x, y);
+	byte *src = (byte *)_background->getBasePtr(x, y);
 	for (int xc = 0; xc < w; xc++) {
 		src[xc] = color2;
 		src[xc + h * 640] = color1;

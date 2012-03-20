@@ -648,4 +648,38 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 	}
 }
 
+LoomTownsDifficultyDialog::LoomTownsDifficultyDialog()
+    : Dialog("LoomTownsDifficultyDialog"), _difficulty(-1) {
+	GUI::StaticTextWidget *text1 = new GUI::StaticTextWidget(this, "LoomTownsDifficultyDialog.Description1", _("Select a Proficiency Level."));
+	text1->setAlign(Graphics::kTextAlignCenter);
+	GUI::StaticTextWidget *text2 = new GUI::StaticTextWidget(this, "LoomTownsDifficultyDialog.Description2", _("Refer to your Loom(TM) manual for help."));
+	text2->setAlign(Graphics::kTextAlignCenter);
+
+	new GUI::ButtonWidget(this, "LoomTownsDifficultyDialog.Standard", _("Standard"), 0, kStandardCmd);
+	new GUI::ButtonWidget(this, "LoomTownsDifficultyDialog.Practice", _("Practice"), 0, kPracticeCmd);
+	new GUI::ButtonWidget(this, "LoomTownsDifficultyDialog.Expert", _("Expert"), 0, kExpertCmd);
+}
+
+void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kStandardCmd:
+		_difficulty = 1;
+		close();
+		break;
+
+	case kPracticeCmd:
+		_difficulty = 0;
+		close();
+		break;
+
+	case kExpertCmd:
+		_difficulty = 2;
+		close();
+		break;
+
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
 } // End of namespace Scumm

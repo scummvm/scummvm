@@ -32,7 +32,10 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+
 #include "graphics/scaler.h"
+
+#include "backends/keymapper/keymapper.h"
 
 #include "base/version.h"
 
@@ -213,9 +216,9 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 		}
 
 		if (_flags.use16ColorMode)
-			gui_drawBarGraph(154, 66 + i * 8, 34, 5, b, e, 0x88, 0);
+			gui_drawHorizontalBarGraph(154, 66 + i * 8, 34, 5, b, e, 0x88, 0);
 		else
-			gui_drawBarGraph(154, 64 + i * 10, 34, 5, b, e, 132, 0);
+			gui_drawHorizontalBarGraph(154, 64 + i * 10, 34, 5, b, e, 132, 0);
 	}
 
 	_screen->drawClippedLine(14, 120, 194, 120, 1);
@@ -343,31 +346,6 @@ void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {
 		_screen->drawShape(_screen->_curPage, getItemIconShapePtr(i), x + 1, y + 1, 0, 0);
 }
 
-void LoLEngine::gui_drawBarGraph(int x, int y, int w, int h, int32 cur, int32 max, int col1, int col2) {
-	if (max < 1)
-		return;
-	if (cur < 0)
-		cur = 0;
-
-	int32 e = MIN(cur, max);
-
-	if (!--w)
-		return;
-	if (!--h)
-		return;
-
-	int32 t = (e * w) / max;
-
-	if (!t && e)
-		t++;
-
-	if (t)
-		_screen->fillRect(x, y, x + t - 1, y + h, col1);
-
-	if (t < w && col2)
-		_screen->fillRect(x + t, y, x + w, y + h, col2);
-}
-
 void LoLEngine::gui_drawAllCharPortraitsWithStats() {
 	int numChars = countActiveCharacters();
 	if (!numChars)
@@ -402,9 +380,9 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	int spellLevels = 0;
 	if (_availableSpells[_selectedSpell] != -1) {
 		for (int i = 0; i < 4; i++) {
-			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur &&
-				_spellProperties[_availableSpells[_selectedSpell]].hpRequired[i] <= _characters[charNum].hitPointsCur)
-					spellLevels++;
+			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur
+			    && _spellProperties[_availableSpells[_selectedSpell]].hpRequired[i] <= _characters[charNum].hitPointsCur)
+				spellLevels++;
 		}
 	}
 
@@ -458,17 +436,6 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 
 	_screen->setCurPage(cp);
 	_screen->setFont(tmpFid);
-}
-
-void LoLEngine::gui_drawBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor) {
-	w--; h--;
-	if (fillColor != -1)
-		_screen->fillRect(x + 1, y + 1, x + w - 1, y + h - 1, fillColor);
-
-	_screen->drawClippedLine(x + 1, y, x + w, y, frameColor2);
-	_screen->drawClippedLine(x + w, y, x + w, y + h - 1, frameColor2);
-	_screen->drawClippedLine(x, y, x, y + h, frameColor1);
-	_screen->drawClippedLine(x, y + h, x + w, y + h, frameColor1);
 }
 
 void LoLEngine::gui_drawCharFaceShape(int charNum, int x, int y, int pageNum) {
@@ -853,19 +820,6 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 	_preserveEvents = true;
 }
 
-void LoLEngine::removeInputTop() {
-	if (!_eventList.empty()) {
-		if (_eventList.begin()->event.type == Common::EVENT_LBUTTONDOWN)
-			_gui->_mouseClick = 1;
-		else if (_eventList.begin()->event.type == Common::EVENT_RBUTTONDOWN)
-			_gui->_mouseClick = 2;
-		else
-			_gui->_mouseClick = 0;
-
-		_eventList.erase(_eventList.begin());
-	}
-}
-
 void LoLEngine::gui_enableDefaultPlayfieldButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_buttonList1);
@@ -909,19 +863,6 @@ void LoLEngine::gui_enableCharInventoryButtons(int charNum) {
 	gui_initButtonsFromList(_buttonList2);
 	gui_initCharInventorySpecialButtons(charNum);
 	gui_setFaceFramesControlButtons(21, 0);
-}
-
-void LoLEngine::gui_resetButtonList() {
-	for (uint i = 0; i < ARRAYSIZE(_activeButtonData); ++i)
-		_activeButtonData[i].nextButton = 0;
-
-	gui_notifyButtonListChanged();
-	_activeButtons = 0;
-}
-
-void LoLEngine::gui_initButtonsFromList(const int16 *list) {
-	while (*list != -1)
-		gui_initButton(*list++);
 }
 
 void LoLEngine::gui_setFaceFramesControlButtons(int index, int xOffs) {
@@ -1007,14 +948,6 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 	}
 
 	b->buttonCallback = _buttonCallbacks[index];
-}
-
-void LoLEngine::gui_notifyButtonListChanged() {
-	if (_gui) {
-		if (!_gui->_buttonListChanged && !_preserveEvents)
-			removeInputTop();
-		_gui->_buttonListChanged = true;
-	}
 }
 
 int LoLEngine::clickedUpArrow(Button *button) {
@@ -1229,7 +1162,7 @@ int LoLEngine::clickedPortraitLeft(Button *button) {
 int LoLEngine::clickedLiveMagicBarsLeft(Button *button) {
 	gui_highlightPortraitFrame(button->arg);
 	_txt->printMessage(0, getLangString(0x4047), _characters[button->arg].name, _characters[button->arg].hitPointsCur,
-		_characters[button->arg].hitPointsMax, _characters[button->arg].magicPointsCur, _characters[button->arg].magicPointsMax);
+	                   _characters[button->arg].hitPointsMax, _characters[button->arg].magicPointsCur, _characters[button->arg].magicPointsMax);
 	return 1;
 }
 
@@ -1333,7 +1266,6 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 int LoLEngine::clickedSceneDropItem(Button *button) {
 	static const uint8 offsX[] = { 0x40, 0xC0, 0x40, 0xC0 };
 	static const uint8 offsY[] = { 0x40, 0x40, 0xC0, 0xC0 };
-	static const uint8 dirIndex[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1 };
 
 	if ((_updateFlags & 1) || !_itemInHand)
 		return 0;
@@ -1348,7 +1280,7 @@ int LoLEngine::clickedSceneDropItem(Button *button) {
 
 	uint16 x = 0;
 	uint16 y = 0;
-	int i = dirIndex[(_currentDirection << 2) + button->arg];
+	int i = _dropItemDirIndex[(_currentDirection << 2) + button->arg];
 
 	calcCoordinates(x, y, block, offsX[i], offsY[i]);
 	setItemPosition(_itemInHand, x, y, 0, 1);
@@ -1404,7 +1336,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 	int hItem = _itemInHand;
 
 	if ((_itemsInPlay[hItem].itemPropertyIndex == 281 || _itemsInPlay[slotItem].itemPropertyIndex == 281) &&
-		(_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
+	        (_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
 		// merge ruby of truth
 
 		WSAMovie_v2 *wsa = new WSAMovie_v2(this);
@@ -1908,20 +1840,16 @@ int LoLEngine::clickedStatusIcon(Button *button) {
 	return 1;
 }
 
-GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
+GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollDown);
 
-	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
-	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
+	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
+	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
 
 	_specialProcessButton = _backUpButtonList = 0;
 	_flagsModifier = 0;
-	_mouseClick = 0;
 	_sliderSfx = 11;
-	_buttonListChanged = false;
-	_savegameList = 0;
-	_savegameListSize = 0;
 }
 
 void GUI_LoL::processButton(Button *button) {
@@ -2015,18 +1943,18 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 	if (!buttonList)
 		return inputFlag & 0x7FFF;
 
-	if (_backUpButtonList != buttonList || _buttonListChanged) {
+	if (_backUpButtonList != buttonList || _vm->_buttonListChanged) {
 		_specialProcessButton = 0;
 
 		_flagsModifier = 0;
-		if (_mouseClick == 1)
+		if (_vm->_mouseClick == 1)
 			_flagsModifier |= 0x200;
-		if (_mouseClick == 2)
+		if (_vm->_mouseClick == 2)
 			_flagsModifier |= 0x2000;
-		_mouseClick = 0;
+		_vm->_mouseClick = 0;
 
 		_backUpButtonList = buttonList;
-		_buttonListChanged = false;
+		_vm->_buttonListChanged = false;
 
 		while (buttonList) {
 			processButton(buttonList);
@@ -2088,7 +2016,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 		bool progress = false;
 
-		if (mouseX >= x && mouseY >= y && mouseX <= x+buttonList->width && mouseY <= y+buttonList->height)
+		if (mouseX >= x && mouseY >= y && mouseX <= x + buttonList->width && mouseY <= y + buttonList->height)
 			progress = true;
 
 		buttonList->flags2 &= ~0x80;
@@ -2237,7 +2165,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 			if (buttonList->buttonCallback) {
 				//_vm->removeInputTop();
-				if ((*buttonList->buttonCallback.get())(buttonList))
+				if ((*buttonList->buttonCallback)(buttonList))
 					break;
 			}
 
@@ -2296,13 +2224,13 @@ int GUI_LoL::runMenu(Menu &menu) {
 	// Instead, the respevtive struct entry is used to determine whether
 	// a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
-	_savegameListUpdateNeeded = true;
+	_saveSlotsListUpdateNeeded = true;
 
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
 
 		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu || _currentMenu == &_deleteMenu) {
-			updateSavegameList();
+			updateSaveSlotsList(_vm->_targetName);
 			setupSaveMenuSlots(*_currentMenu, 4);
 		}
 
@@ -2602,44 +2530,6 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 	}
 }
 
-void GUI_LoL::updateSavegameList() {
-	if (!_savegameListUpdateNeeded)
-		return;
-
-	_savegameListUpdateNeeded = false;
-
-	if (_savegameList) {
-		for (int i = 0; i < _savegameListSize; i++)
-			delete[] _savegameList[i];
-		delete[] _savegameList;
-	}
-
-	updateSaveList(true);
-	_savegameListSize = _saveSlots.size();
-
-	if (_savegameListSize) {
-		LoLEngine::SaveHeader header;
-		Common::InSaveFile *in;
-
-		_savegameList = new char *[_savegameListSize];
-
-		for (int i = 0; i < _savegameListSize; i++) {
-			in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i]), header);
-			if (in) {
-				_savegameList[i] = new char[header.description.size() + 1];
-				Common::strlcpy(_savegameList[i], header.description.c_str(), header.description.size() + 1);
-				Util::convertISOToDOS(_savegameList[i]);
-				delete in;
-			} else {
-				_savegameList[i] = 0;
-				warning("GUI_LoL::updateSavegameList(): Unexpected missing save file for slot: %d.", _saveSlots[i]);
-			}
-		}
-	} else {
-		_savegameList = 0;
-	}
-}
-
 void GUI_LoL::sortSaveSlots() {
 	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
 }
@@ -2661,6 +2551,11 @@ int GUI_LoL::getInput() {
 	if (!_displayMenu)
 		return 0;
 
+#ifdef ENABLE_KEYMAPPER
+	Common::Keymapper *const keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->pushKeymap(Common::kGlobalKeymapName);
+#endif
+
 	Common::Point p = _vm->getMousePos();
 	_vm->_mouseX = p.x;
 	_vm->_mouseY = p.y;
@@ -2676,7 +2571,7 @@ int GUI_LoL::getInput() {
 
 	int inputFlag = _vm->checkInput(_menuButtonList);
 
-	if (_currentMenu == &_savenameMenu && _keyPressed.ascii){
+	if (_currentMenu == &_savenameMenu && _keyPressed.ascii) {
 		char inputKey = _keyPressed.ascii;
 		Util::convertISOToDOS(inputKey);
 
@@ -2697,6 +2592,11 @@ int GUI_LoL::getInput() {
 		_displayMenu = false;
 
 	_vm->delay(8);
+
+#ifdef ENABLE_KEYMAPPER
+	keymapper->popKeymap(Common::kGlobalKeymapName);
+#endif
+
 	return inputFlag & 0x8000 ? 1 : 0;
 }
 
@@ -2826,7 +2726,7 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 		delete[] _vm->_landsFile;
 		_vm->_landsFile = _vm->resource()->fileData(filename.c_str(), 0);
 		_newMenu = _lastMenu;
-		} break;
+	} break;
 	default:
 		// TODO: Is there anything we should do if we hit this case?
 		break;
@@ -2945,11 +2845,11 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 				if (*i >= 990)
 					break;
 				Common::String oldName = _vm->getSavegameFilename(*i);
-				Common::String newName = _vm->getSavegameFilename(*i-1);
+				Common::String newName = _vm->getSavegameFilename(*i - 1);
 				_vm->_saveFileMan->renameSavefile(oldName, newName);
 			}
 			_newMenu = &_mainMenu;
-			_savegameListUpdateNeeded = true;
+			_saveSlotsListUpdateNeeded = true;
 		}
 	} else if (button->arg == _choiceMenu.item[1].itemId) {
 		_newMenu = &_mainMenu;

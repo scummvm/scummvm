@@ -253,8 +253,12 @@ class parser:
 			if len(cmd) >= 3:
 				cmd1 = cmd[1]
 				if cmd1 == 'equ':
-					v = cmd[2]
-					self.set_global(cmd0, op.const(self.fix_dollar(v)))
+					if not (cmd0.lower() in self.skip_binary_data):
+						v = cmd[2]
+						self.set_global(cmd0, op.const(self.fix_dollar(v)))
+					else:
+						print "skipping binary data for %s" % (cmd0.lower(),)
+						skipping_binary_data = True
 				elif cmd1 == 'db' or cmd1 == 'dw' or cmd1 == 'dd':
 					if not (cmd0.lower() in self.skip_binary_data):
 						binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd1[1]]

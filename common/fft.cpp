@@ -231,7 +231,7 @@ DECL_FFT(14, 16384, 8192, 4096)
 DECL_FFT(15, 32768, 16384, 8192)
 DECL_FFT(16, 65536, 32768, 16384)
 
-static void (* const fft_dispatch[])(Complex*) = {
+static void (* const fft_dispatch[])(Complex *) = {
 	fft4, fft8, fft16, fft32, fft64, fft128, fft256, fft512, fft1024,
 	fft2048, fft4096, fft8192, fft16384, fft32768, fft65536,
 };

@@ -25,12 +25,11 @@
 
 #include "mohawk/bitmap.h"
 
-#include "common/file.h"
 #include "common/hashmap.h"
-#include "graphics/pict.h"
+#include "common/rect.h"
 
 namespace Graphics {
-class JPEG;
+struct Surface;
 }
 
 namespace Mohawk {
@@ -99,199 +98,9 @@ protected:
 
 private:
 	// An image cache that stores images until clearCache() is called
-	Common::HashMap<uint16, MohawkSurface*> _cache;
-	Common::HashMap<uint16, Common::Array<MohawkSurface*> > _subImageCache;
+	Common::HashMap<uint16, MohawkSurface *> _cache;
+	Common::HashMap<uint16, Common::Array<MohawkSurface *> > _subImageCache;
 };
-
-#ifdef ENABLE_MYST
-
-class MystBitmap;
-class MohawkEngine_Myst;
-
-enum RectState {
-	kRectEnabled,
-	kRectDisabled,
-	kRectUnreachable
-};
-
-class MystGraphics : public GraphicsManager {
-public:
-	MystGraphics(MohawkEngine_Myst*);
-	~MystGraphics();
-
-	void loadExternalPictureFile(uint16 stack);
-	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
-	void copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest);
-	void copyImageToScreen(uint16 image, Common::Rect dest);
-	void copyImageToBackBuffer(uint16 image, Common::Rect dest);
-	void copyBackBufferToScreen(Common::Rect r);
-	void runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay);
-	void drawRect(Common::Rect rect, RectState state);
-	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
-	void enableDrawingTimeSimulation(bool enable);
-	void fadeToBlack();
-	void fadeFromBlack();
-
-protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
-	void simulatePreviousDrawDelay(const Common::Rect &dest);
-	void copyBackBufferToScreenWithSaturation(int16 saturation);
-
-private:
-	MohawkEngine_Myst *_vm;
-	MystBitmap *_bmpDecoder;
-	Graphics::PictDecoder *_pictDecoder;
-	Graphics::JPEG *_jpegDecoder;
-
-	struct PictureFile {
-		uint32 pictureCount;
-		struct PictureEntry {
-			uint32 offset;
-			uint32 size;
-			uint16 id;
-			uint16 type;
-			uint16 width;
-			uint16 height;
-		} *entries;
-
-		Common::File picFile;
-	} _pictureFile;
-
-	Graphics::Surface *_backBuffer;
-	Graphics::PixelFormat _pixelFormat;
-	Common::Rect _viewport;
-
-	int _enableDrawingTimeSimulation;
-	uint32 _nextAllowedDrawTime;
-	static const uint _constantDrawDelay = 10; // ms
-	static const uint _proportionalDrawDelay = 500; // pixels per ms
-};
-
-#endif // ENABLE_MYST
-
-#ifdef ENABLE_RIVEN
-
-class MohawkEngine_Riven;
-
-class RivenGraphics : public GraphicsManager {
-public:
-	RivenGraphics(MohawkEngine_Riven *vm);
-	~RivenGraphics();
-
-	void copyImageToScreen(uint16, uint32, uint32, uint32, uint32);
-	void updateScreen(Common::Rect updateRect = Common::Rect(0, 0, 608, 392));
-	bool _updatesEnabled;
-	Common::Array<uint16> _activatedPLSTs;
-	void drawPLST(uint16 x);
-	void drawRect(Common::Rect rect, bool active);
-	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
-	void drawExtrasImage(uint16 id, Common::Rect dstRect);
-
-	// Water Effect
-	void scheduleWaterEffect(uint16);
-	void clearWaterEffects();
-	bool runScheduledWaterEffects();
-
-	// Transitions
-	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
-	void runScheduledTransition();
-	void fadeToBlack();
-	void setTransitionSpeed(uint32 speed) { _transitionSpeed = speed; }
-
-	// Inventory
-	void showInventory();
-	void hideInventory();
-
-	// Credits
-	void beginCredits();
-	void updateCredits();
-	uint getCurCreditsImage() { return _creditsImage; }
-
-protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
-
-private:
-	MohawkEngine_Riven *_vm;
-	MohawkBitmap *_bitmapDecoder;
-
-	// Water Effects
-	struct SFXERecord {
-		// Record values
-		uint16 frameCount;
-		Common::Rect rect;
-		uint16 speed;
-		Common::Array<Common::SeekableReadStream*> frameScripts;
-
-		// Cur frame
-		uint16 curFrame;
-		uint32 lastFrameTime;
-	};
-	Common::Array<SFXERecord> _waterEffects;
-
-	// Transitions
-	int16 _scheduledTransition;
-	Common::Rect _transitionRect;
-	uint32 _transitionSpeed;
-
-	// Inventory
-	void clearInventoryArea();
-	void drawInventoryImage(uint16 id, const Common::Rect *rect);
-	bool _inventoryDrawn;
-
-	// Screen Related
-	Graphics::Surface *_mainScreen;
-	bool _dirtyScreen;
-	Graphics::PixelFormat _pixelFormat;
-	void clearMainScreen();
-
-	// Credits
-	uint _creditsImage, _creditsPos;
-};
-
-#endif // ENABLE_RIVEN
-
-class LBGraphics : public GraphicsManager {
-public:
-	LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height);
-	~LBGraphics();
-
-	void setPalette(uint16 id);
-	void copyOffsetAnimImageToScreen(uint16 image, int left = 0, int top = 0);
-	bool imageIsTransparentAt(uint16 image, bool useOffsets, int x, int y);
-
-protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
-
-private:
-	MohawkBitmap *_bmpDecoder;
-	MohawkEngine_LivingBooks *_vm;
-};
-
-#ifdef ENABLE_CSTIME
-
-class MohawkEngine_CSTime;
-
-class CSTimeGraphics : public GraphicsManager {
-public:
-	CSTimeGraphics(MohawkEngine_CSTime *vm);
-	~CSTimeGraphics();
-
-	void drawRect(Common::Rect rect, byte color);
-
-protected:
-	MohawkSurface *decodeImage(uint16 id);
-	Common::Array<MohawkSurface *> decodeImages(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
-
-private:
-	MohawkBitmap *_bmpDecoder;
-	MohawkEngine_CSTime *_vm;
-};
-
-#endif
 
 } // End of namespace Mohawk
 

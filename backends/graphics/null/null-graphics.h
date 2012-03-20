@@ -27,7 +27,7 @@
 
 static const OSystem::GraphicsMode s_noGraphicsModes[] = { {0, 0, 0} };
 
-class NullGraphicsManager : GraphicsManager {
+class NullGraphicsManager : public GraphicsManager {
 public:
 	virtual ~NullGraphicsManager() {}
 
@@ -38,6 +38,7 @@ public:
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const { return s_noGraphicsModes; }
 	int getDefaultGraphicsMode() const { return 0; }
 	bool setGraphicsMode(int mode) { return true; }
+	void resetGraphicsScale(){}
 	int getGraphicsMode() const { return 0; }
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();

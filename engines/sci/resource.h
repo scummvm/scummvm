@@ -322,7 +322,7 @@ public:
 	 * @param mapNumber	For audio36 and sync36, limit search to this map
 	 * @return			The resource list
 	 */
-	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
+	Common::List<ResourceId> listResources(ResourceType type, int mapNumber = -1);
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;

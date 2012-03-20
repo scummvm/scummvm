@@ -26,7 +26,7 @@
 //#define PSP_ENABLE_UNIT_TESTS		// run unit tests
 //#define PSP_ENABLE_SPEED_TESTS		// run speed tests
 
-#if defined (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS)
+#if defined(PSP_ENABLE_UNIT_TESTS) || defined(PSP_ENABLE_SPEED_TESTS)
 void psp_tests();
 #endif
 

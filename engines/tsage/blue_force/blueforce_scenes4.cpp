@@ -547,13 +547,13 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 	_passenger.setVisage(415);
 	_passenger.setStrip(1);
 	_passenger.setPosition(Common::Point(278, 92));
-	_passenger.setDetails(410, 4, -1, 5, 1, NULL);
+	_passenger.setDetails(410, 4, -1, 5, 1, (SceneItem *)NULL);
 
 	_driver.postInit();
 	_driver.setVisage(416);
 	_driver.setStrip(2);
 	_driver.setPosition(Common::Point(244, 85));
-	_driver.setDetails(410, 6, -1, 7, 1, NULL);
+	_driver.setDetails(410, 6, -1, 7, 1, (SceneItem *)NULL);
 	_driver.changeZoom(-1);
 
 	_object5.postInit();
@@ -583,13 +583,13 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 		_harrison.setVisage(343);
 		_harrison.setObjectWrapper(new SceneObjectWrapper());
 		_harrison.animate(ANIM_MODE_1, NULL);
-		_harrison.setDetails(350, 12, 13, 14, 1, NULL);
+		_harrison.setDetails(350, 12, 13, 14, 1, (SceneItem *)NULL);
 		_harrison.setPosition(Common::Point(97, 185));
 		_harrison.changeZoom(-1);
 
 		_patrolCar.postInit();
 		_patrolCar.setVisage(410);
-		_patrolCar.setDetails(410, 8, 9, 10, 1, NULL);
+		_patrolCar.setDetails(410, 8, 9, 10, 1, (SceneItem *)NULL);
 		_patrolCar.fixPriority(148);
 		_patrolCar.setPosition(Common::Point(39, 168));
 
@@ -640,7 +640,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 				_harrison.setVisage(343);
 				_harrison.setObjectWrapper(new SceneObjectWrapper());
 				_harrison.animate(ANIM_MODE_1, NULL);
-				_harrison.setDetails(350, 12, 13, 14, 1, NULL);
+				_harrison.setDetails(350, 12, 13, 14, 1, (SceneItem *)NULL);
 				BF_GLOBALS._sceneItems.addBefore(&_driver, &_harrison);
 
 				_harrison.setPosition(Common::Point(-10, 124));
@@ -648,7 +648,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 
 				_patrolCar.postInit();
 				_patrolCar.setVisage(410);
-				_patrolCar.setDetails(410, 8, 9, 10, 1, NULL);
+				_patrolCar.setDetails(410, 8, 9, 10, 1, (SceneItem *)NULL);
 				_patrolCar.fixPriority(148);
 
 				if (_field1FC4) {
@@ -1076,14 +1076,14 @@ void Scene415::postInit(SceneObjectList *OwnerList) {
 	_dashDrawer.setVisage(411);
 	_dashDrawer.setStrip(3);
 	_dashDrawer.setPosition(Common::Point(151, 97));
-	_dashDrawer.setDetails(415, 22, -1, -1, 1, NULL);
+	_dashDrawer.setDetails(415, 22, -1, -1, 1, (SceneItem *)NULL);
 
 	_animatedSeat.postInit();
 	_animatedSeat.setVisage(419);
 	_animatedSeat.setStrip(1);
 	_animatedSeat.setPosition(Common::Point(306, 116));
 	_animatedSeat.fixPriority(80);
-	
+
 	_windowLever.setDetails(16, 415, 25, -1, 26, 1);
 	_item7.setDetails(17, 415, 32, -1, 33, 1);
 	_seatBelt.setDetails(14, 415, 29, -1, 30, 1);
@@ -1140,7 +1140,7 @@ void Scene415::showBullets() {
 	_theBullets.setFrame(2);
 	_theBullets.setPosition(Common::Point(184, 86));
 	_theBullets.fixPriority(105);
-	_theBullets.setDetails(415, 16, 17, 18, 1, NULL);
+	_theBullets.setDetails(415, 16, 17, 18, 1, (SceneItem *)NULL);
 	BF_GLOBALS._sceneItems.remove(&_theBullets);
 	BF_GLOBALS._sceneItems.push_front(&_theBullets);
 }
@@ -1158,7 +1158,7 @@ void Scene415::showGunAndWig() {
 	_gunAndWig.setFrame(2);
 	_gunAndWig.setPosition(Common::Point(159, 88));
 	_gunAndWig.fixPriority(105);
-	_gunAndWig.setDetails(415, 13, 14, 15, 1, NULL);
+	_gunAndWig.setDetails(415, 13, 14, 15, 1, (SceneItem *)NULL);
 
 	BF_GLOBALS._sceneItems.remove(&_gunAndWig);
 	BF_GLOBALS._sceneItems.push_front(&_gunAndWig);
@@ -1271,7 +1271,7 @@ void Scene440::postInit(SceneObjectList *OwnerList) {
 
 		BF_GLOBALS._player.setVisage(303);
 		BF_GLOBALS._player.setPosition(Common::Point(187, 104));
-		
+
 		_lyle.setPosition(Common::Point(135, 128));
 		_lyle.show();
 
@@ -1291,7 +1291,7 @@ void Scene440::postInit(SceneObjectList *OwnerList) {
 			_vechile.setVisage(580);
 			_vechile.setStrip(2);
 			_vechile.setFrame(3);
-			
+
 			BF_GLOBALS._player.setVisage(303);
 		}
 	}
@@ -1310,7 +1310,7 @@ void Scene440::postInit(SceneObjectList *OwnerList) {
 		_lyle.setPosition(Common::Point(143, 93));
 		_lyle.setStrip(5);
 		_lyle.fixPriority(90);
-		
+
 		_doorway.setFrame(_doorway.getFrameCount());
 		_sceneMode = 4401;
 		setAction(&_sequenceManager, this, 4401, &BF_GLOBALS._player, &_doorway, NULL);
@@ -1375,7 +1375,7 @@ bool Scene450::Weasel::startAction(CursorType action, Event &event) {
 		T2_GLOBALS._uiElements.addScore(30);
 
 		scene->_sceneMode = 4505;
-		scene->setAction(&scene->_sequenceManager, scene, 4505, &BF_GLOBALS._player, this, 
+		scene->setAction(&scene->_sequenceManager, scene, 4505, &BF_GLOBALS._player, this,
 			&scene->_counterDoor, &scene->_object2, NULL);
 		return true;
 	default:
@@ -1427,7 +1427,7 @@ bool Scene450::Manager::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS.getFlag(takenWeasel) && !BF_GLOBALS.getFlag(gotTrailer450)) {
 			BF_GLOBALS.setFlag(gotTrailer450);
 			scene->_sceneMode = 4517;
-			scene->setAction(&scene->_sequenceManager, scene, 4517, &BF_GLOBALS._player, this, 
+			scene->setAction(&scene->_sequenceManager, scene, 4517, &BF_GLOBALS._player, this,
 				&scene->_door, NULL);
 		} else {
 			animate(ANIM_MODE_8, 1, NULL);
@@ -1485,11 +1485,11 @@ bool Scene450::Manager::startAction(CursorType action, Event &event) {
 		} else {
 			animate(ANIM_MODE_8, 1, NULL);
 			BF_GLOBALS._player.disableControl();
-			
+
 			if (!BF_GLOBALS.getFlag(showEugeneID))
 				T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(showEugeneID);
-			
+
 			if ((BF_GLOBALS.getFlag(showRapEugene) || BF_GLOBALS.getFlag(showEugeneNapkin)) &&
 					!BF_GLOBALS.getFlag(fMgrCallsWeasel)) {
 				T2_GLOBALS._uiElements.addScore(30);
@@ -1559,13 +1559,13 @@ void Scene450::postInit(SceneObjectList *OwnerList) {
 	_door.setVisage(450);
 	_door.setStrip(2);
 	_door.setPosition(Common::Point(72, 80));
-	_door.setDetails(450, 15, -1, 13, 1, NULL);
+	_door.setDetails(450, 15, -1, 13, 1, (SceneItem *)NULL);
 
 	_counterDoor.postInit();
 	_counterDoor.setVisage(450);
 	_counterDoor.setPosition(Common::Point(39, 104));
 	_counterDoor.fixPriority(100);
-	_counterDoor.setDetails(450, 12, -1, 13, 1, NULL);
+	_counterDoor.setDetails(450, 12, -1, 13, 1, (SceneItem *)NULL);
 
 	if (BF_GLOBALS._dayNumber != 3) {
 		_pinBoy.postInit();
@@ -1598,7 +1598,7 @@ void Scene450::postInit(SceneObjectList *OwnerList) {
 			_object2.setPosition(Common::Point(-30, 126));
 			ADD_MOVER_NULL(_object2, 27, 126);
 			_object2.changeZoom(-1);
-			_object2.setDetails(450, 2, 18, 3, 1, NULL);
+			_object2.setDetails(450, 2, 18, 3, 1, (SceneItem *)NULL);
 
 			BF_GLOBALS._walkRegions.disableRegion(4);
 

@@ -24,7 +24,6 @@
 #define SWORD1_ANIMATION_H
 
 #include "video/dxa_decoder.h"
-#include "video/smk_decoder.h"
 #include "video/video_decoder.h"
 
 #include "common/list.h"
@@ -38,18 +37,21 @@ namespace Sword1 {
 
 enum DecoderType {
 	kVideoDecoderDXA = 0,
-	kVideoDecoderSMK = 1
+	kVideoDecoderSMK = 1,
+	kVideoDecoderPSX = 2
 };
 
 class MovieText {
 public:
 	uint16 _startFrame;
 	uint16 _endFrame;
+	uint16 _color;
 	Common::String _text;
-	MovieText(int startFrame, int endFrame, const Common::String &text) {
+	MovieText(int startFrame, int endFrame, const Common::String &text, int color) {
 		_startFrame = startFrame;
 		_endFrame = endFrame;
 		_text = text;
+		_color = color;
 	}
 };
 
@@ -80,7 +82,9 @@ protected:
 	OSystem *_system;
 	Common::List<MovieText> _movieTexts;
 	int _textX, _textY, _textWidth, _textHeight;
-	byte _white, _black;
+	int _textColor;
+	uint32 _black;
+	uint32 _c1Color, _c2Color, _c3Color, _c4Color;
 	DecoderType _decoderType;
 
 	Video::VideoDecoder *_decoder;
@@ -89,9 +93,11 @@ protected:
 
 	bool playVideo();
 	void performPostProcessing(byte *screen);
+	void drawFramePSX(const Graphics::Surface *frame);
 
-	byte findBlackPalIndex();
-	byte findWhitePalIndex();
+	uint32 getBlackColor();
+	uint32 findTextColor();
+	void convertColor(byte r, byte g, byte b, float &h, float &s, float &v);
 };
 
 MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system);

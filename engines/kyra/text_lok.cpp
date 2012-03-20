@@ -188,7 +188,7 @@ int8 KyraEngine_LoK::getChatPartnerNum() {
 
 	for (int i = 1; i < 6; i++) {
 		if (_currentCharacter->sceneId == sceneTable[pos]) {
-			partner = sceneTable[pos+1];
+			partner = sceneTable[pos + 1];
 			break;
 		}
 		pos += 2;
@@ -342,12 +342,12 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 			_currSentenceColor[2] = 0x3F;
 
 			_screen->setInterfacePalette(_screen->getPalette(1),
-					_currSentenceColor[0], _currSentenceColor[1], _currSentenceColor[2]);
+			                             _currSentenceColor[0], _currSentenceColor[1], _currSentenceColor[2]);
 		}
 	} else if (_startSentencePalIndex != color || _fadeText != false) {
-		_currSentenceColor[0] = _screen->getPalette(0)[765] = _screen->getPalette(0)[color*3+0];
-		_currSentenceColor[1] = _screen->getPalette(0)[766] = _screen->getPalette(0)[color*3+1];
-		_currSentenceColor[2] = _screen->getPalette(0)[767] = _screen->getPalette(0)[color*3+2];
+		_currSentenceColor[0] = _screen->getPalette(0)[765] = _screen->getPalette(0)[color * 3 + 0];
+		_currSentenceColor[1] = _screen->getPalette(0)[766] = _screen->getPalette(0)[color * 3 + 1];
+		_currSentenceColor[2] = _screen->getPalette(0)[767] = _screen->getPalette(0)[color * 3 + 2];
 
 		_screen->setScreenPalette(_screen->getPalette(0));
 		_startSentencePalIndex = color;
@@ -377,16 +377,15 @@ void KyraEngine_LoK::updateTextFade() {
 	for (int i = 0; i < 3; i++) {
 		if (_currSentenceColor[i] > 4)
 			_currSentenceColor[i] -= 4;
-		else
-			if (_currSentenceColor[i]) {
-				_currSentenceColor[i] = 0;
-				finished = true;
-			}
+		else if (_currSentenceColor[i]) {
+			_currSentenceColor[i] = 0;
+			finished = true;
+		}
 	}
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_screen->setInterfacePalette(_screen->getPalette(1),
-				_currSentenceColor[0], _currSentenceColor[1], _currSentenceColor[2]);
+		                             _currSentenceColor[0], _currSentenceColor[1], _currSentenceColor[2]);
 	} else {
 		_screen->getPalette(0)[765] = _currSentenceColor[0];
 		_screen->getPalette(0)[766] = _currSentenceColor[1];

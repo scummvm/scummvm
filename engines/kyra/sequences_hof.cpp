@@ -32,7 +32,7 @@ namespace Kyra {
 void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 	seq_init();
 
-	bool allowSkip = (!(_flags.isDemo && !_flags.isTalkie) && (startSeq == kSequenceTitle)) ? false : true;
+	bool allowSkip = (_flags.isDemo && !_flags.isTalkie) || startSeq != kSequenceTitle;
 
 	if (endSeq == -1)
 		endSeq = startSeq;
@@ -74,7 +74,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		_seqFrameCounter = 0;
 		_seqStartTime = _system->getMillis();
 
-		allowSkip = (!(_flags.isDemo && !_flags.isTalkie) && (seqNum == kSequenceTitle)) ? false : true;
+		allowSkip = (_flags.isDemo && !_flags.isTalkie) || seqNum != kSequenceTitle;
 
 		Sequence cseq = _sequences->seq[seqNum];
 		SeqProc cb = _callbackS[seqNum];
@@ -234,6 +234,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				int32 dly = _tickLength - (now - _seqSubFrameStartTime);
 				if (dly > 0)
 					delay(MIN<uint32>(dly, tdiff));
+				else
+					updateInput();
 			}
 		}
 
@@ -263,6 +265,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			int32 dly = _tickLength - (now - _seqSubFrameStartTime);
 			if (dly > 0)
 				delay(MIN<uint32>(dly, tdiff));
+			else
+				updateInput();
 		}
 
 		seq_sequenceCommand(cseq.finalCommand);
@@ -2622,7 +2626,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 						while (*str2) {
 							cChar[0] = *str2;
 							_screen->printText(cChar, x, y, col1++, 0);
-							x += _screen->getCharWidth(*str2++);
+							x += _screen->getCharWidth((uint8)*str2++);
 						}
 						palCycle = true;
 					} else if (!strcmp(str, specialData[1])) {
@@ -2631,7 +2635,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 						while (*str2) {
 							cChar[0] = *str2;
 							_screen->printText(cChar, x, y, col1--, 0);
-							x += _screen->getCharWidth(*str2++);
+							x += _screen->getCharWidth((uint8)*str2++);
 						}
 						palCycle = true;
 					} else {
@@ -2773,15 +2777,15 @@ void KyraEngine_HoF::seq_init() {
 		return;
 
 	if (_flags.isDemo && !_flags.isTalkie) {
-		_demoAnimData = _staticres->loadShapeAnimData_v1(k2SeqplayShapeAnimData, _itemAnimDataSize);
+		_demoAnimData = _staticres->loadShapeAnimData_v1(k2SeqplayShapeAnimData, _itemAnimDefinitionSize);
 		uint8 *shp = _res->fileData("icons.shp", 0);
 		uint32 outsize = READ_LE_UINT16(shp + 4);
 		_animShapeFiledata = new uint8[outsize];
 		Screen::decodeFrame4(shp + 10, _animShapeFiledata, outsize);
 		delete[] shp;
 
-		for (int numShp = 0; getShapePtr(numShp); ++numShp)
-			addShapeToPool(_screen->getPtrToShape(_animShapeFiledata, numShp), numShp);
+		for (int i = 0; i < 20; i++)
+			addShapeToPool(_screen->getPtrToShape(_animShapeFiledata, i), i);
 	} else {
 		const MainMenu::StaticData data = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },

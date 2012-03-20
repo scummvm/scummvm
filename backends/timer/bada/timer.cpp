@@ -20,7 +20,7 @@
  *
  */
 
-#if defined (BADA)
+#if defined(BADA)
 
 #include "backends/timer/bada/timer.h"
 

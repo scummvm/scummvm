@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/pixelformat.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"
@@ -244,16 +245,16 @@ void StaticTextWidget::setValue(int value) {
 }
 
 void StaticTextWidget::setLabel(const Common::String &label) {
-    if (_label != label) {
-        _label = label;
+	if (_label != label) {
+		_label = label;
 
-        // when changing the label, add the CLEARBG flag
-        // so the widget is completely redrawn, otherwise
-        // the new text is drawn on top of the old one.
-        setFlags(WIDGET_CLEARBG);
-        draw();
-        clearFlags(WIDGET_CLEARBG);
-    }
+		// when changing the label, add the CLEARBG flag
+		// so the widget is completely redrawn, otherwise
+		// the new text is drawn on top of the old one.
+		setFlags(WIDGET_CLEARBG);
+		draw();
+		clearFlags(WIDGET_CLEARBG);
+	}
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
@@ -300,6 +301,27 @@ void ButtonWidget::drawWidget() {
 
 void ButtonWidget::setLabel(const Common::String &label) {
 	StaticTextWidget::setLabel(cleanupHotkey(label));
+}
+
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x, int y, int w, int h) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		if (!name.empty())
+			button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
+		else
+			button = new PicButtonWidget(boss, x, y, w, h, _("Clear value"), cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		if (!name.empty())
+			button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
+		else
+			button = new ButtonWidget(boss, x, y, w, h, "C", _("Clear value"), cmd);
+
+	return button;
 }
 
 #pragma mark -

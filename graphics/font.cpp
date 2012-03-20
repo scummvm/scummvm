@@ -26,11 +26,20 @@
 
 namespace Graphics {
 
+int Font::getKerningOffset(byte left, byte right) const {
+	return 0;
+}
+
 int Font::getStringWidth(const Common::String &str) const {
 	int space = 0;
+	uint last = 0;
 
-	for (uint i = 0; i < str.size(); ++i)
-		space += getCharWidth(str[i]);
+	for (uint i = 0; i < str.size(); ++i) {
+		const uint cur = str[i];
+		space += getCharWidth(cur) + getKerningOffset(last, cur);
+		last = cur;
+	}
+
 	return space;
 }
 
@@ -65,17 +74,22 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 		// for now.
 		const int halfWidth = (w - ellipsisWidth) / 2;
 		int w2 = 0;
+		uint last = 0;
 
 		for (i = 0; i < s.size(); ++i) {
-			int charWidth = getCharWidth(s[i]);
+			const uint cur = s[i];
+			int charWidth = getCharWidth(cur) + getKerningOffset(last, cur);
 			if (w2 + charWidth > halfWidth)
 				break;
+			last = cur;
 			w2 += charWidth;
-			str += s[i];
+			str += cur;
 		}
+
 		// At this point we know that the first 'i' chars are together 'w2'
 		// pixels wide. We took the first i-1, and add "..." to them.
 		str += "...";
+		last = '.';
 
 		// The original string is width wide. Of those we already skipped past
 		// w2 pixels, which means (width - w2) remain.
@@ -85,7 +99,9 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 		// (width + ellipsisWidth - w)
 		int skip = width + ellipsisWidth - w;
 		for (; i < s.size() && skip > 0; ++i) {
-			skip -= getCharWidth(s[i]);
+			const uint cur = s[i];
+			skip -= getCharWidth(cur) + getKerningOffset(last, cur);
+			last = cur;
 		}
 
 		// Append the remaining chars, if any
@@ -104,8 +120,12 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 		x = x + w - width;
 	x += deltax;
 
+	uint last = 0;
 	for (i = 0; i < str.size(); ++i) {
-		w = getCharWidth(str[i]);
+		const uint cur = str[i];
+		x += getKerningOffset(last, cur);
+		last = cur;
+		w = getCharWidth(cur);
 		if (x+w > rightX)
 			break;
 		if (x >= leftX)
@@ -153,16 +173,18 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Co
 	// of a line. If we encounter such a word, we have to wrap it over multiple
 	// lines.
 
+	uint last = 0;
 	for (Common::String::const_iterator x = str.begin(); x != str.end(); ++x) {
 		const byte c = *x;
-		const int w = getCharWidth(c);
+		const int w = getCharWidth(c) + getKerningOffset(last, c);
+		last = c;
 		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
 
 		// If this char is a whitespace, then it represents a potential
 		// 'wrap point' where wrapping could take place. Everything that
 		// came before it can now safely be added to the line, as we know
 		// that it will not have to be wrapped.
-		if (isspace(c)) {
+		if (Common::isSpace(c)) {
 			line += tmpStr;
 			lineWidth += tmpWidth;
 
@@ -186,9 +208,11 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Co
 			if (lineWidth > 0) {
 				wrapper.add(line, lineWidth);
 				// Trim left side
-				while (tmpStr.size() && isspace(static_cast<unsigned char>(tmpStr[0]))) {
-					tmpWidth -= getCharWidth(tmpStr[0]);
+				while (tmpStr.size() && Common::isSpace(tmpStr[0])) {
 					tmpStr.deleteChar(0);
+					// This is not very fast, but it is the simplest way to
+					// assure we do not mess something up because of kerning.
+					tmpWidth = getStringWidth(tmpStr);
 				}
 			} else {
 				wrapper.add(tmpStr, tmpWidth);

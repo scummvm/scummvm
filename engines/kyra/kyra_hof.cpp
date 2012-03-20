@@ -88,7 +88,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_currentTalkSections.ENDTim = 0;
 
 	memset(&_invWsa, 0, sizeof(_invWsa));
-	_itemAnimData = 0;
+	_itemAnimDefinition = 0;
 	_demoAnimData = 0;
 	_nextAnimItem = 0;
 
@@ -211,8 +211,8 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 
 		_nextIdleAnim += pausedTime;
 
-		for (int x = 0; x < _itemAnimDataSize; x++)
-			_activeItemAnim[x].nextFrame += pausedTime;
+		for (int x = 0; x < _itemAnimDefinitionSize; x++)
+			_activeItemAnim[x].nextFrameTime += pausedTime;
 
 		_tim->refreshTimersAfterPause(pausedTime);
 	}
@@ -286,7 +286,7 @@ Common::Error KyraEngine_HoF::go() {
 		if (_flags.isDemo && !_flags.isTalkie) {
 #ifdef ENABLE_LOL
 			if (_flags.gameID == GI_LOL)
-				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);
+				seq_playSequences(kSequenceLoLDemoScene1, kSequenceLoLDemoScene6);
 			else
 #endif // ENABLE_LOL
 				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);

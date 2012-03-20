@@ -42,9 +42,6 @@ public:
 	         uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
 	~EvilFish();
 
-	/** Are there coordinates within the fish's sprite? */
-	bool isIn(int16 x, int16 y) const;
-
 	/** Enter from this direction / screen edge. */
 	void enter(Direction from, int16 y);
 	/** Leave the screen in the current direction. */
@@ -59,6 +56,9 @@ public:
 	/** Change the fish's animations, effectively making it a different fish type. */
 	void mutate(uint16 animSwimLeft, uint16 animSwimRight,
 	            uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
+
+	/** Is the fish dead? */
+	bool isDead();
 
 private:
 	enum State {

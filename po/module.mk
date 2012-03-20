@@ -1,5 +1,6 @@
 POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
+CPFILES := $(wildcard $(srcdir)/po/*.cp)
 
 updatepot:
 	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c --add-comments=I18N\
@@ -34,12 +35,12 @@ updatepot:
 	fi;
 
 translations-dat: devtools/create_translations
-	devtools/create_translations/create_translations $(POFILES)
+	devtools/create_translations/create_translations $(POFILES) $(CPFILES)
 	mv translations.dat $(srcdir)/gui/themes/
 
-update-translations: updatepot $(POFILES) translations-dat
+update-translations: updatepot $(POFILES) $(CPFILES) translations-dat
 
-update-translations: updatepot $(POFILES)
+update-translations: updatepot $(POFILES) $(CPFILES)
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
 

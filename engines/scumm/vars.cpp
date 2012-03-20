@@ -115,7 +115,7 @@ void ScummEngine_v0::setupScummVars() {
 	VAR_CAMERA_POS_X = 2;
 	VAR_HAVE_MSG = 3;
 	VAR_ROOM = 4;
-	VAR_ACTIVE_ACTOR = 5;
+	VAR_ACTIVE_OBJECT2 = 5;
 	VAR_OVERRIDE = 6;
 	VAR_IS_SOUND_RUNNING = 8;
 	VAR_ACTIVE_VERB = 9;
@@ -546,7 +546,7 @@ void ScummEngine_v8::setupScummVars() {
 #endif
 
 void ScummEngine_v0::resetScummVars() {
-	resetSentence(false);
+	resetSentence();
 
 	VAR(VAR_EGO) = 3;
 

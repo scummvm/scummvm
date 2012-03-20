@@ -137,7 +137,7 @@ class Scene110: public SceneExt {
 		virtual void signal();
 	};
 public:
-	NamedObject _object1, _object2, _object3, _object4, _object5, _object6, _object7, _object8, _object9, _object10; 
+	NamedObject _object1, _object2, _object3, _object4, _object5, _object6, _object7, _object8, _object9, _object10;
 	ASound _sound;
 	Action1 _action1;
 	Action2 _action2;
@@ -354,7 +354,7 @@ public:
 	NamedObject _object1;
 	NamedObject _object2;
 	IntroSceneText _text;
-	
+
 	void postInit(SceneObjectList *OwnerList);
 };
 

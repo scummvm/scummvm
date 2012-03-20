@@ -524,7 +524,7 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 		instrument->size = seg_size[0];
 		instrument->loop_size = seg_size[1];
 
-		instrument->loop = (int8*)malloc(instrument->loop_size + 1);
+		instrument->loop = (int8 *)malloc(instrument->loop_size + 1);
 		memcpy(instrument->loop, instrument->samples + loop_offset, instrument->loop_size);
 
 		instrument->samples[instrument->size] = instrument->loop[0];
@@ -708,7 +708,7 @@ void MidiDriver_AmigaMac::generateSamples(int16 *data, int len) {
 	if (len == 0)
 		return;
 
-	int16 *buffers = (int16*)malloc(len * 2 * kChannels);
+	int16 *buffers = (int16 *)malloc(len * 2 * kChannels);
 
 	memset(buffers, 0, len * 2 * kChannels);
 
@@ -869,7 +869,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 			instrument->size = seg_size[0];
 			instrument->loop_size = seg_size[1] - seg_size[0];
 
-			instrument->loop = (int8*)malloc(instrument->loop_size + 1);
+			instrument->loop = (int8 *)malloc(instrument->loop_size + 1);
 			memcpy(instrument->loop, instrument->samples + loop_offset, instrument->loop_size);
 
 			instrument->samples[instrument->size] = instrument->loop[0];

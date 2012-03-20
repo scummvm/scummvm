@@ -85,7 +85,7 @@ protected:
 
 public:
 	void readSfxFile(const Common::String &filename);
-	void loadSfxTable(Common::File *gameFile, uint32 base);
+	void loadSfxTable(const char *gameFilename, uint32 base);
 	void readVoiceFile(const Common::String &filename);
 
 	void playVoice(uint sound);

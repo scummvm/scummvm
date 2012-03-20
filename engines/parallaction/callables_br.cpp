@@ -26,31 +26,31 @@
 
 namespace Parallaction {
 
-void Parallaction_br::_c_null(void*) {
+void Parallaction_br::_c_null(void *) {
 	// do nothing :)
 }
 
-void Parallaction_br::_c_blufade(void*) {
+void Parallaction_br::_c_blufade(void *) {
 	warning("Parallaction_br::_c_blufade() not yet implemented");
 }
 
-void Parallaction_br::_c_resetpalette(void*) {
+void Parallaction_br::_c_resetpalette(void *) {
 	warning("Parallaction_br::_c_resetpalette() not yet implemented");
 }
 
-void Parallaction_br::_c_ferrcycle(void*) {
+void Parallaction_br::_c_ferrcycle(void *) {
 	warning("Parallaction_br::_c_ferrcycle() not yet implemented");
 }
 
-void Parallaction_br::_c_lipsinc(void*) {
+void Parallaction_br::_c_lipsinc(void *) {
 	warning("Unexpected lipsinc routine call! Please notify the team");
 }
 
-void Parallaction_br::_c_albcycle(void*) {
+void Parallaction_br::_c_albcycle(void *) {
 	warning("Parallaction_br::_c_albcycle() not yet implemented");
 }
 
-void Parallaction_br::_c_password(void*) {
+void Parallaction_br::_c_password(void *) {
 	warning("Parallaction_br::_c_password() not yet implemented");
 }
 

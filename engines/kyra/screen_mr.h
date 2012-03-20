@@ -34,10 +34,6 @@ public:
 	Screen_MR(KyraEngine_MR *vm, OSystem *system);
 	~Screen_MR();
 
-	void setScreenDim(int dim);
-	const ScreenDim *getScreenDim(int dim);
-	int screenDimTableCount() const { return _screenDimTableCount; }
-
 	int getLayer(int x, int y);
 
 	byte getShapeFlag1(int x, int y);

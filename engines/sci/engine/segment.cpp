@@ -294,18 +294,19 @@ void SciString::fromString(const Common::String &string) {
 	if (_type != 3)
 		error("SciString::fromString(): Array is not a string");
 
-	if (string.size() > _size)
-		setSize(string.size());
+	setSize(string.size() + 1);
 
 	for (uint32 i = 0; i < string.size(); i++)
 		_data[i] = string[i];
+
+	_data[string.size()] = 0;
 }
 
 SegmentRef StringTable::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = true;
 	ret.maxSize = _table[pointer.offset].getSize();
-	ret.raw = (byte*)_table[pointer.offset].getRawData();
+	ret.raw = (byte *)_table[pointer.offset].getRawData();
 	return ret;
 }
 

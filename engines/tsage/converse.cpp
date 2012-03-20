@@ -25,6 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/globals.h"
 #include "tsage/staticres.h"
+#include "ringworld2/ringworld2_speakers.h"
 
 namespace TsAGE {
 
@@ -451,7 +452,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 		while (!g_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
 				!g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 		}
 		if (g_vm->shouldQuit())
 			break;
@@ -836,6 +837,9 @@ void StripManager::signal() {
 			}
 		}
 
+		if ((g_vm->getGameID() == GType_Ringworld2) && (_obj44List.size() > 0))
+			static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker)->proc15();
+
 		_textShown = true;
 		_activeSpeaker->setText(choiceList[strIndex]);
 	}
@@ -886,6 +890,17 @@ Speaker *StripManager::getSpeaker(const char *speakerName) {
 	for (uint idx = 0; idx < _speakerList.size(); ++idx) {
 		if (!strcmp(_speakerList[idx]->_speakerName.c_str(), speakerName))
 			return _speakerList[idx];
+	}
+
+	// TODO: Check if it necessary to make a strcmp first.
+	//
+	// If nothing is found, recheck and ignore the case as
+	// in R2R, some character names aren't in uppercase.
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		for (uint idx = 0; idx < _speakerList.size(); ++idx) {
+			if (!scumm_stricmp(_speakerList[idx]->_speakerName.c_str(), speakerName))
+				return _speakerList[idx];
+		}
 	}
 
 	return NULL;

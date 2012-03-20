@@ -206,7 +206,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		// Extract the extension
 		Common::String ext = file->c_str() + file->size() - 3;
 		ext.toUppercase();
-		if (isdigit(static_cast<unsigned char>(ext[0])) && isdigit(static_cast<unsigned char>(ext[1])) && isdigit(static_cast<unsigned char>(ext[2]))){
+		if (Common::isDigit(ext[0]) && Common::isDigit(ext[1]) && Common::isDigit(ext[2])) {
 			int slotNum = atoi(ext.c_str());
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
@@ -286,7 +286,7 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc) {
 
 	// Set the save slot and save the game
 	_skyControl->_selectedGame = slot - 1;
-	if (_skyControl->saveGameToFile() != GAME_SAVED)
+	if (_skyControl->saveGameToFile(false) != GAME_SAVED)
 		return Common::kWritePermissionDenied;
 
 	// Load current save game descriptions

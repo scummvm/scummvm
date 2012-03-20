@@ -965,7 +965,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	int scale1;
 
 	// definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
-#if defined (DEBUG) && !defined(WIN32) && !defined(_WIN32_WCE)
+#if defined(DEBUG) && !defined(WIN32) && !defined(_WIN32_WCE)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif

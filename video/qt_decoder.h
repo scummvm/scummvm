@@ -140,7 +140,7 @@ private:
 	void stopAudio();
 	void updateAudioBuffer();
 	void readNextAudioChunk();
-	Audio::SoundHandle _audHandle;
+	Common::Array<Audio::SoundHandle> _audioHandles;
 	Audio::Timestamp _audioStartOffset;
 
 	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
@@ -186,17 +186,18 @@ private:
 	};
 
 	// The AudioTrackHandler is currently just a wrapper around some
-	// QuickTimeDecoder functions. Eventually this can be made to
-	// handle multiple audio tracks, but I haven't seen a video with
-	// that yet.
+	// QuickTimeDecoder functions.
 	class AudioTrackHandler : public TrackHandler {
 	public:
-		AudioTrackHandler(QuickTimeDecoder *decoder, Track *parent);
+		AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack);
 		TrackType getTrackType() const { return kTrackTypeAudio; }
 
 		void updateBuffer();
 		void seekToTime(Audio::Timestamp time);
 		bool endOfTrack();
+
+	private:
+		QuickTimeAudioTrack *_audioTrack;
 	};
 
 	// The VideoTrackHandler is the bridge between the time of playback

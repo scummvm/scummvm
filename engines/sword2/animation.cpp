@@ -40,6 +40,11 @@
 
 #include "gui/message.h"
 
+#include "video/smk_decoder.h"
+#include "video/psx_decoder.h"
+
+#include "engines/util.h"
+
 namespace Sword2 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,6 +71,10 @@ MoviePlayer::~MoviePlayer() {
  * @param id the id of the file
  */
 bool MoviePlayer::load(const char *name) {
+	// This happens when quitting during the "eye" cutscene.
+	if (_vm->shouldQuit())
+		return false;
+
 	if (_decoderType == kVideoDecoderDXA)
 		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(name);
 	else
@@ -81,16 +90,26 @@ bool MoviePlayer::load(const char *name) {
 	case kVideoDecoderSMK:
 		filename = Common::String::format("%s.smk", name);
 		break;
+	case kVideoDecoderPSX:
+		filename = Common::String::format("%s.str", name);
+
+		// Need to switch to true color
+		initGraphics(640, 480, true, 0);
+
+		// Need to load here in case it fails in which case we'd need
+		// to go back to paletted mode
+		if (_decoder->loadFile(filename)) {
+			return true;
+		} else {
+			initGraphics(640, 480, true);
+			return false;
+		}
 	}
 
 	return _decoder->loadFile(filename.c_str());
 }
 
 void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadIn, uint32 leadOut) {
-	// This happens when quitting during the "eye" cutscene.
-	if (_vm->shouldQuit())
-		return;
-
 	_leadOutFrame = _decoder->getFrameCount();
 	if (_leadOutFrame > 60)
 		_leadOutFrame -= 60;
@@ -120,6 +139,11 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 
 	while (_snd->isSoundHandleActive(*_bgSoundHandle))
 		_system->delayMillis(100);
+
+	if (_decoderType == kVideoDecoderPSX) {
+		// Need to jump back to paletted color
+		initGraphics(640, 480, true);
+	}
 }
 
 void MoviePlayer::openTextObject(uint32 index) {
@@ -165,7 +189,7 @@ void MoviePlayer::openTextObject(uint32 index) {
 	}
 }
 
-void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
+void MoviePlayer::closeTextObject(uint32 index, Graphics::Surface *screen, uint16 pitch) {
 	if (index < _numMovieTexts) {
 		MovieText *text = &_movieTexts[index];
 
@@ -180,23 +204,23 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
 
 				int frameWidth = _decoder->getWidth();
 				int frameHeight = _decoder->getHeight();
+
+				if (_decoderType == kVideoDecoderPSX)
+					frameHeight *= 2;
+
 				int frameX = (_system->getWidth() - frameWidth) / 2;
 				int frameY = (_system->getHeight() - frameHeight) / 2;
-				byte black = findBlackPalIndex();
-
-				byte *dst = screen + _textY * pitch;
+				uint32 black = getBlackColor();
 
 				for (int y = 0; y < text->_textSprite.h; y++) {
 					if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
-						memset(dst + _textX, black, text->_textSprite.w);
+						screen->hLine(_textX, _textY + y, _textX + text->_textSprite.w, black);
 					} else {
 						if (frameX > _textX)
-							memset(dst + _textX, black, frameX - _textX);
+							screen->hLine(_textX, _textY + y, frameX, black);
 						if (frameX + frameWidth < _textX + text->_textSprite.w)
-							memset(dst + frameX + frameWidth, black, _textX + text->_textSprite.w - (frameX + frameWidth));
+							screen->hLine(frameX + frameWidth, _textY + y, text->_textSprite.w, black);
 					}
-
-					dst += pitch;
 				}
 			}
 
@@ -206,11 +230,24 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
 	}
 }
 
-void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
+#define PUT_PIXEL(c) \
+	switch (screen->format.bytesPerPixel) { \
+	case 1: \
+		*dst = (c); \
+		break; \
+	case 2: \
+		WRITE_UINT16(dst, (c)); \
+		break; \
+	case 4: \
+		WRITE_UINT32(dst, (c)); \
+		break; \
+	}
+
+void MoviePlayer::drawTextObject(uint32 index, Graphics::Surface *screen, uint16 pitch) {
 	MovieText *text = &_movieTexts[index];
 
-	byte white = findWhitePalIndex();
-	byte black = findBlackPalIndex();
+	uint32 white = getWhiteColor();
+	uint32 black = getBlackColor();
 
 	if (text->_textMem && _textSurface) {
 		byte *src = text->_textSprite.data;
@@ -226,17 +263,20 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
 			src = psxSpriteBuffer;
 		}
 
-		byte *dst = screen + _textY * pitch + _textX;
-
 		for (int y = 0; y < height; y++) {
+			byte *dst = (byte *)screen->getBasePtr(_textX, _textY + y);
+
 			for (int x = 0; x < width; x++) {
-				if (src[x] == 1)
-					dst[x] = black;
-				else if (src[x] == 255)
-					dst[x] = white;
+				if (src[x] == 1) {
+					PUT_PIXEL(black);
+				} else if (src[x] == 255) {
+					PUT_PIXEL(white);
+				}
+
+				dst += screen->format.bytesPerPixel;
 			}
+
 			src += width;
-			dst += pitch;
 		}
 
 		// Free buffer used to resize psx sprite
@@ -245,7 +285,9 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
 	}
 }
 
-void MoviePlayer::performPostProcessing(byte *screen, uint16 pitch) {
+#undef PUT_PIXEL
+
+void MoviePlayer::performPostProcessing(Graphics::Surface *screen, uint16 pitch) {
 	MovieText *text;
 	int frame = _decoder->getCurFrame();
 
@@ -286,8 +328,12 @@ bool MoviePlayer::playVideo() {
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
-			if (frame)
-				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+			if (frame) {
+				if (_decoderType == kVideoDecoderPSX)
+					drawFramePSX(frame);
+				else
+					_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+			}
 
 			if (_decoder->hasDirtyPalette()) {
 				_decoder->setSystemPalette();
@@ -319,7 +365,7 @@ bool MoviePlayer::playVideo() {
 			}
 
 			Graphics::Surface *screen = _vm->_system->lockScreen();
-			performPostProcessing((byte *)screen->pixels, screen->pitch);
+			performPostProcessing(screen, screen->pitch);
 			_vm->_system->unlockScreen();
 			_vm->_system->updateScreen();
 		}
@@ -335,12 +381,29 @@ bool MoviePlayer::playVideo() {
 	return !_vm->shouldQuit();
 }
 
-byte MoviePlayer::findBlackPalIndex() {
-	return _black;
+uint32 MoviePlayer::getBlackColor() {
+	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
 }
 
-byte MoviePlayer::findWhitePalIndex() {
-	return _white;
+uint32 MoviePlayer::getWhiteColor() {
+	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF) : _white;
+}
+
+void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
+	// The PSX videos have half resolution
+
+	Graphics::Surface scaledFrame;
+	scaledFrame.create(frame->w, frame->h * 2, frame->format);
+
+	for (int y = 0; y < scaledFrame.h; y++)
+		memcpy(scaledFrame.getBasePtr(0, y), frame->getBasePtr(0, y / 2), scaledFrame.w * scaledFrame.format.bytesPerPixel);
+
+	uint16 x = (g_system->getWidth() - scaledFrame.w) / 2;
+	uint16 y = (g_system->getHeight() - scaledFrame.h) / 2;
+
+	_vm->_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+
+	scaledFrame.free();
 }
 
 DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
@@ -358,9 +421,22 @@ uint32 DXADecoderWithSound::getElapsedTime() const {
 // Factory function for creating the appropriate cutscene player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *snd, OSystem *system) {
+MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, uint32 frameCount) {
 	Common::String filename;
 	Audio::SoundHandle *bgSoundHandle = new Audio::SoundHandle;
+
+	filename = Common::String::format("%s.str", name);
+
+	if (Common::File::exists(filename)) {
+#ifdef USE_RGB_COLOR
+		Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x, frameCount);
+		return new MoviePlayer(vm, snd, system, bgSoundHandle, psxDecoder, kVideoDecoderPSX);
+#else
+		GUI::MessageDialog dialog(_("PSX cutscenes found but ScummVM has been built without RGB color support"), _("OK"));
+		dialog.runModal();
+		return NULL;
+#endif
+	}
 
 	filename = Common::String::format("%s.smk", name);
 

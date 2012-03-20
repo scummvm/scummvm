@@ -40,8 +40,8 @@ namespace Kyra {
 KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	: KyraEngine_v1(system, flags) {
 
-	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
-	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 =
+	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm = 0;
+	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 = 0;
 	_seq_Demo4 = 0;
 
 	_seq_WSATable = _seq_CPSTable = _seq_COLTable = _seq_textsTable = 0;
@@ -167,7 +167,7 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 }
 
 Common::Error KyraEngine_LoK::init() {
-	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiResOverlay && ConfMan.getBool("16_color"))
+	if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderPC9801)
 		_screen = new Screen_LoK_16(this, _system);
 	else
 		_screen = new Screen_LoK(this, _system);
@@ -215,7 +215,7 @@ Common::Error KyraEngine_LoK::init() {
 	_currentCharacter = 0;
 	_characterList = new Character[11];
 	assert(_characterList);
-	memset(_characterList, 0, sizeof(Character)*11);
+	memset(_characterList, 0, sizeof(Character) * 11);
 
 	for (int i = 0; i < 11; ++i)
 		memset(_characterList[i].inventoryItems, 0xFF, sizeof(_characterList[i].inventoryItems));
@@ -370,7 +370,7 @@ void KyraEngine_LoK::startup() {
 	// XXX
 	for (int i = 0; i < 12; ++i) {
 		int size = _screen->getRectSize(3, 24);
-		_shapes[361+i] = new byte[size];
+		_shapes[361 + i] = new byte[size];
 	}
 
 	_itemBkgBackUp[0] = new uint8[_screen->getRectSize(3, 24)];
@@ -510,6 +510,9 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 			updateTextFade();
 			updateMousePointer();
 		} else {
+			// We need to do Screen::updateScreen here, since client code
+			// relies on this method to copy screen changes to the actual
+			// screen since at least 0af418e7ea3a41f93fcc551a45ee5bae822d812a.
 			_screen->updateScreen();
 		}
 
@@ -582,23 +585,23 @@ void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int f
 
 	uint8 curImage = 0xFF;
 	int curPageBackUp = _screen->_curPage;
-	_screen->_curPage = 8;	// we are using page 8 here in the original page 2 was backuped and then used for this stuff
+	_screen->_curPage = 8;  // we are using page 8 here in the original page 2 was backuped and then used for this stuff
 	int shapeFlags = 2;
 	if (flags)
 		shapeFlags = 3;
-	for (int i = 123; i < 123+endShape; ++i) {
-		uint8 newImage = shapeTable[i-123].imageIndex;
+	for (int i = 123; i < 123 + endShape; ++i) {
+		uint8 newImage = shapeTable[i - 123].imageIndex;
 		if (newImage != curImage && newImage != 0xFF) {
 			assert(_characterImageTable);
 			_screen->loadBitmap(_characterImageTable[newImage], 8, 8, 0);
 			curImage = newImage;
 		}
-		_shapes[i] = _screen->encodeShape(shapeTable[i-123].x<<3, shapeTable[i-123].y, shapeTable[i-123].w<<3, shapeTable[i-123].h, shapeFlags);
-		assert(i-7 < _defaultShapeTableSize);
-		_defaultShapeTable[i-7].xOffset = shapeTable[i-123].xOffset;
-		_defaultShapeTable[i-7].yOffset = shapeTable[i-123].yOffset;
-		_defaultShapeTable[i-7].w = shapeTable[i-123].w;
-		_defaultShapeTable[i-7].h = shapeTable[i-123].h;
+		_shapes[i] = _screen->encodeShape(shapeTable[i - 123].x << 3, shapeTable[i - 123].y, shapeTable[i - 123].w << 3, shapeTable[i - 123].h, shapeFlags);
+		assert(i - 7 < _defaultShapeTableSize);
+		_defaultShapeTable[i - 7].xOffset = shapeTable[i - 123].xOffset;
+		_defaultShapeTable[i - 7].yOffset = shapeTable[i - 123].yOffset;
+		_defaultShapeTable[i - 7].w = shapeTable[i - 123].w;
+		_defaultShapeTable[i - 7].h = shapeTable[i - 123].h;
 	}
 	_screen->_curPage = curPageBackUp;
 }
@@ -788,7 +791,7 @@ void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 	}
 
 	if (mouse.x >= _entranceMouseCursorTracks[0] && mouse.y >= _entranceMouseCursorTracks[1]
-		&& mouse.x <= _entranceMouseCursorTracks[2] && mouse.y <= _entranceMouseCursorTracks[3]) {
+	        && mouse.x <= _entranceMouseCursorTracks[2] && mouse.y <= _entranceMouseCursorTracks[3]) {
 		switch (_entranceMouseCursorTracks[4]) {
 		case 0:
 			newMouseState = -6;
@@ -844,7 +847,7 @@ void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 				if (_itemInHand == kItemNone)
 					_screen->setMouseCursor(1, 1, _shapes[0]);
 				else
-					_screen->setMouseCursor(8, 15, _shapes[216+_itemInHand]);
+					_screen->setMouseCursor(8, 15, _shapes[216 + _itemInHand]);
 				_screen->showMouse();
 			}
 		}
@@ -884,8 +887,8 @@ int KyraEngine_LoK::checkForNPCScriptRun(int xpos, int ypos) {
 	int charLeft = 0, charRight = 0, charTop = 0, charBottom = 0;
 
 	int scaleFactor = _scaleTable[currentChar->y1];
-	int addX = (((scaleFactor*8)*3)>>8)>>1;
-	int addY = ((scaleFactor*3)<<4)>>8;
+	int addX = (((scaleFactor * 8) * 3) >> 8) >> 1;
+	int addY = ((scaleFactor * 3) << 4) >> 8;
 
 	charLeft = currentChar->x1 - addX;
 	charRight = currentChar->x1 + addX;
@@ -908,7 +911,7 @@ int KyraEngine_LoK::checkForNPCScriptRun(int xpos, int ypos) {
 		charRight = currentChar->x1 + 11;
 		charTop = currentChar->y1 - 48;
 		// if (!i)
-		//	charBottom = currentChar->y2 - 16;
+		//  charBottom = currentChar->y2 - 16;
 		// else
 		charBottom = currentChar->y1;
 
@@ -957,9 +960,6 @@ void KyraEngine_LoK::registerDefaultSettings() {
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
 	ConfMan.registerDefault("walkspeed", 2);
-
-	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiResOverlay)
-		ConfMan.registerDefault("16_color", false);
 }
 
 void KyraEngine_LoK::readSettings() {
@@ -968,13 +968,13 @@ void KyraEngine_LoK::readSettings() {
 	// The default talk speed is 60. This should be mapped to "Normal".
 
 	if (talkspeed == 0)
-		_configTextspeed = 3;	// Clickable
+		_configTextspeed = 3;   // Clickable
 	if (talkspeed <= 50)
-		_configTextspeed = 0;	// Slow
+		_configTextspeed = 0;   // Slow
 	else if (talkspeed <= 150)
-		_configTextspeed = 1;	// Normal
+		_configTextspeed = 1;   // Normal
 	else
-		_configTextspeed = 2;	// Fast
+		_configTextspeed = 2;   // Fast
 
 	KyraEngine_v1::readSettings();
 }
@@ -983,16 +983,16 @@ void KyraEngine_LoK::writeSettings() {
 	int talkspeed;
 
 	switch (_configTextspeed) {
-	case 0:		// Slow
+	case 0:     // Slow
 		talkspeed = 1;
 		break;
-	case 1:		// Normal
+	case 1:     // Normal
 		talkspeed = 60;
 		break;
-	case 2:		// Fast
+	case 2:     // Fast
 		talkspeed = 255;
 		break;
-	default:	// Clickable
+	default:    // Clickable
 		talkspeed = 0;
 	}
 

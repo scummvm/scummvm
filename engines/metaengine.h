@@ -224,9 +224,6 @@ typedef PluginSubclass<MetaEngine> EnginePlugin;
  * Singleton class which manages all Engine plugins.
  */
 class EngineManager : public Common::Singleton<EngineManager> {
-private:
-	friend class Common::Singleton<SingletonBaseType>;
-
 public:
 	GameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
 	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;

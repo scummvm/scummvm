@@ -477,7 +477,7 @@ void Hotspots::call(uint16 offset) {
 
 	_shouldPush = true;
 
-	int16 stackSize = _stack.size();
+	Common::Stack<StackEntry>::size_type stackSize = _stack.size();
 
 	_vm->_inter->funcBlock(0);
 

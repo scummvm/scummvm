@@ -186,8 +186,6 @@ public:
 	void displayText(uint16 textId, int16 flags, uint8 color);
 	void setupTextPalette(uint index, int fadePalette);
 
-	virtual void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {}
-	virtual uint16 processDialogue() { return 1; }
 	virtual void resetDialogueState(TIM *tim) {}
 
 	int _drawPage2;
@@ -255,7 +253,6 @@ protected:
 	int cmd_execOpcode(const uint16 *param);
 	int cmd_initFuncNow(const uint16 *param);
 	int cmd_stopFuncNow(const uint16 *param);
-	int cmd_stopAllFuncs(const uint16 *param);
 #define cmd_return(n, v) \
 	int cmd_return_##n(const uint16 *){ return v; }
 	cmd_return( 1,  1)
@@ -273,8 +270,6 @@ public:
 	int initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaCopyParams);
 	int freeAnimStruct(int index);
 
-	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
-	uint16 processDialogue();
 	void resetDialogueState(TIM *tim);
 
 private:
@@ -284,17 +279,8 @@ private:
 	char *getTableString(int id);
 	void advanceToOpcode(int opcode);
 
-	void drawDialogueButtons();
-
 	LoLEngine *_vm;
 	Screen_LoL *_screen;
-
-	const char *_dialogueButtonString[3];
-	uint16 _dialogueButtonPosX;
-	uint16 _dialogueButtonPosY;
-	int _dialogueNumButtons;
-	uint16 _dialogueButtonXoffs;
-	int _dialogueHighlightedButton;
 
 	virtual int execCommand(int cmd, const uint16 *param);
 
@@ -307,6 +293,7 @@ private:
 	const CommandEntry *_commands;
 	int _commandsSize;
 
+	int cmd_stopAllFuncs(const uint16 *param);
 	int cmd_setLoopIp(const uint16 *param);
 	int cmd_continueLoop(const uint16 *param);
 	int cmd_processDialogue(const uint16 *param);

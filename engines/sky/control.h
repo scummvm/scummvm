@@ -136,7 +136,7 @@ class ConResource {
 public:
 	ConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
 	virtual ~ConResource() {}
-	void setSprite(void *pSpData) { _spriteData = (DataFileHeader*)pSpData; }
+	void setSprite(void *pSpData) { _spriteData = (DataFileHeader *)pSpData; }
 	void setText(uint32 pText) { if (pText) _text = pText + 0x7000; else _text = 0; }
 	void setXY(uint16 x, uint16 y) { _x = x; _y = y; }
 	bool isMouseOver(uint32 mouseX, uint32 mouseY);
@@ -190,7 +190,7 @@ public:
 	bool loadSaveAllowed();
 
 	uint16 _selectedGame;
-	uint16 saveGameToFile();
+	uint16 saveGameToFile(bool fromControlPanel, const char *filename = 0);
 
 	void loadDescriptions(Common::StringArray &list);
 	void saveDescriptions(const Common::StringArray &list);

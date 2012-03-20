@@ -251,7 +251,7 @@ bool MoviePlayerDXA::load() {
 	}
 
 	Common::String videoName = Common::String::format("%s.dxa", baseName);
-	Common::SeekableReadStream *videoStream = _vm->_archives.open(videoName);
+	Common::SeekableReadStream *videoStream = _vm->_archives.createReadStreamForMember(videoName);
 	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
 	if (!loadStream(videoStream))
@@ -312,7 +312,7 @@ void MoviePlayerDXA::startSound() {
 
 			_fileStream->seek(size, SEEK_CUR);
 
-			in.open((const char *)"audio.wav");
+			in.open("audio.wav");
 			if (!in.isOpen()) {
 				error("Can't read offset file 'audio.wav'");
 			}
@@ -415,7 +415,7 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 bool MoviePlayerSMK::load() {
 	Common::String videoName = Common::String::format("%s.smk", baseName);
 
-	Common::SeekableReadStream *videoStream = _vm->_archives.open(videoName);
+	Common::SeekableReadStream *videoStream = _vm->_archives.createReadStreamForMember(videoName);
 	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
 	if (!loadStream(videoStream))

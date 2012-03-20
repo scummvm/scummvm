@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	gui.o \
+	gui_v1.o \
 	gui_lok.o \
 	gui_v2.o \
 	gui_hof.o \
@@ -72,8 +73,19 @@ MODULE_OBJS := \
 	vqa.o \
 	wsamovie.o
 
+KYRARPG_COMMON_OBJ = \
+	gui_rpg.o \
+	kyra_rpg.o \
+	saveload_rpg.o \
+	scene_rpg.o \
+	sprites_rpg.o \
+	staticres_rpg.o \
+	text_rpg.o \
+	timer_rpg.o
+
 ifdef ENABLE_LOL
 MODULE_OBJS += \
+	$(KYRARPG_COMMON_OBJ) \
 	gui_lol.o \
 	items_lol.o \
 	lol.o \
@@ -87,6 +99,30 @@ MODULE_OBJS += \
 	staticres_lol.o \
 	text_lol.o \
 	timer_lol.o
+endif
+
+ifdef ENABLE_EOB
+ifndef ENABLE_LOL
+MODULE_OBJS += \
+	$(KYRARPG_COMMON_OBJ)
+endif
+MODULE_OBJS += \
+	chargen.o \
+	eobcommon.o \
+	eob.o \
+	darkmoon.o \
+	gui_eob.o \
+	items_eob.o \
+	magic_eob.o \
+	saveload_eob.o \
+	scene_eob.o \
+	screen_eob.o \
+	script_eob.o \
+	sequences_eob.o \
+	sequences_darkmoon.o \
+	sprites_eob.o \
+	staticres_eob.o \
+	timer_eob.o
 endif
 
 # This module can be built as a plugin

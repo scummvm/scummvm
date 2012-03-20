@@ -68,10 +68,10 @@ int SoundGen2GS::readBuffer(int16 *buffer, const int numSamples) {
 	static uint data_available = 0;
 	static uint data_offset = 0;
 	uint n = numSamples << 1;
-	uint8 *p = (uint8*)buffer;
+	uint8 *p = (uint8 *)buffer;
 
 	while (n > data_available) {
-		memcpy(p, (uint8*)_out + data_offset, data_available);
+		memcpy(p, (uint8 *)_out + data_offset, data_available);
 		p += data_available;
 		n -= data_available;
 
@@ -81,7 +81,7 @@ int SoundGen2GS::readBuffer(int16 *buffer, const int numSamples) {
 		data_offset = 0;
 	}
 
-	memcpy(p, (uint8*)_out + data_offset, n);
+	memcpy(p, (uint8 *)_out + data_offset, n);
 	data_offset += n;
 	data_available -= n;
 

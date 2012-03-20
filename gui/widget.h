@@ -354,6 +354,8 @@ protected:
 	void drawWidget();
 };
 
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0);
+
 } // End of namespace GUI
 
 #endif

@@ -119,21 +119,21 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 
 	DebugPrintf("Available rooms are:\n");
 	for (RoomDataList::iterator i = rooms.begin(); i != rooms.end(); ++i) {
-		RoomData *room = (*i).get();
+		RoomData const &room = **i;
 		// Explictly note the second drawbridge room as "Alt"
-		if (room->roomNumber == 49) {
+		if (room.roomNumber == 49) {
 			strings.getString(47, buffer);
 			strcat(buffer, " (alt)");
 		} else {
-			strings.getString(room->roomNumber, buffer);
+			strings.getString(room.roomNumber, buffer);
 		}
 
-		DebugPrintf("#%d - %s", room->roomNumber, buffer);
+		DebugPrintf("#%d - %s", room.roomNumber, buffer);
 
 		if (++ctr % 3 == 0) DebugPrintf("\n");
 		else {
 			// Write out spaces between columns
-			int numSpaces = 25 - strlen(buffer) - ((room->roomNumber >= 10) ? 2 : 1);
+			int numSpaces = 25 - strlen(buffer) - (room.roomNumber >= 10 ? 2 : 1);
 			char *s = buffer;
 			while (numSpaces-- > 0) *s++ = ' ';
 			*s = '\0';
@@ -243,13 +243,13 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 			// Loop for displaying active hotspots
 			HotspotList::iterator i;
 			for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
-				Hotspot *hotspot = (*i).get();
+				Hotspot const &hotspot = **i;
 
-				if (hotspot->nameId() == 0) strcpy(buffer, "none");
-				else strings.getString(hotspot->nameId(), buffer);
+				if (hotspot.nameId() == 0) strcpy(buffer, "none");
+				else strings.getString(hotspot.nameId(), buffer);
 
-				DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot->hotspotId(), buffer,
-					hotspot->x(), hotspot->y(), hotspot->roomNumber());
+				DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId(), buffer,
+					hotspot.x(), hotspot.y(), hotspot.roomNumber());
 			}
 		} else {
 			// Presume it's a room's hotspots
@@ -257,14 +257,14 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 
 			HotspotDataList::iterator i;
 			for (i = res.hotspotData().begin(); i != res.hotspotData().end(); ++i) {
-				HotspotData *hotspot = (*i).get();
+				HotspotData const &hotspot = **i;
 
-				if (hotspot->roomNumber == roomNumber) {
-					if (hotspot->nameId == 0) strcpy(buffer, "none");
-					else strings.getString(hotspot->nameId, buffer);
+				if (hotspot.roomNumber == roomNumber) {
+					if (hotspot.nameId == 0) strcpy(buffer, "none");
+					else strings.getString(hotspot.nameId, buffer);
 
-					DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot->hotspotId, buffer,
-					hotspot->startX, hotspot->startY, hotspot->roomNumber);
+					DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId, buffer,
+					hotspot.startX, hotspot.startY, hotspot.roomNumber);
 				}
 			}
 		}
@@ -415,10 +415,10 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 	else {
 		RoomExitHotspotList::iterator i;
 		for (i = exits.begin(); i != exits.end(); ++i) {
-			RoomExitHotspotData *rec = (*i).get();
+			RoomExitHotspotData const &rec = **i;
 
 			DebugPrintf("\nArea - (%d,%d)-(%d,%d) Room=%d Cursor=%d Hotspot=%xh",
-				rec->xs, rec->ys, rec->xe, rec->ye, rec->destRoomNumber, rec->cursorNum, rec->hotspotId);
+				rec.xs, rec.ys, rec.xe, rec.ye, rec.destRoomNumber, rec.cursorNum, rec.hotspotId);
 		}
 
 		DebugPrintf("\n");
@@ -430,11 +430,11 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 	else {
 		RoomExitList::iterator i2;
 		for (i2 = room->exits.begin(); i2 != room->exits.end(); ++i2) {
-			RoomExitData *rec2 = (*i2).get();
+			RoomExitData const &rec2 = **i2;
 
 			DebugPrintf("\nExit - (%d,%d)-(%d,%d) Dest=%d,(%d,%d) Dir=%s Sequence=%xh",
-				rec2->xs, rec2->ys, rec2->xe, rec2->ye, rec2->roomNumber,
-				rec2->x, rec2->y, directionList[rec2->direction], rec2->sequenceOffset);
+				rec2.xs, rec2.ys, rec2.xe, rec2.ye, rec2.roomNumber,
+				rec2.x, rec2.y, directionList[rec2.direction], rec2.sequenceOffset);
 		}
 
 		DebugPrintf("\n");

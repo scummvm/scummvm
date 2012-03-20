@@ -235,25 +235,7 @@ bool VideoManager::updateMovies() {
 						if (_videoStreams[i]->hasDirtyPalette())
 							_videoStreams[i]->setSystemPalette();
 					} else {
-						convertedFrame = new Graphics::Surface();
-						const byte *palette = _videoStreams[i]->getPalette();
-						assert(palette);
-
-						convertedFrame->create(frame->w, frame->h, pixelFormat);
-
-						for (uint16 j = 0; j < frame->h; j++) {
-							for (uint16 k = 0; k < frame->w; k++) {
-								byte palIndex = *((const byte *)frame->getBasePtr(k, j));
-								byte r = palette[palIndex * 3];
-								byte g = palette[palIndex * 3 + 1];
-								byte b = palette[palIndex * 3 + 2];
-								if (pixelFormat.bytesPerPixel == 2)
-									*((uint16 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
-								else
-									*((uint32 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
-							}
-						}
-
+						convertedFrame = frame->convertTo(pixelFormat, _videoStreams[i]->getPalette());
 						frame = convertedFrame;
 					}
 				}
@@ -261,7 +243,7 @@ bool VideoManager::updateMovies() {
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
 				uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
 				uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
-				_vm->_system->copyRectToScreen((byte*)frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
+				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
 
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;

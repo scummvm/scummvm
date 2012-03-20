@@ -31,7 +31,7 @@
 namespace Sky {
 
 void GmMusic::passTimerFunc(void *param) {
-	((GmMusic*)param)->timerCall();
+	((GmMusic *)param)->timerCall();
 }
 
 GmMusic::GmMusic(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pDisk) {

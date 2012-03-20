@@ -115,6 +115,8 @@ public:
 		putVirtPixel(x, y);
 	}
 
+	bool isPictureLoaded() { return _data != NULL; }
+
 private:
 	uint8 *_data;
 	uint32 _flen;

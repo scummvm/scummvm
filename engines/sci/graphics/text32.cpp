@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/sci/graphics/text16.cpp $
- * $Id: text16.cpp 55178 2011-01-08 23:16:44Z thebluegr $
- *
  */
 
 #include "common/util.h"
@@ -176,11 +173,16 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
 
-void GfxText32::drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t textObject) {
+void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
+	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 	// Sanity check: Check if the hunk is set. If not, either the game scripts
 	// didn't set it, or an old saved game has been loaded, where it wasn't set.
 	if (hunkId.isNull())
+		return;
+
+	// Negative coordinates indicate that text shouldn't be displayed
+	if (x < 0 || y < 0)
 		return;
 
 	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
@@ -207,7 +209,7 @@ void GfxText32::drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			byte pixel = surface[curByte++];
-			if (pixel != skipColor)
+			if (pixel != skipColor && pixel != backColor)
 				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}
@@ -295,6 +297,10 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	int16 maxTextWidth = 0, textWidth;
 	int16 totalHeight = 0, textHeight;
 
+	// Adjust maxWidth if we're using an upscaled font
+	if (_screen->fontIsUpscaled())
+		maxWidth = maxWidth * _screen->getDisplayWidth() / _screen->getWidth();
+
 	rect.top = rect.left = 0;
 	GfxFont *font = _cache->getFont(fontId);
 
@@ -321,6 +327,14 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
 	}
+
+	// Adjust the width/height if we're using an upscaled font
+	// for the scripts
+	if (_screen->fontIsUpscaled()) {
+		rect.right = rect.right * _screen->getWidth() / _screen->getDisplayWidth();
+		rect.bottom = rect.bottom * _screen->getHeight() / _screen->getDisplayHeight();
+	}
+
 	return rect.right;
 }
 

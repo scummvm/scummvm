@@ -217,6 +217,7 @@ protected:
 
 	uint getAspectRatio() const;
 
+	void setFormatIsBGR(bool isBGR) { _formatBGR = isBGR; }
 	bool _formatBGR;
 
 	//
@@ -285,6 +286,14 @@ protected:
 	int _cursorTargetScale;
 	bool _cursorNeedsRedraw;
 
+	/**
+	 * Set up the mouse position for graphics output.
+	 *
+	 * @param x X coordinate in native coordinates.
+	 * @param y Y coordinate in native coordinates.
+	 */
+	void setMousePosition(int x, int y) { _cursorState.x = x; _cursorState.y = y; }
+
 	virtual void refreshCursor();
 	virtual void refreshCursorScale();
 
@@ -312,19 +321,19 @@ protected:
 
 #ifdef USE_OSD
 	/**
-	 * The OSD contents.
+	 * Returns the font used for on screen display
 	 */
-	Common::Array<Common::String> _osdLines;
-
-  /**
-   * Returns the font used for on screen display
-   */
-  virtual const Graphics::Font *getFontOSD();
+	virtual const Graphics::Font *getFontOSD();
 
 	/**
 	 * Update the OSD texture / surface.
 	 */
 	void updateOSD();
+
+	/**
+	 * The OSD contents.
+	 */
+	Common::Array<Common::String> _osdLines;
 
 	GLTexture *_osdTexture;
 	Graphics::Surface _osdSurface;

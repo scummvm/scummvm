@@ -21,6 +21,10 @@
 
 #include "common/rect.h"
 
+#ifdef ENABLE_KEYMAPPER
+#include "common/events.h"
+#endif
+
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
@@ -314,6 +318,9 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
+#ifdef ENABLE_KEYMAPPER
+void Dialog::handleOtherEvent(Common::Event evt) { }
+#endif
 /*
  * Determine the widget at location (x,y) if any. Assumes the coordinates are
  * in the local coordinate system, i.e. relative to the top left of the dialog.
@@ -334,25 +341,7 @@ void Dialog::removeWidget(Widget *del) {
 	if (del == _dragWidget)
 		_dragWidget = NULL;
 
-	Widget *w = _firstWidget;
-
-	if (del == _firstWidget) {
-		Widget *del_next = del->_next;
-		del->_next = 0;
-		_firstWidget = del_next;
-		return;
-	}
-
-	w = _firstWidget;
-	while (w) {
-		if (w->_next == del) {
-			Widget *del_next = del->_next;
-			del->_next = 0;
-			w->_next = del_next;
-			return;
-		}
-		w = w->_next;
-	}
+	GuiObject::removeWidget(del);
 }
 
 } // End of namespace GUI

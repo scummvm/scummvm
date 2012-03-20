@@ -66,7 +66,7 @@ bool QuickTimeParser::parseFile(const String &filename) {
 	_foundMOOV = false;
 	_disposeFileHandle = DisposeAfterUse::YES;
 
-	Atom atom = { 0, 0, 0xffffffff };
+	Atom atom = { 0, 0, 0 };
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
@@ -80,14 +80,12 @@ bool QuickTimeParser::parseFile(const String &filename) {
 			if (readDefault(atom) < 0 || !_foundMOOV)
 				return false;
 		}
-		delete _fd;
 
-		atom.type = 0;
-		atom.offset = 0;
-		atom.size = 0xffffffff;
+		delete _fd;
 	}
 
 	_fd = _resFork->getDataFork();
+	atom.size = _fd->size();
 
 	if (readDefault(atom) < 0 || !_foundMOOV)
 		return false;
@@ -113,19 +111,29 @@ bool QuickTimeParser::parseStream(SeekableReadStream *stream, DisposeAfterUse::F
 }
 
 void QuickTimeParser::init() {
-	// Remove unknown/unhandled tracks
 	for (uint32 i = 0; i < _tracks.size(); i++) {
+		// Remove unknown/unhandled tracks
 		if (_tracks[i]->codecType == CODEC_TYPE_MOV_OTHER) {
 			delete _tracks[i];
 			_tracks.remove_at(i);
 			i--;
+		} else {
+			// If this track doesn't have a declared scale, use the movie scale
+			if (_tracks[i]->timeScale == 0)
+				_tracks[i]->timeScale = _timeScale;
+
+			// If this track doesn't have an edit list (like in MPEG-4 files),
+			// fake an entry of one edit that takes up the entire sample
+			if (_tracks[i]->editCount == 0) {
+				_tracks[i]->editCount = 1;
+				_tracks[i]->editList = new EditListEntry[1];
+				_tracks[i]->editList[0].trackDuration = _tracks[i]->duration;
+				_tracks[i]->editList[0].timeOffset = 0;
+				_tracks[i]->editList[0].mediaTime = 0;
+				_tracks[i]->editList[0].mediaRate = 1;
+			}
 		}
 	}
-
-	// Adjust time scale
-	for (uint32 i = 0; i < _tracks.size(); i++)
-		if (!_tracks[i]->timeScale)
-			_tracks[i]->timeScale = _timeScale;
 }
 
 void QuickTimeParser::initParseTable() {
@@ -135,7 +143,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's') },
 		{ &QuickTimeParser::readELST,    MKTAG('e', 'l', 's', 't') },
 		{ &QuickTimeParser::readHDLR,    MKTAG('h', 'd', 'l', 'r') },
-		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'a', 't') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('m', 'd', 'a', 't') },
 		{ &QuickTimeParser::readMDHD,    MKTAG('m', 'd', 'h', 'd') },
 		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'i', 'a') },
 		{ &QuickTimeParser::readDefault, MKTAG('m', 'i', 'n', 'f') },

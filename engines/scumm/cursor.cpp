@@ -636,7 +636,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				byte *dst2 = (_textSurfaceMultiplier == 2) ? dst1 + 16 * scl : dst1;
 				if (_outputPixelFormat.bytesPerPixel == 2) {
 					for (int b = 0; b < scl; b += 2) {
-						*((uint16*)dst1) = *((uint16*)dst2) = color;
+						*((uint16 *)dst1) = *((uint16 *)dst2) = color;
 						dst1 += 2;
 						dst2 += 2;
 					}

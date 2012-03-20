@@ -79,6 +79,7 @@ private:
 	static void startStrip();
 	static void endStrip();
 public:
+	byte _field312[256];
 	int _field372;
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
@@ -101,16 +102,20 @@ public:
 	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
 	virtual void saveCharacter(int characterIndex);
+	virtual void restore() {}
 
-	bool display(CursorType action);
+	bool display(CursorType action, Event &event);
 	void fadeOut();
 	void clearScreen();
+	void scalePalette(int RFactor, int GFactor, int BFactor);
 };
 
 class SceneHandlerExt: public SceneHandler {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
+
+	void setupPaletteMaps();
 };
 
 
@@ -233,15 +238,10 @@ public:
 
 class NamedHotspot : public SceneHotspot {
 public:
-	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
 	NamedHotspot();
 
 	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
-	virtual void synchronize(Serializer &s);
-	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
-	virtual void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	virtual void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode = 0);
 };
 
 class NamedHotspotExt : public NamedHotspot {
@@ -258,16 +258,9 @@ public:
 
 class SceneActor: public SceneObject {
 public:
-	int _resNum;
-	int _lookLineNum, _talkLineNum, _useLineNum;
-
 	virtual Common::String getClassName() { return "SceneActor"; }
-	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual bool startAction(CursorType action, Event &event);
-
-	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 class SceneActorExt: public SceneActor {
@@ -275,11 +268,168 @@ public:
 	int _state;
 
 	SceneActorExt() { _state = 0; }
+
 	virtual Common::String getClassName() { return "SceneActorExt"; }
 	virtual void synchronize(Serializer &s) {
 		SceneActor::synchronize(s);
 		s.syncAsSint16LE(_state);
 	}
+};
+
+class SceneAreaObject: public SceneArea {
+	class Object1: public SceneActor {
+	public:
+	};
+public:
+	Object1 _object1;
+	int _insetCount;
+
+	virtual void remove();
+	virtual void process(Event &event);
+	void setDetails(int visage, int strip, int frameNumber, const Common::Point &pt);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+};
+
+class UnkObject1200 : public SavedObject {
+public:
+	Rect _rect1;
+	Rect _rect2;
+
+	int *_field16;
+	int *_field3A;
+
+	int _field12;
+	int _field14;
+	int _field26;
+	int _field28;
+	int _field2A;
+	int _field2C;
+	int _field2E;
+	int _field30;
+	int _field32;
+	int _field34;
+	int _field36;
+	int _field38;
+	int _field3E;
+	int _field40;
+
+	UnkObject1200();
+	void synchronize(Serializer &s);
+
+	void sub51AE9(int arg1);
+	int sub51AF8(Common::Point pt);
+	bool sub51AFD(Common::Point pt);
+	void sub51B02();
+	void sub9EDE8(Rect rect);
+	int sub9EE22(int &arg1, int &arg2);
+	virtual Common::String getClassName() { return "UnkObject1200"; }
+};
+
+/*--------------------------------------------------------------------------*/
+
+class AnimationSlice {
+public:
+	int _sliceOffset;
+	int _drawMode;
+	int _secondaryIndex;
+public:
+	void load(Common::File &f);
+};
+
+class AnimationSlices {
+public:
+	int _dataSize;
+	int _dataSize2;
+	AnimationSlice _slices[4];
+	byte *_pixelData;
+public:
+	AnimationSlices();
+	~AnimationSlices();
+
+	void load(Common::File &f);
+	int loadPixels(Common::File &f, int slicesSize);
+};
+
+class AnimationPlayerSubData {
+public:
+	int _duration;
+	int _frameRate;
+	int _framesPerSlices;
+	int _drawType;
+	int _sliceSize;
+	int _ySlices;
+	int _field16;
+	int _palStart;
+	int _palSize;
+	byte _palData[256 * 3];
+	int32 _totalSize;
+	AnimationSlices _slices;
+public:
+	void load(Common::File &f);
+};
+
+class AnimationData {
+public:
+	AnimationSlices _slices;
+	int _dataSize;
+	int _animSlicesSize;
+};
+
+enum AnimationPaletteMode { ANIMPALMODE_REPLACE_PALETTE = 0, ANIMPALMODE_CURR_PALETTE = 1,
+		ANIMPALMODE_NONE = 2 };
+
+class AnimationPlayer: public EventHandler {
+private:
+	void rleDecode(const byte *pSrc, byte *pDest, int size);
+
+	void drawFrame(int sliceIndex);
+	void nextSlices();
+	void getSlices();
+public:
+	AnimationData *_animData1, *_animData2;
+	AnimationData *_sliceCurrent;
+	AnimationData *_sliceNext;
+	Common::File _resourceFile;
+	Rect _rect1, _screenBounds;
+	int _field38;
+	int _field3A, _paletteMode;
+	int _objectMode;
+	int _field58, _sliceHeight;
+	byte _palIndexes[256];
+	ScenePalette _palette;
+	AnimationPlayerSubData _subData;
+	Action *_endAction;
+	int _dataNeeded;
+	int _playbackTick;
+	int _playbackTickPrior;
+	int _position;
+	int _nextSlicesPosition;
+	uint _frameDelay;
+	uint32 _gameFrame;
+public:
+	AnimationPlayer();
+	~AnimationPlayer();
+
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void flipPane() {}
+	virtual void changePane() {}
+	virtual void closing() {}
+
+	bool load(int animId, Action *endAction = NULL);
+	bool isCompleted();
+	void close();
+};
+
+class AnimationPlayerExt: public AnimationPlayer {
+public:
+	int _v;
+public:
+	AnimationPlayerExt();
+
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace Ringworld2

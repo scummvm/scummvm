@@ -1095,10 +1095,16 @@ void ScummEngine_v5::o5_getClosestObjActor() {
 void ScummEngine_v5::o5_getDist() {
 	int o1, o2;
 	int r;
+
 	getResultPos();
+	
 	o1 = getVarOrDirectWord(PARAM_1);
 	o2 = getVarOrDirectWord(PARAM_2);
-	r = getObjActToObjActDist(o1, o2);
+
+	if (_game.version == 0) // in v0 both parameters are always actor IDs, never objects
+		r = getObjActToObjActDist(actorToObj(o1), actorToObj(o2));
+	else
+		r = getObjActToObjActDist(o1, o2);
 
 	// FIXME: MI2 race workaround, see bug #597022. We never quite figured out
 	// what the real cause of this, or if it maybe occurs in the original, too...
@@ -2464,8 +2470,40 @@ void ScummEngine_v5::o5_walkActorTo() {
 	a->startWalkActor(x, y, -1);
 }
 
+void ScummEngine_v5::walkActorToActor(int actor, int toActor, int dist) {
+	Actor *a = derefActor(actor, "walkActorToActor");
+	Actor *to = derefActor(toActor, "walkActorToActor(2)");
+
+	if (_game.version <= 2) {
+		dist *= V12_X_MULTIPLIER;
+	} else if (dist == 0xFF) {
+		dist = a->_scalex * a->_width / 0xFF;
+		dist += (to->_scalex * to->_width / 0xFF) / 2;
+	}
+	int x = to->getPos().x;
+	int y = to->getPos().y;
+	if (x < a->getPos().x)
+		x += dist;
+	else
+		x -= dist;
+
+	if (_game.version <= 2) {
+		x /= V12_X_MULTIPLIER;
+		y /= V12_Y_MULTIPLIER;
+	}
+	if (_game.version <= 3) {
+		AdjustBoxResult abr = a->adjustXYToBeInBox(x, y);
+		x = abr.x;
+		y = abr.y;
+	}
+	a->startWalkActor(x, y, -1);
+
+	// WORKAROUND: See bug #2971126 for details on why this is here.
+	if (_game.version == 0)
+		o5_breakHere();
+}
+
 void ScummEngine_v5::o5_walkActorToActor() {
-	int x, y;
 	Actor *a, *a2;
 	int nr = getVarOrDirectByte(PARAM_1);
 	int nr2 = getVarOrDirectByte(PARAM_2);
@@ -2499,33 +2537,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	if (!a2->isInCurrentRoom())
 		return;
 
-	if (_game.version <= 2) {
-		dist *= V12_X_MULTIPLIER;
-	} else if (dist == 0xFF) {
-		dist = a->_scalex * a->_width / 0xFF;
-		dist += (a2->_scalex * a2->_width / 0xFF) / 2;
-	}
-	x = a2->getPos().x;
-	y = a2->getPos().y;
-	if (x < a->getPos().x)
-		x += dist;
-	else
-		x -= dist;
-
-	if (_game.version <= 2) {
-		x /= V12_X_MULTIPLIER;
-		y /= V12_Y_MULTIPLIER;
-	}
-	if (_game.version <= 3) {
-		AdjustBoxResult abr = a->adjustXYToBeInBox(x, y);
-		x = abr.x;
-		y = abr.y;
-	}
-	a->startWalkActor(x, y, -1);
-
-	// WORKAROUND: See bug #2971126 for details on why this is here.
-	if (_game.version == 0)
-		o5_breakHere();
+	walkActorToActor(nr, nr2, dist);
 }
 
 void ScummEngine_v5::o5_walkActorToObject() {

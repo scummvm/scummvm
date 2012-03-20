@@ -34,6 +34,7 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/ringworld2/ringworld2_logic.h"
 
 namespace TsAGE {
 
@@ -940,6 +941,8 @@ int PlayerMover::findDistance(const Common::Point &pt1, const Common::Point &pt2
 	return (int)sqrt(xx + yy);
 }
 
+// Calculate intersection of the line segments pt1-pt2 and pt3-pt4.
+// Return true if they intersect, and return the intersection in ptOut.
 bool PlayerMover::sub_F8E5_calculatePoint(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
 						  const Common::Point &pt4, Common::Point *ptOut) {
 	double diffX1 = pt2.x - pt1.x;
@@ -1298,6 +1301,13 @@ bool ScenePalette::loadPalette(int paletteNum) {
 	return true;
 }
 
+/**
+ * Loads a palette from the passed raw data block
+ */
+void ScenePalette::loadPalette(const byte *pSrc, int start, int count) {
+	Common::copy(pSrc, pSrc + count * 3, &_palette[start * 3]);
+}
+
 void ScenePalette::refresh() {
 	// Set indexes for standard colors to closest color in the palette
 	_colors.background = indexOf(255, 255, 255);	// White background
@@ -1344,13 +1354,15 @@ void ScenePalette::setEntry(int index, uint r, uint g, uint b) {
  * @param g			G component
  * @param b			B component
  * @param threshold	Closeness threshold.
+ * @param start		Starting index
+ * @param count		Number of indexes to scan
  * @remarks	A threshold may be provided to specify how close the matching color must be
  */
-uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
+uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold, int start, int count) {
 	int palIndex = -1;
 	byte *palData = &_palette[0];
 
-	for (int i = 0; i < 256; ++i) {
+	for (int i = start; i < (start + count); ++i) {
 		byte ir = *palData++;
 		byte ig = *palData++;
 		byte ib = *palData++;
@@ -1415,7 +1427,7 @@ void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
 
 	// Set the altered pale4tte
 	g_system->getPaletteManager()->setPalette((const byte *)&tempPalette[0], 0, 256);
-	g_system->updateScreen();
+	GLOBALS._screenSurface.updateScreen();
 }
 
 PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode, int duration, Action *action) {
@@ -1533,25 +1545,30 @@ bool SceneItem::startAction(CursorType action, Event &event) {
 void SceneItem::doAction(int action) {
 	const char *msg = NULL;
 
-	switch ((int)action) {
-	case CURSOR_LOOK:
-		msg = LOOK_SCENE_HOTSPOT;
-		break;
-	case CURSOR_USE:
-		msg = USE_SCENE_HOTSPOT;
-		break;
-	case CURSOR_TALK:
-		msg = TALK_SCENE_HOTSPOT;
-		break;
-	case 0x1000:
-		msg = SPECIAL_SCENE_HOTSPOT;
-		break;
-	default:
-		msg = DEFAULT_SCENE_HOTSPOT;
-		break;
-	}
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		Event dummyEvent;
+		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display((CursorType)action, dummyEvent);
+	} else {
+		switch ((int)action) {
+		case CURSOR_LOOK:
+			msg = LOOK_SCENE_HOTSPOT;
+			break;
+		case CURSOR_USE:
+			msg = USE_SCENE_HOTSPOT;
+			break;
+		case CURSOR_TALK:
+			msg = TALK_SCENE_HOTSPOT;
+			break;
+		case 0x1000:
+			msg = SPECIAL_SCENE_HOTSPOT;
+			break;
+		default:
+			msg = DEFAULT_SCENE_HOTSPOT;
+			break;
+		}
 
-	GUIErrorMessage(msg);
+		GUIErrorMessage(msg);
+	}
 }
 
 bool SceneItem::contains(const Common::Point &pt) {
@@ -1708,7 +1725,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		// Keep event on-screen until a mouse or keypress
 		while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event,
 				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
 		}
 
@@ -1762,12 +1779,54 @@ void SceneItem::display(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
+SceneHotspot::SceneHotspot(): SceneItem() {
+	_lookLineNum = _useLineNum = _talkLineNum = 0;
+}
+
+void SceneHotspot::synchronize(Serializer &s) {
+	SceneItem::synchronize(s);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// In R2R, the following fields were moved into the SceneItem class
+		s.syncAsSint16LE(_resNum);
+		s.syncAsSint16LE(_lookLineNum);
+		s.syncAsSint16LE(_useLineNum);
+		s.syncAsSint16LE(_talkLineNum);
+	}
+}
+
 bool SceneHotspot::startAction(CursorType action, Event &event) {
 	switch (g_vm->getGameID()) {
 	case GType_BlueForce: {
 		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
 		assert(scene);
 		return scene->display(action);
+	}
+	case GType_Ringworld2: {
+		switch (action) {
+		case CURSOR_LOOK:
+			if (_lookLineNum != -1) {
+				SceneItem::display2(_resNum, _lookLineNum);
+				return true;
+			}
+			break;
+		case CURSOR_USE:
+			if (_useLineNum != -1) {
+				SceneItem::display2(_resNum, _useLineNum);
+				return true;
+			}
+			break;
+		case CURSOR_TALK:
+			if (_talkLineNum != -1) {
+				SceneItem::display2(_resNum, _talkLineNum);
+				return true;
+			}
+			break;
+		default:
+			break;
+		}
+
+		return ((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display(action, event);
 	}
 	default:
 		return SceneItem::startAction(action, event);
@@ -1803,6 +1862,87 @@ void SceneHotspot::doAction(int action) {
 			display(2, action, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	}
+}
+
+void SceneHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
+	setBounds(ys, xe, ye, xs);
+	_resNum = resnum;
+	_lookLineNum = lookLineNum;
+	_useLineNum = useLineNum;
+	_talkLineNum = -1;
+	g_globals->_sceneItems.addItems(this, NULL);
+}
+
+void SceneHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+	setBounds(bounds);
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	switch (mode) {
+	case 2:
+		g_globals->_sceneItems.push_front(this);
+		break;
+	case 4:
+		g_globals->_sceneItems.addBefore(item, this);
+		break;
+	case 5:
+		g_globals->_sceneItems.addAfter(item, this);
+		break;
+	default:
+		g_globals->_sceneItems.push_back(this);
+		break;
+	}
+}
+
+void SceneHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
+	_sceneRegionId = sceneRegionId;
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	// Handle adding hotspot to scene items list as necessary
+	switch (mode) {
+	case 2:
+		GLOBALS._sceneItems.push_front(this);
+		break;
+	case 3:
+		break;
+	default:
+		GLOBALS._sceneItems.push_back(this);
+		break;
+	}
+}
+
+void SceneHotspot::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	switch (mode) {
+	case 2:
+		g_globals->_sceneItems.push_front(this);
+		break;
+	case 4:
+		g_globals->_sceneItems.addBefore(item, this);
+		break;
+	case 5:
+		g_globals->_sceneItems.addAfter(item, this);
+		break;
+	default:
+		g_globals->_sceneItems.push_back(this);
+		break;
+	}
+}
+
+void SceneHotspot::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1892,7 +2032,10 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_strip = 0;
 	_frame = 0;
 	_effect = 0;
-	_shade = 0;
+	_shade = _shade2 = 0;
+	_linkedActor = NULL;
+
+	_field8A = Common::Point(0, 0);
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
@@ -2267,12 +2410,18 @@ void SceneObject::synchronize(Serializer &s) {
 	SYNC_POINTER(_mover);
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_moveRate);
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		s.syncAsSint16LE(_field8A.x);
+		s.syncAsSint16LE(_field8A.y);
+	}
 	SYNC_POINTER(_endAction);
 	s.syncAsUint32LE(_regionBitList);
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_effect);
 		s.syncAsSint16LE(_shade);
+		s.syncAsSint16LE(_shade2);
+		SYNC_POINTER(_linkedActor);
 	}
 }
 
@@ -2316,6 +2465,12 @@ void SceneObject::remove() {
 }
 
 void SceneObject::dispatch() {
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		if (_shade != _shade2)
+			_flags |= OBJFLAG_PANES;
+		_shade2 = _shade;
+	}
+
 	uint32 currTime = g_globals->_events.getFrameNumber();
 	if (_action)
 		_action->dispatch();
@@ -2422,6 +2577,17 @@ void SceneObject::dispatch() {
 	}
 	if (!(_flags & OBJFLAG_FIXED_PRIORITY)) {
 		setPriority(_position.y);
+	}
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		if (_linkedActor) {
+			_linkedActor->setPosition(_position);
+			_linkedActor->setStrip(_strip);
+			_linkedActor->setFrame(_frame);
+		}
+
+		if ((_effect == 1) && (getRegionIndex() < 11))
+			_shade = 0;
 	}
 }
 
@@ -2543,6 +2709,20 @@ void BackgroundSceneObject::draw() {
 	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
 	GfxSurface frame = getFrame();
 	g_globals->_sceneManager._scene->_backSurface.copyFrom(frame, destRect, priorityRegion);
+}
+
+void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10) {
+	warning("TODO: Implement properly BackgroundSceneObject::setup2()");
+	postInit();
+	setVisage(visage);
+	setStrip(stripFrameNum);
+	setFrame(frameNum);
+	setPosition(Common::Point(posX, posY), 0);
+	fixPriority(priority);
+}
+
+void BackgroundSceneObject::proc27() {
+	warning("STUB: BackgroundSceneObject::proc27()");
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3073,9 +3253,22 @@ void Player::enableControl() {
 	}
 }
 
-void Player::enableControl(CursorType cursor) {
+void Player::disableControl(CursorType cursorId, CursorType objectId) {
+	if (cursorId != -1)
+		R2_GLOBALS._events.setCursor(cursorId);
+	else if (objectId != CURSOR_NONE)
+		R2_GLOBALS._events.setCursor(objectId);
+
+	disableControl();
+}
+
+void Player::enableControl(CursorType cursorId, CursorType objectId) {
 	enableControl();
-	R2_GLOBALS._events.setCursor(cursor);
+
+	if (cursorId != -1)
+		R2_GLOBALS._events.setCursor(cursorId);
+	else if (objectId != CURSOR_NONE)
+		R2_GLOBALS._events.setCursor(objectId);
 }
 
 void Player::process(Event &event) {
@@ -3916,7 +4109,8 @@ void SceneHandler::process(Event &event) {
 
 	// Check for displaying right-click dialog
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
-			g_globals->_player._uiEnabled) {
+			g_globals->_player._uiEnabled &&
+			((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330))) {
 		g_globals->_game->rightClick();
 
 		event.handled = true;
@@ -4065,8 +4259,10 @@ void SceneHandler::dispatch() {
 	}
 
 	// Handle drawing the contents of the scene
-	if (g_globals->_sceneManager._scene)
-		g_globals->_sceneObjects->draw();
+	if ((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._animationCtr == 0)) {
+		if (g_globals->_sceneManager._scene)
+			g_globals->_sceneObjects->draw();
+	}
 
 	// Check to see if any scene change is required
 	g_globals->_sceneManager.checkScene();

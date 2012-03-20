@@ -156,7 +156,7 @@ void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &s
 			if (sourceRect.contains(x1, y1)) {
 				color = sourceBuffer[(x1-sourceRect.left) + sourceRect.width()*(y1-sourceRect.top)];
 				if (flags == 0 || color)
-					((byte*)pixels)[seq] = color;
+					((byte *)pixels)[seq] = color;
 			}
 		}
 	}

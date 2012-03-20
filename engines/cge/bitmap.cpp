@@ -158,7 +158,7 @@ BitmapPtr Bitmap::code() {
 	debugC(1, kCGEDebugBitmap, "Bitmap::code()");
 
 	if (!_m)
-		return false;
+		return NULL;
 
 	uint16 cnt;
 
@@ -198,7 +198,7 @@ BitmapPtr Bitmap::code() {
 					if ((pix == kPixelTransp) != skip || cnt >= 0x3FF0) { // end of block
 						cnt |= (skip) ? kBmpSKP : kBmpCPY;
 						if (_v)
-							*cp = TO_LE_16(cnt);                          // store block description uint16
+							WRITE_LE_UINT16(cp, cnt); // store block description uint16
 
 						cp = (uint16 *) im;
 						im += 2;
@@ -220,7 +220,7 @@ BitmapPtr Bitmap::code() {
 					} else {
 						cnt |= kBmpCPY;
 						if (_v)
-							*cp = TO_LE_16(cnt);
+							WRITE_LE_UINT16(cp, cnt);
 
 						cp = (uint16 *) im;
 						im += 2;
@@ -232,13 +232,13 @@ BitmapPtr Bitmap::code() {
 			if (cnt && ! skip) {
 				cnt |= kBmpCPY;
 				if (_v)
-					*cp = TO_LE_16(cnt);
+					WRITE_LE_UINT16(cp, cnt);
 
 				cp = (uint16 *) im;
 				im += 2;
 			}
 			if (_v)
-				*cp = TO_LE_16(kBmpEOI);
+				WRITE_LE_UINT16(cp, kBmpEOI);
 			cp = (uint16 *) im;
 			im += 2;
 		}

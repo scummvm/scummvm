@@ -26,7 +26,7 @@
 #undef ARRAYSIZE
 #endif
 
-#define TRANSLATIONS_DAT_VER 2
+#define TRANSLATIONS_DAT_VER 3
 
 #include "common/translation.h"
 #include "common/config-manager.h"
@@ -45,7 +45,7 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
 }
 
-TranslationManager::TranslationManager() : _currentLang(-1) {
+TranslationManager::TranslationManager() : _currentLang(-1), _charmap(0) {
 	loadTranslationsInfoDat();
 
 	// Set the default language
@@ -53,6 +53,7 @@ TranslationManager::TranslationManager() : _currentLang(-1) {
 }
 
 TranslationManager::~TranslationManager() {
+	delete[] _charmap;
 }
 
 int32 TranslationManager::findMatchingLanguage(const String &lang) {
@@ -231,8 +232,9 @@ bool TranslationManager::openTranslationsFile(File &inFile) {
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "translations.dat");
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		SeekableReadStream *stream = it->get()->createReadStream();
-		if (stream && inFile.open(stream, it->get()->getName())) {
+		ArchiveMember       const &m      = **it;
+		SeekableReadStream *const  stream = m.createReadStream();
+		if (stream && inFile.open(stream, m.getName())) {
 			if (checkHeader(inFile))
 				return true;
 			inFile.close();
@@ -289,9 +291,14 @@ void TranslationManager::loadTranslationsInfoDat() {
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
 
-	// Skip all the block sizes
-	for (int i = 0; i < nbTranslations + 2; ++i)
-		in.readUint16BE();
+	// Get number of codepages
+	int nbCodepages = in.readUint16BE();
+
+	// Determine where the codepages start
+	_charmapStart = 0;
+	for (int i = 0; i < nbTranslations + 3; ++i)
+		_charmapStart += in.readUint16BE();
+	_charmapStart += in.pos();
 
 	// Read list of languages
 	_langs.resize(nbTranslations);
@@ -303,6 +310,14 @@ void TranslationManager::loadTranslationsInfoDat() {
 		len = in.readUint16BE();
 		in.read(buf, len);
 		_langNames[i] = String(buf, len - 1);
+	}
+
+	// Read list of codepages
+	_charmaps.resize(nbCodepages);
+	for (int i = 0; i < nbCodepages; ++i) {
+		len = in.readUint16BE();
+		in.read(buf, len);
+		_charmaps[i] = String(buf, len - 1);
 	}
 
 	// Read messages
@@ -344,9 +359,16 @@ void TranslationManager::loadLanguageDat(int index) {
 		return;
 	}
 
+	// Get the number of codepages
+	int nbCodepages = in.readUint16BE();
+	if (nbCodepages != (int)_charmaps.size()) {
+		warning("The 'translations.dat' file has changed since starting ScummVM. GUI translation will not be available");
+		return;
+	}
+
 	// Get size of blocks to skip.
 	int skipSize = 0;
-	for (int i = 0; i < index + 2; ++i)
+	for (int i = 0; i < index + 3; ++i)
 		skipSize += in.readUint16BE();
 	// We also need to skip the remaining block sizes
 	skipSize += 2 * (nbTranslations - index);
@@ -380,6 +402,29 @@ void TranslationManager::loadLanguageDat(int index) {
 			_currentTranslationMessages[i].msgctxt = String(buf, len - 1);
 		}
 	}
+
+	// Find the charset
+	int charmapNum = -1;
+	for (uint i = 0; i < _charmaps.size(); ++i) {
+		if (_charmaps[i].equalsIgnoreCase(_currentCharset)) {
+			charmapNum = i;
+			break;
+		}
+	}
+
+	// Setup the new charset mapping
+	if (charmapNum == -1) {
+		delete[] _charmap;
+		_charmap = 0;
+	} else {
+		if (!_charmap)
+			_charmap = new uint32[256];
+
+		in.seek(_charmapStart + charmapNum * 256 * 4, SEEK_SET);
+		for (int i = 0; i < 256; ++i)
+			_charmap[i] = in.readUint32BE();
+	}
+
 }
 
 bool TranslationManager::checkHeader(File &in) {

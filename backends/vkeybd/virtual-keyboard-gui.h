@@ -121,7 +121,7 @@ private:
 	bool _displaying;
 	bool _firstRun;
 
-	void setupDisplayArea(Rect& r, OverlayColor forecolor);
+	void setupDisplayArea(Rect &r, OverlayColor forecolor);
 	void move(int16 x, int16 y);
 	void moveToDefaultPosition();
 	void screenChanged();
@@ -131,8 +131,8 @@ private:
 	void redraw();
 	void forceRedraw();
 	void updateDisplay();
-	bool fontIsSuitable(const Graphics::Font *font, const Rect& rect);
-	uint calculateEndIndex(const String& str, uint startIndex);
+	bool fontIsSuitable(const Graphics::Font *font, const Rect &rect);
+	uint calculateEndIndex(const String &str, uint startIndex);
 
 	bool _drawCaret;
 	int16 _caretX;
@@ -141,7 +141,7 @@ private:
 
 	static const int kCursorAnimateDelay = 250;
 	int _cursorAnimateCounter;
-	int	_cursorAnimateTimer;
+	int _cursorAnimateTimer;
 	byte _cursor[2048];
 	void setupCursor();
 	void removeCursor();

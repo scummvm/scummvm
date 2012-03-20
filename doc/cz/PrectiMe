@@ -1,5 +1,4 @@
 PŘEČTIMĚ ScummVM
-Poslední aktualizace:    $Date$
 ------------------------------------------------------------------------
 
 Pro více informací, seznamy kompatibility, podrobnosti o dotacích, nejnovější verze, novinky o vývoji a další, prosím navštivte domovskou stránku ScummVM na: http://www.scummvm.org/
@@ -388,6 +387,10 @@ Pokyny pro hry Broken Sword jsou pro verze od Sold-Out Software, kde každá hra
 ------ -------------------------
 Videa pro hry Broken Sword mají v sobě trochu historie (viz další oddíl, pokud jste zvědaví), ale obecně jediné, co potřebujete udělat, je zkopírovat soubory .SMK ze složek "SMACKS" nebo "SMACKSHI" na CD do stejné složky jako ostatní datové soubory hry. (Broken Sword má také složku "SMACKSLO" se stejnými videi, ale ty jsou nižší kvality.) Můžete je umístit do podsložky s názvem "video", pokud Vám to přijde hezčí.
 
+Ve verzích pro PlayStation, můžete původní videa vypsat z disku. Každý soubor, který má příponu "STR", byste měli vypsat jako *čist* sektory z disku (všech 2352 bajtů na sektor). Můžete také míst toho použít přeformátovaná videa, která jsou zmíněna níže, ale to nebude fungovat pro všechny videa v Broken Sword II. Pro více informací si prohlédněte:
+
+  http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
+
 Některá vydání hry, a také verze pro PlayStation, Smacker videa nemají. Revolution Software nám laskavě dovolilo poskytovat přeformátovaná videa ke stažení na naší stránce:
 
   http://www.scummvm.org/downloads.php
@@ -396,7 +399,7 @@ Tato videa jsou poskytována ve formátu DXA se zvukem ve formátu FLAC. Jejich 
 
 Pro systémy, které jsou příliš pomalé, aby zvládli dekódovat formát FLAC byl zvuk videí také poskytnut odděleně ve formátu OGG Vorbis audio. Toto vyžaduje, aby verze ScummVM byla sestavena s podporou libVorbis a zlib.
 
-Pro Broken Sword také poskytujeme přídavek pro titulky. Jednoduše ho rozbalte a následujte pokyny v souboru readme.txt. (Broken Sword II již titulky má; není třeba další práce pro jejich přidání.)
+Pro Broken Sword také poskytujeme přídavek pro titulky. Jednoduše ho rozbalte a následujte pokyny v souboru readme.txt. Balíček v současnosti nefunguje ve videích na PlayStation. (Broken Sword II již titulky má; není třeba další práce pro jejich přidání.)
 
 
 3.7.2) Videa her Broken Sword ve zpětném pohledu:
@@ -449,8 +452,7 @@ Také můžete použít nástroj 'compress_queen' z balíčku nástrojů pro 'z
 CD verze série Gobliiins obsahuje jednu velkou zvukovou stopu, kterou potřebujete vyjmout (viz oddíl o použití komprimovaných zvukových souborů) a zkopírovat ji do herní složky, pokud chcete ve hře hudbu, aniž byste museli CD mít stále v jednotce. V této stopě jsou také řeč a její hlasitost se tedy také mění podle hlasitosti hudby.
 
 
-3.11) Poznámky k Inherit the Earth: Quest for the Orb
-:
+3.11) Poznámky k Inherit the Earth: Quest for the Orb:
 ----- ------------------------------------------------
 Abyste mohli spustit verzi pro Mac OS X od Wyrmkeep musíte data zkopírovat z CD na Váš pevný disk. Pokud používáte PC, pak se podívejte na:
 
@@ -482,8 +484,11 @@ Přejmenovat voices.wav na CD4 na voices4.wav
 
 3.14) Poznámky k The Legend of Kyrandia:
 ----- ----------------------------------
-Abyste mohli spustit The Legend of Kyrandia ve ScummVM potřebujete soubor 'kyra.dat', který můžete najít na stránce 'Downloads' domovské stránky ScummVM.
-
+Abyste mohli spustit The Legend of Kyrandia ve ScummVM potřebujete soubor 'kyra.dat'.
+Soubor by měl být vždykcy součástí oficiálních balíčků ScummVM. V případě, že ScummVM
+hlásí, že soubor chybá, můžete ho najít na stránce ScummVM v sekci 'Downloads'.
+Nezapomeňte, že současná verze ScummVM pro Windows by měla soubor obsahovat ve spouštěči a tudíž ho
+musíte mít pouze, když ScummVM soubor nemůže nalézt.
 
 3.15) Poznámky k Předvídavému Vstupnímu Dialogu her Sierra AGI:
 ----- ---------------------------------------------------------
@@ -491,7 +496,7 @@ Předvídavý Vstupní Dialog je pomůcka ScummVM pro spouštění her používa
 
 Abyste zapnuli předvídavý vstup v hrách AGI, potřebujete zkopírovat soubor pred.dic do dodatečné složky ScummVM nebo do složky hry, kterou chcete hrát. Tento slovník byl vytvořen analýzou všech známých her AGI a obsahuje maximální sadu běžných slov.
 
-Pokud je slovník zjištěn je Předvídavý Vstupní Dialog zobrazen buď při klinutí na oblast příkazového řádku (kdykoliv je požadován vstup klávesnice, i v rámečcích dialogových oken), nebo v některých verzích pro jiné systémy stisknutím určené klávesové zkratky.
+Pokud je slovník zjištěn, je Předvídavý Vstupní Dialog zobrazen buď při klinutí na oblast příkazového řádku (kdykoliv je požadován vstup klávesnice, i v rámečcích dialogových oken), nebo v některých verzích pro jiné systémy stisknutím určené klávesové zkratky.
 
 Předvídavý Vstupní Dialog pracuje ve třech režimech, které jsou přepínány tlačítkem (*)Pre/123/Abc. Hlavní vstupní metodou je předvídavý režim 
 (Pre), který připomíná "rychlé zadávání" v mobilních telefonech. 
@@ -507,7 +512,7 @@ Dialogové okno je plně použitelné pomocí myši, ale v některých verzích
 
 3.16) Poznámky k Mickey's Space Adventure:
 ----- ------------------------------------
-Abyste mohli Mickey's Space Adventure hrát ve ScummVM, potřebujete spolu s datovými soubory hry také původní spouštěč executable (mickey.exe).
+Abyste mohli Mickey's Space Adventure hrát ve ScummVM, potřebujete spolu s datovými soubory hry také původní spouštěč (mickey.exe).
 
 Pro tuto hru ve ScummVM, existuje rozšířená podpora myši, i když v původní hře takováto podpora nebyla. Položky menu mohou být vybrány pomocí myši a je také možné se myší přesunout do jiných míst. Když se kurzor myši nachází na okraji obrazovky, zčervená, pokud je možné jít v tomto směru. Hráč pak může jednoduše kliknout na okraje herní obrazovky pro změnu místa, podobně jako mnoho adventur, což je jednodušší a přímočařejší než pohyb pomocí menu.
 
@@ -543,10 +548,7 @@ Toto vydání má následující známé problémy. Není třeba je ohlašovat, 
 - Při hraní her, které používají CD Audio (hry FM-TOWNS, Loom CD, atd) může u uživatelů Microsoft Windows 2000/XP docházet k náhodným pádům. To je díky dlouhotrvající chybě Windows, která má za následek poškozené soubory při čtení z CD. Abyste se tomuto vyhnuli, zkopírujte, prosím, soubory na pevný disk
 
   Verze FM-TOWNS:
-- Verze Kandži vyžaduje ROM písma FM-TOWNS Font 
-- ScummVM bude náhodně padat v následujících hrách při použití ROM písma FM-TOWNS pro Kandži:
-The Secret of Monkey Island, Monkey Island 2: LeChuck's Revenge
-a Indiana Jones and the Fate of Atlantis
+- Verze Kandži vyžaduje ROM písma FM-TOWNS 
 
   Loom:
 - Vypnutí titulků pomocí souboru nastavení je nevypne spolehlivě, protože skripty Loom je znovu automaticky zapnou
@@ -590,7 +592,6 @@ a Indiana Jones and the Fate of Atlantis
   The Legend of Kyrandia:
 - Ve verzích na disketě pro Mac není žádná hudba ani zvukové efekty.
 - CD Macintosh používá zahrnutou hudbu a zvukové efekty z DOS.
-- Verze pro PC-9821 nemá podporu zvukových efektů.
 
   Hry Humongous Entertainment:
     - Pouze původní rozhraní pro uložení a načtení mohou být použity.
@@ -668,6 +669,7 @@ ScummVM může také hru spustit přímo pomocí argumentů příkazové řádky
   --themepath=CESTA        Cesta kde jsou vzhledy rozhraní uloženy
   --list-themes            Zobrazí seznam všech použitelných vzhledů  
   -e, --music-driver=REŽIM Vybere ovladač hudby (viz také část 7.0)
+  --list-audio-devices     Zobrazí seznam všech dostupných zvukových zařízení
   -q, --language=JAZYK     Vybere jazyk hry (viz také část 5.2)
   -m, --music-volume=Č.    Nastaví hlasitost hudby, 0-255 (výchozí: 192)
   -s, --sfx-volume=Č.      Nastaví hlasitost zvuků, 0-255 (výchozí: 192)
@@ -816,19 +818,28 @@ Jádra, která v současnosti podporují návrat do spouštěče, jsou:
     AGI
     AGOS
     CINE
+    COMPOSER
+    CRUISE
     DRACI
+    DRASCULA
     GOB
     GROOVIE
+    HUGO
     KYRA
     LURE
+    MADE
+    MOHAWK
     PARALLACTION
     QUEEN
     SAGA
+    SCI
     SCUMM
     SKY
     SWORD1
     SWORD2
+    TEENAGENT
     TOUCHE
+    TSAGE
     TUCKER
 
 
@@ -977,16 +988,36 @@ Poznámka pro uživatele WinCE: Kvůli omezenému vstupu z klávesnice ve vět�
 
 6.0) Uložené hry:
 ---- ------------
-Uložené hry jsou na některých platformách standardně umístěny do současné složky a v jiných do přednastavené složky. To můžete určit v souboru s nastavení nastavením parametru savepath. Podívejte se na vzorový soubor s nastavením dále v tomto souboru.
+Uložené hry jsou na některých platformách standardně umístěny do současné složky a v jiných do přednastavené složky. To můžete určit v souboru s nastavením pomocí parametru savepath. Podívejte se na vzorový soubor s nastavením dále v tomto souboru.
 
 Platformy, které v současnosti mají jiné výchozí složky jsou:
-    Mac OS X:     $HOME/Documents/ScummVM Savegames/
-    Jiné unixy: $HOME/.scummvm/
+    Mac OS X:     
+    $HOME/Documents/ScummVM Savegames/
+    
+    Jiné unixy:
+    $HOME/.scummvm/
+    
+     Windows Vista/7:
+    \Users\užjméno\AppData\Roaming\ScummVM\Saved games\
+    
+    Windows 2000/XP:
+    \Documents and Settings\užjméno\Application Data\ScummVM\Saved games\
+    
+    Windows NT4:
+    <windir>\Profiles\užjméno\Application Data\ScummVM\Saved games\
+
+Uložené hry jsou ve Windows NT4/2000/XP/Vista/7 ukládány ve skryté složce,
+do které můžete vstoupit spuštěním "%APPDATA%\ScummVM\Saved Games\" nebo
+povolením zobrazení skrytých složek v Průzkumníku Windows.
+
+Poznámka pro uživatele Windows NT4/2000/XP/Vista/7: Výchozí umístění uložených her
+bylo ve ScummVM 1.5.0 změněno. Dávkový soubor přesunu může být použit pro zkopírování
+uložených her ze starého výchozího umístění do nového. 
 
 6.1) 6.1 Automatické ukládání:
 ---- -------------------------
 V některých hrách, (a to "Beneath a Steel Sky", "Flight of the Amazon
-Queen", všechny hry AGI, and všechny hry SCUMM), bude ScummVM standardně automaticky ukládat současný stav každých pšt minut (upravitelné pomocí nastavení "autoukládání"). Pro jádra AGI a SCUMM, je bude ukládat do pozice 0. V jádru SCUMM může být tento uložený stav znovu načten pomocí Ctrl-0 nebo menu F5.
+Queen", všechny hry AGI, a všechny hry SCUMM), bude ScummVM standardně automaticky ukládat současný stav každých pět minut (upravitelné pomocí nastavení "autoukládání"). Pro jádra AGI a SCUMM, je bude ukládat do pozice 0. V jádru SCUMM může být tento uložený stav znovu načten pomocí Ctrl-0 nebo menu F5.
 
 
 6.2) Převod uložených her:
@@ -1030,20 +1061,28 @@ Kde 'xxx' je číslo pozice uložené hry (tj. 001) ve ScummVM
 
        AGI
        AGOS
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
+       MOHAWK
        PARALLACTION
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
        TUCKER
 
 --save-slot/-x:
@@ -1055,20 +1094,28 @@ Kde 'xxx' je číslo pozice uložené hry (tj. 001) ve ScummVM
    Jádra, která v současnosti podporují--save-slot/-x jsou:
 
        AGI
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
-       PARALLACTION
+       MOHAWK
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
+       TUCKER
 
 
 7.0) Hudba a Zvuk:
@@ -1370,7 +1417,7 @@ Použití kmitočtů mezi není doporučeno. Za prvé Vaše zvuková karta ho ne
 ---- --------------------
 Standardně je soubor s nastavením uložen a načítán:
 
-    Windows Vista:
+    Windows Vista/7:
     \Users\jméno uživatele\AppData\Roaming\ScummVM\scummvm.ini,
 
     Windows 2000/XP:
@@ -1493,10 +1540,13 @@ Simon the Sorcerer 1 a 2 přidává následující nestandardní klíčová slov
     music_mute         boolean  Pokud true, hudba je ztlumena
     sfx_mute           boolean  Pokud true, zvukové efekty jsou ztlumeny
 
-The Legend of Kyrandia přidává následující nestandardní klíčová slova:
+The Legend of Kyrandia přidává následující nestandardní klíčové slovo:
 
     walkspeed          celé číslo      Rychlost chůze (0-4)
+    
+The 7th Guest přidává následující nestandardní klíčové slovo:
 
+    t7g_speed          řetězec   Rychlost přehrávání videa (normal - normální, tweaked - upravená, im_an_ios - jsem na ios)
 
 9.0) Sestavení:
 ---- ----------
@@ -1533,12 +1583,6 @@ Na Win9x/NT/XP můžete určit USE_WINDBG a připojit WinDbg pro procházení la
     * Přečtěte si prosím:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
-  Debian GNU/Linux:
-    * VeVašem systému nainstalujte balíčky 'build-essential', 'fakeroot', 'debhelper' a 'libsdl1.2-dev'.
-    * Instalujte jakýkoli z těchto balíčků (nepovinné): 'libvorbis-dev' (pro podporu Ogg Vorbis), 'libasound2-dev' (pro podporu sekvencéru ALSA), 'libmad0-dev' (pro podporu MAD MP3), 'zlib1g-dev' (pro podporu komprimovaných uložených pozic).
-    * Spusťte 'make deb'.
-    * Nakonec spusťte 'dpkg -i ../scummvm-cvs*deb', a máte hotovo.
-
   Mac OS X:
     * Ujistěte se, že máte nainstalovány nástroje pro vývojáře.
     * Balíček SDL pro vývojáře na OS X, který je dostupný na stránce SDL _není_ vhodný. Spíše potřebujete sestavení v unixovém stylu. Jeden takový způsob, jak ho nainstalovat je pomocí Fink
@@ -1574,3 +1618,5 @@ Hodně Štěstí a Šťastné Adventurování!
 Tým ScummVM.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
+
+

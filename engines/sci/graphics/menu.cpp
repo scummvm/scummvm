@@ -286,7 +286,7 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 
 	switch (attributeId) {
 	case SCI_MENU_ATTRIBUTE_ENABLED:
-		itemEntry->enabled = value.isNull() ? false : true;
+		itemEntry->enabled = !value.isNull();
 		break;
 	case SCI_MENU_ATTRIBUTE_SAID:
 		itemEntry->saidVmPtr = value;
@@ -606,7 +606,7 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 		listItemEntry = *listItemIterator;
 		if (listItemEntry->menuId == newMenuId) {
 			if (!listItemEntry->separatorLine) {
-				_ports->textGreyedOutput(listItemEntry->enabled ? false : true);
+				_ports->textGreyedOutput(!listItemEntry->enabled);
 				_ports->moveTo(_menuRect.left, topPos);
 				_text16->DrawString(listItemEntry->textSplit.c_str());
 				_ports->moveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);

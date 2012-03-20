@@ -50,6 +50,7 @@ public:
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleTickle();
+	virtual void handleOtherEvent(Common::Event ev);
 
 protected:
 	struct ActionWidgets {
@@ -67,7 +68,7 @@ protected:
 	void refreshKeymap();
 	void clearMapping(uint i);
 	void startRemapping(uint i);
-	void stopRemapping();
+	void stopRemapping(bool force = false);
 
 	Keymapper *_keymapper;
 	Keymap** _keymapTable;
@@ -82,14 +83,15 @@ protected:
 	//GUI::ContainerWidget *_container;
 	GUI::ScrollBarWidget *_scrollBar;
 
-	uint _colCount, _rowCount;
+	uint _rowCount;
 
 	Array<ActionWidgets> _keymapWidgets;
-	Action *_activeRemapAction;
 	uint32 _remapTimeout;
 	static const uint32 kRemapTimeoutDelay = 3000;
 
 	bool _changes;
+
+	bool _topKeymapIsGui;
 
 };
 
