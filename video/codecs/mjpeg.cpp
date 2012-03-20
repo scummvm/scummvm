@@ -22,8 +22,8 @@
 
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/jpeg.h"
 #include "graphics/surface.h"
+#include "graphics/decoders/jpeg.h"
 
 #include "video/codecs/mjpeg.h"
 
@@ -34,38 +34,31 @@ class SeekableReadStream;
 namespace Video {
 
 JPEGDecoder::JPEGDecoder() : Codec() {
-	_jpeg = new Graphics::JPEG();
 	_pixelFormat = g_system->getScreenFormat();
 	_surface = NULL;
 }
 
 JPEGDecoder::~JPEGDecoder() {
-	delete _jpeg;
-
 	if (_surface) {
 		_surface->free();
 		delete _surface;
 	}
 }
 
-const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
-	if (!_jpeg->read(stream)) {
+const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream *stream) {
+	Graphics::JPEGDecoder jpeg;
+
+	if (!jpeg.loadStream(*stream)) {
 		warning("Failed to decode JPEG frame");
 		return 0;
 	}
 
-	if (!_surface) {
-		_surface = new Graphics::Surface();
-		_surface->create(_jpeg->getWidth(), _jpeg->getHeight(), _pixelFormat);
+	if (_surface) {
+		_surface->free();
+		delete _surface;
 	}
 
-	Graphics::Surface *frame = _jpeg->getSurface(_pixelFormat);
-	assert(frame);
-
-	_surface->copyFrom(*frame);
-
-	frame->free();
-	delete frame;
+	_surface = jpeg.getSurface()->convertTo(_pixelFormat);
 
 	return _surface;
 }

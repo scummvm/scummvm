@@ -53,6 +53,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "graphics/decoders/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -61,82 +62,44 @@ class SeekableReadStream;
 namespace Graphics {
 
 struct Surface;
-
-enum PNGColorType {
-	kGrayScale          = 0,	// bit depths: 1, 2, 4, 8, 16
-	kTrueColor          = 2,	// bit depths: 8, 16
-	kIndexed            = 3,	// bit depths: 1, 2, 4, 8
-	kGrayScaleWithAlpha = 4,	// bit depths: 8, 16
-	kTrueColorWithAlpha = 6		// bit depths: 8, 16
-};
-
-enum PNGInterlaceType {
-	kNonInterlaced      = 0,
-	kInterlaced         = 1
-};
-
-struct PNGHeader {
-	uint32 width;
-	uint32 height;
-	byte bitDepth;
-	PNGColorType colorType;
-	byte compressionMethod;
-	byte filterMethod;
-	PNGInterlaceType interlaceType;
-};
-
 struct PixelFormat;
 
-class PNG {
+class PNGDecoder : public ImageDecoder {
 public:
-	PNG();
-	~PNG();
+	PNGDecoder();
+	~PNGDecoder();
 
-	/**
-	 * Reads a PNG image from the specified stream
-	 */
-	bool read(Common::SeekableReadStream *str);
-
-	/**
-	 * Returns the information obtained from the PNG header.
-	 */
-	PNGHeader getHeader() const { return _header; }
-
-	/**
-	 * Returns the PNG image, formatted for the specified pixel format.
-	 */
-	Graphics::Surface *getSurface(const PixelFormat &format);
-
-	/**
-	 * Returns the indexed PNG8 image. Used for PNGs with an indexed 256 color
-	 * palette, when they're shown on an 8-bit color screen, as no translation
-	 * is taking place.
-	 */
-	Graphics::Surface *getIndexedSurface() {
-		if (_header.colorType != kIndexed)
-			error("Indexed surface requested for a non-indexed PNG");
-		return _unfilteredSurface;
-	}
-
-	/**
-	 * Returns the palette of the specified PNG8 image, given a pointer to
-	 * an RGBA palette array (4 x 256).
-	 */
-	void getPalette(byte *palette, uint16 &entries) {
-		if (_header.colorType != kIndexed)
-			error("Palette requested for a non-indexed PNG");
-		for (int i = 0; i < 256; i++) {
-			palette[0 + i * 4] = _palette[0 + i * 4];	// R
-			palette[1 + i * 4] = _palette[1 + i * 4];	// G
-			palette[2 + i * 4] = _palette[2 + i * 4];	// B
-			palette[3 + i * 4] = _palette[3 + i * 4];	// A
-		}
-		entries = _paletteEntries;
-	}
+	bool loadStream(Common::SeekableReadStream &stream);
+	void destroy();
+	const Graphics::Surface *getSurface() const { return _outputSurface; }
+	const byte *getPalette() const { return _palette; }
 
 private:
+	enum PNGColorType {
+		kGrayScale          = 0,	// bit depths: 1, 2, 4, 8, 16
+		kTrueColor          = 2,	// bit depths: 8, 16
+		kIndexed            = 3,	// bit depths: 1, 2, 4, 8
+		kGrayScaleWithAlpha = 4,	// bit depths: 8, 16
+		kTrueColorWithAlpha = 6		// bit depths: 8, 16
+	};
+
+	enum PNGInterlaceType {
+		kNonInterlaced      = 0,
+		kInterlaced         = 1
+	};
+
+	struct PNGHeader {
+		uint32 width;
+		uint32 height;
+		byte bitDepth;
+		PNGColorType colorType;
+		byte compressionMethod;
+		byte filterMethod;
+		PNGInterlaceType interlaceType;
+	};
+
 	void readHeaderChunk();
-	byte getNumColorChannels();
+	byte getNumColorChannels() const;
 
 	void readPaletteChunk();
 	void readTransparencyChunk(uint32 chunkLength);
@@ -152,7 +115,8 @@ private:
 
 	PNGHeader _header;
 
-	byte _palette[256 * 4];	// RGBA
+	byte _palette[256 * 3];	// RGB
+	byte _paletteTransparency[256];
 	uint16 _paletteEntries;
 	uint16 _transparentColor[3];
 	bool _transparentColorSpecified;
@@ -160,9 +124,12 @@ private:
 	byte *_compressedBuffer;
 	uint32 _compressedBufferSize;
 
-	Graphics::Surface *_unfilteredSurface;
+	Graphics::Surface *_outputSurface;
+	Graphics::PixelFormat findPixelFormat() const;
+	int getBytesPerPixel() const;
+	void constructOutput(const byte *surface);
 };
 
-} // End of Graphics namespace
+} // End of namespace Graphics
 
 #endif // GRAPHICS_PNG_H

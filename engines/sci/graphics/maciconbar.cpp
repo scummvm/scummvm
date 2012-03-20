@@ -31,8 +31,8 @@
 
 #include "common/memstream.h"
 #include "common/system.h"
-#include "graphics/pict.h"
 #include "graphics/surface.h"
+#include "graphics/decoders/pict.h"
 
 namespace Sci {
 
@@ -201,18 +201,20 @@ void GfxMacIconBar::setInventoryIcon(int16 icon) {
 }
 
 Graphics::Surface *GfxMacIconBar::loadPict(ResourceId id) {
-	Graphics::PictDecoder pictDecoder(Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::PICTDecoder pictDecoder;
 	Resource *res = g_sci->getResMan()->findResource(id, false);
 
 	if (!res || res->size == 0)
 		return 0;
 
-	byte palette[256 * 3];
-	Common::SeekableReadStream *stream = new Common::MemoryReadStream(res->data, res->size);
-	Graphics::Surface *surface = pictDecoder.decodeImage(stream, palette);
-	remapColors(surface, palette);
+	Common::MemoryReadStream stream(res->data, res->size);
+	if (!pictDecoder.loadStream(stream))
+		return 0;
 
-	delete stream;
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->copyFrom(*pictDecoder.getSurface());
+	remapColors(surface, pictDecoder.getPalette());
+
 	return surface;
 }
 
@@ -221,7 +223,7 @@ Graphics::Surface *GfxMacIconBar::createImage(uint32 iconIndex, bool isSelected)
 	return loadPict(ResourceId(type, iconIndex + 1));
 }
 
-void GfxMacIconBar::remapColors(Graphics::Surface *surf, byte *palette) {
+void GfxMacIconBar::remapColors(Graphics::Surface *surf, const byte *palette) {
 	byte *pixels = (byte *)surf->pixels;
 
 	// Remap to the screen palette

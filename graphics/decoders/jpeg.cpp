@@ -20,9 +20,9 @@
  *
  */
 
-#include "graphics/conversion.h"
-#include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
+#include "graphics/yuv_to_rgb.h"
+#include "graphics/decoders/jpeg.h"
 
 #include "common/debug.h"
 #include "common/endian.h"
@@ -43,9 +43,9 @@ static const uint8 _zigZagOrder[64] = {
 	53, 60, 61, 54, 47, 55, 62, 63
 };
 
-JPEG::JPEG() :
+JPEGDecoder::JPEGDecoder() : ImageDecoder(),
 	_stream(NULL), _w(0), _h(0), _numComp(0), _components(NULL), _numScanComp(0),
-	_scanComp(NULL), _currentComp(NULL) {
+	_scanComp(NULL), _currentComp(NULL), _rgbSurface(0) {
 
 	// Initialize the quantization tables
 	for (int i = 0; i < JPEG_MAX_QUANT_TABLES; i++)
@@ -60,42 +60,33 @@ JPEG::JPEG() :
 	}
 }
 
-JPEG::~JPEG() {
-	reset();
+JPEGDecoder::~JPEGDecoder() {
+	destroy();
 }
 
-Surface *JPEG::getSurface(const PixelFormat &format) {
+const Surface *JPEGDecoder::getSurface() const {
 	// Make sure we have loaded data
 	if (!isLoaded())
 		return 0;
 
-	// Only accept >8bpp surfaces
-	if (format.bytesPerPixel == 1)
-		return 0;
+	if (_rgbSurface)
+		return _rgbSurface;
+
+	// Create an RGBA8888 surface
+	_rgbSurface = new Graphics::Surface();
+	_rgbSurface->create(_w, _h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	// Get our component surfaces
-	Graphics::Surface *yComponent = getComponent(1);
-	Graphics::Surface *uComponent = getComponent(2);
-	Graphics::Surface *vComponent = getComponent(3);
+	const Graphics::Surface *yComponent = getComponent(1);
+	const Graphics::Surface *uComponent = getComponent(2);
+	const Graphics::Surface *vComponent = getComponent(3);
 
-	Graphics::Surface *output = new Graphics::Surface();
-	output->create(yComponent->w, yComponent->h, format);
+	convertYUV444ToRGB(_rgbSurface, (byte *)yComponent->pixels, (byte *)uComponent->pixels, (byte *)vComponent->pixels, yComponent->w, yComponent->h, yComponent->pitch, uComponent->pitch);
 
-	for (uint16 i = 0; i < output->h; i++) {
-		for (uint16 j = 0; j < output->w; j++) {
-			byte r = 0, g = 0, b = 0;
-			YUV2RGB(*((byte *)yComponent->getBasePtr(j, i)), *((byte *)uComponent->getBasePtr(j, i)), *((byte *)vComponent->getBasePtr(j, i)), r, g, b);
-			if (format.bytesPerPixel == 2)
-				*((uint16 *)output->getBasePtr(j, i)) = format.RGBToColor(r, g, b);
-			else
-				*((uint32 *)output->getBasePtr(j, i)) = format.RGBToColor(r, g, b);
-		}
-	}
-
-	return output;
+	return _rgbSurface;
 }
 
-void JPEG::reset() {
+void JPEGDecoder::destroy() {
 	// Reset member variables
 	_stream = NULL;
 	_w = _h = 0;
@@ -125,14 +116,19 @@ void JPEG::reset() {
 		delete[] _huff[i].sizes; _huff[i].sizes = NULL;
 		delete[] _huff[i].codes; _huff[i].codes = NULL;
 	}
+
+	if (_rgbSurface) {
+		_rgbSurface->free();
+		delete _rgbSurface;
+	}
 }
 
-bool JPEG::read(Common::SeekableReadStream *stream) {
+bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// Reset member variables and tables from previous reads
-	reset();
+	destroy();
 
 	// Save the input stream
-	_stream = stream;
+	_stream = &stream;
 
 	bool ok = true;
 	bool done = false;
@@ -211,41 +207,41 @@ bool JPEG::read(Common::SeekableReadStream *stream) {
 		}
 		}
 	}
+
+	_stream = 0;
 	return ok;
 }
 
-bool JPEG::readJFIF() {
+bool JPEGDecoder::readJFIF() {
 	uint16 length = _stream->readUint16BE();
 	uint32 tag = _stream->readUint32BE();
 	if (tag != MKTAG('J', 'F', 'I', 'F')) {
-		warning("JPEG::readJFIF() tag mismatch");
+		warning("JPEGDecoder::readJFIF() tag mismatch");
 		return false;
 	}
 	if (_stream->readByte() != 0)  { // NULL
-		warning("JPEG::readJFIF() NULL mismatch");
+		warning("JPEGDecoder::readJFIF() NULL mismatch");
 		return false;
 	}
 	byte majorVersion = _stream->readByte();
 	byte minorVersion = _stream->readByte();
-
-	if (majorVersion != 1 || (minorVersion != 1 && minorVersion != 2))
-		warning("JPEG::readJFIF() Non-v1.1/1.2 JPEGs may not be handled correctly");
-
-	/* byte densityUnits = */ _stream->readByte();
-	/* uint16 xDensity = */ _stream->readUint16BE();
-	/* uint16 yDensity = */ _stream->readUint16BE();
+	if (majorVersion != 1 || minorVersion != 1)
+		warning("JPEGDecoder::readJFIF() Non-v1.1 JPEGs may not be handled correctly");
+	/* byte densityUnits = */_stream->readByte();
+	/* uint16 xDensity = */_stream->readUint16BE();
+	/* uint16 yDensity = */_stream->readUint16BE();
 	byte thumbW = _stream->readByte();
 	byte thumbH = _stream->readByte();
 	_stream->seek(thumbW * thumbH * 3, SEEK_CUR); // Ignore thumbnail
 	if (length != (thumbW * thumbH * 3) + 16) {
-		warning("JPEG::readJFIF() length mismatch");
+		warning("JPEGDecoder::readJFIF() length mismatch");
 		return false;
 	}
 	return true;
 }
 
 // Marker 0xC0 (Start Of Frame, Baseline DCT)
-bool JPEG::readSOF0() {
+bool JPEGDecoder::readSOF0() {
 	debug(5, "JPEG: readSOF0");
 	uint16 size = _stream->readUint16BE();
 
@@ -284,7 +280,7 @@ bool JPEG::readSOF0() {
 }
 
 // Marker 0xC4 (Define Huffman Tables)
-bool JPEG::readDHT() {
+bool JPEGDecoder::readDHT() {
 	debug(5, "JPEG: readDHT");
 	uint16 size = _stream->readUint16BE() - 2;
 	uint32 pos = _stream->pos();
@@ -346,7 +342,7 @@ bool JPEG::readDHT() {
 }
 
 // Marker 0xDA (Start Of Scan)
-bool JPEG::readSOS() {
+bool JPEGDecoder::readSOS() {
 	debug(5, "JPEG: readSOS");
 	uint16 size = _stream->readUint16BE();
 
@@ -473,7 +469,7 @@ bool JPEG::readSOS() {
 }
 
 // Marker 0xDB (Define Quantization Tables)
-bool JPEG::readDQT() {
+bool JPEGDecoder::readDQT() {
 	debug(5, "JPEG: readDQT");
 	uint16 size = _stream->readUint16BE() - 2;
 	uint32 pos = _stream->pos();
@@ -503,7 +499,7 @@ bool JPEG::readDQT() {
 }
 
 // Marker 0xDD (Define Restart Interval)
-bool JPEG::readDRI() {
+bool JPEGDecoder::readDRI() {
 	debug(5, "JPEG: readDRI");
 	uint16 size = _stream->readUint16BE() - 2;
 
@@ -517,7 +513,7 @@ bool JPEG::readDRI() {
 	return true;
 }
 
-bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
+bool JPEGDecoder::readMCU(uint16 xMCU, uint16 yMCU) {
 	bool ok = true;
 	for (int c = 0; ok && (c < _numComp); c++) {
 		// Set the current component
@@ -549,7 +545,7 @@ bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
 	xb = (n - (k2 + k1) * p) >> sh;
 
 // IDCT based on public domain code from http://halicery.com/jpeg/idct.html
-void JPEG::idct1D8x8(int32 src[8], int32 dest[64], int32 ps, int32 half) {
+void JPEGDecoder::idct1D8x8(int32 src[8], int32 dest[64], int32 ps, int32 half) {
 	int p, n;
 
 	src[0] <<= 9;
@@ -578,7 +574,7 @@ void JPEG::idct1D8x8(int32 src[8], int32 dest[64], int32 ps, int32 half) {
 	dest[7 * 8] = (src[0] - src[1]) >> ps;
 }
 
-void JPEG::idct2D8x8(int32 block[64]) {
+void JPEGDecoder::idct2D8x8(int32 block[64]) {
 	int32 tmp[64];
 
 	// Apply 1D IDCT to rows
@@ -590,7 +586,7 @@ void JPEG::idct2D8x8(int32 block[64]) {
 		idct1D8x8(&tmp[i * 8], &block[i], 12, 1 << 11);
  }
 
-bool JPEG::readDataUnit(uint16 x, uint16 y) {
+bool JPEGDecoder::readDataUnit(uint16 x, uint16 y) {
 	// Prepare an empty data array
 	int16 readData[64];
 	for (int i = 1; i < 64; i++)
@@ -654,7 +650,7 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	return true;
 }
 
-int16 JPEG::readDC() {
+int16 JPEGDecoder::readDC() {
 	// DC is type 0
 	uint8 tableNum = _currentComp->DCentropyTableSelector << 1;
 
@@ -665,7 +661,7 @@ int16 JPEG::readDC() {
 	return readSignedBits(numBits);
 }
 
-void JPEG::readAC(int16 *out) {
+void JPEGDecoder::readAC(int16 *out) {
 	// AC is type 1
 	uint8 tableNum = (_currentComp->ACentropyTableSelector << 1) + 1;
 
@@ -695,7 +691,7 @@ void JPEG::readAC(int16 *out) {
 	}
 }
 
-int16 JPEG::readSignedBits(uint8 numBits) {
+int16 JPEGDecoder::readSignedBits(uint8 numBits) {
 	uint16 ret = 0;
 	if (numBits > 16)
 		error("requested %d bits", numBits); //XXX
@@ -713,7 +709,7 @@ int16 JPEG::readSignedBits(uint8 numBits) {
 }
 
 // TODO: optimize?
-uint8 JPEG::readHuff(uint8 table) {
+uint8 JPEGDecoder::readHuff(uint8 table) {
 	bool foundCode = false;
 	uint8 val = 0;
 
@@ -743,7 +739,7 @@ uint8 JPEG::readHuff(uint8 table) {
 	return val;
 }
 
-uint8 JPEG::readBit() {
+uint8 JPEGDecoder::readBit() {
 	// Read a whole byte if necessary
 	if (_bitsNumber == 0) {
 		_bitsData = _stream->readByte();
@@ -773,12 +769,12 @@ uint8 JPEG::readBit() {
 	return (_bitsData & (1 << _bitsNumber)) ? 1 : 0;
 }
 
-Surface *JPEG::getComponent(uint c) {
+const Surface *JPEGDecoder::getComponent(uint c) const {
 	for (int i = 0; i < _numComp; i++)
 		if (_components[i].id == c) // We found the desired component
 			return &_components[i].surface;
 
-	error("JPEG::getComponent: No component %d present", c);
+	error("JPEGDecoder::getComponent: No component %d present", c);
 	return NULL;
 }
 
