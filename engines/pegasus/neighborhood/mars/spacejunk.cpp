@@ -80,7 +80,7 @@ void SpaceJunk::setCenter(const CoordType centerX, const CoordType centerY) {
 
 	Common::Rect r;
 	getBounds(r);
-	r.moveTo(CLIP<int>(centerX - (r.width() >> 1), 0, 640), CLIP<int>(centerY - (r.height() >> 1), 0, 480));
+	r.moveTo(CLIP<int>(centerX - (r.width() >> 1), 0, 640 - r.width()), CLIP<int>(centerY - (r.height() >> 1), 0, 480 - r.height()));
 	setBounds(r);
 }
 
