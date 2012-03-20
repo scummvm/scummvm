@@ -512,18 +512,54 @@ void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool hasPalet
 // http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
 // http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
 void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) {
-	JPEGDecoder jpeg;
-
+	// First, read all the fields from the opcode
 	uint32 dataSize = stream.readUint32BE();
 	uint32 startPos = stream.pos();
 
-	Common::SeekableSubReadStream jpegStream(&stream, stream.pos() + 156, stream.pos() + dataSize);
+	/* uint16 version = */ stream.readUint16BE();
 
+	// Read in the display matrix
+	uint32 matrix[3][3];
+	for (uint32 i = 0; i < 3; i++)
+		for (uint32 j = 0; j < 3; j++)
+			matrix[i][j] = stream.readUint32BE();
+
+	// We currently only support offseting images vertically from the matrix
+	uint16 xOffset = 0;
+	uint16 yOffset = matrix[2][1] >> 16;
+
+	uint32 matteSize = stream.readUint32BE();
+	stream.skip(8); // matte rect
+	/* uint16 transferMode = */ stream.readUint16BE();
+	stream.skip(8); // src rect
+	/* uint32 accuracy = */ stream.readUint32BE();
+	uint32 maskSize = stream.readUint32BE();
+
+	// Skip the matte and mask
+	stream.skip(matteSize + maskSize);
+	
+	// Now we've reached the image descriptor, so read the relevant data from that
+	uint32 idStart = stream.pos();
+	uint32 idSize = stream.readUint32BE();
+	stream.skip(40); // miscellaneous stuff
+	uint32 jpegSize = stream.readUint32BE();
+	stream.skip(idSize - (stream.pos() - idStart)); // more useless stuff
+
+	Common::SeekableSubReadStream jpegStream(&stream, stream.pos(), stream.pos() + jpegSize);
+
+	JPEGDecoder jpeg;
 	if (!jpeg.loadStream(jpegStream))
 		error("PICTDecoder::decodeCompressedQuickTime(): Could not decode JPEG data");
 
-	_outputSurface = new Graphics::Surface();
-	_outputSurface->copyFrom(*jpeg.getSurface());
+	const Graphics::Surface *jpegSurface = jpeg.getSurface();
+
+	if (!_outputSurface) {
+		_outputSurface = new Graphics::Surface();
+		_outputSurface->create(_imageRect.width(), _imageRect.height(), jpegSurface->format);
+	}
+
+	for (uint16 y = 0; y < jpegSurface->h; y++)
+		memcpy(_outputSurface->getBasePtr(0 + xOffset, y + yOffset), jpegSurface->getBasePtr(0, y), jpegSurface->w * jpegSurface->format.bytesPerPixel);
 
 	stream.seek(startPos + dataSize);
 }
