@@ -244,8 +244,12 @@ void TimeBase::checkCallBacks() {
 
 		if (runner->_type == kCallBackAtTime && runner->_trigger == kTriggerTimeFwd) {
 			if (getTime() >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0) {
+				uint param2 = runner->_param2, param3 = runner->_param3;
 				runner->callBack();
-				runner->_hasBeenTriggered = true;
+				// HACK: Only stop future time forward callbacks if the parameters have not been changed
+				// This fixes striding callbacks. Since only striding callbacks do this kind of
+				// craziness, I'm not too worried about this.
+				runner->_hasBeenTriggered = (runner->_param2 == param2 && runner->_param3 == param3);
 			}
 		} else if (runner->_type == kCallBackAtExtremes) {
 			if (runner->_trigger == kTriggerAtStop) {
