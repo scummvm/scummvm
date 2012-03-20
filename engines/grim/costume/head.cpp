@@ -87,7 +87,7 @@ Math::Matrix4 lookAtMatrix(const Math::Vector3d &localForward, const Math::Vecto
 }
 
 	
-void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix, const Common::String &fname) {
+void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) {
 	if (_joint1Node) {
 		float step = g_grim->getPerSecond(rate);
 		float yawStep = step;
