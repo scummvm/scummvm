@@ -396,4 +396,10 @@ inline uint32 READ_BE_UINT24(const void *ptr) {
 	return (b[0] << 16) | (b[1] << 8) | (b[2]);
 }
 
+#ifdef SCUMM_LITTLE_ENDIAN
+#define READ_UINT24(a) READ_LE_UINT24(a)
+#else
+#define READ_UINT24(a) READ_BE_UINT24(a)
+#endif
+
 #endif

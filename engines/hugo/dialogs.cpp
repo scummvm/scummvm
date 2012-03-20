@@ -21,7 +21,7 @@
  */
 
 #include "common/substream.h"
-#include "graphics/imagedec.h"
+#include "graphics/decoders/bmp.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 
@@ -128,7 +128,16 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		uint16 bmpSize = in.readUint16BE();
 		uint32 filPos = in.pos();
 		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize);
-		arrayBmp[i * 2] = Graphics::ImageDecoder::loadFile(stream, g_system->getOverlayFormat());
+
+		Graphics::BitmapDecoder bitmapDecoder;
+		if (!bitmapDecoder.loadStream(stream))
+			error("TopMenu::loadBmpArr(): Could not load bitmap");
+
+		const Graphics::Surface *bitmapSrc = bitmapDecoder.getSurface();
+		if (bitmapSrc->format.bytesPerPixel == 1)
+			error("TopMenu::loadBmpArr(): Unhandled paletted image");
+
+		arrayBmp[i * 2] = bitmapSrc->convertTo(g_system->getOverlayFormat());
 		arrayBmp[i * 2 + 1] = new Graphics::Surface();
 		arrayBmp[i * 2 + 1]->create(arrayBmp[i * 2]->w * 2, arrayBmp[i * 2]->h * 2, g_system->getOverlayFormat());
 		byte *src = (byte *)arrayBmp[i * 2]->pixels;
@@ -154,7 +163,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 			}
 		}
 
-		in.skip(bmpSize);
+		in.seek(filPos + bmpSize);
 	}
 }
 

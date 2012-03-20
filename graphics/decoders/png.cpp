@@ -20,7 +20,7 @@
  *
  */
 
-#include "graphics/png.h"
+#include "graphics/decoders/png.h"
 
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -98,116 +98,30 @@ enum PNGFilters {
 	kFilterPaeth   = 4
 };
 
-PNG::PNG() : _compressedBuffer(0), _compressedBufferSize(0),
-			_unfilteredSurface(0), _transparentColorSpecified(false) {
+PNGDecoder::PNGDecoder() : _compressedBuffer(0), _compressedBufferSize(0),
+			_transparentColorSpecified(false), _outputSurface(0) {
 }
 
-PNG::~PNG() {
-	if (_unfilteredSurface) {
-		_unfilteredSurface->free();
-		delete _unfilteredSurface;
+PNGDecoder::~PNGDecoder() {
+	destroy();
+}
+
+void PNGDecoder::destroy() {
+	if (_outputSurface) {
+		_outputSurface->free();
+		delete _outputSurface;
+		_outputSurface = 0;
 	}
 }
 
-Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
-	Graphics::Surface *output = new Graphics::Surface();
-	output->create(_unfilteredSurface->w, _unfilteredSurface->h, format);
-	byte *src = (byte *)_unfilteredSurface->pixels;
-	byte a = 0xFF;
-	byte bpp = _unfilteredSurface->format.bytesPerPixel;
+bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
+	destroy();
 
-	if (_header.colorType != kIndexed) {
-		if (_header.colorType == kTrueColor || 
-			_header.colorType == kTrueColorWithAlpha) {
-			if (bpp != 3 && bpp != 4)
-				error("Unsupported truecolor PNG format");
-		} else if (_header.colorType == kGrayScale ||
-				   _header.colorType == kGrayScaleWithAlpha) {
-			if (bpp != 1 && bpp != 2)
-				error("Unsupported grayscale PNG format");
-		}
-
-		for (uint16 i = 0; i < output->h; i++) {
-			for (uint16 j = 0; j < output->w; j++) {
-				uint32 result = 0;
-
-				switch (bpp) {
-				case 1:	// Grayscale
-					if (_transparentColorSpecified)
-						a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
-					result = format.ARGBToColor(    a, src[0], src[0], src[0]);
-					break;
-				case 2: // Grayscale + alpha
-					result = format.ARGBToColor(src[1], src[0], src[0], src[0]);
-					break;
-				case 3: // RGB
-					if (_transparentColorSpecified) {
-						bool isTransparentColor = (src[0] == _transparentColor[0] &&
-												   src[1] == _transparentColor[1] &&
-												   src[2] == _transparentColor[2]);
-						a = isTransparentColor ? 0 : 0xFF;
-					}
-					result = format.ARGBToColor(     a, src[0], src[1], src[2]);
-					break;
-				case 4: // RGBA
-					result = format.ARGBToColor(src[3], src[0], src[1], src[2]);
-					break;
-				}
-
-				if (format.bytesPerPixel == 2) 	// 2bpp
-					*((uint16 *)output->getBasePtr(j, i)) = (uint16)result;
-				else	// 4bpp
-					*((uint32 *)output->getBasePtr(j, i)) = result;
-
-				src += bpp;
-			}
-		}
-	} else {
-		byte index, r, g, b;
-		uint32 mask = (0xff >> (8 - _header.bitDepth)) << (8 - _header.bitDepth);
-
-		// Convert the indexed surface to the target pixel format
-		for (uint16 i = 0; i < output->h; i++) {
-			int data = 0;
-			int bitCount = 8;
-			byte *src1 = src;
-
-			for (uint16 j = 0; j < output->w; j++) {
-				if (bitCount == 8) {
-					data = *src;
-					src++;
-				}
-
-				index = (data & mask) >> (8 - _header.bitDepth);
-				data = (data << _header.bitDepth) & 0xff;
-				bitCount -= _header.bitDepth;
-
-				if (bitCount == 0)
-					bitCount = 8;
-
-				r = _palette[index * 4 + 0];
-				g = _palette[index * 4 + 1];
-				b = _palette[index * 4 + 2];
-				a = _palette[index * 4 + 3];
-
-				if (format.bytesPerPixel == 2)
-					*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(a, r, g, b);
-				else
-					*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(a, r, g, b);
-			}
-			src = src1 + output->w;
-		}
-	}
-
-	return output;
-}
-
-bool PNG::read(Common::SeekableReadStream *str) {
 	uint32 chunkLength = 0, chunkType = 0;
-	_stream = str;
+	_stream = &stream;
 
 	// First, check the PNG signature
-	if (_stream->readUint32BE() != MKTAG(0x89, 0x50, 0x4e, 0x47)) {
+	if (_stream->readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
 		delete _stream;
 		return false;
 	}
@@ -249,8 +163,10 @@ bool PNG::read(Common::SeekableReadStream *str) {
 				error("A palette chunk has been found in a non-indexed PNG file");
 			if (chunkLength % 3 != 0)
 				error("Palette chunk not divisible by 3");
+
 			_paletteEntries = chunkLength / 3;
-			readPaletteChunk();
+			_stream->read(_palette, _paletteEntries * 3);
+			memset(_paletteTransparency, 0xff, sizeof(_paletteTransparency));
 			break;
 		case kChunkIEND:
 			// End of stream
@@ -269,7 +185,6 @@ bool PNG::read(Common::SeekableReadStream *str) {
 	}
 
 	// We no longer need the file stream, thus close it here
-	delete _stream;
 	_stream = 0;
 
 	// Unpack the compressed buffer
@@ -295,7 +210,7 @@ bool PNG::read(Common::SeekableReadStream *str) {
  * Taken from lodePNG, with a slight patch:
  * http://www.atalasoft.com/cs/blogs/stevehawley/archive/2010/02/23/libpng-you-re-doing-it-wrong.aspx
  */
-byte PNG::paethPredictor(int16 a, int16 b, int16 c) {
+byte PNGDecoder::paethPredictor(int16 a, int16 b, int16 c) {
   int16 pa = ABS<int16>(b - c);
   int16 pb = ABS<int16>(a - c);
   int16 pc = ABS<int16>(a + b - c - c);
@@ -315,7 +230,7 @@ byte PNG::paethPredictor(int16 a, int16 b, int16 c) {
  *
  * Taken from lodePNG
  */
-void PNG::unfilterScanLine(byte *dest, const byte *scanLine, const byte *prevLine, uint16 byteWidth, byte filterType, uint16 length) {
+void PNGDecoder::unfilterScanLine(byte *dest, const byte *scanLine, const byte *prevLine, uint16 byteWidth, byte filterType, uint16 length) {
 	uint16 i;
 
 	switch (filterType) {
@@ -370,33 +285,29 @@ void PNG::unfilterScanLine(byte *dest, const byte *scanLine, const byte *prevLin
 
 }
 
-void PNG::constructImage() {
+int PNGDecoder::getBytesPerPixel() const {
+	return (getNumColorChannels() * _header.bitDepth + 7) / 8;
+}
+
+void PNGDecoder::constructImage() {
 	assert (_header.bitDepth != 0);
 
-	byte *dest;
-	byte *scanLine;
-	byte *prevLine = 0;
-	byte filterType;
+	int bytesPerPixel = getBytesPerPixel();
+	int pitch = bytesPerPixel * _header.width;
+	byte *unfilteredSurface = new byte[pitch * _header.height];
+	byte *dest = unfilteredSurface;
 	uint16 scanLineWidth = (_header.width * getNumColorChannels() * _header.bitDepth + 7) / 8;
-
-	if (_unfilteredSurface) {
-		_unfilteredSurface->free();
-		delete _unfilteredSurface;
-	}
-	_unfilteredSurface = new Graphics::Surface();
-	// TODO/FIXME: It seems we can not properly determine the format here. But maybe there is a way...
-	_unfilteredSurface->create(_header.width, _header.height, PixelFormat((getNumColorChannels() * _header.bitDepth + 7) / 8, 0, 0, 0, 0, 0, 0, 0, 0));
-	scanLine = new byte[_unfilteredSurface->pitch];
-	dest = (byte *)_unfilteredSurface->getBasePtr(0, 0);
+	byte *scanLine = new byte[scanLineWidth];
+	byte *prevLine = 0;
 
 	switch(_header.interlaceType) {
 	case kNonInterlaced:
-		for (uint16 y = 0; y < _unfilteredSurface->h; y++) {
-			filterType = _imageData->readByte();
+		for (uint16 y = 0; y < _header.height; y++) {
+			byte filterType = _imageData->readByte();
 			_imageData->read(scanLine, scanLineWidth);
-			unfilterScanLine(dest, scanLine, prevLine, _unfilteredSurface->format.bytesPerPixel, filterType, scanLineWidth);
+			unfilterScanLine(dest, scanLine, prevLine, bytesPerPixel, filterType, scanLineWidth);
 			prevLine = dest;
-			dest += _unfilteredSurface->pitch;
+			dest += pitch;
 		}
 		break;
 	case kInterlaced:
@@ -409,9 +320,123 @@ void PNG::constructImage() {
 	}
 
 	delete[] scanLine;
+
+	constructOutput(unfilteredSurface);
+	delete[] unfilteredSurface;
 }
 
-void PNG::readHeaderChunk() {
+Graphics::PixelFormat PNGDecoder::findPixelFormat() const {
+	// Try to find the best pixel format based on what we have here
+	// Which is basically 8bpp for paletted non-transparent
+	// and 32bpp for everything else
+
+	switch (_header.colorType) {
+	case kIndexed:
+		if (!_transparentColorSpecified)
+			return Graphics::PixelFormat::createFormatCLUT8();
+		// fall through
+	case kGrayScale:
+	case kTrueColor:
+	case kGrayScaleWithAlpha:
+	case kTrueColorWithAlpha:
+		// We'll go with standard RGBA 32-bit
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	}
+
+	error("Unknown PNG color type");
+	return Graphics::PixelFormat();
+}
+
+void PNGDecoder::constructOutput(const byte *surface) {
+	_outputSurface = new Graphics::Surface();
+	_outputSurface->create(_header.width, _header.height, findPixelFormat());
+
+	const byte *src = surface;
+	byte a = 0xFF;
+	int bytesPerPixel = getBytesPerPixel();
+
+	if (_header.colorType != kIndexed) {
+		if (_header.colorType == kTrueColor || 
+			_header.colorType == kTrueColorWithAlpha) {
+			if (bytesPerPixel != 3 && bytesPerPixel != 4)
+				error("Unsupported truecolor PNG format");
+		} else if (_header.colorType == kGrayScale ||
+				   _header.colorType == kGrayScaleWithAlpha) {
+			if (bytesPerPixel != 1 && bytesPerPixel != 2)
+				error("Unsupported grayscale PNG format");
+		}
+
+		for (uint16 i = 0; i < _outputSurface->h; i++) {
+			for (uint16 j = 0; j < _outputSurface->w; j++) {
+				uint32 result = 0;
+
+				switch (bytesPerPixel) {
+				case 1:	// Grayscale
+					if (_transparentColorSpecified)
+						a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
+					result = _outputSurface->format.ARGBToColor(a, src[0], src[0], src[0]);
+					break;
+				case 2: // Grayscale + alpha
+					result = _outputSurface->format.ARGBToColor(src[1], src[0], src[0], src[0]);
+					break;
+				case 3: // RGB
+					if (_transparentColorSpecified) {
+						bool isTransparentColor = (src[0] == _transparentColor[0] &&
+												   src[1] == _transparentColor[1] &&
+												   src[2] == _transparentColor[2]);
+						a = isTransparentColor ? 0 : 0xFF;
+					}
+
+					result = _outputSurface->format.ARGBToColor(a, src[0], src[1], src[2]);
+					break;
+				case 4: // RGBA
+					result = _outputSurface->format.ARGBToColor(src[3], src[0], src[1], src[2]);
+					break;
+				}
+
+				*((uint32 *)_outputSurface->getBasePtr(j, i)) = result;
+				src += bytesPerPixel;
+			}
+		}
+	} else {
+		uint32 mask = (0xff >> (8 - _header.bitDepth)) << (8 - _header.bitDepth);
+
+		// Convert the indexed surface to the target pixel format
+		for (uint16 i = 0; i < _outputSurface->h; i++) {
+			int data = 0;
+			int bitCount = 8;
+			const byte *src1 = src;
+
+			for (uint16 j = 0; j < _outputSurface->w; j++) {
+				if (bitCount == 8) {
+					data = *src;
+					src++;
+				}
+
+				byte index = (data & mask) >> (8 - _header.bitDepth);
+				data = (data << _header.bitDepth) & 0xff;
+				bitCount -= _header.bitDepth;
+
+				if (bitCount == 0)
+					bitCount = 8;
+
+				if (_transparentColorSpecified) {
+					byte r = _palette[index * 3 + 0];
+					byte g = _palette[index * 3 + 1];
+					byte b = _palette[index * 3 + 2];
+					a = _paletteTransparency[index];
+					*((uint32 *)_outputSurface->getBasePtr(j, i)) = _outputSurface->format.ARGBToColor(a, r, g, b);
+				} else {
+					*((byte *)_outputSurface->getBasePtr(j, i)) = index;
+				}
+			}
+
+			src = src1 + _outputSurface->w;
+		}
+	}
+}
+
+void PNGDecoder::readHeaderChunk() {
 	_header.width = _stream->readUint32BE();
 	_header.height = _stream->readUint32BE();
 	_header.bitDepth = _stream->readByte();
@@ -431,7 +456,7 @@ void PNG::readHeaderChunk() {
 	_header.interlaceType = (PNGInterlaceType)_stream->readByte();
 }
 
-byte PNG::getNumColorChannels() {
+byte PNGDecoder::getNumColorChannels() const {
 	switch (_header.colorType) {
 	case kGrayScale:
 		return 1; // Gray
@@ -448,16 +473,7 @@ byte PNG::getNumColorChannels() {
 	}
 }
 
-void PNG::readPaletteChunk() {
-	for (uint16 i = 0; i < _paletteEntries; i++) {
-		_palette[i * 4 + 0] = _stream->readByte();	// R
-		_palette[i * 4 + 1] = _stream->readByte();	// G
-		_palette[i * 4 + 2] = _stream->readByte();	// B
-		_palette[i * 4 + 3] = 0xFF;	// Alpha, set in the tRNS chunk
-	}
-}
-
-void PNG::readTransparencyChunk(uint32 chunkLength) {
+void PNGDecoder::readTransparencyChunk(uint32 chunkLength) {
 	_transparentColorSpecified = true;
 
 	switch(_header.colorType) {
@@ -472,8 +488,8 @@ void PNG::readTransparencyChunk(uint32 chunkLength) {
 		_transparentColor[2] = _stream->readUint16BE();
 		break;
 	case kIndexed:
-		for (uint32 i = 0; i < chunkLength; i++)
-			_palette[i * 4 + 3] = _stream->readByte();
+		_stream->read(_paletteTransparency, chunkLength);
+
 		// A transparency chunk may have less entries
 		// than the palette entries. The remaining ones
 		// are unmodified (set to 255). Check here:

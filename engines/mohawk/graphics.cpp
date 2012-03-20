@@ -58,22 +58,7 @@ void MohawkSurface::convertToTrueColor() {
 
 	assert(_palette);
 
-	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_surface->w, _surface->h, pixelFormat);
-
-	for (uint16 i = 0; i < _surface->h; i++) {
-		for (uint16 j = 0; j < _surface->w; j++) {
-			byte palIndex = *((byte *)_surface->pixels + i * _surface->pitch + j);
-			byte r = _palette[palIndex * 3 + 0];
-			byte g = _palette[palIndex * 3 + 1];
-			byte b = _palette[palIndex * 3 + 2];
-			if (pixelFormat.bytesPerPixel == 2)
-				*((uint16 *)surface->getBasePtr(j, i)) = pixelFormat.RGBToColor(r, g, b);
-			else
-				*((uint32 *)surface->getBasePtr(j, i)) = pixelFormat.RGBToColor(r, g, b);
-		}
-	}
+	Graphics::Surface *surface = _surface->convertTo(g_system->getScreenFormat(), _palette);
 
 	// Free everything and set the new surface as the converted surface
 	_surface->free();

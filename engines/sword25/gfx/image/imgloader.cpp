@@ -33,18 +33,19 @@
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/image/imgloader.h"
 #include "graphics/pixelformat.h"
-#include "graphics/png.h"
+#include "graphics/decoders/png.h"
 
 namespace Sword25 {
 
 bool ImgLoader::decodePNGImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
 	Common::MemoryReadStream *fileStr = new Common::MemoryReadStream(fileDataPtr, fileSize, DisposeAfterUse::NO);
-	Graphics::PNG *png = new Graphics::PNG();
-	if (!png->read(fileStr))	// the fileStr pointer, and thus pFileData will be deleted after this is done
+
+	Graphics::PNGDecoder png;
+	if (!png.loadStream(*fileStr)) // the fileStr pointer, and thus pFileData will be deleted after this is done
 		error("Error while reading PNG image");
 
-	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	Graphics::Surface *pngSurface = png->getSurface(format);
+	const Graphics::Surface *sourceSurface = png.getSurface();
+	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), png.getPalette());
 
 	width = pngSurface->w;
 	height = pngSurface->h;
@@ -53,7 +54,7 @@ bool ImgLoader::decodePNGImage(const byte *fileDataPtr, uint fileSize, byte *&un
 	pngSurface->free();
 
 	delete pngSurface;
-	delete png;
+	delete fileStr;
 
 	// Signal success
 	return true;

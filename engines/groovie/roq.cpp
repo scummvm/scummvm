@@ -30,8 +30,8 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 
-#include "graphics/jpeg.h"
 #include "graphics/palette.h"
+#include "graphics/decoders/jpeg.h"
 
 #ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion
@@ -435,8 +435,8 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 
 	warning("Groovie::ROQ: JPEG frame (unfinshed)");
 
-	Graphics::JPEG *jpg = new Graphics::JPEG();
-	jpg->read(_file);
+	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
+	jpg->loadStream(*_file);
 	byte *y = (byte *)jpg->getComponent(1)->getBasePtr(0, 0);
 	byte *u = (byte *)jpg->getComponent(2)->getBasePtr(0, 0);
 	byte *v = (byte *)jpg->getComponent(3)->getBasePtr(0, 0);
