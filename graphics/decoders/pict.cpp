@@ -365,7 +365,7 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool hasPal
 		_outputSurface->create(width, height, PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 		for (uint16 y = 0; y < _outputSurface->h; y++)
 			for (uint16 x = 0; x < _outputSurface->w; x++)
-				WRITE_UINT16(_outputSurface->getBasePtr(x, y), READ_BE_UINT16(buffer + (y * _outputSurface->w + x) * 2));
+				WRITE_UINT16(_outputSurface->getBasePtr(x, y), READ_UINT16(buffer + (y * _outputSurface->w + x) * 2));
 		break;
 	case 3:
 		// Convert from 24-bit (planar!) to whatever surface we need
