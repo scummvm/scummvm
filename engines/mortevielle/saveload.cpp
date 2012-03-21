@@ -31,7 +31,6 @@
 #include "mortevielle/mor.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
-#include "mortevielle/ovd1.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/var_mor.h"
 
@@ -47,25 +46,25 @@ Common::String SavegameManager::generateSaveName(int slotNumber) {
  * Handle saving or loading savegame data
  */
 void SavegameManager::sync_save(Common::Serializer &sz) {
-	sz.syncAsSint16LE(g_s1._faithScore);
+	sz.syncAsSint16LE(g_vm->g_s1._faithScore);
 	for (int i = 0; i < 11; ++i)
-		sz.syncAsByte(g_s1._pourc[i]);
+		sz.syncAsByte(g_vm->g_s1._pourc[i]);
 	for (int i = 0; i < 43; ++i)
-		sz.syncAsByte(g_s1._teauto[i]);
+		sz.syncAsByte(g_vm->g_s1._teauto[i]);
 	for (int i = 0; i < 31; ++i)
-		sz.syncAsByte(g_s1._sjer[i]);
+		sz.syncAsByte(g_vm->g_s1._sjer[i]);
 
-	sz.syncAsSint16LE(g_s1._currPlace);
-	sz.syncAsSint16LE(g_s1._atticBallHoleObjectId);
-	sz.syncAsSint16LE(g_s1._atticRodHoleObjectId);
-	sz.syncAsSint16LE(g_s1._cellarObjectId);
-	sz.syncAsSint16LE(g_s1._secretPassageObjectId);
-	sz.syncAsSint16LE(g_s1._wellObjectId);
-	sz.syncAsSint16LE(g_s1._selectedObjectId);
-	sz.syncAsSint16LE(g_s1._purpleRoomObjectId);
-	sz.syncAsSint16LE(g_s1._cryptObjectId);
-	sz.syncAsByte(g_s1._alreadyEnteredManor);
-	sz.syncAsByte(g_s1._fullHour);
+	sz.syncAsSint16LE(g_vm->g_s1._currPlace);
+	sz.syncAsSint16LE(g_vm->g_s1._atticBallHoleObjectId);
+	sz.syncAsSint16LE(g_vm->g_s1._atticRodHoleObjectId);
+	sz.syncAsSint16LE(g_vm->g_s1._cellarObjectId);
+	sz.syncAsSint16LE(g_vm->g_s1._secretPassageObjectId);
+	sz.syncAsSint16LE(g_vm->g_s1._wellObjectId);
+	sz.syncAsSint16LE(g_vm->g_s1._selectedObjectId);
+	sz.syncAsSint16LE(g_vm->g_s1._purpleRoomObjectId);
+	sz.syncAsSint16LE(g_vm->g_s1._cryptObjectId);
+	sz.syncAsByte(g_vm->g_s1._alreadyEnteredManor);
+	sz.syncAsByte(g_vm->g_s1._fullHour);
 
 	sz.syncBytes(g_bufcha, 391);
 }
@@ -107,7 +106,7 @@ void SavegameManager::loadSavegame(int n) {
 	Common::Serializer sz(stream, NULL);
 	sync_save(sz);
 
-	g_s = g_s1;
+	g_vm->g_s = g_vm->g_s1;
 	for (int i = 0; i <= 389; ++i)
 		g_tabdon[i + kAcha] = g_bufcha[i];
 
@@ -143,9 +142,9 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	
 	for (i = 0; i <= 389; ++i)
 		g_bufcha[i] = g_tabdon[i + kAcha];
-	g_s1 = g_s;
-	if (g_s1._currPlace == 26)
-		g_s1._currPlace = 15;
+	g_vm->g_s1 = g_vm->g_s;
+	if (g_vm->g_s1._currPlace == 26)
+		g_vm->g_s1._currPlace = 15;
 	
 	Common::String filename = generateSaveName(n);
 	f = g_system->getSavefileManager()->openForSaving(filename);

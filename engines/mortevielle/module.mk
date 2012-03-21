@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	mortevielle.o \
 	mouse.o \
 	outtext.o \
-	ovd1.o \
 	saveload.o \
 	sound.o \
 	speech.o \

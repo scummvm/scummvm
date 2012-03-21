@@ -90,6 +90,16 @@ const int amzon = 1650;
 const int fleche = 1758;
 const int arega = 0;
 
+struct nhom {
+	byte _id;     /* number between 0 and 32 */
+	byte _hom[4];
+};
+
+struct t_pcga {
+	byte _p;
+	nhom _a[16];
+};
+
 class MortevielleEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -100,6 +110,8 @@ private:
 	bool _inMainGameLoop;	// Flag when the main game loop is active
 	Common::StringArray _engineStrings;
 	Common::StringArray _gameStrings;
+
+	Pattern _patternArr[15];
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
@@ -114,6 +126,14 @@ private:
 	void handleAction();
 	void cinq_huit(char &c, int &idx, byte &pt, bool &the_end);
 	void copcha();
+	void displayCGAPattern(int n, Pattern p, nhom *pal);
+	void loadPalette();
+	void loadTexts();
+	void loadBRUIT5();
+	void loadCFIEC();
+	void loadCFIPH();
+	void showTitleScreen();
+
 public:
 	Common::String _hintPctMessage;
 	Common::Point _prevPos;
@@ -163,6 +183,8 @@ public:
 	int _c_zzz;
 	int ptr_word;
 	byte _v_lieu[7][25];
+	SaveStruct g_s, g_s1;
+	byte g_is;
 
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
@@ -304,11 +326,14 @@ public:
 	void clearScreenType10();
 	int getRandomNumber(int minval, int maxval);
 	void showMoveMenuAlert();
+	void showConfigScreen();
 	void decodeNumber(byte *pStart, int count);
 	Common::String getString(int num);
 	void resetVariables();
-
 	void setPal(int n);
+	void music();
+	void draw(int ad, int x, int y);
+	void drawRightFrame();
 
 };
 

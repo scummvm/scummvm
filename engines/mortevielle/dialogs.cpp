@@ -455,7 +455,7 @@ void f3f8::aff50(bool drawAni50Fl) {
 	g_caff = 50;
 	g_maff = 0;
 	taffich();
-	dessine(g_ades, 63, 12);
+	g_vm->draw(g_ades, 63, 12);
 	if (drawAni50Fl)
 		ani50();
 	else
