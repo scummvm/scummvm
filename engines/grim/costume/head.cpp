@@ -53,39 +53,6 @@ void Head::setMaxAngles(float maxPitch, float maxYaw, float maxRoll) {
 	_maxPitch = maxPitch;
 	_maxYaw = maxYaw;
 }
-
-/** 
- * Generates a lookat matrix with position at origin. For reference, see 
- * http://clb.demon.fi/MathGeoLib/docs/float3x3_LookAt.php 
- */
-Math::Matrix4 lookAtMatrix(const Math::Vector3d &localForward, const Math::Vector3d &targetDirection, 
-						   const Math::Vector3d &localUp, const Math::Vector3d &worldUp)
-{
-	Math::Vector3d localRight = Math::Vector3d::crossProduct(localUp, localForward);
-	localRight.normalize();
-	Math::Vector3d worldRight = Math::Vector3d::crossProduct(worldUp, targetDirection);
-	worldRight.normalize();
-	Math::Vector3d perpWorldUp = Math::Vector3d::crossProduct(targetDirection, worldRight);
-	perpWorldUp.normalize();
-	
-	Math::Matrix3 m1;
-	m1.getRow(0) << worldRight.x() << worldRight.y() << worldRight.z();
-	m1.getRow(1) << perpWorldUp.x() << perpWorldUp.y() << perpWorldUp.z();
-	m1.getRow(2) << targetDirection.x() << targetDirection.y() << targetDirection.z();
-	m1.transpose();
-	
-	Math::Matrix3 m2;
-	m2.getRow(0) << localRight.x() << localRight.y() << localRight.z();
-	m2.getRow(1) << localUp.x() << localUp.y() << localUp.z();
-	m2.getRow(2) << localForward.x() << localForward.y() << localForward.z();
-	
-	Math::Matrix4 m3;
-	m3.setToIdentity();
-	m3.setRotation(m1 * m2);
-	
-	return m3;
-}
-
 	
 void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) {
 	if (_joint1Node) {
@@ -102,36 +69,37 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		p->setMatrix(matrix);
 		p->update();
 			
-		Math::Vector3d localFront; // Character front direction vector in local space.
-		Math::Vector3d localUp; // Character up direction vector in local space.
+		Math::Vector3d modelFront; // the modeling convention for the forward direction.
+		Math::Vector3d modelUp; // the modeling convention for the upward direction.
 		Math::Vector3d frontDir; // Character front facing direction vector in world space (global scene coordinate space)
 
 		// the character head coordinate frame is: +Y forward, +Z up, +X right.
 		frontDir = Math::Vector3d(_joint3Node->_matrix(0,1), _joint3Node->_matrix(1,1), _joint3Node->_matrix(2,1)); // Look straight ahead. (+Y)
-		localFront = Math::Vector3d(0,1,0);
-		localUp = Math::Vector3d(0,0,1);
+		modelFront = Math::Vector3d(0,1,0);
+		modelUp = Math::Vector3d(0,0,1);
 				
 		// v is the world space direction vector this character should be looking towards.
-		Math::Vector3d v = point - _joint3Node->_pivotMatrix.getPosition();
+		Math::Vector3d targetDir = point - _joint3Node->_pivotMatrix.getPosition();
 		if (!entering)
-			v = frontDir;
-		if (v.isZero())
+			targetDir = frontDir;
+		if (targetDir.isZero())
 			return;
 
-		v.normalize();
+		targetDir.normalize();
 		
 		// The vector v is in world space, so generate the world space lookat matrix for the desired head facing
 		// orientation.
 		Math::Matrix4 lookAtTM;
+		lookAtTM.setToIdentity();
 		const Math::Vector3d worldUp(0,0,1); // The Residual scene convention: +Z is world space up.
-		if (Math::Vector3d::dotProduct(v, worldUp) >= 0.98f) // Avoid singularity if trying to look straight up.
-			lookAtTM = lookAtMatrix(localFront, v, localUp, -frontDir); // Instead of orienting head towards scene up, orient head towards character "back",
+		if (Math::Vector3d::dotProduct(targetDir, worldUp) >= 0.98f) // Avoid singularity if trying to look straight up.
+			lookAtTM.buildFromTargetDir(modelFront, targetDir, modelUp, -frontDir); // Instead of orienting head towards scene up, orient head towards character "back",
 		                                                                // i.e. when you look straight up, your head up vector tilts/arches to point straight backwards.
-		else if (Math::Vector3d::dotProduct(v, worldUp) <= -0.98f) // Avoid singularity if trying to look straight down.
-			lookAtTM = lookAtMatrix(localFront, v, localUp, frontDir); // Instead of orienting head towards scene down, orient head towards character "front",
+		else if (Math::Vector3d::dotProduct(targetDir, worldUp) <= -0.98f) // Avoid singularity if trying to look straight down.
+			lookAtTM.buildFromTargetDir(modelFront, targetDir, modelUp, frontDir); // Instead of orienting head towards scene down, orient head towards character "front",
 																	   // i.e. when you look straight down, your head up vector tilts/arches to point straight forwards.
 		else
-			lookAtTM = lookAtMatrix(localFront, v, localUp, worldUp);
+			lookAtTM.buildFromTargetDir(modelFront, targetDir, modelUp, worldUp);
 		// The above specifies the world space orientation of this bone, but we need to output
 		// the orientation in parent space (as yaw/pitch/roll). 
 		
