@@ -1214,6 +1214,8 @@ void PauseMenu::updateDisplay() {
 		_largeSelect.hide();
 		break;
 	}
+
+	((PegasusEngine *)g_engine)->resetIntroTimer();
 }
 
 

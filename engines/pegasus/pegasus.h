@@ -39,6 +39,7 @@
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
 #include "pegasus/notification.h"
+#include "pegasus/timers.h"
 #include "pegasus/items/autodragger.h"
 #include "pegasus/items/inventory.h"
 #include "pegasus/items/itemdragger.h"
@@ -99,6 +100,7 @@ public:
 	void removeTimeBase(TimeBase *timeBase);
 	void delayShell(TimeValue time, TimeScale scale);
 	void resetIntroTimer();
+	void introTimerExpired();
 	void refreshDisplay();
 	bool playerAlive();
 	void processShell();
@@ -210,8 +212,10 @@ private:
 
 	// Intro
 	void runIntro();
+	void stopIntroTimer();
 	bool detectOpeningClosingDirectory();
 	Common::String _introDirectory;
+	FuseFunction *_introTimer;
 
 	// Idlers
 	Idler *_idlerHead;

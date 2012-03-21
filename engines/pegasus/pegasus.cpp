@@ -89,6 +89,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_dragType = kDragNoDrag;
 	_idlerHead = 0;
 	_currentCD = 1;
+	_introTimer = 0;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -99,9 +100,14 @@ PegasusEngine::~PegasusEngine() {
 	delete _gameMenu;
 	delete _neighborhood;
 	delete _rnd;
+	delete _introTimer;
 
 	// NOTE: This must be deleted last!
 	delete _gfx;
+}
+
+void introTimerExpiredFunction(FunctionPtr *, void *) {
+	((PegasusEngine *)g_engine)->introTimerExpired();
 }
 
 Common::Error PegasusEngine::run() {
@@ -168,6 +174,11 @@ Common::Error PegasusEngine::run() {
 	if (doIntro)
 		// Start up the first notification
 		_shellNotification.setNotificationFlags(kGameStartingFlag, kGameStartingFlag);
+
+	if (!isDemo()) {
+		_introTimer = new FuseFunction();
+		_introTimer->setFunctionPtr(&introTimerExpiredFunction, 0);
+	}
 
 	while (!shouldQuit()) {
 		processShell();
@@ -270,6 +281,8 @@ void PegasusEngine::createItem(ItemID itemID, NeighborhoodID neighborhoodID, Roo
 }
 
 void PegasusEngine::runIntro() {
+	stopIntroTimer();
+
 	bool skipped = false;
 
 	Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
@@ -601,15 +614,18 @@ void PegasusEngine::receiveNotification(Notification *notification, const Notifi
 	if (&_shellNotification == notification) {
 		switch (flags) {
 		case kGameStartingFlag: {
-			if (!isDemo())
+			useMenu(new MainMenu());
+
+			if (!isDemo()) {
 				runIntro();
-			else
+				resetIntroTimer();
+			} else {
 				showTempScreen("Images/Demo/NGsplashScrn.pict");
+			}
 
 			if (shouldQuit())
 				return;
 
-			useMenu(new MainMenu());
 			_gfx->invalRect(Common::Rect(0, 0, 640, 480));
 			_gfx->updateDisplay();
 			((MainMenu *)_gameMenu)->startMainMenuLoop();
@@ -634,7 +650,54 @@ void PegasusEngine::checkCallBacks() {
 }
 
 void PegasusEngine::resetIntroTimer() {
-	// TODO
+	if (!isDemo() && _gameMenu && _gameMenu->getObjectID() == kMainMenuID) {
+		_introTimer->stopFuse();
+		_introTimer->primeFuse(kIntroTimeOut);
+		_introTimer->lightFuse();
+	}
+}
+
+void PegasusEngine::introTimerExpired() {
+	if (_gameMenu && _gameMenu->getObjectID() == kMainMenuID) {
+		((MainMenu *)_gameMenu)->stopMainMenuLoop();
+
+		bool skipped = false;
+
+		Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+		if (!video->loadFile(_introDirectory + "/LilMovie.movie"))
+			error("Failed to load little movie");
+
+		bool saveAllowed = swapSaveAllowed(false);
+		bool openAllowed = swapLoadAllowed(false);
+
+		skipped = playMovieScaled(video, 0, 0);
+
+		delete video;
+
+		if (shouldQuit())
+			return;
+
+		if (!skipped) {
+			runIntro();
+
+			if (shouldQuit())
+				return;
+		}
+
+		resetIntroTimer();
+		_gfx->invalRect(Common::Rect(0, 0, 640, 480));
+
+		swapSaveAllowed(saveAllowed);
+		swapLoadAllowed(openAllowed);
+
+		_gfx->updateDisplay();
+		((MainMenu *)_gameMenu)->startMainMenuLoop();
+	}
+}
+
+void PegasusEngine::stopIntroTimer() {
+	if (_introTimer)
+		_introTimer->stopFuse();
 }
 
 void PegasusEngine::delayShell(TimeValue time, TimeScale scale) {
@@ -681,6 +744,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 
 	switch (command) {
 	case kMenuCmdStartAdventure:
+		stopIntroTimer();
 		GameState.setWalkthroughMode(false);
 		startNewGame();
 		break;
@@ -691,7 +755,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 			_gfx->updateDisplay();
 			_gfx->doFadeInSync();
 		} else {
-			// TODO: Stop intro timer
+			stopIntroTimer();
 			_gfx->doFadeOutSync();
 			useMenu(new CreditsMenu());
 			_gfx->updateDisplay();
@@ -705,17 +769,22 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 		_system->quit();
 		break;
 	case kMenuCmdOverview:
-		// TODO: Stop intro timer
+		stopIntroTimer();
 		doInterfaceOverview();
 		resetIntroTimer();
 		break;
 	case kMenuCmdStartWalkthrough:
+		stopIntroTimer();
 		GameState.setWalkthroughMode(true);
 		startNewGame();
 		break;
 	case kMenuCmdRestore:
+		stopIntroTimer();
+		// fall through
 	case kMenuCmdDeathRestore:
-		showLoadDialog();
+		result = showLoadDialog();
+		if (command == kMenuCmdRestore && result.getCode() != Common::kNoError)
+			resetIntroTimer();
 		break;
 	case kMenuCmdCreditsMainMenu:
 		_gfx->doFadeOutSync();
@@ -769,8 +838,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 		_gfx->updateDisplay();
 		((MainMenu *)_gameMenu)->startMainMenuLoop();
 		_gfx->doFadeInSync();
-		if (!isDemo())
-			resetIntroTimer();
+		resetIntroTimer();
 		break;
 	case kMenuCmdPauseSave:
 		if (showSaveDialog().getCode() != Common::kUserCanceled)
@@ -799,8 +867,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 		_gfx->updateDisplay();
 		((MainMenu *)_gameMenu)->startMainMenuLoop();
 		_gfx->doFadeInSync();
-		if (!isDemo())
-			resetIntroTimer();
+		resetIntroTimer();
 		break;
 	case kMenuCmdNoCommand:
 		break;
