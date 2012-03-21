@@ -148,7 +148,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="C:/residualvm"
 _aos4path="Games:ResidualVM"
-_staticlibpath=/sw
+_staticlibpath=/opt/local
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -4006,8 +4006,6 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
-#ResidualVM specific:
-SDLCONFIG=$_sdlconfig
 
 BACKEND := $_backend
 MODULES += $MODULES
