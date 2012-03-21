@@ -35,6 +35,11 @@ public:
 	Matrix();
 	Matrix(const MatrixBase<3, 3> &m);
 
+    void transpose();
+	
+	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection, 
+						   const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
+
 };
 
 typedef Matrix<3, 3> Matrix3;

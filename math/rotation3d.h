@@ -104,25 +104,48 @@ void Rotation3D<T>::buildAroundYaw(const Angle &yaw) {
 	this->getMatrix().getRow(2) << 0.f  << 0.f   << 1.f;
 }
 
+
+/** 
+ * Decomposes the matrix M to form M = R_z * R_x * R_y (R_D being the cardinal rotation 
+ * matrix about the axis +D), and outputs the angles of rotation in parameters pPitch, pYaw and pRoll.
+ * In the convention of the coordinate system used in Grim Fandango characters:
+ *	Pitch is rotation about the X axis (right)
+ *  Yaw is rotation about the Z axis (up)
+ *  Roll is rotation about the Y axix (out)
+ * This function was adapted from http://www.geometrictools.com/Documentation/EulerAngles.pdf
+ * The matrix M must be orthonormal. 
+ */
 template<class T>
 void Rotation3D<T>::getPitchYawRoll(Angle *pPitch, Angle *pYaw, Angle *pRoll) const {
-	// based on http://planning.cs.uiuc.edu/node103.html
-	if (pYaw) {
-		*pYaw = Angle::arcTangent2(this->getMatrix().getValue(1, 0),
-									  this->getMatrix().getValue(0, 0));
+	const T *m = &(this->getMatrix());  // so dumb
+	
+	float x,y,z;
+	if (m->getValue(2, 1) < 1.f) {
+		if (m->getValue(2, 1) > -1.f) {
+			x = asin(m->getValue(2, 1));
+			z = atan2(-m->getValue(0, 1), m->getValue(1, 1));
+			y = atan2(-m->getValue(2, 0), m->getValue(2, 2));
+		}
+		else {
+			// Not a unique solution. Pick an arbitrary one.
+			x = -3.141592654f/2.f;
+			z = -atan2(-m->getValue(0, 2), m->getValue(0, 0));
+			y = 0;
+		}
 	}
-
-	if (pRoll) {
-		float a = this->getMatrix().getValue(2, 1);
-		float b = this->getMatrix().getValue(2, 2);
-		float mag = sqrt(a * a + b * b);
-		*pRoll = Angle::arcTangent2(-this->getMatrix().getValue(2, 0), mag);
+	else {
+		// Not a unique solution. Pick an arbitrary one.
+		x = 3.141592654f/2.f;
+		z = atan2(m->getValue(0, 2), m->getValue(0, 0));
+		y = 0;
 	}
-
-	if (pPitch) {
-		*pPitch = Angle::arcTangent2(this->getMatrix().getValue(2, 1),
-									   this->getMatrix().getValue(2, 2));
-	}
+	
+	if (pPitch)
+        *pPitch = Math::Angle::fromRadians(x);
+    if (pRoll)
+        *pRoll = Math::Angle::fromRadians(y);
+    if (pYaw)
+        *pYaw = Math::Angle::fromRadians(z);
 }
 
 template<class T>

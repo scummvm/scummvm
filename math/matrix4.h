@@ -26,6 +26,7 @@
 #include "math/rotation3d.h"
 #include "math/squarematrix.h"
 #include "math/vector3d.h"
+#include "math/matrix3.h"
 
 namespace Math {
 
@@ -42,8 +43,23 @@ public:
 	
 	Vector3d getPosition() const;
 	void setPosition(const Vector3d &v);
+	
+	Matrix3 getRotation() const;
+	void setRotation(const Matrix3 &m);
 
 	void translate(const Vector3d &v);
+	
+	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection, 
+						   const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
+	
+	/** 
+     * Inverts a matrix in place.
+     *	This function avoid having to do generic Gaussian elimination on the matrix
+     *	by assuming that the top-left 3x3 part of the matrix is orthonormal
+     *	(columns and rows 0, 1 and 2 orthogonal and unit length).
+     *	See e.g. Eric Lengyel's Mathematics for 3D Game Programming and Computer Graphics, p. 82. 
+     */
+	void invertAffineOrthonormal();
 
 };
 
