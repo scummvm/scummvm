@@ -80,10 +80,10 @@ enum DataType {
 #define MORT_DAT "mort.dat"
 #define GAME_FRAME_DELAY (1000 / 50)
 
+const int kAcha = 492;
 const int asoul = 154;
 const int aouvr = 282;
 const int achai = 387;
-const int acha = 492;
 const int arcf = 1272;
 const int arep = 1314;
 const int amzon = 1650;
@@ -112,6 +112,8 @@ private:
 	void mainGame();
 	void playGame();
 	void handleAction();
+	void cinq_huit(char &c, int &idx, byte &pt, bool &the_end);
+	void copcha();
 public:
 	Common::String _hintPctMessage;
 	Common::Point _prevPos;
@@ -156,10 +158,10 @@ public:
 	int _minute;
 	float _addfix;
 
-
+	Common::Point _stdPal[91][17];
+	t_pcga _cgaPal[91];
 	int _c_zzz;
 	int ptr_word;
-
 	byte _v_lieu[7][25];
 
 	ScreenSurface _screenSurface;
@@ -302,6 +304,11 @@ public:
 	void clearScreenType10();
 	int getRandomNumber(int minval, int maxval);
 	void showMoveMenuAlert();
+	void decodeNumber(byte *pStart, int count);
+	Common::String getString(int num);
+	void resetVariables();
+
+	void setPal(int n);
 
 };
 

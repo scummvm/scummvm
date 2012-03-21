@@ -44,16 +44,7 @@
 
 namespace Mortevielle {
 
-/* NIVEAU 15 */
-void copcha() {
-	int i = acha;
-	do {
-		g_tabdon[i] = g_tabdon[i + 390];
-		++i;
-	} while (i != acha + 390);
-}
-
-void outbloc(int n, pattern p, nhom *pal) {
+void outbloc(int n, Pattern p, nhom *pal) {
 	int ad = n * 404 + 0xd700;
 
 	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + ad], p._tax);
@@ -62,34 +53,6 @@ void outbloc(int n, pattern p, nhom *pal) {
 	for (int i = 1; i <= p._tax; ++i) {
 		for (int j = 1; j <= p._tay; ++j)
 			g_mem[(0x6000 * 16) + ad + (j - 1) * p._tax + i - 1] = pal[n]._hom[p._des[i][j]];
-	}
-}
-
-void writepal(int n) {
-	switch (g_vm->_currGraphicalDevice) {
-	case MODE_TANDY:
-	case MODE_EGA:
-	case MODE_AMSTRAD1512:
-		for (int i = 1; i <= 16; ++i) {
-			g_mem[(0x7000 * 16) + (2 * i)] = g_tabpal[n][i].x;
-			g_mem[(0x7000 * 16) + (2 * i) + 1] = g_tabpal[n][i].y;
-		}
-		break;
-	case MODE_CGA: {
-		nhom pal[16];
-		for (int i = 0; i < 16; ++i) {
-			pal[i] = g_palcga[n]._a[i];
-		}
-
-		if (n < 89)
-			palette(g_palcga[n]._p);
-		
-		for (int i = 0; i <= 15; ++i)
-			outbloc(i, g_tpt[pal[i]._id], pal);
-		}
-		break;
-	default:
-		break;
 	}
 }
 
@@ -199,7 +162,7 @@ void modif(int &nu) {
 
 void dessine(int ad, int x, int y) {
 	g_vm->_mouse.hideMouse();
-	writepal(g_numpal);
+	g_vm->setPal(g_numpal);
 	pictout(ad, 0, x, y);
 	g_vm->_mouse.showMouse();
 }
@@ -209,7 +172,7 @@ void dessine(int ad, int x, int y) {
  * @remarks	Originally called 'dessine_rouleau'
  */
 void drawRightFrame() {
-	writepal(89);
+	g_vm->setPal(89);
 	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
 		g_mem[0x7000 * 16 + 14] = 15;
 	}
@@ -228,7 +191,7 @@ void text1(int x, int y, int nb, int m) {
 		co = 10;
 	else
 		co = 6;
-	Common::String tmpStr = deline(m);
+	Common::String tmpStr = g_vm->getString(m);
 	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
 	displayStr(tmpStr, x, y, nb, 20, g_vm->_textColor);
@@ -291,7 +254,7 @@ void modobj(int m) {
 	Common::String strp = Common::String(' ');
 
 	if (m != 500)
-		strp = deline(m - 501 + kInventoryStringIndex);
+		strp = g_vm->getString(m - 501 + kInventoryStringIndex);
 
 	g_vm->_menu.setText(g_vm->_menu._inventoryMenu[8], strp);
 	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
@@ -299,7 +262,7 @@ void modobj(int m) {
 
 void repon(int f, int m) {
 	if ((m > 499) && (m < 563)) {
-		Common::String tmpStr = deline(m - 501 + kInventoryStringIndex);
+		Common::String tmpStr = g_vm->getString(m - 501 + kInventoryStringIndex);
 
 		if ((int) tmpStr.size() > ((58 + (g_res - 1) * 37) << 1))
 			g_vm->_largestClearScreen = true;
@@ -335,7 +298,7 @@ void repon(int f, int m) {
 			else
 				i = 5;
 
-			Common::String tmpStr = deline(m);
+			Common::String tmpStr = g_vm->getString(m);
 			displayStr(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
@@ -492,54 +455,6 @@ void init_nbrepm() {
 void phaz(int &rand, int &p, int cf) {
 	p += cf;
 	rand = g_vm->getRandomNumber(1, 100);
-}
-
-/**
- * Engine function - When restarting the game, reset the main variables used by the engine
- * @remarks	Originally called 'inzon'
- */
-void resetVariables() {
-	copcha();
-
-	g_s._alreadyEnteredManor = false;
-	g_s._selectedObjectId = 0;
-	g_s._cellarObjectId = 0;
-	g_s._atticBallHoleObjectId = 0;
-	g_s._atticRodHoleObjectId = 0;
-	g_s._wellObjectId = 0;
-	g_s._secretPassageObjectId = 0;
-	g_s._purpleRoomObjectId = 136;
-	g_s._cryptObjectId = 141;
-	g_s._faithScore = g_vm->getRandomNumber(4, 10);
-	g_s._currPlace = MANOR_FRONT;
-
-	for (int i = 2; i <= 6; ++i)
-		g_s._sjer[i] = chr(0);
-
-	g_s._sjer[1] = chr(113);
-	g_s._fullHour = chr(20);
-
-	for (int i = 1; i <= 10; ++i)
-		g_s._pourc[i] = ' ';
-
-	for (int i = 1; i <= 6; ++i)
-		g_s._teauto[i] = '*';
-
-	for (int i = 7; i <= 9; ++i)
-		g_s._teauto[i] = ' ';
-
-	for (int i = 10; i <= 28; ++i)
-		g_s._teauto[i] = '*';
-
-	for (int i = 29; i <= 42; ++i)
-		g_s._teauto[i] = ' ';
-
-	g_s._teauto[33] = '*';
-
-	for (int i = 1; i <= 8; ++i)
-		g_nbrep[i] = 0;
-
-	init_nbrepm();
 }
 
 int t11(int roomId) {
@@ -876,7 +791,7 @@ void tkey1(bool d) {
 	while (g_vm->keyPressed())
 		g_key = testou();
 	do {
-		g_vm->_mouse.getMousePos_(x, y, c);
+		g_vm->_mouse.getMousePosition(x, y, c);
 		g_vm->keyPressed();
 	} while (c != 0);
 	
@@ -885,7 +800,7 @@ void tkey1(bool d) {
 		if (d)
 			tinke();
 		quest = g_vm->keyPressed();
-		g_vm->_mouse.getMousePos_(x, y, c);
+		g_vm->_mouse.getMousePosition(x, y, c);
 		CHECK_QUIT;
 	} while (!(quest || (c != 0) || (d && g_vm->_anyone)));
 	if (quest)
@@ -967,7 +882,7 @@ void modinv() {
 		if (g_s._sjer[i] != chr(0)) {
 			++cy;
 			r = (ord(g_s._sjer[i]) + 400);
-			nomp = deline(r - 501 + kInventoryStringIndex);
+			nomp = g_vm->getString(r - 501 + kInventoryStringIndex);
 			g_vm->_menu.setText(g_vm->_menu._inventoryMenu[cy], nomp);
 			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[i]);
 		}
@@ -992,7 +907,7 @@ void premtet() {
 
 /* NIVEAU 5 */
 void ajchai() {
-	int cy = acha + ((g_mchai - 1) * 10) - 1;
+	int cy = kAcha + ((g_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;
@@ -1077,7 +992,7 @@ void tsuiv() {
 	int tbcl;
 	int cl;
 
-	int cy = acha + ((g_mchai - 1) * 10) - 1;
+	int cy = kAcha + ((g_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;

@@ -564,7 +564,7 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 			g_t_cph[i] = savph[i];
 			g_mlec = _typlec;
 		}
-	writepal(g_numpal);
+	g_vm->setPal(g_numpal);
 }
 
 } // End of namespace Mortevielle

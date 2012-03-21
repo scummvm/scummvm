@@ -109,7 +109,7 @@ void SavegameManager::loadSavegame(int n) {
 
 	g_s = g_s1;
 	for (int i = 0; i <= 389; ++i)
-		g_tabdon[i + acha] = g_bufcha[i];
+		g_tabdon[i + kAcha] = g_bufcha[i];
 
 	// Close the stream
 	delete stream;	
@@ -142,7 +142,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	g_vm->hourToChar();
 	
 	for (i = 0; i <= 389; ++i)
-		g_bufcha[i] = g_tabdon[i + acha];
+		g_bufcha[i] = g_tabdon[i + kAcha];
 	g_s1 = g_s;
 	if (g_s1._currPlace == 26)
 		g_s1._currPlace = 15;

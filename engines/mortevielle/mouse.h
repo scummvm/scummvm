@@ -43,10 +43,10 @@ public:
 	void initMouse();
 	void hideMouse();
 	void showMouse();
-	void setMousePos(Common::Point newPos);
-	void getMousePos_(int &x, int &y, int &c);
+	void setMousePosition(Common::Point newPos);
+	void getMousePosition(int &x, int &y, int &c);
 	void moveMouse(bool &funct, char &key);
-	bool isMouseIn(rectangle r);
+	bool isMouseIn(Rect r);
 };
 
 } // End of namespace Mortevielle

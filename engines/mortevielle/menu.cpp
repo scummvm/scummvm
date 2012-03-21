@@ -97,7 +97,7 @@ void Menu::setDestinationMenuText(int roomId) {
 
 	int destinationId = 0;
 	for (; (destinationId < 7) && (g_vm->_v_lieu[destinationId][roomId]); ++destinationId) {
-		nomp = deline(g_vm->_v_lieu[destinationId][roomId] + kMenuPlaceStringIndex);
+		nomp = g_vm->getString(g_vm->_v_lieu[destinationId][roomId] + kMenuPlaceStringIndex);
 		while (nomp.size() < 20)
 			nomp += ' ';
 		setText(_moveMenu[destinationId + 1], nomp);
@@ -518,18 +518,18 @@ void Menu::initMenu() {
 		_moveStringArray[i] = "*                       ";
 	i = 1;
 	do {
-		_actionStringArray[i] = deline(i + kMenuActionStringIndex);
+		_actionStringArray[i] = g_vm->getString(i + kMenuActionStringIndex);
 
 		while (_actionStringArray[i].size() < 10)
 			_actionStringArray[i] += ' ';
 
 		if (i < 9) {
 			if (i < 6) {
-				_selfStringArray[i] = deline(i + kMenuSelfStringIndex);
+				_selfStringArray[i] = g_vm->getString(i + kMenuSelfStringIndex);
 				while (_selfStringArray[i].size() < 10)
 					_selfStringArray[i] += ' ';
 			}
-			_discussStringArray[i] = deline(i + kMenuSayStringIndex) + ' ';
+			_discussStringArray[i] = g_vm->getString(i + kMenuSayStringIndex) + ' ';
 		}
 		++i;
 	} while (i != 22);

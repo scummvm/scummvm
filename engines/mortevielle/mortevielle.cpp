@@ -30,7 +30,6 @@
 #include "graphics/pixelformat.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/dialogs.h"
-#include "mortevielle/asm.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
@@ -42,6 +41,31 @@
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
+
+const byte tabdr[32] = {
+	32, 101, 115,  97, 114, 105, 110,
+	117, 116, 111, 108,  13, 100,  99,
+	112, 109,  46, 118, 130,  39, 102,
+	98,  44, 113, 104, 103,  33,  76,
+	85, 106,  30,  31
+};
+
+
+const byte tab30[32] = {
+	69,  67,  74, 138, 133, 120,  77, 122,
+	121,  68,  65,  63,  73,  80,  83,  82,
+	156,  45,  58,  79,  49,  86,  78,  84,
+	71,  81,  64,  66, 135,  34, 136,  91
+};
+
+
+
+const byte tab31[32]= {
+	93,  47,  48,  53,  50,  70, 124,  75,
+	72, 147, 140, 150, 151,  57,  56,  51,
+	107, 139,  55,  89, 131,  37,  54,  88,
+	119,   0,   0,   0,   0,   0,   0,   0
+};
 
 MortevielleEngine *g_vm;
 
@@ -164,7 +188,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 		return result;
 
 	// Load some error messages (was previously in chartex())
-	_hintPctMessage = deline(580);  // You should have noticed %d hints
+	_hintPctMessage = getString(580);  // You should have noticed %d hints
 
 	// Set default EGA palette
 	_paletteManager.setDefaultPalette();
@@ -177,7 +201,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	charpal();
 	loadCFIPH();
 	loadCFIEC();
-	zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+	decodeNumber(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	_c_zzz = 1;
 	init_nbrepm();
 	initMouse();
@@ -541,7 +565,7 @@ void MortevielleEngine::mainGame() {
 		loadCFIEC();
 
 	for (g_crep = 1; g_crep <= _c_zzz; ++g_crep) 
-		zzuul(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+		decodeNumber(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	loadBRUIT5();
 	_menu.initMenu();
@@ -1684,7 +1708,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 	assert(rep >= 0);
 
 	_mouse.hideMouse();
-	Common::String dialogStr = deline(rep + kDialogStringIndex);
+	Common::String dialogStr = getString(rep + kDialogStringIndex);
 	displayStr(dialogStr, 230, 4, 65, 24, 5);
 	f3f8::draw();
 	
@@ -1853,7 +1877,7 @@ void MortevielleEngine::gameLoaded() {
 	g_iouv = 0;
 	g_dobj = 0;
 	affrep();
-	_hintPctMessage = deline(580);
+	_hintPctMessage = getString(580);
 
 	_okdes = false;
 	_endGame = true;
@@ -2099,6 +2123,198 @@ int MortevielleEngine::getRandomNumber(int minval, int maxval) {
  */
 void MortevielleEngine::showMoveMenuAlert() {
 	Alert::show(getEngineString(S_USE_DEP_MENU), 1);
+}
+
+/**
+ * Decodes a number of 64 byte blocks
+ * @param pStart	Start of data
+ * @param count		Number of 64 byte blocks
+ * @remarks	Originally called 'zzuul'
+ */
+void MortevielleEngine::decodeNumber(byte *pStart, int count) {
+	while (count-- > 0) {
+		for (int idx = 0; idx < 64; ++pStart, ++idx) {
+			uint16 v = ((*pStart - 0x80) << 1) + 0x80;
+
+			if (v & 0x8000)
+				*pStart = 0;
+			else if (v & 0xff00)
+				*pStart = 0xff;
+			else 
+				*pStart = (byte)v;
+		}
+	}
+}
+
+void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
+	uint16 oct, ocd;
+
+	/* 5-8 */
+	oct = g_t_mot[idx];
+	oct = ((uint16)(oct << (16 - pt))) >> (16 - pt);
+	if (pt < 6) {
+		++idx;
+		oct = oct << (5 - pt);
+		pt += 11;
+		oct = oct | ((uint)g_t_mot[idx] >> pt);
+	} else {
+		pt -= 5;
+		oct = (uint)oct >> pt;
+	}
+
+	switch (oct) {
+	case 11:
+		c = '$';
+		the_end = true;
+		break;
+	case 30:
+	case 31:
+		ocd = g_t_mot[idx];
+		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
+		if (pt < 6) {
+			++idx;
+			ocd = ocd << (5 - pt);
+			pt += 11;
+			ocd = ocd | ((uint)g_t_mot[idx] >> pt);
+		} else {
+			pt -= 5;
+			ocd = (uint)ocd >> pt;
+		}
+
+		if (oct == 30)
+			c = chr(tab30[ocd]);
+		else
+			c = chr(tab31[ocd]);
+
+		if (c == '\0') {
+			the_end = true;
+			c = '#';
+		}
+		break;
+	default:
+		c = chr(tabdr[oct]);
+		break;
+	}
+}
+
+/**
+ * Decode and extract the line with the given Id
+ * @remarks	Originally called 'deline'
+ */
+Common::String MortevielleEngine::getString(int num) {
+	Common::String wrkStr = "";
+
+	if (num < 0) {
+		warning("deline: num < 0! Skipping");
+	} else if (!g_vm->_txxFileFl) {
+		wrkStr = g_vm->getGameString(num);
+	} else {
+		int i = g_t_rec[num]._hintId;
+		byte k = g_t_rec[num]._point;
+		int length = 0;
+		bool endFl = false;
+		char let;
+		do {
+			cinq_huit(let, i, k, endFl);
+			if (length < 254)
+				wrkStr += let;
+			++length;
+		} while (!endFl);
+	}
+
+	if (wrkStr.lastChar() == '$')
+		// Remove trailing '$'
+		wrkStr.deleteLastChar();
+
+	return wrkStr;
+}
+
+void MortevielleEngine::copcha() {
+	int i = kAcha;
+	do {
+		g_tabdon[i] = g_tabdon[i + 390];
+		++i;
+	} while (i != kAcha + 390);
+}
+
+/**
+ * Engine function - When restarting the game, reset the main variables used by the engine
+ * @remarks	Originally called 'inzon'
+ */
+void MortevielleEngine::resetVariables() {
+	copcha();
+
+	g_s._alreadyEnteredManor = false;
+	g_s._selectedObjectId = 0;
+	g_s._cellarObjectId = 0;
+	g_s._atticBallHoleObjectId = 0;
+	g_s._atticRodHoleObjectId = 0;
+	g_s._wellObjectId = 0;
+	g_s._secretPassageObjectId = 0;
+	g_s._purpleRoomObjectId = 136;
+	g_s._cryptObjectId = 141;
+	g_s._faithScore = g_vm->getRandomNumber(4, 10);
+	g_s._currPlace = MANOR_FRONT;
+
+	for (int i = 2; i <= 6; ++i)
+		g_s._sjer[i] = chr(0);
+
+	g_s._sjer[1] = chr(113);
+	g_s._fullHour = chr(20);
+
+	for (int i = 1; i <= 10; ++i)
+		g_s._pourc[i] = ' ';
+
+	for (int i = 1; i <= 6; ++i)
+		g_s._teauto[i] = '*';
+
+	for (int i = 7; i <= 9; ++i)
+		g_s._teauto[i] = ' ';
+
+	for (int i = 10; i <= 28; ++i)
+		g_s._teauto[i] = '*';
+
+	for (int i = 29; i <= 42; ++i)
+		g_s._teauto[i] = ' ';
+
+	g_s._teauto[33] = '*';
+
+	for (int i = 1; i <= 8; ++i)
+		g_nbrep[i] = 0;
+
+	init_nbrepm();
+}
+
+/**
+ * Engine function - Set the palette
+ * @remarks	Originally called 'writepal'
+ */
+void MortevielleEngine::setPal(int n) {
+	switch (g_vm->_currGraphicalDevice) {
+	case MODE_TANDY:
+	case MODE_EGA:
+	case MODE_AMSTRAD1512:
+		for (int i = 1; i <= 16; ++i) {
+			g_mem[(0x7000 * 16) + (2 * i)] = _stdPal[n][i].x;
+			g_mem[(0x7000 * 16) + (2 * i) + 1] = _stdPal[n][i].y;
+		}
+		break;
+	case MODE_CGA: {
+		nhom pal[16];
+		for (int i = 0; i < 16; ++i) {
+			pal[i] = g_vm->_cgaPal[n]._a[i];
+		}
+
+		if (n < 89)
+			palette(g_vm->_cgaPal[n]._p);
+		
+		for (int i = 0; i <= 15; ++i)
+			outbloc(i, _patternArr[pal[i]._id], pal);
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Mortevielle

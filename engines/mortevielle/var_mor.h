@@ -140,16 +140,15 @@ struct SpeechQueue {
 	int _rep;
 };
 
-struct rectangle {
+struct Rect {
 	int _x1, _x2, _y1, _y2;
 	bool _enabled;
 };
 
-struct pattern {
+struct Pattern {
 	byte _tay, _tax;
 	byte _des[kMaxPatt + 1][kMaxPatt + 1];
 };
-
 
 struct nhom {
 	byte _id;     /* number between 0 and 32 */
@@ -227,9 +226,7 @@ extern int g_tay_tchar;
 extern Hint g_t_rec[maxtd + 1];
 extern int g_l[108];
 extern int g_tbi[256];
-extern Common::Point g_tabpal[91][17];
-extern t_pcga g_palcga[91];
-extern pattern g_tpt[15];
+extern Pattern _patternArr[15];
 
 extern byte g_adcfiec[822 * 128];
 

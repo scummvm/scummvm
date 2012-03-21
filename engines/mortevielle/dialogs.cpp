@@ -291,7 +291,7 @@ bool KnowledgeCheck::show() {
 	int rep;
 	int firstOption, lastOption;
 	char key;
-	rectangle coor[kMaxRect];
+	Rect coor[kMaxRect];
 	Common::String choiceArray[15];
 
 	int currChoice, prevChoice;
@@ -307,7 +307,7 @@ bool KnowledgeCheck::show() {
 		else
 			dialogHeight = 23;
 		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
-		Common::String tmpStr = deline(textIndexArr[indx]);
+		Common::String tmpStr = g_vm->getString(textIndexArr[indx]);
 		displayStr(tmpStr, 20, 15, 100, 2, 0);
 
 		if (indx != 9) {
@@ -322,7 +322,7 @@ bool KnowledgeCheck::show() {
 
 		prevChoice = 1;
 		for (int j = firstOption; j <= lastOption; ++j, ++prevChoice) {
-			tmpStr = deline(j);
+			tmpStr = g_vm->getString(j);
 			if ((int) tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
 			displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
