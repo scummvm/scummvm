@@ -3472,7 +3472,7 @@ fi
 echocheck "FreeType2"
 echo "$_freetype2"
 
-define_in_config_h_if_yes "$_freetype2" "USE_FREETYPE2"
+define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 
 #
 # Check for OpenGL (ES)
