@@ -169,12 +169,12 @@ osxsnap: bundle
 	cp $(srcdir)/README ./ResidualVM-snapshot/Residual\ ReadMe
 	mkdir ResidualVM-snapshot/doc
 	cp $(srcdir)/doc/QuickStart ./ResidualVM-snapshot/doc/QuickStart
-	/Developer/Tools/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/*
-	/Developer/Tools/CpMac -r $(bundle_name) ./ResidualVM-snapshot/
+	SetFile -t ttro -c ttxt ./ResidualVM-snapshot/*
+	CpMac -r $(bundle_name) ./ResidualVM-snapshot/
 	#cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
 	#cp $(srcdir)/dists/macosx/background.jpg ./ResidualVM-snapshot/background.jpg
-	#/Developer/Tools/SetFile -a V ./ResidualVM-snapshot/.DS_Store
-	#/Developer/Tools/SetFile -a V ./ResidualVM-snapshot/background.jpg
+	#SetFile -a V ./ResidualVM-snapshot/.DS_Store
+	#SetFile -a V ./ResidualVM-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder ResidualVM-snapshot \
 					-volname "ResidualVM" \
