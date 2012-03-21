@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>residualvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.2.0git, Copyright 2003-2012 The ResiaulVM team</string>
+	<string>0.2.0git, Copyright 2003-2012 The ResidualVM team</string>
 	<key>CFBundleIconFile</key>
 	<string>residualvm.icns</string>
 	<key>CFBundleIdentifier</key>
