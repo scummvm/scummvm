@@ -117,9 +117,8 @@ int g_tay_tchar;
 Hint g_t_rec[maxtd + 1];
 int g_l[108];
 int g_tbi[256];
-Common::Point g_tabpal[91][17];
 t_pcga g_palcga[91];
-pattern g_tpt[15];
+Pattern _patternArr[15];
 
 byte g_adcfiec[(4088 * 16) + (311 * 0x80)];
 

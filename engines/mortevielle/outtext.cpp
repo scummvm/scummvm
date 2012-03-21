@@ -36,125 +36,7 @@
 
 namespace Mortevielle {
 
-Common::String delig;
-const byte tabdr[32] = {
-	32, 101, 115,  97, 114, 105, 110,
-	117, 116, 111, 108,  13, 100,  99,
-	112, 109,  46, 118, 130,  39, 102,
-	98,  44, 113, 104, 103,  33,  76,
-	85, 106,  30,  31
-};
-
-
-const byte tab30[32] = {
-	69,  67,  74, 138, 133, 120,  77, 122,
-	121,  68,  65,  63,  73,  80,  83,  82,
-	156,  45,  58,  79,  49,  86,  78,  84,
-	71,  81,  64,  66, 135,  34, 136,  91
-};
-
-
-
-const byte tab31[32]= {
-	93,  47,  48,  53,  50,  70, 124,  75,
-	72, 147, 140, 150, 151,  57,  56,  51,
-	107, 139,  55,  89, 131,  37,  54,  88,
-	119,   0,   0,   0,   0,   0,   0,   0
-};
-
-Common::String deline(int num);
 typedef unsigned char uchar;
-
-static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
-/*
-	const uchar rap[32] = { 
-		(uchar)',', (uchar)':', (uchar)'@', (uchar)'!', (uchar)'?', (uchar)'-', (uchar)'\207',
-		(uchar)'\240', (uchar)'\205', (uchar)'\203', (uchar)'\202', (uchar)'\212', (uchar)'\210', (uchar)'/',
-		(uchar)'\213', (uchar)'\214', (uchar)'\242', (uchar)'\047', (uchar)'\223', (uchar)'"', (uchar)'\227',
-		(uchar)'\226', (uchar)'0', (uchar)'1', (uchar)'2', (uchar)'3', (uchar)'4', (uchar)'5',
-		(uchar)'6', (uchar)'7', (uchar)'8', (uchar)'9'
-	};
-*/
-	uint16 oct, ocd;
-
-	/* 5-8 */
-	oct = g_t_mot[idx];
-	oct = ((uint16)(oct << (16 - pt))) >> (16 - pt);
-	if (pt < 6) {
-		++idx;
-		oct = oct << (5 - pt);
-		pt += 11;
-		oct = oct | ((uint)g_t_mot[idx] >> pt);
-	} else {
-		pt -= 5;
-		oct = (uint)oct >> pt;
-	}
-
-	switch (oct) {
-	case 11:
-		c = '$';
-		the_end = true;
-		break;
-	case 30:
-	case 31:
-		ocd = g_t_mot[idx];
-		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
-		if (pt < 6) {
-			++idx;
-			ocd = ocd << (5 - pt);
-			pt += 11;
-			ocd = ocd | ((uint)g_t_mot[idx] >> pt);
-		} else {
-			pt -= 5;
-			ocd = (uint)ocd >> pt;
-		}
-
-		if (oct == 30)
-			c = chr(tab30[ocd]);
-		else
-			c = chr(tab31[ocd]);
-
-		if (c == '\0') {
-			the_end = true;
-			c = '#';
-		}
-		break;
-	default:
-		c = chr(tabdr[oct]);
-		break;
-	}
-}              /* 5-8 */
-
-/**
- * Decode and extract the line with the given Id
- */
-Common::String deline(int num) {
-	Common::String wrkStr = "";
-
-	if (num < 0) {
-		warning("deline: num < 0! Skipping");
-	} else if (!g_vm->_txxFileFl) {
-		wrkStr = g_vm->getGameString(num);
-	} else {
-		int i = g_t_rec[num]._hintId;
-		byte k = g_t_rec[num]._point;
-		int length = 0;
-		bool endFl = false;
-		char let;
-		do {
-			cinq_huit(let, i, k, endFl);
-			if (length < 254)
-				wrkStr += let;
-			++length;
-		} while (!endFl);
-	}
-
-	if (wrkStr.lastChar() == '$')
-		// Remove trailing '$'
-		wrkStr.deleteLastChar();
-
-	return wrkStr;
-}
 
 static int l_motsuiv(int p, const char *ch, int &tab) {
 	int c = p;
@@ -429,7 +311,7 @@ void taffich() {
 		}
 	}
 	g_numpal = npal;
-	writepal(npal);
+	g_vm->setPal(npal);
 
 	if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26) || (b == 50)) {
 		lgt = 0;

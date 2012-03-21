@@ -42,9 +42,7 @@ static const int _actionMenu[12] = { OPCODE_NONE,
 		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
 };
 
-extern void copcha();
-extern void outbloc(int n, pattern p, nhom *pal);
-extern void writepal(int n);
+extern void outbloc(int n, Pattern p, nhom *pal);
 extern void pictout(int seg, int dep, int x, int y);
 extern void sauvecr(int y, int dy);
 extern void charecr(int y, int dy);
@@ -76,7 +74,6 @@ extern void becfren(int roomId);
 /* NIVEAU 10 */
 extern void init_nbrepm();
 extern void phaz(int &rand, int &p, int cf);
-extern void resetVariables();
 extern int t11(int roomId);
 extern void cavegre();
 extern void writetp(Common::String s, int t);

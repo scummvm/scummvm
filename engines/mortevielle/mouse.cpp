@@ -227,7 +227,7 @@ void MouseHandler::showMouse() {
  * Set mouse position
  * @remarks	Originally called 'pos_mouse'
  */
-void MouseHandler::setMousePos(Common::Point newPos) {
+void MouseHandler::setMousePosition(Common::Point newPos) {
 	if (newPos.x > 314 * g_res)
 		newPos.x = 314 * g_res;
 	else if (newPos.x < 0)
@@ -247,7 +247,7 @@ void MouseHandler::setMousePos(Common::Point newPos) {
  * Get mouse poisition
  * @remarks	Originally called 'read_pos_mouse'
  */
-void MouseHandler::getMousePos_(int &x, int &y, int &c) {
+void MouseHandler::getMousePosition(int &x, int &y, int &c) {
 	x = g_vm->getMousePos().x;
 	y = g_vm->getMousePos().y;
 	c = g_vm->getMouseClick() ? 1 : 0;
@@ -276,7 +276,7 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 		CHECK_QUIT;
 
 		in1 = g_vm->getChar();
-		getMousePos_(cx, cy, cd);
+		getMousePosition(cx, cy, cd);
 		switch (toupper(in1)) {
 		case '4':
 			cx -= 8;
@@ -407,19 +407,19 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			break;
 		}
 
-		setMousePos(Common::Point(cx, cy));
+		setMousePosition(Common::Point(cx, cy));
 		p_key = g_vm->keyPressed();
 	}
 }
 
 /**
- * Engine function : Is mouse in a given rect?
+ * Mouse function : Is mouse in a given rect?
  * @remarks	Originally called 'dans_rect'
  */
-bool MouseHandler::isMouseIn(rectangle r) {
+bool MouseHandler::isMouseIn(Rect r) {
 	int x, y, c;
 
-	getMousePos_(x, y, c);
+	getMousePosition(x, y, c);
 	if ((x > r._x1) && (x < r._x2) && (y > r._y1) && (y < r._y2))
 		return true;
 

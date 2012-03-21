@@ -209,7 +209,7 @@ void MortevielleEngine::fctTake() {
 				_obpart = false;
 				affrep();
 			} else {
-				g_tabdon[acha + ((g_mchai - 1) * 10) + g_cs - 1] = 0;
+				g_tabdon[kAcha + ((g_mchai - 1) * 10) + g_cs - 1] = 0;
 				tsuiv();
 				++g_dobj;
 				if (g_dobj > 6) {
@@ -699,7 +699,7 @@ void MortevielleEngine::fctPlace() {
 					// Do you want to enter the hidden passage?
 					int answer = Alert::show(getEngineString(S_YES_NO), 1);
 					if (answer == 1) {
-						Common::String alertTxt = deline(582);
+						Common::String alertTxt = g_vm->getString(582);
 						Alert::show(alertTxt, 1);
 
 						bool enterPassageFl = KnowledgeCheck::show();
@@ -722,11 +722,11 @@ void MortevielleEngine::fctPlace() {
 							_menu.setDestinationMenuText(SECRET_PASSAGE);
 						} else {
 							_menu.setDestinationMenuText(g_s._currPlace);
-							writepal(14);
+							setPal(14);
 							dessin(0);
 							aniof(1, 2);
 							aniof(1, 1);
-							alertTxt = deline(577);
+							alertTxt = g_vm->getString(577);
 							Alert::show(alertTxt, 1);
 							aniof(2, 1);
 							g_crep = 166;
@@ -1368,7 +1368,7 @@ void MortevielleEngine::fctDiscuss() {
 	for (int ix = 1; ix <= 46; ++ix)
 		te[ix] = false;
 	for (int ix = 1; ix <= 45; ++ix) {
-		lib[ix] = deline(ix + kQuestionStringIndex);
+		lib[ix] = g_vm->getString(ix + kQuestionStringIndex);
 		for (i = lib[ix].size(); i <= 40; ++i)
 			lib[ix] = lib[ix] + ' ';
 	}
@@ -1403,7 +1403,7 @@ void MortevielleEngine::fctDiscuss() {
 			_mouse.moveMouse(f, tou);
 			CHECK_QUIT;
 
-			_mouse.getMousePos_(x, y, c);
+			_mouse.getMousePosition(x, y, c);
 			x *= (3 - g_res);
 			if (x > 319)
 				cx = 41;

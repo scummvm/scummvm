@@ -54,8 +54,8 @@ void charpal() {
 		error("Missing file - plxx.mor");
 	for (int i = 0; i <= 90; ++i) {
 		for (int j = 1; j <= 16; ++j) {
-			g_tabpal[i][j].x = f.readByte();
-			g_tabpal[i][j].y = f.readByte();
+			g_vm->_stdPal[i][j].x = f.readByte();
+			g_vm->_stdPal[i][j].y = f.readByte();
 		}
 	}
 	f.close();
@@ -64,9 +64,9 @@ void charpal() {
 		error("Missing file - cxx.mor");
 
 	for (int j = 0; j <= 90; ++j) {
-		g_palcga[j]._p = f.readByte();
+		g_vm->_cgaPal[j]._p = f.readByte();
 		for (int i = 0; i <= 15; ++i) {
-			nhom &with = g_palcga[j]._a[i];
+			nhom &with = g_vm->_cgaPal[j]._a[i];
 
 			b = f.readByte();
 			with._id = (uint)b >> 4;
@@ -75,13 +75,13 @@ void charpal() {
 		}
 	}
 
-	g_palcga[10]._a[9] = g_palcga[10]._a[5];
+	g_vm->_cgaPal[10]._a[9] = g_vm->_cgaPal[10]._a[5];
 	for (int j = 0; j <= 14; ++j) {
-		g_tpt[j]._tax = f.readByte();
-		g_tpt[j]._tay = f.readByte();
+		_patternArr[j]._tax = f.readByte();
+		_patternArr[j]._tay = f.readByte();
 		for (int i = 1; i <= 20; ++i)
 			for (int k = 1; k <= 20; ++k)
-				g_tpt[j]._des[i][k] = f.readByte();
+				_patternArr[j]._des[i][k] = f.readByte();
 	}
 	f.close();
 }
