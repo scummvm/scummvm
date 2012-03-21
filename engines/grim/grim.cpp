@@ -286,7 +286,7 @@ Common::Error GrimEngine::run() {
 
 	lua->loadSystemScript();
 	if (!lua->supportedVersion()) {
-		const char *errorMessage;
+		const char *errorMessage = 0;
 		if (g_grim->getGameType() == GType_GRIM)
 			errorMessage = 	"Unsupported version of Grim Fandango.\n"
 							"Please download the original patch from\n"

@@ -37,7 +37,7 @@ class Costume;
 class LipSync;
 class Font;
 class Set;
-class Joint;
+struct Joint;
 
 struct Plane {
 	Common::String setName;
