@@ -157,6 +157,9 @@ static const char *credits[] = {
 "C1""Parallaction",
 "C0""peres",
 "",
+"C1""Pegasus",
+"C0""Matthew Hoops",
+"",
 "C1""Queen",
 "C0""David Eriksson",
 "C2""(retired)",
@@ -709,6 +712,8 @@ static const char *credits[] = {
 "C0""David P. Gray from Gray Design Associates for sharing the source code of the Hugo trilogy.",
 "C0""",
 "C0""Broken Sword 2.5 team for providing sources of their engine and their great support.",
+"C0""",
+"C0""Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime.",
 "C0""",
 "",
 };
