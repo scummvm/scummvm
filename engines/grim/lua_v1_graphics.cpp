@@ -149,7 +149,7 @@ void Lua_V1::IsMoviePlaying() {
 void Lua_V1::StopMovie() {
 	g_movie->stop();
 	// Delete subtitles that may have not expired.
-	TextObject::getPool().deleteObjects();
+	g_grim->setMovieSubtitle(NULL);
 }
 
 void Lua_V1::PauseMovie() {

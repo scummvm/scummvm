@@ -162,6 +162,8 @@ public:
 	void addTalkingActor(Actor *actor);
 	bool areActorsTalking() const;
 
+	void setMovieSubtitle(TextObject *to);
+
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
 
@@ -227,6 +229,7 @@ private:
 
 	Actor *_selectedActor;
 	Iris *_iris;
+	TextObject::Ptr _movieSubtitle;
 
 	bool _buildActiveActorsList;
 	Common::List<Actor *> _activeActors;

@@ -408,8 +408,14 @@ void GrimEngine::drawPrimitives() {
 	_iris->draw();
 
 	// Draw text
-	foreach (TextObject *t, TextObject::getPool()) {
-		t->draw();
+	if (_mode == SmushMode) {
+		if (_movieSubtitle) {
+			_movieSubtitle->draw();
+		}
+	} else {
+		foreach (TextObject *t, TextObject::getPool()) {
+			t->draw();
+		}
 	}
 }
 
@@ -1096,6 +1102,14 @@ void GrimEngine::addTalkingActor(Actor *a) {
 
 bool GrimEngine::areActorsTalking() const {
 	return !_talkingActors.empty();
+}
+
+void GrimEngine::setMovieSubtitle(TextObject *to)
+{
+	if (_movieSubtitle != to) {
+		delete _movieSubtitle;
+		_movieSubtitle = to;
+	}
 }
 
 const Common::String &GrimEngine::getSetName() const {

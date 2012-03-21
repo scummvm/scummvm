@@ -867,7 +867,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	if (background)
 		_isTalkingBackground = true;
 
-	if (_sayLineText) {
+	if (_sayLineText && g_grim->getMode() != GrimEngine::SmushMode) {
 		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
@@ -876,9 +876,6 @@ void Actor::sayLine(const char *msgId, bool background) {
 		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
-
-		if (g_grim->getMode() == GrimEngine::SmushMode)
-			TextObject::getPool().deleteObjects();
 
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
@@ -889,6 +886,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
+			g_grim->setMovieSubtitle(textObject);
 		} else {
 			if (_visible && isInSet(g_grim->getCurrSet()->getName())) {
 				_mustPlaceText = true;
