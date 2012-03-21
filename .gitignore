@@ -18,9 +18,10 @@ lib*.a
 /*.dSYM
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
-/Residual.app
+/ResidualVM.app
 /residualvm-ps3.pkg
 /*.ipk
+/*.dmg
 /.project
 /.cproject
 /.settings
