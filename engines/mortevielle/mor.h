@@ -42,7 +42,6 @@ static const int _actionMenu[12] = { OPCODE_NONE,
 		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
 };
 
-extern void outbloc(int n, Pattern p, nhom *pal);
 extern void pictout(int seg, int dep, int x, int y);
 extern void sauvecr(int y, int dy);
 extern void charecr(int y, int dy);
@@ -51,8 +50,6 @@ extern int animof(int ouf, int num);
 /* Niveau 14 suite */
 extern int readclock();
 extern void modif(int &nu);
-extern void dessine(int ad, int x, int y);
-extern void drawRightFrame();
 /* NIVEAU 13 */
 extern void text1(int x, int y, int nb, int m);
 extern void initouv();

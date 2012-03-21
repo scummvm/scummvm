@@ -101,7 +101,6 @@ int g_x,
 
 int g_t_cph[6401];
 byte g_tabdon[4001];
-byte g_is;
 
 int g_nbrep[9];
 int g_nbrepm[9];
@@ -112,13 +111,11 @@ byte g_bufcha[391];
 
 byte g_lettres[7][24];
 
-uint16 g_t_mot[maxti + 1];
+uint16 g_t_mot[kMaxTi + 1];
 int g_tay_tchar;
-Hint g_t_rec[maxtd + 1];
+Hint g_t_rec[kMaxTd + 1];
 int g_l[108];
 int g_tbi[256];
-t_pcga g_palcga[91];
-Pattern _patternArr[15];
 
 byte g_adcfiec[(4088 * 16) + (311 * 0x80)];
 

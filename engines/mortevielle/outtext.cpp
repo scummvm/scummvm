@@ -196,37 +196,37 @@ void taffich() {
 
 	switch (a) {
 	case 16:
-		g_s._pourc[9] = '*';
-		g_s._teauto[42] = '*';
+		g_vm->g_s._pourc[9] = '*';
+		g_vm->g_s._teauto[42] = '*';
 		break;
 	case 20:
-		g_s._teauto[39] = '*';
-		if (g_s._teauto[36] == '*') {
-			g_s._pourc[3] = '*';
-			g_s._teauto[38] = '*';
+		g_vm->g_s._teauto[39] = '*';
+		if (g_vm->g_s._teauto[36] == '*') {
+			g_vm->g_s._pourc[3] = '*';
+			g_vm->g_s._teauto[38] = '*';
 		}
 		break;
 	case 24:
-		g_s._teauto[37] = '*';
+		g_vm->g_s._teauto[37] = '*';
 		break;
 	case 30:
-		g_s._teauto[9] = '*';
+		g_vm->g_s._teauto[9] = '*';
 		break;
 	case 31:
-		g_s._pourc[4] = '*';
-		g_s._teauto[35] = '*';
+		g_vm->g_s._pourc[4] = '*';
+		g_vm->g_s._teauto[35] = '*';
 		break;
 	case 118:
-		g_s._teauto[41] = '*';
+		g_vm->g_s._teauto[41] = '*';
 		break;
 	case 143:
-		g_s._pourc[1] = '*';
+		g_vm->g_s._pourc[1] = '*';
 		break;
 	case 150:
-		g_s._teauto[34] = '*';
+		g_vm->g_s._teauto[34] = '*';
 		break;
 	case 151:
-		g_s._pourc[2] = '*';
+		g_vm->g_s._pourc[2] = '*';
 		break;
 	default:
 		break;
@@ -249,7 +249,7 @@ void taffich() {
 			m = 2018;
 
 		if (a > 99) {
-			if ((g_is == 1) || (g_is == 0))
+			if ((g_vm->g_is == 1) || (g_vm->g_is == 0))
 				m = 2031;
 			else
 				m = 2032;
@@ -258,7 +258,7 @@ void taffich() {
 		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
 			m = 2030;
 
-		if (((a < 27) && (((g_maff > 69) && (!g_s._alreadyEnteredManor)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
+		if (((a < 27) && (((g_maff > 69) && (!g_vm->g_s._alreadyEnteredManor)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
 			m = 2033;
 
 		g_maff = a;
@@ -333,11 +333,11 @@ void taffich() {
 		charani(filename, lgt, handle);
 	}
 	g_vm->_mouse.showMouse();
-	if ((a < 27) && ((g_maff < 27) || (g_s._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
+	if ((a < 27) && ((g_maff < 27) || (g_vm->g_s._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			g_vm->displayAloneText();
 		else if (!g_vm->_blo)
-			cx = t11(g_s._currPlace);
+			cx = t11(g_vm->g_s._currPlace);
 		g_mpers =  0;
 	}
 }

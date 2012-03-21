@@ -44,19 +44,6 @@
 
 namespace Mortevielle {
 
-void outbloc(int n, Pattern p, nhom *pal) {
-	int ad = n * 404 + 0xd700;
-
-	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + ad], p._tax);
-	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + ad + 2], p._tay);
-	ad += 4;
-	for (int i = 1; i <= p._tax; ++i) {
-		for (int j = 1; j <= p._tay; ++j)
-			g_mem[(0x6000 * 16) + ad + (j - 1) * p._tax + i - 1] = pal[n]._hom[p._des[i][j]];
-	}
-}
-
-
 void pictout(int seg, int dep, int x, int y) {
 	GfxSurface surface;
 	surface.decode(&g_mem[seg * 16 + dep]);
@@ -159,28 +146,6 @@ void modif(int &nu) {
 		nu -= 3976;
 }
 
-
-void dessine(int ad, int x, int y) {
-	g_vm->_mouse.hideMouse();
-	g_vm->setPal(g_numpal);
-	pictout(ad, 0, x, y);
-	g_vm->_mouse.showMouse();
-}
-
-/**
- * Draw right frame
- * @remarks	Originally called 'dessine_rouleau'
- */
-void drawRightFrame() {
-	g_vm->setPal(89);
-	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
-		g_mem[0x7000 * 16 + 14] = 15;
-	}
-	g_vm->_mouse.hideMouse();
-	pictout(0x73a2, 0, 0, 0);
-	g_vm->_mouse.showMouse();
-}
-
 /* NIVEAU 13 */
 
 
@@ -280,12 +245,12 @@ void repon(int f, int m) {
 			g_vm->prepareScreenType2();
 			text1(8, 182, 103, m);
 			if ((m == 68) || (m == 69))
-				g_s._teauto[40] = '*';
+				g_vm->g_s._teauto[40] = '*';
 			if ((m == 104) && (g_caff == 14)) {
-				g_s._teauto[36] = '*';
-				if (g_s._teauto[39] == '*') {
-					g_s._pourc[3] = '*';
-					g_s._teauto[38] = '*';
+				g_vm->g_s._teauto[36] = '*';
+				if (g_vm->g_s._teauto[39] == '*') {
+					g_vm->g_s._pourc[3] = '*';
+					g_vm->g_s._teauto[38] = '*';
 				}
 			}
 			break;
@@ -302,9 +267,9 @@ void repon(int f, int m) {
 			displayStr(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
-				g_s._pourc[6] = '*';
+				g_vm->g_s._pourc[6] = '*';
 			else if (m == 179)
-				g_s._pourc[10] = '*';
+				g_vm->g_s._pourc[10] = '*';
 			}
 			break;
 		default:
@@ -461,7 +426,7 @@ int t11(int roomId) {
 	int retVal = 0;
 	int p, rand;
 
-	ecfren(p, rand, g_s._faithScore, roomId);
+	ecfren(p, rand, g_vm->g_s._faithScore, roomId);
 	g_vm->_place = roomId;
 	if ((roomId > OWN_ROOM) && (roomId < DINING_ROOM)) {
 		if (p != -500) {
@@ -493,7 +458,7 @@ int t11(int roomId) {
 				p = g_vm->getPresenceStatsLanding();
 			else if (roomId == CHAPEL)
 				p = g_vm->getPresenceStatsChapel(h);
-			p += g_s._faithScore;
+			p += g_vm->g_s._faithScore;
 			rand = g_vm->getRandomNumber(1, 100);
 			if (rand > p) {
 				g_vm->displayAloneText();
@@ -518,9 +483,9 @@ int t11(int roomId) {
 }
 
 void cavegre() {
-	g_s._faithScore += 2;
-	if (g_s._faithScore > 69)
-		g_s._faithScore += (g_s._faithScore / 10);
+	g_vm->g_s._faithScore += 2;
+	if (g_vm->g_s._faithScore > 69)
+		g_vm->g_s._faithScore += (g_vm->g_s._faithScore / 10);
 	g_vm->clearScreenType3();
 	g_vm->prepareScreenType2();
 	ecr3(g_vm->getEngineString(S_SOMEONE_ENTERS));
@@ -567,17 +532,17 @@ void aniof(int ouf, int num) {
 /* NIVEAU 9 */
 void dessin(int ad) {
 	if (ad != 0)
-		dessine(g_ades, ((ad % 160) * 2), (ad / 160));
+		g_vm->draw(g_ades, ((ad % 160) * 2), (ad / 160));
 	else {
 		g_vm->clearScreenType1();
 		if (g_caff > 99) {
-			dessine(g_ades, 60, 33);
+			g_vm->draw(g_ades, 60, 33);
 			g_vm->_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
 		} else if (g_caff > 69) {
-			dessine(g_ades, 112, 48);           // Heads
+			g_vm->draw(g_ades, 112, 48);           // Heads
 			g_vm->_screenSurface.drawBox(222, 47, 155, 91, 15);
 		} else {
-			dessine(g_ades, 0, 12);
+			g_vm->draw(g_ades, 0, 12);
 			g_vm->prepareScreenType1();
 			if ((g_caff < 30) || (g_caff > 32)) {
 				for (int cx = 1; cx <= 6; ++cx) {
@@ -586,16 +551,16 @@ void dessin(int ad) {
 				}
 
 				if (g_caff == 13) {
-					if (g_s._atticBallHoleObjectId == 141)
+					if (g_vm->g_s._atticBallHoleObjectId == 141)
 						aniof(1, 7);
 
-					if (g_s._atticRodHoleObjectId == 159)
+					if (g_vm->g_s._atticRodHoleObjectId == 159)
 						aniof(1, 6);
-				} else if ((g_caff == 14) && (g_s._cellarObjectId == 151))
+				} else if ((g_caff == 14) && (g_vm->g_s._cellarObjectId == 151))
 					aniof(1, 2);
-				else if ((g_caff == 17) && (g_s._secretPassageObjectId == 143))
+				else if ((g_caff == 17) && (g_vm->g_s._secretPassageObjectId == 143))
 					aniof(1, 1);
-				else if ((g_caff == 24) && (g_s._wellObjectId != 0))
+				else if ((g_caff == 24) && (g_vm->g_s._wellObjectId != 0))
 					aniof(1, 1);
 			}
 			
@@ -633,7 +598,7 @@ void tinke() {
 		drawClock();
 		cf = 0;
 		for (int i = 1; i <= 10; ++i) {
-			if (g_s._pourc[i] == '*')
+			if (g_vm->g_s._pourc[i] == '*')
 				++cf;
 		}
 
@@ -667,7 +632,7 @@ void tinke() {
 			g_t = kTime2;
 		else
 			g_t = kTime1;
-		cf = g_s._faithScore;
+		cf = g_vm->g_s._faithScore;
 		if ((cf > 33) && (cf < 66))
 			g_t -= (g_t / 3);
 
@@ -723,7 +688,7 @@ void tinke() {
 				g_mpers = g_vm->_currBitIndex;
 
 			if ((g_mpers == 0) && (g_vm->_currBitIndex > 0)) {
-				if ((g_s._currPlace == ATTIC) || (g_s._currPlace == CELLAR)) {
+				if ((g_vm->g_s._currPlace == ATTIC) || (g_vm->g_s._currPlace == CELLAR)) {
 					cavegre();
 				} else if (g_vm->_currBitIndex == 10) {
 					g_vm->_currBitIndex = 0;
@@ -751,7 +716,7 @@ void tinke() {
 		g_vm->getPresenceBitIndex(g_vm->_place);
 		g_vm->_brt = false;
 		g_hdb = 0;
-		if ((g_s._currPlace > OWN_ROOM) && (g_s._currPlace < DINING_ROOM))
+		if ((g_vm->g_s._currPlace > OWN_ROOM) && (g_vm->g_s._currPlace < DINING_ROOM))
 			g_vm->_anyone = true;
 	}
 }
@@ -822,17 +787,17 @@ void tlu(int af, int ob) {
 }
 
 void affrep() {
-	g_caff = g_s._currPlace;
-	g_crep = g_s._currPlace;
+	g_caff = g_vm->g_s._currPlace;
+	g_crep = g_vm->g_s._currPlace;
 }
 
 void tsort() {
 
-	if ((g_iouv > 0) && (g_s._currPlace != 0)) {
-		if (g_s._faithScore < 50)
-			g_s._faithScore += 2;
+	if ((g_iouv > 0) && (g_vm->g_s._currPlace != 0)) {
+		if (g_vm->g_s._faithScore < 50)
+			g_vm->g_s._faithScore += 2;
 		else
-			g_s._faithScore += (g_s._faithScore / 10);
+			g_vm->g_s._faithScore += (g_vm->g_s._faithScore / 10);
 	}
 
 	for (int cx = 1; cx <= 7; ++cx)
@@ -840,7 +805,7 @@ void tsort() {
 	g_ment = 0;
 	g_iouv = 0;
 	g_mchai = 0;
-	debloc(g_s._currPlace);
+	debloc(g_vm->g_s._currPlace);
 }
 
 void st4(int ob) {
@@ -879,9 +844,9 @@ void modinv() {
 
 	int cy = 0;
 	for (int i = 1; i <= 6; ++i) {
-		if (g_s._sjer[i] != chr(0)) {
+		if (g_vm->g_s._sjer[i] != chr(0)) {
 			++cy;
-			r = (ord(g_s._sjer[i]) + 400);
+			r = (ord(g_vm->g_s._sjer[i]) + 400);
 			nomp = g_vm->getString(r - 501 + kInventoryStringIndex);
 			g_vm->_menu.setText(g_vm->_menu._inventoryMenu[cy], nomp);
 			g_vm->_menu.enableMenuItem(g_vm->_menu._inventoryMenu[i]);
@@ -901,7 +866,7 @@ void mennor() {
 }
 
 void premtet() {
-	dessine(g_ades, 10, 80);
+	g_vm->draw(g_ades, 10, 80);
 	g_vm->_screenSurface.drawBox(18, 79, 155, 91, 15);
 }
 
@@ -914,7 +879,7 @@ void ajchai() {
 	} while ((cx <= 9) && (g_tabdon[cy + cx] != 0));
 
 	if (g_tabdon[cy + cx] == 0)
-		g_tabdon[cy + cx] = g_s._selectedObjectId;
+		g_tabdon[cy + cx] = g_vm->g_s._selectedObjectId;
 	else
 		g_crep = 192;
 }
@@ -923,10 +888,10 @@ void ajjer(int ob) {
 	int cx = 0;
 	do {
 		++cx;
-	} while ((cx <= 5) && (ord(g_s._sjer[cx]) != 0));
+	} while ((cx <= 5) && (ord(g_vm->g_s._sjer[cx]) != 0));
 
-	if (ord(g_s._sjer[cx]) == 0) {
-		g_s._sjer[(cx)] = chr(ob);
+	if (ord(g_vm->g_s._sjer[cx]) == 0) {
+		g_vm->g_s._sjer[(cx)] = chr(ob);
 		modinv();
 	} else
 		g_crep = 139;
@@ -955,11 +920,11 @@ L1:
 			g_vm->_speechManager.startSpeech(4, 4, 1);
 
 		if (g_iouv == 0)
-			g_s._faithScore += 2;
-		else if (g_s._faithScore < 50)
-			g_s._faithScore += 4;
+			g_vm->g_s._faithScore += 2;
+		else if (g_vm->g_s._faithScore < 50)
+			g_vm->g_s._faithScore += 4;
 		else
-			g_s._faithScore += 3 * (g_s._faithScore / 10);
+			g_vm->g_s._faithScore += 3 * (g_vm->g_s._faithScore / 10);
 		tsort();
 		g_vm->_menu.setDestinationMenuText(LANDING);
 		int cx = g_vm->convertBitIndexToCharacterIndex(g_vm->_currBitIndex);
@@ -1002,11 +967,11 @@ void tsuiv() {
 	} while ((tbcl == 0) && (g_cs <= 9));
 
 	if ((tbcl != 0) && (g_cs < 11)) {
-		++g_is;
+		++g_vm->g_is;
 		g_caff = tbcl;
 		g_crep = g_caff + 400;
 		if (g_vm->_currBitIndex != 0)
-			g_s._faithScore += 2;
+			g_vm->g_s._faithScore += 2;
 	} else {
 		affrep();
 		g_vm->endSearch();
@@ -1147,20 +1112,20 @@ void treg(int ob) {
 
 void avpoing(int &ob) {
 	g_crep = 999;
-	if (g_s._selectedObjectId != 0)
-		ajjer(g_s._selectedObjectId);
+	if (g_vm->g_s._selectedObjectId != 0)
+		ajjer(g_vm->g_s._selectedObjectId);
 
 	if (g_crep != 139) {
 		modobj(ob + 400);
-		g_s._selectedObjectId = ob;
+		g_vm->g_s._selectedObjectId = ob;
 		ob = 0;
 	}
 }
 
 void rechai(int &ch) {
-	int tmpPlace = g_s._currPlace;
+	int tmpPlace = g_vm->g_s._currPlace;
 
-	if (g_s._currPlace == CRYPT)
+	if (g_vm->g_s._currPlace == CRYPT)
 		tmpPlace = CELLAR;
 	ch = g_tabdon[achai + (tmpPlace * 7) + g_num - 1];
 }
@@ -1175,7 +1140,7 @@ int t23coul() {
 }
 
 void maivid() {
-	g_s._selectedObjectId = 0;
+	g_vm->g_s._selectedObjectId = 0;
 	modobj(500);
 }
 

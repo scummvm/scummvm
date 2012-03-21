@@ -35,7 +35,6 @@
 #include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/ovd1.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/var_mor.h"
@@ -180,7 +179,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	_txxFileFl = false;
 	// Load texts from TXX files
-	chartex();
+	loadTexts();
 
 	// Load the mort.dat resource
 	Common::ErrorCode result = loadMortDat();
@@ -198,7 +197,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	_currGraphicalDevice = MODE_EGA;
 	_newGraphicalDevice = _currGraphicalDevice;
-	charpal();
+	loadPalette();
 	loadCFIPH();
 	loadCFIEC();
 	decodeNumber(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
@@ -211,7 +210,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_largestClearScreen = false;
 
 	teskbd();
-	dialpre();
+	showConfigScreen();
 	_newGraphicalDevice = _currGraphicalDevice;
 	teskbd();
 	if (_newGraphicalDevice != _currGraphicalDevice)
@@ -551,7 +550,7 @@ void MortevielleEngine::showIntroduction() {
 	CHECK_QUIT;
 
 	// TODO: Once music is implemented, only use the below delay if music is turned off
-	suite();
+	showTitleScreen();
 	delay(3000);
 	music();
 }
@@ -2126,6 +2125,15 @@ void MortevielleEngine::showMoveMenuAlert() {
 }
 
 /**
+ * The original engine used this method to display a starting text screen letting the player
+ * select the graphics mode to use
+ * @remarks	Originally called 'dialpre'
+ */
+void MortevielleEngine::showConfigScreen() {
+	g_crep = 998;
+}
+
+/**
  * Decodes a number of 64 byte blocks
  * @param pStart	Start of data
  * @param count		Number of 64 byte blocks
@@ -2206,8 +2214,8 @@ Common::String MortevielleEngine::getString(int num) {
 
 	if (num < 0) {
 		warning("deline: num < 0! Skipping");
-	} else if (!g_vm->_txxFileFl) {
-		wrkStr = g_vm->getGameString(num);
+	} else if (!_txxFileFl) {
+		wrkStr = getGameString(num);
 	} else {
 		int i = g_t_rec[num]._hintId;
 		byte k = g_t_rec[num]._point;
@@ -2253,7 +2261,7 @@ void MortevielleEngine::resetVariables() {
 	g_s._secretPassageObjectId = 0;
 	g_s._purpleRoomObjectId = 136;
 	g_s._cryptObjectId = 141;
-	g_s._faithScore = g_vm->getRandomNumber(4, 10);
+	g_s._faithScore = getRandomNumber(4, 10);
 	g_s._currPlace = MANOR_FRONT;
 
 	for (int i = 2; i <= 6; ++i)
@@ -2290,7 +2298,7 @@ void MortevielleEngine::resetVariables() {
  * @remarks	Originally called 'writepal'
  */
 void MortevielleEngine::setPal(int n) {
-	switch (g_vm->_currGraphicalDevice) {
+	switch (_currGraphicalDevice) {
 	case MODE_TANDY:
 	case MODE_EGA:
 	case MODE_AMSTRAD1512:
@@ -2302,19 +2310,245 @@ void MortevielleEngine::setPal(int n) {
 	case MODE_CGA: {
 		nhom pal[16];
 		for (int i = 0; i < 16; ++i) {
-			pal[i] = g_vm->_cgaPal[n]._a[i];
+			pal[i] = _cgaPal[n]._a[i];
 		}
 
 		if (n < 89)
-			palette(g_vm->_cgaPal[n]._p);
+			palette(_cgaPal[n]._p);
 		
 		for (int i = 0; i <= 15; ++i)
-			outbloc(i, _patternArr[pal[i]._id], pal);
+			displayCGAPattern(i, _patternArr[pal[i]._id], pal);
 		}
 		break;
 	default:
 		break;
 	}
+}
+
+/**
+ * Engine function - Display a CGA pattern, using a specified palette
+ * @remarks	Originally called 'outbloc'
+ */
+void MortevielleEngine::displayCGAPattern(int n, Pattern p, nhom *pal) {
+	int addr = n * 404 + 0xd700;
+
+	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + addr], p._tax);
+	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + addr + 2], p._tay);
+	addr += 4;
+	for (int i = 0; i < p._tax; ++i) {
+		for (int j = 0; j < p._tay; ++j)
+			g_mem[(0x6000 * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
+	}
+}
+
+/**
+ * Engine function - Load Palette from File
+ * @remarks	Originally called 'charpal'
+ */
+void MortevielleEngine::loadPalette() {
+	Common::File f;
+	byte b;
+
+	if (!f.open("fxx.mor"))
+		error("Missing file - fxx.mor");
+	for (int i = 0; i < 108; ++i)
+		g_l[i] = f.readSint16LE();
+	f.close();
+
+	if (!f.open("plxx.mor"))
+		error("Missing file - plxx.mor");
+	for (int i = 0; i <= 90; ++i) {
+		for (int j = 1; j <= 16; ++j) {
+			_stdPal[i][j].x = f.readByte();
+			_stdPal[i][j].y = f.readByte();
+		}
+	}
+	f.close();
+	
+	if (!f.open("cxx.mor"))
+		error("Missing file - cxx.mor");
+
+	for (int j = 0; j <= 90; ++j) {
+		_cgaPal[j]._p = f.readByte();
+		for (int i = 0; i <= 15; ++i) {
+			nhom &with = _cgaPal[j]._a[i];
+
+			b = f.readByte();
+			with._id = (uint)b >> 4;
+			with._hom[0] = ((uint)b >> 2) & 3;
+			with._hom[1] = b & 3;
+		}
+	}
+
+	_cgaPal[10]._a[9] = _cgaPal[10]._a[5];
+	for (int j = 0; j <= 14; ++j) {
+		_patternArr[j]._tax = f.readByte();
+		_patternArr[j]._tay = f.readByte();
+		for (int i = 1; i <= 20; ++i) {
+			for (int k = 1; k <= 20; ++k)
+				_patternArr[j]._des[i][k] = f.readByte();
+		}
+	}
+	f.close();
+}
+
+/**
+ * Engine function - Load Texts from File
+ * @remarks	Originally called 'chartex'
+ */
+void MortevielleEngine::loadTexts() {
+	Common::File inpFile;
+	Common::File ntpFile;
+
+	_txxFileFl = false;
+	if (getLanguage() == Common::EN_ANY) {
+		warning("English version expected - Switching to DAT file");
+		return;
+	}
+
+	if (!inpFile.open("TXX.INP")) {
+		if (!inpFile.open("TXX.MOR")) {
+			warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
+			return;
+		}
+	} 
+	if (!ntpFile.open("TXX.NTP")) {
+		warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
+		return;
+	}
+	
+	if ((inpFile.size() > (kMaxTi * 2)) || (ntpFile.size() > (kMaxTd * 3))) {
+		warning("TXX file - Unexpected format - Switching to DAT file");
+		return;
+	} 
+
+	for (int i = 0; i < inpFile.size() / 2; ++i)
+		g_t_mot[i] = inpFile.readUint16LE();
+
+	inpFile.close();
+	_txxFileFl = true;
+
+	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
+		g_t_rec[i]._hintId = ntpFile.readSint16LE();
+		g_t_rec[i]._point = ntpFile.readByte();
+	}
+
+	ntpFile.close();
+
+}
+
+void MortevielleEngine::loadBRUIT5() {
+	Common::File f;
+
+	if (!f.open("bruit5"))
+		error("Missing file - bruit5");
+
+	f.read(&g_mem[kAdrNoise5 * 16 + 0], 149 * 128);
+	f.close();
+}
+
+void MortevielleEngine::loadCFIEC() {
+	Common::File f;
+
+	if (!f.open("cfiec.mor"))
+		error("Missing file - cfiec.mor");
+
+	f.read(&g_adcfiec[0], 822 * 128);
+	f.close();
+
+	_reloadCFIEC = false;
+}
+
+
+void MortevielleEngine::loadCFIPH() {
+	Common::File f;
+
+	if (!f.open("cfiph.mor"))
+		error("Missing file - cfiph.mor");
+
+	for (int i = 0; i < (f.size() / 2); ++i)
+		g_t_cph[i] = f.readSint16LE();
+
+	f.close();
+}
+
+/**
+ * Engine function - Play Music
+ * @remarks	Originally called 'music'
+ */
+void MortevielleEngine::music() {
+	if (_soundOff)
+		return;
+
+	_reloadCFIEC = true;
+	
+	Common::File fic;
+	if (!fic.open("mort.img"))
+		error("Missing file - mort.img");
+
+	fic.read(&g_mem[0x3800 * 16 + 0], 500);
+	fic.read(&g_mem[0x47a0 * 16 + 0], 123);
+	fic.close();
+
+	_soundManager.decodeMusic(&g_mem[0x3800 * 16], &g_mem[0x5000 * 16], 623);
+	_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
+	_speechManager.cctable(g_tbi);
+
+	bool fin = false;
+	int k = 0;
+	do {
+		fin = keyPressed();
+		_soundManager.musyc(g_tbi, 9958, kTempoMusic);
+		++k;
+		fin = fin | keyPressed() | (k >= 5);
+	} while (!fin);
+	while (keyPressed())
+		getChar();
+}
+
+/**
+ * Engine function - Show title screen
+ * @remarks	Originally called 'suite'
+ */
+void MortevielleEngine::showTitleScreen() {
+	hirs();
+	repon(7, 2035);
+	g_caff = 51;
+	taffich();
+	teskbd();
+	if (_newGraphicalDevice != _currGraphicalDevice)
+		_currGraphicalDevice = _newGraphicalDevice;
+	hirs();
+	g_vm->draw(g_ades, 0, 0);
+
+	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
+	_screenSurface.putxy(104 + 72 * g_res, 185);
+	_screenSurface.drawString(cpr, 0);
+}
+
+/**
+ * Draw picture
+ * @remarks	Originally called 'dessine'
+ */
+void MortevielleEngine::draw(int ad, int x, int y) {
+	g_vm->_mouse.hideMouse();
+	g_vm->setPal(g_numpal);
+	pictout(ad, 0, x, y);
+	g_vm->_mouse.showMouse();
+}
+
+/**
+ * Draw right frame
+ * @remarks	Originally called 'dessine_rouleau'
+ */
+void MortevielleEngine::drawRightFrame() {
+	g_vm->setPal(89);
+	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
+		g_mem[0x7000 * 16 + 14] = 15;
+	}
+	g_vm->_mouse.hideMouse();
+	pictout(0x73a2, 0, 0, 0);
+	g_vm->_mouse.showMouse();
 }
 
 } // End of namespace Mortevielle

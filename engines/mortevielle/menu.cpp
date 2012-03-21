@@ -33,7 +33,6 @@
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/ovd1.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -568,7 +567,7 @@ void Menu::setSearchMenu() {
  * @remarks	Originally called 'mfouen'
  */
 void Menu::unsetSearchMenu() {
-	setDestinationMenuText(g_s._currPlace);
+	setDestinationMenuText(g_vm->g_s._currPlace);
 	for (int i = 1; i <= 11; ++i)
 		enableMenuItem(_actionMenu[i]);
 
