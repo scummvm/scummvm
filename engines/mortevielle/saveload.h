@@ -49,6 +49,8 @@ struct SavegameHeader {
 
 class SavegameManager {
 private:
+	byte _tabdonSaveBuffer[391];
+
 	void sync_save(Common::Serializer &sz);
 public:
 	void loadSavegame(int n);

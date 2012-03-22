@@ -135,6 +135,7 @@ private:
 	Common::StringArray _gameStrings;
 
 	Pattern _patternArr[15];
+	int _menuOpcode;
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
@@ -156,11 +157,21 @@ private:
 	void loadCFIEC();
 	void loadCFIPH();
 	void showTitleScreen();
-	int readclock();
-
+	int  readclock();
+	void palette(int v1);
 public:
 	Common::String _hintPctMessage;
 	Common::Point _prevPos;
+
+	byte _tabdon[4001];
+	byte _cfiecBuffer[822 * 128];
+	int  _fxxBuffer[108];
+	byte _touv[8];
+	int  _msg[5];
+	int  _nbrep[9];
+	int  _nbrepm[9];
+	uint16 _inpBuffer[kMaxTi + 1];
+	Hint _ntpBuffer[kMaxTd + 1];
 
 	bool _roomPresenceLuc;
 	bool _roomPresenceIda;
@@ -201,6 +212,8 @@ public:
 	int _hour;
 	int _minute;
 	float _addfix;
+
+	int _numpal;
 
 	Common::Point _stdPal[91][17];
 	t_pcga _cgaPal[91];
@@ -360,6 +373,7 @@ public:
 	void drawRightFrame();
 	void prepareRoom();
 	void drawClock();
+	Common::String copy(const Common::String &s, int idx, size_t size);
 
 };
 

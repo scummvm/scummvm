@@ -46,7 +46,7 @@ int testou() {
 		break;
 	case '\26' :
 		if ((g_vm->_c_zzz == 1) || (g_vm->_c_zzz == 2)) {
-			g_vm->decodeNumber(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+			g_vm->decodeNumber(&g_vm->_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 			++g_vm->_c_zzz;
 
 			return 61;

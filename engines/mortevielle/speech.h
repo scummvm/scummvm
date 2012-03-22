@@ -68,9 +68,14 @@ class SpeechManager {
 private:
 	int _typlec;
 	int _phonemeNumb;
+
 	SpeechQueue _queue[3];
+	int _ptr_oct;
 
 public:
+	int _cfiphBuffer[6401];
+	int _tbi[256];
+
 	SpeechManager();
 	void spfrac(int wor);
 	void charg_car(int &currWordNumb);

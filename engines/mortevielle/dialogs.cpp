@@ -217,7 +217,7 @@ void Alert::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &li
 		col += 6;
 	}
 	++i;
-	choiceListStr = copy(inputStr, i, 30);
+	choiceListStr = g_vm->copy(inputStr, i, 30);
 	if (g_res == 2)
 		col *= 6;
 	else

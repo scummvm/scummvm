@@ -200,7 +200,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	loadPalette();
 	loadCFIPH();
 	loadCFIEC();
-	decodeNumber(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+	decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	_c_zzz = 1;
 	init_nbrepm();
 	initMouse();
@@ -564,7 +564,7 @@ void MortevielleEngine::mainGame() {
 		loadCFIEC();
 
 	for (g_crep = 1; g_crep <= _c_zzz; ++g_crep) 
-		decodeNumber(&g_adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+		decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	loadBRUIT5();
 	_menu.initMenu();
@@ -638,18 +638,18 @@ void MortevielleEngine::handleAction() {
 			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
-		if (_menu._menuSelected && (g_msg[3] == MENU_SAVE)) {
-			Common::String saveName = Common::String::format("Savegame #%d", g_msg[4] & 7);
-			_savegameManager.saveGame(g_msg[4] & 7, saveName);
+		if (_menu._menuSelected && (_msg[3] == MENU_SAVE)) {
+			Common::String saveName = Common::String::format("Savegame #%d", _msg[4] & 7);
+			_savegameManager.saveGame(_msg[4] & 7, saveName);
 		}
-		if (_menu._menuSelected && (g_msg[3] == MENU_LOAD))
-			_savegameManager.loadGame((g_msg[4] & 7) - 1);
+		if (_menu._menuSelected && (_msg[3] == MENU_LOAD))
+			_savegameManager.loadGame((_msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = Alert::show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
-			if ((g_mnumo != OPCODE_NONE) && ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))) {
-				g_msg[4] = g_mnumo;
+			if ((_menuOpcode != OPCODE_NONE) && ((_msg[3] == MENU_ACTION) || (_msg[3] == MENU_SELF))) {
+				_msg[4] = _menuOpcode;
 				ecr3(getEngineString(S_IDEM));
 			} else
 				return;
@@ -670,17 +670,17 @@ void MortevielleEngine::handleAction() {
 			if (g_num == 9999)
 				g_num = 0;
 		} else {
-			g_mnumo = g_msg[3];
-			if ((g_msg[3] == MENU_ACTION) || (g_msg[3] == MENU_SELF))
-				g_mnumo = g_msg[4];
+			_menuOpcode = _msg[3];
+			if ((_msg[3] == MENU_ACTION) || (_msg[3] == MENU_SELF))
+				_menuOpcode = _msg[4];
 			if (!_anyone) {
 				if ((_heroSearching) || (_obpart)) {
 					if (_mouse._pos.y < 12)
 						return;
 
-					if ((g_msg[4] == OPCODE_SOUND) || (g_msg[4] == OPCODE_LIFT)) {
+					if ((_msg[4] == OPCODE_SOUND) || (_msg[4] == OPCODE_LIFT)) {
 						oo = true;
-						if ((g_msg[4] == OPCODE_LIFT) || (_obpart)) {
+						if ((_msg[4] == OPCODE_LIFT) || (_obpart)) {
 							endSearch();
 							g_caff = _coreVar._currPlace;
 							g_crep = 998;
@@ -1858,7 +1858,7 @@ void MortevielleEngine::gameLoaded() {
 	_hiddenHero = false;
 	_brt = false;
 	g_maff = 68;
-	g_mnumo = OPCODE_NONE;
+	_menuOpcode = OPCODE_NONE;
 	g_prebru = 0;
 	g_x = 0;
 	g_y = 0;
@@ -1908,71 +1908,71 @@ void MortevielleEngine::handleOpcode() {
 	_keyPressedEsc = false;
 	if (!_anyone) {
 		if (_brt) {
-			if ((g_msg[3] == MENU_MOVE) || (g_msg[4] == OPCODE_LEAVE) || (g_msg[4] == OPCODE_SLEEP) || (g_msg[4] == OPCODE_EAT)) {
+			if ((_msg[3] == MENU_MOVE) || (_msg[4] == OPCODE_LEAVE) || (_msg[4] == OPCODE_SLEEP) || (_msg[4] == OPCODE_EAT)) {
 				g_ctrm = 4;
 				mennor();
 				return;
 			}
 		}
-		if (g_msg[3] == MENU_MOVE)
+		if (_msg[3] == MENU_MOVE)
 			fctMove();
-		if (g_msg[3] == MENU_DISCUSS)
+		if (_msg[3] == MENU_DISCUSS)
 			fctDiscuss();
-		if (g_msg[3] == MENU_INVENTORY)
+		if (_msg[3] == MENU_INVENTORY)
 			fctInventoryTake();
-		if (g_msg[4] == OPCODE_ATTACH)
+		if (_msg[4] == OPCODE_ATTACH)
 			fctAttach();
-		if (g_msg[4] == OPCODE_WAIT)
+		if (_msg[4] == OPCODE_WAIT)
 			fctWait();
-		if (g_msg[4] == OPCODE_FORCE)
+		if (_msg[4] == OPCODE_FORCE)
 			fctForce();
-		if (g_msg[4] == OPCODE_SLEEP)
+		if (_msg[4] == OPCODE_SLEEP)
 			fctSleep();
-		if (g_msg[4] == OPCODE_LISTEN)
+		if (_msg[4] == OPCODE_LISTEN)
 			fctListen();
-		if (g_msg[4] == OPCODE_ENTER)
+		if (_msg[4] == OPCODE_ENTER)
 			fctEnter();
-		if (g_msg[4] == OPCODE_CLOSE)
+		if (_msg[4] == OPCODE_CLOSE)
 			fctClose();
-		if (g_msg[4] == OPCODE_SEARCH)
+		if (_msg[4] == OPCODE_SEARCH)
 			fctSearch();
-		if (g_msg[4] == OPCODE_KNOCK)
+		if (_msg[4] == OPCODE_KNOCK)
 			fctKnock();
-		if (g_msg[4] == OPCODE_SCRATCH)
+		if (_msg[4] == OPCODE_SCRATCH)
 			fctScratch();
-		if (g_msg[4] == OPCODE_READ)
+		if (_msg[4] == OPCODE_READ)
 			fctRead();
-		if (g_msg[4] == OPCODE_EAT)
+		if (_msg[4] == OPCODE_EAT)
 			fctEat();
-		if (g_msg[4] == OPCODE_PLACE)
+		if (_msg[4] == OPCODE_PLACE)
 			fctPlace();
-		if (g_msg[4] == OPCODE_OPEN)
+		if (_msg[4] == OPCODE_OPEN)
 			fctOpen();
-		if (g_msg[4] == OPCODE_TAKE)
+		if (_msg[4] == OPCODE_TAKE)
 			fctTake();
-		if (g_msg[4] == OPCODE_LOOK)
+		if (_msg[4] == OPCODE_LOOK)
 			fctLook();
-		if (g_msg[4] == OPCODE_SMELL)
+		if (_msg[4] == OPCODE_SMELL)
 			fctSmell();
-		if (g_msg[4] == OPCODE_SOUND)
+		if (_msg[4] == OPCODE_SOUND)
 			fctSound();
-		if (g_msg[4] == OPCODE_LEAVE)
+		if (_msg[4] == OPCODE_LEAVE)
 			fctLeave();
-		if (g_msg[4] == OPCODE_LIFT)
+		if (_msg[4] == OPCODE_LIFT)
 			fctLift();
-		if (g_msg[4] == OPCODE_TURN)
+		if (_msg[4] == OPCODE_TURN)
 			fctTurn();
-		if (g_msg[4] == OPCODE_SSEARCH)
+		if (_msg[4] == OPCODE_SSEARCH)
 			fctSelfSearch();
-		if (g_msg[4] == OPCODE_SREAD)
+		if (_msg[4] == OPCODE_SREAD)
 			fctSelfRead();
-		if (g_msg[4] == OPCODE_SPUT)
+		if (_msg[4] == OPCODE_SPUT)
 			fctSelfPut();
-		if (g_msg[4] == OPCODE_SLOOK)
+		if (_msg[4] == OPCODE_SLOOK)
 			fctSelftLook();
 		_hiddenHero = false;
 
-		if (g_msg[4] == OPCODE_SHIDE)
+		if (_msg[4] == OPCODE_SHIDE)
 			fctSelfHide();
 	} else {
 		if (_anyone) {
@@ -2158,13 +2158,13 @@ void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 	uint16 oct, ocd;
 
 	/* 5-8 */
-	oct = g_t_mot[idx];
+	oct = _inpBuffer[idx];
 	oct = ((uint16)(oct << (16 - pt))) >> (16 - pt);
 	if (pt < 6) {
 		++idx;
 		oct = oct << (5 - pt);
 		pt += 11;
-		oct = oct | ((uint)g_t_mot[idx] >> pt);
+		oct = oct | ((uint)_inpBuffer[idx] >> pt);
 	} else {
 		pt -= 5;
 		oct = (uint)oct >> pt;
@@ -2177,13 +2177,13 @@ void MortevielleEngine::cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 		break;
 	case 30:
 	case 31:
-		ocd = g_t_mot[idx];
+		ocd = _inpBuffer[idx];
 		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
 			++idx;
 			ocd = ocd << (5 - pt);
 			pt += 11;
-			ocd = ocd | ((uint)g_t_mot[idx] >> pt);
+			ocd = ocd | ((uint)_inpBuffer[idx] >> pt);
 		} else {
 			pt -= 5;
 			ocd = (uint)ocd >> pt;
@@ -2217,21 +2217,21 @@ Common::String MortevielleEngine::getString(int num) {
 	} else if (!_txxFileFl) {
 		wrkStr = getGameString(num);
 	} else {
-		int i = g_t_rec[num]._hintId;
-		byte k = g_t_rec[num]._point;
+		int hint = _ntpBuffer[num]._hintId;
+		byte point = _ntpBuffer[num]._point;
 		int length = 0;
 		bool endFl = false;
 		char let;
 		do {
-			cinq_huit(let, i, k, endFl);
+			cinq_huit(let, hint, point, endFl);
 			if (length < 254)
 				wrkStr += let;
 			++length;
 		} while (!endFl);
 	}
 
-	if (wrkStr.lastChar() == '$')
-		// Remove trailing '$'
+	while (wrkStr.lastChar() == '$')
+		// Remove trailing '$'s
 		wrkStr.deleteLastChar();
 
 	return wrkStr;
@@ -2240,7 +2240,7 @@ Common::String MortevielleEngine::getString(int num) {
 void MortevielleEngine::copcha() {
 	int i = kAcha;
 	do {
-		g_tabdon[i] = g_tabdon[i + 390];
+		_tabdon[i] = _tabdon[i + 390];
 		++i;
 	} while (i != kAcha + 390);
 }
@@ -2288,7 +2288,7 @@ void MortevielleEngine::resetVariables() {
 	_coreVar._teauto[33] = '*';
 
 	for (int i = 1; i <= 8; ++i)
-		g_nbrep[i] = 0;
+		_nbrep[i] = 0;
 
 	init_nbrepm();
 }
@@ -2352,7 +2352,7 @@ void MortevielleEngine::loadPalette() {
 	if (!f.open("fxx.mor"))
 		error("Missing file - fxx.mor");
 	for (int i = 0; i < 108; ++i)
-		g_l[i] = f.readSint16LE();
+		_fxxBuffer[i] = f.readSint16LE();
 	f.close();
 
 	if (!f.open("plxx.mor"))
@@ -2423,14 +2423,14 @@ void MortevielleEngine::loadTexts() {
 	} 
 
 	for (int i = 0; i < inpFile.size() / 2; ++i)
-		g_t_mot[i] = inpFile.readUint16LE();
+		_inpBuffer[i] = inpFile.readUint16LE();
 
 	inpFile.close();
 	_txxFileFl = true;
 
 	for (int i = 0; i < (ntpFile.size() / 3); ++i) {
-		g_t_rec[i]._hintId = ntpFile.readSint16LE();
-		g_t_rec[i]._point = ntpFile.readByte();
+		_ntpBuffer[i]._hintId = ntpFile.readSint16LE();
+		_ntpBuffer[i]._point = ntpFile.readByte();
 	}
 
 	ntpFile.close();
@@ -2453,7 +2453,7 @@ void MortevielleEngine::loadCFIEC() {
 	if (!f.open("cfiec.mor"))
 		error("Missing file - cfiec.mor");
 
-	f.read(&g_adcfiec[0], 822 * 128);
+	f.read(&_cfiecBuffer[0], 822 * 128);
 	f.close();
 
 	_reloadCFIEC = false;
@@ -2467,7 +2467,7 @@ void MortevielleEngine::loadCFIPH() {
 		error("Missing file - cfiph.mor");
 
 	for (int i = 0; i < (f.size() / 2); ++i)
-		g_t_cph[i] = f.readSint16LE();
+		_speechManager._cfiphBuffer[i] = f.readSint16LE();
 
 	f.close();
 }
@@ -2492,13 +2492,13 @@ void MortevielleEngine::music() {
 
 	_soundManager.decodeMusic(&g_mem[0x3800 * 16], &g_mem[0x5000 * 16], 623);
 	_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
-	_speechManager.cctable(g_tbi);
+	_speechManager.cctable(_speechManager._tbi);
 
 	bool fin = false;
 	int k = 0;
 	do {
 		fin = keyPressed();
-		_soundManager.musyc(g_tbi, 9958, kTempoMusic);
+		_soundManager.musyc(_speechManager._tbi, 9958, kTempoMusic);
 		++k;
 		fin = fin | keyPressed() | (k >= 5);
 	} while (!fin);
@@ -2532,7 +2532,7 @@ void MortevielleEngine::showTitleScreen() {
  */
 void MortevielleEngine::draw(int ad, int x, int y) {
 	_mouse.hideMouse();
-	setPal(g_numpal);
+	setPal(_numpal);
 	pictout(ad, 0, x, y);
 	_mouse.showMouse();
 }
@@ -2584,9 +2584,9 @@ void MortevielleEngine::prepareRoom() {
 		int i = 0;
 		do {
 			++i;
-			if (g_nbrepm[i] != 0)
-				--g_nbrepm[i];
-			g_nbrep[i] = 0;
+			if (_nbrepm[i] != 0)
+				--_nbrepm[i];
+			_nbrep[i] = 0;
 		} while (i != 8);
 	}
 	if ((hour > _hour) || ((hour == 0) && (_hour == 23))) {
@@ -2767,6 +2767,28 @@ void MortevielleEngine::drawClock() {
 		tmp.insertChar((char)(_day + 49), 0);
 		_screenSurface.drawString(tmp, 1);
 	}
+}
+
+void MortevielleEngine::palette(int v1) {
+	warning("TODO: palette");
+}
+
+/**
+ * Returns a substring of the given string
+ * @param s		Source string
+ * @param idx	Starting index (1 based)
+ * @param size	Number of characters to return
+ */
+
+Common::String MortevielleEngine::copy(const Common::String &s, int idx, size_t size) {
+	// Copy the substring into a temporary buffer
+	char *tmp = new char[size + 1];
+	strncpy(tmp, s.c_str() + idx - 1, size);
+	tmp[size] = '\0';
+
+	Common::String result(tmp);
+	delete[] tmp;
+	return result;
 }
 
 } // End of namespace Mortevielle
