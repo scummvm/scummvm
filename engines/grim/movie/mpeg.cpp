@@ -82,7 +82,7 @@ void MpegPlayer::init() {
 	Graphics::PixelFormat format = Graphics::PixelFormat(16, 5, 6, 5, 0, 11, 5, 0, 0);
 	_externalSurface->create(MWIDTH, MHEIGHT, format);
 
-	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL, "mpeg loop");
+	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, this, "mpeg loop");
 }
 
 void MpegPlayer::deinit() {

@@ -49,7 +49,7 @@ MoviePlayer::MoviePlayer() {
 	_internalSurface = NULL;
 	_externalSurface = new Graphics::Surface();
 
-	g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, NULL, "movieLoop");
+	g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, this, "movieLoop");
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -74,10 +74,11 @@ void MoviePlayer::stop() {
 	g_grim->setMode(GrimEngine::NormalMode);
 }
 
-void MoviePlayer::timerCallback(void *) {
-	Common::StackLock lock(g_movie->_frameMutex);
-	if (g_movie->prepareFrame())
-		g_movie->postHandleFrame();
+void MoviePlayer::timerCallback(void *instance) {
+	MoviePlayer *movie = static_cast<MoviePlayer *>(instance);
+	Common::StackLock lock(movie->_frameMutex);
+	if (movie->prepareFrame())
+		movie->postHandleFrame();
 }
 
 bool MoviePlayer::prepareFrame() {
@@ -158,7 +159,7 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	_internalSurface = NULL;
 
 	// Get the first frame immediately
-	timerCallback(0);
+	timerCallback(this);
 
 	return true;
 }
