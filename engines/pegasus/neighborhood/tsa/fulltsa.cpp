@@ -2159,7 +2159,7 @@ void FullTSA::arriveAtTSA37() {
 		showExtraView(kTSA37AI2ToPrehistoric);
 		break;
 	case kTSAPlayerGotHistoricalLog:
-		initializePegasusButtons(false, true);
+		initializePegasusButtons(false);
 		break;
 	case kPlayerWentToPrehistoric:
 	case kPlayerOnWayToNorad:
@@ -2174,7 +2174,7 @@ void FullTSA::arriveAtTSA37() {
 		showMainJumpMenu();
 		break;
 	case kPlayerFinishedWithTSA:
-		initializePegasusButtons(true, true);
+		initializePegasusButtons(true);
 		break;
 	}
 }
@@ -2703,7 +2703,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 		case kTSA37RecallToDownload:
 		case kTSA37ReviewRequiredToExit:
 			GameState.setTSAState(kTSAPlayerGotHistoricalLog);
-			initializePegasusButtons(kPegasusUnresolved, kPegasusCanExit);
+			initializePegasusButtons(kPegasusUnresolved);
 			break;
 		case kTSA37ZoomToMainMenu:
 		case kTSA37HorseToColonel2:
@@ -2730,7 +2730,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			break;
 		case kTSA37CongratulationsToExit:
 			GameState.setTSAState(kPlayerFinishedWithTSA);
-			initializePegasusButtons(true, true);
+			initializePegasusButtons(true);
 			break;
 		}
 	}
@@ -2785,7 +2785,7 @@ void FullTSA::arriveFromWSC() {
 	}
 }
 
-void FullTSA::initializePegasusButtons(bool resolved, bool exit) {
+void FullTSA::initializePegasusButtons(bool resolved) {
 	if (resolved) {
 		_sprite1.addPICTResourceFrame(kResolvedPICTID, false, 0, 0);
 		_sprite1.moveElementTo(kResolvedLeft, kResolvedTop);
@@ -2797,18 +2797,10 @@ void FullTSA::initializePegasusButtons(bool resolved, bool exit) {
 	_sprite1.setCurrentFrameIndex(0);
 	_sprite1.show();
 
-	if (exit) {
-		_sprite2.addPICTResourceFrame(kExitPICTID, false, 0, 0);
-		_sprite2.addPICTResourceFrame(kExitHilitedPICTID, false, kExitHilitedLeft - kExitLeft, kExitHilitedTop - kExitTop);
-		_sprite2.moveElementTo(kExitLeft, kExitTop);
-		setCurrentActivation(kActivationReadyToExit);
-	} else {
-		_sprite2.addPICTResourceFrame(kJumpMenuPICTID, false, 0, 0);
-		_sprite2.addPICTResourceFrame(kJumpMenuHilitedPICTID, false, kJumpMenuHilitedLeft - kJumpMenuLeft, kJumpMenuHilitedTop - kJumpMenuTop);
-		_sprite2.moveElementTo(kJumpMenuLeft, kJumpMenuTop);
-		setCurrentActivation(kActivationReadyForJumpMenu);
-	}
-
+	_sprite2.addPICTResourceFrame(kExitPICTID, false, kExitLeft - kExitHilitedLeft, kExitTop - kExitHilitedTop);
+	_sprite2.addPICTResourceFrame(kExitHilitedPICTID, false, 0, 0);
+	_sprite2.moveElementTo(kExitHilitedLeft, kExitHilitedTop);
+	setCurrentActivation(kActivationReadyToExit);
 	_sprite2.setCurrentFrameIndex(0);
 	_sprite2.show();
 }

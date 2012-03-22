@@ -136,7 +136,7 @@ protected:
 
 	InputBits getInputFilter();
 	void arriveAt(const RoomID, const DirectionConstant);
-	void initializePegasusButtons(bool, bool);
+	void initializePegasusButtons(bool);
 	void releaseSprites();
 	void showMainJumpMenu();
 	void arriveAtTSA37();
