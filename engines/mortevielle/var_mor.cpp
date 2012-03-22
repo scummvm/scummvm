@@ -106,7 +106,6 @@ int g_nbrep[9];
 int g_nbrepm[9];
 int g_msg[5];
 byte g_touv[8];
-SaveStruct g_s, g_s1;
 byte g_bufcha[391];
 
 byte g_lettres[7][24];

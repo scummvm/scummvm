@@ -40,6 +40,8 @@ enum {
 
 class Menu {
 private:
+	byte _charArr[7][24];
+
 	void util(Common::Point pos);
 	void invert(int indx);
 	void menuDown(int ii);

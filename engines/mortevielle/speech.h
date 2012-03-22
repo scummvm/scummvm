@@ -56,6 +56,14 @@ const int kTempoM = 89;
 //const int seg_syst = 0x6fed;
 //const int offsetb2 = 4;
 
+struct SpeechQueue {
+	int _val;
+	int _code;
+	int _acc;
+	int _freq;
+	int _rep;
+};
+
 class SpeechManager {
 private:
 	int _typlec;

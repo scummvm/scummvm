@@ -100,6 +100,29 @@ struct t_pcga {
 	nhom _a[16];
 };
 
+struct Pattern {
+	byte _tay, _tax;
+	byte _des[kMaxPatt + 1][kMaxPatt + 1];
+};
+
+struct SaveStruct {
+	int _faithScore;
+	byte _pourc[11];
+	byte _teauto[43];
+	byte _sjer[31];
+	int _currPlace;
+	int _atticBallHoleObjectId;
+	int _atticRodHoleObjectId;
+	int _cellarObjectId;
+	int _secretPassageObjectId;
+	int _wellObjectId;
+	int _selectedObjectId;
+	int _purpleRoomObjectId;
+	int _cryptObjectId;
+	bool _alreadyEnteredManor;
+	byte _fullHour;
+};
+
 class MortevielleEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -133,6 +156,7 @@ private:
 	void loadCFIEC();
 	void loadCFIPH();
 	void showTitleScreen();
+	int readclock();
 
 public:
 	Common::String _hintPctMessage;
@@ -183,7 +207,7 @@ public:
 	int _c_zzz;
 	int ptr_word;
 	byte _v_lieu[7][25];
-	SaveStruct g_s, g_s1;
+	SaveStruct _coreVar, _saveStruct;
 	byte g_is;
 
 	ScreenSurface _screenSurface;
@@ -334,6 +358,8 @@ public:
 	void music();
 	void draw(int ad, int x, int y);
 	void drawRightFrame();
+	void prepareRoom();
+	void drawClock();
 
 };
 

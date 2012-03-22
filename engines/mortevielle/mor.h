@@ -48,7 +48,6 @@ extern void charecr(int y, int dy);
 extern void adzon();
 extern int animof(int ouf, int num);
 /* Niveau 14 suite */
-extern int readclock();
 extern void modif(int &nu);
 /* NIVEAU 13 */
 extern void text1(int x, int y, int nb, int m);
@@ -77,8 +76,6 @@ extern void writetp(Common::String s, int t);
 extern void aniof(int ouf, int num);
 /* NIVEAU 9 */
 extern void dessin(int ad);
-
-extern void tinke();
 extern void fenat(char ans);
 /* NIVEAU 8 */
 extern void afdes();
@@ -89,7 +86,6 @@ extern void affrep();
 /* NIVEAU 6 */
 extern void tsort();
 extern void st4(int ob);
-extern void displayDiningRoom();
 extern void modinv();
 extern void mennor();
 extern void premtet();

@@ -114,44 +114,12 @@ struct Hint {
 	byte _point;
 };
 
-struct SaveStruct {
-	int _faithScore;
-	byte _pourc[11];
-	byte _teauto[43];
-	byte _sjer[31];
-	int _currPlace;
-	int _atticBallHoleObjectId;
-	int _atticRodHoleObjectId;
-	int _cellarObjectId;
-	int _secretPassageObjectId;
-	int _wellObjectId;
-	int _selectedObjectId;
-	int _purpleRoomObjectId;
-	int _cryptObjectId;
-	bool _alreadyEnteredManor;
-	byte _fullHour;
-};
-
-struct SpeechQueue {
-	int _val;
-	int _code;
-	int _acc;
-	int _freq;
-	int _rep;
-};
-
 struct Rect {
 	int _x1, _x2, _y1, _y2;
 	bool _enabled;
 };
 
-struct Pattern {
-	byte _tay, _tax;
-	byte _des[kMaxPatt + 1][kMaxPatt + 1];
-};
-
 typedef int tablint[256];
-//typedef Common::Point tabdb[17];
 typedef int tfxx[108];
 
 /*---------------------------------------------------------------------------*/
@@ -205,8 +173,6 @@ extern int g_nbrepm[9];
 extern int g_msg[5];
 extern byte g_touv[8];
 extern byte g_bufcha[391];
-
-extern byte g_lettres[7][24];
 
 extern uint16 g_t_mot[kMaxTi + 1];
 extern int g_tay_tchar;

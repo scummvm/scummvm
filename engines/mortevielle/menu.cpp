@@ -196,7 +196,7 @@ void Menu::displayMenu() {
 			do {   // One line after the other
 				msk = 0x80;
 				for (pt = 0; pt <= 7; ++pt) {
-					if ((g_lettres[num_letr - 1][ind_tabl] & msk) != 0) {
+					if ((_charArr[num_letr - 1][ind_tabl] & msk) != 0) {
 						g_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
 						g_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
 						g_vm->_screenSurface.setPixel(Common::Point(x, y), color);
@@ -505,7 +505,7 @@ void Menu::initMenu() {
 			if (!f.open("menu.mor"))
 				error("Missing file - menufr.mor or menual.mor or menu.mor");
 
-	f.read(g_lettres, 7 * 24);
+	f.read(_charArr, 7 * 24);
 	f.close();
 
 	// Skipped: dialog asking to swap floppy
@@ -567,7 +567,7 @@ void Menu::setSearchMenu() {
  * @remarks	Originally called 'mfouen'
  */
 void Menu::unsetSearchMenu() {
-	setDestinationMenuText(g_vm->g_s._currPlace);
+	setDestinationMenuText(g_vm->_coreVar._currPlace);
 	for (int i = 1; i <= 11; ++i)
 		enableMenuItem(_actionMenu[i]);
 
