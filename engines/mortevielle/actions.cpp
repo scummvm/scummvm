@@ -42,13 +42,13 @@ namespace Mortevielle {
  * @remarks	Originally called 'taller'
  */
 void MortevielleEngine::fctMove() {
-	if ((_coreVar._currPlace == ROOM26) && (g_msg[4] == _menu._moveMenu[6])) {
+	if ((_coreVar._currPlace == ROOM26) && (_msg[4] == _menu._moveMenu[6])) {
 		_coreVar._currPlace = LANDING;
 		g_caff = _coreVar._currPlace;
 		afdes();
 		repon(2, _coreVar._currPlace);
 	}
-	if ((_coreVar._currPlace == LANDING) && (g_msg[4] == _menu._moveMenu[6])) {
+	if ((_coreVar._currPlace == LANDING) && (_msg[4] == _menu._moveMenu[6])) {
 		if (!_syn)
 			ecr3(getEngineString(S_GO_TO));
 		tfleche();
@@ -89,7 +89,7 @@ void MortevielleEngine::fctMove() {
 	tsort();
 	int menuChoice = 1;
 
-	while (_menu._moveMenu[menuChoice] != g_msg[4])
+	while (_menu._moveMenu[menuChoice] != _msg[4])
 		++menuChoice;
 
 	if (_coreVar._currPlace == MOUNTAIN) {
@@ -209,7 +209,7 @@ void MortevielleEngine::fctTake() {
 				_obpart = false;
 				affrep();
 			} else {
-				g_tabdon[kAcha + ((g_mchai - 1) * 10) + g_cs - 1] = 0;
+				_tabdon[kAcha + ((g_mchai - 1) * 10) + g_cs - 1] = 0;
 				tsuiv();
 				++g_dobj;
 				if (g_dobj > 6) {
@@ -307,7 +307,7 @@ void MortevielleEngine::fctInventoryTake() {
 	cx = 0;
 	do {
 		++cx;
-	} while (_menu._inventoryMenu[cx] != g_msg[4]);
+	} while (_menu._inventoryMenu[cx] != _msg[4]);
 	cz = 0;
 	cy = 0;
 	do {
@@ -352,7 +352,7 @@ void MortevielleEngine::fctLift() {
 		tmpPlace = 14;
 	else if (_coreVar._currPlace == MOUNTAIN)
 		tmpPlace = 15;
-	g_crep = g_tabdon[asoul + (tmpPlace << 3) + (g_num - 1)];
+	g_crep = _tabdon[asoul + (tmpPlace << 3) + (g_num - 1)];
 	if (g_crep == 255)
 		g_crep = 997;
 }
@@ -446,7 +446,7 @@ void MortevielleEngine::fctLook() {
 		cx -= 4;
 	if (_coreVar._currPlace == ROOM26)
 		cx = 21;
-	g_crep = g_tabdon[arega + (cx * 7) + g_num - 1];
+	g_crep = _tabdon[arega + (cx * 7) + g_num - 1];
 	if ((_coreVar._currPlace == ATTIC) && (g_num == 8))
 		g_crep = 126;
 	if (_coreVar._currPlace == MOUNTAIN)
@@ -508,8 +508,8 @@ void MortevielleEngine::fctSearch() {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (g_num != ord(g_touv[cx])));
-			if (g_num != ord(g_touv[cx]))
+			} while ((cx <= 6) && (g_num != ord(_touv[cx])));
+			if (g_num != ord(_touv[cx]))
 				g_crep = 187;
 			else {
 				if (_currBitIndex > 0)
@@ -590,7 +590,7 @@ void MortevielleEngine::fctOpen() {
 
 	if (g_caff == ROOM26) {
 		if (g_ment != 0) {
-			g_msg[4] = OPCODE_ENTER;
+			_msg[4] = OPCODE_ENTER;
 			_syn = true;
 		} else
 			g_crep = 997;
@@ -614,8 +614,8 @@ void MortevielleEngine::fctOpen() {
 		int tmpPlace = 0;
 		do {
 			++tmpPlace;
-		} while (!((tmpPlace > 6) || (ord(g_touv[tmpPlace]) == 0) || (ord(g_touv[tmpPlace]) == g_num)));
-		if (ord(g_touv[tmpPlace]) != g_num) {
+		} while (!((tmpPlace > 6) || (ord(_touv[tmpPlace]) == 0) || (ord(_touv[tmpPlace]) == g_num)));
+		if (ord(_touv[tmpPlace]) != g_num) {
 			if (!( ((g_num == 3) && ((_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == 9) || (_coreVar._currPlace == BLUE_ROOM) || (_coreVar._currPlace == BATHROOM)))
 			    || ((g_num == 4) && ((_coreVar._currPlace == GREEN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == RED_ROOM)))
 				|| ((_coreVar._currPlace == DARKBLUE_ROOM) && (g_num == 5))
@@ -628,13 +628,13 @@ void MortevielleEngine::fctOpen() {
 					if (getRandomNumber(1, 4) == 3)
 						_speechManager.startSpeech(7, 9, 1);
 				}
-				g_touv[tmpPlace] = chr(g_num);
+				_touv[tmpPlace] = chr(g_num);
 				aniof(1, g_num);
 			}
 			tmpPlace = _coreVar._currPlace;
 			if (_coreVar._currPlace == CRYPT)
 				tmpPlace = CELLAR;
-			g_crep = g_tabdon[aouvr + (tmpPlace * 7) + g_num - 1];
+			g_crep = _tabdon[aouvr + (tmpPlace * 7) + g_num - 1];
 			if (g_crep == 254)
 				g_crep = 999;
 		} else
@@ -699,7 +699,7 @@ void MortevielleEngine::fctPlace() {
 					// Do you want to enter the hidden passage?
 					int answer = Alert::show(getEngineString(S_YES_NO), 1);
 					if (answer == 1) {
-						Common::String alertTxt = g_vm->getString(582);
+						Common::String alertTxt = getString(582);
 						Alert::show(alertTxt, 1);
 
 						bool enterPassageFl = KnowledgeCheck::show();
@@ -726,7 +726,7 @@ void MortevielleEngine::fctPlace() {
 							dessin(0);
 							aniof(1, 2);
 							aniof(1, 1);
-							alertTxt = g_vm->getString(577);
+							alertTxt = getString(577);
 							Alert::show(alertTxt, 1);
 							aniof(2, 1);
 							g_crep = 166;
@@ -881,11 +881,11 @@ void MortevielleEngine::fctClose() {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (g_num != ord(g_touv[cx])));
-			if (g_num == ord(g_touv[cx])) {
+			} while ((cx <= 6) && (g_num != ord(_touv[cx])));
+			if (g_num == ord(_touv[cx])) {
 				aniof(2, g_num);
 				g_crep = 998;
-				g_touv[cx] = chr(0);
+				_touv[cx] = chr(0);
 				--g_iouv;
 				if (g_iouv < 0)
 					g_iouv = 0;
@@ -981,8 +981,8 @@ void MortevielleEngine::fctSelfPut() {
 				int cx = 0;
 				do {
 					++cx;
-				} while ((cx <= 6) && (g_num != ord(g_touv[cx])));
-				if (g_num != ord(g_touv[cx]))
+				} while ((cx <= 6) && (g_num != ord(_touv[cx])));
+				if (g_num != ord(_touv[cx]))
 					g_crep = 187;
 				else {
 					g_mchai = chai;
@@ -1153,8 +1153,8 @@ void MortevielleEngine::fctEnter() {
 				g_x = convertBitIndexToCharacterIndex(z);
 				++_coreVar._faithScore;
 				_coreVar._currPlace = LANDING;
-				g_msg[3] = MENU_DISCUSS;
-				g_msg[4] = _menu._discussMenu[g_x];
+				_msg[3] = MENU_DISCUSS;
+				_msg[4] = _menu._discussMenu[g_x];
 				_syn = true;
 				if (g_ment == 9) {
 					_col = true;
@@ -1352,7 +1352,7 @@ void MortevielleEngine::fctDiscuss() {
 		cx = 0;
 		do {
 			++cx;
-		} while (_menu._discussMenu[cx] != g_msg[4]);
+		} while (_menu._discussMenu[cx] != _msg[4]);
 		g_caff = 69 + cx;
 		afdes();
 		repon(2, g_caff);
@@ -1368,7 +1368,7 @@ void MortevielleEngine::fctDiscuss() {
 	for (int ix = 1; ix <= 46; ++ix)
 		te[ix] = false;
 	for (int ix = 1; ix <= 45; ++ix) {
-		lib[ix] = g_vm->getString(ix + kQuestionStringIndex);
+		lib[ix] = getString(ix + kQuestionStringIndex);
 		for (i = lib[ix].size(); i <= 40; ++i)
 			lib[ix] = lib[ix] + ' ';
 	}
@@ -1477,10 +1477,10 @@ void MortevielleEngine::fctDiscuss() {
 					suj = 138;
 					_coreVar._faithScore += (3 * (_coreVar._faithScore / 10));
 				}
-			} else if (g_nbrep[g_caff - 69] < g_nbrepm[g_caff - 69]) {
-				suj = g_tabdon[arep + (ix << 3) + (g_caff - 70)];
-				_coreVar._faithScore += g_tabdon[arcf + ix];
-				++g_nbrep[g_caff - 69];
+			} else if (_nbrep[g_caff - 69] < _nbrepm[g_caff - 69]) {
+				suj = _tabdon[arep + (ix << 3) + (g_caff - 70)];
+				_coreVar._faithScore += _tabdon[arcf + ix];
+				++_nbrep[g_caff - 69];
 			} else {
 				_coreVar._faithScore += 3;
 				suj = 139;

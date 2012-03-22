@@ -158,36 +158,14 @@ extern int g_x,
         g_mchai,
         g_menup,
         g_mpers,
-        g_mnumo,
         g_perdep,
-        g_prebru,
-        g_numpal,
-        g_ptr_oct,
-        g_k_tempo;
-
-extern int g_t_cph[6401]; // Speech
-extern byte g_tabdon[4001];
-
-extern int g_nbrep[9];
-extern int g_nbrepm[9];
-extern int g_msg[5];
-extern byte g_touv[8];
-extern byte g_bufcha[391];
-
-extern uint16 g_t_mot[kMaxTi + 1];
-extern int g_tay_tchar;
-extern Hint g_t_rec[kMaxTd + 1];
-extern int g_l[108];
-extern int g_tbi[256];
-
-extern byte g_adcfiec[822 * 128];
+        g_prebru;
 
 /*---------------------------------------------------------------------------*/
 /*-------------------   PROCEDURES  AND  FONCTIONS   ------------------------*/
 /*---------------------------------------------------------------------------*/
 
 void hirs();
-Common::String copy(const Common::String &s, int idx, size_t size);
 void Val(const Common::String &s, int &V, int Code);
 
 /*---------------------------------------------------------------------------*/
@@ -197,7 +175,6 @@ void Val(const Common::String &s, int &V, int Code);
 
 extern int g_port[0xfff];
 extern byte g_mem[65536 * 16];
-extern void palette(int v1);
 
 } // End of namespace Mortevielle
 

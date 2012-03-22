@@ -486,8 +486,8 @@ void Menu::mdn() {
 			//  A menu was clicked on
 			_menuSelected = (_multiTitle) && (g_msg4 != OPCODE_NONE);
 			menuUp(g_msg3);
-			g_msg[4] = g_msg4;
-			g_msg[3] = g_msg3;
+			g_vm->_msg[4] = g_msg4;
+			g_vm->_msg[3] = g_msg3;
 			g_msg3 = OPCODE_NONE;
 			g_msg4 = OPCODE_NONE;
 
@@ -542,8 +542,8 @@ void Menu::initMenu() {
 	}
 	g_msg3 = OPCODE_NONE;
 	g_msg4 = OPCODE_NONE;
-	g_msg[3] = OPCODE_NONE;
-	g_msg[4] = OPCODE_NONE;
+	g_vm->_msg[3] = OPCODE_NONE;
+	g_vm->_msg[4] = OPCODE_NONE;
 	g_vm->setMouseClick(false);
 }
 

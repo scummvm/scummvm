@@ -65,13 +65,13 @@ void adzon() {
 	if (!f.open("don.mor"))
 		error("Missing file - don.mor");
 
-	f.read(g_tabdon, 7 * 256);
+	f.read(g_vm->_tabdon, 7 * 256);
 	f.close();
 
 	if (!f.open("bmor.mor"))
 		error("Missing file - bmor.mor");
 
-	f.read(&g_tabdon[fleche], 1 * 1916);
+	f.read(&g_vm->_tabdon[fleche], 1 * 1916);
 	f.close();
 
 	if (!f.open("dec.mor"))
@@ -152,7 +152,7 @@ void text1(int x, int y, int nb, int m) {
 
 void initouv() {
 	for (int cx = 1; cx <= 7; ++cx)
-		g_touv[cx] = chr(0);
+		g_vm->_touv[cx] = chr(0);
 }
 
 void ecr2(Common::String str_) {
@@ -164,18 +164,18 @@ void ecr2(Common::String str_) {
 		g_vm->_screenSurface.drawString(str_, 5);
 	else if ((int)str_.size() < (tlig << 1)) {
 		g_vm->_screenSurface.putxy(8, 176);
-		g_vm->_screenSurface.drawString(copy(str_, 1, (tlig - 1)), 5);
+		g_vm->_screenSurface.drawString(g_vm->copy(str_, 1, (tlig - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 182);
-		g_vm->_screenSurface.drawString(copy(str_, tlig, tlig << 1), 5);
+		g_vm->_screenSurface.drawString(g_vm->copy(str_, tlig, tlig << 1), 5);
 	} else {
 		g_vm->_largestClearScreen = true;
 		g_vm->clearScreenType2();
 		g_vm->_screenSurface.putxy(8, 176);
-		g_vm->_screenSurface.drawString(copy(str_, 1, (tlig - 1)), 5);
+		g_vm->_screenSurface.drawString(g_vm->copy(str_, 1, (tlig - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 182);
-		g_vm->_screenSurface.drawString(copy(str_, tlig, ((tlig << 1) - 1)), 5);
+		g_vm->_screenSurface.drawString(g_vm->copy(str_, tlig, ((tlig << 1) - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 190);
-		g_vm->_screenSurface.drawString(copy(str_, tlig << 1, tlig * 3), 5);
+		g_vm->_screenSurface.drawString(g_vm->copy(str_, tlig << 1, tlig * 3), 5);
 	}
 }
 
@@ -351,7 +351,7 @@ void init_nbrepm() {
 	const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
 
 	for (int idx = 0; idx < 9; ++idx)
-		g_nbrepm[idx] = ipm[idx];
+		g_vm->_nbrepm[idx] = ipm[idx];
 }
 
 void phaz(int &rand, int &p, int cf) {
@@ -440,7 +440,7 @@ void writetp(Common::String s, int t) {
 	if (g_res == 2)
 		g_vm->_screenSurface.drawString(s, t);
 	else
-		g_vm->_screenSurface.drawString(copy(s, 1, 25), t);
+		g_vm->_screenSurface.drawString(g_vm->copy(s, 1, 25), t);
 }
 
 void aniof(int ouf, int num) {
@@ -483,8 +483,8 @@ void dessin(int ad) {
 			g_vm->prepareScreenType1();
 			if ((g_caff < 30) || (g_caff > 32)) {
 				for (int cx = 1; cx <= 6; ++cx) {
-					if (ord(g_touv[cx]) != 0)
-						aniof(1, ord(g_touv[cx]));
+					if (ord(g_vm->_touv[cx]) != 0)
+						aniof(1, ord(g_vm->_touv[cx]));
 				}
 
 				if (g_caff == 13) {
@@ -568,7 +568,7 @@ void tlu(int af, int ob) {
 	repon(2, 999);
 	tkey1(true);
 	g_caff = af;
-	g_msg[3] = OPCODE_NONE;
+	g_vm->_msg[3] = OPCODE_NONE;
 	g_crep = 998;
 }
 
@@ -587,7 +587,7 @@ void tsort() {
 	}
 
 	for (int cx = 1; cx <= 7; ++cx)
-		g_touv[cx] = chr(0);
+		g_vm->_touv[cx] = chr(0);
 	g_ment = 0;
 	g_iouv = 0;
 	g_mchai = 0;
@@ -648,7 +648,7 @@ void modinv() {
 }
 
 void mennor() {
-	g_vm->_menu.menuUp(g_msg[3]);
+	g_vm->_menu.menuUp(g_vm->_msg[3]);
 }
 
 void premtet() {
@@ -662,10 +662,10 @@ void ajchai() {
 	int cx = 0;
 	do {
 		++cx;
-	} while ((cx <= 9) && (g_tabdon[cy + cx] != 0));
+	} while ((cx <= 9) && (g_vm->_tabdon[cy + cx] != 0));
 
-	if (g_tabdon[cy + cx] == 0)
-		g_tabdon[cy + cx] = g_vm->_coreVar._selectedObjectId;
+	if (g_vm->_tabdon[cy + cx] == 0)
+		g_vm->_tabdon[cy + cx] = g_vm->_coreVar._selectedObjectId;
 	else
 		g_crep = 192;
 }
@@ -716,8 +716,8 @@ L1:
 		int cx = g_vm->convertBitIndexToCharacterIndex(g_vm->_currBitIndex);
 		g_caff = 69 + cx;
 		g_crep = g_caff;
-		g_msg[3] = MENU_DISCUSS;
-		g_msg[4] = g_vm->_menu._discussMenu[cx];
+		g_vm->_msg[3] = MENU_DISCUSS;
+		g_vm->_msg[4] = g_vm->_menu._discussMenu[cx];
 		g_vm->_syn = true;
 		g_vm->_col = true;
 	} else {
@@ -749,7 +749,7 @@ void tsuiv() {
 		++cx;
 		++g_cs;
 		cl = cy + g_cs;
-		tbcl = g_tabdon[cl];
+		tbcl = g_vm->_tabdon[cl];
 	} while ((tbcl == 0) && (g_cs <= 9));
 
 	if ((tbcl != 0) && (g_cs < 11)) {
@@ -811,12 +811,12 @@ void tcoord(int sx) {
 	int atdon = amzon + 3;
 	int cy = 0;
 	while (cy < g_caff) {
-		a += g_tabdon[atdon];
+		a += g_vm->_tabdon[atdon];
 		atdon += 4;
 		++cy;
 	}
 
-	if (g_tabdon[atdon] == 0) {
+	if (g_vm->_tabdon[atdon] == 0) {
 		g_crep = 997;
 		return;
 	}
@@ -824,10 +824,10 @@ void tcoord(int sx) {
 	a += fleche;
 	int cb = 0;
 	for (cy = 0; cy <= (sx - 2); ++cy) {
-		ib = (g_tabdon[a + cb] << 8) + g_tabdon[(a + cb + 1)];
+		ib = (g_vm->_tabdon[a + cb] << 8) + g_vm->_tabdon[(a + cb + 1)];
 		cb += (ib * 4) + 2;
 	}
-	ib = (g_tabdon[a + cb] << 8) + g_tabdon[(a + cb + 1)];
+	ib = (g_vm->_tabdon[a + cb] << 8) + g_vm->_tabdon[(a + cb + 1)];
 	if (ib == 0) {
 		g_crep = 997;
 		return;
@@ -836,11 +836,11 @@ void tcoord(int sx) {
 	cy = 1;
 	do {
 		cb += 2;
-		sx = g_tabdon[a + cb] * g_res;
-		sy = g_tabdon[(a + cb + 1)];
+		sx = g_vm->_tabdon[a + cb] * g_res;
+		sy = g_vm->_tabdon[(a + cb + 1)];
 		cb += 2;
-		ix = g_tabdon[a + cb] * g_res;
-		iy = g_tabdon[(a + cb + 1)];
+		ix = g_vm->_tabdon[a + cb] * g_res;
+		iy = g_vm->_tabdon[(a + cb + 1)];
 		++cy;
 	} while (!(((g_x >= sx) && (g_x <= ix) && (g_y >= sy) && (g_y <= iy)) || (cy > ib)));
 
@@ -879,7 +879,7 @@ void treg(int ob) {
 	int mdes = g_caff;
 	g_caff = ob;
 
-	if (((g_caff > 29) && (g_caff < 33)) || (g_caff == 144) || (g_caff == 147) || (g_caff == 149) || (g_msg[4] == OPCODE_SLOOK)) {
+	if (((g_caff > 29) && (g_caff < 33)) || (g_caff == 144) || (g_caff == 147) || (g_caff == 149) || (g_vm->_msg[4] == OPCODE_SLOOK)) {
 		afdes();
 		if ((g_caff > 29) && (g_caff < 33))
 			repon(2, g_caff);
@@ -887,7 +887,7 @@ void treg(int ob) {
 			repon(2, g_caff + 400);
 		tkey1(true);
 		g_caff = mdes;
-		g_msg[3] = 0;
+		g_vm->_msg[3] = 0;
 		g_crep = 998;
 	} else {
 		g_vm->_obpart = true;
@@ -913,7 +913,7 @@ void rechai(int &ch) {
 
 	if (g_vm->_coreVar._currPlace == CRYPT)
 		tmpPlace = CELLAR;
-	ch = g_tabdon[achai + (tmpPlace * 7) + g_num - 1];
+	ch = g_vm->_tabdon[achai + (tmpPlace * 7) + g_num - 1];
 }
 
 int t23coul() {

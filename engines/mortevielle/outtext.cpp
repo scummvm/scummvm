@@ -281,16 +281,16 @@ void taffich() {
 		npal = a;
 
 		for (cx = 0; cx <= (a - 1); ++cx)
-			lgt = lgt + g_l[cx];
-		handle = g_l[a];
+			lgt += g_vm->_fxxBuffer[cx];
+		handle = g_vm->_fxxBuffer[a];
 
 		filename = "DXX.mor";
 	} else {
 		filename = "DZZ.mor";
-		handle = g_l[87];
+		handle = g_vm->_fxxBuffer[87];
 		if (a == 51) {
 			lgt = handle;
-			handle = g_l[88];
+			handle = g_vm->_fxxBuffer[88];
 		}
 		g_maff = a;
 		npal = a + 37;
@@ -310,7 +310,7 @@ void taffich() {
 			alllum[k] = -1;
 		}
 	}
-	g_numpal = npal;
+	g_vm->_numpal = npal;
 	g_vm->setPal(npal);
 
 	if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26) || (b == 50)) {
@@ -323,8 +323,8 @@ void taffich() {
 			else if (b > 15)
 				--b;
 			for (cx = 0; cx <= (b - 1); ++cx)
-				lgt += g_l[cx + 89];
-			handle = g_l[b + 89];
+				lgt += g_vm->_fxxBuffer[cx + 89];
+			handle = g_vm->_fxxBuffer[b + 89];
 			filename = "AXX.mor";
 		} else if (b == 50) {
 			filename = "AZZ.mor";
@@ -333,7 +333,7 @@ void taffich() {
 		charani(filename, lgt, handle);
 	}
 	g_vm->_mouse.showMouse();
-	if ((a < 27) && ((g_maff < 27) || (g_vm->_coreVar._currPlace == LANDING)) && (g_msg[4] != OPCODE_ENTER)) {
+	if ((a < 27) && ((g_maff < 27) || (g_vm->_coreVar._currPlace == LANDING)) && (g_vm->_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			g_vm->displayAloneText();
 		else if (!g_vm->_blo)

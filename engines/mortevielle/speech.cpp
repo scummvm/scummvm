@@ -93,8 +93,8 @@ void SpeechManager::charg_car(int &currWordNumb) {
 
 
 void SpeechManager::entroct(byte o) {
-	g_mem[kAdrTroct * 16 + g_ptr_oct] = o;
-	++g_ptr_oct;
+	g_mem[kAdrTroct * 16 + _ptr_oct] = o;
+	++_ptr_oct;
 }
 
 void SpeechManager::veracf(byte b) {
@@ -115,7 +115,7 @@ void SpeechManager::regenbruit() {
 	int i = kOffsetB3 + 8590;
 	int j = 0;
 	do {
-		g_t_cph[j] = READ_LE_UINT16(&g_mem[kAdrNoise3 + i]);
+		_cfiphBuffer[j] = READ_LE_UINT16(&g_mem[kAdrNoise3 + i]);
 		i += 2;
 		++j;
 	} while (i < kOffsetB3 + 8790);
@@ -148,7 +148,7 @@ void SpeechManager::loadPhonemeSounds() {
 		error("Missing file - phbrui.mor");
 
 	for (int i = 1; i <= 3; ++i)
-		g_t_cph[i] = f.readSint16LE();
+		_cfiphBuffer[i] = f.readSint16LE();
 
 	f.close();
 }
@@ -499,13 +499,13 @@ void SpeechManager::initQueue() {
 void SpeechManager::handlePhoneme() {
 	const int deca[3] = {300, 30, 40};
 
-	int startPos = swap(g_t_cph[_phonemeNumb - 1]) + deca[_typlec];
-	int endPos = swap(g_t_cph[_phonemeNumb]) + deca[_typlec];
+	int startPos = swap(_cfiphBuffer[_phonemeNumb - 1]) + deca[_typlec];
+	int endPos = swap(_cfiphBuffer[_phonemeNumb]) + deca[_typlec];
 	int wordCount = endPos - startPos;
 	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
-		WRITE_LE_UINT16(&g_mem[kAdrWord + currWord], g_t_cph[i]);
+		WRITE_LE_UINT16(&g_mem[kAdrWord + currWord], _cfiphBuffer[i]);
 
-	g_ptr_oct = 0;
+	_ptr_oct = 0;
 	int currWord = 0;
 	initQueue();
 
@@ -536,14 +536,14 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	_typlec = typ;
 	if (_typlec != 0) {
 		for (int i = 0; i <= 500; ++i)
-			savph[i] = g_t_cph[i];
+			savph[i] = _cfiphBuffer[i];
 		tempo = kTempoNoise;
 	} else if (g_haut > 5)
 		tempo = kTempoF;
 	else
 		tempo = kTempoM;
 	g_vm->_addfix = (float)((tempo - g_addv[0])) / 256;
-	cctable(g_tbi);
+	cctable(_tbi);
 	switch (typ) {
 	case 1:
 		loadNoise();
@@ -558,13 +558,13 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		break;
 	}
 	handlePhoneme();
-	g_vm->_soundManager.litph(g_tbi, typ, tempo);
+	g_vm->_soundManager.litph(_tbi, typ, tempo);
 	if (_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
-			g_t_cph[i] = savph[i];
+			_cfiphBuffer[i] = savph[i];
 			g_mlec = _typlec;
 		}
-	g_vm->setPal(g_numpal);
+	g_vm->setPal(g_vm->_numpal);
 }
 
 } // End of namespace Mortevielle

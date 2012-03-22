@@ -66,7 +66,7 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
 	sz.syncAsByte(g_vm->_saveStruct._alreadyEnteredManor);
 	sz.syncAsByte(g_vm->_saveStruct._fullHour);
 
-	sz.syncBytes(g_bufcha, 391);
+	sz.syncBytes(_tabdonSaveBuffer, 391);
 }
 
 /**
@@ -108,7 +108,7 @@ void SavegameManager::loadSavegame(int n) {
 
 	g_vm->_coreVar = g_vm->_saveStruct;
 	for (int i = 0; i <= 389; ++i)
-		g_tabdon[i + kAcha] = g_bufcha[i];
+		g_vm->_tabdon[i + kAcha] = _tabdonSaveBuffer[i];
 
 	// Close the stream
 	delete stream;	
@@ -141,10 +141,10 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	g_vm->hourToChar();
 	
 	for (i = 0; i <= 389; ++i)
-		g_bufcha[i] = g_tabdon[i + kAcha];
+		_tabdonSaveBuffer[i] = g_vm->_tabdon[i + kAcha];
 	g_vm->_saveStruct = g_vm->_coreVar;
-	if (g_vm->_saveStruct._currPlace == 26)
-		g_vm->_saveStruct._currPlace = 15;
+	if (g_vm->_saveStruct._currPlace == ROOM26)
+		g_vm->_saveStruct._currPlace = LANDING;
 	
 	Common::String filename = generateSaveName(n);
 	f = g_system->getSavefileManager()->openForSaving(filename);

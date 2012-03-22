@@ -92,31 +92,8 @@ int g_x,
         g_mchai,
         g_menup,
         g_mpers,
-        g_mnumo,
         g_perdep,
-        g_prebru,
-        g_numpal,
-        g_ptr_oct,
-        g_k_tempo;
-
-int g_t_cph[6401];
-byte g_tabdon[4001];
-
-int g_nbrep[9];
-int g_nbrepm[9];
-int g_msg[5];
-byte g_touv[8];
-byte g_bufcha[391];
-
-byte g_lettres[7][24];
-
-uint16 g_t_mot[kMaxTi + 1];
-int g_tay_tchar;
-Hint g_t_rec[kMaxTd + 1];
-int g_l[108];
-int g_tbi[256];
-
-byte g_adcfiec[(4088 * 16) + (311 * 0x80)];
+        g_prebru;
 
 /*---------------------------------------------------------------------------*/
 /*--------------------   PROCEDURES  AND  FONCTIONS   -----------------------*/
@@ -131,33 +108,12 @@ void hirs() {
 	g_vm->_screenSurface.clearScreen();
 }
 
-/**
- * Returns a substring of the given string
- * @param s		Source string
- * @param idx	Starting index (1 based)
- * @param size	Number of characters to return
- */
-Common::String copy(const Common::String &s, int idx, size_t size) {
-	// Copy the substring into a temporary buffer
-	char *tmp = new char[size + 1];
-	strncpy(tmp, s.c_str() + idx - 1, size);
-	tmp[size] = '\0';
-
-	Common::String result(tmp);
-	delete[] tmp;
-	return result;
-}
-
 /*---------------------------------------------------------------------------*/
 /*------------------------------     STUBS     ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
 int g_port[0xfff];
 byte g_mem[65536 * 16];
-
-void palette(int v1) {
-	warning("TODO: palette");
-}
 
 void musyc(tablint &tb, int nbseg, int att) {
 	warning("TODO: musyc");
