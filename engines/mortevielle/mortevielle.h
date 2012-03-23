@@ -123,6 +123,11 @@ struct SaveStruct {
 	byte _fullHour;
 };
 
+struct Hint {
+	int _hintId;
+	byte _point;
+};
+
 class MortevielleEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -211,17 +216,20 @@ public:
 	int _day;
 	int _hour;
 	int _minute;
+	int _mchai;
 	float _addfix;
-
-	int _numpal;
-
+	SaveStruct _coreVar, _saveStruct;
 	Common::Point _stdPal[91][17];
 	t_pcga _cgaPal[91];
+
 	int _c_zzz;
 	int ptr_word;
 	byte _v_lieu[7][25];
-	SaveStruct _coreVar, _saveStruct;
 	byte g_is;
+	int _numpal;
+
+	// TODO: Replace the following with proper implementations, or refactor out the code using them
+	byte _mem[65536 * 16];
 
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
@@ -374,7 +382,7 @@ public:
 	void prepareRoom();
 	void drawClock();
 	Common::String copy(const Common::String &s, int idx, size_t size);
-
+	void hirs();
 };
 
 extern MortevielleEngine *g_vm;

@@ -541,7 +541,7 @@ Common::Error MortevielleEngine::run() {
  */
 void MortevielleEngine::showIntroduction() {
 	f3f8::aff50(false);
-	g_mlec = 0;
+	_speechManager._mlec = 0;
 	f3f8::checkForF8(142, false);
 	CHECK_QUIT;
 
@@ -1656,7 +1656,7 @@ void MortevielleEngine::loseGame() {
 	initouv();
 	g_ment = 0;
 	g_iouv = 0;
-	g_mchai = 0;
+	_mchai = 0;
 	_menu.unsetSearchMenu();
 	if (!_blo)
 		t11(MANOR_FRONT);
@@ -1870,7 +1870,7 @@ void MortevielleEngine::gameLoaded() {
 	g_ment = 0;
 	_syn = true;
 	_heroSearching = true;
-	g_mchai = 0;
+	_mchai = 0;
 	_manorDistance = 0;
 	initouv();
 	g_iouv = 0;
@@ -2303,8 +2303,8 @@ void MortevielleEngine::setPal(int n) {
 	case MODE_EGA:
 	case MODE_AMSTRAD1512:
 		for (int i = 1; i <= 16; ++i) {
-			g_mem[(0x7000 * 16) + (2 * i)] = _stdPal[n][i].x;
-			g_mem[(0x7000 * 16) + (2 * i) + 1] = _stdPal[n][i].y;
+			g_vm->_mem[(0x7000 * 16) + (2 * i)] = _stdPal[n][i].x;
+			g_vm->_mem[(0x7000 * 16) + (2 * i) + 1] = _stdPal[n][i].y;
 		}
 		break;
 	case MODE_CGA: {
@@ -2332,12 +2332,12 @@ void MortevielleEngine::setPal(int n) {
 void MortevielleEngine::displayCGAPattern(int n, Pattern p, nhom *pal) {
 	int addr = n * 404 + 0xd700;
 
-	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + addr], p._tax);
-	WRITE_LE_UINT16(&g_mem[0x6000 * 16 + addr + 2], p._tay);
+	WRITE_LE_UINT16(&g_vm->_mem[0x6000 * 16 + addr], p._tax);
+	WRITE_LE_UINT16(&g_vm->_mem[0x6000 * 16 + addr + 2], p._tay);
 	addr += 4;
 	for (int i = 0; i < p._tax; ++i) {
 		for (int j = 0; j < p._tay; ++j)
-			g_mem[(0x6000 * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
+			g_vm->_mem[(0x6000 * 16) + addr + j * p._tax + i] = pal[n]._hom[p._des[i + 1][j + 1]];
 	}
 }
 
@@ -2443,7 +2443,7 @@ void MortevielleEngine::loadBRUIT5() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(&g_mem[kAdrNoise5 * 16 + 0], 149 * 128);
+	f.read(&g_vm->_mem[kAdrNoise5 * 16 + 0], 149 * 128);
 	f.close();
 }
 
@@ -2486,12 +2486,12 @@ void MortevielleEngine::music() {
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
 
-	fic.read(&g_mem[0x3800 * 16 + 0], 500);
-	fic.read(&g_mem[0x47a0 * 16 + 0], 123);
+	fic.read(&g_vm->_mem[0x3800 * 16 + 0], 500);
+	fic.read(&g_vm->_mem[0x47a0 * 16 + 0], 123);
 	fic.close();
 
-	_soundManager.decodeMusic(&g_mem[0x3800 * 16], &g_mem[0x5000 * 16], 623);
-	_addfix = (float)((kTempoMusic - g_addv[1])) / 256;
+	_soundManager.decodeMusic(&g_vm->_mem[0x3800 * 16], &g_vm->_mem[0x5000 * 16], 623);
+	_addfix = (float)((kTempoMusic - 8)) / 256;
 	_speechManager.cctable(_speechManager._tbi);
 
 	bool fin = false;
@@ -2544,7 +2544,7 @@ void MortevielleEngine::draw(int ad, int x, int y) {
 void MortevielleEngine::drawRightFrame() {
 	setPal(89);
 	if (_currGraphicalDevice == MODE_HERCULES) {
-		g_mem[0x7000 * 16 + 14] = 15;
+		g_vm->_mem[0x7000 * 16 + 14] = 15;
 	}
 	_mouse.hideMouse();
 	pictout(0x73a2, 0, 0, 0);
@@ -2789,6 +2789,15 @@ Common::String MortevielleEngine::copy(const Common::String &s, int idx, size_t 
 	Common::String result(tmp);
 	delete[] tmp;
 	return result;
+}
+
+void MortevielleEngine::hirs() {
+	// Note: The original used this to set the graphics mode and clear the screen, both at
+	// the start of the game, and whenever the screen need to be cleared. As such, this
+	// method is deprecated in favour of clearing the screen
+	debugC(1, kMortevielleCore, "TODO: hirs is deprecated in favour of ScreenSurface::clearScreen");
+
+	g_vm->_screenSurface.clearScreen();
 }
 
 } // End of namespace Mortevielle

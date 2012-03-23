@@ -35,6 +35,28 @@
 
 namespace Mortevielle {
 
+const byte _tnocon[364] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const byte _intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+const byte _typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
+const byte _tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
+const byte _tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
+
 SpeechManager::SpeechManager() {
 	_typlec = 0;
 	_phonemeNumb = 0;
@@ -53,7 +75,7 @@ void SpeechManager::spfrac(int wor) {
 }
 
 void SpeechManager::charg_car(int &currWordNumb) {
-	int wor = swap(READ_LE_UINT16(&g_mem[kAdrWord + currWordNumb]));
+	int wor = swap(READ_LE_UINT16(&g_vm->_mem[kAdrWord + currWordNumb]));
 	int int_ = wor & 0x3f; // 63
 
 	if ((int_ >= 0) && (int_ <= 13)) {
@@ -65,7 +87,7 @@ void SpeechManager::charg_car(int &currWordNumb) {
 	} else if ((int_ >= 22) && (int_ <= 47)) {
 		int_ = int_ - 22;
 		_queue[2]._val = int_;
-		_queue[2]._code = g_typcon[int_];
+		_queue[2]._code = _typcon[int_];
 	} else if ((int_ >= 48) && (int_ <= 56)) {
 		_queue[2]._val = int_ - 22;
 		_queue[2]._code = 4;
@@ -93,7 +115,7 @@ void SpeechManager::charg_car(int &currWordNumb) {
 
 
 void SpeechManager::entroct(byte o) {
-	g_mem[kAdrTroct * 16 + _ptr_oct] = o;
+	g_vm->_mem[kAdrTroct * 16 + _ptr_oct] = o;
 	++_ptr_oct;
 }
 
@@ -115,7 +137,7 @@ void SpeechManager::regenbruit() {
 	int i = kOffsetB3 + 8590;
 	int j = 0;
 	do {
-		_cfiphBuffer[j] = READ_LE_UINT16(&g_mem[kAdrNoise3 + i]);
+		_cfiphBuffer[j] = READ_LE_UINT16(&g_vm->_mem[kAdrNoise3 + i]);
 		i += 2;
 		++j;
 	} while (i < kOffsetB3 + 8790);
@@ -131,9 +153,9 @@ void SpeechManager::loadMusicSound() {
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
 	
-	f.read(&g_mem[0x7414 * 16 + 0], 273);
+	f.read(&g_vm->_mem[0x7414 * 16 + 0], 273);
 
-	g_vm->_soundManager.decodeMusic(&g_mem[0x7414 * 16], &g_mem[kAdrNoise * 16], 273);
+	g_vm->_soundManager.decodeMusic(&g_vm->_mem[0x7414 * 16], &g_vm->_mem[kAdrNoise * 16], 273);
 	f.close();
 }
 
@@ -164,10 +186,10 @@ void SpeechManager::loadNoise() {
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
-	f.read(&g_mem[kAdrNoise * 16 + 0], 250);
+	f.read(&g_vm->_mem[kAdrNoise * 16 + 0], 250);
 	for (i = 0; i <= 19013; ++i)
-		g_mem[kAdrNoise * 16 + 32000 + i] = g_mem[kAdrNoise5 + i];
-	f.read(&g_mem[kAdrNoise1 * 16 + kOffsetB1], 149);
+		g_vm->_mem[kAdrNoise * 16 + 32000 + i] = g_vm->_mem[kAdrNoise5 + i];
+	f.read(&g_vm->_mem[kAdrNoise1 * 16 + kOffsetB1], 149);
 
 	f.close();
 }
@@ -185,7 +207,7 @@ void SpeechManager::trait_car() {
 	case 5:
 	case 6:
 		if (_queue[1]._code == 6)
-			d3 = g_tabdph[(_queue[1]._val - 14) << 1];
+			d3 = _tabdph[(_queue[1]._val - 14) << 1];
 		else
 			d3 = kNullValue;
 		if (_queue[0]._code >= 5) {
@@ -315,7 +337,7 @@ void SpeechManager::trait_car() {
 		veracf(_queue[2]._acc);
 		if (_queue[2]._code == 6) {
 			entroct(4);
-			entroct(g_tabdph[(_queue[2]._val - 14) << 1]);
+			entroct(_tabdph[(_queue[2]._val - 14) << 1]);
 			entroct(_queue[1]._val);
 		} else {
 			entroct(4);
@@ -337,7 +359,7 @@ void SpeechManager::trait_car() {
 			d2 = 8;
 			break;
 		case 6:
-			d2 = g_tabdph[(_queue[2]._val - 14) << 1];
+			d2 = _tabdph[(_queue[2]._val - 14) << 1];
 			break;
 		case 5:
 			d2 = _queue[2]._val;
@@ -347,7 +369,7 @@ void SpeechManager::trait_car() {
 			break;
 		}       //  switch  c3._code
 		d2 = (d2 * 26) + _queue[1]._val;
-		if (g_tnocon[d2] == 0)
+		if (_tnocon[d2] == 0)
 			d3 = 2;
 		else
 			d3 = 6;
@@ -393,7 +415,7 @@ void SpeechManager::trait_car() {
 				d2 = 8;
 				break;
 			case 6:
-				d2 = g_tabdph[(_queue[2]._val - 14) << 1];
+				d2 = _tabdph[(_queue[2]._val - 14) << 1];
 				break;
 			case 5:
 				d2 = _queue[2]._val;
@@ -405,7 +427,7 @@ void SpeechManager::trait_car() {
 			if (d2 == 4)
 				d2 = 3;
 
-			if (g_intcon[_queue[1]._val] != 0)
+			if (_intcon[_queue[1]._val] != 0)
 				++_queue[1]._val;
 
 			if ((_queue[1]._val == 17) || (_queue[1]._val == 18))
@@ -442,7 +464,7 @@ void SpeechManager::trait_car() {
 				d2 = 8;
 				break;
 			case 6:
-				d2 = g_tabdph[(_queue[2]._val - 14) << 1];
+				d2 = _tabdph[(_queue[2]._val - 14) << 1];
 				break;
 			case 5:
 				d2 = _queue[2]._val;
@@ -455,12 +477,12 @@ void SpeechManager::trait_car() {
 			if (d2 == 4)
 				d2 = 3;
 
-			if (g_intcon[_queue[1]._val] != 0)
+			if (_intcon[_queue[1]._val] != 0)
 				++_queue[1]._val;
 
 			entroct(4);
 			entroct(d2);
-			entroct(g_tabdbc[((_queue[1]._val - 26) << 1) + 1]);
+			entroct(_tabdbc[((_queue[1]._val - 26) << 1) + 1]);
 		}
 	
 		break;
@@ -503,7 +525,7 @@ void SpeechManager::handlePhoneme() {
 	int endPos = swap(_cfiphBuffer[_phonemeNumb]) + deca[_typlec];
 	int wordCount = endPos - startPos;
 	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
-		WRITE_LE_UINT16(&g_mem[kAdrWord + currWord], _cfiphBuffer[i]);
+		WRITE_LE_UINT16(&g_vm->_mem[kAdrWord + currWord], _cfiphBuffer[i]);
 
 	_ptr_oct = 0;
 	int currWord = 0;
@@ -542,7 +564,7 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		tempo = kTempoF;
 	else
 		tempo = kTempoM;
-	g_vm->_addfix = (float)((tempo - g_addv[0])) / 256;
+	g_vm->_addfix = (float)((tempo - 8)) / 256;
 	cctable(_tbi);
 	switch (typ) {
 	case 1:
@@ -562,7 +584,7 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	if (_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
 			_cfiphBuffer[i] = savph[i];
-			g_mlec = _typlec;
+			_mlec = _typlec;
 		}
 	g_vm->setPal(g_vm->_numpal);
 }

@@ -37,6 +37,7 @@
 namespace Mortevielle {
 
 typedef unsigned char uchar;
+const byte _rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 
 static int l_motsuiv(int p, const char *ch, int &tab) {
 	int c = p;
@@ -140,14 +141,14 @@ void chardes(Common::String filename, int32 skipSize, int length) {
 	int totalLength = length + remainingSkipSize;
 	int memIndx = 0x6000 * 16;
 	while (totalLength > 0) {
-		f.read(&g_mem[memIndx], 128);
+		f.read(&g_vm->_mem[memIndx], 128);
 		totalLength -= 128;
 		memIndx += 128;
 	}
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i) 
-		g_mem[0x7000 * 16 + i - remainingSkipSize] = g_mem[0x6000 * 16 + i];
+		g_vm->_mem[0x7000 * 16 + i - remainingSkipSize] = g_vm->_mem[0x6000 * 16 + i];
 }
 
 void charani(Common::String filename, int32 skipSize, int length) {
@@ -167,14 +168,14 @@ void charani(Common::String filename, int32 skipSize, int length) {
 	int fullLength = length + remainingSkipSize;
 	int memIndx = 0x6000 * 16;
 	while (fullLength > 0) {
-		f.read(&g_mem[memIndx], 128);
+		f.read(&g_vm->_mem[memIndx], 128);
 		fullLength -= 128;
 		memIndx += 128;
 	}
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		g_mem[kAdrAni * 16 + i - remainingSkipSize] = g_mem[0x6000 * 16 + i];
+		g_vm->_mem[kAdrAni * 16 + i - remainingSkipSize] = g_vm->_mem[0x6000 * 16 + i];
 }
 
 void taffich() {
@@ -298,7 +299,7 @@ void taffich() {
 	chardes(filename, lgt, handle);
 	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&g_mem[(0x7000 * 16) + ((i + 1) << 1)]);
+			int palh = READ_LE_UINT16(&g_vm->_mem[(0x7000 * 16) + ((i + 1) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (int i = 0; i <= 15; ++i) {
@@ -306,7 +307,7 @@ void taffich() {
 			for (int j = 0; j <= 15; ++j)
 				if (alllum[j] > alllum[k])
 					k = j;
-			g_mem[(0x7000 * 16) + 2 + (k << 1)] = g_rang[i];
+			g_vm->_mem[(0x7000 * 16) + 2 + (k << 1)] = _rang[i];
 			alllum[k] = -1;
 		}
 	}

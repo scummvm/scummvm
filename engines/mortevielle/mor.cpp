@@ -46,15 +46,15 @@ namespace Mortevielle {
 
 void pictout(int seg, int dep, int x, int y) {
 	GfxSurface surface;
-	surface.decode(&g_mem[seg * 16 + dep]);
+	surface.decode(&g_vm->_mem[seg * 16 + dep]);
 
 	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
-		g_mem[0x7000 * 16 + 2] = 0;
-		g_mem[0x7000 * 16 + 32] = 15;
+		g_vm->_mem[0x7000 * 16 + 2] = 0;
+		g_vm->_mem[0x7000 * 16 + 32] = 15;
 	}
 
-	if ((g_caff != 51) && (READ_LE_UINT16(&g_mem[0x7000 * 16 + 0x4138]) > 0x100))
-		WRITE_LE_UINT16(&g_mem[0x7000 * 16 + 0x4138], 0x100);
+	if ((g_caff != 51) && (READ_LE_UINT16(&g_vm->_mem[0x7000 * 16 + 0x4138]) > 0x100))
+		WRITE_LE_UINT16(&g_vm->_mem[0x7000 * 16 + 0x4138], 0x100);
 
 	g_vm->_screenSurface.drawPicture(surface, x, y);
 }
@@ -77,7 +77,7 @@ void adzon() {
 	if (!f.open("dec.mor"))
 		error("Missing file - dec.mor");
 
-	f.read(&g_mem[0x73a2 * 16 + 0], 1 * 1664);
+	f.read(&g_vm->_mem[0x73a2 * 16 + 0], 1 * 1664);
 	f.close();
 }
 
@@ -85,12 +85,12 @@ void adzon() {
  * Returns the offset within the compressed image data resource of the desired image
  */
 int animof(int ouf, int num) {
-	int nani = g_mem[kAdrAni * 16 + 1];
+	int nani = g_vm->_mem[kAdrAni * 16 + 1];
 	int aux = num;
 	if (ouf != 1)
 		aux += nani;
 
-	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&g_mem[kAdrAni * 16 + (aux << 1)]);
+	int animof_result = (nani << 2) + 2 + READ_BE_UINT16(&g_vm->_mem[kAdrAni * 16 + (aux << 1)]);
 
 	return animof_result;
 }
@@ -183,13 +183,6 @@ void ecr3(Common::String text) {
 	g_vm->clearScreenType3();
 	g_vm->_screenSurface.putxy(8, 192);
 	g_vm->_screenSurface.drawString(text, 5);
-}
-
-void stop() {
-	hirs();
-	g_vm->_currGraphicalDevice = MODE_AMSTRAD1512;
-	hirs();
-	g_vm->quitGame();
 }
 
 void paint_rect(int x, int y, int dx, int dy) {
@@ -460,7 +453,7 @@ void aniof(int ouf, int num) {
 	int offset = animof(ouf, num);
 
 	GfxSurface surface;
-	surface.decode(&g_mem[ad * 16 + offset]);
+	surface.decode(&g_vm->_mem[ad * 16 + offset]);
 	g_vm->_screenSurface.drawPicture(surface, 0, 12);
 
 	g_vm->prepareScreenType1();
@@ -590,7 +583,7 @@ void tsort() {
 		g_vm->_touv[cx] = chr(0);
 	g_ment = 0;
 	g_iouv = 0;
-	g_mchai = 0;
+	g_vm->_mchai = 0;
 	debloc(g_vm->_coreVar._currPlace);
 }
 
@@ -658,7 +651,7 @@ void premtet() {
 
 /* NIVEAU 5 */
 void ajchai() {
-	int cy = kAcha + ((g_mchai - 1) * 10) - 1;
+	int cy = kAcha + ((g_vm->_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;
@@ -743,7 +736,7 @@ void tsuiv() {
 	int tbcl;
 	int cl;
 
-	int cy = kAcha + ((g_mchai - 1) * 10) - 1;
+	int cy = kAcha + ((g_vm->_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;
