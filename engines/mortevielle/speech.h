@@ -75,6 +75,7 @@ private:
 public:
 	int _cfiphBuffer[6401];
 	int _tbi[256];
+	int _mlec;
 
 	SpeechManager();
 	void spfrac(int wor);

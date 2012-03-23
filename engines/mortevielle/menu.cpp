@@ -220,8 +220,8 @@ void Menu::displayMenu() {
 void Menu::drawMenu() {
 	displayMenu();
 	_menuActive = true;
-	g_msg4 = OPCODE_NONE;
-	g_msg3 = OPCODE_NONE;
+	_msg4 = OPCODE_NONE;
+	_msg3 = OPCODE_NONE;
 	_menuSelected = false;
 	g_vm->setMouseClick(false);
 	_multiTitle = false;
@@ -232,15 +232,15 @@ void Menu::drawMenu() {
  * @remarks	Originally called 'invers'
  */
 void Menu::invert(int indx) {
-	if (g_msg4 == OPCODE_NONE)
+	if (_msg4 == OPCODE_NONE)
 		return;
 
-	int menuIndex = lo(g_msg4);
+	int menuIndex = lo(_msg4);
 
-	g_vm->_screenSurface.putxy(_menuConstants[g_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
+	g_vm->_screenSurface.putxy(_menuConstants[_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
 
 	Common::String str;
-	switch (g_msg3) {
+	switch (_msg3) {
 	case 1:
 		str = _inventoryStringArray[menuIndex];
 		break;
@@ -279,14 +279,14 @@ void Menu::invert(int indx) {
 	if ((str[0] != '*') && (str[0] != '<'))
 		g_vm->_screenSurface.drawString(str, indx);
 	else
-		g_msg4 = OPCODE_NONE;
+		_msg4 = OPCODE_NONE;
 }
 
 void Menu::util(Common::Point pos) {
 
-	int ymx = (_menuConstants[g_msg3 - 1][3] << 3) + 16;
-	int dxcar = _menuConstants[g_msg3 - 1][2];
-	int xmn = (_menuConstants[g_msg3 - 1][0] << 2) * g_res;
+	int ymx = (_menuConstants[_msg3 - 1][3] << 3) + 16;
+	int dxcar = _menuConstants[_msg3 - 1][2];
+	int xmn = (_menuConstants[_msg3 - 1][0] << 2) * g_res;
 
 	int ix;
 	if (g_res == 1)
@@ -295,15 +295,15 @@ void Menu::util(Common::Point pos) {
 		ix = 3;
 	int xmx = dxcar * ix * g_res + xmn + 2;
 	if ((pos.x > xmn) && (pos.x < xmx) && (pos.y < ymx) && (pos.y > 15)) {
-		ix = (((uint)pos.y >> 3) - 1) + (g_msg3 << 8);
-		if (ix != g_msg4) {
+		ix = (((uint)pos.y >> 3) - 1) + (_msg3 << 8);
+		if (ix != _msg4) {
 			invert(1);
-			g_msg4 = ix;
+			_msg4 = ix;
 			invert(0);
 		}
-	} else if (g_msg4 != OPCODE_NONE) {
+	} else if (_msg4 != OPCODE_NONE) {
 		invert(1);
-		g_msg4 = OPCODE_NONE;
+		_msg4 = OPCODE_NONE;
 	}
 }
 
@@ -419,7 +419,7 @@ void Menu::menuUp(int xx) {
 void Menu::eraseMenu() {
 	_menuActive = false;
 	g_vm->setMouseClick(false);
-	menuUp(g_msg3);
+	menuUp(_msg3);
 }
 
 /**
@@ -459,37 +459,37 @@ void Menu::mdn() {
 			else
 				ix = MENU_FILE;
 
-			if ((ix != g_msg3) || (!_multiTitle))
-				if (!((ix == MENU_FILE) && ((g_msg3 == MENU_SAVE) || (g_msg3 == MENU_LOAD)))) {
-					menuUp(g_msg3);
+			if ((ix != _msg3) || (!_multiTitle))
+				if (!((ix == MENU_FILE) && ((_msg3 == MENU_SAVE) || (_msg3 == MENU_LOAD)))) {
+					menuUp(_msg3);
 					menuDown(ix);
-					g_msg3 = ix;
-					g_msg4 = OPCODE_NONE;
+					_msg3 = ix;
+					_msg4 = OPCODE_NONE;
 				}
 		} else { // Not in the MenuTitle line
 			if ((curPos.y > 11) && (_multiTitle))
 				util(curPos);
 		}
 	} else {       // There was a click
-		if ((g_msg3 == MENU_FILE) && (g_msg4 != OPCODE_NONE)) {
+		if ((_msg3 == MENU_FILE) && (_msg4 != OPCODE_NONE)) {
 			// Another menu to be _displayed
 			g_vm->setMouseClick(false);
-			menuUp(g_msg3);
-			if (lo(g_msg4) == 1)
-				g_msg3 = 7;
+			menuUp(_msg3);
+			if (lo(_msg4) == 1)
+				_msg3 = 7;
 			else
-				g_msg3 = 8;
-			menuDown(g_msg3);
+				_msg3 = 8;
+			menuDown(_msg3);
 
 			g_vm->setMouseClick(false);
 		} else { 
 			//  A menu was clicked on
-			_menuSelected = (_multiTitle) && (g_msg4 != OPCODE_NONE);
-			menuUp(g_msg3);
-			g_vm->_msg[4] = g_msg4;
-			g_vm->_msg[3] = g_msg3;
-			g_msg3 = OPCODE_NONE;
-			g_msg4 = OPCODE_NONE;
+			_menuSelected = (_multiTitle) && (_msg4 != OPCODE_NONE);
+			menuUp(_msg3);
+			g_vm->_msg[4] = _msg4;
+			g_vm->_msg[3] = _msg3;
+			_msg3 = OPCODE_NONE;
+			_msg4 = OPCODE_NONE;
 
 			g_vm->setMouseClick(false);
 		}
@@ -540,8 +540,8 @@ void Menu::initMenu() {
 		if (i > 6)
 			g_vm->_menu.disableMenuItem(_inventoryMenu[i]);
 	}
-	g_msg3 = OPCODE_NONE;
-	g_msg4 = OPCODE_NONE;
+	_msg3 = OPCODE_NONE;
+	_msg4 = OPCODE_NONE;
 	g_vm->_msg[3] = OPCODE_NONE;
 	g_vm->_msg[4] = OPCODE_NONE;
 	g_vm->setMouseClick(false);

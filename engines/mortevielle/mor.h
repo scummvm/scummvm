@@ -54,7 +54,6 @@ extern void text1(int x, int y, int nb, int m);
 extern void initouv();
 extern void ecr2(Common::String str_);
 extern void ecr3(Common::String text);
-extern void stop();
 extern void paint_rect(int x, int y, int dx, int dy);
 /* NIVEAU 12 */
 extern void modobj(int m);

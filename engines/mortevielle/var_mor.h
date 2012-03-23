@@ -101,19 +101,6 @@ enum places {
 	DOOR = 25,        ROOM26 = 26,      ROOM27 = 27
 };
 
-extern const byte g_tabdbc[18];
-extern const byte g_tabdph[16];
-extern const byte g_typcon[26];
-extern const byte g_intcon[26];
-extern const byte g_tnocon[364];
-extern const byte g_addv[2];
-extern const byte g_rang[16];
-
-struct Hint {
-	int _hintId;
-	byte _point;
-};
-
 struct Rect {
 	int _x1, _x2, _y1, _y2;
 	bool _enabled;
@@ -152,29 +139,9 @@ extern int g_x,
         g_iouv,
 		g_ctrm,
         g_dobj,
-        g_msg3,
-        g_msg4,
-        g_mlec,
-        g_mchai,
-        g_menup,
         g_mpers,
         g_perdep,
         g_prebru;
-
-/*---------------------------------------------------------------------------*/
-/*-------------------   PROCEDURES  AND  FONCTIONS   ------------------------*/
-/*---------------------------------------------------------------------------*/
-
-void hirs();
-void Val(const Common::String &s, int &V, int Code);
-
-/*---------------------------------------------------------------------------*/
-/*------------------------------     STUBS     ------------------------------*/
-/*---------------------------------------------------------------------------*/
-// TODO: Replace the following with proper implementations, or refactor out the code using them
-
-extern int g_port[0xfff];
-extern byte g_mem[65536 * 16];
 
 } // End of namespace Mortevielle
 

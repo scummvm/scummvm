@@ -913,7 +913,7 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 		(x + surface.w) * 2, (y + surface.h) * 2));
 
 	// Get a lookup for the palette mapping
-	const byte *paletteMap = &g_mem[0x7000 * 16 + 2];
+	const byte *paletteMap = &g_vm->_mem[0x7000 * 16 + 2];
 
 	// Loop through writing 
 	for (int yp = 0; yp < surface.h; ++yp) {

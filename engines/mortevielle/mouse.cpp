@@ -57,10 +57,10 @@ void MouseHandler::hideMouse() {
 			int k = 0;
 			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
 			do {
-				WRITE_LE_UINT16(&g_mem[0xb000 * 16 + j], s_s[0][k]);
-				WRITE_LE_UINT16(&g_mem[0xb800 * 16 + j + 2], s_s[1][k]);
-				WRITE_LE_UINT16(&g_mem[0xba00 * 16 + j], s_s[2][k]);
-				WRITE_LE_UINT16(&g_mem[0xba00 * 16 + j + 2], s_s[3][k]);
+				WRITE_LE_UINT16(&g_vm->_mem[0xb000 * 16 + j], s_s[0][k]);
+				WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j + 2], s_s[1][k]);
+				WRITE_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j], s_s[2][k]);
+				WRITE_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j + 2], s_s[3][k]);
 				j += 80;
 				++k;
 			} while (k < 5);
@@ -69,15 +69,15 @@ void MouseHandler::hideMouse() {
 		case MODE_AMSTRAD1512: {
 			bool imp = odd(_pos.y);
 			for (int i = 0; i <= 3; ++i) {
-				g_port[0x3dd] = 1 << i;
+				_port[0x3dd] = 1 << i;
 				int k = 0;
 				j = 0;
 				do {
 					if (imp) {
-						WRITE_LE_UINT16(&g_mem[0xb800 * 16 + j], s_s[i][k]);
+						WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
 						j += 80 - 0x2000;
 					} else {
-						WRITE_LE_UINT16(&g_mem[0xb800 * 16 + j], s_s[i][k]);
+						WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
 						j += 0x2000;
 					}
 					imp = !imp;
@@ -87,22 +87,22 @@ void MouseHandler::hideMouse() {
 			break;
 			}
 		case MODE_EGA: {
-			g_port[0x3c4] = 2;
-			g_port[0x3ce] = 8;
-			g_port[0x3cf] = 255;
+			_port[0x3c4] = 2;
+			_port[0x3ce] = 8;
+			_port[0x3cf] = 255;
 			int i = 0;
 			do {
-				g_port[0x3c5] = 1 << i;
+				_port[0x3c5] = 1 << i;
 				int k = 0;
 				j = 0;
 				do {
 					// Useless ?
 					// ps = mem[0xa000 * 16 + j];
-					g_mem[0xa000 * 16 + j] = lo(s_s[i][k]);
+					g_vm->_mem[0xa000 * 16 + j] = lo(s_s[i][k]);
 
 					// Useless ??
 					// ps = mem[0xa000 * 16 + j + 1];
-					g_mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
+					g_vm->_mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
 					j += 80;
 					++k;
 				} while (k < 8);
@@ -114,7 +114,7 @@ void MouseHandler::hideMouse() {
 			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
 			for (int i = 0; i <= 5; ++i) {
 				for (int k = 0; k <= 3; ++k) 
-					WRITE_LE_UINT16(&g_mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
+					WRITE_LE_UINT16(&g_vm->_mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
 				j += 80;
 			}
 			break;
@@ -123,8 +123,8 @@ void MouseHandler::hideMouse() {
 			int k = 0;
 			do {
 				for (int i = 0; i <= 3; ++i) {
-					WRITE_LE_UINT16(&g_mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
-					WRITE_LE_UINT16(&g_mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
+					WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
+					WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
 				}
 				j += 160;
 				++k;
@@ -154,10 +154,10 @@ void MouseHandler::showMouse() {
 		k = 0;
 		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
 		do {
-			s_s[0][k] = READ_LE_UINT16(&g_mem[0xb800 * 16 + j]);
-			s_s[1][k] = READ_LE_UINT16(&g_mem[0xb800 * 16 + j + 2]);
-			s_s[2][k] = READ_LE_UINT16(&g_mem[0xba00 * 16 + j]);
-			s_s[3][k] = READ_LE_UINT16(&g_mem[0xba00 * 16 + j + 2]);
+			s_s[0][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j]);
+			s_s[1][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j + 2]);
+			s_s[2][k] = READ_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j]);
+			s_s[3][k] = READ_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j + 2]);
 			j += 80;
 			++k;
 		} while (k < 5);
@@ -167,14 +167,14 @@ void MouseHandler::showMouse() {
 		for (i = 0; i <= 3; ++i) {
 			j = 0;
 			imp = odd(_pos.y);
-			g_port[0x3de] = i;
+			_port[0x3de] = i;
 			k = 0;
 			do {
 				if (imp) {
-					s_s[i][k] = READ_LE_UINT16(&g_mem[0xb800 * 16 + j]);
+					s_s[i][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j]);
 					j += 80 - 0x2000;
 				} else {
-					s_s[i][k] = READ_LE_UINT16(&g_mem[0xb800 * 16 + j]);
+					s_s[i][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j]);
 					j += 0x2000;
 				}
 				imp = !imp;
@@ -184,14 +184,14 @@ void MouseHandler::showMouse() {
 		break;
 		}
 	case MODE_EGA:
-		g_port[0x3ce] = 4;
+		_port[0x3ce] = 4;
 		l = 0;
 		do {
-			g_port[0x3cf] = l;
+			_port[0x3cf] = l;
 			k = 0;
 			j = 0;
 			do {
-				s_s[l][k] = g_mem[0xa000 * 16 + j] + (g_mem[(0xa000 * 16) + j + 1] << 8);
+				s_s[l][k] = g_vm->_mem[0xa000 * 16 + j] + (g_vm->_mem[(0xa000 * 16) + j + 1] << 8);
 				j += 80;
 				++k;
 			} while (k < 8);
@@ -202,7 +202,7 @@ void MouseHandler::showMouse() {
 		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
 		for (i = 0; i <= 5; ++i) {
 			for (k = 0; k <= 3; ++k)
-				s_s[i][k] = READ_LE_UINT16(&g_mem[0xb000 * 16 + k * 0x200 + j]);
+				s_s[i][k] = READ_LE_UINT16(&g_vm->_mem[0xb000 * 16 + k * 0x200 + j]);
 			j += 80;
 		}
 		break;
@@ -211,8 +211,8 @@ void MouseHandler::showMouse() {
 		k = 0;
 		do {
 			for (i = 0; i <= 3; ++i) {
-				s_s[k][i + (k << 2)] = READ_LE_UINT16(&g_mem[0xb800 * 16 + 0x200 * i + j]);
-				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&g_mem[0xb800 * 16 + 0x200 * i + j + 2]);
+				s_s[k][i + (k << 2)] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j]);
+				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2]);
 			}
 			j += 160;
 			++k;

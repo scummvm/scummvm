@@ -299,7 +299,7 @@ bool KnowledgeCheck::show() {
 
 	for (int indx = 0; indx < 10; ++indx) {
 		g_vm->_mouse.hideMouse();
-		hirs();
+		g_vm->hirs();
 		g_vm->_mouse.showMouse();
 		int dialogHeight;
 		if (g_res == 1)
@@ -429,7 +429,7 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 
 		if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice) {
 			g_vm->_currGraphicalDevice = g_vm->_newGraphicalDevice;
-			hirs();
+			g_vm->hirs();
 			aff50(drawAni50Fl);
 		}
 	} while (g_key != 66); // keycode for F8

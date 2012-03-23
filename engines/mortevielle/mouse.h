@@ -36,7 +36,8 @@ class MouseHandler {
 private:
 	int s_s[12][6];
 	int _counter;
-
+	// TODO: Replace the following with proper implementations, or refactor out the code using them
+	int  _port[0xfff];
 public:
 	Common::Point _pos;
 

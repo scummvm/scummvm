@@ -209,7 +209,7 @@ void MortevielleEngine::fctTake() {
 				_obpart = false;
 				affrep();
 			} else {
-				_tabdon[kAcha + ((g_mchai - 1) * 10) + g_cs - 1] = 0;
+				_tabdon[kAcha + ((_mchai - 1) * 10) + g_cs - 1] = 0;
 				tsuiv();
 				++g_dobj;
 				if (g_dobj > 6) {
@@ -515,8 +515,8 @@ void MortevielleEngine::fctSearch() {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 
-				rechai(g_mchai);
-				if (g_mchai != 0) {
+				rechai(_mchai);
+				if (_mchai != 0) {
 					g_cs = 0;
 					g_is = 0;
 					_heroSearching = true;
@@ -891,8 +891,8 @@ void MortevielleEngine::fctClose() {
 					g_iouv = 0;
 				int chai = 9999;
 				rechai(chai);
-				if (g_mchai == chai)
-					g_mchai = 0;
+				if (_mchai == chai)
+					_mchai = 0;
 			} else {
 				g_crep = 187;
 			}
@@ -985,7 +985,7 @@ void MortevielleEngine::fctSelfPut() {
 				if (g_num != ord(_touv[cx]))
 					g_crep = 187;
 				else {
-					g_mchai = chai;
+					_mchai = chai;
 					g_crep = 999;
 				}
 			}
