@@ -128,7 +128,7 @@ void SpeechManager::cctable(tablint &t) {
 
 	tb[0] = 0;
 	for (int k = 0; k <= 255; ++k) {
-		tb[k + 1] = g_vm->_addfix + tb[k];
+		tb[k + 1] = g_vm->_addFix + tb[k];
 		t[255 - k] = abs((int)tb[k] + 1);
 	}
 }
@@ -554,17 +554,17 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		return;
 
 	_phonemeNumb = rep;
-	g_haut = ht;
+	int haut = ht;
 	_typlec = typ;
 	if (_typlec != 0) {
 		for (int i = 0; i <= 500; ++i)
 			savph[i] = _cfiphBuffer[i];
 		tempo = kTempoNoise;
-	} else if (g_haut > 5)
+	} else if (haut > 5)
 		tempo = kTempoF;
 	else
 		tempo = kTempoM;
-	g_vm->_addfix = (float)((tempo - 8)) / 256;
+	g_vm->_addFix = (float)((tempo - 8)) / 256;
 	cctable(_tbi);
 	switch (typ) {
 	case 1:

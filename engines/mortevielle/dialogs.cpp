@@ -76,7 +76,7 @@ int Alert::show(const Common::String &msg, int n) {
 			while ((chaine[i + 1] != '\174') && (chaine[i + 1] != '\135')) {
 				++i;
 				st = st + chaine[i];
-				if (g_res == 2)
+				if (g_vm->_res == 2)
 					curPos.x -= 3;
 				else
 					curPos.x -= 5;
@@ -93,12 +93,12 @@ int Alert::show(const Common::String &msg, int n) {
 		esp = (uint)(nbcol - caseNumb * 40) >> 1;
 	coldep = 320 - ((uint)nbcol >> 1) + ((uint)esp >> 1);
 	setButtonText(cas, coldep, caseNumb, &s[0], esp);
-	limit[1][1] = ((uint)(coldep) >> 1) * g_res;
+	limit[1][1] = ((uint)(coldep) >> 1) * g_vm->_res;
 	limit[1][2] = limit[1][1] + 40;
 	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * g_res;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * g_vm->_res;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
 	g_vm->_mouse.showMouse();
@@ -218,7 +218,7 @@ void Alert::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &li
 	}
 	++i;
 	choiceListStr = g_vm->copy(inputStr, i, 30);
-	if (g_res == 2)
+	if (g_vm->_res == 2)
 		col *= 6;
 	else
 		col *= 10;
@@ -302,7 +302,7 @@ bool KnowledgeCheck::show() {
 		g_vm->hirs();
 		g_vm->_mouse.showMouse();
 		int dialogHeight;
-		if (g_res == 1)
+		if (g_vm->_res == 1)
 			dialogHeight = 29;
 		else
 			dialogHeight = 23;
@@ -331,8 +331,8 @@ bool KnowledgeCheck::show() {
 		}
 
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			coor[j]._x1 = 45 * g_res;
-			coor[j]._x2 = (maxLength * 3 + 55) * g_res;
+			coor[j]._x1 = 45 * g_vm->_res;
+			coor[j]._x2 = (maxLength * 3 + 55) * g_vm->_res;
 			coor[j]._y1 = 27 + j * 8;
 			coor[j]._y2 = 34 + j * 8;
 			coor[j]._enabled = true;
@@ -342,7 +342,7 @@ bool KnowledgeCheck::show() {
 			}
 		}
 		coor[lastOption - firstOption + 2]._enabled = false;
-		if (g_res == 1)
+		if (g_vm->_res == 1)
 			rep = 10;
 		else
 			rep = 6;
@@ -424,7 +424,7 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	teskbd();
 	do {
 		g_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
-		g_key = waitForF3F8();
+		g_vm->_key = waitForF3F8();
 		CHECK_QUIT;
 
 		if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice) {
@@ -432,7 +432,7 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 			g_vm->hirs();
 			aff50(drawAni50Fl);
 		}
-	} while (g_key != 66); // keycode for F8
+	} while (g_vm->_key != 66); // keycode for F8
 }
 
 /**
@@ -452,27 +452,26 @@ int f3f8::waitForF3F8() {
 }
 
 void f3f8::aff50(bool drawAni50Fl) {
-	g_caff = 50;
-	g_maff = 0;
+	g_vm->_caff = 50;
+	g_vm->_maff = 0;
 	taffich();
-	g_vm->draw(g_ades, 63, 12);
+	g_vm->draw(kAdrDes, 63, 12);
 	if (drawAni50Fl)
 		ani50();
 	else
-		repon(2, kDialogStringIndex + 142);
+		g_vm->repon(2, kDialogStringIndex + 142);
 	
 	// Draw the f3/f8 dialog
 	draw();
 }
 
 void f3f8::ani50() {
-	g_crep = animof(1, 1);
-	pictout(kAdrAni, g_crep, 63, 12);
-	g_crep = animof(2, 1);
-	pictout(kAdrAni, g_crep, 63, 12);
-	g_vm->_largestClearScreen = (g_res == 1);
-	repon(2, kDialogStringIndex + 143);
+	g_vm->_crep = g_vm->animof(1, 1);
+	g_vm->pictout(kAdrAni, g_vm->_crep, 63, 12);
+	g_vm->_crep = g_vm->animof(2, 1);
+	g_vm->pictout(kAdrAni, g_vm->_crep, 63, 12);
+	g_vm->_largestClearScreen = (g_vm->_res == 1);
+	g_vm->repon(2, kDialogStringIndex + 143);
 }
-
 
 } // End of namespace Mortevielle

@@ -44,7 +44,7 @@ namespace Mortevielle {
 void MortevielleEngine::fctMove() {
 	if ((_coreVar._currPlace == ROOM26) && (_msg[4] == _menu._moveMenu[6])) {
 		_coreVar._currPlace = LANDING;
-		g_caff = _coreVar._currPlace;
+		_caff = _coreVar._currPlace;
 		afdes();
 		repon(2, _coreVar._currPlace);
 	}
@@ -61,26 +61,26 @@ void MortevielleEngine::fctMove() {
 
 		tcoord(1);
 
-		if (g_num == 0)
+		if (_num == 0)
 			return;
 
-		if (g_num == 1) {
+		if (_num == 1) {
 			_coreVar._currPlace = OWN_ROOM;
 			_menu.setDestinationMenuText(OWN_ROOM);
-		} else if (g_num == 7) {
+		} else if (_num == 7) {
 			_coreVar._currPlace = ATTIC;
 			_menu.setDestinationMenuText(ATTIC);
 		}
 		
-		if (g_num != 6)
+		if (_num != 6)
 			_coreVar._currPlace = ROOM26;
 		
-		if ((g_num > 1) && (g_num < 6))
-			g_ment = g_num - 1;
-		else if (g_num > 7)
-			g_ment = g_num - 3;
+		if ((_num > 1) && (_num < 6))
+			_ment = _num - 1;
+		else if (_num > 7)
+			_ment = _num - 3;
 
-		if (g_num != 6)
+		if (_num != 6)
 			affrep();
 		else
 			showMoveMenuAlert();
@@ -160,11 +160,11 @@ void MortevielleEngine::fctMove() {
 		gotoManorBack();
 	else if (menuChoice == 17) {
 		if ((_coreVar._wellObjectId != 120) && (_coreVar._wellObjectId != 140))
-			g_crep = 997;
+			_crep = 997;
 		else if (_coreVar._wellObjectId == 120)
-			g_crep = 181;
+			_crep = 181;
 		else if (_coreVar._faithScore > 80) {
-			g_crep = 1505;
+			_crep = 1505;
 			loseGame();
 		} else {
 			_coreVar._currPlace = INSIDE_WELL;
@@ -182,19 +182,19 @@ void MortevielleEngine::fctMove() {
  * @remarks	Originally called 'tprendre'
  */
 void MortevielleEngine::fctTake() {
-	if (g_caff > 99) {
-		int cx = g_caff;
+	if (_caff > 99) {
+		int cx = _caff;
 		avpoing(cx);
-		if (g_crep != 139) {
+		if (_crep != 139) {
 			if (_currBitIndex > 0)
 				_coreVar._faithScore += 3;
 			if (_obpart) {
 				if (_coreVar._currPlace == PURPLE_ROOM)
 					_coreVar._purpleRoomObjectId = 0;
 				if (_coreVar._currPlace == ATTIC) {
-					if (_coreVar._atticBallHoleObjectId == g_caff)
+					if (_coreVar._atticBallHoleObjectId == _caff)
 						_coreVar._atticBallHoleObjectId = 0;
-					if (_coreVar._atticRodHoleObjectId == g_caff)
+					if (_coreVar._atticRodHoleObjectId == _caff)
 						_coreVar._atticRodHoleObjectId = 0;
 				}
 				if (_coreVar._currPlace == CELLAR)
@@ -209,12 +209,12 @@ void MortevielleEngine::fctTake() {
 				_obpart = false;
 				affrep();
 			} else {
-				_tabdon[kAcha + ((_mchai - 1) * 10) + g_cs - 1] = 0;
+				_tabdon[kAcha + ((_mchai - 1) * 10) + _cs - 1] = 0;
 				tsuiv();
-				++g_dobj;
-				if (g_dobj > 6) {
+				++_dobj;
+				if (_dobj > 6) {
 					_coreVar._faithScore += 2;
-					g_dobj = 0;
+					_dobj = 0;
 				}
 			}
 		}
@@ -225,35 +225,35 @@ void MortevielleEngine::fctTake() {
 	tfleche();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
-	if (g_caff == 3) {
+	if (_caff == 3) {
 		tcoord(2);
-		if (g_num == 1) {
-			g_crep = 152;
+		if (_num == 1) {
+			_crep = 152;
 			return;
 		}
 	}
 	tcoord(5);
-	if ((g_num == 0) || ((g_num == 1) && (_coreVar._currPlace == CRYPT))) {
+	if ((_num == 0) || ((_num == 1) && (_coreVar._currPlace == CRYPT))) {
 		tcoord(8);
-		if (g_num != 0) {
+		if (_num != 0) {
 			if (_currBitIndex > 0)
 				_coreVar._faithScore += 3;
-			g_crep = 997;
+			_crep = 997;
 			if ((_coreVar._currPlace == PURPLE_ROOM) && (_coreVar._purpleRoomObjectId != 0))
 				avpoing(_coreVar._purpleRoomObjectId);
-			if ((_coreVar._currPlace == ATTIC) && (g_num == 1) && (_coreVar._atticBallHoleObjectId != 0)) {
+			if ((_coreVar._currPlace == ATTIC) && (_num == 1) && (_coreVar._atticBallHoleObjectId != 0)) {
 				avpoing(_coreVar._atticBallHoleObjectId);
-				if ((g_crep != 997) && (g_crep != 139))
+				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 7);
 			}
-			if ((_coreVar._currPlace == ATTIC) && (g_num == 2) && (_coreVar._atticRodHoleObjectId != 0)) {
+			if ((_coreVar._currPlace == ATTIC) && (_num == 2) && (_coreVar._atticRodHoleObjectId != 0)) {
 				avpoing(_coreVar._atticRodHoleObjectId);
-				if ((g_crep != 997) && (g_crep != 139))
+				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 6);
 			}
 			if ((_coreVar._currPlace == CELLAR) && (_coreVar._cellarObjectId != 0)) {
 				avpoing(_coreVar._cellarObjectId);
-				if ((g_crep != 997) && (g_crep != 139))
+				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 2);
 			}
 			if ((_coreVar._currPlace == CRYPT) && (_coreVar._cryptObjectId != 0))
@@ -261,40 +261,40 @@ void MortevielleEngine::fctTake() {
 
 			if ((_coreVar._currPlace == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId != 0)) {
 				avpoing(_coreVar._secretPassageObjectId);
-				if ((g_crep != 997) && (g_crep != 139)) {
-					g_crep = 182;
+				if ((_crep != 997) && (_crep != 139)) {
+					_crep = 182;
 					aniof(2, 1);
 				}
 			}
 			if ((_coreVar._currPlace == WELL) && (_coreVar._wellObjectId != 0)) {
 				avpoing(_coreVar._wellObjectId);
-				if ((g_crep != 997) && (g_crep != 139))
+				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 1);
 			}
-			if ((g_crep != 997) && (g_crep != 182) && (g_crep != 139))
-				g_crep = 999;
+			if ((_crep != 997) && (_crep != 182) && (_crep != 139))
+				_crep = 999;
 		}
 	} else {
-		if ( ((_coreVar._currPlace == OWN_ROOM)  && (g_num == 3))
-		  || ((_coreVar._currPlace == GREEN_ROOM)  && (g_num == 4))
-		  || ((_coreVar._currPlace == PURPLE_ROOM)  && (g_num == 1))
-		  || ((_coreVar._currPlace == DARKBLUE_ROOM)  && (g_num == 3))
-		  || ((_coreVar._currPlace == BLUE_ROOM)  && (g_num == 6))
-		  || ((_coreVar._currPlace == RED_ROOM)  && (g_num == 2))
-		  || ((_coreVar._currPlace == BATHROOM)  && (g_num == 6))
-		  || ((_coreVar._currPlace == GREEN_ROOM2)  && (g_num == 4))
-		  || ((_coreVar._currPlace == ROOM9) && (g_num == 4))
-		  || ((_coreVar._currPlace == DINING_ROOM) && (g_num > 2))
-		  || ((_coreVar._currPlace == BUREAU) && (g_num == 7))
-		  || ((_coreVar._currPlace == KITCHEN) && (g_num == 6))
-		  || ((_coreVar._currPlace == ATTIC) && (g_num > 4))
+		if ( ((_coreVar._currPlace == OWN_ROOM)  && (_num == 3))
+		  || ((_coreVar._currPlace == GREEN_ROOM)  && (_num == 4))
+		  || ((_coreVar._currPlace == PURPLE_ROOM)  && (_num == 1))
+		  || ((_coreVar._currPlace == DARKBLUE_ROOM)  && (_num == 3))
+		  || ((_coreVar._currPlace == BLUE_ROOM)  && (_num == 6))
+		  || ((_coreVar._currPlace == RED_ROOM)  && (_num == 2))
+		  || ((_coreVar._currPlace == BATHROOM)  && (_num == 6))
+		  || ((_coreVar._currPlace == GREEN_ROOM2)  && (_num == 4))
+		  || ((_coreVar._currPlace == ROOM9) && (_num == 4))
+		  || ((_coreVar._currPlace == DINING_ROOM) && (_num > 2))
+		  || ((_coreVar._currPlace == BUREAU) && (_num == 7))
+		  || ((_coreVar._currPlace == KITCHEN) && (_num == 6))
+		  || ((_coreVar._currPlace == ATTIC) && (_num > 4))
 		  || ((_coreVar._currPlace > ATTIC) && (_coreVar._currPlace != INSIDE_WELL)) )
-		  g_crep = 997;
+		  _crep = 997;
 		else if (_coreVar._currPlace == INSIDE_WELL) {
-			g_crep = 1504;
+			_crep = 1504;
 			loseGame();
 		} else
-			g_crep = 120;
+			_crep = 120;
 	}
 }
 /**
@@ -319,7 +319,7 @@ void MortevielleEngine::fctInventoryTake() {
 	_coreVar._sjer[cy] = chr(0);
 	modinv();
 	avpoing(cz);
-	g_crep = 998;
+	_crep = 998;
 	clearScreenType2();
 }
 
@@ -334,12 +334,12 @@ void MortevielleEngine::fctLift() {
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 	tcoord(3);
-	if (g_num == 0) {
+	if (_num == 0) {
 		tcoord(8);
-		if (g_num != 0) {
+		if (_num != 0) {
 			if (_currBitIndex > 0)
 				++_coreVar._faithScore;
-			g_crep = 997;
+			_crep = 997;
 			if ((_coreVar._currPlace == PURPLE_ROOM) && (_coreVar._purpleRoomObjectId != 0))
 				treg(_coreVar._purpleRoomObjectId);
 		}
@@ -352,9 +352,9 @@ void MortevielleEngine::fctLift() {
 		tmpPlace = 14;
 	else if (_coreVar._currPlace == MOUNTAIN)
 		tmpPlace = 15;
-	g_crep = _tabdon[asoul + (tmpPlace << 3) + (g_num - 1)];
-	if (g_crep == 255)
-		g_crep = 997;
+	_crep = _tabdon[asoul + (tmpPlace << 3) + (_num - 1)];
+	if (_crep == 255)
+		_crep = 997;
 }
 
 /**
@@ -362,16 +362,16 @@ void MortevielleEngine::fctLift() {
  * @remarks	Originally called 'tlire'
  */
 void MortevielleEngine::fctRead() {
-	if (g_caff > 99)
-		st4(g_caff);
+	if (_caff > 99)
+		st4(_caff);
 	else {
 		if (!_syn)
 			ecr3(getEngineString(S_READ));
 		tfleche();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			tcoord(4);
-			if (g_num != 0)
-				g_crep = 107;
+			if (_num != 0)
+				_crep = 107;
 		}
 	}
 }
@@ -382,7 +382,7 @@ void MortevielleEngine::fctRead() {
  */
 void MortevielleEngine::fctSelfRead() {
 	if (_coreVar._selectedObjectId == 0)
-		g_crep = 186;
+		_crep = 186;
 	else
 		st4(_coreVar._selectedObjectId);
 }
@@ -394,8 +394,8 @@ void MortevielleEngine::fctSelfRead() {
 void MortevielleEngine::fctLook() {
 	int cx;
 
-	if (g_caff > 99) {
-		g_crep = 103;
+	if (_caff > 99) {
+		_crep = 103;
 		return;
 	}
 	if (!_syn)
@@ -404,35 +404,35 @@ void MortevielleEngine::fctLook() {
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 	tcoord(5);
-	if (g_num == 0) {
+	if (_num == 0) {
 		tcoord(8);
-		g_crep = 131;
-		if (g_num != 0) {
+		_crep = 131;
+		if (_num != 0) {
 			if (_coreVar._currPlace == ATTIC) {
-				if (g_num == 1) {
-					g_crep = 164;
+				if (_num == 1) {
+					_crep = 164;
 					if (_coreVar._atticRodHoleObjectId != 0)
 						treg(_coreVar._atticRodHoleObjectId);
 					else if (_coreVar._atticBallHoleObjectId != 0)
 						treg(_coreVar._atticBallHoleObjectId);
 				} else {
-					g_crep = 193;
+					_crep = 193;
 					if (_coreVar._atticRodHoleObjectId != 0)
 						treg(_coreVar._atticRodHoleObjectId);
 				}
 			}
 			if (_coreVar._currPlace == CELLAR) {
-				g_crep = 164;
+				_crep = 164;
 				if (_coreVar._cellarObjectId != 0)
 					treg(_coreVar._cellarObjectId);
 			}
 			if (_coreVar._currPlace == SECRET_PASSAGE) {
-				g_crep = 174;
+				_crep = 174;
 				if (_coreVar._secretPassageObjectId != 0)
 					treg(_coreVar._secretPassageObjectId);
 			}
 			if (_coreVar._currPlace == WELL) {
-				g_crep = 131;
+				_crep = 131;
 				if (_coreVar._wellObjectId != 0)
 					treg(_coreVar._wellObjectId);
 			}
@@ -446,22 +446,22 @@ void MortevielleEngine::fctLook() {
 		cx -= 4;
 	if (_coreVar._currPlace == ROOM26)
 		cx = 21;
-	g_crep = _tabdon[arega + (cx * 7) + g_num - 1];
-	if ((_coreVar._currPlace == ATTIC) && (g_num == 8))
-		g_crep = 126;
+	_crep = _tabdon[arega + (cx * 7) + _num - 1];
+	if ((_coreVar._currPlace == ATTIC) && (_num == 8))
+		_crep = 126;
 	if (_coreVar._currPlace == MOUNTAIN)
-		g_crep = 103;
-	if (g_crep == 255)
-		g_crep = 131;
-	if ((_coreVar._currPlace == GREEN_ROOM) && (g_num == 1))
+		_crep = 103;
+	if (_crep == 255)
+		_crep = 131;
+	if ((_coreVar._currPlace == GREEN_ROOM) && (_num == 1))
 		treg(144);
-	if ((_coreVar._currPlace == BLUE_ROOM) && (g_num == 3))
+	if ((_coreVar._currPlace == BLUE_ROOM) && (_num == 3))
 		treg(147);
-	if ((_coreVar._currPlace == GREEN_ROOM2) && (g_num == 3))
+	if ((_coreVar._currPlace == GREEN_ROOM2) && (_num == 3))
 		treg(149);
-	if ((_coreVar._currPlace == 9) && (g_num == 2))
+	if ((_coreVar._currPlace == 9) && (_num == 2))
 		treg(30);
-	if ((_coreVar._currPlace == DINING_ROOM) && (g_num == 3))
+	if ((_coreVar._currPlace == DINING_ROOM) && (_num == 3))
 		treg(31);
 }
 
@@ -473,7 +473,7 @@ void MortevielleEngine::fctSelftLook() {
 	if (_coreVar._selectedObjectId != 0)
 		treg(_coreVar._selectedObjectId);
 	else
-		g_crep = 186;
+		_crep = 186;
 }
 
 /**
@@ -483,8 +483,8 @@ void MortevielleEngine::fctSelftLook() {
 void MortevielleEngine::fctSearch() {
 	const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 
-	if (g_caff > 99) {
-		st7(g_caff);
+	if (_caff > 99) {
+		st7(_caff);
 		return;
 	}
 
@@ -496,49 +496,49 @@ void MortevielleEngine::fctSearch() {
 		return;
 
 	if (_coreVar._currPlace == INSIDE_WELL) {
-		g_crep = 1504;
+		_crep = 1504;
 		loseGame();
 		return;
 	}
 
 	tcoord(6);
-	if (g_num == 0) {
+	if (_num == 0) {
 		tcoord(7);
-		if (g_num != 0) {
+		if (_num != 0) {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (g_num != ord(_touv[cx])));
-			if (g_num != ord(_touv[cx]))
-				g_crep = 187;
+			} while ((cx <= 6) && (_num != ord(_touv[cx])));
+			if (_num != ord(_touv[cx]))
+				_crep = 187;
 			else {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 
 				rechai(_mchai);
 				if (_mchai != 0) {
-					g_cs = 0;
-					g_is = 0;
+					_cs = 0;
+					_is = 0;
 					_heroSearching = true;
 					_menu.setSearchMenu();
 					tsuiv();
 				} else
-					g_crep = 997;
+					_crep = 997;
 			}
 		} else {
 			tcoord(8);
-			g_crep = 997;
-			if (g_num != 0) {
+			_crep = 997;
+			if (_num != 0) {
 				if (_currBitIndex > 0)
 					_coreVar._faithScore += 3;
 				if ((_coreVar._currPlace != WELL) && (_coreVar._currPlace != SECRET_PASSAGE) && (_coreVar._currPlace != ATTIC)) {
 					if (_coreVar._currPlace == PURPLE_ROOM) {
-						g_crep = 123;
+						_crep = 123;
 						if (_coreVar._purpleRoomObjectId != 0)
 							treg(_coreVar._purpleRoomObjectId);
 					}
 					if (_coreVar._currPlace == CRYPT) {
-						g_crep = 123;
+						_crep = 123;
 						if (_coreVar._cryptObjectId != 0)
 							treg(_coreVar._cryptObjectId);
 					}
@@ -548,24 +548,24 @@ void MortevielleEngine::fctSearch() {
 	} else {
 		if (_currBitIndex > 0)
 			_coreVar._faithScore += 3;
-		g_crep = 997;
+		_crep = 997;
 		if (_coreVar._currPlace < CELLAR)
-			g_crep = r[_coreVar._currPlace];
+			_crep = r[_coreVar._currPlace];
 
-		if ((_coreVar._currPlace == TOILETS) && (g_num == 2))
-			g_crep = 162;
+		if ((_coreVar._currPlace == TOILETS) && (_num == 2))
+			_crep = 162;
 
 		if (_coreVar._currPlace == KITCHEN) {
-			if ((g_num == 3) || (g_num == 4))
-				g_crep = 162;
-			else if (g_num == 5)
-				g_crep = 159;
+			if ((_num == 3) || (_num == 4))
+				_crep = 162;
+			else if (_num == 5)
+				_crep = 159;
 		}
 
 		if (_coreVar._currPlace == MOUNTAIN)
-			g_crep = 104;
+			_crep = 104;
 		else if (_coreVar._currPlace == CRYPT)
-			g_crep = 155;
+			_crep = 155;
 	}
 }
 
@@ -577,7 +577,7 @@ void MortevielleEngine::fctSelfSearch() {
 	if (_coreVar._selectedObjectId != 0)
 		st7(_coreVar._selectedObjectId);
 	else
-		g_crep = 186;
+		_crep = 186;
 }
 
 /**
@@ -588,16 +588,16 @@ void MortevielleEngine::fctOpen() {
 	if (!_syn)
 		ecr3(getEngineString(S_OPEN));
 
-	if (g_caff == ROOM26) {
-		if (g_ment != 0) {
+	if (_caff == ROOM26) {
+		if (_ment != 0) {
 			_msg[4] = OPCODE_ENTER;
 			_syn = true;
 		} else
-			g_crep = 997;
+			_crep = 997;
 		return;
 	}
 
-	if (g_caff == 15) {
+	if (_caff == 15) {
 		showMoveMenuAlert();
 		return;
 	}
@@ -607,38 +607,38 @@ void MortevielleEngine::fctOpen() {
 		return;
 
 	tcoord(7);
-	if (g_num != 0) {
+	if (_num != 0) {
 		if (_currBitIndex > 0)
 			_coreVar._faithScore += 2;
-		++g_iouv;
+		++_iouv;
 		int tmpPlace = 0;
 		do {
 			++tmpPlace;
-		} while (!((tmpPlace > 6) || (ord(_touv[tmpPlace]) == 0) || (ord(_touv[tmpPlace]) == g_num)));
-		if (ord(_touv[tmpPlace]) != g_num) {
-			if (!( ((g_num == 3) && ((_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == 9) || (_coreVar._currPlace == BLUE_ROOM) || (_coreVar._currPlace == BATHROOM)))
-			    || ((g_num == 4) && ((_coreVar._currPlace == GREEN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == RED_ROOM)))
-				|| ((_coreVar._currPlace == DARKBLUE_ROOM) && (g_num == 5))
-				|| ((g_num == 6) && ((_coreVar._currPlace == BATHROOM) || (_coreVar._currPlace == DINING_ROOM) || (_coreVar._currPlace == GREEN_ROOM2) || (_coreVar._currPlace == ATTIC)))
-				|| ((_coreVar._currPlace == GREEN_ROOM2) && (g_num == 2))
-				|| ((_coreVar._currPlace == KITCHEN) && (g_num == 7))) ) {
+		} while (!((tmpPlace > 6) || (ord(_touv[tmpPlace]) == 0) || (ord(_touv[tmpPlace]) == _num)));
+		if (ord(_touv[tmpPlace]) != _num) {
+			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == 9) || (_coreVar._currPlace == BLUE_ROOM) || (_coreVar._currPlace == BATHROOM)))
+			    || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == RED_ROOM)))
+				|| ((_coreVar._currPlace == DARKBLUE_ROOM) && (_num == 5))
+				|| ((_num == 6) && ((_coreVar._currPlace == BATHROOM) || (_coreVar._currPlace == DINING_ROOM) || (_coreVar._currPlace == GREEN_ROOM2) || (_coreVar._currPlace == ATTIC)))
+				|| ((_coreVar._currPlace == GREEN_ROOM2) && (_num == 2))
+				|| ((_coreVar._currPlace == KITCHEN) && (_num == 7))) ) {
 				if ( ((_coreVar._currPlace > DINING_ROOM) && (_coreVar._currPlace < CELLAR))
 				  || ((_coreVar._currPlace > RED_ROOM) && (_coreVar._currPlace < DINING_ROOM))
 				  || (_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == BLUE_ROOM)) {
 					if (getRandomNumber(1, 4) == 3)
 						_speechManager.startSpeech(7, 9, 1);
 				}
-				_touv[tmpPlace] = chr(g_num);
-				aniof(1, g_num);
+				_touv[tmpPlace] = chr(_num);
+				aniof(1, _num);
 			}
 			tmpPlace = _coreVar._currPlace;
 			if (_coreVar._currPlace == CRYPT)
 				tmpPlace = CELLAR;
-			g_crep = _tabdon[aouvr + (tmpPlace * 7) + g_num - 1];
-			if (g_crep == 254)
-				g_crep = 999;
+			_crep = _tabdon[aouvr + (tmpPlace * 7) + _num - 1];
+			if (_crep == 254)
+				_crep = 999;
 		} else
-			g_crep = 18;
+			_crep = 18;
 	}
 }
 
@@ -648,7 +648,7 @@ void MortevielleEngine::fctOpen() {
  */
 void MortevielleEngine::fctPlace() {
 	if (_coreVar._selectedObjectId == 0) {
-		g_crep = 186;
+		_crep = 186;
 		return;
 	}
 
@@ -657,25 +657,25 @@ void MortevielleEngine::fctPlace() {
 
 	tfleche();
 	if (_keyPressedEsc)
-		g_crep = 998;
+		_crep = 998;
 
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 
 	tcoord(8);
-	if (g_num != 0) {
-		g_crep = 999;
-		if (g_caff == 13) {
-			if (g_num == 1) {
+	if (_num != 0) {
+		_crep = 999;
+		if (_caff == 13) {
+			if (_num == 1) {
 				if (_coreVar._atticBallHoleObjectId != 0) {
-					g_crep = 188;
+					_crep = 188;
 				} else {
 					_coreVar._atticBallHoleObjectId = _coreVar._selectedObjectId;
 					if (_coreVar._selectedObjectId == 141)
 						aniof(1, 7);
 				}
 			} else if (_coreVar._atticRodHoleObjectId != 0) {
-				g_crep = 188;
+				_crep = 188;
 			} else {
 				_coreVar._atticRodHoleObjectId = _coreVar._selectedObjectId;
 				if (_coreVar._selectedObjectId == 159)
@@ -683,9 +683,9 @@ void MortevielleEngine::fctPlace() {
 			}
 		}
 
-		if (g_caff == 14) {
+		if (_caff == 14) {
 			if (_coreVar._cellarObjectId != 0) {
-				g_crep = 188;
+				_crep = 188;
 			} else {
 				_coreVar._cellarObjectId = _coreVar._selectedObjectId;
 				if (_coreVar._selectedObjectId == 151) {
@@ -729,49 +729,49 @@ void MortevielleEngine::fctPlace() {
 							alertTxt = getString(577);
 							Alert::show(alertTxt, 1);
 							aniof(2, 1);
-							g_crep = 166;
+							_crep = 166;
 						}
 						affrep();
 					} else {
 						aniof(2, 1);
-						g_crep = 166;
+						_crep = 166;
 					}
 					return;
 				}
 			}
 		}
 
-		if (g_caff == 16) {
+		if (_caff == 16) {
 			if (_coreVar._cryptObjectId == 0)
 				_coreVar._cryptObjectId = _coreVar._selectedObjectId;
 			else
-				g_crep = 188;
+				_crep = 188;
 		}
 
-		if (g_caff == 17) {
+		if (_caff == 17) {
 			if (_coreVar._secretPassageObjectId != 0) {
-				g_crep = 188;
+				_crep = 188;
 			} else if (_coreVar._selectedObjectId == 143) {
 				_coreVar._secretPassageObjectId = 143;
 				aniof(1, 1);
 			} else {
-				g_crep = 1512;
+				_crep = 1512;
 				loseGame();
 			}
 		}
 
-		if (g_caff == 24) {
+		if (_caff == 24) {
 			if (_coreVar._wellObjectId != 0) {
-				g_crep = 188;
+				_crep = 188;
 			} else if ((_coreVar._selectedObjectId == 140) || (_coreVar._selectedObjectId == 120)) {
 				_coreVar._wellObjectId = _coreVar._selectedObjectId;
 				aniof(1, 1);
 			} else {
-				g_crep = 185;
+				_crep = 185;
 			}
 		}
 
-		if (g_crep != 188)
+		if (_crep != 188)
 			maivid();
 	}
 }
@@ -781,8 +781,8 @@ void MortevielleEngine::fctPlace() {
  * @remarks	Originally called 'ttourner'
  */
 void MortevielleEngine::fctTurn() {
-	if (g_caff > 99) {
-		g_crep = 149;
+	if (_caff > 99) {
+		_crep = 149;
 		return;
 	}
 	if (!_syn)
@@ -791,8 +791,8 @@ void MortevielleEngine::fctTurn() {
 	if ((_anyone) || (_keyPressedEsc))
 		return;
 	tcoord(9);
-	if (g_num != 0) {
-		g_crep = 997;
+	if (_num != 0) {
+		_crep = 997;
 		if ((_coreVar._currPlace == ATTIC) && (_coreVar._atticRodHoleObjectId == 159) && (_coreVar._atticBallHoleObjectId == 141)) {
 			repon(2, 167);
 			_speechManager.startSpeech(7, 9, 1);
@@ -800,7 +800,7 @@ void MortevielleEngine::fctTurn() {
 			if (answer == 1)
 				_endGame = true;
 			else
-				g_crep = 168;
+				_crep = 168;
 		}
 		if ((_coreVar._currPlace == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143)) {
 			repon(2, 175);
@@ -811,7 +811,7 @@ void MortevielleEngine::fctTurn() {
 				_coreVar._currPlace = CRYPT;
 				affrep();
 			} else
-				g_crep = 176;
+				_crep = 176;
 		}
 	}
 }
@@ -826,11 +826,11 @@ void MortevielleEngine::fctSelfHide() {
 	tfleche();
 	if (!(_anyone) && !(_keyPressedEsc)) {
 		tcoord(10);
-		if (g_num == 0)
+		if (_num == 0)
 			_hiddenHero = false;
 		else {
 			_hiddenHero = true;
-			g_crep = 999;
+			_crep = 999;
 		}
 	}
 }
@@ -841,21 +841,21 @@ void MortevielleEngine::fctSelfHide() {
  */
 void MortevielleEngine::fctAttach() {
 	if (_coreVar._selectedObjectId == 0)
-		g_crep = 186;
+		_crep = 186;
 	else {
 		if (!_syn)
 			ecr3(getEngineString(S_TIE));
 		tfleche();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			tcoord(8);
-			g_crep = 997;
-			if ((g_num != 0) && (_coreVar._currPlace == WELL)) {
-				g_crep = 999;
+			_crep = 997;
+			if ((_num != 0) && (_coreVar._currPlace == WELL)) {
+				_crep = 999;
 				if ((_coreVar._selectedObjectId == 120) || (_coreVar._selectedObjectId == 140)) {
 					_coreVar._wellObjectId = _coreVar._selectedObjectId;
 					aniof(1, 1);
 				} else
-					g_crep = 185;
+					_crep = 185;
 				maivid();
 			}
 		}
@@ -870,36 +870,36 @@ void MortevielleEngine::fctClose() {
 	if (!_syn)
 		ecr3(getEngineString(S_CLOSE));
 
-	if (g_caff < ROOM26) {
+	if (_caff < ROOM26) {
 		tfleche();
 		if (_keyPressedEsc)
-			g_crep = 998;
+			_crep = 998;
 		if ((_anyone) || (_keyPressedEsc))
 			return;
 		tcoord(7);
-		if (g_num != 0) {
+		if (_num != 0) {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (g_num != ord(_touv[cx])));
-			if (g_num == ord(_touv[cx])) {
-				aniof(2, g_num);
-				g_crep = 998;
+			} while ((cx <= 6) && (_num != ord(_touv[cx])));
+			if (_num == ord(_touv[cx])) {
+				aniof(2, _num);
+				_crep = 998;
 				_touv[cx] = chr(0);
-				--g_iouv;
-				if (g_iouv < 0)
-					g_iouv = 0;
+				--_iouv;
+				if (_iouv < 0)
+					_iouv = 0;
 				int chai = 9999;
 				rechai(chai);
 				if (_mchai == chai)
 					_mchai = 0;
 			} else {
-				g_crep = 187;
+				_crep = 187;
 			}
 		}
 	}
-	if (g_caff == ROOM26)
-		g_crep = 999;
+	if (_caff == ROOM26)
+		_crep = 999;
 }
 
 /**
@@ -919,9 +919,9 @@ void MortevielleEngine::fctKnock() {
 		tfleche();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			if ((_coreVar._currPlace < MOUNTAIN) && (_coreVar._currPlace != LANDING))
-				g_crep = 133;
+				_crep = 133;
 			else
-				g_crep = 997;
+				_crep = 997;
 		}
 
 		return;
@@ -931,12 +931,12 @@ void MortevielleEngine::fctKnock() {
 		int rand = (getRandomNumber(0, 8)) - 4;
 		_speechManager.startSpeech(11, rand, 1);
 		int p;
-		ecfren(p, rand, _coreVar._faithScore, g_ment);
-		int l = g_ment;
+		ecfren(p, rand, _coreVar._faithScore, _ment);
+		int l = _ment;
 		if (l != 0) {
 			if (p != -500) {
 				if (rand > p)
-					g_crep = 190;
+					_crep = 190;
 				else {
 					becfren(l);
 					getKnockAnswer();
@@ -945,8 +945,8 @@ void MortevielleEngine::fctKnock() {
 				getKnockAnswer();
 		}
 
-		if (g_ment == 8)
-			g_crep = 190;
+		if (_ment == 8)
+			_crep = 190;
 	}
 }
 
@@ -958,12 +958,12 @@ void MortevielleEngine::fctSelfPut() {
 	if (!_syn)
 		ecr3(getEngineString(S_POSE));
 	if (_coreVar._selectedObjectId == 0)
-		g_crep = 186;
+		_crep = 186;
 	else {
-		if (g_caff > 99) {
-			g_crep = 999;
+		if (_caff > 99) {
+			_crep = 999;
 			ajchai();
-			if (g_crep != 192)
+			if (_crep != 192)
 				maivid();
 			return;
 		}
@@ -971,74 +971,74 @@ void MortevielleEngine::fctSelfPut() {
 		if ((_anyone) || (_keyPressedEsc))
 			return;
 		tcoord(7);
-		g_crep = 124;
-		if (g_num != 0) {
+		_crep = 124;
+		if (_num != 0) {
 			int chai;
 			rechai(chai);
 			if (chai == 0)
-				g_crep = 997;
+				_crep = 997;
 			else {
 				int cx = 0;
 				do {
 					++cx;
-				} while ((cx <= 6) && (g_num != ord(_touv[cx])));
-				if (g_num != ord(_touv[cx]))
-					g_crep = 187;
+				} while ((cx <= 6) && (_num != ord(_touv[cx])));
+				if (_num != ord(_touv[cx]))
+					_crep = 187;
 				else {
 					_mchai = chai;
-					g_crep = 999;
+					_crep = 999;
 				}
 			}
 		} else {
 			tcoord(8);
-			if (g_num != 0) {
-				g_crep = 998;
-				if (g_caff == PURPLE_ROOM) {
+			if (_num != 0) {
+				_crep = 998;
+				if (_caff == PURPLE_ROOM) {
 					if (_coreVar._purpleRoomObjectId != 0)
-						g_crep = 188;
+						_crep = 188;
 					else
 						_coreVar._purpleRoomObjectId = _coreVar._selectedObjectId;
 				}
 
-				if (g_caff == ATTIC) {
-					if (g_num == 1) {
+				if (_caff == ATTIC) {
+					if (_num == 1) {
 						if (_coreVar._atticBallHoleObjectId != 0)
-							g_crep = 188;
+							_crep = 188;
 						else
 							_coreVar._atticBallHoleObjectId = _coreVar._selectedObjectId;
 					} else if (_coreVar._atticRodHoleObjectId != 0) {
-						g_crep = 188;
+						_crep = 188;
 					} else {
 						_coreVar._atticRodHoleObjectId = _coreVar._selectedObjectId;
 					}
 				}
 
-				if (g_caff == CRYPT) {
+				if (_caff == CRYPT) {
 					if (_coreVar._cryptObjectId != 0)
-						g_crep = 188;
+						_crep = 188;
 					else
 						_coreVar._cryptObjectId = _coreVar._selectedObjectId;
 				}
 
-				if (g_caff == WELL)
-					g_crep = 185;
-				if ((g_caff == CELLAR) || (g_caff == SECRET_PASSAGE))
-					g_crep = 124;
+				if (_caff == WELL)
+					_crep = 185;
+				if ((_caff == CELLAR) || (_caff == SECRET_PASSAGE))
+					_crep = 124;
 			} else {
-				g_crep = 124;
-				if (g_caff == WELL) {
+				_crep = 124;
+				if (_caff == WELL) {
 					tcoord(5);
-					if (g_num != 0)
-						g_crep = 185;
+					if (_num != 0)
+						_crep = 185;
 				}
 			}
 		}
-		if (g_caff == INSIDE_WELL)
-			g_crep = 185;
-		if ((g_crep == 999) || (g_crep == 185) || (g_crep == 998)) {
-			if (g_crep == 999)
+		if (_caff == INSIDE_WELL)
+			_crep = 185;
+		if ((_crep == 999) || (_crep == 185) || (_crep == 998)) {
+			if (_crep == 999)
 				ajchai();
-			if (g_crep != 192)
+			if (_crep != 192)
 				maivid();
 		}
 	}
@@ -1050,17 +1050,17 @@ void MortevielleEngine::fctSelfPut() {
  */
 void MortevielleEngine::fctListen() {
 	if (_coreVar._currPlace != ROOM26)
-		g_crep = 101;
+		_crep = 101;
 	else {
 		if (_currBitIndex != 0)
 			++_coreVar._faithScore;
 		int p, rand;
-		ecfren(p, rand, _coreVar._faithScore, g_ment);
-		int l = g_ment;
+		ecfren(p, rand, _coreVar._faithScore, _ment);
+		int l = _ment;
 		if (l != 0) {
 			if (p != -500) {
 				if (rand > p)
-					g_crep = 101;
+					_crep = 101;
 				else {
 					becfren(l);
 					int j, h, m;
@@ -1068,16 +1068,16 @@ void MortevielleEngine::fctListen() {
 					rand = getRandomNumber(1, 100);
 					if ((h >= 0) && (h < 8)) {
 						if (rand > 30)
-							g_crep = 101;
+							_crep = 101;
 						else
-							g_crep = 178;
+							_crep = 178;
 					} else if (rand > 70)
-						g_crep = 101;
+						_crep = 101;
 					else
-						g_crep = 178;
+						_crep = 178;
 				}
 			} else
-				g_crep = 178;
+				_crep = 178;
 		}
 	}
 }
@@ -1088,11 +1088,11 @@ void MortevielleEngine::fctListen() {
  */
 void MortevielleEngine::fctEat() {
 	if ((_coreVar._currPlace > LANDING) && (_coreVar._currPlace < ROOM26)) {
-		g_crep = 148;
+		_crep = 148;
 	} else {
 		tsort();
 		_coreVar._currPlace = DINING_ROOM;
-		g_caff = 10;
+		_caff = 10;
 		debloc(_coreVar._currPlace);
 		_menu.setDestinationMenuText(_coreVar._currPlace);
 
@@ -1114,11 +1114,11 @@ void MortevielleEngine::fctEat() {
 					h = 1;
 			}
 			
-			g_jh += h;
-			g_crep = 135;
+			_jh += h;
+			_crep = 135;
 			prepareRoom();
 		} else {
-			g_crep = 134;
+			_crep = 134;
 		}
 	}
 }
@@ -1133,50 +1133,50 @@ void MortevielleEngine::fctEnter() {
 		_menu.setDestinationMenuText(_coreVar._currPlace);
 	} else if (_coreVar._currPlace == LANDING)
 		showMoveMenuAlert();
-	else if (g_ment == 0)
-		g_crep = 997;
-	else if ((g_ment == 9) && (_coreVar._selectedObjectId != 136)) {
-			g_crep = 189;
+	else if (_ment == 0)
+		_crep = 997;
+	else if ((_ment == 9) && (_coreVar._selectedObjectId != 136)) {
+			_crep = 189;
 			_coreVar._teauto[8] = '*';
 	} else {
 		int z = 0;
 		if (!_blo)
-			z = t11(g_ment);
+			z = t11(_ment);
 		if (z != 0) {
-			if ((g_ment == 3) || (g_ment == 7))
-				g_crep = 179;
+			if ((_ment == 3) || (_ment == 7))
+				_crep = 179;
 			else {
-				g_x = (getRandomNumber(0, 10)) - 5;
-				_speechManager.startSpeech(7, g_x, 1);
+				_x = (getRandomNumber(0, 10)) - 5;
+				_speechManager.startSpeech(7, _x, 1);
 				aniof(1, 1);
 				
-				g_x = convertBitIndexToCharacterIndex(z);
+				_x = convertBitIndexToCharacterIndex(z);
 				++_coreVar._faithScore;
 				_coreVar._currPlace = LANDING;
 				_msg[3] = MENU_DISCUSS;
-				_msg[4] = _menu._discussMenu[g_x];
+				_msg[4] = _menu._discussMenu[_x];
 				_syn = true;
-				if (g_ment == 9) {
+				if (_ment == 9) {
 					_col = true;
-					g_caff = 70;
+					_caff = 70;
 					afdes();
-					repon(2, g_caff);
+					repon(2, _caff);
 				} else
 					_col = false;
-				debloc(g_ment);
-				g_ment = 0;
+				debloc(_ment);
+				_ment = 0;
 			}
 		} else {
-			g_x = (getRandomNumber(0, 10)) - 5;
-			_speechManager.startSpeech(7, g_x, 1);
+			_x = (getRandomNumber(0, 10)) - 5;
+			_speechManager.startSpeech(7, _x, 1);
 			aniof(1, 1);
 			
-			_coreVar._currPlace = g_ment;
+			_coreVar._currPlace = _ment;
 			affrep();
 			debloc(_coreVar._currPlace);
 			_menu.setDestinationMenuText(_coreVar._currPlace);
-			g_ment = 0;
-			g_mpers = 0;
+			_ment = 0;
+			_savedBitIndex = 0;
 			_currBitIndex = 0;
 		}
 	}
@@ -1190,7 +1190,7 @@ void MortevielleEngine::fctSleep() {
 	int z, j, h, m;
 
 	if ((_coreVar._currPlace > LANDING) && (_coreVar._currPlace < ROOM26)) {
-		g_crep = 148;
+		_crep = 148;
 		return;
 	}
 	if (_coreVar._currPlace != OWN_ROOM) {
@@ -1214,10 +1214,10 @@ void MortevielleEngine::fctSleep() {
 			z = (7 - h) * 2;
 			if (m == 30)
 				--z;
-			g_jh += z;
+			_jh += z;
 			h = 7;
 		}
-		g_jh += 2;
+		_jh += 2;
 		++h;
 		if (h > 23)
 			h = 0;
@@ -1225,8 +1225,8 @@ void MortevielleEngine::fctSleep() {
 		answer = Alert::show(getEngineString(S_YES_NO), 1);
 		_anyone = false;
 	} while (answer != 1);
-	g_crep = 998;
-	g_num = 0;
+	_crep = 998;
+	_num = 0;
 }
 
 /**
@@ -1236,14 +1236,14 @@ void MortevielleEngine::fctSleep() {
 void MortevielleEngine::fctForce() {
 	if (!_syn)
 		ecr3(getEngineString(S_SMASH));
-	if (g_caff < 25)
+	if (_caff < 25)
 		tfleche();
 
 	if ((!_anyone) && (!_keyPressedEsc)) {
 		if (_coreVar._currPlace != ROOM26)
-			g_crep = 997;
+			_crep = 997;
 		else {
-			g_crep = 143;
+			_crep = 143;
 			_coreVar._faithScore += 2;
 		}
 	}
@@ -1255,9 +1255,9 @@ void MortevielleEngine::fctForce() {
  */
 void MortevielleEngine::fctLeave() {
 	tsort();
-	g_crep = 0;
+	_crep = 0;
 	if ((_coreVar._currPlace == MOUNTAIN) || (_coreVar._currPlace == MANOR_FRONT) || (_coreVar._currPlace == MANOR_BACK) || (_coreVar._currPlace == WELL))
-		g_crep = 997;
+		_crep = 997;
 	else {
 		int nextPlace = OWN_ROOM;
 
@@ -1269,18 +1269,18 @@ void MortevielleEngine::fctLeave() {
 			nextPlace = LANDING;
 		else if (_coreVar._currPlace == CRYPT) {
 			nextPlace = SECRET_PASSAGE;
-			g_crep = 176;
+			_crep = 176;
 		} else if (_coreVar._currPlace == SECRET_PASSAGE)
 			nextPlace = t23coul();
 		else if (_coreVar._currPlace == INSIDE_WELL)
 			nextPlace = WELL;
 
-		if (g_crep != 997)
+		if (_crep != 997)
 			_coreVar._currPlace = nextPlace;
 
-		g_caff = nextPlace;
-		if (g_crep == 0)
-			g_crep = nextPlace;
+		_caff = nextPlace;
+		if (_crep == 0)
+			_crep = nextPlace;
 		debloc(nextPlace);
 		_menu.setDestinationMenuText(nextPlace);
 	}
@@ -1291,22 +1291,22 @@ void MortevielleEngine::fctLeave() {
  * @remarks	Originally called 'tattendre'
  */
 void MortevielleEngine::fctWait() {
-	g_mpers = 0;
+	_savedBitIndex = 0;
 	clearScreenType3();
 
 	int answer;
 	do {
-		++g_jh;
+		++_jh;
 		prepareRoom();
 		if (!_blo)
 			t11(_coreVar._currPlace);
-		if ((_currBitIndex != 0) && (g_mpers == 0)) {
-			g_crep = 998;
+		if ((_currBitIndex != 0) && (_savedBitIndex == 0)) {
+			_crep = 998;
 			if ((_coreVar._currPlace == ATTIC) || (_coreVar._currPlace == CELLAR))
-				cavegre();
+				initCaveOrCellar();
 			if ((_coreVar._currPlace > OWN_ROOM) && (_coreVar._currPlace < DINING_ROOM))
 				_anyone = true;
-			g_mpers = _currBitIndex;
+			_savedBitIndex = _currBitIndex;
 			if (!_anyone)
 				prepareRoom();
 			return;
@@ -1314,7 +1314,7 @@ void MortevielleEngine::fctWait() {
 		repon(2, 102);
 		answer = Alert::show(getEngineString(S_YES_NO), 1);
 	} while (answer != 2);
-	g_crep = 998;
+	_crep = 998;
 	if (!_anyone)
 		prepareRoom();
 }
@@ -1326,11 +1326,11 @@ void MortevielleEngine::fctWait() {
 void MortevielleEngine::fctSound() {
 	if (!_syn)
 		ecr3(getEngineString(S_PROBE2));
-	if (g_caff < 27) {
+	if (_caff < 27) {
 		tfleche();
 		if (!(_anyone) && (!_keyPressedEsc))
-			g_crep = 145;
-		g_num = 0;
+			_crep = 145;
+		_num = 0;
 	}
 }
 
@@ -1353,10 +1353,10 @@ void MortevielleEngine::fctDiscuss() {
 		do {
 			++cx;
 		} while (_menu._discussMenu[cx] != _msg[4]);
-		g_caff = 69 + cx;
+		_caff = 69 + cx;
 		afdes();
-		repon(2, g_caff);
-		suj = g_caff + 60;
+		repon(2, _caff);
+		suj = _caff + 60;
 	}
 	tkey1(false);
 	mennor();
@@ -1404,7 +1404,7 @@ void MortevielleEngine::fctDiscuss() {
 			CHECK_QUIT;
 
 			_mouse.getMousePosition(x, y, c);
-			x *= (3 - g_res);
+			x *= (3 - _res);
 			if (x > 319)
 				cx = 41;
 			else
@@ -1467,7 +1467,7 @@ void MortevielleEngine::fctDiscuss() {
 			if (_col) {
 				_col = false;
 				_coreVar._currPlace = 15;
-				if (g_iouv > 0)
+				if (_iouv > 0)
 					max = 8;
 				else
 					max = 4;
@@ -1477,10 +1477,10 @@ void MortevielleEngine::fctDiscuss() {
 					suj = 138;
 					_coreVar._faithScore += (3 * (_coreVar._faithScore / 10));
 				}
-			} else if (_nbrep[g_caff - 69] < _nbrepm[g_caff - 69]) {
-				suj = _tabdon[arep + (ix << 3) + (g_caff - 70)];
+			} else if (_nbrep[_caff - 69] < _nbrepm[_caff - 69]) {
+				suj = _tabdon[arep + (ix << 3) + (_caff - 70)];
 				_coreVar._faithScore += _tabdon[arcf + ix];
-				++_nbrep[g_caff - 69];
+				++_nbrep[_caff - 69];
 			} else {
 				_coreVar._faithScore += 3;
 				suj = 139;
@@ -1518,7 +1518,7 @@ void MortevielleEngine::fctDiscuss() {
 		_col = false;
 		_coreVar._currPlace = LANDING;
 	}
-	g_ctrm = 0;
+	_controlMenu = 0;
 	_mouse.hideMouse();
 	hirs();
 	drawRightFrame();
@@ -1537,17 +1537,17 @@ void MortevielleEngine::fctDiscuss() {
  * @remarks	Originally called 'tsentir'
  */
 void MortevielleEngine::fctSmell() {
-	g_crep = 119;
-	if (g_caff < ROOM26) {
+	_crep = 119;
+	if (_caff < ROOM26) {
 		if (!_syn)
 			ecr3(getEngineString(S_SMELL));
 		tfleche();
 		if (!(_anyone) && !(_keyPressedEsc))
-			if (g_caff == 16)
-				g_crep = 153;
-	} else if (g_caff == 123)
-		g_crep = 110;
-	g_num = 0;
+			if (_caff == 16)
+				_crep = 153;
+	} else if (_caff == 123)
+		_crep = 110;
+	_num = 0;
 }
 
 /**
@@ -1555,13 +1555,13 @@ void MortevielleEngine::fctSmell() {
  * @remarks	Originally called 'tgratter'
  */
 void MortevielleEngine::fctScratch() {
-	g_crep = 155;
-	if (g_caff < 27) {
+	_crep = 155;
+	if (_caff < 27) {
 		if (!_syn)
 			ecr3(getEngineString(S_SCRATCH));
 		tfleche();
 	}
-	g_num = 0;
+	_num = 0;
 }
 
 /**
@@ -1578,7 +1578,7 @@ void MortevielleEngine::endGame() {
 	repon(9, 1509);
 	tkey1(false);
 	_mouse.hideMouse();
-	g_caff = 70;
+	_caff = 70;
 	taffich();
 	hirs();
 	premtet();
@@ -1588,7 +1588,7 @@ void MortevielleEngine::endGame() {
 	repon(9, 1509);
 	repon(2, 142);
 	tkey1(false);
-	g_caff = 32;
+	_caff = 32;
 	afdes();
 	repon(6, 34);
 	repon(2, 35);

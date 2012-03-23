@@ -81,13 +81,15 @@ enum DataType {
 #define GAME_FRAME_DELAY (1000 / 50)
 
 const int kAcha = 492;
+const int kAdrDes = 0x7000;
+const int kFleche = 1758;
+
 const int asoul = 154;
 const int aouvr = 282;
 const int achai = 387;
 const int arcf = 1272;
 const int arep = 1314;
 const int amzon = 1650;
-const int fleche = 1758;
 const int arega = 0;
 
 struct nhom {
@@ -164,6 +166,12 @@ private:
 	void showTitleScreen();
 	int  readclock();
 	void palette(int v1);
+
+	void adzon();
+	void text1(int x, int y, int nb, int m);
+	void modif(int &nu);
+	void initouv();
+
 public:
 	Common::String _hintPctMessage;
 	Common::Point _prevPos;
@@ -210,6 +218,7 @@ public:
 	int _place;
 	int _manorDistance;
 	int _currBitIndex;
+	int _savedBitIndex;
 	int _currDay;
 	int _currHour;
 	int _currHalfHour;
@@ -217,16 +226,35 @@ public:
 	int _hour;
 	int _minute;
 	int _mchai;
-	float _addfix;
+	float _addFix;
 	SaveStruct _coreVar, _saveStruct;
 	Common::Point _stdPal[91][17];
 	t_pcga _cgaPal[91];
+	int _key;
+	int _controlMenu;
+	int _startHour;
+	int _endHour;
 
 	int _c_zzz;
 	int ptr_word;
 	byte _v_lieu[7][25];
-	byte g_is;
+	byte _is;
 	int _numpal;
+	int _ment;
+	int _iouv;
+	int _caff;
+	int _maff;
+	int _dobj;
+	int _num;
+	int _crep;
+	int _cs;
+	int _res;
+	int _prebru;
+	int _t;
+	int _x;
+	int _y;
+	int _jh;
+	int _mh;
 
 	// TODO: Replace the following with proper implementations, or refactor out the code using them
 	byte _mem[65536 * 16];
@@ -383,6 +411,16 @@ public:
 	void drawClock();
 	Common::String copy(const Common::String &s, int idx, size_t size);
 	void hirs();
+	void initCaveOrCellar();
+	void displayControlMenu();
+
+
+	void pictout(int seg, int dep, int x, int y);
+	int  animof(int ouf, int num);
+	void repon(int f, int m);
+	void ecr2(Common::String text);
+	void ecr3(Common::String text);
+
 };
 
 extern MortevielleEngine *g_vm;

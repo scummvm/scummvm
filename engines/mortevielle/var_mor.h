@@ -115,34 +115,6 @@ typedef int tfxx[108];
 
 enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCULES = 3, MODE_TANDY = 4 };
 
-/*---------------------------------------------------------------------------*/
-/*------------------------------   VARIABLES   ------------------------------*/
-/*---------------------------------------------------------------------------*/
-
-extern int g_x,
-        g_y,
-        g_t,
-        g_jh,
-        g_mh,
-        g_cs,
-        g_hdb,
-        g_hfb,
-        g_key,
-        g_num,
-        g_res,
-        g_ment,
-        g_haut,
-        g_caff,
-        g_maff,
-        g_crep,
-        g_ades,
-        g_iouv,
-		g_ctrm,
-        g_dobj,
-        g_mpers,
-        g_perdep,
-        g_prebru;
-
 } // End of namespace Mortevielle
 
 #endif

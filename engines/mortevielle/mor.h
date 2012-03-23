@@ -42,24 +42,11 @@ static const int _actionMenu[12] = { OPCODE_NONE,
 		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
 };
 
-extern void pictout(int seg, int dep, int x, int y);
-extern void sauvecr(int y, int dy);
-extern void charecr(int y, int dy);
-extern void adzon();
-extern int animof(int ouf, int num);
-/* Niveau 14 suite */
-extern void modif(int &nu);
 /* NIVEAU 13 */
-extern void text1(int x, int y, int nb, int m);
-extern void initouv();
-extern void ecr2(Common::String str_);
-extern void ecr3(Common::String text);
 extern void paint_rect(int x, int y, int dx, int dy);
 /* NIVEAU 12 */
 extern void modobj(int m);
-extern void repon(int f, int m);
 extern int chlm();
-extern void drawClock();
 /*************
  * NIVEAU 11 *
  *************/
@@ -70,7 +57,6 @@ extern void becfren(int roomId);
 extern void init_nbrepm();
 extern void phaz(int &rand, int &p, int cf);
 extern int t11(int roomId);
-extern void cavegre();
 extern void writetp(Common::String s, int t);
 extern void aniof(int ouf, int num);
 /* NIVEAU 9 */
@@ -91,7 +77,6 @@ extern void premtet();
 /* NIVEAU 5 */
 extern void ajchai();
 extern void ajjer(int ob);
-extern void tctrm();
 extern void quelquun();
 extern void tsuiv();
 extern void tfleche();
@@ -104,5 +89,7 @@ extern int t23coul();
 extern void maivid();
 extern void st13(int ob);
 
+extern void sauvecr(int y, int dy);
+extern void charecr(int y, int dy);
 } // End of namespace Mortevielle
 #endif

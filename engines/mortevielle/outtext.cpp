@@ -61,7 +61,7 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 	inputStr += '$'; 
 
 	g_vm->_screenSurface.putxy(x, y);
-	if (g_res == 1)
+	if (g_vm->_res == 1)
 		tab = 10;
 	else
 		tab = 6;
@@ -186,13 +186,13 @@ void taffich() {
 	int32 lgt;
 	int alllum[16];
 
-	int a = g_caff;
+	int a = g_vm->_caff;
 	if ((a >= 153) && (a <= 161))
 		a = tran2[a - 153];
 	else if ((a >= 136) && (a <= 140))
 		a = tran1[a - 136];
 	int b = a;
-	if (g_maff == a)
+	if (g_vm->_maff == a)
 		return;
 
 	switch (a) {
@@ -246,11 +246,11 @@ void taffich() {
 			m = 2010;
 		if (a == 32)
 			m = 2034;
-		if ((a == 17) && (g_maff == 14))
+		if ((a == 17) && (g_vm->_maff == 14))
 			m = 2018;
 
 		if (a > 99) {
-			if ((g_vm->g_is == 1) || (g_vm->g_is == 0))
+			if ((g_vm->_is == 1) || (g_vm->_is == 0))
 				m = 2031;
 			else
 				m = 2032;
@@ -259,26 +259,26 @@ void taffich() {
 		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
 			m = 2030;
 
-		if (((a < 27) && (((g_maff > 69) && (!g_vm->_coreVar._alreadyEnteredManor)) || (g_maff > 99))) || ((g_maff > 29) && (g_maff < 33)))
+		if (((a < 27) && (((g_vm->_maff > 69) && (!g_vm->_coreVar._alreadyEnteredManor)) || (g_vm->_maff > 99))) || ((g_vm->_maff > 29) && (g_vm->_maff < 33)))
 			m = 2033;
 
-		g_maff = a;
+		g_vm->_maff = a;
 		if (a == 159)
 			a = 86;
 		else if (a > 140)
-			a = a - 67;
+			a -= 67;
 		else if (a > 137)
-			a = a - 66;
+			a -= 66;
 		else if (a > 99)
-			a = a - 64;
+			a -= 64;
 		else if (a > 69)
-			a = a - 42;
+			a -= 42;
 		else if (a > 29)
-			a = a - 5;
+			a -= 5;
 		else if (a == 26)
 			a = 24;
 		else if (a > 18)
-			a = a - 1;
+			--a;
 		npal = a;
 
 		for (cx = 0; cx <= (a - 1); ++cx)
@@ -293,7 +293,7 @@ void taffich() {
 			lgt = handle;
 			handle = g_vm->_fxxBuffer[88];
 		}
-		g_maff = a;
+		g_vm->_maff = a;
 		npal = a + 37;
 	}
 	chardes(filename, lgt, handle);
@@ -334,12 +334,12 @@ void taffich() {
 		charani(filename, lgt, handle);
 	}
 	g_vm->_mouse.showMouse();
-	if ((a < 27) && ((g_maff < 27) || (g_vm->_coreVar._currPlace == LANDING)) && (g_vm->_msg[4] != OPCODE_ENTER)) {
+	if ((a < 27) && ((g_vm->_maff < 27) || (g_vm->_coreVar._currPlace == LANDING)) && (g_vm->_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			g_vm->displayAloneText();
 		else if (!g_vm->_blo)
 			cx = t11(g_vm->_coreVar._currPlace);
-		g_mpers =  0;
+		g_vm->_savedBitIndex =  0;
 	}
 }
 
