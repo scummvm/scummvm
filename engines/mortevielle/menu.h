@@ -62,7 +62,8 @@ public:
 	int _moveMenu[8];
 
 	void setText(int menuId, Common::String name);
-	void setDestinationMenuText(int roomId);
+	void setDestinationText(int roomId);
+	void setInventoryText();
 	void disableMenuItem(int menuId);
 	void enableMenuItem(int menuId);
 	void displayMenu();

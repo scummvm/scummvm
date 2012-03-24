@@ -29,7 +29,6 @@
 #include "mortevielle/dialogs.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/speech.h"
@@ -61,7 +60,7 @@ int Alert::show(const Common::String &msg, int n) {
 
 	g_vm->setMouseClick(false);
 	decodeAlertDetails(msg, caseNumb, lignNumb, nbcol, chaine, cas);
-	sauvecr(50, (NUM_LINES + 1) << 4);
+	g_vm->sauvecr(50, (NUM_LINES + 1) << 4);
 
 	i = 0;
 	if (chaine == "") {
@@ -170,7 +169,7 @@ int Alert::show(const Common::String &msg, int n) {
 		tmp4 += " ";
 		g_vm->_screenSurface.drawString(tmp4, 1);
 	}
-	charecr(50, (NUM_LINES + 1) << 4);
+	g_vm->charecr(50, (NUM_LINES + 1) << 4);
 	g_vm->_mouse.showMouse();
 
 	/* Restore the background area */

@@ -28,7 +28,6 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "mortevielle/dialogs.h"
-#include "mortevielle/mor.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/saveload.h"

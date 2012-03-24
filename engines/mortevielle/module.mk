@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	graphics.o \
 	keyboard.o \
 	menu.o \
-	mor.o \
 	mortevielle.o \
 	mouse.o \
 	outtext.o \

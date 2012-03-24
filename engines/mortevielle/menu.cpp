@@ -29,7 +29,6 @@
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "mortevielle/menu.h"
-#include "mortevielle/mor.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
@@ -88,7 +87,7 @@ void Menu::setText(int menuId, Common::String name) {
  * Init destination menu
  * @remarks	Originally called 'tmlieu'
  */
-void Menu::setDestinationMenuText(int roomId) {
+void Menu::setDestinationText(int roomId) {
 	Common::String nomp;
 
 	if (roomId == 26)
@@ -323,7 +322,7 @@ void Menu::menuDown(int ii) {
 	xco = _menuConstants[ii - 1][0];
 	lignNumb = _menuConstants[ii - 1][3];
 	g_vm->_mouse.hideMouse();
-	sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
+	g_vm->sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
 	if (g_vm->_res == 1)
 		cx = 10;
@@ -396,7 +395,7 @@ void Menu::menuDown(int ii) {
  */
 void Menu::menuUp(int xx) {
 	if (_multiTitle) {
-		charecr(10, (_menuConstants[xx - 1][1] + 1) << 1);
+		g_vm->charecr(10, (_menuConstants[xx - 1][1] + 1) << 1);
 
 		/* Restore the background area */
 		assert(g_vm->_screenSurface.pitch == g_vm->_backgroundSurface.pitch);
@@ -538,7 +537,7 @@ void Menu::initMenu() {
 			_moveMenu[i] = 0x200 + i;
 		_inventoryMenu[i] = 0x100 + i;
 		if (i > 6)
-			g_vm->_menu.disableMenuItem(_inventoryMenu[i]);
+			disableMenuItem(_inventoryMenu[i]);
 	}
 	_msg3 = OPCODE_NONE;
 	_msg4 = OPCODE_NONE;
@@ -567,7 +566,7 @@ void Menu::setSearchMenu() {
  * @remarks	Originally called 'mfouen'
  */
 void Menu::unsetSearchMenu() {
-	setDestinationMenuText(g_vm->_coreVar._currPlace);
+	setDestinationText(g_vm->_coreVar._currPlace);
 	for (int i = 1; i <= 11; ++i)
 		enableMenuItem(_actionMenu[i]);
 
@@ -575,4 +574,30 @@ void Menu::unsetSearchMenu() {
 	setText(OPCODE_LIFT, g_vm->getEngineString(S_RAISE));
 }
 
+/**
+ * Set Inventory menu texts
+ * @remarks	Originally called 'modinv'
+ */
+void Menu::setInventoryText() {
+	int r;
+	Common::String nomp;
+
+	int cy = 0;
+	for (int i = 1; i <= 6; ++i) {
+		if (g_vm->_coreVar._sjer[i] != chr(0)) {
+			++cy;
+			r = (ord(g_vm->_coreVar._sjer[i]) + 400);
+			nomp = g_vm->getString(r - 501 + kInventoryStringIndex);
+			setText(_inventoryMenu[cy], nomp);
+			enableMenuItem(_inventoryMenu[i]);
+		}
+	}
+
+	if (cy < 6) {
+		for (int i = cy + 1; i <= 6; ++i) {
+			setText(_inventoryMenu[i], "                       ");
+			disableMenuItem(_inventoryMenu[i]);
+		}
+	}
+}
 } // End of namespace Mortevielle

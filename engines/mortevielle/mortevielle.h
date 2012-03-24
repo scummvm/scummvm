@@ -73,12 +73,21 @@ enum DataType {
 	kGameStrings = 1
 };
 
+static const int _actionMenu[12] = { OPCODE_NONE,
+		OPCODE_SHIDE, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP, 
+		OPCODE_ENTER, OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
+		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
+};
+
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 400
 #define SCREEN_ORIG_HEIGHT 200
 #define MORT_DAT_REQUIRED_VERSION 1
 #define MORT_DAT "mort.dat"
 #define GAME_FRAME_DELAY (1000 / 50)
+
+const int kTime1 = 410;
+const int kTime2 = 250;
 
 const int kAcha = 492;
 const int kAdrDes = 0x7000;
@@ -167,11 +176,18 @@ private:
 	int  readclock();
 	void palette(int v1);
 	int checkLeoMaxRandomPresence();
+	void interactNPC();
 
 	void adzon();
 	void text1(int x, int y, int nb, int m);
 	void modif(int &nu);
 	void initouv();
+	void phaz(int &rand, int &p, int cf);
+	void writetp(Common::String s, int t);
+	void premtet();
+	void ajchai();
+	void tfleche();
+	void setCoordinates(int sx);
 
 public:
 	Common::String _hintPctMessage;
@@ -417,9 +433,14 @@ public:
 	void displayItemInHand(int objId);
 	void displayEmptyHand();
 	void resetRoomVariables(int roomId);
-	int getPresenceStats(int &rand, int cf, int roomId);
+	int  getPresenceStats(int &rand, int cf, int roomId);
 	void setPresenceFlags(int roomId);
-
+	int  getPresence(int roomId);
+	void testKey(bool d);
+	void exitRoom();
+	void getReadDescription(int objId);
+	void getSearchDescription(int objId);
+	int  checkLeaveSecretPassage();
 
 	void pictout(int seg, int dep, int x, int y);
 	int  animof(int ouf, int num);
@@ -427,6 +448,21 @@ public:
 	void ecr2(Common::String text);
 	void ecr3(Common::String text);
 	void init_nbrepm();
+	void aniof(int ouf, int num);
+	void dessin();
+	void afdes();
+	void tlu(int af, int ob);
+	void affrep();
+	void mennor();
+	void ajjer(int ob);
+	void tsuiv();
+	void treg(int objId);
+	void avpoing(int &objId);
+	void rechai(int &ch);
+	void fenat(char ans);
+
+	void sauvecr(int y, int dy);
+	void charecr(int y, int dy);
 
 };
 

@@ -27,7 +27,6 @@
 
 #include "common/file.h"
 #include "common/str.h"
-#include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/graphics.h"
@@ -338,7 +337,7 @@ void taffich() {
 		if ((a == 13) || (a == 14))
 			g_vm->displayAloneText();
 		else if (!g_vm->_blo)
-			cx = t11(g_vm->_coreVar._currPlace);
+			g_vm->getPresence(g_vm->_coreVar._currPlace);
 		g_vm->_savedBitIndex =  0;
 	}
 }
