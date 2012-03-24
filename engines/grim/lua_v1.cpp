@@ -867,6 +867,7 @@ void Lua_V1::GetSaveGameImage() {
 	const char *filename = lua_getstring(param);
 	SaveGame *savedState = SaveGame::openForLoading(filename);
 	if (!savedState || !savedState->isCompatible()) {
+		delete savedState;
 		lua_pushnil();
 		return;
 	}
