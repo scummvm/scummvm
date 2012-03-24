@@ -93,8 +93,9 @@ public:
 	void clearScreen();
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
 	void drawString(const Common::String &l, int command);
-	int getStringWidth(const Common::String &s);
+	int  getStringWidth(const Common::String &s);
 	void drawLine(int x, int y, int xx, int yy, int coul);
+	void drawRectangle(int x, int y, int dx, int dy);
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);

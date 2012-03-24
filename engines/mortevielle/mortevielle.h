@@ -166,6 +166,7 @@ private:
 	void showTitleScreen();
 	int  readclock();
 	void palette(int v1);
+	int checkLeoMaxRandomPresence();
 
 	void adzon();
 	void text1(int x, int y, int nb, int m);
@@ -413,6 +414,11 @@ public:
 	void hirs();
 	void initCaveOrCellar();
 	void displayControlMenu();
+	void displayItemInHand(int objId);
+	void displayEmptyHand();
+	void resetRoomVariables(int roomId);
+	int getPresenceStats(int &rand, int cf, int roomId);
+	void setPresenceFlags(int roomId);
 
 
 	void pictout(int seg, int dep, int x, int y);
@@ -420,6 +426,7 @@ public:
 	void repon(int f, int m);
 	void ecr2(Common::String text);
 	void ecr3(Common::String text);
+	void init_nbrepm();
 
 };
 

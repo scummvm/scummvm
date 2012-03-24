@@ -44,115 +44,7 @@
 
 namespace Mortevielle {
 
-void paint_rect(int x, int y, int dx, int dy) {
-	int co;
-
-	if (g_vm->_currGraphicalDevice == MODE_CGA)
-		co = 3;
-	else
-		co = 11;
-	g_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
-}
-
-/* NIVEAU 12 */
-void modobj(int m) {
-	Common::String strp = Common::String(' ');
-
-	if (m != 500)
-		strp = g_vm->getString(m - 501 + kInventoryStringIndex);
-
-	g_vm->_menu.setText(g_vm->_menu._inventoryMenu[8], strp);
-	g_vm->_menu.disableMenuItem(g_vm->_menu._inventoryMenu[8]);
-}
-
-int chlm() {
-	int retval = g_vm->getRandomNumber(1, 2);
-	if (retval == 2)
-		retval = 128;
-	
-	return retval;
-}
-
-/*************
- * NIVEAU 11 *
- *************/
-
-void debloc(int roomId) {
-	g_vm->_num = 0;
-	g_vm->_x = 0;
-	g_vm->_y = 0;
-	if ((roomId != ROOM26) && (roomId != LANDING))
-		g_vm->resetPresenceInRooms(roomId);
-	g_vm->_savedBitIndex = g_vm->_currBitIndex;
-}
-
-void ecfren(int &p, int &rand, int cf, int roomId) {
-	if (roomId == OWN_ROOM)
-		g_vm->displayAloneText();
-	p = -500;
-	rand = 0;
-	if ( ((roomId == GREEN_ROOM) && (!g_vm->_roomPresenceLuc) && (!g_vm->_roomPresenceIda))
-	  || ((roomId == DARKBLUE_ROOM) && (!g_vm->_roomPresenceGuy) && (!g_vm->_roomPresenceEva)) )
-		p = g_vm->getPresenceStatsGreenRoom();
-	if ((roomId == PURPLE_ROOM) && (!g_vm->_purpleRoomPresenceLeo) && (!g_vm->_room9PresenceLeo))
-		p = g_vm->getPresenceStatsPurpleRoom();
-	if ( ((roomId == TOILETS) && (!g_vm->_toiletsPresenceBobMax))
-	  || ((roomId == BATHROOM) && (!g_vm->_bathRoomPresenceBobMax)) )
-		p = g_vm->getPresenceStatsToilets();
-	if ((roomId == BLUE_ROOM) && (!g_vm->_roomPresenceMax))
-		p = g_vm->getPresenceStatsBlueRoom();
-	if ( ((roomId == RED_ROOM) && (!g_vm->_roomPresenceBob))
-	  || ((roomId == GREEN_ROOM2) && (!g_vm->_roomPresencePat)))
-		p = g_vm->getPresenceStatsRedRoom();
-	if ((roomId == ROOM9) && (!g_vm->_room9PresenceLeo) && (!g_vm->_purpleRoomPresenceLeo))
-		p = 10;
-	if ( ((roomId == PURPLE_ROOM) && (g_vm->_room9PresenceLeo))
-	  || ((roomId == ROOM9) && (g_vm->_purpleRoomPresenceLeo)))
-		p = -400;
-	if (p != -500) {
-		p += cf;
-		rand = g_vm->getRandomNumber(1, 100);
-	}
-}
-
-void becfren(int roomId) {
-	if ((roomId == GREEN_ROOM) || (roomId == DARKBLUE_ROOM)) {
-		int rand = g_vm->getRandomNumber(1, 2);
-		if (roomId == GREEN_ROOM) {
-			if (rand == 1)
-				g_vm->_roomPresenceLuc = true;
-			else
-				g_vm->_roomPresenceIda = true;
-		} else { // roomId == DARKBLUE_ROOM
-			if (rand == 1)
-				g_vm->_roomPresenceGuy = true;
-			else
-				g_vm->_roomPresenceEva = true;
-		}
-	} else if (roomId == PURPLE_ROOM)
-		g_vm->_purpleRoomPresenceLeo = true;
-	else if (roomId == TOILETS)
-		g_vm->_toiletsPresenceBobMax = true;
-	else if (roomId == BLUE_ROOM)
-		g_vm->_roomPresenceMax = true;
-	else if (roomId == RED_ROOM)
-		g_vm->_roomPresenceBob = true;
-	else if (roomId == BATHROOM)
-		g_vm->_bathRoomPresenceBobMax = true;
-	else if (roomId == GREEN_ROOM2)
-		g_vm->_roomPresencePat = true;
-	else if (roomId == ROOM9)
-		g_vm->_room9PresenceLeo = true;
-}
-
 /* NIVEAU 10 */
-void init_nbrepm() {
-	const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
-
-	for (int idx = 0; idx < 9; ++idx)
-		g_vm->_nbrepm[idx] = ipm[idx];
-}
-
 void phaz(int &rand, int &p, int cf) {
 	p += cf;
 	rand = g_vm->getRandomNumber(1, 100);
@@ -160,9 +52,9 @@ void phaz(int &rand, int &p, int cf) {
 
 int t11(int roomId) {
 	int retVal = 0;
-	int p, rand;
+	int rand;
 
-	ecfren(p, rand, g_vm->_coreVar._faithScore, roomId);
+	int p = g_vm->getPresenceStats(rand, g_vm->_coreVar._faithScore, roomId);
 	g_vm->_place = roomId;
 	if ((roomId > OWN_ROOM) && (roomId < DINING_ROOM)) {
 		if (p != -500) {
@@ -170,7 +62,7 @@ int t11(int roomId) {
 				g_vm->displayAloneText();
 				retVal = 0;
 			} else {
-				becfren(g_vm->_place);
+				g_vm->setPresenceFlags(g_vm->_place);
 				retVal = g_vm->getPresenceBitIndex(g_vm->_place);
 			}
 		} else
@@ -374,7 +266,7 @@ void tsort() {
 	g_vm->_ment = 0;
 	g_vm->_iouv = 0;
 	g_vm->_mchai = 0;
-	debloc(g_vm->_coreVar._currPlace);
+	g_vm->resetRoomVariables(g_vm->_coreVar._currPlace);
 }
 
 void st4(int ob) {
@@ -508,7 +400,7 @@ L1:
 			g_vm->_speechManager.startSpeech(3, rand, 1);
 			g_vm->clearScreenType2();
 			g_vm->displayAloneText();
-			debloc(21);
+			g_vm->resetRoomVariables(MANOR_FRONT);
 			affrep();
 		}
 	}
@@ -679,7 +571,7 @@ void avpoing(int &ob) {
 		ajjer(g_vm->_coreVar._selectedObjectId);
 
 	if (g_vm->_crep != 139) {
-		modobj(ob + 400);
+		g_vm->displayItemInHand(ob + 400);
 		g_vm->_coreVar._selectedObjectId = ob;
 		ob = 0;
 	}
@@ -700,11 +592,6 @@ int t23coul() {
 	}
 
 	return CELLAR;
-}
-
-void maivid() {
-	g_vm->_coreVar._selectedObjectId = 0;
-	modobj(500);
 }
 
 void st13(int ob) {
