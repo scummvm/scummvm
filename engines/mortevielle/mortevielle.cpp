@@ -3582,7 +3582,7 @@ void MortevielleEngine::setCoordinates(int sx) {
 	_num = 0;
 	_crep = 999;
 	int a = 0;
-	int atdon = amzon + 3;
+	int atdon = kAmzon + 3;
 	int cy = 0;
 	while (cy < _caff) {
 		a += _tabdon[atdon];
@@ -3664,7 +3664,7 @@ void MortevielleEngine::rechai(int &ch) {
 
 	if (_coreVar._currPlace == CRYPT)
 		tmpPlace = CELLAR;
-	ch = _tabdon[achai + (tmpPlace * 7) + _num - 1];
+	ch = _tabdon[kAchai + (tmpPlace * 7) + _num - 1];
 }
 
 /**
