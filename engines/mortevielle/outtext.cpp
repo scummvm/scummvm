@@ -35,10 +35,11 @@
 
 namespace Mortevielle {
 
-typedef unsigned char uchar;
-const byte _rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
-
-static int l_motsuiv(int p, const char *ch, int &tab) {
+/**
+ * Next word
+ * @remarks	Originally called 'l_motsuiv'
+ */
+int TextHandler::nextWord(int p, const char *ch, int &tab) {
 	int c = p;
 
 	while ((ch[p] != ' ') && (ch[p] != '$') && (ch[p] != '@'))
@@ -51,7 +52,7 @@ static int l_motsuiv(int p, const char *ch, int &tab) {
  * Engine function - Display Text
  * @remarks	Originally called 'afftex'
  */
-void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) {
+void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) {
 	int tab;
 	Common::String s;
 	int i, j;
@@ -87,7 +88,7 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 			s += ' ';
 			xc += tab;
 			++p;
-			if (l_motsuiv(p, inputStr.c_str(), tab) + xc > xf) {
+			if (nextWord(p, inputStr.c_str(), tab) + xc > xf) {
 				g_vm->_screenSurface.drawString(s, typ);
 				s = "";
 				xc = x;
@@ -123,7 +124,11 @@ void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ) 
 	}
 }
 
-void chardes(Common::String filename, int32 skipSize, int length) {
+/**
+ * Load DES file
+ * @remarks	Originally called 'chardes'
+ */
+void TextHandler::loadDesFile(Common::String filename, int32 skipSize, int length) {
 	Common::File f;
 	if (!f.open(filename))
 		error("Missing file %s", filename.c_str());
@@ -150,7 +155,11 @@ void chardes(Common::String filename, int32 skipSize, int length) {
 		g_vm->_mem[0x7000 * 16 + i - remainingSkipSize] = g_vm->_mem[0x6000 * 16 + i];
 }
 
-void charani(Common::String filename, int32 skipSize, int length) {
+/**
+ * Load ANI file
+ * @remarks	Originally called 'charani'
+ */
+void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int length) {
 	Common::File f;
 	if (!f.open(filename))
 		error("Missing file - %s", filename.c_str());
@@ -177,7 +186,9 @@ void charani(Common::String filename, int32 skipSize, int length) {
 		g_vm->_mem[kAdrAni * 16 + i - remainingSkipSize] = g_vm->_mem[0x6000 * 16 + i];
 }
 
-void taffich() {
+void TextHandler::taffich() {
+	static const byte _rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
+
 	byte tran1[] = { 121, 121, 138, 139, 120 };
 	byte tran2[] = { 150, 150, 152, 152, 100, 110, 159, 100, 100 };
 
@@ -295,7 +306,7 @@ void taffich() {
 		g_vm->_maff = a;
 		npal = a + 37;
 	}
-	chardes(filename, lgt, handle);
+	loadDesFile(filename, lgt, handle);
 	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
 			int palh = READ_LE_UINT16(&g_vm->_mem[(0x7000 * 16) + ((i + 1) << 1)]);
@@ -330,7 +341,7 @@ void taffich() {
 			filename = "AZZ.mor";
 			handle = 1260;
 		}
-		charani(filename, lgt, handle);
+		loadAniFile(filename, lgt, handle);
 	}
 	g_vm->_mouse.showMouse();
 	if ((a < 27) && ((g_vm->_maff < 27) || (g_vm->_coreVar._currPlace == LANDING)) && (g_vm->_msg[4] != OPCODE_ENTER)) {

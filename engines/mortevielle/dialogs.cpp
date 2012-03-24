@@ -27,7 +27,6 @@
 
 #include "common/str.h"
 #include "mortevielle/dialogs.h"
-#include "mortevielle/keyboard.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
@@ -307,7 +306,7 @@ bool KnowledgeCheck::show() {
 			dialogHeight = 23;
 		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = g_vm->getString(textIndexArr[indx]);
-		displayStr(tmpStr, 20, 15, 100, 2, 0);
+		g_vm->_text.displayStr(tmpStr, 20, 15, 100, 2, 0);
 
 		if (indx != 9) {
 			firstOption = textIndexArr[indx] + 1;
@@ -324,7 +323,7 @@ bool KnowledgeCheck::show() {
 			tmpStr = g_vm->getString(j);
 			if ((int) tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
-			displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
+			g_vm->_text.displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
 			choiceArray[prevChoice] = tmpStr;
 			optionPosY += 8;
 		}
@@ -362,16 +361,16 @@ bool KnowledgeCheck::show() {
 			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
 					tmpStr = choiceArray[prevChoice] + '$';
-					displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+					g_vm->_text.displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				}
 				if (prevChoice != currChoice) {
 					tmpStr = choiceArray[currChoice] + '$';
-					displayStr(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
+					g_vm->_text.displayStr(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
 					prevChoice = currChoice;
 				}
 			} else if (prevChoice != 0) {
 				tmpStr = choiceArray[prevChoice] + '$';
-				displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+				g_vm->_text.displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				prevChoice = 0;
 			}
 		} while (!((prevChoice != 0) && g_vm->getMouseClick()));
@@ -420,7 +419,7 @@ void f3f8::draw() {
  * @remarks	Originally called 'diver'
  */
 void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
-	teskbd();
+	g_vm->testKeyboard();
 	do {
 		g_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
 		g_vm->_key = waitForF3F8();
@@ -442,7 +441,7 @@ int f3f8::waitForF3F8() {
 	int key;
 
 	do {
-		key = testou();
+		key = g_vm->testou();
 		if (g_vm->shouldQuit())
 			return key;
 	} while ((key != 61) && (key != 66));
@@ -453,7 +452,7 @@ int f3f8::waitForF3F8() {
 void f3f8::aff50(bool drawAni50Fl) {
 	g_vm->_caff = 50;
 	g_vm->_maff = 0;
-	taffich();
+	g_vm->_text.taffich();
 	g_vm->draw(kAdrDes, 63, 12);
 	if (drawAni50Fl)
 		ani50();

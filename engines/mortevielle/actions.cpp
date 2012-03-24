@@ -1575,7 +1575,7 @@ void MortevielleEngine::endGame() {
 	testKey(false);
 	_mouse.hideMouse();
 	_caff = 70;
-	taffich();
+	_text.taffich();
 	hirs();
 	premtet();
 	startDialog(141);
