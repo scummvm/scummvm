@@ -349,7 +349,7 @@ void MortevielleEngine::fctLift() {
 		tmpPlace = 14;
 	else if (_coreVar._currPlace == MOUNTAIN)
 		tmpPlace = 15;
-	_crep = _tabdon[asoul + (tmpPlace << 3) + (_num - 1)];
+	_crep = _tabdon[kAsoul + (tmpPlace << 3) + (_num - 1)];
 	if (_crep == 255)
 		_crep = 997;
 }
@@ -443,7 +443,7 @@ void MortevielleEngine::fctLook() {
 		cx -= 4;
 	if (_coreVar._currPlace == ROOM26)
 		cx = 21;
-	_crep = _tabdon[arega + (cx * 7) + _num - 1];
+	_crep = _tabdon[kArega + (cx * 7) + _num - 1];
 	if ((_coreVar._currPlace == ATTIC) && (_num == 8))
 		_crep = 126;
 	if (_coreVar._currPlace == MOUNTAIN)
@@ -631,7 +631,7 @@ void MortevielleEngine::fctOpen() {
 			tmpPlace = _coreVar._currPlace;
 			if (_coreVar._currPlace == CRYPT)
 				tmpPlace = CELLAR;
-			_crep = _tabdon[aouvr + (tmpPlace * 7) + _num - 1];
+			_crep = _tabdon[kAouvr + (tmpPlace * 7) + _num - 1];
 			if (_crep == 254)
 				_crep = 999;
 		} else
@@ -1474,8 +1474,8 @@ void MortevielleEngine::fctDiscuss() {
 					_coreVar._faithScore += (3 * (_coreVar._faithScore / 10));
 				}
 			} else if (_nbrep[_caff - 69] < _nbrepm[_caff - 69]) {
-				suj = _tabdon[arep + (ix << 3) + (_caff - 70)];
-				_coreVar._faithScore += _tabdon[arcf + ix];
+				suj = _tabdon[kArep + (ix << 3) + (_caff - 70)];
+				_coreVar._faithScore += _tabdon[kArcf + ix];
 				++_nbrep[_caff - 69];
 			} else {
 				_coreVar._faithScore += 3;

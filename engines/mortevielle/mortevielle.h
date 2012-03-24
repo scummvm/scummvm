@@ -110,13 +110,13 @@ const int kAcha = 492;
 const int kAdrDes = 0x7000;
 const int kFleche = 1758;
 
-const int asoul = 154;
-const int aouvr = 282;
-const int achai = 387;
-const int arcf = 1272;
-const int arep = 1314;
-const int amzon = 1650;
-const int arega = 0;
+const int kAsoul = 154;
+const int kAouvr = 282;
+const int kAchai = 387;
+const int kArcf = 1272;
+const int kArep = 1314;
+const int kAmzon = 1650;
+const int kArega = 0;
 
 const int kMaxTi = 7975;
 const int kMaxTd = 600;
