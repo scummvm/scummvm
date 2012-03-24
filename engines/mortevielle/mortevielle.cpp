@@ -1256,7 +1256,7 @@ int MortevielleEngine::setPresenceDiningRoom(int hour) {
 	int retVal = 0;
 
 	if ((hour >= 0) && (hour < 8))
-		retVal = chlm();
+		retVal = checkLeoMaxRandomPresence();
 	else {
 		int min = 0, max = 0;
 		if ((hour > 7) && (hour < 10)) {
@@ -1287,7 +1287,7 @@ int MortevielleEngine::setPresenceBureau(int hour) {
 	int retVal = 0;
 
 	if ((hour >= 0) && (hour < 8))
-		retVal = chlm();
+		retVal = checkLeoMaxRandomPresence();
 	else {
 		int min = 0, max = 0;
 		if (((hour > 7) && (hour < 10)) || ((hour > 20) && (hour < 24))) {
@@ -1312,7 +1312,7 @@ int MortevielleEngine::setPresenceBureau(int hour) {
  * @remarks	Originally called 'quelq12'
  */
 int MortevielleEngine::setPresenceKitchen() {
-	int retVal = chlm();
+	int retVal = checkLeoMaxRandomPresence();
 	showPeoplePresent(retVal);
 
 	return retVal;
@@ -1351,7 +1351,7 @@ int MortevielleEngine::setPresenceChapel(int hour) {
 	int retVal = 0;
 
 	if (((hour >= 0) && (hour < 10)) || ((hour > 18) && (hour < 24)))
-		retVal = chlm();
+		retVal = checkLeoMaxRandomPresence();
 	else {
 		int min = 0, max = 0;
 		if ((hour > 9) && (hour < 12)) {
@@ -1892,7 +1892,7 @@ void MortevielleEngine::gameLoaded() {
 	_menu.setDestinationMenuText(_coreVar._currPlace);
 	modinv();
 	if (_coreVar._selectedObjectId != 0)
-		modobj(_coreVar._selectedObjectId + 400);
+		displayItemInHand(_coreVar._selectedObjectId + 400);
 	_mouse.showMouse();
 }
 
@@ -2733,8 +2733,8 @@ void MortevielleEngine::drawClock() {
 
 	_mouse.hideMouse();
 	
-	paint_rect(570, 118, 20, 10);
-	paint_rect(578, 114, 6, 18);
+	_screenSurface.drawRectangle(570, 118, 20, 10);
+	_screenSurface.drawRectangle(578, 114, 6, 18);
 	if ((_currGraphicalDevice == MODE_CGA) || (_currGraphicalDevice == MODE_HERCULES))
 		co = 0;
 	else
@@ -2796,9 +2796,13 @@ void MortevielleEngine::hirs() {
 	// method is deprecated in favour of clearing the screen
 	debugC(1, kMortevielleCore, "TODO: hirs is deprecated in favour of ScreenSurface::clearScreen");
 
-	if (_currGraphicalDevice == MODE_CGA)
+	if (_currGraphicalDevice == MODE_TANDY) {
+		_screenSurface.fillRect(0, Common::Rect(0, 0, 639, 200));
 		_res = 1;
-	else
+	} else if (_currGraphicalDevice == MODE_CGA) {
+		palette(1);
+		_res = 1;
+	} else
 		_res = 2;
 
 	_screenSurface.clearScreen();
@@ -3023,6 +3027,130 @@ void MortevielleEngine::ecr3(Common::String text) {
 	clearScreenType3();
 	_screenSurface.putxy(8, 192);
 	_screenSurface.drawString(text, 5);
+}
+
+/**
+ * Display item in hand
+ * @remarks	Originally called 'modobj'
+ */
+void MortevielleEngine::displayItemInHand(int objId) {
+	Common::String strp = Common::String(' ');
+
+	if (objId != 500)
+		strp = getString(objId - 501 + kInventoryStringIndex);
+
+	_menu.setText(_menu._inventoryMenu[8], strp);
+	_menu.disableMenuItem(_menu._inventoryMenu[8]);
+}
+
+/**
+ * Display empty hand
+ * @remarks	Originally called 'maivid'
+ */
+void MortevielleEngine::displayEmptyHand() {
+	_coreVar._selectedObjectId = 0;
+	displayItemInHand(500);
+}
+
+/**
+ * Set a random presence: Leo or Max
+ * @remarks	Originally called 'chlm'
+ */
+int MortevielleEngine::checkLeoMaxRandomPresence() {
+	int retval = getRandomNumber(1, 2);
+	if (retval == 2)
+		retval = 128;
+	
+	return retval;
+}
+
+/**
+ * Reset room variables
+ * @remarks	Originally called 'debloc'
+ */
+void MortevielleEngine::resetRoomVariables(int roomId) {
+	_num = 0;
+	_x = 0;
+	_y = 0;
+	if ((roomId != ROOM26) && (roomId != LANDING))
+		resetPresenceInRooms(roomId);
+	_savedBitIndex = _currBitIndex;
+}
+
+/**
+ * Compute presence stats
+ * @remarks	Originally called 'ecfren'
+ */
+int MortevielleEngine::getPresenceStats(int &rand, int cf, int roomId) {
+	if (roomId == OWN_ROOM)
+		displayAloneText();
+	int retVal = -500;
+	rand = 0;
+	if ( ((roomId == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda))
+	  || ((roomId == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)) )
+		retVal = getPresenceStatsGreenRoom();
+	if ((roomId == PURPLE_ROOM) && (!_purpleRoomPresenceLeo) && (!_room9PresenceLeo))
+		retVal = getPresenceStatsPurpleRoom();
+	if ( ((roomId == TOILETS) && (!_toiletsPresenceBobMax))
+	  || ((roomId == BATHROOM) && (!_bathRoomPresenceBobMax)) )
+		retVal = getPresenceStatsToilets();
+	if ((roomId == BLUE_ROOM) && (!_roomPresenceMax))
+		retVal = getPresenceStatsBlueRoom();
+	if ( ((roomId == RED_ROOM) && (!_roomPresenceBob))
+	  || ((roomId == GREEN_ROOM2) && (!_roomPresencePat)))
+		retVal = getPresenceStatsRedRoom();
+	if ((roomId == ROOM9) && (!_room9PresenceLeo) && (!_purpleRoomPresenceLeo))
+		retVal = 10;
+	if ( ((roomId == PURPLE_ROOM) && (_room9PresenceLeo))
+	  || ((roomId == ROOM9) && (_purpleRoomPresenceLeo)))
+		retVal = -400;
+	if (retVal != -500) {
+		retVal += cf;
+		rand = getRandomNumber(1, 100);
+	}
+
+	return retVal;
+}
+
+/**
+ * Set presence flags
+ * @remarks	Originally called 'becfren'
+ */
+void MortevielleEngine::setPresenceFlags(int roomId) {
+	if ((roomId == GREEN_ROOM) || (roomId == DARKBLUE_ROOM)) {
+		int rand = g_vm->getRandomNumber(1, 2);
+		if (roomId == GREEN_ROOM) {
+			if (rand == 1)
+				g_vm->_roomPresenceLuc = true;
+			else
+				g_vm->_roomPresenceIda = true;
+		} else { // roomId == DARKBLUE_ROOM
+			if (rand == 1)
+				g_vm->_roomPresenceGuy = true;
+			else
+				g_vm->_roomPresenceEva = true;
+		}
+	} else if (roomId == PURPLE_ROOM)
+		g_vm->_purpleRoomPresenceLeo = true;
+	else if (roomId == TOILETS)
+		g_vm->_toiletsPresenceBobMax = true;
+	else if (roomId == BLUE_ROOM)
+		g_vm->_roomPresenceMax = true;
+	else if (roomId == RED_ROOM)
+		g_vm->_roomPresenceBob = true;
+	else if (roomId == BATHROOM)
+		g_vm->_bathRoomPresenceBobMax = true;
+	else if (roomId == GREEN_ROOM2)
+		g_vm->_roomPresencePat = true;
+	else if (roomId == ROOM9)
+		g_vm->_room9PresenceLeo = true;
+}
+
+void MortevielleEngine::init_nbrepm() {
+	static const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
+
+	for (int idx = 0; idx < 9; ++idx)
+		g_vm->_nbrepm[idx] = ipm[idx];
 }
 
 } // End of namespace Mortevielle

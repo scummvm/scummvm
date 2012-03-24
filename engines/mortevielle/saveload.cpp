@@ -119,7 +119,7 @@ void SavegameManager::loadSavegame(int n) {
  */
 Common::Error SavegameManager::loadGame(int n) {
 	g_vm->_mouse.hideMouse();
-	maivid();
+	g_vm->displayEmptyHand();
 	loadSavegame(n);
 	
 	/* Initialization */

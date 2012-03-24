@@ -173,7 +173,7 @@ void MortevielleEngine::fctMove() {
 	}
 	if ((menuChoice < 5) || (menuChoice == 13) || (menuChoice == 14))
 		affrep();
-	debloc(_coreVar._currPlace);
+	resetRoomVariables(_coreVar._currPlace);
 	_menu.setDestinationMenuText(_coreVar._currPlace);
 }
 
@@ -693,7 +693,7 @@ void MortevielleEngine::fctPlace() {
 					aniof(1, 2);
 					aniof(1, 1);
 					repon(2, 165);
-					maivid();
+					displayEmptyHand();
 					_speechManager.startSpeech(6, -9, 1);
 
 					// Do you want to enter the hidden passage?
@@ -772,7 +772,7 @@ void MortevielleEngine::fctPlace() {
 		}
 
 		if (_crep != 188)
-			maivid();
+			displayEmptyHand();
 	}
 }
 
@@ -856,7 +856,7 @@ void MortevielleEngine::fctAttach() {
 					aniof(1, 1);
 				} else
 					_crep = 185;
-				maivid();
+				displayEmptyHand();
 			}
 		}
 	}
@@ -930,15 +930,14 @@ void MortevielleEngine::fctKnock() {
 	if (_coreVar._currPlace == ROOM26) {
 		int rand = (getRandomNumber(0, 8)) - 4;
 		_speechManager.startSpeech(11, rand, 1);
-		int p;
-		ecfren(p, rand, _coreVar._faithScore, _ment);
+		int p = getPresenceStats(rand, _coreVar._faithScore, _ment);
 		int l = _ment;
 		if (l != 0) {
 			if (p != -500) {
 				if (rand > p)
 					_crep = 190;
 				else {
-					becfren(l);
+					setPresenceFlags(l);
 					getKnockAnswer();
 				}
 			} else
@@ -964,7 +963,7 @@ void MortevielleEngine::fctSelfPut() {
 			_crep = 999;
 			ajchai();
 			if (_crep != 192)
-				maivid();
+				displayEmptyHand();
 			return;
 		}
 		tfleche();
@@ -1039,7 +1038,7 @@ void MortevielleEngine::fctSelfPut() {
 			if (_crep == 999)
 				ajchai();
 			if (_crep != 192)
-				maivid();
+				displayEmptyHand();
 		}
 	}
 }
@@ -1054,15 +1053,15 @@ void MortevielleEngine::fctListen() {
 	else {
 		if (_currBitIndex != 0)
 			++_coreVar._faithScore;
-		int p, rand;
-		ecfren(p, rand, _coreVar._faithScore, _ment);
+		int rand;
+		int p = getPresenceStats(rand, _coreVar._faithScore, _ment);
 		int l = _ment;
 		if (l != 0) {
 			if (p != -500) {
 				if (rand > p)
 					_crep = 101;
 				else {
-					becfren(l);
+					setPresenceFlags(l);
 					int j, h, m;
 					updateHour(j, h, m);
 					rand = getRandomNumber(1, 100);
@@ -1093,7 +1092,7 @@ void MortevielleEngine::fctEat() {
 		tsort();
 		_coreVar._currPlace = DINING_ROOM;
 		_caff = 10;
-		debloc(_coreVar._currPlace);
+		resetRoomVariables(_coreVar._currPlace);
 		_menu.setDestinationMenuText(_coreVar._currPlace);
 
 		int j, h, m;
@@ -1163,7 +1162,7 @@ void MortevielleEngine::fctEnter() {
 					repon(2, _caff);
 				} else
 					_col = false;
-				debloc(_ment);
+				resetRoomVariables(_ment);
 				_ment = 0;
 			}
 		} else {
@@ -1173,7 +1172,7 @@ void MortevielleEngine::fctEnter() {
 			
 			_coreVar._currPlace = _ment;
 			affrep();
-			debloc(_coreVar._currPlace);
+			resetRoomVariables(_coreVar._currPlace);
 			_menu.setDestinationMenuText(_coreVar._currPlace);
 			_ment = 0;
 			_savedBitIndex = 0;
@@ -1198,7 +1197,7 @@ void MortevielleEngine::fctSleep() {
 		_coreVar._currPlace = OWN_ROOM;
 		affrep();
 		afdes();
-		debloc(_coreVar._currPlace);
+		resetRoomVariables(_coreVar._currPlace);
 		_menu.setDestinationMenuText(_coreVar._currPlace);
 	}
 	clearScreenType3();
@@ -1281,7 +1280,7 @@ void MortevielleEngine::fctLeave() {
 		_caff = nextPlace;
 		if (_crep == 0)
 			_crep = nextPlace;
-		debloc(nextPlace);
+		resetRoomVariables(nextPlace);
 		_menu.setDestinationMenuText(nextPlace);
 	}
 }
@@ -1571,7 +1570,7 @@ void MortevielleEngine::fctScratch() {
 void MortevielleEngine::endGame() {
 	_quitGame = true;
 	tlu(13, 152);
-	maivid();
+	displayEmptyHand();
 	clearScreenType1();
 	clearScreenType2();
 	clearScreenType3();
@@ -1610,7 +1609,7 @@ void MortevielleEngine::askRestart() {
 	clearScreenType2();
 	startMusicOrSpeech(0);
 	tkey1(false);
-	maivid();
+	displayEmptyHand();
 	resetVariables();
 	initGame();
 	_currHour = 10;

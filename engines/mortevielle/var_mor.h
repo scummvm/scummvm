@@ -101,6 +101,8 @@ enum places {
 	DOOR = 25,        ROOM26 = 26,      ROOM27 = 27
 };
 
+enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCULES = 3, MODE_TANDY = 4 };
+
 struct Rect {
 	int _x1, _x2, _y1, _y2;
 	bool _enabled;
@@ -108,12 +110,6 @@ struct Rect {
 
 typedef int tablint[256];
 typedef int tfxx[108];
-
-/*---------------------------------------------------------------------------*/
-/*------------------------------     ENUMS     ------------------------------*/
-/*---------------------------------------------------------------------------*/
-
-enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCULES = 3, MODE_TANDY = 4 };
 
 } // End of namespace Mortevielle
 

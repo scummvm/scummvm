@@ -42,19 +42,7 @@ static const int _actionMenu[12] = { OPCODE_NONE,
 		OPCODE_PLACE, OPCODE_OPEN,   OPCODE_LEAVE
 };
 
-/* NIVEAU 13 */
-extern void paint_rect(int x, int y, int dx, int dy);
-/* NIVEAU 12 */
-extern void modobj(int m);
-extern int chlm();
-/*************
- * NIVEAU 11 *
- *************/
-extern void debloc(int roomId);
-extern void ecfren(int &p, int &rand, int cf, int roomId);
-extern void becfren(int roomId);
 /* NIVEAU 10 */
-extern void init_nbrepm();
 extern void phaz(int &rand, int &p, int cf);
 extern int t11(int roomId);
 extern void writetp(Common::String s, int t);
@@ -86,7 +74,6 @@ extern void treg(int ob);
 extern void avpoing(int &ob);
 extern void rechai(int &ch);
 extern int t23coul();
-extern void maivid();
 extern void st13(int ob);
 
 extern void sauvecr(int y, int dy);

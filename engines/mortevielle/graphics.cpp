@@ -1143,4 +1143,19 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 	}
 }
 
+/**
+ * Draw plain rectangle
+ * @remarks	Originally called 'paint_rect'
+ */
+void ScreenSurface::drawRectangle(int x, int y, int dx, int dy) {
+	int co;
+
+	if (g_vm->_currGraphicalDevice == MODE_CGA)
+		co = 3;
+	else
+		co = 11;
+	g_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
+}
+
+
 } // End of namespace Mortevielle
