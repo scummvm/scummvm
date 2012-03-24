@@ -35,10 +35,15 @@ namespace Mortevielle {
 
 const int kAdrAni = 0x7314;
 
-extern void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
-extern void chardes(Common::String filename, int32 passe, int long_);
-extern void charani(Common::String filename, int32 skipSize, int length);
-extern void taffich();
+class TextHandler {
+private:
+	int  nextWord(int p, const char *ch, int &tab);
+public:
+	void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
+	void loadDesFile(Common::String filename, int32 passe, int long_);
+	void loadAniFile(Common::String filename, int32 skipSize, int length);
+	void taffich();
+};
 
 } // End of namespace Mortevielle
 #endif

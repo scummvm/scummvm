@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	detection.o \
 	dialogs.o \
 	graphics.o \
-	keyboard.o \
 	menu.o \
 	mortevielle.o \
 	mouse.o \

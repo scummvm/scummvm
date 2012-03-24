@@ -30,7 +30,6 @@
 #include "graphics/pixelformat.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/dialogs.h"
-#include "mortevielle/keyboard.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
@@ -208,10 +207,10 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_soundOff = false;
 	_largestClearScreen = false;
 
-	teskbd();
+	testKeyboard();
 	showConfigScreen();
 	_newGraphicalDevice = _currGraphicalDevice;
-	teskbd();
+	testKeyboard();
 	if (_newGraphicalDevice != _currGraphicalDevice)
 		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
@@ -693,7 +692,7 @@ void MortevielleEngine::handleAction() {
 					handleOpcode();
 
 				if ((_controlMenu == 0) && (! _loseGame) && (! _endGame)) {
-					taffich();
+					g_vm->_text.taffich();
 					if (_okdes) {
 						_okdes = false;
 						dessin();
@@ -1706,7 +1705,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 
 	_mouse.hideMouse();
 	Common::String dialogStr = getString(rep + kDialogStringIndex);
-	displayStr(dialogStr, 230, 4, 65, 24, 5);
+	_text.displayStr(dialogStr, 230, 4, 65, 24, 5);
 	f3f8::draw();
 	
 	key = 0;
@@ -2512,8 +2511,8 @@ void MortevielleEngine::showTitleScreen() {
 	hirs();
 	repon(7, 2035);
 	_caff = 51;
-	taffich();
-	teskbd();
+	_text.taffich();
+	testKeyboard();
 	if (_newGraphicalDevice != _currGraphicalDevice)
 		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
@@ -2898,7 +2897,7 @@ void MortevielleEngine::text1(int x, int y, int nb, int m) {
 	Common::String tmpStr = getString(m);
 	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
-	displayStr(tmpStr, x, y, nb, 20, _textColor);
+	_text.displayStr(tmpStr, x, y, nb, 20, _textColor);
 }
 
 void MortevielleEngine::repon(int f, int m) {
@@ -2911,7 +2910,7 @@ void MortevielleEngine::repon(int f, int m) {
 			_largestClearScreen = false;
 
 		clearScreenType2();
-		displayStr(tmpStr, 8, 176, 85, 3, 5);
+		_text.displayStr(tmpStr, 8, 176, 85, 3, 5);
 	} else {
 		modif(m);
 		switch (f) {
@@ -2940,7 +2939,7 @@ void MortevielleEngine::repon(int f, int m) {
 				i = 5;
 
 			Common::String tmpStr = getString(m);
-			displayStr(tmpStr, 80, 40, 60, 25, i);
+			_text.displayStr(tmpStr, 80, 40, 60, 25, i);
 
 			if (m == 180)
 				_coreVar._pourc[6] = '*';
@@ -3288,7 +3287,7 @@ void MortevielleEngine::dessin() {
 }
 
 void MortevielleEngine::afdes() {
-	taffich();
+	_text.taffich();
 	dessin();
 	_okdes = false;
 }
@@ -3424,38 +3423,38 @@ void MortevielleEngine::getSearchDescription(int objId) {
 }
 
 void MortevielleEngine::mennor() {
-	g_vm->_menu.menuUp(g_vm->_msg[3]);
+	_menu.menuUp(_msg[3]);
 }
 
 void MortevielleEngine::premtet() {
-	g_vm->draw(kAdrDes, 10, 80);
-	g_vm->_screenSurface.drawBox(18, 79, 155, 91, 15);
+	draw(kAdrDes, 10, 80);
+	_screenSurface.drawBox(18, 79, 155, 91, 15);
 }
 
 void MortevielleEngine::ajchai() {
-	int cy = kAcha + ((g_vm->_mchai - 1) * 10) - 1;
+	int cy = kAcha + ((_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;
-	} while ((cx <= 9) && (g_vm->_tabdon[cy + cx] != 0));
+	} while ((cx <= 9) && (_tabdon[cy + cx] != 0));
 
-	if (g_vm->_tabdon[cy + cx] == 0)
-		g_vm->_tabdon[cy + cx] = g_vm->_coreVar._selectedObjectId;
+	if (_tabdon[cy + cx] == 0)
+		_tabdon[cy + cx] = _coreVar._selectedObjectId;
 	else
-		g_vm->_crep = 192;
+		_crep = 192;
 }
 
 void MortevielleEngine::ajjer(int ob) {
 	int cx = 0;
 	do {
 		++cx;
-	} while ((cx <= 5) && (ord(g_vm->_coreVar._sjer[cx]) != 0));
+	} while ((cx <= 5) && (ord(_coreVar._sjer[cx]) != 0));
 
-	if (ord(g_vm->_coreVar._sjer[cx]) == 0) {
-		g_vm->_coreVar._sjer[(cx)] = chr(ob);
-		g_vm->_menu.setInventoryText();
+	if (ord(_coreVar._sjer[cx]) == 0) {
+		_coreVar._sjer[(cx)] = chr(ob);
+		_menu.setInventoryText();
 	} else
-		g_vm->_crep = 139;
+		_crep = 139;
 }
 
 /**
@@ -3463,77 +3462,77 @@ void MortevielleEngine::ajjer(int ob) {
  * @remarks	Originally called 'quelquun'
  */
 void MortevielleEngine::interactNPC() {
-	if (g_vm->_menu._menuDisplayed)
-		g_vm->_menu.eraseMenu();
+	if (_menu._menuDisplayed)
+		_menu.eraseMenu();
 
-	g_vm->endSearch();
-	g_vm->_crep = 997;
+	endSearch();
+	_crep = 997;
 L1:
-	if (!g_vm->_hiddenHero) {
-		if (g_vm->_crep == 997)
-			g_vm->_crep = 138;
-		g_vm->repon(2, g_vm->_crep);
-		if (g_vm->_crep == 138)
-			g_vm->_speechManager.startSpeech(5, 2, 1);
+	if (!_hiddenHero) {
+		if (_crep == 997)
+			_crep = 138;
+		repon(2, _crep);
+		if (_crep == 138)
+			_speechManager.startSpeech(5, 2, 1);
 		else
-			g_vm->_speechManager.startSpeech(4, 4, 1);
+			_speechManager.startSpeech(4, 4, 1);
 
-		if (g_vm->_iouv == 0)
-			g_vm->_coreVar._faithScore += 2;
-		else if (g_vm->_coreVar._faithScore < 50)
-			g_vm->_coreVar._faithScore += 4;
+		if (_iouv == 0)
+			_coreVar._faithScore += 2;
+		else if (_coreVar._faithScore < 50)
+			_coreVar._faithScore += 4;
 		else
-			g_vm->_coreVar._faithScore += 3 * (g_vm->_coreVar._faithScore / 10);
-		g_vm->exitRoom();
-		g_vm->_menu.setDestinationText(LANDING);
-		int cx = g_vm->convertBitIndexToCharacterIndex(g_vm->_currBitIndex);
-		g_vm->_caff = 69 + cx;
-		g_vm->_crep = g_vm->_caff;
-		g_vm->_msg[3] = MENU_DISCUSS;
-		g_vm->_msg[4] = g_vm->_menu._discussMenu[cx];
-		g_vm->_syn = true;
-		g_vm->_col = true;
+			_coreVar._faithScore += 3 * (_coreVar._faithScore / 10);
+		exitRoom();
+		_menu.setDestinationText(LANDING);
+		int cx = convertBitIndexToCharacterIndex(_currBitIndex);
+		_caff = 69 + cx;
+		_crep = _caff;
+		_msg[3] = MENU_DISCUSS;
+		_msg[4] = _menu._discussMenu[cx];
+		_syn = true;
+		_col = true;
 	} else {
-		if (g_vm->getRandomNumber(1, 3) == 2) {
-			g_vm->_hiddenHero = false;
-			g_vm->_crep = 137;
+		if (getRandomNumber(1, 3) == 2) {
+			_hiddenHero = false;
+			_crep = 137;
 			goto L1;
 		} else {
-			g_vm->repon(2, 136);
-			int rand = (g_vm->getRandomNumber(0, 4)) - 2;
-			g_vm->_speechManager.startSpeech(3, rand, 1);
-			g_vm->clearScreenType2();
-			g_vm->displayAloneText();
-			g_vm->resetRoomVariables(MANOR_FRONT);
-			g_vm->affrep();
+			repon(2, 136);
+			int rand = (getRandomNumber(0, 4)) - 2;
+			_speechManager.startSpeech(3, rand, 1);
+			clearScreenType2();
+			displayAloneText();
+			resetRoomVariables(MANOR_FRONT);
+			affrep();
 		}
 	}
-	if (g_vm->_menu._menuDisplayed)
-		g_vm->_menu.drawMenu();
+	if (_menu._menuDisplayed)
+		_menu.drawMenu();
 }
 
 void MortevielleEngine::tsuiv() {
 	int tbcl;
-	int cy = kAcha + ((g_vm->_mchai - 1) * 10) - 1;
+	int cy = kAcha + ((_mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;
-		++g_vm->_cs;
-		int cl = cy + g_vm->_cs;
-		tbcl = g_vm->_tabdon[cl];
-	} while ((tbcl == 0) && (g_vm->_cs <= 9));
+		++_cs;
+		int cl = cy + _cs;
+		tbcl = _tabdon[cl];
+	} while ((tbcl == 0) && (_cs <= 9));
 
-	if ((tbcl != 0) && (g_vm->_cs < 11)) {
-		++g_vm->_is;
-		g_vm->_caff = tbcl;
-		g_vm->_crep = g_vm->_caff + 400;
-		if (g_vm->_currBitIndex != 0)
-			g_vm->_coreVar._faithScore += 2;
+	if ((tbcl != 0) && (_cs < 11)) {
+		++_is;
+		_caff = tbcl;
+		_crep = _caff + 400;
+		if (_currBitIndex != 0)
+			_coreVar._faithScore += 2;
 	} else {
-		g_vm->affrep();
-		g_vm->endSearch();
+		affrep();
+		endSearch();
 		if (cx > 9)
-			g_vm->_crep = 131;
+			_crep = 131;
 	}
 }
 
@@ -3541,7 +3540,7 @@ void MortevielleEngine::tfleche() {
 	bool qust;
 	char touch;
 
-	if (g_vm->_num == 9999)
+	if (_num == 9999)
 		return;
 
 	fenat(chr(152));
@@ -3550,24 +3549,24 @@ void MortevielleEngine::tfleche() {
 		touch = '\0';
 
 		do {
-			g_vm->_mouse.moveMouse(qust, touch);
+			_mouse.moveMouse(qust, touch);
 			CHECK_QUIT;
 
-			if (g_vm->getMouseClick())
-				inRect = (g_vm->_mouse._pos.x < 256 * g_vm->_res) && (g_vm->_mouse._pos.y < 176) && (g_vm->_mouse._pos.y > 12);
-			g_vm->prepareRoom();
-		} while (!(qust || inRect || g_vm->_anyone));
+			if (getMouseClick())
+				inRect = (_mouse._pos.x < 256 * _res) && (_mouse._pos.y < 176) && (_mouse._pos.y > 12);
+			prepareRoom();
+		} while (!(qust || inRect || _anyone));
 
 		if (qust && (touch == '\103'))
-			Alert::show(g_vm->_hintPctMessage, 1);
-	} while (!((touch == '\73') || ((touch == '\104') && (g_vm->_x != 0) && (g_vm->_y != 0)) || (g_vm->_anyone) || (inRect)));
+			Alert::show(_hintPctMessage, 1);
+	} while (!((touch == '\73') || ((touch == '\104') && (_x != 0) && (_y != 0)) || (_anyone) || (inRect)));
 
 	if (touch == '\73')
-		g_vm->_keyPressedEsc = true;
+		_keyPressedEsc = true;
 
 	if (inRect) {
-		g_vm->_x = g_vm->_mouse._pos.x;
-		g_vm->_y = g_vm->_mouse._pos.y;
+		_x = _mouse._pos.x;
+		_y = _mouse._pos.y;
 	}
 }
 
@@ -3580,92 +3579,92 @@ void MortevielleEngine::setCoordinates(int sx) {
 	int ib;
 
 
-	g_vm->_num = 0;
-	g_vm->_crep = 999;
+	_num = 0;
+	_crep = 999;
 	int a = 0;
 	int atdon = amzon + 3;
 	int cy = 0;
-	while (cy < g_vm->_caff) {
-		a += g_vm->_tabdon[atdon];
+	while (cy < _caff) {
+		a += _tabdon[atdon];
 		atdon += 4;
 		++cy;
 	}
 
-	if (g_vm->_tabdon[atdon] == 0) {
-		g_vm->_crep = 997;
+	if (_tabdon[atdon] == 0) {
+		_crep = 997;
 		return;
 	}
 
 	a += kFleche;
 	int cb = 0;
 	for (cy = 0; cy <= (sx - 2); ++cy) {
-		ib = (g_vm->_tabdon[a + cb] << 8) + g_vm->_tabdon[(a + cb + 1)];
+		ib = (_tabdon[a + cb] << 8) + _tabdon[(a + cb + 1)];
 		cb += (ib * 4) + 2;
 	}
-	ib = (g_vm->_tabdon[a + cb] << 8) + g_vm->_tabdon[(a + cb + 1)];
+	ib = (_tabdon[a + cb] << 8) + _tabdon[(a + cb + 1)];
 	if (ib == 0) {
-		g_vm->_crep = 997;
+		_crep = 997;
 		return;
 	}
 
 	cy = 1;
 	do {
 		cb += 2;
-		sx = g_vm->_tabdon[a + cb] * g_vm->_res;
-		sy = g_vm->_tabdon[(a + cb + 1)];
+		sx = _tabdon[a + cb] * _res;
+		sy = _tabdon[(a + cb + 1)];
 		cb += 2;
-		ix = g_vm->_tabdon[a + cb] * g_vm->_res;
-		iy = g_vm->_tabdon[(a + cb + 1)];
+		ix = _tabdon[a + cb] * _res;
+		iy = _tabdon[(a + cb + 1)];
 		++cy;
-	} while (!(((g_vm->_x >= sx) && (g_vm->_x <= ix) && (g_vm->_y >= sy) && (g_vm->_y <= iy)) || (cy > ib)));
+	} while (!(((_x >= sx) && (_x <= ix) && (_y >= sy) && (_y <= iy)) || (cy > ib)));
 
-	if ((g_vm->_x >= sx) && (g_vm->_x <= ix) && (g_vm->_y >= sy) && (g_vm->_y <= iy)) {
-		g_vm->_num = cy - 1;
+	if ((_x >= sx) && (_x <= ix) && (_y >= sy) && (_y <= iy)) {
+		_num = cy - 1;
 		return;
 	}
 
-	g_vm->_crep = 997;
+	_crep = 997;
 }
 
 void MortevielleEngine::treg(int objId) {
-	int mdes = g_vm->_caff;
-	g_vm->_caff = objId;
+	int mdes = _caff;
+	_caff = objId;
 
-	if (((g_vm->_caff > 29) && (g_vm->_caff < 33)) || (g_vm->_caff == 144) || (g_vm->_caff == 147) || (g_vm->_caff == 149) || (g_vm->_msg[4] == OPCODE_SLOOK)) {
-		g_vm->afdes();
-		if ((g_vm->_caff > 29) && (g_vm->_caff < 33))
-			g_vm->repon(2, g_vm->_caff);
+	if (((_caff > 29) && (_caff < 33)) || (_caff == 144) || (_caff == 147) || (_caff == 149) || (_msg[4] == OPCODE_SLOOK)) {
+		afdes();
+		if ((_caff > 29) && (_caff < 33))
+			repon(2, _caff);
 		else
-			g_vm->repon(2, g_vm->_caff + 400);
-		g_vm->testKey(true);
-		g_vm->_caff = mdes;
-		g_vm->_msg[3] = 0;
-		g_vm->_crep = 998;
+			repon(2, _caff + 400);
+		testKey(true);
+		_caff = mdes;
+		_msg[3] = 0;
+		_crep = 998;
 	} else {
-		g_vm->_obpart = true;
-		g_vm->_crep = g_vm->_caff + 400;
-		g_vm->_menu.setSearchMenu();
+		_obpart = true;
+		_crep = _caff + 400;
+		_menu.setSearchMenu();
 	}
 }
 
 void MortevielleEngine::avpoing(int &objId) {
-	g_vm->_crep = 999;
-	if (g_vm->_coreVar._selectedObjectId != 0)
-		g_vm->ajjer(g_vm->_coreVar._selectedObjectId);
+	_crep = 999;
+	if (_coreVar._selectedObjectId != 0)
+		ajjer(_coreVar._selectedObjectId);
 
-	if (g_vm->_crep != 139) {
-		g_vm->displayItemInHand(objId + 400);
-		g_vm->_coreVar._selectedObjectId = objId;
+	if (_crep != 139) {
+		displayItemInHand(objId + 400);
+		_coreVar._selectedObjectId = objId;
 		objId = 0;
 	}
 }
 
 void MortevielleEngine::rechai(int &ch) {
-	int tmpPlace = g_vm->_coreVar._currPlace;
+	int tmpPlace = _coreVar._currPlace;
 
-	if (g_vm->_coreVar._currPlace == CRYPT)
+	if (_coreVar._currPlace == CRYPT)
 		tmpPlace = CELLAR;
-	ch = g_vm->_tabdon[achai + (tmpPlace * 7) + g_vm->_num - 1];
+	ch = _tabdon[achai + (tmpPlace * 7) + _num - 1];
 }
 
 /**
@@ -3673,9 +3672,9 @@ void MortevielleEngine::rechai(int &ch) {
  * @remarks	Originally called 't23coul'
  */
 int MortevielleEngine::checkLeaveSecretPassage() {
-	if (!g_vm->checkInventory(143)) {
-		g_vm->_crep = 1512;
-		g_vm->loseGame();
+	if (!checkInventory(143)) {
+		_crep = 1512;
+		loseGame();
 	}
 
 	return CELLAR;
@@ -3684,17 +3683,52 @@ int MortevielleEngine::checkLeaveSecretPassage() {
 void MortevielleEngine::fenat(char ans) {
 	int coul;
 
-	g_vm->_mouse.hideMouse();
-	if (g_vm->_currGraphicalDevice == MODE_CGA)
+	_mouse.hideMouse();
+	if (_currGraphicalDevice == MODE_CGA)
 		coul = 2;
-	else if (g_vm->_currGraphicalDevice == MODE_HERCULES)
+	else if (_currGraphicalDevice == MODE_HERCULES)
 		coul = 1;
 	else
 		coul = 12;
 
-	g_vm->_screenSurface.writeCharacter(Common::Point(306, 193), ord(ans), coul);
-	g_vm->_screenSurface.drawBox(300, 191, 16, 8, 15);
-	g_vm->_mouse.showMouse();
+	_screenSurface.writeCharacter(Common::Point(306, 193), ord(ans), coul);
+	_screenSurface.drawBox(300, 191, 16, 8, 15);
+	_mouse.showMouse();
+}
+
+/**
+ * Test Keyboard
+ * @remarks	Originally called 'teskbd'
+ */
+void MortevielleEngine::testKeyboard() {
+	if (keyPressed())
+		testou();
+}
+
+int MortevielleEngine::testou() {
+	char ch = getChar();
+
+	switch (ch)  {
+	case '\23' :
+		_soundOff = !_soundOff;
+		break;
+	case '\26' :
+		if ((_c_zzz == 1) || (_c_zzz == 2)) {
+			decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+			++_c_zzz;
+
+			return 61;
+		}
+		break;
+	case '\33' :
+		if (keyPressed())
+			ch = getChar();
+		break;
+	default:
+		break;
+	}
+
+	return ord(ch);
 }
 
 void MortevielleEngine::sauvecr(int y, int dy) {

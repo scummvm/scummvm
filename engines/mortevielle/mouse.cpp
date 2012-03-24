@@ -69,7 +69,6 @@ void MouseHandler::hideMouse() {
 		case MODE_AMSTRAD1512: {
 			bool imp = odd(_pos.y);
 			for (int i = 0; i <= 3; ++i) {
-				_port[0x3dd] = 1 << i;
 				int k = 0;
 				j = 0;
 				do {
@@ -87,12 +86,8 @@ void MouseHandler::hideMouse() {
 			break;
 			}
 		case MODE_EGA: {
-			_port[0x3c4] = 2;
-			_port[0x3ce] = 8;
-			_port[0x3cf] = 255;
 			int i = 0;
 			do {
-				_port[0x3c5] = 1 << i;
 				int k = 0;
 				j = 0;
 				do {
@@ -167,7 +162,6 @@ void MouseHandler::showMouse() {
 		for (i = 0; i <= 3; ++i) {
 			j = 0;
 			imp = odd(_pos.y);
-			_port[0x3de] = i;
 			k = 0;
 			do {
 				if (imp) {
@@ -184,10 +178,8 @@ void MouseHandler::showMouse() {
 		break;
 		}
 	case MODE_EGA:
-		_port[0x3ce] = 4;
 		l = 0;
 		do {
-			_port[0x3cf] = l;
 			k = 0;
 			j = 0;
 			do {
