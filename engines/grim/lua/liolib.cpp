@@ -163,6 +163,7 @@ static void closefile(const char *name) {
 	f->close();
 	lua_pushobject(lua_getglobal(name));
 	lua_settag(gettag(CLOSEDTAG));
+	delete f;
 }
 
 static void setfile(int32 id, const char *name, int32 tag) {
