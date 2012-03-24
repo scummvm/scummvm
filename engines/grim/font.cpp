@@ -145,6 +145,14 @@ void Font::restoreState(SaveGame *state) {
 	Common::String fname = state->readString();
 	Common::SeekableReadStream *stream;
 
+	g_driver->destroyFont(this);
+	delete[] _fontData;
+	_fontData = NULL;
+	delete[] _charIndex;
+	_charIndex = NULL;
+	delete[] _charHeaders;
+	_charHeaders = NULL;
+
 	stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 	load(fname, stream);
 	delete stream;
