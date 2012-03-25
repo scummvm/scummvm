@@ -159,6 +159,16 @@ protected:
 	const PlainGameDescriptor *_gameids;
 
 	/**
+	 * A table with all the extra game GUI options the engine supports.
+	 */ 
+	const ExtraGuiOption * const _extraGuiOptions;
+
+	/**
+	 * Number of entries in _extraGuiOptions;
+	 */
+	const uint _extraGuiOptionsCount;
+
+	/**
 	 * The number of bytes to compute MD5 sum for. The AdvancedDetector
 	 * is primarily based on computing and matching MD5 checksums of files.
 	 * Since doing that for large files can be slow, it can be restricted
@@ -211,7 +221,7 @@ protected:
 	const char * const *_directoryGlobs;
 
 public:
-	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids);
+	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids, const ExtraGuiOption *extraGuiOptions = 0, const uint extraGuiOptionsCount = 0);
 
 	/**
 	 * Returns list of targets supported by the engine.
@@ -224,6 +234,8 @@ public:
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 
 protected:
 	// To be implemented by subclasses

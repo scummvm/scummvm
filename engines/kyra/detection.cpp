@@ -30,6 +30,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -50,11 +51,76 @@ const char *const directoryGlobs[] = {
 	0
 };
 
+const ExtraGuiOption gameGuiOptions[] = {
+	// Kyrandia 3 options
+
+	// I18N: Studio audience adds an applause and cheering sounds whenever
+	// Malcolm makes a joke.
+	{
+		_s("Studio audience"),
+		_s("Enable studio audience"),
+		"studio_audience",
+		true
+	},
+
+	// I18N: When enabled, this option allows the user to skip text and cutscenes.
+	{
+		_s("Skip support"),
+		_s("Allow text and cutscenes to be skipped"),
+		"skip_support",
+		true
+	},
+
+	// I18N: Helium mode makes people sound like they've inhaled Helium.
+	{
+		_s("Helium mode"),
+		_s("Enable helium mode"),
+		"helium_mode",
+		false
+	},
+
+#ifdef ENABLE_LOL
+	// LoL options
+
+	// I18N: When enabled, this option makes scrolling smoother when changing
+	// from one screen to another.
+	{
+		_s("Smooth scrolling"),
+		_s("Enable smooth scrolling when walking"),
+		"smooth_scrolling",
+		true
+	},
+
+	// I18N: When enabled, this option changes the cursor when it floats to the
+	// edge of the screen to a directional arrow. The player can then click to
+	// walk towards that direction.
+	{
+		_s("Floating cursors"),
+		_s("Enable floating cursors"),
+		"floating_cursors",
+		false
+	},
+#endif
+
+#ifdef ENABLE_EOB
+	// EoB options
+
+	{
+		_s("HP bar graphs"),
+		_s("Enable hit point bar graphs"),
+		"hpbargraphs",
+		true
+	},
+#endif
+
+	{ 0, 0, 0, 0 }
+};
+
 } // End of anonymous namespace
 
 class KyraMetaEngine : public AdvancedMetaEngine {
 public:
-	KyraMetaEngine() : AdvancedMetaEngine(adGameDescs, sizeof(KYRAGameDescription), gameList) {
+	KyraMetaEngine() : AdvancedMetaEngine(adGameDescs, sizeof(KYRAGameDescription), gameList, gameGuiOptions, ARRAYSIZE(gameGuiOptions)) {
 		_md5Bytes = 1024 * 1024;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

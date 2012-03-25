@@ -24,6 +24,7 @@
 
 #include "common/algorithm.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -37,13 +38,32 @@ static const PlainGameDescriptor dreamWebGames[] = {
 	{ 0, 0 }
 };
 
+static const ExtraGuiOption gameGuiOptions[] = {
+	{
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens, instead of the ScummVM ones"),
+		"dreamweb_originalsaveload",
+		false
+	},
+
+	{
+		_s("Use bright palette mode"),
+		_s("Display graphics using the game's bright palette"),
+		"bright_palette",
+		true
+	},
+
+	{ 0, 0, 0, 0 }
+};
+
 #include "dreamweb/detection_tables.h"
 
 class DreamWebMetaEngine : public AdvancedMetaEngine {
 public:
 	DreamWebMetaEngine():
 	AdvancedMetaEngine(DreamWeb::gameDescriptions,
-	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
+	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames,
+	gameGuiOptions, ARRAYSIZE(gameGuiOptions)) {
 		_singleid = "dreamweb";
 		_guioptions = GUIO1(GUIO_NOMIDI);
 	}
