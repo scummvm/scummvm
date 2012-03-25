@@ -825,6 +825,10 @@ void PredictiveDialog::addWordToDict() {
 	}
 }
 
+#ifdef __DS__
+#include "backends/platform/ds/arm9/source/wordcompletion.h"
+#endif
+
 void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict) {
 	int lines = 0;
 
