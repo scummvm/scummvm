@@ -57,9 +57,9 @@ enum {
 };
 
 enum {
-	MAXLINELEN = 80,
-	MAXWORDLEN = 24,
-	MAXWORD = 50
+	kMaxLineLen = 80,
+	kMaxWordLen = 24,
+	kMaxWord = 50
 };
 
 class PredictiveDialog : public GUI::Dialog {
@@ -121,10 +121,10 @@ private:
 	uint32 _curTime, _lastTime;
 	ButtonId _lastPressBtn;
 
-	char _temp[MAXWORDLEN + 1];
-	int _repeatcount[MAXWORDLEN];
+	char _temp[kMaxWordLen + 1];
+	int _repeatcount[kMaxWordLen];
 
-	char *_memoryList[MAXWORD];
+	char *_memoryList[kMaxWord];
 	int _numMemory;
 
 	String _search;

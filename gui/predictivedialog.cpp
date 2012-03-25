@@ -435,7 +435,7 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 					if (_prefix.size())
 						_prefix.deleteLastChar();
 				}
-			} else if (_prefix.size() + _currentCode.size() < MAXWORDLEN - 1) { // don't overflow the dialog line
+			} else if (_prefix.size() + _currentCode.size() < kMaxWordLen - 1) { // don't overflow the dialog line
 				if (button == kBtn0Act) { // zero
 					_currentCode += buttonStr[9];
 				} else {
@@ -465,9 +465,9 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 			if (_mode == kModePre) {
 				if (_unitedDict.dictActLine && _numMatchingWords > 1) {
 					_wordNumber = (_wordNumber + 1) % _numMatchingWords;
-					char tmp[MAXLINELEN];
-					strncpy(tmp, _unitedDict.dictActLine, MAXLINELEN);
-					tmp[MAXLINELEN - 1] = 0;
+					char tmp[kMaxLineLen];
+					strncpy(tmp, _unitedDict.dictActLine, kMaxLineLen);
+					tmp[kMaxLineLen - 1] = 0;
 					char *tok = strtok(tmp, " ");
 					for (uint8 i = 0; i <= _wordNumber; i++)
 						tok = strtok(NULL, " ");
@@ -595,12 +595,12 @@ void PredictiveDialog::bringWordtoTop(char *str, int wordnum) {
 	// by moving the word at position 'wordnum' to the front (that is, right behind
 	// right behind the numerical code word at the start of the line).
 	Common::Array<Common::String> words;
-	char buf[MAXLINELEN];
+	char buf[kMaxLineLen];
 
 	if (!str)
 		return;
-	strncpy(buf, str, MAXLINELEN);
-	buf[MAXLINELEN - 1] = 0;
+	strncpy(buf, str, kMaxLineLen);
+	buf[kMaxLineLen - 1] = 0;
 	char *word = strtok(buf, " ");
 	if (!word) {
 		debug("Predictive Dialog: Invalid dictionary line");
@@ -648,7 +648,7 @@ bool PredictiveDialog::matchWord() {
 		return false;
 
 	// If the currently entered text is too long, it cannot match anything.
-	if (_currentCode.size() > MAXWORDLEN)
+	if (_currentCode.size() > kMaxWordLen)
 		return false;
 
 	// The entries in the dictionary consist of a code, a space, and then
@@ -668,9 +668,9 @@ bool PredictiveDialog::matchWord() {
 	_currentWord.clear();
 	_wordNumber = 0;
 	if (0 == strncmp(_unitedDict.dictLine[line], _currentCode.c_str(), _currentCode.size())) {
-		char tmp[MAXLINELEN];
-		strncpy(tmp, _unitedDict.dictLine[line], MAXLINELEN);
-		tmp[MAXLINELEN - 1] = 0;
+		char tmp[kMaxLineLen];
+		strncpy(tmp, _unitedDict.dictLine[line], kMaxLineLen);
+		tmp[kMaxLineLen - 1] = 0;
 		char *tok = strtok(tmp, " ");
 		tok = strtok(NULL, " ");
 		_currentWord = Common::String(tok, _currentCode.size());
@@ -821,7 +821,7 @@ void PredictiveDialog::addWord(Dict &dict, const String &word, const String &cod
 }
 
 void PredictiveDialog::addWordToDict() {
-	if (_numMemory < MAXWORD) {
+	if (_numMemory < kMaxWord) {
 		addWord(_unitedDict, _currentWord, _currentCode);
 		addWord(_userDict, _currentWord, _currentCode);		
 	} else {
