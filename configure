@@ -2300,8 +2300,10 @@ if test -n "$_host"; then
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
 			_backend="iphone"
-			_build_hq_scalers=no
+			_build_scalers=no
+			_mt32emu=no
 			_seq_midi=no
+			_timidity=no
 			;;
 		m68k-atari-mint)
 			DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2573,7 +2575,6 @@ case $_backend in
 	gph)
 		;;
 	iphone)
-		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		LIBS="$LIBS -framework QuartzCore -framework GraphicsServices -framework CoreFoundation"
 		LIBS="$LIBS -framework Foundation -framework AudioToolbox -framework CoreAudio"
@@ -2690,7 +2691,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | bada | dingux | dreamcast | gph | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dreamcast | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3565,6 +3566,7 @@ fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
+
 
 #
 # Check for nasm

@@ -125,7 +125,7 @@
 		/>
 		<font	id = 'text_normal'
 				file = 'helvb12.bdf'
-				scalable_file = 'FreeSansBold.ttf'
+				scalable_file = 'FreeSans.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_normal'
@@ -398,7 +398,7 @@
 	<!-- Background of the slider widget -->
 	<drawdata id = 'widget_slider' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = '0'
+					stroke = '1'
 					radius = '5'
 					fill = 'foreground'
 					fg_color = 'paleyellow'
@@ -413,7 +413,7 @@
 					stroke = '1'
 					radius = '5'
 					fill = 'gradient'
-					fg_color = '127, 112, 56'
+					fg_color = '123, 112, 56'
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
 		/>
@@ -687,6 +687,7 @@
 					radius = '5'
 					fg_color = 'paleyellow'
 					shadow = '0'
+					stroke = '1'
 					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>

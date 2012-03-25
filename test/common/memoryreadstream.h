@@ -84,4 +84,20 @@ class MemoryReadStreamTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(ms.pos(), 7);
 		TS_ASSERT(!ms.eos());
 	}
+
+	void test_eos() {
+		byte contents[] = { 1, 2, 3, 4, 5, 6, 7 };
+		Common::MemoryReadStream ms(contents, sizeof(contents));
+
+		// Read after the end of the stream
+		for (int32 i = 0; i <= ms.size(); ++i)
+			ms.readByte();
+
+		// The eos flag should be set here
+		TS_ASSERT(ms.eos());
+
+		// Seeking should reset the eos flag
+		ms.seek(0, SEEK_SET);
+		TS_ASSERT(!ms.eos());
+	}
 };

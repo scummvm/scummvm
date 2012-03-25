@@ -22,6 +22,7 @@
 
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/gui_options.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"

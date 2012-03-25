@@ -35,17 +35,17 @@ namespace Common {
 class KeymapperDefaultBindings : HashMap<String, String> {
 public:
 	/**
-	 * This sets a default hwKey for a given Keymap Action
+	 * This sets a default hwInput for a given Keymap Action
 	 * @param keymapId String representing Keymap id (Keymap.name)
 	 * @param actionId String representing Action id (Action.id)
-	 * @param hwKeyId String representing the HardwareKey id (HardwareKey.hwKeyId)
+	 * @param hwInputId String representing the HardwareInput id (HardwareInput.id)
 	 */
-	void setDefaultBinding(String keymapId, String actionId, String hwKeyId) { setVal(keymapId + "_" + actionId, hwKeyId); }
+	void setDefaultBinding(String keymapId, String actionId, String hwInputId) { setVal(keymapId + "_" + actionId, hwInputId); }
 	/**
 	 * This retrieves the assigned default hwKey for a given Keymap Action
 	 * @param keymapId String representing Keymap id (Keymap.name)
 	 * @param actionId String representing Action id (Action.id)
-	 * @return hwKeyId String representing the HardwareKey id (HardwareKey.hwKeyId)
+	 * @return String representing the HardwareInput id (HardwareInput.id)
 	 */
 	String getDefaultBinding(String keymapId, String actionId) { return getVal(keymapId + "_" + actionId); }
 };

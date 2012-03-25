@@ -30,11 +30,11 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
-#include "graphics/imagedec.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/decoders/bmp.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
@@ -620,19 +620,24 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 	if (surf)
 		return true;
 
-	// If not, try to load the bitmap via the ImageDecoder class.
+	// If not, try to load the bitmap via the BitmapDecoder class.
+	Graphics::BitmapDecoder bitmapDecoder;
+	const Graphics::Surface *srcSurface = 0;
 	Common::ArchiveMemberList members;
 	_themeFiles.listMatchingMembers(members, filename);
 	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
-			surf = Graphics::ImageDecoder::loadFile(*stream, _overlayFormat);
+			bitmapDecoder.loadStream(*stream);
+			srcSurface = bitmapDecoder.getSurface();
 			delete stream;
-
-			if (surf)
+			if (srcSurface)
 				break;
 		}
 	}
+
+	if (srcSurface && srcSurface->format.bytesPerPixel != 1)
+		surf = srcSurface->convertTo(_overlayFormat);
 
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;

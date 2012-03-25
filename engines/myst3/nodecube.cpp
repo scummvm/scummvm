@@ -39,8 +39,9 @@ NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 		if (jpegStream) {
-			Graphics::JPEG jpeg;
-			jpeg.read(jpegStream);
+			Graphics::JPEGDecoder jpeg;
+			//FIXME
+			//jpeg.read(jpegStream);
 
 			_faces[i] = new Face(_vm);
 			_faces[i]->setTextureFromJPEG(&jpeg);

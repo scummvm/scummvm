@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/gui_options.h"
 #include "common/util.h"
 #include "common/system.h"
 #include "common/translation.h"

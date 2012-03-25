@@ -44,7 +44,7 @@
 #include "engines/myst3/menu.h"
 #include "engines/myst3/sound.h"
 
-#include "graphics/jpeg.h"
+#include "graphics/decoders/jpeg.h"
 #include "graphics/conversion.h"
 #include "graphics/pixelbuffer.h"
 

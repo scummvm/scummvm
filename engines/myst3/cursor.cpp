@@ -27,7 +27,7 @@
 #include "engines/myst3/state.h"
 
 #include "graphics/surface.h"
-#include "graphics/imagedec.h"
+#include "graphics/decoders/image_decoder.h"
 
 namespace Myst3 {
 
@@ -77,7 +77,8 @@ void Cursor::loadAvailableCursors() {
 			error("Cursor %d does not exist", availableCursors[i].nodeID);
 
 		Common::MemoryReadStream *bmpStream = cursorDesc->getData();
-		Graphics::Surface *surface = Graphics::ImageDecoder::loadFile(*bmpStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		// FIXME:
+		Graphics::Surface *surface;// = Graphics::ImageDecoder::loadFile(*bmpStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 		delete bmpStream;
 
 		// Apply the colorkey for transparency

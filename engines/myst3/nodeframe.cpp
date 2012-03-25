@@ -44,8 +44,9 @@ NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 	if (jpegStream) {
-		Graphics::JPEG jpeg;
-		jpeg.read(jpegStream);
+		Graphics::JPEGDecoder jpeg;
+		//FIXME
+		//jpeg.read(jpegStream);
 
 		_faces[0] = new Face(_vm);
 		_faces[0]->setTextureFromJPEG(&jpeg);

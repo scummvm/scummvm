@@ -36,7 +36,7 @@
 
 #include "common/scummsys.h"
 
-#if defined __MINT__
+#if defined(__MINT__)
 
 #include <osbind.h>
 #include "audio/mpu401.h"

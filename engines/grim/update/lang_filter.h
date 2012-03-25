@@ -24,7 +24,7 @@
 #define LANGFILTER_H
 
 #include "common/archive.h"
-#include "common/util.h"
+#include "common/language.h"
 
 namespace Grim {
 

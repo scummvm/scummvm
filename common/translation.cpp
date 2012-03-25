@@ -232,8 +232,9 @@ bool TranslationManager::openTranslationsFile(File &inFile) {
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "translations.dat");
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		SeekableReadStream *stream = it->get()->createReadStream();
-		if (stream && inFile.open(stream, it->get()->getName())) {
+		ArchiveMember       const &m      = **it;
+		SeekableReadStream *const  stream = m.createReadStream();
+		if (stream && inFile.open(stream, m.getName())) {
 			if (checkHeader(inFile))
 				return true;
 			inFile.close();

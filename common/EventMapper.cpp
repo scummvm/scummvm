@@ -22,6 +22,9 @@
 
 #include "common/events.h"
 
+#include "common/system.h"
+#include "common/textconsole.h"
+
 namespace Common {
 
 List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
@@ -46,9 +49,44 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	// if it didn't get mapped, just pass it through
 	if (mappedEvent.type == EVENT_INVALID)
 		mappedEvent = ev;
+
+#ifdef ENABLE_KEYMAPPER
+	// TODO: this check is not needed post-split
+	if (mappedEvent.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
+		warning("EVENT_CUSTOM_BACKEND_HARDWARE was not mapped");
+		return List<Event>();
+	}
+#endif
+
 	events.push_back(mappedEvent);
 	return events;
 }
 
+
+void DefaultEventMapper::addDelayedEvent(uint32 millis, Event ev) {
+	if (_delayedEvents.empty()) {
+		_delayedEffectiveTime = g_system->getMillis() + millis;
+		millis = 0;
+	}
+	DelayedEventsEntry entry = DelayedEventsEntry(millis, ev);
+	_delayedEvents.push(entry);
+}
+
+List<Event> DefaultEventMapper::getDelayedEvents() {
+	List<Event> events;
+
+	if (_delayedEvents.empty())
+		return events;
+
+	uint32 now = g_system->getMillis();
+
+	while (!_delayedEvents.empty() && now >= _delayedEffectiveTime) {
+		DelayedEventsEntry entry = _delayedEvents.pop();
+		if (!_delayedEvents.empty())
+			_delayedEffectiveTime += _delayedEvents.front().timerOffset;
+		events.push_back(entry.event);
+	}
+	return events;
+}
 
 } // namespace Common

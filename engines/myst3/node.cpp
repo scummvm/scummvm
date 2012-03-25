@@ -33,7 +33,7 @@
 
 namespace Myst3 {
 
-void Face::setTextureFromJPEG(Graphics::JPEG *jpeg) {
+void Face::setTextureFromJPEG(Graphics::JPEGDecoder *jpeg) {
 	_bitmap = new Graphics::Surface();
 	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
@@ -168,8 +168,9 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 
 		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
-		Graphics::JPEG jpeg;
-		jpeg.read(jpegStream);
+		Graphics::JPEGDecoder jpeg;
+		//FIXME
+		//jpeg.read(jpegStream);
 
 		spotItemFace->loadData(&jpeg);
 
@@ -300,7 +301,7 @@ void SpotItemFace::initBlack(uint16 width, uint16 height) {
 	initNotDrawn(width, height);
 }
 
-void SpotItemFace::loadData(Graphics::JPEG *jpeg) {
+void SpotItemFace::loadData(Graphics::JPEGDecoder *jpeg) {
 	// Convert active SpotItem image to raw data
 	_bitmap = new Graphics::Surface();
 	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));

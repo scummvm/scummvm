@@ -1,34 +1,34 @@
 /* ScummVM - Graphic Adventure Engine
- *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
- * file distributed with this source distribution.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+*
+* ScummVM is the legal property of its developers, whose names
+* are too numerous to list here. Please refer to the COPYRIGHT
+* file distributed with this source distribution.
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*
+*/
 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
-#include "backends/platform/sdl/sdl.h"
-#include "backends/keymapper/keymapper.h"
-#include "common/keyboard.h"
+#include "backends/keymapper/hardware-input.h"
 
 #ifdef ENABLE_KEYMAPPER
 
-using namespace Common;
+#include "backends/keymapper/keymapper.h"
 
-static const KeyTableEntry sdlKeys[] = {
+namespace Common {
+
+static const KeyTableEntry defaultKeys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", false},
 	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", false},
 	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", false},
@@ -164,7 +164,7 @@ static const KeyTableEntry sdlKeys[] = {
 	{0, KEYCODE_INVALID, 0, 0, false}
 };
 
-static const ModifierTableEntry sdlModifiers[] = {
+static const ModifierTableEntry defaultModifiers[] = {
 	{ 0, "", "", false },
 	{ KBD_CTRL, "C+", "Ctrl+", false },
 	{ KBD_ALT, "A+", "Alt+", false },
@@ -175,7 +175,121 @@ static const ModifierTableEntry sdlModifiers[] = {
 	{ 0, 0, 0, false }
 };
 
-Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
-	return new HardwareKeySet(sdlKeys, sdlModifiers);
+HardwareInputSet::HardwareInputSet(bool useDefault, const KeyTableEntry *keys, const ModifierTableEntry *modifiers) {
+	if (useDefault)
+		addHardwareInputs(defaultKeys, defaultModifiers);
+	if (keys)
+		addHardwareInputs(keys, modifiers ? modifiers : defaultModifiers);
 }
-#endif
+
+HardwareInputSet::~HardwareInputSet() {
+	List<const HardwareInput *>::const_iterator it;
+
+	for (it = _inputs.begin(); it != _inputs.end(); ++it)
+		delete *it;
+}
+
+void HardwareInputSet::addHardwareInput(const HardwareInput *input) {
+	assert(input);
+
+	debug(8, "Adding hardware input [%s][%s]", input->id.c_str(), input->description.c_str());
+
+	removeHardwareInput(input);
+
+	_inputs.push_back(input);
+}
+
+const HardwareInput *HardwareInputSet::findHardwareInput(String id) const {
+	List<const HardwareInput *>::const_iterator it;
+
+	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
+		if ((*it)->id == id)
+			return (*it);
+	}
+	return 0;
+}
+
+const HardwareInput *HardwareInputSet::findHardwareInput(const HardwareInputCode code) const {
+	List<const HardwareInput *>::const_iterator it;
+
+	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
+		const HardwareInput *entry = *it;
+		if (entry->type == kHardwareInputTypeGeneric && entry->inputCode == code)
+			return entry;
+	}
+	return 0;
+}
+
+const HardwareInput *HardwareInputSet::findHardwareInput(const KeyState& keystate) const {
+	List<const HardwareInput *>::const_iterator it;
+
+	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
+		const HardwareInput *entry = *it;
+		if (entry->type == kHardwareInputTypeKeyboard && entry->key == keystate)
+			return entry;
+	}
+	return 0;
+}
+
+void HardwareInputSet::addHardwareInputs(const HardwareInputTableEntry inputs[]) {
+	for (const HardwareInputTableEntry *entry = inputs; entry->hwId; ++entry)
+		addHardwareInput(new HardwareInput(entry->hwId, entry->code, entry->desc));
+}
+
+void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
+	const KeyTableEntry *key;
+	const ModifierTableEntry *mod;
+	char fullKeyId[50];
+	char fullKeyDesc[100];
+	uint16 ascii;
+
+	for (mod = modifiers; mod->id; mod++) {
+		for (key = keys; key->hwId; key++) {
+			ascii = key->ascii;
+
+			if (mod->shiftable && key->shiftable) {
+				snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
+				snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
+				ascii = toupper(key->ascii);
+			} else if (mod->shiftable) {
+				snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
+				snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
+			} else {
+				snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
+				snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
+			}
+
+			addHardwareInput(new HardwareInput(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc));
+		}
+	}
+}
+
+void HardwareInputSet::removeHardwareInput(const HardwareInput *input) {
+	if (!input)
+		return;
+
+	List<const HardwareInput *>::iterator it;
+
+	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
+		const HardwareInput *entry = (*it);
+		bool match = false;
+		if (entry->id == input->id)
+			match = true;
+		else if (input->type == entry->type) {
+			if (input->type == kHardwareInputTypeGeneric && input->inputCode == entry->inputCode)
+				match = true;
+			else if (input->type == kHardwareInputTypeKeyboard && input->key == entry->key)
+				match = true;
+		}
+		if (match) {
+			debug(7, "Removing hardware input [%s] (%s) because it matches [%s] (%s)", entry->id.c_str(), entry->description.c_str(), input->id.c_str(), input->description.c_str());
+			delete entry;
+			_inputs.erase(it);
+		}
+	}
+}
+
+} //namespace Common
+
+#endif // #ifdef ENABLE_KEYMAPPER
+

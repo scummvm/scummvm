@@ -85,10 +85,10 @@ protected:
 	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
 	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
 
-	Common::String renderType2GUIO(uint32 renderType);
-
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
+	int _midiTabId;
+	int _pathsTabId;
 
 private:
 	//
@@ -192,6 +192,8 @@ public:
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+	virtual void reflowLayout();
 
 protected:
 #ifdef SMALL_SCREEN_DEVICE

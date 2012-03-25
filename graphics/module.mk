@@ -18,6 +18,8 @@ MODULE_OBJS := \
 	VectorRendererSpec.o \
 	yuv_to_rgb.o \
 	yuva_to_rgba.o \
+	decoders/bmp.o \
+	decoders/jpeg.o \
 	pixelbuffer.o \
 	tinygl/api.o \
 	tinygl/arrays.o \

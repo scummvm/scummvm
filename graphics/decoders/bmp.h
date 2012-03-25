@@ -19,11 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef GRAPHICS_IMAGEDEC_H
-#define GRAPHICS_IMAGEDEC_H
+#ifndef GRAPHICS_DECODERS_BMP_H
+#define GRAPHICS_DECODERS_BMP_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "graphics/decoders/image_decoder.h"
 
 namespace Common{
 class SeekableReadStream;
@@ -34,33 +35,22 @@ namespace Graphics {
 struct PixelFormat;
 struct Surface;
 
-class ImageDecoder {
+class BitmapDecoder : public ImageDecoder {
 public:
-	ImageDecoder() {}
-	virtual ~ImageDecoder() {}
+	BitmapDecoder();
+	virtual ~BitmapDecoder();
 
-	static Surface *loadFile(const Common::String &name, const PixelFormat &format);
-	static Surface *loadFile(Common::SeekableReadStream &stream, const PixelFormat &format);
+	// ImageDecoder API
+	void destroy();
+	virtual bool loadStream(Common::SeekableReadStream &stream);
+	virtual const Surface *getSurface() const { return _surface; }
+	virtual const byte *getPalette() { return _palette; }
 
-	/**
-	 * checks if the data can be decoded by this decoder
-	 *
-	 * @param stream memory read stream
-	 * @return true if it can be decoded, otherwise false
-	 */
-	virtual bool decodeable(Common::SeekableReadStream &stream) = 0;
-
-	/**
-	 * decodes the data and returns an pointer to the resulting surface.
-	 * Surface::free() must be called by the user also it must be deleted
-	 * with delete;
-	 *
-	 * @param stream the memory stream which should be decoded
-	 * @param format the pixel format used to generate the surface
-	 * @return returns a new surface if the image could be decoded, otherwise 0
-	 */
-	virtual Surface *decodeImage(Common::SeekableReadStream &stream, const PixelFormat &format) = 0;
+private:
+	Surface *_surface;
+	byte *_palette;
 };
+
 } // End of namespace Graphics
 
 #endif

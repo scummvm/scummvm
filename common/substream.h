@@ -99,21 +99,24 @@ public:
  * normal SeekableSubReadStream, at the cost of seek()ing the parent stream
  * before each read().
  *
- * More than one SafeSubReadStream to the same parent stream can be used
+ * More than one SafeSeekableSubReadStream to the same parent stream can be used
  * at the same time; they won't mess up each other. They will, however,
  * reposition the parent stream, so don't depend on its position to be
- * the same after a read() or seek() on one of its SafeSubReadStream.
+ * the same after a read() or seek() on one of its SafeSeekableSubReadStream.
+ *
+ * Note that this stream is *not* threading safe. Calling read from the audio
+ * thread and from the main thread might mess up the data retrieved.
  */
-class SafeSubReadStream : public SeekableSubReadStream {
+class SafeSeekableSubReadStream : public SeekableSubReadStream {
 public:
- SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO) :
-		SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
+	SafeSeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
+		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
 	}
 
- virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

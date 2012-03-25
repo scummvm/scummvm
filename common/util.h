@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-
 /**
  * Check whether a given pointer is aligned correctly.
  * Note that 'alignment' must be a power of two!
@@ -77,46 +76,6 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #else
 #  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
 #endif
-
-#define GUIO_NONE			"\000"
-#define GUIO_NOSUBTITLES	"\001"
-#define GUIO_NOMUSIC		"\002"
-#define GUIO_NOSPEECH		"\003"
-#define GUIO_NOSFX			"\004"
-#define GUIO_NOMIDI			"\005"
-#define GUIO_NOLAUNCHLOAD	"\006"
-
-#define GUIO_MIDIPCSPK		"\007"
-#define GUIO_MIDICMS		"\010"
-#define GUIO_MIDIPCJR		"\011"
-#define GUIO_MIDIADLIB		"\012"
-#define GUIO_MIDIC64        "\013"
-#define GUIO_MIDIAMIGA      "\014"
-#define GUIO_MIDIAPPLEIIGS  "\015"
-#define GUIO_MIDITOWNS		"\016"
-#define GUIO_MIDIPC98		"\017"
-#define GUIO_MIDIMT32		"\020"
-#define GUIO_MIDIGM			"\021"
-
-#define GUIO_NOASPECT		"\022"
-#define GUIO_EGAUNDITHER	"\023"
-
-#define GUIO_RENDERHERCGREEN	"\030"
-#define GUIO_RENDERHERCAMBER	"\031"
-#define GUIO_RENDERCGA		"\032"
-#define GUIO_RENDEREGA		"\033"
-#define GUIO_RENDERVGA		"\034"
-#define GUIO_RENDERAMIGA	"\035"
-#define GUIO_RENDERFMTOWNS	"\036"
-#define GUIO_RENDERPC98		"\037"
-
-#define GUIO0() (GUIO_NONE)
-#define GUIO1(a) (a)
-#define GUIO2(a,b) (a b)
-#define GUIO3(a,b,c) (a b c)
-#define GUIO4(a,b,c,d) (a b c d)
-#define GUIO5(a,b,c,d,e) (a b c d e)
-#define GUIO6(a,b,c,d,e,f) (a b c d e f)
 
 namespace Common {
 
@@ -205,147 +164,6 @@ bool isSpace(int c);
  * @return		true if the character is an upper-case letter, false otherwise.
  */
 bool isUpper(int c);
-
-
-/**
- * List of game language.
- */
-enum Language {
-	ZH_CNA,
-	ZH_TWN,
-	CZ_CZE,
-	NL_NLD,
-	EN_ANY,     // Generic English (when only one game version exist)
-	EN_GRB,
-	EN_USA,
-	FR_FRA,
-	DE_DEU,
-	GR_GRE,
-	HE_ISR,
-	HR_HRV,
-	HU_HUN,
-	IT_ITA,
-	JA_JPN,
-	KO_KOR,
-	NB_NOR,
-	PL_POL,
-	PT_BRA,
-	RU_RUS,
-	ES_ESP,
-	SE_SWE,
-
-	UNK_LANG = -1	// Use default language (i.e. none specified)
-};
-
-struct LanguageDescription {
-	const char *code;
-	const char *unixLocale;
-	const char *description;
-	Language id;
-};
-
-extern const LanguageDescription g_languages[];
-
-
-/** Convert a string containing a language name into a Language enum value. */
-extern Language parseLanguage(const String &str);
-extern Language parseLanguageFromLocale(const char *locale);
-extern const char *getLanguageCode(Language id);
-extern const char *getLanguageLocale(Language id);
-extern const char *getLanguageDescription(Language id);
-
-/**
- * List of game platforms. Specifying a platform for a target can be used to
- * give the game engines a hint for which platform the game data file are.
- * This may be optional or required, depending on the game engine and the
- * game in question.
- */
-enum Platform {
-	kPlatformPC,
-	kPlatformAmiga,
-	kPlatformAtariST,
-	kPlatformMacintosh,
-	kPlatformFMTowns,
-	kPlatformWindows,
-	kPlatformNES,
-	kPlatformC64,
-	kPlatformCoCo3,
-	kPlatformLinux,
-	kPlatformAcorn,
-	kPlatformSegaCD,
-	kPlatform3DO,
-	kPlatformPCEngine,
-	kPlatformApple2GS,
-	kPlatformPC98,
-	kPlatformWii,
-	kPlatformPSX,
-	//ResidualVM: playstation2
-	kPlatformPS2,
-	kPlatformCDi,
-	kPlatformIOS,
-
-	kPlatformUnknown = -1
-};
-
-struct PlatformDescription {
-	const char *code;
-	const char *code2;
-	const char *abbrev;
-	const char *description;
-	Platform id;
-};
-
-extern const PlatformDescription g_platforms[];
-
-/** Convert a string containing a platform name into a Platform enum value. */
-extern Platform parsePlatform(const String &str);
-extern const char *getPlatformCode(Platform id);
-extern const char *getPlatformAbbrev(Platform id);
-extern const char *getPlatformDescription(Platform id);
-
-/**
- * List of render modes. It specifies which original graphics mode
- * to use. Some targets used postprocessing dithering routines for
- * reducing color depth of final image which let it to be rendered on
- * such low-level adapters as CGA or Hercules.
- */
-enum RenderMode {
-	kRenderDefault = 0,
-	kRenderVGA = 1,
-	kRenderEGA = 2,
-	kRenderCGA = 3,
-	kRenderHercG = 4,
-	kRenderHercA = 5,
-	kRenderAmiga = 6,
-	kRenderFMTowns = 7,
-	kRenderPC98 = 8
-};
-
-struct RenderModeDescription {
-	const char *code;
-	const char *description;
-	RenderMode id;
-};
-
-extern const RenderModeDescription g_renderModes[];
-
-/** Convert a string containing a render mode name into a RenderingMode enum value. */
-extern RenderMode parseRenderMode(const String &str);
-extern const char *getRenderModeCode(RenderMode id);
-extern const char *getRenderModeDescription(RenderMode id);
-
-bool checkGameGUIOption(const String &option, const String &str);
-bool checkGameGUIOptionLanguage(Language lang, const String &str);
-String parseGameGUIOptions(const String &str);
-const String getGameGUIOptionsDescription(const String &options);
-const String getGameGUIOptionsDescriptionLanguage(Language lang);
-
-/**
- * Updates the GUI options of the current config manager
- * domain, when they differ to the ones passed as
- * parameter.
- */
-void updateGameGUIOptions(const String &options, const String &langOption);
 
 }	// End of namespace Common
 

@@ -29,7 +29,7 @@
 #include "common/rect.h"
 
 #include "graphics/surface.h"
-#include "graphics/jpeg.h"
+#include "graphics/decoders/jpeg.h"
 
 namespace Myst3 {
 
@@ -45,7 +45,7 @@ class Face {
 		Face(Myst3Engine *vm);
 		~Face();
 
-		void setTextureFromJPEG(Graphics::JPEG *jpeg);
+		void setTextureFromJPEG(Graphics::JPEGDecoder *jpeg);
 
 		void markTextureDirty() { _textureDirty = true; }
 		void uploadTexture();
@@ -61,7 +61,7 @@ class SpotItemFace {
 		~SpotItemFace();
 
 		void initBlack(uint16 width, uint16 height);
-		void loadData(Graphics::JPEG *jpeg);
+		void loadData(Graphics::JPEGDecoder *jpeg);
 		void updateData(const uint8 *data);
 		void clear();
 

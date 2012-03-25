@@ -30,6 +30,8 @@
 
 #include "common/fs.h"
 #include "common/config-manager.h"
+#include "common/gui_options.h"
+#include "common/rendermode.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -79,7 +81,7 @@ static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11kH
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
 	init();
 }
 
@@ -901,7 +903,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 				if (setting.empty() ? (preferredType == d->getMusicType()) : (drv == d->getCompleteId())) {
 					popup->setSelectedTag(d->getHandle());
-					return popup->getSelected() == -1 ? false : true;
+					return popup->getSelected() != -1;
 				}
 			}
 		}
@@ -929,30 +931,6 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 
 	if (!found)
 		ConfMan.removeKey(setting, _domain);
-}
-
-Common::String OptionsDialog::renderType2GUIO(uint32 renderType) {
-	static const struct {
-		Common::RenderMode type;
-		const char *guio;
-	} renderGUIOMapping[] = {
-		{ Common::kRenderHercG,		GUIO_RENDERHERCGREEN },
-		{ Common::kRenderHercA,		GUIO_RENDERHERCAMBER },
-		{ Common::kRenderCGA,		GUIO_RENDERCGA },
-		{ Common::kRenderEGA,		GUIO_RENDEREGA },
-		{ Common::kRenderVGA,		GUIO_RENDERVGA },
-		{ Common::kRenderAmiga,		GUIO_RENDERAMIGA },
-		{ Common::kRenderFMTowns,	GUIO_RENDERFMTOWNS },
-		{ Common::kRenderPC98,		GUIO_RENDERPC98 }
-	};
-	Common::String res;
-
-	for (int i = 0; i < ARRAYSIZE(renderGUIOMapping); i++) {
-		if (renderType == renderGUIOMapping[i].type || renderType == (uint32)-1)
-			res += renderGUIOMapping[i].guio;
-	}
-
-	return res;
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
@@ -1012,7 +990,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 3) The MIDI tab
 	//
-	tab->addTab(_("MIDI"));
+	_midiTabId = tab->addTab(_("MIDI"));
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
@@ -1025,9 +1003,9 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// 5) The Paths tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Paths"));
+		_pathsTabId = tab->addTab(_("Paths"));
 	else
-		tab->addTab(_c("Paths", "lowres"));
+		_pathsTabId = tab->addTab(_c("Paths", "lowres"));
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// These two buttons have to be extra wide, or the text will be
@@ -1384,6 +1362,41 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void GlobalOptionsDialog::reflowLayout() {
+	int activeTab = _tabWidget->getActiveTab();
+
+	if (_midiTabId != -1) {
+		_tabWidget->setActiveTab(_midiTabId);
+
+		_tabWidget->removeWidget(_soundFontClearButton);
+		_soundFontClearButton->setNext(0);
+		delete _soundFontClearButton;
+		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);
+	}
+
+	if (_pathsTabId != -1) {
+		_tabWidget->setActiveTab(_pathsTabId);
+
+		_tabWidget->removeWidget(_savePathClearButton);
+		_savePathClearButton->setNext(0);
+		delete _savePathClearButton;
+		_savePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
+
+		_tabWidget->removeWidget(_themePathClearButton);
+		_themePathClearButton->setNext(0);
+		delete _themePathClearButton;
+		_themePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
+
+		_tabWidget->removeWidget(_extraPathClearButton);
+		_extraPathClearButton->setNext(0);
+		delete _extraPathClearButton;
+		_extraPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
+	}
+
+	_tabWidget->setActiveTab(activeTab);
+	OptionsDialog::reflowLayout();
 }
 
 } // End of namespace GUI

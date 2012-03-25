@@ -83,6 +83,8 @@ public:
 
 	virtual void	reflowLayout();
 
+	virtual void	removeWidget(Widget *widget);
+
 protected:
 	virtual void	releaseFocus() = 0;
 };

@@ -86,7 +86,7 @@
 	}
 
 // Test for GCC >= 4.3.0 as this version added the bswap builtin
-#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3))
+#elif GCC_ATLEAST(4, 3)
 
 	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 		return __builtin_bswap32(a);
@@ -156,7 +156,7 @@
 //
 // Moreover, we activate this code for GCC >= 3.3 but *only* if unaligned access
 // is allowed.
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3 && !defined(SCUMM_NEED_ALIGNMENT)))
+#if GCC_ATLEAST(4, 0) || (GCC_ATLEAST(3, 3) && !defined(SCUMM_NEED_ALIGNMENT))
 
 	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
 		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__, __may_alias__));
@@ -395,6 +395,12 @@ inline uint32 READ_BE_UINT24(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
 	return (b[0] << 16) | (b[1] << 8) | (b[2]);
 }
+
+#ifdef SCUMM_LITTLE_ENDIAN
+#define READ_UINT24(a) READ_LE_UINT24(a)
+#else
+#define READ_UINT24(a) READ_BE_UINT24(a)
+#endif
 
 // ResidualVM specific:
 #if defined(SCUMM_BIG_ENDIAN)

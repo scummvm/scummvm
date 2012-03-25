@@ -12,7 +12,7 @@ all: $(EXECUTABLE) plugins
 ######################################################################
 # Module settings
 ######################################################################
-#ResidualVM: do not include 'test' but add 'math':
+#ResidualVM: added 'math':
 
 PLUGINS :=
 MODULES := test devtools base $(MODULES)
@@ -155,7 +155,8 @@ endif
 # Get the current version information
 ######################################################################
 
-VERSION = $(shell grep SCUMMVM_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
+# AmigaOS4's grep has a problem with "./" in pathnames, so use cat piped into grep.
+VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep SCUMMVM_VERSION | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)

@@ -33,6 +33,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	_finishCmd = finishCmd;
 
 	setEditString(text);
+	setFontStyle(ThemeEngine::kFontStyleNormal);
 }
 
 EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
@@ -42,6 +43,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String
 	_finishCmd = finishCmd;
 
 	setEditString(text);
+	setFontStyle(ThemeEngine::kFontStyleNormal);
 }
 
 void EditTextWidget::setEditString(const String &str) {

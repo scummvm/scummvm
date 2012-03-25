@@ -26,21 +26,24 @@
 
 #include "common/system.h"
 
-#include "backends/keymapper/hardware-key.h"
+#include "backends/keymapper/hardware-input.h"
 #include "backends/keymapper/keymapper-defaults.h"
 
 #define KEYMAP_KEY_PREFIX "keymap_"
 
 namespace Common {
 
-Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDomain(0) {
+Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _nonkeymap(), _configDomain(0) {
 	List<Action *>::iterator it;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
-		const HardwareKey *hwKey = (*it)->getMappedKey();
+		const HardwareInput *hwInput = (*it)->getMappedInput();
 
-		if (hwKey) {
-			_keymap[hwKey->key] = *it;
+		if (hwInput) {
+			if (hwInput->type == kHardwareInputTypeKeyboard)
+				_keymap[hwInput->key] = *it;
+			else if (hwInput->type == kHardwareInputTypeGeneric)
+				_nonkeymap[hwInput->inputCode] = *it;
 		}
 	}
 }
@@ -59,24 +62,32 @@ void Keymap::addAction(Action *action) {
 	_actions.push_back(action);
 }
 
-void Keymap::registerMapping(Action *action, const HardwareKey *hwKey) {
-	HashMap<KeyState, Action *>::iterator it;
-
-	it = _keymap.find(hwKey->key);
-
-	// if key is already mapped to a different action then un-map it
-	if (it != _keymap.end() && action != it->_value) {
-		it->_value->mapKey(0);
+void Keymap::registerMapping(Action *action, const HardwareInput *hwInput) {
+	if (hwInput->type == kHardwareInputTypeKeyboard) {
+		HashMap<KeyState, Action *>::iterator it = _keymap.find(hwInput->key);
+		// if input is already mapped to a different action then unmap it from there
+		if (it != _keymap.end() && action != it->_value)
+			it->_value->mapInput(0);
+		// now map it
+		_keymap[hwInput->key] = action;
+	} else if (hwInput->type == kHardwareInputTypeGeneric) {
+		HashMap<HardwareInputCode, Action *>::iterator it = _nonkeymap.find(hwInput->inputCode);
+		// if input is already mapped to a different action then unmap it from there
+		if (it != _nonkeymap.end() && action != it->_value)
+			it->_value->mapInput(0);
+		// now map it
+		_nonkeymap[hwInput->inputCode] = action;
 	}
-
-	_keymap[hwKey->key] = action;
 }
 
 void Keymap::unregisterMapping(Action *action) {
-	const HardwareKey *hwKey = action->getMappedKey();
+	const HardwareInput *hwInput = action->getMappedInput();
 
-	if (hwKey) {
-		_keymap.erase(hwKey->key);
+	if (hwInput) {
+		if (hwInput->type == kHardwareInputTypeKeyboard)
+			_keymap.erase(hwInput->key);
+		else if (hwInput->type == kHardwareInputTypeGeneric)
+			_nonkeymap.erase(hwInput->inputCode);
 	}
 }
 
@@ -116,11 +127,22 @@ Action *Keymap::getMappedAction(const KeyState& ks) const {
 		return it->_value;
 }
 
+Action *Keymap::getMappedAction(const HardwareInputCode code) const {
+	HashMap<HardwareInputCode, Action *>::iterator it;
+
+	it = _nonkeymap.find(code);
+
+	if (it == _nonkeymap.end())
+		return 0;
+	else
+		return it->_value;
+}
+
 void Keymap::setConfigDomain(ConfigManager::Domain *dom) {
 	_configDomain = dom;
 }
 
-void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
+void Keymap::loadMappings(const HardwareInputSet *hwKeys) {
 	if (!_configDomain)
 		return;
 
@@ -129,7 +151,7 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 
 	Common::KeymapperDefaultBindings *defaults = g_system->getKeymapperDefaultBindings();
 
-	HashMap<String, const HardwareKey *> mappedKeys;
+	HashMap<String, const HardwareInput *> mappedInputs;
 	List<Action*>::iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
@@ -138,37 +160,37 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 		String actionId(ua->id);
 		String confKey = prefix + actionId;
 
-		String hwKeyId = _configDomain->getVal(confKey);
+		String hwInputId = _configDomain->getVal(confKey);
 
 		bool defaulted = false;
 		// fall back to the platform-specific defaults
-		if (hwKeyId.empty() && defaults) {
-			hwKeyId = defaults->getDefaultBinding(_name, actionId);
-			if (!hwKeyId.empty())
+		if (hwInputId.empty() && defaults) {
+			hwInputId = defaults->getDefaultBinding(_name, actionId);
+			if (!hwInputId.empty())
 				defaulted = true;
 		}
 		// there's no mapping
-		if (hwKeyId.empty())
+		if (hwInputId.empty())
 			continue;
 
-		const HardwareKey *hwKey = hwKeys->findHardwareKey(hwKeyId.c_str());
+		const HardwareInput *hwInput = hwKeys->findHardwareInput(hwInputId.c_str());
 
-		if (!hwKey) {
-			warning("HardwareKey with ID '%s' not known", hwKeyId.c_str());
+		if (!hwInput) {
+			warning("HardwareInput with ID '%s' not known", hwInputId.c_str());
 			continue;
 		}
 
 		if (defaulted) {
-			if (mappedKeys.contains(hwKeyId)) {
-				debug(1, "Action [%s] not falling back to hardcoded default value [%s] because the key is in use", confKey.c_str(), hwKeyId.c_str());
+			if (mappedInputs.contains(hwInputId)) {
+				debug(1, "Action [%s] not falling back to hardcoded default value [%s] because the hardware input is in use", confKey.c_str(), hwInputId.c_str());
 				continue;
 			}
-			warning("Action [%s] fell back to hardcoded default value [%s]", confKey.c_str(), hwKeyId.c_str());
+			warning("Action [%s] fell back to hardcoded default value [%s]", confKey.c_str(), hwInputId.c_str());
 		}
 
-		mappedKeys.setVal(hwKeyId, hwKey);
+		mappedInputs.setVal(hwInputId, hwInput);
 		// map the key
-		ua->mapKey(hwKey);
+		ua->mapInput(hwInput);
 	}
 }
 
@@ -187,27 +209,27 @@ void Keymap::saveMappings() {
 		String actId((*it)->id, (*it)->id + actIdLen);
 		String hwId = "";
 
-		if ((*it)->getMappedKey()) {
-			hwId = (*it)->getMappedKey()->id;
+		if ((*it)->getMappedInput()) {
+			hwId = (*it)->getMappedInput()->id;
 		}
 		_configDomain->setVal(prefix + actId, hwId);
 	}
 }
 
-bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
+bool Keymap::isComplete(const HardwareInputSet *hwInputs) {
 	List<Action *>::iterator it;
 	bool allMapped = true;
 	uint numberMapped = 0;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
-		if ((*it)->getMappedKey()) {
-			numberMapped++;
+		if ((*it)->getMappedInput()) {
+			++numberMapped;
 		} else {
 			allMapped = false;
 		}
 	}
 
-	return allMapped || (numberMapped == hwKeys->size());
+	return allMapped || (numberMapped == hwInputs->size());
 }
 
 } // End of namespace Common

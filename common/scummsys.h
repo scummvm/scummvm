@@ -23,6 +23,9 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
+// This is a convenience macro to test whether the compiler used is a GCC
+// version, which is at least major.minor.
+#define GCC_ATLEAST(major, minor) (defined(__GNUC__) && (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor))))
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define NONSTANDARD_PORT
@@ -268,7 +271,7 @@
 #ifndef FORCEINLINE
 	#if defined(_MSC_VER)
 		#define FORCEINLINE __forceinline
-	#elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+	#elif GCC_ATLEAST(3, 1)
 		#define FORCEINLINE inline __attribute__((__always_inline__))
 	#else
 		#define FORCEINLINE inline
@@ -320,7 +323,7 @@
 		#define scumm_va_copy va_copy
 	#elif defined(__va_copy)
 		#define scumm_va_copy __va_copy
-	#elif defined(_MSC_VER) || defined (__SYMBIAN32__)
+	#elif defined(_MSC_VER) || defined(__SYMBIAN32__)
 		#define scumm_va_copy(dst, src)       ((dst) = (src))
 	#else
 		#error scumm_va_copy undefined for this port

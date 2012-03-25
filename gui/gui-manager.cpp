@@ -188,7 +188,7 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 	}
 
 	// refresh all dialogs
-	for (int i = 0; i < _dialogStack.size(); ++i)
+	for (DialogStack::size_type i = 0; i < _dialogStack.size(); ++i)
 		_dialogStack[i]->reflowLayout();
 
 	// We need to redraw immediately. Otherwise
@@ -202,7 +202,6 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 }
 
 void GuiManager::redraw() {
-	int i;
 	ThemeEngine::ShadingStyle shading;
 
 	if (_redrawStatus == kRedrawDisabled || _dialogStack.empty())
@@ -223,7 +222,7 @@ void GuiManager::redraw() {
 			_theme->clearAll();
 			_theme->openDialog(true, ThemeEngine::kShadingNone);
 
-			for (i = 0; i < _dialogStack.size() - 1; i++)
+			for (DialogStack::size_type i = 0; i < _dialogStack.size() - 1; i++)
 				_dialogStack[i]->drawDialog();
 
 			_theme->finishBuffering();
@@ -367,6 +366,9 @@ void GuiManager::runLoop() {
 				screenChange();
 				break;
 			default:
+#ifdef ENABLE_KEYMAPPER
+				activeDialog->handleOtherEvent(event);
+#endif
 				break;
 			}
 
@@ -515,7 +517,7 @@ void GuiManager::screenChange() {
 	_theme->refresh();
 
 	// refresh all dialogs
-	for (int i = 0; i < _dialogStack.size(); ++i) {
+	for (DialogStack::size_type i = 0; i < _dialogStack.size(); ++i) {
 		_dialogStack[i]->reflowLayout();
 	}
 	// We need to redraw immediately. Otherwise

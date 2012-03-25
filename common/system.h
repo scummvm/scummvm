@@ -54,7 +54,7 @@ class TimerManager;
 class SeekableReadStream;
 class WriteStream;
 #ifdef ENABLE_KEYMAPPER
-class HardwareKeySet;
+class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
 #endif
@@ -1013,15 +1013,15 @@ public:
 
 #ifdef ENABLE_KEYMAPPER
 	/**
-	 * Register hardware keys with keymapper
+	 * Register hardware inputs with keymapper
 	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
 	 * this, please talk to tsoliman and/or LordHoto.
 	 *
-	 * @return HardwareKeySet with all keys and recommended mappings
+	 * @return HardwareInputSet with all keys and recommended mappings
 	 *
 	 * See keymapper documentation for further reference.
 	 */
-	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
+	virtual Common::HardwareInputSet *getHardwareInputSet() { return 0; }
 
 	/**
 	 * Return a platform-specific global keymap
