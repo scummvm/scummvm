@@ -2024,7 +2024,6 @@ The following keywords are recognized:
 
     fullscreen         bool     Fullscreen mode
     aspect_ratio       bool     Enable aspect ratio correction
-    disable_dithering  bool     Remove dithering artifacts from EGA games
     gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
                                 hq2x, hq3x, tv2x, dotmatrix)
@@ -2069,6 +2068,7 @@ The following keywords are recognized:
 
 Sierra games using the SCI engine add the following non-standard keywords:
 
+    disable_dithering  bool     Remove dithering artifacts from EGA games
     prefer_digitalsfx  bool     If true, digital sound effects are preferred
                                 instead of synthesized ones
     originalsaveload   bool     If true, the original save/load screens are
