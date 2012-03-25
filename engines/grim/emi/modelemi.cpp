@@ -122,8 +122,14 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		data->skip(4);
 	}
 
-	// 4 unknown bytes - usually with value 19
-	data->skip(4);
+	prepareTextures();
+
+	int type = data->readUint32LE();
+	// Check that it is one of the known types
+	//3  is no texture vertecies
+	//18 is no normals
+	//19 is regular
+	assert(type == 19 || type == 18 || type == 3);
 
 	_numVertices = data->readUint32LE();
 
@@ -135,8 +141,10 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_drawVertices[i] = _vertices[i];
 	}
 	_normals = new Math::Vector3d[_numVertices];
-	for (int i = 0; i < _numVertices; i++) {
-		_normals[i].readFromStream(data);
+	if (type != 18) {
+		for (int i = 0; i < _numVertices; i++) {
+			_normals[i].readFromStream(data);
+		}
 	}
 	_colorMap = new EMIColormap[_numVertices];
 	for (int i = 0; i < _numVertices; ++i) {
@@ -145,16 +153,15 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_colorMap[i].b = data->readByte();
 		_colorMap[i].a = data->readByte();
 	}
-	_texVerts = new Math::Vector2d[_numVertices];
-	for (int i = 0; i < _numVertices; i++) {
-		_texVerts[i].readFromStream(data);
+	if (type != 3) {
+		_texVerts = new Math::Vector2d[_numVertices];
+		for (int i = 0; i < _numVertices; i++) {
+			_texVerts[i].readFromStream(data);
+		}
 	}
-
 	// Faces
 
 	_numFaces = data->readUint32LE();
-
-	// Handle the empty-faced fx/screen?.mesh-files
 	if (data->eos()) {
 		_numFaces = 0;
 		_faces = NULL;
@@ -191,7 +198,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_numBones = 0;
 		_numBoneInfos = 0;
 	}
-	prepare(); // <- Initialize materials etc.
+	prepareForRender();
 }
 
 void EMIModel::setSkeleton(Skeleton *skel) {
@@ -240,14 +247,13 @@ void EMIModel::prepareForRender() {
 	}
 }
 
-void EMIModel::prepare() {
+void EMIModel::prepareTextures() {
 	_mats = new Material*[_numTextures];
 	for (uint32 i = 0; i < _numTextures; i++) {
 		// HACK: As we dont know what specialty-textures are yet, we skip loading them
 		if (!_texNames[i].contains("specialty"))
 			_mats[i] = g_resourceloader->loadMaterial(_texNames[i].c_str(), NULL);
 	}
-	prepareForRender();
 }
 
 void EMIModel::draw() {

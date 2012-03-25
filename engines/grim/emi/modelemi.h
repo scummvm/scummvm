@@ -111,7 +111,7 @@ public:
 	void setSkeleton(Skeleton *skel);
 	void loadMesh(Common::SeekableReadStream *data);
 	void prepareForRender();
-	void prepare();
+	void prepareTextures();
 	void draw();
 };
 
