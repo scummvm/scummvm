@@ -54,11 +54,11 @@ const char *const directoryGlobs[] = {
 const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	// Kyrandia 3 options
 
-	// Malcolm makes a joke.
 	{
 		GAMEOPTION_KYRA3_AUDIENCE,
 		{
 			// I18N: Studio audience adds an applause and cheering sounds whenever
+			// Malcolm makes a joke.
 			_s("Studio audience"),
 			_s("Enable studio audience"),
 			"studio_audience",
@@ -94,7 +94,8 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
 		GAMEOPTION_LOL_SCROLLING,
 		{
-			// I18N: When enabled, this option makes scrolling smoother when changing from one screen to another.
+			// I18N: When enabled, this option makes scrolling smoother when
+			// changing from one screen to another.
 			_s("Smooth scrolling"),
 			_s("Enable smooth scrolling when walking"),
 			"smooth_scrolling",
