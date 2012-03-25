@@ -35,7 +35,6 @@
 
 void BaseBackend::displayMessageOnOSD(const char *msg) {
 	// Display the message for 1.5 seconds
-	return;// ResidualVM: OSD not iplemented
 	GUI::TimedMessageDialog dialog(msg, 1500);
 	dialog.runModal();
 }
@@ -57,7 +56,6 @@ void BaseBackend::initBackend() {
 }
 
 void BaseBackend::fillScreen(uint32 col) {
-	return;// ResidualVM: not used
 	Graphics::Surface *screen = lockScreen();
 	if (screen && screen->pixels)
 		memset(screen->pixels, col, screen->h * screen->pitch);
