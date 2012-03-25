@@ -34,6 +34,10 @@
 #include "common/file.h"
 #include "common/savefile.h"
 
+#ifdef __DS__
+#include "backends/platform/ds/arm9/source/wordcompletion.h"
+#endif
+
 using namespace Common;
 
 namespace GUI {
@@ -824,10 +828,6 @@ void PredictiveDialog::addWordToDict() {
 		warning("Predictive Dialog: You cannot add word to user dictionary...");
 	}
 }
-
-#ifdef __DS__
-#include "backends/platform/ds/arm9/source/wordcompletion.h"
-#endif
 
 void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict) {
 	int lines = 0;
