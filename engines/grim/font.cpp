@@ -34,13 +34,16 @@
 namespace Grim {
 
 Font::Font(const Common::String &filename, Common::SeekableReadStream *data) :
-		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>(), _userData(0) {
+		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>(), _userData(NULL),
+		_fontData(NULL), _charHeaders(NULL), _charIndex(NULL) {
 	load(filename, data);
 }
 
 Font::Font() :
-		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>(), _userData(0) {
-	_charIndex = NULL;
+		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>(), _userData(NULL),
+		_fontData(NULL), _charHeaders(NULL), _charIndex(NULL)
+{
+
 }
 
 Font::~Font() {
