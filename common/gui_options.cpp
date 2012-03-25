@@ -52,7 +52,6 @@ const struct GameOpt {
 	{ GUIO_MIDIGM,       "midiGM" },
 
 	{ GUIO_NOASPECT,     "noAspect" },
-	{ GUIO_EGAUNDITHER,  "egaUndither" },
 
 	{ GUIO_RENDERHERCGREEN,	"hercGreen" },
 	{ GUIO_RENDERHERCAMBER,	"hercAmber" },

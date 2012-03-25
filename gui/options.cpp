@@ -102,7 +102,6 @@ void OptionsDialog::init() {
 	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
-	_disableDitheringCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
@@ -217,14 +216,6 @@ void OptionsDialog::open() {
 		}
 #endif // SMALL_SCREEN_DEVICE
 
-		// EGA undithering setting
-		if (_guioptions.contains(GUIO_EGAUNDITHER)  || _domain == Common::ConfigManager::kApplicationDomain) {
-			_disableDitheringCheckbox->setEnabled(true);
-			_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
-		} else {
-			_disableDitheringCheckbox->setState(false);
-			_disableDitheringCheckbox->setEnabled(false);
-		}
 	}
 
 	// Audio options
@@ -333,7 +324,6 @@ void OptionsDialog::close() {
 
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
-				ConfMan.setBool("disable_dithering", _disableDitheringCheckbox->getState(), _domain);
 
 				bool isSet = false;
 
@@ -617,10 +607,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	else
 		_aspectCheckbox->setEnabled(enabled);
 #endif
-	if (_guioptions.contains(GUIO_EGAUNDITHER) && enabled)
-		_disableDitheringCheckbox->setEnabled(true);
-	else
-		_disableDitheringCheckbox->setEnabled(false);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -769,7 +755,6 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
-	_disableDitheringCheckbox = new CheckboxWidget(boss, prefix + "grDisableDitheringCheckbox", _("EGA undithering"), _("Enable undithering in EGA games that support it"));
 
 	_enableGraphicSettings = true;
 }
