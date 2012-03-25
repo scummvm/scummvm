@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/error.h"
+#include "common/array.h"
 
 #include "engines/game.h"
 #include "engines/savestate.h"
@@ -37,6 +38,19 @@ namespace Common {
 class FSList;
 class String;
 }
+
+/**
+ * Per-game extra GUI options structure.
+ * Currently, this can only be used for options with checkboxes.
+ */
+struct ExtraGuiOption {
+	const char *label;          // option label, e.g. "Fullscreen mode"
+	const char *tooltip;        // option tooltip (when the mouse hovers above it)
+	const char *configOption;   // confMan key, e.g. "fullscreen"
+	bool defaultState;          // the detault state of the checkbox (checked or not)
+};
+
+typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
 
 /**
  * A meta engine is essentially a factory for Engine instances with the
@@ -95,6 +109,16 @@ public:
 	 */
 	virtual SaveStateList listSaves(const char *target) const {
 		return SaveStateList();
+	}
+
+	/**
+	 * Return a list of extra GUI options.
+	 * Currently, this only supports options with checkboxes.
+	 *
+	 * The default implementation returns an empty list.
+	 */
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
+		return ExtraGuiOptions();
 	}
 
 	/**
