@@ -42,12 +42,15 @@ engines/groovie/script.cpp
 engines/kyra/detection.cpp
 engines/kyra/lol.cpp
 engines/kyra/sound_midi.cpp
+engines/queen/queen.cpp
 engines/sky/compact.cpp
+engines/sky/detection.cpp
 engines/sword1/animation.cpp
 engines/sword1/control.cpp
 engines/sword1/logic.cpp
 engines/sword1/sword1.cpp
 engines/sword2/animation.cpp
+engines/sword2/sword2.cpp
 engines/tinsel/saveload.cpp
 engines/parallaction/saveload.cpp
 
