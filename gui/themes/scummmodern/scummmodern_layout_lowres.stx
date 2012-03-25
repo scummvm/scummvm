@@ -214,9 +214,6 @@
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'grDisableDitheringCheckbox'
-					type = 'Checkbox'
-			/>
 		</layout>
 	</dialog>
 

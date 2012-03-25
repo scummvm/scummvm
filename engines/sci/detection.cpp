@@ -365,6 +365,16 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_EGA_UNDITHER,
+		{
+			_s("EGA undithering"),
+			_s("Enable undithering in EGA games"),
+			"disable_dithering",
+			false
+		}
+	},
+
+	{
 		GAMEOPTION_PREFER_DIGITAL_SFX,
 		{
 			_s("Prefer digital sound effects"),
