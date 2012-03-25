@@ -56,8 +56,8 @@ static const PlainGameDescriptor queenGameDescriptor = {
 };
 
 static const ExtraGuiOption queenExtraGuiOption = {
-	_s("Alternative intro"),
-	_s("Use an alternative game intro (CD version only)"),
+	_s("Floppy intro"),
+	_s("Use the floppy version's intro (CD version only)"),
 	"alt_intro",
 	false
 };
@@ -106,8 +106,15 @@ GameList QueenMetaEngine::getSupportedGames() const {
 }
 
 const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	Common::String guiOptions;
+	if (ConfMan.hasKey("guioptions", target)) {
+		guiOptions = ConfMan.get("guioptions", target);
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
+
 	ExtraGuiOptions options;
-	options.push_back(queenExtraGuiOption);
+	if (!guiOptions.contains(GUIO_NOSPEECH))
+		options.push_back(queenExtraGuiOption);
 	return options;
 }
 
