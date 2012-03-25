@@ -105,8 +105,8 @@ void Lua_V2::UnloadActor() {
 	if (!actor)
 		return;
 
-	warning("Lua_V2::UnloadActor: actor: %s", actor->getName().c_str());
-	// FIXME actor->func();
+	// This should be safe.
+	delete actor;
 }
 
 void Lua_V2::SetActorWalkRate() {
