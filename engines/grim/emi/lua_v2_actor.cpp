@@ -81,6 +81,17 @@ void Lua_V2::SetActorGlobalAlpha() {
 	*/
 }
 
+void Lua_V2::PutActorInOverworld() {
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+
+	actor->setInOverworld(true);
+}
+
 void Lua_V2::RemoveActorFromOverworld() {
 	lua_Object actorObj = lua_getparam(1);
 
@@ -91,8 +102,7 @@ void Lua_V2::RemoveActorFromOverworld() {
 	if (!actor)
 		return;
 
-	warning("Lua_V2::RemoveActorFromOverworld: actor: %s", actor->getName().c_str());
-	// FIXME actor->func();
+	actor->setInOverworld(false);
 }
 
 void Lua_V2::UnloadActor() {
@@ -292,19 +302,6 @@ void Lua_V2::ActorStopMoving() {
 
 	warning("Lua_V2::ActorStopMoving, actor: %s", actor->getName().c_str());
 	// FIXME: implement missing rest part of code
-}
-
-void Lua_V2::PutActorInOverworld() {
-	lua_Object actorObj = lua_getparam(1);
-
-	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
-		return;
-
-	Actor *actor = getactor(actorObj);
-
-	warning("Lua_V2::PutActorInOverworld, actor: %s", actor->getName().c_str());
-	// FIXME: implement missing func
-	//actor->func();
 }
 
 void Lua_V2::GetActorWorldPos() {
