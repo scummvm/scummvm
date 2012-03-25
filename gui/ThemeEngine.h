@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.8"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.10"
 
 class OSystem;
 
@@ -229,6 +229,7 @@ public:
 	static const char *const kImageLogoSmall; ///< ScummVM logo used in the GMM
 	static const char *const kImageSearch;    ///< Search tool image used in the launcher
 	static const char *const kImageEraser;     ///< Clear input image used in the launcher
+	static const char *const kImageDelbtn; ///< Delete characters in the predictive dialog
 
 	/**
 	 * Graphics mode enumeration.
