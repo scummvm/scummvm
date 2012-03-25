@@ -119,7 +119,7 @@ void DreamWebEngine::loadGame() {
 void DreamWebEngine::doLoad(int savegameId) {
 	_loadingOrSave = 1;
 
-	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
+	if (ConfMan.getBool("originalsaveload") && savegameId == -1) {
 		showOpBox();
 		showLoadOps();
 		_currentSlot = 0;
@@ -208,7 +208,7 @@ void DreamWebEngine::saveGame() {
 
 	_loadingOrSave = 2;
 
-	if (ConfMan.getBool("dreamweb_originalsaveload")) {
+	if (ConfMan.getBool("originalsaveload")) {
 		showOpBox();
 		showSaveOps();
 		_currentSlot = 0;

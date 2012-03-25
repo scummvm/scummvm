@@ -46,7 +46,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		{
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens, instead of the ScummVM ones"),
-			"dreamweb_originalsaveload",
+			"originalsaveload",
 			false
 		}
 	},
