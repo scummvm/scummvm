@@ -56,6 +56,8 @@ Table of Contents:
  * 7.8 Using compressed audio files (MP3, Ogg Vorbis, Flac)
  * 7.9 Output sample rate
 8.0) Configuration file
+ * 8.1 Recognized configuration keywords
+ * 8.2 Custom game options that can be toggled via the GUI
 9.0) Compiling
 
 
@@ -1994,6 +1996,9 @@ An example config file looks as follows:
     path=C:\amiga_mi2\
     music_driver=windows
 
+
+8.1) Recognized configuration keywords
+---- ---------------------------------
 The following keywords are recognized:
 
     path               string   The path to where a game's data files are
@@ -2062,6 +2067,16 @@ The following keywords are recognized:
 
     boot_param         number   Pass this number to the boot script
 
+Sierra games using the SCI engine add the following non-standard keywords:
+
+    prefer_digitalsfx  bool     If true, digital sound effects are preferred
+                                instead of synthesized ones
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    native_fb01        bool     If true, the music driver for an IBM Music
+                                Feature card or a Yahama FB-01 FM synth module
+                                is used for MIDI output
+
 Broken Sword II adds the following non-standard keywords:
 
     gfx_details        number   Graphics details setting (0-3)
@@ -2075,6 +2090,11 @@ Flight of the Amazon Queen adds the following non-standard keywords:
     music_mute         bool     If true, music is muted
     sfx_mute           bool     If true, sound effects are muted
 
+Jones in the Fast Lane adds the following non-standard keyword:
+
+    music_mute         bool     If true, CD audio is used, if available,
+                                instead of in-game audio
+
 King's Quest VI Windows adds the following non-standard keyword:
 
     windows_cursors    bool     If true, the original unscaled black and white
@@ -2082,6 +2102,15 @@ King's Quest VI Windows adds the following non-standard keyword:
                                 ones. If false, the DOS cursors are used in the
                                 Windows version, upscaled to match the rest of
                                 the upscaled graphics
+
+Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
+
+    smooth_scrolling   bool     If true, scrolling is smoother when changing
+                                from one screen to another
+    floating_cursors   bool     If true, the cursor changes when it floats to
+                                the edge of the screen to a directional arrow.
+                                The player can then click to walk towards that
+                                direction.
 
 Space Quest IV CD adds the following non-standard keyword:
 
@@ -2097,9 +2126,24 @@ The Legend of Kyrandia adds the following non-standard keyword:
 
     walkspeed          int      The walk speed (0-4)
 
+The Legend of Kyrandia: Malcolm's Revenge adds the following non-standard
+keywords:
+
+    studio_audience    bool     If true, applause and cheering sounds are heard
+                                whenever Malcolm makes a joke
+    skip_support       bool     If true, the player can skip text and cutscenes
+    helium_mode        bool     If true, people sound like they've inhaled Helium
+
 The 7th Guest adds the following non-standard keyword:
 
     t7g_speed          string   Video playback speed (normal, tweaked, im_an_ios)
+
+
+8.2) Custom game options that can be toggled via the GUI
+---- ---------------------------------------------------
+A lot of the custom game options in the previous section can be toggled via the
+GUI. If a custom option is available for a specific game, a new tab called
+"Engine" will appear when adding or editing the configuration of that game.
 
 
 9.0) Compiling:
