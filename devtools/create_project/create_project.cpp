@@ -843,6 +843,7 @@ const Feature s_features[] = {
 	{    "flac",        "USE_FLAC", "libFLAC_static",   true, "FLAC support" },
 	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
 	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
+	{"freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
 
 	// Feature flags
 	{        "bink",        "USE_BINK",         "", true, "Bink video support" },
