@@ -42,7 +42,7 @@ static const PlainGameDescriptor skySetting =
 
 static const ExtraGuiOption skyExtraGuiOption = {
 	_s("Floppy intro"),
-	_s("Use the floppy verion's intro (CD version only)"),
+	_s("Use the floppy version's intro (CD version only)"),
 	"alt_intro",
 	false
 };
@@ -117,8 +117,15 @@ GameList SkyMetaEngine::getSupportedGames() const {
 }
 
 const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	Common::String guiOptions;
+	if (ConfMan.hasKey("guioptions", target)) {
+		guiOptions = ConfMan.get("guioptions", target);
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
+
 	ExtraGuiOptions options;
-	options.push_back(skyExtraGuiOption);
+	if (!guiOptions.contains(GUIO_NOSPEECH))
+		options.push_back(skyExtraGuiOption);
 	return options;
 }
 
