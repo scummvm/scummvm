@@ -349,7 +349,6 @@ void OptionsDialog::close() {
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
-				ConfMan.removeKey("disable_dithering", _domain);
 				ConfMan.removeKey("gfx_mode", _domain);
 				ConfMan.removeKey("render_mode", _domain);
 			}
