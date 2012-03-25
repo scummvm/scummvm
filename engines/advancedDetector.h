@@ -134,6 +134,24 @@ enum ADFlags {
 
 
 /**
+ * Map entry for mapping GUIO_GAMEOPTIONS* to their ExtraGuiOption
+ * description.
+ */
+struct ADExtraGuiOptionsMap {
+	/**
+	 * GUIO_GAMEOPTION* string.
+	 */
+	const char *guioFlag;
+
+	/**
+	 * The associated option.
+	 */
+	ExtraGuiOption option;
+};
+
+#define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0 } }
+
+/**
  * A MetaEngine implementation based around the advanced detector code.
  */
 class AdvancedMetaEngine : public MetaEngine {
@@ -157,6 +175,11 @@ protected:
 	 * by this engine.
 	 */
 	const PlainGameDescriptor *_gameids;
+
+	/**
+	 * A map containing all the extra game GUI options the engine supports.
+	 */ 
+	const ADExtraGuiOptionsMap * const _extraGuiOptions;
 
 	/**
 	 * The number of bytes to compute MD5 sum for. The AdvancedDetector
@@ -211,7 +234,7 @@ protected:
 	const char * const *_directoryGlobs;
 
 public:
-	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids);
+	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
 	/**
 	 * Returns list of targets supported by the engine.
@@ -224,6 +247,8 @@ public:
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 
 protected:
 	// To be implemented by subclasses
