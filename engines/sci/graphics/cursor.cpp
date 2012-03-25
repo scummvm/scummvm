@@ -132,7 +132,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 
 	resourceData = resource->data;
 
-	if (getSciVersion() <= SCI_VERSION_0_LATE) {
+	if (getSciVersion() <= SCI_VERSION_01) {
 		// SCI0 cursors contain hotspot flags, not actual hotspot coordinates.
 		// If bit 0 of resourceData[3] is set, the hotspot should be centered,
 		// otherwise it's in the top left of the mouse cursor.
