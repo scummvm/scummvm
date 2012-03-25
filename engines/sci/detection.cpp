@@ -379,7 +379,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens, instead of the ScummVM ones"),
-			"sci_originalsaveload",
+			"originalsaveload",
 			false
 		}
 	},

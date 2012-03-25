@@ -191,7 +191,7 @@ extern void showScummVMDialog(const Common::String &message);
 
 Common::Error SciEngine::run() {
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("sci_originalsaveload", "false");
+	ConfMan.registerDefault("originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
 	ConfMan.registerDefault("windows_cursors", "false");	// Windows cursors for KQ6 Windows
 	ConfMan.registerDefault("silver_cursors", "false");	// Silver cursors for SQ4 CD
@@ -492,7 +492,7 @@ void SciEngine::patchGameSaveRestore() {
 		break;
 	}
 
-	if (ConfMan.getBool("sci_originalsaveload"))
+	if (ConfMan.getBool("originalsaveload"))
 		return;
 
 	uint16 kernelNamesSize = _kernel->getKernelNamesSize();
