@@ -88,15 +88,8 @@ EMIMeshFace::~EMIMeshFace() {
 }
 
 void EMIModel::setTex(int index) {
-	_mats[index]->select();
-}
-
-// May be removed when I get through the conversion
-void EMIMeshFace::render() {
-	if(_hasTexture) {
-		_parent->setTex(_texID);
-	}
-	//glDrawElements(GL_TRIANGLES, _faceLength * 3, GL_UNSIGNED_INT, _indexes);
+	if (_mats[index])
+		_mats[index]->select();
 }
 
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
@@ -253,6 +246,8 @@ void EMIModel::prepareTextures() {
 		// HACK: As we dont know what specialty-textures are yet, we skip loading them
 		if (!_texNames[i].contains("specialty"))
 			_mats[i] = g_resourceloader->loadMaterial(_texNames[i].c_str(), NULL);
+		else
+			_mats[i] = NULL;
 	}
 }
 
@@ -261,7 +256,7 @@ void EMIModel::draw() {
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for(uint32 i = 0; i < _numFaces; i++) {
-		_faces[i].render();
+		setTex(_faces[i]._texID);
 		g_driver->drawEMIModelFace(this, &_faces[i]);
 	}
 }
