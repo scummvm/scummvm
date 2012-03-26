@@ -40,8 +40,8 @@ NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 
 		if (jpegStream) {
 			Graphics::JPEGDecoder jpeg;
-			//FIXME
-			//jpeg.read(jpegStream);
+			if (!jpeg.loadStream(*jpegStream))
+				error("Could not decode Myst III JPEG");
 
 			_faces[i] = new Face(_vm);
 			_faces[i]->setTextureFromJPEG(&jpeg);
