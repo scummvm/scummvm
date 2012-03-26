@@ -45,8 +45,8 @@ NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 
 	if (jpegStream) {
 		Graphics::JPEGDecoder jpeg;
-		//FIXME
-		//jpeg.read(jpegStream);
+		if (!jpeg.loadStream(*jpegStream))
+			error("Could not decoder Myst III JPEG");
 
 		_faces[0] = new Face(_vm);
 		_faces[0]->setTextureFromJPEG(&jpeg);

@@ -169,9 +169,9 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 		Graphics::JPEGDecoder jpeg;
-		//FIXME
-		//jpeg.read(jpegStream);
-
+		if (!jpeg.loadStream(*jpegStream))
+			error("Could not decode Myst III JPEG");
+		
 		spotItemFace->loadData(&jpeg);
 
 		delete jpegStream;
