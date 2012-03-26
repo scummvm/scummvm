@@ -12,11 +12,11 @@ For a more comprehensive changelog of the latest experimental code, see:
      with it GNU FreeFont was also added to our modern theme. Note that not all
      ports take advantage of this.
    - Added Basque translation.
-   - Added custom game and engine options in the DREAMWEB, KYRA, QUEEN, SKY and
-     SCI engines. It is now possible to toggle these options via the Engine tab
-     when adding or editing a configuration for a game. In most cases, you will
-     have to readd your games in ScummVM's launcher in order to get the custom
-     options tab, otherwise it won't be visible.
+   - Added custom game and engine options in the AGI, DREAMWEB, KYRA, QUEEN,
+     SKY and SCI engines. It is now possible to toggle these options via the
+     Engine tab when adding or editing a configuration for a game. In most
+     cases, you will have to run each game once or readd them all in ScummVM's
+     launcher in order to get the custom options tab.
 
  SDL ports:
    - Added support for OpenGL (GSoC Task).
