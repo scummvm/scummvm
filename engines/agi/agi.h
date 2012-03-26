@@ -890,6 +890,9 @@ public:
 	int saveGameSimple();
 	int loadGameDialog();
 	int loadGameSimple();
+	int doSave(int slot, const Common::String &desc);
+	int doLoad(int slot, bool showMessages);
+	int scummVMSaveLoadDialog(bool isSave);
 
 	uint8 *_intobj;
 	InputMode _oldMode;

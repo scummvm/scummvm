@@ -31,6 +31,8 @@
 #include "common/md5.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
+
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -139,6 +141,13 @@ static const PlainGameDescriptor agiGames[] = {
 	{0, 0}
 };
 
+static const ExtraGuiOption agiExtraGuiOption = {
+	_s("Use original save/load screens"),
+	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	"originalsaveload",
+	false
+};
+
 #include "agi/detection_tables.h"
 
 using namespace Agi;
@@ -162,6 +171,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -217,6 +227,12 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	}
 
 	return res;
+}
+
+const ExtraGuiOptions AgiMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(agiExtraGuiOption);
+	return options;
 }
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {

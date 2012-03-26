@@ -23,6 +23,8 @@ common/util.cpp
 engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp
+engines/agi/detection.cpp
+engines/agi/saveload.cpp
 engines/dreamweb/detection.cpp
 engines/sci/detection.cpp
 engines/scumm/dialogs.cpp

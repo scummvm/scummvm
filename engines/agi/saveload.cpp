@@ -29,6 +29,10 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
+
+#include "gui/saveload.h"
+
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -784,7 +788,87 @@ int AgiEngine::selectSlot() {
 	return rc;
 }
 
+int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
+	const EnginePlugin *plugin = NULL;
+	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
+		dialog->setSaveMode(true);
+
+		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+#if defined(USE_SAVEGAME_TIMESTAMP)
+			TimeDate curTime;
+			g_system->getTimeAndDate(curTime);
+			curTime.tm_year += 1900; // fixup year
+			curTime.tm_mon++; // fixup month
+			desc = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+#else
+			desc = Common::String::format("Save %d", slot + 1);
+#endif
+		}
+
+		if (desc.size() > 28)
+			desc = Common::String(desc.c_str(), 28);
+	} else {
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
+		dialog->setSaveMode(false);
+		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	}
+
+	delete dialog;
+
+	if (isSave)
+		return doSave(slot, desc);
+	else
+		return doLoad(slot, false);
+}
+
+int AgiEngine::doSave(int slot, const Common::String &desc) {
+	Common::String fileName = getSavegameFilename(slot);
+	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName.c_str());
+
+	// Make sure all graphics was blitted to screen. This fixes bug
+	// #2960567: "AGI: Ego partly erased in Load/Save thumbnails"
+	_gfx->doUpdate();
+
+	return saveGame(fileName, desc);
+}
+
+int AgiEngine::doLoad(int slot, bool showMessages) {
+	Common::String fileName = getSavegameFilename(slot);
+	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName.c_str());
+
+	_sprites->eraseBoth();
+	_sound->stopSound();
+	closeWindow();
+
+	int result = loadGame(fileName);
+
+	if (result == errOK) {
+		if (showMessages)
+			messageBox("Game restored.");
+		_game.exitAllLogics = 1;
+		_menu->enableAll();
+	} else {
+		if (showMessages)
+			messageBox("Error restoring game.");
+	}
+
+	return result;
+}
+
 int AgiEngine::saveGameDialog() {
+	if (!ConfMan.getBool("originalsaveload"))
+		return scummVMSaveLoadDialog(true);
+
 	char *desc;
 	const char *buttons[] = { "Do as I say!", "I regret", NULL };
 	char dstr[200];
@@ -854,14 +938,7 @@ int AgiEngine::saveGameDialog() {
 		return errOK;
 	}
 
-	Common::String fileName = getSavegameFilename(_firstSlot + slot);
-	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName.c_str());
-
-	// Make sure all graphics was blitted to screen. This fixes bug
-	// #2960567: "AGI: Ego partly erased in Load/Save thumbnails"
-	_gfx->doUpdate();
-
-	int result = saveGame(fileName, desc);
+	int result = doSave(_firstSlot + slot, desc);
 
 	if (result == errOK)
 		messageBox("Game saved.");
@@ -872,6 +949,9 @@ int AgiEngine::saveGameDialog() {
 }
 
 int AgiEngine::saveGameSimple() {
+	if (!ConfMan.getBool("originalsaveload"))
+		return scummVMSaveLoadDialog(true);
+
 	Common::String fileName = getSavegameFilename(0);
 
 	int result = saveGame(fileName, "Default savegame");
@@ -881,7 +961,10 @@ int AgiEngine::saveGameSimple() {
 }
 
 int AgiEngine::loadGameDialog() {
-	int rc, slot = 0;
+	if (!ConfMan.getBool("originalsaveload"))
+		return scummVMSaveLoadDialog(false);
+
+	int slot = 0;
 	int hm, vm, hp, vp;	// box margins
 	int w;
 
@@ -907,37 +990,14 @@ int AgiEngine::loadGameDialog() {
 		return errOK;
 	}
 
-	Common::String fileName = getSavegameFilename(_firstSlot + slot);
-
-	if ((rc = loadGame(fileName)) == errOK) {
-		messageBox("Game restored.");
-		_game.exitAllLogics = 1;
-		_menu->enableAll();
-	} else {
-		messageBox("Error restoring game.");
-	}
-
-	return rc;
+	return doLoad(_firstSlot + slot, true);
 }
 
 int AgiEngine::loadGameSimple() {
-	int rc = 0;
-
-	Common::String fileName = getSavegameFilename(0);
-
-	_sprites->eraseBoth();
-	_sound->stopSound();
-	closeWindow();
-
-	if ((rc = loadGame(fileName)) == errOK) {
-		messageBox("Game restored.");
-		_game.exitAllLogics = 1;
-		_menu->enableAll();
-	} else {
-		messageBox("Error restoring game.");
-	}
-
-	return rc;
+	if (!ConfMan.getBool("originalsaveload"))
+		return scummVMSaveLoadDialog(false);
+	else
+		return doLoad(0, true);
 }
 
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,

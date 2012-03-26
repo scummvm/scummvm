@@ -2066,6 +2066,11 @@ The following keywords are recognized:
 
     boot_param         number   Pass this number to the boot script
 
+Sierra games using the AGI engine add the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+
 Sierra games using the SCI engine add the following non-standard keywords:
 
     disable_dithering  bool     Remove dithering artifacts from EGA games
