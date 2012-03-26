@@ -1,3 +1,4 @@
+PATCHR 1
 #In v1.01 Fix issue with cd check function and the lua override of dofile (which cause a lot of warnings)
 #In v1.00 Set game_needs_update to TRUE, in order to blacklist this specific version and force the user
 #to update
