@@ -33,8 +33,8 @@
 
 namespace Mortevielle {
 
-struct Rect {
-	int _x1, _x2, _y1, _y2;
+struct Hotspot {
+	Common::Rect _rect;
 	bool _enabled;
 };
 

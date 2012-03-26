@@ -408,11 +408,11 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
  * Mouse function : Is mouse in a given rect?
  * @remarks	Originally called 'dans_rect'
  */
-bool MouseHandler::isMouseIn(Rect r) {
+bool MouseHandler::isMouseIn(Common::Rect r) {
 	int x, y, c;
 
 	getMousePosition(x, y, c);
-	if ((x > r._x1) && (x < r._x2) && (y > r._y1) && (y < r._y2))
+	if ((x > r.left) && (x < r.right) && (y > r.top) && (y < r.bottom))
 		return true;
 
 	return false;
