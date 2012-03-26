@@ -702,6 +702,7 @@ Common::Error AgiBase::init() {
 
 Common::Error AgiEngine::go() {
 	CursorMan.showMouse(true);
+	setTotalPlayTime(0);
 
 	if (_game.state < STATE_LOADED) {
 		do {

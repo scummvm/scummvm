@@ -187,7 +187,8 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {
@@ -305,6 +306,10 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 			uint32 saveDate = in->readUint32BE();
 			uint16 saveTime = in->readUint16BE();
+			if (saveVersion >= 6) {
+				uint32 playTime = in->readUint32BE();
+				desc.setPlayTime(playTime * 1000);
+			}
 
 			int day = (saveDate >> 24) & 0xFF;
 			int month = (saveDate >> 16) & 0xFF;

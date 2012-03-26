@@ -42,7 +42,7 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 
-#define SAVEGAME_VERSION 5
+#define SAVEGAME_VERSION 6
 
 //
 // Version 0 (Sarien): view table has 64 entries
@@ -51,6 +51,7 @@
 // Version 3 (ScummVM): added AGIPAL save/load support
 // Version 4 (ScummVM): added thumbnails and save creation date/time
 // Version 5 (ScummVM): Added game md5
+// Version 6 (ScummVM): Added game played time
 //
 
 namespace Agi {
@@ -86,12 +87,14 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
+	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
 
 	out->writeUint32BE(saveDate);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save date (%d)", saveDate);
 	out->writeUint16BE(saveTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save time (%d)", saveTime);
-	// TODO: played time
+	out->writeUint32BE(playTime);
+	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing play time (%d)", playTime);
 
 	out->writeByte(_game.state);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game state (%d)", _game.state);
@@ -298,7 +301,10 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 		in->readUint32BE();	// save date
 		in->readUint16BE(); // save time
-		// TODO: played time
+		if (saveVersion >= 6) {
+			uint32 playTime = in->readUint32BE();
+			g_engine->setTotalPlayTime(playTime * 1000);
+		}
 	}
 
 	_game.state = (State)in->readByte();
