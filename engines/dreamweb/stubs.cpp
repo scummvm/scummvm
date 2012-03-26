@@ -1621,8 +1621,7 @@ void DreamWebEngine::animPointer() {
 			if (_pointerCount == 16)
 				_pointerCount = 0;
 		}
-		static const uint8 flashMouseTab[] = { 1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2 };
-		_pointerFrame = flashMouseTab[_pointerCount];
+		_pointerFrame = (_pointerCount <= 8) ? 1 : 2;
 		return;
 	}
 	if (_vars._watchingTime != 0) {
