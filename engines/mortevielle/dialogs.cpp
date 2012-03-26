@@ -289,7 +289,7 @@ bool KnowledgeCheck::show() {
 	int rep;
 	int firstOption, lastOption;
 	char key;
-	Rect coor[kMaxRect];
+	Hotspot coor[kMaxRect];
 	Common::String choiceArray[15];
 
 	int currChoice, prevChoice;
@@ -329,10 +329,10 @@ bool KnowledgeCheck::show() {
 		}
 
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			coor[j]._x1 = 45 * g_vm->_res;
-			coor[j]._x2 = (maxLength * 3 + 55) * g_vm->_res;
-			coor[j]._y1 = 27 + j * 8;
-			coor[j]._y2 = 34 + j * 8;
+			coor[j]._rect.left = 45 * g_vm->_res;
+			coor[j]._rect.right = (maxLength * 3 + 55) * g_vm->_res;
+			coor[j]._rect.top = 27 + j * 8;
+			coor[j]._rect.bottom = 34 + j * 8;
 			coor[j]._enabled = true;
 
 			while ((int)choiceArray[j].size() < maxLength) {
@@ -356,7 +356,7 @@ bool KnowledgeCheck::show() {
 			CHECK_QUIT0;
 
 			currChoice = 1;
-			while (coor[currChoice]._enabled && !g_vm->_mouse.isMouseIn(coor[currChoice]))
+			while (coor[currChoice]._enabled && !g_vm->_mouse.isMouseIn(coor[currChoice]._rect))
 				++currChoice;
 			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {

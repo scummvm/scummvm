@@ -45,7 +45,7 @@ public:
 	void setMousePosition(Common::Point newPos);
 	void getMousePosition(int &x, int &y, int &c);
 	void moveMouse(bool &funct, char &key);
-	bool isMouseIn(Rect r);
+	bool isMouseIn(Common::Rect r);
 };
 
 } // End of namespace Mortevielle
