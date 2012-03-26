@@ -1,3 +1,4 @@
+PATCHR 1
 #Fix issue #397: Keyboard jams in inventory in beaver dam.
 
 begin 83a182eca8030f357068d7dffc992332 6eca  #v1.0

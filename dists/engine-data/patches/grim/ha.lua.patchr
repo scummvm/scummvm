@@ -1,3 +1,4 @@
+PATCHR 1
 #Fix issue #539: Early access to Domino's office
 
 begin c4cd0d09d2dbb4e346dd04ebd44860f0 3fcc  #Both v1.0 and v1.01

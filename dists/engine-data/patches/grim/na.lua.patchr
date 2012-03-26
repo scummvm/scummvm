@@ -1,3 +1,4 @@
+PATCHR 1
 #Fix issue #312: Manny disappears while holding & examing the sign the Ruba in Petrified forest
 
 begin fd7b996055e9e5144bd70ef2bd1834fd 3dbf  #Both v1.0 and v1.01

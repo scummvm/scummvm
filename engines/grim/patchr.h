@@ -33,16 +33,17 @@ namespace Grim {
 
 class Patchr {
 public:
-	Patchr(): _data(NULL), _err(false), _kMd5size(5000), _kMaxFileSize(0x100000) {}
+	Patchr(): _data(NULL), _err(false), _kMd5size(5000), _kMaxFileSize(0x100000), _kVersion(1) {}
 	~Patchr() { if (_data) delete[] _data; }
 	void loadPatch(Common::SeekableReadStream *patchStream);
 	bool patchFile(Common::SeekableReadStream *&file, const Common::String &name);
 private:
 	uint32 _kMaxFileSize;
 	uint32 _kMd5size;
+	uint32 _kVersion;
 
-	enum Instruction { BEGIN, END, REPLACE, INSERT, DELETE, FILL, COPY, INVALID };
-	static const char *InstructionS[8];
+	enum Instruction { PATCHR, BEGIN, END, REPLACE, INSERT, DELETE, FILL, COPY, INVALID };
+	static const char *InstructionS[9];
 	struct Op {
 		Instruction ist;
 		Common::Array<Common::String> args;

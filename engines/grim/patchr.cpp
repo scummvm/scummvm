@@ -33,7 +33,7 @@
 
 namespace Grim {
 
-const char *Patchr::InstructionS[8]  = {"BEGIN", "END", "REPLACE", "INSERT", "DELETE", "FILL", "COPY", NULL};
+const char *Patchr::InstructionS[9]  = {"PATCHR", "BEGIN", "END", "REPLACE", "INSERT", "DELETE", "FILL", "COPY", NULL};
 
 void Patchr::loadPatch(Common::SeekableReadStream *patchStream) {
 	Common::String line, token;
@@ -86,6 +86,16 @@ bool Patchr::patchFile(Common::SeekableReadStream *&file, const Common::String &
 	uint32 maxSize, fileSize;
 	uint32 offset, offset2, size;
 	byte fill;
+
+	//Sanity, signature and version checks
+	if (_patch.empty() || _patch[0].ist != PATCHR) {
+		Debug::warning(Debug::Patchr, "Wrong patch format in %s", name.c_str());
+		return false;
+	}
+	if (_patch[0].args.size() == 0 || str2num(_patch[0].args[0]) != _kVersion) {
+		Debug::warning(Debug::Patchr, "Wrong patch version in %s", name.c_str());
+		return false;
+	}
 
 	//Compute the MD5 of the original file
 	md5 = computeStreamMD5AsString(*file, _kMd5size);
@@ -195,6 +205,10 @@ bool Patchr::patchFile(Common::SeekableReadStream *&file, const Common::String &
 					return false;
 				}
 				memmove(_data + offset, _data + offset2, size);
+				break;
+
+			case PATCHR:
+				err("misplaced signature instruction.");
 				break;
 
 			case BEGIN:
