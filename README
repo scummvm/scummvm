@@ -2149,6 +2149,9 @@ The 7th Guest adds the following non-standard keyword:
 A lot of the custom game options in the previous section can be toggled via the
 GUI. If a custom option is available for a specific game, a new tab called
 "Engine" will appear when adding or editing the configuration of that game.
+If the custom options are not shown, the games in question will need to be run
+once or readded in the ScummVM launcher's game list. This will update the
+configuration of each entry, allowing the custom options to be shown.
 
 
 9.0) Compiling:
