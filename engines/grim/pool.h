@@ -5,9 +5,9 @@
 #include "common/hashmap.h"
 #include "common/list.h"
 
-namespace Grim {
+#include "engines/grim/savegame.h"
 
-class SaveGame;
+namespace Grim {
 
 template<class T> class Pool;
 
