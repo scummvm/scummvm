@@ -42,6 +42,8 @@
 #include "engines/grim/update/update.h"
 #include "common/algorithm.h"
 #include "common/zlib.h"
+#include "common/memstream.h"
+#include "common/file.h"
 #include "gui/message.h"
 
 namespace Grim {

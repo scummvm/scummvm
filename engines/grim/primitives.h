@@ -26,7 +26,6 @@
 #include "common/rect.h"
 
 #include "engines/grim/pool.h"
-#include "engines/grim/bitmap.h"
 #include "engines/grim/color.h"
 
 namespace Grim {

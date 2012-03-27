@@ -40,6 +40,7 @@
 #include "common/archive.h"
 #include "common/debug-channels.h"
 #include "common/file.h"
+#include "common/foreach.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
 

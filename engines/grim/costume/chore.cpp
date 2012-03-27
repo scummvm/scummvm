@@ -21,8 +21,10 @@
  */
 
 #include "engines/grim/costume.h"
+#include "engines/grim/textsplit.h"
 
 #include "engines/grim/costume/chore.h"
+#include "engines/grim/costume/component.h"
 #include "engines/grim/costume/keyframe_component.h"
 
 namespace Grim {

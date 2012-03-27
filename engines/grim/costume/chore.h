@@ -23,7 +23,6 @@
 #ifndef GRIM_CHORE_H
 #define GRIM_CHORE_H
 
-#include "engines/grim/textsplit.h"
 #include "engines/grim/animation.h"
 
 #include "engines/grim/pool.h"
@@ -33,6 +32,7 @@ namespace Grim {
 class Costume;
 class Animation;
 class Component;
+class TextSplitter;
 
 struct TrackKey {
 	int time, value;

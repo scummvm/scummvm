@@ -21,6 +21,7 @@
  */
 
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "engines/grim/lipsync.h"
 #include "engines/grim/resource.h"

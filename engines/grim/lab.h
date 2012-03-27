@@ -25,6 +25,10 @@
 
 #include "common/archive.h"
 
+namespace Common {
+	class File;
+}
+
 namespace Grim {
 
 class Lab;

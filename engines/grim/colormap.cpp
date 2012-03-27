@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/stream.h"
+
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 

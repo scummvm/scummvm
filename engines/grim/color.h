@@ -23,7 +23,7 @@
 #ifndef GRIM_COLOR_H
 #define GRIM_COLOR_H
 
-#include "engines/grim/pool.h"
+#include "common/endian.h"
 
 namespace Grim {
 

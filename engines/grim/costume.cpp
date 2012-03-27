@@ -29,6 +29,7 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
+#include "engines/grim/savegame.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/costume/chore.h"
 #include "engines/grim/costume/head.h"

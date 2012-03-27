@@ -26,6 +26,8 @@
 #include "engines/grim/pool.h"
 #include "engines/grim/color.h"
 
+#include "common/endian.h"
+
 namespace Grim {
 
 class SaveGame;

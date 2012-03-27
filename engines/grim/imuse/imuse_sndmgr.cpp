@@ -21,6 +21,7 @@
  */
 
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "engines/grim/resource.h"
 #include "engines/grim/colormap.h"

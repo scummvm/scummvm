@@ -24,10 +24,9 @@
 #define GRIM_RESOURCE_H
 
 #include "common/archive.h"
-#include "common/file.h"
+#include "common/array.h"
 
 #include "engines/grim/object.h"
-#include "engines/grim/lua/lua.h"
 
 namespace Grim {
 

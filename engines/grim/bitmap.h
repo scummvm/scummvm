@@ -25,10 +25,16 @@
 
 #include "graphics/pixelformat.h"
 
+#include "common/endian.h"
+
 #include "engines/grim/pool.h"
 
 namespace Graphics {
 class PixelBuffer;
+}
+
+namespace Common {
+class SeekableReadStream;
 }
 
 namespace Grim {

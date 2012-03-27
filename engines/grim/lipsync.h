@@ -23,6 +23,8 @@
 #ifndef GRIM_LIPSYNC_H
 #define GRIM_LIPSYNC_H
 
+#include "common/str.h"
+
 #include "engines/grim/object.h"
 
 namespace Common {

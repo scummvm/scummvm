@@ -21,6 +21,7 @@
  */
 
 #include "common/endian.h"
+#include "common/foreach.h"
 #include "common/system.h"
 #include "common/events.h"
 

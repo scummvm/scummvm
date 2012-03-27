@@ -23,6 +23,8 @@
 #ifndef GRIM_COLORMAP_H
 #define GRIM_COLORMAP_H
 
+#include "common/str.h"
+
 #include "engines/grim/object.h"
 
 namespace Common {

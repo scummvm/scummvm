@@ -22,6 +22,7 @@
 
 #include "engines/grim/model.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/savegame.h"
 #include "engines/grim/costume/head.h"
 
 namespace Grim {
@@ -101,7 +102,7 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		else
 			lookAtTM.buildFromTargetDir(modelFront, targetDir, modelUp, worldUp);
 		// The above specifies the world space orientation of this bone, but we need to output
-		// the orientation in parent space (as yaw/pitch/roll). 
+		// the orientation in parent space (as yaw/pitch/roll).
 		
 		// Get the coordinate frame in which we need to produce the character head yaw/pitch/roll values.
 		Math::Matrix4 parentWorldTM = _joint3Node->_parent->_matrix;
@@ -109,8 +110,8 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// While we could compute the desired lookat direction directly in the above coordinate frame,
 		// it is preferrable to compute the lookat direction with respect to the head orientation in
 		// the keyframe animation. This is because the LUA scripts specify the maximum head yaw, pitch and
-		// roll values with respect to those keyframe animations. If the lookat was simply computed 
-		// directly in the space of the parent, we couldn't apply the head maxYaw/Pitch/Roll constraints 
+		// roll values with respect to those keyframe animations. If the lookat was simply computed
+		// directly in the space of the parent, we couldn't apply the head maxYaw/Pitch/Roll constraints
 		// properly. So, compute the coordinate frame of this bone in the keyframe animation.
 		Math::Matrix4 animFrame;
 		animFrame.buildFromPitchYawRoll(_joint3Node->_pitch, _joint3Node->_yaw, _joint3Node->_roll);
@@ -129,7 +130,7 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// Constrain the maximum head movement, as desired by the game LUA scripts.
 		y.clampDegrees(_maxYaw);
 		pt.clampDegrees(_maxPitch);
-		// NOTE: By default, the _head.maxRoll for Manny's head is constrained to 165 degrees, which 
+		// NOTE: By default, the _head.maxRoll for Manny's head is constrained to 165 degrees, which
 		// comes in from the orignal Lua data scripts. (also, maxYaw == 80, maxPitch == 28).
 		// The very small maxPitch angle, and a very large maxRoll angle causes problems when Manny
 		// is trying to look straight up to an object, in which case the euler roll angles vary
@@ -173,9 +174,9 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// What follows is a hack: Since translateObject(ModelNode *node, bool reset) in this file,
 		// and GfxOpenGL/GfxTinyGL::drawHierachyNode concatenate transforms incorrectly, by summing up
 		// euler angles, do a hack here where we do the proper transform here already, and *subtract off*
-		// the YPR scalars from the animYPR scalars to cancel out the values that those pieces of code 
+		// the YPR scalars from the animYPR scalars to cancel out the values that those pieces of code
 		// will later accumulate. After those pieces of code have been fixed, the following lines can
-		// be deleted, and this function can simply output the contents of pt, y and r variables above. 
+		// be deleted, and this function can simply output the contents of pt, y and r variables above.
 		lookAtTM = animFrame * lookAtTM;
 		
 		lookAtTM.getPitchYawRoll(&pt, &y, &r);

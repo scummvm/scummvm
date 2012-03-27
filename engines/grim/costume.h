@@ -23,7 +23,7 @@
 #ifndef GRIM_COSTUME_H
 #define GRIM_COSTUME_H
 
-#include "common/memstream.h"
+#include "common/str.h"
 
 #include "math/matrix4.h"
 

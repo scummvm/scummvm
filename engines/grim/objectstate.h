@@ -23,6 +23,8 @@
 #ifndef GRIM_OSTATE_H
 #define GRIM_OSTATE_H
 
+#include "common/endian.h"
+
 #include "engines/grim/pool.h"
 #include "engines/grim/bitmap.h"
 
