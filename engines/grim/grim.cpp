@@ -310,16 +310,7 @@ Common::Error GrimEngine::run() {
 
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
-		int slot = ConfMan.getInt("save_slot");
-		assert(slot >= 0);
-		char saveName[16];
-		if (slot < 100) {
-			sprintf(saveName, "grim%02d.gsv", slot);
-		} else {
-			sprintf(saveName, "grim%d.gsv", slot);
-		}
-		_savegameLoadRequest = true;
-		_savegameFileName = saveName;
+		loadGameState(ConfMan.getInt("save_slot"));
 	}
 
 	g_grim->setMode(NormalMode);
@@ -327,6 +318,19 @@ Common::Error GrimEngine::run() {
 		delete splash_bm;
 	g_grim->mainLoop();
 
+	return Common::kNoError;
+}
+
+Common::Error GrimEngine::loadGameState(int slot) {
+	assert(slot >= 0);
+	char saveName[16];
+	if (slot < 100) {
+		sprintf(saveName, "grim%02d.gsv", slot);
+	} else {
+		sprintf(saveName, "grim%d.gsv", slot);
+	}
+	_savegameLoadRequest = true;
+	_savegameFileName = saveName;
 	return Common::kNoError;
 }
 
@@ -1128,7 +1132,9 @@ void GrimEngine::clearEventQueue() {
 }
 
 bool GrimEngine::hasFeature(EngineFeature f) const {
-	return f == kSupportsRTL;
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime);
 }
 
 } // end of namespace Grim
