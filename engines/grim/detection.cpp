@@ -443,11 +443,9 @@ static bool cmpSave(const SaveStateDescriptor &x, const SaveStateDescriptor &y) 
 	return x.getSaveSlot() < y.getSaveSlot();
 }
 
-
 SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String saveDesc;
 	Common::String pattern = "grim*.gsv";
 
 	filenames = saveFileMan->listSavefiles(pattern);
@@ -461,19 +459,14 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 
 		if (slotNum >= 0) {
 			SaveGame *savedState = SaveGame::openForLoading(*file);
-			if (savedState) {
-				if (!savedState->isCompatible()) {
-					delete savedState;
-					continue;
-				}
+			if (savedState && savedState->isCompatible()) {
 				savedState->beginSection('SUBS');
 				strSize = savedState->readLESint32();
 				savedState->read(str, strSize);
-				saveDesc = str;
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-				delete savedState;
+				savedState->endSection();
+				saveList.push_back(SaveStateDescriptor(slotNum, str));
 			}
-
+			delete savedState;
 		}
 	}
 

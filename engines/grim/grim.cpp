@@ -323,14 +323,8 @@ Common::Error GrimEngine::run() {
 
 Common::Error GrimEngine::loadGameState(int slot) {
 	assert(slot >= 0);
-	char saveName[16];
-	if (slot < 100) {
-		sprintf(saveName, "grim%02d.gsv", slot);
-	} else {
-		sprintf(saveName, "grim%d.gsv", slot);
-	}
+	_savegameFileName = Common::String::format("grim%02d.gsv", slot);
 	_savegameLoadRequest = true;
-	_savegameFileName = saveName;
 	return Common::kNoError;
 }
 
