@@ -70,10 +70,10 @@ void MortevielleEngine::fctMove() {
 			_coreVar._currPlace = ATTIC;
 			_menu.setDestinationText(ATTIC);
 		}
-		
+
 		if (_num != 6)
 			_coreVar._currPlace = ROOM26;
-		
+
 		if ((_num > 1) && (_num < 6))
 			_ment = _num - 1;
 		else if (_num > 7)
@@ -116,10 +116,10 @@ void MortevielleEngine::fctMove() {
 		menuChoice = 6;
 	else if (((_coreVar._currPlace == LANDING) || (_coreVar._currPlace == ROOM26)) && (menuChoice == 4))
 		menuChoice = 6;
-	
+
 	if ((_coreVar._currPlace > MOUNTAIN) && (_coreVar._currPlace != ROOM26))
 		menuChoice += 10;
-	
+
 	if ((_coreVar._currPlace == CHAPEL) && (menuChoice == 13))
 		menuChoice = 16;
 	else if (_coreVar._currPlace == MANOR_FRONT) {
@@ -710,7 +710,7 @@ void MortevielleEngine::fctPlace() {
 						drawClock();
 						if (_currBitIndex != 0)
 							showPeoplePresent(_currBitIndex);
-						else 
+						else
 							displayAloneText();
 
 						_menu.displayMenu();
@@ -1109,7 +1109,7 @@ void MortevielleEngine::fctEat() {
 				else
 					h = 1;
 			}
-			
+
 			_jh += h;
 			_crep = 135;
 			prepareRoom();
@@ -1145,7 +1145,7 @@ void MortevielleEngine::fctEnter() {
 				_x = (getRandomNumber(0, 10)) - 5;
 				_speechManager.startSpeech(7, _x, 1);
 				aniof(1, 1);
-				
+
 				_x = convertBitIndexToCharacterIndex(z);
 				++_coreVar._faithScore;
 				_coreVar._currPlace = LANDING;
@@ -1166,7 +1166,7 @@ void MortevielleEngine::fctEnter() {
 			_x = (getRandomNumber(0, 10)) - 5;
 			_speechManager.startSpeech(7, _x, 1);
 			aniof(1, 1);
-			
+
 			_coreVar._currPlace = _ment;
 			affrep();
 			resetRoomVariables(_coreVar._currPlace);
@@ -1590,7 +1590,7 @@ void MortevielleEngine::endGame() {
 	repon(2, 35);
 	startMusicOrSpeech(0);
 	testKey(false);
-	// A wait message was displayed. 
+	// A wait message was displayed.
 	// testKey (aka tkey1) was called before and after.
 	// Most likely the double call is useless, thus removed
 	//

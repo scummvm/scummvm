@@ -58,6 +58,6 @@ public:
 	static void aff50(bool drawAni50Fl);
 	static void ani50();
 };
-	
+
 } // End of namespace Mortevielle
 #endif

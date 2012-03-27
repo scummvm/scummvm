@@ -177,7 +177,7 @@ void Menu::displayMenu() {
 	int pt, x, y, color, msk, num_letr;
 
 	g_vm->_mouse.hideMouse();
-	
+
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * g_vm->_res;
 	if (g_vm->_currGraphicalDevice == MODE_CGA)
@@ -434,9 +434,9 @@ void Menu::mdn() {
 			return;
 		else
 			g_vm->_prevPos = curPos;
-		
-		bool tes =  (curPos.y < 11) 
-		   && ((curPos.x >= (28 * g_vm->_res) && curPos.x <= (28 * g_vm->_res + 24)) 
+
+		bool tes =  (curPos.y < 11)
+		   && ((curPos.x >= (28 * g_vm->_res) && curPos.x <= (28 * g_vm->_res + 24))
 		   ||  (curPos.x >= (76 * g_vm->_res) && curPos.x <= (76 * g_vm->_res + 24))
 		   || ((curPos.x > 124 * g_vm->_res) && (curPos.x < 124 * g_vm->_res + 24))
 		   || ((curPos.x > 172 * g_vm->_res) && (curPos.x < 172 * g_vm->_res + 24))
@@ -481,7 +481,7 @@ void Menu::mdn() {
 			menuDown(_msg3);
 
 			g_vm->setMouseClick(false);
-		} else { 
+		} else {
 			//  A menu was clicked on
 			_menuSelected = (_multiTitle) && (_msg4 != OPCODE_NONE);
 			menuUp(_msg3);
@@ -551,7 +551,7 @@ void Menu::initMenu() {
  * @remarks	Originally called 'mfoudi'
  */
 void Menu::setSearchMenu() {
-	for (int i = 1; i <= 7; ++i) 
+	for (int i = 1; i <= 7; ++i)
 		disableMenuItem(_moveMenu[i]);
 
 	for (int i = 1; i <= 11; ++i)

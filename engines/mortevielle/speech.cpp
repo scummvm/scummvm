@@ -151,7 +151,7 @@ void SpeechManager::loadMusicSound() {
 
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
-	
+
 	f.read(&g_vm->_mem[0x7414 * 16 + 0], 273);
 
 	g_vm->_soundManager.decodeMusic(&g_vm->_mem[0x7414 * 16], &g_vm->_mem[kAdrNoise * 16], 273);
@@ -348,7 +348,7 @@ void SpeechManager::trait_car() {
 		}
 		break;
 	case 0:
-	case 1: 
+	case 1:
 		veracf(_queue[1]._acc);
 		switch (_queue[2]._code) {
 		case 2:
@@ -436,7 +436,7 @@ void SpeechManager::trait_car() {
 			entroct(d2);
 			entroct(_queue[1]._val);
 		}
-	
+
 		break;
 	case 4:
 		veracf(_queue[1]._acc);
@@ -483,7 +483,7 @@ void SpeechManager::trait_car() {
 			entroct(d2);
 			entroct(_tabdbc[((_queue[1]._val - 26) << 1) + 1]);
 		}
-	
+
 		break;
 	default:
 		break;

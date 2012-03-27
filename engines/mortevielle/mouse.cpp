@@ -40,7 +40,7 @@ namespace Mortevielle {
 void MouseHandler::initMouse() {
 	_counter = 0;
 	_pos = Common::Point(0, 0);
-	
+
 	g_vm->setMouseClick(false);
 }
 
@@ -108,7 +108,7 @@ void MouseHandler::hideMouse() {
 		case MODE_HERCULES:
 			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
 			for (int i = 0; i <= 5; ++i) {
-				for (int k = 0; k <= 3; ++k) 
+				for (int k = 0; k <= 3; ++k)
 					WRITE_LE_UINT16(&g_vm->_mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
 				j += 80;
 			}

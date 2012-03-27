@@ -58,7 +58,7 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	int i, j;
 
 	// Safeguard: add $ just in case
-	inputStr += '$'; 
+	inputStr += '$';
 
 	g_vm->_screenSurface.putxy(x, y);
 	if (g_vm->_res == 1)
@@ -151,7 +151,7 @@ void TextHandler::loadDesFile(Common::String filename, int32 skipSize, int lengt
 	}
 	f.close();
 
-	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i) 
+	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
 		g_vm->_mem[0x7000 * 16 + i - remainingSkipSize] = g_vm->_mem[0x6000 * 16 + i];
 }
 
