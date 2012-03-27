@@ -430,11 +430,8 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 
 	// Get the thumbnail
 	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail) {
-		delete header.thumbnail;
-		header.thumbnail = NULL;
+	if (!header.thumbnail)
 		return false;
-	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();
