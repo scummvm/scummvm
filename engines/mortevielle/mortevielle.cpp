@@ -86,7 +86,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_toiletsPresenceBobMax = false;
 	_bathRoomPresenceBobMax = false;
 	_room9PresenceLeo = false;
-	
+
 	_soundOff = false;
 	_largestClearScreen = false;
 	_hiddenHero = false;
@@ -144,7 +144,7 @@ bool MortevielleEngine::canSaveGameStateCurrently() {
  * Load in a savegame at the specified slot number
  */
 Common::Error MortevielleEngine::loadGameState(int slot) {
-	return _savegameManager.loadGame(slot);	
+	return _savegameManager.loadGame(slot);
 }
 
 /**
@@ -153,7 +153,7 @@ Common::Error MortevielleEngine::loadGameState(int slot) {
 Common::Error MortevielleEngine::saveGameState(int slot, const Common::String &desc) {
 	if (slot == 0)
 		return Common::kWritingFailed;
-	
+
 	return _savegameManager.saveGame(slot, desc);
 }
 
@@ -296,7 +296,7 @@ void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize, DataTyp
 		char ch;
 		while ((ch = (char)f.readByte()) != '\0')
 			s += ch;
-		
+
 		if (dataType == kStaticStrings)
 			_engineStrings.push_back(s);
 		else if (dataType == kGameStrings)
@@ -319,7 +319,7 @@ bool MortevielleEngine::keyPressed() {
 	// Check if it's time to draw the next frame
 	if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 		_lastGameFrame = g_system->getMillis();
-	
+
 		_screenSurface.updateScreen();
 	}
 
@@ -327,7 +327,7 @@ bool MortevielleEngine::keyPressed() {
 	g_system->delayMillis(5);
 
 	// Return if there are any pending key presses
-	return !_keypresses.empty(); 
+	return !_keypresses.empty();
 }
 
 /**
@@ -387,7 +387,7 @@ void MortevielleEngine::addKeypress(Common::Event &evt) {
 
 	// Handle alphabetic keys
 	if ((evt.kbd.keycode >= Common::KEYCODE_a) && (evt.kbd.keycode <= Common::KEYCODE_z)) {
-		if (evt.kbd.hasFlags(Common::KBD_CTRL)) 
+		if (evt.kbd.hasFlags(Common::KBD_CTRL))
 			ch = evt.kbd.keycode - Common::KEYCODE_a + 1;
 		else
 			ch = evt.kbd.keycode - Common::KEYCODE_a + 'A';
@@ -560,7 +560,7 @@ void MortevielleEngine::mainGame() {
 	if (_reloadCFIEC)
 		loadCFIEC();
 
-	for (_crep = 1; _crep <= _c_zzz; ++_crep) 
+	for (_crep = 1; _crep <= _c_zzz; ++_crep)
 		decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	loadBRUIT5();
@@ -719,7 +719,7 @@ void MortevielleEngine::loadPlaces() {
 
 	for (int i = 0; i < 7; ++i) {
 		for (int j = 0; j < 25; ++j)
-			_v_lieu[i][j] = f.readByte(); 
+			_v_lieu[i][j] = f.readByte();
 	}
 
 	f.close();
@@ -846,7 +846,7 @@ void MortevielleEngine::resetPresenceInRooms(int roomId) {
 }
 
 /**
- * Engine function - Show the people present in the given room 
+ * Engine function - Show the people present in the given room
  * @remarks	Originally called 'affper'
  */
 void MortevielleEngine::showPeoplePresent(int bitIndex) {
@@ -937,8 +937,8 @@ int MortevielleEngine::getPresenceStatsGreenRoom() {
 	int retVal = 0;
 
 	updateHour(day, hour, minute);
-	// The original uses an || instead of an &&, resulting 
-	// in an always true condition. Based on the other tests, 
+	// The original uses an || instead of an &&, resulting
+	// in an always true condition. Based on the other tests,
 	// and on other scenes, we use an && instead.
 	if ((hour > 7) && (hour < 11))
 		retVal = 25;
@@ -978,7 +978,7 @@ int MortevielleEngine::getPresenceStatsPurpleRoom() {
 		retVal = 20;
 	else if ((hour >= 0) && (hour < 8))
 		retVal = 50;
-	
+
 	return retVal;
 }
 
@@ -1707,7 +1707,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 	Common::String dialogStr = getString(rep + kDialogStringIndex);
 	_text.displayStr(dialogStr, 230, 4, 65, 24, 5);
 	f3f8::draw();
-	
+
 	key = 0;
 	do {
 		_speechManager.startSpeech(rep, haut[_caff - 69], 0);
@@ -1808,7 +1808,7 @@ void MortevielleEngine::gotoManorBack() {
 }
 
 /**
- * Engine function - Dead : Flooded in Well 
+ * Engine function - Dead : Flooded in Well
  * @remarks	Originally called 't1deau'
  */
 void MortevielleEngine::floodedInWell() {
@@ -2095,7 +2095,7 @@ void MortevielleEngine::clearScreenType10() {
 		st = getEngineString(S_LOURDE);
 	else if (_coreVar._faithScore > 65)
 		st = getEngineString(S_MALSAINE);
-	
+
 	co = 580 - (_screenSurface.getStringWidth(st) / 2);
 	_screenSurface.putxy(co, 92);
 	_screenSurface.drawString(st, 4);
@@ -2145,7 +2145,7 @@ void MortevielleEngine::decodeNumber(byte *pStart, int count) {
 				*pStart = 0;
 			else if (v & 0xff00)
 				*pStart = 0xff;
-			else 
+			else
 				*pStart = (byte)v;
 		}
 	}
@@ -2312,7 +2312,7 @@ void MortevielleEngine::setPal(int n) {
 
 		if (n < 89)
 			palette(_cgaPal[n]._p);
-		
+
 		for (int i = 0; i <= 15; ++i)
 			displayCGAPattern(i, _patternArr[pal[i]._id], pal);
 		}
@@ -2361,7 +2361,7 @@ void MortevielleEngine::loadPalette() {
 		}
 	}
 	f.close();
-	
+
 	if (!f.open("cxx.mor"))
 		error("Missing file - cxx.mor");
 
@@ -2408,16 +2408,16 @@ void MortevielleEngine::loadTexts() {
 			warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
 			return;
 		}
-	} 
+	}
 	if (!ntpFile.open("TXX.NTP")) {
 		warning("Missing file - TXX.INP or .MOR - Switching to DAT file");
 		return;
 	}
-	
+
 	if ((inpFile.size() > (kMaxTi * 2)) || (ntpFile.size() > (kMaxTd * 3))) {
 		warning("TXX file - Unexpected format - Switching to DAT file");
 		return;
-	} 
+	}
 
 	for (int i = 0; i < inpFile.size() / 2; ++i)
 		_inpBuffer[i] = inpFile.readUint16LE();
@@ -2478,7 +2478,7 @@ void MortevielleEngine::music() {
 		return;
 
 	_reloadCFIEC = true;
-	
+
 	Common::File fic;
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
@@ -2730,7 +2730,7 @@ void MortevielleEngine::drawClock() {
 	int h, co;
 
 	_mouse.hideMouse();
-	
+
 	_screenSurface.drawRectangle(570, 118, 20, 10);
 	_screenSurface.drawRectangle(578, 114, 6, 18);
 	if ((_currGraphicalDevice == MODE_CGA) || (_currGraphicalDevice == MODE_HERCULES))
@@ -2740,7 +2740,7 @@ void MortevielleEngine::drawClock() {
 
 	if (_minute == 0)
 		_screenSurface.drawLine(((uint)x >> 1) * _res, y, ((uint)x >> 1) * _res, (y - rg), co);
-	else 
+	else
 		_screenSurface.drawLine(((uint)x >> 1) * _res, y, ((uint)x >> 1) * _res, (y + rg), co);
 
 	h = _hour;
@@ -3058,7 +3058,7 @@ int MortevielleEngine::checkLeoMaxRandomPresence() {
 	int retval = getRandomNumber(1, 2);
 	if (retval == 2)
 		retval = 128;
-	
+
 	return retval;
 }
 
@@ -3230,7 +3230,7 @@ void MortevielleEngine::writetp(Common::String s, int t) {
 void MortevielleEngine::aniof(int ouf, int num) {
 	if ((_caff == 7) && ((num == 4) || (num == 5)))
 		return;
-	
+
 	if ((_caff == 10) && (num == 7))
 		num = 6;
 	else if (_caff == 12) {
@@ -3280,7 +3280,7 @@ void MortevielleEngine::dessin() {
 			else if ((_caff == 24) && (_coreVar._wellObjectId != 0))
 				aniof(1, 1);
 		}
-		
+
 		if (_caff < ROOM26)
 			startMusicOrSpeech(1);
 	}
@@ -3311,7 +3311,7 @@ void MortevielleEngine::testKey(bool d) {
 		_mouse.getMousePosition(x, y, c);
 		keyPressed();
 	} while (c != 0);
-	
+
 	// Event loop
 	do {
 		if (d)

@@ -41,7 +41,7 @@ static const PlainGameDescriptor MortevielleGame[] = {
 
 class MortevielleMetaEngine : public AdvancedMetaEngine {
 public:
-	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(ADGameDescription), 
+	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(ADGameDescription),
 		MortevielleGame) {
 		_md5Bytes = 512;
 		_singleid = "mortevielle";

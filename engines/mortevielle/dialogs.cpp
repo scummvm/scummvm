@@ -418,7 +418,7 @@ void f3f8::draw() {
 }
 
 /**
- * Alert function - Loop until F8 is pressed, update 
+ * Alert function - Loop until F8 is pressed, update
  * Graphical Device if modified
  * @remarks	Originally called 'diver'
  */
@@ -462,7 +462,7 @@ void f3f8::aff50(bool drawAni50Fl) {
 		ani50();
 	else
 		g_vm->repon(2, kDialogStringIndex + 142);
-	
+
 	// Draw the f3/f8 dialog
 	draw();
 }

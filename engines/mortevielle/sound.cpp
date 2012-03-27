@@ -178,7 +178,7 @@ void SoundManager::playNote(int frequency, int32 length) {
 void SoundManager::musyc(tablint &tb, int nbseg, int att) {
 #ifdef DEBUG
 	const byte *pSrc = &mem[0x5000 * 16];
-	
+
 	// Convert the countdown amount to a tempo rate, and then to note length in microseconds
 	int tempo = TIMER_FREQUENCY / att;
 	int length = 1000000 / tempo;

@@ -48,7 +48,7 @@ struct SpeakerNote {
 		length = noteLength;
 	}
 };
-	
+
 /**
  * This is a modified PC Speaker class that allows the queueing of an entire song
  * sequence one note at a time.
@@ -103,7 +103,7 @@ public:
 
 	void decodeMusic(const byte *PSrc, byte *PDest, int NbreSeg);
 	void litph(tablint &t, int typ, int tempo);
-	void musyc(tablint &tb, int nbseg, int att);  
+	void musyc(tablint &tb, int nbseg, int att);
 };
 
 } // End of namespace Mortevielle

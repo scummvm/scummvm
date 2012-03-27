@@ -31,8 +31,8 @@
 namespace Mortevielle {
 
 /*-------------------------------------------------------------------------*
- * Palette Manager 
- * 
+ * Palette Manager
+ *
  *-------------------------------------------------------------------------*/
 
 /**
@@ -71,7 +71,7 @@ void PaletteManager::setDefaultPalette() {
 
 /*-------------------------------------------------------------------------*
  * Image decoding
- * 
+ *
  * The code in this section is responsible for decoding image resources.
  * Images are broken down into rectangular sections, which can use one
  * of 18 different encoding methods.
@@ -138,7 +138,7 @@ void GfxSurface::decode(const byte *pSrc) {
 		_xSize = READ_BE_UINT16(pSrc + 2) + 1;
 		_ySize = READ_BE_UINT16(pSrc + 4) + 1;
 		majTtxTty();
-		
+
 		pSrc += 6;
 		pDest = &outputBuffer[0];
 
@@ -159,7 +159,7 @@ void GfxSurface::decode(const byte *pSrc) {
 					const byte *pSrcSaved = pSrc;
 					bool savedNibbleFlag = _nibbleFlag;
 					int savedLookupIndex = _lookupIndex;
-					
+
 					do {
 						pSrc = pSrcSaved;
 						_nibbleFlag = savedNibbleFlag;
@@ -237,7 +237,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			pDest = &outputBuffer[_yp * DEFAULT_WIDTH + _xp];
 			pSrcStart = pSrc;
 			INCR_TAIX;
-			
+
 			for (int yCtr = 0; yCtr < _ySize; ++yCtr, pDest += DEFAULT_WIDTH) {
 				byte *pDestLine = pDest;
 				for (int xCtr = 0; xCtr < _xSize; ++xCtr) {
@@ -490,7 +490,7 @@ void GfxSurface::horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLooku
 				break;
 			continue;
 		}
-		
+
 		bool continueFlag = false;
 		do {
 			for (int xIndex = 0; xIndex < _xSize; ++xIndex) {
@@ -599,7 +599,7 @@ void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup)
 			pDest += _thickness;
 			drawIndex += _thickness;
 		}
-		
+
 		while (_xSize < (drawIndex + _thickness)) {
 			if (--_thickness == 0)
 				return;
@@ -622,7 +622,7 @@ void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup)
 				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
 					*--pDest = csuiv(pSrc, pLookup);
 			}
-		}				
+		}
 		if ((_ySize % 2) == 0) {
 			pDest += _thickness;
 			drawIndex += _thickness;
@@ -743,7 +743,7 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 				NIH();
 				increments(pDest);
 			}
-			
+
 			NIH();
 			NIV();
 			increments(pDest);
@@ -780,7 +780,7 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 				NIH();
 				increments(pDest);
 			}
-			
+
 			NIH();
 			NIV();
 			increments(pDest);
@@ -791,13 +791,13 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 				break;
 			} else {
 				pDest += _xInc;
-				
+
 				if (--drawIndex == 0) {
 					TF2(pSrc, pDest, pLookup, diagIndex);
 					NIH();
 					break;
 				}
-			} 
+			}
 
 			NIH();
 		}
@@ -885,7 +885,7 @@ void ScreenSurface::updateScreen() {
 	// Iterate through copying dirty areas to the screen
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
 		Common::Rect r = *i;
-		g_system->copyRectToScreen((const byte *)getBasePtr(r.left, r.top), pitch, 
+		g_system->copyRectToScreen((const byte *)getBasePtr(r.left, r.top), pitch,
 			r.left, r.top, r.width(), r.height());
 	}
 	_dirtyRects.clear();
@@ -896,7 +896,7 @@ void ScreenSurface::updateScreen() {
 
 /**
  * Draws a decoded picture on the screen
- * @remarks		- Because the ScummVM surface is using a double height 640x400 surface to 
+ * @remarks		- Because the ScummVM surface is using a double height 640x400 surface to
  *		simulate the original 640x400 surface, all Y values have to be doubled.
  *		- Image resources are stored at 320x200, so when drawn onto the screen a single pixel
  *		from the source image is drawn using the two pixels at the given index in the palette map
@@ -909,13 +909,13 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 	y += surface._offset.y;
 
 	// Lock the affected area of the surface to write to
-	Graphics::Surface destSurface = lockArea(Common::Rect(x * 2, y * 2, 
+	Graphics::Surface destSurface = lockArea(Common::Rect(x * 2, y * 2,
 		(x + surface.w) * 2, (y + surface.h) * 2));
 
 	// Get a lookup for the palette mapping
 	const byte *paletteMap = &g_vm->_mem[0x7000 * 16 + 2];
 
-	// Loop through writing 
+	// Loop through writing
 	for (int yp = 0; yp < surface.h; ++yp) {
 		if (((y + yp) < 0) || ((y + yp) >= 200))
 			continue;
@@ -948,7 +948,7 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 void ScreenSurface::copyFrom(Graphics::Surface &src, int x, int y) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(x, y, x + src.w, y + src.h));
 
-	// Loop through writing 
+	// Loop through writing
 	for (int yp = 0; yp < src.h; ++yp) {
 		if (((y + yp) < 0) || ((y + yp) >= SCREEN_HEIGHT))
 			continue;
@@ -961,11 +961,11 @@ void ScreenSurface::copyFrom(Graphics::Surface &src, int x, int y) {
 
 /**
  * Draws a character at the specified co-ordinates
- * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex) {
-	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2, 
+	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2,
 		pt.x + FONT_WIDTH, (pt.y + FONT_HEIGHT) * 2));
 
 	// Get the start of the character to use
@@ -988,7 +988,7 @@ void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, in
 
 /**
  * Draws a box at the specified position and size
- * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
@@ -1011,13 +1011,13 @@ void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
 
 /**
  * Fills an area with the specified colour
- * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::fillRect(int colour, const Common::Rect &bounds) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(bounds.left, bounds.top * 2,
 		bounds.right, bounds.bottom * 2));
-	
+
 	// Fill the area
 	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), colour);
 }
@@ -1032,7 +1032,7 @@ void ScreenSurface::clearScreen() {
 
 /**
  * Sets a single pixel at the specified co-ordinates
- * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::setPixel(const Common::Point &pt, int palIndex) {
@@ -1115,7 +1115,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 	yr = y;
 	xro = xx;
 	yro = yy;
-	
+
 	if (abs(y - yy) > abs(x - xx)) {
 		a = (float)((x - xx)) / (y - yy);
 		b = (yr * xro - yro * xr) / (y - yy);

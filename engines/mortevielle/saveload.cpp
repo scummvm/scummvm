@@ -110,7 +110,7 @@ void SavegameManager::loadSavegame(int n) {
 		g_vm->_tabdon[i + kAcha] = _tabdonSaveBuffer[i];
 
 	// Close the stream
-	delete stream;	
+	delete stream;
 }
 
 /**
@@ -120,7 +120,7 @@ Common::Error SavegameManager::loadGame(int n) {
 	g_vm->_mouse.hideMouse();
 	g_vm->displayEmptyHand();
 	loadSavegame(n);
-	
+
 	/* Initialization */
 	g_vm->charToHour();
 	g_vm->initGame();
@@ -138,13 +138,13 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 
 	g_vm->_mouse.hideMouse();
 	g_vm->hourToChar();
-	
+
 	for (i = 0; i <= 389; ++i)
 		_tabdonSaveBuffer[i] = g_vm->_tabdon[i + kAcha];
 	g_vm->_saveStruct = g_vm->_coreVar;
 	if (g_vm->_saveStruct._currPlace == ROOM26)
 		g_vm->_saveStruct._currPlace = LANDING;
-	
+
 	Common::String filename = generateSaveName(n);
 	f = g_system->getSavefileManager()->openForSaving(filename);
 
@@ -162,7 +162,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	// Close the save file
 	f->finalize();
 	delete f;
-	
+
 	// Skipped: dialog asking to swap floppy
 
 	g_vm->_mouse.showMouse();
@@ -252,18 +252,18 @@ SaveStateList SavegameManager::listSaves(const char *target) {
 				// ScummVm savegame. Read in the header to get the savegame name
 				SavegameHeader header;
 				validFlag = readSavegameHeader(in, header);
-				
+
 				if (validFlag) {
 					delete header.thumbnail;
 					saveDescription = header.saveName;
 				}
 			} else if (file->size() == 497) {
 				// Form an appropriate savegame name
-				saveDescription = (slotNumber == 0) ? "Initial game state" : 
+				saveDescription = (slotNumber == 0) ? "Initial game state" :
 					Common::String::format("Savegame #%d", slotNumber);
 				validFlag = true;
 			}
-				
+
 			if (validFlag)
 				// Got a valid savegame
 				saveList.push_back(SaveStateDescriptor(slotNumber, saveDescription));
@@ -278,7 +278,7 @@ SaveStateList SavegameManager::listSaves(const char *target) {
 SaveStateDescriptor SavegameManager::querySaveMetaInfos(int slot) {
 	Common::String fileName = Mortevielle::SavegameManager::generateSaveName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-	
+
 	if (f) {
 		// Check to see if it's a ScummVM savegame or not
 		char buffer[4];
@@ -311,7 +311,7 @@ SaveStateDescriptor SavegameManager::querySaveMetaInfos(int slot) {
 			return desc;
 		}
 	}
-	
+
 	return SaveStateDescriptor();
 }
 
