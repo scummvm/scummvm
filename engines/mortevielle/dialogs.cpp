@@ -284,12 +284,19 @@ bool KnowledgeCheck::show() {
 	const int textIndexArr[10] = {511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
 	const int correctAnswerArr[10] = {4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
 
+	char key;
 	int optionPosY;
 	int maxLength;
 	int rep;
 	int firstOption, lastOption;
-	char key;
-	Hotspot coor[kMaxRect];
+
+	Hotspot coor[kMaxRect+1];
+
+	for (int i = 0; i < kMaxRect; ++i) {
+		coor[i]._rect = Common::Rect();
+		coor[i]._enabled = false;
+	}
+
 	Common::String choiceArray[15];
 
 	int currChoice, prevChoice;
@@ -329,10 +336,7 @@ bool KnowledgeCheck::show() {
 		}
 
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			coor[j]._rect.left = 45 * g_vm->_res;
-			coor[j]._rect.right = (maxLength * 3 + 55) * g_vm->_res;
-			coor[j]._rect.top = 27 + j * 8;
-			coor[j]._rect.bottom = 34 + j * 8;
+			coor[j]._rect = Common::Rect(45 * g_vm->_res, 27 + j * 8, (maxLength * 3 + 55) * g_vm->_res, 34 + j * 8);
 			coor[j]._enabled = true;
 
 			while ((int)choiceArray[j].size() < maxLength) {
