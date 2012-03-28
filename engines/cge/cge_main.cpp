@@ -216,6 +216,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		byte *dataBuffer = (byte *)malloc(size);
 		saveFile->read(dataBuffer, size);
 		readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
+		delete saveFile;
 	}
 
 	// Check to see if it's a ScummVM savegame or not
