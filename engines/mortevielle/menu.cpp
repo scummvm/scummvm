@@ -37,7 +37,7 @@
 namespace Mortevielle {
 
 const byte _menuConstants[8][4] = {
-	{ 7, 37, 22,  8},
+	{ 7, 37, 23,  8},
 	{19, 33, 23,  7},
 	{31, 89, 10, 21},
 	{43, 25, 11,  5},
@@ -56,7 +56,7 @@ void Menu::setText(int menuId, Common::String name) {
 	byte l = lo(menuId);
 	Common::String s = name;
 
-	while (s.size() < 20)
+	while (s.size() < 22)
 		s += ' ';
 
 	switch (h) {
