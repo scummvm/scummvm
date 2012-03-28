@@ -57,6 +57,9 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
+#ifdef USE_FREETYPE2
+#include "graphics/fonts/ttf.h"
+#endif
 
 #include "backends/keymapper/keymapper.h"
 
@@ -505,6 +508,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	MusicManager::destroy();
 	Graphics::CursorManager::destroy();
 	Graphics::FontManager::destroy();
+#ifdef USE_FREETYPE2
+	Graphics::shutdownTTF();
+#endif
 
 	return 0;
 }

@@ -70,6 +70,10 @@ private:
 	bool _initialized;
 };
 
+void shutdownTTF() {
+	TTFLibrary::destroy();
+}
+
 #define g_ttf ::Graphics::TTFLibrary::instance()
 
 TTFLibrary::TTFLibrary() : _library(), _initialized(false) {
