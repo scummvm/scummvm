@@ -31,7 +31,6 @@
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/saveload.h"
-#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

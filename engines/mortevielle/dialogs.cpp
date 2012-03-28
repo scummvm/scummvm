@@ -290,9 +290,9 @@ bool KnowledgeCheck::show() {
 	int rep;
 	int firstOption, lastOption;
 
-	Hotspot coor[kMaxRect+1];
+	Hotspot coor[kMaxHotspots+1];
 
-	for (int i = 0; i < kMaxRect; ++i) {
+	for (int i = 0; i <= kMaxHotspots; ++i) {
 		coor[i]._rect = Common::Rect();
 		coor[i]._enabled = false;
 	}

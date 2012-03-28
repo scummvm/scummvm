@@ -28,12 +28,18 @@
 #ifndef MORTEVIELLE_ALERT_H
 #define MORTEVIELLE_ALERT_H
 
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Mortevielle {
 
 static const int NUM_LINES = 7;
-const int kMaxRect = 14;
+const int kMaxHotspots = 14;
+
+struct Hotspot {
+	Common::Rect _rect;
+	bool _enabled;
+};
 
 class Alert {
 private:

@@ -32,9 +32,10 @@
 #include "audio/mixer.h"
 #include "common/mutex.h"
 #include "common/queue.h"
-#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
+
+typedef int tablint[256];
 
 /**
  * Structure used to store pending notes to play
