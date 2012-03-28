@@ -38,8 +38,6 @@
 #include "backends/platform/ds/arm9/source/wordcompletion.h"
 #endif
 
-using namespace Common;
-
 namespace GUI {
 
 enum {
@@ -907,7 +905,7 @@ void PredictiveDialog::loadAllDictionary(Dict &dict) {
 	ConfMan.registerDefault(dict.nameDict, dict.fnameDict);
 
 	if (dict.nameDict == "predictive_dictionary") {
-		Common::File *inFile = new File();
+		Common::File *inFile = new Common::File();
 		if (!inFile->open(ConfMan.get(dict.nameDict))) {
 			warning("Predictive Dialog: cannot read file: %s", dict.fnameDict.c_str());
 			return;
