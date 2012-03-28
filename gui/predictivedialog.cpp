@@ -630,7 +630,7 @@ void PredictiveDialog::bringWordtoTop(char *str, int wordnum) {
 	memcpy(str, tmp.c_str(), strlen(str));
 }
 
-int PredictiveDialog::binarySearch(char **dictLine, const String &code, int dictLineCount) {
+int PredictiveDialog::binarySearch(char **dictLine, const Common::String &code, int dictLineCount) {
 	int hi = dictLineCount - 1;
 	int lo = 0;
 	int line = 0;
@@ -691,7 +691,7 @@ bool PredictiveDialog::matchWord() {
 	}
 }
 
-bool PredictiveDialog::searchWord(char *where, const String &whatCode) {
+bool PredictiveDialog::searchWord(char *where, const Common::String &whatCode) {
 	char *ptr = where;
 	ptr += whatCode.size();
 
@@ -712,7 +712,7 @@ bool PredictiveDialog::searchWord(char *where, const String &whatCode) {
 	return is;
 }
 
-void PredictiveDialog::addWord(Dict &dict, const String &word, const String &code) {
+void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Common::String &code) {
 	char *newLine;
 	Common::String tmpCode = code + ' ';
 	int line = binarySearch(dict.dictLine, tmpCode, dict.dictLineCount);

@@ -63,8 +63,6 @@ enum {
 };
 
 class PredictiveDialog : public GUI::Dialog {
-	typedef Common::String String;
-
 public:
 	PredictiveDialog();
 	~PredictiveDialog();
@@ -81,8 +79,8 @@ private:
 		char *dictActLine; // using only for united dict...
 		int32 dictLineCount;
 		int32 dictTextSize;
-		String nameDict;
-		String fnameDict;
+		Common::String nameDict;
+		Common::String fnameDict;
 	};
 
 	uint8 countWordsInString(char *str);
@@ -90,9 +88,9 @@ private:
 	void loadDictionary(Common::SeekableReadStream *in, Dict &dict);
 	void loadAllDictionary(Dict &dict);
 	void addWordToDict();
-	void addWord(Dict &dict, const String &word, const String &code);
-	bool searchWord(char *where, const String &whatCode);
-	int binarySearch(char **dictLine, const String &code, int dictLineCount);
+	void addWord(Dict &dict, const Common::String &word, const Common::String &code);
+	bool searchWord(char *where, const Common::String &whatCode);
+	int binarySearch(char **dictLine, const Common::String &code, int dictLineCount);
 	bool matchWord();
 	void processBtnActive(ButtonId active);
 	void pressEditText();
@@ -114,9 +112,9 @@ private:
 	uint8 _numMatchingWords;
 	char _predictiveResult[40];
 
-	String _currentCode;
-	String _currentWord;
-	String _prefix;
+	Common::String _currentCode;
+	Common::String _currentWord;
+	Common::String _prefix;
 
 	uint32 _curTime, _lastTime;
 	ButtonId _lastPressBtn;
@@ -127,7 +125,7 @@ private:
 	char *_memoryList[kMaxWord];
 	int _numMemory;
 
-	String _search;
+	Common::String _search;
 
 	bool _navigationwithkeys;
 private:
