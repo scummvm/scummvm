@@ -43,8 +43,8 @@ const byte _menuConstants[8][4] = {
 	{43, 25, 11,  5},
 	{55, 37,  5,  8},
 	{64, 13, 11,  2},
-	{62, 22, 13,  4},
-	{62, 25, 13,  5}
+	{62, 42, 13,  9},
+	{62, 46, 13, 10}
 };
 
 /**
@@ -56,7 +56,7 @@ void Menu::setText(int menuId, Common::String name) {
 	byte l = lo(menuId);
 	Common::String s = name;
 
-	while (s.size() < 30)
+	while (s.size() < 20)
 		s += ' ';
 
 	switch (h) {
@@ -312,8 +312,6 @@ void Menu::util(Common::Point pos) {
 void Menu::menuDown(int ii) {
 	int cx, xcc, xco;
 	int lignNumb;
-
-	/* debug('menuDown'); */
 
 	// Make a copy of the current screen surface for later restore
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
