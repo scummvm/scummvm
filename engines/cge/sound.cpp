@@ -148,8 +148,11 @@ void Fx::preload(int ref0) {
 		DataCk *wav = loadWave(&file);
 		if (wav) {
 			Handler *p = &_cache[find(0)];
-			if (p >= cacheLim)
+			if (p >= cacheLim) {
+				delete wav;
 				break;
+			}
+			delete p->_wav;
 			p->_wav = wav;
 			p->_ref = ref;
 		} else {
@@ -166,6 +169,7 @@ DataCk *Fx::load(int idx, int ref) {
 	DataCk *wav = loadWave(&file);
 	if (wav) {
 		Handler *p = &_cache[idx];
+		delete p->_wav;
 		p->_wav = wav;
 		p->_ref = ref;
 	} else {
