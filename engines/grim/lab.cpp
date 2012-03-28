@@ -45,46 +45,38 @@ Common::SeekableReadStream *LabEntry::createReadStream() const {
 bool Lab::open(const Common::String &filename) {
 	_labFileName = filename;
 
-	close();
+	bool result = true;
 
-	_f = new Common::File();
-	if (!_f->open(filename)) {
-		close();
-		return false;
+	Common::File *file = new Common::File();
+	if (!file->open(filename) || file->readUint32BE() != MKTAG('L','A','B','N')) {
+		result = false;
+	} else {
+		file->readUint32LE(); // version
+
+		if (g_grim->getGameType() == GType_GRIM)
+			parseGrimFileTable(file);
+		else
+			parseMonkey4FileTable(file);
 	}
+	delete file;
 
-	if (_f->readUint32BE() != MKTAG('L','A','B','N')) {
-		close();
-		return false;
-	}
-
-	_f->readUint32LE(); // version
-
-	if (g_grim->getGameType() == GType_GRIM)
-		parseGrimFileTable();
-	else
-		parseMonkey4FileTable();
-
-	delete _f;
-	_f = NULL;
-
-	return true;
+	return result;
 }
 
-void Lab::parseGrimFileTable() {
-	uint32 entryCount = _f->readUint32LE();
-	uint32 stringTableSize = _f->readUint32LE();
+void Lab::parseGrimFileTable(Common::File *file) {
+	uint32 entryCount = file->readUint32LE();
+	uint32 stringTableSize = file->readUint32LE();
 
 	char *stringTable = new char[stringTableSize];
-	_f->seek(16 * (entryCount + 1));
-	_f->read(stringTable, stringTableSize);
-	_f->seek(16);
+	file->seek(16 * (entryCount + 1));
+	file->read(stringTable, stringTableSize);
+	file->seek(16);
 
 	for (uint32 i = 0; i < entryCount; i++) {
-		int fnameOffset = _f->readUint32LE();
-		int start = _f->readUint32LE();
-		int size = _f->readUint32LE();
-		_f->readUint32LE();
+		int fnameOffset = file->readUint32LE();
+		int start = file->readUint32LE();
+		int size = file->readUint32LE();
+		file->readUint32LE();
 
 		Common::String fname = stringTable + fnameOffset;
 		fname.toLowercase();
@@ -96,15 +88,15 @@ void Lab::parseGrimFileTable() {
 	delete[] stringTable;
 }
 
-void Lab::parseMonkey4FileTable() {
-	uint32 entryCount = _f->readUint32LE();
-	uint32 stringTableSize = _f->readUint32LE();
-	uint32 stringTableOffset = _f->readUint32LE() - 0x13d0f;
+void Lab::parseMonkey4FileTable(Common::File *file) {
+	uint32 entryCount = file->readUint32LE();
+	uint32 stringTableSize = file->readUint32LE();
+	uint32 stringTableOffset = file->readUint32LE() - 0x13d0f;
 
 	char *stringTable = new char[stringTableSize];
-	_f->seek(stringTableOffset);
-	_f->read(stringTable, stringTableSize);
-	_f->seek(20);
+	file->seek(stringTableOffset);
+	file->read(stringTable, stringTableSize);
+	file->seek(20);
 
 	// Decrypt the string table
 	for (uint32 i = 0; i < stringTableSize; i++)
@@ -112,10 +104,10 @@ void Lab::parseMonkey4FileTable() {
 			stringTable[i] ^= 0x96;
 
 	for (uint32 i = 0; i < entryCount; i++) {
-		int fnameOffset = _f->readUint32LE();
-		int start = _f->readUint32LE();
-		int size = _f->readUint32LE();
-		_f->readUint32LE();
+		int fnameOffset = file->readUint32LE();
+		int start = file->readUint32LE();
+		int size = file->readUint32LE();
+		file->readUint32LE();
 
 		char *str = stringTable + fnameOffset;
 		int len = strlen(str);
@@ -170,14 +162,7 @@ Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String 
 
 	Common::File *file = new Common::File();
 	file->open(_labFileName);
-	return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES );
-}
-
-void Lab::close() {
-	delete _f;
-	_f = NULL;
-
-	_entries.clear();
+	return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES);
 }
 
 } // end of namespace Grim

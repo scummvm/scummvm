@@ -47,11 +47,7 @@ public:
 
 class Lab : public Common::Archive {
 public:
-	Lab() : _f(NULL) { }
-	~Lab() { close(); }
-
 	bool open(const Common::String &filename);
-	void close();
 
 	// Common::Archive implementation
 	virtual bool hasFile(const Common::String &name) const;
@@ -60,10 +56,9 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 private:
-	void parseGrimFileTable();
-	void parseMonkey4FileTable();
+	void parseGrimFileTable(Common::File *_f);
+	void parseMonkey4FileTable(Common::File *_f);
 
-	Common::File *_f;
 	Common::String _labFileName;
 	typedef Common::SharedPtr<LabEntry> LabEntryPtr;
 	typedef Common::HashMap<Common::String, LabEntryPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;
