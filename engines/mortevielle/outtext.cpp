@@ -31,7 +31,6 @@
 #include "mortevielle/outtext.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

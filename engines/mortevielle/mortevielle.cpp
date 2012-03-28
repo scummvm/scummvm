@@ -35,7 +35,6 @@
 #include "mortevielle/outtext.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

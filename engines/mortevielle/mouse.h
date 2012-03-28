@@ -28,7 +28,7 @@
 #ifndef MORTEVIELLE_MOUSE_H
 #define MORTEVIELLE_MOUSE_H
 
-#include "mortevielle/var_mor.h"
+#include "common/rect.h"
 
 namespace Mortevielle {
 

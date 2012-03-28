@@ -32,7 +32,6 @@
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/speech.h"
-#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

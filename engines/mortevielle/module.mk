@@ -11,8 +11,7 @@ MODULE_OBJS := \
 	outtext.o \
 	saveload.o \
 	sound.o \
-	speech.o \
-	var_mor.o
+	speech.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MORTEVIELLE), DYNAMIC_PLUGIN)

@@ -30,7 +30,6 @@
 #include "mortevielle/speech.h"
 #include "mortevielle/sound.h"
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
