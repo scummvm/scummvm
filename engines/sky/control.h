@@ -203,6 +203,11 @@ private:
 
 	void drawMainPanel();
 
+	/**
+	 * Waits for a specified amount while still processing events.
+	 *
+	 * @param amount The duration in milliseconds to wait
+	 */
 	void delay(unsigned int amount);
 
 	void animClick(ConResource *pButton);
