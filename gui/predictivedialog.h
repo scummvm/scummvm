@@ -73,7 +73,7 @@ public:
 	virtual void handleKeyDown(Common::KeyState state);
 	virtual void handleTickle();
 
-	char * getResult() { return _predictiveResult; }
+	char *getResult() { return _predictiveResult; }
 private:
 	struct Dict {
 		char **dictLine;
