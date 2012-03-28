@@ -636,11 +636,11 @@ void MortevielleEngine::handleAction() {
 			return;
 		}
 		if (_menu._menuSelected && (_msg[3] == MENU_SAVE)) {
-			Common::String saveName = Common::String::format("Savegame #%d", _msg[4] & 7);
-			_savegameManager.saveGame(_msg[4] & 7, saveName);
+			Common::String saveName = Common::String::format("Savegame #%d", _msg[4] & 15);
+			_savegameManager.saveGame(_msg[4] & 15, saveName);
 		}
 		if (_menu._menuSelected && (_msg[3] == MENU_LOAD))
-			_savegameManager.loadGame((_msg[4] & 7) - 1);
+			_savegameManager.loadGame((_msg[4] & 15) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = Alert::show(_hintPctMessage, 1);
 			return;
