@@ -214,6 +214,8 @@ Common::ErrorCode MortevielleEngine::initialise() {
 		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
 
+	free(_cfiecBuffer);
+	free(_speechManager._cfiphBuffer);
 	return Common::kNoError;
 }
 
@@ -714,7 +716,8 @@ void MortevielleEngine::loadPlaces() {
 	Common::File f;
 
 	if (!f.open("MXX.mor"))
-		error("Missing file - MXX.mor");
+		if (!f.open("MFXX.mor"))
+			error("Missing file - MXX.mor");
 
 	for (int i = 0; i < 7; ++i) {
 		for (int j = 0; j < 25; ++j)
@@ -2345,8 +2348,13 @@ void MortevielleEngine::loadPalette() {
 	Common::File f;
 	byte b;
 
-	if (!f.open("fxx.mor"))
-		error("Missing file - fxx.mor");
+	if (!f.open("fxx.mor")) {
+		if (f.open("mfxx.mor"))
+			f.seek(7 * 25);
+		else
+			error("Missing file - fxx.mor");
+	}
+
 	for (int i = 0; i < 108; ++i)
 		_fxxBuffer[i] = f.readSint16LE();
 	f.close();
@@ -2446,10 +2454,19 @@ void MortevielleEngine::loadBRUIT5() {
 void MortevielleEngine::loadCFIEC() {
 	Common::File f;
 
-	if (!f.open("cfiec.mor"))
-		error("Missing file - cfiec.mor");
+	if (!f.open("cfiec.mor")) {
+		if (!f.open("alcfiec.mor"))
+			error("Missing file - *cfiec.mor");
+	}
 
-	f.read(&_cfiecBuffer[0], 822 * 128);
+	int size = ((f.size() / 128) + 1) * 128;
+
+	if (!_reloadCFIEC)
+		_cfiecBuffer = (byte *)malloc(sizeof(byte) * size);
+
+	for (int i = 0; i < size; ++i)
+		_cfiecBuffer[i] = f.readByte();
+
 	f.close();
 
 	_reloadCFIEC = false;
@@ -2459,8 +2476,12 @@ void MortevielleEngine::loadCFIEC() {
 void MortevielleEngine::loadCFIPH() {
 	Common::File f;
 
-	if (!f.open("cfiph.mor"))
-		error("Missing file - cfiph.mor");
+	if (!f.open("cfiph.mor")) {
+		if (!f.open("alcfiph.mor"))
+			error("Missing file - *cfiph.mor");
+	}
+
+	_speechManager._cfiphBuffer = (int16 *)malloc(sizeof(int16) * (f.size() / 2));
 
 	for (int i = 0; i < (f.size() / 2); ++i)
 		_speechManager._cfiphBuffer[i] = f.readSint16LE();

@@ -73,7 +73,7 @@ private:
 	int _ptr_oct;
 
 public:
-	int _cfiphBuffer[6401];
+	int16 *_cfiphBuffer;
 	int _tbi[256];
 	int _mlec;
 
