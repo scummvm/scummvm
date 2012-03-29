@@ -197,7 +197,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	loadPalette();
 	loadCFIPH();
 	loadCFIEC();
-	decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+	decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 	_c_zzz = 1;
 	init_nbrepm();
 	initMouse();
@@ -2474,12 +2474,12 @@ void MortevielleEngine::loadCFIEC() {
 			error("Missing file - *cfiec.mor");
 	}
 
-	int size = ((f.size() / 128) + 1) * 128;
+	_cfiecBufferSize = ((f.size() / 128) + 1) * 128;
 
 	if (!_reloadCFIEC)
-		_cfiecBuffer = (byte *)malloc(sizeof(byte) * size);
+		_cfiecBuffer = (byte *)malloc(sizeof(byte) * _cfiecBufferSize);
 
-	for (int i = 0; i < size; ++i)
+	for (int i = 0; i < _cfiecBufferSize; ++i)
 		_cfiecBuffer[i] = f.readByte();
 
 	f.close();
@@ -3749,7 +3749,7 @@ int MortevielleEngine::testou() {
 		break;
 	case '\26' :
 		if ((_c_zzz == 1) || (_c_zzz == 2)) {
-			decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+			decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 			++_c_zzz;
 
 			return 61;
