@@ -57,25 +57,32 @@ void openOutputFile(const char *outFilename) {
  * Write out the data for the font 
  */
 void writeFontBlock() {
+	const int knownAddr[2] = {0x36b0, 0x36c0};
 	byte checkBuffer[7];
 	byte fontBuffer[121 * 6];
 
 	// Move to just prior the font data and verify that we're reading the known mort.com
-	mortCom.seek(0x36b0);
-	mortCom.read(checkBuffer, 7);
+	for (int i = 0; i <= 2; ++i) {
+		if ( i == 2) {
+			printf("Invalid mort.com input file");
+			exit(0);
+		}
 
-	if ((checkBuffer[0] != 0x59) || (checkBuffer[1] != 0x5B) || (checkBuffer[2] != 0x58) ||
-		(checkBuffer[3] != 0xC3) || (checkBuffer[4] != 0xE8) || (checkBuffer[5] != 0xD6) ||
-		(checkBuffer[6] != 0x02)) {
-		printf("Invalid mort.com input file");
-		exit(0);
+		mortCom.seek(knownAddr[i]);
+		mortCom.read(checkBuffer, 7);
+
+		if ((checkBuffer[0] == 0x59) && (checkBuffer[1] == 0x5B) && (checkBuffer[2] == 0x58) ||
+			(checkBuffer[3] == 0xC3) && (checkBuffer[4] == 0xE8) && (checkBuffer[5] == 0xD6) ||
+			(checkBuffer[6] == 0x02)) {
+			break;
+		}
 	}
 
 	// Read in the data
 	mortCom.read(fontBuffer, 121 * 6);
 
 	// Write out a section header to the output file and the font data
-	char fontHeader[4] = { 'F', 'O', 'N', 'T' };
+	const char fontHeader[4] = { 'F', 'O', 'N', 'T' };
 	outputFile.write(fontHeader, 4);	// Section Id
 	outputFile.writeWord(121 * 6);		// Section size
 
@@ -84,8 +91,8 @@ void writeFontBlock() {
 
 void writeStaticStrings(const char **strings, DataType dataType, int languageId) {
 	// Write out a section header 
-	char sStaticStrings[4] = { 'S', 'S', 'T', 'R' };
-	char sGameStrings[4] = { 'G', 'S', 'T', 'R' };
+	const char sStaticStrings[4] = { 'S', 'S', 'T', 'R' };
+	const char sGameStrings[4] = { 'G', 'S', 'T', 'R' };
 
 	if (dataType == kStaticStrings)
 		outputFile.write(sStaticStrings, 4);
@@ -119,6 +126,7 @@ void writeStaticStrings(const char **strings, DataType dataType, int languageId)
 void writeEngineStrings() {
 	writeStaticStrings(engineDataEn, kStaticStrings, 1);
 	writeStaticStrings(engineDataFr, kStaticStrings, 0);
+	writeStaticStrings(engineDataDe, kStaticStrings, 2);
 }
 
 /**
@@ -127,6 +135,7 @@ void writeEngineStrings() {
 void writeGameStrings() {
 	writeStaticStrings(gameDataEn, kGameStrings, 1);
 	writeStaticStrings(gameDataFr, kGameStrings, 0);
+	writeStaticStrings(gameDataDe, kGameStrings, 2);
 }
 
 void process() {

@@ -279,7 +279,22 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
  */
 void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize, DataType dataType) {
 	// Figure out what language Id is needed
-	byte desiredLanguageId = (getLanguage() == Common::EN_ANY) ? LANG_ENGLISH : LANG_FRENCH;
+	byte desiredLanguageId;
+	switch(getLanguage()) {
+	case Common::EN_ANY:
+		desiredLanguageId = LANG_ENGLISH;
+		break;
+	case Common::FR_FRA:
+		desiredLanguageId = LANG_FRENCH;
+		break;
+	case Common::DE_DEU:
+		desiredLanguageId = LANG_GERMAN;
+		break;
+	default:
+		warning("Language not supported, switching to English");
+		desiredLanguageId = LANG_ENGLISH;
+		break;
+	}
 
 	// Read in the language
 	byte languageId = f.readByte();

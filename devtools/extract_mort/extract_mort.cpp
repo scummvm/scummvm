@@ -272,11 +272,22 @@ static void export_strings(const char *textFilename) {
 	uint16 *strData;
 
 	// Open input and output files
-	txxInp.open("TXX.INP", kFileReadMode);
-	txxNtp.open("TXX.NTP", kFileReadMode);
+	if (!txxInp.open("TXX.INP", kFileReadMode)) {
+		if (!txxInp.open("TXX.MOR", kFileReadMode)) {
+			printf("Missing TXX.INP/MOR");
+			exit(-1);
+		}
+	}
+	if (!txxNtp.open("TXX.NTP", kFileReadMode)) {
+		if (!txxNtp.open("TXX.IND", kFileReadMode)) {
+			printf("Missing TXX.NTP/IND");
+			exit(-1);
+		}
+	}
 	textFile.open(textFilename, kFileWriteMode);
 
 	// Read all the compressed string data into a buffer
+	printf("%d %d", txxInp.size(), txxNtp.size());
 	strData = (uint16 *)malloc(txxInp.size());
 	txxInp.read(strData, txxInp.size());
 
