@@ -68,9 +68,7 @@ void MortevielleEngine::fctMove() {
 		} else if (_num == 7) {
 			_coreVar._currPlace = ATTIC;
 			_menu.setDestinationText(ATTIC);
-		}
-
-		if (_num != 6)
+		} else if (_num != 6)
 			_coreVar._currPlace = ROOM26;
 
 		if ((_num > 1) && (_num < 6))
