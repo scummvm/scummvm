@@ -620,7 +620,7 @@ void Actor::walkForward() {
 		forwardVec = -forwardVec;
 	}
 
-	Sector *currSector = NULL, *prevSector = NULL;
+	Sector *currSector = NULL, *prevSector = NULL, *startSector = NULL;
 	Sector::ExitInfo ei;
 
 	g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
@@ -629,6 +629,7 @@ void Actor::walkForward() {
 		_walkedCur = true;
 		return;
 	}
+	startSector = currSector;
 
 	while (currSector) {
 		prevSector = currSector;
@@ -649,7 +650,7 @@ void Actor::walkForward() {
 		// Check for an adjacent sector which can continue
 		// the path
 		currSector = g_grim->getCurrSet()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
-		if (currSector == prevSector)
+		if (currSector == prevSector || currSector == startSector)
 			break;
 	}
 
