@@ -498,8 +498,6 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 			// bring MRU word at the top of the list when ok'ed out of the dialog
 			if (_mode == kModePre && _unitedDict.dictActLine && _numMatchingWords > 1 && _wordNumber != 0)
 				bringWordtoTop(_unitedDict.dictActLine, _wordNumber);
-
-			goto press;
 		} else if (button == kModeAct) { // Mode
 			_mode++;
 			_addBtn->setEnabled(false);
@@ -526,12 +524,9 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 			_lastTime = 0;
 			_lastPressBtn = kNoAct;
 			_curTime = 0;
-		} else {
-			goto press;
 		}
 	}
 
-press:
 	pressEditText();
 
 	if (button == kOkAct)
