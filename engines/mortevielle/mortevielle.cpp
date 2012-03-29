@@ -2243,8 +2243,7 @@ Common::String MortevielleEngine::getString(int num) {
 		char let;
 		do {
 			cinq_huit(let, hint, point, endFl);
-			if (length < 254)
-				wrkStr += let;
+			wrkStr += let;
 			++length;
 		} while (!endFl);
 	}
