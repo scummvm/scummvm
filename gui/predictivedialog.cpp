@@ -433,7 +433,7 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 				if (_currentCode.size()) {
 					_repeatcount[_currentCode.size() - 1] = 0;
 					_currentCode.deleteLastChar();
-					if (_currentCode == Common::String(""))
+					if (_currentCode.empty())
 						_currentWord.clear();
 				} else {
 					if (_prefix.size())
