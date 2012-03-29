@@ -51,7 +51,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Mortville Manor (C) 1988-89 Lankhor";
+		return "Mortville Manor (C) 1987-89 Lankhor";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;

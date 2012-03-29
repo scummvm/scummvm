@@ -20,6 +20,11 @@
  *
  */
 
+/*
+ * This code is based on original Mortville Manor DOS source code
+ * Copyright (c) 1987-1989 Lankhor
+ */
+
 #include "common/endian.h"
 #include "common/system.h"
 #include "graphics/palette.h"

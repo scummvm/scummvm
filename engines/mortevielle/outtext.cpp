@@ -22,7 +22,7 @@
 
 /*
  * This code is based on original Mortville Manor DOS source code
- * Copyright (c) 1988-1989 Lankhor
+ * Copyright (c) 1987-1989 Lankhor
  */
 
 #include "common/file.h"
