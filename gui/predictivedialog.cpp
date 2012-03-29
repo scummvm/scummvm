@@ -374,14 +374,14 @@ void PredictiveDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 
 void PredictiveDialog::processBtnActive(ButtonId button) {
 	uint8 x;
-	const char *buttonStr[] = {
+	static const char *const buttonStr[] = {
 		"1", "2", "3",
 		"4", "5", "6",
 		"7", "8", "9",
 		     "0"
 	};
 
-	const char *buttons[] = {
+	static const char *const buttons[] = {
 		"'-.&",  "abc", "def",
 		"ghi",  "jkl", "mno",
 		"pqrs", "tuv", "wxyz",
