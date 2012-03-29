@@ -505,10 +505,11 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 				_mode = kModePre;
 				// I18N: Pre means 'Predictive', leave '*' as is
 				_modebutton->setLabel("*  Pre");
-				// I18N: 'Num' means Numbers, 'Abc' means Latin alphabet input
 			} else if (_mode == kModeNum) {
+				// I18N: 'Num' means Numbers
 				_modebutton->setLabel("*  Num");
 			} else {
+				// I18N: 'Abc' means Latin alphabet input
 				_modebutton->setLabel("*  Abc");
 				_addBtn->setEnabled(true);
 			}
