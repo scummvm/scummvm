@@ -133,4 +133,57 @@ const char *engineDataFr[] = {
 	NULL
 };
 
+const char *engineDataDe[] =  {
+	"[2][ ][JA][NEIN]",
+	"Go to",
+	"Someone enters, looks surised, but says nothing",
+	"Cool",
+	"Schwer",
+	"Ungesund",
+	"Idem",
+	"You",
+	"are",
+	"Alone",
+
+	"Verdammt! Sie hoeren ein Geraeush...",
+	"Sie haetten ",
+	"% der Hinweise|      bemerken muessen...",
+	"Do you want to wake up?",
+	"OK",
+	"", 
+	" schreiben",
+
+	" lesen",
+	" Restart     ",
+	"F3 nochmals",
+	"F8: stop",
+	"Hide self",
+	"take",
+	" probe    ",
+	" raise    ",
+	" -WEITER- ",
+	" -STOP-  ",
+	"[1][ Benutzen Sie jetzt das Menue DEP...][OK]",
+	"lift",
+	"read",
+
+	"look",
+	"search",
+	"open",
+	"put",
+	"turn",
+	"tie",
+	"close",
+	"hit",
+	"pose",
+	"smash",
+
+	"smell",
+	"scratch",
+	"probe",
+	"[1][ Benutzen Sie jetzt das Menue DEP...][OK]",
+	"& tag",
+	NULL
+};
+
 #endif
