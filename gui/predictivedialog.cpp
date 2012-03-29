@@ -579,9 +579,9 @@ void PredictiveDialog::mergeDicts() {
 	}
 }
 
-uint8 PredictiveDialog::countWordsInString(char *str) {
+uint8 PredictiveDialog::countWordsInString(const char *const str) {
 	// Count the number of (space separated) words in the given string.
-	char *ptr;
+	const char *ptr;
 
 	if (!str)
 		return 0;
@@ -630,7 +630,7 @@ void PredictiveDialog::bringWordtoTop(char *str, int wordnum) {
 	memcpy(str, tmp.c_str(), strlen(str));
 }
 
-int PredictiveDialog::binarySearch(char **dictLine, const Common::String &code, int dictLineCount) {
+int PredictiveDialog::binarySearch(const char *const *const dictLine, const Common::String &code, const int dictLineCount) {
 	int hi = dictLineCount - 1;
 	int lo = 0;
 	int line = 0;
@@ -691,11 +691,11 @@ bool PredictiveDialog::matchWord() {
 	}
 }
 
-bool PredictiveDialog::searchWord(char *where, const Common::String &whatCode) {
-	char *ptr = where;
+bool PredictiveDialog::searchWord(const char *const where, const Common::String &whatCode) {
+	const char *ptr = where;
 	ptr += whatCode.size();
 
-	char *newPtr;
+	const char *newPtr;
 	bool is = false;
 	while ((newPtr = strchr(ptr, ' '))) {
 		if (0 == strncmp(ptr, _currentWord.c_str(), newPtr - ptr)) {

@@ -71,7 +71,7 @@ public:
 	virtual void handleKeyDown(Common::KeyState state);
 	virtual void handleTickle();
 
-	char *getResult() { return _predictiveResult; }
+	const char *getResult() const { return _predictiveResult; }
 private:
 	struct Dict {
 		char **dictLine;
@@ -83,14 +83,14 @@ private:
 		Common::String fnameDict;
 	};
 
-	uint8 countWordsInString(char *str);
+	uint8 countWordsInString(const char *const str);
 	void bringWordtoTop(char *str, int wordnum);
 	void loadDictionary(Common::SeekableReadStream *in, Dict &dict);
 	void loadAllDictionary(Dict &dict);
 	void addWordToDict();
 	void addWord(Dict &dict, const Common::String &word, const Common::String &code);
-	bool searchWord(char *where, const Common::String &whatCode);
-	int binarySearch(char **dictLine, const Common::String &code, int dictLineCount);
+	bool searchWord(const char *const where, const Common::String &whatCode);
+	int binarySearch(const char *const *const dictLine, const Common::String &code, const int dictLineCount);
 	bool matchWord();
 	void processBtnActive(ButtonId active);
 	void pressEditText();
