@@ -534,6 +534,10 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 }
 
 void PredictiveDialog::handleTickle() {
+	// TODO/FIXME: This code does not seem to make any sense. It is only
+	// triggered when _lastTime is zero and sets _lastTime to zero again
+	// under some condition. This should really be a nop. Probably this
+	// code intends to check "_lastTime" instead of "!_lastTime".
 	if (!_lastTime) {
 		if ((_curTime - _lastTime) > kRepeatDelay) {
 			_lastTime = 0;
