@@ -272,7 +272,7 @@ private:
 
 
 	Common::String _hintPctMessage;
-	byte _cfiecBuffer[822 * 128];
+	byte *_cfiecBuffer;
 	byte _touv[8];
 	int  _nbrep[9];
 	int  _nbrepm[9];

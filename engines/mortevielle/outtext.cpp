@@ -296,7 +296,11 @@ void TextHandler::taffich() {
 
 		filename = "DXX.mor";
 	} else {
-		filename = "DZZ.mor";
+		if (g_vm->getLanguage() == Common::DE_DEU)
+			filename = "DZZALL";
+		else
+			filename = "DZZ.mor";
+
 		handle = g_vm->_fxxBuffer[87];
 		if (a == 51) {
 			lgt = handle;
