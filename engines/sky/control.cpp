@@ -663,9 +663,8 @@ uint16 Control::doMusicSlide() {
 	uint8 volume;
 	while (_mouseClicked) {
 		delay(50);
-		if (!_controlPanel) {
+		if (!_controlPanel)
 			return 0;
-		}
 		mouse = _system->getEventManager()->getMousePos();
 		int newY = ofsY + mouse.y;
 		if (newY < 59) newY = 59;
