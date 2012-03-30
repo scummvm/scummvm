@@ -28,6 +28,7 @@
 #include "video/codecs/svq1_vlc.h"
 
 #include "common/stream.h"
+#include "common/bitstream.h"
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
@@ -35,68 +36,6 @@
 #include "graphics/yuv_to_rgb.h"
 
 namespace Video {
-
-// TODO: Common could do with a good Bitstream Reader Class 
-//       capable of wrapping ReadStream and byte *buffers
-//       This would replace this, a similar class in SMK, QDM2
-//       and probably a number of other similar pieces of code.
-class SVQ1BitStream {
-public:
-	SVQ1BitStream(Common::SeekableReadStream *stream)
-		: _stream(stream), _bitCount(0) {
-	}
-
-	bool getBit();
-	byte getBitsByte(uint n);
-	uint32 getBitsUint32(uint n);
-
-private:
-	Common::SeekableReadStream *_stream;
-
-	byte _curByte;
-	byte  _bitCount;
-};
-
-bool SVQ1BitStream::getBit() {
-	if (_bitCount == 0) {
-		assert(_stream->pos() < _stream->size());
-		_curByte = _stream->readByte();
-		_bitCount = 8;
-	}
-
-	bool v = _curByte & 1;
-
-	_curByte >>= 1;
-	--_bitCount;
-
-	return v;
-}
-
-byte SVQ1BitStream::getBitsByte(uint n) {
-	assert (n <= 8);
-	byte v = 0;
-
-	for (uint i = 0; i < 8; i++) {
-		v >>= 1;
-		if (getBit() && i < n)
-			v |= 0x80;
-	}
-
-	return v;
-}
-
-uint32 SVQ1BitStream::getBitsUint32(uint n) {
-	assert (n <= 32);
-	uint32 v = 0;
-
-	for (uint i = 0; i < 32; i++) {
-		v >>= 1;
-		if (getBit() && i < n)
-			v |= 0x8000;
-	}
-
-	return v;
-}
 
 SVQ1Decoder::SVQ1Decoder(uint16 width, uint16 height) {
 	_surface = new Graphics::Surface();
@@ -120,9 +59,9 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	stream->seek(startPos, SEEK_SET);
 #endif
 
-	SVQ1BitStream *frameData = new SVQ1BitStream(stream);
+	Common::BitStream32LELSB frameData(*stream);
 
-	uint32 frameCode = frameData->getBitsUint32(22);
+	uint32 frameCode = frameData.getBits(22);
 	debug(1, " frameCode: %d", frameCode);
 
   if ((frameCode & ~0x70) || !(frameCode & 0x60)) // Invalid
@@ -174,16 +113,16 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	};
 #endif
 
-	byte temporalReference = frameData->getBitsByte(8);
+	byte temporalReference = frameData.getBits(8);
 	debug(1, " temporalReference: %d", temporalReference);
 	const char* types[4] = { "I Frame", "P Frame", "B Frame", "Invalid" };
-	byte pictureType = frameData->getBitsByte(2);
+	byte pictureType = frameData.getBits(2);
 	debug(1, " pictureType: %d (%s)", pictureType, types[pictureType]);
 	if (pictureType == 3) // Invalid
 		return _surface;
 	else if (pictureType == 0) { // I Frame
 		if (frameCode == 0x50 || frameCode == 0x60) {
-			uint32 checksum = frameData->getBitsUint32(16);
+			uint32 checksum = frameData.getBits(16);
 			debug(1, " checksum:0x%02x", checksum);
 			// TODO: Validate checksum
 			//uint16 calculate_packet_checksum (const uint8 *data, const int length) {
@@ -233,22 +172,22 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	if ((frameCode ^ 0x10) >= 0x50) {
 		// Decode embedded string
 		Common::String str;
-		uint8 stringLen = frameData->getBitsByte(8);
+		uint8 stringLen = frameData.getBits(8);
 		byte xorVal = stringXORTable[stringLen];
 
 		for (uint16 i = 0; i < stringLen-1; i++) {
-			byte data = frameData->getBitsByte(8);
+			byte data = frameData.getBits(8);
 			str += data ^ xorVal;
 			xorVal = stringXORTable[data];
 		}
 		debug(1, " Embedded String of %d Characters: \"%s\"", stringLen, str.c_str());
 	}
 
-	byte unk1 = frameData->getBitsByte(2); // Unknown
+	byte unk1 = frameData.getBits(2); // Unknown
 	debug(1, "unk1: %d", unk1);
-	byte unk2 = frameData->getBitsByte(2); // Unknown
+	byte unk2 = frameData.getBits(2); // Unknown
 	debug(1, "unk2: %d", unk2);
-	bool unk3 = frameData->getBit(); // Unknown
+	bool unk3 = frameData.getBit(); // Unknown
 	debug(1, "unk3: %d", unk3);
 
 	static const struct { uint w, h; } standardFrameSizes[7] = {
@@ -261,12 +200,12 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 		{ 320, 240 }  // 6
 	};
 
-	byte frameSizeCode = frameData->getBitsByte(3);
+	byte frameSizeCode = frameData.getBits(3);
 	debug(1, " frameSizeCode: %d", frameSizeCode);
 	uint16 frameWidth, frameHeight;
 	if (frameSizeCode == 7) {
-		frameWidth = frameData->getBitsUint32(12);
-		frameHeight = frameData->getBitsUint32(12);
+		frameWidth = frameData.getBits(12);
+		frameHeight = frameData.getBits(12);
 	} else {
 		frameWidth = standardFrameSizes[frameSizeCode].w;
 		frameHeight = standardFrameSizes[frameSizeCode].h;
@@ -276,32 +215,32 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	if (frameWidth == 0 || frameHeight == 0) // Invalid
 		return _surface;
 
-	bool checksumPresent = frameData->getBit();
+	bool checksumPresent = frameData.getBit();
 	debug(1, " checksumPresent: %d", checksumPresent);
 	if (checksumPresent) {
-		bool usePacketChecksum = frameData->getBit();
+		bool usePacketChecksum = frameData.getBit();
 		debug(1, " usePacketChecksum: %d", usePacketChecksum);
-		bool componentChecksumsAfterImageData = frameData->getBit();
+		bool componentChecksumsAfterImageData = frameData.getBit();
 		debug(1, " componentChecksumsAfterImageData: %d", componentChecksumsAfterImageData);
-		byte unk4 = frameData->getBitsByte(2);
+		byte unk4 = frameData.getBits(2);
 		debug(1, " unk4: %d", unk4);
 		if (unk4 != 0)
 			warning("Invalid Frame Header in SVQ1 Frame Decode");
 	}
 
-	bool unk5 = frameData->getBit();
+	bool unk5 = frameData.getBit();
 	debug(1, " unk5: %d", unk5);
 	if (unk5) {
-		bool unk6 = frameData->getBit();
+		bool unk6 = frameData.getBit();
 		debug(1, " unk6: %d", unk6);
-		byte unk7 = frameData->getBitsByte(4);
+		byte unk7 = frameData.getBits(4);
 		debug(1, " unk7: %d", unk7);
-		bool unk8 = frameData->getBit();
+		bool unk8 = frameData.getBit();
 		debug(1, " unk8: %d", unk8);
-		byte unk9 = frameData->getBitsByte(2);
+		byte unk9 = frameData.getBits(2);
 		debug(1, " unk9: %d", unk9);
-		while (frameData->getBit()) {
-			byte unk10 = frameData->getBitsByte(8);
+		while (frameData.getBit()) {
+			byte unk10 = frameData.getBits(8);
 			debug(1, " unk10: %d", unk10);
 		}
 	}
@@ -318,8 +257,6 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			uPlane[i] = 0;
 			vPlane[i] = 0;
 		}
-
-		delete frameData;
 
 		convertYUV410ToRGB(_surface, yPlane, uPlane, vPlane, frameWidth, frameHeight, frameWidth, frameWidth/2);
 	
