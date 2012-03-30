@@ -164,6 +164,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
 		{ &QuickTimeParser::readWAVE,    MKTAG('w', 'a', 'v', 'e') },
 		{ &QuickTimeParser::readESDS,    MKTAG('e', 's', 'd', 's') },
+		{ &QuickTimeParser::readSMI,     MKTAG('S', 'M', 'I', ' ') },
 		{ 0, 0 }
 	};
 
@@ -758,6 +759,18 @@ int QuickTimeParser::readESDS(Atom atom) {
 	track->extraData = _fd->readStream(length);
 
 	debug(0, "MPEG-4 object type = %02x", track->objectTypeMP4);
+	return 0;
+}
+
+int QuickTimeParser::readSMI(Atom atom) {
+	if (_tracks.empty())
+		return 0;
+
+	Track *track = _tracks.back();
+
+	// This atom just contains SVQ3 extra data
+	track->extraData = _fd->readStream(atom.size);
+
 	return 0;
 }
 

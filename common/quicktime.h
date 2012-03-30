@@ -205,6 +205,7 @@ protected:
 	int readCMOV(Atom atom);
 	int readWAVE(Atom atom);
 	int readESDS(Atom atom);
+	int readSMI(Atom atom);
 };
 
 } // End of namespace Common
