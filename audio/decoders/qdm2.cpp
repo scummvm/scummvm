@@ -1695,7 +1695,6 @@ void QDM2Stream::initVlc(void) {
 
 QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
 	uint32 tmp;
-	int32 tmp_s;
 	int tmp_val;
 	int i;
 
@@ -1736,91 +1735,44 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	_superblocktype_2_3 = 0;
 	_hasErrors = false;
 
-	// Rewind extraData stream from any previous calls...
+	// The QDM2 "extra data" is really just an amalgam of three QuickTime
+	// atoms needed to correctly set up the decoder.
+
+	// Rewind extraData stream from any previous calls
 	extraData->seek(0, SEEK_SET);
 
-	tmp_s = extraData->readSint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() extraSize: %d", tmp_s);
-	if ((extraData->size() - extraData->pos()) / 4 + 1 != tmp_s)
-		warning("QDM2Stream::QDM2Stream() extraSize mismatch - Expected %d", (extraData->size() - extraData->pos()) / 4 + 1);
-	if (tmp_s < 12)
-		error("QDM2Stream::QDM2Stream() Insufficient extraData");
+	// First, the frma atom
+	uint32 frmaSize = extraData->readUint32BE();
+	if (frmaSize != 12)
+		error("Invalid QDM2 frma atom");
 
-	tmp = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() extraTag: %d", tmp);
-	if (tmp != MKTAG('f','r','m','a'))
-		warning("QDM2Stream::QDM2Stream() extraTag mismatch");
+	if (extraData->readUint32BE() != MKTAG('f', 'r', 'm', 'a'))
+		error("Failed to find frma atom for QDM2");
 
-	tmp = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() extraType: %d", tmp);
-	if (tmp == MKTAG('Q','D','M','C'))
-		warning("QDM2Stream::QDM2Stream() QDMC stream type not supported");
-	else if (tmp != MKTAG('Q','D','M','2'))
-		error("QDM2Stream::QDM2Stream() Unsupported stream type");
+	uint32 version = extraData->readUint32BE();
+	if (version == MKTAG('Q', 'D', 'M', 'C'))
+		error("Unhandled QDMC sound");
+	else if (version != MKTAG('Q', 'D', 'M', '2'))
+		error("Failed to find QDM2 tag in frma atom");
 
-	tmp_s = extraData->readSint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() extraSize2: %d", tmp_s);
-	if ((extraData->size() - extraData->pos()) + 4 != tmp_s)
-		warning("QDM2Stream::QDM2Stream() extraSize2 mismatch - Expected %d", (extraData->size() - extraData->pos()) + 4);
+	// Second, the QDCA atom
+	uint32 qdcaSize = extraData->readUint32BE();
+	if (qdcaSize > (uint32)(extraData->size() - extraData->pos()))
+		error("Invalid QDM2 QDCA atom");
 
-	tmp = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() extraTag2: %d", tmp);
-	if (tmp != MKTAG('Q','D','C','A'))
-		warning("QDM2Stream::QDM2Stream() extraTag2 mismatch");
+	if (extraData->readUint32BE() != MKTAG('Q', 'D', 'C', 'A'))
+		error("Failed to find QDCA atom for QDM2");
 
-	if (extraData->readUint32BE() != 1)
-		warning("QDM2Stream::QDM2Stream() u0 field not 1");
+	extraData->readUint32BE(); // unknown
 
 	_channels = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() channels: %d", _channels);
-
 	_sampleRate = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() sampleRate: %d", _sampleRate);
-
 	_bitRate = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() bitRate: %d", _bitRate);
-
 	_blockSize = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() blockSize: %d", _blockSize);
-
 	_frameSize = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() frameSize: %d", _frameSize);
-
 	_packetSize = extraData->readUint32BE();
-	debug(1, "QDM2Stream::QDM2Stream() packetSize: %d", _packetSize);
 
-	if (extraData->size() - extraData->pos() != 0) {
-		tmp_s = extraData->readSint32BE();
-		debug(1, "QDM2Stream::QDM2Stream() extraSize3: %d", tmp_s);
-		if (extraData->size() + 4 != tmp_s)
-			warning("QDM2Stream::QDM2Stream() extraSize3 mismatch - Expected %d", extraData->size() + 4);
-
-		tmp = extraData->readUint32BE();
-		debug(1, "QDM2Stream::QDM2Stream() extraTag3: %d", tmp);
-		if (tmp != MKTAG('Q','D','C','P'))
-			warning("QDM2Stream::QDM2Stream() extraTag3 mismatch");
-
-		if ((float)extraData->readUint32BE() != 1.0)
-			warning("QDM2Stream::QDM2Stream() uf0 field not 1.0");
-
-		if (extraData->readUint32BE() != 0)
-			warning("QDM2Stream::QDM2Stream() u1 field not 0");
-
-		if ((float)extraData->readUint32BE() != 1.0)
-			warning("QDM2Stream::QDM2Stream() uf1 field not 1.0");
-
-		if ((float)extraData->readUint32BE() != 1.0)
-			warning("QDM2Stream::QDM2Stream() uf2 field not 1.0");
-
-		if (extraData->readUint32BE() != 27)
-			warning("QDM2Stream::QDM2Stream() u2 field not 27");
-
-		if (extraData->readUint32BE() != 8)
-			warning("QDM2Stream::QDM2Stream() u3 field not 8");
-
-		if (extraData->readUint32BE() != 0)
-			warning("QDM2Stream::QDM2Stream() u4 field not 0");
-	}
+	// Third, we don't care about the QDCP atom
 
 	_fftOrder = Common::intLog2(_frameSize) + 1;
 	_fftFrameSize = 2 * _frameSize; // complex has two floats

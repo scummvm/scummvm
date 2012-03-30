@@ -688,7 +688,7 @@ int QuickTimeParser::readWAVE(Atom atom) {
 		return -1;
 
 	if (track->sampleDescs[0]->getCodecTag() == MKTAG('Q', 'D', 'M', '2')) // Read extra data for QDM2
-		track->extraData = _fd->readStream(atom.size - 8);
+		track->extraData = _fd->readStream(atom.size);
 	else if (atom.size > 8)
 		return readDefault(atom);
 	else
