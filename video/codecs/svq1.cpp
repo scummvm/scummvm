@@ -50,33 +50,26 @@ SVQ1Decoder::~SVQ1Decoder() {
 const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	debug(1, "SVQ1Decoder::decodeImage()");
 
-	// Debugging Output to compare with output of Bitstream Reader
-#if 1
-	int32 startPos = stream->pos();
-	for (uint32 i = 0; i < 6; i++) {
-		debug(1, " Stream Byte %d: 0x%02x", i, stream->readByte());
-	}
-	stream->seek(startPos, SEEK_SET);
-#endif
-
-	Common::BitStream32LELSB frameData(*stream);
+	Common::BitStream32BEMSB frameData(*stream);
 
 	uint32 frameCode = frameData.getBits(22);
 	debug(1, " frameCode: %d", frameCode);
 
-  if ((frameCode & ~0x70) || !(frameCode & 0x60)) // Invalid
-    return _surface;
+	if ((frameCode & ~0x70) || !(frameCode & 0x60)) { // Invalid
+		warning("Invalid Image at frameCode");
+		return _surface;
+	}
 
-  // swap some header bytes (why?)
-  //if (frameCode != 0x20) {
-  //  uint32 *src = stream;
+	// swap some header bytes (why?)
+	//if (frameCode != 0x20) {
+	//  uint32 *src = stream;
 	//
-  //  for (i = 4; i < 8; i++) {
-  //    src[i] = ((src[i] << 16) | (src[i] >> 16)) ^ src[7 - i];
-  // }
-  //}
+	//  for (i = 4; i < 8; i++) {
+	//    src[i] = ((src[i] << 16) | (src[i] >> 16)) ^ src[7 - i];
+	// }
+	//}
 
-#if 0
+#ifdef 0
 	static const uint16 checksum_table[256] = {
 		0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
 		0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
@@ -118,8 +111,10 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	const char* types[4] = { "I Frame", "P Frame", "B Frame", "Invalid" };
 	byte pictureType = frameData.getBits(2);
 	debug(1, " pictureType: %d (%s)", pictureType, types[pictureType]);
-	if (pictureType == 3) // Invalid
+	if (pictureType == 3) { // Invalid
+		warning("Invalid pictureType");
 		return _surface;
+	}
 	else if (pictureType == 0) { // I Frame
 		if (frameCode == 0x50 || frameCode == 0x60) {
 			uint32 checksum = frameData.getBits(16);
@@ -127,10 +122,8 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			// TODO: Validate checksum
 			//uint16 calculate_packet_checksum (const uint8 *data, const int length) {
 			//  int value;
-  		//	for (int i = 0; i < length; i++)
-    	//		value = checksum_table[data[i] ^ (value >> 8)] ^ ((value & 0xFF) << 8);
-  		//	return value;
-			//}
+  			//for (int i = 0; i < length; i++)
+    			//	value = checksum_table[data[i] ^ (value >> 8)] ^ ((value & 0xFF) << 8);
 		}
 	}
 
@@ -184,11 +177,11 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	}
 
 	byte unk1 = frameData.getBits(2); // Unknown
-	debug(1, "unk1: %d", unk1);
+	debug(1, " unk1: %d", unk1);
 	byte unk2 = frameData.getBits(2); // Unknown
-	debug(1, "unk2: %d", unk2);
+	debug(1, " unk2: %d", unk2);
 	bool unk3 = frameData.getBit(); // Unknown
-	debug(1, "unk3: %d", unk3);
+	debug(1, " unk3: %d", unk3);
 
 	static const struct { uint w, h; } standardFrameSizes[7] = {
 		{ 160, 120 }, // 0
