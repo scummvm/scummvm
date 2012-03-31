@@ -240,10 +240,10 @@ BitmapData::BitmapData() :
 
 BitmapData::~BitmapData() {
 	_keepData = false;
-	freeData();
 	if (_loaded) {
 		g_driver->destroyBitmap(this);
 	}
+	freeData();
 	if (_bitmaps) {
 		if (_bitmaps->contains(_fname)) {
 			_bitmaps->erase(_fname);

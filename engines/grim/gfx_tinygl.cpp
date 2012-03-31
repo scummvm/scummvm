@@ -849,6 +849,10 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y) {
 }
 
 void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {
+	for (int pic = 0; pic < bitmap->_numImages; pic++) {
+		if (bitmap->_data)
+			bitmap->_data[pic].free();
+	}
 	delete[] (BlitImage*)bitmap->_texIds;
 }
 
