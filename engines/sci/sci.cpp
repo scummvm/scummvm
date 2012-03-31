@@ -221,7 +221,8 @@ Common::Error SciEngine::run() {
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
+	bool enableUnDitheringFlag = ConfMan.hasKey("disable_dithering") && ConfMan.getBool("disable_dithering");
+	_gfxScreen->enableUndithering(enableUnDitheringFlag);
 
 	_kernel = new Kernel(_resMan, segMan);
 
