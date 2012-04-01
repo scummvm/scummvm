@@ -70,7 +70,54 @@ static const LilliputGameDescription gameDescriptions[] = {
 		},
 		kGameTypeRobin
 	},
-
+	// Robin Hood French
+	{
+		{
+			"robin", 0,
+			{
+				{"frules.prg", 0, "cf076c5ebfe8b3571e74a6a46d79426f", 76660},
+				{"isomap.dta", 0, "bad97eae03a4db3e99565e39b0b3c06a", 16384},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeRobin
+	},
+	// Robin Hood German
+	{
+		{
+			"robin", 0,
+			{
+				{"grules.prg", 0, "b53b7353dc1e841b206a64851e7bc58c", 78050},
+				{"isomap.dta", 0, "bad97eae03a4db3e99565e39b0b3c06a", 16384},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeRobin
+	},
+	// Robin Hood Italian
+	{
+		{
+			"robin", 0,
+			{
+				{"irules.prg", 0, "4d69ed3cda1e1d73585905517ea705d1", 75654},
+				{"isomap.dta", 0, "bad97eae03a4db3e99565e39b0b3c06a", 16384},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeRobin
+	},
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
