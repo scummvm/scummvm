@@ -111,6 +111,8 @@ struct InternalEvent {
 
 - (void)applicationResume;
 
+- (bool)fetchEvent:(int *)outEvent value1:(int *)v1 value2:(int *)v2;
+
 @end
 
 extern iPhoneView *g_iPhoneViewInstance;
