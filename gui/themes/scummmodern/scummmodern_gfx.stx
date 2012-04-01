@@ -336,9 +336,13 @@
 	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y<400'>
 		<drawstep	func = 'roundedsq'
 					radius = '10'
-					fill = 'none'
-					fg_color = 'darkgray'
+					fill = 'gradient'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
 					stroke = '1'
+					fg_color = 'darkred'
+					bevel = '1'
+					bevel_color = 'brightred'
 		/>
 		<drawstep	func = 'triangle'
 					fg_color = 'shadowcolor'
@@ -347,7 +351,7 @@
 					height = '5'
 					xpos = 'right'
 					ypos = 'center'
-					padding = '0,0,2,0'
+					padding = '0,0,1,0'
 					orientation = 'top'
 		/>
 	</drawdata>
