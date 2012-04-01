@@ -65,8 +65,8 @@ void iPhone_updateScreen() {
 	}
 }
 
-bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
-	return [g_iPhoneViewInstance fetchEvent:outEvent value1:outX value2:outY];
+bool iPhone_fetchEvent(InternalEvent *event) {
+	return [g_iPhoneViewInstance fetchEvent:event];
 }
 
 uint getSizeNextPOT(uint size) {
@@ -569,17 +569,14 @@ const char *iPhone_getDocumentsDir() {
 	[_eventLock unlock];
 }
 
-- (bool)fetchEvent:(int *)outEvent value1:(int *)v1 value2:(int *)v2 {
+- (bool)fetchEvent:(InternalEvent *)event {
 	[_eventLock lock];
 	if (_events.empty()) {
 		[_eventLock unlock];
 		return false;
 	}
 
-	const InternalEvent &front = *_events.begin();
-	*outEvent = front.type;
-	*v1 = front.value1;
-	*v2 = front.value2;
+	*event = *_events.begin();
 	_events.pop_front();
 	[_eventLock unlock];
 	return true;

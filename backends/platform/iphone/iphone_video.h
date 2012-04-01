@@ -36,14 +36,6 @@
 
 #include "common/list.h"
 
-struct InternalEvent {
-	InternalEvent() : type(), value1(), value2() {}
-	InternalEvent(InputEvent t, int v1, int v2) : type(t), value1(v1), value2(v2) {}
-
-	InputEvent type;
-	int value1, value2;
-};
-
 @interface iPhoneView : UIView {
 	VideoContext _videoContext;
 
@@ -111,7 +103,7 @@ struct InternalEvent {
 
 - (void)applicationResume;
 
-- (bool)fetchEvent:(int *)outEvent value1:(int *)v1 value2:(int *)v2;
+- (bool)fetchEvent:(InternalEvent *)event;
 
 @end
 
