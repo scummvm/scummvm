@@ -48,6 +48,7 @@ struct InternalEvent {
 	VideoContext _videoContext;
 
 	Common::List<InternalEvent> _events;
+	NSLock *_eventLock;
 	SoftKeyboard *_keyboardView;
 
 	EAGLContext *_context;

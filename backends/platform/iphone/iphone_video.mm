@@ -66,15 +66,19 @@ void iPhone_updateScreen() {
 }
 
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
+	[g_iPhoneViewInstance->_eventLock lock];
 	Common::List<InternalEvent> &events = g_iPhoneViewInstance->_events;
-	if (events.empty())
+	if (events.empty()) {
+		[g_iPhoneViewInstance->_eventLock unlock];
 		return false;
+	}
 
 	const InternalEvent &front = *events.begin();
 	*outEvent = front.type;
 	*outX = front.value1;
 	*outY = front.value2;
 	events.pop_front();
+	[g_iPhoneViewInstance->_eventLock unlock];
 	return true;
 }
 
@@ -191,6 +195,8 @@ const char *iPhone_getDocumentsDir() {
 	_firstTouch = NULL;
 	_secondTouch = NULL;
 
+	_eventLock = [[NSLock alloc] init];
+
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
 	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
 	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
@@ -236,6 +242,7 @@ const char *iPhone_getDocumentsDir() {
 	_videoContext.overlayTexture.free();
 	_videoContext.mouseTexture.free();
 
+	[_eventLock dealloc];
 	[super dealloc];
 }
 
@@ -570,7 +577,9 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)addEvent:(InternalEvent)event {
+	[_eventLock lock];
 	_events.push_back(event);
+	[_eventLock unlock];
 }
 
 /**
