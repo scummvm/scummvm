@@ -207,7 +207,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	engine->initKeymap();
 
 	// Set default values for all of the custom engine options
-	const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions("");
+	const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
 	for (uint i = 0; i < engineOptions.size(); i++) {
 		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
 	}
