@@ -105,7 +105,9 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// the orientation in parent space (as yaw/pitch/roll).
 		
 		// Get the coordinate frame in which we need to produce the character head yaw/pitch/roll values.
-		Math::Matrix4 parentWorldTM = _joint3Node->_parent->_matrix;
+		Math::Matrix4 parentWorldTM;
+		if (_joint3Node->_parent)
+			parentWorldTM = _joint3Node->_parent->_matrix;
 		
 		// While we could compute the desired lookat direction directly in the above coordinate frame,
 		// it is preferrable to compute the lookat direction with respect to the head orientation in
