@@ -462,6 +462,9 @@ public:
 	void attachToActor(Actor *other, const char *joint);
 	void detach();
 
+	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
+	bool isInOverworld() { return _inOverworld; }
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -589,6 +592,8 @@ private:
 	static bool _isTalkingBackground;
 	Actor *_attachedActor;
 	Common::String _attachedJoint;
+
+	bool _inOverworld;
 
 	friend class GrimEngine;
 };

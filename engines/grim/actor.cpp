@@ -89,6 +89,7 @@ Actor::Actor(const Common::String &actorName) :
 	_collisionScale = 1.f;
 	_puckOrient = false;
 	_talking = false;
+	_inOverworld = false;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
