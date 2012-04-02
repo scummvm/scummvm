@@ -203,6 +203,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *dis
 	_skySound = sound;
 	_skyCompact = skyCompact;
 	_system = system;
+	_controlPanel = NULL;
 }
 
 ConResource *Control::createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType) {
@@ -225,6 +226,7 @@ void Control::removePanel() {
 	free(_sprites.slide2);			free(_sprites.slode);
 	free(_sprites.slode2);			free(_sprites.musicBodge);
 	delete _controlPanel;			delete _exitButton;
+	_controlPanel = NULL;
 	delete _slide;				delete _slide2;
 	delete _slode;				delete _restorePanButton;
 	delete _savePanel;			delete _saveButton;
@@ -383,6 +385,8 @@ void Control::animClick(ConResource *pButton) {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		delay(150);
+		if (!_controlPanel)
+			return;
 		pButton->_curSprite--;
 		_text->flushForRedraw();
 		pButton->drawToScreen(NO_MASK);
@@ -480,6 +484,8 @@ void Control::doControlPanel() {
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(50);
+		if (!_controlPanel)
+			return;
 		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
 			_mouseClicked = false;
 			quitPanel = true;
@@ -492,6 +498,8 @@ void Control::doControlPanel() {
 				buttonControl(_controlPanLookList[lookCnt]);
 				if (_mouseClicked && _controlPanLookList[lookCnt]->_onClick) {
 					clickRes = handleClick(_controlPanLookList[lookCnt]);
+					if (!_controlPanel) //game state was destroyed
+						return;
 					_text->flushForRedraw();
 					drawMainPanel();
 					_text->drawToScreen(WITH_MASK);
@@ -618,6 +626,11 @@ bool Control::getYesNo(char *text) {
 		}
 		_system->updateScreen();
 		delay(50);
+		if (!_controlPanel) {
+			free(dlgTextDat);
+			delete dlgText;
+			return retVal;
+		}
 		Common::Point mouse = _system->getEventManager()->getMousePos();
 		if ((mouse.y >= 83) && (mouse.y <= 110)) {
 			if ((mouse.x >= 77) && (mouse.x <= 114)) { // over 'yes'
@@ -650,6 +663,8 @@ uint16 Control::doMusicSlide() {
 	uint8 volume;
 	while (_mouseClicked) {
 		delay(50);
+		if (!_controlPanel)
+			return 0;
 		mouse = _system->getEventManager()->getMousePos();
 		int newY = ofsY + mouse.y;
 		if (newY < 59) newY = 59;
@@ -679,6 +694,8 @@ uint16 Control::doSpeedSlide() {
 	speedDelay += 2;
 	while (_mouseClicked) {
 		delay(50);
+		if (!_controlPanel)
+			return SPEED_CHANGED;
 		mouse = _system->getEventManager()->getMousePos();
 		int newY = ofsY + mouse.y;
 		if (newY < MPNL_Y + 93) newY = MPNL_Y + 93;
@@ -870,12 +887,16 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(50);
+		if (!_controlPanel)
+			return clickRes;
 		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
 			_mouseClicked = false;
 			clickRes = CANCEL_PRESSED;
 			quitPanel = true;
 		} else if ((_keyPressed.keycode == Common::KEYCODE_RETURN) || (_keyPressed.keycode == Common::KEYCODE_KP_ENTER)) {
 			clickRes = handleClick(lookList[0]);
+			if (!_controlPanel) //game state was destroyed
+				return clickRes;
 			if (clickRes == GAME_SAVED)
 				saveDescriptions(saveGameTexts);
 			else if (clickRes == NO_DISK_SPACE)
@@ -912,6 +933,8 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 					_mouseClicked = false;
 
 					clickRes = handleClick(lookList[cnt]);
+					if (!_controlPanel) //game state was destroyed
+						return clickRes;
 
 					if (clickRes == SHIFTED) {
 						_selectedGame = _firstText;
@@ -1420,7 +1443,8 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 
 uint16 Control::quickXRestore(uint16 slot) {
 	uint16 result;
-	initPanel();
+	if (!_controlPanel)
+		initPanel();
 	_mouseClicked = false;
 
 	_savedCharSet = _skyText->giveCurrentCharSet();

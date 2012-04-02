@@ -32,14 +32,11 @@
 
 namespace Sci {
 
-//#define ENABLE_SFX_TYPE_SELECTION
-
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
-#ifdef ENABLE_SFX_TYPE_SELECTION
 	// Check if the user wants synthesized or digital sound effects in SCI1.1
-	// games based on the multi_midi config setting
+	// games based on the prefer_digitalsfx config setting
 
 	// In SCI2 and later games, this check should always be true - there was
 	// always only one version of each sound effect or digital music track
@@ -47,12 +44,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 	// resource number, but it's totally unrelated to the menu music).
 	// The GK1 demo (very late SCI1.1) does the same thing
 	// TODO: Check the QFG4 demo
-
-	_useDigitalSFX = (getSciVersion() >= SCI_VERSION_2 || g_sci->getGameId() == GID_GK1 || ConfMan.getBool("multi_midi"));
-#else
-	// Always prefer digital sound effects
-	_useDigitalSFX = true;
-#endif
+	_useDigitalSFX = (getSciVersion() >= SCI_VERSION_2 || g_sci->getGameId() == GID_GK1 || ConfMan.getBool("prefer_digitalsfx"));
 
 	_music = new SciMusic(_soundVersion, _useDigitalSFX);
 	_music->init();

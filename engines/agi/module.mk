@@ -28,7 +28,6 @@ MODULE_OBJS := \
 	preagi_mickey.o \
 	preagi_troll.o \
 	preagi_winnie.o \
-	predictive.o \
 	saveload.o \
 	sound.o \
 	sound_2gs.o \

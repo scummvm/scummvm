@@ -216,6 +216,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		byte *dataBuffer = (byte *)malloc(size);
 		saveFile->read(dataBuffer, size);
 		readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
+		delete saveFile;
 	}
 
 	// Check to see if it's a ScummVM savegame or not
@@ -430,11 +431,8 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 
 	// Get the thumbnail
 	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail) {
-		delete header.thumbnail;
-		header.thumbnail = NULL;
+	if (!header.thumbnail)
 		return false;
-	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();

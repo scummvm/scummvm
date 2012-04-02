@@ -167,6 +167,34 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectedGames;
 }
 
+const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	if (!_extraGuiOptions)
+		return ExtraGuiOptions();
+
+	ExtraGuiOptions options;
+
+	// If there isn't any target specified, return all available GUI options.
+	// Only used when an engine starts in order to set option defaults.
+	if (target.empty()) {
+		for (const ADExtraGuiOptionsMap *entry = _extraGuiOptions; entry->guioFlag; ++entry)
+			options.push_back(entry->option);
+
+		return options;
+	}
+
+	// Query the GUI options
+	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
+	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
+
+	// Add all the applying extra GUI options.
+	for (const ADExtraGuiOptionsMap *entry = _extraGuiOptions; entry->guioFlag; ++entry) {
+		if (guiOptions.contains(entry->guioFlag))
+			options.push_back(entry->option);
+	}
+
+	return options;
+}
+
 Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 
@@ -562,8 +590,9 @@ GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids)
-	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameids(gameids) {
+AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids, const ADExtraGuiOptionsMap *extraGuiOptions)
+	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameids(gameids),
+	  _extraGuiOptions(extraGuiOptions) {
 
 	_md5Bytes = 5000;
 	_singleid = NULL;

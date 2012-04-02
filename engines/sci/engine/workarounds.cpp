@@ -252,6 +252,7 @@ const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 const SciWorkaroundEntry kGetAngle_workarounds[] = {
 	{ GID_FANMADE,       516,   992,  0,             "Motion", "init",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // The Legend of the Lost Jewel Demo (fan made): called with third/fourth parameters as objects
 	{ GID_KQ6,            -1,   752,  0,        "throwDazzle", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // room 740/790 after the Genie is exposed in the Palace (short and long ending), it starts shooting lightning bolts around. An extra 5th parameter is passed - bug #3034610 & #3041734
+	{ GID_SQ1,            -1,   927,  0,           "PAvoider", "doit",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // all rooms in Ulence Flats after getting the Pilot Droid: called with a single parameter when the droid is in Roger's path - bug #3513207
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -336,6 +337,7 @@ const SciWorkaroundEntry kIsObject_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kMemory_workarounds[] = {
 	{ GID_LAURABOW2,      -1,   999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,    0 } }, // during the intro, when exiting the train (room 160), talking to Mr. Augustini, etc. - bug #3034490
+	{ GID_SQ1,            -1,   999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,    0 } }, // during walking Roger around Ulence Flats - bug #3513765
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

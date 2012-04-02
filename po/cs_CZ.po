@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-03-07 22:09+0000\n"
-"PO-Revision-Date: 2012-02-17 16:28+0100\n"
+"PO-Revision-Date: 2012-03-17 19:07+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
+"Language: Cesky\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Cesky\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
@@ -1160,14 +1160,13 @@ msgstr ""
 "dal¹í pomoc."
 
 #: engines/dialogs.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Je nám líto, ale toto jádro v souèasnosti nepodporuje herní nápovìdu. Prosím "
-"prohlédnìte si README pro základní informace a pro instrukce jak získat "
-"dal¹í pomoc."
+"Ulo¾ení stavu hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro základní "
+"informace a pokyny k získání dal¹í podpory."
 
 #: engines/dialogs.cpp:321 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
@@ -1228,14 +1227,13 @@ msgstr ""
 "Pro podrobnosti si pøeètìte README."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Je nám líto, ale toto jádro v souèasnosti nepodporuje herní nápovìdu. Prosím "
-"prohlédnìte si README pro základní informace a pro instrukce jak získat "
-"dal¹í pomoc."
+"Naètení stavu hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro základní "
+"informace a pokyny k získání dal¹í podpory."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -2087,7 +2085,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:539
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "Proud videa PSX '%s' nemù¾e být pøehrán v re¾imu palety"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
@@ -2142,10 +2140,9 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Toto je konec Dema Broken Sword 1"
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "Videa DXA nalezena, ale ScummVM byl sestaven bez podpory zlib"
+msgstr "Videa PSX nalezena, ale ScummVM byl sestaven bez podpory barev RGB"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2295,7 +2292,7 @@ msgstr "(Aktivní)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr " (Blokováno)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"

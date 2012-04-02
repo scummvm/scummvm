@@ -177,7 +177,10 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 					// Valid savegame
 					if (CGE::CGEEngine::readSavegameHeader(file, header)) {
 						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						delete header.thumbnail;
+						if (header.thumbnail) {
+							header.thumbnail->free();
+							delete header.thumbnail;
+						}
 					}
 				} else {
 					// Must be an original format savegame

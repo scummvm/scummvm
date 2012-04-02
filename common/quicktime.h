@@ -77,24 +77,12 @@ public:
 	 */
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
+	/** Find out if this parser has an open file handle */
 	bool isOpen() const { return _fd != 0; }
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
 	SeekableReadStream *_fd;
-
-	DisposeAfterUse::Flag _disposeFileHandle;
-
-	struct Atom {
-		uint32 type;
-		uint32 offset;
-		uint32 size;
-	};
-
-	struct ParseTable {
-		int (QuickTimeParser::*func)(Atom atom);
-		uint32 type;
-	};
 
 	struct TimeToSampleEntry {
 		int count;
@@ -174,18 +162,33 @@ protected:
 
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format) = 0;
 
-	const ParseTable *_parseTable;
-	bool _foundMOOV;
 	uint32 _timeScale;
 	uint32 _duration;
 	Rational _scaleFactorX;
 	Rational _scaleFactorY;
 	Array<Track *> _tracks;
+	
+	void init();
+
+private:
+	struct Atom {
+		uint32 type;
+		uint32 offset;
+		uint32 size;
+	};
+
+	struct ParseTable {
+		int (QuickTimeParser::*func)(Atom atom);
+		uint32 type;
+	};
+
+	DisposeAfterUse::Flag _disposeFileHandle;
+	const ParseTable *_parseTable;
 	uint32 _beginOffset;
 	MacResManager *_resFork;
+	bool _foundMOOV;
 
 	void initParseTable();
-	void init();
 
 	int readDefault(Atom atom);
 	int readLeaf(Atom atom);
@@ -205,6 +208,7 @@ protected:
 	int readCMOV(Atom atom);
 	int readWAVE(Atom atom);
 	int readESDS(Atom atom);
+	int readSMI(Atom atom);
 };
 
 } // End of namespace Common

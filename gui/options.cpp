@@ -102,7 +102,6 @@ void OptionsDialog::init() {
 	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
-	_disableDitheringCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
@@ -217,14 +216,6 @@ void OptionsDialog::open() {
 		}
 #endif // SMALL_SCREEN_DEVICE
 
-		// EGA undithering setting
-		if (_guioptions.contains(GUIO_EGAUNDITHER)  || _domain == Common::ConfigManager::kApplicationDomain) {
-			_disableDitheringCheckbox->setEnabled(true);
-			_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
-		} else {
-			_disableDitheringCheckbox->setState(false);
-			_disableDitheringCheckbox->setEnabled(false);
-		}
 	}
 
 	// Audio options
@@ -333,7 +324,6 @@ void OptionsDialog::close() {
 
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
-				ConfMan.setBool("disable_dithering", _disableDitheringCheckbox->getState(), _domain);
 
 				bool isSet = false;
 
@@ -359,7 +349,6 @@ void OptionsDialog::close() {
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
-				ConfMan.removeKey("disable_dithering", _domain);
 				ConfMan.removeKey("gfx_mode", _domain);
 				ConfMan.removeKey("render_mode", _domain);
 			}
@@ -617,10 +606,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	else
 		_aspectCheckbox->setEnabled(enabled);
 #endif
-	if (_guioptions.contains(GUIO_EGAUNDITHER) && enabled)
-		_disableDitheringCheckbox->setEnabled(true);
-	else
-		_disableDitheringCheckbox->setEnabled(false);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -769,7 +754,6 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
-	_disableDitheringCheckbox = new CheckboxWidget(boss, prefix + "grDisableDitheringCheckbox", _("EGA undithering"), _("Enable undithering in EGA games that support it"));
 
 	_enableGraphicSettings = true;
 }
@@ -995,6 +979,22 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableVolumeSettings = true;
+}
+
+void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions) {
+	// Note: up to 7 engine options can currently fit on screen (the most that
+	// can fit in a 320x200 screen with the classic theme).
+	// TODO: Increase this number by including the checkboxes inside a scroll
+	// widget. The appropriate number of checkboxes will need to be added to
+	// the theme files.
+
+	uint i = 1;
+	ExtraGuiOptions::const_iterator iter;
+	for (iter = engineOptions.begin(); iter != engineOptions.end(); ++iter, ++i) {
+		Common::String id = Common::String::format("%d", i);
+		_engineCheckboxes.push_back(new CheckboxWidget(boss, 
+			prefix + "customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
+	}
 }
 
 bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType) {

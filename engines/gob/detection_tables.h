@@ -735,6 +735,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		0, 0, 0
 	},
+	{ // Supplied by aldozx in the forums
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "abc3e786cd78197773954c75815b278b", 554721),
+			ES_ESP,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		0, 0, 0
+	},
 	{ // Supplied by bgk in bug report #1706861
 		{
 			"gob2",

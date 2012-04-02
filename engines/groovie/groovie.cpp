@@ -152,20 +152,26 @@ Common::Error GroovieEngine::run() {
 		break;
 	}
 
-	// Create the music player
-	switch (getPlatform()) {
-	case Common::kPlatformMacintosh:
-		// TODO: The 11th Hour Mac uses QuickTime MIDI files
-		// Right now, since the XMIDI are present and it is still detected as
-		// the DOS version, we don't have to do anything here.
-		_musicPlayer = new MusicPlayerMac(this);
-		break;
-	case Common::kPlatformIOS:
+	// Detect ScummVM Music Enhancement Project presence (T7G only)
+	if (Common::File::exists("gu16.ogg") && _gameDescription->version == kGroovieT7G) {
+		// Load player for external files
 		_musicPlayer = new MusicPlayerIOS(this);
-		break;
-	default:
-		_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
-		break;
+	} else {
+		// Create the music player
+		switch (getPlatform()) {
+		case Common::kPlatformMacintosh:
+			// TODO: The 11th Hour Mac uses QuickTime MIDI files
+			// Right now, since the XMIDI are present and it is still detected as
+			// the DOS version, we don't have to do anything here.
+			_musicPlayer = new MusicPlayerMac(this);
+			break;
+		case Common::kPlatformIOS:
+			_musicPlayer = new MusicPlayerIOS(this);
+			break;
+		default:
+			_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
+			break;
+		}
 	}
 
 	// Load volume levels

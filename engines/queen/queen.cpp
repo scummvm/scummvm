@@ -30,6 +30,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 
@@ -54,6 +55,13 @@ static const PlainGameDescriptor queenGameDescriptor = {
 	"queen", "Flight of the Amazon Queen"
 };
 
+static const ExtraGuiOption queenExtraGuiOption = {
+	_s("Floppy intro"),
+	_s("Use the floppy version's intro (CD version only)"),
+	"alt_intro",
+	false
+};
+
 class QueenMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const;
@@ -61,9 +69,11 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
@@ -87,6 +97,8 @@ bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions);
 }
 
@@ -94,6 +106,27 @@ GameList QueenMetaEngine::getSupportedGames() const {
 	GameList games;
 	games.push_back(queenGameDescriptor);
 	return games;
+}
+
+int QueenMetaEngine::getMaximumSaveSlot() const { return 99; }
+
+const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	Common::String guiOptions;
+	ExtraGuiOptions options;
+	
+	if (target.empty()) {
+		options.push_back(queenExtraGuiOption);
+		return options;
+	}
+	
+	if (ConfMan.hasKey("guioptions", target)) {
+		guiOptions = ConfMan.get("guioptions", target);
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
+
+	if (!guiOptions.contains(GUIO_NOSPEECH))
+		options.push_back(queenExtraGuiOption);
+	return options;
 }
 
 GameDescriptor QueenMetaEngine::findGame(const char *gameid) const {
@@ -314,6 +347,14 @@ void QueenEngine::update(bool checkPlayerInput) {
 
 bool QueenEngine::canLoadOrSave() const {
 	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
+}
+
+bool QueenEngine::canLoadGameStateCurrently() {
+	return canLoadOrSave();
+}
+
+bool QueenEngine::canSaveGameStateCurrently() {
+	return canLoadOrSave();
 }
 
 Common::Error QueenEngine::saveGameState(int slot, const Common::String &desc) {

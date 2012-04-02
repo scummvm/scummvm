@@ -1534,7 +1534,11 @@ Flight of the Amazon Queen přidává následující nestandardní klíčová sl
 King's Quest VI Windows přidává následující nestandardní klíčová slova:
 
     windows_cursors    boolean  Pokud true, jsou použity původní černobílé kurzory místo kurzorů z DOS. Pokud false, jsou ve verzi Windows použity kurzory DOS, zvětšené, aby se shodovaly se zbytkem zvětšené grafiky
+
+Space Qust IV CD přidává následující nestandardní klíčové slovo:
     
+    silver_cursors     boolean  Pokud true, je místo původních zlatých kurzorů použita alternativní sada stříbrných
+        
 Simon the Sorcerer 1 a 2 přidává následující nestandardní klíčová slova:
 
     music_mute         boolean  Pokud true, hudba je ztlumena

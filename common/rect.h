@@ -261,9 +261,8 @@ struct Rect {
 	 * @note the center point is rounded up and left when given an odd width and height
 	 */
 	static Rect center(int16 cx, int16 cy, int16 w, int16 h) {
-		int dx = w / 2;
-		int dy = h / 2;
-		return Rect(cx - dx, cy - dy, cx + dx + (w & 1), cy + dy + (h & 1));
+		int x = cx - w / 2, y = cy - h / 2;
+		return Rect(x, y, x + w, y + h);
 	}
 };
 
