@@ -120,7 +120,7 @@ private:
 	Unit _flags[(kNumFlags - 1) / NUM_FLAGS + 1];
 };
 
-#undef NUM_FLAGS;
+#undef NUM_FLAGS
 #undef BIT_INDEX_SHIFT
 #undef BIT_INDEX_MASK
 
