@@ -42,7 +42,7 @@ public:
 	ZoomTable() {}
 	~ZoomTable() {}
 
-	static const uint32 getResTag() { return MKTAG('Z', 'o', 'o', 'm'); }
+	static uint32 getResTag() { return MKTAG('Z', 'o', 'o', 'm'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();

@@ -59,7 +59,7 @@ public:
 	SpotTable() {}
 	~SpotTable() {}
 
-	static const uint32 getResTag() { return MKTAG('S', 'p', 'o', 't'); }
+	static uint32 getResTag() { return MKTAG('S', 'p', 'o', 't'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();

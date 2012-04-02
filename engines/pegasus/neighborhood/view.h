@@ -42,7 +42,7 @@ public:
 	ViewTable() {}
 	~ViewTable() {}
 
-	static const uint32 getResTag() { return MKTAG('V', 'i', 'e', 'w'); }
+	static uint32 getResTag() { return MKTAG('V', 'i', 'e', 'w'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();

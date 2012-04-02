@@ -42,7 +42,7 @@ public:
 	ExitTable() {}
 	~ExitTable() {}
 
-	static const uint32 getResTag() { return MKTAG('E', 'x', 'i', 't'); }
+	static uint32 getResTag() { return MKTAG('E', 'x', 'i', 't'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();

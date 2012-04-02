@@ -53,7 +53,7 @@ public:
 	DoorTable() {}
 	~DoorTable() {}
 
-	static const uint32 getResTag() { return MKTAG('D', 'o', 'o', 'r'); }
+	static uint32 getResTag() { return MKTAG('D', 'o', 'o', 'r'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();

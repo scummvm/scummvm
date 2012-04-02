@@ -42,7 +42,7 @@ public:
 	HotspotInfoTable() {}
 	~HotspotInfoTable() {}
 
-	static const uint32 getResTag() { return MKTAG('H', 'S', 'I', 'n'); }
+	static uint32 getResTag() { return MKTAG('H', 'S', 'I', 'n'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();

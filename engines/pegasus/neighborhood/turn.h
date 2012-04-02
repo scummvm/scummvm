@@ -42,7 +42,7 @@ public:
 	TurnTable() {}
 	~TurnTable() {}
 
-	static const uint32 getResTag() { return MKTAG('T', 'u', 'r', 'n'); }
+	static uint32 getResTag() { return MKTAG('T', 'u', 'r', 'n'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();

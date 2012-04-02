@@ -42,7 +42,7 @@ public:
 	ExtraTable() {}
 	~ExtraTable() {}
 
-	static const uint32 getResTag() { return MKTAG('X', 't', 'r', 'a'); }
+	static uint32 getResTag() { return MKTAG('X', 't', 'r', 'a'); }
 
 	void loadFromStream(Common::SeekableReadStream *stream);
 	void clear();
