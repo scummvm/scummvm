@@ -292,8 +292,11 @@ void PegasusEngine::runIntro() {
 		while (!shouldQuit() && !video->endOfVideo() && !skipped) {
 			if (video->needsUpdate()) {
 				const Graphics::Surface *frame = video->decodeNextFrame();
-				_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
-				_system->updateScreen();
+
+				if (frame) {
+					_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+					_system->updateScreen();
+				}
 			}
 
 			Input input;
