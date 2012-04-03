@@ -162,6 +162,7 @@ public:
 	bool canSolve();
 	void prepareForAIHint(const Common::String &);
 	void cleanUpAfterAIHint(const Common::String &);
+	Common::SeekableReadStream *_aiSaveStream;
 
 	// Neighborhood
 	void jumpToNewEnvironment(const NeighborhoodID, const RoomID, const DirectionConstant);

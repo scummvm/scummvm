@@ -90,6 +90,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_idlerHead = 0;
 	_currentCD = 1;
 	_introTimer = 0;
+	_aiSaveStream = 0;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -101,6 +102,7 @@ PegasusEngine::~PegasusEngine() {
 	delete _neighborhood;
 	delete _rnd;
 	delete _introTimer;
+	delete _aiSaveStream;
 
 	// NOTE: This must be deleted last!
 	delete _gfx;

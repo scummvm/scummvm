@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/memstream.h"
+
 #include "pegasus/cursor.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
@@ -72,11 +74,21 @@ AIArea::~AIArea() {
 
 // Save last state of AI rules...
 void AIArea::saveAIState() {
-	// TODO
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+
+	delete vm->_aiSaveStream;
+
+	Common::MemoryWriteStreamDynamic out;
+	writeAIRules(&out);
+
+	vm->_aiSaveStream = new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES);
 }
 	
 void AIArea::restoreAIState() {
-	// TODO
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+
+	if (vm->_aiSaveStream)
+		readAIRules(vm->_aiSaveStream);
 }
 
 void AIArea::writeAIRules(Common::WriteStream *stream) {
