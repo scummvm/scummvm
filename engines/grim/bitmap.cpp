@@ -538,13 +538,13 @@ static bool decompress_codec3(const char *compressed, char *result, int maxBytes
 				copy_len = 2 * bit;
 				GET_BIT;
 				copy_len += bit + 3;
-				copy_offset = *(uint8 *)(compressed++) - 0x100;
+				copy_offset = *(const uint8 *)(compressed++) - 0x100;
 			} else {
-				copy_offset = (*(uint8 *)(compressed) | (*(uint8 *)(compressed + 1) & 0xf0) << 4) - 0x1000;
-				copy_len = (*(uint8 *)(compressed + 1) & 0xf) + 3;
+				copy_offset = (*(const uint8 *)(compressed) | (*(const uint8 *)(compressed + 1) & 0xf0) << 4) - 0x1000;
+				copy_len = (*(const uint8 *)(compressed + 1) & 0xf) + 3;
 				compressed += 2;
 				if (copy_len == 3) {
-					copy_len = *(uint8 *)(compressed++) + 1;
+					copy_len = *(const uint8 *)(compressed++) + 1;
 					if (copy_len == 1)
 						return true;
 				}

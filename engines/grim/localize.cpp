@@ -34,7 +34,7 @@ namespace Grim {
 Localizer *g_localizer = NULL;
 
 static int sortCallback(const void *entry1, const void *entry2) {
-	return scumm_stricmp(((Localizer::LocaleEntry *)entry1)->text, ((Localizer::LocaleEntry *)entry2)->text);
+	return scumm_stricmp(((const Localizer::LocaleEntry *)entry1)->text, ((const Localizer::LocaleEntry *)entry2)->text);
 }
 
 Localizer::Localizer() {

@@ -112,8 +112,8 @@ struct ArrayIDObj {
 
 static int sortCallback(const void *id1, const void *id2) {
 #ifdef SCUMM_64BITS
-	uint64 p1 = ((ArrayIDObj *)id1)->idObj.low | ((uint64)(((ArrayIDObj *)id1)->idObj.hi)) << 32;
-	uint64 p2 = ((ArrayIDObj *)id2)->idObj.low | ((uint64)(((ArrayIDObj *)id2)->idObj.hi)) << 32;
+	uint64 p1 = ((const ArrayIDObj *)id1)->idObj.low | ((uint64)(((const ArrayIDObj *)id1)->idObj.hi)) << 32;
+	uint64 p2 = ((const ArrayIDObj *)id2)->idObj.low | ((uint64)(((const ArrayIDObj *)id2)->idObj.hi)) << 32;
 	if (p1 > p2) {
 		return 1;
 	} else if (p1 < p2) {
@@ -122,9 +122,9 @@ static int sortCallback(const void *id1, const void *id2) {
 		return 0;
 	}
 #else
-	if (((ArrayIDObj *)id1)->idObj.low > ((ArrayIDObj *)id2)->idObj.low) {
+	if (((const ArrayIDObj *)id1)->idObj.low > ((const ArrayIDObj *)id2)->idObj.low) {
 		return 1;
-	} else if (((ArrayIDObj *)id1)->idObj.low < ((ArrayIDObj *)id2)->idObj.low) {
+	} else if (((const ArrayIDObj *)id1)->idObj.low < ((const ArrayIDObj *)id2)->idObj.low) {
 		return -1;
 	} else {
 		return 0;

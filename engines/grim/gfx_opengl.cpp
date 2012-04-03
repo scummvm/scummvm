@@ -1049,7 +1049,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	if (cmap != NULL) { // EMI doesn't have colour-maps
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
-				uint8 col = *(uint8 *)(data);
+				uint8 col = *(const uint8 *)(data);
 				if (col == 0) {
 					memset(texdatapos, 0, 4); // transparent
 					if (!material->_hasAlpha) {
@@ -1260,7 +1260,7 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	glColor3f(1.0f, 1.0f, 1.0f);
 
 	glListBase(_emergFont);
-	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *)text);
+	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (const GLubyte *)text);
 
 	glEnable(GL_LIGHTING);
 
