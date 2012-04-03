@@ -1216,10 +1216,6 @@ void Actor::update(uint frameTime) {
 // update() is called. For example, Don when he comes out of his office after reaping Meche.
 bool Actor::updateTalk() {
 	if (_talking) {
-		if (_backgroundTalk && !_isTalkingBackground) {
-			return false;
-		}
-
 		// If there's no sound file then we're obviously not talking
 		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 		TextObject *textObject = NULL;

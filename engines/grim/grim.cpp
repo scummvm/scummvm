@@ -1100,7 +1100,15 @@ void GrimEngine::addTalkingActor(Actor *a) {
 }
 
 bool GrimEngine::areActorsTalking() const {
-	return !_talkingActors.empty();
+	//This takes into account that there may be actors which are still talking, but in the background.
+	bool talking = false;
+	foreach (Actor *a, _talkingActors) {
+		if (a->isTalking()) {
+			talking = true;
+			break;
+		}
+	}
+	return talking;
 }
 
 void GrimEngine::setMovieSubtitle(TextObject *to)
