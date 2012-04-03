@@ -1527,4 +1527,11 @@ void Lua_V1::SetActorShadowValid() {
 	actor->setShadowValid(valid);
 }
 
+void Lua_V1::GetActorRect() {
+	// This function is only used in one place and it is only checked if the return value is nil or not.
+	// Looking at how it is used I don't see any reason to ever return nil.
+	// If it does not return nil, the light that comes out of Chepito's lantern move properly.
+	lua_pushnumber(1);
+}
+
 } // end of namespace Grim
