@@ -2,8 +2,9 @@ MODULE := engines/lilliput
 
 MODULE_OBJS = \
 	console.o \
+	detection.o \
 	lilliput.o \
-	detection.o
+	script.o
 
 MODULE_DIRS += \
 	engines/lilliput
