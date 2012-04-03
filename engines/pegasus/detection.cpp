@@ -72,7 +72,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 	{
 		{
 			"pegasus",
-			"",
+			"Demo",
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
