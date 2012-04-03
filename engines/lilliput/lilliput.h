@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 #include "common/file.h"
 #include "lilliput/console.h"
+#include "lilliput/script.h"
 
 namespace Common {
 class RandomSource;
@@ -75,6 +76,9 @@ public:
 	GUI::Debugger *getDebugger();
 
 	Common::RandomSource *_rnd;
+	LilliputScript *_scriptHandler;
+
+	byte _vm_byte1714E;
 
 	byte _buffer1[45056];
 	byte _buffer2[45056];
@@ -110,7 +114,7 @@ public:
 	int *_rulesChunk3;
 	int _rulesChunk3_size;
 	byte *_rulesChunk4;
-	int *_rulesScript;
+	byte *_rulesScript;
 	int _rulesScript_size;
 	int *_rulesChunk6;
 	int _rulesChunk6_size;
