@@ -112,7 +112,7 @@ static const char HELP_STRING[] =
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
-	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
+	"  --talkspeed=NUM          Set talk speed for games (default: 179)\n"
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: true/false\n"
 	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: true/false\n"
 	"\n"
@@ -184,7 +184,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("save_slot", -1);
 	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
 
-	ConfMan.registerDefault("talkspeed", 60);
+	ConfMan.registerDefault("talkspeed", 179);
 
 #ifdef ENABLE_GRIM
 	ConfMan.registerDefault("dimuse_tempo", 10);

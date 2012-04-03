@@ -99,7 +99,7 @@ Registry::ValueType Registry::Value::getType() const {
 Registry::Registry() : _dirty(true) {
 	// Default settings for GRIM
 	ConfMan.registerDefault("subtitles", true);
-	ConfMan.registerDefault("talkspeed", 255);
+	ConfMan.registerDefault("talkspeed", 179);
 	ConfMan.registerDefault("soft_renderer", false);
 	ConfMan.registerDefault("engine_speed", 30);
 	ConfMan.registerDefault("fullscreen", false);
