@@ -1284,7 +1284,7 @@ void Caldoria::activateHotspots() {
 
 	switch (GameState.getCurrentRoom()) {
 	case kCaldoriaDrawers:
-		if (getCurrentActivation() == kActivateRightOpen)
+		if (getCurrentActivation() == kActivateRightOpen) {
 			if (GameState.isTakenItemID(kKeyCard)) {
 				g_allHotspots.activateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
 				g_allHotspots.deactivateOneHotspot(kCaldoriaRightDrawerWithKeysCloseSpotID);
@@ -1292,6 +1292,7 @@ void Caldoria::activateHotspots() {
 				g_allHotspots.activateOneHotspot(kCaldoriaRightDrawerWithKeysCloseSpotID);
 				g_allHotspots.deactivateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
 			}
+		}
 	case kCaldoriaReplicator:
 		if (GameState.getCaldoriaMadeOJ())
 			g_allHotspots.deactivateOneHotspot(kCaldoriaMakeOJSpotID);

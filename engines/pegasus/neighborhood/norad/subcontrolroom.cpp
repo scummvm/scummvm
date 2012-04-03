@@ -804,7 +804,7 @@ void SubControlRoom::clickInHotspot(const Input &input, const Hotspot *spot) {
 	} else if (clickedID == _outSpotID) {
 		_gameState = kPuttingClawAway;
 
-		if (_currentAction == kNoActionIndex)
+		if (_currentAction == kNoActionIndex) {
 			if (_clawPosition == _clawStartPosition) {
 				GameInteraction::clickInHotspot(input, spot);
 			} else {
@@ -826,6 +826,7 @@ void SubControlRoom::clickInHotspot(const Input &input, const Hotspot *spot) {
 					break;
 				}
 			}
+		}
 	} else {
 		GameInteraction::clickInHotspot(input, spot);
 	}
