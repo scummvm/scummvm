@@ -208,12 +208,12 @@ void LilliputEngine::loadRules() {
 	_rulesChunk3_size = f.readSint16LE();
 	curWord = f.readSint16LE();
 
-	warning("Pos %d", f.pos());
+	warning("Pos %d - size chunk3: %d", f.pos(), _rulesChunk3_size);
 	_rulesChunk3 = (int *)malloc(sizeof(int) * _rulesChunk3_size);
 	for (int i = 0; i < _rulesChunk3_size; ++i)
 		_rulesChunk3[i] = f.readUint16LE();
 
-	warning("Pos %d", f.pos());
+	warning("Pos %d - size chunk4: %d", f.pos(), curWord);
 	_rulesChunk4 = (byte *)malloc(sizeof(byte) * curWord);
 	for (int i = 0; i < curWord; ++i)
 		_rulesChunk4[i] = f.readByte();

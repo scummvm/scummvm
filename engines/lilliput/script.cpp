@@ -25,7 +25,7 @@
 
 namespace Lilliput {
 
-LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm) {
+LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
 }
 
 LilliputScript::~LilliputScript() {
@@ -443,7 +443,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub1847F();
 		break;
 	case 0x53:
-		OC_sub184AA();
+		OC_displayVGAFile();
 		break;
 	case 0x54:
 		OC_sub184D7();
@@ -458,7 +458,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub1864D();
 		break;
 	case 0x58:
-		OC_sub18608();
+		OC_initArr18560();
 		break;
 	case 0x59:
 		OC_sub18678();
@@ -506,6 +506,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 }
 
 int LilliputScript::handleOpcode(Common::MemoryReadStream script) {
+	_currScript = &script;
 	uint16 curWord = script.readUint16LE();
 	if (curWord == 0xFFF6)
 		return -1;
@@ -994,8 +995,17 @@ void LilliputScript::OC_sub1844A() {
 void LilliputScript::OC_sub1847F() {
 	warning("OC_sub1847F");
 }
-void LilliputScript::OC_sub184AA() {
-	warning("OC_sub184AA");
+void LilliputScript::OC_displayVGAFile() {
+	warning("OC_displayVGAFile");
+
+	_vm_byte12A09 = 1;
+	warning("TODO: unkPaletteFunction_1");
+	int curWord = _currScript->readUint16LE();
+	int index = _vm->_rulesChunk3[curWord];
+	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
+	_vm_word1881B = -1;
+	warning("TODO: guess_displayFunction_VGAFile");
+	warning("TODO: unkPaletteFunction_2");
 }
 void LilliputScript::OC_sub184D7() {
 	warning("OC_sub184D7");
@@ -1009,8 +1019,21 @@ void LilliputScript::OC_sub1853B() {
 void LilliputScript::OC_sub1864D() {
 	warning("OC_sub1864D");
 }
-void LilliputScript::OC_sub18608() {
-	warning("OC_sub18608");
+void LilliputScript::OC_initArr18560() {
+	warning("OC_initArr18560");
+	int curWord = _currScript->readUint16LE();
+	assert (curWord < 4);
+	_vm->_arr18560[curWord]._field0 = 1;
+	_vm->_arr18560[curWord]._field1 = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._field3 = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._field5 = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._field7 = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._field9 = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._fieldB = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._fieldD = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._fieldF = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._field11 = _currScript->readUint16LE();
+	_vm->_arr18560[curWord]._field13 = _currScript->readUint16LE();
 }
 void LilliputScript::OC_sub18678() {
 	warning("OC_sub18678");
@@ -1041,6 +1064,9 @@ void LilliputScript::OC_sub1873F_snd() {
 }
 void LilliputScript::OC_sub18746_snd() {
 	warning("OC_sub18746_snd");
+	int curWord = _currScript->readUint16LE();
+	curWord = (2 << 8) + (curWord & 0xFF);
+	warning("TODO: ovlContentOVL Function 2, init DX and BX");
 }
 void LilliputScript::OC_sub1875D_snd() {
 	warning("OC_sub1875D_snd");
