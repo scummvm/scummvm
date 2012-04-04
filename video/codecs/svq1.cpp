@@ -59,46 +59,22 @@ struct VLC {
  *                  = (max_vlc_length + bits - 1) / bits
  */
 static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDepth) {
-	//FIXME - Change this code to working with BitStream...
-	//GetBitContext *s
-	//int reIndex;
-	//int reCache;
-	//int index;
-	int code = 0;
-	//int n;
+	int index = s->getBits(bits);
+	int code = table[index][0];
+	int n = table[index][1];
 
-/* FIXME
-	reIndex = s->index;
-	reCache = READ_LE_UINT32(s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-	index = reCache & (0xffffffff >> (32 - bits));
-	code = table[index][0];
-	n = table[index][1];
-
-	if (maxDepth > 1 && n < 0){
-		reIndex += bits;
-		reCache = READ_LE_UINT32(s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-
-		int nbBits = -n;
-
-		index = (reCache & (0xffffffff >> (32 - nbBits))) + code;
+	if (maxDepth > 1 && n < 0) {
+		index = s->getBits(-n) + code;
 		code = table[index][0];
 		n = table[index][1];
 
 		if(maxDepth > 2 && n < 0) {
-			reIndex += nbBits;
-			reCache = READ_LE_UINT32(s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-
-			nbBits = -n;
-
-			index = (reCache & (0xffffffff >> (32 - nbBits))) + code;
+			index = s->getBits(-n) + code;
 			code = table[index][0];
 			n = table[index][1];
 		}
 	}
 
-	reCache >>= n;
-	s->index = reIndex + n;
-*/
 	return code;
 }
 
