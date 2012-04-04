@@ -41,18 +41,6 @@
 
 namespace Grim {
 
-#if 0
-void killBitmapPrimitives(Bitmap *bitmap) {
-	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); ++i) {
-		PrimitiveObject *p = i->_value;
-		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
-			g_grim->killPrimitiveObject(p);
-			break;
-		}
-	}
-}
-#endif
-
 void Lua_V1::GetImage() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj)) {
