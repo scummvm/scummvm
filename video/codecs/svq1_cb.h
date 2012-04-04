@@ -760,7 +760,7 @@ static const int8 svq1_inter_codebook_8x8[6144] = {
 };
 
 // list of codebooks for inter-coded vectors
-const int8_t* const ff_svq1_inter_codebooks[6] = {
+const int8_t* const svq1_inter_codebooks[6] = {
     svq1_inter_codebook_4x2, svq1_inter_codebook_4x4,
     svq1_inter_codebook_8x4, svq1_inter_codebook_8x8,
     NULL, NULL,
@@ -1503,7 +1503,7 @@ static const int8 svq1_intra_codebook_8x8[6144] = {
 };
 
 // list of codebooks for intra-coded vectors/
-const int8* const ff_svq1_intra_codebooks[6] = {
+const int8* const svq1_intra_codebooks[6] = {
     svq1_intra_codebook_4x2, svq1_intra_codebook_4x4,
     svq1_intra_codebook_8x4, svq1_intra_codebook_8x8,
     NULL, NULL,

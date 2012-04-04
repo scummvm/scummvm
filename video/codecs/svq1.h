@@ -37,6 +37,9 @@ public:
 
 private:
 	Graphics::Surface *_surface;
+
+	byte *_current[3];
+	byte *_last[3];
 };
 
 } // End of namespace Video
