@@ -106,7 +106,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 
 	// Initialize value stack
 	// We do this one by hand since the stack doesn't know the current execution stack
-	Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
+	Common::List<ExecStack>::const_iterator iter = s->_executionStack.legacy_reverse_begin();
 
 	// Skip fake kernel stack frame if it's on top
 	if ((*iter).type == EXEC_STACK_TYPE_KERNEL)

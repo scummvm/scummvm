@@ -211,6 +211,11 @@ public:
 	}
 
 	iterator		reverse_begin() {
+		return iterator(_anchor._prev);///<TODO FIXME use an actual backwards Iterator instead of an Forward Iterator 
+	}
+
+	/**DEPRACATED This is the old buggy version of reverse_begin(), use reverse_begin() instead, as sone as it has been fixed*/
+	iterator legacy_reverse_begin(){
 		return iterator(_anchor._prev);
 	}
 
@@ -222,8 +227,13 @@ public:
 		return const_iterator(_anchor._next);
 	}
 
-	const_iterator	reverse_begin() const {
+	/**DEPRACATED This is the old buggy version of reverse_begin(), use reverse_begin() instead, as sone as it has been fixed*/
+	const_iterator	legacy_reverse_begin() const {
 		return const_iterator(_anchor._prev);
+	}
+
+	const_iterator	reverse_begin() const {
+		return const_iterator(_anchor._prev);///<TODO FIXME use an actual backwards Iterator instead of an Forward Iterator 
 	}
 
 	const_iterator	end() const {
@@ -252,7 +262,7 @@ protected:
 		newNode->_prev->_next = newNode;
 		newNode->_next->_prev = newNode;
 	}
-};
+};///< TODO add reverse_end()
 
 } // End of namespace Common
 

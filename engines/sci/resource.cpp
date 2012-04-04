@@ -1034,7 +1034,7 @@ void ResourceManager::printLRU() {
 void ResourceManager::freeOldResources() {
 	while (MAX_MEMORY < _memoryLRU) {
 		assert(!_LRU.empty());
-		Resource *goner = *_LRU.reverse_begin();
+		Resource *goner = *_LRU.legacy_reverse_begin();
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMAN

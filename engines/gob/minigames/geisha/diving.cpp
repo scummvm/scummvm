@@ -703,7 +703,7 @@ void Diving::updateAnims() {
 	int16 left, top, right, bottom;
 
 	// Clear the previous animation frames
-	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
+	for (Common::List<ANIObject *>::iterator a = _anims.legacy_reverse_begin();
 			 a != _anims.end(); --a) {
 
 		(*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom);

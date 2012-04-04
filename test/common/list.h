@@ -218,15 +218,15 @@ class ListTestSuite : public CxxTest::TestSuite
 
 
 		TS_ASSERT_EQUALS(*iter, -11);
-		--iter;
+		++iter;
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 		TS_ASSERT_EQUALS(*iter, 33);
-		--iter;
+		++ter;
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 		TS_ASSERT_EQUALS(*iter, 17);
-		--iter;
+		++ter;
 		TS_ASSERT_EQUALS(iter, container.end());
 
 		iter = container.reverse_begin();

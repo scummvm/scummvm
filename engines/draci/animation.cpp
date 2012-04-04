@@ -499,7 +499,7 @@ const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 	// Get transparent color for the current screen
 	const int transparent = _vm->_screen->getSurface()->getTransparentColor();
 
-	for (it = _animations.reverse_begin(); it != _animations.end(); --it) {
+	for (it = _animations.legacy_reverse_begin(); it != _animations.end(); --it) {
 
 		Animation *anim = *it;
 
