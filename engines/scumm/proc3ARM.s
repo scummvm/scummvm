@@ -153,6 +153,7 @@ _ClassicProc3RendererShadowARM:
 	STR	r12,[r13,#height]
 	STR	r14,[r13,#len]
         LDR	r12,[r13,#pitch]
+	LDR	r11,[r13,#_numStrips]
 	B	startpos
 
 outerloop:
@@ -231,13 +232,13 @@ innerloop:
 	CMPLE	r0,r14			@ || _scaleY >= r14
 	BLE	startpos
 
-	LDRB	r14,[r10],r11		@ r14 = mask[0]    mask += _numStrips
         ADDS	r4,r4,#1		@ y >= 0 (equiv to y>-1,y+1>0)
 	CMPGT   r1,#0			@ && color > 0
 	CMPGT	r6,r4			@ && _out.h+1 > y+1
 	CMNGT	r3,#1			@ && x >= 0 (equiv to x>-1,x+1>0)
 	CMPGT	r7,r3			@ && _out.w > x
 	BLE	masked
+	LDRB	r14,[r10]		@ r14 = mask[0]
 	TST	r14,r8			@ && !(mask[0] && maskbit)
 	LDREQ	r14,[r13,#_palette]
 	BNE	masked
@@ -256,6 +257,7 @@ innerloop:
 	@ stallEQ
 	STRB	r14,[r9]		@ *dst = pcolor
 masked:
+	ADD	r10,r10,r11		@ mask += _numStrips
 	ADD	r9,r9,r12		@ dst += _out.pitch
 startpos:
 	SUBS	r5,r5,#1		@ loopCount -=1
