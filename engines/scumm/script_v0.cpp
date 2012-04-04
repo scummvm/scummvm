@@ -471,7 +471,7 @@ void ScummEngine_v0::drawSentenceLine() {
 				actorName = " ";
 			} else {
 				Actor *a = derefActor(actorId, "drawSentenceLine");
-				actorName = (char *)a->getActorName();
+				actorName = (const char *)a->getActorName();
 			}
 			_sentenceBuf += Common::String::format("%-13s", actorName);
 		}
