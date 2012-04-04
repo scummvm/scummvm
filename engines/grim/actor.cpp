@@ -109,6 +109,7 @@ Actor::Actor() :
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
 	_collisionScale = 1.f;
+	_inOverworld = false;
 
 	_attachedActor = NULL;
 	_attachedJoint = "";
