@@ -718,6 +718,7 @@ void Lua_V1::FileFindFirst() {
 	const char *extension = lua_getstring(extObj);
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	g_grim->_listFiles = saveFileMan->listSavefiles(extension);
+	Common::sort(g_grim->_listFiles.begin(), g_grim->_listFiles.end());
 	g_grim->_listFilesIter = g_grim->_listFiles.begin();
 
 	if (g_grim->_listFilesIter == g_grim->_listFiles.end())
