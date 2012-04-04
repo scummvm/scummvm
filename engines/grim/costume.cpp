@@ -26,7 +26,6 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/textsplit.h"
-#include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
 #include "engines/grim/savegame.h"

@@ -27,7 +27,6 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/keyframe.h"
 #include "engines/grim/textsplit.h"
-#include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
 
@@ -272,10 +271,10 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 	Math::Angle roll = _entries[low]._roll;
 
 	/** @bug Interpolating between two orientations specified by Euler angles (yaw/pitch/roll)
-	 *	by linearly interpolating the YPR values does not compute proper in-between 
+	 *	by linearly interpolating the YPR values does not compute proper in-between
 	 *	poses, i.e. the rotation from start to finish does not go via the shortest arc.
-	 *	Though, if the start and end poses are very similar to each other, this can look 
-	 *	acceptable without visual artifacts. 
+	 *	Though, if the start and end poses are very similar to each other, this can look
+	 *	acceptable without visual artifacts.
 	 */
 	if (useDelta) {
 		pos += dt * _entries[low]._dpos;

@@ -24,7 +24,6 @@
 #include "engines/obsolete.h"
 
 #include "engines/grim/grim.h"
-#include "engines/grim/colormap.h"
 #include "engines/grim/savegame.h"
 
 #include "common/system.h"

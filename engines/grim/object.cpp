@@ -20,12 +20,7 @@
  *
  */
 
-#include "engines/grim/lua/lobject.h"
-
-#include "engines/grim/savegame.h"
-#include "engines/grim/font.h"
 #include "engines/grim/object.h"
-
 
 namespace Grim {
 

@@ -29,7 +29,6 @@
 
 #include "engines/grim/savegame.h"
 #include "engines/grim/debug.h"
-#include "engines/grim/grim.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/gfx_base.h"

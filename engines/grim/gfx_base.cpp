@@ -22,7 +22,6 @@
 
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/savegame.h"
-#include "engines/grim/colormap.h"
 
 namespace Grim {
 

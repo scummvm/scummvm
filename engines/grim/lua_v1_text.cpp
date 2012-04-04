@@ -26,18 +26,16 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdin
 
 #include "common/foreach.h"
+#include "common/system.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lua_v1.h"
 #include "engines/grim/localize.h"
 #include "engines/grim/actor.h"
-#include "engines/grim/lipsync.h"
 #include "engines/grim/savegame.h"
-#include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/inputdialog.h"
-
-#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/textobject.h"
 
 #include "engines/grim/lua/lauxlib.h"
 

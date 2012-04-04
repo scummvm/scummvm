@@ -26,6 +26,8 @@
 #include "graphics/pixelformat.h"
 
 #include "common/endian.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "engines/grim/pool.h"
 

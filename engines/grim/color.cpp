@@ -21,7 +21,6 @@
  */
 
 #include "engines/grim/color.h"
-#include "engines/grim/savegame.h"
 
 namespace Grim {
 

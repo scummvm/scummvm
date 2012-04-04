@@ -33,7 +33,6 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
-#include "engines/grim/colormap.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/movie/movie.h"

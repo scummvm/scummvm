@@ -33,7 +33,6 @@
 
 #include "engines/grim/set.h"
 #include "engines/grim/grim.h"
-#include "engines/grim/lipsync.h"
 
 #include "engines/grim/movie/movie.h"
 

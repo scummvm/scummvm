@@ -26,7 +26,6 @@
 
 #include "engines/grim/localize.h"
 #include "engines/grim/grim.h"
-#include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 
 namespace Grim {

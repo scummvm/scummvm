@@ -25,7 +25,6 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/lua_v1.h"
 #include "engines/grim/actor.h"
-#include "engines/grim/lipsync.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/set.h"
 #include "engines/grim/model.h"
