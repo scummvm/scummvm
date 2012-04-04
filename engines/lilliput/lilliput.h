@@ -66,6 +66,20 @@ enum LilliputDebugChannels {
 
 struct LilliputGameDescription;
 
+struct struct18560 {
+	byte _field0;
+	int16 _field1;
+	int16 _field3;
+	int16 _field5;
+	int16 _field7;
+	int16 _field9;
+	int16 _fieldB;
+	int16 _fieldD;
+	int16 _fieldF;
+	int16 _field11;
+	int16 _field13;
+};
+
 class LilliputEngine : public Engine {
 public:
 	LilliputEngine(OSystem *syst, const LilliputGameDescription *gd);
@@ -78,6 +92,7 @@ public:
 	Common::RandomSource *_rnd;
 	LilliputScript *_scriptHandler;
 
+	struct18560 _arr18560[4];
 	byte _vm_byte1714E;
 
 	byte _buffer1[45056];

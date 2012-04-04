@@ -37,7 +37,12 @@ public:
 private:
 	LilliputEngine *_vm;
 
+	Common::MemoryReadStream *_currScript;
+
 	byte _byte16F05_ScriptHandler;
+	byte _vm_byte12A09;
+
+	int16 _vm_word1881B;
 
 	int handleOpcode(Common::MemoryReadStream script);
 	byte handleOpcodeType1(int curWord);
@@ -179,12 +184,12 @@ private:
 	void OC_sub17E22();
 	void OC_sub1844A();
 	void OC_sub1847F();
-	void OC_sub184AA();
+	void OC_displayVGAFile();
 	void OC_sub184D7();
 	void OC_sub184F5();
 	void OC_sub1853B();
 	void OC_sub1864D();
-	void OC_sub18608();
+	void OC_initArr18560();
 	void OC_sub18678();
 	void OC_sub18690();
 	void OC_setWord10802();
