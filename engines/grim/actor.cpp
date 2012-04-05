@@ -63,7 +63,7 @@ void Actor::restoreStaticState(SaveGame *state) {
 }
 
 Actor::Actor(const Common::String &actorName) :
-		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
+		_name(actorName), _setName(""),
 		_talkColor(255, 255, 255), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
@@ -98,8 +98,7 @@ Actor::Actor(const Common::String &actorName) :
 	}
 }
 
-Actor::Actor() :
-	PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>() {
+Actor::Actor() {
 
 	_shadowArray = new Shadow[5];
 	_running = false;

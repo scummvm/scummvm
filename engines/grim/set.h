@@ -38,11 +38,13 @@ class SaveGame;
 class CMap;
 class Light;
 
-class Set : public PoolObject<Set, MKTAG('S', 'E', 'T', ' ')> {
+class Set : public PoolObject<Set> {
 public:
 	Set(const Common::String &name, Common::SeekableReadStream *data);
 	Set();
 	~Set();
+
+	static int32 getStaticTag() { return MKTAG('S', 'E', 'T', ' '); }
 
 	void loadText(TextSplitter &ts);
 	void loadBinary(Common::SeekableReadStream *data);

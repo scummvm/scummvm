@@ -28,8 +28,7 @@
 
 namespace Grim {
 
-PrimitiveObject::PrimitiveObject() :
-	PoolObject<PrimitiveObject, MKTAG('P', 'R', 'I', 'M')>() {
+PrimitiveObject::PrimitiveObject() {
 	_filled = false;
 	_type = 0;
 }

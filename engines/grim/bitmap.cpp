@@ -389,20 +389,17 @@ const Graphics::PixelBuffer &BitmapData::getImageData(int num) const {
 
 // Bitmap
 
-Bitmap::Bitmap(const Common::String &fname) :
-		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
+Bitmap::Bitmap(const Common::String &fname) {
 	_data = BitmapData::getBitmapData(fname);
 	_currImage = 1;
 }
 
-Bitmap::Bitmap(const Graphics::PixelBuffer &buf, int w, int h, const char *fname) :
-		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
+Bitmap::Bitmap(const Graphics::PixelBuffer &buf, int w, int h, const char *fname) {
 	_data = new BitmapData(buf, w, h, fname);
 	_currImage = 1;
 }
 
-Bitmap::Bitmap() :
-		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
+Bitmap::Bitmap() {
 	_data = new BitmapData();
 }
 

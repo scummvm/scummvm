@@ -33,11 +33,14 @@ namespace Grim {
 
 class SaveGame;
 
-class Font : public PoolObject<Font, MKTAG('F', 'O', 'N', 'T')> {
+class Font : public PoolObject<Font> {
 public:
 	Font(const Common::String &filename, Common::SeekableReadStream *data);
 	Font();
 	~Font();
+
+	static int32 getStaticTag() { return MKTAG('F', 'O', 'N', 'T'); }
+
 	void load(const Common::String &filename, Common::SeekableReadStream *data);
 
 	const Common::String &getFilename() const { return _filename; }

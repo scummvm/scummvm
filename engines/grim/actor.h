@@ -63,7 +63,7 @@ struct Shadow {
  *
  * @short Actor represents a 3D character on screen.
  */
-class Actor : public PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')> {
+class Actor : public PoolObject<Actor> {
 public:
 	enum CollisionMode {
 		CollisionOff = 0,
@@ -86,6 +86,8 @@ public:
 	 * The actor is automatically removed from the GrimEngine instance.
 	 */
 	~Actor();
+
+	static int32 getStaticTag() { return MKTAG('A', 'C', 'T', 'R'); }
 
 	/**
 	 * Saves the actor state.

@@ -32,7 +32,7 @@ namespace Grim {
 
 class SaveGame;
 
-class ObjectState : public PoolObject<ObjectState, MKTAG('S', 'T', 'A', 'T')> {
+class ObjectState : public PoolObject<ObjectState> {
 public:
 	enum Position {
 		OBJSTATE_BACKGROUND = 0,
@@ -44,6 +44,8 @@ public:
 	ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible);
 	ObjectState();
 	~ObjectState();
+
+	static int32 getStaticTag() { return MKTAG('S', 'T', 'A', 'T'); }
 
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
