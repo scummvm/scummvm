@@ -54,6 +54,7 @@ void Sound::initFromAIFFFile(const Common::String &fileName) {
 
 	Common::File *file = new Common::File();
 	if (!file->open(fileName)) {
+		warning("Failed to open AIFF file '%s'", fileName.c_str());
 		delete file;
 		return;
 	}
@@ -65,6 +66,9 @@ void Sound::initFromQuickTime(const Common::String &fileName) {
 	disposeSound();
 
 	_stream = Audio::makeQuickTimeStream(fileName);
+
+	if (!_stream)
+		warning("Failed to open QuickTime file '%s'", fileName.c_str());
 }
 
 void Sound::attachFader(SoundFader *fader) {
