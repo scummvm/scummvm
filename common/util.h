@@ -83,7 +83,7 @@ namespace Common {
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
  * @param data	the data to be dumped
- * @param len	the lenght of that data
+ * @param len	the length of that data
  * @param bytesPerLine	number of bytes to print per line (default: 16)
  * @param startOffset	shift the shown offsets by the starting offset (default: 0)
  */
