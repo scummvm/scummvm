@@ -371,7 +371,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	convertYUV410ToRGB(_surface, current[0], current[1], current[2], _width, _height, _width, _width/4);
 
 	for (int i = 0; i < 3; i++) {
-		delete _last[i];
+		delete[] _last[i];
 		_last[i] = current[i];
 	}
 
