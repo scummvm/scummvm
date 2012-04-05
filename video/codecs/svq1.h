@@ -43,8 +43,9 @@ public:
 
 private:
 	Graphics::Surface *_surface;
+	uint16 _width;
+	uint16 _height;
 
-	byte *_current[3];
 	byte *_last[3];
 
 	Common::Huffman *_blockType;
