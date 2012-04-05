@@ -33,6 +33,7 @@
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
+#include "common/huffman.h"
 
 #include "graphics/yuv_to_rgb.h"
 
@@ -42,669 +43,6 @@ namespace Video {
 #define SVQ1_BLOCK_INTER    1
 #define SVQ1_BLOCK_INTER_4V 2
 #define SVQ1_BLOCK_INTRA    3
-
-struct VLC {
-	int32 bits;
-	int16 (*table)[2]; // code, bits
-	int32 table_size;
-	int32 table_allocated;
-};
-
-/**
- * parses a vlc code, faster then get_vlc()
- * @param bits is the number of bits which will be read at once, must be
- *             identical to nb_bits in init_vlc()
- * @param max_depth is the number of times bits bits must be read to completely
- *                  read the longest vlc code
- *                  = (max_vlc_length + bits - 1) / bits
- */
-static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDepth) {
-	int index = s->getBits(bits);
-	int code = table[index][0];
-	int n = table[index][1];
-
-	if (maxDepth > 1 && n < 0) {
-		index = s->getBits(-n) + code;
-		code = table[index][0];
-		n = table[index][1];
-
-		if(maxDepth > 2 && n < 0) {
-			index = s->getBits(-n) + code;
-			code = table[index][0];
-			n = table[index][1];
-		}
-	}
-
-	return code;
-}
-
-static int allocTable(VLC *vlc, int size, int use_static) {
-	int index;
-	int16 (*temp)[2] = NULL;
-	index = vlc->table_size;
-	vlc->table_size += size;
-	if (vlc->table_size > vlc->table_allocated) {
-		if(use_static)
-			error("SVQ1 cant do anything, init_vlc() is used with too little memory");
-		vlc->table_allocated += (1 << vlc->bits);
-		temp = (int16 (*)[2])realloc(vlc->table, sizeof(int16 *) * 2 * vlc->table_allocated);
-		if (!temp) {
-			free(vlc->table);
-			vlc->table = NULL;
-			return -1;
-		}
-		vlc->table = temp;
-	}
-	return index;
-}
-
-static VLC svq1_block_type;
-static VLC svq1_motion_component;
-static VLC svq1_intra_multistage[6];
-static VLC svq1_inter_multistage[6];
-static VLC svq1_intra_mean;
-static VLC svq1_inter_mean;
-
-static int svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
-	uint8 *list[63];
-	uint32 *dst;
-	int entries[6];
-	int i, j, m, n;
-	int mean, stages;
-	unsigned int x, y, width, height, level;
-	uint32 n1, n2, n3, n4;
-
-	// initialize list for breadth first processing of vectors
-	list[0] = pixels;
-
-	// recursively process vector
-	for (i=0, m=1, n=1, level=5; i < n; i++) {
-		// SVQ1_PROCESS_VECTOR()
-		for (; level > 0; i++) {
-			// process next depth
-			if (i == m) {
-				m = n;
-				if (--level == 0)
-					break;
-			}
-			// divide block if next bit set
-			if (s->getBit() == 0)
-				break;
-			// add child nodes
-			list[n++] = list[i];
-			list[n++] = list[i] + (((level & 1) ? pitch : 1) << ((level / 2) + 1));
-		}
-
-		// destination address and vector size
-		dst = (uint32 *) list[i];
-		width = 1 << ((4 + level) /2);
-		height = 1 << ((3 + level) /2);
-
-		// get number of stages (-1 skips vector, 0 for mean only)
-		stages = getVlc2(s, svq1_intra_multistage[level].table, 3, 3) - 1;
-
-		if (stages == -1) {
-			for (y=0; y < height; y++) {
-				memset (&dst[y*(pitch / 4)], 0, width);
-			}
-		continue; // skip vector
-		}
-
-		if ((stages > 0) && (level >= 4)) {
-			warning("Error (svq1_decode_block_intra): invalid vector: stages=%i level=%i", stages, level);
-		return -1; // invalid vector
-		}
-
-		mean = getVlc2(s, svq1_intra_mean.table, 8, 3);
-
-		if (stages == 0) {
-			for (y=0; y < height; y++) {
-				memset (&dst[y*(pitch / 4)], mean, width);
-			}
-		} else {
-			// SVQ1_CALC_CODEBOOK_ENTRIES(svq1_intra_codebooks);
-			const uint32 *codebook = (const uint32 *) svq1_intra_codebooks[level];
-			uint32 bit_cache = s->getBits(4*stages);
-			// calculate codebook entries for this vector
-			for (j=0; j < stages; j++) {
-				entries[j] = (((bit_cache >> (4*(stages - j - 1))) & 0xF) + 16*j) << (level + 1);
-			}
-			mean -= (stages * 128);
-			n4    = ((mean + (mean >> 31)) << 16) | (mean & 0xFFFF);
-
-			// SVQ1_DO_CODEBOOK_INTRA()
-			for (y=0; y < height; y++) {
-				for (x=0; x < (width / 4); x++, codebook++) {
-					n1 = n4;
-					n2 = n4;
-					// SVQ1_ADD_CODEBOOK()
-					// add codebook entries to vector
-					for (j=0; j < stages; j++) {
-						n3  = codebook[entries[j]] ^ 0x80808080;
-						n1 += ((n3 & 0xFF00FF00) >> 8);
-						n2 +=  (n3 & 0x00FF00FF);
-					}
-
-					// clip to [0..255]
-					if (n1 & 0xFF00FF00) {
-						n3  = ((( n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-						n1 += 0x7F007F00;
-						n1 |= (((~n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-						n1 &= (n3 & 0x00FF00FF);
-					}
-
-					if (n2 & 0xFF00FF00) {
-						n3  = ((( n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-						n2 += 0x7F007F00;
-						n2 |= (((~n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-						n2 &= (n3 & 0x00FF00FF);
-					}
-
-					// store result
-					dst[x] = (n1 << 8) | n2;
-				}
-				dst += (pitch / 4);
-			}
-		}
-	}
-
-	return 0;
-}
-
-static int svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
-	uint8 *list[63];
-	uint32 *dst;
-	int entries[6];
-	int i, j, m, n;
-	int mean, stages;
-	int x, y, width, height, level;
-	uint32 n1, n2, n3, n4;
-
-	// initialize list for breadth first processing of vectors
-	list[0] = pixels;
-
-	// recursively process vector
-	for (i=0, m=1, n=1, level=5; i < n; i++) {
-		// SVQ1_PROCESS_VECTOR()
-		for (; level > 0; i++) {
-			// process next depth
-			if (i == m) {
-				m = n;
-				if (--level == 0)
-					break;
-			}
-			// divide block if next bit set
-			if (s->getBit() == 0)
-				break;
-			// add child nodes
-			list[n++] = list[i];
-			list[n++] = list[i] + (((level & 1) ? pitch : 1) << ((level / 2) + 1));
-		}
-
-		// destination address and vector size
-		dst = (uint32 *) list[i];
-		width = 1 << ((4 + level) /2);
-		height = 1 << ((3 + level) /2);
-
-		// get number of stages (-1 skips vector, 0 for mean only)
-		stages = getVlc2(s, svq1_inter_multistage[level].table, 3, 2) - 1;
-
-		if (stages == -1) continue; // skip vector
-
-		if ((stages > 0) && (level >= 4)) {
-			warning("Error (svq1_decode_block_non_intra): invalid vector: stages=%i level=%i", stages, level);
-			return -1;        // invalid vector
-		}
-
-		mean = getVlc2(s, svq1_inter_mean.table, 9, 3) - 256;
-
-		// SVQ1_CALC_CODEBOOK_ENTRIES(svq1_inter_codebooks);
-		const uint32 *codebook = (const uint32 *) svq1_inter_codebooks[level];
-		uint32 bit_cache = s->getBits(4*stages);
-		// calculate codebook entries for this vector
-		for (j=0; j < stages; j++) {
-			entries[j] = (((bit_cache >> (4*(stages - j - 1))) & 0xF) + 16*j) << (level + 1);
-		}
-		mean -= (stages * 128);
-		n4 = ((mean + (mean >> 31)) << 16) | (mean & 0xFFFF);
-
-		// SVQ1_DO_CODEBOOK_NONINTRA()
-		for (y=0; y < height; y++) {
-			for (x=0; x < (width / 4); x++, codebook++) {
-				n3 = dst[x];
-				// add mean value to vector
-				n1 = ((n3 & 0xFF00FF00) >> 8) + n4;
-				n2 =  (n3 & 0x00FF00FF)          + n4;
-				//SVQ1_ADD_CODEBOOK()
-				// add codebook entries to vector
-				for (j=0; j < stages; j++) {
-					n3  = codebook[entries[j]] ^ 0x80808080;
-					n1 += ((n3 & 0xFF00FF00) >> 8);
-					n2 +=  (n3 & 0x00FF00FF);
-				}
-
-				// clip to [0..255]
-				if (n1 & 0xFF00FF00) {
-					n3  = ((( n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-					n1 += 0x7F007F00;
-					n1 |= (((~n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-					n1 &= (n3 & 0x00FF00FF);
-				}
-
-				if (n2 & 0xFF00FF00) {
-					n3  = ((( n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-					n2 += 0x7F007F00;
-					n2 |= (((~n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
-					n2 &= (n3 & 0x00FF00FF);
-				}
-
-				// store result
-				dst[x] = (n1 << 8) | n2;
-			}
-			dst += (pitch / 4);
-		}
-	}
-	return 0;
-}
-
-// median of 3
-static inline int mid_pred(int a, int b, int c) {
-	if (a > b) {
-		if (c > b) {
-			if (c > a) b = a;
-			else b = c;
-		}
-	} else {
-		if (b > c) {
-			if (c > a) b = c;
-			else b = a;
-		}
-	}
-	return b;
-}
-
-static int svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv) {
-	for (int i=0; i < 2; i++) {
-		// get motion code
-		int diff = getVlc2(s, svq1_motion_component.table, 7, 2);
-		if (diff < 0)
-			return -1;
-		else if (diff) {
-			if (s->getBit()) diff= -diff;
-		}
-
-		// add median of motion vector predictors and clip result
-		if (i == 1)
-			mv->y = ((diff + mid_pred(pmv[0]->y, pmv[1]->y, pmv[2]->y)) << 26) >> 26;
-		else
-			mv->x = ((diff + mid_pred(pmv[0]->x, pmv[1]->x, pmv[2]->x)) << 26) >> 26;
-	}
-
-	return 0;
-}
-
-static void svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int x, int y) {
-	uint8 *src;
-	uint8 *dst;
-
-	src = &previous[x + y*pitch];
-	dst = current;
-
-	for (int i = 0; i < 16; i++) {
-		memcpy(dst, src, 16);
-		src += pitch;
-		dst += pitch;
-	}
-}
-
-static int svq1MotionInterBlock(Common::BitStream *ss,
-                                uint8 *current, uint8 *previous, int pitch,
-                                Common::Point *motion, int x, int y) {
-	uint8 *src;
-	uint8 *dst;
-	Common::Point mv;
-	Common::Point *pmv[3];
-	int result;
-
-	// predict and decode motion vector
-	pmv[0] = &motion[0];
-	if (y == 0) {
-		pmv[1] = pmv[2] = pmv[0];
-	} else {
-		pmv[1] = &motion[(x / 8) + 2];
-		pmv[2] = &motion[(x / 8) + 4];
-	}
-
-	result = svq1DecodeMotionVector(ss, &mv, pmv);
-
-	if (result != 0)
-		return result;
-
-	motion[0].x                =
-	motion[(x / 8) + 2].x      =
-	motion[(x / 8) + 3].x      = mv.x;
-	motion[0].y                =
-	motion[(x / 8) + 2].y      =
-	motion[(x / 8) + 3].y      = mv.y;
-
-	if(y + (mv.y >> 1)<0)
-		mv.y= 0;
-	if(x + (mv.x >> 1)<0)
-		mv.x= 0;
-
-#if 0
-	int w = (s->width+15)&~15;
-	int h = (s->height+15)&~15;
-	if(x + (mv.x >> 1)<0 || y + (mv.y >> 1)<0 || x + (mv.x >> 1) + 16 > w || y + (mv.y >> 1) + 16> h)
-		debug(1, "%d %d %d %d", x, y, x + (mv.x >> 1), y + (mv.y >> 1));
-#endif
-
-	src = &previous[(x + (mv.x >> 1)) + (y + (mv.y >> 1))*pitch];
-	dst = current;
-
-	// FIXME
-	//MpegEncContext *s
-	//s->dsp.put_pixels_tab[0][((mv.y & 1) << 1) | (mv.x & 1)](dst,src,pitch,16);
-
-	return 0;
-}
-
-static int svq1MotionInter4vBlock(Common::BitStream *ss,
-                                  uint8 *current, uint8 *previous, int pitch,
-                                  Common::Point *motion, int x, int y) {
-	uint8 *src;
-	uint8 *dst;
-	Common::Point mv;
-	Common::Point *pmv[4];
-	int i, result;
-
-	// predict and decode motion vector (0)
-	pmv[0] = &motion[0];
-	if (y == 0) {
-		pmv[1] = pmv[2] = pmv[0];
-	} else {
-		pmv[1] = &motion[(x / 8) + 2];
-		pmv[2] = &motion[(x / 8) + 4];
-	}
-
-	result = svq1DecodeMotionVector(ss, &mv, pmv);
-
-	if (result != 0)
-		return result;
-
-	// predict and decode motion vector (1)
-	pmv[0] = &mv;
-	if (y == 0) {
-		pmv[1] = pmv[2] = pmv[0];
-	} else {
-		pmv[1] = &motion[(x / 8) + 3];
-	}
-	result = svq1DecodeMotionVector(ss, &motion[0], pmv);
-
-	if (result != 0)
-		return result;
-
-	// predict and decode motion vector (2)
-	pmv[1] = &motion[0];
-	pmv[2] = &motion[(x / 8) + 1];
-
-	result = svq1DecodeMotionVector(ss, &motion[(x / 8) + 2], pmv);
-
-	if (result != 0)
-		return result;
-
-	// predict and decode motion vector (3)
-	pmv[2] = &motion[(x / 8) + 2];
-	pmv[3] = &motion[(x / 8) + 3];
-
-	result = svq1DecodeMotionVector(ss, pmv[3], pmv);
-
-	if (result != 0)
-		return result;
-
-	// form predictions
-	for (i=0; i < 4; i++) {
-		int mvx = pmv[i]->x + (i&1)*16;
-		int mvy = pmv[i]->y + (i>>1)*16;
-
-		///XXX /FIXME clipping or padding?
-		if(y + (mvy >> 1)<0)
-			mvy = 0;
-		if(x + (mvx >> 1)<0)
-			mvx = 0;
-
-#if 0
-		int w = (s->width+15)&~15;
-		int h = (s->height+15)&~15;
-		if(x + (mvx >> 1)<0 || y + (mvy >> 1)<0 || x + (mvx >> 1) + 8 > w || y + (mvy >> 1) + 8> h)
-			debug(1, "%d %d %d %d", x, y, x + (mvx >> 1), y + (mvy >> 1));
-#endif
-		src = &previous[(x + (mvx >> 1)) + (y + (mvy >> 1))*pitch];
-		dst = current;
-
-		// FIXME
-		//MpegEncContext *s
-		//s->dsp.put_pixels_tab[1][((mvy & 1) << 1) | (mvx & 1)](dst,src,pitch,8);
-
-		// select next block
-		if (i & 1) {
-			current  += 8*(pitch - 1);
-		} else {
-			current  += 8;
-		}
-	}
-
-	return 0;
-}
-
-static int svq1DecodeDeltaBlock(Common::BitStream *ss,
-                        uint8 *current, uint8 *previous, int pitch,
-                        Common::Point *motion, int x, int y) {
-	uint32 block_type;
-	int result = 0;
-
-	// get block type
-	block_type = getVlc2(ss, svq1_block_type.table, 2, 2);
-
-	// reset motion vectors
-	if (block_type == SVQ1_BLOCK_SKIP || block_type == SVQ1_BLOCK_INTRA) {
-		motion[0].x                 =
-		motion[0].y                 =
-		motion[(x / 8) + 2].x =
-		motion[(x / 8) + 2].y =
-		motion[(x / 8) + 3].x =
-		motion[(x / 8) + 3].y = 0;
-	}
-
-	switch (block_type) {
-	case SVQ1_BLOCK_SKIP:
-		svq1SkipBlock(current, previous, pitch, x, y);
-		break;
-
-	case SVQ1_BLOCK_INTER:
-		result = svq1MotionInterBlock(ss, current, previous, pitch, motion, x, y);
-		if (result != 0) {
-			warning("Error in svq1MotionInterBlock %i", result);
-			break;
-		}
-		result = svq1DecodeBlockNonIntra(ss, current, pitch);
-		break;
-
-	case SVQ1_BLOCK_INTER_4V:
-		result = svq1MotionInter4vBlock(ss, current, previous, pitch, motion, x, y);
-		if (result != 0) {
-			warning("Error in svq1MotionInter4vBlock %i", result);
-			break;
-		}
-		result = svq1DecodeBlockNonIntra(ss, current, pitch);
-		break;
-
-	case SVQ1_BLOCK_INTRA:
-		result = svq1DecodeBlockIntra(ss, current, pitch);
-		break;
-	}
-
-	return result;
-}
-
-#define GET_DATA(v, table, i, wrap, size)\
-{\
-	const uint8 *ptr = (const uint8 *)table + i * wrap;\
-	switch(size) {\
-		case 1:\
-			v = *(const uint8 *)ptr;\
-			break;\
-		case 2:\
-			v = *(const uint16 *)ptr;\
-			break;\
-		default:\
-			v = *(const uint32 *)ptr;\
-			break;\
-	}\
-}
-
-static int build_table(VLC *vlc, int table_nb_bits,
-                       int nb_codes,
-                       const void *bits, int bits_wrap, int bits_size,
-                       const void *codes, int codes_wrap, int codes_size,
-                       const void *symbols, int symbols_wrap, int symbols_size,
-                       int code_prefix, int n_prefix, int flags)
-{
-	int i, j, k, n, table_size, table_index, nb, n1, index, code_prefix2, symbol;
-	uint32 code;
-	int16 (*table)[2];
-
-	table_size = 1 << table_nb_bits;
-	table_index = allocTable(vlc, table_size, flags & 4);
-	if (table_index < 0)
-		return -1;
-	table = &vlc->table[table_index];
-
-	for(i = 0; i < table_size; i++) {
-		table[i][1] = 0; //bits
-		table[i][0] = -1; //codes
-	}
-
-	// first pass: map codes and compute auxillary table sizes
-	for(i = 0; i < nb_codes; i++) {
-		GET_DATA(n, bits, i, bits_wrap, bits_size);
-		GET_DATA(code, codes, i, codes_wrap, codes_size);
-		// we accept tables with holes
-		if (n <= 0)
-			continue;
-		if (!symbols)
-			symbol = i;
-		else
-			GET_DATA(symbol, symbols, i, symbols_wrap, symbols_size);
-		// if code matches the prefix, it is in the table
-		n -= n_prefix;
-		if(flags & 2)
-			code_prefix2= code & (n_prefix>=32 ? 0xffffffff : (1 << n_prefix)-1);
-		else
-			code_prefix2= code >> n;
-		if (n > 0 && code_prefix2 == code_prefix) {
-			if (n <= table_nb_bits) {
-				// no need to add another table
-				j = (code << (table_nb_bits - n)) & (table_size - 1);
-				nb = 1 << (table_nb_bits - n);
-				for(k = 0; k < nb; k++) {
-					if(flags & 2)
-						j = (code >> n_prefix) + (k<<n);
-					if (table[j][1] /*bits*/ != 0) {
-						error("SVQ1 incorrect codes");
-						return -1;
-					}
-					table[j][1] = n; //bits
-					table[j][0] = symbol;
-					j++;
-				}
-			} else {
-				n -= table_nb_bits;
-				j = (code >> ((flags & 2) ? n_prefix : n)) & ((1 << table_nb_bits) - 1);
-				// compute table size
-				n1 = -table[j][1]; //bits
-				if (n > n1)
-					n1 = n;
-				table[j][1] = -n1; //bits
-			}
-		}
-	}
-
-	// second pass : fill auxillary tables recursively
-	for(i = 0;i < table_size; i++) {
-		n = table[i][1]; //bits
-		if (n < 0) {
-			n = -n;
-			if (n > table_nb_bits) {
-				n = table_nb_bits;
-				table[i][1] = -n; //bits
-			}
-			index = build_table(vlc, n, nb_codes,
-			                    bits, bits_wrap, bits_size,
-			                    codes, codes_wrap, codes_size,
-			                    symbols, symbols_wrap, symbols_size,
-			                    (flags & 2) ? (code_prefix | (i << n_prefix)) : ((code_prefix << table_nb_bits) | i),
-			                    n_prefix + table_nb_bits, flags);
- 			if (index < 0)
-				return -1;
-			// note: realloc has been done, so reload tables
-			table = &vlc->table[table_index];
-			table[i][0] = index; //code
-		}
-	}
-	return table_index;
-}
-
-/* Build VLC decoding tables suitable for use with get_vlc().
-
-   'nb_bits' set thee decoding table size (2^nb_bits) entries. The
-   bigger it is, the faster is the decoding. But it should not be too
-   big to save memory and L1 cache. '9' is a good compromise.
-
-   'nb_codes' : number of vlcs codes
-
-   'bits' : table which gives the size (in bits) of each vlc code.
-
-   'codes' : table which gives the bit pattern of of each vlc code.
-
-   'symbols' : table which gives the values to be returned from get_vlc().
-
-   'xxx_wrap' : give the number of bytes between each entry of the
-   'bits' or 'codes' tables.
-
-   'xxx_size' : gives the number of bytes of each entry of the 'bits'
-   or 'codes' tables.
-
-   'wrap' and 'size' allows to use any memory configuration and types
-   (byte/word/long) to store the 'bits', 'codes', and 'symbols' tables.
-
-   'use_static' should be set to 1 for tables, which should be freed
-   with av_free_static(), 0 if free_vlc() will be used.
-*/
-void initVlcSparse(VLC *vlc, int nb_bits, int nb_codes,
-		const void *bits, int bits_wrap, int bits_size,
-		const void *codes, int codes_wrap, int codes_size,
-		const void *symbols, int symbols_wrap, int symbols_size) {
-	vlc->bits = nb_bits;
-
-	if(vlc->table_size && vlc->table_size == vlc->table_allocated) {
-		return;
-	} else if(vlc->table_size) {
-		error("called on a partially initialized table");
-	}
-
-	if (build_table(vlc, nb_bits, nb_codes,
-	                bits, bits_wrap, bits_size,
-	                codes, codes_wrap, codes_size,
-	                symbols, symbols_wrap, symbols_size,
-	                0, 0, 4 | 2) < 0) {
-		free(&vlc->table);
-		return; // Error
-	}
-
-	if(vlc->table_size != vlc->table_allocated)
-		error("SVQ1 needed %d had %d", vlc->table_size, vlc->table_allocated);
-}
 
 SVQ1Decoder::SVQ1Decoder(uint16 width, uint16 height) {
 	_surface = new Graphics::Surface();
@@ -719,59 +57,16 @@ SVQ1Decoder::SVQ1Decoder(uint16 width, uint16 height) {
 	_last[2] = 0;
 
 	// Setup Variable Length Code Tables
-	static int16 tableA[6][2];
-	svq1_block_type.table = tableA;
-	svq1_block_type.table_allocated = 6;
-	svq1_block_type.table_size = 0;
-	initVlcSparse(&svq1_block_type, 2, 4, 
-	        &svq1_block_type_vlc[0][1], 2, 1, 
-	        &svq1_block_type_vlc[0][0], 2, 1, NULL, 0, 0);
+	_blockType = new Common::Huffman(0, 4, s_svq1BlockTypeCodes, s_svq1BlockTypeLengths);
 
-	static int16 tableB[176][2];
-	svq1_motion_component.table = tableB;
-	svq1_motion_component.table_allocated = 176;
-	svq1_motion_component.table_size = 0;
-	initVlcSparse(&svq1_motion_component, 7, 33, 
-	        &mvtab[0][1], 2, 1, 
-	        &mvtab[0][0], 2, 1, NULL, 0, 0);
-
-	uint16 offset = 0;
-	for (uint8 i = 0; i < 6; i++) {
-		static const uint8 sizes[2][6] = {{14, 10, 14, 18, 16, 18}, {10, 10, 14, 14, 14, 16}};
-		static int16 tableC[168][2];
-
-		svq1_intra_multistage[i].table = &tableC[offset];
-		svq1_intra_multistage[i].table_allocated = sizes[0][i];
-		svq1_intra_multistage[i].table_size = 0;
-		offset += sizes[0][i];
-		initVlcSparse(&svq1_intra_multistage[i], 3, 8, 
-		         &svq1_intra_multistage_vlc[i][0][1], 2, 1,
-		         &svq1_intra_multistage_vlc[i][0][0], 2, 1, NULL, 0, 0);
-
-		svq1_inter_multistage[i].table = &tableC[offset];
-		svq1_inter_multistage[i].table_allocated = sizes[1][i];
-		svq1_inter_multistage[i].table_size = 0;
-		offset += sizes[1][i];
-		initVlcSparse(&svq1_inter_multistage[i], 3, 8,
-		         &svq1_inter_multistage_vlc[i][0][1], 2, 1,
-		         &svq1_inter_multistage_vlc[i][0][0], 2, 1, NULL, 0, 0);
+	for (int i = 0; i < 6; i++) {
+		_intraMultistage[i] = new Common::Huffman(0, 8, s_svq1IntraMultistageCodes[i], s_svq1IntraMultistageLengths[i]);
+		_interMultistage[i] = new Common::Huffman(0, 8, s_svq1InterMultistageCodes[i], s_svq1InterMultistageLengths[i]);
 	}
 
-	static int16 tableD[632][2];
-	svq1_intra_mean.table = tableD;
-	svq1_intra_mean.table_allocated = 632;
-	svq1_intra_mean.table_size = 0;
-	initVlcSparse(&svq1_intra_mean, 8, 256, 
-	        &svq1_intra_mean_vlc[0][1], 4, 2, 
-	        &svq1_intra_mean_vlc[0][0], 4, 2, NULL, 0, 0);
-
-	static int16 tableE[1434][2];
-	svq1_inter_mean.table = tableE;
-	svq1_inter_mean.table_allocated = 1434;
-	svq1_inter_mean.table_size = 0;
-	initVlcSparse(&svq1_inter_mean, 9, 512, 
-	        &svq1_inter_mean_vlc[0][1], 4, 2, 
-	        &svq1_inter_mean_vlc[0][0], 4, 2, NULL, 0, 0);
+	_intraMean = new Common::Huffman(0, 256, s_svq1IntraMeanCodes, s_svq1IntraMeanLengths);
+	_interMean = new Common::Huffman(0, 512, s_svq1InterMeanCodes, s_svq1InterMeanLengths);
+	_motionComponent = new Common::Huffman(0, 33, s_svq1MotionComponentCodes, s_svq1MotionComponentLengths);
 }
 
 SVQ1Decoder::~SVQ1Decoder() {
@@ -785,6 +80,16 @@ SVQ1Decoder::~SVQ1Decoder() {
 	delete[] _last[0];
 	delete[] _last[1];
 	delete[] _last[2];
+
+	delete _blockType;
+	delete _intraMean;
+	delete _interMean;
+	delete _motionComponent;
+
+	for (int i = 0; i < 6; i++) {
+		delete _intraMultistage[i];
+		delete _interMultistage[i];
+	}
 }
 
 const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *stream) {
@@ -1068,6 +373,448 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 		warning("FrameWidth/Height Sanity Check Failed!");
 
 	return _surface;
+}
+
+int SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
+	uint8 *list[63];
+	uint32 *dst;
+	int entries[6];
+	int i, j, m, n;
+	int mean, stages;
+	unsigned int x, y, width, height, level;
+	uint32 n1, n2, n3, n4;
+
+	// initialize list for breadth first processing of vectors
+	list[0] = pixels;
+
+	// recursively process vector
+	for (i=0, m=1, n=1, level=5; i < n; i++) {
+		// SVQ1_PROCESS_VECTOR()
+		for (; level > 0; i++) {
+			// process next depth
+			if (i == m) {
+				m = n;
+				if (--level == 0)
+					break;
+			}
+			// divide block if next bit set
+			if (s->getBit() == 0)
+				break;
+			// add child nodes
+			list[n++] = list[i];
+			list[n++] = list[i] + (((level & 1) ? pitch : 1) << ((level / 2) + 1));
+		}
+
+		// destination address and vector size
+		dst = (uint32 *) list[i];
+		width = 1 << ((4 + level) /2);
+		height = 1 << ((3 + level) /2);
+
+		// get number of stages (-1 skips vector, 0 for mean only)
+		stages = _intraMultistage[level]->getSymbol(*s) - 1;
+
+		if (stages == -1) {
+			for (y=0; y < height; y++) {
+				memset (&dst[y*(pitch / 4)], 0, width);
+			}
+		continue; // skip vector
+		}
+
+		if ((stages > 0) && (level >= 4)) {
+			warning("Error (svq1_decode_block_intra): invalid vector: stages=%i level=%i", stages, level);
+		return -1; // invalid vector
+		}
+
+		mean = _intraMean->getSymbol(*s);
+
+		if (stages == 0) {
+			for (y=0; y < height; y++) {
+				memset (&dst[y*(pitch / 4)], mean, width);
+			}
+		} else {
+			// SVQ1_CALC_CODEBOOK_ENTRIES(svq1_intra_codebooks);
+			const uint32 *codebook = (const uint32 *) svq1_intra_codebooks[level];
+			uint32 bit_cache = s->getBits(4*stages);
+			// calculate codebook entries for this vector
+			for (j=0; j < stages; j++) {
+				entries[j] = (((bit_cache >> (4*(stages - j - 1))) & 0xF) + 16*j) << (level + 1);
+			}
+			mean -= (stages * 128);
+			n4    = ((mean + (mean >> 31)) << 16) | (mean & 0xFFFF);
+
+			// SVQ1_DO_CODEBOOK_INTRA()
+			for (y=0; y < height; y++) {
+				for (x=0; x < (width / 4); x++, codebook++) {
+					n1 = n4;
+					n2 = n4;
+					// SVQ1_ADD_CODEBOOK()
+					// add codebook entries to vector
+					for (j=0; j < stages; j++) {
+						n3  = codebook[entries[j]] ^ 0x80808080;
+						n1 += ((n3 & 0xFF00FF00) >> 8);
+						n2 +=  (n3 & 0x00FF00FF);
+					}
+
+					// clip to [0..255]
+					if (n1 & 0xFF00FF00) {
+						n3  = ((( n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+						n1 += 0x7F007F00;
+						n1 |= (((~n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+						n1 &= (n3 & 0x00FF00FF);
+					}
+
+					if (n2 & 0xFF00FF00) {
+						n3  = ((( n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+						n2 += 0x7F007F00;
+						n2 |= (((~n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+						n2 &= (n3 & 0x00FF00FF);
+					}
+
+					// store result
+					dst[x] = (n1 << 8) | n2;
+				}
+				dst += (pitch / 4);
+			}
+		}
+	}
+
+	return 0;
+}
+
+int SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
+	uint8 *list[63];
+	uint32 *dst;
+	int entries[6];
+	int i, j, m, n;
+	int mean, stages;
+	int x, y, width, height, level;
+	uint32 n1, n2, n3, n4;
+
+	// initialize list for breadth first processing of vectors
+	list[0] = pixels;
+
+	// recursively process vector
+	for (i=0, m=1, n=1, level=5; i < n; i++) {
+		// SVQ1_PROCESS_VECTOR()
+		for (; level > 0; i++) {
+			// process next depth
+			if (i == m) {
+				m = n;
+				if (--level == 0)
+					break;
+			}
+			// divide block if next bit set
+			if (s->getBit() == 0)
+				break;
+			// add child nodes
+			list[n++] = list[i];
+			list[n++] = list[i] + (((level & 1) ? pitch : 1) << ((level / 2) + 1));
+		}
+
+		// destination address and vector size
+		dst = (uint32 *) list[i];
+		width = 1 << ((4 + level) /2);
+		height = 1 << ((3 + level) /2);
+
+		// get number of stages (-1 skips vector, 0 for mean only)
+		stages = _interMultistage[level]->getSymbol(*s) - 1;
+
+		if (stages == -1) continue; // skip vector
+
+		if ((stages > 0) && (level >= 4)) {
+			warning("Error (svq1_decode_block_non_intra): invalid vector: stages=%i level=%i", stages, level);
+			return -1;        // invalid vector
+		}
+
+		mean = _interMean->getSymbol(*s) - 256;
+
+		// SVQ1_CALC_CODEBOOK_ENTRIES(svq1_inter_codebooks);
+		const uint32 *codebook = (const uint32 *) svq1_inter_codebooks[level];
+		uint32 bit_cache = s->getBits(4*stages);
+		// calculate codebook entries for this vector
+		for (j=0; j < stages; j++) {
+			entries[j] = (((bit_cache >> (4*(stages - j - 1))) & 0xF) + 16*j) << (level + 1);
+		}
+		mean -= (stages * 128);
+		n4 = ((mean + (mean >> 31)) << 16) | (mean & 0xFFFF);
+
+		// SVQ1_DO_CODEBOOK_NONINTRA()
+		for (y=0; y < height; y++) {
+			for (x=0; x < (width / 4); x++, codebook++) {
+				n3 = dst[x];
+				// add mean value to vector
+				n1 = ((n3 & 0xFF00FF00) >> 8) + n4;
+				n2 =  (n3 & 0x00FF00FF)          + n4;
+				//SVQ1_ADD_CODEBOOK()
+				// add codebook entries to vector
+				for (j=0; j < stages; j++) {
+					n3  = codebook[entries[j]] ^ 0x80808080;
+					n1 += ((n3 & 0xFF00FF00) >> 8);
+					n2 +=  (n3 & 0x00FF00FF);
+				}
+
+				// clip to [0..255]
+				if (n1 & 0xFF00FF00) {
+					n3  = ((( n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+					n1 += 0x7F007F00;
+					n1 |= (((~n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+					n1 &= (n3 & 0x00FF00FF);
+				}
+
+				if (n2 & 0xFF00FF00) {
+					n3  = ((( n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+					n2 += 0x7F007F00;
+					n2 |= (((~n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+					n2 &= (n3 & 0x00FF00FF);
+				}
+
+				// store result
+				dst[x] = (n1 << 8) | n2;
+			}
+			dst += (pitch / 4);
+		}
+	}
+	return 0;
+}
+
+// median of 3
+static inline int mid_pred(int a, int b, int c) {
+	if (a > b) {
+		if (c > b) {
+			if (c > a) b = a;
+			else b = c;
+		}
+	} else {
+		if (b > c) {
+			if (c > a) b = c;
+			else b = a;
+		}
+	}
+	return b;
+}
+
+int SVQ1Decoder::svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv) {
+	for (int i=0; i < 2; i++) {
+		// get motion code
+		int diff = _motionComponent->getSymbol(*s);
+		if (diff < 0)
+			return -1;
+		else if (diff) {
+			if (s->getBit()) diff= -diff;
+		}
+
+		// add median of motion vector predictors and clip result
+		if (i == 1)
+			mv->y = ((diff + mid_pred(pmv[0]->y, pmv[1]->y, pmv[2]->y)) << 26) >> 26;
+		else
+			mv->x = ((diff + mid_pred(pmv[0]->x, pmv[1]->x, pmv[2]->x)) << 26) >> 26;
+	}
+
+	return 0;
+}
+
+void SVQ1Decoder::svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int x, int y) {
+	uint8 *src;
+	uint8 *dst;
+
+	src = &previous[x + y*pitch];
+	dst = current;
+
+	for (int i = 0; i < 16; i++) {
+		memcpy(dst, src, 16);
+		src += pitch;
+		dst += pitch;
+	}
+}
+
+int SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
+                                uint8 *current, uint8 *previous, int pitch,
+                                Common::Point *motion, int x, int y) {
+	uint8 *src;
+	uint8 *dst;
+	Common::Point mv;
+	Common::Point *pmv[3];
+	int result;
+
+	// predict and decode motion vector
+	pmv[0] = &motion[0];
+	if (y == 0) {
+		pmv[1] = pmv[2] = pmv[0];
+	} else {
+		pmv[1] = &motion[(x / 8) + 2];
+		pmv[2] = &motion[(x / 8) + 4];
+	}
+
+	result = svq1DecodeMotionVector(ss, &mv, pmv);
+
+	if (result != 0)
+		return result;
+
+	motion[0].x                =
+	motion[(x / 8) + 2].x      =
+	motion[(x / 8) + 3].x      = mv.x;
+	motion[0].y                =
+	motion[(x / 8) + 2].y      =
+	motion[(x / 8) + 3].y      = mv.y;
+
+	if(y + (mv.y >> 1)<0)
+		mv.y= 0;
+	if(x + (mv.x >> 1)<0)
+		mv.x= 0;
+
+#if 0
+	int w = (s->width+15)&~15;
+	int h = (s->height+15)&~15;
+	if(x + (mv.x >> 1)<0 || y + (mv.y >> 1)<0 || x + (mv.x >> 1) + 16 > w || y + (mv.y >> 1) + 16> h)
+		debug(1, "%d %d %d %d", x, y, x + (mv.x >> 1), y + (mv.y >> 1));
+#endif
+
+	src = &previous[(x + (mv.x >> 1)) + (y + (mv.y >> 1))*pitch];
+	dst = current;
+
+	// FIXME
+	//MpegEncContext *s
+	//s->dsp.put_pixels_tab[0][((mv.y & 1) << 1) | (mv.x & 1)](dst,src,pitch,16);
+
+	return 0;
+}
+
+int SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
+                                  uint8 *current, uint8 *previous, int pitch,
+                                  Common::Point *motion, int x, int y) {
+	uint8 *src;
+	uint8 *dst;
+	Common::Point mv;
+	Common::Point *pmv[4];
+	int i, result;
+
+	// predict and decode motion vector (0)
+	pmv[0] = &motion[0];
+	if (y == 0) {
+		pmv[1] = pmv[2] = pmv[0];
+	} else {
+		pmv[1] = &motion[(x / 8) + 2];
+		pmv[2] = &motion[(x / 8) + 4];
+	}
+
+	result = svq1DecodeMotionVector(ss, &mv, pmv);
+
+	if (result != 0)
+		return result;
+
+	// predict and decode motion vector (1)
+	pmv[0] = &mv;
+	if (y == 0) {
+		pmv[1] = pmv[2] = pmv[0];
+	} else {
+		pmv[1] = &motion[(x / 8) + 3];
+	}
+	result = svq1DecodeMotionVector(ss, &motion[0], pmv);
+
+	if (result != 0)
+		return result;
+
+	// predict and decode motion vector (2)
+	pmv[1] = &motion[0];
+	pmv[2] = &motion[(x / 8) + 1];
+
+	result = svq1DecodeMotionVector(ss, &motion[(x / 8) + 2], pmv);
+
+	if (result != 0)
+		return result;
+
+	// predict and decode motion vector (3)
+	pmv[2] = &motion[(x / 8) + 2];
+	pmv[3] = &motion[(x / 8) + 3];
+
+	result = svq1DecodeMotionVector(ss, pmv[3], pmv);
+
+	if (result != 0)
+		return result;
+
+	// form predictions
+	for (i=0; i < 4; i++) {
+		int mvx = pmv[i]->x + (i&1)*16;
+		int mvy = pmv[i]->y + (i>>1)*16;
+
+		///XXX /FIXME clipping or padding?
+		if(y + (mvy >> 1)<0)
+			mvy = 0;
+		if(x + (mvx >> 1)<0)
+			mvx = 0;
+
+#if 0
+		int w = (s->width+15)&~15;
+		int h = (s->height+15)&~15;
+		if(x + (mvx >> 1)<0 || y + (mvy >> 1)<0 || x + (mvx >> 1) + 8 > w || y + (mvy >> 1) + 8> h)
+			debug(1, "%d %d %d %d", x, y, x + (mvx >> 1), y + (mvy >> 1));
+#endif
+		src = &previous[(x + (mvx >> 1)) + (y + (mvy >> 1))*pitch];
+		dst = current;
+
+		// FIXME
+		//MpegEncContext *s
+		//s->dsp.put_pixels_tab[1][((mvy & 1) << 1) | (mvx & 1)](dst,src,pitch,8);
+
+		// select next block
+		if (i & 1) {
+			current  += 8*(pitch - 1);
+		} else {
+			current  += 8;
+		}
+	}
+
+	return 0;
+}
+
+int SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream *ss,
+                        uint8 *current, uint8 *previous, int pitch,
+                        Common::Point *motion, int x, int y) {
+	uint32 block_type;
+	int result = 0;
+
+	// get block type
+	block_type = _blockType->getSymbol(*ss);
+
+	// reset motion vectors
+	if (block_type == SVQ1_BLOCK_SKIP || block_type == SVQ1_BLOCK_INTRA) {
+		motion[0].x                 =
+		motion[0].y                 =
+		motion[(x / 8) + 2].x =
+		motion[(x / 8) + 2].y =
+		motion[(x / 8) + 3].x =
+		motion[(x / 8) + 3].y = 0;
+	}
+
+	switch (block_type) {
+	case SVQ1_BLOCK_SKIP:
+		svq1SkipBlock(current, previous, pitch, x, y);
+		break;
+
+	case SVQ1_BLOCK_INTER:
+		result = svq1MotionInterBlock(ss, current, previous, pitch, motion, x, y);
+		if (result != 0) {
+			warning("Error in svq1MotionInterBlock %i", result);
+			break;
+		}
+		result = svq1DecodeBlockNonIntra(ss, current, pitch);
+		break;
+
+	case SVQ1_BLOCK_INTER_4V:
+		result = svq1MotionInter4vBlock(ss, current, previous, pitch, motion, x, y);
+		if (result != 0) {
+			warning("Error in svq1MotionInter4vBlock %i", result);
+			break;
+		}
+		result = svq1DecodeBlockNonIntra(ss, current, pitch);
+		break;
+
+	case SVQ1_BLOCK_INTRA:
+		result = svq1DecodeBlockIntra(ss, current, pitch);
+		break;
+	}
+
+	return result;
 }
 
 } // End of namespace Video
