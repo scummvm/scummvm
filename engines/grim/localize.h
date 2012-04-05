@@ -23,26 +23,17 @@
 #ifndef GRIM_LOCALIZE_H
 #define GRIM_LOCALIZE_H
 
-#include "common/array.h"
+#include "common/hash-str.h"
 
 namespace Grim {
 
 class Localizer {
 public:
-	Common::String localize(const char *str) const;
-
 	Localizer();
-	~Localizer();
 
-	struct LocaleEntry {
-		char *text;
-		char *translation;
-	};
-
+	Common::String localize(const char *str) const;
 private:
-	char *_data;
-
-	Common::Array<LocaleEntry> _entries;
+	Common::StringMap _entries;
 };
 
 extern Localizer *g_localizer;

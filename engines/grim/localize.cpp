@@ -32,13 +32,7 @@ namespace Grim {
 
 Localizer *g_localizer = NULL;
 
-static int sortCallback(const void *entry1, const void *entry2) {
-	return scumm_stricmp(((const Localizer::LocaleEntry *)entry1)->text, ((const Localizer::LocaleEntry *)entry2)->text);
-}
-
 Localizer::Localizer() {
-	_data = 0;
-
 	if (g_grim->getGameFlags() & ADGF_DEMO || g_grim->getGameType() == GType_MONKEY4)
 		return;
 
@@ -48,69 +42,49 @@ Localizer::Localizer() {
 		return;
 	}
 
-	long filesize = f->size();
+	int32 filesize = f->size();
 
 	// Read in the data
-	_data = new char[filesize + 1];
-	f->read(_data, filesize);
-	_data[filesize] = '\0';
+	char *data = new char[filesize + 1];
+	f->read(data, filesize);
+	data[filesize] = '\0';
 	delete f;
 
-	if (filesize < 4 || READ_BE_UINT32(_data) != MKTAG('R','C','N','E'))
+	if (filesize < 4 || READ_BE_UINT32(data) != MKTAG('R','C','N','E'))
 		error("Invalid magic reading grim.tab");
 
 	// Decode the data
 	for (int i = 4; i < filesize; i++)
-		_data[i] ^= '\xdd';
+		data[i] ^= '\xdd';
 
 	char *nextline;
-	for (char *line = _data + 4; line != NULL && *line != '\0'; line = nextline) {
+	for (char *line = data + 4; line != NULL && *line != '\0'; line = nextline + 1) {
 		nextline = strchr(line, '\n');
+		assert(nextline);
 
-		if (nextline) {
-			if (nextline[-1] == '\r')
-				nextline[-1] = '\0';
-			nextline++;
-		}
 		char *tab = strchr(line, '\t');
+		assert(tab);
 
-		if (!tab)
-			continue;
-
-		LocaleEntry entry;
-		entry.text = line;
-		entry.text[tab - line] = '\0';
-		entry.translation = tab + 1;
-		_entries.push_back(entry);
+		_entries[Common::String(line, tab - line)] = Common::String(tab + 1, (nextline - tab - 2));
 	}
-
-	qsort(_entries.begin(), _entries.size(), sizeof(LocaleEntry), sortCallback);
-
+	delete[] data;
 }
 
 Common::String Localizer::localize(const char *str) const {
 	assert(str);
 
-	if (str[0] != '/' || str[0] == 0)
+	const char *slash2;
+
+	if (str[0] != '/' || str[0] == 0 || !(slash2 = strchr(str + 1, '/')))
 		return str;
 
-	const char *slash2 = strchr(str + 1, '/');
-	if (!slash2)
-		return str;
-
-	LocaleEntry key, *result;
-	Common::String s(str + 1, slash2 - str - 1);
-	key.text = const_cast<char *>(s.c_str());
-	result = (Localizer::LocaleEntry *)bsearch(&key, _entries.begin(), _entries.size(), sizeof(LocaleEntry), sortCallback);
-
-	if (!result)
+	Common::String key(str + 1, slash2 - str - 1);
+	Common::StringMap::iterator it = _entries.find(key);
+	if (it != _entries.end()) {
+		return it->_value;
+	} else {
 		return slash2 + 1;
-
-	return result->translation;
-}
-
-Localizer::~Localizer() {
-	delete[] _data;
+	}
 }
 
 } // end of namespace Grim
