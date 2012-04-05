@@ -208,26 +208,49 @@ class ListTestSuite : public CxxTest::TestSuite
 		Common::List<int> container;
 		Common::List<int>::iterator iter;
 
+                TS_ASSERT(container.empty());
+		TS_ASSERT_EQUALS(container.reverse_begin(),container.reverse_begin());
+		TS_ASSERT_EQUALS(container.reverse_begin(),container.legacy_reverse_begin());
 		// Fill the container with some random data
 		container.push_back(17);
 		container.push_back(33);
 		container.push_back(-11);
 
 		iter = container.reverse_begin();
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 
 		TS_ASSERT_EQUALS(*iter, -11);
 		++iter;
 		TS_ASSERT_DIFFERS(iter, container.end());
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
 
 		TS_ASSERT_EQUALS(*iter, 33);
-		++ter;
+		++iter;
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 		TS_ASSERT_EQUALS(*iter, 17);
-		++ter;
+		++iter;
+		TS_ASSERT_EQUALS(iter, container.reverse_end());
 		TS_ASSERT_EQUALS(iter, container.end());
+
+		iter = container.reverse_begin();
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
+
+
+		TS_ASSERT_EQUALS(*iter, -11);
+		iter++;
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
+
+		TS_ASSERT_EQUALS(*iter, 33);
+		iter++;
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
+
+		TS_ASSERT_EQUALS(*iter, 17);
+		iter++;
+		TS_ASSERT_EQUALS(iter, container.reverse_end());
 
 		iter = container.reverse_begin();
 

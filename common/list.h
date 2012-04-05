@@ -211,10 +211,13 @@ public:
 	}
 
 	iterator		reverse_begin() {
-		return iterator(_anchor._prev);///<TODO FIXME use an actual backwards Iterator instead of an Forward Iterator 
+		return iterator(_anchor._prev, false);
+	}
+	iterator		reverse_end() {
+		return iterator(&_anchor, false);
 	}
 
-	/**DEPRACATED This is the old buggy version of reverse_begin(), use reverse_begin() instead, as sone as it has been fixed*/
+	/**FIXME DEPRACATED This is the old  version of reverse_begin(), use reverse_begin() instead, witch gets an actual backwartsiterator */
 	iterator legacy_reverse_begin(){
 		return iterator(_anchor._prev);
 	}
@@ -227,17 +230,20 @@ public:
 		return const_iterator(_anchor._next);
 	}
 
-	/**DEPRACATED This is the old buggy version of reverse_begin(), use reverse_begin() instead, as sone as it has been fixed*/
+	/**FIXME DEPRACATED This is the old  version of reverse_begin(), use reverse_begin() instead*/
 	const_iterator	legacy_reverse_begin() const {
 		return const_iterator(_anchor._prev);
 	}
 
 	const_iterator	reverse_begin() const {
-		return const_iterator(_anchor._prev);///<TODO FIXME use an actual backwards Iterator instead of an Forward Iterator 
+		return const_iterator(_anchor._prev, false);
 	}
 
 	const_iterator	end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
+	}
+		const_iterator	reverse_end() const {
+		return const_iterator(const_cast<NodeBase *>(&_anchor), false);
 	}
 
 protected:
@@ -262,7 +268,7 @@ protected:
 		newNode->_prev->_next = newNode;
 		newNode->_next->_prev = newNode;
 	}
-};///< TODO add reverse_end()
+};///< TODO add reverse_end() for constat iterator
 
 } // End of namespace Common
 
