@@ -283,9 +283,11 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	}
 
 	byte *current[3];
-	current[0] = new byte[_width*_height];
-	current[1] = new byte[(_width/4)*(_height/4)];
-	current[2] = new byte[(_width/4)*(_height/4)];
+	// FIXME - Added extra _width of 16px blocks to stop out of
+	//         range access causing crashes. Need to correct code...
+	current[0] = new byte[_width*_height +(_width*16)];
+	current[1] = new byte[(_width/4)*(_height/4) +(_width/4*16)];
+	current[2] = new byte[(_width/4)*(_height/4) +(_width/4*16)];
 
 	// Decode Y, U and V component planes
 	for (int i = 0; i < 3; i++) {
