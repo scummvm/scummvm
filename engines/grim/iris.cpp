@@ -36,12 +36,12 @@ Iris::~Iris() {
 
 }
 
-void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
+void Iris::play(Iris::Direction dir, int x, int y, int length) {
 	_playing = true;
 	_direction = dir;
 	_targetX = x;
 	_targetY = y;
-	_lenght = lenght;
+	_length = length;
 	_currTime = 0;
 }
 
@@ -62,12 +62,12 @@ void Iris::update(int frameTime) {
 	}
 
 	_currTime += frameTime;
-	if (_currTime >= _lenght) {
+	if (_currTime >= _length) {
 		_playing = false;
 		return;
 	}
 
-	float factor = (float)_currTime / (float)_lenght;
+	float factor = (float)_currTime / (float)_length;
 	if (_direction == Open) {
 		factor = 1 - factor;
 	}
@@ -87,7 +87,7 @@ void Iris::saveState(SaveGame *state) const {
 	state->writeLESint32(_y1);
 	state->writeLESint32(_x2);
 	state->writeLESint32(_y2);
-	state->writeLESint32(_lenght);
+	state->writeLESint32(_length);
 	state->writeLESint32(_currTime);
 
 	state->endSection();
@@ -102,7 +102,7 @@ void Iris::restoreState(SaveGame *state) {
 	_y1 = state->readLESint32();
 	_x2 = state->readLESint32();
 	_y2 = state->readLESint32();
-	_lenght = state->readLESint32();
+	_length = state->readLESint32();
 	_currTime = state->readLESint32();
 
 	state->endSection();

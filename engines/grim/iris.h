@@ -37,7 +37,7 @@ public:
 	Iris();
 	~Iris();
 
-	void play(Direction dir, int x, int y, int lenght);
+	void play(Direction dir, int x, int y, int length);
 	void draw();
 	void update(int frameTime);
 
@@ -53,7 +53,7 @@ private:
 	int _y2;
 	int _targetX;
 	int _targetY;
-	int _lenght;
+	int _length;
 	int _currTime;
 };
 
