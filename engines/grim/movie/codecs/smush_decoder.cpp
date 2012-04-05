@@ -36,12 +36,9 @@
 #include "engines/grim/movie/codecs/blocky8.h"
 #include "engines/grim/movie/codecs/blocky16.h"
 #include "engines/grim/movie/codecs/smush_decoder.h"
+#include "engines/grim/movie/codecs/vima.h"
 
 namespace Grim {
-
-// Prototypes to avoid depending on grim.h
-void vimaInit(uint16 *destTable);
-void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
 #define BUFFER_SIZE 16385
