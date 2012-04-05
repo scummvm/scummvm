@@ -195,7 +195,6 @@ void Panorama::loadStrips(CoordType stripLeft, CoordType stripRight) {
 		if (overlapLeft <= overlapRight) {
 			Common::Rect r1((overlapLeft - _stripLeft) * _stripWidth, 0,
 					(overlapRight - _stripLeft + 1) * _stripWidth, _panoramaHeight);
-			Common::Rect r2 = r1;
 
 			if (stripLeft < _stripLeft) {
 				Common::Rect bounds;
