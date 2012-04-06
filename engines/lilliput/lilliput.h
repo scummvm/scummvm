@@ -86,7 +86,7 @@ public:
 	LilliputScript *_scriptHandler;
 
 	struct18560 _arr18560[4];
-	byte _vm_byte1714E;
+	byte _byte1714E;
 	byte _byte184F4;
 	byte _sound_byte16F06;
 	byte _byte16F09;
@@ -107,10 +107,11 @@ public:
 	
 	int _word10800_ERULES;
 	int _word10807_ERULES;
-	int _vm_word12D3D;
-	int _vm_word12D3F;
+	int _word12D3D;
+	int _word12D3F;
 
 	byte *_rulesChunk1;
+	int _rulesBuffer2PrevIndx;
 	int _rulesBuffer2_1[40];
 	int _rulesBuffer2_2[40];
 	byte _rulesBuffer2_3[40];

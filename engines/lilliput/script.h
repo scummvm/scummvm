@@ -40,13 +40,20 @@ private:
 	Common::MemoryReadStream *_currScript;
 
 	byte _byte16F05_ScriptHandler;
-	byte _vm_byte12A09;
+	byte _byte12A09;
+	byte _byte129A0;
 
-	int16 _vm_word1881B;
+	int16 _word1881B;
+	int16 _word16F00;
+	int16 _word10804;
 
-	int handleOpcode(Common::MemoryReadStream script);
+	int handleOpcode(Common::MemoryReadStream *script);
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
+
+	int getValue1();
+	byte *getBuffer215Ptr();
+	byte compValues(byte var1, int oper, int var2);
 
 	//Opcodes Type 1
 	byte OC_sub173DF();

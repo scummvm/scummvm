@@ -55,7 +55,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_rnd = 0;
 	_scriptHandler = new LilliputScript(this);
 
-	_vm_byte1714E = 0;
+	_byte1714E = 0;
+	_rulesBuffer2PrevIndx = 0;
 }
 
 LilliputEngine::~LilliputEngine() {
