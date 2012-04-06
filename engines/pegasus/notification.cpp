@@ -38,8 +38,8 @@ Notification::Notification(const NotificationID id, NotificationManager *owner) 
 }
 
 Notification::~Notification() {
-	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++)
-		it->receiver->newNotification(NULL);
+	for (uint i = 0; i < _receivers.size(); i++)
+		_receivers[i].receiver->newNotification(NULL);
 
 	if (_owner)
 		_owner->removeNotification(this);
@@ -49,9 +49,9 @@ Notification::~Notification() {
 // Wherever mask is 0, leave existing bits untouched.
 // Wherever mask is 1, set bit equivalent to flags.
 void Notification::notifyMe(NotificationReceiver *receiver, NotificationFlags flags, NotificationFlags mask) {
-	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++) {
-		if (it->receiver == receiver) {
-			it->mask = (it->mask & ~mask) | (flags & mask);
+	for (uint i = 0; i < _receivers.size(); i++) {
+		if (_receivers[i].receiver == receiver) {
+			_receivers[i].mask = (_receivers[i].mask & ~mask) | (flags & mask);
 			receiver->newNotification(this);
 			return;
 		}
@@ -66,11 +66,11 @@ void Notification::notifyMe(NotificationReceiver *receiver, NotificationFlags fl
 }
 
 void Notification::cancelNotification(NotificationReceiver *receiver) {
-	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end();) {
-		if (it->receiver == receiver)
-			it = _receivers.erase(it);
-		else
-			it++;
+	for (uint i = 0; i < _receivers.size(); i++) {
+		if (_receivers[i].receiver == receiver) {
+			_receivers.remove_at(i);
+			i--;
+		}
 	}
 }
 
@@ -82,9 +82,9 @@ void Notification::checkReceivers() {
 	NotificationFlags currentFlags = _currentFlags;
 	_currentFlags = kNoNotificationFlags;
 
-	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++)
-		if (it->mask & currentFlags)
-			it->receiver->receiveNotification(this, currentFlags);
+	for (uint i = 0; i < _receivers.size(); i++)
+		if (_receivers[i].mask & currentFlags)
+			_receivers[i].receiver->receiveNotification(this, currentFlags);
 }
 
 // Receiver entries are equal if their receivers are equal.

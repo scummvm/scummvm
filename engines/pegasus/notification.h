@@ -26,6 +26,7 @@
 #ifndef PEGASUS_NOTIFICATION_H
 #define PEGASUS_NOTIFICATION_H
 
+#include "common/array.h"
 #include "common/list.h"
 
 #include "pegasus/types.h"
@@ -44,7 +45,7 @@ struct ReceiverEntry {
 int operator==(const ReceiverEntry &entry1, const ReceiverEntry &entry2);
 int operator!=(const ReceiverEntry &entry1, const ReceiverEntry &entry2);
 
-typedef Common::List<ReceiverEntry> ReceiverList;
+typedef Common::Array<ReceiverEntry> ReceiverList;
 
 /*
 	A notification can have 32 flags associated with it, which can be user-defined.
