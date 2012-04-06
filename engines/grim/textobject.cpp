@@ -37,14 +37,14 @@ TextObjectCommon::TextObjectCommon() :
 }
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
-		PoolObject<TextObject, MKTAG('T', 'E', 'X', 'T')>(), TextObjectCommon(), _numberLines(1),
+		TextObjectCommon(), _numberLines(1),
 		_maxLineWidth(0), _lines(0), _userData(0), _created(false) {
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
 }
 
 TextObject::TextObject() :
-	PoolObject<TextObject, MKTAG('T', 'E', 'X', 'T')>(), TextObjectCommon(), _maxLineWidth(0), _lines(NULL) {
+	TextObjectCommon(), _maxLineWidth(0), _lines(NULL) {
 
 }
 

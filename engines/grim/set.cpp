@@ -39,7 +39,7 @@
 namespace Grim {
 
 Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
-		PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false) {
+		_locked(false), _name(sceneName), _enableLights(false) {
 
 	char header[7];
 	data->read(header, 7);
@@ -52,8 +52,7 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 	}
 }
 
-Set::Set() :
-	PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _cmaps(NULL) {
+Set::Set() : _cmaps(NULL) {
 
 }
 

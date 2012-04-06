@@ -32,10 +32,12 @@ namespace Grim {
 
 class SaveGame;
 
-class PrimitiveObject : public PoolObject<PrimitiveObject, MKTAG('P', 'R', 'I', 'M')> {
+class PrimitiveObject : public PoolObject<PrimitiveObject> {
 public:
 	PrimitiveObject();
 	~PrimitiveObject();
+
+	static int32 getStaticTag() { return MKTAG('P', 'R', 'I', 'M'); }
 
 	typedef enum {
 		RECTANGLE = 1,

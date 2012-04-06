@@ -76,12 +76,14 @@ class TextObjectDefaults : public TextObjectCommon {
 
 };
 
-class TextObject : public PoolObject<TextObject, MKTAG('T', 'E', 'X', 'T')>,
+class TextObject : public PoolObject<TextObject>,
                    public TextObjectCommon {
 public:
 	TextObject(bool blastDraw, bool isSpeech = false);
 	TextObject();
 	~TextObject();
+
+	static int32 getStaticTag() { return MKTAG('T', 'E', 'X', 'T'); }
 
 	void setDefaults(TextObjectDefaults *defaults);
 	void setText(const Common::String &text);

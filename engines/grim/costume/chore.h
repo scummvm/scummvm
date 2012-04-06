@@ -87,9 +87,10 @@ private:
 	friend class EMICostume;
 };
 
-class PoolChore : public PoolObject<PoolChore, MKTAG('C', 'H', 'O', 'R')>, public Chore {
+class PoolChore : public PoolObject<PoolChore>, public Chore {
 public:
-	virtual int getId() { return PoolObject<PoolChore, MKTAG('C', 'H', 'O', 'R')>::getId(); }
+	virtual int getId() { return PoolObject<PoolChore>::getId(); }
+	static int32 getStaticTag() { return MKTAG('C', 'H', 'O', 'R'); }
 };
 
 } // end of namespace Grim

@@ -106,7 +106,7 @@ public:
 	Graphics::PixelBuffer *_data;
 };
 
-class Bitmap : public PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')> {
+class Bitmap : public PoolObject<Bitmap> {
 public:
 	/**
 	 * Construct a bitmap from the given data.
@@ -118,6 +118,8 @@ public:
 	Bitmap(const Common::String &filename);
 	Bitmap(const Graphics::PixelBuffer &buf, int width, int height, const char *filename);
 	Bitmap();
+
+	static int32 getStaticTag() { return MKTAG('V', 'B', 'U', 'F'); }
 
 	static Bitmap *create(const Common::String &filename);
 

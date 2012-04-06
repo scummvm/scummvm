@@ -179,9 +179,10 @@ void Lua_V2::ImFlushStack() {
 	warning("Lua_V2::ImFlushStack: implement opcode");
 }
 
-class PoolSound : public PoolObject<PoolSound, MKTAG('A', 'I', 'F', 'F')>{
+class PoolSound : public PoolObject<PoolSound>{
 public:
 	PoolSound(const Common::String &filename);
+	static int32 getStaticTag() { return MKTAG('A', 'I', 'F', 'F'); }
 	AIFFTrack *track;
 };
 
