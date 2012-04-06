@@ -47,6 +47,7 @@ protected:
 	bool _videoFinished;
 	bool _videoPause;
 	bool _videoLooping;
+	bool _timerStarted;
 	int _x, _y;
 
 public:
