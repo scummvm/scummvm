@@ -205,7 +205,7 @@ void Neighborhood::receiveNotification(Notification *, const NotificationFlags f
 		die(_extraDeathReason);
 }
 
-void Neighborhood::arriveAt(RoomID room, DirectionConstant direction) {
+void Neighborhood::arriveAt(const RoomID room, const DirectionConstant direction) {
 	if (g_map)
 		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), room, direction);
 

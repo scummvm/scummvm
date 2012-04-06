@@ -132,7 +132,7 @@ public:
 	virtual void cantMoveThatWay(CanMoveForwardReason);
 	virtual void cantTurnThatWay(CanTurnReason) {}
 	virtual void cantOpenDoor(CanOpenDoorReason);
-	virtual void arriveAt(RoomID room, DirectionConstant direction);
+	virtual void arriveAt(const RoomID room, const DirectionConstant direction);
 	virtual void turnTo(const DirectionConstant);
 	virtual void spotCompleted();
 	virtual void doorOpened();
