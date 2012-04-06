@@ -204,22 +204,18 @@ void LilliputEngine::loadRules() {
 	}
 
 	// Chunk 3 & 4
-	warning("Chunk 3 & 4 Pos: %d", f.pos());
 	_rulesChunk3_size = f.readSint16LE();
 	curWord = f.readSint16LE();
 
-	warning("Pos %d - size chunk3: %d", f.pos(), _rulesChunk3_size);
 	_rulesChunk3 = (int *)malloc(sizeof(int) * _rulesChunk3_size);
 	for (int i = 0; i < _rulesChunk3_size; ++i)
 		_rulesChunk3[i] = f.readUint16LE();
 
-	warning("Pos %d - size chunk4: %d", f.pos(), curWord);
 	_rulesChunk4 = (byte *)malloc(sizeof(byte) * curWord);
 	for (int i = 0; i < curWord; ++i)
 		_rulesChunk4[i] = f.readByte();
 
 	// Chunk 5: Scripts
-	warning("Chunk 5 Pos: %d", f.pos());
 	// Use byte instead of int, therefore multiply by two the size.
 	// This is for changing that into a memory read stream
 	_rulesScript_size = f.readUint16LE() * 2;
@@ -343,6 +339,14 @@ void LilliputEngine::initialize() {
 
 	_rnd = new Common::RandomSource("robin");
 	_rnd->setSeed(42);                              // Kick random number generator
+
+	for (int i = 0; i < 4; i++) {
+		_arr18560[i]._field0 = 0;
+		_arr18560[i]._field1 = 0;
+		_arr18560[i]._field3 = 0;
+		for (int j = 0; j < 8; j ++)
+			_arr18560[i]._field5[j] = 0;
+	}
 }
 
 void LilliputEngine::syncSoundSettings() {
@@ -355,6 +359,8 @@ Common::String LilliputEngine::getSavegameFilename(int slot) {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
 
-
+byte LilliputEngine::_keyboard_getch() {
+	return ' ';
+}
 
 } // End of namespace Lilliput

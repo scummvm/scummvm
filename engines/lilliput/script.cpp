@@ -32,7 +32,6 @@ LilliputScript::~LilliputScript() {
 }
 
 byte LilliputScript::handleOpcodeType1(int curWord) {
-	warning("handleOpcodeType1: %d", curWord);
 	switch (curWord) {
 	case 0x0:
 		return OC_sub173DF();
@@ -191,7 +190,6 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 }
 
 void LilliputScript::handleOpcodeType2(int curWord) {
-	warning("handleOpcodeType1: %d", curWord);
 	switch (curWord) {
 	case 0x0:
 		OC_setWord18821();
@@ -1004,7 +1002,7 @@ void LilliputScript::OC_displayVGAFile() {
 	int index = _vm->_rulesChunk3[curWord];
 	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
 	_vm_word1881B = -1;
-	warning("TODO: guess_displayFunction_VGAFile");
+	warning("TODO: guess_displayFunction_VGAFile(%s)", fileName.c_str());
 	warning("TODO: unkPaletteFunction_2");
 }
 void LilliputScript::OC_sub184D7() {
@@ -1012,6 +1010,36 @@ void LilliputScript::OC_sub184D7() {
 }
 void LilliputScript::OC_sub184F5() {
 	warning("OC_sub184F5");
+	_vm->_byte184F4 = (_currScript->readUint16LE() & 0xFF);
+	_vm->_sound_byte16F06 = _vm->_byte184F4;
+	// TODO: use a separated function when properly identified
+	_vm->_vm_word12D3D = 0;
+	_vm->_vm_word12D3F = 0;
+	//
+	_vm->_mouse_byte1299A = 0;
+	_vm->_byte16F09 = 0;
+
+	// TODO: Remove when the sound is hooked
+	_vm->_sound_byte16F06 = 0;
+	//
+
+	for (;;) {
+		warning("TODO: display function sub_185B4();");
+
+		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
+			_vm->_byte16F09 = _vm->_keyboard_getch();
+			_vm->_keyboard_getch();
+			break;
+		}
+		
+		if (_vm->_mouse_byte1299A == 1)
+			break;
+		
+		if ((_vm->_byte184F4 != 0) && (_vm->_sound_byte16F06 == 0))
+			break;
+	}
+	
+	_vm->_mouse_byte1299A = 0;
 }
 void LilliputScript::OC_sub1853B() {
 	warning("OC_sub1853B");
@@ -1026,14 +1054,8 @@ void LilliputScript::OC_initArr18560() {
 	_vm->_arr18560[curWord]._field0 = 1;
 	_vm->_arr18560[curWord]._field1 = _currScript->readUint16LE();
 	_vm->_arr18560[curWord]._field3 = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._field5 = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._field7 = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._field9 = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._fieldB = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._fieldD = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._fieldF = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._field11 = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._field13 = _currScript->readUint16LE();
+	for (int i = 0; i < 8; i++)
+		_vm->_arr18560[curWord]._field5[i] = _currScript->readUint16LE();
 }
 void LilliputScript::OC_sub18678() {
 	warning("OC_sub18678");
