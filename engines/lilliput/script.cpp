@@ -26,6 +26,9 @@
 namespace Lilliput {
 
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
+	_byte129A0 = 0xFF;
+	_word16F00 = -1;
+	_word10804 = 0;
 }
 
 LilliputScript::~LilliputScript() {
@@ -503,13 +506,13 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 	}
 }
 
-int LilliputScript::handleOpcode(Common::MemoryReadStream script) {
-	_currScript = &script;
-	uint16 curWord = script.readUint16LE();
+int LilliputScript::handleOpcode(Common::MemoryReadStream *script) {
+	_currScript = script;
+	uint16 curWord = _currScript->readUint16LE();
 	if (curWord == 0xFFF6)
 		return -1;
 
-	while (curWord != 0xFFF8) {
+	for (; curWord != 0xFFF8; curWord = _currScript->readUint16LE()) {
 		byte mask = 0; 
 		if (curWord > 1000) {
 			curWord -= 1000;
@@ -518,18 +521,18 @@ int LilliputScript::handleOpcode(Common::MemoryReadStream script) {
 		byte result = handleOpcodeType1(curWord);
 		if ((result ^ mask) == 0) {
 			do {
-				curWord = script.readUint16LE();
+				curWord = _currScript->readUint16LE();
 			} while (curWord != 0xFFF7);
 			return 0;
 		}
 	}
 
-	_vm->_vm_byte1714E = 1;
+	_vm->_byte1714E = 1;
 
 	for (;;) {
-		curWord = script.readUint16LE();
+		curWord = _currScript->readUint16LE();
 		if (curWord == 0xFFF7)
-			return _vm->_vm_byte1714E;
+			return _vm->_byte1714E;
 
 		handleOpcodeType2(curWord);
 	}
@@ -538,9 +541,52 @@ int LilliputScript::handleOpcode(Common::MemoryReadStream script) {
 void LilliputScript::runScript(Common::MemoryReadStream script) {
 	_byte16F05_ScriptHandler = 1;
 	
-	while (handleOpcode(script) != 0xFF)
+	while (handleOpcode(&script) != 0xFF)
 		;
-	
+}
+
+byte LilliputScript::compValues(byte var1, int oper, int var2) {
+	warning("compValues - %d %c %d", var1, oper & 0xFF, var2);
+	switch (oper & 0xFF) {
+	case '<':
+		return (var1 < var2);
+	case '>':
+		return (var1 > var2);
+	default:
+		return (var1 == var2);
+		break;
+	}
+}
+
+int LilliputScript::getValue1() {
+	int curWord = _currScript->readUint16LE();
+	if (curWord < 1000)
+		return curWord;
+
+	switch (curWord) {
+	case 1000:
+		return (int)_byte129A0;
+	case 1001:
+		return _vm->_rulesBuffer2PrevIndx;
+	case 1002:
+		return _word16F00;
+	case 1003:
+		return (int)_vm->_rulesBuffer2_15[6];
+	case 1004:
+		return _word10804;
+	default:
+		warning("getValue1: Unexpected large value %d", curWord);
+		return curWord;
+	}
+}
+
+byte *LilliputScript::getBuffer215Ptr() {
+	int tmpVal = getValue1();
+	tmpVal *= 32;
+	tmpVal += _currScript->readUint16LE();
+
+	assert(tmpVal < 40 * 32);
+	return &_vm->_rulesBuffer2_15[tmpVal];
 }
 
 byte LilliputScript::OC_sub173DF() {
@@ -555,14 +601,21 @@ byte LilliputScript::OC_sub1740A() {
 	warning("OC_sub1740A");
 	return 0;
 }
+
 byte LilliputScript::OC_sub17434() {
-	warning("OC_sub17434");
-	return 0;
+	byte *tmpArr = getBuffer215Ptr();
+	byte var1 = tmpArr[0];
+	uint16 oper = _currScript->readUint16LE();
+	int16 var2 = _currScript->readUint16LE();
+
+	return compValues(var1, oper, var2);
 }
+
 byte LilliputScript::OC_sub17468() {
 	warning("OC_sub17468");
 	return 0;
 }
+
 byte LilliputScript::OC_getRandom() {
 	warning("OC_getRandom");
 	return 0;
@@ -994,14 +1047,12 @@ void LilliputScript::OC_sub1847F() {
 	warning("OC_sub1847F");
 }
 void LilliputScript::OC_displayVGAFile() {
-	warning("OC_displayVGAFile");
-
-	_vm_byte12A09 = 1;
+	_byte12A09 = 1;
 	warning("TODO: unkPaletteFunction_1");
 	int curWord = _currScript->readUint16LE();
 	int index = _vm->_rulesChunk3[curWord];
 	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
-	_vm_word1881B = -1;
+	_word1881B = -1;
 	warning("TODO: guess_displayFunction_VGAFile(%s)", fileName.c_str());
 	warning("TODO: unkPaletteFunction_2");
 }
@@ -1009,12 +1060,11 @@ void LilliputScript::OC_sub184D7() {
 	warning("OC_sub184D7");
 }
 void LilliputScript::OC_sub184F5() {
-	warning("OC_sub184F5");
 	_vm->_byte184F4 = (_currScript->readUint16LE() & 0xFF);
 	_vm->_sound_byte16F06 = _vm->_byte184F4;
 	// TODO: use a separated function when properly identified
-	_vm->_vm_word12D3D = 0;
-	_vm->_vm_word12D3F = 0;
+	_vm->_word12D3D = 0;
+	_vm->_word12D3F = 0;
 	//
 	_vm->_mouse_byte1299A = 0;
 	_vm->_byte16F09 = 0;
