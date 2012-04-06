@@ -217,7 +217,6 @@ Common::Error GrimEngine::run() {
 	}
 
 	g_resourceloader = new ResourceLoader();
-	g_localizer = new Localizer();
 	bool demo = getGameFlags() & ADGF_DEMO;
 	if (getGameType() == GType_GRIM)
 		g_movie = CreateSmushPlayer(demo);
@@ -297,6 +296,8 @@ Common::Error GrimEngine::run() {
 		GUI::displayErrorDialog(errorMessage);
 		return Common::kNoError;
 	}
+	//Make sure that the localizer is initialized after the version is checked
+	g_localizer = new Localizer();
 	lua->boot();
 
 	_savegameLoadRequest = false;
