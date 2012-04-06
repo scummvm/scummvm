@@ -48,8 +48,8 @@ SVQ1Decoder::SVQ1Decoder(uint16 width, uint16 height) {
 	debug(1, "SVQ1Decoder::SVQ1Decoder(width:%d, height:%d)", width, height);
 	_width = width;
 	_height = height;
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, g_system->getScreenFormat());
+	_frameWidth = _frameHeight = 0;
+	_surface = 0;
 
 	_last[0] = 0;
 	_last[1] = 0;
@@ -69,8 +69,10 @@ SVQ1Decoder::SVQ1Decoder(uint16 width, uint16 height) {
 }
 
 SVQ1Decoder::~SVQ1Decoder() {
-	_surface->free();
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
 
 	delete[] _last[0];
 	delete[] _last[1];
@@ -230,19 +232,23 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 
 		byte frameSizeCode = frameData.getBits(3);
 		debug(1, " frameSizeCode: %d", frameSizeCode);
-		uint16 frameWidth, frameHeight;
+
 		if (frameSizeCode == 7) {
-			frameWidth = frameData.getBits(12);
-			frameHeight = frameData.getBits(12);
+			_frameWidth = frameData.getBits(12);
+			_frameHeight = frameData.getBits(12);
 		} else {
-			frameWidth = standardFrameSizes[frameSizeCode].w;
-			frameHeight = standardFrameSizes[frameSizeCode].h;
+			_frameWidth = standardFrameSizes[frameSizeCode].w;
+			_frameHeight = standardFrameSizes[frameSizeCode].h;
 		}
-		debug(1, " frameWidth: %d", frameWidth);
-		debug(1, " frameHeight: %d", frameHeight);
-		if (frameWidth != _width || frameHeight != _height) { // Invalid
-			warning("Invalid Frame Size");
-			return _surface;
+		debug(1, " frameWidth: %d", _frameWidth);
+		debug(1, " frameHeight: %d", _frameHeight);
+
+		// Now we'll create the surface
+		if (!_surface) {
+			_surface = new Graphics::Surface();
+			_surface->create(_frameWidth, _frameHeight, g_system->getScreenFormat());
+			_surface->w = _width;
+			_surface->h = _height;
 		}
 	} else if (frameType == 2) { // B Frame
 		warning("B Frames not supported by SVQ1 decoder");
@@ -285,47 +291,47 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	byte *current[3];
 	// FIXME - Added extra _width of 16px blocks to stop out of
 	//         range access causing crashes. Need to correct code...
-	current[0] = new byte[_width*_height +(_width*16)];
-	current[1] = new byte[(_width/4)*(_height/4) +(_width/4*16)];
-	current[2] = new byte[(_width/4)*(_height/4) +(_width/4*16)];
+	current[0] = new byte[_frameWidth * _frameHeight + (_frameWidth * 16)];
+	current[1] = new byte[(_frameWidth / 4) * (_frameHeight / 4) + (_frameWidth / 4 * 16)];
+	current[2] = new byte[(_frameWidth / 4) * (_frameHeight / 4) + (_frameWidth / 4 * 16)];
 
 	// Decode Y, U and V component planes
 	for (int i = 0; i < 3; i++) {
 		int linesize, width, height;
 		if (i == 0) {
 			// Y Size is width * height
-			width  = _width;
+			width  = _frameWidth;
 			if (width % 16) {
 				width /= 16;
 				width++;
 				width *= 16;
 			}
 			assert(width % 16 == 0);
-			height = _height;
+			height = _frameHeight;
 			if (height % 16) {
 				height /= 16;
 				height++;
 				height *= 16;
 			}
 			assert(height % 16 == 0);
-			linesize = _width;
+			linesize = _frameWidth;
 		} else {
 			// U and V size is width/4 * height/4
-			width  = _width/4;
+			width  = _frameWidth / 4;
 			if (width % 16) {
 				width /= 16;
 				width++;
 				width *= 16;
 			}
 			assert(width % 16 == 0);
-			height = _height/4;
+			height = _frameHeight / 4;
 			if (height % 16) {
 				height /= 16;
 				height++;
 				height *= 16;
 			}
 			assert(height % 16 == 0);
-			linesize = _width/4;
+			linesize = _frameWidth / 4;
 		}
 
 		if (frameType == 0) { // I Frame
@@ -370,7 +376,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 		}
 	}
 
-	convertYUV410ToRGB(_surface, current[0], current[1], current[2], _width, _height, _width, _width/4);
+	convertYUV410ToRGB(_surface, current[0], current[1], current[2], _frameWidth, _frameHeight, _frameWidth, _frameWidth / 4);
 
 	for (int i = 0; i < 3; i++) {
 		delete[] _last[i];

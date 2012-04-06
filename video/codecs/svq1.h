@@ -43,8 +43,8 @@ public:
 
 private:
 	Graphics::Surface *_surface;
-	uint16 _width;
-	uint16 _height;
+	uint16 _width, _height;
+	uint16 _frameWidth, _frameHeight;
 
 	byte *_last[3];
 
