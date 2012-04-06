@@ -262,7 +262,7 @@ void RobotShip::makeVelocityVector(CoordType x1, CoordType y1, CoordType x2, Coo
 	CoordType length = ((PegasusEngine *)g_engine)->getRandomNumber(kVelocityVectorSlop - 1) + kVelocityVectorLength;
 	vector.x = x2 - x1;
 	vector.y = y2 - y1;
-	float oldLength = sqrt(vector.x * vector.x + vector.y * vector.y);
+	float oldLength = sqrt((float)(vector.x * vector.x + vector.y * vector.y));
 	vector.x = (int)(vector.x * length / oldLength);
 	vector.y = (int)(vector.y * length / oldLength);
 }
