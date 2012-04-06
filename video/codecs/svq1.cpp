@@ -632,6 +632,92 @@ void SVQ1Decoder::svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int 
 	}
 }
 
+#define AV_RN32(x) ((((const uint8*)(x))[0] << 24) | (((const uint8*)(x))[1] << 16) | (((const uint8*)(x))[2] <<  8) | ((const uint8*)(x))[3])
+
+static void put_pixels8_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	for (int i = 0; i < h; i++) {
+		*((uint32*)(block)) = AV_RN32(pixels);
+		*((uint32*)(block + 4)) = AV_RN32(pixels + 4);
+		pixels += line_size;
+		block += line_size;
+	}
+}
+
+static inline uint32 rnd_avg32(uint32 a, uint32 b) {
+	return (a | b) - (((a ^ b) & ~((0x01)*0x01010101UL)) >> 1);
+}
+
+static inline void put_pixels8_l2(uint8 *dst, const uint8 *src1, const uint8 *src2, 
+                                  int dst_stride, int src_stride1, int src_stride2, int h) {
+	for (int i = 0; i < h; i++){
+		uint32 a, b;
+		a= AV_RN32(&src1[i*src_stride1]);
+		b= AV_RN32(&src2[i*src_stride2]);
+		*((uint32*)&dst[i*dst_stride]) = rnd_avg32(a, b);
+		a= AV_RN32(&src1[i*src_stride1 + 4]);
+		b= AV_RN32(&src2[i*src_stride2 + 4]);
+		*((uint32*)&dst[i*dst_stride + 4]) = rnd_avg32(a, b);
+	}
+}
+
+static inline void put_pixels8_x2_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	put_pixels8_l2(block, pixels, pixels+1, line_size, line_size, line_size, h);
+}
+
+static inline void put_pixels8_y2_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	put_pixels8_l2(block, pixels, pixels+line_size, line_size, line_size, line_size, h);
+}
+
+static inline void put_pixels8_xy2_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	for (int j = 0; j < 2; j++) {
+		uint32 a = AV_RN32(pixels);
+		uint32 b = AV_RN32(pixels+1);
+		uint32 l0 = (a & 0x03030303UL) + (b & 0x03030303UL) + 0x02020202UL;
+		uint32 h0 = ((a & 0xFCFCFCFCUL) >> 2) + ((b & 0xFCFCFCFCUL) >> 2);
+		uint32 l1, h1;
+
+		pixels += line_size;
+		for (int i = 0; i < h; i += 2) {
+			a = AV_RN32(pixels);
+			b = AV_RN32(pixels+1);
+			l1 = (a & 0x03030303UL) + (b & 0x03030303UL);
+			h1 = ((a & 0xFCFCFCFCUL) >> 2) + ((b & 0xFCFCFCFCUL) >> 2);
+			*((uint32*)block) = h0 + h1 + (((l0 + l1) >> 2) & 0x0F0F0F0FUL);
+			pixels += line_size;
+			block += line_size;
+			a = AV_RN32(pixels);
+			b = AV_RN32(pixels+1);
+			l0 = (a & 0x03030303UL) + (b & 0x03030303UL) + 0x02020202UL;
+			h0 = ((a & 0xFCFCFCFCUL) >> 2) + ((b & 0xFCFCFCFCUL) >> 2);
+			*((uint32*)block) = h0 + h1 + (((l0 + l1) >> 2) & 0x0F0F0F0FUL);
+			pixels += line_size;
+			block += line_size;
+		}
+		pixels += 4 - line_size*(h + 1);
+		block += 4 - line_size*h;
+	}
+}
+
+static void put_pixels16_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	put_pixels8_c(block, pixels, line_size, h);
+	put_pixels8_c(block+8, pixels+8, line_size, h);
+}
+
+static void put_pixels16_x2_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	put_pixels8_x2_c(block, pixels, line_size, h);
+	put_pixels8_x2_c(block+8, pixels+8, line_size, h);
+}
+
+static void put_pixels16_y2_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	put_pixels8_y2_c(block, pixels, line_size, h);
+	put_pixels8_y2_c(block+8, pixels+8, line_size, h);
+}
+
+static void put_pixels16_xy2_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
+	put_pixels8_xy2_c(block, pixels, line_size, h);
+	put_pixels8_xy2_c(block+8, pixels+8, line_size, h);
+}
+
 int SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
                                 uint8 *current, uint8 *previous, int pitch,
                                 Common::Point *motion, int x, int y) {
@@ -677,9 +763,26 @@ int SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
 	src = &previous[(x + (mv.x >> 1)) + (y + (mv.y >> 1))*pitch];
 	dst = current;
 
-	// FIXME
-	//MpegEncContext *s
-	//s->dsp.put_pixels_tab[0][((mv.y & 1) << 1) | (mv.x & 1)](dst,src,pitch,16);
+	// Halfpel motion compensation with rounding (a+b+1)>>1.
+	// 4 motion compensation functions for the 4 halfpel positions
+	// for 16x16 blocks
+	switch(((mv.y & 1)*2) + (mv.x & 1)) {
+	case 0:
+		put_pixels16_c(dst, src, pitch, 16);
+		break;
+	case 1:
+		put_pixels16_x2_c(dst, src, pitch, 16);
+		break;
+	case 2:
+		put_pixels16_y2_c(dst, src, pitch, 16);
+		break;
+	case 3:
+		put_pixels16_xy2_c(dst, src, pitch, 16);
+		break;
+	default:
+		error("Motion Compensation Function Lookup Error. Should Not Happen!");
+		break;
+	}
 
 	return 0;
 }
@@ -757,9 +860,26 @@ int SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 		src = &previous[(x + (mvx >> 1)) + (y + (mvy >> 1))*pitch];
 		dst = current;
 
-		// FIXME
-		//MpegEncContext *s
-		//s->dsp.put_pixels_tab[1][((mvy & 1) << 1) | (mvx & 1)](dst,src,pitch,8);
+		// Halfpel motion compensation with rounding (a+b+1)>>1.
+		// 4 motion compensation functions for the 4 halfpel positions
+		// for 8x8 blocks
+		switch(((mvy & 1)*2) + (mvx & 1)) {
+		case 0:
+			put_pixels8_c(dst, src, pitch, 8);
+			break;
+		case 1:
+			put_pixels8_x2_c(dst, src, pitch, 8);
+			break;
+		case 2:
+			put_pixels8_y2_c(dst, src, pitch, 8);
+			break;
+		case 3:
+			put_pixels8_xy2_c(dst, src, pitch, 8);
+			break;
+		default:
+			error("Motion Compensation Function Lookup Error. Should Not Happen!");
+			break;
+		}
 
 		// select next block
 		if (i & 1) {
