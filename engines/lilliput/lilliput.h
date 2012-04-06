@@ -70,14 +70,7 @@ struct struct18560 {
 	byte _field0;
 	int16 _field1;
 	int16 _field3;
-	int16 _field5;
-	int16 _field7;
-	int16 _field9;
-	int16 _fieldB;
-	int16 _fieldD;
-	int16 _fieldF;
-	int16 _field11;
-	int16 _field13;
+	int16 _field5[8];
 };
 
 class LilliputEngine : public Engine {
@@ -94,6 +87,11 @@ public:
 
 	struct18560 _arr18560[4];
 	byte _vm_byte1714E;
+	byte _byte184F4;
+	byte _sound_byte16F06;
+	byte _byte16F09;
+	byte _keyboard_nextIndex;
+	byte _keyboard_oldIndex;
 
 	byte _buffer1[45056];
 	byte _buffer2[45056];
@@ -109,6 +107,9 @@ public:
 	
 	int _word10800_ERULES;
 	int _word10807_ERULES;
+	int _vm_word12D3D;
+	int _vm_word12D3F;
+
 	byte *_rulesChunk1;
 	int _rulesBuffer2_1[40];
 	int _rulesBuffer2_2[40];
@@ -169,6 +170,11 @@ public:
 
 	Common::String getSavegameFilename(int slot);
 	void syncSoundSettings();
+
+	// Temporary stubs
+	byte _mouse_byte1299A;
+
+	byte _keyboard_getch();
 
 protected:
 
