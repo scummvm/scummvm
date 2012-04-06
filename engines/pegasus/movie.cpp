@@ -67,7 +67,7 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 		if (newName.contains(':'))
 			for (uint i = 0; i < newName.size(); i++)
 				if (newName[i] == ':')
-					newName.setChar(i, '_');
+					newName.setChar('_', i);
 
 		if (!_video->loadFile(newName))
 			error("Could not load video '%s'", fileName.c_str());
