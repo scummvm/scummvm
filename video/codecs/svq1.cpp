@@ -632,12 +632,10 @@ void SVQ1Decoder::svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int 
 	}
 }
 
-#define AV_RN32(x) ((((const uint8*)(x))[0] << 24) | (((const uint8*)(x))[1] << 16) | (((const uint8*)(x))[2] <<  8) | ((const uint8*)(x))[3])
-
 static void put_pixels8_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
 	for (int i = 0; i < h; i++) {
-		*((uint32*)(block)) = AV_RN32(pixels);
-		*((uint32*)(block + 4)) = AV_RN32(pixels + 4);
+		*((uint32*)(block)) = READ_UINT32(pixels);
+		*((uint32*)(block + 4)) = READ_UINT32(pixels + 4);
 		pixels += line_size;
 		block += line_size;
 	}
@@ -651,11 +649,11 @@ static inline void put_pixels8_l2(uint8 *dst, const uint8 *src1, const uint8 *sr
                                   int dst_stride, int src_stride1, int src_stride2, int h) {
 	for (int i = 0; i < h; i++){
 		uint32 a, b;
-		a= AV_RN32(&src1[i*src_stride1]);
-		b= AV_RN32(&src2[i*src_stride2]);
+		a= READ_UINT32(&src1[i*src_stride1]);
+		b= READ_UINT32(&src2[i*src_stride2]);
 		*((uint32*)&dst[i*dst_stride]) = rnd_avg32(a, b);
-		a= AV_RN32(&src1[i*src_stride1 + 4]);
-		b= AV_RN32(&src2[i*src_stride2 + 4]);
+		a= READ_UINT32(&src1[i*src_stride1 + 4]);
+		b= READ_UINT32(&src2[i*src_stride2 + 4]);
 		*((uint32*)&dst[i*dst_stride + 4]) = rnd_avg32(a, b);
 	}
 }
@@ -670,23 +668,23 @@ static inline void put_pixels8_y2_c(uint8 *block, const uint8 *pixels, int line_
 
 static inline void put_pixels8_xy2_c(uint8 *block, const uint8 *pixels, int line_size, int h) {
 	for (int j = 0; j < 2; j++) {
-		uint32 a = AV_RN32(pixels);
-		uint32 b = AV_RN32(pixels+1);
+		uint32 a = READ_UINT32(pixels);
+		uint32 b = READ_UINT32(pixels+1);
 		uint32 l0 = (a & 0x03030303UL) + (b & 0x03030303UL) + 0x02020202UL;
 		uint32 h0 = ((a & 0xFCFCFCFCUL) >> 2) + ((b & 0xFCFCFCFCUL) >> 2);
 		uint32 l1, h1;
 
 		pixels += line_size;
 		for (int i = 0; i < h; i += 2) {
-			a = AV_RN32(pixels);
-			b = AV_RN32(pixels+1);
+			a = READ_UINT32(pixels);
+			b = READ_UINT32(pixels+1);
 			l1 = (a & 0x03030303UL) + (b & 0x03030303UL);
 			h1 = ((a & 0xFCFCFCFCUL) >> 2) + ((b & 0xFCFCFCFCUL) >> 2);
 			*((uint32*)block) = h0 + h1 + (((l0 + l1) >> 2) & 0x0F0F0F0FUL);
 			pixels += line_size;
 			block += line_size;
-			a = AV_RN32(pixels);
-			b = AV_RN32(pixels+1);
+			a = READ_UINT32(pixels);
+			b = READ_UINT32(pixels+1);
 			l0 = (a & 0x03030303UL) + (b & 0x03030303UL) + 0x02020202UL;
 			h0 = ((a & 0xFCFCFCFCUL) >> 2) + ((b & 0xFCFCFCFCUL) >> 2);
 			*((uint32*)block) = h0 + h1 + (((l0 + l1) >> 2) & 0x0F0F0F0FUL);
