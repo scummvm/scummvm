@@ -171,11 +171,20 @@ const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::Strin
 	if (!_extraGuiOptions)
 		return ExtraGuiOptions();
 
+	ExtraGuiOptions options;
+
+	// If there isn't any target specified, return all available GUI options.
+	// Only used when an engine starts in order to set option defaults.
+	if (target.empty()) {
+		for (const ADExtraGuiOptionsMap *entry = _extraGuiOptions; entry->guioFlag; ++entry)
+			options.push_back(entry->option);
+
+		return options;
+	}
+
 	// Query the GUI options
 	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
-
-	ExtraGuiOptions options;
 
 	// Add all the applying extra GUI options.
 	for (const ADExtraGuiOptionsMap *entry = _extraGuiOptions; entry->guioFlag; ++entry) {

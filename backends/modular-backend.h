@@ -72,7 +72,6 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
-
 // ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);
 // ResidualVM specific method
@@ -107,7 +106,6 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-
 	// ResidualVM specific method
 	virtual bool lockMouse(bool lock);
 
