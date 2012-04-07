@@ -31,7 +31,7 @@ class ModelNode;
 class SaveGame;
 
 class Head {
-	public:
+public:
 	class Joint {
 	public:
 		Joint();
