@@ -297,8 +297,8 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (int result = svq1DecodeBlockIntra(&frameData, &currentP[x], linesize) != 0) {
-						warning("Error in svq1DecodeBlock %i (keyframe)", result);
+					if (svq1DecodeBlockIntra(&frameData, &currentP[x], linesize)) {
+						warning("svq1DecodeBlockIntra decode failure");
 						return _surface;
 					}
 				}
@@ -320,8 +320,8 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (int result = svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, linesize, pmv, x, y) != 0) {
-						warning("Error in svq1DecodeDeltaBlock %i", result);
+					if (svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, linesize, pmv, x, y)) {
+						warning("svq1DecodeDeltaBlock decode failure");
 						return _surface;
 					}
 				}
@@ -344,7 +344,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	return _surface;
 }
 
-int SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
+bool SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
 	uint8 *list[63];
 	uint32 *dst;
 	int entries[6];
@@ -357,7 +357,7 @@ int SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int p
 	list[0] = pixels;
 
 	// recursively process vector
-	for (i=0, m=1, n=1, level=5; i < n; i++) {
+	for (i = 0, m = 1, n = 1, level = 5; i < n; i++) {
 		// SVQ1_PROCESS_VECTOR()
 		for (; level > 0; i++) {
 			// process next depth
@@ -383,7 +383,7 @@ int SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int p
 		stages = _intraMultistage[level]->getSymbol(*s) - 1;
 
 		if (stages == -1) {
-			for (y=0; y < height; y++) {
+			for (y = 0; y < height; y++) {
 				memset (&dst[y*(pitch / 4)], 0, width);
 			}
 		continue; // skip vector
@@ -391,13 +391,13 @@ int SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int p
 
 		if ((stages > 0) && (level >= 4)) {
 			warning("Error (svq1_decode_block_intra): invalid vector: stages=%i level=%i", stages, level);
-		return -1; // invalid vector
+			return true; // error - invalid vector
 		}
 
 		mean = _intraMean->getSymbol(*s);
 
 		if (stages == 0) {
-			for (y=0; y < height; y++) {
+			for (y = 0; y < height; y++) {
 				memset (&dst[y*(pitch / 4)], mean, width);
 			}
 		} else {
@@ -405,15 +405,15 @@ int SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int p
 			const uint32 *codebook = s_svq1IntraCodebooks[level];
 			uint32 bit_cache = s->getBits(4*stages);
 			// calculate codebook entries for this vector
-			for (j=0; j < stages; j++) {
+			for (j = 0; j < stages; j++) {
 				entries[j] = (((bit_cache >> (4*(stages - j - 1))) & 0xF) + 16*j) << (level + 1);
 			}
 			mean -= (stages * 128);
-			n4    = ((mean + (mean >> 31)) << 16) | (mean & 0xFFFF);
+			n4 = ((mean + (mean >> 31)) << 16) | (mean & 0xFFFF);
 
 			// SVQ1_DO_CODEBOOK_INTRA()
-			for (y=0; y < height; y++) {
-				for (x=0; x < (width / 4); x++, codebook++) {
+			for (y = 0; y < height; y++) {
+				for (x = 0; x < (width / 4); x++, codebook++) {
 					n1 = n4;
 					n2 = n4;
 					// SVQ1_ADD_CODEBOOK()
@@ -447,10 +447,10 @@ int SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int p
 		}
 	}
 
-	return 0;
+	return false;
 }
 
-int SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
+bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
 	uint8 *list[63];
 	uint32 *dst;
 	int entries[6];
@@ -463,7 +463,7 @@ int SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, in
 	list[0] = pixels;
 
 	// recursively process vector
-	for (i=0, m=1, n=1, level=5; i < n; i++) {
+	for (i = 0, m = 1, n = 1, level = 5; i < n; i++) {
 		// SVQ1_PROCESS_VECTOR()
 		for (; level > 0; i++) {
 			// process next depth
@@ -492,7 +492,7 @@ int SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, in
 
 		if ((stages > 0) && (level >= 4)) {
 			warning("Error (svq1_decode_block_non_intra): invalid vector: stages=%i level=%i", stages, level);
-			return -1;        // invalid vector
+			return true; // error - invalid vector
 		}
 
 		mean = _interMean->getSymbol(*s) - 256;
@@ -508,8 +508,8 @@ int SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, in
 		n4 = ((mean + (mean >> 31)) << 16) | (mean & 0xFFFF);
 
 		// SVQ1_DO_CODEBOOK_NONINTRA()
-		for (y=0; y < height; y++) {
-			for (x=0; x < (width / 4); x++, codebook++) {
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < (width / 4); x++, codebook++) {
 				n3 = dst[x];
 				// add mean value to vector
 				n1 = ((n3 & 0xFF00FF00) >> 8) + n4;
@@ -543,7 +543,7 @@ int SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, in
 			dst += (pitch / 4);
 		}
 	}
-	return 0;
+	return false;
 }
 
 // median of 3
@@ -562,14 +562,14 @@ static inline int mid_pred(int a, int b, int c) {
 	return b;
 }
 
-int SVQ1Decoder::svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv) {
-	for (int i=0; i < 2; i++) {
+bool SVQ1Decoder::svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv) {
+	for (int i = 0; i < 2; i++) {
 		// get motion code
 		int diff = _motionComponent->getSymbol(*s);
 		if (diff < 0)
-			return -1;
+			return true; // error - invalid motion code
 		else if (diff) {
-			if (s->getBit()) diff= -diff;
+			if (s->getBit()) diff = -diff;
 		}
 
 		// add median of motion vector predictors and clip result
@@ -579,7 +579,7 @@ int SVQ1Decoder::svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv,
 			mv->x = ((diff + mid_pred(pmv[0]->x, pmv[1]->x, pmv[2]->x)) << 26) >> 26;
 	}
 
-	return 0;
+	return false;
 }
 
 void SVQ1Decoder::svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int x, int y) {
@@ -680,14 +680,14 @@ static void put_pixels16_xy2_c(uint8 *block, const uint8 *pixels, int line_size,
 	put_pixels8_xy2_c(block+8, pixels+8, line_size, h);
 }
 
-int SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
+bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
                                 uint8 *current, uint8 *previous, int pitch,
                                 Common::Point *motion, int x, int y) {
 	uint8 *src;
 	uint8 *dst;
 	Common::Point mv;
 	Common::Point *pmv[3];
-	int result;
+	bool errorFlag;
 
 	// predict and decode motion vector
 	pmv[0] = &motion[0];
@@ -698,27 +698,22 @@ int SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
 		pmv[2] = &motion[(x / 8) + 4];
 	}
 
-	result = svq1DecodeMotionVector(ss, &mv, pmv);
+	errorFlag = svq1DecodeMotionVector(ss, &mv, pmv);
+	if (errorFlag)
+		return true;
 
-	if (result != 0)
-		return result;
+	motion[0].x = motion[(x / 8) + 2].x = motion[(x / 8) + 3].x = mv.x;
+	motion[0].y = motion[(x / 8) + 2].y = motion[(x / 8) + 3].y = mv.y;
 
-	motion[0].x                =
-	motion[(x / 8) + 2].x      =
-	motion[(x / 8) + 3].x      = mv.x;
-	motion[0].y                =
-	motion[(x / 8) + 2].y      =
-	motion[(x / 8) + 3].y      = mv.y;
-
-	if(y + (mv.y >> 1)<0)
-		mv.y= 0;
-	if(x + (mv.x >> 1)<0)
-		mv.x= 0;
+	if(y + (mv.y >> 1) < 0)
+		mv.y = 0;
+	if(x + (mv.x >> 1) < 0)
+		mv.x = 0;
 
 #if 0
-	int w = (s->width+15)&~15;
-	int h = (s->height+15)&~15;
-	if(x + (mv.x >> 1)<0 || y + (mv.y >> 1)<0 || x + (mv.x >> 1) + 16 > w || y + (mv.y >> 1) + 16> h)
+	int w = (s->width + 15) & ~15;
+	int h = (s->height + 15) & ~15;
+	if(x + (mv.x >> 1) < 0 || y + (mv.y >> 1) < 0 || x + (mv.x >> 1) + 16 > w || y + (mv.y >> 1) + 16 > h)
 		debug(1, "%d %d %d %d", x, y, x + (mv.x >> 1), y + (mv.y >> 1));
 #endif
 
@@ -746,17 +741,17 @@ int SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
 		break;
 	}
 
-	return 0;
+	return false;
 }
 
-int SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
+bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
                                   uint8 *current, uint8 *previous, int pitch,
                                   Common::Point *motion, int x, int y) {
 	uint8 *src;
 	uint8 *dst;
 	Common::Point mv;
 	Common::Point *pmv[4];
-	int i, result;
+	bool errorFlag;
 
 	// predict and decode motion vector (0)
 	pmv[0] = &motion[0];
@@ -767,10 +762,9 @@ int SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 		pmv[2] = &motion[(x / 8) + 4];
 	}
 
-	result = svq1DecodeMotionVector(ss, &mv, pmv);
-
-	if (result != 0)
-		return result;
+	errorFlag = svq1DecodeMotionVector(ss, &mv, pmv);
+	if (errorFlag)
+		return true;
 
 	// predict and decode motion vector (1)
 	pmv[0] = &mv;
@@ -779,44 +773,42 @@ int SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 	} else {
 		pmv[1] = &motion[(x / 8) + 3];
 	}
-	result = svq1DecodeMotionVector(ss, &motion[0], pmv);
 
-	if (result != 0)
-		return result;
+	errorFlag = svq1DecodeMotionVector(ss, &motion[0], pmv);
+	if (errorFlag)
+		return true;
 
 	// predict and decode motion vector (2)
 	pmv[1] = &motion[0];
 	pmv[2] = &motion[(x / 8) + 1];
 
-	result = svq1DecodeMotionVector(ss, &motion[(x / 8) + 2], pmv);
-
-	if (result != 0)
-		return result;
+	errorFlag = svq1DecodeMotionVector(ss, &motion[(x / 8) + 2], pmv);
+	if (errorFlag)
+		return true;
 
 	// predict and decode motion vector (3)
 	pmv[2] = &motion[(x / 8) + 2];
 	pmv[3] = &motion[(x / 8) + 3];
 
-	result = svq1DecodeMotionVector(ss, pmv[3], pmv);
-
-	if (result != 0)
-		return result;
+	errorFlag = svq1DecodeMotionVector(ss, pmv[3], pmv);
+	if (errorFlag)
+		return true;
 
 	// form predictions
-	for (i=0; i < 4; i++) {
-		int mvx = pmv[i]->x + (i&1)*16;
-		int mvy = pmv[i]->y + (i>>1)*16;
+	for (int i = 0; i < 4; i++) {
+		int mvx = pmv[i]->x + (i & 1)*16;
+		int mvy = pmv[i]->y + (i >> 1)*16;
 
 		///XXX /FIXME clipping or padding?
-		if(y + (mvy >> 1)<0)
+		if(y + (mvy >> 1) < 0)
 			mvy = 0;
-		if(x + (mvx >> 1)<0)
+		if(x + (mvx >> 1) < 0)
 			mvx = 0;
 
 #if 0
-		int w = (s->width+15)&~15;
-		int h = (s->height+15)&~15;
-		if(x + (mvx >> 1)<0 || y + (mvy >> 1)<0 || x + (mvx >> 1) + 8 > w || y + (mvy >> 1) + 8> h)
+		int w = (s->width + 15) & ~15;
+		int h = (s->height + 15) & ~15;
+		if(x + (mvx >> 1) < 0 || y + (mvy >> 1) < 0 || x + (mvx >> 1) + 8 > w || y + (mvy >> 1) + 8 > h)
 			debug(1, "%d %d %d %d", x, y, x + (mvx >> 1), y + (mvy >> 1));
 #endif
 		src = &previous[(x + (mvx >> 1)) + (y + (mvy >> 1))*pitch];
@@ -851,14 +843,14 @@ int SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 		}
 	}
 
-	return 0;
+	return false;
 }
 
-int SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream *ss,
+bool SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream *ss,
                         uint8 *current, uint8 *previous, int pitch,
                         Common::Point *motion, int x, int y) {
 	uint32 block_type;
-	int result = 0;
+	bool errorFlag = false;
 
 	// get block type
 	block_type = _blockType->getSymbol(*ss);
@@ -879,29 +871,29 @@ int SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream *ss,
 		break;
 
 	case SVQ1_BLOCK_INTER:
-		result = svq1MotionInterBlock(ss, current, previous, pitch, motion, x, y);
-		if (result != 0) {
-			warning("Error in svq1MotionInterBlock %i", result);
+		errorFlag = svq1MotionInterBlock(ss, current, previous, pitch, motion, x, y);
+		if (errorFlag) {
+			warning("svq1MotionInterBlock decode failure");
 			break;
 		}
-		result = svq1DecodeBlockNonIntra(ss, current, pitch);
+		errorFlag = svq1DecodeBlockNonIntra(ss, current, pitch);
 		break;
 
 	case SVQ1_BLOCK_INTER_4V:
-		result = svq1MotionInter4vBlock(ss, current, previous, pitch, motion, x, y);
-		if (result != 0) {
-			warning("Error in svq1MotionInter4vBlock %i", result);
+		errorFlag = svq1MotionInter4vBlock(ss, current, previous, pitch, motion, x, y);
+		if (errorFlag) {
+			warning("svq1MotionInter4vBlock decode failure");
 			break;
 		}
-		result = svq1DecodeBlockNonIntra(ss, current, pitch);
+		errorFlag = svq1DecodeBlockNonIntra(ss, current, pitch);
 		break;
 
 	case SVQ1_BLOCK_INTRA:
-		result = svq1DecodeBlockIntra(ss, current, pitch);
+		errorFlag = svq1DecodeBlockIntra(ss, current, pitch);
 		break;
 	}
 
-	return result;
+	return errorFlag;
 }
 
 } // End of namespace Video

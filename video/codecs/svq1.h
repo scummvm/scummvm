@@ -55,15 +55,15 @@ private:
 	Common::Huffman *_interMean;
 	Common::Huffman *_motionComponent;
 
-	int svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int pitch);
-	int svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch);
-	int svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv);
+	bool svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int pitch);
+	bool svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch);
+	bool svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv);
 	void svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int x, int y);
-	int svq1MotionInterBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
+	bool svq1MotionInterBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	int svq1MotionInter4vBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
+	bool svq1MotionInter4vBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	int svq1DecodeDeltaBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
+	bool svq1DecodeDeltaBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
 			Common::Point *motion, int x, int y);
 };
 
