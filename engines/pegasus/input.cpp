@@ -180,7 +180,7 @@ InputHandler *InputHandler::setInputHandler(InputHandler *currentHandler) {
 void InputHandler::pollForInput() {
 	if (_inputHandler) {
 		Input input;
-		Hotspot *cursorSpot;
+		Hotspot *cursorSpot = 0;
 
 		InputHandler::getInput(input, cursorSpot);
 		if (_inputHandler->isClickInput(input, cursorSpot))
