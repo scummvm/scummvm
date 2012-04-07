@@ -40,16 +40,8 @@ LilliputEngine *LilliputEngine::s_Engine = 0;
 LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd) : Engine(syst), _gameDescription(gd)
 {
 	_system = syst;
-	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
-	DebugMan.addDebugChannel(kDebugDisplay, "Display", "Display debug level");
-	DebugMan.addDebugChannel(kDebugMouse, "Mouse", "Mouse debug level");
-	DebugMan.addDebugChannel(kDebugParser, "Parser", "Parser debug level");
-	DebugMan.addDebugChannel(kDebugFile, "File", "File IO debug level");
-	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
-	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
-	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
-	DebugMan.addDebugChannel(kDebugMusic, "Music", "Music debug level");
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Script debug level");
 
 	_console = new LilliputConsole(this);
 	_rnd = 0;
@@ -57,6 +49,13 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 	_byte1714E = 0;
 	_rulesBuffer2PrevIndx = 0;
+	_word16EFA = 0;
+
+	for (int i = 0; i < 40; i++) {
+		_byte10999[i] = 0;
+		_byte109C1[i] = 0;
+	}
+
 }
 
 LilliputEngine::~LilliputEngine() {

@@ -52,6 +52,8 @@ private:
 	void handleOpcodeType2(int curWord);
 
 	int getValue1();
+	int getValue2();
+
 	byte *getBuffer215Ptr();
 	byte compValues(byte var1, int oper, int var2);
 
