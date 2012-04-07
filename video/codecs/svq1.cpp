@@ -89,6 +89,8 @@ SVQ1Decoder::~SVQ1Decoder() {
 	}
 }
 
+#define FFALIGN(x, a) (((x)+(a)-1)&~((a)-1))
+
 const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	debug(1, "SVQ1Decoder::decodeImage()");
 
@@ -200,14 +202,6 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 		}
 		debug(1, " frameWidth: %d", _frameWidth);
 		debug(1, " frameHeight: %d", _frameHeight);
-
-		// Now we'll create the surface
-		if (!_surface) {
-			_surface = new Graphics::Surface();
-			_surface->create(_frameWidth, _frameHeight, g_system->getScreenFormat());
-			_surface->w = _width;
-			_surface->h = _height;
-		}
 	} else if (frameType == 2) { // B Frame
 		warning("B Frames not supported by SVQ1 decoder");
 		return _surface;
@@ -246,63 +240,37 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 		}
 	}
 
+	int yWidth = FFALIGN(_frameWidth, 16);
+	int yHeight = FFALIGN(_frameHeight, 16);
+	int uvWidth = FFALIGN(yWidth / 4, 16);
+	int uvHeight = FFALIGN(yHeight / 4, 16);
+
 	byte *current[3];
-	// FIXME - Added extra _width of 16px blocks to stop out of
-	//         range access causing crashes. Need to correct code...
-	current[0] = new byte[_frameWidth * _frameHeight + (_frameWidth * 16)];
-	current[1] = new byte[(_frameWidth / 4) * (_frameHeight / 4) + (_frameWidth / 4 * 16)];
-	current[2] = new byte[(_frameWidth / 4) * (_frameHeight / 4) + (_frameWidth / 4 * 16)];
 
 	// Decode Y, U and V component planes
 	for (int i = 0; i < 3; i++) {
-		int linesize, width, height;
+		int width, height;
 		if (i == 0) {
-			// Y Size is width * height
-			width  = _frameWidth;
-			if (width % 16) {
-				width /= 16;
-				width++;
-				width *= 16;
-			}
-			assert(width % 16 == 0);
-			height = _frameHeight;
-			if (height % 16) {
-				height /= 16;
-				height++;
-				height *= 16;
-			}
-			assert(height % 16 == 0);
-			linesize = _frameWidth;
+			width  = yWidth;
+			height = yHeight;
 		} else {
-			// U and V size is width/4 * height/4
-			width  = _frameWidth / 4;
-			if (width % 16) {
-				width /= 16;
-				width++;
-				width *= 16;
-			}
-			assert(width % 16 == 0);
-			height = _frameHeight / 4;
-			if (height % 16) {
-				height /= 16;
-				height++;
-				height *= 16;
-			}
-			assert(height % 16 == 0);
-			linesize = _frameWidth / 4;
+			width  = uvWidth;
+			height = uvHeight;
 		}
+
+		current[i] = new byte[width * height];
 
 		if (frameType == 0) { // I Frame
 			// Keyframe (I)
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (svq1DecodeBlockIntra(&frameData, &currentP[x], linesize)) {
+					if (svq1DecodeBlockIntra(&frameData, &currentP[x], width)) {
 						warning("svq1DecodeBlockIntra decode failure");
 						return _surface;
 					}
 				}
-				currentP += 16 * linesize;
+				currentP += 16 * width;
 			}
 		} else {
 			// Delta frame (P or B)
@@ -320,7 +288,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, linesize, pmv, x, y)) {
+					if (svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, width, pmv, x, y)) {
 						warning("svq1DecodeDeltaBlock decode failure");
 						return _surface;
 					}
@@ -328,13 +296,21 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 
 				pmv[0].x = pmv[0].y = 0;
 
-				currentP += 16*linesize;
+				currentP += 16*width;
 			}
 			delete[] pmv;
 		}
 	}
 
-	convertYUV410ToRGB(_surface, current[0], current[1], current[2], _frameWidth, _frameHeight, _frameWidth, _frameWidth / 4);
+	// Now we'll create the surface
+	if (!_surface) {
+		_surface = new Graphics::Surface();
+		_surface->create(yWidth, yHeight, g_system->getScreenFormat());
+		_surface->w = _width;
+		_surface->h = _height;
+	}
+
+	convertYUV410ToRGB(_surface, current[0], current[1], current[2], yWidth, yHeight, yWidth, uvWidth);
 
 	for (int i = 0; i < 3; i++) {
 		delete[] _last[i];
