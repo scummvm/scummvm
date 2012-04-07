@@ -52,16 +52,8 @@ enum GameType {
 };
 
 enum LilliputDebugChannels {
-	kDebugSchedule  = 1 <<  0,
-	kDebugEngine    = 1 <<  1,
-	kDebugDisplay   = 1 <<  2,
-	kDebugMouse     = 1 <<  3,
-	kDebugParser    = 1 <<  4,
-	kDebugFile      = 1 <<  5,
-	kDebugRoute     = 1 <<  6,
-	kDebugInventory = 1 <<  7,
-	kDebugObject    = 1 <<  8,
-	kDebugMusic     = 1 <<  9
+	kDebugEngine    = 1 <<  0,
+	kDebugScript    = 1 <<  1
 };
 
 struct LilliputGameDescription;
@@ -109,6 +101,7 @@ public:
 	int _word10807_ERULES;
 	int _word12D3D;
 	int _word12D3F;
+	int _word16EFA;
 
 	byte *_rulesChunk1;
 	int _rulesBuffer2PrevIndx;
@@ -152,7 +145,8 @@ public:
 	int _rulesBuffer13_2[20];
 	int _rulesBuffer13_3[20];
 	byte _rulesBuffer13_4[20];
-
+	byte _byte10999[40];
+	byte _byte109C1[40];
 
 	const LilliputGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -174,7 +168,7 @@ public:
 
 	// Temporary stubs
 	byte _mouse_byte1299A;
-
+	byte _mouse_savedMousePosDivided;
 	byte _keyboard_getch();
 
 protected:
