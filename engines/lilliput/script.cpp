@@ -28,8 +28,20 @@ namespace Lilliput {
 
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
 	_byte129A0 = 0xFF;
+	_byte16F08 = 0;
+
 	_word16F00 = -1;
+	_word10802 = -1;
 	_word10804 = 0;
+	_word15FFB = 0;
+	_word15FFD = 0;
+
+	_savedBuffer215Ptr = NULL;
+
+	for (int i = 0; i < 20; i++) {
+		_array122E9[i] = 0;
+		_array122FD[i] = 0;
+	}
 }
 
 LilliputScript::~LilliputScript() {
@@ -563,6 +575,29 @@ byte LilliputScript::compValues(byte var1, int oper, int var2) {
 	}
 }
 
+int LilliputScript::getValue1() {
+	debugC(1, kDebugScript, "getValue1()");
+	int curWord = _currScript->readUint16LE();
+	if (curWord < 1000)
+		return curWord;
+
+	switch (curWord) {
+	case 1000:
+		return (int)_byte129A0;
+	case 1001:
+		return _vm->_rulesBuffer2PrevIndx;
+	case 1002:
+		return _word16F00;
+	case 1003:
+		return (int)_vm->_rulesBuffer2_15[6];
+	case 1004:
+		return _word10804;
+	default:
+		warning("getValue1: Unexpected large value %d", curWord);
+		return curWord;
+	}
+}
+
 int LilliputScript::getValue2() {
 	debugC(1, kDebugScript, "getValue2()");
 	int curWord = _currScript->readUint16LE();
@@ -599,31 +634,16 @@ int LilliputScript::getValue2() {
 	case 0xF6:
 		return _vm->_mouse_savedMousePosDivided;
 	default:
-		warning("getValue2 - 0x%x - Unexpected high value %d", tmpVal, curWord);
+		warning("getValue2 - 0x%x - High value %d", tmpVal, curWord);
 		return curWord;
 	}
 }
 
-int LilliputScript::getValue1() {
-	debugC(1, kDebugScript, "getValue1()");
-	int curWord = _currScript->readUint16LE();
-	if (curWord < 1000)
-		return curWord;
-
-	switch (curWord) {
-	case 1000:
-		return (int)_byte129A0;
-	case 1001:
-		return _vm->_rulesBuffer2PrevIndx;
-	case 1002:
-		return _word16F00;
-	case 1003:
-		return (int)_vm->_rulesBuffer2_15[6];
-	case 1004:
-		return _word10804;
-	default:
-		warning("getValue1: Unexpected large value %d", curWord);
-		return curWord;
+void LilliputScript::sub130B6() {
+	assert(_vm->_word12F68_ERULES <= 20);
+	for (int i = 0; i < _vm->_word12F68_ERULES; i++) {
+		if (_array122E9[i] == 3)
+			_array122E9[i] = 2;
 	}
 }
 
@@ -926,7 +946,9 @@ void LilliputScript::OC_sub17AEE() {
 	warning("OC_sub17AEE");
 }
 void LilliputScript::OC_setWord10804() {
-	warning("OC_setWord10804");
+	debugC(1, kDebugScript, "OC_setWord10804()");
+
+	_word10804 = getValue1();
 }
 void LilliputScript::OC_sub17C0E() {
 	warning("OC_sub17C0E");
@@ -1019,7 +1041,17 @@ void LilliputScript::OC_sub1808B() {
 	warning("OC_sub1808B");
 }
 void LilliputScript::OC_sub18099() {
-	warning("OC_sub18099");
+	debugC(1, kDebugScript, "OC_sub18099()");
+
+	int index = _currScript->readUint16LE();
+	assert((index >= 0) && (index < 20));
+	int curWord = _currScript->readUint16LE();
+
+	_array122E9[index] = (curWord & 0xFF);
+	_array122FD[index] = (curWord >> 8);
+
+	warning("TODO: display function #8");
+	
 }
 void LilliputScript::OC_sub180C3() {
 	warning("OC_sub180C3");
@@ -1101,7 +1133,21 @@ void LilliputScript::OC_sub1844A() {
 	warning("OC_sub1844A");
 }
 void LilliputScript::OC_sub1847F() {
-	warning("OC_sub1847F");
+	debugC(1, kDebugScript, "OC_sub1847F()");
+	byte *buf215Ptr = getBuffer215Ptr();
+	byte tmpVal = buf215Ptr[0];
+	int curWord = _currScript->readUint16LE();
+	assert(curWord != 0);
+	int var1 = tmpVal / curWord;
+	int var2 = _currScript->readUint16LE();
+	int var3 = _currScript->readUint16LE();
+
+	if (_byte16F08 != 1) {
+		warning("TODO: OC_sub1847F - Display Function 5");
+		warning("TODO: OC_sub1847F - sub_18BE6");
+		warning("TODO: OC_sub1847F - Display Function 4");
+	}
+
 }
 void LilliputScript::OC_displayVGAFile() {
 	debugC(1, kDebugScript, "OC_displayVGAFile()");
@@ -1152,9 +1198,20 @@ void LilliputScript::OC_sub184F5() {
 	
 	_vm->_mouse_byte1299A = 0;
 }
+
 void LilliputScript::OC_sub1853B() {
-	warning("OC_sub1853B");
+	debugC(1, kDebugScript, "OC_initArr1853B()");
+
+	warning("TODO: unkPaletteFunction_1");
+	_byte16F08 = 0;
+	_byte15FFA = 0;
+	sub130B6();
+	warning("TODO: Display function sub15CBC();");
+	warning("TODO: unkPaletteFunction_2");
+	_byte12A09 = 0;
+	warning("TODO: call sound function #5");
 }
+
 void LilliputScript::OC_sub1864D() {
 	warning("OC_sub1864D");
 }
@@ -1170,13 +1227,18 @@ void LilliputScript::OC_initArr18560() {
 		_vm->_arr18560[curWord]._field5[i] = _currScript->readUint16LE();
 }
 void LilliputScript::OC_sub18678() {
-	warning("OC_sub18678");
+	debugC(1, kDebugScript, "OC_initArr18578()");
+	_savedBuffer215Ptr = getBuffer215Ptr();
+	_word15FFB = _currScript->readUint16LE();
+	_word15FFD = _currScript->readUint16LE();
 }
 void LilliputScript::OC_sub18690() {
 	warning("OC_sub18690");
 }
 void LilliputScript::OC_setWord10802() {
-	warning("OC_setWord10802");
+	debugC(1, kDebugScript, "OC_setWord10802()");
+
+	_word10802 = getValue1();
 }
 void LilliputScript::OC_sub186A1() {
 	warning("OC_sub186A1");
@@ -1188,8 +1250,9 @@ void LilliputScript::OC_sub186E5_snd() {
 void LilliputScript::OC_sub1870A_snd() {
 	debugC(1, kDebugScript, "OC_sub1870A_snd()");
 
-	int tmpVal = getValue2();
-	int curWord = _currScript->readUint16LE();
+	int var3 = getValue2();
+	// TODO: int var2 = ...
+	int var1 = (_currScript->readUint16LE() & 0xFF);
 	warning("TODO: call sound function #2");
 }
 
@@ -1210,7 +1273,8 @@ void LilliputScript::OC_sub18746_snd() {
 	warning("TODO: ovlContentOVL Function 2, init DX and BX");
 }
 void LilliputScript::OC_sub1875D_snd() {
-	warning("OC_sub1875D_snd");
+	debugC(1, kDebugScript, "OC_sub1875D_snd()");
+	warning("TODO: ovlContentOVL Function 6");
 }
 void LilliputScript::OC_sub18764() {
 	warning("OC_sub18764");

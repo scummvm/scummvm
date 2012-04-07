@@ -42,10 +42,19 @@ private:
 	byte _byte16F05_ScriptHandler;
 	byte _byte12A09;
 	byte _byte129A0;
+	byte _byte16F08;
+	byte _byte15FFA;
+
+	byte *_savedBuffer215Ptr;
+	byte _array122E9[20];
+	byte _array122FD[20];
 
 	int16 _word1881B;
 	int16 _word16F00;
+	int16 _word10802;
 	int16 _word10804;
+	int16 _word15FFB;
+	int16 _word15FFD;
 
 	int handleOpcode(Common::MemoryReadStream *script);
 	byte handleOpcodeType1(int curWord);
@@ -53,6 +62,8 @@ private:
 
 	int getValue1();
 	int getValue2();
+
+	void sub130B6();
 
 	byte *getBuffer215Ptr();
 	byte compValues(byte var1, int oper, int var2);
