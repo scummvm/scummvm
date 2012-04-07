@@ -20,6 +20,9 @@
  *
  */
 
+// These tables are modified versions of the FFmpeg ones so that they
+// will work with our BitStream class directly.
+
 #ifndef VIDEO_CODECS_SVQ1_VLC_H
 #define VIDEO_CODECS_SVQ1_VLC_H
 

@@ -55,16 +55,26 @@ private:
 	Common::Huffman *_interMean;
 	Common::Huffman *_motionComponent;
 
-	bool svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int pitch);
-	bool svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch);
+	bool svq1DecodeBlockIntra(Common::BitStream *s, byte *pixels, int pitch);
+	bool svq1DecodeBlockNonIntra(Common::BitStream *s, byte *pixels, int pitch);
 	bool svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv);
-	void svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int x, int y);
-	bool svq1MotionInterBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
+	void svq1SkipBlock(byte *current, byte *previous, int pitch, int x, int y);
+	bool svq1MotionInterBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	bool svq1MotionInter4vBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
+	bool svq1MotionInter4vBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	bool svq1DecodeDeltaBlock(Common::BitStream *ss, uint8 *current, uint8 *previous, int pitch,
+	bool svq1DecodeDeltaBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
+
+	void putPixels8C(byte *block, const byte *pixels, int lineSize, int h);
+	void putPixels8L2(byte *dst, const byte *src1, const byte *src2, int dstStride, int srcStride1, int srcStride2, int h);
+	void putPixels8X2C(byte *block, const byte *pixels, int lineSize, int h);
+	void putPixels8Y2C(byte *block, const byte *pixels, int lineSize, int h);
+	void putPixels8XY2C(byte *block, const byte *pixels, int lineSize, int h);
+	void putPixels16C(byte *block, const byte *pixels, int lineSize, int h);
+	void putPixels16X2C(byte *block, const byte *pixels, int lineSize, int h);
+	void putPixels16Y2C(byte *block, const byte *pixels, int lineSize, int h);
+	void putPixels16XY2C(byte *block, const byte *pixels, int lineSize, int h);
 };
 
 } // End of namespace Video

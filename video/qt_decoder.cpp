@@ -46,9 +46,8 @@
 #include "video/codecs/qtrle.h"
 #include "video/codecs/rpza.h"
 #include "video/codecs/smc.h"
-#include "video/codecs/svq1.h"
 #include "video/codecs/cdtoons.h"
-
+#include "video/codecs/svq1.h"
 
 namespace Video {
 

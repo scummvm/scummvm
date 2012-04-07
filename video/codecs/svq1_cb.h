@@ -20,6 +20,9 @@
  *
  */
 
+// These tables are modified from their FFmpeg counterparts so that
+// they work on both little and big endian systems.
+
 #ifndef VIDEO_CODECS_SVQ1_CB_H
 #define VIDEO_CODECS_SVQ1_CB_H
 
