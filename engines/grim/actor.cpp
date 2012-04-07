@@ -74,7 +74,10 @@ Actor::Actor(const Common::String &actorName) :
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_lastTurnDir(0), _currTurnDir(0),
-		_sayLineText(0), _talkDelay(0), _attachedActor(NULL), _attachedJoint("") {
+		_sayLineText(0), _talkDelay(0),
+		_attachedActor(NULL), _attachedJoint(""),
+		_global_alpha(1.f), _alphaMode(AlphaOff)  {
+	_inOverworld = false;
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
@@ -111,6 +114,9 @@ Actor::Actor() {
 
 	_attachedActor = NULL;
 	_attachedJoint = "";
+
+	_alphaMode = AlphaOff;
+	_global_alpha = 1.f;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
