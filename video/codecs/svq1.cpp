@@ -265,7 +265,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (svq1DecodeBlockIntra(&frameData, &currentP[x], width)) {
+					if (!svq1DecodeBlockIntra(&frameData, &currentP[x], width)) {
 						warning("svq1DecodeBlockIntra decode failure");
 						return _surface;
 					}
@@ -288,7 +288,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, width, pmv, x, y)) {
+					if (!svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, width, pmv, x, y)) {
 						warning("svq1DecodeDeltaBlock decode failure");
 						return _surface;
 					}
@@ -367,7 +367,7 @@ bool SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int 
 
 		if ((stages > 0) && (level >= 4)) {
 			warning("Error (svq1_decode_block_intra): invalid vector: stages=%i level=%i", stages, level);
-			return true; // error - invalid vector
+			return false; // error - invalid vector
 		}
 
 		mean = _intraMean->getSymbol(*s);
@@ -423,7 +423,7 @@ bool SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, uint8 *pixels, int 
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, int pitch) {
@@ -468,7 +468,7 @@ bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, i
 
 		if ((stages > 0) && (level >= 4)) {
 			warning("Error (svq1_decode_block_non_intra): invalid vector: stages=%i level=%i", stages, level);
-			return true; // error - invalid vector
+			return false; // error - invalid vector
 		}
 
 		mean = _interMean->getSymbol(*s) - 256;
@@ -519,7 +519,7 @@ bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, uint8 *pixels, i
 			dst += (pitch / 4);
 		}
 	}
-	return false;
+	return true;
 }
 
 // median of 3
@@ -543,7 +543,7 @@ bool SVQ1Decoder::svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv
 		// get motion code
 		int diff = _motionComponent->getSymbol(*s);
 		if (diff < 0)
-			return true; // error - invalid motion code
+			return false; // error - invalid motion code
 		else if (diff) {
 			if (s->getBit()) diff = -diff;
 		}
@@ -555,7 +555,7 @@ bool SVQ1Decoder::svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv
 			mv->x = ((diff + mid_pred(pmv[0]->x, pmv[1]->x, pmv[2]->x)) << 26) >> 26;
 	}
 
-	return false;
+	return true;
 }
 
 void SVQ1Decoder::svq1SkipBlock(uint8 *current, uint8 *previous, int pitch, int x, int y) {
@@ -663,7 +663,7 @@ bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
 	uint8 *dst;
 	Common::Point mv;
 	Common::Point *pmv[3];
-	bool errorFlag;
+	bool resultValid;
 
 	// predict and decode motion vector
 	pmv[0] = &motion[0];
@@ -674,9 +674,9 @@ bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
 		pmv[2] = &motion[(x / 8) + 4];
 	}
 
-	errorFlag = svq1DecodeMotionVector(ss, &mv, pmv);
-	if (errorFlag)
-		return true;
+	resultValid = svq1DecodeMotionVector(ss, &mv, pmv);
+	if (!resultValid)
+		return false;
 
 	motion[0].x = motion[(x / 8) + 2].x = motion[(x / 8) + 3].x = mv.x;
 	motion[0].y = motion[(x / 8) + 2].y = motion[(x / 8) + 3].y = mv.y;
@@ -717,7 +717,7 @@ bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream *ss,
 		break;
 	}
 
-	return false;
+	return true;
 }
 
 bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
@@ -727,7 +727,7 @@ bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 	uint8 *dst;
 	Common::Point mv;
 	Common::Point *pmv[4];
-	bool errorFlag;
+	bool resultValid;
 
 	// predict and decode motion vector (0)
 	pmv[0] = &motion[0];
@@ -738,9 +738,9 @@ bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 		pmv[2] = &motion[(x / 8) + 4];
 	}
 
-	errorFlag = svq1DecodeMotionVector(ss, &mv, pmv);
-	if (errorFlag)
-		return true;
+	resultValid = svq1DecodeMotionVector(ss, &mv, pmv);
+	if (!resultValid)
+		return false;
 
 	// predict and decode motion vector (1)
 	pmv[0] = &mv;
@@ -750,25 +750,25 @@ bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 		pmv[1] = &motion[(x / 8) + 3];
 	}
 
-	errorFlag = svq1DecodeMotionVector(ss, &motion[0], pmv);
-	if (errorFlag)
-		return true;
+	resultValid = svq1DecodeMotionVector(ss, &motion[0], pmv);
+	if (!resultValid)
+		return false;
 
 	// predict and decode motion vector (2)
 	pmv[1] = &motion[0];
 	pmv[2] = &motion[(x / 8) + 1];
 
-	errorFlag = svq1DecodeMotionVector(ss, &motion[(x / 8) + 2], pmv);
-	if (errorFlag)
-		return true;
+	resultValid = svq1DecodeMotionVector(ss, &motion[(x / 8) + 2], pmv);
+	if (!resultValid)
+		return false;
 
 	// predict and decode motion vector (3)
 	pmv[2] = &motion[(x / 8) + 2];
 	pmv[3] = &motion[(x / 8) + 3];
 
-	errorFlag = svq1DecodeMotionVector(ss, pmv[3], pmv);
-	if (errorFlag)
-		return true;
+	resultValid = svq1DecodeMotionVector(ss, pmv[3], pmv);
+	if (!resultValid)
+		return false;
 
 	// form predictions
 	for (int i = 0; i < 4; i++) {
@@ -819,14 +819,14 @@ bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream *ss,
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream *ss,
                         uint8 *current, uint8 *previous, int pitch,
                         Common::Point *motion, int x, int y) {
 	uint32 block_type;
-	bool errorFlag = false;
+	bool resultValid = true;
 
 	// get block type
 	block_type = _blockType->getSymbol(*ss);
@@ -847,29 +847,29 @@ bool SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream *ss,
 		break;
 
 	case SVQ1_BLOCK_INTER:
-		errorFlag = svq1MotionInterBlock(ss, current, previous, pitch, motion, x, y);
-		if (errorFlag) {
+		resultValid = svq1MotionInterBlock(ss, current, previous, pitch, motion, x, y);
+		if (!resultValid) {
 			warning("svq1MotionInterBlock decode failure");
 			break;
 		}
-		errorFlag = svq1DecodeBlockNonIntra(ss, current, pitch);
+		resultValid = svq1DecodeBlockNonIntra(ss, current, pitch);
 		break;
 
 	case SVQ1_BLOCK_INTER_4V:
-		errorFlag = svq1MotionInter4vBlock(ss, current, previous, pitch, motion, x, y);
-		if (errorFlag) {
+		resultValid = svq1MotionInter4vBlock(ss, current, previous, pitch, motion, x, y);
+		if (!resultValid) {
 			warning("svq1MotionInter4vBlock decode failure");
 			break;
 		}
-		errorFlag = svq1DecodeBlockNonIntra(ss, current, pitch);
+		resultValid = svq1DecodeBlockNonIntra(ss, current, pitch);
 		break;
 
 	case SVQ1_BLOCK_INTRA:
-		errorFlag = svq1DecodeBlockIntra(ss, current, pitch);
+		resultValid = svq1DecodeBlockIntra(ss, current, pitch);
 		break;
 	}
 
-	return errorFlag;
+	return resultValid;
 }
 
 } // End of namespace Video
