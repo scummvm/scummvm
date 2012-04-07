@@ -231,6 +231,9 @@
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
+			<widget name = 'grSoftwareRendering'
+					type = 'Checkbox'
+			/>
 		</layout>
 	</dialog>
 

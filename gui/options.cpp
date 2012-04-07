@@ -657,7 +657,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 
-	_softwareRenderingCheckbox = new CheckboxWidget(boss, prefix + "grDisableDitheringCheckbox", _("Software Rendering"), _("Enable software rendering"));
+	_softwareRenderingCheckbox = new CheckboxWidget(boss, prefix + "grSoftwareRendering", _("Software Rendering"), _("Enable software rendering"));
 	_enableGraphicSettings = true;
 }
 
