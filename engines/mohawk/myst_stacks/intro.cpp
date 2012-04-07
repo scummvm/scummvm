@@ -133,14 +133,8 @@ void Intro::introMovies_run() {
 	case 6:
 		_introStep = 7;
 
-		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
-				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
-				// TODO: Switch back to the SVQ version when we support it
-				_vm->_video->playMovie(_vm->wrapMovieFilename("introc", kIntroStack));
-			else
-				_vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
-		}
+		if (!(_vm->getFeatures() & GF_DEMO)) // The demo doesn't have the intro video
+			_vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
 		break;
 	case 7:
 		if (!_vm->_video->isVideoPlaying())
