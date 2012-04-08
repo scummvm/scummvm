@@ -675,12 +675,22 @@ int LilliputScript::getValue2() {
 		}
 	case 0xFD:
 		return _vm->_word16EFA;
-	case 0xFC:
-		warning("TODO: getValue2 - 0xFC");
-		return 0;
-	case 0xFB:
-		warning("TODO: getValue2 - 0xFB");
-		return 0;
+	case 0xFC: {
+		int index = curWord & 0xFF;
+		assert(index < 40);
+		byte var1 = _vm->_rulesBuffer2_1[index] >> 3;
+		byte var2 = _vm->_rulesBuffer2_2[index] >> 3;
+
+		return (var1 << 8) + var2;
+		}
+	case 0xFB: {
+		int index = _word16F00;
+		assert(index < 40);
+		byte var1 = _vm->_rulesBuffer2_1[index] >> 3;
+		byte var2 = _vm->_rulesBuffer2_2[index] >> 3;
+
+		return (var1 << 8) + var2;
+		}
 	case 0xFA:
 		return ((_vm->_byte10999[_vm->_rulesBuffer2PrevIndx] << 8) + _vm->_byte109C1[_vm->_rulesBuffer2PrevIndx]);
 	case 0xF9:
@@ -690,9 +700,14 @@ int LilliputScript::getValue2() {
 		assert((index >= 0) && (index < 40));
 		return _vm->_rulesBuffer12_3[index];
 		}
-	case 0xF7:
-		warning("TODO: getValue2 - 0xF7");
-		return 0;
+	case 0xF7: {
+		int index = _vm->_rulesBuffer2_15[6];
+		assert(index < 40);
+		byte var1 = _vm->_rulesBuffer2_1[index] >> 3;
+		byte var2 = _vm->_rulesBuffer2_2[index] >> 3;
+
+		return (var1 << 8) + var2;
+		}
 	case 0xF6:
 		return _vm->_mouse_savedMousePosDivided;
 	default:
