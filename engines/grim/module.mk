@@ -117,6 +117,11 @@ MODULE_OBJS := \
 	textsplit.o \
 	object.o
 
+ifdef USE_ARM_SMUSH_ASM
+MODULE_OBJS += \
+	movie/codecs/blocky8ARM.o
+endif
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_GRIM), DYNAMIC_PLUGIN)
 PLUGIN := 1

@@ -341,7 +341,7 @@ void Blocky8::makeTables47(int width) {
 
 extern "C" {
 #ifndef IPHONE
-#define ARM_Smush_decode2 _ARM_Smush_decode2
+#define ARM_Blocky8_decode2 _ARM_Blocky8_decode2
 #endif
 }
 
@@ -357,7 +357,7 @@ extern "C" void ARM_Smush_decode2(      byte  *dst,
                                         byte  *_tableSmall);
 
 #define decode2(SRC,DST,WIDTH,HEIGHT,PARAM) \
- ARM_Smush_decode2(SRC,DST,WIDTH,HEIGHT,PARAM,_table,_tableBig, \
+ ARM_Blocky8_decode2(SRC,DST,WIDTH,HEIGHT,PARAM,_table,_tableBig, \
                    _offset1,_offset2,_tableSmall)
 
 #else
