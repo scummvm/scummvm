@@ -941,7 +941,7 @@ void Actor::shutUp() {
 		stopTalking();
 	}
 
-	if (_sayLineText && _talkDelay == 0) {
+	if (_sayLineText) {
 		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
