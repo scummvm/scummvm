@@ -155,7 +155,7 @@ Registry::Value &Registry::value(const Common::String &key) {
 		return _voiceEffects;
 	} else if (scumm_stricmp("TextSpeed", key.c_str()) == 0) {
 		return _textSpeed;
-	} else if (scumm_stricmp("TextMode", key.c_str()) == 0) {
+	} else if (scumm_stricmp("TextMode", key.c_str()) == 0 || scumm_stricmp("SpeechMode", key.c_str()) == 0) {
 		return _speechMode;
 	} else if (scumm_stricmp("MovementMode", key.c_str()) == 0) {
 		return _movement;
@@ -201,7 +201,7 @@ const Registry::Value &Registry::value(const Common::String &key) const {
 		return _voiceEffects;
 	} else if (scumm_stricmp("TextSpeed", key.c_str()) == 0) {
 		return _textSpeed;
-	} else if (scumm_stricmp("TextMode", key.c_str()) == 0) {
+	} else if (scumm_stricmp("TextMode", key.c_str()) == 0 || scumm_stricmp("SpeechMode", key.c_str()) == 0) {
 		return _speechMode;
 	} else if (scumm_stricmp("MovementMode", key.c_str()) == 0) {
 		return _movement;
