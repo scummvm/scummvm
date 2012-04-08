@@ -383,8 +383,14 @@ void MeshFace::changeMaterial(Material *material) {
 }
 
 void MeshFace::draw(float *vertices, float *vertNormals, float *textureVerts) const {
+	if (_light == 0 && !g_driver->isShadowModeActive())
+		g_driver->disableLights();
+
 	_material->select();
 	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
+
+	if (_light == 0 && !g_driver->isShadowModeActive())
+		g_driver->enableLights();
 }
 
 /**
