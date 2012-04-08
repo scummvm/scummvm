@@ -175,6 +175,8 @@ private:
 	bool loadFromMacBinary(SeekableReadStream &stream);
 	bool loadFromAppleDouble(SeekableReadStream &stream);
 
+	static Common::String constructAppleDoubleName(Common::String name);
+
 	enum {
 		kResForkNone = 0,
 		kResForkRaw,
