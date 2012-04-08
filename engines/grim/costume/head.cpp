@@ -231,9 +231,14 @@ void Head::saveState(SaveGame *state) const {
 	state->writeFloat(_maxYaw);
 	state->writeFloat(_maxRoll);
 
-	_joint1.saveState(state);
-	_joint2.saveState(state);
-	_joint3.saveState(state);
+	// TODO: Remove on next save format change.
+	state->writeFloat(0.0f);
+	state->writeFloat(0.0f);
+
+	// TODO: Uncomment on next save format change.
+	//_joint1.saveState(state);
+	//_joint2.saveState(state);
+	//_joint3.saveState(state);
 }
 
 void Head::restoreState(SaveGame *state) {
@@ -244,9 +249,14 @@ void Head::restoreState(SaveGame *state) {
 	_maxYaw = state->readFloat();
 	_maxRoll = state->readFloat();
 
-	_joint1.restoreState(state);
-	_joint2.restoreState(state);
-	_joint3.restoreState(state);
+	// TODO: Remove on next save format change.
+	state->readFloat();
+	state->readFloat();
+
+	// TODO: Uncomment on next save format change.
+	//_joint1.restoreState(state);
+	//_joint2.restoreState(state);
+	//_joint3.restoreState(state);
 }
 
 } // end of namespace Grim
