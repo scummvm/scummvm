@@ -511,7 +511,12 @@ private:
 
 	// Variables for gradual turning
 	bool _turning;
-	Math::Angle _destYaw;
+	// NOTE: The movement direction is separate from the direction
+	// the actor's model is facing. The model's direction is gradually
+	// updated to match the movement direction. This produces a smooth
+	// turning animation while still allowing the actor to move in a
+	// new direction immediately after reflecting off a wall.
+	Math::Angle _moveYaw;
 
 	// Variables for walking to a point
 	bool _walking;

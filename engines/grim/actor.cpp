@@ -188,7 +188,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeBool(_turning);
-	savedState->writeFloat(_destYaw.getDegrees());
+	savedState->writeFloat(_moveYaw.getDegrees());
 
 	savedState->writeBool(_walking);
 	savedState->writeVector3d(_destPos);
@@ -312,7 +312,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	}
 
 	_turning = savedState->readBool();
-	_destYaw = savedState->readFloat();
+	_moveYaw = savedState->readFloat();
 
 	_walking = savedState->readBool();
 	_destPos = savedState->readVector3d();
@@ -389,6 +389,7 @@ void Actor::setYaw(const Math::Angle &yawParam) {
 void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	setYaw(yawParam);
+	_moveYaw = _yaw;
 	_roll = rollParam;
 	_turning = false;
 }
@@ -408,9 +409,9 @@ void Actor::setPos(const Math::Vector3d &position) {
 void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	_roll = rollParam;
+	_moveYaw = yawParam;
 	if (_yaw != yawParam) {
 		_turning = true;
-		_destYaw = yawParam;
 	} else
 		_turning = false;
 }
@@ -599,75 +600,98 @@ void Actor::walkForward() {
 
 	_walking = false;
 
-	Math::Vector3d forwardVec(-_yaw.getSine() * _pitch.getCosine(),
-		_yaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
-
-	// EMI: Y is up-down, sectors use an X-Z plane for movement
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		float temp = forwardVec.z();
-		forwardVec.z() = forwardVec.y();
-		forwardVec.y() = temp;
-	}
-
 	if (! _constrain) {
+		Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
+			_moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
+
+		// EMI: Y is up-down, sectors use an X-Z plane for movement
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			float temp = forwardVec.z();
+			forwardVec.z() = forwardVec.y();
+			forwardVec.y() = temp;
+		}
+
 		_pos += forwardVec * dist;
 		_walkedCur = true;
 		return;
 	}
 
+	bool backwards = false;
 	if (dist < 0) {
 		dist = -dist;
-		forwardVec = -forwardVec;
+		backwards = true;
 	}
 
-	Sector *currSector = NULL, *prevSector = NULL, *startSector = NULL;
-	Sector::ExitInfo ei;
+	int tries = 0;
+	while (dist > 0.0f) {
+		Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
+			_moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
-	g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
-	if (!currSector) { // Shouldn't happen...
-		moveTo(_pos + forwardVec * dist);
-		_walkedCur = true;
-		return;
-	}
-	startSector = currSector;
+		// EMI: Y is up-down, sectors use an X-Z plane for movement
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			float temp = forwardVec.z();
+			forwardVec.z() = forwardVec.y();
+			forwardVec.y() = temp;
+		}
 
-	while (currSector) {
-		prevSector = currSector;
-		Math::Vector3d puckVec = currSector->getProjectionToPuckVector(forwardVec);
-		puckVec /= puckVec.getMagnitude();
-		currSector->getExitInfo(_pos, puckVec, &ei);
-		float exitDist = (ei.exitPoint - _pos).getMagnitude();
-		if (dist < exitDist) {
-			moveTo(_pos + puckVec * dist);
+		if (backwards)
+			forwardVec = -forwardVec;
+
+		Sector *currSector = NULL, *prevSector = NULL, *startSector = NULL;
+		Sector::ExitInfo ei;
+
+		g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
+		if (!currSector) { // Shouldn't happen...
+			moveTo(_pos + forwardVec * dist);
 			_walkedCur = true;
 			return;
 		}
-		_pos = ei.exitPoint;
-		dist -= exitDist;
-		if (exitDist > 0.0001)
-			_walkedCur = true;
+		startSector = currSector;
 
-		// Check for an adjacent sector which can continue
-		// the path
-		currSector = g_grim->getCurrSet()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
-		if (currSector == prevSector || currSector == startSector)
-			break;
+		float oldDist = dist;
+		while (currSector) {
+			prevSector = currSector;
+			Math::Vector3d puckVec = currSector->getProjectionToPuckVector(forwardVec);
+			puckVec /= puckVec.getMagnitude();
+			currSector->getExitInfo(_pos, puckVec, &ei);
+			float exitDist = (ei.exitPoint - _pos).getMagnitude();
+			if (dist < exitDist) {
+				moveTo(_pos + puckVec * dist);
+				_walkedCur = true;
+				return;
+			}
+			_pos = ei.exitPoint;
+			dist -= exitDist;
+			if (exitDist > 0.0001)
+				_walkedCur = true;
+
+			// Check for an adjacent sector which can continue
+			// the path
+			currSector = g_grim->getCurrSet()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
+			if (currSector == prevSector || currSector == startSector)
+				break;
+		}
+
+		int turnDir = 1;
+		if (ei.angleWithEdge > 90) {
+			ei.angleWithEdge = 180 - ei.angleWithEdge;
+			ei.edgeDir = -ei.edgeDir;
+			turnDir = -1;
+		}
+		if (ei.angleWithEdge > _reflectionAngle)
+			return;
+
+		ei.angleWithEdge += (float)1.0f;
+		turnTo(0, _moveYaw + ei.angleWithEdge * turnDir, 0);
+
+		if (oldDist <= dist + 0.001f) {
+			// If we didn't move at all, keep trying a couple more times
+			// in case we can move in the new direction.
+			tries++;
+			if (tries > 3)
+				break;
+		}
 	}
-
-	int turnDir = 1;
-	if (ei.angleWithEdge > 90) {
-		ei.angleWithEdge = 180 - ei.angleWithEdge;
-		ei.edgeDir = -ei.edgeDir;
-		turnDir = -1;
-	}
-	if (ei.angleWithEdge > _reflectionAngle)
-		return;
-
-	ei.angleWithEdge += (float)0.1;
-	Math::Angle turnAmt = g_grim->getPerSecond(_turnRate) * 5.;
-	if (turnAmt > ei.angleWithEdge)
-		turnAmt = ei.angleWithEdge;
-	setYaw(_yaw + turnAmt * turnDir);
 }
 
 Math::Vector3d Actor::getSimplePuckVector() const {
@@ -770,7 +794,8 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 void Actor::turn(int dir) {
 	_walking = false;
 	float delta = g_grim->getPerSecond(_turnRate) * dir;
-	setYaw(_yaw + delta);
+	_moveYaw = _moveYaw + delta;
+	_turning = true;
 	_currTurnDir = dir;
 }
 
@@ -1074,14 +1099,14 @@ void Actor::update(uint frameTime) {
 
 	if (_turning) {
 		float turnAmt = g_grim->getPerSecond(_turnRate) * 5.f;
-		Math::Angle dyaw = _destYaw - _yaw;
+		Math::Angle dyaw = _moveYaw - _yaw;
 		dyaw.normalize(-180);
 		// If the actor won't turn because the rate is set to zero then
 		// have the actor turn all the way to the destination yaw.
 		// Without this some actors will lock the interface on changing
 		// scenes, this affects the Bone Wagon in particular.
 		if (turnAmt == 0 || turnAmt >= fabsf(dyaw.getDegrees())) {
-			setYaw(_destYaw);
+			setYaw(_moveYaw);
 			_turning = false;
 		} else if (dyaw > 0) {
 			setYaw(_yaw + turnAmt);
