@@ -441,7 +441,7 @@ void GrimEngine::luaUpdate() {
 		// the costumes are updated in update().
 		for (Common::List<Actor *>::iterator i = _talkingActors.begin(); i != _talkingActors.end(); ++i) {
 			Actor *a = *i;
-			if (!a->updateTalk()) {
+			if (!a->updateTalk(_frameTime)) {
 				i = _talkingActors.reverse_erase(i);
 			}
 		}

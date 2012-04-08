@@ -74,7 +74,7 @@ Actor::Actor(const Common::String &actorName) :
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_lastTurnDir(0), _currTurnDir(0),
-		_sayLineText(0), _attachedActor(NULL), _attachedJoint("") {
+		_sayLineText(0), _talkDelay(0), _attachedActor(NULL), _attachedJoint("") {
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
@@ -832,6 +832,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 
 	_talkSoundName = soundName;
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
+		_talkDelay = 500;
 		if (g_sound->startVoice(_talkSoundName.c_str()) && g_grim->getCurrSet()) {
 			g_grim->getCurrSet()->setSoundPosition(_talkSoundName.c_str(), _pos);
 		}
@@ -1213,21 +1214,27 @@ void Actor::update(uint frameTime) {
 
 // Not all the talking actors are in the current set, and so on not all the talking actors
 // update() is called. For example, Don when he comes out of his office after reaping Meche.
-bool Actor::updateTalk() {
+bool Actor::updateTalk(uint frameTime) {
 	if (_talking) {
 		// If there's no sound file then we're obviously not talking
 		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 		TextObject *textObject = NULL;
 		if (_sayLineText)
 			textObject = TextObject::getPool().getObject(_sayLineText);
-		if ((m == GrimEngine::TextOnly && !textObject) ||
-			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str())))) {
-
+		if (m == GrimEngine::TextOnly && !textObject) {
 			shutUp();
 			return false;
+		} else if (m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str()))) {
+			_talkDelay -= frameTime;
+			if (_talkDelay <= 0) {
+				_talkDelay = 0;
+				shutUp();
+				return false;
+			}
 		}
 		return true;
 	}
+
 	return false;
 }
 

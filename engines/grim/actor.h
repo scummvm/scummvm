@@ -432,7 +432,7 @@ public:
 	/**
 	 * Check if the actor is still talking. If it is returns true, otherwise false.
 	 */
-	bool updateTalk();
+	bool updateTalk(uint frameTime);
 	void draw();
 
 	bool isLookAtVectorZero() {
@@ -592,6 +592,7 @@ private:
 	bool _puckOrient;
 
 	static bool _isTalkingBackground;
+	int _talkDelay;
 	Actor *_attachedActor;
 	Common::String _attachedJoint;
 
