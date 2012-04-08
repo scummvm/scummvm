@@ -181,7 +181,7 @@ void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
 
 	glGetDoublev(GL_MODELVIEW_MATRIX, _cubeModelViewMatrix);
 	glGetDoublev(GL_PROJECTION_MATRIX, _cubeProjectionMatrix);
-	glGetIntegerv(GL_VIEWPORT, _cubeViewport);
+	glGetIntegerv(GL_VIEWPORT, (GLint *)_cubeViewport);
 }
 
 void Renderer::drawRect2D(const Common::Rect &rect, uint32 color) {
@@ -420,7 +420,7 @@ void Renderer::screenPosToDirection(const Common::Point screen, float &pitch, fl
 	double x, y, z;
 
 	// Screen coords to 3D coords
-	gluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, &x, &y, &z);
+	gluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, (GLint *)_cubeViewport, &x, &y, &z);
 
 	// 3D coords to polar coords
 	Math::Vector3d v = Math::Vector3d(x, y, z);

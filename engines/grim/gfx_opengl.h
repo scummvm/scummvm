@@ -133,7 +133,7 @@ private:
 	GLuint _fragmentProgram;
 	bool _useDimShader;
 	GLuint _dimFragProgram;
-	int _maxLights;
+	GLint _maxLights;
 };
 
 } // end of namespace Grim
