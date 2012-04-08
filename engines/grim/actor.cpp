@@ -685,8 +685,7 @@ void Actor::walkForward() {
 		ei.angleWithEdge += (float)1.0f;
 		turnTo(0, _moveYaw + ei.angleWithEdge * turnDir, 0);
 
-		if (oldDist <= dist + 0.001f)
-		{
+		if (oldDist <= dist + 0.001f) {
 			// If we didn't move at all, keep trying a couple more times
 			// in case we can move in the new direction.
 			tries++;
