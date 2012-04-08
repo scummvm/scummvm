@@ -48,6 +48,7 @@ private:
 	byte *_savedBuffer215Ptr;
 	byte _array122E9[20];
 	byte _array122FD[20];
+	byte _array10B29[40];
 
 	int16 _word1881B;
 	int16 _word16F00;
@@ -60,13 +61,16 @@ private:
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 
+	void sub1823E(byte var1, byte var2, byte *curBufPtr);
+
 	int getValue1();
 	int getValue2();
 
 	void sub130B6();
 
 	byte *getBuffer215Ptr();
-	byte compValues(byte var1, int oper, int var2);
+	byte compareValues(byte var1, int oper, int var2);
+	void computeOperation(byte *bufPtr, int oper, int var2);
 
 	//Opcodes Type 1
 	byte OC_sub173DF();

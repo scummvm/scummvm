@@ -51,6 +51,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
 
+	_saveFlag = false;
+
 	for (int i = 0; i < 40; i++) {
 		_byte10999[i] = 0;
 		_byte109C1[i] = 0;

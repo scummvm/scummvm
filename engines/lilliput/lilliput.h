@@ -96,6 +96,8 @@ public:
 	byte *_bufferIdeogram;
 	byte _buffer10[4032];
 	byte _palette[768];
+
+	bool _saveFlag;
 	
 	int _word10800_ERULES;
 	int _word10807_ERULES;
