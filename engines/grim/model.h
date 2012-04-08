@@ -143,7 +143,7 @@ public:
 
 class ModelNode {
 public:
-	ModelNode() : _initialized(false) { }
+	ModelNode() : _initialized(false), _needsUpdate(true) { }
 	~ModelNode();
 	void loadBinary(Common::SeekableReadStream *data, ModelNode *hierNodes, const Model::Geoset *g);
 	void draw() const;
@@ -181,6 +181,7 @@ public:
 	Math::Angle _animPitch, _animYaw, _animRoll;
 	bool _meshVisible, _hierVisible;
 	bool _initialized;
+	bool _needsUpdate;
 	Math::Matrix4 _matrix;
 	Math::Matrix4 _localMatrix;
 	Math::Matrix4 _pivotMatrix;

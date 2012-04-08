@@ -646,9 +646,11 @@ void Lua_V1::GetActorNodeLocation() {
 	ModelNode *allNodes = actor->getCurrentCostume()->getModelNodes();
 	ModelNode *node = allNodes + nodeId;
 
+	node->_needsUpdate = true;
 	ModelNode *root = node;
 	while (root->_parent) {
 		root = root->_parent;
+		root->_needsUpdate = true;
 	}
 
 	Math::Matrix4 matrix;

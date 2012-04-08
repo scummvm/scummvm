@@ -71,6 +71,8 @@ private:
 	float _maxPitch;
 	float _maxYaw;
 
+	ModelNode *_rootNode;
+
 	// Specifies the three head joint bones of this character.
 	// These joint bones are animated by the moveHead function to make
 	// the characters face different directions.
