@@ -715,7 +715,7 @@ void ModelNode::update() {
 	if (!_initialized)
 		return;
 
-	if (_hierVisible) {
+	if (_hierVisible && _needsUpdate) {
 		Math::Vector3d animPos = _pos + _animPos;
 		Math::Angle animPitch = _pitch + _animPitch;
 		Math::Angle animYaw = _yaw + _animYaw;
@@ -737,6 +737,8 @@ void ModelNode::update() {
 			_child->setMatrix(_matrix);
 			_child->update();
 		}
+
+		_needsUpdate = false;
 	}
 
 	if (_sibling) {

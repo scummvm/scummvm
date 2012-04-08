@@ -32,6 +32,26 @@ class SaveGame;
 
 class Head {
 public:
+	class Joint {
+	public:
+		Joint();
+
+		void init(ModelNode *node);
+
+		void orientTowards(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix,
+			float maxPitch, float maxYaw, float maxRoll, float constrain);
+
+		void saveState(SaveGame *state) const;
+		void restoreState(SaveGame *state);
+
+	private:
+		ModelNode *_node;
+
+		Math::Angle _pitch;
+		Math::Angle _yaw;
+		Math::Angle _roll;
+	};
+
 	Head();
 
 	void setJoints(int joint1, int joint2, int joint3);
@@ -44,24 +64,22 @@ public:
 	void restoreState(SaveGame *state);
 
 private:
-	int _joint1;
-	int _joint2;
-	int _joint3;
+	int _joint1Node;
+	int _joint2Node;
+	int _joint3Node;
 	float _maxRoll;
 	float _maxPitch;
 	float _maxYaw;
+
+	ModelNode *_rootNode;
 
 	// Specifies the three head joint bones of this character.
 	// These joint bones are animated by the moveHead function to make
 	// the characters face different directions.
 	// Note that for some characters, these variables may all be equal.
-	ModelNode *_joint1Node;
-	ModelNode *_joint2Node;
-	ModelNode *_joint3Node;
-
-	Math::Angle _headPitch;
-	Math::Angle _headYaw;
-	Math::Angle _headRoll;
+	Joint _joint1;
+	Joint _joint2;
+	Joint _joint3;
 };
 
 } // end of namespace Grim
