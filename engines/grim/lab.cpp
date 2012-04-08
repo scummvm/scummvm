@@ -72,6 +72,8 @@ void Lab::parseGrimFileTable(Common::File *file) {
 	file->read(stringTable, stringTableSize);
 	file->seek(16);
 
+	int32 filesize = file->size();
+
 	for (uint32 i = 0; i < entryCount; i++) {
 		int fnameOffset = file->readUint32LE();
 		int start = file->readUint32LE();
@@ -80,6 +82,9 @@ void Lab::parseGrimFileTable(Common::File *file) {
 
 		Common::String fname = stringTable + fnameOffset;
 		fname.toLowercase();
+
+		if (start + size > filesize)
+			error("File \"%s\" past the end of lab \"%s\". Your game files may be corrupt.", fname.c_str(), _labFileName.c_str());
 
 		LabEntry *entry = new LabEntry(fname, start, size, this);
 		_entries[fname] = LabEntryPtr(entry);
@@ -97,6 +102,8 @@ void Lab::parseMonkey4FileTable(Common::File *file) {
 	file->seek(stringTableOffset);
 	file->read(stringTable, stringTableSize);
 	file->seek(20);
+
+	int32 filesize = file->size();
 
 	// Decrypt the string table
 	for (uint32 i = 0; i < stringTableSize; i++)
@@ -118,6 +125,9 @@ void Lab::parseMonkey4FileTable(Common::File *file) {
 		}
 		Common::String fname = str;
 		fname.toLowercase();
+
+		if (start + size > filesize)
+			error("File \"%s\" past the end of lab \"%s\". Your game files may be corrupt.", fname.c_str(), _labFileName.c_str());
 
 		LabEntry *entry = new LabEntry(fname, start, size, this);
 		_entries[fname] = LabEntryPtr(entry);
