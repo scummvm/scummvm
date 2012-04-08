@@ -42,6 +42,10 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array122E9[i] = 0;
 		_array122FD[i] = 0;
 	}
+
+	for (int i = 0; i < 40; i++) {
+		_array10B29[i] = 1;
+	}
 }
 
 LilliputScript::~LilliputScript() {
@@ -562,8 +566,8 @@ void LilliputScript::runScript(Common::MemoryReadStream script) {
 		;
 }
 
-byte LilliputScript::compValues(byte var1, int oper, int var2) {
-	debugC(1, kDebugScript, "compValues(%d, %c, %d)", var1, oper, var2);
+byte LilliputScript::compareValues(byte var1, int oper, int var2) {
+	debugC(2, kDebugScript, "compareValues(%d, %c, %d)", var1, oper & 0xFF, var2);
 	switch (oper & 0xFF) {
 	case '<':
 		return (var1 < var2);
@@ -573,6 +577,64 @@ byte LilliputScript::compValues(byte var1, int oper, int var2) {
 		return (var1 == var2);
 		break;
 	}
+}
+
+void LilliputScript::computeOperation(byte *bufPtr, int oper, int var2) {
+	debugC(1, kDebugScript, "computeOperation(bufPtr, %c, %d)", oper & 0xFF, var2 & 0xFF);
+
+	switch (oper & 0xFF) {
+	case '=':
+		bufPtr[0] = var2 & 0xFF;
+		break;
+	case '+': {
+		int tmpVal = bufPtr[0] + var2;
+		if (tmpVal > 0xFF)
+			bufPtr[0] = 0xFF;
+		else
+			bufPtr[0] = (byte)tmpVal;
+		}
+		break;
+	case '-': {
+		int tmpVal = bufPtr[0] - var2;
+		if (tmpVal < 0)
+			bufPtr[0] = 0;
+		else
+			bufPtr[0] = (byte)tmpVal;
+		}
+		break;
+	case '*': {
+		int tmpVal = bufPtr[0] * var2;
+		bufPtr[0] = tmpVal & 0xFF;
+		}
+		break;
+	case '/': {
+		if (var2 != 0)
+			bufPtr[0] /= var2;
+		}
+		break;
+	default: {
+		warning("computeOperation : oper %d", oper);
+		if (var2 != 0) {
+			byte tmpVal = bufPtr[0] / var2;
+			if (tmpVal < 0)
+				bufPtr[0] = 0xFF;
+			else 
+				bufPtr[0] = 0;
+		}
+		break;
+		}
+	}
+}
+
+void LilliputScript::sub1823E(byte var1, byte var2, byte *curBufPtr) {
+	debugC(1, kDebugScript, "sub1823E(%d, %d, curBufPtr)", var1, var2);
+
+	assert ((var1 >= 0) && (var1 < 40));
+	_array10B29[var1] = 0;
+	curBufPtr[0] = var2;
+	curBufPtr[1] = 0;
+	curBufPtr[2] = 0;
+	curBufPtr[3] = 0;
 }
 
 int LilliputScript::getValue1() {
@@ -640,6 +702,7 @@ int LilliputScript::getValue2() {
 }
 
 void LilliputScript::sub130B6() {
+	debugC(1, kDebugScript, "sub130B6()");
 	assert(_vm->_word12F68_ERULES <= 20);
 	for (int i = 0; i < _vm->_word12F68_ERULES; i++) {
 		if (_array122E9[i] == 3)
@@ -648,7 +711,7 @@ void LilliputScript::sub130B6() {
 }
 
 byte *LilliputScript::getBuffer215Ptr() {
-	debugC(1, kDebugScript, "getBuffer215Ptr()");
+	debugC(2, kDebugScript, "getBuffer215Ptr()");
 	int tmpVal = getValue1();
 	tmpVal *= 32;
 	tmpVal += _currScript->readUint16LE();
@@ -678,7 +741,7 @@ byte LilliputScript::OC_sub17434() {
 	uint16 oper = _currScript->readUint16LE();
 	int16 var2 = _currScript->readUint16LE();
 
-	return compValues(var1, oper, var2);
+	return compareValues(var1, oper, var2);
 }
 
 byte LilliputScript::OC_sub17468() {
@@ -699,9 +762,14 @@ byte LilliputScript::OC_compWord18776() {
 	return 0;
 }
 byte LilliputScript::OC_checkSaveFlag() {
-	warning("OC_checkSaveFlag");
+	debugC(1, kDebugScript, "OC_checkSaveFlag()");
+
+	if (_vm->_saveFlag)
+		return 1;
+
 	return 0;
 }
+
 byte LilliputScript::OC_sub174C8() {
 	warning("OC_sub174C8");
 	return 0;
@@ -892,7 +960,13 @@ void LilliputScript::OC_sub17E15() {
 	warning("OC_sub17E15");
 }
 void LilliputScript::OC_sub17B03() {
-	warning("OC_sub17B03");
+	debugC(1, kDebugScript, "OC_sub17B03()");
+
+	byte *bufPtr = getBuffer215Ptr();
+	int oper = _currScript->readUint16LE();
+	int var2 = _currScript->readUint16LE();
+
+	computeOperation(bufPtr, oper, var2);
 }
 void LilliputScript::OC_getRandom_type2() {
 	warning("OC_getRandom_type2");
@@ -1106,8 +1180,14 @@ void LilliputScript::OC_sub18367() {
 	warning("OC_sub18367");
 }
 void LilliputScript::OC_sub17D04() {
-	warning("OC_sub17D04");
+	debugC(1, kDebugScript, "OC_sub17D04()");
+
+	byte var1 = getValue1();
+	byte var2 = _currScript->readUint16LE() & 0xFF;
+	
+	sub1823E(var1, var2, &_vm->_rulesBuffer2_15[var1]);
 }
+
 void LilliputScript::OC_sub18387() {
 	warning("OC_sub18387");
 }
