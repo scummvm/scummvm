@@ -1591,7 +1591,7 @@ void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, CoordTy
 	while (_croppedMovie.isRunning() && !_vm->shouldQuit()) {
 		_vm->processShell();
 		InputDevice.getInput(input, interruptionFilter);
-		if (input.anyInput() || _vm->shouldQuit()) // TODO: Save/Load request
+		if (input.anyInput() || _vm->saveRequested() || _vm->loadRequested() || _vm->shouldQuit())
 			break;
 		_vm->_system->delayMillis(10);
 	}

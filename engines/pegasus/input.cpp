@@ -41,8 +41,6 @@ InputDeviceManager::InputDeviceManager() {
 }
 
 void InputDeviceManager::getInput(Input &input, const InputBits filter) {
-	// TODO: Save/Load keys
-
 	InputBits currentBits = 0;
 	bool consoleRequested = false;
 	bool altDown = false;
@@ -101,6 +99,17 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) // Console!
 					consoleRequested = true;
+				break;
+			case Common::KEYCODE_s:
+				// We support meta where available and control elsewhere
+				if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
+					((PegasusEngine *)g_engine)->requestSave();
+				break;
+			case Common::KEYCODE_o: // o for open (original)
+			case Common::KEYCODE_l: // l for load (ScummVM terminology)
+				// We support meta where available and control elsewhere
+				if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
+					((PegasusEngine *)g_engine)->requestLoad();
 				break;
 			default:
 				break;

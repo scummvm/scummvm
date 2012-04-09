@@ -189,6 +189,10 @@ public:
 		_loadAllowed = allow;
 		return old;
 	}
+	void requestSave() { _saveRequested = true; }
+	bool saveRequested() const { return _saveRequested; }
+	void requestLoad() { _loadRequested = true; }
+	bool loadRequested() const { return _loadRequested; }
 
 protected:
 	Common::Error run();
@@ -243,6 +247,7 @@ private:
 	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
 	Common::Error showLoadDialog();
 	Common::Error showSaveDialog();
+	bool _saveRequested, _loadRequested;
 
 	// Misc.
 	Hotspot _returnHotspot;

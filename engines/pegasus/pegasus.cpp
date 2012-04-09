@@ -78,6 +78,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 		_smallInfoMovie(kNoDisplayElement) {
 	_continuePoint = 0;
 	_saveAllowed = _loadAllowed = true;
+	_saveRequested = _loadRequested = false;
 	_gameMenu = 0;
 	_deathReason = kDeathStranded;
 	_neighborhood = 0;
@@ -891,8 +892,55 @@ void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 		_console->onFrame();
 	}
 
-	// TODO: Save request
-	// TODO: Load request
+	// Handle save requests here
+	if (_saveRequested && _saveAllowed) {
+		_saveRequested = false;
+
+		// Can only save during a game and not in the demo
+		if (g_neighborhood && !isDemo()) {
+			pauseEngine(true);
+			showSaveDialog();
+			pauseEngine(false);
+		}
+	}
+
+	// Handle load requests here
+	if (_loadRequested && _loadAllowed) {
+		_loadRequested = false;
+
+		// WORKAROUND: Do not entertain load requests when the pause menu is up
+		// The original did and the game entered a bad state after loading.
+		// It's theoretically possible to make it so it does work while the
+		// pause menu is up, but the pause state of the engine is just too weird.
+		// Just use the pause menu's restore button since it's there for that
+		// for you to load anyway.
+		if (!isDemo() && !(_gameMenu && _gameMenu->getObjectID() == kPauseMenuID)) {
+			pauseEngine(true);
+
+			if (g_neighborhood) {
+				makeContinuePoint();
+
+				Common::Error result = showLoadDialog();
+				if (result.getCode() != Common::kNoError && result.getCode() != Common::kUserCanceled)
+					loadFromContinuePoint();
+			} else {
+				if (_introTimer)
+					_introTimer->stopFuse();
+
+				Common::Error result = showLoadDialog();
+				if (result.getCode() != Common::kNoError) {
+					if (!_gameMenu) {
+						useMenu(new MainMenu());
+						((MainMenu *)_gameMenu)->startMainMenuLoop();
+					}
+
+					resetIntroTimer();
+				}
+			}
+
+			pauseEngine(false);
+		}
+	}
 }
 
 void PegasusEngine::doInterfaceOverview() {
@@ -1008,7 +1056,7 @@ void PegasusEngine::doInterfaceOverview() {
 	for (;;) {
 		InputDevice.getInput(input, kFilterAllInput);
 
-		if (input.anyInput() || shouldQuit()) // TODO: Check for save/load requests too
+		if (input.anyInput() || shouldQuit() || _loadRequested || _saveRequested)
 			break;
 
 		input.getInputLocation(cursorLoc);
@@ -1055,7 +1103,8 @@ void PegasusEngine::doInterfaceOverview() {
 	((MainMenu *)_gameMenu)->startMainMenuLoop();
 	_gfx->doFadeInSync();
 
-	// TODO: Cancel save/load requests?
+	_saveRequested = false;
+	_loadRequested = false;
 }
 
 void PegasusEngine::showTempScreen(const Common::String &fileName) {
@@ -1223,7 +1272,7 @@ bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x
 
 		Input input;
 		InputDevice.getInput(input, kFilterAllInput);
-		if (input.anyInput())
+		if (input.anyInput() || _saveRequested || _loadRequested)
 			skipped = true;
 
 		_system->delayMillis(10);

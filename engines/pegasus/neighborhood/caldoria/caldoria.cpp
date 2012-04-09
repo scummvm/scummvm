@@ -223,7 +223,7 @@ void Caldoria::start() {
 			}
 
 			InputDevice.getInput(input, kPullbackInterruptFilter);
-			if (input.anyInput()) { // TODO: Save/Quit requests
+			if (input.anyInput() || _vm->saveRequested() || _vm->loadRequested()) {
 				skipped = true;
 				break;
 			}

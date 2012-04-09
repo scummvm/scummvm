@@ -309,7 +309,7 @@ bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::String &mo
 		Input input;
 		InputDevice.getInput(input, interruptFilter);
 
-		if (input.anyInput() || vm->shouldQuit()) {
+		if (input.anyInput() || vm->shouldQuit() || vm->saveRequested() || vm->loadRequested()) {
 			result = false;
 			break;
 		}
