@@ -113,7 +113,8 @@ public:
 		LINK_PLUGIN(DMEDIA)
 		#endif
 		#if defined(__amigaos4__)
-		LINK_PLUGIN(CAMD)
+//ResidualVM: disabled below
+//		LINK_PLUGIN(CAMD)
 		#endif
 		#if defined(MACOSX)
 		LINK_PLUGIN(COREAUDIO)
