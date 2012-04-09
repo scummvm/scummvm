@@ -1307,30 +1307,26 @@ void LilliputScript::OC_sub184F5() {
 	_vm->_word12D3D = 0;
 	_vm->_word12D3F = 0;
 	//
-	_vm->_mouse_byte1299A = 0;
+	_vm->_mouseButton = 0;
 	_vm->_byte16F09 = 0;
-
-	// TODO: Remove when the sound and the events are hooked
-//	_vm->_mouse_byte1299A = 1;
-	//
 
 	for (;;) {
 		sub185B4_display();
-
+		_vm->getMouseEvent();
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
 			_vm->_byte16F09 = _vm->_keyboard_getch();
 			_vm->_keyboard_getch();
 			break;
 		}
 		
-		if (_vm->_mouse_byte1299A == 1)
+		if (_vm->_mouseButton & 1)
 			break;
 		
 		if ((_vm->_byte184F4 != 0) && (_vm->_sound_byte16F06 == 0))
 			break;
 	}
 	
-	_vm->_mouse_byte1299A = 0;
+	_vm->_mouseButton = 0;
 }
 
 void LilliputScript::OC_sub1853B() {

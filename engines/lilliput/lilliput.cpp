@@ -111,6 +111,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 	_console = new LilliputConsole(this);
 	_rnd = 0;
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseButton = 0;
 	_scriptHandler = new LilliputScript(this);
 
 	_byte1714E = 0;
@@ -151,6 +154,18 @@ GameType LilliputEngine::getGameType() const {
 
 Common::Platform LilliputEngine::getPlatform() const {
 	return _platform;
+}
+
+void LilliputEngine::getMouseEvent() {
+	Common::EventManager *_event = _system->getEventManager();
+
+	Common::Event event;
+	while (_event->pollEvent(event) && !_shouldQuit)
+		;
+
+	_mouseX = _event->getMousePos().x;
+	_mouseY = _event->getMousePos().y;
+	_mouseButton = _event->getButtonState();
 }
 
 byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
@@ -445,6 +460,7 @@ void LilliputEngine::initialize() {
 
 	_rnd = new Common::RandomSource("robin");
 	_rnd->setSeed(42);                              // Kick random number generator
+	_shouldQuit = false;
 
 	for (int i = 0; i < 4; i++) {
 		_arr18560[i]._field0 = 0;

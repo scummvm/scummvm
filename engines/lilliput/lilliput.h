@@ -176,12 +176,19 @@ public:
 	Common::String getSavegameFilename(int slot);
 	void syncSoundSettings();
 
+	int _mouseX;
+	int _mouseY;
+	int _mouseButton;
+
+	void getMouseEvent();
+
 	// Temporary stubs
-	byte _mouse_byte1299A;
 	byte _mouse_savedMousePosDivided;
 	byte _keyboard_getch();
 
 protected:
+	Common::EventManager *_eventMan;
+	bool _shouldQuit;
 
 	// Engine APIs
 	Common::Error run();
