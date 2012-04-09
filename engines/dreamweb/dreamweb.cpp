@@ -63,6 +63,20 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_channel1 = 0;
 
 	_datafilePrefix = "DREAMWEB.";
+	// ES and FR CD release use a different data file prefix
+	if (isCD()) {
+		switch(getLanguage()) {
+		case Common::ES_ESP:
+			_datafilePrefix = "DREAMWSP.";
+			break;
+		case Common::FR_FRA:
+			_datafilePrefix = "DREAMWFR.";
+			break;
+		default:
+			// Nothing to do
+			break;
+		}
+	}
 
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
@@ -529,6 +543,33 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	default:
 		return c;
 	}
+}
+	
+Common::String DreamWebEngine::modifyFileName(const char* name) {
+	Common::String fileName(name);
+	
+	// Sanity check
+	if (!fileName.hasPrefix("DREAMWEB"))
+		return fileName;
+
+	// CD ES and FR release use a different file name
+	if (isCD()) {
+		switch(getLanguage()) {
+		case Common::ES_ESP:
+			fileName.setChar('S', 6);
+			fileName.setChar('P', 7);
+			break;
+		case Common::FR_FRA:
+			fileName.setChar('F', 6);
+			fileName.setChar('R', 7);
+			break;
+		default:
+			// Nothing to do
+			break;
+		}
+	}
+	
+	return fileName;
 }
 
 bool DreamWebEngine::hasSpeech() {

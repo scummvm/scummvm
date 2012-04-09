@@ -2090,8 +2090,8 @@ void DreamWebEngine::getRidOfAll() {
 void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	processEvents();
 	Common::File file;
-	if (!file.open(room.name))
-		error("cannot open file %s", room.name);
+	if (!file.open(modifyFileName(room.name)))
+		error("cannot open file %s", modifyFileName(room.name).c_str());
 
 	FileHeader header;
 	file.read((uint8 *)&header, sizeof(FileHeader));
@@ -2176,8 +2176,8 @@ void DreamWebEngine::restoreReels() {
 
 	processEvents();
 	Common::File file;
-	if (!file.open(room.name))
-		error("cannot open file %s", room.name);
+	if (!file.open(modifyFileName(room.name)))
+		error("cannot open file %s", modifyFileName(room.name).c_str());
 
 	FileHeader header;
 	file.read((uint8 *)&header, sizeof(FileHeader));
