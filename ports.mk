@@ -291,6 +291,26 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 	cp $(DIST_FILES_DOCS) $(AOS4PATH)
 
+# Special target to cross create an AmigaOS snapshot installation
+aos4dist-cross: $(EXECUTABLE)
+        mkdir -p ResidualVM
+        $(STRIP) $(EXECUTABLE) -o ResidualVM/ResidualVM
+        cp icons/residualvm.info ResidualVM/ResidualVM.info
+        cp $(DIST_FILES_THEMES) ResidualVM
+ifdef DIST_FILES_ENGINEDATA
+        cp $(DIST_FILES_ENGINEDATA) ResidualVM
+endif
+        cp $(srcdir)/AUTHORS ResidualVM/AUTHORS.txt
+        cp $(srcdir)/COPYING ResidualVM/COPYING.txt
+        cp $(srcdir)/COPYING.BSD ResidualVM/COPYING.BSD.txt
+        cp $(srcdir)/COPYING.LGPL ResidualVM/COPYING.LGPL.txt
+        cp $(srcdir)/COPYING.FREEFONT ResidualVM/COPYING.FREEFONT.txt
+        cp $(srcdir)/COPYRIGHT ResidualVM/COPYRIGHT.txt
+        cp $(srcdir)/NEWS ResidualVM/NEWS.txt
+        cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
+        cp $(srcdir)/README ResidualVM/README.txt
+        lha a residualvm-amigaos4.lha ResidualVM
+
 #
 # PlayStation 3 specific
 #
