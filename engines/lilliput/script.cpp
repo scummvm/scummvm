@@ -1282,6 +1282,7 @@ void LilliputScript::OC_sub1847F() {
 	}
 
 }
+
 void LilliputScript::OC_displayVGAFile() {
 	debugC(1, kDebugScript, "OC_displayVGAFile()");
 
@@ -1291,7 +1292,7 @@ void LilliputScript::OC_displayVGAFile() {
 	int index = _vm->_rulesChunk3[curWord];
 	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
 	_word1881B = -1;
-	warning("TODO: guess_displayFunction_VGAFile(%s)", fileName.c_str());
+	_vm->displayVGAFile(fileName);
 	warning("TODO: unkPaletteFunction_2");
 }
 void LilliputScript::OC_sub184D7() {
@@ -1310,7 +1311,7 @@ void LilliputScript::OC_sub184F5() {
 	_vm->_byte16F09 = 0;
 
 	// TODO: Remove when the sound and the events are hooked
-	_vm->_mouse_byte1299A = 1;
+//	_vm->_mouse_byte1299A = 1;
 	//
 
 	for (;;) {

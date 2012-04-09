@@ -163,6 +163,7 @@ public:
 	byte *loadRaw(Common::String filename);
 	void loadRules();
 
+	void displayVGAFile(Common::String fileName);
 	void initPalette();
 	void fixPaletteEntries(uint8 *palette, int num);
 

@@ -378,6 +378,17 @@ void LilliputEngine::loadRules() {
 	// Skipped: Load Savegame
 }
 
+void LilliputEngine::displayVGAFile(Common::String fileName) {
+	warning("TODO: display function #4");
+
+	byte *buffer = loadVGA(fileName, true);
+	memcpy(_mainSurface->getPixels(), buffer, 320*200);
+	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
+	_system->updateScreen();
+
+	warning("TODO: display function #5");
+}
+
 void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
 	// Color values are coded on 6bits ( for old 6bits DAC )
 	for (int32 i = 0; i < num * 3; i++) {
