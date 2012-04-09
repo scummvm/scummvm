@@ -41,14 +41,18 @@ private:
 
 	byte _byte16F05_ScriptHandler;
 	byte _byte12A09;
+	byte _byte12A04;
 	byte _byte129A0;
 	byte _byte16F08;
 	byte _byte15FFA;
+	byte _byte1855D;
+	byte _byte10806;
 
 	byte *_savedBuffer215Ptr;
 	byte _array122E9[20];
 	byte _array122FD[20];
 	byte _array10B29[40];
+	byte _array128EF[40];
 
 	int16 _word1881B;
 	int16 _word16F00;
@@ -56,11 +60,16 @@ private:
 	int16 _word10804;
 	int16 _word15FFB;
 	int16 _word15FFD;
+	int16 _word12A00;
+	int16 _word12A02;
+	int16 _word1855E;
 
 	int handleOpcode(Common::MemoryReadStream *script);
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 
+	void sub185ED(byte index, byte subIndex);
+	void sub185B4_display();
 	void sub1823E(byte var1, byte var2, byte *curBufPtr);
 
 	int getValue1();
