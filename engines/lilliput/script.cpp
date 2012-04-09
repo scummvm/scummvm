@@ -29,12 +29,18 @@ namespace Lilliput {
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
 	_byte129A0 = 0xFF;
 	_byte16F08 = 0;
+	_byte1855D = 0;
+	_byte12A04 = 0;
+	_byte10806 = 0;
 
+	_word1855E = 0;
 	_word16F00 = -1;
 	_word10802 = -1;
 	_word10804 = 0;
 	_word15FFB = 0;
 	_word15FFD = 0;
+	_word12A00 = 0;
+	_word12A02 = 0;
 
 	_savedBuffer215Ptr = NULL;
 
@@ -45,6 +51,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 
 	for (int i = 0; i < 40; i++) {
 		_array10B29[i] = 1;
+		_array128EF[i] = 15;
 	}
 }
 
@@ -530,7 +537,7 @@ int LilliputScript::handleOpcode(Common::MemoryReadStream *script) {
 	_currScript = script;
 	uint16 curWord = _currScript->readUint16LE();
 	if (curWord == 0xFFF6)
-		return -1;
+		return 0xFF;
 
 	for (; curWord != 0xFFF8; curWord = _currScript->readUint16LE()) {
 		byte mask = 0; 
@@ -564,6 +571,14 @@ void LilliputScript::runScript(Common::MemoryReadStream script) {
 	
 	while (handleOpcode(&script) != 0xFF)
 		;
+}
+
+void LilliputScript::sub185ED(byte index, byte subIndex) {
+	debugC(2, kDebugScript, "sub185ED");
+	if (_vm->_arr18560[index]._field0 != 1)
+		return;
+
+	warning("TODO: display function #1");
 }
 
 byte LilliputScript::compareValues(byte var1, int oper, int var2) {
@@ -626,6 +641,27 @@ void LilliputScript::computeOperation(byte *bufPtr, int oper, int var2) {
 	}
 }
 
+void LilliputScript::sub185B4_display() {
+	if (_byte12A04 == _byte1855D)
+		return;
+
+	_byte1855D = _byte12A04;
+	
+	assert(_word1855E < 8);
+	int subIndex = _word1855E;
+	sub185ED(0, subIndex);
+	sub185ED(1, subIndex);
+	sub185ED(2, subIndex);
+	sub185ED(3, subIndex);
+
+	// In the original, increment by 2 as it's an array of words
+	++subIndex;
+	if (subIndex == 8)
+		subIndex = 0;
+
+	_word1855E = subIndex;
+}
+
 void LilliputScript::sub1823E(byte var1, byte var2, byte *curBufPtr) {
 	debugC(1, kDebugScript, "sub1823E(%d, %d, curBufPtr)", var1, var2);
 
@@ -638,7 +674,7 @@ void LilliputScript::sub1823E(byte var1, byte var2, byte *curBufPtr) {
 }
 
 int LilliputScript::getValue1() {
-	debugC(1, kDebugScript, "getValue1()");
+	debugC(2, kDebugScript, "getValue1()");
 	int curWord = _currScript->readUint16LE();
 	if (curWord < 1000)
 		return curWord;
@@ -661,7 +697,8 @@ int LilliputScript::getValue1() {
 }
 
 int LilliputScript::getValue2() {
-	debugC(1, kDebugScript, "getValue2()");
+	debugC(2, kDebugScript, "getValue2()");
+
 	int curWord = _currScript->readUint16LE();
 	int tmpVal = curWord >> 8;
 	switch(tmpVal) {
@@ -1182,6 +1219,7 @@ void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
 	int curWord = _currScript->readUint16LE();
 	assert((curWord >= 0) && (curWord <= 9));
 	Common::String fileName = Common::String::format("CUBES%d.GFX", curWord);
+	_byte10806 = curWord + 0x30;
 	warning("TODO: load %s then display things", fileName.c_str());
 }
 
@@ -1271,12 +1309,12 @@ void LilliputScript::OC_sub184F5() {
 	_vm->_mouse_byte1299A = 0;
 	_vm->_byte16F09 = 0;
 
-	// TODO: Remove when the sound is hooked
-	_vm->_sound_byte16F06 = 0;
+	// TODO: Remove when the sound and the events are hooked
+	_vm->_mouse_byte1299A = 1;
 	//
 
 	for (;;) {
-		warning("TODO: display function sub_185B4();");
+		sub185B4_display();
 
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
 			_vm->_byte16F09 = _vm->_keyboard_getch();
@@ -1310,6 +1348,7 @@ void LilliputScript::OC_sub1853B() {
 void LilliputScript::OC_sub1864D() {
 	warning("OC_sub1864D");
 }
+
 void LilliputScript::OC_initArr18560() {
 	debugC(1, kDebugScript, "OC_initArr18560()");
 
@@ -1318,9 +1357,11 @@ void LilliputScript::OC_initArr18560() {
 	_vm->_arr18560[curWord]._field0 = 1;
 	_vm->_arr18560[curWord]._field1 = _currScript->readUint16LE();
 	_vm->_arr18560[curWord]._field3 = _currScript->readUint16LE();
+
 	for (int i = 0; i < 8; i++)
 		_vm->_arr18560[curWord]._field5[i] = _currScript->readUint16LE();
 }
+
 void LilliputScript::OC_sub18678() {
 	debugC(1, kDebugScript, "OC_initArr18578()");
 	_savedBuffer215Ptr = getBuffer215Ptr();
@@ -1346,32 +1387,55 @@ void LilliputScript::OC_sub1870A_snd() {
 	debugC(1, kDebugScript, "OC_sub1870A_snd()");
 
 	int var3 = getValue2();
-	// TODO: int var2 = ...
+	int var4 = var3;
+	int var2 = (_word12A00 << 8) + _word12A02;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
-	warning("TODO: call sound function #2");
+	warning("TODO: ovlContentOVL Function 2");
 }
 
 void LilliputScript::OC_sub18725_snd() {
-	warning("OC_sub18725_snd");
+	debugC(1, kDebugScript, "OC_sub18725_snd()");
+
+	int var4 = getValue1() | 0xFF00;
+	warning("TODO: ovlContentOVL Function 3");
 }
+
 void LilliputScript::OC_sub18733_snd() {
-	warning("OC_sub18733_snd");
+	debugC(1, kDebugScript, "OC_sub18733_snd()");
+
+	int var4 = getValue2();
+	warning("TODO: ovlContentOVL Function 3");
 }
+
 void LilliputScript::OC_sub1873F_snd() {
-	warning("OC_sub1873F_snd");
+	debugC(1, kDebugScript, "OC_sub1873F_snd()");
+
+	warning("TODO: ovlContentOVL Function 4");
 }
+
 void LilliputScript::OC_sub18746_snd() {
 	debugC(1, kDebugScript, "OC_sub18746_snd()");
 
-	int curWord = _currScript->readUint16LE();
-	curWord = (2 << 8) + (curWord & 0xFF);
-	warning("TODO: ovlContentOVL Function 2, init DX and BX");
+	int var4 = -1;
+	int var2 = (_word12A00 << 8) + _word12A02;
+	int var1 = _currScript->readUint16LE() & 0xFF;
+	warning("TODO: ovlContentOVL Function 2");
 }
+
 void LilliputScript::OC_sub1875D_snd() {
 	debugC(1, kDebugScript, "OC_sub1875D_snd()");
+
 	warning("TODO: ovlContentOVL Function 6");
 }
+
 void LilliputScript::OC_sub18764() {
-	warning("OC_sub18764");
+	debugC(1, kDebugScript, "OC_sub18764()");
+
+	int index = getValue1();
+	int var1 = _currScript->readUint16LE();
+
+	assert(index < 40);
+	_array128EF[index] = var1 & 0xFF;
 }
+
 } // End of namespace
