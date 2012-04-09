@@ -1,4 +1,4 @@
-README for the Android port of ScummVM
+README for the Android port of ResidualVM
 --------------------------------------
 
 REQUIREMENTS
@@ -33,7 +33,7 @@ CONTROLS
     is moved relative to its current position - like on a touchpad.
 
     The port currently misses its own configuration dialog, the mode can
-    be toggled with the "Mixed AdLib/MIDI mode" on the MIDI tab in ScummVM's
+    be toggled with the "Mixed AdLib/MIDI mode" on the MIDI tab in ResidualVM's
     own option dialog.
 
     Tap + movement: Mouse movement
@@ -50,6 +50,6 @@ CONTROLS
   System keys
 
     Back button: Escape
-    Menu button: ScummVM menu
+    Menu button: ResidualVM menu
     Menu button held for 0.5s: Toggle virtual keyboard
     Camera or Search button: Right mouse button click

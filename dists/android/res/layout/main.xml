@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<org.scummvm.scummvm.EditableSurfaceView
+<org.residualvm.residualvm.EditableSurfaceView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/main_surface"
 	android:layout_width="fill_parent"
