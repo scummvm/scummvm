@@ -1,14 +1,14 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE = 6
-ANDROID_PLUGIN_VERSIONCODE = 6
+ANDROID_VERSIONCODE = 1
+ANDROID_PLUGIN_VERSIONCODE = 1
 
 JAVA_FILES = \
-	ScummVM.java \
-	ScummVMEvents.java \
-	ScummVMApplication.java \
-	ScummVMActivity.java \
+	ResidualVM.java \
+	ResidualVMEvents.java \
+	ResidualVMApplication.java \
+	ResidualVMActivity.java \
 	EditableSurfaceView.java \
 	Unpacker.java
 
@@ -29,12 +29,12 @@ RESOURCES = \
 	$(PATH_RESOURCES)/layout/main.xml \
 	$(PATH_RESOURCES)/layout/splash.xml \
 	$(PATH_RESOURCES)/drawable/gradient.xml \
-	$(PATH_RESOURCES)/drawable/scummvm.png \
-	$(PATH_RESOURCES)/drawable/scummvm_big.png
+	$(PATH_RESOURCES)/drawable/residualvm.png \
+	$(PATH_RESOURCES)/drawable/residualvm_big.png
 
 PLUGIN_RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
-	$(PATH_RESOURCES)/drawable/scummvm.png
+	$(PATH_RESOURCES)/drawable/residualvm.png
 
 # FIXME: find/mark plugin entry points and add all this back again:
 #LDFLAGS += -Wl,--gc-sections
@@ -63,7 +63,7 @@ PATH_BUILD_CLASSES_PLUGIN_TOP = $(PATH_BUILD)/classes.plugin
 PATH_STAGE_PREFIX = build.stage
 PATH_STAGE_MAIN = $(PATH_STAGE_PREFIX).main
 
-PATH_REL = org/scummvm/scummvm
+PATH_REL = org/residualvm/residualvm
 PATH_SRC_TOP = $(srcdir)/backends/platform/android
 PATH_SRC = $(PATH_SRC_TOP)/$(PATH_REL)
 
@@ -85,8 +85,8 @@ CLASSES_MAIN = $(addprefix $(PATH_CLASSES_MAIN)/, $(JAVA_FILES:%.java=%.class))
 CLASSES_GEN = $(addprefix $(PATH_CLASSES_MAIN)/, $(JAVA_FILES_GEN:%.java=%.class))
 CLASSES_PLUGIN = $(addprefix $(PATH_CLASSES_PLUGIN)/, $(JAVA_FILES_PLUGIN:%.java=%.class))
 
-APK_MAIN = scummvm.apk
-APK_PLUGINS = $(patsubst plugins/lib%.so, scummvm-engine-%.apk, $(PLUGINS))
+APK_MAIN = residualvm.apk
+APK_PLUGINS = $(patsubst plugins/lib%.so, residualvm-engine-%.apk, $(PLUGINS))
 
 $(FILE_MANIFEST): $(FILE_MANIFEST_SRC)
 	@$(MKDIR) -p $(@D)
@@ -123,7 +123,7 @@ $(PATH_STAGE_PREFIX).%/res/values/strings.xml: $(PATH_DIST)/mkplugin.sh $(srcdir
 	@$(MKDIR) -p $(@D)
 	$(PATH_DIST)/mkplugin.sh $(srcdir)/configure $* $(PATH_DIST)/plugin-strings.xml $(ANDROID_PLUGIN_VERSIONCODE) $@
 
-$(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png: $(PATH_RESOURCES)/drawable/scummvm.png
+$(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png: $(PATH_RESOURCES)/drawable/residualvm.png
 	@$(MKDIR) -p $(@D)
 	$(CP) $< $@
 
@@ -132,20 +132,20 @@ $(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR8) $(DIST_FIL
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(PATH_BUILD_ASSETS)/
 	$(AAPT) package -f -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR8) -F $@
 
-$(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png plugins/lib%.so $(ANDROID_JAR8)
+$(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png plugins/lib%.so $(ANDROID_JAR8)
 	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR8) -F $@
 
-# Package installer won't delete old libscummvm.so on upgrade so
+# Package installer won't delete old libresidualvm.so on upgrade so
 # replace it with a zero size file
 $(APK_MAIN): $(EXECUTABLE) $(FILE_RESOURCES_MAIN) $(FILE_DEX)
 	$(INSTALL) -d $(PATH_STAGE_MAIN)/common/lib/armeabi
-	touch $(PATH_STAGE_MAIN)/common/lib/armeabi/libscummvm.so
+	touch $(PATH_STAGE_MAIN)/common/lib/armeabi/libresidualvm.so
 	$(INSTALL) -d $(PATH_STAGE_MAIN)/common/mylib/armeabi
-	$(INSTALL) -c -m 644 libscummvm.so $(PATH_STAGE_MAIN)/common/mylib/armeabi/
-	$(STRIP) $(PATH_STAGE_MAIN)/common/mylib/armeabi/libscummvm.so
+	$(INSTALL) -c -m 644 libresidualvm.so $(PATH_STAGE_MAIN)/common/mylib/armeabi/
+	$(STRIP) $(PATH_STAGE_MAIN)/common/mylib/armeabi/libresidualvm.so
 	$(APKBUILDER) $@ -z $(FILE_RESOURCES_MAIN) -f $(FILE_DEX) -rf $(PATH_STAGE_MAIN)/common || { $(RM) $@; exit 1; }
 
-scummvm-engine-%.apk: plugins/lib%.so $(PATH_BUILD)/%/$(FILE_RESOURCES) $(FILE_DEX_PLUGIN)
+residualvm-engine-%.apk: plugins/lib%.so $(PATH_BUILD)/%/$(FILE_RESOURCES) $(FILE_DEX_PLUGIN)
 	$(INSTALL) -d $(PATH_STAGE_PREFIX).$*/apk/mylib/armeabi/
 	$(INSTALL) -c -m 644 plugins/lib$*.so $(PATH_STAGE_PREFIX).$*/apk/mylib/armeabi/
 	$(STRIP) $(PATH_STAGE_PREFIX).$*/apk/mylib/armeabi/lib$*.so
@@ -172,13 +172,13 @@ androidrelease: $(addprefix release/, $(APK_MAIN) $(APK_PLUGINS))
 
 androidtestmain: $(APK_MAIN)
 	$(ADB) install -r $(APK_MAIN)
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.residualvm.residualvm/.Unpacker
 
 androidtest: $(APK_MAIN) $(APK_PLUGINS)
 	@set -e; for apk in $^; do \
 		$(ADB) install -r $$apk; \
 	done
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.residualvm.residualvm/.Unpacker
 
 # used by buildbot!
 androiddistdebug: all

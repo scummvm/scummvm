@@ -1,4 +1,4 @@
-package org.scummvm.scummvm;
+package org.residualvm.residualvm;
 
 import android.util.Log;
 import android.content.res.AssetManager;
@@ -17,8 +17,8 @@ import javax.microedition.khronos.egl.EGLSurface;
 import java.io.File;
 import java.util.LinkedHashMap;
 
-public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
-	final protected static String LOG_TAG = "ScummVM";
+public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
+	final protected static String LOG_TAG = "ResidualVM";
 	final private AssetManager _asset_manager;
 	final private Object _sem_surface;
 
@@ -46,7 +46,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	// pause the engine and all native threads
 	final public native void setPause(boolean pause);
 	final public native void enableZoning(boolean enable);
-	// Feed an event to ScummVM.  Safe to call from other threads.
+	// Feed an event to ResidualVM.  Safe to call from other threads.
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
 										int arg4, int arg5);
 
@@ -58,7 +58,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected String[] getSysArchives();
 
-	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
+	public ResidualVM(AssetManager asset_manager, SurfaceHolder holder) {
 		_asset_manager = asset_manager;
 		_sem_surface = new Object();
 
@@ -126,7 +126,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			deinitEGL();
 			deinitAudio();
 
-			throw new RuntimeException("Error preparing the ScummVM thread", e);
+			throw new RuntimeException("Error preparing the ResidualVM thread", e);
 		}
 
 		create(_asset_manager, _egl, _egl_display,
@@ -442,8 +442,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			}
 		}
 
-		File cache_dir = ScummVMApplication.getLastCacheDir();
-		String libname = System.mapLibraryName("scummvm");
+		File cache_dir = ResidualVMApplication.getLastCacheDir();
+		String libname = System.mapLibraryName("residualvm");
 		File libpath = new File(cache_dir, libname);
 
 		System.load(libpath.getPath());

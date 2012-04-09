@@ -1,13 +1,13 @@
-package org.scummvm.scummvm;
+package org.residualvm.residualvm;
 
 import android.app.Application;
 
 import java.io.File;
 
-public class ScummVMApplication extends Application {
-	public final static String ACTION_PLUGIN_QUERY = "org.scummvm.scummvm.action.PLUGIN_QUERY";
-	public final static String EXTRA_UNPACK_LIBS = "org.scummvm.scummvm.extra.UNPACK_LIBS";
-	public final static String EXTRA_VERSION = "org.scummvm.scummvm.extra.VERSION";
+public class ResidualVMApplication extends Application {
+	public final static String ACTION_PLUGIN_QUERY = "org.residualvm.residualvm.action.PLUGIN_QUERY";
+	public final static String EXTRA_UNPACK_LIBS = "org.residualvm.residualvm.extra.UNPACK_LIBS";
+	public final static String EXTRA_VERSION = "org.residualvm.residualvm.extra.VERSION";
 
 	private static File _cache_dir;
 
@@ -19,7 +19,7 @@ public class ScummVMApplication extends Application {
 		_cache_dir = getCacheDir();
 		// This is mounted noexec :(
 		//cache_dir = new File(Environment.getExternalStorageDirectory(),
-		//				"/.ScummVM.tmp");
+		//				"/.ResidualVM.tmp");
 		// This is owned by download manager and requires special
 		// permissions to access :(
 		//cache_dir = Environment.getDownloadCacheDirectory();

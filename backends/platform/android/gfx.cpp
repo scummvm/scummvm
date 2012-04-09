@@ -506,7 +506,7 @@ void OSystem_Android::updateScreen() {
 
 		const Common::Point &mouse = getEventManager()->getMousePos();
 
-		// Scale up ScummVM -> OpenGL (pixel) coordinates
+		// Scale up ResidualVM -> OpenGL (pixel) coordinates
 		if (_show_overlay) {
 			GLCALL(glScalex(xdiv(_egl_surface_width,
 									_overlay_texture->width()),

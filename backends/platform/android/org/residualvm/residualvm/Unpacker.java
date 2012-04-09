@@ -1,4 +1,4 @@
-package org.scummvm.scummvm;
+package org.residualvm.residualvm;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,11 +35,11 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 
 public class Unpacker extends Activity {
-	protected final static String LOG_TAG = "ScummVM";
+	protected final static String LOG_TAG = "ResidualVM";
 	// TODO don't hardcode this
 	private final static boolean PLUGINS_ENABLED = false;
 	private final static String META_NEXT_ACTIVITY =
-		"org.scummvm.unpacker.nextActivity";
+		"org.residualvm.unpacker.nextActivity";
 	private ProgressBar mProgress;
 	private File mUnpackDest;  // location to unpack into
 	private AsyncTask<String, Integer, Void> mUnpacker;
@@ -239,7 +239,7 @@ public class Unpacker extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (!intent.getAction()
-				.equals(ScummVMApplication.ACTION_PLUGIN_QUERY)) {
+				.equals(ResidualVMApplication.ACTION_PLUGIN_QUERY)) {
 				Log.e(LOG_TAG,
 					  "Received unexpected action " + intent.getAction());
 				return;
@@ -253,7 +253,7 @@ public class Unpacker extends Activity {
 			}
 
 			ArrayList<String> unpack_libs =
-				extras.getStringArrayList(ScummVMApplication.EXTRA_UNPACK_LIBS);
+				extras.getStringArrayList(ResidualVMApplication.EXTRA_UNPACK_LIBS);
 
 			if (unpack_libs != null && !unpack_libs.isEmpty()) {
 				final String[] libs =
@@ -267,13 +267,13 @@ public class Unpacker extends Activity {
 		Bundle extras = new Bundle(1);
 
 		ArrayList<String> unpack_libs = new ArrayList<String>(1);
-		// This is the common ScummVM code (not really a "plugin" as such)
+		// This is the common ResidualVM code (not really a "plugin" as such)
 		unpack_libs.add(new Uri.Builder()
 						.scheme("plugin")
 						.authority(getPackageName())
-						.path("mylib/armeabi/libscummvm.so")
+						.path("mylib/armeabi/libresidualvm.so")
 						.toString());
-		extras.putStringArrayList(ScummVMApplication.EXTRA_UNPACK_LIBS,
+		extras.putStringArrayList(ResidualVMApplication.EXTRA_UNPACK_LIBS,
 								  unpack_libs);
 
 		final PackageInfo info;
@@ -283,13 +283,13 @@ public class Unpacker extends Activity {
 			Log.e(LOG_TAG, "Error finding my own info?", e);
 			return;
 		}
-		extras.putString(ScummVMApplication.EXTRA_VERSION, info.versionName);
+		extras.putString(ResidualVMApplication.EXTRA_VERSION, info.versionName);
 
-		Intent intent = new Intent(ScummVMApplication.ACTION_PLUGIN_QUERY);
+		Intent intent = new Intent(ResidualVMApplication.ACTION_PLUGIN_QUERY);
 		// Android 3.1 defaults to FLAG_EXCLUDE_STOPPED_PACKAGES, and since
 		// none of our plugins will ever be running, that is not helpful
 		intent.setFlags(FLAG_INCLUDE_STOPPED_PACKAGES);
-		sendOrderedBroadcast(intent, Manifest.permission.SCUMMVM_PLUGIN,
+		sendOrderedBroadcast(intent, Manifest.permission.RESIDUALVM_PLUGIN,
 							 new PluginBroadcastReciever(),
 							 null, RESULT_OK, null, extras);
 	}
@@ -298,7 +298,7 @@ public class Unpacker extends Activity {
 	public void onCreate(Bundle b) {
 		super.onCreate(b);
 
-		mUnpackDest = ScummVMApplication.getLastCacheDir();
+		mUnpackDest = ResidualVMApplication.getLastCacheDir();
 
 		setContentView(R.layout.splash);
 		mProgress = (ProgressBar)findViewById(R.id.progress);
@@ -309,7 +309,7 @@ public class Unpacker extends Activity {
 	}
 
 	private void tryUnpack() {
-		Intent intent = new Intent(ScummVMApplication.ACTION_PLUGIN_QUERY);
+		Intent intent = new Intent(ResidualVMApplication.ACTION_PLUGIN_QUERY);
 		List<ResolveInfo> plugins = getPackageManager()
 			.queryBroadcastReceivers(intent, 0);
 		if (PLUGINS_ENABLED && plugins.isEmpty()) {
@@ -330,7 +330,7 @@ public class Unpacker extends Activity {
 									   }
 								   });
 
-			final Uri uri = Uri.parse("market://search?q=ScummVM plugin");
+			final Uri uri = Uri.parse("market://search?q=ResidualVM plugin");
 			final Intent market_intent = new Intent(Intent.ACTION_VIEW, uri);
 			if (getPackageManager().resolveActivity(market_intent, 0) != null) {
 				alert.setPositiveButton(R.string.to_market,

@@ -1,4 +1,4 @@
-package org.scummvm.scummvm;
+package org.residualvm.residualvm;
 
 import android.content.Context;
 import android.text.InputType;

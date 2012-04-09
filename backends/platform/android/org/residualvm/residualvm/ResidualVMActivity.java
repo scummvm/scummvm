@@ -1,4 +1,4 @@
-package org.scummvm.scummvm;
+package org.residualvm.residualvm;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,9 +16,9 @@ import android.widget.Toast;
 
 import java.io.File;
 
-public class ScummVMActivity extends Activity {
+public class ResidualVMActivity extends Activity {
 
-	private class MyScummVM extends ScummVM {
+	private class MyResidualVM extends ResidualVM {
 		private boolean usingSmallScreen() {
 			// Multiple screen sizes came in with Android 1.6.  Have
 			// to use reflection in order to continue supporting 1.5
@@ -36,10 +36,10 @@ public class ScummVMActivity extends Activity {
 			}
 		}
 
-		public MyScummVM(SurfaceHolder holder) {
-			super(ScummVMActivity.this.getAssets(), holder);
+		public MyResidualVM(SurfaceHolder holder) {
+			super(ResidualVMActivity.this.getAssets(), holder);
 
-			// Enable ScummVM zoning on 'small' screens.
+			// Enable ResidualVM zoning on 'small' screens.
 			// FIXME make this optional for the user
 			// disabled for now since it crops too much
 			//enableZoning(usingSmallScreen());
@@ -57,7 +57,7 @@ public class ScummVMActivity extends Activity {
 		@Override
 		protected void displayMessageOnOSD(String msg) {
 			Log.i(LOG_TAG, "OSD: " + msg);
-			Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_LONG).show();
+			Toast.makeText(ResidualVMActivity.this, msg, Toast.LENGTH_LONG).show();
 		}
 
 		@Override
@@ -72,7 +72,7 @@ public class ScummVMActivity extends Activity {
 		@Override
 		protected String[] getPluginDirectories() {
 			String[] dirs = new String[1];
-			dirs[0] = ScummVMApplication.getLastCacheDir().getPath();
+			dirs[0] = ResidualVMApplication.getLastCacheDir().getPath();
 			return dirs;
 		}
 
@@ -92,9 +92,9 @@ public class ScummVMActivity extends Activity {
 
 	}
 
-	private MyScummVM _scummvm;
-	private ScummVMEvents _events;
-	private Thread _scummvm_thread;
+	private MyResidualVM _residualvm;
+	private ResidualVMEvents _events;
+	private Thread _residualvm_thread;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -132,7 +132,7 @@ public class ScummVMActivity extends Activity {
 
 		// Store savegames on external storage if we can, which means they're
 		// world-readable and don't get deleted on uninstall.
-		String savePath = Environment.getExternalStorageDirectory() + "/ScummVM/Saves/";
+		String savePath = Environment.getExternalStorageDirectory() + "/ResidualVM/Saves/";
 		File saveDir = new File(savePath);
 		saveDir.mkdirs();
 		if (!saveDir.isDirectory()) {
@@ -140,63 +140,63 @@ public class ScummVMActivity extends Activity {
 			savePath = getDir("saves", MODE_WORLD_READABLE).getPath();
 		}
 
-		// Start ScummVM
-		_scummvm = new MyScummVM(main_surface.getHolder());
+		// Start ResidualVM
+		_residualvm = new MyResidualVM(main_surface.getHolder());
 
-		_scummvm.setArgs(new String[] {
-			"ScummVM",
-			"--config=" + getFileStreamPath("scummvmrc").getPath(),
+		_residualvm.setArgs(new String[] {
+			"ResidualVM",
+			"--config=" + getFileStreamPath("residualvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
-			"--gui-theme=scummmodern",
+			"--gui-theme=modern",
 			"--savepath=" + savePath
 		});
 
-		_events = new ScummVMEvents(this, _scummvm);
+		_events = new ResidualVMEvents(this, _residualvm);
 
 		main_surface.setOnKeyListener(_events);
 		main_surface.setOnTouchListener(_events);
 
-		_scummvm_thread = new Thread(_scummvm, "ScummVM");
-		_scummvm_thread.start();
+		_residualvm_thread = new Thread(_residualvm, "ResidualVM");
+		_residualvm_thread.start();
 	}
 
 	@Override
 	public void onStart() {
-		Log.d(ScummVM.LOG_TAG, "onStart");
+		Log.d(ResidualVM.LOG_TAG, "onStart");
 
 		super.onStart();
 	}
 
 	@Override
 	public void onResume() {
-		Log.d(ScummVM.LOG_TAG, "onResume");
+		Log.d(ResidualVM.LOG_TAG, "onResume");
 
 		super.onResume();
 
-		if (_scummvm != null)
-			_scummvm.setPause(false);
+		if (_residualvm != null)
+			_residualvm.setPause(false);
 	}
 
 	@Override
 	public void onPause() {
-		Log.d(ScummVM.LOG_TAG, "onPause");
+		Log.d(ResidualVM.LOG_TAG, "onPause");
 
 		super.onPause();
 
-		if (_scummvm != null)
-			_scummvm.setPause(true);
+		if (_residualvm != null)
+			_residualvm.setPause(true);
 	}
 
 	@Override
 	public void onStop() {
-		Log.d(ScummVM.LOG_TAG, "onStop");
+		Log.d(ResidualVM.LOG_TAG, "onStop");
 
 		super.onStop();
 	}
 
 	@Override
 	public void onDestroy() {
-		Log.d(ScummVM.LOG_TAG, "onDestroy");
+		Log.d(ResidualVM.LOG_TAG, "onDestroy");
 
 		super.onDestroy();
 
@@ -205,12 +205,12 @@ public class ScummVMActivity extends Activity {
 
 			try {
 				// 1s timeout
-				_scummvm_thread.join(1000);
+				_residualvm_thread.join(1000);
 			} catch (InterruptedException e) {
-				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
+				Log.i(ResidualVM.LOG_TAG, "Error while joining ResidualVM thread", e);
 			}
 
-			_scummvm = null;
+			_residualvm = null;
 		}
 	}
 
