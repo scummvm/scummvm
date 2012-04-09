@@ -81,21 +81,24 @@ void Cursor::loadAvailableCursors() {
 		Graphics::BitmapDecoder bitmapDecoder;
 		if (!bitmapDecoder.loadStream(*bmpStream))
 			error("Could not decode Myst III bitmap");
-		const Graphics::Surface *surface = bitmapDecoder.getSurface();
-
+		const Graphics::Surface *surfaceBGRA = bitmapDecoder.getSurface();
+		Graphics::Surface *surfaceRGBA = surfaceBGRA->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		
 		delete bmpStream;
 
 		// Apply the colorkey for transparency
-		for (uint u = 0; u < surface->w; u++) {
-			for (uint v = 0; v < surface->h; v++) {
-				uint32 *pixel = (uint32*)(surface->getBasePtr(u, v));
+		for (uint u = 0; u < surfaceRGBA->w; u++) {
+			for (uint v = 0; v < surfaceRGBA->h; v++) {
+				uint32 *pixel = (uint32*)(surfaceRGBA->getBasePtr(u, v));
 				if (*pixel == 0xFF00FF00)
 					*pixel = 0x0000FF00;
 
 			}
 		}
 
-		availableCursors[i].texture = _vm->_gfx->createTexture(surface);
+		availableCursors[i].texture = _vm->_gfx->createTexture(surfaceRGBA);
+		surfaceRGBA->free();
+		delete surfaceRGBA;
 	}
 }
 
