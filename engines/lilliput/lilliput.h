@@ -23,10 +23,13 @@
 #ifndef LILLIPUT_LILLIPUT_H
 #define LILLIPUT_LILLIPUT_H
 
-#include "engines/engine.h"
-#include "common/file.h"
 #include "lilliput/console.h"
 #include "lilliput/script.h"
+
+#include "common/file.h"
+#include "engines/engine.h"
+#include "graphics/palette.h"
+#include "graphics/surface.h"
 
 namespace Common {
 class RandomSource;
@@ -76,6 +79,7 @@ public:
 
 	Common::RandomSource *_rnd;
 	LilliputScript *_scriptHandler;
+	Graphics::Surface *_mainSurface;
 
 	struct18560 _arr18560[4];
 	byte _byte1714E;
@@ -95,7 +99,7 @@ public:
 	byte *_bufferIsoChars;
 	byte *_bufferIdeogram;
 	byte _buffer10[4032];
-	byte _palette[768];
+	byte _curPalette[768];
 
 	bool _saveFlag;
 	
@@ -158,6 +162,9 @@ public:
 	byte *loadVGA(Common::String filename, bool loadPal);
 	byte *loadRaw(Common::String filename);
 	void loadRules();
+
+	void initPalette();
+	void fixPaletteEntries(uint8 *palette, int num);
 
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
