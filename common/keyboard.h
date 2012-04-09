@@ -224,12 +224,13 @@ enum {
 	KBD_CTRL  = 1 << 0,
 	KBD_ALT   = 1 << 1,
 	KBD_SHIFT = 1 << 2,
-	KBD_NON_STICKY = (KBD_CTRL|KBD_ALT|KBD_SHIFT),
+	KBD_META  = 1 << 3,
+	KBD_NON_STICKY = (KBD_CTRL|KBD_ALT|KBD_SHIFT|KBD_META),
 
 	// Sticky modifier flags
-	KBD_NUM   = 1 << 3,
-	KBD_CAPS  = 1 << 4,
-	KBD_SCRL  = 1 << 5,
+	KBD_NUM   = 1 << 4,
+	KBD_CAPS  = 1 << 5,
+	KBD_SCRL  = 1 << 6,
 	KBD_STICKY = (KBD_NUM|KBD_CAPS|KBD_SCRL)
 
 };
