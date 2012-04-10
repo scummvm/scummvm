@@ -220,7 +220,7 @@ byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
 			}
 		} else {
 			// Not compressed
-			int rawSize = (curByte & 0xF);
+			int rawSize = (curByte & 0xFF);
 			for (int i = 0; i < rawSize; ++i) {
 				decodeBuffer[size] = f.readByte();
 				--remainingSize;
