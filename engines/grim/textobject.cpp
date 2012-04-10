@@ -25,6 +25,7 @@
 #include "engines/grim/textobject.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/lua/lua.h"
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/color.h"
@@ -172,6 +173,13 @@ void TextObject::reposition() {
 }
 
 void TextObject::setupText() {
+	if (_font == NULL) {
+		// use lua_error her and not a regular error as this should be recoverable
+		// and it is most likly a script error, but it will still help to see the
+		// lua stack trace
+		lua_error("TextObject::setupText font null");
+	}
+
 	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), NULL);
 	Common::String message;
 
