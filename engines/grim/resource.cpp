@@ -231,19 +231,7 @@ Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filen
 	else
 		return NULL;
 
-	Common::String patchfile = filename + ".patchr";
-	if (SearchMan.hasFile(patchfile)) {
-		Debug::debug(Debug::Patchr, "Patch requested for %s", filename.c_str());
-		Patchr p;
-		p.loadPatch(SearchMan.createReadStreamForMember(patchfile));
-		bool success = p.patchFile(rs, filename);
-		if (success)
-			Debug::debug(Debug::Patchr, "%s successfully patched", filename.c_str());
-		else
-			warning("Patching of %s failed", filename.c_str());
-		rs->seek(0, SEEK_SET);
-	}
-
+	rs = wrapPatchedFile(rs, filename);
 	return rs;
 }
 
