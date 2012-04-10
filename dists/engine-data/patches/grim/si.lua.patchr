@@ -1,0 +1,13 @@
+PATCHR 1
+
+# In the function si.set_up_actors (line 848), calls "start_script(si.naranja_drinking)",
+# which doesn't exist.
+# The problem with that is that lua_error ends the function that was going on,
+# breaking si.set really badly.
+
+begin 826b0f8e65bf5818ca64a29a37e65c0a 8CC4  #Both v1.0 and v1.01
+
+#Just replace the bad call with NOP
+replace 4959 FF FF FF FF FF FF FF FF
+
+end
