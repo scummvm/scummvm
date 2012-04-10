@@ -1814,36 +1814,6 @@ static uint16 qdm2_packet_checksum(const uint8 *data, int length, int value) {
 }
 
 /**
- * Fills a QDM2SubPacket structure with packet type, size, and data pointer.
- *
- * @param gb            bitreader context
- * @param sub_packet    packet under analysis
- */
-static void qdm2_decode_sub_packet_header(Common::BitStream *gb, QDM2SubPacket *sub_packet)
-{
-	sub_packet->type = gb->getBits(8);
-
-	if (sub_packet->type == 0) {
-		sub_packet->size = 0;
-		sub_packet->data = NULL;
-	} else {
-		sub_packet->size = gb->getBits(8);
-
-		if (sub_packet->type & 0x80) {
-			sub_packet->size <<= 8;
-			sub_packet->size  |= gb->getBits(8);
-			sub_packet->type  &= 0x7f;
-		}
-
-		if (sub_packet->type == 0x7f)
-			sub_packet->type |= (gb->getBits(8) << 8);
-
-		// FIXME: Replace internal bitstream buffer usage
-		//sub_packet->data = &gb->buffer[gb->size() / 8];
-	}
-}
-
-/**
  * Return node pointer to first packet of requested type in list.
  *
  * @param list    list of subpackets to be scanned
@@ -2588,7 +2558,27 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 
 	Common::MemoryReadStream *d = new Common::MemoryReadStream(_compressedData, _packetSize*8);
 	Common::BitStream *gb = new Common::BitStream8MSB(d);
-	qdm2_decode_sub_packet_header(gb, &header);
+	//qdm2_decode_sub_packet_header
+	header.type = gb->getBits(8);
+
+	if (header.type == 0) {
+		header.size = 0;
+		header.data = NULL;
+	} else {
+		header.size = gb->getBits(8);
+
+		if (header.type & 0x80) {
+			header.size <<= 8;
+			header.size |= gb->getBits(8);
+			header.type &= 0x7f;
+		}
+
+		if (header.type == 0x7f)
+			header.type |= (gb->getBits(8) << 8);
+
+		// FIXME: Replace internal bitstream buffer usage
+		//header.data = &gb->buffer[gb->size() / 8];
+	}
 
 	if (header.type < 2 || header.type >= 8) {
 		_hasErrors = true;
@@ -2644,7 +2634,28 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 
 		// decode subpacket
 		packet = &_subPackets[i];
-		qdm2_decode_sub_packet_header(gb, packet);
+		//qdm2_decode_sub_packet_header
+		packet->type = gb->getBits(8);
+
+		if (packet->type == 0) {
+			packet->size = 0;
+			packet->data = NULL;
+		} else {
+			packet->size = gb->getBits(8);
+
+			if (packet->type & 0x80) {
+				packet->size <<= 8;
+				packet->size |= gb->getBits(8);
+				packet->type &= 0x7f;
+			}
+
+			if (packet->type == 0x7f)
+				packet->type |= (gb->getBits(8) << 8);
+
+			// FIXME: Replace internal bitstream buffer usage
+			//packet->data = &gb->buffer[gb->size() / 8];
+		}
+
 		next_index = packet->size + gb->pos() / 8;
 		sub_packet_size = ((packet->size > 0xff) ? 1 : 0) + packet->size + 2;
 
