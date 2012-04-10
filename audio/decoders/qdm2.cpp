@@ -1225,34 +1225,21 @@ void ff_mpa_synth_filter(int16 *synth_buf_ptr, int *synth_buf_offset,
  *                  = (max_vlc_length + bits - 1) / bits
  */
 static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDepth) {
-	int totalBits = 0;
-	int index;
-	int code;
-	int n;
-
-	index = s->peekBits(bits);
-	code = table[index][0];
-	n = table[index][1];
+	int index = s->getBits(bits);
+	int code = table[index][0];
+	int n = table[index][1];
 
 	if (maxDepth > 1 && n < 0) {
-		totalBits += bits;
-		s->skip(bits);
-
-		index = s->peekBits(-n) + code;
+		index = s->getBits(-n) + code;
 		code = table[index][0];
 		n = table[index][1];
 
 		if(maxDepth > 2 && n < 0) {
-			totalBits += -n;
-			s->skip(-n);
-
-			index = s->peekBits(-n) + code;
+			index = s->getBits(-n) + code;
 			code = table[index][0];
 			n = table[index][1];
 		}
 	}
-
-	s->skip(totalBits + n);
 
 	return code;
 }
