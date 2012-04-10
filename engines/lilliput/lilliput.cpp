@@ -23,11 +23,12 @@
 #include "common/system.h"
 #include "common/random.h"
 #include "common/error.h"
-#include "common/events.h"
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/events.h"
+#include "engines/util.h"
 
 #include "lilliput/lilliput.h"
 #include "engines/util.h"
@@ -156,16 +157,28 @@ Common::Platform LilliputEngine::getPlatform() const {
 	return _platform;
 }
 
-void LilliputEngine::getMouseEvent() {
-	Common::EventManager *_event = _system->getEventManager();
-
+void LilliputEngine::pollEvent() {
 	Common::Event event;
-	while (_event->pollEvent(event) && !_shouldQuit)
-		;
-
-	_mouseX = _event->getMousePos().x;
-	_mouseY = _event->getMousePos().y;
-	_mouseButton = _event->getButtonState();
+	while (_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_mouseButton |= 1;
+			break;
+		case Common::EVENT_RBUTTONUP:
+			_mouseButton |= 2;
+			break;
+		case Common::EVENT_QUIT:
+			_shouldQuit = true;
+			break;
+		// TODO: handle keyboard
+		default:
+			break;
+		}
+	}
 }
 
 byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
