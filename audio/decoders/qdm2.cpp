@@ -2636,7 +2636,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 			delete d;
 			d = new Common::MemoryReadStream(header.data, header.size*8);
 			gb = new Common::BitStream8MSB(d);
-			gb->getBits(next_index*8); // Skipping bits..
+			gb->skip(next_index*8);
 
 			if (next_index >= header.size)
 				break;
