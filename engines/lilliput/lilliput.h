@@ -105,8 +105,6 @@ public:
 	
 	int _word10800_ERULES;
 	int _word10807_ERULES;
-	int _word12D3D;
-	int _word12D3F;
 	int _word16EFA;
 
 	byte *_rulesChunk1;
@@ -180,7 +178,7 @@ public:
 	int _mouseY;
 	int _mouseButton;
 
-	void getMouseEvent();
+	void pollEvent();
 
 	// Temporary stubs
 	byte _mouse_savedMousePosDivided;

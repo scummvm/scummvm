@@ -219,7 +219,7 @@ private:
 	void OC_sub1847F();
 	void OC_displayVGAFile();
 	void OC_sub184D7();
-	void OC_sub184F5();
+	void OC_displayTitleScreen();
 	void OC_sub1853B();
 	void OC_sub1864D();
 	void OC_initArr18560();
