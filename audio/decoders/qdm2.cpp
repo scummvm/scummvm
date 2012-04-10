@@ -2576,8 +2576,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 		if (header.type == 0x7f)
 			header.type |= (gb->getBits(8) << 8);
 
-		// FIXME: Replace internal bitstream buffer usage
-		//header.data = &gb->buffer[gb->size() / 8];
+		header.data = &_compressedData[gb->pos() / 8];
 	}
 
 	if (header.type < 2 || header.type >= 8) {
@@ -2652,8 +2651,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 			if (packet->type == 0x7f)
 				packet->type |= (gb->getBits(8) << 8);
 
-			// FIXME: Replace internal bitstream buffer usage
-			//packet->data = &gb->buffer[gb->size() / 8];
+			packet->data = &header.data[gb->pos() / 8];
 		}
 
 		next_index = packet->size + gb->pos() / 8;
