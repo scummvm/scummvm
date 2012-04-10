@@ -104,6 +104,7 @@ void Cursor::show() {
 void Cursor::hide() {
 	CursorMan.showMouse(false);
 	setCurrentFrameIndex(0);
+	((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 }
 
 void Cursor::hideUntilMoved() {
