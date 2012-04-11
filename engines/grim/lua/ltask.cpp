@@ -38,13 +38,7 @@ void start_script() {
 	lua_Type type = ttype(Address(paramObj));
 
 	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO)) {
-		warning("lua: Bad argument to start_script. - lua/ltask.cpp:32");
-		// NOTE: Decomment the lua_error if you want to see the stacktrace.
-		// It is commented out because si.lua, in the function si.set_up_actors (line 848),
-		// calls "start_script(si.naranja_drinking)", which doesn't exist. The problem with
-		// that is that lua_error ends the function that was going on, breaking
-		// si.set really badly.
- 		// lua_error("Bad argument to start_script");
+		lua_error("Bad argument to start_script");
 		return;
 	}
 
