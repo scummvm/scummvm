@@ -24,6 +24,7 @@
 #define LILLIPUT_SCRIPT_H
 
 #include "common/memstream.h"
+#include "common/stack.h"
 
 namespace Lilliput {
 
@@ -41,6 +42,7 @@ private:
 	LilliputEngine *_vm;
 
 	Common::MemoryReadStream *_currScript;
+	Common::Stack<Common::MemoryReadStream *> _scriptStack;
 
 	byte _byte16F05_ScriptHandler;
 	byte _byte12A09;
@@ -56,6 +58,8 @@ private:
 	byte _array122E9[20];
 	byte _array122FD[20];
 	byte _array128EF[40];
+	byte _array10AB1[40];
+	byte _array12811[40];
 
 	int _word1881B;
 	int _word16F00;
@@ -74,6 +78,7 @@ private:
 	void sub185ED(byte index, byte subIndex);
 	void sub185B4_display();
 	void sub1823E(byte var1, byte var2, byte *curBufPtr);
+	void sub17B6C(int var1);
 
 	int getValue1();
 	int getValue2();
