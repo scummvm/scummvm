@@ -32,6 +32,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_byte1855D = 0;
 	_byte12A04 = 0;
 	_byte10806 = 0;
+	_byte12FE4 = 0xFF;
 
 	_word1855E = 0;
 	_word16F00 = -1;
@@ -573,6 +574,15 @@ void LilliputScript::runScript(Common::MemoryReadStream script) {
 		;
 }
 
+void LilliputScript::runMenuScript(Common::MemoryReadStream script) {
+	debugC(1, kDebugScript, "runMenuScript");
+	warning("========================== Menu Script ==============================");
+	_byte16F05_ScriptHandler = 0;
+	
+	while (handleOpcode(&script) == 0)
+		;
+}
+
 void LilliputScript::sub185ED(byte index, byte subIndex) {
 	debugC(2, kDebugScript, "sub185ED");
 	if (_vm->_arr18560[index]._field0 != 1)
@@ -746,7 +756,7 @@ int LilliputScript::getValue2() {
 		return (var1 << 8) + var2;
 		}
 	case 0xF6:
-		return _vm->_mouse_savedMousePosDivided;
+		return _vm->_savedMousePosDivided;
 	default:
 		warning("getValue2 - 0x%x - High value %d", tmpVal, curWord);
 		return curWord;
@@ -899,7 +909,16 @@ byte LilliputScript::OC_sub17812() {
 	return 0;
 }
 byte LilliputScript::OC_sub17825() {
-	warning("OC_sub17825");
+	debugC(1, kDebugScript, "OC_sub17825()");
+
+	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
+	
+	if ((_vm->_byte16F07_menuId != 1) && (_vm->_byte16F07_menuId != 3))
+		return 0;
+
+	if (tmpVal == _byte12FE4)
+		return 1;
+
 	return 0;
 }
 byte LilliputScript::OC_sub17844() {

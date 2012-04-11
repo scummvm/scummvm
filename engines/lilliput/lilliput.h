@@ -124,14 +124,15 @@ public:
 	byte _rulesBuffer2_13[40];
 	byte _rulesBuffer2_14[40];
 	byte _rulesBuffer2_15[40 * 32];
+	byte *_ptr_rulesBuffer2_15;
 	byte _rulesBuffer2_16[40 * 32];
 	int *_rulesChunk3;
 	int _rulesChunk3_size;
 	byte *_rulesChunk4;
-	byte *_rulesScript;
-	int _rulesScript_size;
-	int *_rulesChunk6;
-	int _rulesChunk6_size;
+	byte *_initScript;
+	int _initScript_size;
+	byte *_menuScript;
+	int _menuScript_size;
 	int *_rulesChunk7;
 	int _rulesChunk7_size;
 	byte *_rulesChunk8;
@@ -177,11 +178,19 @@ public:
 	int _mouseX;
 	int _mouseY;
 	int _mouseButton;
+	int _savedMousePosDivided;
+
+	byte _byte16F07_menuId;
+	byte _byte12FCE;
+	byte _byte129A0;
+	int _word10804;
 
 	void pollEvent();
+	void sub170EE(int index);
+	void sub130DD();
+	void sub17083();
 
 	// Temporary stubs
-	byte _mouse_savedMousePosDivided;
 	byte _keyboard_getch();
 
 protected:
@@ -190,6 +199,7 @@ protected:
 
 	// Engine APIs
 	Common::Error run();
+	void handleMenu();
 
 private:
 	static LilliputEngine *s_Engine;
