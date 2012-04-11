@@ -42,6 +42,22 @@ static const PlainGameDescriptor grimGames[] = {
 	{0, 0}
 };
 
+#define GAMEOPTION_LOAD_DATAUSR GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap gameGuiOptions[] = {
+	{
+		GAMEOPTION_LOAD_DATAUSR,
+		{
+			"Load user patch (unsupported)",
+			"Load an user patch. Please note that the ResidualVM-team doesn't provide support for using such patches.",
+			"datausr_load",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 static const GrimGameDescription gameDescriptions[] = {
 	{
 		// Grim Fandango English version (patched)
@@ -52,7 +68,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -65,7 +81,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -78,7 +94,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -91,7 +107,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -104,7 +120,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -117,7 +133,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -130,7 +146,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -143,7 +159,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -156,7 +172,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -169,7 +185,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -182,7 +198,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -195,7 +211,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::PT_BRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -208,7 +224,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO_NONE
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM
 	},
@@ -394,7 +410,7 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 
 class GrimMetaEngine : public AdvancedMetaEngine {
 public:
-	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames) {
+	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
 		_singleid = "grim";
 		_guioptions = GUIO_NOMIDI;
 	}
