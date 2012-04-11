@@ -67,7 +67,6 @@ public:
 	Skeleton *loadSkeleton(const Common::String &fname);
 	AnimationEmi *loadAnimationEmi(const Common::String &filename);
 	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false) const;
-	void uncache(const char *fname) const;
 
 	ModelPtr getModel(const Common::String &fname, CMap *c);
 	CMapPtr getColormap(const Common::String &fname);
@@ -89,6 +88,7 @@ private:
 	Common::SeekableReadStream *getFileFromCache(const Common::String &filename) const;
 	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename) const;
 	void putIntoCache(const Common::String &fname, byte *res, uint32 len) const;
+	void uncache(const char *fname) const;
 
 	mutable Common::Array<ResourceCache> _cache;
 	mutable bool _cacheDirty;
