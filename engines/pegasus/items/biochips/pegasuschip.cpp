@@ -155,7 +155,17 @@ void PegasusChip::clickInPegasusHotspot() {
 		break;
 	}
 
-	setItemState(hiliteState);
+	// WORKAROUND: The original called setItemState() here. However,
+	// since we're overriding select() to call setUpPegasusChip(),
+	// the highlighted frame is never displayed! So, we're manually
+	// setting the state and selecting the item. Also of note is that
+	// setItemState() for this class is effectively useless since it
+	// always gets overriden in the select() function. The only reason
+	// that this doesn't end in infinite recursion is because setItemState()
+	// has a check against the current state to make sure you don't call
+	// select() again. </rant>
+	_itemState = hiliteState;
+	BiochipItem::select();
 
 	uint32 time = g_system->getMillis();
 	while (g_system->getMillis() < time + 500) {
