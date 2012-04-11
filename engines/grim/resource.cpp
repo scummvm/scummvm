@@ -44,7 +44,7 @@
 #include "common/zlib.h"
 #include "common/memstream.h"
 #include "common/file.h"
-#include "gui/message.h"
+#include "common/config-manager.h"
 
 namespace Grim {
 
@@ -108,14 +108,14 @@ ResourceLoader::ResourceLoader() {
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
 
-			//Check the presence of datausr.lab and ask the user if he wants to load it.
+			//Check the presence of datausr.lab and if the user wants to load it.
 			//In this case put it in the top of the list
 			Common::ArchiveMemberList::iterator datausr_it = Common::find_if(files.begin(), files.end(), LabListComperator("datausr.lab"));
 			if (datausr_it != files.end()) {
-				Grim::InputDialog d("User-patch detected, the ResidualVM-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
-				int res = d.runModal();
-				if (res == GUI::kMessageOK)
+				if (ConfMan.getBool("datausr_load")) {
+					warning("Loading datausr.lab. Please note that the ResidualVM-team doesn't provide support for using such patches");
 					files.push_front(*datausr_it);
+				}
 				files.erase(datausr_it);
 			}
 		}
