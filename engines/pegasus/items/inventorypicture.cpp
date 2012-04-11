@@ -197,12 +197,12 @@ void InventoryPicture::activateInventoryPicture() {
 			_panelMovie.redrawMovieWorld();
 		}
 
-		_panelMovie.setTime(0);
 		uint32 numSlots = _itemsPerRow * _numberOfRows;
 
 		for (uint32 i = numItems; i < numSlots; i++) {
 			getItemXY(i, x, y);
 			_panelMovie.moveMovieBoxTo(x, y);
+			_panelMovie.setTime(0);
 			_panelMovie.redrawMovieWorld();
 		}
 
