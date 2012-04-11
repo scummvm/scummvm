@@ -53,6 +53,8 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	for (int i = 0; i < 40; i++) {
 		_array10B29[i] = 1;
 		_array128EF[i] = 15;
+		_array10AB1[i] = 0;
+		_array12811[i] = 16;
 	}
 }
 
@@ -683,6 +685,30 @@ void LilliputScript::sub1823E(byte var1, byte var2, byte *curBufPtr) {
 	curBufPtr[3] = 0;
 }
 
+void LilliputScript::sub17B6C(int var1) {
+	debugC(1, kDebugScript, "sub17B6C(%d)", var1);
+
+	if (var1 == 0) {
+		int curWord = 0;
+		while (curWord != 0xFFF6)
+			curWord = _currScript->readUint16LE();
+		
+		_currScript->seek(_currScript->pos() - 4);
+		return;
+	}
+
+	++var1;
+	int curVal = 0;
+	int tmpVal;
+	while (curVal < var1) {
+		tmpVal = _currScript->readUint16LE();
+		if (tmpVal == 0xFFF7)
+			++curVal;
+	}
+
+	_currScript->seek(_currScript->pos() - 2);
+}
+
 int LilliputScript::getValue1() {
 	debugC(2, kDebugScript, "getValue1()");
 	int curWord = _currScript->readUint16LE();
@@ -836,10 +862,34 @@ byte LilliputScript::OC_sub174C8() {
 	warning("OC_sub174C8");
 	return 0;
 }
+
 byte LilliputScript::OC_sub174D8() {
-	warning("OC_sub174D8");
+	debugC(1, kDebugScript, "OC_sub174D8()");
+
+	byte tmpVal = getValue1() & 0xFF;
+	int curWord = _currScript->readUint16LE();
+	
+	if (curWord == 3000) {
+		int index;
+		for (index = 0; index < _vm->_word10807_ERULES; index++) {
+			if (_vm->_rulesBuffer2_5[index] == tmpVal) {
+				_word16F00 = index;
+				return 1;
+			}
+		}
+	} else {
+		_currScript->seek(_currScript->pos() - 2);
+		int index = getValue1();
+		assert(index < 40);
+		if (_vm->_rulesBuffer2_5[index] == tmpVal) {
+			_word16F00 = index;
+			return 1;
+		}
+	}
+
 	return 0;
 }
+
 byte LilliputScript::OC_sub1750E() {
 	warning("OC_sub1750E");
 	return 0;
@@ -860,10 +910,16 @@ byte LilliputScript::OC_sub1759E() {
 	warning("OC_sub1759E");
 	return 0;
 }
+
 byte LilliputScript::OC_compWord16EF8() {
-	warning("OC_compWord16EF8");
+	debugC(1, kDebugScript, "OC_compWord16EF8()");
+	
+	int tmpVal = getValue1();
+	if (tmpVal == _vm->_rulesBuffer2PrevIndx)
+		return 1;
 	return 0;
 }
+
 byte LilliputScript::OC_sub175C8() {
 	warning("OC_sub175C8");
 	return 0;
@@ -917,10 +973,17 @@ byte LilliputScript::OC_sub177F5() {
 	warning("OC_sub177F5");
 	return 0;
 }
+
 byte LilliputScript::OC_sub17812() {
-	warning("OC_sub17812");
+	debugC(1, kDebugScript, "OC_sub17812()");
+
+	byte curByte = (_currScript->readUint16LE() & 0xFF);
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	if (_vm->_ptr_rulesBuffer2_15[0] == curByte)
+		return 1;
 	return 0;
 }
+
 byte LilliputScript::OC_sub17825() {
 	debugC(1, kDebugScript, "OC_sub17825()");
 
@@ -934,14 +997,29 @@ byte LilliputScript::OC_sub17825() {
 
 	return 0;
 }
+
 byte LilliputScript::OC_sub17844() {
 	warning("OC_sub17844");
 	return 0;
 }
+
 byte LilliputScript::OC_sub1785C() {
-	warning("OC_sub1785C");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub1785C()");
+
+	byte curByte = (_currScript->readUint16LE() & 0xFF);
+	int count = 0;
+
+	for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+		if (curByte == _vm->_rulesBuffer2_15[(32 * i)])
+			++count;
+	}
+
+	int oper = _currScript->readUint16LE();
+	int var2 = _currScript->readUint16LE();
+
+	return compareValues(count, oper, var2);
 }
+
 byte LilliputScript::OC_sub17886() {
 	warning("OC_sub17886");
 	return 0;
@@ -978,22 +1056,34 @@ byte LilliputScript::OC_sub1790F() {
 	warning("OC_sub1790F");
 	return 0;
 }
+
 byte LilliputScript::OC_sub1792A() {
-	warning("OC_sub1792A");
+	debugC(1, kDebugScript, "OC_sub1792A()");
+
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	byte curByte = (_currScript->readUint16LE() & 0xFF);
+
+	if (_vm->_ptr_rulesBuffer2_15[1] == curByte)
+		return 1;
+
 	return 0;
 }
+
 byte LilliputScript::OC_sub1793E() {
 	warning("OC_sub1793E");
 	return 0;
 }
+
 byte LilliputScript::OC_sub1795E() {
 	debugC(1, kDebugScript, "OC_sub1795E()");
 
 	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
 	if (_vm->_ptr_rulesBuffer2_15[3] == 1)
 		return 1;
+
 	return 0;
 }
+
 byte LilliputScript::OC_sub1796E() {
 	warning("OC_sub1796E");
 	return 0;
@@ -1091,8 +1181,12 @@ void LilliputScript::OC_saveAndQuit() {
 	warning("OC_saveAndQuit");
 }
 void LilliputScript::OC_sub17B93() {
-	warning("OC_sub17B93");
+	debugC(1, kDebugScript, "OC_sub17B93()");
+	int var1 = _currScript->readUint16LE();
+
+	sub17B6C(var1);
 }
+
 void LilliputScript::OC_sub17E37() {
 	warning("OC_sub17E37");
 }
@@ -1105,18 +1199,52 @@ void LilliputScript::OC_deleteSavegameAndQuit() {
 void LilliputScript::OC_incByte16F04() {
 	warning("OC_incByte16F04");
 }
+
 void LilliputScript::OC_sub17BA5() {
-	warning("OC_sub17BA5");
+	debugC(1, kDebugScript, "OC_sub17BA5()");
+	
+	byte *tmpArr = getBuffer215Ptr();
+	byte oper = (_currScript->readUint16LE() & 0xFF);
+	byte var2 = getBuffer215Ptr()[0];
+	computeOperation(tmpArr, oper, var2);
 }
+
 void LilliputScript::OC_setByte18823() {
 	warning("OC_setByte18823");
 }
 void LilliputScript::OC_sub17BB7() {
-	warning("OC_sub17BB7");
+	debugC(1, kDebugScript, "OC_sub17BB7()");
+
+	int index = _currScript->readUint16LE();
+	int var1 = getValue1();
+
+	_vm->sub170EE(var1);
+	int tmpIndex = _vm->_rulesBuffer2PrevIndx;
+
+	assert(index < _vm->_gameScriptIndexSize);
+	int scriptIndex = _vm->_arrayGameScriptIndex[index];
+
+	_scriptStack.push(_currScript);
+	warning("===> push");
+	if (_byte16F05_ScriptHandler == 0) {
+		_vm->_byte1714E = 0;
+		runMenuScript(Common::MemoryReadStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
+	} else {
+		runScript(Common::MemoryReadStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
+	}
+	warning("===> pop");
+	_currScript = _scriptStack.pop();
+
+	_vm->sub170EE(tmpIndex);
 }
+
 void LilliputScript::OC_sub17BF2() {
-	warning("OC_sub17BF2");
+	debugC(1, kDebugScript, "OC_sub17BF2()");
+
+	OC_sub17BB7();
+	sub17B6C(0);
 }
+
 void LilliputScript::OC_sub17ACC() {
 	warning("OC_sub17ACC");
 }
@@ -1164,9 +1292,14 @@ void LilliputScript::OC_resetWord16EFE() {
 void LilliputScript::OC_sub17CEF() {
 	warning("OC_sub17CEF");
 }
+
 void LilliputScript::OC_sub17D1B() {
-	warning("OC_sub17D1B");
+	debugC(1, kDebugScript, "OC_sub17D1B()");
+
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	++_vm->_ptr_rulesBuffer2_15[1];
 }
+
 void LilliputScript::OC_sub17D23() {
 	warning("OC_sub17D23");
 }
@@ -1200,12 +1333,22 @@ void LilliputScript::OC_getNextVal() {
 void LilliputScript::OC_sub17FD2() {
 	warning("OC_sub17FD2");
 }
+
 void LilliputScript::OC_sub17FDD() {
-	warning("OC_sub17FDD");
+	debugC(1, kDebugScript, "OC_sub17FDD()");
+
+	int index = _currScript->readUint16LE();
+	
+	int tmpVal = (_vm->_rulesBuffer2PrevIndx * 32) + index;
+	assert (tmpVal < 40 * 32);
+	_array10AB1[_vm->_rulesBuffer2PrevIndx] = _vm->_rulesBuffer2_16[tmpVal];
+	_array12811[_vm->_rulesBuffer2PrevIndx] = 16;
 }
+
 void LilliputScript::OC_setByte10B29() {
 	warning("OC_setByte10B29");
 }
+
 void LilliputScript::OC_sub18007() {
 	debugC(1, kDebugScript, "OC_sub18007()");
 
@@ -1213,9 +1356,14 @@ void LilliputScript::OC_sub18007() {
 	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
 	_vm->_ptr_rulesBuffer2_15[2] = curWord & 0xFF;
 }
+
 void LilliputScript::OC_sub18014() {
-	warning("OC_sub18014");
+	debugC(1, kDebugScript, "OC_sub18014()");
+
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	_vm->_ptr_rulesBuffer2_15[2] = 0;
 }
+
 void LilliputScript::OC_sub1801D() {
 	warning("OC_sub1801D");
 }
@@ -1247,9 +1395,13 @@ void LilliputScript::OC_sub180C3() {
 void LilliputScript::OC_sub1810A() {
 	warning("OC_sub1810A");
 }
+
 void LilliputScript::OC_sub1812D() {
-	warning("OC_sub1812D");
+	debugC(1, kDebugScript, "OC_sub1812D()");
+
+	_vm->_rulesBuffer2_3[_vm->_rulesBuffer2PrevIndx] = (_currScript->readUint16LE() & 0xFF);
 }
+
 void LilliputScript::OC_sub1817F() {
 	warning("OC_sub1817F");
 }
@@ -1347,7 +1499,6 @@ void LilliputScript::OC_sub1847F() {
 		warning("TODO: OC_sub1847F - sub_18BE6");
 		warning("TODO: OC_sub1847F - Display Function 4");
 	}
-
 }
 
 void LilliputScript::OC_displayVGAFile() {
