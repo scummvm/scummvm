@@ -224,10 +224,6 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::S
 	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 }
 
-bool ResourceLoader::getFileExists(const Common::String &filename) const {
-	return SearchMan.hasFile(filename);
-}
-
 Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filename) const {
 	Common::SeekableReadStream *rs = NULL;
 	if (SearchMan.hasFile(filename))
@@ -236,7 +232,7 @@ Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filen
 		return NULL;
 
 	Common::String patchfile = filename + ".patchr";
-	if (getFileExists(patchfile)) {
+	if (SearchMan.hasFile(patchfile)) {
 		Debug::debug(Debug::Patchr, "Patch requested for %s", filename.c_str());
 		Patchr p;
 		p.loadPatch(SearchMan.createReadStreamForMember(patchfile));

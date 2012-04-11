@@ -68,7 +68,6 @@ public:
 	AnimationEmi *loadAnimationEmi(const Common::String &filename);
 	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false) const;
 	void uncache(const char *fname) const;
-	bool getFileExists(const Common::String &filename) const;
 
 	ModelPtr getModel(const Common::String &fname, CMap *c);
 	CMapPtr getColormap(const Common::String &fname);

@@ -158,7 +158,7 @@ void Lua_V1::CheckForFile() {
 		return;
 
 	const char *filename = lua_getstring(strObj);
-	pushbool(g_resourceloader->getFileExists(filename));
+	pushbool(SearchMan.hasFile(filename));
 }
 
 void Lua_V1::MakeColor() {
