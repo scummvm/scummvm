@@ -200,7 +200,7 @@ static int sortCallback(const void *entry1, const void *entry2) {
 	return scumm_stricmp(((const ResourceLoader::ResourceCache *)entry1)->fname, ((const ResourceLoader::ResourceCache *)entry2)->fname);
 }
 
-Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::String &filename) {
+Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::String &filename) const {
 	ResourceLoader::ResourceCache *entry = getEntryFromCache(filename);
 	if (!entry)
 		return NULL;
@@ -209,7 +209,7 @@ Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::Strin
 
 }
 
-ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) {
+ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) const {
 	if (_cache.empty())
 		return NULL;
 
@@ -224,11 +224,11 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::S
 	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 }
 
-bool ResourceLoader::getFileExists(const Common::String &filename) {
+bool ResourceLoader::getFileExists(const Common::String &filename) const {
 	return SearchMan.hasFile(filename);
 }
 
-Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filename) {
+Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filename) const {
 	Common::SeekableReadStream *rs = NULL;
 	if (SearchMan.hasFile(filename))
 		rs = SearchMan.createReadStreamForMember(filename);
@@ -251,7 +251,7 @@ Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filen
 	return rs;
 }
 
-Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fname, bool cache) {
+Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fname, bool cache) const {
 	Common::SeekableReadStream *s;
     fname.toLowercase();
 
@@ -276,7 +276,7 @@ Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fna
 	return Common::wrapCompressedReadStream(s);
 }
 
-void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32 len) {
+void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32 len) const {
 	ResourceCache entry;
 	entry.resPtr = res;
 	entry.len = len;
@@ -464,7 +464,7 @@ AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 	return result;
 }
 
-void ResourceLoader::uncache(const char *filename) {
+void ResourceLoader::uncache(const char *filename) const {
 	Common::String fname = filename;
 	fname.toLowercase();
 

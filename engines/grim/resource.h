@@ -66,9 +66,9 @@ public:
 	LipSync *loadLipSync(const Common::String &fname);
 	Skeleton *loadSkeleton(const Common::String &fname);
 	AnimationEmi *loadAnimationEmi(const Common::String &filename);
-	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false);
-	void uncache(const char *fname);
-	bool getFileExists(const Common::String &filename);  //TODO: make it const again at next scummvm sync
+	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false) const;
+	void uncache(const char *fname) const;
+	bool getFileExists(const Common::String &filename) const;
 
 	ModelPtr getModel(const Common::String &fname, CMap *c);
 	CMapPtr getColormap(const Common::String &fname);
@@ -86,14 +86,14 @@ public:
 	};
 
 private:
-	Common::SeekableReadStream *loadFile(const Common::String &filename);  //TODO: make it const again at next scummvm sync
-	Common::SeekableReadStream *getFileFromCache(const Common::String &filename);
-	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename);
-	void putIntoCache(const Common::String &fname, byte *res, uint32 len);
+	Common::SeekableReadStream *loadFile(const Common::String &filename) const;
+	Common::SeekableReadStream *getFileFromCache(const Common::String &filename) const;
+	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename) const;
+	void putIntoCache(const Common::String &fname, byte *res, uint32 len) const;
 
-	Common::Array<ResourceCache> _cache;
-	bool _cacheDirty;
-	int32 _cacheMemorySize;
+	mutable Common::Array<ResourceCache> _cache;
+	mutable bool _cacheDirty;
+	mutable int32 _cacheMemorySize;
 
 	Common::List<EMIModel *> _emiModels;
 	Common::List<Model *> _models;
