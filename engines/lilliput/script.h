@@ -57,15 +57,15 @@ private:
 	byte _array122FD[20];
 	byte _array128EF[40];
 
-	int16 _word1881B;
-	int16 _word16F00;
-	int16 _word10802;
-	int16 _word10804;
-	int16 _word15FFB;
-	int16 _word15FFD;
-	int16 _word12A00;
-	int16 _word12A02;
-	int16 _word1855E;
+	int _word1881B;
+	int _word16F00;
+	int _word10802;
+	int _word10804;
+	int _word15FFB;
+	int _word15FFD;
+	int _word12A00;
+	int _word12A02;
+	int _word1855E;
 
 	int handleOpcode(Common::MemoryReadStream *script);
 	byte handleOpcodeType1(int curWord);

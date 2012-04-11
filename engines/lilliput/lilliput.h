@@ -193,7 +193,7 @@ public:
 	void pollEvent();
 	void sub170EE(int index);
 	void sub130DD();
-	void sub17083();
+	void handleGameScripts();
 
 	// Temporary stubs
 	byte _keyboard_getch();

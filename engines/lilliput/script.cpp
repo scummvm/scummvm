@@ -893,13 +893,26 @@ byte LilliputScript::OC_sub1779E() {
 	return 0;
 }
 byte LilliputScript::OC_sub177C6() {
-	warning("OC_sub177C6");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub177C6()");
+
+	int index = _currScript->readUint16LE();
+	if (_vm->_rulesBuffer2_1[index] == 0xFFFF)
+		return 0;
+
+	return 1;
 }
 byte LilliputScript::OC_compWord16EFE() {
-	warning("OC_compWord16EFE");
-	return 0;
+	debugC(1, kDebugScript, "OC_compWord16EFE()");
+	byte curByte = _currScript->readUint16LE() & 0xFF;
+	byte tmpVal = _vm->_word16EFE >> 8;
+
+	if (curByte != tmpVal)
+		return 0;
+
+	_word16F00 = (_vm->_word16EFE & 0xFF);
+	return 1;
 }
+
 byte LilliputScript::OC_sub177F5() {
 	warning("OC_sub177F5");
 	return 0;
@@ -942,7 +955,11 @@ byte LilliputScript::OC_sub178BA() {
 	return 0;
 }
 byte LilliputScript::OC_sub178C2() {
-	warning("OC_sub178C2");
+	debugC(1, kDebugScript, "OC_sub178C2()");
+
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	if (_vm->_ptr_rulesBuffer2_15[2] == 1)
+		return 1;
 	return 0;
 }
 byte LilliputScript::OC_sub178D2() {
@@ -970,7 +987,11 @@ byte LilliputScript::OC_sub1793E() {
 	return 0;
 }
 byte LilliputScript::OC_sub1795E() {
-	warning("OC_sub1795E");
+	debugC(1, kDebugScript, "OC_sub1795E()");
+
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	if (_vm->_ptr_rulesBuffer2_15[3] == 1)
+		return 1;
 	return 0;
 }
 byte LilliputScript::OC_sub1796E() {
@@ -978,7 +999,16 @@ byte LilliputScript::OC_sub1796E() {
 	return 0;
 }
 byte LilliputScript::OC_sub17984() {
-	warning("OC_sub17984");
+	debugC(1, kDebugScript, "OC_sub17984()");
+
+	int index = _currScript->readUint16LE();
+	int var2 = _currScript->readUint16LE();
+
+	assert(index < 20);
+
+	if (_array122E9[index] == (var2 & 0xFF))
+		return 1;
+
 	return 0;
 }
 byte LilliputScript::OC_checkSavedMousePos() {
@@ -1046,7 +1076,16 @@ void LilliputScript::OC_sub17A66() {
 	warning("OC_sub17A66");
 }
 void LilliputScript::OC_sub17A8D() {
-	warning("OC_sub17A8D");
+	debugC(1, kDebugScript, "OC_sub17A8D()");
+
+	int tmpVal = getValue1();
+	assert(tmpVal < 40);
+
+	if (tmpVal == _word10804)
+		_word10802 = 0xFFFF;
+
+	_vm->_rulesBuffer2_1[tmpVal] = 0xFFFF;
+	_vm->_rulesBuffer2_2[tmpVal] = 0xFFFF;
 }
 void LilliputScript::OC_saveAndQuit() {
 	warning("OC_saveAndQuit");
@@ -1168,7 +1207,11 @@ void LilliputScript::OC_setByte10B29() {
 	warning("OC_setByte10B29");
 }
 void LilliputScript::OC_sub18007() {
-	warning("OC_sub18007");
+	debugC(1, kDebugScript, "OC_sub18007()");
+
+	int curWord = _currScript->readUint16LE();
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	_vm->_ptr_rulesBuffer2_15[2] = curWord & 0xFF;
 }
 void LilliputScript::OC_sub18014() {
 	warning("OC_sub18014");
@@ -1243,7 +1286,12 @@ void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
 }
 
 void LilliputScript::OC_sub1834C() {
-	warning("OC_sub1834C");
+	debugC(1, kDebugScript, "OC_sub1834C()");
+
+	byte curWord = _currScript->readUint16LE() & 0xFF;
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+
+	_vm->_ptr_rulesBuffer2_15[3] = curWord;
 }
 void LilliputScript::OC_sub18359() {
 	warning("OC_sub18359");
