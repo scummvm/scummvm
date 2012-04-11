@@ -34,6 +34,7 @@ public:
 	~LilliputScript();
 
 	void runScript(Common::MemoryReadStream script);
+	void runMenuScript(Common::MemoryReadStream script);
 private:
 	LilliputEngine *_vm;
 
@@ -47,6 +48,7 @@ private:
 	byte _byte15FFA;
 	byte _byte1855D;
 	byte _byte10806;
+	byte _byte12FE4;
 
 	byte *_savedBuffer215Ptr;
 	byte _array122E9[20];

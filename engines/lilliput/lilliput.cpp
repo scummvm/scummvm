@@ -115,13 +115,20 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_mouseX = 0;
 	_mouseY = 0;
 	_mouseButton = 0;
+	_savedMousePosDivided = 0xFFFF;
+
 	_scriptHandler = new LilliputScript(this);
 
 	_byte1714E = 0;
+	_byte12FCE = 0;
+	_byte129A0 = 0xFF;
+
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
+	_word10804 = 0;
 
 	_saveFlag = false;
+	_byte16F07_menuId = 0;
 
 	for (int i = 0; i < 40; i++) {
 		_byte10999[i] = 0;
@@ -158,6 +165,8 @@ Common::Platform LilliputEngine::getPlatform() const {
 }
 
 void LilliputEngine::pollEvent() {
+	debugC(2, kDebugEngine, "pollEvent()");
+
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -182,6 +191,8 @@ void LilliputEngine::pollEvent() {
 }
 
 byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
+	debugC(1, kDebugEngine, "loadVGA(%s, %d)", filename, (loadPal) ? 1 : 0);
+
 	Common::File f;
 
 	if (!f.open(filename))
@@ -191,8 +202,8 @@ byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
 	if (loadPal) {
 		for (int i = 0; i < 768; ++i)
 			_curPalette[i] = f.readByte();
-
 		remainingSize -= 768;
+
 		fixPaletteEntries(_curPalette, 256);
 		_system->getPaletteManager()->setPalette(_curPalette, 0, 256);
 	}
@@ -237,6 +248,8 @@ byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
 }
 
 byte *LilliputEngine::loadRaw(Common::String filename) {
+	debugC(1, kDebugEngine, "loadRaw(%s)", filename.c_str());
+
 	Common::File f;
 
 	if (!f.open(filename))
@@ -252,6 +265,8 @@ byte *LilliputEngine::loadRaw(Common::String filename) {
 }
 
 void LilliputEngine::loadRules() {
+	debugC(1, kDebugEngine, "loadRules()");
+
 	static const byte _rulesXlatArray[26] = {30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37, 38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47, 17, 45, 21, 44};
 	Common::File f;
 	uint16 curWord;
@@ -317,16 +332,16 @@ void LilliputEngine::loadRules() {
 	// Chunk 5: Scripts
 	// Use byte instead of int, therefore multiply by two the size.
 	// This is for changing that into a memory read stream
-	_rulesScript_size = f.readUint16LE() * 2;
-	_rulesScript = (byte *)malloc(sizeof(byte) * _rulesScript_size);
-	for (int i = 0; i < _rulesScript_size; ++i)
-		_rulesScript[i] = f.readByte();
+	_initScript_size = f.readUint16LE() * 2;
+	_initScript = (byte *)malloc(sizeof(byte) * _initScript_size);
+	for (int i = 0; i < _initScript_size; ++i)
+		_initScript[i] = f.readByte();
 
 	// Chunk 6
-	_rulesChunk6_size = f.readUint16LE();
-	_rulesChunk6 = (int *)malloc(sizeof(int) * _rulesChunk6_size);
-	for (int i = 0; i < _rulesChunk6_size; ++i)
-		_rulesChunk6[i] = f.readUint16LE();
+	_menuScript_size = f.readUint16LE() * 2;
+	_menuScript = (byte *)malloc(sizeof(byte) * _menuScript_size);
+	for (int i = 0; i < _menuScript_size; ++i)
+		_menuScript[i] = f.readByte();
 
 	// Chunk 7 & 8
 	_rulesChunk7_size = f.readUint16LE();
@@ -407,6 +422,7 @@ void LilliputEngine::loadRules() {
 }
 
 void LilliputEngine::displayVGAFile(Common::String fileName) {
+	debugC(1, kDebugEngine, "displayVGAFile(%s)", fileName.c_str());
 	warning("TODO: display function #4");
 
 	byte *buffer = loadVGA(fileName, true);
@@ -418,6 +434,7 @@ void LilliputEngine::displayVGAFile(Common::String fileName) {
 }
 
 void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
+	debugC(1, kDebugEngine, "fixPaletteEntries(palette, %d)", num);
 	// Color values are coded on 6bits ( for old 6bits DAC )
 	for (int32 i = 0; i < num * 3; i++) {
 		int32 a = palette[i];
@@ -431,6 +448,8 @@ void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
 }
 
 void LilliputEngine::initPalette() {
+	debugC(1, kDebugEngine, "initPalette()");
+
 	for (int i = 0; i < 768; i++)
 		_curPalette[i] = _basisPalette[i];
 
@@ -438,8 +457,52 @@ void LilliputEngine::initPalette() {
 	_system->getPaletteManager()->setPalette(_curPalette, 0, 256);
 }
 
+void LilliputEngine::sub170EE(int index) {
+	debugC(1, kDebugEngine, "sub170EE(%d)", index);
+
+	_rulesBuffer2PrevIndx = index;
+
+	assert (index < 40);
+	int var2 = _rulesBuffer2_1[index];
+	int var4 = _rulesBuffer2_2[index];
+
+	_word16EFA = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
+	_ptr_rulesBuffer2_15 = &_rulesBuffer2_15[_rulesBuffer2PrevIndx * 32];
+}
+
+void LilliputEngine::sub130DD() {
+	warning("sub130DD()");
+}
+
+void LilliputEngine::handleMenu() {
+	debugC(1, kDebugEngine, "handleMenu()");
+
+	if (_byte16F07_menuId == 0)
+		return;
+
+	if ((_byte12FCE == 1) && (_byte16F07_menuId != 3))
+		return;
+
+	sub170EE(_word10804);
+	_scriptHandler->runMenuScript(Common::MemoryReadStream(_menuScript, _menuScript_size));
+	_savedMousePosDivided = 0xFFFF;
+	_byte129A0 = 0xFF;
+
+	if (_byte16F07_menuId == 3)
+		sub130DD();
+
+	_byte16F07_menuId = 0;
+}
+
+void LilliputEngine::sub17083() {
+	warning("sub17083");
+}
+
 Common::Error LilliputEngine::run() {
+	debugC(1, kDebugEngine, "run()");
+
 	s_Engine = this;
+	initialize();
 	initGraphics(320, 200);
 	_mainSurface = new Graphics::Surface();
 	_mainSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
@@ -456,14 +519,17 @@ Common::Error LilliputEngine::run() {
 	_bufferIsoChars = loadVGA("ISOCHARS.VGA", false);
 	_bufferIsoMap = loadRaw("ISOMAP.DTA");
 
-	//TODO: Init mouse handler
-
 	loadRules();
 
 	//TODO: Init sound/music player
-	_scriptHandler->runScript(Common::MemoryReadStream(_rulesScript, _rulesScript_size));
+	_scriptHandler->runScript(Common::MemoryReadStream(_initScript, _initScript_size));
 
-	//TODO: Main loop
+	while(!_shouldQuit) {
+		handleMenu();
+		sub17083();
+		// To be removed when handled in the previous fonctions
+		pollEvent();
+	}
 
 	return Common::kNoError;
 }
@@ -495,6 +561,7 @@ Common::String LilliputEngine::getSavegameFilename(int slot) {
 }
 
 byte LilliputEngine::_keyboard_getch() {
+	warning("getch()");
 	return ' ';
 }
 
