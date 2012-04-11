@@ -91,8 +91,6 @@ private:
 	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename);
 	void putIntoCache(const Common::String &fname, byte *res, uint32 len);
 
-	Common::SearchSet _files;
-
 	Common::Array<ResourceCache> _cache;
 	bool _cacheDirty;
 	int32 _cacheMemorySize;

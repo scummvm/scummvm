@@ -162,12 +162,12 @@ ResourceLoader::ResourceLoader() {
 		filename.toLowercase();
 
 		//Avoid duplicates
-		if (_files.hasArchive(filename))
+		if (SearchMan.hasArchive(filename))
 			continue;
 
 		l = new Lab();
 		if (l->open(filename))
-			_files.add(filename, l, priority--, true);
+			SearchMan.add(filename, l, priority--, true);
 		else
 			delete l;
 	}
@@ -225,14 +225,12 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::S
 }
 
 bool ResourceLoader::getFileExists(const Common::String &filename) {
-	return _files.hasFile(filename);
+	return SearchMan.hasFile(filename);
 }
 
 Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filename) {
 	Common::SeekableReadStream *rs = NULL;
-	if (_files.hasFile(filename))
-		rs = _files.createReadStreamForMember(filename);
-	else if (SearchMan.hasFile(filename))
+	if (SearchMan.hasFile(filename))
 		rs = SearchMan.createReadStreamForMember(filename);
 	else
 		return NULL;
