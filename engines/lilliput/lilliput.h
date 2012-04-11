@@ -106,6 +106,11 @@ public:
 	int _word10800_ERULES;
 	int _word10807_ERULES;
 	int _word16EFA;
+	int _word17081_nextIndex;
+	int _word16EFE;
+	int _word1817B;
+
+	int _array11D49[40];
 
 	byte *_rulesChunk1;
 	int _rulesBuffer2PrevIndx;
@@ -133,9 +138,9 @@ public:
 	int _initScript_size;
 	byte *_menuScript;
 	int _menuScript_size;
-	int *_rulesChunk7;
-	int _rulesChunk7_size;
-	byte *_rulesChunk8;
+	int *_arrayGameScriptIndex;
+	int _gameScriptIndexSize;
+	byte *_arrayGameScripts;
 	byte _rulesChunk9[60];
 	int _rulesChunk10_size;
 	int *_rulesChunk10;

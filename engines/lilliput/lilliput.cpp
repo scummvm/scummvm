@@ -126,6 +126,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
 	_word10804 = 0;
+	_word17081_nextIndex = 0;
+	_word16EFE = 0xFFFF;
+	_word1817B = 0;
 
 	_saveFlag = false;
 	_byte16F07_menuId = 0;
@@ -133,6 +136,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	for (int i = 0; i < 40; i++) {
 		_byte10999[i] = 0;
 		_byte109C1[i] = 0;
+		_array11D49[i] = 0xFFFF;
 	}
 
 }
@@ -344,15 +348,18 @@ void LilliputEngine::loadRules() {
 		_menuScript[i] = f.readByte();
 
 	// Chunk 7 & 8
-	_rulesChunk7_size = f.readUint16LE();
-	_rulesChunk7 = (int *)malloc(sizeof(int) * _rulesChunk7_size);
-	for (int i = 0; i < _rulesChunk7_size; ++i)
-		_rulesChunk7[i] = f.readUint16LE();
+	_gameScriptIndexSize = f.readUint16LE();
+	// Added one position to keep the total size too, as it's useful later
+	_arrayGameScriptIndex = (int *)malloc(sizeof(int) * (_gameScriptIndexSize + 1));
+	for (int i = 0; i < _gameScriptIndexSize; ++i)
+		_arrayGameScriptIndex[i] = f.readUint16LE();
 
 	curWord = f.readUint16LE();
-	_rulesChunk8 = (byte *)malloc(sizeof(byte) * curWord);
+	_arrayGameScriptIndex[_gameScriptIndexSize] = curWord;
+
+	_arrayGameScripts = (byte *)malloc(sizeof(byte) * curWord);
 	for (int i = 0; i < curWord; ++i)
-		_rulesChunk8[i] = f.readByte();
+		_arrayGameScripts[i] = f.readByte();
 
 	// Chunk 9
 	for (int i = 0; i < 60; i++)
@@ -496,6 +503,35 @@ void LilliputEngine::handleMenu() {
 
 void LilliputEngine::sub17083() {
 	warning("sub17083");
+	int index = _word17081_nextIndex;
+	int i;
+	for (i = 0; (_scriptHandler->_array10B29[index] == 0) && (i < _word10807_ERULES); i++) {
+		++index;
+		if (index >= _word10807_ERULES)
+			index = 0;
+	}
+
+	if (i >= _word10807_ERULES)
+		return;
+
+	_scriptHandler->_array10B29[index] = 0;
+	int tmpVal = index + 1;
+	if (tmpVal >= _word10807_ERULES)
+		tmpVal = 0;
+
+	_word17081_nextIndex = tmpVal;
+	sub170EE(index);
+
+	_word16EFE = _array11D49[index];
+	_array11D49[index] = 0xFFFF;
+	_word1817B = 0;
+
+	tmpVal = _rulesBuffer2_12[index];
+	if (tmpVal == 0xFF)
+		return;
+
+	assert(tmpVal < _gameScriptIndexSize);
+	_scriptHandler->runScript(Common::MemoryReadStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
 }
 
 Common::Error LilliputEngine::run() {

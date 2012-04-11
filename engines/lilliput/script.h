@@ -30,6 +30,8 @@ namespace Lilliput {
 class LilliputEngine;
 class LilliputScript {
 public:
+	byte _array10B29[40];
+
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
 
@@ -53,7 +55,6 @@ private:
 	byte *_savedBuffer215Ptr;
 	byte _array122E9[20];
 	byte _array122FD[20];
-	byte _array10B29[40];
 	byte _array128EF[40];
 
 	int16 _word1881B;
