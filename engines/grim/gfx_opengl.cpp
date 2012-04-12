@@ -379,6 +379,8 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		const Math::Angle &pitch, const Math::Angle &roll, const bool inOverworld,
 		const float alpha) {
 	glEnable(GL_TEXTURE_2D);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	if (_currentShadowArray) {
@@ -403,8 +405,16 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 	}
 
 	if (inOverworld) {
+		// At distance 3.2, a 6.4x4.8 actor fills the screen.
+		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glScalef(1.0, 1.0, -1.0);
+		float right = 1;
+		float top = right * 0.75;
+		glFrustum(-right, right, -top, top, 1, 3276.8f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glScalef(-1.0, 1.0, -1.0);
+		glRotatef(180, 0, 0, -1);
 		glTranslatef(pos.x(), pos.y(), pos.z());
 	} else {
 		glTranslatef(pos.x(), pos.y(), pos.z());
@@ -423,7 +433,11 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 }
 
 void GfxOpenGL::finishActorDraw() {
+	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 	if (_alpha < 1.f) {
 		glDisable(GL_BLEND);
 		_alpha = 1.f;
