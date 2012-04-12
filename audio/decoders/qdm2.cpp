@@ -1225,22 +1225,26 @@ void ff_mpa_synth_filter(int16 *synth_buf_ptr, int *synth_buf_offset,
  *                  = (max_vlc_length + bits - 1) / bits
  */
 static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDepth) {
-	int index = s->getBits(bits);
+	int index = s->peekBits(bits);
 	int code = table[index][0];
 	int n = table[index][1];
 
 	if (maxDepth > 1 && n < 0) {
-		index = s->getBits(-n) + code;
+		s->skip(bits);
+		int nbBits = -n;
+		index = s->peekBits(-n) + code;
 		code = table[index][0];
 		n = table[index][1];
 
 		if(maxDepth > 2 && n < 0) {
+			s->skip(nbBits);
 			index = s->getBits(-n) + code;
 			code = table[index][0];
 			n = table[index][1];
 		}
 	}
 
+	s->skip(n);
 	return code;
 }
 
@@ -2429,7 +2433,7 @@ void QDM2Stream::process_subpacket_9(QDM2SubPNode *node) {
 	int i, j, k, n, ch, run, level, diff;
 
 	Common::MemoryReadStream d(node->packet->data, node->packet->size*8);
-	Common::BitStream8MSB gb(&d);
+	Common::BitStream32LELSB gb(&d);
 
 	n = coeff_per_sb_for_avg[_coeffPerSbSelect][QDM2_SB_USED(_subSampling) - 1] + 1; // same as averagesomething function
 
@@ -2463,7 +2467,7 @@ void QDM2Stream::process_subpacket_9(QDM2SubPNode *node) {
  */
 void QDM2Stream::process_subpacket_10(QDM2SubPNode *node, int length) {
 	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
-	Common::BitStream8MSB gb(&d);
+	Common::BitStream32LELSB gb(&d);
 
 	if (length != 0) {
 		init_tone_level_dequantization(&gb, length);
@@ -2481,7 +2485,7 @@ void QDM2Stream::process_subpacket_10(QDM2SubPNode *node, int length) {
  */
 void QDM2Stream::process_subpacket_11(QDM2SubPNode *node, int length) {
 	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
-	Common::BitStream8MSB gb(&d);
+	Common::BitStream32LELSB gb(&d);
 
 	if (length >= 32) {
 		int c = gb.getBits(13);
@@ -2502,7 +2506,7 @@ void QDM2Stream::process_subpacket_11(QDM2SubPNode *node, int length) {
  */
 void QDM2Stream::process_subpacket_12(QDM2SubPNode *node, int length) {
 	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
-	Common::BitStream8MSB gb(&d);
+	Common::BitStream32LELSB gb(&d);
 
 	synthfilt_build_sb_samples(&gb, length, 8, QDM2_SB_USED(_subSampling));
 }
@@ -2557,7 +2561,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 	average_quantized_coeffs(); // average elements in quantized_coeffs[max_ch][10][8]
 
 	Common::MemoryReadStream *d = new Common::MemoryReadStream(_compressedData, _packetSize*8);
-	Common::BitStream *gb = new Common::BitStream8MSB(d);
+	Common::BitStream *gb = new Common::BitStream32LELSB(d);
 	//qdm2_decode_sub_packet_header
 	header.type = gb->getBits(8);
 
@@ -2591,7 +2595,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 	delete gb;
 	delete d;
 	d = new Common::MemoryReadStream(header.data, header.size*8);
-	gb = new Common::BitStream8MSB(d);
+	gb = new Common::BitStream32LELSB(d);
 
 	if (header.type == 2 || header.type == 4 || header.type == 5) {
 		int csum = 257 * gb->getBits(8) + 2 * gb->getBits(8);
@@ -2624,7 +2628,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 			delete gb;
 			delete d;
 			d = new Common::MemoryReadStream(header.data, header.size*8);
-			gb = new Common::BitStream8MSB(d);
+			gb = new Common::BitStream32LELSB(d);
 			gb->skip(next_index*8);
 
 			if (next_index >= header.size)
@@ -2834,7 +2838,7 @@ void QDM2Stream::qdm2_decode_fft_packets(void) {
 
 		// decode FFT tones
 		Common::MemoryReadStream d(packet->data, packet->size*8);
-		Common::BitStream8MSB gb(&d);
+		Common::BitStream32LELSB gb(&d);
 
 		if (packet->type >= 32 && packet->type < 48 && !fft_subpackets[packet->type - 16])
 			unknown_flag = 1;
