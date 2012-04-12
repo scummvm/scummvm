@@ -370,15 +370,14 @@ void SmushDecoder::handleFramesHeader() {
 
 bool SmushDecoder::setupAnimDemo() {
 	uint32 tag;
-	int32 size;
 
 	tag = _file->readUint32BE();
 	assert(tag == MKTAG('A','N','I','M'));
-	size = _file->readUint32BE();
+	_file->readUint32BE();
 
 	tag = _file->readUint32BE();
 	assert(tag == MKTAG('A','H','D','R'));
-	size = _file->readUint32BE();
+	_file->readUint32BE();
 
 	_file->readUint16BE(); // version
 	_nbframes = _file->readUint16LE();

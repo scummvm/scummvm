@@ -1108,17 +1108,17 @@ void Puzzles::journalSaavedro(int16 move) {
 		}
 
 		uint16 nodeRight;
-		uint16 nodeLeft;
+		//uint16 nodeLeft;
 		if (page || !chapter) {
 			nodeRight = chapterStartNode + page;
-			nodeLeft = chapterStartNode + page;
+			//nodeLeft = chapterStartNode + page;
 		} else {
 			nodeRight = chapterStartNode + page;
-			uint16 chapterLeft = _journalSaavedroNextChapter(chapter, false);
+			/*uint16 chapterLeft = _journalSaavedroNextChapter(chapter, false);
 			if (chapterLeft > 0)
 				nodeLeft = _journalSaavedroGetNode(chapterLeft + 1);
 			else
-				nodeLeft = 2;
+				nodeLeft = 2;*/
 		}
 
 		_vm->_state->setJournalSaavedroClosed(closed);

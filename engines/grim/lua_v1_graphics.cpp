@@ -158,7 +158,7 @@ void Lua_V1::DrawPolygon() {
 		return;
 	}
 
-	int layer = 2;
+	//int layer = 2;
 	lua_Object tableObj2 = lua_getparam(2);
 	if (lua_istable(tableObj2)) {
 		lua_pushobject(tableObj2);
@@ -171,7 +171,7 @@ void Lua_V1::DrawPolygon() {
 		lua_pushstring("layer");
 		lua_Object layerObj = lua_gettable();
 		if (lua_isnumber(layerObj))
-			layer = (int)lua_getnumber(layerObj);
+			/*layer = (int)*/lua_getnumber(layerObj);
 	}
 
 	// This code support static 4 points polygon as game doesn't use other than that.
@@ -233,7 +233,7 @@ void Lua_V1::DrawLine() {
 	p2.x = (int)lua_getnumber(x2Obj);
 	p2.y = (int)lua_getnumber(y2Obj);
 
-	int layer = 2;
+	//int layer = 2;
 	if (lua_istable(tableObj)) {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
@@ -245,7 +245,7 @@ void Lua_V1::DrawLine() {
 		lua_pushstring("layer");
 		lua_Object layerObj = lua_gettable();
 		if (lua_isnumber(layerObj))
-			layer = (int)lua_getnumber(layerObj);
+			/*layer = (int)*/lua_getnumber(layerObj);
 	}
 
 	PrimitiveObject *p = new PrimitiveObject();
@@ -289,12 +289,12 @@ void Lua_V1::ChangePrimitive() {
 	lua_pushstring("yoffset");
 	lua_Object yoffset = lua_gettable();
 	if (lua_isnumber(xoffset) || lua_isnumber(yoffset)) {
-		int x = 0;
-		int y = 0;
+		//int x = 0;
+		//int y = 0;
 		if (lua_isnumber(xoffset))
-			x = (int)lua_getnumber(xoffset);
+			/*x = (int)*/lua_getnumber(xoffset);
 		if (lua_isnumber(yoffset))
-			y = (int)lua_getnumber(yoffset);
+			/*y = (int)*/lua_getnumber(yoffset);
 		// TODO pmodify->setOffets(x, y);
 		assert(0);
 	}
@@ -322,12 +322,12 @@ void Lua_V1::ChangePrimitive() {
 	lua_pushstring("y2");
 	lua_Object y2 = lua_gettable();
 	if (lua_isnumber(x2) || lua_isnumber(y2)) {
-		int x = -1;
-		int y = -1;
+		//int x = -1;
+		//int y = -1;
 		if (lua_isnumber(x2))
-			x = (int)lua_getnumber(x2);
+			/*x = (int)*/lua_getnumber(x2);
 		if (lua_isnumber(y2))
-			y = (int)lua_getnumber(y2);
+			/*y = (int)*/lua_getnumber(y2);
 		// TODO pmodify->setSize(x, y);
 		assert(0);
 	}
@@ -339,12 +339,12 @@ void Lua_V1::ChangePrimitive() {
 	lua_pushstring("height");
 	lua_Object height = lua_gettable();
 	if (lua_isnumber(width) || lua_isnumber(height)) {
-		int x = -1;
-		int y = -1;
+		//int x = -1;
+		//int y = -1;
 		if (lua_isnumber(width))
-			x = (int)lua_getnumber(width);
+			/*x = (int)*/lua_getnumber(width);
 		if (lua_isnumber(height))
-			y = (int)lua_getnumber(height);
+			/*y = (int)*/lua_getnumber(height);
 		// TODO pmodify->setSize(x, y);
 		assert(0);
 	}

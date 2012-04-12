@@ -524,8 +524,8 @@ void Lua_V2::PlayActorChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
-	lua_Object modeObj = lua_getparam(4);
-	lua_Object paramObj = lua_getparam(5);
+//	lua_Object modeObj = lua_getparam(4);
+//	lua_Object paramObj = lua_getparam(5);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -535,7 +535,7 @@ void Lua_V2::PlayActorChore() {
 	if (!lua_isstring(choreObj) || !lua_isstring(costumeObj))
 		lua_pushnil();
 
-	bool mode = false;
+/*	bool mode = false;
 	float param = 0.0;
 
 	if (!lua_isnil(modeObj)) {
@@ -544,7 +544,7 @@ void Lua_V2::PlayActorChore() {
 		if (!lua_isnil(paramObj))
 			if (lua_isnumber(paramObj))
 				param = lua_getnumber(paramObj);
-	}
+	}*/
 
 	const char *choreName = lua_getstring(choreObj);
 	const char *costumeName = lua_getstring(costumeObj);

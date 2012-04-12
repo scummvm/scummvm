@@ -986,13 +986,13 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 	}
 
 	TGLuint format = 0;
-	TGLuint internalFormat = 0;
+//	TGLuint internalFormat = 0;
 	if (material->_colorFormat == BM_RGBA) {
 		format = TGL_RGBA;
-		internalFormat = TGL_RGBA;
+//		internalFormat = TGL_RGBA;
 	} else {	// The only other colorFormat we load right now is BGR
 		format = TGL_BGR;
-		internalFormat = TGL_RGB;
+//		internalFormat = TGL_RGB;
 	}
 
 	TGLuint *textures = (TGLuint *)material->_texture;

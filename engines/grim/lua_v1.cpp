@@ -295,11 +295,8 @@ void Lua_V1::SetHardwareState() {
 }
 
 void Lua_V1::SetVideoDevices() {
-	int devId;
-	int modeId;
-
-	devId = (int)lua_getnumber(lua_getparam(1));
-	modeId = (int)lua_getnumber(lua_getparam(2));
+	/*int devId = (int)*/lua_getnumber(lua_getparam(1));
+	/*int modeId = (int)*/lua_getnumber(lua_getparam(2));
 	// ignore setting video devices
 }
 

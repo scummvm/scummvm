@@ -327,10 +327,9 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	o->seek(0, SEEK_SET);
 	//warning("Loading TILE: %s",fname.c_str());
 
-	uint32 id, bmoffset;
-	id = o->readUint32LE();
+	/*uint32 id = */o->readUint32LE();
 	// Should check that we actually HAVE a TIL
-	bmoffset = o->readUint32LE();
+	uint32 bmoffset = o->readUint32LE();
 	o->seek(bmoffset + 16);
 	int numSubImages = o->readUint32LE();
 	if (numSubImages < 5)
