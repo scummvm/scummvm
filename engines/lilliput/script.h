@@ -25,6 +25,7 @@
 
 #include "common/memstream.h"
 #include "common/stack.h"
+#include "common/random.h"
 
 namespace Lilliput {
 
@@ -53,6 +54,7 @@ private:
 	byte _byte1855D;
 	byte _byte10806;
 	byte _byte12FE4;
+	byte _byte16F02;
 
 	byte *_savedBuffer215Ptr;
 	byte _array122E9[20];
@@ -60,6 +62,10 @@ private:
 	byte _array128EF[40];
 	byte _array10AB1[40];
 	byte _array12811[40];
+	byte _array12839[40];
+	byte _array10B51[40 * 40];
+
+	int _array12311[640];
 
 	int _word1881B;
 	int _word16F00;
@@ -79,6 +85,8 @@ private:
 	void sub185B4_display();
 	void sub1823E(byte var1, byte var2, byte *curBufPtr);
 	void sub17B6C(int var1);
+	void sub16C86(int index, byte *buf);
+	void sub16C5C(int index, byte var3);
 
 	int getValue1();
 	int getValue2();

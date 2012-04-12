@@ -513,7 +513,7 @@ void LilliputEngine::handleGameScripts() {
 			index = 0;
 	}
 
-	if (i >= _word10807_ERULES)
+	if (i > _word10807_ERULES)
 		return;
 
 	_scriptHandler->_array10B29[index] = 0;
