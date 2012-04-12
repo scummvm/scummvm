@@ -35,6 +35,7 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/math.h"
+#include "common/rdft.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/bitstream.h"
@@ -100,13 +101,6 @@ struct QDM2FFT {
 } PACKED_STRUCT;
 #include "common/pack-end.h"
 
-enum RDFTransformType {
-	RDFT,
-	IRDFT,
-	RIDFT,
-	IRIDFT
-};
-
 struct FFTComplex {
 	float re, im;
 };
@@ -134,17 +128,6 @@ struct FFTContext {
 enum {
 	FF_MDCT_PERM_NONE = 0,
 	FF_MDCT_PERM_INTERLEAVE = 1
-};
-
-struct RDFTContext {
-	int nbits;
-	int inverse;
-	int signConvention;
-
-	// pre/post rotation tables
-	float *tcos;
-	float *tsin;
-	FFTContext fft;
 };
 
 class QDM2Stream : public Codec {
@@ -190,7 +173,7 @@ private:
 	int _fftCoefsMinIndex[5];
 	int _fftCoefsMaxIndex[5];
 	int _fftLevelExp[6];
-	RDFTContext _rdftCtx;
+	Common::RDFT *_rdft;
 	QDM2FFT _fft;
 
 	// I/O data
@@ -720,87 +703,6 @@ int fftInit(FFTContext *s, int nbits, int inverse) {
 	free(&s->exptab);
 	free(&s->tmpBuf);
 	return -1;
-}
-
-/**
- * Sets up a real FFT.
- * @param nbits           log2 of the length of the input array
- * @param trans           the type of transform
- */
-int rdftInit(RDFTContext *s, int nbits, RDFTransformType trans) {
-	int n = 1 << nbits;
-	const double theta = (trans == RDFT || trans == IRIDFT ? -1 : 1) * 2 * M_PI / n;
-
-	s->nbits = nbits;
-	s->inverse = trans == IRDFT || trans == IRIDFT;
-	s->signConvention = trans == RIDFT || trans == IRIDFT ? 1 : -1;
-
-	if (nbits < 4 || nbits > 16)
-		return -1;
-
-	if (fftInit(&s->fft, nbits - 1, trans == IRDFT || trans == RIDFT) < 0)
-		return -1;
-
-	initCosineTables(nbits);
-	s->tcos = ff_cos_tabs[nbits];
-	s->tsin = ff_sin_tabs[nbits] + (trans == RDFT || trans == IRIDFT) * (n >> 2);
-
-	for (int i = 0; i < n >> 2; i++)
-		s->tsin[i] = sin(i*theta);
-
-	return 0;
-}
-
-/** Map one real FFT into two parallel real even and odd FFTs. Then interleave
- * the two real FFTs into one complex FFT. Unmangle the results.
- * ref: http://www.engineeringproductivitytools.com/stuff/T0001/PT10.HTM
- */
-void rdftCalc(RDFTContext *s, float *data) {
-	FFTComplex ev, od;
-
-	const int n = 1 << s->nbits;
-	const float k1 = 0.5;
-	const float k2 = 0.5 - s->inverse;
-	const float *tcos = s->tcos;
-	const float *tsin = s->tsin;
-
-	if (!s->inverse) {
-		fftPermute(&s->fft, (FFTComplex *)data);
-		fftCalc(&s->fft, (FFTComplex *)data);
-	}
-
-	// i=0 is a special case because of packing, the DC term is real, so we
-	// are going to throw the N/2 term (also real) in with it.
-	ev.re = data[0];
-	data[0] = ev.re + data[1];
-	data[1] = ev.re - data[1];
-
-	int i;
-
-	for (i = 1; i < n >> 2; i++) {
-		int i1 = i * 2;
-		int i2 = n - i1;
-
-		// Separate even and odd FFTs
-		ev.re = k1 * (data[i1] + data[i2]);
-		od.im = -k2 * (data[i1] - data[i2]);
-		ev.im = k1 * (data[i1 + 1] - data[i2 + 1]);
-		od.re = k2 * (data[i1 + 1] + data[i2 + 1]);
-
-		// Apply twiddle factors to the odd FFT and add to the even FFT
-		data[i1] = ev.re + od.re * tcos[i] - od.im * tsin[i];
-		data[i1 + 1] = ev.im + od.im * tcos[i] + od.re * tsin[i];
-		data[i2] = ev.re - od.re * tcos[i] + od.im * tsin[i];
-		data[i2 + 1] = -ev.im + od.im * tcos[i] + od.re * tsin[i];
-	}
-
-	data[i * 2 + 1] = s->signConvention * data[i * 2 + 1];
-	if (s->inverse) {
-		data[0] *= k1;
-		data[1] *= k1;
-		fftPermute(&s->fft, (FFTComplex *)data);
-		fftCalc(&s->fft, (FFTComplex *)data);
-	}
 }
 
 // half mpeg encoding window (full precision)
@@ -1755,7 +1657,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	if (_fftOrder < 7 || _fftOrder > 9)
 		error("QDM2Stream::QDM2Stream() Unsupported fft_order: %d", _fftOrder);
 
-	rdftInit(&_rdftCtx, _fftOrder, IRDFT);
+	_rdft = new Common::RDFT(_fftOrder, Common::RDFT::IDFT_C2R);
 
 	initVlc();
 	ff_mpa_synth_init(ff_mpa_synth_window);
@@ -1770,6 +1672,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 }
 
 QDM2Stream::~QDM2Stream() {
+	delete _rdft;
 	delete[] _compressedData;
 }
 
@@ -2991,15 +2894,13 @@ void QDM2Stream::qdm2_fft_tone_synthesizer(uint8 sub_packet) {
 }
 
 void QDM2Stream::qdm2_calculate_fft(int channel) {
-	int i;
-
 	_fft.complex[channel][0].re *= 2.0f;
 	_fft.complex[channel][0].im = 0.0f;
 
-	rdftCalc(&_rdftCtx, (float *)_fft.complex[channel]);
+	_rdft->calc((float *)_fft.complex[channel]);
 
 	// add samples to output buffer
-	for (i = 0; i < ((_fftFrameSize + 15) & ~15); i++)
+	for (int i = 0; i < ((_fftFrameSize + 15) & ~15); i++)
 		_outputBuffer[_channels * i + channel] += ((float *) _fft.complex[channel])[i];
 }
 
