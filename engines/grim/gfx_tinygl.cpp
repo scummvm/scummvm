@@ -1232,4 +1232,51 @@ void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	}
 }
 
+void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
+	uint8 r, g, b;
+	int pos = x + y * 640;
+	for (int i = 0; i < height; ++i) {
+		for (int j = 0; j < width; ++j) {
+			_zb->pbuf.getRGBAt(pos + j, r, g, b);
+			buffer[0] = r;
+			buffer[1] = g;
+			buffer[2] = b;
+			buffer[3] = 255;
+			buffer += 4;
+		}
+		pos += 640;
+	}
+}
+
+void GfxTinyGL::createSpecialtyTextures() {
+	//make a buffer big enough to hold any of the textures
+	uint8 *buffer = new uint8[256*256*4];
+
+	readPixels(0, 0, 256, 256, buffer);
+	_specialty[0].create((const char *)buffer, 256, 256);
+
+	readPixels(256, 0, 256, 256, buffer);
+	_specialty[1].create((const char *)buffer, 256, 256);
+
+	readPixels(512, 0, 128, 128, buffer);
+	_specialty[2].create((const char *)buffer, 128, 128);
+
+	readPixels(512, 128, 128, 128, buffer);
+	_specialty[3].create((const char *)buffer, 128, 128);
+
+	readPixels(0, 256, 256, 224, buffer);
+	_specialty[4].create((const char *)buffer, 256, 256);
+
+	readPixels(256, 256, 256, 224, buffer);
+	_specialty[5].create((const char *)buffer, 256, 256);
+
+	readPixels(512, 256, 128, 128, buffer);
+	_specialty[6].create((const char *)buffer, 128, 128);
+
+	readPixels(512, 384, 128, 96, buffer);
+	_specialty[7].create((const char *)buffer, 128, 128);
+
+	delete[] buffer;
+}
+
 } // end of namespace Grim
