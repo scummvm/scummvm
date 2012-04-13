@@ -8257,8 +8257,7 @@ static const float sinTable65536[32768] = {
 	-1.000000f, -1.000000f, -1.000000f, -1.000000f, -1.000000f, -1.000000f, -1.000000f, -1.000000f
 };
 
-static const float *sinTables[17] = {
-	0           , 0           , 0            , 0            ,
+static const float *sinTables[13] = {
 	sinTable16  , sinTable32  , sinTable64   , sinTable128  ,
 	sinTable256 , sinTable512 , sinTable1024 , sinTable2048 ,
 	sinTable4096, sinTable8192, sinTable16384, sinTable32768,
@@ -8268,7 +8267,7 @@ static const float *sinTables[17] = {
 const float *getSineTable(int bits) {
 	assert((bits >= 4) && (bits <= 16));
 
-	return sinTables[bits];
+	return sinTables[bits-4];
 }
 
 } // End of namespace Common

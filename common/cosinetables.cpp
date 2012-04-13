@@ -8257,8 +8257,7 @@ static const float cosTable65536[32768] = {
 	 1.000000f,  1.000000f,  1.000000f,  1.000000f,  1.000000f,  1.000000f,  1.000000f,  1.000000f
 };
 
-static const float *cosTables[17] = {
-	0           , 0           , 0            , 0            ,
+static const float *cosTables[13] = {
 	cosTable16  , cosTable32  , cosTable64   , cosTable128  ,
 	cosTable256 , cosTable512 , cosTable1024 , cosTable2048 ,
 	cosTable4096, cosTable8192, cosTable16384, cosTable32768,
@@ -8268,7 +8267,7 @@ static const float *cosTables[17] = {
 const float *getCosineTable(int bits) {
 	assert((bits >= 4) && (bits <= 16));
 
-	return cosTables[bits];
+	return cosTables[bits-4];
 }
 
 } // End of namespace Common
