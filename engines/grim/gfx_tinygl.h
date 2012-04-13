@@ -117,6 +117,8 @@ public:
 	void selectCleanBuffer();
 	void clearCleanBuffer();
 
+	void createSpecialtyTextures() { };
+
 protected:
 
 private:

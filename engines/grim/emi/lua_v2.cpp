@@ -33,6 +33,7 @@
 
 #include "engines/grim/set.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/gfx_base.h"
 
 #include "engines/grim/movie/movie.h"
 
@@ -105,15 +106,14 @@ void Lua_V2::MakeScreenTextures() {
 	lua_Object indexObj = lua_getparam(1);
 
 	if (!lua_isnil(indexObj) && lua_isnumber(indexObj)) {
-		int index = (int)lua_getnumber(indexObj);
-		warning("Lua_V2::MakeScreenTextures, index: %d", index);
-		// FIXME: implement missing function
-//		if (func(index)) {
-			lua_pushnumber(1.0);
-			return;
-//		}
+		/*int index = (int)lua_getnumber(indexObj);*/
+		// The index does not seem to matter
+
+		g_driver->createSpecialtyTextures();
+		lua_pushnumber(1.0);
+	} else {
+		lua_pushnil();
 	}
-	lua_pushnil();
 }
 
 void Lua_V2::LoadBundle() {

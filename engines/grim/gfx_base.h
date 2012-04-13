@@ -27,6 +27,8 @@
 
 #include "graphics/pixelformat.h"
 
+#include "engines/grim/material.h"
+
 namespace Graphics {
 	struct Surface;
 }
@@ -51,6 +53,15 @@ class MeshFace;
 struct Sprite;
 class Light;
 class Texture;
+
+class SpecialtyMaterial : public Material {
+public:
+	SpecialtyMaterial() { _texture = NULL; }
+	~SpecialtyMaterial() { delete _texture; }
+	void create(const char *data, int width, int height);
+	virtual void select() const;
+	Texture *_texture;
+};
 
 /**
  * The Color-formats used for bitmaps in Grim Fandango/Escape From Monkey Island
@@ -237,6 +248,9 @@ public:
 	virtual void selectCleanBuffer() {}
 	virtual void clearCleanBuffer() {}
 
+	virtual void createSpecialtyTextures() = 0;
+	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
+
 protected:
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
@@ -251,6 +265,7 @@ protected:
 	bool _renderZBitmaps;
 	bool _shadowModeActive;
 	Graphics::PixelFormat _pixelFormat;
+	SpecialtyMaterial _specialty[8];
 };
 
 // Factory-like functions:

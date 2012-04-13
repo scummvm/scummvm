@@ -87,4 +87,20 @@ GfxBase *CreateGfxOpenGL() {
 }
 #endif // USE_OPENGL
 
+void SpecialtyMaterial::select() const {
+	if (_texture) {
+		g_driver->selectMaterial(_texture);
+	}
+}
+
+void SpecialtyMaterial::create(const char *data, int width, int height) {
+	delete _texture;
+	_texture = new Texture();
+	_texture->_width = width;
+	_texture->_height = height;
+	_texture->_bpp = 4;
+	_texture->_colorFormat = BM_RGBA;
+	g_driver->createMaterial(_texture, data, NULL);
+}
+
 }

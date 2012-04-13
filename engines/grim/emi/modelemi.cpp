@@ -247,7 +247,7 @@ void EMIModel::prepareTextures() {
 		if (!_texNames[i].contains("specialty"))
 			_mats[i] = g_resourceloader->loadMaterial(_texNames[i].c_str(), NULL);
 		else
-			_mats[i] = NULL;
+			_mats[i] = g_driver->getSpecialtyTexture(_texNames[i][9] - '0');
 	}
 }
 
