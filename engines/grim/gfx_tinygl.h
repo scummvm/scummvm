@@ -54,7 +54,8 @@ public:
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
 	void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Angle &yaw,
-						const Math::Angle &pitch, const Math::Angle &roll);
+						const Math::Angle &pitch, const Math::Angle &roll, const bool inOverworld,
+						const float alpha);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
@@ -127,6 +128,7 @@ private:
 	int _smushWidth;
 	int _smushHeight;
 	Graphics::PixelBuffer _storedDisplay;
+	float _alpha;
 
 	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);

@@ -95,6 +95,7 @@ GfxOpenGL::GfxOpenGL() {
 	g_driver = this;
 	_storedDisplay = NULL;
 	_emergFont = 0;
+	_alpha = 1.f;
 }
 
 GfxOpenGL::~GfxOpenGL() {
@@ -375,7 +376,8 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 }
 
 void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Angle &yaw,
-		const Math::Angle &pitch, const Math::Angle &roll) {
+		const Math::Angle &pitch, const Math::Angle &roll, const bool inOverworld,
+		const float alpha) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -393,22 +395,39 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glColor3f(_shadowColorR / 255.0f, _shadowColorG / 255.0f, _shadowColorB / 255.0f);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
-	glTranslatef(pos.x(), pos.y(), pos.z());
-	glScalef(scale, scale, scale);
-	// EMI uses Y axis as down-up, so we need to rotate differently.
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		glRotatef(yaw.getDegrees(), 0, -1, 0);
-		glRotatef(pitch.getDegrees(), 1, 0, 0);
-		glRotatef(roll.getDegrees(), 0, 0, 1);
+
+	if (alpha < 1.f) {
+		_alpha = alpha;
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	if (inOverworld) {
+		glLoadIdentity();
+		glScalef(1.0, 1.0, -1.0);
+		glTranslatef(pos.x(), pos.y(), pos.z());
 	} else {
-		glRotatef(yaw.getDegrees(), 0, 0, 1);
-		glRotatef(pitch.getDegrees(), 1, 0, 0);
-		glRotatef(roll.getDegrees(), 0, 1, 0);
+		glTranslatef(pos.x(), pos.y(), pos.z());
+		glScalef(scale, scale, scale);
+		// EMI uses Y axis as down-up, so we need to rotate differently.
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			glRotatef(yaw.getDegrees(), 0, -1, 0);
+			glRotatef(pitch.getDegrees(), 1, 0, 0);
+			glRotatef(roll.getDegrees(), 0, 0, 1);
+		} else {
+			glRotatef(yaw.getDegrees(), 0, 0, 1);
+			glRotatef(pitch.getDegrees(), 1, 0, 0);
+			glRotatef(roll.getDegrees(), 0, 1, 0);
+		}
 	}
 }
 
 void GfxOpenGL::finishActorDraw() {
 	glPopMatrix();
+	if (_alpha < 1.f) {
+		glDisable(GL_BLEND);
+		_alpha = 1.f;
+	}
 	glDisable(GL_TEXTURE_2D);
 	if (_currentShadowArray) {
 		glEnable(GL_LIGHTING);
@@ -501,7 +520,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		if (face->_hasTexture) {
 			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
-		glColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
+		glColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a * _alpha );
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];

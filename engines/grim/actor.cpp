@@ -1298,14 +1298,15 @@ void Actor::draw() {
 			g_driver->setShadowMode();
 			if (g_driver->isHardwareAccelerated())
 				g_driver->drawShadowPlanes();
-			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll);
+			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _global_alpha : 1.f);
 			costume->draw();
 			g_driver->finishActorDraw();
 			g_driver->clearShadowMode();
 			g_driver->setShadow(NULL);
 		}
+
 		// normal draw actor
-		g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll);
+		g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _global_alpha : 1.f);
 		costume->draw();
 		g_driver->finishActorDraw();
 	}
@@ -1315,7 +1316,7 @@ void Actor::draw() {
 		x1 = y1 = 1000;
 		x2 = y2 = -1000;
 		if (!_costumeStack.empty()) {
-			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll);
+			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, 1.f);
 			_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
 			g_driver->finishActorDraw();
 		}

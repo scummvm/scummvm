@@ -229,6 +229,7 @@ GfxTinyGL::GfxTinyGL() {
 	g_driver = this;
 	_zb = NULL;
 	_storedDisplay = NULL;
+	_alpha = 1.f;
 }
 
 GfxTinyGL::~GfxTinyGL() {
@@ -467,7 +468,8 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 }
 
 void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Angle &yaw,
-							   const Math::Angle &pitch, const Math::Angle &roll) {
+							   const Math::Angle &pitch, const Math::Angle &roll, const bool inOverworld,
+								 const float alpha) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -486,17 +488,30 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
-	tglTranslatef(pos.x(), pos.y(), pos.z());
-	tglScalef(scale, scale, scale);
-	// EMI uses Y axis as down-up, so we need to rotate differently.
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		tglRotatef(yaw.getDegrees(), 0, -1, 0);
-		tglRotatef(pitch.getDegrees(), 1, 0, 0);
-		tglRotatef(roll.getDegrees(), 0, 0, 1);
+	// FIXME: TinyGL doesn't seem to support translucency.
+	if (alpha < 1.f) {
+		_alpha = alpha;
+//    tglEnable(TGL_BLEND);
+//    tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	if (inOverworld) {
+		tglLoadIdentity();
+		tglScalef(1.0, 1.0, -1.0);
+		tglTranslatef(pos.x(), pos.y(), pos.z());
 	} else {
-		tglRotatef(yaw.getDegrees(), 0, 0, 1);
-		tglRotatef(pitch.getDegrees(), 1, 0, 0);
-		tglRotatef(roll.getDegrees(), 0, 1, 0);
+		tglTranslatef(pos.x(), pos.y(), pos.z());
+		tglScalef(scale, scale, scale);
+		// EMI uses Y axis as down-up, so we need to rotate differently.
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			tglRotatef(yaw.getDegrees(), 0, -1, 0);
+			tglRotatef(pitch.getDegrees(), 1, 0, 0);
+			tglRotatef(roll.getDegrees(), 0, 0, 1);
+		} else {
+			tglRotatef(yaw.getDegrees(), 0, 0, 1);
+			tglRotatef(pitch.getDegrees(), 1, 0, 0);
+			tglRotatef(roll.getDegrees(), 0, 1, 0);
+		}
 	}
 }
 
@@ -504,6 +519,12 @@ void GfxTinyGL::finishActorDraw() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
 	tglDisable(TGL_TEXTURE_2D);
+
+	// FIXME: TinyGL doesn't seem to support translucency.
+	if (_alpha < 1.f) {
+//    tglDisable(TGL_BLEND);
+		_alpha = 1.f;
+	}
 
 	if (_currentShadowArray) {
 		tglSetShadowMaskBuf(NULL);
