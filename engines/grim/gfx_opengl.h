@@ -120,6 +120,8 @@ public:
 	void drawMovieFrame(int offsetX, int offsetY);
 	void releaseMovieFrame();
 
+	void createSpecialtyTextures();
+
 protected:
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 private:

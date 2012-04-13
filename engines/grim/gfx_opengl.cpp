@@ -1612,6 +1612,37 @@ void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
+void GfxOpenGL::createSpecialtyTextures() {
+	//make a buffer big enough to hold any of the textures
+	char *buffer = new char[256*256*4];
+
+	glReadPixels(0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[0].create(buffer, 256, 256);
+
+	glReadPixels(256, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[1].create(buffer, 256, 256);
+
+	glReadPixels(512, 0, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[2].create(buffer, 128, 128);
+
+	glReadPixels(512, 128, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[3].create(buffer, 128, 128);
+
+	glReadPixels(0, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[4].create(buffer, 256, 256);
+
+	glReadPixels(256, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[5].create(buffer, 256, 256);
+
+	glReadPixels(512, 256, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[6].create(buffer, 128, 128);
+
+	glReadPixels(512, 384, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	_specialty[7].create(buffer, 128, 128);
+
+	delete[] buffer;
+}
+
 } // end of namespace Grim
 
 #endif

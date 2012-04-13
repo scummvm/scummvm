@@ -117,6 +117,8 @@ public:
 	void selectCleanBuffer();
 	void clearCleanBuffer();
 
+	void createSpecialtyTextures();
+
 protected:
 
 private:
@@ -126,6 +128,7 @@ private:
 	int _smushHeight;
 	Graphics::PixelBuffer _storedDisplay;
 
+	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);
 };
 

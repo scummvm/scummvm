@@ -66,7 +66,7 @@ public:
 
 	void reload(CMap *cmap);
 	// Load this texture into the GL context
-	void select() const;
+	virtual void select() const;
 
 	// Set which image in an animated texture to use
 	void setActiveTexture(int n);
@@ -77,7 +77,10 @@ public:
 	const Common::String &getFilename() const;
 	MaterialData *getData() const;
 
-	~Material();
+	virtual ~Material();
+
+protected:
+	Material();
 
 private:
 	MaterialData *_data;
