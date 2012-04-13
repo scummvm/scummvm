@@ -1490,28 +1490,43 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
+	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 
 	if (primitive->isFilled()) {
 		glBegin(GL_QUADS);
 		glVertex2f(x1, y1);
-		glVertex2f(x2, y1);
-		glVertex2f(x2, y2);
-		glVertex2f(x1, y2);
+		glVertex2f(x2 + 1, y1);
+		glVertex2f(x2 + 1, y2 + 1);
+		glVertex2f(x1, y2 + 1);
 		glEnd();
 	} else {
-		glBegin(GL_LINES);
-		glVertex2f(x1, y1);
-		glVertex2f(x2, y1);
+		glBegin(GL_QUADS);
 
+		// top line
+		glVertex2f(x1, y1);
+		glVertex2f(x2 + 1, y1);
+		glVertex2f(x2 + 1, y1 + 1);
+		glVertex2f(x1, y1 + 1);
+
+
+		// right line
 		glVertex2f(x2, y1);
+		glVertex2f(x2 + 1, y1);
+		glVertex2f(x2 + 1, y2 + 1);
 		glVertex2f(x2, y2);
 
-		glVertex2f(x2, y2);
+		// bottom line
+		glVertex2f(x1, y2);
+		glVertex2f(x2 + 1, y2);
+		glVertex2f(x2 + 1, y2 + 1);
+		glVertex2f(x1, y2 + 1);
+
+		// left line
+		glVertex2f(x1, y1);
+		glVertex2f(x1 + 1, y1);
+		glVertex2f(x1 + 1, y2 + 1);
 		glVertex2f(x1, y2);
 
-		glVertex2f(x1, y2);
-		glVertex2f(x1, y1);
 		glEnd();
 	}
 
