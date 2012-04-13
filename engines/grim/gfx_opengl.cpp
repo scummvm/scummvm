@@ -1474,11 +1474,9 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 }
 
 void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
-	float x1 = primitive->getP1().x * _scaleW;
-	float y1 = primitive->getP1().y * _scaleH;
-	float x2 = (primitive->getP2().x+1) * _scaleW;
-	float y2 = (primitive->getP2().y+1) * _scaleH;
-
+	float x1, y1;
+	float x2 = (primitive->getP2().x + 1) * _scaleW;
+	float y2 = (primitive->getP2().y + 1) * _scaleH;
 	const Color color(primitive->getColor());
 
 	glMatrixMode(GL_PROJECTION);
@@ -1494,16 +1492,33 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
 
 	if (primitive->isFilled()) {
-		glBegin(GL_QUADS);
-	} else {
-		glBegin(GL_LINE_LOOP);
-	}
+		x1 = (primitive->getP1().x) * _scaleW;
+		y1 = (primitive->getP1().y) * _scaleH;
 
-	glVertex2f(x1, y1);
-	glVertex2f(x2, y1);
-	glVertex2f(x2, y2);
-	glVertex2f(x1, y2);
-	glEnd();
+		glBegin(GL_QUADS);
+		glVertex2f(x1, y1);
+		glVertex2f(x2, y1);
+		glVertex2f(x2, y2);
+		glVertex2f(x1, y2);
+		glEnd();
+	} else {
+		x1 = (primitive->getP1().x + 1) * _scaleW;
+		y1 = (primitive->getP1().y + 1) * _scaleH;
+
+		glBegin(GL_LINES);
+		glVertex2f((x1 - 1) * _scaleW, y1);
+		glVertex2f(x2, y1);
+
+		glVertex2f(x2, y1);
+		glVertex2f(x2, y2);
+
+		glVertex2f(x2, y2);
+		glVertex2f(x1, y2);
+
+		glVertex2f(x1, y2);
+		glVertex2f(x1, y1);
+		glEnd();
+	}
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 
