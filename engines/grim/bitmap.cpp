@@ -403,7 +403,7 @@ Bitmap::Bitmap() {
 }
 
 Bitmap *Bitmap::create(const Common::String &filename) {
-	if (!g_resourceloader->getFileExists(filename)) {
+	if (!SearchMan.hasFile(filename)) {
 		warning("Could not find bitmap %s", filename.c_str());
 		return NULL;
 	}
