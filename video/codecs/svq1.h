@@ -28,7 +28,7 @@
 namespace Common {
 class BitStream;
 class Huffman;
-class Point;
+struct Point;
 }
 
 namespace Video {
