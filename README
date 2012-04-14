@@ -63,16 +63,12 @@ GRIM.TAB
 
 3.2 - Running Grim Fandango
 ---------------------------
-1. Copy the neccessary files to a folder on your Hard Drive.
-2. Apply the patch, if you don't have it*
-2. Open ResidualVM
-3. Choose "Add Game"
-4. Select the folder you created in step 1
-5. Click Start
-
-* Patched versions have subtitles in cutscenes, and can complete
-the game, unpatched versions don't have subtitles in cutscenes, 
-and can't complete the game. 
+1. Copy the neccessary files to a folder on your Hard Drive
+2. Copy the patch to a game folder
+3. Open ResidualVM
+4. Choose "Add Game"
+5. Select the folder you created in step 1
+6. Click Start
 
 The patch can be downloaded from:
 http://demos.residualvm.org/patches/gfupd101.exe
@@ -137,18 +133,18 @@ The following settings are currently available in the config-file,
 however some of them might not work with your current build. And 
 some of them might make ResidualVM crash, or behave in weird ways.
 
-|-------------------|-------------|-----------------------------------------------------|
-|Setting            | Values      | Effect                                              |
-|-------------------|-------------|-----------------------------------------------------|
-|show_fps           |[true/false] | If true, then ResidualVM will show the current      |
-|                   |             | FPS-rate, while you play                            |
-|-------------------|-------------|-----------------------------------------------------|
-|last_set           |[set-name]   | The set you were last on, ResidualVM will try to    |
-|                   |             | continue from there                                 |
-|-------------------|-------------|-----------------------------------------------------|
-|last_save          |[save-number]| The save you last saved, ResidualVM will have that  |
-|                   |             | selected the next time you try to load a game.      |
-|-------------------|-------------|-----------------------------------------------------|
+|------------|-------------|-----------------------------------------------------|
+|Setting     | Values      | Effect                                              |
+|------------|-------------|-----------------------------------------------------|
+|show_fps    |[true/false] | If true, then ResidualVM will show the current      |
+|            |             | FPS-rate, while you play                            |
+|------------|-------------|-----------------------------------------------------|
+|last_set    |[set-name]   | The set you were last on, ResidualVM will try to    |
+|            |             | continue from there                                 |
+|------------|-------------|-----------------------------------------------------|
+|last_save   |[save-number]| The save you last saved, ResidualVM will have that  |
+|            |             | selected the next time you try to load a game.      |
+|------------|-------------|-----------------------------------------------------|
 
 
 ---------------------------------
