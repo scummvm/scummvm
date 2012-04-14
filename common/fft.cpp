@@ -167,7 +167,8 @@ static void fft##n(Complex *z) { \
 	fft##n2(z); \
 	fft##n4(z + n4 * 2); \
 	fft##n4(z + n4 * 3); \
-	pass(z, getCosineTable(t), n4 / 2);\
+	Common::CosineTable table(t); \
+	pass(z, table.getTable(), n4 / 2);\
 }
 
 static void fft4(Complex *z) {
@@ -209,7 +210,8 @@ static void fft16(Complex *z) {
 	fft4(z + 8);
 	fft4(z + 12);
 
-	const float * const cosTable = getCosineTable(4);
+	Common::CosineTable c(4);
+	const float * const cosTable = c.getTable();
 
 	TRANSFORM_ZERO(z[0], z[4], z[8], z[12]);
 	TRANSFORM(z[2], z[6], z[10], z[14], sqrthalf, sqrthalf);

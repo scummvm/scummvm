@@ -40,12 +40,16 @@ RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _fft(0) {
 
 	int n = 1 << bits;
 
-	_tSin = getSineTable(bits) + (trans == DFT_R2C || trans == DFT_C2R) * (n >> 2);
-	_tCos = getCosineTable(bits);
+	_sin = new SineTable(bits);
+	_tSin = _sin->getTable() + (trans == DFT_R2C || trans == DFT_C2R) * (n >> 2);
+	_cos = new CosineTable(bits);
+	_tCos = _cos->getTable();
 }
 
 RDFT::~RDFT() {
 	delete _fft;
+	delete _sin;
+	delete _cos;
 }
 
 void RDFT::calc(float *data) {

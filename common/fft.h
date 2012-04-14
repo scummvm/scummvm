@@ -64,9 +64,6 @@ private:
 	Complex *_expTab;
 	Complex *_tmpBuf;
 
-	const float *_tSin;
-	const float *_tCos;
-
 	int _splitRadix;
 	int _permutation;
 

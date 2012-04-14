@@ -35,6 +35,8 @@
 
 namespace Common {
 
+class CosineTable;
+
 /**
  * (Inverse) Discrete Cosine Transforms.
  *
@@ -59,6 +61,7 @@ private:
 	int _bits;
 	TransformType _trans;
 
+	CosineTable *_cos;
 	const float *_tCos;
 
 	float *_csc2;

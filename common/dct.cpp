@@ -34,7 +34,8 @@ namespace Common {
 DCT::DCT(int bits, TransformType trans) : _bits(bits), _trans(trans), _rdft(0) {
 	int n = 1 << _bits;
 
-	_tCos = getCosineTable(_bits + 2);
+	_cos = new Common::CosineTable(_bits + 2);
+	_tCos = _cos->getTable();
 
 	_csc2 = new float[n / 2];
 
@@ -47,6 +48,7 @@ DCT::DCT(int bits, TransformType trans) : _bits(bits), _trans(trans), _rdft(0) {
 DCT::~DCT() {
 	delete _rdft;
 	delete[] _csc2;
+	delete _cos;
 }
 
 void DCT::calc(float *data) {
