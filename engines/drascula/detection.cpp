@@ -23,9 +23,11 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/savestate.h"
 #include "common/file.h"
 
 #include "drascula/drascula.h"
+#define MAX_DESC_SIZE 23
 
 namespace Drascula {
 
@@ -270,7 +272,45 @@ public:
 		_singleid = "drascula";
 		_guioptions = GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD);
 	}
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		return (f == kSupportsListSaves);
+	}
+	virtual SaveStateList listSaves(const char *target) const {
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		Common::StringArray filenames;
+		Common::String saveDesc;
+		Common::String pattern = Common::String::format("%s??",target);
+		Common::Array<int> slots;
 
+		filenames = saveFileMan->listSavefiles(pattern);
+		sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+		SaveStateList saveList;
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+			// Obtain the last 2 digits of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 2);
+
+			if (slotNum >= 1 && slotNum <= 10) {
+				slots.push_back(slotNum);
+			}
+		}
+		// Load save index
+		Common::String fileEpa = Common::String::format("%s.epa", target);
+		Common::InSaveFile *epa = g_system->getSavefileManager()->openForLoading(fileEpa); 
+		char saveName[MAX_DESC_SIZE];
+		int line = 1;
+		for (int i = 0; i < slots.size(); i++) {
+			for (; line < slots[i]; line++) epa->readLine(); // ignore lines corresponding to unused saveslots
+			strncpy(saveName, epa->readLine().c_str(), 23);
+			line++;
+			saveName[22] = '\0';	// make sure the savegame name is 0-terminated
+			saveDesc = saveName;
+			saveList.push_back(SaveStateDescriptor(slots[i], saveDesc));
+		}
+		delete epa;
+
+		return saveList;
+	}
 	virtual const char *getName() const {
 		return "Drascula";
 	}
