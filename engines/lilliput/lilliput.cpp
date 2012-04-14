@@ -196,7 +196,7 @@ void LilliputEngine::pollEvent() {
 }
 
 byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
-	debugC(1, kDebugEngine, "loadVGA(%s, %d)", filename, (loadPal) ? 1 : 0);
+	debugC(1, kDebugEngine, "loadVGA(%s, %d)", filename.c_str(), (loadPal) ? 1 : 0);
 
 	Common::File f;
 
@@ -533,7 +533,7 @@ void LilliputEngine::handleGameScripts() {
 		return;
 
 	assert(tmpVal < _gameScriptIndexSize);
-	warning("========================== Game Script %d ==============================", tmpVal);
+	debugC(1, kDebugEngine, "========================== Game Script %d ==========================", tmpVal);
 
 	_scriptHandler->runScript(Common::MemoryReadStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
 }

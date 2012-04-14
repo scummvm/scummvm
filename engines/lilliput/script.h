@@ -63,6 +63,9 @@ private:
 	byte _array10AB1[40];
 	byte _array12811[40];
 	byte _array12839[40];
+	byte _array16123[40];
+	byte _array1614B[40];
+	byte _array16173[40];
 	byte _array10B51[40 * 40];
 
 	int _array12311[640];
@@ -76,6 +79,7 @@ private:
 	int _word12A00;
 	int _word12A02;
 	int _word1855E;
+	int _word18776;
 
 	int handleOpcode(Common::MemoryReadStream *script);
 	byte handleOpcodeType1(int curWord);
@@ -87,6 +91,9 @@ private:
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
 	void sub16C5C(int index, byte var3);
+	int sub17D40(int var);
+	void sub18A56(byte *buf);
+	void sub18B3C(int var);
 
 	int getValue1();
 	int getValue2();
