@@ -10,7 +10,9 @@ ResidualVM
        James Brown           - Core developer (retired)
        Giulio Camuffo        - Core developer
        Pawel Kolodziejski    - Core developer (suspended)
-       Einar Johan T. Somaen - Initial EMI support, various code fixes and
+       Einar Johan T. Somaen - EMI support, various code fixes and
+                               improvements
+       Joel Teichroeb        - EMI support, various engine fixes and
                                improvements
 
     Myst 3 Team:
@@ -22,6 +24,7 @@ ResidualVM
      list. Contact us and we'll add you.
 
     Grim:
+       Thomas Allen          - Various engine code fixes and improvements
        Torbjorn Andersson    - Various code fixes
        Ori Avtalion          - Lipsync, LAF support, various code fixes
        Robert Biro           - Fixes to antiliasing
@@ -47,8 +50,6 @@ ResidualVM
        Vincent Pelletier     - Various engine improvements and code fixes
        Daniel Schepler       - Initial engine codebase, LUA support
        Yaron Tausky          - Fixes to subtitles
-       Joel Teichroeb        - Initial EMI support, various engine fixes and
-                               improvements
        Julien Templier       - create_project tool
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations

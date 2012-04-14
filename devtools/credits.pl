@@ -456,7 +456,8 @@ begin_credits("Credits");
 		add_person("James Brown", "ender", "Core developer (retired)");
 		add_person("Giulio Camuffo", "giucam", "Core developer");
 		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer (suspended)");
-		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Initial EMI support, various code fixes and improvements");
+		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "EMI support, various code fixes and improvements");
+		add_person("Joel Teichroeb ", "klusark", "EMI support, various engine fixes and improvements");
 	    end_section();
 
 	    begin_section("Myst 3 Team");
@@ -469,6 +470,7 @@ begin_credits("Credits");
 	    "If you have contributed to this engine then you deserve to be on this ".
 	    "list. Contact us and we'll add you.");
 	    begin_section("Grim");
+		add_person("Thomas Allen", "olldray", "Various engine code fixes and improvements");
 		add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
 		add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support, various code fixes");
 		add_person("Robert Biro", "DarthJDG", "Fixes to antiliasing");
@@ -492,7 +494,6 @@ begin_credits("Credits");
 		add_person("Vincent Pelletier", "vpelletier", "Various engine improvements and code fixes");
 		add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
 		add_person("Yaron Tausky", "yaront", "Fixes to subtitles");
-		add_person("Joel Teichroeb ", "klusark", "Initial EMI support, various engine fixes and improvements");
 		add_person("Julien Templier", "Littleboy", "create_project tool");
 		add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
 		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
