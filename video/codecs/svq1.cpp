@@ -191,14 +191,18 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 	for (int i = 0; i < 3; i++) {
 		int width, height;
 		if (i == 0) {
-			width  = yWidth;
+			width = yWidth;
 			height = yHeight;
+			current[i] = new byte[width * height];
 		} else {
-			width  = uvWidth;
+			width = uvWidth;
 			height = uvHeight;
-		}
 
-		current[i] = new byte[width * height];
+			// Add an extra row's worth of data to not go out-of-bounds in the
+			// color conversion. Then fill that with "empty" data.
+			current[i] = new byte[width * (height + 1)];
+			memset(current[i] + width * height, 0x80, width);
+		}
 
 		if (frameType == 0) { // I Frame
 			// Keyframe (I)

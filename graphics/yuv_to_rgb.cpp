@@ -300,19 +300,8 @@ void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uS
 		convertYUV420ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
-#define OUTPUT_4_PIXEL_COLUMN() \
-	PUT_PIXEL(*ySrc, dstPtr); \
-	PUT_PIXEL(*(ySrc + yPitch), dstPtr + dstPitch); \
-	PUT_PIXEL(*(ySrc + (yPitch << 1)), dstPtr + dstPitch * 2); \
-	PUT_PIXEL(*(ySrc + (yPitch * 3)), dstPtr + dstPitch * 3); \
-	ySrc++; \
-	dstPtr += sizeof(PixelInt)
-
 template<typename PixelInt>
 void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
-	int quarterHeight = yHeight >> 2;
-	int quarterWidth = yWidth >> 2;
-
 	// Keep the tables in pointers here to avoid a dereference on each pixel
 	const int16 *Cr_r_tab = lookup->_colorTab;
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
@@ -320,26 +309,44 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
 	const uint32 *rgbToPix = lookup->_rgbToPix;
 
-	for (int h = 0; h < quarterHeight; h++) {
-		for (int w = 0; w < quarterWidth; w++) {
-			register const uint32 *L;
+	for (int y = 0; y < yHeight; y++) {
+		for (int x = 0; x < yWidth; x++) {
+			// Perform bilinear interpolation on the the chroma values
+			// Based on the algorithm found here: http://tech-algorithm.com/articles/bilinear-image-scaling/
+			// Feel free to optimize further
+			int targetX = x >> 2;
+			int targetY = y >> 2;
+			int xDiff = x & 3;
+			int yDiff = y & 3;
+			int index = targetY * uvPitch + targetX;
 
-			int16 cr_r  = Cr_r_tab[*vSrc];
-			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
-			int16 cb_b  = Cb_b_tab[*uSrc];
-			++uSrc;
-			++vSrc;
+			byte a = uSrc[index];
+			byte b = uSrc[index + 1];
+			byte c = uSrc[index + uvPitch];
+			byte d = uSrc[index + uvPitch + 1];
 
-			OUTPUT_4_PIXEL_COLUMN();
-			OUTPUT_4_PIXEL_COLUMN();
-			OUTPUT_4_PIXEL_COLUMN();
-			OUTPUT_4_PIXEL_COLUMN();
+			byte u = (a * (4 - xDiff) * (4 - yDiff) + b * xDiff * (4 - yDiff) +
+					c * yDiff * (4 - xDiff) + d * xDiff * yDiff) >> 4;
+
+			a = vSrc[index];
+			b = vSrc[index + 1];
+			c = vSrc[index + uvPitch];
+			d = vSrc[index + uvPitch + 1];
+
+			byte v = (a * (4 - xDiff) * (4 - yDiff) + b * xDiff * (4 - yDiff) +
+					c * yDiff * (4 - xDiff) + d * xDiff * yDiff) >> 4;
+
+			int16 cr_r  = Cr_r_tab[v];
+			int16 crb_g = Cr_g_tab[v] + Cb_g_tab[u];
+			int16 cb_b  = Cb_b_tab[u];
+			const uint32 *L;
+
+			PUT_PIXEL(ySrc[x], dstPtr);
+			dstPtr += sizeof(PixelInt);
 		}
 
-		dstPtr += dstPitch * 3;
-		ySrc += (yPitch << 2) - yWidth;
-		uSrc += uvPitch - quarterWidth;
-		vSrc += uvPitch - quarterWidth;
+		dstPtr += dstPitch - yWidth * sizeof(PixelInt);
+		ySrc += yPitch;
 	}
 }
 

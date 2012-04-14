@@ -67,6 +67,11 @@ void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uS
 /**
  * Convert a YUV410 image to an RGB surface
  *
+ * Since the chroma has a very low resolution in 410, we perform bilinear scaling
+ * on the two chroma planes to produce the image. The chroma planes must have
+ * at least one extra row that can be read from in order to produce a proper
+ * image (filled with 0x80). This is required in order to speed up this function.
+ *
  * @param dst     the destination surface
  * @param ySrc    the source of the y component
  * @param uSrc    the source of the u component
