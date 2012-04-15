@@ -42,7 +42,7 @@ mkdir tmp
 sed -i "s/optimize=\"\$optimize -fforce-mem\"/#optimize=\"\$optimize -fforce-mem\"/" configure.ac; \
 ./configure --enable-static --disable-shared --prefix=%{_builddir}/residualvm-%{version}/tmp; make -j 4; make install)
 (cd libmpeg2-0.5.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/residualvm-%{version}/tmp; make -j 4; make install)
-./configure --with-mad-prefix=%{_builddir}/residualvm-%{version}/tmp --with-faad-prefix=%{_builddir}/residualvm-%{version}/tmp --prefix=%{_prefix} --enable-release
+./configure --with-mad-prefix=%{_builddir}/residualvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/residualvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
 
 %install
