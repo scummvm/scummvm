@@ -303,18 +303,15 @@ public:
 		Common::InSaveFile *epa = saveFileMan->openForLoading(fileEpa); 
 
 		// Get savegame names from index
-		char saveName[MAX_DESC_SIZE];
 		int line = 1;
 		for (int i = 0; i < slots.size(); i++) {
 			for (; line < slots[i]; line++) epa->readLine(); // ignore lines corresponding to unused saveslots
 
-			// copy the name in the line corresponding to the save slot
-			strncpy(saveName, epa->readLine().c_str(), 23);
+			// copy the name in the line corresponding to the save slot and truncate to 22 characters
+			saveDesc = Common::String(epa->readLine().c_str(),22);
 			line++;	// increment line number to ensure it syncs with slot number
-			saveName[22] = '\0'; // make sure the savegame name is 0-terminated
 			
 			// Insert savegame name into list
-			saveDesc = saveName;
 			saveList.push_back(SaveStateDescriptor(slots[i], saveDesc));
 		}
 		delete epa;
