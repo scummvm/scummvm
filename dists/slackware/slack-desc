@@ -1,0 +1,18 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+          |-----handy-ruler------------------------------------------------------|
+residualvm: ResidualVM
+residualvm:
+residualvm: ResidualVM is a cross-platform 3D game interpreter which allows you
+residualvm: to play LucasArts' LUA-based 3D adventures: Grim Fandango and Escape
+residualvm: from Monkey Island, provided you already have their data files.
+residualvm: ResidualVM just replaces the executables shipped with the games,
+residualvm: allowing you to play them on systems for which they were never
+residualvm: designed!
+residualvm:
+residualvm:
