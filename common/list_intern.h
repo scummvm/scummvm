@@ -52,9 +52,11 @@ namespace ListInternal {
 		typedef T *			ValuePtr;
 		typedef T			ValueType;
 
-		NodeBase *_node;
+		
 		friend class ConstIterator<T>;
-		private:		
+		friend class List<T>;
+		private:	
+		NodeBase *_node;
 		bool _forward;		
 		public:
 
@@ -119,8 +121,9 @@ namespace ListInternal {
 		typedef const T &		ValueRef;
 		typedef const T *		ValuePtr;
 
-		const NodeBase *_node;
+		friend class List<T>;
 		private:
+		const NodeBase *_node;
 		bool _forward;
 		public:
 		ConstIterator() : _node(0), _forward(true) {}

@@ -295,4 +295,18 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(container.front(), 99);
 		TS_ASSERT_EQUALS(container.back(),  99);
 	}
+	/** Test equality opertors between Iterators ans ConstIterators*/
+	void test_iterator_equality(){
+		Common::List<int> container;
+		Common::List<int>::iterator iter;
+		Common::List<int>::const_iterator cIter;
+		container.push_back(17);
+		iter = container.begin();
+		cIter = container.begin();
+		TS_ASSERT( iter == cIter);
+		TS_ASSERT(cIter == iter);
+		TS_ASSERT( !(iter != cIter));
+		TS_ASSERT(!(cIter != iter));
+		
+	}
 };
