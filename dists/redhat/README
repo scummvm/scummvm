@@ -1,0 +1,30 @@
+How to build an RPM:
+
+
+Note: the following assumes that the RPM topdir is /usr/src/redhat .
+If you have set a different topdir in /usr/lib/rpm/macros or ~/.rpmmacros,
+adapt the below instructions where necessary.
+
+
+1) Collect sources:
+
+Place residualvm-%{version}.tar.bz2 and libmad-0.15.1b.tar.bz2 
+in /usr/src/redhat/SOURCES .
+If you have a different version of libmad, put the correct version
+numbers in the .spec file.
+
+Place residualvm.spec in /usr/src/redhat/SPECS .
+
+2) Build the rpm:
+
+Change directory to /usr/src/redhat/SPECS .
+Run:
+
+rpmbuild -ba residualvm.spec
+
+The RPM should now be built and placed in /usr/src/redhat/RPMS/i386 and
+the source RPM in /usr/src/redhat/SRPMS
+
+Note: libmad and libmpeg2 are statically linked into the residualvm binary
+because Fedora does not carry a libmad and libmpeg2 package, so I did not
+want to make the residualvm package depend on them.
