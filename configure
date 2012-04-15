@@ -85,7 +85,7 @@ add_engine myst3 "Myst 3" yes
 # Default settings
 #
 #ResidualVM defaults: mpeg2=auto, faad=no, opengles=no, vorbis=no, tremor=no
-# mt32emu=no, translation=no, flac=no, mad=no, seq_midi=no, timidity=no, png=no
+# mt32emu=no, translation=no, flac=no, seq_midi=no, timidity=no, png=no
 # theoradec=no, fluidsynth=no
 #
 # Default lib behaviour yes/no/auto
@@ -93,7 +93,7 @@ _vorbis=no
 _tremor=no
 _tremolo=no
 _flac=no
-_mad=no
+_mad=auto
 _alsa=auto
 _seq_midi=no
 _timidity=no
