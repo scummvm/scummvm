@@ -158,7 +158,6 @@ iphone: $(OBJS)
 # TODO: Replace AUTHORS by Credits.rtf
 osxsnap: bundle
 	mkdir ResidualVM-snapshot
-	$(srcdir)/devtools/credits.pl --text > $(srcdir)/AUTHORS
 	cp $(srcdir)/AUTHORS ./ResidualVM-snapshot/Authors
 	cp $(srcdir)/COPYING ./ResidualVM-snapshot/License\ \(GPL\)
 	cp $(srcdir)/COPYING.BSD ./ResidualVM-snapshot/License\ \(BSD\)
