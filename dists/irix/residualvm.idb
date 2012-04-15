@@ -1,0 +1,14 @@
+f 0644 root sys usr/ResidualVM/COPYING COPYING residualvm.man.readme
+f 0644 root sys usr/ResidualVM/COPYING.LGPL COPYING.LGPL residualvm.man.readme
+f 0644 root sys usr/ResidualVM/COPYING.BSD COPYING.BSD residualvm.man.readme
+f 0644 root sys usr/ResidualVM/COPYING.FREEFONT COPYING.FREEFONT residualvm.man.readme
+f 0644 root sys usr/ResidualVM/COPYRIGHT COPYRIGHT residualvm.man.readme
+f 0644 root sys usr/ResidualVM/NEWS NEWS residualvm.man.readme
+f 0644 root sys usr/ResidualVM/README README residualvm.man.readme
+f 0755 root sys usr/ResidualVM/residualvm residualvm residualvm.sw.eoe tag('0x5260dbec')
+f 0644 root sys usr/ResidualVM/share/pixmaps/residualvm.xpm residualvm.xpm residualvm.sw.eoe
+f 0644 root sys usr/ResidualVM/share/residualvm/residualvm-grim-patch.lab residualvm-grim-patch.lab residualvm.sw.eoe
+f 0644 root sys usr/ResidualVM/share/residualvm/modern.zip modern.zip residualvm.sw.eoe
+l 0000 root sys usr/bin/residualvm residualvm residualvm.sw.eoe symval(/usr/ResidualVM/residualvm)
+f 0644 root sys usr/lib/filetype/local/ResidualVM.ftr ResidualVM.ftr residualvm.sw.eoe exitop('if test -r $rbase/usr/lib/filetype/Makefile ; then chroot $rbase /sbin/sh -c "cd /usr/lib/filetype ; make -u > /dev/null" ; fi')
+f 0644 root sys usr/lib/filetype/local/iconlib/ResidualVM.fti ResidualVM.fti residualvm.sw.eoe exitop('if [ -x $rbase/usr/sbin/iconcatalogedit ]; then chroot $rbase /usr/sbin/iconcatalogedit -add "Category:File Name:/usr/ResidualVM/residualvm" -syspage Games; fi') removeop('if [ -x $rbase/usr/sbin/iconcatalogedit ]; then chroot $rbase /usr/sbin/iconcatalogedit -remove "Category:File Name:/usr/ResidualVM/residualvm" -syspage Games; fi')
