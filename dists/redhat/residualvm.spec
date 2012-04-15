@@ -16,7 +16,7 @@ License		: GPL
 Url             : http://www.residualvm.org
 
 Source		: %{name}-%{version}.tar.bz2
-Source1		: libmad-0.15.1b.tar.bz2
+Source1		: libmad-0.15.1b.tar.gz
 Source2		: libmpeg2-0.5.1.tar.gz
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
