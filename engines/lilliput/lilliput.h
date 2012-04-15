@@ -109,6 +109,8 @@ public:
 	int _word17081_nextIndex;
 	int _word16EFE;
 	int _word1817B;
+	int _word15BC8;
+	int _word15BCA;
 
 	int _array11D49[40];
 
@@ -157,10 +159,15 @@ public:
 	byte _rulesBuffer13_4[20];
 	byte _byte10999[40];
 	byte _byte109C1[40];
+	byte _array15AC8[256];
 
 	const LilliputGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
+
+	void displayFunction1(byte *buf, int var1, int var2, int var4);
+	void displayFunction1a(byte *buf, int var2, int var4);
+	void displayFunction5();
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
@@ -182,8 +189,14 @@ public:
 
 	int _mouseX;
 	int _mouseY;
+	int _oldMouseX;
+	int _oldMouseY;
+	int _mouseDisplayX;
+	int _mouseDisplayY;
 	int _mouseButton;
 	int _savedMousePosDivided;
+	int _skipDisplayFlag1;
+	int _skipDisplayFlag2;
 
 	byte _byte16F07_menuId;
 	byte _byte12FCE;

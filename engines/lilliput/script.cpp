@@ -652,7 +652,7 @@ void LilliputScript::computeOperation(byte *bufPtr, int oper, int var2) {
 	default: {
 		warning("computeOperation : oper %d", oper);
 		if (var2 != 0) {
-			byte tmpVal = bufPtr[0] / var2;
+			int tmpVal = bufPtr[0] / var2;
 			if (tmpVal < 0)
 				bufPtr[0] = 0xFF;
 			else 
