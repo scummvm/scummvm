@@ -38,7 +38,9 @@ BuildRequires: SDL-devel >= 1.2.2
 mkdir tmp
 
 %build
-(cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/residualvm-%{version}/tmp; make -j 4; make install)
+(cd libmad-0.15.1b; sed -i "s/optimize=\"\$optimize -fforce-mem\"/#optimize=\"\$optimize -fforce-mem\"/" configure; \
+sed -i "s/optimize=\"\$optimize -fforce-mem\"/#optimize=\"\$optimize -fforce-mem\"/" configure.ac; \
+./configure --enable-static --disable-shared --prefix=%{_builddir}/residualvm-%{version}/tmp; make -j 4; make install)
 (cd libmpeg2-0.5.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/residualvm-%{version}/tmp; make -j 4; make install)
 ./configure --with-mad-prefix=%{_builddir}/residualvm-%{version}/tmp --with-faad-prefix=%{_builddir}/residualvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
