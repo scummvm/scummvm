@@ -473,7 +473,7 @@ public:
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
 	bool isInOverworld() { return _inOverworld; }
 
-	void setGlobalAlpha(float alpha) { _global_alpha = alpha; }
+	void setGlobalAlpha(float alpha) { _globalAlpha = alpha; }
 	void setAlphaMode(AlphaMode mode) { _alphaMode = mode; }
 
 private:
@@ -610,7 +610,7 @@ private:
 	Actor *_attachedActor;
 	Common::String _attachedJoint;
 	AlphaMode _alphaMode;
-	float _global_alpha;
+	float _globalAlpha;
 
 	bool _inOverworld;
 
