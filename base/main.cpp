@@ -128,6 +128,31 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	if (!(dir.exists() && dir.isDirectory()))
 		err = Common::kPathNotDirectory;
 
+	//
+	// Setup various paths in the SearchManager
+	//
+
+	// Add the game path to the directory search list
+	SearchMan.addDirectory(dir.getPath(), dir, 0, 4);
+
+	// Add extrapath (if any) to the directory search list
+	if (ConfMan.hasKey("extrapath")) {
+		dir = Common::FSNode(ConfMan.get("extrapath"));
+		SearchMan.addDirectory(dir.getPath(), dir);
+	}
+
+	// If a second extrapath is specified on the app domain level, add that as well.
+	// However, since the default hasKey() and get() check the app domain level,
+	// verify that it's not already there before adding it. The search manager will
+	// check for that too, so this check is mostly to avoid a warning message.
+	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain)) {
+		Common::String extraPath = ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain);
+		if (!SearchMan.hasArchive(extraPath)) {
+			dir = Common::FSNode(extraPath);
+			SearchMan.addDirectory(dir.getPath(), dir);
+		}
+	}
+
 	// Create the game engine
 	if (err.getCode() == Common::kNoError)
 		err = (*plugin)->createInstance(&system, &engine);
@@ -154,6 +179,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 			ConfMan.removeGameDomain(ConfMan.getActiveDomainName().c_str());
 		}
 
+		// Reset the file/directory mappings
+		SearchMan.clear();
+
 		return err;
 	}
 
@@ -167,31 +195,6 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		caption = ConfMan.getActiveDomainName();	// Use the domain (=target) name
 	if (!caption.empty())	{
 		system.setWindowCaption(caption.c_str());
-	}
-
-	//
-	// Setup various paths in the SearchManager
-	//
-
-	// Add the game path to the directory search list
-	SearchMan.addDirectory(dir.getPath(), dir, 0, 4);
-
-	// Add extrapath (if any) to the directory search list
-	if (ConfMan.hasKey("extrapath")) {
-		dir = Common::FSNode(ConfMan.get("extrapath"));
-		SearchMan.addDirectory(dir.getPath(), dir);
-	}
-
-	// If a second extrapath is specified on the app domain level, add that as well.
-	// However, since the default hasKey() and get() check the app domain level,
-	// verify that it's not already there before adding it. The search manager will
-	// check for that too, so this check is mostly to avoid a warning message.
-	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain)) {
-		Common::String extraPath = ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain);
-		if (!SearchMan.hasArchive(extraPath)) {
-			dir = Common::FSNode(extraPath);
-			SearchMan.addDirectory(dir.getPath(), dir);
-		}
 	}
 
 	// On creation the engine should have set up all debug levels so we can use
