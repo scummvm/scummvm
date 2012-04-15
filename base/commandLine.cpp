@@ -114,7 +114,8 @@ static const char HELP_STRING[] =
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
 	"  --talkspeed=NUM          Set talk speed for games (default: 179)\n"
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: true/false\n"
-	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: true/false\n"
+	"  --soft-renderer          Switch to 3D software renderer\n"
+	"  --no-soft-renderer       Switch to 3D hardware renderer\n"
 	"\n"
 #ifdef ENABLE_GRIM
 	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
