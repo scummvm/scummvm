@@ -111,6 +111,7 @@ public:
 	int _word1817B;
 	int _word15BC8;
 	int _word15BCA;
+	int _word15AC2;
 
 	int _array11D49[40];
 
@@ -167,6 +168,7 @@ public:
 
 	void displayFunction1(byte *buf, int var1, int var2, int var4);
 	void displayFunction1a(byte *buf, int var2, int var4);
+	void displayFunction4();
 	void displayFunction5();
 
 	void initGame(const LilliputGameDescription *gd);

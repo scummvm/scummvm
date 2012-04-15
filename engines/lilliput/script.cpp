@@ -600,7 +600,7 @@ void LilliputScript::sub185ED(byte index, byte subIndex) {
 	if (_vm->_arr18560[index]._field0 != 1)
 		return;
 
-	warning("TODO: display function #1");
+	_vm->displayFunction1(_vm->_bufferIdeogram, _vm->_arr18560[index]._field5[0], _vm->_arr18560[index]._field1, _vm->_arr18560[index]._field3);
 }
 
 byte LilliputScript::compareValues(byte var1, int oper, int var2) {
@@ -1724,9 +1724,9 @@ void LilliputScript::OC_sub1847F() {
 	int var3 = _currScript->readUint16LE();
 
 	if (_byte16F08 != 1) {
-		warning("TODO: OC_sub1847F - Display Function 5");
+		_vm->displayFunction5();
 		warning("TODO: OC_sub1847F - sub_18BE6");
-		warning("TODO: OC_sub1847F - Display Function 4");
+		_vm->displayFunction4();
 	}
 }
 
