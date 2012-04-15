@@ -8,8 +8,8 @@ adapt the below instructions where necessary.
 
 1) Collect sources:
 
-Place residualvm-%{version}.tar.bz2 and libmad-0.15.1b.tar.bz2 
-in /usr/src/redhat/SOURCES .
+Place residualvm-%{version}.tar.bz2, libmad-0.15.1b.tar.bz2 
+and libmpeg2-0.5.1.tar.gz in /usr/src/redhat/SOURCES .
 If you have a different version of libmad, put the correct version
 numbers in the .spec file.
 
