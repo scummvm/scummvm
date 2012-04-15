@@ -114,8 +114,14 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_rnd = 0;
 	_mouseX = 0;
 	_mouseY = 0;
+	_oldMouseX = 0;
+	_oldMouseY = 0;
+	_mouseDisplayX = 0;
+	_mouseDisplayY = 0;
 	_mouseButton = 0;
 	_savedMousePosDivided = 0xFFFF;
+	_skipDisplayFlag1 = 1;
+	_skipDisplayFlag2 = 0;
 
 	_scriptHandler = new LilliputScript(this);
 
@@ -129,6 +135,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_word17081_nextIndex = 0;
 	_word16EFE = 0xFFFF;
 	_word1817B = 0;
+	_word15BC8 = 0;
+	_word15BCA = 0;
 
 	_saveFlag = false;
 	_byte16F07_menuId = 0;
@@ -138,6 +146,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_byte109C1[i] = 0;
 		_array11D49[i] = 0xFFFF;
 	}
+
+	for (int i = 0; i < 256; i++)
+		_array15AC8[i] = 0;
 
 	_ptr_rulesBuffer2_15 = NULL;
 }
@@ -169,6 +180,73 @@ Common::Platform LilliputEngine::getPlatform() const {
 	return _platform;
 }
 
+void LilliputEngine::displayFunction1(byte *buf, int var1, int var2, int var4) {
+	debugC(2, kDebugEngine, "displayFunction1a(buf, %d, %d, %d)", var1, var2, var4);
+
+	int index1 = ((var1 & 0xFF) << 8) + (var1 >> 8);
+	byte *newBuf = &buf[index1];
+
+	int tmpVal = ((var4 & 0xFF) << 8) + (var4 >> 8);
+	int index2 = var2 + tmpVal + (tmpVal >> 2);
+
+	for (int i = 0; i < 16; i++) {
+		if (newBuf[0] != 0)
+			((byte *)_mainSurface->getPixels())[index2] = newBuf[0];
+		if (newBuf[1] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 1] = newBuf[1];
+		if (newBuf[2] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 2] = newBuf[2];
+		if (newBuf[3] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 3] = newBuf[3];
+		if (newBuf[4] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 4] = newBuf[4];
+		if (newBuf[5] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 5] = newBuf[5];
+		if (newBuf[6] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 6] = newBuf[6];
+		if (newBuf[7] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 7] = newBuf[7];
+		if (newBuf[8] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 8] = newBuf[8];
+		if (newBuf[9] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 9] = newBuf[9];
+		if (newBuf[10] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 10] = newBuf[10];
+		if (newBuf[11] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 11] = newBuf[11];
+		if (newBuf[12] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 12] = newBuf[12];
+		if (newBuf[13] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 13] = newBuf[13];
+		if (newBuf[14] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 14] = newBuf[14];
+		if (newBuf[15] != 0)
+			((byte *)_mainSurface->getPixels())[index2 + 15] = newBuf[15];
+
+		index2 += 304;
+		newBuf = &newBuf[16];
+	}
+	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
+	_system->updateScreen();
+}
+
+void LilliputEngine::displayFunction1a(byte *buf, int var2, int var4) {
+	debugC(2, kDebugEngine, "displayFunction1a(buf, %d, %d)", var2, var4);
+
+	displayFunction1(buf, 0, var2, var4);
+}
+
+void LilliputEngine::displayFunction5() {
+	debugC(2, kDebugEngine, "displayFunction5()");
+
+	if ((_skipDisplayFlag1 != 0) && (_skipDisplayFlag2 != 1)) {
+		_skipDisplayFlag2 = 1;
+		displayFunction1a(_array15AC8, _word15BC8, _word15BCA);
+		_skipDisplayFlag1 = 0;
+		_skipDisplayFlag2 = 0;
+	}
+}
+
 void LilliputEngine::pollEvent() {
 	debugC(2, kDebugEngine, "pollEvent()");
 
@@ -176,8 +254,8 @@ void LilliputEngine::pollEvent() {
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+			_mouseX = CLIP<int>(event.mouse.x, 0, 304) + 5;
+			_mouseY = CLIP<int>(event.mouse.y, 0, 184) + 1;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			_mouseButton |= 1;
@@ -191,6 +269,20 @@ void LilliputEngine::pollEvent() {
 		// TODO: handle keyboard
 		default:
 			break;
+		}
+	}
+
+	if ((_mouseX != _oldMouseX) || (_mouseY != _oldMouseY)) {
+		_oldMouseX = _mouseX;
+		_oldMouseY = _mouseY;
+		if (_skipDisplayFlag1 != 0) {
+			warning("Display function 5");
+			_mouseDisplayX = _mouseX;
+			_mouseDisplayY = _mouseY;
+			warning("Display function 4");
+		} else {
+			_mouseDisplayX = _mouseX;
+			_mouseDisplayY = _mouseY;
 		}
 	}
 }
