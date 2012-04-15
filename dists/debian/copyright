@@ -6,8 +6,19 @@ Copyright:
 
 Most of the files are released under the GNU General Public License v2.
 Some other source files are released under GNU Lesser General Public
-License v2 and BSD licenses. See COPYING.BSD and COPYING.LGPL and COPYING.FREEFONT.
+License v2 and BSD licenses.
+See COPYING.BSD, COPYING.LGPL and COPYING.FREEFONT.
 The Debian packaging is licensed under the GPL.
+
+ResidualVM is Copyright © 2003-2012 The ResidualVM Project
+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation; either version 2, or (at your option) any
+ later version.
+
+ On Debian GNU/Linux systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL'.
 
 ResidualVM includes Lua licensed code:
 /******************************************************************************
