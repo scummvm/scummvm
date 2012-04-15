@@ -275,6 +275,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const {
 		return (f == kSupportsListSaves);
 	}
+
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		Common::StringArray filenames;
@@ -282,8 +283,8 @@ public:
 		Common::String pattern = Common::String::format("%s??",target);
 		Common::Array<int> slots;
 
+		// Get list of savefiles for target game
 		filenames = saveFileMan->listSavefiles(pattern);
-		sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 		SaveStateList saveList;
 		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -294,16 +295,25 @@ public:
 				slots.push_back(slotNum);
 			}
 		}
+		// Sort save slot ids
+		Common::sort<int>(slots.begin(), slots.end());
+
 		// Load save index
 		Common::String fileEpa = Common::String::format("%s.epa", target);
-		Common::InSaveFile *epa = g_system->getSavefileManager()->openForLoading(fileEpa); 
+		Common::InSaveFile *epa = saveFileMan->openForLoading(fileEpa); 
+
+		// Get savegame names from index
 		char saveName[MAX_DESC_SIZE];
 		int line = 1;
 		for (int i = 0; i < slots.size(); i++) {
 			for (; line < slots[i]; line++) epa->readLine(); // ignore lines corresponding to unused saveslots
+
+			// copy the name in the line corresponding to the save slot
 			strncpy(saveName, epa->readLine().c_str(), 23);
-			line++;
-			saveName[22] = '\0';	// make sure the savegame name is 0-terminated
+			line++;	// increment line number to ensure it syncs with slot number
+			saveName[22] = '\0'; // make sure the savegame name is 0-terminated
+			
+			// Insert savegame name into list
 			saveDesc = saveName;
 			saveList.push_back(SaveStateDescriptor(slots[i], saveDesc));
 		}
@@ -311,6 +321,7 @@ public:
 
 		return saveList;
 	}
+
 	virtual const char *getName() const {
 		return "Drascula";
 	}
