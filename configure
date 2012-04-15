@@ -869,6 +869,7 @@ for ac_option in $@; do
 	--disable-sparkle)        _sparkle=no     ;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
+	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
 	--disable-png)            _png=no         ;;
 	--enable-png)             _png=yes        ;;
@@ -877,6 +878,7 @@ for ac_option in $@; do
 	--disable-faad)           _faad=no        ;;
 	--enable-faad)            _faad=yes       ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
+	--enable-fluidsynth)      _fluidsynth=yes ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
 	--enable-freetype2)       _freetype2=yes  ;;
