@@ -41,6 +41,9 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	float pitchStep = step / 3.0f;
 	float rollStep = step / 3.0f;
 
+	if (!_node)
+		return;
+
 	// Make sure we have up-to-date world transform matrices computed for the joint nodes of this character.
 	_node->_needsUpdate = true;
 	ModelNode *p = _node;
