@@ -306,13 +306,16 @@ public:
 		SaveStateList saveList;
 		int line = 1;
 		for (size_t i = 0; i < slots.size(); i++) {
-
 			// ignore lines corresponding to unused saveslots
 			for (; line < slots[i]; line++) 
 				epa->readLine(); 
 
 			// copy the name in the line corresponding to the save slot and truncate to 22 characters
 			saveDesc = Common::String(epa->readLine().c_str(), 22);
+
+			// handle cases where the save directory and save index are detectably out of sync
+			if (saveDesc == "*") 
+				saveDesc = "No name specified.";
 
 			// increment line number to keep it in sync with slot number
 			line++;	
