@@ -162,15 +162,6 @@ PASS(pass)
 #define BUTTERFLIES BUTTERFLIES_BIG
 PASS(pass_big)
 
-#define DECL_FFT(t, n, n2, n4) \
-static void fft##n(Complex *z) { \
-	fft##n2(z); \
-	fft##n4(z + n4 * 2); \
-	fft##n4(z + n4 * 3); \
-	Common::CosineTable table(t); \
-	pass(z, table.getTable(), n4 / 2);\
-}
-
 static void fft4(Complex *z) {
 	float t1, t2, t3, t4, t5, t6, t7, t8;
 
@@ -219,23 +210,105 @@ static void fft16(Complex *z) {
 	TRANSFORM(z[3], z[7], z[11], z[15], cosTable[3], cosTable[1]);
 }
 
-DECL_FFT(5, 32, 16, 8)
-DECL_FFT(6, 64, 32, 16)
-DECL_FFT(7, 128, 64, 32)
-DECL_FFT(8, 256, 128, 64)
-DECL_FFT(9, 512, 256, 128)
-#define pass pass_big
-DECL_FFT(10, 1024, 512, 256)
-DECL_FFT(11, 2048, 1024, 512)
-DECL_FFT(12, 4096, 2048, 1024)
-DECL_FFT(13, 8192, 4096, 2048)
-DECL_FFT(14, 16384, 8192, 4096)
-DECL_FFT(15, 32768, 16384, 8192)
-DECL_FFT(16, 65536, 32768, 16384)
+static void fft32(Complex *z) {
+	fft16(z);
+	fft8(z + 8 * 2);
+	fft8(z + 8 * 3);
+	Common::CosineTable table(5);
+	pass(z, table.getTable(), 8 / 2);
+}
+
+static void fft64(Complex *z) {
+	fft32(z);
+	fft16(z + 16 * 2);
+	fft16(z + 16 * 3);
+	Common::CosineTable table(6);
+	pass(z, table.getTable(), 16 / 2);
+}
+
+static void fft128(Complex *z) {
+	fft64(z);
+	fft32(z + 32 * 2);
+	fft32(z + 32 * 3);
+	Common::CosineTable table(7);
+	pass(z, table.getTable(), 32 / 2);
+}
+
+static void fft256(Complex *z) {
+	fft128(z);
+	fft64(z + 64 * 2);
+	fft64(z + 64 * 3);
+	Common::CosineTable table(8);
+	pass(z, table.getTable(), 64 / 2);
+}
+
+static void fft512(Complex *z) {
+	fft256(z);
+	fft128(z + 128 * 2);
+	fft128(z + 128 * 3);
+	Common::CosineTable table(9);
+	pass(z, table.getTable(), 128 / 2);
+}
+
+static void fft1024(Complex *z) {
+	fft512(z);
+	fft256(z + 256 * 2);
+	fft256(z + 256 * 3);
+	Common::CosineTable table(10);
+	pass_big(z, table.getTable(), 256 / 2);
+}
+
+static void fft2048(Complex *z) {
+	fft1024(z);
+	fft512(z + 512 * 2);
+	fft512(z + 512 * 3);
+	Common::CosineTable table(11);
+	pass_big(z, table.getTable(), 512 / 2);
+}
+
+static void fft4096(Complex *z) {
+	fft2048(z);
+	fft1024(z + 1024 * 2);
+	fft1024(z + 1024 * 3);
+	Common::CosineTable table(12);
+	pass_big(z, table.getTable(), 1024 / 2);
+}
+
+static void fft8192(Complex *z) {
+	fft4096(z);
+	fft2048(z + 2048 * 2);
+	fft2048(z + 2048 * 3);
+	Common::CosineTable table(13);
+	pass_big(z, table.getTable(), 2048 / 2);
+}
+
+static void fft16384(Complex *z) {
+	fft8192(z);
+	fft4096(z + 4096 * 2);
+	fft4096(z + 4096 * 3);
+	Common::CosineTable table(14);
+	pass_big(z, table.getTable(), 4096 / 2);
+}
+
+static void fft32768(Complex *z) {
+	fft16384(z);
+	fft8192(z + 8192 * 2);
+	fft8192(z + 8192 * 3);
+	Common::CosineTable table(15);
+	pass_big(z, table.getTable(), 8192 / 2);
+}
+
+static void fft65536(Complex *z) {
+	fft32768(z);
+	fft16384(z + 16384 * 2);
+	fft16384(z + 16384 * 3);
+	Common::CosineTable table(16);
+	pass_big(z, table.getTable(), 16384 / 2);
+}
 
 static void (* const fft_dispatch[])(Complex *) = {
 	fft4, fft8, fft16, fft32, fft64, fft128, fft256, fft512, fft1024,
-	fft2048, fft4096, fft8192, fft16384, fft32768, fft65536,
+	fft2048, fft4096, fft8192, fft16384, fft32768, fft65536
 };
 
 void FFT::calc(Complex *z) {
