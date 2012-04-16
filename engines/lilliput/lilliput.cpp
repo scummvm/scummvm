@@ -237,6 +237,21 @@ void LilliputEngine::displayFunction1a(byte *buf, int var2, int var4) {
 	displayFunction1(buf, 0, var2, var4);
 }
 
+void LilliputEngine::displayFunction2(byte *buf, int var2, int var4) {
+	debugC(2, kDebugEngine, "displayFunction2(buf, %d, %d)", var2, var4);
+
+
+	int tmpVal = ((var4 & 0xFF) << 8) + (var4 >> 8);
+	int index2 = var2 + tmpVal + (tmpVal >> 2);
+
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			buf[(i * 16) + j] = ((byte *)_mainSurface->getPixels())[index2 + j];
+		}
+		index2 += 320;
+	}
+}
+
 void LilliputEngine::displayFunction4() {
 	debugC(2, kDebugEngine, "displayFunction4()");
 
@@ -246,7 +261,7 @@ void LilliputEngine::displayFunction4() {
 		_word15BC8 = _mouseDisplayX;
 		_word15BCA = _mouseDisplayY;
 
-		warning("Display function 2");
+		displayFunction2(_array15AC8, _mouseDisplayX, _mouseDisplayY);
 
 		displayFunction1(_bufferIdeogram, _word15AC2 + 80, _mouseDisplayX, _mouseDisplayY);
 
