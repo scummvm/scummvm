@@ -93,7 +93,7 @@ public:
 	byte _buffer2[45056];
 	byte _buffer3[45056];
 	byte *_bufferIsoMap;
-	byte _bufferCubegfx[61440];
+	byte *_bufferCubegfx;
 	byte *_bufferMen;
 	byte *_bufferMen2;
 	byte *_bufferIsoChars;
@@ -162,6 +162,8 @@ public:
 	byte _byte109C1[40];
 	byte _array15AC8[256];
 
+	byte _buffer3_45k[45056];
+
 	const LilliputGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
@@ -171,6 +173,8 @@ public:
 	void displayFunction2(byte *buf, int var2, int var4);
 	void displayFunction4();
 	void displayFunction5();
+	void displayFunction6();
+	void displayFunction12();
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
