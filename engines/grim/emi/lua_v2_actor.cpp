@@ -56,8 +56,8 @@ void Lua_V2::SetActorLocalAlpha() {
 
 void Lua_V2::SetActorGlobalAlpha() {
 	lua_Object actorObj = lua_getparam(1);
-//	lua_Object alphaModeObj = lua_getparam(2);
-//	lua_Object valueObj = lua_getparam(3);
+	lua_Object alphaObj = lua_getparam(2);
+//  lua_Object meshObj = lua_getparam(3);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -66,19 +66,17 @@ void Lua_V2::SetActorGlobalAlpha() {
 	if (!actor)
 		return;
 
-	warning("Lua_V2::SetActorGlobalAlpha: actor: %s", actor->getName().c_str());
-
-	/* Only when actor has primitives
-	if (!actor->primities)
+	if (!lua_isnumber(alphaObj))
 			return;
-	if (lua_isnumber(alphaModeObj) {
-		int alphaMode = (int)lua_getnumber(alphaModeObj);
-		if (!lua_isnil(valueObj) && lua_isstring(valueObj)) {
-				// TODO: missing part
-		}
-		// TODO
+
+	float alpha = lua_getnumber(alphaObj);
+	if (alpha == Actor::AlphaOff ||
+	    alpha == Actor::AlphaReplace ||
+	    alpha == Actor::AlphaModulate) {
+			actor->setAlphaMode((Actor::AlphaMode) (int) alpha);
+	} else {
+		actor->setGlobalAlpha(alpha);
 	}
-	*/
 }
 
 void Lua_V2::PutActorInOverworld() {

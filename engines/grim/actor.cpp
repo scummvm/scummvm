@@ -74,7 +74,9 @@ Actor::Actor(const Common::String &actorName) :
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_lastTurnDir(0), _currTurnDir(0),
-		_sayLineText(0), _talkDelay(0), _attachedActor(NULL), _attachedJoint("") {
+		_sayLineText(0), _talkDelay(0),
+		_attachedActor(NULL), _attachedJoint(""),
+		_globalAlpha(1.f), _alphaMode(AlphaOff)  {
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
@@ -111,6 +113,9 @@ Actor::Actor() {
 
 	_attachedActor = NULL;
 	_attachedJoint = "";
+
+	_alphaMode = AlphaOff;
+	_globalAlpha = 1.f;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -1292,14 +1297,15 @@ void Actor::draw() {
 			g_driver->setShadowMode();
 			if (g_driver->isHardwareAccelerated())
 				g_driver->drawShadowPlanes();
-			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll);
+			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
 			costume->draw();
 			g_driver->finishActorDraw();
 			g_driver->clearShadowMode();
 			g_driver->setShadow(NULL);
 		}
+
 		// normal draw actor
-		g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll);
+		g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
 		costume->draw();
 		g_driver->finishActorDraw();
 	}
@@ -1309,7 +1315,7 @@ void Actor::draw() {
 		x1 = y1 = 1000;
 		x2 = y2 = -1000;
 		if (!_costumeStack.empty()) {
-			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll);
+			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, 1.f);
 			_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
 			g_driver->finishActorDraw();
 		}

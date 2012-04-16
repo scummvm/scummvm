@@ -71,6 +71,12 @@ public:
 		CollisionSphere = 2
 	};
 
+	enum AlphaMode {
+		AlphaOff = -1,
+		AlphaReplace = 2,
+		AlphaModulate = 3 // Seems to be unused
+	};
+
 	/**
 	 * Initializes an actor with the given name.
 	 *
@@ -467,6 +473,9 @@ public:
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
 	bool isInOverworld() { return _inOverworld; }
 
+	void setGlobalAlpha(float alpha) { _globalAlpha = alpha; }
+	void setAlphaMode(AlphaMode mode) { _alphaMode = mode; }
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -600,6 +609,8 @@ private:
 	int _talkDelay;
 	Actor *_attachedActor;
 	Common::String _attachedJoint;
+	AlphaMode _alphaMode;
+	float _globalAlpha;
 
 	bool _inOverworld;
 
