@@ -576,7 +576,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	}
 }
 	
-Common::String DreamWebEngine::modifyFileName(const char* name) {
+Common::String DreamWebEngine::modifyFileName(const char *name) {
 	Common::String fileName(name);
 	
 	// Sanity check
