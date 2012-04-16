@@ -168,6 +168,7 @@ public:
 
 	void displayFunction1(byte *buf, int var1, int var2, int var4);
 	void displayFunction1a(byte *buf, int var2, int var4);
+	void displayFunction2(byte *buf, int var2, int var4);
 	void displayFunction4();
 	void displayFunction5();
 
