@@ -580,26 +580,12 @@ Common::String DreamWebEngine::modifyFileName(const char *name) {
 	Common::String fileName(name);
 	
 	// Sanity check
-	if (!fileName.hasPrefix("DREAMWEB"))
+	if (!fileName.hasPrefix("DREAMWEB."))
 		return fileName;
 
-	// CD ES and FR release use a different file name
-	if (isCD()) {
-		switch(getLanguage()) {
-		case Common::ES_ESP:
-			fileName.setChar('S', 6);
-			fileName.setChar('P', 7);
-			break;
-		case Common::FR_FRA:
-			fileName.setChar('F', 6);
-			fileName.setChar('R', 7);
-			break;
-		default:
-			// Nothing to do
-			break;
-		}
-	}
-	
+	// Make sure we use the correct file name as it differs depending on the game variant
+	fileName = _datafilePrefix;
+	fileName += name + 9;
 	return fileName;
 }
 
