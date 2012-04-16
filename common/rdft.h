@@ -36,6 +36,9 @@ namespace Common {
 /**
  * (Inverse) Real Discrete Fourier Transform.
  *
+ * Used in audio:
+ *  - QDM2
+ *
  * Used in engines:
  *  - scumm
  */

@@ -300,4 +300,71 @@ void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uS
 		convertYUV420ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
+template<typename PixelInt>
+void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+	// Keep the tables in pointers here to avoid a dereference on each pixel
+	const int16 *Cr_r_tab = lookup->_colorTab;
+	const int16 *Cr_g_tab = Cr_r_tab + 256;
+	const int16 *Cb_g_tab = Cr_g_tab + 256;
+	const int16 *Cb_b_tab = Cb_g_tab + 256;
+	const uint32 *rgbToPix = lookup->_rgbToPix;
+
+	for (int y = 0; y < yHeight; y++) {
+		for (int x = 0; x < yWidth; x++) {
+			// Perform bilinear interpolation on the the chroma values
+			// Based on the algorithm found here: http://tech-algorithm.com/articles/bilinear-image-scaling/
+			// Feel free to optimize further
+			int targetX = x >> 2;
+			int targetY = y >> 2;
+			int xDiff = x & 3;
+			int yDiff = y & 3;
+			int index = targetY * uvPitch + targetX;
+
+			byte a = uSrc[index];
+			byte b = uSrc[index + 1];
+			byte c = uSrc[index + uvPitch];
+			byte d = uSrc[index + uvPitch + 1];
+
+			byte u = (a * (4 - xDiff) * (4 - yDiff) + b * xDiff * (4 - yDiff) +
+					c * yDiff * (4 - xDiff) + d * xDiff * yDiff) >> 4;
+
+			a = vSrc[index];
+			b = vSrc[index + 1];
+			c = vSrc[index + uvPitch];
+			d = vSrc[index + uvPitch + 1];
+
+			byte v = (a * (4 - xDiff) * (4 - yDiff) + b * xDiff * (4 - yDiff) +
+					c * yDiff * (4 - xDiff) + d * xDiff * yDiff) >> 4;
+
+			int16 cr_r  = Cr_r_tab[v];
+			int16 crb_g = Cr_g_tab[v] + Cb_g_tab[u];
+			int16 cb_b  = Cb_b_tab[u];
+			const uint32 *L;
+
+			PUT_PIXEL(ySrc[x], dstPtr);
+			dstPtr += sizeof(PixelInt);
+		}
+
+		dstPtr += dstPitch - yWidth * sizeof(PixelInt);
+		ySrc += yPitch;
+	}
+}
+
+void convertYUV410ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+	// Sanity checks
+	assert(dst && dst->pixels);
+	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
+	assert(ySrc && uSrc && vSrc);
+	assert((yWidth & 3) == 0);
+	assert((yHeight & 3) == 0);
+
+	const YUVToRGBLookup *lookup = YUVToRGBMan.getLookup(dst->format);
+
+	// Use a templated function to avoid an if check on every pixel
+	if (dst->format.bytesPerPixel == 2)
+		convertYUV410ToRGB<uint16>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+	else
+		convertYUV410ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+}
+
 } // End of namespace Graphics

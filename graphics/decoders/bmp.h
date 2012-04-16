@@ -19,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+/**
+ * @file
+ * Image decoder used in engines:
+ *  - hugo
+ *  - mohawk
+ */
+
 #ifndef GRAPHICS_DECODERS_BMP_H
 #define GRAPHICS_DECODERS_BMP_H
 

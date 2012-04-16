@@ -129,7 +129,7 @@ void MoviePlayer::update() {
 				assert(s->format.bytesPerPixel == 4);
 
 #ifdef THEORA_INDIRECT_RENDERING
-				byte *frameData = (byte *)s->getBasePtr(0, 0);
+				const byte *frameData = (const byte *)s->getBasePtr(0, 0);
 				_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
 #else
 				g_system->copyRectToScreen((byte *)s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));

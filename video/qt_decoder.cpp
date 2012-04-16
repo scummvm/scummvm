@@ -47,7 +47,7 @@
 #include "video/codecs/rpza.h"
 #include "video/codecs/smc.h"
 #include "video/codecs/cdtoons.h"
-
+#include "video/codecs/svq1.h"
 
 namespace Video {
 
@@ -152,7 +152,13 @@ const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	// (needs to be done after we find the next track)
 	updateAudioBuffer();
 
-	if (_scaledSurface) {
+	// We have to initialize the scaled surface
+	if (frame && (_scaleFactorX != 1 || _scaleFactorY != 1)) {
+		if (!_scaledSurface) {
+			_scaledSurface = new Graphics::Surface();
+			_scaledSurface->create(_width, _height, getPixelFormat());
+		}
+
 		scaleSurface(frame, _scaledSurface, _scaleFactorX, _scaleFactorY);
 		return _scaledSurface;
 	}
@@ -258,14 +264,10 @@ void QuickTimeDecoder::init() {
 	_nextVideoTrack = findNextVideoTrack();
 
 	if (_nextVideoTrack) {
-		// Initialize the scaled surface
 		if (_scaleFactorX != 1 || _scaleFactorY != 1) {
-			// We have to initialize the scaled surface
-			_scaledSurface = new Graphics::Surface();
-			_scaledSurface->create((_nextVideoTrack->getWidth() / _scaleFactorX).toInt(),
-					(_nextVideoTrack->getHeight() / _scaleFactorY).toInt(), getPixelFormat());
-			_width = _scaledSurface->w;
-			_height = _scaledSurface->h;
+			// We have to take the scale into consideration when setting width/height
+			_width = (_nextVideoTrack->getWidth() / _scaleFactorX).toInt();
+			_height = (_nextVideoTrack->getHeight() / _scaleFactorY).toInt();
 		} else {
 			_width = _nextVideoTrack->getWidth().toInt();
 			_height = _nextVideoTrack->getHeight().toInt();
@@ -471,7 +473,7 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 		break;
 	case MKTAG('S','V','Q','1'):
 		// Sorenson Video 1: Used by some Myst ME videos.
-		warning("Sorenson Video 1 not yet supported");
+		_videoCodec = new SVQ1Decoder(_parentTrack->width, _parentTrack->height);
 		break;
 	case MKTAG('S','V','Q','3'):
 		// Sorenson Video 3: Used by some Myst ME videos.
@@ -527,19 +529,12 @@ void QuickTimeDecoder::AudioTrackHandler::seekToTime(Audio::Timestamp time) {
 }
 
 QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : TrackHandler(decoder, parent) {
-	if (_parent->scaleFactorX != 1 || _parent->scaleFactorY != 1) {
-		_scaledSurface = new Graphics::Surface();
-		_scaledSurface->create(getWidth().toInt(), getHeight().toInt(), getPixelFormat());
-	} else {
-		_scaledSurface = 0;
-	}
-
 	enterNewEditList(false);
 
 	_holdNextFrameStartTime = false;
 	_curFrame = -1;
 	_durationOverride = -1;
-
+	_scaledSurface = 0;
 }
 
 QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
@@ -576,7 +571,12 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 			enterNewEditList(true);
 	}
 
-	if (_scaledSurface) {
+	if (frame && (_parent->scaleFactorX != 1 || _parent->scaleFactorY != 1)) {
+		if (!_scaledSurface) {
+			_scaledSurface = new Graphics::Surface();
+			_scaledSurface->create(getWidth().toInt(), getHeight().toInt(), getPixelFormat());
+		}
+
 		_decoder->scaleSurface(frame, _scaledSurface, _parent->scaleFactorX, _parent->scaleFactorY);
 		return _scaledSurface;
 	}

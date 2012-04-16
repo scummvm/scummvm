@@ -1258,9 +1258,9 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	do {
 		currentString = nextString;
-		nextString = (uint8 *)strpbrk((const char *)currentString, stringTerms);
+		nextString = (uint8 *)strpbrk((char *)currentString, stringTerms);
 		if (!nextString)
-			nextString = (uint8 *)strchr((const char *)currentString, 0);
+			nextString = (uint8 *)strchr((char *)currentString, 0);
 
 		CreditsLine line;
 
