@@ -1445,14 +1445,14 @@ void LilliputScript::OC_sub17BB7() {
 	int scriptIndex = _vm->_arrayGameScriptIndex[index];
 
 	_scriptStack.push(_currScript);
-	warning("===> push");
+
 	if (_byte16F05_ScriptHandler == 0) {
 		_vm->_byte1714E = 0;
 		runMenuScript(Common::MemoryReadStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
 	} else {
 		runScript(Common::MemoryReadStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
 	}
-	warning("===> pop");
+
 	_currScript = _scriptStack.pop();
 
 	_vm->sub170EE(tmpIndex);
@@ -1663,7 +1663,10 @@ void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
 	assert((curWord >= 0) && (curWord <= 9));
 	Common::String fileName = Common::String::format("CUBES%d.GFX", curWord);
 	_byte10806 = curWord + 0x30;
-	warning("TODO: load %s then display things", fileName.c_str());
+
+	_vm->_bufferCubegfx = _vm->loadVGA(fileName, false);
+	warning("Display function 9");
+	warning("sub_1649F()");
 }
 
 void LilliputScript::OC_sub1834C() {
@@ -1784,7 +1787,9 @@ void LilliputScript::OC_sub1853B() {
 	_byte16F08 = 0;
 	_byte15FFA = 0;
 	sub130B6();
-	warning("TODO: Display function sub15CBC();");
+
+	_vm->displayFunction12();
+
 	warning("TODO: unkPaletteFunction_2");
 	_byte12A09 = 0;
 	warning("TODO: call sound function #5");
