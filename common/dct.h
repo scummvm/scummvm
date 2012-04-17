@@ -33,9 +33,9 @@
 #include "common/math.h"
 #include "common/rdft.h"
 
-namespace Common {
+#include "common/cosinetables.h"
 
-class CosineTable;
+namespace Common {
 
 /**
  * (Inverse) Discrete Cosine Transforms.
@@ -61,7 +61,7 @@ private:
 	int _bits;
 	TransformType _trans;
 
-	CosineTable *_cos;
+	CosineTable _cos;
 	const float *_tCos;
 
 	float *_csc2;

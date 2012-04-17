@@ -31,10 +31,10 @@
 #include "common/math.h"
 #include "common/fft.h"
 
-namespace Common {
+#include "common/cosinetables.h"
+#include "common/sinetables.h"
 
-class SineTable;
-class CosineTable;
+namespace Common {
 
 /**
  * (Inverse) Real Discrete Fourier Transform.
@@ -62,8 +62,8 @@ private:
 	int _inverse;
 	int _signConvention;
 
-	SineTable *_sin;
-	CosineTable *_cos;
+	SineTable _sin;
+	CosineTable _cos;
 	const float *_tSin;
 	const float *_tCos;
 
