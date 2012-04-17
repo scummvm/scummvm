@@ -418,8 +418,9 @@ void LilliputEngine::displayFunction13(byte *buf, int var1, int var2, int var3) 
 	for (int i = 0; i < 32; i++) {
 		for (int j = 0; j < 32; j++) {
 			if (_bufferCubegfx[index2 + j] != 0)
-				buf[index] = _bufferCubegfx[index2 + j];
+				buf[index + j] = _bufferCubegfx[index2 + j];
 		}
+		index2 += 32;
 		index += 256;
 	}
 }
@@ -503,6 +504,9 @@ void LilliputEngine::sub16217() {
 			++_byte160FA;
 		}
 	}
+
+	warning("sub_161323");
+
 }
 
 void LilliputEngine::sub1652B(int var1) {
