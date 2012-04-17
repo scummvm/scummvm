@@ -84,6 +84,8 @@ public:
 	struct18560 _arr18560[4];
 	byte _byte1714E;
 	byte _byte184F4;
+	byte _byte16529;
+	byte _byte1652A;
 	byte _sound_byte16F06;
 	byte _byte16F09;
 	byte _keyboard_nextIndex;
@@ -112,6 +114,7 @@ public:
 	int _word15BC8;
 	int _word15BCA;
 	int _word15AC2;
+	int _word16550;
 
 	int _array11D49[40];
 
@@ -158,11 +161,19 @@ public:
 	int _rulesBuffer13_2[20];
 	int _rulesBuffer13_3[20];
 	byte _rulesBuffer13_4[20];
-	byte _byte10999[40];
-	byte _byte109C1[40];
+	byte _array10999[40];
+	byte _array109C1[40];
 	byte _array15AC8[256];
+	byte _array160FB[40];
+	byte _array16173[40];
+	byte _array1619B[40];
+	byte _array161C3[40];
+	byte _array161EB[40];
 
+	byte _buffer1_45k[45056];
+	byte _buffer2_45k[45056];
 	byte _buffer3_45k[45056];
+	byte _buffer10_4032[4032];
 
 	const LilliputGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -174,7 +185,13 @@ public:
 	void displayFunction4();
 	void displayFunction5();
 	void displayFunction6();
+	void displayFunction7();
+	void displayFunction8();
+	void displayFunction9();
 	void displayFunction12();
+	void displayFunction13(byte *buf, int var1, int var2, int var3);
+	void displayFunction14();
+	void displayFunction15();
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
@@ -208,11 +225,16 @@ public:
 	byte _byte16F07_menuId;
 	byte _byte12FCE;
 	byte _byte129A0;
+	byte _byte160FA;
 	int _word10804;
+	int _word16213;
+	int _word16215;
 
 	void pollEvent();
 	void sub170EE(int index);
 	void sub130DD();
+	void sub16217();
+	void sub1652B(int var1);
 	void handleGameScripts();
 
 	// Temporary stubs
