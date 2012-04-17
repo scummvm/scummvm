@@ -1373,24 +1373,23 @@ msgstr "Voces y sub."
 
 #: engines/scumm/dialogs.cpp:653
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "Selecciona un nivel de dificultad."
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "Mira en el Manual para mayor información."
 
 #: engines/scumm/dialogs.cpp:658
-#, fuzzy
 msgid "Standard"
-msgstr "Estándar (16bpp)"
+msgstr "Estándar"
 
 #: engines/scumm/dialogs.cpp:659
 msgid "Practice"
-msgstr ""
+msgstr "Práctica"
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Expert"
-msgstr ""
+msgstr "Experto"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
