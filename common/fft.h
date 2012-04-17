@@ -76,18 +76,7 @@ private:
 	void fft4(Complex *z);
 	void fft8(Complex *z);
 	void fft16(Complex *z);
-	void fft32(Complex *z);
-	void fft64(Complex *z);
-	void fft128(Complex *z);
-	void fft256(Complex *z);
-	void fft512(Complex *z);
-	void fft1024(Complex *z);
-	void fft2048(Complex *z);
-	void fft4096(Complex *z);
-	void fft8192(Complex *z);
-	void fft16384(Complex *z);
-	void fft32768(Complex *z);
-	void fft65536(Complex *z);
+	void fft(int n, int logn, Complex *z);
 };
 
 } // End of namespace Common
