@@ -300,6 +300,30 @@ void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uS
 		convertYUV420ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
+#define READ_QUAD(ptr, prefix) \
+	byte prefix##A = ptr[index]; \
+	byte prefix##B = ptr[index + 1]; \
+	byte prefix##C = ptr[index + uvPitch]; \
+	byte prefix##D = ptr[index + uvPitch + 1]
+
+#define DO_INTERPOLATION(out) \
+	out = (out##A * (4 - xDiff) * (4 - yDiff) + out##B * xDiff * (4 - yDiff) + \
+			out##C * yDiff * (4 - xDiff) + out##D * xDiff * yDiff) >> 4
+
+#define DO_YUV410_PIXEL() \
+	DO_INTERPOLATION(u); \
+	DO_INTERPOLATION(v); \
+	\
+	cr_r  = Cr_r_tab[v]; \
+	crb_g = Cr_g_tab[v] + Cb_g_tab[u]; \
+	cb_b  = Cb_b_tab[u]; \
+	\
+	PUT_PIXEL(*ySrc, dstPtr); \
+	dstPtr += sizeof(PixelInt); \
+	\
+	ySrc++; \
+	xDiff++
+
 template<typename PixelInt>
 void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Keep the tables in pointers here to avoid a dereference on each pixel
@@ -309,46 +333,40 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
 	const uint32 *rgbToPix = lookup->_rgbToPix;
 
+	int quarterWidth = yWidth >> 2;
+
 	for (int y = 0; y < yHeight; y++) {
-		for (int x = 0; x < yWidth; x++) {
+		for (int x = 0; x < quarterWidth; x++) {
 			// Perform bilinear interpolation on the the chroma values
 			// Based on the algorithm found here: http://tech-algorithm.com/articles/bilinear-image-scaling/
 			// Feel free to optimize further
-			int targetX = x >> 2;
 			int targetY = y >> 2;
-			int xDiff = x & 3;
+			int xDiff = 0;
 			int yDiff = y & 3;
-			int index = targetY * uvPitch + targetX;
+			int index = targetY * uvPitch + x;
 
-			byte a = uSrc[index];
-			byte b = uSrc[index + 1];
-			byte c = uSrc[index + uvPitch];
-			byte d = uSrc[index + uvPitch + 1];
+			// Declare some variables for the following macros
+			byte u, v;
+			int16 cr_r, crb_g, cb_b;
+			register const uint32 *L;
 
-			byte u = (a * (4 - xDiff) * (4 - yDiff) + b * xDiff * (4 - yDiff) +
-					c * yDiff * (4 - xDiff) + d * xDiff * yDiff) >> 4;
+			READ_QUAD(uSrc, u);
+			READ_QUAD(vSrc, v);
 
-			a = vSrc[index];
-			b = vSrc[index + 1];
-			c = vSrc[index + uvPitch];
-			d = vSrc[index + uvPitch + 1];
-
-			byte v = (a * (4 - xDiff) * (4 - yDiff) + b * xDiff * (4 - yDiff) +
-					c * yDiff * (4 - xDiff) + d * xDiff * yDiff) >> 4;
-
-			int16 cr_r  = Cr_r_tab[v];
-			int16 crb_g = Cr_g_tab[v] + Cb_g_tab[u];
-			int16 cb_b  = Cb_b_tab[u];
-			const uint32 *L;
-
-			PUT_PIXEL(ySrc[x], dstPtr);
-			dstPtr += sizeof(PixelInt);
+			DO_YUV410_PIXEL();
+			DO_YUV410_PIXEL();
+			DO_YUV410_PIXEL();
+			DO_YUV410_PIXEL();
 		}
 
 		dstPtr += dstPitch - yWidth * sizeof(PixelInt);
-		ySrc += yPitch;
+		ySrc += yPitch - yWidth;
 	}
 }
+
+#undef READ_QUAD
+#undef DO_INTERPOLATION
+#undef DO_YUV410_PIXEL
 
 void convertYUV410ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
