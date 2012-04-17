@@ -410,10 +410,10 @@ void LilliputEngine::displayFunction13(byte *buf, int var1, int var2, int var3) 
 	debugC(1, kDebugEngine, "displayFunction13(buf, %d, %d, %d)", var1, var2, var3);
 
 	byte tmpByte1 = ((7 + (var2 >> 8) - (var2 & 0xFF)) << 4) & 0xFF;
-	byte tmpByte2 = ((4 + (var2 >> 8) + (var2 & 0xFF) - (var3 >>8) - (var3 & 0xFF)) << 3) & 0xFF;
+	byte tmpByte2 = ((4 + (var2 >> 8) + (var2 & 0xFF) - (var3 >> 7) ) << 3) & 0xFF;
 
 	int index = (tmpByte2 << 8) + tmpByte1;
-	int index2 = tmpByte1 << 8;
+	int index2 = var1 << 10;
 
 	for (int i = 0; i < 32; i++) {
 		for (int j = 0; j < 32; j++) {
@@ -536,7 +536,7 @@ void LilliputEngine::displayFunction15() {
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			int tmpVal = (i << 8) + j;
+			int tmpVal = (j << 8) + i;
 			if (map[1] != 0xFF) {
 				int var1 = map[1];
 				if (_rulesChunk9[var1] != 128)
@@ -546,14 +546,14 @@ void LilliputEngine::displayFunction15() {
 			warning("sub_16553");
 
 			if (map[2] != 0xFF) {
-				int var1 = map[1];
+				int var1 = map[2];
 				if (_rulesChunk9[var1] != 128)
 					var1 += _scriptHandler->_byte12A04;
 				displayFunction13(_buffer1_45k, var1, tmpVal, 2 << 8);
 			}
-			map = &map[4];
+			map += 4;
 		}
-		map = &map[224];
+		map += 224;
 	}
 }
 
