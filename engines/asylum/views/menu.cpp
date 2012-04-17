@@ -291,7 +291,7 @@ void Menu::setupMusic() {
 }
 
 void Menu::adjustPerformance() {
-	// Original reinitialize sound to 11kHz for performance == 0, 22kHz otherwise
+	// Original reinitialize sound to 11kHz for performance == 0, ikHz otherwise
 	getSound()->stopAll();
 	getSound()->playMusic(kResourceNone, 0);
 	setupMusic();
@@ -2284,7 +2284,7 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 
 	switch (evt.kbd.keycode) {
 	default:
-		if (evt.kbd.ascii > 255 || !isalnum(evt.kbd.ascii))
+		if (evt.kbd.ascii > 255 || !Common::isAlnum(evt.kbd.ascii))
 			break;
 
 		if (getSaveLoad()->getName()->size() < 44) {
@@ -2367,7 +2367,7 @@ void Menu::keyKeyboardConfig(const AsylumEvent &evt) {
 	}
 
 	// Check for alphanumeric character
-	if (evt.kbd.ascii > 255 || !isalnum(evt.kbd.ascii))
+	if (evt.kbd.ascii > 255 || !Common::isAlnum(evt.kbd.ascii))
 		return;
 
 	if (!Config.isKeyAssigned((char)evt.kbd.ascii) || *keyCode == (char)evt.kbd.ascii) {
