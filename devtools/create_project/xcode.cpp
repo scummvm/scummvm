@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "xcode.h"
 
 #include <fstream>
@@ -86,34 +87,34 @@ XCodeProvider::XCodeProvider(StringList &global_warnings, std::map<std::string, 
 
 void XCodeProvider::createWorkspace(const BuildSetup &setup) {
 	// Create project folder
-	std::string workspace = setup.outputDir + '/' + "residualvm.xcodeproj";
+	std::string workspace = setup.outputDir + '/' + PROJECT_NAME ".xcodeproj";
 
 #if defined(_WIN32) || defined(WIN32)
 	if (!CreateDirectory(workspace.c_str(), NULL))
 		if (GetLastError() != ERROR_ALREADY_EXISTS)
-			error("Could not create folder \"" + setup.outputDir + '/' + "residualvm.xcodeproj\"");
+			error("Could not create folder \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj\"");
 #else
 	if (mkdir(workspace.c_str(), 0777) == -1) {
 		if (errno == EEXIST) {
 			// Try to open as a folder (might be a file / symbolic link)
 			DIR *dirp = opendir(workspace.c_str());
 			if (dirp == NULL) {
-				error("Could not create folder \"" + setup.outputDir + '/' + "residualvm.xcodeproj\"");
+				error("Could not create folder \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj\"");
 			} else {
 				// The folder exists, just close the stream and return
 				closedir(dirp);
 			}
 		} else {
-			error("Could not create folder \"" + setup.outputDir + '/' + "residualvm.xcodeproj\"");
+			error("Could not create folder \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj\"");
 		}
 	}
 #endif
 
 	// Setup global objects
 	setupDefines(setup);
-	_targets.push_back("ResidualVM-iPhone");
-	_targets.push_back("ResidualVM-OS X");
-	_targets.push_back("ResidualVM-Simulator");
+	_targets.push_back(PROJECT_DESCRIPTION "-iPhone");
+	_targets.push_back(PROJECT_DESCRIPTION "-OS X");
+	_targets.push_back(PROJECT_DESCRIPTION "-Simulator");
 
 	setupCopyFilesBuildPhase();
 	setupFrameworksBuildPhase();
@@ -153,9 +154,9 @@ void XCodeProvider::createProjectFile(const std::string &, const std::string &, 
 // Main Project file
 //////////////////////////////////////////////////////////////////////////
 void XCodeProvider::ouputMainProjectFile(const BuildSetup &setup) {
-	std::ofstream project((setup.outputDir + '/' + "residualvm.xcodeproj" + '/' + "project.pbxproj").c_str());
+	std::ofstream project((setup.outputDir + '/' + PROJECT_NAME ".xcodeproj" + '/' + "project.pbxproj").c_str());
 	if (!project)
-		error("Could not open \"" + setup.outputDir + '/' + "residualvm.xcodeproj" + '/' + "project.pbxproj\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj" + '/' + "project.pbxproj\" for writing");
 
 	//////////////////////////////////////////////////////////////////////////
 	// Header
@@ -275,7 +276,7 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	frameworks_iPhone.push_back("AudioToolbox.framework");
 	frameworks_iPhone.push_back("QuartzCore.framework");
 	frameworks_iPhone.push_back("libmad.a");
-	frameworks_iPhone.push_back("libmpeg2.a");
+	//frameworks_iPhone.push_back("libmpeg2.a");
 	frameworks_iPhone.push_back("libFLAC.a");
 	frameworks_iPhone.push_back("libvorbisidec.a");
 	frameworks_iPhone.push_back("OpenGLES.framework");
@@ -392,8 +393,8 @@ void XCodeProvider::setupNativeTarget() {
 		target->addProperty("dependencies", "", "", SettingsNoValue|SettingsAsList);
 
 		target->addProperty("name", _targets[i], "", SettingsNoValue|SettingsQuoteVariable);
-		target->addProperty("productName", "residualvm", "", SettingsNoValue);
-		target->addProperty("productReference", getHash("PBXFileReference_ResidualVM.app_" + _targets[i]), "ResidualVM.app", SettingsNoValue);
+		target->addProperty("productName", PROJECT_NAME, "", SettingsNoValue);
+		target->addProperty("productReference", getHash("PBXFileReference_" PROJECT_DESCRIPTION ".app_" + _targets[i]), PROJECT_DESCRIPTION ".app", SettingsNoValue);
 		target->addProperty("productType", "com.apple.product-type.application", "", SettingsNoValue|SettingsQuoteVariable);
 
 		_nativeTarget.add(target);
@@ -405,7 +406,7 @@ void XCodeProvider::setupProject() {
 
 	Object *project = new Object(this, "PBXProject", "PBXProject", "PBXProject", "", "Project object");
 
-	project->addProperty("buildConfigurationList", getHash("XCConfigurationList_residualvm"), "Build configuration list for PBXProject \"residualvm\"", SettingsNoValue);
+	project->addProperty("buildConfigurationList", getHash("XCConfigurationList_scummvm"), "Build configuration list for PBXProject \"" PROJECT_NAME "\"", SettingsNoValue);
 	project->addProperty("compatibilityVersion", "Xcode 3.2", "", SettingsNoValue|SettingsQuoteVariable);
 	project->addProperty("developmentRegion", "English", "", SettingsNoValue);
 	project->addProperty("hasScannedForEncodings", "1", "", SettingsNoValue);
@@ -439,7 +440,8 @@ void XCodeProvider::setupResourcesBuildPhase() {
 
 	// Setup resource file properties
 	std::map<std::string, FileProperty> properties;
-	properties["modern.zip"]       = FileProperty("archive.zip", "", "modern.zip", "\"<group>\"");
+	properties["scummclassic.zip"] = FileProperty("archive.zip", "", "scummclassic.zip", "\"<group>\"");
+	properties["scummmodern.zip"]  = FileProperty("archive.zip", "", "scummmodern.zip", "\"<group>\"");
 
 	properties["kyra.dat"]         = FileProperty("file", "", "kyra.dat", "\"<group>\"");
 	properties["lure.dat"]         = FileProperty("file", "", "lure.dat", "\"<group>\"");
@@ -467,7 +469,8 @@ void XCodeProvider::setupResourcesBuildPhase() {
 		files.flags = SettingsAsList;
 
 		ValueList files_list;
-		files_list.push_back("modern.zip");
+		files_list.push_back("scummclassic.zip");
+		files_list.push_back("scummmodern.zip");
 		files_list.push_back("kyra.dat");
 		files_list.push_back("lure.dat");
 		files_list.push_back("queen.tbl");
@@ -493,8 +496,8 @@ void XCodeProvider::setupResourcesBuildPhase() {
 		}
 
 		// Add custom files depending on the target
-		if (_targets[i] == "ResidualVM-OS X") {
-			files.settings[getHash("PBXResources_residualvm.icns")] = Setting("", "residualvm.icns in Resources", SettingsNoValue, 0, 6);
+		if (_targets[i] == PROJECT_DESCRIPTION "-OS X") {
+			files.settings[getHash("PBXResources_" PROJECT_NAME ".icns")] = Setting("", PROJECT_NAME ".icns in Resources", SettingsNoValue, 0, 6);
 
 			// Remove 2 iphone icon files
 			files.settings.erase(getHash("PBXResources_Default.png"));
@@ -524,7 +527,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	// ****************************************/
 
 	// Debug
-	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_ResidualVM-iPhone_Debug", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Debug", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property iPhone_Debug;
 	ADD_SETTING_QUOTE(iPhone_Debug, "ARCHS", "$(ARCHS_UNIVERSAL_IPHONE_OS)");
 	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
@@ -556,7 +559,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, SettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING(iPhone_Debug, "PREBINDING", "NO");
-	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", "ResidualVM");
+	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_DESCRIPTION);
 	ADD_SETTING_QUOTE(iPhone_Debug, "PROVISIONING_PROFILE", "EF590570-5FAC-4346-9071-D609DE2B28D8");
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
 	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos4.0");
@@ -566,7 +569,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
 
 	// Release
-	Object *iPhone_Release_Object = new Object(this, "XCBuildConfiguration_ResidualVM-iPhone_Release", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Object *iPhone_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Release", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property iPhone_Release(iPhone_Debug);
 	ADD_SETTING(iPhone_Release, "GCC_OPTIMIZATION_LEVEL", "3");
 	ADD_SETTING(iPhone_Release, "COPY_PHASE_STRIP", "YES");
@@ -584,7 +587,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	 ****************************************/
 
 	// Debug
-	Object *scummvm_Debug_Object = new Object(this, "XCBuildConfiguration_residualvm_Debug", "residualvm", "XCBuildConfiguration", "PBXProject", "Debug");
+	Object *scummvm_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_NAME "_Debug", PROJECT_NAME, "XCBuildConfiguration", "PBXProject", "Debug");
 	Property scummvm_Debug;
 	ADD_SETTING(scummvm_Debug, "ALWAYS_SEARCH_USER_PATHS", "NO");
 	ADD_SETTING_QUOTE(scummvm_Debug, "ARCHS", "$(ARCHS_STANDARD_32_BIT)");
@@ -621,7 +624,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	scummvm_Debug_Object->properties["buildSettings"] = scummvm_Debug;
 
 	// Release
-	Object *scummvm_Release_Object = new Object(this, "XCBuildConfiguration_scummvm_Release", "residualvm", "XCBuildConfiguration", "PBXProject", "Release");
+	Object *scummvm_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_NAME "_Release", PROJECT_NAME, "XCBuildConfiguration", "PBXProject", "Release");
 	Property scummvm_Release(scummvm_Debug);
 	REMOVE_SETTING(scummvm_Release, "GCC_C_LANGUAGE_STANDARD");       // Not sure why we remove that, or any of the other warnings
 	REMOVE_SETTING(scummvm_Release, "GCC_WARN_ABOUT_RETURN_TYPE");
@@ -639,7 +642,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	 ****************************************/
 
 	// Debug
-	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_ResidualVM-OSX_Debug", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmOSX_Debug;
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "ARCHS", "$(NATIVE_ARCH)");
 	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
@@ -685,13 +688,13 @@ void XCodeProvider::setupBuildConfiguration() {
 	scummvmOSX_LdFlags.push_back("-lz");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "OTHER_LDFLAGS", scummvmOSX_LdFlags, SettingsAsList, 5);
 	ADD_SETTING(scummvmOSX_Debug, "PREBINDING", "NO");
-	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", "ResidualVM");
+	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", PROJECT_DESCRIPTION);
 
 	scummvmOSX_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	scummvmOSX_Debug_Object->properties["buildSettings"] = scummvmOSX_Debug;
 
 	// Release
-	Object *scummvmOSX_Release_Object = new Object(this, "XCBuildConfiguration_ResidualVMOSX_Release", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Object *scummvmOSX_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Release", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmOSX_Release(scummvmOSX_Debug);
 	ADD_SETTING(scummvmOSX_Release, "COPY_PHASE_STRIP", "YES");
 	REMOVE_SETTING(scummvmOSX_Release, "GCC_DYNAMIC_NO_PIC");
@@ -709,7 +712,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	 ****************************************/
 
 	// Debug
-	Object *scummvmSimulator_Debug_Object = new Object(this, "XCBuildConfiguration_ResidualVM-Simulator_Debug", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Object *scummvmSimulator_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Debug", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmSimulator_Debug(iPhone_Debug);
 	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
 	ADD_SETTING_LIST(scummvmSimulator_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
@@ -720,7 +723,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	scummvmSimulator_Debug_Object->properties["buildSettings"] = scummvmSimulator_Debug;
 
 	// Release
-	Object *scummvmSimulator_Release_Object = new Object(this, "XCBuildConfiguration_ResidualVM-Simulator_Release", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Object *scummvmSimulator_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Release", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmSimulator_Release(scummvmSimulator_Debug);
 	ADD_SETTING(scummvmSimulator_Release, "COPY_PHASE_STRIP", "YES");
 	REMOVE_SETTING(scummvmSimulator_Release, "GCC_DYNAMIC_NO_PIC");

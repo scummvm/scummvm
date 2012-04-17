@@ -32,8 +32,12 @@ print "Setting version to '$VERSION'\n";
 # List of the files in which we need to perform substitution.
 my @subs_files = qw(
 	base/internal_version.h
+	dists/redhat/residualvm.spec
+	dists/redhat/residualvm-tools.spec
 	dists/residualvm.rc
+	dists/slackware/residualvm.SlackBuild
 	dists/macosx/Info.plist
+	dists/irix/residualvm.spec
 	);
 
 my %subs = (
