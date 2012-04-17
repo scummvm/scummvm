@@ -848,7 +848,7 @@ int LilliputScript::getValue2() {
 		return (var1 << 8) + var2;
 		}
 	case 0xFA:
-		return ((_vm->_byte10999[_vm->_rulesBuffer2PrevIndx] << 8) + _vm->_byte109C1[_vm->_rulesBuffer2PrevIndx]);
+		return ((_vm->_array10999[_vm->_rulesBuffer2PrevIndx] << 8) + _vm->_array109C1[_vm->_rulesBuffer2PrevIndx]);
 	case 0xF9:
 		return ((_vm->_rulesBuffer2_15[4] << 8) + _vm->_rulesBuffer2_15[5]);
 	case 0xF8: {
@@ -1615,8 +1615,7 @@ void LilliputScript::OC_sub18099() {
 	_array122E9[index] = (curWord & 0xFF);
 	_array122FD[index] = (curWord >> 8);
 
-	warning("TODO: display function #8");
-	
+	_vm->displayFunction8();
 }
 void LilliputScript::OC_sub180C3() {
 	warning("OC_sub180C3");
@@ -1665,8 +1664,9 @@ void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
 	_byte10806 = curWord + 0x30;
 
 	_vm->_bufferCubegfx = _vm->loadVGA(fileName, false);
-	warning("Display function 9");
-	warning("sub_1649F()");
+	_vm->displayFunction9();
+	_vm->displayFunction15();
+
 }
 
 void LilliputScript::OC_sub1834C() {
@@ -1677,12 +1677,14 @@ void LilliputScript::OC_sub1834C() {
 
 	_vm->_ptr_rulesBuffer2_15[3] = curWord;
 }
+
 void LilliputScript::OC_sub18359() {
 	warning("OC_sub18359");
 }
 void LilliputScript::OC_sub18367() {
 	warning("OC_sub18367");
 }
+
 void LilliputScript::OC_sub17D04() {
 	debugC(1, kDebugScript, "OC_sub17D04()");
 
@@ -1716,8 +1718,10 @@ void LilliputScript::OC_sub17E22() {
 void LilliputScript::OC_sub1844A() {
 	warning("OC_sub1844A");
 }
+
 void LilliputScript::OC_sub1847F() {
 	debugC(1, kDebugScript, "OC_sub1847F()");
+
 	byte *buf215Ptr = getBuffer215Ptr();
 	byte tmpVal = buf215Ptr[0];
 	int curWord = _currScript->readUint16LE();
@@ -1745,9 +1749,11 @@ void LilliputScript::OC_displayVGAFile() {
 	_vm->displayVGAFile(fileName);
 	warning("TODO: unkPaletteFunction_2");
 }
+
 void LilliputScript::OC_sub184D7() {
 	warning("OC_sub184D7");
 }
+
 void LilliputScript::OC_displayTitleScreen() {
 	debugC(1, kDebugScript, "OC_displayTitleScreen()");
 
@@ -1818,9 +1824,11 @@ void LilliputScript::OC_sub18678() {
 	_word15FFB = _currScript->readUint16LE();
 	_word15FFD = _currScript->readUint16LE();
 }
+
 void LilliputScript::OC_sub18690() {
 	warning("OC_sub18690");
 }
+
 void LilliputScript::OC_setWord10802() {
 	debugC(1, kDebugScript, "OC_setWord10802()");
 
