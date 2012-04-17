@@ -1221,7 +1221,7 @@ ps3)
 	# The prefix is always the same on PS3 so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
-	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/SCUM12000/USRDIR
+	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/RESI12000/USRDIR
 	# PS3 apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode PS3 specific directories here.
