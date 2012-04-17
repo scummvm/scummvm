@@ -345,7 +345,7 @@ extern "C" {
 #endif
 }
 
-extern "C" void ARM_Smush_decode2(      byte  *dst,
+extern "C" void ARM_Blocky8_decode2(      byte  *dst,
                                   const byte  *src,
                                         int    width,
                                         int    height,
