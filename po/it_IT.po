@@ -1382,11 +1382,11 @@ msgstr "Consultate il manuale delle istruzioni."
 
 #: engines/scumm/dialogs.cpp:658
 msgid "Standard"
-msgstr "Base"
+msgstr "Medio"
 
 #: engines/scumm/dialogs.cpp:659
 msgid "Practice"
-msgstr "Medio"
+msgstr "Base"
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Expert"
