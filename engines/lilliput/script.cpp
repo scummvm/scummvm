@@ -24,6 +24,8 @@
 #include "lilliput/script.h"
 #include "common/debug.h"
 
+#include "common/system.h"
+
 namespace Lilliput {
 
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
@@ -1649,10 +1651,28 @@ void LilliputScript::OC_sub182EC() {
 	warning("OC_sub182EC");
 }
 void LilliputScript::OC_unkPaletteFunction_1() {
-	warning("OC_unkPaletteFunction_1");
+
+	byte palette[768];
+	for (int fade = 256; fade >= 0;	fade -= 8) {
+		for (int i = 0; i < 768; i++) {
+			palette[i] = (_vm->_curPalette[i] * fade) >> 8;
+		}
+		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(33);
+	}
 }
 void LilliputScript::OC_unkPaletteFunction_2() {
-	warning("OC_unkPaletteFunction_2");
+
+	byte palette[768];
+	for (int fade = 8; fade <= 256;	fade += 8) {
+		for (int i = 0; i < 768; i++) {
+			palette[i] = (_vm->_curPalette[i] * fade) >> 8;
+		}
+		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(33);
+	}
 }
 
 void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
@@ -1741,13 +1761,13 @@ void LilliputScript::OC_displayVGAFile() {
 	debugC(1, kDebugScript, "OC_displayVGAFile()");
 
 	_byte12A09 = 1;
-	warning("TODO: unkPaletteFunction_1");
+	OC_unkPaletteFunction_1();
 	int curWord = _currScript->readUint16LE();
 	int index = _vm->_rulesChunk3[curWord];
 	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
 	_word1881B = -1;
 	_vm->displayVGAFile(fileName);
-	warning("TODO: unkPaletteFunction_2");
+	OC_unkPaletteFunction_2();
 }
 
 void LilliputScript::OC_sub184D7() {
@@ -1789,14 +1809,14 @@ void LilliputScript::OC_displayTitleScreen() {
 void LilliputScript::OC_sub1853B() {
 	debugC(1, kDebugScript, "OC_initArr1853B()");
 
-	warning("TODO: unkPaletteFunction_1");
+	OC_unkPaletteFunction_1();
 	_byte16F08 = 0;
 	_byte15FFA = 0;
 	sub130B6();
 
 	_vm->displayFunction12();
 
-	warning("TODO: unkPaletteFunction_2");
+	OC_unkPaletteFunction_2();
 	_byte12A09 = 0;
 	warning("TODO: call sound function #5");
 }

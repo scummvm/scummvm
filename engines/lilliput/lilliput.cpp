@@ -648,7 +648,6 @@ byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
 		remainingSize -= 768;
 
 		fixPaletteEntries(_curPalette, 256);
-		_system->getPaletteManager()->setPalette(_curPalette, 0, 256);
 	}
 
 	uint8 curByte;
