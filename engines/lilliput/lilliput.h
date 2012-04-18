@@ -182,12 +182,14 @@ public:
 	void displayFunction1(byte *buf, int var1, int var2, int var4);
 	void displayFunction1a(byte *buf, int var2, int var4);
 	void displayFunction2(byte *buf, int var2, int var4);
+	void displayFunction3(int var1, int var2, int var4);
 	void displayFunction4();
 	void displayFunction5();
 	void displayFunction6();
 	void displayFunction7();
 	void displayFunction8();
 	void displayFunction9();
+	void displayFunction10();
 	void displayFunction12();
 	void displayFunction13(byte *buf, int var1, int var2, int var3);
 	void displayFunction14();

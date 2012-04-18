@@ -285,6 +285,20 @@ void LilliputEngine::displayFunction2(byte *buf, int var2, int var4) {
 	}
 }
 
+void LilliputEngine::displayFunction3(int var1, int var2, int var4) {
+	debugC(2, kDebugEngine, "displayFunction3(%d, %d, %d)", var1, var2, var4);
+
+	int tmpVal = ((var4 >> 8) + (var4 & 0xFF));
+	int index = var2 + tmpVal + (tmpVal >> 2);
+	int col = var1 & 0xFF;
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			((byte *)_mainSurface->getPixels())[index + j] = col;
+		}
+		index += 320;
+	}
+}
+
 // display mouse cursor
 void LilliputEngine::displayFunction4() {
 	debugC(2, kDebugEngine, "displayFunction4()");
@@ -383,6 +397,28 @@ void LilliputEngine::displayFunction9() {
 		index += 224;
 	}
 
+}
+
+void LilliputEngine::displayFunction10() {
+	debugC(2, kDebugEngine, "displayFunction10()");
+	static const byte _array15976[16] = {244, 248, 250, 250, 252, 252, 252, 252, 252, 252, 252, 252, 250, 250, 248, 244};
+
+	displayFunction5();
+
+	int index = 192;
+	int tmpIndex;
+	int var3;
+
+	for (int i = 0; i < 16; i++) {
+		var3 = _array15976[i];
+		tmpIndex = index - (var3 / 2);
+		for (int j = 0; j < 16; j++) {
+			((byte *)_mainSurface->getPixels())[tmpIndex + j] = 17;
+		}
+		index += 320;
+	}
+
+	displayFunction4();
 }
 
 void LilliputEngine::displayFunction12() {
