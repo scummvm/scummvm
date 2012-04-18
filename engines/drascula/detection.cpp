@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/savestate.h"
 #include "common/file.h"
 
 #include "drascula/drascula.h"
@@ -269,6 +270,62 @@ public:
 	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
 		_singleid = "drascula";
 		_guioptions = GUIO2(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD);
+	}
+
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		return (f == kSupportsListSaves);
+	}
+
+	virtual SaveStateList listSaves(const char *target) const {
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		Common::String pattern = Common::String::format("%s??", target);
+
+		// Get list of savefiles for target game
+		Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+		Common::Array<int> slots;
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		
+			// Obtain the last 2 digits of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 2);
+
+			// Ensure save slot is within valid range
+			if (slotNum >= 1 && slotNum <= 10) {
+				slots.push_back(slotNum);
+			}
+		}
+
+		// Sort save slot ids
+		Common::sort<int>(slots.begin(), slots.end());
+
+		// Load save index
+		Common::String fileEpa = Common::String::format("%s.epa", target);
+		Common::InSaveFile *epa = saveFileMan->openForLoading(fileEpa); 
+
+		// Get savegame names from index
+		Common::String saveDesc;
+		SaveStateList saveList;
+		int line = 1;
+		for (size_t i = 0; i < slots.size(); i++) {
+			// ignore lines corresponding to unused saveslots
+			for (; line < slots[i]; line++) 
+				epa->readLine(); 
+
+			// copy the name in the line corresponding to the save slot and truncate to 22 characters
+			saveDesc = Common::String(epa->readLine().c_str(), 22);
+
+			// handle cases where the save directory and save index are detectably out of sync
+			if (saveDesc == "*") 
+				saveDesc = "No name specified.";
+
+			// increment line number to keep it in sync with slot number
+			line++;	
+			
+			// Insert savegame name into list
+			saveList.push_back(SaveStateDescriptor(slots[i], saveDesc));
+		}
+		delete epa;
+
+		return saveList;
 	}
 
 	virtual const char *getName() const {
