@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-03-07 22:09+0000\n"
-"PO-Revision-Date: 2012-02-17 07:10+0100\n"
+"PO-Revision-Date: 2012-04-18 08:20+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -1158,13 +1158,13 @@ msgstr ""
 "README-t az alap információkról, és hogy hogyan segíthetsz a késõbbiekben."
 
 #: engines/dialogs.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Sajnálom, a motor jelenleg nem tartalmaz játék közbeni súgót. Olvassd el a "
-"README-t az alap információkról, és hogy hogyan segíthetsz a késõbbiekben."
+"(%s) játékmentés nem sikerült!. Olvassd el a README-t az alap "
+"információkról, és hogy hogyan segíthetsz a késõbbiekben."
 
 #: engines/dialogs.cpp:321 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
@@ -1225,13 +1225,13 @@ msgstr ""
 "Nézd meg a README fájlt a részletekért."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Sajnálom, a motor jelenleg nem tartalmaz játék közbeni súgót. Olvassd el a "
-"README-t az alap információkról, és hogy hogyan segíthetsz a késõbbiekben."
+"(%s) játékállás betöltése nem sikerült!. Olvassd el a README-t az alap "
+"információkról, és hogy hogyan segíthetsz a késõbbiekben."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -2083,7 +2083,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:539
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "'%s'  PSX stream átvezetõ nem játszható le paletta módban"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
@@ -2138,10 +2138,11 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Ez a Broken Sword 1 Demo vége"
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "DXA átvezetõ elérhetõ, de a ScummVM zlib támogatás nincs lefordítva"
+msgstr ""
+"PSX átvezetõfilmet találtam, de ez a ScummVM RGB színtámogatás nélkül van "
+"lefordítva"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2289,7 +2290,7 @@ msgstr " (Aktív)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr " (Blokkolt)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
