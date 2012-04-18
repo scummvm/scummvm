@@ -31,7 +31,8 @@ PixelBuffer::PixelBuffer()
 }
 
 PixelBuffer::PixelBuffer(const PixelFormat &format, int buffersize, DisposeAfterUse::Flag dispose)
-	: _buffer(NULL) {
+	: _buffer(NULL),
+	_dispose(DisposeAfterUse::NO) {
 	create(format, buffersize, dispose);
 }
 
