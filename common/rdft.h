@@ -31,6 +31,9 @@
 #include "common/math.h"
 #include "common/fft.h"
 
+#include "common/cosinetables.h"
+#include "common/sinetables.h"
+
 namespace Common {
 
 /**
@@ -62,6 +65,8 @@ private:
 	int _inverse;
 	int _signConvention;
 
+	SineTable _sin;
+	CosineTable _cos;
 	const float *_tSin;
 	const float *_tCos;
 

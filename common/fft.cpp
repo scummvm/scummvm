@@ -29,6 +29,7 @@
 #include "common/cosinetables.h"
 #include "common/fft.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 namespace Common {
 
@@ -45,6 +46,13 @@ FFT::FFT(int bits, int inverse) : _bits(bits), _inverse(inverse) {
 
 	for (int i = 0; i < n; i++)
 		_revTab[-splitRadixPermutation(i, n, _inverse) & (n - 1)] = i;
+
+	for (int i = 0; i < ARRAYSIZE(_cosTables); i++) {
+		if (i+4 <= _bits)
+			_cosTables[i] = new Common::CosineTable(i+4);
+		else
+			_cosTables[i] = 0;
+	}
 }
 
 FFT::~FFT() {
@@ -162,15 +170,7 @@ PASS(pass)
 #define BUTTERFLIES BUTTERFLIES_BIG
 PASS(pass_big)
 
-#define DECL_FFT(t, n, n2, n4) \
-static void fft##n(Complex *z) { \
-	fft##n2(z); \
-	fft##n4(z + n4 * 2); \
-	fft##n4(z + n4 * 3); \
-	pass(z, getCosineTable(t), n4 / 2);\
-}
-
-static void fft4(Complex *z) {
+void FFT::fft4(Complex *z) {
 	float t1, t2, t3, t4, t5, t6, t7, t8;
 
 	BF(t3, t1, z[0].re, z[1].re);
@@ -183,7 +183,7 @@ static void fft4(Complex *z) {
 	BF(z[2].im, z[0].im, t2, t5);
 }
 
-static void fft8(Complex *z) {
+void FFT::fft8(Complex *z) {
 	float t1, t2, t3, t4, t5, t6, t7, t8;
 
 	fft4(z);
@@ -202,14 +202,15 @@ static void fft8(Complex *z) {
 	TRANSFORM(z[1], z[3], z[5], z[7], sqrthalf, sqrthalf);
 }
 
-static void fft16(Complex *z) {
+void FFT::fft16(Complex *z) {
 	float t1, t2, t3, t4, t5, t6;
 
 	fft8(z);
 	fft4(z + 8);
 	fft4(z + 12);
 
-	const float * const cosTable = getCosineTable(4);
+	assert(_cosTables[0]);
+	const float * const cosTable = _cosTables[0]->getTable();
 
 	TRANSFORM_ZERO(z[0], z[4], z[8], z[12]);
 	TRANSFORM(z[2], z[6], z[10], z[14], sqrthalf, sqrthalf);
@@ -217,27 +218,31 @@ static void fft16(Complex *z) {
 	TRANSFORM(z[3], z[7], z[11], z[15], cosTable[3], cosTable[1]);
 }
 
-DECL_FFT(5, 32, 16, 8)
-DECL_FFT(6, 64, 32, 16)
-DECL_FFT(7, 128, 64, 32)
-DECL_FFT(8, 256, 128, 64)
-DECL_FFT(9, 512, 256, 128)
-#define pass pass_big
-DECL_FFT(10, 1024, 512, 256)
-DECL_FFT(11, 2048, 1024, 512)
-DECL_FFT(12, 4096, 2048, 1024)
-DECL_FFT(13, 8192, 4096, 2048)
-DECL_FFT(14, 16384, 8192, 4096)
-DECL_FFT(15, 32768, 16384, 8192)
-DECL_FFT(16, 65536, 32768, 16384)
-
-static void (* const fft_dispatch[])(Complex *) = {
-	fft4, fft8, fft16, fft32, fft64, fft128, fft256, fft512, fft1024,
-	fft2048, fft4096, fft8192, fft16384, fft32768, fft65536,
-};
+void FFT::fft(int n, int logn, Complex *z) {
+	switch (logn) {
+	case 2:
+		fft4(z);
+		break;
+	case 3:
+		fft8(z);
+		break;
+	case 4:
+		fft16(z);
+		break;
+	default:
+		fft((n / 2), logn - 1, z);
+		fft((n / 4), logn - 2, z + (n / 4) * 2);
+		fft((n / 4), logn - 2, z + (n / 4) * 3);
+		assert(_cosTables[logn - 4]);
+		if (n > 1024)
+			pass_big(z, _cosTables[logn - 4]->getTable(), (n / 4) / 2);
+		else
+			pass(z, _cosTables[logn - 4]->getTable(), (n / 4) / 2);
+	}
+}
 
 void FFT::calc(Complex *z) {
-	fft_dispatch[_bits - 2](z);
+	fft(1 << _bits, _bits, z);
 }
 
 } // End of namespace Common

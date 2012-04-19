@@ -25,12 +25,10 @@
 // Copyright (c) 2009 Alex Converse <alex dot converse at gmail dot com>
 
 #include "common/rdft.h"
-#include "common/cosinetables.h"
-#include "common/sinetables.h"
 
 namespace Common {
 
-RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _fft(0) {
+RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _sin(bits), _cos(bits), _fft(0) {
 	assert ((_bits >= 4) && (_bits <= 16));
 
 	_inverse        = trans == IDFT_C2R || trans == DFT_C2R;
@@ -40,8 +38,8 @@ RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _fft(0) {
 
 	int n = 1 << bits;
 
-	_tSin = getSineTable(bits) + (trans == DFT_R2C || trans == DFT_C2R) * (n >> 2);
-	_tCos = getCosineTable(bits);
+	_tSin = _sin.getTable() + (trans == DFT_R2C || trans == DFT_C2R) * (n >> 2);
+	_tCos = _cos.getTable();
 }
 
 RDFT::~RDFT() {
