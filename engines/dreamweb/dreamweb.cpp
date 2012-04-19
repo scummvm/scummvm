@@ -63,6 +63,20 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_channel1 = 0;
 
 	_datafilePrefix = "DREAMWEB.";
+	// ES and FR CD release use a different data file prefix
+	if (isCD()) {
+		switch(getLanguage()) {
+		case Common::ES_ESP:
+			_datafilePrefix = "DREAMWSP.";
+			break;
+		case Common::FR_FRA:
+			_datafilePrefix = "DREAMWFR.";
+			break;
+		default:
+			// Nothing to do
+			break;
+		}
+	}
 
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
@@ -526,9 +540,53 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 		default:
 			return c;
 		}
+	case Common::FR_FRA:
+		switch(c) {
+		case 133:
+			return 'Z' + 1;	
+		case 130:
+			return 'Z' + 2;
+		case 138:
+			return 'Z' + 3;
+		case 136:
+			return 'Z' + 4;
+		case 140:
+			return 'Z' + 5;
+		case 135:
+			return 'Z' + 6;
+		case 149:
+			return ',' - 1;
+		case 131:
+			return ',' - 2;
+		case 141:
+			return ',' - 3;
+		case 139:
+			return ',' - 4;
+		case 151:
+			return 'A' - 1;
+		case 147:
+			return 'A' - 3;
+		case 150:
+			return 'A' - 4;
+		default:
+			return c;
+		}
 	default:
 		return c;
 	}
+}
+	
+Common::String DreamWebEngine::modifyFileName(const char *name) {
+	Common::String fileName(name);
+	
+	// Sanity check
+	if (!fileName.hasPrefix("DREAMWEB."))
+		return fileName;
+
+	// Make sure we use the correct file name as it differs depending on the game variant
+	fileName = _datafilePrefix;
+	fileName += name + 9;
+	return fileName;
 }
 
 bool DreamWebEngine::hasSpeech() {
