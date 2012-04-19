@@ -443,7 +443,11 @@ const Common::String InfoDialog::queryResString(int stringno) {
 		result = buf;
 	}
 
-	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
+	if (!result || *result == '\0'|| 
+		(((_vm->_game.id == GID_INDY3) || 
+		  (_vm->_game.id == GID_INDY4) || 
+		  (_vm->_game.id == GID_LOOM)) && (_vm->_language == Common::RU_RUS)) // workaround for CP866 resource message
+		) {	// Gracelessly degrade to english :)
 		return _(string_map_table_v345[stringno - 1].string);
 	}
 

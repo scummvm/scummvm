@@ -140,6 +140,7 @@ indy3	Indiana Jones and the Last Crusade
 	399b217b0c8d65d0398076da486363a9	6295	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein, Fingolfin
 	17b5d5e6af4ae89d62631641d66d5a05	-1	it	DOS	VGA	VGA	IBM 256 color v2.1 from 3 May 01	Andrea Petrucci, Peter Eckerlein
 	3cce1913a3bc586b51a75c3892ff18dd	-1	ru	DOS	VGA	VGA	VGA	
+	60f4faa74d802b700f6748bf136e5361	6295	ru	DOS	VGA	VGA	VGA RuSCUMM (PRCA) v1.0
 
 	04687cdf7f975a89d2474929f7b80946	7552	en	FM-TOWNS	FM-TOWNS	-	v1.00 1/23/91	Fingolfin
 	3a0c35f3c147b98a2bdf8d400cfc4ab5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
@@ -173,6 +174,7 @@ loom	Loom
 
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
+	303708df4166067540a5c481eceb04ef	7540	ru	FM-TOWNS	FM-TOWNS	-	-	RuSCUMM (PRCA) v1.0
 
 	0aa050f4ad79402fbe9c4f78fb8ac494	6532	en	PC-Engine	PC-Engine	-	-	Kirben
 	79b05f628586837e7166e82b2279bb50	-1	jp	PC-Engine	PC-Engine	-	-	clone2727
@@ -275,6 +277,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	Floppy	Floppy	-	Fingolfin
 	8f3758ff98c9c5d78e5d635222cad026	-1	it	DOS	Floppy	Floppy	-	Andrea Petrucci
 	9bd2a8f72613e715c199246dd511e10f	-1	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
+	b7479cd302cd82f1cd2b5a12186d1401	12030	ru	DOS	Floppy	Floppy	-	RuSCUMM (PRCA) v1.0
 	06b187468113f9ae5a400b148a847fac	12075	en	Mac	Floppy	Floppy	six data files	Lars N sbye Christensen
 	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Floppy	Floppy	two data files	Fingolfin
 
@@ -283,6 +286,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
 	e8d0697906e53fee8b7e9f5652696da8	11915	jp	DOS	-	CD	-	Petr Maruska, tracker #3017219
+	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	-	RuSCUMM (PRCA) v1.0
 
 	c7be10f775404fd9785a8b92a06d240c	12030	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
