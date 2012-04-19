@@ -87,6 +87,7 @@ private:
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 
+	void sub1863B();
 	void sub185ED(byte index, byte subIndex);
 	void sub185B4_display();
 	void sub1823E(byte var1, byte var2, byte *curBufPtr);

@@ -204,13 +204,17 @@ GUI::Debugger *LilliputEngine::getDebugger() {
 }
 
 void LilliputEngine::update() {
-	newInt8();
-	pollEvent();
+	
+	// update every 20 ms.
+	int currentTime = _system->getMillis();
+	if(currentTime - _lastTime > 20) {
+		_lastTime += 20;
+		newInt8();
+		pollEvent();
+	}
 }
 
 void LilliputEngine::newInt8() {
-	if (!_int8installed)
-		return;
 
 	if (_byte12A06 == 0) {
 		_byte12A06 = 2;
@@ -218,6 +222,10 @@ void LilliputEngine::newInt8() {
 	}
 	--_byte12A06;
 	// TODO: check 'out 20h, 20h'
+	
+	// hack for the title stars because _int8installed is not set at the good place for the moment
+	//if (!_int8installed)
+	//	return;
 
 	// if (_soundEnabled)
 	warning("TODO: call sound function #1");
@@ -232,7 +240,7 @@ void LilliputEngine::newInt8() {
 				--_sound_byte16F06;
 
 			_byte12A04 ^= 1;
-			if (_byte12A09 != 1)
+			if (_byte12A09 != 1 && _int8installed) // hack for the title stars because _int8installed is not set at the good place for the moment
 				displayFunction16();
 		}
 		_byte12A08 = 0;
@@ -709,7 +717,7 @@ void LilliputEngine::sub1638C() {
 void LilliputEngine::sub163F0(int var1, int var3) {
 	debugC(2, kDebugEngine, "sub163F0(%d, %d)", var1, var3);
 
-	if ((var1 == _scriptHandler->_word12A00) && (var3 = _scriptHandler->_word12A02))
+	if ((var1 == _scriptHandler->_word12A00) && (var3 == _scriptHandler->_word12A02))
 		return;
 
 	int var2 = 0;
@@ -1152,6 +1160,10 @@ Common::Error LilliputEngine::run() {
 
 	loadRules();
 
+	_lastTime = _system->getMillis();
+
+	
+
 	//TODO: Init sound/music player
 	_scriptHandler->runScript(Common::MemoryReadStream(_initScript, _initScript_size));
 
@@ -1162,7 +1174,6 @@ Common::Error LilliputEngine::run() {
 		handleGameScripts();
 		// To be removed when handled in the previous fonctions
 		update();
-		pollEvent();
 	}
 
 	return Common::kNoError;
