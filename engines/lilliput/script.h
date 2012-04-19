@@ -42,6 +42,7 @@ public:
 
 	int _word12A00;
 	int _word12A02;
+	int _word10802;
 	byte _byte12A04;
 
 	LilliputScript(LilliputEngine *vm);
@@ -76,7 +77,6 @@ private:
 
 	int _word1881B;
 	int _word16F00;
-	int _word10802;
 	int _word10804;
 	int _word15FFB;
 	int _word15FFD;
