@@ -693,7 +693,7 @@ bool parseEngine(const std::string &line, EngineDesc &engine);
 } // End of anonymous namespace
 
 EngineDescList parseConfigure(const std::string &srcDir) {
-	std::string configureFile = srcDir + "/configure";
+	std::string configureFile = srcDir + "/engines/configure.engines";
 
 	std::ifstream configure(configureFile.c_str());
 	if (!configure)
