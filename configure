@@ -77,8 +77,10 @@ add_engine() {
 	done
 }
 
+_srcdir=`dirname $0`
+
 # Read list of engines
-. engines/configure.engines
+. $_srcdir/engines/configure.engines
 
 #
 # Default settings
@@ -185,7 +187,6 @@ _host_vendor=""
 _host_os=""
 _host_alias=""
 
-_srcdir=`dirname $0`
 _port_mk="ports.mk"
 
 # Use temp files in the build directory
