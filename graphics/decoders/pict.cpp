@@ -541,9 +541,13 @@ void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) 
 	// Now we've reached the image descriptor, so read the relevant data from that
 	uint32 idStart = stream.pos();
 	uint32 idSize = stream.readUint32BE();
-	stream.skip(40); // miscellaneous stuff
+	uint32 codec = stream.readUint32BE();
+	stream.skip(36); // miscellaneous stuff
 	uint32 jpegSize = stream.readUint32BE();
 	stream.skip(idSize - (stream.pos() - idStart)); // more useless stuff
+
+	if (codec != MKTAG('j', 'p', 'e', 'g'))
+		error("Unhandled CompressedQuickTime format '%s'", tag2str(codec));
 
 	Common::SeekableSubReadStream jpegStream(&stream, stream.pos(), stream.pos() + jpegSize);
 
