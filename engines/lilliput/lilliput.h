@@ -90,6 +90,12 @@ public:
 	byte _byte16F09;
 	byte _keyboard_nextIndex;
 	byte _keyboard_oldIndex;
+	byte _byte12A04;
+	byte _byte12A05;
+	byte _byte12A06;
+	byte _byte12A07;
+	byte _byte12A08;
+	byte _byte12A09;
 
 	byte _buffer1[45056];
 	byte _buffer2[45056];
@@ -104,7 +110,8 @@ public:
 	byte _curPalette[768];
 
 	bool _saveFlag;
-	
+	bool _int8installed;
+
 	int _word10800_ERULES;
 	int _word10807_ERULES;
 	int _word16EFA;
@@ -179,6 +186,9 @@ public:
 	uint32 getFeatures() const;
 	const char *getGameId() const;
 
+	void newInt8();
+	void update();
+
 	void displayFunction1(byte *buf, int var1, int var2, int var4);
 	void displayFunction1a(byte *buf, int var2, int var4);
 	void displayFunction2(byte *buf, int var2, int var4);
@@ -194,6 +204,10 @@ public:
 	void displayFunction13(byte *buf, int var1, int var2, int var3);
 	void displayFunction14();
 	void displayFunction15();
+	void displayFunction16();
+
+	void sub1638C();
+	void sub163F0(int var1, int var3);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);

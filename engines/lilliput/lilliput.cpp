@@ -112,6 +112,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 	_console = new LilliputConsole(this);
 	_rnd = 0;
+	_int8installed = false;
 	_mouseX = 0;
 	_mouseY = 0;
 	_oldMouseX = 0;
@@ -131,6 +132,12 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte160FA = 0;
 	_byte16529 = 0;
 	_byte1652A = 0;
+	_byte12A04 = 0;
+	_byte12A05 = 10;
+	_byte12A06 = 2;
+	_byte12A07 = 0;
+	_byte12A08 = 0;
+	_byte12A09 = 0;
 
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
@@ -194,6 +201,42 @@ LilliputEngine::~LilliputEngine() {
 
 GUI::Debugger *LilliputEngine::getDebugger() {
 	return _console;
+}
+
+void LilliputEngine::update() {
+	newInt8();
+	pollEvent();
+}
+
+void LilliputEngine::newInt8() {
+	if (!_int8installed)
+		return;
+
+	if (_byte12A06 == 0) {
+		_byte12A06 = 2;
+		_byte12A07 ^= 1;
+	}
+	--_byte12A06;
+	// TODO: check 'out 20h, 20h'
+
+	// if (_soundEnabled)
+	warning("TODO: call sound function #1");
+
+	if (_byte12A08 != 1) {
+		_byte12A08 = 1;
+		if (_byte12A05 != 0)
+			--_byte12A05;
+		else {
+			_byte12A05 = 10;
+			if (_sound_byte16F06 != 0)
+				--_sound_byte16F06;
+
+			_byte12A04 ^= 1;
+			if (_byte12A09 != 1)
+				displayFunction16();
+		}
+		_byte12A08 = 0;
+	}
 }
 
 bool LilliputEngine::hasFeature(EngineFeature f) const {
@@ -285,6 +328,7 @@ void LilliputEngine::displayFunction2(byte *buf, int var2, int var4) {
 	}
 }
 
+// Fill 16x16 rect
 void LilliputEngine::displayFunction3(int var1, int var2, int var4) {
 	debugC(2, kDebugEngine, "displayFunction3(%d, %d, %d)", var1, var2, var4);
 
@@ -399,6 +443,7 @@ void LilliputEngine::displayFunction9() {
 
 }
 
+// Display dialog bubble
 void LilliputEngine::displayFunction10() {
 	debugC(2, kDebugEngine, "displayFunction10()");
 	static const byte _array15976[16] = {244, 248, 250, 250, 252, 252, 252, 252, 252, 252, 252, 252, 250, 250, 248, 244};
@@ -412,7 +457,8 @@ void LilliputEngine::displayFunction10() {
 	for (int i = 0; i < 16; i++) {
 		var3 = _array15976[i];
 		tmpIndex = index - (var3 / 2);
-		for (int j = 0; j < 16; j++) {
+		var3 &= 0xFE;
+		for (int j = 0; j < var3; j++) {
 			((byte *)_mainSurface->getPixels())[tmpIndex + j] = 17;
 		}
 		index += 320;
@@ -591,6 +637,113 @@ void LilliputEngine::displayFunction15() {
 		}
 		map += 224;
 	}
+}
+
+void LilliputEngine::displayFunction16() {
+	debugC(2, kDebugEngine, "displayFunction16()");
+
+	if (_scriptHandler->_byte16F08 == 1) {
+		warning("sub_15F31");
+		warning("sub_15F0C");
+		warning("sub_16626");
+		warning("sub_12F37");
+		warning("sub_16CA0");
+		warning("sub_16EBC");
+		warning("sub_171CF");
+		warning("sub_15EAE");
+	} else {
+		sub1638C();
+		warning("sub_189DE");
+		displayFunction15();
+		displayFunction14();
+		warning("sub_16626");
+		warning("sub_12F37");
+		warning("sub_16CA0");
+		warning("sub_16EBC");
+		warning("sub_171CF");
+		warning("sub_130EE");
+		warning("sub_12FE5");
+		warning("sub_15FFF");
+	}
+}
+
+// Move "window" to x/y
+void LilliputEngine::sub1638C() {
+	debugC(2, kDebugEngine, "sub1638C()");
+
+	if (_scriptHandler->_word10802 == 0xFFFF)
+		return;
+
+	int var2 = (_rulesBuffer2_1[_scriptHandler->_word10802] >> 3) - _scriptHandler->_word12A00;
+	int var4 = (_rulesBuffer2_2[_scriptHandler->_word10802] >> 3) - _scriptHandler->_word12A02;
+	int var1 = _scriptHandler->_word12A00;
+
+	if (var2 >= 1) {
+		if (var2 >= 6) {
+			var1 += 4;
+			if (var1 > 56)
+				var1 = 56;
+		}
+	} else {
+		var1 -= 4;
+		if (var1 < 0)
+			var1 = 0;
+	}
+
+	int var3 = _scriptHandler->_word12A02;
+	if (var4 >= 1) {
+		if (var4 > 6) {
+			var3 += 4;
+			if (var3 >= 56)
+				var3 = 56;
+		}
+	} else {
+		var3 -= 4;
+		if (var3 < 0)
+			var3 = 0;
+	}
+
+	sub163F0(var1, var3);
+}
+
+void LilliputEngine::sub163F0(int var1, int var3) {
+	debugC(2, kDebugEngine, "sub163F0(%d, %d)", var1, var3);
+
+	if ((var1 == _scriptHandler->_word12A00) && (var3 = _scriptHandler->_word12A02))
+		return;
+
+	int var2 = 0;
+	if (var1 != _scriptHandler->_word12A00) {
+		if (var1 < _scriptHandler->_word12A00)
+			--var2;
+		else
+			++var2;
+	}
+
+	int var4 = 0;
+	if (var3!= _scriptHandler->_word12A02) {
+		if (var3 < _scriptHandler->_word12A02)
+			--var4;
+		else
+			++var4;
+	}
+
+	do {
+		_scriptHandler->_word12A00 += var2;
+		_scriptHandler->_word12A02 += var4;
+
+		displayFunction9();
+		displayFunction15();
+		displayFunction14();
+
+		if (var1 == _scriptHandler->_word12A00)
+			var2 = 0;
+
+		if (var3 == _scriptHandler->_word12A02)
+			var4 = 0;
+	} while ((var2 != 0) && (var4 !=0));
+
+	warning("Sound function #5");
 }
 
 void LilliputEngine::pollEvent() {
@@ -1002,10 +1155,13 @@ Common::Error LilliputEngine::run() {
 	//TODO: Init sound/music player
 	_scriptHandler->runScript(Common::MemoryReadStream(_initScript, _initScript_size));
 
+	_int8installed = true;
+
 	while(!_shouldQuit) {
 		handleMenu();
 		handleGameScripts();
 		// To be removed when handled in the previous fonctions
+		update();
 		pollEvent();
 	}
 

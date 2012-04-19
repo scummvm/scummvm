@@ -585,7 +585,7 @@ void LilliputScript::runScript(Common::MemoryReadStream script) {
 	_byte16F05_ScriptHandler = 1;
 	
 	while (handleOpcode(&script) != 0xFF)
-		;
+		_vm->update();
 }
 
 void LilliputScript::runMenuScript(Common::MemoryReadStream script) {
@@ -594,7 +594,7 @@ void LilliputScript::runMenuScript(Common::MemoryReadStream script) {
 	_byte16F05_ScriptHandler = 0;
 	
 	while (handleOpcode(&script) == 0)
-		;
+		_vm->update();
 }
 
 void LilliputScript::sub185ED(byte index, byte subIndex) {
@@ -1789,7 +1789,7 @@ void LilliputScript::OC_displayTitleScreen() {
 
 	for (;;) {
 		sub185B4_display();
-		_vm->pollEvent();
+		_vm->update();
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
 			_vm->_byte16F09 = _vm->_keyboard_getch();
 			_vm->_keyboard_getch();
