@@ -259,6 +259,7 @@ public:
 protected:
 	Common::EventManager *_eventMan;
 	bool _shouldQuit;
+	int _lastTime;
 
 	// Engine APIs
 	Common::Error run();
