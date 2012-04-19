@@ -149,6 +149,7 @@ public:
 
 	Common::Language getLanguage() const;
 	uint8 modifyChar(uint8 c) const;
+	Common::String modifyFileName(const char *);
 
 	void stopSound(uint8 channel);
 
