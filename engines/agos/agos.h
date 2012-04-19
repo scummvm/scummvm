@@ -1265,7 +1265,7 @@ protected:
 	virtual void doOutput(const byte *src, uint len);
 	void clsCheck(WindowBlock *window);
 
-	void quickLoadOrSave();
+	virtual void quickLoadOrSave();
 
 	byte *vc10_uncompressFlip(const byte *src, uint16 w, uint16 h);
 	byte *vc10_flip(const byte *src, uint16 w, uint16 h);
@@ -2060,6 +2060,7 @@ protected:
 	void windowBackSpace(WindowBlock *window);
 
 	virtual char *genSaveName(int slot);
+	virtual void quickLoadOrSave();
 };
 
 class AGOSEngine_FeebleDemo : public AGOSEngine_Feeble {

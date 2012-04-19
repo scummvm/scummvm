@@ -20,6 +20,13 @@
  *
  */
 
+/**
+ * @file
+ * Image decoder used in engines:
+ *  - mohawk
+ *  - sci
+ */
+
 #ifndef GRAPHICS_PICT_H
 #define GRAPHICS_PICT_H
 

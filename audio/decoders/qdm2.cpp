@@ -35,7 +35,10 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/math.h"
+#include "common/rdft.h"
 #include "common/stream.h"
+#include "common/memstream.h"
+#include "common/bitstream.h"
 #include "common/textconsole.h"
 
 namespace Audio {
@@ -49,14 +52,6 @@ enum {
 };
 
 typedef int8 sb_int8_array[2][30][64];
-
-/* bit input */
-/* buffer, buffer_end and size_in_bits must be present and used by every reader */
-struct GetBitContext {
-	const uint8 *buffer, *bufferEnd;
-	int index;
-	int sizeInBits;
-};
 
 struct QDM2SubPacket {
 	int type;
@@ -106,53 +101,6 @@ struct QDM2FFT {
 } PACKED_STRUCT;
 #include "common/pack-end.h"
 
-enum RDFTransformType {
-	RDFT,
-	IRDFT,
-	RIDFT,
-	IRIDFT
-};
-
-struct FFTComplex {
-	float re, im;
-};
-
-struct FFTContext {
-	int nbits;
-	int inverse;
-	uint16 *revtab;
-	FFTComplex *exptab;
-	FFTComplex *tmpBuf;
-	int mdctSize; // size of MDCT (i.e. number of input data * 2)
-	int mdctBits; // n = 2^nbits
-	// pre/post rotation tables
-	float *tcos;
-	float *tsin;
-	void (*fftPermute)(struct FFTContext *s, FFTComplex *z);
-	void (*fftCalc)(struct FFTContext *s, FFTComplex *z);
-	void (*imdctCalc)(struct FFTContext *s, float *output, const float *input);
-	void (*imdctHalf)(struct FFTContext *s, float *output, const float *input);
-	void (*mdctCalc)(struct FFTContext *s, float *output, const float *input);
-	int splitRadix;
-	int permutation;
-};
-
-enum {
-	FF_MDCT_PERM_NONE = 0,
-	FF_MDCT_PERM_INTERLEAVE = 1
-};
-
-struct RDFTContext {
-	int nbits;
-	int inverse;
-	int signConvention;
-
-	// pre/post rotation tables
-	float *tcos;
-	float *tsin;
-	FFTContext fft;
-};
-
 class QDM2Stream : public Codec {
 public:
 	QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData);
@@ -196,7 +144,7 @@ private:
 	int _fftCoefsMinIndex[5];
 	int _fftCoefsMaxIndex[5];
 	int _fftLevelExp[6];
-	RDFTContext _rdftCtx;
+	Common::RDFT *_rdft;
 	QDM2FFT _fft;
 
 	// I/O data
@@ -265,9 +213,9 @@ private:
 	void fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_array tone_level_idx_temp,
 	                              sb_int8_array coding_method, int nb_channels,
 	                              int c, int superblocktype_2_3, int cm_table_select);
-	void synthfilt_build_sb_samples(GetBitContext *gb, int length, int sb_min, int sb_max);
-	void init_quantized_coeffs_elem0(int8 *quantized_coeffs, GetBitContext *gb, int length);
-	void init_tone_level_dequantization(GetBitContext *gb, int length);
+	void synthfilt_build_sb_samples(Common::BitStream *gb, int length, int sb_min, int sb_max);
+	void init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream *gb, int length);
+	void init_tone_level_dequantization(Common::BitStream *gb, int length);
 	void process_subpacket_9(QDM2SubPNode *node);
 	void process_subpacket_10(QDM2SubPNode *node, int length);
 	void process_subpacket_11(QDM2SubPNode *node, int length);
@@ -276,7 +224,7 @@ private:
 	void qdm2_decode_super_block(void);
 	void qdm2_fft_init_coefficient(int sub_packet, int offset, int duration,
 	                               int channel, int exp, int phase);
-	void qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b);
+	void qdm2_fft_decode_tones(int duration, Common::BitStream *gb, int b);
 	void qdm2_decode_fft_packets(void);
 	void qdm2_fft_generate_tone(FFTTone *tone);
 	void qdm2_fft_tone_synthesizer(uint8 sub_packet);
@@ -307,560 +255,6 @@ typedef signed long long int int64_t;
 		(noiseIdx) -= 3840 \
 
 #define SB_DITHERING_NOISE(sb, noiseIdx) (_noiseTable[(noiseIdx)++] * sb_noise_attenuation[(sb)])
-
-static inline void initGetBits(GetBitContext *s, const uint8 *buffer, int bitSize) {
-	int bufferSize = (bitSize + 7) >> 3;
-
-	if (bufferSize < 0 || bitSize < 0) {
-		bufferSize = bitSize = 0;
-		buffer = NULL;
-	}
-
-	s->buffer = buffer;
-	s->sizeInBits = bitSize;
-	s->bufferEnd = buffer + bufferSize;
-	s->index = 0;
-}
-
-static inline int getBitsCount(GetBitContext *s) {
-	return s->index;
-}
-
-static inline unsigned int getBits1(GetBitContext *s) {
-	int index;
-	uint8 result;
-
-	index = s->index;
-	result = s->buffer[index >> 3];
-
-	result >>= (index & 0x07);
-	result &= 1;
-	index++;
-	s->index = index;
-
-	return result;
-}
-
-static inline unsigned int getBits(GetBitContext *s, int n) {
-	int tmp, reCache, reIndex;
-
-	reIndex = s->index;
-
-	reCache = READ_LE_UINT32((const uint8 *)s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-
-	tmp = (reCache) & ((uint32)0xffffffff >> (32 - n));
-
-	s->index = reIndex + n;
-
-	return tmp;
-}
-
-static inline void skipBits(GetBitContext *s, int n) {
-	s->index += n;
-}
-
-#define BITS_LEFT(length, gb) ((length) - getBitsCount((gb)))
-
-static int splitRadixPermutation(int i, int n, int inverse) {
-	if (n <= 2)
-		return i & 1;
-
-	int m = n >> 1;
-
-	if(!(i & m))
-		return splitRadixPermutation(i, m, inverse) * 2;
-
-	m >>= 1;
-
-	if (inverse == !(i & m))
-		return splitRadixPermutation(i, m, inverse) * 4 + 1;
-
-	return splitRadixPermutation(i, m, inverse) * 4 - 1;
-}
-
-// sin(2*pi*x/n) for 0<=x<n/4, followed by n/2<=x<3n/4
-float ff_sin_16[8];
-float ff_sin_32[16];
-float ff_sin_64[32];
-float ff_sin_128[64];
-float ff_sin_256[128];
-float ff_sin_512[256];
-float ff_sin_1024[512];
-float ff_sin_2048[1024];
-float ff_sin_4096[2048];
-float ff_sin_8192[4096];
-float ff_sin_16384[8192];
-float ff_sin_32768[16384];
-float ff_sin_65536[32768];
-
-float *ff_sin_tabs[] = {
-	NULL, NULL, NULL, NULL,
-	ff_sin_16, ff_sin_32, ff_sin_64, ff_sin_128, ff_sin_256, ff_sin_512, ff_sin_1024,
-	ff_sin_2048, ff_sin_4096, ff_sin_8192, ff_sin_16384, ff_sin_32768, ff_sin_65536,
-};
-
-// cos(2*pi*x/n) for 0<=x<=n/4, followed by its reverse
-float ff_cos_16[8];
-float ff_cos_32[16];
-float ff_cos_64[32];
-float ff_cos_128[64];
-float ff_cos_256[128];
-float ff_cos_512[256];
-float ff_cos_1024[512];
-float ff_cos_2048[1024];
-float ff_cos_4096[2048];
-float ff_cos_8192[4096];
-float ff_cos_16384[8192];
-float ff_cos_32768[16384];
-float ff_cos_65536[32768];
-
-float *ff_cos_tabs[] = {
-	NULL, NULL, NULL, NULL,
-	ff_cos_16, ff_cos_32, ff_cos_64, ff_cos_128, ff_cos_256, ff_cos_512, ff_cos_1024,
-	ff_cos_2048, ff_cos_4096, ff_cos_8192, ff_cos_16384, ff_cos_32768, ff_cos_65536,
-};
-
-void initCosineTables(int index) {
-	int m = 1 << index;
-	double freq = 2 * M_PI / m;
-	float *tab = ff_cos_tabs[index];
-
-	for (int i = 0; i <= m / 4; i++)
-		tab[i] = cos(i * freq);
-
-	for (int i = 1; i < m / 4; i++)
-		tab[m / 2 - i] = tab[i];
-}
-
-void fftPermute(FFTContext *s, FFTComplex *z) {
-	const uint16 *revtab = s->revtab;
-	int np = 1 << s->nbits;
-
-	if (s->tmpBuf) {
-		// TODO: handle split-radix permute in a more optimal way, probably in-place
-		for (int j = 0; j < np; j++)
-			s->tmpBuf[revtab[j]] = z[j];
-		memcpy(z, s->tmpBuf, np * sizeof(FFTComplex));
-		return;
-	}
-
-	// reverse
-	for (int j = 0; j < np; j++) {
-		int k = revtab[j];
-		if (k < j) {
-			FFTComplex tmp = z[k];
-			z[k] = z[j];
-			z[j] = tmp;
-		}
-	}
-}
-
-#define DECL_FFT(n,n2,n4) \
-static void fft##n(FFTComplex *z) { \
-	fft##n2(z); \
-	fft##n4(z + n4 * 2); \
-	fft##n4(z + n4 * 3); \
-	pass(z, ff_cos_##n, n4 / 2); \
-}
-
-#ifndef M_SQRT1_2
-#define M_SQRT1_2 7.0710678118654752440E-1
-#endif
-
-#define sqrthalf (float)M_SQRT1_2
-
-#define BF(x,y,a,b) { \
-	x = a - b; \
-	y = a + b; \
-}
-
-#define BUTTERFLIES(a0, a1, a2, a3) { \
-	BF(t3, t5, t5, t1); \
-	BF(a2.re, a0.re, a0.re, t5); \
-	BF(a3.im, a1.im, a1.im, t3); \
-	BF(t4, t6, t2, t6); \
-	BF(a3.re, a1.re, a1.re, t4); \
-	BF(a2.im, a0.im, a0.im, t6); \
-}
-
-// force loading all the inputs before storing any.
-// this is slightly slower for small data, but avoids store->load aliasing
-// for addresses separated by large powers of 2.
-#define BUTTERFLIES_BIG(a0, a1, a2, a3) { \
-	float r0 = a0.re, i0 = a0.im, r1 = a1.re, i1 = a1.im; \
-	BF(t3, t5, t5, t1); \
-	BF(a2.re, a0.re, r0, t5); \
-	BF(a3.im, a1.im, i1, t3); \
-	BF(t4, t6, t2, t6); \
-	BF(a3.re, a1.re, r1, t4); \
-	BF(a2.im, a0.im, i0, t6); \
-}
-
-#define TRANSFORM(a0, a1, a2, a3, wre, wim) { \
-	t1 = a2.re * wre + a2.im * wim; \
-	t2 = a2.im * wre - a2.re * wim; \
-	t5 = a3.re * wre - a3.im * wim; \
-	t6 = a3.im * wre + a3.re * wim; \
-	BUTTERFLIES(a0, a1, a2, a3) \
-}
-
-#define TRANSFORM_ZERO(a0, a1, a2, a3) { \
-	t1 = a2.re; \
-	t2 = a2.im; \
-	t5 = a3.re; \
-	t6 = a3.im; \
-	BUTTERFLIES(a0, a1, a2, a3) \
-}
-
-// z[0...8n-1], w[1...2n-1]
-#define PASS(name) \
-static void name(FFTComplex *z, const float *wre, unsigned int n) { \
-	float t1, t2, t3, t4, t5, t6; \
-	int o1 = 2 * n; \
-	int o2 = 4 * n; \
-	int o3 = 6 * n; \
-	const float *wim = wre + o1; \
-	n--; \
-	\
-	TRANSFORM_ZERO(z[0], z[o1], z[o2], z[o3]); \
-	TRANSFORM(z[1], z[o1 + 1], z[o2 + 1], z[o3 + 1], wre[1], wim[-1]); \
-	\
-	do { \
-		z += 2; \
-		wre += 2; \
-		wim -= 2; \
-		TRANSFORM(z[0], z[o1], z[o2], z[o3], wre[0], wim[0]); \
-		TRANSFORM(z[1], z[o1 + 1],z[o2 + 1], z[o3 + 1], wre[1], wim[-1]); \
-	} while(--n); \
-}
-
-PASS(pass)
-#undef BUTTERFLIES
-#define BUTTERFLIES BUTTERFLIES_BIG
-PASS(pass_big)
-
-static void fft4(FFTComplex *z) {
-	float t1, t2, t3, t4, t5, t6, t7, t8;
-
-	BF(t3, t1, z[0].re, z[1].re);
-	BF(t8, t6, z[3].re, z[2].re);
-	BF(z[2].re, z[0].re, t1, t6);
-	BF(t4, t2, z[0].im, z[1].im);
-	BF(t7, t5, z[2].im, z[3].im);
-	BF(z[3].im, z[1].im, t4, t8);
-	BF(z[3].re, z[1].re, t3, t7);
-	BF(z[2].im, z[0].im, t2, t5);
-}
-
-static void fft8(FFTComplex *z) {
-	float t1, t2, t3, t4, t5, t6, t7, t8;
-
-	fft4(z);
-
-	BF(t1, z[5].re, z[4].re, -z[5].re);
-	BF(t2, z[5].im, z[4].im, -z[5].im);
-	BF(t3, z[7].re, z[6].re, -z[7].re);
-	BF(t4, z[7].im, z[6].im, -z[7].im);
-	BF(t8, t1, t3, t1);
-	BF(t7, t2, t2, t4);
-	BF(z[4].re, z[0].re, z[0].re, t1);
-	BF(z[4].im, z[0].im, z[0].im, t2);
-	BF(z[6].re, z[2].re, z[2].re, t7);
-	BF(z[6].im, z[2].im, z[2].im, t8);
-
-	TRANSFORM(z[1], z[3], z[5], z[7], sqrthalf, sqrthalf);
-}
-
-#undef BF
-
-DECL_FFT(16,8,4)
-DECL_FFT(32,16,8)
-DECL_FFT(64,32,16)
-DECL_FFT(128,64,32)
-DECL_FFT(256,128,64)
-DECL_FFT(512,256,128)
-#define pass pass_big
-DECL_FFT(1024,512,256)
-DECL_FFT(2048,1024,512)
-DECL_FFT(4096,2048,1024)
-DECL_FFT(8192,4096,2048)
-DECL_FFT(16384,8192,4096)
-DECL_FFT(32768,16384,8192)
-DECL_FFT(65536,32768,16384)
-
-void fftCalc(FFTContext *s, FFTComplex *z) {
-	static void (* const fftDispatch[])(FFTComplex *) = {
-		fft4, fft8, fft16, fft32, fft64, fft128, fft256, fft512, fft1024,
-		fft2048, fft4096, fft8192, fft16384, fft32768, fft65536,
-	};
-
-	fftDispatch[s->nbits - 2](z);
-}
-
-// complex multiplication: p = a * b
-#define CMUL(pre, pim, are, aim, bre, bim) \
-{\
-	float _are = (are); \
-	float _aim = (aim); \
-	float _bre = (bre); \
-	float _bim = (bim); \
-	(pre) = _are * _bre - _aim * _bim; \
-	(pim) = _are * _bim + _aim * _bre; \
-}
-
-/**
- * Compute the middle half of the inverse MDCT of size N = 2^nbits,
- * thus excluding the parts that can be derived by symmetry
- * @param output N/2 samples
- * @param input N/2 samples
- */
-void imdctHalfC(FFTContext *s, float *output, const float *input) {
-	const uint16 *revtab = s->revtab;
-	const float *tcos = s->tcos;
-	const float *tsin = s->tsin;
-	FFTComplex *z = (FFTComplex *)output;
-
-	int n = 1 << s->mdctBits;
-	int n2 = n >> 1;
-	int n4 = n >> 2;
-	int n8 = n >> 3;
-
-	// pre rotation
-	const float *in1 = input;
-	const float *in2 = input + n2 - 1;
-	for (int k = 0; k < n4; k++) {
-		int j = revtab[k];
-		CMUL(z[j].re, z[j].im, *in2, *in1, tcos[k], tsin[k]);
-		in1 += 2;
-		in2 -= 2;
-	}
-
-	fftCalc(s, z);
-
-	// post rotation + reordering
-	for (int k = 0; k < n8; k++) {
-		float r0, i0, r1, i1;
-		CMUL(r0, i1, z[n8 - k - 1].im, z[n8 - k - 1].re, tsin[n8 - k - 1], tcos[n8 - k - 1]);
-		CMUL(r1, i0, z[n8 + k].im, z[n8 + k].re, tsin[n8 + k], tcos[n8 + k]);
-		z[n8 - k - 1].re = r0;
-		z[n8 - k - 1].im = i0;
-		z[n8 + k].re = r1;
-		z[n8 + k].im = i1;
-	}
-}
-
-/**
- * Compute inverse MDCT of size N = 2^nbits
- * @param output N samples
- * @param input N/2 samples
- */
-void imdctCalcC(FFTContext *s, float *output, const float *input) {
-	int n = 1 << s->mdctBits;
-	int n2 = n >> 1;
-	int n4 = n >> 2;
-
-	imdctHalfC(s, output + n4, input);
-
-	for (int k = 0; k < n4; k++) {
-		output[k] = -output[n2 - k - 1];
-		output[n - k - 1] = output[n2 + k];
-	}
-}
-
-/**
- * Compute MDCT of size N = 2^nbits
- * @param input N samples
- * @param out N/2 samples
- */
-void mdctCalcC(FFTContext *s, float *out, const float *input) {
-	const uint16 *revtab = s->revtab;
-	const float *tcos = s->tcos;
-	const float *tsin = s->tsin;
-	FFTComplex *x = (FFTComplex *)out;
-
-	int n = 1 << s->mdctBits;
-	int n2 = n >> 1;
-	int n4 = n >> 2;
-	int n8 = n >> 3;
-	int n3 = 3 * n4;
-
-	// pre rotation
-	for (int i = 0; i < n8; i++) {
-		float re = -input[2 * i + 3 * n4] - input[n3 - 1 - 2 * i];
-		float im = -input[n4 + 2 * i] + input[n4 - 1 - 2 * i];
-		int j = revtab[i];
-		CMUL(x[j].re, x[j].im, re, im, -tcos[i], tsin[i]);
-
-		re = input[2 * i] - input[n2 - 1 - 2 * i];
-		im = -(input[n2 + 2 * i] + input[n - 1 - 2 * i]);
-		j = revtab[n8 + i];
-		CMUL(x[j].re, x[j].im, re, im, -tcos[n8 + i], tsin[n8 + i]);
-	}
-
-	fftCalc(s, x);
-
-	// post rotation
-	for (int i = 0; i < n8; i++) {
-		float r0, i0, r1, i1;
-		CMUL(i1, r0, x[n8 - i - 1].re, x[n8 - i - 1].im, -tsin[n8 - i - 1], -tcos[n8 - i - 1]);
-		CMUL(i0, r1, x[n8 + i].re, x[n8 + i].im, -tsin[n8 + i], -tcos[n8 + i]);
-		x[n8 - i - 1].re = r0;
-		x[n8 - i - 1].im = i0;
-		x[n8 + i].re = r1;
-		x[n8 + i].im = i1;
-	}
-}
-
-int fftInit(FFTContext *s, int nbits, int inverse) {
-	int i, j, m, n;
-	float alpha, c1, s1, s2;
-
-	if (nbits < 2 || nbits > 16)
-		goto fail;
-
-	s->nbits = nbits;
-	n = 1 << nbits;
-	s->tmpBuf = NULL;
-
-	s->exptab = (FFTComplex *)malloc((n / 2) * sizeof(FFTComplex));
-	if (!s->exptab)
-		goto fail;
-
-	s->revtab = (uint16 *)malloc(n * sizeof(uint16));
-	if (!s->revtab)
-		goto fail;
-	s->inverse = inverse;
-
-	s2 = inverse ? 1.0 : -1.0;
-
-	s->fftPermute = fftPermute;
-	s->fftCalc = fftCalc;
-	s->imdctCalc = imdctCalcC;
-	s->imdctHalf = imdctHalfC;
-	s->mdctCalc = mdctCalcC;
-	s->splitRadix = 1;
-
-	if (s->splitRadix) {
-		for (j = 4; j <= nbits; j++)
-			initCosineTables(j);
-
-		for (i = 0; i < n; i++)
-			s->revtab[-splitRadixPermutation(i, n, s->inverse) & (n - 1)] = i;
-
-		s->tmpBuf = (FFTComplex *)malloc(n * sizeof(FFTComplex));
-	} else {
-		for (i = 0; i < n / 2; i++) {
-			alpha = 2 * M_PI * (float)i / (float)n;
-			c1 = cos(alpha);
-			s1 = sin(alpha) * s2;
-			s->exptab[i].re = c1;
-			s->exptab[i].im = s1;
-		}
-
-		//int np = 1 << nbits;
-		//int nblocks = np >> 3;
-		//int np2 = np >> 1;
-
-		// compute bit reverse table
-		for (i = 0; i < n; i++) {
-			m = 0;
-
-			for (j = 0; j < nbits; j++)
-				m |= ((i >> j) & 1) << (nbits - j - 1);
-
-			s->revtab[i] = m;
-		}
-	}
-
-	return 0;
-
- fail:
-	free(&s->revtab);
-	free(&s->exptab);
-	free(&s->tmpBuf);
-	return -1;
-}
-
-/**
- * Sets up a real FFT.
- * @param nbits           log2 of the length of the input array
- * @param trans           the type of transform
- */
-int rdftInit(RDFTContext *s, int nbits, RDFTransformType trans) {
-	int n = 1 << nbits;
-	const double theta = (trans == RDFT || trans == IRIDFT ? -1 : 1) * 2 * M_PI / n;
-
-	s->nbits = nbits;
-	s->inverse = trans == IRDFT || trans == IRIDFT;
-	s->signConvention = trans == RIDFT || trans == IRIDFT ? 1 : -1;
-
-	if (nbits < 4 || nbits > 16)
-		return -1;
-
-	if (fftInit(&s->fft, nbits - 1, trans == IRDFT || trans == RIDFT) < 0)
-		return -1;
-
-	initCosineTables(nbits);
-	s->tcos = ff_cos_tabs[nbits];
-	s->tsin = ff_sin_tabs[nbits] + (trans == RDFT || trans == IRIDFT) * (n >> 2);
-
-	for (int i = 0; i < n >> 2; i++)
-		s->tsin[i] = sin(i*theta);
-
-	return 0;
-}
-
-/** Map one real FFT into two parallel real even and odd FFTs. Then interleave
- * the two real FFTs into one complex FFT. Unmangle the results.
- * ref: http://www.engineeringproductivitytools.com/stuff/T0001/PT10.HTM
- */
-void rdftCalc(RDFTContext *s, float *data) {
-	FFTComplex ev, od;
-
-	const int n = 1 << s->nbits;
-	const float k1 = 0.5;
-	const float k2 = 0.5 - s->inverse;
-	const float *tcos = s->tcos;
-	const float *tsin = s->tsin;
-
-	if (!s->inverse) {
-		fftPermute(&s->fft, (FFTComplex *)data);
-		fftCalc(&s->fft, (FFTComplex *)data);
-	}
-
-	// i=0 is a special case because of packing, the DC term is real, so we
-	// are going to throw the N/2 term (also real) in with it.
-	ev.re = data[0];
-	data[0] = ev.re + data[1];
-	data[1] = ev.re - data[1];
-
-	int i;
-
-	for (i = 1; i < n >> 2; i++) {
-		int i1 = i * 2;
-		int i2 = n - i1;
-
-		// Separate even and odd FFTs
-		ev.re = k1 * (data[i1] + data[i2]);
-		od.im = -k2 * (data[i1] - data[i2]);
-		ev.im = k1 * (data[i1 + 1] - data[i2 + 1]);
-		od.re = k2 * (data[i1 + 1] + data[i2 + 1]);
-
-		// Apply twiddle factors to the odd FFT and add to the even FFT
-		data[i1] = ev.re + od.re * tcos[i] - od.im * tsin[i];
-		data[i1 + 1] = ev.im + od.im * tcos[i] + od.re * tsin[i];
-		data[i2] = ev.re - od.re * tcos[i] + od.im * tsin[i];
-		data[i2 + 1] = -ev.im + od.im * tcos[i] + od.re * tsin[i];
-	}
-
-	data[i * 2 + 1] = s->signConvention * data[i * 2 + 1];
-	if (s->inverse) {
-		data[0] *= k1;
-		data[1] *= k1;
-		fftPermute(&s->fft, (FFTComplex *)data);
-		fftCalc(&s->fft, (FFTComplex *)data);
-	}
-}
 
 // half mpeg encoding window (full precision)
 const int32 ff_mpa_enwindow[257] = {
@@ -1283,43 +677,27 @@ void ff_mpa_synth_filter(int16 *synth_buf_ptr, int *synth_buf_offset,
  *                  read the longest vlc code
  *                  = (max_vlc_length + bits - 1) / bits
  */
-static int getVlc2(GetBitContext *s, int16 (*table)[2], int bits, int maxDepth) {
-	int reIndex;
-	int reCache;
-	int index;
-	int code;
-	int n;
+static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDepth) {
+	int index = s->peekBits(bits);
+	int code = table[index][0];
+	int n = table[index][1];
 
-	reIndex = s->index;
-	reCache = READ_LE_UINT32(s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-	index = reCache & (0xffffffff >> (32 - bits));
-	code = table[index][0];
-	n = table[index][1];
-
-	if (maxDepth > 1 && n < 0){
-		reIndex += bits;
-		reCache = READ_LE_UINT32(s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-
+	if (maxDepth > 1 && n < 0) {
+		s->skip(bits);
 		int nbBits = -n;
-
-		index = (reCache & (0xffffffff >> (32 - nbBits))) + code;
+		index = s->peekBits(-n) + code;
 		code = table[index][0];
 		n = table[index][1];
 
 		if(maxDepth > 2 && n < 0) {
-			reIndex += nbBits;
-			reCache = READ_LE_UINT32(s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-
-			nbBits = -n;
-
-			index = (reCache & (0xffffffff >> (32 - nbBits))) + code;
+			s->skip(nbBits);
+			index = s->getBits(-n) + code;
 			code = table[index][0];
 			n = table[index][1];
 		}
 	}
 
-	reCache >>= n;
-	s->index = reIndex + n;
+	s->skip(n);
 	return code;
 }
 
@@ -1830,7 +1208,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	if (_fftOrder < 7 || _fftOrder > 9)
 		error("QDM2Stream::QDM2Stream() Unsupported fft_order: %d", _fftOrder);
 
-	rdftInit(&_rdftCtx, _fftOrder, IRDFT);
+	_rdft = new Common::RDFT(_fftOrder, Common::RDFT::IDFT_C2R);
 
 	initVlc();
 	ff_mpa_synth_init(ff_mpa_synth_window);
@@ -1845,29 +1223,30 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 }
 
 QDM2Stream::~QDM2Stream() {
+	delete _rdft;
 	delete[] _compressedData;
 }
 
-static int qdm2_get_vlc(GetBitContext *gb, VLC *vlc, int flag, int depth) {
+static int qdm2_get_vlc(Common::BitStream *gb, VLC *vlc, int flag, int depth) {
 	int value = getVlc2(gb, vlc->table, vlc->bits, depth);
 
 	// stage-2, 3 bits exponent escape sequence
 	if (value-- == 0)
-		value = getBits(gb, getBits (gb, 3) + 1);
+		value = gb->getBits(gb->getBits(3) + 1);
 
 	// stage-3, optional
 	if (flag) {
 		int tmp = vlc_stage3_values[value];
 
 		if ((value & ~3) > 0)
-			tmp += getBits(gb, (value >> 2));
+			tmp += gb->getBits(value >> 2);
 		value = tmp;
 	}
 
 	return value;
 }
 
-static int qdm2_get_se_vlc(VLC *vlc, GetBitContext *gb, int depth)
+static int qdm2_get_se_vlc(VLC *vlc, Common::BitStream *gb, int depth)
 {
 	int value = qdm2_get_vlc(gb, vlc, 0, depth);
 
@@ -1890,35 +1269,6 @@ static uint16 qdm2_packet_checksum(const uint8 *data, int length, int value) {
 		value -= data[i];
 
 	return (uint16)(value & 0xffff);
-}
-
-/**
- * Fills a QDM2SubPacket structure with packet type, size, and data pointer.
- *
- * @param gb            bitreader context
- * @param sub_packet    packet under analysis
- */
-static void qdm2_decode_sub_packet_header(GetBitContext *gb, QDM2SubPacket *sub_packet)
-{
-	sub_packet->type = getBits (gb, 8);
-
-	if (sub_packet->type == 0) {
-		sub_packet->size = 0;
-		sub_packet->data = NULL;
-	} else {
-		sub_packet->size = getBits (gb, 8);
-
-		if (sub_packet->type & 0x80) {
-			sub_packet->size <<= 8;
-			sub_packet->size  |= getBits (gb, 8);
-			sub_packet->type  &= 0x7f;
-		}
-
-		if (sub_packet->type == 0x7f)
-			sub_packet->type |= (getBits (gb, 8) << 8);
-
-		sub_packet->data = &gb->buffer[getBitsCount(gb) / 8]; // FIXME: this depends on bitreader internal data
-	}
 }
 
 /**
@@ -2256,7 +1606,7 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
  * @param sb_min    lower subband processed (sb_min included)
  * @param sb_max    higher subband processed (sb_max excluded)
  */
-void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int sb_min, int sb_max) {
+void QDM2Stream::synthfilt_build_sb_samples(Common::BitStream *gb, int length, int sb_min, int sb_max) {
 	int sb, j, k, n, ch, run, channels;
 	int joined_stereo, zero_encoding, chs;
 	int type34_first;
@@ -2282,12 +1632,12 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
 		else if (sb >= 24)
 			joined_stereo = 1;
 		else
-			joined_stereo = (BITS_LEFT(length,gb) >= 1) ? getBits1 (gb) : 0;
+			joined_stereo = ((length - gb->pos()) >= 1) ? gb->getBit() : 0;
 
 		if (joined_stereo) {
-			if (BITS_LEFT(length,gb) >= 16)
+			if ((length - gb->pos()) >= 16)
 				for (j = 0; j < 16; j++)
-					sign_bits[j] = getBits1(gb);
+					sign_bits[j] = gb->getBit();
 
 			for (j = 0; j < 64; j++)
 				if (_codingMethod[1][sb][j] > _codingMethod[0][sb][j])
@@ -2298,22 +1648,22 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
 		}
 
 		for (ch = 0; ch < channels; ch++) {
-			zero_encoding = (BITS_LEFT(length,gb) >= 1) ? getBits1(gb) : 0;
+			zero_encoding = ((length - gb->pos()) >= 1) ? gb->getBit() : 0;
 			type34_predictor = 0.0;
 			type34_first = 1;
 
 			for (j = 0; j < 128; ) {
 				switch (_codingMethod[ch][sb][j / 2]) {
 					case 8:
-						if (BITS_LEFT(length,gb) >= 10) {
+						if ((length - gb->pos()) >= 10) {
 							if (zero_encoding) {
 								for (k = 0; k < 5; k++) {
 								if ((j + 2 * k) >= 128)
 									break;
-									samples[2 * k] = getBits1(gb) ? dequant_1bit[joined_stereo][2 * getBits1(gb)] : 0;
+									samples[2 * k] = gb->getBit() ? dequant_1bit[joined_stereo][2 * gb->getBit()] : 0;
 								}
 							} else {
-								n = getBits(gb, 8);
+								n = gb->getBits(8);
 								for (k = 0; k < 5; k++)
 									samples[2 * k] = dequant_1bit[joined_stereo][_randomDequantIndex[n][k]];
 							}
@@ -2327,10 +1677,10 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
 						break;
 
 					case 10:
-						if (BITS_LEFT(length,gb) >= 1) {
+						if ((length - gb->pos()) >= 1) {
 							double f = 0.81;
 
-							if (getBits1(gb))
+							if (gb->getBit())
 								f = -f;
 							f -= _noiseSamples[((sb + 1) * (j +5 * ch + 1)) & 127] * 9.0 / 40.0;
 							samples[0] = f;
@@ -2341,15 +1691,15 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
 						break;
 
 					case 16:
-						if (BITS_LEFT(length,gb) >= 10) {
+						if ((length - gb->pos()) >= 10) {
 							if (zero_encoding) {
 								for (k = 0; k < 5; k++) {
 									if ((j + k) >= 128)
 										break;
-									samples[k] = (getBits1(gb) == 0) ? 0 : dequant_1bit[joined_stereo][2 * getBits1(gb)];
+									samples[k] = (gb->getBit() == 0) ? 0 : dequant_1bit[joined_stereo][2 * gb->getBit()];
 								}
 							} else {
-								n = getBits (gb, 8);
+								n = gb->getBits(8);
 								for (k = 0; k < 5; k++)
 									samples[k] = dequant_1bit[joined_stereo][_randomDequantIndex[n][k]];
 							}
@@ -2361,8 +1711,8 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
 						break;
 
 					case 24:
-						if (BITS_LEFT(length,gb) >= 7) {
-							n = getBits(gb, 7);
+						if ((length - gb->pos()) >= 7) {
+							n = gb->getBits(7);
 							for (k = 0; k < 3; k++)
 								samples[k] = (_randomDequantType24[n][k] - 2.0) * 0.5;
 						} else {
@@ -2373,7 +1723,7 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
 						break;
 
 					case 30:
-						if (BITS_LEFT(length,gb) >= 4)
+						if ((length - gb->pos()) >= 4)
 							samples[0] = type30_dequant[qdm2_get_vlc(gb, &_vlcTabType30, 0, 1)];
 						else
 							samples[0] = SB_DITHERING_NOISE(sb, _noiseIdx);
@@ -2382,10 +1732,10 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
 						break;
 
 					case 34:
-						if (BITS_LEFT(length,gb) >= 7) {
+						if ((length - gb->pos()) >= 7) {
 							if (type34_first) {
-								type34_div = (float)(1 << getBits(gb, 2));
-								samples[0] = ((float)getBits(gb, 5) - 16.0) / 15.0;
+								type34_div = (float)(1 << gb->getBits(2));
+								samples[0] = ((float)gb->getBits(5) - 16.0) / 15.0;
 								type34_predictor = samples[0];
 								type34_first = 0;
 							} else {
@@ -2436,21 +1786,21 @@ void QDM2Stream::synthfilt_build_sb_samples(GetBitContext *gb, int length, int s
  * @param gb        bitreader context
  * @param length    packet length in bits
  */
-void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, GetBitContext *gb, int length) {
+void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream *gb, int length) {
 	int i, k, run, level, diff;
 
-	if (BITS_LEFT(length,gb) < 16)
+	if ((length - gb->pos()) < 16)
 		return;
 	level = qdm2_get_vlc(gb, &_vlcTabLevel, 0, 2);
 
 	quantized_coeffs[0] = level;
 
 	for (i = 0; i < 7; ) {
-		if (BITS_LEFT(length,gb) < 16)
+		if ((length - gb->pos()) < 16)
 			break;
 		run = qdm2_get_vlc(gb, &_vlcTabRun, 0, 1) + 1;
 
-		if (BITS_LEFT(length,gb) < 16)
+		if ((length - gb->pos()) < 16)
 			break;
 		diff = qdm2_get_se_vlc(&_vlcTabDiff, gb, 2);
 
@@ -2470,13 +1820,13 @@ void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, GetBitConte
  * @param gb        bitreader context
  * @param length    packet length in bits
  */
-void QDM2Stream::init_tone_level_dequantization(GetBitContext *gb, int length) {
+void QDM2Stream::init_tone_level_dequantization(Common::BitStream *gb, int length) {
 	int sb, j, k, n, ch;
 
 	for (ch = 0; ch < _channels; ch++) {
 		init_quantized_coeffs_elem0(_quantizedCoeffs[ch][0], gb, length);
 
-		if (BITS_LEFT(length,gb) < 16) {
+		if ((length - gb->pos()) < 16) {
 			memset(_quantizedCoeffs[ch][0], 0, 8);
 			break;
 		}
@@ -2487,11 +1837,11 @@ void QDM2Stream::init_tone_level_dequantization(GetBitContext *gb, int length) {
 	for (sb = 0; sb < n; sb++)
 		for (ch = 0; ch < _channels; ch++)
 			for (j = 0; j < 8; j++) {
-				if (BITS_LEFT(length,gb) < 1)
+				if ((length - gb->pos()) < 1)
 					break;
-				if (getBits1(gb)) {
+				if (gb->getBit()) {
 					for (k=0; k < 8; k++) {
-						if (BITS_LEFT(length,gb) < 16)
+						if ((length - gb->pos()) < 16)
 							break;
 						_toneLevelIdxHi1[ch][sb][j][k] = qdm2_get_vlc(gb, &_vlcTabToneLevelIdxHi1, 0, 2);
 					}
@@ -2505,7 +1855,7 @@ void QDM2Stream::init_tone_level_dequantization(GetBitContext *gb, int length) {
 
 	for (sb = 0; sb < n; sb++)
 		for (ch = 0; ch < _channels; ch++) {
-			if (BITS_LEFT(length,gb) < 16)
+			if ((length - gb->pos()) < 16)
 				break;
 			_toneLevelIdxHi2[ch][sb] = qdm2_get_vlc(gb, &_vlcTabToneLevelIdxHi2, 0, 2);
 			if (sb > 19)
@@ -2520,7 +1870,7 @@ void QDM2Stream::init_tone_level_dequantization(GetBitContext *gb, int length) {
 	for (sb = 0; sb < n; sb++) {
 		for (ch = 0; ch < _channels; ch++) {
 			for (j = 0; j < 8; j++) {
-				if (BITS_LEFT(length,gb) < 16)
+				if ((length - gb->pos()) < 16)
 					break;
 				_toneLevelIdxMid[ch][sb][j] = qdm2_get_vlc(gb, &_vlcTabToneLevelIdxMid, 0, 2) - 32;
 			}
@@ -2534,10 +1884,10 @@ void QDM2Stream::init_tone_level_dequantization(GetBitContext *gb, int length) {
  * @param node    pointer to node with packet
  */
 void QDM2Stream::process_subpacket_9(QDM2SubPNode *node) {
-	GetBitContext gb;
 	int i, j, k, n, ch, run, level, diff;
 
-	initGetBits(&gb, node->packet->data, node->packet->size*8);
+	Common::MemoryReadStream d(node->packet->data, node->packet->size*8);
+	Common::BitStream32LELSB gb(&d);
 
 	n = coeff_per_sb_for_avg[_coeffPerSbSelect][QDM2_SB_USED(_subSampling) - 1] + 1; // same as averagesomething function
 
@@ -2570,9 +1920,8 @@ void QDM2Stream::process_subpacket_9(QDM2SubPNode *node) {
  * @param length    packet length in bits
  */
 void QDM2Stream::process_subpacket_10(QDM2SubPNode *node, int length) {
-	GetBitContext gb;
-
-	initGetBits(&gb, ((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
+	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
+	Common::BitStream32LELSB gb(&d);
 
 	if (length != 0) {
 		init_tone_level_dequantization(&gb, length);
@@ -2589,11 +1938,11 @@ void QDM2Stream::process_subpacket_10(QDM2SubPNode *node, int length) {
  * @param length    packet length in bit
  */
 void QDM2Stream::process_subpacket_11(QDM2SubPNode *node, int length) {
-	GetBitContext gb;
+	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
+	Common::BitStream32LELSB gb(&d);
 
-	initGetBits(&gb, ((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
 	if (length >= 32) {
-		int c = getBits (&gb, 13);
+		int c = gb.getBits(13);
 
 		if (c > 3)
 			fill_coding_method_array(_toneLevelIdx, _toneLevelIdxTemp, _codingMethod,
@@ -2610,9 +1959,9 @@ void QDM2Stream::process_subpacket_11(QDM2SubPNode *node, int length) {
  * @param length    packet length in bits
  */
 void QDM2Stream::process_subpacket_12(QDM2SubPNode *node, int length) {
-	GetBitContext gb;
+	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
+	Common::BitStream32LELSB gb(&d);
 
-	initGetBits(&gb, ((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
 	synthfilt_build_sb_samples(&gb, length, 8, QDM2_SB_USED(_subSampling));
 }
 
@@ -2652,7 +2001,6 @@ void QDM2Stream::process_synthesis_subpackets(QDM2SubPNode *list) {
  *
  */
 void QDM2Stream::qdm2_decode_super_block(void) {
-	GetBitContext gb;
 	struct QDM2SubPacket header, *packet;
 	int i, packet_bytes, sub_packet_size, subPacketsD;
 	unsigned int next_index = 0;
@@ -2666,8 +2014,28 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 
 	average_quantized_coeffs(); // average elements in quantized_coeffs[max_ch][10][8]
 
-	initGetBits(&gb, _compressedData, _packetSize*8);
-	qdm2_decode_sub_packet_header(&gb, &header);
+	Common::MemoryReadStream *d = new Common::MemoryReadStream(_compressedData, _packetSize*8);
+	Common::BitStream *gb = new Common::BitStream32LELSB(d);
+	//qdm2_decode_sub_packet_header
+	header.type = gb->getBits(8);
+
+	if (header.type == 0) {
+		header.size = 0;
+		header.data = NULL;
+	} else {
+		header.size = gb->getBits(8);
+
+		if (header.type & 0x80) {
+			header.size <<= 8;
+			header.size |= gb->getBits(8);
+			header.type &= 0x7f;
+		}
+
+		if (header.type == 0x7f)
+			header.type |= (gb->getBits(8) << 8);
+
+		header.data = &_compressedData[gb->pos() / 8];
+	}
 
 	if (header.type < 2 || header.type >= 8) {
 		_hasErrors = true;
@@ -2676,12 +2044,15 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 	}
 
 	_superblocktype_2_3 = (header.type == 2 || header.type == 3);
-	packet_bytes = (_packetSize - getBitsCount(&gb) / 8);
+	packet_bytes = (_packetSize - gb->pos() / 8);
 
-	initGetBits(&gb, header.data, header.size*8);
+	delete gb;
+	delete d;
+	d = new Common::MemoryReadStream(header.data, header.size*8);
+	gb = new Common::BitStream32LELSB(d);
 
 	if (header.type == 2 || header.type == 4 || header.type == 5) {
-		int csum = 257 * getBits(&gb, 8) + 2 * getBits(&gb, 8);
+		int csum = 257 * gb->getBits(8) + 2 * gb->getBits(8);
 
 		csum = qdm2_packet_checksum(_compressedData, _packetSize, csum);
 
@@ -2708,8 +2079,11 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 			_subPacketListA[i - 1].next = &_subPacketListA[i];
 
 			// seek to next block
-			initGetBits(&gb, header.data, header.size*8);
-			skipBits(&gb, next_index*8);
+			delete gb;
+			delete d;
+			d = new Common::MemoryReadStream(header.data, header.size*8);
+			gb = new Common::BitStream32LELSB(d);
+			gb->skip(next_index*8);
 
 			if (next_index >= header.size)
 				break;
@@ -2717,8 +2091,28 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 
 		// decode subpacket
 		packet = &_subPackets[i];
-		qdm2_decode_sub_packet_header(&gb, packet);
-		next_index = packet->size + getBitsCount(&gb) / 8;
+		//qdm2_decode_sub_packet_header
+		packet->type = gb->getBits(8);
+
+		if (packet->type == 0) {
+			packet->size = 0;
+			packet->data = NULL;
+		} else {
+			packet->size = gb->getBits(8);
+
+			if (packet->type & 0x80) {
+				packet->size <<= 8;
+				packet->size |= gb->getBits(8);
+				packet->type &= 0x7f;
+			}
+
+			if (packet->type == 0x7f)
+				packet->type |= (gb->getBits(8) << 8);
+
+			packet->data = &header.data[gb->pos() / 8];
+		}
+
+		next_index = packet->size + gb->pos() / 8;
 		sub_packet_size = ((packet->size > 0xff) ? 1 : 0) + packet->size + 2;
 
 		if (packet->type == 0)
@@ -2738,18 +2132,22 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 		// add subpacket to related list
 		if (packet->type == 8) {
 			error("Unsupported packet type 8");
+			delete gb;
+			delete d;
 			return;
 		} else if (packet->type >= 9 && packet->type <= 12) {
 			// packets for MPEG Audio like Synthesis Filter
 			QDM2_LIST_ADD(_subPacketListD, subPacketsD, packet);
 		} else if (packet->type == 13) {
 			for (j = 0; j < 6; j++)
-				_fftLevelExp[j] = getBits(&gb, 6);
+				_fftLevelExp[j] = gb->getBits(6);
 		} else if (packet->type == 14) {
 			for (j = 0; j < 6; j++)
-				_fftLevelExp[j] = qdm2_get_vlc(&gb, &_fftLevelExpVlc, 0, 2);
+				_fftLevelExp[j] = qdm2_get_vlc(gb, &_fftLevelExpVlc, 0, 2);
 		} else if (packet->type == 15) {
 			error("Unsupported packet type 15");
+			delete gb;
+			delete d;
 			return;
 		} else if (packet->type >= 16 && packet->type < 48 && !fft_subpackets[packet->type - 16]) {
 			// packets for FFT
@@ -2767,6 +2165,8 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 		process_subpacket_12(NULL, 0);
 	}
 // ****************************************************************
+	delete gb;
+	delete d;
 }
 
 void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int duration,
@@ -2782,7 +2182,7 @@ void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int durat
 	_fftCoefsIndex++;
 }
 
-void QDM2Stream::qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b) {
+void QDM2Stream::qdm2_fft_decode_tones(int duration, Common::BitStream *gb, int b) {
 	int channel, stereo, phase, exp;
 	int local_int_4,  local_int_8,  stereo_phase,  local_int_10;
 	int local_int_14, stereo_exp, local_int_20, local_int_28;
@@ -2823,8 +2223,8 @@ void QDM2Stream::qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b) {
 		local_int_14 = (offset >> local_int_8);
 
 		if (_channels > 1) {
-			channel = getBits1(gb);
-			stereo = getBits1(gb);
+			channel = gb->getBit();
+			stereo = gb->getBit();
 		} else {
 			channel = 0;
 			stereo = 0;
@@ -2834,7 +2234,7 @@ void QDM2Stream::qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b) {
 		exp += _fftLevelExp[fft_level_index_table[local_int_14]];
 		exp = (exp < 0) ? 0 : exp;
 
-		phase = getBits(gb, 3);
+		phase = gb->getBits(3);
 		stereo_exp = 0;
 		stereo_phase = 0;
 
@@ -2859,7 +2259,6 @@ void QDM2Stream::qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b) {
 
 void QDM2Stream::qdm2_decode_fft_packets(void) {
 	int i, j, min, max, value, type, unknown_flag;
-	GetBitContext gb;
 
 	if (_subPacketListB[0].packet == NULL)
 		return;
@@ -2892,7 +2291,8 @@ void QDM2Stream::qdm2_decode_fft_packets(void) {
 			return;
 
 		// decode FFT tones
-		initGetBits(&gb, packet->data, packet->size*8);
+		Common::MemoryReadStream d(packet->data, packet->size*8);
+		Common::BitStream32LELSB gb(&d);
 
 		if (packet->type >= 32 && packet->type < 48 && !fft_subpackets[packet->type - 16])
 			unknown_flag = 1;
@@ -2913,7 +2313,7 @@ void QDM2Stream::qdm2_decode_fft_packets(void) {
 			}
 		} else if (type == 46) {
 			for (j=0; j < 6; j++)
-				_fftLevelExp[j] = getBits(&gb, 6);
+				_fftLevelExp[j] = gb.getBits(6);
 			for (j=0; j < 4; j++) {
 				qdm2_fft_decode_tones(j, &gb, unknown_flag);
 			}
@@ -3045,15 +2445,13 @@ void QDM2Stream::qdm2_fft_tone_synthesizer(uint8 sub_packet) {
 }
 
 void QDM2Stream::qdm2_calculate_fft(int channel) {
-	int i;
-
 	_fft.complex[channel][0].re *= 2.0f;
 	_fft.complex[channel][0].im = 0.0f;
 
-	rdftCalc(&_rdftCtx, (float *)_fft.complex[channel]);
+	_rdft->calc((float *)_fft.complex[channel]);
 
 	// add samples to output buffer
-	for (i = 0; i < ((_fftFrameSize + 15) & ~15); i++)
+	for (int i = 0; i < ((_fftFrameSize + 15) & ~15); i++)
 		_outputBuffer[_channels * i + channel] += ((float *) _fft.complex[channel])[i];
 }
 

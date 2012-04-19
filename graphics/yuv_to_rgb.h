@@ -64,6 +64,25 @@ void convertYUV444ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uS
  */
 void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
+/**
+ * Convert a YUV410 image to an RGB surface
+ *
+ * Since the chroma has a very low resolution in 410, we perform bilinear scaling
+ * on the two chroma planes to produce the image. The chroma planes must have
+ * at least one extra row that can be read from in order to produce a proper
+ * image (filled with 0x80). This is required in order to speed up this function.
+ *
+ * @param dst     the destination surface
+ * @param ySrc    the source of the y component
+ * @param uSrc    the source of the u component
+ * @param vSrc    the source of the v component
+ * @param yWidth  the width of the y surface (must be divisible by 4)
+ * @param yHeight the height of the y surface (must be divisible by 4)
+ * @param yPitch  the pitch of the y surface
+ * @param uvPitch the pitch of the u and v surfaces
+ */
+void convertYUV410ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+
 } // End of namespace Graphics
 
 #endif

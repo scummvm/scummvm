@@ -62,7 +62,7 @@ class NSArchive : public Common::Archive {
 	Common::SeekableReadStream	*_stream;
 
 	char			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
-	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
+	uint32			_archiveLengths[MAX_ARCHIVE_ENTRIES];
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
 	uint32			_numFiles;
 
@@ -103,8 +103,8 @@ NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platfo
 	uint32 dataOffset = (isSmallArchive) ? SMALL_ARCHIVE_DATA_OFS : NORMAL_ARCHIVE_DATA_OFS;
 	for (uint16 i = 0; i < _numFiles; i++) {
 		_archiveOffsets[i] = dataOffset;
-		_archiveLenghts[i] = _stream->readUint32BE();
-		dataOffset += _archiveLenghts[i];
+		_archiveLengths[i] = _stream->readUint32BE();
+		dataOffset += _archiveLengths[i];
 	}
 
 }
@@ -133,7 +133,7 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::S
 	debugC(9, kDebugDisk, "NSArchive::createReadStreamForMember: '%s' found in slot %i", name.c_str(), index);
 
 	int offset = _archiveOffsets[index];
-	int endOffset = _archiveOffsets[index] + _archiveLenghts[index];
+	int endOffset = _archiveOffsets[index] + _archiveLengths[index];
 	return new Common::SeekableSubReadStream(_stream, offset, endOffset, DisposeAfterUse::NO);
 }
 

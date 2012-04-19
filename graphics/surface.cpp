@@ -306,7 +306,7 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 		assert(palette);
 
 		for (int y = 0; y < h; y++) {
-			const byte *srcRow = (byte *)getBasePtr(0, y);
+			const byte *srcRow = (const byte *)getBasePtr(0, y);
 			byte *dstRow = (byte *)surface->getBasePtr(0, y);
 
 			for (int x = 0; x < w; x++) {
@@ -328,7 +328,7 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 	} else {
 		// Converting from high color to high color
 		for (int y = 0; y < h; y++) {
-			const byte *srcRow = (byte *)getBasePtr(0, y);
+			const byte *srcRow = (const byte *)getBasePtr(0, y);
 			byte *dstRow = (byte *)surface->getBasePtr(0, y);
 
 			for (int x = 0; x < w; x++) {

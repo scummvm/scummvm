@@ -709,14 +709,14 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 
 	if (isStereo) {
 		if (is16Bits) {
-			bases[1] = FROM_BE_16(audioBS.getBits(16));
+			bases[1] = SWAP_BYTES_16(audioBS.getBits(16));
 		} else {
 			bases[1] = audioBS.getBits(8);
 		}
 	}
 
 	if (is16Bits) {
-		bases[0] = FROM_BE_16(audioBS.getBits(16));
+		bases[0] = SWAP_BYTES_16(audioBS.getBits(16));
 	} else {
 		bases[0] = audioBS.getBits(8);
 	}

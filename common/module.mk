@@ -41,7 +41,6 @@ MODULE_OBJS := \
 	xmlparser.o \
 	zlib.o
 
-ifdef USE_BINK
 MODULE_OBJS += \
 	cosinetables.o \
 	dct.o \
@@ -49,7 +48,6 @@ MODULE_OBJS += \
 	huffman.o \
 	rdft.o \
 	sinetables.o
-endif
 
 # Include common rules
 include $(srcdir)/rules.mk

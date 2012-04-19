@@ -28,7 +28,6 @@
 #define LIBS_DEFINE "SCUMMVM_LIBS"       // Name of the include environment variable
 #define REVISION_DEFINE "SCUMMVM_INTERNAL_REVISION"
 
-#define HAS_VIDEO_FOLDER 1
 //#define ADDITIONAL_LIBRARY ""
 #define NEEDS_RTTI 0
 

@@ -575,7 +575,9 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("-Wwrite-strings");
 		// The following are not warnings at all... We should consider adding them to
 		// a different list of parameters.
+#if !NEEDS_RTTI
 		globalWarnings.push_back("-fno-rtti");
+#endif
 		globalWarnings.push_back("-fno-exceptions");
 		globalWarnings.push_back("-fcheck-new");
 
@@ -691,7 +693,7 @@ bool parseEngine(const std::string &line, EngineDesc &engine);
 } // End of anonymous namespace
 
 EngineDescList parseConfigure(const std::string &srcDir) {
-	std::string configureFile = srcDir + "/configure";
+	std::string configureFile = srcDir + "/engines/configure.engines";
 
 	std::ifstream configure(configureFile.c_str());
 	if (!configure)
@@ -1213,9 +1215,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
 		createModuleList(setup.srcDir + "/audio", setup.defines, in, ex);
 		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, in, ex);
-#if HAS_VIDEO_FOLDER
 		createModuleList(setup.srcDir + "/video", setup.defines, in, ex);
-#endif
 
 		// Resource files
 		in.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
@@ -1225,6 +1225,8 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/AUTHORS");
 		in.push_back(setup.srcDir + "/COPYING");
 		in.push_back(setup.srcDir + "/COPYING.LGPL");
+		in.push_back(setup.srcDir + "/COPYING.BSD");
+		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
 		in.push_back(setup.srcDir + "/NEWS");
 		in.push_back(setup.srcDir + "/README");
