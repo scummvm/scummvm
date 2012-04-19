@@ -208,7 +208,7 @@ void LilliputEngine::update() {
 	// update every 20 ms.
 	int currentTime = _system->getMillis();
 	if(currentTime - _lastTime > 20) {
-		_lastTime += 20;
+		_lastTime += ((currentTime - _lastTime) / 20) * 20;
 		newInt8();
 		pollEvent();
 	}
