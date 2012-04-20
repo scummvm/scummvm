@@ -1,4 +1,5 @@
-// This file is being included by "base/plugins.cpp"
+// This file was automatically generated and should NEVER be edited manually!
+// To regenerate it, run the update-engines.py script
 #if PLUGIN_ENABLED_STATIC(SCUMM)
 LINK_PLUGIN(SCUMM)
 #endif
@@ -92,11 +93,11 @@ LINK_PLUGIN(TOLTECS)
 #if PLUGIN_ENABLED_STATIC(TOON)
 LINK_PLUGIN(TOON)
 #endif
-#if PLUGIN_ENABLED_STATIC(TSAGE)
-LINK_PLUGIN(TSAGE)
-#endif
 #if PLUGIN_ENABLED_STATIC(TOUCHE)
 LINK_PLUGIN(TOUCHE)
+#endif
+#if PLUGIN_ENABLED_STATIC(TSAGE)
+LINK_PLUGIN(TSAGE)
 #endif
 #if PLUGIN_ENABLED_STATIC(TUCKER)
 LINK_PLUGIN(TUCKER)
