@@ -192,6 +192,12 @@ void Lua_V2::PurgeText() {
 	TextObject::getPool().deleteObjects();
 }
 
+void Lua_V2::GetFontDimensions() {
+	warning("Lua_V2::GetFontDimensions: returns 0,0");
+	lua_pushnumber(0.f);
+	lua_pushnumber(0.f);
+}
+
 void Lua_V2::GetTextObjectDimensions() {
 	lua_Object textObj = lua_getparam(1);
 
