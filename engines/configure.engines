@@ -1,7 +1,9 @@
-# This file is included from the main "configure" script
-add_engine scumm "SCUMM" yes "scumm_7_8 he"
-add_engine scumm_7_8 "v7 & v8 games" yes
+# This file was automatically generated and should NEVER be edited manually!
+# To regenerate it, run the update-engines.py script
+
+add_engine scumm "SCUMM" yes "he scumm_7_8"
 add_engine he "HE71+ games" yes
+add_engine scumm_7_8 "v7 & v8 games" yes
 add_engine agi "AGI" yes
 add_engine agos "AGOS" yes "agos2"
 add_engine agos2 "AGOS 2 games" yes
@@ -16,16 +18,16 @@ add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"
 add_engine groovie2 "Groovie 2 games" no
 add_engine hugo "Hugo Trilogy" yes
-add_engine kyra "Legend of Kyrandia" yes "lol eob"
-add_engine lol "Lands of Lore" yes
+add_engine kyra "Legend of Kyrandia" yes "eob lol"
 add_engine eob "Eye of the Beholder" no
+add_engine lol "Lands of Lore" yes
 add_engine lastexpress "The Last Express" no
 add_engine lure "Lure of the Temptress" yes
 add_engine made "MADE" yes
 add_engine mohawk "Mohawk" yes "cstime myst riven"
 add_engine cstime "Where in Time is Carmen Sandiego?" no
-add_engine riven "Riven: The Sequel to Myst" no
 add_engine myst "Myst" no
+add_engine riven "Riven: The Sequel to Myst" no
 add_engine parallaction "Parallaction" yes
 add_engine queen "Flight of the Amazon Queen" yes
 add_engine saga "SAGA" yes "ihnm saga2"

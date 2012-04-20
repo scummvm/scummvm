@@ -29,7 +29,6 @@ with open("plugins_table.h", 'w') as f:
 	f.write("// This file was automatically generated and should NEVER be edited manually!\n")
 	f.write("// To regenerate it, run the update-engines.py script\n")
 	for engine in sorted(engines, key=scumm_first_key):
-		# 
 		f.write("#if PLUGIN_ENABLED_STATIC(" + engine.upper() + ")\n")
 		f.write("LINK_PLUGIN(" + engine.upper() + ")\n")
 		f.write("#endif\n")
@@ -40,7 +39,6 @@ with open("engines.mk", 'w') as f:
 	f.write("# This file was automatically generated and should NEVER be edited manually!\n")
 	f.write("# To regenerate it, run the update-engines.py script\n")
 	for engine in sorted(engines, key=scumm_first_key):
-		# 
 		f.write("\n")
 		f.write("ifdef ENABLE_" + engine.upper() + "\n")
 		f.write("DEFINES += -DENABLE_" + engine.upper() + "=$(ENABLE_" + engine.upper() + ")\n")
@@ -51,3 +49,32 @@ with open("engines.mk", 'w') as f:
 			f.write("DEFINES += -DENABLE_" + sub.upper() + "\n")
 			f.write("endif\n")
 		f.write("endif\n")
+
+# Regenerate configure.engines
+print "Regenerating configure.engines..."
+with open("configure.engines", 'w') as f:
+	f.write("# This file was automatically generated and should NEVER be edited manually!\n")
+	f.write("# To regenerate it, run the update-engines.py script\n")
+	f.write("\n")
+	for engine in sorted(engines, key=scumm_first_key):
+		# add_engine scumm "SCUMM" yes "scumm_7_8 he"
+		f.write("add_engine " + engine + ' "' + engines[engine]["desc"] + '" ')
+		if engines[engine]["status"] == "stable":
+			f.write("yes")
+		else:
+			f.write("no")
+		if engines[engine].has_key("subengines"):
+			subs = engines[engine]["subengines"]
+			f.write(' "');
+			f.write(" ".join(sorted(subs)))
+			f.write('"\n');
+			for sub in sorted(subs):
+				# add_engine scumm_7_8 "v7 & v8 games" yes
+				f.write("add_engine " + sub + ' "' + subs[sub]["desc"] + '" ')
+				if subs[sub]["status"] == "stable":
+					f.write("yes")
+				else:
+					f.write("no")
+				f.write("\n")
+		else:
+			f.write("\n")
