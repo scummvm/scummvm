@@ -1804,6 +1804,38 @@ void CruiseEngine::mainLoop() {
 			bool skipEvents = false;
 
 			do {
+				if (userEnabled && !userWait && !autoTrack) {
+					if (currentActiveMenu == -1) {
+						static int16 oldMouseX = -1;
+						static int16 oldMouseY = -1;
+
+						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
+
+						if (mouseX != oldMouseX || mouseY != oldMouseY) {
+							int objectType;
+							int newCursor1;
+							int newCursor2;
+
+							oldMouseX = mouseX;
+							oldMouseY = mouseY;
+
+							objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
+
+							if (objectType == 9) {
+								changeCursor(CURSOR_EXIT);
+							} else if (objectType != -1) {
+								changeCursor(CURSOR_MAGNIFYING_GLASS);
+							} else {
+								changeCursor(CURSOR_WALK);
+							}
+						}
+					} else {
+						changeCursor(CURSOR_NORMAL);
+					}
+				} else {
+					changeCursor(CURSOR_NORMAL);
+				}
+
 				g_system->updateScreen();
 
 				g_system->delayMillis(10);
@@ -1917,38 +1949,6 @@ void CruiseEngine::mainLoop() {
 			/*if (!PCFadeFlag)*/
 			mainDraw(userWait);
 			flipScreen();
-
-			if (userEnabled && !userWait && !autoTrack) {
-				if (currentActiveMenu == -1) {
-					static int16 oldMouseX = -1;
-					static int16 oldMouseY = -1;
-
-					getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-
-					if (mouseX != oldMouseX || mouseY != oldMouseY) {
-						int objectType;
-						int newCursor1;
-						int newCursor2;
-
-						oldMouseX = mouseX;
-						oldMouseY = mouseY;
-
-						objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
-
-						if (objectType == 9) {
-							changeCursor(CURSOR_EXIT);
-						} else if (objectType != -1) {
-							changeCursor(CURSOR_MAGNIFYING_GLASS);
-						} else {
-							changeCursor(CURSOR_WALK);
-						}
-					}
-				} else {
-					changeCursor(CURSOR_NORMAL);
-				}
-			} else {
-				changeCursor(CURSOR_NORMAL);
-			}
 
 			if (userWait == 1) {
 				// Waiting for press - original wait loop has been integrated into the
