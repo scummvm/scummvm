@@ -33,17 +33,22 @@ class LilliputEngine;
 class LilliputScript {
 public:
 	byte _byte16F08;
+	byte _byte12A04;
 
 	byte _array10B29[40];
 	byte _array122E9[20];
 	byte _array16123[40];
 	byte _array1614B[40];
 	byte _array16173[40];
+	byte _array12811[40];
+	byte _array10AB1[40];
 
 	int _word12A00;
 	int _word12A02;
 	int _word10802;
-	byte _byte12A04;
+	int _word1881B;
+
+	int _array12311[640];
 
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
@@ -68,14 +73,9 @@ private:
 	byte *_savedBuffer215Ptr;
 	byte _array122FD[20];
 	byte _array128EF[40];
-	byte _array10AB1[40];
-	byte _array12811[40];
 	byte _array12839[40];
 	byte _array10B51[40 * 40];
 
-	int _array12311[640];
-
-	int _word1881B;
 	int _word16F00;
 	int _word10804;
 	int _word15FFB;

@@ -138,6 +138,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12A07 = 0;
 	_byte12A08 = 0;
 	_byte12A09 = 0;
+	_byte1881D = 0;
+	_byte16552 = 0;
 
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
@@ -162,6 +164,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array1619B[i] = 0xFF;
 		_array161C3[i] = 0;
 		_array161EB[i] = 0;
+		_array12299[i] = 0xFF;
 
 		_array11D49[i] = 0xFFFF;
 		_rulesBuffer2_1[i] = 0xFFFF;
@@ -204,7 +207,7 @@ GUI::Debugger *LilliputEngine::getDebugger() {
 }
 
 void LilliputEngine::update() {
-	
+
 	// update every 20 ms.
 	int currentTime = _system->getMillis();
 	if(currentTime - _lastTime > 20) {
@@ -222,7 +225,7 @@ void LilliputEngine::newInt8() {
 	}
 	--_byte12A06;
 	// TODO: check 'out 20h, 20h'
-	
+
 	// hack for the title stars because _int8installed is not set at the good place for the moment
 	//if (!_int8installed)
 	//	return;
@@ -633,7 +636,7 @@ void LilliputEngine::displayFunction15() {
 					var1 += _scriptHandler->_byte12A04;
 				displayFunction13(_buffer1_45k, var1, tmpVal, 1 << 8);
 			}
-			warning("sub_16553");
+			sub16553(map);
 
 			if (map[2] != 0xFF) {
 				int var1 = map[2];
@@ -653,7 +656,7 @@ void LilliputEngine::displayFunction16() {
 	if (_scriptHandler->_byte16F08 == 1) {
 		warning("sub_15F31");
 		warning("sub_15F0C");
-		warning("sub_16626");
+		sub16626();
 		warning("sub_12F37");
 		warning("sub_16CA0");
 		warning("sub_16EBC");
@@ -661,10 +664,10 @@ void LilliputEngine::displayFunction16() {
 		warning("sub_15EAE");
 	} else {
 		sub1638C();
-		warning("sub_189DE");
+		sub189DE();
 		displayFunction15();
 		displayFunction14();
-		warning("sub_16626");
+		sub16626();
 		warning("sub_12F37");
 		warning("sub_16CA0");
 		warning("sub_16EBC");
@@ -675,7 +678,19 @@ void LilliputEngine::displayFunction16() {
 	}
 }
 
-// Move "window" to x/y
+void LilliputEngine::displayFunction17() {
+	debugC(2, kDebugEngine, "displayFunction17()");
+
+	displayFunction5();
+
+	for (int i = 0; i < 16; i++)
+		for (int j = 0; j < 252; j++)
+			((byte *)_mainSurface->getPixels())[66 + (i * 320) + j] = _buffer10_4032[(252 * i) + j];
+
+	displayFunction4();
+}
+
+// Move view port to x/y
 void LilliputEngine::sub1638C() {
 	debugC(2, kDebugEngine, "sub1638C()");
 
@@ -752,6 +767,131 @@ void LilliputEngine::sub163F0(int var1, int var3) {
 	} while ((var2 != 0) && (var4 !=0));
 
 	warning("Sound function #5");
+}
+
+void LilliputEngine::sub16553(byte *buf) {
+	debugC(2, kDebugEngine, "sub16553()");
+
+	if ((_byte16529 != 0) || (_byte1652A != 0))
+		return;
+
+	_byte16552 = 0;
+
+	if (buf[1] != 0xFF) {
+		int tmpIndex = buf[1];
+		if (_rulesChunk9[tmpIndex] == 16)
+			++_byte16552;
+	}
+
+	int index = _array160FB[_word16550];
+	int var2 = (_array161C3[index] << 8) + _array161EB[index];
+
+	if (index == _scriptHandler->_word1881B)
+		warning("sub_1546F(%d)", var2);
+
+	if (_byte16552 != 1) {
+		int var3 = _rulesBuffer2_9[index];
+		int var1 = _rulesBuffer2_4[index];
+
+		if (var1 != 0xFFFF) {
+			var1 += _scriptHandler->_array10AB1[index];
+			if (var3 != 1)
+				var1 += _rulesBuffer2_8[index];
+
+			if (_array12299[index] != 0xFF) {
+				var1 = _array12299[index] + 82;
+				--_array12299[index];
+				var1 = -var1;
+			}
+
+			warning("sub_152FC");
+		}
+	}
+
+	++_word16550;
+	sub1652B(_word16550);
+
+	sub16553(buf);
+}
+
+void LilliputEngine::sub189DE() {
+	debugC(2, kDebugEngine, "sub189DE()");
+
+	if (_byte1881D != 0) {
+		--_byte1881D;
+		if (_byte1881D != 0) {
+			displayFunction17();
+			_scriptHandler->_word1881B = 0xFFFF;
+		}
+	}
+}
+
+void LilliputEngine::sub16626() {
+	debugC(2, kDebugEngine, "sub16626()");
+
+	int index = _word10807_ERULES - 1;
+	int result;
+	while (index >= 0) {
+		result = 0;
+		while (result != 2) {
+			int var2 = _scriptHandler->_array12811[index];
+			if (var2 == 16)
+				break;
+			var2 = (var2 * 2) + (index << 5);
+			int var1 = _scriptHandler->_array12311[var2];
+			var2 = ((var2 & 0xFF00) + (var1 >> 8)) >> 3;
+			var2 &= 0xFE;
+
+			// temporary hack
+			result = 2;
+
+			switch (var2 / 2) {
+			case 0:
+				warning("result = sub_16675");
+				break;
+			case 1:
+				warning("result = sub_166DD");
+				break;
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+				warning("result = sub_16672");
+				break;
+			case 10:
+				warning("result = sub_1675D");
+				break;
+			case 11:
+				warning("result = sub_16729");
+				break;
+			case 12:
+				warning("result = sub_16799");
+				break;
+			case 13:
+				warning("result = sub_16722");
+				break;
+			case 14:
+				warning("result = sub_166F7");
+				break;
+			case 15:
+				warning("result = sub_166EA");
+				break;
+			default:
+				error("sub16626 - unexpected value %d", var2 / 2);
+				break;
+			}
+			if (result == 1) {
+				++_scriptHandler->_array12811[index];
+				if (_scriptHandler->_array12811[index] == 16)
+					_scriptHandler->_array10B29[index] = 1;
+			}
+		}
+		--index;
+	}
 }
 
 void LilliputEngine::pollEvent() {
@@ -1162,7 +1302,7 @@ Common::Error LilliputEngine::run() {
 
 	_lastTime = _system->getMillis();
 
-	
+
 
 	//TODO: Init sound/music player
 	_scriptHandler->runScript(Common::MemoryReadStream(_initScript, _initScript_size));
