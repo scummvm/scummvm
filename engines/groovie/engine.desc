@@ -1,0 +1,10 @@
+{
+  "desc": "Groovie",
+  "status": "stable",
+  "subengines": {
+    "groovie2": {
+      "desc": "Groovie 2 games",
+      "status": "wip"
+    }
+  }
+}

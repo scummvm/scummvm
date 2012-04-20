@@ -1,0 +1,14 @@
+{
+  "desc": "Legend of Kyrandia",
+  "status": "stable",
+  "subengines": {
+    "lol": {
+      "desc": "Lands of Lore",
+      "status": "stable"
+    },
+    "eob": {
+      "desc": "Eye of the Beholder",
+      "status": "wip"
+    }
+  }
+}

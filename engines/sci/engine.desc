@@ -1,0 +1,10 @@
+{
+  "desc": "SCI",
+  "status": "stable",
+  "subengines": {
+    "sci32": {
+      "desc": "SCI32 games",
+      "status": "wip"
+    }
+  }
+}
