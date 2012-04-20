@@ -160,7 +160,9 @@ void Lua_V2::StartMovie() {
 	if (!result)
 		g_grim->setMode(prevEngineMode);
 	pushbool(result);
-	g_grim->setMode(GrimEngine::SmushMode);
+
+	// The following line causes issues after 9547a9b61674546077301bf09f89a2d120046d8e
+	//g_grim->setMode(GrimEngine::SmushMode);
 }
 
 void Lua_V2::EscapeMovie() {
