@@ -160,6 +160,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetActorTurnChores);
 	DECLARE_LUA_OPCODE(SetActorTalkChore);
 	DECLARE_LUA_OPCODE(SetActorMumblechore);
+	DECLARE_LUA_OPCODE(GammaEnabled);
 };
 
 } // end of namespace Grim

@@ -290,6 +290,11 @@ void Lua_V2::GetSectorName() {
 	}
 }
 
+void Lua_V2::GammaEnabled() {
+	warning("Lua_V2::GammaEnabled: implement opcode, pushing nil");
+	lua_pushnil();
+}
+
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -469,6 +474,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "SectEditInsert", LUA_OPCODE(Lua_V2, SectEditInsert) },
 	{ "SectEditSortAdd", LUA_OPCODE(Lua_V2, SectEditSortAdd) },
 	{ "SectEditForgetIt", LUA_OPCODE(Lua_V2, SectEditForgetIt) },
+	{ "GammaEnabled", LUA_OPCODE(Lua_V2, GammaEnabled) },
 	{ "FRUTEY_Begin", LUA_OPCODE(Lua_V2, FRUTEY_Begin) },
 	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) }
 };
