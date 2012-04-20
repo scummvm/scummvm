@@ -1819,7 +1819,7 @@ void LilliputScript::OC_displayTitleScreen() {
 }
 
 void LilliputScript::OC_sub1853B() {
-	debugC(1, kDebugScript, "OC_initArr1853B()");
+	debugC(1, kDebugScript, "OC_sub1853B()");
 
 	OC_unkPaletteFunction_1();
 	_byte16F08 = 0;
@@ -1830,7 +1830,8 @@ void LilliputScript::OC_sub1853B() {
 
 	OC_unkPaletteFunction_2();
 	_byte12A09 = 0;
-	warning("TODO: call sound function #5");
+	
+	_vm->_soundHandler->contentFct5();
 }
 
 void LilliputScript::OC_sub1864D() {
@@ -1884,7 +1885,7 @@ void LilliputScript::OC_sub186E5_snd() {
 	byte var2l = (_word12A02 & 0xFF);
 	int var1 = _currScript->readUint16LE();
 
-	warning("TODO: call sound function #2");
+	_vm->_soundHandler->contentFct2();
 }
 
 void LilliputScript::OC_sub1870A_snd() {
@@ -1894,27 +1895,30 @@ void LilliputScript::OC_sub1870A_snd() {
 	int var4 = var3;
 	int var2 = (_word12A00 << 8) + _word12A02;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
-	warning("TODO: ovlContentOVL Function 2");
+
+	_vm->_soundHandler->contentFct2();
 }
 
 void LilliputScript::OC_sub18725_snd() {
 	debugC(1, kDebugScript, "OC_sub18725_snd()");
 
 	int var4 = getValue1() | 0xFF00;
-	warning("TODO: ovlContentOVL Function 3");
+
+	_vm->_soundHandler->contentFct3();
 }
 
 void LilliputScript::OC_sub18733_snd() {
 	debugC(1, kDebugScript, "OC_sub18733_snd()");
 
 	int var4 = getValue2();
-	warning("TODO: ovlContentOVL Function 3");
+
+	_vm->_soundHandler->contentFct3();
 }
 
 void LilliputScript::OC_sub1873F_snd() {
 	debugC(1, kDebugScript, "OC_sub1873F_snd()");
 
-	warning("TODO: ovlContentOVL Function 4");
+	_vm->_soundHandler->contentFct4();
 }
 
 void LilliputScript::OC_sub18746_snd() {
@@ -1923,13 +1927,14 @@ void LilliputScript::OC_sub18746_snd() {
 	int var4 = -1;
 	int var2 = (_word12A00 << 8) + _word12A02;
 	int var1 = _currScript->readUint16LE() & 0xFF;
-	warning("TODO: ovlContentOVL Function 2");
+
+	_vm->_soundHandler->contentFct2();
 }
 
 void LilliputScript::OC_sub1875D_snd() {
 	debugC(1, kDebugScript, "OC_sub1875D_snd()");
 
-	warning("TODO: ovlContentOVL Function 6");
+	_vm->_soundHandler->contentFct6();
 }
 
 void LilliputScript::OC_sub18764() {

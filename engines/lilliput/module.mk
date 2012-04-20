@@ -4,7 +4,8 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	lilliput.o \
-	script.o
+	script.o \
+	sound.o
 
 MODULE_DIRS += \
 	engines/lilliput
