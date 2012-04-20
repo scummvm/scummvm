@@ -24,6 +24,7 @@ def scumm_first_key(engine):
 	return engine
 
 # Regenerate plugins_table.h
+print "Regenerating plugins_table.h..."
 with open("plugins_table.h", 'w') as f:
 	f.write("// This file was automatically generated and should NEVER be edited manually!\n")
 	f.write("// To regenerate it, run the update-engines.py script\n")
@@ -32,4 +33,21 @@ with open("plugins_table.h", 'w') as f:
 		f.write("#if PLUGIN_ENABLED_STATIC(" + engine.upper() + ")\n")
 		f.write("LINK_PLUGIN(" + engine.upper() + ")\n")
 		f.write("#endif\n")
-		print engine
+
+# Regenerate engines.mk
+print "Regenerating engines.mk..."
+with open("engines.mk", 'w') as f:
+	f.write("# This file was automatically generated and should NEVER be edited manually!\n")
+	f.write("# To regenerate it, run the update-engines.py script\n")
+	for engine in sorted(engines, key=scumm_first_key):
+		# 
+		f.write("\n")
+		f.write("ifdef ENABLE_" + engine.upper() + "\n")
+		f.write("DEFINES += -DENABLE_" + engine.upper() + "=$(ENABLE_" + engine.upper() + ")\n")
+		f.write("MODULES += engines/" + engine + "\n")
+		for sub in sorted(engines[engine].get("subengines", dict())):
+			f.write("\n")
+			f.write("ifdef ENABLE_" + sub.upper() + "\n")
+			f.write("DEFINES += -DENABLE_" + sub.upper() + "\n")
+			f.write("endif\n")
+		f.write("endif\n")
