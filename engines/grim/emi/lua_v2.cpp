@@ -116,6 +116,12 @@ void Lua_V2::MakeScreenTextures() {
 	}
 }
 
+void Lua_V2::ClearSpecialtyTexture() {
+	//This seems to be used in the save/load menu
+	//Not sure why the specialty textures need to be cleared.
+	warning("Lua_V2::ClearSpecialtyTexture: stub");
+}
+
 void Lua_V2::LoadBundle() {
 	lua_Object paramObj = lua_getparam(1);
 	if (lua_isstring(paramObj) || lua_isnil(paramObj)) {
@@ -324,7 +330,6 @@ static void stubError(const char *funcName) {
 
 // Monkey specific LUA_OPCODEs
 STUB_FUNC2(Lua_V2::ThumbnailFromFile)
-STUB_FUNC2(Lua_V2::ClearSpecialtyTexture)
 STUB_FUNC2(Lua_V2::EnableActorPuck)
 STUB_FUNC2(Lua_V2::PlayChore)
 STUB_FUNC2(Lua_V2::PauseChore)
