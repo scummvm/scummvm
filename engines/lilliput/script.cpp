@@ -1339,11 +1339,13 @@ void LilliputScript::OC_sub17D57() {
 	debugC(1, kDebugScript, "OC_sub17D57()");
 
 	int curWord = _currScript->readUint16LE();
-	curWord = sub17D40(curWord);
+
+	if((_byte16F08 == 1) || (_array16173[_vm->_rulesBuffer2PrevIndx] == 0xFF))
+		return;
 
 	_word1881B = _vm->_rulesBuffer2PrevIndx;
-
 	sub18B3C(curWord);
+
 }
 
 void LilliputScript::OC_sub17D7F() {
