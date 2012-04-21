@@ -1778,8 +1778,8 @@ void LilliputScript::sub18BE6(byte var1, int var2, int var4) {
 	_vm->_displayStringBuf[2] = 32;
 	_vm->_displayStringBuf[3] = 0;
 
-	_vm->sub18AEE(var1);
-	_vm->displayFunction18(_vm->_displayStringBuf, var2, var4);
+	_vm->prepareGoldAmount(var1);
+	_vm->displayString(_vm->_displayStringBuf, var2, var4);
 }
 
 void LilliputScript::OC_displayVGAFile() {
