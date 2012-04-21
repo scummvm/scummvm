@@ -168,6 +168,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array161C3[i] = 0;
 		_array161EB[i] = 0;
 		_array12299[i] = 0xFF;
+		_array109E9[i] = 0xFF;
+		_array10A11[i] = 0xFF;
 
 		_array11D49[i] = 0xFFFF;
 		_rulesBuffer2_1[i] = 0xFFFF;
@@ -601,8 +603,7 @@ void LilliputEngine::sub16217() {
 		}
 	}
 
-	warning("sub_161323");
-
+	sub16323();
 }
 
 void LilliputEngine::sub1652B(int var1) {
@@ -691,6 +692,49 @@ void LilliputEngine::displayFunction17() {
 			((byte *)_mainSurface->getPixels())[66 + (i * 320) + j] = _buffer10_4032[(252 * i) + j];
 
 	displayFunction4();
+}
+
+void LilliputEngine::sub16323() {
+	debugC(2, kDebugEngine, "sub16323()");
+
+	if (_byte160FA <= 1)
+		return;
+
+	int var3;
+	for (int var4 = _byte160FA - 1; var4 != 0; var4--) {
+		var3 = 0;
+
+		for (int var2 = 0; var2 < var4; var2++) {
+			int index1 = _array160FB[var2];
+			int index2 = _array160FB[var2 + 1];
+		
+			if (_array1619B[index1] < _array1619B[index2]) 
+				continue;
+
+			if (_array1619B[index1] == _array1619B[index2]) {
+				if (_array16173[index1] < _array16173[index2])
+					continue;
+
+				if (_array16173[index1] == _array16173[index2]) {
+					if (_rulesBuffer2_3[index1] < _rulesBuffer2_3[index2])
+						continue;
+
+					if (_rulesBuffer2_3[index1] == _rulesBuffer2_3[index2]) {
+						if (_array161EB[index1] < _array161EB[index2])
+							continue;
+					}
+				}
+			}
+
+			byte tmpVal = _array160FB[var2];
+			_array160FB[var2] = _array160FB[var2 + 1];
+			_array160FB[var2 + 1] = tmpVal;
+			++var3;
+		}
+
+		if (var3 == 0)
+			return;
+	}
 }
 
 // Move view port to x/y
@@ -829,6 +873,64 @@ void LilliputEngine::sub189DE() {
 	}
 }
 
+int LilliputEngine::sub16B0C(int param1, int param2) {
+	debugC(2, kDebugEngine, "sub16B0C(%d, %d)", param1, param2);
+
+	static const byte _array16B04[8] = {0, 2, 0, 1, 3, 2, 3, 1};
+
+	int var1 = param2;
+	int var2 = param1;
+
+	int8 var1h = (var1 >>8) - (var2 >>8);
+	int8 var1l = (var1 & 0xFF) - (var2 & 0xFF);
+	int8 var2h = 0;
+	int8 var2l = 0;
+
+	if (var1h < var2h) {
+		var2l |= 4;
+		var1h = -var1h;
+	}
+
+	if (var1l < var2h) {
+		var2l |= 2;
+		var1l = -var1l;
+	}
+
+	if (var1h < var1l)
+		var2l |= 1;
+
+	return _array16B04[var2l];
+}
+
+int LilliputEngine::sub16799(int param1, int index) {
+	debugC(2, kDebugEngine, "sub16799(%d, %d)", param1, index);
+
+	byte var3h = _array109E9[index];
+	byte var3l = _array10A11[index];
+
+	if (var3h != 0xFF) {
+		if ((var3h != _scriptHandler->_array16123[index]) || (var3l != _scriptHandler->_array1614B[index])) {
+			warning("sub_1693A");
+			_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
+			return 3;
+		}
+
+		if ((var3h == _scriptHandler->_array12811[index]) && (var3l == _array109C1[index]))
+			return 2;
+	}
+
+	warning("sub_167EF");
+	int var1 = (_scriptHandler->_array16123[index] << 8) + _scriptHandler->_array1614B[index];
+	int var2 = (_array109E9[index] << 8) + _array10A11[index];
+
+	_rulesBuffer2_9[index] = sub16B0C(var1, var2);
+
+	warning("sub_1693A");
+	_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
+	return 3;
+
+}
+
 void LilliputEngine::sub16626() {
 	debugC(2, kDebugEngine, "sub16626()");
 
@@ -872,7 +974,7 @@ void LilliputEngine::sub16626() {
 				warning("result = sub_16729");
 				break;
 			case 12:
-				warning("result = sub_16799");
+				result = sub16799(var1, index);
 				break;
 			case 13:
 				warning("result = sub_16722");
@@ -887,6 +989,7 @@ void LilliputEngine::sub16626() {
 				error("sub16626 - unexpected value %d", var2 / 2);
 				break;
 			}
+
 			if (result == 1) {
 				++_scriptHandler->_array12811[index];
 				if (_scriptHandler->_array12811[index] == 16)
