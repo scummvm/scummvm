@@ -101,6 +101,7 @@ public:
 	byte _byte12A09;
 	byte _byte1881D;
 	byte _byte16552;
+	byte _byte18AED;
 
 	byte _buffer1[45056];
 	byte _buffer2[45056];
@@ -113,6 +114,7 @@ public:
 	byte *_bufferIdeogram;
 	byte _buffer10[4032];
 	byte _curPalette[768];
+	byte _displayStringBuf[160];
 
 	bool _saveFlag;
 	bool _int8installed;
@@ -127,6 +129,7 @@ public:
 	int _word15BCA;
 	int _word15AC2;
 	int _word16550;
+	int _displayStringIndex;
 
 	int _array11D49[40];
 
@@ -214,6 +217,8 @@ public:
 	void displayFunction15();
 	void displayFunction16();
 	void displayFunction17();
+	void displayFunction18(byte *buf, int var2, int var4);
+	void displayChar(int index, int var1);
 
 	void sub16323();
 	void sub1638C();
@@ -223,6 +228,8 @@ public:
 	void sub16553(byte *buf);
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
+	void sub18A3E(byte param1);
+	void sub18AEE(int param1);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);

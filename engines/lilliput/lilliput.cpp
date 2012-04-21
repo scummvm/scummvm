@@ -143,6 +143,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12A09 = 0;
 	_byte1881D = 0;
 	_byte16552 = 0;
+	_byte18AED = 0;
 
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
@@ -155,6 +156,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_word15AC2 = 0;
 	_word16213 = 0;
 	_word16215 = 0;
+	_displayStringIndex = 0;
 
 	_saveFlag = false;
 	_byte16F07_menuId = 0;
@@ -190,6 +192,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 	for (int i = 0; i < 256; i++)
 		_array15AC8[i] = 0;
+
+	for (int i = 0; i < 160; i++)
+		_displayStringBuf[i] = 0;
 
 	_ptr_rulesBuffer2_15 = NULL;
 	_bufferIdeogram = NULL;
@@ -694,6 +699,36 @@ void LilliputEngine::displayFunction17() {
 	displayFunction4();
 }
 
+void LilliputEngine::displayFunction18(byte *buf, int var2, int var4) {
+	debugC(2, kDebugEngine, "displayFunction18(buf, %d, %d)", var2, var4);
+
+	int index = var2;
+	int tmpVar4 = (var4 >> 8) + ((var4 & 0xFF) << 8);
+	index = index + tmpVar4 + (tmpVar4 >> 2);
+
+	int i = 0;
+	while (buf[i] != 0) {
+		displayChar(index, buf[i]);
+		++i;
+		index += 4;
+	}
+}
+
+void LilliputEngine::displayChar(int index, int var1) {
+	debugC(2, kDebugEngine, "displayChar(%d, %d)", index, var1);
+
+	int indexVga = index;
+	int indexChar = var1 << 5;
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 4; j++)
+			((byte *)_mainSurface->getPixels())[indexVga + j] = _bufferIsoChars[indexChar + j];
+		indexVga += 320;
+		indexChar += 4;
+	}
+
+}
+
 void LilliputEngine::sub16323() {
 	debugC(2, kDebugEngine, "sub16323()");
 
@@ -707,8 +742,8 @@ void LilliputEngine::sub16323() {
 		for (int var2 = 0; var2 < var4; var2++) {
 			int index1 = _array160FB[var2];
 			int index2 = _array160FB[var2 + 1];
-		
-			if (_array1619B[index1] < _array1619B[index2]) 
+
+			if (_array1619B[index1] < _array1619B[index2])
 				continue;
 
 			if (_array1619B[index1] == _array1619B[index2]) {
@@ -930,6 +965,40 @@ int LilliputEngine::sub16799(int param1, int index) {
 	return 3;
 
 }
+
+void LilliputEngine::sub18A3E(byte param1) {
+	debugC(2, kDebugEngine, "sub18A3E(%d)", param1);
+
+	_displayStringBuf[_displayStringIndex] = param1;
+	if (_displayStringIndex < 158)
+		++_displayStringIndex;
+}
+
+void LilliputEngine::sub18AEE(int param1) {
+	debugC(2, kDebugEngine, "sub18AEE(%d)", param1);
+
+	static const int _array18AE3[6] = {10000, 1000, 100, 10, 1};
+
+	int count;
+	int var1 = param1;
+	for (int i = 0; i < 5; i++) {
+		count = 0;
+		while (var1 >= 0) {
+			++count;
+			var1 -= _array18AE3[i];
+		}
+		var1 += _array18AE3[i];
+		byte tmpVal = var1 + 0x30;
+
+		if (i == 4)
+			sub18A3E(tmpVal);
+		else if ((var1 != 0) || (_byte18AED != 1)) {
+			_byte18AED = 0;
+			sub18A3E(tmpVal);
+		}
+	}
+}
+
 
 void LilliputEngine::sub16626() {
 	debugC(2, kDebugEngine, "sub16626()");
