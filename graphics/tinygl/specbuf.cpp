@@ -47,4 +47,14 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 	return oldest;
 }
 
+void specbuf_cleanup(GLContext *c) {
+	GLSpecBuf *buf, *next;
+	buf = c->specbuf_first;
+	for (int i = 0; i < c->specbuf_num_buffers; ++i) {
+		next = buf->next;
+		gl_free(buf);
+		buf = next;
+	}
+}
+
 } // end of namespace TinyGL

@@ -17,7 +17,7 @@ static GLTexture *find_texture(GLContext *c, int h) {
 	return NULL;
 }
 
-static void free_texture(GLContext *c, int h) {
+void free_texture(GLContext *c, int h) {
 	GLTexture *t, **ht;
 	GLImage *im;
 	int i;

@@ -300,6 +300,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v);
 void glInitTextures(GLContext *c);
 void glEndTextures(GLContext *c);
 GLTexture *alloc_texture(GLContext *c, int h);
+void free_texture(GLContext *c, int h);
 
 // image_util.c
 void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
@@ -311,6 +312,7 @@ GLContext *gl_get_context();
 
 // specular buffer "api"
 GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
+void specbuf_cleanup(GLContext *c); // free all memory used
 
 void glInit(void *zbuffer);
 void glClose();

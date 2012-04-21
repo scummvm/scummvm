@@ -17,6 +17,7 @@ void endSharedState(GLContext *c) {
 	GLSharedState *s = &c->shared_state;
 	int i;
 
+	free_texture(c, 0);
 	for (i = 0; i< MAX_DISPLAY_LISTS; i++) {
 		// TODO
 	}
@@ -183,7 +184,13 @@ void glInit(void *zbuffer1) {
 
 void glClose() {
 	GLContext *c = gl_get_context();
+
+	specbuf_cleanup(c);
+	for (int i = 0; i < 3; i++)
+		gl_free(c->matrix_stack[i]);
 	endSharedState(c);
+	gl_free(c->vertex);
+
 	gl_free(c);
 }
 
