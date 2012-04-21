@@ -1872,6 +1872,14 @@ void CruiseEngine::mainLoop() {
 //      readKeyboard();
 
 		bool isUserWait = userWait != 0;
+		// WORKAROUND: This prevents hotspots responding during
+		// delays i.e. Menu opening if you click fast on another
+		// hotspot after trying to open a locked door, which
+		// occurred with the original interpreter.
+		if (userDelay) {
+			currentMouseButton = 0;
+		}
+
 		playerDontAskQuit = processInput();
 		if (playerDontAskQuit)
 			break;
@@ -1883,7 +1891,6 @@ void CruiseEngine::mainLoop() {
 
 		if (userDelay && !userWait) {
 			userDelay--;
-			continue;
 		}
 
 		if (isUserWait & !userWait) {
