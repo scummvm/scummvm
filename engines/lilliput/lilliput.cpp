@@ -1010,12 +1010,12 @@ void LilliputEngine::sub16626() {
 	while (index >= 0) {
 		result = 0;
 		while (result != 2) {
-			int var2 = _scriptHandler->_array12811[index];
+			int var2 = _scriptHandler->_array12811[index] & 0xFF;
 			if (var2 == 16)
 				break;
-			var2 = (var2 * 2) + (index << 5);
+			var2 = var2 + (index << 4);
 			int var1 = _scriptHandler->_array12311[var2];
-			var2 = ((var2 & 0xFF00) + (var1 >> 8)) >> 3;
+			var2 = (var1 >> 8) >> 3;
 			var2 &= 0xFE;
 
 			// temporary hack

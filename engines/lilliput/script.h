@@ -48,7 +48,7 @@ public:
 	int _word10802;
 	int _word1881B;
 
-	int _array12311[640];
+	short _array12311[640];
 
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
