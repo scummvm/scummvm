@@ -69,6 +69,10 @@ private:
 	byte _byte10806;
 	byte _byte12FE4;
 	byte _byte16F02;
+	byte _byte18778;
+	byte _byte18779;
+	byte _byte1877A;
+	byte _byte1877B;
 
 	byte *_savedBuffer215Ptr;
 	byte _array122FD[20];
@@ -76,6 +80,7 @@ private:
 	byte _array12839[40];
 	byte _array10B51[40 * 40];
 
+	int _word18818;
 	int _word16F00;
 	int _word10804;
 	int _word15FFB;
@@ -97,6 +102,7 @@ private:
 	int sub17D40(int var);
 	void sub18A56(byte *buf);
 	void sub18B3C(int var);
+	void sub18BE6();
 
 	int getValue1();
 	int getValue2();

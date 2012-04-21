@@ -36,7 +36,12 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_byte10806 = 0;
 	_byte12FE4 = 0xFF;
 	_byte16F02 = 0;
+	_byte18778 = 0;
+	_byte18779 = 0;
+	_byte1877A = 0;
+	_byte1877B = 0;
 
+	_word18818 = 0;
 	_word1855E = 0;
 	_word16F00 = -1;
 	_word10802 = -1;
@@ -1764,9 +1769,22 @@ void LilliputScript::OC_sub1847F() {
 
 	if (_byte16F08 != 1) {
 		_vm->displayFunction5();
-		warning("TODO: OC_sub1847F - sub_18BE6");
+		sub18BE6();
 		_vm->displayFunction4();
 	}
+}
+
+void LilliputScript::sub18BE6() {
+	debugC(1, kDebugScript, "sub18BE6()");
+
+	_word18818 = 0;
+	_byte18778 = 32;
+	_byte18779 = 32;
+	_byte1877A = 32;
+	_byte1877B = 0;
+
+	warning("sub_18AEE");
+	warning("sub_15A8B(_vm_byte18778);");
 }
 
 void LilliputScript::OC_displayVGAFile() {

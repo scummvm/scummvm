@@ -182,6 +182,8 @@ public:
 	byte _array161C3[40];
 	byte _array161EB[40];
 	byte _array12299[40];
+	byte _array109E9[40];
+	byte _array10A11[40];
 
 	byte _buffer1_45k[45056];
 	byte _buffer2_45k[45056];
@@ -213,11 +215,14 @@ public:
 	void displayFunction16();
 	void displayFunction17();
 
+	void sub16323();
 	void sub1638C();
 	void sub163F0(int var1, int var3);
 	void sub189DE();
 	void sub16626();
 	void sub16553(byte *buf);
+	int sub16799(int param1, int index);
+	int sub16B0C(int param1, int param2);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
