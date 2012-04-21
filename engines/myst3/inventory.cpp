@@ -294,7 +294,7 @@ DragItem::~DragItem() {
 
 void DragItem::drawOverlay() {
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
-	_vm->_gfx->drawTexturedRect2D(getPosition(), textureRect, _texture, 0.99);
+	_vm->_gfx->drawTexturedRect2D(getPosition(), textureRect, _texture, 0.99f);
 }
 
 void DragItem::setFrame(uint16 frame) {
