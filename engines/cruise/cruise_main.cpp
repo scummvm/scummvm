@@ -1799,64 +1799,60 @@ void CruiseEngine::mainLoop() {
 		// Handle frame delay
 		uint32 currentTick = g_system->getMillis();
 
-		if (!bFastMode) {
-			// Delay for the specified amount of time, but still respond to events
-			bool skipEvents = false;
+		// Delay for the specified amount of time, but still respond to events
+		bool skipEvents = false;
 
-			do {
-				if (userEnabled && !userWait && !autoTrack) {
-					if (currentActiveMenu == -1) {
-						static int16 oldMouseX = -1;
-						static int16 oldMouseY = -1;
+		do {
+			if (userEnabled && !userWait && !autoTrack) {
+				if (currentActiveMenu == -1) {
+					static int16 oldMouseX = -1;
+					static int16 oldMouseY = -1;
 
-						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
+					getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
 
-						if (mouseX != oldMouseX || mouseY != oldMouseY) {
-							int objectType;
-							int newCursor1;
-							int newCursor2;
+					if (mouseX != oldMouseX || mouseY != oldMouseY) {
+						int objectType;
+						int newCursor1;
+						int newCursor2;
 
-							oldMouseX = mouseX;
-							oldMouseY = mouseY;
+						oldMouseX = mouseX;
+						oldMouseY = mouseY;
 
-							objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
+						objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
 
-							if (objectType == 9) {
-								changeCursor(CURSOR_EXIT);
-							} else if (objectType != -1) {
-								changeCursor(CURSOR_MAGNIFYING_GLASS);
-							} else {
-								changeCursor(CURSOR_WALK);
-							}
+						if (objectType == 9) {
+							changeCursor(CURSOR_EXIT);
+						} else if (objectType != -1) {
+							changeCursor(CURSOR_MAGNIFYING_GLASS);
+						} else {
+							changeCursor(CURSOR_WALK);
 						}
-					} else {
-						changeCursor(CURSOR_NORMAL);
 					}
 				} else {
 					changeCursor(CURSOR_NORMAL);
 				}
+			} else {
+				changeCursor(CURSOR_NORMAL);
+			}
 
-				g_system->updateScreen();
+			g_system->updateScreen();
 
+			if (!skipEvents || bFastMode)
+				skipEvents = manageEvents();
+
+			if (bFastMode) {
+				if (currentTick >= (lastTickDebug + 10))
+					lastTickDebug = currentTick;
+			} else {
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
-
-				if (!skipEvents)
-					skipEvents = manageEvents();
-
-				if (playerDontAskQuit)
-					break;
-
-				_vm->getDebugger()->onFrame();
-			} while (currentTick < lastTick + _gameSpeed);
-		} else {
-			manageEvents();
-
-			if (currentTick >= (lastTickDebug + 10)) {
-				lastTickDebug = currentTick;
-				_vm->getDebugger()->onFrame();
 			}
-		}
+
+			if (playerDontAskQuit)
+				break;
+
+			_vm->getDebugger()->onFrame();
+		} while (currentTick < lastTick + _gameSpeed && !bFastMode);
 		if (playerDontAskQuit)
 			break;
 
