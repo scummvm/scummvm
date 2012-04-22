@@ -228,8 +228,8 @@ private:
 	void OC_sub18252();
 	void OC_sub18260();
 	void OC_sub182EC();
-	void OC_unkPaletteFunction_1();
-	void OC_unkPaletteFunction_2();
+	void OC_PaletteFadeOut();
+	void OC_PaletteFadeIn();
 	void OC_loadAndDisplayCUBESx_GFX();
 	void OC_sub1834C();
 	void OC_sub18359();
