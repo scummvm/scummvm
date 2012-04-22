@@ -665,7 +665,7 @@ void LilliputEngine::displayFunction16() {
 		warning("sub_15F31");
 		warning("sub_15F0C");
 		sub16626();
-		warning("sub_12F37");
+		sub12F37();
 		warning("sub_16CA0");
 		warning("sub_16EBC");
 		warning("sub_171CF");
@@ -676,7 +676,7 @@ void LilliputEngine::displayFunction16() {
 		displayFunction15();
 		displayFunction14();
 		sub16626();
-		warning("sub_12F37");
+		sub12F37();
 		warning("sub_16CA0");
 		warning("sub_16EBC");
 		warning("sub_171CF");
@@ -1008,22 +1008,24 @@ void LilliputEngine::sub16626() {
 	int index = _word10807_ERULES - 1;
 	int result;
 	while (index >= 0) {
-		result = 0;
-		while (result != 2) {
-			int var2 = _scriptHandler->_array12811[index] & 0xFF;
+		result = 2;
+		while (result & 2) {
+			int var2 = _scriptHandler->_array12811[index];
 			if (var2 == 16)
 				break;
-			var2 = var2 + (index << 4);
-			int var1 = _scriptHandler->_array12311[var2];
-			var2 = (var1 >> 8) >> 3;
+
+			var2 = (2 * var2) + (index << 5);
+			int var1 = _scriptHandler->_array12311[var2 / 2];
+			int tmpVal = var2;
+			var2 = ((var1 >> 8) >> 3);
 			var2 &= 0xFE;
 
-			// temporary hack
-			result = 2;
+			// temporary hack 
+			result = 0;
 
 			switch (var2 / 2) {
 			case 0:
-				warning("result = sub_16675");
+				result = sub16675(index, var1);
 				break;
 			case 1:
 				warning("result = sub_166DD");
@@ -1061,7 +1063,7 @@ void LilliputEngine::sub16626() {
 				break;
 			}
 
-			if (result == 1) {
+			if (result & 1) {
 				++_scriptHandler->_array12811[index];
 				if (_scriptHandler->_array12811[index] == 16)
 					_scriptHandler->_array10B29[index] = 1;
@@ -1069,6 +1071,80 @@ void LilliputEngine::sub16626() {
 		}
 		--index;
 	}
+}
+
+void LilliputEngine::sub12F37() {
+	debugC(2, kDebugEngine, "sub12F37()");
+
+	int index1 = _byte12A04 + 2;
+	int index2 = 0;
+
+	for (int i = 0; i < _word10807_ERULES; i++) {
+		if (_rulesBuffer2_15[index1] == 1 ) {
+			--_rulesBuffer2_15[index1];
+			if (_rulesBuffer2_15[index1] == 1)
+				_scriptHandler->_array10B29[index2] = 1;
+		} else 
+			_rulesBuffer2_15[index1] = 0;
+
+		index1 += 32;
+		++index2;
+	}
+}
+
+int LilliputEngine::sub16685(int idx, int var1) {
+	debugC(2, kDebugEngine, "sub16685(%d, %d)", idx, var1);
+
+	int index = (idx << 5) + (var1 & 0xFF);
+	byte tmpVal = _rulesBuffer2_16[index];
+	_scriptHandler->_array10AB1[idx] = tmpVal;
+	return var1;
+}
+
+int LilliputEngine::sub16675(int idx, int var1) {
+	debugC(2, kDebugEngine, "sub16675(%d, %d)", idx, var1);
+
+	warning("sub16675(%d, %d)", idx, var1);
+	int index = sub16685(idx, var1);
+	
+	switch (index) {
+	case 0:
+		break;
+	case 1:
+		warning("sub_166B1");
+		break;
+	case 2:
+		warning("sub_166B6");
+		break;
+	case 3:
+		warning("sub_166BB");
+		break;
+	case 4:
+		warning("sub_16B63");
+		break;
+	case 5:
+		warning("sub_16B76");
+		break;
+	case 6:
+		warning("sub_166C0");
+		break;
+	case 7:
+		warning("sub_166C6");
+		break;
+	case 8:
+		warning("sub_166CC");
+		break;
+	case 9:
+		warning("sub_166D2");
+		break;
+	case 10:
+		warning("sub_166D8");
+		break;
+	default:
+		warning("sub16675 - Unexpected value %d", index);
+	}
+
+	return 0;
 }
 
 void LilliputEngine::pollEvent() {
