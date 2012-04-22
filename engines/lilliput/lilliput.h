@@ -228,6 +228,7 @@ public:
 	void sub163F0(int var1, int var3);
 	void sub189DE();
 	void sub16626();
+
 	void sub16553(byte *buf);
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
@@ -237,6 +238,7 @@ public:
 	int sub16675(int idx, int var1);
 	int sub16685(int idx, int var1);
 	void sub16EBC();
+	int sub166DD(int index, int var1);
 	void sub171CF();
 	void sub12FE5();
 	void displayHeroismIndicator();

@@ -1033,7 +1033,7 @@ void LilliputEngine::sub16626() {
 				result = sub16675(index, var1);
 				break;
 			case 1:
-				warning("result = sub_166DD");
+				result = sub166DD(index, var1);
 				break;
 			case 2:
 			case 3:
@@ -1043,7 +1043,7 @@ void LilliputEngine::sub16626() {
 			case 7:
 			case 8:
 			case 9:
-				warning("result = sub_16672");
+				result = 0;
 				break;
 			case 10:
 				warning("result = sub_1675D");
@@ -1076,6 +1076,13 @@ void LilliputEngine::sub16626() {
 		}
 		--index;
 	}
+}
+
+int LilliputEngine::sub166DD(int index, int var1) {
+	
+	_rulesBuffer2_9[index] = (var1 >> 8) & 3;
+	sub16685(index, var1 & 0xFF);
+	return 0;
 }
 
 void LilliputEngine::sub16EBC() {
