@@ -28,19 +28,11 @@ namespace DreamWeb {
 void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	processEvents();
 	Common::Point pos = _eventMan->getMousePos();
-	if (pos.x > 298)
-		pos.x = 298;
-	if (pos.x < 15)
-		pos.x = 15;
-	if (pos.y < 15)
-		pos.y = 15;
-	if (pos.y > 184)
-		pos.y = 184;
-	*x = pos.x;
-	*y = pos.y;
+	*x = CLIP<int16>(pos.x, 15, 298);
+	*y = CLIP<int16>(pos.y, 15, 184);
 
 	unsigned newState = _eventMan->getButtonState();
-	*state = (newState == _oldMouseState? 0 : newState);
+	*state = (newState == _oldMouseState ? 0 : newState);
 	_oldMouseState = newState;
 }
 
@@ -80,12 +72,8 @@ void DreamWebEngine::showPointer() {
 			frames = &_exFrames;
 		const Frame *frame = &frames->_frames[(3 * _itemFrame + 1)];
 
-		uint8 width = frame->width;
-		uint8 height = frame->height;
-		if (width < 12)
-			width = 12;
-		if (height < 12)
-			height = 12;
+		uint8 width = MAX<uint8>(frame->width, 12);
+		uint8 height = MAX<uint8>(frame->height, 12);
 		_pointerXS = width;
 		_pointerYS = height;
 		uint16 xMin = (x >= width / 2) ? x - width / 2 : 0;
@@ -97,12 +85,8 @@ void DreamWebEngine::showPointer() {
 		showFrame(_icons1, x, y, 3, 128);
 	} else {
 		const Frame *frame = &_icons1._frames[_pointerFrame + 20];
-		uint8 width = frame->width;
-		uint8 height = frame->height;
-		if (width < 12)
-			width = 12;
-		if (height < 12)
-			height = 12;
+		uint8 width = MAX<uint8>(frame->width, 12);
+		uint8 height = MAX<uint8>(frame->height, 12);
 		_pointerXS = width;
 		_pointerYS = height;
 		multiGet(_pointerBack, x, y, width, height);
