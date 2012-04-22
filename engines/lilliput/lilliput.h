@@ -129,8 +129,11 @@ public:
 	int _word15AC2;
 	int _word16550;
 	int _displayStringIndex;
+	int _word1289D;
 
 	int _array11D49[40];
+	int _array1289F[40];
+	int _array12861[30];
 
 	byte *_rulesChunk1;
 	int _rulesBuffer2PrevIndx;
@@ -186,6 +189,7 @@ public:
 	byte _array12299[40];
 	byte _array109E9[40];
 	byte _array10A11[40];
+	byte _array16E94[40];
 
 	byte _buffer1_45k[45056];
 	byte _buffer2_45k[45056];
@@ -232,6 +236,10 @@ public:
 	void sub12F37();
 	int sub16675(int idx, int var1);
 	int sub16685(int idx, int var1);
+	void sub16EBC();
+	void sub171CF();
+	void sub12FE5();
+	void displayHeroismIndicator();
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
