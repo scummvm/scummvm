@@ -66,7 +66,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	}
 
 	for (int i = 0; i < 640; i++) {
-		_array12311[i] = 0xFFFF;
+		_array12311[i] = -1;
 	}
 }
 
@@ -738,7 +738,7 @@ void LilliputScript::sub16C86(int index, byte *buf) {
 	_array12811[index] = 0;
 
 	for (int i = 0; i < 16; i++) {
-		_array12311[(index * 16) + i] = (buf[2 * i] << 8) + buf[(2 * i) + 1];
+		_array12311[(index * 16) + i] = (buf[(2 * i) + 1] << 8) + buf[2 * i];
 	}
 }
 
