@@ -44,6 +44,8 @@ public:
 	byte _array12811[40];
 	byte _array10AB1[40];
 	byte _array122FD[20];
+	short _array10B51[40 * 40];
+
 	byte *_savedBuffer215Ptr;
 
 	int _word12A00;
@@ -76,7 +78,6 @@ private:
 
 	byte _array128EF[40];
 	byte _array12839[40];
-	byte _array10B51[40 * 40];
 
 	int _word16F00;
 	int _word10804;
