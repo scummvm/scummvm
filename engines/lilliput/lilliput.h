@@ -238,9 +238,11 @@ public:
 	int sub16675(int idx, int var1);
 	int sub16685(int idx, int var1);
 	void sub16EBC();
+	void sub16CA0();
 	int sub166DD(int index, int var1);
 	void sub171CF();
 	void sub12FE5();
+	int sub16DD5(int x1, int y1, int x2, int y2);
 	void displayHeroismIndicator();
 
 	void initGame(const LilliputGameDescription *gd);
@@ -276,6 +278,7 @@ public:
 	byte _byte12FCE;
 	byte _byte129A0;
 	byte _byte160FA;
+	byte _byte16C9F; 
 	int _word10804;
 	int _word16213;
 	int _word16215;
