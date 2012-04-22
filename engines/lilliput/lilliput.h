@@ -229,6 +229,9 @@ public:
 	int sub16B0C(int param1, int param2);
 	void sub18A3E(byte param1);
 	void prepareGoldAmount(int param1);
+	void sub12F37();
+	int sub16675(int idx, int var1);
+	int sub16685(int idx, int var1);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
