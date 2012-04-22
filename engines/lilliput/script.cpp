@@ -1796,7 +1796,7 @@ void LilliputScript::OC_displayVGAFile() {
 	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
 	_word1881B = -1;
 	_vm->displayVGAFile(fileName);
-	OC_PaletteFadeOut();
+	OC_PaletteFadeIn();
 }
 
 void LilliputScript::OC_sub184D7() {
