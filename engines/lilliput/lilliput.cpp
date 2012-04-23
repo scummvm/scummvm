@@ -436,7 +436,7 @@ void LilliputEngine::displayFunction7() {
 void LilliputEngine::displayFunction8() {
 	debugC(2, kDebugEngine, "displayFunction8()");
 
-	if (_scriptHandler->_byte16F08 == 1)
+	if (_scriptHandler->displayMap == 1)
 		return;
 
 	displayFunction5();
@@ -538,7 +538,7 @@ void LilliputEngine::displayFunction13(byte *buf, int var1, int var2, int var3) 
 void LilliputEngine::displayFunction14() {
 	debugC(2, kDebugEngine, "displayFunction14()");
 
-	if (_scriptHandler->_byte16F08 == 1)
+	if (_scriptHandler->displayMap == 1)
 		return;
 
 	if (_mouseDisplayX > 48)
@@ -556,6 +556,37 @@ void LilliputEngine::displayFunction14() {
 
 	displayFunction4();
 };
+
+void LilliputEngine::restoreMapPoints() {
+	displayFunction5();
+
+	byte* buf = (byte*)_mainSurface->getPixels();
+	for (int index = 0; index < _word10807_ERULES; index++) {
+		buf[_word15E5D[index]] = _byte15E35[index];
+	}
+
+	displayFunction4();
+}
+
+void LilliputEngine::displayCharactersOnMap() {
+	sub16217();
+	displayFunction5();
+
+	byte* buf = (byte*)_mainSurface->getPixels();
+	for( int index = _word10807_ERULES - 1; index >=0; index--) {
+		if(_rulesBuffer2_11[index] & 2 == 0 &&
+		   _scriptHandler->_array1614B[index] != -1) {
+			 int y = 3 * _scriptHandler->_array1614B[index] + 1;
+			 int x = _scriptHandler->_array16123[index] * 4 + 1;
+
+			 _word15E5D[index] = y * 320 + x;
+			 _byte15E35[index] = buf[y * 320 + x];
+			 buf[y * 320 + x] = _scriptHandler->_array128EF[index];
+
+		}
+	}
+	displayFunction4();
+}
 
 void LilliputEngine::sub16217() {
 	debugC(2, kDebugEngine, "sub16217()");
@@ -669,15 +700,15 @@ void LilliputEngine::displayFunction15() {
 void LilliputEngine::displayFunction16() {
 	debugC(2, kDebugEngine, "displayFunction16()");
 
-	if (_scriptHandler->_byte16F08 == 1) {
+	if (_scriptHandler->displayMap == 1) {
 		warning("sub_15F31");
-		warning("sub_15F0C");
+		restoreMapPoints();
 		sub16626();
 		sub12F37();
 		sub16CA0();
 		sub16EBC();
 		sub171CF();
-		warning("sub_15EAE");
+		displayCharactersOnMap();
 	} else {
 		sub1638C();
 		sub189DE();
@@ -701,7 +732,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 	int dx = x2 - x1;
 	int dy = y2 - y1;
 
-	int word16DCB = 0; 
+	int word16DCB = 0;
 	int word16DCD = 0;
 	int word16DD1 = 0;
 	int word16DCF = 0;
@@ -740,7 +771,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 	word16DCB += word16DCD;
 
 	int var1 = byte16DD4;
-	int count = 0; 
+	int count = 0;
 
 	while ( *isoMap == 0xFF ) {
 		if (var1 > 0) {
@@ -750,7 +781,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 			isoMap += word16DCF;
 			var1 += byte16DD4;
 		}
-		
+
 		count++;
 		if (count == dy) {
 			return 0;
@@ -771,20 +802,20 @@ void LilliputEngine::sub16CA0() {
 
 		for(int index2 = _word10807_ERULES - 1; index2 >= 0; index2--) {
 			_byte16C9F = 0;
-			if ((index != index2 ) && 
+			if ((index != index2 ) &&
 				(_rulesBuffer2_5[index] != index2) &&
 				(_rulesBuffer2_5[index2] != index) &&
 				(_rulesBuffer2_11[index2] & 2) == 0) {
 				int d1 = _scriptHandler->_array16123[index2];
 				int d2 = _scriptHandler->_array1614B[index2];
-	
+
 				if (d1 != 0xFF) {
 					int x = c1 - d1;
 					if ((x > -6) && (x < 6)) {
 						int y = c2 - d2;
 						if ((y > -6) && (y < 6)) {
 							_byte16C9F = 1;
-	
+
 							if ((c1 == d1) && (c2 == d2)) {
 								_byte16C9F = 4;
 							} else if((_rulesBuffer2_11[index] & 4) != 0) {
@@ -798,7 +829,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								} else if (_rulesBuffer2_9[index] == 1) {
 									if (d2 < c2) {
@@ -808,7 +839,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								} else if (_rulesBuffer2_9[index] == 2) {
 									if (d2 > c2) {
@@ -818,7 +849,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								} else {
 									if (d1 < c1) {
@@ -828,7 +859,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								}
 							}
@@ -843,7 +874,7 @@ void LilliputEngine::sub16CA0() {
 				_scriptHandler->_array10B29[index] = 1;
 				val = (val & 0xFF00) | _byte16C9F;
 			}
-			_scriptHandler->_array10B51[index2 + index * 40] = val;	
+			_scriptHandler->_array10B51[index2 + index * 40] = val;
 
 		}
 
@@ -1237,7 +1268,7 @@ void LilliputEngine::sub16626() {
 }
 
 int LilliputEngine::sub166DD(int index, int var1) {
-	
+
 	_rulesBuffer2_9[index] = (var1 >> 8) & 3;
 	sub16685(index, var1 & 0xFF);
 	return 0;
@@ -1305,7 +1336,7 @@ void LilliputEngine::sub130EE() {
 
 	if ((posX < 0) || (posX > 255))
 		return;
-	
+
 	if ((posY < 0) || (posY > 176))
 		return;
 

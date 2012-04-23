@@ -132,6 +132,8 @@ public:
 	int _word16550;
 	int _displayStringIndex;
 	int _word1289D;
+	short _word15E5D[40];
+	byte _byte15E35[40];
 
 	int _array11D49[40];
 	int _array1289F[40];
@@ -245,6 +247,8 @@ public:
 	void sub171CF();
 	void sub12FE5();
 	int sub16DD5(int x1, int y1, int x2, int y2);
+	void displayCharactersOnMap();
+	void restoreMapPoints();
 	void displayHeroismIndicator();
 	void sub130EE();
 	void sub1305C(byte index, byte var2);

@@ -32,7 +32,7 @@ namespace Lilliput {
 class LilliputEngine;
 class LilliputScript {
 public:
-	byte _byte16F08;
+	byte displayMap;
 	byte _byte12A04;
 	byte _byte15FFA;
 
@@ -56,6 +56,8 @@ public:
 	int _word15FFD;
 
 	short _array12311[640];
+	byte _array128EF[40];
+	byte _array12839[40];
 
 	void sub130B6();
 
@@ -78,8 +80,6 @@ private:
 	byte _byte12FE4;
 	byte _byte16F02;
 
-	byte _array128EF[40];
-	byte _array12839[40];
 
 	int _word16F00;
 	int _word10804;
