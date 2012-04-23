@@ -57,6 +57,8 @@ public:
 
 	short _array12311[640];
 
+	void sub130B6();
+
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
 
@@ -102,8 +104,6 @@ private:
 
 	int getValue1();
 	int getValue2();
-
-	void sub130B6();
 
 	byte *getBuffer215Ptr();
 	byte compareValues(byte var1, int oper, int var2);
