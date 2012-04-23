@@ -143,6 +143,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12A09 = 0;
 	_byte1881D = 0;
 	_byte16552 = 0;
+	_byte12FE4 = 0xFF;
+	_byte12FE3 = 0;
 
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
@@ -686,7 +688,7 @@ void LilliputEngine::displayFunction16() {
 		sub16CA0();
 		sub16EBC();
 		sub171CF();
-		warning("sub_130EE");
+		sub130EE();
 		sub12FE5();
 		displayHeroismIndicator();
 	}
@@ -1276,6 +1278,100 @@ void LilliputEngine::sub12F37() {
 		index1 += 32;
 		++index2;
 	}
+}
+
+void LilliputEngine::sub130EE() {
+	debugC(2, kDebugEngine, "sub130EE()");
+
+	warning("sub147D7");
+	warning("sub13156");
+
+	if (_mouseButton == 0)
+		// TODO: check _mouse_byte1299F
+		return;
+
+	int button = _mouseButton;
+	_mouseButton = 0;
+
+	if (button & 2) {
+		if (_byte12FE4 != 0xFF)
+			sub1305C(_byte12FE4, button);
+		return;
+	}
+
+	sub13184();
+	int posX = _mouseX - 64;
+	int posY = _mouseY - 16;
+
+	if ((posX < 0) || (posX > 255))
+		return;
+	
+	if ((posY < 0) || (posY > 176))
+		return;
+
+	warning("sub131B2");
+	warning("sub131FC");
+}
+
+void LilliputEngine::sub13184() {
+	debugC(2, kDebugEngine, "sub13184()");
+
+	for (int index = _word12F68_ERULES - 1; index >= 0; index--) {
+		if (sub13240(_mouseX, _mouseY, _rulesBuffer13_2[index], _rulesBuffer13_3[index]) == 0) {
+			sub1305C(index, 1);
+			warning("TODO: sub13184 - add parameter to force return in calling function");
+		}
+	}
+}
+
+int LilliputEngine::sub13240(int posX, int posY, int var3, int var4) {
+	debugC(2, kDebugEngine, "sub13240(%d, %d, %d, %d)", posX, posY, var3, var4);
+
+	if ((posX < var3) || (posY < var4))
+		return -1;
+
+	var3 += 16;
+	var4 += 16;
+
+	if ((posX > var3) || (posY > var4))
+		return -1;
+
+	return 0;
+}
+
+void LilliputEngine::sub1305C(byte index, byte button) {
+	debugC(2, kDebugEngine, "sub1305C(%d, %d)", index, button);
+
+	if (_scriptHandler->_array122E9[index] < 2)
+		return;
+
+	_byte12FE4 = index;
+	_byte12FE3 = button;
+
+	if (button == 2) {
+		if (_byte12FCE != 1) {
+			_scriptHandler->_array122E9[index] = 2;
+			_byte16F07_menuId = 2;
+			displayFunction8();
+		}
+		return;
+	}
+
+	if (_byte12FCE == 1) {
+		sub130DD();
+		return;
+	}
+
+	_scriptHandler->sub130B6();
+	_scriptHandler->_array122E9[index] = 3;
+	if (_rulesBuffer13_1[index] == 1) {
+		_byte12FCE = 1;
+		_word15AC2 = 1;
+	} else {
+		_byte16F07_menuId = 1;
+	}
+
+	displayFunction8();
 }
 
 int LilliputEngine::sub16685(int idx, int var1) {

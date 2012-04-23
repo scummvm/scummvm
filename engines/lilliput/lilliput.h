@@ -101,6 +101,8 @@ public:
 	byte _byte12A09;
 	byte _byte1881D;
 	byte _byte16552;
+	byte _byte12FE4;
+	byte _byte12FE3;
 
 	byte _buffer1[45056];
 	byte _buffer2[45056];
@@ -244,6 +246,10 @@ public:
 	void sub12FE5();
 	int sub16DD5(int x1, int y1, int x2, int y2);
 	void displayHeroismIndicator();
+	void sub130EE();
+	void sub1305C(byte index, byte var2);
+	void sub13184();
+	int sub13240(int posX, int posY, int var3, int var4);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
