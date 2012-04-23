@@ -694,8 +694,67 @@ void LilliputEngine::displayFunction16() {
 
 int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 {
-	warning("sub16DD5");
-	return 0;
+	byte* isoMap = _bufferIsoMap + (x1 << 8) + (y1 << 2) + 1;
+
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+
+	int word16DCB = 0; 
+	int word16DCD = 0;
+	int word16DD1 = 0;
+	int word16DCF = 0;
+
+	byte byte16DD4 = 0;
+	byte byte16DD3 = 0;
+
+	if(dx < 0) {
+		dx = -dx;
+		word16DCB = -4;
+	} else {
+		word16DCB = 4;
+	}
+
+	if(dy < 0) {
+		dy = -dy;
+		word16DCD = -256;
+	} else {
+		word16DCD = 256;
+	}
+
+	if(dy > dx) {
+		word16DD1 = 0;
+		word16DCF = word16DCB;
+	} else {
+		int tmp = dx;
+		dy = dx;
+		dx = tmp;
+		word16DCF = 0;
+		word16DD1 = word16DCD;
+	}
+
+	byte16DD4 = (dx << 1) - dy;
+	byte16DD3 = (dx << 1) - 2 * dy;
+	word16DCF = word16DD1;
+	word16DCB += word16DCD;
+
+	int var1 = byte16DD4;
+	int count = 0; 
+
+	while ( *isoMap == 0xFF ) {
+		if (var1 > 0) {
+			isoMap += word16DCB;
+			var1 += byte16DD3;
+		} else {
+			isoMap += word16DCF;
+			var1 += byte16DD4;
+		}
+		
+		count++;
+		if (count == dy) {
+			return 0;
+		}
+	}
+	return 1;
 }
 
 void LilliputEngine::sub16CA0() {
