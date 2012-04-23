@@ -30,7 +30,7 @@ namespace Lilliput {
 
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
 	_byte129A0 = 0xFF;
-	_byte16F08 = 0;
+	displayMap = 0;
 	_byte1855D = 0;
 	_byte12A04 = 0;
 	_byte10806 = 0;
@@ -764,7 +764,7 @@ void LilliputScript::sub16C5C(int index, byte var3) {
 int LilliputScript::sub17D40(int var) {
 	debugC(1, kDebugScript, "sub17D40(%d)", var);
 
-	if ((_byte16F08 != 1) && (_array16173[_vm->_rulesBuffer2PrevIndx] != 0xFF))
+	if ((displayMap != 1) && (_array16173[_vm->_rulesBuffer2PrevIndx] != 0xFF))
 		return var;
 
 	warning("sub17D40() - FIXME: Unexpected POP");
@@ -1340,7 +1340,7 @@ void LilliputScript::OC_sub17D57() {
 
 	int curWord = _currScript->readUint16LE();
 
-	if((_byte16F08 == 1) || (_array16173[_vm->_rulesBuffer2PrevIndx] == 0xFF))
+	if((displayMap == 1) || (_array16173[_vm->_rulesBuffer2PrevIndx] == 0xFF))
 		return;
 
 	_word1881B = _vm->_rulesBuffer2PrevIndx;
@@ -1766,7 +1766,7 @@ void LilliputScript::OC_sub1847F() {
 	int var2 = _currScript->readUint16LE();
 	int var4 = _currScript->readUint16LE();
 
-	if (_byte16F08 != 1) {
+	if (displayMap != 1) {
 		_vm->displayFunction5();
 		sub18BE6(var1 & 0xFF, var2, var4);
 		_vm->displayFunction4();
@@ -1839,7 +1839,7 @@ void LilliputScript::OC_sub1853B() {
 	debugC(1, kDebugScript, "OC_sub1853B()");
 
 	OC_PaletteFadeOut();
-	_byte16F08 = 0;
+	displayMap = 0;
 	_byte15FFA = 0;
 	sub130B6();
 
