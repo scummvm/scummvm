@@ -224,6 +224,7 @@ public:
 	void displayFunction15();
 	void displayFunction16();
 	void displayFunction17();
+	void displayFunction18(int index, int var2, int flags);
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
 

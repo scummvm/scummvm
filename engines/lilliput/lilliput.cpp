@@ -283,6 +283,44 @@ Common::Platform LilliputEngine::getPlatform() const {
 	return _platform;
 }
 
+
+void LilliputEngine::displayFunction18(int index, int position, int flags) {
+
+	byte* buf = _buffer1_45k + ((position & 0xFF) << 8) + (position >> 8);
+
+	byte* src = _bufferMen;
+	if (index < 0) {
+		src = _bufferIdeogram;
+		index = -index;
+	} else if (index > 0xF0) {
+		src = _bufferMen2;
+		index -= 0xF0;
+	}
+
+	src += index << 8;
+
+	if ( (flags & 2) == 0 ) {
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 16; x++) {
+				if (src[x] != 0)
+					buf[x] = src[x];
+			}
+			src += 16;
+			buf += 256;
+		}
+	} else {
+		src += 14;
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 16; x++) {
+				if (src[x] != 0)
+					buf[x] = src[x];
+			}
+			src += 32;
+			buf += 256;
+		}
+	} 
+}
+
 // display mouse cursor, if any
 void LilliputEngine::displayFunction1(byte *buf, int var1, int var2, int var4) {
 	debugC(2, kDebugEngine, "displayFunction1(buf, %d, %d, %d)", var1, var2, var4);
