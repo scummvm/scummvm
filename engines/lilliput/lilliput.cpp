@@ -734,7 +734,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 
 	byte16DD4 = (dx << 1) - dy;
 	byte16DD3 = (dx << 1) - 2 * dy;
-	word16DCF = word16DD1;
+	word16DCF += word16DD1;
 	word16DCB += word16DCD;
 
 	int var1 = byte16DD4;
