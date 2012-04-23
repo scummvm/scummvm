@@ -699,100 +699,90 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 }
 
 void LilliputEngine::sub16CA0() {
-
+	debugC(2, kDebugEngine, "sub16CA0()");
 
 	for (int index = _word10807_ERULES - 1; index >= 0; index--) {
 		if (_rulesBuffer2_11[index] & 1)
 			continue;
+
 		int c1 = _scriptHandler->_array16123[index];
 		int c2 = _scriptHandler->_array1614B[index];
 
 		for(int index2 = _word10807_ERULES - 1; index2 >= 0; index2--) {
-			if ( index == index2 )
-				continue;
-
-			if (_rulesBuffer2_5[index] != index2 &&
-				_rulesBuffer2_5[index2] != index &&
+			_byte16C9F = 0;
+			if ((index != index2 ) && 
+				(_rulesBuffer2_5[index] != index2) &&
+				(_rulesBuffer2_5[index2] != index) &&
 				(_rulesBuffer2_11[index2] & 2) == 0) {
 				int d1 = _scriptHandler->_array16123[index2];
 				int d2 = _scriptHandler->_array1614B[index2];
-
+	
 				if (d1 != 0xFF) {
 					int x = c1 - d1;
-					if (x > -6 && x < 6) {
+					if ((x > -6) && (x < 6)) {
 						int y = c2 - d2;
-						if (y > -6 && y < 6) {
+						if ((y > -6) && (y < 6)) {
 							_byte16C9F = 1;
-
-							if (c1 == d1 && c2 == d2) {
+	
+							if ((c1 == d1) && (c2 == d2)) {
 								_byte16C9F = 4;
-							}
-							else {
-								if((_rulesBuffer2_11[index] & 4) == 0) {
-									if (_rulesBuffer2_9[index] == 0) {
-										if (d1 > c1) {
-											_byte16C9F = 2;
-											if (d2 == c2) {
-												_byte16C9F = 3;
-											} else {
-												if (sub16DD5(c1,d1,c2,d2)) {
-													_byte16C9F = 1;	
-												}
-											}
-										}
-									}
-									else if (_rulesBuffer2_9[index] == 1) {
-										if (d2 < c2) {
-											_byte16C9F = 2;
-											if(d1 == c1) {
-												_byte16C9F = 3;
-											} else {
-												if (sub16DD5(c1,d1,c2,d2)) {
-													_byte16C9F = 1;	
-												}
-											}
-										}
-									}
-									else if (_rulesBuffer2_9[index] == 2) {
-										if (d2 > c2) {
-											_byte16C9F = 2;
-											if(d1 == c1) {
-												_byte16C9F = 3;
-											} else {
-												if (sub16DD5(c1,d1,c2,d2)) {
-													_byte16C9F = 1;	
-												}
-											}
-										}
-									} 
-									else {
-										if (d1 < c1) {
-											_byte16C9F = 2;
-											if (d2 == c2) {
-												_byte16C9F = 3;
-											} else {
-												if (sub16DD5(c1,d1,c2,d2)) {
-													_byte16C9F = 1;	
-												}
-											}
-										}
-									}
+							} else if((_rulesBuffer2_11[index] & 4) != 0) {
+								_byte16C9F = 0;
+							} else {
+								if (_rulesBuffer2_9[index] == 0) {
+									if (d1 > c1) {
+										_byte16C9F = 2;
 
-									
+										if (d2 == c2)
+											_byte16C9F = 3;
+
+										if (sub16DD5(c1, d1, c2, d2) != 0)
+											_byte16C9F = 1;	
+									}
+								} else if (_rulesBuffer2_9[index] == 1) {
+									if (d2 < c2) {
+										_byte16C9F = 2;
+
+										if(d1 == c1)
+											_byte16C9F = 3;
+
+										if (sub16DD5(c1, d1, c2, d2) != 0)
+											_byte16C9F = 1;	
+									}
+								} else if (_rulesBuffer2_9[index] == 2) {
+									if (d2 > c2) {
+										_byte16C9F = 2;
+
+										if(d1 == c1)
+											_byte16C9F = 3;
+
+										if (sub16DD5(c1, d1, c2, d2) != 0)
+											_byte16C9F = 1;	
+									}
+								} else {
+									if (d1 < c1) {
+										_byte16C9F = 2;
+
+										if (d2 == c2)
+											_byte16C9F = 3;
+
+										if (sub16DD5(c1, d1, c2, d2) != 0)
+											_byte16C9F = 1;	
+									}
 								}
 							}
 						}
 					}
 				}
-			
-				int val = _scriptHandler->_array10B51[index2 + index * 40];
-				val = (val & 0xFF) + ((val & 0xFF) << 8);
-				if( (val & 0xFF) != _byte16C9F ) {
-					_scriptHandler->_array10B29[index] = 1;
-					val = (val & 0xFF00) | _byte16C9F;
-				}
-				_scriptHandler->_array10B51[index2 + index * 40] = val;	
 			}
+
+			int val = _scriptHandler->_array10B51[index2 + index * 40];
+			val = (val & 0xFF) + ((val & 0xFF) << 8);
+			if( (val & 0xFF) != _byte16C9F ) {
+				_scriptHandler->_array10B29[index] = 1;
+				val = (val & 0xFF00) | _byte16C9F;
+			}
+			_scriptHandler->_array10B51[index2 + index * 40] = val;	
 
 		}
 
