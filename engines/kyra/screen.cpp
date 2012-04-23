@@ -95,8 +95,23 @@ bool Screen::init() {
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
 
-	if (ConfMan.hasKey("render_mode"))
-		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+	// We only check the "render_mode" setting for both Eye of the Beholder
+	// games here, since all the other games do not support the render_mode
+	// setting or handle it differently, like Kyra 1 PC-98. This avoids
+	// graphics glitches and crashes in other games, when the user sets his
+	// global render_mode setting to EGA for example.
+	// TODO/FIXME: It would be nice not to hardcode this. But there is no
+	// trivial/non annoying way to do mode checks in an easy fashion right
+	// now.
+	// In a more general sense, we might want to think about a way to only
+	// pass valid config values, as in values which the engine can work with,
+	// to the engines. We already limit the selection via our GUIO flags in
+	// the game specific settings, but this is not enough due to global
+	// settings allowing everything.
+	if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2) {
+		if (ConfMan.hasKey("render_mode"))
+			_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+	}
 
 	// CGA and EGA modes use additional pages to do the CGA/EGA specific graphics conversions.
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
