@@ -129,7 +129,7 @@ public:
 	int _word15BC8;
 	int _word15BCA;
 	int _word15AC2;
-	int _word16550;
+	int _currentDisplayCharacter;
 	int _displayStringIndex;
 	int _word1289D;
 	short _word15E5D[40];
@@ -141,8 +141,8 @@ public:
 
 	byte *_rulesChunk1;
 	int _rulesBuffer2PrevIndx;
-	int _rulesBuffer2_1[40];
-	int _rulesBuffer2_2[40];
+	int _characterPositionX[40];
+	int _characterPositionY[40];
 	byte _rulesBuffer2_3[40];
 	int _rulesBuffer2_4[40];
 	byte _rulesBuffer2_5[40];
@@ -186,10 +186,10 @@ public:
 	byte _array109C1[40];
 	byte _array15AC8[256];
 	byte _charactersToDisplay[40];
-	byte _array16173[40];
-	byte _array1619B[40];
-	byte _array161C3[40];
-	byte _array161EB[40];
+	byte _characterRelativePositionX[40];
+	byte _characterRelativePositionY[40];
+	byte _characterDisplayX[40];
+	byte _characterDisplayY[40];
 	byte _array12299[40];
 	byte _array109E9[40];
 	byte _array10A11[40];
@@ -224,17 +224,17 @@ public:
 	void displayFunction15();
 	void displayFunction16();
 	void displayFunction17();
-	void displayFunction18(int index, int var2, int flags);
+	void displayFunction18(int index, int x, int y, int flags);
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
 
 	void sortCharacters();
-	void sub1638C();
-	void sub163F0(int var1, int var3);
+	void scrollToViewportCharacterTarget();
+	void viewportScrollTo(int var1, int var3);
 	void sub189DE();
 	void sub16626();
 
-	void sub16553(byte *buf, int x, int y);
+	void renderCharacters(byte *buf, int x, int y);
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
 	void sub18A3E(byte param1);

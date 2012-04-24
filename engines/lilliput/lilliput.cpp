@@ -167,18 +167,18 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array10999[i] = 0;
 		_array109C1[i] = 0;
 		_charactersToDisplay[i] = 0;
-		_array16173[i] = 0xFF;
-		_array1619B[i] = 0xFF;
-		_array161C3[i] = 0;
-		_array161EB[i] = 0;
+		_characterRelativePositionX[i] = 0xFF;
+		_characterRelativePositionY[i] = 0xFF;
+		_characterDisplayX[i] = 0;
+		_characterDisplayY[i] = 0;
 		_array12299[i] = 0xFF;
 		_array109E9[i] = 0xFF;
 		_array10A11[i] = 0xFF;
 		_array16E94[i] = 0;
 
 		_array11D49[i] = 0xFFFF;
-		_rulesBuffer2_1[i] = 0xFFFF;
-		_rulesBuffer2_2[i] = 0xFFFF;
+		_characterPositionX[i] = 0xFFFF;
+		_characterPositionY[i] = 0xFFFF;
 		_rulesBuffer2_3[i] = 0;
 		_rulesBuffer2_4[i] = 0;
 		_rulesBuffer2_5[i] = 0xFF;
@@ -284,10 +284,10 @@ Common::Platform LilliputEngine::getPlatform() const {
 }
 
 
-void LilliputEngine::displayFunction18(int index, int position, int flags) {
-	debugC(2, kDebugEngine, "displayFunction18(%d, %d, %d)", index, position, flags);
+void LilliputEngine::displayFunction18(int index, int x, int y, int flags) {
+	debugC(2, kDebugEngine, "displayFunction18(%d, %d, %d, %d)", index, x, y, flags);
 
-	byte* buf = _buffer1_45k + ((position & 0xFF) << 8) + (position >> 8);
+	byte* buf = _buffer1_45k + (y << 8) + x;
 
 	byte* src = _bufferMen;
 	if (index < 0) {
@@ -319,7 +319,7 @@ void LilliputEngine::displayFunction18(int index, int position, int flags) {
 			src += 32;
 			buf += 256;
 		}
-	} 
+	}
 }
 
 // display mouse cursor, if any
@@ -495,7 +495,7 @@ void LilliputEngine::displayFunction9() {
 
 	memcpy(_buffer2_45k, _buffer3_45k, 45056);
 
-	int var1 = (_scriptHandler->_word12A02 >> 8) + ((_scriptHandler->_word12A02 & 0xFF) << 8) + (_scriptHandler->_word12A00 << 2);
+	int var1 = (_scriptHandler->_viewportY >> 8) + ((_scriptHandler->_viewportY & 0xFF) << 8) + (_scriptHandler->_viewportX << 2);
 	int var2;
 	int index = 0;
 
@@ -630,8 +630,8 @@ void LilliputEngine::sub16217() {
 
 	_numCharactersToDisplay = 0;
 	int index = _word10807_ERULES - 1;
-	_word16213 = _scriptHandler->_word12A00 << 3;
-	_word16215 = _scriptHandler->_word12A02 << 3;
+	_word16213 = _scriptHandler->_viewportX << 3;
+	_word16215 = _scriptHandler->_viewportY << 3;
 
 	for (int i = index; i >= 0; i--) {
 		if (_rulesBuffer2_5[i] != 0xFF) {
@@ -639,8 +639,8 @@ void LilliputEngine::sub16217() {
 			_rulesBuffer2_3[i] = _rulesBuffer2_3[index2] + _rulesBuffer2_7[i];
 			int tmpVal = _rulesBuffer2_6[i];
 			_rulesBuffer2_9[i] = _rulesBuffer2_9[index2];
-			int var3 = _rulesBuffer2_1[index2];
-			int var4 = _rulesBuffer2_2[index2];
+			int var3 = _characterPositionX[index2];
+			int var4 = _characterPositionY[index2];
 
 			switch (_rulesBuffer2_9[i]) {
 			case 0:
@@ -657,30 +657,30 @@ void LilliputEngine::sub16217() {
 				break;
 			}
 
-			_rulesBuffer2_1[i] = var3;
-			_rulesBuffer2_2[i] = var4;
+			_characterPositionX[i] = var3;
+			_characterPositionY[i] = var4;
 		}
 
-		_scriptHandler->_array16123[i] = (_rulesBuffer2_1[i] & 0xFF);
-		_scriptHandler->_array1614B[i] = (_rulesBuffer2_2[i] & 0xFF);
+		_scriptHandler->_array16123[i] = (_characterPositionX[i] & 0xFF);
+		_scriptHandler->_array1614B[i] = (_characterPositionY[i] & 0xFF);
 		_scriptHandler->_array16173[i] = 0xFF;
-		_array1619B[i] = 0xFF;
-		_array161C3[i] = 0xFF;
-		_array161EB[i] = 0xFF;
+		_characterRelativePositionY[i] = 0xFF;
+		_characterDisplayX[i] = 0xFF;
+		_characterDisplayY[i] = 0xFF;
 
-		int tmpVal2 = (_rulesBuffer2_1[i] >> 3) - _scriptHandler->_word12A00;
-		int tmpVal3 = (_rulesBuffer2_2[i] >> 3) - _scriptHandler->_word12A02;
+		int tmpVal2 = (_characterPositionX[i] >> 3) - _scriptHandler->_viewportX;
+		int tmpVal3 = (_characterPositionY[i] >> 3) - _scriptHandler->_viewportY;
 		if ((tmpVal2 >= 0) && (tmpVal2 <= 7) && (tmpVal3 >= 0) && (tmpVal3 <= 7)) {
-			_array16173[i] = tmpVal2;
-			_array1619B[i] = tmpVal3;
-			tmpVal2 = _rulesBuffer2_1[i] - _word16213;
-			tmpVal3 = _rulesBuffer2_2[i] - _word16215;
+			_characterRelativePositionX[i] = tmpVal2;
+			_characterRelativePositionY[i] = tmpVal3;
+			tmpVal2 = _characterPositionX[i] - _word16213;
+			tmpVal3 = _characterPositionY[i] - _word16215;
 			int tmpVal4 = _rulesBuffer2_3[i];
-			_array161C3[i] = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
-			_array161EB[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
+			_characterDisplayX[i] = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
+			_characterDisplayY[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
 			_charactersToDisplay[_numCharactersToDisplay] = i;
 			++_numCharactersToDisplay;
- 		}
+		}
 	}
 
 	sortCharacters();
@@ -691,8 +691,8 @@ void LilliputEngine::sub1652B(int var1) {
 
 	if ( (var1 & 0xFF) < _numCharactersToDisplay) {
 		int index = _charactersToDisplay[var1 & 0xFF];
-		_byte16529 = _array16173[index];
-		_byte1652A = _array1619B[index];
+		_byte16529 = _characterRelativePositionX[index];
+		_byte1652A = _characterRelativePositionY[index];
 	} else {
 		_byte16529 = 0xFF;
 		_byte1652A = 0xFF;
@@ -703,12 +703,12 @@ void LilliputEngine::displayFunction15() {
 	debugC(2, kDebugEngine, "displayFunction15()");
 
 	sub16217();
-	_word16550 = 0;
+	_currentDisplayCharacter = 0;
 	sub1652B(0);
 
 	memcpy(_buffer1_45k, _buffer2_45k, 45056);
 
-	int index1 = (_scriptHandler->_word12A02 >> 8) + ((_scriptHandler->_word12A02 & 0xFF) << 8) + (_scriptHandler->_word12A00 << 2);
+	int index1 = (_scriptHandler->_viewportY >> 8) + ((_scriptHandler->_viewportY & 0xFF) << 8) + (_scriptHandler->_viewportX << 2);
 	byte *map = &_bufferIsoMap[index1];
 
 	for (int i = 0; i < 8; i++) {
@@ -720,7 +720,7 @@ void LilliputEngine::displayFunction15() {
 					var1 += _scriptHandler->_byte12A04;
 				displayFunction13(_buffer1_45k, var1, tmpVal, 1 << 8);
 			}
-			sub16553(map, j, i);
+			renderCharacters(map, j, i);
 
 			if (map[2] != 0xFF) {
 				int var1 = map[2];
@@ -747,7 +747,7 @@ void LilliputEngine::displayFunction16() {
 		sub171CF();
 		displayCharactersOnMap();
 	} else {
-		sub1638C();
+		scrollToViewportCharacterTarget();
 		sub189DE();
 		displayFunction15();
 		displayFunction14();
@@ -974,19 +974,19 @@ void LilliputEngine::sortCharacters() {
 			int index1 = _charactersToDisplay[var2];
 			int index2 = _charactersToDisplay[var2 + 1];
 
-			if (_array1619B[index1] < _array1619B[index2])
+			if (_characterRelativePositionY[index1] < _characterRelativePositionY[index2])
 				continue;
 
-			if (_array1619B[index1] == _array1619B[index2]) {
-				if (_array16173[index1] < _array16173[index2])
+			if (_characterRelativePositionY[index1] == _characterRelativePositionY[index2]) {
+				if (_characterRelativePositionX[index1] < _characterRelativePositionX[index2])
 					continue;
 
-				if (_array16173[index1] == _array16173[index2]) {
+				if (_characterRelativePositionX[index1] == _characterRelativePositionX[index2]) {
 					if (_rulesBuffer2_3[index1] < _rulesBuffer2_3[index2])
 						continue;
 
 					if (_rulesBuffer2_3[index1] == _rulesBuffer2_3[index2]) {
-						if (_array161EB[index1] < _array161EB[index2])
+						if (_characterDisplayY[index1] < _characterDisplayY[index2])
 							continue;
 					}
 				}
@@ -1004,15 +1004,15 @@ void LilliputEngine::sortCharacters() {
 }
 
 // Move view port to x/y
-void LilliputEngine::sub1638C() {
+void LilliputEngine::scrollToViewportCharacterTarget() {
 	debugC(2, kDebugEngine, "sub1638C()");
 
-	if (_scriptHandler->_word10802 == 0xFFFF)
+	if (_scriptHandler->_viewportCharacterTarget == 0xFFFF)
 		return;
 
-	int var2 = (_rulesBuffer2_1[_scriptHandler->_word10802] >> 3) - _scriptHandler->_word12A00;
-	int var4 = (_rulesBuffer2_2[_scriptHandler->_word10802] >> 3) - _scriptHandler->_word12A02;
-	int var1 = _scriptHandler->_word12A00;
+	int var2 = (_characterPositionX[_scriptHandler->_viewportCharacterTarget] >> 3) - _scriptHandler->_viewportX;
+	int var4 = (_characterPositionY[_scriptHandler->_viewportCharacterTarget] >> 3) - _scriptHandler->_viewportY;
+	int var1 = _scriptHandler->_viewportX;
 
 	if (var2 >= 1) {
 		if (var2 >= 6) {
@@ -1026,7 +1026,7 @@ void LilliputEngine::sub1638C() {
 			var1 = 0;
 	}
 
-	int var3 = _scriptHandler->_word12A02;
+	int var3 = _scriptHandler->_viewportY;
 	if (var4 >= 1) {
 		if (var4 > 6) {
 			var3 += 4;
@@ -1039,56 +1039,56 @@ void LilliputEngine::sub1638C() {
 			var3 = 0;
 	}
 
-	sub163F0(var1, var3);
+	viewportScrollTo(var1, var3);
 }
 
-void LilliputEngine::sub163F0(int var1, int var3) {
-	debugC(2, kDebugEngine, "sub163F0(%d, %d)", var1, var3);
+void LilliputEngine::viewportScrollTo(int goalX, int goalY) {
+	debugC(2, kDebugEngine, "sub163F0(%d, %d)", goalX, goalY);
 
-	if ((var1 == _scriptHandler->_word12A00) && (var3 == _scriptHandler->_word12A02))
+	if ((goalX == _scriptHandler->_viewportX) && (goalY == _scriptHandler->_viewportY))
 		return;
 
-	int var2 = 0;
-	if (var1 != _scriptHandler->_word12A00) {
-		if (var1 < _scriptHandler->_word12A00)
-			--var2;
+	int dx = 0;
+	if (goalX != _scriptHandler->_viewportX) {
+		if (goalX < _scriptHandler->_viewportX)
+			--dx;
 		else
-			++var2;
+			++dx;
 	}
 
-	int var4 = 0;
-	if (var3!= _scriptHandler->_word12A02) {
-		if (var3 < _scriptHandler->_word12A02)
-			--var4;
+	int dy = 0;
+	if (goalY!= _scriptHandler->_viewportY) {
+		if (goalY < _scriptHandler->_viewportY)
+			--dy;
 		else
-			++var4;
+			++dy;
 	}
 
 	do {
-		_scriptHandler->_word12A00 += var2;
-		_scriptHandler->_word12A02 += var4;
+		_scriptHandler->_viewportX += dx;
+		_scriptHandler->_viewportY += dy;
 
 		displayFunction9();
 		displayFunction15();
 		displayFunction14();
 
-		if (var1 == _scriptHandler->_word12A00)
-			var2 = 0;
+		if (goalX == _scriptHandler->_viewportX)
+			dx = 0;
 
-		if (var3 == _scriptHandler->_word12A02)
-			var4 = 0;
-	} while ((var2 != 0) && (var4 !=0));
+		if (goalY == _scriptHandler->_viewportY)
+			dy = 0;
+	} while ((dx != 0) && (dy != 0));
 
 	_soundHandler->contentFct5();
 }
 
-void LilliputEngine::sub16553(byte *buf, int x, int y) {
+void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
 	debugC(2, kDebugEngine, "sub16553()");
 
 	if ((_byte16529 != x) || (_byte1652A != y))
 		return;
 
-	_byte16552 = 0;
+	bool _byte16552 = 0;
 
 	if (buf[1] != 0xFF) {
 		int tmpIndex = buf[1];
@@ -1096,35 +1096,36 @@ void LilliputEngine::sub16553(byte *buf, int x, int y) {
 			++_byte16552;
 	}
 
-	int index = _charactersToDisplay[_word16550];
-	int var2 = (_array161C3[index] << 8) + _array161EB[index];
+	int index = _charactersToDisplay[_currentDisplayCharacter];
+	int displayX = _characterDisplayX[index];
+	int displayY = _characterDisplayY[index];
 
 	if (index == _scriptHandler->_word1881B)
-		warning("sub_1546F(%d)", var2);
+		warning("sub_1546F(%d,%d)", displayX, displayY);
 
 	if (_byte16552 != 1) {
 		int var3 = _rulesBuffer2_9[index];
-		int var1 = _rulesBuffer2_4[index];
+		int frame = _rulesBuffer2_4[index];
 
-		if (var1 != 0xFFFF) {
-			var1 += _scriptHandler->_array10AB1[index];
-			if (var3 != 1)
-				var1 += _rulesBuffer2_8[index];
+		if (frame != 0xFFFF) {
+			frame += _scriptHandler->_array10AB1[index];
+			if (var3 & 1)
+				frame += _rulesBuffer2_8[index];
 
 			if (_array12299[index] != 0xFF) {
-				var1 = _array12299[index] + 82;
+				frame = _array12299[index] + 82;
 				--_array12299[index];
-				var1 = -var1;
+				frame = -frame;
 			}
 
-			displayFunction18(var1, var2, var3);
+			displayFunction18(frame, displayX, displayY, var3);
 		}
 	}
 
-	++_word16550;
-	sub1652B(_word16550);
+	++_currentDisplayCharacter;
+	sub1652B(_currentDisplayCharacter);
 
-	sub16553(buf, x, y);
+	renderCharacters(buf, x, y);
 }
 
 void LilliputEngine::sub189DE() {
@@ -1402,8 +1403,8 @@ void LilliputEngine::sub131FC(int var2, int var4) {
 	y = y - diff;
 
 	if ((y >= 0) && (diff >= 0) && (y < 8) && (diff < 8)) {
-		y += _scriptHandler->_word12A00;
-		diff += _scriptHandler->_word12A02;
+		y += _scriptHandler->_viewportX;
+		diff += _scriptHandler->_viewportY;
 		_savedMousePosDivided = (y << 8) + diff;
 		_byte16F07_menuId = 5;
 	}
@@ -1415,7 +1416,7 @@ void LilliputEngine::sub131B2(int var2, int var4, bool &forceReturnFl) {
 	forceReturnFl = false;
 
 	for (int i = 0; i < _word10807_ERULES; i++) {
-		if ((var2 >= _array161C3[i]) && (var2 <= _array161C3[i] + 17) && (var4 >= _array161EB[i]) && (var4 <= _array161EB[i] + 17) && (i != _word10804)) {
+		if ((var2 >= _characterDisplayX[i]) && (var2 <= _characterDisplayX[i] + 17) && (var4 >= _characterDisplayY[i]) && (var4 <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_byte129A0 = i;
 			_byte16F07_menuId = 4;
 			if (_byte12FCE == 1)
@@ -1560,7 +1561,7 @@ void LilliputEngine::sub171CF() {
 	++_word1289D;
 
 	for (int i = 0; i < 10; i++) {
-		if ((_array12861[(3 * i) + 1] != 0xFFFF) && (_array12861[3 * i] = _word1289D)) {
+		if ((_array12861[(3 * i) + 1] != 0xFFFF) && (_array12861[3 * i] == _word1289D)) {
 			int var1 = _array12861[(3 * i) + 1];
 			int var4 = _array12861[(3 * i) + 2];
 			_array12861[(3 * i) + 1] = 0xFFFF;
@@ -1614,16 +1615,16 @@ void LilliputEngine::displayHeroismIndicator() {
 
 	_scriptHandler->_byte15FFA += var2;
 
-	int var4 = (_scriptHandler->_word15FFD >> 8) + ((_scriptHandler->_word15FFD & 0xFF) << 8);
-	int index = _scriptHandler->_word15FFB + var4 + (var4 >> 2);
+	int index = _scriptHandler->_word15FFB + _scriptHandler->_word15FFD * 320 ;
 
 	var2 = _scriptHandler->_byte15FFA & 0xFF;
 	if (var2 != 0) {
 //		sub16064(var1, _scriptHandler->_byte15FFA);
 		for (int i = 0; i < (var2 << 2); i++) {
-			((byte *)_mainSurface->getPixels())[index - (i * 320)] = var1; 
-			((byte *)_mainSurface->getPixels())[index - (i * 320) + 1] = var1; 
-			((byte *)_mainSurface->getPixels())[index - (i * 320) + 2] = var1; 
+			((byte *)_mainSurface->getPixels())[index] = var1;
+			((byte *)_mainSurface->getPixels())[index + 1] = var1;
+			((byte *)_mainSurface->getPixels())[index + 2] = var1;
+			index -= 320;
 		}
 	}
 
@@ -1631,9 +1632,10 @@ void LilliputEngine::displayHeroismIndicator() {
 //		sub16064(23, 25 - _scriptHandler->_byte15FFA);
 		var2 = (25 - _scriptHandler->_byte15FFA) << 2;
 		for (int i = 0; i < var2; i++) {
-			((byte *)_mainSurface->getPixels())[index - (i * 320)] = 23;
-			((byte *)_mainSurface->getPixels())[index - (i * 320) + 1] = 23;
-			((byte *)_mainSurface->getPixels())[index - (i * 320) + 2] = 23;
+			((byte *)_mainSurface->getPixels())[index] = 23;
+			((byte *)_mainSurface->getPixels())[index + 1] = 23;
+			((byte *)_mainSurface->getPixels())[index + 2] = 23;
+			index -= 320;
 		}
 	}
 
@@ -1779,12 +1781,12 @@ void LilliputEngine::loadRules() {
 		curWord = f.readUint16LE();
 		if (curWord != 0xFFFF)
 			curWord = (curWord << 3) + 4;
-		_rulesBuffer2_1[j] = curWord;
+		_characterPositionX[j] = curWord;
 
 		curWord = f.readUint16LE();
 		if (curWord != 0xFFFF)
 			curWord = (curWord << 3) + 4;
-		_rulesBuffer2_2[j] = curWord;
+		_characterPositionY[j] = curWord;
 
 		_rulesBuffer2_3[j] = (f.readUint16LE() & 0xFF);
 		_rulesBuffer2_4[j] = f.readUint16LE();
@@ -1956,8 +1958,8 @@ void LilliputEngine::sub170EE(int index) {
 	_rulesBuffer2PrevIndx = index;
 
 	assert (index < 40);
-	int var2 = _rulesBuffer2_1[index];
-	int var4 = _rulesBuffer2_2[index];
+	int var2 = _characterPositionX[index];
+	int var4 = _characterPositionY[index];
 
 	_word16EFA = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
 	_ptr_rulesBuffer2_15 = &_rulesBuffer2_15[_rulesBuffer2PrevIndx * 32];

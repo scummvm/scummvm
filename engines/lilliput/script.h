@@ -48,9 +48,9 @@ public:
 
 	byte *_savedBuffer215Ptr;
 
-	int _word12A00;
-	int _word12A02;
-	int _word10802;
+	int _viewportX;
+	int _viewportY;
+	int _viewportCharacterTarget;
 	int _word1881B;
 	int _word15FFB;
 	int _word15FFD;
