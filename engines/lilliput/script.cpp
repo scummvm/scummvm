@@ -39,12 +39,12 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 
 	_word1855E = 0;
 	_word16F00 = -1;
-	_word10802 = -1;
+	_viewportCharacterTarget = -1;
 	_word10804 = 0;
 	_word15FFB = 0;
 	_word15FFD = 0;
-	_word12A00 = 0;
-	_word12A02 = 0;
+	_viewportX = 0;
+	_viewportY = 0;
 	_word18776 = 0;
 
 	_savedBuffer215Ptr = NULL;
@@ -847,16 +847,16 @@ int LilliputScript::getValue2() {
 	case 0xFC: {
 		int index = curWord & 0xFF;
 		assert(index < 40);
-		byte var1 = _vm->_rulesBuffer2_1[index] >> 3;
-		byte var2 = _vm->_rulesBuffer2_2[index] >> 3;
+		byte var1 = _vm->_characterPositionX[index] >> 3;
+		byte var2 = _vm->_characterPositionY[index] >> 3;
 
 		return (var1 << 8) + var2;
 		}
 	case 0xFB: {
 		int index = _word16F00;
 		assert(index < 40);
-		byte var1 = _vm->_rulesBuffer2_1[index] >> 3;
-		byte var2 = _vm->_rulesBuffer2_2[index] >> 3;
+		byte var1 = _vm->_characterPositionX[index] >> 3;
+		byte var2 = _vm->_characterPositionY[index] >> 3;
 
 		return (var1 << 8) + var2;
 		}
@@ -872,8 +872,8 @@ int LilliputScript::getValue2() {
 	case 0xF7: {
 		int index = _vm->_rulesBuffer2_15[6];
 		assert(index < 40);
-		byte var1 = _vm->_rulesBuffer2_1[index] >> 3;
-		byte var2 = _vm->_rulesBuffer2_2[index] >> 3;
+		byte var1 = _vm->_characterPositionX[index] >> 3;
+		byte var2 = _vm->_characterPositionY[index] >> 3;
 
 		return (var1 << 8) + var2;
 		}
@@ -1144,7 +1144,7 @@ byte LilliputScript::OC_sub177C6() {
 	debugC(1, kDebugScript, "OC_sub177C6()");
 
 	int index = _currScript->readUint16LE();
-	if (_vm->_rulesBuffer2_1[index] == 0xFFFF)
+	if (_vm->_characterPositionX[index] == 0xFFFF)
 		return 0;
 
 	return 1;
@@ -1397,8 +1397,8 @@ void LilliputScript::OC_sub17A66() {
 	int var4 = ((tmpVal & 0xFF) << 3) + 4;
 
 	assert(index < 40);
-	_vm->_rulesBuffer2_1[index] = var2;
-	_vm->_rulesBuffer2_2[index] = var4;
+	_vm->_characterPositionX[index] = var2;
+	_vm->_characterPositionY[index] = var4;
 }
 
 void LilliputScript::OC_sub17A8D() {
@@ -1408,10 +1408,10 @@ void LilliputScript::OC_sub17A8D() {
 	assert(tmpVal < 40);
 
 	if (tmpVal == _word10804)
-		_word10802 = 0xFFFF;
+		_viewportCharacterTarget = 0xFFFF;
 
-	_vm->_rulesBuffer2_1[tmpVal] = 0xFFFF;
-	_vm->_rulesBuffer2_2[tmpVal] = 0xFFFF;
+	_vm->_characterPositionX[tmpVal] = 0xFFFF;
+	_vm->_characterPositionY[tmpVal] = 0xFFFF;
 }
 void LilliputScript::OC_saveAndQuit() {
 	warning("OC_saveAndQuit");
@@ -1882,7 +1882,7 @@ void LilliputScript::OC_sub18690() {
 void LilliputScript::OC_setWord10802() {
 	debugC(1, kDebugScript, "OC_setWord10802()");
 
-	_word10802 = getValue1();
+	_viewportCharacterTarget = getValue1();
 }
 
 void LilliputScript::OC_sub186A1() {
@@ -1898,8 +1898,8 @@ void LilliputScript::OC_sub186E5_snd() {
 	byte var4l = (index & 0xFF);
 	byte var3h = _array16123[index];
 	byte var3l = _array1614B[index];
-	byte var2h = (_word12A00 & 0xFF);
-	byte var2l = (_word12A02 & 0xFF);
+	byte var2h = (_viewportX & 0xFF);
+	byte var2l = (_viewportY & 0xFF);
 	int var1 = _currScript->readUint16LE();
 
 	_vm->_soundHandler->contentFct2();
@@ -1910,7 +1910,7 @@ void LilliputScript::OC_sub1870A_snd() {
 
 	int var3 = getValue2();
 	int var4 = var3;
-	int var2 = (_word12A00 << 8) + _word12A02;
+	int var2 = (_viewportX << 8) + _viewportY;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
 
 	_vm->_soundHandler->contentFct2();
@@ -1942,7 +1942,7 @@ void LilliputScript::OC_sub18746_snd() {
 	debugC(1, kDebugScript, "OC_sub18746_snd()");
 
 	int var4 = -1;
-	int var2 = (_word12A00 << 8) + _word12A02;
+	int var2 = (_viewportX << 8) + _viewportY;
 	int var1 = _currScript->readUint16LE() & 0xFF;
 
 	_vm->_soundHandler->contentFct2();
