@@ -185,7 +185,7 @@ public:
 	byte _array10999[40];
 	byte _array109C1[40];
 	byte _array15AC8[256];
-	byte _array160FB[40];
+	byte _charactersToDisplay[40];
 	byte _array16173[40];
 	byte _array1619B[40];
 	byte _array161C3[40];
@@ -228,13 +228,13 @@ public:
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
 
-	void sub16323();
+	void sortCharacters();
 	void sub1638C();
 	void sub163F0(int var1, int var3);
 	void sub189DE();
 	void sub16626();
 
-	void sub16553(byte *buf);
+	void sub16553(byte *buf, int x, int y);
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
 	void sub18A3E(byte param1);
@@ -290,7 +290,7 @@ public:
 	byte _byte16F07_menuId;
 	byte _byte12FCE;
 	byte _byte129A0;
-	byte _byte160FA;
+	byte _numCharactersToDisplay;
 	byte _byte16C9F; 
 	int _word10804;
 	int _word16213;
