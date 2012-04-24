@@ -1,0 +1,18 @@
+{
+  "desc": "Mohawk",
+  "status": "stable",
+  "subengines": {
+    "cstime": {
+      "desc": "Where in Time is Carmen Sandiego?",
+      "status": "wip"
+    },
+    "myst": {
+      "desc": "Myst",
+      "status": "wip"
+    },
+    "riven": {
+      "desc": "Riven: The Sequel to Myst",
+      "status": "wip"
+    }
+  }
+}

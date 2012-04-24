@@ -1,0 +1,14 @@
+{
+  "desc": "SCUMM",
+  "status": "stable",
+  "subengines": {
+    "scumm_7_8": {
+      "desc": "v7 & v8 games",
+      "status": "stable"
+    },
+    "he": {
+      "desc": "HE71+ games",
+      "status": "stable"
+    }
+  }
+}
