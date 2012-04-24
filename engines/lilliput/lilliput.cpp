@@ -612,15 +612,13 @@ void LilliputEngine::displayCharactersOnMap() {
 
 	byte* buf = (byte*)_mainSurface->getPixels();
 	for( int index = _word10807_ERULES - 1; index >=0; index--) {
-		if(_rulesBuffer2_11[index] & 2 == 0 &&
-		   _scriptHandler->_array1614B[index] != -1) {
-			 int y = 3 * _scriptHandler->_array1614B[index] + 1;
-			 int x = _scriptHandler->_array16123[index] * 4 + 1;
+		if(((_rulesBuffer2_11[index] & 2) == 0) && (_scriptHandler->_array1614B[index] != -1)) {
+			 int y = (3 * _scriptHandler->_array1614B[index]) + 1;
+			 int x = (_scriptHandler->_array16123[index] * 4) + 1;
 
 			 _word15E5D[index] = y * 320 + x;
 			 _byte15E35[index] = buf[y * 320 + x];
 			 buf[y * 320 + x] = _scriptHandler->_array128EF[index];
-
 		}
 	}
 	displayFunction4();
@@ -1368,7 +1366,11 @@ void LilliputEngine::sub130EE() {
 		return;
 	}
 
-	sub13184();
+	bool forceReturnFl = false;
+	sub13184(forceReturnFl);
+	if (forceReturnFl)
+		return;
+
 	int posX = _mouseX - 64;
 	int posY = _mouseY - 16;
 
@@ -1378,17 +1380,62 @@ void LilliputEngine::sub130EE() {
 	if ((posY < 0) || (posY > 176))
 		return;
 
-	warning("sub131B2");
-	warning("sub131FC");
+	forceReturnFl = false;
+	sub131B2(posX, posY, forceReturnFl);
+	if (forceReturnFl)
+		return;
+
+	sub131FC(posX, posY);
 }
 
-void LilliputEngine::sub13184() {
+void LilliputEngine::sub131FC(int var2, int var4) {
+	debugC(2, kDebugEngine, "sub131FC(%d, %d)", var2, var4);
+
+	int x = var2 - 8;
+	int y = var4 - 4;
+
+	x = (x >> 4) - 7;
+	y = (y >> 3) - 4;
+
+	int diff = (y - x) >> 1;
+	y = y - diff;
+
+	if ((y >= 0) && (diff >= 0) && (y < 8) && (diff < 8)) {
+		y += _scriptHandler->_word12A00;
+		diff += _scriptHandler->_word12A02;
+		_savedMousePosDivided = (y << 8) + diff;
+		_byte16F07_menuId = 5;
+	}
+}
+
+void LilliputEngine::sub131B2(int var2, int var4, bool &forceReturnFl) {
+	debugC(2, kDebugEngine, "sub131B2(%d, %d)", var2, var4);
+
+	forceReturnFl = false;
+
+	for (int i = 0; i < _word10807_ERULES; i++) {
+		if ((var2 >= _array161C3[i]) && (var2 <= _array161C3[i] + 17) && (var4 >= _array161EB[i]) && (var4 <= _array161EB[i] + 17) && (i != _word10804)) {
+			_byte129A0 = i;
+			_byte16F07_menuId = 4;
+			if (_byte12FCE == 1)
+				_byte16F07_menuId = 3;
+
+			return;
+		}
+	}
+	forceReturnFl = true;
+	return;
+}
+
+void LilliputEngine::sub13184(bool &forceReturnFl) {
 	debugC(2, kDebugEngine, "sub13184()");
 
+	forceReturnFl = false;
 	for (int index = _word12F68_ERULES - 1; index >= 0; index--) {
 		if (sub13240(_mouseX, _mouseY, _rulesBuffer13_2[index], _rulesBuffer13_3[index]) == 0) {
 			sub1305C(index, 1);
-			warning("TODO: sub13184 - add parameter to force return in calling function");
+			forceReturnFl = true;
+			return;
 		}
 	}
 }

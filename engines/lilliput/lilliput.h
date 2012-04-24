@@ -253,8 +253,10 @@ public:
 	void displayHeroismIndicator();
 	void sub130EE();
 	void sub1305C(byte index, byte var2);
-	void sub13184();
+	void sub13184(bool &forceReturnFl);
 	int sub13240(int posX, int posY, int var3, int var4);
+	void sub131B2(int var2, int var4, bool &forceReturnFl);
+	void sub131FC(int var2, int var4);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
