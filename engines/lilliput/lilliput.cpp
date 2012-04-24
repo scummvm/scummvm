@@ -285,6 +285,7 @@ Common::Platform LilliputEngine::getPlatform() const {
 
 
 void LilliputEngine::displayFunction18(int index, int position, int flags) {
+	debugC(2, kDebugEngine, "displayFunction18(%d, %d, %d)", index, position, flags);
 
 	byte* buf = _buffer1_45k + ((position & 0xFF) << 8) + (position >> 8);
 
@@ -292,7 +293,7 @@ void LilliputEngine::displayFunction18(int index, int position, int flags) {
 	if (index < 0) {
 		src = _bufferIdeogram;
 		index = -index;
-	} else if (index > 0xF0) {
+	} else if (index >= 0xF0) {
 		src = _bufferMen2;
 		index -= 0xF0;
 	}
@@ -1616,12 +1617,13 @@ void LilliputEngine::displayHeroismIndicator() {
 	int var4 = (_scriptHandler->_word15FFD >> 8) + ((_scriptHandler->_word15FFD & 0xFF) << 8);
 	int index = _scriptHandler->_word15FFB + var4 + (var4 >> 2);
 
-	if ((_scriptHandler->_byte15FFA & 0xFF) == 0) {
+	var2 = _scriptHandler->_byte15FFA & 0xFF;
+	if (var2 != 0) {
 //		sub16064(var1, _scriptHandler->_byte15FFA);
-		for (int i = 0; i < (_scriptHandler->_byte15FFA << 2); i++) {
-			((byte *)_mainSurface->getPixels())[index - (i * 320)] = var1;
-			((byte *)_mainSurface->getPixels())[index - (i * 320) + 1] = var1;
-			((byte *)_mainSurface->getPixels())[index - (i * 320) + 2] = var1;
+		for (int i = 0; i < (var2 << 2); i++) {
+			((byte *)_mainSurface->getPixels())[index - (i * 320)] = var1; 
+			((byte *)_mainSurface->getPixels())[index - (i * 320) + 1] = var1; 
+			((byte *)_mainSurface->getPixels())[index - (i * 320) + 2] = var1; 
 		}
 	}
 
