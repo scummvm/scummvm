@@ -145,6 +145,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte16552 = 0;
 	_byte12FE4 = 0xFF;
 	_byte12FE3 = 0;
+	_byte16F08 = 0;	
 
 	_rulesBuffer2PrevIndx = 0;
 	_word16EFA = 0;
@@ -157,6 +158,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_word15AC2 = 0;
 	_word16213 = 0;
 	_word16215 = 0;
+	_word15AC2 = 0;
 	_displayStringIndex = 0;
 	_word1289D = 0;
 
