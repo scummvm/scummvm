@@ -80,7 +80,6 @@ public:
 	void loadMaterial(int index);
 	void loadBinary(Common::SeekableReadStream *data);
 	void loadText(TextSplitter *ts);
-	void loadEMI(Common::SeekableReadStream *data);
 
 	Common::String _fname;
 	ObjectPtr<CMap> _cmap;

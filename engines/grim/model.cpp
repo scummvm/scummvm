@@ -48,9 +48,7 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 		Object(), _parent(parent), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
 	_fname = filename;
 
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		loadEMI(data);
-	} else if (data->readUint32BE() == MKTAG('L','D','O','M'))
+	if (data->readUint32BE() == MKTAG('L','D','O','M'))
 		loadBinary(data);
 	else {
 		data->seek(0, SEEK_SET);
@@ -107,38 +105,6 @@ Model::~Model() {
 	g_resourceloader->uncacheModel(this);
 }
 
-void Model::loadEMI(Common::SeekableReadStream *data) {
-	char name[64];
-
-	int nameLength = data->readUint32LE();
-	assert(nameLength < 64);
-
-	data->read(name, nameLength);
-
-	// skip over some unkown floats
-	data->seek(48, SEEK_CUR);
-
-	_numMaterials = data->readUint32LE();
-	_materials = new Material*[_numMaterials];
-	_materialNames = new char[_numMaterials][32];
-	for (int i = 0; i < _numMaterials; i++) {
-		nameLength = data->readUint32LE();
-		assert(nameLength < 32);
-
-		data->read(_materialNames[i], nameLength);
-		// I'm not sure what specialty mateials are, but they are handled differently.
-		if (memcmp(_materialNames[i], "specialty", 9) == 0) {
-			_materials[i] = 0;
-		} else {
-			loadMaterial(i);
-		}
-		data->seek(4, SEEK_CUR);
-	}
-
-	data->seek(4, SEEK_CUR);
-
-
-}
 void Model::loadBinary(Common::SeekableReadStream *data) {
 	char v3[4 * 3], f[4];
 	_numMaterials = data->readUint32LE();
