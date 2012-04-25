@@ -47,6 +47,8 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_viewportY = 0;
 	_word18776 = 0;
 
+
+
 	_savedBuffer215Ptr = NULL;
 
 	for (int i = 0; i < 20; i++) {
@@ -64,6 +66,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array1614B[i] = 0;
 		_array16173[i] = 0xFF;
 		_array122C1[i] = 0;
+		_array1813B[i] = 0;
 	}
 
 	for (int i = 0; i < 640; i++) {
@@ -702,7 +705,7 @@ void LilliputScript::sub1823E(byte var1, byte var2, byte *curBufPtr) {
 	debugC(1, kDebugScript, "sub1823E(%d, %d, curBufPtr)", var1, var2);
 
 	assert ((var1 >= 0) && (var1 < 40));
-	_array10B29[var1] = 0;
+	_array10B29[var1] = 1;
 	curBufPtr[0] = var2;
 	curBufPtr[1] = 0;
 	curBufPtr[2] = 0;
@@ -1724,13 +1727,75 @@ void LilliputScript::OC_sub1812D() {
 }
 
 void LilliputScript::OC_sub1817F() {
-	warning("OC_sub1817F");
+	debugC(1, kDebugScript, "OC_sub1817F()");
+
+	int var1 = _currScript->readUint16LE();
+	int var2 = _currScript->readUint16LE();
+	
+	int b1 = var1 & 0xFF;
+	int b2 = var2 & 0xFF;
+	OC_sub1817F_loop(b1,b2);
 }
+
+void LilliputScript::OC_sub1817F_loop( int b1, int b2 ) {
+	for (int i = 0; i <  _vm->_word1817B; i++) {
+		if ((_array1813B[i] >> 8) == b2 ) {
+			b2 += _array1813B[i] & 0xFF;
+			if (b2 < 0) {
+				b2 = 0xFF;
+			}
+			_array1813B[i] = (_array1813B[i] & 0xFF00) + b2;
+			return;
+		}
+	}
+
+	_array1813B[_vm->_word1817B++] = (b1 << 8) + b2;
+}
+
 void LilliputScript::OC_sub181BB() {
-	warning("OC_sub181BB");
+	debugC(1, kDebugScript, "OC_sub1817F()");
+	
+	int b = _currScript->readUint16LE();
+	int d = _currScript->readUint16LE() & 0xFF;
+	int s = _currScript->readUint16LE();
+	int c = _vm->_ptr_rulesBuffer2_15[s];
+	int c2 = 0;
+
+	if ( d == 0x2D ) {
+		c = - 1 - c;
+	} else if ( d == 0x3E ) {
+		c = c - 0x80;
+		if ( c < 0 ) 
+			c = 0;
+		c = c * 2;
+	} else if ( d == 0x3C ) {
+		c = -1 - c;
+		c = c - 0x80;
+		if ( c < 0 )
+			c = 0;
+		c = c * 2;
+	}
+
+	int a = _currScript->readUint16LE() * c + (c & 0xFF);
+	b = b & 0xFF00 + a;
+	OC_sub1817F_loop(b & 0xFF, b >> 8);
+
 }
 void LilliputScript::OC_sub18213() {
-	warning("OC_sub18213");
+	debugC(1, kDebugScript, "OC_sub18213()");
+
+	int var1 = _currScript->readUint16LE();
+
+	int maxValue = 0;
+	int maxItem = var1 & 0xFF;
+
+	for (int i = 0; i < _vm->_word1817B; i++) {
+		if ( _array1813B[i] & 0xFF > maxValue ) {
+			maxValue = _array1813B[i] & 0xFF;
+			maxItem = _array1813B[i] >> 8;
+		}
+	}
+	sub1823E(_vm->_rulesBuffer2PrevIndx, maxItem, &_vm->_rulesBuffer2_15[var1]);
 }
 void LilliputScript::OC_sub18252() {
 	warning("OC_sub18252");
