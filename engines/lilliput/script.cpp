@@ -1826,8 +1826,26 @@ void LilliputScript::OC_sub183C6() {
 	warning("OC_sub183C6");
 }
 void LilliputScript::OC_loadFile_AERIAL_GFX() {
-	warning("OC_loadFile_AERIAL_GFX");
+	debugC(1, kDebugScript, "OC_loadFile_AERIAL_GFX()");
+	
+	int var1 = _currScript->readUint16LE() & 0xff;
+	_vm->_byte15EAD = var1;
+
+	_byte12A09 = 1;
+	_word1881B = 0xFFFF;
+	OC_PaletteFadeOut();
+	_vm->_word15AC2 = 1;
+	_vm->displayVGAFile("AERIAL.GFX");
+	OC_PaletteFadeIn();
+
+	_vm->displayCharactersOnMap();
+	_vm->_byte16F08 = 1;
+	_vm->_keyboard_oldIndex = 0;
+	_vm->_keyboard_nextIndex = 0;
+
+	_vm->_byte12A09 = 0;
 }
+
 void LilliputScript::OC_sub17E22() {
 	warning("OC_sub17E22");
 }

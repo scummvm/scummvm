@@ -103,6 +103,8 @@ public:
 	byte _byte16552;
 	byte _byte12FE4;
 	byte _byte12FE3;
+	byte _byte16F08;
+	byte _byte15EAD;
 
 	byte _array147D1[3];
 	byte _buffer1[45056];
