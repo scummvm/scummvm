@@ -57,6 +57,7 @@ public:
 	int _heroismBarBottomY;
 
 	short _array12311[640];
+	short _array1813B[40];
 	byte _array128EF[40];
 	byte _array12839[40];
 
@@ -225,6 +226,7 @@ private:
 	void OC_sub1810A();
 	void OC_sub1812D();
 	void OC_sub1817F();
+	void OC_sub1817F_loop( int b1, int b2 );
 	void OC_sub181BB();
 	void OC_sub18213();
 	void OC_sub18252();
