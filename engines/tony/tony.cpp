@@ -20,20 +20,63 @@
  *
  */
 
+#include "common/scummsys.h"
+#include "common/algorithm.h"
+#include "common/file.h"
 #include "tony/tony.h"
+#include "tony/mpal/mpal.h"
 
 namespace Tony {
 
 TonyEngine *_vm;
 
-TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst), 
+		_gameDescription(gameDesc), _randomSource("tony") {
+	_vm = this;
 }
 
 TonyEngine::~TonyEngine() {
 }
 
+/**
+ * Run the game
+ */
 Common::Error TonyEngine::run() {
+	Common::ErrorCode result = Init();
+	if (result != Common::kNoError)
+		return result;
+
+	/*
+	Play();
+	Close();
+*/
 	return Common::kNoError;
+}
+
+/**
+ * Initialise the game
+ */
+Common::ErrorCode TonyEngine::Init() {
+	// Initialise the function list
+	Common::fill(FuncList, FuncList + sizeof(FuncList), (LPCUSTOMFUNCTION)NULL);
+
+	// Initializes MPAL system, passing the custom functions list
+	Common::File f;
+	if (!f.open("ROASTED.MPC"))
+		return Common::kReadingFailed;
+	f.close();
+
+	if (!mpalInit("ROASTED.MPC", "ROASTED.MPR", FuncList))
+		return Common::kUnknownError;
+
+	return Common::kNoError;
+}
+
+/**
+ * Display an error message
+ */
+void TonyEngine::GUIError(const Common::String &msg) {
+	GUIErrorMessage(msg);
 }
 
 } // End of namespace Tony

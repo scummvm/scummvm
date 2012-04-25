@@ -26,10 +26,11 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
-#include "common/events.h"
-#include "common/keyboard.h"
+#include "common/random.h"
 #include "common/util.h"
 #include "engines/engine.h"
+
+#include "tony/mpal.h"
 
 /**
  * This is the namespace of the Tony engine.
@@ -40,6 +41,8 @@
  * - Tony Tough
  */
 namespace Tony {
+
+using namespace MPAL;
 
 enum {
 	kTonyDebugAnimations = 1 << 0,
@@ -55,10 +58,15 @@ enum {
 struct TonyGameDescription;
 
 class TonyEngine : public Engine {
+private:
+	Common::ErrorCode Init();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+public:
+	LPCUSTOMFUNCTION FuncList[300];
+	Common::RandomSource _randomSource;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();
@@ -70,6 +78,8 @@ public:
 	uint16 getVersion() const;
 	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
+
+	void GUIError(const Common::String &msg);
 };
 
 // Global reference to the TonyEngine object

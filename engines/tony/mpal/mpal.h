@@ -20,7 +20,6 @@
  *
  *
  */
-
 /**************************************************************************
  *                                     様様様様様様様様様様様様様様様様様 *
  *                        ...                  Spyral Software snc        *
@@ -118,11 +117,8 @@
 #ifndef __MPAL_H
 #define __MPAL_H
 
+#include "common/scummsys.h"
 #include "common/rect.h"
-
-namespace Tony {
-
-namespace MPAL {
 
 /****************************************************************************\
 *       Macro definitions and structures
@@ -201,10 +197,10 @@ typedef struct {
   Common::Rect bbox[MAXFRAMES];
   short pattern[MAXPATTERN][MAXFRAMES];
   short speed;
-  uint8 numframe;
-  uint8 numpattern;
-  uint8 curframe;
-  uint8 curpattern;
+  char numframe;
+  char numpattern;
+  char curframe;
+  char curpattern;
   short destX, destY;
   signed char Zvalue;
   short objectID;
@@ -350,7 +346,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 
 /****************************************************************************\
 *
-* Function:     LPuint32 mpalQueryItemList(uint32 nLoc);
+* Function:     uint32 * mpalQueryItemList(uint32 nLoc);
 *
 * Description:  Provides the list of objects in the lease.
 *
@@ -361,7 +357,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryItemList(nLoc)                         \
-        (LPuint32)mpalQuery(MPQ_ITEM_LIST,(uint32)(nLoc))
+        (uint32 *)mpalQuery(MPQ_ITEM_LIST,(uint32)(nLoc))
 
 
 
@@ -479,7 +475,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 
 /****************************************************************************\
 *
-* Function:     LPuint32 mpalQueryDialogSelectList(uint32 nChoice);
+* Function:     uint32 * mpalQueryDialogSelectList(uint32 nChoice);
 *
 * Description:  Requires a list of various options for some choice within 
 *				the current dialog.
@@ -496,7 +492,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryDialogSelectList(nChoice)              \
-        (LPuint32)mpalQuery(MPQ_DIALOG_SELECTLIST,(uint32)(nChoice))
+        (uint32 *)mpalQuery(MPQ_DIALOG_SELECTLIST,(uint32)(nChoice))
 
 
 
@@ -572,8 +568,12 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 
 
 /****************************************************************************\
-*       MPAL Interface Functions
+*       Functions exported DLL
 \****************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /****************************************************************************\
 *
@@ -741,9 +741,29 @@ void EXPORT mpalSaveState(byte *buf);
 
 int EXPORT mpalGetSaveStateSize(void);
 
-} // end of namespace MPAL
+#ifdef __cplusplus
+}
+#endif
 
-} // end of namespace 
+/****************************************************************************\
+*
+* Function:     void LockVar(void);
+*
+* Description:  Locka le variabili per accederci
+*
+\****************************************************************************/
+
+extern void LockVar(void);
+
+/****************************************************************************\
+*
+* Function:     void UnlockVar(void);
+*
+* Description:  Unlocka le variabili dopo l'uso
+*
+\****************************************************************************/
+
+extern void UnlockVar(void);
 
 #endif
 
