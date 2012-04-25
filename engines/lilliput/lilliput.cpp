@@ -163,6 +163,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_saveFlag = false;
 	_byte16F07_menuId = 0;
 
+	for (int i = 0; i < 3; i++)
+		_array147D1[i] = 0;
+
 	for (int i = 0; i < 40; i++) {
 		_array10999[i] = 0;
 		_array109C1[i] = 0;
