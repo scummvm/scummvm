@@ -39,6 +39,7 @@ int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
 	PLUGIN_TYPE_MUSIC_VERSION,
 	PLUGIN_TYPE_DETECTION_VERSION,
+	PLUGIN_TYPE_SCALER_VERSION,
 };
 
 
@@ -935,4 +936,16 @@ DECLARE_SINGLETON(MusicManager);
 
 const PluginList &MusicManager::getPlugins() const {
 	return PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
+}
+
+// Scaler plugins
+
+#include "graphics/scalerplugin.h"
+
+namespace Common {
+DECLARE_SINGLETON(ScalerManager);
+}
+
+const ScalerPlugin::List &ScalerManager::getPlugins() const {
+	return (const ScalerPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_SCALER);
 }
