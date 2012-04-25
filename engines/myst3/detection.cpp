@@ -92,8 +92,8 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformWindows, Common::IT_ITA, "DVD", "M3.exe", "e5e0ca7a6703c3aee5438f9602214ac9", &v127win)
 	MYST3ENTRY(Common::kPlatformWindows, Common::ES_ESP, "DVD", "M3.exe", "1c30c1d2e06bab8dcd483f5c49ef1a65", &v127win)
 
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, 0,     "Myst III Exile", "xxx", &v100mac)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::JA_JPN, 0,     "Myst3 Exile JP", "xxx", &v120mjp)
+	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, 0,     "Myst III Exile",                "13d36737421e7dbc5ac453491935d0f5", &v100mac)
+	MYST3ENTRY(Common::kPlatformMacintosh, Common::JA_JPN, 0,     "Myst3 Exile JP",                "fd212d71d70fb4e8cacbdce175ebeb81", &v120mjp)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, 0,     "Myst3",                         "bedd73588f94f0aa287084b2ee5d4f12", &v120mac)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, "DVD", "Myst III Exile for Mac OS 8-9", "820f34ab68643b60f05e819e45f93cd2", &v127mac)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, "DVD", "Myst III Exile for Mac OS 8-9", "2f074a705b56ce42f2a4019e1c01e483", &v127mac)
