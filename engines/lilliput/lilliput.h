@@ -87,8 +87,8 @@ public:
 	struct18560 _arr18560[4];
 	byte _byte1714E;
 	byte _byte184F4;
-	byte _byte16529;
-	byte _byte1652A;
+	byte _nextDisplayCharacterX;
+	byte _nextDisplayCharacterY;
 	byte _sound_byte16F06;
 	byte _byte16F09;
 	byte _keyboard_nextIndex;
@@ -258,6 +258,8 @@ public:
 	int sub13240(int posX, int posY, int var3, int var4);
 	void sub131B2(int var2, int var4, bool &forceReturnFl);
 	void sub131FC(int var2, int var4);
+	void sub1546F(byte displayX, byte displayY);
+	void sub15498(byte x, byte y, int var2);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
@@ -301,7 +303,7 @@ public:
 	void sub170EE(int index);
 	void sub130DD();
 	void sub16217();
-	void sub1652B(int var1);
+	void setNextDisplayCharacter(int var1);
 	void handleGameScripts();
 
 	// Temporary stubs

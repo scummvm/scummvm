@@ -133,8 +133,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12FCE = 0;
 	_byte129A0 = 0xFF;
 	_numCharactersToDisplay = 0;
-	_byte16529 = 0;
-	_byte1652A = 0;
+	_nextDisplayCharacterX = 0;
+	_nextDisplayCharacterY = 0;
 	_byte12A04 = 0;
 	_byte12A05 = 10;
 	_byte12A06 = 2;
@@ -227,7 +227,6 @@ GUI::Debugger *LilliputEngine::getDebugger() {
 }
 
 void LilliputEngine::update() {
-
 	// update every 20 ms.
 	int currentTime = _system->getMillis();
 	if(currentTime - _lastTime > 20) {
@@ -336,41 +335,12 @@ void LilliputEngine::displayFunction1(byte *buf, int var1, int var2, int var4) {
 	int index2 = var2 + tmpVal + (tmpVal >> 2);
 
 	for (int i = 0; i < 16; i++) {
-		if (newBuf[0] != 0)
-			((byte *)_mainSurface->getPixels())[index2] = newBuf[0];
-		if (newBuf[1] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 1] = newBuf[1];
-		if (newBuf[2] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 2] = newBuf[2];
-		if (newBuf[3] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 3] = newBuf[3];
-		if (newBuf[4] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 4] = newBuf[4];
-		if (newBuf[5] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 5] = newBuf[5];
-		if (newBuf[6] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 6] = newBuf[6];
-		if (newBuf[7] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 7] = newBuf[7];
-		if (newBuf[8] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 8] = newBuf[8];
-		if (newBuf[9] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 9] = newBuf[9];
-		if (newBuf[10] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 10] = newBuf[10];
-		if (newBuf[11] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 11] = newBuf[11];
-		if (newBuf[12] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 12] = newBuf[12];
-		if (newBuf[13] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 13] = newBuf[13];
-		if (newBuf[14] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 14] = newBuf[14];
-		if (newBuf[15] != 0)
-			((byte *)_mainSurface->getPixels())[index2 + 15] = newBuf[15];
-
+		for (int j = 0; j < 16; j++) {
+			if (newBuf[j] != 0)
+				((byte *)_mainSurface->getPixels())[index2 + j] = newBuf[j];
+		}
 		index2 += 320;
-		newBuf = &newBuf[16];
+		newBuf += 16;
 	}
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
@@ -689,16 +659,17 @@ void LilliputEngine::sub16217() {
 	sortCharacters();
 }
 
-void LilliputEngine::sub1652B(int var1) {
-	debugC(2, kDebugEngine, "sub1652B(%d)", var1);
+void LilliputEngine::setNextDisplayCharacter(int var1) {
+	debugC(2, kDebugEngine, "setNextDisplayCharacter(%d)", var1);
 
-	if ( (var1 & 0xFF) < _numCharactersToDisplay) {
-		int index = _charactersToDisplay[var1 & 0xFF];
-		_byte16529 = _characterRelativePositionX[index];
-		_byte1652A = _characterRelativePositionY[index];
+	byte charNum = var1 & 0xFF;
+	if ( charNum < _numCharactersToDisplay) {
+		int index = _charactersToDisplay[charNum];
+		_nextDisplayCharacterX = _characterRelativePositionX[index];
+		_nextDisplayCharacterY = _characterRelativePositionY[index];
 	} else {
-		_byte16529 = 0xFF;
-		_byte1652A = 0xFF;
+		_nextDisplayCharacterX = 0xFF;
+		_nextDisplayCharacterY = 0xFF;
 	}
 }
 
@@ -707,7 +678,7 @@ void LilliputEngine::displayFunction15() {
 
 	sub16217();
 	_currentDisplayCharacter = 0;
-	sub1652B(0);
+	setNextDisplayCharacter(0);
 
 	memcpy(_buffer1_45k, _buffer2_45k, 45056);
 
@@ -964,7 +935,7 @@ void LilliputEngine::displayChar(int index, int var1) {
 }
 
 void LilliputEngine::sortCharacters() {
-	debugC(2, kDebugEngine, "sub16323()");
+	debugC(2, kDebugEngine, "sortCharacters()");
 
 	if (_numCharactersToDisplay <= 1)
 		return;
@@ -1008,7 +979,7 @@ void LilliputEngine::sortCharacters() {
 
 // Move view port to x/y
 void LilliputEngine::scrollToViewportCharacterTarget() {
-	debugC(2, kDebugEngine, "sub1638C()");
+	debugC(2, kDebugEngine, "scrollToViewportCharacterTarget()");
 
 	if (_scriptHandler->_viewportCharacterTarget == 0xFFFF)
 		return;
@@ -1046,7 +1017,7 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 }
 
 void LilliputEngine::viewportScrollTo(int goalX, int goalY) {
-	debugC(2, kDebugEngine, "sub163F0(%d, %d)", goalX, goalY);
+	debugC(2, kDebugEngine, "viewportScrollTo(%d, %d)", goalX, goalY);
 
 	if ((goalX == _scriptHandler->_viewportX) && (goalY == _scriptHandler->_viewportY))
 		return;
@@ -1086,9 +1057,9 @@ void LilliputEngine::viewportScrollTo(int goalX, int goalY) {
 }
 
 void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
-	debugC(2, kDebugEngine, "sub16553()");
+	debugC(2, kDebugEngine, "renderCharacters(buf, %d, %d)", x, y);
 
-	if ((_byte16529 != x) || (_byte1652A != y))
+	if ((_nextDisplayCharacterX != x) || (_nextDisplayCharacterY != y))
 		return;
 
 	bool _byte16552 = 0;
@@ -1104,7 +1075,7 @@ void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
 	int displayY = _characterDisplayY[index];
 
 	if (index == _scriptHandler->_word1881B)
-		warning("sub_1546F(%d,%d)", displayX, displayY);
+		sub1546F(displayX, displayY);
 
 	if (_byte16552 != 1) {
 		int var3 = _rulesBuffer2_9[index];
@@ -1126,9 +1097,44 @@ void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
 	}
 
 	++_currentDisplayCharacter;
-	sub1652B(_currentDisplayCharacter);
+	setNextDisplayCharacter(_currentDisplayCharacter);
 
 	renderCharacters(buf, x, y);
+}
+
+void LilliputEngine::sub1546F(byte displayX, byte displayY) {
+	debugC(2, kDebugEngine, "sub1546F(%d, %d)", displayX, displayY);
+	
+	int orgX = displayX + 8;
+	int orgY = displayY;
+	int var2 = 0;
+	
+	int x = orgX;
+	int y = orgY;
+	do {
+		sub15498(x, y, var2);
+		--x;
+		y >>= 1;
+	} while (y != 0);
+	
+	x = orgX + 1;
+	y = orgY >> 1;
+	
+	while (y != 0) {
+		sub15498(x, y, var2);
+		++x;
+		y >>= 1;
+	}
+}
+
+void LilliputEngine::sub15498(byte x, byte y, int var2) {
+	debugC(2, kDebugEngine, "sub15498(%d, %d, %d)", x, y, var2);
+	
+	int index = x + ((var2 & 0xFF) << 8) + (var2 >> 8);
+	for (int i = 1 + y - var2; i > 0; i--) {
+		_buffer1_45k[index] = 17;
+		index += 256;
+	}
 }
 
 void LilliputEngine::sub189DE() {
