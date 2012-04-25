@@ -1201,8 +1201,14 @@ byte LilliputScript::OC_sub17825() {
 }
 
 byte LilliputScript::OC_sub17844() {
-	warning("OC_sub17844");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub17844()");
+
+	int tmpVal = _currScript->readUint16LE();
+
+	if ((_vm->_byte16F07_menuId == 2) || ((tmpVal & 0xFF) != _byte12FE4))
+		return 0;
+
+	return 1;
 }
 
 byte LilliputScript::OC_sub1785C() {
@@ -1303,14 +1309,25 @@ byte LilliputScript::OC_sub17984() {
 
 	return 0;
 }
+
 byte LilliputScript::OC_checkSavedMousePos() {
-	warning("OC_checkSavedMousePos");
-	return 0;
+	debugC(1, kDebugScript, "OC_checkSavedMousePos()");
+
+	if ((_byte129A0 != 0xFF) || (_vm->_savedMousePosDivided == 0xFFFF))
+		return 0;
+
+	return 1;
 }
+
 byte LilliputScript::OC_sub179AE() {
-	warning("OC_sub179AE");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub179AE()");
+
+	if ((_vm->_byte12FCE == 1) || (_byte129A0 == 0xFF))
+		return 0;
+
+	return 1;
 }
+
 byte LilliputScript::OC_sub179C2() {
 	warning("OC_sub179C2");
 	return 0;
@@ -1319,10 +1336,29 @@ byte LilliputScript::OC_sub179E5() {
 	warning("OC_sub179E5");
 	return 0;
 }
+
 byte LilliputScript::OC_sub17A07() {
-	warning("OC_sub17A07");
+	debugC(1, kDebugScript, "OC_sub17A07()");
+
+	static const byte _array179FD[10] = {11, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+	if (_vm->_byte16F07_menuId == 6) {
+		int index = _currScript->readUint16LE();
+		if (_array179FD[index] == _vm->_array147D1[0]) {
+			index = _currScript->readUint16LE();
+			if (_array179FD[index] == _vm->_array147D1[1]) {
+				index = _currScript->readUint16LE();
+				if (_array179FD[index] == _vm->_array147D1[2]) {
+					return 1;
+				}
+			}
+		}
+	}
+	
+	_currScript->seek(_currScript->pos() + 6);
 	return 0;
 }
+
 byte LilliputScript::OC_sub17757() {
 	warning("OC_sub17757");
 	return 0;
