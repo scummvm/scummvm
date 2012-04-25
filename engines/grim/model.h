@@ -53,22 +53,18 @@ class Model : public Object {
 public:
 	// Construct a 3D model from the given data.
 	Model(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap, Model *parent = NULL);
-	void loadBinary(Common::SeekableReadStream *data, CMap *cmap);
-	void loadText(TextSplitter *ts, CMap *cmap);
-	void loadEMI(Common::SeekableReadStream *data);
+
 	void reload(CMap *cmap);
 	void draw() const;
 	Material *findMaterial(const char *name, CMap *cmap) const;
 
 	~Model();
-
-	Common::String _fname;
-	ObjectPtr<CMap> _cmap;
+	const Common::String &getFilename() const { return _fname; }
+	const ObjectPtr<CMap> &getCMap() const { return _cmap; }
 
 	ModelNode *getHierarchy() const;
 	int getNumNodes() const { return _numHierNodes; }
 
-//private:
 	struct Geoset {
 		void loadBinary(Common::SeekableReadStream *data, Material *materials[]);
 		void loadText(TextSplitter *ts, Material *materials[]);
@@ -80,8 +76,14 @@ public:
 		Mesh *_meshes;
 	};
 
-	void loadMaterial(int index, CMap *cmap);
+//private:
+	void loadMaterial(int index);
+	void loadBinary(Common::SeekableReadStream *data);
+	void loadText(TextSplitter *ts);
+	void loadEMI(Common::SeekableReadStream *data);
 
+	Common::String _fname;
+	ObjectPtr<CMap> _cmap;
 	Model *_parent;
 	int _numMaterials;
 	char (*_materialNames)[32];

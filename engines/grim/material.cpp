@@ -40,11 +40,11 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		initEMI(data);
 	} else {
-		initGrim(data, cmap);
+		initGrim(data);
 	}
 }
 
-void MaterialData::initGrim(Common::SeekableReadStream *data, CMap *cmap) {
+void MaterialData::initGrim(Common::SeekableReadStream *data) {
 	uint32 tag = data->readUint32BE();
 	if (tag != MKTAG('M','A','T',' '))
 		error("invalid magic loading texture");

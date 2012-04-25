@@ -501,7 +501,7 @@ ModelPtr ResourceLoader::getModel(const Common::String &fname, CMap *c) {
 	filename.toLowercase();
 	for (Common::List<Model *>::const_iterator i = _models.begin(); i != _models.end(); ++i) {
 		Model *m = *i;
-		if (filename == m->_fname && *m->_cmap == *c) {
+		if (filename == m->getFilename() && *m->getCMap() == *c) {
 			return m;
 		}
 	}

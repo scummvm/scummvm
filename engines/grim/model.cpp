@@ -51,11 +51,11 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		loadEMI(data);
 	} else if (data->readUint32BE() == MKTAG('L','D','O','M'))
-		loadBinary(data, cmap);
+		loadBinary(data);
 	else {
 		data->seek(0, SEEK_SET);
 		TextSplitter ts(data);
-		loadText(&ts, cmap);
+		loadText(&ts);
 	}
 
 	Math::Vector3d max;
@@ -130,7 +130,7 @@ void Model::loadEMI(Common::SeekableReadStream *data) {
 		if (memcmp(_materialNames[i], "specialty", 9) == 0) {
 			_materials[i] = 0;
 		} else {
-			loadMaterial(i, 0);
+			loadMaterial(i);
 		}
 		data->seek(4, SEEK_CUR);
 	}
@@ -139,7 +139,7 @@ void Model::loadEMI(Common::SeekableReadStream *data) {
 
 
 }
-void Model::loadBinary(Common::SeekableReadStream *data, CMap *cmap) {
+void Model::loadBinary(Common::SeekableReadStream *data) {
 	char v3[4 * 3], f[4];
 	_numMaterials = data->readUint32LE();
 	_materials = new Material*[_numMaterials];
@@ -149,7 +149,7 @@ void Model::loadBinary(Common::SeekableReadStream *data, CMap *cmap) {
 		data->read(_materialNames[i], 32);
 		_materialsShared[i] = false;
 		_materials[i] = NULL;
-		loadMaterial(i, cmap);
+		loadMaterial(i);
 	}
 	data->seek(32, SEEK_CUR); // skip name
 	data->seek(4, SEEK_CUR);
@@ -170,7 +170,7 @@ void Model::loadBinary(Common::SeekableReadStream *data, CMap *cmap) {
 	_insertOffset = Math::Vector3d::get_vector3d(v3);
 }
 
-void Model::loadText(TextSplitter *ts, CMap *cmap) {
+void Model::loadText(TextSplitter *ts) {
 	ts->expectString("section: header");
 	int major, minor;
 	ts->scanString("3do %d.%d", 2, &major, &minor);
@@ -187,7 +187,7 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 
 		ts->scanString("%d: %32s", 2, &num, materialName);
 		strcpy(_materialNames[num], materialName);
-		loadMaterial(num, cmap);
+		loadMaterial(num);
 	}
 
 	ts->expectString("section: geometrydef");
@@ -258,32 +258,32 @@ ModelNode *Model::getHierarchy() const {
 }
 
 void Model::reload(CMap *cmap) {
+	_cmap = cmap;
 	// Load the new colormap
 	for (int i = 0; i < _numMaterials; i++) {
-		loadMaterial(i, cmap);
+		loadMaterial(i);
 	}
 	for (int i = 0; i < _numGeosets; i++)
 		_geosets[i].changeMaterials(_materials);
-	_cmap = cmap;
 }
 
-void Model::loadMaterial(int index, CMap *cmap) {
+void Model::loadMaterial(int index) {
 	Material *mat = NULL;
 	if (!_materialsShared[index]) {
 		mat = _materials[index];
 	}
 	_materials[index] = NULL;
 	if (_parent) {
-		_materials[index] = _parent->findMaterial(_materialNames[index], cmap);
+		_materials[index] = _parent->findMaterial(_materialNames[index], _cmap);
 		if (_materials[index]) {
 			_materialsShared[index] = true;
 		}
 	}
 	if (!_materials[index]) {
-		if (mat && cmap->getFilename() == _cmap->getFilename()) {
+		if (mat && _cmap->getFilename() == _cmap->getFilename()) {
 			_materials[index] = mat;
 		} else {
-			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap);
+			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], _cmap);
 		}
 		_materialsShared[index] = false;
 	}

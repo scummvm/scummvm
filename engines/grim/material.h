@@ -55,7 +55,7 @@ public:
 	int _refCount;
 
 private:
-	void initGrim(Common::SeekableReadStream *data, CMap *cmap);
+	void initGrim(Common::SeekableReadStream *data);
 	void initEMI(Common::SeekableReadStream *data);
 };
 
