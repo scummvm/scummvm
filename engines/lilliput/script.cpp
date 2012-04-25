@@ -1001,10 +1001,23 @@ byte LilliputScript::OC_sub1750E() {
 	warning("OC_sub1750E");
 	return 0;
 }
+
 byte LilliputScript::OC_compareCoords_1() {
-	warning("compareCoords_1");
-	return 0;
+	debugC(1, kDebugScript, "OC_compareCoords_1()");
+
+	int index = _currScript->readUint16LE();
+	assert(index < 40);
+
+	int var3 = _vm->_rulesBuffer12_1[index];
+	int var4 = _vm->_rulesBuffer12_2[index];
+	int var1 = _vm->_word16EFA;
+
+	if (((var1 >> 8) < (var3 >> 8)) || ((var1 >> 8) > (var3 & 0xFF)) || ((var1 & 0xFF) < (var3 >> 8)) || ((var1 & 0xFF) > (var3 & 0xFF)))
+		return 0;
+
+	return 1;
 }
+
 byte LilliputScript::OC_compareCoords_2() {
 	warning("compareCoords_2");
 	return 0;
@@ -1257,13 +1270,29 @@ byte LilliputScript::OC_sub178E8() {
 	warning("OC_sub178E8");
 	return 0;
 }
+
 byte LilliputScript::OC_sub178FC() {
-	warning("OC_sub178FC");
+	debugC(1, kDebugScript, "OC_sub178FC()");
+
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	byte curByte = (_currScript->readUint16LE() & 0xFF);
+
+	if (curByte <= _vm->_ptr_rulesBuffer2_15[0])
+		return 1;
 	return 0;
 }
+
 byte LilliputScript::OC_sub1790F() {
-	warning("OC_sub1790F");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub1790F()");
+
+	int index = getValue1();
+	assert(index < 40);
+	if (_vm->_rulesBuffer2_5[index] == 0xFF)
+		return 0;
+
+	_word16F00 = _vm->_rulesBuffer2_5[index];
+
+	return 1;
 }
 
 byte LilliputScript::OC_sub1792A() {
@@ -1279,8 +1308,15 @@ byte LilliputScript::OC_sub1792A() {
 }
 
 byte LilliputScript::OC_sub1793E() {
-	warning("OC_sub1793E");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub1793E()");
+
+	if (_vm->_word16EFA == 0xFFFF)
+		return 0;
+
+	if (_vm->_array16E94[_vm->_rulesBuffer2PrevIndx] == 0)
+		return 0;
+
+	return 1;
 }
 
 byte LilliputScript::OC_sub1795E() {
