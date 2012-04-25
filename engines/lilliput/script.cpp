@@ -41,8 +41,8 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_word16F00 = -1;
 	_viewportCharacterTarget = -1;
 	_word10804 = 0;
-	_word15FFB = 0;
-	_word15FFD = 0;
+	_heroismBarX = 0;
+	_heroismBarBottomY = 0;
 	_viewportX = 0;
 	_viewportY = 0;
 	_word18776 = 0;
@@ -63,6 +63,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array16123[i] = 0;
 		_array1614B[i] = 0;
 		_array16173[i] = 0xFF;
+		_array122C1[i] = 0;
 	}
 
 	for (int i = 0; i < 640; i++) {
@@ -1571,7 +1572,11 @@ void LilliputScript::OC_resetWord16EFE() {
 	warning("OC_resetWord16EFE");
 }
 void LilliputScript::OC_sub17CEF() {
-	warning("OC_sub17CEF");
+	debugC(1, kDebugScript, "OC_sub17CEF()");
+
+	int var1 = _currScript->readUint16LE();
+	sub1823E(_vm->_rulesBuffer2PrevIndx , var1, _vm->_ptr_rulesBuffer2_15);
+	sub17B6C(0);
 }
 
 void LilliputScript::OC_sub17D1B() {
@@ -1751,7 +1756,10 @@ void LilliputScript::OC_sub1834C() {
 }
 
 void LilliputScript::OC_sub18359() {
-	warning("OC_sub18359");
+	debugC(1, kDebugScript, "OC_sub18359()");
+
+	int var1 = _currScript->readUint16LE();
+	_array122C1[_vm->_rulesBuffer2PrevIndx] = var1;
 }
 void LilliputScript::OC_sub18367() {
 	warning("OC_sub18367");
@@ -1876,7 +1884,7 @@ void LilliputScript::OC_sub1853B() {
 
 	OC_PaletteFadeOut();
 	displayMap = 0;
-	_byte15FFA = 0;
+	_heroismLevel = 0;
 	sub130B6();
 
 	_vm->displayFunction12();
@@ -1907,8 +1915,8 @@ void LilliputScript::OC_initArr18560() {
 void LilliputScript::OC_sub18678() {
 	debugC(1, kDebugScript, "OC_initArr18578()");
 	_savedBuffer215Ptr = getBuffer215Ptr();
-	_word15FFB = _currScript->readUint16LE();
-	_word15FFD = _currScript->readUint16LE();
+	_heroismBarX = _currScript->readUint16LE();
+	_heroismBarBottomY = _currScript->readUint16LE();
 }
 
 void LilliputScript::OC_sub18690() {

@@ -34,7 +34,7 @@ class LilliputScript {
 public:
 	byte displayMap;
 	byte _byte12A04;
-	byte _byte15FFA;
+	byte _heroismLevel;
 
 	byte _array10B29[40];
 	byte _array122E9[20];
@@ -44,6 +44,7 @@ public:
 	byte _array12811[40];
 	byte _array10AB1[40];
 	byte _array122FD[20];
+	byte _array122C1[40];
 	short _array10B51[40 * 40];
 
 	byte *_savedBuffer215Ptr;
@@ -52,8 +53,8 @@ public:
 	int _viewportY;
 	int _viewportCharacterTarget;
 	int _word1881B;
-	int _word15FFB;
-	int _word15FFD;
+	int _heroismBarX;
+	int _heroismBarBottomY;
 
 	short _array12311[640];
 	byte _array128EF[40];

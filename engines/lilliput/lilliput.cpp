@@ -1346,12 +1346,15 @@ void LilliputEngine::sub12F37() {
 	int index2 = 0;
 
 	for (int i = 0; i < _word10807_ERULES; i++) {
-		if (_rulesBuffer2_15[index1] == 1 ) {
-			--_rulesBuffer2_15[index1];
-			if (_rulesBuffer2_15[index1] == 1)
-				_scriptHandler->_array10B29[index2] = 1;
-		} else
-			_rulesBuffer2_15[index1] = 0;
+		if (_rulesBuffer2_15[index1] != 0 ) {
+			if (_rulesBuffer2_15[index1] == 1) {
+				_rulesBuffer2_15[index1] = 0;
+			} else {
+				--_rulesBuffer2_15[index1];
+				if (_rulesBuffer2_15[index1] == 1)
+					_scriptHandler->_array10B29[index2] = 1;
+			}			
+		}
 
 		index1 += 32;
 		++index2;
@@ -1610,23 +1613,23 @@ void LilliputEngine::displayHeroismIndicator() {
 
 	int var1 = (_scriptHandler->_savedBuffer215Ptr[0] * 25) >> 8;
 
-	if (var1 == _scriptHandler->_byte15FFA)
+	if (var1 == _scriptHandler->_heroismLevel)
 		return;
 
 	displayFunction5();
 	int var2 = 1;
-	if (var1 > _scriptHandler->_byte15FFA)
+	if (var1 > _scriptHandler->_heroismLevel)
 		var1 = 150;
 	else {
 		var2 = -1;
 		var1 = 40;
 	}
 
-	_scriptHandler->_byte15FFA += var2;
+	_scriptHandler->_heroismLevel += var2;
+	
+	int index = _scriptHandler->_heroismBarX + _scriptHandler->_heroismBarBottomY * 320 ;
 
-	int index = _scriptHandler->_word15FFB + _scriptHandler->_word15FFD * 320 ;
-
-	var2 = _scriptHandler->_byte15FFA & 0xFF;
+	var2 = _scriptHandler->_heroismLevel & 0xFF;
 	if (var2 != 0) {
 //		sub16064(var1, _scriptHandler->_byte15FFA);
 		for (int i = 0; i < (var2 << 2); i++) {
@@ -1637,9 +1640,9 @@ void LilliputEngine::displayHeroismIndicator() {
 		}
 	}
 
-	if (25 - _scriptHandler->_byte15FFA != 0) {
+	if (25 - _scriptHandler->_heroismLevel != 0) {
 //		sub16064(23, 25 - _scriptHandler->_byte15FFA);
-		var2 = (25 - _scriptHandler->_byte15FFA) << 2;
+		var2 = (25 - _scriptHandler->_heroismLevel) << 2;
 		for (int i = 0; i < var2; i++) {
 			((byte *)_mainSurface->getPixels())[index] = 23;
 			((byte *)_mainSurface->getPixels())[index + 1] = 23;
