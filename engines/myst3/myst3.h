@@ -187,7 +187,7 @@ private:
 	HotSpot *getHoveredHotspot(NodePtr nodeData, uint16 var = 0);
 	void updateCursor();
 
-	void addArchive(const Common::String &file, bool mandatory);
+	bool addArchive(const Common::String &file, bool mandatory);
 	void openArchives();
 	void closeArchives();
 
