@@ -840,7 +840,7 @@ Optional Libraries:
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
 
-  --with-freetype-prefix=DIR Prefix where the freetype-config script is
+  --with-freetype2-prefix=DIR Prefix where the freetype-config script is
                            installed (optional)
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
