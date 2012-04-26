@@ -45,19 +45,20 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ExecutableVersion v100mac = { "1.0 Mac",      kFlagVersion10, "Myst III Exile",                0,        0x10FD4,  0x10F10,  0x1109C  };
-static const ExecutableVersion v120mjp = { "1.2 Mac",      kFlagNone,      "Myst3 Exile JP",                0,        0x11230,  0x1116C,  0x112F8  };
-static const ExecutableVersion v120mac = { "1.2 Mac",      kFlagNone,      "Myst3",                         0,        0x112D0,  0x1120C,  0x11398  };
-static const ExecutableVersion v12xsd  = { "1.2 Win",      kFlagSafeDisc,  "M3.exe",                        0,        0,        0,        0        };
-static const ExecutableVersion v12xwin = { "1.2x Win",     kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0  };
-static const ExecutableVersion v122osx = { "1.22 Mac OSX", kFlagNone,      "Myst3 OS X US",                 0,        0x118C4,  0x11800,  0x1198C  };
-static const ExecutableVersion v124win = { "1.24 Win",     kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861E8  };
-static const ExecutableVersion v127win = { "1.27 Win",     kFlagDVD,       "M3.exe",                        0x400000, 0x86110,  0x86040,  0x861F0  };
-static const ExecutableVersion v127mac = { "1.27 Mac",     kFlagDVD,       "Myst III Exile for Mac OS 8-9", 0,        0x11378,  0x112A8,  0x11454  };
-static const ExecutableVersion v127xcd = { "1.27 Mac OSX", kFlagNone,      "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10  };
-static const ExecutableVersion v127osx = { "1.27 Mac OSX", kFlagDVD,       "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10  };
-static const ExecutableVersion ps2ntsc = { "PS2 NTSC",     kFlagNone,      "SLUS_204.34",                   0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 };
-static const ExecutableVersion ps2pal =  { "PS2 PAL",      kFlagNone,      "SLES_507.26",                   0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0 };
+static const ExecutableVersion v100win = { "1.0 Windows",    kFlagVersion10 | kFlagSafeDisc, "M3.exe",                        0,        0,        0,        0        };
+static const ExecutableVersion v100mac = { "1.0 Macintosh",  kFlagVersion10,                 "Myst III Exile",                0,        0x10FD4,  0x10F10,  0x1109C  };
+static const ExecutableVersion v120mjp = { "1.2 Macintosh",  kFlagNone,                      "Myst3 Exile JP",                0,        0x11230,  0x1116C,  0x112F8  };
+static const ExecutableVersion v120mac = { "1.2 Macintosh",  kFlagNone,                      "Myst3",                         0,        0x112D0,  0x1120C,  0x11398  };
+static const ExecutableVersion v12xsd  = { "1.2 Windows",    kFlagSafeDisc,                  "M3.exe",                        0,        0,        0,        0        };
+static const ExecutableVersion v12xwin = { "1.2x Windows",   kFlagNone,                      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0  };
+static const ExecutableVersion v122osx = { "1.22 Mac OS X",  kFlagNone,                      "Myst3 OS X US",                 0,        0x118C4,  0x11800,  0x1198C  };
+static const ExecutableVersion v124win = { "1.24 Windows",   kFlagNone,                      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861E8  };
+static const ExecutableVersion v127win = { "1.27 Windows",   kFlagDVD,                       "M3.exe",                        0x400000, 0x86110,  0x86040,  0x861F0  };
+static const ExecutableVersion v127mac = { "1.27 Macintosh", kFlagDVD,                       "Myst III Exile for Mac OS 8-9", 0,        0x11378,  0x112A8,  0x11454  };
+static const ExecutableVersion v127xcd = { "1.27 Mac OS X",  kFlagNone,                      "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10  };
+static const ExecutableVersion v127osx = { "1.27 Mac OS X",  kFlagDVD,                       "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10  };
+static const ExecutableVersion ps2ntsc = { "PS2 NTSC-U/C",   kFlagNone,                      "SLUS_204.34",                   0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 };
+static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,                      "SLES_507.26",                   0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0 };
 
 #define MYST3ENTRY(platform, lang, extra, exe, md5exe, version) 				\
 {																				\
@@ -77,6 +78,7 @@ static const ExecutableVersion ps2pal =  { "PS2 PAL",      kFlagNone,      "SLES
 },
 
 static const Myst3GameDescription gameDescriptions[] = {
+	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "f8ab52da2815c1342eeb42b1bcad5441", &v100win) // 1.0
 	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "3510a29ba7db40fa7310e15aac807e8e", &v12xsd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "7a4eaea5f19f621e05e732d657c15fe3", &v12xwin) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "c8ca22d347f947cd52d95229d0f6a3f3", &v12xwin) // 1.22
@@ -92,8 +94,8 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformWindows, Common::IT_ITA, "DVD", "M3.exe", "e5e0ca7a6703c3aee5438f9602214ac9", &v127win)
 	MYST3ENTRY(Common::kPlatformWindows, Common::ES_ESP, "DVD", "M3.exe", "1c30c1d2e06bab8dcd483f5c49ef1a65", &v127win)
 
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, 0,     "Myst III Exile", "xxx", &v100mac)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::JA_JPN, 0,     "Myst3 Exile JP", "xxx", &v120mjp)
+	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, 0,     "Myst III Exile",                "13d36737421e7dbc5ac453491935d0f5", &v100mac)
+	MYST3ENTRY(Common::kPlatformMacintosh, Common::JA_JPN, 0,     "Myst3 Exile JP",                "fd212d71d70fb4e8cacbdce175ebeb81", &v120mjp)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, 0,     "Myst3",                         "bedd73588f94f0aa287084b2ee5d4f12", &v120mac)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, "DVD", "Myst III Exile for Mac OS 8-9", "820f34ab68643b60f05e819e45f93cd2", &v127mac)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, "DVD", "Myst III Exile for Mac OS 8-9", "2f074a705b56ce42f2a4019e1c01e483", &v127mac)
@@ -112,7 +114,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::ES_ESP, "DVD", "Myst III Exile for Mac OS X",   "05f37c98a0378c57190da5a4687b7e41", &v127osx)
 
 	{
-		// Myst 3 PS2 (NTSC U/C)
+		// Myst 3 PS2 (NTSC-U/C)
 		{
 			"myst3",
 			0,

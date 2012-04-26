@@ -192,7 +192,7 @@ Common::Error Myst3Engine::run() {
 	return Common::kNoError;
 }
 
-void Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
+bool Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
 	Archive *archive = new Archive();
 	bool opened = archive->open(file.c_str(), 0);
 
@@ -203,6 +203,8 @@ void Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
 		if (mandatory)
 			error("Unable to open archive %s", file.c_str());
 	}
+
+	return opened;
 }
 
 void Myst3Engine::openArchives() {
@@ -277,9 +279,9 @@ void Myst3Engine::openArchives() {
 	addArchive("OVER101.m3o", false);
 	addArchive(textLanguage + ".m3t", true);
 
-	if (getExecutableVersion()->flags & kFlagDVD
-			|| getDefaultLanguage() != Common::EN_ANY)
-		addArchive(menuLanguage + ".m3u", true);
+	if (getExecutableVersion()->flags & kFlagDVD || getDefaultLanguage() != Common::EN_ANY)
+		if (!addArchive("language.m3u", false))
+			addArchive(menuLanguage + ".m3u", true);
 
 	addArchive("RSRC.m3r", true);
 }
