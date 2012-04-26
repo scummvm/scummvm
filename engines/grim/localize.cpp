@@ -32,13 +32,6 @@ namespace Grim {
 
 Localizer *g_localizer = NULL;
 
-static unsigned long next = 0x16;
-
-int myrand(void) {
-    next = next * 0x343FD + 0x269EC3;
-    return (next >> 0x10) & 0x7FFF;
-}
-
 Localizer::Localizer() {
 	if (g_grim->getGameType() == GType_GRIM && g_grim->getGameFlags() & ADGF_DEMO)
 		return;
@@ -70,8 +63,10 @@ Localizer::Localizer() {
 
 		// Decode the data
 		if (g_grim->getGameType() == GType_MONKEY4) {
+			uint32 next = 0x16;
 			for (int i = 4; i < filesize; i++) {
-				data[i] ^= (int)(((myrand()/32767.f)*254)+1);
+				 next = next * 0x343FD + 0x269EC3;
+				data[i] ^= (int)(((((next >> 16) & 0x7FFF) / 32767.f) * 254) + 1);
 			}
 		} else {
 			for (int i = 4; i < filesize; i++) {
