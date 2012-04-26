@@ -120,7 +120,9 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 			// trying to do alt+enter or something). Since it's only used
 			// as an easter egg, I'm just going to handle it as a separate
 			// bool value.
-			if (event.kbd.flags & Common::KBD_ALT)
+			// WORKAROUND x2: I'm also accepting control here since an
+			// alt+click is often intercepted by the OS.
+			if (event.kbd.flags & (Common::KBD_ALT|Common::KBD_CTRL))
 				altDown = true;
 		}
 	}
