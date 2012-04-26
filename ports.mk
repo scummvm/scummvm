@@ -328,7 +328,6 @@ endif
 	cp $(srcdir)/dists/ps3/readme-ps3.md ps3pkg/USRDIR/doc/
 	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip ps3pkg/USRDIR/data/
 	cp $(srcdir)/dists/ps3/ICON0.PNG ps3pkg/
-	cp $(srcdir)/dists/ps3/PIC1.PNG ps3pkg/
 	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
 	pkg.py --contentid UP0001-RESI12000_00-0000000000000000 ps3pkg/ residualvm-ps3.pkg
 	package_finalize residualvm-ps3.pkg
