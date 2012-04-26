@@ -30,7 +30,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 
-#include "tony/mpal.h"
+#include "tony/mpal/mpal.h"
 
 /**
  * This is the namespace of the Tony engine.

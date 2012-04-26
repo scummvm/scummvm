@@ -72,7 +72,7 @@ namespace MPAL {
 *
 \****************************************************************************/
 
-bool ParseMpc(const byte *lpBuf);
+bool ParseMpc(byte *lpBuf);
 
 
 } // end of namespace MPAL

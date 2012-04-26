@@ -114,11 +114,15 @@
  *
  */
 
-#ifndef __MPAL_H
-#define __MPAL_H
+#ifndef TONY_MPAL_H
+#define TONY_MPAL_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+
+namespace Tony {
+
+namespace MPAL {
 
 /****************************************************************************\
 *       Macro definitions and structures
@@ -764,6 +768,10 @@ extern void LockVar(void);
 \****************************************************************************/
 
 extern void UnlockVar(void);
+
+} // end of namespace MPAL
+
+} // end of namespace Tony
 
 #endif
 

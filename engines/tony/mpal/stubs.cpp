@@ -1,4 +1,4 @@
-e/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -20,9 +20,6 @@ e/* ScummVM - Graphic Adventure Engine
  *
  *
  */
-
-#ifndef TONY_MPAL_STUBS
-#define TONY_MPAL_STUBS
 
 /****************************************************************************\
 *       This file contains stubs and mappings for things used by the MPAL
@@ -101,7 +98,7 @@ HANDLE CreateThread(void *lpThreadAttributes, size_t dwStackSize,
 	return 0;
 }
 
-void ExitThread(HANDLE ThreadId) {
+void ExitThread(int ThreadId) {
 }
 
 void TerminateThread(HANDLE ThreadId, uint32 dwExitCode) {
@@ -136,5 +133,3 @@ void ResetEvent(HANDLE hEvent) {
 } // end of namespace MPAL
 
 } // end of namespace Tony
-
-#endif
