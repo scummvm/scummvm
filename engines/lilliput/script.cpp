@@ -56,6 +56,9 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array122FD[i] = 0;
 	}
 
+	for (int i = 0; i < 32; i++)
+		_array1813B[i] = 0;
+
 	for (int i = 0; i < 40; i++) {
 		_array10B29[i] = 1;
 		_array128EF[i] = 15;
@@ -1015,7 +1018,7 @@ byte LilliputScript::OC_compareCoords_1() {
 	int var4 = _vm->_rulesBuffer12_2[index];
 	int var1 = _vm->_word16EFA;
 
-	if (((var1 >> 8) < (var3 >> 8)) || ((var1 >> 8) > (var3 & 0xFF)) || ((var1 & 0xFF) < (var3 >> 8)) || ((var1 & 0xFF) > (var3 & 0xFF)))
+	if (((var1 >> 8) < (var3 >> 8)) || ((var1 >> 8) > (var3 & 0xFF)) || ((var1 & 0xFF) < (var4 >> 8)) || ((var1 & 0xFF) > (var4 & 0xFF)))
 		return 0;
 
 	return 1;
@@ -1087,8 +1090,54 @@ byte LilliputScript::OC_sub175C8() {
 	return 0;
 }
 byte LilliputScript::OC_sub17640() {
-	warning("OC_sub17640");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub176C4()");
+
+	int var4 = _currScript->readUint16LE();
+	int index = _vm->_rulesBuffer2PrevIndx * 40;
+	int subIndex = 0xFFFF;
+
+	int tmpVal = _currScript->readUint16LE();
+
+	if (tmpVal >= 2000) {
+		int var1 = tmpVal;
+
+		if (var1 == 3000) {
+			subIndex = 0;
+			for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+				tmpVal = _array10B51[index + i];
+				byte v1 = tmpVal & 0xFF;
+				byte v2 = tmpVal >> 8;
+				if ((v1 >= (var4 & 0xFF)) && (v2 < (var4 & 0xFF))) {
+					_word16F00 = subIndex;
+					return 1;
+				}
+			}
+			return 0;
+		} else {
+			var1 -= 2000;
+			var4 &= ((var1 & 0xFF) << 8);
+			for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+				tmpVal = _array10B51[index + i];
+				byte v1 = tmpVal & 0xFF;
+				byte v2 = tmpVal >> 8;
+				if ((v1 >= (var4 & 0xFF)) && (v2 < (var4 & 0xFF)) && (_vm->_rulesBuffer2_12[subIndex] != (var4 >> 8))) {
+					_word16F00 = subIndex;
+					return 1;
+				}
+			}
+			return 0;
+		}
+	} else {
+		_currScript->seek(_currScript->pos() - 2);
+		subIndex = getValue1();
+		tmpVal = _array10B51[index + subIndex];
+		byte v1 = tmpVal & 0xFF;
+		byte v2 = tmpVal >> 8;
+		if ((v1 < (var4 & 0xFF)) || (v2 >= (var4 & 0xFF)))
+			return 0;
+		_word16F00 = subIndex;
+		return 1;
+	}
 }
 
 byte LilliputScript::OC_sub176C4() {
