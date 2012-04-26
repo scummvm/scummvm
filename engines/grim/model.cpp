@@ -115,7 +115,7 @@ void Model::loadBinary(Common::SeekableReadStream *data) {
 		data->read(_materialNames[i], 32);
 		_materialsShared[i] = false;
 		_materials[i] = NULL;
-		loadMaterial(i);
+		loadMaterial(i, _cmap);
 	}
 	data->seek(32, SEEK_CUR); // skip name
 	data->seek(4, SEEK_CUR);
@@ -153,7 +153,7 @@ void Model::loadText(TextSplitter *ts) {
 
 		ts->scanString("%d: %32s", 2, &num, materialName);
 		strcpy(_materialNames[num], materialName);
-		loadMaterial(num);
+		loadMaterial(num, _cmap);
 	}
 
 	ts->expectString("section: geometrydef");
@@ -224,32 +224,32 @@ ModelNode *Model::getHierarchy() const {
 }
 
 void Model::reload(CMap *cmap) {
-	_cmap = cmap;
 	// Load the new colormap
 	for (int i = 0; i < _numMaterials; i++) {
-		loadMaterial(i);
+		loadMaterial(i, cmap);
 	}
 	for (int i = 0; i < _numGeosets; i++)
 		_geosets[i].changeMaterials(_materials);
+	_cmap = cmap;
 }
 
-void Model::loadMaterial(int index) {
+void Model::loadMaterial(int index, CMap *cmap) {
 	Material *mat = NULL;
 	if (!_materialsShared[index]) {
 		mat = _materials[index];
 	}
 	_materials[index] = NULL;
 	if (_parent) {
-		_materials[index] = _parent->findMaterial(_materialNames[index], _cmap);
+		_materials[index] = _parent->findMaterial(_materialNames[index], cmap);
 		if (_materials[index]) {
 			_materialsShared[index] = true;
 		}
 	}
 	if (!_materials[index]) {
-		if (mat && _cmap->getFilename() == _cmap->getFilename()) {
+		if (mat && cmap->getFilename() == _cmap->getFilename()) {
 			_materials[index] = mat;
 		} else {
-			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], _cmap);
+			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap);
 		}
 		_materialsShared[index] = false;
 	}

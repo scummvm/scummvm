@@ -77,7 +77,7 @@ public:
 	};
 
 //private:
-	void loadMaterial(int index);
+	void loadMaterial(int index, CMap *cmap);
 	void loadBinary(Common::SeekableReadStream *data);
 	void loadText(TextSplitter *ts);
 
