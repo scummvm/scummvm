@@ -85,9 +85,6 @@ void Skeleton::initBones() {
 
 void Skeleton::resetAnim() {
 	_time = 0;
-	for (int i = 0; i < _numJoints; i++) {
-		_joints[i]._finalMatrix = _joints[i]._absMatrix;
-	}
 }
 
 void Skeleton::setAnim(AnimationEmi *anim) {
