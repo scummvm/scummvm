@@ -99,7 +99,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_getRandom();
 		break;
 	case 0x6:
-		return OC_sub1748C();
+		return OC_for();
 		break;
 	case 0x7:
 		return OC_compWord18776();
@@ -960,8 +960,8 @@ byte LilliputScript::OC_getRandom() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub1748C() {
-	debugC(1, kDebugScript, "OC_sub1748C()");
+byte LilliputScript::OC_for() {
+	debugC(1, kDebugScript, "OC_for()");
 
 	int var1 = _currScript->readUint16LE();
 	int tmpVal = _currScript->readUint16LE() + 1;
@@ -971,6 +971,7 @@ byte LilliputScript::OC_sub1748C() {
 	if (tmpVal < var1)
 		return 0;
 
+	_currScript->writeUint16LE(0, -2);
 	return 1;
 }
 
