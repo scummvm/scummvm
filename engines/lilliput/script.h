@@ -103,6 +103,7 @@ private:
 	void sub18A56(byte *buf);
 	void sub18B3C(int var);
 	void sub18BE6(byte var1, int var2, int var4);
+	byte *getMapPtr(int var1);
 
 	int getValue1();
 	int getValue2();
