@@ -551,7 +551,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 	}
 }
 
-int LilliputScript::handleOpcode(Common::MemoryReadStream *script) {
+int LilliputScript::handleOpcode(ScriptStream *script) {
 	debugC(2, kDebugScript, "handleOpcode");
 	_currScript = script;
 	uint16 curWord = _currScript->readUint16LE();
@@ -584,7 +584,7 @@ int LilliputScript::handleOpcode(Common::MemoryReadStream *script) {
 	}
 }
 
-void LilliputScript::runScript(Common::MemoryReadStream script) {
+void LilliputScript::runScript(ScriptStream script) {
 	debugC(1, kDebugScript, "runScript");
 	_byte16F05_ScriptHandler = 1;
 	
@@ -592,7 +592,7 @@ void LilliputScript::runScript(Common::MemoryReadStream script) {
 		_vm->update();
 }
 
-void LilliputScript::runMenuScript(Common::MemoryReadStream script) {
+void LilliputScript::runMenuScript(ScriptStream script) {
 	debugC(1, kDebugScript, "runMenuScript");
 	warning("========================== Menu Script ==============================");
 	_byte16F05_ScriptHandler = 0;
@@ -1217,7 +1217,6 @@ byte LilliputScript::OC_sub1779E() {
 		_currScript->seek(_currScript->pos() + 6);
 		return 0;
 	}
-	
 	int var2 = _currScript->readUint16LE();
 	byte *buf = getMapPtr(tmpVal);
 	byte var1 = buf[var2];
@@ -1635,9 +1634,9 @@ void LilliputScript::OC_sub17BB7() {
 
 	if (_byte16F05_ScriptHandler == 0) {
 		_vm->_byte1714E = 0;
-		runMenuScript(Common::MemoryReadStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
+		runMenuScript(ScriptStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
 	} else {
-		runScript(Common::MemoryReadStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
+		runScript(ScriptStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
 	}
 
 	_currScript = _scriptStack.pop();

@@ -5,7 +5,8 @@ MODULE_OBJS = \
 	detection.o \
 	lilliput.o \
 	script.o \
-	sound.o
+	sound.o \
+	stream.o
 
 MODULE_DIRS += \
 	engines/lilliput

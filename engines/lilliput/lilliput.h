@@ -26,6 +26,7 @@
 #include "lilliput/console.h"
 #include "lilliput/script.h"
 #include "lilliput/sound.h"
+#include "lilliput/stream.h"
 
 #include "common/file.h"
 #include "engines/engine.h"
