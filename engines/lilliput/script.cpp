@@ -1572,7 +1572,12 @@ void LilliputScript::OC_sub17B03() {
 }
 
 void LilliputScript::OC_getRandom_type2() {
-	warning("OC_getRandom_type2");
+	debugC(1, kDebugScript, "OC_getRandom_type2()");
+
+	byte* bufPtr = getBuffer215Ptr();
+	int maxVal = _currScript->readUint16LE(); 
+	int randomVal = _vm->_rnd->getRandomNumber(maxVal);
+	*bufPtr = randomVal;
 }
 
 void LilliputScript::OC_sub17A66() {
@@ -1718,7 +1723,16 @@ void LilliputScript::OC_sub17C0E() {
 }
 
 void LilliputScript::OC_sub17C55() {
-	warning("OC_sub17C55");
+	debugC(1, kDebugScript, "OC_sub17C55()");
+	int var1 = getValue1();
+	int var2 = getValue1();
+
+	int var3 = _currScript->readUint16LE();
+	int var4 = _currScript->readUint16LE();
+
+	_vm->_rulesBuffer2_5[var2] = var1 & 0xFF;
+	_vm->_rulesBuffer2_6[var2] = var3 & 0xFF;
+	_vm->_rulesBuffer2_7[var2] = var4 & 0xFF;
 }
 void LilliputScript::OC_sub17C76() {
 	warning("OC_sub17C76");
