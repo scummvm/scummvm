@@ -226,7 +226,7 @@ private:
 	void OC_sub1810A();
 	void OC_sub1812D();
 	void OC_sub1817F();
-	void OC_sub1817F_loop( int b1, int b2 );
+	void sub1818B(int b1, int b2);
 	void OC_sub181BB();
 	void OC_sub18213();
 	void OC_sub18252();
