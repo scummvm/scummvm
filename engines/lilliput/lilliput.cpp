@@ -291,9 +291,9 @@ Common::Platform LilliputEngine::getPlatform() const {
 void LilliputEngine::displayFunction18(int index, int x, int y, int flags) {
 	debugC(2, kDebugEngine, "displayFunction18(%d, %d, %d, %d)", index, x, y, flags);
 
-	byte* buf = _buffer1_45k + (y << 8) + x;
+	byte *buf = _buffer1_45k + (y << 8) + x;
 
-	byte* src = _bufferMen;
+	byte *src = _bufferMen;
 	if (index < 0) {
 		src = _bufferIdeogram;
 		index = -index;
@@ -569,12 +569,12 @@ void LilliputEngine::displayFunction14() {
 	_system->updateScreen();
 
 	displayFunction4();
-};
+}
 
 void LilliputEngine::restoreMapPoints() {
 	displayFunction5();
 
-	byte* buf = (byte*)_mainSurface->getPixels();
+	byte *buf = (byte *)_mainSurface->getPixels();
 	for (int index = 0; index < _word10807_ERULES; index++) {
 		buf[_word15E5D[index]] = _byte15E35[index];
 	}
@@ -586,9 +586,9 @@ void LilliputEngine::displayCharactersOnMap() {
 	sub16217();
 	displayFunction5();
 
-	byte* buf = (byte*)_mainSurface->getPixels();
-	for( int index = _word10807_ERULES - 1; index >=0; index--) {
-		if(((_rulesBuffer2_11[index] & 2) == 0) && (_scriptHandler->_array1614B[index] != -1)) {
+	byte *buf = (byte *)_mainSurface->getPixels();
+	for (int index = _word10807_ERULES - 1; index >=0; index--) {
+		if (((_rulesBuffer2_11[index] & 2) == 0) && (_scriptHandler->_array1614B[index] != -1)) {
 			 int y = (3 * _scriptHandler->_array1614B[index]) + 1;
 			 int x = (_scriptHandler->_array16123[index] * 4) + 1;
 
@@ -740,7 +740,7 @@ void LilliputEngine::displayFunction16() {
 
 int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 {
-	byte* isoMap = _bufferIsoMap + (x1 << 8) + (y1 << 2) + 1;
+	byte *isoMap = _bufferIsoMap + (x1 << 8) + (y1 << 2) + 1;
 
 	int dx = x2 - x1;
 	int dy = y2 - y1;
@@ -813,7 +813,7 @@ void LilliputEngine::sub16CA0() {
 		int c1 = _scriptHandler->_array16123[index];
 		int c2 = _scriptHandler->_array1614B[index];
 
-		for(int index2 = _word10807_ERULES - 1; index2 >= 0; index2--) {
+		for (int index2 = _word10807_ERULES - 1; index2 >= 0; index2--) {
 			_byte16C9F = 0;
 			if ((index != index2 ) &&
 				(_rulesBuffer2_5[index] != index2) &&
