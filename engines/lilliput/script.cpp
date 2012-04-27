@@ -1200,9 +1200,31 @@ byte LilliputScript::OC_sub17782() {
 	warning("OC_sub17782");
 	return 0;
 }
+
+byte *LilliputScript::getMapPtr(int var1) {
+	debugC(1, kDebugScript, "getMapPtr(%d)", var1);
+	
+	int index = (((var1 & 0xFF) << 6) + (var1 >> 8)) << 2;
+	return &_vm->_bufferIsoMap[index];
+}
+
 byte LilliputScript::OC_sub1779E() {
-	warning("OC_sub1779E");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub1779E()");
+
+	int tmpVal = getValue2();
+
+	if (tmpVal == 0xFFFF) {
+		_currScript->seek(_currScript->pos() + 6);
+		return 0;
+	}
+	
+	int var2 = _currScript->readUint16LE();
+	byte *buf = getMapPtr(tmpVal);
+	byte var1 = buf[var2];
+	var2 = _currScript->readUint16LE();
+	int oper = _currScript->readUint16LE();
+	
+	return compareValues(var1, oper, var2);
 }
 
 byte LilliputScript::OC_sub177C6() {
