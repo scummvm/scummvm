@@ -101,8 +101,8 @@ void Skeleton::setAnim(AnimationEmi *anim) {
 	}
 	
 	for(int i = 0; i < _anim->_numBones; i++) {
-		int index = findJointIndex(_anim->_bones[i]->_boneName, _numJoints);
-		if (_anim->_bones[i]->_operation == 3) {
+		int index = findJointIndex(_anim->_bones[i]._boneName, _numJoints);
+		if (_anim->_bones[i]._operation == 3) {
 			_joints[index]._animIndex[0] = i;
 		} else {
 			_joints[index]._animIndex[1] = i;
@@ -144,7 +144,7 @@ void Skeleton::animate(float delta) {
 		if (rotIdx >= 0) {
 			int keyfIdx = 0;
 			Math::Quaternion quat;
-			Bone *curBone = _anim->_bones[rotIdx];
+			Bone *curBone = &_anim->_bones[rotIdx];
 			Math::Vector3d relPos = relFinal.getPosition();
 
 			// Find the right keyframe
@@ -172,7 +172,7 @@ void Skeleton::animate(float delta) {
 
 		if (transIdx >= 0) {
 			int keyfIdx = 0;
-			Bone *curBone = _anim->_bones[transIdx];
+			Bone *curBone = &_anim->_bones[transIdx];
 			// Find the right keyframe
 			for (int curKeyFrame = 0; curKeyFrame < curBone->_count; curKeyFrame++) {
 				if (curBone->_translations[curKeyFrame]->_time >= _time) {

@@ -41,17 +41,13 @@ void AnimationEmi::loadAnimation(Common::SeekableReadStream *data) {
 	_duration = get_float(temp);
 	_numBones = data->readUint32LE();
 
-	_bones = new Bone*[_numBones];
+	_bones = new Bone[_numBones];
 	for (int i = 0; i < _numBones; i++) {
-		_bones[i] = new Bone();
-		_bones[i]->loadBinary(data);
+		_bones[i].loadBinary(data);
 	}
 }
 
 AnimationEmi::~AnimationEmi() {
-	for (int i = 0; i < _numBones; i++) {
-		delete _bones[i];
-	}
 	delete[] _bones;
 }
 

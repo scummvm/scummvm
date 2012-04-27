@@ -59,7 +59,7 @@ public:
 	Common::String _name;
 	float _duration;
 	int _numBones;
-	Bone **_bones;
+	Bone *_bones;
 	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data) : _name(""), _duration(0.0f), _numBones(0), _bones(NULL) { loadAnimation(data); }
 	~AnimationEmi();
 };
