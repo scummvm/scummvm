@@ -47,8 +47,6 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_viewportY = 0;
 	_word18776 = 0;
 
-
-
 	_savedBuffer215Ptr = NULL;
 
 	for (int i = 0; i < 20; i++) {
@@ -69,7 +67,6 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array1614B[i] = 0;
 		_array16173[i] = 0xFF;
 		_array122C1[i] = 0;
-		_array1813B[i] = 0;
 	}
 
 	for (int i = 0; i < 640; i++) {
@@ -612,7 +609,6 @@ void LilliputScript::sub1863B() {
 	_word1855E = 0;
 }
 
-
 void LilliputScript::sub185ED(byte index, byte subIndex) {
 	debugC(2, kDebugScript, "sub185ED");
 	if (_vm->_arr18560[index]._field0 != 1)
@@ -680,8 +676,6 @@ void LilliputScript::computeOperation(byte *bufPtr, int oper, int var2) {
 		}
 	}
 }
-
-
 
 void LilliputScript::sub185B4_display() {
 	if (_vm->_byte12A04 == _byte1855D)
@@ -962,6 +956,7 @@ byte LilliputScript::OC_compWord18776() {
 	warning("OC_compWord18776");
 	return 0;
 }
+
 byte LilliputScript::OC_checkSaveFlag() {
 	debugC(1, kDebugScript, "OC_checkSaveFlag()");
 
@@ -1089,6 +1084,7 @@ byte LilliputScript::OC_sub175C8() {
 	
 	return 0;
 }
+
 byte LilliputScript::OC_sub17640() {
 	debugC(1, kDebugScript, "OC_sub176C4()");
 
@@ -1194,6 +1190,7 @@ byte LilliputScript::OC_compWord10804() {
 
 	return 0;
 }
+
 byte LilliputScript::OC_sub17766() {
 	warning("OC_sub17766");
 	return 0;
@@ -1206,6 +1203,7 @@ byte LilliputScript::OC_sub1779E() {
 	warning("OC_sub1779E");
 	return 0;
 }
+
 byte LilliputScript::OC_sub177C6() {
 	debugC(1, kDebugScript, "OC_sub177C6()");
 
@@ -1215,6 +1213,7 @@ byte LilliputScript::OC_sub177C6() {
 
 	return 1;
 }
+
 byte LilliputScript::OC_compWord16EFE() {
 	debugC(1, kDebugScript, "OC_compWord16EFE()");
 
@@ -1306,6 +1305,7 @@ byte LilliputScript::OC_sub178BA() {
 	warning("OC_sub178BA");
 	return 0;
 }
+
 byte LilliputScript::OC_sub178C2() {
 	debugC(1, kDebugScript, "OC_sub178C2()");
 
@@ -1314,12 +1314,31 @@ byte LilliputScript::OC_sub178C2() {
 		return 1;
 	return 0;
 }
+
 byte LilliputScript::OC_sub178D2() {
-	warning("OC_sub178D2");
+	debugC(1, kDebugScript, "OC_sub178D2()");
+
+	int index = getValue1();
+	assert (index < 40);
+
+	byte curByte = (_currScript->readUint16LE() & 0xFF);
+
+	if (curByte == _vm->_rulesBuffer2_12[index])
+		return 1;
+
 	return 0;
 }
+
 byte LilliputScript::OC_sub178E8() {
-	warning("OC_sub178E8");
+	debugC(1, kDebugScript, "OC_sub178E8()");
+
+	byte *bufPtr = getBuffer215Ptr();
+	byte var1 = bufPtr[0];
+	byte curByte = (_currScript->readUint16LE() & 0xFF);
+
+	if (var1 & curByte)
+		return 1;
+
 	return 0;
 }
 
@@ -1385,6 +1404,7 @@ byte LilliputScript::OC_sub1796E() {
 	warning("OC_sub1796E");
 	return 0;
 }
+
 byte LilliputScript::OC_sub17984() {
 	debugC(1, kDebugScript, "OC_sub17984()");
 
@@ -1538,9 +1558,11 @@ void LilliputScript::OC_sub17A8D() {
 	_vm->_characterPositionX[tmpVal] = 0xFFFF;
 	_vm->_characterPositionY[tmpVal] = 0xFFFF;
 }
+
 void LilliputScript::OC_saveAndQuit() {
 	warning("OC_saveAndQuit");
 }
+
 void LilliputScript::OC_sub17B93() {
 	debugC(1, kDebugScript, "OC_sub17B93()");
 	int var1 = _currScript->readUint16LE();
@@ -1573,6 +1595,7 @@ void LilliputScript::OC_sub17BA5() {
 void LilliputScript::OC_setByte18823() {
 	warning("OC_setByte18823");
 }
+
 void LilliputScript::OC_sub17BB7() {
 	debugC(1, kDebugScript, "OC_sub17BB7()");
 
@@ -1632,6 +1655,7 @@ void LilliputScript::OC_setWord10804() {
 
 	_word10804 = getValue1();
 }
+
 void LilliputScript::OC_sub17C0E() {
 	warning("OC_sub17C0E");
 }
@@ -1659,6 +1683,7 @@ void LilliputScript::OC_sub17CD1() {
 void LilliputScript::OC_resetWord16EFE() {
 	warning("OC_resetWord16EFE");
 }
+
 void LilliputScript::OC_sub17CEF() {
 	debugC(1, kDebugScript, "OC_sub17CEF()");
 
@@ -1750,6 +1775,7 @@ void LilliputScript::OC_sub18074() {
 void LilliputScript::OC_sub1808B() {
 	warning("OC_sub1808B");
 }
+
 void LilliputScript::OC_sub18099() {
 	debugC(1, kDebugScript, "OC_sub18099()");
 
@@ -1762,6 +1788,7 @@ void LilliputScript::OC_sub18099() {
 
 	_vm->displayFunction8();
 }
+
 void LilliputScript::OC_sub180C3() {
 	warning("OC_sub180C3");
 }
@@ -1783,17 +1810,19 @@ void LilliputScript::OC_sub1817F() {
 	
 	int b1 = var1 & 0xFF;
 	int b2 = var2 & 0xFF;
-	OC_sub1817F_loop(b1,b2);
+	sub1818B(b1,b2);
 }
 
-void LilliputScript::OC_sub1817F_loop( int b1, int b2 ) {
+void LilliputScript::sub1818B(int b1, int b2) {
+	debugC(2, kDebugScript, "sub1818B(%d, %d)", b1, b2);
 	for (int i = 0; i <  _vm->_word1817B; i++) {
 		if ((_array1813B[i] >> 8) == b2 ) {
 			b2 += _array1813B[i] & 0xFF;
-			if (b2 < 0) {
+			if (b2 > 0xFF) {
 				b2 = 0xFF;
+				++b1;
 			}
-			_array1813B[i] = (_array1813B[i] & 0xFF00) + b2;
+			_array1813B[i] = (b1 << 8) + b2;
 			return;
 		}
 	}
@@ -1802,7 +1831,7 @@ void LilliputScript::OC_sub1817F_loop( int b1, int b2 ) {
 }
 
 void LilliputScript::OC_sub181BB() {
-	debugC(1, kDebugScript, "OC_sub1817F()");
+	debugC(1, kDebugScript, "OC_sub181BB()");
 	
 	int b = _currScript->readUint16LE();
 	int d = _currScript->readUint16LE() & 0xFF;
@@ -1827,9 +1856,10 @@ void LilliputScript::OC_sub181BB() {
 
 	int a = _currScript->readUint16LE() * c + (c & 0xFF);
 	b = b & 0xFF00 + a;
-	OC_sub1817F_loop(b & 0xFF, b >> 8);
+	sub1818B(b & 0xFF, b >> 8);
 
 }
+
 void LilliputScript::OC_sub18213() {
 	debugC(1, kDebugScript, "OC_sub18213()");
 
@@ -1839,13 +1869,14 @@ void LilliputScript::OC_sub18213() {
 	int maxItem = var1 & 0xFF;
 
 	for (int i = 0; i < _vm->_word1817B; i++) {
-		if ( _array1813B[i] & 0xFF > maxValue ) {
+		if ((_array1813B[i] & 0xFF) > maxValue) {
 			maxValue = _array1813B[i] & 0xFF;
 			maxItem = _array1813B[i] >> 8;
 		}
 	}
 	sub1823E(_vm->_rulesBuffer2PrevIndx, maxItem, &_vm->_rulesBuffer2_15[var1]);
 }
+
 void LilliputScript::OC_sub18252() {
 	warning("OC_sub18252");
 }
@@ -1857,6 +1888,8 @@ void LilliputScript::OC_sub182EC() {
 }
 
 void LilliputScript::OC_PaletteFadeOut() {
+	debugC(1, kDebugScript, "OC_PaletteFadeOut()");
+
 	sub1863B();
 	byte palette[768];
 	for (int fade = 256; fade >= 0;	fade -= 8) {
@@ -1870,6 +1903,7 @@ void LilliputScript::OC_PaletteFadeOut() {
 }
 
 void LilliputScript::OC_PaletteFadeIn() {
+	debugC(1, kDebugScript, "OC_PaletteFadeIn()");
 
 	byte palette[768];
 	for (int fade = 8; fade <= 256;	fade += 8) {
