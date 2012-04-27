@@ -926,9 +926,32 @@ byte LilliputScript::OC_sub173F0() {
 	return 0;
 }
 
+byte* LilliputScript::sub17399(int val) {
+	int x = (val >> 8);
+	int y = (val & 0xFF);
+	return &_vm->_bufferIsoMap[(y * 320 + x) << 2];
+}
+
 byte LilliputScript::OC_sub1740A() {
-	warning("OC_sub1740A");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub1740A()");
+
+	int var = _vm->_word16EFA;
+	if (var == 0xFFFF) {
+		_currScript->readUint16LE();
+		return 0;
+	}
+
+	byte *isoMapBuf = sub17399(var);
+	int var2 = isoMapBuf[3];
+
+	int var3 = _currScript->readUint16LE();
+	int var4 = 8 >> var3;
+
+	if( var2 & var4 ) {
+		return 1;
+	} else { 
+		return 0;
+	}
 }
 
 byte LilliputScript::OC_sub17434() {
@@ -943,8 +966,11 @@ byte LilliputScript::OC_sub17434() {
 }
 
 byte LilliputScript::OC_sub17468() {
-	warning("OC_sub17468");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub17468()");
+
+	int operation = _currScript->readUint16LE();
+	int val2 = _currScript->readUint16LE();
+	return compareValues(_byte16F02, operation, val2);
 }
 
 byte LilliputScript::OC_getRandom() {
