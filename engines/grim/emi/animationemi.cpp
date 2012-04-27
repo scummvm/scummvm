@@ -56,6 +56,7 @@ void Bone::loadBinary(Common::SeekableReadStream *data) {
 	char *inString = new char[len];
 	data->read(inString, len);
 	_boneName = inString;
+	delete[] inString;
 	_operation = data->readUint32LE();
 	_b = data->readUint32LE();
 	_c = data->readUint32LE();
