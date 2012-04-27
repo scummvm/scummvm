@@ -50,6 +50,7 @@ struct Bone {
 	AnimTranslation **_translations;
 	Bone() : _rotations(NULL), _translations(NULL), _boneName(""), _operation(0) {}
 	~Bone();
+	void loadBinary(Common::SeekableReadStream *data);
 };
 
 class AnimationEmi : public Object {
