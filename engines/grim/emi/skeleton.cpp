@@ -214,7 +214,7 @@ void Skeleton::animate(float delta) {
 }
 
 bool Skeleton::hasJoint(const Common::String & name) const {
-	return name.empty() || findJointIndex(name, _numJoints) >= 0; 
+	return name.empty() || findJointIndex(name, _numJoints) >= 0;
 }
 
 Joint * Skeleton::getJointNamed(const Common::String & name) const {
