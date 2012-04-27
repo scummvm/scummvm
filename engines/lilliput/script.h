@@ -122,7 +122,7 @@ private:
 	byte OC_sub17434();
 	byte OC_sub17468();
 	byte OC_getRandom();
-	byte OC_sub1748C();
+	byte OC_for();
 	byte OC_compWord18776();
 	byte OC_checkSaveFlag();
 	byte OC_sub174C8();
