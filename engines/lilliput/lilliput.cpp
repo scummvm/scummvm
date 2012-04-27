@@ -1993,7 +1993,7 @@ void LilliputEngine::handleMenu() {
 		return;
 
 	sub170EE(_word10804);
-	_scriptHandler->runMenuScript(Common::MemoryReadStream(_menuScript, _menuScript_size));
+	_scriptHandler->runMenuScript(ScriptStream(_menuScript, _menuScript_size));
 	_savedMousePosDivided = 0xFFFF;
 	_byte129A0 = 0xFF;
 
@@ -2036,7 +2036,7 @@ void LilliputEngine::handleGameScripts() {
 	assert(tmpVal < _gameScriptIndexSize);
 	debugC(1, kDebugEngine, "========================== Game Script %d ==========================", tmpVal);
 
-	_scriptHandler->runScript(Common::MemoryReadStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
+	_scriptHandler->runScript(ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
 }
 
 Common::Error LilliputEngine::run() {
@@ -2067,7 +2067,7 @@ Common::Error LilliputEngine::run() {
 
 
 	//TODO: Init sound/music player
-	_scriptHandler->runScript(Common::MemoryReadStream(_initScript, _initScript_size));
+	_scriptHandler->runScript(ScriptStream(_initScript, _initScript_size));
 
 	_int8installed = true;
 

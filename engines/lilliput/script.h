@@ -27,9 +27,12 @@
 #include "common/stack.h"
 #include "common/random.h"
 
+#include "lilliput/stream.h"
+
 namespace Lilliput {
 
 class LilliputEngine;
+
 class LilliputScript {
 public:
 	byte displayMap;
@@ -66,13 +69,13 @@ public:
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
 
-	void runScript(Common::MemoryReadStream script);
-	void runMenuScript(Common::MemoryReadStream script);
+	void runScript(ScriptStream script);
+	void runMenuScript(ScriptStream script);
 private:
 	LilliputEngine *_vm;
 
-	Common::MemoryReadStream *_currScript;
-	Common::Stack<Common::MemoryReadStream *> _scriptStack;
+	ScriptStream *_currScript;
+	Common::Stack<ScriptStream *> _scriptStack;
 
 	byte _byte16F05_ScriptHandler;
 	byte _byte12A09;
@@ -88,7 +91,7 @@ private:
 	int _word1855E;
 	int _word18776;
 
-	int handleOpcode(Common::MemoryReadStream *script);
+	int handleOpcode(ScriptStream *script);
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 
