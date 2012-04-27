@@ -42,14 +42,14 @@ IMPLEMENT_PERSISTENT(CBFader, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBFader::CBFader(CBGame *inGame): CBObject(inGame) {
-	m_Active = false;
-	m_Red = m_Green = m_Blue = 0;
-	m_CurrentAlpha = 0x00;
-	m_SourceAlpha = 0;
-	m_TargetAlpha = 0;
-	m_Duration = 1000;
-	m_StartTime = 0;
-	m_System = false;
+	_active = false;
+	_red = _green = _blue = 0;
+	_currentAlpha = 0x00;
+	_sourceAlpha = 0;
+	_targetAlpha = 0;
+	_duration = 1000;
+	_startTime = 0;
+	_system = false;
 }
 
 
@@ -61,23 +61,23 @@ CBFader::~CBFader() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFader::Update() {
-	if (!m_Active) return S_OK;
+	if (!_active) return S_OK;
 
-	int AlphaDelta = m_TargetAlpha - m_SourceAlpha;
+	int AlphaDelta = _targetAlpha - _sourceAlpha;
 
 	uint32 time;
 
-	if (m_System) time = CBPlatform::GetTime() - m_StartTime;
-	else time = Game->m_Timer - m_StartTime;
+	if (_system) time = CBPlatform::GetTime() - _startTime;
+	else time = Game->_timer - _startTime;
 
-	if (time >= m_Duration) m_CurrentAlpha = m_TargetAlpha;
+	if (time >= _duration) _currentAlpha = _targetAlpha;
 	else {
-		m_CurrentAlpha = m_SourceAlpha + (float)time / (float)m_Duration * AlphaDelta;
+		_currentAlpha = _sourceAlpha + (float)time / (float)_duration * AlphaDelta;
 	}
-	m_CurrentAlpha = MIN((unsigned char)255, MAX(m_CurrentAlpha, (byte )0)); // TODO: clean
+	_currentAlpha = MIN((unsigned char)255, MAX(_currentAlpha, (byte )0)); // TODO: clean
 
-	m_Ready = time >= m_Duration;
-	if (m_Ready && m_CurrentAlpha == 0x00) m_Active = false;
+	_ready = time >= _duration;
+	if (_ready && _currentAlpha == 0x00) _active = false;
 
 	return S_OK;
 }
@@ -85,38 +85,38 @@ HRESULT CBFader::Update() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFader::Display() {
-	if (!m_Active) return S_OK;
+	if (!_active) return S_OK;
 
-	if (m_CurrentAlpha > 0x00) return Game->m_Renderer->FadeToColor(DRGBA(m_Red, m_Green, m_Blue, m_CurrentAlpha));
+	if (_currentAlpha > 0x00) return Game->_renderer->FadeToColor(DRGBA(_red, _green, _blue, _currentAlpha));
 	else return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFader::Deactivate() {
-	m_Active = false;
-	m_Ready = true;
+	_active = false;
+	_ready = true;
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFader::FadeIn(uint32 SourceColor, uint32 Duration, bool System) {
-	m_Ready = false;
-	m_Active = true;
+	_ready = false;
+	_active = true;
 
-	m_Red   = D3DCOLGetR(SourceColor);
-	m_Green = D3DCOLGetG(SourceColor);
-	m_Blue  = D3DCOLGetB(SourceColor);
+	_red   = D3DCOLGetR(SourceColor);
+	_green = D3DCOLGetG(SourceColor);
+	_blue  = D3DCOLGetB(SourceColor);
 
-	m_SourceAlpha = D3DCOLGetA(SourceColor);
-	m_TargetAlpha = 0;
+	_sourceAlpha = D3DCOLGetA(SourceColor);
+	_targetAlpha = 0;
 
-	m_Duration = Duration;
-	m_System = System;
+	_duration = Duration;
+	_system = System;
 
-	if (m_System) m_StartTime = CBPlatform::GetTime();
-	else m_StartTime = Game->m_Timer;
+	if (_system) _startTime = CBPlatform::GetTime();
+	else _startTime = Game->_timer;
 
 	return S_OK;
 }
@@ -124,22 +124,22 @@ HRESULT CBFader::FadeIn(uint32 SourceColor, uint32 Duration, bool System) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFader::FadeOut(uint32 TargetColor, uint32 Duration, bool System) {
-	m_Ready = false;
-	m_Active = true;
+	_ready = false;
+	_active = true;
 
-	m_Red   = D3DCOLGetR(TargetColor);
-	m_Green = D3DCOLGetG(TargetColor);
-	m_Blue  = D3DCOLGetB(TargetColor);
+	_red   = D3DCOLGetR(TargetColor);
+	_green = D3DCOLGetG(TargetColor);
+	_blue  = D3DCOLGetB(TargetColor);
 
-	//m_SourceAlpha = 0;
-	m_SourceAlpha = m_CurrentAlpha;
-	m_TargetAlpha = D3DCOLGetA(TargetColor);
+	//_sourceAlpha = 0;
+	_sourceAlpha = _currentAlpha;
+	_targetAlpha = D3DCOLGetA(TargetColor);
 
-	m_Duration = Duration;
-	m_System = System;
+	_duration = Duration;
+	_system = System;
 
-	if (m_System) m_StartTime = CBPlatform::GetTime();
-	else m_StartTime = Game->m_Timer;
+	if (_system) _startTime = CBPlatform::GetTime();
+	else _startTime = Game->_timer;
 
 
 	return S_OK;
@@ -148,7 +148,7 @@ HRESULT CBFader::FadeOut(uint32 TargetColor, uint32 Duration, bool System) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBFader::GetCurrentColor() {
-	return DRGBA(m_Red, m_Green, m_Blue, m_CurrentAlpha);
+	return DRGBA(_red, _green, _blue, _currentAlpha);
 }
 
 
@@ -157,18 +157,18 @@ uint32 CBFader::GetCurrentColor() {
 HRESULT CBFader::Persist(CBPersistMgr *PersistMgr) {
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	PersistMgr->Transfer(TMEMBER(m_Blue));
-	PersistMgr->Transfer(TMEMBER(m_CurrentAlpha));
-	PersistMgr->Transfer(TMEMBER(m_Duration));
-	PersistMgr->Transfer(TMEMBER(m_Green));
-	PersistMgr->Transfer(TMEMBER(m_Red));
-	PersistMgr->Transfer(TMEMBER(m_SourceAlpha));
-	PersistMgr->Transfer(TMEMBER(m_StartTime));
-	PersistMgr->Transfer(TMEMBER(m_TargetAlpha));
-	PersistMgr->Transfer(TMEMBER(m_System));
+	PersistMgr->Transfer(TMEMBER(_active));
+	PersistMgr->Transfer(TMEMBER(_blue));
+	PersistMgr->Transfer(TMEMBER(_currentAlpha));
+	PersistMgr->Transfer(TMEMBER(_duration));
+	PersistMgr->Transfer(TMEMBER(_green));
+	PersistMgr->Transfer(TMEMBER(_red));
+	PersistMgr->Transfer(TMEMBER(_sourceAlpha));
+	PersistMgr->Transfer(TMEMBER(_startTime));
+	PersistMgr->Transfer(TMEMBER(_targetAlpha));
+	PersistMgr->Transfer(TMEMBER(_system));
 
-	if (m_System && !PersistMgr->m_Saving) m_StartTime = 0;
+	if (_system && !PersistMgr->_saving) _startTime = 0;
 
 	return S_OK;
 }

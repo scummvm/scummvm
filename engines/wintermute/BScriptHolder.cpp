@@ -40,8 +40,8 @@ IMPLEMENT_PERSISTENT(CBScriptHolder, false)
 CBScriptHolder::CBScriptHolder(CBGame *inGame): CBScriptable(inGame) {
 	SetName("<unnamed>");
 
-	m_Freezable = true;
-	m_Filename = NULL;
+	_freezable = true;
+	_filename = NULL;
 }
 
 
@@ -53,26 +53,26 @@ CBScriptHolder::~CBScriptHolder() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBScriptHolder::Cleanup() {
-	delete[] m_Filename;
-	m_Filename = NULL;
+	delete[] _filename;
+	_filename = NULL;
 
 	int i;
 
-	for (i = 0; i < m_Scripts.GetSize(); i++) {
-		m_Scripts[i]->Finish(true);
-		m_Scripts[i]->m_Owner = NULL;
+	for (i = 0; i < _scripts.GetSize(); i++) {
+		_scripts[i]->Finish(true);
+		_scripts[i]->_owner = NULL;
 	}
-	m_Scripts.RemoveAll();
+	_scripts.RemoveAll();
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////
 void CBScriptHolder::SetFilename(char *Filename) {
-	if (m_Filename != NULL) delete [] m_Filename;
+	if (_filename != NULL) delete [] _filename;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	if (m_Filename != NULL) strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	if (_filename != NULL) strcpy(_filename, Filename);
 }
 
 
@@ -81,17 +81,17 @@ HRESULT CBScriptHolder::ApplyEvent(const char *EventName, bool Unbreakable) {
 	int NumHandlers = 0;
 
 	HRESULT ret = E_FAIL;
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (!m_Scripts[i]->m_Thread) {
-			CScScript *handler = m_Scripts[i]->InvokeEventHandler(EventName, Unbreakable);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (!_scripts[i]->_thread) {
+			CScScript *handler = _scripts[i]->InvokeEventHandler(EventName, Unbreakable);
 			if (handler) {
-				//m_Scripts.Add(handler);
+				//_scripts.Add(handler);
 				NumHandlers++;
 				ret = S_OK;
 			}
 		}
 	}
-	if (NumHandlers > 0 && Unbreakable) Game->m_ScEngine->TickUnbreakable();
+	if (NumHandlers > 0 && Unbreakable) Game->_scEngine->TickUnbreakable();
 
 	return ret;
 }
@@ -172,9 +172,9 @@ HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStac
 		char *Filename = Stack->Pop()->GetString();
 		bool KillThreads = Stack->Pop()->GetBool(false);
 		bool ret = false;
-		for (int i = 0; i < m_Scripts.GetSize(); i++) {
-			if (scumm_stricmp(m_Scripts[i]->m_Filename, Filename) == 0) {
-				m_Scripts[i]->Finish(KillThreads);
+		for (int i = 0; i < _scripts.GetSize(); i++) {
+			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
+				_scripts[i]->Finish(KillThreads);
 				ret = true;
 				break;
 			}
@@ -191,8 +191,8 @@ HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStac
 		Stack->CorrectParams(1);
 		char *Filename = Stack->Pop()->GetString();
 		bool ret = false;
-		for (int i = 0; i < m_Scripts.GetSize(); i++) {
-			if (scumm_stricmp(m_Scripts[i]->m_Filename, Filename) == 0 && m_Scripts[i]->m_State != SCRIPT_FINISHED && m_Scripts[i]->m_State != SCRIPT_ERROR) {
+		for (int i = 0; i < _scripts.GetSize(); i++) {
+			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
 				ret = true;
 				break;
 			}
@@ -206,30 +206,30 @@ HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStac
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBScriptHolder::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("script_holder");
-		return m_ScValue;
+		_scValue->SetString("script_holder");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Name") == 0) {
-		m_ScValue->SetString(m_Name);
-		return m_ScValue;
+		_scValue->SetString(_name);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Filename (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Filename") == 0) {
-		m_ScValue->SetString(m_Filename);
-		return m_ScValue;
+		_scValue->SetString(_filename);
+		return _scValue;
 	}
 
 	else return CBScriptable::ScGetProperty(Name);
@@ -263,10 +263,10 @@ HRESULT CBScriptHolder::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 HRESULT CBScriptHolder::Persist(CBPersistMgr *PersistMgr) {
 	CBScriptable::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Filename));
-	PersistMgr->Transfer(TMEMBER(m_Freezable));
-	PersistMgr->Transfer(TMEMBER(m_Name));
-	m_Scripts.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_filename));
+	PersistMgr->Transfer(TMEMBER(_freezable));
+	PersistMgr->Transfer(TMEMBER(_name));
+	_scripts.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -274,34 +274,34 @@ HRESULT CBScriptHolder::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBScriptHolder::AddScript(char *Filename) {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (scumm_stricmp(m_Scripts[i]->m_Filename, Filename) == 0) {
-			if (m_Scripts[i]->m_State != SCRIPT_FINISHED) {
-				Game->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", Filename, m_Name);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
+			if (_scripts[i]->_state != SCRIPT_FINISHED) {
+				Game->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", Filename, _name);
 				return S_OK;
 			}
 		}
 	}
 
-	CScScript *scr =  Game->m_ScEngine->RunScript(Filename, this);
+	CScScript *scr =  Game->_scEngine->RunScript(Filename, this);
 	if (!scr) {
-		if (Game->m_EditorForceScripts) {
+		if (Game->_editorForceScripts) {
 			// editor hack
-			scr = new CScScript(Game, Game->m_ScEngine);
-			scr->m_Filename = new char[strlen(Filename) + 1];
-			strcpy(scr->m_Filename, Filename);
-			scr->m_State = SCRIPT_ERROR;
-			scr->m_Owner = this;
-			m_Scripts.Add(scr);
-			Game->m_ScEngine->m_Scripts.Add(scr);
+			scr = new CScScript(Game, Game->_scEngine);
+			scr->_filename = new char[strlen(Filename) + 1];
+			strcpy(scr->_filename, Filename);
+			scr->_state = SCRIPT_ERROR;
+			scr->_owner = this;
+			_scripts.Add(scr);
+			Game->_scEngine->_scripts.Add(scr);
 			Game->GetDebugMgr()->OnScriptInit(scr);
 
 			return S_OK;
 		}
 		return E_FAIL;
 	} else {
-		scr->m_Freezable = m_Freezable;
-		m_Scripts.Add(scr);
+		scr->_freezable = _freezable;
+		_scripts.Add(scr);
 		return S_OK;
 	}
 }
@@ -309,9 +309,9 @@ HRESULT CBScriptHolder::AddScript(char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBScriptHolder::RemoveScript(CScScript *Script) {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i] == Script) {
-			m_Scripts.RemoveAt(i);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i] == Script) {
+			_scripts.RemoveAt(i);
 			break;
 		}
 	}
@@ -320,8 +320,8 @@ HRESULT CBScriptHolder::RemoveScript(CScScript *Script) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBScriptHolder::CanHandleEvent(char *EventName) {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (!m_Scripts[i]->m_Thread && m_Scripts[i]->CanHandleEvent(EventName)) return true;
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (!_scripts[i]->_thread && _scripts[i]->CanHandleEvent(EventName)) return true;
 	}
 	return false;
 }
@@ -329,8 +329,8 @@ bool CBScriptHolder::CanHandleEvent(char *EventName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBScriptHolder::CanHandleMethod(char *MethodName) {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (!m_Scripts[i]->m_Thread && m_Scripts[i]->CanHandleMethod(MethodName)) return true;
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (!_scripts[i]->_thread && _scripts[i]->CanHandleMethod(MethodName)) return true;
 	}
 	return false;
 }
@@ -416,24 +416,24 @@ HRESULT CBScriptHolder::ParseProperty(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBScriptHolder::MakeFreezable(bool Freezable) {
-	m_Freezable = Freezable;
-	for (int i = 0; i < m_Scripts.GetSize(); i++)
-		m_Scripts[i]->m_Freezable = Freezable;
+	_freezable = Freezable;
+	for (int i = 0; i < _scripts.GetSize(); i++)
+		_scripts[i]->_freezable = Freezable;
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScScript *CBScriptHolder::InvokeMethodThread(char *MethodName) {
-	for (int i = m_Scripts.GetSize() - 1; i >= 0; i--) {
-		if (m_Scripts[i]->CanHandleMethod(MethodName)) {
+	for (int i = _scripts.GetSize() - 1; i >= 0; i--) {
+		if (_scripts[i]->CanHandleMethod(MethodName)) {
 
-			CScScript *thread = new CScScript(Game, m_Scripts[i]->m_Engine);
+			CScScript *thread = new CScScript(Game, _scripts[i]->_engine);
 			if (thread) {
-				HRESULT ret = thread->CreateMethodThread(m_Scripts[i], MethodName);
+				HRESULT ret = thread->CreateMethodThread(_scripts[i], MethodName);
 				if (SUCCEEDED(ret)) {
-					m_Scripts[i]->m_Engine->m_Scripts.Add(thread);
-					Game->GetDebugMgr()->OnScriptMethodThreadInit(thread, m_Scripts[i], MethodName);
+					_scripts[i]->_engine->_scripts.Add(thread);
+					Game->GetDebugMgr()->OnScriptMethodThreadInit(thread, _scripts[i], MethodName);
 
 					return thread;
 				} else {
@@ -449,13 +449,13 @@ CScScript *CBScriptHolder::InvokeMethodThread(char *MethodName) {
 //////////////////////////////////////////////////////////////////////////
 void CBScriptHolder::ScDebuggerDesc(char *Buf, int BufSize) {
 	strcpy(Buf, ScToString());
-	if (m_Name && strcmp(m_Name, "<unnamed>") != 0) {
+	if (_name && strcmp(_name, "<unnamed>") != 0) {
 		strcat(Buf, "  Name: ");
-		strcat(Buf, m_Name);
+		strcat(Buf, _name);
 	}
-	if (m_Filename) {
+	if (_filename) {
 		strcat(Buf, "  File: ");
-		strcat(Buf, m_Filename);
+		strcat(Buf, _filename);
 	}
 }
 

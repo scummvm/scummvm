@@ -33,15 +33,15 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBDynBuffer::CBDynBuffer(CBGame *inGame, uint32 InitSize, uint32 GrowBy): CBBase(inGame) {
-	m_Buffer = NULL;
-	m_Size = 0;
-	m_RealSize = 0;
+	_buffer = NULL;
+	_size = 0;
+	_realSize = 0;
 
-	m_Offset = 0;
-	m_InitSize = InitSize;
-	m_GrowBy = GrowBy;
+	_offset = 0;
+	_initSize = InitSize;
+	_growBy = GrowBy;
 
-	m_Initialized = false;
+	_initialized = false;
 }
 
 
@@ -53,18 +53,18 @@ CBDynBuffer::~CBDynBuffer() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBDynBuffer::Cleanup() {
-	if (m_Buffer) free(m_Buffer);
-	m_Buffer = NULL;
-	m_Size = 0;
-	m_RealSize = 0;
-	m_Offset = 0;
-	m_Initialized = false;
+	if (_buffer) free(_buffer);
+	_buffer = NULL;
+	_size = 0;
+	_realSize = 0;
+	_offset = 0;
+	_initialized = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBDynBuffer::GetSize() {
-	return m_Size;
+	return _size;
 }
 
 
@@ -72,16 +72,16 @@ uint32 CBDynBuffer::GetSize() {
 HRESULT CBDynBuffer::Init(uint32 InitSize) {
 	Cleanup();
 
-	if (InitSize == 0) InitSize = m_InitSize;
+	if (InitSize == 0) InitSize = _initSize;
 
-	m_Buffer = (byte  *)malloc(InitSize);
-	if (!m_Buffer) {
+	_buffer = (byte  *)malloc(InitSize);
+	if (!_buffer) {
 		Game->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", InitSize);
 		return E_FAIL;
 	}
 
-	m_RealSize = InitSize;
-	m_Initialized = true;
+	_realSize = InitSize;
+	_initialized = true;
 
 	return S_OK;
 }
@@ -89,20 +89,20 @@ HRESULT CBDynBuffer::Init(uint32 InitSize) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBDynBuffer::PutBytes(byte  *Buffer, uint32 Size) {
-	if (!m_Initialized) Init();
+	if (!_initialized) Init();
 
-	while (m_Offset + Size > m_RealSize) {
-		m_RealSize += m_GrowBy;
-		m_Buffer = (byte  *)realloc(m_Buffer, m_RealSize);
-		if (!m_Buffer) {
-			Game->LOG(0, "CBDynBuffer::PutBytes - Error reallocating buffer to %d bytes", m_RealSize);
+	while (_offset + Size > _realSize) {
+		_realSize += _growBy;
+		_buffer = (byte  *)realloc(_buffer, _realSize);
+		if (!_buffer) {
+			Game->LOG(0, "CBDynBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
 			return E_FAIL;
 		}
 	}
 
-	memcpy(m_Buffer + m_Offset, Buffer, Size);
-	m_Offset += Size;
-	m_Size += Size;
+	memcpy(_buffer + _offset, Buffer, Size);
+	_offset += Size;
+	_size += Size;
 
 	return S_OK;
 }
@@ -110,15 +110,15 @@ HRESULT CBDynBuffer::PutBytes(byte  *Buffer, uint32 Size) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBDynBuffer::GetBytes(byte  *Buffer, uint32 Size) {
-	if (!m_Initialized) Init();
+	if (!_initialized) Init();
 
-	if (m_Offset + Size > m_Size) {
+	if (_offset + Size > _size) {
 		Game->LOG(0, "CBDynBuffer::GetBytes - Buffer underflow");
 		return E_FAIL;
 	}
 
-	memcpy(Buffer, m_Buffer + m_Offset, Size);
-	m_Offset += Size;
+	memcpy(Buffer, _buffer + _offset, Size);
+	_offset += Size;
 
 	return S_OK;
 }
@@ -151,8 +151,8 @@ void CBDynBuffer::PutString(const char *Val) {
 //////////////////////////////////////////////////////////////////////////
 char *CBDynBuffer::GetString() {
 	uint32 len = GetDWORD();
-	char *ret = (char *)(m_Buffer + m_Offset);
-	m_Offset += len;
+	char *ret = (char *)(_buffer + _offset);
+	_offset += len;
 
 	if (!strcmp(ret, "(null)")) return NULL;
 	else return ret;

@@ -41,8 +41,8 @@ public:
 	virtual ~CBSaveThumbHelper(void);
 	HRESULT StoreThumbnail(bool DoFlip = false);
 
-	CBImage *m_Thumbnail;
-	CBImage *m_RichThumbnail;
+	CBImage *_thumbnail;
+	CBImage *_richThumbnail;
 };
 
 } // end of namespace WinterMute

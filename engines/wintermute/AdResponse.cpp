@@ -39,46 +39,46 @@ IMPLEMENT_PERSISTENT(CAdResponse, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdResponse::CAdResponse(CBGame *inGame): CBObject(inGame) {
-	m_Text = NULL;
-	m_TextOrig = NULL;
-	m_Icon = m_IconHover = m_IconPressed = NULL;
-	m_Font = NULL;
-	m_ID = 0;
-	m_ResponseType = RESPONSE_ALWAYS;
+	_text = NULL;
+	_textOrig = NULL;
+	_icon = _iconHover = _iconPressed = NULL;
+	_font = NULL;
+	_iD = 0;
+	_responseType = RESPONSE_ALWAYS;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdResponse::~CAdResponse() {
-	delete[] m_Text;
-	delete[] m_TextOrig;
-	delete m_Icon;
-	delete m_IconHover;
-	delete m_IconPressed;
-	m_Text = NULL;
-	m_TextOrig = NULL;
-	m_Icon = NULL;
-	m_IconHover = NULL;
-	m_IconPressed = NULL;
-	if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
+	delete[] _text;
+	delete[] _textOrig;
+	delete _icon;
+	delete _iconHover;
+	delete _iconPressed;
+	_text = NULL;
+	_textOrig = NULL;
+	_icon = NULL;
+	_iconHover = NULL;
+	_iconPressed = NULL;
+	if (_font) Game->_fontStorage->RemoveFont(_font);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponse::SetText(char *Text) {
-	CBUtils::SetString(&m_Text, Text);
-	CBUtils::SetString(&m_TextOrig, Text);
+	CBUtils::SetString(&_text, Text);
+	CBUtils::SetString(&_textOrig, Text);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponse::SetIcon(char *Filename) {
-	delete m_Icon;
-	m_Icon = new CBSprite(Game);
-	if (!m_Icon || FAILED(m_Icon->LoadFile(Filename))) {
+	delete _icon;
+	_icon = new CBSprite(Game);
+	if (!_icon || FAILED(_icon->LoadFile(Filename))) {
 		Game->LOG(0, "CAdResponse::SetIcon failed for file '%s'", Filename);
-		delete m_Icon;
-		m_Icon = NULL;
+		delete _icon;
+		_icon = NULL;
 		return E_FAIL;
 	}
 	return S_OK;
@@ -86,9 +86,9 @@ HRESULT CAdResponse::SetIcon(char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponse::SetFont(char *Filename) {
-	if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
-	m_Font = Game->m_FontStorage->AddFont(Filename);
-	if (!m_Font) {
+	if (_font) Game->_fontStorage->RemoveFont(_font);
+	_font = Game->_fontStorage->AddFont(Filename);
+	if (!_font) {
 		Game->LOG(0, "CAdResponse::SetFont failed for file '%s'", Filename);
 		return E_FAIL;
 	}
@@ -97,12 +97,12 @@ HRESULT CAdResponse::SetFont(char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponse::SetIconHover(char *Filename) {
-	delete m_IconHover;
-	m_IconHover = new CBSprite(Game);
-	if (!m_IconHover || FAILED(m_IconHover->LoadFile(Filename))) {
+	delete _iconHover;
+	_iconHover = new CBSprite(Game);
+	if (!_iconHover || FAILED(_iconHover->LoadFile(Filename))) {
 		Game->LOG(0, "CAdResponse::SetIconHover failed for file '%s'", Filename);
-		delete m_IconHover;
-		m_IconHover = NULL;
+		delete _iconHover;
+		_iconHover = NULL;
 		return E_FAIL;
 	}
 	return S_OK;
@@ -111,12 +111,12 @@ HRESULT CAdResponse::SetIconHover(char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponse::SetIconPressed(char *Filename) {
-	delete m_IconPressed;
-	m_IconPressed = new CBSprite(Game);
-	if (!m_IconPressed || FAILED(m_IconPressed->LoadFile(Filename))) {
+	delete _iconPressed;
+	_iconPressed = new CBSprite(Game);
+	if (!_iconPressed || FAILED(_iconPressed->LoadFile(Filename))) {
 		Game->LOG(0, "CAdResponse::SetIconPressed failed for file '%s'", Filename);
-		delete m_IconPressed;
-		m_IconPressed = NULL;
+		delete _iconPressed;
+		_iconPressed = NULL;
 		return E_FAIL;
 	}
 	return S_OK;
@@ -128,14 +128,14 @@ HRESULT CAdResponse::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Icon));
-	PersistMgr->Transfer(TMEMBER(m_IconHover));
-	PersistMgr->Transfer(TMEMBER(m_IconPressed));
-	PersistMgr->Transfer(TMEMBER(m_ID));
-	PersistMgr->Transfer(TMEMBER(m_Text));
-	PersistMgr->Transfer(TMEMBER(m_TextOrig));
-	PersistMgr->Transfer(TMEMBER_INT(m_ResponseType));
-	PersistMgr->Transfer(TMEMBER(m_Font));
+	PersistMgr->Transfer(TMEMBER(_icon));
+	PersistMgr->Transfer(TMEMBER(_iconHover));
+	PersistMgr->Transfer(TMEMBER(_iconPressed));
+	PersistMgr->Transfer(TMEMBER(_iD));
+	PersistMgr->Transfer(TMEMBER(_text));
+	PersistMgr->Transfer(TMEMBER(_textOrig));
+	PersistMgr->Transfer(TMEMBER_INT(_responseType));
+	PersistMgr->Transfer(TMEMBER(_font));
 
 	return S_OK;
 }

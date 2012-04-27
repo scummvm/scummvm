@@ -37,13 +37,13 @@ IMPLEMENT_PERSISTENT(CBKeyboardState, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBKeyboardState::CBKeyboardState(CBGame *inGame): CBScriptable(inGame) {
-	m_CurrentPrintable = false;
-	m_CurrentCharCode = 0;
-	m_CurrentKeyData = 0;
+	_currentPrintable = false;
+	_currentCharCode = 0;
+	_currentKeyData = 0;
 
-	m_CurrentShift = false;
-	m_CurrentAlt = false;
-	m_CurrentControl = false;
+	_currentShift = false;
+	_currentAlt = false;
+	_currentControl = false;
 }
 
 
@@ -65,7 +65,7 @@ HRESULT CBKeyboardState::ScCallMethod(CScScript *Script, CScStack *Stack, CScSta
 		CScValue *val = Stack->Pop();
 		int vKey;
 
-		if (val->m_Type == VAL_STRING && strlen(val->GetString()) > 0) {
+		if (val->_type == VAL_STRING && strlen(val->GetString()) > 0) {
 			char *str = val->GetString();
 			if (str[0] >= 'A' && str[0] <= 'Z') str[0] += ('a' - 'A');
 			vKey = (int)str[0];
@@ -86,68 +86,68 @@ HRESULT CBKeyboardState::ScCallMethod(CScScript *Script, CScStack *Stack, CScSta
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBKeyboardState::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("keyboard");
-		return m_ScValue;
+		_scValue->SetString("keyboard");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Key
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Key") == 0) {
-		if (m_CurrentPrintable) {
+		if (_currentPrintable) {
 			char key[2];
-			key[0] = (char)m_CurrentCharCode;
+			key[0] = (char)_currentCharCode;
 			key[1] = '\0';
-			m_ScValue->SetString(key);
-		} else m_ScValue->SetString("");
+			_scValue->SetString(key);
+		} else _scValue->SetString("");
 
-		return m_ScValue;
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Printable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Printable") == 0) {
-		m_ScValue->SetBool(m_CurrentPrintable);
-		return m_ScValue;
+		_scValue->SetBool(_currentPrintable);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// KeyCode
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "KeyCode") == 0) {
-		m_ScValue->SetInt(m_CurrentCharCode);
-		return m_ScValue;
+		_scValue->SetInt(_currentCharCode);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsShift
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsShift") == 0) {
-		m_ScValue->SetBool(m_CurrentShift);
-		return m_ScValue;
+		_scValue->SetBool(_currentShift);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsAlt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsAlt") == 0) {
-		m_ScValue->SetBool(m_CurrentAlt);
-		return m_ScValue;
+		_scValue->SetBool(_currentAlt);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsControl
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsControl") == 0) {
-		m_ScValue->SetBool(m_CurrentControl);
-		return m_ScValue;
+		_scValue->SetBool(_currentControl);
+		return _scValue;
 	}
 
 	else return CBScriptable::ScGetProperty(Name);
@@ -162,7 +162,7 @@ HRESULT CBKeyboardState::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(Name, "Name")==0){
 	    SetName(Value->GetString());
-	    if(m_Renderer) SetWindowText(m_Renderer->m_Window, m_Name);
+	    if(_renderer) SetWindowText(_renderer->_window, _name);
 	    return S_OK;
 	}
 
@@ -178,13 +178,13 @@ char *CBKeyboardState::ScToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBKeyboardState::ReadKey(SDL_Event *event) {
-	//m_CurrentPrintable = (event->type == SDL_TEXTINPUT); // TODO
-	m_CurrentCharCode = KeyCodeToVKey(event);
-	//m_CurrentKeyData = KeyData;
+	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
+	_currentCharCode = KeyCodeToVKey(event);
+	//_currentKeyData = KeyData;
 
-	m_CurrentControl = IsControlDown();
-	m_CurrentAlt     = IsAltDown();
-	m_CurrentShift   = IsShiftDown();
+	_currentControl = IsControlDown();
+	_currentAlt     = IsAltDown();
+	_currentShift   = IsShiftDown();
 
 	return S_OK;
 }
@@ -192,15 +192,15 @@ HRESULT CBKeyboardState::ReadKey(SDL_Event *event) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBKeyboardState::Persist(CBPersistMgr *PersistMgr) {
-	//if(!PersistMgr->m_Saving) Cleanup();
+	//if(!PersistMgr->_saving) Cleanup();
 	CBScriptable::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_CurrentAlt));
-	PersistMgr->Transfer(TMEMBER(m_CurrentCharCode));
-	PersistMgr->Transfer(TMEMBER(m_CurrentControl));
-	PersistMgr->Transfer(TMEMBER(m_CurrentKeyData));
-	PersistMgr->Transfer(TMEMBER(m_CurrentPrintable));
-	PersistMgr->Transfer(TMEMBER(m_CurrentShift));
+	PersistMgr->Transfer(TMEMBER(_currentAlt));
+	PersistMgr->Transfer(TMEMBER(_currentCharCode));
+	PersistMgr->Transfer(TMEMBER(_currentControl));
+	PersistMgr->Transfer(TMEMBER(_currentKeyData));
+	PersistMgr->Transfer(TMEMBER(_currentPrintable));
+	PersistMgr->Transfer(TMEMBER(_currentShift));
 
 	return S_OK;
 }

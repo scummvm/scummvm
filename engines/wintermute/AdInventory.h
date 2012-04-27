@@ -43,8 +43,8 @@ public:
 	HRESULT InsertItem(char *Name, char *InsertAfter = NULL);
 	CAdInventory(CBGame *inGame);
 	virtual ~CAdInventory();
-	CBArray<CAdItem *, CAdItem *> m_TakenItems;
-	int m_ScrollOffset;
+	CBArray<CAdItem *, CAdItem *> _takenItems;
+	int _scrollOffset;
 };
 
 } // end of namespace WinterMute

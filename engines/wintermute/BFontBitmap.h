@@ -49,15 +49,15 @@ public:
 
 
 	HRESULT GetWidths();
-	CBSprite *m_Sprite;
-	int m_WidthsFrame;
-	bool m_FontextFix;
-	int m_NumColumns;
-	int m_TileHeight;
-	int m_TileWidth;
-	byte m_Widths[NUM_CHARACTERS];
-	CBSubFrame *m_Subframe;
-	bool m_WholeCell;
+	CBSprite *_sprite;
+	int _widthsFrame;
+	bool _fontextFix;
+	int _numColumns;
+	int _tileHeight;
+	int _tileWidth;
+	byte _widths[NUM_CHARACTERS];
+	CBSubFrame *_subframe;
+	bool _wholeCell;
 
 private:
 	int GetCharWidth(byte  Index);

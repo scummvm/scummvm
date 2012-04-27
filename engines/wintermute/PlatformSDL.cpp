@@ -78,7 +78,7 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 
 				// set ini name
 				sprintf(param, "./%s", IniName);
-				Game->m_Registry->SetIniName(param);
+				Game->_registry->SetIniName(param);
 
 				delete [] IniDir;
 				delete [] IniName;
@@ -87,16 +87,16 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 	}
 
 
-	if (Game->m_Registry->ReadBool("Debug", "DebugMode")) Game->DEBUG_DebugEnable("./wme.log");
+	if (Game->_registry->ReadBool("Debug", "DebugMode")) Game->DEBUG_DebugEnable("./wme.log");
 
-	Game->m_DEBUG_ShowFPS = Game->m_Registry->ReadBool("Debug", "ShowFPS");
+	Game->_dEBUG_ShowFPS = Game->_registry->ReadBool("Debug", "ShowFPS");
 
-	if (Game->m_Registry->ReadBool("Debug", "DisableSmartCache")) {
+	if (Game->_registry->ReadBool("Debug", "DisableSmartCache")) {
 		Game->LOG(0, "Smart cache is DISABLED");
-		Game->m_SmartCache = false;
+		Game->_smartCache = false;
 	}
 
-	bool AllowDirectDraw = Game->m_Registry->ReadBool("Debug", "AllowDirectDraw", false);
+	bool AllowDirectDraw = Game->_registry->ReadBool("Debug", "AllowDirectDraw", false);
 
 	// load general game settings
 	Game->Initialize1();
@@ -116,14 +116,14 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 	Game->Initialize2();
 
 	Game->GetDebugMgr()->OnGameInit();
-	Game->m_ScEngine->LoadBreakpoints();
+	Game->_scEngine->LoadBreakpoints();
 
 
 
 	HRESULT ret;
 
 	// initialize the renderer
-	ret = Game->m_Renderer->InitRenderer(Game->m_SettingsResWidth, Game->m_SettingsResHeight, windowedMode);
+	ret = Game->_renderer->InitRenderer(Game->_settingsResWidth, Game->_settingsResHeight, windowedMode);
 	if (FAILED(ret)) {
 		Game->LOG(ret, "Error initializing renderer. Exiting.");
 
@@ -139,7 +139,7 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 #endif
 
 	// initialize sound manager (non-fatal if we fail)
-	ret = Game->m_SoundMgr->Initialize();
+	ret = Game->_soundMgr->Initialize();
 	if (FAILED(ret)) {
 		Game->LOG(ret, "Sound is NOT available.");
 	}
@@ -148,15 +148,15 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 	// load game
 	uint32 DataInitStart = GetTime();
 
-	if (FAILED(Game->LoadFile(Game->m_SettingsGameFile ? Game->m_SettingsGameFile : "default.game"))) {
+	if (FAILED(Game->LoadFile(Game->_settingsGameFile ? Game->_settingsGameFile : "default.game"))) {
 		Game->LOG(ret, "Error loading game file. Exiting.");
 		delete Game;
 		Game = NULL;
 		return false;
 	}
 	Game->SetWindowTitle();
-	Game->m_Renderer->m_Ready = true;
-	Game->m_MiniUpdateEnabled = true;
+	Game->_renderer->_ready = true;
+	Game->_miniUpdateEnabled = true;
 
 	Game->LOG(0, "Engine initialized in %d ms", GetTime() - DataInitStart);
 	Game->LOG(0, "");
@@ -182,7 +182,7 @@ int CBPlatform::MessageLoop() {
 			HandleEvent(&event);
 		}
 
-		if (Game && Game->m_Renderer->m_Active && Game->m_Renderer->m_Ready) {
+		if (Game && Game->_renderer->_active && Game->_renderer->_ready) {
 
 			Game->DisplayContent();
 			Game->DisplayQuickMsg();
@@ -190,27 +190,27 @@ int CBPlatform::MessageLoop() {
 			Game->DisplayDebugInfo();
 
 			// ***** flip
-			if (!Game->m_SuspendedRendering) Game->m_Renderer->Flip();
-			if (Game->m_Loading) Game->LoadGame(Game->m_ScheduledLoadSlot);
+			if (!Game->_suspendedRendering) Game->_renderer->Flip();
+			if (Game->_loading) Game->LoadGame(Game->_scheduledLoadSlot);
 		}
-		if (Game->m_Quitting) break;
+		if (Game->_quitting) break;
 
 	}
 
 	if (Game) {
 		// remember previous window position
 		/*
-		if(Game->m_Renderer && Game->m_Renderer->m_Windowed)
+		if(Game->_renderer && Game->_renderer->_windowed)
 		{
-		    if(!::IsIconic(Game->m_Renderer->m_Window))
+		    if(!::IsIconic(Game->_renderer->_window))
 		    {
-		        int PosX = Game->m_Renderer->m_WindowRect.left;
-		        int PosY = Game->m_Renderer->m_WindowRect.top;
-		        PosX -= Game->m_Renderer->m_MonitorRect.left;
-		        PosY -= Game->m_Renderer->m_MonitorRect.top;
+		        int PosX = Game->_renderer->_windowRect.left;
+		        int PosY = Game->_renderer->_windowRect.top;
+		        PosX -= Game->_renderer->_monitorRect.left;
+		        PosY -= Game->_renderer->_monitorRect.top;
 
-		        Game->m_Registry->WriteInt("Video", "WindowPosX", PosX);
-		        Game->m_Registry->WriteInt("Video", "WindowPosY", PosY);
+		        Game->_registry->WriteInt("Video", "WindowPosX", PosX);
+		        Game->_registry->WriteInt("Video", "WindowPosY", PosY);
 		    }
 		}
 		*/
@@ -229,14 +229,14 @@ void CBPlatform::HandleEvent(SDL_Event *event) {
 
 #ifdef __IPHONEOS__
 		{
-			CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->m_Renderer);
+			CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 			POINT p;
 			GetCursorPos(&p);
 			Game->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
 
-			if (Game->m_ActiveObject != NULL && strcmp(Game->m_ActiveObject->GetClassName(), "CUIButton") == 0) {
-				CUIButton *btn = static_cast<CUIButton *>(Game->m_ActiveObject);
-				if (btn->m_Visible && !btn->m_Disable) btn->m_Press = true;
+			if (Game->_activeObject != NULL && strcmp(Game->_activeObject->GetClassName(), "CUIButton") == 0) {
+				CUIButton *btn = static_cast<CUIButton *>(Game->_activeObject);
+				if (btn->_visible && !btn->_disable) btn->_press = true;
 			}
 		}
 #endif
@@ -307,7 +307,7 @@ void CBPlatform::HandleEvent(SDL_Event *event) {
 #ifdef __IPHONEOS__
 		if (Game) {
 			Game->AutoSaveOnExit();
-			Game->m_Quitting = true;
+			Game->_quitting = true;
 		}
 #else
 		if (Game) Game->OnWindowClose();
@@ -357,7 +357,7 @@ uint32 CBPlatform::GetTime() {
 
 //////////////////////////////////////////////////////////////////////////
 BOOL CBPlatform::GetCursorPos(LPPOINT lpPoint) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->m_Renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
 	int x, y;
 	SDL_GetMouseState(&x, &y);
@@ -371,7 +371,7 @@ BOOL CBPlatform::GetCursorPos(LPPOINT lpPoint) {
 
 //////////////////////////////////////////////////////////////////////////
 BOOL CBPlatform::SetCursorPos(int X, int Y) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->m_Renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
 	POINT p;
 	p.x = X;

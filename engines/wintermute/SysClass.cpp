@@ -39,14 +39,14 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CSysClass::CSysClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class) {
-	m_Name = name;
+	_name = name;
 
-	m_Build = build;
-	m_Load = load;
-	m_Next = NULL;
-	m_SavedID = -1;
-	m_Persistent = persistent_class;
-	m_NumInst = 0;
+	_build = build;
+	_load = load;
+	_next = NULL;
+	_savedID = -1;
+	_persistent = persistent_class;
+	_numInst = 0;
 
 	CSysClassRegistry::GetInstance()->RegisterClass(this);
 }
@@ -61,11 +61,11 @@ CSysClass::~CSysClass() {
 //////////////////////////////////////////////////////////////////////////
 bool CSysClass::RemoveAllInstances() {
 	InstanceMap::iterator it;
-	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+	for (it = _instanceMap.begin(); it != _instanceMap.end(); ++it) {
 		delete(it->_value);
 	}
-	//m_Instances.clear();
-	m_InstanceMap.clear();
+	//_instances.clear();
+	_instanceMap.clear();
 
 	return true;
 }
@@ -74,9 +74,9 @@ bool CSysClass::RemoveAllInstances() {
 CSysInstance *CSysClass::AddInstance(void *instance, int id, int savedId) {
 	CSysInstance *inst = new CSysInstance(instance, id, this);
 	inst->SetSavedID(savedId);
-	//m_Instances.insert(inst);
+	//_instances.insert(inst);
 
-	m_InstanceMap[instance] = inst;
+	_instanceMap[instance] = inst;
 
 	CSysClassRegistry::GetInstance()->AddInstanceToTable(inst, instance);
 
@@ -86,25 +86,25 @@ CSysInstance *CSysClass::AddInstance(void *instance, int id, int savedId) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CSysClass::RemoveInstance(void *instance) {
-	InstanceMap::iterator mapIt = m_InstanceMap.find(instance);
-	if (mapIt == m_InstanceMap.end()) return false;
+	InstanceMap::iterator mapIt = _instanceMap.find(instance);
+	if (mapIt == _instanceMap.end()) return false;
 /*
-	Instances::iterator it = m_Instances.find((*mapIt).second);
-	if (it != m_Instances.end()) {
+	Instances::iterator it = _instances.find((*mapIt).second);
+	if (it != _instances.end()) {
 		delete(*it);
-		m_Instances.erase(it);
+		_instances.erase(it);
 	}*/
 
 	delete mapIt->_value;
-	m_InstanceMap.erase(mapIt);
+	_instanceMap.erase(mapIt);
 
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 int CSysClass::GetInstanceID(void *pointer) {
-	InstanceMap::iterator mapIt = m_InstanceMap.find(pointer);
-	if (mapIt == m_InstanceMap.end()) return -1;
+	InstanceMap::iterator mapIt = _instanceMap.find(pointer);
+	if (mapIt == _instanceMap.end()) return -1;
 	else return (*mapIt)._value->GetID();
 }
 
@@ -112,11 +112,11 @@ int CSysClass::GetInstanceID(void *pointer) {
 void *CSysClass::IDToPointer(int savedID) {
 	//slow
 	/*Instances::iterator it;
-	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
+	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		if ((*it)->GetSavedID() == savedID) return (*it)->GetInstance();
 	}*/
 	InstanceMap::iterator it;
-	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+	for (it = _instanceMap.begin(); it != _instanceMap.end(); ++it) {
 		if ((it->_value)->GetSavedID() == savedID) return (it->_value)->GetInstance();
 	}
 	return NULL;
@@ -124,56 +124,56 @@ void *CSysClass::IDToPointer(int savedID) {
 
 //////////////////////////////////////////////////////////////////////////
 int CSysClass::GetNumInstances() {
-	//return m_Instances.size();
-	return m_InstanceMap.size(); // TODO: This might break, if we have multiple keys per value.
+	//return _instances.size();
+	return _instanceMap.size(); // TODO: This might break, if we have multiple keys per value.
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::Dump(void *stream) {
-	fprintf((FILE*)stream, "%03d %c %-20s instances: %d\n", m_ID, m_Persistent ? 'p' : ' ', m_Name.c_str(), GetNumInstances());
+	fprintf((FILE*)stream, "%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), GetNumInstances());
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr) {
-	PersistMgr->PutString(m_Name.c_str());
-	PersistMgr->PutDWORD(m_ID);
-	PersistMgr->PutDWORD(m_InstanceMap.size());
+	PersistMgr->PutString(_name.c_str());
+	PersistMgr->PutDWORD(_iD);
+	PersistMgr->PutDWORD(_instanceMap.size());
 
 	InstanceMap::iterator it;
-	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+	for (it = _instanceMap.begin(); it != _instanceMap.end(); ++it) {
 		PersistMgr->PutDWORD((it->_value)->GetID());
 	}
 	/*
 	Instances::iterator it;
-	for (it = m_Instances.begin(); it != m_Instances.end(); ++it) {
+	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		PersistMgr->PutDWORD((*it)->GetID());
 	}*/
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
-	m_SavedID = PersistMgr->GetDWORD();
+	_savedID = PersistMgr->GetDWORD();
 	int numInstances = PersistMgr->GetDWORD();
 
 	for (int i = 0; i < numInstances; i++) {
-		if (m_Persistent) {
+		if (_persistent) {
 			int instId = PersistMgr->GetDWORD();
 
 			if (i > 0) {
-				Game->LOG(0, "Warning: attempting to load multiple instances of persistent class %s (%d)", m_Name.c_str(), numInstances);
+				Game->LOG(0, "Warning: attempting to load multiple instances of persistent class %s (%d)", _name.c_str(), numInstances);
 				continue;
 			}
 
-			InstanceMap::iterator it = m_InstanceMap.begin();
-/*			Instances::iterator it = m_Instances.begin();*/
-			if (it != m_InstanceMap.end()) {
+			InstanceMap::iterator it = _instanceMap.begin();
+/*			Instances::iterator it = _instances.begin();*/
+			if (it != _instanceMap.end()) {
 				(it->_value)->SetSavedID(instId);
 				CSysClassRegistry::GetInstance()->AddInstanceToTable((it->_value), (it->_value)->GetInstance());
-			} else Game->LOG(0, "Warning: instance %d of persistent class %s not found", i, m_Name.c_str());
+			} else Game->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
 		}
 		// normal instances, create empty objects
 		else {
-			void *emptyObject = m_Build();
+			void *emptyObject = _build();
 			AddInstance(emptyObject, CSysClassRegistry::GetInstance()->GetNextID(), PersistMgr->GetDWORD());
 		}
 
@@ -183,25 +183,25 @@ void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr) {
 	InstanceMap::iterator it;
-	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+	for (it = _instanceMap.begin(); it != _instanceMap.end(); ++it) {
 		// write instace header
-		PersistMgr->PutDWORD(m_ID);
+		PersistMgr->PutDWORD(_iD);
 		PersistMgr->PutDWORD((it->_value)->GetID());
 
-		m_Load((it->_value)->GetInstance(), PersistMgr);
+		_load((it->_value)->GetInstance(), PersistMgr);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::LoadInstance(void *instance, CBPersistMgr *PersistMgr) {
-	m_Load(instance, PersistMgr);
+	_load(instance, PersistMgr);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::ResetSavedIDs() {
 	InstanceMap::iterator it;
-	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+	for (it = _instanceMap.begin(); it != _instanceMap.end(); ++it) {
 		(it->_value)->SetSavedID(-1);
 	}
 }
@@ -209,7 +209,7 @@ void CSysClass::ResetSavedIDs() {
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::InstanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData) {
 	InstanceMap::iterator it;
-	for (it = m_InstanceMap.begin(); it != m_InstanceMap.end(); ++it) {
+	for (it = _instanceMap.begin(); it != _instanceMap.end(); ++it) {
 		lpCallback((it->_value)->GetInstance(), lpData);
 	}
 }

@@ -53,11 +53,11 @@ public:
 	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
 	void SetFilename(char *Filename);
 	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
-	char *m_Filename;
-	bool m_Freezable;
-	bool m_Ready;
+	char *_filename;
+	bool _freezable;
+	bool _ready;
 
-	CBArray<CScScript *, CScScript *> m_Scripts;
+	CBArray<CScScript *, CScScript *> _scripts;
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);

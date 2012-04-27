@@ -48,15 +48,15 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBPkgFile::CBPkgFile(CBGame *inGame): CBFile(inGame) {
-	m_FileEntry = NULL;
-	m_File = NULL;
-	m_Compressed = false;
+	_fileEntry = NULL;
+	_file = NULL;
+	_compressed = false;
 
-	m_Stream.zalloc = (alloc_func)0;
-	m_Stream.zfree = (free_func)0;
-	m_Stream.opaque = (voidpf)0;
+	_stream.zalloc = (alloc_func)0;
+	_stream.zfree = (free_func)0;
+	_stream.opaque = (voidpf)0;
 
-	m_InflateInit = false;
+	_inflateInit = false;
 }
 
 
@@ -78,15 +78,15 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 		if (fileName[i] == '/') fileName[i] = '\\';
 	}
 
-	m_FileEntry = Game->m_FileManager->GetPackageEntry(fileName);
-	if (!m_FileEntry) return E_FAIL;
+	_fileEntry = Game->_fileManager->GetPackageEntry(fileName);
+	if (!_fileEntry) return E_FAIL;
 
-	m_File = m_FileEntry->m_Package->GetFilePointer();
-	if (!m_File) return E_FAIL;
+	_file = _fileEntry->_package->GetFilePointer();
+	if (!_file) return E_FAIL;
 
 
-	m_Compressed = (m_FileEntry->m_CompressedLength != 0);
-	m_Size = m_FileEntry->m_Length;
+	_compressed = (_fileEntry->_compressedLength != 0);
+	_size = _fileEntry->_length;
 
 	SeekToPos(0);
 
@@ -96,17 +96,17 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPkgFile::Close() {
-	if (m_FileEntry) {
-		m_FileEntry->m_Package->CloseFilePointer(m_File);
-		m_FileEntry = NULL;
+	if (_fileEntry) {
+		_fileEntry->_package->CloseFilePointer(_file);
+		_fileEntry = NULL;
 	}
-	m_File = NULL;
+	_file = NULL;
 
-	m_Pos = 0;
-	m_Size = 0;
+	_pos = 0;
+	_size = 0;
 
-	if (m_InflateInit) inflateEnd(&m_Stream);
-	m_InflateInit = false;
+	if (_inflateInit) inflateEnd(&_stream);
+	_inflateInit = false;
 
 	return S_OK;
 }
@@ -114,30 +114,30 @@ HRESULT CBPkgFile::Close() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
-	if (!m_FileEntry) return E_FAIL;
+	if (!_fileEntry) return E_FAIL;
 
 	HRESULT ret = S_OK;
 
-	if (m_Pos + Size > m_Size) {
-		Size = m_Size - m_Pos;
+	if (_pos + Size > _size) {
+		Size = _size - _pos;
 		if (Size == 0) return E_FAIL;
 	}
 
-	if (m_Compressed) {
-		uint32 InitOut = m_Stream.total_out;
+	if (_compressed) {
+		uint32 InitOut = _stream.total_out;
 
-		m_Stream.avail_out = Size;
-		m_Stream.next_out = (byte  *)Buffer;
+		_stream.avail_out = Size;
+		_stream.next_out = (byte  *)Buffer;
 
-		while (m_Stream.total_out - InitOut < Size && m_Stream.total_in < m_FileEntry->m_CompressedLength) {
+		while (_stream.total_out - InitOut < Size && _stream.total_in < _fileEntry->_compressedLength) {
 			// needs to read more data?
-			if (m_Stream.avail_in == 0) {
-				m_Stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, m_FileEntry->m_CompressedLength - m_Stream.total_in); // TODO: long unsigned int????
-				m_FileEntry->m_Package->Read(m_File, m_FileEntry->m_Offset + m_Stream.total_in, m_CompBuffer, m_Stream.avail_in);
-				m_Stream.next_in = m_CompBuffer;
+			if (_stream.avail_in == 0) {
+				_stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, _fileEntry->_compressedLength - _stream.total_in); // TODO: long unsigned int????
+				_fileEntry->_package->Read(_file, _fileEntry->_offset + _stream.total_in, _compBuffer, _stream.avail_in);
+				_stream.next_in = _compBuffer;
 			}
 
-			int res = inflate(&m_Stream, Z_SYNC_FLUSH);
+			int res = inflate(&_stream, Z_SYNC_FLUSH);
 			if (res != Z_OK && res != Z_STREAM_END) {
 				Game->LOG(0, "zlib error: %d", res);
 				ret = E_FAIL;
@@ -147,10 +147,10 @@ HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
 
 
 	} else {
-		ret = m_FileEntry->m_Package->Read(m_File, m_FileEntry->m_Offset + m_Pos, (byte  *)Buffer, Size);
+		ret = _fileEntry->_package->Read(_file, _fileEntry->_offset + _pos, (byte  *)Buffer, Size);
 	}
 
-	m_Pos += Size;
+	_pos += Size;
 
 	return ret;
 }
@@ -158,7 +158,7 @@ HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPkgFile::Seek(uint32 Pos, TSeek Origin) {
-	if (!m_FileEntry) return E_FAIL;
+	if (!_fileEntry) return E_FAIL;
 
 	uint32 NewPos = 0;
 
@@ -167,14 +167,14 @@ HRESULT CBPkgFile::Seek(uint32 Pos, TSeek Origin) {
 		NewPos = Pos;
 		break;
 	case SEEK_TO_END:
-		NewPos = m_Size + Pos;
+		NewPos = _size + Pos;
 		break;
 	case SEEK_TO_CURRENT:
-		NewPos = m_Pos + Pos;
+		NewPos = _pos + Pos;
 		break;
 	}
 
-	if (NewPos < 0 || NewPos > m_Size) return E_FAIL;
+	if (NewPos < 0 || NewPos > _size) return E_FAIL;
 
 	return SeekToPos(NewPos);
 }
@@ -186,34 +186,34 @@ HRESULT CBPkgFile::SeekToPos(uint32 NewPos) {
 	HRESULT ret = S_OK;
 
 	// seek compressed stream to NewPos
-	if (m_Compressed) {
+	if (_compressed) {
 		byte StreamBuffer[STREAM_BUFFER_SIZE];
-		if (m_InflateInit) inflateEnd(&m_Stream);
-		m_InflateInit = false;
+		if (_inflateInit) inflateEnd(&_stream);
+		_inflateInit = false;
 
-		m_Stream.avail_in = 0;
-		m_Stream.next_in = m_CompBuffer;
-		m_Stream.avail_out = MIN((uint32)STREAM_BUFFER_SIZE, NewPos); //TODO: remove cast.
-		m_Stream.next_out = StreamBuffer;
-		inflateInit(&m_Stream);
-		m_InflateInit = true;
+		_stream.avail_in = 0;
+		_stream.next_in = _compBuffer;
+		_stream.avail_out = MIN((uint32)STREAM_BUFFER_SIZE, NewPos); //TODO: remove cast.
+		_stream.next_out = StreamBuffer;
+		inflateInit(&_stream);
+		_inflateInit = true;
 
-		while (m_Stream.total_out < NewPos && m_Stream.total_in < m_FileEntry->m_CompressedLength) {
+		while (_stream.total_out < NewPos && _stream.total_in < _fileEntry->_compressedLength) {
 			// needs to read more data?
-			if (m_Stream.avail_in == 0) {
-				m_Stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, m_FileEntry->m_CompressedLength - m_Stream.total_in); // TODO: long unsigned int???
-				m_FileEntry->m_Package->Read(m_File, m_FileEntry->m_Offset + m_Stream.total_in, m_CompBuffer, m_Stream.avail_in);
-				m_Stream.next_in = m_CompBuffer;
+			if (_stream.avail_in == 0) {
+				_stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, _fileEntry->_compressedLength - _stream.total_in); // TODO: long unsigned int???
+				_fileEntry->_package->Read(_file, _fileEntry->_offset + _stream.total_in, _compBuffer, _stream.avail_in);
+				_stream.next_in = _compBuffer;
 			}
 
 			// needs more space?
-			if (m_Stream.avail_out == 0) {
-				m_Stream.next_out = StreamBuffer;
-				m_Stream.avail_out = MIN((long unsigned int)STREAM_BUFFER_SIZE, NewPos - m_Stream.total_out); // TODO: long unsigned int???.
+			if (_stream.avail_out == 0) {
+				_stream.next_out = StreamBuffer;
+				_stream.avail_out = MIN((long unsigned int)STREAM_BUFFER_SIZE, NewPos - _stream.total_out); // TODO: long unsigned int???.
 			}
 
 			// stream on!
-			int res = inflate(&m_Stream, Z_SYNC_FLUSH);
+			int res = inflate(&_stream, Z_SYNC_FLUSH);
 			if (res != Z_OK && res != Z_STREAM_END) {
 				ret = E_FAIL;
 				break;
@@ -222,7 +222,7 @@ HRESULT CBPkgFile::SeekToPos(uint32 NewPos) {
 
 	}
 
-	m_Pos = NewPos;
+	_pos = NewPos;
 	return ret;
 }
 

@@ -41,62 +41,62 @@ public:
 	CPartEmitter(CBGame *inGame, CBScriptHolder *Owner);
 	virtual ~CPartEmitter(void);
 
-	int m_Width;
-	int m_Height;
+	int _width;
+	int _height;
 
-	int m_Angle1;
-	int m_Angle2;
+	int _angle1;
+	int _angle2;
 
-	float m_Rotation1;
-	float m_Rotation2;
+	float _rotation1;
+	float _rotation2;
 
-	float m_AngVelocity1;
-	float m_AngVelocity2;
+	float _angVelocity1;
+	float _angVelocity2;
 
-	float m_GrowthRate1;
-	float m_GrowthRate2;
-	bool m_ExponentialGrowth;
+	float _growthRate1;
+	float _growthRate2;
+	bool _exponentialGrowth;
 
-	float m_Velocity1;
-	float m_Velocity2;
-	bool m_VelocityZBased;
+	float _velocity1;
+	float _velocity2;
+	bool _velocityZBased;
 
-	float m_Scale1;
-	float m_Scale2;
-	bool m_ScaleZBased;
+	float _scale1;
+	float _scale2;
+	bool _scaleZBased;
 
-	int m_MaxParticles;
+	int _maxParticles;
 
-	int m_LifeTime1;
-	int m_LifeTime2;
-	bool m_LifeTimeZBased;
+	int _lifeTime1;
+	int _lifeTime2;
+	bool _lifeTimeZBased;
 
-	int m_GenInterval;
-	int m_GenAmount;
+	int _genInterval;
+	int _genAmount;
 
-	bool m_Running;
-	int m_OverheadTime;
+	bool _running;
+	int _overheadTime;
 
-	int m_MaxBatches;
-	int m_BatchesGenerated;
+	int _maxBatches;
+	int _batchesGenerated;
 
-	RECT m_Border;
-	int m_BorderThicknessLeft;
-	int m_BorderThicknessRight;
-	int m_BorderThicknessTop;
-	int m_BorderThicknessBottom;
+	RECT _border;
+	int _borderThicknessLeft;
+	int _borderThicknessRight;
+	int _borderThicknessTop;
+	int _borderThicknessBottom;
 
-	int m_FadeInTime;
-	int m_FadeOutTime;
+	int _fadeInTime;
+	int _fadeOutTime;
 
-	int m_Alpha1;
-	int m_Alpha2;
-	bool m_AlphaTimeBased;
+	int _alpha1;
+	int _alpha2;
+	bool _alphaTimeBased;
 
-	bool m_UseRegion;
+	bool _useRegion;
 
-	char *m_EmitEvent;
-	CBScriptHolder *m_Owner;
+	char *_emitEvent;
+	CBScriptHolder *_owner;
 
 	HRESULT Start();
 
@@ -112,7 +112,7 @@ public:
 	HRESULT AddForce(char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
 	HRESULT RemoveForce(char *Name);
 
-	CBArray<CPartForce *, CPartForce *> m_Forces;
+	CBArray<CPartForce *, CPartForce *> _forces;
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
@@ -126,9 +126,9 @@ private:
 	int static CompareZ(const void *Obj1, const void *Obj2);
 	HRESULT InitParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta);
 	HRESULT UpdateInternal(uint32 CurrentTime, uint32 TimerDelta);
-	uint32 m_LastGenTime;
-	CBArray<CPartParticle *, CPartParticle *> m_Particles;
-	CBArray<char *, char *> m_Sprites;
+	uint32 _lastGenTime;
+	CBArray<CPartParticle *, CPartParticle *> _particles;
+	CBArray<char *, char *> _sprites;
 };
 
 } // end of namespace WinterMute

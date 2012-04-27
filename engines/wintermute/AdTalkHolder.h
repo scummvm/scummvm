@@ -38,9 +38,9 @@ public:
 	DECLARE_PERSISTENT(CAdTalkHolder, CAdObject)
 	virtual CBSprite *GetTalkStance(char *Stance);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	CBSprite *m_Sprite;
-	CBArray<CBSprite *, CBSprite *> m_TalkSprites;
-	CBArray<CBSprite *, CBSprite *> m_TalkSpritesEx;
+	CBSprite *_sprite;
+	CBArray<CBSprite *, CBSprite *> _talkSprites;
+	CBArray<CBSprite *, CBSprite *> _talkSpritesEx;
 	CAdTalkHolder(CBGame *inGame);
 	virtual ~CAdTalkHolder();
 

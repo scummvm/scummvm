@@ -38,19 +38,19 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
 CBRenderer::CBRenderer(CBGame *inGame): CBBase(inGame) {
-	m_Instance = NULL;
-	m_Window = NULL;
-	m_ClipperWindow = NULL;
-	m_Active = false;
-	m_Ready = false;
-	m_Windowed = true;
-	m_ForceAlphaColor = 0x00;
+	_instance = NULL;
+	_window = NULL;
+	_clipperWindow = NULL;
+	_active = false;
+	_ready = false;
+	_windowed = true;
+	_forceAlphaColor = 0x00;
 
-	m_Width = m_Height = m_BPP = 0;
-	CBPlatform::SetRectEmpty(&m_MonitorRect);
+	_width = _height = _bPP = 0;
+	CBPlatform::SetRectEmpty(&_monitorRect);
 
-	m_RealWidth = m_RealHeight = 0;
-	m_DrawOffsetX = m_DrawOffsetY = 0;
+	_realWidth = _realHeight = 0;
+	_drawOffsetX = _drawOffsetY = 0;
 }
 
 
@@ -73,31 +73,31 @@ CBObject *CBRenderer::GetObjectAt(int X, int Y) {
 	point.x = X;
 	point.y = Y;
 
-	for (int i = m_RectList.GetSize() - 1; i >= 0; i--) {
-		if (CBPlatform::PtInRect(&m_RectList[i]->m_Rect, point)) {
-			if (m_RectList[i]->m_Precise) {
+	for (int i = _rectList.GetSize() - 1; i >= 0; i--) {
+		if (CBPlatform::PtInRect(&_rectList[i]->_rect, point)) {
+			if (_rectList[i]->_precise) {
 				// frame
-				if (m_RectList[i]->m_Frame) {
-					int XX = (int)((m_RectList[i]->m_Frame->m_Rect.left + X - m_RectList[i]->m_Rect.left + m_RectList[i]->m_OffsetX) / (float)((float)m_RectList[i]->m_ZoomX / (float)100));
-					int YY = (int)((m_RectList[i]->m_Frame->m_Rect.top  + Y - m_RectList[i]->m_Rect.top  + m_RectList[i]->m_OffsetY) / (float)((float)m_RectList[i]->m_ZoomY / (float)100));
+				if (_rectList[i]->_frame) {
+					int XX = (int)((_rectList[i]->_frame->_rect.left + X - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
+					int YY = (int)((_rectList[i]->_frame->_rect.top  + Y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
 
-					if (m_RectList[i]->m_Frame->m_MirrorX) {
-						int Width = m_RectList[i]->m_Frame->m_Rect.right - m_RectList[i]->m_Frame->m_Rect.left;
+					if (_rectList[i]->_frame->_mirrorX) {
+						int Width = _rectList[i]->_frame->_rect.right - _rectList[i]->_frame->_rect.left;
 						XX = Width - XX;
 					}
 
-					if (m_RectList[i]->m_Frame->m_MirrorY) {
-						int Height = m_RectList[i]->m_Frame->m_Rect.bottom - m_RectList[i]->m_Frame->m_Rect.top;
+					if (_rectList[i]->_frame->_mirrorY) {
+						int Height = _rectList[i]->_frame->_rect.bottom - _rectList[i]->_frame->_rect.top;
 						YY = Height - YY;
 					}
 
-					if (!m_RectList[i]->m_Frame->m_Surface->IsTransparentAt(XX, YY)) return m_RectList[i]->m_Owner;
+					if (!_rectList[i]->_frame->_surface->IsTransparentAt(XX, YY)) return _rectList[i]->_owner;
 				}
 				// region
-				else if (m_RectList[i]->m_Region) {
-					if (m_RectList[i]->m_Region->PointInRegion(X + m_RectList[i]->m_OffsetX, Y + m_RectList[i]->m_OffsetY)) return m_RectList[i]->m_Owner;
+				else if (_rectList[i]->_region) {
+					if (_rectList[i]->_region->PointInRegion(X + _rectList[i]->_offsetX, Y + _rectList[i]->_offsetY)) return _rectList[i]->_owner;
 				}
-			} else return m_RectList[i]->m_Owner;
+			} else return _rectList[i]->_owner;
 		}
 	}
 
@@ -107,10 +107,10 @@ CBObject *CBRenderer::GetObjectAt(int X, int Y) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBRenderer::DeleteRectList() {
-	for (int i = 0; i < m_RectList.GetSize(); i++) {
-		delete m_RectList[i];
+	for (int i = 0; i < _rectList.GetSize(); i++) {
+		delete _rectList[i];
 	}
-	m_RectList.RemoveAll();
+	_rectList.RemoveAll();
 }
 
 
@@ -199,16 +199,16 @@ HRESULT CBRenderer::SetViewport(int left, int top, int right, int bottom) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderer::SetScreenViewport() {
-	return SetViewport(m_DrawOffsetX, m_DrawOffsetY, m_Width + m_DrawOffsetX, m_Height + m_DrawOffsetY);
+	return SetViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderer::SetViewport(RECT *Rect) {
-	return SetViewport(Rect->left + m_DrawOffsetX,
-	                   Rect->top + m_DrawOffsetY,
-	                   Rect->right + m_DrawOffsetX,
-	                   Rect->bottom + m_DrawOffsetY);
+	return SetViewport(Rect->left + _drawOffsetX,
+	                   Rect->top + _drawOffsetY,
+	                   Rect->right + _drawOffsetX,
+	                   Rect->bottom + _drawOffsetY);
 }
 
 
@@ -221,16 +221,16 @@ CBImage *CBRenderer::TakeScreenshot() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderer::ClipCursor() {
 	/*
-	if(!m_Windowed)
+	if(!_windowed)
 	{
 	    RECT rc;
-	    GetWindowRect(m_Window, &rc);
+	    GetWindowRect(_window, &rc);
 
 	    // if "maintain aspect ratio" is in effect, lock mouse to visible area
-	    rc.left = m_DrawOffsetX;
-	    rc.top = m_DrawOffsetY;
-	    rc.right = rc.left + m_Width;
-	    rc.bottom = rc.top + m_Height;
+	    rc.left = _drawOffsetX;
+	    rc.top = _drawOffsetY;
+	    rc.right = rc.left + _width;
+	    rc.bottom = rc.top + _height;
 
 	    ::ClipCursor(&rc);
 	}
@@ -241,17 +241,17 @@ HRESULT CBRenderer::ClipCursor() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderer::UnclipCursor() {
 	/*
-	if(!m_Windowed) ::ClipCursor(NULL);
+	if(!_windowed) ::ClipCursor(NULL);
 	*/
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRenderer::PointInViewport(POINT *P) {
-	if (P->x < m_DrawOffsetX) return false;
-	if (P->y < m_DrawOffsetY) return false;
-	if (P->x > m_DrawOffsetX + m_Width) return false;
-	if (P->y > m_DrawOffsetY + m_Height) return false;
+	if (P->x < _drawOffsetX) return false;
+	if (P->y < _drawOffsetY) return false;
+	if (P->x > _drawOffsetX + _width) return false;
+	if (P->y > _drawOffsetY + _height) return false;
 
 	return true;
 }

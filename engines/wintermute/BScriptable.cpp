@@ -37,24 +37,24 @@ IMPLEMENT_PERSISTENT(CBScriptable, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBScriptable::CBScriptable(CBGame *inGame, bool NoValue, bool Persistable): CBNamedObject(inGame) {
-	m_RefCount = 0;
+	_refCount = 0;
 
-	if (NoValue) m_ScValue = NULL;
-	else m_ScValue = new CScValue(Game);
+	if (NoValue) _scValue = NULL;
+	else _scValue = new CScValue(Game);
 
-	m_Persistable = Persistable;
+	_persistable = Persistable;
 
-	m_ScProp = NULL;
+	_scProp = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBScriptable::~CBScriptable() {
-	//if(m_RefCount>0) Game->LOG(0, "Warning: Destroying object, m_RefCount=%d", m_RefCount);
-	delete m_ScValue;
-	delete m_ScProp;
-	m_ScValue = NULL;
-	m_ScProp = NULL;
+	//if(_refCount>0) Game->LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
+	delete _scValue;
+	delete _scProp;
+	_scValue = NULL;
+	_scProp = NULL;
 }
 
 
@@ -75,16 +75,16 @@ HRESULT CBScriptable::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBScriptable::ScGetProperty(char *Name) {
-	if (!m_ScProp) m_ScProp = new CScValue(Game);
-	if (m_ScProp) return m_ScProp->GetProp(Name);
+	if (!_scProp) _scProp = new CScValue(Game);
+	if (_scProp) return _scProp->GetProp(Name);
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBScriptable::ScSetProperty(char *Name, CScValue *Value) {
-	if (!m_ScProp) m_ScProp = new CScValue(Game);
-	if (m_ScProp) return m_ScProp->SetProp(Name, Value);
+	if (!_scProp) _scProp = new CScValue(Game);
+	if (_scProp) return _scProp->SetProp(Name, Value);
 	else return E_FAIL;
 }
 
@@ -141,9 +141,9 @@ void CBScriptable::ScSetBool(bool Val) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBScriptable::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(m_RefCount));
-	PersistMgr->Transfer(TMEMBER(m_ScProp));
-	PersistMgr->Transfer(TMEMBER(m_ScValue));
+	PersistMgr->Transfer(TMEMBER(_refCount));
+	PersistMgr->Transfer(TMEMBER(_scProp));
+	PersistMgr->Transfer(TMEMBER(_scValue));
 
 	return S_OK;
 }

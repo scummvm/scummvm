@@ -39,23 +39,23 @@ IMPLEMENT_PERSISTENT(CAdSceneState, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdSceneState::CAdSceneState(CBGame *inGame): CBBase(inGame) {
-	m_Filename = NULL;
+	_filename = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdSceneState::~CAdSceneState() {
-	SAFE_DELETE_ARRAY(m_Filename);
+	SAFE_DELETE_ARRAY(_filename);
 
-	for (int i = 0; i < m_NodeStates.GetSize(); i++) delete m_NodeStates[i];
-	m_NodeStates.RemoveAll();
+	for (int i = 0; i < _nodeStates.GetSize(); i++) delete _nodeStates[i];
+	_nodeStates.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSceneState::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(m_Filename));
-	m_NodeStates.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_filename));
+	_nodeStates.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -63,22 +63,22 @@ HRESULT CAdSceneState::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdSceneState::SetFilename(char *Filename) {
-	SAFE_DELETE_ARRAY(m_Filename);
-	m_Filename = new char [strlen(Filename) + 1];
-	if (m_Filename) strcpy(m_Filename, Filename);
+	SAFE_DELETE_ARRAY(_filename);
+	_filename = new char [strlen(Filename) + 1];
+	if (_filename) strcpy(_filename, Filename);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdNodeState *CAdSceneState::GetNodeState(char *Name, bool Saving) {
-	for (int i = 0; i < m_NodeStates.GetSize(); i++) {
-		if (scumm_stricmp(m_NodeStates[i]->m_Name, Name) == 0) return m_NodeStates[i];
+	for (int i = 0; i < _nodeStates.GetSize(); i++) {
+		if (scumm_stricmp(_nodeStates[i]->_name, Name) == 0) return _nodeStates[i];
 	}
 
 	if (Saving) {
 		CAdNodeState *ret = new CAdNodeState(Game);
 		ret->SetName(Name);
-		m_NodeStates.Add(ret);
+		_nodeStates.Add(ret);
 
 		return ret;
 	} else return NULL;

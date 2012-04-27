@@ -49,54 +49,54 @@ IMPLEMENT_PERSISTENT(CUIButton, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUIButton::CUIButton(CBGame *inGame): CUIObject(inGame) {
-	m_BackPress = m_BackHover = m_BackDisable = m_BackFocus = NULL;
+	_backPress = _backHover = _backDisable = _backFocus = NULL;
 
-	m_FontHover = m_FontPress = m_FontDisable = m_FontFocus = NULL;
+	_fontHover = _fontPress = _fontDisable = _fontFocus = NULL;
 
-	m_ImageDisable = m_ImagePress = m_ImageHover = m_ImageFocus = NULL;
+	_imageDisable = _imagePress = _imageHover = _imageFocus = NULL;
 
-	m_Align = TAL_CENTER;
+	_align = TAL_CENTER;
 
-	m_Hover = m_Press = false;
+	_hover = _press = false;
 
-	m_Type = UI_BUTTON;
+	_type = UI_BUTTON;
 
-	m_CanFocus = false;
-	m_StayPressed = false;
+	_canFocus = false;
+	_stayPressed = false;
 
-	m_OneTimePress = false;
-	m_CenterImage = false;
+	_oneTimePress = false;
+	_centerImage = false;
 
-	m_PixelPerfect = false;
+	_pixelPerfect = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CUIButton::~CUIButton() {
-	if (m_BackPress) delete m_BackPress;
-	if (m_BackHover) delete m_BackHover;
-	if (m_BackDisable) delete m_BackDisable;
-	if (m_BackFocus) delete m_BackFocus;
+	if (_backPress) delete _backPress;
+	if (_backHover) delete _backHover;
+	if (_backDisable) delete _backDisable;
+	if (_backFocus) delete _backFocus;
 
-	if (!m_SharedFonts) {
-		if (m_FontHover)   Game->m_FontStorage->RemoveFont(m_FontHover);
-		if (m_FontPress)   Game->m_FontStorage->RemoveFont(m_FontPress);
-		if (m_FontDisable) Game->m_FontStorage->RemoveFont(m_FontDisable);
-		if (m_FontFocus)   Game->m_FontStorage->RemoveFont(m_FontFocus);
+	if (!_sharedFonts) {
+		if (_fontHover)   Game->_fontStorage->RemoveFont(_fontHover);
+		if (_fontPress)   Game->_fontStorage->RemoveFont(_fontPress);
+		if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
+		if (_fontFocus)   Game->_fontStorage->RemoveFont(_fontFocus);
 	}
 
-	if (!m_SharedImages) {
-		if (m_ImageHover)   delete m_ImageHover;
-		if (m_ImagePress)   delete m_ImagePress;
-		if (m_ImageDisable) delete m_ImageDisable;
-		if (m_ImageFocus)   delete m_ImageFocus;
+	if (!_sharedImages) {
+		if (_imageHover)   delete _imageHover;
+		if (_imagePress)   delete _imagePress;
+		if (_imageDisable) delete _imageDisable;
+		if (_imageFocus)   delete _imageFocus;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIButton::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIButton::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -104,8 +104,8 @@ HRESULT CUIButton::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", Filename);
 
@@ -222,168 +222,168 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete m_Back;
-			m_Back = new CUITiledImage(Game);
-			if (!m_Back || FAILED(m_Back->LoadFile((char *)params))) {
-				delete m_Back;
-				m_Back = NULL;
+			delete _back;
+			_back = new CUITiledImage(Game);
+			if (!_back || FAILED(_back->LoadFile((char *)params))) {
+				delete _back;
+				_back = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_HOVER:
-			delete m_BackHover;
-			m_BackHover = new CUITiledImage(Game);
-			if (!m_BackHover || FAILED(m_BackHover->LoadFile((char *)params))) {
-				delete m_BackHover;
-				m_BackHover = NULL;
+			delete _backHover;
+			_backHover = new CUITiledImage(Game);
+			if (!_backHover || FAILED(_backHover->LoadFile((char *)params))) {
+				delete _backHover;
+				_backHover = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_PRESS:
-			delete m_BackPress;
-			m_BackPress = new CUITiledImage(Game);
-			if (!m_BackPress || FAILED(m_BackPress->LoadFile((char *)params))) {
-				delete m_BackPress;
-				m_BackPress = NULL;
+			delete _backPress;
+			_backPress = new CUITiledImage(Game);
+			if (!_backPress || FAILED(_backPress->LoadFile((char *)params))) {
+				delete _backPress;
+				_backPress = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_DISABLE:
-			delete m_BackDisable;
-			m_BackDisable = new CUITiledImage(Game);
-			if (!m_BackDisable || FAILED(m_BackDisable->LoadFile((char *)params))) {
-				delete m_BackDisable;
-				m_BackDisable = NULL;
+			delete _backDisable;
+			_backDisable = new CUITiledImage(Game);
+			if (!_backDisable || FAILED(_backDisable->LoadFile((char *)params))) {
+				delete _backDisable;
+				_backDisable = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_FOCUS:
-			delete m_BackFocus;
-			m_BackFocus = new CUITiledImage(Game);
-			if (!m_BackFocus || FAILED(m_BackFocus->LoadFile((char *)params))) {
-				delete m_BackFocus;
-				m_BackFocus = NULL;
+			delete _backFocus;
+			_backFocus = new CUITiledImage(Game);
+			if (!_backFocus || FAILED(_backFocus->LoadFile((char *)params))) {
+				delete _backFocus;
+				_backFocus = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete m_Image;
-			m_Image = new CBSprite(Game);
-			if (!m_Image || FAILED(m_Image->LoadFile((char *)params))) {
-				delete m_Image;
-				m_Image = NULL;
+			delete _image;
+			_image = new CBSprite(Game);
+			if (!_image || FAILED(_image->LoadFile((char *)params))) {
+				delete _image;
+				_image = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_HOVER:
-			delete m_ImageHover;
-			m_ImageHover = new CBSprite(Game);
-			if (!m_ImageHover || FAILED(m_ImageHover->LoadFile((char *)params))) {
-				delete m_ImageHover;
-				m_ImageHover = NULL;
+			delete _imageHover;
+			_imageHover = new CBSprite(Game);
+			if (!_imageHover || FAILED(_imageHover->LoadFile((char *)params))) {
+				delete _imageHover;
+				_imageHover = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_PRESS:
-			delete m_ImagePress;
-			m_ImagePress = new CBSprite(Game);
-			if (!m_ImagePress || FAILED(m_ImagePress->LoadFile((char *)params))) {
-				delete m_ImagePress;
-				m_ImagePress = NULL;
+			delete _imagePress;
+			_imagePress = new CBSprite(Game);
+			if (!_imagePress || FAILED(_imagePress->LoadFile((char *)params))) {
+				delete _imagePress;
+				_imagePress = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_DISABLE:
-			delete m_ImageDisable;
-			m_ImageDisable = new CBSprite(Game);
-			if (!m_ImageDisable || FAILED(m_ImageDisable->LoadFile((char *)params))) {
-				delete m_ImageDisable;
-				m_ImageDisable = NULL;
+			delete _imageDisable;
+			_imageDisable = new CBSprite(Game);
+			if (!_imageDisable || FAILED(_imageDisable->LoadFile((char *)params))) {
+				delete _imageDisable;
+				_imageDisable = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_FOCUS:
-			delete m_ImageFocus;
-			m_ImageFocus = new CBSprite(Game);
-			if (!m_ImageFocus || FAILED(m_ImageFocus->LoadFile((char *)params))) {
-				delete m_ImageFocus;
-				m_ImageFocus = NULL;
+			delete _imageFocus;
+			_imageFocus = new CBSprite(Game);
+			if (!_imageFocus || FAILED(_imageFocus->LoadFile((char *)params))) {
+				delete _imageFocus;
+				_imageFocus = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_FONT:
-			if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
-			m_Font = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_Font) cmd = PARSERR_GENERIC;
+			if (_font) Game->_fontStorage->RemoveFont(_font);
+			_font = Game->_fontStorage->AddFont((char *)params);
+			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_HOVER:
-			if (m_FontHover) Game->m_FontStorage->RemoveFont(m_FontHover);
-			m_FontHover = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_FontHover) cmd = PARSERR_GENERIC;
+			if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
+			_fontHover = Game->_fontStorage->AddFont((char *)params);
+			if (!_fontHover) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_PRESS:
-			if (m_FontPress) Game->m_FontStorage->RemoveFont(m_FontPress);
-			m_FontPress = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_FontPress) cmd = PARSERR_GENERIC;
+			if (_fontPress) Game->_fontStorage->RemoveFont(_fontPress);
+			_fontPress = Game->_fontStorage->AddFont((char *)params);
+			if (!_fontPress) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_DISABLE:
-			if (m_FontDisable) Game->m_FontStorage->RemoveFont(m_FontDisable);
-			m_FontDisable = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_FontDisable) cmd = PARSERR_GENERIC;
+			if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
+			_fontDisable = Game->_fontStorage->AddFont((char *)params);
+			if (!_fontDisable) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_FOCUS:
-			if (m_FontFocus) Game->m_FontStorage->RemoveFont(m_FontFocus);
-			m_FontFocus = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_FontFocus) cmd = PARSERR_GENERIC;
+			if (_fontFocus) Game->_fontStorage->RemoveFont(_fontFocus);
+			_fontFocus = Game->_fontStorage->AddFont((char *)params);
+			if (!_fontFocus) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TEXT:
 			SetText((char *)params);
-			Game->m_StringTable->Expand(&m_Text);
+			Game->_stringTable->Expand(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) m_Align = TAL_LEFT;
-			else if (scumm_stricmp((char *)params, "right") == 0) m_Align = TAL_RIGHT;
-			else m_Align = TAL_CENTER;
+			if (scumm_stricmp((char *)params, "left") == 0) _align = TAL_LEFT;
+			else if (scumm_stricmp((char *)params, "right") == 0) _align = TAL_RIGHT;
+			else _align = TAL_CENTER;
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &m_PosX);
+			parser.ScanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &m_PosY);
+			parser.ScanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &m_Width);
+			parser.ScanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &m_Height);
+			parser.ScanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_CURSOR:
-			delete m_Cursor;
-			m_Cursor = new CBSprite(Game);
-			if (!m_Cursor || FAILED(m_Cursor->LoadFile((char *)params))) {
-				delete m_Cursor;
-				m_Cursor = NULL;
+			delete _cursor;
+			_cursor = new CBSprite(Game);
+			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+				delete _cursor;
+				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -393,31 +393,31 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
-			parser.ScanStr((char *)params, "%b", &m_ParentNotify);
+			parser.ScanStr((char *)params, "%b", &_parentNotify);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &m_Disable);
+			parser.ScanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &m_Visible);
+			parser.ScanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_FOCUSABLE:
-			parser.ScanStr((char *)params, "%b", &m_CanFocus);
+			parser.ScanStr((char *)params, "%b", &_canFocus);
 			break;
 
 		case TOKEN_CENTER_IMAGE:
-			parser.ScanStr((char *)params, "%b", &m_CenterImage);
+			parser.ScanStr((char *)params, "%b", &_centerImage);
 			break;
 
 		case TOKEN_PRESSED:
-			parser.ScanStr((char *)params, "%b", &m_StayPressed);
+			parser.ScanStr((char *)params, "%b", &_stayPressed);
 			break;
 
 		case TOKEN_PIXEL_PERFECT:
-			parser.ScanStr((char *)params, "%b", &m_PixelPerfect);
+			parser.ScanStr((char *)params, "%b", &_pixelPerfect);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -444,54 +444,54 @@ HRESULT CUIButton::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "BUTTON\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	if (m_Back && m_Back->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", m_Back->m_Filename);
-	if (m_BackHover && m_BackHover->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_HOVER=\"%s\"\n", m_BackHover->m_Filename);
-	if (m_BackPress && m_BackPress->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_PRESS=\"%s\"\n", m_BackPress->m_Filename);
-	if (m_BackDisable && m_BackDisable->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_DISABLE=\"%s\"\n", m_BackDisable->m_Filename);
-	if (m_BackFocus && m_BackFocus->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_FOCUS=\"%s\"\n", m_BackFocus->m_Filename);
+	if (_back && _back->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
+	if (_backHover && _backHover->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK_HOVER=\"%s\"\n", _backHover->_filename);
+	if (_backPress && _backPress->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK_PRESS=\"%s\"\n", _backPress->_filename);
+	if (_backDisable && _backDisable->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK_DISABLE=\"%s\"\n", _backDisable->_filename);
+	if (_backFocus && _backFocus->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK_FOCUS=\"%s\"\n", _backFocus->_filename);
 
-	if (m_Image && m_Image->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", m_Image->m_Filename);
-	if (m_ImageHover && m_ImageHover->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_HOVER=\"%s\"\n", m_ImageHover->m_Filename);
-	if (m_ImagePress && m_ImagePress->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_PRESS=\"%s\"\n", m_ImagePress->m_Filename);
-	if (m_ImageDisable && m_ImageDisable->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_DISABLE=\"%s\"\n", m_ImageDisable->m_Filename);
-	if (m_ImageFocus && m_ImageFocus->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_FOCUS=\"%s\"\n", m_ImageFocus->m_Filename);
+	if (_image && _image->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
+	if (_imageHover && _imageHover->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE_HOVER=\"%s\"\n", _imageHover->_filename);
+	if (_imagePress && _imagePress->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE_PRESS=\"%s\"\n", _imagePress->_filename);
+	if (_imageDisable && _imageDisable->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE_DISABLE=\"%s\"\n", _imageDisable->_filename);
+	if (_imageFocus && _imageFocus->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE_FOCUS=\"%s\"\n", _imageFocus->_filename);
 
-	if (m_Font && m_Font->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", m_Font->m_Filename);
-	if (m_FontHover && m_FontHover->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", m_FontHover->m_Filename);
-	if (m_FontPress && m_FontPress->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_PRESS=\"%s\"\n", m_FontPress->m_Filename);
-	if (m_FontDisable && m_FontDisable->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_DISABLE=\"%s\"\n", m_FontDisable->m_Filename);
-	if (m_FontFocus && m_FontFocus->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_FOCUS=\"%s\"\n", m_FontFocus->m_Filename);
+	if (_font && _font->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+	if (_fontHover && _fontHover->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
+	if (_fontPress && _fontPress->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT_PRESS=\"%s\"\n", _fontPress->_filename);
+	if (_fontDisable && _fontDisable->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT_DISABLE=\"%s\"\n", _fontDisable->_filename);
+	if (_fontFocus && _fontFocus->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT_FOCUS=\"%s\"\n", _fontFocus->_filename);
 
-	if (m_Cursor && m_Cursor->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", m_Cursor->m_Filename);
+	if (_cursor && _cursor->_filename)
+		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	if (m_Text)
-		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", m_Text);
+	if (_text)
+		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
 
-	switch (m_Align) {
+	switch (_align) {
 	case TAL_LEFT:
 		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
 		break;
@@ -505,25 +505,25 @@ HRESULT CUIButton::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", m_PosX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", m_PosY);
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", m_Width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", m_Height);
+	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
 
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", m_Disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", m_Visible ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", m_ParentNotify ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "FOCUSABLE=%s\n", m_CanFocus ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "CENTER_IMAGE=%s\n", m_CenterImage ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PRESSED=%s\n", m_StayPressed ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PIXEL_PERFECT=%s\n", m_PixelPerfect ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "FOCUSABLE=%s\n", _canFocus ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "CENTER_IMAGE=%s\n", _centerImage ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "PRESSED=%s\n", _stayPressed ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "PIXEL_PERFECT=%s\n", _pixelPerfect ? "TRUE" : "FALSE");
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// scripts
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
@@ -540,111 +540,111 @@ void CUIButton::CorrectSize() {
 	RECT rect;
 
 	CBSprite *img = NULL;
-	if (m_Image) img = m_Image;
-	else if (m_ImageDisable) img = m_ImageDisable;
-	else if (m_ImageHover) img = m_ImageHover;
-	else if (m_ImagePress) img = m_ImagePress;
-	else if (m_ImageFocus) img = m_ImageFocus;
+	if (_image) img = _image;
+	else if (_imageDisable) img = _imageDisable;
+	else if (_imageHover) img = _imageHover;
+	else if (_imagePress) img = _imagePress;
+	else if (_imageFocus) img = _imageFocus;
 
-	if (m_Width <= 0) {
+	if (_width <= 0) {
 		if (img) {
 			img->GetBoundingRect(&rect, 0, 0);
-			m_Width = rect.right - rect.left;
-		} else m_Width = 100;
+			_width = rect.right - rect.left;
+		} else _width = 100;
 	}
 
-	if (m_Height <= 0) {
+	if (_height <= 0) {
 		if (img) {
 			img->GetBoundingRect(&rect, 0, 0);
-			m_Height = rect.bottom - rect.top;
+			_height = rect.bottom - rect.top;
 		}
 	}
 
-	if (m_Text) {
+	if (_text) {
 		int text_height;
-		if (m_Font) text_height = m_Font->GetTextHeight((byte  *)m_Text, m_Width);
-		else text_height = Game->m_SystemFont->GetTextHeight((byte  *)m_Text, m_Width);
+		if (_font) text_height = _font->GetTextHeight((byte  *)_text, _width);
+		else text_height = Game->_systemFont->GetTextHeight((byte  *)_text, _width);
 
-		if (text_height > m_Height) m_Height = text_height;
+		if (text_height > _height) _height = text_height;
 	}
 
-	if (m_Height <= 0) m_Height = 100;
+	if (_height <= 0) _height = 100;
 
-	if (m_Back) m_Back->CorrectSize(&m_Width, &m_Height);
+	if (_back) _back->CorrectSize(&_width, &_height);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIButton::Display(int OffsetX, int OffsetY) {
-	if (!m_Visible) return S_OK;
+	if (!_visible) return S_OK;
 
 	CUITiledImage *back = NULL;
 	CBSprite *image = NULL;
 	CBFont *font = 0;
 
 	//RECT rect;
-	//CBPlatform::SetRect(&rect, OffsetX + m_PosX, OffsetY + m_PosY, OffsetX+m_PosX+m_Width, OffsetY+m_PosY+m_Height);
-	//m_Hover = (!m_Disable && CBPlatform::PtInRect(&rect, Game->m_MousePos)!=FALSE);
-	m_Hover = (!m_Disable && Game->m_ActiveObject == this && (Game->m_Interactive || Game->m_State == GAME_SEMI_FROZEN));
+	//CBPlatform::SetRect(&rect, OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
+	//_hover = (!_disable && CBPlatform::PtInRect(&rect, Game->_mousePos)!=FALSE);
+	_hover = (!_disable && Game->_activeObject == this && (Game->_interactive || Game->_state == GAME_SEMI_FROZEN));
 
-	if ((m_Press && m_Hover && !Game->m_MouseLeftDown) ||
-	        m_OneTimePress && CBPlatform::GetTime() - m_OneTimePressTime >= 100) Press();
+	if ((_press && _hover && !Game->_mouseLeftDown) ||
+	        _oneTimePress && CBPlatform::GetTime() - _oneTimePressTime >= 100) Press();
 
 
-	if (m_Disable) {
-		if (m_BackDisable) back = m_BackDisable;
-		if (m_ImageDisable) image = m_ImageDisable;
-		if (m_Text && m_FontDisable) font = m_FontDisable;
-	} else if (m_Press || m_OneTimePress || m_StayPressed) {
-		if (m_BackPress) back = m_BackPress;
-		if (m_ImagePress) image = m_ImagePress;
-		if (m_Text && m_FontPress) font = m_FontPress;
-	} else if (m_Hover) {
-		if (m_BackHover) back = m_BackHover;
-		if (m_ImageHover) image = m_ImageHover;
-		if (m_Text && m_FontHover) font = m_FontHover;
-	} else if (m_CanFocus && IsFocused()) {
-		if (m_BackFocus) back = m_BackFocus;
-		if (m_ImageFocus) image = m_ImageFocus;
-		if (m_Text && m_FontFocus) font = m_FontFocus;
+	if (_disable) {
+		if (_backDisable) back = _backDisable;
+		if (_imageDisable) image = _imageDisable;
+		if (_text && _fontDisable) font = _fontDisable;
+	} else if (_press || _oneTimePress || _stayPressed) {
+		if (_backPress) back = _backPress;
+		if (_imagePress) image = _imagePress;
+		if (_text && _fontPress) font = _fontPress;
+	} else if (_hover) {
+		if (_backHover) back = _backHover;
+		if (_imageHover) image = _imageHover;
+		if (_text && _fontHover) font = _fontHover;
+	} else if (_canFocus && IsFocused()) {
+		if (_backFocus) back = _backFocus;
+		if (_imageFocus) image = _imageFocus;
+		if (_text && _fontFocus) font = _fontFocus;
 	}
 
-	if (!back && m_Back) back = m_Back;
-	if (!image && m_Image) image = m_Image;
-	if (m_Text && !font) {
-		if (m_Font) font = m_Font;
-		else font = Game->m_SystemFont;
+	if (!back && _back) back = _back;
+	if (!image && _image) image = _image;
+	if (_text && !font) {
+		if (_font) font = _font;
+		else font = Game->_systemFont;
 	}
 
-	int ImageX = OffsetX + m_PosX;
-	int ImageY = OffsetY + m_PosY;
+	int ImageX = OffsetX + _posX;
+	int ImageY = OffsetY + _posY;
 
-	if (image && m_CenterImage) {
+	if (image && _centerImage) {
 		RECT rc;
 		image->GetBoundingRect(&rc, 0, 0);
-		ImageX += (m_Width - (rc.right - rc.left)) / 2;
-		ImageY += (m_Height - (rc.bottom - rc.top)) / 2;
+		ImageX += (_width - (rc.right - rc.left)) / 2;
+		ImageY += (_height - (rc.bottom - rc.top)) / 2;
 	}
 
-	if (back) back->Display(OffsetX + m_PosX, OffsetY + m_PosY, m_Width, m_Height);
-	//if(image) image->Draw(ImageX +((m_Press||m_OneTimePress)&&back?1:0), ImageY +((m_Press||m_OneTimePress)&&back?1:0), NULL);
-	if (image) image->Draw(ImageX + ((m_Press || m_OneTimePress) && back ? 1 : 0), ImageY + ((m_Press || m_OneTimePress) && back ? 1 : 0), m_PixelPerfect ? this : NULL);
+	if (back) back->Display(OffsetX + _posX, OffsetY + _posY, _width, _height);
+	//if(image) image->Draw(ImageX +((_press||_oneTimePress)&&back?1:0), ImageY +((_press||_oneTimePress)&&back?1:0), NULL);
+	if (image) image->Draw(ImageX + ((_press || _oneTimePress) && back ? 1 : 0), ImageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
 
-	if (font && m_Text) {
-		int text_offset = (m_Height - font->GetTextHeight((byte  *)m_Text, m_Width)) / 2;
-		font->DrawText((byte  *)m_Text, OffsetX + m_PosX + ((m_Press || m_OneTimePress) ? 1 : 0), OffsetY + m_PosY + text_offset + ((m_Press || m_OneTimePress) ? 1 : 0), m_Width, m_Align);
+	if (font && _text) {
+		int text_offset = (_height - font->GetTextHeight((byte  *)_text, _width)) / 2;
+		font->DrawText((byte  *)_text, OffsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), OffsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
-	if (!m_PixelPerfect || !m_Image) Game->m_Renderer->m_RectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + m_PosX, OffsetY + m_PosY, m_Width, m_Height, 100, 100, false));
+	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
 
 	// reset unused sprites
-	if (m_Image && m_Image != image) m_Image->Reset();
-	if (m_ImageDisable && m_ImageDisable != image) m_ImageDisable->Reset();
-	if (m_ImageFocus && m_ImageFocus != image) m_ImageFocus->Reset();
-	if (m_ImagePress && m_ImagePress != image) m_ImagePress->Reset();
-	if (m_ImageHover && m_ImageHover != image) m_ImageHover->Reset();
+	if (_image && _image != image) _image->Reset();
+	if (_imageDisable && _imageDisable != image) _imageDisable->Reset();
+	if (_imageFocus && _imageFocus != image) _imageFocus->Reset();
+	if (_imagePress && _imagePress != image) _imagePress->Reset();
+	if (_imageHover && _imageHover != image) _imageHover->Reset();
 
-	m_Press = m_Hover && Game->m_MouseLeftDown && Game->m_CapturedObject == this;
+	_press = _hover && Game->_mouseLeftDown && Game->_capturedObject == this;
 
 	return S_OK;
 }
@@ -653,10 +653,10 @@ HRESULT CUIButton::Display(int OffsetX, int OffsetY) {
 //////////////////////////////////////////////////////////////////////////
 void CUIButton::Press() {
 	ApplyEvent("Press");
-	if (m_ListenerObject) m_ListenerObject->Listen(m_ListenerParamObject, m_ListenerParamDWORD);
-	if (m_ParentNotify && m_Parent) m_Parent->ApplyEvent(m_Name);
+	if (_listenerObject) _listenerObject->Listen(_listenerParamObject, _listenerParamDWORD);
+	if (_parentNotify && _parent) _parent->ApplyEvent(_name);
 
-	m_OneTimePress = false;
+	_oneTimePress = false;
 }
 
 
@@ -671,13 +671,13 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
 
-		if (m_FontDisable) Game->m_FontStorage->RemoveFont(m_FontDisable);
+		if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
 		if (Val->IsNULL()) {
-			m_FontDisable = NULL;
+			_fontDisable = NULL;
 			Stack->PushBool(true);
 		} else {
-			m_FontDisable = Game->m_FontStorage->AddFont(Val->GetString());
-			Stack->PushBool(m_FontDisable != NULL);
+			_fontDisable = Game->_fontStorage->AddFont(Val->GetString());
+			Stack->PushBool(_fontDisable != NULL);
 		}
 		return S_OK;
 	}
@@ -689,13 +689,13 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
 
-		if (m_FontHover) Game->m_FontStorage->RemoveFont(m_FontHover);
+		if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
 		if (Val->IsNULL()) {
-			m_FontHover = NULL;
+			_fontHover = NULL;
 			Stack->PushBool(true);
 		} else {
-			m_FontHover = Game->m_FontStorage->AddFont(Val->GetString());
-			Stack->PushBool(m_FontHover != NULL);
+			_fontHover = Game->_fontStorage->AddFont(Val->GetString());
+			Stack->PushBool(_fontHover != NULL);
 		}
 		return S_OK;
 	}
@@ -707,13 +707,13 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
 
-		if (m_FontPress) Game->m_FontStorage->RemoveFont(m_FontPress);
+		if (_fontPress) Game->_fontStorage->RemoveFont(_fontPress);
 		if (Val->IsNULL()) {
-			m_FontPress = NULL;
+			_fontPress = NULL;
 			Stack->PushBool(true);
 		} else {
-			m_FontPress = Game->m_FontStorage->AddFont(Val->GetString());
-			Stack->PushBool(m_FontPress != NULL);
+			_fontPress = Game->_fontStorage->AddFont(Val->GetString());
+			Stack->PushBool(_fontPress != NULL);
 		}
 		return S_OK;
 	}
@@ -725,13 +725,13 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
 
-		if (m_FontFocus) Game->m_FontStorage->RemoveFont(m_FontFocus);
+		if (_fontFocus) Game->_fontStorage->RemoveFont(_fontFocus);
 		if (Val->IsNULL()) {
-			m_FontFocus = NULL;
+			_fontFocus = NULL;
 			Stack->PushBool(true);
 		} else {
-			m_FontFocus = Game->m_FontStorage->AddFont(Val->GetString());
-			Stack->PushBool(m_FontFocus != NULL);
+			_fontFocus = Game->_fontStorage->AddFont(Val->GetString());
+			Stack->PushBool(_fontFocus != NULL);
 		}
 		return S_OK;
 	}
@@ -742,12 +742,12 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "SetDisabledImage") == 0) {
 		Stack->CorrectParams(1);
 
-		delete m_ImageDisable;
-		m_ImageDisable = new CBSprite(Game);
+		delete _imageDisable;
+		_imageDisable = new CBSprite(Game);
 		char *Filename = Stack->Pop()->GetString();
-		if (!m_ImageDisable || FAILED(m_ImageDisable->LoadFile(Filename))) {
-			delete m_ImageDisable;
-			m_ImageDisable = NULL;
+		if (!_imageDisable || FAILED(_imageDisable->LoadFile(Filename))) {
+			delete _imageDisable;
+			_imageDisable = NULL;
 			Stack->PushBool(false);
 		} else Stack->PushBool(true);
 
@@ -759,8 +759,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetDisabledImage") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageDisable || !m_ImageDisable->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_ImageDisable->m_Filename);
+		if (!_imageDisable || !_imageDisable->_filename) Stack->PushNULL();
+		else Stack->PushString(_imageDisable->_filename);
 
 		return S_OK;
 	}
@@ -770,8 +770,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetDisabledImageObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageDisable) Stack->PushNULL();
-		else Stack->PushNative(m_ImageDisable, true);
+		if (!_imageDisable) Stack->PushNULL();
+		else Stack->PushNative(_imageDisable, true);
 
 		return S_OK;
 	}
@@ -783,12 +783,12 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "SetHoverImage") == 0) {
 		Stack->CorrectParams(1);
 
-		delete m_ImageHover;
-		m_ImageHover = new CBSprite(Game);
+		delete _imageHover;
+		_imageHover = new CBSprite(Game);
 		char *Filename = Stack->Pop()->GetString();
-		if (!m_ImageHover || FAILED(m_ImageHover->LoadFile(Filename))) {
-			delete m_ImageHover;
-			m_ImageHover = NULL;
+		if (!_imageHover || FAILED(_imageHover->LoadFile(Filename))) {
+			delete _imageHover;
+			_imageHover = NULL;
 			Stack->PushBool(false);
 		} else Stack->PushBool(true);
 
@@ -800,8 +800,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetHoverImage") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageHover || !m_ImageHover->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_ImageHover->m_Filename);
+		if (!_imageHover || !_imageHover->_filename) Stack->PushNULL();
+		else Stack->PushString(_imageHover->_filename);
 
 		return S_OK;
 	}
@@ -811,8 +811,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetHoverImageObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageHover) Stack->PushNULL();
-		else Stack->PushNative(m_ImageHover, true);
+		if (!_imageHover) Stack->PushNULL();
+		else Stack->PushNative(_imageHover, true);
 
 		return S_OK;
 	}
@@ -823,12 +823,12 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "SetPressedImage") == 0) {
 		Stack->CorrectParams(1);
 
-		delete m_ImagePress;
-		m_ImagePress = new CBSprite(Game);
+		delete _imagePress;
+		_imagePress = new CBSprite(Game);
 		char *Filename = Stack->Pop()->GetString();
-		if (!m_ImagePress || FAILED(m_ImagePress->LoadFile(Filename))) {
-			delete m_ImagePress;
-			m_ImagePress = NULL;
+		if (!_imagePress || FAILED(_imagePress->LoadFile(Filename))) {
+			delete _imagePress;
+			_imagePress = NULL;
 			Stack->PushBool(false);
 		} else Stack->PushBool(true);
 
@@ -840,8 +840,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetPressedImage") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImagePress || !m_ImagePress->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_ImagePress->m_Filename);
+		if (!_imagePress || !_imagePress->_filename) Stack->PushNULL();
+		else Stack->PushString(_imagePress->_filename);
 
 		return S_OK;
 	}
@@ -851,8 +851,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetPressedImageObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImagePress) Stack->PushNULL();
-		else Stack->PushNative(m_ImagePress, true);
+		if (!_imagePress) Stack->PushNULL();
+		else Stack->PushNative(_imagePress, true);
 
 		return S_OK;
 	}
@@ -863,12 +863,12 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "SetFocusedImage") == 0) {
 		Stack->CorrectParams(1);
 
-		delete m_ImageFocus;
-		m_ImageFocus = new CBSprite(Game);
+		delete _imageFocus;
+		_imageFocus = new CBSprite(Game);
 		char *Filename = Stack->Pop()->GetString();
-		if (!m_ImageFocus || FAILED(m_ImageFocus->LoadFile(Filename))) {
-			delete m_ImageFocus;
-			m_ImageFocus = NULL;
+		if (!_imageFocus || FAILED(_imageFocus->LoadFile(Filename))) {
+			delete _imageFocus;
+			_imageFocus = NULL;
 			Stack->PushBool(false);
 		} else Stack->PushBool(true);
 
@@ -880,8 +880,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetFocusedImage") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageFocus || !m_ImageFocus->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_ImageFocus->m_Filename);
+		if (!_imageFocus || !_imageFocus->_filename) Stack->PushNULL();
+		else Stack->PushString(_imageFocus->_filename);
 
 		return S_OK;
 	}
@@ -891,8 +891,8 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetFocusedImageObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageFocus) Stack->PushNULL();
-		else Stack->PushNative(m_ImageFocus, true);
+		if (!_imageFocus) Stack->PushNULL();
+		else Stack->PushNative(_imageFocus, true);
 
 		return S_OK;
 	}
@@ -903,9 +903,9 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "Press") == 0) {
 		Stack->CorrectParams(0);
 
-		if (m_Visible && !m_Disable) {
-			m_OneTimePress = true;
-			m_OneTimePressTime = CBPlatform::GetTime();
+		if (_visible && !_disable) {
+			_oneTimePress = true;
+			_oneTimePressTime = CBPlatform::GetTime();
 		}
 		Stack->PushNULL();
 
@@ -919,44 +919,44 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIButton::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("button");
-		return m_ScValue;
+		_scValue->SetString("button");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TextAlign") == 0) {
-		m_ScValue->SetInt(m_Align);
-		return m_ScValue;
+		_scValue->SetInt(_align);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Focusable") == 0) {
-		m_ScValue->SetBool(m_CanFocus);
-		return m_ScValue;
+		_scValue->SetBool(_canFocus);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Pressed") == 0) {
-		m_ScValue->SetBool(m_StayPressed);
-		return m_ScValue;
+		_scValue->SetBool(_stayPressed);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PixelPerfect") == 0) {
-		m_ScValue->SetBool(m_PixelPerfect);
-		return m_ScValue;
+		_scValue->SetBool(_pixelPerfect);
+		return _scValue;
 	}
 
 	else return CUIObject::ScGetProperty(Name);
@@ -971,7 +971,7 @@ HRESULT CUIButton::ScSetProperty(char *Name, CScValue *Value) {
 	if (strcmp(Name, "TextAlign") == 0) {
 		int i = Value->GetInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
-		m_Align = (TTextAlign)i;
+		_align = (TTextAlign)i;
 		return S_OK;
 	}
 
@@ -979,21 +979,21 @@ HRESULT CUIButton::ScSetProperty(char *Name, CScValue *Value) {
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Focusable") == 0) {
-		m_CanFocus = Value->GetBool();
+		_canFocus = Value->GetBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Pressed") == 0) {
-		m_StayPressed = Value->GetBool();
+		_stayPressed = Value->GetBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PixelPerfect") == 0) {
-		m_PixelPerfect = Value->GetBool();
+		_pixelPerfect = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1012,29 +1012,29 @@ HRESULT CUIButton::Persist(CBPersistMgr *PersistMgr) {
 
 	CUIObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER_INT(m_Align));
-	PersistMgr->Transfer(TMEMBER(m_BackDisable));
-	PersistMgr->Transfer(TMEMBER(m_BackFocus));
-	PersistMgr->Transfer(TMEMBER(m_BackHover));
-	PersistMgr->Transfer(TMEMBER(m_BackPress));
-	PersistMgr->Transfer(TMEMBER(m_CenterImage));
-	PersistMgr->Transfer(TMEMBER(m_FontDisable));
-	PersistMgr->Transfer(TMEMBER(m_FontFocus));
-	PersistMgr->Transfer(TMEMBER(m_FontHover));
-	PersistMgr->Transfer(TMEMBER(m_FontPress));
-	PersistMgr->Transfer(TMEMBER(m_Hover));
-	PersistMgr->Transfer(TMEMBER(m_Image));
-	PersistMgr->Transfer(TMEMBER(m_ImageDisable));
-	PersistMgr->Transfer(TMEMBER(m_ImageFocus));
-	PersistMgr->Transfer(TMEMBER(m_ImageHover));
-	PersistMgr->Transfer(TMEMBER(m_ImagePress));
-	PersistMgr->Transfer(TMEMBER(m_PixelPerfect));
-	PersistMgr->Transfer(TMEMBER(m_Press));
-	PersistMgr->Transfer(TMEMBER(m_StayPressed));
+	PersistMgr->Transfer(TMEMBER_INT(_align));
+	PersistMgr->Transfer(TMEMBER(_backDisable));
+	PersistMgr->Transfer(TMEMBER(_backFocus));
+	PersistMgr->Transfer(TMEMBER(_backHover));
+	PersistMgr->Transfer(TMEMBER(_backPress));
+	PersistMgr->Transfer(TMEMBER(_centerImage));
+	PersistMgr->Transfer(TMEMBER(_fontDisable));
+	PersistMgr->Transfer(TMEMBER(_fontFocus));
+	PersistMgr->Transfer(TMEMBER(_fontHover));
+	PersistMgr->Transfer(TMEMBER(_fontPress));
+	PersistMgr->Transfer(TMEMBER(_hover));
+	PersistMgr->Transfer(TMEMBER(_image));
+	PersistMgr->Transfer(TMEMBER(_imageDisable));
+	PersistMgr->Transfer(TMEMBER(_imageFocus));
+	PersistMgr->Transfer(TMEMBER(_imageHover));
+	PersistMgr->Transfer(TMEMBER(_imagePress));
+	PersistMgr->Transfer(TMEMBER(_pixelPerfect));
+	PersistMgr->Transfer(TMEMBER(_press));
+	PersistMgr->Transfer(TMEMBER(_stayPressed));
 
-	if (!PersistMgr->m_Saving) {
-		m_OneTimePress = false;
-		m_OneTimePressTime = 0;
+	if (!PersistMgr->_saving) {
+		_oneTimePress = false;
+		_oneTimePressTime = 0;
 	}
 
 	return S_OK;

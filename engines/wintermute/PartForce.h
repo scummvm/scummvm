@@ -42,9 +42,9 @@ public:
 	CPartForce(CBGame *inGame);
 	virtual ~CPartForce(void);
 
-	Vector2 m_Pos;
-	Vector2 m_Direction;
-	TForceType m_Type;
+	Vector2 _pos;
+	Vector2 _direction;
+	TForceType _type;
 
 	HRESULT Persist(CBPersistMgr *PersistMgr);
 };

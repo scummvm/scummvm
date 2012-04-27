@@ -37,20 +37,20 @@ class CUIWindow;
 
 class CAdInventoryBox : public CBObject {
 public:
-	bool m_HideSelected;
+	bool _hideSelected;
 	DECLARE_PERSISTENT(CAdInventoryBox, CBObject)
-	bool m_Exclusive;
-	int m_ScrollBy;
-	int m_ItemHeight;
-	int m_ItemWidth;
-	bool m_Visible;
+	bool _exclusive;
+	int _scrollBy;
+	int _itemHeight;
+	int _itemWidth;
+	bool _visible;
 	virtual HRESULT Display();
-	CUIButton *m_CloseButton;
-	int m_Spacing;
-	int m_ScrollOffset;
-	RECT m_ItemsArea;
+	CUIButton *_closeButton;
+	int _spacing;
+	int _scrollOffset;
+	RECT _itemsArea;
 	HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	CUIWindow *m_Window;
+	CUIWindow *_window;
 	CAdInventoryBox(CBGame *inGame);
 	virtual ~CAdInventoryBox();
 	HRESULT LoadFile(char *Filename);

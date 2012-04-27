@@ -36,34 +36,34 @@ IMPLEMENT_PERSISTENT(CAdSceneNode, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdSceneNode::CAdSceneNode(CBGame *inGame): CBObject(inGame) {
-	m_Type = OBJECT_NONE;
-	m_Region = NULL;
-	m_Entity = NULL;
+	_type = OBJECT_NONE;
+	_region = NULL;
+	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdSceneNode::~CAdSceneNode() {
-	Game->UnregisterObject(m_Region);
-	m_Region = NULL;
+	Game->UnregisterObject(_region);
+	_region = NULL;
 
-	Game->UnregisterObject(m_Entity);
-	m_Entity = NULL;
+	Game->UnregisterObject(_entity);
+	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSceneNode::SetEntity(CAdEntity *Entity) {
-	m_Type = OBJECT_ENTITY;
-	m_Entity = Entity;
+	_type = OBJECT_ENTITY;
+	_entity = Entity;
 	return Game->RegisterObject(Entity);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSceneNode::SetRegion(CAdRegion *Region) {
-	m_Type = OBJECT_REGION;
-	m_Region = Region;
+	_type = OBJECT_REGION;
+	_region = Region;
 	return Game->RegisterObject(Region);
 }
 
@@ -73,9 +73,9 @@ HRESULT CAdSceneNode::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Entity));
-	PersistMgr->Transfer(TMEMBER(m_Region));
-	PersistMgr->Transfer(TMEMBER_INT(m_Type));
+	PersistMgr->Transfer(TMEMBER(_entity));
+	PersistMgr->Transfer(TMEMBER(_region));
+	PersistMgr->Transfer(TMEMBER_INT(_type));
 
 	return S_OK;
 }

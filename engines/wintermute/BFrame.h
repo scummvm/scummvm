@@ -40,25 +40,25 @@ class CScScript;
 class CScStack;
 class CBFrame: public CBScriptable {
 public:
-	bool m_KillSound;
-	bool m_Keyframe;
+	bool _killSound;
+	bool _keyframe;
 	HRESULT OneTimeDisplay(CBObject *Owner, bool Muted = false);
 	DECLARE_PERSISTENT(CBFrame, CBScriptable)
-	CBSound *m_Sound;
-	bool m_EditorExpanded;
+	CBSound *_sound;
+	bool _editorExpanded;
 	bool GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
 	HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	int m_MoveY;
-	int m_MoveX;
-	uint32 m_Delay;
-	CBArray<CBSubFrame *, CBSubFrame *> m_Subframes;
+	int _moveY;
+	int _moveX;
+	uint32 _delay;
+	CBArray<CBSubFrame *, CBSubFrame *> _subframes;
 	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, bool Precise = true, uint32 Alpha = 0xFFFFFFFF, bool AllFrames = false, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
 	HRESULT LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded);
 
 	CBFrame(CBGame *inGame);
 	virtual ~CBFrame();
 
-	CBArray<char *, char *> m_ApplyEvent;
+	CBArray<char *, char *> _applyEvent;
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);

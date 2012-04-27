@@ -42,8 +42,8 @@ public:
 	DECLARE_PERSISTENT(CAdSceneState, CBBase)
 	CAdSceneState(CBGame *inGame);
 	virtual ~CAdSceneState();
-	char *m_Filename;
-	CBArray<CAdNodeState *, CAdNodeState *> m_NodeStates;
+	char *_filename;
+	CBArray<CAdNodeState *, CAdNodeState *> _nodeStates;
 };
 
 } // end of namespace WinterMute

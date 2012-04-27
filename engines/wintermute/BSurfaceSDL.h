@@ -63,15 +63,15 @@ public:
 	static long DLL_CALLCONV TellProc(fi_handle handle);*/
 
 private:
-	SDL_Texture *m_Texture;
+	SDL_Texture *_texture;
 
 	HRESULT DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float ZoomY, uint32 Alpha, bool AlphaDisable, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY, int offsetX = 0, int offsetY = 0);
 	void GenAlphaMask(SDL_Surface *surface);
 	uint32 GetPixel(SDL_Surface *surface, int x, int y);
 
-	void *m_LockPixels;
-	int m_LockPitch;
-	byte *m_AlphaMask;
+	void *_lockPixels;
+	int _lockPitch;
+	byte *_alphaMask;
 };
 
 } // end of namespace WinterMute

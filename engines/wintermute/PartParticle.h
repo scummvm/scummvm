@@ -45,25 +45,25 @@ public:
 	CPartParticle(CBGame *inGame);
 	virtual ~CPartParticle(void);
 
-	float m_GrowthRate;
-	bool m_ExponentialGrowth;
+	float _growthRate;
+	bool _exponentialGrowth;
 
-	float m_Rotation;
-	float m_AngVelocity;
+	float _rotation;
+	float _angVelocity;
 
-	int m_Alpha1;
-	int m_Alpha2;
+	int _alpha1;
+	int _alpha2;
 
-	RECT m_Border;
-	Vector2 m_Pos;
-	float m_PosZ;
-	Vector2 m_Velocity;
-	float m_Scale;
-	CBSprite *m_Sprite;
-	uint32 m_CreationTime;
-	int m_LifeTime;
-	bool m_IsDead;
-	TParticleState m_State;
+	RECT _border;
+	Vector2 _pos;
+	float _posZ;
+	Vector2 _velocity;
+	float _scale;
+	CBSprite *_sprite;
+	uint32 _creationTime;
+	int _lifeTime;
+	bool _isDead;
+	TParticleState _state;
 
 	HRESULT Update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta);
 	HRESULT Display(CPartEmitter *Emitter);
@@ -75,10 +75,10 @@ public:
 
 	HRESULT Persist(CBPersistMgr *PersistMgr);
 private:
-	uint32 m_FadeStart;
-	int m_FadeTime;
-	int m_CurrentAlpha;
-	int m_FadeStartAlpha;
+	uint32 _fadeStart;
+	int _fadeTime;
+	int _currentAlpha;
+	int _fadeStartAlpha;
 };
 
 } // end of namespace WinterMute

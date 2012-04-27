@@ -36,8 +36,8 @@ IMPLEMENT_PERSISTENT(CAdPath, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdPath::CAdPath(CBGame *inGame): CBBase(inGame) {
-	m_CurrIndex = -1;
-	m_Ready = false;
+	_currIndex = -1;
+	_ready = false;
 }
 
 
@@ -49,49 +49,49 @@ CAdPath::~CAdPath() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdPath::Reset() {
-	for (int i = 0; i < m_Points.GetSize(); i++)
-		delete m_Points[i];
+	for (int i = 0; i < _points.GetSize(); i++)
+		delete _points[i];
 
-	m_Points.RemoveAll();
-	m_CurrIndex = -1;
-	m_Ready = false;
+	_points.RemoveAll();
+	_currIndex = -1;
+	_ready = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBPoint *CAdPath::GetFirst() {
-	if (m_Points.GetSize() > 0) {
-		m_CurrIndex = 0;
-		return m_Points[m_CurrIndex];
+	if (_points.GetSize() > 0) {
+		_currIndex = 0;
+		return _points[_currIndex];
 	} else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBPoint *CAdPath::GetNext() {
-	m_CurrIndex++;
-	if (m_CurrIndex < m_Points.GetSize()) return m_Points[m_CurrIndex];
+	_currIndex++;
+	if (_currIndex < _points.GetSize()) return _points[_currIndex];
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBPoint *CAdPath::GetCurrent() {
-	if (m_CurrIndex >= 0 && m_CurrIndex < m_Points.GetSize()) return m_Points[m_CurrIndex];
+	if (_currIndex >= 0 && _currIndex < _points.GetSize()) return _points[_currIndex];
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdPath::AddPoint(CBPoint *point) {
-	m_Points.Add(point);
+	_points.Add(point);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdPath::SetReady(bool ready) {
-	bool orig = m_Ready;
-	m_Ready = ready;
+	bool orig = _ready;
+	_ready = ready;
 
 	return orig;
 }
@@ -102,9 +102,9 @@ HRESULT CAdPath::Persist(CBPersistMgr *PersistMgr) {
 
 	PersistMgr->Transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(m_CurrIndex));
-	m_Points.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(m_Ready));
+	PersistMgr->Transfer(TMEMBER(_currIndex));
+	_points.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_ready));
 
 	return S_OK;
 }

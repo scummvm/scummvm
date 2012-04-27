@@ -43,10 +43,10 @@ public:
 	HRESULT AddString(const char *Key, const char *Val, bool ReportDuplicities = true);
 	CBStringTable(CBGame *inGame);
 	virtual ~CBStringTable();
-	Common::HashMap<Common::String, Common::String> m_Strings;
+	Common::HashMap<Common::String, Common::String> _strings;
 	char *GetKey(const char *Str);
 private:
-	Common::HashMap<Common::String, Common::String>::iterator m_StringsIter;
+	Common::HashMap<Common::String, Common::String>::iterator _stringsIter;
 
 };
 

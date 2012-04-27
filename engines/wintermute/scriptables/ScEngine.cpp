@@ -54,31 +54,31 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 	char CompilerPath[MAX_PATH];
 	strcpy(CompilerPath, COMPILER_DLL);
 
-	m_CompilerDLL = ::LoadLibrary(CompilerPath);
-	if (m_CompilerDLL == NULL) {
+	_compilerDLL = ::LoadLibrary(CompilerPath);
+	if (_compilerDLL == NULL) {
 		char ModuleName[MAX_PATH];
 		::GetModuleFileName(NULL, ModuleName, MAX_PATH);
 
 		// switch to exe's dir
 		char *ExeDir = CBUtils::GetPath(ModuleName);
 		sprintf(CompilerPath, "%s%s", ExeDir, COMPILER_DLL);
-		m_CompilerDLL = ::LoadLibrary(CompilerPath);
+		_compilerDLL = ::LoadLibrary(CompilerPath);
 
 		delete [] ExeDir;
 	}
-	if (m_CompilerDLL != NULL) {
+	if (_compilerDLL != NULL) {
 		// bind compiler's functionality
-		ExtCompileBuffer  = (DLL_COMPILE_BUFFER) ::GetProcAddress(m_CompilerDLL, "CompileBuffer");
-		ExtCompileFile    = (DLL_COMPILE_FILE)   ::GetProcAddress(m_CompilerDLL, "CompileFile");
-		ExtReleaseBuffer  = (DLL_RELEASE_BUFFER) ::GetProcAddress(m_CompilerDLL, "ReleaseBuffer");
-		ExtSetCallbacks   = (DLL_SET_CALLBACKS)  ::GetProcAddress(m_CompilerDLL, "SetCallbacks");
-		ExtDefineFunction = (DLL_DEFINE_FUNCTION)::GetProcAddress(m_CompilerDLL, "DefineFunction");
-		ExtDefineVariable = (DLL_DEFINE_VARIABLE)::GetProcAddress(m_CompilerDLL, "DefineVariable");
+		ExtCompileBuffer  = (DLL_COMPILE_BUFFER) ::GetProcAddress(_compilerDLL, "CompileBuffer");
+		ExtCompileFile    = (DLL_COMPILE_FILE)   ::GetProcAddress(_compilerDLL, "CompileFile");
+		ExtReleaseBuffer  = (DLL_RELEASE_BUFFER) ::GetProcAddress(_compilerDLL, "ReleaseBuffer");
+		ExtSetCallbacks   = (DLL_SET_CALLBACKS)  ::GetProcAddress(_compilerDLL, "SetCallbacks");
+		ExtDefineFunction = (DLL_DEFINE_FUNCTION)::GetProcAddress(_compilerDLL, "DefineFunction");
+		ExtDefineVariable = (DLL_DEFINE_VARIABLE)::GetProcAddress(_compilerDLL, "DefineVariable");
 
 		if (!ExtCompileBuffer || !ExtCompileFile || !ExtReleaseBuffer || !ExtSetCallbacks || !ExtDefineFunction || !ExtDefineVariable) {
-			m_CompilerAvailable = false;
-			::FreeLibrary(m_CompilerDLL);
-			m_CompilerDLL = NULL;
+			_compilerAvailable = false;
+			::FreeLibrary(_compilerDLL);
+			_compilerDLL = NULL;
 		} else {
 			/*
 			// publish external methods to the compiler
@@ -89,50 +89,50 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 			ExtSetCallbacks(&c, Game);
 			*/
 
-			m_CompilerAvailable = true;
+			_compilerAvailable = true;
 		}
-	} else m_CompilerAvailable = false;
+	} else _compilerAvailable = false;
 #else
-	m_CompilerAvailable = false;
-	m_CompilerDLL = NULL;
+	_compilerAvailable = false;
+	_compilerDLL = NULL;
 #endif
 
 
-	if (m_CompilerAvailable) Game->LOG(0, "  Script compiler bound successfuly");
+	if (_compilerAvailable) Game->LOG(0, "  Script compiler bound successfuly");
 	else Game->LOG(0, "  Script compiler is NOT available");
 
-	m_Globals = new CScValue(Game);
+	_globals = new CScValue(Game);
 
 
 	// register 'Game' as global variable
-	if (!m_Globals->PropExists("Game")) {
+	if (!_globals->PropExists("Game")) {
 		CScValue val(Game);
 		val.SetNative(Game, true);
-		m_Globals->SetProp("Game", &val);
+		_globals->SetProp("Game", &val);
 	}
 
 	// register 'Math' as global variable
-	if (!m_Globals->PropExists("Math")) {
+	if (!_globals->PropExists("Math")) {
 		CScValue val(Game);
-		val.SetNative(Game->m_MathClass, true);
-		m_Globals->SetProp("Math", &val);
+		val.SetNative(Game->_mathClass, true);
+		_globals->SetProp("Math", &val);
 	}
 
 	// prepare script cache
-	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) m_CachedScripts[i] = NULL;
+	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) _cachedScripts[i] = NULL;
 
-	m_CurrentScript = NULL;
+	_currentScript = NULL;
 
-	m_FileToCompile = NULL;
+	_fileToCompile = NULL;
 
-	m_CompileErrorCallback = NULL;
-	m_CompileErrorCallbackData = NULL;
+	_compileErrorCallback = NULL;
+	_compileErrorCallbackData = NULL;
 
-	m_ParseElementCallback = NULL;
-	m_ParseElementCallbackData = NULL;
+	_parseElementCallback = NULL;
+	_parseElementCallbackData = NULL;
 
-	m_IsProfiling = false;
-	m_ProfilingStartTime = 0;
+	_isProfiling = false;
+	_profilingStartTime = 0;
 
 	//EnableProfiling();
 }
@@ -145,44 +145,44 @@ CScEngine::~CScEngine() {
 
 	DisableProfiling();
 #ifdef __WIN32__
-	if (m_CompilerAvailable && m_CompilerDLL) ::FreeLibrary(m_CompilerDLL);
+	if (_compilerAvailable && _compilerDLL) ::FreeLibrary(_compilerDLL);
 #endif
 	Cleanup();
 
-	for (int i = 0; i < m_Breakpoints.GetSize(); i++) {
-		delete m_Breakpoints[i];
-		m_Breakpoints[i] = NULL;
+	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+		delete _breakpoints[i];
+		_breakpoints[i] = NULL;
 	}
-	m_Breakpoints.RemoveAll();
+	_breakpoints.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::Cleanup() {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (!m_Scripts[i]->m_Thread && m_Scripts[i]->m_Owner) m_Scripts[i]->m_Owner->RemoveScript(m_Scripts[i]);
-		delete m_Scripts[i];
-		m_Scripts.RemoveAt(i);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->RemoveScript(_scripts[i]);
+		delete _scripts[i];
+		_scripts.RemoveAt(i);
 		i--;
 	}
 
-	m_Scripts.RemoveAll();
+	_scripts.RemoveAll();
 
-	delete m_Globals;
-	m_Globals = NULL;
+	delete _globals;
+	_globals = NULL;
 
 	EmptyScriptCache();
 
-	m_CurrentScript = NULL; // ref only
+	_currentScript = NULL; // ref only
 
-	delete[] m_FileToCompile;
-	m_FileToCompile = NULL;
+	delete[] _fileToCompile;
+	_fileToCompile = NULL;
 
-	m_CompileErrorCallback = NULL;
-	m_CompileErrorCallbackData = NULL;
+	_compileErrorCallback = NULL;
+	_compileErrorCallbackData = NULL;
 
-	m_ParseElementCallback = NULL;
-	m_ParseElementCallbackData = NULL;
+	_parseElementCallback = NULL;
+	_parseElementCallbackData = NULL;
 
 	return S_OK;
 }
@@ -191,7 +191,7 @@ HRESULT CScEngine::Cleanup() {
 //////////////////////////////////////////////////////////////////////////
 byte *WINAPI CScEngine::LoadFile(void *Data, char *Filename, uint32 *Size) {
 	CBGame *Game = (CBGame *)Data;
-	return Game->m_FileManager->ReadWholeFile(Filename, Size);
+	return Game->_fileManager->ReadWholeFile(Filename, Size);
 }
 
 
@@ -205,14 +205,14 @@ void WINAPI CScEngine::AddError(void *Data, int Line, char *Text) {
 	CBGame *Game = (CBGame *)Data;
 
 	if (Game) {
-		if (Game->m_ScEngine && Game->m_ScEngine->m_FileToCompile)
-			Game->LOG(0, "Compiling script '%s'...", Game->m_ScEngine->m_FileToCompile);
+		if (Game->_scEngine && Game->_scEngine->_fileToCompile)
+			Game->LOG(0, "Compiling script '%s'...", Game->_scEngine->_fileToCompile);
 		Game->LOG(0, "  Error@line %d: %s", Line, Text);
 
 
 		// redirect to an engine's own callback
-		if (Game->m_ScEngine && Game->m_ScEngine->m_CompileErrorCallback) {
-			Game->m_ScEngine->m_CompileErrorCallback(Line, Text, Game->m_ScEngine->m_CompileErrorCallbackData);
+		if (Game->_scEngine && Game->_scEngine->_compileErrorCallback) {
+			Game->_scEngine->_compileErrorCallback(Line, Text, Game->_scEngine->_compileErrorCallbackData);
 		}
 	}
 }
@@ -224,8 +224,8 @@ void WINAPI CScEngine::ParseElement(void *Data, int Line, int Type, void *Elemen
 
 	if (Game) {
 		// redirect to an engine's own callback
-		if (Game->m_ScEngine && Game->m_ScEngine->m_ParseElementCallback) {
-			Game->m_ScEngine->m_ParseElementCallback(Line, Type, ElementData, Game->m_ScEngine->m_CompileErrorCallbackData);
+		if (Game->_scEngine && Game->_scEngine->_parseElementCallback) {
+			Game->_scEngine->_parseElementCallback(Line, Type, ElementData, Game->_scEngine->_compileErrorCallbackData);
 		}
 	}
 }
@@ -253,10 +253,10 @@ CScScript *CScEngine::RunScript(char *Filename, CBScriptHolder *Owner) {
 		if (Owner)val.SetNative(Owner, true);
 		else val.SetNULL();
 
-		script->m_Globals->SetProp("self", &val);
-		script->m_Globals->SetProp("this", &val);
+		script->_globals->SetProp("self", &val);
+		script->_globals->SetProp("this", &val);
 
-		m_Scripts.Add(script);
+		_scripts.Add(script);
 		Game->GetDebugMgr()->OnScriptInit(script);
 
 		return script;
@@ -271,10 +271,10 @@ byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreC
 	// is script in cache?
 	if (!IgnoreCache) {
 		for (i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-			if (m_CachedScripts[i] && scumm_stricmp(m_CachedScripts[i]->m_Filename, Filename) == 0) {
-				m_CachedScripts[i]->m_Timestamp = CBPlatform::GetTime();
-				*OutSize = m_CachedScripts[i]->m_Size;
-				return m_CachedScripts[i]->m_Buffer;
+			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename, Filename) == 0) {
+				_cachedScripts[i]->_timestamp = CBPlatform::GetTime();
+				*OutSize = _cachedScripts[i]->_size;
+				return _cachedScripts[i]->_buffer;
 			}
 		}
 	}
@@ -286,7 +286,7 @@ byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreC
 
 	uint32 Size;
 
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename, &Size);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename, &Size);
 	if (!Buffer) {
 		Game->LOG(0, "CScEngine::GetCompiledScript - error opening script '%s'", Filename);
 		return NULL;
@@ -297,7 +297,7 @@ byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreC
 		CompBuffer = Buffer;
 		CompSize = Size;
 	} else {
-		if (!m_CompilerAvailable) {
+		if (!_compilerAvailable) {
 			Game->LOG(0, "CScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", Filename);
 			delete [] Buffer;
 			return NULL;
@@ -333,20 +333,20 @@ byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreC
 		int index;
 		uint32 MinTime = CBPlatform::GetTime();
 		for (i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-			if (m_CachedScripts[i] == NULL) {
+			if (_cachedScripts[i] == NULL) {
 				index = i;
 				break;
-			} else if (m_CachedScripts[i]->m_Timestamp <= MinTime) {
-				MinTime = m_CachedScripts[i]->m_Timestamp;
+			} else if (_cachedScripts[i]->_timestamp <= MinTime) {
+				MinTime = _cachedScripts[i]->_timestamp;
 				index = i;
 			}
 		}
 
-		if (m_CachedScripts[index] != NULL) delete m_CachedScripts[index];
-		m_CachedScripts[index] = CachedScript;
+		if (_cachedScripts[index] != NULL) delete _cachedScripts[index];
+		_cachedScripts[index] = CachedScript;
 
-		ret = CachedScript->m_Buffer;
-		*OutSize = CachedScript->m_Size;
+		ret = CachedScript->_buffer;
+		*OutSize = CachedScript->_size;
 	}
 
 
@@ -363,55 +363,55 @@ byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreC
 HRESULT CScEngine::Tick() {
 	int i;
 
-	if (m_Scripts.GetSize() == 0) return S_OK;
+	if (_scripts.GetSize() == 0) return S_OK;
 
 
 	// resolve waiting scripts
-	for (i = 0; i < m_Scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.GetSize(); i++) {
 
-		switch (m_Scripts[i]->m_State) {
+		switch (_scripts[i]->_state) {
 		case SCRIPT_WAITING: {
 			/*
 			bool obj_found=false;
-			for(int j=0; j<Game->m_RegObjects.GetSize(); j++)
+			for(int j=0; j<Game->_regObjects.GetSize(); j++)
 			{
-			    if(Game->m_RegObjects[j] == m_Scripts[i]->m_WaitObject)
+			    if(Game->_regObjects[j] == _scripts[i]->_waitObject)
 			    {
-			        if(Game->m_RegObjects[j]->IsReady()) m_Scripts[i]->Run();
+			        if(Game->_regObjects[j]->IsReady()) _scripts[i]->Run();
 			        obj_found = true;
 			        break;
 			    }
 			}
-			if(!obj_found) m_Scripts[i]->Finish(); // m_WaitObject no longer exists
+			if(!obj_found) _scripts[i]->Finish(); // _waitObject no longer exists
 			*/
-			if (Game->ValidObject(m_Scripts[i]->m_WaitObject)) {
-				if (m_Scripts[i]->m_WaitObject->IsReady()) m_Scripts[i]->Run();
-			} else m_Scripts[i]->Finish();
+			if (Game->ValidObject(_scripts[i]->_waitObject)) {
+				if (_scripts[i]->_waitObject->IsReady()) _scripts[i]->Run();
+			} else _scripts[i]->Finish();
 			break;
 		}
 
 		case SCRIPT_SLEEPING: {
-			if (m_Scripts[i]->m_WaitFrozen) {
-				if (m_Scripts[i]->m_WaitTime <= CBPlatform::GetTime()) m_Scripts[i]->Run();
+			if (_scripts[i]->_waitFrozen) {
+				if (_scripts[i]->_waitTime <= CBPlatform::GetTime()) _scripts[i]->Run();
 			} else {
-				if (m_Scripts[i]->m_WaitTime <= Game->m_Timer) m_Scripts[i]->Run();
+				if (_scripts[i]->_waitTime <= Game->_timer) _scripts[i]->Run();
 			}
 			break;
 		}
 
 		case SCRIPT_WAITING_SCRIPT: {
-			if (!IsValidScript(m_Scripts[i]->m_WaitScript) || m_Scripts[i]->m_WaitScript->m_State == SCRIPT_ERROR) {
+			if (!IsValidScript(_scripts[i]->_waitScript) || _scripts[i]->_waitScript->_state == SCRIPT_ERROR) {
 				// fake return value
-				m_Scripts[i]->m_Stack->PushNULL();
-				m_Scripts[i]->m_WaitScript = NULL;
-				m_Scripts[i]->Run();
+				_scripts[i]->_stack->PushNULL();
+				_scripts[i]->_waitScript = NULL;
+				_scripts[i]->Run();
 			} else {
-				if (m_Scripts[i]->m_WaitScript->m_State == SCRIPT_THREAD_FINISHED) {
+				if (_scripts[i]->_waitScript->_state == SCRIPT_THREAD_FINISHED) {
 					// copy return value
-					m_Scripts[i]->m_Stack->Push(m_Scripts[i]->m_WaitScript->m_Stack->Pop());
-					m_Scripts[i]->Run();
-					m_Scripts[i]->m_WaitScript->Finish();
-					m_Scripts[i]->m_WaitScript = NULL;
+					_scripts[i]->_stack->Push(_scripts[i]->_waitScript->_stack->Pop());
+					_scripts[i]->Run();
+					_scripts[i]->_waitScript->Finish();
+					_scripts[i]->_waitScript = NULL;
 				}
 			}
 			break;
@@ -421,34 +421,34 @@ HRESULT CScEngine::Tick() {
 
 
 	// execute scripts
-	for (i = 0; i < m_Scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.GetSize(); i++) {
 
 		// skip paused scripts
-		if (m_Scripts[i]->m_State == SCRIPT_PAUSED) continue;
+		if (_scripts[i]->_state == SCRIPT_PAUSED) continue;
 
 		// time sliced script
-		if (m_Scripts[i]->m_TimeSlice > 0) {
+		if (_scripts[i]->_timeSlice > 0) {
 			uint32 StartTime = CBPlatform::GetTime();
-			while (m_Scripts[i]->m_State == SCRIPT_RUNNING && CBPlatform::GetTime() - StartTime < m_Scripts[i]->m_TimeSlice) {
-				m_CurrentScript = m_Scripts[i];
-				m_Scripts[i]->ExecuteInstruction();
+			while (_scripts[i]->_state == SCRIPT_RUNNING && CBPlatform::GetTime() - StartTime < _scripts[i]->_timeSlice) {
+				_currentScript = _scripts[i];
+				_scripts[i]->ExecuteInstruction();
 			}
-			if (m_IsProfiling && m_Scripts[i]->m_Filename) AddScriptTime(m_Scripts[i]->m_Filename, CBPlatform::GetTime() - StartTime);
+			if (_isProfiling && _scripts[i]->_filename) AddScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
 		}
 
 		// normal script
 		else {
 			uint32 StartTime;
-			bool isProfiling = m_IsProfiling;
+			bool isProfiling = _isProfiling;
 			if (isProfiling) StartTime = CBPlatform::GetTime();
 
-			while (m_Scripts[i]->m_State == SCRIPT_RUNNING) {
-				m_CurrentScript = m_Scripts[i];
-				m_Scripts[i]->ExecuteInstruction();
+			while (_scripts[i]->_state == SCRIPT_RUNNING) {
+				_currentScript = _scripts[i];
+				_scripts[i]->ExecuteInstruction();
 			}
-			if (isProfiling && m_Scripts[i]->m_Filename) AddScriptTime(m_Scripts[i]->m_Filename, CBPlatform::GetTime() - StartTime);
+			if (isProfiling && _scripts[i]->_filename) AddScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
 		}
-		m_CurrentScript = NULL;
+		_currentScript = NULL;
 	}
 
 	RemoveFinishedScripts();
@@ -460,15 +460,15 @@ HRESULT CScEngine::Tick() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::TickUnbreakable() {
 	// execute unbreakable scripts
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (!m_Scripts[i]->m_Unbreakable) continue;
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (!_scripts[i]->_unbreakable) continue;
 
-		while (m_Scripts[i]->m_State == SCRIPT_RUNNING) {
-			m_CurrentScript = m_Scripts[i];
-			m_Scripts[i]->ExecuteInstruction();
+		while (_scripts[i]->_state == SCRIPT_RUNNING) {
+			_currentScript = _scripts[i];
+			_scripts[i]->ExecuteInstruction();
 		}
-		m_Scripts[i]->Finish();
-		m_CurrentScript = NULL;
+		_scripts[i]->Finish();
+		_currentScript = NULL;
 	}
 	RemoveFinishedScripts();
 
@@ -479,12 +479,12 @@ HRESULT CScEngine::TickUnbreakable() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::RemoveFinishedScripts() {
 	// remove finished scripts
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i]->m_State == SCRIPT_FINISHED || m_Scripts[i]->m_State == SCRIPT_ERROR) {
-			if (!m_Scripts[i]->m_Thread && m_Scripts[i]->m_Owner) m_Scripts[i]->m_Owner->RemoveScript(m_Scripts[i]);
-			Game->GetDebugMgr()->OnScriptShutdown(m_Scripts[i]);
-			delete m_Scripts[i];
-			m_Scripts.RemoveAt(i);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
+			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->RemoveScript(_scripts[i]);
+			Game->GetDebugMgr()->OnScriptShutdown(_scripts[i]);
+			delete _scripts[i];
+			_scripts.RemoveAt(i);
 			i--;
 		}
 	}
@@ -496,9 +496,9 @@ HRESULT CScEngine::RemoveFinishedScripts() {
 int CScEngine::GetNumScripts(int *Running, int *Waiting, int *Persistent) {
 	int running = 0, waiting = 0, persistent = 0, total = 0;
 
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i]->m_State == SCRIPT_FINISHED) continue;
-		switch (m_Scripts[i]->m_State) {
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i]->_state == SCRIPT_FINISHED) continue;
+		switch (_scripts[i]->_state) {
 		case SCRIPT_RUNNING:
 		case SCRIPT_SLEEPING:
 		case SCRIPT_PAUSED:
@@ -524,9 +524,9 @@ int CScEngine::GetNumScripts(int *Running, int *Waiting, int *Persistent) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::EmptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-		if (m_CachedScripts[i]) {
-			delete m_CachedScripts[i];
-			m_CachedScripts[i] = NULL;
+		if (_cachedScripts[i]) {
+			delete _cachedScripts[i];
+			_cachedScripts[i] = NULL;
 		}
 	}
 	return S_OK;
@@ -536,12 +536,12 @@ HRESULT CScEngine::EmptyScriptCache() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::ResetObject(CBObject *Object) {
 	// terminate all scripts waiting for this object
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i]->m_State == SCRIPT_WAITING && m_Scripts[i]->m_WaitObject == Object) {
-			if (!Game->m_CompatKillMethodThreads) ResetScript(m_Scripts[i]);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
+			if (!Game->_compatKillMethodThreads) ResetScript(_scripts[i]);
 
-			bool IsThread = m_Scripts[i]->m_MethodThread || m_Scripts[i]->m_Thread;
-			m_Scripts[i]->Finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
+			bool IsThread = _scripts[i]->_methodThread || _scripts[i]->_thread;
+			_scripts[i]->Finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
 		}
 	}
 	return S_OK;
@@ -550,9 +550,9 @@ HRESULT CScEngine::ResetObject(CBObject *Object) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::ResetScript(CScScript *Script) {
 	// terminate all scripts waiting for this script
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i]->m_State == SCRIPT_WAITING_SCRIPT && m_Scripts[i]->m_WaitScript == Script) {
-			m_Scripts[i]->Finish();
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == Script) {
+			_scripts[i]->Finish();
 		}
 	}
 	return S_OK;
@@ -560,13 +560,13 @@ HRESULT CScEngine::ResetScript(CScScript *Script) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::Persist(CBPersistMgr *PersistMgr) {
-	if (!PersistMgr->m_Saving) Cleanup();
+	if (!PersistMgr->_saving) Cleanup();
 
 	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(m_CurrentScript));
-	PersistMgr->Transfer(TMEMBER(m_FileToCompile));
-	PersistMgr->Transfer(TMEMBER(m_Globals));
-	m_Scripts.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_currentScript));
+	PersistMgr->Transfer(TMEMBER(_fileToCompile));
+	PersistMgr->Transfer(TMEMBER(_globals));
+	_scripts.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -574,10 +574,10 @@ HRESULT CScEngine::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::EditorCleanup() {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i]->m_Owner == NULL && (m_Scripts[i]->m_State == SCRIPT_FINISHED || m_Scripts[i]->m_State == SCRIPT_ERROR)) {
-			delete m_Scripts[i];
-			m_Scripts.RemoveAt(i);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i]->_owner == NULL && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
+			delete _scripts[i];
+			_scripts.RemoveAt(i);
 			i--;
 		}
 	}
@@ -586,8 +586,8 @@ void CScEngine::EditorCleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::PauseAll() {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i] != m_CurrentScript) m_Scripts[i]->Pause();
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i] != _currentScript) _scripts[i]->Pause();
 	}
 
 	return S_OK;
@@ -596,8 +596,8 @@ HRESULT CScEngine::PauseAll() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::ResumeAll() {
-	for (int i = 0; i < m_Scripts.GetSize(); i++)
-		m_Scripts[i]->Resume();
+	for (int i = 0; i < _scripts.GetSize(); i++)
+		_scripts[i]->Resume();
 
 	return S_OK;
 }
@@ -605,10 +605,10 @@ HRESULT CScEngine::ResumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::SetFileToCompile(char *Filename) {
-	delete[] m_FileToCompile;
-	m_FileToCompile = new char[strlen(Filename) + 1];
-	if (m_FileToCompile) {
-		strcpy(m_FileToCompile, Filename);
+	delete[] _fileToCompile;
+	_fileToCompile = new char[strlen(Filename) + 1];
+	if (_fileToCompile) {
+		strcpy(_fileToCompile, Filename);
 		return S_OK;
 	} else return E_FAIL;
 }
@@ -616,46 +616,46 @@ HRESULT CScEngine::SetFileToCompile(char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::SetCompileErrorCallback(COMPILE_ERROR_CALLBACK Callback, void *Data) {
-	m_CompileErrorCallback = Callback;
-	m_CompileErrorCallbackData = Data;
+	_compileErrorCallback = Callback;
+	_compileErrorCallbackData = Data;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::SetParseElementCallback(PARSE_ELEMENT_CALLBACK Callback, void *Data) {
-	m_ParseElementCallback = Callback;
-	m_ParseElementCallbackData = Data;
+	_parseElementCallback = Callback;
+	_parseElementCallbackData = Data;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScEngine::IsValidScript(CScScript *Script) {
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i] == Script) return true;
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i] == Script) return true;
 	}
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::ClearGlobals(bool IncludingNatives) {
-	m_Globals->CleanProps(IncludingNatives);
+	_globals->CleanProps(IncludingNatives);
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::DbgSendScripts(IWmeDebugClient *Client) {
 	// send global variables
-	m_Globals->DbgSendVariables(Client, WME_DBGVAR_GLOBAL, NULL, 0);
+	_globals->DbgSendVariables(Client, WME_DBGVAR_GLOBAL, NULL, 0);
 
 	// process normal scripts first
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i]->m_Thread || m_Scripts[i]->m_MethodThread) continue;
-		m_Scripts[i]->DbgSendScript(Client);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i]->_thread || _scripts[i]->_methodThread) continue;
+		_scripts[i]->DbgSendScript(Client);
 	}
 
 	// and threads later
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		if (m_Scripts[i]->m_Thread || m_Scripts[i]->m_MethodThread)
-			m_Scripts[i]->DbgSendScript(Client);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		if (_scripts[i]->_thread || _scripts[i]->_methodThread)
+			_scripts[i]->DbgSendScript(Client);
 	}
 
 	return S_OK;
@@ -663,24 +663,24 @@ HRESULT CScEngine::DbgSendScripts(IWmeDebugClient *Client) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::AddBreakpoint(char *ScriptFilename, int Line) {
-	if (!Game->GetDebugMgr()->m_Enabled) return S_OK;
+	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
 	CScBreakpoint *Bp = NULL;
-	for (int i = 0; i < m_Breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(m_Breakpoints[i]->m_Filename, ScriptFilename) == 0) {
-			Bp = m_Breakpoints[i];
+	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+		if (scumm_stricmp(_breakpoints[i]->_filename, ScriptFilename) == 0) {
+			Bp = _breakpoints[i];
 			break;
 		}
 	}
 	if (Bp == NULL) {
 		Bp = new CScBreakpoint(ScriptFilename);
-		m_Breakpoints.Add(Bp);
+		_breakpoints.Add(Bp);
 	}
 	bool Found = false;
-	for (int i = 0; i < Bp->m_Lines.GetSize(); i++) {
-		if (Bp->m_Lines[i] == Line) return S_OK;
+	for (int i = 0; i < Bp->_lines.GetSize(); i++) {
+		if (Bp->_lines[i] == Line) return S_OK;
 	}
-	Bp->m_Lines.Add(Line);
+	Bp->_lines.Add(Line);
 
 	// refresh changes
 	RefreshScriptBreakpoints();
@@ -690,16 +690,16 @@ HRESULT CScEngine::AddBreakpoint(char *ScriptFilename, int Line) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::RemoveBreakpoint(char *ScriptFilename, int Line) {
-	if (!Game->GetDebugMgr()->m_Enabled) return S_OK;
+	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
-	for (int i = 0; i < m_Breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(m_Breakpoints[i]->m_Filename, ScriptFilename) == 0) {
-			for (int j = 0; j < m_Breakpoints[i]->m_Lines.GetSize(); j++) {
-				if (m_Breakpoints[i]->m_Lines[j] == Line) {
-					m_Breakpoints[i]->m_Lines.RemoveAt(j);
-					if (m_Breakpoints[i]->m_Lines.GetSize() == 0) {
-						delete m_Breakpoints[i];
-						m_Breakpoints.RemoveAt(i);
+	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+		if (scumm_stricmp(_breakpoints[i]->_filename, ScriptFilename) == 0) {
+			for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
+				if (_breakpoints[i]->_lines[j] == Line) {
+					_breakpoints[i]->_lines.RemoveAt(j);
+					if (_breakpoints[i]->_lines.GetSize() == 0) {
+						delete _breakpoints[i];
+						_breakpoints.RemoveAt(i);
 					}
 					// refresh changes
 					RefreshScriptBreakpoints();
@@ -715,65 +715,65 @@ HRESULT CScEngine::RemoveBreakpoint(char *ScriptFilename, int Line) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::RefreshScriptBreakpoints() {
-	if (!Game->GetDebugMgr()->m_Enabled) return S_OK;
+	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		RefreshScriptBreakpoints(m_Scripts[i]);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		RefreshScriptBreakpoints(_scripts[i]);
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *Script) {
-	if (!Game->GetDebugMgr()->m_Enabled) return S_OK;
+	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
-	if (!Script || !Script->m_Filename) return E_FAIL;
+	if (!Script || !Script->_filename) return E_FAIL;
 
-	for (int i = 0; i < m_Breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(m_Breakpoints[i]->m_Filename, Script->m_Filename) == 0) {
-			Script->m_Breakpoints.Copy(m_Breakpoints[i]->m_Lines);
+	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+		if (scumm_stricmp(_breakpoints[i]->_filename, Script->_filename) == 0) {
+			Script->_breakpoints.Copy(_breakpoints[i]->_lines);
 			return S_OK;
 		}
 	}
-	if (Script->m_Breakpoints.GetSize() > 0) Script->m_Breakpoints.RemoveAll();
+	if (Script->_breakpoints.GetSize() > 0) Script->_breakpoints.RemoveAll();
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::SaveBreakpoints() {
-	if (!Game->GetDebugMgr()->m_Enabled) return S_OK;
+	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
 
 	char Text[512];
 	char Key[100];
 
 	int Count = 0;
-	for (int i = 0; i < m_Breakpoints.GetSize(); i++) {
-		for (int j = 0; j < m_Breakpoints[i]->m_Lines.GetSize(); j++) {
+	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+		for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
 			Count++;
 			sprintf(Key, "Breakpoint%d", Count);
-			sprintf(Text, "%s:%d", m_Breakpoints[i]->m_Filename, m_Breakpoints[i]->m_Lines[j]);
+			sprintf(Text, "%s:%d", _breakpoints[i]->_filename, _breakpoints[i]->_lines[j]);
 
-			Game->m_Registry->WriteString("Debug", Key, Text);
+			Game->_registry->WriteString("Debug", Key, Text);
 		}
 	}
-	Game->m_Registry->WriteInt("Debug", "NumBreakpoints", Count);
+	Game->_registry->WriteInt("Debug", "NumBreakpoints", Count);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::LoadBreakpoints() {
-	if (!Game->GetDebugMgr()->m_Enabled) return S_OK;
+	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
 	char Key[100];
 
-	int Count = Game->m_Registry->ReadInt("Debug", "NumBreakpoints", 0);
+	int Count = Game->_registry->ReadInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= Count; i++) {
 		uint32 BufSize = 512;
 		sprintf(Key, "Breakpoint%d", i);
-		AnsiString breakpoint = Game->m_Registry->ReadString("Debug", Key, "");
+		AnsiString breakpoint = Game->_registry->ReadString("Debug", Key, "");
 
 		char *Path = CBUtils::StrEntry(0, breakpoint.c_str(), ':');
 		char *Line = CBUtils::StrEntry(1, breakpoint.c_str(), ':');
@@ -791,45 +791,45 @@ HRESULT CScEngine::LoadBreakpoints() {
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::AddScriptTime(const char *Filename, uint32 Time) {
-	if (!m_IsProfiling) return;
+	if (!_isProfiling) return;
 
 	AnsiString fileName = Filename;
 	StringUtil::ToLowerCase(fileName);
-	m_ScriptTimes[fileName] += Time;
+	_scriptTimes[fileName] += Time;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::EnableProfiling() {
-	if (m_IsProfiling) return;
+	if (_isProfiling) return;
 
 	// destroy old data, if any
-	m_ScriptTimes.clear();
+	_scriptTimes.clear();
 
-	m_ProfilingStartTime = CBPlatform::GetTime();
-	m_IsProfiling = true;
+	_profilingStartTime = CBPlatform::GetTime();
+	_isProfiling = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::DisableProfiling() {
-	if (!m_IsProfiling) return;
+	if (!_isProfiling) return;
 
 	DumpStats();
-	m_IsProfiling = false;
+	_isProfiling = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::DumpStats() {
 	error("DumpStats not ported to ScummVM yet");
-/*	uint32 totalTime = CBPlatform::GetTime() - m_ProfilingStartTime;
+/*	uint32 totalTime = CBPlatform::GetTime() - _profilingStartTime;
 
 	typedef std::vector <std::pair<uint32, std::string> > TimeVector;
 	TimeVector times;
 
 	ScriptTimes::iterator it;
-	for (it = m_ScriptTimes.begin(); it != m_ScriptTimes.end(); it++) {
+	for (it = _scriptTimes.begin(); it != _scriptTimes.end(); it++) {
 		times.push_back(std::pair<uint32, std::string> (it->_value, it->_key));
 	}
 	std::sort(times.begin(), times.end());

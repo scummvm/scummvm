@@ -41,9 +41,9 @@ public:
 	void SetScript(char *Script);
 	void SetName(char *Name);
 	static const char *GetEventName(TEventType Type);
-	char *m_Script;
-	char *m_Name;
-	TEventType m_Type;
+	char *_script;
+	char *_name;
+	TEventType _type;
 	CBEvent(CBGame *inGame);
 	CBEvent(CBGame *inGame, TEventType Type, char *Script);
 	virtual ~CBEvent();

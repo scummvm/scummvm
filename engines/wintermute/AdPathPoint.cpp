@@ -36,10 +36,10 @@ IMPLEMENT_PERSISTENT(CAdPathPoint, false)
 //////////////////////////////////////////////////////////////////////////
 CAdPathPoint::CAdPathPoint() {
 	x = y = 0;
-	m_Distance = 0;
+	_distance = 0;
 
-	m_Marked = false;
-	m_Origin = NULL;
+	_marked = false;
+	_origin = NULL;
 }
 
 
@@ -47,16 +47,16 @@ CAdPathPoint::CAdPathPoint() {
 CAdPathPoint::CAdPathPoint(int initX, int initY, int initDistance) {
 	x = initX;
 	y = initY;
-	m_Distance = initDistance;
+	_distance = initDistance;
 
-	m_Marked = false;
-	m_Origin = NULL;
+	_marked = false;
+	_origin = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdPathPoint::~CAdPathPoint() {
-	m_Origin = NULL;
+	_origin = NULL;
 }
 
 
@@ -65,9 +65,9 @@ HRESULT CAdPathPoint::Persist(CBPersistMgr *PersistMgr) {
 
 	CBPoint::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Distance));
-	PersistMgr->Transfer(TMEMBER(m_Marked));
-	PersistMgr->Transfer(TMEMBER(m_Origin));
+	PersistMgr->Transfer(TMEMBER(_distance));
+	PersistMgr->Transfer(TMEMBER(_marked));
+	PersistMgr->Transfer(TMEMBER(_origin));
 
 	return S_OK;
 }

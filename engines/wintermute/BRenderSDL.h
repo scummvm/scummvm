@@ -58,10 +58,10 @@ public:
 	CBImage *TakeScreenshot();
 
 	SDL_Renderer *GetSdlRenderer() const {
-		return m_Renderer;
+		return _renderer;
 	}
 	SDL_Window *GetSdlWindow() const {
-		return m_Win;
+		return _win;
 	}
 
 	HRESULT SetViewport(int left, int top, int right, int bottom);
@@ -73,24 +73,24 @@ public:
 	void DumpData(char *Filename);
 
 	float GetScaleRatioX() const {
-		return m_RatioX;
+		return _ratioX;
 	}
 	float GetScaleRatioY() const {
-		return m_RatioY;
+		return _ratioY;
 	}
 
 private:
-	SDL_Renderer *m_Renderer;
-	SDL_Window *m_Win;
-	AnsiString m_Name;
+	SDL_Renderer *_renderer;
+	SDL_Window *_win;
+	AnsiString _name;
 
-	int m_BorderLeft;
-	int m_BorderTop;
-	int m_BorderRight;
-	int m_BorderBottom;
+	int _borderLeft;
+	int _borderTop;
+	int _borderRight;
+	int _borderBottom;
 
-	float m_RatioX;
-	float m_RatioY;
+	float _ratioX;
+	float _ratioY;
 };
 
 } // end of namespace WinterMute

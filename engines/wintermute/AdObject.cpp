@@ -58,107 +58,107 @@ IMPLEMENT_PERSISTENT(CAdObject, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdObject::CAdObject(CBGame *inGame): CBObject(inGame) {
-	m_Type = OBJECT_NONE;
-	m_State = m_NextState = STATE_NONE;
+	_type = OBJECT_NONE;
+	_state = _nextState = STATE_NONE;
 
-	m_Active = true;
-	m_Drawn = false;
+	_active = true;
+	_drawn = false;
 
-	m_CurrentSprite = NULL;
-	m_AnimSprite = NULL;
-	m_TempSprite2 = NULL;
+	_currentSprite = NULL;
+	_animSprite = NULL;
+	_tempSprite2 = NULL;
 
-	m_Font = NULL;
+	_font = NULL;
 
-	m_Sentence = NULL;
+	_sentence = NULL;
 
-	m_ForcedTalkAnimName = NULL;
-	m_ForcedTalkAnimUsed = false;
+	_forcedTalkAnimName = NULL;
+	_forcedTalkAnimUsed = false;
 
-	m_BlockRegion = NULL;
-	m_WptGroup = NULL;
+	_blockRegion = NULL;
+	_wptGroup = NULL;
 
-	m_CurrentBlockRegion = NULL;
-	m_CurrentWptGroup = NULL;
+	_currentBlockRegion = NULL;
+	_currentWptGroup = NULL;
 
-	m_IgnoreItems = false;
-	m_SceneIndependent = false;
+	_ignoreItems = false;
+	_sceneIndependent = false;
 
-	m_StickRegion = NULL;
+	_stickRegion = NULL;
 
-	m_SubtitlesModRelative = true;
-	m_SubtitlesModX = 0;
-	m_SubtitlesModY = 0;
-	m_SubtitlesWidth = 0;
-	m_SubtitlesModXCenter = true;
+	_subtitlesModRelative = true;
+	_subtitlesModX = 0;
+	_subtitlesModY = 0;
+	_subtitlesWidth = 0;
+	_subtitlesModXCenter = true;
 
-	m_Inventory = NULL;
+	_inventory = NULL;
 
-	for (int i = 0; i < MAX_NUM_REGIONS; i++) m_CurrentRegions[i] = NULL;
+	for (int i = 0; i < MAX_NUM_REGIONS; i++) _currentRegions[i] = NULL;
 
-	m_PartEmitter = NULL;
-	m_PartFollowParent = false;
-	m_PartOffsetX = m_PartOffsetY = 0;
+	_partEmitter = NULL;
+	_partFollowParent = false;
+	_partOffsetX = _partOffsetY = 0;
 
-	m_RegisterAlias = this;
+	_registerAlias = this;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdObject::~CAdObject() {
-	m_CurrentSprite = NULL; // reference only, don't delete
-	SAFE_DELETE(m_AnimSprite);
-	SAFE_DELETE(m_Sentence);
-	SAFE_DELETE_ARRAY(m_ForcedTalkAnimName);
+	_currentSprite = NULL; // reference only, don't delete
+	SAFE_DELETE(_animSprite);
+	SAFE_DELETE(_sentence);
+	SAFE_DELETE_ARRAY(_forcedTalkAnimName);
 
-	SAFE_DELETE(m_BlockRegion);
-	SAFE_DELETE(m_WptGroup);
+	SAFE_DELETE(_blockRegion);
+	SAFE_DELETE(_wptGroup);
 
-	SAFE_DELETE(m_CurrentBlockRegion);
-	SAFE_DELETE(m_CurrentWptGroup);
+	SAFE_DELETE(_currentBlockRegion);
+	SAFE_DELETE(_currentWptGroup);
 
 
-	m_TempSprite2 = NULL; // reference only
-	m_StickRegion = NULL;
+	_tempSprite2 = NULL; // reference only
+	_stickRegion = NULL;
 
-	if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
+	if (_font) Game->_fontStorage->RemoveFont(_font);
 
-	if (m_Inventory) {
-		((CAdGame *)Game)->UnregisterInventory(m_Inventory);
-		m_Inventory = NULL;
+	if (_inventory) {
+		((CAdGame *)Game)->UnregisterInventory(_inventory);
+		_inventory = NULL;
 	}
 
-	if (m_PartEmitter)
-		Game->UnregisterObject(m_PartEmitter);
+	if (_partEmitter)
+		Game->UnregisterObject(_partEmitter);
 
 
-	for (int i = 0; i < m_AttachmentsPre.GetSize(); i++) {
-		Game->UnregisterObject(m_AttachmentsPre[i]);
+	for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+		Game->UnregisterObject(_attachmentsPre[i]);
 	}
-	m_AttachmentsPre.RemoveAll();
+	_attachmentsPre.RemoveAll();
 
-	for (int i = 0; i < m_AttachmentsPost.GetSize(); i++) {
-		Game->UnregisterObject(m_AttachmentsPost[i]);
+	for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+		Game->UnregisterObject(_attachmentsPost[i]);
 	}
-	m_AttachmentsPost.RemoveAll();
+	_attachmentsPost.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::PlayAnim(char *Filename) {
-	SAFE_DELETE(m_AnimSprite);
-	m_AnimSprite = new CBSprite(Game, this);
-	if (!m_AnimSprite) {
-		Game->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", m_Name, Filename);
+	SAFE_DELETE(_animSprite);
+	_animSprite = new CBSprite(Game, this);
+	if (!_animSprite) {
+		Game->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
 		return E_FAIL;
 	}
-	HRESULT res = m_AnimSprite->LoadFile(Filename);
+	HRESULT res = _animSprite->LoadFile(Filename);
 	if (FAILED(res)) {
-		Game->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", m_Name, Filename);
-		SAFE_DELETE(m_AnimSprite);
+		Game->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
+		SAFE_DELETE(_animSprite);
 		return res;
 	}
-	m_State = STATE_PLAYING_ANIM;
+	_state = STATE_PLAYING_ANIM;
 
 	return S_OK;
 }
@@ -209,7 +209,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsTalking") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushBool(m_State == STATE_TALKING);
+		Stack->PushBool(_state == STATE_TALKING);
 		return S_OK;
 	}
 
@@ -218,10 +218,10 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "StopTalk") == 0 || strcmp(Name, "StopTalking") == 0) {
 		Stack->CorrectParams(0);
-		if (m_Sentence) m_Sentence->Finish();
-		if (m_State == STATE_TALKING) {
-			m_State = m_NextState;
-			m_NextState = STATE_READY;
+		if (_sentence) _sentence->Finish();
+		if (_state == STATE_TALKING) {
+			_state = _nextState;
+			_nextState = STATE_READY;
 			Stack->PushBool(true);
 		} else Stack->PushBool(false);
 		return S_OK;
@@ -233,10 +233,10 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "ForceTalkAnim") == 0) {
 		Stack->CorrectParams(1);
 		char *AnimName = Stack->Pop()->GetString();
-		SAFE_DELETE_ARRAY(m_ForcedTalkAnimName);
-		m_ForcedTalkAnimName = new char[strlen(AnimName) + 1];
-		strcpy(m_ForcedTalkAnimName, AnimName);
-		m_ForcedTalkAnimUsed = false;
+		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
+		_forcedTalkAnimName = new char[strlen(AnimName) + 1];
+		strcpy(_forcedTalkAnimName, AnimName);
+		_forcedTalkAnimUsed = false;
 		Stack->PushBool(true);
 		return S_OK;
 	}
@@ -277,19 +277,19 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "StickToRegion") == 0) {
 		Stack->CorrectParams(1);
 
-		CAdLayer *Main = ((CAdGame *)Game)->m_Scene->m_MainLayer;
+		CAdLayer *Main = ((CAdGame *)Game)->_scene->_mainLayer;
 		bool RegFound = false;
 
 		int i;
 		CScValue *Val = Stack->Pop();
 		if (Val->IsNULL() || !Main) {
-			m_StickRegion = NULL;
+			_stickRegion = NULL;
 			RegFound = true;
 		} else if (Val->IsString()) {
 			char *RegionName = Val->GetString();
-			for (i = 0; i < Main->m_Nodes.GetSize(); i++) {
-				if (Main->m_Nodes[i]->m_Type == OBJECT_REGION && Main->m_Nodes[i]->m_Region->m_Name && scumm_stricmp(Main->m_Nodes[i]->m_Region->m_Name, RegionName) == 0) {
-					m_StickRegion = Main->m_Nodes[i]->m_Region;
+			for (i = 0; i < Main->_nodes.GetSize(); i++) {
+				if (Main->_nodes[i]->_type == OBJECT_REGION && Main->_nodes[i]->_region->_name && scumm_stricmp(Main->_nodes[i]->_region->_name, RegionName) == 0) {
+					_stickRegion = Main->_nodes[i]->_region;
 					RegFound = true;
 					break;
 				}
@@ -297,9 +297,9 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		} else if (Val->IsNative()) {
 			CBScriptable *Obj = Val->GetNative();
 
-			for (i = 0; i < Main->m_Nodes.GetSize(); i++) {
-				if (Main->m_Nodes[i]->m_Type == OBJECT_REGION && Main->m_Nodes[i]->m_Region == Obj) {
-					m_StickRegion = Main->m_Nodes[i]->m_Region;
+			for (i = 0; i < Main->_nodes.GetSize(); i++) {
+				if (Main->_nodes[i]->_type == OBJECT_REGION && Main->_nodes[i]->_region == Obj) {
+					_stickRegion = Main->_nodes[i]->_region;
 					RegFound = true;
 					break;
 				}
@@ -307,7 +307,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		}
 
-		if (!RegFound) m_StickRegion = NULL;
+		if (!RegFound) _stickRegion = NULL;
 		Stack->PushBool(RegFound);
 		return S_OK;
 	}
@@ -331,7 +331,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetFont") == 0) {
 		Stack->CorrectParams(0);
-		if (m_Font && m_Font->m_Filename) Stack->PushString(m_Font->m_Filename);
+		if (_font && _font->_filename) Stack->PushString(_font->_filename);
 		else Stack->PushNULL();
 		return S_OK;
 	}
@@ -342,9 +342,9 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "TakeItem") == 0) {
 		Stack->CorrectParams(2);
 
-		if (!m_Inventory) {
-			m_Inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(m_Inventory);
+		if (!_inventory) {
+			_inventory = new CAdInventory(Game);
+			((CAdGame *)Game)->RegisterInventory(_inventory);
 		}
 
 		CScValue *val = Stack->Pop();
@@ -352,10 +352,10 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			char *ItemName = val->GetString();
 			val = Stack->Pop();
 			char *InsertAfter = val->IsNULL() ? NULL : val->GetString();
-			if (FAILED(m_Inventory->InsertItem(ItemName, InsertAfter))) Script->RuntimeError("Cannot add item '%s' to inventory", ItemName);
+			if (FAILED(_inventory->InsertItem(ItemName, InsertAfter))) Script->RuntimeError("Cannot add item '%s' to inventory", ItemName);
 			else {
 				// hide associated entities
-				((CAdGame *)Game)->m_Scene->HandleItemAssociations(ItemName, false);
+				((CAdGame *)Game)->_scene->HandleItemAssociations(ItemName, false);
 			}
 
 		} else Script->RuntimeError("TakeItem: item name expected");
@@ -370,17 +370,17 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "DropItem") == 0) {
 		Stack->CorrectParams(1);
 
-		if (!m_Inventory) {
-			m_Inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(m_Inventory);
+		if (!_inventory) {
+			_inventory = new CAdInventory(Game);
+			((CAdGame *)Game)->RegisterInventory(_inventory);
 		}
 
 		CScValue *val = Stack->Pop();
 		if (!val->IsNULL()) {
-			if (FAILED(m_Inventory->RemoveItem(val->GetString()))) Script->RuntimeError("Cannot remove item '%s' from inventory", val->GetString());
+			if (FAILED(_inventory->RemoveItem(val->GetString()))) Script->RuntimeError("Cannot remove item '%s' from inventory", val->GetString());
 			else {
 				// show associated entities
-				((CAdGame *)Game)->m_Scene->HandleItemAssociations(val->GetString(), true);
+				((CAdGame *)Game)->_scene->HandleItemAssociations(val->GetString(), true);
 			}
 		} else Script->RuntimeError("DropItem: item name expected");
 
@@ -394,20 +394,20 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "GetItem") == 0) {
 		Stack->CorrectParams(1);
 
-		if (!m_Inventory) {
-			m_Inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(m_Inventory);
+		if (!_inventory) {
+			_inventory = new CAdInventory(Game);
+			((CAdGame *)Game)->RegisterInventory(_inventory);
 		}
 
 		CScValue *val = Stack->Pop();
-		if (val->m_Type == VAL_STRING) {
+		if (val->_type == VAL_STRING) {
 			CAdItem *item = ((CAdGame *)Game)->GetItemByName(val->GetString());
 			if (item) Stack->PushNative(item, true);
 			else Stack->PushNULL();
-		} else if (val->IsNULL() || val->GetInt() < 0 || val->GetInt() >= m_Inventory->m_TakenItems.GetSize())
+		} else if (val->IsNULL() || val->GetInt() < 0 || val->GetInt() >= _inventory->_takenItems.GetSize())
 			Stack->PushNULL();
 		else
-			Stack->PushNative(m_Inventory->m_TakenItems[val->GetInt()], true);
+			Stack->PushNative(_inventory->_takenItems[val->GetInt()], true);
 
 		return S_OK;
 	}
@@ -418,18 +418,18 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "HasItem") == 0) {
 		Stack->CorrectParams(1);
 
-		if (!m_Inventory) {
-			m_Inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(m_Inventory);
+		if (!_inventory) {
+			_inventory = new CAdInventory(Game);
+			((CAdGame *)Game)->RegisterInventory(_inventory);
 		}
 
 		CScValue *val = Stack->Pop();
 		if (!val->IsNULL()) {
-			for (int i = 0; i < m_Inventory->m_TakenItems.GetSize(); i++) {
-				if (val->GetNative() == m_Inventory->m_TakenItems[i]) {
+			for (int i = 0; i < _inventory->_takenItems.GetSize(); i++) {
+				if (val->GetNative() == _inventory->_takenItems[i]) {
 					Stack->PushBool(true);
 					return S_OK;
-				} else if (scumm_stricmp(val->GetString(), m_Inventory->m_TakenItems[i]->m_Name) == 0) {
+				} else if (scumm_stricmp(val->GetString(), _inventory->_takenItems[i]->_name) == 0) {
 					Stack->PushBool(true);
 					return S_OK;
 				}
@@ -450,7 +450,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		int OffsetY = Stack->Pop()->GetInt();
 
 		CPartEmitter *Emitter = CreateParticleEmitter(FollowParent, OffsetX, OffsetY);
-		if (Emitter) Stack->PushNative(m_PartEmitter, true);
+		if (Emitter) Stack->PushNative(_partEmitter, true);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -461,9 +461,9 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DeleteParticleEmitter") == 0) {
 		Stack->CorrectParams(0);
-		if (m_PartEmitter) {
-			Game->UnregisterObject(m_PartEmitter);
-			m_PartEmitter = NULL;
+		if (_partEmitter) {
+			Game->UnregisterObject(_partEmitter);
+			_partEmitter = NULL;
 		}
 		Stack->PushNULL();
 
@@ -489,12 +489,12 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		} else {
 			Game->RegisterObject(Ent);
 
-			Ent->m_PosX = OffsetX;
-			Ent->m_PosY = OffsetY;
-			Ent->m_Active = true;
+			Ent->_posX = OffsetX;
+			Ent->_posY = OffsetY;
+			Ent->_active = true;
 
-			if (PreDisplay) m_AttachmentsPre.Add(Ent);
-			else m_AttachmentsPost.Add(Ent);
+			if (PreDisplay) _attachmentsPre.Add(Ent);
+			else _attachmentsPost.Add(Ent);
 
 			Stack->PushBool(true);
 		}
@@ -511,37 +511,37 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		bool Found = false;
 		if (Val->IsNative()) {
 			CBScriptable *Obj = Val->GetNative();
-			for (int i = 0; i < m_AttachmentsPre.GetSize(); i++) {
-				if (m_AttachmentsPre[i] == Obj) {
+			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+				if (_attachmentsPre[i] == Obj) {
 					Found = true;
-					Game->UnregisterObject(m_AttachmentsPre[i]);
-					m_AttachmentsPre.RemoveAt(i);
+					Game->UnregisterObject(_attachmentsPre[i]);
+					_attachmentsPre.RemoveAt(i);
 					i--;
 				}
 			}
-			for (int i = 0; i < m_AttachmentsPost.GetSize(); i++) {
-				if (m_AttachmentsPost[i] == Obj) {
+			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+				if (_attachmentsPost[i] == Obj) {
 					Found = true;
-					Game->UnregisterObject(m_AttachmentsPost[i]);
-					m_AttachmentsPost.RemoveAt(i);
+					Game->UnregisterObject(_attachmentsPost[i]);
+					_attachmentsPost.RemoveAt(i);
 					i--;
 				}
 			}
 		} else {
 			char *Name = Val->GetString();
-			for (int i = 0; i < m_AttachmentsPre.GetSize(); i++) {
-				if (m_AttachmentsPre[i]->m_Name && scumm_stricmp(m_AttachmentsPre[i]->m_Name, Name) == 0) {
+			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, Name) == 0) {
 					Found = true;
-					Game->UnregisterObject(m_AttachmentsPre[i]);
-					m_AttachmentsPre.RemoveAt(i);
+					Game->UnregisterObject(_attachmentsPre[i]);
+					_attachmentsPre.RemoveAt(i);
 					i--;
 				}
 			}
-			for (int i = 0; i < m_AttachmentsPost.GetSize(); i++) {
-				if (m_AttachmentsPost[i]->m_Name && scumm_stricmp(m_AttachmentsPost[i]->m_Name, Name) == 0) {
+			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, Name) == 0) {
 					Found = true;
-					Game->UnregisterObject(m_AttachmentsPost[i]);
-					m_AttachmentsPost.RemoveAt(i);
+					Game->UnregisterObject(_attachmentsPost[i]);
+					_attachmentsPost.RemoveAt(i);
 					i--;
 				}
 			}
@@ -562,26 +562,26 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (Val->IsInt()) {
 			int Index = Val->GetInt();
 			int CurrIndex = 0;
-			for (int i = 0; i < m_AttachmentsPre.GetSize(); i++) {
-				if (CurrIndex == Index) Ret = m_AttachmentsPre[i];
+			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+				if (CurrIndex == Index) Ret = _attachmentsPre[i];
 				CurrIndex++;
 			}
-			for (int i = 0; i < m_AttachmentsPost.GetSize(); i++) {
-				if (CurrIndex == Index) Ret = m_AttachmentsPost[i];
+			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+				if (CurrIndex == Index) Ret = _attachmentsPost[i];
 				CurrIndex++;
 			}
 		} else {
 			char *Name = Val->GetString();
-			for (int i = 0; i < m_AttachmentsPre.GetSize(); i++) {
-				if (m_AttachmentsPre[i]->m_Name && scumm_stricmp(m_AttachmentsPre[i]->m_Name, Name) == 0) {
-					Ret = m_AttachmentsPre[i];
+			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, Name) == 0) {
+					Ret = _attachmentsPre[i];
 					break;
 				}
 			}
 			if (!Ret) {
-				for (int i = 0; i < m_AttachmentsPost.GetSize(); i++) {
-					if (m_AttachmentsPost[i]->m_Name && scumm_stricmp(m_AttachmentsPost[i]->m_Name, Name) == 0) {
-						Ret = m_AttachmentsPre[i];
+				for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+					if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, Name) == 0) {
+						Ret = _attachmentsPre[i];
 						break;
 					}
 				}
@@ -600,104 +600,104 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdObject::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("object");
-		return m_ScValue;
+		_scValue->SetString("object");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Active") == 0) {
-		m_ScValue->SetBool(m_Active);
-		return m_ScValue;
+		_scValue->SetBool(_active);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IgnoreItems") == 0) {
-		m_ScValue->SetBool(m_IgnoreItems);
-		return m_ScValue;
+		_scValue->SetBool(_ignoreItems);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SceneIndependent") == 0) {
-		m_ScValue->SetBool(m_SceneIndependent);
-		return m_ScValue;
+		_scValue->SetBool(_sceneIndependent);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesWidth") == 0) {
-		m_ScValue->SetInt(m_SubtitlesWidth);
-		return m_ScValue;
+		_scValue->SetInt(_subtitlesWidth);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosRelative") == 0) {
-		m_ScValue->SetBool(m_SubtitlesModRelative);
-		return m_ScValue;
+		_scValue->SetBool(_subtitlesModRelative);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosX") == 0) {
-		m_ScValue->SetInt(m_SubtitlesModX);
-		return m_ScValue;
+		_scValue->SetInt(_subtitlesModX);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosY") == 0) {
-		m_ScValue->SetInt(m_SubtitlesModY);
-		return m_ScValue;
+		_scValue->SetInt(_subtitlesModY);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosXCenter") == 0) {
-		m_ScValue->SetBool(m_SubtitlesModXCenter);
-		return m_ScValue;
+		_scValue->SetBool(_subtitlesModXCenter);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumItems (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumItems") == 0) {
-		m_ScValue->SetInt(GetInventory()->m_TakenItems.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(GetInventory()->_takenItems.GetSize());
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// ParticleEmitter (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ParticleEmitter") == 0) {
-		if (m_PartEmitter) m_ScValue->SetNative(m_PartEmitter, true);
-		else m_ScValue->SetNULL();
+		if (_partEmitter) _scValue->SetNative(_partEmitter, true);
+		else _scValue->SetNULL();
 
-		return m_ScValue;
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumAttachments (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumAttachments") == 0) {
-		m_ScValue->SetInt(m_AttachmentsPre.GetSize() + m_AttachmentsPost.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_attachmentsPre.GetSize() + _attachmentsPost.GetSize());
+		return _scValue;
 	}
 
 
@@ -712,7 +712,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Active") == 0) {
-		m_Active = Value->GetBool();
+		_active = Value->GetBool();
 		return S_OK;
 	}
 
@@ -720,7 +720,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IgnoreItems") == 0) {
-		m_IgnoreItems = Value->GetBool();
+		_ignoreItems = Value->GetBool();
 		return S_OK;
 	}
 
@@ -728,7 +728,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SceneIndependent") == 0) {
-		m_SceneIndependent = Value->GetBool();
+		_sceneIndependent = Value->GetBool();
 		return S_OK;
 	}
 
@@ -736,7 +736,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesWidth") == 0) {
-		m_SubtitlesWidth = Value->GetInt();
+		_subtitlesWidth = Value->GetInt();
 		return S_OK;
 	}
 
@@ -744,7 +744,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosRelative") == 0) {
-		m_SubtitlesModRelative = Value->GetBool();
+		_subtitlesModRelative = Value->GetBool();
 		return S_OK;
 	}
 
@@ -752,7 +752,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosX") == 0) {
-		m_SubtitlesModX = Value->GetInt();
+		_subtitlesModX = Value->GetInt();
 		return S_OK;
 	}
 
@@ -760,7 +760,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosY") == 0) {
-		m_SubtitlesModY = Value->GetInt();
+		_subtitlesModY = Value->GetInt();
 		return S_OK;
 	}
 
@@ -768,7 +768,7 @@ HRESULT CAdObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SubtitlesPosXCenter") == 0) {
-		m_SubtitlesModXCenter = Value->GetBool();
+		_subtitlesModXCenter = Value->GetBool();
 		return S_OK;
 	}
 
@@ -784,12 +784,12 @@ char *CAdObject::ScToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::SetFont(char *Filename) {
-	if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
+	if (_font) Game->_fontStorage->RemoveFont(_font);
 	if (Filename) {
-		m_Font = Game->m_FontStorage->AddFont(Filename);
-		return m_Font == NULL ? E_FAIL : S_OK;
+		_font = Game->_fontStorage->AddFont(Filename);
+		return _font == NULL ? E_FAIL : S_OK;
 	} else {
-		m_Font = NULL;
+		_font = NULL;
 		return S_OK;
 	}
 }
@@ -797,16 +797,16 @@ HRESULT CAdObject::SetFont(char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 int CAdObject::GetHeight() {
-	if (!m_CurrentSprite) return 0;
+	if (!_currentSprite) return 0;
 	else {
-		CBFrame *frame = m_CurrentSprite->m_Frames[m_CurrentSprite->m_CurrentFrame];
+		CBFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
 		int ret = 0;
-		for (int i = 0; i < frame->m_Subframes.GetSize(); i++) {
-			ret = MAX(ret, frame->m_Subframes[i]->m_HotspotY);
+		for (int i = 0; i < frame->_subframes.GetSize(); i++) {
+			ret = MAX(ret, frame->_subframes[i]->_hotspotY);
 		}
 
-		if (m_Zoomable) {
-			float zoom = ((CAdGame *)Game)->m_Scene->GetZoomAt(m_PosX, m_PosY);
+		if (_zoomable) {
+			float zoom = ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY);
 			ret = ret * zoom / 100;
 		}
 		return ret;
@@ -816,30 +816,30 @@ int CAdObject::GetHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdObject::Talk(char *Text, char *Sound, uint32 Duration, char *Stances, TTextAlign Align) {
-	if (!m_Sentence) m_Sentence = new CAdSentence(Game);
-	if (!m_Sentence) return;
+	if (!_sentence) _sentence = new CAdSentence(Game);
+	if (!_sentence) return;
 
-	if (m_ForcedTalkAnimName && m_ForcedTalkAnimUsed) {
-		SAFE_DELETE_ARRAY(m_ForcedTalkAnimName);
-		m_ForcedTalkAnimUsed = false;
+	if (_forcedTalkAnimName && _forcedTalkAnimUsed) {
+		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
+		_forcedTalkAnimUsed = false;
 	}
 
-	SAFE_DELETE(m_Sentence->m_Sound);
+	SAFE_DELETE(_sentence->_sound);
 
-	m_Sentence->SetText(Text);
-	Game->m_StringTable->Expand(&m_Sentence->m_Text);
-	m_Sentence->SetStances(Stances);
-	m_Sentence->m_Duration = Duration;
-	m_Sentence->m_Align = Align;
-	m_Sentence->m_StartTime = Game->m_Timer;
-	m_Sentence->m_CurrentStance = -1;
-	m_Sentence->m_Font = m_Font == NULL ? Game->m_SystemFont : m_Font;
-	m_Sentence->m_Freezable = m_Freezable;
+	_sentence->SetText(Text);
+	Game->_stringTable->Expand(&_sentence->_text);
+	_sentence->SetStances(Stances);
+	_sentence->_duration = Duration;
+	_sentence->_align = Align;
+	_sentence->_startTime = Game->_timer;
+	_sentence->_currentStance = -1;
+	_sentence->_font = _font == NULL ? Game->_systemFont : _font;
+	_sentence->_freezable = _freezable;
 
 	// try to locate speech file automatically
 	bool DeleteSound = false;
 	if (!Sound) {
-		char *Key = Game->m_StringTable->GetKey(Text);
+		char *Key = Game->_stringTable->GetKey(Text);
 		if (Key) {
 			Sound = ((CAdGame *)Game)->FindSpeechFile(Key);
 			delete [] Key;
@@ -852,73 +852,73 @@ void CAdObject::Talk(char *Text, char *Sound, uint32 Duration, char *Stances, TT
 	if (Sound) {
 		CBSound *snd = new CBSound(Game);
 		if (snd && SUCCEEDED(snd->SetSound(Sound, SOUND_SPEECH, true))) {
-			m_Sentence->SetSound(snd);
-			if (m_Sentence->m_Duration <= 0) {
+			_sentence->SetSound(snd);
+			if (_sentence->_duration <= 0) {
 				uint32 Length = snd->GetLength();
-				if (Length != 0) m_Sentence->m_Duration = Length;
+				if (Length != 0) _sentence->_duration = Length;
 			}
 		} else delete snd;
 	}
 
 	// set duration by text length
-	if (m_Sentence->m_Duration <= 0) {// TODO: Avoid longs.
-		m_Sentence->m_Duration = MAX((unsigned long)1000, Game->m_SubtitlesSpeed * strlen(m_Sentence->m_Text));
+	if (_sentence->_duration <= 0) {// TODO: Avoid longs.
+		_sentence->_duration = MAX((unsigned long)1000, Game->_subtitlesSpeed * strlen(_sentence->_text));
 	}
 
 
 	int x, y, width, height;
 
-	x = m_PosX;
-	y = m_PosY;
+	x = _posX;
+	y = _posY;
 
-	if (!m_SceneIndependent && m_SubtitlesModRelative) {
-		x -= ((CAdGame *)Game)->m_Scene->GetOffsetLeft();
-		y -= ((CAdGame *)Game)->m_Scene->GetOffsetTop();
+	if (!_sceneIndependent && _subtitlesModRelative) {
+		x -= ((CAdGame *)Game)->_scene->GetOffsetLeft();
+		y -= ((CAdGame *)Game)->_scene->GetOffsetTop();
 	}
 
 
-	if (m_SubtitlesWidth > 0) width = m_SubtitlesWidth;
+	if (_subtitlesWidth > 0) width = _subtitlesWidth;
 	else {
-		if ((x < Game->m_Renderer->m_Width / 4 || x > Game->m_Renderer->m_Width * 0.75) && !Game->m_TouchInterface) {
-			width = MAX(Game->m_Renderer->m_Width / 4, MIN(x * 2, (Game->m_Renderer->m_Width - x) * 2));
-		} else width = Game->m_Renderer->m_Width / 2;
+		if ((x < Game->_renderer->_width / 4 || x > Game->_renderer->_width * 0.75) && !Game->_touchInterface) {
+			width = MAX(Game->_renderer->_width / 4, MIN(x * 2, (Game->_renderer->_width - x) * 2));
+		} else width = Game->_renderer->_width / 2;
 	}
 
-	height = m_Sentence->m_Font->GetTextHeight((byte  *)m_Sentence->m_Text, width);
+	height = _sentence->_font->GetTextHeight((byte  *)_sentence->_text, width);
 
 	y = y - height - GetHeight() - 5;
-	if (m_SubtitlesModRelative) {
-		x += m_SubtitlesModX;
-		y += m_SubtitlesModY;
+	if (_subtitlesModRelative) {
+		x += _subtitlesModX;
+		y += _subtitlesModY;
 	} else {
-		x = m_SubtitlesModX;
-		y = m_SubtitlesModY;
+		x = _subtitlesModX;
+		y = _subtitlesModY;
 	}
-	if (m_SubtitlesModXCenter)
+	if (_subtitlesModXCenter)
 		x = x - width / 2;
 
 
-	x = MIN(MAX(0, x), Game->m_Renderer->m_Width - width);
-	y = MIN(MAX(0, y), Game->m_Renderer->m_Height - height);
+	x = MIN(MAX(0, x), Game->_renderer->_width - width);
+	y = MIN(MAX(0, y), Game->_renderer->_height - height);
 
-	m_Sentence->m_Width = width;
-
-
-	m_Sentence->m_Pos.x = x;
-	m_Sentence->m_Pos.y = y;
+	_sentence->_width = width;
 
 
-	if (m_SubtitlesModRelative) {
-		m_Sentence->m_Pos.x += ((CAdGame *)Game)->m_Scene->GetOffsetLeft();
-		m_Sentence->m_Pos.y += ((CAdGame *)Game)->m_Scene->GetOffsetTop();
+	_sentence->_pos.x = x;
+	_sentence->_pos.y = y;
+
+
+	if (_subtitlesModRelative) {
+		_sentence->_pos.x += ((CAdGame *)Game)->_scene->GetOffsetLeft();
+		_sentence->_pos.y += ((CAdGame *)Game)->_scene->GetOffsetTop();
 	}
 
-	m_Sentence->m_FixedPos = !m_SubtitlesModRelative;
+	_sentence->_fixedPos = !_subtitlesModRelative;
 
 
-	m_Sentence->SetupTalkFile(Sound);
+	_sentence->SetupTalkFile(Sound);
 
-	m_State = STATE_TALKING;
+	_state = STATE_TALKING;
 
 	if (DeleteSound) delete [] Sound;
 }
@@ -926,15 +926,15 @@ void CAdObject::Talk(char *Text, char *Sound, uint32 Duration, char *Stances, TT
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::Reset() {
-	if (m_State == STATE_PLAYING_ANIM && m_AnimSprite != NULL) {
-		SAFE_DELETE(m_AnimSprite);
-	} else if (m_State == STATE_TALKING && m_Sentence) {
-		m_Sentence->Finish();
+	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL) {
+		SAFE_DELETE(_animSprite);
+	} else if (_state == STATE_TALKING && _sentence) {
+		_sentence->Finish();
 	}
 
-	m_State = m_NextState = STATE_READY;
+	_state = _nextState = STATE_READY;
 
-	Game->m_ScEngine->ResetObject(this);
+	Game->_scEngine->ResetObject(this);
 
 	return S_OK;
 }
@@ -944,42 +944,42 @@ HRESULT CAdObject::Reset() {
 HRESULT CAdObject::Persist(CBPersistMgr *PersistMgr) {
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	PersistMgr->Transfer(TMEMBER(m_BlockRegion));
-	PersistMgr->Transfer(TMEMBER(m_CurrentBlockRegion));
-	PersistMgr->Transfer(TMEMBER(m_CurrentWptGroup));
-	PersistMgr->Transfer(TMEMBER(m_CurrentSprite));
-	PersistMgr->Transfer(TMEMBER(m_Drawn));
-	PersistMgr->Transfer(TMEMBER(m_Font));
-	PersistMgr->Transfer(TMEMBER(m_IgnoreItems));
-	PersistMgr->Transfer(TMEMBER_INT(m_NextState));
-	PersistMgr->Transfer(TMEMBER(m_Sentence));
-	PersistMgr->Transfer(TMEMBER_INT(m_State));
-	PersistMgr->Transfer(TMEMBER(m_AnimSprite));
-	PersistMgr->Transfer(TMEMBER(m_SceneIndependent));
-	PersistMgr->Transfer(TMEMBER(m_ForcedTalkAnimName));
-	PersistMgr->Transfer(TMEMBER(m_ForcedTalkAnimUsed));
-	PersistMgr->Transfer(TMEMBER(m_TempSprite2));
-	PersistMgr->Transfer(TMEMBER_INT(m_Type));
-	PersistMgr->Transfer(TMEMBER(m_WptGroup));
-	PersistMgr->Transfer(TMEMBER(m_StickRegion));
-	PersistMgr->Transfer(TMEMBER(m_SubtitlesModRelative));
-	PersistMgr->Transfer(TMEMBER(m_SubtitlesModX));
-	PersistMgr->Transfer(TMEMBER(m_SubtitlesModY));
-	PersistMgr->Transfer(TMEMBER(m_SubtitlesModXCenter));
-	PersistMgr->Transfer(TMEMBER(m_SubtitlesWidth));
-	PersistMgr->Transfer(TMEMBER(m_Inventory));
-	PersistMgr->Transfer(TMEMBER(m_PartEmitter));
+	PersistMgr->Transfer(TMEMBER(_active));
+	PersistMgr->Transfer(TMEMBER(_blockRegion));
+	PersistMgr->Transfer(TMEMBER(_currentBlockRegion));
+	PersistMgr->Transfer(TMEMBER(_currentWptGroup));
+	PersistMgr->Transfer(TMEMBER(_currentSprite));
+	PersistMgr->Transfer(TMEMBER(_drawn));
+	PersistMgr->Transfer(TMEMBER(_font));
+	PersistMgr->Transfer(TMEMBER(_ignoreItems));
+	PersistMgr->Transfer(TMEMBER_INT(_nextState));
+	PersistMgr->Transfer(TMEMBER(_sentence));
+	PersistMgr->Transfer(TMEMBER_INT(_state));
+	PersistMgr->Transfer(TMEMBER(_animSprite));
+	PersistMgr->Transfer(TMEMBER(_sceneIndependent));
+	PersistMgr->Transfer(TMEMBER(_forcedTalkAnimName));
+	PersistMgr->Transfer(TMEMBER(_forcedTalkAnimUsed));
+	PersistMgr->Transfer(TMEMBER(_tempSprite2));
+	PersistMgr->Transfer(TMEMBER_INT(_type));
+	PersistMgr->Transfer(TMEMBER(_wptGroup));
+	PersistMgr->Transfer(TMEMBER(_stickRegion));
+	PersistMgr->Transfer(TMEMBER(_subtitlesModRelative));
+	PersistMgr->Transfer(TMEMBER(_subtitlesModX));
+	PersistMgr->Transfer(TMEMBER(_subtitlesModY));
+	PersistMgr->Transfer(TMEMBER(_subtitlesModXCenter));
+	PersistMgr->Transfer(TMEMBER(_subtitlesWidth));
+	PersistMgr->Transfer(TMEMBER(_inventory));
+	PersistMgr->Transfer(TMEMBER(_partEmitter));
 
-	for (int i = 0; i < MAX_NUM_REGIONS; i++) PersistMgr->Transfer(TMEMBER(m_CurrentRegions[i]));
+	for (int i = 0; i < MAX_NUM_REGIONS; i++) PersistMgr->Transfer(TMEMBER(_currentRegions[i]));
 
-	m_AttachmentsPre.Persist(PersistMgr);
-	m_AttachmentsPost.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(m_RegisterAlias));
+	_attachmentsPre.Persist(PersistMgr);
+	_attachmentsPost.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_registerAlias));
 
-	PersistMgr->Transfer(TMEMBER(m_PartFollowParent));
-	PersistMgr->Transfer(TMEMBER(m_PartOffsetX));
-	PersistMgr->Transfer(TMEMBER(m_PartOffsetY));
+	PersistMgr->Transfer(TMEMBER(_partFollowParent));
+	PersistMgr->Transfer(TMEMBER(_partOffsetX));
+	PersistMgr->Transfer(TMEMBER(_partOffsetY));
 
 	return S_OK;
 }
@@ -987,8 +987,8 @@ HRESULT CAdObject::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::UpdateSounds() {
-	if (m_Sentence && m_Sentence->m_Sound)
-		UpdateOneSound(m_Sentence->m_Sound);
+	if (_sentence && _sentence->_sound)
+		UpdateOneSound(_sentence->_sound);
 
 	return CBObject::UpdateSounds();
 }
@@ -996,8 +996,8 @@ HRESULT CAdObject::UpdateSounds() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::ResetSoundPan() {
-	if (m_Sentence && m_Sentence->m_Sound) {
-		m_Sentence->m_Sound->SetPan(0.0f);
+	if (_sentence && _sentence->_sound) {
+		_sentence->_sound->SetPan(0.0f);
 	}
 	return CBObject::ResetSoundPan();
 }
@@ -1014,8 +1014,8 @@ bool CAdObject::GetExtendedFlag(char *FlagName) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
-	if (m_BlockRegion) m_BlockRegion->SaveAsText(Buffer, Indent + 2, "BLOCKED_REGION");
-	if (m_WptGroup) m_WptGroup->SaveAsText(Buffer, Indent + 2);
+	if (_blockRegion) _blockRegion->SaveAsText(Buffer, Indent + 2, "BLOCKED_REGION");
+	if (_wptGroup) _wptGroup->SaveAsText(Buffer, Indent + 2);
 
 	CBBase::SaveAsText(Buffer, Indent + 2);
 
@@ -1026,23 +1026,23 @@ HRESULT CAdObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::UpdateBlockRegion() {
 	CAdGame *AdGame = (CAdGame *)Game;
-	if (AdGame->m_Scene) {
-		if (m_BlockRegion && m_CurrentBlockRegion)
-			m_CurrentBlockRegion->Mimic(m_BlockRegion, m_Zoomable ? AdGame->m_Scene->GetScaleAt(m_PosY) : 100.0f, m_PosX, m_PosY);
+	if (AdGame->_scene) {
+		if (_blockRegion && _currentBlockRegion)
+			_currentBlockRegion->Mimic(_blockRegion, _zoomable ? AdGame->_scene->GetScaleAt(_posY) : 100.0f, _posX, _posY);
 
-		if (m_WptGroup && m_CurrentWptGroup)
-			m_CurrentWptGroup->Mimic(m_WptGroup, m_Zoomable ? AdGame->m_Scene->GetScaleAt(m_PosY) : 100.0f, m_PosX, m_PosY);
+		if (_wptGroup && _currentWptGroup)
+			_currentWptGroup->Mimic(_wptGroup, _zoomable ? AdGame->_scene->GetScaleAt(_posY) : 100.0f, _posX, _posY);
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CAdInventory *CAdObject::GetInventory() {
-	if (!m_Inventory) {
-		m_Inventory = new CAdInventory(Game);
-		((CAdGame *)Game)->RegisterInventory(m_Inventory);
+	if (!_inventory) {
+		_inventory = new CAdInventory(Game);
+		((CAdGame *)Game)->RegisterInventory(_inventory);
 	}
-	return m_Inventory;
+	return _inventory;
 }
 
 
@@ -1050,13 +1050,13 @@ CAdInventory *CAdObject::GetInventory() {
 HRESULT CAdObject::AfterMove() {
 	CAdRegion *NewRegions[MAX_NUM_REGIONS];
 
-	((CAdGame *)Game)->m_Scene->GetRegionsAt(m_PosX, m_PosY, NewRegions, MAX_NUM_REGIONS);
+	((CAdGame *)Game)->_scene->GetRegionsAt(_posX, _posY, NewRegions, MAX_NUM_REGIONS);
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
 		if (!NewRegions[i]) break;
 		bool RegFound = false;
 		for (int j = 0; j < MAX_NUM_REGIONS; j++) {
-			if (m_CurrentRegions[j] == NewRegions[i]) {
-				m_CurrentRegions[j] = NULL;
+			if (_currentRegions[j] == NewRegions[i]) {
+				_currentRegions[j] = NULL;
 				RegFound = true;
 				break;
 			}
@@ -1065,10 +1065,10 @@ HRESULT CAdObject::AfterMove() {
 	}
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
-		if (m_CurrentRegions[i] && Game->ValidObject(m_CurrentRegions[i])) {
-			m_CurrentRegions[i]->ApplyEvent("ActorLeave");
+		if (_currentRegions[i] && Game->ValidObject(_currentRegions[i])) {
+			_currentRegions[i]->ApplyEvent("ActorLeave");
 		}
-		m_CurrentRegions[i] = NewRegions[i];
+		_currentRegions[i] = NewRegions[i];
 	}
 
 	return S_OK;
@@ -1076,19 +1076,19 @@ HRESULT CAdObject::AfterMove() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::InvalidateCurrRegions() {
-	for (int i = 0; i < MAX_NUM_REGIONS; i++) m_CurrentRegions[i] = NULL;
+	for (int i = 0; i < MAX_NUM_REGIONS; i++) _currentRegions[i] = NULL;
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::GetScale(float *ScaleX, float *ScaleY) {
-	if (m_Zoomable) {
-		if (m_ScaleX >= 0 || m_ScaleY >= 0) {
-			*ScaleX = m_ScaleX < 0 ? 100 : m_ScaleX;
-			*ScaleY = m_ScaleY < 0 ? 100 : m_ScaleY;
-		} else if (m_Scale >= 0) *ScaleX = *ScaleY = m_Scale;
-		else *ScaleX = *ScaleY = ((CAdGame *)Game)->m_Scene->GetZoomAt(m_PosX, m_PosY) + m_RelativeScale;
+	if (_zoomable) {
+		if (_scaleX >= 0 || _scaleY >= 0) {
+			*ScaleX = _scaleX < 0 ? 100 : _scaleX;
+			*ScaleY = _scaleY < 0 ? 100 : _scaleY;
+		} else if (_scale >= 0) *ScaleX = *ScaleY = _scale;
+		else *ScaleX = *ScaleY = ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) + _relativeScale;
 	} else {
 		*ScaleX = *ScaleY = 100;
 	}
@@ -1097,11 +1097,11 @@ HRESULT CAdObject::GetScale(float *ScaleX, float *ScaleY) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::UpdateSpriteAttachments() {
-	for (int i = 0; i < m_AttachmentsPre.GetSize(); i++) {
-		m_AttachmentsPre[i]->Update();
+	for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+		_attachmentsPre[i]->Update();
 	}
-	for (int i = 0; i < m_AttachmentsPost.GetSize(); i++) {
-		m_AttachmentsPost[i]->Update();
+	for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+		_attachmentsPost[i]->Update();
 	}
 	return S_OK;
 }
@@ -1109,12 +1109,12 @@ HRESULT CAdObject::UpdateSpriteAttachments() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::DisplaySpriteAttachments(bool PreDisplay) {
 	if (PreDisplay) {
-		for (int i = 0; i < m_AttachmentsPre.GetSize(); i++) {
-			DisplaySpriteAttachment(m_AttachmentsPre[i]);
+		for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+			DisplaySpriteAttachment(_attachmentsPre[i]);
 		}
 	} else {
-		for (int i = 0; i < m_AttachmentsPost.GetSize(); i++) {
-			DisplaySpriteAttachment(m_AttachmentsPost[i]);
+		for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+			DisplaySpriteAttachment(_attachmentsPost[i]);
 		}
 	}
 	return S_OK;
@@ -1122,70 +1122,70 @@ HRESULT CAdObject::DisplaySpriteAttachments(bool PreDisplay) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::DisplaySpriteAttachment(CAdObject *Attachment) {
-	if (!Attachment->m_Active) return S_OK;
+	if (!Attachment->_active) return S_OK;
 
 	float ScaleX, ScaleY;
 	GetScale(&ScaleX, &ScaleY);
 
-	int OrigX = Attachment->m_PosX;
-	int OrigY = Attachment->m_PosY;
+	int OrigX = Attachment->_posX;
+	int OrigY = Attachment->_posY;
 
 	// inherit position from owner
-	Attachment->m_PosX = this->m_PosX + Attachment->m_PosX * ScaleX / 100.0f;
-	Attachment->m_PosY = this->m_PosY + Attachment->m_PosY * ScaleY / 100.0f;
+	Attachment->_posX = this->_posX + Attachment->_posX * ScaleX / 100.0f;
+	Attachment->_posY = this->_posY + Attachment->_posY * ScaleY / 100.0f;
 
 	// inherit other props
-	Attachment->m_AlphaColor = this->m_AlphaColor;
-	Attachment->m_BlendMode = this->m_BlendMode;
+	Attachment->_alphaColor = this->_alphaColor;
+	Attachment->_blendMode = this->_blendMode;
 
-	Attachment->m_Scale = this->m_Scale;
-	Attachment->m_RelativeScale = this->m_RelativeScale;
-	Attachment->m_ScaleX = this->m_ScaleX;
-	Attachment->m_ScaleY = this->m_ScaleY;
+	Attachment->_scale = this->_scale;
+	Attachment->_relativeScale = this->_relativeScale;
+	Attachment->_scaleX = this->_scaleX;
+	Attachment->_scaleY = this->_scaleY;
 
-	Attachment->m_Rotate = this->m_Rotate;
-	Attachment->m_RelativeRotate = this->m_RelativeRotate;
-	Attachment->m_RotateValid = this->m_RotateValid;
+	Attachment->_rotate = this->_rotate;
+	Attachment->_relativeRotate = this->_relativeRotate;
+	Attachment->_rotateValid = this->_rotateValid;
 
-	Attachment->m_RegisterAlias = this;
-	Attachment->m_Registrable = this->m_Registrable;
+	Attachment->_registerAlias = this;
+	Attachment->_registrable = this->_registrable;
 
 	HRESULT ret = Attachment->Display();
 
-	Attachment->m_PosX = OrigX;
-	Attachment->m_PosY = OrigY;
+	Attachment->_posX = OrigX;
+	Attachment->_posY = OrigY;
 
 	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CPartEmitter *CAdObject::CreateParticleEmitter(bool FollowParent, int OffsetX, int OffsetY) {
-	m_PartFollowParent = FollowParent;
-	m_PartOffsetX = OffsetX;
-	m_PartOffsetY = OffsetY;
+	_partFollowParent = FollowParent;
+	_partOffsetX = OffsetX;
+	_partOffsetY = OffsetY;
 
-	if (!m_PartEmitter) {
-		m_PartEmitter = new CPartEmitter(Game, this);
-		if (m_PartEmitter) {
-			Game->RegisterObject(m_PartEmitter);
+	if (!_partEmitter) {
+		_partEmitter = new CPartEmitter(Game, this);
+		if (_partEmitter) {
+			Game->RegisterObject(_partEmitter);
 		}
 	}
 	UpdatePartEmitter();
-	return m_PartEmitter;
+	return _partEmitter;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::UpdatePartEmitter() {
-	if (!m_PartEmitter) return E_FAIL;
+	if (!_partEmitter) return E_FAIL;
 
-	if (m_PartFollowParent) {
+	if (_partFollowParent) {
 		float ScaleX, ScaleY;
 		GetScale(&ScaleX, &ScaleY);
 
-		m_PartEmitter->m_PosX = m_PosX + (ScaleX / 100.0f) * m_PartOffsetX;
-		m_PartEmitter->m_PosY = m_PosY + (ScaleY / 100.0f) * m_PartOffsetY;
+		_partEmitter->_posX = _posX + (ScaleX / 100.0f) * _partOffsetX;
+		_partEmitter->_posY = _posY + (ScaleY / 100.0f) * _partOffsetY;
 	}
-	return m_PartEmitter->Update();
+	return _partEmitter->Update();
 }
 
 } // end of namespace WinterMute

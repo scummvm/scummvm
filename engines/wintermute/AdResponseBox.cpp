@@ -51,70 +51,70 @@ IMPLEMENT_PERSISTENT(CAdResponseBox, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdResponseBox::CAdResponseBox(CBGame *inGame): CBObject(inGame) {
-	m_Font = m_FontHover = NULL;
+	_font = _fontHover = NULL;
 
-	m_Window = NULL;
-	m_ShieldWindow = new CUIWindow(Game);
+	_window = NULL;
+	_shieldWindow = new CUIWindow(Game);
 
-	m_Horizontal = false;
-	CBPlatform::SetRectEmpty(&m_ResponseArea);
-	m_ScrollOffset = 0;
-	m_Spacing = 0;
+	_horizontal = false;
+	CBPlatform::SetRectEmpty(&_responseArea);
+	_scrollOffset = 0;
+	_spacing = 0;
 
-	m_WaitingScript = NULL;
-	m_LastResponseText = NULL;
-	m_LastResponseTextOrig = NULL;
+	_waitingScript = NULL;
+	_lastResponseText = NULL;
+	_lastResponseTextOrig = NULL;
 
-	m_VerticalAlign = VAL_BOTTOM;
-	m_Align = TAL_LEFT;
+	_verticalAlign = VAL_BOTTOM;
+	_align = TAL_LEFT;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdResponseBox::~CAdResponseBox() {
 
-	SAFE_DELETE(m_Window);
-	SAFE_DELETE(m_ShieldWindow);
-	SAFE_DELETE_ARRAY(m_LastResponseText);
-	SAFE_DELETE_ARRAY(m_LastResponseTextOrig);
+	SAFE_DELETE(_window);
+	SAFE_DELETE(_shieldWindow);
+	SAFE_DELETE_ARRAY(_lastResponseText);
+	SAFE_DELETE_ARRAY(_lastResponseTextOrig);
 
-	if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
-	if (m_FontHover) Game->m_FontStorage->RemoveFont(m_FontHover);
+	if (_font) Game->_fontStorage->RemoveFont(_font);
+	if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
 
 	ClearResponses();
 	ClearButtons();
 
-	m_WaitingScript = NULL;
+	_waitingScript = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponseBox::ClearResponses() {
-	for (int i = 0; i < m_Responses.GetSize(); i++) {
-		delete m_Responses[i];
+	for (int i = 0; i < _responses.GetSize(); i++) {
+		delete _responses[i];
 	}
-	m_Responses.RemoveAll();
+	_responses.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponseBox::ClearButtons() {
-	for (int i = 0; i < m_RespButtons.GetSize(); i++) {
-		delete m_RespButtons[i];
+	for (int i = 0; i < _respButtons.GetSize(); i++) {
+		delete _respButtons[i];
 	}
-	m_RespButtons.RemoveAll();
+	_respButtons.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::InvalidateButtons() {
-	for (int i = 0; i < m_RespButtons.GetSize(); i++) {
-		m_RespButtons[i]->m_Image = NULL;
-		m_RespButtons[i]->m_Cursor = NULL;
-		m_RespButtons[i]->m_Font = NULL;
-		m_RespButtons[i]->m_FontHover = NULL;
-		m_RespButtons[i]->m_FontPress = NULL;
-		m_RespButtons[i]->SetText("");
+	for (int i = 0; i < _respButtons.GetSize(); i++) {
+		_respButtons[i]->_image = NULL;
+		_respButtons[i]->_cursor = NULL;
+		_respButtons[i]->_font = NULL;
+		_respButtons[i]->_fontHover = NULL;
+		_respButtons[i]->_fontPress = NULL;
+		_respButtons[i]->SetText("");
 	}
 	return S_OK;
 }
@@ -124,59 +124,59 @@ HRESULT CAdResponseBox::InvalidateButtons() {
 HRESULT CAdResponseBox::CreateButtons() {
 	ClearButtons();
 
-	m_ScrollOffset = 0;
-	for (int i = 0; i < m_Responses.GetSize(); i++) {
+	_scrollOffset = 0;
+	for (int i = 0; i < _responses.GetSize(); i++) {
 		CUIButton *btn = new CUIButton(Game);
 		if (btn) {
-			btn->m_Parent = m_Window;
-			btn->m_SharedFonts = btn->m_SharedImages = true;
-			btn->m_SharedCursors = true;
+			btn->_parent = _window;
+			btn->_sharedFonts = btn->_sharedImages = true;
+			btn->_sharedCursors = true;
 			// iconic
-			if (m_Responses[i]->m_Icon) {
-				btn->m_Image = m_Responses[i]->m_Icon;
-				if (m_Responses[i]->m_IconHover)   btn->m_ImageHover = m_Responses[i]->m_IconHover;
-				if (m_Responses[i]->m_IconPressed) btn->m_ImagePress = m_Responses[i]->m_IconPressed;
+			if (_responses[i]->_icon) {
+				btn->_image = _responses[i]->_icon;
+				if (_responses[i]->_iconHover)   btn->_imageHover = _responses[i]->_iconHover;
+				if (_responses[i]->_iconPressed) btn->_imagePress = _responses[i]->_iconPressed;
 
-				btn->SetCaption(m_Responses[i]->m_Text);
-				if (m_Cursor) btn->m_Cursor = m_Cursor;
-				else if (Game->m_ActiveCursor) btn->m_Cursor = Game->m_ActiveCursor;
+				btn->SetCaption(_responses[i]->_text);
+				if (_cursor) btn->_cursor = _cursor;
+				else if (Game->_activeCursor) btn->_cursor = Game->_activeCursor;
 			}
 			// textual
 			else {
-				btn->SetText(m_Responses[i]->m_Text);
-				btn->m_Font = (m_Font == NULL) ? Game->m_SystemFont : m_Font;
-				btn->m_FontHover = (m_FontHover == NULL) ? Game->m_SystemFont : m_FontHover;
-				btn->m_FontPress = btn->m_FontHover;
-				btn->m_Align = m_Align;
+				btn->SetText(_responses[i]->_text);
+				btn->_font = (_font == NULL) ? Game->_systemFont : _font;
+				btn->_fontHover = (_fontHover == NULL) ? Game->_systemFont : _fontHover;
+				btn->_fontPress = btn->_fontHover;
+				btn->_align = _align;
 
-				if (Game->m_TouchInterface)
-					btn->m_FontHover = btn->m_Font;
+				if (Game->_touchInterface)
+					btn->_fontHover = btn->_font;
 
 
-				if (m_Responses[i]->m_Font) btn->m_Font = m_Responses[i]->m_Font;
+				if (_responses[i]->_font) btn->_font = _responses[i]->_font;
 
-				btn->m_Width = m_ResponseArea.right - m_ResponseArea.left;
-				if (btn->m_Width <= 0) btn->m_Width = Game->m_Renderer->m_Width;
+				btn->_width = _responseArea.right - _responseArea.left;
+				if (btn->_width <= 0) btn->_width = Game->_renderer->_width;
 			}
 			btn->SetName("response");
 			btn->CorrectSize();
 
 			// make the responses touchable
-			if (Game->m_TouchInterface)
-				btn->m_Height = std::max(btn->m_Height, 50);
+			if (Game->_touchInterface)
+				btn->_height = std::max(btn->_height, 50);
 
-			//btn->SetListener(this, btn, m_Responses[i]->m_ID);
+			//btn->SetListener(this, btn, _responses[i]->_iD);
 			btn->SetListener(this, btn, i);
-			btn->m_Visible = false;
-			m_RespButtons.Add(btn);
+			btn->_visible = false;
+			_respButtons.Add(btn);
 
-			if (m_ResponseArea.bottom - m_ResponseArea.top < btn->m_Height) {
-				Game->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", m_Responses[i]->m_Text);
-				m_ResponseArea.bottom += (btn->m_Height - (m_ResponseArea.bottom - m_ResponseArea.top));
+			if (_responseArea.bottom - _responseArea.top < btn->_height) {
+				Game->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
+				_responseArea.bottom += (btn->_height - (_responseArea.bottom - _responseArea.top));
 			}
 		}
 	}
-	m_Ready = false;
+	_ready = false;
 
 	return S_OK;
 }
@@ -184,7 +184,7 @@ HRESULT CAdResponseBox::CreateButtons() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -192,8 +192,8 @@ HRESULT CAdResponseBox::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", Filename);
 
@@ -255,48 +255,48 @@ HRESULT CAdResponseBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_WINDOW:
-			SAFE_DELETE(m_Window);
-			m_Window = new CUIWindow(Game);
-			if (!m_Window || FAILED(m_Window->LoadBuffer(params, false))) {
-				SAFE_DELETE(m_Window);
+			SAFE_DELETE(_window);
+			_window = new CUIWindow(Game);
+			if (!_window || FAILED(_window->LoadBuffer(params, false))) {
+				SAFE_DELETE(_window);
 				cmd = PARSERR_GENERIC;
-			} else if (m_ShieldWindow) m_ShieldWindow->m_Parent = m_Window;
+			} else if (_shieldWindow) _shieldWindow->_parent = _window;
 			break;
 
 		case TOKEN_FONT:
-			if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
-			m_Font = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_Font) cmd = PARSERR_GENERIC;
+			if (_font) Game->_fontStorage->RemoveFont(_font);
+			_font = Game->_fontStorage->AddFont((char *)params);
+			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_HOVER:
-			if (m_FontHover) Game->m_FontStorage->RemoveFont(m_FontHover);
-			m_FontHover = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_FontHover) cmd = PARSERR_GENERIC;
+			if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
+			_fontHover = Game->_fontStorage->AddFont((char *)params);
+			if (!_fontHover) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_AREA:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_ResponseArea.left, &m_ResponseArea.top, &m_ResponseArea.right, &m_ResponseArea.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_responseArea.left, &_responseArea.top, &_responseArea.right, &_responseArea.bottom);
 			break;
 
 		case TOKEN_HORIZONTAL:
-			parser.ScanStr((char *)params, "%b", &m_Horizontal);
+			parser.ScanStr((char *)params, "%b", &_horizontal);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
-			if (scumm_stricmp((char *)params, "center") == 0) m_Align = TAL_CENTER;
-			else if (scumm_stricmp((char *)params, "right") == 0) m_Align = TAL_RIGHT;
-			else m_Align = TAL_LEFT;
+			if (scumm_stricmp((char *)params, "center") == 0) _align = TAL_CENTER;
+			else if (scumm_stricmp((char *)params, "right") == 0) _align = TAL_RIGHT;
+			else _align = TAL_LEFT;
 			break;
 
 		case TOKEN_VERTICAL_ALIGN:
-			if (scumm_stricmp((char *)params, "top") == 0) m_VerticalAlign = VAL_TOP;
-			else if (scumm_stricmp((char *)params, "center") == 0) m_VerticalAlign = VAL_CENTER;
-			else m_VerticalAlign = VAL_BOTTOM;
+			if (scumm_stricmp((char *)params, "top") == 0) _verticalAlign = VAL_TOP;
+			else if (scumm_stricmp((char *)params, "center") == 0) _verticalAlign = VAL_CENTER;
+			else _verticalAlign = VAL_BOTTOM;
 			break;
 
 		case TOKEN_SPACING:
-			parser.ScanStr((char *)params, "%d", &m_Spacing);
+			parser.ScanStr((char *)params, "%d", &_spacing);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -304,10 +304,10 @@ HRESULT CAdResponseBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			SAFE_DELETE(m_Cursor);
-			m_Cursor = new CBSprite(Game);
-			if (!m_Cursor || FAILED(m_Cursor->LoadFile((char *)params))) {
-				SAFE_DELETE(m_Cursor);
+			SAFE_DELETE(_cursor);
+			_cursor = new CBSprite(Game);
+			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -318,10 +318,10 @@ HRESULT CAdResponseBox::LoadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	if (m_Window) {
-		for (int i = 0; i < m_Window->m_Widgets.GetSize(); i++) {
-			if (!m_Window->m_Widgets[i]->m_ListenerObject)
-				m_Window->m_Widgets[i]->SetListener(this, m_Window->m_Widgets[i], 0);
+	if (_window) {
+		for (int i = 0; i < _window->_widgets.GetSize(); i++) {
+			if (!_window->_widgets[i]->_listenerObject)
+				_window->_widgets[i]->SetListener(this, _window->_widgets[i], 0);
 		}
 	}
 
@@ -333,19 +333,19 @@ HRESULT CAdResponseBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "RESPONSE_BOX\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", m_ResponseArea.left, m_ResponseArea.top, m_ResponseArea.right, m_ResponseArea.bottom);
+	Buffer->PutTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
 
-	if (m_Font && m_Font->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", m_Font->m_Filename);
-	if (m_FontHover && m_FontHover->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", m_FontHover->m_Filename);
+	if (_font && _font->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+	if (_fontHover && _fontHover->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
 
-	if (m_Cursor && m_Cursor->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", m_Cursor->m_Filename);
+	if (_cursor && _cursor->_filename)
+		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	Buffer->PutTextIndent(Indent + 2, "HORIZONTAL=%s\n", m_Horizontal ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "HORIZONTAL=%s\n", _horizontal ? "TRUE" : "FALSE");
 
-	switch (m_Align) {
+	switch (_align) {
 	case TAL_LEFT:
 		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
 		break;
@@ -357,7 +357,7 @@ HRESULT CAdResponseBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		break;
 	}
 
-	switch (m_VerticalAlign) {
+	switch (_verticalAlign) {
 	case VAL_TOP:
 		Buffer->PutTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
 		break;
@@ -369,12 +369,12 @@ HRESULT CAdResponseBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		break;
 	}
 
-	Buffer->PutTextIndent(Indent + 2, "SPACING=%d\n", m_Spacing);
+	Buffer->PutTextIndent(Indent + 2, "SPACING=%d\n", _spacing);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// window
-	if (m_Window) m_Window->SaveAsText(Buffer, Indent + 2);
+	if (_window) _window->SaveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
@@ -388,10 +388,10 @@ HRESULT CAdResponseBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::Display() {
-	RECT rect = m_ResponseArea;
-	if (m_Window) {
-		CBPlatform::OffsetRect(&rect, m_Window->m_PosX, m_Window->m_PosY);
-		//m_Window->Display();
+	RECT rect = _responseArea;
+	if (_window) {
+		CBPlatform::OffsetRect(&rect, _window->_posX, _window->_posY);
+		//_window->Display();
 	}
 
 	int xxx, yyy, i;
@@ -400,12 +400,12 @@ HRESULT CAdResponseBox::Display() {
 	yyy = rect.top;
 
 	// shift down if needed
-	if (!m_Horizontal) {
+	if (!_horizontal) {
 		int total_height = 0;
-		for (i = 0; i < m_RespButtons.GetSize(); i++) total_height += (m_RespButtons[i]->m_Height + m_Spacing);
-		total_height -= m_Spacing;
+		for (i = 0; i < _respButtons.GetSize(); i++) total_height += (_respButtons[i]->_height + _spacing);
+		total_height -= _spacing;
 
-		switch (m_VerticalAlign) {
+		switch (_verticalAlign) {
 		case VAL_BOTTOM:
 			if (yyy + total_height < rect.bottom)
 				yyy = rect.bottom - total_height;
@@ -424,48 +424,48 @@ HRESULT CAdResponseBox::Display() {
 
 	// prepare response buttons
 	bool scroll_needed = false;
-	for (i = m_ScrollOffset; i < m_RespButtons.GetSize(); i++) {
-		if ((m_Horizontal && xxx + m_RespButtons[i]->m_Width > rect.right)
-		        || (!m_Horizontal && yyy + m_RespButtons[i]->m_Height > rect.bottom)) {
+	for (i = _scrollOffset; i < _respButtons.GetSize(); i++) {
+		if ((_horizontal && xxx + _respButtons[i]->_width > rect.right)
+		        || (!_horizontal && yyy + _respButtons[i]->_height > rect.bottom)) {
 
 			scroll_needed = true;
-			m_RespButtons[i]->m_Visible = false;
+			_respButtons[i]->_visible = false;
 			break;
 		}
 
-		m_RespButtons[i]->m_Visible = true;
-		m_RespButtons[i]->m_PosX = xxx;
-		m_RespButtons[i]->m_PosY = yyy;
+		_respButtons[i]->_visible = true;
+		_respButtons[i]->_posX = xxx;
+		_respButtons[i]->_posY = yyy;
 
-		if (m_Horizontal) {
-			xxx += (m_RespButtons[i]->m_Width + m_Spacing);
+		if (_horizontal) {
+			xxx += (_respButtons[i]->_width + _spacing);
 		} else {
-			yyy += (m_RespButtons[i]->m_Height + m_Spacing);
+			yyy += (_respButtons[i]->_height + _spacing);
 		}
 	}
 
 	// show appropriate scroll buttons
-	if (m_Window) {
-		m_Window->ShowWidget("prev", m_ScrollOffset > 0);
-		m_Window->ShowWidget("next", scroll_needed);
+	if (_window) {
+		_window->ShowWidget("prev", _scrollOffset > 0);
+		_window->ShowWidget("next", scroll_needed);
 	}
 
 	// go exclusive
-	if (m_ShieldWindow) {
-		m_ShieldWindow->m_PosX = m_ShieldWindow->m_PosY = 0;
-		m_ShieldWindow->m_Width = Game->m_Renderer->m_Width;
-		m_ShieldWindow->m_Height = Game->m_Renderer->m_Height;
+	if (_shieldWindow) {
+		_shieldWindow->_posX = _shieldWindow->_posY = 0;
+		_shieldWindow->_width = Game->_renderer->_width;
+		_shieldWindow->_height = Game->_renderer->_height;
 
-		m_ShieldWindow->Display();
+		_shieldWindow->Display();
 	}
 
 	// display window
-	if (m_Window) m_Window->Display();
+	if (_window) _window->Display();
 
 
 	// display response buttons
-	for (i = m_ScrollOffset; i < m_RespButtons.GetSize(); i++) {
-		m_RespButtons[i]->Display();
+	for (i = _scrollOffset; i < _respButtons.GetSize(); i++) {
+		_respButtons[i]->Display();
 	}
 
 	return S_OK;
@@ -476,19 +476,19 @@ HRESULT CAdResponseBox::Display() {
 HRESULT CAdResponseBox::Listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
-	switch (obj->m_Type) {
+	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->m_Name, "prev") == 0) {
-			m_ScrollOffset--;
-		} else if (scumm_stricmp(obj->m_Name, "next") == 0) {
-			m_ScrollOffset++;
-		} else if (scumm_stricmp(obj->m_Name, "response") == 0) {
-			if (m_WaitingScript) m_WaitingScript->m_Stack->PushInt(m_Responses[param2]->m_ID);
-			HandleResponse(m_Responses[param2]);
-			m_WaitingScript = NULL;
-			Game->m_State = GAME_RUNNING;
-			((CAdGame *)Game)->m_StateEx = GAME_NORMAL;
-			m_Ready = true;
+		if (scumm_stricmp(obj->_name, "prev") == 0) {
+			_scrollOffset--;
+		} else if (scumm_stricmp(obj->_name, "next") == 0) {
+			_scrollOffset++;
+		} else if (scumm_stricmp(obj->_name, "response") == 0) {
+			if (_waitingScript) _waitingScript->_stack->PushInt(_responses[param2]->_iD);
+			HandleResponse(_responses[param2]);
+			_waitingScript = NULL;
+			Game->_state = GAME_RUNNING;
+			((CAdGame *)Game)->_stateEx = GAME_NORMAL;
+			_ready = true;
 			InvalidateButtons();
 			ClearResponses();
 		} else return CBObject::Listen(param1, param2);
@@ -503,22 +503,22 @@ HRESULT CAdResponseBox::Listen(CBScriptHolder *param1, uint32 param2) {
 HRESULT CAdResponseBox::Persist(CBPersistMgr *PersistMgr) {
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Font));
-	PersistMgr->Transfer(TMEMBER(m_FontHover));
-	PersistMgr->Transfer(TMEMBER(m_Horizontal));
-	PersistMgr->Transfer(TMEMBER(m_LastResponseText));
-	PersistMgr->Transfer(TMEMBER(m_LastResponseTextOrig));
-	m_RespButtons.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(m_ResponseArea));
-	m_Responses.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(m_ScrollOffset));
-	PersistMgr->Transfer(TMEMBER(m_ShieldWindow));
-	PersistMgr->Transfer(TMEMBER(m_Spacing));
-	PersistMgr->Transfer(TMEMBER(m_WaitingScript));
-	PersistMgr->Transfer(TMEMBER(m_Window));
+	PersistMgr->Transfer(TMEMBER(_font));
+	PersistMgr->Transfer(TMEMBER(_fontHover));
+	PersistMgr->Transfer(TMEMBER(_horizontal));
+	PersistMgr->Transfer(TMEMBER(_lastResponseText));
+	PersistMgr->Transfer(TMEMBER(_lastResponseTextOrig));
+	_respButtons.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_responseArea));
+	_responses.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_scrollOffset));
+	PersistMgr->Transfer(TMEMBER(_shieldWindow));
+	PersistMgr->Transfer(TMEMBER(_spacing));
+	PersistMgr->Transfer(TMEMBER(_waitingScript));
+	PersistMgr->Transfer(TMEMBER(_window));
 
-	PersistMgr->Transfer(TMEMBER_INT(m_VerticalAlign));
-	PersistMgr->Transfer(TMEMBER_INT(m_Align));
+	PersistMgr->Transfer(TMEMBER_INT(_verticalAlign));
+	PersistMgr->Transfer(TMEMBER_INT(_align));
 
 	return S_OK;
 }
@@ -528,20 +528,20 @@ HRESULT CAdResponseBox::Persist(CBPersistMgr *PersistMgr) {
 HRESULT CAdResponseBox::WeedResponses() {
 	CAdGame *AdGame = (CAdGame *)Game;
 
-	for (int i = 0; i < m_Responses.GetSize(); i++) {
-		switch (m_Responses[i]->m_ResponseType) {
+	for (int i = 0; i < _responses.GetSize(); i++) {
+		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
-			if (AdGame->BranchResponseUsed(m_Responses[i]->m_ID)) {
-				delete m_Responses[i];
-				m_Responses.RemoveAt(i);
+			if (AdGame->BranchResponseUsed(_responses[i]->_iD)) {
+				delete _responses[i];
+				_responses.RemoveAt(i);
 				i--;
 			}
 			break;
 
 		case RESPONSE_ONCE_GAME:
-			if (AdGame->GameResponseUsed(m_Responses[i]->m_ID)) {
-				delete m_Responses[i];
-				m_Responses.RemoveAt(i);
+			if (AdGame->GameResponseUsed(_responses[i]->_iD)) {
+				delete _responses[i];
+				_responses.RemoveAt(i);
 				i--;
 			}
 			break;
@@ -553,24 +553,24 @@ HRESULT CAdResponseBox::WeedResponses() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponseBox::SetLastResponseText(char *Text, char *TextOrig) {
-	CBUtils::SetString(&m_LastResponseText, Text);
-	CBUtils::SetString(&m_LastResponseTextOrig, TextOrig);
+	CBUtils::SetString(&_lastResponseText, Text);
+	CBUtils::SetString(&_lastResponseTextOrig, TextOrig);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::HandleResponse(CAdResponse *Response) {
-	SetLastResponseText(Response->m_Text, Response->m_TextOrig);
+	SetLastResponseText(Response->_text, Response->_textOrig);
 
 	CAdGame *AdGame = (CAdGame *)Game;
 
-	switch (Response->m_ResponseType) {
+	switch (Response->_responseType) {
 	case RESPONSE_ONCE:
-		AdGame->AddBranchResponse(Response->m_ID);
+		AdGame->AddBranchResponse(Response->_iD);
 		break;
 
 	case RESPONSE_ONCE_GAME:
-		AdGame->AddGameResponse(Response->m_ID);
+		AdGame->AddGameResponse(Response->_iD);
 		break;
 	}
 
@@ -620,10 +620,10 @@ CBObject *CAdResponseBox::GetPrevAccessObject(CBObject *CurrObject) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::GetObjects(CBArray<CUIObject *, CUIObject *>& Objects, bool InteractiveOnly) {
-	for (int i = 0; i < m_RespButtons.GetSize(); i++) {
-		Objects.Add(m_RespButtons[i]);
+	for (int i = 0; i < _respButtons.GetSize(); i++) {
+		Objects.Add(_respButtons[i]);
 	}
-	if (m_Window) m_Window->GetWindowObjects(Objects, InteractiveOnly);
+	if (_window) _window->GetWindowObjects(Objects, InteractiveOnly);
 
 	return S_OK;
 }

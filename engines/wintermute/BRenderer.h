@@ -41,10 +41,10 @@ class CBObject;
 
 class CBRenderer: public CBBase {
 public:
-	int m_RealWidth;
-	int m_RealHeight;
-	int m_DrawOffsetX;
-	int m_DrawOffsetY;
+	int _realWidth;
+	int _realHeight;
+	int _drawOffsetX;
+	int _drawOffsetY;
 
 	virtual void DumpData(char *Filename) {};
 	virtual CBImage *TakeScreenshot();
@@ -101,22 +101,22 @@ public:
 		return S_OK;
 	};
 	bool PointInViewport(POINT *P);
-	uint32 m_ForceAlphaColor;
-	HINSTANCE m_Instance;
-	HWND m_Window;
-	HWND m_ClipperWindow;
-	bool m_Active;
-	bool m_Ready;
-	bool m_Windowed;
-	RECT m_WindowRect;
-	RECT m_ViewportRect;
-	RECT m_ScreenRect;
-	RECT m_MonitorRect;
-	int m_BPP;
-	int m_Height;
-	int m_Width;
+	uint32 _forceAlphaColor;
+	HINSTANCE _instance;
+	HWND _window;
+	HWND _clipperWindow;
+	bool _active;
+	bool _ready;
+	bool _windowed;
+	RECT _windowRect;
+	RECT _viewportRect;
+	RECT _screenRect;
+	RECT _monitorRect;
+	int _bPP;
+	int _height;
+	int _width;
 
-	CBArray<CBActiveRect *, CBActiveRect *> m_RectList;
+	CBArray<CBActiveRect *, CBActiveRect *> _rectList;
 };
 
 } // end of namespace WinterMute

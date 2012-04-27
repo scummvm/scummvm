@@ -53,10 +53,10 @@ public:
 	void Cleanup(bool IgnoreNatives = false);
 	DECLARE_PERSISTENT(CScValue, CBBase)
 
-	bool m_IsConstVar;
+	bool _isConstVar;
 	HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 	void SetValue(CScValue *Val);
-	bool m_Persistent;
+	bool _persistent;
 	bool PropExists(char *Name);
 	void Copy(CScValue *orig, bool CopyWhole = false);
 	void SetStringVal(const char *Val);
@@ -87,21 +87,21 @@ public:
 	bool IsObject();
 	HRESULT SetProp(char *Name, CScValue *Val, bool CopyWhole = false, bool SetAsConst = false);
 	CScValue *GetProp(char *Name);
-	CBScriptable *m_ValNative;
-	CScValue *m_ValRef;
-	bool m_ValBool;
-	int m_ValInt;
-	double m_ValFloat;
-	char *m_ValString;
-	TValType m_Type;
+	CBScriptable *_valNative;
+	CScValue *_valRef;
+	bool _valBool;
+	int _valInt;
+	double _valFloat;
+	char *_valString;
+	TValType _type;
 	CScValue(CBGame *inGame);
 	CScValue(CBGame *inGame, bool Val);
 	CScValue(CBGame *inGame, int Val);
 	CScValue(CBGame *inGame, double Val);
 	CScValue(CBGame *inGame, const char *Val);
 	virtual ~CScValue();
-	Common::HashMap<Common::String, CScValue *> m_ValObject;
-	Common::HashMap<Common::String, CScValue *>::iterator m_ValIter;
+	Common::HashMap<Common::String, CScValue *> _valObject;
+	Common::HashMap<Common::String, CScValue *>::iterator _valIter;
 
 	bool SetProperty(const char *PropName, int Value);
 	bool SetProperty(const char *PropName, const char *Value);

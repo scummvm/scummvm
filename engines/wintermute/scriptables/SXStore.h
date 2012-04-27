@@ -38,88 +38,88 @@ public:
 	class CBStoreProduct {
 	public:
 		CBStoreProduct() {
-			m_Id = m_Name = m_Desc = m_Price = NULL;
+			_id = _name = _desc = _price = NULL;
 		}
 
 		CBStoreProduct(const char *id, const char *name, const char *desc, const char *price) {
-			m_Id = m_Name = m_Desc = m_Price = NULL;
+			_id = _name = _desc = _price = NULL;
 
-			CBUtils::SetString(&m_Id, id);
-			CBUtils::SetString(&m_Name, name);
-			CBUtils::SetString(&m_Desc, desc);
-			CBUtils::SetString(&m_Price, price);
+			CBUtils::SetString(&_id, id);
+			CBUtils::SetString(&_name, name);
+			CBUtils::SetString(&_desc, desc);
+			CBUtils::SetString(&_price, price);
 		}
 
 		~CBStoreProduct() {
-			delete [] m_Id;
-			delete [] m_Name;
-			delete [] m_Desc;
-			delete [] m_Price;
+			delete [] _id;
+			delete [] _name;
+			delete [] _desc;
+			delete [] _price;
 		}
 
 		HRESULT Persist(CBPersistMgr *PersistMgr) {
-			PersistMgr->Transfer(TMEMBER(m_Id));
-			PersistMgr->Transfer(TMEMBER(m_Name));
-			PersistMgr->Transfer(TMEMBER(m_Desc));
-			PersistMgr->Transfer(TMEMBER(m_Price));
+			PersistMgr->Transfer(TMEMBER(_id));
+			PersistMgr->Transfer(TMEMBER(_name));
+			PersistMgr->Transfer(TMEMBER(_desc));
+			PersistMgr->Transfer(TMEMBER(_price));
 			return S_OK;
 		}
 
 		const char *GetId() {
-			return m_Id;
+			return _id;
 		}
 		const char *GetName() {
-			return m_Name;
+			return _name;
 		}
 		const char *GetDesc() {
-			return m_Desc;
+			return _desc;
 		}
 		const char *GetPrice() {
-			return m_Price;
+			return _price;
 		}
 
 	private:
-		char *m_Id;
-		char *m_Name;
-		char *m_Desc;
-		char *m_Price;
+		char *_id;
+		char *_name;
+		char *_desc;
+		char *_price;
 	};
 
 	//////////////////////////////////////////////////////////////////////////
 	class CBStoreTransaction {
 	public:
 		CBStoreTransaction() {
-			m_Id = m_ProductId = m_State = NULL;
+			_id = _productId = _state = NULL;
 		}
 
 		CBStoreTransaction(const char *id, const char *productId, const char *state) {
-			m_Id = m_ProductId = m_State = NULL;
+			_id = _productId = _state = NULL;
 
-			CBUtils::SetString(&m_Id, id);
-			CBUtils::SetString(&m_ProductId, productId);
-			CBUtils::SetString(&m_State, state);
+			CBUtils::SetString(&_id, id);
+			CBUtils::SetString(&_productId, productId);
+			CBUtils::SetString(&_state, state);
 		}
 
 		~CBStoreTransaction() {
-			delete [] m_Id;
-			delete [] m_ProductId;
-			delete [] m_State;
+			delete [] _id;
+			delete [] _productId;
+			delete [] _state;
 		}
 
 		const char *GetId() {
-			return m_Id;
+			return _id;
 		}
 		const char *GetProductId() {
-			return m_ProductId;
+			return _productId;
 		}
 		const char *GetState() {
-			return m_State;
+			return _state;
 		}
 
 	private:
-		char *m_Id;
-		char *m_ProductId;
-		char *m_State;
+		char *_id;
+		char *_productId;
+		char *_state;
 	};
 
 
@@ -135,7 +135,7 @@ public:
 	bool IsAvailable();
 	void SetEventsEnabled(CScScript *script, bool val);
 	bool GetEventsEnabled() const {
-		return m_EventsEnabled;
+		return _eventsEnabled;
 	}
 	void ValidateProducts(const char *prodIdList);
 
@@ -156,14 +156,14 @@ private:
 	bool FinishTransaction(CScScript *script, const char *transId);
 	void RestoreTransactions(CScScript *script);
 
-	bool m_EventsEnabled;
-	CBArray<CBStoreProduct *, CBStoreProduct *> m_ValidProducts;
-	AnsiStringArray m_InvalidProducts;
-	CBScriptHolder *m_LastProductRequestOwner;
-	CBScriptHolder *m_LastPurchaseOwner;
-	CBScriptHolder *m_LastRestoreOwner;
+	bool _eventsEnabled;
+	CBArray<CBStoreProduct *, CBStoreProduct *> _validProducts;
+	AnsiStringArray _invalidProducts;
+	CBScriptHolder *_lastProductRequestOwner;
+	CBScriptHolder *_lastPurchaseOwner;
+	CBScriptHolder *_lastRestoreOwner;
 
-	CBArray<CBStoreTransaction *, CBStoreTransaction *> m_Transactions;
+	CBArray<CBStoreTransaction *, CBStoreTransaction *> _transactions;
 
 };
 

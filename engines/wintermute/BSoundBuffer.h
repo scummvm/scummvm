@@ -57,7 +57,7 @@ public:
 
 	HRESULT SetLoopStart(uint32 Pos);
 	uint32 GetLoopStart() const {
-		return m_LoopStart;
+		return _loopStart;
 	}
 
 	HRESULT SetPan(float Pan);
@@ -70,17 +70,17 @@ public:
 	void SetStreaming(bool Streamed, uint32 NumBlocks = 0, uint32 BlockSize = 0);
 	HRESULT ApplyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4);
 
-	//HSTREAM m_Stream;
-	//HSYNC m_Sync;
+	//HSTREAM _stream;
+	//HSYNC _sync;
 
-	bool m_FreezePaused;
-	uint32 m_LoopStart;
-	TSoundType m_Type;
-	bool m_Looping;
-	CBFile *m_File;
-	char *m_Filename;
-	bool m_Streamed;
-	int m_PrivateVolume;
+	bool _freezePaused;
+	uint32 _loopStart;
+	TSoundType _type;
+	bool _looping;
+	CBFile *_file;
+	char *_filename;
+	bool _streamed;
+	int _privateVolume;
 
 	/*static void CALLBACK LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void *user);
 

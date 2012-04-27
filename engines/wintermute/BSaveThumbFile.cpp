@@ -40,7 +40,7 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBSaveThumbFile::CBSaveThumbFile(CBGame *inGame): CBFile(inGame) {
-	m_Data = NULL;
+	_data = NULL;
 }
 
 
@@ -74,20 +74,20 @@ HRESULT CBSaveThumbFile::Open(Common::String Filename) {
 	CBPersistMgr *pm = new CBPersistMgr(Game);
 	if (!pm) return E_FAIL;
 
-	Game->m_DEBUG_AbsolutePathWarning = false;
+	Game->_dEBUG_AbsolutePathWarning = false;
 	if (FAILED(pm->InitLoad(SlotFilename))) {
-		Game->m_DEBUG_AbsolutePathWarning = true;
+		Game->_dEBUG_AbsolutePathWarning = true;
 		delete pm;
 		return E_FAIL;
 	}
-	Game->m_DEBUG_AbsolutePathWarning = true;
+	Game->_dEBUG_AbsolutePathWarning = true;
 
 	HRESULT res;
 
-	if (pm->m_ThumbnailDataSize != 0) {
-		m_Data = new byte[pm->m_ThumbnailDataSize];
-		memcpy(m_Data, pm->m_ThumbnailData, pm->m_ThumbnailDataSize);
-		m_Size = pm->m_ThumbnailDataSize;
+	if (pm->_thumbnailDataSize != 0) {
+		_data = new byte[pm->_thumbnailDataSize];
+		memcpy(_data, pm->_thumbnailData, pm->_thumbnailDataSize);
+		_size = pm->_thumbnailDataSize;
 		res = S_OK;
 	} else res = E_FAIL;
 	delete pm;
@@ -98,11 +98,11 @@ HRESULT CBSaveThumbFile::Open(Common::String Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSaveThumbFile::Close() {
-	delete[] m_Data;
-	m_Data = NULL;
+	delete[] _data;
+	_data = NULL;
 
-	m_Pos = 0;
-	m_Size = 0;
+	_pos = 0;
+	_size = 0;
 
 	return S_OK;
 }
@@ -110,10 +110,10 @@ HRESULT CBSaveThumbFile::Close() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSaveThumbFile::Read(void *Buffer, uint32 Size) {
-	if (!m_Data || m_Pos + Size > m_Size) return E_FAIL;
+	if (!_data || _pos + Size > _size) return E_FAIL;
 
-	memcpy(Buffer, (byte  *)m_Data + m_Pos, Size);
-	m_Pos += Size;
+	memcpy(Buffer, (byte  *)_data + _pos, Size);
+	_pos += Size;
 
 	return S_OK;
 }
@@ -121,7 +121,7 @@ HRESULT CBSaveThumbFile::Read(void *Buffer, uint32 Size) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSaveThumbFile::Seek(uint32 Pos, TSeek Origin) {
-	if (!m_Data) return E_FAIL;
+	if (!_data) return E_FAIL;
 
 	uint32 NewPos = 0;
 
@@ -130,15 +130,15 @@ HRESULT CBSaveThumbFile::Seek(uint32 Pos, TSeek Origin) {
 		NewPos = Pos;
 		break;
 	case SEEK_TO_END:
-		NewPos = m_Size + Pos;
+		NewPos = _size + Pos;
 		break;
 	case SEEK_TO_CURRENT:
-		NewPos = m_Pos + Pos;
+		NewPos = _pos + Pos;
 		break;
 	}
 
-	if (NewPos < 0 || NewPos > m_Size) return E_FAIL;
-	else m_Pos = NewPos;
+	if (NewPos < 0 || NewPos > _size) return E_FAIL;
+	else _pos = NewPos;
 
 	return S_OK;
 }

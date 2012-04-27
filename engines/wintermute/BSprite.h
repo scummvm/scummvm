@@ -41,41 +41,41 @@ class CBSprite: public CBScriptHolder {
 public:
 	HRESULT KillAllSounds();
 	CBSurface *GetSurface();
-	char *m_EditorBgFile;
-	int m_EditorBgOffsetX;
-	int m_EditorBgOffsetY;
-	int m_EditorBgAlpha;
-	bool m_Streamed;
-	bool m_StreamedKeepLoaded;
+	char *_editorBgFile;
+	int _editorBgOffsetX;
+	int _editorBgOffsetY;
+	int _editorBgAlpha;
+	bool _streamed;
+	bool _streamedKeepLoaded;
 	void Cleanup();
 	void SetDefaults();
-	bool m_Precise;
+	bool _precise;
 	DECLARE_PERSISTENT(CBSprite, CBScriptHolder)
 
-	bool m_EditorAllFrames;
+	bool _editorAllFrames;
 	bool GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
-	int m_MoveY;
-	int m_MoveX;
+	int _moveY;
+	int _moveX;
 	HRESULT Display(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
 	bool GetCurrentFrame(float ZoomX = 100, float ZoomY = 100);
-	bool m_CanBreak;
-	bool m_EditorMuted;
-	bool m_Continuous;
+	bool _canBreak;
+	bool _editorMuted;
+	bool _continuous;
 	void Reset();
-	CBObject *m_Owner;
-	bool m_Changed;
-	bool m_Paused;
-	bool m_Finished;
+	CBObject *_owner;
+	bool _changed;
+	bool _paused;
+	bool _finished;
 	HRESULT LoadBuffer(byte  *Buffer, bool Compete = true, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
 	HRESULT LoadFile(char *Filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
-	uint32 m_LastFrameTime;
+	uint32 _lastFrameTime;
 	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF);
-	bool m_Looping;
-	int m_CurrentFrame;
+	bool _looping;
+	int _currentFrame;
 	HRESULT AddFrame(char *Filename, uint32 Delay = 0, int HotspotX = 0, int HotspotY = 0, RECT *Rect = NULL);
 	CBSprite(CBGame *inGame, CBObject *Owner = NULL);
 	virtual ~CBSprite();
-	CBArray<CBFrame *, CBFrame *> m_Frames;
+	CBArray<CBFrame *, CBFrame *> _frames;
 	HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 
 	// scripting interface

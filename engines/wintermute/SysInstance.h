@@ -39,28 +39,28 @@ public:
 	virtual ~CSysInstance();
 
 	int GetID() const {
-		return m_ID;
+		return _iD;
 	}
 	int GetSavedID() const {
-		return m_SavedID;
+		return _savedID;
 	}
 	void *GetInstance() const {
-		return m_Instance;
+		return _instance;
 	}
 	CSysClass *GetClass() const {
-		return m_Class;
+		return _class;
 	}
 
 	void SetSavedID(int id) {
-		m_SavedID = id;
+		_savedID = id;
 	}
 
 private:
-	bool m_Used;
-	int m_ID;
-	int m_SavedID;
-	void *m_Instance;
-	CSysClass *m_Class;
+	bool _used;
+	int _iD;
+	int _savedID;
+	void *_instance;
+	CSysClass *_class;
 };
 
 } // end of namespace WinterMute

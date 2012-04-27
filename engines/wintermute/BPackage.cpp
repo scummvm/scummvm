@@ -40,35 +40,35 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBPackage::CBPackage(CBGame *inGame): CBBase(inGame) {
-	m_File = NULL;
-	m_Name = NULL;
-	m_CD = 0;
-	m_Priority = 0;
-	m_BoundToExe = false;
+	_file = NULL;
+	_name = NULL;
+	_cD = 0;
+	_priority = 0;
+	_boundToExe = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBPackage::~CBPackage() {
-	if (m_Name) delete [] m_Name;
-	CloseFilePointer(m_File);
+	if (_name) delete [] _name;
+	CloseFilePointer(_file);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPackage::Open() {
-	if (m_File) return S_OK;
+	if (_file) return S_OK;
 	else {
-		m_File = GetFilePointer();
-		return m_File ? S_OK : E_FAIL;
+		_file = GetFilePointer();
+		return _file ? S_OK : E_FAIL;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPackage::Close() {
-	delete m_File;
-	m_File = NULL;
+	delete _file;
+	_file = NULL;
 	return S_OK;
 }
 
@@ -86,10 +86,10 @@ HRESULT CBPackage::Read(Common::File *file, uint32 offset, byte *buffer, uint32 
 
 //////////////////////////////////////////////////////////////////////////
 Common::File *CBPackage::GetFilePointer() {
-	Common::File *file = Game->m_FileManager->OpenPackage(m_Name);
+	Common::File *file = Game->_fileManager->OpenPackage(_name);
 	if (!file) {
-		Game->m_FileManager->RequestCD(m_CD, m_Name, "");
-		file = Game->m_FileManager->OpenPackage(m_Name);
+		Game->_fileManager->RequestCD(_cD, _name, "");
+		file = Game->_fileManager->OpenPackage(_name);
 	}
 	return file;
 }

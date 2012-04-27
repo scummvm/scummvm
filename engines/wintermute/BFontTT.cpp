@@ -49,45 +49,45 @@ IMPLEMENT_PERSISTENT(CBFontTT, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
-	m_FontHeight = 12;
-	m_IsBold = m_IsItalic = m_IsUnderline = m_IsStriked = false;
+	_fontHeight = 12;
+	_isBold = _isItalic = _isUnderline = _isStriked = false;
 
-	m_FontFile = NULL;
+	_fontFile = NULL;
 
-	for (int i = 0; i < NUM_CACHED_TEXTS; i++) m_CachedTexts[i] = NULL;
+	for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
 
 
-	m_FTFace = NULL;
-	m_FTStream = NULL;
+	_fTFace = NULL;
+	_fTStream = NULL;
 
-	m_GlyphCache = NULL;
+	_glyphCache = NULL;
 
-	m_Ascender = m_Descender = m_LineHeight = m_PointSize = m_UnderlinePos = 0;
-	m_HorDpi = m_VertDpi = 0;
-	m_MaxCharWidth = m_MaxCharHeight = 0;
+	_ascender = _descender = _lineHeight = _pointSize = _underlinePos = 0;
+	_horDpi = _vertDpi = 0;
+	_maxCharWidth = _maxCharHeight = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CBFontTT::~CBFontTT(void) {
 	ClearCache();
 
-	for (int i = 0; i < m_Layers.GetSize(); i++) {
-		delete m_Layers[i];
+	for (int i = 0; i < _layers.GetSize(); i++) {
+		delete _layers[i];
 	}
-	m_Layers.RemoveAll();
+	_layers.RemoveAll();
 
-	delete[] m_FontFile;
-	m_FontFile = NULL;
+	delete[] _fontFile;
+	_fontFile = NULL;
 
-	delete m_GlyphCache;
-	m_GlyphCache = NULL;
+	delete _glyphCache;
+	_glyphCache = NULL;
 
-	if (m_FTFace) {
-		FT_Done_Face(m_FTFace);
-		m_FTFace = NULL;
+	if (_fTFace) {
+		FT_Done_Face(_fTFace);
+		_fTFace = NULL;
 	}
-	delete[] m_FTStream;
-	m_FTStream = NULL;
+	delete[] _fTStream;
+	_fTStream = NULL;
 
 }
 
@@ -95,8 +95,8 @@ CBFontTT::~CBFontTT(void) {
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::ClearCache() {
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-		if (m_CachedTexts[i]) delete m_CachedTexts[i];
-		m_CachedTexts[i] = NULL;
+		if (_cachedTexts[i]) delete _cachedTexts[i];
+		_cachedTexts[i] = NULL;
 	}
 
 }
@@ -104,15 +104,15 @@ void CBFontTT::ClearCache() {
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::InitLoop() {
 	// we need more aggressive cache management on iOS not to waste too much memory on fonts
-	if (Game->m_ConstrainedMemory) {
+	if (Game->_constrainedMemory) {
 		// purge all cached images not used in the last frame
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-			if (m_CachedTexts[i] == NULL) continue;
+			if (_cachedTexts[i] == NULL) continue;
 
-			if (!m_CachedTexts[i]->m_Marked) {
-				delete m_CachedTexts[i];
-				m_CachedTexts[i] = NULL;
-			} else m_CachedTexts[i]->m_Marked = false;
+			if (!_cachedTexts[i]->_marked) {
+				delete _cachedTexts[i];
+				_cachedTexts[i] = NULL;
+			} else _cachedTexts[i]->_marked = false;
 		}
 	}
 }
@@ -121,7 +121,7 @@ void CBFontTT::InitLoop() {
 int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 	WideString text;
 
-	if (Game->m_TextEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	else text = StringUtil::AnsiToWide((char *)Text);
 
 	if (MaxLength >= 0 && text.size() > MaxLength) 
@@ -138,7 +138,7 @@ int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 	WideString text;
 
-	if (Game->m_TextEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	else text = StringUtil::AnsiToWide((char *)Text);
 
 
@@ -155,14 +155,14 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 
 	WideString text;
 
-	if (Game->m_TextEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	else text = StringUtil::AnsiToWide((char *)Text);
 
 	if (MaxLength >= 0 && text.size() > MaxLength) 
 		text = Common::String(text.c_str(), MaxLength);
 		//text = text.substr(0, MaxLength); // TODO: Remove
 
-	CBRenderSDL *m_Renderer = (CBRenderSDL *)Game->m_Renderer;
+	CBRenderSDL *_renderer = (CBRenderSDL *)Game->_renderer;
 
 	// find cached surface, if exists
 	int MinPriority = INT_MAX;
@@ -171,19 +171,19 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 	int textOffset = 0;
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-		if (m_CachedTexts[i] == NULL) {
+		if (_cachedTexts[i] == NULL) {
 			MinPriority = 0;
 			MinIndex = i;
 		} else {
-			if (m_CachedTexts[i]->m_Text == text && m_CachedTexts[i]->m_Align == Align && m_CachedTexts[i]->m_Width == Width && m_CachedTexts[i]->m_MaxHeight == MaxHeight && m_CachedTexts[i]->m_MaxLength == MaxLength) {
-				Surface = m_CachedTexts[i]->m_Surface;
-				textOffset = m_CachedTexts[i]->m_TextOffset;
-				m_CachedTexts[i]->m_Priority++;
-				m_CachedTexts[i]->m_Marked = true;
+			if (_cachedTexts[i]->_text == text && _cachedTexts[i]->_align == Align && _cachedTexts[i]->_width == Width && _cachedTexts[i]->_maxHeight == MaxHeight && _cachedTexts[i]->_maxLength == MaxLength) {
+				Surface = _cachedTexts[i]->_surface;
+				textOffset = _cachedTexts[i]->_textOffset;
+				_cachedTexts[i]->_priority++;
+				_cachedTexts[i]->_marked = true;
 				break;
 			} else {
-				if (m_CachedTexts[i]->m_Priority < MinPriority) {
-					MinPriority = m_CachedTexts[i]->m_Priority;
+				if (_cachedTexts[i]->_priority < MinPriority) {
+					MinPriority = _cachedTexts[i]->_priority;
 					MinIndex = i;
 				}
 			}
@@ -195,18 +195,18 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 		Surface = RenderTextToTexture(text, Width, Align, MaxHeight, textOffset);
 		if (Surface) {
 			// write surface to cache
-			if (m_CachedTexts[MinIndex] != NULL) delete m_CachedTexts[MinIndex];
-			m_CachedTexts[MinIndex] = new CBCachedTTFontText;
+			if (_cachedTexts[MinIndex] != NULL) delete _cachedTexts[MinIndex];
+			_cachedTexts[MinIndex] = new CBCachedTTFontText;
 
-			m_CachedTexts[MinIndex]->m_Surface = Surface;
-			m_CachedTexts[MinIndex]->m_Align = Align;
-			m_CachedTexts[MinIndex]->m_Width = Width;
-			m_CachedTexts[MinIndex]->m_MaxHeight = MaxHeight;
-			m_CachedTexts[MinIndex]->m_MaxLength = MaxLength;
-			m_CachedTexts[MinIndex]->m_Priority = 1;
-			m_CachedTexts[MinIndex]->m_Text = text;
-			m_CachedTexts[MinIndex]->m_TextOffset = textOffset;
-			m_CachedTexts[MinIndex]->m_Marked = true;
+			_cachedTexts[MinIndex]->_surface = Surface;
+			_cachedTexts[MinIndex]->_align = Align;
+			_cachedTexts[MinIndex]->_width = Width;
+			_cachedTexts[MinIndex]->_maxHeight = MaxHeight;
+			_cachedTexts[MinIndex]->_maxLength = MaxLength;
+			_cachedTexts[MinIndex]->_priority = 1;
+			_cachedTexts[MinIndex]->_text = text;
+			_cachedTexts[MinIndex]->_textOffset = textOffset;
+			_cachedTexts[MinIndex]->_marked = true;
 		}
 	}
 
@@ -215,16 +215,16 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 	if (Surface) {
 		RECT rc;
 		CBPlatform::SetRect(&rc, 0, 0, Surface->GetWidth(), Surface->GetHeight());
-		for (int i = 0; i < m_Layers.GetSize(); i++) {
-			uint32 Color = m_Layers[i]->m_Color;
-			uint32 OrigForceAlpha = m_Renderer->m_ForceAlphaColor;
-			if (m_Renderer->m_ForceAlphaColor != 0) {
-				Color = DRGBA(D3DCOLGetR(Color), D3DCOLGetG(Color), D3DCOLGetB(Color), D3DCOLGetA(m_Renderer->m_ForceAlphaColor));
-				m_Renderer->m_ForceAlphaColor = 0;
+		for (int i = 0; i < _layers.GetSize(); i++) {
+			uint32 Color = _layers[i]->_color;
+			uint32 OrigForceAlpha = _renderer->_forceAlphaColor;
+			if (_renderer->_forceAlphaColor != 0) {
+				Color = DRGBA(D3DCOLGetR(Color), D3DCOLGetG(Color), D3DCOLGetB(Color), D3DCOLGetA(_renderer->_forceAlphaColor));
+				_renderer->_forceAlphaColor = 0;
 			}
-			Surface->DisplayTransOffset(X, Y - textOffset, rc, Color, BLEND_NORMAL, false, false, m_Layers[i]->m_OffsetX, m_Layers[i]->m_OffsetY);
+			Surface->DisplayTransOffset(X, Y - textOffset, rc, Color, BLEND_NORMAL, false, false, _layers[i]->_offsetX, _layers[i]->_offsetY);
 
-			m_Renderer->m_ForceAlphaColor = OrigForceAlpha;
+			_renderer->_forceAlphaColor = OrigForceAlpha;
 		}
 	}
 
@@ -239,12 +239,12 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 
 	TextLineList::iterator it;
 
-	int textHeight = lines.size() * (m_MaxCharHeight + m_Ascender);
+	int textHeight = lines.size() * (_maxCharHeight + _ascender);
 	SDL_Surface *surface = SDL_CreateRGBSurface(0, width, textHeight, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 
 	SDL_LockSurface(surface);
 
-	int posY = (int)GetLineHeight() - (int)m_Descender;
+	int posY = (int)GetLineHeight() - (int)_descender;
 
 	for (it = lines.begin(); it != lines.end(); ++it) {
 		TextLine *line = (*it);
@@ -265,7 +265,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 		for (size_t i = 0; i < line->GetText().size(); i++) {
 			wchar_t ch = line->GetText()[i];
 
-			GlyphInfo *glyph = m_GlyphCache->GetGlyph(ch);
+			GlyphInfo *glyph = _glyphCache->GetGlyph(ch);
 			if (!glyph) continue;
 
 			textOffset = std::max(textOffset, glyph->GetBearingY());
@@ -278,7 +278,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 		for (size_t i = 0; i < line->GetText().size(); i++) {
 			wchar_t ch = line->GetText()[i];
 
-			GlyphInfo *glyph = m_GlyphCache->GetGlyph(ch);
+			GlyphInfo *glyph = _glyphCache->GetGlyph(ch);
 			if (!glyph) continue;
 
 			float kerning = 0;
@@ -303,9 +303,9 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 			posY += (int)(glyph->GetAdvanceY());
 		}
 
-		if (m_IsUnderline) {
+		if (_isUnderline) {
 			for (int i = origPosX; i < origPosX + line->GetWidth(); i++) {
-				Uint8 *buf = (Uint8 *)surface->pixels + (int)(m_UnderlinePos + m_Ascender) * surface->pitch;
+				Uint8 *buf = (Uint8 *)surface->pixels + (int)(_underlinePos + _ascender) * surface->pitch;
 				Uint32 *buf32 = (Uint32 *)buf;
 
 				buf32[i] = SDL_MapRGBA(surface->format, 255, 255, 255, 255);
@@ -361,7 +361,7 @@ int CBFontTT::GetLetterHeight() {
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBFontTT::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBFontTT::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -369,8 +369,8 @@ HRESULT CBFontTT::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", Filename);
 
@@ -428,7 +428,7 @@ HRESULT CBFontTT::LoadBuffer(byte  *Buffer) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SIZE:
-			parser.ScanStr(params, "%d", &m_FontHeight);
+			parser.ScanStr(params, "%d", &_fontHeight);
 			break;
 
 		case TOKEN_FACE:
@@ -436,23 +436,23 @@ HRESULT CBFontTT::LoadBuffer(byte  *Buffer) {
 			break;
 
 		case TOKEN_FILENAME:
-			CBUtils::SetString(&m_FontFile, params);
+			CBUtils::SetString(&_fontFile, params);
 			break;
 
 		case TOKEN_BOLD:
-			parser.ScanStr(params, "%b", &m_IsBold);
+			parser.ScanStr(params, "%b", &_isBold);
 			break;
 
 		case TOKEN_ITALIC:
-			parser.ScanStr(params, "%b", &m_IsItalic);
+			parser.ScanStr(params, "%b", &_isItalic);
 			break;
 
 		case TOKEN_UNDERLINE:
-			parser.ScanStr(params, "%b", &m_IsUnderline);
+			parser.ScanStr(params, "%b", &_isUnderline);
 			break;
 
 		case TOKEN_STRIKE:
-			parser.ScanStr(params, "%b", &m_IsStriked);
+			parser.ScanStr(params, "%b", &_isStriked);
 			break;
 
 		case TOKEN_CHARSET:
@@ -475,7 +475,7 @@ HRESULT CBFontTT::LoadBuffer(byte  *Buffer) {
 
 		case TOKEN_LAYER: {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
-			if (Layer && SUCCEEDED(ParseLayer(Layer, (byte  *)params))) m_Layers.Add(Layer);
+			if (Layer && SUCCEEDED(ParseLayer(Layer, (byte  *)params))) _layers.Add(Layer);
 			else {
 				delete Layer;
 				Layer = NULL;
@@ -492,13 +492,13 @@ HRESULT CBFontTT::LoadBuffer(byte  *Buffer) {
 	}
 
 	// create at least one layer
-	if (m_Layers.GetSize() == 0) {
+	if (_layers.GetSize() == 0) {
 		CBTTFontLayer *Layer = new CBTTFontLayer;
-		Layer->m_Color = BaseColor;
-		m_Layers.Add(Layer);
+		Layer->_color = BaseColor;
+		_layers.Add(Layer);
 	}
 
-	if (!m_FontFile) CBUtils::SetString(&m_FontFile, "arial.ttf");
+	if (!_fontFile) CBUtils::SetString(&_fontFile, "arial.ttf");
 
 	return InitFont();
 }
@@ -520,24 +520,24 @@ HRESULT CBFontTT::ParseLayer(CBTTFontLayer *Layer, byte *Buffer) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_OFFSET_X:
-			parser.ScanStr(params, "%d", &Layer->m_OffsetX);
+			parser.ScanStr(params, "%d", &Layer->_offsetX);
 			break;
 
 		case TOKEN_OFFSET_Y:
-			parser.ScanStr(params, "%d", &Layer->m_OffsetY);
+			parser.ScanStr(params, "%d", &Layer->_offsetY);
 			break;
 
 		case TOKEN_COLOR: {
 			int r, g, b;
 			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
-			Layer->m_Color = DRGBA(r, g, b, D3DCOLGetA(Layer->m_Color));
+			Layer->_color = DRGBA(r, g, b, D3DCOLGetA(Layer->_color));
 		}
 		break;
 
 		case TOKEN_ALPHA: {
 			int a;
 			parser.ScanStr(params, "%d", &a);
-			Layer->m_Color = DRGBA(D3DCOLGetR(Layer->m_Color), D3DCOLGetG(Layer->m_Color), D3DCOLGetB(Layer->m_Color), a);
+			Layer->_color = DRGBA(D3DCOLGetR(Layer->_color), D3DCOLGetG(Layer->_color), D3DCOLGetB(Layer->_color), a);
 		}
 		break;
 		}
@@ -551,33 +551,33 @@ HRESULT CBFontTT::ParseLayer(CBTTFontLayer *Layer, byte *Buffer) {
 HRESULT CBFontTT::Persist(CBPersistMgr *PersistMgr) {
 	CBFont::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_IsBold));
-	PersistMgr->Transfer(TMEMBER(m_IsItalic));
-	PersistMgr->Transfer(TMEMBER(m_IsUnderline));
-	PersistMgr->Transfer(TMEMBER(m_IsStriked));
-	PersistMgr->Transfer(TMEMBER(m_FontHeight));
-	PersistMgr->Transfer(TMEMBER(m_FontFile));
+	PersistMgr->Transfer(TMEMBER(_isBold));
+	PersistMgr->Transfer(TMEMBER(_isItalic));
+	PersistMgr->Transfer(TMEMBER(_isUnderline));
+	PersistMgr->Transfer(TMEMBER(_isStriked));
+	PersistMgr->Transfer(TMEMBER(_fontHeight));
+	PersistMgr->Transfer(TMEMBER(_fontFile));
 
 
 	// persist layers
 	int NumLayers;
-	if (PersistMgr->m_Saving) {
-		NumLayers = m_Layers.GetSize();
+	if (PersistMgr->_saving) {
+		NumLayers = _layers.GetSize();
 		PersistMgr->Transfer(TMEMBER(NumLayers));
-		for (int i = 0; i < NumLayers; i++) m_Layers[i]->Persist(PersistMgr);
+		for (int i = 0; i < NumLayers; i++) _layers[i]->Persist(PersistMgr);
 	} else {
-		NumLayers = m_Layers.GetSize();
+		NumLayers = _layers.GetSize();
 		PersistMgr->Transfer(TMEMBER(NumLayers));
 		for (int i = 0; i < NumLayers; i++) {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
 			Layer->Persist(PersistMgr);
-			m_Layers.Add(Layer);
+			_layers.Add(Layer);
 		}
 	}
 
-	if (!PersistMgr->m_Saving) {
-		for (int i = 0; i < NUM_CACHED_TEXTS; i++) m_CachedTexts[i] = NULL;
-		m_GlyphCache = NULL;
+	if (!PersistMgr->_saving) {
+		for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
+		_glyphCache = NULL;
 	}
 
 	return S_OK;
@@ -591,16 +591,16 @@ void CBFontTT::AfterLoad() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFontTT::InitFont() {
-	if (!m_FontFile) return E_FAIL;
+	if (!_fontFile) return E_FAIL;
 
-	CBFile *file = Game->m_FileManager->OpenFile(m_FontFile);
+	CBFile *file = Game->_fileManager->OpenFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
-		AnsiString fontFileName = PathUtil::Combine(CBPlatform::GetSystemFontPath(), PathUtil::GetFileName(m_FontFile));
-		file = Game->m_FileManager->OpenFile((char *)fontFileName.c_str(), false);
+		AnsiString fontFileName = PathUtil::Combine(CBPlatform::GetSystemFontPath(), PathUtil::GetFileName(_fontFile));
+		file = Game->_fileManager->OpenFile((char *)fontFileName.c_str(), false);
 
 		if (!file) {
-			Game->LOG(0, "Error loading TrueType font '%s'", m_FontFile);
+			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);
 			return E_FAIL;
 		}
 	}
@@ -611,55 +611,55 @@ HRESULT CBFontTT::InitFont() {
 	float horDpi = 96.0;
 
 
-	m_FTStream = (FT_Stream)new byte[sizeof(*m_FTStream)];
-	memset(m_FTStream, 0, sizeof(*m_FTStream));
+	_fTStream = (FT_Stream)new byte[sizeof(*_fTStream)];
+	memset(_fTStream, 0, sizeof(*_fTStream));
 
-	m_FTStream->read = CBFontTT::FTReadSeekProc;
-	m_FTStream->close = CBFontTT::FTCloseProc;
-	m_FTStream->descriptor.pointer = file;
-	m_FTStream->size = file->GetSize();
+	_fTStream->read = CBFontTT::FTReadSeekProc;
+	_fTStream->close = CBFontTT::FTCloseProc;
+	_fTStream->descriptor.pointer = file;
+	_fTStream->size = file->GetSize();
 
 	FT_Open_Args args;
 	args.flags = FT_OPEN_STREAM;
-	args.stream = m_FTStream;
+	args.stream = _fTStream;
 
-	error = FT_Open_Face(Game->m_FontStorage->GetFTLibrary(), &args, 0, &m_FTFace);
+	error = FT_Open_Face(Game->_fontStorage->GetFTLibrary(), &args, 0, &_fTFace);
 	if (error) {
-		SAFE_DELETE_ARRAY(m_FTStream);
-		Game->m_FileManager->CloseFile(file);
+		SAFE_DELETE_ARRAY(_fTStream);
+		Game->_fileManager->CloseFile(file);
 		return E_FAIL;
 	}
 
-	error = FT_Set_Char_Size(m_FTFace, 0, (FT_F26Dot6)(m_FontHeight * 64), (FT_UInt)horDpi, (FT_UInt)vertDpi);
+	error = FT_Set_Char_Size(_fTFace, 0, (FT_F26Dot6)(_fontHeight * 64), (FT_UInt)horDpi, (FT_UInt)vertDpi);
 	if (error) {
-		FT_Done_Face(m_FTFace);
-		m_FTFace = NULL;
+		FT_Done_Face(_fTFace);
+		_fTFace = NULL;
 		return E_FAIL;
 	}
 
-	// http://en.wikipedia.org/wiki/Em_(typography)
-	float pixelsPerEm = (m_FontHeight / 72.f) * vertDpi; // Size in inches * dpi
-	float EmsPerUnit = 1.0f / m_FTFace->units_per_EM;
+	// http://en.wikipedia.org/wiki/E_(typography)
+	float pixelsPerEm = (_fontHeight / 72.f) * vertDpi; // Size in inches * dpi
+	float EmsPerUnit = 1.0f / _fTFace->units_per_EM;
 	float pixelsPerUnit = pixelsPerEm * EmsPerUnit;
 
 	// bounding box in pixels
-	float xMin = m_FTFace->bbox.xMin * pixelsPerUnit;
-	float xMax = m_FTFace->bbox.xMax * pixelsPerUnit;
-	float yMin = m_FTFace->bbox.yMin * pixelsPerUnit;
-	float yMax = m_FTFace->bbox.yMax * pixelsPerUnit;
+	float xMin = _fTFace->bbox.xMin * pixelsPerUnit;
+	float xMax = _fTFace->bbox.xMax * pixelsPerUnit;
+	float yMin = _fTFace->bbox.yMin * pixelsPerUnit;
+	float yMax = _fTFace->bbox.yMax * pixelsPerUnit;
 
 	// metrics in pixels
-	m_Ascender = m_FTFace->ascender * pixelsPerUnit;
-	m_Descender = - m_FTFace->descender * pixelsPerUnit;
-	m_LineHeight = MathUtil::RoundUp(m_FTFace->height * pixelsPerUnit) + 2;
-	m_UnderlinePos = - m_FTFace->underline_position * pixelsPerUnit;
+	_ascender = _fTFace->ascender * pixelsPerUnit;
+	_descender = - _fTFace->descender * pixelsPerUnit;
+	_lineHeight = MathUtil::RoundUp(_fTFace->height * pixelsPerUnit) + 2;
+	_underlinePos = - _fTFace->underline_position * pixelsPerUnit;
 
 	// max character size (used for texture grid)
-	m_MaxCharWidth  = (size_t)MathUtil::RoundUp(xMax - xMin);
-	m_MaxCharHeight = (size_t)MathUtil::RoundUp(yMax - yMin);
+	_maxCharWidth  = (size_t)MathUtil::RoundUp(xMax - xMin);
+	_maxCharHeight = (size_t)MathUtil::RoundUp(yMax - yMin);
 
-	m_GlyphCache = new FontGlyphCache();
-	m_GlyphCache->Initialize();
+	_glyphCache = new FontGlyphCache();
+	_glyphCache->Initialize();
 
 
 	return S_OK;
@@ -688,7 +688,7 @@ void CBFontTT::FTCloseProc(FT_Stream stream) {
 
 	CBGame *Game = f->Game;
 
-	Game->m_FileManager->CloseFile(f);
+	Game->_fileManager->CloseFile(f);
 	stream->descriptor.pointer = NULL;
 }
 
@@ -794,13 +794,13 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 
 //////////////////////////////////////////////////////////////////////////
 float CBFontTT::GetKerning(wchar_t leftChar, wchar_t rightChar) {
-	GlyphInfo *infoLeft = m_GlyphCache->GetGlyph(leftChar);
-	GlyphInfo *infoRight = m_GlyphCache->GetGlyph(rightChar);
+	GlyphInfo *infoLeft = _glyphCache->GetGlyph(leftChar);
+	GlyphInfo *infoRight = _glyphCache->GetGlyph(rightChar);
 
 	if (!infoLeft || !infoRight) return 0;
 
 	FT_Vector delta;
-	FT_Error error = FT_Get_Kerning(m_FTFace, infoLeft->GetGlyphIndex(), infoRight->GetGlyphIndex(), ft_kerning_unfitted, &delta);
+	FT_Error error = FT_Get_Kerning(_fTFace, infoLeft->GetGlyphIndex(), infoRight->GetGlyphIndex(), ft_kerning_unfitted, &delta);
 	if (error) return 0;
 
 	return delta.x * (1.0f / 64.0f);
@@ -812,45 +812,45 @@ void CBFontTT::PrepareGlyphs(const WideString &text) {
 	// make sure we have all the glyphs we need
 	for (size_t i = 0; i < text.size(); i++) {
 		wchar_t ch = text[i];
-		if (!m_GlyphCache->HasGlyph(ch)) CacheGlyph(ch);
+		if (!_glyphCache->HasGlyph(ch)) CacheGlyph(ch);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::CacheGlyph(wchar_t ch) {
-	FT_UInt glyphIndex = FT_Get_Char_Index(m_FTFace, ch);
+	FT_UInt glyphIndex = FT_Get_Char_Index(_fTFace, ch);
 	if (!glyphIndex) return;
 
-	FT_Error error = FT_Load_Glyph(m_FTFace, glyphIndex, FT_LOAD_DEFAULT);
+	FT_Error error = FT_Load_Glyph(_fTFace, glyphIndex, FT_LOAD_DEFAULT);
 	if (error) return;
 
-	error = FT_Render_Glyph(m_FTFace->glyph, FT_RENDER_MODE_NORMAL);
+	error = FT_Render_Glyph(_fTFace->glyph, FT_RENDER_MODE_NORMAL);
 	if (error) return;
 
-	byte *pixels = m_FTFace->glyph->bitmap.buffer;
-	size_t stride = m_FTFace->glyph->bitmap.pitch;
+	byte *pixels = _fTFace->glyph->bitmap.buffer;
+	size_t stride = _fTFace->glyph->bitmap.pitch;
 
 
 	// convert from monochrome to grayscale if needed
 	byte *tempBuffer = NULL;
-	if (pixels != NULL && m_FTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
-		tempBuffer = new byte[m_FTFace->glyph->bitmap.width * m_FTFace->glyph->bitmap.rows];
-		for (int j = 0; j < m_FTFace->glyph->bitmap.rows; j++) {
+	if (pixels != NULL && _fTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+		tempBuffer = new byte[_fTFace->glyph->bitmap.width * _fTFace->glyph->bitmap.rows];
+		for (int j = 0; j < _fTFace->glyph->bitmap.rows; j++) {
 			int rowOffset = stride * j;
-			for (int i = 0; i < m_FTFace->glyph->bitmap.width; i++) {
+			for (int i = 0; i < _fTFace->glyph->bitmap.width; i++) {
 				int byteOffset = i / 8;
 				int bitOffset = 7 - (i % 8);
 				byte bit = (pixels[rowOffset + byteOffset] & (1 << bitOffset)) >> bitOffset;
-				tempBuffer[m_FTFace->glyph->bitmap.width * j + i] = 255 * bit;
+				tempBuffer[_fTFace->glyph->bitmap.width * j + i] = 255 * bit;
 			}
 		}
 
 		pixels = tempBuffer;
-		stride = m_FTFace->glyph->bitmap.width;
+		stride = _fTFace->glyph->bitmap.width;
 	}
 
 	// add glyph to cache
-	m_GlyphCache->AddGlyph(ch, glyphIndex, m_FTFace->glyph, m_FTFace->glyph->bitmap.width, m_FTFace->glyph->bitmap.rows, pixels, stride);
+	_glyphCache->AddGlyph(ch, glyphIndex, _fTFace->glyph, _fTFace->glyph->bitmap.width, _fTFace->glyph->bitmap.rows, pixels, stride);
 
 	if (tempBuffer) delete [] tempBuffer;
 }

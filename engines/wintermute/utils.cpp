@@ -235,7 +235,7 @@ bool CBUtils::MatchesPattern(const char *Pattern, const char *String) {
 //////////////////////////////////////////////////////////////////////////
 char *CBUtils::GetPath(char *Filename) {
 	AnsiString path = PathUtil::GetDirectoryName(Filename);
-	//path = boost::filesystem::system_complete(path).string();
+	//path = boost::filesystem::syste_complete(path).string();
 	warning("CBUtils::GetPath: (%s), not implemented", Filename);
 	return Filename;
 	char *ret = new char[path.size() + 1];

@@ -46,10 +46,10 @@ public:
 
 	HRESULT HandleResponse(CAdResponse *Response);
 	void SetLastResponseText(char *Text, char *TextOrig);
-	char *m_LastResponseText;
-	char *m_LastResponseTextOrig;
+	char *_lastResponseText;
+	char *_lastResponseTextOrig;
 	DECLARE_PERSISTENT(CAdResponseBox, CBObject)
-	CScScript *m_WaitingScript;
+	CScScript *_waitingScript;
 	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
 	typedef enum {
 	    EVENT_PREV, EVENT_NEXT, EVENT_RESPONSE
@@ -57,24 +57,24 @@ public:
 
 	HRESULT WeedResponses();
 	HRESULT Display();
-	int m_Spacing;
-	int m_ScrollOffset;
-	CBFont *m_FontHover;
-	CBFont *m_Font;
+	int _spacing;
+	int _scrollOffset;
+	CBFont *_fontHover;
+	CBFont *_font;
 	HRESULT CreateButtons();
 	HRESULT InvalidateButtons();
 	void ClearButtons();
 	void ClearResponses();
 	CAdResponseBox(CBGame *inGame);
 	virtual ~CAdResponseBox();
-	CBArray<CAdResponse *, CAdResponse *> m_Responses;
-	CBArray<CUIButton *, CUIButton *> m_RespButtons;
-	CUIWindow *m_Window;
-	CUIWindow *m_ShieldWindow;
-	bool m_Horizontal;
-	RECT m_ResponseArea;
-	int m_VerticalAlign;
-	TTextAlign m_Align;
+	CBArray<CAdResponse *, CAdResponse *> _responses;
+	CBArray<CUIButton *, CUIButton *> _respButtons;
+	CUIWindow *_window;
+	CUIWindow *_shieldWindow;
+	bool _horizontal;
+	RECT _responseArea;
+	int _verticalAlign;
+	TTextAlign _align;
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);

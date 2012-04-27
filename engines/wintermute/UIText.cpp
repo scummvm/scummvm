@@ -48,10 +48,10 @@ IMPLEMENT_PERSISTENT(CUIText, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUIText::CUIText(CBGame *inGame): CUIObject(inGame) {
-	m_TextAlign = TAL_LEFT;
-	m_VerticalAlign = VAL_CENTER;
-	m_Type = UI_STATIC;
-	m_CanFocus = false;
+	_textAlign = TAL_LEFT;
+	_verticalAlign = VAL_CENTER;
+	_type = UI_STATIC;
+	_canFocus = false;
 }
 
 
@@ -63,31 +63,31 @@ CUIText::~CUIText() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIText::Display(int OffsetX, int OffsetY) {
-	if (!m_Visible) return S_OK;
+	if (!_visible) return S_OK;
 
 
-	CBFont *font = m_Font;
-	if (!font) font = Game->m_SystemFont;
+	CBFont *font = _font;
+	if (!font) font = Game->_systemFont;
 
-	if (m_Back) m_Back->Display(OffsetX + m_PosX, OffsetY + m_PosY, m_Width, m_Height);
-	if (m_Image) m_Image->Draw(OffsetX + m_PosX, OffsetY + m_PosY, NULL);
+	if (_back) _back->Display(OffsetX + _posX, OffsetY + _posY, _width, _height);
+	if (_image) _image->Draw(OffsetX + _posX, OffsetY + _posY, NULL);
 
-	if (font && m_Text) {
+	if (font && _text) {
 		int text_offset;
-		switch (m_VerticalAlign) {
+		switch (_verticalAlign) {
 		case VAL_TOP:
 			text_offset = 0;
 			break;
 		case VAL_BOTTOM:
-			text_offset = m_Height - font->GetTextHeight((byte  *)m_Text, m_Width);
+			text_offset = _height - font->GetTextHeight((byte  *)_text, _width);
 			break;
 		default:
-			text_offset = (m_Height - font->GetTextHeight((byte  *)m_Text, m_Width)) / 2;
+			text_offset = (_height - font->GetTextHeight((byte  *)_text, _width)) / 2;
 		}
-		font->DrawText((byte  *)m_Text, OffsetX + m_PosX, OffsetY + m_PosY + text_offset, m_Width, m_TextAlign, m_Height);
+		font->DrawText((byte  *)_text, OffsetX + _posX, OffsetY + _posY + text_offset, _width, _textAlign, _height);
 	}
 
-	//Game->m_Renderer->m_RectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + m_PosX, OffsetY + m_PosY, m_Width, m_Height, 100, 100, false));
+	//Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
 
 	return S_OK;
 }
@@ -96,7 +96,7 @@ HRESULT CUIText::Display(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIText::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIText::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -104,8 +104,8 @@ HRESULT CUIText::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing STATIC file '%s'", Filename);
 
@@ -189,70 +189,70 @@ HRESULT CUIText::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete m_Back;
-			m_Back = new CUITiledImage(Game);
-			if (!m_Back || FAILED(m_Back->LoadFile((char *)params))) {
-				delete m_Back;
-				m_Back = NULL;
+			delete _back;
+			_back = new CUITiledImage(Game);
+			if (!_back || FAILED(_back->LoadFile((char *)params))) {
+				delete _back;
+				_back = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete m_Image;
-			m_Image = new CBSprite(Game);
-			if (!m_Image || FAILED(m_Image->LoadFile((char *)params))) {
-				delete m_Image;
-				m_Image = NULL;
+			delete _image;
+			_image = new CBSprite(Game);
+			if (!_image || FAILED(_image->LoadFile((char *)params))) {
+				delete _image;
+				_image = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_FONT:
-			if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
-			m_Font = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_Font) cmd = PARSERR_GENERIC;
+			if (_font) Game->_fontStorage->RemoveFont(_font);
+			_font = Game->_fontStorage->AddFont((char *)params);
+			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TEXT:
 			SetText((char *)params);
-			Game->m_StringTable->Expand(&m_Text);
+			Game->_stringTable->Expand(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) m_TextAlign = TAL_LEFT;
-			else if (scumm_stricmp((char *)params, "right") == 0) m_TextAlign = TAL_RIGHT;
-			else m_TextAlign = TAL_CENTER;
+			if (scumm_stricmp((char *)params, "left") == 0) _textAlign = TAL_LEFT;
+			else if (scumm_stricmp((char *)params, "right") == 0) _textAlign = TAL_RIGHT;
+			else _textAlign = TAL_CENTER;
 			break;
 
 		case TOKEN_VERTICAL_ALIGN:
-			if (scumm_stricmp((char *)params, "top") == 0) m_VerticalAlign = VAL_TOP;
-			else if (scumm_stricmp((char *)params, "bottom") == 0) m_VerticalAlign = VAL_BOTTOM;
-			else m_VerticalAlign = VAL_CENTER;
+			if (scumm_stricmp((char *)params, "top") == 0) _verticalAlign = VAL_TOP;
+			else if (scumm_stricmp((char *)params, "bottom") == 0) _verticalAlign = VAL_BOTTOM;
+			else _verticalAlign = VAL_CENTER;
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &m_PosX);
+			parser.ScanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &m_PosY);
+			parser.ScanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &m_Width);
+			parser.ScanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &m_Height);
+			parser.ScanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_CURSOR:
-			delete m_Cursor;
-			m_Cursor = new CBSprite(Game);
-			if (!m_Cursor || FAILED(m_Cursor->LoadFile((char *)params))) {
-				delete m_Cursor;
-				m_Cursor = NULL;
+			delete _cursor;
+			_cursor = new CBSprite(Game);
+			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+				delete _cursor;
+				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -262,15 +262,15 @@ HRESULT CUIText::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
-			parser.ScanStr((char *)params, "%b", &m_ParentNotify);
+			parser.ScanStr((char *)params, "%b", &_parentNotify);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &m_Disable);
+			parser.ScanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &m_Visible);
+			parser.ScanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -297,27 +297,27 @@ HRESULT CUIText::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "STATIC\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	if (m_Back && m_Back->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", m_Back->m_Filename);
+	if (_back && _back->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
 
-	if (m_Image && m_Image->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", m_Image->m_Filename);
+	if (_image && _image->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 
-	if (m_Font && m_Font->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", m_Font->m_Filename);
+	if (_font && _font->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
 
-	if (m_Cursor && m_Cursor->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", m_Cursor->m_Filename);
+	if (_cursor && _cursor->_filename)
+		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	if (m_Text)
-		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", m_Text);
+	if (_text)
+		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
 
-	switch (m_TextAlign) {
+	switch (_textAlign) {
 	case TAL_LEFT:
 		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
 		break;
@@ -329,7 +329,7 @@ HRESULT CUIText::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		break;
 	}
 
-	switch (m_VerticalAlign) {
+	switch (_verticalAlign) {
 	case VAL_TOP:
 		Buffer->PutTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
 		break;
@@ -343,20 +343,20 @@ HRESULT CUIText::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", m_PosX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", m_PosY);
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", m_Width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", m_Height);
+	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", m_Disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", m_Visible ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", m_ParentNotify ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// scripts
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
@@ -387,7 +387,7 @@ HRESULT CUIText::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HeightToFit") == 0) {
 		Stack->CorrectParams(0);
-		if (m_Font && m_Text) m_Height = m_Font->GetTextHeight((byte  *)m_Text, m_Width);
+		if (_font && _text) _height = _font->GetTextHeight((byte  *)_text, _width);
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -398,30 +398,30 @@ HRESULT CUIText::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIText::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("static");
-		return m_ScValue;
+		_scValue->SetString("static");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TextAlign") == 0) {
-		m_ScValue->SetInt(m_TextAlign);
-		return m_ScValue;
+		_scValue->SetInt(_textAlign);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "VerticalAlign") == 0) {
-		m_ScValue->SetInt(m_VerticalAlign);
-		return m_ScValue;
+		_scValue->SetInt(_verticalAlign);
+		return _scValue;
 	}
 
 	else return CUIObject::ScGetProperty(Name);
@@ -436,7 +436,7 @@ HRESULT CUIText::ScSetProperty(char *Name, CScValue *Value) {
 	if (strcmp(Name, "TextAlign") == 0) {
 		int i = Value->GetInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
-		m_TextAlign = (TTextAlign)i;
+		_textAlign = (TTextAlign)i;
 		return S_OK;
 	}
 
@@ -446,7 +446,7 @@ HRESULT CUIText::ScSetProperty(char *Name, CScValue *Value) {
 	else if (strcmp(Name, "VerticalAlign") == 0) {
 		int i = Value->GetInt();
 		if (i < 0 || i >= NUM_VERTICAL_ALIGN) i = 0;
-		m_VerticalAlign = (TVerticalAlign)i;
+		_verticalAlign = (TVerticalAlign)i;
 		return S_OK;
 	}
 
@@ -465,8 +465,8 @@ char *CUIText::ScToString() {
 HRESULT CUIText::Persist(CBPersistMgr *PersistMgr) {
 
 	CUIObject::Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER_INT(m_TextAlign));
-	PersistMgr->Transfer(TMEMBER_INT(m_VerticalAlign));
+	PersistMgr->Transfer(TMEMBER_INT(_textAlign));
+	PersistMgr->Transfer(TMEMBER_INT(_verticalAlign));
 
 	return S_OK;
 }
@@ -474,9 +474,9 @@ HRESULT CUIText::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIText::SizeToFit() {
-	if (m_Font && m_Text) {
-		m_Width = m_Font->GetTextWidth((byte  *)m_Text);
-		m_Height = m_Font->GetTextHeight((byte  *)m_Text, m_Width);
+	if (_font && _text) {
+		_width = _font->GetTextWidth((byte  *)_text);
+		_height = _font->GetTextHeight((byte  *)_text, _width);
 	}
 	return S_OK;
 }

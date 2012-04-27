@@ -51,10 +51,10 @@ public:
 	HRESULT CopyFrom(CBImage *OrigImage, int NewWidth = 0, int NewHeight = 0);
 
 	FIBITMAP *GetBitmap() const {
-		return m_Bitmap;
+		return _bitmap;
 	}
 private:
-	FIBITMAP *m_Bitmap;
+	FIBITMAP *_bitmap;
 };
 
 } // end of namespace WinterMute

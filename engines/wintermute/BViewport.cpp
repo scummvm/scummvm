@@ -36,9 +36,9 @@ IMPLEMENT_PERSISTENT(CBViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBViewport::CBViewport(CBGame *inGame): CBBase(inGame) {
-	CBPlatform::SetRectEmpty(&m_Rect);
-	m_MainObject = NULL;
-	m_OffsetX = m_OffsetY = 0;
+	CBPlatform::SetRectEmpty(&_rect);
+	_mainObject = NULL;
+	_offsetX = _offsetY = 0;
 }
 
 
@@ -53,10 +53,10 @@ HRESULT CBViewport::Persist(CBPersistMgr *PersistMgr) {
 
 	PersistMgr->Transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(m_MainObject));
-	PersistMgr->Transfer(TMEMBER(m_OffsetX));
-	PersistMgr->Transfer(TMEMBER(m_OffsetY));
-	PersistMgr->Transfer(TMEMBER(m_Rect));
+	PersistMgr->Transfer(TMEMBER(_mainObject));
+	PersistMgr->Transfer(TMEMBER(_offsetX));
+	PersistMgr->Transfer(TMEMBER(_offsetY));
+	PersistMgr->Transfer(TMEMBER(_rect));
 
 	return S_OK;
 }
@@ -67,32 +67,32 @@ HRESULT CBViewport::SetRect(int left, int top, int right, int bottom, bool NoChe
 	if (!NoCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
-		right = MIN(right, Game->m_Renderer->m_Width);
-		bottom = MIN(bottom, Game->m_Renderer->m_Height);
+		right = MIN(right, Game->_renderer->_width);
+		bottom = MIN(bottom, Game->_renderer->_height);
 	}
 
-	CBPlatform::SetRect(&m_Rect, left, top, right, bottom);
-	m_OffsetX = left;
-	m_OffsetY = top;
+	CBPlatform::SetRect(&_rect, left, top, right, bottom);
+	_offsetX = left;
+	_offsetY = top;
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 RECT *CBViewport::GetRect() {
-	return &m_Rect;
+	return &_rect;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 int CBViewport::GetWidth() {
-	return m_Rect.right - m_Rect.left;
+	return _rect.right - _rect.left;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 int CBViewport::GetHeight() {
-	return m_Rect.bottom - m_Rect.top;
+	return _rect.bottom - _rect.top;
 }
 
 } // end of namespace WinterMute

@@ -36,51 +36,51 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
 CBActiveRect::CBActiveRect(CBGame *inGame): CBBase(inGame) {
-	CBPlatform::SetRectEmpty(&m_Rect);
-	m_Owner = NULL;
-	m_Frame = NULL;
-	m_Region = NULL;
-	m_ZoomX = 100;
-	m_ZoomY = 100;
-	m_OffsetX = m_OffsetY = 0;
+	CBPlatform::SetRectEmpty(&_rect);
+	_owner = NULL;
+	_frame = NULL;
+	_region = NULL;
+	_zoomX = 100;
+	_zoomY = 100;
+	_offsetX = _offsetY = 0;
 	ClipRect();
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *Owner, CBSubFrame *Frame, int X, int Y, int Width, int Height, float ZoomX, float ZoomY, bool Precise): CBBase(inGame) {
-	m_Owner = Owner;
-	m_Frame = Frame;
-	CBPlatform::SetRect(&m_Rect, X, Y, X + Width, Y + Height);
-	m_ZoomX = ZoomX;
-	m_ZoomY = ZoomY;
-	m_Precise = Precise;
-	m_Region = NULL;
-	m_OffsetX = m_OffsetY = 0;
+	_owner = Owner;
+	_frame = Frame;
+	CBPlatform::SetRect(&_rect, X, Y, X + Width, Y + Height);
+	_zoomX = ZoomX;
+	_zoomY = ZoomY;
+	_precise = Precise;
+	_region = NULL;
+	_offsetX = _offsetY = 0;
 	ClipRect();
 }
 
 //////////////////////////////////////////////////////////////////////
 CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *Owner, CBRegion *Region, int OffsetX, int OffsetY): CBBase(inGame) {
-	m_Owner = Owner;
-	m_Region = Region;
-	CBPlatform::CopyRect(&m_Rect, &Region->m_Rect);
-	CBPlatform::OffsetRect(&m_Rect, -OffsetX, -OffsetY);
-	m_ZoomX = 100;
-	m_ZoomY = 100;
-	m_Precise = true;
-	m_Frame = NULL;
+	_owner = Owner;
+	_region = Region;
+	CBPlatform::CopyRect(&_rect, &Region->_rect);
+	CBPlatform::OffsetRect(&_rect, -OffsetX, -OffsetY);
+	_zoomX = 100;
+	_zoomY = 100;
+	_precise = true;
+	_frame = NULL;
 	ClipRect();
-	m_OffsetX = OffsetX;
-	m_OffsetY = OffsetY;
+	_offsetX = OffsetX;
+	_offsetY = OffsetY;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBActiveRect::~CBActiveRect() {
-	m_Owner = NULL;
-	m_Frame = NULL;
-	m_Region = NULL;
+	_owner = NULL;
+	_frame = NULL;
+	_region = NULL;
 }
 
 
@@ -89,19 +89,19 @@ void CBActiveRect::ClipRect() {
 	RECT rc;
 	bool CustomViewport;
 	Game->GetCurrentViewportRect(&rc, &CustomViewport);
-	CBRenderer *Rend = Game->m_Renderer;
+	CBRenderer *Rend = Game->_renderer;
 
 	if (!CustomViewport) {
-		rc.left -= Rend->m_DrawOffsetX;
-		rc.right -= Rend->m_DrawOffsetX;
-		rc.top -= Rend->m_DrawOffsetY;
-		rc.bottom -= Rend->m_DrawOffsetY;
+		rc.left -= Rend->_drawOffsetX;
+		rc.right -= Rend->_drawOffsetX;
+		rc.top -= Rend->_drawOffsetY;
+		rc.bottom -= Rend->_drawOffsetY;
 	}
 
-	if (rc.left > m_Rect.left) m_OffsetX = rc.left - m_Rect.left;
-	if (rc.top  > m_Rect.top)  m_OffsetY = rc.top  - m_Rect.top;
+	if (rc.left > _rect.left) _offsetX = rc.left - _rect.left;
+	if (rc.top  > _rect.top)  _offsetY = rc.top  - _rect.top;
 
-	CBPlatform::IntersectRect(&m_Rect, &m_Rect, &rc);
+	CBPlatform::IntersectRect(&_rect, &_rect, &rc);
 }
 
 } // end of namespace WinterMute

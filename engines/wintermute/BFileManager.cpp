@@ -83,7 +83,7 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
 CBFileManager::CBFileManager(CBGame *inGame): CBBase(inGame) {
-	m_BasePath = NULL;
+	_basePath = NULL;
 
 	InitPaths();
 	RegisterPackages();
@@ -101,38 +101,38 @@ HRESULT CBFileManager::Cleanup() {
 	int i;
 
 	// delete registered paths
-	for (i = 0; i < m_SinglePaths.GetSize(); i++)
-		delete [] m_SinglePaths[i];
-	m_SinglePaths.RemoveAll();
+	for (i = 0; i < _singlePaths.GetSize(); i++)
+		delete [] _singlePaths[i];
+	_singlePaths.RemoveAll();
 
-	for (i = 0; i < m_PackagePaths.GetSize(); i++)
-		delete [] m_PackagePaths[i];
-	m_PackagePaths.RemoveAll();
+	for (i = 0; i < _packagePaths.GetSize(); i++)
+		delete [] _packagePaths[i];
+	_packagePaths.RemoveAll();
 
 
 	// delete file entries
-	m_FilesIter = m_Files.begin();
-	while (m_FilesIter != m_Files.end()) {
-		delete m_FilesIter->_value;
-		m_FilesIter++;
+	_filesIter = _files.begin();
+	while (_filesIter != _files.end()) {
+		delete _filesIter->_value;
+		_filesIter++;
 	}
-	m_Files.clear();
+	_files.clear();
 
 	// close open files
-	for (i = 0; i < m_OpenFiles.GetSize(); i++) {
-		m_OpenFiles[i]->Close();
-		delete m_OpenFiles[i];
+	for (i = 0; i < _openFiles.GetSize(); i++) {
+		_openFiles[i]->Close();
+		delete _openFiles[i];
 	}
-	m_OpenFiles.RemoveAll();
+	_openFiles.RemoveAll();
 
 
 	// delete packages
-	for (i = 0; i < m_Packages.GetSize(); i++)
-		delete m_Packages[i];
-	m_Packages.RemoveAll();
+	for (i = 0; i < _packages.GetSize(); i++)
+		delete _packages[i];
+	_packages.RemoveAll();
 
-	delete[] m_BasePath;
-	m_BasePath = NULL;
+	delete[] _basePath;
+	_basePath = NULL;
 
 	return S_OK;
 }
@@ -241,8 +241,8 @@ HRESULT CBFileManager::SaveFile(char *Filename, byte *Buffer, uint32 BufferSize,
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::RequestCD(int CD, char *PackageFile, char *Filename) {
 	// unmount all non-local packages
-	for (int i = 0; i < m_Packages.GetSize(); i++) {
-		if (m_Packages[i]->m_CD > 0) m_Packages[i]->Close();
+	for (int i = 0; i < _packages.GetSize(); i++) {
+		if (_packages[i]->_cD > 0) _packages[i]->Close();
 	}
 
 
@@ -265,10 +265,10 @@ HRESULT CBFileManager::AddPath(TPathType Type, const char *Path) {
 
 	switch (Type) {
 	case PATH_SINGLE:
-		m_SinglePaths.Add(buffer);
+		_singlePaths.Add(buffer);
 		break;
 	case PATH_PACKAGE:
-		m_PackagePaths.Add(buffer);
+		_packagePaths.Add(buffer);
 		break;
 	}
 
@@ -278,13 +278,13 @@ HRESULT CBFileManager::AddPath(TPathType Type, const char *Path) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::ReloadPaths() {
 	// delete registered paths
-	for (int i = 0; i < m_SinglePaths.GetSize(); i++)
-		delete [] m_SinglePaths[i];
-	m_SinglePaths.RemoveAll();
+	for (int i = 0; i < _singlePaths.GetSize(); i++)
+		delete [] _singlePaths[i];
+	_singlePaths.RemoveAll();
 
-	for (int i = 0; i < m_PackagePaths.GetSize(); i++)
-		delete [] m_PackagePaths[i];
-	m_PackagePaths.RemoveAll();
+	for (int i = 0; i < _packagePaths.GetSize(); i++)
+		delete [] _packagePaths[i];
+	_packagePaths.RemoveAll();
 
 	return InitPaths();
 }
@@ -299,7 +299,7 @@ HRESULT CBFileManager::InitPaths() {
 	int numPaths;
 
 	// single files paths
-	pathList = Game->m_Registry->ReadString("Resource", "CustomPaths", "");
+	pathList = Game->_registry->ReadString("Resource", "CustomPaths", "");
 	numPaths = CBUtils::StrNumEntries(pathList.c_str(), ';');
 
 	for (int i = 0; i < numPaths; i++) {
@@ -343,7 +343,7 @@ HRESULT CBFileManager::InitPaths() {
 #endif
 
 
-	pathList = Game->m_Registry->ReadString("Resource", "PackagePaths", "");
+	pathList = Game->_registry->ReadString("Resource", "PackagePaths", "");
 	numPaths = CBUtils::StrNumEntries(pathList.c_str(), ';');
 
 	for (int i = 0; i < numPaths; i++) {
@@ -373,8 +373,8 @@ HRESULT CBFileManager::RegisterPackages() {
 #if 0
 	AnsiString extension = AnsiString(".") + AnsiString(PACKAGE_EXTENSION);
 
-	for (int i = 0; i < m_PackagePaths.GetSize(); i++) {
-		boost::filesystem::path absPath = boost::filesystem::system_complete(m_PackagePaths[i]);
+	for (int i = 0; i < _packagePaths.GetSize(); i++) {
+		boost::filesystem::path absPath = boost::filesystem::syste_complete(_packagePaths[i]);
 
 		//Game->LOG(0, "Scanning: %s", absPath.string().c_str());
 		//printf("Scanning: %s\n", absPath.string().c_str());
@@ -398,10 +398,10 @@ HRESULT CBFileManager::RegisterPackages() {
 		}
 	}
 
-	warning("  Registered %d files in %d package(s)", m_Files.size(), m_Packages.GetSize());
-	Game->LOG(0, "  Registered %d files in %d package(s)", m_Files.size(), m_Packages.GetSize());
+	warning("  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
+	Game->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
 #endif
-	warning("  Registered %d files in %d package(s)", m_Files.size(), m_Packages.GetSize());
+	warning("  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
 	return S_OK;
 }
 
@@ -455,17 +455,17 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 		CBPackage *pkg = new CBPackage(Game);
 		if (!pkg) return E_FAIL;
 		
-		pkg->m_BoundToExe = BoundToExe;
+		pkg->_boundToExe = BoundToExe;
 		
 		// read package info
 		byte NameLength = package->readByte();
-		pkg->m_Name = new char[NameLength];
-		package->read(pkg->m_Name, NameLength);
-		pkg->m_CD = package->readByte();
-		pkg->m_Priority = hdr.Priority;
+		pkg->_name = new char[NameLength];
+		package->read(pkg->_name, NameLength);
+		pkg->_cD = package->readByte();
+		pkg->_priority = hdr.Priority;
 		
-		if (!hdr.MasterIndex) pkg->m_CD = 0; // override CD to fixed disk
-		m_Packages.Add(pkg);
+		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
+		_packages.Add(pkg);
 		
 		
 		// read file entries
@@ -503,24 +503,24 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 				TimeDate1 = package->readUint32LE();
 				TimeDate2 = package->readUint32LE();
 			}
-			m_FilesIter = m_Files.find(Name);
-			if (m_FilesIter == m_Files.end()) {
+			_filesIter = _files.find(Name);
+			if (_filesIter == _files.end()) {
 				CBFileEntry *file = new CBFileEntry(Game);
-				file->m_Package = pkg;
-				file->m_Offset = Offset;
-				file->m_Length = Length;
-				file->m_CompressedLength = CompLength;
-				file->m_Flags = Flags;
+				file->_package = pkg;
+				file->_offset = Offset;
+				file->_length = Length;
+				file->_compressedLength = CompLength;
+				file->_flags = Flags;
 				
-				m_Files[Name] = file;
+				_files[Name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
-				if (pkg->m_CD < m_FilesIter->_value->m_Package->m_CD || pkg->m_Priority > m_FilesIter->_value->m_Package->m_Priority) {
-					m_FilesIter->_value->m_Package = pkg;
-					m_FilesIter->_value->m_Offset = Offset;
-					m_FilesIter->_value->m_Length = Length;
-					m_FilesIter->_value->m_CompressedLength = CompLength;
-					m_FilesIter->_value->m_Flags = Flags;
+				if (pkg->_cD < _filesIter->_value->_package->_cD || pkg->_priority > _filesIter->_value->_package->_priority) {
+					_filesIter->_value->_package = pkg;
+					_filesIter->_value->_offset = Offset;
+					_filesIter->_value->_length = Length;
+					_filesIter->_value->_compressedLength = CompLength;
+					_filesIter->_value->_flags = Flags;
 				}
 			}
 			delete [] Name;
@@ -584,18 +584,18 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 		CBPackage *pkg = new CBPackage(Game);
 		if (!pkg) return E_FAIL;
 
-		pkg->m_BoundToExe = BoundToExe;
+		pkg->_boundToExe = BoundToExe;
 
 		// read package info
 		byte NameLength;
 		fread(&NameLength, sizeof(byte ), 1, f);
-		pkg->m_Name = new char[NameLength];
-		fread(pkg->m_Name, NameLength, 1, f);
-		fread(&pkg->m_CD, sizeof(byte ), 1, f);
-		pkg->m_Priority = hdr.Priority;
+		pkg->_name = new char[NameLength];
+		fread(pkg->_name, NameLength, 1, f);
+		fread(&pkg->_cD, sizeof(byte ), 1, f);
+		pkg->_priority = hdr.Priority;
 
-		if (!hdr.MasterIndex) pkg->m_CD = 0; // override CD to fixed disk
-		m_Packages.Add(pkg);
+		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
+		_packages.Add(pkg);
 
 
 		// read file entries
@@ -634,24 +634,24 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 				fread(&TimeDate1, sizeof(uint32), 1, f);
 				fread(&TimeDate2, sizeof(uint32), 1, f);
 			}
-			m_FilesIter = m_Files.find(Name);
-			if (m_FilesIter == m_Files.end()) {
+			_filesIter = _files.find(Name);
+			if (_filesIter == _files.end()) {
 				CBFileEntry *file = new CBFileEntry(Game);
-				file->m_Package = pkg;
-				file->m_Offset = Offset;
-				file->m_Length = Length;
-				file->m_CompressedLength = CompLength;
-				file->m_Flags = Flags;
+				file->_package = pkg;
+				file->_offset = Offset;
+				file->_length = Length;
+				file->_compressedLength = CompLength;
+				file->_flags = Flags;
 
-				m_Files[Name] = file;
+				_files[Name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
-				if (pkg->m_CD < m_FilesIter->_value->m_Package->m_CD || pkg->m_Priority > m_FilesIter->_value->m_Package->m_Priority) {
-					m_FilesIter->_value->m_Package = pkg;
-					m_FilesIter->_value->m_Offset = Offset;
-					m_FilesIter->_value->m_Length = Length;
-					m_FilesIter->_value->m_CompressedLength = CompLength;
-					m_FilesIter->_value->m_Flags = Flags;
+				if (pkg->_cD < _filesIter->_value->_package->_cD || pkg->_priority > _filesIter->_value->_package->_priority) {
+					_filesIter->_value->_package = pkg;
+					_filesIter->_value->_offset = Offset;
+					_filesIter->_value->_length = Length;
+					_filesIter->_value->_compressedLength = CompLength;
+					_filesIter->_value->_flags = Flags;
 				}
 			}
 			delete [] Name;
@@ -685,8 +685,8 @@ Common::File *CBFileManager::OpenPackage(char *Name) {
 	Common::File *ret = new Common::File();
 	char Filename[MAX_PATH];
 
-	for (int i = 0; i < m_PackagePaths.GetSize(); i++) {
-		sprintf(Filename, "%s%s.%s", m_PackagePaths[i], Name, PACKAGE_EXTENSION);
+	for (int i = 0; i < _packagePaths.GetSize(); i++) {
+		sprintf(Filename, "%s%s.%s", _packagePaths[i], Name, PACKAGE_EXTENSION);
 		//ret = fopen(Filename, "rb");
 		ret->open(Filename);
 		if (ret->isOpen()) {
@@ -705,8 +705,8 @@ Common::File *CBFileManager::OpenSingleFile(char *Name) {
 	Common::File *ret = NULL;
 	char Filename[MAX_PATH];
 	
-	for (int i = 0; i < m_SinglePaths.GetSize(); i++) {
-		sprintf(Filename, "%s%s", m_SinglePaths[i], Name);
+	for (int i = 0; i < _singlePaths.GetSize(); i++) {
+		sprintf(Filename, "%s%s", _singlePaths[i], Name);
 		ret->open(Filename);
 		if (ret->isOpen()) 
 			return ret;
@@ -730,8 +730,8 @@ bool CBFileManager::GetFullPath(char *Filename, char *Fullname) {
 	FILE *f = NULL;
 	bool found = false;
 
-	for (int i = 0; i < m_SinglePaths.GetSize(); i++) {
-		sprintf(Fullname, "%s%s", m_SinglePaths[i], Filename);
+	for (int i = 0; i < _singlePaths.GetSize(); i++) {
+		sprintf(Fullname, "%s%s", _singlePaths[i], Filename);
 		f = fopen(Fullname, "rb");
 		if (f) {
 			fclose(f);
@@ -760,8 +760,8 @@ CBFileEntry *CBFileManager::GetPackageEntry(const char *Filename) {
 	CBPlatform::strupr(upc_name);
 
 	CBFileEntry *ret = NULL;
-	m_FilesIter = m_Files.find(upc_name);
-	if (m_FilesIter != m_Files.end()) ret = m_FilesIter->_value;
+	_filesIter = _files.find(upc_name);
+	if (_filesIter != _files.end()) ret = _filesIter->_value;
 
 	delete [] upc_name;
 
@@ -774,7 +774,7 @@ CBFile *CBFileManager::OpenFile(const char *Filename, bool AbsPathWarning) {
 	if (strcmp(Filename, "") == 0) return NULL;
 	//Game->LOG(0, "open file: %s", Filename);
 #ifdef __WIN32__
-	if (Game->m_DEBUG_DebugMode && Game->m_DEBUG_AbsolutePathWarning && AbsPathWarning) {
+	if (Game->_dEBUG_DebugMode && Game->_dEBUG_AbsolutePathWarning && AbsPathWarning) {
 		char Drive[_MAX_DRIVE];
 		_splitpath(Filename, Drive, NULL, NULL, NULL);
 		if (Drive[0] != '\0') {
@@ -784,18 +784,18 @@ CBFile *CBFileManager::OpenFile(const char *Filename, bool AbsPathWarning) {
 #endif
 
 	CBFile *File = OpenFileRaw(Filename);
-	if (File) m_OpenFiles.Add(File);
+	if (File) _openFiles.Add(File);
 	return File;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::CloseFile(CBFile *File) {
-	for (int i = 0; i < m_OpenFiles.GetSize(); i++) {
-		if (m_OpenFiles[i] == File) {
-			m_OpenFiles[i]->Close();
-			delete m_OpenFiles[i];
-			m_OpenFiles.RemoveAt(i);
+	for (int i = 0; i < _openFiles.GetSize(); i++) {
+		if (_openFiles[i] == File) {
+			_openFiles[i]->Close();
+			delete _openFiles[i];
+			_openFiles.RemoveAt(i);
 			return S_OK;
 		}
 	}
@@ -837,9 +837,9 @@ CBFile *CBFileManager::OpenFileRaw(const char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::RestoreCurrentDir() {
-	if (!m_BasePath) return S_OK;
+	if (!_basePath) return S_OK;
 	else {
-		if (!chdir(m_BasePath)) return S_OK;
+		if (!chdir(_basePath)) return S_OK;
 		else return E_FAIL;
 	}
 }
@@ -850,8 +850,8 @@ HRESULT CBFileManager::SetBasePath(char *Path) {
 	Cleanup();
 
 	if (Path) {
-		m_BasePath = new char[strlen(Path) + 1];
-		strcpy(m_BasePath, Path);
+		_basePath = new char[strlen(Path) + 1];
+		strcpy(_basePath, Path);
 	}
 
 	InitPaths();

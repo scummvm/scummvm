@@ -41,7 +41,7 @@ public:
 	virtual ~CBNamedObject(void);
 	CBNamedObject(TDynamicConstructor, TDynamicConstructor);
 
-	char *m_Name;
+	char *_name;
 	void SetName(char *Name);
 };
 

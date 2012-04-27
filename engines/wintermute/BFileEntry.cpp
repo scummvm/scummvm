@@ -32,19 +32,19 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBFileEntry::CBFileEntry(CBGame *inGame): CBBase(inGame) {
-	m_Package = NULL;
-	m_Length = m_CompressedLength = m_Offset = m_Flags = 0;
-	m_Filename = "";
+	_package = NULL;
+	_length = _compressedLength = _offset = _flags = 0;
+	_filename = "";
 
-	m_TimeDate1 = m_TimeDate2 = 0;
+	_timeDate1 = _timeDate2 = 0;
 
-	m_JournalTime = 0;
+	_journalTime = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBFileEntry::~CBFileEntry() {
-	m_Package = NULL; // ref only
+	_package = NULL; // ref only
 }
 
 } // end of namespace WinterMute

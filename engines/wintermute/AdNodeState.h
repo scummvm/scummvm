@@ -42,14 +42,14 @@ public:
 	DECLARE_PERSISTENT(CAdNodeState, CBBase)
 	CAdNodeState(CBGame *inGame);
 	virtual ~CAdNodeState();
-	char *m_Name;
-	bool m_Active;
-	char *m_Caption[7];
+	char *_name;
+	bool _active;
+	char *_caption[7];
 	void SetCaption(char *Caption, int Case);
 	char *GetCaption(int Case);
-	uint32 m_AlphaColor;
-	char *m_Filename;
-	char *m_Cursor;
+	uint32 _alphaColor;
+	char *_filename;
+	char *_cursor;
 
 };
 

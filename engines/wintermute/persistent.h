@@ -47,7 +47,7 @@ namespace WinterMute {
 	
 
 #define DECLARE_PERSISTENT(class_name, parent_class)\
-static const char m_ClassName[];\
+static const char _className[];\
 static void* WINAPI PersistBuild(void);\
 virtual const char* GetClassName();\
 static HRESULT WINAPI PersistLoad(void* Instance, CBPersistMgr* PersistMgr);\
@@ -58,7 +58,7 @@ void operator delete(void* p);\
 
 	
 #define IMPLEMENT_PERSISTENT(class_name, persistent_class)\
-const char class_name::m_ClassName[] = #class_name;\
+const char class_name::_className[] = #class_name;\
 void* class_name::PersistBuild(){\
 return ::new class_name(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);\
 }\
@@ -71,7 +71,7 @@ const char* class_name::GetClassName(){\
 return #class_name;\
 }\
 \
-CSysClass Register##class_name(class_name::m_ClassName, class_name::PersistBuild, class_name::PersistLoad, persistent_class);\
+CSysClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);\
 \
 void* class_name::operator new (size_t size){\
 void* ret = ::operator new(size);\

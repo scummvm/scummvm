@@ -48,20 +48,20 @@ public:
 	byte GetVolumePercent(TSoundType Type);
 	HRESULT SetVolumePercent(TSoundType Type, byte Percent);
 	HRESULT SetVolume(TSoundType Type, int Volume);
-	uint32 m_VolumeOriginal;
-	int m_VolumeMaster;
-	int m_VolumeMusic;
-	int m_VolumeSpeech;
-	int m_VolumeSFX;
+	uint32 _volumeOriginal;
+	int _volumeMaster;
+	int _volumeMusic;
+	int _volumeSpeech;
+	int _volumeSFX;
 	HRESULT RemoveSound(CBSoundBuffer *Sound);
 	CBSoundBuffer *AddSound(const char *Filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
 	HRESULT AddSound(CBSoundBuffer *Sound, TSoundType Type = SOUND_SFX);
 	HRESULT InitLoop();
 	HRESULT Initialize();
-	bool m_SoundAvailable;
+	bool _soundAvailable;
 	CBSoundMgr(CBGame *inGame);
 	virtual ~CBSoundMgr();
-	CBArray<CBSoundBuffer *, CBSoundBuffer *> m_Sounds;
+	CBArray<CBSoundBuffer *, CBSoundBuffer *> _sounds;
 	void SaveSettings();
 };
 

@@ -53,48 +53,48 @@ IMPLEMENT_PERSISTENT(CUIEdit, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
-	m_Type = UI_EDIT;
+	_type = UI_EDIT;
 
-	m_FontSelected = NULL;
+	_fontSelected = NULL;
 
-	m_SelStart = m_SelEnd = 10000;
-	m_ScrollOffset = 0;
+	_selStart = _selEnd = 10000;
+	_scrollOffset = 0;
 
-	m_CursorChar = NULL;
+	_cursorChar = NULL;
 	SetCursorChar("|");
 
 #ifdef __WIN32__
-	m_CursorBlinkRate = GetCaretBlinkTime();
+	_cursorBlinkRate = GetCaretBlinkTime();
 #else
-	m_CursorBlinkRate = 600;
+	_cursorBlinkRate = 600;
 #endif
-	m_FrameWidth = 0;
+	_frameWidth = 0;
 
 	SetText("");
 
-	m_LastBlinkTime = 0;
-	m_CursorVisible = true;
+	_lastBlinkTime = 0;
+	_cursorVisible = true;
 
-	m_MaxLength = -1;
+	_maxLength = -1;
 
-	m_CanFocus = true;
+	_canFocus = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CUIEdit::~CUIEdit() {
-	if (!m_SharedFonts) {
-		if (m_FontSelected)   Game->m_FontStorage->RemoveFont(m_FontSelected);
+	if (!_sharedFonts) {
+		if (_fontSelected)   Game->_fontStorage->RemoveFont(_fontSelected);
 	}
 
-	delete[] m_CursorChar;
-	m_CursorChar = NULL;
+	delete[] _cursorChar;
+	_cursorChar = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEdit::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIEdit::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -102,8 +102,8 @@ HRESULT CUIEdit::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing EDIT file '%s'", Filename);
 
@@ -187,60 +187,60 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete m_Back;
-			m_Back = new CUITiledImage(Game);
-			if (!m_Back || FAILED(m_Back->LoadFile((char *)params))) {
-				delete m_Back;
-				m_Back = NULL;
+			delete _back;
+			_back = new CUITiledImage(Game);
+			if (!_back || FAILED(_back->LoadFile((char *)params))) {
+				delete _back;
+				_back = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete m_Image;
-			m_Image = new CBSprite(Game);
-			if (!m_Image || FAILED(m_Image->LoadFile((char *)params))) {
-				delete m_Image;
-				m_Image = NULL;
+			delete _image;
+			_image = new CBSprite(Game);
+			if (!_image || FAILED(_image->LoadFile((char *)params))) {
+				delete _image;
+				_image = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_FONT:
-			if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
-			m_Font = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_Font) cmd = PARSERR_GENERIC;
+			if (_font) Game->_fontStorage->RemoveFont(_font);
+			_font = Game->_fontStorage->AddFont((char *)params);
+			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_SELECTED:
-			if (m_FontSelected) Game->m_FontStorage->RemoveFont(m_FontSelected);
-			m_FontSelected = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_FontSelected) cmd = PARSERR_GENERIC;
+			if (_fontSelected) Game->_fontStorage->RemoveFont(_fontSelected);
+			_fontSelected = Game->_fontStorage->AddFont((char *)params);
+			if (!_fontSelected) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TEXT:
 			SetText((char *)params);
-			Game->m_StringTable->Expand(&m_Text);
+			Game->_stringTable->Expand(&_text);
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &m_PosX);
+			parser.ScanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &m_PosY);
+			parser.ScanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &m_Width);
+			parser.ScanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &m_Height);
+			parser.ScanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_MAX_LENGTH:
-			parser.ScanStr((char *)params, "%d", &m_MaxLength);
+			parser.ScanStr((char *)params, "%d", &_maxLength);
 			break;
 
 		case TOKEN_CAPTION:
@@ -248,21 +248,21 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete m_Cursor;
-			m_Cursor = new CBSprite(Game);
-			if (!m_Cursor || FAILED(m_Cursor->LoadFile((char *)params))) {
-				delete m_Cursor;
-				m_Cursor = NULL;
+			delete _cursor;
+			_cursor = new CBSprite(Game);
+			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+				delete _cursor;
+				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_CURSOR_BLINK_RATE:
-			parser.ScanStr((char *)params, "%d", &m_CursorBlinkRate);
+			parser.ScanStr((char *)params, "%d", &_cursorBlinkRate);
 			break;
 
 		case TOKEN_FRAME_WIDTH:
-			parser.ScanStr((char *)params, "%d", &m_FrameWidth);
+			parser.ScanStr((char *)params, "%d", &_frameWidth);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -270,15 +270,15 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
-			parser.ScanStr((char *)params, "%b", &m_ParentNotify);
+			parser.ScanStr((char *)params, "%b", &_parentNotify);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &m_Disable);
+			parser.ScanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &m_Visible);
+			parser.ScanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -305,47 +305,47 @@ HRESULT CUIEdit::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "EDIT\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	if (m_Back && m_Back->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", m_Back->m_Filename);
+	if (_back && _back->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
 
-	if (m_Image && m_Image->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", m_Image->m_Filename);
+	if (_image && _image->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 
-	if (m_Font && m_Font->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", m_Font->m_Filename);
-	if (m_FontSelected && m_FontSelected->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_SELECTED=\"%s\"\n", m_FontSelected->m_Filename);
+	if (_font && _font->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+	if (_fontSelected && _fontSelected->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->_filename);
 
-	if (m_Cursor && m_Cursor->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", m_Cursor->m_Filename);
-
-	Buffer->PutTextIndent(Indent + 2, "\n");
-
-	if (m_Text)
-		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", m_Text);
+	if (_cursor && _cursor->_filename)
+		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", m_PosX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", m_PosY);
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", m_Width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", m_Height);
-	Buffer->PutTextIndent(Indent + 2, "MAX_LENGTH=%d\n", m_MaxLength);
-	Buffer->PutTextIndent(Indent + 2, "CURSOR_BLINK_RATE=%d\n", m_CursorBlinkRate);
-	Buffer->PutTextIndent(Indent + 2, "FRAME_WIDTH=%d\n", m_FrameWidth);
+	if (_text)
+		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", m_Disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", m_Visible ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", m_ParentNotify ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "\n");
+
+	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
+	Buffer->PutTextIndent(Indent + 2, "MAX_LENGTH=%d\n", _maxLength);
+	Buffer->PutTextIndent(Indent + 2, "CURSOR_BLINK_RATE=%d\n", _cursorBlinkRate);
+	Buffer->PutTextIndent(Indent + 2, "FRAME_WIDTH=%d\n", _frameWidth);
+
+	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
 	// scripts
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
@@ -367,9 +367,9 @@ HRESULT CUIEdit::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	if (strcmp(Name, "SetSelectedFont") == 0) {
 		Stack->CorrectParams(1);
 
-		if (m_FontSelected) Game->m_FontStorage->RemoveFont(m_FontSelected);
-		m_FontSelected = Game->m_FontStorage->AddFont(Stack->Pop()->GetString());
-		Stack->PushBool(m_FontSelected != NULL);
+		if (_fontSelected) Game->_fontStorage->RemoveFont(_fontSelected);
+		_fontSelected = Game->_fontStorage->AddFont(Stack->Pop()->GetString());
+		Stack->PushBool(_fontSelected != NULL);
 
 		return S_OK;
 	}
@@ -380,75 +380,75 @@ HRESULT CUIEdit::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIEdit::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("editor");
-		return m_ScValue;
+		_scValue->SetString("editor");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SelStart") == 0) {
-		m_ScValue->SetInt(m_SelStart);
-		return m_ScValue;
+		_scValue->SetInt(_selStart);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SelEnd") == 0) {
-		m_ScValue->SetInt(m_SelEnd);
-		return m_ScValue;
+		_scValue->SetInt(_selEnd);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CursorBlinkRate") == 0) {
-		m_ScValue->SetInt(m_CursorBlinkRate);
-		return m_ScValue;
+		_scValue->SetInt(_cursorBlinkRate);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CursorChar") == 0) {
-		m_ScValue->SetString(m_CursorChar);
-		return m_ScValue;
+		_scValue->SetString(_cursorChar);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FrameWidth") == 0) {
-		m_ScValue->SetInt(m_FrameWidth);
-		return m_ScValue;
+		_scValue->SetInt(_frameWidth);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MaxLength") == 0) {
-		m_ScValue->SetInt(m_MaxLength);
-		return m_ScValue;
+		_scValue->SetInt(_maxLength);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Text") == 0) {
-		if (Game->m_TextEncoding == TEXT_UTF8) {
-			WideString wstr = StringUtil::AnsiToWide(m_Text);
-			m_ScValue->SetString(StringUtil::WideToUtf8(wstr).c_str());
+		if (Game->_textEncoding == TEXT_UTF8) {
+			WideString wstr = StringUtil::AnsiToWide(_text);
+			_scValue->SetString(StringUtil::WideToUtf8(wstr).c_str());
 		} else {
-			m_ScValue->SetString(m_Text);
+			_scValue->SetString(_text);
 		}
-		return m_ScValue;
+		return _scValue;
 	}
 
 	else return CUIObject::ScGetProperty(Name);
@@ -461,9 +461,9 @@ HRESULT CUIEdit::ScSetProperty(char *Name, CScValue *Value) {
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "SelStart") == 0) {
-		m_SelStart = Value->GetInt();
-		m_SelStart = MAX(m_SelStart, 0);
-		m_SelStart = MIN((size_t)m_SelStart, strlen(m_Text));
+		_selStart = Value->GetInt();
+		_selStart = MAX(_selStart, 0);
+		_selStart = MIN((size_t)_selStart, strlen(_text));
 		return S_OK;
 	}
 
@@ -471,9 +471,9 @@ HRESULT CUIEdit::ScSetProperty(char *Name, CScValue *Value) {
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SelEnd") == 0) {
-		m_SelEnd = Value->GetInt();
-		m_SelEnd = MAX(m_SelEnd, 0);
-		m_SelEnd = MIN((size_t)m_SelEnd, strlen(m_Text));
+		_selEnd = Value->GetInt();
+		_selEnd = MAX(_selEnd, 0);
+		_selEnd = MIN((size_t)_selEnd, strlen(_text));
 		return S_OK;
 	}
 
@@ -481,7 +481,7 @@ HRESULT CUIEdit::ScSetProperty(char *Name, CScValue *Value) {
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CursorBlinkRate") == 0) {
-		m_CursorBlinkRate = Value->GetInt();
+		_cursorBlinkRate = Value->GetInt();
 		return S_OK;
 	}
 
@@ -497,7 +497,7 @@ HRESULT CUIEdit::ScSetProperty(char *Name, CScValue *Value) {
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FrameWidth") == 0) {
-		m_FrameWidth = Value->GetInt();
+		_frameWidth = Value->GetInt();
 		return S_OK;
 	}
 
@@ -505,7 +505,7 @@ HRESULT CUIEdit::ScSetProperty(char *Name, CScValue *Value) {
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MaxLength") == 0) {
-		m_MaxLength = Value->GetInt();
+		_maxLength = Value->GetInt();
 		return S_OK;
 	}
 
@@ -513,7 +513,7 @@ HRESULT CUIEdit::ScSetProperty(char *Name, CScValue *Value) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Text") == 0) {
-		if (Game->m_TextEncoding == TEXT_UTF8) {
+		if (Game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::Utf8ToWide(Value->GetString());
 			SetText(StringUtil::WideToAnsi(wstr).c_str());
 		} else {
@@ -535,72 +535,72 @@ char *CUIEdit::ScToString() {
 //////////////////////////////////////////////////////////////////////////
 void CUIEdit::SetCursorChar(char *Char) {
 	if (!Char) return;
-	delete[] m_CursorChar;
-	m_CursorChar = new char [strlen(Char) + 1];
-	if (m_CursorChar) strcpy(m_CursorChar, Char);
+	delete[] _cursorChar;
+	_cursorChar = new char [strlen(Char) + 1];
+	if (_cursorChar) strcpy(_cursorChar, Char);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
-	if (!m_Visible) return S_OK;
+	if (!_visible) return S_OK;
 
 
 	// hack!
-	TTextEncoding OrigEncoding = Game->m_TextEncoding;
-	Game->m_TextEncoding = TEXT_ANSI;
+	TTextEncoding OrigEncoding = Game->_textEncoding;
+	Game->_textEncoding = TEXT_ANSI;
 
-	if (m_Back) m_Back->Display(OffsetX + m_PosX, OffsetY + m_PosY, m_Width, m_Height);
-	if (m_Image) m_Image->Draw(OffsetX + m_PosX, OffsetY + m_PosY, NULL);
+	if (_back) _back->Display(OffsetX + _posX, OffsetY + _posY, _width, _height);
+	if (_image) _image->Draw(OffsetX + _posX, OffsetY + _posY, NULL);
 
 	// prepare fonts
 	CBFont *font;
 	CBFont *sfont;
 
-	if (m_Font) font = m_Font;
-	else font = Game->m_SystemFont;
+	if (_font) font = _font;
+	else font = Game->_systemFont;
 
-	if (m_FontSelected) sfont = m_FontSelected;
+	if (_fontSelected) sfont = _fontSelected;
 	else sfont = font;
 
 	bool focused = IsFocused();
 
-	m_SelStart = MAX(m_SelStart, 0);
-	m_SelEnd   = MAX(m_SelEnd, 0);
+	_selStart = MAX(_selStart, 0);
+	_selEnd   = MAX(_selEnd, 0);
 
-	m_SelStart = MIN((size_t)m_SelStart, strlen(m_Text));
-	m_SelEnd   = MIN((size_t)m_SelEnd,   strlen(m_Text));
+	_selStart = MIN((size_t)_selStart, strlen(_text));
+	_selEnd   = MIN((size_t)_selEnd,   strlen(_text));
 
-	//int CursorWidth = font->GetCharWidth(m_CursorChar[0]);
-	int CursorWidth = font->GetTextWidth((byte  *)m_CursorChar);
+	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
+	int CursorWidth = font->GetTextWidth((byte  *)_cursorChar);
 
 	int s1, s2;
 	bool CurFirst;
 	// modify scroll offset
-	if (m_SelStart >= m_SelEnd) {
-		while (font->GetTextWidth((byte  *)m_Text + m_ScrollOffset, std::max(0, m_SelEnd - m_ScrollOffset)) > m_Width - CursorWidth - 2 * m_FrameWidth) {
-			m_ScrollOffset++;
-			if (m_ScrollOffset >= strlen(m_Text)) break;
+	if (_selStart >= _selEnd) {
+		while (font->GetTextWidth((byte  *)_text + _scrollOffset, std::max(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
+			_scrollOffset++;
+			if (_scrollOffset >= strlen(_text)) break;
 		}
 
-		m_ScrollOffset = std::min(m_ScrollOffset, m_SelEnd);
+		_scrollOffset = std::min(_scrollOffset, _selEnd);
 
-		s1 = m_SelEnd;
-		s2 = m_SelStart;
+		s1 = _selEnd;
+		s2 = _selStart;
 		CurFirst = true;
 	} else {
-		while (font->GetTextWidth((byte  *)m_Text + m_ScrollOffset, std::max(0, m_SelStart - m_ScrollOffset)) +
-		        sfont->GetTextWidth((byte  *)(m_Text + std::max(m_ScrollOffset, m_SelStart)), m_SelEnd - std::max(m_ScrollOffset, m_SelStart))
+		while (font->GetTextWidth((byte  *)_text + _scrollOffset, std::max(0, _selStart - _scrollOffset)) +
+		        sfont->GetTextWidth((byte  *)(_text + std::max(_scrollOffset, _selStart)), _selEnd - std::max(_scrollOffset, _selStart))
 
-		        > m_Width - CursorWidth - 2 * m_FrameWidth) {
-			m_ScrollOffset++;
-			if (m_ScrollOffset >= strlen(m_Text)) break;
+		        > _width - CursorWidth - 2 * _frameWidth) {
+			_scrollOffset++;
+			if (_scrollOffset >= strlen(_text)) break;
 		}
 
-		m_ScrollOffset = std::min(m_ScrollOffset, m_SelEnd);
+		_scrollOffset = std::min(_scrollOffset, _selEnd);
 
-		s1 = m_SelStart;
-		s2 = m_SelEnd;
+		s1 = _selStart;
+		s2 = _selEnd;
 		CurFirst = false;
 	}
 
@@ -611,74 +611,74 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 		// draw text
 		int xxx, yyy, width, height;
 
-		xxx = m_PosX + m_FrameWidth + OffsetX;
-		yyy = m_PosY + m_FrameWidth + OffsetY;
+		xxx = _posX + _frameWidth + OffsetX;
+		yyy = _posY + _frameWidth + OffsetY;
 
-		width = m_PosX + m_Width + OffsetX - m_FrameWidth;
+		width = _posX + _width + OffsetX - _frameWidth;
 		height = std::max(font->GetLetterHeight(), sfont->GetLetterHeight());
 
-		if (Game->m_TextRTL) xxx += AlignOffset;
+		if (Game->_textRTL) xxx += AlignOffset;
 
 		TTextAlign Align = TAL_LEFT;
 
 
 		// unselected 1
-		if (s1 > m_ScrollOffset) {
-			if (Count) font->DrawText((byte  *)m_Text + m_ScrollOffset, xxx, yyy, width - xxx, Align, height, s1 - m_ScrollOffset);
-			xxx += font->GetTextWidth((byte  *)m_Text + m_ScrollOffset, s1 - m_ScrollOffset);
-			AlignOffset += font->GetTextWidth((byte  *)m_Text + m_ScrollOffset, s1 - m_ScrollOffset);
+		if (s1 > _scrollOffset) {
+			if (Count) font->DrawText((byte  *)_text + _scrollOffset, xxx, yyy, width - xxx, Align, height, s1 - _scrollOffset);
+			xxx += font->GetTextWidth((byte  *)_text + _scrollOffset, s1 - _scrollOffset);
+			AlignOffset += font->GetTextWidth((byte  *)_text + _scrollOffset, s1 - _scrollOffset);
 		}
 
 		// cursor
 		if (focused && CurFirst) {
 			if (Count) {
-				if (CBPlatform::GetTime() - m_LastBlinkTime >= m_CursorBlinkRate) {
-					m_LastBlinkTime = CBPlatform::GetTime();
-					m_CursorVisible = !m_CursorVisible;
+				if (CBPlatform::GetTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = CBPlatform::GetTime();
+					_cursorVisible = !_cursorVisible;
 				}
-				if (m_CursorVisible)
-					font->DrawText((byte  *)m_CursorChar, xxx, yyy, width - xxx, Align, height, 1);
+				if (_cursorVisible)
+					font->DrawText((byte  *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
 			xxx += CursorWidth;
 			AlignOffset += CursorWidth;
 		}
 
 		// selected
-		int s3 = std::max(s1, m_ScrollOffset);
+		int s3 = std::max(s1, _scrollOffset);
 
 		if (s2 - s3 > 0) {
-			if (Count) sfont->DrawText((byte  *)m_Text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
-			xxx += sfont->GetTextWidth((byte  *)m_Text + s3, s2 - s3);
-			AlignOffset += sfont->GetTextWidth((byte  *)m_Text + s3, s2 - s3);
+			if (Count) sfont->DrawText((byte  *)_text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
+			xxx += sfont->GetTextWidth((byte  *)_text + s3, s2 - s3);
+			AlignOffset += sfont->GetTextWidth((byte  *)_text + s3, s2 - s3);
 		}
 
 		// cursor
 		if (focused && !CurFirst) {
 			if (Count) {
-				if (CBPlatform::GetTime() - m_LastBlinkTime >= m_CursorBlinkRate) {
-					m_LastBlinkTime = CBPlatform::GetTime();
-					m_CursorVisible = !m_CursorVisible;
+				if (CBPlatform::GetTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = CBPlatform::GetTime();
+					_cursorVisible = !_cursorVisible;
 				}
-				if (m_CursorVisible)
-					font->DrawText((byte  *)m_CursorChar, xxx, yyy, width - xxx, Align, height, 1);
+				if (_cursorVisible)
+					font->DrawText((byte  *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
 			xxx += CursorWidth;
 			AlignOffset += CursorWidth;
 		}
 
 		// unselected 2
-		if (Count) font->DrawText((byte  *)m_Text + s2, xxx, yyy, width - xxx, Align, height);
-		AlignOffset += font->GetTextWidth((byte  *)m_Text + s2);
+		if (Count) font->DrawText((byte  *)_text + s2, xxx, yyy, width - xxx, Align, height);
+		AlignOffset += font->GetTextWidth((byte  *)_text + s2);
 
-		AlignOffset = (m_Width - 2 * m_FrameWidth) - AlignOffset;
+		AlignOffset = (_width - 2 * _frameWidth) - AlignOffset;
 		if (AlignOffset < 0) AlignOffset = 0;
 	}
 
 
-	Game->m_Renderer->m_RectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + m_PosX, OffsetY + m_PosY, m_Width, m_Height, 100, 100, false));
+	Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
 
 
-	Game->m_TextEncoding = OrigEncoding;
+	Game->_textEncoding = OrigEncoding;
 
 	return S_OK;
 }
@@ -698,70 +698,70 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 			// ctrl+A
 		case SDLK_a:
 			if (CBKeyboardState::IsControlDown()) {
-				m_SelStart = 0;
-				m_SelEnd = strlen(m_Text);
+				_selStart = 0;
+				_selEnd = strlen(_text);
 				Handled = true;
 			}
 			break;
 
 		case SDLK_BACKSPACE:
-			if (m_SelStart == m_SelEnd) {
-				if (Game->m_TextRTL) DeleteChars(m_SelStart, m_SelStart + 1);
-				else DeleteChars(m_SelStart - 1, m_SelStart);
-			} else DeleteChars(m_SelStart, m_SelEnd);
-			if (m_SelEnd >= m_SelStart) m_SelEnd -= std::max(1, m_SelEnd - m_SelStart);
-			m_SelStart = m_SelEnd;
+			if (_selStart == _selEnd) {
+				if (Game->_textRTL) DeleteChars(_selStart, _selStart + 1);
+				else DeleteChars(_selStart - 1, _selStart);
+			} else DeleteChars(_selStart, _selEnd);
+			if (_selEnd >= _selStart) _selEnd -= std::max(1, _selEnd - _selStart);
+			_selStart = _selEnd;
 
 			Handled = true;
 			break;
 
 		case SDLK_LEFT:
 		case SDLK_UP:
-			m_SelEnd--;
-			if (!CBKeyboardState::IsShiftDown()) m_SelStart = m_SelEnd;
+			_selEnd--;
+			if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			Handled = true;
 			break;
 
 		case SDLK_RIGHT:
 		case SDLK_DOWN:
-			m_SelEnd++;
-			if (!CBKeyboardState::IsShiftDown()) m_SelStart = m_SelEnd;
+			_selEnd++;
+			if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			Handled = true;
 			break;
 
 		case SDLK_HOME:
-			if (Game->m_TextRTL) {
-				m_SelEnd = strlen(m_Text);
-				if (!CBKeyboardState::IsShiftDown()) m_SelStart = m_SelEnd;
+			if (Game->_textRTL) {
+				_selEnd = strlen(_text);
+				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			} else {
-				m_SelEnd = 0;
-				if (!CBKeyboardState::IsShiftDown()) m_SelStart = m_SelEnd;
+				_selEnd = 0;
+				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			}
 			Handled = true;
 			break;
 
 		case SDLK_END:
-			if (Game->m_TextRTL) {
-				m_SelEnd = 0;
-				if (!CBKeyboardState::IsShiftDown()) m_SelStart = m_SelEnd;
+			if (Game->_textRTL) {
+				_selEnd = 0;
+				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			} else {
-				m_SelEnd = strlen(m_Text);
-				if (!CBKeyboardState::IsShiftDown()) m_SelStart = m_SelEnd;
+				_selEnd = strlen(_text);
+				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			}
 			Handled = true;
 			break;
 
 		case SDLK_DELETE:
-			if (m_SelStart == m_SelEnd) {
-				if (Game->m_TextRTL) {
-					DeleteChars(m_SelStart - 1, m_SelStart);
-					m_SelEnd--;
-					if (m_SelEnd < 0) m_SelEnd = 0;
-				} else DeleteChars(m_SelStart, m_SelStart + 1);
-			} else DeleteChars(m_SelStart, m_SelEnd);
-			if (m_SelEnd > m_SelStart) m_SelEnd -= (m_SelEnd - m_SelStart);
+			if (_selStart == _selEnd) {
+				if (Game->_textRTL) {
+					DeleteChars(_selStart - 1, _selStart);
+					_selEnd--;
+					if (_selEnd < 0) _selEnd = 0;
+				} else DeleteChars(_selStart, _selStart + 1);
+			} else DeleteChars(_selStart, _selEnd);
+			if (_selEnd > _selStart) _selEnd -= (_selEnd - _selStart);
 
-			m_SelStart = m_SelEnd;
+			_selStart = _selEnd;
 			Handled = true;
 			break;
 		}
@@ -769,13 +769,13 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 	}
 #if 0
 	else if (event->type == SDL_TEXTINPUT) {
-		if (m_SelStart != m_SelEnd) DeleteChars(m_SelStart, m_SelEnd);
+		if (_selStart != _selEnd) DeleteChars(_selStart, _selEnd);
 
 		WideString wstr = StringUtil::Utf8ToWide(event->text.text);
-		m_SelEnd += InsertChars(m_SelEnd, (byte  *)StringUtil::WideToAnsi(wstr).c_str(), 1);
+		_selEnd += InsertChars(_selEnd, (byte  *)StringUtil::WideToAnsi(wstr).c_str(), 1);
 
-		if (Game->m_TextRTL) m_SelEnd = m_SelStart;
-		else m_SelStart = m_SelEnd;
+		if (Game->_textRTL) _selEnd = _selStart;
+		else _selStart = _selEnd;
 
 		return true;
 	}
@@ -790,17 +790,17 @@ int CUIEdit::DeleteChars(int Start, int End) {
 	if (Start > End) CBUtils::Swap(&Start, &End);
 
 	Start = MAX(Start, (int)0);
-	End = MIN((size_t)End, strlen(m_Text));
+	End = MIN((size_t)End, strlen(_text));
 
-	char *str = new char[strlen(m_Text) - (End - Start) + 1];
+	char *str = new char[strlen(_text) - (End - Start) + 1];
 	if (str) {
-		if (Start > 0) memcpy(str, m_Text, Start);
-		memcpy(str + std::max(0, Start), m_Text + End, strlen(m_Text) - End + 1);
+		if (Start > 0) memcpy(str, _text, Start);
+		memcpy(str + std::max(0, Start), _text + End, strlen(_text) - End + 1);
 
-		delete[] m_Text;
-		m_Text = str;
+		delete[] _text;
+		_text = str;
 	}
-	if (m_ParentNotify && m_Parent) m_Parent->ApplyEvent(m_Name);
+	if (_parentNotify && _parent) _parent->ApplyEvent(_name);
 
 	return End - Start;
 }
@@ -808,24 +808,24 @@ int CUIEdit::DeleteChars(int Start, int End) {
 
 //////////////////////////////////////////////////////////////////////////
 int CUIEdit::InsertChars(int Pos, byte *Chars, int Num) {
-	if (strlen(m_Text) + Num > m_MaxLength) {
-		Num -= (strlen(m_Text) + Num - m_MaxLength);
+	if (strlen(_text) + Num > _maxLength) {
+		Num -= (strlen(_text) + Num - _maxLength);
 	}
 
 	Pos = MAX(Pos, (int)0);
-	Pos = MIN((size_t)Pos, strlen(m_Text));
+	Pos = MIN((size_t)Pos, strlen(_text));
 
-	char *str = new char[strlen(m_Text) + Num + 1];
+	char *str = new char[strlen(_text) + Num + 1];
 	if (str) {
-		if (Pos > 0) memcpy(str, m_Text, Pos);
-		memcpy(str + Pos + Num, m_Text + Pos, strlen(m_Text) - Pos + 1);
+		if (Pos > 0) memcpy(str, _text, Pos);
+		memcpy(str + Pos + Num, _text + Pos, strlen(_text) - Pos + 1);
 
 		memcpy(str + Pos, Chars, Num);
 
-		delete[] m_Text;
-		m_Text = str;
+		delete[] _text;
+		_text = str;
 	}
-	if (m_ParentNotify && m_Parent) m_Parent->ApplyEvent(m_Name);
+	if (_parentNotify && _parent) _parent->ApplyEvent(_name);
 
 	return Num;
 }
@@ -837,18 +837,18 @@ HRESULT CUIEdit::Persist(CBPersistMgr *PersistMgr) {
 
 	CUIObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_CursorBlinkRate));
-	PersistMgr->Transfer(TMEMBER(m_CursorChar));
-	PersistMgr->Transfer(TMEMBER(m_FontSelected));
-	PersistMgr->Transfer(TMEMBER(m_FrameWidth));
-	PersistMgr->Transfer(TMEMBER(m_MaxLength));
-	PersistMgr->Transfer(TMEMBER(m_ScrollOffset));
-	PersistMgr->Transfer(TMEMBER(m_SelEnd));
-	PersistMgr->Transfer(TMEMBER(m_SelStart));
+	PersistMgr->Transfer(TMEMBER(_cursorBlinkRate));
+	PersistMgr->Transfer(TMEMBER(_cursorChar));
+	PersistMgr->Transfer(TMEMBER(_fontSelected));
+	PersistMgr->Transfer(TMEMBER(_frameWidth));
+	PersistMgr->Transfer(TMEMBER(_maxLength));
+	PersistMgr->Transfer(TMEMBER(_scrollOffset));
+	PersistMgr->Transfer(TMEMBER(_selEnd));
+	PersistMgr->Transfer(TMEMBER(_selStart));
 
-	if (!PersistMgr->m_Saving) {
-		m_CursorVisible = false;
-		m_LastBlinkTime = 0;
+	if (!PersistMgr->_saving) {
+		_cursorVisible = false;
+		_lastBlinkTime = 0;
 	}
 
 	return S_OK;

@@ -80,23 +80,23 @@ public:
 	CSysClassRegistry();
 	virtual ~CSysClassRegistry();
 
-	bool m_Disabled;
-	int m_Count;
+	bool _disabled;
+	int _count;
 
 	typedef Common::HashMap<CSysClass *, CSysClass *> Classes;
-	Classes m_Classes;
+	Classes _classes;
 
 	typedef Common::HashMap<AnsiString, CSysClass *> NameMap;
-	NameMap m_NameMap;
+	NameMap _nameMap;
 
 	typedef Common::HashMap<int, CSysClass *> IdMap;
-	IdMap m_IdMap;
+	IdMap _idMap;
 
 	typedef Common::HashMap<void *, CSysInstance *> InstanceMap;
-	InstanceMap m_InstanceMap;
+	InstanceMap _instanceMap;
 
 	typedef Common::HashMap<int, CSysInstance *> SavedInstanceMap;
-	SavedInstanceMap m_SavedInstanceMap;
+	SavedInstanceMap _savedInstanceMap;
 
 };
 

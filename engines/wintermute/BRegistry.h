@@ -48,22 +48,22 @@ public:
 
 	void SetBasePath(const char *basePath);
 	AnsiString GetBasePath() const {
-		return m_BasePath;
+		return _basePath;
 	}
 
 	void LoadValues(bool local);
 	void SaveValues();
 
 private:
-	char *m_IniName;
+	char *_iniName;
 
 	typedef Common::HashMap<AnsiString, AnsiString> KeyValuePair;
 	typedef Common::HashMap<AnsiString, KeyValuePair> PathValueMap;
 
-	PathValueMap m_LocalValues;
-	PathValueMap m_Values;
+	PathValueMap _localValues;
+	PathValueMap _values;
 
-	AnsiString m_BasePath;
+	AnsiString _basePath;
 
 	void LoadXml(const AnsiString fileName, PathValueMap &values);
 	void SaveXml(const AnsiString fileName, PathValueMap &values);

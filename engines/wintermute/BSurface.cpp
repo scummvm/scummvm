@@ -34,28 +34,28 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
 CBSurface::CBSurface(CBGame *inGame): CBBase(inGame) {
-	m_ReferenceCount = 0;
+	_referenceCount = 0;
 
-	m_Width = m_Height = 0;
+	_width = _height = 0;
 
-	m_Filename = NULL;
+	_filename = NULL;
 
-	m_PixelOpReady = false;
+	_pixelOpReady = false;
 
-	m_CKDefault = true;
-	m_CKRed = m_CKGreen = m_CKBlue = 0;
-	m_LifeTime = 0;
-	m_KeepLoaded = false;
+	_cKDefault = true;
+	_cKRed = _cKGreen = _cKBlue = 0;
+	_lifeTime = 0;
+	_keepLoaded = false;
 
-	m_LastUsedTime = 0;
-	m_Valid = false;
+	_lastUsedTime = 0;
+	_valid = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBSurface::~CBSurface() {
-	if (m_PixelOpReady) EndPixelOp();
-	if (m_Filename) delete [] m_Filename;
+	if (_pixelOpReady) EndPixelOp();
+	if (_filename) delete [] _filename;
 }
 
 
@@ -168,29 +168,29 @@ HRESULT CBSurface::Invalidate() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSurface::PrepareToDraw() {
-	m_LastUsedTime = Game->m_LiveTimer;
+	_lastUsedTime = Game->_liveTimer;
 
-	if (!m_Valid) {
-		//Game->LOG(0, "Reviving: %s", m_Filename);
-		return Create(m_Filename, m_CKDefault, m_CKRed, m_CKGreen, m_CKBlue, m_LifeTime, m_KeepLoaded);
+	if (!_valid) {
+		//Game->LOG(0, "Reviving: %s", _filename);
+		return Create(_filename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
 	} else return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CBSurface::SetFilename(const char *Filename) {
-	delete[] m_Filename;
-	m_Filename = NULL;
+	delete[] _filename;
+	_filename = NULL;
 	if (!Filename) return;
 
-	m_Filename = new char[strlen(Filename) + 1];
-	if (m_Filename) strcpy(m_Filename, Filename);
+	_filename = new char[strlen(Filename) + 1];
+	if (_filename) strcpy(_filename, Filename);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBSurface::SetSize(int Width, int Height) {
-	m_Width = Width;
-	m_Height = Height;
+	_width = Width;
+	_height = Height;
 }
 
 } // end of namespace WinterMute

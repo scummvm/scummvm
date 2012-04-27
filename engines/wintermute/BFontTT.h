@@ -45,29 +45,29 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	class CBCachedTTFontText {
 	public:
-		WideString m_Text;
-		int m_Width;
-		TTextAlign m_Align;
-		int m_MaxHeight;
-		int m_MaxLength;
-		CBSurface *m_Surface;
-		int m_Priority;
-		int m_TextOffset;
-		bool m_Marked;
+		WideString _text;
+		int _width;
+		TTextAlign _align;
+		int _maxHeight;
+		int _maxLength;
+		CBSurface *_surface;
+		int _priority;
+		int _textOffset;
+		bool _marked;
 
 		CBCachedTTFontText() {
-			//m_Text = L"";
-			m_Text = "";
-			m_Width = m_MaxHeight = m_MaxLength = -1;
-			m_Align = TAL_LEFT;
-			m_Surface = NULL;
-			m_Priority = -1;
-			m_TextOffset = 0;
-			m_Marked = false;
+			//_text = L"";
+			_text = "";
+			_width = _maxHeight = _maxLength = -1;
+			_align = TAL_LEFT;
+			_surface = NULL;
+			_priority = -1;
+			_textOffset = 0;
+			_marked = false;
 		}
 
 		virtual ~CBCachedTTFontText() {
-			if (m_Surface) delete m_Surface;
+			if (_surface) delete _surface;
 		}
 	};
 
@@ -76,39 +76,39 @@ public:
 	class CBTTFontLayer {
 	public:
 		CBTTFontLayer() {
-			m_OffsetX = m_OffsetY = 0;
-			m_Color = 0x00000000;
+			_offsetX = _offsetY = 0;
+			_color = 0x00000000;
 		}
 
 		HRESULT Persist(CBPersistMgr *PersistMgr) {
-			PersistMgr->Transfer(TMEMBER(m_OffsetX));
-			PersistMgr->Transfer(TMEMBER(m_OffsetY));
-			PersistMgr->Transfer(TMEMBER(m_Color));
+			PersistMgr->Transfer(TMEMBER(_offsetX));
+			PersistMgr->Transfer(TMEMBER(_offsetY));
+			PersistMgr->Transfer(TMEMBER(_color));
 			return S_OK;
 		}
 
-		int m_OffsetX;
-		int m_OffsetY;
-		uint32 m_Color;
+		int _offsetX;
+		int _offsetY;
+		uint32 _color;
 	};
 
 	//////////////////////////////////////////////////////////////////////////
 	class TextLine {
 	public:
 		TextLine(const WideString &text, int width) {
-			m_Text = text;
-			m_Width = width;
+			_text = text;
+			_width = width;
 		}
 
 		const WideString &GetText() const {
-			return m_Text;
+			return _text;
 		}
 		int GetWidth() const {
-			return m_Width;
+			return _width;
 		}
 	private:
-		WideString m_Text;
-		int m_Width;
+		WideString _text;
+		int _width;
 	};
 	typedef Common::List<TextLine *> TextLineList;
 
@@ -130,11 +130,11 @@ public:
 	static void FTCloseProc(FT_Stream stream);
 
 	FontGlyphCache *GetGlyphCache() {
-		return m_GlyphCache;
+		return _glyphCache;
 	}
 
 	float GetLineHeight() const {
-		return m_LineHeight;
+		return _lineHeight;
 	}
 
 	void AfterLoad();
@@ -153,34 +153,34 @@ private:
 	void BlitSurface(SDL_Surface *src, SDL_Surface *target, SDL_Rect *targetRect);
 
 
-	CBCachedTTFontText *m_CachedTexts[NUM_CACHED_TEXTS];
+	CBCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
 
 	HRESULT InitFont();
-	FT_Stream m_FTStream;
-	FT_Face m_FTFace;
+	FT_Stream _fTStream;
+	FT_Face _fTFace;
 
-	FontGlyphCache *m_GlyphCache;
+	FontGlyphCache *_glyphCache;
 
-	float m_Ascender;
-	float m_Descender;
-	float m_LineHeight;
-	float m_UnderlinePos;
-	float m_PointSize;
-	float m_VertDpi;
-	float m_HorDpi;
+	float _ascender;
+	float _descender;
+	float _lineHeight;
+	float _underlinePos;
+	float _pointSize;
+	float _vertDpi;
+	float _horDpi;
 
-	size_t m_MaxCharWidth;
-	size_t m_MaxCharHeight;
+	size_t _maxCharWidth;
+	size_t _maxCharHeight;
 
 public:
-	bool m_IsBold;
-	bool m_IsItalic;
-	bool m_IsUnderline;
-	bool m_IsStriked;
-	int m_FontHeight;
-	char *m_FontFile;
+	bool _isBold;
+	bool _isItalic;
+	bool _isUnderline;
+	bool _isStriked;
+	int _fontHeight;
+	char *_fontFile;
 
-	CBArray<CBTTFontLayer *, CBTTFontLayer *> m_Layers;
+	CBArray<CBTTFontLayer *, CBTTFontLayer *> _layers;
 	void ClearCache();
 
 };

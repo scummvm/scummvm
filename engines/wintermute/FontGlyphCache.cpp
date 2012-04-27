@@ -35,7 +35,7 @@ FontGlyphCache::FontGlyphCache() {
 FontGlyphCache::~FontGlyphCache() {
 	GlyphInfoMap::iterator it;
 
-	for (it = m_Glyphs.begin(); it != m_Glyphs.end(); ++it) {
+	for (it = _glyphs.begin(); it != _glyphs.end(); ++it) {
 		delete it->_value;
 		it->_value = NULL;
 	}
@@ -43,7 +43,7 @@ FontGlyphCache::~FontGlyphCache() {
 
 //////////////////////////////////////////////////////////////////////////
 bool FontGlyphCache::HasGlyph(wchar_t ch) {
-	return (m_Glyphs.find(ch) != m_Glyphs.end());
+	return (_glyphs.find(ch) != _glyphs.end());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ void FontGlyphCache::Initialize() {
 //////////////////////////////////////////////////////////////////////////
 GlyphInfo *FontGlyphCache::GetGlyph(wchar_t ch) {
 	GlyphInfoMap::const_iterator it;
-	it = m_Glyphs.find(ch);
-	if (it == m_Glyphs.end()) return NULL;
+	it = _glyphs.find(ch);
+	if (it == _glyphs.end()) return NULL;
 
 	return it->_value;
 }
@@ -63,34 +63,34 @@ GlyphInfo *FontGlyphCache::GetGlyph(wchar_t ch) {
 void FontGlyphCache::AddGlyph(wchar_t ch, int glyphIndex, FT_GlyphSlot glyphSlot, size_t width, size_t height, byte *pixels, size_t stride) {
 	if (stride == 0) stride = width;
 
-	m_Glyphs[ch] = new GlyphInfo(glyphIndex);
-	m_Glyphs[ch]->SetGlyphInfo(glyphSlot->advance.x / 64.f, glyphSlot->advance.y / 64.f, glyphSlot->bitmap_left, glyphSlot->bitmap_top);
-	m_Glyphs[ch]->SetGlyphImage(width, height, stride, pixels);
+	_glyphs[ch] = new GlyphInfo(glyphIndex);
+	_glyphs[ch]->SetGlyphInfo(glyphSlot->advance.x / 64.f, glyphSlot->advance.y / 64.f, glyphSlot->bitmap_left, glyphSlot->bitmap_top);
+	_glyphs[ch]->SetGlyphImage(width, height, stride, pixels);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void GlyphInfo::SetGlyphImage(size_t width, size_t height, size_t stride, byte *pixels) {
-	if (m_Image) SDL_FreeSurface(m_Image);
+	if (_image) SDL_FreeSurface(_image);
 
-	m_Image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-	SDL_LockSurface(m_Image);
+	_image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+	SDL_LockSurface(_image);
 
-	Uint8 *buf = (Uint8 *)m_Image->pixels;
+	Uint8 *buf = (Uint8 *)_image->pixels;
 
 	for (int y = 0; y < height; y++) {
 		Uint32 *buf32 = (Uint32 *)buf;
 
 		for (int x = 0; x < width; x++) {
 			byte alpha = pixels[y * stride + x];
-			Uint32 color = SDL_MapRGBA(m_Image->format, 255, 255, 255, alpha);
+			Uint32 color = SDL_MapRGBA(_image->format, 255, 255, 255, alpha);
 			buf32[x] = color;
 		}
 
-		buf += m_Image->pitch;
+		buf += _image->pitch;
 	}
 
-	SDL_UnlockSurface(m_Image);
+	SDL_UnlockSurface(_image);
 }
 
 } // end of namespace WinterMute

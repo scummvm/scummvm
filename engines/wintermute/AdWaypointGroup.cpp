@@ -39,10 +39,10 @@ IMPLEMENT_PERSISTENT(CAdWaypointGroup, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdWaypointGroup::CAdWaypointGroup(CBGame *inGame): CBObject(inGame) {
-	m_Active = true;
-	m_EditorSelectedPoint = -1;
-	m_LastMimicScale = -1;
-	m_LastMimicX = m_LastMimicY = INT_MIN;
+	_active = true;
+	_editorSelectedPoint = -1;
+	_lastMimicScale = -1;
+	_lastMimicX = _lastMimicY = INT_MIN;
 }
 
 
@@ -54,16 +54,16 @@ CAdWaypointGroup::~CAdWaypointGroup() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdWaypointGroup::Cleanup() {
-	for (int i = 0; i < m_Points.GetSize(); i++)
-		delete m_Points[i];
-	m_Points.RemoveAll();
-	m_EditorSelectedPoint = -1;
+	for (int i = 0; i < _points.GetSize(); i++)
+		delete _points[i];
+	_points.RemoveAll();
+	_editorSelectedPoint = -1;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdWaypointGroup::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -71,8 +71,8 @@ HRESULT CAdWaypointGroup::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing WAYPOINTS file '%s'", Filename);
 
@@ -131,16 +131,16 @@ HRESULT CAdWaypointGroup::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_POINT: {
 			int x, y;
 			parser.ScanStr((char *)params, "%d,%d", &x, &y);
-			m_Points.Add(new CBPoint(x, y));
+			_points.Add(new CBPoint(x, y));
 		}
 		break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr((char *)params, "%b", &m_EditorSelected);
+			parser.ScanStr((char *)params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.ScanStr((char *)params, "%d", &m_EditorSelectedPoint);
+			parser.ScanStr((char *)params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -164,15 +164,15 @@ HRESULT CAdWaypointGroup::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdWaypointGroup::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "WAYPOINTS {\n");
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", m_EditorSelected ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", m_EditorSelectedPoint);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
-	if (m_ScProp) m_ScProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
 	CBBase::SaveAsText(Buffer, Indent + 2);
 
-	for (int i = 0; i < m_Points.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", m_Points[i]->x, m_Points[i]->y);
+	for (int i = 0; i < _points.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
 	Buffer->PutTextIndent(Indent, "}\n");
@@ -186,12 +186,12 @@ HRESULT CAdWaypointGroup::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	PersistMgr->Transfer(TMEMBER(m_EditorSelectedPoint));
-	PersistMgr->Transfer(TMEMBER(m_LastMimicScale));
-	PersistMgr->Transfer(TMEMBER(m_LastMimicX));
-	PersistMgr->Transfer(TMEMBER(m_LastMimicY));
-	m_Points.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_active));
+	PersistMgr->Transfer(TMEMBER(_editorSelectedPoint));
+	PersistMgr->Transfer(TMEMBER(_lastMimicScale));
+	PersistMgr->Transfer(TMEMBER(_lastMimicX));
+	PersistMgr->Transfer(TMEMBER(_lastMimicY));
+	_points.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -199,22 +199,22 @@ HRESULT CAdWaypointGroup::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdWaypointGroup::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("waypoint-group");
-		return m_ScValue;
+		_scValue->SetString("waypoint-group");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Active") == 0) {
-		m_ScValue->SetBool(m_Active);
-		return m_ScValue;
+		_scValue->SetBool(_active);
+		return _scValue;
 	}
 
 	else return CBObject::ScGetProperty(Name);
@@ -227,7 +227,7 @@ HRESULT CAdWaypointGroup::ScSetProperty(char *Name, CScValue *Value) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Active") == 0) {
-		m_Active = Value->GetBool();
+		_active = Value->GetBool();
 		return S_OK;
 	}
 
@@ -237,22 +237,22 @@ HRESULT CAdWaypointGroup::ScSetProperty(char *Name, CScValue *Value) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdWaypointGroup::Mimic(CAdWaypointGroup *Wpt, float Scale, int X, int Y) {
-	if (Scale == m_LastMimicScale && X == m_LastMimicX && Y == m_LastMimicY) return S_OK;
+	if (Scale == _lastMimicScale && X == _lastMimicX && Y == _lastMimicY) return S_OK;
 
 	Cleanup();
 
-	for (int i = 0; i < Wpt->m_Points.GetSize(); i++) {
+	for (int i = 0; i < Wpt->_points.GetSize(); i++) {
 		int x, y;
 
-		x = (int)((float)Wpt->m_Points[i]->x * Scale / 100.0f);
-		y = (int)((float)Wpt->m_Points[i]->y * Scale / 100.0f);
+		x = (int)((float)Wpt->_points[i]->x * Scale / 100.0f);
+		y = (int)((float)Wpt->_points[i]->y * Scale / 100.0f);
 
-		m_Points.Add(new CBPoint(x + X, y + Y));
+		_points.Add(new CBPoint(x + X, y + Y));
 	}
 
-	m_LastMimicScale = Scale;
-	m_LastMimicX = X;
-	m_LastMimicY = Y;
+	_lastMimicScale = Scale;
+	_lastMimicX = X;
+	_lastMimicY = Y;
 
 	return S_OK;
 }

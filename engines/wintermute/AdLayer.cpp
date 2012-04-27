@@ -45,24 +45,24 @@ IMPLEMENT_PERSISTENT(CAdLayer, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdLayer::CAdLayer(CBGame *inGame): CBObject(inGame) {
-	m_Main = false;
-	m_Width = m_Height = 0;
-	m_Active = true;
-	m_CloseUp = false;
+	_main = false;
+	_width = _height = 0;
+	_active = true;
+	_closeUp = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdLayer::~CAdLayer() {
-	for (int i = 0; i < m_Nodes.GetSize(); i++)
-		delete m_Nodes[i];
-	m_Nodes.RemoveAll();
+	for (int i = 0; i < _nodes.GetSize(); i++)
+		delete _nodes[i];
+	_nodes.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdLayer::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdLayer::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -70,8 +70,8 @@ HRESULT CAdLayer::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", Filename);
 
@@ -146,23 +146,23 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_MAIN:
-			parser.ScanStr((char *)params, "%b", &m_Main);
+			parser.ScanStr((char *)params, "%b", &_main);
 			break;
 
 		case TOKEN_CLOSE_UP:
-			parser.ScanStr((char *)params, "%b", &m_CloseUp);
+			parser.ScanStr((char *)params, "%b", &_closeUp);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &m_Width);
+			parser.ScanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &m_Height);
+			parser.ScanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &m_Active);
+			parser.ScanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_REGION: {
@@ -176,7 +176,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 				node = NULL;
 			} else {
 				node->SetRegion(region);
-				m_Nodes.Add(node);
+				_nodes.Add(node);
 			}
 		}
 		break;
@@ -184,7 +184,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_ENTITY: {
 			CAdEntity *entity = new CAdEntity(Game);
 			CAdSceneNode *node = new CAdSceneNode(Game);
-			if (entity) entity->m_Zoomable = false; // scene entites default to NOT zoom
+			if (entity) entity->_zoomable = false; // scene entites default to NOT zoom
 			if (!entity || !node || FAILED(entity->LoadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
@@ -193,13 +193,13 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 				node = NULL;
 			} else {
 				node->SetEntity(entity);
-				m_Nodes.Add(node);
+				_nodes.Add(node);
 			}
 		}
 		break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr((char *)params, "%b", &m_EditorSelected);
+			parser.ScanStr((char *)params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -236,25 +236,25 @@ HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CScValue *val = Stack->Pop();
 		int node = -1;
 
-		if (val->m_Type == VAL_INT) node = val->GetInt();
+		if (val->_type == VAL_INT) node = val->GetInt();
 		else { // get by name
-			for (int i = 0; i < m_Nodes.GetSize(); i++) {
-				if ((m_Nodes[i]->m_Type == OBJECT_ENTITY && scumm_stricmp(m_Nodes[i]->m_Entity->m_Name, val->GetString()) == 0) ||
-				        (m_Nodes[i]->m_Type == OBJECT_REGION && scumm_stricmp(m_Nodes[i]->m_Region->m_Name, val->GetString()) == 0)) {
+			for (int i = 0; i < _nodes.GetSize(); i++) {
+				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->_name, val->GetString()) == 0) ||
+				        (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->_name, val->GetString()) == 0)) {
 					node = i;
 					break;
 				}
 			}
 		}
 
-		if (node < 0 || node >= m_Nodes.GetSize()) Stack->PushNULL();
+		if (node < 0 || node >= _nodes.GetSize()) Stack->PushNULL();
 		else {
-			switch (m_Nodes[node]->m_Type) {
+			switch (_nodes[node]->_type) {
 			case OBJECT_ENTITY:
-				Stack->PushNative(m_Nodes[node]->m_Entity, true);
+				Stack->PushNative(_nodes[node]->_entity, true);
 				break;
 			case OBJECT_REGION:
-				Stack->PushNative(m_Nodes[node]->m_Region, true);
+				Stack->PushNative(_nodes[node]->_region, true);
 				break;
 			default:
 				Stack->PushNULL();
@@ -282,7 +282,7 @@ HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			Node->SetEntity(Entity);
 			Stack->PushNative(Entity, true);
 		}
-		m_Nodes.Add(Node);
+		_nodes.Add(Node);
 		return S_OK;
 	}
 
@@ -307,8 +307,8 @@ HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			Stack->PushNative(Entity, true);
 		}
 		if (Index < 0) Index = 0;
-		if (Index <= m_Nodes.GetSize() - 1) m_Nodes.InsertAt(Index, Node);
-		else m_Nodes.Add(Node);
+		if (Index <= _nodes.GetSize() - 1) _nodes.InsertAt(Index, Node);
+		else _nodes.Add(Node);
 
 		return S_OK;
 	}
@@ -323,16 +323,16 @@ HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CAdSceneNode *ToDelete = NULL;
 		if (Val->IsNative()) {
 			CBScriptable *Temp = Val->GetNative();
-			for (int i = 0; i < m_Nodes.GetSize(); i++) {
-				if (m_Nodes[i]->m_Region == Temp || m_Nodes[i]->m_Entity == Temp) {
-					ToDelete = m_Nodes[i];
+			for (int i = 0; i < _nodes.GetSize(); i++) {
+				if (_nodes[i]->_region == Temp || _nodes[i]->_entity == Temp) {
+					ToDelete = _nodes[i];
 					break;
 				}
 			}
 		} else {
 			int Index = Val->GetInt();
-			if (Index >= 0 && Index < m_Nodes.GetSize()) {
-				ToDelete = m_Nodes[Index];
+			if (Index >= 0 && Index < _nodes.GetSize()) {
+				ToDelete = _nodes[Index];
 			}
 		}
 		if (ToDelete == NULL) {
@@ -340,11 +340,11 @@ HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			return S_OK;
 		}
 
-		for (int i = 0; i < m_Nodes.GetSize(); i++) {
-			if (m_Nodes[i] == ToDelete) {
-				delete m_Nodes[i];
-				m_Nodes[i] = NULL;
-				m_Nodes.RemoveAt(i);
+		for (int i = 0; i < _nodes.GetSize(); i++) {
+			if (_nodes[i] == ToDelete) {
+				delete _nodes[i];
+				_nodes[i] = NULL;
+				_nodes.RemoveAt(i);
 				break;
 			}
 		}
@@ -358,62 +358,62 @@ HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdLayer::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("layer");
-		return m_ScValue;
+		_scValue->SetString("layer");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumNodes") == 0) {
-		m_ScValue->SetInt(m_Nodes.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_nodes.GetSize());
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Width") == 0) {
-		m_ScValue->SetInt(m_Width);
-		return m_ScValue;
+		_scValue->SetInt(_width);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		m_ScValue->SetInt(m_Height);
-		return m_ScValue;
+		_scValue->SetInt(_height);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Main (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Main") == 0) {
-		m_ScValue->SetBool(m_Main);
-		return m_ScValue;
+		_scValue->SetBool(_main);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CloseUp") == 0) {
-		m_ScValue->SetBool(m_CloseUp);
-		return m_ScValue;
+		_scValue->SetBool(_closeUp);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Active") == 0) {
-		m_ScValue->SetBool(m_Active);
-		return m_ScValue;
+		_scValue->SetBool(_active);
+		return _scValue;
 	}
 
 	else return CBObject::ScGetProperty(Name);
@@ -434,7 +434,7 @@ HRESULT CAdLayer::ScSetProperty(char *Name, CScValue *Value) {
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CloseUp") == 0) {
-		m_CloseUp = Value->GetBool();
+		_closeUp = Value->GetBool();
 		return S_OK;
 	}
 
@@ -442,8 +442,8 @@ HRESULT CAdLayer::ScSetProperty(char *Name, CScValue *Value) {
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Width") == 0) {
-		m_Width = Value->GetInt();
-		if (m_Width < 0) m_Width = 0;
+		_width = Value->GetInt();
+		if (_width < 0) _width = 0;
 		return S_OK;
 	}
 
@@ -451,8 +451,8 @@ HRESULT CAdLayer::ScSetProperty(char *Name, CScValue *Value) {
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		m_Height = Value->GetInt();
-		if (m_Height < 0) m_Height = 0;
+		_height = Value->GetInt();
+		if (_height < 0) _height = 0;
 		return S_OK;
 	}
 
@@ -461,9 +461,9 @@ HRESULT CAdLayer::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Active") == 0) {
 		bool b = Value->GetBool();
-		if (b == false && m_Main) {
+		if (b == false && _main) {
 			Game->LOG(0, "Warning: cannot deactivate scene's main layer");
-		} else m_Active = b;
+		} else _active = b;
 		return S_OK;
 	}
 
@@ -480,31 +480,31 @@ char *CAdLayer::ScToString() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdLayer::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "LAYER {\n");
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
-	Buffer->PutTextIndent(Indent + 2, "MAIN=%s\n", m_Main ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", m_Width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", m_Height);
-	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", m_Active ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", m_EditorSelected ? "TRUE" : "FALSE");
-	if (m_CloseUp)
-		Buffer->PutTextIndent(Indent + 2, "CLOSE_UP=%s\n", m_CloseUp ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "MAIN=%s\n", _main ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
+	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+	if (_closeUp)
+		Buffer->PutTextIndent(Indent + 2, "CLOSE_UP=%s\n", _closeUp ? "TRUE" : "FALSE");
 
 	int i;
 
-	for (i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (m_ScProp) m_ScProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
 
-	for (i = 0; i < m_Nodes.GetSize(); i++) {
-		switch (m_Nodes[i]->m_Type) {
+	for (i = 0; i < _nodes.GetSize(); i++) {
+		switch (_nodes[i]->_type) {
 		case OBJECT_ENTITY:
-			m_Nodes[i]->m_Entity->SaveAsText(Buffer, Indent + 2);
+			_nodes[i]->_entity->SaveAsText(Buffer, Indent + 2);
 			break;
 		case OBJECT_REGION:
-			m_Nodes[i]->m_Region->SaveAsText(Buffer, Indent + 2);
+			_nodes[i]->_region->SaveAsText(Buffer, Indent + 2);
 			break;
 		}
 	}
@@ -522,12 +522,12 @@ HRESULT CAdLayer::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	PersistMgr->Transfer(TMEMBER(m_CloseUp));
-	PersistMgr->Transfer(TMEMBER(m_Height));
-	PersistMgr->Transfer(TMEMBER(m_Main));
-	m_Nodes.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(m_Width));
+	PersistMgr->Transfer(TMEMBER(_active));
+	PersistMgr->Transfer(TMEMBER(_closeUp));
+	PersistMgr->Transfer(TMEMBER(_height));
+	PersistMgr->Transfer(TMEMBER(_main));
+	_nodes.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_width));
 
 	return S_OK;
 }

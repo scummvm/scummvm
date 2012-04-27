@@ -48,10 +48,10 @@ public:
 	virtual HRESULT Open(Common::String Filename);
 private:
 	void CorrectSlashes(char *fileName);
-	Common::SeekableReadStream *m_File;
-	byte *m_Data;
-	bool m_Compressed;
-	uint32 m_PrefixSize;
+	Common::SeekableReadStream *_file;
+	byte *_data;
+	bool _compressed;
+	uint32 _prefixSize;
 };
 
 } // end of namespace WinterMute

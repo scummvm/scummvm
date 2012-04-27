@@ -37,8 +37,8 @@ class CAdTalkNode;
 class CAdSpriteSet;
 class CAdTalkDef : public CBObject {
 public:
-	char *m_DefaultSpriteSetFilename;
-	CAdSpriteSet *m_DefaultSpriteSet;
+	char *_defaultSpriteSetFilename;
+	CAdSpriteSet *_defaultSpriteSet;
 	CBSprite *GetDefaultSprite(TDirection Dir);
 	HRESULT LoadDefaultSprite();
 	DECLARE_PERSISTENT(CAdTalkDef, CBObject)
@@ -47,9 +47,9 @@ public:
 	virtual ~CAdTalkDef();
 	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	CBArray<CAdTalkNode *, CAdTalkNode *> m_Nodes;
-	char *m_DefaultSpriteFilename;
-	CBSprite *m_DefaultSprite;
+	CBArray<CAdTalkNode *, CAdTalkNode *> _nodes;
+	char *_defaultSpriteFilename;
+	CBSprite *_defaultSprite;
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent = 0);
 };
 

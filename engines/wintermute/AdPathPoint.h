@@ -40,9 +40,9 @@ public:
 	CAdPathPoint(int initX, int initY, int initDistance);
 	CAdPathPoint();
 	virtual ~CAdPathPoint();
-	CAdPathPoint *m_Origin;
-	bool m_Marked;
-	int m_Distance;
+	CAdPathPoint *_origin;
+	bool _marked;
+	int _distance;
 };
 
 } // end of namespace WinterMute

@@ -44,33 +44,33 @@ IMPLEMENT_PERSISTENT(CBSubFrame, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBSubFrame::CBSubFrame(CBGame *inGame): CBScriptable(inGame, true) {
-	m_Surface = NULL;
-	m_HotspotX = m_HotspotY = 0;
-	m_Alpha = 0xFFFFFFFF;
-	m_Transparent = 0xFFFF00FF;
+	_surface = NULL;
+	_hotspotX = _hotspotY = 0;
+	_alpha = 0xFFFFFFFF;
+	_transparent = 0xFFFF00FF;
 
-	CBPlatform::SetRectEmpty(&m_Rect);
+	CBPlatform::SetRectEmpty(&_rect);
 
-	m_EditorSelected = false;
+	_editorSelected = false;
 
-	m_SurfaceFilename = NULL;
-	m_CKDefault = true;
-	m_CKRed = m_CKBlue = m_CKGreen = 0;
-	m_LifeTime = -1;
-	m_KeepLoaded = false;
+	_surfaceFilename = NULL;
+	_cKDefault = true;
+	_cKRed = _cKBlue = _cKGreen = 0;
+	_lifeTime = -1;
+	_keepLoaded = false;
 
-	m_2DOnly = m_3DOnly = false;
-	m_Decoration = false;
+	_2DOnly = _3DOnly = false;
+	_decoration = false;
 
-	m_MirrorX = m_MirrorY = false;
+	_mirrorX = _mirrorY = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBSubFrame::~CBSubFrame() {
-	if (m_Surface) Game->m_SurfaceStorage->RemoveSurface(m_Surface);
-	delete[] m_SurfaceFilename;
-	m_SurfaceFilename = NULL;
+	if (_surface) Game->_surfaceStorage->RemoveSurface(_surface);
+	delete[] _surfaceFilename;
+	_surfaceFilename = NULL;
 }
 
 
@@ -113,12 +113,12 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	RECT rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
-	bool custom_trans = false;
+	bool custo_trans = false;
 	CBPlatform::SetRectEmpty(&rect);
 	char *surface_file = NULL;
 
-	delete m_Surface;
-	m_Surface = NULL;
+	delete _surface;
+	_surface = NULL;
 
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -128,7 +128,7 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 		case TOKEN_TRANSPARENT:
 			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
-			custom_trans = true;
+			custo_trans = true;
 			break;
 
 		case TOKEN_RECT:
@@ -136,27 +136,27 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_HOTSPOT:
-			parser.ScanStr(params, "%d,%d", &m_HotspotX, &m_HotspotY);
+			parser.ScanStr(params, "%d,%d", &_hotspotX, &_hotspotY);
 			break;
 
 		case TOKEN_2D_ONLY:
-			parser.ScanStr(params, "%b", &m_2DOnly);
+			parser.ScanStr(params, "%b", &_2DOnly);
 			break;
 
 		case TOKEN_3D_ONLY:
-			parser.ScanStr(params, "%b", &m_3DOnly);
+			parser.ScanStr(params, "%b", &_3DOnly);
 			break;
 
 		case TOKEN_MIRROR_X:
-			parser.ScanStr(params, "%b", &m_MirrorX);
+			parser.ScanStr(params, "%b", &_mirrorX);
 			break;
 
 		case TOKEN_MIRROR_Y:
-			parser.ScanStr(params, "%b", &m_MirrorY);
+			parser.ScanStr(params, "%b", &_mirrorY);
 			break;
 
 		case TOKEN_DECORATION:
-			parser.ScanStr(params, "%b", &m_Decoration);
+			parser.ScanStr(params, "%b", &_decoration);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
@@ -168,7 +168,7 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr(params, "%b", &m_EditorSelected);
+			parser.ScanStr(params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -182,22 +182,22 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	}
 
 	if (surface_file != NULL) {
-		if (custom_trans) SetSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
+		if (custo_trans) SetSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
 		else SetSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
 	}
 
-	m_Alpha = DRGBA(ar, ag, ab, alpha);
-	if (custom_trans) m_Transparent = DRGBA(r, g, b, 0xFF);
+	_alpha = DRGBA(ar, ag, ab, alpha);
+	if (custo_trans) _transparent = DRGBA(r, g, b, 0xFF);
 
 	/*
-	if(m_Surface == NULL)
+	if(_surface == NULL)
 	{
 	    Game->LOG(0, "Error parsing sub-frame. Image not set.");
 	    return E_FAIL;
 	}
 	*/
 	if (CBPlatform::IsRectEmpty(&rect)) SetDefaultRect();
-	else m_Rect = rect;
+	else _rect = rect;
 
 	return S_OK;
 }
@@ -205,27 +205,27 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBSubFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
-	if (!m_Surface) return S_OK;
+	if (!_surface) return S_OK;
 
-	if (Register != NULL && !m_Decoration) {
+	if (Register != NULL && !_decoration) {
 		if (ZoomX == 100 && ZoomY == 100) {
-			Game->m_Renderer->m_RectList.Add(new CBActiveRect(Game, Register, this, X - m_HotspotX + m_Rect.left, Y - m_HotspotY + m_Rect.top, m_Rect.right - m_Rect.left, m_Rect.bottom - m_Rect.top, ZoomX, ZoomY, Precise));
+			Game->_renderer->_rectList.Add(new CBActiveRect(Game, Register, this, X - _hotspotX + _rect.left, Y - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, ZoomX, ZoomY, Precise));
 		} else {
-			Game->m_Renderer->m_RectList.Add(new CBActiveRect(Game, Register, this, (int)(X - (m_HotspotX + m_Rect.left) * (ZoomX / 100)), (int)(Y - (m_HotspotY + m_Rect.top) * (ZoomY / 100)), (int)((m_Rect.right - m_Rect.left) * (ZoomX / 100)), (int)((m_Rect.bottom - m_Rect.top) * (ZoomY / 100)), ZoomX, ZoomY, Precise));
+			Game->_renderer->_rectList.Add(new CBActiveRect(Game, Register, this, (int)(X - (_hotspotX + _rect.left) * (ZoomX / 100)), (int)(Y - (_hotspotY + _rect.top) * (ZoomY / 100)), (int)((_rect.right - _rect.left) * (ZoomX / 100)), (int)((_rect.bottom - _rect.top) * (ZoomY / 100)), ZoomX, ZoomY, Precise));
 		}
 	}
-	if (Game->m_SuspendedRendering) return S_OK;
+	if (Game->_suspendedRendering) return S_OK;
 
 	HRESULT res;
 
-	//if(Alpha==0xFFFFFFFF) Alpha = m_Alpha; // TODO: better (combine owner's and self alpha)
-	if (m_Alpha != 0xFFFFFFFF) Alpha = m_Alpha;
+	//if(Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
+	if (_alpha != 0xFFFFFFFF) Alpha = _alpha;
 
 	if (Rotate != 0.0f) {
-		res = m_Surface->DisplayTransform((int)(X - m_HotspotX * (ZoomX / 100)), (int)(Y - m_HotspotY * (ZoomY / 100)), m_HotspotX, m_HotspotY, m_Rect, ZoomX, ZoomY, Alpha, Rotate, BlendMode, m_MirrorX, m_MirrorY);
+		res = _surface->DisplayTransform((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _hotspotX, _hotspotY, _rect, ZoomX, ZoomY, Alpha, Rotate, BlendMode, _mirrorX, _mirrorY);
 	} else {
-		if (ZoomX == 100 && ZoomY == 100) res = m_Surface->DisplayTrans(X - m_HotspotX, Y - m_HotspotY, m_Rect, Alpha, BlendMode, m_MirrorX, m_MirrorY);
-		else res = m_Surface->DisplayTransZoom((int)(X - m_HotspotX * (ZoomX / 100)), (int)(Y - m_HotspotY * (ZoomY / 100)), m_Rect, ZoomX, ZoomY, Alpha, BlendMode, m_MirrorX, m_MirrorY);
+		if (ZoomX == 100 && ZoomY == 100) res = _surface->DisplayTrans(X - _hotspotX, Y - _hotspotY, _rect, Alpha, BlendMode, _mirrorX, _mirrorY);
+		else res = _surface->DisplayTransZoom((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _rect, ZoomX, ZoomY, Alpha, BlendMode, _mirrorX, _mirrorY);
 	}
 
 	return res;
@@ -240,10 +240,10 @@ bool CBSubFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float 
 	float RatioY = ScaleY / 100.0f;
 
 	CBPlatform::SetRect(Rect,
-	                    X - m_HotspotX * RatioX,
-	                    Y - m_HotspotY * RatioY,
-	                    X - m_HotspotX * RatioX + (m_Rect.right - m_Rect.left)*RatioX,
-	                    Y - m_HotspotY * RatioY + (m_Rect.bottom - m_Rect.top)*RatioY);
+	                    X - _hotspotX * RatioX,
+	                    Y - _hotspotY * RatioY,
+	                    X - _hotspotX * RatioX + (_rect.right - _rect.left)*RatioX,
+	                    Y - _hotspotY * RatioY + (_rect.bottom - _rect.top)*RatioY);
 	return true;
 }
 
@@ -253,43 +253,43 @@ HRESULT CBSubFrame::SaveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 	if (Complete)
 		Buffer->PutTextIndent(Indent, "SUBFRAME {\n");
 
-	if (m_Surface && m_Surface->m_Filename != NULL)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE = \"%s\"\n", m_Surface->m_Filename);
+	if (_surface && _surface->_filename != NULL)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE = \"%s\"\n", _surface->_filename);
 
-	if (m_Transparent != 0xFFFF00FF)
-		Buffer->PutTextIndent(Indent + 2, "TRANSPARENT { %d,%d,%d }\n", D3DCOLGetR(m_Transparent), D3DCOLGetG(m_Transparent), D3DCOLGetB(m_Transparent));
+	if (_transparent != 0xFFFF00FF)
+		Buffer->PutTextIndent(Indent + 2, "TRANSPARENT { %d,%d,%d }\n", D3DCOLGetR(_transparent), D3DCOLGetG(_transparent), D3DCOLGetB(_transparent));
 
 	RECT rect;
 	CBPlatform::SetRectEmpty(&rect);
-	if (m_Surface) CBPlatform::SetRect(&rect, 0, 0, m_Surface->GetWidth(), m_Surface->GetHeight());
-	if (!CBPlatform::EqualRect(&rect, &m_Rect))
-		Buffer->PutTextIndent(Indent + 2, "RECT { %d,%d,%d,%d }\n", m_Rect.left, m_Rect.top, m_Rect.right, m_Rect.bottom);
+	if (_surface) CBPlatform::SetRect(&rect, 0, 0, _surface->GetWidth(), _surface->GetHeight());
+	if (!CBPlatform::EqualRect(&rect, &_rect))
+		Buffer->PutTextIndent(Indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
 
-	if (m_HotspotX != 0 || m_HotspotY != 0)
-		Buffer->PutTextIndent(Indent + 2, "HOTSPOT {%d, %d}\n", m_HotspotX, m_HotspotY);
+	if (_hotspotX != 0 || _hotspotY != 0)
+		Buffer->PutTextIndent(Indent + 2, "HOTSPOT {%d, %d}\n", _hotspotX, _hotspotY);
 
-	if (m_Alpha != 0xFFFFFFFF) {
-		Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(m_Alpha), D3DCOLGetG(m_Alpha), D3DCOLGetB(m_Alpha));
-		Buffer->PutTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(m_Alpha));
+	if (_alpha != 0xFFFFFFFF) {
+		Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alpha), D3DCOLGetG(_alpha), D3DCOLGetB(_alpha));
+		Buffer->PutTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alpha));
 	}
 
-	if (m_MirrorX)
-		Buffer->PutTextIndent(Indent + 2, "MIRROR_X=%s\n", m_MirrorX ? "TRUE" : "FALSE");
+	if (_mirrorX)
+		Buffer->PutTextIndent(Indent + 2, "MIRROR_X=%s\n", _mirrorX ? "TRUE" : "FALSE");
 
-	if (m_MirrorY)
-		Buffer->PutTextIndent(Indent + 2, "MIRROR_Y=%s\n", m_MirrorY ? "TRUE" : "FALSE");
+	if (_mirrorY)
+		Buffer->PutTextIndent(Indent + 2, "MIRROR_Y=%s\n", _mirrorY ? "TRUE" : "FALSE");
 
-	if (m_2DOnly)
-		Buffer->PutTextIndent(Indent + 2, "2D_ONLY=%s\n", m_2DOnly ? "TRUE" : "FALSE");
+	if (_2DOnly)
+		Buffer->PutTextIndent(Indent + 2, "2D_ONLY=%s\n", _2DOnly ? "TRUE" : "FALSE");
 
-	if (m_3DOnly)
-		Buffer->PutTextIndent(Indent + 2, "3D_ONLY=%s\n", m_3DOnly ? "TRUE" : "FALSE");
+	if (_3DOnly)
+		Buffer->PutTextIndent(Indent + 2, "3D_ONLY=%s\n", _3DOnly ? "TRUE" : "FALSE");
 
-	if (m_Decoration)
-		Buffer->PutTextIndent(Indent + 2, "DECORATION=%s\n", m_Decoration ? "TRUE" : "FALSE");
+	if (_decoration)
+		Buffer->PutTextIndent(Indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
 
-	if (m_EditorSelected)
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", m_EditorSelected ? "TRUE" : "FALSE");
+	if (_editorSelected)
+		Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
 	CBBase::SaveAsText(Buffer, Indent + 2);
 
@@ -303,9 +303,9 @@ HRESULT CBSubFrame::SaveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBSubFrame::SetDefaultRect() {
-	if (m_Surface) {
-		CBPlatform::SetRect(&m_Rect, 0, 0, m_Surface->GetWidth(), m_Surface->GetHeight());
-	} else CBPlatform::SetRectEmpty(&m_Rect);
+	if (_surface) {
+		CBPlatform::SetRect(&_rect, 0, 0, _surface->GetWidth(), _surface->GetHeight());
+	} else CBPlatform::SetRectEmpty(&_rect);
 }
 
 
@@ -314,26 +314,26 @@ HRESULT CBSubFrame::Persist(CBPersistMgr *PersistMgr) {
 
 	CBScriptable::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_2DOnly));
-	PersistMgr->Transfer(TMEMBER(m_3DOnly));
-	PersistMgr->Transfer(TMEMBER(m_Alpha));
-	PersistMgr->Transfer(TMEMBER(m_Decoration));
-	PersistMgr->Transfer(TMEMBER(m_EditorSelected));
-	PersistMgr->Transfer(TMEMBER(m_HotspotX));
-	PersistMgr->Transfer(TMEMBER(m_HotspotY));
-	PersistMgr->Transfer(TMEMBER(m_Rect));
+	PersistMgr->Transfer(TMEMBER(_2DOnly));
+	PersistMgr->Transfer(TMEMBER(_3DOnly));
+	PersistMgr->Transfer(TMEMBER(_alpha));
+	PersistMgr->Transfer(TMEMBER(_decoration));
+	PersistMgr->Transfer(TMEMBER(_editorSelected));
+	PersistMgr->Transfer(TMEMBER(_hotspotX));
+	PersistMgr->Transfer(TMEMBER(_hotspotY));
+	PersistMgr->Transfer(TMEMBER(_rect));
 
-	PersistMgr->Transfer(TMEMBER(m_SurfaceFilename));
-	PersistMgr->Transfer(TMEMBER(m_CKDefault));
-	PersistMgr->Transfer(TMEMBER(m_CKRed));
-	PersistMgr->Transfer(TMEMBER(m_CKGreen));
-	PersistMgr->Transfer(TMEMBER(m_CKBlue));
-	PersistMgr->Transfer(TMEMBER(m_LifeTime));
+	PersistMgr->Transfer(TMEMBER(_surfaceFilename));
+	PersistMgr->Transfer(TMEMBER(_cKDefault));
+	PersistMgr->Transfer(TMEMBER(_cKRed));
+	PersistMgr->Transfer(TMEMBER(_cKGreen));
+	PersistMgr->Transfer(TMEMBER(_cKBlue));
+	PersistMgr->Transfer(TMEMBER(_lifeTime));
 
-	PersistMgr->Transfer(TMEMBER(m_KeepLoaded));
-	PersistMgr->Transfer(TMEMBER(m_MirrorX));
-	PersistMgr->Transfer(TMEMBER(m_MirrorY));
-	PersistMgr->Transfer(TMEMBER(m_Transparent));
+	PersistMgr->Transfer(TMEMBER(_keepLoaded));
+	PersistMgr->Transfer(TMEMBER(_mirrorX));
+	PersistMgr->Transfer(TMEMBER(_mirrorY));
+	PersistMgr->Transfer(TMEMBER(_transparent));
 
 	return S_OK;
 }
@@ -350,8 +350,8 @@ HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *T
 	if (strcmp(Name, "GetImage") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_SurfaceFilename) Stack->PushNULL();
-		else Stack->PushString(m_SurfaceFilename);
+		if (!_surfaceFilename) Stack->PushNULL();
+		else Stack->PushString(_surfaceFilename);
 		return S_OK;
 	}
 
@@ -363,9 +363,9 @@ HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *T
 		CScValue *Val = Stack->Pop();
 
 		if (Val->IsNULL()) {
-			if (m_Surface) Game->m_SurfaceStorage->RemoveSurface(m_Surface);
-			delete[] m_SurfaceFilename;
-			m_SurfaceFilename = NULL;
+			if (_surface) Game->_surfaceStorage->RemoveSurface(_surface);
+			delete[] _surfaceFilename;
+			_surfaceFilename = NULL;
 			Stack->PushBool(true);
 		} else {
 			char *Filename = Val->GetString();
@@ -384,15 +384,15 @@ HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *T
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBSubFrame::ScGetProperty(char *Name) {
-	if (!m_ScValue) m_ScValue = new CScValue(Game);
-	m_ScValue->SetNULL();
+	if (!_scValue) _scValue = new CScValue(Game);
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("subframe");
-		return m_ScValue;
+		_scValue->SetString("subframe");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -400,72 +400,72 @@ CScValue *CBSubFrame::ScGetProperty(char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AlphaColor") == 0) {
 
-		m_ScValue->SetInt((int)m_Alpha);
-		return m_ScValue;
+		_scValue->SetInt((int)_alpha);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// TransparentColor (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TransparentColor") == 0) {
-		m_ScValue->SetInt((int)m_Transparent);
-		return m_ScValue;
+		_scValue->SetInt((int)_transparent);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Is2DOnly") == 0) {
-		m_ScValue->SetBool(m_2DOnly);
-		return m_ScValue;
+		_scValue->SetBool(_2DOnly);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Is3DOnly") == 0) {
-		m_ScValue->SetBool(m_3DOnly);
-		return m_ScValue;
+		_scValue->SetBool(_3DOnly);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MirrorX") == 0) {
-		m_ScValue->SetBool(m_MirrorX);
-		return m_ScValue;
+		_scValue->SetBool(_mirrorX);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MirrorY") == 0) {
-		m_ScValue->SetBool(m_MirrorY);
-		return m_ScValue;
+		_scValue->SetBool(_mirrorY);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Decoration") == 0) {
-		m_ScValue->SetBool(m_Decoration);
-		return m_ScValue;
+		_scValue->SetBool(_decoration);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HotspotX") == 0) {
-		m_ScValue->SetInt(m_HotspotX);
-		return m_ScValue;
+		_scValue->SetInt(_hotspotX);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HotspotY") == 0) {
-		m_ScValue->SetInt(m_HotspotY);
-		return m_ScValue;
+		_scValue->SetInt(_hotspotY);
+		return _scValue;
 	}
 
 	else return CBScriptable::ScGetProperty(Name);
@@ -478,7 +478,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "AlphaColor") == 0) {
-		m_Alpha = (uint32)Value->GetInt();
+		_alpha = (uint32)Value->GetInt();
 		return S_OK;
 	}
 
@@ -486,7 +486,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Is2DOnly") == 0) {
-		m_2DOnly = Value->GetBool();
+		_2DOnly = Value->GetBool();
 		return S_OK;
 	}
 
@@ -494,7 +494,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Is3DOnly") == 0) {
-		m_3DOnly = Value->GetBool();
+		_3DOnly = Value->GetBool();
 		return S_OK;
 	}
 
@@ -502,7 +502,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MirrorX") == 0) {
-		m_MirrorX = Value->GetBool();
+		_mirrorX = Value->GetBool();
 		return S_OK;
 	}
 
@@ -510,7 +510,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MirrorY") == 0) {
-		m_MirrorY = Value->GetBool();
+		_mirrorY = Value->GetBool();
 		return S_OK;
 	}
 
@@ -518,7 +518,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Decoration") == 0) {
-		m_Decoration = Value->GetBool();
+		_decoration = Value->GetBool();
 		return S_OK;
 	}
 
@@ -526,7 +526,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HotspotX") == 0) {
-		m_HotspotX = Value->GetInt();
+		_hotspotX = Value->GetInt();
 		return S_OK;
 	}
 
@@ -534,7 +534,7 @@ HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HotspotY") == 0) {
-		m_HotspotY = Value->GetInt();
+		_hotspotY = Value->GetInt();
 		return S_OK;
 	}
 
@@ -550,25 +550,25 @@ char *CBSubFrame::ScToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSubFrame::SetSurface(char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
-	if (m_Surface) {
-		Game->m_SurfaceStorage->RemoveSurface(m_Surface);
-		m_Surface = NULL;
+	if (_surface) {
+		Game->_surfaceStorage->RemoveSurface(_surface);
+		_surface = NULL;
 	}
 
-	delete[] m_SurfaceFilename;
-	m_SurfaceFilename = NULL;
+	delete[] _surfaceFilename;
+	_surfaceFilename = NULL;
 
-	m_Surface = Game->m_SurfaceStorage->AddSurface(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
-	if (m_Surface) {
-		m_SurfaceFilename = new char[strlen(Filename) + 1];
-		strcpy(m_SurfaceFilename, Filename);
+	_surface = Game->_surfaceStorage->AddSurface(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+	if (_surface) {
+		_surfaceFilename = new char[strlen(Filename) + 1];
+		strcpy(_surfaceFilename, Filename);
 
-		m_CKDefault = default_ck;
-		m_CKRed = ck_red;
-		m_CKGreen = ck_green;
-		m_CKBlue = ck_blue;
-		m_LifeTime = LifeTime;
-		m_KeepLoaded = KeepLoaded;
+		_cKDefault = default_ck;
+		_cKRed = ck_red;
+		_cKGreen = ck_green;
+		_cKBlue = ck_blue;
+		_lifeTime = LifeTime;
+		_keepLoaded = KeepLoaded;
 
 		return S_OK;
 	} else return E_FAIL;
@@ -577,12 +577,12 @@ HRESULT CBSubFrame::SetSurface(char *Filename, bool default_ck, byte ck_red, byt
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSubFrame::SetSurfaceSimple() {
-	if (!m_SurfaceFilename) {
-		m_Surface = NULL;
+	if (!_surfaceFilename) {
+		_surface = NULL;
 		return S_OK;
 	}
-	m_Surface = Game->m_SurfaceStorage->AddSurface(m_SurfaceFilename, m_CKDefault, m_CKRed, m_CKGreen, m_CKBlue, m_LifeTime, m_KeepLoaded);
-	if (m_Surface) return S_OK;
+	_surface = Game->_surfaceStorage->AddSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
+	if (_surface) return S_OK;
 	else return E_FAIL;
 }
 

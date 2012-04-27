@@ -57,96 +57,96 @@ IMPLEMENT_PERSISTENT(CAdActor, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdActor::CAdActor(CBGame *inGame): CAdTalkHolder(inGame) {
-	m_Path = new CAdPath(Game);
+	_path = new CAdPath(Game);
 
-	m_Type = OBJECT_ACTOR;
-	m_Dir = DI_LEFT;
+	_type = OBJECT_ACTOR;
+	_dir = DI_LEFT;
 
-	m_WalkSprite = NULL;
-	m_StandSprite = NULL;
-	m_TurnLeftSprite = NULL;
-	m_TurnRightSprite = NULL;
+	_walkSprite = NULL;
+	_standSprite = NULL;
+	_turnLeftSprite = NULL;
+	_turnRightSprite = NULL;
 
-	m_TargetPoint = new CBPoint;
-	m_AfterWalkDir = DI_NONE;
+	_targetPoint = new CBPoint;
+	_afterWalkDir = DI_NONE;
 
-	m_AnimSprite2 = NULL;
+	_animSprite2 = NULL;
 
 	SetDefaultAnimNames();
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdActor::SetDefaultAnimNames() {
-	m_TalkAnimName = NULL;
-	CBUtils::SetString(&m_TalkAnimName, "talk");
+	_talkAnimName = NULL;
+	CBUtils::SetString(&_talkAnimName, "talk");
 
-	m_IdleAnimName = NULL;
-	CBUtils::SetString(&m_IdleAnimName, "idle");
+	_idleAnimName = NULL;
+	CBUtils::SetString(&_idleAnimName, "idle");
 
-	m_WalkAnimName = NULL;
-	CBUtils::SetString(&m_WalkAnimName, "walk");
+	_walkAnimName = NULL;
+	CBUtils::SetString(&_walkAnimName, "walk");
 
-	m_TurnLeftAnimName = NULL;
-	CBUtils::SetString(&m_TurnLeftAnimName, "turnleft");
+	_turnLeftAnimName = NULL;
+	CBUtils::SetString(&_turnLeftAnimName, "turnleft");
 
-	m_TurnRightAnimName = NULL;
-	CBUtils::SetString(&m_TurnRightAnimName, "turnright");
+	_turnRightAnimName = NULL;
+	CBUtils::SetString(&_turnRightAnimName, "turnright");
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CAdActor::~CAdActor() {
-	delete m_Path;
-	delete m_TargetPoint;
-	m_Path = NULL;
-	m_TargetPoint = NULL;
+	delete _path;
+	delete _targetPoint;
+	_path = NULL;
+	_targetPoint = NULL;
 
-	delete m_WalkSprite;
-	delete m_StandSprite;
-	delete m_TurnLeftSprite;
-	delete m_TurnRightSprite;
-	m_WalkSprite = NULL;
-	m_StandSprite = NULL;
-	m_TurnLeftSprite = NULL;
-	m_TurnRightSprite = NULL;
+	delete _walkSprite;
+	delete _standSprite;
+	delete _turnLeftSprite;
+	delete _turnRightSprite;
+	_walkSprite = NULL;
+	_standSprite = NULL;
+	_turnLeftSprite = NULL;
+	_turnRightSprite = NULL;
 
-	m_AnimSprite2 = NULL; // ref only
+	_animSprite2 = NULL; // ref only
 
-	for (int i = 0; i < m_TalkSprites.GetSize(); i++) {
-		delete m_TalkSprites[i];
+	for (int i = 0; i < _talkSprites.GetSize(); i++) {
+		delete _talkSprites[i];
 	}
-	m_TalkSprites.RemoveAll();
+	_talkSprites.RemoveAll();
 
-	for (int i = 0; i < m_TalkSpritesEx.GetSize(); i++) {
-		delete m_TalkSpritesEx[i];
+	for (int i = 0; i < _talkSpritesEx.GetSize(); i++) {
+		delete _talkSpritesEx[i];
 	}
-	m_TalkSpritesEx.RemoveAll();
+	_talkSpritesEx.RemoveAll();
 
 
-	delete[] m_TalkAnimName;
-	delete[] m_IdleAnimName;
-	delete[] m_WalkAnimName;
-	delete[] m_TurnLeftAnimName;
-	delete[] m_TurnRightAnimName;
-	m_TalkAnimName = NULL;
-	m_IdleAnimName = NULL;
-	m_WalkAnimName = NULL;
-	m_TurnLeftAnimName = NULL;
-	m_TurnRightAnimName = NULL;
+	delete[] _talkAnimName;
+	delete[] _idleAnimName;
+	delete[] _walkAnimName;
+	delete[] _turnLeftAnimName;
+	delete[] _turnRightAnimName;
+	_talkAnimName = NULL;
+	_idleAnimName = NULL;
+	_walkAnimName = NULL;
+	_turnLeftAnimName = NULL;
+	_turnRightAnimName = NULL;
 
-	for (int i = 0; i < m_Anims.GetSize(); i++) {
-		delete m_Anims[i];
-		m_Anims[i] = NULL;
+	for (int i = 0; i < _anims.GetSize(); i++) {
+		delete _anims[i];
+		_anims[i] = NULL;
 	}
-	m_Anims.RemoveAll();
+	_anims.RemoveAll();
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdActor::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdActor::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -154,8 +154,8 @@ HRESULT CAdActor::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ACTOR file '%s'", Filename);
 
@@ -267,11 +267,11 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &m_PosX);
+			parser.ScanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &m_PosY);
+			parser.ScanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_NAME:
@@ -287,70 +287,70 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCALABLE:
-			parser.ScanStr((char *)params, "%b", &m_Zoomable);
+			parser.ScanStr((char *)params, "%b", &_zoomable);
 			break;
 
 		case TOKEN_ROTABLE:
 		case TOKEN_ROTATABLE:
-			parser.ScanStr((char *)params, "%b", &m_Rotatable);
+			parser.ScanStr((char *)params, "%b", &_rotatable);
 			break;
 
 		case TOKEN_REGISTRABLE:
 		case TOKEN_INTERACTIVE:
-			parser.ScanStr((char *)params, "%b", &m_Registrable);
+			parser.ScanStr((char *)params, "%b", &_registrable);
 			break;
 
 		case TOKEN_SHADOWABLE:
 		case TOKEN_COLORABLE:
-			parser.ScanStr((char *)params, "%b", &m_Shadowable);
+			parser.ScanStr((char *)params, "%b", &_shadowable);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &m_Active);
+			parser.ScanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_WALK:
-			delete m_WalkSprite;
-			m_WalkSprite = NULL;
+			delete _walkSprite;
+			_walkSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->m_TexWalkLifeTime, CACHE_HALF))) cmd = PARSERR_GENERIC;
-			else m_WalkSprite = spr;
+			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->_texWalkLifeTime, CACHE_HALF))) cmd = PARSERR_GENERIC;
+			else _walkSprite = spr;
 			break;
 
 		case TOKEN_TALK:
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->m_TexTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else m_TalkSprites.Add(spr);
+			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			else _talkSprites.Add(spr);
 			break;
 
 		case TOKEN_TALK_SPECIAL:
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->m_TexTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else m_TalkSpritesEx.Add(spr);
+			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			else _talkSpritesEx.Add(spr);
 			break;
 
 		case TOKEN_STAND:
-			delete m_StandSprite;
-			m_StandSprite = NULL;
+			delete _standSprite;
+			_standSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->m_TexStandLifeTime))) cmd = PARSERR_GENERIC;
-			else m_StandSprite = spr;
+			if (!spr || FAILED(spr->LoadBuffer(params, true, AdGame->_texStandLifeTime))) cmd = PARSERR_GENERIC;
+			else _standSprite = spr;
 			break;
 
 		case TOKEN_TURN_LEFT:
-			delete m_TurnLeftSprite;
-			m_TurnLeftSprite = NULL;
+			delete _turnLeftSprite;
+			_turnLeftSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
 			if (!spr || FAILED(spr->LoadBuffer(params, true))) cmd = PARSERR_GENERIC;
-			else m_TurnLeftSprite = spr;
+			else _turnLeftSprite = spr;
 			break;
 
 		case TOKEN_TURN_RIGHT:
-			delete m_TurnRightSprite;
-			m_TurnRightSprite = NULL;
+			delete _turnRightSprite;
+			_turnRightSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
 			if (!spr || FAILED(spr->LoadBuffer(params, true))) cmd = PARSERR_GENERIC;
-			else m_TurnRightSprite = spr;
+			else _turnRightSprite = spr;
 			break;
 
 		case TOKEN_SCRIPT:
@@ -358,23 +358,23 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete m_Cursor;
-			m_Cursor = new CBSprite(Game);
-			if (!m_Cursor || FAILED(m_Cursor->LoadFile((char *)params))) {
-				delete m_Cursor;
-				m_Cursor = NULL;
+			delete _cursor;
+			_cursor = new CBSprite(Game);
+			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+				delete _cursor;
+				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_SOUND_VOLUME:
-			parser.ScanStr((char *)params, "%d", &m_SFXVolume);
+			parser.ScanStr((char *)params, "%d", &_sFXVolume);
 			break;
 
 		case TOKEN_SCALE: {
 			int s;
 			parser.ScanStr((char *)params, "%d", &s);
-			m_Scale = (float)s;
+			_scale = (float)s;
 
 		}
 		break;
@@ -382,13 +382,13 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_RELATIVE_SCALE: {
 			int s;
 			parser.ScanStr((char *)params, "%d", &s);
-			m_RelativeScale = (float)s;
+			_relativeScale = (float)s;
 
 		}
 		break;
 
 		case TOKEN_SOUND_PANNING:
-			parser.ScanStr((char *)params, "%b", &m_AutoSoundPanning);
+			parser.ScanStr((char *)params, "%b", &_autoSoundPanning);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -396,49 +396,49 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_BLOCKED_REGION: {
-			delete m_BlockRegion;
-			delete m_CurrentBlockRegion;
-			m_BlockRegion = NULL;
-			m_CurrentBlockRegion = NULL;
+			delete _blockRegion;
+			delete _currentBlockRegion;
+			_blockRegion = NULL;
+			_currentBlockRegion = NULL;
 			CBRegion *rgn = new CBRegion(Game);
 			CBRegion *crgn = new CBRegion(Game);
 			if (!rgn || !crgn || FAILED(rgn->LoadBuffer(params, false))) {
-				delete m_BlockRegion;
-				delete m_CurrentBlockRegion;
-				m_BlockRegion = NULL;
-				m_CurrentBlockRegion = NULL;
+				delete _blockRegion;
+				delete _currentBlockRegion;
+				_blockRegion = NULL;
+				_currentBlockRegion = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
-				m_BlockRegion = rgn;
-				m_CurrentBlockRegion = crgn;
-				m_CurrentBlockRegion->Mimic(m_BlockRegion);
+				_blockRegion = rgn;
+				_currentBlockRegion = crgn;
+				_currentBlockRegion->Mimic(_blockRegion);
 			}
 		}
 		break;
 
 		case TOKEN_WAYPOINTS: {
-			delete m_WptGroup;
-			delete m_CurrentWptGroup;
-			m_WptGroup = NULL;
-			m_CurrentWptGroup = NULL;
+			delete _wptGroup;
+			delete _currentWptGroup;
+			_wptGroup = NULL;
+			_currentWptGroup = NULL;
 			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
 			CAdWaypointGroup *cwpt = new CAdWaypointGroup(Game);
 			if (!wpt || !cwpt || FAILED(wpt->LoadBuffer(params, false))) {
-				delete m_WptGroup;
-				delete m_CurrentWptGroup;
-				m_WptGroup = NULL;
-				m_CurrentWptGroup = NULL;
+				delete _wptGroup;
+				delete _currentWptGroup;
+				_wptGroup = NULL;
+				_currentWptGroup = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
-				m_WptGroup = wpt;
-				m_CurrentWptGroup = cwpt;
-				m_CurrentWptGroup->Mimic(m_WptGroup);
+				_wptGroup = wpt;
+				_currentWptGroup = cwpt;
+				_currentWptGroup->Mimic(_wptGroup);
 			}
 		}
 		break;
 
 		case TOKEN_IGNORE_ITEMS:
-			parser.ScanStr((char *)params, "%b", &m_IgnoreItems);
+			parser.ScanStr((char *)params, "%b", &_ignoreItems);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
@@ -456,7 +456,7 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_ANIMATION: {
 			CAdSpriteSet *Anim = new CAdSpriteSet(Game, this);
 			if (!Anim || FAILED(Anim->LoadBuffer(params, false))) cmd = PARSERR_GENERIC;
-			else m_Anims.Add(Anim);
+			else _anims.Add(Anim);
 		}
 		break;
 		}
@@ -474,8 +474,8 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
 	}
-	m_AlphaColor = DRGBA(ar, ag, ab, alpha);
-	m_State = m_NextState = STATE_READY;
+	_alphaColor = DRGBA(ar, ag, ab, alpha);
+	_state = _nextState = STATE_READY;
 
 	return S_OK;
 }
@@ -485,83 +485,83 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 void CAdActor::TurnTo(TDirection dir) {
 	int delta1, delta2, delta3, delta;
 
-	delta1 = dir - m_Dir;
-	delta2 = dir + NUM_DIRECTIONS - m_Dir;
-	delta3 = dir - NUM_DIRECTIONS - m_Dir;
+	delta1 = dir - _dir;
+	delta2 = dir + NUM_DIRECTIONS - _dir;
+	delta3 = dir - NUM_DIRECTIONS - _dir;
 
 	delta1 = (abs(delta1) <= abs(delta2)) ? delta1 : delta2;
 	delta = (abs(delta1) <= abs(delta3)) ? delta1 : delta3;
 
 	// already there?
 	if (abs(delta) < 2) {
-		m_Dir = dir;
-		m_State = m_NextState;
-		m_NextState = STATE_READY;
+		_dir = dir;
+		_state = _nextState;
+		_nextState = STATE_READY;
 		return;
 	}
 
-	m_TargetDir = dir;
-	m_State = delta < 0 ? STATE_TURNING_LEFT : STATE_TURNING_RIGHT;
+	_targetDir = dir;
+	_state = delta < 0 ? STATE_TURNING_LEFT : STATE_TURNING_RIGHT;
 
-	m_TempSprite2 = NULL;
+	_tempSprite2 = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdActor::GoTo(int X, int Y, TDirection AfterWalkDir) {
-	m_AfterWalkDir = AfterWalkDir;
-	if (X == m_TargetPoint->x && Y == m_TargetPoint->y && m_State == STATE_FOLLOWING_PATH) return;
+	_afterWalkDir = AfterWalkDir;
+	if (X == _targetPoint->x && Y == _targetPoint->y && _state == STATE_FOLLOWING_PATH) return;
 
-	m_Path->Reset();
-	m_Path->SetReady(false);
+	_path->Reset();
+	_path->SetReady(false);
 
-	m_TargetPoint->x = X;
-	m_TargetPoint->y = Y;
+	_targetPoint->x = X;
+	_targetPoint->y = Y;
 
-	((CAdGame *)Game)->m_Scene->CorrectTargetPoint(m_PosX, m_PosY, &m_TargetPoint->x, &m_TargetPoint->y, true, this);
+	((CAdGame *)Game)->_scene->CorrectTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
 
-	m_State = STATE_SEARCHING_PATH;
+	_state = STATE_SEARCHING_PATH;
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdActor::Display() {
-	if (m_Active) UpdateSounds();
+	if (_active) UpdateSounds();
 
 	uint32 Alpha;
-	if (m_AlphaColor != 0) Alpha = m_AlphaColor;
-	else Alpha = m_Shadowable ? ((CAdGame *)Game)->m_Scene->GetAlphaAt(m_PosX, m_PosY, true) : 0xFFFFFFFF;
+	if (_alphaColor != 0) Alpha = _alphaColor;
+	else Alpha = _shadowable ? ((CAdGame *)Game)->_scene->GetAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
 
 	float ScaleX, ScaleY;
 	GetScale(&ScaleX, &ScaleY);
 
 
 	float Rotate;
-	if (m_Rotatable) {
-		if (m_RotateValid) Rotate = m_Rotate;
-		else Rotate = ((CAdGame *)Game)->m_Scene->GetRotationAt(m_PosX, m_PosY) + m_RelativeRotate;
+	if (_rotatable) {
+		if (_rotateValid) Rotate = _rotate;
+		else Rotate = ((CAdGame *)Game)->_scene->GetRotationAt(_posX, _posY) + _relativeRotate;
 	} else Rotate = 0.0f;
 
-	if (m_Active) DisplaySpriteAttachments(true);
+	if (_active) DisplaySpriteAttachments(true);
 
-	if (m_CurrentSprite && m_Active) {
-		bool Reg = m_Registrable;
-		if (m_IgnoreItems && ((CAdGame *)Game)->m_SelectedItem) Reg = false;
+	if (_currentSprite && _active) {
+		bool Reg = _registrable;
+		if (_ignoreItems && ((CAdGame *)Game)->_selectedItem) Reg = false;
 
-		m_CurrentSprite->Display(m_PosX,
-		                         m_PosY,
-		                         Reg ? m_RegisterAlias : NULL,
+		_currentSprite->Display(_posX,
+		                         _posY,
+		                         Reg ? _registerAlias : NULL,
 		                         ScaleX,
 		                         ScaleY,
 		                         Alpha,
 		                         Rotate,
-		                         m_BlendMode);
+		                         _blendMode);
 
 	}
 
-	if (m_Active) DisplaySpriteAttachments(false);
-	if (m_Active && m_PartEmitter) m_PartEmitter->Display();
+	if (_active) DisplaySpriteAttachments(false);
+	if (_active && _partEmitter) _partEmitter->Display();
 
 
 	return S_OK;
@@ -570,128 +570,128 @@ HRESULT CAdActor::Display() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdActor::Update() {
-	m_CurrentSprite = NULL;
+	_currentSprite = NULL;
 
-	if (m_State == STATE_READY) {
-		if (m_AnimSprite) {
-			delete m_AnimSprite;
-			m_AnimSprite = NULL;
+	if (_state == STATE_READY) {
+		if (_animSprite) {
+			delete _animSprite;
+			_animSprite = NULL;
 		}
-		if (m_AnimSprite2) {
-			m_AnimSprite2 = NULL;
+		if (_animSprite2) {
+			_animSprite2 = NULL;
 		}
 	}
 
 	// finished playing animation?
-	if (m_State == STATE_PLAYING_ANIM && m_AnimSprite != NULL && m_AnimSprite->m_Finished) {
-		m_State = m_NextState;
-		m_NextState = STATE_READY;
-		m_CurrentSprite = m_AnimSprite;
+	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->_finished) {
+		_state = _nextState;
+		_nextState = STATE_READY;
+		_currentSprite = _animSprite;
 	}
 
-	if (m_State == STATE_PLAYING_ANIM_SET && m_AnimSprite2 != NULL && m_AnimSprite2->m_Finished) {
-		m_State = m_NextState;
-		m_NextState = STATE_READY;
-		m_CurrentSprite = m_AnimSprite2;
+	if (_state == STATE_PLAYING_ANIM_SET && _animSprite2 != NULL && _animSprite2->_finished) {
+		_state = _nextState;
+		_nextState = STATE_READY;
+		_currentSprite = _animSprite2;
 	}
 
-	if (m_Sentence && m_State != STATE_TALKING) m_Sentence->Finish();
+	if (_sentence && _state != STATE_TALKING) _sentence->Finish();
 
 	// default: stand animation
-	if (!m_CurrentSprite) {
-		if (m_Sprite) m_CurrentSprite = m_Sprite;
+	if (!_currentSprite) {
+		if (_sprite) _currentSprite = _sprite;
 		else {
-			if (m_StandSprite) {
-				m_CurrentSprite = m_StandSprite->GetSprite(m_Dir);
+			if (_standSprite) {
+				_currentSprite = _standSprite->GetSprite(_dir);
 			} else {
-				CAdSpriteSet *Anim = GetAnimByName(m_IdleAnimName);
-				if (Anim) m_CurrentSprite = Anim->GetSprite(m_Dir);
+				CAdSpriteSet *Anim = GetAnimByName(_idleAnimName);
+				if (Anim) _currentSprite = Anim->GetSprite(_dir);
 			}
 		}
 	}
 
 	bool already_moved = false;
 
-	switch (m_State) {
+	switch (_state) {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_PLAYING_ANIM:
-		m_CurrentSprite = m_AnimSprite;
+		_currentSprite = _animSprite;
 		break;
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_PLAYING_ANIM_SET:
-		m_CurrentSprite = m_AnimSprite2;
+		_currentSprite = _animSprite2;
 		break;
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_LEFT:
-		if (m_TempSprite2 == NULL || m_TempSprite2->m_Finished) {
-			if (m_Dir > 0) m_Dir = (TDirection)(m_Dir - 1);
-			else m_Dir = (TDirection)(NUM_DIRECTIONS - 1);
+		if (_tempSprite2 == NULL || _tempSprite2->_finished) {
+			if (_dir > 0) _dir = (TDirection)(_dir - 1);
+			else _dir = (TDirection)(NUM_DIRECTIONS - 1);
 
-			if (m_Dir == m_TargetDir) {
-				m_TempSprite2 = NULL;
-				m_State = m_NextState;
-				m_NextState = STATE_READY;
+			if (_dir == _targetDir) {
+				_tempSprite2 = NULL;
+				_state = _nextState;
+				_nextState = STATE_READY;
 			} else {
-				if (m_TurnLeftSprite) {
-					m_TempSprite2 = m_TurnLeftSprite->GetSprite(m_Dir);
+				if (_turnLeftSprite) {
+					_tempSprite2 = _turnLeftSprite->GetSprite(_dir);
 				} else {
-					CAdSpriteSet *Anim = GetAnimByName(m_TurnLeftAnimName);
-					if (Anim) m_TempSprite2 = Anim->GetSprite(m_Dir);
+					CAdSpriteSet *Anim = GetAnimByName(_turnLeftAnimName);
+					if (Anim) _tempSprite2 = Anim->GetSprite(_dir);
 				}
 
-				if (m_TempSprite2) {
-					m_TempSprite2->Reset();
-					if (m_TempSprite2->m_Looping) m_TempSprite2->m_Looping = false;
+				if (_tempSprite2) {
+					_tempSprite2->Reset();
+					if (_tempSprite2->_looping) _tempSprite2->_looping = false;
 				}
-				m_CurrentSprite = m_TempSprite2;
+				_currentSprite = _tempSprite2;
 			}
-		} else m_CurrentSprite = m_TempSprite2;
+		} else _currentSprite = _tempSprite2;
 		break;
 
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_RIGHT:
-		if (m_TempSprite2 == NULL || m_TempSprite2->m_Finished) {
-			m_Dir = (TDirection)(m_Dir + 1);
+		if (_tempSprite2 == NULL || _tempSprite2->_finished) {
+			_dir = (TDirection)(_dir + 1);
 
-			if ((int)m_Dir >= (int)NUM_DIRECTIONS) m_Dir = (TDirection)(0);
+			if ((int)_dir >= (int)NUM_DIRECTIONS) _dir = (TDirection)(0);
 
-			if (m_Dir == m_TargetDir) {
-				m_TempSprite2 = NULL;
-				m_State = m_NextState;
-				m_NextState = STATE_READY;
+			if (_dir == _targetDir) {
+				_tempSprite2 = NULL;
+				_state = _nextState;
+				_nextState = STATE_READY;
 			} else {
-				if (m_TurnRightSprite) {
-					m_TempSprite2 = m_TurnRightSprite->GetSprite(m_Dir);
+				if (_turnRightSprite) {
+					_tempSprite2 = _turnRightSprite->GetSprite(_dir);
 				} else {
-					CAdSpriteSet *Anim = GetAnimByName(m_TurnRightAnimName);
-					if (Anim) m_TempSprite2 = Anim->GetSprite(m_Dir);
+					CAdSpriteSet *Anim = GetAnimByName(_turnRightAnimName);
+					if (Anim) _tempSprite2 = Anim->GetSprite(_dir);
 				}
 
-				if (m_TempSprite2) {
-					m_TempSprite2->Reset();
-					if (m_TempSprite2->m_Looping) m_TempSprite2->m_Looping = false;
+				if (_tempSprite2) {
+					_tempSprite2->Reset();
+					if (_tempSprite2->_looping) _tempSprite2->_looping = false;
 				}
-				m_CurrentSprite = m_TempSprite2;
+				_currentSprite = _tempSprite2;
 			}
-		} else m_CurrentSprite = m_TempSprite2;
+		} else _currentSprite = _tempSprite2;
 		break;
 
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_SEARCHING_PATH:
 		// keep asking scene for the path
-		if (((CAdGame *)Game)->m_Scene->GetPath(CBPoint(m_PosX, m_PosY), *m_TargetPoint, m_Path, this))
-			m_State = STATE_WAITING_PATH;
+		if (((CAdGame *)Game)->_scene->GetPath(CBPoint(_posX, _posY), *_targetPoint, _path, this))
+			_state = STATE_WAITING_PATH;
 		break;
 
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_WAITING_PATH:
 		// wait until the scene finished the path
-		if (m_Path->m_Ready) FollowPath();
+		if (_path->_ready) FollowPath();
 		break;
 
 
@@ -703,41 +703,41 @@ HRESULT CAdActor::Update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
-		m_Sentence->Update(m_Dir);
-		if (m_Sentence->m_CurrentSprite) m_TempSprite2 = m_Sentence->m_CurrentSprite;
+		_sentence->Update(_dir);
+		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
-		bool TimeIsUp = (m_Sentence->m_Sound && m_Sentence->m_SoundStarted && (!m_Sentence->m_Sound->IsPlaying() && !m_Sentence->m_Sound->IsPaused())) || (!m_Sentence->m_Sound && m_Sentence->m_Duration <= Game->m_Timer - m_Sentence->m_StartTime);
-		if (m_TempSprite2 == NULL || m_TempSprite2->m_Finished || (/*m_TempSprite2->m_Looping &&*/ TimeIsUp)) {
+		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->IsPlaying() && !_sentence->_sound->IsPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
+		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
 			if (TimeIsUp) {
-				m_Sentence->Finish();
-				m_TempSprite2 = NULL;
-				m_State = m_NextState;
-				m_NextState = STATE_READY;
+				_sentence->Finish();
+				_tempSprite2 = NULL;
+				_state = _nextState;
+				_nextState = STATE_READY;
 			} else {
-				m_TempSprite2 = GetTalkStance(m_Sentence->GetNextStance());
-				if (m_TempSprite2) {
-					m_TempSprite2->Reset();
-					m_CurrentSprite = m_TempSprite2;
-					((CAdGame *)Game)->AddSentence(m_Sentence);
+				_tempSprite2 = GetTalkStance(_sentence->GetNextStance());
+				if (_tempSprite2) {
+					_tempSprite2->Reset();
+					_currentSprite = _tempSprite2;
+					((CAdGame *)Game)->AddSentence(_sentence);
 				}
 			}
 		} else {
-			m_CurrentSprite = m_TempSprite2;
-			((CAdGame *)Game)->AddSentence(m_Sentence);
+			_currentSprite = _tempSprite2;
+			((CAdGame *)Game)->AddSentence(_sentence);
 		}
 	}
 	break;
 
 	//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
-		if (!m_AnimSprite && !m_AnimSprite2) {
-			if (m_Sprite) m_CurrentSprite = m_Sprite;
+		if (!_animSprite && !_animSprite2) {
+			if (_sprite) _currentSprite = _sprite;
 			else {
-				if (m_StandSprite) {
-					m_CurrentSprite = m_StandSprite->GetSprite(m_Dir);
+				if (_standSprite) {
+					_currentSprite = _standSprite->GetSprite(_dir);
 				} else {
-					CAdSpriteSet *Anim = GetAnimByName(m_IdleAnimName);
-					if (Anim) m_CurrentSprite = Anim->GetSprite(m_Dir);
+					CAdSpriteSet *Anim = GetAnimByName(_idleAnimName);
+					if (Anim) _currentSprite = Anim->GetSprite(_dir);
 				}
 			}
 		}
@@ -745,19 +745,19 @@ HRESULT CAdActor::Update() {
 	}
 
 
-	if (m_CurrentSprite && !already_moved) {
-		m_CurrentSprite->GetCurrentFrame(m_Zoomable ? ((CAdGame *)Game)->m_Scene->GetZoomAt(m_PosX, m_PosY) : 100, m_Zoomable ? ((CAdGame *)Game)->m_Scene->GetZoomAt(m_PosX, m_PosY) : 100);
-		if (m_CurrentSprite->m_Changed) {
-			m_PosX += m_CurrentSprite->m_MoveX;
-			m_PosY += m_CurrentSprite->m_MoveY;
+	if (_currentSprite && !already_moved) {
+		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100);
+		if (_currentSprite->_changed) {
+			_posX += _currentSprite->_moveX;
+			_posY += _currentSprite->_moveY;
 			AfterMove();
 		}
 	}
 
-	//Game->QuickMessageForm("%s", m_CurrentSprite->m_Filename);
+	//Game->QuickMessageForm("%s", _currentSprite->_filename);
 
 	UpdateBlockRegion();
-	m_Ready = (m_State == STATE_READY);
+	_ready = (_state == STATE_READY);
 
 	UpdatePartEmitter();
 	UpdateSpriteAttachments();
@@ -769,99 +769,99 @@ HRESULT CAdActor::Update() {
 //////////////////////////////////////////////////////////////////////////
 void CAdActor::FollowPath() {
 	// skip current position
-	m_Path->GetFirst();
-	while (m_Path->GetCurrent() != NULL) {
-		if (m_Path->GetCurrent()->x != m_PosX || m_Path->GetCurrent()->y != m_PosY) break;
-		m_Path->GetNext();
+	_path->GetFirst();
+	while (_path->GetCurrent() != NULL) {
+		if (_path->GetCurrent()->x != _posX || _path->GetCurrent()->y != _posY) break;
+		_path->GetNext();
 	}
 
 	// are there points to follow?
-	if (m_Path->GetCurrent() != NULL) {
-		m_State = STATE_FOLLOWING_PATH;;
-		InitLine(CBPoint(m_PosX, m_PosY), *m_Path->GetCurrent());
+	if (_path->GetCurrent() != NULL) {
+		_state = STATE_FOLLOWING_PATH;;
+		InitLine(CBPoint(_posX, _posY), *_path->GetCurrent());
 	} else {
-		if (m_AfterWalkDir != DI_NONE) TurnTo(m_AfterWalkDir);
-		else m_State = STATE_READY;
+		if (_afterWalkDir != DI_NONE) TurnTo(_afterWalkDir);
+		else _state = STATE_READY;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdActor::GetNextStep() {
-	if (m_WalkSprite) {
-		m_CurrentSprite = m_WalkSprite->GetSprite(m_Dir);
+	if (_walkSprite) {
+		_currentSprite = _walkSprite->GetSprite(_dir);
 	} else {
-		CAdSpriteSet *Anim = GetAnimByName(m_WalkAnimName);
-		if (Anim) m_CurrentSprite = Anim->GetSprite(m_Dir);
+		CAdSpriteSet *Anim = GetAnimByName(_walkAnimName);
+		if (Anim) _currentSprite = Anim->GetSprite(_dir);
 	}
 
-	if (!m_CurrentSprite) return;
+	if (!_currentSprite) return;
 
-	m_CurrentSprite->GetCurrentFrame(m_Zoomable ? ((CAdGame *)Game)->m_Scene->GetZoomAt(m_PosX, m_PosY) : 100, m_Zoomable ? ((CAdGame *)Game)->m_Scene->GetZoomAt(m_PosX, m_PosY) : 100);
-	if (!m_CurrentSprite->m_Changed) return;
+	_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100);
+	if (!_currentSprite->_changed) return;
 
 
 	int MaxStepX, MaxStepY;
-	MaxStepX = abs(m_CurrentSprite->m_MoveX);
-	MaxStepY = abs(m_CurrentSprite->m_MoveY);
+	MaxStepX = abs(_currentSprite->_moveX);
+	MaxStepY = abs(_currentSprite->_moveY);
 
 	MaxStepX = std::max(MaxStepX, MaxStepY);
 	MaxStepX = std::max(MaxStepX, 1);
 
-	while (m_PFCount > 0 && MaxStepX >= 0) {
-		m_PFX += m_PFStepX;
-		m_PFY += m_PFStepY;
+	while (_pFCount > 0 && MaxStepX >= 0) {
+		_pFX += _pFStepX;
+		_pFY += _pFStepY;
 
-		m_PFCount--;
+		_pFCount--;
 		MaxStepX--;
 	}
 
-	if (((CAdGame *)Game)->m_Scene->IsBlockedAt(m_PFX, m_PFY, true, this)) {
-		if (m_PFCount == 0) {
-			m_State = m_NextState;
-			m_NextState = STATE_READY;
+	if (((CAdGame *)Game)->_scene->IsBlockedAt(_pFX, _pFY, true, this)) {
+		if (_pFCount == 0) {
+			_state = _nextState;
+			_nextState = STATE_READY;
 			return;
 		}
-		GoTo(m_TargetPoint->x, m_TargetPoint->y);
+		GoTo(_targetPoint->x, _targetPoint->y);
 		return;
 	}
 
 
-	m_PosX = (int)m_PFX;
-	m_PosY = (int)m_PFY;
+	_posX = (int)_pFX;
+	_posY = (int)_pFY;
 
 	AfterMove();
 
 
-	if (m_PFCount == 0) {
-		if (m_Path->GetNext() == NULL) {
-			m_PosX = m_TargetPoint->x;
-			m_PosY = m_TargetPoint->y;
+	if (_pFCount == 0) {
+		if (_path->GetNext() == NULL) {
+			_posX = _targetPoint->x;
+			_posY = _targetPoint->y;
 
-			m_Path->Reset();
-			if (m_AfterWalkDir != DI_NONE) TurnTo(m_AfterWalkDir);
+			_path->Reset();
+			if (_afterWalkDir != DI_NONE) TurnTo(_afterWalkDir);
 			else {
-				m_State = m_NextState;
-				m_NextState = STATE_READY;
+				_state = _nextState;
+				_nextState = STATE_READY;
 			}
-		} else InitLine(CBPoint(m_PosX, m_PosY), *m_Path->GetCurrent());
+		} else InitLine(CBPoint(_posX, _posY), *_path->GetCurrent());
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdActor::InitLine(CBPoint StartPt, CBPoint EndPt) {
-	m_PFCount = std::max((abs(EndPt.x - StartPt.x)) , (abs(EndPt.y - StartPt.y)));
+	_pFCount = std::max((abs(EndPt.x - StartPt.x)) , (abs(EndPt.y - StartPt.y)));
 
-	m_PFStepX = (double)(EndPt.x - StartPt.x) / m_PFCount;
-	m_PFStepY = (double)(EndPt.y - StartPt.y) / m_PFCount;
+	_pFStepX = (double)(EndPt.x - StartPt.x) / _pFCount;
+	_pFStepY = (double)(EndPt.y - StartPt.y) / _pFCount;
 
-	m_PFX = StartPt.x;
-	m_PFY = StartPt.y;
+	_pFX = StartPt.x;
+	_pFY = StartPt.y;
 
 	int angle = (int)(atan2((double)(EndPt.y - StartPt.y), (double)(EndPt.x - StartPt.x)) * (180 / 3.14));
 
-	m_NextState = STATE_FOLLOWING_PATH;
+	_nextState = STATE_FOLLOWING_PATH;
 
 	TurnTo(AngleToDirection(angle));
 }
@@ -896,14 +896,14 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			return S_OK;
 		}
 		CAdObject *Obj = (CAdObject *)Val->GetNative();
-		if (!Obj || Obj->m_Type != OBJECT_ENTITY) {
+		if (!Obj || Obj->_type != OBJECT_ENTITY) {
 			Script->RuntimeError("actor.%s method accepts an entity refrence only", Name);
 			Stack->PushNULL();
 			return S_OK;
 		}
 		CAdEntity *Ent = (CAdEntity *)Obj;
-		if (Ent->m_WalkToX == 0 && Ent->m_WalkToY == 0) GoTo(Ent->m_PosX, Ent->m_PosY);
-		else GoTo(Ent->m_WalkToX, Ent->m_WalkToY, Ent->m_WalkToDir);
+		if (Ent->_walkToX == 0 && Ent->_walkToY == 0) GoTo(Ent->_posX, Ent->_posY);
+		else GoTo(Ent->_walkToX, Ent->_walkToY, Ent->_walkToDir);
 		if (strcmp(Name, "GoToObjectAsync") != 0) Script->WaitForExclusive(this);
 		Stack->PushNULL();
 		return S_OK;
@@ -920,7 +920,7 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		// turn to object?
 		if (val->IsNative() && Game->ValidObject((CBObject *)val->GetNative())) {
 			CBObject *obj = (CBObject *)val->GetNative();
-			int angle = (int)(atan2((double)(obj->m_PosY - m_PosY), (double)(obj->m_PosX - m_PosX)) * (180 / 3.14));
+			int angle = (int)(atan2((double)(obj->_posY - _posY), (double)(obj->_posX - _posX)) * (180 / 3.14));
 			dir = (int)AngleToDirection(angle);
 		}
 		// otherwise turn to direction
@@ -939,7 +939,7 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsWalking") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushBool(m_State == STATE_FOLLOWING_PATH);
+		Stack->PushBool(_state == STATE_FOLLOWING_PATH);
 		return S_OK;
 	}
 
@@ -960,16 +960,16 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		char *AnimName = Stack->Pop()->GetString();
 
 		bool Found = false;
-		for (int i = 0; i < m_Anims.GetSize(); i++) {
-			if (scumm_stricmp(m_Anims[i]->m_Name, AnimName) == 0) {
+		for (int i = 0; i < _anims.GetSize(); i++) {
+			if (scumm_stricmp(_anims[i]->_name, AnimName) == 0) {
 				// invalidate sprites in use
-				if (m_Anims[i]->ContainsSprite(m_TempSprite2)) m_TempSprite2 = NULL;
-				if (m_Anims[i]->ContainsSprite(m_CurrentSprite)) m_CurrentSprite = NULL;
-				if (m_Anims[i]->ContainsSprite(m_AnimSprite2)) m_AnimSprite2 = NULL;
+				if (_anims[i]->ContainsSprite(_tempSprite2)) _tempSprite2 = NULL;
+				if (_anims[i]->ContainsSprite(_currentSprite)) _currentSprite = NULL;
+				if (_anims[i]->ContainsSprite(_animSprite2)) _animSprite2 = NULL;
 
-				delete m_Anims[i];
-				m_Anims[i] = NULL;
-				m_Anims.RemoveAt(i);
+				delete _anims[i];
+				_anims[i] = NULL;
+				_anims.RemoveAt(i);
 				i--;
 				Found = true;
 			}
@@ -994,60 +994,60 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdActor::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Direction") == 0) {
-		m_ScValue->SetInt(m_Dir);
-		return m_ScValue;
+		_scValue->SetInt(_dir);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("actor");
-		return m_ScValue;
+		_scValue->SetString("actor");
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TalkAnimName") == 0) {
-		m_ScValue->SetString(m_TalkAnimName);
-		return m_ScValue;
+		_scValue->SetString(_talkAnimName);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "WalkAnimName") == 0) {
-		m_ScValue->SetString(m_WalkAnimName);
-		return m_ScValue;
+		_scValue->SetString(_walkAnimName);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IdleAnimName") == 0) {
-		m_ScValue->SetString(m_IdleAnimName);
-		return m_ScValue;
+		_scValue->SetString(_idleAnimName);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TurnLeftAnimName") == 0) {
-		m_ScValue->SetString(m_TurnLeftAnimName);
-		return m_ScValue;
+		_scValue->SetString(_turnLeftAnimName);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TurnRightAnimName") == 0) {
-		m_ScValue->SetString(m_TurnRightAnimName);
-		return m_ScValue;
+		_scValue->SetString(_turnRightAnimName);
+		return _scValue;
 	}
 
 	else return CAdTalkHolder::ScGetProperty(Name);
@@ -1061,7 +1061,7 @@ HRESULT CAdActor::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Direction") == 0) {
 		int dir = Value->GetInt();
-		if (dir >= 0 && dir < NUM_DIRECTIONS) m_Dir = (TDirection)dir;
+		if (dir >= 0 && dir < NUM_DIRECTIONS) _dir = (TDirection)dir;
 		return S_OK;
 	}
 
@@ -1069,8 +1069,8 @@ HRESULT CAdActor::ScSetProperty(char *Name, CScValue *Value) {
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TalkAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&m_TalkAnimName, "talk");
-		else CBUtils::SetString(&m_TalkAnimName, Value->GetString());
+		if (Value->IsNULL()) CBUtils::SetString(&_talkAnimName, "talk");
+		else CBUtils::SetString(&_talkAnimName, Value->GetString());
 		return S_OK;
 	}
 
@@ -1078,8 +1078,8 @@ HRESULT CAdActor::ScSetProperty(char *Name, CScValue *Value) {
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "WalkAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&m_WalkAnimName, "walk");
-		else CBUtils::SetString(&m_WalkAnimName, Value->GetString());
+		if (Value->IsNULL()) CBUtils::SetString(&_walkAnimName, "walk");
+		else CBUtils::SetString(&_walkAnimName, Value->GetString());
 		return S_OK;
 	}
 
@@ -1087,8 +1087,8 @@ HRESULT CAdActor::ScSetProperty(char *Name, CScValue *Value) {
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IdleAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&m_IdleAnimName, "idle");
-		else CBUtils::SetString(&m_IdleAnimName, Value->GetString());
+		if (Value->IsNULL()) CBUtils::SetString(&_idleAnimName, "idle");
+		else CBUtils::SetString(&_idleAnimName, Value->GetString());
 		return S_OK;
 	}
 
@@ -1096,8 +1096,8 @@ HRESULT CAdActor::ScSetProperty(char *Name, CScValue *Value) {
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TurnLeftAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&m_TurnLeftAnimName, "turnleft");
-		else CBUtils::SetString(&m_TurnLeftAnimName, Value->GetString());
+		if (Value->IsNULL()) CBUtils::SetString(&_turnLeftAnimName, "turnleft");
+		else CBUtils::SetString(&_turnLeftAnimName, Value->GetString());
 		return S_OK;
 	}
 
@@ -1105,8 +1105,8 @@ HRESULT CAdActor::ScSetProperty(char *Name, CScValue *Value) {
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TurnRightAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&m_TurnRightAnimName, "turnright");
-		else CBUtils::SetString(&m_TurnRightAnimName, Value->GetString());
+		if (Value->IsNULL()) CBUtils::SetString(&_turnRightAnimName, "turnright");
+		else CBUtils::SetString(&_turnRightAnimName, Value->GetString());
 		return S_OK;
 	}
 
@@ -1123,22 +1123,22 @@ char *CAdActor::ScToString() {
 //////////////////////////////////////////////////////////////////////////
 CBSprite *CAdActor::GetTalkStance(char *Stance) {
 	// forced stance?
-	if (m_ForcedTalkAnimName && !m_ForcedTalkAnimUsed) {
-		m_ForcedTalkAnimUsed = true;
-		delete m_AnimSprite;
-		m_AnimSprite = new CBSprite(Game, this);
-		if (m_AnimSprite) {
-			HRESULT res = m_AnimSprite->LoadFile(m_ForcedTalkAnimName);
+	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
+		_forcedTalkAnimUsed = true;
+		delete _animSprite;
+		_animSprite = new CBSprite(Game, this);
+		if (_animSprite) {
+			HRESULT res = _animSprite->LoadFile(_forcedTalkAnimName);
 			if (FAILED(res)) {
-				Game->LOG(res, "CAdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", m_Name, m_ForcedTalkAnimName);
-				delete m_AnimSprite;
-				m_AnimSprite = NULL;
-			} else return m_AnimSprite;
+				Game->LOG(res, "CAdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				delete _animSprite;
+				_animSprite = NULL;
+			} else return _animSprite;
 		}
 	}
 
 	// old way
-	if (m_TalkSprites.GetSize() > 0 || m_TalkSpritesEx.GetSize() > 0)
+	if (_talkSprites.GetSize() > 0 || _talkSpritesEx.GetSize() > 0)
 		return GetTalkStanceOld(Stance);
 
 	// new way
@@ -1146,24 +1146,24 @@ CBSprite *CAdActor::GetTalkStance(char *Stance) {
 
 	// do we have an animation with this name?
 	CAdSpriteSet *Anim = GetAnimByName(Stance);
-	if (Anim) Ret = Anim->GetSprite(m_Dir);
+	if (Anim) Ret = Anim->GetSprite(_dir);
 
 	// not - get a random talk
 	if (!Ret) {
 		CBArray<CAdSpriteSet *, CAdSpriteSet *> TalkAnims;
-		for (int i = 0; i < m_Anims.GetSize(); i++) {
-			if (scumm_stricmp(m_Anims[i]->m_Name, m_TalkAnimName) == 0)
-				TalkAnims.Add(m_Anims[i]);
+		for (int i = 0; i < _anims.GetSize(); i++) {
+			if (scumm_stricmp(_anims[i]->_name, _talkAnimName) == 0)
+				TalkAnims.Add(_anims[i]);
 		}
 
 		if (TalkAnims.GetSize() > 0) {
 			int rnd = rand() % TalkAnims.GetSize();
-			Ret = TalkAnims[rnd]->GetSprite(m_Dir);
+			Ret = TalkAnims[rnd]->GetSprite(_dir);
 		} else {
-			if (m_StandSprite) Ret = m_StandSprite->GetSprite(m_Dir);
+			if (_standSprite) Ret = _standSprite->GetSprite(_dir);
 			else {
-				Anim = GetAnimByName(m_IdleAnimName);
-				if (Anim) Ret = Anim->GetSprite(m_Dir);
+				Anim = GetAnimByName(_idleAnimName);
+				if (Anim) Ret = Anim->GetSprite(_dir);
 			}
 		}
 	}
@@ -1176,17 +1176,17 @@ CBSprite *CAdActor::GetTalkStanceOld(char *Stance) {
 
 	if (Stance != NULL) {
 		// search special stances
-		for (int i = 0; i < m_TalkSpritesEx.GetSize(); i++) {
-			if (scumm_stricmp(m_TalkSpritesEx[i]->m_Name, Stance) == 0) {
-				ret = m_TalkSpritesEx[i]->GetSprite(m_Dir);
+		for (int i = 0; i < _talkSpritesEx.GetSize(); i++) {
+			if (scumm_stricmp(_talkSpritesEx[i]->_name, Stance) == 0) {
+				ret = _talkSpritesEx[i]->GetSprite(_dir);
 				break;
 			}
 		}
 		if (ret == NULL) {
 			// search generic stances
-			for (int i = 0; i < m_TalkSprites.GetSize(); i++) {
-				if (scumm_stricmp(m_TalkSprites[i]->m_Name, Stance) == 0) {
-					ret = m_TalkSprites[i]->GetSprite(m_Dir);
+			for (int i = 0; i < _talkSprites.GetSize(); i++) {
+				if (scumm_stricmp(_talkSprites[i]->_name, Stance) == 0) {
+					ret = _talkSprites[i]->GetSprite(_dir);
 					break;
 				}
 			}
@@ -1195,11 +1195,11 @@ CBSprite *CAdActor::GetTalkStanceOld(char *Stance) {
 
 	// not a valid stance? get a random one
 	if (ret == NULL) {
-		if (m_TalkSprites.GetSize() < 1) ret = m_StandSprite->GetSprite(m_Dir);
+		if (_talkSprites.GetSize() < 1) ret = _standSprite->GetSprite(_dir);
 		else {
 			// TODO: remember last
-			int rnd = rand() % m_TalkSprites.GetSize();
-			ret = m_TalkSprites[rnd]->GetSprite(m_Dir);
+			int rnd = rand() % _talkSprites.GetSize();
+			ret = _talkSprites[rnd]->GetSprite(_dir);
 		}
 	}
 
@@ -1210,31 +1210,31 @@ CBSprite *CAdActor::GetTalkStanceOld(char *Stance) {
 HRESULT CAdActor::Persist(CBPersistMgr *PersistMgr) {
 	CAdTalkHolder::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER_INT(m_Dir));
-	PersistMgr->Transfer(TMEMBER(m_Path));
-	PersistMgr->Transfer(TMEMBER(m_PFCount));
-	PersistMgr->Transfer(TMEMBER(m_PFStepX));
-	PersistMgr->Transfer(TMEMBER(m_PFStepY));
-	PersistMgr->Transfer(TMEMBER(m_PFX));
-	PersistMgr->Transfer(TMEMBER(m_PFY));
-	PersistMgr->Transfer(TMEMBER(m_StandSprite));
-	m_TalkSprites.Persist(PersistMgr);
-	m_TalkSpritesEx.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER_INT(m_TargetDir));
-	PersistMgr->Transfer(TMEMBER_INT(m_AfterWalkDir));
-	PersistMgr->Transfer(TMEMBER(m_TargetPoint));
-	PersistMgr->Transfer(TMEMBER(m_TurnLeftSprite));
-	PersistMgr->Transfer(TMEMBER(m_TurnRightSprite));
-	PersistMgr->Transfer(TMEMBER(m_WalkSprite));
+	PersistMgr->Transfer(TMEMBER_INT(_dir));
+	PersistMgr->Transfer(TMEMBER(_path));
+	PersistMgr->Transfer(TMEMBER(_pFCount));
+	PersistMgr->Transfer(TMEMBER(_pFStepX));
+	PersistMgr->Transfer(TMEMBER(_pFStepY));
+	PersistMgr->Transfer(TMEMBER(_pFX));
+	PersistMgr->Transfer(TMEMBER(_pFY));
+	PersistMgr->Transfer(TMEMBER(_standSprite));
+	_talkSprites.Persist(PersistMgr);
+	_talkSpritesEx.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER_INT(_targetDir));
+	PersistMgr->Transfer(TMEMBER_INT(_afterWalkDir));
+	PersistMgr->Transfer(TMEMBER(_targetPoint));
+	PersistMgr->Transfer(TMEMBER(_turnLeftSprite));
+	PersistMgr->Transfer(TMEMBER(_turnRightSprite));
+	PersistMgr->Transfer(TMEMBER(_walkSprite));
 
-	PersistMgr->Transfer(TMEMBER(m_AnimSprite2));
-	PersistMgr->Transfer(TMEMBER(m_TalkAnimName));
-	PersistMgr->Transfer(TMEMBER(m_IdleAnimName));
-	PersistMgr->Transfer(TMEMBER(m_WalkAnimName));
-	PersistMgr->Transfer(TMEMBER(m_TurnLeftAnimName));
-	PersistMgr->Transfer(TMEMBER(m_TurnRightAnimName));
+	PersistMgr->Transfer(TMEMBER(_animSprite2));
+	PersistMgr->Transfer(TMEMBER(_talkAnimName));
+	PersistMgr->Transfer(TMEMBER(_idleAnimName));
+	PersistMgr->Transfer(TMEMBER(_walkAnimName));
+	PersistMgr->Transfer(TMEMBER(_turnLeftAnimName));
+	PersistMgr->Transfer(TMEMBER(_turnRightAnimName));
 
-	m_Anims.Persist(PersistMgr);
+	_anims.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -1260,11 +1260,11 @@ TDirection CAdActor::AngleToDirection(int Angle) {
 //////////////////////////////////////////////////////////////////////////
 int CAdActor::GetHeight() {
 	// if no current sprite is set, set some
-	if (m_CurrentSprite == NULL) {
-		if (m_StandSprite) m_CurrentSprite = m_StandSprite->GetSprite(m_Dir);
+	if (_currentSprite == NULL) {
+		if (_standSprite) _currentSprite = _standSprite->GetSprite(_dir);
 		else {
-			CAdSpriteSet *Anim = GetAnimByName(m_IdleAnimName);
-			if (Anim) m_CurrentSprite = Anim->GetSprite(m_Dir);
+			CAdSpriteSet *Anim = GetAnimByName(_idleAnimName);
+			if (Anim) _currentSprite = Anim->GetSprite(_dir);
 		}
 	}
 	// and get height
@@ -1276,8 +1276,8 @@ int CAdActor::GetHeight() {
 CAdSpriteSet *CAdActor::GetAnimByName(char *AnimName) {
 	if (!AnimName) return NULL;
 
-	for (int i = 0; i < m_Anims.GetSize(); i++) {
-		if (scumm_stricmp(m_Anims[i]->m_Name, AnimName) == 0) return m_Anims[i];
+	for (int i = 0; i < _anims.GetSize(); i++) {
+		if (scumm_stricmp(_anims[i]->_name, AnimName) == 0) return _anims[i];
 	}
 	return NULL;
 }
@@ -1289,7 +1289,7 @@ HRESULT CAdActor::MergeAnims(char *AnimsFilename) {
 	TOKEN_TABLE_END
 
 
-	byte *FileBuffer = Game->m_FileManager->ReadWholeFile(AnimsFilename);
+	byte *FileBuffer = Game->_fileManager->ReadWholeFile(AnimsFilename);
 	if (FileBuffer == NULL) {
 		Game->LOG(0, "CAdActor::MergeAnims failed for file '%s'", AnimsFilename);
 		return E_FAIL;
@@ -1309,7 +1309,7 @@ HRESULT CAdActor::MergeAnims(char *AnimsFilename) {
 			if (!Anim || FAILED(Anim->LoadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				Ret = E_FAIL;
-			} else m_Anims.Add(Anim);
+			} else _anims.Add(Anim);
 		}
 		break;
 		}
@@ -1323,10 +1323,10 @@ HRESULT CAdActor::PlayAnim(char *Filename) {
 	// if we have an anim with this name, use it
 	CAdSpriteSet *Anim = GetAnimByName(Filename);
 	if (Anim) {
-		m_AnimSprite2 = Anim->GetSprite(m_Dir);
-		if (m_AnimSprite2) {
-			m_AnimSprite2->Reset();
-			m_State = STATE_PLAYING_ANIM_SET;
+		_animSprite2 = Anim->GetSprite(_dir);
+		if (_animSprite2) {
+			_animSprite2->Reset();
+			_state = STATE_PLAYING_ANIM_SET;
 			return S_OK;
 		}
 	}

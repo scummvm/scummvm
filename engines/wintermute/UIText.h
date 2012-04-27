@@ -41,8 +41,8 @@ public:
 	DECLARE_PERSISTENT(CUIText, CUIObject)
 	CUIText(CBGame *inGame = NULL);
 	virtual ~CUIText();
-	TTextAlign m_TextAlign;
-	TVerticalAlign m_VerticalAlign;
+	TTextAlign _textAlign;
+	TVerticalAlign _verticalAlign;
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);

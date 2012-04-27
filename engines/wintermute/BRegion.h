@@ -36,24 +36,24 @@ namespace WinterMute {
 
 class CBRegion : public CBObject {
 public:
-	float m_LastMimicScale;
-	int m_LastMimicX;
-	int m_LastMimicY;
+	float _lastMimicScale;
+	int _lastMimicX;
+	int _lastMimicY;
 	void Cleanup();
 	HRESULT Mimic(CBRegion *Region, float Scale = 100.0f, int X = 0, int Y = 0);
 	HRESULT GetBoundingRect(RECT *Rect);
 	bool PtInPolygon(int X, int Y);
 	DECLARE_PERSISTENT(CBRegion, CBObject)
-	bool m_Active;
-	int m_EditorSelectedPoint;
+	bool _active;
+	int _editorSelectedPoint;
 	CBRegion(CBGame *inGame);
 	virtual ~CBRegion();
 	bool PointInRegion(int X, int Y);
 	bool CreateRegion();
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	RECT m_Rect;
-	CBArray<CBPoint *, CBPoint *> m_Points;
+	RECT _rect;
+	CBArray<CBPoint *, CBPoint *> _points;
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent, char *NameOverride = NULL);
 
 	// scripting interface

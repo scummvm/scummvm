@@ -37,29 +37,29 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
 CBBase::CBBase(CBGame *GameOwner) {
 	Game = GameOwner;
-	m_Persistable = true;
+	_persistable = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBBase::CBBase() {
 	Game = NULL;
-	m_Persistable = true;
+	_persistable = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBBase::~CBBase() {
-	m_EditorProps.clear();
+	_editorProps.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 const char *CBBase::GetEditorProp(const char *PropName, const char *InitVal) {
-	m_EditorPropsIter = m_EditorProps.find(PropName);
-	if (m_EditorPropsIter != m_EditorProps.end())
-		return m_EditorPropsIter->_value.c_str();
-		//return m_EditorPropsIter->second.c_str(); // <- TODO Clean
+	_editorPropsIter = _editorProps.find(PropName);
+	if (_editorPropsIter != _editorProps.end())
+		return _editorPropsIter->_value.c_str();
+		//return _editorPropsIter->second.c_str(); // <- TODO Clean
 	else return InitVal;
 }
 
@@ -69,9 +69,9 @@ HRESULT CBBase::SetEditorProp(const char *PropName, const char *PropValue) {
 	if (PropName == NULL) return E_FAIL;
 
 	if (PropValue == NULL) {
-		m_EditorProps.erase(PropName);
+		_editorProps.erase(PropName);
 	} else {
-		m_EditorProps[PropName] = PropValue;
+		_editorProps[PropName] = PropValue;
 	}
 	return S_OK;
 }
@@ -92,7 +92,7 @@ HRESULT CBBase::ParseEditorProperty(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_END
 
 
-	if (!Game->m_EditorMode) return S_OK;
+	if (!Game->_editorMode) return S_OK;
 
 
 	byte *params;
@@ -159,17 +159,17 @@ HRESULT CBBase::ParseEditorProperty(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBBase::SaveAsText(CBDynBuffer *Buffer, int Indent) {
-	m_EditorPropsIter = m_EditorProps.begin();
-	while (m_EditorPropsIter != m_EditorProps.end()) {
+	_editorPropsIter = _editorProps.begin();
+	while (_editorPropsIter != _editorProps.end()) {
 		Buffer->PutTextIndent(Indent, "EDITOR_PROPERTY\n");
 		Buffer->PutTextIndent(Indent, "{\n");
-		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_EditorPropsIter->_key.c_str());
-		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_EditorPropsIter->_value.c_str());
-		//Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_EditorPropsIter->first.c_str()); // <- TODO, remove
-		//Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_EditorPropsIter->second.c_str()); // <- TODO, remove
+		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)_editorPropsIter->_key.c_str());
+		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->_value.c_str());
+		//Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)_editorPropsIter->first.c_str()); // <- TODO, remove
+		//Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->second.c_str()); // <- TODO, remove
 		Buffer->PutTextIndent(Indent, "}\n\n");
 
-		m_EditorPropsIter++;
+		_editorPropsIter++;
 	}
 	return S_OK;
 }

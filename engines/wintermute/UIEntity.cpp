@@ -42,21 +42,21 @@ IMPLEMENT_PERSISTENT(CUIEntity, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUIEntity::CUIEntity(CBGame *inGame): CUIObject(inGame) {
-	m_Type = UI_CUSTOM;
-	m_Entity = NULL;
+	_type = UI_CUSTOM;
+	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CUIEntity::~CUIEntity() {
-	if (m_Entity) Game->UnregisterObject(m_Entity);
-	m_Entity = NULL;
+	if (_entity) Game->UnregisterObject(_entity);
+	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEntity::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIEntity::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -64,8 +64,8 @@ HRESULT CUIEntity::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", Filename);
 
@@ -126,19 +126,19 @@ HRESULT CUIEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &m_PosX);
+			parser.ScanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &m_PosY);
+			parser.ScanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &m_Disable);
+			parser.ScanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &m_Visible);
+			parser.ScanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_ENTITY:
@@ -165,9 +165,9 @@ HRESULT CUIEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 
 	CorrectSize();
 
-	if (Game->m_EditorMode) {
-		m_Width = 50;
-		m_Height = 50;
+	if (Game->_editorMode) {
+		_width = 50;
+		_height = 50;
 	}
 
 	return S_OK;
@@ -178,24 +178,24 @@ HRESULT CUIEntity::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "ENTITY_CONTAINER\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", m_PosX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", m_PosY);
+	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", m_Disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", m_Visible ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
 
-	if (m_Entity && m_Entity->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "ENTITY=\"%s\"\n", m_Entity->m_Filename);
+	if (_entity && _entity->_filename)
+		Buffer->PutTextIndent(Indent + 2, "ENTITY=\"%s\"\n", _entity->_filename);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// scripts
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
@@ -209,39 +209,39 @@ HRESULT CUIEntity::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEntity::SetEntity(char *Filename) {
-	if (m_Entity) Game->UnregisterObject(m_Entity);
-	m_Entity = new CAdEntity(Game);
-	if (!m_Entity || FAILED(m_Entity->LoadFile(Filename))) {
-		delete m_Entity;
-		m_Entity = NULL;
+	if (_entity) Game->UnregisterObject(_entity);
+	_entity = new CAdEntity(Game);
+	if (!_entity || FAILED(_entity->LoadFile(Filename))) {
+		delete _entity;
+		_entity = NULL;
 		return E_FAIL;
 	} else {
-		m_Entity->m_NonIntMouseEvents = true;
-		m_Entity->m_SceneIndependent = true;
-		m_Entity->MakeFreezable(false);
-		Game->RegisterObject(m_Entity);
+		_entity->_nonIntMouseEvents = true;
+		_entity->_sceneIndependent = true;
+		_entity->MakeFreezable(false);
+		Game->RegisterObject(_entity);
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEntity::Display(int OffsetX, int OffsetY) {
-	if (!m_Visible) return S_OK;
+	if (!_visible) return S_OK;
 
-	if (m_Entity) {
-		m_Entity->m_PosX = OffsetX + m_PosX;
-		m_Entity->m_PosY = OffsetY + m_PosY;
-		if (m_Entity->m_Scale < 0) m_Entity->m_Zoomable = false;
-		m_Entity->m_Shadowable = false;
+	if (_entity) {
+		_entity->_posX = OffsetX + _posX;
+		_entity->_posY = OffsetY + _posY;
+		if (_entity->_scale < 0) _entity->_zoomable = false;
+		_entity->_shadowable = false;
 
-		m_Entity->Update();
+		_entity->Update();
 
-		bool OrigReg = m_Entity->m_Registrable;
+		bool OrigReg = _entity->_registrable;
 
-		if (m_Entity->m_Registrable && m_Disable) m_Entity->m_Registrable = false;
+		if (_entity->_registrable && _disable) _entity->_registrable = false;
 
-		m_Entity->Display();
-		m_Entity->m_Registrable = OrigReg;
+		_entity->Display();
+		_entity->_registrable = OrigReg;
 	}
 
 	return S_OK;
@@ -258,7 +258,7 @@ HRESULT CUIEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	if (strcmp(Name, "GetEntity") == 0) {
 		Stack->CorrectParams(0);
 
-		if (m_Entity) Stack->PushNative(m_Entity, true);
+		if (_entity) Stack->PushNative(_entity, true);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -286,23 +286,23 @@ HRESULT CUIEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIEntity::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("entity container");
-		return m_ScValue;
+		_scValue->SetString("entity container");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Freezable") == 0) {
-		if (m_Entity) m_ScValue->SetBool(m_Entity->m_Freezable);
-		else m_ScValue->SetBool(false);
-		return m_ScValue;
+		if (_entity) _scValue->SetBool(_entity->_freezable);
+		else _scValue->SetBool(false);
+		return _scValue;
 	}
 
 	else return CUIObject::ScGetProperty(Name);
@@ -315,7 +315,7 @@ HRESULT CUIEntity::ScSetProperty(char *Name, CScValue *Value) {
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Freezable") == 0) {
-		if (m_Entity) m_Entity->MakeFreezable(Value->GetBool());
+		if (_entity) _entity->MakeFreezable(Value->GetBool());
 		return S_OK;
 	} else return CUIObject::ScSetProperty(Name, Value);
 }
@@ -332,7 +332,7 @@ HRESULT CUIEntity::Persist(CBPersistMgr *PersistMgr) {
 
 	CUIObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Entity));
+	PersistMgr->Transfer(TMEMBER(_entity));
 	return S_OK;
 }
 

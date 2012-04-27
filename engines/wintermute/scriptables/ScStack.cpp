@@ -36,7 +36,7 @@ IMPLEMENT_PERSISTENT(CScStack, false)
 
 //////////////////////////////////////////////////////////////////////////
 CScStack::CScStack(CBGame *inGame): CBBase(inGame) {
-	m_SP = -1;
+	_sP = -1;
 }
 
 
@@ -44,95 +44,95 @@ CScStack::CScStack(CBGame *inGame): CBBase(inGame) {
 CScStack::~CScStack() {
 
 #if _DEBUG
-	//Game->LOG(0, "STAT: Stack size: %d, SP=%d", m_Values.GetSize(), m_SP);
+	//Game->LOG(0, "STAT: Stack size: %d, SP=%d", _values.GetSize(), _sP);
 #endif
 
-	for (int i = 0; i < m_Values.GetSize(); i++) {
-		delete m_Values[i];
+	for (int i = 0; i < _values.GetSize(); i++) {
+		delete _values[i];
 	}
-	m_Values.RemoveAll();
+	_values.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScStack::Pop() {
-	if (m_SP < 0) {
+	if (_sP < 0) {
 		Game->LOG(0, "Fatal: Stack underflow");
 		return NULL;
 	}
 
-	return m_Values[m_SP--];
+	return _values[_sP--];
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScStack::Push(CScValue *Val) {
-	m_SP++;
+	_sP++;
 
-	if (m_SP < m_Values.GetSize()) {
-		m_Values[m_SP]->Cleanup();
-		m_Values[m_SP]->Copy(Val);
+	if (_sP < _values.GetSize()) {
+		_values[_sP]->Cleanup();
+		_values[_sP]->Copy(Val);
 	} else {
 		CScValue *val = new CScValue(Game);
 		val->Copy(Val);
-		m_Values.Add(val);
+		_values.Add(val);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScStack::GetPushValue() {
-	m_SP++;
+	_sP++;
 
-	if (m_SP >= m_Values.GetSize()) {
+	if (_sP >= _values.GetSize()) {
 		CScValue *val = new CScValue(Game);
-		m_Values.Add(val);
+		_values.Add(val);
 	}
-	m_Values[m_SP]->Cleanup();
-	return m_Values[m_SP];
+	_values[_sP]->Cleanup();
+	return _values[_sP];
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScStack::GetTop() {
-	if (m_SP < 0 || m_SP >= m_Values.GetSize()) return NULL;
-	else return m_Values[m_SP];
+	if (_sP < 0 || _sP >= _values.GetSize()) return NULL;
+	else return _values[_sP];
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScStack::GetAt(int Index) {
-	Index = m_SP - Index;
-	if (Index < 0 || Index >= m_Values.GetSize()) return NULL;
-	else return m_Values[Index];
+	Index = _sP - Index;
+	if (Index < 0 || Index >= _values.GetSize()) return NULL;
+	else return _values[Index];
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScStack::CorrectParams(uint32 expected_params) {
-	int num_params = Pop()->GetInt();
+	int nu_params = Pop()->GetInt();
 
-	if (expected_params < num_params) { // too many params
-		while (expected_params < num_params) {
+	if (expected_params < nu_params) { // too many params
+		while (expected_params < nu_params) {
 			//Pop();
-			delete m_Values[m_SP - expected_params];
-			m_Values.RemoveAt(m_SP - expected_params);
-			num_params--;
-			m_SP--;
+			delete _values[_sP - expected_params];
+			_values.RemoveAt(_sP - expected_params);
+			nu_params--;
+			_sP--;
 		}
-	} else if (expected_params > num_params) { // need more params
-		while (expected_params > num_params) {
+	} else if (expected_params > nu_params) { // need more params
+		while (expected_params > nu_params) {
 			//Push(null_val);
 			CScValue *null_val = new CScValue(Game);
 			null_val->SetNULL();
-			m_Values.InsertAt(m_SP - num_params + 1, null_val);
-			num_params++;
-			m_SP++;
+			_values.InsertAt(_sP - nu_params + 1, null_val);
+			nu_params++;
+			_sP++;
 
-			if (m_Values.GetSize() > m_SP + 1) {
-				delete m_Values[m_Values.GetSize() - 1];
-				m_Values.RemoveAt(m_Values.GetSize() - 1);
+			if (_values.GetSize() > _sP + 1) {
+				delete _values[_values.GetSize() - 1];
+				_values.RemoveAt(_values.GetSize() - 1);
 			}
 		}
 	}
@@ -217,8 +217,8 @@ HRESULT CScStack::Persist(CBPersistMgr *PersistMgr) {
 
 	PersistMgr->Transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(m_SP));
-	m_Values.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_sP));
+	_values.Persist(PersistMgr);
 
 	return S_OK;
 }

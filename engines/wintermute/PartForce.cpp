@@ -32,9 +32,9 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CPartForce::CPartForce(CBGame *inGame) : CBNamedObject(inGame) {
-	m_Pos = Vector2(0.0f, 0.0f);
-	m_Direction = Vector2(0.0f, 0.0f);
-	m_Type = FORCE_POINT;
+	_pos = Vector2(0.0f, 0.0f);
+	_direction = Vector2(0.0f, 0.0f);
+	_type = FORCE_POINT;
 }
 
 
@@ -45,10 +45,10 @@ CPartForce::~CPartForce(void) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartForce::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(m_Name));
-	PersistMgr->Transfer(TMEMBER(m_Pos));
-	PersistMgr->Transfer(TMEMBER(m_Direction));
-	PersistMgr->Transfer(TMEMBER_INT(m_Type));
+	PersistMgr->Transfer(TMEMBER(_name));
+	PersistMgr->Transfer(TMEMBER(_pos));
+	PersistMgr->Transfer(TMEMBER(_direction));
+	PersistMgr->Transfer(TMEMBER_INT(_type));
 
 	return S_OK;
 }

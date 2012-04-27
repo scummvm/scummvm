@@ -36,10 +36,10 @@ namespace WinterMute {
 class CAdRegion : public CBRegion {
 public:
 	DECLARE_PERSISTENT(CAdRegion, CBRegion)
-	uint32 m_Alpha;
-	float m_Zoom;
-	bool m_Blocked;
-	bool m_Decoration;
+	uint32 _alpha;
+	float _zoom;
+	bool _blocked;
+	bool _decoration;
 	CAdRegion(CBGame *inGame);
 	virtual ~CAdRegion();
 	HRESULT LoadFile(char *Filename);

@@ -51,13 +51,13 @@ public:
 	virtual HRESULT Close();
 	virtual HRESULT Open(Common::String Filename);
 private:
-	bool m_InflateInit;
+	bool _inflateInit;
 	HRESULT SeekToPos(uint32 NewPos);
-	bool m_Compressed;
-	CBFileEntry *m_FileEntry;
-	z_stream m_Stream;
-	byte m_CompBuffer[COMPRESSED_BUFFER_SIZE];
-	Common::File *m_File;
+	bool _compressed;
+	CBFileEntry *_fileEntry;
+	z_stream _stream;
+	byte _compBuffer[COMPRESSED_BUFFER_SIZE];
+	Common::File *_file;
 };
 
 } // end of namespace WinterMute

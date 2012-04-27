@@ -37,7 +37,7 @@ namespace WinterMute {
 class CBSurface;
 class CBSurfaceStorage : public CBBase {
 public:
-	uint32 m_LastCleanupTime;
+	uint32 _lastCleanupTime;
 	HRESULT InitLoop();
 	HRESULT SortSurfaces();
 	static int SurfaceSortCB(const void *arg1, const void *arg2);
@@ -50,7 +50,7 @@ public:
 	CBSurfaceStorage(CBGame *inGame);
 	virtual ~CBSurfaceStorage();
 
-	CBArray<CBSurface *, CBSurface *> m_Surfaces;
+	CBArray<CBSurface *, CBSurface *> _surfaces;
 };
 
 } // end of namespace WinterMute

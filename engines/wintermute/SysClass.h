@@ -63,22 +63,22 @@ public:
 	void *IDToPointer(int savedID);
 
 	void SetID(int id) {
-		m_ID = id;
+		_iD = id;
 	}
 	int GetID() const {
-		return m_ID;
+		return _iD;
 	}
 
 	int GetSavedID() const {
-		return m_SavedID;
+		return _savedID;
 	}
 
 	bool IsPersistent() const {
-		return m_Persistent;
+		return _persistent;
 	}
 
 	AnsiString GetName() const {
-		return m_Name;
+		return _name;
 	}
 
 	void SaveTable(CBGame *Game, CBPersistMgr *PersistMgr);
@@ -94,20 +94,20 @@ public:
 	void Dump(void *stream);
 
 private:
-	int m_NumInst;
-	bool m_Persistent;
-	CSysClass *m_Next;
-	int m_ID;
-	int m_SavedID;
-	AnsiString m_Name;
-	PERSISTBUILD m_Build;
-	PERSISTLOAD m_Load;
+	int _numInst;
+	bool _persistent;
+	CSysClass *_next;
+	int _iD;
+	int _savedID;
+	AnsiString _name;
+	PERSISTBUILD _build;
+	PERSISTLOAD _load;
 
 	//typedef std::set<CSysInstance *> Instances;
-	//Instances m_Instances;
+	//Instances _instances;
 
 	typedef Common::HashMap<void *, CSysInstance *> InstanceMap;
-	InstanceMap m_InstanceMap;
+	InstanceMap _instanceMap;
 };
 
 } // end of namespace WinterMute

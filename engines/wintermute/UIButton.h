@@ -37,30 +37,30 @@ namespace WinterMute {
 
 class CUIButton : public CUIObject {
 public:
-	bool m_PixelPerfect;
-	bool m_StayPressed;
-	bool m_CenterImage;
-	bool m_OneTimePress;
-	uint32 m_OneTimePressTime;
+	bool _pixelPerfect;
+	bool _stayPressed;
+	bool _centerImage;
+	bool _oneTimePress;
+	uint32 _oneTimePressTime;
 	DECLARE_PERSISTENT(CUIButton, CUIObject)
 	void Press();
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
-	bool m_Press;
-	bool m_Hover;
+	bool _press;
+	bool _hover;
 	void CorrectSize();
-	TTextAlign m_Align;
-	CBSprite *m_ImageHover;
-	CBSprite *m_ImagePress;
-	CBSprite *m_ImageDisable;
-	CBSprite *m_ImageFocus;
-	CBFont *m_FontDisable;
-	CBFont *m_FontPress;
-	CBFont *m_FontHover;
-	CBFont *m_FontFocus;
-	CUITiledImage *m_BackPress;
-	CUITiledImage *m_BackHover;
-	CUITiledImage *m_BackDisable;
-	CUITiledImage *m_BackFocus;
+	TTextAlign _align;
+	CBSprite *_imageHover;
+	CBSprite *_imagePress;
+	CBSprite *_imageDisable;
+	CBSprite *_imageFocus;
+	CBFont *_fontDisable;
+	CBFont *_fontPress;
+	CBFont *_fontHover;
+	CBFont *_fontFocus;
+	CUITiledImage *_backPress;
+	CUITiledImage *_backHover;
+	CUITiledImage *_backDisable;
+	CUITiledImage *_backFocus;
 	CUIButton(CBGame *inGame = NULL);
 	virtual ~CUIButton();
 	HRESULT LoadFile(char *Filename);

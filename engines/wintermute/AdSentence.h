@@ -41,39 +41,39 @@ class CBSprite;
 class CBSound;
 class CAdSentence : public CBBase {
 public:
-	bool m_Freezable;
-	bool m_FixedPos;
-	CBSprite *m_CurrentSprite;
-	char *m_CurrentSkelAnim;
+	bool _freezable;
+	bool _fixedPos;
+	CBSprite *_currentSprite;
+	char *_currentSkelAnim;
 	HRESULT Update(TDirection Dir = DI_DOWN);
 	HRESULT SetupTalkFile(char *SoundFilename);
 	DECLARE_PERSISTENT(CAdSentence, CBBase)
 	HRESULT Finish();
 	void SetSound(CBSound *Sound);
-	bool m_SoundStarted;
-	CBSound *m_Sound;
-	TTextAlign m_Align;
+	bool _soundStarted;
+	CBSound *_sound;
+	TTextAlign _align;
 	HRESULT Display();
-	int m_Width;
-	POINT m_Pos;
-	CBFont *m_Font;
+	int _width;
+	POINT _pos;
+	CBFont *_font;
 	char *GetNextStance();
 	char *GetCurrentStance();
 	void SetStances(char *Stances);
 	void SetText(char *Text);
-	int m_CurrentStance;
-	uint32 m_StartTime;
-	char *m_Stances;
-	char *m_Text;
-	uint32 m_Duration;
+	int _currentStance;
+	uint32 _startTime;
+	char *_stances;
+	char *_text;
+	uint32 _duration;
 	CAdSentence(CBGame *inGame);
 	virtual ~CAdSentence();
-	CAdTalkDef *m_TalkDef;
+	CAdTalkDef *_talkDef;
 
 	bool CanSkip();
 
 private:
-	char *m_TempStance;
+	char *_tempStance;
 	char *GetStance(int Stance);
 
 };

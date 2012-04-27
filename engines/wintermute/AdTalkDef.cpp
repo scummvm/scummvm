@@ -43,34 +43,34 @@ IMPLEMENT_PERSISTENT(CAdTalkDef, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdTalkDef::CAdTalkDef(CBGame *inGame): CBObject(inGame) {
-	m_DefaultSpriteFilename = NULL;
-	m_DefaultSprite = NULL;
+	_defaultSpriteFilename = NULL;
+	_defaultSprite = NULL;
 
-	m_DefaultSpriteSetFilename = NULL;
-	m_DefaultSpriteSet = NULL;
+	_defaultSpriteSetFilename = NULL;
+	_defaultSpriteSet = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdTalkDef::~CAdTalkDef() {
-	for (int i = 0; i < m_Nodes.GetSize(); i++) delete m_Nodes[i];
-	m_Nodes.RemoveAll();
+	for (int i = 0; i < _nodes.GetSize(); i++) delete _nodes[i];
+	_nodes.RemoveAll();
 
-	delete[] m_DefaultSpriteFilename;
-	delete m_DefaultSprite;
-	m_DefaultSpriteFilename = NULL;
-	m_DefaultSprite = NULL;
+	delete[] _defaultSpriteFilename;
+	delete _defaultSprite;
+	_defaultSpriteFilename = NULL;
+	_defaultSprite = NULL;
 
-	delete[] m_DefaultSpriteSetFilename;
-	delete m_DefaultSpriteSet;
-	m_DefaultSpriteSetFilename = NULL;
-	m_DefaultSpriteSet = NULL;
+	delete[] _defaultSpriteSetFilename;
+	delete _defaultSpriteSet;
+	_defaultSpriteSetFilename = NULL;
+	_defaultSpriteSet = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkDef::LoadFile(const char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -78,7 +78,7 @@ HRESULT CAdTalkDef::LoadFile(const char *Filename) {
 
 	HRESULT ret;
 
-	CBUtils::SetString(&m_Filename, Filename);
+	CBUtils::SetString(&_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", Filename);
 
@@ -129,7 +129,7 @@ HRESULT CAdTalkDef::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_ACTION: {
 			CAdTalkNode *Node = new CAdTalkNode(Game);
-			if (Node && SUCCEEDED(Node->LoadBuffer(params, false))) m_Nodes.Add(Node);
+			if (Node && SUCCEEDED(Node->LoadBuffer(params, false))) _nodes.Add(Node);
 			else {
 				delete Node;
 				Node = NULL;
@@ -139,19 +139,19 @@ HRESULT CAdTalkDef::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_DEFAULT_SPRITE:
-			CBUtils::SetString(&m_DefaultSpriteFilename, (char *)params);
+			CBUtils::SetString(&_defaultSpriteFilename, (char *)params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET_FILE:
-			CBUtils::SetString(&m_DefaultSpriteSetFilename, (char *)params);
+			CBUtils::SetString(&_defaultSpriteSetFilename, (char *)params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET: {
-			delete m_DefaultSpriteSet;
-			m_DefaultSpriteSet = new CAdSpriteSet(Game);
-			if (!m_DefaultSpriteSet || FAILED(m_DefaultSpriteSet->LoadBuffer(params, false))) {
-				delete m_DefaultSpriteSet;
-				m_DefaultSpriteSet = NULL;
+			delete _defaultSpriteSet;
+			_defaultSpriteSet = new CAdSpriteSet(Game);
+			if (!_defaultSpriteSet || FAILED(_defaultSpriteSet->LoadBuffer(params, false))) {
+				delete _defaultSpriteSet;
+				_defaultSpriteSet = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -173,19 +173,19 @@ HRESULT CAdTalkDef::LoadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	delete m_DefaultSprite;
-	delete m_DefaultSpriteSet;
-	m_DefaultSprite = NULL;
-	m_DefaultSpriteSet = NULL;
+	delete _defaultSprite;
+	delete _defaultSpriteSet;
+	_defaultSprite = NULL;
+	_defaultSpriteSet = NULL;
 
-	if (m_DefaultSpriteFilename) {
-		m_DefaultSprite = new CBSprite(Game);
-		if (!m_DefaultSprite || FAILED(m_DefaultSprite->LoadFile(m_DefaultSpriteFilename))) return E_FAIL;
+	if (_defaultSpriteFilename) {
+		_defaultSprite = new CBSprite(Game);
+		if (!_defaultSprite || FAILED(_defaultSprite->LoadFile(_defaultSpriteFilename))) return E_FAIL;
 	}
 
-	if (m_DefaultSpriteSetFilename) {
-		m_DefaultSpriteSet = new CAdSpriteSet(Game);
-		if (!m_DefaultSpriteSet || FAILED(m_DefaultSpriteSet->LoadFile(m_DefaultSpriteSetFilename))) return E_FAIL;
+	if (_defaultSpriteSetFilename) {
+		_defaultSpriteSet = new CAdSpriteSet(Game);
+		if (!_defaultSpriteSet || FAILED(_defaultSpriteSet->LoadFile(_defaultSpriteSetFilename))) return E_FAIL;
 	}
 
 
@@ -198,12 +198,12 @@ HRESULT CAdTalkDef::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_DefaultSprite));
-	PersistMgr->Transfer(TMEMBER(m_DefaultSpriteFilename));
-	PersistMgr->Transfer(TMEMBER(m_DefaultSpriteSet));
-	PersistMgr->Transfer(TMEMBER(m_DefaultSpriteSetFilename));
+	PersistMgr->Transfer(TMEMBER(_defaultSprite));
+	PersistMgr->Transfer(TMEMBER(_defaultSpriteFilename));
+	PersistMgr->Transfer(TMEMBER(_defaultSpriteSet));
+	PersistMgr->Transfer(TMEMBER(_defaultSpriteSetFilename));
 
-	m_Nodes.Persist(PersistMgr);
+	_nodes.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -212,13 +212,13 @@ HRESULT CAdTalkDef::Persist(CBPersistMgr *PersistMgr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkDef::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "TALK {\n");
-	if (m_DefaultSpriteFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITE=\"%s\"\n", m_DefaultSpriteFilename);
+	if (_defaultSpriteFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
 
-	if (m_DefaultSpriteSetFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", m_DefaultSpriteSetFilename);
-	else if (m_DefaultSpriteSet) m_DefaultSpriteSet->SaveAsText(Buffer, Indent + 2);
+	if (_defaultSpriteSetFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
+	else if (_defaultSpriteSet) _defaultSpriteSet->SaveAsText(Buffer, Indent + 2);
 
-	for (int i = 0; i < m_Nodes.GetSize(); i++) {
-		m_Nodes[i]->SaveAsText(Buffer, Indent + 2);
+	for (int i = 0; i < _nodes.GetSize(); i++) {
+		_nodes[i]->SaveAsText(Buffer, Indent + 2);
 		Buffer->PutTextIndent(Indent, "\n");
 	}
 	CBBase::SaveAsText(Buffer, Indent + 2);
@@ -231,18 +231,18 @@ HRESULT CAdTalkDef::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkDef::LoadDefaultSprite() {
-	if (m_DefaultSpriteFilename && !m_DefaultSprite) {
-		m_DefaultSprite = new CBSprite(Game);
-		if (!m_DefaultSprite || FAILED(m_DefaultSprite->LoadFile(m_DefaultSpriteFilename))) {
-			delete m_DefaultSprite;
-			m_DefaultSprite = NULL;
+	if (_defaultSpriteFilename && !_defaultSprite) {
+		_defaultSprite = new CBSprite(Game);
+		if (!_defaultSprite || FAILED(_defaultSprite->LoadFile(_defaultSpriteFilename))) {
+			delete _defaultSprite;
+			_defaultSprite = NULL;
 			return E_FAIL;
 		} else return S_OK;
-	} else if (m_DefaultSpriteSetFilename && !m_DefaultSpriteSet) {
-		m_DefaultSpriteSet = new CAdSpriteSet(Game);
-		if (!m_DefaultSpriteSet || FAILED(m_DefaultSpriteSet->LoadFile(m_DefaultSpriteSetFilename))) {
-			delete m_DefaultSpriteSet;
-			m_DefaultSpriteSet = NULL;
+	} else if (_defaultSpriteSetFilename && !_defaultSpriteSet) {
+		_defaultSpriteSet = new CAdSpriteSet(Game);
+		if (!_defaultSpriteSet || FAILED(_defaultSpriteSet->LoadFile(_defaultSpriteSetFilename))) {
+			delete _defaultSpriteSet;
+			_defaultSpriteSet = NULL;
 			return E_FAIL;
 		} else return S_OK;
 	} else return S_OK;
@@ -252,8 +252,8 @@ HRESULT CAdTalkDef::LoadDefaultSprite() {
 //////////////////////////////////////////////////////////////////////////
 CBSprite *CAdTalkDef::GetDefaultSprite(TDirection Dir) {
 	LoadDefaultSprite();
-	if (m_DefaultSprite) return m_DefaultSprite;
-	else if (m_DefaultSpriteSet) return m_DefaultSpriteSet->GetSprite(Dir);
+	if (_defaultSprite) return _defaultSprite;
+	else if (_defaultSpriteSet) return _defaultSpriteSet->GetSprite(Dir);
 	else return NULL;
 }
 

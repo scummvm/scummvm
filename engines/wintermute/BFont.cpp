@@ -73,7 +73,7 @@ int CBFont::GetTextWidth(byte  *text, int MaxLenght) {
 //////////////////////////////////////////////////////////////////////
 HRESULT CBFont::LoadFile(char * Filename)
 {
-    BYTE* Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+    BYTE* Buffer = Game->_fileManager->ReadWholeFile(Filename);
     if(Buffer==NULL){
         Game->LOG(0, "CBFont::LoadFile failed for file '%s'", Filename);
         return E_FAIL;
@@ -81,8 +81,8 @@ HRESULT CBFont::LoadFile(char * Filename)
 
     HRESULT ret;
 
-    m_Filename = new char [strlen(Filename)+1];
-    strcpy(m_Filename, Filename);
+    _filename = new char [strlen(Filename)+1];
+    strcpy(_filename, Filename);
 
     if(FAILED(ret = LoadBuffer(Buffer))) Game->LOG(0, "Error parsing FONT file '%s'", Filename);
 
@@ -122,7 +122,7 @@ HRESULT CBFont::LoadBuffer(byte  * Buffer)
 
             case TOKEN_TRANSPARENT:
                 parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
-                custom_trans = true;
+                custo_trans = true;
             break;
         }
 
@@ -187,7 +187,7 @@ bool CBFont::IsTrueType(CBGame *Game, char *Filename) {
 	TOKEN_TABLE_END
 
 
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) return false;
 
 	byte *WorkBuffer = Buffer;

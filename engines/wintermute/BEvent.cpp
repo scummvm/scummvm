@@ -41,27 +41,27 @@ IMPLEMENT_PERSISTENT(CBEvent, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBEvent::CBEvent(CBGame *inGame): CBBase(inGame) {
-	m_Type = EVENT_NONE;
-	m_Script = NULL;
-	m_Name = NULL;
+	_type = EVENT_NONE;
+	_script = NULL;
+	_name = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBEvent::CBEvent(CBGame *inGame, TEventType Type, char *Script): CBBase(inGame) {
-	m_Type = Type;
-	m_Script = new char [strlen(Script) + 1];
-	if (m_Script) strcpy(m_Script, Script);
-	m_Name = NULL;
+	_type = Type;
+	_script = new char [strlen(Script) + 1];
+	if (_script) strcpy(_script, Script);
+	_name = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBEvent::~CBEvent() {
-	delete[] m_Script;
-	m_Script = NULL;
-	delete[] m_Name;
-	m_Name = NULL;
+	delete[] _script;
+	_script = NULL;
+	delete[] _name;
+	_name = NULL;
 }
 
 
@@ -101,26 +101,26 @@ const char *CBEvent::GetEventName(TEventType Type) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBEvent::SetScript(char *Script) {
-	if (m_Script) delete [] m_Script;
+	if (_script) delete [] _script;
 
-	m_Script = new char [strlen(Script) + 1];
-	if (m_Script) strcpy(m_Script, Script);
+	_script = new char [strlen(Script) + 1];
+	if (_script) strcpy(_script, Script);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CBEvent::SetName(char *Name) {
-	if (m_Name) delete [] m_Name;
+	if (_name) delete [] _name;
 
-	m_Name = new char [strlen(Name) + 1];
-	if (m_Name) strcpy(m_Name, Name);
+	_name = new char [strlen(Name) + 1];
+	if (_name) strcpy(_name, Name);
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBEvent::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBEvent::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -187,9 +187,9 @@ HRESULT CBEvent::Persist(CBPersistMgr *PersistMgr) {
 
 	PersistMgr->Transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(m_Script));
-	PersistMgr->Transfer(TMEMBER(m_Name));
-	PersistMgr->Transfer(TMEMBER_INT(m_Type));
+	PersistMgr->Transfer(TMEMBER(_script));
+	PersistMgr->Transfer(TMEMBER(_name));
+	PersistMgr->Transfer(TMEMBER_INT(_type));
 
 	return S_OK;
 }

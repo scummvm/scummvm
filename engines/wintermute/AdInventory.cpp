@@ -38,13 +38,13 @@ IMPLEMENT_PERSISTENT(CAdInventory, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdInventory::CAdInventory(CBGame *inGame): CBObject(inGame) {
-	m_ScrollOffset = 0;
+	_scrollOffset = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdInventory::~CAdInventory() {
-	m_TakenItems.RemoveAll(); // ref only
+	_takenItems.RemoveAll(); // ref only
 }
 
 
@@ -56,18 +56,18 @@ HRESULT CAdInventory::InsertItem(char *Name, char *InsertAfter) {
 	if (item == NULL) return E_FAIL;
 
 	int InsertIndex = -1;
-	for (int i = 0; i < m_TakenItems.GetSize(); i++) {
-		if (scumm_stricmp(m_TakenItems[i]->m_Name, Name) == 0) {
-			m_TakenItems.RemoveAt(i);
+	for (int i = 0; i < _takenItems.GetSize(); i++) {
+		if (scumm_stricmp(_takenItems[i]->_name, Name) == 0) {
+			_takenItems.RemoveAt(i);
 			i--;
 			continue;
 		}
-		if (InsertAfter && scumm_stricmp(m_TakenItems[i]->m_Name, InsertAfter) == 0) InsertIndex = i + 1;
+		if (InsertAfter && scumm_stricmp(_takenItems[i]->_name, InsertAfter) == 0) InsertIndex = i + 1;
 	}
 
 
-	if (InsertIndex == -1) m_TakenItems.Add(item);
-	else m_TakenItems.InsertAt(InsertIndex, item);
+	if (InsertIndex == -1) _takenItems.Add(item);
+	else _takenItems.InsertAt(InsertIndex, item);
 
 	return S_OK;
 }
@@ -77,10 +77,10 @@ HRESULT CAdInventory::InsertItem(char *Name, char *InsertAfter) {
 HRESULT CAdInventory::RemoveItem(char *Name) {
 	if (Name == NULL) return E_FAIL;
 
-	for (int i = 0; i < m_TakenItems.GetSize(); i++) {
-		if (scumm_stricmp(m_TakenItems[i]->m_Name, Name) == 0) {
-			if (((CAdGame *)Game)->m_SelectedItem == m_TakenItems[i])((CAdGame *)Game)->m_SelectedItem = NULL;
-			m_TakenItems.RemoveAt(i);
+	for (int i = 0; i < _takenItems.GetSize(); i++) {
+		if (scumm_stricmp(_takenItems[i]->_name, Name) == 0) {
+			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
+			_takenItems.RemoveAt(i);
 			return S_OK;
 		}
 	}
@@ -94,10 +94,10 @@ HRESULT CAdInventory::RemoveItem(char *Name) {
 HRESULT CAdInventory::RemoveItem(CAdItem *Item) {
 	if (Item == NULL) return E_FAIL;
 
-	for (int i = 0; i < m_TakenItems.GetSize(); i++) {
-		if (m_TakenItems[i] == Item) {
-			if (((CAdGame *)Game)->m_SelectedItem == m_TakenItems[i])((CAdGame *)Game)->m_SelectedItem = NULL;
-			m_TakenItems.RemoveAt(i);
+	for (int i = 0; i < _takenItems.GetSize(); i++) {
+		if (_takenItems[i] == Item) {
+			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
+			_takenItems.RemoveAt(i);
 			return S_OK;
 		}
 	}
@@ -110,8 +110,8 @@ HRESULT CAdInventory::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	m_TakenItems.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(m_ScrollOffset));
+	_takenItems.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_scrollOffset));
 
 	return S_OK;
 }

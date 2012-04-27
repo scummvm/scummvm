@@ -38,33 +38,33 @@ IMPLEMENT_PERSISTENT(CSXArray, false)
 
 //////////////////////////////////////////////////////////////////////////
 CSXArray::CSXArray(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
-	m_Length = 0;
-	m_Values = new CScValue(Game);
+	_length = 0;
+	_values = new CScValue(Game);
 
 	int NumParams = Stack->Pop()->GetInt(0);
 
-	if (NumParams == 1) m_Length = Stack->Pop()->GetInt(0);
+	if (NumParams == 1) _length = Stack->Pop()->GetInt(0);
 	else if (NumParams > 1) {
-		m_Length = NumParams;
+		_length = NumParams;
 		char ParamName[20];
 		for (int i = 0; i < NumParams; i++) {
 			sprintf(ParamName, "%d", i);
-			m_Values->SetProp(ParamName, Stack->Pop());
+			_values->SetProp(ParamName, Stack->Pop());
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 CSXArray::CSXArray(CBGame *inGame): CBScriptable(inGame) {
-	m_Length = 0;
-	m_Values = new CScValue(Game);
+	_length = 0;
+	_values = new CScValue(Game);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CSXArray::~CSXArray() {
-	delete m_Values;
-	m_Values = NULL;
+	delete _values;
+	_values = NULL;
 }
 
 
@@ -73,16 +73,16 @@ char *CSXArray::ScToString() {
 	static char Dummy[32768];
 	strcpy(Dummy, "");
 	char PropName[20];
-	for (int i = 0; i < m_Length; i++) {
+	for (int i = 0; i < _length; i++) {
 		sprintf(PropName, "%d", i);
-		CScValue *val = m_Values->GetProp(PropName);
+		CScValue *val = _values->GetProp(PropName);
 		if (val) {
 			if (strlen(Dummy) + strlen(val->GetString()) < 32768) {
 				strcat(Dummy, val->GetString());
 			}
 		}
 
-		if (i < m_Length - 1 && strlen(Dummy) + 1 < 32768) strcat(Dummy, ",");
+		if (i < _length - 1 && strlen(Dummy) + 1 < 32768) strcat(Dummy, ",");
 	}
 	return Dummy;
 }
@@ -98,11 +98,11 @@ HRESULT CSXArray::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		char ParamName[20];
 
 		for (int i = 0; i < NumParams; i++) {
-			m_Length++;
-			sprintf(ParamName, "%d", m_Length - 1);
-			m_Values->SetProp(ParamName, Stack->Pop(), true);
+			_length++;
+			sprintf(ParamName, "%d", _length - 1);
+			_values->SetProp(ParamName, Stack->Pop(), true);
 		}
-		Stack->PushInt(m_Length);
+		Stack->PushInt(_length);
 
 		return S_OK;
 	}
@@ -114,12 +114,12 @@ HRESULT CSXArray::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 		Stack->CorrectParams(0);
 
-		if (m_Length > 0) {
+		if (_length > 0) {
 			char ParamName[20];
-			sprintf(ParamName, "%d", m_Length - 1);
-			Stack->Push(m_Values->GetProp(ParamName));
-			m_Values->DeleteProp(ParamName);
-			m_Length--;
+			sprintf(ParamName, "%d", _length - 1);
+			Stack->Push(_values->GetProp(ParamName));
+			_values->DeleteProp(ParamName);
+			_length--;
 		} else Stack->PushNULL();
 
 		return S_OK;
@@ -131,22 +131,22 @@ HRESULT CSXArray::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXArray::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("array");
-		return m_ScValue;
+		_scValue->SetString("array");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Length") == 0) {
-		m_ScValue->SetInt(m_Length);
-		return m_ScValue;
+		_scValue->SetInt(_length);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -155,8 +155,8 @@ CScValue *CSXArray::ScGetProperty(char *Name) {
 	else {
 		char ParamName[20];
 		if (ValidNumber(Name, ParamName)) {
-			return m_Values->GetProp(ParamName);
-		} else return m_ScValue;
+			return _values->GetProp(ParamName);
+		} else return _scValue;
 	}
 }
 
@@ -167,14 +167,14 @@ HRESULT CSXArray::ScSetProperty(char *Name, CScValue *Value) {
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Length") == 0) {
-		int OrigLength = m_Length;
-		m_Length = MAX(Value->GetInt(0), 0);
+		int OrigLength = _length;
+		_length = MAX(Value->GetInt(0), 0);
 
 		char PropName[20];
-		if (m_Length < OrigLength) {
-			for (int i = m_Length; i < OrigLength; i++) {
+		if (_length < OrigLength) {
+			for (int i = _length; i < OrigLength; i++) {
 				sprintf(PropName, "%d", i);
-				m_Values->DeleteProp(PropName);
+				_values->DeleteProp(PropName);
 			}
 		}
 		return S_OK;
@@ -187,8 +187,8 @@ HRESULT CSXArray::ScSetProperty(char *Name, CScValue *Value) {
 		char ParamName[20];
 		if (ValidNumber(Name, ParamName)) {
 			int Index = atoi(ParamName);
-			if (Index >= m_Length) m_Length = Index + 1;
-			return m_Values->SetProp(ParamName, Value);
+			if (Index >= _length) _length = Index + 1;
+			return _values->SetProp(ParamName, Value);
 		} else return E_FAIL;
 	}
 }
@@ -198,8 +198,8 @@ HRESULT CSXArray::ScSetProperty(char *Name, CScValue *Value) {
 HRESULT CSXArray::Persist(CBPersistMgr *PersistMgr) {
 	CBScriptable::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Length));
-	PersistMgr->Transfer(TMEMBER(m_Values));
+	PersistMgr->Transfer(TMEMBER(_length));
+	PersistMgr->Transfer(TMEMBER(_values));
 
 	return S_OK;
 }
@@ -225,9 +225,9 @@ bool CSXArray::ValidNumber(const char *OrigStr, char *OutStr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSXArray::Push(CScValue *Val) {
 	char ParamName[20];
-	m_Length++;
-	sprintf(ParamName, "%d", m_Length - 1);
-	m_Values->SetProp(ParamName, Val, true);
+	_length++;
+	sprintf(ParamName, "%d", _length - 1);
+	_values->SetProp(ParamName, Val, true);
 	return S_OK;
 }
 

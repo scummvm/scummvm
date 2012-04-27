@@ -44,58 +44,58 @@ IMPLEMENT_PERSISTENT(CBObject, false)
 
 //////////////////////////////////////////////////////////////////////
 CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
-	m_PosX = m_PosY = 0;
-	m_Movable = true;
-	m_Zoomable = true;
-	m_Registrable = true;
-	m_Shadowable = true;
-	m_Rotatable = false;
-	m_Is3D = false;
+	_posX = _posY = 0;
+	_movable = true;
+	_zoomable = true;
+	_registrable = true;
+	_shadowable = true;
+	_rotatable = false;
+	_is3D = false;
 
-	m_AlphaColor = 0;
-	m_Scale = -1;
-	m_RelativeScale = 0;
+	_alphaColor = 0;
+	_scale = -1;
+	_relativeScale = 0;
 
-	m_ScaleX = -1;
-	m_ScaleY = -1;
+	_scaleX = -1;
+	_scaleY = -1;
 
-	m_Ready = true;
+	_ready = true;
 
-	m_SoundEvent = NULL;
+	_soundEvent = NULL;
 
-	m_ID = Game->GetSequence();
+	_iD = Game->GetSequence();
 
-	CBPlatform::SetRectEmpty(&m_Rect);
-	m_RectSet = false;
+	CBPlatform::SetRectEmpty(&_rect);
+	_rectSet = false;
 
-	m_Cursor = NULL;
-	m_ActiveCursor = NULL;
-	m_SharedCursors = false;
+	_cursor = NULL;
+	_activeCursor = NULL;
+	_sharedCursors = false;
 
-	m_SFX = NULL;
-	m_SFXStart = 0;
-	m_SFXVolume = 100;
-	m_AutoSoundPanning = true;
+	_sFX = NULL;
+	_sFXStart = 0;
+	_sFXVolume = 100;
+	_autoSoundPanning = true;
 
-	m_EditorAlwaysRegister = false;
-	m_EditorSelected = false;
+	_editorAlwaysRegister = false;
+	_editorSelected = false;
 
-	m_EditorOnly = false;
+	_editorOnly = false;
 
-	m_Rotate = 0.0f;
-	m_RotateValid = false;
-	m_RelativeRotate = 0.0f;
+	_rotate = 0.0f;
+	_rotateValid = false;
+	_relativeRotate = 0.0f;
 
-	for (int i = 0; i < 7; i++) m_Caption[i] = NULL;
-	m_SaveState = true;
+	for (int i = 0; i < 7; i++) _caption[i] = NULL;
+	_saveState = true;
 
-	m_NonIntMouseEvents = false;
+	_nonIntMouseEvents = false;
 
 	// sound FX
-	m_SFXType = SFX_NONE;
-	m_SFXParam1 = m_SFXParam2 = m_SFXParam3 = m_SFXParam4 = 0;
+	_sFXType = SFX_NONE;
+	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 
-	m_BlendMode = BLEND_NORMAL;
+	_blendMode = BLEND_NORMAL;
 }
 
 
@@ -107,28 +107,28 @@ CBObject::~CBObject() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::Cleanup() {
-	if (Game && Game->m_ActiveObject == this) Game->m_ActiveObject = NULL;
+	if (Game && Game->_activeObject == this) Game->_activeObject = NULL;
 
 	CBScriptHolder::Cleanup();
-	delete[] m_SoundEvent;
-	m_SoundEvent = NULL;
+	delete[] _soundEvent;
+	_soundEvent = NULL;
 
-	if (!m_SharedCursors) {
-		delete m_Cursor;
-		delete m_ActiveCursor;
-		m_Cursor = NULL;
-		m_ActiveCursor = NULL;
+	if (!_sharedCursors) {
+		delete _cursor;
+		delete _activeCursor;
+		_cursor = NULL;
+		_activeCursor = NULL;
 	}
-	delete m_SFX;
-	m_SFX = NULL;
+	delete _sFX;
+	_sFX = NULL;
 
 	for (int i = 0; i < 7; i++) {
-		delete[] m_Caption[i];
-		m_Caption[i] = NULL;
+		delete[] _caption[i];
+		_caption[i] = NULL;
 	}
 
-	m_SFXType = SFX_NONE;
-	m_SFXParam1 = m_SFXParam2 = m_SFXParam3 = m_SFXParam4 = 0;
+	_sFXType = SFX_NONE;
+	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 
 	return S_OK;
 }
@@ -139,11 +139,11 @@ void CBObject::SetCaption(char *Caption, int Case) {
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7) return;
 
-	delete[] m_Caption[Case - 1];
-	m_Caption[Case - 1] = new char[strlen(Caption) + 1];
-	if (m_Caption[Case - 1]) {
-		strcpy(m_Caption[Case - 1], Caption);
-		Game->m_StringTable->Expand(&m_Caption[Case - 1]);
+	delete[] _caption[Case - 1];
+	_caption[Case - 1] = new char[strlen(Caption) + 1];
+	if (_caption[Case - 1]) {
+		strcpy(_caption[Case - 1], Caption);
+		Game->_stringTable->Expand(&_caption[Case - 1]);
 	}
 }
 
@@ -151,8 +151,8 @@ void CBObject::SetCaption(char *Caption, int Case) {
 //////////////////////////////////////////////////////////////////////////
 char *CBObject::GetCaption(int Case) {
 	if (Case == 0) Case = 1;
-	if (Case < 1 || Case > 7 || m_Caption[Case - 1] == NULL) return "";
-	else return m_Caption[Case - 1];
+	if (Case < 1 || Case > 7 || _caption[Case - 1] == NULL) return "";
+	else return _caption[Case - 1];
 }
 
 
@@ -172,8 +172,8 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "SkipTo") == 0) {
 		Stack->CorrectParams(2);
-		m_PosX = Stack->Pop()->GetInt();
-		m_PosY = Stack->Pop()->GetInt();
+		_posX = Stack->Pop()->GetInt();
+		_posY = Stack->Pop()->GetInt();
 		AfterMove();
 		Stack->PushNULL();
 
@@ -206,11 +206,11 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RemoveCursor") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_SharedCursors) {
-			delete m_Cursor;
-			m_Cursor = NULL;
+		if (!_sharedCursors) {
+			delete _cursor;
+			_cursor = NULL;
 		} else {
-			m_Cursor = NULL;
+			_cursor = NULL;
 	
 		}
 		Stack->PushNULL();
@@ -223,8 +223,8 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetCursor") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_Cursor || !m_Cursor->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_Cursor->m_Filename);
+		if (!_cursor || !_cursor->_filename) Stack->PushNULL();
+		else Stack->PushString(_cursor->_filename);
 
 		return S_OK;
 	}
@@ -234,8 +234,8 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetCursorObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_Cursor) Stack->PushNULL();
-		else Stack->PushNative(m_Cursor, true);
+		if (!_cursor) Stack->PushNULL();
+		else Stack->PushNative(_cursor, true);
 
 		return S_OK;
 	}
@@ -246,7 +246,7 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "HasCursor") == 0) {
 		Stack->CorrectParams(0);
 
-		if (m_Cursor) Stack->PushBool(true);
+		if (_cursor) Stack->PushBool(true);
 		else Stack->PushBool(false);
 
 		return S_OK;
@@ -291,7 +291,7 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CScValue *val2 = Stack->Pop();
 		CScValue *val3 = Stack->Pop();
 
-		if (val1->m_Type == VAL_BOOL) {
+		if (val1->_type == VAL_BOOL) {
 			Filename = NULL;
 			Looping = val1->GetBool();
 			LoopStart = val2->GetInt();
@@ -371,7 +371,7 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "IsSoundPlaying") == 0) {
 		Stack->CorrectParams(0);
 
-		if (m_SFX && m_SFX->IsPlaying()) Stack->PushBool(true);
+		if (_sFX && _sFX->IsPlaying()) Stack->PushBool(true);
 		else Stack->PushBool(false);
 		return S_OK;
 	}
@@ -394,8 +394,8 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "GetSoundPosition") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_SFX) Stack->PushInt(0);
-		else Stack->PushInt(m_SFX->GetPositionTime());
+		if (!_sFX) Stack->PushInt(0);
+		else Stack->PushInt(_sFX->GetPositionTime());
 		return S_OK;
 	}
 
@@ -417,8 +417,8 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "GetSoundVolume") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_SFX) Stack->PushInt(m_SFXVolume);
-		else Stack->PushInt(m_SFX->GetVolume());
+		if (!_sFX) Stack->PushInt(_sFXVolume);
+		else Stack->PushInt(_sFX->GetVolume());
 		return S_OK;
 	}
 
@@ -428,11 +428,11 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SoundFXNone") == 0) {
 		Stack->CorrectParams(0);
-		m_SFXType = SFX_NONE;
-		m_SFXParam1 = 0;
-		m_SFXParam2 = 0;
-		m_SFXParam3 = 0;
-		m_SFXParam4 = 0;
+		_sFXType = SFX_NONE;
+		_sFXParam1 = 0;
+		_sFXParam2 = 0;
+		_sFXParam3 = 0;
+		_sFXParam4 = 0;
 		Stack->PushNULL();
 
 		return S_OK;
@@ -443,11 +443,11 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SoundFXEcho") == 0) {
 		Stack->CorrectParams(4);
-		m_SFXType = SFX_ECHO;
-		m_SFXParam1 = (float)Stack->Pop()->GetFloat(0); // Wet/Dry Mix [%] (0-100)
-		m_SFXParam2 = (float)Stack->Pop()->GetFloat(0); // Feedback [%] (0-100)
-		m_SFXParam3 = (float)Stack->Pop()->GetFloat(333.0f); // Left Delay [ms] (1-2000)
-		m_SFXParam4 = (float)Stack->Pop()->GetFloat(333.0f); // Right Delay [ms] (1-2000)
+		_sFXType = SFX_ECHO;
+		_sFXParam1 = (float)Stack->Pop()->GetFloat(0); // Wet/Dry Mix [%] (0-100)
+		_sFXParam2 = (float)Stack->Pop()->GetFloat(0); // Feedback [%] (0-100)
+		_sFXParam3 = (float)Stack->Pop()->GetFloat(333.0f); // Left Delay [ms] (1-2000)
+		_sFXParam4 = (float)Stack->Pop()->GetFloat(333.0f); // Right Delay [ms] (1-2000)
 		Stack->PushNULL();
 
 		return S_OK;
@@ -458,11 +458,11 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SoundFXReverb") == 0) {
 		Stack->CorrectParams(4);
-		m_SFXType = SFX_REVERB;
-		m_SFXParam1 = (float)Stack->Pop()->GetFloat(0); // In Gain [dB] (-96 - 0)
-		m_SFXParam2 = (float)Stack->Pop()->GetFloat(0); // Reverb Mix [dB] (-96 - 0)
-		m_SFXParam3 = (float)Stack->Pop()->GetFloat(1000.0f); // Reverb Time [ms] (0.001 - 3000)
-		m_SFXParam4 = (float)Stack->Pop()->GetFloat(0.001f); // HighFreq RT Ratio (0.001 - 0.999)
+		_sFXType = SFX_REVERB;
+		_sFXParam1 = (float)Stack->Pop()->GetFloat(0); // In Gain [dB] (-96 - 0)
+		_sFXParam2 = (float)Stack->Pop()->GetFloat(0); // Reverb Mix [dB] (-96 - 0)
+		_sFXParam3 = (float)Stack->Pop()->GetFloat(1000.0f); // Reverb Time [ms] (0.001 - 3000)
+		_sFXParam4 = (float)Stack->Pop()->GetFloat(0.001f); // HighFreq RT Ratio (0.001 - 0.999)
 		Stack->PushNULL();
 
 		return S_OK;
@@ -474,191 +474,191 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBObject::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("object");
-		return m_ScValue;
+		_scValue->SetString("object");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Caption") == 0) {
-		m_ScValue->SetString(GetCaption(1));
-		return m_ScValue;
+		_scValue->SetString(GetCaption(1));
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "X") == 0) {
-		m_ScValue->SetInt(m_PosX);
-		return m_ScValue;
+		_scValue->SetInt(_posX);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Y") == 0) {
-		m_ScValue->SetInt(m_PosY);
-		return m_ScValue;
+		_scValue->SetInt(_posY);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		m_ScValue->SetInt(GetHeight());
-		return m_ScValue;
+		_scValue->SetInt(GetHeight());
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Ready (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Ready") == 0) {
-		m_ScValue->SetBool(m_Ready);
-		return m_ScValue;
+		_scValue->SetBool(_ready);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Movable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Movable") == 0) {
-		m_ScValue->SetBool(m_Movable);
-		return m_ScValue;
+		_scValue->SetBool(_movable);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Registrable/Interactive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Registrable") == 0 || strcmp(Name, "Interactive") == 0) {
-		m_ScValue->SetBool(m_Registrable);
-		return m_ScValue;
+		_scValue->SetBool(_registrable);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Zoomable/Scalable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Zoomable") == 0 || strcmp(Name, "Scalable") == 0) {
-		m_ScValue->SetBool(m_Zoomable);
-		return m_ScValue;
+		_scValue->SetBool(_zoomable);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotatable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotatable") == 0) {
-		m_ScValue->SetBool(m_Rotatable);
-		return m_ScValue;
+		_scValue->SetBool(_rotatable);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AlphaColor") == 0) {
-		m_ScValue->SetInt((int)m_AlphaColor);
-		return m_ScValue;
+		_scValue->SetInt((int)_alphaColor);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// BlendMode
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "BlendMode") == 0) {
-		m_ScValue->SetInt((int)m_BlendMode);
-		return m_ScValue;
+		_scValue->SetInt((int)_blendMode);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale") == 0) {
-		if (m_Scale < 0) m_ScValue->SetNULL();
-		else m_ScValue->SetFloat((double)m_Scale);
-		return m_ScValue;
+		if (_scale < 0) _scValue->SetNULL();
+		else _scValue->SetFloat((double)_scale);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ScaleX") == 0) {
-		if (m_ScaleX < 0) m_ScValue->SetNULL();
-		else m_ScValue->SetFloat((double)m_ScaleX);
-		return m_ScValue;
+		if (_scaleX < 0) _scValue->SetNULL();
+		else _scValue->SetFloat((double)_scaleX);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ScaleY") == 0) {
-		if (m_ScaleY < 0) m_ScValue->SetNULL();
-		else m_ScValue->SetFloat((double)m_ScaleY);
-		return m_ScValue;
+		if (_scaleY < 0) _scValue->SetNULL();
+		else _scValue->SetFloat((double)_scaleY);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeScale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RelativeScale") == 0) {
-		m_ScValue->SetFloat((double)m_RelativeScale);
-		return m_ScValue;
+		_scValue->SetFloat((double)_relativeScale);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Rotate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotate") == 0) {
-		if (!m_RotateValid) m_ScValue->SetNULL();
-		else m_ScValue->SetFloat((double)m_Rotate);
-		return m_ScValue;
+		if (!_rotateValid) _scValue->SetNULL();
+		else _scValue->SetFloat((double)_rotate);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeRotate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RelativeRotate") == 0) {
-		m_ScValue->SetFloat((double)m_RelativeRotate);
-		return m_ScValue;
+		_scValue->SetFloat((double)_relativeRotate);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Colorable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Colorable") == 0) {
-		m_ScValue->SetBool(m_Shadowable);
-		return m_ScValue;
+		_scValue->SetBool(_shadowable);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SoundPanning
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SoundPanning") == 0) {
-		m_ScValue->SetBool(m_AutoSoundPanning);
-		return m_ScValue;
+		_scValue->SetBool(_autoSoundPanning);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SaveState
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SaveState") == 0) {
-		m_ScValue->SetBool(m_SaveState);
-		return m_ScValue;
+		_scValue->SetBool(_saveState);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NonIntMouseEvents
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NonIntMouseEvents") == 0) {
-		m_ScValue->SetBool(m_NonIntMouseEvents);
-		return m_ScValue;
+		_scValue->SetBool(_nonIntMouseEvents);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AccCaption") == 0) {
-		m_ScValue->SetNULL();
-		return m_ScValue;
+		_scValue->SetNULL();
+		return _scValue;
 	}
 
 	else return CBScriptHolder::ScGetProperty(Name);
@@ -679,7 +679,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// X
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "X") == 0) {
-		m_PosX = Value->GetInt();
+		_posX = Value->GetInt();
 		AfterMove();
 		return S_OK;
 	}
@@ -688,7 +688,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Y
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Y") == 0) {
-		m_PosY = Value->GetInt();
+		_posY = Value->GetInt();
 		AfterMove();
 		return S_OK;
 	}
@@ -697,7 +697,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Movable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Movable") == 0) {
-		m_Movable = Value->GetBool();
+		_movable = Value->GetBool();
 		return S_OK;
 	}
 
@@ -705,7 +705,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Registrable/Interactive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Registrable") == 0 || strcmp(Name, "Interactive") == 0) {
-		m_Registrable = Value->GetBool();
+		_registrable = Value->GetBool();
 		return S_OK;
 	}
 
@@ -713,7 +713,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Zoomable/Scalable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Zoomable") == 0 || strcmp(Name, "Scalable") == 0) {
-		m_Zoomable = Value->GetBool();
+		_zoomable = Value->GetBool();
 		return S_OK;
 	}
 
@@ -721,7 +721,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Rotatable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotatable") == 0) {
-		m_Rotatable = Value->GetBool();
+		_rotatable = Value->GetBool();
 		return S_OK;
 	}
 
@@ -729,7 +729,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AlphaColor") == 0) {
-		m_AlphaColor = (uint32)Value->GetInt();
+		_alphaColor = (uint32)Value->GetInt();
 		return S_OK;
 	}
 
@@ -739,7 +739,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	else if (strcmp(Name, "BlendMode") == 0) {
 		int i = Value->GetInt();
 		if (i < BLEND_NORMAL || i >= NUM_BLEND_MODES) i = BLEND_NORMAL;
-		m_BlendMode = (TSpriteBlendMode)i;
+		_blendMode = (TSpriteBlendMode)i;
 		return S_OK;
 	}
 
@@ -747,8 +747,8 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale") == 0) {
-		if (Value->IsNULL()) m_Scale = -1;
-		else m_Scale = (float)Value->GetFloat();
+		if (Value->IsNULL()) _scale = -1;
+		else _scale = (float)Value->GetFloat();
 		return S_OK;
 	}
 
@@ -756,8 +756,8 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ScaleX") == 0) {
-		if (Value->IsNULL()) m_ScaleX = -1;
-		else m_ScaleX = (float)Value->GetFloat();
+		if (Value->IsNULL()) _scaleX = -1;
+		else _scaleX = (float)Value->GetFloat();
 		return S_OK;
 	}
 
@@ -765,8 +765,8 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ScaleY") == 0) {
-		if (Value->IsNULL()) m_ScaleY = -1;
-		else m_ScaleY = (float)Value->GetFloat();
+		if (Value->IsNULL()) _scaleY = -1;
+		else _scaleY = (float)Value->GetFloat();
 		return S_OK;
 	}
 
@@ -774,7 +774,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// RelativeScale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RelativeScale") == 0) {
-		m_RelativeScale = (float)Value->GetFloat();
+		_relativeScale = (float)Value->GetFloat();
 		return S_OK;
 	}
 
@@ -783,11 +783,11 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotate") == 0) {
 		if (Value->IsNULL()) {
-			m_Rotate = 0.0f;
-			m_RotateValid = false;
+			_rotate = 0.0f;
+			_rotateValid = false;
 		} else {
-			m_Rotate = (float)Value->GetFloat();
-			m_RotateValid = true;
+			_rotate = (float)Value->GetFloat();
+			_rotateValid = true;
 		}
 		return S_OK;
 	}
@@ -796,7 +796,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// RelativeRotate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RelativeRotate") == 0) {
-		m_RelativeRotate = (float)Value->GetFloat();
+		_relativeRotate = (float)Value->GetFloat();
 		return S_OK;
 	}
 
@@ -804,7 +804,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Colorable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Colorable") == 0) {
-		m_Shadowable = Value->GetBool();
+		_shadowable = Value->GetBool();
 		return S_OK;
 	}
 
@@ -812,8 +812,8 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SoundPanning
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SoundPanning") == 0) {
-		m_AutoSoundPanning = Value->GetBool();
-		if (!m_AutoSoundPanning) ResetSoundPan();
+		_autoSoundPanning = Value->GetBool();
+		if (!_autoSoundPanning) ResetSoundPan();
 		return S_OK;
 	}
 
@@ -821,7 +821,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// SaveState
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SaveState") == 0) {
-		m_SaveState = Value->GetBool();
+		_saveState = Value->GetBool();
 		return S_OK;
 	}
 
@@ -829,7 +829,7 @@ HRESULT CBObject::ScSetProperty(char *Name, CScValue *Value) {
 	// NonIntMouseEvents
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NonIntMouseEvents") == 0) {
-		m_NonIntMouseEvents = Value->GetBool();
+		_nonIntMouseEvents = Value->GetBool();
 		return S_OK;
 	}
 
@@ -852,7 +852,7 @@ char *CBObject::ScToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::ShowCursor() {
-	if (m_Cursor) return Game->DrawCursor(m_Cursor);
+	if (_cursor) return Game->DrawCursor(_cursor);
 	else return E_FAIL;
 }
 
@@ -867,52 +867,52 @@ HRESULT CBObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 HRESULT CBObject::Persist(CBPersistMgr *PersistMgr) {
 	CBScriptHolder::Persist(PersistMgr);
 
-	for (int i = 0; i < 7; i++) PersistMgr->Transfer(TMEMBER(m_Caption[i]));
-	PersistMgr->Transfer(TMEMBER(m_ActiveCursor));
-	PersistMgr->Transfer(TMEMBER(m_AlphaColor));
-	PersistMgr->Transfer(TMEMBER(m_AutoSoundPanning));
-	PersistMgr->Transfer(TMEMBER(m_Cursor));
-	PersistMgr->Transfer(TMEMBER(m_SharedCursors));
-	PersistMgr->Transfer(TMEMBER(m_EditorAlwaysRegister));
-	PersistMgr->Transfer(TMEMBER(m_EditorOnly));
-	PersistMgr->Transfer(TMEMBER(m_EditorSelected));
-	PersistMgr->Transfer(TMEMBER(m_ID));
-	PersistMgr->Transfer(TMEMBER(m_Is3D));
-	PersistMgr->Transfer(TMEMBER(m_Movable));
-	PersistMgr->Transfer(TMEMBER(m_PosX));
-	PersistMgr->Transfer(TMEMBER(m_PosY));
-	PersistMgr->Transfer(TMEMBER(m_RelativeScale));
-	PersistMgr->Transfer(TMEMBER(m_Rotatable));
-	PersistMgr->Transfer(TMEMBER(m_Scale));
-	PersistMgr->Transfer(TMEMBER(m_SFX));
-	PersistMgr->Transfer(TMEMBER(m_SFXStart));
-	PersistMgr->Transfer(TMEMBER(m_SFXVolume));
-	PersistMgr->Transfer(TMEMBER(m_Ready));
-	PersistMgr->Transfer(TMEMBER(m_Rect));
-	PersistMgr->Transfer(TMEMBER(m_RectSet));
-	PersistMgr->Transfer(TMEMBER(m_Registrable));
-	PersistMgr->Transfer(TMEMBER(m_Shadowable));
-	PersistMgr->Transfer(TMEMBER(m_SoundEvent));
-	PersistMgr->Transfer(TMEMBER(m_Zoomable));
+	for (int i = 0; i < 7; i++) PersistMgr->Transfer(TMEMBER(_caption[i]));
+	PersistMgr->Transfer(TMEMBER(_activeCursor));
+	PersistMgr->Transfer(TMEMBER(_alphaColor));
+	PersistMgr->Transfer(TMEMBER(_autoSoundPanning));
+	PersistMgr->Transfer(TMEMBER(_cursor));
+	PersistMgr->Transfer(TMEMBER(_sharedCursors));
+	PersistMgr->Transfer(TMEMBER(_editorAlwaysRegister));
+	PersistMgr->Transfer(TMEMBER(_editorOnly));
+	PersistMgr->Transfer(TMEMBER(_editorSelected));
+	PersistMgr->Transfer(TMEMBER(_iD));
+	PersistMgr->Transfer(TMEMBER(_is3D));
+	PersistMgr->Transfer(TMEMBER(_movable));
+	PersistMgr->Transfer(TMEMBER(_posX));
+	PersistMgr->Transfer(TMEMBER(_posY));
+	PersistMgr->Transfer(TMEMBER(_relativeScale));
+	PersistMgr->Transfer(TMEMBER(_rotatable));
+	PersistMgr->Transfer(TMEMBER(_scale));
+	PersistMgr->Transfer(TMEMBER(_sFX));
+	PersistMgr->Transfer(TMEMBER(_sFXStart));
+	PersistMgr->Transfer(TMEMBER(_sFXVolume));
+	PersistMgr->Transfer(TMEMBER(_ready));
+	PersistMgr->Transfer(TMEMBER(_rect));
+	PersistMgr->Transfer(TMEMBER(_rectSet));
+	PersistMgr->Transfer(TMEMBER(_registrable));
+	PersistMgr->Transfer(TMEMBER(_shadowable));
+	PersistMgr->Transfer(TMEMBER(_soundEvent));
+	PersistMgr->Transfer(TMEMBER(_zoomable));
 
-	PersistMgr->Transfer(TMEMBER(m_ScaleX));
-	PersistMgr->Transfer(TMEMBER(m_ScaleY));
+	PersistMgr->Transfer(TMEMBER(_scaleX));
+	PersistMgr->Transfer(TMEMBER(_scaleY));
 
-	PersistMgr->Transfer(TMEMBER(m_Rotate));
-	PersistMgr->Transfer(TMEMBER(m_RotateValid));
-	PersistMgr->Transfer(TMEMBER(m_RelativeRotate));
+	PersistMgr->Transfer(TMEMBER(_rotate));
+	PersistMgr->Transfer(TMEMBER(_rotateValid));
+	PersistMgr->Transfer(TMEMBER(_relativeRotate));
 
-	PersistMgr->Transfer(TMEMBER(m_SaveState));
-	PersistMgr->Transfer(TMEMBER(m_NonIntMouseEvents));
+	PersistMgr->Transfer(TMEMBER(_saveState));
+	PersistMgr->Transfer(TMEMBER(_nonIntMouseEvents));
 
-	PersistMgr->Transfer(TMEMBER_INT(m_SFXType));
-	PersistMgr->Transfer(TMEMBER(m_SFXParam1));
-	PersistMgr->Transfer(TMEMBER(m_SFXParam2));
-	PersistMgr->Transfer(TMEMBER(m_SFXParam3));
-	PersistMgr->Transfer(TMEMBER(m_SFXParam4));
+	PersistMgr->Transfer(TMEMBER_INT(_sFXType));
+	PersistMgr->Transfer(TMEMBER(_sFXParam1));
+	PersistMgr->Transfer(TMEMBER(_sFXParam2));
+	PersistMgr->Transfer(TMEMBER(_sFXParam3));
+	PersistMgr->Transfer(TMEMBER(_sFXParam4));
 
 
-	PersistMgr->Transfer(TMEMBER_INT(m_BlendMode));
+	PersistMgr->Transfer(TMEMBER_INT(_blendMode));
 
 	return S_OK;
 }
@@ -920,16 +920,16 @@ HRESULT CBObject::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::SetCursor(char *Filename) {
-	if (!m_SharedCursors) {
-		delete m_Cursor;
-		m_Cursor = NULL;
+	if (!_sharedCursors) {
+		delete _cursor;
+		_cursor = NULL;
 	}
 
-	m_SharedCursors = false;
-	m_Cursor = new CBSprite(Game);
-	if (!m_Cursor || FAILED(m_Cursor->LoadFile(Filename))) {
-		delete m_Cursor;
-		m_Cursor = NULL;
+	_sharedCursors = false;
+	_cursor = new CBSprite(Game);
+	if (!_cursor || FAILED(_cursor->LoadFile(Filename))) {
+		delete _cursor;
+		_cursor = NULL;
 		return E_FAIL;
 	} else return S_OK;
 }
@@ -937,11 +937,11 @@ HRESULT CBObject::SetCursor(char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::SetActiveCursor(char *Filename) {
-	delete m_ActiveCursor;
-	m_ActiveCursor = new CBSprite(Game);
-	if (!m_ActiveCursor || FAILED(m_ActiveCursor->LoadFile(Filename))) {
-		delete m_ActiveCursor;
-		m_ActiveCursor = NULL;
+	delete _activeCursor;
+	_activeCursor = new CBSprite(Game);
+	if (!_activeCursor || FAILED(_activeCursor->LoadFile(Filename))) {
+		delete _activeCursor;
+		_activeCursor = NULL;
 		return E_FAIL;
 	} else return S_OK;
 }
@@ -974,40 +974,40 @@ bool CBObject::HandleMouseWheel(int Delta) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::PlaySFX(char *Filename, bool Looping, bool PlayNow, char *EventName, uint32 LoopStart) {
 	// just play loaded sound
-	if (Filename == NULL && m_SFX) {
-		if (Game->m_EditorMode || m_SFXStart) {
-			m_SFX->SetVolume(m_SFXVolume);
-			m_SFX->SetPositionTime(m_SFXStart);
-			if (!Game->m_EditorMode) m_SFXStart = 0;
+	if (Filename == NULL && _sFX) {
+		if (Game->_editorMode || _sFXStart) {
+			_sFX->SetVolume(_sFXVolume);
+			_sFX->SetPositionTime(_sFXStart);
+			if (!Game->_editorMode) _sFXStart = 0;
 		}
 		if (PlayNow) {
 			SetSoundEvent(EventName);
-			if (LoopStart) m_SFX->SetLoopStart(LoopStart);
-			return m_SFX->Play(Looping);
+			if (LoopStart) _sFX->SetLoopStart(LoopStart);
+			return _sFX->Play(Looping);
 		} else return S_OK;
 	}
 
 	if (Filename == NULL) return E_FAIL;
 
 	// create new sound
-	delete m_SFX;
+	delete _sFX;
 
-	m_SFX = new CBSound(Game);
-	if (m_SFX && SUCCEEDED(m_SFX->SetSound(Filename, SOUND_SFX, true))) {
-		m_SFX->SetVolume(m_SFXVolume);
-		if (m_SFXStart) {
-			m_SFX->SetPositionTime(m_SFXStart);
-			m_SFXStart = 0;
+	_sFX = new CBSound(Game);
+	if (_sFX && SUCCEEDED(_sFX->SetSound(Filename, SOUND_SFX, true))) {
+		_sFX->SetVolume(_sFXVolume);
+		if (_sFXStart) {
+			_sFX->SetPositionTime(_sFXStart);
+			_sFXStart = 0;
 		}
-		m_SFX->ApplyFX(m_SFXType, m_SFXParam1, m_SFXParam2, m_SFXParam3, m_SFXParam4);
+		_sFX->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 		if (PlayNow) {
 			SetSoundEvent(EventName);
-			if (LoopStart) m_SFX->SetLoopStart(LoopStart);
-			return m_SFX->Play(Looping);
+			if (LoopStart) _sFX->SetLoopStart(LoopStart);
+			return _sFX->Play(Looping);
 		} else return S_OK;
 	} else {
-		delete m_SFX;
-		m_SFX = NULL;
+		delete _sFX;
+		_sFX = NULL;
 		return E_FAIL;
 	}
 }
@@ -1015,11 +1015,11 @@ HRESULT CBObject::PlaySFX(char *Filename, bool Looping, bool PlayNow, char *Even
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::StopSFX(bool DeleteSound) {
-	if (m_SFX) {
-		m_SFX->Stop();
+	if (_sFX) {
+		_sFX->Stop();
 		if (DeleteSound) {
-			delete m_SFX;
-			m_SFX = NULL;
+			delete _sFX;
+			_sFX = NULL;
 		}
 		return S_OK;
 	} else return E_FAIL;
@@ -1028,44 +1028,44 @@ HRESULT CBObject::StopSFX(bool DeleteSound) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::PauseSFX() {
-	if (m_SFX) return m_SFX->Pause();
+	if (_sFX) return _sFX->Pause();
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::ResumeSFX() {
-	if (m_SFX) return m_SFX->Resume();
+	if (_sFX) return _sFX->Resume();
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::SetSFXTime(uint32 Time) {
-	m_SFXStart = Time;
-	if (m_SFX && m_SFX->IsPlaying()) return m_SFX->SetPositionTime(Time);
+	_sFXStart = Time;
+	if (_sFX && _sFX->IsPlaying()) return _sFX->SetPositionTime(Time);
 	else return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::SetSFXVolume(int Volume) {
-	m_SFXVolume = Volume;
-	if (m_SFX) return m_SFX->SetVolume(Volume);
+	_sFXVolume = Volume;
+	if (_sFX) return _sFX->SetVolume(Volume);
 	else return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::UpdateSounds() {
-	if (m_SoundEvent) {
-		if (m_SFX && !m_SFX->IsPlaying()) {
-			ApplyEvent(m_SoundEvent);
+	if (_soundEvent) {
+		if (_sFX && !_sFX->IsPlaying()) {
+			ApplyEvent(_soundEvent);
 			SetSoundEvent(NULL);
 		}
 	}
 
-	if (m_SFX) UpdateOneSound(m_SFX);
+	if (_sFX) UpdateOneSound(_sFX);
 
 	return S_OK;
 }
@@ -1075,19 +1075,19 @@ HRESULT CBObject::UpdateOneSound(CBSound *Sound) {
 	HRESULT Ret = S_OK;
 
 	if (Sound) {
-		if (m_AutoSoundPanning)
-			Ret = Sound->SetPan(Game->m_SoundMgr->PosToPan(m_PosX  - Game->m_OffsetX, m_PosY - Game->m_OffsetY));
+		if (_autoSoundPanning)
+			Ret = Sound->SetPan(Game->_soundMgr->PosToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
 
-		Ret = Sound->ApplyFX(m_SFXType, m_SFXParam1, m_SFXParam2, m_SFXParam3, m_SFXParam4);
+		Ret = Sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 	}
 	return Ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::ResetSoundPan() {
-	if (!m_SFX) return S_OK;
+	if (!_sFX) return S_OK;
 	else {
-		return m_SFX->SetPan(0.0f);
+		return _sFX->SetPan(0.0f);
 	}
 }
 
@@ -1100,17 +1100,17 @@ bool CBObject::GetExtendedFlag(char *FlagName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBObject::IsReady() {
-	return m_Ready;
+	return _ready;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CBObject::SetSoundEvent(char *EventName) {
-	delete[] m_SoundEvent;
-	m_SoundEvent = NULL;
+	delete[] _soundEvent;
+	_soundEvent = NULL;
 	if (EventName) {
-		m_SoundEvent = new char[strlen(EventName) + 1];
-		if (m_SoundEvent) strcpy(m_SoundEvent, EventName);
+		_soundEvent = new char[strlen(EventName) + 1];
+		if (_soundEvent) strcpy(_soundEvent, EventName);
 	}
 }
 

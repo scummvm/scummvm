@@ -37,8 +37,8 @@ namespace WinterMute {
 class CAdResponseContext : public CBBase {
 public:
 	void SetContext(char *Context);
-	int m_ID;
-	char *m_Context;
+	int _iD;
+	char *_context;
 	DECLARE_PERSISTENT(CAdResponseContext, CBBase)
 	CAdResponseContext(CBGame *inGame);
 	virtual ~CAdResponseContext();

@@ -41,13 +41,13 @@ namespace WinterMute {
 
 class CBFile : public CBBase {
 public:
-	uint32 m_Pos;
-	uint32 m_Size;
+	uint32 _pos;
+	uint32 _size;
 	virtual uint32 GetSize() {
-		return m_Size;
+		return _size;
 	};
 	virtual uint32 GetPos() {
-		return m_Pos;
+		return _pos;
 	};
 	virtual HRESULT Seek(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN) = 0;
 	virtual HRESULT Read(void *Buffer, uint32 Size) = 0;

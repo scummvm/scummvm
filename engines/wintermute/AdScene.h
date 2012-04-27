@@ -56,12 +56,12 @@ public:
 
 	HRESULT GetRegionsAt(int X, int Y, CAdRegion **RegionList, int NumRegions);
 	HRESULT HandleItemAssociations(char *ItemName, bool Show);
-	CUIWindow *m_ShieldWindow;
+	CUIWindow *_shieldWindow;
 	float GetRotationAt(int X, int Y);
 	HRESULT LoadState();
 	HRESULT SaveState();
-	bool m_PersistentState;
-	bool m_PersistentStateSprites;
+	bool _persistentState;
+	bool _persistentStateSprites;
 	CBObject *GetNodeByName(char *Name);
 	void SetOffset(int OffsetLeft, int OffsetTop);
 	bool PointInViewport(int X, int Y);
@@ -69,12 +69,12 @@ public:
 	int GetOffsetLeft();
 	HRESULT GetViewportSize(int *Width = NULL, int *Height = NULL);
 	HRESULT GetViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
-	CBViewport *m_Viewport;
-	CBFader *m_Fader;
-	int m_PFPointsNum;
+	CBViewport *_viewport;
+	CBFader *_fader;
+	int _pFPointsNum;
 	void PFPointsAdd(int X, int Y, int Distance);
 	void PFPointsStart();
-	bool m_Initialized;
+	bool _initialized;
 	HRESULT CorrectTargetPoint(int StartX, int StartY, int *X, int *Y, bool CheckFreeObjects = false, CBObject *Requester = NULL);
 	HRESULT CorrectTargetPoint2(int StartX, int StartY, int *TargetX, int *TargetY, bool CheckFreeObjects, CBObject *Requester);
 	DECLARE_PERSISTENT(CAdScene, CBObject)
@@ -89,7 +89,7 @@ public:
 	HRESULT SortRotLevels();
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 	uint32 GetAlphaAt(int X, int Y, bool ColorCheck = false);
-	bool m_ParalaxScrolling;
+	bool _paralaxScrolling;
 	void SkipTo(int OffsetX, int OffsetY);
 	void SetDefaults();
 	void Cleanup();
@@ -97,60 +97,60 @@ public:
 	void ScrollToObject(CBObject *Object);
 	void ScrollTo(int OffsetX, int OffsetY);
 	virtual HRESULT Update();
-	bool m_AutoScroll;
-	int m_TargetOffsetTop;
-	int m_TargetOffsetLeft;
+	bool _autoScroll;
+	int _targetOffsetTop;
+	int _targetOffsetLeft;
 
-	int m_ScrollPixelsV;
-	uint32 m_ScrollTimeV;
-	uint32 m_LastTimeV;
+	int _scrollPixelsV;
+	uint32 _scrollTimeV;
+	uint32 _lastTimeV;
 
-	int m_ScrollPixelsH;
-	uint32 m_ScrollTimeH;
-	uint32 m_LastTimeH;
+	int _scrollPixelsH;
+	uint32 _scrollTimeH;
+	uint32 _lastTimeH;
 
 	virtual HRESULT Display();
-	uint32 m_PFMaxTime;
+	uint32 _pFMaxTime;
 	HRESULT InitLoop();
 	void PathFinderStep();
 	bool IsBlockedAt(int X, int Y, bool CheckFreeObjects = false, CBObject *Requester = NULL);
 	bool IsWalkableAt(int X, int Y, bool CheckFreeObjects = false, CBObject *Requester = NULL);
-	CAdLayer *m_MainLayer;
+	CAdLayer *_mainLayer;
 	float GetZoomAt(int X, int Y);
 	bool GetPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *requester = NULL);
 	CAdScene(CBGame *inGame);
 	virtual ~CAdScene();
-	CBArray<CAdLayer *, CAdLayer *> m_Layers;
-	CBArray<CAdObject *, CAdObject *> m_Objects;
-	CBArray<CAdWaypointGroup *, CAdWaypointGroup *> m_WaypointGroups;
+	CBArray<CAdLayer *, CAdLayer *> _layers;
+	CBArray<CAdObject *, CAdObject *> _objects;
+	CBArray<CAdWaypointGroup *, CAdWaypointGroup *> _waypointGroups;
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	int m_Width;
-	int m_Height;
+	int _width;
+	int _height;
 	HRESULT AddObject(CAdObject *Object);
 	HRESULT RemoveObject(CAdObject *Object);
-	int m_EditorMarginH;
-	int m_EditorMarginV;
-	uint32 m_EditorColFrame;
-	uint32 m_EditorColEntity;
-	uint32 m_EditorColRegion;
-	uint32 m_EditorColBlocked;
-	uint32 m_EditorColWaypoints;
-	uint32 m_EditorColEntitySel;
-	uint32 m_EditorColRegionSel;
-	uint32 m_EditorColBlockedSel;
-	uint32 m_EditorColWaypointsSel;
-	uint32 m_EditorColScale;
-	uint32 m_EditorColDecor;
-	uint32 m_EditorColDecorSel;
+	int _editorMarginH;
+	int _editorMarginV;
+	uint32 _editorColFrame;
+	uint32 _editorColEntity;
+	uint32 _editorColRegion;
+	uint32 _editorColBlocked;
+	uint32 _editorColWaypoints;
+	uint32 _editorColEntitySel;
+	uint32 _editorColRegionSel;
+	uint32 _editorColBlockedSel;
+	uint32 _editorColWaypointsSel;
+	uint32 _editorColScale;
+	uint32 _editorColDecor;
+	uint32 _editorColDecorSel;
 
-	bool m_EditorShowRegions;
-	bool m_EditorShowBlocked;
-	bool m_EditorShowDecor;
-	bool m_EditorShowEntities;
-	bool m_EditorShowScale;
-	CBArray<CAdScaleLevel *, CAdScaleLevel *> m_ScaleLevels;
-	CBArray<CAdRotLevel *, CAdRotLevel *> m_RotLevels;
+	bool _editorShowRegions;
+	bool _editorShowBlocked;
+	bool _editorShowDecor;
+	bool _editorShowEntities;
+	bool _editorShowScale;
+	CBArray<CAdScaleLevel *, CAdScaleLevel *> _scaleLevels;
+	CBArray<CAdRotLevel *, CAdRotLevel *> _rotLevels;
 
 	virtual HRESULT RestoreDeviceObjects();
 	int GetPointsDist(CBPoint p1, CBPoint p2, CBObject *requester = NULL);
@@ -165,14 +165,14 @@ public:
 private:
 	HRESULT PersistState(bool Saving = true);
 	void PFAddWaypointGroup(CAdWaypointGroup *Wpt, CBObject *Requester = NULL);
-	bool m_PFReady;
-	CBPoint *m_PFTarget;
-	CAdPath *m_PFTargetPath;
-	CBObject *m_PFRequester;
-	CBArray<CAdPathPoint *, CAdPathPoint *> m_PFPath;
+	bool _pFReady;
+	CBPoint *_pFTarget;
+	CAdPath *_pFTargetPath;
+	CBObject *_pFRequester;
+	CBArray<CAdPathPoint *, CAdPathPoint *> _pFPath;
 
-	int m_OffsetTop;
-	int m_OffsetLeft;
+	int _offsetTop;
+	int _offsetLeft;
 
 };
 

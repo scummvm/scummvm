@@ -41,9 +41,9 @@ public:
 	DECLARE_PERSISTENT(CAdSceneNode, CBObject)
 	HRESULT SetRegion(CAdRegion *Region);
 	HRESULT SetEntity(CAdEntity *Entity);
-	CAdEntity *m_Entity;
-	CAdRegion *m_Region;
-	TObjectType m_Type;
+	CAdEntity *_entity;
+	CAdRegion *_region;
+	TObjectType _type;
 	CAdSceneNode(CBGame *inGame);
 	virtual ~CAdSceneNode();
 

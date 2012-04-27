@@ -43,16 +43,16 @@ public:
 	CSXFile(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXFile();
 private:
-	CBFile *m_ReadFile;
-	FILE *m_WriteFile;
-	int m_Mode; // 0..none, 1..read, 2..write, 3..append
-	bool m_TextMode;
+	CBFile *_readFile;
+	FILE *_writeFile;
+	int _mode; // 0..none, 1..read, 2..write, 3..append
+	bool _textMode;
 	void Close();
 	void Cleanup();
 	uint32 GetPos();
 	uint32 GetLength();
 	bool SetPos(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
-	char *m_Filename;
+	char *_filename;
 };
 
 } // end of namespace WinterMute

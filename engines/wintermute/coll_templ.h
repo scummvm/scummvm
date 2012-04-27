@@ -116,10 +116,10 @@ public:
 
 // Implementation
 protected:
-	TYPE *m_pData;   // the actual array of data
-	int m_nSize;     // # of elements (upperBound - 1)
-	int m_nMaxSize;  // max allocated
-	int m_nGrowBy;   // grow amount
+	TYPE *_pData;   // the actual array of data
+	int _nSize;     // # of elements (upperBound - 1)
+	int _nMaxSize;  // max allocated
+	int _nGrowBy;   // grow amount
 
 public:
 	~CBArray();
@@ -130,11 +130,11 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 inline int CBArray<TYPE, ARG_TYPE>::GetSize() const {
-	return m_nSize;
+	return _nSize;
 }
 template<class TYPE, class ARG_TYPE>
 inline int CBArray<TYPE, ARG_TYPE>::GetUpperBound() const {
-	return m_nSize - 1;
+	return _nSize - 1;
 }
 template<class TYPE, class ARG_TYPE>
 inline void CBArray<TYPE, ARG_TYPE>::RemoveAll() {
@@ -142,27 +142,27 @@ inline void CBArray<TYPE, ARG_TYPE>::RemoveAll() {
 }
 template<class TYPE, class ARG_TYPE>
 inline TYPE CBArray<TYPE, ARG_TYPE>::GetAt(int nIndex) const {
-	return m_pData[nIndex];
+	return _pData[nIndex];
 }
 template<class TYPE, class ARG_TYPE>
 inline void CBArray<TYPE, ARG_TYPE>::SetAt(int nIndex, ARG_TYPE newElement) {
-	m_pData[nIndex] = newElement;
+	_pData[nIndex] = newElement;
 }
 template<class TYPE, class ARG_TYPE>
 inline TYPE &CBArray<TYPE, ARG_TYPE>::ElementAt(int nIndex) {
-	return m_pData[nIndex];
+	return _pData[nIndex];
 }
 template<class TYPE, class ARG_TYPE>
 inline const TYPE *CBArray<TYPE, ARG_TYPE>::GetData() const {
-	return (const TYPE *)m_pData;
+	return (const TYPE *)_pData;
 }
 template<class TYPE, class ARG_TYPE>
 inline TYPE *CBArray<TYPE, ARG_TYPE>::GetData() {
-	return (TYPE *)m_pData;
+	return (TYPE *)_pData;
 }
 template<class TYPE, class ARG_TYPE>
 inline int CBArray<TYPE, ARG_TYPE>::Add(ARG_TYPE newElement) {
-	int nIndex = m_nSize;
+	int nIndex = _nSize;
 	SetAtGrow(nIndex, newElement);
 	return nIndex;
 }
@@ -180,16 +180,16 @@ inline TYPE &CBArray<TYPE, ARG_TYPE>::operator[](int nIndex) {
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 CBArray<TYPE, ARG_TYPE>::CBArray() {
-	m_pData = NULL;
-	m_nSize = m_nMaxSize = m_nGrowBy = 0;
+	_pData = NULL;
+	_nSize = _nMaxSize = _nGrowBy = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 CBArray<TYPE, ARG_TYPE>::~CBArray() {
-	if (m_pData != NULL) {
-		DCDestructElements<TYPE>(m_pData, m_nSize);
-		delete[](byte  *)m_pData;
+	if (_pData != NULL) {
+		DCDestructElements<TYPE>(_pData, _nSize);
+		delete[](byte  *)_pData;
 	}
 }
 
@@ -197,140 +197,140 @@ CBArray<TYPE, ARG_TYPE>::~CBArray() {
 template<class TYPE, class ARG_TYPE>
 void CBArray<TYPE, ARG_TYPE>::SetSize(int nNewSize, int nGrowBy) {
 	if (nGrowBy != -1)
-		m_nGrowBy = nGrowBy;  // set new size
+		_nGrowBy = nGrowBy;  // set new size
 
 	if (nNewSize == 0) {
 		// shrink to nothing
-		if (m_pData != NULL) {
-			DCDestructElements<TYPE>(m_pData, m_nSize);
-			delete[](byte  *)m_pData;
-			m_pData = NULL;
+		if (_pData != NULL) {
+			DCDestructElements<TYPE>(_pData, _nSize);
+			delete[](byte  *)_pData;
+			_pData = NULL;
 		}
-		m_nSize = m_nMaxSize = 0;
-	} else if (m_pData == NULL) {
+		_nSize = _nMaxSize = 0;
+	} else if (_pData == NULL) {
 		// create one with exact size
-		m_pData = (TYPE *) new byte[nNewSize * sizeof(TYPE)];
-		DCConstructElements<TYPE>(m_pData, nNewSize);
-		m_nSize = m_nMaxSize = nNewSize;
-	} else if (nNewSize <= m_nMaxSize) {
+		_pData = (TYPE *) new byte[nNewSize * sizeof(TYPE)];
+		DCConstructElements<TYPE>(_pData, nNewSize);
+		_nSize = _nMaxSize = nNewSize;
+	} else if (nNewSize <= _nMaxSize) {
 		// it fits
-		if (nNewSize > m_nSize) {
+		if (nNewSize > _nSize) {
 			// initialize the new elements
-			DCConstructElements<TYPE>(&m_pData[m_nSize], nNewSize - m_nSize);
-		} else if (m_nSize > nNewSize) {
+			DCConstructElements<TYPE>(&_pData[_nSize], nNewSize - _nSize);
+		} else if (_nSize > nNewSize) {
 			// destroy the old elements
-			DCDestructElements<TYPE>(&m_pData[nNewSize], m_nSize - nNewSize);
+			DCDestructElements<TYPE>(&_pData[nNewSize], _nSize - nNewSize);
 		}
-		m_nSize = nNewSize;
+		_nSize = nNewSize;
 	} else {
 		// otherwise, grow array
-		int nGrowBy = m_nGrowBy;
+		int nGrowBy = _nGrowBy;
 		if (nGrowBy == 0) {
 			// heuristically determine growth when nGrowBy == 0
 			//  (this avoids heap fragmentation in many situations)
-			nGrowBy = m_nSize / 8;
+			nGrowBy = _nSize / 8;
 			nGrowBy = (nGrowBy < 4) ? 4 : ((nGrowBy > 1024) ? 1024 : nGrowBy);
 		}
 		int nNewMax;
-		if (nNewSize < m_nMaxSize + nGrowBy)
-			nNewMax = m_nMaxSize + nGrowBy;  // granularity
+		if (nNewSize < _nMaxSize + nGrowBy)
+			nNewMax = _nMaxSize + nGrowBy;  // granularity
 		else
 			nNewMax = nNewSize;  // no slush
 
 		TYPE *pNewData = (TYPE *) new byte[nNewMax * sizeof(TYPE)];
 
 		// copy new data from old
-		memcpy(pNewData, m_pData, m_nSize * sizeof(TYPE));
+		memcpy(pNewData, _pData, _nSize * sizeof(TYPE));
 
 		// construct remaining elements
-		DCConstructElements<TYPE>(&pNewData[m_nSize], nNewSize - m_nSize);
+		DCConstructElements<TYPE>(&pNewData[_nSize], nNewSize - _nSize);
 
 		// get rid of old stuff (note: no destructors called)
-		delete[](byte  *)m_pData;
-		m_pData = pNewData;
-		m_nSize = nNewSize;
-		m_nMaxSize = nNewMax;
+		delete[](byte  *)_pData;
+		_pData = pNewData;
+		_nSize = nNewSize;
+		_nMaxSize = nNewMax;
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 int CBArray<TYPE, ARG_TYPE>::Append(const CBArray &src) {
-	int nOldSize = m_nSize;
-	SetSize(m_nSize + src.m_nSize);
-	DCCopyElements<TYPE>(m_pData + nOldSize, src.m_pData, src.m_nSize);
+	int nOldSize = _nSize;
+	SetSize(_nSize + src._nSize);
+	DCCopyElements<TYPE>(_pData + nOldSize, src._pData, src._nSize);
 	return nOldSize;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 void CBArray<TYPE, ARG_TYPE>::Copy(const CBArray &src) {
-	SetSize(src.m_nSize);
-	DCCopyElements<TYPE>(m_pData, src.m_pData, src.m_nSize);
+	SetSize(src._nSize);
+	DCCopyElements<TYPE>(_pData, src._pData, src._nSize);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 void CBArray<TYPE, ARG_TYPE>::FreeExtra() {
-	if (m_nSize != m_nMaxSize) {
+	if (_nSize != _nMaxSize) {
 		// shrink to desired size
 		TYPE *pNewData = NULL;
-		if (m_nSize != 0) {
-			pNewData = (TYPE *) new byte[m_nSize * sizeof(TYPE)];
+		if (_nSize != 0) {
+			pNewData = (TYPE *) new byte[_nSize * sizeof(TYPE)];
 			// copy new data from old
-			memcpy(pNewData, m_pData, m_nSize * sizeof(TYPE));
+			memcpy(pNewData, _pData, _nSize * sizeof(TYPE));
 		}
 
 		// get rid of old stuff (note: no destructors called)
-		delete[](byte  *)m_pData;
-		m_pData = pNewData;
-		m_nMaxSize = m_nSize;
+		delete[](byte  *)_pData;
+		_pData = pNewData;
+		_nMaxSize = _nSize;
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 void CBArray<TYPE, ARG_TYPE>::SetAtGrow(int nIndex, ARG_TYPE newElement) {
-	if (nIndex >= m_nSize)
+	if (nIndex >= _nSize)
 		SetSize(nIndex + 1, -1);
-	m_pData[nIndex] = newElement;
+	_pData[nIndex] = newElement;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 void CBArray<TYPE, ARG_TYPE>::InsertAt(int nIndex, ARG_TYPE newElement, int nCount /*=1*/) {
-	if (nIndex >= m_nSize) {
+	if (nIndex >= _nSize) {
 		// adding after the end of the array
 		SetSize(nIndex + nCount, -1);   // grow so nIndex is valid
 	} else {
 		// inserting in the middle of the array
-		int nOldSize = m_nSize;
-		SetSize(m_nSize + nCount, -1);  // grow it to new size
+		int nOldSize = _nSize;
+		SetSize(_nSize + nCount, -1);  // grow it to new size
 		// destroy intial data before copying over it
-		DCDestructElements<TYPE>(&m_pData[nOldSize], nCount);
+		DCDestructElements<TYPE>(&_pData[nOldSize], nCount);
 		// shift old data up to fill gap
-		memmove(&m_pData[nIndex + nCount], &m_pData[nIndex],
+		memmove(&_pData[nIndex + nCount], &_pData[nIndex],
 		        (nOldSize - nIndex) * sizeof(TYPE));
 
 		// re-init slots we copied from
-		DCConstructElements<TYPE>(&m_pData[nIndex], nCount);
+		DCConstructElements<TYPE>(&_pData[nIndex], nCount);
 	}
 
 	// insert new value in the gap
 	while (nCount--)
-		m_pData[nIndex++] = newElement;
+		_pData[nIndex++] = newElement;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
 void CBArray<TYPE, ARG_TYPE>::RemoveAt(int nIndex, int nCount) {
 	// just remove a range
-	int nMoveCount = m_nSize - (nIndex + nCount);
-	DCDestructElements<TYPE>(&m_pData[nIndex], nCount);
+	int nMoveCount = _nSize - (nIndex + nCount);
+	DCDestructElements<TYPE>(&_pData[nIndex], nCount);
 	if (nMoveCount)
-		memcpy(&m_pData[nIndex], &m_pData[nIndex + nCount],
+		memcpy(&_pData[nIndex], &_pData[nIndex + nCount],
 		       nMoveCount * sizeof(TYPE));
-	m_nSize -= nCount;
+	_nSize -= nCount;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -348,7 +348,7 @@ void CBArray<TYPE, ARG_TYPE>::InsertAt(int nStartIndex, CBArray *pNewArray) {
 template<class TYPE, class ARG_TYPE>
 HRESULT CBArray<TYPE, ARG_TYPE>::Persist(CBPersistMgr *PersistMgr) {
 	int i, j;
-	if (PersistMgr->m_Saving) {
+	if (PersistMgr->_saving) {
 		j = GetSize();
 		PersistMgr->Transfer("ArraySize", &j);
 		for (i = 0; i < j; i++) {

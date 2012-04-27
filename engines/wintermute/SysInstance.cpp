@@ -34,12 +34,12 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CSysInstance::CSysInstance(void *Instance, int ID, CSysClass *sysClass) {
-	m_Instance = Instance;
-	m_ID = ID;
-	m_SavedID = -1;
-	m_Class = sysClass;
+	_instance = Instance;
+	_iD = ID;
+	_savedID = -1;
+	_class = sysClass;
 
-	m_Used = false;
+	_used = false;
 }
 
 //////////////////////////////////////////////////////////////////////////

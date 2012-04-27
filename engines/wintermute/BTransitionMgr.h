@@ -35,17 +35,17 @@ namespace WinterMute {
 
 class CBTransitionMgr : public CBBase {
 public:
-	bool m_Started;
-	uint32 m_LastTime;
-	bool m_OrigInteractive;
-	bool m_PreserveInteractive;
+	bool _started;
+	uint32 _lastTime;
+	bool _origInteractive;
+	bool _preserveInteractive;
 	HRESULT Update();
 	HRESULT Start(TTransitionType Type, bool NonInteractive = false);
 	bool IsReady();
-	TTransMgrState m_State;
+	TTransMgrState _state;
 	CBTransitionMgr(CBGame *inGame);
 	virtual ~CBTransitionMgr();
-	TTransitionType m_Type;
+	TTransitionType _type;
 
 };
 

@@ -43,7 +43,7 @@ public:
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
-	CAdEntity *m_Entity;
+	CAdEntity *_entity;
 	HRESULT SetEntity(char *Filename);
 
 	// scripting interface

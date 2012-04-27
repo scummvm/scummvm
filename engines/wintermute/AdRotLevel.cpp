@@ -41,8 +41,8 @@ IMPLEMENT_PERSISTENT(CAdRotLevel, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdRotLevel::CAdRotLevel(CBGame *inGame): CBObject(inGame) {
-	m_PosX = 0;
-	m_Rotation = 0.0f;
+	_posX = 0;
+	_rotation = 0.0f;
 }
 
 
@@ -54,7 +54,7 @@ CAdRotLevel::~CAdRotLevel() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdRotLevel::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdRotLevel::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -62,8 +62,8 @@ HRESULT CAdRotLevel::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ROTATION_LEVEL file '%s'", Filename);
 
@@ -110,13 +110,13 @@ HRESULT CAdRotLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &m_PosX);
+			parser.ScanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_ROTATION: {
 			int i;
 			parser.ScanStr((char *)params, "%d", &i);
-			m_Rotation = (float)i;
+			_rotation = (float)i;
 		}
 		break;
 
@@ -137,8 +137,8 @@ HRESULT CAdRotLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdRotLevel::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "ROTATION_LEVEL {\n");
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", m_PosX);
-	Buffer->PutTextIndent(Indent + 2, "ROTATION=%d\n", (int)m_Rotation);
+	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->PutTextIndent(Indent + 2, "ROTATION=%d\n", (int)_rotation);
 	CBBase::SaveAsText(Buffer, Indent + 2);
 	Buffer->PutTextIndent(Indent, "}\n");
 
@@ -151,7 +151,7 @@ HRESULT CAdRotLevel::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Rotation));
+	PersistMgr->Transfer(TMEMBER(_rotation));
 
 	return S_OK;
 }

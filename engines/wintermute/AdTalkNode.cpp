@@ -40,30 +40,30 @@ IMPLEMENT_PERSISTENT(CAdTalkNode, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdTalkNode::CAdTalkNode(CBGame *inGame): CBBase(inGame) {
-	m_Sprite = NULL;
-	m_SpriteFilename = NULL;
-	m_SpriteSet = NULL;
-	m_SpriteSetFilename = NULL;
-	m_Comment = NULL;
+	_sprite = NULL;
+	_spriteFilename = NULL;
+	_spriteSet = NULL;
+	_spriteSetFilename = NULL;
+	_comment = NULL;
 
-	m_StartTime = m_EndTime = 0;
-	m_PlayToEnd = false;
-	m_PreCache = false;
+	_startTime = _endTime = 0;
+	_playToEnd = false;
+	_preCache = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdTalkNode::~CAdTalkNode() {
-	delete[] m_SpriteFilename;
-	delete m_Sprite;
-	delete[] m_SpriteSetFilename;
-	delete m_SpriteSet;
-	delete m_Comment;
-	m_SpriteFilename = NULL;
-	m_Sprite = NULL;
-	m_SpriteSetFilename = NULL;
-	m_SpriteSet = NULL;
-	m_Comment = NULL;
+	delete[] _spriteFilename;
+	delete _sprite;
+	delete[] _spriteSetFilename;
+	delete _spriteSet;
+	delete _comment;
+	_spriteFilename = NULL;
+	_sprite = NULL;
+	_spriteSetFilename = NULL;
+	_spriteSet = NULL;
+	_comment = NULL;
 }
 
 
@@ -105,45 +105,45 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 		Buffer = params;
 	}
 
-	m_EndTime = 0;
-	m_PlayToEnd = false;
-	m_PreCache = false;
+	_endTime = 0;
+	_playToEnd = false;
+	_preCache = false;
 
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SPRITE:
-			CBUtils::SetString(&m_SpriteFilename, (char *)params);
+			CBUtils::SetString(&_spriteFilename, (char *)params);
 			break;
 
 		case TOKEN_SPRITESET_FILE:
-			CBUtils::SetString(&m_SpriteSetFilename, (char *)params);
+			CBUtils::SetString(&_spriteSetFilename, (char *)params);
 			break;
 
 		case TOKEN_SPRITESET: {
-			delete m_SpriteSet;
-			m_SpriteSet = new CAdSpriteSet(Game);
-			if (!m_SpriteSet || FAILED(m_SpriteSet->LoadBuffer(params, false))) {
-				delete m_SpriteSet;
-				m_SpriteSet = NULL;
+			delete _spriteSet;
+			_spriteSet = new CAdSpriteSet(Game);
+			if (!_spriteSet || FAILED(_spriteSet->LoadBuffer(params, false))) {
+				delete _spriteSet;
+				_spriteSet = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 		}
 		break;
 
 		case TOKEN_START_TIME:
-			parser.ScanStr((char *)params, "%d", &m_StartTime);
+			parser.ScanStr((char *)params, "%d", &_startTime);
 			break;
 
 		case TOKEN_END_TIME:
-			parser.ScanStr((char *)params, "%d", &m_EndTime);
+			parser.ScanStr((char *)params, "%d", &_endTime);
 			break;
 
 		case TOKEN_PRECACHE:
-			parser.ScanStr((char *)params, "%b", &m_PreCache);
+			parser.ScanStr((char *)params, "%b", &_preCache);
 			break;
 
 		case TOKEN_COMMENT:
-			if (Game->m_EditorMode) CBUtils::SetString(&m_Comment, (char *)params);
+			if (Game->_editorMode) CBUtils::SetString(&_comment, (char *)params);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -161,19 +161,19 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	if (m_EndTime == 0) m_PlayToEnd = true;
-	else m_PlayToEnd = false;
+	if (_endTime == 0) _playToEnd = true;
+	else _playToEnd = false;
 
-	if (m_PreCache && m_SpriteFilename) {
-		delete m_Sprite;
-		m_Sprite = new CBSprite(Game);
-		if (!m_Sprite || FAILED(m_Sprite->LoadFile(m_SpriteFilename))) return E_FAIL;
+	if (_preCache && _spriteFilename) {
+		delete _sprite;
+		_sprite = new CBSprite(Game);
+		if (!_sprite || FAILED(_sprite->LoadFile(_spriteFilename))) return E_FAIL;
 	}
 
-	if (m_PreCache && m_SpriteSetFilename) {
-		delete m_SpriteSet;
-		m_SpriteSet = new CAdSpriteSet(Game);
-		if (!m_SpriteSet || FAILED(m_SpriteSet->LoadFile(m_SpriteSetFilename))) return E_FAIL;
+	if (_preCache && _spriteSetFilename) {
+		delete _spriteSet;
+		_spriteSet = new CAdSpriteSet(Game);
+		if (!_spriteSet || FAILED(_spriteSet->LoadFile(_spriteSetFilename))) return E_FAIL;
 	}
 
 
@@ -184,14 +184,14 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkNode::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(m_Comment));
-	PersistMgr->Transfer(TMEMBER(m_StartTime));
-	PersistMgr->Transfer(TMEMBER(m_EndTime));
-	PersistMgr->Transfer(TMEMBER(m_PlayToEnd));
-	PersistMgr->Transfer(TMEMBER(m_Sprite));
-	PersistMgr->Transfer(TMEMBER(m_SpriteFilename));
-	PersistMgr->Transfer(TMEMBER(m_SpriteSet));
-	PersistMgr->Transfer(TMEMBER(m_SpriteSetFilename));
+	PersistMgr->Transfer(TMEMBER(_comment));
+	PersistMgr->Transfer(TMEMBER(_startTime));
+	PersistMgr->Transfer(TMEMBER(_endTime));
+	PersistMgr->Transfer(TMEMBER(_playToEnd));
+	PersistMgr->Transfer(TMEMBER(_sprite));
+	PersistMgr->Transfer(TMEMBER(_spriteFilename));
+	PersistMgr->Transfer(TMEMBER(_spriteSet));
+	PersistMgr->Transfer(TMEMBER(_spriteSetFilename));
 
 	return S_OK;
 }
@@ -200,13 +200,13 @@ HRESULT CAdTalkNode::Persist(CBPersistMgr *PersistMgr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkNode::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "ACTION {\n");
-	if (m_Comment) Buffer->PutTextIndent(Indent + 2, "COMMENT=\"%s\"\n", m_Comment);
-	Buffer->PutTextIndent(Indent + 2, "START_TIME=%d\n", m_StartTime);
-	if (!m_PlayToEnd) Buffer->PutTextIndent(Indent + 2, "END_TIME=%d\n", m_EndTime);
-	if (m_SpriteFilename) Buffer->PutTextIndent(Indent + 2, "SPRITE=\"%s\"\n", m_SpriteFilename);
-	if (m_SpriteSetFilename) Buffer->PutTextIndent(Indent + 2, "SPRITESET_FILE=\"%s\"\n", m_SpriteSetFilename);
-	else if (m_SpriteSet) m_SpriteSet->SaveAsText(Buffer, Indent + 2);
-	if (m_PreCache) Buffer->PutTextIndent(Indent + 2, "PRECACHE=\"%s\"\n", m_PreCache ? "TRUE" : "FALSE");
+	if (_comment) Buffer->PutTextIndent(Indent + 2, "COMMENT=\"%s\"\n", _comment);
+	Buffer->PutTextIndent(Indent + 2, "START_TIME=%d\n", _startTime);
+	if (!_playToEnd) Buffer->PutTextIndent(Indent + 2, "END_TIME=%d\n", _endTime);
+	if (_spriteFilename) Buffer->PutTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
+	if (_spriteSetFilename) Buffer->PutTextIndent(Indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
+	else if (_spriteSet) _spriteSet->SaveAsText(Buffer, Indent + 2);
+	if (_preCache) Buffer->PutTextIndent(Indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
 
 	CBBase::SaveAsText(Buffer, Indent + 2);
 
@@ -218,20 +218,20 @@ HRESULT CAdTalkNode::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkNode::LoadSprite() {
-	if (m_SpriteFilename && !m_Sprite) {
-		m_Sprite = new CBSprite(Game);
-		if (!m_Sprite || FAILED(m_Sprite->LoadFile(m_SpriteFilename))) {
-			delete m_Sprite;
-			m_Sprite = NULL;
+	if (_spriteFilename && !_sprite) {
+		_sprite = new CBSprite(Game);
+		if (!_sprite || FAILED(_sprite->LoadFile(_spriteFilename))) {
+			delete _sprite;
+			_sprite = NULL;
 			return E_FAIL;
 		} else return S_OK;
 	}
 
-	else if (m_SpriteSetFilename && !m_SpriteSet) {
-		m_SpriteSet = new CAdSpriteSet(Game);
-		if (!m_SpriteSet || FAILED(m_SpriteSet->LoadFile(m_SpriteSetFilename))) {
-			delete m_SpriteSet;
-			m_SpriteSet = NULL;
+	else if (_spriteSetFilename && !_spriteSet) {
+		_spriteSet = new CAdSpriteSet(Game);
+		if (!_spriteSet || FAILED(_spriteSet->LoadFile(_spriteSetFilename))) {
+			delete _spriteSet;
+			_spriteSet = NULL;
 			return E_FAIL;
 		} else return S_OK;
 	}
@@ -242,12 +242,12 @@ HRESULT CAdTalkNode::LoadSprite() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdTalkNode::IsInTimeInterval(uint32 Time, TDirection Dir) {
-	if (Time >= m_StartTime) {
-		if (m_PlayToEnd) {
-			if ((m_SpriteFilename && m_Sprite == NULL) || (m_Sprite && m_Sprite->m_Finished == false)) return true;
-			else if ((m_SpriteSetFilename && m_SpriteSet == NULL) || (m_SpriteSet && m_SpriteSet->GetSprite(Dir) && m_SpriteSet->GetSprite(Dir)->m_Finished == false)) return true;
+	if (Time >= _startTime) {
+		if (_playToEnd) {
+			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->_finished == false)) return true;
+			else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->GetSprite(Dir) && _spriteSet->GetSprite(Dir)->_finished == false)) return true;
 			else return false;
-		} else return m_EndTime >= Time;
+		} else return _endTime >= Time;
 	} else return false;
 }
 
@@ -255,8 +255,8 @@ bool CAdTalkNode::IsInTimeInterval(uint32 Time, TDirection Dir) {
 //////////////////////////////////////////////////////////////////////////
 CBSprite *CAdTalkNode::GetSprite(TDirection Dir) {
 	LoadSprite();
-	if (m_Sprite) return m_Sprite;
-	else if (m_SpriteSet) return m_SpriteSet->GetSprite(Dir);
+	if (_sprite) return _sprite;
+	else if (_spriteSet) return _spriteSet->GetSprite(Dir);
 	else return NULL;
 }
 

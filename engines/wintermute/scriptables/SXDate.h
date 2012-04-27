@@ -44,8 +44,8 @@ public:
 	HRESULT ScSetProperty(char *Name, CScValue *Value);
 	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	char *ScToString();
-	char *m_String;
-	//struct tm m_tm; // TODO!
+	char *_string;
+	//struct tm _tm; // TODO!
 };
 
 } // end of namespace WinterMute

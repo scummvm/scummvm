@@ -44,77 +44,77 @@ IMPLEMENT_PERSISTENT(CScValue, false)
 
 //////////////////////////////////////////////////////////////////////////
 CScValue::CScValue(CBGame *inGame): CBBase(inGame) {
-	m_Type = VAL_NULL;
+	_type = VAL_NULL;
 
-	m_ValBool = false;
-	m_ValInt = 0;
-	m_ValFloat = 0.0f;
-	m_ValNative = NULL;
-	m_ValString = NULL;
-	m_ValRef = NULL;
-	m_Persistent = false;
-	m_IsConstVar = false;
+	_valBool = false;
+	_valInt = 0;
+	_valFloat = 0.0f;
+	_valNative = NULL;
+	_valString = NULL;
+	_valRef = NULL;
+	_persistent = false;
+	_isConstVar = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue::CScValue(CBGame *inGame, bool Val): CBBase(inGame) {
-	m_Type = VAL_BOOL;
-	m_ValBool = Val;
+	_type = VAL_BOOL;
+	_valBool = Val;
 
-	m_ValInt = 0;
-	m_ValFloat = 0.0f;
-	m_ValNative = NULL;
-	m_ValString = NULL;
-	m_ValRef = NULL;
-	m_Persistent = false;
-	m_IsConstVar = false;
+	_valInt = 0;
+	_valFloat = 0.0f;
+	_valNative = NULL;
+	_valString = NULL;
+	_valRef = NULL;
+	_persistent = false;
+	_isConstVar = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue::CScValue(CBGame *inGame, int Val): CBBase(inGame) {
-	m_Type = VAL_INT;
-	m_ValInt = Val;
+	_type = VAL_INT;
+	_valInt = Val;
 
-	m_ValFloat = 0.0f;
-	m_ValBool = false;
-	m_ValNative = NULL;
-	m_ValString = NULL;
-	m_ValRef = NULL;
-	m_Persistent = false;
-	m_IsConstVar = false;
+	_valFloat = 0.0f;
+	_valBool = false;
+	_valNative = NULL;
+	_valString = NULL;
+	_valRef = NULL;
+	_persistent = false;
+	_isConstVar = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue::CScValue(CBGame *inGame, double Val): CBBase(inGame) {
-	m_Type = VAL_FLOAT;
-	m_ValFloat = Val;
+	_type = VAL_FLOAT;
+	_valFloat = Val;
 
-	m_ValInt = 0;
-	m_ValBool = false;
-	m_ValNative = NULL;
-	m_ValString = NULL;
-	m_ValRef = NULL;
-	m_Persistent = false;
-	m_IsConstVar = false;
+	_valInt = 0;
+	_valBool = false;
+	_valNative = NULL;
+	_valString = NULL;
+	_valRef = NULL;
+	_persistent = false;
+	_isConstVar = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue::CScValue(CBGame *inGame, const char *Val): CBBase(inGame) {
-	m_Type = VAL_STRING;
-	m_ValString = NULL;
+	_type = VAL_STRING;
+	_valString = NULL;
 	SetStringVal(Val);
 
-	m_ValBool = false;
-	m_ValInt = 0;
-	m_ValFloat = 0.0f;
-	m_ValNative = NULL;
-	m_ValRef = NULL;
-	m_Persistent = false;
-	m_IsConstVar = false;
+	_valBool = false;
+	_valInt = 0;
+	_valFloat = 0.0f;
+	_valNative = NULL;
+	_valRef = NULL;
+	_persistent = false;
+	_isConstVar = false;
 }
 
 
@@ -122,29 +122,29 @@ CScValue::CScValue(CBGame *inGame, const char *Val): CBBase(inGame) {
 void CScValue::Cleanup(bool IgnoreNatives) {
 	DeleteProps();
 
-	if (m_ValString) delete [] m_ValString;
+	if (_valString) delete [] _valString;
 
 	if (!IgnoreNatives) {
-		if (m_ValNative && !m_Persistent) {
-			m_ValNative->m_RefCount--;
-			if (m_ValNative->m_RefCount <= 0) {
-				delete m_ValNative;
-				m_ValNative = NULL;
+		if (_valNative && !_persistent) {
+			_valNative->_refCount--;
+			if (_valNative->_refCount <= 0) {
+				delete _valNative;
+				_valNative = NULL;
 			}
 		}
 	}
 
 
-	m_Type = VAL_NULL;
+	_type = VAL_NULL;
 
-	m_ValBool = false;
-	m_ValInt = 0;
-	m_ValFloat = 0.0f;
-	m_ValNative = NULL;
-	m_ValString = NULL;
-	m_ValRef = NULL;
-	m_Persistent = false;
-	m_IsConstVar = false;
+	_valBool = false;
+	_valInt = 0;
+	_valFloat = 0.0f;
+	_valNative = NULL;
+	_valString = NULL;
+	_valRef = NULL;
+	_persistent = false;
+	_isConstVar = false;
 }
 
 
@@ -157,44 +157,44 @@ CScValue::~CScValue() {
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScValue::GetProp(char *Name) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetProp(Name);
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetProp(Name);
 
-	if (m_Type == VAL_STRING && strcmp(Name, "Length") == 0) {
-		Game->m_ScValue->m_Type = VAL_INT;
+	if (_type == VAL_STRING && strcmp(Name, "Length") == 0) {
+		Game->_scValue->_type = VAL_INT;
 
 #if 0 // TODO: Remove FreeType-dependency
-		if (Game->m_TextEncoding == TEXT_ANSI) {
+		if (Game->_textEncoding == TEXT_ANSI) {
 #else
 		if (true) {
 #endif
-			Game->m_ScValue->SetInt(strlen(m_ValString));
+			Game->_scValue->SetInt(strlen(_valString));
 		} else {
-			WideString wstr = StringUtil::Utf8ToWide(m_ValString);
-			Game->m_ScValue->SetInt(wstr.size());
+			WideString wstr = StringUtil::Utf8ToWide(_valString);
+			Game->_scValue->SetInt(wstr.size());
 		}
 
-		return Game->m_ScValue;
+		return Game->_scValue;
 	}
 
 	CScValue *ret = NULL;
 
-	if (m_Type == VAL_NATIVE && m_ValNative) ret = m_ValNative->ScGetProperty(Name);
+	if (_type == VAL_NATIVE && _valNative) ret = _valNative->ScGetProperty(Name);
 
 	if (ret == NULL) {
-		m_ValIter = m_ValObject.find(Name);
-		if (m_ValIter != m_ValObject.end()) ret = m_ValIter->_value;
+		_valIter = _valObject.find(Name);
+		if (_valIter != _valObject.end()) ret = _valIter->_value;
 	}
 	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScValue::DeleteProp(char *Name) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->DeleteProp(Name);
+	if (_type == VAL_VARIABLE_REF) return _valRef->DeleteProp(Name);
 
-	m_ValIter = m_ValObject.find(Name);
-	if (m_ValIter != m_ValObject.end()) {
-		delete m_ValIter->_value;
-		m_ValIter->_value = NULL;
+	_valIter = _valObject.find(Name);
+	if (_valIter != _valObject.end()) {
+		delete _valIter->_value;
+		_valIter->_value = NULL;
 	}
 
 	return S_OK;
@@ -204,41 +204,41 @@ HRESULT CScValue::DeleteProp(char *Name) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScValue::SetProp(char *Name, CScValue *Val, bool CopyWhole, bool SetAsConst) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->SetProp(Name, Val);
+	if (_type == VAL_VARIABLE_REF) return _valRef->SetProp(Name, Val);
 
 	HRESULT ret = E_FAIL;
-	if (m_Type == VAL_NATIVE && m_ValNative) {
-		ret = m_ValNative->ScSetProperty(Name, Val);
+	if (_type == VAL_NATIVE && _valNative) {
+		ret = _valNative->ScSetProperty(Name, Val);
 	}
 
 	if (FAILED(ret)) {
 		CScValue *val = NULL;
 
-		m_ValIter = m_ValObject.find(Name);
-		if (m_ValIter != m_ValObject.end()) {
-			val = m_ValIter->_value;
+		_valIter = _valObject.find(Name);
+		if (_valIter != _valObject.end()) {
+			val = _valIter->_value;
 		}
 		if (!val) val = new CScValue(Game);
 		else val->Cleanup();
 
 		val->Copy(Val, CopyWhole);
-		val->m_IsConstVar = SetAsConst;
-		m_ValObject[Name] = val;
+		val->_isConstVar = SetAsConst;
+		_valObject[Name] = val;
 
-		if (m_Type != VAL_NATIVE) m_Type = VAL_OBJECT;
+		if (_type != VAL_NATIVE) _type = VAL_OBJECT;
 
 		/*
-		m_ValIter = m_ValObject.find(Name);
-		if (m_ValIter != m_ValObject.end()){
-		    delete m_ValIter->_value;
-		    m_ValIter->_value = NULL;
+		_valIter = _valObject.find(Name);
+		if (_valIter != _valObject.end()){
+		    delete _valIter->_value;
+		    _valIter->_value = NULL;
 		}
 		CScValue* val = new CScValue(Game);
 		val->Copy(Val, CopyWhole);
-		val->m_IsConstVar = SetAsConst;
-		m_ValObject[Name] = val;
+		val->_isConstVar = SetAsConst;
+		_valObject[Name] = val;
 
-		if(m_Type!=VAL_NATIVE) m_Type = VAL_OBJECT;
+		if(_type!=VAL_NATIVE) _type = VAL_OBJECT;
 		*/
 	}
 
@@ -248,265 +248,265 @@ HRESULT CScValue::SetProp(char *Name, CScValue *Val, bool CopyWhole, bool SetAsC
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::PropExists(char *Name) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->PropExists(Name);
-	m_ValIter = m_ValObject.find(Name);
+	if (_type == VAL_VARIABLE_REF) return _valRef->PropExists(Name);
+	_valIter = _valObject.find(Name);
 
-	return (m_ValIter != m_ValObject.end());
+	return (_valIter != _valObject.end());
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::DeleteProps() {
-	m_ValIter = m_ValObject.begin();
-	while (m_ValIter != m_ValObject.end()) {
-		delete(CScValue *)m_ValIter->_value;
-		m_ValIter++;
+	_valIter = _valObject.begin();
+	while (_valIter != _valObject.end()) {
+		delete(CScValue *)_valIter->_value;
+		_valIter++;
 	}
-	m_ValObject.clear();
+	_valObject.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::CleanProps(bool IncludingNatives) {
-	m_ValIter = m_ValObject.begin();
-	while (m_ValIter != m_ValObject.end()) {
-		if (!m_ValIter->_value->m_IsConstVar && (!m_ValIter->_value->IsNative() || IncludingNatives)) m_ValIter->_value->SetNULL();
-		m_ValIter++;
+	_valIter = _valObject.begin();
+	while (_valIter != _valObject.end()) {
+		if (!_valIter->_value->_isConstVar && (!_valIter->_value->IsNative() || IncludingNatives)) _valIter->_value->SetNULL();
+		_valIter++;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::IsNULL() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->IsNULL();
+	if (_type == VAL_VARIABLE_REF) return _valRef->IsNULL();
 
-	return (m_Type == VAL_NULL);
+	return (_type == VAL_NULL);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::IsNative() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->IsNative();
+	if (_type == VAL_VARIABLE_REF) return _valRef->IsNative();
 
-	return (m_Type == VAL_NATIVE);
+	return (_type == VAL_NATIVE);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::IsString() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->IsString();
+	if (_type == VAL_VARIABLE_REF) return _valRef->IsString();
 
-	return (m_Type == VAL_STRING);
+	return (_type == VAL_STRING);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::IsFloat() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->IsFloat();
+	if (_type == VAL_VARIABLE_REF) return _valRef->IsFloat();
 
-	return (m_Type == VAL_FLOAT);
+	return (_type == VAL_FLOAT);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::IsInt() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->IsInt();
+	if (_type == VAL_VARIABLE_REF) return _valRef->IsInt();
 
-	return (m_Type == VAL_INT);
+	return (_type == VAL_INT);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::IsBool() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->IsBool();
+	if (_type == VAL_VARIABLE_REF) return _valRef->IsBool();
 
-	return (m_Type == VAL_BOOL);
+	return (_type == VAL_BOOL);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::IsObject() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->IsObject();
+	if (_type == VAL_VARIABLE_REF) return _valRef->IsObject();
 
-	return (m_Type == VAL_OBJECT);
+	return (_type == VAL_OBJECT);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 TValType CScValue::GetTypeTolerant() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetType();
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetType();
 
-	return m_Type;
+	return _type;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetBool(bool Val) {
-	if (m_Type == VAL_VARIABLE_REF) {
-		m_ValRef->SetBool(Val);
+	if (_type == VAL_VARIABLE_REF) {
+		_valRef->SetBool(Val);
 		return;
 	}
 
-	if (m_Type == VAL_NATIVE) {
-		m_ValNative->ScSetBool(Val);
+	if (_type == VAL_NATIVE) {
+		_valNative->ScSetBool(Val);
 		return;
 	}
 
-	m_ValBool = Val;
-	m_Type = VAL_BOOL;
+	_valBool = Val;
+	_type = VAL_BOOL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetInt(int Val) {
-	if (m_Type == VAL_VARIABLE_REF) {
-		m_ValRef->SetInt(Val);
+	if (_type == VAL_VARIABLE_REF) {
+		_valRef->SetInt(Val);
 		return;
 	}
 
-	if (m_Type == VAL_NATIVE) {
-		m_ValNative->ScSetInt(Val);
+	if (_type == VAL_NATIVE) {
+		_valNative->ScSetInt(Val);
 		return;
 	}
 
-	m_ValInt = Val;
-	m_Type = VAL_INT;
+	_valInt = Val;
+	_type = VAL_INT;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetFloat(double Val) {
-	if (m_Type == VAL_VARIABLE_REF) {
-		m_ValRef->SetFloat(Val);
+	if (_type == VAL_VARIABLE_REF) {
+		_valRef->SetFloat(Val);
 		return;
 	}
 
-	if (m_Type == VAL_NATIVE) {
-		m_ValNative->ScSetFloat(Val);
+	if (_type == VAL_NATIVE) {
+		_valNative->ScSetFloat(Val);
 		return;
 	}
 
-	m_ValFloat = Val;
-	m_Type = VAL_FLOAT;
+	_valFloat = Val;
+	_type = VAL_FLOAT;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetString(const char *Val) {
-	if (m_Type == VAL_VARIABLE_REF) {
-		m_ValRef->SetString(Val);
+	if (_type == VAL_VARIABLE_REF) {
+		_valRef->SetString(Val);
 		return;
 	}
 
-	if (m_Type == VAL_NATIVE) {
-		m_ValNative->ScSetString(Val);
+	if (_type == VAL_NATIVE) {
+		_valNative->ScSetString(Val);
 		return;
 	}
 
 	SetStringVal(Val);
-	if (m_ValString) m_Type = VAL_STRING;
-	else m_Type = VAL_NULL;
+	if (_valString) _type = VAL_STRING;
+	else _type = VAL_NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetStringVal(const char *Val) {
-	if (m_ValString) delete [] m_ValString;
+	if (_valString) delete [] _valString;
 
 	if (Val == NULL) {
-		m_ValString = NULL;
+		_valString = NULL;
 		return;
 	}
 
-	m_ValString = new char [strlen(Val) + 1];
-	if (m_ValString) {
-		strcpy(m_ValString, Val);
+	_valString = new char [strlen(Val) + 1];
+	if (_valString) {
+		strcpy(_valString, Val);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetNULL() {
-	if (m_Type == VAL_VARIABLE_REF) {
-		m_ValRef->SetNULL();
+	if (_type == VAL_VARIABLE_REF) {
+		_valRef->SetNULL();
 		return;
 	}
 
-	if (m_ValNative && !m_Persistent) {
-		m_ValNative->m_RefCount--;
-		if (m_ValNative->m_RefCount <= 0) delete m_ValNative;
+	if (_valNative && !_persistent) {
+		_valNative->_refCount--;
+		if (_valNative->_refCount <= 0) delete _valNative;
 	}
-	m_ValNative = NULL;
+	_valNative = NULL;
 	DeleteProps();
 
-	m_Type = VAL_NULL;
+	_type = VAL_NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetNative(CBScriptable *Val, bool Persistent) {
-	if (m_Type == VAL_VARIABLE_REF) {
-		m_ValRef->SetNative(Val, Persistent);
+	if (_type == VAL_VARIABLE_REF) {
+		_valRef->SetNative(Val, Persistent);
 		return;
 	}
 
 	if (Val == NULL) {
 		SetNULL();
 	} else {
-		if (m_ValNative && !m_Persistent) {
-			m_ValNative->m_RefCount--;
-			if (m_ValNative->m_RefCount <= 0) {
-				if (m_ValNative != Val) delete m_ValNative;
-				m_ValNative = NULL;
+		if (_valNative && !_persistent) {
+			_valNative->_refCount--;
+			if (_valNative->_refCount <= 0) {
+				if (_valNative != Val) delete _valNative;
+				_valNative = NULL;
 			}
 		}
 
-		m_Type = VAL_NATIVE;
-		m_Persistent = Persistent;
+		_type = VAL_NATIVE;
+		_persistent = Persistent;
 
-		m_ValNative = Val;
-		if (m_ValNative && !m_Persistent) m_ValNative->m_RefCount++;
+		_valNative = Val;
+		if (_valNative && !_persistent) _valNative->_refCount++;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetObject() {
-	if (m_Type == VAL_VARIABLE_REF) {
-		m_ValRef->SetObject();
+	if (_type == VAL_VARIABLE_REF) {
+		_valRef->SetObject();
 		return;
 	}
 
 	DeleteProps();
-	m_Type = VAL_OBJECT;
+	_type = VAL_OBJECT;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetReference(CScValue *Val) {
-	m_ValRef = Val;
-	m_Type = VAL_VARIABLE_REF;
+	_valRef = Val;
+	_type = VAL_VARIABLE_REF;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::GetBool(bool Default) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetBool();
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetBool();
 
-	switch (m_Type) {
+	switch (_type) {
 	case VAL_BOOL:
-		return m_ValBool;
+		return _valBool;
 
 	case VAL_NATIVE:
-		return m_ValNative->ScToBool();
+		return _valNative->ScToBool();
 
 	case VAL_INT:
-		return (m_ValInt != 0);
+		return (_valInt != 0);
 
 	case VAL_FLOAT:
-		return (m_ValFloat != 0.0f);
+		return (_valFloat != 0.0f);
 
 	case VAL_STRING:
-		return (scumm_stricmp(m_ValString, "1") == 0 || scumm_stricmp(m_ValString, "yes") == 0 || scumm_stricmp(m_ValString, "true") == 0);
+		return (scumm_stricmp(_valString, "1") == 0 || scumm_stricmp(_valString, "yes") == 0 || scumm_stricmp(_valString, "true") == 0);
 
 	default:
 		return Default;
@@ -516,23 +516,23 @@ bool CScValue::GetBool(bool Default) {
 
 //////////////////////////////////////////////////////////////////////////
 int CScValue::GetInt(int Default) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetInt();
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetInt();
 
-	switch (m_Type) {
+	switch (_type) {
 	case VAL_BOOL:
-		return m_ValBool ? 1 : 0;
+		return _valBool ? 1 : 0;
 
 	case VAL_NATIVE:
-		return m_ValNative->ScToInt();
+		return _valNative->ScToInt();
 
 	case VAL_INT:
-		return m_ValInt;
+		return _valInt;
 
 	case VAL_FLOAT:
-		return (int)m_ValFloat;
+		return (int)_valFloat;
 
 	case VAL_STRING:
-		return atoi(m_ValString);
+		return atoi(_valString);
 
 	default:
 		return Default;
@@ -542,23 +542,23 @@ int CScValue::GetInt(int Default) {
 
 //////////////////////////////////////////////////////////////////////////
 double CScValue::GetFloat(double Default) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetFloat();
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetFloat();
 
-	switch (m_Type) {
+	switch (_type) {
 	case VAL_BOOL:
-		return m_ValBool ? 1.0f : 0.0f;
+		return _valBool ? 1.0f : 0.0f;
 
 	case VAL_NATIVE:
-		return m_ValNative->ScToFloat();
+		return _valNative->ScToFloat();
 
 	case VAL_INT:
-		return (double)m_ValInt;
+		return (double)_valInt;
 
 	case VAL_FLOAT:
-		return m_ValFloat;
+		return _valFloat;
 
 	case VAL_STRING:
-		return atof(m_ValString);
+		return atof(_valString);
 
 	default:
 		return Default;
@@ -567,18 +567,18 @@ double CScValue::GetFloat(double Default) {
 
 //////////////////////////////////////////////////////////////////////////
 void *CScValue::GetMemBuffer() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetMemBuffer();
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetMemBuffer();
 
-	if (m_Type == VAL_NATIVE) return m_ValNative->ScToMemBuffer();
+	if (_type == VAL_NATIVE) return _valNative->ScToMemBuffer();
 	else return (void *)NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *CScValue::GetString() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetString();
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetString();
 
-	switch (m_Type) {
+	switch (_type) {
 	case VAL_OBJECT:
 		SetStringVal("[object]");
 		break;
@@ -588,26 +588,26 @@ char *CScValue::GetString() {
 		break;
 
 	case VAL_NATIVE: {
-		char *StrVal = m_ValNative->ScToString();
+		char *StrVal = _valNative->ScToString();
 		SetStringVal(StrVal);
 		return StrVal;
 		break;
 	}
 
 	case VAL_BOOL:
-		SetStringVal(m_ValBool ? "yes" : "no");
+		SetStringVal(_valBool ? "yes" : "no");
 		break;
 
 	case VAL_INT: {
 		char dummy[50];
-		sprintf(dummy, "%d", m_ValInt);
+		sprintf(dummy, "%d", _valInt);
 		SetStringVal(dummy);
 		break;
 	}
 
 	case VAL_FLOAT: {
 		char dummy[50];
-		sprintf(dummy, "%f", m_ValFloat);
+		sprintf(dummy, "%f", _valFloat);
 		SetStringVal(dummy);
 		break;
 	}
@@ -619,22 +619,22 @@ char *CScValue::GetString() {
 		SetStringVal("");
 	}
 
-	return m_ValString;
+	return _valString;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBScriptable *CScValue::GetNative() {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->GetNative();
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetNative();
 
-	if (m_Type == VAL_NATIVE) return m_ValNative;
+	if (_type == VAL_NATIVE) return _valNative;
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 TValType CScValue::GetType() {
-	return m_Type;
+	return _type;
 }
 
 
@@ -642,64 +642,64 @@ TValType CScValue::GetType() {
 void CScValue::Copy(CScValue *orig, bool CopyWhole) {
 	Game = orig->Game;
 
-	if (m_ValNative && !m_Persistent) {
-		m_ValNative->m_RefCount--;
-		if (m_ValNative->m_RefCount <= 0) {
-			if (m_ValNative != orig->m_ValNative) delete m_ValNative;
-			m_ValNative = NULL;
+	if (_valNative && !_persistent) {
+		_valNative->_refCount--;
+		if (_valNative->_refCount <= 0) {
+			if (_valNative != orig->_valNative) delete _valNative;
+			_valNative = NULL;
 		}
 	}
 
-	if (orig->m_Type == VAL_VARIABLE_REF && orig->m_ValRef && CopyWhole) orig = orig->m_ValRef;
+	if (orig->_type == VAL_VARIABLE_REF && orig->_valRef && CopyWhole) orig = orig->_valRef;
 
 	Cleanup(true);
 
-	m_Type = orig->m_Type;
-	m_ValBool = orig->m_ValBool;
-	m_ValInt = orig->m_ValInt;
-	m_ValFloat = orig->m_ValFloat;
-	SetStringVal(orig->m_ValString);
+	_type = orig->_type;
+	_valBool = orig->_valBool;
+	_valInt = orig->_valInt;
+	_valFloat = orig->_valFloat;
+	SetStringVal(orig->_valString);
 
-	m_ValRef = orig->m_ValRef;
-	m_Persistent = orig->m_Persistent;
+	_valRef = orig->_valRef;
+	_persistent = orig->_persistent;
 
-	m_ValNative = orig->m_ValNative;
-	if (m_ValNative && !m_Persistent) m_ValNative->m_RefCount++;
+	_valNative = orig->_valNative;
+	if (_valNative && !_persistent) _valNative->_refCount++;
 //!!!! ref->native++
 
 	// copy properties
-	if (orig->m_Type == VAL_OBJECT && orig->m_ValObject.size() > 0) {
-		orig->m_ValIter = orig->m_ValObject.begin();
-		while (orig->m_ValIter != orig->m_ValObject.end()) {
-			m_ValObject[orig->m_ValIter->_key] = new CScValue(Game);
-			m_ValObject[orig->m_ValIter->_key]->Copy(orig->m_ValIter->_value);
-			orig->m_ValIter++;
+	if (orig->_type == VAL_OBJECT && orig->_valObject.size() > 0) {
+		orig->_valIter = orig->_valObject.begin();
+		while (orig->_valIter != orig->_valObject.end()) {
+			_valObject[orig->_valIter->_key] = new CScValue(Game);
+			_valObject[orig->_valIter->_key]->Copy(orig->_valIter->_value);
+			orig->_valIter++;
 		}
-	} else m_ValObject.clear();
+	} else _valObject.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetValue(CScValue *Val) {
-	if (Val->m_Type == VAL_VARIABLE_REF) {
-		SetValue(Val->m_ValRef);
+	if (Val->_type == VAL_VARIABLE_REF) {
+		SetValue(Val->_valRef);
 		return;
 	}
 
 	// if being assigned a simple type, preserve native state
-	if (m_Type == VAL_NATIVE && (Val->m_Type == VAL_INT || Val->m_Type == VAL_STRING || Val->m_Type == VAL_BOOL)) {
-		switch (Val->m_Type) {
+	if (_type == VAL_NATIVE && (Val->_type == VAL_INT || Val->_type == VAL_STRING || Val->_type == VAL_BOOL)) {
+		switch (Val->_type) {
 		case VAL_INT:
-			m_ValNative->ScSetInt(Val->GetInt());
+			_valNative->ScSetInt(Val->GetInt());
 			break;
 		case VAL_FLOAT:
-			m_ValNative->ScSetFloat(Val->GetFloat());
+			_valNative->ScSetFloat(Val->GetFloat());
 			break;
 		case VAL_BOOL:
-			m_ValNative->ScSetBool(Val->GetBool());
+			_valNative->ScSetBool(Val->GetBool());
 			break;
 		case VAL_STRING:
-			m_ValNative->ScSetString(Val->GetString());
+			_valNative->ScSetString(Val->GetString());
 			break;
 		}
 	}
@@ -712,26 +712,26 @@ void CScValue::SetValue(CScValue *Val) {
 HRESULT CScValue::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(m_Persistent));
-	PersistMgr->Transfer(TMEMBER(m_IsConstVar));
-	PersistMgr->Transfer(TMEMBER_INT(m_Type));
-	PersistMgr->Transfer(TMEMBER(m_ValBool));
-	PersistMgr->Transfer(TMEMBER(m_ValFloat));
-	PersistMgr->Transfer(TMEMBER(m_ValInt));
-	PersistMgr->Transfer(TMEMBER(m_ValNative));
+	PersistMgr->Transfer(TMEMBER(_persistent));
+	PersistMgr->Transfer(TMEMBER(_isConstVar));
+	PersistMgr->Transfer(TMEMBER_INT(_type));
+	PersistMgr->Transfer(TMEMBER(_valBool));
+	PersistMgr->Transfer(TMEMBER(_valFloat));
+	PersistMgr->Transfer(TMEMBER(_valInt));
+	PersistMgr->Transfer(TMEMBER(_valNative));
 
 	int size;
 	char *str;
-	if (PersistMgr->m_Saving) {
-		size = m_ValObject.size();
+	if (PersistMgr->_saving) {
+		size = _valObject.size();
 		PersistMgr->Transfer("", &size);
-		m_ValIter = m_ValObject.begin();
-		while (m_ValIter != m_ValObject.end()) {
-			str = (char *)m_ValIter->_key.c_str();
+		_valIter = _valObject.begin();
+		while (_valIter != _valObject.end()) {
+			str = (char *)_valIter->_key.c_str();
 			PersistMgr->Transfer("", &str);
-			PersistMgr->Transfer("", &m_ValIter->_value);
+			PersistMgr->Transfer("", &_valIter->_value);
 
-			m_ValIter++;
+			_valIter++;
 		}
 	} else {
 		CScValue *val;
@@ -740,28 +740,28 @@ HRESULT CScValue::Persist(CBPersistMgr *PersistMgr) {
 			PersistMgr->Transfer("", &str);
 			PersistMgr->Transfer("", &val);
 
-			m_ValObject[str] = val;
+			_valObject[str] = val;
 			delete [] str;
 		}
 	}
 
-	PersistMgr->Transfer(TMEMBER(m_ValRef));
-	PersistMgr->Transfer(TMEMBER(m_ValString));
+	PersistMgr->Transfer(TMEMBER(_valRef));
+	PersistMgr->Transfer(TMEMBER(_valString));
 
 	/*
 	FILE* f = fopen("c:\\val.log", "a+");
-	switch(m_Type)
+	switch(_type)
 	{
 	case VAL_STRING:
-	    fprintf(f, "str %s\n", m_ValString);
+	    fprintf(f, "str %s\n", _valString);
 	    break;
 
 	case VAL_INT:
-	    fprintf(f, "int %d\n", m_ValInt);
+	    fprintf(f, "int %d\n", _valInt);
 	    break;
 
 	case VAL_BOOL:
-	    fprintf(f, "bool %d\n", m_ValBool);
+	    fprintf(f, "bool %d\n", _valBool);
 	    break;
 
 	case VAL_NULL:
@@ -794,14 +794,14 @@ HRESULT CScValue::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScValue::SaveAsText(CBDynBuffer *Buffer, int Indent) {
-	m_ValIter = m_ValObject.begin();
-	while (m_ValIter != m_ValObject.end()) {
+	_valIter = _valObject.begin();
+	while (_valIter != _valObject.end()) {
 		Buffer->PutTextIndent(Indent, "PROPERTY {\n");
-		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)m_ValIter->_key.c_str());
-		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", m_ValIter->_value->GetString());
+		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)_valIter->_key.c_str());
+		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", _valIter->_value->GetString());
 		Buffer->PutTextIndent(Indent, "}\n\n");
 
-		m_ValIter++;
+		_valIter++;
 	}
 	return S_OK;
 }
@@ -853,10 +853,10 @@ int CScValue::CompareStrict(CScValue *Val1, CScValue *Val2) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScValue::DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *Script, unsigned int ScopeID) {
-	m_ValIter = m_ValObject.begin();
-	while (m_ValIter != m_ValObject.end()) {
-		Client->OnVariableInit(Type, Script, ScopeID, m_ValIter->_value, m_ValIter->_key.c_str());
-		m_ValIter++;
+	_valIter = _valObject.begin();
+	while (_valIter != _valObject.end()) {
+		Client->OnVariableInit(Type, Script, ScopeID, _valIter->_value, _valIter->_key.c_str());
+		_valIter++;
 	}
 	return S_OK;
 }
@@ -987,23 +987,23 @@ bool CScValue::DbgSetVal() {
 
 //////////////////////////////////////////////////////////////////////////
 int CScValue::DbgGetNumProperties() {
-	if (m_ValNative && m_ValNative->m_ScProp) return m_ValNative->m_ScProp->DbgGetNumProperties();
-	else return m_ValObject.size();
+	if (_valNative && _valNative->_scProp) return _valNative->_scProp->DbgGetNumProperties();
+	else return _valObject.size();
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::DbgGetProperty(int Index, const char **Name, IWmeDebugProp **Value) {
-	if (m_ValNative && m_ValNative->m_ScProp) return m_ValNative->m_ScProp->DbgGetProperty(Index, Name, Value);
+	if (_valNative && _valNative->_scProp) return _valNative->_scProp->DbgGetProperty(Index, Name, Value);
 	else {
 		int Count = 0;
-		m_ValIter = m_ValObject.begin();
-		while (m_ValIter != m_ValObject.end()) {
+		_valIter = _valObject.begin();
+		while (_valIter != _valObject.end()) {
 			if (Count == Index) {
-				*Name = m_ValIter->_key.c_str();
-				*Value = m_ValIter->_value;
+				*Name = _valIter->_key.c_str();
+				*Value = _valIter->_value;
 				return true;
 			}
-			m_ValIter++;
+			_valIter++;
 			Count++;
 		}
 		return false;
@@ -1012,10 +1012,10 @@ bool CScValue::DbgGetProperty(int Index, const char **Name, IWmeDebugProp **Valu
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::DbgGetDescription(char *Buf, int BufSize) {
-	if (m_Type == VAL_VARIABLE_REF) return m_ValRef->DbgGetDescription(Buf, BufSize);
+	if (_type == VAL_VARIABLE_REF) return _valRef->DbgGetDescription(Buf, BufSize);
 
-	if (m_Type == VAL_NATIVE) {
-		m_ValNative->ScDebuggerDesc(Buf, BufSize);
+	if (_type == VAL_NATIVE) {
+		_valNative->ScDebuggerDesc(Buf, BufSize);
 	} else {
 		strncpy(Buf, GetString(), BufSize);
 	}

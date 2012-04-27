@@ -46,31 +46,31 @@ IMPLEMENT_PERSISTENT(CBFrame, false)
 
 //////////////////////////////////////////////////////////////////////
 CBFrame::CBFrame(CBGame *inGame): CBScriptable(inGame, true) {
-	m_Delay = 0;
-	m_MoveX = m_MoveY = 0;
+	_delay = 0;
+	_moveX = _moveY = 0;
 
-	m_Sound = NULL;
-	m_KillSound = false;
+	_sound = NULL;
+	_killSound = false;
 
-	m_EditorExpanded = false;
-	m_Keyframe = false;
+	_editorExpanded = false;
+	_keyframe = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBFrame::~CBFrame() {
-	delete m_Sound;
-	m_Sound = NULL;
+	delete _sound;
+	_sound = NULL;
 
 	int i;
 
-	for (i = 0; i < m_Subframes.GetSize(); i++) delete m_Subframes[i];
-	m_Subframes.RemoveAll();
+	for (i = 0; i < _subframes.GetSize(); i++) delete _subframes[i];
+	_subframes.RemoveAll();
 
-	for (i = 0; i < m_ApplyEvent.GetSize(); i++) {
-		SAFE_DELETE_ARRAY(m_ApplyEvent[i]);
+	for (i = 0; i < _applyEvent.GetSize(); i++) {
+		SAFE_DELETE_ARRAY(_applyEvent[i]);
 	}
-	m_ApplyEvent.RemoveAll();
+	_applyEvent.RemoveAll();
 }
 
 
@@ -78,8 +78,8 @@ CBFrame::~CBFrame() {
 HRESULT CBFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, bool AllFrames, float Rotate, TSpriteBlendMode BlendMode) {
 	HRESULT res;
 
-	for (int i = 0; i < m_Subframes.GetSize(); i++) {
-		res = m_Subframes[i]->Draw(X, Y, Register, ZoomX, ZoomY, Precise, Alpha, Rotate, BlendMode);
+	for (int i = 0; i < _subframes.GetSize(); i++) {
+		res = _subframes[i]->Draw(X, Y, Register, ZoomX, ZoomY, Precise, Alpha, Rotate, BlendMode);
 		if (FAILED(res)) return res;
 	}
 	return S_OK;
@@ -88,19 +88,19 @@ HRESULT CBFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFrame::OneTimeDisplay(CBObject *Owner, bool Muted) {
-	if (m_Sound && !Muted) {
-		if (Owner) Owner->UpdateOneSound(m_Sound);
-		m_Sound->Play();
+	if (_sound && !Muted) {
+		if (Owner) Owner->UpdateOneSound(_sound);
+		_sound->Play();
 		/*
-		if(Game->m_State==GAME_FROZEN)
+		if(Game->_state==GAME_FROZEN)
 		{
-		    m_Sound->Pause(true);
+		    _sound->Pause(true);
 		}
 		*/
 	}
 	if (Owner) {
-		for (int i = 0; i < m_ApplyEvent.GetSize(); i++) {
-			Owner->ApplyEvent(m_ApplyEvent[i]);
+		for (int i = 0; i < _applyEvent.GetSize(); i++) {
+			Owner->ApplyEvent(_applyEvent[i]);
 		}
 	}
 	return S_OK;
@@ -164,7 +164,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	int HotspotX = 0, HotspotY = 0;
-	bool custom_trans = false;
+	bool custo_trans = false;
 	bool editor_selected = false;
 	bool Is2DOnly = false;
 	bool Is3DOnly = false;
@@ -177,7 +177,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_DELAY:
-			parser.ScanStr(params, "%d", &m_Delay);
+			parser.ScanStr(params, "%d", &_delay);
 			break;
 
 		case TOKEN_IMAGE:
@@ -186,7 +186,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 		case TOKEN_TRANSPARENT:
 			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
-			custom_trans = true;
+			custo_trans = true;
 			break;
 
 		case TOKEN_RECT:
@@ -198,7 +198,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_MOVE:
-			parser.ScanStr(params, "%d,%d", &m_MoveX, &m_MoveY);
+			parser.ScanStr(params, "%d,%d", &_moveX, &_moveY);
 			break;
 
 		case TOKEN_2D_ONLY:
@@ -230,11 +230,11 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_EXPANDED:
-			parser.ScanStr(params, "%b", &m_EditorExpanded);
+			parser.ScanStr(params, "%b", &_editorExpanded);
 			break;
 
 		case TOKEN_KILL_SOUND:
-			parser.ScanStr(params, "%b", &m_KillSound);
+			parser.ScanStr(params, "%b", &_killSound);
 			break;
 
 		case TOKEN_SUBFRAME: {
@@ -242,20 +242,20 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 			if (!subframe || FAILED(subframe->LoadBuffer((byte  *)params, LifeTime, KeepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
-			} else m_Subframes.Add(subframe);
+			} else _subframes.Add(subframe);
 		}
 		break;
 
 		case TOKEN_SOUND: {
-			if (m_Sound) {
-				delete m_Sound;
-				m_Sound = NULL;
+			if (_sound) {
+				delete _sound;
+				_sound = NULL;
 			}
-			m_Sound = new CBSound(Game);
-			if (!m_Sound || FAILED(m_Sound->SetSound(params, SOUND_SFX, false))) {
-				if (Game->m_SoundMgr->m_SoundAvailable) Game->LOG(0, "Error loading sound '%s'.", params);
-				delete m_Sound;
-				m_Sound = NULL;
+			_sound = new CBSound(Game);
+			if (!_sound || FAILED(_sound->SetSound(params, SOUND_SFX, false))) {
+				if (Game->_soundMgr->_soundAvailable) Game->LOG(0, "Error loading sound '%s'.", params);
+				delete _sound;
+				_sound = NULL;
 			}
 		}
 		break;
@@ -263,12 +263,12 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 		case TOKEN_APPLY_EVENT: {
 			char *Event = new char[strlen(params) + 1];
 			strcpy(Event, params);
-			m_ApplyEvent.Add(Event);
+			_applyEvent.Add(Event);
 		}
 		break;
 
 		case TOKEN_KEYFRAME:
-			parser.ScanStr(params, "%b", &m_Keyframe);
+			parser.ScanStr(params, "%b", &_keyframe);
 			break;
 
 		case TOKEN_DECORATION:
@@ -293,33 +293,33 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 	CBSubFrame *sub = new CBSubFrame(Game);
 	if (surface_file != NULL) {
-		if (custom_trans) sub->SetSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
+		if (custo_trans) sub->SetSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
 		else sub->SetSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
 
-		if (!sub->m_Surface) {
+		if (!sub->_surface) {
 			delete sub;
 			Game->LOG(0, "Error loading SUBFRAME");
 			return E_FAIL;
 		}
 
-		sub->m_Alpha = DRGBA(ar, ag, ab, alpha);
-		if (custom_trans) sub->m_Transparent = DRGBA(r, g, b, 0xFF);
+		sub->_alpha = DRGBA(ar, ag, ab, alpha);
+		if (custo_trans) sub->_transparent = DRGBA(r, g, b, 0xFF);
 	}
 
 	if (CBPlatform::IsRectEmpty(&rect)) sub->SetDefaultRect();
-	else sub->m_Rect = rect;
+	else sub->_rect = rect;
 
-	sub->m_HotspotX = HotspotX;
-	sub->m_HotspotY = HotspotY;
-	sub->m_2DOnly = Is2DOnly;
-	sub->m_3DOnly = Is3DOnly;
-	sub->m_Decoration = Decoration;
-	sub->m_MirrorX = MirrorX;
-	sub->m_MirrorY = MirrorY;
+	sub->_hotspotX = HotspotX;
+	sub->_hotspotY = HotspotY;
+	sub->_2DOnly = Is2DOnly;
+	sub->_3DOnly = Is3DOnly;
+	sub->_decoration = Decoration;
+	sub->_mirrorX = MirrorX;
+	sub->_mirrorY = MirrorY;
 
 
-	sub->m_EditorSelected = editor_selected;
-	m_Subframes.InsertAt(0, sub);
+	sub->_editorSelected = editor_selected;
+	_subframes.InsertAt(0, sub);
 
 	return S_OK;
 }
@@ -332,8 +332,8 @@ bool CBFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sca
 
 	RECT SubRect;
 
-	for (int i = 0; i < m_Subframes.GetSize(); i++) {
-		m_Subframes[i]->GetBoundingRect(&SubRect, X, Y, ScaleX, ScaleY);
+	for (int i = 0; i < _subframes.GetSize(); i++) {
+		_subframes[i]->GetBoundingRect(&SubRect, X, Y, ScaleX, ScaleY);
 		CBPlatform::UnionRect(Rect, Rect, &SubRect);
 	}
 	return true;
@@ -344,31 +344,31 @@ bool CBFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sca
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFrame::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "FRAME {\n");
-	Buffer->PutTextIndent(Indent + 2, "DELAY = %d\n", m_Delay);
+	Buffer->PutTextIndent(Indent + 2, "DELAY = %d\n", _delay);
 
-	if (m_MoveX != 0 || m_MoveY != 0)
-		Buffer->PutTextIndent(Indent + 2, "MOVE {%d, %d}\n", m_MoveX, m_MoveY);
+	if (_moveX != 0 || _moveY != 0)
+		Buffer->PutTextIndent(Indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
 
-	if (m_Sound && m_Sound->m_SoundFilename)
-		Buffer->PutTextIndent(Indent + 2, "SOUND=\"%s\"\n", m_Sound->m_SoundFilename);
+	if (_sound && _sound->_soundFilename)
+		Buffer->PutTextIndent(Indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
 
-	Buffer->PutTextIndent(Indent + 2, "KEYFRAME=%s\n", m_Keyframe ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
 
-	if (m_KillSound)
-		Buffer->PutTextIndent(Indent + 2, "KILL_SOUND=%s\n", m_KillSound ? "TRUE" : "FALSE");
+	if (_killSound)
+		Buffer->PutTextIndent(Indent + 2, "KILL_SOUND=%s\n", _killSound ? "TRUE" : "FALSE");
 
-	if (m_EditorExpanded)
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_EXPANDED=%s\n", m_EditorExpanded ? "TRUE" : "FALSE");
+	if (_editorExpanded)
+		Buffer->PutTextIndent(Indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
 
-	if (m_Subframes.GetSize() > 0) m_Subframes[0]->SaveAsText(Buffer, Indent, false);
+	if (_subframes.GetSize() > 0) _subframes[0]->SaveAsText(Buffer, Indent, false);
 
 	int i;
-	for (i = 1; i < m_Subframes.GetSize(); i++) {
-		m_Subframes[i]->SaveAsText(Buffer, Indent + 2);
+	for (i = 1; i < _subframes.GetSize(); i++) {
+		_subframes[i]->SaveAsText(Buffer, Indent + 2);
 	}
 
-	for (i = 0; i < m_ApplyEvent.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "APPLY_EVENT=\"%s\"\n", m_ApplyEvent[i]);
+	for (i = 0; i < _applyEvent.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
 	CBBase::SaveAsText(Buffer, Indent + 2);
@@ -384,15 +384,15 @@ HRESULT CBFrame::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 HRESULT CBFrame::Persist(CBPersistMgr *PersistMgr) {
 	CBScriptable::Persist(PersistMgr);
 
-	m_ApplyEvent.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(m_Delay));
-	PersistMgr->Transfer(TMEMBER(m_EditorExpanded));
-	PersistMgr->Transfer(TMEMBER(m_Keyframe));
-	PersistMgr->Transfer(TMEMBER(m_KillSound));
-	PersistMgr->Transfer(TMEMBER(m_MoveX));
-	PersistMgr->Transfer(TMEMBER(m_MoveY));
-	PersistMgr->Transfer(TMEMBER(m_Sound));
-	m_Subframes.Persist(PersistMgr);
+	_applyEvent.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_delay));
+	PersistMgr->Transfer(TMEMBER(_editorExpanded));
+	PersistMgr->Transfer(TMEMBER(_keyframe));
+	PersistMgr->Transfer(TMEMBER(_killSound));
+	PersistMgr->Transfer(TMEMBER(_moveX));
+	PersistMgr->Transfer(TMEMBER(_moveY));
+	PersistMgr->Transfer(TMEMBER(_sound));
+	_subframes.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -409,7 +409,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	if (strcmp(Name, "GetSound") == 0) {
 		Stack->CorrectParams(0);
 
-		if (m_Sound && m_Sound->m_SoundFilename) Stack->PushString(m_Sound->m_SoundFilename);
+		if (_sound && _sound->_soundFilename) Stack->PushString(_sound->_soundFilename);
 		else Stack->PushNULL();
 		return S_OK;
 	}
@@ -420,15 +420,15 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	if (strcmp(Name, "SetSound") == 0) {
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
-		delete m_Sound;
-		m_Sound = NULL;
+		delete _sound;
+		_sound = NULL;
 
 		if (!Val->IsNULL()) {
-			m_Sound = new CBSound(Game);
-			if (!m_Sound || FAILED(m_Sound->SetSound(Val->GetString(), SOUND_SFX, false))) {
+			_sound = new CBSound(Game);
+			if (!_sound || FAILED(_sound->SetSound(Val->GetString(), SOUND_SFX, false))) {
 				Stack->PushBool(false);
-				delete m_Sound;
-				m_Sound = NULL;
+				delete _sound;
+				_sound = NULL;
 			} else Stack->PushBool(true);
 		} else Stack->PushBool(true);
 		return S_OK;
@@ -440,10 +440,10 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	if (strcmp(Name, "GetSubframe") == 0) {
 		Stack->CorrectParams(1);
 		int Index = Stack->Pop()->GetInt(-1);
-		if (Index < 0 || Index >= m_Subframes.GetSize()) {
+		if (Index < 0 || Index >= _subframes.GetSize()) {
 			Script->RuntimeError("Frame.GetSubframe: Subframe index %d is out of range.", Index);
 			Stack->PushNULL();
-		} else Stack->PushNative(m_Subframes[Index], true);
+		} else Stack->PushNative(_subframes[Index], true);
 
 		return S_OK;
 	}
@@ -456,15 +456,15 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		CScValue *Val = Stack->Pop();
 		if (Val->IsInt()) {
 			int Index = Val->GetInt(-1);
-			if (Index < 0 || Index >= m_Subframes.GetSize()) {
+			if (Index < 0 || Index >= _subframes.GetSize()) {
 				Script->RuntimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", Index);
 			}
 		} else {
 			CBSubFrame *Sub = (CBSubFrame *)Val->GetNative();
-			for (int i = 0; i < m_Subframes.GetSize(); i++) {
-				if (m_Subframes[i] == Sub) {
-					delete m_Subframes[i];
-					m_Subframes.RemoveAt(i);
+			for (int i = 0; i < _subframes.GetSize(); i++) {
+				if (_subframes[i] == Sub) {
+					delete _subframes[i];
+					_subframes.RemoveAt(i);
 					break;
 				}
 			}
@@ -487,7 +487,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Sub->SetSurface(Filename);
 			Sub->SetDefaultRect();
 		}
-		m_Subframes.Add(Sub);
+		_subframes.Add(Sub);
 
 		Stack->PushNative(Sub, true);
 		return S_OK;
@@ -510,8 +510,8 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Sub->SetSurface(Filename);
 		}
 
-		if (Index >= m_Subframes.GetSize()) m_Subframes.Add(Sub);
-		else m_Subframes.InsertAt(Index, Sub);
+		if (Index >= _subframes.GetSize()) _subframes.Add(Sub);
+		else _subframes.InsertAt(Index, Sub);
 
 		Stack->PushNative(Sub, true);
 		return S_OK;
@@ -523,10 +523,10 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "GetSubframe") == 0) {
 		Stack->CorrectParams(1);
 		int Index = Stack->Pop()->GetInt(-1);
-		if (Index < 0 || Index >= m_ApplyEvent.GetSize()) {
+		if (Index < 0 || Index >= _applyEvent.GetSize()) {
 			Script->RuntimeError("Frame.GetEvent: Event index %d is out of range.", Index);
 			Stack->PushNULL();
-		} else Stack->PushString(m_ApplyEvent[Index]);
+		} else Stack->PushString(_applyEvent[Index]);
 		return S_OK;
 	}
 
@@ -536,13 +536,13 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "AddEvent") == 0) {
 		Stack->CorrectParams(1);
 		char *Event = Stack->Pop()->GetString();
-		for (int i = 0; i < m_ApplyEvent.GetSize(); i++) {
-			if (scumm_stricmp(m_ApplyEvent[i], Event) == 0) {
+		for (int i = 0; i < _applyEvent.GetSize(); i++) {
+			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
 				Stack->PushNULL();
 				return S_OK;
 			}
 		}
-		m_ApplyEvent.Add(Event);
+		_applyEvent.Add(Event);
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -553,10 +553,10 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "DeleteEvent") == 0) {
 		Stack->CorrectParams(1);
 		char *Event = Stack->Pop()->GetString();
-		for (int i = 0; i < m_ApplyEvent.GetSize(); i++) {
-			if (scumm_stricmp(m_ApplyEvent[i], Event) == 0) {
-				delete [] m_ApplyEvent[i];
-				m_ApplyEvent.RemoveAt(i);
+		for (int i = 0; i < _applyEvent.GetSize(); i++) {
+			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
+				delete [] _applyEvent[i];
+				_applyEvent.RemoveAt(i);
 				break;
 			}
 		}
@@ -566,7 +566,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (m_Subframes.GetSize() == 1) return m_Subframes[0]->ScCallMethod(Script, Stack, ThisStack, Name);
+		if (_subframes.GetSize() == 1) return _subframes[0]->ScCallMethod(Script, Stack, ThisStack, Name);
 		else return CBScriptable::ScCallMethod(Script, Stack, ThisStack, Name);
 	}
 }
@@ -574,76 +574,76 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBFrame::ScGetProperty(char *Name) {
-	if (!m_ScValue) m_ScValue = new CScValue(Game);
-	m_ScValue->SetNULL();
+	if (!_scValue) _scValue = new CScValue(Game);
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("frame");
-		return m_ScValue;
+		_scValue->SetString("frame");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Delay") == 0) {
-		m_ScValue->SetInt(m_Delay);
-		return m_ScValue;
+		_scValue->SetInt(_delay);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Keyframe") == 0) {
-		m_ScValue->SetBool(m_Keyframe);
-		return m_ScValue;
+		_scValue->SetBool(_keyframe);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "KillSounds") == 0) {
-		m_ScValue->SetBool(m_KillSound);
-		return m_ScValue;
+		_scValue->SetBool(_killSound);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MoveX") == 0) {
-		m_ScValue->SetInt(m_MoveX);
-		return m_ScValue;
+		_scValue->SetInt(_moveX);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MoveY") == 0) {
-		m_ScValue->SetInt(m_MoveY);
-		return m_ScValue;
+		_scValue->SetInt(_moveY);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumSubframes (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumSubframes") == 0) {
-		m_ScValue->SetInt(m_Subframes.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_subframes.GetSize());
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumEvents (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumEvents") == 0) {
-		m_ScValue->SetInt(m_ApplyEvent.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_applyEvent.GetSize());
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (m_Subframes.GetSize() == 1) return m_Subframes[0]->ScGetProperty(Name);
+		if (_subframes.GetSize() == 1) return _subframes[0]->ScGetProperty(Name);
 		else return CBScriptable::ScGetProperty(Name);
 	}
 }
@@ -655,7 +655,7 @@ HRESULT CBFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Delay") == 0) {
-		m_Delay = MAX(0, Value->GetInt());
+		_delay = MAX(0, Value->GetInt());
 		return S_OK;
 	}
 
@@ -663,7 +663,7 @@ HRESULT CBFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Keyframe") == 0) {
-		m_Keyframe = Value->GetBool();
+		_keyframe = Value->GetBool();
 		return S_OK;
 	}
 
@@ -671,7 +671,7 @@ HRESULT CBFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "KillSounds") == 0) {
-		m_KillSound = Value->GetBool();
+		_killSound = Value->GetBool();
 		return S_OK;
 	}
 
@@ -679,7 +679,7 @@ HRESULT CBFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MoveX") == 0) {
-		m_MoveX = Value->GetInt();
+		_moveX = Value->GetInt();
 		return S_OK;
 	}
 
@@ -687,13 +687,13 @@ HRESULT CBFrame::ScSetProperty(char *Name, CScValue *Value) {
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MoveY") == 0) {
-		m_MoveY = Value->GetInt();
+		_moveY = Value->GetInt();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (m_Subframes.GetSize() == 1) return m_Subframes[0]->ScSetProperty(Name, Value);
+		if (_subframes.GetSize() == 1) return _subframes[0]->ScSetProperty(Name, Value);
 		else return CBScriptable::ScSetProperty(Name, Value);
 	}
 }

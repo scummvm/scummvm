@@ -38,15 +38,15 @@ class CBObject;
 class CBActiveRect: CBBase {
 public:
 	void ClipRect();
-	bool m_Precise;
-	float m_ZoomX;
-	float m_ZoomY;
-	CBSubFrame *m_Frame;
-	CBObject *m_Owner;
-	CBRegion *m_Region;
-	int m_OffsetX;
-	int m_OffsetY;
-	RECT m_Rect;
+	bool _precise;
+	float _zoomX;
+	float _zoomY;
+	CBSubFrame *_frame;
+	CBObject *_owner;
+	CBRegion *_region;
+	int _offsetX;
+	int _offsetY;
+	RECT _rect;
 	CBActiveRect(CBGame *inGameOwner = NULL);
 	CBActiveRect(CBGame *inGameOwner, CBObject *Owner, CBSubFrame *Frame, int X, int Y, int Width, int Height, float ZoomX = 100, float ZoomY = 100, bool Precise = true);
 	CBActiveRect(CBGame *inGame, CBObject *Owner, CBRegion *Region, int OffsetX, int OffsetY);

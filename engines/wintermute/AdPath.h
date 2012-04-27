@@ -46,9 +46,9 @@ public:
 	void Reset();
 	CAdPath(CBGame *inGame);
 	virtual ~CAdPath();
-	CBArray <CBPoint *, CBPoint *> m_Points;
-	int m_CurrIndex;
-	bool m_Ready;
+	CBArray <CBPoint *, CBPoint *> _points;
+	int _currIndex;
+	bool _ready;
 };
 
 } // end of namespace WinterMute

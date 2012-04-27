@@ -43,12 +43,12 @@ IMPLEMENT_PERSISTENT(CBRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBRegion::CBRegion(CBGame *inGame): CBObject(inGame) {
-	m_Active = true;
-	m_EditorSelectedPoint = -1;
-	m_LastMimicScale = -1;
-	m_LastMimicX = m_LastMimicY = INT_MIN;
+	_active = true;
+	_editorSelectedPoint = -1;
+	_lastMimicScale = -1;
+	_lastMimicX = _lastMimicY = INT_MIN;
 
-	CBPlatform::SetRectEmpty(&m_Rect);
+	CBPlatform::SetRectEmpty(&_rect);
 }
 
 
@@ -60,23 +60,23 @@ CBRegion::~CBRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegion::Cleanup() {
-	for (int i = 0; i < m_Points.GetSize(); i++) delete m_Points[i];
-	m_Points.RemoveAll();
+	for (int i = 0; i < _points.GetSize(); i++) delete _points[i];
+	_points.RemoveAll();
 
-	CBPlatform::SetRectEmpty(&m_Rect);
-	m_EditorSelectedPoint = -1;
+	CBPlatform::SetRectEmpty(&_rect);
+	_editorSelectedPoint = -1;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegion::CreateRegion() {
-	return SUCCEEDED(GetBoundingRect(&m_Rect));
+	return SUCCEEDED(GetBoundingRect(&_rect));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegion::PointInRegion(int X, int Y) {
-	if (m_Points.GetSize() < 3) return false;
+	if (_points.GetSize() < 3) return false;
 
 	POINT pt;
 	pt.x = X;
@@ -88,14 +88,14 @@ bool CBRegion::PointInRegion(int X, int Y) {
 	rect.top = Y - 1;
 	rect.bottom = Y + 2;
 
-	if (CBPlatform::PtInRect(&m_Rect, pt)) return PtInPolygon(X, Y);
+	if (CBPlatform::PtInRect(&_rect, pt)) return PtInPolygon(X, Y);
 	else return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRegion::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBRegion::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -103,8 +103,8 @@ HRESULT CBRegion::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", Filename);
 
@@ -154,8 +154,8 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 
 	int i;
 
-	for (i = 0; i < m_Points.GetSize(); i++) delete m_Points[i];
-	m_Points.RemoveAll();
+	for (i = 0; i < _points.GetSize(); i++) delete _points[i];
+	_points.RemoveAll();
 
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -172,13 +172,13 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &m_Active);
+			parser.ScanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_POINT: {
 			int x, y;
 			parser.ScanStr((char *)params, "%d,%d", &x, &y);
-			m_Points.Add(new CBPoint(x, y));
+			_points.Add(new CBPoint(x, y));
 		}
 		break;
 
@@ -187,7 +187,7 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.ScanStr((char *)params, "%d", &m_EditorSelectedPoint);
+			parser.ScanStr((char *)params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -219,7 +219,7 @@ HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		int X = Stack->Pop()->GetInt();
 		int Y = Stack->Pop()->GetInt();
 
-		m_Points.Add(new CBPoint(X, Y));
+		_points.Add(new CBPoint(X, Y));
 		CreateRegion();
 
 		Stack->PushBool(true);
@@ -236,8 +236,8 @@ HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		int X = Stack->Pop()->GetInt();
 		int Y = Stack->Pop()->GetInt();
 
-		if (Index >= 0 && Index < m_Points.GetSize()) {
-			m_Points.InsertAt(Index, new CBPoint(X, Y));
+		if (Index >= 0 && Index < _points.GetSize()) {
+			_points.InsertAt(Index, new CBPoint(X, Y));
 			CreateRegion();
 
 			Stack->PushBool(true);
@@ -255,9 +255,9 @@ HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		int X = Stack->Pop()->GetInt();
 		int Y = Stack->Pop()->GetInt();
 
-		if (Index >= 0 && Index < m_Points.GetSize()) {
-			m_Points[Index]->x = X;
-			m_Points[Index]->y = Y;
+		if (Index >= 0 && Index < _points.GetSize()) {
+			_points[Index]->x = X;
+			_points[Index]->y = Y;
 			CreateRegion();
 
 			Stack->PushBool(true);
@@ -273,11 +273,11 @@ HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		Stack->CorrectParams(1);
 		int Index = Stack->Pop()->GetInt();
 
-		if (Index >= 0 && Index < m_Points.GetSize()) {
-			delete m_Points[Index];
-			m_Points[Index] = NULL;
+		if (Index >= 0 && Index < _points.GetSize()) {
+			delete _points[Index];
+			_points[Index] = NULL;
 
-			m_Points.RemoveAt(Index);
+			_points.RemoveAt(Index);
 			CreateRegion();
 
 			Stack->PushBool(true);
@@ -293,11 +293,11 @@ HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		Stack->CorrectParams(1);
 		int Index = Stack->Pop()->GetInt();
 
-		if (Index >= 0 && Index < m_Points.GetSize()) {
+		if (Index >= 0 && Index < _points.GetSize()) {
 			CScValue *Val = Stack->GetPushValue();
 			if (Val) {
-				Val->SetProperty("X", m_Points[Index]->x);
-				Val->SetProperty("Y", m_Points[Index]->y);
+				Val->SetProperty("X", _points[Index]->x);
+				Val->SetProperty("Y", _points[Index]->y);
 			}
 		} else Stack->PushNULL();
 
@@ -310,38 +310,38 @@ HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBRegion::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("region");
-		return m_ScValue;
+		_scValue->SetString("region");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Name") == 0) {
-		m_ScValue->SetString(m_Name);
-		return m_ScValue;
+		_scValue->SetString(_name);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Active") == 0) {
-		m_ScValue->SetBool(m_Active);
-		return m_ScValue;
+		_scValue->SetBool(_active);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumPoints
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumPoints") == 0) {
-		m_ScValue->SetInt(m_Points.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_points.GetSize());
+		return _scValue;
 	}
 
 	else return CBObject::ScGetProperty(Name);
@@ -362,7 +362,7 @@ HRESULT CBRegion::ScSetProperty(char *Name, CScValue *Value) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Active") == 0) {
-		m_Active = Value->GetBool();
+		_active = Value->GetBool();
 		return S_OK;
 	}
 
@@ -381,22 +381,22 @@ HRESULT CBRegion::SaveAsText(CBDynBuffer *Buffer, int Indent, char *NameOverride
 	if (!NameOverride) Buffer->PutTextIndent(Indent, "REGION {\n");
 	else Buffer->PutTextIndent(Indent, "%s {\n", NameOverride);
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
-	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", m_Active ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", m_EditorSelectedPoint);
+	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
 	int i;
 
-	for (i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	for (i = 0; i < m_Points.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", m_Points[i]->x, m_Points[i]->y);
+	for (i = 0; i < _points.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	if (m_ScProp) m_ScProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n\n");
 
@@ -409,12 +409,12 @@ HRESULT CBRegion::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	PersistMgr->Transfer(TMEMBER(m_EditorSelectedPoint));
-	PersistMgr->Transfer(TMEMBER(m_LastMimicScale));
-	PersistMgr->Transfer(TMEMBER(m_LastMimicX));
-	PersistMgr->Transfer(TMEMBER(m_LastMimicY));
-	m_Points.Persist(PersistMgr);
+	PersistMgr->Transfer(TMEMBER(_active));
+	PersistMgr->Transfer(TMEMBER(_editorSelectedPoint));
+	PersistMgr->Transfer(TMEMBER(_lastMimicScale));
+	PersistMgr->Transfer(TMEMBER(_lastMimicX));
+	PersistMgr->Transfer(TMEMBER(_lastMimicY));
+	_points.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -426,7 +426,7 @@ typedef struct {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegion::PtInPolygon(int X, int Y) {
-	if (m_Points.GetSize() < 3) return false;
+	if (_points.GetSize() < 3) return false;
 
 	int counter = 0;
 	int i;
@@ -436,12 +436,12 @@ bool CBRegion::PtInPolygon(int X, int Y) {
 	p.x = (double)X;
 	p.y = (double)Y;
 
-	p1.x = (double)m_Points[0]->x;
-	p1.y = (double)m_Points[0]->y;
+	p1.x = (double)_points[0]->x;
+	p1.y = (double)_points[0]->y;
 
-	for (i = 1; i <= m_Points.GetSize(); i++) {
-		p2.x = (double)m_Points[i % m_Points.GetSize()]->x;
-		p2.y = (double)m_Points[i % m_Points.GetSize()]->y;
+	for (i = 1; i <= _points.GetSize(); i++) {
+		p2.x = (double)_points[i % _points.GetSize()]->x;
+		p2.y = (double)_points[i % _points.GetSize()]->y;
 
 		if (p.y > std::min(p1.y, p2.y)) {
 			if (p.y <= std::max(p1.y, p2.y)) {
@@ -466,16 +466,16 @@ bool CBRegion::PtInPolygon(int X, int Y) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRegion::GetBoundingRect(RECT *Rect) {
-	if (m_Points.GetSize() == 0) CBPlatform::SetRectEmpty(Rect);
+	if (_points.GetSize() == 0) CBPlatform::SetRectEmpty(Rect);
 	else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
 
-		for (int i = 0; i < m_Points.GetSize(); i++) {
-			MinX = std::min(MinX, m_Points[i]->x);
-			MinY = std::min(MinY, m_Points[i]->y);
+		for (int i = 0; i < _points.GetSize(); i++) {
+			MinX = std::min(MinX, _points[i]->x);
+			MinY = std::min(MinY, _points[i]->y);
 
-			MaxX = std::max(MaxX, m_Points[i]->x);
-			MaxY = std::max(MaxY, m_Points[i]->y);
+			MaxX = std::max(MaxX, _points[i]->x);
+			MaxY = std::max(MaxY, _points[i]->y);
 		}
 		CBPlatform::SetRect(Rect, MinX, MinY, MaxX, MaxY);
 	}
@@ -485,22 +485,22 @@ HRESULT CBRegion::GetBoundingRect(RECT *Rect) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRegion::Mimic(CBRegion *Region, float Scale, int X, int Y) {
-	if (Scale == m_LastMimicScale && X == m_LastMimicX && Y == m_LastMimicY) return S_OK;
+	if (Scale == _lastMimicScale && X == _lastMimicX && Y == _lastMimicY) return S_OK;
 
 	Cleanup();
 
-	for (int i = 0; i < Region->m_Points.GetSize(); i++) {
+	for (int i = 0; i < Region->_points.GetSize(); i++) {
 		int x, y;
 
-		x = (int)((float)Region->m_Points[i]->x * Scale / 100.0f);
-		y = (int)((float)Region->m_Points[i]->y * Scale / 100.0f);
+		x = (int)((float)Region->_points[i]->x * Scale / 100.0f);
+		y = (int)((float)Region->_points[i]->y * Scale / 100.0f);
 
-		m_Points.Add(new CBPoint(x + X, y + Y));
+		_points.Add(new CBPoint(x + X, y + Y));
 	}
 
-	m_LastMimicScale = Scale;
-	m_LastMimicX = X;
-	m_LastMimicY = Y;
+	_lastMimicScale = Scale;
+	_lastMimicX = X;
+	_lastMimicY = Y;
 
 	return CreateRegion() ? S_OK : E_FAIL;
 }

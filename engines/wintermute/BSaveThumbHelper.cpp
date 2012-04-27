@@ -35,38 +35,38 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBSaveThumbHelper::CBSaveThumbHelper(CBGame *inGame): CBBase(inGame) {
-	m_Thumbnail = NULL;
+	_thumbnail = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CBSaveThumbHelper::~CBSaveThumbHelper(void) {
-	delete m_Thumbnail;
-	m_Thumbnail = NULL;
+	delete _thumbnail;
+	_thumbnail = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSaveThumbHelper::StoreThumbnail(bool DoFlip) {
-	delete m_Thumbnail;
-	m_Thumbnail = NULL;
+	delete _thumbnail;
+	_thumbnail = NULL;
 
-	if (Game->m_ThumbnailWidth > 0 && Game->m_ThumbnailHeight > 0) {
+	if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
 		if (DoFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
 			Game->DisplayContent(false);
-			Game->m_Renderer->Flip();
+			Game->_renderer->Flip();
 
 			Game->DisplayContent(false);
-			Game->m_Renderer->Flip();
+			Game->_renderer->Flip();
 		}
 
-		CBImage *Screenshot = Game->m_Renderer->TakeScreenshot();
+		CBImage *Screenshot = Game->_renderer->TakeScreenshot();
 		if (!Screenshot) return E_FAIL;
 
 		// normal thumbnail
-		if (Game->m_ThumbnailWidth > 0 && Game->m_ThumbnailHeight > 0) {
-			m_Thumbnail = new CBImage(Game);
-			m_Thumbnail->CopyFrom(Screenshot, Game->m_ThumbnailWidth, Game->m_ThumbnailHeight);
+		if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
+			_thumbnail = new CBImage(Game);
+			_thumbnail->CopyFrom(Screenshot, Game->_thumbnailWidth, Game->_thumbnailHeight);
 		}
 
 

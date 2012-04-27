@@ -45,25 +45,25 @@ class CAdInventory;
 
 class CAdObject : public CBObject {
 public:
-	CPartEmitter *m_PartEmitter;
+	CPartEmitter *_partEmitter;
 	virtual CPartEmitter *CreateParticleEmitter(bool FollowParent = false, int OffsetX = 0, int OffsetY = 0);
 	virtual HRESULT UpdatePartEmitter();
-	bool m_PartFollowParent;
-	int m_PartOffsetX;
-	int m_PartOffsetY;
+	bool _partFollowParent;
+	int _partOffsetX;
+	int _partOffsetY;
 
 	HRESULT InvalidateCurrRegions();
-	bool m_SubtitlesModRelative;
-	bool m_SubtitlesModXCenter;
-	int m_SubtitlesModX;
-	int m_SubtitlesModY;
-	int m_SubtitlesWidth;
-	CAdRegion *m_StickRegion;
-	bool m_SceneIndependent;
-	bool m_IgnoreItems;
+	bool _subtitlesModRelative;
+	bool _subtitlesModXCenter;
+	int _subtitlesModX;
+	int _subtitlesModY;
+	int _subtitlesWidth;
+	CAdRegion *_stickRegion;
+	bool _sceneIndependent;
+	bool _ignoreItems;
 	HRESULT UpdateBlockRegion();
-	bool m_ForcedTalkAnimUsed;
-	char *m_ForcedTalkAnimName;
+	bool _forcedTalkAnimUsed;
+	char *_forcedTalkAnimName;
 	virtual bool GetExtendedFlag(char *FlagName);
 	virtual HRESULT ResetSoundPan();
 	virtual HRESULT UpdateSounds();
@@ -71,32 +71,32 @@ public:
 	DECLARE_PERSISTENT(CAdObject, CBObject)
 	virtual void Talk(char *Text, char *Sound = NULL, uint32 Duration = 0, char *Stances = NULL, TTextAlign Align = TAL_CENTER);
 	virtual int GetHeight();
-	CAdSentence *m_Sentence;
+	CAdSentence *_sentence;
 	HRESULT SetFont(char *Filename);
 	virtual HRESULT Update();
 	virtual HRESULT Display();
-	bool m_Drawn;
-	bool m_Active;
+	bool _drawn;
+	bool _active;
 	virtual HRESULT PlayAnim(char *Filename);
-	CBSprite *m_AnimSprite;
-	CBSprite *m_CurrentSprite;
-	TObjectState m_State;
-	TObjectState m_NextState;
-	TObjectType m_Type;
+	CBSprite *_animSprite;
+	CBSprite *_currentSprite;
+	TObjectState _state;
+	TObjectState _nextState;
+	TObjectType _type;
 	CAdObject(CBGame *inGame);
 	virtual ~CAdObject();
-	CBFont *m_Font;
-	CBSprite *m_TempSprite2;
-	CBRegion *m_BlockRegion;
-	CAdWaypointGroup *m_WptGroup;
-	CBRegion *m_CurrentBlockRegion;
-	CAdWaypointGroup *m_CurrentWptGroup;
+	CBFont *_font;
+	CBSprite *_tempSprite2;
+	CBRegion *_blockRegion;
+	CAdWaypointGroup *_wptGroup;
+	CBRegion *_currentBlockRegion;
+	CAdWaypointGroup *_currentWptGroup;
 	CAdInventory *GetInventory();
 
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 
 	virtual HRESULT AfterMove();
-	CAdRegion *m_CurrentRegions[MAX_NUM_REGIONS];
+	CAdRegion *_currentRegions[MAX_NUM_REGIONS];
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
@@ -104,15 +104,15 @@ public:
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
 
-	CBArray<CAdObject *, CAdObject *> m_AttachmentsPre;
-	CBArray<CAdObject *, CAdObject *> m_AttachmentsPost;
+	CBArray<CAdObject *, CAdObject *> _attachmentsPre;
+	CBArray<CAdObject *, CAdObject *> _attachmentsPost;
 
 	HRESULT UpdateSpriteAttachments();
 	HRESULT DisplaySpriteAttachments(bool PreDisplay);
-	CAdObject *m_RegisterAlias;
+	CAdObject *_registerAlias;
 private:
 	HRESULT DisplaySpriteAttachment(CAdObject *Attachment);
-	CAdInventory *m_Inventory;
+	CAdInventory *_inventory;
 
 protected:
 	HRESULT GetScale(float *ScaleX, float *ScaleY);

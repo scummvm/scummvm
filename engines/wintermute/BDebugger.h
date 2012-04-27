@@ -42,7 +42,7 @@ public:
 	virtual ~CBDebugger(void);
 
 	// initialization
-	bool m_Enabled;
+	bool _enabled;
 	HRESULT Initialize();
 	HRESULT Shutdown();
 

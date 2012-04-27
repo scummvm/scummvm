@@ -44,7 +44,7 @@ class CBDynBuffer;
 
 class CBBase {
 public:
-	bool m_Persistable;
+	bool _persistable;
 	HRESULT SetEditorProp(const char *PropName, const char *PropValue);
 	const char *GetEditorProp(const char *PropName, const char *InitVal = NULL);
 	CBBase(TDynamicConstructor, TDynamicConstructor) {};
@@ -55,10 +55,10 @@ public:
 	CBBase(CBGame *GameOwner);
 	virtual ~CBBase();
 
-	Common::HashMap<Common::String, Common::String> m_EditorProps;
-	Common::HashMap<Common::String, Common::String>::iterator m_EditorPropsIter;
-/*	std::map<std::string, std::string> m_EditorProps;
-	std::map<std::string, std::string>::iterator m_EditorPropsIter;*/
+	Common::HashMap<Common::String, Common::String> _editorProps;
+	Common::HashMap<Common::String, Common::String>::iterator _editorPropsIter;
+/*	std::map<std::string, std::string> _editorProps;
+	std::map<std::string, std::string>::iterator _editorPropsIter;*/
 };
 
 } // end of namespace WinterMute

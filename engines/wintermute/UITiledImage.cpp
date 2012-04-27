@@ -42,77 +42,77 @@ IMPLEMENT_PERSISTENT(CUITiledImage, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUITiledImage::CUITiledImage(CBGame *inGame): CBObject(inGame) {
-	m_Image = NULL;
+	_image = NULL;
 
-	CBPlatform::SetRectEmpty(&m_UpLeft);
-	CBPlatform::SetRectEmpty(&m_UpMiddle);
-	CBPlatform::SetRectEmpty(&m_UpRight);
-	CBPlatform::SetRectEmpty(&m_MiddleLeft);
-	CBPlatform::SetRectEmpty(&m_MiddleMiddle);
-	CBPlatform::SetRectEmpty(&m_MiddleRight);
-	CBPlatform::SetRectEmpty(&m_DownLeft);
-	CBPlatform::SetRectEmpty(&m_DownMiddle);
-	CBPlatform::SetRectEmpty(&m_DownRight);
+	CBPlatform::SetRectEmpty(&_upLeft);
+	CBPlatform::SetRectEmpty(&_upMiddle);
+	CBPlatform::SetRectEmpty(&_upRight);
+	CBPlatform::SetRectEmpty(&_middleLeft);
+	CBPlatform::SetRectEmpty(&_middleMiddle);
+	CBPlatform::SetRectEmpty(&_middleRight);
+	CBPlatform::SetRectEmpty(&_downLeft);
+	CBPlatform::SetRectEmpty(&_downMiddle);
+	CBPlatform::SetRectEmpty(&_downRight);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CUITiledImage::~CUITiledImage() {
-	delete m_Image;
-	m_Image = NULL;
+	delete _image;
+	_image = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUITiledImage::Display(int X, int Y, int Width, int Height) {
-	if (!m_Image) return E_FAIL;
+	if (!_image) return E_FAIL;
 
-	int tile_width = m_MiddleMiddle.right - m_MiddleMiddle.left;
-	int tile_height = m_MiddleMiddle.bottom - m_MiddleMiddle.top;
+	int tile_width = _middleMiddle.right - _middleMiddle.left;
+	int tile_height = _middleMiddle.bottom - _middleMiddle.top;
 
-	int num_columns = (Width - (m_MiddleLeft.right - m_MiddleLeft.left) - (m_MiddleRight.right - m_MiddleRight.left)) / tile_width;
-	int num_rows = (Height - (m_UpMiddle.bottom - m_UpMiddle.top) - (m_DownMiddle.bottom - m_DownMiddle.top)) / tile_height;
+	int nu_columns = (Width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tile_width;
+	int nu_rows = (Height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tile_height;
 
 	int col, row;
 
-	Game->m_Renderer->StartSpriteBatch();
+	Game->_renderer->StartSpriteBatch();
 
 	// top left/right
-	m_Image->m_Surface->DisplayTrans(X,                                                       Y, m_UpLeft);
-	m_Image->m_Surface->DisplayTrans(X + (m_UpLeft.right - m_UpLeft.left) + num_columns * tile_width, Y, m_UpRight);
+	_image->_surface->DisplayTrans(X,                                                       Y, _upLeft);
+	_image->_surface->DisplayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y, _upRight);
 
 	// bottom left/right
-	m_Image->m_Surface->DisplayTrans(X,                                                       Y + (m_UpMiddle.bottom - m_UpMiddle.top) + num_rows * tile_height, m_DownLeft);
-	m_Image->m_Surface->DisplayTrans(X + (m_UpLeft.right - m_UpLeft.left) + num_columns * tile_width, Y + (m_UpMiddle.bottom - m_UpMiddle.top) + num_rows * tile_height, m_DownRight);
+	_image->_surface->DisplayTrans(X,                                                       Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downLeft);
+	_image->_surface->DisplayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downRight);
 
 	// left/right
-	int yyy = Y + (m_UpMiddle.bottom - m_UpMiddle.top);
-	for (row = 0; row < num_rows; row++) {
-		m_Image->m_Surface->DisplayTrans(X,                                                       yyy, m_MiddleLeft);
-		m_Image->m_Surface->DisplayTrans(X + (m_MiddleLeft.right - m_MiddleLeft.left) + num_columns * tile_width, yyy, m_MiddleRight);
+	int yyy = Y + (_upMiddle.bottom - _upMiddle.top);
+	for (row = 0; row < nu_rows; row++) {
+		_image->_surface->DisplayTrans(X,                                                       yyy, _middleLeft);
+		_image->_surface->DisplayTrans(X + (_middleLeft.right - _middleLeft.left) + nu_columns * tile_width, yyy, _middleRight);
 		yyy += tile_width;
 	}
 
 	// top/bottom
-	int xxx = X + (m_UpLeft.right - m_UpLeft.left);
-	for (col = 0; col < num_columns; col++) {
-		m_Image->m_Surface->DisplayTrans(xxx, Y, m_UpMiddle);
-		m_Image->m_Surface->DisplayTrans(xxx, Y + (m_UpMiddle.bottom - m_UpMiddle.top) + num_rows * tile_height, m_DownMiddle);
+	int xxx = X + (_upLeft.right - _upLeft.left);
+	for (col = 0; col < nu_columns; col++) {
+		_image->_surface->DisplayTrans(xxx, Y, _upMiddle);
+		_image->_surface->DisplayTrans(xxx, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downMiddle);
 		xxx += tile_width;
 	}
 
 	// tiles
-	yyy = Y + (m_UpMiddle.bottom - m_UpMiddle.top);
-	for (row = 0; row < num_rows; row++) {
-		xxx = X + (m_UpLeft.right - m_UpLeft.left);
-		for (col = 0; col < num_columns; col++) {
-			m_Image->m_Surface->DisplayTrans(xxx, yyy, m_MiddleMiddle);
+	yyy = Y + (_upMiddle.bottom - _upMiddle.top);
+	for (row = 0; row < nu_rows; row++) {
+		xxx = X + (_upLeft.right - _upLeft.left);
+		for (col = 0; col < nu_columns; col++) {
+			_image->_surface->DisplayTrans(xxx, yyy, _middleMiddle);
 			xxx += tile_width;
 		}
 		yyy += tile_width;
 	}
 
-	Game->m_Renderer->EndSpriteBatch();
+	Game->_renderer->EndSpriteBatch();
 
 	return S_OK;
 }
@@ -120,7 +120,7 @@ HRESULT CUITiledImage::Display(int X, int Y, int Width, int Height) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUITiledImage::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -128,8 +128,8 @@ HRESULT CUITiledImage::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", Filename);
 
@@ -199,49 +199,49 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_IMAGE:
-			delete m_Image;
-			m_Image = new CBSubFrame(Game);
-			if (!m_Image || FAILED(m_Image->SetSurface((char *)params))) {
-				delete m_Image;
-				m_Image = NULL;
+			delete _image;
+			_image = new CBSubFrame(Game);
+			if (!_image || FAILED(_image->SetSurface((char *)params))) {
+				delete _image;
+				_image = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_UP_LEFT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_UpLeft.left, &m_UpLeft.top, &m_UpLeft.right, &m_UpLeft.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_upLeft.left, &_upLeft.top, &_upLeft.right, &_upLeft.bottom);
 			break;
 
 		case TOKEN_UP_RIGHT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_UpRight.left, &m_UpRight.top, &m_UpRight.right, &m_UpRight.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_upRight.left, &_upRight.top, &_upRight.right, &_upRight.bottom);
 			break;
 
 		case TOKEN_UP_MIDDLE:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_UpMiddle.left, &m_UpMiddle.top, &m_UpMiddle.right, &m_UpMiddle.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_upMiddle.left, &_upMiddle.top, &_upMiddle.right, &_upMiddle.bottom);
 			break;
 
 		case TOKEN_DOWN_LEFT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_DownLeft.left, &m_DownLeft.top, &m_DownLeft.right, &m_DownLeft.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_downLeft.left, &_downLeft.top, &_downLeft.right, &_downLeft.bottom);
 			break;
 
 		case TOKEN_DOWN_RIGHT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_DownRight.left, &m_DownRight.top, &m_DownRight.right, &m_DownRight.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_downRight.left, &_downRight.top, &_downRight.right, &_downRight.bottom);
 			break;
 
 		case TOKEN_DOWN_MIDDLE:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_DownMiddle.left, &m_DownMiddle.top, &m_DownMiddle.right, &m_DownMiddle.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_downMiddle.left, &_downMiddle.top, &_downMiddle.right, &_downMiddle.bottom);
 			break;
 
 		case TOKEN_MIDDLE_LEFT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_MiddleLeft.left, &m_MiddleLeft.top, &m_MiddleLeft.right, &m_MiddleLeft.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_middleLeft.left, &_middleLeft.top, &_middleLeft.right, &_middleLeft.bottom);
 			break;
 
 		case TOKEN_MIDDLE_RIGHT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_MiddleRight.left, &m_MiddleRight.top, &m_MiddleRight.right, &m_MiddleRight.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_middleRight.left, &_middleRight.top, &_middleRight.right, &_middleRight.bottom);
 			break;
 
 		case TOKEN_MIDDLE_MIDDLE:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_MiddleMiddle.left, &m_MiddleMiddle.top, &m_MiddleMiddle.right, &m_MiddleMiddle.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_middleMiddle.left, &_middleMiddle.top, &_middleMiddle.right, &_middleMiddle.bottom);
 			break;
 
 		case TOKEN_HORIZONTAL_TILES:
@@ -270,37 +270,37 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 
 	if (VTiles && HTiles) {
 		// up row
-		CBPlatform::SetRect(&m_UpLeft,   0,     0, H1,       V1);
-		CBPlatform::SetRect(&m_UpMiddle, H1,    0, H1 + H2,    V1);
-		CBPlatform::SetRect(&m_UpRight,  H1 + H2, 0, H1 + H2 + H3, V1);
+		CBPlatform::SetRect(&_upLeft,   0,     0, H1,       V1);
+		CBPlatform::SetRect(&_upMiddle, H1,    0, H1 + H2,    V1);
+		CBPlatform::SetRect(&_upRight,  H1 + H2, 0, H1 + H2 + H3, V1);
 
 		// middle row
-		CBPlatform::SetRect(&m_MiddleLeft,   0,     V1, H1,       V1 + V2);
-		CBPlatform::SetRect(&m_MiddleMiddle, H1,    V1, H1 + H2,    V1 + V2);
-		CBPlatform::SetRect(&m_MiddleRight,  H1 + H2, V1, H1 + H2 + H3, V1 + V2);
+		CBPlatform::SetRect(&_middleLeft,   0,     V1, H1,       V1 + V2);
+		CBPlatform::SetRect(&_middleMiddle, H1,    V1, H1 + H2,    V1 + V2);
+		CBPlatform::SetRect(&_middleRight,  H1 + H2, V1, H1 + H2 + H3, V1 + V2);
 
 		// down row
-		CBPlatform::SetRect(&m_DownLeft,   0,     V1 + V2, H1,       V1 + V2 + V3);
-		CBPlatform::SetRect(&m_DownMiddle, H1,    V1 + V2, H1 + H2,    V1 + V2 + V3);
-		CBPlatform::SetRect(&m_DownRight,  H1 + H2, V1 + V2, H1 + H2 + H3, V1 + V2 + V3);
+		CBPlatform::SetRect(&_downLeft,   0,     V1 + V2, H1,       V1 + V2 + V3);
+		CBPlatform::SetRect(&_downMiddle, H1,    V1 + V2, H1 + H2,    V1 + V2 + V3);
+		CBPlatform::SetRect(&_downRight,  H1 + H2, V1 + V2, H1 + H2 + H3, V1 + V2 + V3);
 	}
 
 	// default
-	if (m_Image && m_Image->m_Surface) {
-		int Width = m_Image->m_Surface->GetWidth() / 3;
-		int Height = m_Image->m_Surface->GetHeight() / 3;
+	if (_image && _image->_surface) {
+		int Width = _image->_surface->GetWidth() / 3;
+		int Height = _image->_surface->GetHeight() / 3;
 
-		if (CBPlatform::IsRectEmpty(&m_UpLeft))   CBPlatform::SetRect(&m_UpLeft,   0,       0, Width,   Height);
-		if (CBPlatform::IsRectEmpty(&m_UpMiddle)) CBPlatform::SetRect(&m_UpMiddle, Width,   0, 2 * Width, Height);
-		if (CBPlatform::IsRectEmpty(&m_UpRight))  CBPlatform::SetRect(&m_UpRight,  2 * Width, 0, 3 * Width, Height);
+		if (CBPlatform::IsRectEmpty(&_upLeft))   CBPlatform::SetRect(&_upLeft,   0,       0, Width,   Height);
+		if (CBPlatform::IsRectEmpty(&_upMiddle)) CBPlatform::SetRect(&_upMiddle, Width,   0, 2 * Width, Height);
+		if (CBPlatform::IsRectEmpty(&_upRight))  CBPlatform::SetRect(&_upRight,  2 * Width, 0, 3 * Width, Height);
 
-		if (CBPlatform::IsRectEmpty(&m_MiddleLeft))   CBPlatform::SetRect(&m_MiddleLeft,   0,       Height, Width,   2 * Height);
-		if (CBPlatform::IsRectEmpty(&m_MiddleMiddle)) CBPlatform::SetRect(&m_MiddleMiddle, Width,   Height, 2 * Width, 2 * Height);
-		if (CBPlatform::IsRectEmpty(&m_MiddleRight))  CBPlatform::SetRect(&m_MiddleRight,  2 * Width, Height, 3 * Width, 2 * Height);
+		if (CBPlatform::IsRectEmpty(&_middleLeft))   CBPlatform::SetRect(&_middleLeft,   0,       Height, Width,   2 * Height);
+		if (CBPlatform::IsRectEmpty(&_middleMiddle)) CBPlatform::SetRect(&_middleMiddle, Width,   Height, 2 * Width, 2 * Height);
+		if (CBPlatform::IsRectEmpty(&_middleRight))  CBPlatform::SetRect(&_middleRight,  2 * Width, Height, 3 * Width, 2 * Height);
 
-		if (CBPlatform::IsRectEmpty(&m_DownLeft))   CBPlatform::SetRect(&m_DownLeft,   0,       2 * Height, Width,   3 * Height);
-		if (CBPlatform::IsRectEmpty(&m_DownMiddle)) CBPlatform::SetRect(&m_DownMiddle, Width,   2 * Height, 2 * Width, 3 * Height);
-		if (CBPlatform::IsRectEmpty(&m_DownRight))  CBPlatform::SetRect(&m_DownRight,  2 * Width, 2 * Height, 3 * Width, 3 * Height);
+		if (CBPlatform::IsRectEmpty(&_downLeft))   CBPlatform::SetRect(&_downLeft,   0,       2 * Height, Width,   3 * Height);
+		if (CBPlatform::IsRectEmpty(&_downMiddle)) CBPlatform::SetRect(&_downMiddle, Width,   2 * Height, 2 * Width, 3 * Height);
+		if (CBPlatform::IsRectEmpty(&_downRight))  CBPlatform::SetRect(&_downRight,  2 * Width, 2 * Height, 3 * Width, 3 * Height);
 	}
 
 	return S_OK;
@@ -311,19 +311,19 @@ HRESULT CUITiledImage::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "TILED_IMAGE\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
-	if (m_Image && m_Image->m_SurfaceFilename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", m_Image->m_SurfaceFilename);
+	if (_image && _image->_surfaceFilename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
 
 	int H1, H2, H3;
 	int V1, V2, V3;
 
-	H1 = m_UpLeft.right;
-	H2 = m_UpMiddle.right - m_UpMiddle.left;
-	H3 = m_UpRight.right - m_UpRight.left;
+	H1 = _upLeft.right;
+	H2 = _upMiddle.right - _upMiddle.left;
+	H3 = _upRight.right - _upRight.left;
 
-	V1 = m_UpLeft.bottom;
-	V2 = m_MiddleLeft.bottom - m_MiddleLeft.top;
-	V3 = m_DownLeft.bottom - m_DownLeft.top;
+	V1 = _upLeft.bottom;
+	V2 = _middleLeft.bottom - _middleLeft.top;
+	V3 = _downLeft.bottom - _downLeft.top;
 
 
 	Buffer->PutTextIndent(Indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", V1, V2, V3);
@@ -338,14 +338,14 @@ HRESULT CUITiledImage::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 void CUITiledImage::CorrectSize(int *Width, int *Height) {
-	int tile_width = m_MiddleMiddle.right - m_MiddleMiddle.left;
-	int tile_height = m_MiddleMiddle.bottom - m_MiddleMiddle.top;
+	int tile_width = _middleMiddle.right - _middleMiddle.left;
+	int tile_height = _middleMiddle.bottom - _middleMiddle.top;
 
-	int num_columns = (*Width - (m_MiddleLeft.right - m_MiddleLeft.left) - (m_MiddleRight.right - m_MiddleRight.left)) / tile_width;
-	int num_rows = (*Height - (m_UpMiddle.bottom - m_UpMiddle.top) - (m_DownMiddle.bottom - m_DownMiddle.top)) / tile_height;
+	int nu_columns = (*Width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tile_width;
+	int nu_rows = (*Height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tile_height;
 
-	*Width  = (m_MiddleLeft.right - m_MiddleLeft.left) + (m_MiddleRight.right - m_MiddleRight.left) + num_columns * tile_width;
-	*Height = (m_UpMiddle.bottom - m_UpMiddle.top) + (m_DownMiddle.bottom - m_DownMiddle.top) + num_rows * tile_height;
+	*Width  = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + nu_columns * tile_width;
+	*Height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + nu_rows * tile_height;
 }
 
 
@@ -353,16 +353,16 @@ void CUITiledImage::CorrectSize(int *Width, int *Height) {
 HRESULT CUITiledImage::Persist(CBPersistMgr *PersistMgr) {
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_DownLeft));
-	PersistMgr->Transfer(TMEMBER(m_DownMiddle));
-	PersistMgr->Transfer(TMEMBER(m_DownRight));
-	PersistMgr->Transfer(TMEMBER(m_Image));
-	PersistMgr->Transfer(TMEMBER(m_MiddleLeft));
-	PersistMgr->Transfer(TMEMBER(m_MiddleMiddle));
-	PersistMgr->Transfer(TMEMBER(m_MiddleRight));
-	PersistMgr->Transfer(TMEMBER(m_UpLeft));
-	PersistMgr->Transfer(TMEMBER(m_UpMiddle));
-	PersistMgr->Transfer(TMEMBER(m_UpRight));
+	PersistMgr->Transfer(TMEMBER(_downLeft));
+	PersistMgr->Transfer(TMEMBER(_downMiddle));
+	PersistMgr->Transfer(TMEMBER(_downRight));
+	PersistMgr->Transfer(TMEMBER(_image));
+	PersistMgr->Transfer(TMEMBER(_middleLeft));
+	PersistMgr->Transfer(TMEMBER(_middleMiddle));
+	PersistMgr->Transfer(TMEMBER(_middleRight));
+	PersistMgr->Transfer(TMEMBER(_upLeft));
+	PersistMgr->Transfer(TMEMBER(_upMiddle));
+	PersistMgr->Transfer(TMEMBER(_upRight));
 
 	return S_OK;
 }

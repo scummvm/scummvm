@@ -41,34 +41,34 @@ class CUIObject : public CBObject {
 public:
 
 	HRESULT GetTotalOffset(int *OffsetX, int *OffsetY);
-	bool m_CanFocus;
+	bool _canFocus;
 	HRESULT Focus();
 	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
 	bool IsFocused();
-	bool m_ParentNotify;
+	bool _parentNotify;
 	DECLARE_PERSISTENT(CUIObject, CBObject)
-	CUIObject *m_Parent;
+	CUIObject *_parent;
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
 	virtual void CorrectSize();
-	bool m_SharedFonts;
-	bool m_SharedImages;
+	bool _sharedFonts;
+	bool _sharedImages;
 	void SetText(const char *Text);
-	char *m_Text;
-	CBFont *m_Font;
-	bool m_Visible;
-	CUITiledImage *m_Back;
-	bool m_Disable;
+	char *_text;
+	CBFont *_font;
+	bool _visible;
+	CUITiledImage *_back;
+	bool _disable;
 	CUIObject(CBGame *inGame = NULL);
 	virtual ~CUIObject();
-	int m_Width;
-	int m_Height;
-	TUIObjectType m_Type;
-	CBSprite *m_Image;
+	int _width;
+	int _height;
+	TUIObjectType _type;
+	CBSprite *_image;
 	void SetListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam);
-	CBScriptHolder *m_ListenerParamObject;
-	uint32 m_ListenerParamDWORD;
-	CBScriptHolder *m_ListenerObject;
-	CUIObject *m_FocusedWidget;
+	CBScriptHolder *_listenerParamObject;
+	uint32 _listenerParamDWORD;
+	CBScriptHolder *_listenerObject;
+	CUIObject *_focusedWidget;
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 
 	// scripting interface

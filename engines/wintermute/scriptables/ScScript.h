@@ -46,11 +46,11 @@ public:
 	HRESULT DbgSendScript(IWmeDebugClient *Client);
 	HRESULT DbgSendVariables(IWmeDebugClient *Client);
 
-	CBArray<int, int> m_Breakpoints;
-	bool m_TracingMode;
+	CBArray<int, int> _breakpoints;
+	bool _tracingMode;
 
-	CScScript *m_ParentScript;
-	bool m_Unbreakable;
+	CScScript *_parentScript;
+	bool _unbreakable;
 	HRESULT FinishThreads();
 	HRESULT CopyParameters(CScStack *Stack);
 
@@ -63,9 +63,9 @@ public:
 	static double GetST0Double(void);
 #endif
 
-	CScValue *m_Operand;
-	CScValue *m_Reg1;
-	bool m_Freezable;
+	CScValue *_operand;
+	CScValue *_reg1;
+	bool _freezable;
 	HRESULT Resume();
 	HRESULT Pause();
 	bool CanHandleEvent(char *EventName);
@@ -73,7 +73,7 @@ public:
 	HRESULT CreateThread(CScScript *Original, uint32 InitIP, const char *EventName);
 	HRESULT CreateMethodThread(CScScript *Original, const char *MethodName);
 	CScScript *InvokeEventHandler(const char *EventName, bool Unbreakable = false);
-	uint32 m_TimeSlice;
+	uint32 _timeSlice;
 	DECLARE_PERSISTENT(CScScript, CBBase)
 	void RuntimeError(LPCSTR fmt, ...);
 	HRESULT Run();
@@ -81,12 +81,12 @@ public:
 	HRESULT Sleep(uint32 Duration);
 	HRESULT WaitForExclusive(CBObject *Object);
 	HRESULT WaitFor(CBObject *Object);
-	uint32 m_WaitTime;
-	bool m_WaitFrozen;
-	CBObject *m_WaitObject;
-	CScScript *m_WaitScript;
-	TScriptState m_State;
-	TScriptState m_OrigState;
+	uint32 _waitTime;
+	bool _waitFrozen;
+	CBObject *_waitObject;
+	CScScript *_waitScript;
+	TScriptState _state;
+	TScriptState _origState;
 	CScValue *GetVar(char *Name);
 	uint32 GetFuncPos(const char *Name);
 	uint32 GetEventPos(const char *Name);
@@ -123,44 +123,44 @@ public:
 		char *dll_name;
 		TCallType call_type;
 		TExternalType returns;
-		int num_params;
+		int nu_params;
 		TExternalType *params;
 	} TExternalFunction;
 
 
-	CScStack *m_CallStack;
-	CScStack *m_ThisStack;
-	CScStack *m_ScopeStack;
-	CScStack *m_Stack;
-	CScValue *m_Globals;
-	CScEngine *m_Engine;
-	int m_CurrentLine;
+	CScStack *_callStack;
+	CScStack *_thisStack;
+	CScStack *_scopeStack;
+	CScStack *_stack;
+	CScValue *_globals;
+	CScEngine *_engine;
+	int _currentLine;
 	HRESULT ExecuteInstruction();
 	char *GetString();
 	uint32 GetDWORD();
 	double GetFloat();
 	void Cleanup();
 	HRESULT Create(char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner);
-	uint32 m_IP;
-	uint32 m_BufferSize;
-	byte *m_Buffer;
+	uint32 _iP;
+	uint32 _bufferSize;
+	byte *_buffer;
 	CScScript(CBGame *inGame, CScEngine *Engine);
 	virtual ~CScScript();
-	char *m_Filename;
-	char **m_Symbols;
-	int m_NumSymbols;
-	TFunctionPos *m_Functions;
-	TMethodPos *m_Methods;
-	TEventPos *m_Events;
-	int m_NumExternals;
-	TExternalFunction *m_Externals;
-	int m_NumFunctions;
-	int m_NumMethods;
-	int m_NumEvents;
-	bool m_Thread;
-	bool m_MethodThread;
-	char *m_ThreadEvent;
-	CBScriptHolder *m_Owner;
+	char *_filename;
+	char **_symbols;
+	int _numSymbols;
+	TFunctionPos *_functions;
+	TMethodPos *_methods;
+	TEventPos *_events;
+	int _numExternals;
+	TExternalFunction *_externals;
+	int _numFunctions;
+	int _numMethods;
+	int _numEvents;
+	bool _thread;
+	bool _methodThread;
+	char *_threadEvent;
+	CBScriptHolder *_owner;
 	CScScript::TExternalFunction *GetExternal(char *Name);
 	HRESULT ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript::TExternalFunction *Function);
 private:

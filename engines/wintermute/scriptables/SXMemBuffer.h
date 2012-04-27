@@ -46,10 +46,10 @@ public:
 	CSXMemBuffer(CBGame *inGame, void *Buffer);
 	virtual ~CSXMemBuffer();
 	virtual void *ScToMemBuffer();
-	int m_Size;
+	int _size;
 private:
 	HRESULT Resize(int NewSize);
-	void *m_Buffer;
+	void *_buffer;
 	void Cleanup();
 	bool CheckBounds(CScScript *Script, int Start, int Length);
 };

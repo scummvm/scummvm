@@ -39,30 +39,30 @@ namespace WinterMute {
 class CBSound : public CBBase {
 public:
 	HRESULT SetPan(float Pan);
-	int m_SoundPrivateVolume;
+	int _soundPrivateVolume;
 	int GetVolume();
 	HRESULT SetVolume(int Volume);
 	HRESULT SetPrivateVolume(int Volume);
 	HRESULT SetLoopStart(uint32 Pos);
 	uint32 GetPositionTime();
 	HRESULT SetPositionTime(uint32 Time);
-	bool m_SoundPaused;
-	bool m_SoundFreezePaused;
+	bool _soundPaused;
+	bool _soundFreezePaused;
 	bool IsPlaying();
 	bool IsPaused();
-	bool m_SoundPlaying;
-	bool m_SoundLooping;
-	uint32 m_SoundLoopStart;
-	uint32 m_SoundPosition;
+	bool _soundPlaying;
+	bool _soundLooping;
+	uint32 _soundLoopStart;
+	uint32 _soundPosition;
 	DECLARE_PERSISTENT(CBSound, CBBase)
 	HRESULT Resume();
 	HRESULT Pause(bool FreezePaused = false);
 	HRESULT Stop();
 	HRESULT Play(bool Looping = false);
 	uint32 GetLength();
-	bool m_SoundStreamed;
-	TSoundType m_SoundType;
-	char *m_SoundFilename;
+	bool _soundStreamed;
+	TSoundType _soundType;
+	char *_soundFilename;
 	HRESULT SetSoundSimple();
 	HRESULT SetSound(char *Filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
 	CBSound(CBGame *inGame);
@@ -71,12 +71,12 @@ public:
 	HRESULT ApplyFX(TSFXType Type = SFX_NONE, float Param1 = 0, float Param2 = 0, float Param3 = 0, float Param4 = 0);
 
 private:
-	TSFXType m_SFXType;
-	float m_SFXParam1;
-	float m_SFXParam2;
-	float m_SFXParam3;
-	float m_SFXParam4;
-	CBSoundBuffer *m_Sound;
+	TSFXType _sFXType;
+	float _sFXParam1;
+	float _sFXParam2;
+	float _sFXParam3;
+	float _sFXParam4;
+	CBSoundBuffer *_sound;
 
 };
 

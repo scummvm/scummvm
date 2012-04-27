@@ -41,12 +41,12 @@ public:
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent = 0);
 	CBSprite *GetSprite(TDirection Direction);
 	DECLARE_PERSISTENT(CAdSpriteSet, CBObject)
-	CBObject *m_Owner;
+	CBObject *_owner;
 	CAdSpriteSet(CBGame *inGame, CBObject *Owner = NULL);
 	virtual ~CAdSpriteSet();
 	HRESULT LoadFile(char *Filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
-	CBSprite *m_Sprites[NUM_DIRECTIONS];
+	CBSprite *_sprites[NUM_DIRECTIONS];
 };
 
 } // end of namespace WinterMute

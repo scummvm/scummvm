@@ -47,7 +47,7 @@ public:
 	HRESULT Cleanup();
 	HRESULT SetBasePath(char *Path);
 	HRESULT RestoreCurrentDir();
-	char *m_BasePath;
+	char *_basePath;
 	bool GetFullPath(char *Filename, char *Fullname);
 	CBFile *OpenFileRaw(const char *Filename);
 	HRESULT CloseFile(CBFile *File);
@@ -67,16 +67,16 @@ public:
 	byte *ReadWholeFile(const char *Filename, uint32 *Size = NULL, bool MustExist = true);
 	CBFileManager(CBGame *inGame = NULL);
 	virtual ~CBFileManager();
-	CBArray<char *, char *> m_SinglePaths;
-	CBArray<char *, char *> m_PackagePaths;
-	CBArray<CBPackage *, CBPackage *> m_Packages;
-	CBArray<CBFile *, CBFile *> m_OpenFiles;
+	CBArray<char *, char *> _singlePaths;
+	CBArray<char *, char *> _packagePaths;
+	CBArray<CBPackage *, CBPackage *> _packages;
+	CBArray<CBFile *, CBFile *> _openFiles;
 
-	Common::HashMap<Common::String, CBFileEntry *> m_Files;
+	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:
 	HRESULT RegisterPackage(const char *Path, const char *Name, bool SearchSignature = false);
 	HRESULT RegisterPackage(Common::String Filename, bool SearchSignature = false);
-	Common::HashMap<Common::String, CBFileEntry *>::iterator m_FilesIter;
+	Common::HashMap<Common::String, CBFileEntry *>::iterator _filesIter;
 	bool IsValidPackage(const AnsiString &fileName) const;
 
 };

@@ -39,8 +39,8 @@ IMPLEMENT_PERSISTENT(CAdScaleLevel, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdScaleLevel::CAdScaleLevel(CBGame *inGame): CBObject(inGame) {
-	m_PosY = 0;
-	m_Scale = 100;
+	_posY = 0;
+	_scale = 100;
 }
 
 
@@ -52,7 +52,7 @@ CAdScaleLevel::~CAdScaleLevel() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScaleLevel::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdScaleLevel::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -60,8 +60,8 @@ HRESULT CAdScaleLevel::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", Filename);
 
@@ -108,13 +108,13 @@ HRESULT CAdScaleLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &m_PosY);
+			parser.ScanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_SCALE: {
 			int i;
 			parser.ScanStr((char *)params, "%d", &i);
-			m_Scale = (float)i;
+			_scale = (float)i;
 		}
 		break;
 
@@ -135,8 +135,8 @@ HRESULT CAdScaleLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScaleLevel::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "SCALE_LEVEL {\n");
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", m_PosY);
-	Buffer->PutTextIndent(Indent + 2, "SCALE=%d\n", (int)m_Scale);
+	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->PutTextIndent(Indent + 2, "SCALE=%d\n", (int)_scale);
 	CBBase::SaveAsText(Buffer, Indent + 2);
 	Buffer->PutTextIndent(Indent, "}\n");
 
@@ -149,7 +149,7 @@ HRESULT CAdScaleLevel::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Scale));
+	PersistMgr->Transfer(TMEMBER(_scale));
 
 	return S_OK;
 }

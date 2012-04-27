@@ -54,36 +54,36 @@ IMPLEMENT_PERSISTENT(CUIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUIWindow::CUIWindow(CBGame *inGame): CUIObject(inGame) {
-	CBPlatform::SetRectEmpty(&m_TitleRect);
-	CBPlatform::SetRectEmpty(&m_DragRect);
-	m_TitleAlign = TAL_LEFT;
-	m_Transparent = false;
+	CBPlatform::SetRectEmpty(&_titleRect);
+	CBPlatform::SetRectEmpty(&_dragRect);
+	_titleAlign = TAL_LEFT;
+	_transparent = false;
 
-	m_BackInactive = NULL;
-	m_FontInactive = NULL;
-	m_ImageInactive = NULL;
+	_backInactive = NULL;
+	_fontInactive = NULL;
+	_imageInactive = NULL;
 
-	m_Type = UI_WINDOW;
-	m_CanFocus = true;
+	_type = UI_WINDOW;
+	_canFocus = true;
 
-	m_Dragging = false;
-	m_DragFrom.x = m_DragFrom.y = 0;
+	_dragging = false;
+	_dragFrom.x = _dragFrom.y = 0;
 
-	m_Mode = WINDOW_NORMAL;
-	m_ShieldWindow = NULL;
-	m_ShieldButton = NULL;
+	_mode = WINDOW_NORMAL;
+	_shieldWindow = NULL;
+	_shieldButton = NULL;
 
-	m_FadeColor = 0x00000000;
-	m_FadeBackground = false;
+	_fadeColor = 0x00000000;
+	_fadeBackground = false;
 
-	m_Ready = true;
-	m_IsMenu = false;
-	m_InGame = false;
+	_ready = true;
+	_isMenu = false;
+	_inGame = false;
 
-	m_ClipContents = false;
-	m_Viewport = NULL;
+	_clipContents = false;
+	_viewport = NULL;
 
-	m_PauseMusic = true;
+	_pauseMusic = true;
 }
 
 
@@ -96,102 +96,102 @@ CUIWindow::~CUIWindow() {
 
 //////////////////////////////////////////////////////////////////////////
 void CUIWindow::Cleanup() {
-	delete m_ShieldWindow;
-	delete m_ShieldButton;
-	delete m_Viewport;
-	m_ShieldWindow = NULL;
-	m_ShieldButton = NULL;
-	m_Viewport = NULL;
+	delete _shieldWindow;
+	delete _shieldButton;
+	delete _viewport;
+	_shieldWindow = NULL;
+	_shieldButton = NULL;
+	_viewport = NULL;
 
-	if (m_BackInactive) delete m_BackInactive;
-	if (!m_SharedFonts && m_FontInactive) Game->m_FontStorage->RemoveFont(m_FontInactive);
-	if (!m_SharedImages && m_ImageInactive) delete m_ImageInactive;
+	if (_backInactive) delete _backInactive;
+	if (!_sharedFonts && _fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
+	if (!_sharedImages && _imageInactive) delete _imageInactive;
 
-	for (int i = 0; i < m_Widgets.GetSize(); i++) delete m_Widgets[i];
-	m_Widgets.RemoveAll();
+	for (int i = 0; i < _widgets.GetSize(); i++) delete _widgets[i];
+	_widgets.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 	// go exclusive
-	if (m_Mode == WINDOW_EXCLUSIVE || m_Mode == WINDOW_SYSTEM_EXCLUSIVE) {
-		if (!m_ShieldWindow) m_ShieldWindow = new CUIWindow(Game);
-		if (m_ShieldWindow) {
-			m_ShieldWindow->m_PosX = m_ShieldWindow->m_PosY = 0;
-			m_ShieldWindow->m_Width = Game->m_Renderer->m_Width;
-			m_ShieldWindow->m_Height = Game->m_Renderer->m_Height;
+	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
+		if (!_shieldWindow) _shieldWindow = new CUIWindow(Game);
+		if (_shieldWindow) {
+			_shieldWindow->_posX = _shieldWindow->_posY = 0;
+			_shieldWindow->_width = Game->_renderer->_width;
+			_shieldWindow->_height = Game->_renderer->_height;
 
-			m_ShieldWindow->Display();
+			_shieldWindow->Display();
 		}
-	} else if (m_IsMenu) {
-		if (!m_ShieldButton) {
-			m_ShieldButton = new CUIButton(Game);
-			m_ShieldButton->SetName("close");
-			m_ShieldButton->SetListener(this, m_ShieldButton, 0);
-			m_ShieldButton->m_Parent = this;
+	} else if (_isMenu) {
+		if (!_shieldButton) {
+			_shieldButton = new CUIButton(Game);
+			_shieldButton->SetName("close");
+			_shieldButton->SetListener(this, _shieldButton, 0);
+			_shieldButton->_parent = this;
 		}
-		if (m_ShieldButton) {
-			m_ShieldButton->m_PosX = m_ShieldButton->m_PosY = 0;
-			m_ShieldButton->m_Width = Game->m_Renderer->m_Width;
-			m_ShieldButton->m_Height = Game->m_Renderer->m_Height;
+		if (_shieldButton) {
+			_shieldButton->_posX = _shieldButton->_posY = 0;
+			_shieldButton->_width = Game->_renderer->_width;
+			_shieldButton->_height = Game->_renderer->_height;
 
-			m_ShieldButton->Display();
+			_shieldButton->Display();
 		}
 	}
 
-	if (!m_Visible) return S_OK;
+	if (!_visible) return S_OK;
 
-	if (m_FadeBackground) Game->m_Renderer->FadeToColor(m_FadeColor);
+	if (_fadeBackground) Game->_renderer->FadeToColor(_fadeColor);
 
-	if (m_Dragging) {
-		m_PosX += (Game->m_MousePos.x - m_DragFrom.x);
-		m_PosY += (Game->m_MousePos.y - m_DragFrom.y);
+	if (_dragging) {
+		_posX += (Game->_mousePos.x - _dragFrom.x);
+		_posY += (Game->_mousePos.y - _dragFrom.y);
 
-		m_DragFrom.x = Game->m_MousePos.x;
-		m_DragFrom.y = Game->m_MousePos.y;
+		_dragFrom.x = Game->_mousePos.x;
+		_dragFrom.y = Game->_mousePos.y;
 	}
 
-	if (!m_FocusedWidget || (!m_FocusedWidget->m_CanFocus || m_FocusedWidget->m_Disable || !m_FocusedWidget->m_Visible)) {
+	if (!_focusedWidget || (!_focusedWidget->_canFocus || _focusedWidget->_disable || !_focusedWidget->_visible)) {
 		MoveFocus();
 	}
 
 	bool PopViewport = false;
-	if (m_ClipContents) {
-		if (!m_Viewport) m_Viewport = new CBViewport(Game);
-		if (m_Viewport) {
-			m_Viewport->SetRect(m_PosX + OffsetX, m_PosY + OffsetY, m_PosX + m_Width + OffsetX, m_PosY + m_Height + OffsetY);
-			Game->PushViewport(m_Viewport);
+	if (_clipContents) {
+		if (!_viewport) _viewport = new CBViewport(Game);
+		if (_viewport) {
+			_viewport->SetRect(_posX + OffsetX, _posY + OffsetY, _posX + _width + OffsetX, _posY + _height + OffsetY);
+			Game->PushViewport(_viewport);
 			PopViewport = true;
 		}
 	}
 
 
-	CUITiledImage *back = m_Back;
-	CBSprite *image = m_Image;
-	CBFont *font = m_Font;
+	CUITiledImage *back = _back;
+	CBSprite *image = _image;
+	CBFont *font = _font;
 
 	if (!IsFocused()) {
-		if (m_BackInactive) back = m_BackInactive;
-		if (m_ImageInactive) image = m_ImageInactive;
-		if (m_FontInactive) font = m_FontInactive;
+		if (_backInactive) back = _backInactive;
+		if (_imageInactive) image = _imageInactive;
+		if (_fontInactive) font = _fontInactive;
 	}
 
-	if (m_AlphaColor != 0) Game->m_Renderer->m_ForceAlphaColor = m_AlphaColor;
-	if (back) back->Display(m_PosX + OffsetX, m_PosY + OffsetY, m_Width, m_Height);
-	if (image) image->Draw(m_PosX + OffsetX, m_PosY + OffsetY, m_Transparent ? NULL : this);
+	if (_alphaColor != 0) Game->_renderer->_forceAlphaColor = _alphaColor;
+	if (back) back->Display(_posX + OffsetX, _posY + OffsetY, _width, _height);
+	if (image) image->Draw(_posX + OffsetX, _posY + OffsetY, _transparent ? NULL : this);
 
-	if (!CBPlatform::IsRectEmpty(&m_TitleRect) && font && m_Text) {
-		font->DrawText((byte  *)m_Text, m_PosX + OffsetX + m_TitleRect.left, m_PosY + OffsetY + m_TitleRect.top, m_TitleRect.right - m_TitleRect.left, m_TitleAlign, m_TitleRect.bottom - m_TitleRect.top);
+	if (!CBPlatform::IsRectEmpty(&_titleRect) && font && _text) {
+		font->DrawText((byte  *)_text, _posX + OffsetX + _titleRect.left, _posY + OffsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
-	if (!m_Transparent && !image) Game->m_Renderer->m_RectList.Add(new CBActiveRect(Game, this, NULL, m_PosX + OffsetX, m_PosY + OffsetY, m_Width, m_Height, 100, 100, false));
+	if (!_transparent && !image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, _posX + OffsetX, _posY + OffsetY, _width, _height, 100, 100, false));
 
-	for (int i = 0; i < m_Widgets.GetSize(); i++) {
-		m_Widgets[i]->Display(m_PosX + OffsetX, m_PosY + OffsetY);
+	for (int i = 0; i < _widgets.GetSize(); i++) {
+		_widgets[i]->Display(_posX + OffsetX, _posY + OffsetY);
 	}
 
-	if (m_AlphaColor != 0) Game->m_Renderer->m_ForceAlphaColor = 0;
+	if (_alphaColor != 0) Game->_renderer->_forceAlphaColor = 0;
 
 	if (PopViewport) Game->PopViewport();
 
@@ -201,7 +201,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIWindow::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -209,8 +209,8 @@ HRESULT CUIWindow::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", Filename);
 
@@ -329,98 +329,98 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete m_Back;
-			m_Back = new CUITiledImage(Game);
-			if (!m_Back || FAILED(m_Back->LoadFile((char *)params))) {
-				delete m_Back;
-				m_Back = NULL;
+			delete _back;
+			_back = new CUITiledImage(Game);
+			if (!_back || FAILED(_back->LoadFile((char *)params))) {
+				delete _back;
+				_back = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_INACTIVE:
-			delete m_BackInactive;
-			m_BackInactive = new CUITiledImage(Game);
-			if (!m_BackInactive || FAILED(m_BackInactive->LoadFile((char *)params))) {
-				delete m_BackInactive;
-				m_BackInactive = NULL;
+			delete _backInactive;
+			_backInactive = new CUITiledImage(Game);
+			if (!_backInactive || FAILED(_backInactive->LoadFile((char *)params))) {
+				delete _backInactive;
+				_backInactive = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete m_Image;
-			m_Image = new CBSprite(Game);
-			if (!m_Image || FAILED(m_Image->LoadFile((char *)params))) {
-				delete m_Image;
-				m_Image = NULL;
+			delete _image;
+			_image = new CBSprite(Game);
+			if (!_image || FAILED(_image->LoadFile((char *)params))) {
+				delete _image;
+				_image = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_INACTIVE:
-			delete m_ImageInactive,
-			m_ImageInactive = new CBSprite(Game);
-			if (!m_ImageInactive || FAILED(m_ImageInactive->LoadFile((char *)params))) {
-				delete m_ImageInactive;
-				m_ImageInactive = NULL;
+			delete _imageInactive,
+			_imageInactive = new CBSprite(Game);
+			if (!_imageInactive || FAILED(_imageInactive->LoadFile((char *)params))) {
+				delete _imageInactive;
+				_imageInactive = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_FONT:
-			if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
-			m_Font = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_Font) cmd = PARSERR_GENERIC;
+			if (_font) Game->_fontStorage->RemoveFont(_font);
+			_font = Game->_fontStorage->AddFont((char *)params);
+			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_INACTIVE:
-			if (m_FontInactive) Game->m_FontStorage->RemoveFont(m_FontInactive);
-			m_FontInactive = Game->m_FontStorage->AddFont((char *)params);
-			if (!m_FontInactive) cmd = PARSERR_GENERIC;
+			if (_fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
+			_fontInactive = Game->_fontStorage->AddFont((char *)params);
+			if (!_fontInactive) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TITLE:
 			SetText((char *)params);
-			Game->m_StringTable->Expand(&m_Text);
+			Game->_stringTable->Expand(&_text);
 			break;
 
 		case TOKEN_TITLE_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) m_TitleAlign = TAL_LEFT;
-			else if (scumm_stricmp((char *)params, "right") == 0) m_TitleAlign = TAL_RIGHT;
-			else m_TitleAlign = TAL_CENTER;
+			if (scumm_stricmp((char *)params, "left") == 0) _titleAlign = TAL_LEFT;
+			else if (scumm_stricmp((char *)params, "right") == 0) _titleAlign = TAL_RIGHT;
+			else _titleAlign = TAL_CENTER;
 			break;
 
 		case TOKEN_TITLE_RECT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_TitleRect.left, &m_TitleRect.top, &m_TitleRect.right, &m_TitleRect.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_titleRect.left, &_titleRect.top, &_titleRect.right, &_titleRect.bottom);
 			break;
 
 		case TOKEN_DRAG_RECT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &m_DragRect.left, &m_DragRect.top, &m_DragRect.right, &m_DragRect.bottom);
+			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_dragRect.left, &_dragRect.top, &_dragRect.right, &_dragRect.bottom);
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &m_PosX);
+			parser.ScanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &m_PosY);
+			parser.ScanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &m_Width);
+			parser.ScanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &m_Height);
+			parser.ScanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_CURSOR:
-			delete m_Cursor;
-			m_Cursor = new CBSprite(Game);
-			if (!m_Cursor || FAILED(m_Cursor->LoadFile((char *)params))) {
-				delete m_Cursor;
-				m_Cursor = NULL;
+			delete _cursor;
+			_cursor = new CBSprite(Game);
+			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+				delete _cursor;
+				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -432,8 +432,8 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 				btn = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
-				btn->m_Parent = this;
-				m_Widgets.Add(btn);
+				btn->_parent = this;
+				_widgets.Add(btn);
 			}
 		}
 		break;
@@ -445,8 +445,8 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 				text = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
-				text->m_Parent = this;
-				m_Widgets.Add(text);
+				text->_parent = this;
+				_widgets.Add(text);
 			}
 		}
 		break;
@@ -458,8 +458,8 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 				edit = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
-				edit->m_Parent = this;
-				m_Widgets.Add(edit);
+				edit->_parent = this;
+				_widgets.Add(edit);
 			}
 		}
 		break;
@@ -471,15 +471,15 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 				win = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
-				win->m_Parent = this;
-				m_Widgets.Add(win);
+				win->_parent = this;
+				_widgets.Add(win);
 			}
 		}
 		break;
 
 
 		case TOKEN_TRANSPARENT:
-			parser.ScanStr((char *)params, "%b", &m_Transparent);
+			parser.ScanStr((char *)params, "%b", &_transparent);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -487,41 +487,41 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
-			parser.ScanStr((char *)params, "%b", &m_ParentNotify);
+			parser.ScanStr((char *)params, "%b", &_parentNotify);
 			break;
 
 		case TOKEN_PAUSE_MUSIC:
-			parser.ScanStr((char *)params, "%b", &m_PauseMusic);
+			parser.ScanStr((char *)params, "%b", &_pauseMusic);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &m_Disable);
+			parser.ScanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &m_Visible);
+			parser.ScanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_MENU:
-			parser.ScanStr((char *)params, "%b", &m_IsMenu);
+			parser.ScanStr((char *)params, "%b", &_isMenu);
 			break;
 
 		case TOKEN_IN_GAME:
-			parser.ScanStr((char *)params, "%b", &m_InGame);
+			parser.ScanStr((char *)params, "%b", &_inGame);
 			break;
 
 		case TOKEN_CLIP_CONTENTS:
-			parser.ScanStr((char *)params, "%b", &m_ClipContents);
+			parser.ScanStr((char *)params, "%b", &_clipContents);
 			break;
 
 		case TOKEN_FADE_COLOR:
 			parser.ScanStr((char *)params, "%d,%d,%d", &FadeR, &FadeG, &FadeB);
-			m_FadeBackground = true;
+			_fadeBackground = true;
 			break;
 
 		case TOKEN_FADE_ALPHA:
 			parser.ScanStr((char *)params, "%d", &FadeA);
-			m_FadeBackground = true;
+			_fadeBackground = true;
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -557,11 +557,11 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
 	}
-	m_AlphaColor = DRGBA(ar, ag, ab, alpha);
+	_alphaColor = DRGBA(ar, ag, ab, alpha);
 
-	if (m_FadeBackground) m_FadeColor = DRGBA(FadeR, FadeG, FadeB, FadeA);
+	if (_fadeBackground) _fadeColor = DRGBA(FadeR, FadeG, FadeB, FadeA);
 
-	m_FocusedWidget = NULL;
+	_focusedWidget = NULL;
 
 	return S_OK;
 }
@@ -571,35 +571,35 @@ HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "WINDOW\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	if (m_Back && m_Back->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", m_Back->m_Filename);
-	if (m_BackInactive && m_BackInactive->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_INACTIVE=\"%s\"\n", m_BackInactive->m_Filename);
+	if (_back && _back->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
+	if (_backInactive && _backInactive->_filename)
+		Buffer->PutTextIndent(Indent + 2, "BACK_INACTIVE=\"%s\"\n", _backInactive->_filename);
 
-	if (m_Image && m_Image->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", m_Image->m_Filename);
-	if (m_ImageInactive && m_ImageInactive->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_INACTIVE=\"%s\"\n", m_ImageInactive->m_Filename);
+	if (_image && _image->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
+	if (_imageInactive && _imageInactive->_filename)
+		Buffer->PutTextIndent(Indent + 2, "IMAGE_INACTIVE=\"%s\"\n", _imageInactive->_filename);
 
-	if (m_Font && m_Font->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", m_Font->m_Filename);
-	if (m_FontInactive && m_FontInactive->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_INACTIVE=\"%s\"\n", m_FontInactive->m_Filename);
+	if (_font && _font->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+	if (_fontInactive && _fontInactive->_filename)
+		Buffer->PutTextIndent(Indent + 2, "FONT_INACTIVE=\"%s\"\n", _fontInactive->_filename);
 
-	if (m_Cursor && m_Cursor->m_Filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", m_Cursor->m_Filename);
+	if (_cursor && _cursor->_filename)
+		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	if (m_Text)
-		Buffer->PutTextIndent(Indent + 2, "TITLE=\"%s\"\n", m_Text);
+	if (_text)
+		Buffer->PutTextIndent(Indent + 2, "TITLE=\"%s\"\n", _text);
 
-	switch (m_TitleAlign) {
+	switch (_titleAlign) {
 	case TAL_LEFT:
 		Buffer->PutTextIndent(Indent + 2, "TITLE_ALIGN=\"%s\"\n", "left");
 		break;
@@ -611,46 +611,46 @@ HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		break;
 	}
 
-	if (!CBPlatform::IsRectEmpty(&m_TitleRect)) {
-		Buffer->PutTextIndent(Indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", m_TitleRect.left, m_TitleRect.top, m_TitleRect.right, m_TitleRect.bottom);
+	if (!CBPlatform::IsRectEmpty(&_titleRect)) {
+		Buffer->PutTextIndent(Indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
-	if (!CBPlatform::IsRectEmpty(&m_DragRect)) {
-		Buffer->PutTextIndent(Indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", m_DragRect.left, m_DragRect.top, m_DragRect.right, m_DragRect.bottom);
+	if (!CBPlatform::IsRectEmpty(&_dragRect)) {
+		Buffer->PutTextIndent(Indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", m_PosX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", m_PosY);
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", m_Width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", m_Height);
+	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", m_Disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", m_Visible ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", m_ParentNotify ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
-	Buffer->PutTextIndent(Indent + 2, "TRANSPARENT=%s\n", m_Transparent ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PAUSE_MUSIC=%s\n", m_PauseMusic ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "MENU=%s\n", m_IsMenu ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "IN_GAME=%s\n", m_InGame ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "CLIP_CONTENTS=%s\n", m_ClipContents ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "TRANSPARENT=%s\n", _transparent ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "PAUSE_MUSIC=%s\n", _pauseMusic ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "MENU=%s\n", _isMenu ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "IN_GAME=%s\n", _inGame ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "CLIP_CONTENTS=%s\n", _clipContents ? "TRUE" : "FALSE");
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	if (m_FadeBackground) {
-		Buffer->PutTextIndent(Indent + 2, "FADE_COLOR { %d, %d, %d }\n", D3DCOLGetR(m_FadeColor), D3DCOLGetG(m_FadeColor), D3DCOLGetB(m_FadeColor));
-		Buffer->PutTextIndent(Indent + 2, "FADE_ALPHA=%d\n", D3DCOLGetA(m_FadeColor));
+	if (_fadeBackground) {
+		Buffer->PutTextIndent(Indent + 2, "FADE_COLOR { %d, %d, %d }\n", D3DCOLGetR(_fadeColor), D3DCOLGetG(_fadeColor), D3DCOLGetB(_fadeColor));
+		Buffer->PutTextIndent(Indent + 2, "FADE_ALPHA=%d\n", D3DCOLGetA(_fadeColor));
 	}
 
-	Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d, %d, %d }\n", D3DCOLGetR(m_AlphaColor), D3DCOLGetG(m_AlphaColor), D3DCOLGetB(m_AlphaColor));
-	Buffer->PutTextIndent(Indent + 2, "ALPHA=%d\n", D3DCOLGetA(m_AlphaColor));
+	Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d, %d, %d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
+	Buffer->PutTextIndent(Indent + 2, "ALPHA=%d\n", D3DCOLGetA(_alphaColor));
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// scripts
-	for (int i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (int i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
@@ -659,8 +659,8 @@ HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	CBBase::SaveAsText(Buffer, Indent + 2);
 
 	// controls
-	for (int i = 0; i < m_Widgets.GetSize(); i++)
-		m_Widgets[i]->SaveAsText(Buffer, Indent + 2);
+	for (int i = 0; i < _widgets.GetSize(); i++)
+		_widgets[i]->SaveAsText(Buffer, Indent + 2);
 
 
 	Buffer->PutTextIndent(Indent, "}\n");
@@ -669,8 +669,8 @@ HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::EnableWidget(char *Name, bool Enable) {
-	for (int i = 0; i < m_Widgets.GetSize(); i++) {
-		if (scumm_stricmp(m_Widgets[i]->m_Name, Name) == 0) m_Widgets[i]->m_Disable = !Enable;
+	for (int i = 0; i < _widgets.GetSize(); i++) {
+		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_disable = !Enable;
 	}
 	return S_OK;
 }
@@ -678,8 +678,8 @@ HRESULT CUIWindow::EnableWidget(char *Name, bool Enable) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::ShowWidget(char *Name, bool Visible) {
-	for (int i = 0; i < m_Widgets.GetSize(); i++) {
-		if (scumm_stricmp(m_Widgets[i]->m_Name, Name) == 0) m_Widgets[i]->m_Visible = Visible;
+	for (int i = 0; i < _widgets.GetSize(); i++) {
+		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_visible = Visible;
 	}
 	return S_OK;
 }
@@ -697,12 +697,12 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		CScValue *val = Stack->Pop();
 		if (val->GetType() == VAL_INT) {
 			int widget = val->GetInt();
-			if (widget < 0 || widget >= m_Widgets.GetSize()) Stack->PushNULL();
-			else Stack->PushNative(m_Widgets[widget], true);
+			if (widget < 0 || widget >= _widgets.GetSize()) Stack->PushNULL();
+			else Stack->PushNative(_widgets[widget], true);
 		} else {
-			for (int i = 0; i < m_Widgets.GetSize(); i++) {
-				if (scumm_stricmp(m_Widgets[i]->m_Name, val->GetString()) == 0) {
-					Stack->PushNative(m_Widgets[i], true);
+			for (int i = 0; i < _widgets.GetSize(); i++) {
+				if (scumm_stricmp(_widgets[i]->_name, val->GetString()) == 0) {
+					Stack->PushNative(_widgets[i], true);
 					return S_OK;
 				}
 			}
@@ -718,9 +718,9 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "SetInactiveFont") == 0) {
 		Stack->CorrectParams(1);
 
-		if (m_FontInactive) Game->m_FontStorage->RemoveFont(m_FontInactive);
-		m_FontInactive = Game->m_FontStorage->AddFont(Stack->Pop()->GetString());
-		Stack->PushBool(m_FontInactive != NULL);
+		if (_fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
+		_fontInactive = Game->_fontStorage->AddFont(Stack->Pop()->GetString());
+		Stack->PushBool(_fontInactive != NULL);
 
 		return S_OK;
 	}
@@ -731,12 +731,12 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "SetInactiveImage") == 0) {
 		Stack->CorrectParams(1);
 
-		delete m_ImageInactive;
-		m_ImageInactive = new CBSprite(Game);
+		delete _imageInactive;
+		_imageInactive = new CBSprite(Game);
 		char *Filename = Stack->Pop()->GetString();
-		if (!m_ImageInactive || FAILED(m_ImageInactive->LoadFile(Filename))) {
-			delete m_ImageInactive;
-			m_ImageInactive = NULL;
+		if (!_imageInactive || FAILED(_imageInactive->LoadFile(Filename))) {
+			delete _imageInactive;
+			_imageInactive = NULL;
 			Stack->PushBool(false);
 		} else Stack->PushBool(true);
 
@@ -748,8 +748,8 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetInactiveImage") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageInactive || !m_ImageInactive->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_ImageInactive->m_Filename);
+		if (!_imageInactive || !_imageInactive->_filename) Stack->PushNULL();
+		else Stack->PushString(_imageInactive->_filename);
 
 		return S_OK;
 	}
@@ -759,8 +759,8 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetInactiveImageObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_ImageInactive) Stack->PushNULL();
-		else Stack->PushNative(m_ImageInactive, true);
+		if (!_imageInactive) Stack->PushNULL();
+		else Stack->PushNative(_imageInactive, true);
 
 		return S_OK;
 	}
@@ -802,8 +802,8 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Center") == 0) {
 		Stack->CorrectParams(0);
-		m_PosX = (Game->m_Renderer->m_Width - m_Width) / 2;
-		m_PosY = (Game->m_Renderer->m_Height - m_Height) / 2;
+		_posX = (Game->_renderer->_width - _width) / 2;
+		_posY = (Game->_renderer->_height - _height) / 2;
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -834,8 +834,8 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (!Val->IsNULL()) Btn->SetName(Val->GetString());
 		Stack->PushNative(Btn, true);
 
-		Btn->m_Parent = this;
-		m_Widgets.Add(Btn);
+		Btn->_parent = this;
+		_widgets.Add(Btn);
 
 		return S_OK;
 	}
@@ -851,8 +851,8 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (!Val->IsNULL()) Sta->SetName(Val->GetString());
 		Stack->PushNative(Sta, true);
 
-		Sta->m_Parent = this;
-		m_Widgets.Add(Sta);
+		Sta->_parent = this;
+		_widgets.Add(Sta);
 
 		return S_OK;
 	}
@@ -868,8 +868,8 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (!Val->IsNULL()) Edi->SetName(Val->GetString());
 		Stack->PushNative(Edi, true);
 
-		Edi->m_Parent = this;
-		m_Widgets.Add(Edi);
+		Edi->_parent = this;
+		_widgets.Add(Edi);
 
 		return S_OK;
 	}
@@ -885,8 +885,8 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (!Val->IsNULL()) Win->SetName(Val->GetString());
 		Stack->PushNative(Win, true);
 
-		Win->m_Parent = this;
-		m_Widgets.Add(Win);
+		Win->_parent = this;
+		_widgets.Add(Win);
 
 		return S_OK;
 	}
@@ -899,10 +899,10 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		CScValue *val = Stack->Pop();
 		CUIObject *obj = (CUIObject *)val->GetNative();
 
-		for (int i = 0; i < m_Widgets.GetSize(); i++) {
-			if (m_Widgets[i] == obj) {
-				delete m_Widgets[i];
-				m_Widgets.RemoveAt(i);
+		for (int i = 0; i < _widgets.GetSize(); i++) {
+			if (_widgets[i] == obj) {
+				delete _widgets[i];
+				_widgets.RemoveAt(i);
 				if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
 			}
 		}
@@ -916,86 +916,86 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIWindow::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("window");
-		return m_ScValue;
+		_scValue->SetString("window");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumWidgets / NumControls (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumWidgets") == 0 || strcmp(Name, "NumControls") == 0) {
-		m_ScValue->SetInt(m_Widgets.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_widgets.GetSize());
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Exclusive") == 0) {
-		m_ScValue->SetBool(m_Mode == WINDOW_EXCLUSIVE);
-		return m_ScValue;
+		_scValue->SetBool(_mode == WINDOW_EXCLUSIVE);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SystemExclusive") == 0) {
-		m_ScValue->SetBool(m_Mode == WINDOW_SYSTEM_EXCLUSIVE);
-		return m_ScValue;
+		_scValue->SetBool(_mode == WINDOW_SYSTEM_EXCLUSIVE);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Menu") == 0) {
-		m_ScValue->SetBool(m_IsMenu);
-		return m_ScValue;
+		_scValue->SetBool(_isMenu);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "InGame") == 0) {
-		m_ScValue->SetBool(m_InGame);
-		return m_ScValue;
+		_scValue->SetBool(_inGame);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PauseMusic") == 0) {
-		m_ScValue->SetBool(m_PauseMusic);
-		return m_ScValue;
+		_scValue->SetBool(_pauseMusic);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ClipContents") == 0) {
-		m_ScValue->SetBool(m_ClipContents);
-		return m_ScValue;
+		_scValue->SetBool(_clipContents);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Transparent") == 0) {
-		m_ScValue->SetBool(m_Transparent);
-		return m_ScValue;
+		_scValue->SetBool(_transparent);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FadeColor") == 0) {
-		m_ScValue->SetInt((int)m_FadeColor);
-		return m_ScValue;
+		_scValue->SetInt((int)_fadeColor);
+		return _scValue;
 	}
 
 	else return CUIObject::ScGetProperty(Name);
@@ -1016,7 +1016,7 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Menu") == 0) {
-		m_IsMenu = Value->GetBool();
+		_isMenu = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1024,7 +1024,7 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "InGame") == 0) {
-		m_InGame = Value->GetBool();
+		_inGame = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1032,7 +1032,7 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PauseMusic") == 0) {
-		m_PauseMusic = Value->GetBool();
+		_pauseMusic = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1040,7 +1040,7 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ClipContents") == 0) {
-		m_ClipContents = Value->GetBool();
+		_clipContents = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1048,7 +1048,7 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Transparent") == 0) {
-		m_Transparent = Value->GetBool();
+		_transparent = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1056,8 +1056,8 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FadeColor") == 0) {
-		m_FadeColor = (uint32)Value->GetInt();
-		m_FadeBackground = (m_FadeColor != 0);
+		_fadeColor = (uint32)Value->GetInt();
+		_fadeBackground = (_fadeColor != 0);
 		return S_OK;
 	}
 
@@ -1069,7 +1069,7 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 			GoExclusive();
 		else {
 			Close();
-			m_Visible = true;
+			_visible = true;
 		}
 		return S_OK;
 	}
@@ -1082,7 +1082,7 @@ HRESULT CUIWindow::ScSetProperty(char *Name, CScValue *Value) {
 			GoSystemExclusive();
 		else {
 			Close();
-			m_Visible = true;
+			_visible = true;
 		}
 		return S_OK;
 	}
@@ -1104,7 +1104,7 @@ bool CUIWindow::HandleKeypress(SDL_Event *event) {
 	if (event->type == SDL_KEYDOWN && event->key.keysym.scancode == SDL_SCANCODE_TAB) {
 		return SUCCEEDED(MoveFocus(!CBKeyboardState::IsShiftDown()));
 	} else {
-		if (m_FocusedWidget) return m_FocusedWidget->HandleKeypress(event);
+		if (_focusedWidget) return _focusedWidget->HandleKeypress(event);
 		else return false;
 	}
 #endif
@@ -1114,7 +1114,7 @@ bool CUIWindow::HandleKeypress(SDL_Event *event) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CUIWindow::HandleMouseWheel(int Delta) {
-	if (m_FocusedWidget) return m_FocusedWidget->HandleMouseWheel(Delta);
+	if (_focusedWidget) return _focusedWidget->HandleMouseWheel(Delta);
 	else return false;
 }
 
@@ -1124,23 +1124,23 @@ HRESULT CUIWindow::HandleMouse(TMouseEvent Event, TMouseButton Button) {
 	HRESULT res = CUIObject::HandleMouse(Event, Button);
 
 	// handle window dragging
-	if (!CBPlatform::IsRectEmpty(&m_DragRect)) {
+	if (!CBPlatform::IsRectEmpty(&_dragRect)) {
 		// start drag
 		if (Event == MOUSE_CLICK && Button == MOUSE_BUTTON_LEFT) {
-			RECT DragRect = m_DragRect;
+			RECT DragRect = _dragRect;
 			int OffsetX, OffsetY;
 			GetTotalOffset(&OffsetX, &OffsetY);
-			CBPlatform::OffsetRect(&DragRect, m_PosX + OffsetX, m_PosY + OffsetY);
+			CBPlatform::OffsetRect(&DragRect, _posX + OffsetX, _posY + OffsetY);
 
-			if (CBPlatform::PtInRect(&DragRect, Game->m_MousePos)) {
-				m_DragFrom.x = Game->m_MousePos.x;
-				m_DragFrom.y = Game->m_MousePos.y;
-				m_Dragging = true;
+			if (CBPlatform::PtInRect(&DragRect, Game->_mousePos)) {
+				_dragFrom.x = Game->_mousePos.x;
+				_dragFrom.y = Game->_mousePos.y;
+				_dragging = true;
 			}
 		}
 		// end drag
-		else if (m_Dragging && Event == MOUSE_RELEASE && Button == MOUSE_BUTTON_LEFT) {
-			m_Dragging = false;
+		else if (_dragging && Event == MOUSE_RELEASE && Button == MOUSE_BUTTON_LEFT) {
+			_dragging = false;
 		}
 	}
 
@@ -1154,27 +1154,27 @@ HRESULT CUIWindow::Persist(CBPersistMgr *PersistMgr) {
 
 	CUIObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_BackInactive));
-	PersistMgr->Transfer(TMEMBER(m_ClipContents));
-	PersistMgr->Transfer(TMEMBER(m_DragFrom));
-	PersistMgr->Transfer(TMEMBER(m_Dragging));
-	PersistMgr->Transfer(TMEMBER(m_DragRect));
-	PersistMgr->Transfer(TMEMBER(m_FadeBackground));
-	PersistMgr->Transfer(TMEMBER(m_FadeColor));
-	PersistMgr->Transfer(TMEMBER(m_FontInactive));
-	PersistMgr->Transfer(TMEMBER(m_ImageInactive));
-	PersistMgr->Transfer(TMEMBER(m_InGame));
-	PersistMgr->Transfer(TMEMBER(m_IsMenu));
-	PersistMgr->Transfer(TMEMBER_INT(m_Mode));
-	PersistMgr->Transfer(TMEMBER(m_ShieldButton));
-	PersistMgr->Transfer(TMEMBER(m_ShieldWindow));
-	PersistMgr->Transfer(TMEMBER_INT(m_TitleAlign));
-	PersistMgr->Transfer(TMEMBER(m_TitleRect));
-	PersistMgr->Transfer(TMEMBER(m_Transparent));
-	PersistMgr->Transfer(TMEMBER(m_Viewport));
-	PersistMgr->Transfer(TMEMBER(m_PauseMusic));
+	PersistMgr->Transfer(TMEMBER(_backInactive));
+	PersistMgr->Transfer(TMEMBER(_clipContents));
+	PersistMgr->Transfer(TMEMBER(_dragFrom));
+	PersistMgr->Transfer(TMEMBER(_dragging));
+	PersistMgr->Transfer(TMEMBER(_dragRect));
+	PersistMgr->Transfer(TMEMBER(_fadeBackground));
+	PersistMgr->Transfer(TMEMBER(_fadeColor));
+	PersistMgr->Transfer(TMEMBER(_fontInactive));
+	PersistMgr->Transfer(TMEMBER(_imageInactive));
+	PersistMgr->Transfer(TMEMBER(_inGame));
+	PersistMgr->Transfer(TMEMBER(_isMenu));
+	PersistMgr->Transfer(TMEMBER_INT(_mode));
+	PersistMgr->Transfer(TMEMBER(_shieldButton));
+	PersistMgr->Transfer(TMEMBER(_shieldWindow));
+	PersistMgr->Transfer(TMEMBER_INT(_titleAlign));
+	PersistMgr->Transfer(TMEMBER(_titleRect));
+	PersistMgr->Transfer(TMEMBER(_transparent));
+	PersistMgr->Transfer(TMEMBER(_viewport));
+	PersistMgr->Transfer(TMEMBER(_pauseMusic));
 
-	m_Widgets.Persist(PersistMgr);
+	_widgets.Persist(PersistMgr);
 
 	return S_OK;
 }
@@ -1184,35 +1184,35 @@ HRESULT CUIWindow::Persist(CBPersistMgr *PersistMgr) {
 HRESULT CUIWindow::MoveFocus(bool Forward) {
 	int i;
 	bool found = false;
-	for (i = 0; i < m_Widgets.GetSize(); i++) {
-		if (m_Widgets[i] == m_FocusedWidget) {
+	for (i = 0; i < _widgets.GetSize(); i++) {
+		if (_widgets[i] == _focusedWidget) {
 			found = true;
 			break;
 		}
 	}
-	if (!found) m_FocusedWidget = NULL;
+	if (!found) _focusedWidget = NULL;
 
-	if (!m_FocusedWidget) {
-		if (m_Widgets.GetSize() > 0) i = 0;
+	if (!_focusedWidget) {
+		if (_widgets.GetSize() > 0) i = 0;
 		else return S_OK;
 	}
 
 	int NumTries = 0;
 	bool done = false;
 
-	while (NumTries <= m_Widgets.GetSize()) {
-		if (m_Widgets[i] != m_FocusedWidget && m_Widgets[i]->m_CanFocus && m_Widgets[i]->m_Visible && !m_Widgets[i]->m_Disable) {
-			m_FocusedWidget = m_Widgets[i];
+	while (NumTries <= _widgets.GetSize()) {
+		if (_widgets[i] != _focusedWidget && _widgets[i]->_canFocus && _widgets[i]->_visible && !_widgets[i]->_disable) {
+			_focusedWidget = _widgets[i];
 			done = true;
 			break;
 		}
 
 		if (Forward) {
 			i++;
-			if (i >= m_Widgets.GetSize()) i = 0;
+			if (i >= _widgets.GetSize()) i = 0;
 		} else {
 			i--;
-			if (i < 0) i = m_Widgets.GetSize() - 1;
+			if (i < 0) i = _widgets.GetSize() - 1;
 		}
 		NumTries++;
 	}
@@ -1223,13 +1223,13 @@ HRESULT CUIWindow::MoveFocus(bool Forward) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::GoExclusive() {
-	if (m_Mode == WINDOW_EXCLUSIVE) return S_OK;
+	if (_mode == WINDOW_EXCLUSIVE) return S_OK;
 
-	if (m_Mode == WINDOW_NORMAL) {
-		m_Ready = false;
-		m_Mode = WINDOW_EXCLUSIVE;
-		m_Visible = true;
-		m_Disable = false;
+	if (_mode == WINDOW_NORMAL) {
+		_ready = false;
+		_mode = WINDOW_EXCLUSIVE;
+		_visible = true;
+		_disable = false;
 		Game->FocusWindow(this);
 		return S_OK;
 	} else return E_FAIL;
@@ -1238,30 +1238,30 @@ HRESULT CUIWindow::GoExclusive() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::GoSystemExclusive() {
-	if (m_Mode == WINDOW_SYSTEM_EXCLUSIVE) return S_OK;
+	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return S_OK;
 
 	MakeFreezable(false);
 
-	m_Mode = WINDOW_SYSTEM_EXCLUSIVE;
-	m_Ready = false;
-	m_Visible = true;
-	m_Disable = false;
+	_mode = WINDOW_SYSTEM_EXCLUSIVE;
+	_ready = false;
+	_visible = true;
+	_disable = false;
 	Game->FocusWindow(this);
 
-	Game->Freeze(m_PauseMusic);
+	Game->Freeze(_pauseMusic);
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::Close() {
-	if (m_Mode == WINDOW_SYSTEM_EXCLUSIVE) {
+	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		Game->Unfreeze();
 	}
 
-	m_Mode = WINDOW_NORMAL;
-	m_Visible = false;
-	m_Ready = true;
+	_mode = WINDOW_NORMAL;
+	_visible = false;
+	_ready = true;
 
 	return S_OK;
 }
@@ -1271,9 +1271,9 @@ HRESULT CUIWindow::Close() {
 HRESULT CUIWindow::Listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
-	switch (obj->m_Type) {
+	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->m_Name, "close") == 0) Close();
+		if (scumm_stricmp(obj->_name, "close") == 0) Close();
 		else return CBObject::Listen(param1, param2);
 		break;
 	default:
@@ -1286,8 +1286,8 @@ HRESULT CUIWindow::Listen(CBScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 void CUIWindow::MakeFreezable(bool Freezable) {
-	for (int i = 0; i < m_Widgets.GetSize(); i++)
-		m_Widgets[i]->MakeFreezable(Freezable);
+	for (int i = 0; i < _widgets.GetSize(); i++)
+		_widgets[i]->MakeFreezable(Freezable);
 
 	CBObject::MakeFreezable(Freezable);
 }
@@ -1295,11 +1295,11 @@ void CUIWindow::MakeFreezable(bool Freezable) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::GetWindowObjects(CBArray<CUIObject *, CUIObject *>& Objects, bool InteractiveOnly) {
-	for (int i = 0; i < m_Widgets.GetSize(); i++) {
-		CUIObject *Control = m_Widgets[i];
-		if (Control->m_Disable && InteractiveOnly) continue;
+	for (int i = 0; i < _widgets.GetSize(); i++) {
+		CUIObject *Control = _widgets[i];
+		if (Control->_disable && InteractiveOnly) continue;
 
-		switch (Control->m_Type) {
+		switch (Control->_type) {
 		case UI_WINDOW:
 			((CUIWindow *)Control)->GetWindowObjects(Objects, InteractiveOnly);
 			break;

@@ -39,13 +39,13 @@ namespace WinterMute {
 
 class CBKeyboardState : public CBScriptable {
 public:
-	uint32 m_CurrentKeyData;
-	uint32 m_CurrentCharCode;
-	bool m_CurrentPrintable;
+	uint32 _currentKeyData;
+	uint32 _currentCharCode;
+	bool _currentPrintable;
 
-	bool m_CurrentShift;
-	bool m_CurrentAlt;
-	bool m_CurrentControl;
+	bool _currentShift;
+	bool _currentAlt;
+	bool _currentControl;
 
 	DECLARE_PERSISTENT(CBKeyboardState, CBScriptable)
 	CBKeyboardState(CBGame *inGame);

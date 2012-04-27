@@ -45,10 +45,10 @@ CSXStore::CSXStore(CBGame *inGame) : CBObject(inGame) {
 	StoreKit_SetExternalData((void *)this);
 #endif
 
-	m_EventsEnabled = false;
-	m_LastProductRequestOwner = NULL;
-	m_LastPurchaseOwner = NULL;
-	m_LastRestoreOwner = NULL;
+	_eventsEnabled = false;
+	_lastProductRequestOwner = NULL;
+	_lastPurchaseOwner = NULL;
+	_lastRestoreOwner = NULL;
 }
 
 
@@ -61,19 +61,19 @@ CSXStore::~CSXStore() {
 void CSXStore::Cleanup() {
 	SetEventsEnabled(NULL, false);
 
-	for (int i = 0; i < m_ValidProducts.GetSize(); i++) {
-		delete m_ValidProducts[i];
+	for (int i = 0; i < _validProducts.GetSize(); i++) {
+		delete _validProducts[i];
 	}
-	m_ValidProducts.RemoveAll();
+	_validProducts.RemoveAll();
 
 
-	for (int i = 0; i < m_Transactions.GetSize(); i++) {
-		delete m_Transactions[i];
+	for (int i = 0; i < _transactions.GetSize(); i++) {
+		delete _transactions[i];
 	}
-	m_Transactions.RemoveAll();
+	_transactions.RemoveAll();
 
 
-	m_LastProductRequestOwner = m_LastPurchaseOwner = m_LastRestoreOwner = NULL;
+	_lastProductRequestOwner = _lastPurchaseOwner = _lastRestoreOwner = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "ValidateProducts") == 0) {
 		stack->CorrectParams(1);
 		char *prodIdList = stack->Pop()->GetString();
-		m_LastProductRequestOwner = script->m_Owner;
+		_lastProductRequestOwner = script->_owner;
 		ValidateProducts(prodIdList);
 		stack->PushNULL();
 		return S_OK;
@@ -113,13 +113,13 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "GetValidProduct") == 0) {
 		stack->CorrectParams(1);
 		int index = stack->Pop()->GetInt();
-		if (index >= 0 && index < m_ValidProducts.GetSize()) {
+		if (index >= 0 && index < _validProducts.GetSize()) {
 			CScValue *prod = stack->GetPushValue();
 			if (prod) {
-				prod->SetProperty("Id", m_ValidProducts[index]->GetId());
-				prod->SetProperty("Name", m_ValidProducts[index]->GetName());
-				prod->SetProperty("Description", m_ValidProducts[index]->GetDesc());
-				prod->SetProperty("Price", m_ValidProducts[index]->GetPrice());
+				prod->SetProperty("Id", _validProducts[index]->GetId());
+				prod->SetProperty("Name", _validProducts[index]->GetName());
+				prod->SetProperty("Description", _validProducts[index]->GetDesc());
+				prod->SetProperty("Price", _validProducts[index]->GetPrice());
 			}
 		} else
 			stack->PushNULL();
@@ -132,8 +132,8 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "GetInvalidProduct") == 0) {
 		stack->CorrectParams(1);
 		int index = stack->Pop()->GetInt();
-		if (index >= 0 && index < m_InvalidProducts.size())
-			stack->PushString(m_InvalidProducts[index].c_str());
+		if (index >= 0 && index < _invalidProducts.size())
+			stack->PushString(_invalidProducts[index].c_str());
 		else
 			stack->PushNULL();
 
@@ -145,12 +145,12 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "GetTransaction") == 0) {
 		stack->CorrectParams(1);
 		int index = stack->Pop()->GetInt();
-		if (index >= 0 && index < m_Transactions.GetSize()) {
+		if (index >= 0 && index < _transactions.GetSize()) {
 			CScValue *trans = stack->GetPushValue();
 			if (trans) {
-				trans->SetProperty("Id", m_Transactions[index]->GetId());
-				trans->SetProperty("ProductId", m_Transactions[index]->GetProductId());
-				trans->SetProperty("State", m_Transactions[index]->GetState());
+				trans->SetProperty("Id", _transactions[index]->GetId());
+				trans->SetProperty("ProductId", _transactions[index]->GetProductId());
+				trans->SetProperty("State", _transactions[index]->GetState());
 			}
 		} else
 			stack->PushNULL();
@@ -195,8 +195,8 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->CorrectParams(1);
 		char *prodId = stack->Pop()->GetString();
 
-		Game->m_Registry->WriteBool("Purchases", prodId, true);
-		Game->m_Registry->SaveValues();
+		Game->_registry->WriteBool("Purchases", prodId, true);
+		Game->_registry->SaveValues();
 
 		stack->PushBool(true);
 
@@ -210,7 +210,7 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->CorrectParams(1);
 		char *prodId = stack->Pop()->GetString();
 
-		stack->PushBool(Game->m_Registry->ReadBool("Purchases", prodId, false));
+		stack->PushBool(Game->_registry->ReadBool("Purchases", prodId, false));
 
 		return S_OK;
 	}
@@ -221,80 +221,80 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXStore::ScGetProperty(char *name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		m_ScValue->SetString("store");
-		return m_ScValue;
+		_scValue->SetString("store");
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Available (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Available") == 0) {
-		m_ScValue->SetBool(IsAvailable());
-		return m_ScValue;
+		_scValue->SetBool(IsAvailable());
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// EventsEnabled (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EventsEnabled") == 0) {
-		m_ScValue->SetBool(GetEventsEnabled());
-		return m_ScValue;
+		_scValue->SetBool(GetEventsEnabled());
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// NumValidProducts (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumValidProducts") == 0) {
-		m_ScValue->SetInt(m_ValidProducts.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_validProducts.GetSize());
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// NumInvalidProducts (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumInvalidProducts") == 0) {
-		m_ScValue->SetInt(m_InvalidProducts.size());
-		return m_ScValue;
+		_scValue->SetInt(_invalidProducts.size());
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// NumTransactions (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumTransactions") == 0) {
-		m_ScValue->SetInt(m_Transactions.GetSize());
-		return m_ScValue;
+		_scValue->SetInt(_transactions.GetSize());
+		return _scValue;
 	}
 
-	else return m_ScValue;
+	else return _scValue;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSXStore::Persist(CBPersistMgr *PersistMgr) {
-	if (!PersistMgr->m_Saving) Cleanup();
+	if (!PersistMgr->_saving) Cleanup();
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_EventsEnabled));
-	PersistMgr->Transfer(TMEMBER(m_LastProductRequestOwner));
-	PersistMgr->Transfer(TMEMBER(m_LastPurchaseOwner));
-	PersistMgr->Transfer(TMEMBER(m_LastRestoreOwner));
-	PersistMgr->Transfer(TMEMBER(m_InvalidProducts));
+	PersistMgr->Transfer(TMEMBER(_eventsEnabled));
+	PersistMgr->Transfer(TMEMBER(_lastProductRequestOwner));
+	PersistMgr->Transfer(TMEMBER(_lastPurchaseOwner));
+	PersistMgr->Transfer(TMEMBER(_lastRestoreOwner));
+	PersistMgr->Transfer(TMEMBER(_invalidProducts));
 
 	// persist valid products
 	int numProducts;
-	if (PersistMgr->m_Saving) {
-		numProducts = m_ValidProducts.GetSize();
+	if (PersistMgr->_saving) {
+		numProducts = _validProducts.GetSize();
 		PersistMgr->Transfer(TMEMBER(numProducts));
-		for (int i = 0; i < numProducts; i++) m_ValidProducts[i]->Persist(PersistMgr);
+		for (int i = 0; i < numProducts; i++) _validProducts[i]->Persist(PersistMgr);
 	} else {
-		numProducts = m_ValidProducts.GetSize();
+		numProducts = _validProducts.GetSize();
 		PersistMgr->Transfer(TMEMBER(numProducts));
 		for (int i = 0; i < numProducts; i++) {
 			CBStoreProduct *prod = new CBStoreProduct;
 			prod->Persist(PersistMgr);
-			m_ValidProducts.Add(prod);
+			_validProducts.Add(prod);
 		}
 	}
 
@@ -304,7 +304,7 @@ HRESULT CSXStore::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::AfterLoad() {
-	if (m_EventsEnabled) {
+	if (_eventsEnabled) {
 		SetEventsEnabled(NULL, true);
 	}
 #ifdef __IPHONEOS__
@@ -314,22 +314,22 @@ void CSXStore::AfterLoad() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::OnObjectDestroyed(CBScriptHolder *obj) {
-	if (m_LastProductRequestOwner == obj) m_LastProductRequestOwner = NULL;
-	if (m_LastPurchaseOwner == obj) m_LastPurchaseOwner = NULL;
-	if (m_LastRestoreOwner == obj) m_LastRestoreOwner = NULL;
+	if (_lastProductRequestOwner == obj) _lastProductRequestOwner = NULL;
+	if (_lastPurchaseOwner == obj) _lastPurchaseOwner = NULL;
+	if (_lastRestoreOwner == obj) _lastRestoreOwner = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::SetEventsEnabled(CScScript *script, bool val) {
-	m_EventsEnabled = val;
+	_eventsEnabled = val;
 
 	if (val) {
-		if (script) m_LastPurchaseOwner = script->m_Owner;
+		if (script) _lastPurchaseOwner = script->_owner;
 #ifdef __IPHONEOS__
 		StoreKit_EnableEvents();
 #endif
 	} else {
-		m_LastPurchaseOwner = NULL;
+		_lastPurchaseOwner = NULL;
 #ifdef __IPHONEOS__
 		StoreKit_DisableEvents();
 #endif
@@ -354,48 +354,48 @@ bool CSXStore::IsAvailable() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::ReceiveProductsStart() {
-	for (int i = 0; i < m_ValidProducts.GetSize(); i++) {
-		delete m_ValidProducts[i];
+	for (int i = 0; i < _validProducts.GetSize(); i++) {
+		delete _validProducts[i];
 	}
-	m_ValidProducts.RemoveAll();
+	_validProducts.RemoveAll();
 
-	m_InvalidProducts.clear();
+	_invalidProducts.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::ReceiveProductsEnd() {
-	if (m_LastProductRequestOwner) m_LastProductRequestOwner->ApplyEvent("ProductsValidated");
+	if (_lastProductRequestOwner) _lastProductRequestOwner->ApplyEvent("ProductsValidated");
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::AddValidProduct(const char *id, const char *name, const char *desc, const char *price) {
 	CBStoreProduct *prod = new CBStoreProduct(id, name, desc, price);
-	m_ValidProducts.Add(prod);
+	_validProducts.Add(prod);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::AddInvalidProduct(const char *id) {
-	m_InvalidProducts.push_back(id);
+	_invalidProducts.push_back(id);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::ReceiveTransactionsStart() {
-	for (int i = 0; i < m_Transactions.GetSize(); i++) {
-		delete m_Transactions[i];
+	for (int i = 0; i < _transactions.GetSize(); i++) {
+		delete _transactions[i];
 	}
-	m_Transactions.RemoveAll();
+	_transactions.RemoveAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::ReceiveTransactionsEnd() {
-	if (m_LastPurchaseOwner) m_LastPurchaseOwner->ApplyEvent("TransactionsUpdated");
+	if (_lastPurchaseOwner) _lastPurchaseOwner->ApplyEvent("TransactionsUpdated");
 	else Game->ApplyEvent("TransactionsUpdated");
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::AddTransaction(const char *id, const char *productId, const char *state) {
 	CBStoreTransaction *trans = new CBStoreTransaction(id, productId, state);
-	m_Transactions.Add(trans);
+	_transactions.Add(trans);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -403,9 +403,9 @@ bool CSXStore::Purchase(CScScript *script, const char *productId) {
 	if (!productId) return false;
 
 #ifdef __IPHONEOS__
-	for (int i = 0; i < m_ValidProducts.GetSize(); i++) {
-		if (strcmp(productId, m_ValidProducts[i]->GetId()) == 0) {
-			m_LastPurchaseOwner = script->m_Owner;
+	for (int i = 0; i < _validProducts.GetSize(); i++) {
+		if (strcmp(productId, _validProducts[i]->GetId()) == 0) {
+			_lastPurchaseOwner = script->_owner;
 
 			StoreKit_Purchase(productId);
 			return true;
@@ -420,11 +420,11 @@ bool CSXStore::Purchase(CScScript *script, const char *productId) {
 bool CSXStore::FinishTransaction(CScScript *script, const char *transId) {
 	if (!transId) return false;
 #ifdef __IPHONEOS__
-	for (int i = 0; i < m_Transactions.GetSize(); i++) {
-		if (strcmp(transId, m_Transactions[i]->GetId()) == 0) {
+	for (int i = 0; i < _transactions.GetSize(); i++) {
+		if (strcmp(transId, _transactions[i]->GetId()) == 0) {
 			if (StoreKit_FinishTransaction(transId) > 0) {
-				SAFE_DELETE(m_Transactions[i]);
-				m_Transactions.RemoveAt(i);
+				SAFE_DELETE(_transactions[i]);
+				_transactions.RemoveAt(i);
 				return true;
 			} else return false;
 		}
@@ -436,7 +436,7 @@ bool CSXStore::FinishTransaction(CScScript *script, const char *transId) {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::RestoreTransactions(CScScript *script) {
-	m_LastRestoreOwner = script->m_Owner;
+	_lastRestoreOwner = script->_owner;
 #ifdef __IPHONEOS__
 	StoreKit_RestoreTransactions();
 #endif
@@ -444,9 +444,9 @@ void CSXStore::RestoreTransactions(CScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::OnRestoreFinished(bool error) {
-	if (m_LastRestoreOwner) {
-		if (error) m_LastRestoreOwner->ApplyEvent("TransactionsRestoreFailed");
-		else m_LastRestoreOwner->ApplyEvent("TransactionsRestoreFinished");
+	if (_lastRestoreOwner) {
+		if (error) _lastRestoreOwner->ApplyEvent("TransactionsRestoreFailed");
+		else _lastRestoreOwner->ApplyEvent("TransactionsRestoreFinished");
 	}
 }
 

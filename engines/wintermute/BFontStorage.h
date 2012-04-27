@@ -49,16 +49,16 @@ public:
 	CBFont *AddFont(char *Filename);
 	CBFontStorage(CBGame *inGame);
 	virtual ~CBFontStorage();
-	CBArray<CBFont *, CBFont *> m_Fonts;
+	CBArray<CBFont *, CBFont *> _fonts;
 	HRESULT InitLoop();
 
 	FT_Library GetFTLibrary() const {
-		return m_FTLibrary;
+		return _fTLibrary;
 	}
 
 private:
 	void InitFreeType();
-	FT_Library m_FTLibrary;
+	FT_Library _fTLibrary;
 };
 
 } // end of namespace WinterMute

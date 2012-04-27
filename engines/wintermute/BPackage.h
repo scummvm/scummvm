@@ -43,14 +43,14 @@ public:
 	Common::File *GetFilePointer();
 	void CloseFilePointer(Common::File*& file);
 
-	bool m_BoundToExe;
-	byte m_Priority;
+	bool _boundToExe;
+	byte _priority;
 	HRESULT Read(Common::File *file, uint32 offset, byte *buffer, uint32 size);
 	HRESULT Close();
 	HRESULT Open();
-	char *m_Name;
-	int m_CD;
-	Common::File *m_File;
+	char *_name;
+	int _cD;
+	Common::File *_file;
 	CBPackage(CBGame *inGame);
 	virtual ~CBPackage();
 

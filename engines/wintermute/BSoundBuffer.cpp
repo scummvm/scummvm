@@ -45,20 +45,20 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 CBSoundBuffer::CBSoundBuffer(CBGame *inGame): CBBase(inGame) {
 #if 0
-	m_Stream = NULL;
-	m_Sync = NULL;
+	_stream = NULL;
+	_sync = NULL;
 
-	m_Streamed = false;
-	m_Filename = NULL;
-	m_File = NULL;
-	m_PrivateVolume = 100;
+	_streamed = false;
+	_filename = NULL;
+	_file = NULL;
+	_privateVolume = 100;
 
-	m_Looping = false;
-	m_LoopStart = 0;
+	_looping = false;
+	_loopStart = 0;
 
-	m_Type = SOUND_SFX;
+	_type = SOUND_SFX;
 
-	m_FreezePaused = false;
+	_freezePaused = false;
 #endif
 }
 
@@ -68,39 +68,39 @@ CBSoundBuffer::~CBSoundBuffer() {
 #if 0
 	Stop();
 
-	if (m_Stream) {
-		BASS_StreamFree(m_Stream);
-		m_Stream = NULL;
+	if (_stream) {
+		BASS_StreamFree(_stream);
+		_stream = NULL;
 	}
 
-	if (m_File) {
-		Game->m_FileManager->CloseFile(m_File);
-		m_File = NULL;
+	if (_file) {
+		Game->_fileManager->CloseFile(_file);
+		_file = NULL;
 	}
 
-	SAFE_DELETE_ARRAY(m_Filename);
+	SAFE_DELETE_ARRAY(_filename);
 #endif
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CBSoundBuffer::SetStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSize) {
-	m_Streamed = Streamed;
+	_streamed = Streamed;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 #if 0
-	if (m_Stream) {
-		BASS_StreamFree(m_Stream);
-		m_Stream = NULL;
+	if (_stream) {
+		BASS_StreamFree(_stream);
+		_stream = NULL;
 	}
 
-	if (m_File) Game->m_FileManager->CloseFile(m_File);
+	if (_file) Game->_fileManager->CloseFile(_file);
 
-	m_File = Game->m_FileManager->OpenFile(Filename);
-	if (!m_File) {
+	_file = Game->_fileManager->OpenFile(Filename);
+	if (!_file) {
 		Game->LOG(0, "Error opening sound file '%s'", Filename);
 		return E_FAIL;
 	}
@@ -111,33 +111,33 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 	fileProc.seek = CBSoundBuffer::FileSeekProc;
 	fileProc.length = CBSoundBuffer::FileLenProc;
 
-	m_Stream = BASS_StreamCreateFileUser(STREAMFILE_NOBUFFER, 0, &fileProc, (void *)m_File);
-	if (!m_Stream) {
+	_stream = BASS_StreamCreateFileUser(STREAMFILE_NOBUFFER, 0, &fileProc, (void *)_file);
+	if (!_stream) {
 		Game->LOG(0, "BASS error: %d while loading '%s'", BASS_ErrorGetCode(), Filename);
 		return E_FAIL;
 	}
 
-	CBUtils::SetString(&m_Filename, Filename);
+	CBUtils::SetString(&_filename, Filename);
 
 	/*
 	HRESULT res;
 	bool NewlyCreated = false;
 
-	if(!m_SoundBuffer || ForceReload || m_Streamed){
-	    if(!m_File) m_File = Game->m_FileManager->OpenFile(Filename);
-	    if(!m_File){
+	if(!_soundBuffer || ForceReload || _streamed){
+	    if(!_file) _file = Game->_fileManager->OpenFile(Filename);
+	    if(!_file){
 	        Game->LOG(0, "Error opening sound file '%s'", Filename);
 	        return E_FAIL;
 	    }
 	    // switch to streamed for big files
-	    if(!m_Streamed && (m_File->GetSize() > MAX_NONSTREAMED_FILE_SIZE && !Game->m_ForceNonStreamedSounds)) SetStreaming(true);
+	    if(!_streamed && (_file->GetSize() > MAX_NONSTREAMED_FILE_SIZE && !Game->_forceNonStreamedSounds)) SetStreaming(true);
 	}
 
 	// create buffer
-	if(!m_SoundBuffer){
+	if(!_soundBuffer){
 	    NewlyCreated = true;
 
-	    res = InitializeBuffer(m_File);
+	    res = InitializeBuffer(_file);
 	    if(FAILED(res)){
 	        Game->LOG(res, "Error creating sound buffer for file '%s'", Filename);
 	        return res;
@@ -147,15 +147,15 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 
 
 	// store filename
-	if(!m_Filename){
-	    m_Filename = new char[strlen(Filename)+1];
-	    strcpy(m_Filename, Filename);
+	if(!_filename){
+	    _filename = new char[strlen(Filename)+1];
+	    strcpy(_filename, Filename);
 	}
 
 	// close file (if not streaming)
-	if(!m_Streamed && m_File){
-	    Game->m_FileManager->CloseFile(m_File);
-	    m_File = NULL;
+	if(!_streamed && _file){
+	    Game->_fileManager->CloseFile(_file);
+	    _file = NULL;
 	}
 	*/
 
@@ -167,9 +167,9 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Play(bool Looping, uint32 StartSample) {
 #if 0
-	if (m_Stream) {
+	if (_stream) {
 		SetLooping(Looping);
-		BASS_ChannelPlay(m_Stream, TRUE);
+		BASS_ChannelPlay(_stream, TRUE);
 	}
 	return S_OK;
 #endif
@@ -178,10 +178,10 @@ HRESULT CBSoundBuffer::Play(bool Looping, uint32 StartSample) {
 //////////////////////////////////////////////////////////////////////////
 void CBSoundBuffer::SetLooping(bool looping) {
 #if 0
-	m_Looping = looping;
+	_looping = looping;
 
-	if (m_Stream) {
-		BASS_ChannelFlags(m_Stream, looping ? BASS_SAMPLE_LOOP : 0, BASS_SAMPLE_LOOP);
+	if (_stream) {
+		BASS_ChannelFlags(_stream, looping ? BASS_SAMPLE_LOOP : 0, BASS_SAMPLE_LOOP);
 	}
 #endif
 }
@@ -189,8 +189,8 @@ void CBSoundBuffer::SetLooping(bool looping) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Resume() {
 #if 0
-	if (m_Stream) {
-		BASS_ChannelPlay(m_Stream, FALSE);
+	if (_stream) {
+		BASS_ChannelPlay(_stream, FALSE);
 	}
 	return S_OK;
 #endif
@@ -200,8 +200,8 @@ HRESULT CBSoundBuffer::Resume() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Stop() {
 #if 0
-	if (m_Stream) {
-		BASS_ChannelStop(m_Stream);
+	if (_stream) {
+		BASS_ChannelStop(_stream);
 	}
 #endif
 	return S_OK;
@@ -211,8 +211,8 @@ HRESULT CBSoundBuffer::Stop() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Pause() {
 #if 0
-	if (m_Stream) {
-		BASS_ChannelPause(m_Stream);
+	if (_stream) {
+		BASS_ChannelPause(_stream);
 	}
 #endif
 	return S_OK;
@@ -222,23 +222,23 @@ HRESULT CBSoundBuffer::Pause() {
 //////////////////////////////////////////////////////////////////////////
 uint32 CBSoundBuffer::GetLength() {
 #if 0
-	QWORD len = BASS_ChannelGetLength(m_Stream, BASS_POS_BYTE);
-	return 1000 * BASS_ChannelBytes2Seconds(m_Stream, len);
+	QWORD len = BASS_ChannelGetLength(_stream, BASS_POS_BYTE);
+	return 1000 * BASS_ChannelBytes2Seconds(_stream, len);
 #endif
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CBSoundBuffer::SetType(TSoundType Type) {
-	m_Type = Type;
+	_type = Type;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetVolume(int Volume) {
 #if 0
-	if (m_Stream) {
-		BASS_ChannelSetAttribute(m_Stream, BASS_ATTRIB_VOL, (float)Volume / 100.0f);
+	if (_stream) {
+		BASS_ChannelSetAttribute(_stream, BASS_ATTRIB_VOL, (float)Volume / 100.0f);
 	}
 #endif
 	return S_OK;
@@ -248,17 +248,17 @@ HRESULT CBSoundBuffer::SetVolume(int Volume) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetPrivateVolume(int Volume) {
 #if 0
-	m_PrivateVolume = Volume;
+	_privateVolume = Volume;
 
-	switch (m_Type) {
+	switch (_type) {
 	case SOUND_SFX:
-		Volume = Game->m_SoundMgr->m_VolumeSFX;
+		Volume = Game->_soundMgr->_volumeSFX;
 		break;
 	case SOUND_SPEECH:
-		Volume = Game->m_SoundMgr->m_VolumeSpeech;
+		Volume = Game->_soundMgr->_volumeSpeech;
 		break;
 	case SOUND_MUSIC:
-		Volume = Game->m_SoundMgr->m_VolumeMusic;
+		Volume = Game->_soundMgr->_volumeMusic;
 		break;
 	}
 #endif
@@ -269,7 +269,7 @@ HRESULT CBSoundBuffer::SetPrivateVolume(int Volume) {
 //////////////////////////////////////////////////////////////////////////
 bool CBSoundBuffer::IsPlaying() {
 #if 0
-	return m_FreezePaused || BASS_ChannelIsActive(m_Stream) == BASS_ACTIVE_PLAYING;
+	return _freezePaused || BASS_ChannelIsActive(_stream) == BASS_ACTIVE_PLAYING;
 #endif
 	return false;
 }
@@ -278,9 +278,9 @@ bool CBSoundBuffer::IsPlaying() {
 //////////////////////////////////////////////////////////////////////////
 uint32 CBSoundBuffer::GetPosition() {
 #if 0
-	if (m_Stream) {
-		QWORD len = BASS_ChannelGetPosition(m_Stream, BASS_POS_BYTE);
-		return 1000 * BASS_ChannelBytes2Seconds(m_Stream, len);
+	if (_stream) {
+		QWORD len = BASS_ChannelGetPosition(_stream, BASS_POS_BYTE);
+		return 1000 * BASS_ChannelBytes2Seconds(_stream, len);
 	} else return 0;
 #endif
 	return 0;
@@ -290,9 +290,9 @@ uint32 CBSoundBuffer::GetPosition() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetPosition(uint32 Pos) {
 #if 0
-	if (m_Stream) {
-		QWORD pos = BASS_ChannelSeconds2Bytes(m_Stream, (float)Pos / 1000.0f);
-		BASS_ChannelSetPosition(m_Stream, pos, BASS_POS_BYTE);
+	if (_stream) {
+		QWORD pos = BASS_ChannelSeconds2Bytes(_stream, (float)Pos / 1000.0f);
+		BASS_ChannelSetPosition(_stream, pos, BASS_POS_BYTE);
 	}
 #endif
 	return S_OK;
@@ -300,16 +300,16 @@ HRESULT CBSoundBuffer::SetPosition(uint32 Pos) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetLoopStart(uint32 Pos) {
-	m_LoopStart = Pos;
+	_loopStart = Pos;
 #if 0
-	if (m_Stream) {
-		if (m_Sync) {
-			BASS_ChannelRemoveSync(m_Stream, m_Sync);
-			m_Sync = NULL;
+	if (_stream) {
+		if (_sync) {
+			BASS_ChannelRemoveSync(_stream, _sync);
+			_sync = NULL;
 		}
-		if (m_LoopStart > 0) {
-			QWORD len = BASS_ChannelGetLength(m_Stream, BASS_POS_BYTE);
-			m_Sync = BASS_ChannelSetSync(m_Stream, BASS_SYNC_POS | BASS_SYNC_MIXTIME, len, CBSoundBuffer::LoopSyncProc, (void *)this);
+		if (_loopStart > 0) {
+			QWORD len = BASS_ChannelGetLength(_stream, BASS_POS_BYTE);
+			_sync = BASS_ChannelSetSync(_stream, BASS_SYNC_POS | BASS_SYNC_MIXTIME, len, CBSoundBuffer::LoopSyncProc, (void *)this);
 		}
 	}
 #endif
@@ -328,8 +328,8 @@ void CBSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetPan(float Pan) {
 #if 0
-	if (m_Stream) {
-		BASS_ChannelSetAttribute(m_Stream, BASS_ATTRIB_PAN, Pan);
+	if (_stream) {
+		BASS_ChannelSetAttribute(_stream, BASS_ATTRIB_PAN, Pan);
 	}
 #endif
 	return S_OK;
@@ -357,7 +357,7 @@ HRESULT CBSoundBuffer::ApplyFX(TSFXType Type, float Param1, float Param2, float 
 void CBSoundBuffer::FileCloseProc(void *user) {
 	/*
 	CBFile* file = static_cast<CBFile*>(user);
-	file->Game->m_FileManager->CloseFile(file);
+	file->Game->_fileManager->CloseFile(file);
 	*/
 }
 

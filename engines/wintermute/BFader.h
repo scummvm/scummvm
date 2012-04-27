@@ -36,7 +36,7 @@ namespace WinterMute {
 
 class CBFader : public CBObject {
 public:
-	bool m_System;
+	bool _system;
 	uint32 GetCurrentColor();
 	HRESULT FadeOut(uint32 TargetColor, uint32 Duration, bool System = false);
 	HRESULT FadeIn(uint32 SourceColor, uint32 Duration, bool System = false);
@@ -46,15 +46,15 @@ public:
 	DECLARE_PERSISTENT(CBFader, CBObject)
 	CBFader(CBGame *inGame);
 	virtual ~CBFader();
-	bool m_Active;
-	byte m_Red;
-	byte m_Green;
-	byte m_Blue;
-	byte m_CurrentAlpha;
-	byte m_TargetAlpha;
-	byte m_SourceAlpha;
-	uint32 m_Duration;
-	uint32 m_StartTime;
+	bool _active;
+	byte _red;
+	byte _green;
+	byte _blue;
+	byte _currentAlpha;
+	byte _targetAlpha;
+	byte _sourceAlpha;
+	uint32 _duration;
+	uint32 _startTime;
 };
 
 } // end of namespace WinterMute

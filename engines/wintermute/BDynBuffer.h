@@ -36,7 +36,7 @@ namespace WinterMute {
 
 class CBDynBuffer : public CBBase {
 public:
-	bool m_Initialized;
+	bool _initialized;
 	void PutText(LPCSTR fmt, ...);
 	void PutTextIndent(int Indent, LPCSTR fmt, ...);
 	uint32 GetDWORD();
@@ -48,16 +48,16 @@ public:
 	uint32 GetSize();
 	HRESULT Init(uint32 InitSize = 0);
 	void Cleanup();
-	uint32 m_Size;
-	byte *m_Buffer;
+	uint32 _size;
+	byte *_buffer;
 	CBDynBuffer(CBGame *inGame, uint32 InitSize = 1000, uint32 GrowBy = 1000);
 	virtual ~CBDynBuffer();
 
 private:
-	uint32 m_RealSize;
-	uint32 m_GrowBy;
-	uint32 m_InitSize;
-	uint32 m_Offset;
+	uint32 _realSize;
+	uint32 _growBy;
+	uint32 _initSize;
+	uint32 _offset;
 	void PutTextForm(const char *format, va_list argptr);
 };
 

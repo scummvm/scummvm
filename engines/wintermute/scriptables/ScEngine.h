@@ -58,39 +58,39 @@ public:
 	class CScCachedScript {
 	public:
 		CScCachedScript(char *Filename, byte *Buffer, uint32 Size) {
-			m_Timestamp = CBPlatform::GetTime();
-			m_Buffer = new byte[Size];
-			if (m_Buffer) memcpy(m_Buffer, Buffer, Size);
-			m_Size = Size;
-			m_Filename = new char[strlen(Filename) + 1];
-			if (m_Filename) strcpy(m_Filename, Filename);
+			_timestamp = CBPlatform::GetTime();
+			_buffer = new byte[Size];
+			if (_buffer) memcpy(_buffer, Buffer, Size);
+			_size = Size;
+			_filename = new char[strlen(Filename) + 1];
+			if (_filename) strcpy(_filename, Filename);
 		};
 
 		~CScCachedScript() {
-			if (m_Buffer) delete [] m_Buffer;
-			if (m_Filename) delete [] m_Filename;
+			if (_buffer) delete [] _buffer;
+			if (_filename) delete [] _filename;
 		};
 
-		uint32 m_Timestamp;
-		byte *m_Buffer;
-		uint32 m_Size;
-		char *m_Filename;
+		uint32 _timestamp;
+		byte *_buffer;
+		uint32 _size;
+		char *_filename;
 	};
 
 	class CScBreakpoint {
 	public:
 		CScBreakpoint(const char *Filename) {
-			m_Filename = NULL;
-			CBUtils::SetString(&m_Filename, Filename);
+			_filename = NULL;
+			CBUtils::SetString(&_filename, Filename);
 		}
 
 		~CScBreakpoint() {
-			if (m_Filename) delete [] m_Filename;
-			m_Lines.RemoveAll();
+			if (_filename) delete [] _filename;
+			_lines.RemoveAll();
 		}
 
-		char *m_Filename;
-		CBArray<int, int> m_Lines;
+		char *_filename;
+		CBArray<int, int> _lines;
 	};
 
 
@@ -99,7 +99,7 @@ public:
 public:
 	HRESULT DbgSendScripts(IWmeDebugClient *Client);
 
-	CBArray<CScBreakpoint *, CScBreakpoint *> m_Breakpoints;
+	CBArray<CScBreakpoint *, CScBreakpoint *> _breakpoints;
 	HRESULT AddBreakpoint(char *ScriptFilename, int Line);
 	HRESULT RemoveBreakpoint(char *ScriptFilename, int Line);
 	HRESULT RefreshScriptBreakpoints();
@@ -114,15 +114,15 @@ public:
 	void SetCompileErrorCallback(COMPILE_ERROR_CALLBACK Callback, void *Data);
 	void SetParseElementCallback(PARSE_ELEMENT_CALLBACK Callback, void *Data);
 
-	COMPILE_ERROR_CALLBACK m_CompileErrorCallback;
-	void *m_CompileErrorCallbackData;
+	COMPILE_ERROR_CALLBACK _compileErrorCallback;
+	void *_compileErrorCallbackData;
 
-	PARSE_ELEMENT_CALLBACK m_ParseElementCallback;
-	void *m_ParseElementCallbackData;
+	PARSE_ELEMENT_CALLBACK _parseElementCallback;
+	void *_parseElementCallbackData;
 
 	HRESULT SetFileToCompile(char *Filename);
-	char *m_FileToCompile;
-	CScScript *m_CurrentScript;
+	char *_fileToCompile;
+	CScScript *_currentScript;
 	HRESULT ResumeAll();
 	HRESULT PauseAll();
 	void EditorCleanup();
@@ -134,10 +134,10 @@ public:
 	HRESULT Cleanup();
 	int GetNumScripts(int *Running = NULL, int *Waiting = NULL, int *Persistent = NULL);
 	HRESULT Tick();
-	CScValue *m_Globals;
+	CScValue *_globals;
 	CScScript *RunScript(char *Filename, CBScriptHolder *Owner = NULL);
-	bool m_CompilerAvailable;
-	HINSTANCE m_CompilerDLL;
+	bool _compilerAvailable;
+	HINSTANCE _compilerDLL;
 	CScEngine(CBGame *inGame);
 	virtual ~CScEngine();
 	static void WINAPI AddError(void *Data, int Line, char *Text);
@@ -151,12 +151,12 @@ public:
 	DLL_DEFINE_FUNCTION ExtDefineFunction;
 	DLL_DEFINE_VARIABLE ExtDefineVariable;
 
-	CBArray<CScScript *, CScScript *> m_Scripts;
+	CBArray<CScScript *, CScScript *> _scripts;
 
 	void EnableProfiling();
 	void DisableProfiling();
 	bool IsProfiling() {
-		return m_IsProfiling;
+		return _isProfiling;
 	}
 
 	void AddScriptTime(const char *Filename, uint32 Time);
@@ -164,12 +164,12 @@ public:
 
 private:
 
-	CScCachedScript *m_CachedScripts[MAX_CACHED_SCRIPTS];
-	bool m_IsProfiling;
-	uint32 m_ProfilingStartTime;
+	CScCachedScript *_cachedScripts[MAX_CACHED_SCRIPTS];
+	bool _isProfiling;
+	uint32 _profilingStartTime;
 
 	typedef Common::HashMap<Common::String, uint32> ScriptTimes;
-	ScriptTimes m_ScriptTimes;
+	ScriptTimes _scriptTimes;
 
 };
 

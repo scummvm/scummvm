@@ -42,56 +42,56 @@ IMPLEMENT_PERSISTENT(CUIObject, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUIObject::CUIObject(CBGame *inGame): CBObject(inGame) {
-	m_Back = NULL;
-	m_Image = NULL;
-	m_Font = NULL;
-	m_Text = NULL;
-	m_SharedFonts = m_SharedImages = false;
+	_back = NULL;
+	_image = NULL;
+	_font = NULL;
+	_text = NULL;
+	_sharedFonts = _sharedImages = false;
 
-	m_Width = m_Height = 0;
+	_width = _height = 0;
 
-	m_ListenerObject = NULL;
-	m_ListenerParamObject = NULL;
-	m_ListenerParamDWORD = 0;
+	_listenerObject = NULL;
+	_listenerParamObject = NULL;
+	_listenerParamDWORD = 0;
 
-	m_Disable = false;
-	m_Visible = true;
+	_disable = false;
+	_visible = true;
 
-	m_Type = UI_UNKNOWN;
-	m_Parent = NULL;
+	_type = UI_UNKNOWN;
+	_parent = NULL;
 
-	m_ParentNotify = false;
+	_parentNotify = false;
 
-	m_FocusedWidget = NULL;
+	_focusedWidget = NULL;
 
-	m_CanFocus = false;
-	m_NonIntMouseEvents = true;
+	_canFocus = false;
+	_nonIntMouseEvents = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CUIObject::~CUIObject() {
-	if (!Game->m_LoadInProgress) CSysClassRegistry::GetInstance()->EnumInstances(CBGame::InvalidateValues, "CScValue", (void *)this);
+	if (!Game->_loadInProgress) CSysClassRegistry::GetInstance()->EnumInstances(CBGame::InvalidateValues, "CScValue", (void *)this);
 
-	if (m_Back) delete m_Back;
-	if (m_Font && !m_SharedFonts) Game->m_FontStorage->RemoveFont(m_Font);
+	if (_back) delete _back;
+	if (_font && !_sharedFonts) Game->_fontStorage->RemoveFont(_font);
 
-	if (m_Image && !m_SharedImages) delete m_Image;
+	if (_image && !_sharedImages) delete _image;
 
-	if (m_Text) delete [] m_Text;
+	if (_text) delete [] _text;
 
-	m_FocusedWidget = NULL; // ref only
+	_focusedWidget = NULL; // ref only
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CUIObject::SetText(const char *Text) {
-	if (m_Text) delete [] m_Text;
-	m_Text = new char [strlen(Text) + 1];
-	if (m_Text) {
-		strcpy(m_Text, Text);
-		for (int i = 0; i < strlen(m_Text); i++) {
-			if (m_Text[i] == '|') m_Text[i] = '\n';
+	if (_text) delete [] _text;
+	_text = new char [strlen(Text) + 1];
+	if (_text) {
+		strcpy(_text, Text);
+		for (int i = 0; i < strlen(_text); i++) {
+			if (_text[i] == '|') _text[i] = '\n';
 		}
 	}
 }
@@ -105,9 +105,9 @@ HRESULT CUIObject::Display(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 void CUIObject::SetListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam) {
-	m_ListenerObject = Object;
-	m_ListenerParamObject = ListenerObject;
-	m_ListenerParamDWORD = ListenerParam;
+	_listenerObject = Object;
+	_listenerParamObject = ListenerObject;
+	_listenerParamDWORD = ListenerParam;
 }
 
 
@@ -115,21 +115,21 @@ void CUIObject::SetListener(CBScriptHolder *Object, CBScriptHolder *ListenerObje
 void CUIObject::CorrectSize() {
 	RECT rect;
 
-	if (m_Width <= 0) {
-		if (m_Image) {
-			m_Image->GetBoundingRect(&rect, 0, 0);
-			m_Width = rect.right - rect.left;
-		} else m_Width = 100;
+	if (_width <= 0) {
+		if (_image) {
+			_image->GetBoundingRect(&rect, 0, 0);
+			_width = rect.right - rect.left;
+		} else _width = 100;
 	}
 
-	if (m_Height <= 0) {
-		if (m_Image) {
-			m_Image->GetBoundingRect(&rect, 0, 0);
-			m_Height = rect.bottom - rect.top;
+	if (_height <= 0) {
+		if (_image) {
+			_image->GetBoundingRect(&rect, 0, 0);
+			_height = rect.bottom - rect.top;
 		}
 	}
 
-	if (m_Back) m_Back->CorrectSize(&m_Width, &m_Height);
+	if (_back) _back->CorrectSize(&_width, &_height);
 }
 
 
@@ -145,13 +145,13 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
 
-		if (m_Font) Game->m_FontStorage->RemoveFont(m_Font);
+		if (_font) Game->_fontStorage->RemoveFont(_font);
 		if (Val->IsNULL()) {
-			m_Font = NULL;
+			_font = NULL;
 			Stack->PushBool(true);
 		} else {
-			m_Font = Game->m_FontStorage->AddFont(Val->GetString());
-			Stack->PushBool(m_Font != NULL);
+			_font = Game->_fontStorage->AddFont(Val->GetString());
+			Stack->PushBool(_font != NULL);
 		}
 		return S_OK;
 	}
@@ -165,17 +165,17 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		char *Filename = Val->GetString();
 
-		delete m_Image;
-		m_Image = NULL;
+		delete _image;
+		_image = NULL;
 		if (Val->IsNULL()) {
 			Stack->PushBool(true);
 			return S_OK;
 		}
 
-		m_Image = new CBSprite(Game);
-		if (!m_Image || FAILED(m_Image->LoadFile(Val->GetString()))) {
-			delete m_Image;
-			m_Image = NULL;
+		_image = new CBSprite(Game);
+		if (!_image || FAILED(_image->LoadFile(Val->GetString()))) {
+			delete _image;
+			_image = NULL;
 			Stack->PushBool(false);
 		} else Stack->PushBool(true);
 
@@ -187,8 +187,8 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetImage") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_Image || !m_Image->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_Image->m_Filename);
+		if (!_image || !_image->_filename) Stack->PushNULL();
+		else Stack->PushString(_image->_filename);
 
 		return S_OK;
 	}
@@ -198,8 +198,8 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetImageObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_Image) Stack->PushNULL();
-		else Stack->PushNative(m_Image, true);
+		if (!_image) Stack->PushNULL();
+		else Stack->PushNative(_image, true);
 
 		return S_OK;
 	}
@@ -220,8 +220,8 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "MoveAfter") == 0 || strcmp(Name, "MoveBefore") == 0) {
 		Stack->CorrectParams(1);
 
-		if (m_Parent && m_Parent->m_Type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)m_Parent;
+		if (_parent && _parent->_type == UI_WINDOW) {
+			CUIWindow *win = (CUIWindow *)_parent;
 
 			int i;
 			bool found = false;
@@ -229,8 +229,8 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			// find directly
 			if (val->IsNative()) {
 				CUIObject *widget = (CUIObject *)val->GetNative();
-				for (i = 0; i < win->m_Widgets.GetSize(); i++) {
-					if (win->m_Widgets[i] == widget) {
+				for (i = 0; i < win->_widgets.GetSize(); i++) {
+					if (win->_widgets[i] == widget) {
 						found = true;
 						break;
 					}
@@ -239,8 +239,8 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			// find by name
 			else {
 				char *name = val->GetString();
-				for (i = 0; i < win->m_Widgets.GetSize(); i++) {
-					if (scumm_stricmp(win->m_Widgets[i]->m_Name, name) == 0) {
+				for (i = 0; i < win->_widgets.GetSize(); i++) {
+					if (scumm_stricmp(win->_widgets[i]->_name, name) == 0) {
 						found = true;
 						break;
 					}
@@ -249,13 +249,13 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 			if (found) {
 				bool done = false;
-				for (int j = 0; j < win->m_Widgets.GetSize(); j++) {
-					if (win->m_Widgets[j] == this) {
+				for (int j = 0; j < win->_widgets.GetSize(); j++) {
+					if (win->_widgets[j] == this) {
 						if (strcmp(Name, "MoveAfter") == 0) i++;
 						if (j >= i) j++;
 
-						win->m_Widgets.InsertAt(i, this);
-						win->m_Widgets.RemoveAt(j);
+						win->_widgets.InsertAt(i, this);
+						win->_widgets.RemoveAt(j);
 
 						done = true;
 						Stack->PushBool(true);
@@ -276,12 +276,12 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "MoveToBottom") == 0) {
 		Stack->CorrectParams(0);
 
-		if (m_Parent && m_Parent->m_Type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)m_Parent;
-			for (int i = 0; i < win->m_Widgets.GetSize(); i++) {
-				if (win->m_Widgets[i] == this) {
-					win->m_Widgets.RemoveAt(i);
-					win->m_Widgets.InsertAt(0, this);
+		if (_parent && _parent->_type == UI_WINDOW) {
+			CUIWindow *win = (CUIWindow *)_parent;
+			for (int i = 0; i < win->_widgets.GetSize(); i++) {
+				if (win->_widgets[i] == this) {
+					win->_widgets.RemoveAt(i);
+					win->_widgets.InsertAt(0, this);
 					break;
 				}
 			}
@@ -297,12 +297,12 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "MoveToTop") == 0) {
 		Stack->CorrectParams(0);
 
-		if (m_Parent && m_Parent->m_Type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)m_Parent;
-			for (int i = 0; i < win->m_Widgets.GetSize(); i++) {
-				if (win->m_Widgets[i] == this) {
-					win->m_Widgets.RemoveAt(i);
-					win->m_Widgets.Add(this);
+		if (_parent && _parent->_type == UI_WINDOW) {
+			CUIWindow *win = (CUIWindow *)_parent;
+			for (int i = 0; i < win->_widgets.GetSize(); i++) {
+				if (win->_widgets[i] == this) {
+					win->_widgets.RemoveAt(i);
+					win->_widgets.Add(this);
 					break;
 				}
 			}
@@ -318,99 +318,99 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIObject::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("ui_object");
-		return m_ScValue;
+		_scValue->SetString("ui_object");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Name") == 0) {
-		m_ScValue->SetString(m_Name);
-		return m_ScValue;
+		_scValue->SetString(_name);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Parent (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Parent") == 0) {
-		m_ScValue->SetNative(m_Parent, true);
-		return m_ScValue;
+		_scValue->SetNative(_parent, true);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ParentNotify") == 0) {
-		m_ScValue->SetBool(m_ParentNotify);
-		return m_ScValue;
+		_scValue->SetBool(_parentNotify);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Width") == 0) {
-		m_ScValue->SetInt(m_Width);
-		return m_ScValue;
+		_scValue->SetInt(_width);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		m_ScValue->SetInt(m_Height);
-		return m_ScValue;
+		_scValue->SetInt(_height);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Visible") == 0) {
-		m_ScValue->SetBool(m_Visible);
-		return m_ScValue;
+		_scValue->SetBool(_visible);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Disabled") == 0) {
-		m_ScValue->SetBool(m_Disable);
-		return m_ScValue;
+		_scValue->SetBool(_disable);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Text") == 0) {
-		m_ScValue->SetString(m_Text);
-		return m_ScValue;
+		_scValue->SetString(_text);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NextSibling (RO) / PrevSibling (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NextSibling") == 0 || strcmp(Name, "PrevSibling") == 0) {
-		m_ScValue->SetNULL();
-		if (m_Parent && m_Parent->m_Type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)m_Parent;
-			for (int i = 0; i < win->m_Widgets.GetSize(); i++) {
-				if (win->m_Widgets[i] == this) {
+		_scValue->SetNULL();
+		if (_parent && _parent->_type == UI_WINDOW) {
+			CUIWindow *win = (CUIWindow *)_parent;
+			for (int i = 0; i < win->_widgets.GetSize(); i++) {
+				if (win->_widgets[i] == this) {
 					if (strcmp(Name, "NextSibling") == 0) {
-						if (i < win->m_Widgets.GetSize() - 1) m_ScValue->SetNative(win->m_Widgets[i + 1], true);
+						if (i < win->_widgets.GetSize() - 1) _scValue->SetNative(win->_widgets[i + 1], true);
 					} else {
-						if (i > 0) m_ScValue->SetNative(win->m_Widgets[i - 1], true);
+						if (i > 0) _scValue->SetNative(win->_widgets[i - 1], true);
 					}
 					break;
 				}
 			}
 		}
-		return m_ScValue;
+		return _scValue;
 	}
 
 	else return CBObject::ScGetProperty(Name);
@@ -431,7 +431,7 @@ HRESULT CUIObject::ScSetProperty(char *Name, CScValue *Value) {
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ParentNotify") == 0) {
-		m_ParentNotify = Value->GetBool();
+		_parentNotify = Value->GetBool();
 		return S_OK;
 	}
 
@@ -439,7 +439,7 @@ HRESULT CUIObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Width") == 0) {
-		m_Width = Value->GetInt();
+		_width = Value->GetInt();
 		return S_OK;
 	}
 
@@ -447,7 +447,7 @@ HRESULT CUIObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		m_Height = Value->GetInt();
+		_height = Value->GetInt();
 		return S_OK;
 	}
 
@@ -455,7 +455,7 @@ HRESULT CUIObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Visible") == 0) {
-		m_Visible = Value->GetBool();
+		_visible = Value->GetBool();
 		return S_OK;
 	}
 
@@ -463,7 +463,7 @@ HRESULT CUIObject::ScSetProperty(char *Name, CScValue *Value) {
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Disabled") == 0) {
-		m_Disable = Value->GetBool();
+		_disable = Value->GetBool();
 		return S_OK;
 	}
 
@@ -487,13 +487,13 @@ char *CUIObject::ScToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CUIObject::IsFocused() {
-	if (!Game->m_FocusedWindow) return false;
-	if (Game->m_FocusedWindow == this) return true;
+	if (!Game->_focusedWindow) return false;
+	if (Game->_focusedWindow == this) return true;
 
-	CUIObject *obj = Game->m_FocusedWindow;
+	CUIObject *obj = Game->_focusedWindow;
 	while (obj) {
 		if (obj == this) return true;
-		else obj = obj->m_FocusedWidget;
+		else obj = obj->_focusedWidget;
 	}
 	return false;
 }
@@ -514,22 +514,22 @@ HRESULT CUIObject::Focus() {
 	CUIObject *obj = this;
 	bool disabled = false;
 	while (obj) {
-		if (obj->m_Disable && obj->m_Type == UI_WINDOW) {
+		if (obj->_disable && obj->_type == UI_WINDOW) {
 			disabled = true;
 			break;
 		}
-		obj = obj->m_Parent;
+		obj = obj->_parent;
 	}
 	if (!disabled) {
 		obj = this;
 		while (obj) {
-			if (obj->m_Parent) {
-				if (!obj->m_Disable && obj->m_CanFocus) obj->m_Parent->m_FocusedWidget = obj;
+			if (obj->_parent) {
+				if (!obj->_disable && obj->_canFocus) obj->_parent->_focusedWidget = obj;
 			} else {
-				if (obj->m_Type == UI_WINDOW) Game->FocusWindow((CUIWindow *)obj);
+				if (obj->_type == UI_WINDOW) Game->FocusWindow((CUIWindow *)obj);
 			}
 
-			obj = obj->m_Parent;
+			obj = obj->_parent;
 		}
 	}
 	return S_OK;
@@ -540,12 +540,12 @@ HRESULT CUIObject::Focus() {
 HRESULT CUIObject::GetTotalOffset(int *OffsetX, int *OffsetY) {
 	int OffX = 0, OffY = 0;
 
-	CUIObject *obj = m_Parent;
+	CUIObject *obj = _parent;
 	while (obj) {
-		OffX += obj->m_PosX;
-		OffY += obj->m_PosY;
+		OffX += obj->_posX;
+		OffY += obj->_posY;
 
-		obj = obj->m_Parent;
+		obj = obj->_parent;
 	}
 	if (OffsetX) *OffsetX = OffX;
 	if (OffsetY) *OffsetY = OffY;
@@ -559,24 +559,24 @@ HRESULT CUIObject::Persist(CBPersistMgr *PersistMgr) {
 
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Back));
-	PersistMgr->Transfer(TMEMBER(m_CanFocus));
-	PersistMgr->Transfer(TMEMBER(m_Disable));
-	PersistMgr->Transfer(TMEMBER(m_FocusedWidget));
-	PersistMgr->Transfer(TMEMBER(m_Font));
-	PersistMgr->Transfer(TMEMBER(m_Height));
-	PersistMgr->Transfer(TMEMBER(m_Image));
-	PersistMgr->Transfer(TMEMBER(m_ListenerObject));
-	PersistMgr->Transfer(TMEMBER(m_ListenerParamObject));
-	PersistMgr->Transfer(TMEMBER(m_ListenerParamDWORD));
-	PersistMgr->Transfer(TMEMBER(m_Parent));
-	PersistMgr->Transfer(TMEMBER(m_ParentNotify));
-	PersistMgr->Transfer(TMEMBER(m_SharedFonts));
-	PersistMgr->Transfer(TMEMBER(m_SharedImages));
-	PersistMgr->Transfer(TMEMBER(m_Text));
-	PersistMgr->Transfer(TMEMBER_INT(m_Type));
-	PersistMgr->Transfer(TMEMBER(m_Visible));
-	PersistMgr->Transfer(TMEMBER(m_Width));
+	PersistMgr->Transfer(TMEMBER(_back));
+	PersistMgr->Transfer(TMEMBER(_canFocus));
+	PersistMgr->Transfer(TMEMBER(_disable));
+	PersistMgr->Transfer(TMEMBER(_focusedWidget));
+	PersistMgr->Transfer(TMEMBER(_font));
+	PersistMgr->Transfer(TMEMBER(_height));
+	PersistMgr->Transfer(TMEMBER(_image));
+	PersistMgr->Transfer(TMEMBER(_listenerObject));
+	PersistMgr->Transfer(TMEMBER(_listenerParamObject));
+	PersistMgr->Transfer(TMEMBER(_listenerParamDWORD));
+	PersistMgr->Transfer(TMEMBER(_parent));
+	PersistMgr->Transfer(TMEMBER(_parentNotify));
+	PersistMgr->Transfer(TMEMBER(_sharedFonts));
+	PersistMgr->Transfer(TMEMBER(_sharedImages));
+	PersistMgr->Transfer(TMEMBER(_text));
+	PersistMgr->Transfer(TMEMBER_INT(_type));
+	PersistMgr->Transfer(TMEMBER(_visible));
+	PersistMgr->Transfer(TMEMBER(_width));
 
 	return S_OK;
 }

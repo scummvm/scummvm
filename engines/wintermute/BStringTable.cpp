@@ -44,7 +44,7 @@ CBStringTable::CBStringTable(CBGame *inGame): CBBase(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CBStringTable::~CBStringTable() {
 	// delete strings
-	m_Strings.clear();
+	_strings.clear();
 
 }
 
@@ -54,17 +54,17 @@ HRESULT CBStringTable::AddString(const char *Key, const char *Val, bool ReportDu
 	if (Key == NULL || Val == NULL) return E_FAIL;
 
 	if (scumm_stricmp(Key, "@right-to-left") == 0) {
-		Game->m_TextRTL = true;
+		Game->_textRTL = true;
 		return S_OK;
 	}
 
 	Common::String final_key = Key;
 	StringUtil::ToLowerCase(final_key);
 
-	m_StringsIter = m_Strings.find(final_key);
-	if (m_StringsIter != m_Strings.end() && ReportDuplicities) Game->LOG(0, "  Warning: Duplicate definition of string '%s'.", final_key.c_str());
+	_stringsIter = _strings.find(final_key);
+	if (_stringsIter != _strings.end() && ReportDuplicities) Game->LOG(0, "  Warning: Duplicate definition of string '%s'.", final_key.c_str());
 
-	m_Strings[final_key] = Val;
+	_strings[final_key] = Val;
 
 	return S_OK;
 }
@@ -83,10 +83,10 @@ char *CBStringTable::GetKey(const char *Str) {
 
 	char *new_str;
 
-	m_StringsIter = m_Strings.find(key);
-	if (m_StringsIter != m_Strings.end()) {
-		new_str = new char[m_StringsIter->_value.size() + 1];
-		strcpy(new_str, m_StringsIter->_value.c_str());
+	_stringsIter = _strings.find(key);
+	if (_stringsIter != _strings.end()) {
+		new_str = new char[_stringsIter->_value.size() + 1];
+		strcpy(new_str, _stringsIter->_value.c_str());
 		if (strlen(new_str) > 0 && new_str[0] == '/' && strchr(new_str + 1, '/')) {
 			delete [] key;
 			char *Ret = GetKey(new_str);
@@ -103,7 +103,7 @@ char *CBStringTable::GetKey(const char *Str) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBStringTable::Expand(char **Str, bool ForceExpand) {
-	if (Game->m_DoNotExpandStrings && !ForceExpand) return;
+	if (Game->_doNotExpandStrings && !ForceExpand) return;
 
 	if (Str == NULL || *Str == NULL || *Str[0] != '/') return;
 
@@ -119,10 +119,10 @@ void CBStringTable::Expand(char **Str, bool ForceExpand) {
 
 	char *new_str;
 
-	m_StringsIter = m_Strings.find(key);
-	if (m_StringsIter != m_Strings.end()) {
-		new_str = new char[m_StringsIter->_value.size() + 1];
-		strcpy(new_str, m_StringsIter->_value.c_str());
+	_stringsIter = _strings.find(key);
+	if (_stringsIter != _strings.end()) {
+		new_str = new char[_stringsIter->_value.size() + 1];
+		strcpy(new_str, _stringsIter->_value.c_str());
 	} else {
 		new_str = new char[strlen(value) + 1];
 		strcpy(new_str, value);
@@ -138,7 +138,7 @@ void CBStringTable::Expand(char **Str, bool ForceExpand) {
 
 //////////////////////////////////////////////////////////////////////////
 const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
-	if (Game->m_DoNotExpandStrings && !ForceExpand) return String;
+	if (Game->_doNotExpandStrings && !ForceExpand) return String;
 
 	if (String == NULL || String[0] == '\0' || String[0] != '/') return String;
 
@@ -154,9 +154,9 @@ const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
 
 	const char *new_str;
 
-	m_StringsIter = m_Strings.find(key);
-	if (m_StringsIter != m_Strings.end()) {
-		new_str = m_StringsIter->_value.c_str();
+	_stringsIter = _strings.find(key);
+	if (_stringsIter != _strings.end()) {
+		new_str = _stringsIter->_value.c_str();
 	} else {
 		new_str = value;
 	}
@@ -172,10 +172,10 @@ const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
 HRESULT CBStringTable::LoadFile(char *Filename, bool ClearOld) {
 	Game->LOG(0, "Loading string table...");
 
-	if (ClearOld) m_Strings.clear();
+	if (ClearOld) _strings.clear();
 
 	uint32 Size;
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename, &Size);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename, &Size);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBStringTable::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -185,12 +185,12 @@ HRESULT CBStringTable::LoadFile(char *Filename, bool ClearOld) {
 
 	if (Size > 3 && Buffer[0] == 0xEF && Buffer[1] == 0xBB && Buffer[2] == 0xBF) {
 		Pos += 3;
-		if (Game->m_TextEncoding != TEXT_UTF8) {
-			Game->m_TextEncoding = TEXT_UTF8;
-			//Game->m_TextEncoding = TEXT_ANSI;
+		if (Game->_textEncoding != TEXT_UTF8) {
+			Game->_textEncoding = TEXT_UTF8;
+			//Game->_textEncoding = TEXT_ANSI;
 			Game->LOG(0, "  UTF8 file detected, switching to UTF8 text encoding");
 		}
-	} else Game->m_TextEncoding = TEXT_ANSI;
+	} else Game->_textEncoding = TEXT_ANSI;
 
 	int LineLength = 0;
 	while (Pos < Size) {
@@ -221,7 +221,7 @@ HRESULT CBStringTable::LoadFile(char *Filename, bool ClearOld) {
 
 	delete [] Buffer;
 
-	Game->LOG(0, "  %d strings loaded", m_Strings.size());
+	Game->LOG(0, "  %d strings loaded", _strings.size());
 
 	return S_OK;
 }

@@ -36,34 +36,34 @@ IMPLEMENT_PERSISTENT(CAdResponseContext, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdResponseContext::CAdResponseContext(CBGame *inGame): CBBase(inGame) {
-	m_ID = 0;
-	m_Context = NULL;
+	_iD = 0;
+	_context = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdResponseContext::~CAdResponseContext() {
-	delete[] m_Context;
-	m_Context = NULL;
+	delete[] _context;
+	_context = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseContext::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(m_Context));
-	PersistMgr->Transfer(TMEMBER(m_ID));
+	PersistMgr->Transfer(TMEMBER(_context));
+	PersistMgr->Transfer(TMEMBER(_iD));
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponseContext::SetContext(char *Context) {
-	delete[] m_Context;
-	m_Context = NULL;
+	delete[] _context;
+	_context = NULL;
 	if (Context) {
-		m_Context = new char [strlen(Context) + 1];
-		if (m_Context) strcpy(m_Context, Context);
+		_context = new char [strlen(Context) + 1];
+		if (_context) strcpy(_context, Context);
 	}
 }
 

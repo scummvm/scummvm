@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdItem_H__
-#define __WmeAdItem_H__
+#ifndef __WmeAdIte_h__
+#define __WmeAdIte_h__
 
 
 #include "AdTalkHolder.h"
@@ -36,23 +36,23 @@ namespace WinterMute {
 
 class CAdItem : public CAdTalkHolder {
 public:
-	bool m_DisplayAmount;
-	int m_Amount;
-	int m_AmountOffsetX;
-	int m_AmountOffsetY;
-	TTextAlign m_AmountAlign;
-	char *m_AmountString;
+	bool _displayAmount;
+	int _amount;
+	int _amountOffsetX;
+	int _amountOffsetY;
+	TTextAlign _amountAlign;
+	char *_amountString;
 
 
 	HRESULT Update();
 	DECLARE_PERSISTENT(CAdItem, CAdTalkHolder)
 	HRESULT Display(int X, int Y);
 	bool GetExtendedFlag(char *FlagName);
-	bool m_InInventory;
-	bool m_CursorCombined;
-	CBSprite *m_SpriteHover;
-	CBSprite *m_CursorNormal;
-	CBSprite *m_CursorHover;
+	bool _inInventory;
+	bool _cursorCombined;
+	CBSprite *_spriteHover;
+	CBSprite *_cursorNormal;
+	CBSprite *_cursorHover;
 	CAdItem(CBGame *inGame);
 	virtual ~CAdItem();
 	HRESULT LoadFile(char *Filename);

@@ -246,25 +246,25 @@ HRESULT CSXMath::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXMath::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("math");
-		return m_ScValue;
+		_scValue->SetString("math");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// PI
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PI") == 0) {
-		m_ScValue->SetFloat(PI);
-		return m_ScValue;
+		_scValue->SetFloat(PI);
+		return _scValue;
 	}
 
-	else return m_ScValue;
+	else return _scValue;
 }
 
 

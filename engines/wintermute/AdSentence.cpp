@@ -45,98 +45,98 @@ IMPLEMENT_PERSISTENT(CAdSentence, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdSentence::CAdSentence(CBGame *inGame): CBBase(inGame) {
-	m_Text = NULL;
-	m_Stances = NULL;
-	m_TempStance = NULL;
+	_text = NULL;
+	_stances = NULL;
+	_tempStance = NULL;
 
-	m_Duration = 0;
-	m_StartTime = 0;
-	m_CurrentStance = 0;
+	_duration = 0;
+	_startTime = 0;
+	_currentStance = 0;
 
-	m_Font = NULL;
+	_font = NULL;
 
-	m_Pos.x = m_Pos.y = 0;
-	m_Width = Game->m_Renderer->m_Width;
+	_pos.x = _pos.y = 0;
+	_width = Game->_renderer->_width;
 
-	m_Align = (TTextAlign)TAL_CENTER;
+	_align = (TTextAlign)TAL_CENTER;
 
-	m_Sound = NULL;
-	m_SoundStarted = false;
+	_sound = NULL;
+	_soundStarted = false;
 
-	m_TalkDef = NULL;
-	m_CurrentSprite = NULL;
-	m_CurrentSkelAnim = NULL;
-	m_FixedPos = false;
-	m_Freezable = true;
+	_talkDef = NULL;
+	_currentSprite = NULL;
+	_currentSkelAnim = NULL;
+	_fixedPos = false;
+	_freezable = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdSentence::~CAdSentence() {
-	delete m_Sound;
-	delete[] m_Text;
-	delete[] m_Stances;
-	delete[] m_TempStance;
-	delete m_TalkDef;
-	m_Sound = NULL;
-	m_Text = NULL;
-	m_Stances = NULL;
-	m_TempStance = NULL;
-	m_TalkDef = NULL;
+	delete _sound;
+	delete[] _text;
+	delete[] _stances;
+	delete[] _tempStance;
+	delete _talkDef;
+	_sound = NULL;
+	_text = NULL;
+	_stances = NULL;
+	_tempStance = NULL;
+	_talkDef = NULL;
 
-	m_CurrentSprite = NULL; // ref only
-	m_CurrentSkelAnim = NULL;
-	m_Font = NULL; // ref only
+	_currentSprite = NULL; // ref only
+	_currentSkelAnim = NULL;
+	_font = NULL; // ref only
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdSentence::SetText(char *Text) {
-	if (m_Text) delete [] m_Text;
-	m_Text = new char[strlen(Text) + 1];
-	if (m_Text) strcpy(m_Text, Text);
+	if (_text) delete [] _text;
+	_text = new char[strlen(Text) + 1];
+	if (_text) strcpy(_text, Text);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdSentence::SetStances(char *Stances) {
-	if (m_Stances) delete [] m_Stances;
+	if (_stances) delete [] _stances;
 	if (Stances) {
-		m_Stances = new char[strlen(Stances) + 1];
-		if (m_Stances) strcpy(m_Stances, Stances);
-	} else m_Stances = NULL;
+		_stances = new char[strlen(Stances) + 1];
+		if (_stances) strcpy(_stances, Stances);
+	} else _stances = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *CAdSentence::GetCurrentStance() {
-	return GetStance(m_CurrentStance);
+	return GetStance(_currentStance);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *CAdSentence::GetNextStance() {
-	m_CurrentStance++;
-	return GetStance(m_CurrentStance);
+	_currentStance++;
+	return GetStance(_currentStance);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *CAdSentence::GetStance(int Stance) {
-	if (m_Stances == NULL) return NULL;
+	if (_stances == NULL) return NULL;
 
-	if (m_TempStance) delete [] m_TempStance;
-	m_TempStance = NULL;
+	if (_tempStance) delete [] _tempStance;
+	_tempStance = NULL;
 
 	char *start;
 	char *curr;
 	int pos;
 
-	if (Stance == 0) start = m_Stances;
+	if (Stance == 0) start = _stances;
 	else {
 		pos = 0;
 		start = NULL;
-		curr = m_Stances;
+		curr = _stances;
 		while (pos < Stance) {
 			if (*curr == '\0') break;
 			if (*curr == ',') pos++;
@@ -154,40 +154,40 @@ char *CAdSentence::GetStance(int Stance) {
 
 	while (curr > start && *(curr - 1) == ' ') curr--;
 
-	m_TempStance = new char [curr - start + 1];
-	if (m_TempStance) {
-		m_TempStance[curr - start] = '\0';
-		strncpy(m_TempStance, start, curr - start);
+	_tempStance = new char [curr - start + 1];
+	if (_tempStance) {
+		_tempStance[curr - start] = '\0';
+		strncpy(_tempStance, start, curr - start);
 	}
 
-	return m_TempStance;
+	return _tempStance;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSentence::Display() {
-	if (!m_Font || !m_Text) return E_FAIL;
+	if (!_font || !_text) return E_FAIL;
 
-	if (m_Sound && !m_SoundStarted) {
-		m_Sound->Play();
-		m_SoundStarted = true;
+	if (_sound && !_soundStarted) {
+		_sound->Play();
+		_soundStarted = true;
 	}
 
-	if (Game->m_Subtitles) {
-		int x = m_Pos.x;
-		int y = m_Pos.y;
+	if (Game->_subtitles) {
+		int x = _pos.x;
+		int y = _pos.y;
 
-		if (!m_FixedPos) {
-			x = x - ((CAdGame *)Game)->m_Scene->GetOffsetLeft();
-			y = y - ((CAdGame *)Game)->m_Scene->GetOffsetTop();
+		if (!_fixedPos) {
+			x = x - ((CAdGame *)Game)->_scene->GetOffsetLeft();
+			y = y - ((CAdGame *)Game)->_scene->GetOffsetTop();
 		}
 
 
 		x = std::max(x, 0);
-		x = std::min(x, Game->m_Renderer->m_Width - m_Width);
+		x = std::min(x, Game->_renderer->_width - _width);
 		y = std::max(y, 0);
 
-		m_Font->DrawText((byte  *)m_Text, x, y, m_Width, m_Align);
+		_font->DrawText((byte  *)_text, x, y, _width, _align);
 	}
 
 	return S_OK;
@@ -197,15 +197,15 @@ HRESULT CAdSentence::Display() {
 //////////////////////////////////////////////////////////////////////////
 void CAdSentence::SetSound(CBSound *Sound) {
 	if (!Sound) return;
-	delete m_Sound;
-	m_Sound = Sound;
-	m_SoundStarted = false;
+	delete _sound;
+	_sound = Sound;
+	_soundStarted = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSentence::Finish() {
-	if (m_Sound) m_Sound->Stop();
+	if (_sound) _sound->Stop();
 	return S_OK;
 }
 
@@ -215,23 +215,23 @@ HRESULT CAdSentence::Persist(CBPersistMgr *PersistMgr) {
 
 	PersistMgr->Transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER_INT(m_Align));
-	PersistMgr->Transfer(TMEMBER(m_CurrentStance));
-	PersistMgr->Transfer(TMEMBER(m_CurrentSprite));
-	PersistMgr->Transfer(TMEMBER(m_CurrentSkelAnim));
-	PersistMgr->Transfer(TMEMBER(m_Duration));
-	PersistMgr->Transfer(TMEMBER(m_Font));
-	PersistMgr->Transfer(TMEMBER(m_Pos));
-	PersistMgr->Transfer(TMEMBER(m_Sound));
-	PersistMgr->Transfer(TMEMBER(m_SoundStarted));
-	PersistMgr->Transfer(TMEMBER(m_Stances));
-	PersistMgr->Transfer(TMEMBER(m_StartTime));
-	PersistMgr->Transfer(TMEMBER(m_TalkDef));
-	PersistMgr->Transfer(TMEMBER(m_TempStance));
-	PersistMgr->Transfer(TMEMBER(m_Text));
-	PersistMgr->Transfer(TMEMBER(m_Width));
-	PersistMgr->Transfer(TMEMBER(m_FixedPos));
-	PersistMgr->Transfer(TMEMBER(m_Freezable));
+	PersistMgr->Transfer(TMEMBER_INT(_align));
+	PersistMgr->Transfer(TMEMBER(_currentStance));
+	PersistMgr->Transfer(TMEMBER(_currentSprite));
+	PersistMgr->Transfer(TMEMBER(_currentSkelAnim));
+	PersistMgr->Transfer(TMEMBER(_duration));
+	PersistMgr->Transfer(TMEMBER(_font));
+	PersistMgr->Transfer(TMEMBER(_pos));
+	PersistMgr->Transfer(TMEMBER(_sound));
+	PersistMgr->Transfer(TMEMBER(_soundStarted));
+	PersistMgr->Transfer(TMEMBER(_stances));
+	PersistMgr->Transfer(TMEMBER(_startTime));
+	PersistMgr->Transfer(TMEMBER(_talkDef));
+	PersistMgr->Transfer(TMEMBER(_tempStance));
+	PersistMgr->Transfer(TMEMBER(_text));
+	PersistMgr->Transfer(TMEMBER(_width));
+	PersistMgr->Transfer(TMEMBER(_fixedPos));
+	PersistMgr->Transfer(TMEMBER(_freezable));
 
 	return S_OK;
 }
@@ -239,9 +239,9 @@ HRESULT CAdSentence::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSentence::SetupTalkFile(char *SoundFilename) {
-	delete m_TalkDef;
-	m_TalkDef = NULL;
-	m_CurrentSprite = NULL;
+	delete _talkDef;
+	_talkDef = NULL;
+	_currentSprite = NULL;
 
 	if (!SoundFilename) return S_OK;
 
@@ -251,16 +251,16 @@ HRESULT CAdSentence::SetupTalkFile(char *SoundFilename) {
 
 	AnsiString talkDefFileName = PathUtil::Combine(path, name + ".talk");
 
-	CBFile *file = Game->m_FileManager->OpenFile(talkDefFileName.c_str());
+	CBFile *file = Game->_fileManager->OpenFile(talkDefFileName.c_str());
 	if (file) {
-		Game->m_FileManager->CloseFile(file);
+		Game->_fileManager->CloseFile(file);
 	} else return S_OK; // no talk def file found
 
 
-	m_TalkDef = new CAdTalkDef(Game);
-	if (!m_TalkDef || FAILED(m_TalkDef->LoadFile(talkDefFileName.c_str()))) {
-		delete m_TalkDef;
-		m_TalkDef = NULL;
+	_talkDef = new CAdTalkDef(Game);
+	if (!_talkDef || FAILED(_talkDef->LoadFile(talkDefFileName.c_str()))) {
+		delete _talkDef;
+		_talkDef = NULL;
 		return E_FAIL;
 	}
 	//Game->LOG(0, "Using .talk file: %s", TalkDefFile);
@@ -271,38 +271,38 @@ HRESULT CAdSentence::SetupTalkFile(char *SoundFilename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSentence::Update(TDirection Dir) {
-	if (!m_TalkDef) return S_OK;
+	if (!_talkDef) return S_OK;
 
 	uint32 CurrentTime;
 	// if sound is available, synchronize with sound, otherwise use timer
 
 	/*
-	if(m_Sound) CurrentTime = m_Sound->GetPositionTime();
-	else CurrentTime = Game->m_Timer - m_StartTime;
+	if(_sound) CurrentTime = _sound->GetPositionTime();
+	else CurrentTime = Game->_timer - _startTime;
 	*/
-	CurrentTime = Game->m_Timer - m_StartTime;
+	CurrentTime = Game->_timer - _startTime;
 
 	bool TalkNodeFound = false;
-	for (int i = 0; i < m_TalkDef->m_Nodes.GetSize(); i++) {
-		if (m_TalkDef->m_Nodes[i]->IsInTimeInterval(CurrentTime, Dir)) {
+	for (int i = 0; i < _talkDef->_nodes.GetSize(); i++) {
+		if (_talkDef->_nodes[i]->IsInTimeInterval(CurrentTime, Dir)) {
 			TalkNodeFound = true;
 
-			CBSprite *NewSprite = m_TalkDef->m_Nodes[i]->GetSprite(Dir);
-			if (NewSprite != m_CurrentSprite) NewSprite->Reset();
-			m_CurrentSprite = NewSprite;
+			CBSprite *NewSprite = _talkDef->_nodes[i]->GetSprite(Dir);
+			if (NewSprite != _currentSprite) NewSprite->Reset();
+			_currentSprite = NewSprite;
 
-			if (!m_TalkDef->m_Nodes[i]->m_PlayToEnd) break;
+			if (!_talkDef->_nodes[i]->_playToEnd) break;
 		}
 	}
 
 
 	// no talk node, try to use default sprite instead (if any)
 	if (!TalkNodeFound) {
-		CBSprite *NewSprite = m_TalkDef->GetDefaultSprite(Dir);
+		CBSprite *NewSprite = _talkDef->GetDefaultSprite(Dir);
 		if (NewSprite) {
-			if (NewSprite != m_CurrentSprite) NewSprite->Reset();
-			m_CurrentSprite = NewSprite;
-		} else m_CurrentSprite = NULL;
+			if (NewSprite != _currentSprite) NewSprite->Reset();
+			_currentSprite = NewSprite;
+		} else _currentSprite = NULL;
 	}
 
 	return S_OK;
@@ -311,7 +311,7 @@ HRESULT CAdSentence::Update(TDirection Dir) {
 //////////////////////////////////////////////////////////////////////////
 bool CAdSentence::CanSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
-	return (Game->m_Timer - m_StartTime) > 300;
+	return (Game->_timer - _startTime) > 300;
 }
 
 } // end of namespace WinterMute

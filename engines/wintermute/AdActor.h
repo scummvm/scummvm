@@ -51,32 +51,32 @@ public:
 	virtual int GetHeight();
 	CBSprite *GetTalkStance(char *Stance);
 	virtual void GoTo(int X, int Y, TDirection AfterWalkDir = DI_NONE);
-	CBPoint *m_TargetPoint;
+	CBPoint *_targetPoint;
 	virtual HRESULT Update();
 	virtual HRESULT Display();
-	TDirection m_TargetDir;
-	TDirection m_AfterWalkDir;
+	TDirection _targetDir;
+	TDirection _afterWalkDir;
 	virtual void TurnTo(TDirection dir);
-	CAdPath *m_Path;
-	CAdSpriteSet *m_WalkSprite;
-	CAdSpriteSet *m_StandSprite;
-	CAdSpriteSet *m_TurnLeftSprite;
-	CAdSpriteSet *m_TurnRightSprite;
-	CBArray<CAdSpriteSet *, CAdSpriteSet *> m_TalkSprites;
-	CBArray<CAdSpriteSet *, CAdSpriteSet *> m_TalkSpritesEx;
-	TDirection m_Dir;
+	CAdPath *_path;
+	CAdSpriteSet *_walkSprite;
+	CAdSpriteSet *_standSprite;
+	CAdSpriteSet *_turnLeftSprite;
+	CAdSpriteSet *_turnRightSprite;
+	CBArray<CAdSpriteSet *, CAdSpriteSet *> _talkSprites;
+	CBArray<CAdSpriteSet *, CAdSpriteSet *> _talkSpritesEx;
+	TDirection _dir;
 	CAdActor(CBGame *inGame/*=NULL*/);
 	virtual ~CAdActor();
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 
 	// new anim system
-	char *m_TalkAnimName;
-	char *m_IdleAnimName;
-	char *m_WalkAnimName;
-	char *m_TurnLeftAnimName;
-	char *m_TurnRightAnimName;
-	CBArray<CAdSpriteSet *, CAdSpriteSet *> m_Anims;
+	char *_talkAnimName;
+	char *_idleAnimName;
+	char *_walkAnimName;
+	char *_turnLeftAnimName;
+	char *_turnRightAnimName;
+	CBArray<CAdSpriteSet *, CAdSpriteSet *> _anims;
 	virtual HRESULT PlayAnim(char *Filename);
 	CAdSpriteSet *GetAnimByName(char *AnimName);
 
@@ -90,16 +90,16 @@ private:
 	HRESULT SetDefaultAnimNames();
 	CBSprite *GetTalkStanceOld(char *Stance);
 	HRESULT MergeAnims(char *AnimsFilename);
-	CBSprite *m_AnimSprite2;
+	CBSprite *_animSprite2;
 
 	void InitLine(CBPoint StartPt, CBPoint EndPt);
 	void GetNextStep();
 	void FollowPath();
-	double m_PFStepX;
-	double m_PFStepY;
-	double m_PFX;
-	double m_PFY;
-	int m_PFCount;
+	double _pFStepX;
+	double _pFStepY;
+	double _pFX;
+	double _pFY;
+	int _pFCount;
 };
 
 } // end of namespace WinterMute

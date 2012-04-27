@@ -76,11 +76,11 @@ public:
 	void SkipCharacters(char **buf, const char *toSkip);
 	long GetCommand(char **buf, TokenDesc *tokens, char **params);
 	long GetObject(char **buf, TokenDesc *tokens, char **name, char **data);
-	int m_ParserLine;
-	char m_LastOffender[255];
+	int _parserLine;
+	char _lastOffender[255];
 	CBParser(CBGame *inGame = NULL);
 	virtual ~CBParser();
-	char *m_WhiteSpace;
+	char *_whiteSpace;
 };
 
 } // end of namespace WinterMute

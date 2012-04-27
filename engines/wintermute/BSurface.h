@@ -37,17 +37,17 @@ class CBSurface: public CBBase {
 public:
 	virtual HRESULT Invalidate();
 	virtual HRESULT PrepareToDraw();
-	bool m_CKDefault;
-	byte m_CKRed;
-	byte m_CKGreen;
-	byte m_CKBlue;
+	bool _cKDefault;
+	byte _cKRed;
+	byte _cKGreen;
+	byte _cKBlue;
 
-	uint32 m_LastUsedTime;
-	bool m_Valid;
-	int m_LifeTime;
-	bool m_KeepLoaded;
+	uint32 _lastUsedTime;
+	bool _valid;
+	int _lifeTime;
+	bool _keepLoaded;
 
-	bool m_PixelOpReady;
+	bool _pixelOpReady;
 	CBSurface(CBGame *inGame);
 	virtual ~CBSurface();
 
@@ -71,20 +71,20 @@ public:
 	void SetFilename(const char *Filename);
 	void SetSize(int Width, int Height);
 
-	int m_ReferenceCount;
-	char *m_Filename;
+	int _referenceCount;
+	char *_filename;
 
 	int GetWidth() {
-		return m_Width;
+		return _width;
 	}
 	int GetHeight() {
-		return m_Height;
+		return _height;
 	}
-	//void SetWidth(int Width){ m_Width = Width;    }
-	//void SetHeight(int Height){ m_Height = Height; }
+	//void SetWidth(int Width){ _width = Width;    }
+	//void SetHeight(int Height){ _height = Height; }
 protected:
-	int m_Height;
-	int m_Width;
+	int _height;
+	int _width;
 
 };
 

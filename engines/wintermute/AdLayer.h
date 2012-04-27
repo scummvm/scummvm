@@ -33,15 +33,15 @@ namespace WinterMute {
 class CAdSceneNode;
 class CAdLayer : public CBObject {
 public:
-	bool m_CloseUp;
+	bool _closeUp;
 	DECLARE_PERSISTENT(CAdLayer, CBObject)
-	bool m_Active;
-	int m_Height;
-	int m_Width;
-	bool m_Main;
+	bool _active;
+	int _height;
+	int _width;
+	bool _main;
 	CAdLayer(CBGame *inGame);
 	virtual ~CAdLayer();
-	CBArray<CAdSceneNode *, CAdSceneNode *> m_Nodes;
+	CBArray<CAdSceneNode *, CAdSceneNode *> _nodes;
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);

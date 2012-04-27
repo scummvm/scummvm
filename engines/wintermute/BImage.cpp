@@ -32,16 +32,16 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
 CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
 #if 0
-	m_Bitmap = bitmap;
+	_bitmap = bitmap;
 #endif
-	m_Bitmap = NULL;
+	_bitmap = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBImage::~CBImage() {
 #if 0
-	if (m_Bitmap) FreeImage_Unload(m_Bitmap);
+	if (_bitmap) FreeImage_Unload(_bitmap);
 #endif
 }
 
@@ -49,9 +49,9 @@ CBImage::~CBImage() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBImage::SaveBMPFile(char *Filename) {
 #if 0
-	if (!m_Bitmap) return E_FAIL;
+	if (!_bitmap) return E_FAIL;
 
-	if (FreeImage_Save(FIF_BMP, m_Bitmap, Filename)) return S_OK;
+	if (FreeImage_Save(FIF_BMP, _bitmap, Filename)) return S_OK;
 	else return E_FAIL;
 #endif
 	return E_FAIL;
@@ -61,16 +61,16 @@ HRESULT CBImage::SaveBMPFile(char *Filename) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBImage::Resize(int NewWidth, int NewHeight) {
 #if 0
-	if (!m_Bitmap) return E_FAIL;
+	if (!_bitmap) return E_FAIL;
 
-	if (NewWidth == 0) NewWidth = FreeImage_GetWidth(m_Bitmap);
-	if (NewHeight == 0) NewHeight = FreeImage_GetHeight(m_Bitmap);
+	if (NewWidth == 0) NewWidth = FreeImage_GetWidth(_bitmap);
+	if (NewHeight == 0) NewHeight = FreeImage_GetHeight(_bitmap);
 
 
-	FIBITMAP *newImg = FreeImage_Rescale(m_Bitmap, NewWidth, NewHeight, FILTER_BILINEAR);
+	FIBITMAP *newImg = FreeImage_Rescale(_bitmap, NewWidth, NewHeight, FILTER_BILINEAR);
 	if (newImg) {
-		FreeImage_Unload(m_Bitmap);
-		m_Bitmap = newImg;
+		FreeImage_Unload(_bitmap);
+		_bitmap = newImg;
 		return S_OK;
 	} else return E_FAIL;
 #endif
@@ -80,10 +80,10 @@ HRESULT CBImage::Resize(int NewWidth, int NewHeight) {
 
 //////////////////////////////////////////////////////////////////////////
 byte *CBImage::CreateBMPBuffer(uint32 *BufferSize) {
-	if (!m_Bitmap) return NULL;
+	if (!_bitmap) return NULL;
 #if 0
 	FIMEMORY *fiMem = FreeImage_OpenMemory();
-	FreeImage_SaveToMemory(FIF_PNG, m_Bitmap, fiMem);
+	FreeImage_SaveToMemory(FIF_PNG, _bitmap, fiMem);
 	uint32 size;
 	byte *data;
 	FreeImage_AcquireMemory(fiMem, &data, &size);
@@ -104,12 +104,12 @@ byte *CBImage::CreateBMPBuffer(uint32 *BufferSize) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBImage::CopyFrom(CBImage *OrigImage, int NewWidth, int NewHeight) {
 #if 0
-	if (m_Bitmap) FreeImage_Unload(m_Bitmap);
+	if (_bitmap) FreeImage_Unload(_bitmap);
 
 	if (NewWidth == 0) NewWidth = FreeImage_GetWidth(OrigImage->GetBitmap());
 	if (NewHeight == 0) NewHeight = FreeImage_GetHeight(OrigImage->GetBitmap());
 
-	m_Bitmap = FreeImage_Rescale(OrigImage->GetBitmap(), NewWidth, NewHeight, FILTER_BILINEAR);
+	_bitmap = FreeImage_Rescale(OrigImage->GetBitmap(), NewWidth, NewHeight, FILTER_BILINEAR);
 #endif
 	return S_OK;
 }

@@ -41,13 +41,13 @@ public:
 	RECT *GetRect();
 	HRESULT SetRect(int left, int top, int right, int bottom, bool NoCheck = false);
 	DECLARE_PERSISTENT(CBViewport, CBBase)
-	int m_OffsetY;
-	int m_OffsetX;
-	CBObject *m_MainObject;
+	int _offsetY;
+	int _offsetX;
+	CBObject *_mainObject;
 	CBViewport(CBGame *inGame = NULL);
 	virtual ~CBViewport();
 private:
-	RECT m_Rect;
+	RECT _rect;
 };
 
 } // end of namespace WinterMute

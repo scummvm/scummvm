@@ -56,8 +56,8 @@ public:
 	CScValue *Pop();
 	CScStack(CBGame *inGame);
 	virtual ~CScStack();
-	CBArray<CScValue *, CScValue *> m_Values;
-	int m_SP;
+	CBArray<CScValue *, CScValue *> _values;
+	int _sP;
 
 };
 

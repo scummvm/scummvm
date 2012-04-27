@@ -38,13 +38,13 @@ class Vector2;
 
 class CBPersistMgr : public CBBase {
 public:
-	char *m_SavedDescription;
-	time_t m_SavedTimestamp;
-	byte m_SavedVerMajor;
-	byte m_SavedVerMinor;
-	byte m_SavedVerBuild;
-	byte m_SavedExtMajor;
-	byte m_SavedExtMinor;
+	char *_savedDescription;
+	time_t _savedTimestamp;
+	byte _savedVerMajor;
+	byte _savedVerMinor;
+	byte _savedVerBuild;
+	byte _savedExtMajor;
+	byte _savedExtMinor;
 	HRESULT SaveFile(char *Filename);
 	uint32 GetDWORD();
 	void PutDWORD(uint32 Val);
@@ -55,13 +55,13 @@ public:
 	HRESULT InitSave(char *Desc);
 	HRESULT GetBytes(byte  *Buffer, uint32 Size);
 	HRESULT PutBytes(byte  *Buffer, uint32 Size);
-	uint32 m_Offset;
-	uint32 m_BufferSize;
-	byte *m_Buffer;
-	bool m_Saving;
+	uint32 _offset;
+	uint32 _bufferSize;
+	byte *_buffer;
+	bool _saving;
 
-	uint32 m_RichBufferSize;
-	byte *m_RichBuffer;
+	uint32 _richBufferSize;
+	byte *_richBuffer;
 
 	HRESULT Transfer(const char *Name, void *Val);
 	HRESULT Transfer(const char *Name, int *Val);
@@ -79,8 +79,8 @@ public:
 	virtual ~CBPersistMgr();
 	bool CheckVersion(byte  VerMajor, byte VerMinor, byte VerBuild);
 
-	uint32 m_ThumbnailDataSize;
-	byte *m_ThumbnailData;
+	uint32 _thumbnailDataSize;
+	byte *_thumbnailData;
 
 };
 

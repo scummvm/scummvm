@@ -41,10 +41,10 @@ IMPLEMENT_PERSISTENT(CAdRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdRegion::CAdRegion(CBGame *inGame): CBRegion(inGame) {
-	m_Blocked = false;
-	m_Decoration = false;
-	m_Zoom = 0;
-	m_Alpha = 0xFFFFFFFF;
+	_blocked = false;
+	_decoration = false;
+	_zoom = 0;
+	_alpha = 0xFFFFFFFF;
 }
 
 
@@ -55,7 +55,7 @@ CAdRegion::~CAdRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdRegion::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdRegion::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -63,8 +63,8 @@ HRESULT CAdRegion::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", Filename);
 
@@ -130,8 +130,8 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 
 	int i;
 
-	for (i = 0; i < m_Points.GetSize(); i++) delete m_Points[i];
-	m_Points.RemoveAll();
+	for (i = 0; i < _points.GetSize(); i++) delete _points[i];
+	_points.RemoveAll();
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 
@@ -150,29 +150,29 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &m_Active);
+			parser.ScanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_BLOCKED:
-			parser.ScanStr((char *)params, "%b", &m_Blocked);
+			parser.ScanStr((char *)params, "%b", &_blocked);
 			break;
 
 		case TOKEN_DECORATION:
-			parser.ScanStr((char *)params, "%b", &m_Decoration);
+			parser.ScanStr((char *)params, "%b", &_decoration);
 			break;
 
 		case TOKEN_ZOOM:
 		case TOKEN_SCALE: {
 			int i;
 			parser.ScanStr((char *)params, "%d", &i);
-			m_Zoom = (float)i;
+			_zoom = (float)i;
 		}
 		break;
 
 		case TOKEN_POINT: {
 			int x, y;
 			parser.ScanStr((char *)params, "%d,%d", &x, &y);
-			m_Points.Add(new CBPoint(x, y));
+			_points.Add(new CBPoint(x, y));
 		}
 		break;
 
@@ -185,11 +185,11 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr((char *)params, "%b", &m_EditorSelected);
+			parser.ScanStr((char *)params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.ScanStr((char *)params, "%d", &m_EditorSelectedPoint);
+			parser.ScanStr((char *)params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -212,7 +212,7 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 
 	CreateRegion();
 
-	m_Alpha = DRGBA(ar, ag, ab, alpha);
+	_alpha = DRGBA(ar, ag, ab, alpha);
 
 	return S_OK;
 }
@@ -228,8 +228,8 @@ HRESULT CAdRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	    //////////////////////////////////////////////////////////////////////////
 	    if(strcmp(Name, "SkipTo")==0){
 	        Stack->CorrectParams(2);
-	        m_PosX = Stack->Pop()->GetInt();
-	        m_PosY = Stack->Pop()->GetInt();
+	        _posX = Stack->Pop()->GetInt();
+	        _posY = Stack->Pop()->GetInt();
 	        Stack->PushNULL();
 
 	        return S_OK;
@@ -241,54 +241,54 @@ HRESULT CAdRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdRegion::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("ad region");
-		return m_ScValue;
+		_scValue->SetString("ad region");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Name") == 0) {
-		m_ScValue->SetString(m_Name);
-		return m_ScValue;
+		_scValue->SetString(_name);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Blocked
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Blocked") == 0) {
-		m_ScValue->SetBool(m_Blocked);
-		return m_ScValue;
+		_scValue->SetBool(_blocked);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Decoration") == 0) {
-		m_ScValue->SetBool(m_Decoration);
-		return m_ScValue;
+		_scValue->SetBool(_decoration);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale") == 0) {
-		m_ScValue->SetFloat(m_Zoom);
-		return m_ScValue;
+		_scValue->SetFloat(_zoom);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AlphaColor") == 0) {
-		m_ScValue->SetInt((int)m_Alpha);
-		return m_ScValue;
+		_scValue->SetInt((int)_alpha);
+		return _scValue;
 	}
 
 	else return CBRegion::ScGetProperty(Name);
@@ -309,7 +309,7 @@ HRESULT CAdRegion::ScSetProperty(char *Name, CScValue *Value) {
 	// Blocked
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Blocked") == 0) {
-		m_Blocked = Value->GetBool();
+		_blocked = Value->GetBool();
 		return S_OK;
 	}
 
@@ -317,7 +317,7 @@ HRESULT CAdRegion::ScSetProperty(char *Name, CScValue *Value) {
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Decoration") == 0) {
-		m_Decoration = Value->GetBool();
+		_decoration = Value->GetBool();
 		return S_OK;
 	}
 
@@ -325,7 +325,7 @@ HRESULT CAdRegion::ScSetProperty(char *Name, CScValue *Value) {
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale") == 0) {
-		m_Zoom = Value->GetFloat();
+		_zoom = Value->GetFloat();
 		return S_OK;
 	}
 
@@ -333,7 +333,7 @@ HRESULT CAdRegion::ScSetProperty(char *Name, CScValue *Value) {
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AlphaColor") == 0) {
-		m_Alpha = (uint32)Value->GetInt();
+		_alpha = (uint32)Value->GetInt();
 		return S_OK;
 	}
 
@@ -350,25 +350,25 @@ char *CAdRegion::ScToString() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdRegion::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "REGION {\n");
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", m_Name);
+	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
-	Buffer->PutTextIndent(Indent + 2, "BLOCKED=%s\n", m_Blocked ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "DECORATION=%s\n", m_Decoration ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", m_Active ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "SCALE=%d\n", (int)m_Zoom);
-	Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(m_Alpha), D3DCOLGetG(m_Alpha), D3DCOLGetB(m_Alpha));
-	Buffer->PutTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(m_Alpha));
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", m_EditorSelected ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "BLOCKED=%s\n", _blocked ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	Buffer->PutTextIndent(Indent + 2, "SCALE=%d\n", (int)_zoom);
+	Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alpha), D3DCOLGetG(_alpha), D3DCOLGetB(_alpha));
+	Buffer->PutTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alpha));
+	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
 	int i;
-	for (i = 0; i < m_Scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", m_Scripts[i]->m_Filename);
+	for (i = 0; i < _scripts.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (m_ScProp) m_ScProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
 
-	for (i = 0; i < m_Points.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", m_Points[i]->x, m_Points[i]->y);
+	for (i = 0; i < _points.GetSize(); i++) {
+		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
 	CBBase::SaveAsText(Buffer, Indent + 2);
@@ -383,10 +383,10 @@ HRESULT CAdRegion::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 HRESULT CAdRegion::Persist(CBPersistMgr *PersistMgr) {
 	CBRegion::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Alpha));
-	PersistMgr->Transfer(TMEMBER(m_Blocked));
-	PersistMgr->Transfer(TMEMBER(m_Decoration));
-	PersistMgr->Transfer(TMEMBER(m_Zoom));
+	PersistMgr->Transfer(TMEMBER(_alpha));
+	PersistMgr->Transfer(TMEMBER(_blocked));
+	PersistMgr->Transfer(TMEMBER(_decoration));
+	PersistMgr->Transfer(TMEMBER(_zoom));
 
 	return S_OK;
 }

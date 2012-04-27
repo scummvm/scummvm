@@ -38,7 +38,7 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBRegistry::CBRegistry(CBGame *inGame): CBBase(inGame) {
-	m_IniName = NULL;
+	_iniName = NULL;
 
 	SetIniName("./wme.ini");
 	LoadValues(true);
@@ -48,8 +48,8 @@ CBRegistry::CBRegistry(CBGame *inGame): CBBase(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CBRegistry::~CBRegistry() {
 	SaveValues();
-	delete[] m_IniName;
-	m_IniName = NULL;
+	delete[] _iniName;
+	_iniName = NULL;
 }
 
 
@@ -61,15 +61,15 @@ AnsiString CBRegistry::ReadString(const AnsiString &subKey, const AnsiString &ke
 #ifdef __WIN32__
 	// check ini file first (so what we can use project files on windows)
 	char buffer[32768];
-	GetPrivateProfileString(subKey.c_str(), key.c_str(), init.c_str(), buffer, 32768, m_IniName);
+	GetPrivateProfileString(subKey.c_str(), key.c_str(), init.c_str(), buffer, 32768, _iniName);
 	ret = AnsiString(buffer);
 
 	if (buffer != init) return ret;
 #endif
 
 	bool found = false;
-	ret = GetValue(m_LocalValues, subKey, key, found);
-	if (!found) ret = GetValue(m_Values, subKey, key, found);
+	ret = GetValue(_localValues, subKey, key, found);
+	if (!found) ret = GetValue(_values, subKey, key, found);
 	if (!found) ret = init;
 
 	return ret;
@@ -78,7 +78,7 @@ AnsiString CBRegistry::ReadString(const AnsiString &subKey, const AnsiString &ke
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegistry::WriteString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value) {
-	m_Values[subKey][key] = value;
+	_values[subKey][key] = value;
 	return true;
 }
 
@@ -86,7 +86,7 @@ bool CBRegistry::WriteString(const AnsiString &subKey, const AnsiString &key, co
 //////////////////////////////////////////////////////////////////////////
 int CBRegistry::ReadInt(const AnsiString &subKey, const AnsiString &key, int init) {
 #ifdef __WIN32__
-	int ret = GetPrivateProfileInt(subKey.c_str(), key.c_str(), init, m_IniName);
+	int ret = GetPrivateProfileInt(subKey.c_str(), key.c_str(), init, _iniName);
 	if (ret != init) return ret;
 #endif
 
@@ -117,38 +117,38 @@ bool CBRegistry::WriteBool(const AnsiString &subKey, const AnsiString &key, bool
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::SetIniName(char *Name) {
-	delete[] m_IniName;
-	m_IniName = NULL;
+	delete[] _iniName;
+	_iniName = NULL;
 
 	if (strchr(Name, '\\') == NULL && strchr(Name, '/') == NULL) {
-		m_IniName = new char [strlen(Name) + 3];
-		sprintf(m_IniName, "./%s", Name);
+		_iniName = new char [strlen(Name) + 3];
+		sprintf(_iniName, "./%s", Name);
 	} else {
-		m_IniName = new char [strlen(Name) + 1];
-		strcpy(m_IniName, Name);
+		_iniName = new char [strlen(Name) + 1];
+		strcpy(_iniName, Name);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *CBRegistry::GetIniName() {
-	return m_IniName;
+	return _iniName;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::LoadValues(bool local) {
-	if (local) LoadXml("settings.xml", m_LocalValues);
-	else LoadXml(PathUtil::Combine(Game->GetDataDir(), "settings.xml"), m_Values);
+	if (local) LoadXml("settings.xml", _localValues);
+	else LoadXml(PathUtil::Combine(Game->GetDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::SaveValues() {
-	SaveXml(PathUtil::Combine(Game->GetDataDir(), "settings.xml"), m_Values);
+	SaveXml(PathUtil::Combine(Game->GetDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::SetBasePath(const char *basePath) {
-	m_BasePath = PathUtil::GetFileNameWithoutExtension(basePath);
+	_basePath = PathUtil::GetFileNameWithoutExtension(basePath);
 
 	LoadValues(false);
 }
@@ -196,7 +196,7 @@ void CBRegistry::SaveXml(const AnsiString fileName, PathValueMap &values) {
 	doc.LinkEndChild(root);
 
 	PathValueMap::iterator pathIt;
-	for (pathIt = m_Values.begin(); pathIt != m_Values.end(); ++pathIt) {
+	for (pathIt = _values.begin(); pathIt != _values.end(); ++pathIt) {
 		TiXmlElement *pathElem = new TiXmlElement((*pathIt)._key.c_str());
 		root->LinkEndChild(pathElem);
 

@@ -35,12 +35,12 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBTransitionMgr::CBTransitionMgr(CBGame *inGame): CBBase(inGame) {
-	m_State = TRANS_MGR_READY;
-	m_Type = TRANSITION_NONE;
-	m_OrigInteractive = false;
-	m_PreserveInteractive = false;
-	m_LastTime = 0;
-	m_Started = false;
+	_state = TRANS_MGR_READY;
+	_type = TRANSITION_NONE;
+	_origInteractive = false;
+	_preserveInteractive = false;
+	_lastTime = 0;
+	_started = false;
 }
 
 
@@ -53,28 +53,28 @@ CBTransitionMgr::~CBTransitionMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBTransitionMgr::IsReady() {
-	return (m_State == TRANS_MGR_READY);
+	return (_state == TRANS_MGR_READY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBTransitionMgr::Start(TTransitionType Type, bool NonInteractive) {
-	if (m_State != TRANS_MGR_READY) return S_OK;
+	if (_state != TRANS_MGR_READY) return S_OK;
 
 	if (Type == TRANSITION_NONE || Type >= NUM_TRANSITION_TYPES) {
-		m_State = TRANS_MGR_READY;
+		_state = TRANS_MGR_READY;
 		return S_OK;
 	}
 
 	if (NonInteractive) {
-		m_PreserveInteractive = true;
-		m_OrigInteractive = Game->m_Interactive;
-		Game->m_Interactive = false;
-	} else m_PreserveInteractive;
+		_preserveInteractive = true;
+		_origInteractive = Game->_interactive;
+		Game->_interactive = false;
+	} else _preserveInteractive;
 
-	m_Type = Type;
-	m_State = TRANS_MGR_RUNNING;
-	m_Started = false;
+	_type = Type;
+	_state = TRANS_MGR_RUNNING;
+	_started = false;
 
 	return S_OK;
 }
@@ -85,40 +85,40 @@ HRESULT CBTransitionMgr::Start(TTransitionType Type, bool NonInteractive) {
 HRESULT CBTransitionMgr::Update() {
 	if (IsReady()) return S_OK;
 
-	if (!m_Started) {
-		m_Started = true;
-		m_LastTime = CBPlatform::GetTime();
+	if (!_started) {
+		_started = true;
+		_lastTime = CBPlatform::GetTime();
 	}
 
-	switch (m_Type) {
+	switch (_type) {
 	case TRANSITION_NONE:
-		m_State = TRANS_MGR_READY;
+		_state = TRANS_MGR_READY;
 		break;
 
 	case TRANSITION_FADE_OUT: {
-		uint32 time = CBPlatform::GetTime() - m_LastTime;
+		uint32 time = CBPlatform::GetTime() - _lastTime;
 		int Alpha = 255 - (float)time / (float)FADE_DURATION * 255;
 		Alpha = MIN(255, MAX(Alpha, 0));
-		Game->m_Renderer->Fade((WORD)Alpha);
+		Game->_renderer->Fade((WORD)Alpha);
 
-		if (time > FADE_DURATION) m_State = TRANS_MGR_READY;
+		if (time > FADE_DURATION) _state = TRANS_MGR_READY;
 	}
 	break;
 
 	case TRANSITION_FADE_IN: {
-		uint32 time = CBPlatform::GetTime() - m_LastTime;
+		uint32 time = CBPlatform::GetTime() - _lastTime;
 		int Alpha = (float)time / (float)FADE_DURATION * 255;
 		Alpha = MIN(255, MAX(Alpha, 0));
-		Game->m_Renderer->Fade((WORD)Alpha);
+		Game->_renderer->Fade((WORD)Alpha);
 
-		if (time > FADE_DURATION) m_State = TRANS_MGR_READY;
+		if (time > FADE_DURATION) _state = TRANS_MGR_READY;
 	}
 	break;
 
 	}
 
 	if (IsReady()) {
-		if (m_PreserveInteractive) Game->m_Interactive = m_OrigInteractive;
+		if (_preserveInteractive) Game->_interactive = _origInteractive;
 	}
 	return S_OK;
 }

@@ -36,15 +36,15 @@ namespace WinterMute {
 class CAdEntity : public CAdTalkHolder {
 public:
 	HRESULT SetSprite(char *Filename);
-	int m_WalkToX;
-	int m_WalkToY;
-	TDirection m_WalkToDir;
+	int _walkToX;
+	int _walkToY;
+	TDirection _walkToDir;
 	void SetItem(char *ItemName);
-	char *m_Item;
+	char *_item;
 	DECLARE_PERSISTENT(CAdEntity, CAdTalkHolder)
 	void UpdatePosition();
 	virtual int GetHeight();
-	CBRegion *m_Region;
+	CBRegion *_region;
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 	virtual HRESULT Update();
 	virtual HRESULT Display();
@@ -52,7 +52,7 @@ public:
 	virtual ~CAdEntity();
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	TEntityType m_Subtype;
+	TEntityType _subtype;
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);

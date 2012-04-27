@@ -37,8 +37,8 @@ class CAdSpriteSet;
 class CBSprite;
 class CAdTalkNode : public CBBase {
 public:
-	char *m_SpriteSetFilename;
-	CAdSpriteSet *m_SpriteSet;
+	char *_spriteSetFilename;
+	CAdSpriteSet *_spriteSet;
 	CBSprite *GetSprite(TDirection Dir);
 	bool IsInTimeInterval(uint32 Time, TDirection Dir);
 	HRESULT LoadSprite();
@@ -48,13 +48,13 @@ public:
 	virtual ~CAdTalkNode();
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent = 0);
-	char *m_SpriteFilename;
-	CBSprite *m_Sprite;
-	uint32 m_StartTime;
-	uint32 m_EndTime;
-	bool m_PlayToEnd;
-	bool m_PreCache;
-	char *m_Comment;
+	char *_spriteFilename;
+	CBSprite *_sprite;
+	uint32 _startTime;
+	uint32 _endTime;
+	bool _playToEnd;
+	bool _preCache;
+	char *_comment;
 
 };
 

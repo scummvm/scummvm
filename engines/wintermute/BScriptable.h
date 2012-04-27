@@ -64,9 +64,9 @@ public:
 	virtual void ScSetBool(bool Val);
 	virtual int ScCompare(CBScriptable *Val);
 	virtual void ScDebuggerDesc(char *Buf, int BufSize);
-	int m_RefCount;
-	CScValue *m_ScValue;
-	CScValue *m_ScProp;
+	int _refCount;
+	CScValue *_scValue;
+	CScValue *_scProp;
 
 public:
 	// IWmeDebugObject

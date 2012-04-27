@@ -43,51 +43,51 @@ IMPLEMENT_PERSISTENT(CAdNodeState, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdNodeState::CAdNodeState(CBGame *inGame): CBBase(inGame) {
-	m_Name = NULL;
-	m_Active = false;
-	for (int i = 0; i < 7; i++) m_Caption[i] = NULL;
-	m_AlphaColor = 0;
-	m_Filename = NULL;
-	m_Cursor = NULL;
+	_name = NULL;
+	_active = false;
+	for (int i = 0; i < 7; i++) _caption[i] = NULL;
+	_alphaColor = 0;
+	_filename = NULL;
+	_cursor = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdNodeState::~CAdNodeState() {
-	delete[] m_Name;
-	delete[] m_Filename;
-	delete[] m_Cursor;
-	m_Name = NULL;
-	m_Filename = NULL;
-	m_Cursor = NULL;
+	delete[] _name;
+	delete[] _filename;
+	delete[] _cursor;
+	_name = NULL;
+	_filename = NULL;
+	_cursor = NULL;
 	for (int i = 0; i < 7; i++) {
-		delete[] m_Caption[i];
-		m_Caption[i] = NULL;
+		delete[] _caption[i];
+		_caption[i] = NULL;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdNodeState::SetName(char *Name) {
-	delete[] m_Name;
-	m_Name = NULL;
-	CBUtils::SetString(&m_Name, Name);
+	delete[] _name;
+	_name = NULL;
+	CBUtils::SetString(&_name, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdNodeState::SetFilename(char *Filename) {
-	delete[] m_Filename;
-	m_Filename = NULL;
-	CBUtils::SetString(&m_Filename, Filename);
+	delete[] _filename;
+	_filename = NULL;
+	CBUtils::SetString(&_filename, Filename);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdNodeState::SetCursor(char *Filename) {
-	delete[] m_Cursor;
-	m_Cursor = NULL;
-	CBUtils::SetString(&m_Cursor, Filename);
+	delete[] _cursor;
+	_cursor = NULL;
+	CBUtils::SetString(&_cursor, Filename);
 }
 
 
@@ -95,12 +95,12 @@ void CAdNodeState::SetCursor(char *Filename) {
 HRESULT CAdNodeState::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	PersistMgr->Transfer(TMEMBER(m_Name));
-	PersistMgr->Transfer(TMEMBER(m_Filename));
-	PersistMgr->Transfer(TMEMBER(m_Cursor));
-	PersistMgr->Transfer(TMEMBER(m_AlphaColor));
-	for (int i = 0; i < 7; i++) PersistMgr->Transfer(TMEMBER(m_Caption[i]));
+	PersistMgr->Transfer(TMEMBER(_active));
+	PersistMgr->Transfer(TMEMBER(_name));
+	PersistMgr->Transfer(TMEMBER(_filename));
+	PersistMgr->Transfer(TMEMBER(_cursor));
+	PersistMgr->Transfer(TMEMBER(_alphaColor));
+	for (int i = 0; i < 7; i++) PersistMgr->Transfer(TMEMBER(_caption[i]));
 
 	return S_OK;
 }
@@ -111,11 +111,11 @@ void CAdNodeState::SetCaption(char *Caption, int Case) {
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7) return;
 
-	delete[] m_Caption[Case - 1];
-	m_Caption[Case - 1] = new char[strlen(Caption) + 1];
-	if (m_Caption[Case - 1]) {
-		strcpy(m_Caption[Case - 1], Caption);
-		Game->m_StringTable->Expand(&m_Caption[Case - 1]);
+	delete[] _caption[Case - 1];
+	_caption[Case - 1] = new char[strlen(Caption) + 1];
+	if (_caption[Case - 1]) {
+		strcpy(_caption[Case - 1], Caption);
+		Game->_stringTable->Expand(&_caption[Case - 1]);
 	}
 }
 
@@ -123,8 +123,8 @@ void CAdNodeState::SetCaption(char *Caption, int Case) {
 //////////////////////////////////////////////////////////////////////////
 char *CAdNodeState::GetCaption(int Case) {
 	if (Case == 0) Case = 1;
-	if (Case < 1 || Case > 7 || m_Caption[Case - 1] == NULL) return "";
-	else return m_Caption[Case - 1];
+	if (Case < 1 || Case > 7 || _caption[Case - 1] == NULL) return "";
+	else return _caption[Case - 1];
 }
 
 
@@ -137,30 +137,30 @@ HRESULT CAdNodeState::TransferEntity(CAdEntity *Entity, bool IncludingSprites, b
 
 	if (Saving) {
 		for (int i = 0; i < 7; i++) {
-			if (Entity->m_Caption[i]) SetCaption(Entity->m_Caption[i], i);
+			if (Entity->_caption[i]) SetCaption(Entity->_caption[i], i);
 		}
-		if (!Entity->m_Region && Entity->m_Sprite && Entity->m_Sprite->m_Filename) {
-			if (IncludingSprites) SetFilename(Entity->m_Sprite->m_Filename);
+		if (!Entity->_region && Entity->_sprite && Entity->_sprite->_filename) {
+			if (IncludingSprites) SetFilename(Entity->_sprite->_filename);
 			else SetFilename("");
 		}
-		if (Entity->m_Cursor && Entity->m_Cursor->m_Filename) SetCursor(Entity->m_Cursor->m_Filename);
-		m_AlphaColor = Entity->m_AlphaColor;
-		m_Active = Entity->m_Active;
+		if (Entity->_cursor && Entity->_cursor->_filename) SetCursor(Entity->_cursor->_filename);
+		_alphaColor = Entity->_alphaColor;
+		_active = Entity->_active;
 	} else {
 		for (int i = 0; i < 7; i++) {
-			if (m_Caption[i]) Entity->SetCaption(m_Caption[i], i);
+			if (_caption[i]) Entity->SetCaption(_caption[i], i);
 		}
-		if (m_Filename && !Entity->m_Region && IncludingSprites && strcmp(m_Filename, "") != 0) {
-			if (!Entity->m_Sprite || !Entity->m_Sprite->m_Filename || scumm_stricmp(Entity->m_Sprite->m_Filename, m_Filename) != 0)
-				Entity->SetSprite(m_Filename);
+		if (_filename && !Entity->_region && IncludingSprites && strcmp(_filename, "") != 0) {
+			if (!Entity->_sprite || !Entity->_sprite->_filename || scumm_stricmp(Entity->_sprite->_filename, _filename) != 0)
+				Entity->SetSprite(_filename);
 		}
-		if (m_Cursor) {
-			if (!Entity->m_Cursor || !Entity->m_Cursor->m_Filename || scumm_stricmp(Entity->m_Cursor->m_Filename, m_Cursor) != 0)
-				Entity->SetCursor(m_Cursor);
+		if (_cursor) {
+			if (!Entity->_cursor || !Entity->_cursor->_filename || scumm_stricmp(Entity->_cursor->_filename, _cursor) != 0)
+				Entity->SetCursor(_cursor);
 		}
 
-		Entity->m_Active = m_Active;
-		Entity->m_AlphaColor = m_AlphaColor;
+		Entity->_active = _active;
+		Entity->_alphaColor = _alphaColor;
 	}
 
 	return S_OK;

@@ -39,8 +39,8 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBFile::CBFile(CBGame *inGame): CBBase(inGame) {
-	m_Pos = 0;
-	m_Size = 0;
+	_pos = 0;
+	_size = 0;
 }
 
 
@@ -52,7 +52,7 @@ CBFile::~CBFile() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBFile::IsEOF() {
-	return m_Pos == m_Size;
+	return _pos == _size;
 }
 
 Common::SeekableReadStream *CBFile::getMemStream() {

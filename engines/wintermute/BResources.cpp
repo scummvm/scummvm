@@ -2817,7 +2817,7 @@ bool CBResources::GetFile(const char *fileName, byte*& buffer, uint32 &size) {
 		buffer = invaliddebug;
 		size = sizeof(invaliddebug);
 		return true;
-	} else if (scumm_stricmp(fileName, "system_font.bmp") == 0) {
+	} else if (scumm_stricmp(fileName, "syste_font.bmp") == 0) {
 		buffer = systemfont;
 		size = sizeof(systemfont);
 		return true;

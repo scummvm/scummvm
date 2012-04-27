@@ -35,20 +35,20 @@ namespace WinterMute {
 class CBPoint;
 class CAdWaypointGroup : public CBObject {
 public:
-	float m_LastMimicScale;
-	int m_LastMimicX;
-	int m_LastMimicY;
+	float _lastMimicScale;
+	int _lastMimicX;
+	int _lastMimicY;
 	void Cleanup();
 	HRESULT Mimic(CAdWaypointGroup *Wpt, float Scale = 100.0f, int X = 0, int Y = 0);
 	DECLARE_PERSISTENT(CAdWaypointGroup, CBObject)
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	bool m_Active;
+	bool _active;
 	CAdWaypointGroup(CBGame *inGame);
 	HRESULT LoadFile(char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual ~CAdWaypointGroup();
-	CBArray<CBPoint *, CBPoint *> m_Points;
-	int m_EditorSelectedPoint;
+	CBArray<CBPoint *, CBPoint *> _points;
+	int _editorSelectedPoint;
 	virtual CScValue *ScGetProperty(char *Name);
 	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
 };

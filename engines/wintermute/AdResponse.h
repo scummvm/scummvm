@@ -43,16 +43,16 @@ public:
 	HRESULT SetIconHover(char *Filename);
 	HRESULT SetIconPressed(char *Filename);
 	void SetText(char *Text);
-	int m_ID;
-	CBSprite *m_Icon;
-	CBSprite *m_IconHover;
-	CBSprite *m_IconPressed;
-	CBFont *m_Font;
-	char *m_Text;
-	char *m_TextOrig;
+	int _iD;
+	CBSprite *_icon;
+	CBSprite *_iconHover;
+	CBSprite *_iconPressed;
+	CBFont *_font;
+	char *_text;
+	char *_textOrig;
 	CAdResponse(CBGame *inGame);
 	virtual ~CAdResponse();
-	TResponseType m_ResponseType;
+	TResponseType _responseType;
 
 };
 

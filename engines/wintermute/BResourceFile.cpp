@@ -34,7 +34,7 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBResourceFile::CBResourceFile(CBGame *inGame): CBFile(inGame) {
-	m_Data = NULL;
+	_data = NULL;
 }
 
 
@@ -48,8 +48,8 @@ CBResourceFile::~CBResourceFile() {
 HRESULT CBResourceFile::Open(Common::String Filename) {
 	Close();
 
-	if (CBResources::GetFile(Filename.c_str(), m_Data, m_Size)) {
-		m_Pos = 0;
+	if (CBResources::GetFile(Filename.c_str(), _data, _size)) {
+		_pos = 0;
 		return S_OK;
 	}
 	return E_FAIL;
@@ -57,9 +57,9 @@ HRESULT CBResourceFile::Open(Common::String Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBResourceFile::Close() {
-	m_Data = NULL;
-	m_Pos = 0;
-	m_Size = 0;
+	_data = NULL;
+	_pos = 0;
+	_size = 0;
 
 	return S_OK;
 }
@@ -67,10 +67,10 @@ HRESULT CBResourceFile::Close() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBResourceFile::Read(void *Buffer, uint32 Size) {
-	if (!m_Data || m_Pos + Size > m_Size) return E_FAIL;
+	if (!_data || _pos + Size > _size) return E_FAIL;
 
-	memcpy(Buffer, (byte  *)m_Data + m_Pos, Size);
-	m_Pos += Size;
+	memcpy(Buffer, (byte  *)_data + _pos, Size);
+	_pos += Size;
 
 	return S_OK;
 }
@@ -78,7 +78,7 @@ HRESULT CBResourceFile::Read(void *Buffer, uint32 Size) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBResourceFile::Seek(uint32 Pos, TSeek Origin) {
-	if (!m_Data) return E_FAIL;
+	if (!_data) return E_FAIL;
 
 	uint32 NewPos = 0;
 
@@ -87,15 +87,15 @@ HRESULT CBResourceFile::Seek(uint32 Pos, TSeek Origin) {
 		NewPos = Pos;
 		break;
 	case SEEK_TO_END:
-		NewPos = m_Size + Pos;
+		NewPos = _size + Pos;
 		break;
 	case SEEK_TO_CURRENT:
-		NewPos = m_Pos + Pos;
+		NewPos = _pos + Pos;
 		break;
 	}
 
-	if (NewPos < 0 || NewPos > m_Size) return E_FAIL;
-	else m_Pos = NewPos;
+	if (NewPos < 0 || NewPos > _size) return E_FAIL;
+	else _pos = NewPos;
 
 	return S_OK;
 }

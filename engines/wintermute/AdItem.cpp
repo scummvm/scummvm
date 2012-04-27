@@ -50,42 +50,42 @@ IMPLEMENT_PERSISTENT(CAdItem, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdItem::CAdItem(CBGame *inGame): CAdTalkHolder(inGame) {
-	m_SpriteHover = NULL;
-	m_CursorNormal = m_CursorHover = NULL;
+	_spriteHover = NULL;
+	_cursorNormal = _cursorHover = NULL;
 
-	m_CursorCombined = true;
-	m_InInventory = false;
+	_cursorCombined = true;
+	_inInventory = false;
 
-	m_DisplayAmount = false;
-	m_Amount = 0;
-	m_AmountOffsetX = 0;
-	m_AmountOffsetY = 0;
-	m_AmountAlign = TAL_RIGHT;
-	m_AmountString = NULL;
+	_displayAmount = false;
+	_amount = 0;
+	_amountOffsetX = 0;
+	_amountOffsetY = 0;
+	_amountAlign = TAL_RIGHT;
+	_amountString = NULL;
 
-	m_State = STATE_READY;
+	_state = STATE_READY;
 
-	m_Movable = false;
+	_movable = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CAdItem::~CAdItem() {
-	delete m_SpriteHover;
-	delete m_CursorNormal;
-	delete m_CursorHover;
-	m_SpriteHover = NULL;
-	m_CursorNormal = NULL;
-	m_CursorHover = NULL;
+	delete _spriteHover;
+	delete _cursorNormal;
+	delete _cursorHover;
+	_spriteHover = NULL;
+	_cursorNormal = NULL;
+	_cursorHover = NULL;
 
-	delete[] m_AmountString;
-	m_AmountString = NULL;
+	delete[] _amountString;
+	_amountString = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdItem::LoadFile(char *Filename) {
-	byte *Buffer = Game->m_FileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -93,8 +93,8 @@ HRESULT CAdItem::LoadFile(char *Filename) {
 
 	HRESULT ret;
 
-	m_Filename = new char [strlen(Filename) + 1];
-	strcpy(m_Filename, Filename);
+	_filename = new char [strlen(Filename) + 1];
+	strcpy(_filename, Filename);
 
 	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", Filename);
 
@@ -197,86 +197,86 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_IMAGE:
 		case TOKEN_SPRITE:
-			delete m_Sprite;
-			m_Sprite = new CBSprite(Game, this);
-			if (!m_Sprite || FAILED(m_Sprite->LoadFile((char *)params, ((CAdGame *)Game)->m_TexItemLifeTime))) {
-				delete m_Sprite;
+			delete _sprite;
+			_sprite = new CBSprite(Game, this);
+			if (!_sprite || FAILED(_sprite->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+				delete _sprite;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_HOVER:
 		case TOKEN_SPRITE_HOVER:
-			delete m_SpriteHover;
-			m_SpriteHover = new CBSprite(Game, this);
-			if (!m_SpriteHover || FAILED(m_SpriteHover->LoadFile((char *)params, ((CAdGame *)Game)->m_TexItemLifeTime))) {
-				delete m_SpriteHover;
+			delete _spriteHover;
+			_spriteHover = new CBSprite(Game, this);
+			if (!_spriteHover || FAILED(_spriteHover->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+				delete _spriteHover;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_AMOUNT:
-			parser.ScanStr((char *)params, "%d", &m_Amount);
+			parser.ScanStr((char *)params, "%d", &_amount);
 			break;
 
 		case TOKEN_DISPLAY_AMOUNT:
-			parser.ScanStr((char *)params, "%b", &m_DisplayAmount);
+			parser.ScanStr((char *)params, "%b", &_displayAmount);
 			break;
 
 		case TOKEN_AMOUNT_OFFSET_X:
-			parser.ScanStr((char *)params, "%d", &m_AmountOffsetX);
+			parser.ScanStr((char *)params, "%d", &_amountOffsetX);
 			break;
 
 		case TOKEN_AMOUNT_OFFSET_Y:
-			parser.ScanStr((char *)params, "%d", &m_AmountOffsetY);
+			parser.ScanStr((char *)params, "%d", &_amountOffsetY);
 			break;
 
 		case TOKEN_AMOUNT_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) m_AmountAlign = TAL_LEFT;
-			else if (scumm_stricmp((char *)params, "right") == 0) m_AmountAlign = TAL_RIGHT;
-			else m_AmountAlign = TAL_CENTER;
+			if (scumm_stricmp((char *)params, "left") == 0) _amountAlign = TAL_LEFT;
+			else if (scumm_stricmp((char *)params, "right") == 0) _amountAlign = TAL_RIGHT;
+			else _amountAlign = TAL_CENTER;
 			break;
 
 		case TOKEN_AMOUNT_STRING:
-			CBUtils::SetString(&m_AmountString, (char *)params);
+			CBUtils::SetString(&_amountString, (char *)params);
 			break;
 
 		case TOKEN_TALK: {
 			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->LoadFile((char *)params, ((CAdGame *)Game)->m_TexTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else m_TalkSprites.Add(spr);
+			if (!spr || FAILED(spr->LoadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			else _talkSprites.Add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->LoadFile((char *)params, ((CAdGame *)Game)->m_TexTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else m_TalkSpritesEx.Add(spr);
+			if (!spr || FAILED(spr->LoadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			else _talkSpritesEx.Add(spr);
 		}
 		break;
 
 		case TOKEN_CURSOR:
-			delete m_CursorNormal;
-			m_CursorNormal = new CBSprite(Game);
-			if (!m_CursorNormal || FAILED(m_CursorNormal->LoadFile((char *)params, ((CAdGame *)Game)->m_TexItemLifeTime))) {
-				delete m_CursorNormal;
-				m_CursorNormal = NULL;
+			delete _cursorNormal;
+			_cursorNormal = new CBSprite(Game);
+			if (!_cursorNormal || FAILED(_cursorNormal->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+				delete _cursorNormal;
+				_cursorNormal = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_CURSOR_HOVER:
-			delete m_CursorHover;
-			m_CursorHover = new CBSprite(Game);
-			if (!m_CursorHover || FAILED(m_CursorHover->LoadFile((char *)params, ((CAdGame *)Game)->m_TexItemLifeTime))) {
-				delete m_CursorHover;
-				m_CursorHover = NULL;
+			delete _cursorHover;
+			_cursorHover = new CBSprite(Game);
+			if (!_cursorHover || FAILED(_cursorHover->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+				delete _cursorHover;
+				_cursorHover = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_CURSOR_COMBINED:
-			parser.ScanStr((char *)params, "%b", &m_CursorCombined);
+			parser.ScanStr((char *)params, "%b", &_cursorCombined);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -312,7 +312,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
 	}
-	m_AlphaColor = DRGBA(ar, ag, ab, alpha);
+	_alphaColor = DRGBA(ar, ag, ab, alpha);
 
 	return S_OK;
 }
@@ -320,65 +320,65 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdItem::Update() {
-	m_CurrentSprite = NULL;
+	_currentSprite = NULL;
 
-	if (m_State == STATE_READY && m_AnimSprite) {
-		delete m_AnimSprite;
-		m_AnimSprite = NULL;
+	if (_state == STATE_READY && _animSprite) {
+		delete _animSprite;
+		_animSprite = NULL;
 	}
 
 	// finished playing animation?
-	if (m_State == STATE_PLAYING_ANIM && m_AnimSprite != NULL && m_AnimSprite->m_Finished) {
-		m_State = STATE_READY;
-		m_CurrentSprite = m_AnimSprite;
+	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->_finished) {
+		_state = STATE_READY;
+		_currentSprite = _animSprite;
 	}
 
-	if (m_Sentence && m_State != STATE_TALKING) m_Sentence->Finish();
+	if (_sentence && _state != STATE_TALKING) _sentence->Finish();
 
 	// default: stand animation
-	if (!m_CurrentSprite) m_CurrentSprite = m_Sprite;
+	if (!_currentSprite) _currentSprite = _sprite;
 
-	switch (m_State) {
+	switch (_state) {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_PLAYING_ANIM:
-		m_CurrentSprite = m_AnimSprite;
+		_currentSprite = _animSprite;
 		break;
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
-		if (!m_AnimSprite) {
-			if (Game->m_ActiveObject == this && m_SpriteHover) m_CurrentSprite = m_SpriteHover;
-			else m_CurrentSprite = m_Sprite;
+		if (!_animSprite) {
+			if (Game->_activeObject == this && _spriteHover) _currentSprite = _spriteHover;
+			else _currentSprite = _sprite;
 		}
 		break;
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
-		m_Sentence->Update();
-		if (m_Sentence->m_CurrentSprite) m_TempSprite2 = m_Sentence->m_CurrentSprite;
+		_sentence->Update();
+		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
-		bool TimeIsUp = (m_Sentence->m_Sound && m_Sentence->m_SoundStarted && (!m_Sentence->m_Sound->IsPlaying() && !m_Sentence->m_Sound->IsPaused())) || (!m_Sentence->m_Sound && m_Sentence->m_Duration <= Game->m_Timer - m_Sentence->m_StartTime);
-		if (m_TempSprite2 == NULL || m_TempSprite2->m_Finished || (/*m_TempSprite2->m_Looping &&*/ TimeIsUp)) {
+		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->IsPlaying() && !_sentence->_sound->IsPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
+		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
 			if (TimeIsUp) {
-				m_Sentence->Finish();
-				m_TempSprite2 = NULL;
-				m_State = STATE_READY;
+				_sentence->Finish();
+				_tempSprite2 = NULL;
+				_state = STATE_READY;
 			} else {
-				m_TempSprite2 = GetTalkStance(m_Sentence->GetNextStance());
-				if (m_TempSprite2) {
-					m_TempSprite2->Reset();
-					m_CurrentSprite = m_TempSprite2;
+				_tempSprite2 = GetTalkStance(_sentence->GetNextStance());
+				if (_tempSprite2) {
+					_tempSprite2->Reset();
+					_currentSprite = _tempSprite2;
 				}
-				((CAdGame *)Game)->AddSentence(m_Sentence);
+				((CAdGame *)Game)->AddSentence(_sentence);
 			}
 		} else {
-			m_CurrentSprite = m_TempSprite2;
-			((CAdGame *)Game)->AddSentence(m_Sentence);
+			_currentSprite = _tempSprite2;
+			((CAdGame *)Game)->AddSentence(_sentence);
 		}
 	}
 	break;
 	}
-	m_Ready = (m_State == STATE_READY);
+	_ready = (_state == STATE_READY);
 
 	return S_OK;
 }
@@ -387,36 +387,36 @@ HRESULT CAdItem::Update() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdItem::Display(int X, int Y) {
 	int Width = 0;
-	if (m_CurrentSprite) {
+	if (_currentSprite) {
 		RECT rc;
-		m_CurrentSprite->GetBoundingRect(&rc, 0, 0);
+		_currentSprite->GetBoundingRect(&rc, 0, 0);
 		Width = rc.right - rc.left;
 	}
 
-	m_PosX = X + Width / 2;
-	m_PosY = Y;
+	_posX = X + Width / 2;
+	_posY = Y;
 
 	HRESULT ret;
-	if (m_CurrentSprite) ret = m_CurrentSprite->Draw(X, Y, this, 100, 100, m_AlphaColor);
+	if (_currentSprite) ret = _currentSprite->Draw(X, Y, this, 100, 100, _alphaColor);
 	else ret = S_OK;
 
-	if (m_DisplayAmount) {
+	if (_displayAmount) {
 		int AmountX = X;
-		int AmountY = Y + m_AmountOffsetY;
+		int AmountY = Y + _amountOffsetY;
 
-		if (m_AmountAlign == TAL_RIGHT) {
-			Width -= m_AmountOffsetX;
-			AmountX -= m_AmountOffsetX;
+		if (_amountAlign == TAL_RIGHT) {
+			Width -= _amountOffsetX;
+			AmountX -= _amountOffsetX;
 		}
-		AmountX += m_AmountOffsetX;
+		AmountX += _amountOffsetX;
 
-		CBFont *Font = m_Font ? m_Font : Game->m_SystemFont;
+		CBFont *Font = _font ? _font : Game->_systemFont;
 		if (Font) {
-			if (m_AmountString) Font->DrawText((byte  *)m_AmountString, AmountX, AmountY, Width, m_AmountAlign);
+			if (_amountString) Font->DrawText((byte  *)_amountString, AmountX, AmountY, Width, _amountAlign);
 			else {
 				char Str[256];
-				sprintf(Str, "%d", m_Amount);
-				Font->DrawText((byte  *)Str, AmountX, AmountY, Width, m_AmountAlign);
+				sprintf(Str, "%d", _amount);
+				Font->DrawText((byte  *)Str, AmountX, AmountY, Width, _amountAlign);
 			}
 		}
 	}
@@ -436,19 +436,19 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		Stack->CorrectParams(1);
 
 		bool SetCurrent = false;
-		if (m_CurrentSprite && m_CurrentSprite == m_SpriteHover) SetCurrent = true;
+		if (_currentSprite && _currentSprite == _spriteHover) SetCurrent = true;
 
 		char *Filename = Stack->Pop()->GetString();
 
-		delete m_SpriteHover;
-		m_SpriteHover = NULL;
+		delete _spriteHover;
+		_spriteHover = NULL;
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->LoadFile(Filename))) {
 			Stack->PushBool(false);
 			Script->RuntimeError("Item.SetHoverSprite failed for file '%s'", Filename);
 		} else {
-			m_SpriteHover = spr;
-			if (SetCurrent) m_CurrentSprite = m_SpriteHover;
+			_spriteHover = spr;
+			if (SetCurrent) _currentSprite = _spriteHover;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -460,8 +460,8 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "GetHoverSprite") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_SpriteHover || !m_SpriteHover->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_SpriteHover->m_Filename);
+		if (!_spriteHover || !_spriteHover->_filename) Stack->PushNULL();
+		else Stack->PushString(_spriteHover->_filename);
 		return S_OK;
 	}
 
@@ -470,8 +470,8 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetHoverSpriteObject") == 0) {
 		Stack->CorrectParams(0);
-		if (!m_SpriteHover) Stack->PushNULL();
-		else Stack->PushNative(m_SpriteHover, true);
+		if (!_spriteHover) Stack->PushNULL();
+		else Stack->PushNative(_spriteHover, true);
 		return S_OK;
 	}
 
@@ -483,14 +483,14 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		char *Filename = Stack->Pop()->GetString();
 
-		delete m_CursorNormal;
-		m_CursorNormal = NULL;
+		delete _cursorNormal;
+		_cursorNormal = NULL;
 		CBSprite *spr = new CBSprite(Game);
 		if (!spr || FAILED(spr->LoadFile(Filename))) {
 			Stack->PushBool(false);
 			Script->RuntimeError("Item.SetNormalCursor failed for file '%s'", Filename);
 		} else {
-			m_CursorNormal = spr;
+			_cursorNormal = spr;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -502,8 +502,8 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "GetNormalCursor") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_CursorNormal || !m_CursorNormal->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_CursorNormal->m_Filename);
+		if (!_cursorNormal || !_cursorNormal->_filename) Stack->PushNULL();
+		else Stack->PushString(_cursorNormal->_filename);
 		return S_OK;
 	}
 
@@ -513,8 +513,8 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "GetNormalCursorObject") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_CursorNormal) Stack->PushNULL();
-		else Stack->PushNative(m_CursorNormal, true);
+		if (!_cursorNormal) Stack->PushNULL();
+		else Stack->PushNative(_cursorNormal, true);
 		return S_OK;
 	}
 
@@ -526,14 +526,14 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		char *Filename = Stack->Pop()->GetString();
 
-		delete m_CursorHover;
-		m_CursorHover = NULL;
+		delete _cursorHover;
+		_cursorHover = NULL;
 		CBSprite *spr = new CBSprite(Game);
 		if (!spr || FAILED(spr->LoadFile(Filename))) {
 			Stack->PushBool(false);
 			Script->RuntimeError("Item.SetHoverCursor failed for file '%s'", Filename);
 		} else {
-			m_CursorHover = spr;
+			_cursorHover = spr;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -545,8 +545,8 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "GetHoverCursor") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_CursorHover || !m_CursorHover->m_Filename) Stack->PushNULL();
-		else Stack->PushString(m_CursorHover->m_Filename);
+		if (!_cursorHover || !_cursorHover->_filename) Stack->PushNULL();
+		else Stack->PushString(_cursorHover->_filename);
 		return S_OK;
 	}
 
@@ -556,8 +556,8 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "GetHoverCursorObject") == 0) {
 		Stack->CorrectParams(0);
 
-		if (!m_CursorHover) Stack->PushNULL();
-		else Stack->PushNative(m_CursorHover, true);
+		if (!_cursorHover) Stack->PushNULL();
+		else Stack->PushNative(_cursorHover, true);
 		return S_OK;
 	}
 
@@ -567,79 +567,79 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdItem::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("item");
-		return m_ScValue;
+		_scValue->SetString("item");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Name") == 0) {
-		m_ScValue->SetString(m_Name);
-		return m_ScValue;
+		_scValue->SetString(_name);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DisplayAmount") == 0) {
-		m_ScValue->SetBool(m_DisplayAmount);
-		return m_ScValue;
+		_scValue->SetBool(_displayAmount);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Amount") == 0) {
-		m_ScValue->SetInt(m_Amount);
-		return m_ScValue;
+		_scValue->SetInt(_amount);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountOffsetX") == 0) {
-		m_ScValue->SetInt(m_AmountOffsetX);
-		return m_ScValue;
+		_scValue->SetInt(_amountOffsetX);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountOffsetY") == 0) {
-		m_ScValue->SetInt(m_AmountOffsetY);
-		return m_ScValue;
+		_scValue->SetInt(_amountOffsetY);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountAlign") == 0) {
-		m_ScValue->SetInt(m_AmountAlign);
-		return m_ScValue;
+		_scValue->SetInt(_amountAlign);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountString") == 0) {
-		if (!m_AmountString) m_ScValue->SetNULL();
-		else m_ScValue->SetString(m_AmountString);
-		return m_ScValue;
+		if (!_amountString) _scValue->SetNULL();
+		else _scValue->SetString(_amountString);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CursorCombined") == 0) {
-		m_ScValue->SetBool(m_CursorCombined);
-		return m_ScValue;
+		_scValue->SetBool(_cursorCombined);
+		return _scValue;
 	}
 
 	else return CAdTalkHolder::ScGetProperty(Name);
@@ -660,7 +660,7 @@ HRESULT CAdItem::ScSetProperty(char *Name, CScValue *Value) {
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DisplayAmount") == 0) {
-		m_DisplayAmount = Value->GetBool();
+		_displayAmount = Value->GetBool();
 		return S_OK;
 	}
 
@@ -668,7 +668,7 @@ HRESULT CAdItem::ScSetProperty(char *Name, CScValue *Value) {
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Amount") == 0) {
-		m_Amount = Value->GetInt();
+		_amount = Value->GetInt();
 		return S_OK;
 	}
 
@@ -676,7 +676,7 @@ HRESULT CAdItem::ScSetProperty(char *Name, CScValue *Value) {
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountOffsetX") == 0) {
-		m_AmountOffsetX = Value->GetInt();
+		_amountOffsetX = Value->GetInt();
 		return S_OK;
 	}
 
@@ -684,7 +684,7 @@ HRESULT CAdItem::ScSetProperty(char *Name, CScValue *Value) {
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountOffsetY") == 0) {
-		m_AmountOffsetY = Value->GetInt();
+		_amountOffsetY = Value->GetInt();
 		return S_OK;
 	}
 
@@ -692,7 +692,7 @@ HRESULT CAdItem::ScSetProperty(char *Name, CScValue *Value) {
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountAlign") == 0) {
-		m_AmountAlign = (TTextAlign)Value->GetInt();
+		_amountAlign = (TTextAlign)Value->GetInt();
 		return S_OK;
 	}
 
@@ -700,8 +700,8 @@ HRESULT CAdItem::ScSetProperty(char *Name, CScValue *Value) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountString") == 0) {
-		if (Value->IsNULL()) SAFE_DELETE_ARRAY(m_AmountString);
-		else CBUtils::SetString(&m_AmountString, Value->GetString());
+		if (Value->IsNULL()) SAFE_DELETE_ARRAY(_amountString);
+		else CBUtils::SetString(&_amountString, Value->GetString());
 		return S_OK;
 	}
 
@@ -709,7 +709,7 @@ HRESULT CAdItem::ScSetProperty(char *Name, CScValue *Value) {
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CursorCombined") == 0) {
-		m_CursorCombined = Value->GetBool();
+		_cursorCombined = Value->GetBool();
 		return S_OK;
 	}
 
@@ -728,17 +728,17 @@ HRESULT CAdItem::Persist(CBPersistMgr *PersistMgr) {
 
 	CAdTalkHolder::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_CursorCombined));
-	PersistMgr->Transfer(TMEMBER(m_CursorHover));
-	PersistMgr->Transfer(TMEMBER(m_CursorNormal));
-	PersistMgr->Transfer(TMEMBER(m_SpriteHover));
-	PersistMgr->Transfer(TMEMBER(m_InInventory));
-	PersistMgr->Transfer(TMEMBER(m_DisplayAmount));
-	PersistMgr->Transfer(TMEMBER(m_Amount));
-	PersistMgr->Transfer(TMEMBER(m_AmountOffsetX));
-	PersistMgr->Transfer(TMEMBER(m_AmountOffsetY));
-	PersistMgr->Transfer(TMEMBER_INT(m_AmountAlign));
-	PersistMgr->Transfer(TMEMBER(m_AmountString));
+	PersistMgr->Transfer(TMEMBER(_cursorCombined));
+	PersistMgr->Transfer(TMEMBER(_cursorHover));
+	PersistMgr->Transfer(TMEMBER(_cursorNormal));
+	PersistMgr->Transfer(TMEMBER(_spriteHover));
+	PersistMgr->Transfer(TMEMBER(_inInventory));
+	PersistMgr->Transfer(TMEMBER(_displayAmount));
+	PersistMgr->Transfer(TMEMBER(_amount));
+	PersistMgr->Transfer(TMEMBER(_amountOffsetX));
+	PersistMgr->Transfer(TMEMBER(_amountOffsetY));
+	PersistMgr->Transfer(TMEMBER_INT(_amountAlign));
+	PersistMgr->Transfer(TMEMBER(_amountString));
 
 	return S_OK;
 }

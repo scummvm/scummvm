@@ -37,21 +37,21 @@ class CBFont;
 class CUIEdit : public CUIObject {
 public:
 	DECLARE_PERSISTENT(CUIEdit, CUIObject)
-	int m_MaxLength;
+	int _maxLength;
 	int InsertChars(int Pos, byte *Chars, int Num);
 	int DeleteChars(int Start, int End);
-	bool m_CursorVisible;
-	uint32 m_LastBlinkTime;
+	bool _cursorVisible;
+	uint32 _lastBlinkTime;
 	virtual HRESULT Display(int OffsetX, int OffsetY);
 	virtual bool HandleKeypress(SDL_Event *event);
-	int m_ScrollOffset;
-	int m_FrameWidth;
-	uint32 m_CursorBlinkRate;
+	int _scrollOffset;
+	int _frameWidth;
+	uint32 _cursorBlinkRate;
 	void SetCursorChar(char *Char);
-	char *m_CursorChar;
-	int m_SelEnd;
-	int m_SelStart;
-	CBFont *m_FontSelected;
+	char *_cursorChar;
+	int _selEnd;
+	int _selStart;
+	CBFont *_fontSelected;
 	CUIEdit(CBGame *inGame);
 	virtual ~CUIEdit();
 

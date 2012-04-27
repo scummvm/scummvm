@@ -39,8 +39,8 @@ IMPLEMENT_PERSISTENT(CSXMemBuffer, false)
 //////////////////////////////////////////////////////////////////////////
 CSXMemBuffer::CSXMemBuffer(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	Stack->CorrectParams(1);
-	m_Buffer = NULL;
-	m_Size = 0;
+	_buffer = NULL;
+	_size = 0;
 
 	int NewSize = Stack->Pop()->GetInt();
 	Resize(MAX(0, NewSize));
@@ -48,8 +48,8 @@ CSXMemBuffer::CSXMemBuffer(CBGame *inGame, CScStack *Stack): CBScriptable(inGame
 
 //////////////////////////////////////////////////////////////////////////
 CSXMemBuffer::CSXMemBuffer(CBGame *inGame, void *Buffer): CBScriptable(inGame) {
-	m_Size = NULL;
-	m_Buffer = Buffer;
+	_size = NULL;
+	_buffer = Buffer;
 }
 
 
@@ -60,51 +60,51 @@ CSXMemBuffer::~CSXMemBuffer() {
 
 //////////////////////////////////////////////////////////////////////////
 void *CSXMemBuffer::ScToMemBuffer() {
-	return m_Buffer;
+	return _buffer;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CSXMemBuffer::Cleanup() {
-	if (m_Size) free(m_Buffer);
-	m_Buffer = NULL;
-	m_Size = 0;
+	if (_size) free(_buffer);
+	_buffer = NULL;
+	_size = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSXMemBuffer::Resize(int NewSize) {
-	int OldSize = m_Size;
+	int OldSize = _size;
 
-	if (m_Size == 0) {
-		m_Buffer = malloc(NewSize);
-		if (m_Buffer) m_Size = NewSize;
+	if (_size == 0) {
+		_buffer = malloc(NewSize);
+		if (_buffer) _size = NewSize;
 	} else {
-		void *NewBuf = realloc(m_Buffer, NewSize);
+		void *NewBuf = realloc(_buffer, NewSize);
 		if (!NewBuf) {
 			if (NewSize == 0) {
-				m_Buffer = NewBuf;
-				m_Size = NewSize;
+				_buffer = NewBuf;
+				_size = NewSize;
 			} else return E_FAIL;
 		} else {
-			m_Buffer = NewBuf;
-			m_Size = NewSize;
+			_buffer = NewBuf;
+			_size = NewSize;
 		}
 	}
 
-	if (m_Buffer && m_Size > OldSize) {
-		memset((byte  *)m_Buffer + OldSize, 0, m_Size - OldSize);
+	if (_buffer && _size > OldSize) {
+		memset((byte  *)_buffer + OldSize, 0, _size - OldSize);
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CSXMemBuffer::CheckBounds(CScScript *Script, int Start, int Length) {
-	if (m_Buffer == NULL) {
+	if (_buffer == NULL) {
 		Script->RuntimeError("Cannot use Set/Get methods on an uninitialized memory buffer");
 		return false;
 	}
-	if (m_Size == 0) return true;
+	if (_size == 0) return true;
 
-	if (Start < 0 || Length == 0 || Start + Length > m_Size) {
+	if (Start < 0 || Length == 0 || Start + Length > _size) {
 		Script->RuntimeError("Set/Get method call is out of bounds");
 		return false;
 	} else return true;
@@ -138,7 +138,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(bool))) Stack->PushNULL();
-		else Stack->PushBool(*(bool *)((byte  *)m_Buffer + Start));
+		else Stack->PushBool(*(bool *)((byte  *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -150,7 +150,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(byte ))) Stack->PushNULL();
-		else Stack->PushInt(*(byte  *)((byte  *)m_Buffer + Start));
+		else Stack->PushInt(*(byte  *)((byte  *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -162,7 +162,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(short))) Stack->PushNULL();
-		else Stack->PushInt(65536 + * (short *)((byte  *)m_Buffer + Start));
+		else Stack->PushInt(65536 + * (short *)((byte  *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -174,7 +174,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(int))) Stack->PushNULL();
-		else Stack->PushInt(*(int *)((byte  *)m_Buffer + Start));
+		else Stack->PushInt(*(int *)((byte  *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -186,7 +186,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(float))) Stack->PushNULL();
-		else Stack->PushFloat(*(float *)((byte  *)m_Buffer + Start));
+		else Stack->PushFloat(*(float *)((byte  *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -198,7 +198,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(double))) Stack->PushNULL();
-		else Stack->PushFloat(*(double *)((byte  *)m_Buffer + Start));
+		else Stack->PushFloat(*(double *)((byte  *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -212,9 +212,9 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		int Length = Stack->Pop()->GetInt();
 
 		// find end of string
-		if (Length == 0 && Start >= 0 && Start < m_Size) {
-			for (int i = Start; i < m_Size; i++) {
-				if (((char *)m_Buffer)[i] == '\0') {
+		if (Length == 0 && Start >= 0 && Start < _size) {
+			for (int i = Start; i < _size; i++) {
+				if (((char *)_buffer)[i] == '\0') {
 					Length = i - Start;
 					break;
 				}
@@ -224,7 +224,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		if (!CheckBounds(Script, Start, Length)) Stack->PushNULL();
 		else {
 			char *Str = new char[Length + 1];
-			strncpy(Str, (const char *)m_Buffer + Start, Length);
+			strncpy(Str, (const char *)_buffer + Start, Length);
 			Str[Length] = '\0';
 			Stack->PushString(Str);
 			delete [] Str;
@@ -240,7 +240,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(void *))) Stack->PushNULL();
 		else {
-			void *Pointer = *(void **)((byte  *)m_Buffer + Start);
+			void *Pointer = *(void **)((byte  *)_buffer + Start);
 			CSXMemBuffer *Buf = new CSXMemBuffer(Game, Pointer);
 			Stack->PushNative(Buf, false);
 		}
@@ -257,7 +257,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(bool))) Stack->PushBool(false);
 		else {
-			*(bool *)((byte  *)m_Buffer + Start) = Val;
+			*(bool *)((byte  *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -273,7 +273,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(byte ))) Stack->PushBool(false);
 		else {
-			*(byte  *)((byte  *)m_Buffer + Start) = Val;
+			*(byte  *)((byte  *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -289,7 +289,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(short))) Stack->PushBool(false);
 		else {
-			*(short *)((byte  *)m_Buffer + Start) = Val;
+			*(short *)((byte  *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -305,7 +305,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(int))) Stack->PushBool(false);
 		else {
-			*(int *)((byte  *)m_Buffer + Start) = Val;
+			*(int *)((byte  *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -321,7 +321,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(float))) Stack->PushBool(false);
 		else {
-			*(float *)((byte  *)m_Buffer + Start) = Val;
+			*(float *)((byte  *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -337,7 +337,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(double))) Stack->PushBool(false);
 		else {
-			*(double *)((byte  *)m_Buffer + Start) = Val;
+			*(double *)((byte  *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -353,7 +353,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, strlen(Val) + 1)) Stack->PushBool(false);
 		else {
-			memcpy((byte  *)m_Buffer + Start, Val, strlen(Val) + 1);
+			memcpy((byte  *)_buffer + Start, Val, strlen(Val) + 1);
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -371,7 +371,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		else {
 			/*
 			int Pointer = (int)Val->GetMemBuffer();
-			memcpy((byte *)m_Buffer+Start, &Pointer, sizeof(void*));
+			memcpy((byte *)_buffer+Start, &Pointer, sizeof(void*));
 			Stack->PushBool(true);
 			*/
 			// TODO fix
@@ -386,9 +386,9 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DEBUG_Dump") == 0) {
 		Stack->CorrectParams(0);
-		if (m_Buffer && m_Size) {
+		if (_buffer && _size) {
 			FILE *f = fopen("c:\\!!buffer.bin", "wb");
-			fwrite(m_Buffer, m_Size, 1, f);
+			fwrite(_buffer, _size, 1, f);
 			fclose(f);
 		}
 		Stack->PushNULL();
@@ -401,22 +401,22 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXMemBuffer::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("membuffer");
-		return m_ScValue;
+		_scValue->SetString("membuffer");
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Size (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Size") == 0) {
-		m_ScValue->SetInt(m_Size);
-		return m_ScValue;
+		_scValue->SetInt(_size);
+		return _scValue;
 	}
 
 	else return CBScriptable::ScGetProperty(Name);
@@ -430,14 +430,14 @@ HRESULT CSXMemBuffer::ScSetProperty(char *Name, CScValue *Value) {
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(Name, "Length")==0){
-	    int OrigLength = m_Length;
-	    m_Length = max(Value->GetInt(0), 0);
+	    int OrigLength = _length;
+	    _length = max(Value->GetInt(0), 0);
 
 	    char PropName[20];
-	    if(m_Length < OrigLength){
-	        for(int i=m_Length; i<OrigLength; i++){
+	    if(_length < OrigLength){
+	        for(int i=_length; i<OrigLength; i++){
 	            sprintf(PropName, "%d", i);
-	            m_Values->DeleteProp(PropName);
+	            _values->DeleteProp(PropName);
 	        }
 	    }
 	    return S_OK;
@@ -451,15 +451,15 @@ HRESULT CSXMemBuffer::Persist(CBPersistMgr *PersistMgr) {
 
 	CBScriptable::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Size));
+	PersistMgr->Transfer(TMEMBER(_size));
 
-	if (PersistMgr->m_Saving) {
-		if (m_Size > 0) PersistMgr->PutBytes((byte  *)m_Buffer, m_Size);
+	if (PersistMgr->_saving) {
+		if (_size > 0) PersistMgr->PutBytes((byte  *)_buffer, _size);
 	} else {
-		if (m_Size > 0) {
-			m_Buffer = malloc(m_Size);
-			PersistMgr->GetBytes((byte  *)m_Buffer, m_Size);
-		} else m_Buffer = NULL;
+		if (_size > 0) {
+			_buffer = malloc(_size);
+			PersistMgr->GetBytes((byte  *)_buffer, _size);
+		} else _buffer = NULL;
 	}
 
 	return S_OK;
@@ -468,7 +468,7 @@ HRESULT CSXMemBuffer::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 int CSXMemBuffer::ScCompare(CBScriptable *Val) {
-	if (m_Buffer == Val->ScToMemBuffer()) return 0;
+	if (_buffer == Val->ScToMemBuffer()) return 0;
 	else return 1;
 }
 

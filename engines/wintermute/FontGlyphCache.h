@@ -36,65 +36,65 @@ namespace WinterMute {
 class GlyphInfo {
 public:
 	GlyphInfo(int glyphIndex) {
-		m_GlyphIndex = glyphIndex;
-		m_AdvanceX = m_AdvanceY = 0;
-		m_BearingX = m_BearingY = 0;
+		_glyphIndex = glyphIndex;
+		_advanceX = _advanceY = 0;
+		_bearingX = _bearingY = 0;
 
-		m_Width = m_Height = 0;
+		_width = _height = 0;
 
-		m_Image = NULL;
+		_image = NULL;
 	}
 
 	~GlyphInfo() {
-		if (m_Image) SDL_FreeSurface(m_Image);
+		if (_image) SDL_FreeSurface(_image);
 	}
 
 	void SetGlyphInfo(float AdvanceX, float AdvanceY, int BearingX, int BearingY) {
-		m_AdvanceX = AdvanceX;
-		m_AdvanceY = AdvanceY;
-		m_BearingX = BearingX;
-		m_BearingY = BearingY;
+		_advanceX = AdvanceX;
+		_advanceY = AdvanceY;
+		_bearingX = BearingX;
+		_bearingY = BearingY;
 	}
 
 	void SetGlyphImage(size_t width, size_t height, size_t stride, byte *pixels);
 
 	int GetGlyphIndex() {
-		return m_GlyphIndex;
+		return _glyphIndex;
 	}
 	int GetWidth() {
-		return m_Width;
+		return _width;
 	}
 	int GetHeight() {
-		return m_Height;
+		return _height;
 	}
 	float GetAdvanceX() {
-		return m_AdvanceX;
+		return _advanceX;
 	}
 	float GetAdvanceY() {
-		return m_AdvanceY;
+		return _advanceY;
 	}
 	int GetBearingX() {
-		return m_BearingX;
+		return _bearingX;
 	}
 	int GetBearingY() {
-		return m_BearingY;
+		return _bearingY;
 	}
 	SDL_Surface *GetImage() {
-		return m_Image;
+		return _image;
 	}
 
 private:
-	int m_GlyphIndex;
+	int _glyphIndex;
 
-	float m_AdvanceX;
-	float m_AdvanceY;
-	int m_BearingX;
-	int m_BearingY;
+	float _advanceX;
+	float _advanceY;
+	int _bearingX;
+	int _bearingY;
 
-	int m_Width;
-	int m_Height;
+	int _width;
+	int _height;
 
-	SDL_Surface *m_Image;
+	SDL_Surface *_image;
 };
 
 
@@ -113,7 +113,7 @@ public:
 private:
 	//typedef Common::HashMap<wchar_t, GlyphInfo *> GlyphInfoMap;
 	typedef Common::HashMap<char, GlyphInfo *> GlyphInfoMap; // TODO
-	GlyphInfoMap m_Glyphs;
+	GlyphInfoMap _glyphs;
 };
 
 } // end of namespace WinterMute

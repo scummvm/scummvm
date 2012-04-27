@@ -33,33 +33,33 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBNamedObject::CBNamedObject(CBGame *inGame) : CBBase(inGame) {
-	m_Name = NULL;
+	_name = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CBNamedObject::CBNamedObject() : CBBase() {
-	m_Name = NULL;
+	_name = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBNamedObject::CBNamedObject(TDynamicConstructor, TDynamicConstructor) {
-	m_Name = NULL;
+	_name = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CBNamedObject::~CBNamedObject(void) {
-	delete[] m_Name;
-	m_Name = NULL;
+	delete[] _name;
+	_name = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 void CBNamedObject::SetName(char *Name) {
-	delete[] m_Name;
+	delete[] _name;
 
-	m_Name = new char [strlen(Name) + 1];
-	if (m_Name != NULL) strcpy(m_Name, Name);
+	_name = new char [strlen(Name) + 1];
+	if (_name != NULL) strcpy(_name, Name);
 }
 
 } // end of namespace WinterMute

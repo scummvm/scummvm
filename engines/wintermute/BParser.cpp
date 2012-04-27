@@ -44,32 +44,32 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
 CBParser::CBParser(CBGame *inGame): CBBase(inGame) {
-	m_WhiteSpace = new char [strlen(WHITESPACE) + 1];
-	strcpy(m_WhiteSpace, WHITESPACE);
+	_whiteSpace = new char [strlen(WHITESPACE) + 1];
+	strcpy(_whiteSpace, WHITESPACE);
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBParser::~CBParser() {
-	if (m_WhiteSpace != NULL) delete [] m_WhiteSpace;
+	if (_whiteSpace != NULL) delete [] _whiteSpace;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 char *CBParser::GetLastOffender() {
-	return m_LastOffender;
+	return _lastOffender;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 long CBParser::GetObject(char **buf, TokenDesc *tokens, char **name, char **data) {
-	SkipCharacters(buf, m_WhiteSpace);
+	SkipCharacters(buf, _whiteSpace);
 
 	// skip comment lines.
 	while (**buf == ';') {
 		*buf = strchr(*buf, '\n');
-		m_ParserLine++;
-		SkipCharacters(buf, m_WhiteSpace);
+		_parserLine++;
+		SkipCharacters(buf, _whiteSpace);
 	}
 
 	if (! **buf)                  // at end of file
@@ -89,18 +89,18 @@ long CBParser::GetObject(char **buf, TokenDesc *tokens, char **name, char **data
 	if (tokens->id == 0) {
 		char *p = strchr(*buf, '\n');
 		if (p && p > *buf) {
-			strncpy(m_LastOffender, *buf, MIN((long int)255, p - *buf)); // TODO, clean
-		} else strcpy(m_LastOffender, "");
+			strncpy(_lastOffender, *buf, MIN((long int)255, p - *buf)); // TODO, clean
+		} else strcpy(_lastOffender, "");
 
 		return PARSERR_TOKENNOTFOUND;
 	}
 	// skip the token
 	*buf += strlen(tokens->token);
-	SkipCharacters(buf, m_WhiteSpace);
+	SkipCharacters(buf, _whiteSpace);
 
 	// get optional name
 	*name = GetSubText(buf, '\'', '\'');  // single quotes
-	SkipCharacters(buf, m_WhiteSpace);
+	SkipCharacters(buf, _whiteSpace);
 
 	// get optional data
 	if (**buf == '=') // An assignment rather than a command/object.
@@ -125,7 +125,7 @@ long CBParser::GetCommand(char **buf, TokenDesc *tokens, char **params) {
 void CBParser::SkipCharacters(char **buf, const char *toSkip) {
 	char ch;
 	while ((ch = **buf) != 0) {
-		if (ch == '\n') m_ParserLine++;
+		if (ch == '\n') _parserLine++;
 		if (strchr(toSkip, ch) == NULL)
 			return;
 		++*buf;                     // skip this character
@@ -166,7 +166,7 @@ char *CBParser::GetSubText(char **buf, char open, char close) {
 //////////////////////////////////////////////////////////////////////
 char *CBParser::GetAssignmentText(char **buf) {
 	++*buf;                       // skip the '='
-	SkipCharacters(buf, m_WhiteSpace);
+	SkipCharacters(buf, _whiteSpace);
 	char *result = *buf;
 
 

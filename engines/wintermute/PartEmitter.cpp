@@ -42,72 +42,72 @@ IMPLEMENT_PERSISTENT(CPartEmitter, false)
 
 //////////////////////////////////////////////////////////////////////////
 CPartEmitter::CPartEmitter(CBGame *inGame, CBScriptHolder *Owner) : CBObject(inGame) {
-	m_Width = m_Height = 0;
+	_width = _height = 0;
 
-	CBPlatform::SetRectEmpty(&m_Border);
-	m_BorderThicknessLeft = m_BorderThicknessRight = m_BorderThicknessTop = m_BorderThicknessBottom = 0;
+	CBPlatform::SetRectEmpty(&_border);
+	_borderThicknessLeft = _borderThicknessRight = _borderThicknessTop = _borderThicknessBottom = 0;
 
-	m_Angle1 = m_Angle2 = 0;
+	_angle1 = _angle2 = 0;
 
-	m_Velocity1 = m_Velocity2 = 0.0f;
-	m_VelocityZBased = false;
+	_velocity1 = _velocity2 = 0.0f;
+	_velocityZBased = false;
 
-	m_Scale1 = m_Scale2 = 100.0f;
-	m_ScaleZBased = false;
+	_scale1 = _scale2 = 100.0f;
+	_scaleZBased = false;
 
-	m_MaxParticles = 100;
+	_maxParticles = 100;
 
-	m_LifeTime1 = m_LifeTime2 = 1000;
-	m_LifeTimeZBased = false;
+	_lifeTime1 = _lifeTime2 = 1000;
+	_lifeTimeZBased = false;
 
-	m_LastGenTime = 0;
-	m_GenInterval = 0;
-	m_GenAmount = 1;
+	_lastGenTime = 0;
+	_genInterval = 0;
+	_genAmount = 1;
 
-	m_OverheadTime = 0;
-	m_Running = false;
+	_overheadTime = 0;
+	_running = false;
 
-	m_MaxBatches = 0;
-	m_BatchesGenerated = 0;
+	_maxBatches = 0;
+	_batchesGenerated = 0;
 
-	m_FadeInTime = m_FadeOutTime = 0;
+	_fadeInTime = _fadeOutTime = 0;
 
-	m_Alpha1 = m_Alpha2 = 255;
-	m_AlphaTimeBased = false;
+	_alpha1 = _alpha2 = 255;
+	_alphaTimeBased = false;
 
-	m_Rotation1 = m_Rotation2 = 0.0f;
-	m_AngVelocity1 = m_AngVelocity2 = 0.0f;
+	_rotation1 = _rotation2 = 0.0f;
+	_angVelocity1 = _angVelocity2 = 0.0f;
 
-	m_GrowthRate1 = m_GrowthRate2 = 0.0f;
-	m_ExponentialGrowth = false;
+	_growthRate1 = _growthRate2 = 0.0f;
+	_exponentialGrowth = false;
 
-	m_UseRegion = false;
+	_useRegion = false;
 
-	m_EmitEvent = NULL;
-	m_Owner = Owner;
+	_emitEvent = NULL;
+	_owner = Owner;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CPartEmitter::~CPartEmitter(void) {
-	for (int i = 0; i < m_Particles.GetSize(); i++) {
-		delete m_Particles[i];
+	for (int i = 0; i < _particles.GetSize(); i++) {
+		delete _particles[i];
 	}
-	m_Particles.RemoveAll();
+	_particles.RemoveAll();
 
-	for (int i = 0; i < m_Forces.GetSize(); i++) {
-		delete m_Forces[i];
+	for (int i = 0; i < _forces.GetSize(); i++) {
+		delete _forces[i];
 	}
-	m_Forces.RemoveAll();
+	_forces.RemoveAll();
 
 
-	for (int i = 0; i < m_Sprites.GetSize(); i++) {
-		delete [] m_Sprites[i];
+	for (int i = 0; i < _sprites.GetSize(); i++) {
+		delete [] _sprites[i];
 	}
-	m_Sprites.RemoveAll();
+	_sprites.RemoveAll();
 
-	delete[] m_EmitEvent;
-	m_EmitEvent = NULL;
+	delete[] _emitEvent;
+	_emitEvent = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -115,30 +115,30 @@ HRESULT CPartEmitter::AddSprite(char *Filename) {
 	if (!Filename) return E_FAIL;
 
 	// do we already have the file?
-	for (int i = 0; i < m_Sprites.GetSize(); i++) {
-		if (scumm_stricmp(Filename, m_Sprites[i]) == 0) return S_OK;
+	for (int i = 0; i < _sprites.GetSize(); i++) {
+		if (scumm_stricmp(Filename, _sprites[i]) == 0) return S_OK;
 	}
 
 	// check if file exists
-	CBFile *File = Game->m_FileManager->OpenFile(Filename);
+	CBFile *File = Game->_fileManager->OpenFile(Filename);
 	if (!File) {
 		Game->LOG(0, "Sprite '%s' not found", Filename);
 		return E_FAIL;
-	} else Game->m_FileManager->CloseFile(File);
+	} else Game->_fileManager->CloseFile(File);
 
 	char *Str = new char[strlen(Filename) + 1];
 	strcpy(Str, Filename);
-	m_Sprites.Add(Str);
+	_sprites.Add(Str);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::RemoveSprite(char *Filename) {
-	for (int i = 0; i < m_Sprites.GetSize(); i++) {
-		if (scumm_stricmp(Filename, m_Sprites[i]) == 0) {
-			delete [] m_Sprites[i];
-			m_Sprites.RemoveAt(i);
+	for (int i = 0; i < _sprites.GetSize(); i++) {
+		if (scumm_stricmp(Filename, _sprites[i]) == 0) {
+			delete [] _sprites[i];
+			_sprites.RemoveAt(i);
 			return S_OK;
 		}
 	}
@@ -148,42 +148,42 @@ HRESULT CPartEmitter::RemoveSprite(char *Filename) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta) {
 	if (!Particle) return E_FAIL;
-	if (m_Sprites.GetSize() == 0) return E_FAIL;
+	if (_sprites.GetSize() == 0) return E_FAIL;
 
-	int PosX = CBUtils::RandomInt(m_PosX, m_PosX + m_Width);
-	int PosY = CBUtils::RandomInt(m_PosY, m_PosY + m_Height);
+	int PosX = CBUtils::RandomInt(_posX, _posX + _width);
+	int PosY = CBUtils::RandomInt(_posY, _posY + _height);
 	float PosZ = CBUtils::RandomFloat(0.0f, 100.0f);
 
 	float Velocity;
-	if (m_VelocityZBased) Velocity = m_Velocity1 + PosZ * (m_Velocity2 - m_Velocity1) / 100;
-	else Velocity = CBUtils::RandomFloat(m_Velocity1, m_Velocity2);
+	if (_velocityZBased) Velocity = _velocity1 + PosZ * (_velocity2 - _velocity1) / 100;
+	else Velocity = CBUtils::RandomFloat(_velocity1, _velocity2);
 
 	float Scale;
-	if (m_ScaleZBased) Scale = m_Scale1 + PosZ * (m_Scale2 - m_Scale1) / 100;
-	else Scale = CBUtils::RandomFloat(m_Scale1, m_Scale2);
+	if (_scaleZBased) Scale = _scale1 + PosZ * (_scale2 - _scale1) / 100;
+	else Scale = CBUtils::RandomFloat(_scale1, _scale2);
 
 	int LifeTime;
-	if (m_LifeTimeZBased) LifeTime = m_LifeTime2 - PosZ * (m_LifeTime2 - m_LifeTime1) / 100;
-	else LifeTime = CBUtils::RandomInt(m_LifeTime1, m_LifeTime2);
+	if (_lifeTimeZBased) LifeTime = _lifeTime2 - PosZ * (_lifeTime2 - _lifeTime1) / 100;
+	else LifeTime = CBUtils::RandomInt(_lifeTime1, _lifeTime2);
 
-	float Angle = CBUtils::RandomAngle(m_Angle1, m_Angle2);
-	int SpriteIndex = CBUtils::RandomInt(0, m_Sprites.GetSize() - 1);
+	float Angle = CBUtils::RandomAngle(_angle1, _angle2);
+	int SpriteIndex = CBUtils::RandomInt(0, _sprites.GetSize() - 1);
 
-	float Rotation = CBUtils::RandomAngle(m_Rotation1, m_Rotation2);
-	float AngVelocity = CBUtils::RandomFloat(m_AngVelocity1, m_AngVelocity2);
-	float GrowthRate = CBUtils::RandomFloat(m_GrowthRate1, m_GrowthRate2);
+	float Rotation = CBUtils::RandomAngle(_rotation1, _rotation2);
+	float AngVelocity = CBUtils::RandomFloat(_angVelocity1, _angVelocity2);
+	float GrowthRate = CBUtils::RandomFloat(_growthRate1, _growthRate2);
 
-	if (!CBPlatform::IsRectEmpty(&m_Border)) {
-		int ThicknessLeft   = m_BorderThicknessLeft   - (float)m_BorderThicknessLeft   * PosZ / 100.0f;
-		int ThicknessRight  = m_BorderThicknessRight  - (float)m_BorderThicknessRight  * PosZ / 100.0f;
-		int ThicknessTop    = m_BorderThicknessTop    - (float)m_BorderThicknessTop    * PosZ / 100.0f;
-		int ThicknessBottom = m_BorderThicknessBottom - (float)m_BorderThicknessBottom * PosZ / 100.0f;
+	if (!CBPlatform::IsRectEmpty(&_border)) {
+		int ThicknessLeft   = _borderThicknessLeft   - (float)_borderThicknessLeft   * PosZ / 100.0f;
+		int ThicknessRight  = _borderThicknessRight  - (float)_borderThicknessRight  * PosZ / 100.0f;
+		int ThicknessTop    = _borderThicknessTop    - (float)_borderThicknessTop    * PosZ / 100.0f;
+		int ThicknessBottom = _borderThicknessBottom - (float)_borderThicknessBottom * PosZ / 100.0f;
 
-		Particle->m_Border = m_Border;
-		Particle->m_Border.left += ThicknessLeft;
-		Particle->m_Border.right -= ThicknessRight;
-		Particle->m_Border.top += ThicknessTop;
-		Particle->m_Border.bottom -= ThicknessBottom;
+		Particle->_border = _border;
+		Particle->_border.left += ThicknessLeft;
+		Particle->_border.right -= ThicknessRight;
+		Particle->_border.top += ThicknessTop;
+		Particle->_border.bottom -= ThicknessBottom;
 	}
 
 	Vector2 VecPos((float)PosX, (float)PosY);
@@ -193,76 +193,76 @@ HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, 
 	MatRot.RotationZ(DegToRad(CBUtils::NormalizeAngle(Angle - 180)));
 	MatRot.TransformVector2(VecVel);
 
-	if (m_AlphaTimeBased) {
-		Particle->m_Alpha1 = m_Alpha1;
-		Particle->m_Alpha2 = m_Alpha2;
+	if (_alphaTimeBased) {
+		Particle->_alpha1 = _alpha1;
+		Particle->_alpha2 = _alpha2;
 	} else {
-		int Alpha = CBUtils::RandomInt(m_Alpha1, m_Alpha2);
-		Particle->m_Alpha1 = Alpha;
-		Particle->m_Alpha2 = Alpha;
+		int Alpha = CBUtils::RandomInt(_alpha1, _alpha2);
+		Particle->_alpha1 = Alpha;
+		Particle->_alpha2 = Alpha;
 	}
 
-	Particle->m_CreationTime = CurrentTime;
-	Particle->m_Pos = VecPos;
-	Particle->m_PosZ = PosZ;
-	Particle->m_Velocity = VecVel;
-	Particle->m_Scale = Scale;
-	Particle->m_LifeTime = LifeTime;
-	Particle->m_Rotation = Rotation;
-	Particle->m_AngVelocity = AngVelocity;
-	Particle->m_GrowthRate = GrowthRate;
-	Particle->m_ExponentialGrowth = m_ExponentialGrowth;
-	Particle->m_IsDead = FAILED(Particle->SetSprite(m_Sprites[SpriteIndex]));
-	Particle->FadeIn(CurrentTime, m_FadeInTime);
+	Particle->_creationTime = CurrentTime;
+	Particle->_pos = VecPos;
+	Particle->_posZ = PosZ;
+	Particle->_velocity = VecVel;
+	Particle->_scale = Scale;
+	Particle->_lifeTime = LifeTime;
+	Particle->_rotation = Rotation;
+	Particle->_angVelocity = AngVelocity;
+	Particle->_growthRate = GrowthRate;
+	Particle->_exponentialGrowth = _exponentialGrowth;
+	Particle->_isDead = FAILED(Particle->SetSprite(_sprites[SpriteIndex]));
+	Particle->FadeIn(CurrentTime, _fadeInTime);
 
 
-	if (Particle->m_IsDead) return E_FAIL;
+	if (Particle->_isDead) return E_FAIL;
 	else return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::Update() {
-	if (!m_Running) return S_OK;
-	else return UpdateInternal(Game->m_Timer, Game->m_TimerDelta);
+	if (!_running) return S_OK;
+	else return UpdateInternal(Game->_timer, Game->_timerDelta);
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 	int NumLive = 0;
 
-	for (int i = 0; i < m_Particles.GetSize(); i++) {
-		m_Particles[i]->Update(this, CurrentTime, TimerDelta);
+	for (int i = 0; i < _particles.GetSize(); i++) {
+		_particles[i]->Update(this, CurrentTime, TimerDelta);
 
-		if (!m_Particles[i]->m_IsDead) NumLive++;
+		if (!_particles[i]->_isDead) NumLive++;
 	}
 
 
 	// we're understaffed
-	if (NumLive < m_MaxParticles) {
+	if (NumLive < _maxParticles) {
 		bool NeedsSort = false;
-		if (CurrentTime - m_LastGenTime > m_GenInterval) {
-			m_LastGenTime = CurrentTime;
-			m_BatchesGenerated++;
+		if (CurrentTime - _lastGenTime > _genInterval) {
+			_lastGenTime = CurrentTime;
+			_batchesGenerated++;
 
-			if (m_MaxBatches > 0 && m_BatchesGenerated > m_MaxBatches) {
+			if (_maxBatches > 0 && _batchesGenerated > _maxBatches) {
 				return S_OK;
 			}
 
-			int ToGen = std::min(m_GenAmount, m_MaxParticles - NumLive);
+			int ToGen = std::min(_genAmount, _maxParticles - NumLive);
 			while (ToGen > 0) {
 				int FirstDeadIndex = -1;
-				for (int i = 0; i < m_Particles.GetSize(); i++) {
-					if (m_Particles[i]->m_IsDead) {
+				for (int i = 0; i < _particles.GetSize(); i++) {
+					if (_particles[i]->_isDead) {
 						FirstDeadIndex = i;
 						break;
 					}
 				}
 
 				CPartParticle *Particle;
-				if (FirstDeadIndex >= 0) Particle = m_Particles[FirstDeadIndex];
+				if (FirstDeadIndex >= 0) Particle = _particles[FirstDeadIndex];
 				else {
 					Particle = new CPartParticle(Game);
-					m_Particles.Add(Particle);
+					_particles.Add(Particle);
 				}
 				InitParticle(Particle, CurrentTime, TimerDelta);
 				NeedsSort = true;
@@ -270,12 +270,12 @@ HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 				ToGen--;
 			}
 		}
-		if (NeedsSort && (m_ScaleZBased || m_VelocityZBased || m_LifeTimeZBased))
+		if (NeedsSort && (_scaleZBased || _velocityZBased || _lifeTimeZBased))
 			SortParticlesByZ();
 
 		// we actually generated some particles and we're not in fast-forward mode
-		if (NeedsSort && m_OverheadTime == 0) {
-			if (m_Owner && m_EmitEvent) m_Owner->ApplyEvent(m_EmitEvent);
+		if (NeedsSort && _overheadTime == 0) {
+			if (_owner && _emitEvent) _owner->ApplyEvent(_emitEvent);
 		}
 	}
 
@@ -284,40 +284,40 @@ HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::Display(CBRegion *Region) {
-	if (m_Sprites.GetSize() <= 1) Game->m_Renderer->StartSpriteBatch();
+	if (_sprites.GetSize() <= 1) Game->_renderer->StartSpriteBatch();
 
-	for (int i = 0; i < m_Particles.GetSize(); i++) {
-		if (Region != NULL && m_UseRegion) {
-			if (!Region->PointInRegion(m_Particles[i]->m_Pos.x, m_Particles[i]->m_Pos.y)) continue;
+	for (int i = 0; i < _particles.GetSize(); i++) {
+		if (Region != NULL && _useRegion) {
+			if (!Region->PointInRegion(_particles[i]->_pos.x, _particles[i]->_pos.y)) continue;
 		}
 
-		m_Particles[i]->Display(this);
+		_particles[i]->Display(this);
 	}
 
-	if (m_Sprites.GetSize() <= 1) Game->m_Renderer->EndSpriteBatch();
+	if (_sprites.GetSize() <= 1) Game->_renderer->EndSpriteBatch();
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::Start() {
-	for (int i = 0; i < m_Particles.GetSize(); i++) {
-		m_Particles[i]->m_IsDead = true;
+	for (int i = 0; i < _particles.GetSize(); i++) {
+		_particles[i]->_isDead = true;
 	}
-	m_Running = true;
-	m_BatchesGenerated = 0;
+	_running = true;
+	_batchesGenerated = 0;
 
 
-	if (m_OverheadTime > 0) {
+	if (_overheadTime > 0) {
 		uint32 Delta = 500;
-		int Steps = m_OverheadTime / Delta;
-		uint32 CurrentTime = Game->m_Timer - m_OverheadTime;
+		int Steps = _overheadTime / Delta;
+		uint32 CurrentTime = Game->_timer - _overheadTime;
 
 		for (int i = 0; i < Steps; i++) {
 			UpdateInternal(CurrentTime, Delta);
 			CurrentTime += Delta;
 		}
-		m_OverheadTime = 0;
+		_overheadTime = 0;
 	}
 
 
@@ -326,8 +326,8 @@ HRESULT CPartEmitter::Start() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::SortParticlesByZ() {
-	// sort particles by m_PosY
-	qsort(m_Particles.GetData(), m_Particles.GetSize(), sizeof(CPartParticle *), CPartEmitter::CompareZ);
+	// sort particles by _posY
+	qsort(_particles.GetData(), _particles.GetSize(), sizeof(CPartParticle *), CPartEmitter::CompareZ);
 	return S_OK;
 }
 
@@ -336,24 +336,24 @@ int CPartEmitter::CompareZ(const void *Obj1, const void *Obj2) {
 	CPartParticle *P1 = *(CPartParticle **)Obj1;
 	CPartParticle *P2 = *(CPartParticle **)Obj2;
 
-	if (P1->m_PosZ < P2->m_PosZ) return -1;
-	else if (P1->m_PosZ > P2->m_PosZ) return 1;
+	if (P1->_posZ < P2->_posZ) return -1;
+	else if (P1->_posZ > P2->_posZ) return 1;
 	else return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::SetBorder(int X, int Y, int Width, int Height) {
-	CBPlatform::SetRect(&m_Border, X, Y, X + Width, Y + Height);
+	CBPlatform::SetRect(&_border, X, Y, X + Width, Y + Height);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::SetBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom) {
-	m_BorderThicknessLeft = ThicknessLeft;
-	m_BorderThicknessRight = ThicknessRight;
-	m_BorderThicknessTop = ThicknessTop;
-	m_BorderThicknessBottom = ThicknessBottom;
+	_borderThicknessLeft = ThicknessLeft;
+	_borderThicknessRight = ThicknessRight;
+	_borderThicknessTop = ThicknessTop;
+	_borderThicknessBottom = ThicknessBottom;
 
 	return S_OK;
 }
@@ -362,9 +362,9 @@ HRESULT CPartEmitter::SetBorderThickness(int ThicknessLeft, int ThicknessRight, 
 CPartForce *CPartEmitter::AddForceByName(char *Name) {
 	CPartForce *Force = NULL;
 
-	for (int i = 0; i < m_Forces.GetSize(); i++) {
-		if (scumm_stricmp(Name, m_Forces[i]->m_Name) == 0) {
-			Force = m_Forces[i];
+	for (int i = 0; i < _forces.GetSize(); i++) {
+		if (scumm_stricmp(Name, _forces[i]->_name) == 0) {
+			Force = _forces[i];
 			break;
 		}
 	}
@@ -372,7 +372,7 @@ CPartForce *CPartEmitter::AddForceByName(char *Name) {
 		Force = new CPartForce(Game);
 		if (Force) {
 			Force->SetName(Name);
-			m_Forces.Add(Force);
+			_forces.Add(Force);
 		}
 	}
 	return Force;
@@ -384,23 +384,23 @@ HRESULT CPartEmitter::AddForce(char *Name, CPartForce::TForceType Type, int PosX
 	CPartForce *Force = AddForceByName(Name);
 	if (!Force) return E_FAIL;
 
-	Force->m_Type = Type;
-	Force->m_Pos = Vector2(PosX, PosY);
+	Force->_type = Type;
+	Force->_pos = Vector2(PosX, PosY);
 
-	Force->m_Direction = Vector2(0, Strength);
+	Force->_direction = Vector2(0, Strength);
 	Matrix4 MatRot;
 	MatRot.RotationZ(DegToRad(CBUtils::NormalizeAngle(Angle - 180)));
-	MatRot.TransformVector2(Force->m_Direction);
+	MatRot.TransformVector2(Force->_direction);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::RemoveForce(char *Name) {
-	for (int i = 0; i < m_Forces.GetSize(); i++) {
-		if (scumm_stricmp(Name, m_Forces[i]->m_Name) == 0) {
-			delete m_Forces[i];
-			m_Forces.RemoveAt(i);
+	for (int i = 0; i < _forces.GetSize(); i++) {
+		if (scumm_stricmp(Name, _forces[i]->_name) == 0) {
+			delete _forces[i];
+			_forces.RemoveAt(i);
 			return S_OK;
 		}
 	}
@@ -466,7 +466,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Start") == 0) {
 		Stack->CorrectParams(1);
-		m_OverheadTime = Stack->Pop()->GetInt();
+		_overheadTime = Stack->Pop()->GetInt();
 		Stack->PushBool(SUCCEEDED(Start()));
 
 		return S_OK;
@@ -478,12 +478,12 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "Stop") == 0) {
 		Stack->CorrectParams(0);
 
-		for (int i = 0; i < m_Particles.GetSize(); i++) {
-			delete m_Particles[i];
+		for (int i = 0; i < _particles.GetSize(); i++) {
+			delete _particles[i];
 		}
-		m_Particles.RemoveAll();
+		_particles.RemoveAll();
 
-		m_Running = false;
+		_running = false;
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -494,7 +494,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Pause") == 0) {
 		Stack->CorrectParams(0);
-		m_Running = false;
+		_running = false;
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -505,7 +505,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Resume") == 0) {
 		Stack->CorrectParams(0);
-		m_Running = true;
+		_running = true;
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -558,270 +558,270 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CPartEmitter::ScGetProperty(char *Name) {
-	m_ScValue->SetNULL();
+	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Type") == 0) {
-		m_ScValue->SetString("particle-emitter");
-		return m_ScValue;
+		_scValue->SetString("particle-emitter");
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "X") == 0) {
-		m_ScValue->SetInt(m_PosX);
-		return m_ScValue;
+		_scValue->SetInt(_posX);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Y") == 0) {
-		m_ScValue->SetInt(m_PosY);
-		return m_ScValue;
+		_scValue->SetInt(_posY);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Width") == 0) {
-		m_ScValue->SetInt(m_Width);
-		return m_ScValue;
+		_scValue->SetInt(_width);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		m_ScValue->SetInt(m_Height);
-		return m_ScValue;
+		_scValue->SetInt(_height);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scale1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale1") == 0) {
-		m_ScValue->SetFloat(m_Scale1);
-		return m_ScValue;
+		_scValue->SetFloat(_scale1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Scale2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale2") == 0) {
-		m_ScValue->SetFloat(m_Scale2);
-		return m_ScValue;
+		_scValue->SetFloat(_scale2);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ScaleZBased") == 0) {
-		m_ScValue->SetBool(m_ScaleZBased);
-		return m_ScValue;
+		_scValue->SetBool(_scaleZBased);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Velocity1") == 0) {
-		m_ScValue->SetFloat(m_Velocity1);
-		return m_ScValue;
+		_scValue->SetFloat(_velocity1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Velocity2") == 0) {
-		m_ScValue->SetFloat(m_Velocity2);
-		return m_ScValue;
+		_scValue->SetFloat(_velocity2);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// VelocityZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "VelocityZBased") == 0) {
-		m_ScValue->SetBool(m_VelocityZBased);
-		return m_ScValue;
+		_scValue->SetBool(_velocityZBased);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LifeTime1") == 0) {
-		m_ScValue->SetInt(m_LifeTime1);
-		return m_ScValue;
+		_scValue->SetInt(_lifeTime1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LifeTime2") == 0) {
-		m_ScValue->SetInt(m_LifeTime2);
-		return m_ScValue;
+		_scValue->SetInt(_lifeTime2);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTimeZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LifeTimeZBased") == 0) {
-		m_ScValue->SetBool(m_LifeTimeZBased);
-		return m_ScValue;
+		_scValue->SetBool(_lifeTimeZBased);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Angle1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Angle1") == 0) {
-		m_ScValue->SetInt(m_Angle1);
-		return m_ScValue;
+		_scValue->SetInt(_angle1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Angle2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Angle2") == 0) {
-		m_ScValue->SetInt(m_Angle2);
-		return m_ScValue;
+		_scValue->SetInt(_angle2);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AngVelocity1") == 0) {
-		m_ScValue->SetFloat(m_AngVelocity1);
-		return m_ScValue;
+		_scValue->SetFloat(_angVelocity1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AngVelocity2") == 0) {
-		m_ScValue->SetFloat(m_AngVelocity2);
-		return m_ScValue;
+		_scValue->SetFloat(_angVelocity2);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotation1") == 0) {
-		m_ScValue->SetFloat(m_Rotation1);
-		return m_ScValue;
+		_scValue->SetFloat(_rotation1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotation2") == 0) {
-		m_ScValue->SetFloat(m_Rotation2);
-		return m_ScValue;
+		_scValue->SetFloat(_rotation2);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Alpha1") == 0) {
-		m_ScValue->SetInt(m_Alpha1);
-		return m_ScValue;
+		_scValue->SetInt(_alpha1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Alpha2") == 0) {
-		m_ScValue->SetInt(m_Alpha2);
-		return m_ScValue;
+		_scValue->SetInt(_alpha2);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaTimeBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AlphaTimeBased") == 0) {
-		m_ScValue->SetBool(m_AlphaTimeBased);
-		return m_ScValue;
+		_scValue->SetBool(_alphaTimeBased);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// MaxParticles
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MaxParticles") == 0) {
-		m_ScValue->SetInt(m_MaxParticles);
-		return m_ScValue;
+		_scValue->SetInt(_maxParticles);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// NumLiveParticles (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumLiveParticles") == 0) {
 		int NumAlive = 0;
-		for (int i = 0; i < m_Particles.GetSize(); i++) {
-			if (m_Particles[i] && !m_Particles[i]->m_IsDead) NumAlive++;
+		for (int i = 0; i < _particles.GetSize(); i++) {
+			if (_particles[i] && !_particles[i]->_isDead) NumAlive++;
 		}
-		m_ScValue->SetInt(NumAlive);
-		return m_ScValue;
+		_scValue->SetInt(NumAlive);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationInterval
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GenerationInterval") == 0) {
-		m_ScValue->SetInt(m_GenInterval);
-		return m_ScValue;
+		_scValue->SetInt(_genInterval);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GenerationAmount") == 0) {
-		m_ScValue->SetInt(m_GenAmount);
-		return m_ScValue;
+		_scValue->SetInt(_genAmount);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// MaxBatches
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MaxBatches") == 0) {
-		m_ScValue->SetInt(m_MaxBatches);
-		return m_ScValue;
+		_scValue->SetInt(_maxBatches);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// FadeInTime
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FadeInTime") == 0) {
-		m_ScValue->SetInt(m_FadeInTime);
-		return m_ScValue;
+		_scValue->SetInt(_fadeInTime);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// FadeOutTime
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FadeOutTime") == 0) {
-		m_ScValue->SetInt(m_FadeOutTime);
-		return m_ScValue;
+		_scValue->SetInt(_fadeOutTime);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GrowthRate1") == 0) {
-		m_ScValue->SetFloat(m_GrowthRate1);
-		return m_ScValue;
+		_scValue->SetFloat(_growthRate1);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GrowthRate2") == 0) {
-		m_ScValue->SetFloat(m_GrowthRate2);
-		return m_ScValue;
+		_scValue->SetFloat(_growthRate2);
+		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ExponentialGrowth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ExponentialGrowth") == 0) {
-		m_ScValue->SetBool(m_ExponentialGrowth);
-		return m_ScValue;
+		_scValue->SetBool(_exponentialGrowth);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// UseRegion
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "UseRegion") == 0) {
-		m_ScValue->SetBool(m_UseRegion);
-		return m_ScValue;
+		_scValue->SetBool(_useRegion);
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "EmitEvent") == 0) {
-		if (!m_EmitEvent) m_ScValue->SetNULL();
-		else m_ScValue->SetString(m_EmitEvent);
-		return m_ScValue;
+		if (!_emitEvent) _scValue->SetNULL();
+		else _scValue->SetString(_emitEvent);
+		return _scValue;
 	}
 
 	else return CBObject::ScGetProperty(Name);
@@ -834,28 +834,28 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// X
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "X") == 0) {
-		m_PosX = Value->GetInt();
+		_posX = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Y") == 0) {
-		m_PosY = Value->GetInt();
+		_posY = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Width") == 0) {
-		m_Width = Value->GetInt();
+		_width = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		m_Height = Value->GetInt();
+		_height = Value->GetInt();
 		return S_OK;
 	}
 
@@ -863,21 +863,21 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// Scale1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale1") == 0) {
-		m_Scale1 = Value->GetFloat();
+		_scale1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Scale2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Scale2") == 0) {
-		m_Scale2 = Value->GetFloat();
+		_scale2 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ScaleZBased") == 0) {
-		m_ScaleZBased = Value->GetBool();
+		_scaleZBased = Value->GetBool();
 		return S_OK;
 	}
 
@@ -885,21 +885,21 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// Velocity1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Velocity1") == 0) {
-		m_Velocity1 = Value->GetFloat();
+		_velocity1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Velocity2") == 0) {
-		m_Velocity2 = Value->GetFloat();
+		_velocity2 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// VelocityZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "VelocityZBased") == 0) {
-		m_VelocityZBased = Value->GetBool();
+		_velocityZBased = Value->GetBool();
 		return S_OK;
 	}
 
@@ -907,21 +907,21 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// LifeTime1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LifeTime1") == 0) {
-		m_LifeTime1 = Value->GetInt();
+		_lifeTime1 = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LifeTime2") == 0) {
-		m_LifeTime2 = Value->GetInt();
+		_lifeTime2 = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTimeZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LifeTimeZBased") == 0) {
-		m_LifeTimeZBased = Value->GetBool();
+		_lifeTimeZBased = Value->GetBool();
 		return S_OK;
 	}
 
@@ -929,14 +929,14 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// Angle1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Angle1") == 0) {
-		m_Angle1 = Value->GetInt();
+		_angle1 = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Angle2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Angle2") == 0) {
-		m_Angle2 = Value->GetInt();
+		_angle2 = Value->GetInt();
 		return S_OK;
 	}
 
@@ -944,14 +944,14 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// AngVelocity1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AngVelocity1") == 0) {
-		m_AngVelocity1 = Value->GetFloat();
+		_angVelocity1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AngVelocity2") == 0) {
-		m_AngVelocity2 = Value->GetFloat();
+		_angVelocity2 = Value->GetFloat();
 		return S_OK;
 	}
 
@@ -959,14 +959,14 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// Rotation1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotation1") == 0) {
-		m_Rotation1 = Value->GetFloat();
+		_rotation1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Rotation2") == 0) {
-		m_Rotation2 = Value->GetFloat();
+		_rotation2 = Value->GetFloat();
 		return S_OK;
 	}
 
@@ -974,25 +974,25 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// Alpha1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Alpha1") == 0) {
-		m_Alpha1 = Value->GetInt();
-		if (m_Alpha1 < 0) m_Alpha1 = 0;
-		if (m_Alpha1 > 255) m_Alpha1 = 255;
+		_alpha1 = Value->GetInt();
+		if (_alpha1 < 0) _alpha1 = 0;
+		if (_alpha1 > 255) _alpha1 = 255;
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Alpha2") == 0) {
-		m_Alpha2 = Value->GetInt();
-		if (m_Alpha2 < 0) m_Alpha2 = 0;
-		if (m_Alpha2 > 255) m_Alpha2 = 255;
+		_alpha2 = Value->GetInt();
+		if (_alpha2 < 0) _alpha2 = 0;
+		if (_alpha2 > 255) _alpha2 = 255;
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaTimeBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AlphaTimeBased") == 0) {
-		m_AlphaTimeBased = Value->GetBool();
+		_alphaTimeBased = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1000,7 +1000,7 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// MaxParticles
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MaxParticles") == 0) {
-		m_MaxParticles = Value->GetInt();
+		_maxParticles = Value->GetInt();
 		return S_OK;
 	}
 
@@ -1008,21 +1008,21 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// GenerationInterval
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GenerationInterval") == 0) {
-		m_GenInterval = Value->GetInt();
+		_genInterval = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GenerationAmount") == 0) {
-		m_GenAmount = Value->GetInt();
+		_genAmount = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// MaxBatches
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MaxBatches") == 0) {
-		m_MaxBatches = Value->GetInt();
+		_maxBatches = Value->GetInt();
 		return S_OK;
 	}
 
@@ -1030,14 +1030,14 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// FadeInTime
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FadeInTime") == 0) {
-		m_FadeInTime = Value->GetInt();
+		_fadeInTime = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// FadeOutTime
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FadeOutTime") == 0) {
-		m_FadeOutTime = Value->GetInt();
+		_fadeOutTime = Value->GetInt();
 		return S_OK;
 	}
 
@@ -1045,21 +1045,21 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// GrowthRate1
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GrowthRate1") == 0) {
-		m_GrowthRate1 = Value->GetFloat();
+		_growthRate1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GrowthRate2") == 0) {
-		m_GrowthRate2 = Value->GetFloat();
+		_growthRate2 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ExponentialGrowth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ExponentialGrowth") == 0) {
-		m_ExponentialGrowth = Value->GetBool();
+		_exponentialGrowth = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1067,7 +1067,7 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// UseRegion
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "UseRegion") == 0) {
-		m_UseRegion = Value->GetBool();
+		_useRegion = Value->GetBool();
 		return S_OK;
 	}
 
@@ -1075,8 +1075,8 @@ HRESULT CPartEmitter::ScSetProperty(char *Name, CScValue *Value) {
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "EmitEvent") == 0) {
-		SAFE_DELETE_ARRAY(m_EmitEvent);
-		if (!Value->IsNULL()) CBUtils::SetString(&m_EmitEvent, Value->GetString());
+		SAFE_DELETE_ARRAY(_emitEvent);
+		if (!Value->IsNULL()) CBUtils::SetString(&_emitEvent, Value->GetString());
 		return S_OK;
 	}
 
@@ -1096,95 +1096,95 @@ char *CPartEmitter::ScToString() {
 HRESULT CPartEmitter::Persist(CBPersistMgr *PersistMgr) {
 	CBObject::Persist(PersistMgr);
 
-	PersistMgr->Transfer(TMEMBER(m_Width));
-	PersistMgr->Transfer(TMEMBER(m_Height));
+	PersistMgr->Transfer(TMEMBER(_width));
+	PersistMgr->Transfer(TMEMBER(_height));
 
-	PersistMgr->Transfer(TMEMBER(m_Angle1));
-	PersistMgr->Transfer(TMEMBER(m_Angle2));
+	PersistMgr->Transfer(TMEMBER(_angle1));
+	PersistMgr->Transfer(TMEMBER(_angle2));
 
-	PersistMgr->Transfer(TMEMBER(m_Velocity1));
-	PersistMgr->Transfer(TMEMBER(m_Velocity2));
-	PersistMgr->Transfer(TMEMBER(m_VelocityZBased));
+	PersistMgr->Transfer(TMEMBER(_velocity1));
+	PersistMgr->Transfer(TMEMBER(_velocity2));
+	PersistMgr->Transfer(TMEMBER(_velocityZBased));
 
-	PersistMgr->Transfer(TMEMBER(m_Scale1));
-	PersistMgr->Transfer(TMEMBER(m_Scale2));
-	PersistMgr->Transfer(TMEMBER(m_ScaleZBased));
+	PersistMgr->Transfer(TMEMBER(_scale1));
+	PersistMgr->Transfer(TMEMBER(_scale2));
+	PersistMgr->Transfer(TMEMBER(_scaleZBased));
 
-	PersistMgr->Transfer(TMEMBER(m_MaxParticles));
+	PersistMgr->Transfer(TMEMBER(_maxParticles));
 
-	PersistMgr->Transfer(TMEMBER(m_LifeTime1));
-	PersistMgr->Transfer(TMEMBER(m_LifeTime2));
-	PersistMgr->Transfer(TMEMBER(m_LifeTimeZBased));
+	PersistMgr->Transfer(TMEMBER(_lifeTime1));
+	PersistMgr->Transfer(TMEMBER(_lifeTime2));
+	PersistMgr->Transfer(TMEMBER(_lifeTimeZBased));
 
-	PersistMgr->Transfer(TMEMBER(m_GenInterval));
-	PersistMgr->Transfer(TMEMBER(m_GenAmount));
+	PersistMgr->Transfer(TMEMBER(_genInterval));
+	PersistMgr->Transfer(TMEMBER(_genAmount));
 
-	PersistMgr->Transfer(TMEMBER(m_Running));
-	PersistMgr->Transfer(TMEMBER(m_OverheadTime));
+	PersistMgr->Transfer(TMEMBER(_running));
+	PersistMgr->Transfer(TMEMBER(_overheadTime));
 
-	PersistMgr->Transfer(TMEMBER(m_Border));
-	PersistMgr->Transfer(TMEMBER(m_BorderThicknessLeft));
-	PersistMgr->Transfer(TMEMBER(m_BorderThicknessRight));
-	PersistMgr->Transfer(TMEMBER(m_BorderThicknessTop));
-	PersistMgr->Transfer(TMEMBER(m_BorderThicknessBottom));
+	PersistMgr->Transfer(TMEMBER(_border));
+	PersistMgr->Transfer(TMEMBER(_borderThicknessLeft));
+	PersistMgr->Transfer(TMEMBER(_borderThicknessRight));
+	PersistMgr->Transfer(TMEMBER(_borderThicknessTop));
+	PersistMgr->Transfer(TMEMBER(_borderThicknessBottom));
 
-	PersistMgr->Transfer(TMEMBER(m_FadeInTime));
-	PersistMgr->Transfer(TMEMBER(m_FadeOutTime));
+	PersistMgr->Transfer(TMEMBER(_fadeInTime));
+	PersistMgr->Transfer(TMEMBER(_fadeOutTime));
 
-	PersistMgr->Transfer(TMEMBER(m_Alpha1));
-	PersistMgr->Transfer(TMEMBER(m_Alpha2));
-	PersistMgr->Transfer(TMEMBER(m_AlphaTimeBased));
+	PersistMgr->Transfer(TMEMBER(_alpha1));
+	PersistMgr->Transfer(TMEMBER(_alpha2));
+	PersistMgr->Transfer(TMEMBER(_alphaTimeBased));
 
-	PersistMgr->Transfer(TMEMBER(m_AngVelocity1));
-	PersistMgr->Transfer(TMEMBER(m_AngVelocity2));
+	PersistMgr->Transfer(TMEMBER(_angVelocity1));
+	PersistMgr->Transfer(TMEMBER(_angVelocity2));
 
-	PersistMgr->Transfer(TMEMBER(m_Rotation1));
-	PersistMgr->Transfer(TMEMBER(m_Rotation2));
+	PersistMgr->Transfer(TMEMBER(_rotation1));
+	PersistMgr->Transfer(TMEMBER(_rotation2));
 
-	PersistMgr->Transfer(TMEMBER(m_GrowthRate1));
-	PersistMgr->Transfer(TMEMBER(m_GrowthRate2));
-	PersistMgr->Transfer(TMEMBER(m_ExponentialGrowth));
+	PersistMgr->Transfer(TMEMBER(_growthRate1));
+	PersistMgr->Transfer(TMEMBER(_growthRate2));
+	PersistMgr->Transfer(TMEMBER(_exponentialGrowth));
 
-	PersistMgr->Transfer(TMEMBER(m_UseRegion));
+	PersistMgr->Transfer(TMEMBER(_useRegion));
 
-	PersistMgr->Transfer(TMEMBER_INT(m_MaxBatches));
-	PersistMgr->Transfer(TMEMBER_INT(m_BatchesGenerated));
+	PersistMgr->Transfer(TMEMBER_INT(_maxBatches));
+	PersistMgr->Transfer(TMEMBER_INT(_batchesGenerated));
 
-	PersistMgr->Transfer(TMEMBER(m_EmitEvent));
-	PersistMgr->Transfer(TMEMBER(m_Owner));
+	PersistMgr->Transfer(TMEMBER(_emitEvent));
+	PersistMgr->Transfer(TMEMBER(_owner));
 
 
-	m_Sprites.Persist(PersistMgr);
+	_sprites.Persist(PersistMgr);
 
 	int NumForces;
-	if (PersistMgr->m_Saving) {
-		NumForces = m_Forces.GetSize();
+	if (PersistMgr->_saving) {
+		NumForces = _forces.GetSize();
 		PersistMgr->Transfer(TMEMBER(NumForces));
-		for (int i = 0; i < m_Forces.GetSize(); i++) {
-			m_Forces[i]->Persist(PersistMgr);
+		for (int i = 0; i < _forces.GetSize(); i++) {
+			_forces[i]->Persist(PersistMgr);
 		}
 	} else {
 		PersistMgr->Transfer(TMEMBER(NumForces));
 		for (int i = 0; i < NumForces; i++) {
 			CPartForce *Force = new CPartForce(Game);
 			Force->Persist(PersistMgr);
-			m_Forces.Add(Force);
+			_forces.Add(Force);
 		}
 	}
 
 	int NumParticles;
-	if (PersistMgr->m_Saving) {
-		NumParticles = m_Particles.GetSize();
+	if (PersistMgr->_saving) {
+		NumParticles = _particles.GetSize();
 		PersistMgr->Transfer(TMEMBER(NumParticles));
-		for (int i = 0; i < m_Particles.GetSize(); i++) {
-			m_Particles[i]->Persist(PersistMgr);
+		for (int i = 0; i < _particles.GetSize(); i++) {
+			_particles[i]->Persist(PersistMgr);
 		}
 	} else {
 		PersistMgr->Transfer(TMEMBER(NumParticles));
 		for (int i = 0; i < NumParticles; i++) {
 			CPartParticle *Particle = new CPartParticle(Game);
 			Particle->Persist(PersistMgr);
-			m_Particles.Add(Particle);
+			_particles.Add(Particle);
 		}
 	}
 

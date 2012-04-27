@@ -58,31 +58,31 @@ public:
 	virtual HRESULT InitAfterLoad();
 	static void AfterLoadScene(void *Scene, void *Data);
 
-	bool m_SmartItemCursor;
+	bool _smartItemCursor;
 
-	CBArray<char *, char *> m_SpeechDirs;
+	CBArray<char *, char *> _speechDirs;
 	HRESULT AddSpeechDir(const char *Dir);
 	HRESULT RemoveSpeechDir(char *Dir);
 	char *FindSpeechFile(char *StringID);
 
 	HRESULT DeleteItem(CAdItem *Item);
-	char *m_ItemsFile;
-	bool m_TempDisableSaveState;
+	char *_itemsFile;
+	bool _tempDisableSaveState;
 	virtual HRESULT ResetContent();
 	HRESULT AddItem(CAdItem *Item);
 	CAdItem *GetItemByName(char *Name);
-	CBArray<CAdItem *, CAdItem *> m_Items;
-	CAdObject *m_InventoryOwner;
+	CBArray<CAdItem *, CAdItem *> _items;
+	CAdObject *_inventoryOwner;
 	bool IsItemTaken(char *ItemName);
 	HRESULT RegisterInventory(CAdInventory *Inv);
 	HRESULT UnregisterInventory(CAdInventory *Inv);
 
-	CAdObject *m_InvObject;
-	CBArray<CAdInventory *, CAdInventory *> m_Inventories;
+	CAdObject *_invObject;
+	CBArray<CAdInventory *, CAdInventory *> _inventories;
 	virtual HRESULT DisplayContent(bool Update = true, bool DisplayAll = false);
-	char *m_DebugStartupScene;
-	char *m_StartupScene;
-	bool m_InitialScene;
+	char *_debugStartupScene;
+	char *_startupScene;
+	bool _initialScene;
 	bool GameResponseUsed(int ID);
 	HRESULT AddGameResponse(int ID);
 	HRESULT ResetResponse(int ID);
@@ -96,49 +96,49 @@ public:
 	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name);
 
 	CAdSceneState *GetSceneState(char *Filename, bool Saving);
-	CBViewport *m_SceneViewport;
-	int m_TexItemLifeTime;
-	int m_TexWalkLifeTime;
-	int m_TexStandLifeTime;
-	int m_TexTalkLifeTime;
+	CBViewport *_sceneViewport;
+	int _texItemLifeTime;
+	int _texWalkLifeTime;
+	int _texStandLifeTime;
+	int _texTalkLifeTime;
 
-	TTalkSkipButton m_TalkSkipButton;
+	TTalkSkipButton _talkSkipButton;
 
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
 	HRESULT ScheduleChangeScene(char *Filename, bool FadeIn);
-	char *m_ScheduledScene;
-	bool m_ScheduledFadeIn;
+	char *_scheduledScene;
+	bool _scheduledFadeIn;
 	void SetPrevSceneName(char *Name);
 	void SetPrevSceneFilename(char *Name);
-	char *m_PrevSceneName;
-	char *m_PrevSceneFilename;
+	char *_prevSceneName;
+	char *_prevSceneFilename;
 	virtual HRESULT LoadGame(char *Filename);
-	CAdItem *m_SelectedItem;
+	CAdItem *_selectedItem;
 	HRESULT Cleanup();
 	DECLARE_PERSISTENT(CAdGame, CBGame)
 
 	void FinishSentences();
 	HRESULT ShowCursor();
-	TGameStateEx m_StateEx;
-	CAdResponseBox *m_ResponseBox;
-	CAdInventoryBox *m_InventoryBox;
+	TGameStateEx _stateEx;
+	CAdResponseBox *_responseBox;
+	CAdInventoryBox *_inventoryBox;
 	HRESULT DisplaySentences(bool Frozen);
 	void AddSentence(CAdSentence *Sentence);
 	HRESULT ChangeScene(char *Filename, bool FadeIn);
 	HRESULT RemoveObject(CAdObject *Object);
 	HRESULT AddObject(CAdObject *Object);
-	CAdScene *m_Scene;
+	CAdScene *_scene;
 	HRESULT InitLoop();
 	CAdGame();
 	virtual ~CAdGame();
-	CBArray<CAdObject *, CAdObject *> m_Objects;
-	CBArray<CAdSentence *, CAdSentence *> m_Sentences;
+	CBArray<CAdObject *, CAdObject *> _objects;
+	CBArray<CAdSentence *, CAdSentence *> _sentences;
 
-	CBArray<CAdSceneState *, CAdSceneState *> m_SceneStates;
-	CBArray<char *, char *> m_DlgPendingBranches;
+	CBArray<CAdSceneState *, CAdSceneState *> _sceneStates;
+	CBArray<char *, char *> _dlgPendingBranches;
 
-	CBArray<CAdResponseContext *, CAdResponseContext *> m_ResponsesBranch;
-	CBArray<CAdResponseContext *, CAdResponseContext *> m_ResponsesGame;
+	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesBranch;
+	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesGame;
 
 	virtual HRESULT LoadFile(const char *Filename);
 	virtual HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
