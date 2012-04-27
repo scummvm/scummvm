@@ -46,8 +46,8 @@ struct Bone {
 	int _b;
 	int _c;
 	int _count;
-	AnimRotation **_rotations;
-	AnimTranslation **_translations;
+	AnimRotation *_rotations;
+	AnimTranslation *_translations;
 	Bone() : _rotations(NULL), _translations(NULL), _boneName(""), _operation(0) {}
 	~Bone();
 	void loadBinary(Common::SeekableReadStream *data);

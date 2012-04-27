@@ -149,22 +149,22 @@ void Skeleton::animate(float delta) {
 
 			// Find the right keyframe
 			for (int curKeyFrame = 0; curKeyFrame < curBone->_count; curKeyFrame++) {
-				if (curBone->_rotations[curKeyFrame]->_time >= _time) {
+				if (curBone->_rotations[curKeyFrame]._time >= _time) {
 					keyfIdx = curKeyFrame;
 					break;
 				}
 			}
 
 			if (keyfIdx == 0) {
-				quat = curBone->_rotations[keyfIdx]->_quat;
+				quat = curBone->_rotations[keyfIdx]._quat;
 			} else if (keyfIdx == curBone->_count - 1) {
-				quat = curBone->_rotations[keyfIdx-1]->_quat;
+				quat = curBone->_rotations[keyfIdx-1]._quat;
 			} else {
-				timeDelta = curBone->_rotations[keyfIdx-1]->_time - curBone->_rotations[keyfIdx]->_time;
-				interpVal = (_time - curBone->_rotations[keyfIdx]->_time) / timeDelta;
+				timeDelta = curBone->_rotations[keyfIdx-1]._time - curBone->_rotations[keyfIdx]._time;
+				interpVal = (_time - curBone->_rotations[keyfIdx]._time) / timeDelta;
 
 				// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
-				quat = curBone->_rotations[keyfIdx]->_quat.slerpQuat(curBone->_rotations[keyfIdx - 1]->_quat, interpVal);
+				quat = curBone->_rotations[keyfIdx]._quat.slerpQuat(curBone->_rotations[keyfIdx - 1]._quat, interpVal);
 			}
 			quat.toMatrix(relFinal);
 			relFinal.setPosition(relPos);
@@ -175,28 +175,28 @@ void Skeleton::animate(float delta) {
 			Bone *curBone = &_anim->_bones[transIdx];
 			// Find the right keyframe
 			for (int curKeyFrame = 0; curKeyFrame < curBone->_count; curKeyFrame++) {
-				if (curBone->_translations[curKeyFrame]->_time >= _time) {
+				if (curBone->_translations[curKeyFrame]._time >= _time) {
 					keyfIdx = curKeyFrame;
 					break;
 				}
 			}
 
 			if (keyfIdx == 0) {
-				vec = curBone->_translations[keyfIdx]->_vec;
+				vec = curBone->_translations[keyfIdx]._vec;
 			} else if (keyfIdx == curBone->_count - 1) {
-				vec = curBone->_translations[keyfIdx-1]->_vec;
+				vec = curBone->_translations[keyfIdx-1]._vec;
 			} else {
-				timeDelta = curBone->_translations[keyfIdx-1]->_time - curBone->_translations[keyfIdx]->_time;
-				interpVal = (_time - curBone->_translations[keyfIdx]->_time) / timeDelta;
+				timeDelta = curBone->_translations[keyfIdx-1]._time - curBone->_translations[keyfIdx]._time;
+				interpVal = (_time - curBone->_translations[keyfIdx]._time) / timeDelta;
 
-				vec.x() = curBone->_translations[keyfIdx-1]->_vec.x() +
-					(curBone->_translations[keyfIdx]->_vec.x() - curBone->_translations[keyfIdx-1]->_vec.x()) * interpVal;
+				vec.x() = curBone->_translations[keyfIdx-1]._vec.x() +
+					(curBone->_translations[keyfIdx]._vec.x() - curBone->_translations[keyfIdx-1]._vec.x()) * interpVal;
 
-				vec.y() = curBone->_translations[keyfIdx-1]->_vec.y() +
-					(curBone->_translations[keyfIdx]->_vec.y() - curBone->_translations[keyfIdx-1]->_vec.y()) * interpVal;
+				vec.y() = curBone->_translations[keyfIdx-1]._vec.y() +
+					(curBone->_translations[keyfIdx]._vec.y() - curBone->_translations[keyfIdx-1]._vec.y()) * interpVal;
 
-				vec.z() = curBone->_translations[keyfIdx-1]->_vec.z() +
-					(curBone->_translations[keyfIdx]->_vec.z() - curBone->_translations[keyfIdx-1]->_vec.z()) * interpVal;
+				vec.z() = curBone->_translations[keyfIdx-1]._vec.z() +
+					(curBone->_translations[keyfIdx]._vec.z() - curBone->_translations[keyfIdx-1]._vec.z()) * interpVal;
 			}
 			relFinal.setPosition(vec);
 		}

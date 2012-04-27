@@ -63,20 +63,18 @@ void Bone::loadBinary(Common::SeekableReadStream *data) {
 
 	char temp[4];
 	if (_operation == 3) { // Translation
-		_translations = new AnimTranslation*[_count];
+		_translations = new AnimTranslation[_count];
 		for(int j = 0; j < _count; j++) {
-			_translations[j] = new AnimTranslation();
-			_translations[j]->_vec.readFromStream(data);
+			_translations[j]._vec.readFromStream(data);
 			data->read(temp, 4);
-			_translations[j]->_time = get_float(temp);
+			_translations[j]._time = get_float(temp);
 		}
 	} else if (_operation == 4) { // Rotation
-		_rotations = new AnimRotation*[_count];
+		_rotations = new AnimRotation[_count];
 		for(int j = 0; j < _count; j++) {
-			_rotations[j] = new AnimRotation();
-			_rotations[j]->_quat.readFromStream(data);
+			_rotations[j]._quat.readFromStream(data);
 			data->read(temp, 4);
-			_rotations[j]->_time = get_float(temp);
+			_rotations[j]._time = get_float(temp);
 		}
 	} else {
 		error("Unknown animation-operation %d", _operation);
@@ -85,14 +83,8 @@ void Bone::loadBinary(Common::SeekableReadStream *data) {
 
 Bone::~Bone() {
 	if (_operation == 3) {
-		for(int i = 0; i < _count; i++) {
-			delete _translations[i];
-		}
 		delete[] _translations;
 	} else if (_operation == 4) {
-		for(int i = 0; i < _count; i++) {
-			delete _rotations[i];
-		}
 		delete[] _rotations;
 	}
 }
