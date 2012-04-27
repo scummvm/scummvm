@@ -898,6 +898,7 @@ void LilliputScript::sub130B6() {
 
 byte *LilliputScript::getBuffer215Ptr() {
 	debugC(2, kDebugScript, "getBuffer215Ptr()");
+
 	int tmpVal = getValue1();
 	tmpVal *= 32;
 	tmpVal += _currScript->readUint16LE();
@@ -910,10 +911,21 @@ byte LilliputScript::OC_sub173DF() {
 	warning("OC_sub173DF");
 	return 0;
 }
+
 byte LilliputScript::OC_sub173F0() {
-	warning("OC_sub173F0");
+	debugC(2, kDebugScript, "OC_sub173F0()");
+
+	int index = getValue1();
+	byte d1 = _array16123[index];
+	byte d2 = _array1614B[index];
+	int var1 = getValue2();
+
+	if (var1 == (d1 << 8) + d2)
+		return 1;
+
 	return 0;
 }
+
 byte LilliputScript::OC_sub1740A() {
 	warning("OC_sub1740A");
 	return 0;
@@ -949,8 +961,17 @@ byte LilliputScript::OC_getRandom() {
 }
 
 byte LilliputScript::OC_sub1748C() {
-	warning("OC_sub1748C");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub1748C()");
+
+	int var1 = _currScript->readUint16LE();
+	int tmpVal = _currScript->readUint16LE() + 1;
+	// no need to seek later, the move is already done
+	_currScript->writeUint16LE(tmpVal, -2);
+	// overwrite the recently used "variable" in the script
+	if (tmpVal < var1)
+		return 0;
+
+	return 1;
 }
 
 byte LilliputScript::OC_compWord18776() {
@@ -1679,8 +1700,23 @@ void LilliputScript::OC_setWord10804() {
 }
 
 void LilliputScript::OC_sub17C0E() {
-	warning("OC_sub17C0E");
+	debugC(1, kDebugScript, "OC_sub17C0E()");
+
+	assert(_vm->_ptr_rulesBuffer2_15 != NULL);
+	byte var1 = (_vm->_ptr_rulesBuffer2_15[4] << 8) + _vm->_ptr_rulesBuffer2_15[5];
+	byte b2 = _vm->_ptr_rulesBuffer2_15[6];
+
+	byte *mapPtr = getMapPtr(var1);
+	mapPtr[b2] = _vm->_ptr_rulesBuffer2_15[7];
+	mapPtr[3] = _vm->_ptr_rulesBuffer2_15[8];
+
+	if (b2 == 0) {
+		_byte12A09 = 1;
+		_vm->displayFunction9();
+		_byte12A09 = 0;
+	}
 }
+
 void LilliputScript::OC_sub17C55() {
 	warning("OC_sub17C55");
 }
