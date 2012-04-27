@@ -32,12 +32,12 @@ ScriptStream::~ScriptStream() {
 }
 
 void ScriptStream::writeUint16LE(int value, int relativePos) {
-	Common::MemoryWriteStream tmpStream = Common::MemoryWriteStream(_orgPtr, size());
-	int writePos = pos() + relativePos < size();
 	
-	assert((writePos >= 0) && (writePos < size()));
+	int writePos = pos() + relativePos;
+	assert((writePos >= 0) && (writePos + 2 < size()));
 
-	tmpStream.writeSint16LE(value);
+	Common::MemoryWriteStream tmpStream = Common::MemoryWriteStream(_orgPtr + writePos, size() - writePos);
+	tmpStream.writeUint16LE(value);
 }
 
 } // End of namespace Lilliput
