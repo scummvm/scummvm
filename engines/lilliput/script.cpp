@@ -58,7 +58,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array1813B[i] = 0;
 
 	for (int i = 0; i < 40; i++) {
-		_array10B29[i] = 1;
+		_characterScriptEnabled[i] = 1;
 		_array128EF[i] = 15;
 		_array10AB1[i] = 0;
 		_array12811[i] = 16;
@@ -702,7 +702,7 @@ void LilliputScript::sub1823E(byte var1, byte var2, byte *curBufPtr) {
 	debugC(1, kDebugScript, "sub1823E(%d, %d, curBufPtr)", var1, var2);
 
 	assert ((var1 >= 0) && (var1 < 40));
-	_array10B29[var1] = 1;
+	_characterScriptEnabled[var1] = 1;
 	curBufPtr[0] = var2;
 	curBufPtr[1] = 0;
 	curBufPtr[2] = 0;
@@ -844,7 +844,7 @@ int LilliputScript::getValue2() {
 		return ((_vm->_rulesBuffer2_13[index] << 8) + _vm->_rulesBuffer2_14[index]);
 		}
 	case 0xFD:
-		return _vm->_word16EFA;
+		return _vm->_currentScriptCharacterPosition;
 	case 0xFC: {
 		int index = curWord & 0xFF;
 		assert(index < 40);
@@ -908,7 +908,10 @@ byte *LilliputScript::getBuffer215Ptr() {
 }
 
 byte LilliputScript::OC_sub173DF() {
-	warning("OC_sub173DF");
+	debugC(2, kDebugScript, "OC_sub173F0()");
+	if (_vm->_currentScriptCharacterPosition == getValue2()) {
+		return 1;
+	}
 	return 0;
 }
 
@@ -935,7 +938,7 @@ byte* LilliputScript::sub17399(int val) {
 byte LilliputScript::OC_sub1740A() {
 	debugC(1, kDebugScript, "OC_sub1740A()");
 
-	int var = _vm->_word16EFA;
+	int var = _vm->_currentScriptCharacterPosition;
 	if (var == 0xFFFF) {
 		_currScript->readUint16LE();
 		return 0;
@@ -1028,7 +1031,7 @@ byte LilliputScript::OC_sub174D8() {
 	
 	if (curWord == 3000) {
 		int index;
-		for (index = 0; index < _vm->_word10807_ERULES; index++) {
+		for (index = 0; index < _vm->_numCharacters; index++) {
 			if (_vm->_rulesBuffer2_5[index] == tmpVal) {
 				_word16F00 = index;
 				return 1;
@@ -1060,7 +1063,7 @@ byte LilliputScript::OC_compareCoords_1() {
 
 	int var3 = _vm->_rulesBuffer12_1[index];
 	int var4 = _vm->_rulesBuffer12_2[index];
-	int var1 = _vm->_word16EFA;
+	int var1 = _vm->_currentScriptCharacterPosition;
 
 	if (((var1 >> 8) < (var3 >> 8)) || ((var1 >> 8) > (var3 & 0xFF)) || ((var1 & 0xFF) < (var4 >> 8)) || ((var1 & 0xFF) > (var4 & 0xFF)))
 		return 0;
@@ -1109,7 +1112,7 @@ byte LilliputScript::OC_sub175C8() {
 	}
 
 	if (tmpVal == 3000) {
-		for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+		for (int i = 0; i < _vm->_numCharacters; i++) {
 			int var1 = _array10B51[(_vm->_rulesBuffer2PrevIndx * 40) + i];
 			if ((var1 & 0xFF) >= var4) {
 				_word16F00 = i;
@@ -1121,7 +1124,7 @@ byte LilliputScript::OC_sub175C8() {
 	
 	tmpVal -= 2000;
 	byte var4b = tmpVal & 0xFF;
-	for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+	for (int i = 0; i < _vm->_numCharacters; i++) {
 		int var1 = _array10B51[(_vm->_rulesBuffer2PrevIndx * 40) + i];
 		if ((var1 & 0xFF) >= var4) {
 			if (_vm->_rulesBuffer2_12[i] == var4b) {
@@ -1148,7 +1151,7 @@ byte LilliputScript::OC_sub17640() {
 
 		if (var1 == 3000) {
 			subIndex = 0;
-			for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+			for (int i = 0; i < _vm->_numCharacters; i++) {
 				tmpVal = _array10B51[index + i];
 				byte v1 = tmpVal & 0xFF;
 				byte v2 = tmpVal >> 8;
@@ -1161,7 +1164,7 @@ byte LilliputScript::OC_sub17640() {
 		} else {
 			var1 -= 2000;
 			var4 &= ((var1 & 0xFF) << 8);
-			for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+			for (int i = 0; i < _vm->_numCharacters; i++) {
 				tmpVal = _array10B51[index + i];
 				byte v1 = tmpVal & 0xFF;
 				byte v2 = tmpVal >> 8;
@@ -1204,7 +1207,7 @@ byte LilliputScript::OC_sub176C4() {
 	}
 
 	if (tmpVal == 3000) {
-		for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+		for (int i = 0; i < _vm->_numCharacters; i++) {
 			int var1 = _array10B51[(_vm->_rulesBuffer2PrevIndx * 40) + i];
 			if (((var1 & 0xFF) < var4) && ((var1 >> 8) >= var4)) {
 				_word16F00 = i;
@@ -1216,7 +1219,7 @@ byte LilliputScript::OC_sub176C4() {
 	
 	tmpVal -= 2000;
 	byte var4b = tmpVal & 0xFF;
-	for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+	for (int i = 0; i < _vm->_numCharacters; i++) {
 		int var1 = _array10B51[(_vm->_rulesBuffer2PrevIndx * 40) + i];
 		if (((var1 & 0xFF) < var4) && ((var1 >> 8) >= var4)) {
 			if (_vm->_rulesBuffer2_12[i] == var4b) {
@@ -1352,7 +1355,7 @@ byte LilliputScript::OC_sub1785C() {
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
 	int count = 0;
 
-	for (int i = 0; i < _vm->_word10807_ERULES; i++) {
+	for (int i = 0; i < _vm->_numCharacters; i++) {
 		if (curByte == _vm->_rulesBuffer2_15[(32 * i)])
 			++count;
 	}
@@ -1451,7 +1454,7 @@ byte LilliputScript::OC_sub1792A() {
 byte LilliputScript::OC_sub1793E() {
 	debugC(1, kDebugScript, "OC_sub1793E()");
 
-	if (_vm->_word16EFA == 0xFFFF)
+	if (_vm->_currentScriptCharacterPosition == 0xFFFF)
 		return 0;
 
 	if (_vm->_array16E94[_vm->_rulesBuffer2PrevIndx] == 0)

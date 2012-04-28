@@ -39,7 +39,7 @@ public:
 	byte _byte12A04;
 	byte _heroismLevel;
 
-	byte _array10B29[40];
+	byte _characterScriptEnabled[40];
 	byte _array122E9[20];
 	byte _array16123[40];
 	byte _array1614B[40];
