@@ -85,6 +85,10 @@ private:
 	byte _byte12FE4;
 	byte _byte16F02;
 	byte _byte16F04;
+	byte _byte1881A;
+	byte _byte18823;
+	byte _byte1881E;
+	byte _byte1881D;
 
 	int _word16F00;
 	int _word10804;
@@ -95,8 +99,6 @@ private:
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 	
-
-
 	void sub1863B();
 	void sub185ED(byte index, byte subIndex);
 	void sub185B4_display();
@@ -112,6 +114,8 @@ private:
 	byte *sub173D2();
 	void sub171AF(int var1, int var2, int var4);
 	void sub18B7C(int var1, int var3);
+	void sub189B8();
+	void sub189F5();
 
 	int getValue1();
 	int getValue2();

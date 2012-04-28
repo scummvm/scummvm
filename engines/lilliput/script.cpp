@@ -37,7 +37,10 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_byte12FE4 = 0xFF;
 	_byte16F02 = 0;
 	_byte16F04 = 0;
-
+	_byte1881A = 0;
+	_byte18823 = 0;
+	_byte1881E = 3;
+	_byte1881D = 0;
 	_word1855E = 0;
 	_word16F00 = -1;
 	_viewportCharacterTarget = -1;
@@ -933,8 +936,116 @@ void LilliputScript::sub17D40(bool &forceReturnFl) {
 	return;
 }
 
+void LilliputScript::sub189F5() {
+	debugC(2, kDebugScript, "sub189F5()");
+
+	int index = 0;
+	int var2 = 0x100;
+	int var1;
+
+	for (;;) {
+		var1 = _vm->_displayStringBuf[index];
+		if (var1 == 0)
+			break;
+
+		if (var1 == '|') {
+			var2 &= 0xFF;
+			++var2;
+			continue;
+		}
+
+		var2 += 0x100;
+		if ((var2 >> 8) < 61)
+			continue;
+
+		if ((var2 & 0xFF) == 1) {
+			_vm->_displayStringBuf[index - 1] = 0;
+			break;
+		}
+
+		--index;
+		while (_vm->_displayStringBuf[index] != ' ')
+			--index;
+
+		_vm->_displayStringBuf[index] = '|';
+		++var2;
+		var2 &= 0xFF;
+		++index;
+	}
+}
+
+void LilliputScript::sub189B8() {
+	debugC(2, kDebugScript, "sub189B8()");
+
+	sub189F5();
+	int index = 0;
+
+	for (;;) {
+		if (_vm->_displayStringBuf[index] == 0)
+			break;
+		++index;
+	}
+
+	index /= _byte1881E;
+	index += 4;
+	_byte1881D = index;
+	_vm->displayFunction10();
+	_vm->displayFunction11(_vm->_displayStringBuf);
+}
+
 void LilliputScript::sub18A56(byte *buf) {
-	warning("TODO: sub18A56(buf)");
+	debugC(2, kDebugScript, "sub18A56(buf)");
+
+	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |is the |is a |in a |To the |to the |by |going |here |The|the|and |some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|have |you|I''ve |can''t |up |to |he |she |down |what|What|with|are |and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|''s |''t |re|gg|tt|pp|nn|ay|ar|wh|";
+
+	_vm->_displayStringIndex = 0;
+	_byte1881A = 0;
+	int index = 0;
+	byte var1 = 0;
+	for (;;) {
+		var1 = buf[index];
+		++index;
+		if (var1 == ']')
+			var1 = 0;
+
+		if (var1 < 0x80) {
+			if (var1 == '@') {
+				var1 = buf[index];
+				++index;
+				if (var1 == '#') {
+					_vm->prepareGoldAmount(_byte18823);
+				}
+			} else {
+				_vm->addCharToBuf(var1);
+				if (var1 == 0)
+					break;
+			}
+		} else {
+			int nounIndex = 0;
+			byte var3 = 0xFF - var1;
+			for (int i = 0; i < var3; i++) {
+				for (;;) {
+					var1 = nounsArrayPtr[nounIndex];
+					++nounIndex;
+
+					if (var1 == '|')
+						break;
+				}
+			}
+
+			for (;;) {
+				var1 = nounsArrayPtr[nounIndex];
+				++nounIndex;
+
+				if (var1 == '|')
+					break;
+
+				_vm->addCharToBuf(var1);
+			}
+		}
+	}
+
+	sub189B8();
 }
 
 void LilliputScript::sub18B3C(int var) {
@@ -1729,8 +1840,8 @@ byte LilliputScript::OC_sub179C2() {
 	debugC(1, kDebugScript, "OC_sub179C2()");
 	int var1 = getValue2();
 
-	if (_vm->_array10999[_vm->_rulesBuffer2PrevIndx] == var1 >> 8
-		 && _vm->_array109C1[_vm->_rulesBuffer2PrevIndx] == var1 & 0xFF)
+	if ((_vm->_array10999[_vm->_rulesBuffer2PrevIndx] == (var1 >> 8))
+		 && (_vm->_array109C1[_vm->_rulesBuffer2PrevIndx] == (var1 & 0xFF)))
 		return 1;
 
 	return 0;

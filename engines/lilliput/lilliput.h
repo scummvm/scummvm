@@ -222,6 +222,7 @@ public:
 	void displayFunction8();
 	void displayFunction9();
 	void displayFunction10();
+	void displayFunction11(byte *buf);
 	void displayFunction12();
 	void displayFunction13(byte *buf, int var1, int var2, int var3);
 	void displayFunction14();
@@ -241,7 +242,7 @@ public:
 	void renderCharacters(byte *buf, int x, int y);
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
-	void sub18A3E(byte param1);
+	void addCharToBuf(byte character);
 	void prepareGoldAmount(int param1);
 	void sub12F37();
 	int sub16675(int idx, int var1);
@@ -263,6 +264,7 @@ public:
 	void sub131FC(int var2, int var4);
 	void sub1546F(byte displayX, byte displayY);
 	void sub15498(byte x, byte y, int var2);
+	void sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);

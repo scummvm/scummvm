@@ -509,6 +509,71 @@ void LilliputEngine::displayFunction10() {
 	displayFunction4();
 }
 
+void LilliputEngine::sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex) {
+	debugC(2, kDebugEngine, "sub15A4C()");
+
+	int var3 = 0;
+	int var1;
+	int bckIndex = bufIndex;
+
+	for (;;) {
+		var1 = srcBuf[bufIndex];
+		if ((var1 == 0) || (var1 == '|'))
+			break;
+
+		++bufIndex;
+		++var3;
+	}
+
+	var1 = (0x3D - var3) < 1;
+	vgaIndex += var1;
+
+	bufIndex = bckIndex;
+	for (;;) {
+		var1 = srcBuf[bufIndex];
+		++bufIndex;
+		if ((var1 == 0) || (var1 == '|'))
+			break;
+
+		displayChar(vgaIndex, srcBuf[bufIndex]);
+		vgaIndex += 4;
+	}
+
+}
+
+void LilliputEngine::displayFunction11(byte *buf) {
+	debugC(2, kDebugEngine, "displayFunction11(%s)", buf);
+
+	displayFunction5();
+
+	int vgaIndex = 70;
+	int bufIndex = 0;
+
+	byte _byte15A0C = 0;
+	int var1;
+
+	for (;;) {
+		var1 = buf[bufIndex];
+		++bufIndex;
+		if (var1 == 0) {
+			vgaIndex += (4 * 320);
+			break;
+		} else if (var1 == 0x7C) {
+			_byte15A0C = 1;
+			break;
+		}
+	}
+
+	bufIndex = 0;
+	sub15A4C(vgaIndex, buf, bufIndex);
+	if (_byte15A0C == 1) {
+		vgaIndex += (8 * 320);
+		sub15A4C(vgaIndex, buf, bufIndex);
+	}
+
+	displayFunction4();
+}
+
 void LilliputEngine::displayFunction12() {
 	debugC(1, kDebugEngine, "displayFunction12()");
 
@@ -1209,10 +1274,10 @@ int LilliputEngine::sub16799(int param1, int index) {
 
 }
 
-void LilliputEngine::sub18A3E(byte param1) {
-	debugC(2, kDebugEngine, "sub18A3E(%d)", param1);
+void LilliputEngine::addCharToBuf(byte character) {
+	debugC(2, kDebugEngine, "addCharToBuf(%c)", character);
 
-	_displayStringBuf[_displayStringIndex] = param1;
+	_displayStringBuf[_displayStringIndex] = character;
 	if (_displayStringIndex < 158)
 		++_displayStringIndex;
 }
@@ -1237,10 +1302,10 @@ void LilliputEngine::prepareGoldAmount(int param1) {
 		byte tmpVal = count + 0x30;
 
 		if (i == 4)
-			sub18A3E(tmpVal);
+			addCharToBuf(tmpVal);
 		else if ((count != 0) || (!hideZeros)) {
 			hideZeros = false;
-			sub18A3E(tmpVal);
+			addCharToBuf(tmpVal);
 		}
 	}
 }
