@@ -74,6 +74,7 @@ class Script;
 class Renderer;
 class Menu;
 class Sound;
+class Ambient;
 struct NodeData;
 struct Myst3GameDescription;
 
@@ -94,6 +95,7 @@ public:
 	Menu *_menu;
 	Database *_db;
 	Sound *_sound;
+	Ambient *_ambient;
 	
 	Common::RandomSource *_rnd;
 
@@ -129,6 +131,7 @@ public:
 	void runNodeBackgroundScripts();
 	void runScriptsFromNode(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
 	void runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
+	void runAmbientScripts(uint32 node);
 
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
 	void playMovieGoToNode(uint16 movie, uint16 node);

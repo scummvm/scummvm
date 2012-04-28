@@ -43,6 +43,7 @@
 #include "engines/myst3/script.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/sound.h"
+#include "engines/myst3/ambient.h"
 
 #include "graphics/decoders/jpeg.h"
 #include "graphics/conversion.h"
@@ -66,7 +67,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_db(0), _console(0), _scriptEngine(0),
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
-		_rnd(0), _sound(0),
+		_rnd(0), _sound(0), _ambient(0),
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_menuAction(0), _projectorBackground(0) {
@@ -121,6 +122,7 @@ Myst3Engine::~Myst3Engine() {
 	delete _state;
 	delete _rnd;
 	delete _sound;
+	delete _ambient;
 	delete _gfx;
 }
 
@@ -136,6 +138,7 @@ Common::Error Myst3Engine::run() {
 
 	_gfx = new Renderer(_system);
 	_sound = new Sound(this);
+	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
@@ -563,6 +566,10 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 	_state->setLocationNextNode(0);
 	_state->setLocationNextRoom(0);
 	_state->setLocationNextAge(0);
+
+	if (_state->getAmbiantPreviousFadeOutDelay() > 0) {
+		_ambient->playCurrentNode(100, _state->getAmbiantPreviousFadeOutDelay());
+	}
 }
 
 void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
@@ -729,6 +736,25 @@ void Myst3Engine::runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID
 				break;
 		}
 	}
+}
+
+void Myst3Engine::runAmbientScripts(uint32 node) {
+	uint32 room = _ambient->_scriptRoom;
+	uint32 age = _ambient->_scriptAge;
+
+	if (room == 0)
+		room = _state->getLocationRoom();
+
+	if (age == 0)
+		age = _state->getLocationAge();
+
+	NodePtr nodeData = _db->getNodeData(node, room, age);
+
+	if (!nodeData) return;
+
+	for (uint j = 0; j < nodeData->soundScripts.size(); j++)
+		if (_state->evaluate(nodeData->soundScripts[j].condition))
+			_scriptEngine->run(&nodeData->soundScripts[j].script);
 }
 
 void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop) {

@@ -1,6 +1,7 @@
 MODULE := engines/myst3
 
 MODULE_OBJS := \
+	ambient.o \
 	archive.o \
 	console.o \
 	cursor.o \

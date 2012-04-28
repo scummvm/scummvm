@@ -28,6 +28,7 @@
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/puzzles.h"
 #include "engines/myst3/sound.h"
+#include "engines/myst3/ambient.h"
 
 #include "common/events.h"
 
@@ -221,10 +222,18 @@ Script::Script(Myst3Engine *vm):
 	OP_2(195, runPuzzle2,					kValue,		kValue											);
 	OP_3(196, runPuzzle3,					kValue,		kValue,		kValue								);
 	OP_4(197, runPuzzle4,					kValue,		kValue,		kValue,		kValue					);
+	OP_3(198, ambientLoadNode,				kValue,		kValue,		kValue								);
+	OP_1(199, ambientReloadCurrentNode,		kEvalValue													);
+	OP_2(200, ambientPlayCurrentNode,		kValue,		kValue											);
+	OP_0(201, ambientApply																				);
+	OP_1(202, ambientApplyWithFadeDelay,	kEvalValue													);
 	OP_1(205, soundPlay,					kEvalValue													);
 	OP_2(206, soundPlayVolume,				kEvalValue,	kEvalValue										);
 	OP_3(207, soundPlayVolumeDirection,		kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_4(208, soundPlayVolumeDirectionAtt,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
+	OP_1(218, ambientSetFadeOutDelay,		kValue														);
+	OP_1(229, runAmbientScriptNode,			kEvalValue													);
+	OP_4(230, runAmbientScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
 	OP_1(231, runSoundScriptNode,			kEvalValue													);
 	OP_2(232, runSoundScriptNodeRoom,		kEvalValue,	kEvalValue										);
 	OP_3(233, runSoundScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue							);
@@ -250,7 +259,7 @@ Script::~Script() {
 }
 
 bool Script::run(const Common::Array<Opcode> *script) {
-	debugC(kDebugScript, "Script start %p", (void *) script);
+	debugC(kDebugScript, "Script start %p", (const void *) script);
 
 	Context c;
 	c.result = true;
@@ -267,7 +276,7 @@ bool Script::run(const Common::Array<Opcode> *script) {
 		c.op++;
 	}
 
-	debugC(kDebugScript, "Script stop %p ", (void *) script);
+	debugC(kDebugScript, "Script stop %p ", (const void *) script);
 
 	return c.result;
 }
@@ -2309,6 +2318,37 @@ void Script::runPuzzle4(Context &c, const Opcode &cmd) {
 	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 }
 
+void Script::ambientLoadNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Load ambient sounds from node %d %d %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	_vm->_ambient->loadNode(cmd.args[2], cmd.args[1], cmd.args[0]);
+}
+
+void Script::ambientReloadCurrentNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Reload ambient sounds from current node with fade out delay : %d", cmd.op, cmd.args[0]);
+
+	_vm->_ambient->loadNode(0, 0, 0);
+	_vm->_ambient->applySounds(_vm->_state->valueOrVarValue(cmd.args[0]));
+}
+
+void Script::ambientPlayCurrentNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play ambient sounds from current node %d %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_ambient->playCurrentNode(cmd.args[0], cmd.args[1]);
+}
+
+void Script::ambientApply(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Apply loadad ambient sounds", cmd.op);
+
+	_vm->_ambient->applySounds(1);
+}
+
+void Script::ambientApplyWithFadeDelay(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Apply loadad ambient sounds with fade out delay : %d", cmd.op, cmd.args[0]);
+
+	_vm->_ambient->applySounds(_vm->_state->valueOrVarValue(cmd.args[0]));
+}
+
 void Script::soundPlay(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Play sound %d", cmd.op, cmd.args[0]);
 
@@ -2339,6 +2379,32 @@ void Script::soundPlayVolumeDirectionAtt(Context &c, const Opcode &cmd) {
 	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
 	int32 att = _vm->_state->valueOrVarValue(cmd.args[3]);
 	_vm->_sound->playEffect(cmd.args[0], volume, heading, att);
+}
+
+void Script::ambientSetFadeOutDelay(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set fade out delay : %d", cmd.op, cmd.args[0]);
+
+	_vm->_state->setAmbiantPreviousFadeOutDelay(cmd.args[0]);
+}
+
+void Script::runAmbientScriptNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run ambient script for node %d",
+			cmd.op, cmd.args[0]);
+
+	int32 node = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->runAmbientScripts(node);
+}
+
+void Script::runAmbientScriptNodeRoomAge(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run sound script for node %d, room %d, age %d",
+			cmd.op, cmd.args[2], cmd.args[1], cmd.args[0]);
+
+	int32 node = _vm->_state->valueOrVarValue(cmd.args[2]);
+	_vm->_ambient->_scriptRoom = _vm->_state->valueOrVarValue(cmd.args[1]);
+	_vm->_ambient->_scriptAge = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->runAmbientScripts(node);
+	_vm->_ambient->scaleVolume(_vm->_state->valueOrVarValue(cmd.args[3]));
 }
 
 void Script::runSoundScriptNode(Context &c, const Opcode &cmd) {

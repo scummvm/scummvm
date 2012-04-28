@@ -96,6 +96,9 @@ public:
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)
 
+	DECLARE_VAR(119, AmbiantFadeOutDelay)
+	DECLARE_VAR(120, AmbiantPreviousFadeOutDelay)
+
 	DECLARE_VAR(131, CursorLocked)
 	DECLARE_VAR(132, CursorHidden)
 

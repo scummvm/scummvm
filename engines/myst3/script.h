@@ -272,10 +272,18 @@ private:
 	DECLARE_OPCODE(runPuzzle2);
 	DECLARE_OPCODE(runPuzzle3);
 	DECLARE_OPCODE(runPuzzle4);
+	DECLARE_OPCODE(ambientLoadNode);
+	DECLARE_OPCODE(ambientReloadCurrentNode);
+	DECLARE_OPCODE(ambientPlayCurrentNode);
+	DECLARE_OPCODE(ambientApply);
+	DECLARE_OPCODE(ambientApplyWithFadeDelay);
 	DECLARE_OPCODE(soundPlay);
 	DECLARE_OPCODE(soundPlayVolume);
 	DECLARE_OPCODE(soundPlayVolumeDirection);
 	DECLARE_OPCODE(soundPlayVolumeDirectionAtt);
+	DECLARE_OPCODE(ambientSetFadeOutDelay);
+	DECLARE_OPCODE(runAmbientScriptNode);
+	DECLARE_OPCODE(runAmbientScriptNodeRoomAge);
 	DECLARE_OPCODE(runSoundScriptNode);
 	DECLARE_OPCODE(runSoundScriptNodeRoom);
 	DECLARE_OPCODE(runSoundScriptNodeRoomAge);

@@ -68,6 +68,9 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(116, SunspotColor, false)
 	VAR(117, SunspotRadius, false)
 
+	VAR(119, AmbiantFadeOutDelay, false)
+	VAR(120, AmbiantPreviousFadeOutDelay, false)
+
 	VAR(131, CursorLocked, false)
 	VAR(132, CursorHidden, false)
 

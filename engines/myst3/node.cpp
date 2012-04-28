@@ -37,9 +37,9 @@ void Face::setTextureFromJPEG(Graphics::JPEGDecoder *jpeg) {
 	_bitmap = new Graphics::Surface();
 	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
-	byte *y = (byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
-	byte *u = (byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
-	byte *v = (byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
+	const byte *y = (const byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
+	const byte *u = (const byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
+	const byte *v = (const byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
 	
 	byte *ptr = (byte *)_bitmap->getBasePtr(0, 0);
 	for (int i = 0; i < _bitmap->w * _bitmap->h; i++) {
@@ -307,9 +307,9 @@ void SpotItemFace::loadData(Graphics::JPEGDecoder *jpeg) {
 	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
 	for (int i = 0; i < _bitmap->h; i++) {
-		byte *y = (byte *)jpeg->getComponent(1)->getBasePtr(0, i);
-		byte *u = (byte *)jpeg->getComponent(2)->getBasePtr(0, i);
-		byte *v = (byte *)jpeg->getComponent(3)->getBasePtr(0, i);
+		const byte *y = (const byte *)jpeg->getComponent(1)->getBasePtr(0, i);
+		const byte *u = (const byte *)jpeg->getComponent(2)->getBasePtr(0, i);
+		const byte *v = (const byte *)jpeg->getComponent(3)->getBasePtr(0, i);
 
 		byte *ptr = (byte *)_bitmap->getBasePtr(0, i);
 
