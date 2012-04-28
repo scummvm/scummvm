@@ -43,7 +43,6 @@ public:
 	byte _array122E9[20];
 	byte _array16123[40];
 	byte _array1614B[40];
-	byte _array16173[40];
 	byte _array12811[40];
 	byte _array10AB1[40];
 	byte _array122FD[20];
@@ -102,13 +101,14 @@ private:
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
 	void sub16C5C(int index, byte var3);
-	int sub17D40(int var);
+	void sub17D40(bool &forceReturnFl);
 	void sub18A56(byte *buf);
 	void sub18B3C(int var);
 	void sub18BE6(byte var1, int var2, int var4);
 	byte *getMapPtr(int val);
 	byte *sub173D2();
 	void sub171AF(int var1, int var2, int var4);
+	void sub18B7C(int var1, int var3);
 
 	int getValue1();
 	int getValue2();

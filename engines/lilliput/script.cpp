@@ -66,7 +66,6 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array12839[i] = 0xFF;
 		_array16123[i] = 0;
 		_array1614B[i] = 0;
-		_array16173[i] = 0xFF;
 		_array122C1[i] = 0;
 	}
 
@@ -763,14 +762,15 @@ void LilliputScript::sub16C5C(int index, byte var3) {
 	sub16C86(index, buf);
 }
 
-int LilliputScript::sub17D40(int var) {
-	debugC(1, kDebugScript, "sub17D40(%d)", var);
+void LilliputScript::sub17D40(bool &forceReturnFl) {
+	debugC(1, kDebugScript, "sub17D40()");
 
-	if ((displayMap != 1) && (_array16173[_vm->_rulesBuffer2PrevIndx] != 0xFF))
-		return var;
+	forceReturnFl = false;
+	if ((displayMap != 1) && (_vm->_characterRelativePositionX[_vm->_rulesBuffer2PrevIndx] != 0xFF))
+		return;
 
-	warning("sub17D40() - FIXME: Unexpected POP");
-	return var;
+	forceReturnFl = true;
+	return;
 }
 
 void LilliputScript::sub18A56(byte *buf) {
@@ -1575,7 +1575,9 @@ void LilliputScript::OC_sub17D57() {
 
 	int curWord = _currScript->readUint16LE();
 
-	if((displayMap == 1) || (_array16173[_vm->_rulesBuffer2PrevIndx] == 0xFF))
+	bool forceReturnFl = false;
+	sub17D40(forceReturnFl);
+	if (forceReturnFl)
 		return;
 
 	_word1881B = _vm->_rulesBuffer2PrevIndx;
@@ -1583,9 +1585,51 @@ void LilliputScript::OC_sub17D57() {
 
 }
 
-void LilliputScript::OC_sub17D7F() {
-	warning("OC_sub17D7F");
+void LilliputScript::sub18B7C(int var1, int var3) {
+	debugC(2, kDebugScript, "sub18B7C(%d, %d)", var1, var3);
+
+	if (var1 == 0xFFFF) 
+		return;
+
+	_word18776 = var1;
+	int index = _vm->_rulesChunk3[var1];
+
+	while (_vm->_rulesChunk4[index] == 91)
+		++index;
+
+	for (int i = 0; i < var3; i++) {
+		int tmpVal = 93;
+		while (tmpVal == 93) {
+			tmpVal = _vm->_rulesChunk4[index];
+			++index;
+		}
+	}
+	
+	if (_vm->_rulesChunk4[index] == 0)
+		return;
+
+	sub18A56(&_vm->_rulesChunk4[index]);
 }
+
+void LilliputScript::OC_sub17D7F() {
+	debugC(1, kDebugScript, "OC_sub17D7F()");
+
+	int var1 = getBuffer215Ptr()[0];
+	int var2 = (_currScript->readUint16LE() & 0xFF);
+	int var3 = var1 / var2;
+	
+	var1 = _currScript->readUint16LE();
+
+	bool forceReturnFl = false;
+	sub17D40(forceReturnFl);
+	if (forceReturnFl)
+		return;
+
+	_word1881B = _vm->_rulesBuffer2PrevIndx;
+
+	sub18B7C(var1, var3);
+}
+
 void LilliputScript::OC_sub17DB9() {
 	warning("OC_sub17DB9");
 }
