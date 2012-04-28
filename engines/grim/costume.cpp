@@ -320,7 +320,7 @@ int Costume::getChoreId(const char *name) {
 
 void Costume::playChore(const char *name) {
 	for (int i = 0; i < _numChores; ++i) {
-			if (strcmp(_chores[i]->_name, name) == 0) {
+		if (strcmp(_chores[i]->_name, name) == 0) {
 			playChore(i);
 			return;
 		}
