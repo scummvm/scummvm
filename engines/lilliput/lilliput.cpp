@@ -2030,6 +2030,8 @@ void LilliputEngine::handleGameScripts() {
 
 	assert(tmpVal < _gameScriptIndexSize);
 	debugC(1, kDebugEngine, "================= Game Script %d for character %d ==================", tmpVal, index);
+	ScriptStream script = ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]);
+	//_scriptHandler->disasmScript(script);
 	_scriptHandler->runScript(ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
 	debugC(1, kDebugEngine, "============= End Game Script %d for character %d ==================", tmpVal, index);
 

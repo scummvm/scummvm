@@ -551,6 +551,164 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 	}
 }
 
+enum KValueType {
+	kNone,
+	kImmediateValue,
+	kCompareOperation,
+	kGetValue1,
+	kGetValue2,
+};
+
+
+struct OpCode {
+	const char* _opName;
+	int _numArgs;
+	KValueType _arg1;
+	KValueType _arg2;
+	KValueType _arg3;
+	KValueType _arg4;
+	KValueType _arg5;
+};
+
+static const OpCode opCodes1[] = {
+	{ "OC_sub173DF", 1, kGetValue2, kNone, kNone, kNone, kNone },
+	{ "OC_sub173F0", 2, kGetValue1, kGetValue2, kNone, kNone, kNone },
+	{ "OC_sub1740A", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub17434", 4, kGetValue1, kImmediateValue, kCompareOperation, kImmediateValue, kNone },
+	{ "OC_sub17468", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_getRandom", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_for", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_compWord18776", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_checkSaveFlag", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_compByte16F04", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_sub174D8", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
+	{ "OC_sub1750E", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
+	{ "OC_compareCoords_1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_compareCoords_2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_sub1757C", 3, kGetValue2, kCompareOperation, kImmediateValue, kNone, kNone },
+	{ "OC_sub1759E", 3, kGetValue1, kCompareOperation, kImmediateValue, kNone, kNone },
+	{ "OC_compWord16EF8", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_sub175C8", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
+	{ "OC_sub17640", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
+	{ "OC_sub176C4", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
+	{ "OC_compWord10804", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_sub17766", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub17782", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub1779E", 4, kGetValue2, kImmediateValue, kImmediateValue, kCompareOperation, kNone },
+	{ "OC_sub177C6", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_compWord16EFE", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub177F5", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_sub17812", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub17825", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub17844", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub1785C", 3, kImmediateValue, kCompareOperation, kImmediateValue, kNone, kNone },
+	{ "OC_sub17886", 1, kGetValue2, kNone, kNone, kNone, kNone },
+	{ "OC_sub178A8", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
+	{ "OC_sub178BA", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub178C2", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_sub178D2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_sub178E8", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
+	{ "OC_sub178FC", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub1790F", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_sub1792A", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub1793E", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_sub1795E", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_sub17984", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_checkSavedMousePos", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_sub179AE", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_sub179C2", 1, kGetValue2, kNone, kNone, kNone, kNone },
+	{ "OC_sub179E5", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub17A07", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
+	{ "OC_sub17757", 1, kGetValue1, kNone, kNone, kNone, kNone },
+};
+
+static const OpCode opCodes2[] = {
+	{ "test", 1, kNone, kNone, kNone, kNone }
+};
+
+void LilliputScript::disasmScript( ScriptStream script) {
+	
+	while(!script.eos()) {
+		uint16 val = script.readUint16LE();
+		if (val == 0xFFF6) // end of script
+			return;
+
+		bool hasIf = false;
+
+		if(val != 0xFFF8) {
+			hasIf = true;
+			debugC(2, kDebugScript, "if (");
+		}
+
+		// check the conditions.
+		while (val != 0xFFF8) {
+
+			bool neg = false;
+
+			if (val > 1000) {
+				val -= 1000;
+				// negative condition
+				neg = true;
+			}
+
+			// op code type 1
+			assert(val < sizeof(opCodes1)/sizeof(OpCode));
+			const OpCode* opCode = &opCodes1[val];
+			const KValueType* opArgType = &opCode->_arg1;
+
+			Common::String str;
+
+			str = "  ";
+			if (neg) str += "not ";
+			str += Common::String(opCode->_opName);
+			str += "(";
+
+			for (int p = 0; p < opCode->_numArgs; p++) {
+				if(*opArgType == kImmediateValue) {
+					str +=  Common::String::format("%d", script.readUint16LE());
+				} else if (*opArgType == kGetValue1) {
+					str += Common::String::format("getValue1(%d)", script.readUint16LE());
+				} else if (*opArgType == kGetValue2) {
+					str += Common::String::format("getValue2(%d)", script.readUint16LE());
+				} else if (*opArgType == kCompareOperation) {
+					int comp = script.readUint16LE();
+					if(comp != '<' && comp != '>')
+						comp = '=';
+					str += Common::String::format("%c", comp );
+				}
+				
+				if(p != opCode->_numArgs - 1)
+					str += ", ";
+
+				opArgType++;
+			}
+			str += ")";
+
+			debugC(2, kDebugScript, str.c_str());
+
+			val = script.readUint16LE();
+			
+		}
+
+		if( hasIf ) {
+			debugC(2, kDebugScript, ")");
+		}
+
+
+		debugC(2, kDebugScript,"{ ");
+
+		while (val != 0xFFF7) {
+			// op code type 2 TODO
+
+			val = script.readUint16LE();
+		}
+
+		debugC(2, kDebugScript,"} ");
+
+	}
+}
+
 int LilliputScript::handleOpcode(ScriptStream *script) {
 	debugC(2, kDebugScript, "handleOpcode");
 	_currScript = script;
@@ -591,6 +749,8 @@ void LilliputScript::runScript(ScriptStream script) {
 	while (handleOpcode(&script) != 0xFF)
 		_vm->update();
 }
+
+
 
 void LilliputScript::runMenuScript(ScriptStream script) {
 	debugC(1, kDebugScript, "runMenuScript");
@@ -1057,8 +1217,17 @@ byte LilliputScript::OC_sub174D8() {
 }
 
 byte LilliputScript::OC_sub1750E() {
-	warning("OC_sub1750E");
-	return 0;
+	debugC(1, kDebugScript, "OC_sub1750E()");
+
+	byte* buf1 = getBuffer215Ptr();
+	int var1 = *buf1;
+
+	int operation = _currScript->readUint16LE();
+
+	byte* buf2 = getBuffer215Ptr();
+	int var2 = *buf2;
+
+	return compareValues(var1, operation, var2);
 }
 
 byte LilliputScript::OC_compareCoords_1() {
@@ -1078,8 +1247,16 @@ byte LilliputScript::OC_compareCoords_1() {
 }
 
 byte LilliputScript::OC_compareCoords_2() {
-	warning("compareCoords_2");
-	return 0;
+	debugC(1, kDebugScript, "OC_compareCoords_2()");
+	int var1 = getValue1();
+	var1 = (_array16123[var1] << 8) + _array1614B[var1];
+	int var2 = _currScript->readUint16LE();
+	int var3 = _vm->_rulesBuffer12_1[var2];
+	int var4 = _vm->_rulesBuffer12_2[var2];
+
+	if (((var1 >> 8) < (var3 >> 8)) || ((var1 >> 8) > (var3 & 0xFF)) || ((var1 & 0xFF) < (var4 >> 8)) || ((var1 & 0xFF) > (var4 & 0xFF)))
+		return 0;
+	return 1;
 }
 byte LilliputScript::OC_sub1757C() {
 	warning("OC_sub1757C");
@@ -1297,7 +1474,7 @@ byte LilliputScript::OC_sub1779E() {
 byte LilliputScript::OC_sub177C6() {
 	debugC(1, kDebugScript, "OC_sub177C6()");
 
-	int index = _currScript->readUint16LE();
+	int index = getValue1();
 	if (_vm->_characterPositionX[index] == 0xFFFF)
 		return 0;
 
@@ -1384,16 +1561,31 @@ byte LilliputScript::OC_sub1785C() {
 }
 
 byte LilliputScript::OC_sub17886() {
-	warning("OC_sub17886");
+	debugC(1, kDebugScript, "OC_sub17886()");
+
+	int var1 = getValue2();
+	int x = var1 >> 8;
+	int y = var1 & 0xFF;
+
+	int dx = x - _viewportX;
+	int dy = y - _viewportY;
+
+	if ( dx >= 0 && dx < 8 && dy >= 0 && dy < 8)
+		return 1;
 	return 0;
 }
 byte LilliputScript::OC_sub178A8() {
-	warning("OC_sub178A8");
+	debugC(1, kDebugScript, "OC_sub178A8()");
+
+	int var1 = getValue1();
+	int var2 = getValue2();
+	if (var1 == var2)
+		return 1;
 	return 0;
 }
 byte LilliputScript::OC_sub178BA() {
-	warning("OC_sub178BA");
-	return 0;
+	_currScript->readUint16LE();
+	return 1;
 }
 
 byte LilliputScript::OC_sub178C2() {
@@ -1491,7 +1683,13 @@ byte LilliputScript::OC_sub1795E() {
 }
 
 byte LilliputScript::OC_sub1796E() {
-	warning("OC_sub1796E");
+	debugC(1, kDebugScript, "OC_sub1796E()");
+
+	int var1 = getValue1();
+	int var2 = _currScript->readUint16LE();
+
+	if (_vm->_rulesBuffer2_9[var1] == var2)
+		return 1;
 	return 0;
 }
 
@@ -1528,11 +1726,25 @@ byte LilliputScript::OC_sub179AE() {
 }
 
 byte LilliputScript::OC_sub179C2() {
-	warning("OC_sub179C2");
+	debugC(1, kDebugScript, "OC_sub179C2()");
+	int var1 = getValue2();
+
+	if (_vm->_array10999[_vm->_rulesBuffer2PrevIndx] == var1 >> 8
+		 && _vm->_array109C1[_vm->_rulesBuffer2PrevIndx] == var1 & 0xFF)
+		return 1;
+
 	return 0;
 }
 byte LilliputScript::OC_sub179E5() {
-	warning("OC_sub179E5");
+	debugC(1, kDebugScript, "OC_sub17A07()");
+
+	static const byte _byte179DB[10] = {0x44, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42, 0x43};
+
+	int var1 = (_currScript->readUint16LE() & 0xFF) - 0x30;
+	
+	if (_byte179DB[var1] == _vm->_byte16F09)
+		return 1;
+
 	return 0;
 }
 
@@ -1559,7 +1771,12 @@ byte LilliputScript::OC_sub17A07() {
 }
 
 byte LilliputScript::OC_sub17757() {
-	warning("OC_sub17757");
+	debugC(1, kDebugScript, "OC_sub17757()");
+
+	int var1 = getValue1();
+	if ( var1 == _viewportCharacterTarget )
+		return 1;
+	
 	return 0;
 }
 
