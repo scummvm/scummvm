@@ -1144,7 +1144,7 @@ void LilliputEngine::sub189DE() {
 
 	if (_byte1881D != 0) {
 		--_byte1881D;
-		if (_byte1881D != 0) {
+		if (_byte1881D == 0) {
 			displayFunction17();
 			_scriptHandler->_word1881B = 0xFFFF;
 		}
