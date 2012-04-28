@@ -1810,17 +1810,63 @@ void LilliputScript::OC_sub17C76() {
 void LilliputScript::OC_sub17AFC() {
 	warning("OC_sub17AFC");
 }
+
+void LilliputScript::sub171AF(int var1, int var2, int var4) {
+	debugC(2, kDebugScript, "sub171AF()");
+
+	int index = 0;
+	for (int i = 0; i < 10; i++) {
+		if (_vm->_array12861[index + 1] == 0xFFFF) {
+			_vm->_array12861[index + 1] = var1;
+			_vm->_array12861[index + 2] = var2;
+			_vm->_array12861[index + 0] = _vm->_word1289D + var4;
+		}
+		index += 3;
+	}
+}
+
 void LilliputScript::OC_sub17C8B() {
-	warning("OC_sub17C8B");
+	debugC(1, kDebugScript, "OC_sub17C8B()");
+
+	int var1 = 2 << 8;
+	int var4 = _currScript->readUint16LE();
+	int var2 = _currScript->readUint16LE();
+	var2 = ((var2 & 0xFF) << 8 ) + _vm->_rulesBuffer2PrevIndx;
+	
+	sub171AF(var1, var2, var4);
 }
+
 void LilliputScript::OC_sub17CA2() {
-	warning("OC_sub17CA2");
+	debugC(1, kDebugScript, "OC_sub17CA2()");
+
+	int var1 = 1 << 8;
+	int var4 = _currScript->readUint16LE();
+	int var2 = _currScript->readUint16LE();
+	var2 = ((var2 & 0xFF) << 8 ) + _vm->_rulesBuffer2PrevIndx;
+	
+	sub171AF(var1, var2, var4);
 }
+
 void LilliputScript::OC_sub17CB9() {
-	warning("OC_sub17CB9");
+	debugC(1, kDebugScript, "OC_sub17CB9()");
+
+	int var4 = _currScript->readUint16LE();
+	int var1 = getValue1();
+	int var2 = _currScript->readUint16LE();
+	var2 = ((var2 & 0xFF) << 8 ) + _vm->_rulesBuffer2PrevIndx;
+	
+	sub171AF(var1, var2, var4);
 }
+
 void LilliputScript::OC_sub17CD1() {
-	warning("OC_sub17CD1");
+	debugC(1, kDebugScript, "OC_sub17CD1()");
+
+	int var1 = 3 << 8;
+	int var4 = _currScript->readUint16LE();
+	int var2 = _currScript->readUint16LE();
+	var2 = ((var2 & 0xFF) << 8 ) + _vm->_rulesBuffer2PrevIndx;
+	
+	sub171AF(var1, var2, var4);
 }
 
 void LilliputScript::OC_resetWord16EFE() {
