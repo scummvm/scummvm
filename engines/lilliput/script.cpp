@@ -1575,7 +1575,6 @@ void LilliputScript::OC_sub17DB9() {
 
 void LilliputScript::OC_sub17DF9() {
 	debugC(1, kDebugScript, "OC_sub17DF9()");
-
 	if ((_word1881B & 0xFF) == 0xFF) {
 		OC_sub17D57();
 		return;
@@ -1585,10 +1584,25 @@ void LilliputScript::OC_sub17DF9() {
 }
 
 void LilliputScript::OC_sub17E07() {
-	warning("OC_sub17E07");
+	debugC(1, kDebugScript, "OC_sub17E07()");
+	if ((_word1881B & 0xFF) == 0xFF) {
+		OC_sub17D7F();
+		return;
+	}
+	_currScript->readUint16LE();
+	_currScript->readUint16LE();
+	_currScript->readUint16LE();
+	_currScript->readUint16LE();
+
 }
 void LilliputScript::OC_sub17E15() {
-	warning("OC_sub17E15");
+	debugC(1, kDebugScript, "OC_sub17E15()");
+	if ((_word1881B & 0xFF) == 0xFF) {
+		OC_sub17DB9();
+		return;
+	}
+	_currScript->readUint16LE();
+	_currScript->readUint16LE();
 }
 
 void LilliputScript::OC_sub17B03() {
@@ -1652,13 +1666,15 @@ void LilliputScript::OC_sub17E37() {
 	warning("OC_sub17E37");
 }
 void LilliputScript::OC_resetByte1714E() {
-	warning("OC_resetByte1714E");
+	debugC(1, kDebugScript, "OC_resetByte1714E()");
+	_vm->_byte1714E = 0;
 }
 void LilliputScript::OC_deleteSavegameAndQuit() {
 	warning("OC_deleteSavegameAndQuit");
 }
 void LilliputScript::OC_incByte16F04() {
-	warning("OC_incByte16F04");
+	debugC(1, kDebugScript, "OC_incByte16F04()");
+	_vm->_byte1714E++;
 }
 
 void LilliputScript::OC_sub17BA5() {
