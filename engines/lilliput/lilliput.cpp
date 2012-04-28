@@ -145,10 +145,10 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte16552 = 0;
 	_byte12FE4 = 0xFF;
 	_byte12FE3 = 0;
-	_byte16F08 = 0;	
+	_byte16F08 = 0;
 
 	_rulesBuffer2PrevIndx = 0;
-	_word16EFA = 0;
+	_currentScriptCharacterPosition = 0;
 	_word10804 = 0;
 	_word17081_nextIndex = 0;
 	_word16EFE = 0xFFFF;
@@ -575,7 +575,7 @@ void LilliputEngine::restoreMapPoints() {
 	displayFunction5();
 
 	byte *buf = (byte *)_mainSurface->getPixels();
-	for (int index = 0; index < _word10807_ERULES; index++) {
+	for (int index = 0; index < _numCharacters; index++) {
 		buf[_word15E5D[index]] = _byte15E35[index];
 	}
 
@@ -587,7 +587,7 @@ void LilliputEngine::displayCharactersOnMap() {
 	displayFunction5();
 
 	byte *buf = (byte *)_mainSurface->getPixels();
-	for (int index = _word10807_ERULES - 1; index >=0; index--) {
+	for (int index = _numCharacters - 1; index >=0; index--) {
 		if (((_rulesBuffer2_11[index] & 2) == 0) && (_scriptHandler->_array1614B[index] != -1)) {
 			 int y = (3 * _scriptHandler->_array1614B[index]) + 1;
 			 int x = (_scriptHandler->_array16123[index] * 4) + 1;
@@ -604,7 +604,7 @@ void LilliputEngine::sub16217() {
 	debugC(2, kDebugEngine, "sub16217()");
 
 	_numCharactersToDisplay = 0;
-	int index = _word10807_ERULES - 1;
+	int index = _numCharacters - 1;
 	_word16213 = _scriptHandler->_viewportX << 3;
 	_word16215 = _scriptHandler->_viewportY << 3;
 
@@ -806,14 +806,14 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 void LilliputEngine::sub16CA0() {
 	debugC(2, kDebugEngine, "sub16CA0()");
 
-	for (int index = _word10807_ERULES - 1; index >= 0; index--) {
+	for (int index = _numCharacters - 1; index >= 0; index--) {
 		if (_rulesBuffer2_11[index] & 1)
 			continue;
 
 		int c1 = _scriptHandler->_array16123[index];
 		int c2 = _scriptHandler->_array1614B[index];
 
-		for (int index2 = _word10807_ERULES - 1; index2 >= 0; index2--) {
+		for (int index2 = _numCharacters - 1; index2 >= 0; index2--) {
 			_byte16C9F = 0;
 			if ((index != index2 ) &&
 				(_rulesBuffer2_5[index] != index2) &&
@@ -884,7 +884,7 @@ void LilliputEngine::sub16CA0() {
 			int val = _scriptHandler->_array10B51[index2 + index * 40];
 			val = (val & 0xFF) + ((val & 0xFF) << 8);
 			if( (val & 0xFF) != _byte16C9F ) {
-				_scriptHandler->_array10B29[index] = 1;
+				_scriptHandler->_characterScriptEnabled[index] = 1;
 				val = (val & 0xFF00) | _byte16C9F;
 			}
 			_scriptHandler->_array10B51[index2 + index * 40] = val;
@@ -1106,11 +1106,11 @@ void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
 
 void LilliputEngine::sub1546F(byte displayX, byte displayY) {
 	debugC(2, kDebugEngine, "sub1546F(%d, %d)", displayX, displayY);
-	
+
 	int orgX = displayX + 8;
 	int orgY = displayY;
 	int var2 = 0;
-	
+
 	int x = orgX;
 	int y = orgY;
 	do {
@@ -1118,10 +1118,10 @@ void LilliputEngine::sub1546F(byte displayX, byte displayY) {
 		--x;
 		y >>= 1;
 	} while (y != 0);
-	
+
 	x = orgX + 1;
 	y = orgY >> 1;
-	
+
 	while (y != 0) {
 		sub15498(x, y, var2);
 		++x;
@@ -1131,7 +1131,7 @@ void LilliputEngine::sub1546F(byte displayX, byte displayY) {
 
 void LilliputEngine::sub15498(byte x, byte y, int var2) {
 	debugC(2, kDebugEngine, "sub15498(%d, %d, %d)", x, y, var2);
-	
+
 	int index = x + ((var2 & 0xFF) << 8) + (var2 >> 8);
 	for (int i = 1 + y - var2; i > 0; i--) {
 		_buffer1_45k[index] = 17;
@@ -1248,7 +1248,7 @@ void LilliputEngine::prepareGoldAmount(int param1) {
 void LilliputEngine::sub16626() {
 	debugC(2, kDebugEngine, "sub16626()");
 
-	int index = _word10807_ERULES - 1;
+	int index = _numCharacters - 1;
 	int result;
 	while (index >= 0) {
 		result = 2;
@@ -1262,9 +1262,6 @@ void LilliputEngine::sub16626() {
 			int tmpVal = var2;
 			var2 = ((var1 >> 8) >> 3);
 			var2 &= 0xFE;
-
-			// temporary hack
-			result = 0;
 
 			switch (var2 / 2) {
 			case 0:
@@ -1309,7 +1306,7 @@ void LilliputEngine::sub16626() {
 			if (result & 1) {
 				++_scriptHandler->_array12811[index];
 				if (_scriptHandler->_array12811[index] == 16)
-					_scriptHandler->_array10B29[index] = 1;
+					_scriptHandler->_characterScriptEnabled[index] = 1;
 			}
 		}
 		--index;
@@ -1328,7 +1325,7 @@ void LilliputEngine::sub16EBC() {
 
 	int index2 = 3;
 
-	for (int index1 = _word10807_ERULES - 1; index1 >= 0; index1--) {
+	for (int index1 = _numCharacters - 1; index1 >= 0; index1--) {
 		int var2 = (_scriptHandler->_array1614B[index1] << 8) + (_scriptHandler->_array16123[index1] << 2);
 		int var1 = (_bufferIsoMap[index2 + var2] & 0x40);
 
@@ -1337,7 +1334,7 @@ void LilliputEngine::sub16EBC() {
 
 		_array16E94[index1] = var1;
 		if (var1 != 0)
-			_scriptHandler->_array10B29[index1] = 1;
+			_scriptHandler->_characterScriptEnabled[index1] = 1;
 	}
 }
 
@@ -1347,15 +1344,15 @@ void LilliputEngine::sub12F37() {
 	int index1 = _byte12A04 + 2;
 	int index2 = 0;
 
-	for (int i = 0; i < _word10807_ERULES; i++) {
+	for (int i = 0; i < _numCharacters; i++) {
 		if (_rulesBuffer2_15[index1] != 0 ) {
 			if (_rulesBuffer2_15[index1] == 1) {
 				_rulesBuffer2_15[index1] = 0;
 			} else {
 				--_rulesBuffer2_15[index1];
 				if (_rulesBuffer2_15[index1] == 1)
-					_scriptHandler->_array10B29[index2] = 1;
-			}			
+					_scriptHandler->_characterScriptEnabled[index2] = 1;
+			}
 		}
 
 		index1 += 32;
@@ -1429,7 +1426,7 @@ void LilliputEngine::sub131B2(int var2, int var4, bool &forceReturnFl) {
 
 	forceReturnFl = false;
 
-	for (int i = 0; i < _word10807_ERULES; i++) {
+	for (int i = 0; i < _numCharacters; i++) {
 		if ((var2 >= _characterDisplayX[i]) && (var2 <= _characterDisplayX[i] + 17) && (var4 >= _characterDisplayY[i]) && (var4 <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_byte129A0 = i;
 			_byte16F07_menuId = 4;
@@ -1564,11 +1561,11 @@ int LilliputEngine::sub16675(int idx, int var1) {
 void LilliputEngine::sub171CF() {
 	debugC(2, kDebugEngine, "sub171CF()");
 
-	for (int i = 0; i < _word10807_ERULES; i++) {
+	for (int i = 0; i < _numCharacters; i++) {
 		if (_array1289F[i] != 0xFFFF) {
 			_array11D49[i] = _array1289F[i];
 			_array1289F[i] = 0xFFFF;
-			_scriptHandler->_array10B29[i] = 1;
+			_scriptHandler->_characterScriptEnabled[i] = 1;
 		}
 	}
 
@@ -1628,7 +1625,7 @@ void LilliputEngine::displayHeroismIndicator() {
 	}
 
 	_scriptHandler->_heroismLevel += var2;
-	
+
 	int index = _scriptHandler->_heroismBarX + _scriptHandler->_heroismBarBottomY * 320 ;
 
 	var2 = _scriptHandler->_heroismLevel & 0xFF;
@@ -1788,10 +1785,10 @@ void LilliputEngine::loadRules() {
 		_rulesChunk1[i] = f.readByte();
 
 	// Chunk 2
-	_word10807_ERULES = f.readSint16LE();
-	assert(_word10807_ERULES <= 40);
+	_numCharacters = f.readSint16LE();
+	assert(_numCharacters <= 40);
 
-	for (int i = _word10807_ERULES, j = 0; i != 0; i--, j++) {
+	for (int i = _numCharacters, j = 0; i != 0; i--, j++) {
 		curWord = f.readUint16LE();
 		if (curWord != 0xFFFF)
 			curWord = (curWord << 3) + 4;
@@ -1975,7 +1972,7 @@ void LilliputEngine::sub170EE(int index) {
 	int var2 = _characterPositionX[index];
 	int var4 = _characterPositionY[index];
 
-	_word16EFA = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
+	_currentScriptCharacterPosition = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
 	_ptr_rulesBuffer2_15 = &_rulesBuffer2_15[_rulesBuffer2PrevIndx * 32];
 }
 
@@ -2008,35 +2005,34 @@ void LilliputEngine::handleGameScripts() {
 
 	int index = _word17081_nextIndex;
 	int i;
-	for (i = 0; (_scriptHandler->_array10B29[index] == 0) && (i < _word10807_ERULES); i++) {
+	for (i = 0; (_scriptHandler->_characterScriptEnabled[index] == 0) && (i < _numCharacters); i++) {
 		++index;
-		if (index >= _word10807_ERULES)
+		if (index >= _numCharacters)
 			index = 0;
 	}
 
-	if (i > _word10807_ERULES)
+	if (i > _numCharacters)
 		return;
 
-	_scriptHandler->_array10B29[index] = 0;
-	int tmpVal = index + 1;
-	if (tmpVal >= _word10807_ERULES)
-		tmpVal = 0;
+	_word17081_nextIndex = (index + 1) % _numCharacters;
 
-	_word17081_nextIndex = tmpVal;
+
+	_scriptHandler->_characterScriptEnabled[index] = 0;
 	sub170EE(index);
 
 	_word16EFE = _array11D49[index];
 	_array11D49[index] = 0xFFFF;
 	_word1817B = 0;
 
-	tmpVal = _rulesBuffer2_12[index];
+	int tmpVal = _rulesBuffer2_12[index];
 	if (tmpVal == 0xFF)
 		return;
 
 	assert(tmpVal < _gameScriptIndexSize);
-	debugC(1, kDebugEngine, "========================== Game Script %d ==========================", tmpVal);
-
+	debugC(1, kDebugEngine, "================= Game Script %d for character %d ==================", tmpVal, index);
 	_scriptHandler->runScript(ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
+	debugC(1, kDebugEngine, "============= End Game Script %d for character %d ==================", tmpVal, index);
+
 }
 
 Common::Error LilliputEngine::run() {

@@ -125,8 +125,8 @@ public:
 	bool _int8installed;
 
 	int _word10800_ERULES;
-	int _word10807_ERULES;
-	int _word16EFA;
+	int _numCharacters;
+	int _currentScriptCharacterPosition;
 	int _word17081_nextIndex;
 	int _word16EFE;
 	int _word1817B;
