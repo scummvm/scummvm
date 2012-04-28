@@ -68,6 +68,7 @@ public:
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
 
+	void disasmScript(ScriptStream script);
 	void runScript(ScriptStream script);
 	void runMenuScript(ScriptStream script);
 private:
@@ -93,6 +94,8 @@ private:
 	int handleOpcode(ScriptStream *script);
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
+	
+
 
 	void sub1863B();
 	void sub185ED(byte index, byte subIndex);
