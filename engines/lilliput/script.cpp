@@ -929,12 +929,6 @@ byte LilliputScript::OC_sub173F0() {
 	return 0;
 }
 
-byte* LilliputScript::sub17399(int val) {
-	int x = (val >> 8);
-	int y = (val & 0xFF);
-	return &_vm->_bufferIsoMap[(y * 320 + x) << 2];
-}
-
 byte LilliputScript::OC_sub1740A() {
 	debugC(1, kDebugScript, "OC_sub1740A()");
 
@@ -944,7 +938,7 @@ byte LilliputScript::OC_sub1740A() {
 		return 0;
 	}
 
-	byte *isoMapBuf = sub17399(var);
+	byte *isoMapBuf = getMapPtr(var);
 	int var2 = isoMapBuf[3];
 
 	int var3 = _currScript->readUint16LE();
@@ -1252,11 +1246,12 @@ byte LilliputScript::OC_sub17782() {
 	return 0;
 }
 
-byte *LilliputScript::getMapPtr(int var1) {
-	debugC(1, kDebugScript, "getMapPtr(%d)", var1);
-	
-	int index = (((var1 & 0xFF) << 6) + (var1 >> 8)) << 2;
-	return &_vm->_bufferIsoMap[index];
+byte *LilliputScript::getMapPtr(int val) {
+	debugC(1, kDebugScript, "getMapPtr(%d)", val);
+
+	int x = (val >> 8);
+	int y = (val & 0xFF);
+	return &_vm->_bufferIsoMap[(y * 320 + x) << 2];
 }
 
 byte LilliputScript::OC_sub1779E() {
