@@ -84,7 +84,7 @@ private:
 	byte _byte10806;
 	byte _byte12FE4;
 	byte _byte16F02;
-
+	byte _byte16F04;
 
 	int _word16F00;
 	int _word10804;
@@ -107,6 +107,7 @@ private:
 	void sub18B3C(int var);
 	void sub18BE6(byte var1, int var2, int var4);
 	byte *getMapPtr(int val);
+	byte *sub173D2();
 
 	int getValue1();
 	int getValue2();
@@ -125,7 +126,7 @@ private:
 	byte OC_for();
 	byte OC_compWord18776();
 	byte OC_checkSaveFlag();
-	byte OC_sub174C8();
+	byte OC_compByte16F04();
 	byte OC_sub174D8();
 	byte OC_sub1750E();
 	byte OC_compareCoords_1();
