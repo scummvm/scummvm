@@ -1436,7 +1436,7 @@ void LoLEngine::increaseExperience(int charNum, int skill, uint32 points) {
 
 	bool loop = true;
 	while (loop) {
-		if (_characters[charNum].experiencePts[skill] <= _expRequirements[_characters[charNum].skillLevels[skill]])
+		if (_characters[charNum].experiencePts[skill] < _expRequirements[_characters[charNum].skillLevels[skill]])
 			break;
 
 		_characters[charNum].skillLevels[skill]++;
