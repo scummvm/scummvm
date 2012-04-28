@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	mpal/expr.o \
 	mpal/loadmpc.o \
 	mpal/mpal.o \
+	mpal/lzo.o \
 	mpal/stubs.o
 
 # This module can be built as a plugin

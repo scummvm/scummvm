@@ -58,7 +58,7 @@ Common::Error TonyEngine::run() {
  */
 Common::ErrorCode TonyEngine::Init() {
 	// Initialise the function list
-	Common::fill(FuncList, FuncList + sizeof(FuncList), (LPCUSTOMFUNCTION)NULL);
+	Common::fill(FuncList, FuncList + 300, (LPCUSTOMFUNCTION)NULL);
 
 	// Initializes MPAL system, passing the custom functions list
 	Common::File f;

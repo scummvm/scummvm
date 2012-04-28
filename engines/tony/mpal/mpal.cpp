@@ -51,17 +51,15 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "tony/tony.h"
+#include "lzo.h"	
 #include "mpal.h"
 #include "mpaldll.h"
 #include "stubs.h"
-#include "tony/tony.h"
-#include "tony/lzo/lzo1x.h"	
 
 namespace Tony {
 
 namespace MPAL {
-
-using namespace Tony::LZO;
 
 /****************************************************************************\
 *       Copyright
@@ -653,7 +651,7 @@ HGLOBAL resLoad(uint32 dwId) {
 			if (nBytesRead != nSizeComp)
 				return NULL;
 
-			lzo1x_decompress(temp, nSizeComp, buf, (lzo_uint*)&nBytesRead, NULL);
+			lzo1x_decompress(temp, nSizeComp, buf, &nBytesRead);
 			if (nBytesRead != nSizeDecomp)
 				return NULL;
 
@@ -1709,7 +1707,7 @@ bool mpalInit(char * lpszMpcFileName, char * lpszMprFileName, LPLPCUSTOMFUNCTION
 		/* Se il file e' compresso, guarda quanto e' grande e alloca la
 			memoria temporanea per la decompressione */
 		dwSizeComp = hMpc.readUint32LE();
-		if (nBytesRead != 4)
+		if (hMpc.err())
 			return false;
 
 		cmpbuf = (byte *)GlobalAlloc(GMEM_FIXED,dwSizeComp);
@@ -1721,7 +1719,7 @@ bool mpalInit(char * lpszMpcFileName, char * lpszMprFileName, LPLPCUSTOMFUNCTION
 			return false;
 
 		/* Decomprime l'immagine */
-		lzo1x_decompress(cmpbuf,dwSizeComp,lpMpcImage,(lzo_uint*)&nBytesRead,NULL);
+		lzo1x_decompress(cmpbuf, dwSizeComp, lpMpcImage, &nBytesRead);
 		if (nBytesRead != dwSizeDecomp)
 			return false;
 
@@ -1795,7 +1793,7 @@ bool mpalInit(char * lpszMpcFileName, char * lpszMprFileName, LPLPCUSTOMFUNCTION
 	if (nBytesRead != dwSizeComp)
 		return false;
 
-	lzo1x_decompress((byte *)cmpbuf,dwSizeComp,(byte *)lpResources, (uint32 *)&nBytesRead, NULL);
+	lzo1x_decompress((const byte *)cmpbuf, dwSizeComp, (byte *)lpResources, (uint32 *)&nBytesRead);
 	if (nBytesRead != (uint32)nResources*8)
 		return false;
 
