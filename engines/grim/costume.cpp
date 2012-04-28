@@ -523,7 +523,7 @@ void Costume::saveState(SaveGame *state) const {
 
 	state->writeLEUint32(_playingChores.size());
 	for (Common::List<Chore*>::const_iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
-		state->writeLESint32((*i)->getId());
+		state->writeLESint32((*i)->getChoreId());
 	}
 
 	state->writeFloat(_lookAtRate);

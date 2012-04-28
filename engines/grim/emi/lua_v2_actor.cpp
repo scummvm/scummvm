@@ -248,6 +248,11 @@ void Lua_V2::AdvanceChore() {
 	float time = lua_getnumber(timeObj);
 	// FIXME: implement missong code
 	warning("Lua_V2::AdvanceChore: stub, chore: %d time: %f", chore, time);
+	Chore *c = PoolChore::getPool().getObject(chore);
+	if (c) {
+		// this is kind of wrong, but it at least gets stuff to draw.
+		c->getOwner()->playChoreLooping(c->getChoreId());
+	}
 }
 
 void Lua_V2::SetActorSortOrder() {
@@ -511,7 +516,7 @@ void Lua_V2::GetActorChores() {
 	for (int i = 0; i < num; ++i) {
 		lua_pushobject(result);
 		lua_pushnumber(i);
-		lua_pushusertag(costume->getChore(i)->getId(), MKTAG('C','H','O','R'));
+		lua_pushusertag(((PoolChore *)costume->getChore(i))->getId(), MKTAG('C','H','O','R'));
 		lua_settable();
 	}
 
@@ -553,7 +558,7 @@ void Lua_V2::PlayActorChore() {
 		costume = actor->findCostume(costumeName);
 	}
 
-	Chore *chore = costume->getChore(choreName);
+	PoolChore *chore = (PoolChore *)costume->getChore(choreName);
 	costume->playChore(choreName);
 	if (chore) {
 		lua_pushusertag(chore->getId(), MKTAG('C','H','O','R'));

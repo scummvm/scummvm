@@ -55,10 +55,11 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		data->read(_chores[i]->_name, nameLength);
 		float length;
 		data->read(&length, 4);
-		_chores[i]->_length = (int)length;
+		_chores[i]->_length = (int)(length * 1000);
 
 		_chores[i]->setOwner(this);
 		_chores[i]->createTracks(data->readUint32LE());
+		_chores[i]->_choreId = i;
 
 		for (int k = 0; k < _chores[i]->_numTracks; k++) {
 			int componentNameLength = data->readUint32LE();

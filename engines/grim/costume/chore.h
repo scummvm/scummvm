@@ -63,9 +63,10 @@ public:
 	bool isPlaying() { return _playing; }
 	bool isLooping() { return _looping; }
 
-	virtual int getId() { return _choreId; }
+	int getChoreId() { return _choreId; }
 	
 	void setOwner(Costume *owner) { _owner = owner; }
+	Costume *getOwner() { return _owner; }
 	void createTracks(int num);
 
 private:
@@ -89,7 +90,6 @@ private:
 
 class PoolChore : public PoolObject<PoolChore>, public Chore {
 public:
-	virtual int getId() { return PoolObject<PoolChore>::getId(); }
 	static int32 getStaticTag() { return MKTAG('C', 'H', 'O', 'R'); }
 };
 
