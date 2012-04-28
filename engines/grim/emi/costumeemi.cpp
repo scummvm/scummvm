@@ -48,20 +48,20 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	_numChores = data->readUint32LE();
 	_chores = new Chore *[_numChores];
 	for (int i = 0; i < _numChores; i++) {
-		_chores[i] = new PoolChore();
 		uint32 nameLength;
 		Component *prevComponent = NULL;
 		nameLength = data->readUint32LE();
-		data->read(_chores[i]->_name, nameLength);
+		assert(nameLength < 32);
+
+		char name[32];
+		data->read(name, nameLength);
 		float length;
 		data->read(&length, 4);
-		_chores[i]->_length = (int)(length * 1000);
+		int numTracks = data->readUint32LE();
 
-		_chores[i]->setOwner(this);
-		_chores[i]->createTracks(data->readUint32LE());
-		_chores[i]->_choreId = i;
+		_chores[i] = new PoolChore(name, i, this, (int)length, numTracks);
 
-		for (int k = 0; k < _chores[i]->_numTracks; k++) {
+		for (int k = 0; k < numTracks; k++) {
 			int componentNameLength = data->readUint32LE();
 
 			char *name = new char[componentNameLength];
@@ -89,7 +89,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				component->setCostume(this);
 				component->init();
 
-				if (strcmp(_chores[i]->_name, "wear_default") == 0) {
+				if (strcmp(_chores[i]->getName(), "wear_default") == 0) {
 					EMIMeshComponent *m = dynamic_cast<EMIMeshComponent *>(component);
 					EMISkelComponent *s = dynamic_cast<EMISkelComponent *>(component);
 					if (m) {
@@ -106,8 +106,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				
 				}
 			}
-
-			//Component *component = loadComponentEMI(name, parent);
 
 			components.push_back(component);
 
@@ -127,7 +125,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 			}
 			delete[] name;
 		}
-		//_chores[i]._tracks->compID;
 	}
 
 	_numComponents = components.size();
@@ -208,7 +205,7 @@ void EMICostume::draw() {
 int EMICostume::update(uint time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		(*i)->update(time);
-		if (!(*i)->_playing) {
+		if (!(*i)->isPlaying()) {
 			i = _playingChores.erase(i);
 			--i;
 		}

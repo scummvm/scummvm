@@ -30,8 +30,12 @@
 namespace Grim {
 
 // Should initialize the status variables so the chore can't play unexpectedly
-Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
-                          _tracks(NULL) {
+Chore::Chore(char name[32], int id, Costume *owner, int length, int numTracks) :
+		_hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
+		_numTracks(numTracks), _length(length), _choreId(id), _owner(owner) {
+
+	memcpy(_name, name, 32);
+	_tracks = new ChoreTrack[_numTracks];
 }
 
 Chore::~Chore() {
@@ -44,11 +48,8 @@ Chore::~Chore() {
 	}
 }
 
-void Chore::load(int id, Costume *owner, TextSplitter &ts) {
-	_owner = owner;
-	_tracks = new ChoreTrack[_numTracks];
+void Chore::load(TextSplitter &ts) {
 	_hasPlayed = _playing = false;
-	_choreId = id;
 	for (int i = 0; i < _numTracks; i++) {
 		int compID, numKeys;
 		ts.scanString(" %d %d", 2, &compID, &numKeys);
@@ -176,9 +177,18 @@ void Chore::fadeOut(uint msecs) {
 	fade(Animation::FadeOut, msecs);
 }
 
-void Chore::createTracks(int num) {
-	_numTracks = num;
-	_tracks = new ChoreTrack[_numTracks];
+void Chore::saveState(SaveGame *state) const {
+	state->writeBool(_hasPlayed);
+	state->writeBool(_playing);
+	state->writeBool(_looping);
+	state->writeLESint32(_currTime);
+}
+
+void Chore::restoreState(SaveGame *state) {
+	_hasPlayed = state->readBool();
+	_playing = state->readBool();
+	_looping = state->readBool();
+	_currTime = state->readLESint32();
 }
 
 } // end of namespace Grim

@@ -185,10 +185,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 		int id, length, tracks;
 		char name[32];
 		ts.scanString(" %d %d %d %32s", 4, &id, &length, &tracks, name);
-		_chores[id] = new Chore();
-		_chores[id]->_length = length;
-		_chores[id]->_numTracks = tracks;
-		memcpy(_chores[id]->_name, name, 32);
+		_chores[id] = new Chore(name, i, this, length, tracks);
 		Debug::debug(Debug::Chores, "Loaded chore: %s\n", name);
 	}
 
@@ -196,7 +193,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numChores; i++) {
 		int which;
 		ts.scanString("chore %d", 1, &which);
-		_chores[which]->load(i, this, ts);
+		_chores[which]->load(ts);
 	}
 }
 
@@ -302,7 +299,7 @@ void Costume::playChoreLooping(int num) {
 
 Chore *Costume::getChore(const char *name) {
 	for (int i = 0; i < _numChores; ++i) {
-		if (strcmp(_chores[i]->_name, name) == 0) {
+		if (strcmp(_chores[i]->getName(), name) == 0) {
 			return _chores[i];
 		}
 	}
@@ -311,7 +308,7 @@ Chore *Costume::getChore(const char *name) {
 
 int Costume::getChoreId(const char *name) {
 	for (int i = 0; i < _numChores; ++i) {
-		if (strcmp(_chores[i]->_name, name) == 0) {
+		if (strcmp(_chores[i]->getName(), name) == 0) {
 			return i;
 		}
 	}
@@ -320,7 +317,7 @@ int Costume::getChoreId(const char *name) {
 
 void Costume::playChore(const char *name) {
 	for (int i = 0; i < _numChores; ++i) {
-		if (strcmp(_chores[i]->_name, name) == 0) {
+		if (strcmp(_chores[i]->getName(), name) == 0) {
 			playChore(i);
 			return;
 		}
@@ -385,7 +382,7 @@ void Costume::fadeChoreOut(int chore, int msecs) {
 
 int Costume::isChoring(const char *name, bool excludeLooping) {
 	for (int i = 0; i < _numChores; i++) {
-		if (!strcmp(_chores[i]->_name, name) && _chores[i]->_playing && !(excludeLooping && _chores[i]->_looping))
+		if (!strcmp(_chores[i]->getName(), name) && _chores[i]->isPlaying() && !(excludeLooping && _chores[i]->isLooping()))
 			return i;
 	}
 	return -1;
@@ -396,7 +393,7 @@ int Costume::isChoring(int num, bool excludeLooping) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return -1;
 	}
-	if (_chores[num]->_playing && !(excludeLooping && _chores[num]->_looping))
+	if (_chores[num]->isPlaying() && !(excludeLooping && _chores[num]->isLooping()))
 		return num;
 	else
 		return -1;
@@ -404,7 +401,7 @@ int Costume::isChoring(int num, bool excludeLooping) {
 
 int Costume::isChoring(bool excludeLooping) {
 	for (int i = 0; i < _numChores; i++) {
-		if (_chores[i]->_playing && !(excludeLooping && _chores[i]->_looping))
+		if (_chores[i]->isPlaying() && !(excludeLooping && _chores[i]->isLooping()))
 			return i;
 	}
 	return -1;
@@ -434,7 +431,7 @@ void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 int Costume::update(uint time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		(*i)->update(time);
-		if (!(*i)->_playing) {
+		if (!(*i)->isPlaying()) {
 			i = _playingChores.erase(i);
 			--i;
 		}
@@ -503,12 +500,7 @@ void Costume::saveState(SaveGame *state) const {
 	}
 
 	for (int i = 0; i < _numChores; ++i) {
-		Chore *c = _chores[i];
-
-		state->writeBool(c->_hasPlayed);
-		state->writeBool(c->_playing);
-		state->writeBool(c->_looping);
-		state->writeLESint32(c->_currTime);
+		_chores[i]->saveState(state);
 	}
 
 	for (int i = 0; i < _numComponents; ++i) {
@@ -537,13 +529,9 @@ bool Costume::restoreState(SaveGame *state) {
 	}
 
 	for (int i = 0; i < _numChores; ++i) {
-		Chore *c = _chores[i];
-
-		c->_hasPlayed = state->readBool();
-		c->_playing = state->readBool();
-		c->_looping = state->readBool();
-		c->_currTime = state->readLESint32();
+		_chores[i]->restoreState(state);
 	}
+
 	for (int i = 0; i < _numComponents; ++i) {
 		Component *c = _components[i];
 
