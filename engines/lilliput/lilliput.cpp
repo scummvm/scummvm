@@ -638,7 +638,7 @@ void LilliputEngine::sub16217() {
 
 		_scriptHandler->_array16123[i] = (_characterPositionX[i] & 0xFF);
 		_scriptHandler->_array1614B[i] = (_characterPositionY[i] & 0xFF);
-		_scriptHandler->_array16173[i] = 0xFF;
+		_characterRelativePositionX[i] = 0xFF;
 		_characterRelativePositionY[i] = 0xFF;
 		_characterDisplayX[i] = 0xFF;
 		_characterDisplayY[i] = 0xFF;
