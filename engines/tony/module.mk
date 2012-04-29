@@ -2,11 +2,14 @@ MODULE := engines/tony
 
 MODULE_OBJS := \
 	detection.o \
+	loc.o \
 	tony.o \
 	utils.o \
 	mpal/expr.o \
 	mpal/loadmpc.o \
+	mpal/memory.o \
 	mpal/mpal.o \
+	mpal/mpalutils.o \
 	mpal/lzo.o \
 	mpal/stubs.o
 

@@ -860,7 +860,7 @@ void PASCAL ScriptThread(LPMPALSCRIPT s) {
 	uint32 dwCurTime;
 	uint32 dwId;
 	static HANDLE cfHandles[MAX_COMMANDS_PER_MOMENT];
-	int numHandles;
+	int numHandles = 0;
 	LPCFCALL p;
 
 // warning("PlayScript(): Moments: %u\n",s->nMoments);
@@ -1785,7 +1785,7 @@ bool mpalInit(char * lpszMpcFileName, char * lpszMprFileName, LPLPCUSTOMFUNCTION
 	if (lpResources==NULL)
 		return false;
 
-	cmpbuf = GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, dwSizeComp);
+	cmpbuf = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, dwSizeComp);
 	if (cmpbuf==NULL)
 		return false;
 
@@ -1840,12 +1840,14 @@ bool mpalInit(char * lpszMpcFileName, char * lpszMprFileName, LPLPCUSTOMFUNCTION
 #define GETARG(type)   va_arg(v,type)
 
 uint32 mpalQuery(uint16 wQueryType, ...) {
-	uint32 dwRet; int x,y,z; char * n;
+	uint32 dwRet = 0;
+	int x,y,z;
+	char *n;
 	va_list v;
 	Common::String buf;
 
-	mpalError=OK;
-	va_start(v,wQueryType);
+	mpalError = OK;
+	va_start(v, wQueryType);
 
 	switch (wQueryType) {
    /*

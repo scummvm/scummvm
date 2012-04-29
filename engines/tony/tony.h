@@ -32,6 +32,8 @@
 #include "engines/engine.h"
 
 #include "tony/mpal/mpal.h"
+#include "tony/mpal/memory.h"
+#include "tony/loc.h"
 #include "tony/utils.h"
 
 /**
@@ -83,9 +85,12 @@ protected:
 public:
 	LPCUSTOMFUNCTION FuncList[300];
 	Common::RandomSource _randomSource;
+	MPAL::MemoryManager _memoryManager;
 	RMResUpdate _resUpdate;
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
+	// Bounding box list manager
+	RMGameBoxes _theBoxes;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();

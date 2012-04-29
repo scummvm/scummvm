@@ -31,6 +31,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "tony/mpal/memory.h"
 
 namespace Tony {
 
@@ -39,9 +40,6 @@ namespace MPAL {
 /****************************************************************************\
 *       Types
 \****************************************************************************/
-
-typedef void *HGLOBAL;
-typedef void *HANDLE;
 
 typedef uint32 (*LPTHREAD_START_ROUTINE)(void *lpThreadParameter);
 
@@ -74,14 +72,6 @@ Out CopyMemory(Out dst, In first, int size) {
 /****************************************************************************\
 *       Methods
 \****************************************************************************/
-
-extern byte *GlobalAlloc(uint16 flags, int size);
-
-extern void *GlobalLock(HGLOBAL h);
-
-extern void GlobalUnlock(HGLOBAL h);
-
-extern void GlobalFree(HGLOBAL h);
 
 extern void MessageBox(const Common::String &msg);
 

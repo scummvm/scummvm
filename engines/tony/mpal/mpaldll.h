@@ -51,6 +51,7 @@
 #define __MPALDLL_H
 
 #include "common/file.h"
+#include "memory.h"
 #include "stubs.h"
 
 namespace Tony {

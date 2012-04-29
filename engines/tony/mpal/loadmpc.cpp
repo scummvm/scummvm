@@ -52,6 +52,8 @@
 */
 #include "mpal.h"
 #include "mpaldll.h"
+#include "memory.h"
+#include "tony/tony.h"
 
 namespace Tony {
 

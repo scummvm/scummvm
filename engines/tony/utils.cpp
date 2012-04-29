@@ -19,11 +19,888 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+/**************************************************************************
+ *                                     様様様様様様様様様様様様様様様様様 *
+ *                                             Nayma Software srl         *
+ *                    e                -= We create much MORE than ALL =- *
+ *        u-        z$$$c        '.    様様様様様様様様様様様様様様様様様 *
+ *      .d"        d$$$$$b        "b.                                     *
+ *   .z$*         d$$$$$$$L        ^*$c.                                  *
+ *  #$$$.         $$$$$$$$$         .$$$" Project: Roasted Moths........  *
+ *    ^*$b       4$$$$$$$$$F      .d$*"                                   *
+ *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Loc.CPP..............  *
+ *        *$.    '$$$$$$$$$     4$P 4                                     *
+ *     J   *$     "$$$$$$$"     $P   r    Author:  Giovanni Bajo........  *
+ *    z$   '$$$P*4c.*$$$*.z@*R$$$    $.                                   *
+ *   z$"    ""       #$F^      ""    '$c  Desc:    Classi di gestione     *
+ *  z$$beu     .ue="  $  "=e..    .zed$$c          dei dati di una loca-  *
+ *      "#$e z$*"   .  `.   ^*Nc e$""              zione................  *
+ *         "$$".  .r"   ^4.  .^$$"                 .....................  *
+ *          ^.@*"6L=\ebu^+C$"*b."                                         *
+ *        "**$.  "c 4$$$  J"  J$P*"    OS:  [ ] DOS  [X] WIN95  [ ] PORT  *
+ *            ^"--.^ 9$"  .--""      COMP:  [ ] WATCOM  [X] VISUAL C++    *
+ *                    "                     [ ] EIFFEL  [ ] GCC/GXX/DJGPP *
+ *                                                                        *
+ * This source code is Copyright (C) Nayma Software.  ALL RIGHTS RESERVED *
+ *                                                                        *
+ **************************************************************************/
 
 #include "tony/utils.h"
-#include "mpal/lzo.h"
+#include "tony/tony.h"
+#include "tony/mpal/lzo.h"
 
 namespace Tony {
+
+/****************************************************************************\
+*       RMString methods
+\****************************************************************************/
+
+/**
+ * Constructor
+ */
+RMString::RMString() {
+	m_string=NULL;
+	m_length=0;
+	m_realLength=0;
+}
+
+/**
+ * Destructor
+ */
+RMString::~RMString() {
+	if (m_string != NULL)
+		delete[] m_string;
+}
+
+/**
+ * Copy constructor
+ */
+RMString::RMString(const RMString &str) {
+	// Richiama l'overload su '=' per copiare
+	m_string = NULL;
+	m_length = 0;
+	m_realLength = 0;
+	*this = str;
+}
+
+/**
+ * Constructor from a char *
+ */
+RMString::RMString(const char* str) {
+	// Use the overloaded '=' when copying
+	m_string = NULL;
+	m_length = 0;
+	m_realLength = 0;
+	*this = str;
+}
+
+/**
+ * Constructor with a single passed character
+ */
+RMString::RMString(const int ch) {
+	// Use the overloaded '=' when copying
+	m_string = NULL;
+	m_length = 0;
+	m_realLength = 0;
+	*this = ch;
+}
+
+/**
+ * Returns the length of the string
+ * @returns					Length
+ */
+int RMString::Length() {
+ return m_length;
+}
+
+/**
+ * Gets the character at the given index
+ * @param nIndex			Position of the character to return
+ * @returns					Character
+ */
+char RMString::GetAt(int nIndex) {
+	assert(nIndex < m_length);
+	return m_string[nIndex];
+}
+
+/**
+ * Sets the character at the given index
+ * @param nIndex			Position of the character to change
+ * @param c					Character
+ */
+void RMString::SetAt(int nIndex, char c) {
+	assert(nIndex < m_length);
+	m_string[nIndex] = c;
+}
+
+/**
+ * Overloaded square brackets operator for accessing characters within the string
+ * @param nIndex			Position of the charactre to reference
+ * @params					Reference to the character
+ */
+char &RMString::operator[](int nIndex) {
+	assert(nIndex < m_length);
+	return m_string[nIndex];
+}
+
+/**
+ * Copies a string
+ * @param str				String to copy
+ * @returns					Refrence to our string
+ */
+const RMString &RMString::operator=(const RMString &str) {
+	// Set the new length
+	m_length = str.m_length;
+
+	// If the source is empty, then destroy the current string buffer
+	if (m_length == 0) {
+		if (m_realLength > 0) {
+			delete[] m_string;
+			m_string = NULL;
+			m_realLength = 0;
+		}
+	} else {
+		// Resize if necessary
+		Resize(m_length + 1);
+
+		// Copy the string
+		Common::copy(str.m_string, str.m_string + m_length + 1, m_string);
+	}
+ 
+	return *this;
+}
+
+/**
+ * Copies a char * string
+ * @param str				String to copy
+ * @returns					Refrence to our string
+ */
+const RMString& RMString::operator=(const char* str) {
+	// If the source is empty, then destroy the current string buffer
+	if (str == NULL) {
+		if (m_realLength > 0) {
+			delete[] m_string;
+			m_string = NULL;
+			m_realLength = m_length = 0;
+		}
+	} else {
+		// Calculate the new length
+		m_length = strlen(str);
+
+		// Resize if necessary
+		Resize(m_length + 1);
+
+		// Copy the string
+		Common::copy(str, str + m_length + 1, m_string);
+	}
+
+	return *this;
+}
+
+/**
+ * Forms a string from a passed character
+ * @param ch				Character to copy
+ * @returns					Refrence to our string
+ */
+const RMString& RMString::operator=(const int ch) {
+	if (ch=='\0')  {
+		// Destroy the current string
+		if (m_realLength > 0) {
+			delete [] m_string;
+			m_string=NULL;
+			m_length=m_realLength=0;
+		}
+	} else {
+		// Resize if necessary
+		Resize(2);
+
+		m_string[0] = ch;
+		m_string[1] = '\0';
+		m_length = 1;
+	}
+
+	return *this;
+}
+
+/** 
+ * Concatenate a string into the current one
+ * @param str				String to concatenate
+ * @param size				Length of the string
+ */
+void RMString::Connect(const char *str, int size) {
+	int nlen;
+
+	if (size > 0) {
+		// Calculate the new lenght
+		nlen=m_length+size;
+
+		// Resize
+		Resize(nlen + 1, true);
+
+		// Linkage with '\0'
+		Common::copy(str, str + size + 1, m_string + m_length);
+
+		// Save the new length
+		m_length = nlen;
+	}
+}
+
+/**
+ * Concatenate a string
+ * @param str				String to concatenate
+ * @returns					Refrence to our string
+ */
+const RMString &RMString::operator+=(RMString &str) {
+	Connect(str,str.Length());
+	return *this;
+}
+
+/**
+ * Concatenate a string
+ * @param str				String to concatenate
+ * @returns					Refrence to our string
+ */
+const RMString &RMString::operator+=(const char *str) {
+	Connect(str,strlen(str));
+	return *this;
+}
+
+/**
+ * Concatenate a character
+ * @param ch				Character to concatenate
+ * @returns					Refrence to our string
+ */
+const RMString &RMString::operator+=(const int ch) {
+	char str[2];
+
+	// Create a simple string buffer to hold the single character
+	str[0] = ch;
+	str[1] = '\0';
+
+	Connect(str, 1);
+	return *this;
+}
+
+/**
+ * Casts a string as char *
+ * @returns					char * reference to string
+ */
+RMString::operator char*() const {
+	return m_string;
+}
+
+/**
+ * Resize a string as necessary
+ * @param size				New size necessary (in bytes)
+ * @param bMaintain			If TRUE we must keep the original string, 
+							if FALSE we can destroy.
+ */
+void RMString::Resize(int size, bool bMantain) {
+	if (m_realLength == 0) {
+		m_string = new char[size];
+		m_realLength = size;
+	} else if (size > m_realLength) {
+		if (bMantain) {
+			char* app;
+
+			app = new char[size];
+			Common::copy(m_string, m_string + m_length + 1, app);
+			delete[] m_string;
+			m_string = app;
+		} else {
+			delete[] m_string;
+			m_string = new char[size];
+		}
+	}
+}
+
+/**
+ * Compacts the string to occupy less memory if possible.
+ */
+void RMString::Compact(void) {
+	if (m_realLength + 1 > m_length) {
+		char *app;
+
+		app = new char[m_length + 1];
+		Common::copy(m_string, m_string + m_length + 1, app);
+
+		delete[] m_string;
+		m_string = app;
+	}
+}
+
+/**
+ * Operator to concatenate two strings
+ */
+RMString operator+(const RMString &str1, const RMString &str2) {
+	RMString ret(str1);
+
+	return (ret += str2);
+}
+
+/**
+ * Operator to concatenate a character to a string
+ */
+RMString operator+(RMString &str, const int ch) {
+	RMString ret(str);
+
+	return (ret += ch);
+}
+
+RMString operator+(const int ch, RMString &str) {
+	RMString ret(ch);
+
+	return (ret += str);
+}
+
+/**
+ * Operator to concatenate a char * string to an RMString
+ */
+RMString operator+(RMString &str, const char *s) {
+	RMString ret(str);
+
+	return (ret += s);
+}
+
+RMString operator+(const char *s, RMString &str) {
+	RMString ret(s);
+
+	return (ret+=str);
+}
+
+/**
+ * Extracts a string from a data stream
+ * @param df				data stream
+ * @param var				String
+ */
+RMDataStream &operator>>(RMDataStream &df, RMString &var) {
+	uint8 len;
+	int i;
+
+	df >> len;
+	var.Resize(len + 1);
+	var.m_length=len+1;
+ 
+	for (i = 0; i < len; i++)
+		df >> var[i];
+
+	var[i] = '\0';	
+	var.m_length = len;
+ 
+	return df;
+}
+
+/**
+ * Formats a string
+ */
+void RMString::Format(char* str, ...) {
+	warning("TODO: Refactor RMString::Format if needed");
+	/*
+	static char buf[2048];
+	va_list argList;
+
+	va_start(argList,str);
+	wvsprintf(buf,str,argList);
+	va_end(argList);
+	*this = buf;
+*/
+}
+
+/****************************************************************************\
+*       RMDataStream methods
+\****************************************************************************/
+
+/**
+ * Constructor
+ */
+RMDataStream::RMDataStream() {
+	m_length = 0;
+	m_pos = 0;
+	m_bError = false;
+}
+
+/**
+ * Destructor
+ */
+RMDataStream::~RMDataStream() {
+	Close();
+}
+
+/**
+ * Close a stream
+ */
+void RMDataStream::Close(void) {
+	m_length = 0;
+	m_pos = 0;
+}
+
+/**
+ * Takes the address of the buffer from which will be read the data.
+ * @param lpBuf			Data buffer
+ * @param size			Size of the buffer
+ * @remarks				If the length of the buffer is not known, and cannot be
+ *						specified, then EOF() and Seek() to end won't work.
+ */
+void RMDataStream::OpenBuffer(const byte *lpBuf, int size) {
+	m_length = size;
+	m_buf = lpBuf;
+	m_bError = false;
+	m_pos = 0;
+}
+
+/**
+ * Returns the length of the stream
+ * @returns				Stream length
+ */
+int RMDataStream::Length() {
+	return m_length;
+}
+
+/**
+ * Determines if the end of the stream has been reached
+ * @returns				TRUE if end of stream reached, FALSE if not
+ */
+bool RMDataStream::IsEOF() {
+	return (m_pos >= m_length);
+}
+
+/**
+ * Extracts data from the stream
+ * @param df				Stream
+ * @param var				Variable of a supported type
+ * @returns					Value read from the stream
+ */
+RMDataStream &operator>>(RMDataStream &df, char &var) {
+	df.Read(&var, 1);
+	return df;
+}
+
+/**
+ * Extracts data from the stream
+ * @param df				Stream
+ * @param var				Variable of a supported type
+ * @returns					Value read from the stream
+ */
+RMDataStream &operator>>(RMDataStream &df, uint8 &var) {
+	df.Read(&var, 1);
+	return df;
+}
+
+/**
+ * Extracts data from the stream
+ * @param df				Stream
+ * @param var				Variable of a supported type
+ * @returns					Value read from the stream
+ */
+RMDataStream &operator>>(RMDataStream &df, uint16 &var) {
+	uint16 v;
+	df.Read(&v, 2);
+
+	var = FROM_LE_16(v);
+	return df;
+}
+
+/**
+ * Extracts data from the stream
+ * @param df				Stream
+ * @param var				Variable of a supported type
+ * @returns					Value read from the stream
+ */
+RMDataStream &operator>>(RMDataStream &df, int16 &var) {
+	uint16 v;
+	df.Read(&v, 2);
+
+	var = (int16)FROM_LE_16(v);
+	return df;
+}
+
+/**
+ * Extracts data from the stream
+ * @param df				Stream
+ * @param var				Variable of a supported type
+ * @returns					Value read from the stream
+ */
+RMDataStream &operator>>(RMDataStream &df, int &var) {
+	uint32 v;
+	df.Read(&v, 4);
+
+	var = (int)FROM_LE_32(v);
+	return df;
+}
+
+/**
+ * Extracts data from the stream
+ * @param df				Stream
+ * @param var				Variable of a supported type
+ * @returns					Value read from the stream
+ */
+RMDataStream &operator>>(RMDataStream &df, uint32 &var) {
+	uint32 v;
+	df.Read(&v, 4);
+
+	var = FROM_LE_32(v);
+	return df;
+}
+
+/**
+ * Reads a series of data from the stream in a buffer
+ * @param lpBuf				Data buffer
+ * @param size				Size of the buffer
+ * @returns					TRUE if we have reached the end, FALSE if not
+ */
+bool RMDataStream::Read(void *lpBuf, int size) {
+	byte *dest = (byte *)lpBuf;
+
+	if ((m_pos + size) > m_length) {
+		Common::copy(m_buf + m_pos, m_buf + m_pos + (m_length - m_pos), dest);
+
+		return true;
+	} else {
+		Common::copy(m_buf + m_pos, m_buf + m_pos + size, dest);
+
+		m_pos += size;
+		return false;
+	}
+}
+
+/**
+ * Skips a number of bytes in the stream
+ * @param nBytres			Number of bytes to skip
+ * @returns					The stream
+ */
+RMDataStream &RMDataStream::operator+=(int nBytes) {
+	m_pos+=nBytes;
+	return *this;
+}
+
+/**
+ * Seeks to a position within the stream
+ * @param nBytes			Number of bytes from specified origin
+ * @param origin			Origin to do offset from
+ * @returns					The absolute current position in bytes
+ */
+int RMDataStream::Seek(int nBytes, RMDSPos origin) {
+	switch (origin) {
+	case CUR:
+		break;
+
+	case START:
+		m_pos=0;
+		break;
+
+	case END:
+		if (m_length == SIZENOTKNOWN)
+			return m_pos;
+		m_pos=m_length;
+		break;
+	}
+
+	m_pos+=nBytes;
+	return m_pos;
+}
+
+/**
+ * Returns the current position of the stream
+ * @returns					The current position
+ */
+int RMDataStream::Pos() {
+	return m_pos;
+}
+
+/**
+ * Check if an error occurred during reading the stream
+ * @returns					TRUE if there was an error, false otherwise
+ */
+bool RMDataStream::IsError() {
+	return m_bError;
+}
+
+/**
+ * Sets an error code for the stream
+ * @param code				Error code
+ */
+void RMDataStream::SetError(int code) {
+	m_bError = true;
+	m_ecode = code;
+}
+
+/**
+ * Returns the error code for the stream
+ * @returns					Error code
+ */
+int RMDataStream::GetError() {
+	return m_ecode;
+}
+
+/****************************************************************************\
+*       RMPoint methods
+\****************************************************************************/
+
+/**
+ * Constructor
+ */
+RMPoint::RMPoint() {
+	x = y = 0;
+}
+
+/**
+ * Copy constructor
+ */
+RMPoint::RMPoint(const RMPoint &p) {
+	x=p.x;
+	y=p.y;
+}
+
+/**
+ * Constructor with integer parameters
+ */
+RMPoint::RMPoint(int x1, int y1) {
+	x = x1;
+	y = y1;
+}
+
+/**
+ * Copy operator
+ */
+RMPoint &RMPoint::operator=(RMPoint p) {
+	x = p.x;
+	y = p.y;
+
+	return *this;
+}
+
+/**
+ * Offsets the point by another point
+ */
+void RMPoint::Offset(RMPoint p) {
+	x += p.x;
+	y += p.y;
+}
+
+/**
+ * Offsets the point by a specified offset
+ */
+void RMPoint::Offset(int xOff, int yOff) {
+	x += xOff;
+	y += yOff;
+}
+
+/**
+ * Sums together two points
+ */
+RMPoint operator+(RMPoint p1, RMPoint p2) {
+	RMPoint p(p1);
+
+	return (p += p2);
+}
+
+/**
+ * Subtracts two points
+ */
+RMPoint operator-(RMPoint p1, RMPoint p2) {
+	RMPoint p(p1);
+
+	return (p -= p2);
+}
+
+/**
+ * Sum (offset) of a point
+ */
+RMPoint &RMPoint::operator+=(RMPoint p) {
+	Offset(p);
+	return *this;
+}
+
+/**
+ * Subtract (offset) of a point
+ */
+RMPoint& RMPoint::operator-=(RMPoint p) {
+	Offset(-p);
+	return *this;
+}
+
+/**
+ * Inverts a point
+ */
+RMPoint RMPoint::operator-() {
+	RMPoint p;
+
+	p.x = -x;
+	p.y = -y;
+
+	return p;
+}
+
+/**
+ * Equality operator
+ */
+bool RMPoint::operator==(RMPoint p) {
+	return ((x == p.x) && (y == p.y));
+}
+
+/**
+ * Not equal operator
+ */
+bool RMPoint::operator!=(RMPoint p) {
+	return ((x != p.x) || (y != p.y));
+}
+
+/**
+ * Reads a point from a stream
+ */
+RMDataStream &operator>>(RMDataStream &ds, RMPoint &p) {
+	ds >> p.x >> p.y;
+	return ds;
+}
+
+/****************************************************************************\
+*       RMRect methods
+\****************************************************************************/
+
+RMRect::RMRect() {
+	SetEmpty();
+}
+
+void RMRect::SetEmpty(void) {
+	x1 = y1 = x2 = y2 = 0;
+}
+
+RMRect::RMRect(RMPoint p1, RMPoint p2) {
+	SetRect(p1, p2);
+}
+
+RMRect::RMRect(int X1, int Y1, int X2, int Y2) {
+	SetRect(X1, Y1, X2, Y2);
+}
+
+RMRect::RMRect(const RMRect &rc) {
+	CopyRect(rc);
+}
+
+void RMRect::SetRect(RMPoint p1, RMPoint p2) {
+	x1 = p1.x;
+	y1 = p1.y;
+	x2 = p2.x;
+	y2 = p2.y;
+}
+
+void RMRect::SetRect(int X1, int Y1, int X2, int Y2) {
+	x1 = X1;
+	y1 = Y1;
+	x2 = X2;
+	y2 = Y2;
+}
+
+void RMRect::SetRect(const RMRect &rc) {
+	CopyRect(rc);
+}
+
+void RMRect::CopyRect(const RMRect &rc) {
+	x1 = rc.x1;
+	y1 = rc.y1;
+	x2 = rc.x2;
+	y2 = rc.y2;
+}
+
+RMPoint &RMRect::TopLeft() {
+	// FIXME: This seems very bad
+	return *((RMPoint *)this);
+}
+
+RMPoint& RMRect::BottomRight() {
+	// FIXME: This seems very bad
+	return *((RMPoint*)this + 1);
+}
+
+RMPoint RMRect::Center() {
+	return RMPoint((x2 - x1) / 2,(y2 - y1) / 2);
+}
+
+int RMRect::Width() {
+	return x2 - x1;
+}
+
+int RMRect::Height() {
+	return y2 - y1;
+}
+
+int RMRect::Size() {
+	return Width() * Height();
+}
+
+bool RMRect::IsEmpty() {
+	return (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0);
+}
+
+const RMRect& RMRect::operator=(const RMRect &rc) {
+	CopyRect(rc);
+	return *this;
+}
+
+void RMRect::Offset(int xOff, int yOff) {
+	x1 += xOff;
+	y1 += yOff;
+	x2 += xOff;
+	y2 += yOff;
+}
+
+void RMRect::Offset(RMPoint p) {
+	x1 += p.x;
+	y1 += p.y;
+	x2 += p.x;
+	y2 += p.y;
+}
+
+const RMRect &RMRect::operator+=(RMPoint p) {
+	Offset(p);
+	return *this;
+}
+
+const RMRect &RMRect::operator-=(RMPoint p) {
+	Offset(-p);
+	return *this;
+}
+
+RMRect operator+(const RMRect &rc, RMPoint p) {
+	RMRect r(rc);
+	return (r += p);
+}
+
+RMRect operator-(const RMRect& rc, RMPoint p) {
+	RMRect r(rc);
+
+	return (r -= p);
+}
+
+RMRect operator+(RMPoint p, const RMRect& rc) {
+	RMRect r(rc);
+
+	return (r+=p);
+}
+
+RMRect operator-(RMPoint p, const RMRect& rc) {
+	RMRect r(rc);
+
+	return (r+=p);
+}
+
+bool RMRect::operator==(const RMRect& rc) {
+	return ((x1 == rc.x1) && (y1 == rc.y1) && (x2 == rc.x2) && (y2 == rc.y2));
+}
+
+bool RMRect::operator!=(const RMRect& rc) {
+	return ((x1 != rc.x1) || (y1 != rc.y1) || (x2 != rc.x2) || (y2 != rc.y2));
+}
+
+void RMRect::NormalizeRect(void) {
+	SetRect(MIN(x1,x2), MIN(y1,y2), MAX(x1,x2), MAX(y1,y2));
+}
+
+RMDataStream &operator>>(RMDataStream &ds, RMRect &rc) {
+	ds >> rc.x1 >> rc.y1 >> rc.x2 >> rc.y2;
+	return ds;
+}
+
 
 /****************************************************************************\
 *       Resource Update
@@ -68,7 +945,7 @@ void RMResUpdate::Init(const Common::String &fileName) {
 	}
 }
 
-const byte *RMResUpdate::QueryResource(uint32 dwRes) {
+HGLOBAL RMResUpdate::QueryResource(uint32 dwRes) {
 	// If there isn't an update file, return NULL
 	if (!_hFile.isOpen())
 		return NULL;
@@ -98,7 +975,8 @@ const byte *RMResUpdate::QueryResource(uint32 dwRes) {
 	}
 
 	// Allocate space for the output resource
-	byte *lpDestBuf = new byte[info.size];
+	HGLOBAL destBuf = GlobalAllocate(info.size);
+	byte *lpDestBuf = (byte *)GlobalLock(destBuf);
 	uint32 dwSize;
 
 	// Decompress the data
@@ -108,6 +986,7 @@ const byte *RMResUpdate::QueryResource(uint32 dwRes) {
 	delete [] cmpBuf;
 
 	// Return the resource
+	GlobalUnlock(destBuf);
 	return lpDestBuf;
 }
 

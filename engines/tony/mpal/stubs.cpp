@@ -37,45 +37,6 @@ namespace Tony {
 namespace MPAL {
 
 /**
- * Allocates a memory block
- */
-byte *GlobalAlloc(uint16 flags, int size) {
-	byte *result = (byte *)malloc(size);
-
-	if (flags & GMEM_ZEROINIT)
-		Common::fill(result, result + size, 0);
-
-	return result;
-}
-
-/**
- * Lock a global handle
- * @param h		Global handle
- * @remarks		Since HGLOBALs are directly representing the pointers anyway,
- *				simply return it
- */
-void *GlobalLock(HGLOBAL h) {
-	return h;
-}
-
-/**
- * Unlock a global handle
- * @param h		Global handle
- * @remarks		Since HGLOBALs are directly representing the pointers anyway,
- *				the unlock method doesn't need to do anything
- */
-void GlobalUnlock(HGLOBAL h) {
-}
-
-/**
- * Free a globally allocated memory block
- * @param h		Global handle
- */
-void GlobalFree(HGLOBAL h) {
-	free(h);
-}
-
-/**
  * Display a message
  * @param msg		Message to display
  */

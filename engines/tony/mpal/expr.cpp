@@ -48,8 +48,10 @@
  **************************************************************************/
 
 #include "mpal.h"
+#include "memory.h"
 #include "mpaldll.h"
 #include "stubs.h"
+#include "tony/tony.h"
 
 /*
 #include "lzo1x.h"
@@ -149,7 +151,7 @@ static byte *DuplicateExpression(HGLOBAL h) {
 	num=*(byte *)orig;
 	one=(LPEXPRESSION)(orig+1);
 
-	clone=GlobalAlloc(GMEM_FIXED,sizeof(EXPRESSION)*num+1);
+	clone = (byte *)GlobalAlloc(GMEM_FIXED, sizeof(EXPRESSION)*num+1);
 	two=(LPEXPRESSION)(clone+1);
 
 	CopyMemory(clone,orig,sizeof(EXPRESSION)*num+1);

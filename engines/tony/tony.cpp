@@ -78,8 +78,12 @@ Common::ErrorCode TonyEngine::Init() {
 	// Initialise the music
 	InitMusic();
 
+	// Initialise the voices database
 	if (!OpenVoiceDatabase())
 		return Common::kReadingFailed;
+
+	// Initialise the boxes
+	_theBoxes.Init();
 
 	return Common::kNoError;
 }
