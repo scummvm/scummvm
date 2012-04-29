@@ -126,6 +126,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_skipDisplayFlag1 = 1;
 	_skipDisplayFlag2 = 0;
 	_displayMap = 0;
+	_debugFlag = 0;
+	_byte14837 = 0;
 
 	_scriptHandler = new LilliputScript(this);
 	_soundHandler = new LilliputSound(this);
