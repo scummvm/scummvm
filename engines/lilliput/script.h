@@ -46,6 +46,7 @@ public:
 	byte _array10AB1[40];
 	byte _array122FD[20];
 	byte _array122C1[40];
+	byte _array10A39[40];
 	short _array10B51[40 * 40];
 
 	byte *_savedBuffer215Ptr;
@@ -93,6 +94,7 @@ private:
 	int _word16F00;
 	int _word10804;
 	int _word18776;
+	int _word18821;
 
 	int handleOpcode(ScriptStream *script);
 	byte handleOpcodeType1(int curWord);
@@ -114,6 +116,7 @@ private:
 	void sub18B7C(int var1, int var3);
 	void sub189B8();
 	void sub189F5();
+	int sub17285(int index);
 
 	int getValue1();
 	int getValue2();
