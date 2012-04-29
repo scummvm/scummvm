@@ -77,6 +77,7 @@ namespace MPAL {
 #define TEST_LB(m_pos)      ((void) 0)
 
 #define M2_MAX_OFFSET   0x0800
+#define LZO1X
 
 /**
  * Decompresses an LZO compressed resource
