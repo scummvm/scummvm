@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "tony/tony.h"
 #include "tony/mpal/mpal.h"
@@ -36,6 +37,8 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 }
 
 TonyEngine::~TonyEngine() {
+	// Close the voice database
+	CloseVoiceDatabase();
 }
 
 /**
@@ -72,6 +75,12 @@ Common::ErrorCode TonyEngine::Init() {
 	// Initialise the update resources
 	_resUpdate.Init("ROASTED.MPU");
 
+	// Initialise the music
+	InitMusic();
+
+	if (!OpenVoiceDatabase())
+		return Common::kReadingFailed;
+
 	return Common::kNoError;
 }
 
@@ -80,6 +89,68 @@ Common::ErrorCode TonyEngine::Init() {
  */
 void TonyEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
+}
+
+void TonyEngine::InitMusic() {
+	warning("TODO: TonyEngine::InitMusic");
+}
+
+void TonyEngine::CloseMusic() {
+	warning("TODO: TonyEngine::CloseMusic");
+}
+
+void TonyEngine::PauseSound(bool bPause) {
+}
+
+void TonyEngine::SetMusicVolume(int nChannel, int volume) {
+}
+
+int TonyEngine::GetMusicVolume(int nChannel) {
+	return 255;
+}
+
+bool TonyEngine::OpenVoiceDatabase() {
+	char id[4];
+	uint32 numfiles;
+
+	// Add the voices folder to the search directory list
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
+
+	// Open the voices database
+	if (!_vdbFP.open("voices.vdb"))
+		return false;
+
+	_vdbFP.seek(-8, SEEK_END);
+	numfiles = _vdbFP.readUint32LE();
+	_vdbFP.read(id, 4);
+
+	if (id[0] != 'V' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+		_vdbFP.close();
+		return false;
+	}
+
+	// Read in the index
+	_vdbFP.seek(-8 - (numfiles * VOICE_HEADER_SIZE), SEEK_END);
+
+	for (uint32 i = 0; i < numfiles; ++i) {
+		VoiceHeader vh;
+		vh.offset = _vdbFP.readUint32LE();
+		vh.code = _vdbFP.readUint32LE();
+		vh.parts = _vdbFP.readUint32LE();
+
+		_voices.push_back(vh);
+	}
+
+	return true;
+}
+
+void TonyEngine::CloseVoiceDatabase() {
+	if (_vdbFP.isOpen())
+		_vdbFP.close();
+
+	if (_voices.size() > 0)
+		_voices.clear();
 }
 
 } // End of namespace Tony

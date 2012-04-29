@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/array.h"
 #include "common/error.h"
 #include "common/random.h"
 #include "common/util.h"
@@ -58,9 +59,23 @@ enum {
 
 struct TonyGameDescription;
 
+struct VoiceHeader {
+	int offset;
+	int code;
+	int parts;
+};
+#define VOICE_HEADER_SIZE 12
+
 class TonyEngine : public Engine {
 private:
 	Common::ErrorCode Init();
+	void InitMusic();
+	void CloseMusic();
+	void PauseSound(bool bPause);
+	void SetMusicVolume(int nChannel, int volume);
+	int GetMusicVolume(int nChannel);
+	bool OpenVoiceDatabase();
+	void CloseVoiceDatabase();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -69,6 +84,8 @@ public:
 	LPCUSTOMFUNCTION FuncList[300];
 	Common::RandomSource _randomSource;
 	RMResUpdate _resUpdate;
+	Common::File _vdbFP;
+	Common::Array<VoiceHeader> _voices;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();
