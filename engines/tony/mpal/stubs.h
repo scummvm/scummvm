@@ -43,7 +43,7 @@ namespace MPAL {
 typedef void *HGLOBAL;
 typedef void *HANDLE;
 
-typedef uint32 (__stdcall *LPTHREAD_START_ROUTINE)(void *lpThreadParameter);
+typedef uint32 (*LPTHREAD_START_ROUTINE)(void *lpThreadParameter);
 
 /****************************************************************************\
 *       Defines
