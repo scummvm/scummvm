@@ -31,6 +31,7 @@
 #include "engines/engine.h"
 
 #include "tony/mpal/mpal.h"
+#include "tony/utils.h"
 
 /**
  * This is the namespace of the Tony engine.
@@ -67,6 +68,7 @@ protected:
 public:
 	LPCUSTOMFUNCTION FuncList[300];
 	Common::RandomSource _randomSource;
+	RMResUpdate _resUpdate;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();

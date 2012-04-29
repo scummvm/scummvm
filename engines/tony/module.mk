@@ -3,6 +3,7 @@ MODULE := engines/tony
 MODULE_OBJS := \
 	detection.o \
 	tony.o \
+	utils.o \
 	mpal/expr.o \
 	mpal/loadmpc.o \
 	mpal/mpal.o \
