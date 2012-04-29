@@ -69,6 +69,9 @@ Common::ErrorCode TonyEngine::Init() {
 	if (!mpalInit("ROASTED.MPC", "ROASTED.MPR", FuncList))
 		return Common::kUnknownError;
 
+	// Initialise the update resources
+	_resUpdate.Init("ROASTED.MPU");
+
 	return Common::kNoError;
 }
 
