@@ -85,6 +85,9 @@ Common::ErrorCode TonyEngine::Init() {
 	// Initialise the boxes
 	_theBoxes.Init();
 
+	// Link to the custom graphics engine
+
+
 	return Common::kNoError;
 }
 

@@ -75,6 +75,10 @@ public:
 #define GlobalUnlock(handle)		{}
 #define GlobalSize(handle)			(_vm->_memoryManager.getItem(handle).Size())
 
+#define GMEM_FIXED 1
+#define GMEM_MOVEABLE 2
+#define GMEM_ZEROINIT 4
+
 } // end of namespace MPAL
 
 } // end of namespace Tony

@@ -1,0 +1,399 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+/**************************************************************************
+ *                                     ออออออออออออออออออออออออออออออออออ *
+ *                                             Nayma Software srl         *
+ *                    e                -= We create much MORE than ALL =- *
+ *        u-        z$$$c        '.    ออออออออออออออออออออออออออออออออออ *
+ *      .d"        d$$$$$b        "b.                                     *
+ *   .z$*         d$$$$$$$L        ^*$c.                                  *
+ *  #$$$.         $$$$$$$$$         .$$$" Project: Roasted Moths........  *
+ *    ^*$b       4$$$$$$$$$F      .d$*"                                   *
+ *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Font.CPP.............  *
+ *        *$.    '$$$$$$$$$     4$P 4                                     *
+ *     J   *$     "$$$$$$$"     $P   r    Author:  Giovanni Bajo........  *
+ *    z$   '$$$P*4c.*$$$*.z@*R$$$    $.                                   *
+ *   z$"    ""       #$F^      ""    '$c                                  *
+ *  z$$beu     .ue="  $  "=e..    .zed$$c                                 *
+ *      "#$e z$*"   .  `.   ^*Nc e$""                                     *
+ *         "$$".  .r"   ^4.  .^$$"                                        *
+ *          ^.@*"6L=\ebu^+C$"*b."                                         *
+ *        "**$.  "c 4$$$  J"  J$P*"    OS:  [ ] DOS  [X] WIN95  [ ] PORT  *
+ *            ^"--.^ 9$"  .--""      COMP:  [ ] WATCOM  [X] VISUAL C++    *
+ *                    "                     [ ] EIFFEL  [ ] GCC/GXX/DJGPP *
+ *                                                                        *
+ * This source code is Copyright (C) Nayma Software.  ALL RIGHTS RESERVED *
+ *                                                                        *
+ **************************************************************************/
+
+#ifndef TONY_FONT_H
+#define TONY_FONT_H
+
+#include "common/system.h"
+#include "tony/gfxcore.h"
+#include "tony/resid.h"
+
+namespace Tony {
+
+class RMInventory;
+
+/**
+ * Gestisce un font, in cui ha varie surface per ogni lettera
+ */
+class RMFont : public RMGfxTaskSetPrior {
+protected:
+    int nLetters;
+    RMGfxSourceBuffer8RLEByte *m_letter;
+public:
+    int m_fontDimx,m_fontDimy;
+
+private:
+    int m_dimx,m_dimy;
+
+    class RMFontPrimitive : public RMGfxPrimitive {
+    public:
+        RMFontPrimitive() : RMGfxPrimitive() {}
+        RMFontPrimitive(RMGfxTask *task) : RMGfxPrimitive(task) {}
+
+        virtual RMGfxPrimitive* Duplicate() { return new RMFontPrimitive(*this); }
+
+        int m_nChar;
+    };
+
+protected:
+    // Caricamento del font
+    void Load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
+    void Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
+
+    // Scaricamente del font (anche da distruttore)
+    void Unload(void);
+
+protected:
+    // Conversione (da overloadare)
+    virtual int ConvertToLetter(int nChar) = 0;
+
+    // Lunghezza dei caratteri (da overloadare)
+    virtual int LetterLength(int nChar, int nNext=0) = 0;
+
+public:
+    virtual int LetterHeight(void) = 0;
+
+public:
+    RMFont();
+    virtual ~RMFont();
+
+    // Inizializzazione e chiusura 
+    virtual void Init(void) = 0;
+    virtual void Close(void);
+
+    // Funzione del task da overloadare
+    void Draw(RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
+
+    // Crea una primitiva per una lettera
+    RMGfxPrimitive *MakeLetterPrimitive(byte bChar, int& nLength);
+
+    // Lunghezza in pixel di una stringa con il font corrente
+    int StringLen(RMString text);
+    int StringLen(char bChar, char bNext=0);
+};
+
+
+class RMFontColor : public virtual RMFont {
+private:
+    byte m_r,m_g,m_b;
+
+public:
+    RMFontColor();
+	virtual ~RMFontColor();
+    virtual void SetBaseColor(byte r, byte g, byte b);
+};
+
+
+class RMFontWithTables : public virtual RMFont {
+protected:
+    int cTable[256];
+    int lTable[256];
+    int lDefault;
+    int hDefault;
+    signed char l2Table[256][256];
+
+protected:
+    // Overload dei metodi
+    int ConvertToLetter(int nChar) { return cTable[nChar]; }
+    int LetterLength(int nChar, int nNext=0) { return (nChar!=-1 ? lTable[nChar]+l2Table[nChar][nNext] : lDefault); }
+    
+public:
+    int LetterHeight() { return hDefault; }
+	virtual ~RMFontWithTables() {}
+};
+
+
+class RMFontParla : public RMFontColor, public RMFontWithTables {
+public:
+    void Init(void);
+	virtual ~RMFontParla() {}
+};
+
+class RMFontObj : public RMFontColor, public RMFontWithTables {
+private:
+    void SetBothCase(int nChar, int nNext, signed char spiazz);
+
+public:
+    void Init(void);
+	virtual ~RMFontObj() {}
+};
+
+class RMFontMacc : public RMFontColor, public RMFontWithTables {
+public:
+    void Init(void);
+	virtual ~RMFontMacc() {}
+};
+
+class RMFontCredits : public RMFontColor, public RMFontWithTables {
+public:
+    void Init(void);
+	virtual ~RMFontCredits() {}
+    virtual void SetBaseColor(byte r, byte g, byte b) {}
+};
+
+/**
+ * Gestisce una scritta su schermo, con tutte le possibilita' di formattazione disponibile
+ */
+class RMText : public RMGfxWoodyBuffer {
+private:
+    static RMFontColor *m_fonts[4];
+    static RMGfxClearTask m_clear;
+	static OSystem::MutexRef m_cs;
+    int maxLineLength;
+
+public:
+    enum HORALIGN {
+		HLEFT,
+		HLEFTPAR,
+		HCENTER,
+		HRIGHT
+    };
+
+    enum VERALIGN {
+		VTOP,
+		VCENTER,
+		VBOTTOM
+    };
+
+private:
+	HORALIGN aHorType;
+    VERALIGN aVerType;
+    byte m_r,m_g,m_b;
+
+protected:
+    virtual void ClipOnScreen(RMGfxPrimitive* prim);
+
+public:
+    RMText();
+    virtual ~RMText();
+
+    // Setta il tipo di allineamento
+    void SetAlignType(HORALIGN aHor, VERALIGN aVer) { aHorType=aHor; aVerType=aVer; }
+    
+    // Setta la lunghezza massima di una linea in pixel (utilizzato per formattare il testo)
+    void SetMaxLineLength(int max);
+
+    // Scrive un testo
+    void WriteText(RMString text, int font, int *time = NULL);
+    void WriteText(RMString text, RMFontColor* font, int *time = NULL);
+
+    // Overloading della funzione ereditata da RMGfxTask per decidere
+    // quando eliminare un oggetto dalla OTLIST
+    virtual bool RemoveThis(void);
+
+    // Overloading del Draw per centrare la scritta, se necessario
+    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+
+    // Setta il colore di base
+    void SetColor(byte r, byte g, byte b) { m_r=r; m_g=g; m_b=b; }
+};
+
+/**
+ * Gestisce il testo di un dialogo 
+ */
+class RMTextDialog : public RMText
+{
+  protected:
+    int m_startTime;
+    int m_time;
+    bool m_bSkipStatus;
+    RMPoint dst;
+    HANDLE hEndDisplay;
+    bool m_bShowed;
+	bool m_bForceTime;
+    bool m_bForceNoTime;
+	HANDLE hCustomSkip;
+    HANDLE hCustomSkip2;
+    RMInput* m_input;
+	bool m_bAlwaysDisplay;
+	bool m_bNoTab;
+
+  public:
+    RMTextDialog();
+    virtual ~RMTextDialog();
+
+    // Scrive un testo
+    void WriteText(RMString text, int font, int *time=NULL);
+    void WriteText(RMString text, RMFontColor* font, int *time=NULL);
+
+    // Overloading della funzione ereditata da RMGfxTask per decidere
+    // quando eliminare un oggetto dalla OTLIST
+    virtual bool RemoveThis(void);
+
+    // Overloading della funzione di deregistrazione, utilizzata per capire
+    // quando ci leviamo di torno
+    virtual void Unregister(void);
+
+    // Overloading del Draw per centrare la scritta, se necessario
+    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+
+    // Setta la posizione
+    void SetPosition(RMPoint pt) { dst=pt; }
+
+    // Aspetta che venga finita la visualizzazione
+    void WaitForEndDisplay(void);
+    void SetCustomSkipHandle(HANDLE hCustomSkip);
+    void SetCustomSkipHandle2(HANDLE hCustomSkip);
+    void SetSkipStatus(bool bEnabled);
+	void SetForcedTime(uint32 dwTime);
+	void SetNoTab(void);
+	void ForceTime(void);
+	void ForceNoTime(void);
+	void SetAlwaysDisplay(void);
+    
+    // Setta il dispositivo di input, per permettere skip da mouse
+    void SetInput(RMInput* input);
+
+    void Show(void);
+    void Hide(void);
+};
+
+class RMTextDialogScrolling : public RMTextDialog {
+protected:
+    RMLocation* curLoc;
+    RMPoint startScroll;
+
+    virtual void ClipOnScreen(RMGfxPrimitive* prim);
+
+public:
+    RMTextDialogScrolling();
+    RMTextDialogScrolling(RMLocation* loc);
+	virtual ~RMTextDialogScrolling();
+
+    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+};
+
+
+/****************************************************************************\
+*       class RMTextItemName
+*       --------------------
+* Description: Gestisce il nome dell'oggetto selezionato su schermo
+\****************************************************************************/
+
+class RMTextItemName : protected RMText {
+protected:
+    RMPoint m_mpos;
+    RMPoint m_curscroll;
+    RMItem* m_item;
+    RMString m_itemName;
+
+public:
+    RMTextItemName();
+	virtual ~RMTextItemName();
+    
+    void SetMouseCoord(RMPoint m) { m_mpos=m; }
+
+    void DoFrame(RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
+    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+
+    RMPoint GetHotspot() { if (m_item==NULL) return m_mpos+m_curscroll; else return m_item->Hotspot();  }
+    RMItem* GetSelectedItem() { return m_item; }
+    bool IsItemSelected() { return m_item!=NULL; }
+    bool IsNormalItemSelected() { return m_item!=NULL && m_itemName.Length()>0; }
+
+    virtual bool RemoveThis() { return true; }
+};
+
+
+/**
+ * Gestisce la schermata di scelta delle voci di un dialogo
+ */
+class RMDialogChoice : public RMGfxWoodyBuffer {
+private:
+    int m_curSelection;
+    int m_numChoices;
+    RMText* m_drawedStrings;
+    RMPoint *m_ptDrawStrings;
+    int m_curAdded;
+    bool m_bShow;
+    RMGfxSourceBuffer8 DlgText;
+    RMGfxSourceBuffer8 DlgTextLine;
+    RMPoint m_ptDrawPos;
+    HANDLE hUnreg;
+    bool bRemoveFromOT;
+
+protected:
+    void Prepare(void);
+    void SetSelected(int pos);
+  
+public:
+    bool RemoveThis(void);
+    void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+    void Unregister(void);
+
+public:
+    // Inizializzazione
+    RMDialogChoice();
+    virtual ~RMDialogChoice();
+
+    // Inizializzazione e chiusura
+    void Init(void);
+    void Close(void);
+  
+    // Setta il numero delle frasi possibili, che dovranno essere poi aggiunte 
+    // con AddChoice()
+    void SetNumChoices(int num);
+
+    // Aggiunge una stringa con la scelta
+    void AddChoice(RMString string);
+
+    // Mostra e nasconde la scelta, con eventuali animazioni
+    // NOTA: Se non viene passato parametro alla Show(), ่ obbligo del 
+    // chiamante assicurarsi che la classe venga inserita alla OTlist
+    void Show(RMGfxTargetBuffer* bigBuf = NULL);
+    void Hide(void);
+
+    // Polling di aggiornamento
+    void DoFrame(RMPoint ptMousePos);
+
+    // Ritorna la voce attualmente selezionata, o -1 se nessuna ่ selezionata
+    int GetSelection(void);
+};
+
+} // End of namespace Tony
+
+#endif

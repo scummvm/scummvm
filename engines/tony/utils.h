@@ -28,14 +28,14 @@
  *   .z$*         d$$$$$$$L        ^*$c.                                  *
  *  #$$$.         $$$$$$$$$         .$$$" Project: Roasted Moths........  *
  *    ^*$b       4$$$$$$$$$F      .d$*"                                   *
- *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Loc.CPP..............  *
+ *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Utils.CPP............  *
  *        *$.    '$$$$$$$$$     4$P 4                                     *
  *     J   *$     "$$$$$$$"     $P   r    Author:  Giovanni Bajo........  *
  *    z$   '$$$P*4c.*$$$*.z@*R$$$    $.                                   *
- *   z$"    ""       #$F^      ""    '$c  Desc:    Classi di gestione     *
- *  z$$beu     .ue="  $  "=e..    .zed$$c          dei dati di una loca-  *
- *      "#$e z$*"   .  `.   ^*Nc e$""              zione................  *
- *         "$$".  .r"   ^4.  .^$$"                 .....................  *
+ *   z$"    ""       #$F^      ""    '$c                                  *
+ *  z$$beu     .ue="  $  "=e..    .zed$$c                                 *
+ *      "#$e z$*"   .  `.   ^*Nc e$""                                     *
+ *         "$$".  .r"   ^4.  .^$$"                                        *
  *          ^.@*"6L=\ebu^+C$"*b."                                         *
  *        "**$.  "c 4$$$  J"  J$P*"    OS:  [ ] DOS  [X] WIN95  [ ] PORT  *
  *            ^"--.^ 9$"  .--""      COMP:  [ ] WATCOM  [X] VISUAL C++    *

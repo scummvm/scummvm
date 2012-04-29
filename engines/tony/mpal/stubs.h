@@ -47,10 +47,6 @@ typedef uint32 (*LPTHREAD_START_ROUTINE)(void *lpThreadParameter);
 *       Defines
 \****************************************************************************/
 
-#define GMEM_FIXED 1
-#define GMEM_MOVEABLE 2
-#define GMEM_ZEROINIT 4
-
 #define MB_OK 1
 
 #define PASCAL

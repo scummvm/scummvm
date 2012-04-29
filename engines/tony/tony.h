@@ -33,6 +33,7 @@
 
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/memory.h"
+#include "tony/gfxEngine.h"
 #include "tony/loc.h"
 #include "tony/utils.h"
 
@@ -91,6 +92,7 @@ public:
 	Common::Array<VoiceHeader> _voices;
 	// Bounding box list manager
 	RMGameBoxes _theBoxes;
+	RMGfxEngine _theEngine;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();

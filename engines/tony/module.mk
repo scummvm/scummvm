@@ -2,7 +2,12 @@ MODULE := engines/tony
 
 MODULE_OBJS := \
 	detection.o \
+	game.o \
+	gfxcore.o \
+	gfxengine.o \
+	input.o \
 	loc.o \
+	sound.o \
 	tony.o \
 	utils.o \
 	mpal/expr.o \
