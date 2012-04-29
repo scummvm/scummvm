@@ -251,7 +251,7 @@ private:
 	void OC_sub18367();
 	void OC_sub17D04();
 	void OC_sub18387();
-	void OC_setByte14835();
+	void OC_setDebugFlag();
 	void OC_setByte14837();
 	void OC_sub183A2();
 	void OC_sub183C6();

@@ -467,7 +467,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub18387();
 		break;
 	case 0x4B:
-		OC_setByte14835();
+		OC_setDebugFlag();
 		break;
 	case 0x4C:
 		OC_setByte14837();
@@ -2342,11 +2342,20 @@ void LilliputScript::OC_sub1801D() {
 void LilliputScript::OC_sub1805D() {
 	warning("OC_sub1805D");
 }
+
 void LilliputScript::OC_sub18074() {
-	warning("OC_sub18074");
+	debugC(1, kDebugScript, "OC_sub18074()");
+
+	int var2 = _currScript->readUint16LE();
+	byte var1 = (_currScript->readUint16LE() & 0xFF);
+
+	_vm->_rulesBuffer2_16[(_vm->_rulesBuffer2PrevIndx * 32) + var2] = var1;
 }
+
 void LilliputScript::OC_sub1808B() {
-	warning("OC_sub1808B");
+	debugC(1, kDebugScript, "OC_sub1808B()");
+
+	_vm->_rulesBuffer2_9[_vm->_rulesBuffer2PrevIndx] = (_currScript->readUint16LE() & 0xFF);
 }
 
 void LilliputScript::OC_sub18099() {
@@ -2451,13 +2460,30 @@ void LilliputScript::OC_sub18213() {
 }
 
 void LilliputScript::OC_sub18252() {
-	warning("OC_sub18252");
+	debugC(1, kDebugScript, "OC_sub18252()");
+
+	int index = getValue1();
+	assert(index < 40);
+
+	_vm->_array12299[index] = 4;
 }
+
 void LilliputScript::OC_sub18260() {
 	warning("OC_sub18260");
 }
+
 void LilliputScript::OC_sub182EC() {
-	warning("OC_sub182EC");
+	debugC(1, kDebugScript, "OC_sub182EC()");
+
+	byte *tmpArr = getBuffer215Ptr();
+
+	byte var1 = (_currScript->readUint16LE() & 0xFF);
+	byte var2 = (_currScript->readUint16LE() & 0xFF);
+
+	if (var2 == 0)
+		tmpArr[0] = (0xFF ^ var1);
+	else
+		tmpArr[0] |= var1;
 }
 
 void LilliputScript::OC_PaletteFadeOut() {
@@ -2487,7 +2513,6 @@ void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
 	_vm->_bufferCubegfx = _vm->loadVGA(fileName, false);
 	_vm->displayFunction9();
 	_vm->displayFunction15();
-
 }
 
 void LilliputScript::OC_sub1834C() {
@@ -2505,8 +2530,15 @@ void LilliputScript::OC_sub18359() {
 	int var1 = _currScript->readUint16LE();
 	_array122C1[_vm->_rulesBuffer2PrevIndx] = var1;
 }
+
 void LilliputScript::OC_sub18367() {
-	warning("OC_sub18367");
+	debugC(1, kDebugScript, "OC_sub18367()");
+
+	_characterScriptEnabled[_vm->_rulesBuffer2PrevIndx] = 1;
+	_vm->_ptr_rulesBuffer2_15[0] = _array122C1[_vm->_rulesBuffer2PrevIndx];
+	_vm->_ptr_rulesBuffer2_15[1] = 0;
+	_vm->_ptr_rulesBuffer2_15[2] = 0;
+	_vm->_ptr_rulesBuffer2_15[3] = 0;
 }
 
 void LilliputScript::OC_sub17D04() {
@@ -2519,14 +2551,27 @@ void LilliputScript::OC_sub17D04() {
 }
 
 void LilliputScript::OC_sub18387() {
-	warning("OC_sub18387");
+	debugC(1, kDebugScript, "OC_sub18387()");
+
+	int index = getValue1();
+	byte var1 = _currScript->readUint16LE() & 0xFF;
+
+	assert(index < 40);
+	_vm->_rulesBuffer2_10[index] = var1;
 }
-void LilliputScript::OC_setByte14835() {
-	warning("OC_setByte14835");
+
+void LilliputScript::OC_setDebugFlag() {
+	debugC(1, kDebugScript, "OC_setDebugFlag()");
+
+	_vm->_debugFlag = 1;
 }
+
 void LilliputScript::OC_setByte14837() {
-	warning("OC_setByte14837");
+	debugC(1, kDebugScript, "OC_setByte14837()");
+
+	_vm->_byte14837 = 1;
 }
+
 void LilliputScript::OC_sub183A2() {
 	warning("OC_sub183A2");
 }
