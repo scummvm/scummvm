@@ -30,7 +30,6 @@ namespace Lilliput {
 
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
 	_byte129A0 = 0xFF;
-	displayMap = 0;
 	_byte1855D = 0;
 	_byte12A04 = 0;
 	_byte10806 = 0;
@@ -764,14 +763,6 @@ void LilliputScript::runMenuScript(ScriptStream script) {
 		_vm->update();
 }
 
-void LilliputScript::sub1863B() {
-	_vm->_arr18560[0]._field0 = 0;
-	_vm->_arr18560[1]._field0 = 0;
-	_vm->_arr18560[2]._field0 = 0;
-	_vm->_arr18560[3]._field0 = 0;
-	_word1855E = 0;
-}
-
 void LilliputScript::sub185ED(byte index, byte subIndex) {
 	debugC(2, kDebugScript, "sub185ED");
 	if (_vm->_arr18560[index]._field0 != 1)
@@ -929,7 +920,7 @@ void LilliputScript::sub17D40(bool &forceReturnFl) {
 	debugC(1, kDebugScript, "sub17D40()");
 
 	forceReturnFl = false;
-	if ((displayMap != 1) && (_vm->_characterRelativePositionX[_vm->_rulesBuffer2PrevIndx] != 0xFF))
+	if ((_vm->_displayMap != 1) && (_vm->_characterRelativePositionX[_vm->_rulesBuffer2PrevIndx] != 0xFF))
 		return;
 
 	forceReturnFl = true;
@@ -2472,30 +2463,17 @@ void LilliputScript::OC_sub182EC() {
 void LilliputScript::OC_PaletteFadeOut() {
 	debugC(1, kDebugScript, "OC_PaletteFadeOut()");
 
-	sub1863B();
-	byte palette[768];
-	for (int fade = 256; fade >= 0;	fade -= 8) {
-		for (int i = 0; i < 768; i++) {
-			palette[i] = (_vm->_curPalette[i] * fade) >> 8;
-		}
-		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(20);
-	}
+	_byte12A09 = 1;
+	_vm->paletteFadeOut();
+	_byte12A09 = 0;
 }
 
 void LilliputScript::OC_PaletteFadeIn() {
 	debugC(1, kDebugScript, "OC_PaletteFadeIn()");
 
-	byte palette[768];
-	for (int fade = 8; fade <= 256;	fade += 8) {
-		for (int i = 0; i < 768; i++) {
-			palette[i] = (_vm->_curPalette[i] * fade) >> 8;
-		}
-		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(20);
-	}
+	_byte12A09 = 1;
+	_vm->paletteFadeIn();
+	_byte12A09 = 0;
 }
 
 void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
@@ -2594,7 +2572,7 @@ void LilliputScript::OC_sub1847F() {
 	int var2 = _currScript->readUint16LE();
 	int var4 = _currScript->readUint16LE();
 
-	if (displayMap != 1) {
+	if (_vm->_displayMap != 1) {
 		_vm->displayFunction5();
 		sub18BE6(var1 & 0xFF, var2, var4);
 		_vm->displayFunction4();
@@ -2667,7 +2645,7 @@ void LilliputScript::OC_sub1853B() {
 	debugC(1, kDebugScript, "OC_sub1853B()");
 
 	OC_PaletteFadeOut();
-	displayMap = 0;
+	_vm->_displayMap = 0;
 	_heroismLevel = 0;
 	sub130B6();
 

@@ -35,7 +35,6 @@ class LilliputEngine;
 
 class LilliputScript {
 public:
-	byte displayMap;
 	byte _byte12A04;
 	byte _heroismLevel;
 
@@ -57,6 +56,7 @@ public:
 	int _word1881B;
 	int _heroismBarX;
 	int _heroismBarBottomY;
+	int _word1855E;
 
 	short _array12311[640];
 	byte _array128EF[40];
@@ -92,14 +92,12 @@ private:
 
 	int _word16F00;
 	int _word10804;
-	int _word1855E;
 	int _word18776;
 
 	int handleOpcode(ScriptStream *script);
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 	
-	void sub1863B();
 	void sub185ED(byte index, byte subIndex);
 	void sub185B4_display();
 	void sub1823E(byte var1, byte var2, byte *curBufPtr);

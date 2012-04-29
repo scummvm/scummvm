@@ -125,6 +125,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_savedMousePosDivided = 0xFFFF;
 	_skipDisplayFlag1 = 1;
 	_skipDisplayFlag2 = 0;
+	_displayMap = 0;
 
 	_scriptHandler = new LilliputScript(this);
 	_soundHandler = new LilliputSound(this);
@@ -450,7 +451,7 @@ void LilliputEngine::displayFunction7() {
 void LilliputEngine::displayFunction8() {
 	debugC(2, kDebugEngine, "displayFunction8()");
 
-	if (_scriptHandler->displayMap == 1)
+	if (_displayMap == 1)
 		return;
 
 	displayFunction5();
@@ -617,7 +618,7 @@ void LilliputEngine::displayFunction13(byte *buf, int var1, int var2, int var3) 
 void LilliputEngine::displayFunction14() {
 	debugC(2, kDebugEngine, "displayFunction14()");
 
-	if (_scriptHandler->displayMap == 1)
+	if (_displayMap == 1)
 		return;
 
 	if (_mouseDisplayX > 48)
@@ -778,8 +779,12 @@ void LilliputEngine::displayFunction15() {
 void LilliputEngine::displayFunction16() {
 	debugC(2, kDebugEngine, "displayFunction16()");
 
-	if (_scriptHandler->displayMap == 1) {
-		warning("sub_15F31");
+	if (_displayMap == 1) {
+		bool forceReturnFl = false;
+		sub15F31(forceReturnFl);
+		if (forceReturnFl)
+			return;
+
 		restoreMapPoints();
 		sub16626();
 		sub12F37();
@@ -803,8 +808,46 @@ void LilliputEngine::displayFunction16() {
 	}
 }
 
-int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
-{
+void LilliputEngine::sub1863B() {
+	_arr18560[0]._field0 = 0;
+	_arr18560[1]._field0 = 0;
+	_arr18560[2]._field0 = 0;
+	_arr18560[3]._field0 = 0;
+	_scriptHandler->_word1855E = 0;
+}
+
+void LilliputEngine::paletteFadeOut() {
+	debugC(2, kDebugEngine, "paletteFadeOut()");
+
+	sub1863B();
+	byte palette[768];
+	for (int fade = 256; fade >= 0;	fade -= 8) {
+		for (int i = 0; i < 768; i++) {
+			palette[i] = (_curPalette[i] * fade) >> 8;
+		}
+		_system->getPaletteManager()->setPalette(palette, 0, 256);
+		_system->updateScreen();
+		_system->delayMillis(20);
+	}
+}
+
+void LilliputEngine::paletteFadeIn() {
+	debugC(2, kDebugEngine, "paletteFadeIn()");
+
+	byte palette[768];
+	for (int fade = 8; fade <= 256;	fade += 8) {
+		for (int i = 0; i < 768; i++) {
+			palette[i] = (_curPalette[i] * fade) >> 8;
+		}
+		_system->getPaletteManager()->setPalette(palette, 0, 256);
+		_system->updateScreen();
+		_system->delayMillis(20);
+	}
+}
+
+int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
+	debugC(2, kDebugEngine, "sub16DD5(%d, %d, %d, %d)", x1, y1, x2, y2);
+
 	byte *isoMap = _bufferIsoMap + (x1 << 8) + (y1 << 2) + 1;
 
 	int dx = x2 - x1;
@@ -866,6 +909,57 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2)
 		}
 	}
 	return 1;
+}
+
+void LilliputEngine::sub15F75() {
+	debugC(2, kDebugEngine, "sub15F75()");
+
+	_byte129A0 = 0xFF;
+	_savedMousePosDivided = 0xFFFF;
+	byte newX = _mouseX >> 2; 
+	byte newY = _mouseY / 3;
+
+	if ((newX >= 64) || (newY >= 64))
+		return;
+	
+	_savedMousePosDivided = (newX << 8) + newY;
+	_byte16F07_menuId = 5;
+}
+
+void LilliputEngine::sub130B6() {
+	debugC(2, kDebugEngine, "sub130B6()");
+
+	for (int index = 0; index < _word12F68_ERULES; index++) {
+		if (_scriptHandler->_array122E9[index] == 3)
+			_scriptHandler->_array122E9[index] = 2;
+	}
+}
+
+void LilliputEngine::sub15F31(bool &forceReturnFl) {
+	debugC(2, kDebugEngine, "sub15F31()");
+
+	forceReturnFl = false;
+	if (_displayMap != 1)
+		return;
+
+	pollEvent();
+	warning("sub15F31- TODO: Check keyboard");
+
+	if ((_mouseButton & 1) == 0)
+		return;
+
+	_mouseButton = 0;
+	sub15F75();
+	
+	_displayMap = 0;
+	paletteFadeOut();
+	_word15AC2 = 0;
+	sub130B6();
+	displayFunction12();
+	_scriptHandler->_heroismLevel = 0;
+	sub16217();
+	paletteFadeIn();
+	forceReturnFl = true;
 }
 
 void LilliputEngine::sub16CA0() {

@@ -123,6 +123,7 @@ public:
 
 	bool _saveFlag;
 	bool _int8installed;
+	byte _displayMap;
 
 	int _word10800_ERULES;
 	int _numCharacters;
@@ -232,6 +233,11 @@ public:
 	void displayFunction18(int index, int x, int y, int flags);
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
+	void sub130B6();
+	void sub15F75();
+	void sub1863B();
+	void paletteFadeOut();
+	void paletteFadeIn();
 
 	void sortCharacters();
 	void scrollToViewportCharacterTarget();
@@ -265,6 +271,7 @@ public:
 	void sub1546F(byte displayX, byte displayY);
 	void sub15498(byte x, byte y, int var2);
 	void sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex);
+	void sub15F31(bool &forceReturnFl);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
