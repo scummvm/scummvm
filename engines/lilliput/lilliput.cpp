@@ -638,6 +638,8 @@ void LilliputEngine::displayFunction14() {
 }
 
 void LilliputEngine::restoreMapPoints() {
+	debugC(2, kDebugEngine, "restoreMapPoints()");
+
 	displayFunction5();
 
 	byte *buf = (byte *)_mainSurface->getPixels();
@@ -649,6 +651,8 @@ void LilliputEngine::restoreMapPoints() {
 }
 
 void LilliputEngine::displayCharactersOnMap() {
+	debugC(2, kDebugEngine, "displayCharactersOnMap()");
+
 	sub16217();
 	displayFunction5();
 
