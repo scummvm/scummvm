@@ -119,7 +119,9 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_htc_fail(false),
 	_force_redraw(false),
 	_game_texture(0),
+	_game_pbuf(),
 	_overlay_texture(0),
+	_opengl(false),
 	_mouse_texture(0),
 	_mouse_texture_palette(0),
 	_mouse_texture_rgb(0),
@@ -406,6 +408,9 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureAspectRatioCorrection ||
 			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
+#ifdef USE_OPENGL
+			f == kFeatureOpenGL ||
+#endif
 			f == kFeatureOverlaySupportsAlpha);
 }
 

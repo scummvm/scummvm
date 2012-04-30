@@ -50,6 +50,17 @@ static inline GLfixed xdiv(int numerator, int denominator) {
 	return (numerator << 16) / denominator;
 }
 
+// ResidualVM specific method
+void OSystem_Android::launcherInitSize(uint w, uint h) {
+	//setupScreen(w, h, true, false);
+}
+
+// ResidualVM specific method
+bool OSystem_Android::lockMouse(bool lock) {
+	_show_mouse = lock;
+	return true;
+}
+
 const OSystem::GraphicsMode *OSystem_Android::getSupportedGraphicsModes() const {
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 		{ "default", "Default", 0 },
@@ -222,23 +233,36 @@ void OSystem_Android::initViewport() {
 
 	assert(JNI::haveSurface());
 
-	// Turn off anything that looks like 3D ;)
+	if (_opengl) {
+		GLCALL(glEnable(GL_DITHER));
+		GLCALL(glShadeModel(GL_SMOOTH));
+
+		GLCALL(glDisableClientState(GL_VERTEX_ARRAY));
+		GLCALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+
+		GLCALL(glDisable(GL_TEXTURE_2D));
+
+		GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
+	} else {
+		// Turn off anything that looks like 3D ;)
+		GLCALL(glDisable(GL_DITHER));
+		GLCALL(glShadeModel(GL_FLAT));
+
+		GLCALL(glEnableClientState(GL_VERTEX_ARRAY));
+		GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+
+		GLCALL(glEnable(GL_TEXTURE_2D));
+
+		GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
+	}
+
 	GLCALL(glDisable(GL_CULL_FACE));
 	GLCALL(glDisable(GL_DEPTH_TEST));
 	GLCALL(glDisable(GL_LIGHTING));
 	GLCALL(glDisable(GL_FOG));
-	GLCALL(glDisable(GL_DITHER));
-
-	GLCALL(glShadeModel(GL_FLAT));
-	GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
 
 	GLCALL(glEnable(GL_BLEND));
 	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-	GLCALL(glEnableClientState(GL_VERTEX_ARRAY));
-	GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-
-	GLCALL(glEnable(GL_TEXTURE_2D));
 
 	GLCALL(glViewport(0, 0, _egl_surface_width, _egl_surface_height));
 
@@ -310,7 +334,11 @@ void OSystem_Android::clearScreen(FixupType type, byte count) {
 	for (byte i = 0; i < count; ++i) {
 		// clear screen
 		GLCALL(glClearColorx(0, 0, 0, 1 << 16));
-		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+		if (_opengl) {
+			GLCALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+		} else {
+			GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+		}
 
 		switch (type) {
 		case kClear:
@@ -430,6 +458,28 @@ void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
 	_game_texture->updateBuffer(x, y, w, h, buf, pitch);
 }
 
+
+// ResidualVM specific method
+Graphics::PixelBuffer OSystem_Android::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+	_opengl = accel3d;
+	initViewport();
+
+	if (_opengl) {
+		// resize game texture
+		initSize(screenW, screenH, 0);
+		// format is not used by the gfx_opengl driver, use fake format
+		_game_pbuf.set(Graphics::PixelFormat(), 0);
+	} else {
+		Graphics::PixelFormat format = GLES565Texture::pixelFormat();
+		initSize(screenW, screenH, &format);
+		// as there is no support for the texture surface's lock/unlock mechanism in gfx_tinygl/...
+		// do not use _game_texture->surface()->pixels directly
+		_game_pbuf.create(_game_texture->getPixelFormat(),
+				_game_texture->width() * _game_texture->height(), DisposeAfterUse::YES);
+	}
+	return _game_pbuf;
+}
+
 void OSystem_Android::updateScreen() {
 	//ENTER();
 
@@ -438,109 +488,117 @@ void OSystem_Android::updateScreen() {
 	if (!JNI::haveSurface())
 		return;
 
-	if (!_force_redraw &&
-			!_game_texture->dirty() &&
-			!_overlay_texture->dirty() &&
-			!_mouse_texture->dirty())
-		return;
-
-	_force_redraw = false;
-
-	// clear pointer leftovers in dead areas
-	// also, HTC's GLES drivers are made of fail and don't preserve the buffer
-	// ( http://www.khronos.org/registry/egl/specs/EGLTechNote0001.html )
-	if ((_show_overlay || _htc_fail) && !_fullscreen)
-		clearScreen(kClear);
-
-	GLCALL(glPushMatrix());
-
-	if (_shake_offset != 0 ||
-			(!_focus_rect.isEmpty() &&
-			!Common::Rect(_game_texture->width(),
-							_game_texture->height()).contains(_focus_rect))) {
-		// These are the only cases where _game_texture doesn't
-		// cover the entire screen.
-		clearScreen(kClear);
-
-		// Move everything up by _shake_offset (game) pixels
-		GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
-	}
-
-// TODO this doesnt work on those sucky drivers, do it differently
-//	if (_show_overlay)
-//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
-
-	if (_focus_rect.isEmpty()) {
-		_game_texture->drawTextureRect();
-	} else {
-		GLCALL(glPushMatrix());
-
-		GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
-						xdiv(_egl_surface_height, _focus_rect.height()),
-						1 << 16));
-		GLCALL(glTranslatex(-_focus_rect.left << 16,
-							-_focus_rect.top << 16, 0));
-		GLCALL(glScalex(xdiv(_game_texture->width(), _egl_surface_width),
-						xdiv(_game_texture->height(), _egl_surface_height),
-						1 << 16));
-
-		_game_texture->drawTextureRect();
-
-		GLCALL(glPopMatrix());
-	}
-
-	int cs = _mouse_targetscale;
-
-	if (_show_overlay) {
-// TODO see above
-//		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
-
-		// ugly, but the modern theme sets a wacko factor, only god knows why
-		cs = 1;
-
-		GLCALL(_overlay_texture->drawTextureRect());
-	}
-
-	if (_show_mouse && !_mouse_texture->isEmpty()) {
-		GLCALL(glPushMatrix());
-
-		const Common::Point &mouse = getEventManager()->getMousePos();
-
-		// Scale up ResidualVM -> OpenGL (pixel) coordinates
-		if (_show_overlay) {
-			GLCALL(glScalex(xdiv(_egl_surface_width,
-									_overlay_texture->width()),
-							xdiv(_egl_surface_height,
-									_overlay_texture->height()),
-							1 << 16));
-		} else {
-			const Common::Rect &r = _game_texture->getDrawRect();
-
-			GLCALL(glTranslatex(r.left << 16,
-								r.top << 16,
-								0));
-			GLCALL(glScalex(xdiv(r.width(), _game_texture->width()),
-							xdiv(r.height(), _game_texture->height()),
-							1 << 16));
+	if (!_opengl) {
+		if (_game_pbuf) {
+			int pitch = _game_texture->width() * _game_texture->getPixelFormat().bytesPerPixel;
+			_game_texture->updateBuffer(0, 0, _game_texture->width(), _game_texture->height(),
+					_game_pbuf.getRawBuffer(), pitch);
 		}
 
-		GLCALL(glTranslatex((-_mouse_hotspot.x * cs) << 16,
-							(-_mouse_hotspot.y * cs) << 16,
-							0));
+		if (!_force_redraw &&
+				!_game_texture->dirty() &&
+				!_overlay_texture->dirty() &&
+				!_mouse_texture->dirty())
+			return;
 
-		// Note the extra half texel to position the mouse in
-		// the middle of the x,y square:
-		GLCALL(glTranslatex((mouse.x << 16) | 1 << 15,
-							(mouse.y << 16) | 1 << 15, 0));
+		_force_redraw = false;
 
-		GLCALL(glScalex(cs << 16, cs << 16, 1 << 16));
+		// clear pointer leftovers in dead areas
+		// also, HTC's GLES drivers are made of fail and don't preserve the buffer
+		// ( http://www.khronos.org/registry/egl/specs/EGLTechNote0001.html )
+		if ((_show_overlay || _htc_fail) && !_fullscreen)
+			clearScreen(kClear);
 
-		_mouse_texture->drawTextureOrigin();
+		GLCALL(glPushMatrix());
+
+		if (_shake_offset != 0 ||
+				(!_focus_rect.isEmpty() &&
+				!Common::Rect(_game_texture->width(),
+								_game_texture->height()).contains(_focus_rect))) {
+			// These are the only cases where _game_texture doesn't
+			// cover the entire screen.
+			clearScreen(kClear);
+
+			// Move everything up by _shake_offset (game) pixels
+			GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
+		}
+
+	// TODO this doesnt work on those sucky drivers, do it differently
+	//	if (_show_overlay)
+	//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
+
+		if (_focus_rect.isEmpty()) {
+			_game_texture->drawTextureRect();
+		} else {
+			GLCALL(glPushMatrix());
+
+			GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
+							xdiv(_egl_surface_height, _focus_rect.height()),
+							1 << 16));
+			GLCALL(glTranslatex(-_focus_rect.left << 16,
+								-_focus_rect.top << 16, 0));
+			GLCALL(glScalex(xdiv(_game_texture->width(), _egl_surface_width),
+							xdiv(_game_texture->height(), _egl_surface_height),
+							1 << 16));
+
+			_game_texture->drawTextureRect();
+
+			GLCALL(glPopMatrix());
+		}
+
+		int cs = _mouse_targetscale;
+
+		if (_show_overlay) {
+	// TODO see above
+	//		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
+
+			// ugly, but the modern theme sets a wacko factor, only god knows why
+			cs = 1;
+
+			GLCALL(_overlay_texture->drawTextureRect());
+		}
+
+		if (_show_mouse && !_mouse_texture->isEmpty()) {
+			GLCALL(glPushMatrix());
+
+			const Common::Point &mouse = getEventManager()->getMousePos();
+
+			// Scale up ResidualVM -> OpenGL (pixel) coordinates
+			if (_show_overlay) {
+				GLCALL(glScalex(xdiv(_egl_surface_width,
+										_overlay_texture->width()),
+								xdiv(_egl_surface_height,
+										_overlay_texture->height()),
+								1 << 16));
+			} else {
+				const Common::Rect &r = _game_texture->getDrawRect();
+
+				GLCALL(glTranslatex(r.left << 16,
+									r.top << 16,
+									0));
+				GLCALL(glScalex(xdiv(r.width(), _game_texture->width()),
+								xdiv(r.height(), _game_texture->height()),
+								1 << 16));
+			}
+
+			GLCALL(glTranslatex((-_mouse_hotspot.x * cs) << 16,
+								(-_mouse_hotspot.y * cs) << 16,
+								0));
+
+			// Note the extra half texel to position the mouse in
+			// the middle of the x,y square:
+			GLCALL(glTranslatex((mouse.x << 16) | 1 << 15,
+								(mouse.y << 16) | 1 << 15, 0));
+
+			GLCALL(glScalex(cs << 16, cs << 16, 1 << 16));
+
+			_mouse_texture->drawTextureOrigin();
+
+			GLCALL(glPopMatrix());
+		}
 
 		GLCALL(glPopMatrix());
 	}
-
-	GLCALL(glPopMatrix());
 
 	if (!JNI::swapBuffers())
 		LOGW("swapBuffers failed: 0x%x", glGetError());

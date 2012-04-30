@@ -30,6 +30,7 @@
 #include "audio/mixer_intern.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "graphics/pixelbuffer.h"
 #include "backends/base-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
@@ -116,8 +117,12 @@ private:
 
 	bool _force_redraw;
 
+	bool _opengl;
+
 	// Game layer
 	GLESBaseTexture *_game_texture;
+	Graphics::PixelBuffer _game_pbuf;
+
 	int _shake_offset;
 	Common::Rect _focus_rect;
 
@@ -294,6 +299,11 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);
 	virtual Common::String getSystemLanguage() const;
+
+	// ResidualVM specific method
+	virtual void launcherInitSize(uint w, uint h);
+	bool lockMouse(bool lock);
+	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 };
 
 #endif
