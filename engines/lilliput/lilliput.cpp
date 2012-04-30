@@ -309,7 +309,7 @@ void LilliputEngine::displayFunction18(int index, int x, int y, int flags) {
 		index -= 0xF0;
 	}
 
-	src += index << 8;
+	src += ((index & 0xFF) << 8) + (index >> 8);
 
 	if ( (flags & 2) == 0 ) {
 		for (int y = 0; y < 16; y++) {
@@ -321,13 +321,13 @@ void LilliputEngine::displayFunction18(int index, int x, int y, int flags) {
 			buf += 256;
 		}
 	} else {
-		src += 14;
+//		src += 14;
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				if (src[x] != 0)
-					buf[x] = src[x];
+				if (src[15 - x] != 0)
+					buf[x] = src[15 - x];
 			}
-			src += 32;
+			src += 16;
 			buf += 256;
 		}
 	}
@@ -1227,17 +1227,17 @@ void LilliputEngine::viewportScrollTo(int goalX, int goalY) {
 	_soundHandler->contentFct5();
 }
 
-void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
+void LilliputEngine::renderCharacters(byte *buf, byte x, byte y) {
 	debugC(2, kDebugEngine, "renderCharacters(buf, %d, %d)", x, y);
 
 	if ((_nextDisplayCharacterX != x) || (_nextDisplayCharacterY != y))
 		return;
 
-	bool _byte16552 = 0;
+	byte _byte16552 = 0;
 
 	if (buf[1] != 0xFF) {
 		int tmpIndex = buf[1];
-		if (_rulesChunk9[tmpIndex] == 16)
+		if ((_rulesChunk9[tmpIndex] & 16) == 0)
 			++_byte16552;
 	}
 
@@ -1249,12 +1249,12 @@ void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
 		sub1546F(displayX, displayY);
 
 	if (_byte16552 != 1) {
-		int var3 = _rulesBuffer2_9[index];
+		int flag = _rulesBuffer2_9[index];
 		int frame = _rulesBuffer2_4[index];
 
 		if (frame != 0xFFFF) {
 			frame += _scriptHandler->_array10AB1[index];
-			if (var3 & 1)
+			if ((flag & 1) == 1)
 				frame += _rulesBuffer2_8[index];
 
 			if (_array12299[index] != 0xFF) {
@@ -1263,7 +1263,7 @@ void LilliputEngine::renderCharacters(byte *buf, int x, int y) {
 				frame = -frame;
 			}
 
-			displayFunction18(frame, displayX, displayY, var3);
+			displayFunction18(frame, displayX, displayY, flag);
 		}
 	}
 

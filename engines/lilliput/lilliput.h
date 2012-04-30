@@ -251,7 +251,7 @@ public:
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
 
-	void renderCharacters(byte *buf, int x, int y);
+	void renderCharacters(byte *buf, byte x, byte y);
 
 	void sub16553(byte *buf);
 

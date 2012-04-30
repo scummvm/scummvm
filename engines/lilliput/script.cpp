@@ -2789,7 +2789,7 @@ void LilliputScript::OC_displayVGAFile() {
 	int curWord = _currScript->readUint16LE();
 	int index = _vm->_rulesChunk3[curWord];
 	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
-	_word1881B = -1;
+	_word1881B = 0xFFFF;
 	_vm->displayVGAFile(fileName);
 	OC_PaletteFadeIn();
 }
