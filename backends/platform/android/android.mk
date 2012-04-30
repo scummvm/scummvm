@@ -47,12 +47,12 @@ APKBUILDER = $(ANDROID_SDK)/tools/apkbuilder
 JAVAC ?= javac
 JAVACFLAGS = -source 1.5 -target 1.5
 
-# This is a bit silly.  I want to compile against the 1.6 android.jar,
+# This is a bit silly.  I want to compile against the 2.1 android.jar,
 # to make the compiler check that I don't use something that requires
 # a newer Android.  However, in order to use android:installLocation,
 # we need to give aapt a version >=8 android.jar - even though the
-# result will work ok on 1.5+.
-ANDROID_JAR = $(ANDROID_SDK)/platforms/android-4/android.jar
+# result will work ok on 2.0+.
+ANDROID_JAR = $(ANDROID_SDK)/platforms/android-7/android.jar
 ANDROID_JAR8 = $(ANDROID_SDK)/platforms/android-8/android.jar
 
 PATH_BUILD = build.tmp
