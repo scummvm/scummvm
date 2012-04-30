@@ -140,6 +140,8 @@ private:
 	bool _show_mouse;
 	bool _use_mouse_palette;
 
+	int _virt_arrowkeys_pressed;
+
 	int _graphicsMode;
 	bool _fullscreen;
 	bool _ar_correction;
@@ -221,7 +223,7 @@ public:
 	}
 
 public:
-	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5);
+	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -242,6 +244,11 @@ private:
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
 	void updateEventScale();
 	void disableCursorPalette();
+
+	void updateVirtArrowKeys(int keys);
+	int getTouchArea(int x, int y);
+	int checkVirtArrowKeys(int action, int x, int y);
+	void checkVirtArrowKeys(int pointer, int action, int x0, int y0, int x1, int y1);
 
 protected:
 	// PaletteManager API

@@ -59,6 +59,9 @@ enum {
 	JE_DOUBLE_TAP = 6,
 	JE_MULTI = 7,
 	JE_BALL = 8,
+	JE_TOUCH = 9,
+	JE_LONG = 10,
+	JE_FLING = 11,
 	JE_QUIT = 0x1000
 };
 
@@ -308,8 +311,110 @@ void OSystem_Android::updateEventScale() {
 	_eventScaleX = 100 * 640 / tex->width();
 }
 
+enum TouchArea {
+	kTouchAreaCenter  = 1,
+	kTouchAreaTop     = 2,
+	kTouchAreaBottom  = 4,
+	kTouchAreaLeft    = 8,
+	kTouchAreaRight   = 16
+};
+
+enum VirtArrowKey {
+	kVirtArrowKeyUp    = 1,
+	kVirtArrowKeyDown  = 2,
+	kVirtArrowKeyLeft  = 4,
+	kVirtArrowKeyRight = 8,
+	kVirtArrowKeyRun   = 16
+};
+
+void OSystem_Android::updateVirtArrowKeys(int keys) {
+	Common::Event e;
+
+#if 0
+	if (keys != _virt_arrowkeys_pressed) {
+		debug("keys: %d%d%d%d%d / %d%d%d%d%d",
+				(_virt_arrowkeys_pressed >> 0) & 1, (_virt_arrowkeys_pressed >> 1) & 1,
+				(_virt_arrowkeys_pressed >> 2) & 1, (_virt_arrowkeys_pressed >> 3) & 1,
+				(_virt_arrowkeys_pressed >> 4) & 1,
+				(keys >> 0) & 1, (keys >> 1) & 1,
+				(keys >> 2) & 1, (keys >> 3) & 1,
+				(keys >> 4) & 1);
+	}
+#endif
+
+	Common::KeyCode keymap[] = {
+			Common::KEYCODE_UP, Common::KEYCODE_DOWN,
+			Common::KEYCODE_LEFT, Common::KEYCODE_RIGHT,
+			Common::KEYCODE_LSHIFT
+	};
+
+	lockMutex(_event_queue_lock);
+	for (int i = 0; i < 5; ++i) {
+		int mask = (1 << i);
+		if ((_virt_arrowkeys_pressed & mask) && !(keys & mask)) {
+			e.type = Common::EVENT_KEYUP;
+			e.kbd.keycode = keymap[i];
+			_event_queue.push(e);
+		} else if (!(_virt_arrowkeys_pressed & mask) && (keys & mask)) {
+			e.type = Common::EVENT_KEYDOWN;
+			e.kbd.keycode = keymap[i];
+			_event_queue.push(e);
+		}
+	}
+	unlockMutex(_event_queue_lock);
+
+	_virt_arrowkeys_pressed = keys;
+}
+
+int OSystem_Android::getTouchArea(int x, int y) {
+	int xScaled = x * 100 / _egl_surface_width;
+	int yScaled = y * 100 / _egl_surface_height;
+
+	if (xScaled >= 35 && xScaled <= 65 && yScaled >= 35 && yScaled <= 65)
+		return kTouchAreaCenter;
+
+	int res = 0;
+	if (xScaled >= 0 && xScaled <= 20)
+		res |= kTouchAreaLeft;
+	else if (xScaled >= 80 && xScaled <= 100)
+		res |= kTouchAreaRight;
+	if (yScaled >= 0 && yScaled <= 20)
+		res |= kTouchAreaTop;
+	else if (yScaled >= 80 && yScaled <= 100)
+		res |= kTouchAreaBottom;
+
+	return res;
+}
+
+int OSystem_Android::checkVirtArrowKeys(int action, int x, int y) {
+	int res = 0;
+
+	int touchArea = getTouchArea(x, y);
+	if (touchArea & kTouchAreaLeft) {
+		res |= kVirtArrowKeyLeft;
+	} else if (touchArea & kTouchAreaRight) {
+		res |= kVirtArrowKeyRight;
+	}
+	if (touchArea & kTouchAreaTop) {
+		res |= kVirtArrowKeyUp;
+	} else if (touchArea & kTouchAreaBottom) {
+		res |= kVirtArrowKeyDown;
+	}
+
+	return res;
+}
+
+void OSystem_Android::checkVirtArrowKeys(int pointer, int action, int x0, int y0, int x1, int y1) {
+	int virtArrowkey = _virt_arrowkeys_pressed & kVirtArrowKeyRun;
+	if (!(action == JACTION_POINTER_UP && pointer == 0))
+		virtArrowkey |= checkVirtArrowKeys(action, x0, y0);
+	if (!(action == JACTION_POINTER_UP && pointer == 1) && x1 != -1)
+		virtArrowkey |= checkVirtArrowKeys(action, x1, y1);
+	updateVirtArrowKeys(virtArrowkey);
+}
+
 void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
-								int arg4, int arg5) {
+								int arg4, int arg5, int arg6) {
 	Common::Event e;
 
 	switch (type) {
@@ -544,29 +649,64 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		break;
 
 	case JE_SCROLL:
-		e.type = Common::EVENT_MOUSEMOVE;
+		if (_show_mouse) {
+			e.type = Common::EVENT_MOUSEMOVE;
 
-		if (_touchpad_mode) {
-			if (_touch_pt_scroll.x == -1 && _touch_pt_scroll.y == -1) {
-				_touch_pt_scroll.x = arg3;
-				_touch_pt_scroll.y = arg4;
-				return;
+			if (_touchpad_mode) {
+				if (_touch_pt_scroll.x == -1 && _touch_pt_scroll.y == -1) {
+					_touch_pt_scroll.x = arg3;
+					_touch_pt_scroll.y = arg4;
+					return;
+				}
+
+				scaleMouse(e.mouse, arg3 - _touch_pt_scroll.x,
+							arg4 - _touch_pt_scroll.y, false);
+				e.mouse += _touch_pt_down;
+				clipMouse(e.mouse);
+			} else {
+				scaleMouse(e.mouse, arg3, arg4);
+				clipMouse(e.mouse);
 			}
 
-			scaleMouse(e.mouse, arg3 - _touch_pt_scroll.x,
-						arg4 - _touch_pt_scroll.y, false);
-			e.mouse += _touch_pt_down;
-			clipMouse(e.mouse);
-		} else {
-			scaleMouse(e.mouse, arg3, arg4);
-			clipMouse(e.mouse);
+			lockMutex(_event_queue_lock);
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
 		}
 
-		lockMutex(_event_queue_lock);
-		_event_queue.push(e);
-		unlockMutex(_event_queue_lock);
-
 		return;
+
+	case JE_LONG:
+		if (!_show_mouse &&
+			getTouchArea(arg1, arg2) == kTouchAreaCenter)
+		{
+			e.kbd.keycode = Common::KEYCODE_i;
+			e.kbd.ascii = 'i';
+
+			lockMutex(_event_queue_lock);
+			e.type = Common::EVENT_KEYDOWN;
+			_event_queue.push(e);
+			e.type = Common::EVENT_KEYUP;
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
+		}
+		break;
+
+	case JE_FLING:
+		if (!_show_mouse &&
+			(getTouchArea(arg1, arg2) == kTouchAreaCenter ||
+			 getTouchArea(arg3, arg4) == kTouchAreaCenter))
+		{
+			e.kbd.keycode = Common::KEYCODE_PERIOD;
+			e.kbd.ascii = '.';
+
+			lockMutex(_event_queue_lock);
+			e.type = Common::EVENT_KEYDOWN;
+			_event_queue.push(e);
+			e.type = Common::EVENT_KEYUP;
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
+		}
+		break;
 
 	case JE_TAP:
 		if (_fingersDown > 0) {
@@ -574,16 +714,16 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 		}
 
-		e.type = Common::EVENT_MOUSEMOVE;
+		if (_show_mouse) {
+			e.type = Common::EVENT_MOUSEMOVE;
 
-		if (_touchpad_mode) {
-			e.mouse = getEventManager()->getMousePos();
-		} else {
-			scaleMouse(e.mouse, arg1, arg2);
-			clipMouse(e.mouse);
-		}
+			if (_touchpad_mode) {
+				e.mouse = getEventManager()->getMousePos();
+			} else {
+				scaleMouse(e.mouse, arg1, arg2);
+				clipMouse(e.mouse);
+			}
 
-		{
 			Common::EventType down, up;
 
 			// TODO put these values in some option dlg?
@@ -614,70 +754,115 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 			unlockMutex(_event_queue_lock);
+		} else {
+			if (getTouchArea(arg1, arg2) == kTouchAreaCenter) {
+				e.kbd.keycode = Common::KEYCODE_RETURN;
+				e.kbd.ascii = Common::ASCII_RETURN;
+
+				lockMutex(_event_queue_lock);
+				e.type = Common::EVENT_KEYDOWN;
+				_event_queue.push(e);
+				e.type = Common::EVENT_KEYUP;
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+			}
 		}
 
 		return;
 
 	case JE_DOUBLE_TAP:
-		e.type = Common::EVENT_MOUSEMOVE;
+		if (_show_mouse) {
+			e.type = Common::EVENT_MOUSEMOVE;
 
-		if (_touchpad_mode) {
-			e.mouse = getEventManager()->getMousePos();
-		} else {
-			scaleMouse(e.mouse, arg1, arg2);
-			clipMouse(e.mouse);
-		}
+			if (_touchpad_mode) {
+				e.mouse = getEventManager()->getMousePos();
+			} else {
+				scaleMouse(e.mouse, arg1, arg2);
+				clipMouse(e.mouse);
+			}
 
-		{
-			Common::EventType dptype = Common::EVENT_INVALID;
+			{
+				Common::EventType dptype = Common::EVENT_INVALID;
 
-			switch (arg3) {
-			case JACTION_DOWN:
-				dptype = Common::EVENT_LBUTTONDOWN;
-				_touch_pt_dt.x = -1;
-				_touch_pt_dt.y = -1;
-				break;
-			case JACTION_UP:
-				dptype = Common::EVENT_LBUTTONUP;
-				break;
-			// held and moved
-			case JACTION_MULTIPLE:
-				if (_touch_pt_dt.x == -1 && _touch_pt_dt.y == -1) {
-					_touch_pt_dt.x = arg1;
-					_touch_pt_dt.y = arg2;
+				switch (arg3) {
+				case JACTION_DOWN:
+					dptype = Common::EVENT_LBUTTONDOWN;
+					_touch_pt_dt.x = -1;
+					_touch_pt_dt.y = -1;
+					break;
+				case JACTION_UP:
+					dptype = Common::EVENT_LBUTTONUP;
+					break;
+				// held and moved
+				case JACTION_MULTIPLE:
+					if (_touch_pt_dt.x == -1 && _touch_pt_dt.y == -1) {
+						_touch_pt_dt.x = arg1;
+						_touch_pt_dt.y = arg2;
+						return;
+					}
+
+					dptype = Common::EVENT_MOUSEMOVE;
+
+					if (_touchpad_mode) {
+						scaleMouse(e.mouse, arg1 - _touch_pt_dt.x,
+									arg2 - _touch_pt_dt.y, false);
+						e.mouse += _touch_pt_down;
+
+						clipMouse(e.mouse);
+					}
+
+					break;
+				default:
+					LOGE("unhandled jaction on double tap: %d", arg3);
 					return;
 				}
 
-				dptype = Common::EVENT_MOUSEMOVE;
-
-				if (_touchpad_mode) {
-					scaleMouse(e.mouse, arg1 - _touch_pt_dt.x,
-								arg2 - _touch_pt_dt.y, false);
-					e.mouse += _touch_pt_down;
-
-					clipMouse(e.mouse);
-				}
-
-				break;
-			default:
-				LOGE("unhandled jaction on double tap: %d", arg3);
-				return;
+				lockMutex(_event_queue_lock);
+				_event_queue.push(e);
+				e.type = dptype;
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
 			}
+		} else {
+			int touchArea = getTouchArea(arg1, arg2);
+			if (touchArea && touchArea != kTouchAreaCenter) {
+				updateVirtArrowKeys(_virt_arrowkeys_pressed | kVirtArrowKeyRun);
+			} else if (touchArea == kTouchAreaCenter) {
+				e.kbd.keycode = Common::KEYCODE_u;
+				e.kbd.ascii = 'u';
 
-			lockMutex(_event_queue_lock);
-			_event_queue.push(e);
-			e.type = dptype;
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
+				lockMutex(_event_queue_lock);
+				e.type = Common::EVENT_KEYDOWN;
+				_event_queue.push(e);
+				e.type = Common::EVENT_KEYUP;
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+			}
 		}
 
 		return;
 
+	case JE_TOUCH:
 	case JE_MULTI:
 		switch (arg2) {
+		case JACTION_DOWN:
+		case JACTION_MULTIPLE:
+			if (!_show_mouse) {
+				checkVirtArrowKeys(arg1, arg2, arg3, arg4, arg5, arg6);
+			}
+			return;
+
+		case JACTION_UP:
+			updateVirtArrowKeys(0);
+			return;
+
 		case JACTION_POINTER_DOWN:
 			if (arg1 > _fingersDown)
 				_fingersDown = arg1;
+
+			if (!_show_mouse) {
+				checkVirtArrowKeys(arg1, arg2, arg3, arg4, arg5, arg6);
+			}
 
 			return;
 
@@ -685,7 +870,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			if (arg1 != _fingersDown)
 				return;
 
-			{
+			if (_show_mouse) {
 				Common::EventType up;
 
 				switch (_fingersDown) {
@@ -716,12 +901,10 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 				unlockMutex(_event_queue_lock);
-				return;
-
-			default:
-				LOGE("unhandled jaction on multi tap: %d", arg2);
-				return;
+			} else {
+				checkVirtArrowKeys(arg1, arg2, arg3, arg4, arg5, arg6);
 			}
+			return;
 		}
 
 		return;

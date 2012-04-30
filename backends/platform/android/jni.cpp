@@ -103,7 +103,7 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::setSurface },
 	{ "main", "([Ljava/lang/String;)I",
 		(void *)JNI::main },
-	{ "pushEvent", "(IIIIII)V",
+	{ "pushEvent", "(IIIIIII)V",
 		(void *)JNI::pushEvent },
 	{ "enableZoning", "(Z)V",
 		(void *)JNI::enableZoning },
@@ -576,7 +576,7 @@ cleanup:
 }
 
 void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
-					int arg3, int arg4, int arg5) {
+					int arg3, int arg4, int arg5, int arg6) {
 	// drop events until we're ready and after we quit
 	if (!_ready_for_events) {
 		LOGW("dropping event");
@@ -585,7 +585,7 @@ void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
 
 	assert(_system);
 
-	_system->pushEvent(type, arg1, arg2, arg3, arg4, arg5);
+	_system->pushEvent(type, arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {

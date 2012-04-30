@@ -14,7 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 
 public class ResidualVMEvents implements
 		android.view.View.OnKeyListener,
-		android.view.View.OnTouchListener,
 		android.view.GestureDetector.OnGestureListener,
 		android.view.GestureDetector.OnDoubleTapListener {
 
@@ -27,6 +26,9 @@ public class ResidualVMEvents implements
 	public static final int JE_DOUBLE_TAP = 6;
 	public static final int JE_MULTI = 7;
 	public static final int JE_BALL = 8;
+	public static final int JE_TOUCH = 9;
+	public static final int JE_LONG = 10;
+	public static final int JE_FLING = 11;
 	public static final int JE_QUIT = 0x1000;
 
 	final protected Context _context;
@@ -40,20 +42,20 @@ public class ResidualVMEvents implements
 
 		_gd = new GestureDetector(context, this);
 		_gd.setOnDoubleTapListener(this);
-		_gd.setIsLongpressEnabled(false);
+		//_gd.setIsLongpressEnabled(false);
 
 		_longPress = ViewConfiguration.getLongPressTimeout();
 	}
 
 	final public void sendQuitEvent() {
-		_residualvm.pushEvent(JE_QUIT, 0, 0, 0, 0, 0);
+		_residualvm.pushEvent(JE_QUIT, 0, 0, 0, 0, 0, 0);
 	}
 
 	public boolean onTrackballEvent(MotionEvent e) {
 		_residualvm.pushEvent(JE_BALL, e.getAction(),
 							(int)(e.getX() * e.getXPrecision() * 100),
 							(int)(e.getY() * e.getYPrecision() * 100),
-							0, 0);
+							0, 0, 0);
 		return true;
 	}
 
@@ -117,7 +119,7 @@ public class ResidualVMEvents implements
 					return true;
 			}
 
-			_residualvm.pushEvent(JE_SYS_KEY, action, keyCode, 0, 0, 0);
+			_residualvm.pushEvent(JE_SYS_KEY, action, keyCode, 0, 0, 0, 0);
 
 			return true;
 		}
@@ -134,7 +136,7 @@ public class ResidualVMEvents implements
 			for (KeyEvent s : es) {
 				_residualvm.pushEvent(JE_KEY, s.getAction(), s.getKeyCode(),
 					s.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					s.getMetaState(), s.getRepeatCount());
+					s.getMetaState(), s.getRepeatCount(), 0);
 			}
 
 			return true;
@@ -148,29 +150,35 @@ public class ResidualVMEvents implements
 		case KeyEvent.KEYCODE_DPAD_CENTER:
 			_residualvm.pushEvent(JE_DPAD, action, keyCode,
 								(int)(e.getEventTime() - e.getDownTime()),
-								e.getRepeatCount(), 0);
+								e.getRepeatCount(), 0, 0);
 			return true;
 		}
 
 		_residualvm.pushEvent(JE_KEY, action, keyCode,
 					e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					e.getMetaState(), e.getRepeatCount());
+					e.getMetaState(), e.getRepeatCount(), 0);
 
 		return true;
 	}
 
-	// OnTouchListener
-	final public boolean onTouch(View v, MotionEvent e) {
+	final public boolean onTouchEvent(MotionEvent e) {
 		final int action = e.getAction();
 
 		// constants from APIv5:
 		// (action & ACTION_POINTER_INDEX_MASK) >> ACTION_POINTER_INDEX_SHIFT
 		final int pointer = (action & 0xff00) >> 8;
-
+		
+		final int x0 = (int)e.getX();
+		final int y0 = (int)e.getY();
+		final int x1 = (e.getPointerCount() > 1 ? (int)e.getX(1) : -1);
+		final int y1 = (e.getPointerCount() > 1 ? (int)e.getY(1) : -1);
+		
 		if (pointer > 0) {
 			_residualvm.pushEvent(JE_MULTI, pointer, action & 0xff, // ACTION_MASK
-								(int)e.getX(), (int)e.getY(), 0);
-			return true;
+					x0, y0, x1, y1);
+		} else {
+			_residualvm.pushEvent(JE_TOUCH, pointer, action & 0xff, // ACTION_MASK
+					x0, y0, x1, y1);
 		}
 
 		return _gd.onTouchEvent(e);
@@ -178,28 +186,26 @@ public class ResidualVMEvents implements
 
 	// OnGestureListener
 	final public boolean onDown(MotionEvent e) {
-		_residualvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0);
+		_residualvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
 		return true;
 	}
 
 	final public boolean onFling(MotionEvent e1, MotionEvent e2,
 									float velocityX, float velocityY) {
-		//Log.d(ResidualVM.LOG_TAG, String.format("onFling: %s -> %s (%.3f %.3f)",
-		//										e1.toString(), e2.toString(),
-		//										velocityX, velocityY));
-
+		_residualvm.pushEvent(JE_FLING, (int)e1.getX(), (int)e1.getY(),
+							(int)e2.getX(), (int)e2.getY(), 0, 0);
 		return true;
 	}
 
 	final public void onLongPress(MotionEvent e) {
-		// disabled, interferes with drag&drop
+		_residualvm.pushEvent(JE_LONG, (int)e.getX(), (int)e.getY(),
+				0, 0, 0, 0);
 	}
 
 	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
 									float distanceX, float distanceY) {
 		_residualvm.pushEvent(JE_SCROLL, (int)e1.getX(), (int)e1.getY(),
-							(int)e2.getX(), (int)e2.getY(), 0);
-
+							(int)e2.getX(), (int)e2.getY(), 0, 0);
 		return true;
 	}
 
@@ -207,25 +213,24 @@ public class ResidualVMEvents implements
 	}
 
 	final public boolean onSingleTapUp(MotionEvent e) {
-		_residualvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
-							(int)(e.getEventTime() - e.getDownTime()), 0, 0);
-
-		return true;
+		return false;
 	}
 
 	// OnDoubleTapListener
 	final public boolean onDoubleTap(MotionEvent e) {
-		return true;
+		return false;
 	}
 
 	final public boolean onDoubleTapEvent(MotionEvent e) {
 		_residualvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(),
-							e.getAction(), 0, 0);
+							e.getAction(), 0, 0, 0);
 
 		return true;
 	}
 
 	final public boolean onSingleTapConfirmed(MotionEvent e) {
+		_residualvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
+				(int)(e.getEventTime() - e.getDownTime()), 0, 0, 0);
 		return true;
 	}
 }

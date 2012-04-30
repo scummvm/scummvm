@@ -154,7 +154,6 @@ public class ResidualVMActivity extends Activity {
 		_events = new ResidualVMEvents(this, _residualvm);
 
 		main_surface.setOnKeyListener(_events);
-		main_surface.setOnTouchListener(_events);
 
 		_residualvm_thread = new Thread(_residualvm, "ResidualVM");
 		_residualvm_thread.start();
@@ -218,6 +217,14 @@ public class ResidualVMActivity extends Activity {
 	public boolean onTrackballEvent(MotionEvent e) {
 		if (_events != null)
 			return _events.onTrackballEvent(e);
+
+		return false;
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+		if (_events != null)
+			return _events.onTouchEvent(e);
 
 		return false;
 	}
