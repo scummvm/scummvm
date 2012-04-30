@@ -635,18 +635,18 @@ static const OpCode opCodes2[] = {
 	{ "OC_sub17DB9", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone }, // todo
 	{ "OC_sub17DF9", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_sub17E07", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
-	{ "OC_sub17E15", 3, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_sub17E15", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_sub17B03", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
 	{ "OC_getRandom_type2", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
 	{ "OC_sub17A66", 2, kGetValue1, kGetValue2, kNone, kNone, kNone },
-	{ "OC_sub17A8D", 2, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_saveAndQuit", 2, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_sub17A8D", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub17B93", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
 	{ "OC_sub17E37", 0, kNone, kNone, kNone, kNone, kNone },  // todo
 	{ "OC_resetByte1714E", 0, kNone, kNone, kNone, kNone, kNone },  
 	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },  
 	{ "OC_incByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
-	{ "OC_sub17BA5", 0, kGetValue1, kImmediateValue,kComputeOperation, kGetValue1, kImmediateValue },
+	{ "OC_sub17BA5", 5, kGetValue1, kImmediateValue,kComputeOperation, kGetValue1, kImmediateValue },
 	{ "OC_incByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
 	{ "OC_sub17BA5", 0, kNone, kNone, kNone, kNone, kNone },  
 	{ "OC_setByte18823", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },  
@@ -676,7 +676,63 @@ static const OpCode opCodes2[] = {
 	{ "OC_sub17EF4", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
 	{ "OC_sub17F08", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 	{ "OC_sub17F4F", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17F68", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub17F68", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_getNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_sub17FD2", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub17FDD", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_setByte10B29", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18007", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18014", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1801D", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+	{ "OC_sub1805D", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+	{ "OC_sub18074", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18099", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_sub180C3", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1810A", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1812D", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1817F", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_sub181BB", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+	{ "OC_sub18213", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18252", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18260", 2, kGetValue1, kGetValue2, kNone, kNone, kNone }, // TODO
+	{ "OC_sub182EC", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+	{ "OC_PaletteFadeOut", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_PaletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_loadAndDisplayCUBESx_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1834C", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18359", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18367", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub17D04", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_sub18387", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub183A2", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub183C6", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
+	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1834C", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub17E22", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_sub1847F", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+	{ "OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub184D7", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // TODO
+	{ "OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1864D", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },  // TODO
+	{ "OC_initArr18560", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+	{ "OC_sub18678", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+	{ "OC_sub18690", 2, kGetValue1, kGetValue2, kNone, kNone, kNone },  //TODO
+	{ "OC_setViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_sub186A1", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },  //TODO
+	{ "OC_sub186E5_snd", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_sub1870A_snd", 2, kGetValue2, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_sub18725_snd", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18733_snd", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1873F_snd", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18746_snd", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub1875D_snd", 0, kNone, kNone, kNone, kNone, kNone }, 
+	{ "OC_sub18764", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }
 };
 
 void LilliputScript::disasmScript( ScriptStream script) {
@@ -2444,13 +2500,50 @@ void LilliputScript::OC_sub17F4F() {
 }
 
 void LilliputScript::OC_sub17F68() {
-	warning("OC_sub17F68");
+	if (_vm->_rulesBuffer2PrevIndx != _viewportCharacterTarget)
+		return;
+
+	static const byte _byte_17F60[] = { 0xFF, 0xFD, 0xFD, 0xFA };
+	static const byte _byte_17F64[] = { 0xFD, 0xFA, 0xFF, 0xFD };
+	
+	int cx = _byte_17F60[_vm->_characterDirectionArray[_vm->_rulesBuffer2PrevIndx]];
+	int cy = _byte_17F64[_vm->_characterDirectionArray[_vm->_rulesBuffer2PrevIndx]];
+
+	int pos = sub17285(_vm->_rulesBuffer2PrevIndx);
+
+	int posx = pos >> 8;
+	int posy = pos & 0xFF;
+
+	int newPosX = posx + cx;
+	int newPosY = posy + cy;
+
+	if (newPosX < 0)
+		newPosX = 0;
+
+	if (newPosX > 56)
+		newPosX = 56;
+
+	if (newPosY < 0)
+		newPosY = 0;
+
+	if (newPosY > 56)
+		newPosY = 56;
+
+	_byte12A09 = 1;
+	_vm->viewportScrollTo(newPosX, newPosY);
+	_byte12A09 = 0;
+
 }
 void LilliputScript::OC_getNextVal() {
-	warning("OC_getNextVal");
+	debugC(1, kDebugScript, "OC_getNextVal()");
+	 _currScript->readUint16LE();
 }
 void LilliputScript::OC_sub17FD2() {
-	warning("OC_sub17FD2");
+	debugC(1, kDebugScript, "OC_sub17FD2()");
+	
+	int var1 = getValue1();
+	_vm->_ptr_rulesBuffer2_15[6] = var1 & 0xFF;
+
 }
 
 void LilliputScript::OC_sub17FDD() {
@@ -2465,7 +2558,9 @@ void LilliputScript::OC_sub17FDD() {
 }
 
 void LilliputScript::OC_setByte10B29() {
-	warning("OC_setByte10B29");
+	debugC(1, kDebugScript, "OC_setByte10B29()");
+	int var1 = getValue1();
+	_characterScriptEnabled[var1] = 1;
 }
 
 void LilliputScript::OC_sub18007() {
@@ -2484,10 +2579,27 @@ void LilliputScript::OC_sub18014() {
 }
 
 void LilliputScript::OC_sub1801D() {
-	warning("OC_sub1801D");
+	debugC(1, kDebugScript, "OC_sub18014()");
+
+	int var1 = getValue1();
+
+	int x = _vm->_characterPositionX[var1] & 0xFFF8;
+	x += _currScript->readUint16LE();
+	_vm->_characterPositionX[var1] = x;
+
+	int y = _vm->_characterPositionY[var1] & 0xFFF8;
+	y += _currScript->readUint16LE();
+	_vm->_characterPositionY[var1] = y;
+
+	_vm->_rulesBuffer2_3[var1]  = _currScript->readUint16LE();
+	_vm->_characterDirectionArray[var1] = _currScript->readUint16LE();
+
 }
 void LilliputScript::OC_sub1805D() {
-	warning("OC_sub1805D");
+	debugC(1, kDebugScript, "OC_sub1805D()");
+	
+	int var1 = getValue1();
+	
 }
 
 void LilliputScript::OC_sub18074() {
@@ -2519,10 +2631,45 @@ void LilliputScript::OC_sub18099() {
 }
 
 void LilliputScript::OC_sub180C3() {
-	warning("OC_sub180C3");
+	debugC(1, kDebugScript, "OC_sub180C3()");
+	_viewportCharacterTarget = 0xFFFF;
+
+	int var1 = _currScript->readUint16LE();
+	
+	static const char _byte180B3[] = { 6, 0, 0, -6 };
+	static const char _byte180BB[] = { 0, -6, 6, 0 };
+	
+	int x = _viewportX + _byte180B3[var1];
+	int y = _viewportY + _byte180BB[var1];
+
+	if ( x < 0 )
+		x = 0;
+
+	if ( y < 0 )
+		y = 0;
+	
+	if ( x > 56 )
+		x = 56;
+
+	if ( y > 56 )
+		y = 56;
+
+	_byte12A09 = 1;
+	_vm->viewportScrollTo(x, y);
+	_byte12A09 = 0;
 }
+
 void LilliputScript::OC_sub1810A() {
-	warning("OC_sub1810A");
+	debugC(1, kDebugScript, "OC_sub1810A()");
+
+	_viewportCharacterTarget = 0xFFFF;
+	int var1 = getValue2();
+
+	_viewportX = var1 >> 8;
+	_viewportY = var1 & 0xFF;
+
+	_vm->displayFunction9();
+	_vm->displayFunction15();
 }
 
 void LilliputScript::OC_sub1812D() {
@@ -2616,7 +2763,22 @@ void LilliputScript::OC_sub18252() {
 }
 
 void LilliputScript::OC_sub18260() {
-	warning("OC_sub18260");
+	debugC(1, kDebugScript, "OC_sub18260()");
+	
+	int var1 = getValue1();
+	int var2 = getValue2();
+
+	int x = var1 + _viewportX;
+	int y = var2 + _viewportY;
+
+	byte* mapPtr = getMapPtr((x << 8) + (y & 0xff));
+
+	int bx = 0;
+	int by = 0;
+
+	if (mapPtr[1] == 0xFF) {
+		// TODO
+	}
 }
 
 void LilliputScript::OC_sub182EC() {
