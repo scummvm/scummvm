@@ -247,10 +247,14 @@ public:
 	void viewportScrollTo(int var1, int var3);
 	void sub189DE();
 	void sub16626();
+
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
 
 	void renderCharacters(byte *buf, int x, int y);
+
+	void sub16553(byte *buf);
+
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
 	void addCharToBuf(byte character);
