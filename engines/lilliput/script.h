@@ -218,7 +218,7 @@ private:
 	void OC_sub17D1B();
 	void OC_sub17D23();
 	void OC_sub17E6D();
-	void OC_sub17E7E();
+	void OC_changeCurrentCharacterSprite();
 	void OC_sub17E99();
 	void OC_sub17EC5();
 	void OC_sub17EF4();
