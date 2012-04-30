@@ -49,10 +49,9 @@ Common::Error TonyEngine::run() {
 	if (result != Common::kNoError)
 		return result;
 
-	/*
 	Play();
 	Close();
-*/
+
 	return Common::kNoError;
 }
 
@@ -60,6 +59,12 @@ Common::Error TonyEngine::run() {
  * Initialise the game
  */
 Common::ErrorCode TonyEngine::Init() {
+	m_hEndOfFrame = CreateEvent(NULL, false, false, NULL);
+
+	m_bPaused = false;
+	m_bDrawLocation = true;
+	m_startTime = g_system->getMillis();
+
 	// Initialise the function list
 	Common::fill(FuncList, FuncList + 300, (LPCUSTOMFUNCTION)NULL);
 
@@ -96,6 +101,60 @@ Common::ErrorCode TonyEngine::Init() {
  */
 void TonyEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
+}
+
+char nextMusic[_MAX_PATH];
+bool nextLoop;
+int nextChannel;
+int nextSync;
+int curChannel;
+int flipflop=0;
+OSystem::MutexRef csMusic;
+
+
+void TonyEngine::PlayMusic(int nChannel, char* fn, int nFX, bool bLoop, int nSync) {
+	warning("TonyEngine::PlayMusic");
+}
+
+void TonyEngine::PlaySFX(int nChannel, int nFX) {
+	warning("TonyEngine::PlaySFX");
+}
+
+void TonyEngine::StopMusic(int nChannel) {
+	warning("TonyEngine::StopMusic");
+}
+
+void TonyEngine::StopSFX(int nChannel) {
+	warning("TonyEngine::StopSFX");
+}
+
+void TonyEngine::PlayUtilSFX(int nChannel, int nFX) {
+	warning("TonyEngine::PlayUtilSFX");
+}
+
+void TonyEngine::StopUtilSFX(int nChannel) {
+	warning("TonyEngine::StopUtilSFX");
+}
+
+void TonyEngine::PreloadSFX(int nChannel, char* fn) {
+	warning("TonyEngine::PreloadSFX");
+}
+
+FPSFX *TonyEngine::CreateSFX(byte *buf) {
+	warning("TonyEngine::CreateSFX");
+	return NULL;
+}
+
+void TonyEngine::PreloadUtilSFX(int nChannel, char *fn) {
+	warning("TonyEngine::PreloadUtilSFX");
+}
+
+void TonyEngine::UnloadAllSFX(void) {
+	warning("TonyEngine::UnloadAllSFX");
+}
+
+void TonyEngine::UnloadAllUtilSFX(void) {
+	warning("TonyEngine::UnloadAllUtilSFX");
 }
 
 void TonyEngine::InitMusic() {
@@ -158,6 +217,11 @@ void TonyEngine::CloseVoiceDatabase() {
 
 	if (_voices.size() > 0)
 		_voices.clear();
+}
+
+void TonyEngine::GrabThumbnail(void) {
+	//m_wnd.GrabThumbnail(m_curThumbnail);
+	warning("TODO: TonyEngine::GrabThumbnail");
 }
 
 } // End of namespace Tony

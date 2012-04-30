@@ -980,7 +980,7 @@ HGLOBAL RMResUpdate::QueryResource(uint32 dwRes) {
 	uint32 dwSize;
 
 	// Decompress the data
-	MPAL::lzo1x_decompress(cmpBuf, info.cmpSize, lpDestBuf, &dwSize);
+	lzo1x_decompress(cmpBuf, info.cmpSize, lpDestBuf, &dwSize);
 
 	// Delete buffer for compressed data
 	delete [] cmpBuf;

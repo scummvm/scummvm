@@ -541,7 +541,7 @@ public:
 	// Caricamento da disco
 	bool Load(char *lpszFileName);
 	bool Load(HANDLE hFile);
-	bool Load(byte *buf);
+	bool Load(const byte *buf);
 	bool Load(RMDataStream &ds);
 	bool LoadLOX(RMDataStream &ds);
 
@@ -561,10 +561,10 @@ public:
 	RMItem* GetItemFromCode(uint32 dwCode);
 
 	// Setta la posizione corrente di scrolling
-	void SetScrollPosition(RMPoint &scroll);
+	void SetScrollPosition(const RMPoint &scroll);
 
 	// Setta un offset aggiuntivo di scrolling da aggiungere sempre
-	void SetFixedScroll(RMPoint &scroll);
+	void SetFixedScroll(const RMPoint &scroll);
 
 	// Aggiorna le coordinate di scrolling in modo da visualizzare sempre il punto fornito
 	void UpdateScrolling(RMPoint ptShowThis);

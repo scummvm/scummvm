@@ -145,8 +145,8 @@ public:
 	void Unfreeze(void);
 
 	// State management
-	void SaveState(char *fn, byte *curThumb, char *name, bool bFastCompress = false);
-	void LoadState(char *fn);
+	void SaveState(const char *fn, byte *curThumb, const char *name, bool bFastCompress = false);
+	void LoadState(const char *fn);
 
 	// Selects a location
 	void SelectLocation(RMPoint ptTonyStart=RMPoint(-1,-1), RMPoint start=RMPoint(-1,-1));

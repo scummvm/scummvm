@@ -18,6 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ *
  */
 /**************************************************************************
  *                                     様様様様様様様様様様様様様様様様様 *
@@ -28,14 +29,14 @@
  *   .z$*         d$$$$$$$L        ^*$c.                                  *
  *  #$$$.         $$$$$$$$$         .$$$" Project: Roasted Moths........  *
  *    ^*$b       4$$$$$$$$$F      .d$*"                                   *
- *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Input.CPP............  *
+ *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Custom.CPP...........  *
  *        *$.    '$$$$$$$$$     4$P 4                                     *
  *     J   *$     "$$$$$$$"     $P   r    Author:  Giovanni Bajo........  *
  *    z$   '$$$P*4c.*$$$*.z@*R$$$    $.                                   *
- *   z$"    ""       #$F^      ""    '$c                                  *
- *  z$$beu     .ue="  $  "=e..    .zed$$c                                 *
- *      "#$e z$*"   .  `.   ^*Nc e$""                                     *
- *         "$$".  .r"   ^4.  .^$$"                                        *
+ *   z$"    ""       #$F^      ""    '$c  Desc:    Custom functions.....  *
+ *  z$$beu     .ue="  $  "=e..    .zed$$c          .....................  *
+ *      "#$e z$*"   .  `.   ^*Nc e$""              .....................  *
+ *         "$$".  .r"   ^4.  .^$$"                 .....................  *
  *          ^.@*"6L=\ebu^+C$"*b."                                         *
  *        "**$.  "c 4$$$  J"  J$P*"    OS:  [ ] DOS  [X] WIN95  [ ] PORT  *
  *            ^"--.^ 9$"  .--""      COMP:  [ ] WATCOM  [X] VISUAL C++    *
@@ -43,74 +44,63 @@
  *                                                                        *
  * This source code is Copyright (C) Nayma Software.  ALL RIGHTS RESERVED *
  *                                                                        *
- **************************************************************************/
+ **************************************************************************
 
-#ifndef TONY_INPUT_H
-#define TONY_INPUT_H
+/** RCS
+ *
+ * $Id: $
+ *
+ **/
 
-#include "tony/utils.h"
+#ifndef TONY_CUSTOM_H
+#define TONY_CUSTOM_H
+
+#include "tony/mpal/mpal.h"
 
 namespace Tony {
 
-class RMInput {
-private:
-//	LPDIRECTINPUT m_DI;
-//	LPDIRECTINPUTDEVICE m_DIDKeyboard, m_DIDMouse;
+using namespace MPAL;
 
-//	DIMOUSESTATE m_mState;
-	int m_mX, m_mY;
-	bool m_bClampMouse;
+/*
+ *	Defines
+ */
 
-	bool m_bLeftClickMouse, m_bLeftReleaseMouse, m_bRightClickMouse, m_bRightReleaseMouse;
+typedef uint32 HWND;
 
-private:
-	// Inizializza DirectInput
-	void DIInit(uint32 hInst);
+typedef void __declspec(dllexport) (*INIT_CUSTOM_FUNCTION_TYPE)(HWND, LPCUSTOMFUNCTION *);
 
-	// Deinizializza DirectInput
-	void DIClose(void);
-	
-public:
-	RMInput();
-	~RMInput();
+#define INIT_CUSTOM_FUNCTION					MapCustomFunctions
+#define INIT_CUSTOM_FUNCTION_STRING		"MapCustomFunctions"
 
-	// Class initialisation
-	void Init(/*uint32 hInst*/);
+#define DECLARE_CUSTOM_FUNCTION(x)		void x
 
-	// Closes the class
-	void Close(void);
+#define BEGIN_CUSTOM_FUNCTION_MAP()																					\
+	static void AssignError(HWND hWnd, int num)	{ \
+		error("Custom function %u has been already assigned!", num);		\
+	}																																					\
+	void INIT_CUSTOM_FUNCTION(HWND hWnd, LPCUSTOMFUNCTION *lpMap) \
+	{																																				
 
-	// Polling (must be performed once per frame)
-	void Poll(void);
 
-	// Aquire the DirectInput device
-	bool Acquire(void);
+#define END_CUSTOM_FUNCTION_MAP()																						\
+	}
 
-	// Deacquires the device
-	void Unacquire(void);
 
-	// Reading of the mouse
-	RMPoint MousePos() { return RMPoint(m_mX, m_mY); }
+#define ASSIGN(num,func)																										\
+	if (lpMap[num]!=NULL)																											\
+		AssignError(hWnd,num);																									\
+	lpMap[num]=func;																													
 
-	// Current status of the mouse buttons
-	bool MouseLeft();
-	bool MouseRight();
+class RMTony;
+class RMPointer;
+class RMGameBoxes;
+class RMLocation;
+class RMInventory;
+class RMInput;
 
-	// Events of mouse clicks
-	bool MouseLeftClicked() { return m_bLeftClickMouse; }
-	bool MouseRightClicked() { return m_bRightClickMouse; }
-	bool MouseBothClicked() { return m_bLeftClickMouse&&m_bRightClickMouse; }
-	bool MouseLeftReleased() { return m_bLeftReleaseMouse; }
-	bool MouseRightReleased() { return m_bRightReleaseMouse; }
-	bool MouseBothReleased() { return m_bLeftReleaseMouse&&m_bRightReleaseMouse; }
-
-	// Warns when changing from full screen to windowed
-	void SwitchFullscreen(bool bFull);
-
-	// Warns when we are in the GDI loop
-	void GDIControl(bool bCon);
-};
-
-} // End of namespace Tony
+void INIT_CUSTOM_FUNCTION(HWND hWnd, LPCUSTOMFUNCTION *lpMap);
+void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input);
 
 #endif
+
+} // end of namespace Tony

@@ -48,7 +48,23 @@
 #ifndef TONY_ADV_H
 #define TONY_ADV_H
 
+#include "tony/mpal/memory.h"
+#include "tony/gfxcore.h"
+
+
 namespace Tony {
+
+// X & Y dimensions of the adventure
+#define RM_SX			640
+#define RM_SY			480
+
+// Dimensioni X&Y del bigbuf
+#define RM_BBX		(RM_SX)
+#define RM_BBY		(RM_SY)
+
+// Skipping X&Y 
+#define RM_SKIPY  ((RM_BBY - RM_SY) / 2)
+#define RM_SKIPX  0
 
 // Tony's actions
 enum RMTonyAction {
@@ -64,6 +80,25 @@ enum RMTonyAction {
 	TA_COMBINEGIVE,
 	TA_RECEIVECOMBINEGIVE
 };
+
+// Funzioni globali
+HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
+HANDLE MainUnloadLocation(bool bDoOnExit);
+void MainLinkGraphicTask(RMGfxTask *task);
+void MainFreeze(void);
+void MainUnfreeze(void);
+void MainWaitFrame(void);
+void MainShowMouse(void);
+void MainHideMouse(void);
+void MainEnableInput(void);
+void MainDisableInput(void);
+void MainPlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync);
+void MainInitWipe(int type);
+void MainCloseWipe(void);
+void MainWaitWipeEnd(void);
+void MainEnableGUI(void);
+void MainDisableGUI(void);
+void MainSetPalesati(bool bPalesati);
 
 } // End of namespace Tony
 

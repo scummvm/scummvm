@@ -1,6 +1,7 @@
 MODULE := engines/tony
 
 MODULE_OBJS := \
+	custom.o \
 	detection.o \
 	game.o \
 	gfxcore.o \

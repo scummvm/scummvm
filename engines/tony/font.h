@@ -55,6 +55,8 @@
 namespace Tony {
 
 class RMInventory;
+class RMLoc;
+class RMItem;
 
 /**
  * Gestisce un font, in cui ha varie surface per ogni lettera
@@ -318,7 +320,7 @@ class RMTextItemName : protected RMText {
 protected:
     RMPoint m_mpos;
     RMPoint m_curscroll;
-    RMItem* m_item;
+    RMItem *m_item;
     RMString m_itemName;
 
 public:
@@ -330,10 +332,10 @@ public:
     void DoFrame(RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
     virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
 
-    RMPoint GetHotspot() { if (m_item==NULL) return m_mpos+m_curscroll; else return m_item->Hotspot();  }
-    RMItem* GetSelectedItem() { return m_item; }
-    bool IsItemSelected() { return m_item!=NULL; }
-    bool IsNormalItemSelected() { return m_item!=NULL && m_itemName.Length()>0; }
+    RMPoint GetHotspot();
+    RMItem *GetSelectedItem();
+    bool IsItemSelected();
+    bool IsNormalItemSelected();
 
     virtual bool RemoveThis() { return true; }
 };

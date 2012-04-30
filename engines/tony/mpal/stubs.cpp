@@ -59,7 +59,13 @@ HANDLE CreateThread(void *lpThreadAttributes, size_t dwStackSize,
 	return 0;
 }
 
+void _beginthread(LPTHREAD_ROUTINE lpStartAddress, size_t dwStackSize, void *lpParameter) {
+}
+
 void ExitThread(int ThreadId) {
+}
+
+void _endthread() {
 }
 
 void TerminateThread(HANDLE ThreadId, uint32 dwExitCode) {
@@ -89,6 +95,10 @@ void SetEvent(HANDLE hEvent) {
 }
 
 void ResetEvent(HANDLE hEvent) {
+}
+
+uint16 GetAsyncKeyState(Common::KeyCode kc) {
+	return 0;
 }
 
 } // end of namespace MPAL

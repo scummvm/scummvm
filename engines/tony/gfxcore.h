@@ -237,7 +237,7 @@ class RMGfxSourceBuffer : public virtual RMGfxBuffer, public RMGfxTaskSetPrior {
 public:
     // Carica i dati della surface a basso livello
     virtual int Init(uint32 resID, int dimx, int dimy, bool bLoadPalette = false);
-    virtual int Init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+    virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	
 	virtual ~RMGfxSourceBuffer();

@@ -36,6 +36,7 @@
 #include "tony/gfxEngine.h"
 #include "tony/loc.h"
 #include "tony/utils.h"
+#include "tony/window.h"
 
 /**
  * This is the namespace of the Tony engine.
@@ -72,11 +73,9 @@ struct VoiceHeader {
 class TonyEngine : public Engine {
 private:
 	Common::ErrorCode Init();
+
 	void InitMusic();
 	void CloseMusic();
-	void PauseSound(bool bPause);
-	void SetMusicVolume(int nChannel, int volume);
-	int GetMusicVolume(int nChannel);
 	bool OpenVoiceDatabase();
 	void CloseVoiceDatabase();
 protected:
@@ -88,24 +87,105 @@ public:
 	Common::RandomSource _randomSource;
 	MPAL::MemoryManager _memoryManager;
 	RMResUpdate _resUpdate;
+	HANDLE m_hEndOfFrame;
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
+	FPSOUND	_theSound;
 	// Bounding box list manager
 	RMGameBoxes _theBoxes;
 	RMGfxEngine _theEngine;
+	RMWindow m_wnd;
+	bool m_bPaused;
+	bool m_bDrawLocation;
+	int m_startTime;
+	uint16 *m_curThumbnail;
+
+	bool m_bQuitNow;
+	bool m_bTimeFreezed;
+	int m_nTimeFreezed;
+
+	enum DATADIR {
+		DD_BASE = 1,
+		DD_SAVE,
+		DD_SHOTS,
+		DD_MUSIC,
+		DD_LAYER,
+		DD_UTILSFX,
+		DD_VOICES,
+		DD_BASE2
+	};
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();
 
 	const TonyGameDescription *_gameDescription;
-	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
-	uint32 getFlags() const;
-	Common::Platform getPlatform() const;
-
+	bool getIsDemo() const;
+	RMGfxEngine *GetEngine() { return &_theEngine; }
 	void GUIError(const Common::String &msg);
+
+	void Play();
+	void Close();
+	void Abort();
+
+	void GetDataDirectory(DATADIR dir, char *path);
+
+	void SwitchFullscreen(bool bFull);
+	void OptionScreen(void);
+
+	void ShowLocation(void) { m_bDrawLocation = true; }
+	void HideLocation(void) { m_bDrawLocation = false; }
+
+	// Mette o leva la pausa
+	void Pause(bool bPause);
+	bool IsPaused() { return m_bPaused; }
+
+	// Reads the time
+	uint32 GetTime(void);
+	void FreezeTime(void);
+	void UnfreezeTime(void);
+
+	// Music
+	// ******
+	void PlayMusic(int nChannel, char *fn, int nFX, bool bLoop, int nSync);
+	void StopMusic(int nChannel);
+
+	void PlaySFX(int nSfx, int nFX = 0);
+	void StopSFX(int nSfx);
+
+	void PlayUtilSFX(int nSfx, int nFX = 0);
+	void StopUtilSFX(int nSfx);
+
+	FPSFX *CreateSFX(byte *buf);
+
+	void PreloadSFX(int nSfx, char *fn);
+	void UnloadAllSFX(void);
+	
+	void PreloadUtilSFX(int nSfx, char *fn);
+	void UnloadAllUtilSFX(void);
+
+	// Ferma tutta la parte audio
+	void PauseSound(bool bPause);
+
+	void SetMusicVolume(int nChannel, int volume);
+	int GetMusicVolume(int nChannel);
+
+	// Salvataggio
+	void AutoSave(void);
+	void SaveState(int n, char *name);
+	void LoadState(int n);
+	void GetSaveStateFileName(int n, char* buf);
+
+	// Prende il thumbnail
+	void GrabThumbnail(void);
+	uint16 *GetThumbnail(void) { return m_curThumbnail; }
+
+	void Quit(void) { m_bQuitNow = true; }
+
+	void OpenInitLoadMenu(void);
+	void OpenInitOptions(void);
 };
 
 // Global reference to the TonyEngine object

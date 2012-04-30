@@ -43,6 +43,10 @@ Common::Language TonyEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+bool TonyEngine::getIsDemo() const { 
+	return _gameDescription->desc.flags & ADGF_DEMO; 
+}
+
 }
 
 static const PlainGameDescriptor tonyGames[] = {

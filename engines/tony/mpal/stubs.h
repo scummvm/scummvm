@@ -31,6 +31,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/keyboard.h"
 #include "tony/mpal/memory.h"
 
 namespace Tony {
@@ -42,6 +43,7 @@ namespace MPAL {
 \****************************************************************************/
 
 typedef uint32 (*LPTHREAD_START_ROUTINE)(void *lpThreadParameter);
+typedef void (*LPTHREAD_ROUTINE)(void *lpThreadParameter);
 
 /****************************************************************************\
 *       Defines
@@ -82,7 +84,11 @@ extern HANDLE CreateThread(void *lpThreadAttributes, size_t dwStackSize,
 		LPTHREAD_START_ROUTINE lpStartAddress, void *lpParameter,
 		uint32 dwCreationFlags, uint32 *lpThreadId);
 
+extern void _beginthread(LPTHREAD_ROUTINE lpStartAddress, size_t dwStackSize, void *lpParameter);
+
 extern void ExitThread(int ThreadId);
+
+extern void _endthread();
 
 extern void TerminateThread(HANDLE ThreadId, uint32 dwExitCode);
 
@@ -99,6 +105,8 @@ extern HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInit
 extern void SetEvent(HANDLE hEvent);
 
 extern void ResetEvent(HANDLE hEvent);
+
+extern uint16 GetAsyncKeyState(Common::KeyCode kc);
 
 } // end of namespace MPAL
 

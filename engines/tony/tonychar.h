@@ -49,6 +49,7 @@
 #define TONY_TONYCHAR_H
 
 #include "tony/mpal/stubs.h"
+#include "tony/loc.h"
 
 namespace Tony {
 

@@ -28,14 +28,14 @@
  *   .z$*         d$$$$$$$L        ^*$c.                                  *
  *  #$$$.         $$$$$$$$$         .$$$" Project: Roasted Moths........  *
  *    ^*$b       4$$$$$$$$$F      .d$*"                                   *
- *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Input.CPP............  *
+ *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Window.HPP...........  *
  *        *$.    '$$$$$$$$$     4$P 4                                     *
  *     J   *$     "$$$$$$$"     $P   r    Author:  Giovanni Bajo........  *
  *    z$   '$$$P*4c.*$$$*.z@*R$$$    $.                                   *
- *   z$"    ""       #$F^      ""    '$c                                  *
- *  z$$beu     .ue="  $  "=e..    .zed$$c                                 *
- *      "#$e z$*"   .  `.   ^*Nc e$""                                     *
- *         "$$".  .r"   ^4.  .^$$"                                        *
+ *   z$"    ""       #$F^      ""    '$c  Desc:    Classi per la gestione *
+ *  z$$beu     .ue="  $  "=e..    .zed$$c          di una finestra Direct 
+ *      "#$e z$*"   .  `.   ^*Nc e$""              Draw.................  *
+ *         "$$".  .r"   ^4.  .^$$"                 .....................  *
  *          ^.@*"6L=\ebu^+C$"*b."                                         *
  *        "**$.  "c 4$$$  J"  J$P*"    OS:  [ ] DOS  [X] WIN95  [ ] PORT  *
  *            ^"--.^ 9$"  .--""      COMP:  [ ] WATCOM  [X] VISUAL C++    *
@@ -45,72 +45,90 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef TONY_INPUT_H
-#define TONY_INPUT_H
+#ifndef TONY_WINDOW_H
+#define TONY_WINDOW_H
 
-#include "tony/utils.h"
+#include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Tony {
 
-class RMInput {
+typedef uint32 HWND;
+
+class RMWindow {
 private:
-//	LPDIRECTINPUT m_DI;
-//	LPDIRECTINPUTDEVICE m_DIDKeyboard, m_DIDMouse;
+	bool Lock(/*DDSURFACEDESC& ddsd */);
+	void Unlock(/*DDSURFACEDESC& ddsd */);
 
-//	DIMOUSESTATE m_mState;
-	int m_mX, m_mY;
-	bool m_bClampMouse;
+	// Inizializza DirectDraw
+	void DDInit(void);
 
-	bool m_bLeftClickMouse, m_bLeftReleaseMouse, m_bRightClickMouse, m_bRightReleaseMouse;
+	// Chiude DirectDraw
+	void DDClose(void);
 
-private:
-	// Inizializza DirectInput
-	void DIInit(uint32 hInst);
+	// Repaint grafico tramite DirectDraw
+	void Repaint(void);
 
-	// Deinizializza DirectInput
-	void DIClose(void);
-	
-public:
-	RMInput();
-	~RMInput();
+	// Window Proc principale che richiama la WindowProc dentro la classe
+//	friend LRESULT CALLBACK GlobalWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	// Class initialisation
-	void Init(/*uint32 hInst*/);
+	// Procedura di gestione messaggi
+//	LRESULT WindowProc(UINT msg, WPARAM wParam, LPARAM lParam);
 
-	// Closes the class
-	void Close(void);
+protected:
+	HWND m_hWnd;
+	bool m_bFullscreen;
 
-	// Polling (must be performed once per frame)
-	void Poll(void);
+	void * /*LPDIRECTDRAW*/ m_DD;
+	void * /*LPDIRECTDRAWSURFACE*/ m_Primary;
+	void * /*LPDIRECTDRAWSURFACE*/ m_Back;
+	void * /*LPDIRECTDRAWCLIPPER*/ m_MainClipper;
+	void * /*LPDIRECTDRAWCLIPPER*/ m_BackClipper;
 
-	// Aquire the DirectInput device
-	bool Acquire(void);
+	int fps, fcount;
+	int lastsecond, lastfcount;
 
-	// Deacquires the device
-	void Unacquire(void);
+	int mskRed, mskGreen, mskBlue;
 
-	// Reading of the mouse
-	RMPoint MousePos() { return RMPoint(m_mX, m_mY); }
+	bool m_bGrabScreenshot;
+	bool m_bGrabThumbnail;
+	bool m_bGrabMovie;
+	uint16 *m_wThumbBuf;
 
-	// Current status of the mouse buttons
-	bool MouseLeft();
-	bool MouseRight();
+	void CreateBWPrecalcTable(void);
+	void UpdatePixelFormat(void);
+	void WipeEffect(Common::Rect &rcBoundEllipse);
 
-	// Events of mouse clicks
-	bool MouseLeftClicked() { return m_bLeftClickMouse; }
-	bool MouseRightClicked() { return m_bRightClickMouse; }
-	bool MouseBothClicked() { return m_bLeftClickMouse&&m_bRightClickMouse; }
-	bool MouseLeftReleased() { return m_bLeftReleaseMouse; }
-	bool MouseRightReleased() { return m_bRightReleaseMouse; }
-	bool MouseBothReleased() { return m_bLeftReleaseMouse&&m_bRightReleaseMouse; }
+	public:
+		RMWindow() { m_Primary = NULL; m_Back = NULL; };
+		~RMWindow() { Close(); }
 
-	// Warns when changing from full screen to windowed
-	void SwitchFullscreen(bool bFull);
+		// Inizializzazione
+		void Init(/*HINSTANCE hInst*/);
+		void InitDirectDraw(void);
+		void Close(void);
 
-	// Warns when we are in the GDI loop
-	void GDIControl(bool bCon);
+		// Switch tra windowed e fullscreen
+		void SwitchFullscreen(bool bFull);
+
+		// Legge il prossimo frame
+		void GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
+
+		// Avverte di grabbare un thumbnail per il salvataggio
+//		void GrabThumbnail(uint16 *buf);
+
+		operator HWND() { return m_hWnd; }
+
+		// Modi pixel format
+		// MODE1: 1555
+		// MODE2: 5515
+		// MODE3: 5551
+		bool ISMODE1() { return (mskRed == 0x7C00 && mskGreen == 0x3E0 && mskBlue== 0x1F); }
+		bool ISMODE2() { return (mskRed == 0xF800 && mskGreen == 0x7E0 && mskBlue== 0x1F); }
+		bool ISMODE3() { return (mskRed == 0xF800 && mskGreen == 0x7C0 && mskBlue== 0x3E); }
+		bool ISMODE4() { return (mskBlue == 0xF800 && mskGreen == 0x7E0 && mskRed== 0x1F); }
 };
 
 } // End of namespace Tony
 
-#endif
+#endif /* TONY_WINDOW_H */
