@@ -193,12 +193,12 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterPositionX[i] = 0xFFFF;
 		_characterPositionY[i] = 0xFFFF;
 		_rulesBuffer2_3[i] = 0;
-		_rulesBuffer2_4[i] = 0;
+		_characterFrameArray[i] = 0;
 		_rulesBuffer2_5[i] = 0xFF;
 		_rulesBuffer2_6[i] = 4;
 		_rulesBuffer2_7[i] = 0;
-		_rulesBuffer2_8[i] = 20;
-		_rulesBuffer2_9[i] = 0;
+		_spriteSizeArray[i] = 20;
+		_characterDirectionArray[i] = 0;
 		_rulesBuffer2_10[i] = 0;
 		_rulesBuffer2_11[i] = 0;
 		_rulesBuffer2_12[i] = 0;
@@ -295,8 +295,8 @@ Common::Platform LilliputEngine::getPlatform() const {
 	return _platform;
 }
 
-void LilliputEngine::displayFunction18(int index, int x, int y, int flags) {
-	debugC(2, kDebugEngine, "displayFunction18(%d, %d, %d, %d)", index, x, y, flags);
+void LilliputEngine::displayCharacter(int index, int x, int y, int flags) {
+	debugC(2, kDebugEngine, "displayCharacter(%d, %d, %d, %d)", index, x, y, flags);
 
 	byte *buf = _buffer1_45k + (y << 8) + x;
 
@@ -321,9 +321,10 @@ void LilliputEngine::displayFunction18(int index, int x, int y, int flags) {
 			buf += 256;
 		}
 	} else {
-//		src += 14;
+		// Sprite mirror
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
+				// May need a hack of 1 pixel 
 				if (src[15 - x] != 0)
 					buf[x] = src[15 - x];
 			}
@@ -689,11 +690,11 @@ void LilliputEngine::sub16217() {
 			int index2 = _rulesBuffer2_5[i];
 			_rulesBuffer2_3[i] = _rulesBuffer2_3[index2] + _rulesBuffer2_7[i];
 			int tmpVal = _rulesBuffer2_6[i];
-			_rulesBuffer2_9[i] = _rulesBuffer2_9[index2];
+			_characterDirectionArray[i] = _characterDirectionArray[index2];
 			int var3 = _characterPositionX[index2];
 			int var4 = _characterPositionY[index2];
 
-			switch (_rulesBuffer2_9[i]) {
+			switch (_characterDirectionArray[i]) {
 			case 0:
 				var3 -= tmpVal;
 				break;
@@ -1003,7 +1004,7 @@ void LilliputEngine::sub16CA0() {
 							} else if((_rulesBuffer2_11[index] & 4) != 0) {
 								_byte16C9F = 0;
 							} else {
-								if (_rulesBuffer2_9[index] == 0) {
+								if (_characterDirectionArray[index] == 0) {
 									if (d1 > c1) {
 										_byte16C9F = 2;
 
@@ -1013,7 +1014,7 @@ void LilliputEngine::sub16CA0() {
 										if (sub16DD5(c1, d1, c2, d2) != 0)
 											_byte16C9F = 1;
 									}
-								} else if (_rulesBuffer2_9[index] == 1) {
+								} else if (_characterDirectionArray[index] == 1) {
 									if (d2 < c2) {
 										_byte16C9F = 2;
 
@@ -1023,7 +1024,7 @@ void LilliputEngine::sub16CA0() {
 										if (sub16DD5(c1, d1, c2, d2) != 0)
 											_byte16C9F = 1;
 									}
-								} else if (_rulesBuffer2_9[index] == 2) {
+								} else if (_characterDirectionArray[index] == 2) {
 									if (d2 > c2) {
 										_byte16C9F = 2;
 
@@ -1245,17 +1246,20 @@ void LilliputEngine::renderCharacters(byte *buf, byte x, byte y) {
 	int displayX = _characterDisplayX[index];
 	int displayY = _characterDisplayY[index];
 
+	if ((displayX == 104) && (displayY == 132))
+		warning("");
+
 	if (index == _scriptHandler->_word1881B)
 		sub1546F(displayX, displayY);
 
 	if (_byte16552 != 1) {
-		int flag = _rulesBuffer2_9[index];
-		int frame = _rulesBuffer2_4[index];
+		int flag = _characterDirectionArray[index];
+		int frame = _characterFrameArray[index];
 
 		if (frame != 0xFFFF) {
 			frame += _scriptHandler->_array10AB1[index];
 			if ((flag & 1) == 1)
-				frame += _rulesBuffer2_8[index];
+				frame += _spriteSizeArray[index];
 
 			if (_array12299[index] != 0xFF) {
 				frame = _array12299[index] + 82;
@@ -1263,7 +1267,7 @@ void LilliputEngine::renderCharacters(byte *buf, byte x, byte y) {
 				frame = -frame;
 			}
 
-			displayFunction18(frame, displayX, displayY, flag);
+			displayCharacter(frame, displayX, displayY, flag);
 		}
 	}
 
@@ -1370,7 +1374,7 @@ int LilliputEngine::sub16799(int param1, int index) {
 	int var1 = (_scriptHandler->_array16123[index] << 8) + _scriptHandler->_array1614B[index];
 	int var2 = (_array109E9[index] << 8) + _array10A11[index];
 
-	_rulesBuffer2_9[index] = sub16B0C(var1, var2);
+	_characterDirectionArray[index] = sub16B0C(var1, var2);
 
 	warning("sub_1693A");
 	_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
@@ -1484,7 +1488,7 @@ void LilliputEngine::sub16626() {
 
 int LilliputEngine::sub166DD(int index, int var1) {
 
-	_rulesBuffer2_9[index] = (var1 >> 8) & 3;
+	_characterDirectionArray[index] = (var1 >> 8) & 3;
 	sub16685(index, var1 & 0xFF);
 	return 0;
 }
@@ -1728,14 +1732,14 @@ void LilliputEngine::sub16B63(int index) {
 	debugC(2, kDebugEngine, "sub16B63(%d)", index);
 
 	static const byte nextFrame[4] = {1, 3, 0, 2};
-	_rulesBuffer2_9[index] = nextFrame[_rulesBuffer2_9[index]];
+	_characterDirectionArray[index] = nextFrame[_characterDirectionArray[index]];
 }
 
 void LilliputEngine::sub16B76(int index) {
 	debugC(2, kDebugEngine, "sub16B76(%d)", index);
 
 	static const byte nextFrame[4] = {2, 0, 3, 1};
-	_rulesBuffer2_9[index] = nextFrame[_rulesBuffer2_9[index]];
+	_characterDirectionArray[index] = nextFrame[_characterDirectionArray[index]];
 }
 
 void LilliputEngine::sub166C0(int index) {
@@ -1791,7 +1795,7 @@ void LilliputEngine::sub16B31(int index, int val) {
 
 	int newX = _characterPositionX[index];
 	int newY = _characterPositionY[index];
-	switch (_rulesBuffer2_9[index]) {
+	switch (_characterDirectionArray[index]) {
 	case 0:
 		newX += val;
 		break;
@@ -1805,7 +1809,7 @@ void LilliputEngine::sub16B31(int index, int val) {
 		newX -= val;
 		break;
 	}
-	sub16B8F(index, newX, newY, _rulesBuffer2_9[index]);
+	sub16B8F(index, newX, newY, _characterDirectionArray[index]);
 }
 
 void LilliputEngine::sub16B8F(int index, int x, int y, int flag) {
@@ -2119,12 +2123,12 @@ void LilliputEngine::loadRules() {
 		_characterPositionY[j] = curWord;
 
 		_rulesBuffer2_3[j] = (f.readUint16LE() & 0xFF);
-		_rulesBuffer2_4[j] = f.readUint16LE();
+		_characterFrameArray[j] = f.readUint16LE();
 		_rulesBuffer2_5[j] = f.readByte();
 		_rulesBuffer2_6[j] = f.readByte();
 		_rulesBuffer2_7[j] = f.readByte();
-		_rulesBuffer2_8[j] = f.readByte();
-		_rulesBuffer2_9[j] = f.readByte();
+		_spriteSizeArray[j] = f.readByte();
+		_characterDirectionArray[j] = f.readByte();
 		_rulesBuffer2_10[j] = f.readByte();
 		_rulesBuffer2_11[j] = f.readByte();
 		_rulesBuffer2_12[j] = f.readByte();

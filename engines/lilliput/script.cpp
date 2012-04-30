@@ -209,7 +209,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_sub1795E();
 		break;
 	case 0x2A:
-		return OC_sub1796E();
+		return OC_checkCharacterDirection();
 		break;
 	case 0x2B:
 		return OC_sub17984();
@@ -410,7 +410,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub18074();
 		break;
 	case 0x38:
-		OC_sub1808B();
+		OC_setCurrentCharacterDirection();
 		break;
 	case 0x39:
 		OC_sub18099();
@@ -515,7 +515,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub18690();
 		break;
 	case 0x5B:
-		OC_setWord10802();
+		OC_setViewPortCharacterTarget();
 		break;
 	case 0x5C:
 		OC_sub186A1();
@@ -1850,13 +1850,13 @@ byte LilliputScript::OC_sub1795E() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub1796E() {
-	debugC(1, kDebugScript, "OC_sub1796E()");
+byte LilliputScript::OC_checkCharacterDirection() {
+	debugC(1, kDebugScript, "OC_checkCharacterDirection()");
 
 	int var1 = getValue1();
 	int var2 = _currScript->readUint16LE();
 
-	if (_vm->_rulesBuffer2_9[var1] == var2)
+	if (_vm->_characterDirectionArray[var1] == var2)
 		return 1;
 	return 0;
 }
@@ -2344,19 +2344,21 @@ void LilliputScript::OC_sub17D23() {
 	computeOperation(buf, var1, var2 >> 8);
 	computeOperation(buf + 1, var1, var2 & 0xFF);
 }
+
 void LilliputScript::OC_sub17E6D() {
 	debugC(1, kDebugScript, "OC_sub17E6D()");
 	
 	int var1 = _currScript->readUint16LE();
 	_vm->_rulesBuffer2_12[_vm->_rulesBuffer2PrevIndx] = (var1 - 2000) & 0xFF;
 }
+
 void LilliputScript::OC_sub17E7E() {
 	debugC(2, kDebugScript, "OC_sub17E7E()");
 
 	int var1 = _currScript->readUint16LE();
 	int var2 = _currScript->readUint16LE();
-	_vm->_rulesBuffer2_4[_vm->_rulesBuffer2PrevIndx] = var1;
-	_vm->_rulesBuffer2_8[_vm->_rulesBuffer2PrevIndx] = var2;
+	_vm->_characterFrameArray[_vm->_rulesBuffer2PrevIndx] = var1;
+	_vm->_spriteSizeArray[_vm->_rulesBuffer2PrevIndx] = var2;
 
 }
 
@@ -2405,18 +2407,18 @@ void LilliputScript::OC_sub17EF4() {
 	int var1 = getValue2();
 	int posTile = sub17285(_vm->_rulesBuffer2PrevIndx);
 	int dir = _vm->sub16B0C(posTile, var1);
-	_vm->_rulesBuffer2_9[_vm->_rulesBuffer2PrevIndx] = dir;
+	_vm->_characterDirectionArray[_vm->_rulesBuffer2PrevIndx] = dir;
 
 }
 void LilliputScript::OC_sub17F08() {
 	debugC(1, kDebugScript, "OC_sub17F08()");
 	
-	int var1 = getValue1();
+	int index = getValue1();
 
-	static const byte _array16B04[] = { 0, 2, 0, 1, 3, 2, 3, 1 };
+	static const byte _directionsArray[] = { 0, 2, 0, 1, 3, 2, 3, 1 };
 
-	int dx = _vm->_characterPositionX[var1] - _vm->_characterDisplayX[_vm->_rulesBuffer2PrevIndx];
-	int dy = _vm->_characterPositionY[var1] - _vm->_characterDisplayY[_vm->_rulesBuffer2PrevIndx];
+	int dx = _vm->_characterPositionX[index] - _vm->_characterDisplayX[_vm->_rulesBuffer2PrevIndx];
+	int dy = _vm->_characterPositionY[index] - _vm->_characterDisplayY[_vm->_rulesBuffer2PrevIndx];
 
 	int flag = 0;
 	if (dx < 0) {
@@ -2431,7 +2433,7 @@ void LilliputScript::OC_sub17F08() {
 		flag |= 1;
 	}
 
-	_vm->_rulesBuffer2_9[_vm->_rulesBuffer2PrevIndx] = _array16B04[flag];
+	_vm->_characterDirectionArray[_vm->_rulesBuffer2PrevIndx] = _directionsArray[flag];
 }
 
 void LilliputScript::OC_sub17F4F() {
@@ -2440,6 +2442,7 @@ void LilliputScript::OC_sub17F4F() {
 	_array10A39[_vm->_rulesBuffer2PrevIndx] = var;
 	_vm->_array109E9[_vm->_rulesBuffer2PrevIndx] = 0xFF;
 }
+
 void LilliputScript::OC_sub17F68() {
 	warning("OC_sub17F68");
 }
@@ -2496,10 +2499,10 @@ void LilliputScript::OC_sub18074() {
 	_vm->_rulesBuffer2_16[(_vm->_rulesBuffer2PrevIndx * 32) + var2] = var1;
 }
 
-void LilliputScript::OC_sub1808B() {
-	debugC(1, kDebugScript, "OC_sub1808B()");
+void LilliputScript::OC_setCurrentCharacterDirection() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacterDirection()");
 
-	_vm->_rulesBuffer2_9[_vm->_rulesBuffer2PrevIndx] = (_currScript->readUint16LE() & 0xFF);
+	_vm->_characterDirectionArray[_vm->_rulesBuffer2PrevIndx] = (_currScript->readUint16LE() & 0xFF);
 }
 
 void LilliputScript::OC_sub18099() {
@@ -2874,8 +2877,8 @@ void LilliputScript::OC_sub18690() {
 	warning("OC_sub18690");
 }
 
-void LilliputScript::OC_setWord10802() {
-	debugC(1, kDebugScript, "OC_setWord10802()");
+void LilliputScript::OC_setViewPortCharacterTarget() {
+	debugC(1, kDebugScript, "OC_setViewPortCharacterTarget()");
 
 	_viewportCharacterTarget = getValue1();
 }

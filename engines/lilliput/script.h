@@ -168,7 +168,7 @@ private:
 	byte OC_sub1792A();
 	byte OC_sub1793E();
 	byte OC_sub1795E();
-	byte OC_sub1796E();
+	byte OC_checkCharacterDirection();
 	byte OC_sub17984();
 	byte OC_checkSavedMousePos();
 	byte OC_sub179AE();
@@ -234,7 +234,7 @@ private:
 	void OC_sub1801D();
 	void OC_sub1805D();
 	void OC_sub18074();
-	void OC_sub1808B();
+	void OC_setCurrentCharacterDirection();
 	void OC_sub18099();
 	void OC_sub180C3();
 	void OC_sub1810A();
@@ -270,7 +270,7 @@ private:
 	void OC_initArr18560();
 	void OC_sub18678();
 	void OC_sub18690();
-	void OC_setWord10802();
+	void OC_setViewPortCharacterTarget();
 	void OC_sub186A1();
 	void OC_sub186E5_snd();
 	void OC_sub1870A_snd();

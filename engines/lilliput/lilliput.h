@@ -151,12 +151,12 @@ public:
 	int _characterPositionX[40];
 	int _characterPositionY[40];
 	byte _rulesBuffer2_3[40];
-	int _rulesBuffer2_4[40];
+	int _characterFrameArray[40];
 	byte _rulesBuffer2_5[40];
 	byte _rulesBuffer2_6[40];
 	byte _rulesBuffer2_7[40];
-	byte _rulesBuffer2_8[40];
-	byte _rulesBuffer2_9[40];
+	byte _spriteSizeArray[40];
+	byte _characterDirectionArray[40];
 	byte _rulesBuffer2_10[40];
 	byte _rulesBuffer2_11[40];
 	byte _rulesBuffer2_12[40];
@@ -233,7 +233,7 @@ public:
 	void displayFunction15();
 	void displayFunction16();
 	void displayFunction17();
-	void displayFunction18(int index, int x, int y, int flags);
+	void displayCharacter(int index, int x, int y, int flags);
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
 	void sub130B6();
@@ -252,8 +252,6 @@ public:
 	void sub17264(int index, int var4);
 
 	void renderCharacters(byte *buf, byte x, byte y);
-
-	void sub16553(byte *buf);
 
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
