@@ -362,7 +362,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub17E6D();
 		break;
 	case 0x28:
-		OC_sub17E7E();
+		OC_changeCurrentCharacterSprite();
 		break;
 	case 0x29:
 		OC_sub17E99();
@@ -2408,8 +2408,8 @@ void LilliputScript::OC_sub17E6D() {
 	_vm->_rulesBuffer2_12[_vm->_rulesBuffer2PrevIndx] = (var1 - 2000) & 0xFF;
 }
 
-void LilliputScript::OC_sub17E7E() {
-	debugC(2, kDebugScript, "OC_sub17E7E()");
+void LilliputScript::OC_changeCurrentCharacterSprite() {
+	debugC(2, kDebugScript, "OC_changeCurrentCharacterSprite()");
 
 	int var1 = _currScript->readUint16LE();
 	int var2 = _currScript->readUint16LE();
@@ -2464,8 +2464,8 @@ void LilliputScript::OC_sub17EF4() {
 	int posTile = sub17285(_vm->_rulesBuffer2PrevIndx);
 	int dir = _vm->sub16B0C(posTile, var1);
 	_vm->_characterDirectionArray[_vm->_rulesBuffer2PrevIndx] = dir;
-
 }
+
 void LilliputScript::OC_sub17F08() {
 	debugC(1, kDebugScript, "OC_sub17F08()");
 	
@@ -2887,6 +2887,7 @@ void LilliputScript::OC_sub183A2() {
 void LilliputScript::OC_sub183C6() {
 	warning("OC_sub183C6");
 }
+
 void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	debugC(1, kDebugScript, "OC_loadFile_AERIAL_GFX()");
 	

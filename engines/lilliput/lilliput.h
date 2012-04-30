@@ -291,6 +291,8 @@ public:
 	void sub166D8(int index);
 	void sub16B31(int index, int val);
 	void sub16B8F(int index, int x, int y, int flag);
+	int sub1675D(int index, int var1);
+
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);

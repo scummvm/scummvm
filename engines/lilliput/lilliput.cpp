@@ -366,7 +366,6 @@ void LilliputEngine::displayFunction1a(byte *buf, int var2, int var4) {
 void LilliputEngine::displayFunction2(byte *buf, int var2, int var4) {
 	debugC(2, kDebugEngine, "displayFunction2(buf, %d, %d)", var2, var4);
 
-
 	int tmpVal = ((var4 & 0xFF) << 8) + (var4 >> 8);
 	int index2 = var2 + tmpVal + (tmpVal >> 2);
 
@@ -1246,9 +1245,6 @@ void LilliputEngine::renderCharacters(byte *buf, byte x, byte y) {
 	int displayX = _characterDisplayX[index];
 	int displayY = _characterDisplayY[index];
 
-	if ((displayX == 104) && (displayY == 132))
-		warning("");
-
 	if (index == _scriptHandler->_word1881B)
 		sub1546F(displayX, displayY);
 
@@ -1454,7 +1450,7 @@ void LilliputEngine::sub16626() {
 				result = 0;
 				break;
 			case 10:
-				warning("result = sub_1675D");
+				result = sub1675D(index, var1);
 				break;
 			case 11:
 				warning("result = sub_16729");
@@ -1491,6 +1487,28 @@ int LilliputEngine::sub166DD(int index, int var1) {
 	_characterDirectionArray[index] = (var1 >> 8) & 3;
 	sub16685(index, var1 & 0xFF);
 	return 0;
+}
+
+int LilliputEngine::sub1675D(int index, int var1) {
+	debugC(2, kDebugEngine, "sub1675D(%d, %d)", index, var1);
+
+	int var2 = _scriptHandler->_array10A39[index];
+	int var1h = _scriptHandler->_array16123[var2];
+	int var1l = _scriptHandler->_array1614B[var2];
+	int var3 = _array109E9[index];
+
+	if ((var3 != 0xFF) && (var3 == _array10999[index])) {
+		var3 = _array10A11[index];
+		if (var3 == _array109C1[index]) {
+			_array109E9[index] = var1h;
+			_array10A11[index] = var1l;
+		}
+	}
+
+	_array10999[index] = var1h;
+	_array109C1[index] = var1l;
+
+	return sub16799(index, var1);
 }
 
 void LilliputEngine::sub16EBC() {
