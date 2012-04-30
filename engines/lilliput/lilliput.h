@@ -201,7 +201,8 @@ public:
 	byte _array109E9[40];
 	byte _array10A11[40];
 	byte _array16E94[40];
-
+	byte _array16C54[4];
+	byte _array16C58[4];
 	byte _buffer1_45k[45056];
 	byte _buffer2_45k[45056];
 	byte _buffer3_45k[45056];
@@ -246,6 +247,8 @@ public:
 	void viewportScrollTo(int var1, int var3);
 	void sub189DE();
 	void sub16626();
+	void sub17224(int var1, int var4);
+	void sub17264(int index, int var4);
 
 	void renderCharacters(byte *buf, int x, int y);
 	int sub16799(int param1, int index);
@@ -274,6 +277,18 @@ public:
 	void sub15498(byte x, byte y, int var2);
 	void sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex);
 	void sub15F31(bool &forceReturnFl);
+	void sub16B63(int index);
+	void sub16B76(int index);
+	void sub166C0(int index);
+	void sub166C6(int index);
+	void sub166CC(int index);
+	void sub166D2(int index);
+	void sub166B1(int index);
+	void sub166B6(int index);
+	void sub166BB(int index);
+	void sub166D8(int index);
+	void sub16B31(int index, int val);
+	void sub16B8F(int index, int x, int y, int flag);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);

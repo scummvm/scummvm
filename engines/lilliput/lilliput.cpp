@@ -168,6 +168,11 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_saveFlag = false;
 	_byte16F07_menuId = 0;
 
+	_array16C54[0] = _array16C54[3] = 1;
+	_array16C54[1] = _array16C54[2] = 2;
+	_array16C54[2] = _array16C54[1] = 4;
+	_array16C54[3] = _array16C54[0] = 8;
+
 	for (int i = 0; i < 3; i++)
 		_array147D1[i] = 0;
 
@@ -289,7 +294,6 @@ GameType LilliputEngine::getGameType() const {
 Common::Platform LilliputEngine::getPlatform() const {
 	return _platform;
 }
-
 
 void LilliputEngine::displayFunction18(int index, int x, int y, int flags) {
 	debugC(2, kDebugEngine, "displayFunction18(%d, %d, %d, %d)", index, x, y, flags);
@@ -1422,7 +1426,7 @@ void LilliputEngine::sub16626() {
 			if (var2 == 16)
 				break;
 
-			var2 = (2 * var2) + (index << 5);
+			var2 = (2 * (var2 & 0xFF)) + (index << 5);
 			int var1 = _scriptHandler->_array12311[var2 / 2];
 			int tmpVal = var2;
 			var2 = ((var1 >> 8) >> 3);
@@ -1464,11 +1468,11 @@ void LilliputEngine::sub16626() {
 				warning("result = sub_166EA");
 				break;
 			default:
-				error("sub16626 - unexpected value %d", var2 / 2);
+				warning("sub16626 - unexpected value %d", var2 / 2);
 				break;
 			}
 
-			if (result & 1) {
+			if ((result & 1) == 0) {
 				++_scriptHandler->_array12811[index];
 				if (_scriptHandler->_array12811[index] == 16)
 					_scriptHandler->_characterScriptEnabled[index] = 1;
@@ -1680,47 +1684,199 @@ int LilliputEngine::sub16685(int idx, int var1) {
 int LilliputEngine::sub16675(int idx, int var1) {
 	debugC(2, kDebugEngine, "sub16675(%d, %d)", idx, var1);
 
-	warning("sub16675(%d, %d)", idx, var1);
 	int index = sub16685(idx, var1);
 
 	switch (index) {
 	case 0:
 		break;
 	case 1:
-		warning("sub_166B1");
+		sub166B1(index);
 		break;
 	case 2:
-		warning("sub_166B6");
+		sub166B6(index);
 		break;
 	case 3:
-		warning("sub_166BB");
+		sub166BB(index);
 		break;
 	case 4:
-		warning("sub_16B63");
+		sub16B63(index);
 		break;
 	case 5:
-		warning("sub_16B76");
+		sub16B76(index);
 		break;
 	case 6:
-		warning("sub_166C0");
+		sub166C0(index);
 		break;
 	case 7:
-		warning("sub_166C6");
+		sub166C6(index);
 		break;
 	case 8:
-		warning("sub_166CC");
+		sub166CC(index);
 		break;
 	case 9:
-		warning("sub_166D2");
+		sub166D2(index);
 		break;
 	case 10:
-		warning("sub_166D8");
+		sub166D8(index);
 		break;
 	default:
 		warning("sub16675 - Unexpected value %d", index);
 	}
 
 	return 0;
+}
+
+void LilliputEngine::sub16B63(int index) {
+	debugC(2, kDebugEngine, "sub16B63(%d)", index);
+
+	static const byte nextFrame[4] = {1, 3, 0, 2};
+	_rulesBuffer2_9[index] = nextFrame[_rulesBuffer2_9[index]];
+}
+
+void LilliputEngine::sub16B76(int index) {
+	debugC(2, kDebugEngine, "sub16B76(%d)", index);
+
+	static const byte nextFrame[4] = {2, 0, 3, 1};
+	_rulesBuffer2_9[index] = nextFrame[_rulesBuffer2_9[index]];
+}
+
+void LilliputEngine::sub166C0(int index) {
+	debugC(2, kDebugEngine, "sub166C0(%d)", index);
+
+	_rulesBuffer2_3[index] += 1;
+}
+
+void LilliputEngine::sub166C6(int index) {
+	debugC(2, kDebugEngine, "sub166C6(%d)", index);
+
+	_rulesBuffer2_3[index] += 2;
+}
+
+void LilliputEngine::sub166CC(int index) {
+	debugC(2, kDebugEngine, "sub166CC(%d)", index);
+
+	_rulesBuffer2_3[index] -= 1;
+}
+
+void LilliputEngine::sub166D2(int index) {
+	debugC(2, kDebugEngine, "sub166D2(%d)", index);
+
+	_rulesBuffer2_3[index] -= 2;
+}
+
+void LilliputEngine::sub166B1(int index) {
+	debugC(2, kDebugEngine, "sub166B1(%d)", index);
+
+	sub16B31(index, 2);
+}
+
+void LilliputEngine::sub166B6(int index) {
+	debugC(2, kDebugEngine, "sub166B6(%d)", index);
+
+	sub16B31(index, 4);
+}
+
+void LilliputEngine::sub166BB(int index) {
+	debugC(2, kDebugEngine, "sub166BB(%d)", index);
+
+	sub16B31(index, 0xFE);
+}
+
+void LilliputEngine::sub166D8(int index) {
+	debugC(2, kDebugEngine, "sub166D8(%d)", index);
+
+	sub16B31(index, 3);
+}
+
+void LilliputEngine::sub16B31(int index, int val) {
+	debugC(2, kDebugEngine, "sub16B31(%d, %d)", index, val);
+
+	int newX = _characterPositionX[index];
+	int newY = _characterPositionY[index];
+	switch (_rulesBuffer2_9[index]) {
+	case 0:
+		newX += val;
+		break;
+	case 1:
+		newY -= val;
+		break;
+	case 2:
+		newY += val;
+		break;
+	default:
+		newX -= val;
+		break;
+	}
+	sub16B8F(index, newX, newY, _rulesBuffer2_9[index]);
+}
+
+void LilliputEngine::sub16B8F(int index, int x, int y, int flag) {
+	debugC(2, kDebugEngine, "sub16B8F(%d, %d, %d)", index, x, y);
+
+	int diffX = x >> 3;
+	if (((diffX & 0xFF) == _scriptHandler->_array16123[index]) && ((y >> 3) == _scriptHandler->_array1614B[index])) {
+		_characterPositionX[index] = x;
+		_characterPositionY[index] = y;
+	}
+
+	if ((x < 0) || (x >= 512) || (y < 0) || (y >= 512))
+		return;
+
+	int mapIndex = (_scriptHandler->_array1614B[index] << 6) + _scriptHandler->_array16123[index];
+	mapIndex <<= 2;
+
+	if ((_bufferIsoMap[mapIndex + 3] & _array16C58[flag]) == 0)
+		return;
+
+	mapIndex = ((y & 0xFFF8) << 3) + diffX;
+	mapIndex <<= 2;
+
+	if ((_bufferIsoMap[mapIndex + 3] & _array16C54[flag]) == 0)
+		return;
+
+	int var1 = _rulesBuffer2_10[index];
+	var1 &= 7;
+	var1 ^= 7;
+
+	if ((var1 & _rulesChunk9[_bufferIsoMap[mapIndex]]) != 0)
+		return;
+
+	_characterPositionX[index] = x;
+	_characterPositionY[index] = y;
+}
+
+void LilliputEngine::sub17224(int var1, int var4) {
+	debugC(2, kDebugEngine, "sub17224(%d, %d)", var1, var4);
+
+	byte type = (var1 >> 8);
+	if (type == 0) {
+		sub17264(var1, var4);
+		return;
+	}
+	
+	if (type == 3) {
+		for (int i = _numCharacters - 1; i >= 0; i--)
+			sub17264(i, var4);
+		return;
+	}
+
+	int index = var4 & 0xFF;
+	for (int i = 0; i < _numCharacters; i++) {
+		if (_scriptHandler->_array10B51[index] >= type)
+			sub17264(i, var4);
+		index += 40;
+	}
+}
+
+void LilliputEngine::sub17264(int index, int var4) {
+	debugC(2, kDebugEngine, "sub17264(%d, %d)", index, var4);
+
+	if (_array11D49[index] != 0xFFFF) {
+		_array1289F[index] = var4;
+	} else {
+		_scriptHandler->_characterScriptEnabled[index] = 1;
+		_array11D49[index] = var4;
+	}
 }
 
 void LilliputEngine::sub171CF() {
@@ -1742,7 +1898,7 @@ void LilliputEngine::sub171CF() {
 			int var4 = _array12861[(3 * i) + 2];
 			_array12861[(3 * i) + 1] = 0xFFFF;
 
-			warning("sub_17224");
+			sub17224(var1, var4);
 		}
 	}
 }
@@ -2197,7 +2353,7 @@ void LilliputEngine::handleGameScripts() {
 		assert(tmpVal < _gameScriptIndexSize);
 		debugC(1, kDebugEngine, "================= Game Script %d ==================", i);
 		ScriptStream script = ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[i]], _arrayGameScriptIndex[i + 1] - _arrayGameScriptIndex[i]);
-		_scriptHandler->disasmScript(script);
+//		_scriptHandler->disasmScript(script);
 		debugC(1, kDebugEngine, "============= End Game Script %d ==================", i);
 
 	}
