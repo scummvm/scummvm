@@ -257,7 +257,7 @@ public:
 	void prepareGoldAmount(int param1);
 	void sub12F37();
 	int sub16675(int idx, int var1);
-	int sub16685(int idx, int var1);
+	void sub16685(int idx, int var1);
 	void sub16EBC();
 	void sub16CA0();
 	int sub166DD(int index, int var1);

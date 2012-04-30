@@ -1672,21 +1672,19 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	displayFunction8();
 }
 
-int LilliputEngine::sub16685(int idx, int var1) {
+void LilliputEngine::sub16685(int idx, int var1) {
 	debugC(2, kDebugEngine, "sub16685(%d, %d)", idx, var1);
 
 	int index = (idx << 5) + (var1 & 0xFF);
-	byte tmpVal = _rulesBuffer2_16[index];
-	_scriptHandler->_array10AB1[idx] = tmpVal;
-	return var1;
+	_scriptHandler->_array10AB1[idx] = _rulesBuffer2_16[index];
 }
 
 int LilliputEngine::sub16675(int idx, int var1) {
 	debugC(2, kDebugEngine, "sub16675(%d, %d)", idx, var1);
 
-	int index = sub16685(idx, var1);
-
-	switch (index) {
+	sub16685(idx, var1);
+	int index = (var1 & 0xFF);	
+	switch (var1 >> 8) {
 	case 0:
 		break;
 	case 1:
@@ -1720,7 +1718,7 @@ int LilliputEngine::sub16675(int idx, int var1) {
 		sub166D8(index);
 		break;
 	default:
-		warning("sub16675 - Unexpected value %d", index);
+		warning("sub16675 - Unexpected value %d", var1 >> 8);
 	}
 
 	return 0;
@@ -2340,6 +2338,7 @@ void LilliputEngine::handleGameScripts() {
 
 	_scriptHandler->_characterScriptEnabled[index] = 0;
 	sub170EE(index);
+
 
 	_word16EFE = _array11D49[index];
 	_array11D49[index] = 0xFFFF;
