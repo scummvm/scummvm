@@ -148,17 +148,14 @@ void Costume::load(Common::SeekableReadStream *data) {
 		// use the properties of the previous costume as a base
 		if (parentID == -1) {
 			if (_prevCostume) {
-				MainModelComponent *mmc;
-
 				// However, only the first item can actually share the
 				// node hierarchy with the previous costume, so flag
 				// that component so it knows what to do
 				if (i == 0)
 					parentID = -2;
 				prevComponent = _prevCostume->_components[0];
-				mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 				// Make sure that the component is valid
-				if (!mmc)
+				if (!((FROM_BE_32(prevComponent->getTag()) == MKTAG('M','M','D','L'))))
 					prevComponent = NULL;
 			} else if (id > 0) {
 				// Use the MainModelComponent of this costume as prevComponent,
@@ -421,8 +418,9 @@ void Costume::draw() {
 
 void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 	for (int i = 0; i < _numComponents; i++) {
-		ModelComponent *c = dynamic_cast<ModelComponent *>(_components[i]);
-		if (c) {
+		if ((FROM_BE_32(_components[i]->getTag()) == MKTAG('M','M','D','L') ||
+			 FROM_BE_32(_components[i]->getTag()) == MKTAG('M','O','D','L'))) {
+			ModelComponent *c = static_cast<ModelComponent *>(_components[i]);
 			c->getBoundingBox(x1, y1, x2, y2);
 		}
 	}

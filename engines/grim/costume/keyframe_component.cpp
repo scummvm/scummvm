@@ -114,8 +114,9 @@ int KeyframeComponent::update(uint time) {
 }
 
 void KeyframeComponent::init() {
-	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc) {
+	if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
+		FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
+		ModelComponent *mc = static_cast<ModelComponent *>(_parent);
 		_anim = new Animation(_fname, mc->getAnimManager(), _priority1, _priority2);
 	} else {
 		Debug::warning(Debug::Costumes, "Parent of %s was not a model", _fname.c_str());
