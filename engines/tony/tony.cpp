@@ -25,6 +25,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "tony/tony.h"
+#include "tony/game.h"
 #include "tony/mpal/mpal.h"
 
 namespace Tony {
@@ -91,7 +92,33 @@ Common::ErrorCode TonyEngine::Init() {
 	_theBoxes.Init();
 
 	// Link to the custom graphics engine
+	_theEngine.InitCustomDll();
 
+	// Inizializza il gfxEngine
+	_theEngine.Init();
+
+	// Memoria per il thumbnail
+	m_curThumbnail = new uint16[160 * 120];
+
+	// Configurazione di default
+	bCfgInvLocked = false;
+	bCfgInvNoScroll = false;
+	bCfgTimerizedText = true;
+	bCfgInvUp = false;
+	bCfgAnni30 = false;
+	bCfgAntiAlias = false;
+	bCfgTransparence = true;
+	bCfgInterTips = true;
+	bCfgSottotitoli = true;
+	nCfgTonySpeed = 3;
+	nCfgTextSpeed = 5;
+	bCfgDubbing = true;
+	bCfgMusic = true;
+	bCfgSFX = true;
+	nCfgDubbingVolume = 10;
+	nCfgMusicVolume = 7;
+	nCfgSFXVolume = 10;
+	m_bQuitNow = false;
 
 	return Common::kNoError;
 }

@@ -237,26 +237,6 @@ void RMOptionButton::AddToList(RMGfxTargetBuffer &bigBuf) {
 
 
 /****************************************************************************\
-*       RMOptionSlide methods
-\****************************************************************************/
-
-#define INIT_GFX16_FROMRAW(dwRes, buf16)	\
-	raw = new RMResRaw(dwRes);	\
-	assert(raw->IsValid());			\
-	assert((buf16) == NULL);			\
-	(buf16) = new RMGfxSourceBuffer16(false); \
-	(buf16)->Init(*raw,raw->Width(),raw->Height()); \
-	delete raw;
-
-#define INIT_GFX8_FROMRAW(dwRes, buf8)	\
-	raw = new RMResRaw(dwRes);	\
-	assert(raw->IsValid());			\
-	assert((buf8) == NULL);			\
-	(buf8) = new RMGfxSourceBuffer8RLEByte(); \
-	(buf8)->Init(*raw, raw->Width(), raw->Height(), true); \
-	delete raw;
-
-/****************************************************************************\
 *       Metodi di RMGfxEngine
 \****************************************************************************/
 
@@ -284,23 +264,23 @@ RMGfxEngine::~RMGfxEngine() {
 }
 
 void RMGfxEngine::OpenOptionScreen(int type) {
-	bool bRes;
+	bool bRes = false;
 
 	switch (type) {
 	case 0:
-		bRes=m_opt.Init(m_bigBuf);
+		bRes = m_opt.Init(m_bigBuf);
 		break;
 	case 1:
-		bRes=m_opt.InitLoadMenuOnly(m_bigBuf, true);
+		bRes = m_opt.InitLoadMenuOnly(m_bigBuf, true);
 		break;
 	case 2:
-		bRes=m_opt.InitNoLoadSave(m_bigBuf);
+		bRes = m_opt.InitNoLoadSave(m_bigBuf);
 		break;
 	case 3:
-		bRes=m_opt.InitLoadMenuOnly(m_bigBuf, false);
+		bRes = m_opt.InitLoadMenuOnly(m_bigBuf, false);
 		break;
 	case 4:
-		bRes=m_opt.InitSaveMenuOnly(m_bigBuf, false);
+		bRes = m_opt.InitSaveMenuOnly(m_bigBuf, false);
 		break;
 	}
 
