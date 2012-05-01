@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	loc.o \
 	sound.o \
 	tony.o \
+	tonychar.o \
 	utils.o \
 	mpal/expr.o \
 	mpal/loadmpc.o \

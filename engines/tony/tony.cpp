@@ -251,4 +251,98 @@ void TonyEngine::GrabThumbnail(void) {
 	warning("TODO: TonyEngine::GrabThumbnail");
 }
 
+void TonyEngine::Play(void) {
+	warning("TODO TonyEngine::Play");
+	
+#if 0
+	MSG msg;
+
+	do {
+		// Se siamo in pausa, entra nel loop appropriato
+		if (m_bPaused)
+			PauseLoop();
+
+  		// Redraw del graphic engine
+		theEngine.DoFrame(m_bDrawLocation);
+
+		// Avverte che è finito un frame
+		PulseEvent(m_hEndOfFrame);
+
+		// Passa il buffer dall'engine alla finestra
+		if (!m_bPaused) {
+			if (!theEngine.m_bWiping)
+				m_wnd.GetNewFrame(theEngine, NULL);
+			else
+				m_wnd.GetNewFrame(theEngine, &theEngine.m_rcWipeEllipse);
+		}
+
+		// Loop minchia dei messaggi
+		if (PeekMessage(&msg, m_wnd, 0, 0, true)) {
+			if (!TranslateAccelerator(m_wnd, m_hacc, &msg)) {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+	} while (msg.message != WM_QUIT && !m_bQuitNow);
+#endif
+}
+
+
+
+void TonyEngine::Close(void) {
+	CloseMusic();
+	CloseHandle(m_hEndOfFrame);
+	_theBoxes.Close();
+	_theEngine.Close();
+	m_wnd.Close();
+}
+
+void TonyEngine::SwitchFullscreen(bool bFull) {
+	m_wnd.SwitchFullscreen(bFull);
+	_theEngine.SwitchFullscreen(bFull);
+}
+
+void TonyEngine::GDIControl(bool bCon) {
+	_theEngine.GDIControl(bCon);
+}
+
+
+void TonyEngine::PauseLoop(void) {
+	warning("TODO: TonyEngine::PauseLoop");
+
+#if 0
+	MSG msg;
+	int st,et;
+
+	st = timeGetTime();
+
+	while (m_bPaused && GetMessage(&msg,m_wnd,0,0)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	et = timeGetTime();
+
+	m_startTime += et - st;
+#endif
+}
+
+void TonyEngine::Pause(bool bPause) {
+	// Se non e' cambiato lo stato di pausing, non fare nulla
+	if (m_bPaused == bPause)
+		return;
+
+warning("TODO: TonyEninge::Pause");
+/*
+	m_bPaused = bPause;										
+	theEngine.GDIControl(m_bPaused);
+
+	if (m_bPaused) {
+		SetWindowText(m_wnd, "Tony Tough and the night of Roasted Moths - PAUSED");
+	} else {
+		SetWindowText(m_wnd, "Tony Tough and the night of Roasted Moths");
+	}
+*/
+}
+
 } // End of namespace Tony

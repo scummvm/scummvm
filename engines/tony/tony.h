@@ -126,6 +126,15 @@ public:
 	RMGfxEngine *GetEngine() { return &_theEngine; }
 	void GUIError(const Common::String &msg);
 
+	// Avverte che siamo guidati dal GDI
+	void GDIControl(bool bCon);
+
+	// Loop che gestisce i messaggi quando siamo in pausa
+	void PauseLoop(void);
+
+	// Carica un modulo e le sue funzioni custom
+	void InitCustomDll(LPCUSTOMFUNCTION *FuncList);
+
 	void Play();
 	void Close();
 	void Abort();
