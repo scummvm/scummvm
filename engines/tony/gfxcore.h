@@ -127,37 +127,37 @@ public:
 		m_task = task; m_bFlag = 0;
     }
 
-	RMGfxPrimitive(RMGfxTask *task, RMRect &src, RMRect &dst) {
+	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMRect &dst) {
 		m_task = task; m_src = src; m_dst = dst; m_bFlag = 0;
 		m_bStretch = (src.Width() != dst.Width() || src.Height() != dst.Height());
     }
 
-    RMGfxPrimitive(RMGfxTask *task, RMPoint &src, RMRect &dst) {
+    RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMRect &dst) {
 		m_task = task; m_src.TopLeft() = src; m_dst = dst; m_bFlag = 0;
     }
 
-    RMGfxPrimitive(RMGfxTask *task, RMPoint &src, RMPoint &dst) {
+    RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMPoint &dst) {
 		m_task = task; m_src.TopLeft() = src; m_dst.TopLeft() = dst; m_bFlag = 0;
     }
 
-    RMGfxPrimitive(RMGfxTask *task, RMRect &src, RMPoint &dst) {
+    RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMPoint &dst) {
 		m_task = task; m_src = src; m_dst.TopLeft() = dst; m_bFlag = 0;
     }
 
-    RMGfxPrimitive(RMGfxTask *task, RMRect &dst) {
+    RMGfxPrimitive(RMGfxTask *task, const RMRect &dst) {
 		m_task = task; m_dst = dst; m_src.SetEmpty(); m_bFlag = 0;
     }
 
-    RMGfxPrimitive(RMGfxTask *task, RMPoint &dst) {
+    RMGfxPrimitive(RMGfxTask *task, const RMPoint &dst) {
 		m_task = task; m_dst.TopLeft() = dst; m_src.SetEmpty(); m_bFlag = 0;
     }
 
     void SetFlag(byte bFlag)		{ m_bFlag=bFlag; }
 	void SetTask(RMGfxTask *task)   { m_task = task; }
-    void SetSrc(RMRect &src)        { m_src = src; }
-    void SetSrc(RMPoint &src)       { m_src.TopLeft() = src; }
-    void SetDst(RMRect &dst)        { m_dst = dst; }
-    void SetDst(RMPoint &dst)       { m_dst.TopLeft() = dst; }
+    void SetSrc(const RMRect &src)        { m_src = src; }
+    void SetSrc(const RMPoint &src)       { m_src.TopLeft() = src; }
+    void SetDst(const RMRect &dst)        { m_dst = dst; }
+    void SetDst(const RMPoint &dst)       { m_dst.TopLeft() = dst; }
     void SetStrecth(bool bStretch)	{ m_bStretch = bStretch; }
 
 	bool HaveDst()					{ return !m_dst.IsEmpty(); }
@@ -292,7 +292,7 @@ public:
 	virtual void Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette = false);
  
 	int LoadPaletteWA(uint32 resID, bool bSwapped = false);
-	int LoadPaletteWA(byte *buf, bool bSwapped = false);
+	int LoadPaletteWA(const byte *buf, bool bSwapped = false);
 	int LoadPalette(uint32 resID);
 	int LoadPalette(byte *buf);
 };
@@ -365,7 +365,7 @@ public:
 
 	// Overload of the initialization method
 	virtual void Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int Init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	// Draw image with RLE decompression
 	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
@@ -447,8 +447,8 @@ public:
 	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
 
 	// Overloaded initialisation methods
-	virtual void Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette = false);
-    virtual int Init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+    virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer8RLEByteAA();
 };

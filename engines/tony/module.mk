@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	gfxcore.o \
 	gfxengine.o \
 	input.o \
+	inventory.o \
 	loc.o \
 	sound.o \
 	tony.o \

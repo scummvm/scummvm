@@ -816,19 +816,19 @@ RMPoint RMRect::Center() {
 	return RMPoint((x2 - x1) / 2,(y2 - y1) / 2);
 }
 
-int RMRect::Width() {
+int RMRect::Width() const {
 	return x2 - x1;
 }
 
-int RMRect::Height() {
+int RMRect::Height() const {
 	return y2 - y1;
 }
 
-int RMRect::Size() {
+int RMRect::Size() const {
 	return Width() * Height();
 }
 
-bool RMRect::IsEmpty() {
+bool RMRect::IsEmpty() const {
 	return (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0);
 }
 

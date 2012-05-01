@@ -54,9 +54,12 @@
 
 namespace Tony {
 
+class RMInput;
 class RMInventory;
-class RMLoc;
 class RMItem;
+class RMLoc;
+class RMLocation;
+class RMPointer;
 
 /**
  * Gestisce un font, in cui ha varie surface per ogni lettera
@@ -237,8 +240,7 @@ public:
 /**
  * Gestisce il testo di un dialogo 
  */
-class RMTextDialog : public RMText
-{
+class RMTextDialog : public RMText {
   protected:
     int m_startTime;
     int m_time;
@@ -250,7 +252,7 @@ class RMTextDialog : public RMText
     bool m_bForceNoTime;
 	HANDLE hCustomSkip;
     HANDLE hCustomSkip2;
-    RMInput* m_input;
+    RMInput *m_input;
 	bool m_bAlwaysDisplay;
 	bool m_bNoTab;
 
@@ -296,7 +298,7 @@ class RMTextDialog : public RMText
 
 class RMTextDialogScrolling : public RMTextDialog {
 protected:
-    RMLocation* curLoc;
+    RMLocation *curLoc;
     RMPoint startScroll;
 
     virtual void ClipOnScreen(RMGfxPrimitive* prim);

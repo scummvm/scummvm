@@ -51,6 +51,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "tony/font.h"
+#include "tony/game.h"
 #include "tony/gfxcore.h"
 #include "tony/loc.h"
 
@@ -79,7 +80,7 @@ protected:
 	int m_inv[256];
 	int m_nInv;
 	int m_curPutY;
-	int m_curPutTime;
+	uint32 m_curPutTime;
 
 	int m_curPos;
 	STATE m_state;
@@ -134,7 +135,7 @@ public:
 	
 	// Gestisce il tasto destro del mouse (solo quando c'ha focus)
 	void RightClick(RMPoint mpos);
-	bool RightRelease(RMPoint mpos, RMTonyAction& curAction);
+	bool RightRelease(RMPoint mpos, RMTonyAction &curAction);
 
 	// Avverte che è finito il combine
 	void EndCombine(void);

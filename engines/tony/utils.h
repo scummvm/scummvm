@@ -232,10 +232,10 @@ public:
     RMPoint &TopLeft();
     RMPoint &BottomRight();
     RMPoint Center();
-    int Width();
-    int Height();
-    bool IsEmpty();
-	int Size();
+    int Width() const;
+    int Height() const;
+    bool IsEmpty() const;
+	int Size() const;
 
     // Set
     void SetRect(int x1, int y1, int x2, int y2);
