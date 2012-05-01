@@ -455,7 +455,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub1834C();
 		break;
 	case 0x47:
-		OC_sub18359();
+		OC_setArray122C1();
 		break;
 	case 0x48:
 		OC_sub18367();
@@ -699,7 +699,7 @@ static const OpCode opCodes2[] = {
 /* 0x44 */	{ "OC_PaletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x45 */	{ "OC_loadAndDisplayCUBESx_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x46 */	{ "OC_sub1834C", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-/* 0x47 */	{ "OC_sub18359", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x47 */	{ "OC_setArray122C1", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x48 */	{ "OC_sub18367", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x49 */	{ "OC_sub17D04", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x4a */	{ "OC_sub18387", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
@@ -2910,8 +2910,8 @@ void LilliputScript::OC_sub1834C() {
 	_vm->_ptr_rulesBuffer2_15[3] = curWord;
 }
 
-void LilliputScript::OC_sub18359() {
-	debugC(1, kDebugScript, "OC_sub18359()");
+void LilliputScript::OC_setArray122C1() {
+	debugC(1, kDebugScript, "OC_setArray122C1()");
 
 	int var1 = _currScript->readUint16LE();
 	_array122C1[_vm->_rulesBuffer2PrevIndx] = var1;
