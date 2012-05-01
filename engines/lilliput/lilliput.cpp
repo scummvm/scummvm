@@ -150,7 +150,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12FE3 = 0;
 	_byte16F08 = 0;
 
-	_rulesBuffer2PrevIndx = 0;
+	currentScriptCharacter = 0;
 	_currentScriptCharacterPosition = 0;
 	_word10804 = 0;
 	_word17081_nextIndex = 0;
@@ -192,7 +192,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array11D49[i] = 0xFFFF;
 		_characterPositionX[i] = 0xFFFF;
 		_characterPositionY[i] = 0xFFFF;
-		_rulesBuffer2_3[i] = 0;
+		_characterPositionAltitude[i] = 0;
 		_characterFrameArray[i] = 0;
 		_rulesBuffer2_5[i] = 0xFF;
 		_rulesBuffer2_6[i] = 4;
@@ -216,7 +216,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	for (int i = 0; i < 160; i++)
 		_displayStringBuf[i] = 0;
 
-	_ptr_rulesBuffer2_15 = NULL;
+	_currentCharacterVariables = NULL;
 	_bufferIdeogram = NULL;
 	_bufferMen = NULL;
 	_bufferMen2 = NULL;
@@ -687,7 +687,7 @@ void LilliputEngine::sub16217() {
 	for (int i = index; i >= 0; i--) {
 		if (_rulesBuffer2_5[i] != 0xFF) {
 			int index2 = _rulesBuffer2_5[i];
-			_rulesBuffer2_3[i] = _rulesBuffer2_3[index2] + _rulesBuffer2_7[i];
+			_characterPositionAltitude[i] = _characterPositionAltitude[index2] + _rulesBuffer2_7[i];
 			int tmpVal = _rulesBuffer2_6[i];
 			_characterDirectionArray[i] = _characterDirectionArray[index2];
 			int var3 = _characterPositionX[index2];
@@ -726,7 +726,7 @@ void LilliputEngine::sub16217() {
 			_characterRelativePositionY[i] = tmpVal3;
 			tmpVal2 = _characterPositionX[i] - _word16213;
 			tmpVal3 = _characterPositionY[i] - _word16215;
-			int tmpVal4 = _rulesBuffer2_3[i];
+			int tmpVal4 = _characterPositionAltitude[i];
 			_characterDisplayX[i] = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
 			_characterDisplayY[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
 			_charactersToDisplay[_numCharactersToDisplay] = i;
@@ -1127,10 +1127,10 @@ void LilliputEngine::sortCharacters() {
 					continue;
 
 				if (_characterRelativePositionX[index1] == _characterRelativePositionX[index2]) {
-					if (_rulesBuffer2_3[index1] < _rulesBuffer2_3[index2])
+					if (_characterPositionAltitude[index1] < _characterPositionAltitude[index2])
 						continue;
 
-					if (_rulesBuffer2_3[index1] == _rulesBuffer2_3[index2]) {
+					if (_characterPositionAltitude[index1] == _characterPositionAltitude[index2]) {
 						if (_characterDisplayY[index1] < _characterDisplayY[index2])
 							continue;
 					}
@@ -1536,12 +1536,12 @@ void LilliputEngine::sub12F37() {
 	int index2 = 0;
 
 	for (int i = 0; i < _numCharacters; i++) {
-		if (_rulesBuffer2_15[index1] != 0 ) {
-			if (_rulesBuffer2_15[index1] == 1) {
-				_rulesBuffer2_15[index1] = 0;
+		if (_characterVariables[index1] != 0 ) {
+			if (_characterVariables[index1] == 1) {
+				_characterVariables[index1] = 0;
 			} else {
-				--_rulesBuffer2_15[index1];
-				if (_rulesBuffer2_15[index1] == 1)
+				--_characterVariables[index1];
+				if (_characterVariables[index1] == 1)
 					_scriptHandler->_characterScriptEnabled[index2] = 1;
 			}
 		}
@@ -1763,25 +1763,25 @@ void LilliputEngine::sub16B76(int index) {
 void LilliputEngine::sub166C0(int index) {
 	debugC(2, kDebugEngine, "sub166C0(%d)", index);
 
-	_rulesBuffer2_3[index] += 1;
+	_characterPositionAltitude[index] += 1;
 }
 
 void LilliputEngine::sub166C6(int index) {
 	debugC(2, kDebugEngine, "sub166C6(%d)", index);
 
-	_rulesBuffer2_3[index] += 2;
+	_characterPositionAltitude[index] += 2;
 }
 
 void LilliputEngine::sub166CC(int index) {
 	debugC(2, kDebugEngine, "sub166CC(%d)", index);
 
-	_rulesBuffer2_3[index] -= 1;
+	_characterPositionAltitude[index] -= 1;
 }
 
 void LilliputEngine::sub166D2(int index) {
 	debugC(2, kDebugEngine, "sub166D2(%d)", index);
 
-	_rulesBuffer2_3[index] -= 2;
+	_characterPositionAltitude[index] -= 2;
 }
 
 void LilliputEngine::sub166B1(int index) {
@@ -2140,7 +2140,7 @@ void LilliputEngine::loadRules() {
 			curWord = (curWord << 3) + 4;
 		_characterPositionY[j] = curWord;
 
-		_rulesBuffer2_3[j] = (f.readUint16LE() & 0xFF);
+		_characterPositionAltitude[j] = (f.readUint16LE() & 0xFF);
 		_characterFrameArray[j] = f.readUint16LE();
 		_rulesBuffer2_5[j] = f.readByte();
 		_rulesBuffer2_6[j] = f.readByte();
@@ -2154,7 +2154,7 @@ void LilliputEngine::loadRules() {
 		_rulesBuffer2_14[j] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
-			_rulesBuffer2_15[(j * 32) + k] = f.readByte();
+			_characterVariables[(j * 32) + k] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
 			_rulesBuffer2_16[(j * 32) + k] = f.readByte();
@@ -2307,14 +2307,14 @@ void LilliputEngine::initPalette() {
 void LilliputEngine::sub170EE(int index) {
 	debugC(1, kDebugEngine, "sub170EE(%d)", index);
 
-	_rulesBuffer2PrevIndx = index;
+	currentScriptCharacter = index;
 
 	assert (index < 40);
 	int var2 = _characterPositionX[index];
 	int var4 = _characterPositionY[index];
 
 	_currentScriptCharacterPosition = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
-	_ptr_rulesBuffer2_15 = &_rulesBuffer2_15[_rulesBuffer2PrevIndx * 32];
+	_currentCharacterVariables = &_characterVariables[currentScriptCharacter * 32];
 }
 
 void LilliputEngine::sub130DD() {
@@ -2370,14 +2370,15 @@ void LilliputEngine::handleGameScripts() {
 	if (tmpVal == 0xFF)
 		return;
 
-/*for (int i = 0; i < _gameScriptIndexSize; i++) {
+	for (int i = 0; i < _gameScriptIndexSize; i++) {
 		assert(tmpVal < _gameScriptIndexSize);
 		debugC(1, kDebugEngine, "================= Game Script %d ==================", i);
 		ScriptStream script = ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[i]], _arrayGameScriptIndex[i + 1] - _arrayGameScriptIndex[i]);
 		_scriptHandler->disasmScript(script);
 		debugC(1, kDebugEngine, "============= End Game Script %d ==================", i);
 	}
-*/
+
+while(1);
 
 	assert(tmpVal < _gameScriptIndexSize);
 	debugC(1, kDebugEngine, "================= Game Script %d for character %d ==================", tmpVal, index);

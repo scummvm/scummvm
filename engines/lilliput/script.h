@@ -33,6 +33,26 @@ namespace Lilliput {
 
 class LilliputEngine;
 
+enum KValueType {
+	kNone,
+	kImmediateValue,
+	kCompareOperation,
+	kComputeOperation,
+	kGetValue1,
+	kGetValue2,
+};
+
+
+struct OpCode {
+	const char* _opName;
+	int _numArgs;
+	KValueType _arg1;
+	KValueType _arg2;
+	KValueType _arg3;
+	KValueType _arg4;
+	KValueType _arg5;
+};
+
 class LilliputScript {
 public:
 	byte _byte12A04;
@@ -70,6 +90,7 @@ public:
 	~LilliputScript();
 
 	void disasmScript(ScriptStream script);
+	static Common::String getArgumentString(KValueType type, ScriptStream& script);
 	void runScript(ScriptStream script);
 	void runMenuScript(ScriptStream script);
 private:
@@ -121,7 +142,7 @@ private:
 	int getValue1();
 	int getValue2();
 
-	byte *getBuffer215Ptr();
+	byte *getCharacterVariablePtr();
 	byte compareValues(byte var1, int oper, int var2);
 	void computeOperation(byte *bufPtr, int oper, int var2);
 
