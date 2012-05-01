@@ -2835,7 +2835,7 @@ void LilliputScript::OC_sub18213() {
 			maxItem = _array1813B[i] >> 8;
 		}
 	}
-	sub1823E(_vm->_currentScriptCharacter, maxItem, &_vm->_characterVariables[var1]);
+	sub1823E(_vm->_currentScriptCharacter, maxItem, _vm->_currentCharacterVariables);
 }
 
 void LilliputScript::OC_sub18252() {
