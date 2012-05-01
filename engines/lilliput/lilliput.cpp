@@ -2369,7 +2369,7 @@ void LilliputEngine::handleGameScripts() {
 	int tmpVal = _rulesBuffer2_12[index];
 	if (tmpVal == 0xFF)
 		return;
-
+/*
 	for (int i = 0; i < _gameScriptIndexSize; i++) {
 		assert(tmpVal < _gameScriptIndexSize);
 		debugC(1, kDebugEngine, "================= Game Script %d ==================", i);
@@ -2378,7 +2378,7 @@ void LilliputEngine::handleGameScripts() {
 		debugC(1, kDebugEngine, "============= End Game Script %d ==================", i);
 	}
 
-while(1);
+while(1);*/
 
 	assert(tmpVal < _gameScriptIndexSize);
 	debugC(1, kDebugEngine, "================= Game Script %d for character %d ==================", tmpVal, index);
