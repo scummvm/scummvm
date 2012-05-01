@@ -1749,15 +1749,15 @@ int LilliputEngine::sub16675(int idx, int var1) {
 void LilliputEngine::sub16B63(int index) {
 	debugC(2, kDebugEngine, "sub16B63(%d)", index);
 
-	static const byte nextFrame[4] = {1, 3, 0, 2};
-	_characterDirectionArray[index] = nextFrame[_characterDirectionArray[index]];
+	static const byte nextDirection[4] = {1, 3, 0, 2};
+	_characterDirectionArray[index] = nextDirection[_characterDirectionArray[index]];
 }
 
 void LilliputEngine::sub16B76(int index) {
 	debugC(2, kDebugEngine, "sub16B76(%d)", index);
 
-	static const byte nextFrame[4] = {2, 0, 3, 1};
-	_characterDirectionArray[index] = nextFrame[_characterDirectionArray[index]];
+	static const byte nextDirection[4] = {2, 0, 3, 1};
+	_characterDirectionArray[index] = nextDirection[_characterDirectionArray[index]];
 }
 
 void LilliputEngine::sub166C0(int index) {

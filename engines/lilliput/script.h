@@ -250,7 +250,7 @@ private:
 	void OC_PaletteFadeIn();
 	void OC_loadAndDisplayCUBESx_GFX();
 	void OC_sub1834C();
-	void OC_sub18359();
+	void OC_setArray122C1();
 	void OC_sub18367();
 	void OC_sub17D04();
 	void OC_sub18387();
