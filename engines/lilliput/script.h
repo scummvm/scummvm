@@ -188,7 +188,7 @@ private:
 	void OC_sub17E15();
 	void OC_sub17B03();
 	void OC_getRandom_type2();
-	void OC_sub17A66();
+	void OC_setCharacterPosition();
 	void OC_sub17A8D();
 	void OC_saveAndQuit();
 	void OC_sub17B93();
@@ -198,7 +198,7 @@ private:
 	void OC_incByte16F04();
 	void OC_sub17BA5();
 	void OC_setByte18823();
-	void OC_sub17BB7();
+	void OC_callScript();
 	void OC_sub17BF2();
 	void OC_sub17ACC();
 	void OC_resetByte16F04();

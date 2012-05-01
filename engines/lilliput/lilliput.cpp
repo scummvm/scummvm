@@ -2370,14 +2370,14 @@ void LilliputEngine::handleGameScripts() {
 	if (tmpVal == 0xFF)
 		return;
 
-	for (int i = 0; i < _gameScriptIndexSize; i++) {
+/*for (int i = 0; i < _gameScriptIndexSize; i++) {
 		assert(tmpVal < _gameScriptIndexSize);
 		debugC(1, kDebugEngine, "================= Game Script %d ==================", i);
 		ScriptStream script = ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[i]], _arrayGameScriptIndex[i + 1] - _arrayGameScriptIndex[i]);
-//		_scriptHandler->disasmScript(script);
+		_scriptHandler->disasmScript(script);
 		debugC(1, kDebugEngine, "============= End Game Script %d ==================", i);
-
 	}
+*/
 
 	assert(tmpVal < _gameScriptIndexSize);
 	debugC(1, kDebugEngine, "================= Game Script %d for character %d ==================", tmpVal, index);

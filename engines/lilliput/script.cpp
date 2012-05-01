@@ -272,7 +272,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_getRandom_type2();
 		break;
 	case 0xA:
-		OC_sub17A66();
+		OC_setCharacterPosition();
 		break;
 	case 0xB:
 		OC_sub17A8D();
@@ -302,7 +302,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_setByte18823();
 		break;
 	case 0x14:
-		OC_sub17BB7();
+		OC_callScript();
 		break;
 	case 0x15:
 		OC_sub17BF2();
@@ -628,111 +628,108 @@ static const OpCode opCodes1[] = {
 
 
 static const OpCode opCodes2[] = {
-	{ "OC_setWord18821", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_sub17A3E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_sub17D57", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub17D7F", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
-	{ "OC_sub17DB9", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone }, // todo
-	{ "OC_sub17DF9", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_sub17E07", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
-	{ "OC_sub17E15", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_sub17B03", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
-	{ "OC_getRandom_type2", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
-	{ "OC_sub17A66", 2, kGetValue1, kGetValue2, kNone, kNone, kNone },
-	{ "OC_sub17A8D", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_sub17B93", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
-	{ "OC_sub17E37", 0, kNone, kNone, kNone, kNone, kNone },  // todo
-	{ "OC_resetByte1714E", 0, kNone, kNone, kNone, kNone, kNone },  
-	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },  
-	{ "OC_incByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
-	{ "OC_sub17BA5", 5, kGetValue1, kImmediateValue,kComputeOperation, kGetValue1, kImmediateValue },
-	{ "OC_incByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
-	{ "OC_sub17BA5", 0, kNone, kNone, kNone, kNone, kNone },  
-	{ "OC_setByte18823", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },  
-	{ "OC_sub17BB7", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone },  // run script
-	{ "OC_sub17BF2", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone },  // run script then stop
-	{ "OC_sub17ACC", 1, kGetValue2, kNone, kNone, kNone, kNone },  
-	{ "OC_resetByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
-	{ "OC_sub17AE1", 1, kImmediateValue, kNone, kNone, kNone, kNone },  
-	{ "OC_sub17AEE", 1, kImmediateValue, kNone, kNone, kNone, kNone },  
-	{ "OC_setWord10804", 1, kGetValue1, kNone, kNone, kNone, kNone },  
-	{ "OC_sub17C0E", 0, kNone, kNone, kNone, kNone, kNone },  
- 	{ "OC_sub17C55", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone }, 
-	{ "OC_sub17C76", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17AFC", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17C8B", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_sub17CA2", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub17CB9", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone }, 
-	{ "OC_sub17CD1", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_resetWord16EFE", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17CEF", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // stop script
-	{ "OC_sub17D1B", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17D23", 2, kImmediateValue, kGetValue2, kNone, kNone, kNone }, 
-	{ "OC_sub17E6D", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17E7E", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub17E99", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
-	{ "OC_sub17EC5", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
-	{ "OC_sub17EF4", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17F08", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17F4F", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17F68", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_getNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub17FD2", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17FDD", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_setByte10B29", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18007", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18014", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1801D", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
-	{ "OC_sub1805D", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
-	{ "OC_sub18074", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18099", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub180C3", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1810A", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1812D", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1817F", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub181BB", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
-	{ "OC_sub18213", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18252", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18260", 2, kGetValue1, kGetValue2, kNone, kNone, kNone }, // TODO
-	{ "OC_sub182EC", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
-	{ "OC_PaletteFadeOut", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_PaletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_loadAndDisplayCUBESx_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1834C", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18359", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18367", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17D04", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub18387", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub183A2", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub183C6", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
-	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1834C", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub17E22", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub1847F", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
-	{ "OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub184D7", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // TODO
-	{ "OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1864D", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },  // TODO
-	{ "OC_initArr18560", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
-	{ "OC_sub18678", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
-	{ "OC_sub18690", 2, kGetValue1, kGetValue2, kNone, kNone, kNone },  //TODO
-	{ "OC_setViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_sub186A1", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },  //TODO
-	{ "OC_sub186E5_snd", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub1870A_snd", 2, kGetValue2, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub18725_snd", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18733_snd", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1873F_snd", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18746_snd", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub1875D_snd", 0, kNone, kNone, kNone, kNone, kNone }, 
-	{ "OC_sub18764", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }
+/* 0x00 */	{ "OC_setWord18821", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x01 */	{ "OC_sub17A3E", 3, kGetValue2, kImmediateValue, kImmediateValue, kNone, kNone },
+/* 0x02 */	{ "OC_sub17D57", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x03 */	{ "OC_sub17D7F", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x04 */	{ "OC_sub17DB9", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, // todo
+/* 0x05 */	{ "OC_sub17DF9", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x06 */	{ "OC_sub17E07", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
+/* 0x07 */	{ "OC_sub17E15", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+/* 0x08 */	{ "OC_sub17B03", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
+/* 0x09 */	{ "OC_getRandom_type2", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
+/* 0x0a */	{ "OC_setCharacterPosition", 2, kGetValue1, kGetValue2, kNone, kNone, kNone },
+/* 0x0b */	{ "OC_sub17A8D", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x0c */	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x0d */	{ "OC_sub17B93", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
+/* 0x0e */	{ "OC_sub17E37", 0, kNone, kNone, kNone, kNone, kNone },  // todo
+/* 0x0f */	{ "OC_resetByte1714E", 0, kNone, kNone, kNone, kNone, kNone },  
+/* 0x10 */	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },  
+/* 0x11 */	{ "OC_incByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
+/* 0x12 */	{ "OC_sub17BA5", 5, kGetValue1, kImmediateValue,kComputeOperation, kGetValue1, kImmediateValue },
+/* 0x13 */	{ "OC_setByte18823", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },  
+/* 0x14 */	{ "OC_callScript", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },  // run script
+/* 0x15 */	{ "OC_sub17BF2", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },  // run script then stop
+/* 0x16 */	{ "OC_sub17ACC", 1, kGetValue2, kNone, kNone, kNone, kNone },  
+/* 0x17 */	{ "OC_resetByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
+/* 0x18 */	{ "OC_sub17AE1", 1, kImmediateValue, kNone, kNone, kNone, kNone },  
+/* 0x19 */	{ "OC_sub17AEE", 1, kImmediateValue, kNone, kNone, kNone, kNone },  
+/* 0x1a */	{ "OC_setWord10804", 1, kGetValue1, kNone, kNone, kNone, kNone },  
+/* 0x1b */	{ "OC_sub17C0E", 0, kNone, kNone, kNone, kNone, kNone },  
+/* 0x1c */ 	{ "OC_sub17C55", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone }, 
+/* 0x1d */	{ "OC_sub17C76", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x1e */	{ "OC_sub17AFC", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x1f */	{ "OC_sub17C8B", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+/* 0x20 */	{ "OC_sub17CA2", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x21 */	{ "OC_sub17CB9", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone }, 
+/* 0x22 */	{ "OC_sub17CD1", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+/* 0x23 */	{ "OC_resetWord16EFE", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x24 */	{ "OC_sub17CEF", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // stop script
+/* 0x25 */	{ "OC_sub17D1B", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x26 */	{ "OC_sub17D23", 2, kImmediateValue, kGetValue2, kNone, kNone, kNone }, 
+/* 0x27 */	{ "OC_sub17E6D", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x28 */	{ "OC_sub17E7E", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x29 */	{ "OC_sub17E99", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+/* 0x2a */	{ "OC_sub17EC5", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+/* 0x2b */	{ "OC_sub17EF4", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
+/* 0x2c */	{ "OC_sub17F08", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x2d */	{ "OC_sub17F4F", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x2e */	{ "OC_sub17F68", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x2f */	{ "OC_getNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x30 */	{ "OC_sub17FD2", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x31 */	{ "OC_sub17FDD", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x32 */	{ "OC_setByte10B29", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x33 */	{ "OC_sub18007", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x34 */	{ "OC_sub18014", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x35 */	{ "OC_sub1801D", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+/* 0x36 */	{ "OC_sub1805D", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+/* 0x37 */	{ "OC_sub18074", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x38 */	{ "OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x39 */	{ "OC_sub18099", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x3a */	{ "OC_sub180C3", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x3b */	{ "OC_sub1810A", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
+/* 0x3c */	{ "OC_sub1812D", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x3d */	{ "OC_sub1817F", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x3e */	{ "OC_sub181BB", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+/* 0x3f */	{ "OC_sub18213", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x40 */	{ "OC_sub18252", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x41 */	{ "OC_sub18260", 2, kGetValue1, kGetValue2, kNone, kNone, kNone }, // TODO
+/* 0x42 */	{ "OC_sub182EC", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+/* 0x43 */	{ "OC_PaletteFadeOut", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x44 */	{ "OC_PaletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x45 */	{ "OC_loadAndDisplayCUBESx_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x46 */	{ "OC_sub1834C", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x47 */	{ "OC_sub18359", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x48 */	{ "OC_sub18367", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x49 */	{ "OC_sub17D04", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x4a */	{ "OC_sub18387", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x4b */	{ "OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x4c */	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x4d */	{ "OC_sub183A2", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x4e */	{ "OC_sub183C6", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
+/* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x50 */	{ "OC_sub17E22", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x52 */	{ "OC_sub1847F", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+/* 0x53 */	{ "OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x54 */	{ "OC_sub184D7", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // TODO
+/* 0x55 */	{ "OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x56 */	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x57 */	{ "OC_sub1864D", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },  // TODO
+/* 0x58 */	{ "OC_initArr18560", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+/* 0x59 */	{ "OC_sub18678", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
+/* 0x5a */	{ "OC_sub18690", 2, kGetValue1, kGetValue2, kNone, kNone, kNone },  //TODO
+/* 0x5b */	{ "OC_setViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x5c */	{ "OC_sub186A1", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },  //TODO
+/* 0x5d */	{ "OC_sub186E5_snd", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x5e */	{ "OC_sub1870A_snd", 2, kGetValue2, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x5f */	{ "OC_sub18725_snd", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x60 */	{ "OC_sub18733_snd", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x61 */	{ "OC_sub1873F_snd", 1, kGetValue2, kNone, kNone, kNone, kNone }, 
+/* 0x62 */	{ "OC_sub18746_snd", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x63 */	{ "OC_sub1875D_snd", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x64 */	{ "OC_sub18764", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x65 */	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }
 };
 
 void LilliputScript::disasmScript( ScriptStream script) {
@@ -746,8 +743,10 @@ void LilliputScript::disasmScript( ScriptStream script) {
 
 		if(val != 0xFFF8) {
 			hasIf = true;
-			debugC(2, kDebugScript, "if (");
+			
 		}
+		bool firstIf = true; 
+
 
 		// check the conditions.
 		while (val != 0xFFF8) {
@@ -767,21 +766,26 @@ void LilliputScript::disasmScript( ScriptStream script) {
 
 			Common::String str;
 
-			str = "  ";
+			if(firstIf) {
+				str = "if (";
+				firstIf = false;
+			} else {
+				str = "    ";
+			}
 			if (neg) str += "not ";
 			str += Common::String(opCode->_opName);
 			str += "(";
 
 			for (int p = 0; p < opCode->_numArgs; p++) {
 				if(*opArgType == kImmediateValue) {
-					str +=  Common::String::format("%d", script.readUint16LE());
+					str +=  Common::String::format("0x%x", script.readUint16LE());
 				} else if (*opArgType == kGetValue1) {
 					int val = script.readUint16LE();
 					if(val < 1000) 
 					{ 
-						str += Common::String::format("%d", val);
+						str += Common::String::format("0x%x", val);
 					} else if (val > 1004) { 
-						str += Common::String::format("getValue1(%d)", val);
+						str += Common::String::format("getValue1(0x%x)", val);
 					} else if ( val == 1000 ) {
 						str += Common::String("_byte129A0");
 					} else if( val == 1001 ) {
@@ -794,7 +798,7 @@ void LilliputScript::disasmScript( ScriptStream script) {
 						str += Common::String("_word10804");
 					}
 				} else if (*opArgType == kGetValue2) {
-					str += Common::String::format("getValue2(%d)", script.readUint16LE());
+					str += Common::String::format("getValue2(0x%x)", script.readUint16LE());
 				} else if (*opArgType == kCompareOperation) {
 					int comp = script.readUint16LE();
 					if(comp != '<' && comp != '>')
@@ -809,27 +813,86 @@ void LilliputScript::disasmScript( ScriptStream script) {
 			}
 			str += ")";
 
-			debugC(2, kDebugScript, str.c_str());
+			
 
 			val = script.readUint16LE();
+
+			if(val == 0xFFF8) {
+				str += ")";
+			}
+
+
+			debugC(2, kDebugScript, str.c_str());
+
 			
 		}
 
-		if( hasIf ) {
-			debugC(2, kDebugScript, ")");
-		}
-
-
 		debugC(2, kDebugScript,"{ ");
 
+		val = script.readUint16LE();
+
 		while (val != 0xFFF7) {
-			// op code type 2 TODO
+			
+			// op code type 2 
+			assert(val < sizeof(opCodes2)/sizeof(OpCode));
+			const OpCode* opCode = &opCodes2[val];
+			const KValueType* opArgType = &opCode->_arg1;
+
+			Common::String str;
+
+			str = "    ";
+			str += Common::String(opCode->_opName);
+			str += "(";
+
+			for (int p = 0; p < opCode->_numArgs; p++) {
+				if(*opArgType == kImmediateValue) {
+					str +=  Common::String::format("0x%x", script.readUint16LE());
+				} else if (*opArgType == kGetValue1) {
+					int val = script.readUint16LE();
+					if(val < 1000) 
+					{ 
+						str += Common::String::format("0x%x", val);
+					} else if (val > 1004) { 
+						str += Common::String::format("getValue1(0x%x)", val);
+					} else if ( val == 1000 ) {
+						str += Common::String("_byte129A0");
+					} else if( val == 1001 ) {
+						str += Common::String("characterIndex");
+					} else if( val == 1002 ) {
+						str += Common::String("_word16F00");
+					} else if( val == 1003 ) {
+						str += Common::String("currentCharacter_var6");
+					} else if( val == 1004 ) {
+						str += Common::String("_word10804");
+					}
+				} else if (*opArgType == kGetValue2) {
+					str += Common::String::format("getValue2(0x%x)", script.readUint16LE());
+				} else if (*opArgType == kCompareOperation) {
+					int comp = script.readUint16LE();
+					if(comp != '<' && comp != '>')
+						comp = '=';
+					str += Common::String::format("%c", comp );
+				} else if (*opArgType == kComputeOperation) {
+					int comp = script.readUint16LE();
+					str += Common::String::format("%c", comp );
+				}
+
+				if (p != opCode->_numArgs - 1)
+					str += ", ";
+
+				if ( p < 5 )
+					opArgType++;
+			}
+			str += ");";
+
+			debugC(2, kDebugScript, str.c_str());
+
 
 			val = script.readUint16LE();
 		}
 
 		debugC(2, kDebugScript,"} ");
-
+		debugC(2, kDebugScript," ");
 	}
 }
 
@@ -1249,14 +1312,14 @@ int LilliputScript::getValue2() {
 	case 0xFA:
 		return ((_vm->_array10999[_vm->_rulesBuffer2PrevIndx] << 8) + _vm->_array109C1[_vm->_rulesBuffer2PrevIndx]);
 	case 0xF9:
-		return ((_vm->_rulesBuffer2_15[4] << 8) + _vm->_rulesBuffer2_15[5]);
+		return ((_vm->_ptr_rulesBuffer2_15[4] << 8) + _vm->_ptr_rulesBuffer2_15[5]);
 	case 0xF8: {
 		int index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
 		return _vm->_rulesBuffer12_3[index];
 		}
 	case 0xF7: {
-		int index = _vm->_rulesBuffer2_15[6];
+		int index = _vm->_ptr_rulesBuffer2_15[6];
 		assert(index < 40);
 		byte var1 = _vm->_characterPositionX[index] >> 3;
 		byte var2 = _vm->_characterPositionY[index] >> 3;
@@ -2009,7 +2072,21 @@ void LilliputScript::OC_setWord18821() {
 	_word18821 = getValue1();
 }
 void LilliputScript::OC_sub17A3E() {
-	warning("OC_sub17A3E");
+	debugC(1, kDebugScript, "OC_sub17A3E()");
+	int var1 = getValue2();
+	int var2 = _currScript->readUint16LE();
+	int var3 = _currScript->readUint16LE();
+
+	byte* mapPtr = getMapPtr(var1);
+	
+	int mask = 8 >> var2;
+	mask = ~mask;
+	mapPtr[3] &= mask;
+
+	if (var3 > 0) {
+		mask = ~mask;
+		mapPtr[3] |= mask;
+	}
 }
 
 void LilliputScript::OC_sub17D57() {
@@ -2127,8 +2204,8 @@ void LilliputScript::OC_getRandom_type2() {
 	*bufPtr = randomVal;
 }
 
-void LilliputScript::OC_sub17A66() {
-	debugC(1, kDebugScript, "OC_sub17A66()");
+void LilliputScript::OC_setCharacterPosition() {
+	debugC(1, kDebugScript, "OC_setCharacterPosition()");
 	
 	int index = getValue1();
 	int tmpVal = getValue2();
@@ -2199,8 +2276,8 @@ void LilliputScript::OC_setByte18823() {
 	_byte18823 = *tmpArr;
 }
 
-void LilliputScript::OC_sub17BB7() {
-	debugC(1, kDebugScript, "OC_sub17BB7()");
+void LilliputScript::OC_callScript() {
+	debugC(1, kDebugScript, "OC_callScript()");
 
 	int index = _currScript->readUint16LE();
 	int var1 = getValue1();
@@ -2228,7 +2305,7 @@ void LilliputScript::OC_sub17BB7() {
 void LilliputScript::OC_sub17BF2() {
 	debugC(1, kDebugScript, "OC_sub17BF2()");
 
-	OC_sub17BB7();
+	OC_callScript();
 	sub17B6C(0);
 }
 
