@@ -464,7 +464,7 @@ void LilliputEngine::displayFunction8() {
 
 	int index = 0;
 	int tmpVal;
-	for (int i = 0; i < _word12F68_ERULES; i++) {
+	for (index = 0; index < _word12F68_ERULES; index++) {
 		tmpVal = ((_scriptHandler->_array122E9[index] << 2) + (_scriptHandler->_array122E9[index] << 4)) & 0xFF;
 		displayFunction1(_bufferIdeogram, tmpVal + index, _rulesBuffer13_2[index], _rulesBuffer13_3[index]);
 	}
@@ -590,6 +590,7 @@ void LilliputEngine::displayFunction12() {
 	memcpy(_mainSurface->getPixels(), tmpBuf, 320*200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
+
 
 	displayFunction6();
 	displayFunction7();
