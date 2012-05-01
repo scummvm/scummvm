@@ -147,10 +147,10 @@ public:
 	int _array12861[30];
 
 	byte *_rulesChunk1;
-	int _rulesBuffer2PrevIndx;
+	int currentScriptCharacter;
 	int _characterPositionX[40];
 	int _characterPositionY[40];
-	byte _rulesBuffer2_3[40];
+	byte _characterPositionAltitude[40];
 	int _characterFrameArray[40];
 	byte _rulesBuffer2_5[40];
 	byte _rulesBuffer2_6[40];
@@ -162,8 +162,8 @@ public:
 	byte _rulesBuffer2_12[40];
 	byte _rulesBuffer2_13[40];
 	byte _rulesBuffer2_14[40];
-	byte _rulesBuffer2_15[40 * 32];
-	byte *_ptr_rulesBuffer2_15;
+	byte _characterVariables[40 * 32];
+	byte *_currentCharacterVariables;
 	byte _rulesBuffer2_16[40 * 32];
 	int *_rulesChunk3;
 	int _rulesChunk3_size;
