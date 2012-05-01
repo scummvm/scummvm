@@ -150,7 +150,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12FE3 = 0;
 	_byte16F08 = 0;
 
-	currentScriptCharacter = 0;
+	_currentScriptCharacter = 0;
 	_currentScriptCharacterPosition = 0;
 	_word10804 = 0;
 	_word17081_nextIndex = 0;
@@ -2307,14 +2307,14 @@ void LilliputEngine::initPalette() {
 void LilliputEngine::sub170EE(int index) {
 	debugC(1, kDebugEngine, "sub170EE(%d)", index);
 
-	currentScriptCharacter = index;
+	_currentScriptCharacter = index;
 
 	assert (index < 40);
 	int var2 = _characterPositionX[index];
 	int var4 = _characterPositionY[index];
 
 	_currentScriptCharacterPosition = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
-	_currentCharacterVariables = &_characterVariables[currentScriptCharacter * 32];
+	_currentCharacterVariables = &_characterVariables[_currentScriptCharacter * 32];
 }
 
 void LilliputEngine::sub130DD() {
