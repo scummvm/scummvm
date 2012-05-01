@@ -1428,7 +1428,7 @@ void LilliputEngine::sub16626() {
 				break;
 
 			var2 = (2 * (var2 & 0xFF)) + (index << 5);
-			int var1 = _scriptHandler->_array12311[var2 / 2];
+			uint16 var1 = _scriptHandler->_array12311[var2 / 2];
 			int tmpVal = var2;
 			var2 = ((var1 >> 8) >> 3);
 			var2 &= 0xFE;
@@ -1466,7 +1466,9 @@ void LilliputEngine::sub16626() {
 				warning("result = sub_166F7");
 				break;
 			case 15:
-				warning("result = sub_166EA");
+				_scriptHandler->_array12811[index] = 0x10;
+				_scriptHandler->_characterScriptEnabled[index] = 1;
+				result = 1;
 				break;
 			default:
 				warning("sub16626 - unexpected value %d", var2 / 2);
@@ -2386,6 +2388,10 @@ while(1);*/
 	_scriptHandler->runScript(ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
 	debugC(1, kDebugEngine, "============= End Game Script %d for character %d ==================", tmpVal, index);
 
+
+	//warning("dump char stat");
+	i = index;
+	warning("char %d, pos %d %d, state %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], _characterVariables[i*32+0], _scriptHandler->_characterScriptEnabled[i]);
 }
 
 Common::Error LilliputEngine::run() {
