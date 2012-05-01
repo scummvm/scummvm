@@ -34,8 +34,9 @@ MoviePlayer *CreateSmushPlayer(bool demo) {
 }
 
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
-	_videoDecoder = new Grim::SmushDecoder();
-	getDecoder()->setDemo(_demo);
+	_smushDecoder = new SmushDecoder();
+	_videoDecoder = _smushDecoder;
+	_smushDecoder->setDemo(_demo);
 }
 
 bool SmushPlayer::loadFile(Common::String filename) {
@@ -45,17 +46,12 @@ bool SmushPlayer::loadFile(Common::String filename) {
 		return _videoDecoder->loadFile(filename);
 }
 
-SmushDecoder *SmushPlayer::getDecoder() {
-	return dynamic_cast<SmushDecoder *>(_videoDecoder);
-}
-
 void SmushPlayer::init() {
-	SmushDecoder *decoder = getDecoder();
 	if (_demo) {
-		_x = decoder->getX();
-		_y = decoder->getY();
+		_x = _smushDecoder->getX();
+		_y = _smushDecoder->getY();
 	} else {
-		decoder->setLooping(_videoLooping);
+		_smushDecoder->setLooping(_videoLooping);
 	}
 	MoviePlayer::init();
 }
@@ -76,15 +72,15 @@ void SmushPlayer::handleFrame() {
 
 void SmushPlayer::postHandleFrame() {
 	if (_demo) {
-		_x = getDecoder()->getX();
-		_y = getDecoder()->getY();
+		_x = _smushDecoder->getX();
+		_y = _smushDecoder->getY();
 	}
 }
 
 void SmushPlayer::restoreState(SaveGame *state) {
 	MoviePlayer::restoreState(state);
 	if (isPlaying()) {
-		getDecoder()->seekToTime((uint32)_movieTime); // Currently not fully working (out of synch)
+		_smushDecoder->seekToTime((uint32)_movieTime); // Currently not fully working (out of synch)
 	}
 }
 

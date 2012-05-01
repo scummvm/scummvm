@@ -38,9 +38,9 @@ private:
 	bool loadFile(Common::String filename);
 	void handleFrame();
 	void postHandleFrame();
-	SmushDecoder* getDecoder();
 	void init();
 	bool _demo;
+	SmushDecoder *_smushDecoder;
 };
 
 } // end of namespace Grim
