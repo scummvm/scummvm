@@ -255,9 +255,11 @@ public:
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
 	uint16 sub168DA(byte var1h, byte var1l);
+	uint16 sub_16901(byte var1h, byte var1l);
 
 	void renderCharacters(byte *buf, byte x, byte y);
 
+	int sub168DA(int x, int y);
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
 	void addCharToBuf(byte character);
@@ -297,6 +299,7 @@ public:
 	void sub16B31(int index, int val);
 	void sub16B8F(int index, int x, int y, int flag);
 	int sub1675D(int index, int var1);
+	int sub16729(int index);
 	byte sub166F7(int index, int var1, int tmpVal);
 	void sub1693A(int index);
 
@@ -333,7 +336,7 @@ public:
 	byte _byte12FCE;
 	byte _byte129A0;
 	byte _numCharactersToDisplay;
-	byte _byte16C9F; 
+	byte _byte16C9F;
 	int _word10804;
 	int _word16213;
 	int _word16215;
