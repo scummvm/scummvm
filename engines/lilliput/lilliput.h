@@ -108,8 +108,10 @@ public:
 	byte _byte15EAD;
 	byte _debugFlag; // Mostly useless, as the associated functions are empty
 	byte _byte14837; // Unused byte, set by an opcode
+	byte _byte16939;
 
 	byte _array147D1[3];
+	byte _array1692B[4];
 	byte _buffer1[45056];
 	byte _buffer2[45056];
 	byte _buffer3[45056];
@@ -139,9 +141,10 @@ public:
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
 	int _word1289D;
+	int _word16937;
+
 	short _word15E5D[40];
 	byte _byte15E35[40];
-
 	int _array11D49[40];
 	int _array1289F[40];
 	int _array12861[30];
@@ -247,9 +250,11 @@ public:
 	void viewportScrollTo(int var1, int var3);
 	void sub189DE();
 	void sub16626();
-
+	void sub16A08(int index);
+	byte sub16A76(int indexb, int indexs);
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
+	uint16 sub168DA(byte var1h, byte var1l);
 
 	void renderCharacters(byte *buf, byte x, byte y);
 
@@ -293,6 +298,7 @@ public:
 	void sub16B8F(int index, int x, int y, int flag);
 	int sub1675D(int index, int var1);
 	byte sub166F7(int index, int var1, int tmpVal);
+	void sub1693A(int index);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, bool loadPal);
