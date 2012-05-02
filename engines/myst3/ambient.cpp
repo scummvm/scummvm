@@ -72,6 +72,29 @@ void Ambient::loadNode(uint32 node, uint32 room, uint32 age) {
 		_vm->runAmbientScripts(32766);
 }
 
+void Ambient::addSound(uint32 id, int32 volume, int32 heading, int32 headingAngle, int32 u1, int32 u2) {
+	if (!volume)
+		volume = 1;
+
+	AmbientSound s;
+
+	if (volume >= 0) {
+		s.volume = volume;
+		s.volumeFlag = 0;
+	} else {
+		s.volume = -volume;
+		s.volumeFlag = 1;
+	}
+
+	s.id = id;
+	s.heading = heading;
+	s.headingAngle = headingAngle;
+	s.u1 = u1;
+	s.u2 = u2;
+
+	_sounds.push_back(s);
+}
+
 void Ambient::applySounds(uint32 fadeOutDelay) {
 	// TODO
 }

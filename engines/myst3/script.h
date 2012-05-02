@@ -282,6 +282,11 @@ private:
 	DECLARE_OPCODE(soundPlayVolumeDirection);
 	DECLARE_OPCODE(soundPlayVolumeDirectionAtt);
 	DECLARE_OPCODE(ambientSetFadeOutDelay);
+	DECLARE_OPCODE(ambientAddSound1);
+	DECLARE_OPCODE(ambientAddSound2);
+	DECLARE_OPCODE(ambientAddSound3);
+	DECLARE_OPCODE(ambientAddSound4);
+	DECLARE_OPCODE(ambientAddSound5);
 	DECLARE_OPCODE(runAmbientScriptNode);
 	DECLARE_OPCODE(runAmbientScriptNodeRoomAge);
 	DECLARE_OPCODE(runSoundScriptNode);

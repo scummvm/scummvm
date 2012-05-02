@@ -39,6 +39,8 @@ public:
 	void applySounds(uint32 fadeOutDelay);
 	void scaleVolume(uint32 volume);
 
+	void addSound(uint32 id, int32 volume, int32 heading, int32 headingAngle, int32 u1, int32 u2);
+
 	uint32 _scriptAge;
 	uint32 _scriptRoom;
 
@@ -47,14 +49,14 @@ private:
 
 	struct AmbientSound {
 		uint32 id;
-		char name[32];
+		//char name[32];
 
-		uint32 volume;
-		uint32 u2;
-		uint32 u3;
-		uint32 u4;
-		uint32 u5;
-		uint32 u6;
+		int32 volume;
+		int32 volumeFlag;
+		int32 heading;
+		int32 headingAngle;
+		int32 u1;
+		int32 u2;
 	};
 
 	Common::Array<AmbientSound> _sounds;

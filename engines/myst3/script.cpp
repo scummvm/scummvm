@@ -232,6 +232,11 @@ Script::Script(Myst3Engine *vm):
 	OP_3(207, soundPlayVolumeDirection,		kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_4(208, soundPlayVolumeDirectionAtt,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
 	OP_1(218, ambientSetFadeOutDelay,		kValue														);
+	OP_2(219, ambientAddSound1,				kValue,		kEvalValue										);
+	OP_3(220, ambientAddSound2,				kValue,		kEvalValue,	kValue								);
+	OP_3(222, ambientAddSound3,				kValue,		kEvalValue,	kValue								);
+	OP_4(223, ambientAddSound4,				kValue,		kEvalValue,	kValue,		kValue					);
+	OP_3(224, ambientAddSound5,				kValue,		kEvalValue,	kEvalValue							);
 	OP_1(229, runAmbientScriptNode,			kEvalValue													);
 	OP_4(230, runAmbientScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
 	OP_1(231, runSoundScriptNode,			kEvalValue													);
@@ -2385,6 +2390,56 @@ void Script::ambientSetFadeOutDelay(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Set fade out delay : %d", cmd.op, cmd.args[0]);
 
 	_vm->_state->setAmbiantPreviousFadeOutDelay(cmd.args[0]);
+}
+
+void Script::ambientAddSound1(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+
+	_vm->_ambient->addSound(id, volume, 0, 0, 0, 0);
+}
+
+void Script::ambientAddSound2(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 u2 = cmd.args[2];
+
+	_vm->_ambient->addSound(id, volume, 0, 0, 0, u2);
+}
+
+void Script::ambientAddSound3(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = cmd.args[2];
+
+	_vm->_ambient->addSound(id, volume, heading, 85, 0, 0);
+}
+
+void Script::ambientAddSound4(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = cmd.args[2];
+	int32 angle = cmd.args[3];
+
+	_vm->_ambient->addSound(id, volume, heading, angle, 0, 0);
+}
+
+void Script::ambientAddSound5(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 u1 = _vm->_state->valueOrVarValue(cmd.args[2]);
+
+	_vm->_ambient->addSound(id, volume, 0, 0, u1, 0);
 }
 
 void Script::runAmbientScriptNode(Context &c, const Opcode &cmd) {
