@@ -97,6 +97,9 @@ void SetEvent(HANDLE hEvent) {
 void ResetEvent(HANDLE hEvent) {
 }
 
+void PulseEvent(HANDLE hEvent) {
+}
+
 uint16 GetAsyncKeyState(Common::KeyCode kc) {
 	return 0;
 }

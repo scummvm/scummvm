@@ -106,6 +106,8 @@ extern void SetEvent(HANDLE hEvent);
 
 extern void ResetEvent(HANDLE hEvent);
 
+extern void PulseEvent(HANDLE hEvent);
+
 extern uint16 GetAsyncKeyState(Common::KeyCode kc);
 
 } // end of namespace MPAL

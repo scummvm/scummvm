@@ -3,6 +3,7 @@ MODULE := engines/tony
 MODULE_OBJS := \
 	custom.o \
 	detection.o \
+	font.o \
 	game.o \
 	gfxcore.o \
 	gfxengine.o \

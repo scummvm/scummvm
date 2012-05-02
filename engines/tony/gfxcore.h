@@ -288,7 +288,7 @@ protected:
 public:
 	virtual ~RMGfxSourceBufferPal();
 
-	virtual int Init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 	virtual void Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette = false);
  
 	int LoadPaletteWA(uint32 resID, bool bSwapped = false);
