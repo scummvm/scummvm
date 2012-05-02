@@ -132,6 +132,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_scriptHandler = new LilliputScript(this);
 	_soundHandler = new LilliputSound(this);
 
+	_byte16939 = 0;
 	_byte1714E = 0;
 	_byte12FCE = 0;
 	_byte129A0 = 0xFF;
@@ -175,6 +176,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 	for (int i = 0; i < 3; i++)
 		_array147D1[i] = 0;
+
+	for (int i = 0; i < 4; i++)
+		_array1692B[i] = 0;
 
 	for (int i = 0; i < 40; i++) {
 		_array10999[i] = 0;
@@ -1358,7 +1362,7 @@ int LilliputEngine::sub16799(int param1, int index) {
 
 	if (var3h != 0xFF) {
 		if ((var3h != _scriptHandler->_array16123[index]) || (var3l != _scriptHandler->_array1614B[index])) {
-			warning("sub_1693A");
+			sub1693A(index);
 			_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
 			return 3;
 		}
@@ -1373,10 +1377,130 @@ int LilliputEngine::sub16799(int param1, int index) {
 
 	_characterDirectionArray[index] = sub16B0C(var1, var2);
 
-	warning("sub_1693A");
+	sub1693A(index);
 	_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
 	return 3;
 
+}
+
+void LilliputEngine::sub1693A(int index) {
+	debugC(2, kDebugEngine, "sub1693A(%d)", index);
+	
+	static const uint16 _array1692F[4] = {4, 0xFF00, 0x100, 0xFFFC};
+
+	byte var1h = _scriptHandler->_array16123[index];
+	byte var1l = _scriptHandler->_array1614B[index];
+	_word16937 = (var1h << 8) + var1l;
+
+	sub16A08(index);
+	
+	int var2 = (_characterDirectionArray[index] ^ 3);
+	_array1692B[var2] += 0xF8;
+	_byte16939 = 0;
+	
+	int mapIndex = ((((var1l << 8) >> 2) + var1h) << 2);
+	int subMapIndex = 0;
+	int retVal = 0;
+	for (int i = 3; i >= 0; i--) {
+		subMapIndex = _array1692F[i];
+		if (((_bufferIsoMap[mapIndex + subMapIndex + 3] & _array16C54[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _array16C58[i]) != 0)) {
+			if ((_bufferIsoMap[mapIndex + subMapIndex + 3] & 0x80) != 0) {
+				if (sub16A76(i, index) != 0)
+					_array1692B[i] += 0xEC;
+				
+				int tmpVal = ((_rulesBuffer2_10[index] & 7) ^ 7);
+				retVal = _rulesChunk9[_bufferIsoMap[mapIndex + subMapIndex]];
+				tmpVal &= retVal;
+				if (tmpVal == 0)
+					continue;
+			}
+		}
+		_array1692B[i] = 0x9E;
+		++_byte16939;
+	}
+
+	if (_byte16939 != 0)
+		_array1692B[_characterDirectionArray[index]] += 3;
+
+	int tmpVal = 0x9D;
+	for (int i = 3; i >= 0; i--) {
+		if (tmpVal < _array1692B[i]) {
+			retVal = i;
+			tmpVal = _array1692B[i];
+		}
+	}
+	
+	_characterDirectionArray[index] = retVal;
+}
+
+byte LilliputEngine::sub16A76(int indexb, int indexs) {
+	debugC(2, kDebugEngine, "sub16A76(%d, %d)", indexb, indexs);
+
+	static const byte _array16A6C[4] = {1, 0, 0, 0xFF};
+	static const byte _array16A70[4] = {0, 0xFF, 1, 0};
+	   
+	byte var1h = (_word16937 >> 8) + _array16A6C[indexb];
+	byte var1l = (_word16937 & 0xFF) + _array16A70[indexs];
+
+	int var2 = sub168DA(var1h, var1l);
+	if (var2 == 0xFFFF)
+		return 1;
+
+	int _word16A74 = var2; // useless?
+
+	var1h = (_word16937 >> 8);
+	var1l = (_word16937 & 0xFF);
+
+	if ((var1h >= (_rulesBuffer12_1[var2] >> 8)) && (var1h <= (_rulesBuffer12_1[var2] & 0xFF)) && (var1l >= (_rulesBuffer12_2[var2] >> 8)) && (var1l <= (_rulesBuffer12_2[var2] & 0xFF)))
+		return 0;
+
+	var1h = _array109E9[indexs];
+	var1l = _array10A11[indexs];
+
+	if ((var1h >= (_rulesBuffer12_1[var2] >> 8)) && (var1h <= (_rulesBuffer12_1[var2] & 0xFF)) && (var1l >= (_rulesBuffer12_2[var2] >> 8)) && (var1l <= (_rulesBuffer12_2[var2] & 0xFF)))
+		return 0;
+
+	return 1;
+}
+
+uint16 LilliputEngine::sub168DA(byte var1h, byte var1l) {
+	debugC(2, kDebugEngine, "sub168DA(%d, %d)", var1h, var1l);
+
+	for (int i = 0; i < _rulesChunk12_size; i++) {
+		if ((var1h >= (_rulesBuffer12_1[i] >> 8)) && (var1h <= (_rulesBuffer12_1[i] & 0xFF)) && (var1h >= (_rulesBuffer12_2[i] >> 8)) && (var1h <= (_rulesBuffer12_2[i] & 0xFF)))
+			return i;
+	}
+	return 0xFFFF;
+}
+
+void LilliputEngine::sub16A08(int index) {
+	debugC(2, kDebugEngine, "sub16A08(%d)", index);
+
+	static const byte _array169F8[4] = {1, 0, 0, 0xFF};
+	static const byte _array169FC[4] = {0, 0xFF, 1, 0};
+
+	int _array16A00[4];
+
+	for (int i = 3; i >= 0; i--) {
+		byte var1h = (_word16937 >> 8) + _array169F8[i] - _array109E9[index];
+		byte var1l = (_word16937 & 0xFF) + _array169FC[i] - _array10A11[index];
+		_array16A00[i] = (var1l * var1l) + (var1h * var1h);
+	}
+	_array1692B[0] = 0;
+	_array1692B[2] = 0;
+
+	for (int i = 6; i > 0; i--) {
+		int tmpVal = 0x7FFF;
+		int tmpIndex = 0;
+		for (int j = 0; j < 4; j++) {
+			if (tmpVal > _array16A00[j]) {
+				tmpVal = _array16A00[j];
+				tmpIndex = j;
+			}
+		}
+		_array16A00[tmpIndex] = 0x7FFF;
+		_array1692B[tmpIndex] = i;
+	}
 }
 
 void LilliputEngine::addCharToBuf(byte character) {
