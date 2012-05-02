@@ -123,7 +123,7 @@ private:
 	
 	void sub185ED(byte index, byte subIndex);
 	void sub185B4_display();
-	void sub1823E(byte var1, byte var2, byte *curBufPtr);
+	void sub1823E(byte index, byte var1, byte *curBufPtr);
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
 	void sub16C5C(int index, byte var3);
