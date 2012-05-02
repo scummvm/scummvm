@@ -1045,12 +1045,12 @@ void LilliputScript::sub185B4_display() {
 	_word1855E = subIndex;
 }
 
-void LilliputScript::sub1823E(byte var1, byte var2, byte *curBufPtr) {
-	debugC(1, kDebugScript, "sub1823E(%d, %d, curBufPtr)", var1, var2);
+void LilliputScript::sub1823E(byte index, byte var1, byte *curBufPtr) {
+	debugC(1, kDebugScript, "sub1823E(%d, %d, curBufPtr)", index, var1);
 
-	assert ((var1 >= 0) && (var1 < 40));
-	_characterScriptEnabled[var1] = 1;
-	curBufPtr[0] = var2;
+	assert (index < 40);
+	_characterScriptEnabled[index] = 1;
+	curBufPtr[0] = var1;
 	curBufPtr[1] = 0;
 	curBufPtr[2] = 0;
 	curBufPtr[3] = 0;
