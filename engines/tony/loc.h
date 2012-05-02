@@ -50,6 +50,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/file.h"
 #include "tony/mpal/stubs.h"
 #include "tony/sound.h"
 #include "tony/utils.h"
@@ -539,8 +540,8 @@ public:
 	virtual ~RMLocation();
 
 	// Caricamento da disco
-	bool Load(char *lpszFileName);
-	bool Load(HANDLE hFile);
+	bool Load(const char *lpszFileName);
+	bool Load(Common::File &file);
 	bool Load(const byte *buf);
 	bool Load(RMDataStream &ds);
 	bool LoadLOX(RMDataStream &ds);

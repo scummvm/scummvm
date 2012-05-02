@@ -118,6 +118,56 @@ public:
     bool IsError();
 };
 
+
+/**
+ * Data stream per lettura di dati aperto da file
+ */
+class RMFileStream : public RMDataStream {
+private:
+	byte *m_buf;
+
+public:
+	RMFileStream();
+	virtual ~RMFileStream();
+
+	// Apre lo stream da file
+	bool OpenFile(const char *lpFN);
+	bool OpenFile(Common::File &file);
+
+	void Close(void);
+};
+
+
+class RMFileStreamSlow : public RMDataStream {
+private:
+	Common::File f;
+	bool bMustClose;
+
+public:
+	RMFileStreamSlow();
+	virtual ~RMFileStreamSlow();
+
+	bool OpenFile(const char *lpFN);
+	bool OpenFile(Common::File &file);
+
+	void Close(void);
+
+    RMDataStream& operator+=(int nBytes);
+    int Seek(int nBytes, RMDSPos where = CUR);
+
+	int Pos();
+	virtual bool IsEOF();
+
+	bool Read(void *buf, int size);
+
+    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, char &var);
+    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, byte &var);
+    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, uint16 &var);
+    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, int16 &var);
+    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, int &var);
+    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, uint32 &var);
+};
+
 /**
  * String class
  */
