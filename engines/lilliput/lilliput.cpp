@@ -1354,8 +1354,8 @@ int LilliputEngine::sub16B0C(int param1, int param2) {
 	return _array16B04[var2l];
 }
 
-int LilliputEngine::sub16799(int param1, int index) {
-	debugC(2, kDebugEngine, "sub16799(%d, %d)", param1, index);
+byte LilliputEngine::sub16799(int index, int param1) {
+	debugC(2, kDebugEngine, "sub16799(%d, %d)", index, param1);
 
 	byte var3h = _array109E9[index];
 	byte var3l = _array10A11[index];
@@ -1554,7 +1554,7 @@ void LilliputEngine::sub16626() {
 	debugC(2, kDebugEngine, "sub16626()");
 
 	int index = _numCharacters - 1;
-	int result;
+	byte result;
 	while (index >= 0) {
 		result = 2;
 		while (result & 2) {
@@ -1592,18 +1592,16 @@ void LilliputEngine::sub16626() {
 				result = sub16729(index);
 				break;
 			case 12:
-				result = sub16799(var1, index);
+				result = sub16799(index, var1);
 				break;
 			case 13:
-				warning("result = sub_16722");
+				result = sub16722(index, var1);
 				break;
 			case 14:
 				result = sub166F7(index, var1, tmpVal);
 				break;
 			case 15:
-				_scriptHandler->_array12811[index] = 0x10;
-				_scriptHandler->_characterScriptEnabled[index] = 1;
-				result = 1;
+				result = sub166EA(index);
 				break;
 			default:
 				warning("sub16626 - unexpected value %d", var2 / 2);
@@ -1618,6 +1616,14 @@ void LilliputEngine::sub16626() {
 		}
 		--index;
 	}
+}
+
+byte LilliputEngine::sub166EA(int index) {
+	debugC(2, kDebugEngine, "sub166EA(%d, %d)", index);
+
+	_scriptHandler->_array12811[index] = 0x10;
+	_scriptHandler->_characterScriptEnabled[index] = 1;
+	return 1;
 }
 
 byte LilliputEngine::sub166F7(int index, int var1, int tmpVal) {
@@ -1640,14 +1646,24 @@ byte LilliputEngine::sub166F7(int index, int var1, int tmpVal) {
 	return 3;
 }
 
-int LilliputEngine::sub166DD(int index, int var1) {
+byte LilliputEngine::sub166DD(int index, int var1) {
+	debugC(2, kDebugEngine, "sub166DD(%d, %d)", index, var1);
 	
 	_characterDirectionArray[index] = (var1 >> 8) & 3;
 	sub16685(index, var1 & 0xFF);
 	return 0;
 }
 
-int LilliputEngine::sub16729(int index) {
+byte LilliputEngine::sub16722(int index, byte var1) {
+	debugC(2, kDebugEngine, "sub16722(%d, %d)", index, var1);
+
+	_rulesBuffer2_10[index] = var1;
+	return 2;
+}
+
+byte LilliputEngine::sub16729(int index) {
+	debugC(2, kDebugEngine, "sub16729(%d)", index);
+
 	int arg1 = index | 0xFF00;
 	int pos1 = (_scriptHandler->_array16123[index] << 8) | (_scriptHandler->_array1614B[index] & 0xFF);
 	int pos2 = (_scriptHandler->_viewportX << 8) | (_scriptHandler->_viewportY & 0xFF);
@@ -1655,7 +1671,7 @@ int LilliputEngine::sub16729(int index) {
 	return 2;
 }
 
-int LilliputEngine::sub1675D(int index, int var1) {
+byte LilliputEngine::sub1675D(int index, int var1) {
 	debugC(2, kDebugEngine, "sub1675D(%d, %d)", index, var1);
 
 	int var2 = _scriptHandler->_array10A39[index];
@@ -1867,7 +1883,7 @@ void LilliputEngine::sub16685(int idx, int var1) {
 	_scriptHandler->_array10AB1[idx] = _rulesBuffer2_16[index];
 }
 
-int LilliputEngine::sub16675(int idx, int var1) {
+byte LilliputEngine::sub16675(int idx, int var1) {
 	debugC(2, kDebugEngine, "sub16675(%d, %d)", idx, var1);
 
 	sub16685(idx, var1);
