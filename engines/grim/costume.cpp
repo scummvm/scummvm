@@ -419,8 +419,8 @@ void Costume::draw() {
 
 void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 	for (int i = 0; i < _numComponents; i++) {
-		if ((_components[i]->isComponentType('M','M','D','L') ||
-			 _components[i]->isComponentType('M','O','D','L'))) {
+		if (_components[i] &&(_components[i]->isComponentType('M','M','D','L') ||
+							  _components[i]->isComponentType('M','O','D','L'))) {
 			ModelComponent *c = static_cast<ModelComponent *>(_components[i]);
 			c->getBoundingBox(x1, y1, x2, y2);
 		}
