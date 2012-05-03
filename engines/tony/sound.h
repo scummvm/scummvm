@@ -48,11 +48,20 @@
 #ifndef TONY_SOUND_H
 #define TONY_SOUND_H
 
+#include "common/file.h"
 #include "tony/gfxcore.h"
 #include "tony/loc.h"
 #include "tony/utils.h"
 
 namespace Tony {
+
+// Dummy type declarations
+typedef void *LPDIRECTSOUND;
+typedef void *LPDIRECTSOUNDBUFFER;
+typedef uint32 HWND;
+struct DSCAPS {
+};
+
 
 class FPSTREAM;
 class FPSFX;
@@ -78,12 +87,10 @@ class FPSOUND {
 private:
 
 	bool bSoundSupported;
-/*
 	LPDIRECTSOUND lpDS;
 	LPDIRECTSOUNDBUFFER lpDSBPrimary;
 	DSCAPS dscaps;
 	HWND hwnd;
-*/
 
 /****************************************************************************\
 *       Metodi
@@ -301,7 +308,7 @@ public:
 
 	bool LoadFile(char *lpszFileName, uint32 dwCodec = FPCODEC_RAW);
 	bool LoadFile(byte *lpBuf, uint32 dwCodec);
-	bool LoadVoiceFromVDB(Common::File &hvdb);
+	bool LoadVoiceFromVDB(Common::File &vdbFP);
 
 
 /****************************************************************************\
@@ -410,7 +417,7 @@ private:
 	uint32 dwCodec;                        // CODEC utilizzato
 
 	HANDLE hThreadEnd;                    // Evento per chiudere il thread
-	HANDLE hFile;                         // Handle del file di stream
+	Common::File _file;                   // Handle del file di stream
 	HANDLE hPlayThread;                   // Handle del thread di play
 	HANDLE hHot1, hHot2, hHot3;           // Eventi settati da DirectSoundNotify
 	HANDLE hPlayThread_PlayFast;
@@ -497,7 +504,7 @@ public:
 *
 \****************************************************************************/
 
-	bool LoadFile(char *lpszFileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
+	bool LoadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
 
 
 

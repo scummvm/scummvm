@@ -65,7 +65,7 @@ private:
 
 private:
 	// Inizializza DirectInput
-	void DIInit(uint32 hInst);
+	void DIInit(/*uint32 hInst*/);
 
 	// Deinizializza DirectInput
 	void DIClose(void);
