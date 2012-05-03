@@ -218,7 +218,7 @@ int curChangedHotspot = 0;
 
 struct {
 	uint32 dwCode;
-	uint32 nX,nY;
+	uint32 nX, nY;
 
 	void Save(Common::OutSaveFile *f) {
 		f->writeUint32LE(dwCode);
@@ -629,7 +629,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(uint32 nLoc, uint32 tX, uint32 tY, uint3
 	Unfreeze();
 
 
-	h = mpalQueryDoAction(0,nLoc,0);
+	h = mpalQueryDoAction(0, nLoc,0);
 
 	if (!bNoOcchioDiBue) {
   		WaitWipeEnd();
@@ -1079,18 +1079,18 @@ DECLARE_CUSTOM_FUNCTION(WaitForPatternEnd)(uint32 nItem, uint32, uint32, uint32)
 
 
 DECLARE_CUSTOM_FUNCTION(SetTonyPosition)(uint32 nX, uint32 nY, uint32 nLoc, uint32) {
-	Tony->SetPosition(RMPoint(nX,nY),nLoc);
+	Tony->SetPosition(RMPoint(nX, nY), nLoc);
 }
 
 DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(uint32 nX, uint32 nY, uint32, uint32) {
-	Tony->Move(RMPoint(nX,nY));
+	Tony->Move(RMPoint(nX, nY));
 	
 	if (!bSkipIdle)
 		Tony->WaitForEndMovement();
 }
 
 DECLARE_CUSTOM_FUNCTION(MoveTony)(uint32 nX, uint32 nY, uint32, uint32) {
-	Tony->Move(RMPoint(nX,nY));
+	Tony->Move(RMPoint(nX, nY));
 }
 
 DECLARE_CUSTOM_FUNCTION(ScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
@@ -1103,22 +1103,20 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uint32 
 
 	pt=Loc->ScrollPosition();
 	
-	while ((lx != 0 || ly != 0) && !bSkipIdle) 	{
-		if (lx>0) {
-			lx -= (int32)sX; if (lx<0) lx = 0;
+	while ((lx != 0 || ly != 0) && !bSkipIdle) {
+		if (lx > 0) {
+			lx -= (int32)sX; if (lx < 0) lx = 0;
 			pt.Offset((int32)sX, 0);
-		} else if (lx<0) {
-			lx += (int32)sX; if (lx>0) lx = 0;
+		} else if (lx < 0) {
+			lx += (int32)sX; if (lx > 0) lx = 0;
 			pt.Offset(-(int32)sX, 0);
 		}
 
 		if (ly > 0) {
-			ly-=sY; if (ly<0) ly = 0;
-			pt.Offset(0,sY);
-		}
-		else if (ly<0)
-		{
-			ly+=sY; if (ly>0) ly = 0;
+			ly -= sY; if (ly < 0) ly = 0;
+			pt.Offset(0, sY);
+		} else if (ly < 0) {
+			ly += sY; if (ly > 0) ly = 0;
 			pt.Offset(0, -(int32)sY);
 		}
 
@@ -1134,18 +1132,18 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uint32 
 
 DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
 	int lx, ly;
-	RMPoint pt,startpt;
-	uint32 dwStartTime,dwCurTime,dwTotalTime;
+	RMPoint pt, startpt;
+	uint32 dwStartTime, dwCurTime, dwTotalTime;
 	uint32 stepX, stepY;
-	int dimx,dimy;
+	int dimx, dimy;
 
 	// Prende le coordinate di quanto scrollare
 	lx=*((int*)&nX);
 	ly=*((int*)&nY);
-	dimx=lx;
-	dimy=ly;
-	if (lx<0) dimx = -lx;
-	if (ly<0) dimy = -ly;
+	dimx = lx;
+	dimy = ly;
+	if (lx < 0) dimx = -lx;
+	if (ly < 0) dimy = -ly;
 
 	stepX = sX;
 	stepY = sY;
@@ -1155,13 +1153,12 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uin
   dwStartTime = timeGetTime();
 	
 	if (sX)
-		dwTotalTime = dimx*(1000/35)/sX;
+		dwTotalTime = dimx * (1000 / 35) / sX;
 	else
-		dwTotalTime = dimy*(1000/35)/sY;
+		dwTotalTime = dimy * (1000 / 35) / sY;
 
-	while ((lx != 0 || ly != 0) && !bSkipIdle)
-	{
-   	dwCurTime=timeGetTime()-dwStartTime;
+	while ((lx != 0 || ly != 0) && !bSkipIdle) {
+		dwCurTime = _vm->GetTime() - dwStartTime;
 		if (dwCurTime>dwTotalTime)
 			break;
 
@@ -1181,28 +1178,22 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uin
 		}
 
 /*		
-		sX = stepX * (dwCurTime-dwLastTime) / (1000/35);
-		sY = stepY * (dwCurTime-dwLastTime) / (1000/35);
+		sX = stepX * (dwCurTime-dwLastTime) / (1000 / 35);
+		sY = stepY * (dwCurTime-dwLastTime) / (1000 / 35);
 
-		if (lx>0)
-		{
-			lx-=sX; if (lx<0) lx = 0;
+		if (lx > 0) {
+			lx-=sX; if (lx < 0) lx = 0;
 			pt.Offset(sX,0);
-		}
-		else if (lx<0)
-		{
-			lx+=sX; if (lx>0) lx = 0;
+		} else if (lx < 0) {
+			lx+=sX; if (lx > 0) lx = 0;
 			pt.Offset(-sX,0);
 		}
 
-		if (ly>0)
-		{
+		if (ly > 0) {
 			ly-=sY; if (ly<0) ly = 0;
 			pt.Offset(0,sY);
-		}
-		else if (ly<0)
-		{
-			ly+=sY; if (ly>0) ly = 0;
+		} else if (ly<0) {
+			ly+=sY; if (ly > 0) ly = 0;
 			pt.Offset(0,-sY);
 		}
 */
@@ -1218,12 +1209,12 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uin
 
 	// Setta la posizione finale
 	if (sX) {
-		if (lx>0)
+		if (lx > 0)
 			pt.x = startpt.x + dimx;
 		else
 			pt.x = startpt.x - dimx;
 	} else {
-		if (ly>0)
+		if (ly > 0)
 			pt.y = startpt.y + dimy;
 		else
 			pt.y = startpt.y - dimy;
@@ -1254,7 +1245,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(uint32 dwCode, uint32 nX, uint32 nY, uint
 		curChangedHotspot++;
 	}
 
-	Loc->GetItemFromCode(dwCode)->ChangeHotspot(RMPoint(nX,nY));
+	Loc->GetItemFromCode(dwCode)->ChangeHotspot(RMPoint(nX, nY));
 }
 
 
@@ -1274,7 +1265,7 @@ DECLARE_CUSTOM_FUNCTION(TremaSchermo)(uint32 nScosse, uint32, uint32, uint32) {
 	dirx = 1;
 	diry = 1;
 
-	while (_vm->GetTime() < curTime + nScosse) 	{
+	while (_vm->GetTime() < curTime + nScosse) {
 		WaitFrame();
 
 		Freeze();
@@ -1359,7 +1350,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(uint32 nChar, uint32 dwMessage, uint32 
 
 	VoiceHeader *curVoc = SearchVoiceHeader(0, dwMessage);
 	FPSFX *voice = NULL;
-	if (curVoc) 	{
+	if (curVoc) {
 		// Si posiziona all'interno del database delle voci all'inizio della prima
 //		fseek(_vm->m_vdbFP, curVoc->offset, SEEK_SET);
 		g_system->lockMutex(vdb);
@@ -1734,7 +1725,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(uint32 nPers, uint32 nMsg, uint32, ui
 		parm = (MCharacter[nPers].curgroup * 10) + _vm->_randomSource.getRandomNumber(
 			MCharacter[nPers].numtalks[MCharacter[nPers].curgroup] - 1) + 1;
 
-		if (MCharacter[nPers].numtexts != 0 && MCharacter[nPers].bInTexts) 		{
+		if (MCharacter[nPers].numtexts != 0 && MCharacter[nPers].bInTexts) {
 			MCharacter[nPers].numtexts--;
 		} else {
 			// Cerca di eseguire la funzione custom per inizializzare la parlata
@@ -1849,9 +1840,8 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(uint32 nDialog, uint32 nStartGroup, uint32,
 			;
 
 		// Se c'e' una sola opzione, la fa automaticamente, e aspetta la prossima scelta
-		if (num==1)
-		{
-			mpalQueryDialogSelection(nChoice,sl[0]);
+		if (num == 1) {
+			mpalQueryDialogSelection(nChoice, sl[0]);
 			GlobalFree(sl);
 			continue;
 		}

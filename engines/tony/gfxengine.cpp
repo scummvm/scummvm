@@ -139,7 +139,7 @@ void RMGfxEngine::DoFrame(bool bDrawLocation) {
 	// Poll dei dispositivi di input
 	m_input.Poll();
 
-	if (m_bMustEnterMenu && bIdleExited) 	{
+	if (m_bMustEnterMenu && bIdleExited) {
 		m_bOption = true;
 		m_bMustEnterMenu = false;
 		bIdleExited = false;
@@ -216,8 +216,7 @@ void RMGfxEngine::DoFrame(bool bDrawLocation) {
 
 				// CLICK SINISTRO
 				// **************
-				if (m_input.MouseLeftClicked() && !m_inter.Active())
-				{
+				if (m_input.MouseLeftClicked() && !m_inter.Active()) {
 					// Se clicko dentro un oggetto, esegui l'azione
 					//if (m_itemName.IsItemSelected())
 					{
@@ -383,8 +382,7 @@ void RMGfxEngine::ItemIrq(uint32 dwItem, int nPattern, int nStatus) {
 	bool bEnableParent = false;
 	m_ofn.hwndOwner = PreModal();
 	AfxUnhookWindowCreate();
-	if (m_ofn.hwndOwner != NULL && ::IsWindowEnabled(m_ofn.hwndOwner))
-	{
+	if (m_ofn.hwndOwner != NULL && ::IsWindowEnabled(m_ofn.hwndOwner)) {
 		bEnableParent = true;
 		::EnableWindow(m_ofn.hwndOwner, false);
 	}
@@ -489,8 +487,7 @@ HANDLE RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 			continue;
 #if 0
 		// codice per dumpare una locazione in caso serva una modifica
-		if (nLoc == 106)
-		{
+		if (nLoc == 106) {
 			FILE *f = fopen("loc106.lox", "wb");
 			fwrite(res.DataPointer(), res.Size(), 1, f);
 			fclose(f);
@@ -514,19 +511,17 @@ HANDLE RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	return INVALID_HANDLE_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
 }
 
-HANDLE RMGfxEngine::UnloadLocation(bool bDoOnExit)
-{
+HANDLE RMGfxEngine::UnloadLocation(bool bDoOnExit) {
 	HANDLE h;
 	
 	// Scarica tutta la memoria della locazione
 	mpalEndIdlePoll(m_nCurLoc);
 
 	// On Exit?
-	if (bDoOnExit)
-	{
-		h=mpalQueryDoAction(1,m_nCurLoc,0);
-		if (h!=INVALID_HANDLE_VALUE)
-			WaitForSingleObject(h,INFINITE);
+	if (bDoOnExit) {
+		h = mpalQueryDoAction(1, m_nCurLoc, 0);
+		if (h != INVALID_HANDLE_VALUE)
+			WaitForSingleObject(h, INFINITE);
 	}
 
 	MainFreeze();
@@ -633,8 +628,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	//LoadLocation(40,RMPoint(233,441),RMPoint(-1,-1));
 }
 
-void RMGfxEngine::Close(void)
-{
+void RMGfxEngine::Close(void) {
 	m_bigBuf.ClearOT();
 
 	m_inter.Close();
@@ -644,68 +638,36 @@ void RMGfxEngine::Close(void)
 	m_input.Close();
 }
 
-void RMGfxEngine::SwitchFullscreen(bool bFull)
-{
+void RMGfxEngine::SwitchFullscreen(bool bFull) {
 	m_input.SwitchFullscreen(bFull);
 }
 
-void RMGfxEngine::GDIControl(bool bCon)
-{
+void RMGfxEngine::GDIControl(bool bCon) {
 	m_input.GDIControl(bCon);
 }
 
-/*
-void RMGfxEngine::OptionScreen(void)
-{
-	if (!m_bOption)
-	{
-		if (m_opt.Init(m_bigBuf))
-		{
-			m_bOption = true;
-			DisableInput();
-			EnableMouse();
-		}
-	}
-	else
-	{
-		if (m_opt.Close())
-		{
-			m_bOption = false;
-			DisableMouse();
-			EnableInput();
-		}
-	}
-}
-*/
-
-void RMGfxEngine::EnableInput(void)
-{
+void RMGfxEngine::EnableInput(void) {
 	m_bInput = true;
 }
 
-void RMGfxEngine::DisableInput(void)
-{
+void RMGfxEngine::DisableInput(void) {
 	m_bInput = false;
 	m_inter.Reset();
 }
 
-void RMGfxEngine::EnableMouse(void)
-{
+void RMGfxEngine::EnableMouse(void) {
 	m_bAlwaysDrawMouse = true;
 }
 
-void RMGfxEngine::DisableMouse(void)
-{
+void RMGfxEngine::DisableMouse(void) {
 	m_bAlwaysDrawMouse = false;
 }
 
-void RMGfxEngine::Freeze(void)
-{
+void RMGfxEngine::Freeze(void) {
 	g_system->lockMutex(csMainLoop);
 }
 
-void RMGfxEngine::Unfreeze(void)
-{
+void RMGfxEngine::Unfreeze(void) {
 	g_system->unlockMutex(csMainLoop);
 }
 

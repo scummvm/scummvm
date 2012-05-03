@@ -2902,10 +2902,8 @@ case num:	\
 		return DLG##num[nPers];
 
 
-char *GetPersonName(uint16 nDlg, int nPers)
-{
-	switch (nDlg)
-	{
+char *GetPersonName(uint16 nDlg, int nPers) {
+	switch (nDlg) {
 	HANDLE_DIALOG(10);
 	HANDLE_DIALOG(51);
 	HANDLE_DIALOG(52);

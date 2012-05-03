@@ -89,31 +89,24 @@ void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palRes
 	m_letter = new RMGfxSourceBuffer8RLEByte[nChars];
 
 #if 0
-	if (nChars == 112 && palResID == RES_F_PAL)
-	{
+	if (nChars == 112 && palResID == RES_F_PAL) {
 		// Font parla
 		DumpFontBMP("font_parla.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
 	}
-	else if (nChars == 102 && palResID == RES_F_PAL)
-	{
+	else if (nChars == 102 && palResID == RES_F_PAL) {
 		// Font macc
 		DumpFontBMP("font_macc.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
-	}
-	else if (nChars == 85 && palResID == RES_F_PAL)
-	{
+	} else if (nChars == 85 && palResID == RES_F_PAL) {
 		// Font obj
 		DumpFontBMP("font_obj.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
-	}
-	else if (nChars == 112 && palResID == RES_F_CPAL)
-	{
+	} else if (nChars == 112 && palResID == RES_F_CPAL) {
 		// Font credits
 		DumpFontBMP("font_credits.bmp", buf, nChars, dimx, dimy, RMRes(palResID));		
 	}
 #endif
 
 	// Carichiamoce 'sto font
-	for (int i = 0; i < nChars; i++)
-	{
+	for (int i = 0; i < nChars; i++) {
 		// Inizializza il buffer con le lettere
 		m_letter[i].Init(buf + i * (dimx * dimy + 8) + 8, dimx, dimy);
 		m_letter[i].LoadPaletteWA(palResID);
@@ -261,8 +254,7 @@ void RMFontParla::Init(void) {
 	lDefault = 13;
 	hDefault = 18;
 	Common::fill(&l2Table[0][0], &l2Table[0][0] + (256 * 256), '\0');
-	for (i = 0; i < 256; i++)
-	{
+	for (i = 0; i < 256; i++) {
 		cTable[i] = -1;
 		lTable[i] = lDefault;
 	}
@@ -1042,8 +1034,7 @@ void RMFontCredits::Init(void) {
 	hDefault=28;
 	Common::fill(&l2Table[0][0], &l2Table[0][0] + (256 * 256), '\0');
 	
-	for (i = 0; i < 256; i++)
-	{
+	for (i = 0; i < 256; i++) {
 		cTable[i] = -1;
 		lTable[i] = lDefault;
 	}
@@ -1514,20 +1505,18 @@ void RMFontObj::Init(void) {
 	hDefault = 30;
 	Common::fill(&l2Table[0][0], &l2Table[0][0] + (256 * 256), '\0');
 
-	for (i = 0; i < 256; i++)
-	{
+	for (i = 0; i < 256; i++) {
 		cTable[i] = -1;
 		lTable[i] = lDefault;
 	}
 
-	for (i = 0; i < 26; i++)
-	{
-		cTable['A'+i] = i+0;
-		cTable['a'+i] = i+0;
+	for (i = 0; i < 26; i++) {
+		cTable['A' + i] = i+0;
+		cTable['a' + i] = i+0;
 	}
 
 	for (i = 0; i < 10; i++)
-		cTable['0'+i] = i+26;
+		cTable['0' + i] = i + 26;
 
 	cTable[','] = 36;
 	cTable[';'] = 37;
@@ -2255,8 +2244,7 @@ void RMTextItemName::DoFrame(RMGfxTargetBuffer& bigBuf, RMLocation &loc, RMPoint
 	WriteText(itemName, 1);
 
 	// Se e' diverso dal precedente, e' il caso di aggiornare anche il puntatore con la WhichPointer
-	if (lastItem != m_item)
-	{
+	if (lastItem != m_item) {
 		if (m_item == NULL)
 			ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 		else {
@@ -2395,7 +2383,7 @@ void RMDialogChoice::Prepare(void) {
 
 	ptPos.Set(20,90);
 
-	for (i = 0; i < m_numChoices; i++) 	{
+	for (i = 0; i < m_numChoices; i++) {
 		AddPrim(new RMGfxPrimitive(&m_drawedStrings[i], ptPos));
 		m_ptDrawStrings[i] = ptPos;
 		ptPos.Offset(0,m_drawedStrings[i].Dimy() + 15);

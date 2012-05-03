@@ -121,8 +121,7 @@ void RMInventory::Init(void) {
 		
 		m_items[i].pointer=new RMGfxSourceBuffer8RLEByteAA[m_items[i].icon.NumPattern()];
 
-		for (j=0;j<m_items[i].icon.NumPattern();j++)
-		{
+		for (j = 0; j < m_items[i].icon.NumPattern(); j++) {
 			RMResRaw raw(curres);
 
 			assert(raw.IsValid());
@@ -235,8 +234,7 @@ void RMInventory::RemoveItem(int code) {
 	int i;
 
 	for (i=0;i<m_nInv;i++)
-		if (m_inv[i] == code-10000)
-		{
+		if (m_inv[i] == code - 10000) {
 			g_system->lockMutex(m_csModifyInterface);
 
 			Common::copy_backward(&m_inv[i + 1], &m_inv[i + 1] + (m_nInv - i), &m_inv[i]);
@@ -254,15 +252,13 @@ void RMInventory::RemoveItem(int code) {
 }
 
 void RMInventory::AddItem(int code) {
-	if (code <= 10000 && code >= 10101)
-	{
+	if (code <= 10000 && code >= 10101) {
 		// Se siamo qui, vuol dire che stiamo aggiungendo un oggetto che non dovrebbe essere
 		// nell'inventario
 		warning("Cannot find a valid icon for this item, and then it will not be added to the inventory");
 	} else {
 		g_system->lockMutex(m_csModifyInterface);
-		if (m_curPos+8  ==  m_nInv)		
-		{
+		if (m_curPos + 8 == m_nInv)	{
 			// Sfondiamo l'inventario! Attivo il pattern di lampeggio
 			m_items[28].icon.SetPattern(2);
 		}
@@ -352,8 +348,7 @@ bool RMInventory::LeftClick(RMPoint mpos, int& nCombineObj) {
 	}
 	
 	// Click sulla freccia destra
-	if ((m_state == OPENED) && m_bBlinkingRight)
-	{
+	if ((m_state == OPENED) && m_bBlinkingRight) {
 		g_system->lockMutex(m_csModifyInterface);
 		m_curPos++;
 
@@ -408,11 +403,10 @@ void RMInventory::RightClick(RMPoint mpos) {
 		// Apre l'interfaccina contestuale
 		n = mpos.x / 64;
 
-		if (n > 0 && n < RM_SX / 64-1 && m_inv[n-1+m_curPos]!=0)
-		{	
-			m_state=SELECTING;
-			miniAction=0;
-			m_nSelectObj=n-1;
+		if (n > 0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0) {	
+			m_state = SELECTING;
+			miniAction = 0;
+			m_nSelectObj = n - 1;
 
 			_vm->PlayUtilSFX(0);
 		}

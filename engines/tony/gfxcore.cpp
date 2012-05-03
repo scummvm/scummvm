@@ -198,13 +198,10 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 /*
    OBSOLETE CODE: 
 
-	if (buf == NULL)
-	{
+	if (buf == NULL) {
 		destw=RM_SX;
 		desth=RM_SY;
-	}
-	else
-	{
+	} else {
 		destw = buf->Dimx();
 		desth = buf->Dimy();
 	}
@@ -391,8 +388,7 @@ void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
 		otlist->next = NULL;
 	}
 	// Inserimento in testa
-	else if (nPrior < otlist->prim->m_task->Priority())
-	{
+	else if (nPrior < otlist->prim->m_task->Priority()) {
 		n->next = otlist;
 		otlist = n;
 	} else {
@@ -452,8 +448,7 @@ int RMGfxSourceBufferPal::LoadPalette(const byte *buf) {
 void RMGfxSourceBufferPal::PreparePalette(void) {
 	int i;
 
-	for (i = 0; i < 256; i++)
-	{
+	for (i = 0; i < 256; i++) {
 		m_palFinal[i] = (((int)m_pal[i * 3 + 0] >> 3) <<  10) |
 									(((int)m_pal[i * 3 + 1] >> 3) <<  5) | 
 									(((int)m_pal[i * 3 + 2] >> 3) <<  0);
@@ -575,16 +570,15 @@ void RMGfxSourceBuffer8::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		for (y = 0; y < height; y++) {
 			raw = m_buf + (y + v) * m_dimx + u;
 
-			for (x = 0;x<width;x+=2)
-			{
+			for (x = 0; x < width; x += 2) {
 				buf[0] = m_palFinal[raw[0]];
 				buf[1] = m_palFinal[raw[1]];
 				
-				buf+=2;
-				raw+=2;
+				buf += 2;
+				raw += 2;
 			}
 
-			buf += bufx-width;
+			buf += bufx - width;
 		}
 	}
 }
@@ -595,7 +589,7 @@ RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
 }
 
 RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
-	m_bTrasp0=bTrasp0;
+	m_bTrasp0 = bTrasp0;
 }
 
 
@@ -867,8 +861,7 @@ void RMGfxSourceBuffer8RLE::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 	buf += y1*bigBuf.Dimx();
 
 	// Looppone
-	if (prim->IsFlipped())
-	{
+	if (prim->IsFlipped()) {
 // Annulliamo il clipping orizzontale
 //		width = m_dimx;
 //		x1=prim->Dst().x1;
@@ -877,30 +870,26 @@ void RMGfxSourceBuffer8RLE::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 		u = m_dimx - (width+u);
 		x1 = (prim->Dst().x1 + m_dimx - 1) - u;
 
-		for (y = 0;y<height;y++)
-		{
+		for (y = 0; y < height; y++) {
 			// Decompressione
-			RLEDecompressLineFlipped(buf+x1, src+2,u,width);
+			RLEDecompressLineFlipped(buf + x1, src + 2, u, width);
 
 			// Prossima linea
 			src += READ_LE_UINT16(src);
 
 			// Skippa alla linea successiva
-			buf+=bigBuf.Dimx();		
+			buf += bigBuf.Dimx();		
 		}
-	}
-	else
-	{
-		for (y = 0;y<height;y++)
-		{
+	} else {
+		for (y = 0; y < height; y++) {
 			// Decompressione
-			RLEDecompressLine(buf+x1, src+2,u,width);
+			RLEDecompressLine(buf + x1, src + 2, u, width);
 
 			// Prossima linea
 			src += READ_LE_UINT16(src);
 
 			// Skippa alla linea successiva
-			buf+=bigBuf.Dimx();		
+			buf += bigBuf.Dimx();		
 		}
 	}
 }
@@ -956,7 +945,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLine(uint16 *dst, byte *src, int nS
 		if (n == 0xFF)
 			return;
 		
-		if (n >= nStartSkip) 		{
+		if (n >= nStartSkip) {
 			dst += n - nStartSkip;
 			nLength -= n - nStartSkip;
 			if (nLength > 0)
@@ -1012,8 +1001,7 @@ RLEByteDoAlpha:
 RLEByteDoAlpha2:
 		if (n > nLength)
 			n = nLength;
-		for (i = 0; i < n; i++)
-		{
+		for (i = 0; i < n; i++) {
 			r=(*dst >> 10) & 0x1F;
 			g=(*dst >> 5) & 0x1F;
 			b=*dst & 0x1F;
@@ -1022,7 +1010,7 @@ RLEByteDoAlpha2:
 			g=(g >> 2) + (alphaG >> 1);
 			b=(b >> 2) + (alphaB >> 1);
 
-			*dst++=(r<<10)|(g<<5)|b;
+			*dst ++= (r << 10) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1233,8 +1221,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLine(uint16 *dst, byte *src, int nS
 		n = READ_LE_UINT16(src);
 		src += 2;
 		
-		if (n>=nStartSkip)
-		{
+		if (n >= nStartSkip) {
 			src += nStartSkip;
 			n -= nStartSkip;
 			goto RLEWordDoCopy2;
@@ -1244,8 +1231,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLine(uint16 *dst, byte *src, int nS
 	}
 
 
-	while (1)
-	{
+	while (1) {
 RLEWordDoTrasp:
 		// Via il trasp di merda
 		n = READ_LE_UINT16(src);
@@ -1326,8 +1312,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 		if (n == 0xFFFF)
 			return;
 		
-		if (n>=nStartSkip)
-		{
+		if (n >= nStartSkip) {
 			dst -= n - nStartSkip;
 			nLength -= n - nStartSkip;
 			
@@ -1344,8 +1329,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 		n = READ_LE_UINT16(src);
 		src += 2;
 
-		if (n>=nStartSkip)
-		{
+		if (n >= nStartSkip) {
 			n -= nStartSkip;
 			goto RLEWordFlippedDoAlpha2;
 		}
@@ -1440,7 +1424,7 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 	int i, n;
 	int r, g, b, r2, g2, b2;
 
-	if (!bCfgTransparence) 	{
+	if (!bCfgTransparence) {
 		RMGfxSourceBuffer8RLEWord::RLEDecompressLine(dst, src, nStartSkip, nLength);
 		return;
 	}
@@ -1485,8 +1469,7 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 		n = READ_LE_UINT16(src);
 		src += 2;
 		
-		if (n >= nStartSkip)
-		{
+		if (n >= nStartSkip) {
 			src += nStartSkip;
 			n -= nStartSkip;
 			goto RLEWordDoCopy2;
@@ -1549,18 +1532,18 @@ RLEWordDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++)	{
-			r=(*dst >> 10) & 0x1F;
-			g=(*dst >> 5) & 0x1F;
-			b=*dst & 0x1F;
+		for (i = 0; i < n; i++) {
+			r = (*dst >> 10) & 0x1F;
+			g = (*dst >> 5) & 0x1F;
+			b = *dst & 0x1F;
 
-			r2=(m_palFinal[*src] >> 10) & 0x1F;
-			g2=(m_palFinal[*src] >> 5) & 0x1F;
+			r2 = (m_palFinal[*src] >> 10) & 0x1F;
+			g2 = (m_palFinal[*src] >> 5) & 0x1F;
 			b2 = m_palFinal[*src] & 0x1F;
 
-			r=(r >> 1) + (r2 >> 1);
-			g=(g >> 1) + (g2 >> 1);
-			b=(b >> 1) + (b2 >> 1);
+			r = (r >> 1) + (r2 >> 1);
+			g = (g >> 1) + (g2 >> 1);
+			b = (b >> 1) + (b2 >> 1);
 
 			*dst ++= (r << 10) | (g << 5) | b;
 			src++;

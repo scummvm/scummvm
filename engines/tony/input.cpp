@@ -57,8 +57,7 @@ void RMInput::DIInit(/*HINSTANCE hInst*/) {
 
 	// Crea l'oggetto madre
 	err = DirectInputCreate(hInst, DIRECTINPUT_VERSION, &m_DI, NULL);
-	if (err!=DI_OK)
-	{
+	if (err!=DI_OK) {
 		MessageBox(theGame.m_wnd,"Error initializing DirectInput!","RMInput::DIInit()",MB_OK);
 		assert(0);
 	}
@@ -66,24 +65,21 @@ void RMInput::DIInit(/*HINSTANCE hInst*/) {
 	// Crea il device del mouse
 	// ************************
 	err=m_DI->CreateDevice(GUID_SysMouse,&m_DIDMouse,NULL);
-	if (err!=DI_OK)
-	{
+	if (err!=DI_OK) {
 		MessageBox(theGame.m_wnd,"Error creating mouse device!","RMInput::DIInit()",MB_OK);
 		assert(0);
 	}
 	
 	// Setta il data format
 	err=m_DIDMouse->SetDataFormat(&c_dfDIMouse);
-	if (err!=DI_OK)
-	{
+	if (err!=DI_OK) {
 		MessageBox(theGame.m_wnd,"Error setting mouse data format!","RMInput::DIInit()",MB_OK);
 		assert(0);
 	}		
 
 	// Setta il cooperative level
 	err=m_DIDMouse->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_NONEXCLUSIVE);
-	if (err!=DI_OK)
-	{
+	if (err!=DI_OK) {
 		MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
 		assert(0);
 	}	
@@ -91,24 +87,21 @@ void RMInput::DIInit(/*HINSTANCE hInst*/) {
 	// Crea il device della tastiera
 	// *****************************
 	err=m_DI->CreateDevice(GUID_SysKeyboard,&m_DIDKeyboard,NULL);
-	if (err!=DI_OK)
-	{
+	if (err!=DI_OK) {
 		MessageBox(theGame.m_wnd,"Error creating keyboard device!","RMInput::DIInit()",MB_OK);
 		assert(0);
 	}
 	
 	// Setta il data format
 	err=m_DIDKeyboard->SetDataFormat(&c_dfDIKeyboard);
-	if (err!=DI_OK)
-	{
+	if (err!=DI_OK) {
 		MessageBox(theGame.m_wnd,"Error setting keyboard data format!","RMInput::DIInit()",MB_OK);
 		assert(0);
 	}	
 
 	// Setta il cooperative level
 	err=m_DIDKeyboard->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_NONEXCLUSIVE);
-	if (err!=DI_OK)
-	{
+	if (err!=DI_OK) {
 		MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
 		assert(0);
 	}
@@ -126,22 +119,17 @@ void RMInput::SwitchFullscreen(bool bFull) {
 	//  cooperative level
 	Unacquire();
 
-	if (bFull)
-	{
+	if (bFull) {
 		// Setta il cooperative level
 		err=m_DIDMouse->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE);
-		if (err!=DI_OK)
-		{
+		if (err!=DI_OK) {
 			MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
 			assert(0);
 		}	
-	}
-	else
-	{
+	} else {
 		// Setta il cooperative level
 		err=m_DIDMouse->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE);
-		if (err!=DI_OK)
-		{
+		if (err!=DI_OK) {
 			MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
 			assert(0);
 		}	
@@ -197,13 +185,10 @@ void RMInput::Unacquire(void) {
 
 void RMInput::GDIControl(bool bCon) {
 #ifdef REFACTOR_ME
-	if (bCon)
-	{
+	if (bCon) {
 		Unacquire();
 		ShowCursor(true);
-	}
-	else
-	{
+	} else {
 		ShowCursor(false);
 		Acquire();
 	}
@@ -220,14 +205,12 @@ void RMInput::Poll(void) {
 	m_bLeftClickMouse=m_bLeftReleaseMouse=m_bRightClickMouse=m_bRightReleaseMouse=false;
 
 	// Legge lo stato del mouse
-	while (1)
-	{
+	while (1) {
 		ZeroMemory(&m_mState,sizeof(m_mState));
 		err=m_DIDMouse->GetDeviceState(sizeof(m_mState),&m_mState);
 		if (err==DI_OK)
 			break;
-		else if (err==DIERR_INPUTLOST || err==DIERR_NOTACQUIRED)
-		{
+		else if (err==DIERR_INPUTLOST || err==DIERR_NOTACQUIRED) {
 			ZeroMemory(&m_mState,sizeof(m_mState));
 			// Se l'acquire non funziona (ad esempio, quando siamo in background, allora lasciamo perdere
 			if (!Acquire())
@@ -242,8 +225,7 @@ void RMInput::Poll(void) {
 	m_mY+=m_mState.lY;
 
 	// Clamp dei valori sui bordi della finestra
-	if (m_bClampMouse)
-	{
+	if (m_bClampMouse) {
 		if (m_mX<0) m_mX=0;
 		if (m_mY<0) m_mY=0;
 		if (m_mX>=640) m_mX=639;

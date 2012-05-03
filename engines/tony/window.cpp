@@ -102,8 +102,7 @@ LRESULT RMWindow::WindowProc(uint32 msg, uint16 wParam, int32 lParam) {
 		return 0;
 /*
 		case WM_KEYDOWN:
-			switch (wParam)
-			{
+			switch (wParam) {
 				case '0':
 				case '1':
 				case '2':
@@ -180,12 +179,10 @@ LRESULT RMWindow::WindowProc(uint32 msg, uint16 wParam, int32 lParam) {
 HANDLE hWaitFlip;
 bool bExitThread;
 
-void DoFlipThread(LPDIRECTDRAWSURFACE lpDDSPrimary)
-{
+void DoFlipThread(LPDIRECTDRAWSURFACE lpDDSPrimary) {
 	bExitThread=false;
 
-	while (1)
-	{
+	while (1) {
 		WaitForSingleObject(hWaitFlip,INFINITE);
 		if (bExitThread) _endthread();
 		lpDDSPrimary->Flip(NULL,DDFLIP_WAIT);
@@ -330,8 +327,7 @@ void RMWindow::CreateBWPrecalcTable(void) {
 	CLAMP(shiftG, 0, 15);
 	CLAMP(shiftB, 0, 15);
 
-	for (i = 0;i<0x10000;i++)
-	{
+	for (i = 0; i < 0x10000; i++) {
 		r=(i >> shiftR) & 0x1F;
 		g=(i >> shiftG) & 0x1F;
 		b=(i >> shiftB) & 0x1F;
@@ -412,8 +408,7 @@ void RMWindow::DDInit(void) {
 #endif
 
 /*
-	if (!ISMODE1() && !ISMODE2() && !ISMODE3() && !ISMODE4())
-	{
+	if (!ISMODE1() && !ISMODE2() && !ISMODE3() && !ISMODE4()) {
 		RMString str;
 		str.Format("Graphic mode not supported: %04x %04x %04x",mskRed,mskGreen,mskBlue);
 		MessageBox(m_hWnd,str,"Debug",MB_OK);

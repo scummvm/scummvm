@@ -222,20 +222,15 @@ int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	//  Se speed! = 0, suona solo quelli in loop
 	for (i = 0;i < m_nSlots; i++) {
 		if (m_slots[i].m_type == SOUND) {
-			if (i == 0)
-			{
-				if (sfx[m_slots[i].m_data].m_name[0]=='_')
-				{
+			if (i == 0) {
+				if (sfx[m_slots[i].m_data].m_name[0] == '_') {
 	  			sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play(true);
-				}
-				else
-				{
-	  			sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
+				} else {
+	  				sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play();
 				}
-			}
-			else if (m_speed == 0) {
+			} else if (m_speed == 0) {
 				if (bPlayP0) {
 	  				sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play();
@@ -330,8 +325,7 @@ RMPattern::RMPattern() {
 }
 
 RMPattern::~RMPattern() {
-	if (m_slots != NULL)
-	{
+	if (m_slots != NULL) {
 		delete[] m_slots;
 		m_slots = NULL;
 	}
@@ -807,8 +801,7 @@ bool RMItem::GetName(RMString& name)
 
 
 void RMItem::Unload(void) {
-	if (m_patterns != NULL)
-	{
+	if (m_patterns != NULL) {
 		delete[] m_patterns;
 		m_patterns = NULL;
 	}
@@ -943,8 +936,7 @@ void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 		m_bMustRegister = false;
 	}
 	
-	if (m_bFading)
-	{
+	if (m_bFading) {
 		m_wip0r.DoFrame(&bigBuf, false);
 
 		m_nFadeStep++;
@@ -1671,8 +1663,7 @@ void RMBox::ReadFromStream(RMDataStream &ds) {
 	ds >> bottom;
 
 	// Adiacenza
-	for (i = 0; i < MAXBOXES; i++)
-	{
+	for (i = 0; i < MAXBOXES; i++) {
 		ds >> adj[i];
 	}
 
@@ -2174,7 +2165,7 @@ RMItem *RMLocation::WhichItemIsIn(RMPoint pt) {
 	int foundSize = 0;
 	int size;
 		
-	for (int i = 0; i < m_nItems; i++) 	{
+	for (int i = 0; i < m_nItems; i++) {
 		size = 0;
 		if (m_items[i].IsIn(pt, &size)) {
 			if (found == -1 || size < foundSize) {

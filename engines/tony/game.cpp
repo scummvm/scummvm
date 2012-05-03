@@ -398,8 +398,7 @@ void RMOptionScreen::RefreshAll(void) {
 	if (m_bNoLoadSave)
 		AddPrim(new RMGfxPrimitive(m_HideLoadSave,RMPoint(0, 401)));
 
-	if (m_bQuitConfirm)
-	{
+	if (m_bQuitConfirm) {
 		AddPrim(new RMGfxPrimitive(m_QuitConfirm,RMPoint(270, 200)));
 		m_ButtonQuitYes->AddToList(*this);
 		m_ButtonQuitNo->AddToList(*this);
@@ -568,9 +567,7 @@ void RMOptionScreen::InitState(void) {
 		if (m_bAlterGfx) {
 			assert(m_ButtonExit == NULL);
 			m_ButtonExit = new RMOptionButton(20025, RMPoint(561, 406));
-		}
-		else
-		{
+		} else {
 			assert(m_ButtonExit == NULL);
 			m_ButtonExit = new RMOptionButton(20012, RMPoint(560, 404));
 		}
@@ -974,12 +971,12 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 			m_ButtonSoundMenu->DoFrame(mousePos, bLeftClick, bRightClick);
 
 			// bottoni con grafica
-			if (!m_bNoLoadSave)
-			{
-#ifndef DEMO
-				bRefresh |= m_ButtonLoad->DoFrame(mousePos, bLeftClick, bRightClick);
-				bRefresh |= m_ButtonSave->DoFrame(mousePos, bLeftClick, bRightClick);
-#endif				
+			if (!m_bNoLoadSave) {
+				if (!_vm->getIsDemo()) {
+					bRefresh |= m_ButtonLoad->DoFrame(mousePos, bLeftClick, bRightClick);
+					bRefresh |= m_ButtonSave->DoFrame(mousePos, bLeftClick, bRightClick);
+				}
+
 				bRefresh |= m_ButtonQuit->DoFrame(mousePos, bLeftClick, bRightClick);
 			}
 		}
@@ -1207,8 +1204,7 @@ void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 			m_FadeY += FADE_SPEED;
 		else
 			m_FadeY += FADE_SPEED*SYNC;
-		if (m_FadeY > 480)
-		{
+		if (m_FadeY > 480) {
 			m_FadeY = 480;
 			m_FadeStep++;
 		}

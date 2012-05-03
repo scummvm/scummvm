@@ -126,7 +126,7 @@ void RMTony::DoFrame(RMGfxTargetBuffer *bigBuf, int curLoc) {
 	// Esegue il movimento normale del personaggio
 	int time = _vm->GetTime();
 
-	do 	{
+	do {
 		m_nTimeLastStep += (1000 / 40);
 		RMCharacter::DoFrame(bigBuf, curLoc);
 
@@ -155,8 +155,8 @@ void RMTony::Hide(bool bShowOmbra) {
 
 void RMTony::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	// Richiama il Draw() della classe madre se tony è visibile
-	if (m_bShow && bDrawNow) 	{
-		if (m_bCorpoDavanti) 		{
+	if (m_bShow && bDrawNow) {
+		if (m_bCorpoDavanti) {
 			prim->Dst().SetEmpty();
 			prim->Dst().Offset(-44, -134);
 			if (m_bPastorella)
