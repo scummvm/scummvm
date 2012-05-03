@@ -1865,6 +1865,7 @@ case $_host_os in
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				;;
 		esac
+		# ResidualVM use newer NDK
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-5/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections"
@@ -1886,6 +1887,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5TE__"
 		# supress 'mangling of 'va_list' has changed in GCC 4.4'
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
+		# ResidualVM use newer NDK
 		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-5/arch-arm"
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"

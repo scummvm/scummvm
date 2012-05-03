@@ -4,7 +4,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.residualvm.residualvm"
 		android:versionCode="@ANDROID_VERSIONCODE@"
-		android:versionName="0.1.0git"
+		android:versionName="0.2.0git"
 		android:installLocation="preferExternal"
 		android:sharedUserId="org.residualvm.residualvm">
 
