@@ -40,8 +40,8 @@ MaterialComponent::MaterialComponent(Component *p, int parentID, const char *fil
 
 void MaterialComponent::init() {
 	_mat = NULL;
-	if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
-		FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
+	if (_parent->getTag() == MKTAG('M','M','D','L') ||
+		_parent->getTag() == MKTAG('M','O','D','L')) {
 		ModelComponent *p = static_cast<ModelComponent *>(_parent);
 		Model *model = p->getModel();
 		if (model) {

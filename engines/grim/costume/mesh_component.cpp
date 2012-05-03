@@ -36,8 +36,8 @@ MeshComponent::MeshComponent(Component *p, int parentID, const char *name, tag32
 }
 
 void MeshComponent::init() {
-	if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
-		FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
+	if (_parent->getTag() == MKTAG('M','M','D','L') ||
+		_parent->getTag() == MKTAG('M','O','D','L')) {
 		ModelComponent *mc = static_cast<ModelComponent *>(_parent);
 		_node = mc->getHierarchy() + _num;
 		_model = mc->getModel();
@@ -49,8 +49,8 @@ void MeshComponent::init() {
 }
 
 CMap *MeshComponent::cmap() {
-	if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
-		FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
+	if (_parent->getTag() == MKTAG('M','M','D','L') ||
+		_parent->getTag() == MKTAG('M','O','D','L')) {
 		ModelComponent *mc = static_cast<ModelComponent *>(_parent);
 		return mc->getCMap();
 	}

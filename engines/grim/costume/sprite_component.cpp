@@ -41,8 +41,8 @@ SpriteComponent::~SpriteComponent() {
 		if (_parent) {
 			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 			if (mc) {
-				if (FROM_BE_32(mc->getParent()->getTag()) == MKTAG('M','M','D','L') ||
-					FROM_BE_32(mc->getParent()->getTag()) == MKTAG('M','O','D','L')) {
+				if (mc->getParent()->getTag() == MKTAG('M','M','D','L') ||
+					mc->getParent()->getTag() == MKTAG('M','O','D','L')) {
 					ModelComponent *mdlc = static_cast<ModelComponent *>(mc->getParent());
 					if (mdlc->getHierarchy())
 						mc->getNode()->removeSprite(_sprite);
@@ -81,8 +81,8 @@ void SpriteComponent::init() {
 		_sprite->_next = NULL;
 
 		if (_parent) {
-			if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
-				FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
+			if (_parent->getTag() == MKTAG('M','M','D','L') ||
+				_parent->getTag() == MKTAG('M','O','D','L')) {
 				MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 				mc->getNode()->addSprite(_sprite);
 			} else

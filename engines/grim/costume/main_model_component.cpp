@@ -30,7 +30,7 @@ namespace Grim {
 
 MainModelComponent::MainModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
 		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false), _parentModel(NULL) {
-	if (parentID == -2 && prevComponent && FROM_BE_32(prevComponent->getTag()) == MKTAG('M','M','D','L')) {
+	if (parentID == -2 && prevComponent && prevComponent->getTag() == MKTAG('M','M','D','L')) {
 		MainModelComponent *mmc = static_cast<MainModelComponent *>(prevComponent);
 
 		if (mmc->_filename == filename) {
