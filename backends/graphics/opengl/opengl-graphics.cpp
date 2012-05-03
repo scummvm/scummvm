@@ -70,6 +70,11 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	free(_gamePalette);
 	free(_cursorPalette);
 
+	_screenData.free();
+	_overlayData.free();
+	_cursorData.free();
+	_osdSurface.free();
+
 	delete _gameTexture;
 	delete _overlayTexture;
 	delete _cursorTexture;
