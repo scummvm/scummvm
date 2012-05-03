@@ -41,9 +41,12 @@ SpriteComponent::~SpriteComponent() {
 		if (_parent) {
 			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 			if (mc) {
-				ModelComponent *mdlc = dynamic_cast<ModelComponent *>(mc->getParent());
-				if (mdlc && mdlc->getHierarchy())
-					mc->getNode()->removeSprite(_sprite);
+				if (mc->getParent()->isComponentType('M','M','D','L') ||
+					mc->getParent()->isComponentType('M','O','D','L')) {
+					ModelComponent *mdlc = static_cast<ModelComponent *>(mc->getParent());
+					if (mdlc->getHierarchy())
+						mc->getNode()->removeSprite(_sprite);
+				}
 			}
 		}
 		delete _sprite->_material;
@@ -78,10 +81,11 @@ void SpriteComponent::init() {
 		_sprite->_next = NULL;
 
 		if (_parent) {
-			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
-			if (mc)
+			if (_parent->isComponentType('M','M','D','L') ||
+				_parent->isComponentType('M','O','D','L')) {
+				MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 				mc->getNode()->addSprite(_sprite);
-			else
+			} else
 				Debug::warning(Debug::Costumes, "Parent of sprite %s wasn't a mesh", _filename.c_str());
 		}
 	}

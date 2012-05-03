@@ -30,10 +30,10 @@ namespace Grim {
 
 MainModelComponent::MainModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
 		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false), _parentModel(NULL) {
-	if (parentID == -2 && prevComponent) {
-		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
+	if (parentID == -2 && prevComponent && prevComponent->isComponentType('M','M','D','L')) {
+		MainModelComponent *mmc = static_cast<MainModelComponent *>(prevComponent);
 
-		if (mmc && mmc->_filename == filename) {
+		if (mmc->_filename == filename) {
 			_animation = mmc->_animation;
 			_obj = mmc->_obj;
 			_hier = mmc->_hier;

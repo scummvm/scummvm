@@ -154,7 +154,7 @@ void Chore::update(uint time) {
 void Chore::fade(Animation::FadeMode mode, uint msecs) {
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
-		if (comp && FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
+		if (comp && comp->isComponentType('K','E','Y','F')) {
 			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
 			kf->fade(mode, msecs);
 		}

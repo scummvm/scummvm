@@ -130,6 +130,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 		for (int j = 0; j < 4; j++)
 			t[j] = toupper(t[j]);
 		memcpy(&tags[which], t, sizeof(tag32));
+		tags[which] = FROM_BE_32(tags[which]);
 	}
 
 	ts.expectString("section components");
@@ -148,17 +149,14 @@ void Costume::load(Common::SeekableReadStream *data) {
 		// use the properties of the previous costume as a base
 		if (parentID == -1) {
 			if (_prevCostume) {
-				MainModelComponent *mmc;
-
 				// However, only the first item can actually share the
 				// node hierarchy with the previous costume, so flag
 				// that component so it knows what to do
 				if (i == 0)
 					parentID = -2;
 				prevComponent = _prevCostume->_components[0];
-				mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 				// Make sure that the component is valid
-				if (!mmc)
+				if (!prevComponent->isComponentType('M','M','D','L'))
 					prevComponent = NULL;
 			} else if (id > 0) {
 				// Use the MainModelComponent of this costume as prevComponent,
@@ -216,27 +214,27 @@ Costume::~Costume() {
 }
 
 Component *Costume::loadComponent (tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent) {
-	if (FROM_BE_32(tag) == MKTAG('M','M','D','L'))
+	if (tag == MKTAG('M','M','D','L'))
 		return new MainModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (FROM_BE_32(tag) == MKTAG('M','O','D','L'))
+	else if (tag == MKTAG('M','O','D','L'))
 		return new ModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (FROM_BE_32(tag) == MKTAG('C','M','A','P'))
+	else if (tag == MKTAG('C','M','A','P'))
 		return new ColormapComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('K','E','Y','F'))
+	else if (tag == MKTAG('K','E','Y','F'))
 		return new KeyframeComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('M','E','S','H'))
+	else if (tag == MKTAG('M','E','S','H'))
 		return new MeshComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('L','U','A','V'))
+	else if (tag == MKTAG('L','U','A','V'))
 		return new LuaVarComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('I','M','L','S'))
+	else if (tag == MKTAG('I','M','L','S'))
 		return new SoundComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('B','K','N','D'))
+	else if (tag == MKTAG('B','K','N','D'))
 		return new BitmapComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('M','A','T',' '))
+	else if (tag == MKTAG('M','A','T',' '))
 		return new MaterialComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('S','P','R','T'))
+	else if (tag == MKTAG('S','P','R','T'))
 		return new SpriteComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('A','N','I','M')) //Used  in the demo
+	else if (tag == MKTAG('A','N','I','M')) //Used  in the demo
 		return new BitmapComponent(parent, parentID, name, tag);
 
 	char t[4];
@@ -249,7 +247,7 @@ ModelComponent *Costume::getMainModelComponent() const {
 	for (int i = 0; i < _numComponents; i++) {
 		// Needs to handle Main Models (pigeons) and normal Models
 		// (when Manny climbs the rope)
-		if (FROM_BE_32(_components[i]->getTag()) == MKTAG('M','M','D','L'))
+		if (_components[i]->isComponentType('M','M','D','L'))
 			return static_cast<ModelComponent *>(_components[i]);
 	}
 	return NULL;
@@ -421,8 +419,9 @@ void Costume::draw() {
 
 void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 	for (int i = 0; i < _numComponents; i++) {
-		ModelComponent *c = dynamic_cast<ModelComponent *>(_components[i]);
-		if (c) {
+		if ((_components[i]->isComponentType('M','M','D','L') ||
+			 _components[i]->isComponentType('M','O','D','L'))) {
+			ModelComponent *c = static_cast<ModelComponent *>(_components[i]);
 			c->getBoundingBox(x1, y1, x2, y2);
 		}
 	}

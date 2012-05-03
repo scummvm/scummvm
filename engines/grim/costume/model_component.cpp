@@ -65,12 +65,8 @@ ModelComponent::~ModelComponent() {
 }
 
 void ModelComponent::init() {
-	if (_prevComp) {
-		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(_prevComp);
-
-		if (mmc) {
-			_previousCmap = mmc->getCMap();
-		}
+	if (_prevComp && _prevComp->isComponentType('M','M','D','L')) {
+		_previousCmap = _prevComp->getCMap();
 	}
 	// Skip loading if it was initialized
 	// by the sharing MainModelComponent
