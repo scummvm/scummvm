@@ -78,7 +78,7 @@ public:
 
 	virtual void reflowLayout();
 	virtual void lostFocus();
-	virtual void receivedFocus() {};
+	virtual void receivedFocus() {}
 
 protected:
 	virtual void open();
