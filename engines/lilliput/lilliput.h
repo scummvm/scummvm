@@ -255,11 +255,10 @@ public:
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
 	uint16 sub168DA(byte var1h, byte var1l);
-	uint16 sub_16901(byte var1h, byte var1l);
+	uint16 sub16901(byte var1h, byte var1l);
 
 	void renderCharacters(byte *buf, byte x, byte y);
 
-	int sub168DA(int x, int y);
 	int sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
 	void addCharToBuf(byte character);
