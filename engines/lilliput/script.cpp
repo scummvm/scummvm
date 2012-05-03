@@ -2219,8 +2219,10 @@ void LilliputScript::OC_sub17E07() {
 	_currScript->readUint16LE();
 
 }
+
 void LilliputScript::OC_sub17E15() {
 	debugC(1, kDebugScript, "OC_sub17E15()");
+
 	if ((_word1881B & 0xFF) == 0xFF) {
 		OC_sub17DB9();
 		return;
@@ -2299,6 +2301,7 @@ void LilliputScript::OC_resetByte1714E() {
 void LilliputScript::OC_deleteSavegameAndQuit() {
 	warning("OC_deleteSavegameAndQuit");
 }
+
 void LilliputScript::OC_incByte16F04() {
 	debugC(1, kDebugScript, "OC_incByte16F04()");
 
@@ -2316,6 +2319,7 @@ void LilliputScript::OC_sub17BA5() {
 
 void LilliputScript::OC_setByte18823() {
 	debugC(1, kDebugScript, "OC_setByte18823()");
+
 	byte *tmpArr = getCharacterVariablePtr();
 	_byte18823 = *tmpArr;
 }
@@ -2408,6 +2412,7 @@ void LilliputScript::OC_sub17C0E() {
 
 void LilliputScript::OC_sub17C55() {
 	debugC(1, kDebugScript, "OC_sub17C55()");
+
 	int var1 = getValue1();
 	int var2 = getValue1();
 

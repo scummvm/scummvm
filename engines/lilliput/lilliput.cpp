@@ -150,6 +150,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12FE4 = 0xFF;
 	_byte12FE3 = 0;
 	_byte16F08 = 0;
+	_byte16C9F = 0;
 
 	_currentScriptCharacter = 0;
 	_currentScriptCharacterPosition = 0;
@@ -165,6 +166,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_word15AC2 = 0;
 	_displayStringIndex = 0;
 	_word1289D = 0;
+	_numCharacters = 0;
 
 	_saveFlag = false;
 	_byte16F07_menuId = 0;
