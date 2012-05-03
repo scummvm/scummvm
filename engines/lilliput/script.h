@@ -138,6 +138,7 @@ private:
 	void sub189B8();
 	void sub189F5();
 	int sub17285(int index);
+	int sub18BB7(int index);
 
 	int getValue1();
 	int getValue2();

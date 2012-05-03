@@ -906,6 +906,7 @@ void LilliputScript::disasmScript( ScriptStream script) {
 
 int LilliputScript::handleOpcode(ScriptStream *script) {
 	debugC(2, kDebugScript, "handleOpcode");
+
 	_currScript = script;
 	uint16 curWord = _currScript->readUint16LE();
 	if (curWord == 0xFFF6)
@@ -939,16 +940,16 @@ int LilliputScript::handleOpcode(ScriptStream *script) {
 
 void LilliputScript::runScript(ScriptStream script) {
 	debugC(1, kDebugScript, "runScript");
+
 	_byte16F05_ScriptHandler = 1;
 	
 	while (handleOpcode(&script) != 0xFF)
 		_vm->update();
 }
 
-
-
 void LilliputScript::runMenuScript(ScriptStream script) {
 	debugC(1, kDebugScript, "runMenuScript");
+
 	warning("========================== Menu Script ==============================");
 	_byte16F05_ScriptHandler = 0;
 	
@@ -958,6 +959,7 @@ void LilliputScript::runMenuScript(ScriptStream script) {
 
 void LilliputScript::sub185ED(byte index, byte subIndex) {
 	debugC(2, kDebugScript, "sub185ED");
+
 	if (_vm->_arr18560[index]._field0 != 1)
 		return;
 
@@ -966,6 +968,7 @@ void LilliputScript::sub185ED(byte index, byte subIndex) {
 
 byte LilliputScript::compareValues(byte var1, int oper, int var2) {
 	debugC(2, kDebugScript, "compareValues(%d, %c, %d)", var1, oper & 0xFF, var2);
+
 	switch (oper & 0xFF) {
 	case '<':
 		return (var1 < var2);
@@ -1232,6 +1235,17 @@ void LilliputScript::sub18A56(byte *buf) {
 	sub189B8();
 }
 
+int LilliputScript::sub18BB7(int index) {
+	debugC(2, kDebugScript, "sub18BB7(%d)", index);
+	
+	int chunk4Index = _vm->_rulesChunk3[index];
+	int result = 0;
+	while (_vm->_rulesChunk4[chunk4Index + result] == 0x5B)
+		++result;
+	
+	return result + 1;
+}
+
 void LilliputScript::sub18B3C(int var) {
 	debugC(2, kDebugScript, "sub18B3C(%d)", var);
 
@@ -1342,9 +1356,9 @@ int LilliputScript::getValue2() {
 	}
 }
 
-
 void LilliputScript::sub130B6() {
 	debugC(1, kDebugScript, "sub130B6()");
+
 	assert(_vm->_word12F68_ERULES <= 20);
 	for (int i = 0; i < _vm->_word12F68_ERULES; i++) {
 		if (_array122E9[i] == 3)
@@ -1365,6 +1379,7 @@ byte *LilliputScript::getCharacterVariablePtr() {
 
 byte LilliputScript::OC_sub173DF() {
 	debugC(2, kDebugScript, "OC_sub173F0()");
+
 	if (_vm->_currentScriptCharacterPosition == getValue2()) {
 		return 1;
 	}
@@ -2158,11 +2173,31 @@ void LilliputScript::OC_sub17D7F() {
 }
 
 void LilliputScript::OC_sub17DB9() {
-	warning("OC_sub17DB9");
+	debugC(1, kDebugScript, "OC_sub17DB9()");
+
+	int index = _currScript->readUint16LE();
+	int maxValue = sub18BB7(index);
+	
+	int tmpVal = _currScript->readUint16LE() + 1;
+	int oldVal = tmpVal;
+	if (tmpVal >= maxValue)
+		tmpVal = 0;
+	_currScript->writeUint16LE(tmpVal, -2); 
+
+	bool forceReturnFl = false;
+	sub17D40(forceReturnFl);
+	if (forceReturnFl)
+		return;
+
+	_word1881B = _vm->_currentScriptCharacter;
+
+	sub18B7C(index, oldVal);
+	
 }
 
 void LilliputScript::OC_sub17DF9() {
 	debugC(1, kDebugScript, "OC_sub17DF9()");
+
 	if ((_word1881B & 0xFF) == 0xFF) {
 		OC_sub17D57();
 		return;
@@ -2173,6 +2208,7 @@ void LilliputScript::OC_sub17DF9() {
 
 void LilliputScript::OC_sub17E07() {
 	debugC(1, kDebugScript, "OC_sub17E07()");
+
 	if ((_word1881B & 0xFF) == 0xFF) {
 		OC_sub17D7F();
 		return;
@@ -3098,7 +3134,15 @@ void LilliputScript::OC_sub1853B() {
 }
 
 void LilliputScript::OC_sub1864D() {
-	warning("OC_sub1864D");
+	debugC(1, kDebugScript, "OC_sub1864D()");
+
+	byte *tmpArr = getCharacterVariablePtr();
+	int var1 = (_currScript->readUint16LE() & 0xFF);
+	int var3 = ((70 * tmpArr[0]) / (_currScript->readUint16LE() & 0xFF) & 0xFF);
+	int var2 = _currScript->readUint16LE();
+	int var4 = _currScript->readUint16LE();
+	
+	_vm->displayFunction18(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_initArr18560() {

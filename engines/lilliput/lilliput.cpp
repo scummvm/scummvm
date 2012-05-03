@@ -328,7 +328,7 @@ void LilliputEngine::displayCharacter(int index, int x, int y, int flags) {
 		// Sprite mirror
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				// May need a hack of 1 pixel 
+				// May need a hack of 1 pixel
 				if (src[15 - x] != 0)
 					buf[x] = src[15 - x];
 			}
@@ -931,12 +931,12 @@ void LilliputEngine::sub15F75() {
 
 	_byte129A0 = 0xFF;
 	_savedMousePosDivided = 0xFFFF;
-	byte newX = _mouseX >> 2; 
+	byte newX = _mouseX >> 2;
 	byte newY = _mouseY / 3;
 
 	if ((newX >= 64) || (newY >= 64))
 		return;
-	
+
 	_savedMousePosDivided = (newX << 8) + newY;
 	_byte16F07_menuId = 5;
 }
@@ -965,7 +965,7 @@ void LilliputEngine::sub15F31(bool &forceReturnFl) {
 
 	_mouseButton = 0;
 	sub15F75();
-	
+
 	_displayMap = 0;
 	paletteFadeOut();
 	_word15AC2 = 0;
@@ -1076,6 +1076,38 @@ void LilliputEngine::displayFunction17() {
 	for (int i = 0; i < 16; i++)
 		for (int j = 0; j < 252; j++)
 			((byte *)_mainSurface->getPixels())[66 + (i * 320) + j] = _buffer10_4032[(252 * i) + j];
+
+	displayFunction4();
+}
+
+void LilliputEngine::displayFunction18(int var1, int var2, int var3, int var4) {
+	debugC(2, kDebugEngine, "displayFunction18(%d, %d, %d, %d)", var1, var2, var3, var4);
+
+	displayFunction5();
+
+	if ((var1 & 0xFF) == 0x2D) {
+		var2 += 35;
+		var3 -= 35;
+
+		if (var3 < 0) {
+			var2 += var3;
+			var3 = -var3;
+		}
+	}
+
+	byte *vgaBuf = (byte *)_mainSurface->getPixels();
+	int tmpVal = (var3 >> 8) + ((var3 & 0xFF) << 8);
+	int vgaIndex = var2 + tmpVal + (tmpVal >> 2);
+
+	if (var3 == 0)
+		++var3;
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < var3; j++) {
+			vgaBuf[vgaIndex + j] = 2;
+		}
+		vgaIndex += 320;
+	}
 
 	displayFunction4();
 }
@@ -1371,7 +1403,8 @@ byte LilliputEngine::sub16799(int index, int param1) {
 			return 2;
 	}
 
-	warning("sub_167EF");
+	sub167EF(index);
+
 	int var1 = (_scriptHandler->_array16123[index] << 8) + _scriptHandler->_array1614B[index];
 	int var2 = (_array109E9[index] << 8) + _array10A11[index];
 
@@ -1383,9 +1416,81 @@ byte LilliputEngine::sub16799(int index, int param1) {
 
 }
 
+void LilliputEngine::sub167EF(int index) {
+	debugC(2, kDebugEngine, "sub167EF(%d)", index);
+
+	int word167EB = sub168DA(_scriptHandler->_array16123[index], _scriptHandler->_array1614B[index]);
+	int word167ED = sub168DA(_array10999[index], _array109C1[index]);
+
+	if (word167EB == word167ED) {
+		_array109E9[index] = _array10999[index];
+		_array10A11[index] = _array109C1[index];
+		return;
+	}
+
+	if (word167EB = 0xFFFF) {
+		int tmpVal = sub16901(_array10999[index], _array109C1[index]);
+		_array109E9[index] = (_rulesBuffer12_4[tmpVal] >> 8);
+		_array10A11[index] = (_rulesBuffer12_4[tmpVal] & 0xFF);
+		return;
+	}
+
+	if ((word167ED != 0xFFFF) &&
+		  (_array10999[index] >= (_rulesBuffer12_1[word167EB] >> 8)) &&
+		  (_array10999[index] <= (_rulesBuffer12_1[word167EB] & 0xFF)) &&
+		  (_array109C1[index] >= (_rulesBuffer12_2[word167EB] >> 8)) &&
+		  (_array109C1[index] <= (_rulesBuffer12_2[word167EB] & 0xFF)) ) {
+		_array109E9[index] = (_rulesBuffer12_4[word167ED] >> 8);
+		_array10A11[index] = (_rulesBuffer12_4[word167ED] & 0xFF);
+		return;
+	}
+
+	_array109E9[index] = (_rulesBuffer12_4[word167EB] >> 8);
+	_array10A11[index] = (_rulesBuffer12_4[word167EB] & 0xFF);
+	int var4h = (_rulesBuffer12_1[index] >> 8);
+	int var4l = (_rulesBuffer12_1[index] & 0xFF);
+
+	if (var4h != var4l) {
+		if (_array109E9[index] == var4h) {
+			--_array109E9[index];
+			return;
+		}
+
+		if (_array109E9[index] == var4l) {
+			++_array109E9[index];
+			return;
+		}
+
+		int var4h = (_rulesBuffer12_2[index] >> 8);
+		int var4l = (_rulesBuffer12_2[index] & 0xFF);
+
+		if (var4h != var4l) {
+			if (_array10A11[index] == var4h)
+				--_array10A11[index];
+			else
+				++_array10A11[index];
+			return;
+		}
+	}
+
+	// var4h == var4l
+	int mapIndex = (((_array10A11[index] >> 2) + _array109E9[index]) << 2);
+	int tmpVal = _bufferIsoMap[mapIndex + 3];
+	if ((tmpVal & 8) != 0)
+		++_array109E9[index];
+	else if ((tmpVal & 4) != 0)
+		--_array10A11[index];
+	else if ((tmpVal & 2) != 0)
+		++_array10A11[index];
+	else
+		--_array109E9[index];
+
+	return;
+}
+
 void LilliputEngine::sub1693A(int index) {
 	debugC(2, kDebugEngine, "sub1693A(%d)", index);
-	
+
 	static const uint16 _array1692F[4] = {4, 0xFF00, 0x100, 0xFFFC};
 
 	byte var1h = _scriptHandler->_array16123[index];
@@ -1393,11 +1498,11 @@ void LilliputEngine::sub1693A(int index) {
 	_word16937 = (var1h << 8) + var1l;
 
 	sub16A08(index);
-	
+
 	int var2 = (_characterDirectionArray[index] ^ 3);
 	_array1692B[var2] += 0xF8;
 	_byte16939 = 0;
-	
+
 	int mapIndex = ((((var1l << 8) >> 2) + var1h) << 2);
 	int subMapIndex = 0;
 	int retVal = 0;
@@ -1407,7 +1512,7 @@ void LilliputEngine::sub1693A(int index) {
 			if ((_bufferIsoMap[mapIndex + subMapIndex + 3] & 0x80) != 0) {
 				if (sub16A76(i, index) != 0)
 					_array1692B[i] += 0xEC;
-				
+
 				int tmpVal = ((_rulesBuffer2_10[index] & 7) ^ 7);
 				retVal = _rulesChunk9[_bufferIsoMap[mapIndex + subMapIndex]];
 				tmpVal &= retVal;
@@ -1429,7 +1534,7 @@ void LilliputEngine::sub1693A(int index) {
 			tmpVal = _array1692B[i];
 		}
 	}
-	
+
 	_characterDirectionArray[index] = retVal;
 }
 
@@ -1438,7 +1543,7 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 
 	static const byte _array16A6C[4] = {1, 0, 0, 0xFF};
 	static const byte _array16A70[4] = {0, 0xFF, 1, 0};
-	   
+
 	byte var1h = (_word16937 >> 8) + _array16A6C[indexb];
 	byte var1l = (_word16937 & 0xFF) + _array16A70[indexs];
 
@@ -1648,7 +1753,7 @@ byte LilliputEngine::sub166F7(int index, int var1, int tmpVal) {
 
 byte LilliputEngine::sub166DD(int index, int var1) {
 	debugC(2, kDebugEngine, "sub166DD(%d, %d)", index, var1);
-	
+
 	_characterDirectionArray[index] = (var1 >> 8) & 3;
 	sub16685(index, var1 & 0xFF);
 	return 0;
@@ -1887,7 +1992,7 @@ byte LilliputEngine::sub16675(int idx, int var1) {
 	debugC(2, kDebugEngine, "sub16675(%d, %d)", idx, var1);
 
 	sub16685(idx, var1);
-	int index = (var1 & 0xFF);	
+	int index = (var1 & 0xFF);
 	switch (var1 >> 8) {
 	case 0:
 		break;
@@ -2055,7 +2160,7 @@ void LilliputEngine::sub17224(int var1, int var4) {
 		sub17264(var1, var4);
 		return;
 	}
-	
+
 	if (type == 3) {
 		for (int i = _numCharacters - 1; i >= 0; i--)
 			sub17264(i, var4);

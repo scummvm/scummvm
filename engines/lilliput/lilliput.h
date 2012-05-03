@@ -236,6 +236,8 @@ public:
 	void displayFunction15();
 	void displayFunction16();
 	void displayFunction17();
+	void displayFunction18(int var1, int var2, int var3, int var4);
+
 	void displayCharacter(int index, int x, int y, int flags);
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
@@ -258,6 +260,7 @@ public:
 	uint16 sub16901(byte var1h, byte var1l);
 	byte sub16722(int index, byte var1);
 	byte sub166EA(int index);
+	void sub167EF(int index);
 
 	void renderCharacters(byte *buf, byte x, byte y);
 
