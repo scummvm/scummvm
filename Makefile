@@ -32,8 +32,8 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable exceptions, ResidualVM use RTTI:
-	CXXFLAGS+= -fno-exceptions
+	# Disable RTTI and exceptions
+	CXXFLAGS+= -fno-rtti -fno-exceptions
 
 ifneq "$(HAVE_CLANG)" "1"
 	# enable checking of pointers returned by "new", but only when we do not

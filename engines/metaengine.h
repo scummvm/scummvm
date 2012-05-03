@@ -112,10 +112,17 @@ public:
 	}
 
 	/**
-	 * Return a list of extra GUI options.
+	 * Return a list of extra GUI options for the specified target.
+	 * If no target is specified, all of the available custom GUI options are
+	 * Returned for the plugin (used to set default values).
+	 *
 	 * Currently, this only supports options with checkboxes.
 	 *
 	 * The default implementation returns an empty list.
+	 *
+	 * @param target    name of a config manager target
+	 * @return          a list of extra GUI options for an engine plugin and
+	 *                  target
 	 */
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		return ExtraGuiOptions();

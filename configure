@@ -77,9 +77,10 @@ add_engine() {
 	done
 }
 
-add_engine grim "Grim" yes "monkey4"
-add_engine monkey4 "Escape from Monkey Island" yes
-add_engine myst3 "Myst 3" yes
+_srcdir=`dirname $0`
+
+# Read list of engines
+. $_srcdir/engines/configure.engines
 
 #
 # Default settings
@@ -191,7 +192,6 @@ _host_vendor=""
 _host_os=""
 _host_alias=""
 
-_srcdir=`dirname $0`
 _port_mk="ports.mk"
 
 # Use temp files in the build directory
@@ -878,6 +878,7 @@ for ac_option in $@; do
 	--disable-faad)           _faad=no        ;;
 	--enable-faad)            _faad=yes       ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
+//ResidualVM specific:
 	--enable-fluidsynth)      _fluidsynth=yes ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -1380,6 +1381,10 @@ ps2)
 ps3)
 	if test -z "$PS3DEV"; then
 		echo "Please set PS3DEV in your environment. export PS3DEV=<path to ps3 toolchain>"
+		exit 1
+	fi
+	if test -z "$PSL1GHT"; then
+		echo "Please set PSL1GHT in your environment. export PSL1GHT=<path to psl1ght>"
 		exit 1
 	fi
 	;;
@@ -2047,8 +2052,8 @@ case $_host_os in
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		DEFINES="$DEFINES -DPLAYSTATION3"
-		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
-		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
+		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
+		LDFLAGS="$LDFLAGS -L$PSL1GHT/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
@@ -3773,9 +3778,22 @@ if test "$_nasm" = yes ; then
 	echo_n ", assembly routines"
 fi
 
+if test "$_16bit" = yes ; then
+	echo_n ""
+fi
+
 if test "$_savegame_timestamp" = yes ; then
 	echo_n ", savegame timestamp"
 fi
+
+if test "$_build_scalers" = yes ; then
+	if test "$_build_hq_scalers" = yes ; then
+		echo_n ""
+	else
+		echo_n ""
+	fi
+fi
+
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emu"
 fi

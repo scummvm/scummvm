@@ -99,7 +99,6 @@ static int eatSystemEvents() {
 }
 
 static void drawProgress(float progress) {
-	return; // TODO implement in ResidualVM
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
@@ -139,7 +138,6 @@ static void drawProgress(float progress) {
 }
 
 static void drawMessage(int offset, const Common::String &text) {
-	return; // TODO implement in ResidualVM
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 

@@ -654,14 +654,14 @@ void displayHelp(const char *exe) {
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines           list all available engines and their default state\n"
-	        " --enable-engine          enable building of the engine with the name \"engine\"\n"
-	        " --disable-engine         disable building of the engine with the name \"engine\"\n"
+	        " --enable-engine=<name>   enable building of the engine with the name \"name\"\n"
+	        " --disable-engine=<name>  disable building of the engine with the name \"name\"\n"
 	        " --enable-all-engines     enable building of all engines\n"
 	        " --disable-all-engines    disable building of all engines\n"
 	        "\n"
 	        "Optional features settings:\n"
-	        " --enable-name            enable inclusion of the feature \"name\"\n"
-	        " --disable-name           disable inclusion of the feature \"name\"\n"
+	        " --enable-<name>          enable inclusion of the feature \"name\"\n"
+	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -693,7 +693,7 @@ bool parseEngine(const std::string &line, EngineDesc &engine);
 } // End of anonymous namespace
 
 EngineDescList parseConfigure(const std::string &srcDir) {
-	std::string configureFile = srcDir + "/configure";
+	std::string configureFile = srcDir + "/engines/configure.engines";
 
 	std::ifstream configure(configureFile.c_str());
 	if (!configure)
@@ -1227,6 +1227,8 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/AUTHORS");
 		in.push_back(setup.srcDir + "/COPYING");
 		in.push_back(setup.srcDir + "/COPYING.LGPL");
+		in.push_back(setup.srcDir + "/COPYING.BSD");
+		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
 		in.push_back(setup.srcDir + "/NEWS");
 		in.push_back(setup.srcDir + "/README");
