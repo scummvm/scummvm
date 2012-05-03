@@ -878,7 +878,7 @@ for ac_option in $@; do
 	--disable-faad)           _faad=no        ;;
 	--enable-faad)            _faad=yes       ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
-//ResidualVM specific:
+#ResidualVM specific option:
 	--enable-fluidsynth)      _fluidsynth=yes ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
