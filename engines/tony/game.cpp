@@ -130,7 +130,7 @@ void MainHideMouse(void) {
   _vm->GetEngine()->DisableMouse();
 }
 
-void MainPlayMusic(int nChannel, char* filename, int nFX, bool bLoop, int nSync) {
+void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
 	_vm->PlayMusic(nChannel, filename, nFX, bLoop, nSync);
 }
 

@@ -505,7 +505,7 @@ uint32 CODECADPCMMONO::Decompress(Common::File &fp, void *buf, uint32 dwSize) {
 	uint16 *lpBuf = (uint16 *)buf;
 	byte *inp;
 	int bufferstep;
-	int cache;
+	int cache = 0;
 	int delta;
 	int sign;
 	int vpdiff;
@@ -545,12 +545,12 @@ uint32 CODECADPCMMONO::Decompress(Common::File &fp, void *buf, uint32 dwSize) {
 			cache = *inp++;
 			delta = (cache>>4)&0xF;
 		} else
-			delta=cache&0xF;
+			delta = cache & 0xF;
 
 		/* Trova il nuovo indice */
 		index += indexTable[delta];
 		if (index < 0) index = 0;
-		if (index > 88) index=88;
+		if (index > 88) index = 88;
 
 		/* Legge il segno e lo separa dall'ampliamento */
 		sign = delta&8;
@@ -558,9 +558,9 @@ uint32 CODECADPCMMONO::Decompress(Common::File &fp, void *buf, uint32 dwSize) {
 
 		/* Trova la differenza dal valore precedente */
 		vpdiff = step >> 3;
-		if (delta&4) vpdiff+=step;
-		if (delta&2) vpdiff+=step >> 1;
-		if (delta&1) vpdiff+=step >> 2;
+		if (delta&4) vpdiff += step;
+		if (delta&2) vpdiff += step >> 1;
+		if (delta&1) vpdiff += step >> 2;
 
 		if (sign)
 			valpred -= vpdiff;
@@ -1551,10 +1551,8 @@ void FPSFX::GetVolume(int *lpdwVolume) {
 	*lpdwVolume -= (DSBVOLUME_MIN);
 	*lpdwVolume *= 64;
 	*lpdwVolume /= (DSBVOLUME_MAX - DSBVOLUME_MIN);
-#endregion
+#endif
 }
-
-
 
 
 /****************************************************************************\
@@ -1571,6 +1569,7 @@ void FPSFX::GetVolume(int *lpdwVolume) {
 \****************************************************************************/
 
 FPSTREAM::FPSTREAM(LPDIRECTSOUND LPDS, HWND hWnd, bool bSoundOn) {
+#ifdef REFACTOR_ME
 	//hwnd=hWnd;
 	lpDS=LPDS;
 	bSoundSupported = bSoundOn;
@@ -1581,6 +1580,7 @@ FPSTREAM::FPSTREAM(LPDIRECTSOUND LPDS, HWND hWnd, bool bSoundOn) {
 	lpDSBuffer = NULL;
 	lpDSNotify = NULL;
 	hHot1 = hHot2 = hHot3 = hPlayThread_PlayFast = hPlayThread_PlayNormal = NULL;
+#endif
 }
 
 bool FPSTREAM::CreateBuffer(int nBufSize) {
@@ -1661,6 +1661,8 @@ bool FPSTREAM::CreateBuffer(int nBufSize) {
 \****************************************************************************/
 
 FPSTREAM::~FPSTREAM() {
+#ifdef REFACTOR_ME
+
 	if (!bSoundSupported)
 		return;
 
@@ -1695,6 +1697,7 @@ FPSTREAM::~FPSTREAM() {
 
 	RELEASE(lpDSNotify);
 	RELEASE(lpDSBuffer);
+#endif
 }
 
 
@@ -1711,9 +1714,9 @@ FPSTREAM::~FPSTREAM() {
 *
 \****************************************************************************/
 
-FPSTREAM::Release() {
+void FPSTREAM::Release() {
 	delete this;
-	return NULL;
+//	return NULL;
 }
 
 
@@ -1780,6 +1783,8 @@ bool FPSTREAM::LoadFile(const char *lpszFileName, uint32 dwCodType, int nBufSize
 \****************************************************************************/
 
 bool FPSTREAM::UnloadFile() {
+#ifdef REFACTOR_ME
+
 	if (!bSoundSupported || !bFileLoaded)
 		return true;
 
@@ -1791,7 +1796,7 @@ bool FPSTREAM::UnloadFile() {
 
 	/* Si ricorda che non c'e' piu' nessun file in memoria */
 	bFileLoaded = false;
-
+#endif
 	return true;
 }
 
@@ -1985,6 +1990,8 @@ bool FPSTREAM::Play() {
 \****************************************************************************/
 
 bool FPSTREAM::Stop(bool bSync) {
+#ifdef REFACTOR_ME
+
 	if (!bSoundSupported)
 		return true;
 
@@ -2018,7 +2025,7 @@ bool FPSTREAM::Stop(bool bSync) {
 		bIsPlaying = false;
 		bPaused = false;
 	}
- 
+#endif
 	return true;
 }
 
@@ -2199,6 +2206,8 @@ void FPSTREAM::SetLoop(bool loop) {
 
 
 void FPSTREAM::Pause(bool bPause) {
+#ifdef REFACTOR_ME
+
 	if (bFileLoaded) {
 		if (bPause && bIsPlaying) {
 			lpDSBuffer->Stop();
@@ -2227,6 +2236,7 @@ void FPSTREAM::Pause(bool bPause) {
 			SetVolume(lastVolume);
 		}
 	}
+#endif
 }
 
 
@@ -2278,7 +2288,7 @@ void FPSTREAM::GetVolume(int *lpdwVolume) {
 	*lpdwVolume -= (DSBVOLUME_MIN);
 	*lpdwVolume *= 64;
 	*lpdwVolume /= (DSBVOLUME_MAX - DSBVOLUME_MIN);
-#endregion
+#endif
 }
 
 } // End of namespace Tony

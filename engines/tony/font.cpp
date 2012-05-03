@@ -125,6 +125,14 @@ void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palRes
 	nLetters=nChars;
 }
 
+void RMFont::Load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID) {
+	RMRes res(resID);
+
+	if ((int)res.Size() < nChars * (dimy * dimx + 8))
+		nChars = res.Size() / (dimy * dimx + 8);
+
+	Load(res, nChars, dimx, dimy, palResID);
+}
 
 void RMFont::Unload(void) {
 	if (m_letter != NULL) {
@@ -2271,6 +2279,25 @@ void RMTextItemName::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	prim->Dst().TopLeft() = m_mpos-RMPoint(0, 30);
 
 	RMText::Draw(bigBuf,prim);
+}
+
+RMPoint RMTextItemName::GetHotspot() { 
+	if (m_item == NULL) 
+		return m_mpos + m_curscroll; 
+	else 
+		return m_item->Hotspot();  
+}
+
+RMItem *RMTextItemName::GetSelectedItem() { 
+	return m_item; 
+}
+
+bool RMTextItemName::IsItemSelected() { 
+	return m_item != NULL; 
+}
+
+bool RMTextItemName::IsNormalItemSelected() { 
+	return m_item != NULL && m_itemName.Length() > 0; 
 }
 
 

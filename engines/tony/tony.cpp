@@ -139,7 +139,7 @@ int flipflop=0;
 OSystem::MutexRef csMusic;
 
 
-void TonyEngine::PlayMusic(int nChannel, char* fn, int nFX, bool bLoop, int nSync) {
+void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync) {
 	warning("TonyEngine::PlayMusic");
 }
 
@@ -202,6 +202,46 @@ int TonyEngine::GetMusicVolume(int nChannel) {
 	return 255;
 }
 
+
+void TonyEngine::GetSaveStateFileName(int n, char *buf) {
+	RMString name;
+
+	if (n > 0)
+		name.Format("%02d", n);	
+	else
+		name.Format("autosave");	
+
+	name += ".sav";
+}
+
+void TonyEngine::AutoSave(void) {
+	char buf[256];
+
+	GrabThumbnail();
+	MainWaitFrame();
+	MainWaitFrame();
+	MainFreeze();
+	GetSaveStateFileName(0,buf);
+	_theEngine.SaveState(buf, (byte *)m_curThumbnail, "Autosave", true);
+	MainUnfreeze();
+}
+
+
+void TonyEngine::SaveState(int n, const char *name) {
+	char buf[256];
+
+	GetSaveStateFileName(n, buf);
+	_theEngine.SaveState(buf,(byte *)m_curThumbnail, name);
+}
+
+
+void TonyEngine::LoadState(int n) {
+	char buf[256];
+
+	GetSaveStateFileName(n, buf);
+	_theEngine.LoadState(buf);
+}
+
 bool TonyEngine::OpenVoiceDatabase() {
 	char id[4];
 	uint32 numfiles;
@@ -249,6 +289,21 @@ void TonyEngine::CloseVoiceDatabase() {
 void TonyEngine::GrabThumbnail(void) {
 	//m_wnd.GrabThumbnail(m_curThumbnail);
 	warning("TODO: TonyEngine::GrabThumbnail");
+}
+
+void TonyEngine::OptionScreen(void) {
+}
+
+void TonyEngine::OpenInitLoadMenu(void) {
+	_theEngine.OpenOptionScreen(1);
+}
+
+void TonyEngine::OpenInitOptions(void) {
+	_theEngine.OpenOptionScreen(2);
+}
+
+void TonyEngine::Abort(void) {
+	m_bQuitNow = true;
 }
 
 void TonyEngine::Play(void) {
@@ -314,14 +369,14 @@ void TonyEngine::PauseLoop(void) {
 	MSG msg;
 	int st,et;
 
-	st = timeGetTime();
+	st = GetTime();
 
 	while (m_bPaused && GetMessage(&msg,m_wnd,0,0)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 
-	et = timeGetTime();
+	et = GetTime();
 
 	m_startTime += et - st;
 #endif
@@ -343,6 +398,24 @@ warning("TODO: TonyEninge::Pause");
 		SetWindowText(m_wnd, "Tony Tough and the night of Roasted Moths");
 	}
 */
+}
+
+void TonyEngine::FreezeTime(void) {
+	m_bTimeFreezed = true;
+	m_nTimeFreezed = GetTime() - m_startTime;
+}
+
+void TonyEngine::UnfreezeTime(void)
+{
+	m_bTimeFreezed = false;
+}
+
+
+/**
+ * Returns the millisecond timer
+ */
+uint32 TonyEngine::GetTime() {
+	return g_system->getMillis();
 }
 
 } // End of namespace Tony

@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	tony.o \
 	tonychar.o \
 	utils.o \
+	window.o \
 	mpal/expr.o \
 	mpal/loadmpc.o \
 	mpal/memory.o \

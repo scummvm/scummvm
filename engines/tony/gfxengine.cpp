@@ -58,15 +58,25 @@ extern bool bIdleExited;
 extern bool bPatIrqFreeze;
 extern bool bSkipSfxNoLoop;
 
-extern void ExitAllIdles(int nCurLoc);
 
 /****************************************************************************\
 *       Metodi di RMGfxEngine
 \****************************************************************************/
 
+bool bIdleExited;
+
+void ExitAllIdles(int nCurLoc) {
+	// Chiude le idle
+	bSkipSfxNoLoop = true;
+	mpalEndIdlePoll(nCurLoc);
+	bIdleExited = true;
+	bSkipSfxNoLoop = false;
+	ExitThread(0);
+}
+
 RMGfxEngine::RMGfxEngine() {
 	// Crea il big buffer dove verranno disegnati i frame
-	m_bigBuf.Create(RM_BBX,RM_BBY,16);
+	m_bigBuf.Create(RM_BBX, RM_BBY, 16);
 	m_bigBuf.OffsetY(RM_SKIPY);
 }
 

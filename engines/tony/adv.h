@@ -92,7 +92,7 @@ void MainShowMouse(void);
 void MainHideMouse(void);
 void MainEnableInput(void);
 void MainDisableInput(void);
-void MainPlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync);
+void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync);
 void MainInitWipe(int type);
 void MainCloseWipe(void);
 void MainWaitWipeEnd(void);

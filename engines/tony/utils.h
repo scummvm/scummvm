@@ -140,9 +140,7 @@ public:
 
 class RMFileStreamSlow : public RMDataStream {
 private:
-	Common::File f;
-	bool bMustClose;
-
+	Common::SeekableReadStream *_stream;
 public:
 	RMFileStreamSlow();
 	virtual ~RMFileStreamSlow();

@@ -158,7 +158,7 @@ public:
 
 	// Music
 	// ******
-	void PlayMusic(int nChannel, char *fn, int nFX, bool bLoop, int nSync);
+	void PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync);
 	void StopMusic(int nChannel);
 
 	void PlaySFX(int nSfx, int nFX = 0);
@@ -183,7 +183,7 @@ public:
 
 	// Salvataggio
 	void AutoSave(void);
-	void SaveState(int n, char *name);
+	void SaveState(int n, const char *name);
 	void LoadState(int n);
 	void GetSaveStateFileName(int n, char* buf);
 

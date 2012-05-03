@@ -292,8 +292,8 @@ RMString::operator char*() const {
 /**
  * Resize a string as necessary
  * @param size				New size necessary (in bytes)
- * @param bMaintain			If TRUE we must keep the original string, 
-							if FALSE we can destroy.
+ * @param bMaintain			If true we must keep the original string, 
+							if false we can destroy.
  */
 void RMString::Resize(int size, bool bMantain) {
 	if (m_realLength == 0) {
@@ -407,6 +407,122 @@ void RMString::Format(char* str, ...) {
 }
 
 /****************************************************************************\
+*       Metodi di RMFileStreamSlow
+\****************************************************************************/
+
+RMFileStreamSlow::RMFileStreamSlow() : RMDataStream() {
+	_stream = NULL;
+}
+
+RMFileStreamSlow::~RMFileStreamSlow() {
+	Close();
+}
+
+void RMFileStreamSlow::Close() {
+	delete _stream;
+}
+
+bool RMFileStreamSlow::OpenFile(Common::File &file) {
+	_stream = file.readStream(file.size());
+
+	m_length = _stream->pos();
+
+	return true;
+}
+
+
+bool RMFileStreamSlow::OpenFile(const char *lpFN) {
+	// Apre il file in lettura
+	Common::File f;
+	if (!f.open(lpFN))
+		return false;
+
+	m_length = f.size();
+	_stream = f.readStream(f.size());
+
+	return true;
+}
+
+
+RMDataStream& RMFileStreamSlow::operator+=(int nBytes) {
+	Seek(nBytes);
+	return *this;
+}
+
+int RMFileStreamSlow::Pos() {
+	return _stream->pos();
+}
+
+bool RMFileStreamSlow::IsEOF() {
+	return (Pos() >= m_length);
+}
+
+
+int RMFileStreamSlow::Seek(int nBytes, RMDSPos where) {
+	switch (where) {
+	case START:
+		return _stream->seek(nBytes);
+		
+	case END:
+		return _stream->seek(nBytes, SEEK_END);
+
+	case CUR:
+		return _stream->seek(nBytes, SEEK_CUR);
+
+	default:
+		return 0;
+	}
+}
+
+
+bool RMFileStreamSlow::Read(void *buf, int size) {
+	uint32 dwRead;
+
+	dwRead = _stream->read(buf, size);
+	return ((int)dwRead == size);
+}
+
+
+RMFileStreamSlow &operator>>(RMFileStreamSlow &df, char &var) {
+	df.Read(&var, 1);
+	return df;
+}
+
+RMFileStreamSlow &operator>>(RMFileStreamSlow &df, byte &var) {
+	df.Read(&var,1);
+	return df;
+}
+
+RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint16 &var) {
+	uint16 v;
+	df.Read(&v, 2);
+	v = FROM_LE_16(v);
+	return df;
+}
+
+RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int16 &var) {
+	uint16 v;
+	df.Read(&v, 2);
+	var = (int16)FROM_LE_16(v);
+	return df;
+}
+
+RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int &var) {
+	int v;
+	df.Read(&v,4);
+	var = FROM_LE_32(v);
+	return df;
+}
+
+RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint32 &var) {
+	uint32 v;
+	df.Read(&v, 4);
+	var = FROM_LE_32(v);
+	return df;
+}
+
+
+/****************************************************************************\
 *       RMDataStream methods
 \****************************************************************************/
 
@@ -458,7 +574,7 @@ int RMDataStream::Length() {
 
 /**
  * Determines if the end of the stream has been reached
- * @returns				TRUE if end of stream reached, FALSE if not
+ * @returns				true if end of stream reached, false if not
  */
 bool RMDataStream::IsEOF() {
 	return (m_pos >= m_length);
@@ -546,7 +662,7 @@ RMDataStream &operator>>(RMDataStream &df, uint32 &var) {
  * Reads a series of data from the stream in a buffer
  * @param lpBuf				Data buffer
  * @param size				Size of the buffer
- * @returns					TRUE if we have reached the end, FALSE if not
+ * @returns					true if we have reached the end, false if not
  */
 bool RMDataStream::Read(void *lpBuf, int size) {
 	byte *dest = (byte *)lpBuf;
@@ -609,7 +725,7 @@ int RMDataStream::Pos() {
 
 /**
  * Check if an error occurred during reading the stream
- * @returns					TRUE if there was an error, false otherwise
+ * @returns					true if there was an error, false otherwise
  */
 bool RMDataStream::IsError() {
 	return m_bError;
@@ -714,7 +830,7 @@ RMPoint &RMPoint::operator+=(RMPoint p) {
 /**
  * Subtract (offset) of a point
  */
-RMPoint& RMPoint::operator-=(RMPoint p) {
+RMPoint &RMPoint::operator-=(RMPoint p) {
 	Offset(-p);
 	return *this;
 }
@@ -807,7 +923,7 @@ RMPoint &RMRect::TopLeft() {
 	return *((RMPoint *)this);
 }
 
-RMPoint& RMRect::BottomRight() {
+RMPoint &RMRect::BottomRight() {
 	// FIXME: This seems very bad
 	return *((RMPoint*)this + 1);
 }

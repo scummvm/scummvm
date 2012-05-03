@@ -50,15 +50,36 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "tony/adv.h"
 
 namespace Tony {
 
 typedef uint32 HWND;
+struct DDSURFACEDESC {
+};
+
+class RMSnapshot {
+private:
+	// Buffer per la creazione dei path
+	static char bufDrive[_MAX_DRIVE], bufDir[_MAX_DIR], bufName[_MAX_FNAME], bufExt[_MAX_EXT];
+	static char filename[512];
+
+	// Buffer per la conversione a RGB
+	static byte	rgb[RM_SX * RM_SY * 3];
+
+private:
+	bool GetFreeSnapName(char *fn);
+
+public:
+	// Prende uno screenshot
+	void GrabScreenshot(byte *lpBuf, int dezoom = 1, uint16 *lpDestBuf = NULL);
+};
+
 
 class RMWindow {
 private:
-	bool Lock(/*DDSURFACEDESC& ddsd */);
-	void Unlock(/*DDSURFACEDESC& ddsd */);
+	bool Lock(DDSURFACEDESC &ddsd);
+	void Unlock(DDSURFACEDESC &ddsd);
 
 	// Inizializza DirectDraw
 	void DDInit(void);
@@ -115,7 +136,7 @@ protected:
 		void GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
 
 		// Avverte di grabbare un thumbnail per il salvataggio
-//		void GrabThumbnail(uint16 *buf);
+		void GrabThumbnail(uint16 *buf);
 
 		operator HWND() { return m_hWnd; }
 

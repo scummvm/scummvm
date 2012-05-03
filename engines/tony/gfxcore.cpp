@@ -138,15 +138,15 @@ void RMGfxBuffer::OffsetY(int nLines, int nBpp) {
 }
 
 
-inline RMGfxBuffer::operator byte *() {
+RMGfxBuffer::operator byte *() {
 	return m_buf;
 }
 
-inline RMGfxBuffer::operator void *() {
+RMGfxBuffer::operator void *() {
 	return (void *)m_buf;
 }
 
-inline RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw) {
+RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw) {
 	Create(dimx, dimy, nBpp, bUseDDraw);
 }
 
@@ -255,7 +255,7 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 *
 \****************************************************************************/
 
-inline int RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
+int RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
 	return Init(RMRes(resID), dimx, dimy, bLoadPalette);
 }
 
@@ -275,11 +275,11 @@ void RMGfxWoodyBuffer::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	RMGfxSourceBuffer16::Draw(bigBuf, prim);
 }
 
-inline RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
+RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
 
 }
 
-inline RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
+RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
 	  : RMGfxBuffer(dimx,dimy,16,bUseDDraw) {
 
 }
@@ -407,7 +407,7 @@ void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
 	g_system->unlockMutex(csModifyingOT);
 }
 
-inline void RMGfxTargetBuffer::AddClearTask(void) {
+void RMGfxTargetBuffer::AddClearTask(void) {
 	AddPrim(new RMGfxPrimitive(&taskClear));
 }
 
@@ -486,11 +486,11 @@ void RMGfxSourceBufferPal::Init(RMDataStream &ds, int dimx, int dimy, bool bLoad
 	}
 }
 
-inline int RMGfxSourceBufferPal::LoadPalette(uint32 resID) {
+int RMGfxSourceBufferPal::LoadPalette(uint32 resID) {
 	return LoadPalette(RMRes(resID));
 }
 
-inline int RMGfxSourceBufferPal::LoadPaletteWA(uint32 resID, bool bSwapped) {
+int RMGfxSourceBufferPal::LoadPaletteWA(uint32 resID, bool bSwapped) {
 	return LoadPaletteWA(RMRes(resID), bSwapped);
 }
 
@@ -501,7 +501,7 @@ inline int RMGfxSourceBufferPal::LoadPaletteWA(uint32 resID, bool bSwapped) {
 void RMGfxSourceBuffer4::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
-inline RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
+RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
 		: RMGfxBuffer(dimx,dimy,4,bUseDDraw) {
 	SetPriority(0);
 }
@@ -516,11 +516,11 @@ inline RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw
 *
 \****************************************************************************/
 
-inline int RMGfxSourceBuffer4::Bpp() {
+int RMGfxSourceBuffer4::Bpp() {
 	return 4;
 }
 
-inline void RMGfxSourceBuffer4::Create(int dimx, int dimy, bool bUseDDraw) {
+void RMGfxSourceBuffer4::Create(int dimx, int dimy, bool bUseDDraw) {
 	RMGfxBuffer::Create(dimx,dimy,4,bUseDDraw);
 }
 
@@ -589,12 +589,12 @@ void RMGfxSourceBuffer8::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	}
 }
 
-inline RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
+RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
 		: RMGfxBuffer(dimx,dimy,8,bUseDDraw) {
 	SetPriority(0);
 }
 
-inline RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
+RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
 	m_bTrasp0=bTrasp0;
 }
 
@@ -609,11 +609,11 @@ inline RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
 *
 \****************************************************************************/
 
-inline int RMGfxSourceBuffer8::Bpp() {
+int RMGfxSourceBuffer8::Bpp() {
 	return 8;
 }
 
-inline void RMGfxSourceBuffer8::Create(int dimx, int dimy, bool bUseDDraw) {	
+void RMGfxSourceBuffer8::Create(int dimx, int dimy, bool bUseDDraw) {	
 	RMGfxBuffer::Create(dimx, dimy, 8, bUseDDraw);
 }
 
@@ -630,7 +630,7 @@ RMGfxSourceBuffer8AB::~RMGfxSourceBuffer8AB() {
 
 }
 
-inline int RMGfxSourceBuffer8AB::CalcTrasp(int fore, int back)
+int RMGfxSourceBuffer8AB::CalcTrasp(int fore, int back)
 {
 	int r,g,b;
 
@@ -1919,7 +1919,7 @@ void RMGfxSourceBuffer16::PrepareImage(void) {
 }
 
 
-inline RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
+RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
 		: RMGfxBuffer(dimx,dimy,16,bUseDDraw) {
 	SetPriority(0);
 }
@@ -1934,11 +1934,11 @@ inline RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDr
 *
 \****************************************************************************/
 
-inline int RMGfxSourceBuffer16::Bpp() {
+int RMGfxSourceBuffer16::Bpp() {
 	return 16;
 }
 
-inline void RMGfxSourceBuffer16::Create(int dimx, int dimy, bool bUseDDraw) {
+void RMGfxSourceBuffer16::Create(int dimx, int dimy, bool bUseDDraw) {
 	RMGfxBuffer::Create(dimx,dimy,16,bUseDDraw);
 }
 
@@ -1980,17 +1980,17 @@ void RMGfxBox::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 *       Metodi di RMGfxClearTask
 \****************************************************************************/
 
-inline int RMGfxClearTask::Priority() {
+int RMGfxClearTask::Priority() {
 	// Priorita' massima (deve essere fatto per primo)
 	return 1;
 }
 
-inline void RMGfxClearTask::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *) {
+void RMGfxClearTask::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *) {
 	// Pulisce tutto il target buffer
 	Common::fill((byte *)bigBuf, (byte *)bigBuf + (bigBuf.Dimx() * bigBuf.Dimy() * 2), 0x0);
 }
 
-inline bool RMGfxClearTask::RemoveThis() {
+bool RMGfxClearTask::RemoveThis() {
 	// Il task di clear si disattiva sempre
 	return true;
 }
