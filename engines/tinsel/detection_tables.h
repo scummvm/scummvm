@@ -397,7 +397,7 @@ static const TinselGameDescription gameDescriptions[] = {
 	{	// multilanguage PSX demo
 		{
 			"dw",
-			"CD demo",
+			"CD Demo",
 			{
 				{"french.txt", 0, "e7020d35f58d0d187052ac406d86cc87", 273914},
 				{"german.txt", 0, "52f0a01e0ff0d340b02a36fd5109d705", 263942},
