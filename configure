@@ -743,6 +743,7 @@ Fine tuning of the installation directories:
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
                           special targets: android for Android
+                                           ps3 for PlayStation 3
                                            samsungtv for Samsung TV
 
 Game engines:
