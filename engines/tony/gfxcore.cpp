@@ -46,6 +46,7 @@
  **************************************************************************/
 
 #include "tony/gfxEngine.h"
+#include "tony/mpal/mpalutils.h"
 
 namespace Tony {
 
@@ -133,9 +134,21 @@ void RMGfxBuffer::Unlock(void) {
 }
 
 void RMGfxBuffer::OffsetY(int nLines, int nBpp) {
-	m_buf += nLines*Dimx() * nBpp / 8;
+	m_buf += nLines* Dimx() * nBpp / 8;
 }
 
+
+inline RMGfxBuffer::operator byte *() {
+	return m_buf;
+}
+
+inline RMGfxBuffer::operator void *() {
+	return (void *)m_buf;
+}
+
+inline RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw) {
+	Create(dimx, dimy, nBpp, bUseDDraw);
+}
 
 /****************************************************************************\
 *       Metodi di RMGfxSourceBuffer
@@ -231,6 +244,20 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 	return true;
 }
 
+/****************************************************************************\
+*
+* Function:     void RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy);
+*
+* Description:  Carica una surface partendo dall'ID della risorsa
+*
+* Input:        uint32 resID             ID della risorsa
+*               int dimx, dimy					Dimensione del buffer
+*
+\****************************************************************************/
+
+inline int RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
+	return Init(RMRes(resID), dimx, dimy, bLoadPalette);
+}
 
 /****************************************************************************\
 *       Metodi di RMGfxWoodyBuffer
@@ -248,6 +275,14 @@ void RMGfxWoodyBuffer::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	RMGfxSourceBuffer16::Draw(bigBuf, prim);
 }
 
+inline RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
+
+}
+
+inline RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
+	  : RMGfxBuffer(dimx,dimy,16,bUseDDraw) {
+
+}
 
 
 /****************************************************************************\
@@ -372,6 +407,11 @@ void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
 	g_system->unlockMutex(csModifyingOT);
 }
 
+inline void RMGfxTargetBuffer::AddClearTask(void) {
+	AddPrim(new RMGfxPrimitive(&taskClear));
+}
+
+
 /****************************************************************************\
 *				Metodi di RMGfxSourceBufferPal
 \****************************************************************************/
@@ -397,8 +437,7 @@ int RMGfxSourceBufferPal::LoadPaletteWA(const byte *buf, bool bSwapped) {
 	return (1<<Bpp())*3;
 }
 
-int RMGfxSourceBufferPal::LoadPalette(byte *buf)
-{
+int RMGfxSourceBufferPal::LoadPalette(const byte *buf) {
 	int i;
 
 	for (i = 0; i < 256; i++)
@@ -447,7 +486,13 @@ void RMGfxSourceBufferPal::Init(RMDataStream &ds, int dimx, int dimy, bool bLoad
 	}
 }
 
+inline int RMGfxSourceBufferPal::LoadPalette(uint32 resID) {
+	return LoadPalette(RMRes(resID));
+}
 
+inline int RMGfxSourceBufferPal::LoadPaletteWA(uint32 resID, bool bSwapped) {
+	return LoadPaletteWA(RMRes(resID), bSwapped);
+}
 
 /****************************************************************************\
 *				Metodi di RMGfxSourceBuffer4
@@ -456,7 +501,28 @@ void RMGfxSourceBufferPal::Init(RMDataStream &ds, int dimx, int dimy, bool bLoad
 void RMGfxSourceBuffer4::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
+inline RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
+		: RMGfxBuffer(dimx,dimy,4,bUseDDraw) {
+	SetPriority(0);
+}
 
+/****************************************************************************\
+*
+* Function:     int RMGfxSourceBuffer4::Bpp();
+*
+* Description:  Ritorna il numero di bit per pixel della surface
+*
+* Return:       Bit per pixel
+*
+\****************************************************************************/
+
+inline int RMGfxSourceBuffer4::Bpp() {
+	return 4;
+}
+
+inline void RMGfxSourceBuffer4::Create(int dimx, int dimy, bool bUseDDraw) {
+	RMGfxBuffer::Create(dimx,dimy,4,bUseDDraw);
+}
 
 /****************************************************************************\
 *				Metodi di RMGfxSourceBuffer8
@@ -521,8 +587,34 @@ void RMGfxSourceBuffer8::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 			buf += bufx-width;
 		}
 	}
+}
 
-  return;
+inline RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
+		: RMGfxBuffer(dimx,dimy,8,bUseDDraw) {
+	SetPriority(0);
+}
+
+inline RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
+	m_bTrasp0=bTrasp0;
+}
+
+
+/****************************************************************************\
+*
+* Function:     int RMGfxSourceBuffer8::Bpp();
+*
+* Description:  Ritorna il numero di bit per pixel della surface
+*
+* Return:       Bit per pixel
+*
+\****************************************************************************/
+
+inline int RMGfxSourceBuffer8::Bpp() {
+	return 8;
+}
+
+inline void RMGfxSourceBuffer8::Create(int dimx, int dimy, bool bUseDDraw) {	
+	RMGfxBuffer::Create(dimx, dimy, 8, bUseDDraw);
 }
 
 #define GETRED(x)	(((x) >> 10) & 0x1F)
@@ -1827,6 +1919,29 @@ void RMGfxSourceBuffer16::PrepareImage(void) {
 }
 
 
+inline RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
+		: RMGfxBuffer(dimx,dimy,16,bUseDDraw) {
+	SetPriority(0);
+}
+
+/****************************************************************************\
+*
+* Function:     int RMGfxSourceBuffer16::Bpp();
+*
+* Description:  Ritorna il numero di bit per pixel della surface
+*
+* Return:       Bit per pixel
+*
+\****************************************************************************/
+
+inline int RMGfxSourceBuffer16::Bpp() {
+	return 16;
+}
+
+inline void RMGfxSourceBuffer16::Create(int dimx, int dimy, bool bUseDDraw) {
+	RMGfxBuffer::Create(dimx,dimy,16,bUseDDraw);
+}
+
 /****************************************************************************\
 *				Metodi di RMGfxBox
 \****************************************************************************/
@@ -1858,6 +1973,26 @@ void RMGfxBox::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 		buf += bigBuf.Dimx() - rcDst.Width();
 	}
+}
+
+
+/****************************************************************************\
+*       Metodi di RMGfxClearTask
+\****************************************************************************/
+
+inline int RMGfxClearTask::Priority() {
+	// Priorita' massima (deve essere fatto per primo)
+	return 1;
+}
+
+inline void RMGfxClearTask::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *) {
+	// Pulisce tutto il target buffer
+	Common::fill((byte *)bigBuf, (byte *)bigBuf + (bigBuf.Dimx() * bigBuf.Dimy() * 2), 0x0);
+}
+
+inline bool RMGfxClearTask::RemoveThis() {
+	// Il task di clear si disattiva sempre
+	return true;
 }
 
 } // End of namespace Tony

@@ -294,7 +294,7 @@ public:
 	int LoadPaletteWA(uint32 resID, bool bSwapped = false);
 	int LoadPaletteWA(const byte *buf, bool bSwapped = false);
 	int LoadPalette(uint32 resID);
-	int LoadPalette(byte *buf);
+	int LoadPalette(const byte *buf);
 };
 
 
