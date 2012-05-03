@@ -256,19 +256,21 @@ public:
 	void sub17264(int index, int var4);
 	uint16 sub168DA(byte var1h, byte var1l);
 	uint16 sub16901(byte var1h, byte var1l);
+	byte sub16722(int index, byte var1);
+	byte sub166EA(int index);
 
 	void renderCharacters(byte *buf, byte x, byte y);
 
-	int sub16799(int param1, int index);
+	byte sub16799(int param1, int index);
 	int sub16B0C(int param1, int param2);
 	void addCharToBuf(byte character);
 	void prepareGoldAmount(int param1);
 	void sub12F37();
-	int sub16675(int idx, int var1);
+	byte sub16675(int idx, int var1);
 	void sub16685(int idx, int var1);
 	void sub16EBC();
 	void sub16CA0();
-	int sub166DD(int index, int var1);
+	byte sub166DD(int index, int var1);
 	void sub171CF();
 	void sub12FE5();
 	int sub16DD5(int x1, int y1, int x2, int y2);
@@ -297,8 +299,8 @@ public:
 	void sub166D8(int index);
 	void sub16B31(int index, int val);
 	void sub16B8F(int index, int x, int y, int flag);
-	int sub1675D(int index, int var1);
-	int sub16729(int index);
+	byte sub1675D(int index, int var1);
+	byte sub16729(int index);
 	byte sub166F7(int index, int var1, int tmpVal);
 	void sub1693A(int index);
 
