@@ -33,12 +33,19 @@ namespace Grim {
 Localizer *g_localizer = NULL;
 
 Localizer::Localizer() {
-	if (g_grim->getGameFlags() & ADGF_DEMO || g_grim->getGameType() == GType_MONKEY4)
+	if (g_grim->getGameType() == GType_GRIM && g_grim->getGameFlags() & ADGF_DEMO)
 		return;
 
-	Common::SeekableReadStream *f = g_resourceloader->openNewStreamFile("grim.tab");
+	Common::String filename;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		filename = "script.tab";
+	} else {
+		filename = "grim.tab";
+	}
+
+	Common::SeekableReadStream *f = g_resourceloader->openNewStreamFile(filename);
 	if (!f) {
-		error("Localizer::Localizer: Unable to find localization information (grim.tab)");
+		error("Localizer::Localizer: Unable to find localization information (%s)", filename.c_str());
 		return;
 	}
 
@@ -50,15 +57,26 @@ Localizer::Localizer() {
 	data[filesize] = '\0';
 	delete f;
 
-	if (filesize < 4 || READ_BE_UINT32(data) != MKTAG('R','C','N','E'))
-		error("Invalid magic reading grim.tab");
+	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
+		if (filesize < 4 || READ_BE_UINT32(data) != MKTAG('R','C','N','E'))
+			error("Invalid magic reading %s", filename.c_str());
 
-	// Decode the data
-	for (int i = 4; i < filesize; i++)
-		data[i] ^= '\xdd';
+		// Decode the data
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			uint32 next = 0x16;
+			for (int i = 4; i < filesize; i++) {
+				 next = next * 0x343FD + 0x269EC3;
+				data[i] ^= (int)(((((next >> 16) & 0x7FFF) / 32767.f) * 254) + 1);
+			}
+		} else {
+			for (int i = 4; i < filesize; i++) {
+				data[i] ^= '\xdd';
+			}
+		}
+	}
 
 	char *nextline;
-	for (char *line = data + 4; line != NULL && *line != '\0'; line = nextline + 1) {
+	for (char *line = data + 4; line != NULL && *line != '\0' && *line != '\r'; line = nextline + 1) {
 		nextline = strchr(line, '\n');
 		assert(nextline);
 
