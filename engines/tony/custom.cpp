@@ -2447,13 +2447,14 @@ void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	EnableGUI = MainEnableGUI;
 	SetPalesati = MainSetPalesati;
 
-	g_system->lockMutex(vdb);
+	vdb = g_system->createMutex();
 
 	bAlwaysDisplay = false;
 	int i;
-/*
+
 	for (i = 0;i < 10; i++)
-		InitializeCriticalSection(&cs[i]);
+		cs[i] = g_system->createMutex();
+/*
 	for (i = 0;i < 10; i++)
 		mut[i] = CreateMutex(NULL, false, NULL);
 */

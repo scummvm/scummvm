@@ -144,32 +144,65 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 }
 
 void TonyEngine::PlaySFX(int nChannel, int nFX) {
-	warning("TonyEngine::PlaySFX");
+	if (m_sfx[nChannel] == NULL)
+		return;
+
+	switch (nFX) {
+	case 0:
+		m_sfx[nChannel]->SetLoop(false);
+		break;
+
+	case 1:
+		m_sfx[nChannel]->SetLoop(true);
+		break;
+	}
+
+	m_sfx[nChannel]->Play();
 }
 
 void TonyEngine::StopMusic(int nChannel) {
-	warning("TonyEngine::StopMusic");
+	warning("TODO TonyEngine::StopMusic");
 }
 
 void TonyEngine::StopSFX(int nChannel) {
-	warning("TonyEngine::StopSFX");
+	warning("TODO TonyEngine::StopSFX");
 }
 
 void TonyEngine::PlayUtilSFX(int nChannel, int nFX) {
-	warning("TonyEngine::PlayUtilSFX");
+	warning("TODO TonyEngine::PlayUtilSFX");
 }
 
 void TonyEngine::StopUtilSFX(int nChannel) {
-	warning("TonyEngine::StopUtilSFX");
+	warning("TODO TonyEngine::StopUtilSFX");
 }
 
 void TonyEngine::PreloadSFX(int nChannel, char* fn) {
-	warning("TonyEngine::PreloadSFX");
+	if (m_sfx[nChannel] != NULL) {
+		m_sfx[nChannel]->Stop();
+		m_sfx[nChannel]->Release();
+		m_sfx[nChannel] = NULL;
+	}
+
+	_theSound.CreateSfx(&m_sfx[nChannel]);
+
+/*	
+	// Mette il path giusto
+	GetDataDirectory(DD_UTILSFX, path_buffer);
+	_splitpath(path_buffer,drive,dir,NULL,NULL);
+	_splitpath(fn,NULL,NULL,fname,ext);
+	_makepath(path_buffer,drive,dir,fname,ext);
+
+	m_sfx[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM);
+*/
+	m_sfx[nChannel]->LoadFile(fn, FPCODEC_ADPCM);
 }
 
 FPSFX *TonyEngine::CreateSFX(byte *buf) {
-	warning("TonyEngine::CreateSFX");
-	return NULL;
+	FPSFX *sfx;
+	
+	_theSound.CreateSfx(&sfx);
+	sfx->LoadFile(buf,FPCODEC_WAV);
+	return sfx;
 }
 
 void TonyEngine::PreloadUtilSFX(int nChannel, char *fn) {
@@ -185,11 +218,40 @@ void TonyEngine::UnloadAllUtilSFX(void) {
 }
 
 void TonyEngine::InitMusic() {
-	warning("TODO: TonyEngine::InitMusic");
+	int i;
+
+	_theSound.Init(/*m_wnd*/);
+	_theSound.SetMasterVolume(63);
+	
+	for (i = 0; i < 6; i++)
+		_theSound.CreateStream(&m_stream[i]);
+
+	for (i = 0; i < MAX_SFX_CHANNELS; i++) {
+		m_sfx[i] = m_utilSfx[i] = NULL;
+	}
+
+	// Crea la critical section per la musica
+	csMusic = g_system->createMutex();
+
+	// Carica effetti sonori
+//	PreloadUtilSFX(0,"AccendiOpzione.ADP");
+//	PreloadUtilSFX(1,"ApriInterfaccia.ADP");
+	
+	PreloadUtilSFX(0, "U01.ADP"); // invertiti!!
+	PreloadUtilSFX(1, "U02.ADP");
 }
 
 void TonyEngine::CloseMusic() {
-	warning("TODO: TonyEngine::CloseMusic");
+	for (int i = 0; i < 6; i++) {
+		m_stream[i]->Stop();
+		m_stream[i]->UnloadFile();
+		m_stream[i]->Release();
+	}
+
+	g_system->deleteMutex(csMusic);
+
+	UnloadAllSFX();
+	UnloadAllUtilSFX();
 }
 
 void TonyEngine::PauseSound(bool bPause) {

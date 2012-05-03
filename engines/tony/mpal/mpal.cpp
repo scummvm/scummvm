@@ -626,13 +626,13 @@ HGLOBAL resLoad(uint32 dwId) {
 	uint32 nSizeComp, nSizeDecomp;
 	byte *temp, *buf;
 
-	for (i=0;i<nResources;i++)
-		if (lpResources[i*2]==dwId) {
+	for (i = 0; i < nResources; i++)
+		if (lpResources[i * 2] == dwId) {
 			hMpr.seek(lpResources[i * 2 + 1]);
 			nBytesRead = hMpr.read(head, 4);
-			if (nBytesRead!=4)
+			if (nBytesRead != 4)
 				return NULL;
-			if (head[0]!='R' || head[1]!='E' || head[2]!='S' || head[3]!='D')
+			if (head[0] != 'R' || head[1] != 'E' || head[2] != 'S' || head[3] != 'D')
 				return NULL;
 
 			nSizeDecomp = hMpr.readUint32LE();

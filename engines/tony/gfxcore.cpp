@@ -290,14 +290,13 @@ RMGfxClearTask RMGfxTargetBuffer::taskClear;
 
 RMGfxTargetBuffer::RMGfxTargetBuffer() {
 	otlist = NULL;
-//	InitializeCriticalSection(&csModifyingOT);
+	csModifyingOT = g_system->createMutex();
 }
 
 RMGfxTargetBuffer::~RMGfxTargetBuffer() {
 	ClearOT();
-//	DeleteCriticalSection(&csModifyingOT);
+	g_system->deleteMutex(csModifyingOT);
 }
-
 
 void RMGfxTargetBuffer::ClearOT(void) {
 	OTList *cur, *n;

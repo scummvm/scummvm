@@ -62,10 +62,12 @@ RMInventory::RMInventory() {
 	m_items = NULL;
 	m_state = CLOSED;
 	m_bCombining = false;
+	m_csModifyInterface = g_system->createMutex();
 }
 
 RMInventory::~RMInventory() {
 	Close();
+	g_system->deleteMutex(m_csModifyInterface);
 }
 
 bool RMInventory::CheckPointInside(RMPoint &pt) {

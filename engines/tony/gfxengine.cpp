@@ -572,6 +572,9 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	m_bWiping = false;
 	m_hWipeEvent = CreateEvent(NULL, false, false, NULL);
 
+	// Crea l'evento di freeze
+	csMainLoop = g_system->createMutex();
+
 	// Inizializza la funzione di IRQ di Item per l'MPAL
 	ItemIrq((uint32)-1, (uint32)this, 0);
 	mpalInstallItemIrq(ItemIrq);

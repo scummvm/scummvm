@@ -702,7 +702,7 @@ void RMFontMacc::Init(void) {
 	cTable[':'] = 80;		
 	cTable['-'] = 81;		
 	cTable['<'] = 82;
-	cTable[' > '] = 83;
+	cTable['>'] = 83;
 	cTable['/'] = 84;
 	cTable['ÿ'] = 85;
 	cTable['à'] = 86;
@@ -1541,7 +1541,7 @@ void RMFontObj::Init(void) {
 	cTable['^'] = 56;
 	cTable['*'] = 57;
 	cTable['<'] = 58;
-	cTable[' > '] = 59;
+	cTable['>'] = 59;
 	cTable['«'] = 60;
 	cTable['»'] = 61;
 	cTable['ø'] = 62;
@@ -1847,6 +1847,8 @@ void RMText::WriteText(RMString text, int nFont, int *time) {
 		m_fonts[1] = new RMFontObj;   m_fonts[1]->Init();
 		m_fonts[2] = new RMFontMacc;  m_fonts[2]->Init();
 		m_fonts[3] = new RMFontCredits;  m_fonts[3]->Init();
+
+		m_cs = g_system->createMutex();
 	}
 
 	g_system->lockMutex(m_cs);

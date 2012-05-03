@@ -63,6 +63,8 @@ enum {
 
 struct TonyGameDescription;
 
+#define MAX_SFX_CHANNELS	32
+
 struct VoiceHeader {
 	int offset;
 	int code;
@@ -91,18 +93,6 @@ public:
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND	_theSound;
-	// Bounding box list manager
-	RMGameBoxes _theBoxes;
-	RMGfxEngine _theEngine;
-	RMWindow m_wnd;
-	bool m_bPaused;
-	bool m_bDrawLocation;
-	int m_startTime;
-	uint16 *m_curThumbnail;
-
-	bool m_bQuitNow;
-	bool m_bTimeFreezed;
-	int m_nTimeFreezed;
 
 	enum DATADIR {
 		DD_BASE = 1,
@@ -114,6 +104,25 @@ public:
 		DD_VOICES,
 		DD_BASE2
 	};
+
+	FPSTREAM *m_stream[6];
+	FPSFX *m_sfx[MAX_SFX_CHANNELS];
+	FPSFX *m_utilSfx[MAX_SFX_CHANNELS];
+	RMGfxEngine theEngine;
+	RMFont *fonts[2];
+	bool m_bPaused;
+	bool m_bDrawLocation;
+	int m_startTime;
+	uint16 *m_curThumbnail;
+
+	// Bounding box list manager
+	RMGameBoxes _theBoxes;
+	RMGfxEngine _theEngine;
+	RMWindow m_wnd;
+
+	bool m_bQuitNow;
+	bool m_bTimeFreezed;
+	int m_nTimeFreezed;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();

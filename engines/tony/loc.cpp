@@ -1628,7 +1628,7 @@ bool RMCharacter::RemoveThis(void) {
 }
 
 RMCharacter::RMCharacter() {
-//	InitializeCriticalSection(&csMove);
+	csMove = g_system->createMutex();
 	hEndOfPath = CreateEvent(NULL, false, false, NULL);
 	minpath = 0;
 	curSpeed = 3;
@@ -1639,7 +1639,7 @@ RMCharacter::RMCharacter() {
 }
 
 RMCharacter::~RMCharacter() {
-//	DeleteCriticalSection(&csMove);
+	g_system->deleteMutex(csMove);
 	CloseHandle(hEndOfPath);
 }
 
