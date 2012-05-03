@@ -38,7 +38,6 @@ class Component {
 public:
 	Component(Component *parent, int parentID, tag32 tag);
 
-	tag32 getTag() { return _tag; }
 	CMap *getCMap();
 	virtual void setColormap(CMap *c);
 	bool isVisible();
@@ -56,6 +55,8 @@ public:
 	virtual void saveState(SaveGame *) { }
 	virtual void restoreState(SaveGame *) { }
 	virtual ~Component();
+
+	bool isComponentType(char a0, char a1, char a2, char a3) { return _tag == MKTAG(a0, a1, a2, a3); }
 
 protected:
 	ObjectPtr<CMap> _cmap, _previousCmap;

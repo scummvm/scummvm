@@ -114,8 +114,8 @@ int KeyframeComponent::update(uint time) {
 }
 
 void KeyframeComponent::init() {
-	if (_parent->getTag() == MKTAG('M','M','D','L') ||
-		_parent->getTag() == MKTAG('M','O','D','L')) {
+	if (_parent->isComponentType('M','M','D','L') ||
+		_parent->isComponentType('M','O','D','L')) {
 		ModelComponent *mc = static_cast<ModelComponent *>(_parent);
 		_anim = new Animation(_fname, mc->getAnimManager(), _priority1, _priority2);
 	} else {

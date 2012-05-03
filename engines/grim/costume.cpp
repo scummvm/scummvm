@@ -156,7 +156,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 					parentID = -2;
 				prevComponent = _prevCostume->_components[0];
 				// Make sure that the component is valid
-				if (prevComponent->getTag() != MKTAG('M','M','D','L'))
+				if (!prevComponent->isComponentType('M','M','D','L'))
 					prevComponent = NULL;
 			} else if (id > 0) {
 				// Use the MainModelComponent of this costume as prevComponent,
@@ -247,7 +247,7 @@ ModelComponent *Costume::getMainModelComponent() const {
 	for (int i = 0; i < _numComponents; i++) {
 		// Needs to handle Main Models (pigeons) and normal Models
 		// (when Manny climbs the rope)
-		if (_components[i]->getTag() == MKTAG('M','M','D','L'))
+		if (_components[i]->isComponentType('M','M','D','L'))
 			return static_cast<ModelComponent *>(_components[i]);
 	}
 	return NULL;
@@ -419,8 +419,8 @@ void Costume::draw() {
 
 void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 	for (int i = 0; i < _numComponents; i++) {
-		if ((_components[i]->getTag() == MKTAG('M','M','D','L') ||
-			 _components[i]->getTag() == MKTAG('M','O','D','L'))) {
+		if ((_components[i]->isComponentType('M','M','D','L') ||
+			 _components[i]->isComponentType('M','O','D','L'))) {
 			ModelComponent *c = static_cast<ModelComponent *>(_components[i]);
 			c->getBoundingBox(x1, y1, x2, y2);
 		}

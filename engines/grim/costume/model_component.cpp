@@ -65,7 +65,7 @@ ModelComponent::~ModelComponent() {
 }
 
 void ModelComponent::init() {
-	if (_prevComp && _prevComp->getTag() == MKTAG('M','M','D','L')) {
+	if (_prevComp && _prevComp->isComponentType('M','M','D','L')) {
 		_previousCmap = _prevComp->getCMap();
 	}
 	// Skip loading if it was initialized
