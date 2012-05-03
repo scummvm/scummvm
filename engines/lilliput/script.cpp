@@ -72,7 +72,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	}
 
 	for (int i = 0; i < 640; i++) {
-		_array12311[i] = -1;
+		_array12311[i] = 0xFFFF;
 	}
 }
 
