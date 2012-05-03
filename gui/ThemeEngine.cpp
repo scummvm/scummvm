@@ -175,6 +175,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDButtonIdle,                 "button_idle",      true,   kDDWidgetBackgroundSlider},
 	{kDDButtonHover,                "button_hover",     false,  kDDButtonIdle},
 	{kDDButtonDisabled,             "button_disabled",  true,   kDDNone},
+	{kDDButtonPressed,              "button_pressed",   false,  kDDButtonIdle},
 
 	{kDDSliderFull,                 "slider_full",      false,  kDDNone},
 	{kDDSliderHover,                "slider_hover",     false,  kDDNone},
@@ -877,6 +878,8 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 		dd = kDDButtonHover;
 	else if (state == kStateDisabled)
 		dd = kDDButtonDisabled;
+	else if (state == kStatePressed)
+		dd = kDDButtonPressed;
 
 	queueDD(dd, r, 0, hints & WIDGET_CLEARBG);
 	queueDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
@@ -1125,6 +1128,7 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 				break;
 
 			case kStateEnabled:
+			case kStatePressed:
 				colorId = kTextColorNormal;
 				break;
 			}
@@ -1145,6 +1149,7 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 				break;
 
 			case kStateEnabled:
+			case kStatePressed:
 				colorId = kTextColorAlternative;
 				break;
 			}

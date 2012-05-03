@@ -663,7 +663,6 @@ LauncherDialog::LauncherDialog()
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
-
 	// Populate the list
 	updateListing();
 
