@@ -121,14 +121,14 @@ public:
 		#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
 		#endif
-		#if defined(__ANDROID__)
-		LINK_PLUGIN(EAS)
-		#endif
 		LINK_PLUGIN(ADLIB)
 //ResidualVM: disabled belows
 //		LINK_PLUGIN(PCSPK)
 //		LINK_PLUGIN(PCJR)
 		LINK_PLUGIN(CMS)
+		#if defined(__ANDROID__)
+//		LINK_PLUGIN(EAS)
+		#endif
 		#ifndef DISABLE_SID
 //		LINK_PLUGIN(C64)
 		#endif

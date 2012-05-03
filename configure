@@ -716,7 +716,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (sdl, null) [sdl]
+  --backend=BACKEND       backend to build (android, sdl, null) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -742,6 +742,7 @@ Fine tuning of the installation directories:
 
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
+                          special targets: android for Android
 
 Game engines:
   --enable-all-engines     enable all engines, including those which are
@@ -1854,15 +1855,17 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -march=armv5te"
 				CXXFLAGS="$CXXFLAGS -mtune=xscale"
 				CXXFLAGS="$CXXFLAGS -msoft-float"
+				LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/libs/armeabi"
 				;;
 			android-v7a)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
+				LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/libs/armeabi-v7a"
 				;;
 		esac
-		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
+		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-5/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections"
 		CXXFLAGS="$CXXFLAGS -funwind-tables"
@@ -1883,10 +1886,12 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5TE__"
 		# supress 'mangling of 'va_list' has changed in GCC 4.4'
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
-		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
+		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-5/arch-arm"
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
+		# for RTTI (dynamic_cast, ...) support
+		LIBS="-lsupc++"
 		;;
 	bada)
 		BADA_SDK_ROOT="`cygpath -m ${BADA_SDK}`"

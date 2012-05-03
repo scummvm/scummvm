@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+		package="org.residualvm.residualvm.plugin.@PLUGIN_NAME@"
+		android:versionCode="@PLUGIN_VERSION_CODE@"
+		android:versionName="1.5.0git"
+		android:installLocation="preferExternal"
+		android:sharedUserId="org.residualvm.residualvm">
+
+	<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="8" />
+
+	<application android:label="@string/app_name"
+			android:description="@string/app_desc"
+			android:icon="@drawable/residualvm">
+		<receiver android:name="org.residualvm.residualvm.PluginProvider"
+				android:process="org.residualvm.residualvm">
+			<intent-filter>
+				<action android:name="org.residualvm.residualvm.action.PLUGIN_QUERY"/>
+				<category android:name="android.intent.category.INFO"/>
+			</intent-filter>
+			<meta-data android:name="org.residualvm.residualvm.meta.UNPACK_LIB"
+					android:value="mylib/armeabi/lib@PLUGIN_NAME@.so" />
+		</receiver>
+	</application>
+
+	<uses-permission android:name="org.residualvm.residualvm.permission.RESIDUALVM_PLUGIN"/>
+	<uses-configuration android:reqFiveWayNav="true"
+			android:reqKeyboardType="qwerty"/>
+
+	<uses-configuration android:reqTouchScreen="finger"
+			android:reqKeyboardType="qwerty"/>
+
+	<uses-configuration android:reqTouchScreen="stylus"
+			android:reqKeyboardType="qwerty"/>
+</manifest>

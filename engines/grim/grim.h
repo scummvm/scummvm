@@ -179,6 +179,8 @@ public:
 
 	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
 
+	virtual void openMainMenuDialog();
+
 private:
 	void handleControls(Common::EventType type, const Common::KeyState &key);
 	void handleChars(Common::EventType type, const Common::KeyState &key);
