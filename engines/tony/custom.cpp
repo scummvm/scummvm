@@ -1833,7 +1833,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(uint32 nDialog, uint32 nStartGroup, uint32,
 	curDialog = nDialog;
 	
 	// Chiama l'MPAL per iniziare il dialogo
-	mpalQueryDoDialog(nDialog,nStartGroup);
+	mpalQueryDoDialogU32(nDialog, nStartGroup);
 
 	// Aspetta che una scelta si presenti
 	while ((nChoice=mpalQueryDialogWaitForChoice()) != -1) {
@@ -1844,7 +1844,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(uint32 nDialog, uint32 nStartGroup, uint32,
 
 		// Se c'e' una sola opzione, la fa automaticamente, e aspetta la prossima scelta
 		if (num == 1) {
-			mpalQueryDialogSelection(nChoice, sl[0]);
+			mpalQueryDialogSelectionU32(nChoice, sl[0]);
 			GlobalFree(sl);
 			continue;
 		}
@@ -1880,7 +1880,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(uint32 nDialog, uint32 nStartGroup, uint32,
 		MainHideMouse();
 		
 		dc.Hide();
-		mpalQueryDialogSelection(nChoice, sl[sel]);
+		mpalQueryDialogSelectionU32(nChoice, sl[sel]);
 
 		// Chiude la scelta
 		dc.Close();

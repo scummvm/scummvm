@@ -1349,7 +1349,7 @@ void RMCharacter::NewBoxEntered(int nBox) {
 	bool bOldReverse;
 	
 	// Richiama la On ExitBox
-	mpalQueryDoAction(3, curLocation, curbox);
+	mpalQueryDoActionU32(3, curLocation, curbox);
 
 	cur = theBoxes->GetBoxes(curLocation);
 	bOldReverse = cur->boxes[curbox].bReversed;
@@ -1383,7 +1383,7 @@ void RMCharacter::NewBoxEntered(int nBox) {
 	}
 
 	// Richiama la On EnterBox
-	mpalQueryDoAction(2, curLocation, curbox);
+	mpalQueryDoActionU32(2, curLocation, curbox);
 }
 	
 void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {

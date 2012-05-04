@@ -1061,6 +1061,9 @@ void RMTony::StartTalk(TALKTYPE nTalkType) {
 			headStartPat = PAT_SPAVENTOLEFT_STAND;
 			headLoopPat = PAT_SPAVENTOLEFT_LOOP;
 			break;
+
+		default:
+			break;
 		}
 		break;
 	}			
@@ -1355,6 +1358,10 @@ void RMTony::EndTalk(void) {
 			headStandPat = PAT_SPAVENTOLEFT_STAND;
 			bodyEndPat = 0;
 			break;
+
+
+		default:
+			break;
 		}
 		break;
 
@@ -1635,6 +1642,9 @@ void RMTony::StartStatic(TALKTYPE nTalk) {
 			bodyStartPat = BPAT_STANDRIGHT;
 			headLoopPat = PAT_SPAVENTORIGHT_STAND;
 			m_nBodyOffset.Set(6, 56);
+			break;
+
+		default:
 			break;
 		}
 

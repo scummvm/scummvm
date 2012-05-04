@@ -252,7 +252,7 @@ void RMWindow::Init(/*HINSTANCE hInst*/) {
 	
 	//hWaitFlip = CreateEvent(NULL,false,false, NULL);
 #endif
-};
+}
 
 void RMWindow::Close(void) {
 	DDClose();

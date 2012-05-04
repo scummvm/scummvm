@@ -523,7 +523,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryDialogSelection(nChoice,dwData)        \
         (bool)mpalQuery(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
 
-
+#define mpalQueryDialogSelectionU32(nChoice, dwData)        \
+        mpalQuery(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
 
 /****************************************************************************\
 *
@@ -547,9 +548,11 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *
 \****************************************************************************/
 
-#define mpalQueryDoAction(nAction,nItem,dwParam)      \
-        (HANDLE)mpalQuery(MPQ_DO_ACTION,(uint32)(nAction),(uint32)(nItem),(uint32)(dwParam))
+#define mpalQueryDoAction(nAction, nItem, dwParam)      \
+        (HANDLE)mpalQuery(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
 
+#define mpalQueryDoActionU32(nAction, nItem, dwParam)      \
+        mpalQuery(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
 
 
 /****************************************************************************\
@@ -569,6 +572,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryDoDialog(nDialog,nGroup)               \
         (HANDLE)mpalQuery(MPQ_DO_DIALOG,(uint32)(nDialog),(uint32)(nGroup))
 
+#define mpalQueryDoDialogU32(nDialog, nGroup)               \
+        mpalQuery(MPQ_DO_DIALOG,(uint32)(nDialog),(uint32)(nGroup))
 
 
 /****************************************************************************\
