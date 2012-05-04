@@ -36,14 +36,14 @@ typedef HANDLE HGLOBAL;
 
 class MemoryItem {
 protected:
-    void *_buffer;
+    byte *_buffer;
 	uint32 _size;
 public:
 	MemoryItem(uint32 size);
 	virtual ~MemoryItem();
 	
 	uint32 Size() { return _size; }
-	void *DataPointer() { return _buffer; }
+	void *DataPointer() { return (void *)_buffer; }
 	bool IsValid() { return _buffer != NULL; }
 
     // Casting for access to data
@@ -61,7 +61,7 @@ public:
 	HGLOBAL alloc(uint32 size);
 	MemoryItem &getItem(HGLOBAL handle);
 	MemoryItem &operator[](HGLOBAL handle);
-	void erase(MemoryItem &item);
+	void erase(MemoryItem *item);
 	void erase(HGLOBAL handle);
 
 	uint32 getSize(HANDLE handle);

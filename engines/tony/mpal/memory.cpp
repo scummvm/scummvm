@@ -127,9 +127,9 @@ uint32 MemoryManager::getSize(HGLOBAL handle) {
 /**
  * Erases a given item
  */
-void MemoryManager::erase(MemoryItem &item) {
+void MemoryManager::erase(MemoryItem *item) {
 	delete item;
-	_memoryBlocks.remove(&item);
+	_memoryBlocks.remove(item);
 }
 
 /**
@@ -137,7 +137,7 @@ void MemoryManager::erase(MemoryItem &item) {
  */
 void MemoryManager::erase(HGLOBAL handle) {
 	MemoryItem &item = getItem(handle);
-	erase(item);
+	erase(&item);
 }
 
 } // end of namespace MPAL
