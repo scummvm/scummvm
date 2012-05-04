@@ -66,7 +66,7 @@ namespace MPAL {
 
 static bool CompareCommands(struct command *cmd1, struct command *cmd2) {
 	if (cmd1->type == 2 && cmd2->type == 2) {
-		if (strcmp(cmd1->lpszVarName,cmd2->lpszVarName)==0 &&
+		if (strcmp(cmd1->lpszVarName, cmd2->lpszVarName) == 0 &&
 			CompareExpressions(cmd1->expr,cmd2->expr))
 			return true;
 		else
@@ -169,94 +169,97 @@ static byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	uint32 curCmd;
 	uint32 len;
 
-	lpmdDialog->nObj=*(int *)lpBuf;
-	lpBuf+=4;
+	lpmdDialog->nObj = READ_LE_UINT32(lpBuf);
+	lpBuf += 4;
 
 	/* Periodi */
-	num=*(uint16 *)lpBuf; lpBuf+=2;
+	num = READ_LE_UINT16(lpBuf); lpBuf += 2;
 	
-	if (num >= MAX_PERIODS_PER_DIALOG-1) {
-		Common::String msg = Common::String::format("Too much periods in dialog #%d",lpmdDialog->nObj);
+	if (num >= MAX_PERIODS_PER_DIALOG - 1) {
+		Common::String msg = Common::String::format("Too much periods in dialog #%d", lpmdDialog->nObj);
 		MessageBox(msg);
 	}
 
-	for (i=0;i<num;i++) {
-		lpmdDialog->PeriodNums[i]=*(uint16 *)lpBuf; lpBuf+=2;
-		lpmdDialog->Periods[i]=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,*lpBuf+1);
+	for (i = 0; i < num; i++) {
+		lpmdDialog->PeriodNums[i] = READ_LE_UINT16(lpBuf); lpBuf += 2;
+		lpmdDialog->Periods[i] = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
 		lpLock = (byte *)GlobalLock(lpmdDialog->Periods[i]);
-		CopyMemory(lpLock,lpBuf+1,*lpBuf);
+		Common::copy(lpBuf + 1, lpBuf + 1 + *lpBuf, lpLock);
+		lpLock[*lpBuf] = '\0';
 		GlobalUnlock(lpmdDialog->Periods[i]);
-		lpBuf+=(*lpBuf)+1;
+		lpBuf += (*lpBuf) + 1;
 	}
 
-	lpmdDialog->PeriodNums[i]=0;
-	lpmdDialog->Periods[i]=NULL;
+	lpmdDialog->PeriodNums[i] = 0;
+	lpmdDialog->Periods[i] = NULL;
 
 	/* Gruppi */
-	num=*(uint16 *)lpBuf; lpBuf+=2;
-	curCmd=0;
+	num = READ_LE_UINT16(lpBuf); lpBuf += 2;
+	curCmd = 0;
 
 	if (num >= MAX_GROUPS_PER_DIALOG) {
-		Common::String msg = Common::String::format("Too much groups in dialog #%d",lpmdDialog->nObj);
+		Common::String msg = Common::String::format("Too much groups in dialog #%d", lpmdDialog->nObj);
 		MessageBox(msg);
 	}
 
-	for (i=0;i<num;i++) {
-		lpmdDialog->Group[i].num=*(uint16 *)lpBuf; lpBuf+=2;
-		lpmdDialog->Group[i].nCmds=*lpBuf; lpBuf++;
+	for (i = 0; i < num; i++) {
+		lpmdDialog->Group[i].num = READ_LE_UINT16(lpBuf); lpBuf += 2;
+		lpmdDialog->Group[i].nCmds = *lpBuf; lpBuf++;
 
 		if (lpmdDialog->Group[i].nCmds >= MAX_COMMANDS_PER_GROUP) {
 			Common::String msg = Common::String::format("Too much commands in group #%d in dialog #%d",lpmdDialog->Group[i].num,lpmdDialog->nObj);
 			MessageBox(msg);
 		}
 
-		for (j=0;j<lpmdDialog->Group[i].nCmds;j++) {
-			lpmdDialog->Command[curCmd].type=*lpBuf;
+		for (j = 0; j < lpmdDialog->Group[i].nCmds; j++) {
+			lpmdDialog->Command[curCmd].type = *lpBuf;
 			lpBuf++;
 
 			switch (lpmdDialog->Command[curCmd].type) {
 			// Call custom function
 			case 1:
-				lpmdDialog->Command[curCmd].nCf =*(uint16 *)(lpBuf); lpBuf+=2;
-				lpmdDialog->Command[curCmd].arg1=*(int *)(lpBuf); lpBuf+=4;
-				lpmdDialog->Command[curCmd].arg2=*(int *)(lpBuf); lpBuf+=4;
-				lpmdDialog->Command[curCmd].arg3=*(int *)(lpBuf); lpBuf+=4;
-				lpmdDialog->Command[curCmd].arg4=*(int *)(lpBuf); lpBuf+=4;
+				lpmdDialog->Command[curCmd].nCf = READ_LE_UINT16(lpBuf); lpBuf += 2;
+				lpmdDialog->Command[curCmd].arg1 = READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmdDialog->Command[curCmd].arg2 = READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmdDialog->Command[curCmd].arg3 = READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmdDialog->Command[curCmd].arg4 = READ_LE_UINT32(lpBuf); lpBuf += 4;
 				break;
 
 			// Variable assign
 			case 2:
-				len=*lpBuf;
+				len = *lpBuf;
 				lpBuf++;
-				lpmdDialog->Command[curCmd].lpszVarName=(char *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,len+1);
-				if (lpmdDialog->Command[curCmd].lpszVarName==NULL)
+				lpmdDialog->Command[curCmd].lpszVarName = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
+				if (lpmdDialog->Command[curCmd].lpszVarName == NULL)
 					return NULL;
-				CopyMemory(lpmdDialog->Command[curCmd].lpszVarName,lpBuf,len);
-				lpBuf+=len;
 
-				lpBuf=ParseExpression(lpBuf,&lpmdDialog->Command[curCmd].expr);
-				if (lpBuf==NULL)
+				Common::copy(lpBuf, lpBuf + len, lpmdDialog->Command[curCmd].lpszVarName);
+				lpmdDialog->Command[curCmd].lpszVarName[len] = '\0';
+				lpBuf += len;
+
+				lpBuf=ParseExpression(lpBuf, &lpmdDialog->Command[curCmd].expr);
+				if (lpBuf == NULL)
 					return NULL;
 				break;
 
 			// Do Choice
 			case 3:
-				lpmdDialog->Command[curCmd].nChoice=*(uint16 *)lpBuf; lpBuf+=2;
+				lpmdDialog->Command[curCmd].nChoice = READ_LE_UINT16(lpBuf); lpBuf += 2;
 				break;
 
 			default:
 				return NULL;
 			}
 
-			for (kk=0;kk<curCmd;kk++) {
-				if (CompareCommands(&lpmdDialog->Command[kk],&lpmdDialog->Command[curCmd])) {
-					lpmdDialog->Group[i].CmdNum[j]=kk;
+			for (kk = 0;kk < curCmd; kk++) {
+				if (CompareCommands(&lpmdDialog->Command[kk], &lpmdDialog->Command[curCmd])) {
+					lpmdDialog->Group[i].CmdNum[j] = kk;
 					break;
 				}
 			}
 
-			if (kk==curCmd) {	
-				lpmdDialog->Group[i].CmdNum[j]=curCmd;
+			if (kk == curCmd) {	
+				lpmdDialog->Group[i].CmdNum[j] = curCmd;
 				curCmd++;
 			}
 		}
@@ -268,33 +271,33 @@ static byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	}
 
 	/* Choices */
-	num=*(uint16 *)lpBuf; lpBuf+=2;
+	num=*(uint16 *)lpBuf; lpBuf += 2;
 
 	if (num >= MAX_CHOICES_PER_DIALOG) {
 		Common::String msg = Common::String::format("Too much choices in dialog #%d",lpmdDialog->nObj);
 		MessageBox(msg);
 	}
 
-	for (i=0;i<num;i++) {
-		lpmdDialog->Choice[i].nChoice=*(uint16 *)lpBuf; lpBuf+=2;
+	for (i = 0; i < num; i++) {
+		lpmdDialog->Choice[i].nChoice = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		num2=*lpBuf++;
+		num2 = *lpBuf++;
 
 		if (num2 >= MAX_SELECTS_PER_CHOICE) {
 			Common::String msg = Common::String::format("Too much selects in choice #%d in dialog #%d",lpmdDialog->Choice[i].nChoice,lpmdDialog->nObj);
 			MessageBox(msg);
 		}
 
-		for (j=0;j<num2;j++) {
+		for (j = 0; j < num2; j++) {
 			// When
 			switch (*lpBuf++) {
 			case 0:
-				lpmdDialog->Choice[i].Select[j].when=NULL;
+				lpmdDialog->Choice[i].Select[j].when = NULL;
 				break;
 
 			case 1:
-				lpBuf=ParseExpression(lpBuf,&lpmdDialog->Choice[i].Select[j].when);
-				if (lpBuf==NULL)
+				lpBuf = ParseExpression(lpBuf,&lpmdDialog->Choice[i].Select[j].when);
+				if (lpBuf == NULL)
 					return NULL;
 				break;
 
@@ -303,31 +306,31 @@ static byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			}
 
 			// Attrib
-			lpmdDialog->Choice[i].Select[j].attr=*lpBuf++;
+			lpmdDialog->Choice[i].Select[j].attr = *lpBuf++;
 
 			// Data
-			lpmdDialog->Choice[i].Select[j].dwData=*(uint32 *)lpBuf; lpBuf+=4;
+			lpmdDialog->Choice[i].Select[j].dwData = READ_LE_UINT32(lpBuf); lpBuf += 4;
 
 			// PlayGroup
-			num3=*lpBuf; *lpBuf++;
+			num3 = *lpBuf; *lpBuf++;
 
   			if (num3 >= MAX_PLAYGROUPS_PER_SELECT) {
-				Common::String msg = Common::String::format("Too much playgroups in select #%d in choice #%d in dialog #%d",j,lpmdDialog->Choice[i].nChoice,lpmdDialog->nObj);
+				Common::String msg = Common::String::format("Too much playgroups in select #%d in choice #%d in dialog #%d", j, lpmdDialog->Choice[i].nChoice, lpmdDialog->nObj);
 				MessageBox(msg);
 			}
 
-			for (z=0;z<num3;z++) {
-				lpmdDialog->Choice[i].Select[j].wPlayGroup[z]=*(uint16 *)lpBuf; lpBuf+=2;
+			for (z = 0; z < num3; z++) {
+				lpmdDialog->Choice[i].Select[j].wPlayGroup[z] = READ_LE_UINT16(lpBuf); lpBuf += 2;
 			}
 
-			lpmdDialog->Choice[i].Select[j].wPlayGroup[num3]=0;
+			lpmdDialog->Choice[i].Select[j].wPlayGroup[num3] = 0;
 		}
 
 		// Segna l'ultimo select
-		lpmdDialog->Choice[i].Select[num2].dwData=0;
+		lpmdDialog->Choice[i].Select[num2].dwData = 0;
 	}
 
-	lpmdDialog->Choice[num].nChoice=0;
+	lpmdDialog->Choice[num].nChoice = 0;
 
 	return lpBuf;
 }
