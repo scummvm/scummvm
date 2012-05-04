@@ -66,6 +66,13 @@ namespace Tony {
 #define RM_SKIPY  ((RM_BBY - RM_SY) / 2)
 #define RM_SKIPX  0
 
+// Name lengths
+// FIXME: Some of these can likely be removed when refactoring is completed
+#define MAX_DRIVE 10
+#define MAX_DIR 255
+#define MAX_FNAME 100
+#define MAX_EXT 10
+
 // Tony's actions
 enum RMTonyAction {
 	TA_GOTO = 0,

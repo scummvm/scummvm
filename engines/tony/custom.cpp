@@ -110,7 +110,7 @@ int tappeti[200];
 #define T_MARE 6
 #define T_MAREMETA 7
 
-char* tappetiFile[] =  {
+const char *tappetiFile[] =  {
 	"None",
 	"1.ADP",	// Grilli.WAV
 	"2.ADP",	// Grilli-Ovattati.WAV
@@ -121,7 +121,7 @@ char* tappetiFile[] =  {
 	"6.ADP"		// Mare1.WAV metà volume
 };
 
-struct {
+struct CharacterStruct {
 	uint32 code;
 	RMItem *item;
 	byte r, g, b;
@@ -155,9 +155,10 @@ struct {
 		endtalkpattern = f->readUint32LE();
 		numtexts = f->readUint32LE();
 	}
-} Character[16];
+};
+CharacterStruct Character[16];
 
-struct {
+struct MCharacterStruct {
 	uint32 code;
 	RMItem *item;
 	byte r, g, b;
@@ -202,7 +203,8 @@ struct {
 		curTalk = f->readUint32LE();
 		bAlwaysBack = f->readByte();
 	}
-} MCharacter[10];
+};
+MCharacterStruct MCharacter[10];
 
 bool IsMChar[16];
 
@@ -216,7 +218,7 @@ bool bTonyIsSpeaking = false;
 
 int curChangedHotspot = 0;
 
-struct {
+struct ChangedHotspotStruct {
 	uint32 dwCode;
 	uint32 nX, nY;
 
@@ -230,7 +232,8 @@ struct {
 		nX = f->readUint32LE();
 		nY = f->readUint32LE();
 	}
-} ChangedHotspot[256];
+};
+ChangedHotspotStruct ChangedHotspot[256];
 
 void ReapplyChangedHotspot(void) {
 	int i;
@@ -2015,11 +2018,11 @@ DECLARE_CUSTOM_FUNCTION(DemuteStacchetto)(uint32, uint32, uint32, uint32) {
 	_vm->SetMusicVolume(2, 64);
 }
 
-struct {
+struct MusicFileEntry {
 	const char *name;
 	int sync;
-} musicFiles[] = 
-{ 
+};
+const MusicFileEntry musicFiles[] =  { 
 /*
 	{ "PREGAME1.ADP", 0 }, { "SONO1.ADP", 0 },
 	{ "SONO2.ADP", 0 }, { "SONO3.ADP", 0 },

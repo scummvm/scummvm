@@ -1069,10 +1069,10 @@ DOFRAMERATE:
 *       Metodi di RMSnapshot
 \****************************************************************************/
 
-char RMSnapshot::bufDrive[_MAX_DRIVE];
-char RMSnapshot::bufDir[_MAX_DIR];
-char RMSnapshot::bufName[_MAX_FNAME];
-char RMSnapshot::bufExt[_MAX_EXT];
+char RMSnapshot::bufDrive[MAX_DRIVE];
+char RMSnapshot::bufDir[MAX_DIR];
+char RMSnapshot::bufName[MAX_FNAME];
+char RMSnapshot::bufExt[MAX_EXT];
 char RMSnapshot::filename[512];
 byte RMSnapshot::rgb[RM_SX * RM_SY * 3];
 

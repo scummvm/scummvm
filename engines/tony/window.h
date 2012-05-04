@@ -61,7 +61,7 @@ struct DDSURFACEDESC {
 class RMSnapshot {
 private:
 	// Buffer per la creazione dei path
-	static char bufDrive[_MAX_DRIVE], bufDir[_MAX_DIR], bufName[_MAX_FNAME], bufExt[_MAX_EXT];
+	static char bufDrive[MAX_DRIVE], bufDir[MAX_DIR], bufName[MAX_FNAME], bufExt[MAX_EXT];
 	static char filename[512];
 
 	// Buffer per la conversione a RGB

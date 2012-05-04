@@ -93,10 +93,10 @@ bool bPatIrqFreeze;
 /****************************************/
 
 static char path_buffer[_MAX_PATH];
-static char drive[_MAX_DRIVE];
-static char dir[_MAX_DIR];
-static char fname[_MAX_FNAME];
-static char ext[_MAX_EXT];
+static char drive[MAX_DRIVE];
+static char dir[MAX_DIR];
+static char fname[MAX_FNAME];
+static char ext[MAX_EXT];
 
 HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
 	return _vm->GetEngine()->LoadLocation(nLoc, pt,start);
