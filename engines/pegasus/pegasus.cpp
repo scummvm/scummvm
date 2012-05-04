@@ -575,6 +575,13 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 }
 
 void PegasusEngine::makeContinuePoint() {
+	// WORKAROUND: Do not attempt to make a continue point if the interface is not set
+	// up. The original did *not* do this and attempting to restore the game using the pause
+	// menu during the canyon/space chase sequence would segfault the game and crash the
+	// system. Nice!
+	if (!g_interface)
+		return;
+
 	delete _continuePoint;
 
 	Common::MemoryWriteStreamDynamic newPoint(DisposeAfterUse::NO);
