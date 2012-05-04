@@ -45,13 +45,10 @@
  *                                                                        *
  **************************************************************************/
 
-#include "tony/gfxEngine.h"
+#include "tony/gfxengine.h"
 #include "tony/mpal/mpalutils.h"
 
 namespace Tony {
-
-static char rcsid[] = "$Id: $";
-
 
 /****************************************************************************\
 *       Metodi di RMGfxTask

@@ -271,7 +271,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryGlobalVar(lpszVarName)                 \
-        (uint32)mpalQuery(MPQ_GLOBAL_VAR,(LPSTR)(lpszVarName))
+        (uint32)mpalQuery(MPQ_GLOBAL_VAR,(const char *)(lpszVarName))
 
 
 

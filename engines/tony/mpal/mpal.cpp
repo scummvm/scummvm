@@ -868,9 +868,9 @@ void PASCAL ScriptThread(LPMPALSCRIPT s) {
 		// Dorme il tempo necessario per arrivare al momento successivo
 		if (s->Moment[i].dwTime==-1) {
 			WaitForMultipleObjects(numHandles,cfHandles,true,INFINITE);
-			dwStartTime=timeGetTime();
+			dwStartTime = timeGetTime();
 		} else {
-			dwCurTime=timeGetTime();
+			dwCurTime = timeGetTime();
 			if (dwCurTime < dwStartTime+(s->Moment[i].dwTime*100)) {
   //     warning("PlayScript(): Sleeping %lums\n",dwStartTime+(s->Moment[i].dwTime*100)-dwCurTime);
 				Sleep(dwStartTime+(s->Moment[i].dwTime*100)-dwCurTime);
@@ -1043,23 +1043,23 @@ void PASCAL LocationPollThread(uint32 id) {
  /* Cerchiamo gli items della locazione senza idle actions e li eliminiamo
     dalla lista */
 	LockItems();
-	nIdleActions=0;
-	nRealItems=0;
-	for (i=0;i<numitems;i++) {
-		int ord=itemGetOrderFromNum(il[i]);
+	nIdleActions = 0;
+	nRealItems = 0;
+	for (i = 0; i < numitems; i++) {
+		int ord = itemGetOrderFromNum(il[i]);
 
-		if (ord==-1) continue;
+		if (ord == -1) continue;
 	 
-		curItem=lpmiItems+ord;
+		curItem = lpmiItems + ord;
 
 		k=0;
-		for (j=0;j<curItem->nActions;j++)
-			if (curItem->Action[j].num==0xFF)
+		for (j = 0; j < curItem->nActions; j++)
+			if (curItem->Action[j].num == 0xFF)
 				k++;
 
-		nIdleActions+=k;
+		nIdleActions += k;
 
-		if (k==0)
+		if (k == 0)
 			/* Possiamo eliminare questo item dalla lista */
 			il[i] = (uint32)NULL;
 		else
@@ -1068,28 +1068,28 @@ void PASCAL LocationPollThread(uint32 id) {
 	UnlockItems();
 
 	/* Se non e' rimasto nessuno possiamo uscire */
-	if (nRealItems==0) {
+	if (nRealItems == 0) {
 		GlobalFree(il);
 		ExitThread(0);
 //		_endthread();
 	}
 
-	MyThreads=(MYTHREAD*)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,nRealItems*sizeof(MYTHREAD));
-	if (MyThreads==NULL) {
+	MyThreads=(MYTHREAD *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, nRealItems * sizeof(MYTHREAD));
+	if (MyThreads == NULL) {
 		GlobalFree(il);
 		ExitThread(0);
 //		_endthread();
 	}
 
 	/* Inizializziamo le routine random */
-	//curTime=timeGetTime();
+	//curTime = timeGetTime();
 	//srand(curTime);
 
 
  /* Abbiamo appurato che esiste almeno un item che contiene idle actions.
     Ora creaiamo le copie speculari delle idle actions */
-	MyActions=(MYACTION*)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,nIdleActions*sizeof(MYACTION));
-	if (MyActions==NULL) {
+	MyActions = (MYACTION *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, nIdleActions * sizeof(MYACTION));
+	if (MyActions == NULL) {
 		GlobalFree(MyThreads);
 		GlobalFree(il);
 		ExitThread(0);
@@ -1097,27 +1097,27 @@ void PASCAL LocationPollThread(uint32 id) {
 	}
 
 	LockItems();
-	k=0;
+	k = 0;
 
-	for (i=0;i<numitems;i++) {
-		if (il[i]==0)
+	for (i = 0; i < numitems; i++) {
+		if (il[i] == 0)
 			continue;
 
-		curItem=lpmiItems+itemGetOrderFromNum(il[i]);
+		curItem = lpmiItems + itemGetOrderFromNum(il[i]);
 
-		for (j=0;j<curItem->nActions;j++)
-			if (curItem->Action[j].num==0xFF) {
-				MyActions[k].nItem=il[i];
-				MyActions[k].nAction=j;
+		for (j = 0; j < curItem->nActions; j++)
+			if (curItem->Action[j].num == 0xFF) {
+				MyActions[k].nItem = il[i];
+				MyActions[k].nAction = j;
 
-				MyActions[k].wTime=curItem->Action[j].wTime;
-				MyActions[k].perc=curItem->Action[j].perc;
-				MyActions[k].when=curItem->Action[j].when;
-				MyActions[k].nCmds=curItem->Action[j].nCmds;
+				MyActions[k].wTime = curItem->Action[j].wTime;
+				MyActions[k].perc = curItem->Action[j].perc;
+				MyActions[k].when = curItem->Action[j].when;
+				MyActions[k].nCmds = curItem->Action[j].nCmds;
 				CopyMemory(MyActions[k].CmdNum, curItem->Action[j].CmdNum,
-				MAX_COMMANDS_PER_ACTION*sizeof(uint16));
+				MAX_COMMANDS_PER_ACTION * sizeof(uint16));
 
-				MyActions[k].dwLastTime=timeGetTime();
+				MyActions[k].dwLastTime = timeGetTime();
 				k++;
 			}
 	}
@@ -1132,7 +1132,7 @@ void PASCAL LocationPollThread(uint32 id) {
 	while (1) {
 		/* Cerchiamo tra tutte le idle actions quella a cui manca meno tempo per
 			l'esecuzione */
-		curTime=timeGetTime();
+		curTime = timeGetTime();
 		dwSleepTime=(uint32)-1L;
 
 		for (k=0;k<nIdleActions;k++)
@@ -1154,7 +1154,7 @@ void PASCAL LocationPollThread(uint32 id) {
 					MyThreads[i].nItem=0;
 			}
 
-		curTime=timeGetTime();
+		curTime = timeGetTime();
 
 		/* Cerchiamo all'interno delle idle actions quale e' necessario eseguire */
 		for (k=0;k<nIdleActions;k++)
@@ -1204,7 +1204,7 @@ void PASCAL LocationPollThread(uint32 id) {
 					UnlockItems();
 
 					/* Copiamo l'azione nella #0 */
-//					newItem->Action[0].nCmds=curItem->Action[j].nCmds;
+//					newItem->Action[0].nCmds = curItem->Action[j].nCmds;
 //					CopyMemory(newItem->Action[0].CmdNum,curItem->Action[j].CmdNum,newItem->Action[0].nCmds*sizeof(newItem->Action[0].CmdNum[0]));
 					newItem->dwRes=j;
 

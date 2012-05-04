@@ -49,7 +49,7 @@
 #include "tony/mpal/lzo.h"
 #include "tony/mpal/mpalutils.h"
 #include "tony/custom.h"
-#include "tony/gfxEngine.h"
+#include "tony/gfxengine.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -934,7 +934,7 @@ void RMGfxEngine::LoadState(const char *fn) {
 	
 	// Le versioni vecchie necessitano di On enter
 	if (ver < 5)
-		mpalQueryDoAction(0,loc,0);
+		mpalQueryDoAction(0, loc, 0);
 	else {
 		// In quelle nuove, ci basta resettare gli mcode
 		MCharResetCodes();

@@ -55,8 +55,6 @@ namespace Tony {
 
 using namespace ::Tony::MPAL;
 
-static char rcsid[] = "$Id: $";
-
 extern bool bSkipSfxNoLoop;
 
 
