@@ -1518,7 +1518,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 			return INVALID_HANDLE_VALUE;
 
 		// Nella nuova versione scriviamo il numero dell'azione in dwRes
-		CopyMemory(newitem,item,sizeof(MPALITEM));
+		Common::copy((byte *)item, (byte *)item + sizeof(MPALITEM), (byte *)newitem);
 /*   newitem->Action[0].nCmds=item->Action[i].nCmds;
    CopyMemory(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
 */

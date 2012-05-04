@@ -1055,8 +1055,8 @@ void RMFontCredits::Init(void) {
 	cTable[(byte)'é'] = 57; 
 //	cTable[''] = 58; // e ^
 //	cTable[''] = 59; // e pallini
-	cTable['ì'] = 60;
-	cTable['í'] = 61;
+	cTable[(byte)'ì'] = 60;
+	cTable[(byte)'í'] = 61;
 //	cTable[''] = 62; // i ^
 //	cTable[''] = 63; // i pallini
 	cTable[(byte)'ò'] = 64;
