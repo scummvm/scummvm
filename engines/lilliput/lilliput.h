@@ -165,7 +165,7 @@ public:
 	byte _rulesBuffer2_12[40];
 	byte _rulesBuffer2_13[40];
 	byte _rulesBuffer2_14[40];
-	byte _characterVariables[40 * 32];
+	byte _characterVariables_[1400 + 3120];
 	byte *_currentCharacterVariables;
 	byte _rulesBuffer2_16[40 * 32];
 	int *_rulesChunk3;
@@ -351,6 +351,9 @@ public:
 	void sub16217();
 	void setNextDisplayCharacter(int var1);
 	void handleGameScripts();
+
+	// Added by Strangerke
+	byte *getCharacterVariablesPtr(int16 index);
 
 	// Temporary stubs
 	byte _keyboard_getch();
