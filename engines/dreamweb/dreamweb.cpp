@@ -522,6 +522,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 			return c;
 		}
 	case Common::FR_FRA:
+	case Common::IT_ITA:
 		switch(c) {
 		case 133:
 			return 'Z' + 1;	
