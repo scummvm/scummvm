@@ -67,12 +67,12 @@ namespace MPAL {
 static bool CompareCommands(struct command *cmd1, struct command *cmd2) {
 	if (cmd1->type == 2 && cmd2->type == 2) {
 		if (strcmp(cmd1->lpszVarName, cmd2->lpszVarName) == 0 &&
-			CompareExpressions(cmd1->expr,cmd2->expr))
+			CompareExpressions(cmd1->expr, cmd2->expr))
 			return true;
 		else
 			return false;
 	} else
-		return (memcmp(cmd1,cmd2,sizeof(struct command))==0);
+		return (memcmp(cmd1, cmd2, sizeof(struct command)) == 0);
 }
 
 
@@ -92,7 +92,7 @@ static bool CompareCommands(struct command *cmd1, struct command *cmd2) {
 *
 \****************************************************************************/
 
-static byte *ParseScript(byte *lpBuf, LPMPALSCRIPT lpmsScript) {
+static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 	int curCmd,j,len;
 	uint i;
 
@@ -127,7 +127,7 @@ static byte *ParseScript(byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 				CopyMemory(lpmsScript->Command[curCmd].lpszVarName, lpBuf, len);
 				lpBuf+=len;
 
-				lpBuf=ParseExpression(lpBuf,&lpmsScript->Command[curCmd].expr);
+				lpBuf = ParseExpression(lpBuf, &lpmsScript->Command[curCmd].expr);
 				if (lpBuf==NULL)
 				return NULL;
 				break;
@@ -162,15 +162,12 @@ static byte *ParseScript(byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 *
 \****************************************************************************/
 
-static byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog) {
+static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	uint32 i,j,z,kk;
 	uint32 num,num2,num3;
 	byte *lpLock;
 	uint32 curCmd;
 	uint32 len;
-
-	lpmdDialog->nObj = READ_LE_UINT32(lpBuf);
-	lpBuf += 4;
 
 	/* Periodi */
 	num = READ_LE_UINT16(lpBuf); lpBuf += 2;
@@ -185,7 +182,6 @@ static byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 		lpmdDialog->Periods[i] = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
 		lpLock = (byte *)GlobalLock(lpmdDialog->Periods[i]);
 		Common::copy(lpBuf + 1, lpBuf + 1 + *lpBuf, lpLock);
-		lpLock[*lpBuf] = '\0';
 		GlobalUnlock(lpmdDialog->Periods[i]);
 		lpBuf += (*lpBuf) + 1;
 	}
@@ -234,10 +230,9 @@ static byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 					return NULL;
 
 				Common::copy(lpBuf, lpBuf + len, lpmdDialog->Command[curCmd].lpszVarName);
-				lpmdDialog->Command[curCmd].lpszVarName[len] = '\0';
 				lpBuf += len;
 
-				lpBuf=ParseExpression(lpBuf, &lpmdDialog->Command[curCmd].expr);
+				lpBuf = ParseExpression(lpBuf, &lpmdDialog->Command[curCmd].expr);
 				if (lpBuf == NULL)
 					return NULL;
 				break;
@@ -355,7 +350,7 @@ static byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 *
 \****************************************************************************/
 
-static byte *ParseItem(byte *lpBuf, LPMPALITEM lpmiItem) {
+static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	byte len;
 	uint32 i,j,kk;
 	uint32 curCmd;
@@ -403,8 +398,8 @@ static byte *ParseItem(byte *lpBuf, LPMPALITEM lpmiItem) {
 			lpmiItem->Action[i].when=NULL;
 		} else {
 			lpBuf++;
-			lpBuf=ParseExpression(lpBuf,&lpmiItem->Action[i].when);
-			if (lpBuf==NULL)
+			lpBuf = ParseExpression(lpBuf,&lpmiItem->Action[i].when);
+			if (lpBuf == NULL)
 				return NULL;
 		}
 
@@ -489,7 +484,7 @@ static byte *ParseItem(byte *lpBuf, LPMPALITEM lpmiItem) {
 *
 \****************************************************************************/
 
-static byte *ParseLocation(byte *lpBuf, LPMPALLOCATION lpmlLocation) {
+static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation) {
 	lpmlLocation->nObj=*(int *)lpBuf;
 	lpBuf+=4;
 	lpmlLocation->dwXlen=*(uint16 *)lpBuf;
@@ -529,32 +524,32 @@ static byte *ParseLocation(byte *lpBuf, LPMPALLOCATION lpmlLocation) {
 *
 \****************************************************************************/
 
-bool ParseMpc(byte *lpBuf) {
+bool ParseMpc(const byte *lpBuf) {
 	uint16 i, j;
 	uint16 wLen;
 	byte *lpTemp, *lpTemp2;
 
 	/* 1. Variabili */
-	if (lpBuf[0]!='V' || lpBuf[1]!='A' || lpBuf[2]!='R' || lpBuf[3]!='S')
+	if (lpBuf[0] != 'V' || lpBuf[1] != 'A' || lpBuf[2] != 'R' || lpBuf[3] != 'S')
 		return false;
 
-	lpBuf+=4;
-	nVars=*(uint16 *)lpBuf;
-	lpBuf+=2;
+	lpBuf += 4;
+	nVars = READ_LE_UINT16(lpBuf);
+	lpBuf += 2;
 
-	hVars=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,sizeof(MPALVAR)*(uint32)nVars);
-	if (hVars==NULL)
+	hVars = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALVAR) * (uint32)nVars);
+	if (hVars == NULL)
 		return false;
 
-	lpmvVars=(LPMPALVAR)GlobalLock(hVars);
+	lpmvVars = (LPMPALVAR)GlobalLock(hVars);
 
-	for (i=0;i<nVars;i++) {
+	for (i = 0; i < nVars; i++) {
 		wLen=*(byte *)lpBuf;
 		lpBuf++;
-		CopyMemory(lpmvVars->lpszVarName,lpBuf,MIN(wLen, (uint16)32));
-		lpBuf+=wLen;
-		lpmvVars->dwVal=*(int *)lpBuf;
-		lpBuf+=4;
+		CopyMemory(lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
+		lpBuf += wLen;
+		lpmvVars->dwVal = READ_LE_UINT32(lpBuf);
+		lpBuf += 4;
 
 		lpBuf++;             // Salta 'ext'
 		lpmvVars++;
@@ -563,44 +558,44 @@ bool ParseMpc(byte *lpBuf) {
 	GlobalUnlock(hVars);
 
 	/* 2. Messaggi */
-	if (lpBuf[0]!='M' || lpBuf[1]!='S' || lpBuf[2]!='G' || lpBuf[3]!='S')
+	if (lpBuf[0] != 'M' || lpBuf[1] != 'S' || lpBuf[2] != 'G' || lpBuf[3] != 'S')
 		return false;
 
-	lpBuf+=4;
-	nMsgs=*(uint16 *)lpBuf;
-	lpBuf+=2;
+	lpBuf += 4;
+	nMsgs = READ_LE_UINT16(lpBuf);
+	lpBuf += 2;
 
 #ifdef NEED_LOCK_MSGS
-	hMsgs=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,sizeof(MPALMSG)*(uint32)nMsgs);
-	if (hMsgs==NULL)
+	hMsgs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)nMsgs);
+	if (hMsgs == NULL)
 		return false;
 
-	lpmmMsgs=(LPMPALMSG)GlobalLock(hMsgs);
+	lpmmMsgs = (LPMPALMSG)GlobalLock(hMsgs);
 #else
 	lpmmMsgs=(LPMPALMSG)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(MPALMSG)*(uint32)nMsgs);
 	if (lpmmMsgs==NULL)
 		return false;
 #endif
 
-	for (i=0;i<nMsgs;i++) {
-		lpmmMsgs->wNum=*(uint16 *)lpBuf;
-		lpBuf+=2;
+	for (i = 0; i < nMsgs; i++) {
+		lpmmMsgs->wNum = READ_LE_UINT16(lpBuf);
+		lpBuf += 2;
 
-		for (j=0;lpBuf[j]!=0;)
-			j+=lpBuf[j]+1;
+		for (j = 0; lpBuf[j] != 0;)
+			j += lpBuf[j] + 1;
 
-		lpmmMsgs->hText=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,j+1);
-		lpTemp2=lpTemp=(byte *)GlobalLock(lpmmMsgs->hText);
+		lpmmMsgs->hText = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
+		lpTemp2 = lpTemp = (byte *)GlobalLock(lpmmMsgs->hText);
 
-		for (j=0;lpBuf[j]!=0;) {
-			CopyMemory(lpTemp,&lpBuf[j+1],lpBuf[j]);
-			lpTemp+=lpBuf[j];
-			*lpTemp++='\0';
-			j+=lpBuf[j]+1;
+		for (j = 0; lpBuf[j] != 0;) {
+			CopyMemory(lpTemp, &lpBuf[j + 1], lpBuf[j]);
+			lpTemp += lpBuf[j];
+			*lpTemp ++= '\0';
+			j += lpBuf[j] + 1;
 		}
 
-		lpBuf+=j+1;
-		*lpTemp='\0';
+		lpBuf += j + 1;
+		*lpTemp = '\0';
 
 		GlobalUnlock(lpmmMsgs->hText);
 		lpmmMsgs++;
@@ -611,87 +606,87 @@ bool ParseMpc(byte *lpBuf) {
 #endif
 
 	/* 3. Oggetti */
-	if (lpBuf[0]!='O' || lpBuf[1]!='B' || lpBuf[2]!='J' || lpBuf[3]!='S')
+	if (lpBuf[0] != 'O' || lpBuf[1] != 'B' || lpBuf[2] != 'J' || lpBuf[3] != 'S')
 		return false;
 
-	lpBuf+=4;
-	nObjs=*(uint16 *)lpBuf;
-	lpBuf+=2;
+	lpBuf += 4;
+	nObjs = READ_LE_UINT16(lpBuf);
+	lpBuf += 2;
 
 	// Controlla i dialoghi
-	nDialogs=0;
-	hDialogs=lpmdDialogs=NULL;
-	if (*((const char *)lpBuf+2)==6 && strncmp((const char *)lpBuf+3,"Dialog",6)==0) {
-		nDialogs=*(uint16 *)lpBuf; lpBuf+=2;
+	nDialogs = 0;
+	hDialogs = lpmdDialogs = NULL;
+	if (*((const byte *)lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Dialog", 6) == 0) {
+		nDialogs = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		hDialogs=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,(uint32)nDialogs*sizeof(MPALDIALOG));
-		if (hDialogs==NULL)
+		hDialogs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nDialogs * sizeof(MPALDIALOG));
+		if (hDialogs == NULL)
 			return false;
 
-		lpmdDialogs=(LPMPALDIALOG)GlobalLock(hDialogs);
+		lpmdDialogs = (LPMPALDIALOG)GlobalLock(hDialogs);
 
-		for (i=0;i<nDialogs;i++)
-			if ((lpBuf=ParseDialog(lpBuf+7,&lpmdDialogs[i]))==NULL)
+		for (i = 0;i < nDialogs; i++)
+			if ((lpBuf = ParseDialog(lpBuf + 7, &lpmdDialogs[i])) == NULL)
 				return false;
 
 		GlobalUnlock(hDialogs);
 	}
 
 	// Controlla gli item
-	nItems=0;
-	hItems=lpmiItems=NULL;
-	if (*(lpBuf+2)==4 && strncmp((const char *)lpBuf+3,"Item",4)==0) {
-		nItems=*(uint16 *)lpBuf; lpBuf+=2;
+	nItems = 0;
+	hItems = lpmiItems = NULL;
+	if (*(lpBuf + 2) == 4 && strncmp((const char *)lpBuf + 3, "Item", 4)==0) {
+		nItems = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 		// Alloca la memoria e li legge
-		hItems=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,(uint32)nItems*sizeof(MPALITEM));
-		if (hItems==NULL)
+		hItems=GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nItems * sizeof(MPALITEM));
+		if (hItems == NULL)
 			return false;
 
 		lpmiItems=(LPMPALITEM)GlobalLock(hItems);
 
-		for (i=0;i<nItems;i++)
-			if ((lpBuf=ParseItem(lpBuf+5,&lpmiItems[i]))==NULL)
+		for (i = 0; i < nItems; i++)
+			if ((lpBuf = ParseItem(lpBuf + 5, &lpmiItems[i])) == NULL)
 				return false;
 
 		GlobalUnlock(hItems);
 	}
 
 	// Controlla le locazioni
-	nLocations=0;
-	hLocations=lpmlLocations=NULL;
-	if (*(lpBuf+2)==8 && strncmp((const char *)lpBuf+3,"Location",8)==0) {
-		nLocations=*(uint16 *)lpBuf; lpBuf+=2;
+	nLocations = 0;
+	hLocations = lpmlLocations = NULL;
+	if (*(lpBuf + 2) == 8 && strncmp((const char *)lpBuf + 3, "Location", 8)==0) {
+		nLocations = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 		// Alloca la memoria e li legge
-		hLocations=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,(uint32)nLocations*sizeof(MPALLOCATION));
-		if (hLocations==NULL)
+		hLocations=GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nLocations*sizeof(MPALLOCATION));
+		if (hLocations == NULL)
 			return false;
 
-		lpmlLocations=(LPMPALLOCATION)GlobalLock(hLocations);
+		lpmlLocations = (LPMPALLOCATION)GlobalLock(hLocations);
 
-		for (i=0;i<nLocations;i++)
-			if ((lpBuf=ParseLocation(lpBuf+9,&lpmlLocations[i]))==NULL)
+		for (i = 0; i < nLocations; i++)
+			if ((lpBuf = ParseLocation(lpBuf + 9, &lpmlLocations[i])) == NULL)
 				return false;
 
 		GlobalUnlock(hLocations);
 	}
 
 	// Controlla gli script
-	nScripts=0;
-	hScripts=lpmsScripts=NULL;
-	if (*(lpBuf+2)==6 && strncmp((const char *)lpBuf+3,"Script",6)==0) {
-		nScripts=*(uint16 *)lpBuf; lpBuf+=2;
+	nScripts = 0;
+	hScripts = lpmsScripts = NULL;
+	if (*(lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Script", 6) == 0) {
+		nScripts = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 		// Alloca la memoria
-		hScripts=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,(uint32)nScripts*sizeof(MPALSCRIPT));
-		if (hScripts==NULL)
+		hScripts = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nScripts * sizeof(MPALSCRIPT));
+		if (hScripts == NULL)
 			return false;
 
-		lpmsScripts=(LPMPALSCRIPT)GlobalLock(hScripts);
+		lpmsScripts = (LPMPALSCRIPT)GlobalLock(hScripts);
 
-		for (i=0;i<nScripts;i++) {
-			if ((lpBuf=ParseScript(lpBuf+7,&lpmsScripts[i]))==NULL)
+		for (i = 0; i < nScripts; i++) {
+			if ((lpBuf = ParseScript(lpBuf + 7, &lpmsScripts[i])) == NULL)
 			return false;
 
 			// Ordina i vari moments dello script
@@ -707,7 +702,7 @@ bool ParseMpc(byte *lpBuf) {
 		GlobalUnlock(hScripts);
 	}
 
-	if (lpBuf[0]!='E' || lpBuf[1]!='N' || lpBuf[2]!='D' || lpBuf[3]!='0')
+	if (lpBuf[0] != 'E' || lpBuf[1] != 'N' || lpBuf[2] != 'D' || lpBuf[3] != '0')
 		return false;
 
 	return true;

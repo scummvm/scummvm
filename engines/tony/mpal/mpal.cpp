@@ -1735,7 +1735,7 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 	hMpc.close();
 
 	/* Parsa l'immagine */
-	if (ParseMpc(lpMpcImage)==false)
+	if (ParseMpc(lpMpcImage) == false)
 		return false;
 
 	GlobalFree(lpMpcImage);

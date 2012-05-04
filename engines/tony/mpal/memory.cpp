@@ -21,6 +21,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "tony/mpal/memory.h"
 
@@ -77,8 +78,13 @@ MemoryManager::~MemoryManager() {
  * Allocates a new memory block
  * @returns					Returns a MemoryItem instance for the new block
  */
-MemoryItem &MemoryManager::allocate(uint32 size) {
+MemoryItem &MemoryManager::allocate(uint32 size, uint flags) {
 	MemoryItem *newItem = new MemoryItem(size);
+	if ((flags & GMEM_ZEROINIT) != 0) {
+		byte *dataP = (byte *)newItem->DataPointer();
+		Common::fill(dataP, dataP + size, 0);
+	}
+
 	_memoryBlocks.push_back(newItem);
 
 	return *newItem;
@@ -88,8 +94,8 @@ MemoryItem &MemoryManager::allocate(uint32 size) {
  * Allocates a new memory block and returns it's data pointer
  * @returns					Data pointer to allocated block
  */
-HGLOBAL MemoryManager::alloc(uint32 size) {
-	MemoryItem &newItem = allocate(size);
+HGLOBAL MemoryManager::alloc(uint32 size, uint flags) {
+	MemoryItem &newItem = allocate(size, flags);
 	return (HGLOBAL)newItem.DataPointer();
 }
 

@@ -76,7 +76,7 @@ namespace MPAL {
 *
 \****************************************************************************/
 
-byte *ParseExpression(byte *lpBuf, HGLOBAL *h);
+const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h);
 
 
 /****************************************************************************\

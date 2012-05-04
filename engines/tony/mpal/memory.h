@@ -57,8 +57,8 @@ public:
 	MemoryManager();
 	virtual ~MemoryManager();
 
-	MemoryItem &allocate(uint32 size);
-	HGLOBAL alloc(uint32 size);
+	MemoryItem &allocate(uint32 size, uint flags);
+	HGLOBAL alloc(uint32 size, uint flags);
 	MemoryItem &getItem(HGLOBAL handle);
 	MemoryItem &operator[](HGLOBAL handle);
 	void erase(MemoryItem *item);
@@ -68,8 +68,8 @@ public:
 };
 
 // defines
-#define GlobalAlloc(flags, size)	_vm->_memoryManager.alloc(size)
-#define GlobalAllocate(size)		_vm->_memoryManager.allocate(size)
+#define GlobalAlloc(flags, size)	_vm->_memoryManager.alloc(size, flags)
+#define GlobalAllocate(size)		_vm->_memoryManager.allocate(size, 0)
 #define GlobalFree(handle)			_vm->_memoryManager.erase(handle)
 #define GlobalLock(handle)			(_vm->_memoryManager.getItem(handle).DataPointer())
 #define GlobalUnlock(handle)		{}

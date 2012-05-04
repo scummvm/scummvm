@@ -306,18 +306,18 @@ static int EvaluateAndFreeExpression(byte *expr) {
 *
 \****************************************************************************/
 
-byte *ParseExpression(byte *lpBuf, HGLOBAL *h) {
+const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 	LPEXPRESSION cur;
 	byte *start;
 	uint32 num, i;
 
-	num=*lpBuf;
+	num = *lpBuf;
 	lpBuf++;
 
-	if (num==0)
+	if (num == 0)
 		return NULL;
 
-	*h=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,num*sizeof(EXPRESSION)+1);
+	*h = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
 	if (*h==NULL)
 		return NULL;
 
@@ -441,7 +441,7 @@ bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
 			break;
 		 
 		case ELT_VAR:
-			if (strcmp(one->val.name, two->val.name)!=0) {
+			if (strcmp(one->val.name, two->val.name) != 0) {
 				GlobalUnlock(h1);
 				GlobalUnlock(h2);
 				return false;
