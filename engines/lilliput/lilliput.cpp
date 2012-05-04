@@ -2746,6 +2746,7 @@ void LilliputEngine::initialize() {
 byte *LilliputEngine::getCharacterVariablesPtr(int16 index) {
 	debugC(1, kDebugEngine, "getCharacterVariablesPtr(%d)", index);
 
+	assert((index > -3120) && (index < 1400));
 	if (index >= 0)
 		return &_characterVariables_[index];
 	else

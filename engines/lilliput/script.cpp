@@ -1372,8 +1372,6 @@ byte *LilliputScript::getCharacterVariablePtr() {
 	int index = tmpVal * 32;
 	index += _currScript->readUint16LE();
 
-	assert(index < 1400);
-
 	return _vm->getCharacterVariablesPtr(index);
 }
 
@@ -2979,10 +2977,10 @@ void LilliputScript::OC_sub18367() {
 void LilliputScript::OC_sub17D04() {
 	debugC(1, kDebugScript, "OC_sub17D04()");
 
-	byte var1 = getValue1();
+	int16 index = getValue1();
 	byte var2 = _currScript->readUint16LE() & 0xFF;
 	
-	sub1823E(var1, var2, _vm->getCharacterVariablesPtr(var1));
+	sub1823E(index, var2, _vm->getCharacterVariablesPtr(index * 32));
 }
 
 void LilliputScript::OC_sub18387() {
