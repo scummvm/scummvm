@@ -169,6 +169,8 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	uint32 curCmd;
 	uint32 len;
 
+	lpmdDialog->nObj = READ_LE_UINT32(lpBuf); lpBuf += 4;
+
 	/* Periodi */
 	num = READ_LE_UINT16(lpBuf); lpBuf += 2;
 	
