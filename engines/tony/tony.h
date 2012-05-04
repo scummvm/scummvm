@@ -33,7 +33,7 @@
 
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/memory.h"
-#include "tony/gfxEngine.h"
+#include "tony/gfxengine.h"
 #include "tony/loc.h"
 #include "tony/utils.h"
 #include "tony/window.h"

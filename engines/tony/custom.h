@@ -44,13 +44,7 @@
  *                                                                        *
  * This source code is Copyright (C) Nayma Software.  ALL RIGHTS RESERVED *
  *                                                                        *
- **************************************************************************
-
-/** RCS
- *
- * $Id: $
- *
- **/
+ **************************************************************************/
 
 #ifndef TONY_CUSTOM_H
 #define TONY_CUSTOM_H
@@ -66,8 +60,6 @@ using namespace MPAL;
  */
 
 typedef uint32 HWND;
-
-typedef void __declspec(dllexport) (*INIT_CUSTOM_FUNCTION_TYPE)(HWND, LPCUSTOMFUNCTION *);
 
 #define INIT_CUSTOM_FUNCTION					MapCustomFunctions
 #define INIT_CUSTOM_FUNCTION_STRING		"MapCustomFunctions"

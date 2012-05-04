@@ -152,6 +152,8 @@ public:
 		m_task = task; m_dst.TopLeft() = dst; m_src.SetEmpty(); m_bFlag = 0;
     }
 
+	virtual ~RMGfxPrimitive() { }
+
     void SetFlag(byte bFlag)		{ m_bFlag=bFlag; }
 	void SetTask(RMGfxTask *task)   { m_task = task; }
     void SetSrc(const RMRect &src)        { m_src = src; }
@@ -185,6 +187,7 @@ protected:
 public:
 	// Costruttore standard
     RMGfxTask();
+	virtual ~RMGfxTask() { }
 
 	virtual int Priority();
     virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) = 0;
@@ -201,6 +204,7 @@ public:
  */
 class RMGfxTaskSetPrior : public RMGfxTask {
 public:
+	virtual ~RMGfxTaskSetPrior() { }
     void SetPriority(int nPrior);
 };
 
@@ -210,6 +214,8 @@ public:
  */
 class RMGfxClearTask : public RMGfxTask {
 public:
+	virtual ~RMGfxClearTask() { }
+
 	int Priority();
     void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
 	bool RemoveThis();
@@ -224,6 +230,8 @@ protected:
 	uint16 wFillColor;
 
 public:
+	virtual ~RMGfxBox() { }
+
 	void SetColor(byte r, byte g, byte b);
 	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	bool RemoveThis();

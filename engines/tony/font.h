@@ -78,8 +78,8 @@ private:
     public:
         RMFontPrimitive() : RMGfxPrimitive() {}
         RMFontPrimitive(RMGfxTask *task) : RMGfxPrimitive(task) {}
-
-        virtual RMGfxPrimitive* Duplicate() { return new RMFontPrimitive(*this); }
+		virtual ~RMFontPrimitive() { }
+        virtual RMGfxPrimitive *Duplicate() { return new RMFontPrimitive(*this); }
 
         int m_nChar;
     };
