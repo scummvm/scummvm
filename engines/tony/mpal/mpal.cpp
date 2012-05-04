@@ -97,7 +97,6 @@ typedef LPCFCALL*       LPLPCFCALL;
 
 uint32                    mpalError;
 
-static bool              bInit=false;
 static byte *           lpMpcImage;
 
 LPITEMIRQFUNCTION        lpiifCustom=NULL;
@@ -786,11 +785,11 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	patlength = dat;
 	dat+=ret->numpattern;
 
-	for (i=1;i<ret->numpattern;i++) {
-		for (j=0;j<patlength[i];j++)
-			ret->pattern[i][j]=dat[j];
-		ret->pattern[i][patlength[i]]=255;   // Termina i pattern
-		dat+=patlength[i];
+	for (i = 1; i < ret->numpattern; i++) {
+		for (j = 0; j < patlength[i]; j++)
+			ret->pattern[i][j] = dat[j];
+		ret->pattern[i][(int)patlength[i]] = 255;   // Termina i pattern
+		dat += patlength[i];
 	}
 
 	// Carica i singoli frame di animazione
@@ -2284,9 +2283,9 @@ bool bDontOutput;
 struct MsgCommentsStruct {
 	uint16 wStart;
 	uint16 wEnd;
-	char *pComment;	
+	const char *pComment;	
 };
-MsgCommentsStruct MsgComments[] = {
+const MsgCommentsStruct MsgComments[] = {
 	{ 10, 16, "###" },
 	{ 560, 563, "@@@ BUTCH & DUDLEY:" },
 	{ 551, 553, "@@@ JACK'S LETTER (JACK'S VOICE):" },
@@ -2894,7 +2893,7 @@ const char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL,
 
 #define HANDLE_DIALOG(num)	\
 case num:	\
-	if (nPers >= sizeof(DLG##num) / sizeof(char*) || DLG##num[nPers]==NULL)	\
+	if (nPers >= (int)(sizeof(DLG##num) / sizeof(const char *)) || DLG##num[nPers] == NULL)	\
 	{	\
 		warning("ERROR: Il personaggio #%d non esiste nel dialogo %d!\n", nPers, nDlg);	\
 		return "ERROR";	\
