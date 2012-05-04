@@ -393,17 +393,14 @@ RMDataStream &operator>>(RMDataStream &df, RMString &var) {
 /**
  * Formats a string
  */
-void RMString::Format(char* str, ...) {
-	warning("TODO: Refactor RMString::Format if needed");
-	/*
+void RMString::Format(const char *str, ...) {
 	static char buf[2048];
 	va_list argList;
 
-	va_start(argList,str);
-	wvsprintf(buf,str,argList);
+	va_start(argList, str);
+	vsprintf(buf, str, argList);
 	va_end(argList);
 	*this = buf;
-*/
 }
 
 /****************************************************************************\

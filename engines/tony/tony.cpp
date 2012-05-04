@@ -130,7 +130,7 @@ void TonyEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
 }
 
-char nextMusic[_MAX_PATH];
+char nextMusic[MAX_PATH];
 bool nextLoop;
 int nextChannel;
 int nextSync;

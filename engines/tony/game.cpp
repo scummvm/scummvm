@@ -92,11 +92,7 @@ bool bPatIrqFreeze;
 /*  Funzioni globali per la DLL Custom	*/
 /****************************************/
 
-static char path_buffer[_MAX_PATH];
-static char drive[MAX_DRIVE];
-static char dir[MAX_DIR];
-static char fname[MAX_FNAME];
-static char ext[MAX_EXT];
+static char path_buffer[MAX_PATH];
 
 HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
 	return _vm->GetEngine()->LoadLocation(nLoc, pt,start);
@@ -494,7 +490,7 @@ void RMOptionScreen::RefreshAll(void) {
 				if (m_statePos == 0 && i == 0)
 					s.Format("Autosave");
 				else
-					s.Format("%02d)%s", m_statePos + i, m_curThumbName[i]);
+					s.Format("%02d)%s", m_statePos + i, (const char *)m_curThumbName[i]);
 			}
 			
 			num[i] = new RMText;

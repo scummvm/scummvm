@@ -219,7 +219,7 @@ public:
     friend RMDataStream& operator>>(RMDataStream& df, RMString &var);
 
 	// Formattazione di stringa
-	void Format(char *str, ...);
+	void Format(const char *str, ...);
 
 private:
     void Resize(int size, bool bMantain = false);

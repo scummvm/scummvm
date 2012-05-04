@@ -70,6 +70,7 @@ namespace Tony {
 // FIXME: Some of these can likely be removed when refactoring is completed
 #define MAX_DRIVE 10
 #define MAX_DIR 255
+#define MAX_PATH 255
 #define MAX_FNAME 100
 #define MAX_EXT 10
 
