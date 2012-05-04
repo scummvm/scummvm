@@ -546,7 +546,7 @@ bool ParseMpc(const byte *lpBuf) {
 	lpmvVars = (LPMPALVAR)GlobalLock(hVars);
 
 	for (i = 0; i < nVars; i++) {
-		wLen=*(byte *)lpBuf;
+		wLen = *(const byte *)lpBuf;
 		lpBuf++;
 		CopyMemory(lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
 		lpBuf += wLen;

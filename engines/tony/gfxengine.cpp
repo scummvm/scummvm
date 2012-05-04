@@ -934,7 +934,7 @@ void RMGfxEngine::LoadState(const char *fn) {
 	
 	// Le versioni vecchie necessitano di On enter
 	if (ver < 5)
-		mpalQueryDoAction(0, loc, 0);
+		mpalQueryDoActionU32(0, loc, 0);
 	else {
 		// In quelle nuove, ci basta resettare gli mcode
 		MCharResetCodes();
