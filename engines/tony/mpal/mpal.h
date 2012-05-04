@@ -595,7 +595,7 @@ extern "C" {
 *
 \****************************************************************************/
 
-bool EXPORT mpalInit(LPSTR lpszFileName, LPSTR lpszMprFileName,
+bool EXPORT mpalInit(const char *lpszFileName, const char *lpszMprFileName,
   LPLPCUSTOMFUNCTION lplpcfArray);
 
 

@@ -356,20 +356,20 @@ int32 varGetValue(const char *lpszVarName) {
 \****************************************************************************/
 
 void varSetValue(const char *lpszVarName, int32 val) {
-	int i;
+	uint i;
 	LPMPALVAR v=lpmvVars;
 
 	for (i=0;i<nVars;v++,i++)
 		if (strcmp(lpszVarName,v->lpszVarName)==0) {
 			v->dwVal=val;
-			if (lpiifCustom!=NULL && strncmp(v->lpszVarName,"Pattern.",8)==0) {
-				i=0;
-				sscanf(v->lpszVarName,"Pattern.%u",&i);
+			if (lpiifCustom!=NULL && strncmp(v->lpszVarName,"Pattern.",8) == 0) {
+				i = 0;
+				sscanf(v->lpszVarName, "Pattern.%u", &i);
 				lpiifCustom(i,val,-1);
-			} else if (lpiifCustom!=NULL && strncmp(v->lpszVarName,"Status.",7)==0) {
-				i=0;
-				sscanf(v->lpszVarName,"Status.%u",&i);
-				lpiifCustom(i,-1,val);
+			} else if (lpiifCustom!=NULL && strncmp(v->lpszVarName, "Status.", 7) == 0) {
+				i = 0;
+				sscanf(v->lpszVarName,"Status.%u", &i);
+				lpiifCustom(i, -1, val);
 			}
 			return;
 		}
@@ -1648,7 +1648,7 @@ bool DoSelection(uint32 i, uint32 dwData) {
 
 /****************************************************************************\
 *
-* Function:     bool mpalInit(char * lpszMpcFileName, char * lpszMprFileName,
+* Function:     bool mpalInit(LPSTR lpszMpcFileName, LPSTR lpszMprFileName,
 *                 LPLPCUSTOMFUNCTION lplpcfArray);
 *
 * Description:  Inizializza la libreria MPAL, e apre un file .MPC, che
@@ -1665,7 +1665,7 @@ bool DoSelection(uint32 i, uint32 dwData) {
 *
 \****************************************************************************/
 
-bool mpalInit(char * lpszMpcFileName, char * lpszMprFileName, LPLPCUSTOMFUNCTION lplpcfArray) {
+bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCUSTOMFUNCTION lplpcfArray) {
 	Common::File hMpc;
 	byte buf[5];
 	uint32 nBytesRead;
@@ -2281,11 +2281,12 @@ int mpalLoadState(byte *buf) {
 
 bool bDontOutput;
 
-struct {
+struct MsgCommentsStruct {
 	uint16 wStart;
 	uint16 wEnd;
 	char *pComment;	
-} MsgComments[] = {
+};
+MsgCommentsStruct MsgComments[] = {
 	{ 10, 16, "###" },
 	{ 560, 563, "@@@ BUTCH & DUDLEY:" },
 	{ 551, 553, "@@@ JACK'S LETTER (JACK'S VOICE):" },
@@ -2584,310 +2585,310 @@ void mpalDumpOthers(void) {
 
 
 #if 0 // English names
-char *DLG10[] = { "Tony", NULL };
-char *DLG51[] = { "Tony", "Butch", "Dudley" };
-char *DLG52[] = { "Tony", NULL };
-char *DLG61[] = { "Tony", "Old lady 1", NULL };
-char *DLG71[] = { "Tony", "Timothy", "Convict", NULL, NULL, "Jack (with microphone)", "Old lady 1", NULL };
-char *DLG90[] = { "Tony", "Bearded lady", NULL };
-char *DLG110[] = { "Tony", "Lorenz", NULL };
-char *DLG111[] = { "Tony", "Lorenz", NULL };
-char *DLG130[] = { "Tony", "Piranha", NULL };
-char *DLG150[] = { "Tony", "Rufus", "Snowman", NULL };
-char *DLG151[] = { "Tony", "Rufus", "Snowman", NULL };
-char *DLG152[] = { "Tony", "Rufus", "Snowman", NULL };
-char *DLG153[] = { "Tony", "Rufus", "Snowman", NULL };
-char *DLG154[] = { "Tony", "Rufus", "Snowman", NULL };
-char *DLG160[] = { "Tony", "Shmiley", NULL };
-char *DLG161[] = { "Tony", "Shmiley", NULL };
-char *DLG162[] = { "Tony", "Shmiley", NULL };
-char *DLG163[] = { "Tony", "Shmiley", NULL };
-char *DLG180[] = { "Tony", "Beast", NULL };
-char *DLG190[] = { "Tony", "Beast", NULL };
-char *DLG191[] = { "Tony", "Beast", NULL };
-char *DLG201[] = { "Tony", NULL };
-char *DLG210[] = { "Tony", "Mortimer", NULL };
-char *DLG211[] = { "Tony", "Mortimer", NULL };
-char *DLG212[] = { "Tony", "Mortimer", NULL };
-char *DLG240[] = { "Tony", "Isabella", NULL };
-char *DLG250[] = { "Tony", "Bartender", "Sad pirate", "Anchorman", "Biff", NULL };
-char *DLG251[] = { "Tony", "Bartender", "Sad pirate", "Anchorman", "Biff", NULL };
-char *DLG260[] = { "Tony", "Captain", "Captain (tale)", NULL };
-char *DLG270[] = { "Tony", "Egghead", NULL };
-char *DLG271[] = { "Tony", "Egghead", NULL };
-char *DLG272[] = { "Tony", "Egghead", NULL };
-char *DLG290[] = { "Tony", "Old lady 2", NULL };
-char *DLG310[] = { "Tony", "Wally", NULL };
-char *DLG330[] = { "Tony", "Polly", "Captain (off scene)", NULL };
-char *DLG340[] = { "Tony", "Randall", NULL };
-char *DLG360[] = { "Tony", NULL };
-char *DLG361[] = { "Tony", NULL };
-char *DLG370[] = { "Tony", "Gatekeeper", NULL };
-char *DLG371[] = { "Tony", "Gatekeeper", NULL };
-char *DLG372[] = { "Tony", "Gatekeeper", NULL };
-char *DLG373[] = { "Tony", "Gatekeeper", NULL };
-char *DLG380[] = { "Tony", NULL };
-char *DLG410[] = { "Tony", "Gwendel", NULL };
-char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Housekeeper (off scene)", NULL };
-char *DLG460[] = { "Tony", NULL };
-char *DLG470[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG471[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG472[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG473[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG474[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG480[] = { "Tony", "Pin-up", NULL };
-char *DLG490[] = { "Tony", "Gwendel", NULL };	
-char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
-char *DLG550[] = { "Tony", "Mr. Wishing Well", "Tony (from the top of the well)", NULL  };
-char *DLG560[] = { "Tony", "Superintendent", NULL };
-char *DLG590[] = { "Tony", "Pantagruel", NULL };
-char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL, "Storyteller", "Mr. Wishing Well", NULL };
+const char *DLG10[] = { "Tony", NULL };
+const char *DLG51[] = { "Tony", "Butch", "Dudley" };
+const char *DLG52[] = { "Tony", NULL };
+const char *DLG61[] = { "Tony", "Old lady 1", NULL };
+const char *DLG71[] = { "Tony", "Timothy", "Convict", NULL, NULL, "Jack (with microphone)", "Old lady 1", NULL };
+const char *DLG90[] = { "Tony", "Bearded lady", NULL };
+const char *DLG110[] = { "Tony", "Lorenz", NULL };
+const char *DLG111[] = { "Tony", "Lorenz", NULL };
+const char *DLG130[] = { "Tony", "Piranha", NULL };
+const char *DLG150[] = { "Tony", "Rufus", "Snowman", NULL };
+const char *DLG151[] = { "Tony", "Rufus", "Snowman", NULL };
+const char *DLG152[] = { "Tony", "Rufus", "Snowman", NULL };
+const char *DLG153[] = { "Tony", "Rufus", "Snowman", NULL };
+const char *DLG154[] = { "Tony", "Rufus", "Snowman", NULL };
+const char *DLG160[] = { "Tony", "Shmiley", NULL };
+const char *DLG161[] = { "Tony", "Shmiley", NULL };
+const char *DLG162[] = { "Tony", "Shmiley", NULL };
+const char *DLG163[] = { "Tony", "Shmiley", NULL };
+const char *DLG180[] = { "Tony", "Beast", NULL };
+const char *DLG190[] = { "Tony", "Beast", NULL };
+const char *DLG191[] = { "Tony", "Beast", NULL };
+const char *DLG201[] = { "Tony", NULL };
+const char *DLG210[] = { "Tony", "Mortimer", NULL };
+const char *DLG211[] = { "Tony", "Mortimer", NULL };
+const char *DLG212[] = { "Tony", "Mortimer", NULL };
+const char *DLG240[] = { "Tony", "Isabella", NULL };
+const char *DLG250[] = { "Tony", "Bartender", "Sad pirate", "Anchorman", "Biff", NULL };
+const char *DLG251[] = { "Tony", "Bartender", "Sad pirate", "Anchorman", "Biff", NULL };
+const char *DLG260[] = { "Tony", "Captain", "Captain (tale)", NULL };
+const char *DLG270[] = { "Tony", "Egghead", NULL };
+const char *DLG271[] = { "Tony", "Egghead", NULL };
+const char *DLG272[] = { "Tony", "Egghead", NULL };
+const char *DLG290[] = { "Tony", "Old lady 2", NULL };
+const char *DLG310[] = { "Tony", "Wally", NULL };
+const char *DLG330[] = { "Tony", "Polly", "Captain (off scene)", NULL };
+const char *DLG340[] = { "Tony", "Randall", NULL };
+const char *DLG360[] = { "Tony", NULL };
+const char *DLG361[] = { "Tony", NULL };
+const char *DLG370[] = { "Tony", "Gatekeeper", NULL };
+const char *DLG371[] = { "Tony", "Gatekeeper", NULL };
+const char *DLG372[] = { "Tony", "Gatekeeper", NULL };
+const char *DLG373[] = { "Tony", "Gatekeeper", NULL };
+const char *DLG380[] = { "Tony", NULL };
+const char *DLG410[] = { "Tony", "Gwendel", NULL };
+const char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Housekeeper (off scene)", NULL };
+const char *DLG460[] = { "Tony", NULL };
+const char *DLG470[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG471[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG472[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG473[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG474[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG480[] = { "Tony", "Pin-up", NULL };
+const char *DLG490[] = { "Tony", "Gwendel", NULL };	
+const char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
+const char *DLG550[] = { "Tony", "Mr. Wishing Well", "Tony (from the top of the well)", NULL  };
+const char *DLG560[] = { "Tony", "Superintendent", NULL };
+const char *DLG590[] = { "Tony", "Pantagruel", NULL };
+const char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL, "Storyteller", "Mr. Wishing Well", NULL };
 #endif
 
 #if 0 // Polish names
-char *DLG10[] = { "Tony", NULL };
-char *DLG51[] = { "Tony", "Butch", "Dudley" };
-char *DLG52[] = { "Tony", NULL };
-char *DLG61[] = { "Tony", "Staruszka 1", NULL };
-char *DLG71[] = { "Tony", "Timothy", "Skazaniec", NULL, NULL, "Јebster (przez mikrofon)", "Staruszka 1", NULL };
-char *DLG90[] = { "Tony", "Kobieta z Brod№", NULL };
-char *DLG110[] = { "Tony", "Lorenz", NULL };
-char *DLG111[] = { "Tony", "Lorenz", NULL };
-char *DLG130[] = { "Tony", "Pirania", NULL };
-char *DLG150[] = { "Tony", "Rufus", "Baіwan", NULL };
-char *DLG151[] = { "Tony", "Rufus", "Baіwan", NULL };
-char *DLG152[] = { "Tony", "Rufus", "Baіwan", NULL };
-char *DLG153[] = { "Tony", "Rufus", "Baіwan", NULL };
-char *DLG154[] = { "Tony", "Rufus", "Baіwan", NULL };
-char *DLG160[] = { "Tony", "Њmiechozol", NULL };
-char *DLG161[] = { "Tony", "Њmiechozol", NULL };
-char *DLG162[] = { "Tony", "Њmiechozol", NULL };
-char *DLG163[] = { "Tony", "Њmiechozol", NULL };
-char *DLG180[] = { "Tony", "Wycz", NULL };
-char *DLG190[] = { "Tony", "Wycz", NULL };
-char *DLG191[] = { "Tony", "Wycz", NULL };
-char *DLG201[] = { "Tony", NULL };
-char *DLG210[] = { "Tony", "Mortimer (Okropny)", NULL };
-char *DLG211[] = { "Tony", "Mortimer (Okropny)", NULL };
-char *DLG212[] = { "Tony", "Mortimer (Okropny)", NULL };
-char *DLG240[] = { "Tony", "Isabella", NULL };
-char *DLG250[] = { "Tony", "Barman", "Smutny Pirat", "Wodzirej", "Biff", NULL };
-char *DLG251[] = { "Tony", "Barman", "Smutny Pirat", "Wodzirej", "Biff", NULL };
-char *DLG260[] = { "Tony", "Kapitan", "Captain (opowieњж)", NULL };
-char *DLG270[] = { "Tony", "Jajogіowy", NULL };
-char *DLG271[] = { "Tony", "Jajogіowy", NULL };
-char *DLG272[] = { "Tony", "Jajogіowy", NULL };
-char *DLG290[] = { "Tony", "Staruszka 2", NULL };
-char *DLG310[] = { "Tony", "Wally", NULL };
-char *DLG330[] = { "Tony", "Polly", "Kapitan (zza sceny)", NULL };
-char *DLG340[] = { "Tony", "Randall", NULL };
-char *DLG360[] = { "Tony", NULL };
-char *DLG361[] = { "Tony", NULL };
-char *DLG370[] = { "Tony", "Straїnik", NULL };
-char *DLG371[] = { "Tony", "Straїnik", NULL };
-char *DLG372[] = { "Tony", "Straїnik", NULL };
-char *DLG373[] = { "Tony", "Straїnik", NULL };
-char *DLG380[] = { "Tony", NULL };
-char *DLG410[] = { "Tony", "Gwendel", NULL };
-char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Gospodyni (zza sceny)", NULL };
-char *DLG460[] = { "Tony", NULL };
-char *DLG470[] = { "Tony", "Gospodyni", "Mirror", NULL };
-char *DLG471[] = { "Tony", "Gospodyni", "Mirror", NULL };
-char *DLG472[] = { "Tony", "Gospodyni", "Mirror", NULL };
-char *DLG473[] = { "Tony", "Gospodyni", "Mirror", NULL };
-char *DLG474[] = { "Tony", "Gospodyni", "Mirror", NULL };
-char *DLG480[] = { "Tony", "Pin-up", NULL };
-char *DLG490[] = { "Tony", "Gwendel", NULL };
-char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
-char *DLG550[] = { "Tony", "Pan Studnia Їyczeс", "Tony (nad studni№)", NULL  };
-char *DLG560[] = { "Tony", "Inspektor", NULL };
-char *DLG590[] = { "Tony", "Pantaloniarz", NULL };
-char *DLG600[] = { "Tony", "Јebster", "Јebster", NULL, "Јebster", NULL, NULL, NULL, "Narrator", "Pan Studnia Їyczeс", NULL };
+const char *DLG10[] = { "Tony", NULL };
+const char *DLG51[] = { "Tony", "Butch", "Dudley" };
+const char *DLG52[] = { "Tony", NULL };
+const char *DLG61[] = { "Tony", "Staruszka 1", NULL };
+const char *DLG71[] = { "Tony", "Timothy", "Skazaniec", NULL, NULL, "Јebster (przez mikrofon)", "Staruszka 1", NULL };
+const char *DLG90[] = { "Tony", "Kobieta z Brod№", NULL };
+const char *DLG110[] = { "Tony", "Lorenz", NULL };
+const char *DLG111[] = { "Tony", "Lorenz", NULL };
+const char *DLG130[] = { "Tony", "Pirania", NULL };
+const char *DLG150[] = { "Tony", "Rufus", "Baіwan", NULL };
+const char *DLG151[] = { "Tony", "Rufus", "Baіwan", NULL };
+const char *DLG152[] = { "Tony", "Rufus", "Baіwan", NULL };
+const char *DLG153[] = { "Tony", "Rufus", "Baіwan", NULL };
+const char *DLG154[] = { "Tony", "Rufus", "Baіwan", NULL };
+const char *DLG160[] = { "Tony", "Њmiechozol", NULL };
+const char *DLG161[] = { "Tony", "Њmiechozol", NULL };
+const char *DLG162[] = { "Tony", "Њmiechozol", NULL };
+const char *DLG163[] = { "Tony", "Њmiechozol", NULL };
+const char *DLG180[] = { "Tony", "Wycz", NULL };
+const char *DLG190[] = { "Tony", "Wycz", NULL };
+const char *DLG191[] = { "Tony", "Wycz", NULL };
+const char *DLG201[] = { "Tony", NULL };
+const char *DLG210[] = { "Tony", "Mortimer (Okropny)", NULL };
+const char *DLG211[] = { "Tony", "Mortimer (Okropny)", NULL };
+const char *DLG212[] = { "Tony", "Mortimer (Okropny)", NULL };
+const char *DLG240[] = { "Tony", "Isabella", NULL };
+const char *DLG250[] = { "Tony", "Barman", "Smutny Pirat", "Wodzirej", "Biff", NULL };
+const char *DLG251[] = { "Tony", "Barman", "Smutny Pirat", "Wodzirej", "Biff", NULL };
+const char *DLG260[] = { "Tony", "Kapitan", "Captain (opowieњж)", NULL };
+const char *DLG270[] = { "Tony", "Jajogіowy", NULL };
+const char *DLG271[] = { "Tony", "Jajogіowy", NULL };
+const char *DLG272[] = { "Tony", "Jajogіowy", NULL };
+const char *DLG290[] = { "Tony", "Staruszka 2", NULL };
+const char *DLG310[] = { "Tony", "Wally", NULL };
+const char *DLG330[] = { "Tony", "Polly", "Kapitan (zza sceny)", NULL };
+const char *DLG340[] = { "Tony", "Randall", NULL };
+const char *DLG360[] = { "Tony", NULL };
+const char *DLG361[] = { "Tony", NULL };
+const char *DLG370[] = { "Tony", "Straїnik", NULL };
+const char *DLG371[] = { "Tony", "Straїnik", NULL };
+const char *DLG372[] = { "Tony", "Straїnik", NULL };
+const char *DLG373[] = { "Tony", "Straїnik", NULL };
+const char *DLG380[] = { "Tony", NULL };
+const char *DLG410[] = { "Tony", "Gwendel", NULL };
+const char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Gospodyni (zza sceny)", NULL };
+const char *DLG460[] = { "Tony", NULL };
+const char *DLG470[] = { "Tony", "Gospodyni", "Mirror", NULL };
+const char *DLG471[] = { "Tony", "Gospodyni", "Mirror", NULL };
+const char *DLG472[] = { "Tony", "Gospodyni", "Mirror", NULL };
+const char *DLG473[] = { "Tony", "Gospodyni", "Mirror", NULL };
+const char *DLG474[] = { "Tony", "Gospodyni", "Mirror", NULL };
+const char *DLG480[] = { "Tony", "Pin-up", NULL };
+const char *DLG490[] = { "Tony", "Gwendel", NULL };
+const char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
+const char *DLG550[] = { "Tony", "Pan Studnia Їyczeс", "Tony (nad studni№)", NULL  };
+const char *DLG560[] = { "Tony", "Inspektor", NULL };
+const char *DLG590[] = { "Tony", "Pantaloniarz", NULL };
+const char *DLG600[] = { "Tony", "Јebster", "Јebster", NULL, "Јebster", NULL, NULL, NULL, "Narrator", "Pan Studnia Їyczeс", NULL };
 #endif // Polish
 
 
 #if 0 // Russian
-char *DLG10[] = { "Тони", NULL };
-char *DLG51[] = { "Тони", "Буч", "Дадли" };
-char *DLG52[] = { "Тони", NULL };
-char *DLG61[] = { "Тони", "Старушка 1", NULL };
-char *DLG71[] = { "Тони", "Тимоти", "Осужденный", NULL, NULL, "Джек (с микрофоном)", "Старушка 1", NULL };
-char *DLG90[] = { "Тони", "Бородатая женщина", NULL };
-char *DLG110[] = { "Тони", "Лоренц", NULL };
-char *DLG111[] = { "Тони", "Лоренц", NULL };
-char *DLG130[] = { "Тони", "Пиранья", NULL };
-char *DLG150[] = { "Тони", "Руфус", "Снеговик", NULL };
-char *DLG151[] = { "Тони", "Руфус", "Снеговик", NULL };
-char *DLG152[] = { "Тони", "Руфус", "Снеговик", NULL };
-char *DLG153[] = { "Тони", "Руфус", "Снеговик", NULL };
-char *DLG154[] = { "Тони", "Руфус", "Снеговик", NULL };
-char *DLG160[] = { "Тони", "Шмайли", NULL };
-char *DLG161[] = { "Тони", "Шмайли", NULL };
-char *DLG162[] = { "Тони", "Шмайли", NULL };
-char *DLG163[] = { "Тони", "Шмайли", NULL };
-char *DLG180[] = { "Тони", "Чудовище", NULL };
-char *DLG190[] = { "Тони", "Чудовище", NULL };
-char *DLG191[] = { "Тони", "Чудовище", NULL };
-char *DLG201[] = { "Тони", NULL };
-char *DLG210[] = { "Тони", "Мортимер", NULL };
-char *DLG211[] = { "Тони", "Мортимер", NULL };
-char *DLG212[] = { "Тони", "Мортимер", NULL };
-char *DLG240[] = { "Тони", "Изабелла", NULL };
-char *DLG250[] = { "Тони", "Бармен", "Грустный пират", "Ведущий", "Бифф", NULL };
-char *DLG251[] = { "Тони", "Бармен", "Грустный пират", "Ведущий", "Бифф", NULL };
-char *DLG260[] = { "Тони", "Капитан", "Капитан (рассказ)", NULL };
-char *DLG270[] = { "Тони", "Яйцеголовый", NULL };
-char *DLG271[] = { "Тони", "Яйцеголовый", NULL };
-char *DLG272[] = { "Тони", "Яйцеголовый", NULL };
-char *DLG290[] = { "Тони", "Старушка 2", NULL };
-char *DLG310[] = { "Тони", "Уолли", NULL };
-char *DLG330[] = { "Тони", "Полли", "Капитан (за сценой)", NULL };
-char *DLG340[] = { "Тони", "Рэндал", NULL };
-char *DLG360[] = { "Тони", NULL };
-char *DLG361[] = { "Тони", NULL };
-char *DLG370[] = { "Тони", "Привратник", NULL };
-char *DLG371[] = { "Тони", "Привратник", NULL };
-char *DLG372[] = { "Тони", "Привратник", NULL };
-char *DLG373[] = { "Тони", "Привратник", NULL };
-char *DLG380[] = { "Тони", NULL };
-char *DLG410[] = { "Тони", "Гвендель", NULL };
-char *DLG430[] = { "Тони", "Гарольд", "Чак", "Pigeons", "Housekeeper (off scene)", NULL };
-char *DLG460[] = { "Тони", NULL };
-char *DLG470[] = { "Тони", "Housekeeper", "Mirror", NULL };
-char *DLG471[] = { "Тони", "Housekeeper", "Mirror", NULL };
-char *DLG472[] = { "Тони", "Housekeeper", "Mirror", NULL };
-char *DLG473[] = { "Тони", "Housekeeper", "Mirror", NULL };
-char *DLG474[] = { "Тони", "Housekeeper", "Mirror", NULL };
-char *DLG480[] = { "Тони", "Pin-up", NULL };
-char *DLG490[] = { "Тони", "Гвендель", NULL };	
-char *DLG530[] = { "Тони", "Гарольд", "Чак", NULL };
-char *DLG550[] = { "Тони", "Господин Колодец желаний", "Тони (с вершины колодца)", NULL  };
-char *DLG560[] = { "Тони", "Начальник охраны", NULL };
-char *DLG590[] = { "Тони", "Пантагрюэль", NULL };
-char *DLG600[] = { "Тони", "Джек", "Джек", NULL, "Джек", NULL, NULL, NULL, "Рассказчик", "Господин Колодец желаний", NULL };
+const char *DLG10[] = { "Тони", NULL };
+const char *DLG51[] = { "Тони", "Буч", "Дадли" };
+const char *DLG52[] = { "Тони", NULL };
+const char *DLG61[] = { "Тони", "Старушка 1", NULL };
+const char *DLG71[] = { "Тони", "Тимоти", "Осужденный", NULL, NULL, "Джек (с микрофоном)", "Старушка 1", NULL };
+const char *DLG90[] = { "Тони", "Бородатая женщина", NULL };
+const char *DLG110[] = { "Тони", "Лоренц", NULL };
+const char *DLG111[] = { "Тони", "Лоренц", NULL };
+const char *DLG130[] = { "Тони", "Пиранья", NULL };
+const char *DLG150[] = { "Тони", "Руфус", "Снеговик", NULL };
+const char *DLG151[] = { "Тони", "Руфус", "Снеговик", NULL };
+const char *DLG152[] = { "Тони", "Руфус", "Снеговик", NULL };
+const char *DLG153[] = { "Тони", "Руфус", "Снеговик", NULL };
+const char *DLG154[] = { "Тони", "Руфус", "Снеговик", NULL };
+const char *DLG160[] = { "Тони", "Шмайли", NULL };
+const char *DLG161[] = { "Тони", "Шмайли", NULL };
+const char *DLG162[] = { "Тони", "Шмайли", NULL };
+const char *DLG163[] = { "Тони", "Шмайли", NULL };
+const char *DLG180[] = { "Тони", "Чудовище", NULL };
+const char *DLG190[] = { "Тони", "Чудовище", NULL };
+const char *DLG191[] = { "Тони", "Чудовище", NULL };
+const char *DLG201[] = { "Тони", NULL };
+const char *DLG210[] = { "Тони", "Мортимер", NULL };
+const char *DLG211[] = { "Тони", "Мортимер", NULL };
+const char *DLG212[] = { "Тони", "Мортимер", NULL };
+const char *DLG240[] = { "Тони", "Изабелла", NULL };
+const char *DLG250[] = { "Тони", "Бармен", "Грустный пират", "Ведущий", "Бифф", NULL };
+const char *DLG251[] = { "Тони", "Бармен", "Грустный пират", "Ведущий", "Бифф", NULL };
+const char *DLG260[] = { "Тони", "Капитан", "Капитан (рассказ)", NULL };
+const char *DLG270[] = { "Тони", "Яйцеголовый", NULL };
+const char *DLG271[] = { "Тони", "Яйцеголовый", NULL };
+const char *DLG272[] = { "Тони", "Яйцеголовый", NULL };
+const char *DLG290[] = { "Тони", "Старушка 2", NULL };
+const char *DLG310[] = { "Тони", "Уолли", NULL };
+const char *DLG330[] = { "Тони", "Полли", "Капитан (за сценой)", NULL };
+const char *DLG340[] = { "Тони", "Рэндал", NULL };
+const char *DLG360[] = { "Тони", NULL };
+const char *DLG361[] = { "Тони", NULL };
+const char *DLG370[] = { "Тони", "Привратник", NULL };
+const char *DLG371[] = { "Тони", "Привратник", NULL };
+const char *DLG372[] = { "Тони", "Привратник", NULL };
+const char *DLG373[] = { "Тони", "Привратник", NULL };
+const char *DLG380[] = { "Тони", NULL };
+const char *DLG410[] = { "Тони", "Гвендель", NULL };
+const char *DLG430[] = { "Тони", "Гарольд", "Чак", "Pigeons", "Housekeeper (off scene)", NULL };
+const char *DLG460[] = { "Тони", NULL };
+const char *DLG470[] = { "Тони", "Housekeeper", "Mirror", NULL };
+const char *DLG471[] = { "Тони", "Housekeeper", "Mirror", NULL };
+const char *DLG472[] = { "Тони", "Housekeeper", "Mirror", NULL };
+const char *DLG473[] = { "Тони", "Housekeeper", "Mirror", NULL };
+const char *DLG474[] = { "Тони", "Housekeeper", "Mirror", NULL };
+const char *DLG480[] = { "Тони", "Pin-up", NULL };
+const char *DLG490[] = { "Тони", "Гвендель", NULL };	
+const char *DLG530[] = { "Тони", "Гарольд", "Чак", NULL };
+const char *DLG550[] = { "Тони", "Господин Колодец желаний", "Тони (с вершины колодца)", NULL  };
+const char *DLG560[] = { "Тони", "Начальник охраны", NULL };
+const char *DLG590[] = { "Тони", "Пантагрюэль", NULL };
+const char *DLG600[] = { "Тони", "Джек", "Джек", NULL, "Джек", NULL, NULL, NULL, "Рассказчик", "Господин Колодец желаний", NULL };
 #endif // Russian
 
 
 #if 0 // Czech names
-char *DLG10[] = { "Tony", NULL };
-char *DLG51[] = { "Tony", "Butch", "Dudley" };
-char *DLG52[] = { "Tony", NULL };
-char *DLG61[] = { "Tony", "Starб panн 1", NULL };
-char *DLG71[] = { "Tony", "Timothy", "Trestanec", NULL, NULL, "Jack (s mikrofonem)", "Starб panн 1", NULL };
-char *DLG90[] = { "Tony", "Vousatб ћena", NULL };
-char *DLG110[] = { "Tony", "Lorenz", NULL };
-char *DLG111[] = { "Tony", "Lorenz", NULL };
-char *DLG130[] = { "Tony", "Piraтa", NULL };
-char *DLG150[] = { "Tony", "Rufus", "Snмhulбk", NULL };
-char *DLG151[] = { "Tony", "Rufus", "Snмhulбk", NULL };
-char *DLG152[] = { "Tony", "Rufus", "Snмhulбk", NULL };
-char *DLG153[] = { "Tony", "Rufus", "Snмhulбk", NULL };
-char *DLG154[] = { "Tony", "Rufus", "Snмhulбk", NULL };
-char *DLG160[] = { "Tony", "Shmiley", NULL };
-char *DLG161[] = { "Tony", "Shmiley", NULL };
-char *DLG162[] = { "Tony", "Shmiley", NULL };
-char *DLG163[] = { "Tony", "Shmiley", NULL };
-char *DLG180[] = { "Tony", "Zvншe", NULL };
-char *DLG190[] = { "Tony", "Zvншe", NULL };
-char *DLG191[] = { "Tony", "Zvншe", NULL };
-char *DLG201[] = { "Tony", NULL };
-char *DLG210[] = { "Tony", "Mortimer", NULL };
-char *DLG211[] = { "Tony", "Mortimer", NULL };
-char *DLG212[] = { "Tony", "Mortimer", NULL };
-char *DLG240[] = { "Tony", "Isabella", NULL };
-char *DLG250[] = { "Tony", "Barman", "Smutnэ pirбt", "Moderбtor", "Biff", NULL };
-char *DLG251[] = { "Tony", "Barman", "Smutnэ pirбt", "Moderбtor", "Biff", NULL };
-char *DLG260[] = { "Tony", "Kapitбn", "Kapitбn (pшнbмh)", NULL };
-char *DLG270[] = { "Tony", "Intelektuбl", NULL };
-char *DLG271[] = { "Tony", "Intelektuбl", NULL };
-char *DLG272[] = { "Tony", "Intelektuбl", NULL };
-char *DLG290[] = { "Tony", "Starб panн 2", NULL };
-char *DLG310[] = { "Tony", "Wally", NULL };
-char *DLG330[] = { "Tony", "Lуra", "Kapitбn (mimo scйnu)", NULL };
-char *DLG340[] = { "Tony", "Randall", NULL };
-char *DLG360[] = { "Tony", NULL };
-char *DLG361[] = { "Tony", NULL };
-char *DLG370[] = { "Tony", "Strбћnэ", NULL };
-char *DLG371[] = { "Tony", "Strбћnэ", NULL };
-char *DLG372[] = { "Tony", "Strбћnэ", NULL };
-char *DLG373[] = { "Tony", "Strбћnэ", NULL };
-char *DLG380[] = { "Tony", NULL };
-char *DLG410[] = { "Tony", "Gwendel", NULL };
-char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Housekeeper (off scene)", NULL };
-char *DLG460[] = { "Tony", NULL };
-char *DLG470[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG471[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG472[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG473[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG474[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG480[] = { "Tony", "Pin-up", NULL };
-char *DLG490[] = { "Tony", "Gwendel", NULL };	
-char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
-char *DLG550[] = { "Tony", "Pan Studna pшбnн", "Tony (z vrcholu studny)", NULL  };
-char *DLG560[] = { "Tony", "Sprбvce", NULL };
-char *DLG590[] = { "Tony", "Pantagruel", NULL };
-char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL, "Vypravми", "Pan Studna pшбnн", NULL };
+const char *DLG10[] = { "Tony", NULL };
+const char *DLG51[] = { "Tony", "Butch", "Dudley" };
+const char *DLG52[] = { "Tony", NULL };
+const char *DLG61[] = { "Tony", "Starб panн 1", NULL };
+const char *DLG71[] = { "Tony", "Timothy", "Trestanec", NULL, NULL, "Jack (s mikrofonem)", "Starб panн 1", NULL };
+const char *DLG90[] = { "Tony", "Vousatб ћena", NULL };
+const char *DLG110[] = { "Tony", "Lorenz", NULL };
+const char *DLG111[] = { "Tony", "Lorenz", NULL };
+const char *DLG130[] = { "Tony", "Piraтa", NULL };
+const char *DLG150[] = { "Tony", "Rufus", "Snмhulбk", NULL };
+const char *DLG151[] = { "Tony", "Rufus", "Snмhulбk", NULL };
+const char *DLG152[] = { "Tony", "Rufus", "Snмhulбk", NULL };
+const char *DLG153[] = { "Tony", "Rufus", "Snмhulбk", NULL };
+const char *DLG154[] = { "Tony", "Rufus", "Snмhulбk", NULL };
+const char *DLG160[] = { "Tony", "Shmiley", NULL };
+const char *DLG161[] = { "Tony", "Shmiley", NULL };
+const char *DLG162[] = { "Tony", "Shmiley", NULL };
+const char *DLG163[] = { "Tony", "Shmiley", NULL };
+const char *DLG180[] = { "Tony", "Zvншe", NULL };
+const char *DLG190[] = { "Tony", "Zvншe", NULL };
+const char *DLG191[] = { "Tony", "Zvншe", NULL };
+const char *DLG201[] = { "Tony", NULL };
+const char *DLG210[] = { "Tony", "Mortimer", NULL };
+const char *DLG211[] = { "Tony", "Mortimer", NULL };
+const char *DLG212[] = { "Tony", "Mortimer", NULL };
+const char *DLG240[] = { "Tony", "Isabella", NULL };
+const char *DLG250[] = { "Tony", "Barman", "Smutnэ pirбt", "Moderбtor", "Biff", NULL };
+const char *DLG251[] = { "Tony", "Barman", "Smutnэ pirбt", "Moderбtor", "Biff", NULL };
+const char *DLG260[] = { "Tony", "Kapitбn", "Kapitбn (pшнbмh)", NULL };
+const char *DLG270[] = { "Tony", "Intelektuбl", NULL };
+const char *DLG271[] = { "Tony", "Intelektuбl", NULL };
+const char *DLG272[] = { "Tony", "Intelektuбl", NULL };
+const char *DLG290[] = { "Tony", "Starб panн 2", NULL };
+const char *DLG310[] = { "Tony", "Wally", NULL };
+const char *DLG330[] = { "Tony", "Lуra", "Kapitбn (mimo scйnu)", NULL };
+const char *DLG340[] = { "Tony", "Randall", NULL };
+const char *DLG360[] = { "Tony", NULL };
+const char *DLG361[] = { "Tony", NULL };
+const char *DLG370[] = { "Tony", "Strбћnэ", NULL };
+const char *DLG371[] = { "Tony", "Strбћnэ", NULL };
+const char *DLG372[] = { "Tony", "Strбћnэ", NULL };
+const char *DLG373[] = { "Tony", "Strбћnэ", NULL };
+const char *DLG380[] = { "Tony", NULL };
+const char *DLG410[] = { "Tony", "Gwendel", NULL };
+const char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Housekeeper (off scene)", NULL };
+const char *DLG460[] = { "Tony", NULL };
+const char *DLG470[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG471[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG472[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG473[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG474[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG480[] = { "Tony", "Pin-up", NULL };
+const char *DLG490[] = { "Tony", "Gwendel", NULL };	
+const char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
+const char *DLG550[] = { "Tony", "Pan Studna pшбnн", "Tony (z vrcholu studny)", NULL  };
+const char *DLG560[] = { "Tony", "Sprбvce", NULL };
+const char *DLG590[] = { "Tony", "Pantagruel", NULL };
+const char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL, "Vypravми", "Pan Studna pшбnн", NULL };
 #endif // Czech names
 
 #if 1 // Deutsch names
-char *DLG10[] = { "Tony", NULL };
-char *DLG51[] = { "Tony", "Butch", "Dudley" };
-char *DLG52[] = { "Tony", NULL };
-char *DLG61[] = { "Tony", "Alte Dame 1", NULL };
-char *DLG71[] = { "Tony", "Timothy", "Strдfling", NULL, NULL, "Jack (mit Mikrofon)", "Alte Dame 1", NULL };
-char *DLG90[] = { "Tony", "Bдrtige Dame", NULL };
-char *DLG110[] = { "Tony", "Lorenz", NULL };
-char *DLG111[] = { "Tony", "Lorenz", NULL };
-char *DLG130[] = { "Tony", "Piranha", NULL };
-char *DLG150[] = { "Tony", "Rufus", "Schneemann", NULL };
-char *DLG151[] = { "Tony", "Rufus", "Schneemann", NULL };
-char *DLG152[] = { "Tony", "Rufus", "Schneemann", NULL };
-char *DLG153[] = { "Tony", "Rufus", "Schneemann", NULL };
-char *DLG154[] = { "Tony", "Rufus", "Schneemann", NULL };
-char *DLG160[] = { "Tony", "Shmiley", NULL };
-char *DLG161[] = { "Tony", "Shmiley", NULL };
-char *DLG162[] = { "Tony", "Shmiley", NULL };
-char *DLG163[] = { "Tony", "Shmiley", NULL };
-char *DLG180[] = { "Tony", "Biest", NULL };
-char *DLG190[] = { "Tony", "Biest", NULL };
-char *DLG191[] = { "Tony", "Biest", NULL };
-char *DLG201[] = { "Tony", NULL };
-char *DLG210[] = { "Tony", "Mortimer", NULL };
-char *DLG211[] = { "Tony", "Mortimer", NULL };
-char *DLG212[] = { "Tony", "Mortimer", NULL };
-char *DLG240[] = { "Tony", "Isabella", NULL };
-char *DLG250[] = { "Tony", "Barmann", "Trauriger Pirat", "Chefanimateur", "Biff", NULL };
-char *DLG251[] = { "Tony", "Barmann", "Trauriger Pirat", "Chefanimateur", "Biff", NULL };
-char *DLG260[] = { "Tony", "Kapitдn", "Kapitдn (Erzдhlung)", NULL };
-char *DLG270[] = { "Tony", "Eierkopf", NULL };
-char *DLG271[] = { "Tony", "Eierkopf", NULL };
-char *DLG272[] = { "Tony", "Eierkopf", NULL };
-char *DLG290[] = { "Tony", "Alte Dame 2", NULL };
-char *DLG310[] = { "Tony", "Wally", NULL };
-char *DLG330[] = { "Tony", "Polly", "Kapitдn (im Off)", NULL };
-char *DLG340[] = { "Tony", "Randall", NULL };
-char *DLG360[] = { "Tony", NULL };
-char *DLG361[] = { "Tony", NULL };
-char *DLG370[] = { "Tony", "Pfцrtner", NULL };
-char *DLG371[] = { "Tony", "Pfцrtner", NULL };
-char *DLG372[] = { "Tony", "Pfцrtner", NULL };
-char *DLG373[] = { "Tony", "Pfцrtner", NULL };
-char *DLG380[] = { "Tony", NULL };
-char *DLG410[] = { "Tony", "Gwendel", NULL };
-char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Housekeeper (off scene)", NULL };
-char *DLG460[] = { "Tony", NULL };
-char *DLG470[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG471[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG472[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG473[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG474[] = { "Tony", "Housekeeper", "Mirror", NULL };
-char *DLG480[] = { "Tony", "Pin-up", NULL };
-char *DLG490[] = { "Tony", "Gwendel", NULL };	
-char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
-char *DLG550[] = { "Tony", "Herr Wunschbrunnen", "Tony (ьber dem Brunnen)", NULL  };
-char *DLG560[] = { "Tony", "Verwalter", NULL };
-char *DLG590[] = { "Tony", "Pantagruel", NULL };
-char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL, "Erzдhler", "Herr Wunschbrunnen", NULL };
+const char *DLG10[] = { "Tony", NULL };
+const char *DLG51[] = { "Tony", "Butch", "Dudley" };
+const char *DLG52[] = { "Tony", NULL };
+const char *DLG61[] = { "Tony", "Alte Dame 1", NULL };
+const char *DLG71[] = { "Tony", "Timothy", "Strдfling", NULL, NULL, "Jack (mit Mikrofon)", "Alte Dame 1", NULL };
+const char *DLG90[] = { "Tony", "Bдrtige Dame", NULL };
+const char *DLG110[] = { "Tony", "Lorenz", NULL };
+const char *DLG111[] = { "Tony", "Lorenz", NULL };
+const char *DLG130[] = { "Tony", "Piranha", NULL };
+const char *DLG150[] = { "Tony", "Rufus", "Schneemann", NULL };
+const char *DLG151[] = { "Tony", "Rufus", "Schneemann", NULL };
+const char *DLG152[] = { "Tony", "Rufus", "Schneemann", NULL };
+const char *DLG153[] = { "Tony", "Rufus", "Schneemann", NULL };
+const char *DLG154[] = { "Tony", "Rufus", "Schneemann", NULL };
+const char *DLG160[] = { "Tony", "Shmiley", NULL };
+const char *DLG161[] = { "Tony", "Shmiley", NULL };
+const char *DLG162[] = { "Tony", "Shmiley", NULL };
+const char *DLG163[] = { "Tony", "Shmiley", NULL };
+const char *DLG180[] = { "Tony", "Biest", NULL };
+const char *DLG190[] = { "Tony", "Biest", NULL };
+const char *DLG191[] = { "Tony", "Biest", NULL };
+const char *DLG201[] = { "Tony", NULL };
+const char *DLG210[] = { "Tony", "Mortimer", NULL };
+const char *DLG211[] = { "Tony", "Mortimer", NULL };
+const char *DLG212[] = { "Tony", "Mortimer", NULL };
+const char *DLG240[] = { "Tony", "Isabella", NULL };
+const char *DLG250[] = { "Tony", "Barmann", "Trauriger Pirat", "Chefanimateur", "Biff", NULL };
+const char *DLG251[] = { "Tony", "Barmann", "Trauriger Pirat", "Chefanimateur", "Biff", NULL };
+const char *DLG260[] = { "Tony", "Kapitдn", "Kapitдn (Erzдhlung)", NULL };
+const char *DLG270[] = { "Tony", "Eierkopf", NULL };
+const char *DLG271[] = { "Tony", "Eierkopf", NULL };
+const char *DLG272[] = { "Tony", "Eierkopf", NULL };
+const char *DLG290[] = { "Tony", "Alte Dame 2", NULL };
+const char *DLG310[] = { "Tony", "Wally", NULL };
+const char *DLG330[] = { "Tony", "Polly", "Kapitдn (im Off)", NULL };
+const char *DLG340[] = { "Tony", "Randall", NULL };
+const char *DLG360[] = { "Tony", NULL };
+const char *DLG361[] = { "Tony", NULL };
+const char *DLG370[] = { "Tony", "Pfцrtner", NULL };
+const char *DLG371[] = { "Tony", "Pfцrtner", NULL };
+const char *DLG372[] = { "Tony", "Pfцrtner", NULL };
+const char *DLG373[] = { "Tony", "Pfцrtner", NULL };
+const char *DLG380[] = { "Tony", NULL };
+const char *DLG410[] = { "Tony", "Gwendel", NULL };
+const char *DLG430[] = { "Tony", "Harold", "Chuck", "Pigeons", "Housekeeper (off scene)", NULL };
+const char *DLG460[] = { "Tony", NULL };
+const char *DLG470[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG471[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG472[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG473[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG474[] = { "Tony", "Housekeeper", "Mirror", NULL };
+const char *DLG480[] = { "Tony", "Pin-up", NULL };
+const char *DLG490[] = { "Tony", "Gwendel", NULL };	
+const char *DLG530[] = { "Tony", "Harold", "Chuck", NULL };
+const char *DLG550[] = { "Tony", "Herr Wunschbrunnen", "Tony (ьber dem Brunnen)", NULL  };
+const char *DLG560[] = { "Tony", "Verwalter", NULL };
+const char *DLG590[] = { "Tony", "Pantagruel", NULL };
+const char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL, "Erzдhler", "Herr Wunschbrunnen", NULL };
 #endif
 
 
@@ -2902,7 +2903,7 @@ case num:	\
 		return DLG##num[nPers];
 
 
-char *GetPersonName(uint16 nDlg, int nPers) {
+const char *GetPersonName(uint16 nDlg, int nPers) {
 	switch (nDlg) {
 	HANDLE_DIALOG(10);
 	HANDLE_DIALOG(51);
@@ -2964,7 +2965,7 @@ char *GetPersonName(uint16 nDlg, int nPers) {
 	HANDLE_DIALOG(600);
 
 	default:
-		warning("ERROR: Il dialogo %d non esiste!\n", nDlg);
+		warning("ERROR: Il dialogo %d non esiste!\n", (int)nDlg);
 		return "ERROR";
 	}
 }

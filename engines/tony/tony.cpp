@@ -176,7 +176,7 @@ void TonyEngine::StopUtilSFX(int nChannel) {
 	warning("TODO TonyEngine::StopUtilSFX");
 }
 
-void TonyEngine::PreloadSFX(int nChannel, char* fn) {
+void TonyEngine::PreloadSFX(int nChannel, const char *fn) {
 	if (m_sfx[nChannel] != NULL) {
 		m_sfx[nChannel]->Stop();
 		m_sfx[nChannel]->Release();
@@ -205,7 +205,7 @@ FPSFX *TonyEngine::CreateSFX(byte *buf) {
 	return sfx;
 }
 
-void TonyEngine::PreloadUtilSFX(int nChannel, char *fn) {
+void TonyEngine::PreloadUtilSFX(int nChannel, const char *fn) {
 	warning("TonyEngine::PreloadUtilSFX");
 }
 

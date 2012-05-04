@@ -1357,6 +1357,9 @@ void RMTony::EndTalk(void) {
 			break;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	// Gestisce la fine di una animazione static lasciando tutto invariato
@@ -1634,6 +1637,9 @@ void RMTony::StartStatic(TALKTYPE nTalk) {
 			m_nBodyOffset.Set(6, 56);
 			break;
 		}
+
+	default:
+		break;
 	}
 
 	// e vai con i pattern
@@ -1783,7 +1789,13 @@ void RMTony::EndStatic(TALKTYPE nTalk) {
 		case RIGHT:
 			headEndPat = PAT_SPAVENTORIGHT_END;
 			break;
+
+		default:
+			break;
 		}
+		break;
+
+	default:
 		break;
 	}
 

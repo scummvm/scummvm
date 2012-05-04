@@ -45,7 +45,7 @@
  *                                                                        *
  **************************************************************************/
 
-#include "tony/gfxEngine.h"
+#include "tony/gfxengine.h"
 
 namespace Tony {
 
@@ -137,8 +137,7 @@ void RMInput::SwitchFullscreen(bool bFull) {
 #endif
 }
 
-void RMInput::DIClose(void)
-{
+void RMInput::DIClose(void) {
 #ifdef REFACTOR_ME
 	DIRELEASE(m_DIDMouse);
 	DIRELEASE(m_DI);

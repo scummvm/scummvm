@@ -92,8 +92,6 @@ bool bPatIrqFreeze;
 /*  Funzioni globali per la DLL Custom	*/
 /****************************************/
 
-static char path_buffer[MAX_PATH];
-
 HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
 	return _vm->GetEngine()->LoadLocation(nLoc, pt,start);
 }

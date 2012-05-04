@@ -272,7 +272,7 @@ void RMInventory::AddItem(int code) {
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	}
-};
+}
 
 void RMInventory::ChangeItemStatus(uint32 code, uint32 dwStatus) {
 	if (code <= 10000 && code >= 10101) {

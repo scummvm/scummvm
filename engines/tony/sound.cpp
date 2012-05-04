@@ -589,7 +589,7 @@ uint32 CODECADPCMSTEREO::Decompress(HANDLE hFile, void *buf, uint32 dwSize) {
 	uint16 *lpBuf = (uint16 *)buf;
 	byte *inp;
 	int bufferstep;
-	int cache;
+	int cache = 0;
 	int delta;
 	int sign;
 	int vpdiff;
@@ -677,7 +677,7 @@ uint32 CODECADPCMSTEREO::Decompress(Common::File &fp, void *buf, uint32 dwSize) 
 	uint16 *lpBuf = (uint16 *)buf;
 	byte *inp;
 	int bufferstep;
-	int cache;
+	int cache = 0;
 	int delta;
 	int sign;
 	int vpdiff;
@@ -1289,7 +1289,7 @@ bool FPSFX::LoadVoiceFromVDB(Common::File &vdbFP) {
 }
 
 
-bool FPSFX::LoadFile(LPSTR lpszFileName, uint32 dwCodec) {
+bool FPSFX::LoadFile(const char *lpszFileName, uint32 dwCodec) {
 #ifdef REFACTOR_ME
 	static PCMWAVEFORMAT pcmwf;
 	static DSBUFFERDESC dsbdesc;

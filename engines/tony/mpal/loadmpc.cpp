@@ -527,15 +527,9 @@ static byte *ParseLocation(byte *lpBuf, LPMPALLOCATION lpmlLocation) {
 \****************************************************************************/
 
 bool ParseMpc(byte *lpBuf) {
-	uint16 i,j;
+	uint16 i, j;
 	uint16 wLen;
 	byte *lpTemp, *lpTemp2;
-
-	// Oggetti dummy. Definiti static per evitare stack overflow
-	static MPALITEM dummyitem;
-	static MPALLOCATION dummylocation;
-	static MPALSCRIPT dummyscript;
-	static MPALDIALOG dummydialog;
 
 	/* 1. Variabili */
 	if (lpBuf[0]!='V' || lpBuf[1]!='A' || lpBuf[2]!='R' || lpBuf[3]!='S')

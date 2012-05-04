@@ -178,10 +178,10 @@ public:
 
 	FPSFX *CreateSFX(byte *buf);
 
-	void PreloadSFX(int nSfx, char *fn);
+	void PreloadSFX(int nSfx, const char *fn);
 	void UnloadAllSFX(void);
 	
-	void PreloadUtilSFX(int nSfx, char *fn);
+	void PreloadUtilSFX(int nSfx, const char *fn);
 	void UnloadAllUtilSFX(void);
 
 	// Ferma tutta la parte audio
@@ -194,7 +194,7 @@ public:
 	void AutoSave(void);
 	void SaveState(int n, const char *name);
 	void LoadState(int n);
-	void GetSaveStateFileName(int n, char* buf);
+	void GetSaveStateFileName(int n, char *buf);
 
 	// Prende il thumbnail
 	void GrabThumbnail(void);

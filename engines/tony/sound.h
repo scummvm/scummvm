@@ -306,7 +306,7 @@ public:
 *
 \****************************************************************************/
 
-	bool LoadFile(char *lpszFileName, uint32 dwCodec = FPCODEC_RAW);
+	bool LoadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW);
 	bool LoadFile(byte *lpBuf, uint32 dwCodec);
 	bool LoadVoiceFromVDB(Common::File &vdbFP);
 
