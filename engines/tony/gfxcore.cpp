@@ -1832,7 +1832,7 @@ RMGfxSourceBuffer16::~RMGfxSourceBuffer16() {
 }
 
 void RMGfxSourceBuffer16::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int x,y;
+	int x, y;
 	uint16 *buf = bigBuf;
 	uint16 *raw = (uint16*)m_buf;
 	int dimx, dimy;
@@ -1881,7 +1881,7 @@ void RMGfxSourceBuffer16::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) 
 		}
 	} else {
 		for (y = 0; y < dimy; y++) {
-			CopyMemory(buf, raw, dimx * 2);
+			Common::copy(raw, raw + dimx, buf);
 			buf += bigBuf.Dimx();
 			raw += m_dimx;
 		}

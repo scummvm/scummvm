@@ -82,6 +82,17 @@ void RMTony::Init(void) {
 	RMRes body(9999);
 	RMDataStream ds;
 
+	// Mostra Tony di default
+	m_bShow=m_bShowOmbra = true;
+
+	// Nessuna azione in attesa
+	m_bActionPending = false;
+	m_bAction = false;
+
+	m_bPastorella = false;
+	m_bIsTalking = false;
+	m_bIsStaticTalk = false;
+
 	// Apre il buffer
 	ds.OpenBuffer(tony);
 
@@ -96,17 +107,6 @@ void RMTony::Init(void) {
 	m_body.ReadFromStream(ds, true); // da OGX
 	ds.Close();
 	m_body.SetPattern(0);
-
-	// Mostra Tony di default
-	m_bShow=m_bShowOmbra = true;
-
-  // Nessuna azione in attesa
-	m_bActionPending = false;
-	m_bAction = false;
-
-	m_bPastorella = false;
-	m_bIsTalking = false;
-	m_bIsStaticTalk = false;
 
 	m_nTimeLastStep = _vm->GetTime();
 }
