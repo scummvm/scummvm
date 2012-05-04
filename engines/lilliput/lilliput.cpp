@@ -222,6 +222,10 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	for (int i = 0; i < 160; i++)
 		_displayStringBuf[i] = 0;
 
+	for (int i = 0; i < 1400 + 3120; i++) {
+		_characterVariables_[i] = 0;
+	}
+
 	_currentCharacterVariables = NULL;
 	_bufferIdeogram = NULL;
 	_bufferMen = NULL;
@@ -1825,12 +1829,13 @@ void LilliputEngine::sub12F37() {
 	int index2 = 0;
 
 	for (int i = 0; i < _numCharacters; i++) {
-		if (_characterVariables[index1] != 0 ) {
-			if (_characterVariables[index1] == 1) {
-				_characterVariables[index1] = 0;
+		byte *varPtr = getCharacterVariablesPtr(index1);
+		if (varPtr[0] != 0 ) {
+			if (varPtr[0] == 1) {
+				varPtr[0] = 0;
 			} else {
-				--_characterVariables[index1];
-				if (_characterVariables[index1] == 1)
+				--varPtr[0];
+				if (varPtr[0] == 1)
 					_scriptHandler->_characterScriptEnabled[index2] = 1;
 			}
 		}
@@ -2443,7 +2448,7 @@ void LilliputEngine::loadRules() {
 		_rulesBuffer2_14[j] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
-			_characterVariables[(j * 32) + k] = f.readByte();
+			_characterVariables_[(j * 32) + k] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
 			_rulesBuffer2_16[(j * 32) + k] = f.readByte();
@@ -2603,7 +2608,7 @@ void LilliputEngine::sub170EE(int index) {
 	int var4 = _characterPositionY[index];
 
 	_currentScriptCharacterPosition = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
-	_currentCharacterVariables = &_characterVariables[_currentScriptCharacter * 32];
+	_currentCharacterVariables = getCharacterVariablesPtr(_currentScriptCharacter * 32);
 }
 
 void LilliputEngine::sub130DD() {
@@ -2677,7 +2682,7 @@ while(1);*/
 
 	//warning("dump char stat");
 	i = index;
-	debugC(3, kDebugEngine, "char %d, pos %d %d, state %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], _characterVariables[i*32+0], _scriptHandler->_characterScriptEnabled[i]);
+	debugC(3, kDebugEngine, "char %d, pos %d %d, state %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], *getCharacterVariablesPtr(i * 32 + 0), _scriptHandler->_characterScriptEnabled[i]);
 }
 
 Common::Error LilliputEngine::run() {
@@ -2736,6 +2741,15 @@ void LilliputEngine::initialize() {
 		for (int j = 0; j < 8; j ++)
 			_arr18560[i]._field5[j] = 0;
 	}
+}
+
+byte *LilliputEngine::getCharacterVariablesPtr(int16 index) {
+	debugC(1, kDebugEngine, "getCharacterVariablesPtr(%d)", index);
+
+	if (index >= 0)
+		return &_characterVariables_[index];
+	else
+		return &_characterVariables_[1400 - index];
 }
 
 void LilliputEngine::syncSoundSettings() {

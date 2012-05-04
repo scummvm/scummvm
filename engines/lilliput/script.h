@@ -113,7 +113,6 @@ private:
 	byte _byte1881D;
 
 	int _word16F00;
-	int _word10804;
 	int _word18776;
 	int _word18821;
 
@@ -140,7 +139,7 @@ private:
 	int sub17285(int index);
 	int sub18BB7(int index);
 
-	int getValue1();
+	int16 getValue1();
 	int getValue2();
 
 	byte *getCharacterVariablePtr();

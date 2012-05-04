@@ -43,7 +43,6 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_word1855E = 0;
 	_word16F00 = -1;
 	_viewportCharacterTarget = -1;
-	_word10804 = 0;
 	_heroismBarX = 0;
 	_heroismBarBottomY = 0;
 	_viewportX = 0;
@@ -1275,10 +1274,10 @@ void LilliputScript::sub18B3C(int var) {
 	sub18A56(&_vm->_rulesChunk4[index + count + i]);
 }
 
-int LilliputScript::getValue1() {
+int16 LilliputScript::getValue1() {
 	debugC(2, kDebugScript, "getValue1()");
 
-	int curWord = _currScript->readUint16LE();
+	int16 curWord = _currScript->readUint16LE();
 	if (curWord < 1000)
 		return curWord;
 
@@ -1292,7 +1291,7 @@ int LilliputScript::getValue1() {
 	case 1003:
 		return (int)_vm->_currentCharacterVariables[6];
 	case 1004:
-		return _word10804;
+		return _vm->_word10804;
 	default:
 		warning("getValue1: Unexpected large value %d", curWord);
 		return curWord;
@@ -1369,12 +1368,13 @@ void LilliputScript::sub130B6() {
 byte *LilliputScript::getCharacterVariablePtr() {
 	debugC(2, kDebugScript, "getCharacterVariablePtr()");
 
-	int tmpVal = getValue1();
-	tmpVal *= 32;
-	tmpVal += _currScript->readUint16LE();
+	int8 tmpVal = (int8) (getValue1() & 0xFF);
+	int index = tmpVal * 32;
+	index += _currScript->readUint16LE();
 
-	assert(tmpVal < 40 * 32);
-	return &_vm->_characterVariables[tmpVal];
+	assert(index < 1400);
+
+	return _vm->getCharacterVariablesPtr(index);
 }
 
 byte LilliputScript::OC_sub173DF() {
@@ -1729,7 +1729,7 @@ byte LilliputScript::OC_compWord10804() {
 	debugC(1, kDebugScript, "OC_compWord10804()");
 	
 	byte tmpVal = getValue1();
-	if (tmpVal == _word10804)
+	if (tmpVal == _vm->_word10804)
 		return 1;
 
 	return 0;
@@ -1860,7 +1860,7 @@ byte LilliputScript::OC_sub1785C() {
 	int count = 0;
 
 	for (int i = 0; i < _vm->_numCharacters; i++) {
-		if (curByte == _vm->_characterVariables[(32 * i)])
+		if (curByte == *_vm->getCharacterVariablesPtr(32 * i))
 			++count;
 	}
 
@@ -2270,7 +2270,7 @@ void LilliputScript::OC_sub17A8D() {
 	int tmpVal = getValue1();
 	assert(tmpVal < 40);
 
-	if (tmpVal == _word10804)
+	if (tmpVal == _vm->_word10804)
 		_viewportCharacterTarget = 0xFFFF;
 
 	_vm->_characterPositionX[tmpVal] = 0xFFFF;
@@ -2389,7 +2389,7 @@ void LilliputScript::OC_sub17AEE() {
 void LilliputScript::OC_setWord10804() {
 	debugC(1, kDebugScript, "OC_setWord10804()");
 
-	_word10804 = getValue1();
+	_vm->_word10804 = getValue1();
 }
 
 void LilliputScript::OC_sub17C0E() {
@@ -2982,7 +2982,7 @@ void LilliputScript::OC_sub17D04() {
 	byte var1 = getValue1();
 	byte var2 = _currScript->readUint16LE() & 0xFF;
 	
-	sub1823E(var1, var2, &_vm->_characterVariables[var1]);
+	sub1823E(var1, var2, _vm->getCharacterVariablesPtr(var1));
 }
 
 void LilliputScript::OC_sub18387() {
