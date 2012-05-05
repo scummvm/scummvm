@@ -81,8 +81,7 @@ void SpriteComponent::init() {
 		_sprite->_next = NULL;
 
 		if (_parent) {
-			if (_parent->isComponentType('M','M','D','L') ||
-				_parent->isComponentType('M','O','D','L')) {
+			if (_parent->isComponentType('M','E','S','H')) {
 				MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 				mc->getNode()->addSprite(_sprite);
 			} else
