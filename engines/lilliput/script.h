@@ -40,7 +40,7 @@ enum KValueType {
 	kCompareOperation,
 	kComputeOperation,
 	kGetValue1,
-	kGetValue2,
+	kgetPosFromScript,
 };
 
 
@@ -130,17 +130,17 @@ private:
 	void sub18A56(byte *buf);
 	void sub18B3C(int var);
 	void sub18BE6(byte var1, int var2, int var4);
-	byte *getMapPtr(int val);
+	byte *getMapPtr(Common::Point val);
 	byte *sub173D2();
 	void sub171AF(int var1, int var2, int var4);
 	void sub18B7C(int var1, int var3);
 	void sub189B8();
 	void sub189F5();
-	int sub17285(int index);
+	Common::Point sub17285(int index);
 	int sub18BB7(int index);
 
 	int16 getValue1();
-	int getValue2();
+	Common::Point getPosFromScript();
 
 	byte *getCharacterVariablePtr();
 	byte compareValues(byte var1, int oper, int var2);
