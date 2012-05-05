@@ -41,7 +41,6 @@ public:
 	void restoreState(SaveGame *state);
 
 private:
-	Common::String _filename;
 	Sprite *_sprite;
 };
 

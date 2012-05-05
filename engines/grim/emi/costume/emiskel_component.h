@@ -43,7 +43,6 @@ public:
 public:
 	bool _hierShared;
 	Component *_parentModel;
-	Common::String _filename;
 	Skeleton *_obj;
 	friend class Costume;
 };

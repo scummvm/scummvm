@@ -29,7 +29,7 @@
 namespace Grim {
 
 MeshComponent::MeshComponent(Component *p, int parentID, const char *name, tag32 t) :
-		Component(p, parentID, t), _name(name), _node(NULL) {
+		Component(p, parentID, name, t), _node(NULL) {
 	if (sscanf(name, "mesh %d", &_num) < 1)
 		error("Couldn't parse mesh name %s", name);
 

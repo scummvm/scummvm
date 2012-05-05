@@ -34,12 +34,10 @@ namespace Grim {
 
 
 SoundComponent::SoundComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, t) {
+		Component(p, parentID, filename, t) {
 	const char *comma = strchr(filename, ',');
 	if (comma) {
-		_soundName = Common::String(filename, comma);
-	} else {
-		_soundName = filename;
+		_name = Common::String(filename, comma);
 	}
 }
 
@@ -53,27 +51,27 @@ void SoundComponent::setKey(int val) {
 	case 0: // "Play"
 		// No longer a need to check the sound status, if it's already playing
 		// then it will just use the existing handle
-		g_imuse->startSfx(_soundName.c_str());
+		g_imuse->startSfx(_name.c_str());
 		if (g_grim->getCurrSet()) {
 			Math::Vector3d pos = _cost->getMatrix().getPosition();
-			g_grim->getCurrSet()->setSoundPosition(_soundName.c_str(), pos);
+			g_grim->getCurrSet()->setSoundPosition(_name.c_str(), pos);
 		}
 		break;
 	case 1: // "Stop"
-		g_imuse->stopSound(_soundName.c_str());
+		g_imuse->stopSound(_name.c_str());
 		break;
 	case 2: // "Stop Looping"
-		g_imuse->setHookId(_soundName.c_str(), 0x80);
+		g_imuse->setHookId(_name.c_str(), 0x80);
 		break;
 	default:
-		Debug::warning(Debug::Costumes, "Unknown key %d for sound %s", val, _soundName.c_str());
+		Debug::warning(Debug::Costumes, "Unknown key %d for sound %s", val, _name.c_str());
 	}
 }
 
 void SoundComponent::reset() {
 	// A lot of the sound components this gets called against aren't actually running
-	if (g_imuse && g_imuse->getSoundStatus(_soundName.c_str()))
-		g_imuse->stopSound(_soundName.c_str());
+	if (g_imuse && g_imuse->getSoundStatus(_name.c_str()))
+		g_imuse->stopSound(_name.c_str());
 }
 
 } // end of namespace Grim

@@ -36,7 +36,7 @@ class SaveGame;
 
 class Component {
 public:
-	Component(Component *parent, int parentID, tag32 tag);
+	Component(Component *parent, int parentID, const char *name, tag32 tag);
 
 	CMap *getCMap();
 	virtual void setColormap(CMap *c);
@@ -66,6 +66,8 @@ protected:
 	Component *_parent, *_child, *_sibling;
 	Math::Matrix4 _matrix;
 	Costume *_cost;
+	Common::String _name;
+
 	void setCostume(Costume *cost) { _cost = cost; }
 	void setParent(Component *newParent);
 	void removeChild(Component *child);

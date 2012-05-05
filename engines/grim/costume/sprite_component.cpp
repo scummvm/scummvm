@@ -32,7 +32,7 @@
 namespace Grim {
 
 SpriteComponent::SpriteComponent(Component *p, int parentID, const char *filename, tag32 t) :
-	Component(p, parentID, t), _filename(filename), _sprite(NULL) {
+	Component(p, parentID, filename, t), _sprite(NULL) {
 
 }
 
@@ -55,9 +55,9 @@ SpriteComponent::~SpriteComponent() {
 }
 
 void SpriteComponent::init() {
-	const char *comma = strchr(_filename.c_str(), ',');
+	const char *comma = strchr(_name.c_str(), ',');
 
-	Common::String name(_filename.c_str(), comma);
+	Common::String name(_name.c_str(), comma);
 
 	if (_sprite) {
 		if (_parent) {
@@ -85,7 +85,7 @@ void SpriteComponent::init() {
 				MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 				mc->getNode()->addSprite(_sprite);
 			} else
-				Debug::warning(Debug::Costumes, "Parent of sprite %s wasn't a mesh", _filename.c_str());
+				Debug::warning(Debug::Costumes, "Parent of sprite %s wasn't a mesh", _name.c_str());
 		}
 	}
 }

@@ -31,8 +31,6 @@ class LuaVarComponent : public Component {
 public:
 	LuaVarComponent(Component *parent, int parentID, const char *name, tag32 tag);
 	void setKey(int val);
-private:
-	Common::String _name;
 };
 
 } // end of namespace Grim

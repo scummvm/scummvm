@@ -29,8 +29,8 @@
 namespace Grim {
 
 ColormapComponent::ColormapComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, t) {
-	_cmap = g_resourceloader->getColormap(filename);
+		Component(p, parentID, filename, t) {
+	_cmap = g_resourceloader->getColormap(_name);
 
 	// Set the colormap here in the ctor and not in init()!
 	if (p)

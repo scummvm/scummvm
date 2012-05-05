@@ -41,7 +41,6 @@ public:
 
 private:
 	Material *_mat;
-	Common::String _filename;
 };
 
 } // end of namespace Grim

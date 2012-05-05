@@ -48,7 +48,6 @@ public:
 	Model *getModel() { return _model; }
 
 private:
-	Common::String _name;
 	int _num;
 	Model *_model;
 	ModelNode *_node;

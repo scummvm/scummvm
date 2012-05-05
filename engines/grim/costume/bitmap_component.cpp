@@ -31,11 +31,11 @@ namespace Grim {
 
 
 BitmapComponent::BitmapComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, t), _filename(filename) {
+		Component(p, parentID, filename, t) {
 }
 
 void BitmapComponent::setKey(int val) {
-	ObjectState *state = g_grim->getCurrSet()->findState(_filename);
+	ObjectState *state = g_grim->getCurrSet()->findState(_name);
 
 	if (state) {
 		state->setActiveImage(val);
@@ -46,7 +46,7 @@ void BitmapComponent::setKey(int val) {
 	// bitmaps were not loading with the scene. This was because they were requested
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
-	Debug::warning(Debug::Bitmaps | Debug::Costumes, "Missing scene bitmap: %s", _filename.c_str());
+	Debug::warning(Debug::Bitmaps | Debug::Costumes, "Missing scene bitmap: %s", _name.c_str());
 
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class

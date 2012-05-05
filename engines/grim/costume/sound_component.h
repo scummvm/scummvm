@@ -34,9 +34,6 @@ public:
 
 	void setKey(int val);
 	void reset();
-
-private:
-	Common::String _soundName;
 };
 
 } // end of namespace Grim

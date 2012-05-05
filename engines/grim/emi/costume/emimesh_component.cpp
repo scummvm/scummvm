@@ -29,7 +29,7 @@
 
 namespace Grim {
 
-EMIMeshComponent::EMIMeshComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, t), _filename(filename), _obj(NULL), _parentModel(NULL), _hasComplained(false) {
+EMIMeshComponent::EMIMeshComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _parentModel(NULL), _hasComplained(false) {
 	_hierShared = false;
 }
 
@@ -54,7 +54,7 @@ EMIMeshComponent::~EMIMeshComponent() {
 
 void EMIMeshComponent::init() {
 	_visible = true;
-	_obj = g_resourceloader->loadModelEMI(_filename);
+	_obj = g_resourceloader->loadModelEMI(_name);
 }
 
 int EMIMeshComponent::update(uint time) {
@@ -72,7 +72,7 @@ void EMIMeshComponent::draw() {
 		return;
 	if (!_obj) {
 		if (!_hasComplained) {
-			warning("Tried to draw component we have no file for %s", _filename.c_str());
+			warning("Tried to draw component we have no file for %s", _name.c_str());
 			_hasComplained = true;
 		}
 		return;

@@ -31,9 +31,6 @@ class BitmapComponent : public Component {
 public:
 	BitmapComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	void setKey(int val);
-
-private:
-	Common::String _filename;
 };
 
 } // end of namespace Grim

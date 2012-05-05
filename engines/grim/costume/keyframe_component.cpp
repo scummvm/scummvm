@@ -28,10 +28,10 @@
 namespace Grim {
 
 KeyframeComponent::KeyframeComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, t), _priority1(1), _priority2(5), _fname(filename) {
+		Component(p, parentID, filename, t), _priority1(1), _priority2(5) {
 	const char *comma = strchr(filename, ',');
 	if (comma) {
-		_fname = Common::String(filename, comma);
+		_name = Common::String(filename, comma);
 		sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
 	}
 }
@@ -96,7 +96,7 @@ void KeyframeComponent::setKey(int val) {
 		fade(Animation::FadeOut, 125);
 		break;
 	default:
-		Debug::warning(Debug::Costumes, "Unknown key %d for component %s", val, _fname.c_str());
+		Debug::warning(Debug::Costumes, "Unknown key %d for component %s", val, _name.c_str());
 	}
 }
 
@@ -117,9 +117,9 @@ void KeyframeComponent::init() {
 	if (_parent->isComponentType('M','M','D','L') ||
 		_parent->isComponentType('M','O','D','L')) {
 		ModelComponent *mc = static_cast<ModelComponent *>(_parent);
-		_anim = new Animation(_fname, mc->getAnimManager(), _priority1, _priority2);
+		_anim = new Animation(_name, mc->getAnimManager(), _priority1, _priority2);
 	} else {
-		Debug::warning(Debug::Costumes, "Parent of %s was not a model", _fname.c_str());
+		Debug::warning(Debug::Costumes, "Parent of %s was not a model", _name.c_str());
 		_anim = NULL;
 	}
 }

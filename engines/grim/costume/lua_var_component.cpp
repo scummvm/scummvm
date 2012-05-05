@@ -28,7 +28,7 @@ namespace Grim {
 
 
 LuaVarComponent::LuaVarComponent(Component *p, int parentID, const char *name, tag32 t) :
-		Component(p, parentID, t), _name(name) {
+		Component(p, parentID, name, t) {
 }
 
 void LuaVarComponent::setKey(int val) {

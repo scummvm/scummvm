@@ -42,7 +42,6 @@ public:
 	bool _hierShared;
 	Common::List<EMIMeshComponent*> _children;
 	EMIMeshComponent *_parentModel;
-	Common::String _filename;
 	EMIModel *_obj;
 	bool _hasComplained; // Temporary fix for warning-spam.
 	friend class Costume;

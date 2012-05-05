@@ -38,7 +38,7 @@ namespace Grim {
 #define DEFAULT_COLORMAP "item.cmp"
 
 ModelComponent::ModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
-		Component(p, parentID, t), _filename(filename),
+		Component(p, parentID, filename, t),
 		_obj(NULL), _hier(NULL), _animation(NULL) {
 	const char *comma = strchr(filename, ',');
 
@@ -47,10 +47,8 @@ ModelComponent::ModelComponent(Component *p, int parentID, const char *filename,
 	// Example: At the "scrimshaw parlor" in Rubacava the object
 	// "manny_cafe.3do,1" is requested
 	if (comma) {
-		_filename = Common::String(filename, comma);
+		_name = Common::String(filename, comma);
 		warning("Comma in model components not supported: %s", filename);
-	} else {
-		_filename = filename;
 	}
 	_prevComp = prevComponent;
 }
@@ -79,7 +77,7 @@ void ModelComponent::init() {
 		if (!cm && g_grim->getCurrSet())
 			cm = g_grim->getCurrSet()->getCMap();
 		if (!cm) {
-			Debug::warning(Debug::Costumes, "No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
+			Debug::warning(Debug::Costumes, "No colormap specified for %s, using %s", _name.c_str(), DEFAULT_COLORMAP);
 
 			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
@@ -88,13 +86,13 @@ void ModelComponent::init() {
 		// parent object's tree.
 		if (_parent) {
 			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
-			_obj = g_resourceloader->loadModel(_filename, cm, mc->getModel());
+			_obj = g_resourceloader->loadModel(_name, cm, mc->getModel());
 			_hier = _obj->getHierarchy();
 			mc->getNode()->addChild(_hier);
 		} else {
-			_obj = g_resourceloader->loadModel(_filename, cm);
+			_obj = g_resourceloader->loadModel(_name, cm);
 			_hier = _obj->getHierarchy();
-			Debug::warning(Debug::Costumes, "Parent of model %s wasn't a mesh", _filename.c_str());
+			Debug::warning(Debug::Costumes, "Parent of model %s wasn't a mesh", _name.c_str());
 		}
 
 		// Use parent availablity to decide whether to default the

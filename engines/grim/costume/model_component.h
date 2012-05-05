@@ -53,7 +53,6 @@ public:
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
 
 protected:
-	Common::String _filename;
 	Model *_obj;
 	ModelNode *_hier;
 	Math::Matrix4 _matrix;

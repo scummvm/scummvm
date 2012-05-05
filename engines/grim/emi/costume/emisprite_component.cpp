@@ -27,7 +27,7 @@
 
 namespace Grim {
 
-EMISpriteComponent::EMISpriteComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, t), _filename(filename), _sprite(NULL) {
+EMISpriteComponent::EMISpriteComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _sprite(NULL) {
 }
 
 EMISpriteComponent::~EMISpriteComponent() {
@@ -37,7 +37,7 @@ EMISpriteComponent::~EMISpriteComponent() {
 void EMISpriteComponent::init() {
 
 	// FIXME: this code should probably go into a sprite class.
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(_filename+"b");
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(_name+"b");
 	if (!stream)
 		return;
 	uint32 namelength = stream->readUint32LE();

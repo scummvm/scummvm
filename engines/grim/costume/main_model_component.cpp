@@ -33,7 +33,7 @@ MainModelComponent::MainModelComponent(Component *p, int parentID, const char *f
 	if (parentID == -2 && prevComponent && prevComponent->isComponentType('M','M','D','L')) {
 		MainModelComponent *mmc = static_cast<MainModelComponent *>(prevComponent);
 
-		if (mmc->_filename == filename) {
+		if (mmc->_name == _name) {
 			_animation = mmc->_animation;
 			_obj = mmc->_obj;
 			_hier = mmc->_hier;

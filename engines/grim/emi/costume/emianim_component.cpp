@@ -33,7 +33,7 @@
 
 namespace Grim {
 
-EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, t), _filename(filename), _obj(NULL), _parentModel(NULL) {
+EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _parentModel(NULL) {
 }
 
 EMIAnimComponent::~EMIAnimComponent() {
@@ -42,7 +42,7 @@ EMIAnimComponent::~EMIAnimComponent() {
 
 void EMIAnimComponent::init() {
 	_visible = true;
-	_obj = g_resourceloader->loadAnimationEmi(_filename);
+	_obj = g_resourceloader->loadAnimationEmi(_name);
 }
 
 int EMIAnimComponent::update(uint time) {

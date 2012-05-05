@@ -45,7 +45,6 @@ public:
 private:
 	Animation *_anim;
 	int _priority1, _priority2;
-	Common::String _fname;
 
 	friend class Costume;
 };
