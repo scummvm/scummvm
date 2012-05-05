@@ -58,20 +58,26 @@ Localizer::Localizer() {
 	delete f;
 
 	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
-		if (filesize < 4 || READ_BE_UINT32(data) != MKTAG('R','C','N','E'))
-			error("Invalid magic reading %s", filename.c_str());
-
-		// Decode the data
-		if (g_grim->getGameType() == GType_MONKEY4) {
-			uint32 next = 0x16;
-			for (int i = 4; i < filesize; i++) {
-				 next = next * 0x343FD + 0x269EC3;
-				data[i] ^= (int)(((((next >> 16) & 0x7FFF) / 32767.f) * 254) + 1);
+		if (filesize < 4)
+			error("%s to short: %i", filename.c_str(), filesize);
+		switch (READ_BE_UINT32(data)) {
+		case MKTAG('R','C','N','E'):
+			// Decode the data
+			if (g_grim->getGameType() == GType_MONKEY4) {
+				uint32 next = 0x16;
+				for (int i = 4; i < filesize; i++) {
+					 next = next * 0x343FD + 0x269EC3;
+					data[i] ^= (int)(((((next >> 16) & 0x7FFF) / 32767.f) * 254) + 1);
+				}
+			} else {
+				for (int i = 4; i < filesize; i++) {
+					data[i] ^= '\xdd';
+				}
 			}
-		} else {
-			for (int i = 4; i < filesize; i++) {
-				data[i] ^= '\xdd';
-			}
+		case MKTAG('D', 'O', 'E', 'L'):
+			break;
+		default:
+			error("Invalid magic reading %s: %08x", filename.c_str(), READ_BE_UINT32(data));
 		}
 	}
 
