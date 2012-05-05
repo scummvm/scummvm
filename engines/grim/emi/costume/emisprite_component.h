@@ -40,7 +40,6 @@ public:
 
 public:
 	Sprite *_sprite;
-	friend class Costume;
 };
 
 } // end of namespace Grim

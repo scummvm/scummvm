@@ -614,7 +614,6 @@ private:
 
 	bool _inOverworld;
 
-	friend class GrimEngine;
 };
 
 } // end of namespace Grim

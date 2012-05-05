@@ -44,7 +44,6 @@ public:
 	bool _hierShared;
 	Component *_parentModel;
 	Skeleton *_obj;
-	friend class Costume;
 };
 
 } // end of namespace Grim

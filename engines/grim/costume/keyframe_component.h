@@ -45,8 +45,6 @@ public:
 private:
 	Animation *_anim;
 	int _priority1, _priority2;
-
-	friend class Costume;
 };
 
 } // end of namespace Grim

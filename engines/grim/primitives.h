@@ -65,8 +65,6 @@ private:
 	Color _color;
 	bool _filled;
 	int _type;
-
-	friend class GrimEngine;
 };
 
 } // end of namespace Grim

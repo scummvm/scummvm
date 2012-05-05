@@ -44,7 +44,6 @@ private:
 	bool _hierShared;
 	Component *_parentModel;
 	AnimationEmi *_obj;
-	friend class Costume;
 };
 
 } // end of namespace Grim

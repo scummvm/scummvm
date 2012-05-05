@@ -48,7 +48,6 @@ private:
 	int32 _id;
 	static int32 s_id;
 
-	friend class GrimEngine;
 	friend class Pointer;
 };
 

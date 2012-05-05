@@ -42,7 +42,6 @@ private:
 	bool _hierShared;
 	Common::List<MainModelComponent*> _children;
 	MainModelComponent *_parentModel;
-	friend class Costume;
 };
 
 } // end of namespace Grim

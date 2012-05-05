@@ -44,7 +44,6 @@ public:
 	EMIMeshComponent *_parentModel;
 	EMIModel *_obj;
 	bool _hasComplained; // Temporary fix for warning-spam.
-	friend class Costume;
 };
 
 } // end of namespace Grim
