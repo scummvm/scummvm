@@ -133,7 +133,7 @@ public:
 
 	int _word10800_ERULES;
 	int _numCharacters;
-	int _currentScriptCharacterPosition;
+	Common::Point _currentScriptCharacterPos;
 	int _word17081_nextIndex;
 	int _word16EFE;
 	int _word1817B;
@@ -250,7 +250,7 @@ public:
 
 	void sortCharacters();
 	void scrollToViewportCharacterTarget();
-	void viewportScrollTo(int var1, int var3);
+	void viewportScrollTo(Common::Point goalPos);
 	void sub189DE();
 	void sub16626();
 	void sub16A08(int index);
@@ -266,7 +266,7 @@ public:
 	void renderCharacters(byte *buf, byte x, byte y);
 
 	byte sub16799(int param1, int index);
-	int sub16B0C(int param1, int param2);
+	int sub16B0C(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
 	void prepareGoldAmount(int param1);
 	void sub12F37();
@@ -330,7 +330,7 @@ public:
 	Common::Point _oldMousePos;
 	Common::Point _mouseDisplayPos;
 	int _mouseButton;
-	int _savedMousePosDivided;
+	Common::Point _savedMousePosDivided;
 	int _skipDisplayFlag1;
 	int _skipDisplayFlag2;
 

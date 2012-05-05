@@ -119,7 +119,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_oldMousePos = Common::Point(0, 0);
 	_mouseDisplayPos = Common::Point(0, 0);
 	_mouseButton = 0;
-	_savedMousePosDivided = 0xFFFF;
+	_savedMousePosDivided = Common::Point(-1, -1);
 	_skipDisplayFlag1 = 1;
 	_skipDisplayFlag2 = 0;
 	_displayMap = 0;
@@ -150,7 +150,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte16C9F = 0;
 
 	_currentScriptCharacter = 0;
-	_currentScriptCharacterPosition = 0;
+	_currentScriptCharacterPos = Common::Point(0, 0);
 	_word10804 = 0;
 	_word17081_nextIndex = 0;
 	_word16EFE = 0xFFFF;
@@ -926,14 +926,14 @@ void LilliputEngine::sub15F75() {
 	debugC(2, kDebugEngine, "sub15F75()");
 
 	_byte129A0 = 0xFF;
-	_savedMousePosDivided = 0xFFFF;
+	_savedMousePosDivided = Common::Point(-1, -1);
 	byte newX = _mousePos.x >> 2; 
 	byte newY = _mousePos.y / 3;
 
 	if ((newX >= 64) || (newY >= 64))
 		return;
 
-	_savedMousePosDivided = (newX << 8) + newY;
+	_savedMousePosDivided = Common::Point(newX, newY);
 	_byte16F07_menuId = 5;
 }
 
@@ -1190,53 +1190,52 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 
 	int var2 = (_characterPositionX[_scriptHandler->_viewportCharacterTarget] >> 3) - _scriptHandler->_viewportPos.x;
 	int var4 = (_characterPositionY[_scriptHandler->_viewportCharacterTarget] >> 3) - _scriptHandler->_viewportPos.y;
-	int var1 = _scriptHandler->_viewportPos.x;
+	Common::Point newPos = _scriptHandler->_viewportPos;
 
 	if (var2 >= 1) {
 		if (var2 >= 6) {
-			var1 += 4;
-			if (var1 > 56)
-				var1 = 56;
+			newPos.x += 4;
+			if (newPos.x > 56)
+				newPos.x = 56;
 		}
 	} else {
-		var1 -= 4;
-		if (var1 < 0)
-			var1 = 0;
+		newPos.x -= 4;
+		if (newPos.x < 0)
+			newPos.x = 0;
 	}
 
-	int var3 = _scriptHandler->_viewportPos.y;
 	if (var4 >= 1) {
 		if (var4 > 6) {
-			var3 += 4;
-			if (var3 >= 56)
-				var3 = 56;
+			newPos.y += 4;
+			if (newPos.y >= 56)
+				newPos.y = 56;
 		}
 	} else {
-		var3 -= 4;
-		if (var3 < 0)
-			var3 = 0;
+		newPos.y -= 4;
+		if (newPos.y < 0)
+			newPos.y = 0;
 	}
 
-	viewportScrollTo(var1, var3);
+	viewportScrollTo(newPos);
 }
 
-void LilliputEngine::viewportScrollTo(int goalX, int goalY) {
-	debugC(2, kDebugEngine, "viewportScrollTo(%d, %d)", goalX, goalY);
+void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
+	debugC(2, kDebugEngine, "viewportScrollTo(%d, %d)", goalPos.x, goalPos.y);
 
-	if ((goalX == _scriptHandler->_viewportPos.x) && (goalY == _scriptHandler->_viewportPos.y))
+	if (goalPos == _scriptHandler->_viewportPos)
 		return;
 
 	int dx = 0;
-	if (goalX != _scriptHandler->_viewportPos.x) {
-		if (goalX < _scriptHandler->_viewportPos.x)
+	if (goalPos.x != _scriptHandler->_viewportPos.x) {
+		if (goalPos.x < _scriptHandler->_viewportPos.x)
 			--dx;
 		else
 			++dx;
 	}
 
 	int dy = 0;
-	if (goalY!= _scriptHandler->_viewportPos.y) {
-		if (goalY < _scriptHandler->_viewportPos.y)
+	if (goalPos.y!= _scriptHandler->_viewportPos.y) {
+		if (goalPos.y < _scriptHandler->_viewportPos.y)
 			--dy;
 		else
 			++dy;
@@ -1250,10 +1249,10 @@ void LilliputEngine::viewportScrollTo(int goalX, int goalY) {
 		displayFunction15();
 		displayFunction14();
 
-		if (goalX == _scriptHandler->_viewportPos.x)
+		if (goalPos.x == _scriptHandler->_viewportPos.x)
 			dx = 0;
 
-		if (goalY == _scriptHandler->_viewportPos.y)
+		if (goalPos.y == _scriptHandler->_viewportPos.y)
 			dy = 0;
 	} while ((dx != 0) && (dy != 0));
 
@@ -1353,16 +1352,17 @@ void LilliputEngine::sub189DE() {
 	}
 }
 
-int LilliputEngine::sub16B0C(int param1, int param2) {
-	debugC(2, kDebugEngine, "sub16B0C(%d, %d)", param1, param2);
+// TODO rename to determine direction parameter from/to
+int LilliputEngine::sub16B0C(Common::Point param1, Common::Point param2) {
+	debugC(2, kDebugEngine, "sub16B0C(%d - %d, %d - %d)", param1.x, param1.y, param2.x, param2.y);
 
-	static const byte _array16B04[8] = {0, 2, 0, 1, 3, 2, 3, 1};
+	static const char _array16B04[8] = {0, 2, 0, 1, 3, 2, 3, 1};
 
-	int var1 = param2;
-	int var2 = param1;
+	Common::Point var1 = param2;
+	Common::Point var2 = param1;
 
-	int8 var1h = (var1 >>8) - (var2 >>8);
-	int8 var1l = (var1 & 0xFF) - (var2 & 0xFF);
+	int8 var1h = var1.x - var2.x;
+	int8 var1l = var1.y - var2.y;
 	int8 var2h = 0;
 	int8 var2l = 0;
 
@@ -1401,10 +1401,10 @@ byte LilliputEngine::sub16799(int index, int param1) {
 
 	sub167EF(index);
 
-	int var1 = (_scriptHandler->_array16123[index] << 8) + _scriptHandler->_array1614B[index];
-	int var2 = (_array109E9[index] << 8) + _array10A11[index];
+	Common::Point pos1 = Common::Point(_scriptHandler->_array16123[index], _scriptHandler->_array1614B[index]);
+	Common::Point pos2 = Common::Point(_array109E9[index], _array10A11[index]);
 
-	_characterDirectionArray[index] = sub16B0C(var1, var2);
+	_characterDirectionArray[index] = sub16B0C(pos1, pos2);
 
 	sub1693A(index);
 	_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
@@ -1876,6 +1876,7 @@ void LilliputEngine::sub130EE() {
 	sub131FC(posX, posY);
 }
 
+// TODO use Common::Point
 void LilliputEngine::sub131FC(int var2, int var4) {
 	debugC(2, kDebugEngine, "sub131FC(%d, %d)", var2, var4);
 
@@ -1891,7 +1892,7 @@ void LilliputEngine::sub131FC(int var2, int var4) {
 	if ((y >= 0) && (diff >= 0) && (y < 8) && (diff < 8)) {
 		y += _scriptHandler->_viewportPos.x;
 		diff += _scriptHandler->_viewportPos.y;
-		_savedMousePosDivided = (y << 8) + diff;
+		_savedMousePosDivided = Common::Point(y, diff);
 		_byte16F07_menuId = 5;
 	}
 }
@@ -2594,7 +2595,7 @@ void LilliputEngine::sub170EE(int index) {
 	int var2 = _characterPositionX[index];
 	int var4 = _characterPositionY[index];
 
-	_currentScriptCharacterPosition = (((var2 >> 3) & 0xFF) << 8) + ((var4 >> 3) & 0xFF);
+	_currentScriptCharacterPos = Common::Point((var2 >> 3) & 0xFF, (var4 >> 3) & 0xFF);
 	_currentCharacterVariables = getCharacterVariablesPtr(_currentScriptCharacter * 32);
 }
 
@@ -2615,7 +2616,7 @@ void LilliputEngine::handleMenu() {
 	debugC(1, kDebugScript, "========================== Menu Script ==============================");
 	_scriptHandler->runMenuScript(ScriptStream(_menuScript, _menuScript_size));
 	debugC(1, kDebugScript, "========================== End of Menu Script==============================");
-	_savedMousePosDivided = 0xFFFF;
+	_savedMousePosDivided = Common::Point(-1, -1);
 	_byte129A0 = 0xFF;
 
 	if (_byte16F07_menuId == 3)
