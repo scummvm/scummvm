@@ -82,6 +82,7 @@ Localizer::Localizer() {
 	}
 
 	char *nextline;
+	Common::String last_entry;
 	for (char *line = data + 4; line != NULL && *line != '\0' && *line != '\r'; line = nextline + 1) {
 		nextline = strchr(line, '\n');
 		assert(nextline);
@@ -89,7 +90,13 @@ Localizer::Localizer() {
 		char *tab = strchr(line, '\t');
 		assert(tab);
 
-		_entries[Common::String(line, tab - line)] = Common::String(tab + 1, (nextline - tab - 2));
+		if (tab > nextline) {
+			Common::String cont = Common::String(line, nextline - line - 1);
+			assert(last_entry != "");
+			warning("Continuation line: \"%s\" = \"%s\" + \"%s\"", last_entry.c_str(), _entries[last_entry].c_str(), cont.c_str());
+			_entries[last_entry] += cont;
+		} else
+			_entries[last_entry = Common::String(line, tab - line)] = Common::String(tab + 1, (nextline - tab - 2));
 	}
 	delete[] data;
 }
