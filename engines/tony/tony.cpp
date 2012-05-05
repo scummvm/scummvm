@@ -410,6 +410,7 @@ void TonyEngine::Close(void) {
 	CloseMusic();
 	CloseHandle(m_hEndOfFrame);
 	_theBoxes.Close();
+	RMText::Unload();
 	_theEngine.Close();
 	m_wnd.Close();
 }

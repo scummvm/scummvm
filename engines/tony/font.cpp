@@ -1829,6 +1829,18 @@ RMText::~RMText() {
 	
 }
 
+void RMText::Unload() {
+	if (m_fonts[0] != NULL) {
+		delete m_fonts[0];
+		delete m_fonts[1];
+		delete m_fonts[2];
+		delete m_fonts[3];
+		m_fonts[0] =  m_fonts[1] = m_fonts[2] = m_fonts[3] = 0;
+
+		g_system->unlockMutex(m_cs);
+	}
+}
+
 void RMText::SetMaxLineLength(int max) {
 	maxLineLength = max;
 }

@@ -357,13 +357,17 @@ public:
 	void RecalcAllAdj(void);
 };
 
+#define GAME_BOXES_SIZE 200
 
 class RMGameBoxes {	
 protected:
-	RMBoxLoc *m_allBoxes[200];
+	RMBoxLoc *m_allBoxes[GAME_BOXES_SIZE];
 	int m_nLocBoxes;
 
 public:
+	RMGameBoxes();
+	~RMGameBoxes();
+
 	void Init(void);		
 	void Close(void);
 

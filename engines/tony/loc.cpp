@@ -1746,6 +1746,16 @@ RMDataStream &operator>>(RMDataStream &ds, RMBoxLoc &bl) {
 *       RMGameBoxes methods
 \****************************************************************************/
 
+RMGameBoxes::RMGameBoxes() {
+	m_nLocBoxes = 0;
+	Common::fill(m_allBoxes, m_allBoxes + GAME_BOXES_SIZE, (RMBoxLoc *)NULL);
+}
+
+RMGameBoxes::~RMGameBoxes() {
+	for (int i = 1; i <= m_nLocBoxes; ++i)
+		delete m_allBoxes[i];
+}
+
 void RMGameBoxes::Init(void) {
 	int i;
 	RMString fn;
@@ -1753,7 +1763,7 @@ void RMGameBoxes::Init(void) {
 
 	// Load boxes from disk
 	m_nLocBoxes = 130;
-	for (i=1; i <= m_nLocBoxes; i++) {
+	for (i = 1; i <= m_nLocBoxes; i++) {
 		RMRes res(10000 + i);
 
 		ds.OpenBuffer(res);

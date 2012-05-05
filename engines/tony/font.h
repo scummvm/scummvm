@@ -215,6 +215,7 @@ protected:
 public:
     RMText();
     virtual ~RMText();
+	static void Unload();
 
     // Setta il tipo di allineamento
     void SetAlignType(HORALIGN aHor, VERALIGN aVer) { aHorType=aHor; aVerType=aVer; }
