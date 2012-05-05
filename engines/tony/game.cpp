@@ -1412,9 +1412,12 @@ void RMPointer::Init(void) {
 void RMPointer::Close(void) {
 	int i;
 
-	for (i = 0; i < 1; i++)
-		if (m_pointer[i] != NULL)
-			delete m_pointer[i], m_pointer[i] = NULL;
+	for (i = 0; i < 5; i++) {
+		if (m_pointer[i] != NULL) {
+			delete m_pointer[i];
+			m_pointer[i] = NULL;
+		}
+	}
 }
 
 

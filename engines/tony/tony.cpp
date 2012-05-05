@@ -413,6 +413,7 @@ void TonyEngine::Close(void) {
 	RMText::Unload();
 	_theEngine.Close();
 	m_wnd.Close();
+	delete[] m_curThumbnail;
 }
 
 void TonyEngine::SwitchFullscreen(bool bFull) {
