@@ -81,28 +81,7 @@ private:
 	bool Lock(DDSURFACEDESC &ddsd);
 	void Unlock(DDSURFACEDESC &ddsd);
 
-	// Inizializza DirectDraw
-	void DDInit(void);
-
-	// Chiude DirectDraw
-	void DDClose(void);
-
-	// Repaint grafico tramite DirectDraw
-	void Repaint(void);
-
-	// Window Proc principale che richiama la WindowProc dentro la classe
-//	friend LRESULT CALLBACK GlobalWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-	// Procedura di gestione messaggi
-//	LRESULT WindowProc(UINT msg, WPARAM wParam, LPARAM lParam);
-
 protected:
-	HWND m_hWnd;
-	bool m_bFullscreen;
-
-	void * /*LPDIRECTDRAW*/ m_DD;
-	void * /*LPDIRECTDRAWSURFACE*/ m_Primary;
-	void * /*LPDIRECTDRAWSURFACE*/ m_Back;
 	void * /*LPDIRECTDRAWCLIPPER*/ m_MainClipper;
 	void * /*LPDIRECTDRAWCLIPPER*/ m_BackClipper;
 
@@ -117,37 +96,37 @@ protected:
 	uint16 *m_wThumbBuf;
 
 	void CreateBWPrecalcTable(void);
-	void UpdatePixelFormat(void);
 	void WipeEffect(Common::Rect &rcBoundEllipse);
 
-	public:
-		RMWindow();
-		~RMWindow();
+public:
+	RMWindow();
+	~RMWindow();
 
-		// Inizializzazione
-		void Init(/*HINSTANCE hInst*/);
-		void InitDirectDraw(void);
-		void Close(void);
+	// Inizializzazione
+	void Init(/*HINSTANCE hInst*/);
+	void InitDirectDraw(void);
+	void Close(void);
 
-		// Switch tra windowed e fullscreen
-		void SwitchFullscreen(bool bFull);
+	// Repaint grafico tramite DirectDraw
+	void Repaint(void);
 
-		// Legge il prossimo frame
-		void GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
+	// Switch tra windowed e fullscreen
+	void SwitchFullscreen(bool bFull) {}
 
-		// Avverte di grabbare un thumbnail per il salvataggio
-		void GrabThumbnail(uint16 *buf);
+	// Legge il prossimo frame
+	void GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
 
-		operator HWND() { return m_hWnd; }
+	// Avverte di grabbare un thumbnail per il salvataggio
+	void GrabThumbnail(uint16 *buf);
 
-		// Modi pixel format
-		// MODE1: 1555
-		// MODE2: 5515
-		// MODE3: 5551
-		bool ISMODE1() { return (mskRed == 0x7C00 && mskGreen == 0x3E0 && mskBlue== 0x1F); }
-		bool ISMODE2() { return (mskRed == 0xF800 && mskGreen == 0x7E0 && mskBlue== 0x1F); }
-		bool ISMODE3() { return (mskRed == 0xF800 && mskGreen == 0x7C0 && mskBlue== 0x3E); }
-		bool ISMODE4() { return (mskBlue == 0xF800 && mskGreen == 0x7E0 && mskRed== 0x1F); }
+	// Modi pixel format
+	// MODE1: 1555
+	// MODE2: 5515
+	// MODE3: 5551
+	bool ISMODE1() { return (mskRed == 0x7C00 && mskGreen == 0x3E0 && mskBlue== 0x1F); }
+	bool ISMODE2() { return (mskRed == 0xF800 && mskGreen == 0x7E0 && mskBlue== 0x1F); }
+	bool ISMODE3() { return (mskRed == 0xF800 && mskGreen == 0x7C0 && mskBlue== 0x3E); }
+	bool ISMODE4() { return (mskBlue == 0xF800 && mskGreen == 0x7E0 && mskRed== 0x1F); }
 };
 
 } // End of namespace Tony

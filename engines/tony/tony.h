@@ -116,7 +116,7 @@ public:
 
 	// Bounding box list manager
 	RMGameBoxes _theBoxes;
-	RMWindow m_wnd;
+	RMWindow _window;
 	RMGfxEngine _theEngine;
 
 	bool m_bQuitNow;

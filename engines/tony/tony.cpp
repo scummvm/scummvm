@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "tony/tony.h"
 #include "tony/game.h"
@@ -65,6 +66,9 @@ Common::ErrorCode TonyEngine::Init() {
 	m_bPaused = false;
 	m_bDrawLocation = true;
 	m_startTime = g_system->getMillis();
+
+	// Initialise the graphics window
+	_window.Init();
 
 	// Initialise the function list
 	Common::fill(FuncList, FuncList + 300, (LPCUSTOMFUNCTION)NULL);
@@ -220,7 +224,7 @@ void TonyEngine::UnloadAllUtilSFX(void) {
 void TonyEngine::InitMusic() {
 	int i;
 
-	_theSound.Init(/*m_wnd*/);
+	_theSound.Init(/*_window*/);
 	_theSound.SetMasterVolume(63);
 	
 	for (i = 0; i < 6; i++)
@@ -349,7 +353,7 @@ void TonyEngine::CloseVoiceDatabase() {
 }
 
 void TonyEngine::GrabThumbnail(void) {
-	//m_wnd.GrabThumbnail(m_curThumbnail);
+	//_window.GrabThumbnail(m_curThumbnail);
 	warning("TODO: TonyEngine::GrabThumbnail");
 }
 
@@ -369,8 +373,16 @@ void TonyEngine::Abort(void) {
 }
 
 void TonyEngine::Play(void) {
-	warning("TODO TonyEngine::Play");
-	
+	// Main game loop
+	while (!shouldQuit() && !m_bQuitNow) {
+		g_system->delayMillis(50);
+		_window.Repaint();
+
+		Common::Event evt;
+		while (g_system->getEventManager()->pollEvent(evt))
+			;
+	}
+
 #if 0
 	MSG msg;
 
@@ -388,14 +400,14 @@ void TonyEngine::Play(void) {
 		// Passa il buffer dall'engine alla finestra
 		if (!m_bPaused) {
 			if (!theEngine.m_bWiping)
-				m_wnd.GetNewFrame(theEngine, NULL);
+				_window.GetNewFrame(theEngine, NULL);
 			else
-				m_wnd.GetNewFrame(theEngine, &theEngine.m_rcWipeEllipse);
+				_window.GetNewFrame(theEngine, &theEngine.m_rcWipeEllipse);
 		}
 
 		// Loop minchia dei messaggi
-		if (PeekMessage(&msg, m_wnd, 0, 0, true)) {
-			if (!TranslateAccelerator(m_wnd, m_hacc, &msg)) {
+		if (PeekMessage(&msg, _window, 0, 0, true)) {
+			if (!TranslateAccelerator(_window, m_hacc, &msg)) {
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
@@ -411,12 +423,12 @@ void TonyEngine::Close(void) {
 	CloseHandle(m_hEndOfFrame);
 	_theBoxes.Close();
 	_theEngine.Close();
-	m_wnd.Close();
+	_window.Close();
 	delete[] m_curThumbnail;
 }
 
 void TonyEngine::SwitchFullscreen(bool bFull) {
-	m_wnd.SwitchFullscreen(bFull);
+	_window.SwitchFullscreen(bFull);
 	_theEngine.SwitchFullscreen(bFull);
 }
 
@@ -434,7 +446,7 @@ void TonyEngine::PauseLoop(void) {
 
 	st = GetTime();
 
-	while (m_bPaused && GetMessage(&msg,m_wnd,0,0)) {
+	while (m_bPaused && GetMessage(&msg,_window,0,0)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
@@ -456,9 +468,9 @@ warning("TODO: TonyEninge::Pause");
 	theEngine.GDIControl(m_bPaused);
 
 	if (m_bPaused) {
-		SetWindowText(m_wnd, "Tony Tough and the night of Roasted Moths - PAUSED");
+		SetWindowText(_window, "Tony Tough and the night of Roasted Moths - PAUSED");
 	} else {
-		SetWindowText(m_wnd, "Tony Tough and the night of Roasted Moths");
+		SetWindowText(_window, "Tony Tough and the night of Roasted Moths");
 	}
 */
 }

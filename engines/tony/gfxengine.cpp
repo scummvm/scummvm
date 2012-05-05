@@ -557,7 +557,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	m_bigBuf.DrawOT();
 	m_bigBuf.ClearOT();
 	delete load;
-	_vm->m_wnd.GetNewFrame(*this, NULL);
+	_vm->_window.GetNewFrame(*this, NULL);
 
 
 
