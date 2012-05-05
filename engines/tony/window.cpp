@@ -117,25 +117,21 @@ void RMWindow::WipeEffect(Common::Rect &rcBoundEllipse) {
 		g_system->fillScreen(0);
 	} else {
 		// Clear the designated area a line at a time
-		byte line[RM_SX];
+		uint16 line[RM_SX];
 		Common::fill(line, line + RM_SX, 0);
 
 		// Loop through each line
 		for (int yp = rcBoundEllipse.top; yp < rcBoundEllipse.bottom; ++yp) {
-			g_system->copyRectToScreen(line, RM_SX, rcBoundEllipse.left, yp, rcBoundEllipse.width(), 1);
+			g_system->copyRectToScreen((const byte *)&line[0], RM_SX * 2, rcBoundEllipse.left, yp, rcBoundEllipse.width(), 1);
 		}
 	}
 }
 
 void RMWindow::GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
-	if (rcBoundEllipse == NULL) {
-		// Full screen update
-		g_system->copyRectToScreen(lpBuf, RM_SX, 0, 0, RM_SX, RM_SY);
-	} else {
-		// Update a screen section
-		g_system->copyRectToScreen(lpBuf, RM_SX, rcBoundEllipse->left, rcBoundEllipse->top, 
-			rcBoundEllipse->width(), rcBoundEllipse->height());
-	}
+	Common::Rect bounds = (rcBoundEllipse) ? *rcBoundEllipse : Common::Rect(0, 0, RM_SX, RM_SY);
+
+	// Update a screen section
+	g_system->copyRectToScreen(lpBuf, RM_SX * 2, bounds.left, bounds.top, bounds.width(), bounds.height());
 }
 
 
