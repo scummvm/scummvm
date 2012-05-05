@@ -288,7 +288,7 @@ SKIPCLICKSINISTRO:
 	}
 
 	// Anima Tony
-	m_tony.DoFrame(&m_bigBuf,m_nCurLoc);
+	m_tony.DoFrame(&m_bigBuf, m_nCurLoc);
 	
 	// Aggiorna lo scrolling per tenere Tony dentro lo schermo
 	if (m_tony.MustUpdateScrolling() && m_bLocationLoaded) {

@@ -819,10 +819,21 @@ RMItem::RMItem() {
 	m_bCurFlag = 0;
 	m_patterns = NULL;
 	m_sprites = NULL;
-	m_sfx= NULL;
+	m_sfx = NULL;
 	m_curScroll.Set(0, 0);
-	m_bInitCurPattern=true;
+	m_bInitCurPattern = true;
 	m_nCurPattern = 0;
+	m_z = 0;
+	m_cm = CM_256;
+	m_FX = 0;
+	m_FXparm = 0;
+	m_mpalCode = 0;
+	m_nSprites = 0;
+	m_nSfx = 0;
+	m_nPatterns = 0;
+	m_hEndPattern = 0;
+	m_bPal = 0;
+	m_nCurSprite = 0;
 
 	m_hEndPattern = CreateEvent(NULL, false, false, NULL);
 }
@@ -1632,6 +1643,16 @@ RMCharacter::RMCharacter() {
 	curSpeed = 3;
 	bRemoveFromOT = false;
 	bMoving = false;
+	curLocation = 0;
+	curbox = 0;
+	dx = dy = 0;
+	olddx = olddy = 0;
+	fx = fy = slope = 0;
+	walkspeed = walkstatus = 0;
+	nextbox = 0;
+	pathlenght = pathcount = 0;
+	status = STAND;
+	theBoxes = NULL;
 
 	m_pos.Set(0, 0);
 }

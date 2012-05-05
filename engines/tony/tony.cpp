@@ -375,45 +375,33 @@ void TonyEngine::Abort(void) {
 void TonyEngine::Play(void) {
 	// Main game loop
 	while (!shouldQuit() && !m_bQuitNow) {
-		g_system->delayMillis(50);
-		_window.Repaint();
-
-		Common::Event evt;
-		while (g_system->getEventManager()->pollEvent(evt))
-			;
-	}
-
-#if 0
-	MSG msg;
-
-	do {
 		// Se siamo in pausa, entra nel loop appropriato
 		if (m_bPaused)
 			PauseLoop();
 
-  		// Redraw del graphic engine
-		theEngine.DoFrame(m_bDrawLocation);
+		g_system->delayMillis(50);
 
-		// Avverte che è finito un frame
+		Common::Event evt;
+		while (g_system->getEventManager()->pollEvent(evt))
+			;
+
+  		// Call the engine to handle the next frame
+		_theEngine.DoFrame(m_bDrawLocation);
+
+		// Warns that a frame is finished
 		PulseEvent(m_hEndOfFrame);
 
-		// Passa il buffer dall'engine alla finestra
+		// Handle drawing the frame
 		if (!m_bPaused) {
-			if (!theEngine.m_bWiping)
-				_window.GetNewFrame(theEngine, NULL);
+			if (!_theEngine.m_bWiping)
+				_window.GetNewFrame(_theEngine, NULL);
 			else
-				_window.GetNewFrame(theEngine, &theEngine.m_rcWipeEllipse);
+				_window.GetNewFrame(_theEngine, &_theEngine.m_rcWipeEllipse);
 		}
 
-		// Loop minchia dei messaggi
-		if (PeekMessage(&msg, _window, 0, 0, true)) {
-			if (!TranslateAccelerator(_window, m_hacc, &msg)) {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
-	} while (msg.message != WM_QUIT && !m_bQuitNow);
-#endif
+		// Paint the frame onto the screen
+		_window.Repaint();
+	}
 }
 
 
