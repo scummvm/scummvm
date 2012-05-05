@@ -78,11 +78,14 @@ RMGfxEngine::RMGfxEngine() {
 	// Crea il big buffer dove verranno disegnati i frame
 	m_bigBuf.Create(RM_BBX, RM_BBY, 16);
 	m_bigBuf.OffsetY(RM_SKIPY);
+
+	csMainLoop = NULL;
 }
 
 RMGfxEngine::~RMGfxEngine() {
 	// Chiude il buffer
 	m_bigBuf.Destroy();
+	g_system->deleteMutex(csMainLoop);
 }
 
 void RMGfxEngine::OpenOptionScreen(int type) {

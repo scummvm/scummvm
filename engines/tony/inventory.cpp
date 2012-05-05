@@ -63,6 +63,7 @@ RMInventory::RMInventory() {
 	m_state = CLOSED;
 	m_bCombining = false;
 	m_csModifyInterface = g_system->createMutex();
+	m_nItems = 0;
 }
 
 RMInventory::~RMInventory() {
@@ -94,7 +95,7 @@ void RMInventory::Init(void) {
 
 	// Nuovi oggetti
 	m_nItems = 78;	// @@@ Numero di oggetti prendibili
-	m_items = new RMInventoryItem[m_nItems+1];
+	m_items = new RMInventoryItem[m_nItems + 1];
 
 	curres = 10500;
 
@@ -114,14 +115,15 @@ void RMInventory::Init(void) {
 		ds.Close();
 
 		// Mette di default a pattern 1
-		m_items[i].status=1;
+		m_items[i].pointer = NULL;
+		m_items[i].status = 1;
 		m_items[i].icon.SetPattern(1);
 		m_items[i].icon.DoFrame(this, false);
 
 		curres++;
 		if (i == 0 || i == 28 || i == 29) continue;
 		
-		m_items[i].pointer=new RMGfxSourceBuffer8RLEByteAA[m_items[i].icon.NumPattern()];
+		m_items[i].pointer = new RMGfxSourceBuffer8RLEByteAA[m_items[i].icon.NumPattern()];
 
 		for (j = 0; j < m_items[i].icon.NumPattern(); j++) {
 			RMResRaw raw(curres);
@@ -174,6 +176,11 @@ void RMInventory::Init(void) {
 void RMInventory::Close(void) {
 	// Ciao memoria 
 	if (m_items != NULL) {
+		// Delete the item pointers
+		for (int i = 0; i <= m_nItems; i++)
+			delete[] m_items[i].pointer;
+
+		// Delete the items array
 		delete[] m_items;
 		m_items = NULL;
 	}

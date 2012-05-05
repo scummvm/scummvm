@@ -350,6 +350,9 @@ private:
 	void ReadFromStream(RMDataStream& ds);
 
 public:
+	RMBoxLoc();
+	virtual ~RMBoxLoc();
+
 	friend RMDataStream& operator >>(RMDataStream &ds, RMBoxLoc &bl);
 	void RecalcAllAdj(void);
 };

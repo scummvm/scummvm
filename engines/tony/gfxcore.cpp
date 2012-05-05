@@ -709,11 +709,12 @@ void RMGfxSourceBuffer8RLE::SetAlphaBlendColor(int color) {
 RMGfxSourceBuffer8RLE::RMGfxSourceBuffer8RLE() {
 	alphaBlendColor = -1;
 	bNeedRLECompress = true;
+	m_buf = NULL;
 }
 
 RMGfxSourceBuffer8RLE::~RMGfxSourceBuffer8RLE() {
 	if (m_buf != NULL) {
-		delete m_buf;
+		delete[] m_buf;
 		m_buf = NULL;
 	}
 }
@@ -833,7 +834,7 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 	// Ci copia l'immagine compressa
 	x = cur - MegaRLEBuf;
 	m_buf = new byte[x];
-	CopyMemory(m_buf, MegaRLEBuf, x);
+	Common::copy(MegaRLEBuf, MegaRLEBuf + x, m_buf);
 }
 
 void RMGfxSourceBuffer8RLE::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {

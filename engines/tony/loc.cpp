@@ -1694,6 +1694,14 @@ RMDataStream &operator>>(RMDataStream &ds, RMBox &box) {
 *       RMBoxLoc Methods
 \****************************************************************************/
 
+RMBoxLoc::RMBoxLoc() {
+	boxes = NULL;
+}
+
+RMBoxLoc::~RMBoxLoc() {
+	delete[] boxes;
+}
+
 void RMBoxLoc::ReadFromStream(RMDataStream &ds) {
 	int i;
 	char buf[2];
