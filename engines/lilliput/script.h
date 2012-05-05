@@ -26,6 +26,7 @@
 #include "common/memstream.h"
 #include "common/stack.h"
 #include "common/random.h"
+#include "common/rect.h"
 
 #include "lilliput/stream.h"
 
@@ -71,8 +72,7 @@ public:
 
 	byte *_savedBuffer215Ptr;
 
-	int _viewportX;
-	int _viewportY;
+	Common::Point _viewportPos;
 	int _viewportCharacterTarget;
 	int _word1881B;
 	int _heroismBarX;

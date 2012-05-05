@@ -29,6 +29,8 @@
 #include "lilliput/stream.h"
 
 #include "common/file.h"
+#include "common/rect.h"
+
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -135,8 +137,7 @@ public:
 	int _word17081_nextIndex;
 	int _word16EFE;
 	int _word1817B;
-	int _word15BC8;
-	int _word15BCA;
+	Common::Point _word15BC8Pos;
 	int _word15AC2;
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
@@ -189,8 +190,8 @@ public:
 	int _rulesBuffer12_4[40];
 	int _word12F68_ERULES;
 	byte _rulesBuffer13_1[20];
-	int _rulesBuffer13_2[20];
-	int _rulesBuffer13_3[20];
+	int _interfaceHotspotsX[20];
+	int _interfaceHotspotsY[20];
 	byte _rulesBuffer13_4[20];
 	byte _array10999[40];
 	byte _array109C1[40];
@@ -218,15 +219,15 @@ public:
 	void newInt8();
 	void update();
 
-	void displayFunction1(byte *buf, int var1, int var2, int var4);
-	void displayFunction1a(byte *buf, int var2, int var4);
-	void displayFunction2(byte *buf, int var2, int var4);
+	void displayFunction1(byte *buf, int var1, Common::Point pos);
+	void displayFunction1a(byte *buf, Common::Point pos);
+	void displayFunction2(byte *buf, Common::Point pos);
 	void displayFunction3(int var1, int var2, int var4);
 	void displayFunction4();
 	void displayFunction5();
 	void displayFunction6();
 	void displayFunction7();
-	void displayFunction8();
+	void displayInterfaceHotspots();
 	void displayFunction9();
 	void displayFunction10();
 	void displayFunction11(byte *buf);
@@ -282,8 +283,8 @@ public:
 	void displayHeroismIndicator();
 	void sub130EE();
 	void sub1305C(byte index, byte var2);
-	void sub13184(bool &forceReturnFl);
-	int sub13240(int posX, int posY, int var3, int var4);
+	void checkInterfaceHotspots(bool &forceReturnFl);
+	int sub13240(Common::Point mousePos, int var3, int var4);
 	void sub131B2(int var2, int var4, bool &forceReturnFl);
 	void sub131FC(int var2, int var4);
 	void sub1546F(byte displayX, byte displayY);
@@ -325,12 +326,9 @@ public:
 	Common::String getSavegameFilename(int slot);
 	void syncSoundSettings();
 
-	int _mouseX;
-	int _mouseY;
-	int _oldMouseX;
-	int _oldMouseY;
-	int _mouseDisplayX;
-	int _mouseDisplayY;
+	Common::Point _mousePos;
+	Common::Point _oldMousePos;
+	Common::Point _mouseDisplayPos;
 	int _mouseButton;
 	int _savedMousePosDivided;
 	int _skipDisplayFlag1;
@@ -342,8 +340,6 @@ public:
 	byte _numCharactersToDisplay;
 	byte _byte16C9F;
 	int _word10804;
-	int _word16213;
-	int _word16215;
 
 	void pollEvent();
 	void sub170EE(int index);

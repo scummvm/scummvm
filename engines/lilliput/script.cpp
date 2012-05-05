@@ -45,8 +45,8 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_viewportCharacterTarget = -1;
 	_heroismBarX = 0;
 	_heroismBarBottomY = 0;
-	_viewportX = 0;
-	_viewportY = 0;
+	_viewportPos.x = 0;
+	_viewportPos.y = 0;
 	_word18776 = 0;
 
 	_savedBuffer215Ptr = NULL;
@@ -949,7 +949,6 @@ void LilliputScript::runScript(ScriptStream script) {
 void LilliputScript::runMenuScript(ScriptStream script) {
 	debugC(1, kDebugScript, "runMenuScript");
 
-	warning("========================== Menu Script ==============================");
 	_byte16F05_ScriptHandler = 0;
 	
 	while (handleOpcode(&script) == 0)
@@ -962,7 +961,7 @@ void LilliputScript::sub185ED(byte index, byte subIndex) {
 	if (_vm->_arr18560[index]._field0 != 1)
 		return;
 
-	_vm->displayFunction1(_vm->_bufferIdeogram, _vm->_arr18560[index]._field5[subIndex], _vm->_arr18560[index]._field1, _vm->_arr18560[index]._field3);
+	_vm->displayFunction1(_vm->_bufferIdeogram, _vm->_arr18560[index]._field5[subIndex], Common::Point(_vm->_arr18560[index]._field1, _vm->_arr18560[index]._field3));
 }
 
 byte LilliputScript::compareValues(byte var1, int oper, int var2) {
@@ -1875,8 +1874,8 @@ byte LilliputScript::OC_sub17886() {
 	int x = var1 >> 8;
 	int y = var1 & 0xFF;
 
-	int dx = x - _viewportX;
-	int dy = y - _viewportY;
+	int dx = x - _viewportPos.x;
+	int dy = y - _viewportPos.y;
 
 	if ( dx >= 0 && dx < 8 && dy >= 0 && dy < 8)
 		return 1;
@@ -2338,7 +2337,9 @@ void LilliputScript::OC_callScript() {
 
 	if (_byte16F05_ScriptHandler == 0) {
 		_vm->_byte1714E = 0;
+		debugC(1, kDebugScript, "========================== Menu Script %d==============================", scriptIndex);
 		runMenuScript(ScriptStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
+		debugC(1, kDebugScript, "========================== End of Menu Script==============================");
 	} else {
 		runScript(ScriptStream(&_vm->_arrayGameScripts[scriptIndex], _vm->_arrayGameScriptIndex[index + 1] - _vm->_arrayGameScriptIndex[index]));
 	}
@@ -2751,7 +2752,7 @@ void LilliputScript::OC_sub18099() {
 	_array122E9[index] = (curWord & 0xFF);
 	_array122FD[index] = (curWord >> 8);
 
-	_vm->displayFunction8();
+	_vm->displayInterfaceHotspots();
 }
 
 void LilliputScript::OC_sub180C3() {
@@ -2763,8 +2764,8 @@ void LilliputScript::OC_sub180C3() {
 	static const char _byte180B3[] = { 6, 0, 0, -6 };
 	static const char _byte180BB[] = { 0, -6, 6, 0 };
 	
-	int x = _viewportX + _byte180B3[var1];
-	int y = _viewportY + _byte180BB[var1];
+	int x = _viewportPos.x + _byte180B3[var1];
+	int y = _viewportPos.y + _byte180BB[var1];
 
 	if ( x < 0 )
 		x = 0;
@@ -2789,8 +2790,8 @@ void LilliputScript::OC_sub1810A() {
 	_viewportCharacterTarget = 0xFFFF;
 	int var1 = getValue2();
 
-	_viewportX = var1 >> 8;
-	_viewportY = var1 & 0xFF;
+	_viewportPos.x = var1 >> 8;
+	_viewportPos.y = var1 & 0xFF;
 
 	_vm->displayFunction9();
 	_vm->displayFunction15();
@@ -2892,8 +2893,8 @@ void LilliputScript::OC_sub18260() {
 	int var1 = getValue1();
 	int var2 = getValue2();
 
-	int x = var1 + _viewportX;
-	int y = var2 + _viewportY;
+	int x = var1 + _viewportPos.x;
+	int y = var2 + _viewportPos.y;
 
 	byte* mapPtr = getMapPtr((x << 8) + (y & 0xff));
 
@@ -3191,8 +3192,8 @@ void LilliputScript::OC_sub186E5_snd() {
 	byte var4l = (index & 0xFF);
 	byte var3h = _array16123[index];
 	byte var3l = _array1614B[index];
-	byte var2h = (_viewportX & 0xFF);
-	byte var2l = (_viewportY & 0xFF);
+	byte var2h = (_viewportPos.x & 0xFF);
+	byte var2l = (_viewportPos.y & 0xFF);
 	int var1 = _currScript->readUint16LE();
 
 	_vm->_soundHandler->contentFct2();
@@ -3203,7 +3204,7 @@ void LilliputScript::OC_sub1870A_snd() {
 
 	int var3 = getValue2();
 	int var4 = var3;
-	int var2 = (_viewportX << 8) + _viewportY;
+	int var2 = (_viewportPos.x << 8) + _viewportPos.y;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
 
 	_vm->_soundHandler->contentFct2();
@@ -3235,7 +3236,7 @@ void LilliputScript::OC_sub18746_snd() {
 	debugC(1, kDebugScript, "OC_sub18746_snd()");
 
 	int var4 = -1;
-	int var2 = (_viewportX << 8) + _viewportY;
+	int var2 = (_viewportPos.x << 8) + _viewportPos.y;
 	int var1 = _currScript->readUint16LE() & 0xFF;
 
 	_vm->_soundHandler->contentFct2();
