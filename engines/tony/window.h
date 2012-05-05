@@ -121,8 +121,8 @@ protected:
 	void WipeEffect(Common::Rect &rcBoundEllipse);
 
 	public:
-		RMWindow() { m_Primary = NULL; m_Back = NULL; };
-		~RMWindow() { Close(); }
+		RMWindow();
+		~RMWindow();
 
 		// Inizializzazione
 		void Init(/*HINSTANCE hInst*/);

@@ -108,7 +108,6 @@ public:
 	FPSTREAM *m_stream[6];
 	FPSFX *m_sfx[MAX_SFX_CHANNELS];
 	FPSFX *m_utilSfx[MAX_SFX_CHANNELS];
-	RMGfxEngine theEngine;
 	RMFont *fonts[2];
 	bool m_bPaused;
 	bool m_bDrawLocation;
@@ -117,8 +116,8 @@ public:
 
 	// Bounding box list manager
 	RMGameBoxes _theBoxes;
-	RMGfxEngine _theEngine;
 	RMWindow m_wnd;
+	RMGfxEngine _theEngine;
 
 	bool m_bQuitNow;
 	bool m_bTimeFreezed;

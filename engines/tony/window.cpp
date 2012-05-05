@@ -57,8 +57,17 @@ namespace Tony {
 static uint16 m_wPrecalcTable[0x10000];
 
 /****************************************************************************\
-*       Metodi di RMWindow
+*       RMWindow Methods
 \****************************************************************************/
+
+RMWindow::RMWindow() { 
+	m_Primary = NULL; m_Back = NULL; 
+}
+
+RMWindow::~RMWindow() {
+	Close();
+	RMText::Unload();
+}
 
 #ifdef REFACTOR_ME
 LRESULT CALLBACK GlobalWindowProc(HWND hWnd, uint32 msg, uint16 wParam, int32 lParam) {
