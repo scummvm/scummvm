@@ -422,25 +422,6 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 	DreamWeb::g_keyBuffer[in] = ascii;
 }
 
-void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
-	processEvents();
-	Common::Point pos = _eventMan->getMousePos();
-	if (pos.x > 298)
-		pos.x = 298;
-	if (pos.x < 15)
-		pos.x = 15;
-	if (pos.y < 15)
-		pos.y = 15;
-	if (pos.y > 184)
-		pos.y = 184;
-	*x = pos.x;
-	*y = pos.y;
-
-	unsigned newState = _eventMan->getButtonState();
-	*state = (newState == _oldMouseState? 0 : newState);
-	_oldMouseState = newState;
-}
-
 void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
 	_system->getPaletteManager()->grabPalette(data, start, count);
 	while (count--)
@@ -541,6 +522,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 			return c;
 		}
 	case Common::FR_FRA:
+	case Common::IT_ITA:
 		switch(c) {
 		case 133:
 			return 'Z' + 1;	

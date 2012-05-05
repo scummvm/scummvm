@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.11"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.12"
 
 class OSystem;
 
@@ -81,6 +81,7 @@ enum DrawData {
 	kDDButtonIdle,
 	kDDButtonHover,
 	kDDButtonDisabled,
+	kDDButtonPressed,
 
 	kDDSliderFull,
 	kDDSliderHover,
@@ -178,7 +179,8 @@ public:
 	enum State {
 		kStateDisabled,     ///< Indicates that the widget is disabled, that does NOT include that it is invisible
 		kStateEnabled,      ///< Indicates that the widget is enabled
-		kStateHighlight     ///< Indicates that the widget is highlighted by the user
+		kStateHighlight,    ///< Indicates that the widget is highlighted by the user
+		kStatePressed       ///< Indicates that the widget is pressed, currently works for buttons
 	};
 
 	typedef State WidgetStateInfo;

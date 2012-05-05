@@ -68,6 +68,7 @@ public:
 	~PredictiveDialog();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleKeyDown(Common::KeyState state);
 	virtual void handleTickle();
 
@@ -98,6 +99,8 @@ private:
 	void saveUserDictToFile();
 
 	void mergeDicts();
+
+	void updateHighLightedButton(ButtonId active);
 private:
 	Dict _unitedDict;
 	Dict _predictiveDict;
@@ -118,6 +121,7 @@ private:
 
 	uint32 _curTime, _lastTime;
 	ButtonId _lastPressBtn;
+	ButtonId _currBtn;
 
 	char _temp[kMaxWordLen + 1];
 	int _repeatcount[kMaxWordLen];
@@ -128,11 +132,10 @@ private:
 	Common::String _search;
 
 	bool _navigationwithkeys;
+	bool _needRefresh;
 private:
 	EditTextWidget *_edittext;
-	ButtonWidget   *_modebutton;
-	ButtonWidget   *_delbtn;
-	ButtonWidget   *_addBtn;
+	ButtonWidget   **_btns;
 };
 
 } // namespace GUI

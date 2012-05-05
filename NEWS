@@ -3,7 +3,17 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.5.0 (????-??-??)
  New Games:
+   - Added support for Blue Force.
+   - Added support for Darby the Dragon.
+   - Added support for Dreamweb.
+   - Added support for Gregory and the Hot Air Balloon.
+   - Added support for Magic Tales: Baba Yaga and the Magic Geese.
+   - Added support for Magic Tales: Imo and the King.
+   - Added support for Magic Tales: Liam Finds a Story.
+   - Added support for Magic Tales: The Little Samurai.
+   - Added support for Sleeping Cub's Test of Courage.
    - Added support for Soltys.
+   - Added support for The Princess and the Crab.
 
  General:
    - Updated MT-32 emulation code to latest munt project snapshot. The emulation

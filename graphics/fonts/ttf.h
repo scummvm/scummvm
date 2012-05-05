@@ -34,6 +34,8 @@ namespace Graphics {
 class Font;
 Font *loadTTFFont(Common::SeekableReadStream &stream, int size, bool monochrome = false, const uint32 *mapping = 0);
 
+void shutdownTTF();
+
 } // End of namespace Graphics
 
 #endif

@@ -589,11 +589,11 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 						file.c_str(), md5str.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid / variant at this point.
-					// If not, then there's a bug in our data tables...
-					assert(dr.game.gameid != 0);
-
-					// Add it to the list of detected games
-					results.push_back(dr);
+					// If not, we may have #ifdef'ed the entry out in our detection_tables.h because we
+					// don't have the required stuff compiled in, or there's a bug in our data tables...
+					if (dr.game.gameid != 0)
+						// Add it to the list of detected games
+						results.push_back(dr);
 				}
 			}
 

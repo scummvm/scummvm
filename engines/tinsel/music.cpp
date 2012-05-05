@@ -131,11 +131,6 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	g_currentMidi = dwFileOffset;
 	g_currentLoop = bLoop;
 
-	// Tinsel V1 PSX uses a different music format, so i
-	// disable it here.
-	// TODO: Maybe this should be moved to a better place...
-	if (TinselV1PSX) return false;
-
 	if (_vm->_config->_musicVolume != 0) {
 		bool mute = false;
 		if (ConfMan.hasKey("mute"))
@@ -231,14 +226,14 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 			_vm->_midiMusic->send(0x7F07B0 | 13);
 		}
 
-		_vm->_midiMusic->playXMIDI(g_midiBuffer.pDat, dwSeqLen, bLoop);
+		_vm->_midiMusic->playMIDI(dwSeqLen, bLoop);
 
 		// Store the length
 		//dwLastSeqLen = dwSeqLen;
 	} else {
 	 	// dwFileOffset == dwLastMidiIndex
 		_vm->_midiMusic->stop();
-		_vm->_midiMusic->playXMIDI(g_midiBuffer.pDat, dwSeqLen, bLoop);
+		_vm->_midiMusic->playMIDI(dwSeqLen, bLoop);
 	}
 
 	return true;
@@ -314,8 +309,7 @@ void OpenMidiFiles() {
 	Common::File midiStream;
 
 	// Demo version has no midi file
-	// Also, Discworld PSX uses still unsupported psx SEQ format for music...
-	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2) || TinselV1PSX)
+	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2))
 		return;
 
 	if (g_midiBuffer.pDat)
@@ -412,7 +406,7 @@ void MidiMusicPlayer::send(uint32 b) {
 	}
 }
 
-void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
+void MidiMusicPlayer::playMIDI(uint32 size, bool loop) {
 	Common::StackLock lock(_mutex);
 
 	if (_isPlaying)
@@ -420,6 +414,13 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 
 	stop();
 
+	if (TinselV1PSX)
+		playSEQ(size, loop);
+	else
+		playXMIDI(size, loop);
+}
+
+void MidiMusicPlayer::playXMIDI(uint32 size, bool loop) {
 	// It seems like not all music (the main menu music, for instance) set
 	// all the instruments explicitly. That means the music will sound
 	// different, depending on which music played before it. This appears
@@ -433,7 +434,78 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 	// Load XMID resource data
 
 	MidiParser *parser = MidiParser::createParser_XMIDI();
-	if (parser->loadMusic(midiData, size)) {
+	if (parser->loadMusic(g_midiBuffer.pDat, size)) {
+		parser->setTrack(0);
+		parser->setMidiDriver(this);
+		parser->setTimerRate(getBaseTempo());
+		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+
+		_parser = parser;
+
+		_isLooping = loop;
+		_isPlaying = true;
+	} else {
+		delete parser;
+	}
+}
+
+void MidiMusicPlayer::playSEQ(uint32 size, bool loop) {
+	// MIDI.DAT holds the file names in DW1 PSX
+	Common::String baseName((char *)g_midiBuffer.pDat, size);
+	Common::String seqName = baseName + ".SEQ";
+
+	// TODO: Load the instrument bank (<baseName>.VB and <baseName>.VH)
+
+	Common::File seqFile;
+	if (!seqFile.open(seqName))
+		error("Failed to open SEQ file '%s'", seqName.c_str());
+
+	if (seqFile.readUint32LE() != MKTAG('S', 'E', 'Q', 'p'))
+		error("Failed to find SEQp tag");
+
+	// Make sure we don't have a SEP file (with multiple SEQ's inside)
+	if (seqFile.readUint32BE() != 1)
+		error("Can only play SEQ files, not SEP");
+
+	uint16 ppqn = seqFile.readUint16BE();
+	uint32 tempo = seqFile.readUint16BE() << 8;
+	tempo |= seqFile.readByte();
+	/* uint16 beat = */ seqFile.readUint16BE();
+
+	// SEQ is directly based on SMF and we'll use that to our advantage here
+	// and convert to SMF and then use the SMF MidiParser.
+
+	// Calculate the SMF size we'll need
+	uint32 dataSize = seqFile.size() - 15;
+	uint32 actualSize = dataSize + 7 + 22;
+
+	// Resize the buffer if necessary
+	if (g_midiBuffer.size < actualSize) {
+		g_midiBuffer.pDat = (byte *)realloc(g_midiBuffer.pDat, actualSize);
+		assert(g_midiBuffer.pDat);
+	}
+
+	// Now construct the header
+	WRITE_BE_UINT32(g_midiBuffer.pDat, MKTAG('M', 'T', 'h', 'd'));
+	WRITE_BE_UINT32(g_midiBuffer.pDat + 4, 6); // header size
+	WRITE_BE_UINT16(g_midiBuffer.pDat + 8, 0); // type 0
+	WRITE_BE_UINT16(g_midiBuffer.pDat + 10, 1); // one track
+	WRITE_BE_UINT16(g_midiBuffer.pDat + 12, ppqn);
+	WRITE_BE_UINT32(g_midiBuffer.pDat + 14, MKTAG('M', 'T', 'r', 'k'));
+	WRITE_BE_UINT32(g_midiBuffer.pDat + 18, dataSize + 7); // SEQ data size + tempo change event size
+
+	// Add in a fake tempo change event
+	WRITE_BE_UINT32(g_midiBuffer.pDat + 22, 0x00FF5103); // no delta, meta event, tempo change, param size = 3
+	WRITE_BE_UINT16(g_midiBuffer.pDat + 26, tempo >> 8);
+	g_midiBuffer.pDat[28] = tempo & 0xFF;
+
+	// Now copy in the rest of the events
+	seqFile.read(g_midiBuffer.pDat + 29, dataSize);
+	seqFile.close();
+
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(g_midiBuffer.pDat, actualSize)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(getBaseTempo());

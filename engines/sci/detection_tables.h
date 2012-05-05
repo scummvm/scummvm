@@ -3445,6 +3445,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Space Quest 4 1.000 - French DOS Floppy (supplied by misterhands in bug report #3515247)
+	{"sq4", "", {
+
+		{"resource.map", 0, "1fd6f356f6a59ad2057686ce6573caeb", 6159},
+		{"resource.000", 0, "8000a55aebc50a68b7cce07a8c33758c", 205287},
+		{"resource.001", 0, "99a6df6d366b3f061271ff3450ac0d32", 1269850},
+		{"resource.002", 0, "a6a8d7a24dbb7a266a26b084e7275e89", 1242668},
+		{"resource.003", 0, "482a99c8103b4bcb5706e5969d1c1193", 1323083},
+		{"resource.004", 0, "b2cca3afcf2e013b8ce86b64155af766", 1254353},
+		{"resource.005", 0, "9e520577e035547c4b5149a6d12ef85b", 1098814},
+		AD_LISTEND},
+	 	Common::FR_FRA, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Space Quest 4 1.000 - English DOS Floppy (from abevi, bug report #2612718)
 	{"sq4", "", {
 		{"resource.map", 0, "8f08b97ca093f370c56d99715b015554", 6153},

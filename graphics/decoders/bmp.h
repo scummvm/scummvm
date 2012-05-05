@@ -51,7 +51,7 @@ public:
 	void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 	virtual const Surface *getSurface() const { return _surface; }
-	virtual const byte *getPalette() { return _palette; }
+	const byte *getPalette() const { return _palette; }
 
 private:
 	Surface *_surface;

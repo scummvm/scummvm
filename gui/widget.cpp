@@ -30,6 +30,8 @@
 
 #include "gui/ThemeEval.h"
 
+#include "gui/dialog.h"
+
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
@@ -77,6 +79,8 @@ void Widget::updateState(int oldFlags, int newFlags) {
 		_state = ThemeEngine::kStateEnabled;
 		if (newFlags & WIDGET_HILITED)
 			_state = ThemeEngine::kStateHighlight;
+		if (newFlags & WIDGET_PRESSED)
+			_state = ThemeEngine::kStatePressed;
 	} else {
 		_state = ThemeEngine::kStateDisabled;
 	}
@@ -272,27 +276,33 @@ void StaticTextWidget::drawWidget() {
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
 
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kButtonWidget;
 }
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd) {
+	  _cmd(cmd), _lastTime(0) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kButtonWidget;
 }
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
+	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
 		sendCommand(_cmd, 0);
+		startAnimatePressedState();
+	}
+}
+
+void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	setPressedState();
 }
 
 void ButtonWidget::drawWidget() {
@@ -322,6 +332,44 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 			button = new ButtonWidget(boss, x, y, w, h, "C", _("Clear value"), cmd);
 
 	return button;
+}
+
+void ButtonWidget::setHighLighted(bool enable) {
+	(enable) ? setFlags(WIDGET_HILITED) : clearFlags(WIDGET_HILITED);
+	draw();
+}
+
+void ButtonWidget::handleTickle() {
+	if (_lastTime) {
+		uint32 curTime = g_system->getMillis();
+		if (curTime - _lastTime > kPressedButtonTime) {
+			stopAnimatePressedState();
+		}
+	}
+}
+
+void ButtonWidget::setPressedState() {
+	wantTickle(true);
+	setFlags(WIDGET_PRESSED);
+	draw();
+}
+
+void ButtonWidget::stopAnimatePressedState() {
+	wantTickle(false);
+	_lastTime = 0;
+	clearFlags(WIDGET_PRESSED);
+	draw();
+}
+
+void ButtonWidget::startAnimatePressedState() {
+	_lastTime = g_system->getMillis();
+}
+
+void ButtonWidget::wantTickle(bool tickled) {
+	if (tickled) 
+		((GUI::Dialog *)_boss)->setTickleWidget(this);
+	else
+		((GUI::Dialog *)_boss)->unSetTickleWidget();
 }
 
 #pragma mark -

@@ -42,7 +42,7 @@ namespace GUI {
 
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false),
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _tickleWidget(0), _visible(false),
 	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	// Some dialogs like LauncherDialog use internally a fixed size, even though
 	// their widgets rely on the layout to be initialized correctly by the theme.
@@ -54,7 +54,7 @@ Dialog::Dialog(int x, int y, int w, int h)
 
 Dialog::Dialog(const Common::String &name)
 	: GuiObject(name),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false),
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _tickleWidget(0), _visible(false),
 	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 
 	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
@@ -115,6 +115,12 @@ void Dialog::reflowLayout() {
 	}
 
 	GuiObject::reflowLayout();
+}
+
+void Dialog::lostFocus() {
+	if (_tickleWidget) {
+		_tickleWidget->lostFocus();
+	}
 }
 
 void Dialog::setFocusWidget(Widget *widget) {
@@ -308,6 +314,9 @@ void Dialog::handleTickle() {
 	// Focused widget receives tickle notifications
 	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE)
 		_focusedWidget->handleTickle();
+
+	if (_tickleWidget && _tickleWidget->getFlags() & WIDGET_WANT_TICKLE)
+		_tickleWidget->handleTickle();
 }
 
 void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

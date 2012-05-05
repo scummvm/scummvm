@@ -1626,7 +1626,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
  */
 static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	// FIXME: This is a workaround for the FIXME below
-	if (GetMidiVolume() == 0 || TinselV1PSX)
+	if (GetMidiVolume() == 0)
 		return;
 
 	CORO_BEGIN_CONTEXT;

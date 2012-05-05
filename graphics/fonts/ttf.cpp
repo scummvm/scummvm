@@ -43,10 +43,6 @@ namespace Graphics {
 
 namespace {
 
-inline int ftFloor26_6(FT_Pos x) {
-	return x / 64;
-}
-
 inline int ftCeil26_6(FT_Pos x) {
 	return (x + 63) / 64;
 }
@@ -69,6 +65,10 @@ private:
 	FT_Library _library;
 	bool _initialized;
 };
+
+void shutdownTTF() {
+	TTFLibrary::destroy();
+}
 
 #define g_ttf ::Graphics::TTFLibrary::instance()
 

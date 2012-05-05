@@ -60,7 +60,9 @@ public:
 	const Font *getFontByName(const Common::String &name) const;
 
 	/**
-	 * Associates a font object with an 'name'
+	 * Associates a font object with an 'name'.
+	 * The FontManager takes ownership of the provided font object
+	 * and will delete it when necesssary.
 	 *
 	 * @param name	the name of the font
 	 * @param font	the font object
@@ -111,6 +113,7 @@ private:
 	~FontManager();
 
 	Common::HashMap<Common::String, const Font *> _fontMap;
+	Common::Array<const Font *> _ownedFonts;
 	Common::String _localizedFontName;
 };
 

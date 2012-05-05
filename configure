@@ -840,7 +840,7 @@ Optional Libraries:
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
 
-  --with-freetype-prefix=DIR Prefix where the freetype-config script is
+  --with-freetype2-prefix=DIR Prefix where the freetype-config script is
                            installed (optional)
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
@@ -1401,6 +1401,10 @@ ps2)
 ps3)
 	if test -z "$PS3DEV"; then
 		echo "Please set PS3DEV in your environment. export PS3DEV=<path to ps3 toolchain>"
+		exit 1
+	fi
+	if test -z "$PSL1GHT"; then
+		echo "Please set PSL1GHT in your environment. export PSL1GHT=<path to psl1ght>"
 		exit 1
 	fi
 	;;
@@ -2068,8 +2072,8 @@ case $_host_os in
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		DEFINES="$DEFINES -DPLAYSTATION3"
-		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
-		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
+		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
+		LDFLAGS="$LDFLAGS -L$PSL1GHT/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;

@@ -47,6 +47,13 @@ FontManager::FontManager() {
 }
 
 FontManager::~FontManager() {
+	for (uint i = 0; i < _ownedFonts.size(); ++i) {
+		const Font *font = _ownedFonts[i];
+		if (font == g_sysfont || font == g_sysfont_big || font == g_consolefont)
+			continue;
+		delete font;
+	}
+
 	delete g_sysfont;
 	g_sysfont = 0;
 	delete g_sysfont_big;
@@ -90,6 +97,8 @@ bool FontManager::assignFontToName(const Common::String &name, const Font *font)
 	Common::String lowercaseName = name;
 	lowercaseName.toLowercase();
 	_fontMap[lowercaseName] = font;
+	if (Common::find(_ownedFonts.begin(), _ownedFonts.end(), font) == _ownedFonts.end())
+		_ownedFonts.push_back(font);
 	return true;
 }
 
@@ -116,7 +125,34 @@ bool FontManager::setFont(FontUsage usage, const BdfFont *font) {
 void FontManager::removeFontName(const Common::String &name) {
 	Common::String lowercaseName = name;
 	lowercaseName.toLowercase();
+	if (!_fontMap.contains(lowercaseName))
+		return;
+
+	const Font *font = _fontMap[lowercaseName];
 	_fontMap.erase(lowercaseName);
+
+	// Check if we still have a copy of this font in the map.
+	bool stillHasFont = false;
+	for (Common::HashMap<Common::String, const Font *>::iterator i = _fontMap.begin(); i != _fontMap.end(); ++i) {
+		if (i->_value != font)
+			continue;
+		stillHasFont = true;
+		break;
+	}
+
+	if (!stillHasFont) {
+		// We don't have a copy of the font, so remove it from our list and delete it.
+		stillHasFont = true;
+		for (uint i = 0; i < _ownedFonts.size(); ++i) {
+			if (_ownedFonts[i] != font)
+				continue;
+			stillHasFont = false;
+			_ownedFonts.remove_at(i);
+			break;
+		}
+		assert(!stillHasFont);
+		delete font;
+	}
 
 	// In case the current localized font is removed, we fall back to the
 	// default font again.

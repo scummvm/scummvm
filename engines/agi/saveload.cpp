@@ -831,6 +831,9 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 
 	delete dialog;
 
+	if (slot < 0)
+		return true;
+	
 	if (isSave)
 		return doSave(slot, desc);
 	else
