@@ -311,9 +311,6 @@ static void UnlockScripts(void) {
 }
 
 
-
-
-
 /****************************************************************************\
 *
 * Function:     int varGetValue(char * lpszVarName);
@@ -334,11 +331,11 @@ int32 varGetValue(const char *lpszVarName) {
 	int i;
 	LPMPALVAR v=lpmvVars;
 
-	for (i=0;i<nVars;v++,i++)
-		if (strcmp(lpszVarName,v->lpszVarName)==0)
+	for (i = 0; i < nVars; v++, i++)
+		if (strcmp(lpszVarName, v->lpszVarName) == 0)
 			return v->dwVal;
 
-	mpalError=1;
+	mpalError = 1;
 	return 0;
 }
 
@@ -356,16 +353,16 @@ int32 varGetValue(const char *lpszVarName) {
 
 void varSetValue(const char *lpszVarName, int32 val) {
 	uint i;
-	LPMPALVAR v=lpmvVars;
+	LPMPALVAR v = lpmvVars;
 
-	for (i=0;i<nVars;v++,i++)
-		if (strcmp(lpszVarName,v->lpszVarName)==0) {
-			v->dwVal=val;
-			if (lpiifCustom!=NULL && strncmp(v->lpszVarName,"Pattern.",8) == 0) {
+	for (i = 0; i < nVars; v++, i++)
+		if (strcmp(lpszVarName, v->lpszVarName) == 0) {
+			v->dwVal = val;
+			if (lpiifCustom != NULL && strncmp(v->lpszVarName, "Pattern.", 8) == 0) {
 				i = 0;
 				sscanf(v->lpszVarName, "Pattern.%u", &i);
-				lpiifCustom(i,val,-1);
-			} else if (lpiifCustom!=NULL && strncmp(v->lpszVarName, "Status.", 7) == 0) {
+				lpiifCustom(i, val, -1);
+			} else if (lpiifCustom != NULL && strncmp(v->lpszVarName, "Status.", 7) == 0) {
 				i = 0;
 				sscanf(v->lpszVarName,"Status.%u", &i);
 				lpiifCustom(i, -1, val);
@@ -373,7 +370,7 @@ void varSetValue(const char *lpszVarName, int32 val) {
 			return;
 		}
 
-	mpalError=1;
+	mpalError = 1;
 	return;
 }
 
@@ -396,10 +393,10 @@ void varSetValue(const char *lpszVarName, int32 val) {
 
 static int locGetOrderFromNum(uint32 nLoc) {
 	int i;
-	LPMPALLOCATION loc=lpmlLocations;
+	LPMPALLOCATION loc = lpmlLocations;
 
-	for (i=0;i<nLocations;i++,loc++)
-		if (loc->nObj==nLoc)
+	for (i = 0; i < nLocations; i++,loc++)
+		if (loc->nObj == nLoc)
 			return i;
 
 	return -1;
@@ -425,8 +422,8 @@ static int msgGetOrderFromNum(uint32 nMsg) {
 	int i;
 	LPMPALMSG msg=lpmmMsgs;
 
-	for (i=0;i<nMsgs;i++,msg++)
-		if (msg->wNum==nMsg)
+	for (i = 0; i < nMsgs; i++, msg++)
+		if (msg->wNum == nMsg)
 			return i;
 
 	return -1;
@@ -453,8 +450,8 @@ static int itemGetOrderFromNum(uint32 nItem) {
 	int i;
 	LPMPALITEM item=lpmiItems;
 
-	for (i=0;i<nItems;i++,item++)
-		if (item->nObj==nItem)
+	for (i = 0; i < nItems; i++, item++)
+		if (item->nObj == nItem)
 			return i;
 
 	return -1;
@@ -479,10 +476,10 @@ static int itemGetOrderFromNum(uint32 nItem) {
 
 static int scriptGetOrderFromNum(uint32 nScript) {
 	int i;
-	LPMPALSCRIPT script=lpmsScripts;
+	LPMPALSCRIPT script = lpmsScripts;
 
-	for (i=0;i<nScripts;i++,script++)
-		if (script->nObj==nScript)
+	for (i = 0; i < nScripts; i++,script++)
+		if (script->nObj == nScript)
 			return i;
 
 	return -1;
@@ -509,8 +506,8 @@ static int dialogGetOrderFromNum(uint32 nDialog) {
 	int i;
 	LPMPALDIALOG dialog=lpmdDialogs;
 
-	for (i=0;i<nDialogs;i++,dialog++)
-		if (dialog->nObj==nDialog)
+	for (i = 0; i < nDialogs; i++, dialog++)
+		if (dialog->nObj == nDialog)
 			return i;
 
 	return -1;
@@ -542,13 +539,13 @@ static char *DuplicateMessage(uint32 nMsgOrd) {
 
 	origmsg = (const char *)GlobalLock(lpmmMsgs[nMsgOrd].hText);
 
-	j=0;
-	while (origmsg[j]!='\0' || origmsg[j+1]!='\0')
+	j = 0;
+	while (origmsg[j] != '\0' || origmsg[j+1] != '\0')
 		j++;
-	j+=2;
+	j += 2;
 
-	clonemsg=(char *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,j);
-	if (clonemsg==NULL)
+	clonemsg=(char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, j);
+	if (clonemsg == NULL)
 		return NULL;
 
 	CopyMemory(clonemsg, origmsg, j);
@@ -580,17 +577,17 @@ static char *DuplicateDialogPeriod(uint32 nPeriod) {
 	LPMPALDIALOG dialog=lpmdDialogs+nExecutingDialog;
 	int i,j;
 
-	for (j=0;dialog->Periods[j]!=NULL;j++)
-		if (dialog->PeriodNums[j]==nPeriod) {
+	for (j = 0; dialog->Periods[j] != NULL; j++)
+		if (dialog->PeriodNums[j] == nPeriod) {
 			/* Trovata la frase, va duplicata */
 			origmsg = (const char *)GlobalLock(dialog->Periods[j]);
 
 			/* Calcola la lunghezza e alloca la memoria */
-			i=0;
-			while (origmsg[i]!='\0') i++;
+			i = 0;
+			while (origmsg[i] != '\0') i++;
 
-			clonemsg = (char *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,i+1);
-			if (clonemsg==NULL)
+			clonemsg = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, i + 1);
+			if (clonemsg == NULL)
 				return NULL;
 
 			CopyMemory(clonemsg, origmsg, i);
@@ -644,7 +641,7 @@ HGLOBAL resLoad(uint32 dwId) {
 
 			h = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, nSizeDecomp + (nSizeDecomp / 1024) * 16);
 			buf = (byte *)GlobalLock(h);
-			temp = (byte *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,nSizeComp);
+			temp = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT,nSizeComp);
 
 			nBytesRead = hMpr.read(temp, nSizeComp);
 			if (nBytesRead != nSizeComp)
@@ -668,24 +665,24 @@ static uint32 *GetSelectList(uint32 i) {
 	LPMPALDIALOG dialog=lpmdDialogs+nExecutingDialog;
 
 	/* Conta quanti select attivi ci sono */
-	num=0;
-	for (j=0;dialog->Choice[i].Select[j].dwData!=0;j++)
+	num = 0;
+	for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
 		if (dialog->Choice[i].Select[j].curActive)
 			num++;
 
 	/* Se sono 0, e' un errore */
-	if (num==0)
+	if (num == 0)
 		return NULL;
 
-	sl= (uint32 *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(uint32)*(num+1));
-	if (sl==NULL)
+	sl= (uint32 *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(uint32) * (num + 1));
+	if (sl == NULL)
 		return NULL;
 
 	/* Copia il dato di ogni select attivo dentro la lista */
-	k=0;
-	for (j=0;dialog->Choice[i].Select[j].dwData!=0;j++)
+	k = 0;
+	for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
 		if (dialog->Choice[i].Select[j].curActive)
-			sl[k++]=dialog->Choice[i].Select[j].dwData;
+			sl[k++] = dialog->Choice[i].Select[j].dwData;
 
 	sl[k] = (uint32)NULL;
 	return sl;
@@ -694,23 +691,23 @@ static uint32 *GetSelectList(uint32 i) {
 static uint32 *GetItemList(uint32 nLoc) {
 	uint32 *il;
 	uint32 num,i,j;
-	LPMPALVAR v=lpmvVars;
+	LPMPALVAR v = lpmvVars;
 
-	num=0;
-	for (i=0;i<nVars;i++,v++) {
-		if (strncmp(v->lpszVarName,"Location",8)==0 && v->dwVal==nLoc)
+	num = 0;
+	for (i = 0; i < nVars; i++,v++) {
+		if (strncmp(v->lpszVarName,"Location",8) == 0 && v->dwVal == nLoc)
 			num++;
 	}
 
-	il=(uint32 *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(uint32)*(num+1));
-	if (il==NULL)
+	il=(uint32 *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(uint32) * (num + 1));
+	if (il == NULL)
 		return NULL;
 
-	v=lpmvVars;
-	j=0;
-	for (i=0;i<nVars;i++,v++) {
-		if (strncmp(v->lpszVarName,"Location",8)==0 && v->dwVal==nLoc) {
-			sscanf(v->lpszVarName,"Location.%u",&il[j]);
+	v = lpmvVars;
+	j = 0;
+	for (i = 0; i < nVars; i++,v++) {
+		if (strncmp(v->lpszVarName,"Location",8) == 0 && v->dwVal == nLoc) {
+			sscanf(v->lpszVarName, "Location.%u", &il[j]);
 			j++;
 		}
 	}
@@ -720,38 +717,38 @@ static uint32 *GetItemList(uint32 nLoc) {
 }
 
 static LPITEM GetItemData(uint32 nOrdItem) {
-	LPMPALITEM curitem=lpmiItems+nOrdItem;
+	LPMPALITEM curitem = lpmiItems+nOrdItem;
 	LPITEM ret;
 	HGLOBAL hDat;
 	char *dat;
-	int i,j;
+	int i, j;
 	char *patlength;
 	uint32 dim;
 
 	// Lo zeroinit e' obbligatorio!!!!
-	ret = (LPITEM)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(ITEM));
-	if (ret==NULL)
+	ret = (LPITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(ITEM));
+	if (ret == NULL)
 		return NULL;
-	ret->speed=150;
+	ret->speed = 150;
 
 	hDat = resLoad(curitem->dwRes);
 	dat = (char *)GlobalLock(hDat);
 
-	if (dat[0]=='D' && dat[1]=='A' && dat[2]=='T') {
-		i=dat[3];            // Versione!! Per ora 1.0
-		dat+=4;
+	if (dat[0] == 'D' && dat[1] == 'A' && dat[2] == 'T') {
+		i = dat[3];            // Versione!! Per ora 1.0
+		dat += 4;
 
-		if (i>=0x10) { // Dalla 1.0 c'e' il punto di destinazione per ogni oggetto
-			ret->destX=*(uint16 *)dat;
-			ret->destY=*(uint16 *)(dat+2);
+		if (i >= 0x10) { // Dalla 1.0 c'e' il punto di destinazione per ogni oggetto
+			ret->destX = (int16)READ_LE_UINT16(dat);
+			ret->destY = (int16)READ_LE_UINT16(dat + 2);
 			dat+=4;
 		}
 
-		if (i>=0x11) {// Dalla 1.1 c'e' la velocita' di animazione
-			ret->speed=*(uint16 *)dat;
-			dat+=2;
+		if (i >= 0x11) {// Dalla 1.1 c'e' la velocita' di animazione
+			ret->speed = READ_LE_UINT16(dat);
+			dat += 2;
 		} else
-			ret->speed=150;
+			ret->speed = 150;
 	}
 
 	ret->numframe=*dat++;
@@ -759,25 +756,25 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	ret->Zvalue=*dat++;
 
 	// Carica le coordinate left&top di ogni frame
-	for (i=0;i<ret->numframe;i++) {
-		ret->frameslocations[i].left=*(short*)(dat);
-		ret->frameslocations[i].top=*(short*)(dat+2);
-		dat+=4;
+	for (i = 0; i < ret->numframe; i++) {
+		ret->frameslocations[i].left = (int16)READ_LE_UINT16(dat);
+		ret->frameslocations[i].top = (int16)READ_LE_UINT16(dat + 2);
+		dat += 4;
 	}
 
 	// Carica le dimensioni di ogni frame e calcola right&bottom
-	for (i=0;i<ret->numframe;i++) {
-		ret->frameslocations[i].right=*(uint16 *)(dat)+ret->frameslocations[i].left;
-		ret->frameslocations[i].bottom=*(uint16 *)(dat+2)+ret->frameslocations[i].top;
+	for (i = 0; i < ret->numframe; i++) {
+		ret->frameslocations[i].right = (int16)READ_LE_UINT16(dat) + ret->frameslocations[i].left;
+		ret->frameslocations[i].bottom = (int16)READ_LE_UINT16(dat + 2) + ret->frameslocations[i].top;
 		dat+=4;
 	}
 
 	// Carica i bounding box di ogni frame
-	for (i=0;i<ret->numframe;i++) {
-		ret->bbox[i].left=*(uint16 *)(dat);
-		ret->bbox[i].top=*(uint16 *)(dat+2);
-		ret->bbox[i].right=*(uint16 *)(dat+4);
-		ret->bbox[i].bottom=*(uint16 *)(dat+6);
+	for (i = 0; i < ret->numframe; i++) {
+		ret->bbox[i].left = (int16)READ_LE_UINT16(dat);
+		ret->bbox[i].top = (int16)READ_LE_UINT16(dat + 2);
+		ret->bbox[i].right = (int16)READ_LE_UINT16(dat + 4);
+		ret->bbox[i].bottom = (int16)READ_LE_UINT16(dat + 6);
 		dat+=8;
 	}
 
@@ -793,20 +790,20 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	}
 
 	// Carica i singoli frame di animazione
-	for (i=1;i<ret->numframe;i++) {
-		dim=(uint32)(ret->frameslocations[i].right-ret->frameslocations[i].left)*
+	for (i = 1; i < ret->numframe; i++) {
+		dim=(uint32)(ret->frameslocations[i].right-ret->frameslocations[i].left) *
 			(uint32)(ret->frameslocations[i].bottom-ret->frameslocations[i].top);
 		ret->frames[i]=(char *)GlobalAlloc(GMEM_FIXED,dim);
    
-		if (ret->frames[i]==NULL)
+		if (ret->frames[i] == NULL)
 			return NULL;
 		CopyMemory(ret->frames[i], dat, dim);
-		dat+=dim;
+		dat += dim;
 	}
 
 	// Controlla se siamo arrivati fino alla fine del file
-	i=*(uint16 *)dat;
-	if (i!=0xABCD)
+	i = READ_LE_UINT16(dat);
+	if (i != 0xABCD)
 		return NULL;
 
 	GlobalUnlock(hDat);
@@ -832,7 +829,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 \****************************************************************************/
 
 void PASCAL CustomThread(LPCFCALL p) {
-	lplpFunctions[p->nCf](p->arg1,p->arg2,p->arg3,p->arg4);
+	lplpFunctions[p->nCf](p->arg1, p->arg2, p->arg3, p->arg4);
 	GlobalFree(p);
 	ExitThread(1);
 //	_endthread();
@@ -863,28 +860,28 @@ void PASCAL ScriptThread(LPMPALSCRIPT s) {
 	LPCFCALL p;
 
 // warning("PlayScript(): Moments: %u\n",s->nMoments);
-	for (i=0;i<s->nMoments;i++) {
+	for (i = 0; i < s->nMoments; i++) {
 		// Dorme il tempo necessario per arrivare al momento successivo
-		if (s->Moment[i].dwTime==-1) {
-			WaitForMultipleObjects(numHandles,cfHandles,true,INFINITE);
+		if (s->Moment[i].dwTime == -1) {
+			WaitForMultipleObjects(numHandles, cfHandles, true, INFINITE);
 			dwStartTime = timeGetTime();
 		} else {
 			dwCurTime = timeGetTime();
-			if (dwCurTime < dwStartTime+(s->Moment[i].dwTime*100)) {
+			if (dwCurTime < dwStartTime + (s->Moment[i].dwTime * 100)) {
   //     warning("PlayScript(): Sleeping %lums\n",dwStartTime+(s->Moment[i].dwTime*100)-dwCurTime);
-				Sleep(dwStartTime+(s->Moment[i].dwTime*100)-dwCurTime);
+				Sleep(dwStartTime+(s->Moment[i].dwTime * 100) - dwCurTime);
 			}
 		}
 
-		numHandles=0;
-		for (j=0;j<s->Moment[i].nCmds;j++) {
+		numHandles = 0;
+		for (j = 0;j<s->Moment[i].nCmds; j++) {
 			k=s->Moment[i].CmdNum[j];
 
 			switch (s->Command[k].type) {
 			case 1:
-				p=(LPCFCALL)GlobalAlloc(GMEM_FIXED,sizeof(CFCALL));
-				if (p==NULL) {
-					mpalError=1;
+				p=(LPCFCALL)GlobalAlloc(GMEM_FIXED, sizeof(CFCALL));
+				if (p == NULL) {
+					mpalError = 1;
 					ExitThread(0);
 //					_endthread();
 				}
@@ -896,9 +893,9 @@ void PASCAL ScriptThread(LPMPALSCRIPT s) {
 				p->arg4=s->Command[k].arg4;
 
 					 // !!! Nuova gestione dei thread
-				if ((cfHandles[numHandles++]=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)CustomThread,(void *)p,0,&dwId))==NULL) {
+				if ((cfHandles[numHandles++] = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)CustomThread,(void *)p, 0, &dwId)) == NULL) {
 			 //if ((cfHandles[numHandles++]=(void*)_beginthread(CustomThread, 10240, (void *)p))==(void*)-1)
-					mpalError=1;
+					mpalError = 1;
 					ExitThread(0);
 //					_endthread();
 				}
@@ -914,7 +911,7 @@ void PASCAL ScriptThread(LPMPALSCRIPT s) {
 				break;
 
 			default:
-				mpalError=1;
+				mpalError = 1;
 				GlobalFree(s);
 				ExitThread(0);
 //				_endthread();
@@ -943,9 +940,9 @@ void PASCAL ScriptThread(LPMPALSCRIPT s) {
 \****************************************************************************/
 
 void PASCAL ActionThread(LPMPALITEM item) {
-	int j,k;
+	int j, k;
 
-	for (j=0;j<item->Action[item->dwRes].nCmds;j++) {
+	for (j = 0;j<item->Action[item->dwRes].nCmds; j++) {
 		k=item->Action[item->dwRes].CmdNum[j];
 
 		switch (item->Command[k].type) {
@@ -962,27 +959,27 @@ void PASCAL ActionThread(LPMPALITEM item) {
 		case 2:
 			// Variable assign
 			LockVar();
-			varSetValue(item->Command[k].lpszVarName,EvaluateExpression(item->Command[k].expr));
+			varSetValue(item->Command[k].lpszVarName, EvaluateExpression(item->Command[k].expr));
 			UnlockVar();
 			break;
 
 		default:
-			mpalError=1;
+			mpalError = 1;
 			ExitThread(0);
 //			_endthread();
 		}
 	}
 
 	GlobalFree(item);
-	//bExecutingAction=false;
+	//bExecutingAction = false;
 
 	ExitThread(1);
 // _endthread();
 }
 
 void PASCAL ShutUpActionThread(HANDLE hThread) {
-	WaitForSingleObject(hThread,INFINITE);
-	bExecutingAction=false;
+	WaitForSingleObject(hThread, INFINITE);
+	bExecutingAction = false;
 
 	ExitThread(1);
 // _endthread();
@@ -1036,7 +1033,7 @@ void PASCAL LocationPollThread(uint32 id) {
 	il = mpalQueryItemList(nPollingLocations[id]);
 
  /* Contiamo gli items */
-	for (numitems=0;il[numitems]!=0;numitems++)
+	for (numitems = 0; il[numitems] != 0; numitems++)
 		;
 
  /* Cerchiamo gli items della locazione senza idle actions e li eliminiamo
@@ -1051,7 +1048,7 @@ void PASCAL LocationPollThread(uint32 id) {
 	 
 		curItem = lpmiItems + ord;
 
-		k=0;
+		k = 0;
 		for (j = 0; j < curItem->nActions; j++)
 			if (curItem->Action[j].num == 0xFF)
 				k++;
@@ -1132,49 +1129,49 @@ void PASCAL LocationPollThread(uint32 id) {
 		/* Cerchiamo tra tutte le idle actions quella a cui manca meno tempo per
 			l'esecuzione */
 		curTime = timeGetTime();
-		dwSleepTime=(uint32)-1L;
+		dwSleepTime=(uint32) - 1L;
 
-		for (k=0;k<nIdleActions;k++)
-			if (curTime>=MyActions[k].dwLastTime+MyActions[k].wTime) {
-				dwSleepTime=0;
+		for (k = 0;k<nIdleActions;k++)
+			if (curTime >= MyActions[k].dwLastTime + MyActions[k].wTime) {
+				dwSleepTime = 0;
 				break;
 		     } else
-				dwSleepTime=MIN(dwSleepTime,MyActions[k].dwLastTime+MyActions[k].wTime-curTime);
+				dwSleepTime = MIN(dwSleepTime,MyActions[k].dwLastTime+MyActions[k].wTime-curTime);
 
 		/* Ci addormentiamo, ma controllando sempre l'evento che viene settato
 			quando viene richiesta la nostra chiusura */
-		k=WaitForSingleObject(hEndPollingLocations[id],dwSleepTime);
-		if (k==WAIT_OBJECT_0)
+		k = WaitForSingleObject(hEndPollingLocations[id], dwSleepTime);
+		if (k == WAIT_OBJECT_0)
 			break;
 
-		for (i=0;i<nRealItems;i++)
-			if (MyThreads[i].nItem!=0) {
-				if (WaitForSingleObject(MyThreads[i].hThread,0)==WAIT_OBJECT_0)
-					MyThreads[i].nItem=0;
+		for (i = 0; i < nRealItems; i++)
+			if (MyThreads[i].nItem != 0) {
+				if (WaitForSingleObject(MyThreads[i].hThread, 0) == WAIT_OBJECT_0)
+					MyThreads[i].nItem = 0;
 			}
 
 		curTime = timeGetTime();
 
 		/* Cerchiamo all'interno delle idle actions quale e' necessario eseguire */
-		for (k=0;k<nIdleActions;k++)
-			if (curTime>=MyActions[k].dwLastTime+MyActions[k].wTime) {
-				MyActions[k].dwLastTime+=MyActions[k].wTime;
+		for (k = 0; k < nIdleActions; k++)
+			if (curTime >= MyActions[k].dwLastTime + MyActions[k].wTime) {
+				MyActions[k].dwLastTime += MyActions[k].wTime;
 
 			   /* E' il momento di tirare il nostro dado virtuale, e controllare
 				  se la sorte e' dalla parte della idle action */
 				byte randomVal = (byte)_vm->_randomSource.getRandomNumber(99);
 				if (randomVal < MyActions[k].perc) {
 					/* Controlliamo se c'e' una action in esecuzione sull'item */
-					if ((bExecutingAction) && (nExecutingAction==MyActions[k].nItem))
+					if ((bExecutingAction) && (nExecutingAction == MyActions[k].nItem))
 						continue;
 
 					/* Controlliamo se c'e' gia' un'altra idle function in esecuzione
 						sullo stesso item */
-					for (i=0;i<nRealItems;i++)
-						if (MyThreads[i].nItem==MyActions[k].nItem)
+					for (i = 0; i < nRealItems; i++)
+						if (MyThreads[i].nItem == MyActions[k].nItem)
 							break;
 
-					if (i<nRealItems)
+					if (i < nRealItems)
 						continue;
 
 					/* Ok, siamo gli unici :) */
@@ -1183,7 +1180,7 @@ void PASCAL LocationPollThread(uint32 id) {
 
 					/* Controlliamo se c'e' un esperessione WhenExecute */
 					j=MyActions[k].nAction;
-					if (curItem->Action[j].when!=NULL)
+					if (curItem->Action[j].when != NULL)
 						if (!EvaluateExpression(curItem->Action[j].when)) {
 							UnlockItems();
 							continue;
@@ -1191,15 +1188,15 @@ void PASCAL LocationPollThread(uint32 id) {
 
 					/* Ok, possiamo eseguire la azione. Per comodita' lo facciamo in
 						un nuovo thread */
-					newItem=(LPMPALITEM)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(MPALITEM));
-					if (newItem==false) {
+					newItem=(LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
+					if (newItem == false) {
 						GlobalFree(MyThreads);
 						GlobalFree(MyActions);
 						ExitThread(0);
 //						_endthread();
 					}
 
-					CopyMemory(newItem,curItem,sizeof(MPALITEM));
+					CopyMemory(newItem,curItem, sizeof(MPALITEM));
 					UnlockItems();
 
 					/* Copiamo l'azione nella #0 */
@@ -1209,15 +1206,15 @@ void PASCAL LocationPollThread(uint32 id) {
 
 					/* Creaiamo l'action thread. Provvedera' lui a liberare la memoria
 						allocata per il nuovo item */
-					for (i=0;i<nRealItems;i++)
-						if (MyThreads[i].nItem==0)
+					for (i = 0; i < nRealItems; i++)
+						if (MyThreads[i].nItem == 0)
 							break;
 
 					MyThreads[i].nItem=MyActions[k].nItem;
 
 					// !!! Nuova gestione dei thread
-					if ((MyThreads[i].hThread=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)ActionThread,(void *)newItem,0,&dwId))==NULL) {
-					//if ((MyThreads[i].hThread=(void*)_beginthread(ActionThread,10240,(void *)newItem))==(void*)-1)
+					if ((MyThreads[i].hThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)ActionThread,(void *)newItem, 0, &dwId)) == NULL) {
+					//if ((MyThreads[i].hThread=(void*)_beginthread(ActionThread, 10240,(void *)newItem))==(void*)-1)
 						GlobalFree(newItem);
 						GlobalFree(MyThreads);
 						GlobalFree(MyActions);
@@ -1236,26 +1233,26 @@ void PASCAL LocationPollThread(uint32 id) {
 
 		CODICE OBSOLETO: ANDIAMO DI SKIP CHE RULLA
 
- for (i=0;i<nRealItems;i++)
-   if (MyThreads[i].nItem!=0) {
-     TerminateThread(MyThreads[i].hThread,0);
+ for (i = 0; i < nRealItems; i++)
+   if (MyThreads[i].nItem != 0) {
+     TerminateThread(MyThreads[i].hThread, 0);
      CloseHandle(MyThreads[i].hThread);
    }
 */
 
 	// Set idle skip on
-	lplpFunctions[200](0,0,0,0);
+	lplpFunctions[200](0, 0, 0, 0);
 
-	for (i=0;i<nRealItems;i++)
-		if (MyThreads[i].nItem!=0) {
-			if (WaitForSingleObject(MyThreads[i].hThread,5000)!=WAIT_OBJECT_0)
-				TerminateThread(MyThreads[i].hThread,0);
+	for (i = 0; i < nRealItems; i++)
+		if (MyThreads[i].nItem != 0) {
+			if (WaitForSingleObject(MyThreads[i].hThread,5000) != WAIT_OBJECT_0)
+				TerminateThread(MyThreads[i].hThread, 0);
 
 			CloseHandle(MyThreads[i].hThread);
 		}
 
 	// Set idle skip off
-	lplpFunctions[201](0,0,0,0);
+	lplpFunctions[201](0, 0, 0, 0);
 
 	/* Abbiamo finito */
 	GlobalFree(MyThreads);
@@ -1283,11 +1280,11 @@ void PASCAL LocationPollThread(uint32 id) {
 \****************************************************************************/
 
 void PASCAL ShutUpDialogThread(HANDLE hThread) {
-	WaitForSingleObject(hThread,INFINITE);
+	WaitForSingleObject(hThread, INFINITE);
 
-	bExecutingDialog=false;
-	nExecutingDialog=0;
-	nExecutingChoice=0;
+	bExecutingDialog = false;
+	nExecutingDialog = 0;
+	nExecutingChoice = 0;
 
 	SetEvent(hAskChoice);
 	ExitThread(1);
@@ -1309,19 +1306,19 @@ void DoChoice(uint32 nChoice);
 
 void PASCAL GroupThread(uint32 nGroup) {
 	LPMPALDIALOG dialog;
-	int i,j,k;
+	int i, j, k;
 
 	/* Locka i dialoghi */
 	LockDialogs();
 
 	/* Trova il puntatore al dialogo corrente */
-	dialog=lpmdDialogs+nExecutingDialog;
+	dialog = lpmdDialogs+nExecutingDialog;
 
 	/* Cerca il gruppo richiesto all'interno del dialogo */
-	for (i=0;dialog->Group[i].num!=0;i++)
+	for (i = 0; dialog->Group[i].num != 0; i++)
 		if (dialog->Group[i].num==nGroup) {
 			/* Cicla eseguendo i comandi del gruppo */
-			for (j=0;j<dialog->Group[i].nCmds;j++) {
+			for (j = 0; j < dialog->Group[i].nCmds; j++) {
 				k=dialog->Group[i].CmdNum[j];
 
 				switch (dialog->Command[k].type) {
@@ -1348,7 +1345,7 @@ void PASCAL GroupThread(uint32 nGroup) {
 					break;
 
 				default:
-					mpalError=1;
+					mpalError = 1;
 					UnlockDialogs();
 					ExitThread(0);
 //					_endthread();
@@ -1363,7 +1360,7 @@ void PASCAL GroupThread(uint32 nGroup) {
 	}
 
 	/* Se siamo qui, vuol dire che non abbiamo trovato il gruppo richiesto */
-	mpalError=1;
+	mpalError = 1;
 	UnlockDialogs();
 	ExitThread(0);
 //	_endthread();
@@ -1391,14 +1388,14 @@ void DoChoice(uint32 nChoice) {
 	dialog=lpmdDialogs+nExecutingDialog;
 
 	/* Cerca la scelta richiesta tra quelle nel dialogo */
-	for (i=0;dialog->Choice[i].nChoice!=0;i++)
-		if (dialog->Choice[i].nChoice==nChoice)
+	for (i = 0; dialog->Choice[i].nChoice != 0; i++)
+		if (dialog->Choice[i].nChoice == nChoice)
 			break;
 
 	/* Se non l'ha trovata, esce con errore */
-	if (dialog->Choice[i].nChoice==0) {
+	if (dialog->Choice[i].nChoice == 0) {
 		/* Se siamo qui, non abbiamo trovato la choice richiesta */
-		mpalError=1;
+		mpalError = 1;
 		UnlockDialogs();
 		ExitThread(0);
 //		_endthread();
@@ -1406,26 +1403,26 @@ void DoChoice(uint32 nChoice) {
 
 	/* Abbiamo trova la choice richiesta. Ricordiamoci qual e' nella
 		variabile globale */
-	nExecutingChoice=i;
+	nExecutingChoice = i;
 
 	while (1) {
-		nExecutingChoice=i;
+		nExecutingChoice = i;
 
-		k=0;
+		k = 0;
 		/* Calcoliamo le when expression di ciascun select, per vedere se sono
 			attivi o disattivi */
-		for (j=0;dialog->Choice[i].Select[j].dwData!=0;j++)
-			if (dialog->Choice[i].Select[j].when==NULL) {
-				dialog->Choice[i].Select[j].curActive=1;
+		for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
+			if (dialog->Choice[i].Select[j].when == NULL) {
+				dialog->Choice[i].Select[j].curActive = 1;
 				k++;
 			} else if (EvaluateExpression(dialog->Choice[i].Select[j].when)) {
-				dialog->Choice[i].Select[j].curActive=1;
+				dialog->Choice[i].Select[j].curActive = 1;
 				k++;
 			} else
-				dialog->Choice[i].Select[j].curActive=0;
+				dialog->Choice[i].Select[j].curActive = 0;
 
 		/* Se non ci sono scelte attivate, la scelta e' finita */
-		if (k==0) {
+		if (k == 0) {
 			UnlockDialogs();
 			break;
 		}
@@ -1434,22 +1431,22 @@ void DoChoice(uint32 nChoice) {
 			e restiamo in attesa della risposta */
 		ResetEvent(hDoneChoice);
 		SetEvent(hAskChoice);
-		WaitForSingleObject(hDoneChoice,INFINITE);
+		WaitForSingleObject(hDoneChoice, INFINITE);
 
 		/* Ora che la scelta e' stata effettuata, possiamo eseguire i gruppi
 			associati con la scelta */
 		j=nSelectedChoice;
-		for (k=0;dialog->Choice[i].Select[j].wPlayGroup[k]!=0;k++)
+		for (k = 0; dialog->Choice[i].Select[j].wPlayGroup[k] != 0; k++)
 			GroupThread(dialog->Choice[i].Select[j].wPlayGroup[k]);
 
 		/* Controllo sugli attributi */
-		if (dialog->Choice[i].Select[j].attr&(1<<0)) {
+		if (dialog->Choice[i].Select[j].attr & (1 << 0)) {
 			/* Bit 0 settato: fine della scelta */
 			UnlockDialogs();
 			break;
 		}
 
-		if (dialog->Choice[i].Select[j].attr&(1<<1)) {
+		if (dialog->Choice[i].Select[j].attr & (1 << 1)) {
 			/* Bit 1 settato: fine del dialogo */
 			UnlockDialogs();
 			ExitThread(1);
@@ -1488,7 +1485,7 @@ void DoChoice(uint32 nChoice) {
 \****************************************************************************/
 
 static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
-	LPMPALITEM item=lpmiItems;
+	LPMPALITEM item = lpmiItems;
 	int i;
 	LPMPALITEM newitem;
 	uint32 dwId;
@@ -1496,25 +1493,25 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 
 	item+=ordItem;
 	Common::String buf = Common::String::format("Status.%u", item->nObj);
-	if (varGetValue(buf.c_str())<=0)
+	if (varGetValue(buf.c_str()) <= 0)
 		return INVALID_HANDLE_VALUE;
 
-	for (i=0;i<item->nActions;i++) {
-		if (item->Action[i].num!=nAction)
+	for (i = 0; i < item->nActions; i++) {
+		if (item->Action[i].num != nAction)
 			continue;
 
-		if (item->Action[i].wParm!=dwParam)
+		if (item->Action[i].wParm != dwParam)
 			continue;
 
-		if (item->Action[i].when!=NULL) {
+		if (item->Action[i].when != NULL) {
 			if (!EvaluateExpression(item->Action[i].when))
 				continue;
 		}
 
 		// Ora abbiamo trova l'azione giusta che deve essere eseguita.
 		// Duplichiamo l'item corrente e copiamo la azione #i nella #0
-		newitem=(LPMPALITEM)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(MPALITEM));
-		if (newitem==NULL)
+		newitem=(LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
+		if (newitem == NULL)
 			return INVALID_HANDLE_VALUE;
 
 		// Nella nuova versione scriviamo il numero dell'azione in dwRes
@@ -1522,29 +1519,29 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 /*   newitem->Action[0].nCmds=item->Action[i].nCmds;
    CopyMemory(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
 */
-		newitem->dwRes=i;
+		newitem->dwRes = i;
 
 		// E finalmente possiamo richiamare il thread, che eseguira' l'azione
 		// 0 dell'item, e poi liberera' la memoria con la GlobalFree()
 
 /* !!! Nuova gestione dei thread
 */
-		if ((h=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)ActionThread,(void *)newitem,0,&dwId))==NULL)
+		if ((h = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)ActionThread, (void *)newitem, 0, &dwId)) == NULL)
 			return INVALID_HANDLE_VALUE;
 
-		if ((h=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)ShutUpActionThread,(void *)h,0,&dwId))==NULL)
+		if ((h = CreateThread(NULL, 10240,(LPTHREAD_START_ROUTINE)ShutUpActionThread, (void *)h, 0, &dwId)) == NULL)
 			return INVALID_HANDLE_VALUE;
 
 /*
-	 if ((h=(void*)_beginthread(ActionThread,10240,(void *)newitem))==(void*)-1)
+	 if ((h=(void*)_beginthread(ActionThread, 10240,(void *)newitem))==(void*)-1)
      return INVALID_HANDLE_VALUE;
 		
-	 if ((h=(void*)_beginthread(ShutUpActionThread,10240,(void *)h))==(void*)-1)
+	 if ((h=(void*)_beginthread(ShutUpActionThread, 10240,(void *)h))==(void*)-1)
      return INVALID_HANDLE_VALUE;
 
 */
-		nExecutingAction=item->nObj;
-		bExecutingAction=true;
+		nExecutingAction = item->nObj;
+		bExecutingAction = true;
 
 		return h;
 	}
@@ -1580,10 +1577,10 @@ static HANDLE DoDialog(uint32 nDlgOrd, uint32 nGroup) {
 	HANDLE h;
 
 	/* Si ricorda nella variabile globale qual e' il dialogo in esecuzione */
-	nExecutingDialog=nDlgOrd;
+	nExecutingDialog = nDlgOrd;
 
 	/* Attiva la flag per indicare che c'e' un dialogo in esecuzione */
-	bExecutingDialog=true;
+	bExecutingDialog = true;
 
 	ResetEvent(hAskChoice);
 	ResetEvent(hDoneChoice);
@@ -1591,16 +1588,16 @@ static HANDLE DoDialog(uint32 nDlgOrd, uint32 nGroup) {
 	/* Crea un thread in cui esegue un gruppo del dialogo */
 
 	// !!! Nuova gestione dei thread
-	if ((h=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)GroupThread,(void *)nGroup,0,&dwId))==NULL)
-		// if ((h=(void*)_beginthread(GroupThread,10240,(void *)nGroup))==(void*)-1)
+	if ((h = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)GroupThread, (void *)nGroup, 0, &dwId)) == NULL)
+		// if ((h=(void*)_beginthread(GroupThread, 10240,(void *)nGroup))==(void*)-1)
 		return INVALID_HANDLE_VALUE;
 
 	/* Crea un thread che attende la fine del dialogo e rimette a posto le
 		variabili globali */
  // !!! Nuova gestione dei thread
-	if (CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)ShutUpDialogThread,(void *)h,0,&dwId)==NULL) {
-	//if ((h=(void*)_beginthread(ShutUpDialogThread,10240,(void *)h))==(void*)-1)
-		TerminateThread(h,0);
+	if (CreateThread(NULL, 10240,(LPTHREAD_START_ROUTINE)ShutUpDialogThread,(void *)h, 0, &dwId) == NULL) {
+	//if ((h=(void*)_beginthread(ShutUpDialogThread, 10240,(void *)h))==(void*)-1)
+		TerminateThread(h, 0);
 		CloseHandle(h);
 		return INVALID_HANDLE_VALUE;
 	}
@@ -1627,14 +1624,14 @@ bool DoSelection(uint32 i, uint32 dwData) {
 	LPMPALDIALOG dialog=lpmdDialogs+nExecutingDialog;
 	int j;
 
-	for (j=0;dialog->Choice[i].Select[j].dwData!=0;j++)
-		if (dialog->Choice[i].Select[j].dwData==dwData && dialog->Choice[i].Select[j].curActive!=0)
+	for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
+		if (dialog->Choice[i].Select[j].dwData == dwData && dialog->Choice[i].Select[j].curActive != 0)
 			break;
 
-	if (dialog->Choice[i].Select[j].dwData==0)
+	if (dialog->Choice[i].Select[j].dwData == 0)
 		return false;
 
-	nSelectedChoice=j;
+	nSelectedChoice = j;
 	SetEvent(hDoneChoice);
 	return true;
 }
@@ -1664,7 +1661,7 @@ bool DoSelection(uint32 i, uint32 dwData) {
 *
 \****************************************************************************/
 
-bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCUSTOMFUNCTION lplpcfArray) {
+bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName, LPLPCUSTOMFUNCTION lplpcfArray) {
 	Common::File hMpc;
 	byte buf[5];
 	uint32 nBytesRead;
@@ -1672,9 +1669,9 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 	uint32 dwSizeDecomp, dwSizeComp;
 	byte *cmpbuf;
 
- //printf("Item: %lu\n",sizeof(MPALITEM));
- //printf("Script: %lu\n",sizeof(MPALSCRIPT));
- //printf("Dialog: %lu\n",sizeof(MPALDIALOG));
+ //printf("Item: %lu\n", sizeof(MPALITEM));
+ //printf("Script: %lu\n", sizeof(MPALSCRIPT));
+ //printf("Dialog: %lu\n", sizeof(MPALDIALOG));
 
 	/* Si salva l'array delle funzioni custom */
 	lplpFunctions=lplpcfArray;
@@ -1685,13 +1682,13 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 
 	/* Legge e controlla l'header */
 	nBytesRead = hMpc.read(buf, 5);
-	if (nBytesRead !=5)
+	if (nBytesRead != 5)
 		return false;
 
-	if (buf[0]!='M' || buf[1]!='P' || buf[2]!='C' || buf[3]!=0x20)
+	if (buf[0] != 'M' || buf[1] != 'P' || buf[2] != 'C' || buf[3] != 0x20)
 		return false;
 
-	bCompress=buf[4];
+	bCompress = buf[4];
 
 	/* Legge la dimensione del file decompresso, e alloca la memoria */
 	dwSizeDecomp = hMpc.readUint32LE();
@@ -1699,7 +1696,7 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 		return false;
 
 	lpMpcImage = (byte *)GlobalAlloc(GMEM_FIXED,dwSizeDecomp+16);
-	if (lpMpcImage==NULL)
+	if (lpMpcImage == NULL)
 		return false;
 
 	if (bCompress) {
@@ -1710,7 +1707,7 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 			return false;
 
 		cmpbuf = (byte *)GlobalAlloc(GMEM_FIXED,dwSizeComp);
-		if (cmpbuf==NULL)
+		if (cmpbuf == NULL)
 			return false;
 
 		nBytesRead = hMpc.read(cmpbuf, dwSizeComp);
@@ -1781,11 +1778,11 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 	hMpr.seek(-(12 + (int)dwSizeComp), SEEK_END);
 
 	lpResources = (uint32 *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, nResources * 8);
-	if (lpResources==NULL)
+	if (lpResources == NULL)
 		return false;
 
 	cmpbuf = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, dwSizeComp);
-	if (cmpbuf==NULL)
+	if (cmpbuf == NULL)
 		return false;
 
 	nBytesRead = hMpr.read(cmpbuf, dwSizeComp);
@@ -1810,8 +1807,8 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 
 	/* Crea l'evento che verra' utilizzato per avvertire il gioco che c'e'
 		da effettuare una scelta */
-	hAskChoice=CreateEvent(NULL, true, false, NULL);
-	hDoneChoice=CreateEvent(NULL, true, false, NULL);
+	hAskChoice = CreateEvent(NULL, true, false, NULL);
+	hDoneChoice = CreateEvent(NULL, true, false, NULL);
 
 	return true;
 }
@@ -1840,7 +1837,7 @@ bool mpalInit(const char * lpszMpcFileName, const char * lpszMprFileName, LPLPCU
 
 uint32 mpalQuery(uint16 wQueryType, ...) {
 	uint32 dwRet = 0;
-	int x,y,z;
+	int x, y, z;
 	char *n;
 	va_list v;
 	Common::String buf;
@@ -1861,7 +1858,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_GLOBAL_VAR:
 		LockVar();
-		dwRet=(uint32)varGetValue(GETARG(char *));
+		dwRet = (uint32)varGetValue(GETARG(char *));
 		UnlockVar();
 		break;
 
@@ -1870,7 +1867,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_MESSAGE:
 		LockMsg();
-		dwRet=(uint32)DuplicateMessage(msgGetOrderFromNum(GETARG(uint32)));
+		dwRet = (uint32)DuplicateMessage(msgGetOrderFromNum(GETARG(uint32)));
 		UnlockMsg();
 		break;
 
@@ -1889,17 +1886,17 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_LOCATION_SIZE:
 		LockLocations();
-		x=locGetOrderFromNum(GETARG(uint32));
-		y=GETARG(uint32);
-		if (x!=-1) {
-			if (y==MPQ_X)
-				dwRet=lpmlLocations[x].dwXlen;
-			else if (y==MPQ_Y)
-				dwRet=lpmlLocations[x].dwYlen;
+		x = locGetOrderFromNum(GETARG(uint32));
+		y = GETARG(uint32);
+		if (x != -1) {
+			if (y == MPQ_X)
+				dwRet = lpmlLocations[x].dwXlen;
+			else if (y == MPQ_Y)
+				dwRet = lpmlLocations[x].dwYlen;
 			else
-				mpalError=1;
+				mpalError = 1;
 		} else
-			mpalError=1;
+			mpalError = 1;
 		UnlockLocations();
 		break;
 
@@ -1908,8 +1905,8 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_LOCATION_IMAGE:
 		LockLocations();
-		x=locGetOrderFromNum(GETARG(uint32));
-		dwRet=(uint32)resLoad(lpmlLocations[x].dwPicRes);
+		x = locGetOrderFromNum(GETARG(uint32));
+		dwRet = (uint32)resLoad(lpmlLocations[x].dwPicRes);
 		UnlockLocations();
 		break;
 
@@ -1917,7 +1914,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     *  HGLOBAL mpalQuery(MPQ_RESOURCE, uint32 dwRes);
     */
 	case MPQ_RESOURCE:
-		dwRet=(uint32)resLoad(GETARG(uint32));
+		dwRet = (uint32)resLoad(GETARG(uint32));
 		break;
 
    /*
@@ -1925,7 +1922,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_ITEM_LIST:
 		LockVar();
-		dwRet=(uint32)GetItemList(GETARG(uint32));
+		dwRet = (uint32)GetItemList(GETARG(uint32));
 		LockVar();
 		break;
 
@@ -1934,7 +1931,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_ITEM_DATA:
 		LockItems();
-		dwRet=(uint32)GetItemData(itemGetOrderFromNum(GETARG(uint32)));
+		dwRet = (uint32)GetItemData(itemGetOrderFromNum(GETARG(uint32)));
 		UnlockItems();
 		break;
 
@@ -1943,7 +1940,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_ITEM_IS_ACTIVE:
 		LockVar();
-		x=GETARG(uint32);
+		x = GETARG(uint32);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			dwRet = (uint32)false;
@@ -1958,14 +1955,14 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_ITEM_NAME:
 		LockVar();
-		x=GETARG(uint32);
+		x = GETARG(uint32);
 		n=GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			n[0]='\0';
 		else {
 			LockItems();
-			y=itemGetOrderFromNum(x);
+			y = itemGetOrderFromNum(x);
 			CopyMemory(n, (char *)(lpmiItems+y)->lpszDescribe, MAX_DESCRIBE_SIZE);
 			UnlockItems();
 		}
@@ -1979,8 +1976,8 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_DIALOG_PERIOD:
 		LockDialogs();
-		y=GETARG(uint32);
-		dwRet=(uint32)DuplicateDialogPeriod(y);
+		y = GETARG(uint32);
+		dwRet = (uint32)DuplicateDialogPeriod(y);
 		UnlockDialogs();
 		break;
 
@@ -1989,13 +1986,13 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
     */
 	case MPQ_DIALOG_WAITFORCHOICE:
-		WaitForSingleObject(hAskChoice,INFINITE);
+		WaitForSingleObject(hAskChoice, INFINITE);
 		ResetEvent(hAskChoice);
 
 		if (bExecutingDialog)
-			dwRet=(uint32)nExecutingChoice;
+			dwRet = (uint32)nExecutingChoice;
 		else
-			dwRet=(uint32)((int)-1);
+			dwRet = (uint32)((int)-1);
 		break;
 
 
@@ -2004,7 +2001,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
    case MPQ_DIALOG_SELECTLIST:
 		LockDialogs();
-		dwRet=(uint32)GetSelectList(GETARG(uint32));
+		dwRet = (uint32)GetSelectList(GETARG(uint32));
 		UnlockDialogs();
 		break;
 
@@ -2013,9 +2010,9 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     */
 	case MPQ_DIALOG_SELECTION:
 		LockDialogs();
-		x=GETARG(uint32);
-		y=GETARG(uint32);
-		dwRet=(uint32)DoSelection(x,y);
+		x = GETARG(uint32);
+		y = GETARG(uint32);
+		dwRet = (uint32)DoSelection(x,y);
 		UnlockDialogs();
 		break;
 
@@ -2027,21 +2024,21 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
      /*
 		 if (bExecutingAction)
      {
-       dwRet=(uint32)INVALID_HANDLE_VALUE;
+       dwRet = (uint32)INVALID_HANDLE_VALUE;
        break;
      }
 			*/
 
 		LockItems();
 		LockVar();
-		x=GETARG(uint32);
-		z=GETARG(uint32);
-		y=itemGetOrderFromNum(z);
+		x = GETARG(uint32);
+		z = GETARG(uint32);
+		y = itemGetOrderFromNum(z);
 		if (y!=-1) {
-			dwRet=(uint32)DoAction(x,y,GETARG(uint32));
+			dwRet = (uint32)DoAction(x, y, GETARG(uint32));
 		} else {
-			dwRet=(uint32)INVALID_HANDLE_VALUE;
-			mpalError=1;
+			dwRet = (uint32)INVALID_HANDLE_VALUE;
+			mpalError = 1;
 		}
 		UnlockVar();
 		UnlockItems();
@@ -2056,9 +2053,9 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
 
 		LockDialogs();
 
-		x=dialogGetOrderFromNum(GETARG(uint32));
-		y=GETARG(uint32);
-		dwRet=(uint32)DoDialog(x,y);
+		x = dialogGetOrderFromNum(GETARG(uint32));
+		y = GETARG(uint32);
+		dwRet = (uint32)DoDialog(x, y);
 		UnlockDialogs();
 		break;
 
@@ -2066,7 +2063,7 @@ uint32 mpalQuery(uint16 wQueryType, ...) {
     *  DEFAULT -> ERROR
     */
    default:
-		mpalError=1;
+		mpalError = 1;
 		break;
 	}
 
@@ -2110,17 +2107,17 @@ bool EXPORT mpalExecuteScript(int nScript) {
 	uint32 dwId;
 
 	LockScripts();
-	n=scriptGetOrderFromNum(nScript);
-	s=(LPMPALSCRIPT)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(MPALSCRIPT));
-	if (s==NULL)
+	n = scriptGetOrderFromNum(nScript);
+	s = (LPMPALSCRIPT)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALSCRIPT));
+	if (s == NULL)
 		return false;
 
 	CopyMemory(s, lpmsScripts+n, sizeof(MPALSCRIPT));
 	UnlockScripts();
 
 // !!! Nuova gestione dei thread
-	if (CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)ScriptThread,(void *)s,0,&dwId)==NULL)
- //if ((void*)_beginthread(ScriptThread,10240,(void *)s)==(void*)-1)
+	if (CreateThread(NULL, 10240,(LPTHREAD_START_ROUTINE)ScriptThread,(void *)s, 0, &dwId) == NULL)
+ //if ((void*)_beginthread(ScriptThread, 10240,(void *)s)==(void*)-1)
 		return false;
 
 	return true;
@@ -2139,7 +2136,7 @@ bool EXPORT mpalExecuteScript(int nScript) {
 \****************************************************************************/
 
 void EXPORT mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
-	lpiifCustom=lpiifCus;
+	lpiifCustom = lpiifCus;
 }
 
 
@@ -2163,18 +2160,18 @@ bool EXPORT mpalStartIdlePoll(int nLoc) {
 	uint32 i;
 	uint32 dwId;
 
-	for (i=0;i<MAXPOLLINGLOCATIONS;i++)
+	for (i = 0; i < MAXPOLLINGLOCATIONS; i++)
 		if (nPollingLocations[i] == (uint32)nLoc)
 			return false;
 
-	for (i=0;i<MAXPOLLINGLOCATIONS;i++) {
-		if (nPollingLocations[i]==0) {
+	for (i = 0; i < MAXPOLLINGLOCATIONS; i++) {
+		if (nPollingLocations[i] == 0) {
 			nPollingLocations[i]=nLoc;
 
-			hEndPollingLocations[i]=CreateEvent(NULL,true,false,NULL);
+			hEndPollingLocations[i] = CreateEvent(NULL, true, false, NULL);
 // !!! Nuova gestione dei thread
-			if ((PollingThreads[i]=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)LocationPollThread,(void *)i,0,&dwId))==NULL)
-//			 if ((hEndPollingLocations[i]=(void*)_beginthread(LocationPollThread,10240,(void *)i))==(void*)-1)
+			if ((PollingThreads[i] = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)LocationPollThread,(void *)i, 0, &dwId)) == NULL)
+//			 if ((hEndPollingLocations[i]=(void*)_beginthread(LocationPollThread, 10240,(void *)i))==(void*)-1)
 				return false;
 
 			return true;
@@ -2202,14 +2199,14 @@ bool EXPORT mpalStartIdlePoll(int nLoc) {
 bool EXPORT mpalEndIdlePoll(int nLoc) {
 	uint32 i;
 
-	for (i=0;i<MAXPOLLINGLOCATIONS;i++)
+	for (i = 0; i < MAXPOLLINGLOCATIONS; i++)
 	if (nPollingLocations[i] == (uint32)nLoc) {
 		SetEvent(hEndPollingLocations[i]);
 
-		WaitForSingleObject(PollingThreads[i],INFINITE);
+		WaitForSingleObject(PollingThreads[i], INFINITE);
 
 		CloseHandle(hEndPollingLocations[i]);
-		nPollingLocations[i]=0;
+		nPollingLocations[i] = 0;
 
 		return true;
 	}
@@ -2230,7 +2227,7 @@ bool EXPORT mpalEndIdlePoll(int nLoc) {
 \****************************************************************************/
 
 int mpalGetSaveStateSize(void) {
-	return nVars*sizeof(MPALVAR)+4;
+	return nVars * sizeof(MPALVAR) + 4;
 }
 
 
@@ -2248,7 +2245,7 @@ int mpalGetSaveStateSize(void) {
 void mpalSaveState(byte *buf) {
 	LockVar();
 	WRITE_LE_UINT32(buf, nVars);
-	CopyMemory(buf+4, (byte *)lpmvVars, nVars*sizeof(MPALVAR));
+	CopyMemory(buf + 4, (byte *)lpmvVars, nVars * sizeof(MPALVAR));
 	UnlockVar();	
 }
 
@@ -2342,17 +2339,17 @@ const MsgCommentsStruct MsgComments[] = {
 void OutputStartMsgComment(uint16 wNum, Common::OutSaveFile *f) {
 	int i;
 
-	for (i=0;MsgComments[i].wStart!=0;i++)
+	for (i = 0; MsgComments[i].wStart != 0; i++)
 		if (MsgComments[i].wStart == wNum) {
-warning("Start: %d\n", wNum);
+			warning("Start: %d\n", wNum);
 
 			f->writeString("</TABLE>\n<P>\n<P>\n");
 
 			if (strcmp(MsgComments[i].pComment, "###") != 0 && strncmp(MsgComments[i].pComment, "@@@", 3) != 0) {
 				f->writeString(Common::String::format("%s\n", MsgComments[i].pComment));
-				f->writeString("<P>\n<P>\n<TABLE WIDTH=100%% BORDER=1>\n");
+				f->writeString("<P>\n<P>\n<TABLE WIDTH = 100%% BORDER = 1>\n");
 			} else
-				bDontOutput=true;
+				bDontOutput = true;
 			return;
 		}
 }
@@ -2360,16 +2357,16 @@ warning("Start: %d\n", wNum);
 void OutputEndMsgComment(uint16 wNum, Common::OutSaveFile *f) {
 	int i;
 
-	for (i=0;MsgComments[i].wEnd!=0;i++)
+	for (i = 0; MsgComments[i].wEnd != 0; i++)
 		if (MsgComments[i].wEnd == wNum) {
 warning("End: %d\n", wNum);
 
 			if (strcmp(MsgComments[i].pComment, "###") != 0 && strncmp(MsgComments[i].pComment, "@@@", 3) != 0) {
 				f->writeString("</TABLE>\n<P>\n");
 			} else
-				bDontOutput=false;
+				bDontOutput = false;
 	
-			f->writeString("<P>\n<P>\n<TABLE WIDTH=100%% BORDER=1>\n");
+			f->writeString("<P>\n<P>\n<TABLE WIDTH = 100%% BORDER = 1>\n");
 			return;
 		}
 }
@@ -2378,12 +2375,12 @@ warning("End: %d\n", wNum);
 int OutputStartOther(uint16 wNum, Common::OutSaveFile *f) {
 	int i;
 	
-	for (i=0;MsgComments[i].wStart!=0;i++)
+	for (i = 0; MsgComments[i].wStart != 0; i++)
 		if (MsgComments[i].wStart <= wNum && MsgComments[i].wEnd >= wNum) {
 			if (strncmp(MsgComments[i].pComment, "@@@", 3) == 0) {
 				if (MsgComments[i].wStart == wNum) {
-					f->writeString(Common::String::format("%s\n", MsgComments[i].pComment+4));
-					f->writeString("<P>\n<P>\n<TABLE WIDTH=100%% BORDER=1>\n");
+					f->writeString(Common::String::format("%s\n", MsgComments[i].pComment + 4));
+					f->writeString("<P>\n<P>\n<TABLE WIDTH = 100%% BORDER = 1>\n");
 				}
 				
 				return 1;				
@@ -2397,7 +2394,7 @@ int OutputStartOther(uint16 wNum, Common::OutSaveFile *f) {
 void OutputEndOther(uint16 wNum, Common::OutSaveFile *f) {
 	int i;
 
-	for (i=0;MsgComments[i].wStart!=0;i++)
+	for (i = 0; MsgComments[i].wStart != 0; i++)
 		if (MsgComments[i].wEnd == wNum && strncmp(MsgComments[i].pComment, "@@@", 3) == 0) {
 			f->writeString("</TABLE>\n<P>\n");	
 			break;
@@ -2406,7 +2403,7 @@ void OutputEndOther(uint16 wNum, Common::OutSaveFile *f) {
 
 
 void mpalDumpMessages(void) {
-	int i,j;
+	int i, j;
 	char *lpMessage;
 	char *p;
 	char *lpPeriods[30];
@@ -2419,50 +2416,50 @@ void mpalDumpMessages(void) {
 
 	LockMsg();
 
-	bDontOutput=false;
+	bDontOutput = false;
 
 	warning("Dumping MESSAGES.HTM...\n");
 	
 	f = g_system->getSavefileManager()->openForSaving("Messages.htm");
-	f->writeString("<HTML>\n<BODY>\n<TABLE WIDTH=100%% BORDER=1>\n");
+	f->writeString("<HTML>\n<BODY>\n<TABLE WIDTH = 100%% BORDER = 1>\n");
 
-	for (i=0;i<nMsgs;i++) {
+	for (i = 0; i < nMsgs; i++) {
 		lpMessage = (char*)GlobalLock(lpmmMsgs[i].hText);
 		if (*lpMessage != '\0') {
 			// bernie: debug
 			/*if (lpmmMsgs[i].wNum == 1950) {
-				int a=1;
+				int a = 1;
 			}*/
 
-			nPeriods=1;
-			p=lpPeriods[0]=lpMessage;
+			nPeriods = 1;
+			p=lpPeriods[0] = lpMessage;
 
 			OutputStartMsgComment(lpmmMsgs[i].wNum, f);
 
 			while (1) {
 				// Trova la fine del periodo corrente
-				while (*p!='\0')
+				while (*p != '\0')
 					p++;
 
 				// Se c'e' un altro '\0' siamo alla fine del messaggio
 				p++;
-				if (*p=='\0')
+				if (*p == '\0')
 					break;
 
 				// Altrimenti c'e' un altro periodo, e ci ricordiamo il suo inizio
-				lpPeriods[nPeriods++]=p;
+				lpPeriods[nPeriods++] = p;
 			}
 
 			// Ora fa un ciclo su tutti i periodi
-			for (j=0;j<nPeriods;j++) {
-				if (nPeriods==1)
+			for (j = 0;j<nPeriods; j++) {
+				if (nPeriods == 1)
 					sprintf(fname, "000-%05d.WAV", lpmmMsgs[i].wNum);
 				else
 					sprintf(fname, "000-%05d-%02d.WAV", lpmmMsgs[i].wNum,j);
 			
-				strcpy(frase,lpPeriods[j]);
+				strcpy(frase, lpPeriods[j]);
 
-				while ((p=strchr(frase,'^'))!=NULL)
+				while ((p = strchr(frase,'^')) != NULL)
 					*p = '\"';
 
 				p = frase;
@@ -2512,17 +2509,17 @@ void mpalDumpOthers(void) {
 	f = g_system->getSavefileManager()->openForSaving("Others.htm");
 	LockMsg();
 	
-	bDontOutput=false;
+	bDontOutput = false;
 	
 	warning("Dumping OTHERS.HTM...\n");
 
 	f->writeString("<HTML>\n<BODY>\n");
 	
-	for (i=0;i<nMsgs;i++) {
+	for (i = 0; i < nMsgs; i++) {
 		lpMessage = (char*)GlobalLock(lpmmMsgs[i].hText);
 		if (*lpMessage != '\0') {
-			nPeriods=1;
-			p=lpPeriods[0]=lpMessage;
+			nPeriods = 1;
+			p=lpPeriods[0] = lpMessage;
 			
 			if (OutputStartOther(lpmmMsgs[i].wNum, f)) {	
 				while (1) {
@@ -2532,23 +2529,23 @@ void mpalDumpOthers(void) {
 					
 					// Se c'e' un altro '\0' siamo alla fine del messaggio
 					p++;
-					if (*p=='\0')
+					if (*p == '\0')
 						break;
 					
 					// Altrimenti c'e' un altro periodo, e ci ricordiamo il suo inizio
-					lpPeriods[nPeriods++]=p;
+					lpPeriods[nPeriods++] = p;
 				}
 				
 				// Ora fa un ciclo su tutti i periodi
-				for (j=0;j<nPeriods;j++) {
-					if (nPeriods==1)
+				for (j = 0; j < nPeriods; j++) {
+					if (nPeriods == 1)
 						sprintf(fname, "000-%05d.WAV", lpmmMsgs[i].wNum);
 					else
 						sprintf(fname, "000-%05d-%02d.WAV", lpmmMsgs[i].wNum,j);				
 
 					strcpy(frase,lpPeriods[j]);
 					
-					while ((p=strchr(frase,'^'))!=NULL)
+					while ((p = strchr(frase,'^')) != NULL)
 						*p = '\"';
 
 					p = frase;
@@ -2981,20 +2978,20 @@ void mpalDumpDialog(LPMPALDIALOG dlg) {
 
 	v1 = g_system->getSavefileManager()->openForSaving("voicelist.txt");
 	
-	sprintf(dfn,"DIALOG%03d.HTM",dlg->nObj);
+	sprintf(dfn,"DIALOG%03d.HTM", dlg->nObj);
 	warning("Dumping %s...\n", dfn);
 
 	f = g_system->getSavefileManager()->openForSaving(dfn);
 
 	f->writeString("<HTML>\n<BODY>\n");
 
-	for (g=0;dlg->Group[g].num != 0; g++) {
+	for (g = 0;dlg->Group[g].num != 0; g++) {
 		bAtLeastOne = false;
 
-		for (c=0;c<dlg->Group[g].nCmds; c++) {
+		for (c = 0; c<dlg->Group[g].nCmds; c++) {
 			curCmd = &dlg->Command[dlg->Group[g].CmdNum[c]];
 			if (curCmd->type == 1 && curCmd->nCf == 71) {
-				bAtLeastOne=true;
+				bAtLeastOne = true;
 				break;
 			}
 		}
@@ -3003,27 +3000,27 @@ void mpalDumpDialog(LPMPALDIALOG dlg) {
 			continue;
 		
 		f->writeString(Common::String::format("<P>\n<H3>Group %d</H3>\n<P>\n", g));
-		f->writeString("<TABLE WIDTH=100%% BORDER=1>\n");
+		f->writeString("<TABLE WIDTH = 100%% BORDER = 1>\n");
 
-		for (c=0;c<dlg->Group[g].nCmds; c++) {
+		for (c = 0;c<dlg->Group[g].nCmds; c++) {
 			curCmd = &dlg->Command[dlg->Group[g].CmdNum[c]];
 
 			// Se è una funzione custom, e richiama la SendDialogMessage(nPers, nMsg)
 			if (curCmd->type == 1 && curCmd->nCf == 71) {
 				sprintf(fname, "%03d-%05d.WAV", dlg->nObj, curCmd->arg2);
 				
-				for (j=0;dlg->Periods[j]!=NULL;j++)
+				for (j = 0; dlg->Periods[j] != NULL; j++)
 					if (dlg->PeriodNums[j] == curCmd->arg2)
 						break;
 						
-				if (dlg->Periods[j]==NULL)
+				if (dlg->Periods[j] == NULL)
 					warning("ERROR: Dialogo %d, Periodo %d non trovato!\n", (int)dlg->nObj, (int)curCmd->arg2);
 				else {	
 					frase = (char *)GlobalLock(dlg->Periods[j]);
 					strcpy(copia, frase);
 					GlobalUnlock(dlg->Periods[j]);
 
-					while ((p=strchr(copia,'^')) != NULL)
+					while ((p = strchr(copia,'^')) != NULL)
 						*p = '\"';
 
 					p = frase;
@@ -3034,7 +3031,7 @@ void mpalDumpDialog(LPMPALDIALOG dlg) {
 					v1->writeString(Common::String::format("%s\n", fname));
 					f->writeString("\t<TR>\n");
 					f->writeString(Common::String::format("\t\t<TD WIDTH=20%%> %s </TD>\n", fname));
-					f->writeString(Common::String::format("\t\t<TD WIDTH=13%%> <B> %s </B> </TD>\n", 
+					f->writeString(Common::String::format("\t\t<TD WIDTH = 13%%> <B> %s </B> </TD>\n", 
 						GetPersonName(dlg->nObj, curCmd->arg1)));
 					f->writeString(Common::String::format("\t\t<TD> %s </TD>\n",copia));
 					f->writeString("\t</TR>\n");
@@ -3058,7 +3055,7 @@ void mpalDumpDialogs(void) {
 
 	LockDialogs();
 
-	for (i=0;i<nDialogs;i++)
+	for (i = 0; i < nDialogs; i++)
 		mpalDumpDialog(&lpmdDialogs[i]);
 
 	UnlockDialogs();
