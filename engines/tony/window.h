@@ -78,8 +78,8 @@ public:
 
 class RMWindow {
 private:
-	bool Lock(DDSURFACEDESC &ddsd);
-	void Unlock(DDSURFACEDESC &ddsd);
+	bool Lock();
+	void Unlock();
 
 protected:
 	void * /*LPDIRECTDRAWCLIPPER*/ m_MainClipper;
@@ -119,14 +119,7 @@ public:
 	// Avverte di grabbare un thumbnail per il salvataggio
 	void GrabThumbnail(uint16 *buf);
 
-	// Modi pixel format
-	// MODE1: 1555
-	// MODE2: 5515
-	// MODE3: 5551
-	bool ISMODE1() { return (mskRed == 0x7C00 && mskGreen == 0x3E0 && mskBlue== 0x1F); }
-	bool ISMODE2() { return (mskRed == 0xF800 && mskGreen == 0x7E0 && mskBlue== 0x1F); }
-	bool ISMODE3() { return (mskRed == 0xF800 && mskGreen == 0x7C0 && mskBlue== 0x3E); }
-	bool ISMODE4() { return (mskBlue == 0xF800 && mskGreen == 0x7E0 && mskRed== 0x1F); }
+	int getFps() const { return fps; }
 };
 
 } // End of namespace Tony
