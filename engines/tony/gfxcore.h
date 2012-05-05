@@ -195,7 +195,7 @@ public:
 		
 	// Registration
 	virtual void Register(void) { m_nInList++; }
-	virtual void Unregister(void) { m_nInList--; assert(m_nInList>=0); }
+	virtual void Unregister(void) { m_nInList--; assert(m_nInList >= 0); }
 };
 
 

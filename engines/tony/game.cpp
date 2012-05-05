@@ -1371,6 +1371,7 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 
 RMPointer::RMPointer() {
 	Common::fill(m_pointer, m_pointer + 16, (RMGfxSourceBuffer8 *)NULL);
+	Common::fill(m_specialPointer, m_specialPointer + 16, (RMItem *)NULL);
 }
 
 RMPointer::~RMPointer() {
@@ -1416,6 +1417,11 @@ void RMPointer::Close(void) {
 		if (m_pointer[i] != NULL) {
 			delete m_pointer[i];
 			m_pointer[i] = NULL;
+		}
+
+		if (m_specialPointer[i] != NULL) {
+			delete m_specialPointer[i];
+			m_specialPointer[i] = NULL;
 		}
 	}
 }
