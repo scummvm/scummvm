@@ -240,7 +240,7 @@ static void io_writeto() {
 }
 
 static void io_appendto() {
-	const char *s = Common::lastPathComponent(luaL_check_string(FIRSTARG), '\\').c_str();;
+	const char *s = Common::lastPathComponent(luaL_check_string(FIRSTARG), '\\').c_str();
 	Common::SeekableReadStream *inFile = NULL;
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	inFile = saveFileMan->openForLoading(s);

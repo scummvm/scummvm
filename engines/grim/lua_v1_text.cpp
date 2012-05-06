@@ -270,7 +270,7 @@ void Lua_V1::SetSayLineDefaults() {
 void Lua_V1::SayLine() {
 	int vol = 127, buffer = 64, paramId = 1, x = -1, y = -1;
 	bool background = true;
-	const char *msgId = NULL;;
+	const char *msgId = NULL;
 	Common::String msg;
 	lua_Object paramObj = lua_getparam(paramId++);
 

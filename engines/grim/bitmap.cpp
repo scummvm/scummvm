@@ -271,7 +271,7 @@ bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
 
 	data->seek(9, SEEK_CUR);
 	_width = data->readUint16LE();
-	_height = data->readUint16LE();;
+	_height = data->readUint16LE();
 	_format = 1;
 	_x = 0;
 	_y = 0;
