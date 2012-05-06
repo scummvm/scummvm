@@ -80,10 +80,12 @@ void Sleep(uint32 time) {
 }
 
 int WaitForSingleObject(HANDLE ThreadId, uint32 dwSleepTime) {
+	warning("TODO: Old style WaitForSingleObject");
 	return 0;
 }
 
 uint32 WaitForMultipleObjects(uint32 nCount, const HANDLE *lpHandles, bool bWaitAll, uint32 dwMilliseconds) {
+	warning("TODO: Old style WaitForMultipleObjects");
 	return 0;
 }
 

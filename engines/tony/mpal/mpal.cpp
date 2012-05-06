@@ -1335,93 +1335,101 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 *
 \****************************************************************************/
 
-void PASCAL ShutUpDialogThread(HANDLE hThread) {
-	WaitForSingleObject(hThread, INFINITE);
+void ShutUpDialogThread(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	uint32 pid = *(const uint32 *)param;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, pid, INFINITE);
 
 	bExecutingDialog = false;
 	nExecutingDialog = 0;
 	nExecutingChoice = 0;
 
 	SetEvent(hAskChoice);
-	ExitThread(1);
-//	_endthread();
+
+	CORO_KILL_SELF();
+
+	CORO_END_CODE;
 }
 
+void DoChoice(CORO_PARAM, uint32 nChoice);
 
-/****************************************************************************\
-*
-* Function:     void GroupThread(uint32 nGroup);
-*
-* Description:  Esegue un gruppo del dialogo corrente. Puo' essere lo
-*               starting point di un thread.
-*
-* Input:        uint32 nGroup            Numero del gruppo da eseguire
-*
-\****************************************************************************/
-void DoChoice(uint32 nChoice);
+/**
+ * Executes a group of the current dialog. Can 'be the Starting point of a process.
+ * @parm nGroup					Number of the group to perform
+ */
+void GroupThread(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+		LPMPALDIALOG dialog;
+		int i, j, k;
+		int type;
+	CORO_END_CONTEXT(_ctx);
 
-void PASCAL GroupThread(uint32 nGroup) {
-	LPMPALDIALOG dialog;
-	int i, j, k;
+	uint32 nGroup = *(const uint32 *)param;
 
-	/* Locka i dialoghi */
+	CORO_BEGIN_CODE(_ctx);
+
+	// Lock the _ctx->dialog
 	LockDialogs();
 
-	/* Trova il puntatore al dialogo corrente */
-	dialog = lpmdDialogs+nExecutingDialog;
+	// Find the pointer to the current _ctx->dialog
+	_ctx->dialog = lpmdDialogs + nExecutingDialog;
 
-	/* Cerca il gruppo richiesto all'interno del dialogo */
-	for (i = 0; dialog->Group[i].num != 0; i++)
-		if (dialog->Group[i].num==nGroup) {
-			/* Cicla eseguendo i comandi del gruppo */
-			for (j = 0; j < dialog->Group[i].nCmds; j++) {
-				k=dialog->Group[i].CmdNum[j];
+	// Search inside the group requesting the _ctx->dialog
+	for (_ctx->i = 0; _ctx->dialog->Group[_ctx->i].num != 0; _ctx->i++) {
+		if (_ctx->dialog->Group[_ctx->i].num == nGroup) {
+			// Cycle through executing the commands of the group
+			for (_ctx->j = 0; _ctx->j < _ctx->dialog->Group[_ctx->i].nCmds; _ctx->j++) {
+				_ctx->k = _ctx->dialog->Group[_ctx->i].CmdNum[_ctx->j];
 
-				switch (dialog->Command[k].type) {
-				/* Funzione custom: la richiama */
-				case 1:
-					// FIXME: Convert to co-routine
-					lplpFunctions[dialog->Command[k].nCf](
-						nullContext,
-						dialog->Command[k].arg1,
-						dialog->Command[k].arg2,
-						dialog->Command[k].arg3,
-						dialog->Command[k].arg4
+				_ctx->type = _ctx->dialog->Command[_ctx->k].type;
+				if (_ctx->type == 1) {
+					// Call custom function
+					CORO_INVOKE_4(lplpFunctions[_ctx->dialog->Command[_ctx->k].nCf],
+						_ctx->dialog->Command[_ctx->k].arg1, 
+						_ctx->dialog->Command[_ctx->k].arg2,
+						_ctx->dialog->Command[_ctx->k].arg3, 
+						_ctx->dialog->Command[_ctx->k].arg4
 					);
-					break;
 
-				/* Variabile: la setta */
-				case 2:
+				} else if (_ctx->type == 2) {
+					// Set a variable
 					LockVar();
-					varSetValue(dialog->Command[k].lpszVarName,EvaluateExpression(dialog->Command[k].expr));
+					varSetValue(_ctx->dialog->Command[_ctx->k].lpszVarName, EvaluateExpression(_ctx->dialog->Command[_ctx->k].expr));
 					UnlockVar();
-					break;
-
-				/* DoChoice: richiama la funzione di scelta */
-				case 3:
-					DoChoice((uint32)dialog->Command[k].nChoice);
-					break;
-
-				default:
+					
+				} else if (_ctx->type == 3) {
+					// DoChoice: call the chosen function
+					CORO_INVOKE_1(DoChoice, (uint32)_ctx->dialog->Command[_ctx->k].nChoice);
+					
+				} else {
 					mpalError = 1;
 					UnlockDialogs();
-					ExitThread(0);
-//					_endthread();
+					
+					CORO_KILL_SELF();
+					return;
+				}
 			}
-		}
 
-		/* Abbiamo eseguito il gruppo. Possiamo uscire alla funzione chiamante.
-			Se il gruppo era il primo chiamato, allora automaticamente il
-			thread viene chiuso, altrimenti si ritorno al gruppo chiamante. */
-		UnlockDialogs();
-		return;
+			/* The gruop is finished, so we can return to the calling function.
+			 * If the group was the first called, then the process will automatically 
+			 * end. Otherwise it returns to the caller method
+			 */
+			return;
+		}
 	}
 
 	/* Se siamo qui, vuol dire che non abbiamo trovato il gruppo richiesto */
 	mpalError = 1;
 	UnlockDialogs();
-	ExitThread(0);
-//	_endthread();
+	
+	CORO_KILL_SELF();
+
+	CORO_END_CODE;
 }
 
 
@@ -1435,52 +1443,58 @@ void PASCAL GroupThread(uint32 nGroup) {
 *
 \****************************************************************************/
 
-void DoChoice(uint32 nChoice) {
-	LPMPALDIALOG dialog;
-	int i,j,k;
+void DoChoice(CORO_PARAM, uint32 nChoice) {
+	CORO_BEGIN_CONTEXT;
+		LPMPALDIALOG dialog;
+		int i, j, k;
+		uint32 nGroup;
+	CORO_END_CONTEXT(_ctx);
 
-	/* Locka i dialoghi */
+	CORO_BEGIN_CODE(_ctx);
+
+	/* Locka _ctx->i dialoghi */
 	LockDialogs();
 
 	/* Trova il puntatore al dialogo corrente */
-	dialog=lpmdDialogs+nExecutingDialog;
+	_ctx->dialog=lpmdDialogs+nExecutingDialog;
 
 	/* Cerca la scelta richiesta tra quelle nel dialogo */
-	for (i = 0; dialog->Choice[i].nChoice != 0; i++)
-		if (dialog->Choice[i].nChoice == nChoice)
+	for (_ctx->i = 0; _ctx->dialog->Choice[_ctx->i].nChoice != 0; _ctx->i++)
+		if (_ctx->dialog->Choice[_ctx->i].nChoice == nChoice)
 			break;
 
 	/* Se non l'ha trovata, esce con errore */
-	if (dialog->Choice[i].nChoice == 0) {
+	if (_ctx->dialog->Choice[_ctx->i].nChoice == 0) {
 		/* Se siamo qui, non abbiamo trovato la choice richiesta */
 		mpalError = 1;
 		UnlockDialogs();
-		ExitThread(0);
-//		_endthread();
+
+		CORO_KILL_SELF();
+		return;
 	}
 
 	/* Abbiamo trova la choice richiesta. Ricordiamoci qual e' nella
 		variabile globale */
-	nExecutingChoice = i;
+	nExecutingChoice = _ctx->i;
 
 	while (1) {
-		nExecutingChoice = i;
+		nExecutingChoice = _ctx->i;
 
-		k = 0;
+		_ctx->k = 0;
 		/* Calcoliamo le when expression di ciascun select, per vedere se sono
 			attivi o disattivi */
-		for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
-			if (dialog->Choice[i].Select[j].when == NULL) {
-				dialog->Choice[i].Select[j].curActive = 1;
-				k++;
-			} else if (EvaluateExpression(dialog->Choice[i].Select[j].when)) {
-				dialog->Choice[i].Select[j].curActive = 1;
-				k++;
+		for (_ctx->j = 0; _ctx->dialog->Choice[_ctx->i].Select[_ctx->j].dwData != 0; _ctx->j++)
+			if (_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].when == NULL) {
+				_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].curActive = 1;
+				_ctx->k++;
+			} else if (EvaluateExpression(_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].when)) {
+				_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].curActive = 1;
+				_ctx->k++;
 			} else
-				dialog->Choice[i].Select[j].curActive = 0;
+				_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].curActive = 0;
 
 		/* Se non ci sono scelte attivate, la scelta e' finita */
-		if (k == 0) {
+		if (_ctx->k == 0) {
 			UnlockDialogs();
 			break;
 		}
@@ -1491,31 +1505,36 @@ void DoChoice(uint32 nChoice) {
 		SetEvent(hAskChoice);
 		WaitForSingleObject(hDoneChoice, INFINITE);
 
-		/* Ora che la scelta e' stata effettuata, possiamo eseguire i gruppi
+		/* Ora che la scelta e' stata effettuata, possiamo eseguire _ctx->i gruppi
 			associati con la scelta */
-		j=nSelectedChoice;
-		for (k = 0; dialog->Choice[i].Select[j].wPlayGroup[k] != 0; k++)
-			GroupThread(dialog->Choice[i].Select[j].wPlayGroup[k]);
+		_ctx->j = nSelectedChoice;
+		for (_ctx->k = 0; _ctx->dialog->Choice[_ctx->i].Select[_ctx->j].wPlayGroup[_ctx->k] != 0; _ctx->k++) {
+			_ctx->nGroup = _ctx->dialog->Choice[_ctx->i].Select[_ctx->j].wPlayGroup[_ctx->k];
+			CORO_INVOKE_1(GroupThread, &_ctx->nGroup);
+		}
 
 		/* Controllo sugli attributi */
-		if (dialog->Choice[i].Select[j].attr & (1 << 0)) {
+		if (_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].attr & (1 << 0)) {
 			/* Bit 0 settato: fine della scelta */
 			UnlockDialogs();
 			break;
 		}
 
-		if (dialog->Choice[i].Select[j].attr & (1 << 1)) {
+		if (_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].attr & (1 << 1)) {
 			/* Bit 1 settato: fine del dialogo */
 			UnlockDialogs();
-			ExitThread(1);
-//			_endthread();
+			
+			CORO_KILL_SELF();
+			return;
 		}
 
 		/* Fine della scelta senza attributi: bisogna rifarla */
 	}
 
-	/* Se siamo qui, abbiamo trovato un end choice. Ritorna al gruppo chiamante */
+	// If we're here, we found an end choice. Return to the caller group
 	return;
+
+	CORO_END_CODE;
 }
 
 
@@ -1605,57 +1624,40 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	return INVALID_HANDLE_VALUE;
 }
 
+/**
+ * Shows a dialog in a separate process.
+ *
+ * @param nDlgOrd				The index of the dialog in the dialog list
+ * @param nGroup				Number of the group to perform
+ * @returns						The process Id of the process running the dialog
+ *								or INVALID_HANDLE_VALUE on error
+ * @remarks						The dialogue runs in a thread created on purpose, 
+ * so that must inform through an event and when 'necessary to you make a choice. 
+ * The data on the choices may be obtained through various queries.
+ */
+static uint32 DoDialog(uint32 nDlgOrd, uint32 nGroup) {
+	uint32 h;
 
-/****************************************************************************\
-*
-* Function:     HANDLE DoDialog(uint32 nDlgOrd, uint32 nGroup);
-*
-* Description:  Esegue un dialogo in un thread
-*
-* Input:        uint32 nDlgOrd           Indice del dialogo da eseguire
-*                                       all'interno dell'array di strutture
-*                                       dei dialoghi
-*               uint32 nGroup            Numero del gruppo da eseguire
-*
-* Return:       Handle del thread che sta eseguendo il dialogo, o
-*               INVALID_HANDLE_VALUE in caso di errore
-*
-* Note:         Il dialogo viene eseguito in un thread creato apposta, che
-*               deve informa tramite un evento quando e' necessario far
-*               fare una scelta all'utente. I dati sulle scelte possono
-*               essere richiesti tramite le varie query.
-*
-\****************************************************************************/
-
-static HANDLE DoDialog(uint32 nDlgOrd, uint32 nGroup) {
-//	LPMPALDIALOG dialog=lpmdDialogs+nDlgOrd;
-	uint32 dwId;
-	HANDLE h;
-
-	/* Si ricorda nella variabile globale qual e' il dialogo in esecuzione */
+	// Store the running dialog in a global variable
 	nExecutingDialog = nDlgOrd;
 
-	/* Attiva la flag per indicare che c'e' un dialogo in esecuzione */
+	// Enables the flag to indicate that there is' a running dialogue
 	bExecutingDialog = true;
 
 	ResetEvent(hAskChoice);
 	ResetEvent(hDoneChoice);
 
-	/* Crea un thread in cui esegue un gruppo del dialogo */
+	// Create a thread that performs the dialogue group
 
-	// !!! Nuova gestione dei thread
-	if ((h = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)GroupThread, (void *)nGroup, 0, &dwId)) == NULL)
-		// if ((h=(void*)_beginthread(GroupThread, 10240,(void *)nGroup))==(void*)-1)
-		return INVALID_HANDLE_VALUE;
+	// Create the process
+	if ((h = _vm->_scheduler.createProcess(GroupThread, &nGroup, sizeof(uint32))) == 0)
+		return 0;
 
-	/* Crea un thread che attende la fine del dialogo e rimette a posto le
-		variabili globali */
- // !!! Nuova gestione dei thread
-	if (CreateThread(NULL, 10240,(LPTHREAD_START_ROUTINE)ShutUpDialogThread,(void *)h, 0, &dwId) == NULL) {
-	//if ((h=(void*)_beginthread(ShutUpDialogThread, 10240,(void *)h))==(void*)-1)
-		TerminateThread(h, 0);
-		CloseHandle(h);
-		return INVALID_HANDLE_VALUE;
+	// Create a thread that waits until the end of the dialog process, and will restore the global variables
+	if (_vm->_scheduler.createProcess(ShutUpDialogThread, &h, sizeof(uint32)) == 0) {
+		// Something went wrong, so kill the previously started dialog process
+		_vm->_scheduler.killMatchingProcess(h);
+		return 0;
 	}
 
 	return h;
@@ -1893,241 +1895,228 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 #define GETARG(type)   va_arg(v,type)
 
-uint32 mpalQuery(uint16 wQueryType, ...) {
-	uint32 dwRet = 0;
-	int x, y, z;
-	char *n;
-	va_list v;
-	Common::String buf;
+void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
+	CORO_BEGIN_CONTEXT;
+		int x, y, z;
+		char *n;
+		Common::String buf;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	mpalError = OK;
-	va_start(v, wQueryType);
 
-	switch (wQueryType) {
-   /*
-    *  uint32 mpalQuery(MPQ_VERSION);
-    */
-	case MPQ_VERSION:
-		dwRet = HEX_VERSION;
-		break;
+	if (wQueryType == MPQ_VERSION) {
+		/*
+		 *  uint32 mpalQuery(MPQ_VERSION);
+		 */
+		*dwRet = HEX_VERSION;
 
-   /*
-    *  uint32 mpalQuery(MPQ_GLOBAL_VAR, char * lpszVarName);
-    */
-	case MPQ_GLOBAL_VAR:
+	} else if (wQueryType == MPQ_GLOBAL_VAR) {
+		/*
+		 *  uint32 mpalQuery(MPQ_GLOBAL_VAR, char * lpszVarName);
+		 */
 		LockVar();
-		dwRet = (uint32)varGetValue(GETARG(char *));
+		*dwRet = (uint32)varGetValue(GETARG(char *));
 		UnlockVar();
-		break;
 
-   /*
-    *  char * mpalQuery(MPQ_MESSAGE, uint32 nMsg);
-    */
-	case MPQ_MESSAGE:
+	} else if (wQueryType == MPQ_MESSAGE) {
+		/*
+		 *  char * mpalQuery(MPQ_MESSAGE, uint32 nMsg);
+		 */
 		LockMsg();
-		dwRet = (uint32)DuplicateMessage(msgGetOrderFromNum(GETARG(uint32)));
+		*dwRet = (uint32)DuplicateMessage(msgGetOrderFromNum(GETARG(uint32)));
 		UnlockMsg();
-		break;
-
-   /*
-    *  uint32 mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem);
-    */
-	case MPQ_ITEM_PATTERN:
+		
+	} else if (wQueryType == MPQ_ITEM_PATTERN) {
+		/*
+		 *  uint32 mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem);
+		 */
 		LockVar();
-		buf = Common::String::format("Pattern.%u", GETARG(uint32));
-		dwRet = (uint32)varGetValue(buf.c_str());
+		_ctx->buf = Common::String::format("Pattern.%u", GETARG(uint32));
+		*dwRet = (uint32)varGetValue(_ctx->buf.c_str());
 		UnlockVar();
-		break;
-
-   /*
-    *  uint32 mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord);
-    */
-	case MPQ_LOCATION_SIZE:
+		
+	} else if (wQueryType == MPQ_LOCATION_SIZE) {
+		/*
+		 *  uint32 mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord);
+		 */
 		LockLocations();
-		x = locGetOrderFromNum(GETARG(uint32));
-		y = GETARG(uint32);
-		if (x != -1) {
-			if (y == MPQ_X)
-				dwRet = lpmlLocations[x].dwXlen;
-			else if (y == MPQ_Y)
-				dwRet = lpmlLocations[x].dwYlen;
+		_ctx->x = locGetOrderFromNum(GETARG(uint32));
+		_ctx->y = GETARG(uint32);
+		if (_ctx->x != -1) {
+			if (_ctx->y == MPQ_X)
+				*dwRet = lpmlLocations[_ctx->x].dwXlen;
+			else if (_ctx->y == MPQ_Y)
+				*dwRet = lpmlLocations[_ctx->x].dwYlen;
 			else
 				mpalError = 1;
 		} else
 			mpalError = 1;
 		UnlockLocations();
-		break;
-
-   /*
-    *  HGLOBAL mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc);
-    */
-	case MPQ_LOCATION_IMAGE:
+		
+	} else if (wQueryType == MPQ_LOCATION_IMAGE) {
+		/*
+		 *  HGLOBAL mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc);
+		 */
 		LockLocations();
-		x = locGetOrderFromNum(GETARG(uint32));
-		dwRet = (uint32)resLoad(lpmlLocations[x].dwPicRes);
+		_ctx->x = locGetOrderFromNum(GETARG(uint32));
+		*dwRet = (uint32)resLoad(lpmlLocations[_ctx->x].dwPicRes);
 		UnlockLocations();
-		break;
 
-   /*
-    *  HGLOBAL mpalQuery(MPQ_RESOURCE, uint32 dwRes);
-    */
-	case MPQ_RESOURCE:
-		dwRet = (uint32)resLoad(GETARG(uint32));
-		break;
+	} else if (wQueryType == MPQ_RESOURCE) {
+		/*
+		 *  HGLOBAL mpalQuery(MPQ_RESOURCE, uint32 dwRes);
+		 */
+		*dwRet = (uint32)resLoad(GETARG(uint32));
 
-   /*
-    *  uint32 mpalQuery(MPQ_ITEM_LIST, uint32 nLoc);
-    */
-	case MPQ_ITEM_LIST:
+	} else if (wQueryType == MPQ_ITEM_LIST) {
+		/*
+		 *  uint32 mpalQuery(MPQ_ITEM_LIST, uint32 nLoc);
+		 */
 		LockVar();
-		dwRet = (uint32)GetItemList(GETARG(uint32));
+		*dwRet = (uint32)GetItemList(GETARG(uint32));
 		LockVar();
-		break;
 
-   /*
-    *  LPITEM mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
-    */
-	case MPQ_ITEM_DATA:
+	} else if (wQueryType == MPQ_ITEM_DATA) {
+		/*
+		 *  LPITEM mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
+		 */
 		LockItems();
-		dwRet = (uint32)GetItemData(itemGetOrderFromNum(GETARG(uint32)));
+		*dwRet = (uint32)GetItemData(itemGetOrderFromNum(GETARG(uint32)));
 		UnlockItems();
-		break;
 
-   /*
-    *  bool mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem);
-    */
-	case MPQ_ITEM_IS_ACTIVE:
+	} else if (wQueryType == MPQ_ITEM_IS_ACTIVE) {
+		/*
+		 *  bool mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem);
+		 */
 		LockVar();
-		x = GETARG(uint32);
-		buf = Common::String::format("Status.%u", x);
-		if (varGetValue(buf.c_str()) <= 0)
-			dwRet = (uint32)false;
+		_ctx->x = GETARG(uint32);
+		_ctx->buf = Common::String::format("Status.%u", _ctx->x);
+		if (varGetValue(_ctx->buf.c_str()) <= 0)
+			*dwRet = (uint32)false;
 		else
-			dwRet = (uint32)true;
+			*dwRet = (uint32)true;
 		UnlockVar();
-		break;
 
-
-   /*
-    *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char * lpszName);
-    */
-	case MPQ_ITEM_NAME:
+	} else if (wQueryType == MPQ_ITEM_NAME) {
+		/*
+		 *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char * lpszName);
+		 */
 		LockVar();
-		x = GETARG(uint32);
-		n=GETARG(char *);
-		buf = Common::String::format("Status.%u", x);
-		if (varGetValue(buf.c_str()) <= 0)
-			n[0]='\0';
+		_ctx->x = GETARG(uint32);
+		_ctx->n = GETARG(char *);
+		_ctx->buf = Common::String::format("Status.%u", _ctx->x);
+		if (varGetValue(_ctx->buf.c_str()) <= 0)
+			_ctx->n[0]='\0';
 		else {
 			LockItems();
-			y = itemGetOrderFromNum(x);
-			CopyMemory(n, (char *)(lpmiItems+y)->lpszDescribe, MAX_DESCRIBE_SIZE);
+			_ctx->y = itemGetOrderFromNum(_ctx->x);
+			CopyMemory(_ctx->n, (char *)(lpmiItems+_ctx->y)->lpszDescribe, MAX_DESCRIBE_SIZE);
 			UnlockItems();
 		}
 
 		UnlockVar();
-		break;
 
-
-   /*
-    *  char * mpalQuery(MPQ_DIALOG_PERIOD, uint32 nDialog, uint32 nPeriod);
-    */
-	case MPQ_DIALOG_PERIOD:
+	} else if (wQueryType == MPQ_DIALOG_PERIOD) {
+		/*
+		 *  char * mpalQuery(MPQ_DIALOG_PERIOD, uint32 nDialog, uint32 nPeriod);
+		 */
 		LockDialogs();
-		y = GETARG(uint32);
-		dwRet = (uint32)DuplicateDialogPeriod(y);
+		_ctx->y = GETARG(uint32);
+		*dwRet = (uint32)DuplicateDialogPeriod(_ctx->y);
 		UnlockDialogs();
-		break;
 
-
-   /*
-    *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
-    */
-	case MPQ_DIALOG_WAITFORCHOICE:
+	} else if (wQueryType == MPQ_DIALOG_WAITFORCHOICE) {
+		/*
+		 *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
+		 */
 		WaitForSingleObject(hAskChoice, INFINITE);
 		ResetEvent(hAskChoice);
 
 		if (bExecutingDialog)
-			dwRet = (uint32)nExecutingChoice;
+			*dwRet = (uint32)nExecutingChoice;
 		else
-			dwRet = (uint32)((int)-1);
-		break;
+			*dwRet = (uint32)((int)-1);
 
-
-   /*
-    *  uint32 *mpalQuery(MPQ_DIALOG_SELECTLIST, uint32 nChoice);
-    */
-   case MPQ_DIALOG_SELECTLIST:
+	} else if (wQueryType == MPQ_DIALOG_SELECTLIST) {
+		/*
+		 *  uint32 *mpalQuery(MPQ_DIALOG_SELECTLIST, uint32 nChoice);
+		 */
 		LockDialogs();
-		dwRet = (uint32)GetSelectList(GETARG(uint32));
+		*dwRet = (uint32)GetSelectList(GETARG(uint32));
 		UnlockDialogs();
 		break;
 
-   /*
-    *  bool mpalQuery(MPQ_DIALOG_SELECTION, uint32 nChoice, uint32 dwData);
-    */
-	case MPQ_DIALOG_SELECTION:
+	} else if (wQueryType == MPQ_DIALOG_SELECTION) {
+		/*
+		 *  bool mpalQuery(MPQ_DIALOG_SELECTION, uint32 nChoice, uint32 dwData);
+		 */
 		LockDialogs();
-		x = GETARG(uint32);
-		y = GETARG(uint32);
-		dwRet = (uint32)DoSelection(x,y);
+		_ctx->x = GETARG(uint32);
+		_ctx->y = GETARG(uint32);
+		*dwRet = (uint32)DoSelection(_ctx->x,_ctx->y);
 		UnlockDialogs();
-		break;
 
-
-   /*
-    *  int mpalQuery(MPQ_DO_ACTION, uint32 nAction, uint32 nItem, uint32 dwParam);
-    */
-	case MPQ_DO_ACTION:
-     /*
-		 if (bExecutingAction)
-     {
-       dwRet = (uint32)INVALID_HANDLE_VALUE;
-       break;
-     }
-			*/
-
+	} else if (wQueryType == MPQ_DO_ACTION) {
+		/*
+		 *  int mpalQuery(MPQ_DO_ACTION, uint32 nAction, uint32 nItem, uint32 dwParam);
+		 */
 		LockItems();
 		LockVar();
-		x = GETARG(uint32);
-		z = GETARG(uint32);
-		y = itemGetOrderFromNum(z);
-		if (y!=-1) {
-			dwRet = (uint32)DoAction(x, y, GETARG(uint32));
+		_ctx->x = GETARG(uint32);
+		_ctx->z = GETARG(uint32);
+		_ctx->y = itemGetOrderFromNum(_ctx->z);
+		if (_ctx->y!=-1) {
+			*dwRet = (uint32)DoAction(_ctx->x, _ctx->y, GETARG(uint32));
 		} else {
-			dwRet = (uint32)INVALID_HANDLE_VALUE;
+			*dwRet = (uint32)INVALID_HANDLE_VALUE;
 			mpalError = 1;
 		}
 		UnlockVar();
 		UnlockItems();
-		break;
 
-   /*
-    *  int mpalQuery(MPQ_DO_DIALOG, uint32 nDialog, uint32 nGroup);
-    */
-	case MPQ_DO_DIALOG:
-		if (bExecutingDialog)
-			break;
+	} else if (wQueryType == MPQ_DO_DIALOG) {
+		/*
+		 *  int mpalQuery(MPQ_DO_DIALOG, uint32 nDialog, uint32 nGroup);
+		 */
+		if (!bExecutingDialog) {
+			LockDialogs();
 
-		LockDialogs();
-
-		x = dialogGetOrderFromNum(GETARG(uint32));
-		y = GETARG(uint32);
-		dwRet = (uint32)DoDialog(x, y);
-		UnlockDialogs();
-		break;
-
-   /*
-    *  DEFAULT -> ERROR
-    */
-   default:
+			_ctx->x = dialogGetOrderFromNum(GETARG(uint32));
+			_ctx->y = GETARG(uint32);
+			*dwRet = DoDialog(_ctx->x, _ctx->y);
+			UnlockDialogs();
+		}
+	} else {
+		/*
+		 *  DEFAULT -> ERROR
+		 */
 		mpalError = 1;
-		break;
 	}
+
+	CORO_END_CODE;
+}
+
+uint32 mpalQuery(uint16 wQueryType, ...) {
+	uint32 dwRet;
+	va_list v;
+	va_start(v, wQueryType);
+
+	mpalQueryInner(nullContext, wQueryType, &dwRet, v);
 
 	va_end(v);
 
 	return dwRet;
+}
+
+void mpalQueryCoro(CORO_PARAM, uint32 *dwRet, uint16 wQueryType, ...) {
+	va_list v;
+	va_start(v, wQueryType);
+
+	mpalQueryInner(coroParam, wQueryType, dwRet, v);
+
+	va_end(v);
 }
 
 

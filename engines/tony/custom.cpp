@@ -1699,7 +1699,7 @@ int curDialog;
 
 DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg, uint32, uint32) {
 	LPSTR string;
-	RMTextDialog* text;
+	RMTextDialog *text;
 	int parm;
 	HANDLE h;
 	bool bIsBack = false;
@@ -1875,70 +1875,80 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 // @@@@ This cannot be skipped!!!!!!!!!!!!!!!!!!!
 
 DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGroup, uint32, uint32) {
-	int nChoice;
-	uint32 *sl;
-	int i,num;
-	char* string;
-	RMDialogChoice dc;
-	int sel;
+	CORO_BEGIN_CONTEXT;
+		uint32 nChoice;
+		uint32 *sl;
+		int i, num;
+		char *string;
+		RMDialogChoice dc;
+		int sel;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	curDialog = nDialog;
 	
-	// Chiama l'MPAL per iniziare il dialogo
+	// Call MPAL to start the dialog
 	mpalQueryDoDialogU32(nDialog, nStartGroup);
 
-	// Aspetta che una scelta si presenti
-	while ((nChoice = mpalQueryDialogWaitForChoice()) != -1) {
+	// Wait until a choice is selected
+	mpalQueryDialogWaitForChoice(&_ctx->nChoice);
+	while (_ctx->nChoice != -1) {
 		// Si fa dare la lista di opzioni e le conta
-		sl = mpalQueryDialogSelectList(nChoice);
-		for (num = 0; sl[num] != 0; num++)
+		_ctx->sl = mpalQueryDialogSelectList(_ctx->nChoice);
+		for (_ctx->num = 0; _ctx->sl[_ctx->num] != 0; _ctx->num++)
 			;
 
 		// Se c'e' una sola opzione, la fa automaticamente, e aspetta la prossima scelta
-		if (num == 1) {
-			mpalQueryDialogSelectionU32(nChoice, sl[0]);
-			GlobalFree(sl);
+		if (_ctx->num == 1) {
+			mpalQueryDialogSelectionU32(_ctx->nChoice, _ctx->sl[0]);
+			GlobalFree(_ctx->sl);
 			continue;
 		}
 		
 		// Crea una scelta per il dialogo
-		dc.Init();
-		dc.SetNumChoices(num);
+		_ctx->dc.Init();
+		_ctx->dc.SetNumChoices(_ctx->num);
 
 		// Scrive tutte le possibili opzioni
-		for (i = 0; i < num; i++) {
-			string = mpalQueryDialogPeriod(sl[i]);
-			assert(string != NULL);
-			dc.AddChoice(string);
-			GlobalFree(string);
+		for (_ctx->i = 0; _ctx->i < _ctx->num; _ctx->i++) {
+			_ctx->string = mpalQueryDialogPeriod(_ctx->sl[_ctx->i]);
+			assert(_ctx->string != NULL);
+			_ctx->dc.AddChoice(_ctx->string);
+			GlobalFree(_ctx->string);
 		}
 
 		// Attiva l'oggetto
-		LinkGraphicTask(&dc);
-		dc.Show();
+		LinkGraphicTask(&_ctx->dc);
+		_ctx->dc.Show();
 
 		// Disegna il puntatore
 		Pointer->SetSpecialPointer(Pointer->PTR_NONE);
 		MainShowMouse();
 			
-		while (!(Input->MouseLeftClicked() && ((sel = dc.GetSelection()) != -1))) {
+		while (!(Input->MouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {
 			WaitFrame();
 			Freeze();
-			dc.DoFrame(Input->MousePos());
+			_ctx->dc.DoFrame(Input->MousePos());
 			Unfreeze();
 		}	
 
 		// Nascondi il puntatore
 		MainHideMouse();
 		
-		dc.Hide();
-		mpalQueryDialogSelectionU32(nChoice, sl[sel]);
+		_ctx->dc.Hide();
+		mpalQueryDialogSelectionU32(_ctx->nChoice, _ctx->sl[_ctx->sel]);
 
 		// Chiude la scelta
-		dc.Close();
+		_ctx->dc.Close();
 
-		GlobalFree(sl);
+		GlobalFree(_ctx->sl);
+
+		// Wait for the next choice to be made
+		mpalQueryDialogWaitForChoice(&_ctx->nChoice);
 	}
+
+	CORO_END_CODE;
 }
 
 

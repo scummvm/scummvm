@@ -474,10 +474,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *
 \****************************************************************************/
 
-#define mpalQueryDialogWaitForChoice()                  \
-        (int)mpalQuery(MPQ_DIALOG_WAITFORCHOICE)
-
-
+#define mpalQueryDialogWaitForChoice(dwRet)                  \
+        CORO_INVOKE_2(mpalQueryCoro, dwRet, MPQ_DIALOG_WAITFORCHOICE)
 
 /****************************************************************************\
 *
@@ -627,7 +625,7 @@ bool EXPORT mpalInit(const char *lpszFileName, const char *lpszMprFileName,
 
 uint32 EXPORT mpalQuery(uint16 wQueryType, ...);
 
-
+void mpalQueryCoro(CORO_PARAM, uint32 *dwRet, uint16 wQueryType, ...);
 
 /****************************************************************************\
 *

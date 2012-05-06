@@ -299,6 +299,9 @@ void Scheduler::giveWay(PPROCESS pReSchedProc) {
  * @param expired		Set to true if delay period expired
  */
 void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration, bool *expired) {
+	if (!pCurrent)
+		error("Called Scheduler::waitForSingleObject from the main process");
+
 	CORO_BEGIN_CONTEXT;
 		uint32 endTime;
 		PROCESS *pProc;
