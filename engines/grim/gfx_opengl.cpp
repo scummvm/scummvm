@@ -394,7 +394,7 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 // 		glColor3f(0.0f, 1.0f, 0.0f);
-		glColor3f(_shadowColorR / 255.0f, _shadowColorG / 255.0f, _shadowColorB / 255.0f);
+		glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
@@ -1024,7 +1024,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	const Color &color = text->getFGColor();
 	const Font *font = text->getFont();
 
-	glColor3f(color.getRed() / 255.f, color.getGreen() / 255.f, color.getBlue() / 255.f);
+	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 	const FontUserData *userData = (const FontUserData *)font->getUserData();
 	if (!userData)
 		error("Could not get font userdata");
@@ -1588,7 +1588,7 @@ void GfxOpenGL::drawLine(const PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
+	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 
 	glLineWidth(_scaleW);
 
@@ -1626,7 +1626,7 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
+	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 
 	glBegin(GL_LINES);
 	glVertex2f(x1, y1);
