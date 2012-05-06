@@ -297,38 +297,38 @@ void CharsLoadAll(Common::InSaveFile *f) {
 	}
 }
 
-DECLARE_CUSTOM_FUNCTION(FaceToMe)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FaceToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->SetPattern(Tony->PAT_STANDDOWN);
 }
 
-DECLARE_CUSTOM_FUNCTION(BackToMe)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(BackToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->SetPattern(Tony->PAT_STANDUP);
 }
 
-DECLARE_CUSTOM_FUNCTION(LeftToMe)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(LeftToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->SetPattern(Tony->PAT_STANDLEFT);
 }
 
-DECLARE_CUSTOM_FUNCTION(RightToMe)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(RightToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->SetPattern(Tony->PAT_STANDRIGHT);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonySetPalesati)(uint32 bStatus, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySetPalesati)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
 	SetPalesati(bStatus);	
 }
 
-DECLARE_CUSTOM_FUNCTION(MySleep)(uint32 dwTime, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MySleep)(CORO_PARAM, uint32 dwTime, uint32, uint32, uint32) {
 	if (bSkipIdle) return;
 	Sleep(dwTime);
 }
 
-DECLARE_CUSTOM_FUNCTION(SetAlwaysDisplay)(uint32 val, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(SetAlwaysDisplay)(CORO_PARAM, uint32 val, uint32, uint32, uint32) {
 	bAlwaysDisplay = (val != 0);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(SetPointer)(uint32 dwPointer, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(SetPointer)(CORO_PARAM, uint32 dwPointer, uint32, uint32, uint32) {
 	switch (dwPointer) {
 		case 1:
 			Pointer->SetSpecialPointer(Pointer->PTR_FRECCIASU);
@@ -369,7 +369,7 @@ VoiceHeader *SearchVoiceHeader(uint32 codehi, uint32 codelo) {
 }
 
 
-DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(uint32 dwMessage, uint32 nX, uint32 nY, uint32) {
+DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX, uint32 nY, uint32) {
 	RMMessage msg(dwMessage);
 	int i;
 	int curOffset = 0;
@@ -476,12 +476,12 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(uint32 dwMessage, uint32 nX, uint32 nY,
 	Tony->EndTalk();
 }
 
-DECLARE_CUSTOM_FUNCTION(ChangeBoxStatus)(uint32 nLoc, uint32 nBox, uint32 nStatus, uint32) {
+DECLARE_CUSTOM_FUNCTION(ChangeBoxStatus)(CORO_PARAM, uint32 nLoc, uint32 nBox, uint32 nStatus, uint32) {
 	Boxes->ChangeBoxStatus(nLoc,nBox,nStatus);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
+DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
 	HANDLE h;
 
 	Freeze();
@@ -504,7 +504,7 @@ DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(uint32 nLoc, uint32 tX, uint32 tY, uin
 RMPoint SFM_pt;
 int SFM_nLoc;
 
-DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(uint32 nMsg, uint32 nFont, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 nFont, uint32, uint32) {
 	RMMessage msg(nMsg);
 	RMGfxClearTask clear;
 	int i;
@@ -554,14 +554,14 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(uint32 nMsg, uint32 nFont, uint3
 	}
 }
 
-DECLARE_CUSTOM_FUNCTION(ClearScreen)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	RMGfxClearTask clear;
 
 	LinkGraphicTask(&clear);
 	WaitFrame();
 }
 
-DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(uint32 bNotEnableTony, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(CORO_PARAM, uint32 bNotEnableTony, uint32, uint32, uint32) {
 	Freeze();
 	LoadLocation(SFM_nLoc,RMPoint(SFM_pt.x,SFM_pt.y),RMPoint(-1,-1));
 	if (!bNotEnableTony)
@@ -573,18 +573,25 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(uint32 bNotEnableTony, uint32, uin
 }
 
 
-DECLARE_CUSTOM_FUNCTION(SendFullscreenMessage)(uint32 nMsg, uint32 nFont, uint32, uint32) {
-	SendFullscreenMsgStart(nMsg,nFont,0,0);
-	SendFullscreenMsgEnd(0, 0, 0, 0);
+DECLARE_CUSTOM_FUNCTION(SendFullscreenMessage)(CORO_PARAM, uint32 nMsg, uint32 nFont, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_4(SendFullscreenMsgStart, nMsg, nFont, 0, 0);
+	CORO_INVOKE_4(SendFullscreenMsgEnd, 0, 0, 0, 0);
+
+	CORO_END_CODE;
 }
 
 bool bNoOcchioDiBue = false;
 
-DECLARE_CUSTOM_FUNCTION(NoOcchioDiBue)(uint32, uint32, uint32, uint32) {
- bNoOcchioDiBue = true;
+DECLARE_CUSTOM_FUNCTION(NoOcchioDiBue)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	bNoOcchioDiBue = true;
 }
 
-DECLARE_CUSTOM_FUNCTION(CloseLocation)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	if (!bNoOcchioDiBue) {
 	  InitWipe(1);
 	  WaitWipeEnd();
@@ -598,7 +605,7 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(uint32, uint32, uint32, uint32) {
 }
 
 
-DECLARE_CUSTOM_FUNCTION(ChangeLocation)(uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
+DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
 	HANDLE h;
 
 	if (!bNoOcchioDiBue) {
@@ -647,40 +654,48 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(uint32 nLoc, uint32 tX, uint32 tY, uint3
 
 }
 
-DECLARE_CUSTOM_FUNCTION(SetLocStartPosition)(uint32 nLoc, uint32 lX, uint32 lY, uint32) {
+DECLARE_CUSTOM_FUNCTION(SetLocStartPosition)(CORO_PARAM, uint32 nLoc, uint32 lX, uint32 lY, uint32) {
 	StartLocPos[nLoc].Set(lX,lY);	
 }
 
-DECLARE_CUSTOM_FUNCTION(SaveTonyPosition)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(SaveTonyPosition)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	saveTonyPos = Tony->Position();
 	saveTonyLoc = Loc->TEMPGetNumLoc();
 }
 
-DECLARE_CUSTOM_FUNCTION(RestoreTonyPosition)(uint32, uint32, uint32, uint32) {
-	ChangeLocation(saveTonyLoc, saveTonyPos.x, saveTonyPos.y, 0);
+DECLARE_CUSTOM_FUNCTION(RestoreTonyPosition)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_4(ChangeLocation, saveTonyLoc, saveTonyPos.x, saveTonyPos.y, 0);
+	
 	MCharResetCodes();
+
+	CORO_END_CODE;
 }
 
 
-DECLARE_CUSTOM_FUNCTION(DisableInput)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(DisableInput)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	MainDisableInput();
 }
 
 
-DECLARE_CUSTOM_FUNCTION(EnableInput)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(EnableInput)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	MainEnableInput();
 }
 
-DECLARE_CUSTOM_FUNCTION(StopTony)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(StopTony)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->StopNoAction();
 }
 
 
-DECLARE_CUSTOM_FUNCTION(CustEnableGUI)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(CustEnableGUI)(CORO_PARAM, uint32, uint32, uint32, uint32) {
   EnableGUI();
 }
 
-DECLARE_CUSTOM_FUNCTION(CustDisableGUI)(uint32, uint32, uint32, uint32)
+DECLARE_CUSTOM_FUNCTION(CustDisableGUI)(CORO_PARAM, uint32, uint32, uint32, uint32)
 {
   DisableGUI();
 }
@@ -731,31 +746,31 @@ void TonyGenericPut2(uint32 nDirection) {
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonyTakeUp1)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyTakeUp1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericTake1(0);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonyTakeMid1)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyTakeMid1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericTake1(1);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyTakeDown1)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyTakeDown1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericTake1(2);
 }
 
 
 
-DECLARE_CUSTOM_FUNCTION(TonyTakeUp2)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyTakeUp2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericTake2(0);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonyTakeMid2)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyTakeMid2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericTake2(1);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyTakeDown2)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyTakeDown2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericTake2(2);
 }
 
@@ -765,42 +780,42 @@ DECLARE_CUSTOM_FUNCTION(TonyTakeDown2)(uint32, uint32, uint32, uint32) {
 
 
 
-DECLARE_CUSTOM_FUNCTION(TonyPutUp1)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPutUp1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut1(0);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonyPutMid1)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPutMid1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut1(1);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyPutDown1)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPutDown1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut1(2);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyPutUp2)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPutUp2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut2(0);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonyPutMid2)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPutMid2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut2(1);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyPutDown2)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPutDown2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut2(2);
 }
 
 
 
-DECLARE_CUSTOM_FUNCTION(TonyPerTerra)(uint32 dwParte, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPerTerra)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
 	if (dwParte== 0)
 		Tony->SetPattern(Tony->PAT_PERTERRALEFT);
 	else
 		Tony->SetPattern(Tony->PAT_PERTERRARIGHT);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySiRialza)(uint32 dwParte, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySiRialza)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
 	if (dwParte== 0)
 		Tony->SetPattern(Tony->PAT_SIRIALZALEFT);
 	else
@@ -810,11 +825,11 @@ DECLARE_CUSTOM_FUNCTION(TonySiRialza)(uint32 dwParte, uint32, uint32, uint32) {
 		Tony->WaitForEndPattern();
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyPastorella)(uint32 bIsPast, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyPastorella)(CORO_PARAM, uint32 bIsPast, uint32, uint32, uint32) {
   Tony->SetPastorella(bIsPast);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyFischietto)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyFischietto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->SetPattern(Tony->PAT_FISCHIETTORIGHT);
 	if (!bSkipIdle)
 		Tony->WaitForEndPattern();
@@ -827,182 +842,182 @@ void TonySetNumTexts(uint32 dwText) {
 	bTonyInTexts = false;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyRide)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyRide)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_RIDE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyRidacchia)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyRidacchia)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_RIDE2;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyFianchi)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyFianchi)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_FIANCHI;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyCanta)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyCanta)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CANTA;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySiIndica)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySiIndica)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_SIINDICA;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoConMani)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySpaventatoConMani)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_SPAVENTATO;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoSenzaMani)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySpaventatoSenzaMani)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_SPAVENTATO2;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConMartello)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConMartello)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONMARTELLO;
 	Tony->SetPattern(Tony->PAT_CONMARTELLO);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConBicchiere)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConBicchiere)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONBICCHIERE;
 	Tony->SetPattern(Tony->PAT_CONBICCHIERE);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConVerme)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConVerme)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONVERME;
 	Tony->SetPattern(Tony->PAT_CONVERME);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCorda)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConCorda)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONCORDA;
 	Tony->SetPattern(Tony->PAT_CONCORDA);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConSegretaria)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConSegretaria)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONSEGRETARIA;
 	Tony->SetPattern(Tony->PAT_CONSEGRETARIA);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConConiglioANIM)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConConiglioANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONCONIGLIO;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConRicettaANIM)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConRicettaANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONRICETTA;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCarteANIM)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConCarteANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONCARTE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConPupazzoANIM)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConPupazzoANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_CONPUPAZZO;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConPupazzoStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConPupazzoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_CONPUPAZZOSTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_CONPUPAZZOSTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConPupazzoEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConPupazzoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_CONPUPAZZOSTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConConiglioStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConConiglioStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_CONCONIGLIOSTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_CONCONIGLIOSTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConConiglioEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConConiglioEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_CONCONIGLIOSTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConRicettaStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConRicettaStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_CONRICETTASTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_CONRICETTASTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConRicettaEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConRicettaEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_CONRICETTASTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCarteStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConCarteStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_CONCARTESTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_CONCARTESTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCarteEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConCarteEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_CONCARTESTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_CONTACCUINOSTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_CONTACCUINOSTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_CONTACCUINOSTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConMegafonoStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConMegafonoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_CONMEGAFONOSTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_CONMEGAFONOSTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConMegafonoEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConMegafonoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_CONMEGAFONOSTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConBarbaStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConBarbaStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_CONBARBASTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_CONBARBASTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConBarbaEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyConBarbaEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_CONBARBASTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySpaventatoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	nTonyNextTalkType = Tony->TALK_SPAVENTATOSTATIC;
 	bStaticTalk = true;
 	Tony->StartStatic(Tony->TALK_SPAVENTATOSTATIC);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySpaventatoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->EndStatic(Tony->TALK_SPAVENTATOSTATIC);
 	bStaticTalk = false;
 	nTonyNextTalkType = Tony->TALK_NORMAL;
@@ -1010,29 +1025,43 @@ DECLARE_CUSTOM_FUNCTION(TonySpaventatoEnd)(uint32, uint32, uint32, uint32) {
 
 
 
-DECLARE_CUSTOM_FUNCTION(TonySchifato)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySchifato)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_SCHIFATO;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySniffaLeft)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySniffaLeft)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	Tony->SetPattern(Tony->PAT_SNIFFA_LEFT);
 	Tony->WaitForEndPattern();
-	LeftToMe(0, 0, 0, 0);
+	CORO_INVOKE_4(LeftToMe, 0, 0, 0, 0);
+
+	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySniffaRight)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySniffaRight)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	Tony->SetPattern(Tony->PAT_SNIFFA_RIGHT);
 	Tony->WaitForEndPattern();
-	RightToMe(0, 0, 0, 0);
+	CORO_INVOKE_4(RightToMe, 0, 0, 0, 0);
+
+	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyNaah)(uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyNaah)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
   TonySetNumTexts(dwText);
 	nTonyNextTalkType = Tony->TALK_NAAH;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyMacbeth)(uint32 nPos, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyMacbeth)(CORO_PARAM, uint32 nPos, uint32, uint32, uint32) {
 	switch (nPos) {
 	case 1:
 		nTonyNextTalkType = Tony->TALK_MACBETH1;
@@ -1065,15 +1094,15 @@ DECLARE_CUSTOM_FUNCTION(TonyMacbeth)(uint32 nPos, uint32, uint32, uint32) {
 }
 
 
-DECLARE_CUSTOM_FUNCTION(EnableTony)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(EnableTony)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Tony->Show();
 }
 
-DECLARE_CUSTOM_FUNCTION(DisableTony)(uint32 bShowOmbra, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(DisableTony)(CORO_PARAM, uint32 bShowOmbra, uint32, uint32, uint32) {
 	Tony->Hide(bShowOmbra);
 }
 
-DECLARE_CUSTOM_FUNCTION(WaitForPatternEnd)(uint32 nItem, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(WaitForPatternEnd)(CORO_PARAM, uint32 nItem, uint32, uint32, uint32) {
 	RMItem *item = Loc->GetItemFromCode(nItem);
 	
 	if (!bSkipIdle && item != NULL)
@@ -1081,22 +1110,22 @@ DECLARE_CUSTOM_FUNCTION(WaitForPatternEnd)(uint32 nItem, uint32, uint32, uint32)
 }
 
 
-DECLARE_CUSTOM_FUNCTION(SetTonyPosition)(uint32 nX, uint32 nY, uint32 nLoc, uint32) {
+DECLARE_CUSTOM_FUNCTION(SetTonyPosition)(CORO_PARAM, uint32 nX, uint32 nY, uint32 nLoc, uint32) {
 	Tony->SetPosition(RMPoint(nX, nY), nLoc);
 }
 
-DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(uint32 nX, uint32 nY, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint32) {
 	Tony->Move(RMPoint(nX, nY));
 	
 	if (!bSkipIdle)
 		Tony->WaitForEndMovement();
 }
 
-DECLARE_CUSTOM_FUNCTION(MoveTony)(uint32 nX, uint32 nY, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MoveTony)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint32) {
 	Tony->Move(RMPoint(nX, nY));
 }
 
-DECLARE_CUSTOM_FUNCTION(ScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
+DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
 	int lx, ly;
 	RMPoint pt;
 
@@ -1133,7 +1162,7 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uint32 
 	}
 }
 
-DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
+DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
 	int lx, ly;
 	RMPoint pt, startpt;
 	uint32 dwStartTime, dwCurTime, dwTotalTime;
@@ -1231,7 +1260,7 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(uint32 nX, uint32 nY, uint32 sX, uin
 }
 
 
-DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(uint32 dwCode, uint32 nX, uint32 nY, uint32) {
+DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(CORO_PARAM, uint32 dwCode, uint32 nX, uint32 nY, uint32) {
 	int i;
 
 	for (i = 0; i < curChangedHotspot; i++)
@@ -1252,15 +1281,15 @@ DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(uint32 dwCode, uint32 nX, uint32 nY, uint
 }
 
 
-DECLARE_CUSTOM_FUNCTION(AutoSave)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(AutoSave)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->AutoSave();
 }
 
-DECLARE_CUSTOM_FUNCTION(Abort)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(Abort)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->Abort();
 }
 
-DECLARE_CUSTOM_FUNCTION(TremaSchermo)(uint32 nScosse, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32, uint32) {
 	uint32 i;
 	uint32 curTime = _vm->GetTime();
 	int dirx,diry;
@@ -1296,7 +1325,7 @@ DECLARE_CUSTOM_FUNCTION(TremaSchermo)(uint32 nScosse, uint32, uint32, uint32) {
  *	Personaggi
  */
 
-DECLARE_CUSTOM_FUNCTION(CharSetCode)(uint32 nChar, uint32 nCode, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(CharSetCode)(CORO_PARAM, uint32 nChar, uint32 nCode, uint32, uint32) {
 	assert(nChar < 16);
 	Character[nChar].code = nCode;
 	Character[nChar].item = Loc->GetItemFromCode(nCode);
@@ -1311,26 +1340,26 @@ DECLARE_CUSTOM_FUNCTION(CharSetCode)(uint32 nChar, uint32 nCode, uint32, uint32)
 	IsMChar[nChar] = false;
 }
 
-DECLARE_CUSTOM_FUNCTION(CharSetColor)(uint32 nChar, uint32 r, uint32 g, uint32 b) {
+DECLARE_CUSTOM_FUNCTION(CharSetColor)(CORO_PARAM, uint32 nChar, uint32 r, uint32 g, uint32 b) {
 	assert(nChar<16);
 	Character[nChar].r = r;
 	Character[nChar].g = g;
 	Character[nChar].b = b;
 }
 
-DECLARE_CUSTOM_FUNCTION(CharSetTalkPattern)(uint32 nChar, uint32 tp, uint32 sp, uint32) {
+DECLARE_CUSTOM_FUNCTION(CharSetTalkPattern)(CORO_PARAM, uint32 nChar, uint32 tp, uint32 sp, uint32) {
 	assert(nChar<16);
 	Character[nChar].talkpattern = tp;
 	Character[nChar].standpattern = sp;
 }
 
-DECLARE_CUSTOM_FUNCTION(CharSetStartEndTalkPattern)(uint32 nChar, uint32 sp, uint32 ep, uint32) {
+DECLARE_CUSTOM_FUNCTION(CharSetStartEndTalkPattern)(CORO_PARAM, uint32 nChar, uint32 sp, uint32 ep, uint32) {
 	assert(nChar<16);
 	Character[nChar].starttalkpattern=sp;
 	Character[nChar].endtalkpattern=ep;
 }
 
-DECLARE_CUSTOM_FUNCTION(CharSendMessage)(uint32 nChar, uint32 dwMessage, uint32 bIsBack, uint32) {
+DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMessage, uint32 bIsBack, uint32) {
 	RMMessage msg(dwMessage);
 	int i;
 	RMPoint pt;
@@ -1433,15 +1462,15 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(uint32 nChar, uint32 dwMessage, uint32 
 	Unfreeze();
 }
 
-DECLARE_CUSTOM_FUNCTION(AddInventory)(uint32 dwCode, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(AddInventory)(CORO_PARAM, uint32 dwCode, uint32, uint32, uint32) {
 	Inventory->AddItem(dwCode);	
 }
 
-DECLARE_CUSTOM_FUNCTION(RemoveInventory)(uint32 dwCode, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(RemoveInventory)(CORO_PARAM, uint32 dwCode, uint32, uint32, uint32) {
 	Inventory->RemoveItem(dwCode);
 }
 
-DECLARE_CUSTOM_FUNCTION(ChangeInventoryStatus)(uint32 dwCode, uint32 dwStatus, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(ChangeInventoryStatus)(CORO_PARAM, uint32 dwCode, uint32 dwStatus, uint32, uint32) {
   Inventory->ChangeItemStatus(dwCode,dwStatus);
 }
 
@@ -1452,7 +1481,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeInventoryStatus)(uint32 dwCode, uint32 dwStatus, u
  *	Mastri Personaggi
  */
 
-DECLARE_CUSTOM_FUNCTION(MCharSetCode)(uint32 nChar, uint32 nCode, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MCharSetCode)(CORO_PARAM, uint32 nChar, uint32 nCode, uint32, uint32) {
 	assert(nChar < 10);
 	MCharacter[nChar].code=nCode;
 	if (nCode== 0)
@@ -1474,19 +1503,19 @@ DECLARE_CUSTOM_FUNCTION(MCharSetCode)(uint32 nChar, uint32 nCode, uint32, uint32
 	IsMChar[nChar] = true;
 }
 
-DECLARE_CUSTOM_FUNCTION(MCharResetCode)(uint32 nChar, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MCharResetCode)(CORO_PARAM, uint32 nChar, uint32, uint32, uint32) {
 	MCharacter[nChar].item=Loc->GetItemFromCode(MCharacter[nChar].code);
 }
 
 
-DECLARE_CUSTOM_FUNCTION(MCharSetPosition)(uint32 nChar, uint32 nX, uint32 nY, uint32) {
+DECLARE_CUSTOM_FUNCTION(MCharSetPosition)(CORO_PARAM, uint32 nChar, uint32 nX, uint32 nY, uint32) {
 	assert(nChar < 10);
 	MCharacter[nChar].x=nX;
 	MCharacter[nChar].y=nY;
 }
 
 
-DECLARE_CUSTOM_FUNCTION(MCharSetColor)(uint32 nChar, uint32 r, uint32 g, uint32 b) {
+DECLARE_CUSTOM_FUNCTION(MCharSetColor)(CORO_PARAM, uint32 nChar, uint32 r, uint32 g, uint32 b) {
 	assert(nChar < 10);
 	MCharacter[nChar].r=r;
 	MCharacter[nChar].g=g;
@@ -1494,7 +1523,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSetColor)(uint32 nChar, uint32 r, uint32 g, uint32 
 }
 
 
-DECLARE_CUSTOM_FUNCTION(MCharSetNumTalksInGroup)(uint32 nChar, uint32 nGroup, uint32 nTalks, uint32) {
+DECLARE_CUSTOM_FUNCTION(MCharSetNumTalksInGroup)(CORO_PARAM, uint32 nChar, uint32 nGroup, uint32 nTalks, uint32) {
   assert(nChar < 10);
 	assert(nGroup < 10);
 
@@ -1502,7 +1531,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSetNumTalksInGroup)(uint32 nChar, uint32 nGroup, ui
 }
 
 
-DECLARE_CUSTOM_FUNCTION(MCharSetCurrentGroup)(uint32 nChar, uint32 nGroup, uint32, uint32)
+DECLARE_CUSTOM_FUNCTION(MCharSetCurrentGroup)(CORO_PARAM, uint32 nChar, uint32 nGroup, uint32, uint32)
 {
   assert(nChar < 10);
 	assert(nGroup < 10);
@@ -1510,21 +1539,21 @@ DECLARE_CUSTOM_FUNCTION(MCharSetCurrentGroup)(uint32 nChar, uint32 nGroup, uint3
 	MCharacter[nChar].curgroup = nGroup;
 }
 
-DECLARE_CUSTOM_FUNCTION(MCharSetNumTexts)(uint32 nChar, uint32 nTexts, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MCharSetNumTexts)(CORO_PARAM, uint32 nChar, uint32 nTexts, uint32, uint32) {
 	assert(nChar < 10);
 
 	MCharacter[nChar].numtexts=nTexts-1;
 	MCharacter[nChar].bInTexts = false;
 }
 
-DECLARE_CUSTOM_FUNCTION(MCharSetAlwaysBack)(uint32 nChar, uint32 bAlwaysBack, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MCharSetAlwaysBack)(CORO_PARAM, uint32 nChar, uint32 bAlwaysBack, uint32, uint32) {
 	assert(nChar < 10);
 
 	MCharacter[nChar].bAlwaysBack=bAlwaysBack;
 }
 
 
-DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(uint32 nChar, uint32 dwMessage, uint32 bIsBack, uint32 nFont) {
+DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMessage, uint32 bIsBack, uint32 nFont) {
 	RMMessage msg(dwMessage);
 	int i;
 	int parm;
@@ -1645,7 +1674,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(uint32 nChar, uint32 dwMessage, uint32
 
 int curDialog;
 
-DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(uint32 nPers, uint32 nMsg, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg, uint32, uint32) {
 	LPSTR string;
 	RMTextDialog* text;
 	int parm;
@@ -1822,7 +1851,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(uint32 nPers, uint32 nMsg, uint32, ui
 
 // @@@@ QUESTA NON SI PUO' SKIPPARE!!!!!!!!!!!!!!!!!!!
 
-DECLARE_CUSTOM_FUNCTION(StartDialog)(uint32 nDialog, uint32 nStartGroup, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGroup, uint32, uint32) {
 	int nChoice;
 	uint32 *sl;
 	int i,num;
@@ -1897,12 +1926,12 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(uint32 nDialog, uint32 nStartGroup, uint32,
  *	Sync tra idle e mpal
  */
 
-DECLARE_CUSTOM_FUNCTION(TakeOwnership)(uint32 num, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
 //	EnterCriticalSection(&cs[num]);
 	WaitForSingleObject(mut[num],INFINITE);
 }
 
-DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(uint32 num, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
 //	LeaveCriticalSection(&cs[num]);
 //	g_system->unlockMutex(mut[num]);
 	warning("TODO: ReleaseOwnership");
@@ -1975,46 +2004,46 @@ void ThreadFadeOutMusic(void *nMusic) {
 	_endthread();
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeInSonoriz)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FadeInSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_beginthread(ThreadFadeInMusic, 10240, (void*)curSonoriz);
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeOutSonoriz)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FadeOutSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bFadeOutStop = false;
 	_beginthread(ThreadFadeOutMusic, 10240, (void *)curSonoriz);
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeOutStacchetto)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FadeOutStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bFadeOutStop = false;
 	_beginthread(ThreadFadeOutMusic, 10240, (void*)2);
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeInStacchetto)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FadeInStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_beginthread(ThreadFadeInMusic, 10240, (void*)2);
 }
 
-DECLARE_CUSTOM_FUNCTION(StopSonoriz)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(StopSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->StopMusic(curSonoriz);
 }
 
-DECLARE_CUSTOM_FUNCTION(StopStacchetto)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(StopStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->StopMusic(2);
 }
 
-DECLARE_CUSTOM_FUNCTION(MuteSonoriz)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->SetMusicVolume(curSonoriz, 0);
 }
 
-DECLARE_CUSTOM_FUNCTION(DemuteSonoriz)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(DemuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bFadeOutStop = true;
 	_vm->SetMusicVolume(curSonoriz, 64);
 }
 
-DECLARE_CUSTOM_FUNCTION(MuteStacchetto)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MuteStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->SetMusicVolume(2, 0);
 }
 
-DECLARE_CUSTOM_FUNCTION(DemuteStacchetto)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(DemuteStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->SetMusicVolume(2, 64);
 }
 
@@ -2139,7 +2168,7 @@ void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int
 	debug("End CustPlayMusic\n");
 }
 
-DECLARE_CUSTOM_FUNCTION(PlaySonoriz)(uint32 nMusic, uint32 nFX, uint32 bNoLoop, uint32) {
+DECLARE_CUSTOM_FUNCTION(PlaySonoriz)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bNoLoop, uint32) {
 	if (nFX == 0 || nFX == 1 || nFX==2) {
 		debug("PlaySonoriz stop fadeout\n");
 		bFadeOutStop = true;
@@ -2149,11 +2178,11 @@ DECLARE_CUSTOM_FUNCTION(PlaySonoriz)(uint32 nMusic, uint32 nFX, uint32 bNoLoop, 
 	CustPlayMusic(curSonoriz, musicFiles[nMusic].name, nFX, bNoLoop ? false : true, musicFiles[nMusic].sync);
 }
 
-DECLARE_CUSTOM_FUNCTION(PlayStacchetto)(uint32 nMusic, uint32 nFX, uint32 bLoop, uint32) {
+DECLARE_CUSTOM_FUNCTION(PlayStacchetto)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bLoop, uint32) {
 	CustPlayMusic(2,staccFileNames[nMusic],nFX,bLoop);
 }
 
-DECLARE_CUSTOM_FUNCTION(PlayItemSfx)(uint32 nItem, uint32 nSFX, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(PlayItemSfx)(CORO_PARAM, uint32 nItem, uint32 nSFX, uint32, uint32) {
 	if (nItem== 0) {
 		Tony->PlaySfx(nSFX);
 	} else {
@@ -2165,7 +2194,7 @@ DECLARE_CUSTOM_FUNCTION(PlayItemSfx)(uint32 nItem, uint32 nSFX, uint32, uint32) 
 
 
 void RestoreMusic(void) {
-	PlaySonoriz(lastMusic, 0, 0, 0);
+	PlaySonoriz(nullContext, lastMusic, 0, 0, 0);
 	if (lastTappeto != 0)
 		CustPlayMusic(4, tappetiFile[lastTappeto], 0, true);
 }
@@ -2181,49 +2210,63 @@ void LoadMusic(Common::InSaveFile *f) {
 }
 
 
-DECLARE_CUSTOM_FUNCTION(StacchettoFadeStart)(uint32 nStacc, uint32 bLoop, uint32, uint32) {
-	FadeOutSonoriz(0, 0, 0, 0);
-	MuteStacchetto(0, 0, 0, 0);
-	PlayStacchetto(nStacc, 0, bLoop, 0);
-	FadeInStacchetto(0, 0, 0, 0);	
+DECLARE_CUSTOM_FUNCTION(StacchettoFadeStart)(CORO_PARAM, uint32 nStacc, uint32 bLoop, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_4(FadeOutSonoriz, 0, 0, 0, 0);
+	CORO_INVOKE_4(MuteStacchetto, 0, 0, 0, 0);
+	CORO_INVOKE_4(PlayStacchetto, nStacc, 0, bLoop, 0);
+	CORO_INVOKE_4(FadeInStacchetto, 0, 0, 0, 0);	
+
+	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(StacchettoFadeEnd)(uint32 nStacc, uint32 bLoop, uint32, uint32) {
-	FadeOutStacchetto(0, 0, 0, 0);
-	FadeInSonoriz(0, 0, 0, 0);
+DECLARE_CUSTOM_FUNCTION(StacchettoFadeEnd)(CORO_PARAM, uint32 nStacc, uint32 bLoop, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_4(FadeOutStacchetto, 0, 0, 0, 0);
+	CORO_INVOKE_4(FadeInSonoriz, 0, 0, 0, 0);
+
+	CORO_END_CODE;
 }
 
 
 
 
-DECLARE_CUSTOM_FUNCTION(MustSkipIdleStart)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MustSkipIdleStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bSkipIdle = true;
 	SetEvent(hSkipIdle);
 }
 
-DECLARE_CUSTOM_FUNCTION(MustSkipIdleEnd)(uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MustSkipIdleEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bSkipIdle = false;
 	ResetEvent(hSkipIdle);
 }
 
-DECLARE_CUSTOM_FUNCTION(PatIrqFreeze)(uint32 bStatus, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(PatIrqFreeze)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
 	bPatIrqFreeze = bStatus;
 }
 
-DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(uint32 , uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Freeze();
 	_vm->OpenInitLoadMenu();
 	Unfreeze();
 }
 
-DECLARE_CUSTOM_FUNCTION(OpenInitOptions)(uint32 , uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(OpenInitOptions)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	Freeze();
 	_vm->OpenInitOptions();
 	Unfreeze();
 }
 
 
-DECLARE_CUSTOM_FUNCTION(DoCredits)(uint32 nMsg, uint32 dwTime, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
 	RMMessage msg(nMsg);
 	RMTextDialog *text;
 	HANDLE hDisable = CreateEvent(NULL, true, false, NULL);

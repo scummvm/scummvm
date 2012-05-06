@@ -1,6 +1,7 @@
 MODULE := engines/tony
 
 MODULE_OBJS := \
+	coroutine.o \
 	custom.o \
 	detection.o \
 	font.o \
@@ -10,6 +11,7 @@ MODULE_OBJS := \
 	input.o \
 	inventory.o \
 	loc.o \
+	sched.o \
 	sound.o \
 	tony.o \
 	tonychar.o \

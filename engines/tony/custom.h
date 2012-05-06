@@ -67,10 +67,10 @@ typedef uint32 HWND;
 #define DECLARE_CUSTOM_FUNCTION(x)		void x
 
 #define BEGIN_CUSTOM_FUNCTION_MAP()																					\
-	static void AssignError(HWND hWnd, int num)	{ \
+	static void AssignError(int num)	{ \
 		error("Custom function %u has been already assigned!", num);		\
 	}																																					\
-	void INIT_CUSTOM_FUNCTION(HWND hWnd, LPCUSTOMFUNCTION *lpMap) \
+	void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap) \
 	{																																				
 
 
@@ -78,10 +78,10 @@ typedef uint32 HWND;
 	}
 
 
-#define ASSIGN(num,func)																										\
-	if (lpMap[num]!=NULL)																											\
-		AssignError(hWnd,num);																									\
-	lpMap[num]=func;																													
+#define ASSIGN(num, func)																										\
+	if (lpMap[num] != NULL)																											\
+		AssignError(num);																									\
+	lpMap[num] = func;																													
 
 class RMTony;
 class RMPointer;
@@ -90,7 +90,7 @@ class RMLocation;
 class RMInventory;
 class RMInput;
 
-void INIT_CUSTOM_FUNCTION(HWND hWnd, LPCUSTOMFUNCTION *lpMap);
+void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap);
 void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input);
 
 #endif

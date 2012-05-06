@@ -35,6 +35,7 @@
 #include "tony/mpal/memory.h"
 #include "tony/gfxengine.h"
 #include "tony/loc.h"
+#include "tony/sched.h"
 #include "tony/utils.h"
 #include "tony/window.h"
 
@@ -80,6 +81,7 @@ private:
 	void CloseMusic();
 	bool OpenVoiceDatabase();
 	void CloseVoiceDatabase();
+	void InitCustomFunctionMap();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -93,6 +95,7 @@ public:
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND	_theSound;
+	Scheduler _scheduler;
 
 	enum DATADIR {
 		DD_BASE = 1,
@@ -139,9 +142,6 @@ public:
 
 	// Loop che gestisce i messaggi quando siamo in pausa
 	void PauseLoop(void);
-
-	// Carica un modulo e le sue funzioni custom
-	void InitCustomDll(LPCUSTOMFUNCTION *FuncList);
 
 	void Play();
 	void Close();

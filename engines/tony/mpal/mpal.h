@@ -119,6 +119,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "tony/coroutine.h"
 
 namespace Tony {
 
@@ -220,7 +221,7 @@ typedef ITEM *LPITEM;
 *              to perform various controls as a result of an action
 \****************************************************************************/
 
-typedef void (*LPCUSTOMFUNCTION)(uint32, uint32, uint32, uint32);
+typedef void (*LPCUSTOMFUNCTION)(CORO_PARAM, uint32, uint32, uint32, uint32);
 typedef LPCUSTOMFUNCTION *LPLPCUSTOMFUNCTION;
 
 

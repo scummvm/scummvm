@@ -224,7 +224,7 @@ void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
 			}
 		}
 	} else {
-		// Esegue l'azione
+		// Perform the action
 		hThread = mpalQueryDoAction(nAction, nActionItem, 0); 
 	}
 					

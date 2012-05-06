@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "tony/tony.h"
+#include "tony/custom.h"
 #include "tony/game.h"
 #include "tony/mpal/mpal.h"
 
@@ -67,11 +68,15 @@ Common::ErrorCode TonyEngine::Init() {
 	m_bDrawLocation = true;
 	m_startTime = g_system->getMillis();
 
+	// Reset the scheduler
+	_scheduler.reset();
+
 	// Initialise the graphics window
 	_window.Init();
 
 	// Initialise the function list
 	Common::fill(FuncList, FuncList + 300, (LPCUSTOMFUNCTION)NULL);
+	InitCustomFunctionMap();
 
 	// Initializes MPAL system, passing the custom functions list
 	Common::File f;
@@ -125,6 +130,10 @@ Common::ErrorCode TonyEngine::Init() {
 	m_bQuitNow = false;
 
 	return Common::kNoError;
+}
+
+void TonyEngine::InitCustomFunctionMap() {
+	INIT_CUSTOM_FUNCTION(FuncList);
 }
 
 /**
@@ -385,6 +394,9 @@ void TonyEngine::Play(void) {
 		while (g_system->getEventManager()->pollEvent(evt))
 			;
 
+		// Call any scheduled processes
+		_scheduler.schedule();
+
   		// Call the engine to handle the next frame
 		_theEngine.DoFrame(m_bDrawLocation);
 
@@ -468,8 +480,7 @@ void TonyEngine::FreezeTime(void) {
 	m_nTimeFreezed = GetTime() - m_startTime;
 }
 
-void TonyEngine::UnfreezeTime(void)
-{
+void TonyEngine::UnfreezeTime(void) {
 	m_bTimeFreezed = false;
 }
 

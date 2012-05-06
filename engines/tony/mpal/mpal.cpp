@@ -51,11 +51,12 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "tony/sched.h"
 #include "tony/tony.h"
-#include "lzo.h"	
-#include "mpal.h"
-#include "mpaldll.h"
-#include "stubs.h"
+#include "tony/mpal/lzo.h"	
+#include "tony/mpal/mpal.h"
+#include "tony/mpal/mpaldll.h"
+#include "tony/mpal/stubs.h"
 
 namespace Tony {
 
@@ -829,7 +830,10 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 \****************************************************************************/
 
 void PASCAL CustomThread(LPCFCALL p) {
-	lplpFunctions[p->nCf](p->arg1, p->arg2, p->arg3, p->arg4);
+	// FIXME: Convert to proper corotuine call
+	warning("FIXME: CustomThread call");
+
+	lplpFunctions[p->nCf](nullContext, p->arg1, p->arg2, p->arg3, p->arg4);
 	GlobalFree(p);
 	ExitThread(1);
 //	_endthread();
@@ -939,50 +943,69 @@ void PASCAL ScriptThread(LPMPALSCRIPT s) {
 *
 \****************************************************************************/
 
-void PASCAL ActionThread(LPMPALITEM item) {
-	int j, k;
+void ActionThread(CORO_PARAM, const void *param) {
+	// COROUTINE
+	CORO_BEGIN_CONTEXT;
+		int j, k;
+	CORO_END_CONTEXT(_ctx);
 
-	for (j = 0;j<item->Action[item->dwRes].nCmds; j++) {
-		k=item->Action[item->dwRes].CmdNum[j];
+	const LPMPALITEM item = *(const LPMPALITEM *)param;
 
-		switch (item->Command[k].type) {
-		case 1:
-			// Funzione custom
-			lplpFunctions[item->Command[k].nCf](
-				item->Command[k].arg1,
-				item->Command[k].arg2,
-				item->Command[k].arg3,
-				item->Command[k].arg4
+	CORO_BEGIN_CODE(_ctx);
+
+	mpalError = 0;
+	for (_ctx->j = 0; _ctx->j < item->Action[item->dwRes].nCmds; _ctx->j++) {
+		_ctx->k = item->Action[item->dwRes].CmdNum[_ctx->j];
+
+		if (item->Command[_ctx->k].type == 1) {
+			// Custom function
+			CORO_INVOKE_4(lplpFunctions[item->Command[_ctx->k].nCf],
+				item->Command[_ctx->k].arg1,
+				item->Command[_ctx->k].arg2,
+				item->Command[_ctx->k].arg3,
+				item->Command[_ctx->k].arg4
+
 			);
-			break;
-
-		case 2:
+		} else if (item->Command[_ctx->k].type == 2) {
 			// Variable assign
 			LockVar();
-			varSetValue(item->Command[k].lpszVarName, EvaluateExpression(item->Command[k].expr));
+			varSetValue(item->Command[_ctx->k].lpszVarName, EvaluateExpression(item->Command[_ctx->k].expr));
 			UnlockVar();
 			break;
 
-		default:
+		} else {
 			mpalError = 1;
-			ExitThread(0);
-//			_endthread();
+			break;
 		}
 	}
 
 	GlobalFree(item);
-	//bExecutingAction = false;
+	
+	CORO_KILL_SELF();
 
-	ExitThread(1);
-// _endthread();
+	CORO_END_CODE;
 }
 
-void PASCAL ShutUpActionThread(HANDLE hThread) {
+/**
+ * This thread monitors a created action to detect when it ends.
+ * @remarks				Since actions can spawn sub-actions, this needs to be a
+ *						separate thread to determine when the outer action is done
+ */
+void ShutUpActionThread(CORO_PARAM, const void *param) {
+	// COROUTINE
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	HANDLE hThread = *(const HANDLE *)param;
+
+	CORO_BEGIN_CODE(_ctx);
+
 	WaitForSingleObject(hThread, INFINITE);
 	bExecutingAction = false;
 
-	ExitThread(1);
-// _endthread();
+	CORO_KILL_SELF();
+
+	CORO_END_CODE;
 }
 
 /****************************************************************************\
@@ -1241,7 +1264,8 @@ void PASCAL LocationPollThread(uint32 id) {
 */
 
 	// Set idle skip on
-	lplpFunctions[200](0, 0, 0, 0);
+	// FIXME: Convert to co-routine
+	lplpFunctions[200](nullContext, 0, 0, 0, 0);
 
 	for (i = 0; i < nRealItems; i++)
 		if (MyThreads[i].nItem != 0) {
@@ -1252,7 +1276,8 @@ void PASCAL LocationPollThread(uint32 id) {
 		}
 
 	// Set idle skip off
-	lplpFunctions[201](0, 0, 0, 0);
+	// FIXME: Convert to co-routine
+	lplpFunctions[201](nullContext, 0, 0, 0, 0);
 
 	/* Abbiamo finito */
 	GlobalFree(MyThreads);
@@ -1324,7 +1349,9 @@ void PASCAL GroupThread(uint32 nGroup) {
 				switch (dialog->Command[k].type) {
 				/* Funzione custom: la richiama */
 				case 1:
+					// FIXME: Convert to co-routine
 					lplpFunctions[dialog->Command[k].nCf](
+						nullContext,
 						dialog->Command[k].arg1,
 						dialog->Command[k].arg2,
 						dialog->Command[k].arg3,
@@ -1488,8 +1515,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	LPMPALITEM item = lpmiItems;
 	int i;
 	LPMPALITEM newitem;
-	uint32 dwId;
-	HANDLE h;
+	PROCESS *h;
 
 	item+=ordItem;
 	Common::String buf = Common::String::format("Status.%u", item->nObj);
@@ -1510,7 +1536,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 
 		// Ora abbiamo trova l'azione giusta che deve essere eseguita.
 		// Duplichiamo l'item corrente e copiamo la azione #i nella #0
-		newitem=(LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
+		newitem = (LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
 		if (newitem == NULL)
 			return INVALID_HANDLE_VALUE;
 
@@ -1524,12 +1550,11 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// E finalmente possiamo richiamare il thread, che eseguira' l'azione
 		// 0 dell'item, e poi liberera' la memoria con la GlobalFree()
 
-/* !!! Nuova gestione dei thread
-*/
-		if ((h = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)ActionThread, (void *)newitem, 0, &dwId)) == NULL)
+		// !!! New thread management
+		if ((h = g_scheduler->createProcess(ActionThread, newitem)) == NULL)
 			return INVALID_HANDLE_VALUE;
 
-		if ((h = CreateThread(NULL, 10240,(LPTHREAD_START_ROUTINE)ShutUpActionThread, (void *)h, 0, &dwId)) == NULL)
+		if ((h = g_scheduler->createProcess(0, ShutUpActionThread, &h, sizeof(PROCESS *))) == NULL)
 			return INVALID_HANDLE_VALUE;
 
 /*
@@ -1543,7 +1568,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		nExecutingAction = item->nObj;
 		bExecutingAction = true;
 
-		return h;
+		return (HANDLE)h;
 	}
 
 	return INVALID_HANDLE_VALUE;
@@ -1674,7 +1699,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName, LPLPCUST
  //printf("Dialog: %lu\n", sizeof(MPALDIALOG));
 
 	/* Si salva l'array delle funzioni custom */
-	lplpFunctions=lplpcfArray;
+	lplpFunctions = lplpcfArray;
 
 	/* Apre il file MPC in lettura */
 	if (!hMpc.open(lpszMpcFileName))
