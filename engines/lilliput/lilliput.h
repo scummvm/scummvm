@@ -142,7 +142,7 @@ public:
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
 	int _word1289D;
-	int _word16937;
+	Common::Point _word16937Pos;
 
 	short _word15E5D[40];
 	byte _byte15E35[40];
@@ -186,8 +186,8 @@ public:
 	int _rulesChunk12_size;
 	int16 _rectXMinMax[40];
 	int16 _rectYMinMax[40];
-	int _rulesBuffer12_3[40];
-	Common::Point _rulesBuffer12Pos[40];
+	Common::Point _rulesBuffer12Pos3[40];
+	Common::Point _rulesBuffer12Pos4[40];
 	int _word12F68_ERULES;
 	byte _rulesBuffer13_1[20];
 	int _interfaceHotspotsX[20];
