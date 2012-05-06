@@ -48,25 +48,23 @@
 #ifndef TONY_INPUT_H
 #define TONY_INPUT_H
 
+#include "common/events.h"
 #include "tony/utils.h"
 
 namespace Tony {
 
 class RMInput {
 private:
-//	LPDIRECTINPUT m_DI;
-//	LPDIRECTINPUTDEVICE m_DIDKeyboard, m_DIDMouse;
+	Common::Event _event;
+	RMPoint _mousePos;
 
 //	DIMOUSESTATE m_mState;
-	int m_mX, m_mY;
-	bool m_bClampMouse;
+	bool _clampMouse;
+	bool _leftButton, _rightButton;
 
-	bool m_bLeftClickMouse, m_bLeftReleaseMouse, m_bRightClickMouse, m_bRightReleaseMouse;
+	bool _leftClickMouse, _leftReleaseMouse, _rightClickMouse, _rightReleaseMouse;
 
 private:
-	// Inizializza DirectInput
-	void DIInit(/*uint32 hInst*/);
-
 	// Deinizializza DirectInput
 	void DIClose(void);
 	
@@ -83,29 +81,20 @@ public:
 	// Polling (must be performed once per frame)
 	void Poll(void);
 
-	// Aquire the DirectInput device
-	bool Acquire(void);
-
-	// Deacquires the device
-	void Unacquire(void);
-
 	// Reading of the mouse
-	RMPoint MousePos() { return RMPoint(m_mX, m_mY); }
+	RMPoint MousePos() { return _mousePos; }
 
 	// Current status of the mouse buttons
 	bool MouseLeft();
 	bool MouseRight();
 
 	// Events of mouse clicks
-	bool MouseLeftClicked() { return m_bLeftClickMouse; }
-	bool MouseRightClicked() { return m_bRightClickMouse; }
-	bool MouseBothClicked() { return m_bLeftClickMouse&&m_bRightClickMouse; }
-	bool MouseLeftReleased() { return m_bLeftReleaseMouse; }
-	bool MouseRightReleased() { return m_bRightReleaseMouse; }
-	bool MouseBothReleased() { return m_bLeftReleaseMouse&&m_bRightReleaseMouse; }
-
-	// Warns when changing from full screen to windowed
-	void SwitchFullscreen(bool bFull);
+	bool MouseLeftClicked() { return _leftClickMouse; }
+	bool MouseRightClicked() { return _rightClickMouse; }
+	bool MouseBothClicked() { return _leftClickMouse && _rightClickMouse; }
+	bool MouseLeftReleased() { return _leftReleaseMouse; }
+	bool MouseRightReleased() { return _rightReleaseMouse; }
+	bool MouseBothReleased() { return _leftReleaseMouse && _rightReleaseMouse; }
 
 	// Warns when we are in the GDI loop
 	void GDIControl(bool bCon);

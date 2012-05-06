@@ -51,238 +51,68 @@ namespace Tony {
 
 #define DIRELEASE(x)		if (x) { (x)->Release(); (x)=NULL; }
 
-void RMInput::DIInit(/*HINSTANCE hInst*/) {
-#ifdef REFACTOR_ME
-	HRESULT err;
-
-	// Crea l'oggetto madre
-	err = DirectInputCreate(hInst, DIRECTINPUT_VERSION, &m_DI, NULL);
-	if (err!=DI_OK) {
-		MessageBox(theGame.m_wnd,"Error initializing DirectInput!","RMInput::DIInit()",MB_OK);
-		assert(0);
-	}
-
-	// Crea il device del mouse
-	// ************************
-	err=m_DI->CreateDevice(GUID_SysMouse,&m_DIDMouse,NULL);
-	if (err!=DI_OK) {
-		MessageBox(theGame.m_wnd,"Error creating mouse device!","RMInput::DIInit()",MB_OK);
-		assert(0);
-	}
-	
-	// Setta il data format
-	err=m_DIDMouse->SetDataFormat(&c_dfDIMouse);
-	if (err!=DI_OK) {
-		MessageBox(theGame.m_wnd,"Error setting mouse data format!","RMInput::DIInit()",MB_OK);
-		assert(0);
-	}		
-
-	// Setta il cooperative level
-	err=m_DIDMouse->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_NONEXCLUSIVE);
-	if (err!=DI_OK) {
-		MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
-		assert(0);
-	}	
-
-	// Crea il device della tastiera
-	// *****************************
-	err=m_DI->CreateDevice(GUID_SysKeyboard,&m_DIDKeyboard,NULL);
-	if (err!=DI_OK) {
-		MessageBox(theGame.m_wnd,"Error creating keyboard device!","RMInput::DIInit()",MB_OK);
-		assert(0);
-	}
-	
-	// Setta il data format
-	err=m_DIDKeyboard->SetDataFormat(&c_dfDIKeyboard);
-	if (err!=DI_OK) {
-		MessageBox(theGame.m_wnd,"Error setting keyboard data format!","RMInput::DIInit()",MB_OK);
-		assert(0);
-	}	
-
-	// Setta il cooperative level
-	err=m_DIDKeyboard->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_NONEXCLUSIVE);
-	if (err!=DI_OK) {
-		MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
-		assert(0);
-	}
-#endif
-}
-
-void RMInput::SwitchFullscreen(bool bFull) {
-#ifdef REFACTOR_ME
-	HRESULT err;
-	
-	// Il camping del mouse e' attivo solo in fullscreen
-	m_bClampMouse=bFull;
-		
-	// Prima di tutto leviamo l'acquiring ai device, altrimenti non possiamo cambiare il
-	//  cooperative level
-	Unacquire();
-
-	if (bFull) {
-		// Setta il cooperative level
-		err=m_DIDMouse->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE);
-		if (err!=DI_OK) {
-			MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
-			assert(0);
-		}	
-	} else {
-		// Setta il cooperative level
-		err=m_DIDMouse->SetCooperativeLevel(theGame.m_wnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE);
-		if (err!=DI_OK) {
-			MessageBox(theGame.m_wnd,"Error setting cooperative level!","RMInput::DIInit()",MB_OK);
-			assert(0);
-		}	
-	}
-#endif
-}
-
-void RMInput::DIClose(void) {
-#ifdef REFACTOR_ME
-	DIRELEASE(m_DIDMouse);
-	DIRELEASE(m_DI);
-#endif
-}
-
-
-bool RMInput::Acquire(void) {
-#ifdef REFACTOR_ME
-	HRESULT err;
-	
-	if (m_DIDMouse == NULL)
-		return true;
-
-	// Inizializza la posizione del mouse
-	POINT pt;
-	RECT rc;
-	GetWindowRect(theGame.m_wnd,&rc);
-	GetCursorPos(&pt);
-	m_mX=pt.x-rc.left-GetSystemMetrics(SM_CXDLGFRAME);
-	m_mY=pt.y-rc.top-(GetSystemMetrics(SM_CYDLGFRAME)+GetSystemMetrics(SM_CYCAPTION));
-
-	err=m_DIDMouse->Acquire();
-	if (err!=DI_OK)
-		return false;
-
-	err=m_DIDKeyboard->Acquire();
-	if (err!=DI_OK)
-		return false;
-#endif
-	return true;
-}
-
-void RMInput::Unacquire(void) {
-#ifdef REFACTOR_ME
-	if (m_DIDMouse!=NULL)
-		m_DIDMouse->Unacquire();
-	
-	if (m_DIDKeyboard!=NULL)
-		m_DIDKeyboard->Unacquire();
-#endif
-}
-
-
-void RMInput::GDIControl(bool bCon) {
-#ifdef REFACTOR_ME
-	if (bCon) {
-		Unacquire();
-		ShowCursor(true);
-	} else {
-		ShowCursor(false);
-		Acquire();
-	}
-#endif
-}
-
-void RMInput::Poll(void) {
-#ifdef REFACTOR_ME
-	HRESULT err;
-	bool mLastLeft, mLastRight;
-
-	mLastLeft=MouseLeft();
-	mLastRight=MouseRight();
-	m_bLeftClickMouse=m_bLeftReleaseMouse=m_bRightClickMouse=m_bRightReleaseMouse=false;
-
-	// Legge lo stato del mouse
-	while (1) {
-		ZeroMemory(&m_mState,sizeof(m_mState));
-		err=m_DIDMouse->GetDeviceState(sizeof(m_mState),&m_mState);
-		if (err==DI_OK)
-			break;
-		else if (err==DIERR_INPUTLOST || err==DIERR_NOTACQUIRED) {
-			ZeroMemory(&m_mState,sizeof(m_mState));
-			// Se l'acquire non funziona (ad esempio, quando siamo in background, allora lasciamo perdere
-			if (!Acquire())
-				return;
-		}
-		else
-			break;
-	}
-
-	// Aggiorna le coordinate del mouse
-	m_mX+=m_mState.lX;
-	m_mY+=m_mState.lY;
-
-	// Clamp dei valori sui bordi della finestra
-	if (m_bClampMouse) {
-		if (m_mX<0) m_mX=0;
-		if (m_mY<0) m_mY=0;
-		if (m_mX>=640) m_mX=639;
-		if (m_mY>=480) m_mY=479;
-	}
-
-	// Controlla se e' cambiato lo stato dei bottoni
-	if (mLastLeft && !MouseLeft())
-		m_bLeftReleaseMouse=true;
-
-	if (!mLastLeft && MouseLeft())
-		m_bLeftClickMouse=true;
-
-	if (mLastRight && !MouseRight())
-		m_bRightReleaseMouse=true;
-
-	if (!mLastRight && MouseRight())
-		m_bRightClickMouse=true;
-#endif
-}
-
-
 RMInput::RMInput() {
-	m_bClampMouse = false;	
+	_clampMouse = false;	
+	_mousePos.Set(0, 0);
+	_leftButton = _rightButton = false;;
+
+	_leftClickMouse = _leftReleaseMouse = false;
+	_rightClickMouse = _rightReleaseMouse = false;
 }
 
 RMInput::~RMInput() {
-	
+
 }
 
-void RMInput::Init(/*HINSTANCE hInst*/) {
-#ifdef REFACTOR_ME
-	DIInit(hInst);
-#ifdef STARTFULLSCREEN
-	SwitchFullscreen(true);
-#endif
-	Acquire();
-#endif
+void RMInput::Poll(void) {
+	_leftClickMouse = _leftReleaseMouse = _rightClickMouse = _rightReleaseMouse = false;
+
+	// Get pending events
+	while (g_system->getEventManager()->pollEvent(_event)) {
+		switch (_event.type) {
+		case Common::EVENT_MOUSEMOVE:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONUP:
+			_mousePos.Set(_event.mouse.x, _event.mouse.y);
+
+			if (_event.type == Common::EVENT_LBUTTONDOWN) {
+				_leftButton = true;
+				_leftClickMouse = true;
+			} else if (_event.type == Common::EVENT_LBUTTONUP) {
+				_leftButton = false;
+				_leftReleaseMouse = true;
+			} else if (_event.type == Common::EVENT_RBUTTONDOWN) {
+				_rightButton = true;
+				_rightClickMouse = true;
+			} else if (_event.type == Common::EVENT_RBUTTONDOWN) {
+				_rightButton = false;
+				_rightReleaseMouse = true;
+			} else
+				continue;
+
+			// Since a mouse button has changed, don't do any further event processing this frame
+			return;
+
+		default:
+			break;
+		}
+	}			
+}
+
+void RMInput::Init() {
 }
 
 void RMInput::Close(void) {
-	Unacquire();
-	DIClose();
 }
 
-
 bool RMInput::MouseLeft() {
-	return false;
-#ifdef REFACTOR_ME
-	return (m_mState.rgbButtons[0] & 0x80);
-#endif
+	return _leftButton;
 }
 
 bool RMInput::MouseRight() {
-	return false;
-#ifdef REFACTOR_ME
-	return (m_mState.rgbButtons[1] & 0x80);
-#endif
+	return _rightButton;
 }
 
 } // End of namespace Tony

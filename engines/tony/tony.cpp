@@ -390,10 +390,6 @@ void TonyEngine::Play(void) {
 
 		g_system->delayMillis(50);
 
-		Common::Event evt;
-		while (g_system->getEventManager()->pollEvent(evt))
-			;
-
 		// Call any scheduled processes
 		_scheduler.schedule();
 

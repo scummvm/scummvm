@@ -2202,7 +2202,6 @@ void EXPORT mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
 
 bool mpalStartIdlePoll(int nLoc) {
 	uint32 i;
-	uint32 dwId;
 
 	for (i = 0; i < MAXPOLLINGLOCATIONS; i++)
 		if (nPollingLocations[i] == (uint32)nLoc)

@@ -660,11 +660,9 @@ void RMGfxEngine::Close(void) {
 }
 
 void RMGfxEngine::SwitchFullscreen(bool bFull) {
-	m_input.SwitchFullscreen(bFull);
 }
 
 void RMGfxEngine::GDIControl(bool bCon) {
-	m_input.GDIControl(bCon);
 }
 
 void RMGfxEngine::EnableInput(void) {
