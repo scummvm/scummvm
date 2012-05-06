@@ -73,7 +73,7 @@ RMWindow::~RMWindow() {
  */
 void RMWindow::Init() {
 	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	initGraphics(RM_SX, RM_SY, false, &pixelFormat);
+	initGraphics(RM_SX, RM_SY, true, &pixelFormat);
 
 	// Inizializza i conteggi degli FPS
 	fps = lastfcount = fcount = lastsecond = 0;
