@@ -45,18 +45,18 @@ public:
 		POLYGON
 	} PrimType;
 
-	void createRectangle(Common::Point p1, Common::Point p2, const Color &color, bool filled);
-	void createLine(Common::Point p1, Common::Point p2, const Color &color);
-	void createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, const Color &color);
-	Common::Point getP1() { return _p1; }
-	Common::Point getP2() { return _p2; }
-	Common::Point getP3() { return _p3; }
-	Common::Point getP4() { return _p4; }
+	void createRectangle(const Common::Point &p1, const Common::Point &p2, const Color &color, bool filled);
+	void createLine(const Common::Point &p1, const Common::Point &p2, const Color &color);
+	void createPolygon(const Common::Point &p1, const Common::Point &p2, const Common::Point &p3, const Common::Point &p4, const Color &color);
+	Common::Point getP1() const { return _p1; }
+	Common::Point getP2() const { return _p2; }
+	Common::Point getP3() const { return _p3; }
+	Common::Point getP4() const { return _p4; }
 	void setPos(int x, int y);
 	void setColor(const Color &color) { _color = color; }
-	Color getColor() { return _color; }
-	bool isFilled() { return _filled; }
-	void draw();
+	Color getColor() const { return _color; }
+	bool isFilled() const { return _filled; }
+	void draw() const;
 	void saveState(SaveGame *state) const;
     bool restoreState(SaveGame *state);
 

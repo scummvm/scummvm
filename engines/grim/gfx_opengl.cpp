@@ -1506,7 +1506,7 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	glDepthMask(GL_TRUE);
 }
 
-void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
+void GfxOpenGL::drawRectangle(const PrimitiveObject *primitive) {
 	float x1 = primitive->getP1().x * _scaleW;
 	float y1 = primitive->getP1().y * _scaleH;
 	float x2 = primitive->getP2().x * _scaleW;
@@ -1570,7 +1570,7 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
-void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
+void GfxOpenGL::drawLine(const PrimitiveObject *primitive) {
 	float x1 = primitive->getP1().x * _scaleW;
 	float y1 = primitive->getP1().y * _scaleH;
 	float x2 = primitive->getP2().x * _scaleW;
@@ -1604,7 +1604,7 @@ void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
-void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
+void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	float x1 = primitive->getP1().x * _scaleW;
 	float y1 = primitive->getP1().y * _scaleH;
 	float x2 = primitive->getP2().x * _scaleW;

@@ -72,7 +72,7 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, const Color &color, bool filled) {
+void PrimitiveObject::createRectangle(const Common::Point &p1, const Common::Point &p2, const Color &color, bool filled) {
 	_type = RECTANGLE;
 	_p1 = p1;
 	_p2 = p2;
@@ -80,14 +80,14 @@ void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, const 
 	_filled = filled;
 }
 
-void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, const Color &color) {
+void PrimitiveObject::createLine(const Common::Point &p1, const Common::Point &p2, const Color &color) {
 	_type = LINE;
 	_p1 = p1;
 	_p2 = p2;
 	_color = color;
 }
 
-void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, const Color &color) {
+void PrimitiveObject::createPolygon(const Common::Point &p1, const Common::Point &p2, const Common::Point &p3, const Common::Point &p4, const Color &color) {
 	_type = POLYGON;
 	_p1 = p1;
 	_p2 = p2;
@@ -96,7 +96,7 @@ void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::
 	_color = color;
 }
 
-void PrimitiveObject::draw() {
+void PrimitiveObject::draw() const {
 	assert(_type);
 
 	if (_type == RECTANGLE)

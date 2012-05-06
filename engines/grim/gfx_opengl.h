@@ -113,9 +113,9 @@ public:
 	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
 	void loadEmergFont();
 
-	void drawRectangle(PrimitiveObject *primitive);
-	void drawLine(PrimitiveObject *primitive);
-	void drawPolygon(PrimitiveObject *primitive);
+	void drawRectangle(const PrimitiveObject *primitive);
+	void drawLine(const PrimitiveObject *primitive);
+	void drawPolygon(const PrimitiveObject *primitive);
 
 	void prepareMovieFrame(Graphics::Surface* frame);
 	void drawMovieFrame(int offsetX, int offsetY);

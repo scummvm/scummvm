@@ -213,9 +213,9 @@ public:
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;
 
-	virtual void drawRectangle(PrimitiveObject *primitive) = 0;
-	virtual void drawLine(PrimitiveObject *primitive) = 0;
-	virtual void drawPolygon(PrimitiveObject *primitive) = 0;
+	virtual void drawRectangle(const PrimitiveObject *primitive) = 0;
+	virtual void drawLine(const PrimitiveObject *primitive) = 0;
+	virtual void drawPolygon(const PrimitiveObject *primitive) = 0;
 
 	/**
 	 * Prepare a movie-frame for drawing

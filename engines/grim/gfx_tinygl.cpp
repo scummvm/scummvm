@@ -1174,7 +1174,7 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	}
 }
 
-void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
+void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
 	int x2 = primitive->getP2().x;
@@ -1209,7 +1209,7 @@ void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	}
 }
 
-void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
+void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
 	int x2 = primitive->getP2().x;
@@ -1233,7 +1233,7 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	}
 }
 
-void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
+void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
 	int x2 = primitive->getP2().x;
