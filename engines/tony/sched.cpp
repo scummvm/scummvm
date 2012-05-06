@@ -21,6 +21,7 @@
  * Process scheduler.
  */
 
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "tony/sched.h"
@@ -42,7 +43,8 @@ Scheduler::Scheduler() {
 	maxProcs = 0;
 #endif
 
-	pRCfunction = 0;
+	pRCfunction = NULL;
+	pidCounter = 0;
 
 	active = new PROCESS;
 	active->pPrevious = NULL;
@@ -290,6 +292,40 @@ void Scheduler::giveWay(PPROCESS pReSchedProc) {
 }
 
 /**
+ * Continously makes a given process wait for another process to finish
+ *
+ * @param pid		Process identifier
+ * @param duration	Duration in milliseconds
+ */
+void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration) {
+	CORO_BEGIN_CONTEXT;
+		uint32 endTime;
+		PROCESS *pProc;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->endTime = (duration == INFINITE) ? INFINITE : g_system->getMillis() + duration;
+
+	// Outer loop for doing checks until expiry 
+	while (g_system->getMillis() < _ctx->endTime) {
+		// Check to see if a process with the given Id exists
+		_ctx->pProc = active->pNext;
+		while ((_ctx->pProc != NULL) && (_ctx->pProc->pid == pid))
+			_ctx->pProc = _ctx->pProc->pNext;
+
+		if (_ctx->pProc == NULL)
+			// No match process found, so it's okay to break out of loop
+			break;
+
+		// Sleep until the next cycle
+		CORO_SLEEP(1);
+	}
+
+	CORO_END_CODE;
+}
+
+/**
  * Creates a new process.
  *
  * @param pid	process identifier
@@ -297,7 +333,7 @@ void Scheduler::giveWay(PPROCESS pReSchedProc) {
  * @param pParam	process specific info
  * @param sizeParam	size of process specific info
  */
-PROCESS *Scheduler::createProcess(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
+PROCESS *Scheduler::createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc;
 
 	// get a free process
@@ -347,7 +383,7 @@ PROCESS *Scheduler::createProcess(int pid, CORO_ADDR coroAddr, const void *pPara
 	pProc->sleepTime = 1;
 
 	// set new process id
-	pProc->pid = pid;
+	pProc->pid = ++pidCounter;
 
 	// set new process specific info
 	if (sizeParam) {

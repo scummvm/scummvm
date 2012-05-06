@@ -35,6 +35,8 @@ namespace Tony {
 #define	NUM_PROCESS	100
 #define MAX_PROCESSES 100
 
+#define INFINITE 0xffffffff
+
 typedef void (*CORO_ADDR)(CoroContext &, const void *);
 
 /** process structure */
@@ -75,6 +77,10 @@ private:
 	/** the currently active process */
 	PROCESS *pCurrent;
 
+	/** Auto-incrementing process Id */
+	int pidCounter;
+
+
 #ifdef DEBUG
 	// diagnostic process counters
 	int numProcs;
@@ -105,10 +111,11 @@ public:
 	void rescheduleAll();
 	void reschedule(PPROCESS pReSchedProc = NULL);
 	void giveWay(PPROCESS pReSchedProc = NULL);
+	void waitForSingleObject(CORO_PARAM, int pid, int duration);
 
-	PROCESS *createProcess(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
+	PROCESS *createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam);
 	PROCESS *createProcess(CORO_ADDR coroAddr, const void *pParam) {
-		return createProcess(0, coroAddr, &pParam, sizeof(void *));
+		return createProcess(coroAddr, &pParam, sizeof(void *));
 	}
 	void killProcess(PROCESS *pKillProc);
 

@@ -996,11 +996,12 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	HANDLE hThread = *(const HANDLE *)param;
+	int pid = *(const int *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
-	WaitForSingleObject(hThread, INFINITE);
+	CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, pid, INFINITE);
+
 	bExecutingAction = false;
 
 	CORO_KILL_SELF();
@@ -1554,7 +1555,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		if ((h = g_scheduler->createProcess(ActionThread, newitem)) == NULL)
 			return INVALID_HANDLE_VALUE;
 
-		if ((h = g_scheduler->createProcess(0, ShutUpActionThread, &h, sizeof(PROCESS *))) == NULL)
+		if ((h = g_scheduler->createProcess(ShutUpActionThread, &h->pid, sizeof(int))) == NULL)
 			return INVALID_HANDLE_VALUE;
 
 /*
