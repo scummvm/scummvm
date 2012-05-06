@@ -41,7 +41,7 @@ typedef void (*CORO_ADDR)(CoroContext &, const void *);
 
 /** process structure */
 struct PROCESS {
-	PROCESS *pNext;	///< pointer to next process in active or free list
+	PROCESS *pNext;		///< pointer to next process in active or free list
 	PROCESS *pPrevious;	///< pointer to previous process in active or free list
 
 	CoroContext state;		///< the state of the coroutine
@@ -111,10 +111,10 @@ public:
 	void rescheduleAll();
 	void reschedule(PPROCESS pReSchedProc = NULL);
 	void giveWay(PPROCESS pReSchedProc = NULL);
-	void waitForSingleObject(CORO_PARAM, int pid, int duration);
+	void waitForSingleObject(CORO_PARAM, int pid, int duration, bool *delay = NULL);
 
-	PROCESS *createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam);
-	PROCESS *createProcess(CORO_ADDR coroAddr, const void *pParam) {
+	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam);
+	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam) {
 		return createProcess(coroAddr, &pParam, sizeof(void *));
 	}
 	void killProcess(PROCESS *pKillProc);

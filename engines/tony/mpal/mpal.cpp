@@ -138,7 +138,7 @@ bool                     bExecutingDialog;
 
 uint32                    nPollingLocations[MAXPOLLINGLOCATIONS];
 HANDLE                   hEndPollingLocations[MAXPOLLINGLOCATIONS];
-HANDLE                   PollingThreads[MAXPOLLINGLOCATIONS];
+uint32                   PollingThreads[MAXPOLLINGLOCATIONS];
 
 HANDLE                   hAskChoice;
 HANDLE                   hDoneChoice;
@@ -996,7 +996,7 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	int pid = *(const int *)param;
+	uint32 pid = *(const uint32 *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -1021,17 +1021,7 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 *
 \****************************************************************************/
 
-void PASCAL LocationPollThread(uint32 id) {
-	uint32 *il;
-	int i,j,k;
-	int numitems;
-	int nRealItems;
-	LPMPALITEM curItem,newItem;
-	int nIdleActions;
-	uint32 curTime;
-	uint32 dwSleepTime;
-	uint32 dwId;
-
+void LocationPollThread(CORO_PARAM, const void *param) {
 	typedef struct {
 		uint32 nItem, nAction;
 
@@ -1046,59 +1036,77 @@ void PASCAL LocationPollThread(uint32 id) {
 
 	typedef struct {
 		uint32 nItem;
-		HANDLE hThread;
+		uint32 hThread;
 	} MYTHREAD;
 
-	MYACTION *MyActions;
-	MYTHREAD *MyThreads;
+	CORO_BEGIN_CONTEXT;
+		uint32 *il;
+		int i, j, k;
+		int numitems;
+		int nRealItems;
+		LPMPALITEM curItem,newItem;
+		int nIdleActions;
+		uint32 curTime;
+		uint32 dwSleepTime;
+		uint32 dwId;
+		int ord;
+		bool delayExpired;
+
+		MYACTION *MyActions;
+		MYTHREAD *MyThreads;
+	CORO_END_CONTEXT(_ctx);
+
+	uint32 id = *((const uint32 *)param);
+
+	CORO_BEGIN_CODE(_ctx);
 
  /* Tanto per cominciare, e' necessario richiedere la lista degli item
     presenti nella locazione. */
-	il = mpalQueryItemList(nPollingLocations[id]);
+	_ctx->il = mpalQueryItemList(nPollingLocations[id]);
 
  /* Contiamo gli items */
-	for (numitems = 0; il[numitems] != 0; numitems++)
+	for (_ctx->numitems = 0; _ctx->il[_ctx->numitems] != 0; _ctx->numitems++)
 		;
 
  /* Cerchiamo gli items della locazione senza idle actions e li eliminiamo
     dalla lista */
 	LockItems();
-	nIdleActions = 0;
-	nRealItems = 0;
-	for (i = 0; i < numitems; i++) {
-		int ord = itemGetOrderFromNum(il[i]);
+	_ctx->nIdleActions = 0;
+	_ctx->nRealItems = 0;
+	for (_ctx->i = 0; _ctx->i < _ctx->numitems; _ctx->i++) {
+		_ctx->ord = itemGetOrderFromNum(_ctx->il[_ctx->i]);
 
-		if (ord == -1) continue;
+		if (_ctx->ord == -1) continue;
 	 
-		curItem = lpmiItems + ord;
+		_ctx->curItem = lpmiItems + _ctx->ord;
 
-		k = 0;
-		for (j = 0; j < curItem->nActions; j++)
-			if (curItem->Action[j].num == 0xFF)
-				k++;
+		_ctx->k = 0;
+		for (_ctx->j = 0; _ctx->j < _ctx->curItem->nActions; _ctx->j++)
+			if (_ctx->curItem->Action[_ctx->j].num == 0xFF)
+				_ctx->k++;
 
-		nIdleActions += k;
+		_ctx->nIdleActions += _ctx->k;
 
-		if (k == 0)
+		if (_ctx->k == 0)
 			/* Possiamo eliminare questo item dalla lista */
-			il[i] = (uint32)NULL;
+			_ctx->il[_ctx->i] = (uint32)NULL;
 		else
-			nRealItems++;
+			_ctx->nRealItems++;
 	}
 	UnlockItems();
 
 	/* Se non e' rimasto nessuno possiamo uscire */
-	if (nRealItems == 0) {
-		GlobalFree(il);
-		ExitThread(0);
-//		_endthread();
+	if (_ctx->nRealItems == 0) {
+		GlobalFree(_ctx->il);
+		CORO_KILL_SELF();
+		return;
 	}
 
-	MyThreads=(MYTHREAD *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, nRealItems * sizeof(MYTHREAD));
-	if (MyThreads == NULL) {
-		GlobalFree(il);
-		ExitThread(0);
-//		_endthread();
+	_ctx->MyThreads = (MYTHREAD *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nRealItems * sizeof(MYTHREAD));
+	if (_ctx->MyThreads == NULL) {
+		GlobalFree(_ctx->il);
+		CORO_KILL_SELF();
+		return;
 	}
 
 	/* Inizializziamo le routine random */
@@ -1108,142 +1116,147 @@ void PASCAL LocationPollThread(uint32 id) {
 
  /* Abbiamo appurato che esiste almeno un item che contiene idle actions.
     Ora creaiamo le copie speculari delle idle actions */
-	MyActions = (MYACTION *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, nIdleActions * sizeof(MYACTION));
-	if (MyActions == NULL) {
-		GlobalFree(MyThreads);
-		GlobalFree(il);
-		ExitThread(0);
-//		_endthread();
+	_ctx->MyActions = (MYACTION *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nIdleActions * sizeof(MYACTION));
+	if (_ctx->MyActions == NULL) {
+		GlobalFree(_ctx->MyThreads);
+		GlobalFree(_ctx->il);
+		CORO_KILL_SELF();
+		return;
 	}
 
 	LockItems();
-	k = 0;
+	_ctx->k = 0;
 
-	for (i = 0; i < numitems; i++) {
-		if (il[i] == 0)
+	for (_ctx->i = 0; _ctx->i < _ctx->numitems; _ctx->i++) {
+		if (_ctx->il[_ctx->i] == 0)
 			continue;
 
-		curItem = lpmiItems + itemGetOrderFromNum(il[i]);
+		_ctx->curItem = lpmiItems + itemGetOrderFromNum(_ctx->il[_ctx->i]);
 
-		for (j = 0; j < curItem->nActions; j++)
-			if (curItem->Action[j].num == 0xFF) {
-				MyActions[k].nItem = il[i];
-				MyActions[k].nAction = j;
+		for (_ctx->j = 0; _ctx->j < _ctx->curItem->nActions; _ctx->j++)
+			if (_ctx->curItem->Action[_ctx->j].num == 0xFF) {
+				_ctx->MyActions[_ctx->k].nItem = _ctx->il[_ctx->i];
+				_ctx->MyActions[_ctx->k].nAction = _ctx->j;
 
-				MyActions[k].wTime = curItem->Action[j].wTime;
-				MyActions[k].perc = curItem->Action[j].perc;
-				MyActions[k].when = curItem->Action[j].when;
-				MyActions[k].nCmds = curItem->Action[j].nCmds;
-				CopyMemory(MyActions[k].CmdNum, curItem->Action[j].CmdNum,
+				_ctx->MyActions[_ctx->k].wTime = _ctx->curItem->Action[_ctx->j].wTime;
+				_ctx->MyActions[_ctx->k].perc = _ctx->curItem->Action[_ctx->j].perc;
+				_ctx->MyActions[_ctx->k].when = _ctx->curItem->Action[_ctx->j].when;
+				_ctx->MyActions[_ctx->k].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
+				CopyMemory(_ctx->MyActions[_ctx->k].CmdNum, _ctx->curItem->Action[_ctx->j].CmdNum,
 				MAX_COMMANDS_PER_ACTION * sizeof(uint16));
 
-				MyActions[k].dwLastTime = timeGetTime();
-				k++;
+				_ctx->MyActions[_ctx->k].dwLastTime = timeGetTime();
+				_ctx->k++;
 			}
 	}
 
 	UnlockItems();
 
 	/* La item list non ci serve piu' */
-	GlobalFree(il);
+	GlobalFree(_ctx->il);
 
 
 	/* Eccoci al ciclo principale. */
 	while (1) {
 		/* Cerchiamo tra tutte le idle actions quella a cui manca meno tempo per
 			l'esecuzione */
-		curTime = timeGetTime();
-		dwSleepTime=(uint32) - 1L;
+		_ctx->curTime = timeGetTime();
+		_ctx->dwSleepTime = (uint32)-1L;
 
-		for (k = 0;k<nIdleActions;k++)
-			if (curTime >= MyActions[k].dwLastTime + MyActions[k].wTime) {
-				dwSleepTime = 0;
+		for (_ctx->k = 0;_ctx->k<_ctx->nIdleActions;_ctx->k++)
+			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
+				_ctx->dwSleepTime = 0;
 				break;
 		     } else
-				dwSleepTime = MIN(dwSleepTime,MyActions[k].dwLastTime+MyActions[k].wTime-curTime);
+				_ctx->dwSleepTime = MIN(_ctx->dwSleepTime, _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime - _ctx->curTime);
 
 		/* Ci addormentiamo, ma controllando sempre l'evento che viene settato
 			quando viene richiesta la nostra chiusura */
-		k = WaitForSingleObject(hEndPollingLocations[id], dwSleepTime);
-		if (k == WAIT_OBJECT_0)
+		_ctx->k = WaitForSingleObject(hEndPollingLocations[id], _ctx->dwSleepTime);
+		if (_ctx->k == WAIT_OBJECT_0)
 			break;
 
-		for (i = 0; i < nRealItems; i++)
-			if (MyThreads[i].nItem != 0) {
-				if (WaitForSingleObject(MyThreads[i].hThread, 0) == WAIT_OBJECT_0)
-					MyThreads[i].nItem = 0;
+		for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+			if (_ctx->MyThreads[_ctx->i].nItem != 0) {
+				CORO_INVOKE_3(_vm->_scheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 0, &_ctx->delayExpired);
+
+				// if result ) == WAIT_OBJECT_0)
+				if (!_ctx->delayExpired)
+					_ctx->MyThreads[_ctx->i].nItem = 0;
 			}
 
-		curTime = timeGetTime();
+		_ctx->curTime = timeGetTime();
 
 		/* Cerchiamo all'interno delle idle actions quale e' necessario eseguire */
-		for (k = 0; k < nIdleActions; k++)
-			if (curTime >= MyActions[k].dwLastTime + MyActions[k].wTime) {
-				MyActions[k].dwLastTime += MyActions[k].wTime;
+		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++)
+			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
+				_ctx->MyActions[_ctx->k].dwLastTime += _ctx->MyActions[_ctx->k].wTime;
 
-			   /* E' il momento di tirare il nostro dado virtuale, e controllare
+			   /* E' _ctx->il momento di tirare _ctx->il nostro dado virtuale, e controllare
 				  se la sorte e' dalla parte della idle action */
 				byte randomVal = (byte)_vm->_randomSource.getRandomNumber(99);
-				if (randomVal < MyActions[k].perc) {
+				if (randomVal < _ctx->MyActions[_ctx->k].perc) {
 					/* Controlliamo se c'e' una action in esecuzione sull'item */
-					if ((bExecutingAction) && (nExecutingAction == MyActions[k].nItem))
+					if ((bExecutingAction) && (nExecutingAction == _ctx->MyActions[_ctx->k].nItem))
 						continue;
 
 					/* Controlliamo se c'e' gia' un'altra idle function in esecuzione
 						sullo stesso item */
-					for (i = 0; i < nRealItems; i++)
-						if (MyThreads[i].nItem == MyActions[k].nItem)
+					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+						if (_ctx->MyThreads[_ctx->i].nItem == _ctx->MyActions[_ctx->k].nItem)
 							break;
 
-					if (i < nRealItems)
+					if (_ctx->i < _ctx->nRealItems)
 						continue;
 
 					/* Ok, siamo gli unici :) */
 					LockItems();
-					curItem=lpmiItems+itemGetOrderFromNum(MyActions[k].nItem);
+					_ctx->curItem=lpmiItems+itemGetOrderFromNum(_ctx->MyActions[_ctx->k].nItem);
 
 					/* Controlliamo se c'e' un esperessione WhenExecute */
-					j=MyActions[k].nAction;
-					if (curItem->Action[j].when != NULL)
-						if (!EvaluateExpression(curItem->Action[j].when)) {
+					_ctx->j=_ctx->MyActions[_ctx->k].nAction;
+					if (_ctx->curItem->Action[_ctx->j].when != NULL)
+						if (!EvaluateExpression(_ctx->curItem->Action[_ctx->j].when)) {
 							UnlockItems();
 							continue;
 						}
 
 					/* Ok, possiamo eseguire la azione. Per comodita' lo facciamo in
 						un nuovo thread */
-					newItem=(LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
-					if (newItem == false) {
-						GlobalFree(MyThreads);
-						GlobalFree(MyActions);
-						ExitThread(0);
-//						_endthread();
+					_ctx->newItem = (LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
+					if (_ctx->newItem == false) {
+						GlobalFree(_ctx->MyThreads);
+						GlobalFree(_ctx->MyActions);
+						
+						CORO_KILL_SELF();
+						return;
 					}
 
-					CopyMemory(newItem,curItem, sizeof(MPALITEM));
+					CopyMemory(_ctx->newItem,_ctx->curItem, sizeof(MPALITEM));
 					UnlockItems();
 
 					/* Copiamo l'azione nella #0 */
-//					newItem->Action[0].nCmds = curItem->Action[j].nCmds;
-//					CopyMemory(newItem->Action[0].CmdNum,curItem->Action[j].CmdNum,newItem->Action[0].nCmds*sizeof(newItem->Action[0].CmdNum[0]));
-					newItem->dwRes=j;
+//					_ctx->newItem->Action[0].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
+//					CopyMemory(_ctx->newItem->Action[0].CmdNum,_ctx->curItem->Action[_ctx->j].CmdNum,_ctx->newItem->Action[0].nCmds*sizeof(_ctx->newItem->Action[0].CmdNum[0]));
+					_ctx->newItem->dwRes=_ctx->j;
 
 					/* Creaiamo l'action thread. Provvedera' lui a liberare la memoria
-						allocata per il nuovo item */
-					for (i = 0; i < nRealItems; i++)
-						if (MyThreads[i].nItem == 0)
+						allocata per _ctx->il nuovo item */
+					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+						if (_ctx->MyThreads[_ctx->i].nItem == 0)
 							break;
 
-					MyThreads[i].nItem=MyActions[k].nItem;
+					_ctx->MyThreads[_ctx->i].nItem = _ctx->MyActions[_ctx->k].nItem;
 
 					// !!! Nuova gestione dei thread
-					if ((MyThreads[i].hThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)ActionThread,(void *)newItem, 0, &dwId)) == NULL) {
-					//if ((MyThreads[i].hThread=(void*)_beginthread(ActionThread, 10240,(void *)newItem))==(void*)-1)
-						GlobalFree(newItem);
-						GlobalFree(MyThreads);
-						GlobalFree(MyActions);
-						ExitThread(0);
-//						_endthread();
+					if ((_ctx->MyThreads[_ctx->i].hThread = _vm->_scheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == 0) {
+					//if ((_ctx->MyThreads[_ctx->i].hThread=(void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem))==(void*)-1)
+						GlobalFree(_ctx->newItem);
+						GlobalFree(_ctx->MyThreads);
+						GlobalFree(_ctx->MyActions);
+						
+						CORO_KILL_SELF();
+						return;
 					}
 
 					/* Skippa tutte le idle action dello stesso item */
@@ -1251,16 +1264,16 @@ void PASCAL LocationPollThread(uint32 id) {
 			}
 	}
 
-	/* Chiude tutti i thread interni */
+	/* Chiude tutti _ctx->i thread interni */
 
 	/*
 
 		CODICE OBSOLETO: ANDIAMO DI SKIP CHE RULLA
 
- for (i = 0; i < nRealItems; i++)
-   if (MyThreads[i].nItem != 0) {
-     TerminateThread(MyThreads[i].hThread, 0);
-     CloseHandle(MyThreads[i].hThread);
+ for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+   if (_ctx->MyThreads[_ctx->i].nItem != 0) {
+     TerminateThread(_ctx->MyThreads[_ctx->i].hThread, 0);
+     CloseHandle(_ctx->MyThreads[_ctx->i].hThread);
    }
 */
 
@@ -1268,23 +1281,28 @@ void PASCAL LocationPollThread(uint32 id) {
 	// FIXME: Convert to co-routine
 	lplpFunctions[200](nullContext, 0, 0, 0, 0);
 
-	for (i = 0; i < nRealItems; i++)
-		if (MyThreads[i].nItem != 0) {
-			if (WaitForSingleObject(MyThreads[i].hThread,5000) != WAIT_OBJECT_0)
-				TerminateThread(MyThreads[i].hThread, 0);
+	for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+		if (_ctx->MyThreads[_ctx->i].nItem != 0) {
+			CORO_INVOKE_3(_vm->_scheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 5000, &_ctx->delayExpired);
 
-			CloseHandle(MyThreads[i].hThread);
+/*
+			//if (result != WAIT_OBJECT_0)
+			if (_ctx->delayExpired)
+				TerminateThread(_ctx->MyThreads[_ctx->i].hThread, 0);
+*/
+			_vm->_scheduler.killMatchingProcess(_ctx->MyThreads[_ctx->i].hThread);
 		}
 
 	// Set idle skip off
-	// FIXME: Convert to co-routine
-	lplpFunctions[201](nullContext, 0, 0, 0, 0);
+	CORO_INVOKE_4(lplpFunctions[201], 0, 0, 0, 0);
 
 	/* Abbiamo finito */
-	GlobalFree(MyThreads);
-	GlobalFree(MyActions);
-	ExitThread(1);
-//endthread();
+	GlobalFree(_ctx->MyThreads);
+	GlobalFree(_ctx->MyActions);
+	
+	CORO_KILL_SELF();
+
+	CORO_END_CODE;
 }
 
 
@@ -1516,7 +1534,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	LPMPALITEM item = lpmiItems;
 	int i;
 	LPMPALITEM newitem;
-	PROCESS *h;
+	uint32 h;
 
 	item+=ordItem;
 	Common::String buf = Common::String::format("Status.%u", item->nObj);
@@ -1552,10 +1570,10 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// 0 dell'item, e poi liberera' la memoria con la GlobalFree()
 
 		// !!! New thread management
-		if ((h = g_scheduler->createProcess(ActionThread, newitem)) == NULL)
+		if ((h = g_scheduler->createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == NULL)
 			return INVALID_HANDLE_VALUE;
 
-		if ((h = g_scheduler->createProcess(ShutUpActionThread, &h->pid, sizeof(int))) == NULL)
+		if ((h = g_scheduler->createProcess(ShutUpActionThread, &h, sizeof(uint32))) == NULL)
 			return INVALID_HANDLE_VALUE;
 
 /*
@@ -2182,7 +2200,7 @@ void EXPORT mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
 *
 \****************************************************************************/
 
-bool EXPORT mpalStartIdlePoll(int nLoc) {
+bool mpalStartIdlePoll(int nLoc) {
 	uint32 i;
 	uint32 dwId;
 
@@ -2196,7 +2214,7 @@ bool EXPORT mpalStartIdlePoll(int nLoc) {
 
 			hEndPollingLocations[i] = CreateEvent(NULL, true, false, NULL);
 // !!! Nuova gestione dei thread
-			if ((PollingThreads[i] = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)LocationPollThread,(void *)i, 0, &dwId)) == NULL)
+			if ((PollingThreads[i] = _vm->_scheduler.createProcess(LocationPollThread, &i, sizeof(uint32))) == 0)
 //			 if ((hEndPollingLocations[i]=(void*)_beginthread(LocationPollThread, 10240,(void *)i))==(void*)-1)
 				return false;
 
@@ -2222,22 +2240,32 @@ bool EXPORT mpalStartIdlePoll(int nLoc) {
 *
 \****************************************************************************/
 
-bool EXPORT mpalEndIdlePoll(int nLoc) {
-	uint32 i;
+void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result) {
+	CORO_BEGIN_CONTEXT;
+		int i;
+	CORO_END_CONTEXT(_ctx);
 
-	for (i = 0; i < MAXPOLLINGLOCATIONS; i++)
-	if (nPollingLocations[i] == (uint32)nLoc) {
-		SetEvent(hEndPollingLocations[i]);
+	CORO_BEGIN_CODE(_ctx);
 
-		WaitForSingleObject(PollingThreads[i], INFINITE);
+	for (_ctx->i = 0; _ctx->i < MAXPOLLINGLOCATIONS; _ctx->i++) {
+		if (nPollingLocations[_ctx->i] == (uint32)nLoc) {
+			SetEvent(hEndPollingLocations[_ctx->i]);
 
-		CloseHandle(hEndPollingLocations[i]);
-		nPollingLocations[i] = 0;
+			CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, PollingThreads[_ctx->i], INFINITE);
 
-		return true;
+			CloseHandle(hEndPollingLocations[_ctx->i]);
+			nPollingLocations[_ctx->i] = 0;
+
+			if (result)
+				*result = true;
+			return;
+		}
 	}
 
-	return false;
+	if (result)
+		*result = false;
+
+	CORO_END_CODE;
 }
 
 

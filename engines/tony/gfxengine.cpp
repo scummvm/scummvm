@@ -65,13 +65,21 @@ extern bool bSkipSfxNoLoop;
 
 bool bIdleExited;
 
-void ExitAllIdles(int nCurLoc) {
+void ExitAllIdles(CORO_PARAM, int nCurLoc) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	// Chiude le idle
 	bSkipSfxNoLoop = true;
-	mpalEndIdlePoll(nCurLoc);
+
+	CORO_INVOKE_2(mpalEndIdlePoll, nCurLoc, NULL);
+
 	bIdleExited = true;
 	bSkipSfxNoLoop = false;
-	ExitThread(0);
+
+	CORO_END_CODE;
 }
 
 RMGfxEngine::RMGfxEngine() {
@@ -514,17 +522,21 @@ HANDLE RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	return INVALID_HANDLE_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
 }
 
-HANDLE RMGfxEngine::UnloadLocation(bool bDoOnExit) {
-	HANDLE h;
+void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
+	CORO_BEGIN_CONTEXT;
+		HANDLE h;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 	
 	// Scarica tutta la memoria della locazione
-	mpalEndIdlePoll(m_nCurLoc);
+	CORO_INVOKE_2(mpalEndIdlePoll, m_nCurLoc, NULL);
 
 	// On Exit?
 	if (bDoOnExit) {
-		h = mpalQueryDoAction(1, m_nCurLoc, 0);
-		if (h != INVALID_HANDLE_VALUE)
-			WaitForSingleObject(h, INFINITE);
+		_ctx->h = mpalQueryDoAction(1, m_nCurLoc, 0);
+		if (_ctx->h != INVALID_HANDLE_VALUE)
+			WaitForSingleObject(_ctx->h, INFINITE);
 	}
 
 	MainFreeze();
@@ -534,7 +546,10 @@ HANDLE RMGfxEngine::UnloadLocation(bool bDoOnExit) {
 	m_bigBuf.ClearOT();
 	m_loc.Unload();
 
-	return INVALID_HANDLE_VALUE;
+	if (result != NULL)
+		*result = INVALID_HANDLE_VALUE;
+
+	CORO_END_CODE;
 }
 
 void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
@@ -930,7 +945,7 @@ void RMGfxEngine::LoadState(const char *fn) {
 
 	delete f;
 
-	UnloadLocation(false);
+	UnloadLocation(nullContext, false, NULL);
 	LoadLocation(loc,tp,RMPoint(-1, -1));
 	m_tony.SetPattern(RMTony::PAT_STANDRIGHT);
 	MainUnfreeze();

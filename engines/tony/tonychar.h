@@ -49,6 +49,7 @@
 #define TONY_TONYCHAR_H
 
 #include "tony/mpal/stubs.h"
+#include "tony/coroutine.h"
 #include "tony/loc.h"
 
 namespace Tony {
@@ -128,8 +129,8 @@ protected:
 	// Overload dell'allocazione degli sprites per cambiare il tipo
 	virtual RMGfxSourceBuffer* NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
 
-	// Thread che aspetta la fine di un azione
-	static uint32 WaitEndOfAction(HANDLE hThread);
+	// Thread which waits for the end of an action
+	static void WaitEndOfAction(CORO_PARAM, const void *param);
 
 public: // per farlo rialzare, altrimenti private
 	enum PATTERNS {

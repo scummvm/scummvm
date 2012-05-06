@@ -59,11 +59,19 @@ namespace Tony {
 
 bool RMTony::m_bAction = false;
 
-uint32 RMTony::WaitEndOfAction(HANDLE hThread) {
-	WaitForSingleObject(hThread, INFINITE);
+void RMTony::WaitEndOfAction(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	uint32 pid = *(const uint32 *)param;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, pid, INFINITE);
+
 	m_bAction = false;
 
-	return 1;
+	CORO_END_CODE;
 }
 
 RMGfxSourceBuffer *RMTony::NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE) {
@@ -205,6 +213,7 @@ void RMTony::MoveAndDoAction(RMPoint dst, RMItem *item, int nAction, int nAction
 
 void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
 	HANDLE hThread;
+	uint32 pid;
 	
 	if (nAction == TA_COMBINE) {
 		hThread = mpalQueryDoAction(TA_COMBINE, nParm, nActionItem);
@@ -229,27 +238,28 @@ void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
 	}
 					
 	if (hThread != INVALID_HANDLE_VALUE) {
-		uint32 id;
 		m_bAction = true;
-		CreateThread(NULL, 10240,(LPTHREAD_START_ROUTINE)WaitEndOfAction, (void *)hThread, 0, &id);
+		pid = (uint32)hThread;
+		_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
 		hActionThread = hThread;
 	} else if (nAction != TA_GOTO) {
- 		uint32 id;
-
 		if (nAction == TA_TALK) {
 			hThread = mpalQueryDoAction(6, 1, 0); 
 			m_bAction = true;
-			CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)WaitEndOfAction, (void *)hThread,0,&id);
-  			hActionThread=hThread;
+			pid = (uint32)hThread;
+			_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
+  			hActionThread = hThread;
 		} else if (nAction == TA_PALESATI) {
 			hThread = mpalQueryDoAction(7, 1, 0);
 			m_bAction = true; 
-			CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)WaitEndOfAction,(void *)hThread, 0, &id);
+			pid = (uint32)hThread;
+			_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
   			hActionThread=hThread;
 		} else {
 			hThread = mpalQueryDoAction(5, 1, 0); 
 			m_bAction = true;
-			CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)WaitEndOfAction, (void *)hThread, 0, &id);
+			pid = (uint32)hThread;
+			_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
 			hActionThread = hThread;
 		}
 	}

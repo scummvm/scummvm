@@ -294,10 +294,11 @@ void Scheduler::giveWay(PPROCESS pReSchedProc) {
 /**
  * Continously makes a given process wait for another process to finish
  *
- * @param pid		Process identifier
- * @param duration	Duration in milliseconds
+ * @param pid			Process identifier
+ * @param duration		Duration in milliseconds
+ * @param expired		Set to true if delay period expired
  */
-void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration) {
+void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration, bool *expired) {
 	CORO_BEGIN_CONTEXT;
 		uint32 endTime;
 		PROCESS *pProc;
@@ -306,6 +307,8 @@ void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration) {
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->endTime = (duration == INFINITE) ? INFINITE : g_system->getMillis() + duration;
+	if (expired)
+		*expired = false;
 
 	// Outer loop for doing checks until expiry 
 	while (g_system->getMillis() < _ctx->endTime) {
@@ -314,9 +317,13 @@ void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration) {
 		while ((_ctx->pProc != NULL) && (_ctx->pProc->pid == pid))
 			_ctx->pProc = _ctx->pProc->pNext;
 
-		if (_ctx->pProc == NULL)
+		if (_ctx->pProc == NULL) {
 			// No match process found, so it's okay to break out of loop
+			if (expired)
+				*expired = true;
+
 			break;
+		}
 
 		// Sleep until the next cycle
 		CORO_SLEEP(1);
@@ -333,7 +340,7 @@ void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration) {
  * @param pParam	process specific info
  * @param sizeParam	size of process specific info
  */
-PROCESS *Scheduler::createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
+uint32 Scheduler::createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc;
 
 	// get a free process
@@ -394,7 +401,7 @@ PROCESS *Scheduler::createProcess(CORO_ADDR coroAddr, const void *pParam, int si
 	}
 
 	// return created process
-	return pProc;
+	return pProc->pid;
 }
 
 /**

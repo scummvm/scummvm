@@ -72,7 +72,7 @@ RMInventory *Inventory;
 RMInput *Input;
 
 HANDLE (*LoadLocation)(int, RMPoint, RMPoint start);
-HANDLE (*UnloadLocation)(bool bDoOnExit);
+void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, HANDLE *result);
 void (*LinkGraphicTask)(RMGfxTask *task);
 void (*Freeze)(void); 
 void (*Unfreeze)(void); 
@@ -505,20 +505,27 @@ RMPoint SFM_pt;
 int SFM_nLoc;
 
 DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 nFont, uint32, uint32) {
-	RMMessage msg(nMsg);
-	RMGfxClearTask clear;
-	int i;
+	CORO_BEGIN_CONTEXT;
+		RMMessage *msg;
+		RMGfxClearTask clear;
+		int i;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->msg = new RMMessage(nMsg);
 		
 	SFM_nLoc = Loc->TEMPGetNumLoc();
 	SFM_pt = Tony->Position();
 	
-	if (bSkipIdle) return;
+	if (bSkipIdle) 
+		return;
 
-	UnloadLocation(false);
+	CORO_INVOKE_2(UnloadLocation, false, NULL);
 	Tony->Hide();
 	Unfreeze();
 
-	for (i = 0; i < msg.NumPeriods() && !bSkipIdle; i++) {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !bSkipIdle; _ctx->i++) {
 		RMTextDialog text;
 
 		text.SetInput(Input);
@@ -533,25 +540,29 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 		text.SetColor(255,255,255);
 
 		// Scrive il testo
-		if (nFont== 0)
-			text.WriteText(msg[i],1);
-		else if (nFont==1)
-			text.WriteText(msg[i],0);
+		if (nFont == 0)
+			text.WriteText((*_ctx->msg)[_ctx->i], 1);
+		else if (nFont == 1)
+			text.WriteText((*_ctx->msg)[_ctx->i], 0);
 
 		// Setta la posizione
-		text.SetPosition(RMPoint(320,240));
+		text.SetPosition(RMPoint(320, 240));
 
 		text.SetAlwaysDisplay();
 		text.ForceTime();
 
 		// Registra il testo
-		LinkGraphicTask(&clear);
+		LinkGraphicTask(&_ctx->clear);
 		LinkGraphicTask(&text);
 
 		// Aspetta la fine della visualizzazione	
 		text.SetCustomSkipHandle(hSkipIdle);
 		text.WaitForEndDisplay();
 	}
+
+	delete _ctx->msg;
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -592,6 +603,11 @@ DECLARE_CUSTOM_FUNCTION(NoOcchioDiBue)(CORO_PARAM, uint32, uint32, uint32, uint3
 }
 
 DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (!bNoOcchioDiBue) {
 	  InitWipe(1);
 	  WaitWipeEnd();
@@ -600,13 +616,19 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 	_vm->StopMusic(4);
 
 	// On Exit e lascia freezzato
-	UnloadLocation(true);
+	CORO_INVOKE_2(UnloadLocation, true, NULL);
 	Unfreeze();
+
+	CORO_END_CODE;
 }
 
 
 DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
-	HANDLE h;
+	CORO_BEGIN_CONTEXT;
+		HANDLE h;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	if (!bNoOcchioDiBue) {
 		InitWipe(1);
@@ -618,7 +640,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	}
 		
 	// On Exit e lascia freezzato
-	UnloadLocation(true);
+	CORO_INVOKE_2(UnloadLocation, true, NULL);
 
 	curChangedHotspot = 0;
 	if (bUseStartPos != 0)
@@ -639,7 +661,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	Unfreeze();
 
 
-	h = mpalQueryDoAction(0, nLoc,0);
+	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
 	if (!bNoOcchioDiBue) {
   		WaitWipeEnd();
@@ -649,9 +671,10 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	bNoOcchioDiBue = false;
 
 	// On Enter?
-	if (h != INVALID_HANDLE_VALUE)
-		WaitForSingleObject(h,INFINITE);
+	if (_ctx->h != INVALID_HANDLE_VALUE)
+		WaitForSingleObject(_ctx->h, INFINITE);
 
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(SetLocStartPosition)(CORO_PARAM, uint32 nLoc, uint32 lX, uint32 lY, uint32) {

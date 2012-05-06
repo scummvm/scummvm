@@ -138,7 +138,7 @@ public:
 
 	// Manage a location
 	HANDLE LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
-	HANDLE UnloadLocation(bool bDoOnExit=true);
+	void UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result);
 
 	// Freeze and unfreeze
 	void Freeze(void);

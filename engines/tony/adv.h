@@ -49,6 +49,7 @@
 #define TONY_ADV_H
 
 #include "tony/mpal/memory.h"
+#include "tony/coroutine.h"
 #include "tony/gfxcore.h"
 
 
@@ -91,7 +92,7 @@ enum RMTonyAction {
 
 // Funzioni globali
 HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
-HANDLE MainUnloadLocation(bool bDoOnExit);
+void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result);
 void MainLinkGraphicTask(RMGfxTask *task);
 void MainFreeze(void);
 void MainUnfreeze(void);

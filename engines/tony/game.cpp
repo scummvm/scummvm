@@ -96,8 +96,8 @@ HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
 	return _vm->GetEngine()->LoadLocation(nLoc, pt,start);
 }
 
-HANDLE MainUnloadLocation(bool bDoOnExit) {
-	return _vm->GetEngine()->UnloadLocation(bDoOnExit);
+void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
+	_vm->GetEngine()->UnloadLocation(coroParam, bDoOnExit, result);
 }
 
 void MainLinkGraphicTask(RMGfxTask *task) {

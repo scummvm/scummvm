@@ -704,8 +704,7 @@ bool EXPORT mpalStartIdlePoll(int nLoc);
 *
 \****************************************************************************/
 
-bool EXPORT mpalEndIdlePoll(int nLoc);
-
+void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result);
 
 
 /****************************************************************************\
