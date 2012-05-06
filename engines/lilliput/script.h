@@ -61,8 +61,8 @@ public:
 
 	byte _characterScriptEnabled[40];
 	byte _array122E9[20];
-	byte _array16123[40];
-	byte _array1614B[40];
+	char _array16123PosX[40];
+	char _array1614BPosY[40];
 	byte _array12811[40];
 	byte _array10AB1[40];
 	byte _array122FD[20];
@@ -136,7 +136,7 @@ private:
 	void sub18B7C(int var1, int var3);
 	void sub189B8();
 	void sub189F5();
-	Common::Point sub17285(int index);
+	Common::Point getCharacterTilePos(int index);
 	int sub18BB7(int index);
 
 	int16 getValue1();
@@ -221,7 +221,7 @@ private:
 	void OC_setByte18823();
 	void OC_callScript();
 	void OC_sub17BF2();
-	void OC_sub17ACC();
+	void OC_setCurrentScriptCharacterPos();
 	void OC_resetByte16F04();
 	void OC_sub17AE1();
 	void OC_sub17AEE();
@@ -242,11 +242,11 @@ private:
 	void OC_changeCurrentCharacterSprite();
 	void OC_sub17E99();
 	void OC_sub17EC5();
-	void OC_sub17EF4();
+	void OC_setCharacterDirectionTowardsPos();
 	void OC_sub17F08();
 	void OC_sub17F4F();
 	void OC_sub17F68();
-	void OC_getNextVal();
+	void OC_skipNextVal();
 	void OC_sub17FD2();
 	void OC_sub17FDD();
 	void OC_setByte10B29();
