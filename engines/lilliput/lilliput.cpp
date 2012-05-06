@@ -177,8 +177,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array1692B[i] = 0;
 
 	for (int i = 0; i < 40; i++) {
-		_array10999[i] = 0;
-		_array109C1[i] = 0;
+		_array10999PosX[i] = 0;
+		_array109C1PosY[i] = 0;
 		_charactersToDisplay[i] = 0;
 		_characterRelativePositionX[i] = 0xFF;
 		_characterRelativePositionY[i] = 0xFF;
@@ -1395,7 +1395,7 @@ byte LilliputEngine::sub16799(int index, int param1) {
 			return 3;
 		}
 
-		if ((var3h == _scriptHandler->_array12811[index]) && (var3l == _array109C1[index]))
+		if ((var3h == _scriptHandler->_array12811[index]) && (var3l == _array109C1PosY[index]))
 			return 2;
 	}
 
@@ -1412,30 +1412,31 @@ byte LilliputEngine::sub16799(int index, int param1) {
 
 }
 
+//TODO rename arrays
 void LilliputEngine::sub167EF(int index) {
 	debugC(2, kDebugEngine, "sub167EF(%d)", index);
 
-	int word167EB = sub168DA(_scriptHandler->_array16123[index], _scriptHandler->_array1614B[index]);
-	int word167ED = sub168DA(_array10999[index], _array109C1[index]);
+	int word167EB = sub168DA(Common::Point(_scriptHandler->_array16123[index], _scriptHandler->_array1614B[index]));
+	int word167ED = sub168DA(Common::Point(_array10999PosX[index], _array109C1PosY[index]));
 
 	if (word167EB == word167ED) {
-		_array109E9[index] = _array10999[index];
-		_array10A11[index] = _array109C1[index];
+		_array109E9[index] = _array10999PosX[index];
+		_array10A11[index] = _array109C1PosY[index];
 		return;
 	}
 
 	if (word167EB = 0xFFFF) {
-		int tmpVal = sub16901(_array10999[index], _array109C1[index]);
+		int tmpVal = sub16901(_array10999PosX[index], _array109C1PosY[index]);
 		_array109E9[index] = (_rulesBuffer12_4[tmpVal] >> 8);
 		_array10A11[index] = (_rulesBuffer12_4[tmpVal] & 0xFF);
 		return;
 	}
 
 	if ((word167ED != 0xFFFF) &&
-		  (_array10999[index] >= (_rulesBuffer12_1[word167EB] >> 8)) &&
-		  (_array10999[index] <= (_rulesBuffer12_1[word167EB] & 0xFF)) &&
-		  (_array109C1[index] >= (_rulesBuffer12_2[word167EB] >> 8)) &&
-		  (_array109C1[index] <= (_rulesBuffer12_2[word167EB] & 0xFF)) ) {
+		  (_array10999PosX[index] >= (_rectXMinMax[word167EB] >> 8)) &&
+		  (_array10999PosX[index] <= (_rectXMinMax[word167EB] & 0xFF)) &&
+		  (_array109C1PosY[index] >= (_rectYMinMax[word167EB] >> 8)) &&
+		  (_array109C1PosY[index] <= (_rectYMinMax[word167EB] & 0xFF)) ) {
 		_array109E9[index] = (_rulesBuffer12_4[word167ED] >> 8);
 		_array10A11[index] = (_rulesBuffer12_4[word167ED] & 0xFF);
 		return;
@@ -1443,8 +1444,8 @@ void LilliputEngine::sub167EF(int index) {
 
 	_array109E9[index] = (_rulesBuffer12_4[word167EB] >> 8);
 	_array10A11[index] = (_rulesBuffer12_4[word167EB] & 0xFF);
-	int var4h = (_rulesBuffer12_1[index] >> 8);
-	int var4l = (_rulesBuffer12_1[index] & 0xFF);
+	int var4h = (_rectXMinMax[index] >> 8);
+	int var4l = (_rectXMinMax[index] & 0xFF);
 
 	if (var4h != var4l) {
 		if (_array109E9[index] == var4h) {
@@ -1457,8 +1458,8 @@ void LilliputEngine::sub167EF(int index) {
 			return;
 		}
 
-		int var4h = (_rulesBuffer12_2[index] >> 8);
-		int var4l = (_rulesBuffer12_2[index] & 0xFF);
+		int var4h = (_rectYMinMax[index] >> 8);
+		int var4l = (_rectYMinMax[index] & 0xFF);
 
 		if (var4h != var4l) {
 			if (_array10A11[index] == var4h)
@@ -1534,16 +1535,17 @@ void LilliputEngine::sub1693A(int index) {
 	_characterDirectionArray[index] = retVal;
 }
 
+// TODO rename _word16937
 byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	debugC(2, kDebugEngine, "sub16A76(%d, %d)", indexb, indexs);
 
-	static const byte _array16A6C[4] = {1, 0, 0, 0xFF};
-	static const byte _array16A70[4] = {0, 0xFF, 1, 0};
+	static const char _array16A6C[4] = {1, 0, 0, -1};
+	static const char _array16A70[4] = {0, -1, 1, 0};
 
-	byte var1h = (_word16937 >> 8) + _array16A6C[indexb];
-	byte var1l = (_word16937 & 0xFF) + _array16A70[indexs];
+	char var1h = (_word16937 >> 8) + _array16A6C[indexb];
+	char var1l = (_word16937 & 0xFF) + _array16A70[indexs];
 
-	int var2 = sub168DA(var1h, var1l);
+	int var2 = sub168DA(Common::Point(var1h, var1l));
 	if (var2 == 0xFFFF)
 		return 1;
 
@@ -1552,23 +1554,23 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	var1h = (_word16937 >> 8);
 	var1l = (_word16937 & 0xFF);
 
-	if ((var1h >= (_rulesBuffer12_1[var2] >> 8)) && (var1h <= (_rulesBuffer12_1[var2] & 0xFF)) && (var1l >= (_rulesBuffer12_2[var2] >> 8)) && (var1l <= (_rulesBuffer12_2[var2] & 0xFF)))
+	if ((var1h >= (_rectXMinMax[var2] >> 8)) && (var1h <= (_rectXMinMax[var2] & 0xFF)) && (var1l >= (_rectYMinMax[var2] >> 8)) && (var1l <= (_rectYMinMax[var2] & 0xFF)))
 		return 0;
 
 	var1h = _array109E9[indexs];
 	var1l = _array10A11[indexs];
 
-	if ((var1h >= (_rulesBuffer12_1[var2] >> 8)) && (var1h <= (_rulesBuffer12_1[var2] & 0xFF)) && (var1l >= (_rulesBuffer12_2[var2] >> 8)) && (var1l <= (_rulesBuffer12_2[var2] & 0xFF)))
+	if ((var1h >= (_rectXMinMax[var2] >> 8)) && (var1h <= (_rectXMinMax[var2] & 0xFF)) && (var1l >= (_rectYMinMax[var2] >> 8)) && (var1l <= (_rectYMinMax[var2] & 0xFF)))
 		return 0;
 
 	return 1;
 }
 
-uint16 LilliputEngine::sub168DA(byte var1h, byte var1l) {
-	debugC(2, kDebugEngine, "sub168DA(%d, %d)", var1h, var1l);
+uint16 LilliputEngine::sub168DA(Common::Point pos) {
+	debugC(2, kDebugEngine, "sub168DA(%d, %d)", pos.x, pos.y);
 
 	for (int i = 0; i < _rulesChunk12_size; i++) {
-		if ((var1h >= (_rulesBuffer12_1[i] >> 8)) && (var1h <= (_rulesBuffer12_1[i] & 0xFF)) && (var1h >= (_rulesBuffer12_2[i] >> 8)) && (var1h <= (_rulesBuffer12_2[i] & 0xFF)))
+		if ((pos.x >= (_rectXMinMax[i] >> 8)) && (pos.x <= (_rectXMinMax[i] & 0xFF)) && (pos.y >= (_rectYMinMax[i] >> 8)) && (pos.y <= (_rectYMinMax[i] & 0xFF)))
 			return i;
 	}
 	return 0xFFFF;
@@ -1578,7 +1580,7 @@ uint16 LilliputEngine::sub16901(byte var1h, byte var1l) {
 	debugC(2, kDebugEngine, "sub16901(%d, %d)", var1h, var1l);
 
 	for (int i = _rulesChunk12_size-1; i >= 0 ; i--) {
-		if ((var1h >= (_rulesBuffer12_1[i] >> 8)) && (var1h <= (_rulesBuffer12_1[i] & 0xFF)) && (var1h >= (_rulesBuffer12_2[i] >> 8)) && (var1h <= (_rulesBuffer12_2[i] & 0xFF)))
+		if ((var1h >= (_rectXMinMax[i] >> 8)) && (var1h <= (_rectXMinMax[i] & 0xFF)) && (var1h >= (_rectYMinMax[i] >> 8)) && (var1h <= (_rectYMinMax[i] & 0xFF)))
 			return i;
 	}
 	return 0xFFFF;
@@ -1780,16 +1782,16 @@ byte LilliputEngine::sub1675D(int index, int var1) {
 	int var1l = _scriptHandler->_array1614B[var2];
 	int var3 = _array109E9[index];
 
-	if ((var3 != 0xFF) && (var3 == _array10999[index])) {
+	if ((var3 != 0xFF) && (var3 == _array10999PosX[index])) {
 		var3 = _array10A11[index];
-		if (var3 == _array109C1[index]) {
+		if (var3 == _array109C1PosY[index]) {
 			_array109E9[index] = var1h;
 			_array10A11[index] = var1l;
 		}
 	}
 
-	_array10999[index] = var1h;
-	_array109C1[index] = var1l;
+	_array10999PosX[index] = var1h;
+	_array109C1PosY[index] = var1l;
 
 	return sub16799(index, var1);
 }
@@ -2509,8 +2511,8 @@ void LilliputEngine::loadRules() {
 	assert(_rulesChunk12_size <= 40);
 
 	for (int i = 0; i < _rulesChunk12_size; i++) {
-		_rulesBuffer12_1[i] = f.readUint16LE();
-		_rulesBuffer12_2[i] = f.readUint16LE();
+		_rectXMinMax[i] = f.readUint16LE();
+		_rectYMinMax[i] = f.readUint16LE();
 		_rulesBuffer12_3[i] = f.readUint16LE();
 		_rulesBuffer12_4[i] = f.readUint16LE();
 	}

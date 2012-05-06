@@ -82,10 +82,10 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 	debugC(2, kDebugScript, "handleOpcodeType1(0x%x)", curWord);
 	switch (curWord) {
 	case 0x0:
-		return OC_sub173DF();
+		return OC_checkCharacterGoalPos();
 		break;
 	case 0x1:
-		return OC_sub173F0();
+		return OC_comparePos();
 		break;
 	case 0x2:
 		return OC_sub1740A();
@@ -178,10 +178,10 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_sub17886();
 		break;
 	case 0x20:
-		return OC_sub178A8();
+		return OC_CompareGameVariables();
 		break;
 	case 0x21:
-		return OC_sub178BA();
+		return OC_skipNextOpcode();
 		break;
 	case 0x22:
 		return OC_sub178C2();
@@ -552,11 +552,9 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 	}
 }
 
-
-
 static const OpCode opCodes1[] = {
-	{ "OC_sub173DF", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_sub173F0", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
+	{ "OC_checkCharacterGoalPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
+	{ "OC_comparePos", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
 	{ "OC_sub1740A", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_sub17434", 4, kGetValue1, kImmediateValue, kCompareOperation, kImmediateValue, kNone },
 	{ "OC_sub17468", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone },
@@ -587,8 +585,8 @@ static const OpCode opCodes1[] = {
 	{ "OC_sub17844", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_sub1785C", 3, kImmediateValue, kCompareOperation, kImmediateValue, kNone, kNone },
 	{ "OC_sub17886", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_sub178A8", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
-	{ "OC_sub178BA", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_CompareGameVariables", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
+	{ "OC_skipNextOpcode", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_sub178C2", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub178D2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_sub178E8", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
@@ -762,7 +760,7 @@ Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& 
 		break;
 			   }
 	case 0xFA:
-		str = Common::String::format("(_array10999[currentCharacter], _array109C1[currentCharacter])");
+		str = Common::String::format("(_array10999PosX[currentCharacter], _array109C1PosY[currentCharacter])");
 		break;
 	case 0xF9:
 		str = Common::String::format("(_currentCharacterVariables[4], _currentCharacterVariables[5])");
@@ -1330,7 +1328,7 @@ Common::Point LilliputScript::getPosFromScript() {
 		return Common::Point(x, y);
 		}
 	case 0xFA:
-		return Common::Point(_vm->_array10999[_vm->_currentScriptCharacter], _vm->_array109C1[_vm->_currentScriptCharacter]);
+		return Common::Point(_vm->_array10999PosX[_vm->_currentScriptCharacter], _vm->_array109C1PosY[_vm->_currentScriptCharacter]);
 	case 0xF9:
 		return Common::Point(_vm->_currentCharacterVariables[4], _vm->_currentCharacterVariables[5]);
 	case 0xF8: {
@@ -1375,9 +1373,8 @@ byte *LilliputScript::getCharacterVariablePtr() {
 	return _vm->getCharacterVariablesPtr(index);
 }
 
-//TODO rename to "check script character pos"
-byte LilliputScript::OC_sub173DF() {
-	debugC(2, kDebugScript, "OC_sub173F0()");
+byte LilliputScript::OC_checkCharacterGoalPos() {
+	debugC(2, kDebugScript, "OC_checkCharacterGoalPos()");
 
 	if (_vm->_currentScriptCharacterPos == getPosFromScript()) {
 		return 1;
@@ -1385,9 +1382,8 @@ byte LilliputScript::OC_sub173DF() {
 	return 0;
 }
 
-// TODO rename to "compare position"
-byte LilliputScript::OC_sub173F0() {
-	debugC(2, kDebugScript, "OC_sub173F0()");
+byte LilliputScript::OC_comparePos() {
+	debugC(2, kDebugScript, "OC_comparePos()");
 
 	int index = getValue1();
 	byte d1 = _array16123[index];
@@ -1422,6 +1418,7 @@ byte LilliputScript::OC_sub1740A() {
 	}
 }
 
+// Compare field0 with value -> character id?
 byte LilliputScript::OC_sub17434() {
 	debugC(1, kDebugScript, "OC_sub17434()");
 
@@ -1540,16 +1537,15 @@ byte LilliputScript::OC_sub1750E() {
 	return compareValues(var1, operation, var2);
 }
 
-// TODO Rename arrays to "x min/max" and "y min/max"
-// TODO Rename function to "Check if point in rectangle"
+// TODO Rename function to "Check if character pos in rectangle"
 byte LilliputScript::OC_compareCoords_1() {
 	debugC(1, kDebugScript, "OC_compareCoords_1()");
 
 	int index = _currScript->readUint16LE();
 	assert(index < 40);
 
-	int var3 = _vm->_rulesBuffer12_1[index];
-	int var4 = _vm->_rulesBuffer12_2[index];
+	int var3 = _vm->_rectXMinMax[index];
+	int var4 = _vm->_rectYMinMax[index];
 	Common::Point var1 = _vm->_currentScriptCharacterPos;
 
 	if ((var1.x < (var3 >> 8)) || (var1.x > (var3 & 0xFF)) || (var1.y < (var4 >> 8)) || (var1.y > (var4 & 0xFF)))
@@ -1558,18 +1554,21 @@ byte LilliputScript::OC_compareCoords_1() {
 	return 1;
 }
 
+// TODO Rename function to "Check if character pos in rectangle"
 byte LilliputScript::OC_compareCoords_2() {
 	debugC(1, kDebugScript, "OC_compareCoords_2()");
-	int var1 = getValue1();
-	var1 = (_array16123[var1] << 8) + _array1614B[var1];
-	int var2 = _currScript->readUint16LE();
-	int var3 = _vm->_rulesBuffer12_1[var2];
-	int var4 = _vm->_rulesBuffer12_2[var2];
 
-	if (((var1 >> 8) < (var3 >> 8)) || ((var1 >> 8) > (var3 & 0xFF)) || ((var1 & 0xFF) < (var4 >> 8)) || ((var1 & 0xFF) > (var4 & 0xFF)))
+	int index = getValue1();
+	Common::Point var1 = Common::Point(_array16123[index], _array1614B[index]);
+	uint16 var2 = _currScript->readUint16LE();
+	uint16 var3 = _vm->_rectXMinMax[var2];
+	uint16 var4 = _vm->_rectYMinMax[var2];
+
+	if ((var1.x < (var3 >> 8)) || (var1.x > (var3 & 0xFF)) || (var1.y < (var4 >> 8)) || (var1.y > (var4 & 0xFF)))
 		return 0;
 	return 1;
 }
+
 byte LilliputScript::OC_sub1757C() {
 	warning("OC_sub1757C");
 	return 0;
@@ -1757,11 +1756,10 @@ byte LilliputScript::OC_sub17782() {
 	return 0;
 }
 
-//TODO verify "*320"
 byte *LilliputScript::getMapPtr(Common::Point val) {
 	debugC(1, kDebugScript, "getMapPtr(%d %d)", val.x, val.y);
 
-	return &_vm->_bufferIsoMap[(val.y * 320 + val.x) << 2];
+	return &_vm->_bufferIsoMap[(val.y * 64 + val.x) << 2];
 }
 
 byte LilliputScript::OC_sub1779E() {
@@ -1884,8 +1882,8 @@ byte LilliputScript::OC_sub17886() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub178A8() {
-	debugC(1, kDebugScript, "OC_sub178A8()");
+byte LilliputScript::OC_CompareGameVariables() {
+	debugC(1, kDebugScript, "OC_CompareGameVariables()");
 
 	int var1 = getValue1();
 	int var2 = getValue1();
@@ -1894,7 +1892,9 @@ byte LilliputScript::OC_sub178A8() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub178BA() {
+byte LilliputScript::OC_skipNextOpcode() {
+	debugC(1, kDebugScript, "OC_skipNextOpcode()");
+
 	_currScript->readUint16LE();
 	return 1;
 }
@@ -2036,13 +2036,12 @@ byte LilliputScript::OC_sub179AE() {
 	return 1;
 }
 
-//TODO rename arrays
 byte LilliputScript::OC_sub179C2() {
 	debugC(1, kDebugScript, "OC_sub179C2()");
 	Common::Point var1 = getPosFromScript();
 
-	if ((_vm->_array10999[_vm->_currentScriptCharacter] == var1.x)
-		 && (_vm->_array109C1[_vm->_currentScriptCharacter] == var1.y))
+	if ((_vm->_array10999PosX[_vm->_currentScriptCharacter] == var1.x)
+		 && (_vm->_array109C1PosY[_vm->_currentScriptCharacter] == var1.y))
 		return 1;
 
 	return 0;
@@ -2366,8 +2365,8 @@ void LilliputScript::OC_sub17ACC() {
 	debugC(1, kDebugScript, "OC_sub17ACC()");
 
 	Common::Point var = getPosFromScript();
-	_vm->_array10999[_vm->_currentScriptCharacter] = var.x;
-	_vm->_array109C1[_vm->_currentScriptCharacter] = var.y;
+	_vm->_array10999PosX[_vm->_currentScriptCharacter] = var.x;
+	_vm->_array109C1PosY[_vm->_currentScriptCharacter] = var.y;
 	_vm->_array109E9[_vm->_currentScriptCharacter] = 0xFF;
 }
 
