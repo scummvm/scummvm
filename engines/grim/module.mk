@@ -99,6 +99,7 @@ MODULE_OBJS := \
 	lua_v1.o \
 	lua_v1_actor.o \
 	lua_v1_graphics.o \
+	lua_v1_set.o \
 	lua_v1_sound.o \
 	lua_v1_text.o \
 	material.o \
