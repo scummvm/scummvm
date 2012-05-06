@@ -49,6 +49,7 @@
 #ifndef TONY_CUSTOM_H
 #define TONY_CUSTOM_H
 
+#include "common/str.h"
 #include "tony/mpal/mpal.h"
 
 namespace Tony {
@@ -70,18 +71,19 @@ typedef uint32 HWND;
 	static void AssignError(int num)	{ \
 		error("Custom function %u has been already assigned!", num);		\
 	}																																					\
-	void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap) \
+	void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap, Common::String *lpStrMap) \
 	{																																				
 
 
-#define END_CUSTOM_FUNCTION_MAP()																						\
+#define END_CUSTOM_FUNCTION_MAP()		\
 	}
 
 
-#define ASSIGN(num, func)																										\
-	if (lpMap[num] != NULL)																											\
-		AssignError(num);																									\
-	lpMap[num] = func;																													
+#define ASSIGN(num, func)				\
+	if (lpMap[num] != NULL)				\
+		AssignError(num);				\
+	lpMap[num] = func;					\
+	lpStrMap[num] = #func;
 
 class RMTony;
 class RMPointer;
@@ -90,7 +92,7 @@ class RMLocation;
 class RMInventory;
 class RMInput;
 
-void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap);
+void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap, Common::String *lpStrMap);
 void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input);
 
 #endif

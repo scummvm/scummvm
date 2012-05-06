@@ -119,6 +119,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/str.h"
 #include "tony/coroutine.h"
 
 namespace Tony {
@@ -602,7 +603,7 @@ extern "C" {
 \****************************************************************************/
 
 bool EXPORT mpalInit(const char *lpszFileName, const char *lpszMprFileName,
-  LPLPCUSTOMFUNCTION lplpcfArray);
+					 LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings);
 
 
 

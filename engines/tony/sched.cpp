@@ -314,7 +314,7 @@ void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration, bool *exp
 	while (g_system->getMillis() < _ctx->endTime) {
 		// Check to see if a process with the given Id exists
 		_ctx->pProc = active->pNext;
-		while ((_ctx->pProc != NULL) && (_ctx->pProc->pid == pid))
+		while ((_ctx->pProc != NULL) && (_ctx->pProc->pid != pid))
 			_ctx->pProc = _ctx->pProc->pNext;
 
 		if (_ctx->pProc == NULL) {

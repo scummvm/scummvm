@@ -88,6 +88,7 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	LPCUSTOMFUNCTION FuncList[300];
+	Common::String FuncListStrings[300];
 	Common::RandomSource _randomSource;
 	MPAL::MemoryManager _memoryManager;
 	RMResUpdate _resUpdate;

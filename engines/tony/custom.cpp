@@ -1680,7 +1680,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 	// Cerca di eseguire la funzione custom per chiudere la parlata
 	if (MCharacter[nChar].item) {
-		h=mpalQueryDoAction(31,MCharacter[nChar].item->MpalCode(),parm);
+		h = mpalQueryDoAction(31,MCharacter[nChar].item->MpalCode(),parm);
 		if (h!=INVALID_HANDLE_VALUE)
 			WaitForSingleObject(h,INFINITE);
 	}
@@ -1724,7 +1724,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		g_system->unlockMutex(vdb);
 	}
 
-	string=mpalQueryDialogPeriod(nMsg);
+	string = mpalQueryDialogPeriod(nMsg);
 
 	if (nPers == 0) {
 		text = new RMTextDialog;
@@ -1847,7 +1847,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			if ((MCharacter[nPers].bInTexts && MCharacter[nPers].numtexts== 0) || !MCharacter[nPers].bInTexts) {
 				// Cerca di eseguire la funzione custom per chiudere la parlata
 				MCharacter[nPers].curTalk = (MCharacter[nPers].curTalk%10) + MCharacter[nPers].curgroup*10;
-				h=mpalQueryDoAction(31,MCharacter[nPers].item->MpalCode(),MCharacter[nPers].curTalk);
+				h = mpalQueryDoAction(31,MCharacter[nPers].item->MpalCode(),MCharacter[nPers].curTalk);
 				if (h!=INVALID_HANDLE_VALUE)
 					WaitForSingleObject(h,INFINITE);
 
@@ -1872,7 +1872,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 }
 
 
-// @@@@ QUESTA NON SI PUO' SKIPPARE!!!!!!!!!!!!!!!!!!!
+// @@@@ This cannot be skipped!!!!!!!!!!!!!!!!!!!
 
 DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGroup, uint32, uint32) {
 	int nChoice;
@@ -1888,9 +1888,9 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 	mpalQueryDoDialogU32(nDialog, nStartGroup);
 
 	// Aspetta che una scelta si presenti
-	while ((nChoice=mpalQueryDialogWaitForChoice()) != -1) {
+	while ((nChoice = mpalQueryDialogWaitForChoice()) != -1) {
 		// Si fa dare la lista di opzioni e le conta
-		sl=mpalQueryDialogSelectList(nChoice);
+		sl = mpalQueryDialogSelectList(nChoice);
 		for (num = 0; sl[num] != 0; num++)
 			;
 
@@ -1906,7 +1906,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		dc.SetNumChoices(num);
 
 		// Scrive tutte le possibili opzioni
-		for (i = 0;i < num; i++) {
+		for (i = 0; i < num; i++) {
 			string = mpalQueryDialogPeriod(sl[i]);
 			assert(string != NULL);
 			dc.AddChoice(string);

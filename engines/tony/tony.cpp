@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "tony/tony.h"
@@ -37,6 +38,11 @@ TonyEngine *_vm;
 TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst), 
 		_gameDescription(gameDesc), _randomSource("tony") {
 	_vm = this;
+
+	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");
+	DebugMan.addDebugChannel(kTonyDebugActions, "actions", "Actions debugging");
+	DebugMan.addDebugChannel(kTonyDebugSound, "sound", "Sound debugging");
+	DebugMan.addDebugChannel(kTonyDebugMusic, "music", "Music debugging");
 }
 
 TonyEngine::~TonyEngine() {
@@ -84,7 +90,7 @@ Common::ErrorCode TonyEngine::Init() {
 		return Common::kReadingFailed;
 	f.close();
 
-	if (!mpalInit("ROASTED.MPC", "ROASTED.MPR", FuncList))
+	if (!mpalInit("ROASTED.MPC", "ROASTED.MPR", FuncList, FuncListStrings))
 		return Common::kUnknownError;
 
 	// Initialise the update resources
@@ -133,7 +139,7 @@ Common::ErrorCode TonyEngine::Init() {
 }
 
 void TonyEngine::InitCustomFunctionMap() {
-	INIT_CUSTOM_FUNCTION(FuncList);
+	INIT_CUSTOM_FUNCTION(FuncList, FuncListStrings);
 }
 
 /**

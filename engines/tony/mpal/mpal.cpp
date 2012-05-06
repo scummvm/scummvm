@@ -102,7 +102,8 @@ static byte *           lpMpcImage;
 
 LPITEMIRQFUNCTION        lpiifCustom=NULL;
 
-LPLPCUSTOMFUNCTION       lplpFunctions=NULL;
+LPLPCUSTOMFUNCTION      lplpFunctions = NULL;
+Common::String *		lplpFunctionStrings = NULL;
 uint16                   nObjs;
 
 uint16                   nVars;
@@ -959,6 +960,12 @@ void ActionThread(CORO_PARAM, const void *param) {
 
 		if (item->Command[_ctx->k].type == 1) {
 			// Custom function
+			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Call=%s params=%d,%d,%d,%d",
+				_vm->_scheduler.getCurrentPID(), lplpFunctionStrings[item->Command[_ctx->k].nCf].c_str(),
+				item->Command[_ctx->k].arg1, item->Command[_ctx->k].arg2,
+				item->Command[_ctx->k].arg3, item->Command[_ctx->k].arg4
+			);
+
 			CORO_INVOKE_4(lplpFunctions[item->Command[_ctx->k].nCf],
 				item->Command[_ctx->k].arg1,
 				item->Command[_ctx->k].arg2,
@@ -968,6 +975,9 @@ void ActionThread(CORO_PARAM, const void *param) {
 			);
 		} else if (item->Command[_ctx->k].type == 2) {
 			// Variable assign
+			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Variable=%s",
+				_vm->_scheduler.getCurrentPID(), item->Command[_ctx->k].lpszVarName);
+
 			LockVar();
 			varSetValue(item->Command[_ctx->k].lpszVarName, EvaluateExpression(item->Command[_ctx->k].expr));
 			UnlockVar();
@@ -981,6 +991,8 @@ void ActionThread(CORO_PARAM, const void *param) {
 
 	GlobalFree(item);
 	
+	debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d ended", _vm->_scheduler.getCurrentPID());
+
 	CORO_KILL_SELF();
 
 	CORO_END_CODE;
@@ -1705,7 +1717,8 @@ bool DoSelection(uint32 i, uint32 dwData) {
 *
 \****************************************************************************/
 
-bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName, LPLPCUSTOMFUNCTION lplpcfArray) {
+bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName, 
+			  LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings) {
 	Common::File hMpc;
 	byte buf[5];
 	uint32 nBytesRead;
@@ -1719,6 +1732,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName, LPLPCUST
 
 	/* Si salva l'array delle funzioni custom */
 	lplpFunctions = lplpcfArray;
+	lplpFunctionStrings = lpcfStrings;
 
 	/* Apre il file MPC in lettura */
 	if (!hMpc.open(lpszMpcFileName))
