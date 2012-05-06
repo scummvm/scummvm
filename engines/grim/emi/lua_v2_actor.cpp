@@ -24,6 +24,7 @@
 #include "engines/grim/lua/lua.h"
 
 #include "engines/grim/actor.h"
+#include "engines/grim/grim.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/costume/chore.h"
 
@@ -109,6 +110,7 @@ void Lua_V2::UnloadActor() {
 
 	// This should be safe.
 	delete actor;
+	g_grim->invalidateActiveActorsList();
 }
 
 void Lua_V2::SetActorWalkRate() {
