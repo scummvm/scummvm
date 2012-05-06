@@ -20,11 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
-
 #include "common/foreach.h"
 #include "common/system.h"
 

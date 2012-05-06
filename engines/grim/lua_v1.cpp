@@ -20,8 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "common/endian.h"
 #include "common/system.h"
 

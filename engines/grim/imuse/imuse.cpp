@@ -20,9 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
-#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
-
 #include "common/timer.h"
 
 #include "engines/grim/savegame.h"
