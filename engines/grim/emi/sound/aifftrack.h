@@ -42,6 +42,8 @@ public:
 	bool isPlaying() { return true; }
 	void setLooping(bool looping);
 	bool play();
+private:
+	bool _looping;
 };
 
 }
