@@ -768,7 +768,7 @@ Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& 
 	case 0xF8: {
 		int index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
-		str = Common::String::format("_vm->_rulesBuffer12_3[%d]", index);
+		str = Common::String::format("_vm->_rulesBuffer12Pos3[%d]", index);
 	}
 	case 0xF7: {
 		str = Common::String::format("(_characterPositionTileX[_currentCharacterVariables[6]], _characterPositionTileY[_currentCharacterVariables[6]])");
@@ -1334,7 +1334,7 @@ Common::Point LilliputScript::getPosFromScript() {
 	case 0xF8: {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
-		return Common::Point(_vm->_rulesBuffer12_3[index] >> 8, _vm->_rulesBuffer12_3[index] & 0xFF);
+		return _vm->_rulesBuffer12Pos3[index];
 		}
 	case 0xF7: {
 		int8 index = _vm->_currentCharacterVariables[6];
