@@ -152,9 +152,9 @@ public:
 
 	byte *_rulesChunk1;
 	int _currentScriptCharacter;
-	int _characterPositionX[40];
-	int _characterPositionY[40];
-	byte _characterPositionAltitude[40];
+	int16 _characterPositionX[40];
+	int16 _characterPositionY[40];
+	char _characterPositionAltitude[40];
 	int _characterFrameArray[40];
 	byte _rulesBuffer2_5[40];
 	byte _rulesBuffer2_6[40];
@@ -184,26 +184,26 @@ public:
 	int *_rulesChunk10;
 	byte *_rulesChunk11;
 	int _rulesChunk12_size;
-	uint16 _rectXMinMax[40];
-	uint16 _rectYMinMax[40];
+	int16 _rectXMinMax[40];
+	int16 _rectYMinMax[40];
 	int _rulesBuffer12_3[40];
-	int _rulesBuffer12_4[40];
+	Common::Point _rulesBuffer12Pos[40];
 	int _word12F68_ERULES;
 	byte _rulesBuffer13_1[20];
 	int _interfaceHotspotsX[20];
 	int _interfaceHotspotsY[20];
 	byte _rulesBuffer13_4[20];
-	byte _array10999PosX[40];
-	byte _array109C1PosY[40];
+	int16 _array10999PosX[40];
+	int16 _array109C1PosY[40];
 	byte _array15AC8[256];
 	byte _charactersToDisplay[40];
-	byte _characterRelativePositionX[40];
-	byte _characterRelativePositionY[40];
-	byte _characterDisplayX[40];
-	byte _characterDisplayY[40];
+	int16 _characterRelativePositionX[40];
+	int16 _characterRelativePositionY[40];
+	int16 _characterDisplayX[40];
+	int16 _characterDisplayY[40];
 	byte _array12299[40];
-	byte _array109E9[40];
-	byte _array10A11[40];
+	int16 _array109E9PosX[40];
+	int16 _array10A11PosY[40];
 	byte _array16E94[40];
 	byte _array16C54[4];
 	byte _array16C58[4];
@@ -266,7 +266,7 @@ public:
 	void renderCharacters(byte *buf, byte x, byte y);
 
 	byte sub16799(int param1, int index);
-	int sub16B0C(Common::Point param1, Common::Point param2);
+	int getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
 	void prepareGoldAmount(int param1);
 	void sub12F37();
@@ -305,7 +305,7 @@ public:
 	void sub16B8F(int index, int x, int y, int flag);
 	byte sub1675D(int index, int var1);
 	byte sub16729(int index);
-	byte sub166F7(int index, int var1, int tmpVal);
+	byte sub166F7(int index, Common::Point var1, int tmpVal);
 	void sub1693A(int index);
 
 	void initGame(const LilliputGameDescription *gd);
