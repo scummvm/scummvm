@@ -91,7 +91,7 @@ public:
 	void createFont(Font *font);
 	void destroyFont(Font *font);
 
-	void drawTextObject(TextObject *text);
+	void drawTextObject(const TextObject *text);
 	void createTextObject(TextObject *text);
 	void destroyTextObject(TextObject *text);
 

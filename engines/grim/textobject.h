@@ -36,25 +36,25 @@ class Font;
 class TextObjectCommon {
 public:
 	void setX(int x) { _x = x; _positioned = false; }
-	int getX() { return _x; }
+	int getX() const { return _x; }
 
 	void setY(int y) { _y = y; _positioned = false; }
-	int getY() { return _y; }
+	int getY() const { return _y; }
 
 	void setFont(Font *font) { _font = font; }
-	Font *getFont() { return _font; }
+	const Font *getFont() const { return _font; }
 
 	void setFGColor(const Color &fgColor) { _fgColor = fgColor; }
-	Color getFGColor() { return _fgColor; }
+	Color getFGColor() const { return _fgColor; }
 
 	void setJustify(int justify) { _justify = justify; }
-	int getJustify() { return _justify; }
+	int getJustify() const { return _justify; }
 
 	void setWidth(int width) { _width = width; }
-	int getWidth() { return _width; }
+	int getWidth() const { return _width; }
 
 	void setHeight(int height) { _height = height; }
-	int getHeight() { return _height; }
+	int getHeight() const { return _height; }
 
 	void setDuration(int duration) { _duration = duration; }
 	int getDuration() const { return _duration; }
@@ -67,7 +67,7 @@ protected:
 	int _posX, _posY;
 	int _width, _height;
 	int _justify;
-	Font *_font;
+	const Font *_font;
 	int _duration;
 	bool _positioned;
 };
@@ -89,18 +89,18 @@ public:
 	void setText(const Common::String &text);
 	void reset();
 
-	int getBitmapWidth();
-	int getBitmapHeight();
+	int getBitmapWidth() const;
+	int getBitmapHeight() const;
 	int getTextCharPosition(int pos);
 
-	int getLineX(int line);
-	int getLineY(int line);
+	int getLineX(int line) const;
+	int getLineY(int line) const;
 
-	void *getUserData() { return _userData; }
+	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
 
-	const Common::String *getLines() { return _lines; }
-	int getNumLines() { return _numberLines; }
+	const Common::String *getLines() const { return _lines; }
+	int getNumLines() const { return _numberLines; }
 
 	const Common::String &getName() const { return _textID; }
 	void draw();

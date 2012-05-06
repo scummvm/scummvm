@@ -59,7 +59,7 @@ public:
 
 	int getStringLength(const Common::String &text) const;
 
-	void *getUserData() { return _userData; }
+	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
 
 	void saveState(SaveGame *state) const;

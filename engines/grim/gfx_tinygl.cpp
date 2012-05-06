@@ -969,7 +969,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 	}
 }
 
-void GfxTinyGL::drawTextObject(TextObject *text) {
+void GfxTinyGL::drawTextObject(const TextObject *text) {
 	TextObjectData *userData = (TextObjectData *)text->getUserData();
 	if (userData) {
 		int numLines = text->getNumLines();

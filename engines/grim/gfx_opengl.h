@@ -100,7 +100,7 @@ public:
 	void destroyFont(Font *font);
 
 	void createTextObject(TextObject *text);
-	void drawTextObject(TextObject *text);
+	void drawTextObject(const TextObject *text);
 	void destroyTextObject(TextObject *text);
 
 	Bitmap *getScreenshot(int w, int h);

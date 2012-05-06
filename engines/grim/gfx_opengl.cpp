@@ -1002,7 +1002,7 @@ void GfxOpenGL::destroyFont(Font *font) {
 void GfxOpenGL::createTextObject(TextObject *text) {
 }
 
-void GfxOpenGL::drawTextObject(TextObject *text) {
+void GfxOpenGL::drawTextObject(const TextObject *text) {
 	if (!text)
 		return;
 
@@ -1022,10 +1022,10 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 	glDepthMask(GL_FALSE);
 
 	const Color &color = text->getFGColor();
-	Font *font = text->getFont();
+	const Font *font = text->getFont();
 
 	glColor3f(color.getRed() / 255.f, color.getGreen() / 255.f, color.getBlue() / 255.f);
-	FontUserData *userData = (FontUserData *)font->getUserData();
+	const FontUserData *userData = (const FontUserData *)font->getUserData();
 	if (!userData)
 		error("Could not get font userdata");
 	float size = userData->size * _scaleW;

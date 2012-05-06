@@ -120,11 +120,11 @@ void TextObject::setDefaults(TextObjectDefaults *defaults) {
 	_justify = defaults->getJustify();
 }
 
-int TextObject::getBitmapWidth() {
+int TextObject::getBitmapWidth() const {
 	return _maxLineWidth;
 }
 
-int TextObject::getBitmapHeight() {
+int TextObject::getBitmapHeight() const {
 	return _numberLines * _font->getHeight();
 }
 
@@ -302,7 +302,7 @@ void TextObject::setupText() {
 	_elapsedTime = 0;
 }
 
-int TextObject::getLineX(int line) {
+int TextObject::getLineX(int line) const {
 	int x = _posX;
 	if (_justify == CENTER)
 		x = _posX - (_font->getStringLength(_lines[line]) / 2);
@@ -314,7 +314,7 @@ int TextObject::getLineX(int line) {
 	return x;
 }
 
-int TextObject::getLineY(int line) {
+int TextObject::getLineY(int line) const {
 	int y = _posY;
 	if (_blastDraw)
 		y = _posY + 5;
