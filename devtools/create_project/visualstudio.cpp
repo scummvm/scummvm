@@ -110,7 +110,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 		std::string toolConfig;
 		toolConfig  = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
-		toolConfig += (name == "tinsel" ? "DebugInformationFormat=\"3\" " : "");
+		toolConfig += ((name == "tinsel" || name == "tony") ? "DebugInformationFormat=\"3\" " : "");
 		toolConfig += (name == "sword25" ? "DisableLanguageExtensions=\"false\" " : "");
 		toolConfig += (name == "grim" ? "DisableLanguageExtensions=\"false\" " : "");
 
