@@ -1106,16 +1106,11 @@ bool GrimEngine::areActorsTalking() const {
 	return talking;
 }
 
-void GrimEngine::setMovieSubtitle(TextObject *to)
-{
+void GrimEngine::setMovieSubtitle(TextObject *to) {
 	if (_movieSubtitle != to) {
 		delete _movieSubtitle;
 		_movieSubtitle = to;
 	}
-}
-
-const Common::String &GrimEngine::getSetName() const {
-	return _currSet->getName();
 }
 
 void GrimEngine::clearEventQueue() {

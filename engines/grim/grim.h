@@ -139,7 +139,6 @@ public:
 	void setSet(const char *name);
 	void setSet(Set *scene);
 	Set *getCurrSet() { return _currSet; }
-	const Common::String &getSetName() const;
 	void makeCurrentSetup(int num);
 
 	void flagRefreshShadowMask(bool flag) { _refreshShadowMask = flag; }
