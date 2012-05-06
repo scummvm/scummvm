@@ -184,8 +184,8 @@ public:
 	int *_rulesChunk10;
 	byte *_rulesChunk11;
 	int _rulesChunk12_size;
-	int _rulesBuffer12_1[40];
-	int _rulesBuffer12_2[40];
+	uint16 _rectXMinMax[40];
+	uint16 _rectYMinMax[40];
 	int _rulesBuffer12_3[40];
 	int _rulesBuffer12_4[40];
 	int _word12F68_ERULES;
@@ -193,8 +193,8 @@ public:
 	int _interfaceHotspotsX[20];
 	int _interfaceHotspotsY[20];
 	byte _rulesBuffer13_4[20];
-	byte _array10999[40];
-	byte _array109C1[40];
+	byte _array10999PosX[40];
+	byte _array109C1PosY[40];
 	byte _array15AC8[256];
 	byte _charactersToDisplay[40];
 	byte _characterRelativePositionX[40];
@@ -257,7 +257,7 @@ public:
 	byte sub16A76(int indexb, int indexs);
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
-	uint16 sub168DA(byte var1h, byte var1l);
+	uint16 sub168DA(Common::Point pos);
 	uint16 sub16901(byte var1h, byte var1l);
 	byte sub16722(int index, byte var1);
 	byte sub166EA(int index);

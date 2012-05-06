@@ -147,8 +147,8 @@ private:
 	void computeOperation(byte *bufPtr, int oper, int var2);
 
 	//Opcodes Type 1
-	byte OC_sub173DF();
-	byte OC_sub173F0();
+	byte OC_checkCharacterGoalPos();
+	byte OC_comparePos();
 	byte OC_sub1740A();
 	byte OC_sub17434();
 	byte OC_sub17468();
@@ -179,8 +179,8 @@ private:
 	byte OC_sub17844();
 	byte OC_sub1785C();
 	byte OC_sub17886();
-	byte OC_sub178A8();
-	byte OC_sub178BA();
+	byte OC_CompareGameVariables();
+	byte OC_skipNextOpcode();
 	byte OC_sub178C2();
 	byte OC_sub178D2();
 	byte OC_sub178E8();
