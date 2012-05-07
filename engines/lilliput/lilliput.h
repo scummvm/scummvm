@@ -257,8 +257,8 @@ public:
 	byte sub16A76(int indexb, int indexs);
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
-	uint16 sub168DA(Common::Point pos);
-	uint16 sub16901(byte var1h, byte var1l);
+	int findHotspot(Common::Point pos);
+	int reverseFindHotspot(Common::Point pos);
 	byte sub16722(int index, byte var1);
 	byte sub166EA(int index);
 	void sub167EF(int index);
