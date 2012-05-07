@@ -408,7 +408,9 @@ public:
 	int GetCurPattern();
 
 	// Attende la fine di un pattern
-	void WaitForEndPattern(HANDLE hCustomSkip = INVALID_HANDLE_VALUE) { RMCharacter::WaitForEndPattern(hCustomSkip);}
+	void WaitForEndPattern(CORO_PARAM, HANDLE hCustomSkip = INVALID_HANDLE_VALUE) { 
+		RMCharacter::WaitForEndPattern(coroParam, hCustomSkip);
+	}
 
 	// Controlla se si trova in azione
 	bool InAction() { return (m_bActionPending&&m_Action != 0) | m_bAction; }
@@ -427,12 +429,18 @@ public:
 	void Put(int nWhere, int nPart);
 
 	// Start e End Talk
-	void StartTalk(TALKTYPE nTalkType);
-	void EndTalk(void);
+	bool StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &bodyStartPat,
+			int &headLoopPat, int &bodyLoopPat);
+	void StartTalk(CORO_PARAM, TALKTYPE nTalkType);
+	bool EndTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic);
+	void EndTalk(CORO_PARAM);
 
 	// Start e End Static
-	void StartStatic(TALKTYPE nTalkType);
-	void EndStatic(TALKTYPE nTalkType);
+	void StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat,
+			int &bodyStartPat, int &bodyLoopPat);
+	void StartStatic(CORO_PARAM, TALKTYPE nTalkType);
+	void EndStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
+	void EndStatic(CORO_PARAM, TALKTYPE nTalkType);
 
 	// Tony si traveste!
 	void SetPastorella(bool bIsPast) { m_bPastorella=bIsPast; }

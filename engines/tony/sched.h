@@ -24,6 +24,7 @@
 #ifndef TONY_SCHED_H
 #define TONY_SCHED_H
 
+#include "common/list.h"
 #include "tony/coroutine.h"
 
 namespace Tony {
@@ -48,12 +49,19 @@ struct PROCESS {
 	CORO_ADDR  coroAddr;	///< the entry point of the coroutine
 
 	int sleepTime;		///< number of scheduler cycles to sleep
-	int pid;		///< process ID
+	uint32 pid;			///< process ID
 	char param[PARAM_SIZE];	///< process specific info
 };
 typedef PROCESS *PPROCESS;
 
 struct INT_CONTEXT;
+
+/** Event structure */
+struct EVENT {
+	uint32 pid;
+	bool manualReset;
+	bool signalled;
+};
 
 /**
  * Create and manage "processes" (really coroutines).
@@ -80,6 +88,8 @@ private:
 	/** Auto-incrementing process Id */
 	int pidCounter;
 
+	/** Event list */
+	Common::List<EVENT *> _events;
 
 #ifdef DEBUG
 	// diagnostic process counters
@@ -95,7 +105,8 @@ private:
 	 */
 	VFPTRPP pRCfunction;
 
-
+	PROCESS *getProcess(uint32 pid);
+	EVENT *getEvent(uint32 pid);
 public:
 
 	Scheduler();
@@ -111,7 +122,9 @@ public:
 	void rescheduleAll();
 	void reschedule(PPROCESS pReSchedProc = NULL);
 	void giveWay(PPROCESS pReSchedProc = NULL);
-	void waitForSingleObject(CORO_PARAM, int pid, int duration, bool *delay = NULL);
+	void waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired = NULL);
+	void waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
+		uint32 duration, bool *expired = NULL);
 
 	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam);
 	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam) {
@@ -123,9 +136,13 @@ public:
 	int getCurrentPID() const;
 	int killMatchingProcess(int pidKill, int pidMask = -1);
 
-
 	void setResourceCallback(VFPTRPP pFunc);
 
+	/* Event methods */
+	uint32 createEvent(bool bManualReset, bool bInitialState);
+	void closeEvent(uint32 pidEvent);
+	void setEvent(uint32 pidEvent);
+	void resetEvent(uint32 pidEvent);
 };
 
 extern Scheduler *g_scheduler;	// FIXME: Temporary global var, to be used until everything has been OOifyied

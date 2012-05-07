@@ -52,6 +52,7 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "tony/mpal/stubs.h"
+#include "tony/sched.h"
 #include "tony/sound.h"
 #include "tony/utils.h"
 
@@ -245,7 +246,7 @@ private:
 	byte m_bCurFlag;
 	int m_nCurSprite;
 	bool m_bIsActive;
-	HANDLE m_hEndPattern;
+	uint32 m_hEndPattern;
 	bool m_bInitCurPattern;
 
 public:
@@ -291,7 +292,7 @@ public:
 	void Unload(void);
 
 	// Aspetta la fine del pattern in play
-	void WaitForEndPattern(HANDLE hCustomSkip = INVALID_HANDLE_VALUE);
+	void WaitForEndPattern(CORO_PARAM, HANDLE hCustomSkip = INVALID_HANDLE_VALUE);
 
 	// Setta un nuovo hotspot per l'oggetto
 	void ChangeHotspot(RMPoint pt);

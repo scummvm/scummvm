@@ -141,8 +141,8 @@ uint32                    nPollingLocations[MAXPOLLINGLOCATIONS];
 HANDLE                   hEndPollingLocations[MAXPOLLINGLOCATIONS];
 uint32                   PollingThreads[MAXPOLLINGLOCATIONS];
 
-HANDLE                   hAskChoice;
-HANDLE                   hDoneChoice;
+uint32					hAskChoice;
+uint32					hDoneChoice;
 
 uint32                    nExecutingAction;
 
@@ -1349,7 +1349,7 @@ void ShutUpDialogThread(CORO_PARAM, const void *param) {
 	nExecutingDialog = 0;
 	nExecutingChoice = 0;
 
-	SetEvent(hAskChoice);
+	_vm->_scheduler.setEvent(hAskChoice);
 
 	CORO_KILL_SELF();
 
@@ -1501,9 +1501,9 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 
 		/* Avvertiamo il gioco che c'e' una scelta da far fare all'utente,
 			e restiamo in attesa della risposta */
-		ResetEvent(hDoneChoice);
-		SetEvent(hAskChoice);
-		WaitForSingleObject(hDoneChoice, INFINITE);
+		_vm->_scheduler.resetEvent(hDoneChoice);
+		_vm->_scheduler.setEvent(hAskChoice);
+		CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, hDoneChoice, INFINITE);
 
 		/* Ora che la scelta e' stata effettuata, possiamo eseguire _ctx->i gruppi
 			associati con la scelta */
@@ -1644,8 +1644,8 @@ static uint32 DoDialog(uint32 nDlgOrd, uint32 nGroup) {
 	// Enables the flag to indicate that there is' a running dialogue
 	bExecutingDialog = true;
 
-	ResetEvent(hAskChoice);
-	ResetEvent(hDoneChoice);
+	_vm->_scheduler.resetEvent(hAskChoice);
+	_vm->_scheduler.resetEvent(hDoneChoice);
 
 	// Create a thread that performs the dialogue group
 
@@ -1690,7 +1690,7 @@ bool DoSelection(uint32 i, uint32 dwData) {
 		return false;
 
 	nSelectedChoice = j;
-	SetEvent(hDoneChoice);
+	_vm->_scheduler.setEvent(hDoneChoice);
 	return true;
 }
 
@@ -1867,8 +1867,8 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	/* Crea l'evento che verra' utilizzato per avvertire il gioco che c'e'
 		da effettuare una scelta */
-	hAskChoice = CreateEvent(NULL, true, false, NULL);
-	hDoneChoice = CreateEvent(NULL, true, false, NULL);
+	hAskChoice = _vm->_scheduler.createEvent(true, false);
+	hDoneChoice = _vm->_scheduler.createEvent(true, false);
 
 	return true;
 }
@@ -2031,8 +2031,9 @@ void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
 		/*
 		 *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
 		 */
-		WaitForSingleObject(hAskChoice, INFINITE);
-		ResetEvent(hAskChoice);
+		CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, hAskChoice, INFINITE);
+
+		_vm->_scheduler.resetEvent(hAskChoice);
 
 		if (bExecutingDialog)
 			*dwRet = (uint32)nExecutingChoice;

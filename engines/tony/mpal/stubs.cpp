@@ -90,16 +90,20 @@ uint32 WaitForMultipleObjects(uint32 nCount, const HANDLE *lpHandles, bool bWait
 }
 
 HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInitialState, const char *lpName) {
+	warning("TODO: Refactor call to old style CreateEvent method");
 	return 0;
 }
 
 void SetEvent(HANDLE hEvent) {
+	warning("TODO: Refactor call to old style SetEvent method");
 }
 
 void ResetEvent(HANDLE hEvent) {
+	warning("TODO: Refactor call to old style ResetEvent method");
 }
 
 void PulseEvent(HANDLE hEvent) {
+	warning("TODO: Refactor call to old style PulseEvent method");
 }
 
 uint16 GetAsyncKeyState(Common::KeyCode kc) {

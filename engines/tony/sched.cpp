@@ -67,6 +67,11 @@ Scheduler::~Scheduler() {
 
 	delete active;
 	active = 0;
+
+	// Clear the event list
+	Common::List<EVENT *>::iterator i;
+	for (i = _events.begin(); i != _events.end(); ++i)
+		delete (*i);
 }
 
 /**
@@ -292,39 +297,52 @@ void Scheduler::giveWay(PPROCESS pReSchedProc) {
 }
 
 /**
- * Continously makes a given process wait for another process to finish
+ * Continously makes a given process wait for another process to finish or event to signal.
  *
- * @param pid			Process identifier
+ * @param pid			Process/Event identifier
  * @param duration		Duration in milliseconds
- * @param expired		Set to true if delay period expired
+ * @param expired		If specified, set to true if delay period expired
  */
-void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration, bool *expired) {
+void Scheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired) {
 	if (!pCurrent)
 		error("Called Scheduler::waitForSingleObject from the main process");
 
 	CORO_BEGIN_CONTEXT;
 		uint32 endTime;
-		PROCESS *pProc;
+		PROCESS *pProcess;
+		EVENT *pEvent;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->endTime = (duration == INFINITE) ? INFINITE : g_system->getMillis() + duration;
 	if (expired)
-		*expired = false;
+		// Presume it will expire
+		*expired = true;
 
 	// Outer loop for doing checks until expiry 
 	while (g_system->getMillis() < _ctx->endTime) {
-		// Check to see if a process with the given Id exists
-		_ctx->pProc = active->pNext;
-		while ((_ctx->pProc != NULL) && (_ctx->pProc->pid != pid))
-			_ctx->pProc = _ctx->pProc->pNext;
+		// Check to see if a process or event with the given Id exists
+		_ctx->pProcess = getProcess(pid);
+		_ctx->pEvent = !_ctx->pProcess ? getEvent(pid) : NULL;
 
-		if (_ctx->pProc == NULL) {
-			// No match process found, so it's okay to break out of loop
+		// If there's no active process or event, presume it's a process that's finished,
+		// so the waiting can immediately exit
+		if ((_ctx->pProcess == NULL) && (_ctx->pEvent == NULL)) {
 			if (expired)
-				*expired = true;
+				*expired = false;
+			break;
+		}
 
+		// If a process was found, don't go into the if statement, and keep waiting. 
+		// Likewise if it's an event that's not yet signalled
+		if ((_ctx->pEvent != NULL) && _ctx->pEvent->signalled) {
+			// Unless the event is flagged for manual reset, reset it now
+			if (!_ctx->pEvent->manualReset)
+				_ctx->pEvent->signalled = false;
+
+			if (expired)
+				*expired = false;
 			break;
 		}
 
@@ -334,6 +352,76 @@ void Scheduler::waitForSingleObject(CORO_PARAM, int pid, int duration, bool *exp
 
 	CORO_END_CODE;
 }
+
+/**
+ * Continously makes a given process wait for given prcesses to finished or events to be set
+ *
+ * @param nCount		Number of Id's being passed
+ * @param evtList		List of pids to wait for
+ * @param bWaitAll		Specifies whether all or any of the processes/events 
+ * @param duration		Duration in milliseconds
+ * @param expired		Set to true if delay period expired
+ */
+void Scheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
+						   uint32 duration, bool *expired) {
+	if (!pCurrent)
+		error("Called Scheduler::waitForMultipleEvents from the main process");
+
+	CORO_BEGIN_CONTEXT;
+		uint32 endTime;
+		bool signalled;
+		bool pidSignalled;
+		int i;
+		PROCESS *pProcess;
+		EVENT *pEvent;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->endTime = (duration == INFINITE) ? INFINITE : g_system->getMillis() + duration;
+	if (expired)
+		// Presume that delay will expire
+		*expired = true;
+
+	// Outer loop for doing checks until expiry 
+	while (g_system->getMillis() < _ctx->endTime) {
+		_ctx->signalled = bWaitAll;
+
+		for (_ctx->i = 0; _ctx->i < nCount; ++_ctx->i) {
+			_ctx->pProcess = getProcess(pidList[_ctx->i]);
+			_ctx->pEvent = !_ctx->pProcess ? getEvent(pidList[_ctx->i]) : NULL;
+
+			// Determine the signalled state
+			_ctx->pidSignalled = (_ctx->pProcess) || !_ctx->pEvent ? false : _ctx->pEvent->signalled;
+
+			if (bWaitAll && _ctx->pidSignalled)
+				_ctx->signalled = false;
+			else if (!bWaitAll & _ctx->pidSignalled)
+				_ctx->signalled = true;
+		}
+
+		// At this point, if the signalled variable is set, waiting is finished
+		if (_ctx->signalled) {
+			// Automatically reset any events not flagged for manual reset
+			for (_ctx->i = 0; _ctx->i < nCount; ++_ctx->i) {
+				_ctx->pEvent = getEvent(pidList[_ctx->i]);
+
+				if (_ctx->pEvent->manualReset)
+					_ctx->pEvent->signalled = false;
+			}
+
+			if (expired)
+				*expired = false;
+			break;
+		}
+
+		// Sleep until the next cycle
+		CORO_SLEEP(1);
+	}
+
+	CORO_END_CODE;
+}
+
 
 /**
  * Creates a new process.
@@ -539,6 +627,74 @@ int Scheduler::killMatchingProcess(int pidKill, int pidMask) {
  */
 void Scheduler::setResourceCallback(VFPTRPP pFunc) {
 	pRCfunction = pFunc;
+}
+
+PROCESS *Scheduler::getProcess(uint32 pid) {
+	PROCESS *pProc = active->pNext;
+	while ((pProc != NULL) && (pProc->pid != pid))
+		pProc = pProc->pNext;
+
+	return pProc;
+}
+
+EVENT *Scheduler::getEvent(uint32 pid) {
+	Common::List<EVENT *>::iterator i;
+	for (i = _events.begin(); i != _events.end(); ++i) {
+		EVENT *evt = *i;
+		if (evt->pid == pid)
+			return evt;
+	}
+
+	return NULL;
+}
+
+
+/**
+ * Creates a new event object
+ * @param bManualReset					Events needs to be manually reset. Otherwise, events
+ * will be automatically reset after a process waits on the event finishes
+ * @param bInitialState					Specifies whether the event is signalled or not initially
+ */
+uint32 Scheduler::createEvent(bool bManualReset, bool bInitialState) {
+	EVENT *evt = new EVENT();
+	evt->pid = ++pidCounter;
+	evt->manualReset = bManualReset;
+	evt->signalled = bInitialState;
+
+	_events.push_back(evt);
+	return evt->pid;
+}
+
+/**
+ * Destroys the given event
+ * @param pidEvent						Event PID
+ */
+void Scheduler::closeEvent(uint32 pidEvent) {
+	EVENT *evt = getEvent(pidEvent);
+	if (evt) {
+		_events.remove(evt);
+		delete evt;
+	}
+}
+
+/**
+ * Sets the event
+ * @param pidEvent						Event PID
+ */
+void Scheduler::setEvent(uint32 pidEvent) {
+	EVENT *evt = getEvent(pidEvent);
+	if (evt)
+		evt->signalled = true;
+}
+
+/**
+ * Resets the event
+ * @param pidEvent						Event PID
+ */
+void Scheduler::resetEvent(uint32 pidEvent) {
+	EVENT *evt = getEvent(pidEvent);
+	if (evt)
+		evt->signalled = false;
 }
 
 } // End of namespace Tony

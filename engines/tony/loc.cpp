@@ -705,8 +705,9 @@ bool RMItem::DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 		return false;
 
 	// Facciamo un update del pattern, che ci ritorna anche il frame corrente
+	// FIXME: Get rid of HANDLE cast
 	if (m_nCurPattern != 0)
-		m_nCurSprite=m_patterns[m_nCurPattern].Update(m_hEndPattern,m_bCurFlag, m_sfx);
+		m_nCurSprite = m_patterns[m_nCurPattern].Update((HANDLE)m_hEndPattern, m_bCurFlag, m_sfx);
 
 	// Se la funzione ha ritornato -1, vuol dire che il pattern e' finito
 	if (m_nCurSprite == -1) {
@@ -831,30 +832,36 @@ RMItem::RMItem() {
 	m_nSprites = 0;
 	m_nSfx = 0;
 	m_nPatterns = 0;
-	m_hEndPattern = 0;
 	m_bPal = 0;
 	m_nCurSprite = 0;
 
-	m_hEndPattern = CreateEvent(NULL, false, false, NULL);
+	m_hEndPattern = _vm->_scheduler.createEvent(false, false);
 }
 
 RMItem::~RMItem() {
-	Unload();	
-	CloseHandle(m_hEndPattern);
+	Unload();
+	_vm->_scheduler.closeEvent(m_hEndPattern);
 }
 
-void RMItem::WaitForEndPattern(HANDLE hCustomSkip) {
+//FIXME: Pass uint32 directly for hCustomSkip
+void RMItem::WaitForEndPattern(CORO_PARAM, HANDLE hCustomSkip) {
+	CORO_BEGIN_CONTEXT;
+		uint32 h[2];
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (m_nCurPattern != 0) {
 		if (hCustomSkip == INVALID_HANDLE_VALUE)
-			WaitForSingleObject(m_hEndPattern,INFINITE);
+			CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, m_hEndPattern, INFINITE);
 		else {
-			HANDLE h[2];
-
-			h[0] = hCustomSkip;
-			h[1] = m_hEndPattern;
-			WaitForMultipleObjects(2, h, false, INFINITE);
+			_ctx->h[0] = (uint32)hCustomSkip;
+			_ctx->h[1] = m_hEndPattern;
+			CORO_INVOKE_4(_vm->_scheduler.waitForMultipleObjects, 2, &_ctx->h[0], false, INFINITE);
 		}
 	}
+
+	CORO_END_CODE;
 }
 
 void RMItem::ChangeHotspot(RMPoint pt) {
