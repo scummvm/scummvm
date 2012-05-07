@@ -318,7 +318,7 @@ bool PatchedFile::seek(int32 offset, int whence) {
 		}
 	}
 	_diff->seek(skipDiff, SEEK_CUR);
-	_extra->seek(skipSize, SEEK_CUR);
+	_extra->seek(skipExtra, SEEK_CUR);
 	_file->seek(totJump, SEEK_CUR);
 
 	return true;
