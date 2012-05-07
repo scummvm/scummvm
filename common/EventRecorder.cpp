@@ -315,9 +315,15 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription* desc) {
 	if (desc != NULL) {
 		if (_recordMode == kRecorderRecord) {
 			writeGameHash(desc);
+			_recordFile->writeString(getAutor());
+			_recordFile->writeByte(0);
+			_recordFile->writeString(getComment());
+			_recordFile->writeByte(0);
 		}
 		if (_recordMode == kRecorderPlayback) {
 			checkGameHash(desc);
+			warning("%s", readString().c_str());
+			warning("%s", readString().c_str());
 			getNextEvent();
 		}
 	}
@@ -455,6 +461,14 @@ SdlMixerManager* EventRecorder::getMixerManager() {
 	} else {
 		return _fakeMixerManager;
 	}
+}
+
+Common::String EventRecorder::getAutor() {
+	return "Unknown Autor";
+}
+
+Common::String EventRecorder::getComment() {
+	return "Empty\ncomment";
 }
 
 } // End of namespace Common

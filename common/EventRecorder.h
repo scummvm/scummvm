@@ -81,6 +81,8 @@ private:
 	void checkGameHash(const ADGameDescription* desc);
 	void writeGameHash(const ADGameDescription* desc);
 	bool notifyEvent(const Event &ev);
+	String getAutor();
+	String getComment();
 	String findMd5ByFileName(const ADGameDescription* gameDesc, String fileName);
 	Common::String readString();
 	bool notifyPoll();
