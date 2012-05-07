@@ -101,6 +101,24 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// French CD release
+	// From bug #3524362
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamwfr.r00", 0, "e354582a8564faf5c515df92f207e8d1", 154657},
+				{"dreamwfr.r02", 0, "cb99f08d5aefd04184eac76927eced80", 200575},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_CD | ADGF_TESTING,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
 	// German floppy release
 	{
 		{
@@ -160,6 +178,24 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			{
 				{"dreamwsp.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
 				{"dreamwsp.r02", 0, "577d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			ADGF_CD | ADGF_TESTING,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
+	// Spanish CD release
+	// From bug #3524362
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamwsp.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
+				{"dreamwsp.r02", 0, "f97d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
 				AD_LISTEND
 			},
 			Common::ES_ESP,
