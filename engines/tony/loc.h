@@ -423,7 +423,7 @@ private:
 	STATUS status;
 	int curSpeed;
 	bool bEndOfPath;
-	HANDLE hEndOfPath;
+	uint32 hEndOfPath;
 	OSystem::MutexRef csMove;
 	int curLocation;
 	bool bRemoveFromOT;
@@ -482,7 +482,7 @@ public:
 	void SetPosition(RMPoint pt, int newloc=-1);
 
 	// Aspetta la fine del movimento
-	void WaitForEndMovement(void) { if (bMoving) WaitForSingleObject(hEndOfPath, INFINITE); }
+	void WaitForEndMovement(CORO_PARAM);
 
 	void SetFixedScroll(RMPoint fix) { m_fixedScroll = fix; }
 	void SetSpeed(int speed) { curSpeed=speed; }

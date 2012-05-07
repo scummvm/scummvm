@@ -36,7 +36,7 @@ namespace Tony {
 TonyEngine *_vm;
 
 TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst), 
-		_gameDescription(gameDesc), _randomSource("tony") {
+		_gameDescription(gameDesc), _randomSource("tony"), _scheduler() {
 	_vm = this;
 
 	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");

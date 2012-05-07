@@ -51,6 +51,8 @@ Scheduler::Scheduler() {
 	active->pNext = NULL;
 
 	g_scheduler = this;	// FIXME HACK
+
+	reset();
 }
 
 Scheduler::~Scheduler() {
@@ -102,6 +104,7 @@ void Scheduler::reset() {
 	while (pProc != NULL) {
 		delete pProc->state;
 		pProc->state = 0;
+		pProc->waiting = false;
 		pProc = pProc->pNext;
 	}
 
@@ -315,6 +318,9 @@ void Scheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *
 
 	CORO_BEGIN_CODE(_ctx);
 
+	// Signal as waiting
+	pCurrent->waiting = true;
+
 	_ctx->endTime = (duration == INFINITE) ? INFINITE : g_system->getMillis() + duration;
 	if (expired)
 		// Presume it will expire
@@ -350,6 +356,9 @@ void Scheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *
 		CORO_SLEEP(1);
 	}
 
+	// Signal waiting is done
+	pCurrent->waiting = false;
+
 	CORO_END_CODE;
 }
 
@@ -377,6 +386,9 @@ void Scheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, 
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
+
+	// Signal as waiting
+	pCurrent->waiting = true;
 
 	_ctx->endTime = (duration == INFINITE) ? INFINITE : g_system->getMillis() + duration;
 	if (expired)
@@ -418,6 +430,9 @@ void Scheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, 
 		// Sleep until the next cycle
 		CORO_SLEEP(1);
 	}
+
+	// Signal waiting is done
+	pCurrent->waiting = false;
 
 	CORO_END_CODE;
 }
@@ -567,12 +582,12 @@ int Scheduler::getCurrentPID() const {
  * @param pidMask	mask to apply to process identifiers before comparison
  * @return The number of processes killed is returned.
  */
-int Scheduler::killMatchingProcess(int pidKill, int pidMask) {
+int Scheduler::killMatchingProcess(uint32 pidKill, int pidMask) {
 	int numKilled = 0;
 	PROCESS *pProc, *pPrev;	// process list pointers
 
 	for (pProc = active->pNext, pPrev = active; pProc != NULL; pPrev = pProc, pProc = pProc->pNext) {
-		if ((pProc->pid & pidMask) == pidKill) {
+		if ((pProc->pid & (uint32)pidMask) == pidKill) {
 			// found a matching process
 
 			// dont kill the current process
@@ -695,6 +710,58 @@ void Scheduler::resetEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (evt)
 		evt->signalled = false;
+}
+
+/**
+ * Temporarily sets a given event to true, and then runs all waiting processes, allowing any
+ * processes waiting on the event to be fired. It then immediately resets the event again.
+ * @param pidEvent						Event PID
+ *
+ * @remarks		Should not be run inside of another process
+ */
+void Scheduler::pulseEvent(uint32 pidEvent) {
+	EVENT *evt = getEvent(pidEvent);
+	if (!evt)
+		return;
+	
+	// Set the event as true
+	evt->signalled = true;
+	
+	// start dispatching active process list for any processes that are currently waiting
+	PROCESS *pOriginal = pCurrent;
+	PROCESS *pNext;
+	PROCESS *pProc = active->pNext;
+	while (pProc != NULL) {
+		pNext = pProc->pNext;
+
+		// Only call processes that are currently waiting (either in waitForSingleObject or
+		// waitForMultipleObjects). If one is found, execute it immediately
+		if (pProc->waiting) {
+			// Dispatch the process
+			pCurrent = pProc;
+			pProc->coroAddr(pProc->state, pProc->param);
+
+			if (!pProc->state || pProc->state->_sleep <= 0) {
+				// Coroutine finished
+				pCurrent = pCurrent->pPrevious;
+				killProcess(pProc);
+			} else {
+				pProc->sleepTime = pProc->state->_sleep;
+			}
+
+			// pCurrent may have been changed
+			pNext = pCurrent->pNext;
+			pCurrent = NULL;
+		}
+
+		pProc = pNext;
+	}
+
+	// Restore the original current process (if one was active)
+	pCurrent = pOriginal;
+
+	// Reset the event back to non-signalled
+	evt->signalled = false;
 }
 
 } // End of namespace Tony

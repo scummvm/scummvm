@@ -50,6 +50,7 @@ struct PROCESS {
 
 	int sleepTime;		///< number of scheduler cycles to sleep
 	uint32 pid;			///< process ID
+	bool waiting;		///< process is currently in a waiting state
 	char param[PARAM_SIZE];	///< process specific info
 };
 typedef PROCESS *PPROCESS;
@@ -134,7 +135,7 @@ public:
 
 	PROCESS *getCurrentProcess();
 	int getCurrentPID() const;
-	int killMatchingProcess(int pidKill, int pidMask = -1);
+	int killMatchingProcess(uint32 pidKill, int pidMask = -1);
 
 	void setResourceCallback(VFPTRPP pFunc);
 
@@ -143,6 +144,7 @@ public:
 	void closeEvent(uint32 pidEvent);
 	void setEvent(uint32 pidEvent);
 	void resetEvent(uint32 pidEvent);
+	void pulseEvent(uint32 pidEvent);
 };
 
 extern Scheduler *g_scheduler;	// FIXME: Temporary global var, to be used until everything has been OOifyied

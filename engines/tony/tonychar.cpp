@@ -67,7 +67,7 @@ void RMTony::WaitEndOfAction(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_2(_vm->_scheduler.waitForSingleObject, pid, INFINITE);
+	CORO_INVOKE_2(g_scheduler->waitForSingleObject, pid, INFINITE);
 
 	m_bAction = false;
 
@@ -240,26 +240,26 @@ void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
 	if (hThread != INVALID_HANDLE_VALUE) {
 		m_bAction = true;
 		pid = (uint32)hThread;
-		_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
+		g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
 		hActionThread = hThread;
 	} else if (nAction != TA_GOTO) {
 		if (nAction == TA_TALK) {
 			hThread = mpalQueryDoAction(6, 1, 0); 
 			m_bAction = true;
 			pid = (uint32)hThread;
-			_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
+			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
   			hActionThread = hThread;
 		} else if (nAction == TA_PALESATI) {
 			hThread = mpalQueryDoAction(7, 1, 0);
 			m_bAction = true; 
 			pid = (uint32)hThread;
-			_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
+			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
   			hActionThread=hThread;
 		} else {
 			hThread = mpalQueryDoAction(5, 1, 0); 
 			m_bAction = true;
 			pid = (uint32)hThread;
-			_vm->_scheduler.createProcess(WaitEndOfAction, &pid, sizeof(uint32));
+			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
 			hActionThread = hThread;
 		}
 	}
@@ -1074,7 +1074,9 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 		}
 		break;
-	}			
+	}
+
+	return true;
 }
 
 void RMTony::StartTalk(CORO_PARAM, TALKTYPE nTalkType) {

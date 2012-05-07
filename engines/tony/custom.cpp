@@ -1310,10 +1310,17 @@ DECLARE_CUSTOM_FUNCTION(SetTonyPosition)(CORO_PARAM, uint32 nX, uint32 nY, uint3
 }
 
 DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	Tony->Move(RMPoint(nX, nY));
 	
 	if (!bSkipIdle)
-		Tony->WaitForEndMovement();
+		CORO_INVOKE_0(Tony->WaitForEndMovement);
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(MoveTony)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint32) {
