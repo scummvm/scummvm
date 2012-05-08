@@ -38,6 +38,7 @@
 namespace Lilliput {
 
 LilliputEngine *LilliputEngine::s_Engine = 0;
+
 static const byte _basisPalette[768] = {
 	0,  0,  0,  0,  0,  42, 0,  42, 0,  0,  42, 42,
 	42, 0,  0,  42, 0,  42, 42, 21, 0,  42, 42, 42,
@@ -166,10 +167,10 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_saveFlag = false;
 	_byte16F07_menuId = 0;
 
-	_array16C54[0] = _array16C54[3] = 1;
-	_array16C54[1] = _array16C54[2] = 2;
-	_array16C54[2] = _array16C54[1] = 4;
-	_array16C54[3] = _array16C54[0] = 8;
+	_array16C54[0] = _array16C58[3] = 1;
+	_array16C54[1] = _array16C58[2] = 2;
+	_array16C54[2] = _array16C58[1] = 4;
+	_array16C54[3] = _array16C58[0] = 8;
 
 	for (int i = 0; i < 3; i++)
 		_array147D1[i] = 0;
@@ -1379,15 +1380,15 @@ int LilliputEngine::getDirection(Common::Point param1, Common::Point param2) {
 	return _directionsArray[var2l];
 }
 
-byte LilliputEngine::sub16799(int index, int param1) {
-	debugC(2, kDebugEngineTBC, "sub16799(%d, %d)", index, param1);
+byte LilliputEngine::sub16799(int index, Common::Point param1) {
+	debugC(2, kDebugEngineTBC, "sub16799(%d, %d - %d)", index, param1.x, param1.y);
 
 	Common::Point var3 = Common::Point(_array109E9PosX[index], _array10A11PosY[index]);
 
 	if (var3.x != -1) {
 		if ((var3.x != _scriptHandler->_array16123PosX[index]) || (var3.y != _scriptHandler->_array1614BPosY[index])) {
 			sub1693A(index);
-			_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
+			_scriptHandler->_array12811[index] -= (param1.x & 0x0F);
 			return 3;
 		}
 
@@ -1403,7 +1404,7 @@ byte LilliputEngine::sub16799(int index, int param1) {
 	_characterDirectionArray[index] = getDirection(pos1, pos2);
 
 	sub1693A(index);
-	_scriptHandler->_array12811[index] -= (param1 >> 8) & 0x0F;
+	_scriptHandler->_array12811[index] -= (param1.x & 0x0F);
 	return 3;
 
 }
@@ -1466,7 +1467,7 @@ void LilliputEngine::sub167EF(int index) {
 	}
 	
 	// var4h == var4l
-	int mapIndex = (((_array10A11PosY[index] >> 2) + _array109E9PosX[index]) << 2);
+	int mapIndex = (((_array10A11PosY[index] << 8) >> 2) + _array109E9PosX[index]) << 2;
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
 	if ((tmpVal & 8) != 0)
 		++_array109E9PosX[index];
@@ -1658,9 +1659,9 @@ void LilliputEngine::sub16626() {
 				break;
 
 			var2 = (2 * (var2 & 0xFF)) + (index << 5);
-			uint16 var1 = _scriptHandler->_array12311[var2 / 2];
+			Common::Point var1 = _scriptHandler->_array12311[var2 / 2];
 			int tmpVal = var2;
-			var2 = ((var1 >> 8) >> 3);
+			var2 = (var1.x >> 3);
 			var2 &= 0xFE;
 
 			switch (var2 / 2) {
@@ -1693,7 +1694,7 @@ void LilliputEngine::sub16626() {
 				result = sub16722(index, var1);
 				break;
 			case 14:
-				result = sub166F7(index, Common::Point(var1 >> 8, var1 && 0xFF), tmpVal);
+				result = sub166F7(index, var1, tmpVal);
 				break;
 			case 15:
 				result = sub166EA(index);
@@ -1730,9 +1731,9 @@ byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
 			a2 |= (a2 << 4);
 
 		a2 -= 16;
-		_scriptHandler->_array12311[tmpVal] = (var1.x << 8) + var1.y;
+		_scriptHandler->_array12311[tmpVal] = Common::Point(var1.x, a2);
 
-		if ((var1.y & 0xF0) == 0)
+		if ((a2 & 0xF0) == 0)
 			return 2;
 	}
 
@@ -1740,18 +1741,18 @@ byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
 	return 3;
 }
 
-byte LilliputEngine::sub166DD(int index, int var1) {
-	debugC(2, kDebugEngineTBC, "sub166DD(%d, %d)", index, var1);
+byte LilliputEngine::sub166DD(int index, Common::Point var1) {
+	debugC(2, kDebugEngineTBC, "sub166DD(%d, %d - %d)", index, var1.x, var1.y);
 	
-	_characterDirectionArray[index] = (var1 >> 8) & 3;
-	sub16685(index, var1 & 0xFF);
+	_characterDirectionArray[index] = (var1.x & 3);
+	sub16685(index, var1);
 	return 0;
 }
 
-byte LilliputEngine::sub16722(int index, byte var1) {
-	debugC(2, kDebugEngineTBC, "sub16722(%d, %d)", index, var1);
+byte LilliputEngine::sub16722(int index, Common::Point var1) {
+	debugC(2, kDebugEngineTBC, "sub16722(%d, %d - %d)", index, var1.x, var1.y);
 
-	_rulesBuffer2_10[index] = var1;
+	_rulesBuffer2_10[index] = var1.y;
 	return 2;
 }
 
@@ -1765,8 +1766,8 @@ byte LilliputEngine::sub16729(int index) {
 	return 2;
 }
 
-byte LilliputEngine::sub1675D(int index, int var1) {
-	debugC(2, kDebugEngineTBC, "sub1675D(%d)", index);
+byte LilliputEngine::sub1675D(int index, Common::Point var1) {
+	debugC(2, kDebugEngineTBC, "sub1675D(%d, %d - %d)", index, var1.x, var1.y);
 
 	int var2 = _scriptHandler->_array10A39[index];
 	int var1h = _scriptHandler->_array16123PosX[var2];
@@ -1967,19 +1968,19 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	displayInterfaceHotspots();
 }
 
-void LilliputEngine::sub16685(int idx, int var1) {
-	debugC(2, kDebugEngineTBC, "sub16685(%d, %d)", idx, var1);
+void LilliputEngine::sub16685(int idx, Common::Point var1) {
+	debugC(2, kDebugEngineTBC, "sub16685(%d, %d - %d)", idx, var1.x, var1.y);
 
-	int index = (idx << 5) + (var1 & 0xFF);
+	int index = (idx << 5) + var1.y;
 	_scriptHandler->_array10AB1[idx] = _rulesBuffer2_16[index];
 }
 
-byte LilliputEngine::sub16675(int idx, int var1) {
-	debugC(2, kDebugEngineTBC, "sub16675(%d, %d)", idx, var1);
+byte LilliputEngine::sub16675(int idx, Common::Point var1) {
+	debugC(2, kDebugEngineTBC, "sub16675(%d, %d - %d)", idx, var1.x, var1.y);
 
 	sub16685(idx, var1);
-	int index = (var1 & 0xFF);	
-	switch (var1 >> 8) {
+	int index = var1.y;	
+	switch (var1.x) {
 	case 0:
 		break;
 	case 1:
@@ -2013,7 +2014,7 @@ byte LilliputEngine::sub16675(int idx, int var1) {
 		sub166D8(index);
 		break;
 	default:
-		warning("sub16675 - Unexpected value %d", var1 >> 8);
+		warning("sub16675 - Unexpected value %d", var1.x);
 	}
 
 	return 0;
