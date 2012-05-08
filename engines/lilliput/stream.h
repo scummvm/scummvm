@@ -31,7 +31,7 @@ class ScriptStream : public Common::MemoryReadStream {
 private:
 	byte *_orgPtr;
 public:
-	ScriptStream(byte *buf, int size);
+	ScriptStream(byte *buf, int bufSize);
 	virtual ~ScriptStream();
 
 	void writeUint16LE(int value, int relativePos = 0);

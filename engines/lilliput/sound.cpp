@@ -33,6 +33,11 @@ LilliputSound::LilliputSound(LilliputEngine *vm) : _vm(vm) {
 LilliputSound::~LilliputSound() {
 }
 
+// Used during initialisation
+void LilliputSound::contentFct0() {
+	debugC(1, kDebugSound, "contentFct0()");
+}
+
 void LilliputSound::contentFct1() {
 	debugC(1, kDebugSound, "contentFct1()");
 }
