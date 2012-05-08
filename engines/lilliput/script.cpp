@@ -77,6 +77,9 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	for (int i = 0; i < 640; i++) {
 		_array12311[i] = 0xFFFF;
 	}
+
+	for (int i = 0; i < 1600; i++)
+		_array10B51[i] = 0;
 }
 
 LilliputScript::~LilliputScript() {
