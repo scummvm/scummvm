@@ -147,7 +147,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte16552 = 0;
 	_byte12FE4 = 0xFF;
 	_byte12FE3 = 0;
-	_byte16F08 = 0;
+	_byte16F08 = 0;	
 	_byte16C9F = 0;
 
 	_currentScriptCharacter = 0;
@@ -259,7 +259,7 @@ void LilliputEngine::newInt8() {
 	}
 	--_byte12A06;
 	// TODO: check 'out 20h, 20h'
-
+	
 	// hack for the title stars because _int8installed is not set at the good place for the moment
 	//if (!_int8installed)
 	//	return;
@@ -329,7 +329,7 @@ void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 		// Sprite mirror
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				// May need a hack of 1 pixel
+				// May need a hack of 1 pixel 
 				if (src[15 - x] != 0)
 					buf[x] = src[15 - x];
 			}
@@ -588,7 +588,7 @@ void LilliputEngine::displayFunction12() {
 
 	displayFunction5();
 
-	byte *tmpBuf = loadVGA("SCREEN.GFX", true);
+	byte *tmpBuf = loadVGA("SCREEN.GFX", 64000, true);
 	memcpy(_mainSurface->getPixels(), tmpBuf, 320*200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
@@ -1150,8 +1150,8 @@ void LilliputEngine::sortCharacters() {
 		for (int var2 = 0; var2 < var4; var2++) {
 			int index1 = _charactersToDisplay[var2];
 			int index2 = _charactersToDisplay[var2 + 1];
-
-			if (_characterRelativePositionY[index1] < _characterRelativePositionY[index2])
+		
+			if (_characterRelativePositionY[index1] < _characterRelativePositionY[index2]) 
 				continue;
 
 			if (_characterRelativePositionY[index1] == _characterRelativePositionY[index2]) {
@@ -1408,7 +1408,6 @@ byte LilliputEngine::sub16799(int index, int param1) {
 
 }
 
-//TODO rename arrays
 void LilliputEngine::sub167EF(int index) {
 	debugC(2, kDebugEngineTBC, "sub167EF(%d)", index);
 	
@@ -2305,8 +2304,8 @@ void LilliputEngine::pollEvent() {
 	}
 }
 
-byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
-	debugC(1, kDebugEngine, "loadVGA(%s, %d)", filename.c_str(), (loadPal) ? 1 : 0);
+byte *LilliputEngine::loadVGA(Common::String filename, int expectedSize, bool loadPal) {
+	debugC(1, kDebugEngine, "loadVGA(%s, %d, %d)", filename.c_str(), expectedSize, (loadPal) ? 1 : 0);
 
 	Common::File f;
 
@@ -2323,10 +2322,10 @@ byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
 	}
 
 	uint8 curByte;
-	byte decodeBuffer[100000];
+	byte *decodeBuffer = (byte *)malloc(expectedSize);
 	int size = 0;
 
-	for (;remainingSize > 0;) {
+	for (;(remainingSize > 0) && (size < expectedSize);) {
 		curByte = f.readByte();
 		--remainingSize;
 
@@ -2342,6 +2341,8 @@ byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
 			for (int i = 0; i < compSize; ++i) {
 				decodeBuffer[size] = curByte;
 				++size;
+				if (size == expectedSize)
+					break;
 			}
 		} else {
 			// Not compressed
@@ -2350,15 +2351,17 @@ byte *LilliputEngine::loadVGA(Common::String filename, bool loadPal) {
 				decodeBuffer[size] = f.readByte();
 				--remainingSize;
 				++size;
+				if (size == expectedSize)
+					break;
 			}
 		}
 	}
-
 	f.close();
 
-	byte *res = (byte *)malloc(sizeof(byte) * size);
-	memcpy(res, decodeBuffer, size);
-	return res;
+	for (int i = size; i < expectedSize; i++)
+		decodeBuffer[i] = 0;
+
+	return decodeBuffer;
 }
 
 byte *LilliputEngine::loadRaw(Common::String filename) {
@@ -2546,7 +2549,7 @@ void LilliputEngine::displayVGAFile(Common::String fileName) {
 
 	displayFunction4();
 
-	byte *buffer = loadVGA(fileName, true);
+	byte *buffer = loadVGA(fileName, 64000, true);
 	memcpy(_mainSurface->getPixels(), buffer, 320*200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
@@ -2683,10 +2686,10 @@ Common::Error LilliputEngine::run() {
 	initPalette();
 
 	// Load files. In the original, the size was hardcoded
-	_bufferIdeogram = loadVGA("IDEOGRAM.VGA", false);
-	_bufferMen = loadVGA("MEN.VGA", false);
-	_bufferMen2 = loadVGA("MEN2.VGA", false);
-	_bufferIsoChars = loadVGA("ISOCHARS.VGA", false);
+	_bufferIdeogram = loadVGA("IDEOGRAM.VGA", 25600, false);
+	_bufferMen = loadVGA("MEN.VGA", 61440, false);
+	_bufferMen2 = loadVGA("MEN2.VGA", 61440, false);
+	_bufferIsoChars = loadVGA("ISOCHARS.VGA", 4096, false);
 	_bufferIsoMap = loadRaw("ISOMAP.DTA");
 
 	loadRules();
