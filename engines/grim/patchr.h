@@ -23,42 +23,20 @@
 #ifndef GRIM_PATCHR_H
 #define GRIM_PATCHR_H
 
-namespace Common {
-template<class T> class Array;
-class String;
-class SeekableReadStream;
-}
-
 namespace Grim {
 
-class Patchr {
-public:
-	Patchr(): _data(NULL), _err(false), _kMd5size(5000), _kMaxFileSize(0x100000), _kVersion(1) {}
-	~Patchr() { if (_data) delete[] _data; }
-	void loadPatch(Common::SeekableReadStream *patchStream);
-	bool patchFile(Common::SeekableReadStream *&file, const Common::String &name);
-private:
-	uint32 _kMaxFileSize;
-	uint32 _kMd5size;
-	uint32 _kVersion;
-
-	enum Instruction { PATCHR, BEGIN, END, REPLACE, INSERT, DELETE, FILL, COPY, INVALID };
-	static const char *InstructionS[9];
-	struct Op {
-		Instruction ist;
-		Common::Array<Common::String> args;
-		uint line_n;
-	};
-
-	Common::Array<Op> _patch;
-	byte *_data;
-	Op _curLine;
-	bool _err;
-
-	uint32 calcIncSize(Common::Array<Op>::const_iterator start);
-	uint32 str2num(Common::String num);
-	void err(const char *s);
-};
+/**
+ * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
+ * transparently patch it on-the-fly. It uses filename.patchr as patchfile,
+ * but if it fails, it tries with filename_1.patchr and so on.
+ * If no valid patchfile exists, the original stream is returned unmodified
+ * (and in particular, not wrapped).
+ * For more informations, see diffr and patchr manuals.
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
+ */
+Common::SeekableReadStream *wrapPatchedFile(Common::SeekableReadStream *rs, const Common::String &filename);
 
 } // end of namespace Grim
 
