@@ -260,22 +260,22 @@ public:
 	void sub17264(int index, int var4);
 	int findHotspot(Common::Point pos);
 	int reverseFindHotspot(Common::Point pos);
-	byte sub16722(int index, byte var1);
+	byte sub16722(int index, Common::Point var1);
 	byte sub166EA(int index);
 	void sub167EF(int index);
 
 	void renderCharacters(byte *buf, Common::Point pos);
 
-	byte sub16799(int param1, int index);
+	byte sub16799(int index, Common::Point param1);
 	int getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
 	void prepareGoldAmount(int param1);
 	void sub12F37();
-	byte sub16675(int idx, int var1);
-	void sub16685(int idx, int var1);
+	byte sub16675(int idx, Common::Point var1);
+	void sub16685(int idx, Common::Point var1);
 	void sub16EBC();
 	void sub16CA0();
-	byte sub166DD(int index, int var1);
+	byte sub166DD(int index, Common::Point var1);
 	void sub171CF();
 	void sub12FE5();
 	int sub16DD5(int x1, int y1, int x2, int y2);
@@ -304,7 +304,7 @@ public:
 	void sub166D8(int index);
 	void sub16B31(int index, int val);
 	void sub16B8F(int index, int x, int y, int flag);
-	byte sub1675D(int index, int var1);
+	byte sub1675D(int index, Common::Point var1);
 	byte sub16729(int index);
 	byte sub166F7(int index, Common::Point var1, int tmpVal);
 	void sub1693A(int index);

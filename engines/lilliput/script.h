@@ -79,7 +79,7 @@ public:
 	int _heroismBarBottomY;
 	int _word1855E;
 
-	uint16 _array12311[640];
+	Common::Point _array12311[640];
 	byte _array128EF[40];
 	byte _array12839[40];
 	int _array1813B[32];
