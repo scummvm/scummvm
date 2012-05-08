@@ -137,9 +137,9 @@ uint32 *                 lpResources;
 bool                     bExecutingAction;
 bool                     bExecutingDialog;
 
-uint32                    nPollingLocations[MAXPOLLINGLOCATIONS];
-HANDLE                   hEndPollingLocations[MAXPOLLINGLOCATIONS];
-uint32                   PollingThreads[MAXPOLLINGLOCATIONS];
+uint32					nPollingLocations[MAXPOLLINGLOCATIONS];
+uint32					hEndPollingLocations[MAXPOLLINGLOCATIONS];
+uint32					PollingThreads[MAXPOLLINGLOCATIONS];
 
 uint32					hAskChoice;
 uint32					hDoneChoice;
@@ -830,14 +830,20 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 *
 \****************************************************************************/
 
-void PASCAL CustomThread(LPCFCALL p) {
-	// FIXME: Convert to proper corotuine call
-	warning("FIXME: CustomThread call");
+void CustomThread(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+		LPCFCALL p;
+	CORO_END_CONTEXT(_ctx);
 
-	lplpFunctions[p->nCf](nullContext, p->arg1, p->arg2, p->arg3, p->arg4);
-	GlobalFree(p);
-	ExitThread(1);
-//	_endthread();
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->p = *(LPCFCALL *)param;
+
+	CORO_INVOKE_4(lplpFunctions[_ctx->p->nCf], _ctx->p->arg1, _ctx->p->arg2, _ctx->p->arg3, _ctx->p->arg4);
+
+	GlobalFree(_ctx->p);
+
+	CORO_END_CODE;
 }
 
 
@@ -855,78 +861,87 @@ void PASCAL CustomThread(LPCFCALL p) {
 *
 \****************************************************************************/
 
-void PASCAL ScriptThread(LPMPALSCRIPT s) {
-	uint i,j,k;
-	uint32 dwStartTime = timeGetTime();
-	uint32 dwCurTime;
-	uint32 dwId;
-	static HANDLE cfHandles[MAX_COMMANDS_PER_MOMENT];
-	int numHandles = 0;
-	LPCFCALL p;
+void ScriptThread(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+		uint i, j, k;
+		uint32 dwStartTime;
+		uint32 dwCurTime;
+		uint32 dwId;
+		int numHandles;
+		LPCFCALL p;
+	CORO_END_CONTEXT(_ctx);
+
+	static uint32 cfHandles[MAX_COMMANDS_PER_MOMENT];
+	LPMPALSCRIPT s = *(const LPMPALSCRIPT *)param;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->dwStartTime = _vm->GetTime();
+	_ctx->numHandles = 0;
 
 // warning("PlayScript(): Moments: %u\n",s->nMoments);
-	for (i = 0; i < s->nMoments; i++) {
+	for (_ctx->i = 0; _ctx->i < s->nMoments; _ctx->i++) {
 		// Dorme il tempo necessario per arrivare al momento successivo
-		if (s->Moment[i].dwTime == -1) {
-			WaitForMultipleObjects(numHandles, cfHandles, true, INFINITE);
-			dwStartTime = timeGetTime();
+		if (s->Moment[_ctx->i].dwTime == -1) {
+			CORO_INVOKE_4(g_scheduler->waitForMultipleObjects, _ctx->numHandles, cfHandles, true, INFINITE);
+			_ctx->dwStartTime = _vm->GetTime();
 		} else {
-			dwCurTime = timeGetTime();
-			if (dwCurTime < dwStartTime + (s->Moment[i].dwTime * 100)) {
-  //     warning("PlayScript(): Sleeping %lums\n",dwStartTime+(s->Moment[i].dwTime*100)-dwCurTime);
-				Sleep(dwStartTime+(s->Moment[i].dwTime * 100) - dwCurTime);
+			_ctx->dwCurTime = _vm->GetTime();
+			if (_ctx->dwCurTime < _ctx->dwStartTime + (s->Moment[_ctx->i].dwTime * 100)) {
+  //     warning("PlayScript(): Sleeping %lums\n",_ctx->dwStartTime+(s->Moment[_ctx->i].dwTime*100)-_ctx->dwCurTime);
+				CORO_INVOKE_1(g_scheduler->sleep, _ctx->dwStartTime+(s->Moment[_ctx->i].dwTime * 100) - _ctx->dwCurTime);
 			}
 		}
 
-		numHandles = 0;
-		for (j = 0;j<s->Moment[i].nCmds; j++) {
-			k=s->Moment[i].CmdNum[j];
+		_ctx->numHandles = 0;
+		for (_ctx->j = 0; _ctx->j<s->Moment[_ctx->i].nCmds; _ctx->j++) {
+			_ctx->k = s->Moment[_ctx->i].CmdNum[_ctx->j];
 
-			switch (s->Command[k].type) {
-			case 1:
-				p=(LPCFCALL)GlobalAlloc(GMEM_FIXED, sizeof(CFCALL));
-				if (p == NULL) {
+			if (s->Command[_ctx->k].type == 1) {
+				_ctx->p=(LPCFCALL)GlobalAlloc(GMEM_FIXED, sizeof(CFCALL));
+				if (_ctx->p == NULL) {
 					mpalError = 1;
-					ExitThread(0);
-//					_endthread();
+
+					CORO_KILL_SELF();
+					return;
 				}
 
-				p->nCf=s->Command[k].nCf;
-				p->arg1=s->Command[k].arg1;
-				p->arg2=s->Command[k].arg2;
-				p->arg3=s->Command[k].arg3;
-				p->arg4=s->Command[k].arg4;
+				_ctx->p->nCf=s->Command[_ctx->k].nCf;
+				_ctx->p->arg1=s->Command[_ctx->k].arg1;
+				_ctx->p->arg2=s->Command[_ctx->k].arg2;
+				_ctx->p->arg3=s->Command[_ctx->k].arg3;
+				_ctx->p->arg4=s->Command[_ctx->k].arg4;
 
 					 // !!! Nuova gestione dei thread
-				if ((cfHandles[numHandles++] = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)CustomThread,(void *)p, 0, &dwId)) == NULL) {
-			 //if ((cfHandles[numHandles++]=(void*)_beginthread(CustomThread, 10240, (void *)p))==(void*)-1)
+				if ((cfHandles[_ctx->numHandles++] = g_scheduler->createProcess(CustomThread, &_ctx->p, sizeof(LPCFCALL))) == 0) {
 					mpalError = 1;
-					ExitThread(0);
-//					_endthread();
-				}
-				break;
 
-			case 2:
+					CORO_KILL_SELF();
+					return;
+				}
+			} else if (s->Command[_ctx->k].type == 2) {
 				LockVar();
 				varSetValue(
-					s->Command[k].lpszVarName,
-					EvaluateExpression(s->Command[k].expr)
+					s->Command[_ctx->k].lpszVarName,
+					EvaluateExpression(s->Command[_ctx->k].expr)
 				);
 				UnlockVar();
-				break;
 
-			default:
+			} else {
 				mpalError = 1;
 				GlobalFree(s);
-				ExitThread(0);
-//				_endthread();
+
+				CORO_KILL_SELF();
+				return;
 			}
 		}
 	}
 
 	GlobalFree(s);
-	ExitThread(1);
-	//_endthread();
+
+	CORO_KILL_SELF();
+
+	CORO_END_CODE;
 }
 
 
@@ -1063,6 +1078,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		uint32 dwId;
 		int ord;
 		bool delayExpired;
+		bool expired;
 
 		MYACTION *MyActions;
 		MYTHREAD *MyThreads;
@@ -1122,7 +1138,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	}
 
 	/* Inizializziamo le routine random */
-	//curTime = timeGetTime();
+	//curTime = _vm->GetTime();
 	//srand(curTime);
 
 
@@ -1157,7 +1173,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 				CopyMemory(_ctx->MyActions[_ctx->k].CmdNum, _ctx->curItem->Action[_ctx->j].CmdNum,
 				MAX_COMMANDS_PER_ACTION * sizeof(uint16));
 
-				_ctx->MyActions[_ctx->k].dwLastTime = timeGetTime();
+				_ctx->MyActions[_ctx->k].dwLastTime = _vm->GetTime();
 				_ctx->k++;
 			}
 	}
@@ -1172,7 +1188,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	while (1) {
 		/* Cerchiamo tra tutte le idle actions quella a cui manca meno tempo per
 			l'esecuzione */
-		_ctx->curTime = timeGetTime();
+		_ctx->curTime = _vm->GetTime();
 		_ctx->dwSleepTime = (uint32)-1L;
 
 		for (_ctx->k = 0;_ctx->k<_ctx->nIdleActions;_ctx->k++)
@@ -1184,8 +1200,11 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		/* Ci addormentiamo, ma controllando sempre l'evento che viene settato
 			quando viene richiesta la nostra chiusura */
-		_ctx->k = WaitForSingleObject(hEndPollingLocations[id], _ctx->dwSleepTime);
-		if (_ctx->k == WAIT_OBJECT_0)
+		
+		CORO_INVOKE_3(g_scheduler->waitForSingleObject, hEndPollingLocations[id], _ctx->dwSleepTime, &_ctx->expired);
+
+		//if (_ctx->k == WAIT_OBJECT_0)
+		if (!_ctx->expired)
 			break;
 
 		for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
@@ -1197,7 +1216,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					_ctx->MyThreads[_ctx->i].nItem = 0;
 			}
 
-		_ctx->curTime = timeGetTime();
+		_ctx->curTime = _vm->GetTime();
 
 		/* Cerchiamo all'interno delle idle actions quale e' necessario eseguire */
 		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++)
@@ -2163,10 +2182,9 @@ bool EXPORT mpalExecuteScript(int nScript) {
 	CopyMemory(s, lpmsScripts+n, sizeof(MPALSCRIPT));
 	UnlockScripts();
 
-// !!! Nuova gestione dei thread
-	if (CreateThread(NULL, 10240,(LPTHREAD_START_ROUTINE)ScriptThread,(void *)s, 0, &dwId) == NULL)
- //if ((void*)_beginthread(ScriptThread, 10240,(void *)s)==(void*)-1)
-		return false;
+	// !!! Nuova gestione dei thread
+	if (g_scheduler->createProcess(ScriptThread, &s, sizeof(LPMPALSCRIPT)) == INVALID_PID_VALUE)
+ 		return false;
 
 	return true;
 }
@@ -2213,9 +2231,9 @@ bool mpalStartIdlePoll(int nLoc) {
 
 	for (i = 0; i < MAXPOLLINGLOCATIONS; i++) {
 		if (nPollingLocations[i] == 0) {
-			nPollingLocations[i]=nLoc;
+			nPollingLocations[i] = nLoc;
 
-			hEndPollingLocations[i] = CreateEvent(NULL, true, false, NULL);
+			hEndPollingLocations[i] = g_scheduler->createEvent(true, false);
 // !!! Nuova gestione dei thread
 			if ((PollingThreads[i] = g_scheduler->createProcess(LocationPollThread, &i, sizeof(uint32))) == 0)
 //			 if ((hEndPollingLocations[i]=(void*)_beginthread(LocationPollThread, 10240,(void *)i))==(void*)-1)
@@ -2252,11 +2270,11 @@ void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result) {
 
 	for (_ctx->i = 0; _ctx->i < MAXPOLLINGLOCATIONS; _ctx->i++) {
 		if (nPollingLocations[_ctx->i] == (uint32)nLoc) {
-			SetEvent(hEndPollingLocations[_ctx->i]);
+			g_scheduler->setEvent(hEndPollingLocations[_ctx->i]);
 
 			CORO_INVOKE_2(g_scheduler->waitForSingleObject, PollingThreads[_ctx->i], INFINITE);
 
-			CloseHandle(hEndPollingLocations[_ctx->i]);
+			g_scheduler->closeEvent(hEndPollingLocations[_ctx->i]);
 			nPollingLocations[_ctx->i] = 0;
 
 			if (result)

@@ -240,7 +240,7 @@ private:
 //  DSBPOSITIONNOTIFY dspnHot[2];
   
 public:
-	HANDLE hEndOfBuffer;
+	uint32 hEndOfBuffer;
 
 private:
 

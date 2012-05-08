@@ -171,7 +171,7 @@ public:
 
 	// Update the pattern, checking to see if it's time to change slot and executing 
 	// any associated commands
-	int Update(HANDLE hEndPattern, byte& bFlag, RMSfx* sfx);
+	int Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx);
 
 	// Stop a sound effect
 	void StopSfx(RMSfx *sfx);
@@ -292,7 +292,7 @@ public:
 	void Unload(void);
 
 	// Aspetta la fine del pattern in play
-	void WaitForEndPattern(CORO_PARAM, HANDLE hCustomSkip = INVALID_HANDLE_VALUE);
+	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = INVALID_PID_VALUE);
 
 	// Setta un nuovo hotspot per l'oggetto
 	void ChangeHotspot(RMPoint pt);
@@ -494,9 +494,9 @@ private:
 	bool m_bFading;
 	bool m_bEndFade;
 	bool m_bUnregister;
-	HANDLE m_hUnregistered;
+	uint32 m_hUnregistered;
 	int m_nFadeStep;
-	HANDLE m_hEndOfFade;
+	uint32 m_hEndOfFade;
 	bool m_bMustRegister;
 
 	RMItem m_wip0r;
@@ -510,7 +510,7 @@ public:
 	
 	void InitFade(int type);
 	void CloseFade(void);
-	void WaitForFadeEnd(void);
+	void WaitForFadeEnd(CORO_PARAM);
 
 	virtual void Unregister(void);
 	virtual bool RemoveThis(void);

@@ -123,7 +123,7 @@ private:
 	int m_nTimeLastStep;
 
 	RMItem m_body;
-	HANDLE hActionThread;
+	uint32 hActionThread;
 
 protected:
 	// Overload dell'allocazione degli sprites per cambiare il tipo
@@ -398,8 +398,8 @@ public:
 	void MoveAndDoAction(RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
 
 	// Ferma Tony (dalla parte giusta rispetto a un eventuale oggetto)
-	virtual void Stop(void);
-	void StopNoAction(void);
+	virtual void Stop(CORO_PARAM);
+	void StopNoAction(CORO_PARAM);
 
 	// Setta un pattern
 	void SetPattern(int npatt, bool bPlayP0 = false);
@@ -408,7 +408,7 @@ public:
 	int GetCurPattern();
 
 	// Attende la fine di un pattern
-	void WaitForEndPattern(CORO_PARAM, HANDLE hCustomSkip = INVALID_HANDLE_VALUE) { 
+	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = INVALID_PID_VALUE) { 
 		RMCharacter::WaitForEndPattern(coroParam, hCustomSkip);
 	}
 

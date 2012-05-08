@@ -65,9 +65,11 @@ extern bool bSkipSfxNoLoop;
 
 bool bIdleExited;
 
-void ExitAllIdles(CORO_PARAM, int nCurLoc) {
+void ExitAllIdles(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
+
+	int nCurLoc = *(const int *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -96,28 +98,27 @@ RMGfxEngine::~RMGfxEngine() {
 	g_system->deleteMutex(csMainLoop);
 }
 
-void RMGfxEngine::OpenOptionScreen(int type) {
-	bool bRes = false;
+void RMGfxEngine::OpenOptionScreen(CORO_PARAM, int type) {
+	CORO_BEGIN_CONTEXT;
+		bool bRes;
+	CORO_END_CONTEXT(_ctx);
 
-	switch (type) {
-		case 0:
-			bRes = m_opt.Init(m_bigBuf);
-			break;
-		case 1:
-			bRes = m_opt.InitLoadMenuOnly(m_bigBuf,true);
-			break;
-		case 2:
-			bRes = m_opt.InitNoLoadSave(m_bigBuf);
-			break;
-		case 3:
-			bRes = m_opt.InitLoadMenuOnly(m_bigBuf,false);
-			break;
-		case 4:
-			bRes = m_opt.InitSaveMenuOnly(m_bigBuf,false);
-			break;
-	}
+	CORO_BEGIN_CODE(_ctx);
 
-	if (bRes) {
+	_ctx->bRes = false;
+
+	if (type == 0)
+		_ctx->bRes = m_opt.Init(m_bigBuf);
+	else if (type == 1)
+		_ctx->bRes = m_opt.InitLoadMenuOnly(m_bigBuf, true);
+	else if (type == 2)
+		_ctx->bRes = m_opt.InitNoLoadSave(m_bigBuf);
+	else if (type == 3)
+		_ctx->bRes = m_opt.InitLoadMenuOnly(m_bigBuf, false);
+	else if (type == 4)
+		_ctx->bRes = m_opt.InitSaveMenuOnly(m_bigBuf, false);
+
+	if (_ctx->bRes) {
 		_vm->PauseSound(true);
 
 		DisableInput();
@@ -135,16 +136,23 @@ void RMGfxEngine::OpenOptionScreen(int type) {
 		if (type == 1 || type == 2) {
 			bIdleExited = true;
 		} else {
-			m_tony.StopNoAction();
+			CORO_INVOKE_0(m_tony.StopNoAction);
 
-			uint32 id;
 			bIdleExited = false;
-			CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)ExitAllIdles, (void *)m_nCurLoc, 0, &id);
+
+			g_scheduler->createProcess(ExitAllIdles, &m_nCurLoc, sizeof(int));
 		}
 	}
+
+	CORO_END_CODE;
 }
 
-void RMGfxEngine::DoFrame(bool bDrawLocation) {
+void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	g_system->lockMutex(csMainLoop);
 	
 	// Poll dei dispositivi di input
@@ -212,15 +220,15 @@ void RMGfxEngine::DoFrame(bool bDrawLocation) {
 				if (m_bGUIOption) {
 					if (!m_tony.InAction() && m_bInput) {
 						if ((m_input.MouseLeftClicked() && m_input.MousePos().x < 3 && m_input.MousePos().y < 3)) {
-							OpenOptionScreen(0);
+							OpenOptionScreen(nullContext, 0);
 							goto SKIPCLICKSINISTRO;
 						} else if ((GetAsyncKeyState(Common::KEYCODE_ESCAPE)&0x8001) == 0x8001)
-							OpenOptionScreen(0);
+							OpenOptionScreen(nullContext, 0);
 						else if (_vm->getIsDemo()) {
 							if ((GetAsyncKeyState(Common::KEYCODE_F3) & 0x8001) == 0x8001)
-								OpenOptionScreen(3);
+								OpenOptionScreen(nullContext, 3);
 							else if ((GetAsyncKeyState(Common::KEYCODE_F2) & 0x8001) == 0x8001)
-								OpenOptionScreen(4);
+								OpenOptionScreen(nullContext, 4);
 						}
 					}
 				}
@@ -287,7 +295,7 @@ SKIPCLICKSINISTRO:
 			// Aggiorna il nome sotto il puntatore del mouse
 			m_itemName.SetMouseCoord(m_input.MousePos());
 			if (!m_inter.Active() && !m_inv.MiniActive())
-				m_itemName.DoFrame(m_bigBuf,m_loc,m_point,m_inv);	
+				CORO_INVOKE_4(m_itemName.DoFrame, m_bigBuf, m_loc, m_point, m_inv);	
 		}
 
 		// Inventario & interfaccia
@@ -325,7 +333,7 @@ SKIPCLICKSINISTRO:
 		switch (m_nWipeType) {
 			case 1:
 				if (!(m_rcWipeEllipse.bottom - m_rcWipeEllipse.top >= FSTEP * 2)) {
-					SetEvent(m_hWipeEvent);
+					g_scheduler->setEvent(m_hWipeEvent);
 					m_nWipeType = 3;
 					break;
 				}
@@ -338,7 +346,7 @@ SKIPCLICKSINISTRO:
 
 			case 2:
 				if (!(m_rcWipeEllipse.bottom - m_rcWipeEllipse.top < 480 - FSTEP)) {
-					SetEvent(m_hWipeEvent);
+					g_scheduler->setEvent(m_hWipeEvent);
 					m_nWipeType = 3;
 					break;
 				}
@@ -352,6 +360,8 @@ SKIPCLICKSINISTRO:
 	}
 
 	g_system->unlockMutex(csMainLoop);
+
+	CORO_END_CODE;
 }
 
 
@@ -524,7 +534,7 @@ HANDLE RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 
 void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
 	CORO_BEGIN_CONTEXT;
-		HANDLE h;
+		uint32 h;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -534,9 +544,9 @@ void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
 
 	// On Exit?
 	if (bDoOnExit) {
-		_ctx->h = mpalQueryDoAction(1, m_nCurLoc, 0);
-		if (_ctx->h != INVALID_HANDLE_VALUE)
-			WaitForSingleObject(_ctx->h, INFINITE);
+		_ctx->h = mpalQueryDoActionU32(1, m_nCurLoc, 0);
+		if (_ctx->h != INVALID_PID_VALUE)
+			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 	}
 
 	MainFreeze();
@@ -588,7 +598,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	bIdleExited = false;
 	m_bOption = false;
 	m_bWiping = false;
-	m_hWipeEvent = CreateEvent(NULL, false, false, NULL);
+	m_hWipeEvent = g_scheduler->createEvent(false, false);
 
 	// Crea l'evento di freeze
 	csMainLoop = g_system->createMutex();
@@ -986,8 +996,8 @@ void RMGfxEngine::CloseWipe(void) {
 	m_bWiping = false;
 }
 
-void RMGfxEngine::WaitWipeEnd(void) {
-	WaitForSingleObject(m_hWipeEvent,INFINITE);
+void RMGfxEngine::WaitWipeEnd(CORO_PARAM) {
+	g_scheduler->waitForSingleObject(coroParam, m_hWipeEvent, INFINITE);
 }
 
 } // End of namespace Tony

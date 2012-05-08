@@ -56,6 +56,7 @@
 #include "tony/font.h"
 #include "tony/game.h"
 #include "tony/gfxcore.h"
+#include "tony/sched.h"
 #include "tony/tony.h"
 #include "tony/tonychar.h"
 #include "tony/utils.h"
@@ -76,9 +77,9 @@ void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, HANDLE *result);
 void (*LinkGraphicTask)(RMGfxTask *task);
 void (*Freeze)(void); 
 void (*Unfreeze)(void); 
-void (*WaitFrame)(void); 
+void (*WaitFrame)(CORO_PARAM); 
 void (*PlayMusic)(int nChannel, const char *fileName, int nFX, bool bLoop, int nSync);
-void (*WaitWipeEnd)(void); 
+void (*WaitWipeEnd)(CORO_PARAM); 
 void (*CloseWipe)(void); 
 void (*InitWipe)(int type); 
 void (*EnableGUI)(void); 
@@ -96,7 +97,7 @@ OSystem::MutexRef vdb;
 HANDLE mut[10];
 
 bool bSkipIdle = false;
-HANDLE hSkipIdle;
+uint32 hSkipIdle;
 
 int lastMusic = 0, lastTappeto = 0;
 
@@ -319,8 +320,16 @@ DECLARE_CUSTOM_FUNCTION(TonySetPalesati)(CORO_PARAM, uint32 bStatus, uint32, uin
 }
 
 DECLARE_CUSTOM_FUNCTION(MySleep)(CORO_PARAM, uint32 dwTime, uint32, uint32, uint32) {
-	if (bSkipIdle) return;
-	Sleep(dwTime);
+	CORO_BEGIN_CONTEXT;
+		int i;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (!bSkipIdle)
+		CORO_INVOKE_1(g_scheduler->sleep, dwTime);
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(SetAlwaysDisplay)(CORO_PARAM, uint32 val, uint32, uint32, uint32) {
@@ -376,6 +385,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		int curOffset;
 		VoiceHeader *curVoc;
 		FPSFX *voice;
+		RMTextDialog text;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -422,39 +432,38 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 	}
 
 	if (curBackText)
-		curBackText->Hide();
+		CORO_INVOKE_0(curBackText->Hide);
+
 	bTonyIsSpeaking = true;
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !bSkipIdle; _ctx->i++) {
-		RMTextDialog text;
-
-		text.SetInput(Input);
+		_ctx->text.SetInput(Input);
 	
 		// Allineamento
-		text.SetAlignType(RMText::HCENTER,RMText::VBOTTOM);
+		_ctx->text.SetAlignType(RMText::HCENTER,RMText::VBOTTOM);
 		
 		// Colore
-		text.SetColor(0,255,0);
+		_ctx->text.SetColor(0,255,0);
 
 		// Scrive il testo
-		text.WriteText((*_ctx->msg)[_ctx->i],0);
+		_ctx->text.WriteText((*_ctx->msg)[_ctx->i],0);
 
 		// Setta la posizione
 		if (nX == 0 && nY == 0)
-			text.SetPosition(Tony->Position() - RMPoint(0, 130) - Loc->ScrollPosition());
+			_ctx->text.SetPosition(Tony->Position() - RMPoint(0, 130) - Loc->ScrollPosition());
 		else
-			text.SetPosition(RMPoint(nX, nY) - Loc->ScrollPosition());
+			_ctx->text.SetPosition(RMPoint(nX, nY) - Loc->ScrollPosition());
 
 		// Setta l'always display
-		if (bAlwaysDisplay) { text.SetAlwaysDisplay(); text.ForceTime(); }
+		if (bAlwaysDisplay) { _ctx->text.SetAlwaysDisplay(); _ctx->text.ForceTime(); }
 
 		// Registra il testo
-		LinkGraphicTask(&text);
+		LinkGraphicTask(&_ctx->text);
 
 		if (_ctx->curVoc) {
 			if (_ctx->i == 0) {
 				_ctx->voice->Play();
-				text.SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+				_ctx->text.SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			} else {
 				g_system->lockMutex(vdb);
 		//		fseek(_vm->m_vdbFP, _ctx->curOffset, SEEK_SET);
@@ -465,14 +474,14 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 				_ctx->curOffset = _vm->_vdbFP.pos();
 				_ctx->voice->SetLoop(false);
 				_ctx->voice->Play();
-				text.SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+				_ctx->text.SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 				g_system->unlockMutex(vdb);
 			}
 		}
 
 		// Aspetta la fine della visualizzazione	
-		text.SetCustomSkipHandle(hSkipIdle);
-		text.WaitForEndDisplay();
+		_ctx->text.SetCustomSkipHandle(hSkipIdle);
+		CORO_INVOKE_0(_ctx->text.WaitForEndDisplay);
 
 		if (_ctx->curVoc) {
 			_ctx->voice->Stop();
@@ -497,7 +506,11 @@ DECLARE_CUSTOM_FUNCTION(ChangeBoxStatus)(CORO_PARAM, uint32 nLoc, uint32 nBox, u
 
 
 DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
-	HANDLE h;
+	CORO_BEGIN_CONTEXT;
+		uint32 h;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	Freeze();
 
@@ -508,11 +521,13 @@ DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, ui
 		LoadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
 
 	Unfreeze();
-	h = mpalQueryDoAction(0, nLoc, 0);
+	_ctx->h = mpalQueryDoActionU32(0, nLoc, 0);
 
 	// On Enter?
-	if (h != INVALID_HANDLE_VALUE)
-		WaitForSingleObject(h, INFINITE);
+	if (_ctx->h != INVALID_PID_VALUE)
+		CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+
+	CORO_END_CODE;
 }
 
 
@@ -524,6 +539,7 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 		RMMessage *msg;
 		RMGfxClearTask clear;
 		int i;
+		RMTextDialog text;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -541,38 +557,36 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 	Unfreeze();
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !bSkipIdle; _ctx->i++) {
-		RMTextDialog text;
-
-		text.SetInput(Input);
+		_ctx->text.SetInput(Input);
 
 		// Allineamento
-		text.SetAlignType(RMText::HCENTER,RMText::VCENTER);
+		_ctx->text.SetAlignType(RMText::HCENTER,RMText::VCENTER);
 		
 		// Forza il testo a scomparire a tempo		
-		text.ForceTime();
+		_ctx->text.ForceTime();
 
 		// Colore
-		text.SetColor(255,255,255);
+		_ctx->text.SetColor(255,255,255);
 
 		// Scrive il testo
 		if (nFont == 0)
-			text.WriteText((*_ctx->msg)[_ctx->i], 1);
+			_ctx->text.WriteText((*_ctx->msg)[_ctx->i], 1);
 		else if (nFont == 1)
-			text.WriteText((*_ctx->msg)[_ctx->i], 0);
+			_ctx->text.WriteText((*_ctx->msg)[_ctx->i], 0);
 
 		// Setta la posizione
-		text.SetPosition(RMPoint(320, 240));
+		_ctx->text.SetPosition(RMPoint(320, 240));
 
-		text.SetAlwaysDisplay();
-		text.ForceTime();
+		_ctx->text.SetAlwaysDisplay();
+		_ctx->text.ForceTime();
 
 		// Registra il testo
 		LinkGraphicTask(&_ctx->clear);
-		LinkGraphicTask(&text);
+		LinkGraphicTask(&_ctx->text);
 
 		// Aspetta la fine della visualizzazione	
-		text.SetCustomSkipHandle(hSkipIdle);
-		text.WaitForEndDisplay();
+		_ctx->text.SetCustomSkipHandle(hSkipIdle);
+		CORO_INVOKE_0(_ctx->text.WaitForEndDisplay);
 	}
 
 	delete _ctx->msg;
@@ -581,10 +595,18 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 }
 
 DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	RMGfxClearTask clear;
+	CORO_BEGIN_CONTEXT;
+		char buf[256];
+		RMGfxClearTask clear;
+	CORO_END_CONTEXT(_ctx);
 
-	LinkGraphicTask(&clear);
-	WaitFrame();
+	CORO_BEGIN_CODE(_ctx);
+
+	LinkGraphicTask(&_ctx->clear);
+	
+	CORO_INVOKE_0(WaitFrame);
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(CORO_PARAM, uint32 bNotEnableTony, uint32, uint32, uint32) {
@@ -625,7 +647,7 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 
 	if (!bNoOcchioDiBue) {
 	  InitWipe(1);
-	  WaitWipeEnd();
+	  CORO_INVOKE_0(WaitWipeEnd);
 	}
 
 	_vm->StopMusic(4);
@@ -640,14 +662,14 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 
 DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
 	CORO_BEGIN_CONTEXT;
-		HANDLE h;
+		uint32 h;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	if (!bNoOcchioDiBue) {
 		InitWipe(1);
-		WaitWipeEnd();
+		CORO_INVOKE_0(WaitWipeEnd);
 	}
 
 	if (lastTappeto != tappeti[nLoc]) {
@@ -676,18 +698,18 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	Unfreeze();
 
 
-	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
+	_ctx->h = mpalQueryDoActionU32(0, nLoc, 0);
 
 	if (!bNoOcchioDiBue) {
-  		WaitWipeEnd();
+  		CORO_INVOKE_0(WaitWipeEnd);
 		CloseWipe();
 	}
 
 	bNoOcchioDiBue = false;
 
 	// On Enter?
-	if (_ctx->h != INVALID_HANDLE_VALUE)
-		WaitForSingleObject(_ctx->h, INFINITE);
+	if (_ctx->h != INVALID_PID_VALUE)
+		CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 
 	CORO_END_CODE;
 }
@@ -725,7 +747,7 @@ DECLARE_CUSTOM_FUNCTION(EnableInput)(CORO_PARAM, uint32, uint32, uint32, uint32)
 }
 
 DECLARE_CUSTOM_FUNCTION(StopTony)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	Tony->StopNoAction();
+	Tony->StopNoAction(coroParam);
 }
 
 
@@ -1328,114 +1350,123 @@ DECLARE_CUSTOM_FUNCTION(MoveTony)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint
 }
 
 DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
-	int lx, ly;
-	RMPoint pt;
+	CORO_BEGIN_CONTEXT;
+		int lx, ly;
+		RMPoint pt;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	// Prende le coordinate di quanto scrollare
-	lx=*((int*)&nX);
-	ly=*((int*)&nY);
+	_ctx->lx = (int32)nX;
+	_ctx->ly = (int32)nY;
 
-	pt=Loc->ScrollPosition();
+	_ctx->pt = Loc->ScrollPosition();
 	
-	while ((lx != 0 || ly != 0) && !bSkipIdle) {
-		if (lx > 0) {
-			lx -= (int32)sX; if (lx < 0) lx = 0;
-			pt.Offset((int32)sX, 0);
-		} else if (lx < 0) {
-			lx += (int32)sX; if (lx > 0) lx = 0;
-			pt.Offset(-(int32)sX, 0);
+	while ((_ctx->lx != 0 || _ctx->ly != 0) && !bSkipIdle) {
+		if (_ctx->lx > 0) {
+			_ctx->lx -= (int32)sX; if (_ctx->lx < 0) _ctx->lx = 0;
+			_ctx->pt.Offset((int32)sX, 0);
+		} else if (_ctx->lx < 0) {
+			_ctx->lx += (int32)sX; if (_ctx->lx > 0) _ctx->lx = 0;
+			_ctx->pt.Offset(-(int32)sX, 0);
 		}
 
-		if (ly > 0) {
-			ly -= sY; if (ly < 0) ly = 0;
-			pt.Offset(0, sY);
-		} else if (ly < 0) {
-			ly += sY; if (ly > 0) ly = 0;
-			pt.Offset(0, -(int32)sY);
+		if (_ctx->ly > 0) {
+			_ctx->ly -= sY; if (_ctx->ly < 0) _ctx->ly = 0;
+			_ctx->pt.Offset(0, sY);
+		} else if (_ctx->ly < 0) {
+			_ctx->ly += sY; if (_ctx->ly > 0) _ctx->ly = 0;
+			_ctx->pt.Offset(0, -(int32)sY);
 		}
 
-		WaitFrame();
+		CORO_INVOKE_0(WaitFrame);
 
 		Freeze();
-		Loc->SetScrollPosition(pt);
-		Tony->SetScrollPosition(pt);
+		Loc->SetScrollPosition(_ctx->pt);
+		Tony->SetScrollPosition(_ctx->pt);
 		Unfreeze();
-
 	}
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
-	int lx, ly;
-	RMPoint pt, startpt;
-	uint32 dwStartTime, dwCurTime, dwTotalTime;
-	uint32 stepX, stepY;
-	int dimx, dimy;
+	CORO_BEGIN_CONTEXT;
+		int lx, ly;
+		RMPoint pt, startpt;
+		uint32 dwStartTime, dwCurTime, dwTotalTime;
+		uint32 stepX, stepY;
+		int dimx, dimy;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	// Prende le coordinate di quanto scrollare
-	lx=*((int*)&nX);
-	ly=*((int*)&nY);
-	dimx = lx;
-	dimy = ly;
-	if (lx < 0) dimx = -lx;
-	if (ly < 0) dimy = -ly;
+	_ctx->lx=*((int*)&nX);
+	_ctx->ly=*((int*)&nY);
+	_ctx->dimx = _ctx->lx;
+	_ctx->dimy = _ctx->ly;
+	if (_ctx->lx < 0) _ctx->dimx = -_ctx->lx;
+	if (_ctx->ly < 0) _ctx->dimy = -_ctx->ly;
 
-	stepX = sX;
-	stepY = sY;
+	_ctx->stepX = sX;
+	_ctx->stepY = sY;
 
-	startpt = Loc->ScrollPosition();
+	_ctx->startpt = Loc->ScrollPosition();
 	
-  dwStartTime = timeGetTime();
+	_ctx->dwStartTime = _vm->GetTime();
 	
 	if (sX)
-		dwTotalTime = dimx * (1000 / 35) / sX;
+		_ctx->dwTotalTime = _ctx->dimx * (1000 / 35) / sX;
 	else
-		dwTotalTime = dimy * (1000 / 35) / sY;
+		_ctx->dwTotalTime = _ctx->dimy * (1000 / 35) / sY;
 
-	while ((lx != 0 || ly != 0) && !bSkipIdle) {
-		dwCurTime = _vm->GetTime() - dwStartTime;
-		if (dwCurTime>dwTotalTime)
+	while ((_ctx->lx != 0 || _ctx->ly != 0) && !bSkipIdle) {
+		_ctx->dwCurTime = _vm->GetTime() - _ctx->dwStartTime;
+		if (_ctx->dwCurTime > _ctx->dwTotalTime)
 			break;
 
-		pt = startpt;
+		_ctx->pt = _ctx->startpt;
 		
 		if (sX) {
-			if (lx > 0)
-				pt.x += (dimx * dwCurTime) / dwTotalTime;
+			if (_ctx->lx > 0)
+				_ctx->pt.x += (_ctx->dimx * _ctx->dwCurTime) / _ctx->dwTotalTime;
 			else
-				pt.x -= (dimx * dwCurTime) / dwTotalTime;
+				_ctx->pt.x -= (_ctx->dimx * _ctx->dwCurTime) / _ctx->dwTotalTime;
 		} else {
-			if (ly > 0)
-				pt.y += (dimy*dwCurTime) / dwTotalTime;
+			if (_ctx->ly > 0)
+				_ctx->pt.y += (_ctx->dimy*_ctx->dwCurTime) / _ctx->dwTotalTime;
 			else
-				pt.y -= (dimy*dwCurTime) / dwTotalTime;
+				_ctx->pt.y -= (_ctx->dimy*_ctx->dwCurTime) / _ctx->dwTotalTime;
 
 		}
 
 /*		
-		sX = stepX * (dwCurTime-dwLastTime) / (1000 / 35);
-		sY = stepY * (dwCurTime-dwLastTime) / (1000 / 35);
+		sX = _ctx->stepX * (_ctx->dwCurTime-dwLastTime) / (1000 / 35);
+		sY = _ctx->stepY * (_ctx->dwCurTime-dwLastTime) / (1000 / 35);
 
-		if (lx > 0) {
-			lx-=sX; if (lx < 0) lx = 0;
-			pt.Offset(sX,0);
-		} else if (lx < 0) {
-			lx+=sX; if (lx > 0) lx = 0;
-			pt.Offset(-sX,0);
+		if (_ctx->lx > 0) {
+			_ctx->lx-=sX; if (_ctx->lx < 0) _ctx->lx = 0;
+			_ctx->pt.Offset(sX,0);
+		} else if (_ctx->lx < 0) {
+			_ctx->lx+=sX; if (_ctx->lx > 0) _ctx->lx = 0;
+			_ctx->pt.Offset(-sX,0);
 		}
 
-		if (ly > 0) {
-			ly-=sY; if (ly<0) ly = 0;
-			pt.Offset(0,sY);
-		} else if (ly<0) {
-			ly+=sY; if (ly > 0) ly = 0;
-			pt.Offset(0,-sY);
+		if (_ctx->ly > 0) {
+			_ctx->ly-=sY; if (_ctx->ly<0) _ctx->ly = 0;
+			_ctx->pt.Offset(0,sY);
+		} else if (_ctx->ly<0) {
+			_ctx->ly+=sY; if (_ctx->ly > 0) _ctx->ly = 0;
+			_ctx->pt.Offset(0,-sY);
 		}
 */
-		WaitFrame();
+		CORO_INVOKE_0(WaitFrame);
 
 		Freeze();
-		Loc->SetScrollPosition(pt);
-		Tony->SetScrollPosition(pt);
+		Loc->SetScrollPosition(_ctx->pt);
+		Tony->SetScrollPosition(_ctx->pt);
 		Unfreeze();
 
 	}
@@ -1443,22 +1474,23 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 
 	// Setta la posizione finale
 	if (sX) {
-		if (lx > 0)
-			pt.x = startpt.x + dimx;
+		if (_ctx->lx > 0)
+			_ctx->pt.x = _ctx->startpt.x + _ctx->dimx;
 		else
-			pt.x = startpt.x - dimx;
+			_ctx->pt.x = _ctx->startpt.x - _ctx->dimx;
 	} else {
-		if (ly > 0)
-			pt.y = startpt.y + dimy;
+		if (_ctx->ly > 0)
+			_ctx->pt.y = _ctx->startpt.y + _ctx->dimy;
 		else
-			pt.y = startpt.y - dimy;
-
+			_ctx->pt.y = _ctx->startpt.y - _ctx->dimy;
 	}
 
 	Freeze();
-	Loc->SetScrollPosition(pt);
-	Tony->SetScrollPosition(pt);
+	Loc->SetScrollPosition(_ctx->pt);
+	Tony->SetScrollPosition(_ctx->pt);
 	Unfreeze();
+
+	CORO_END_CODE;
 }
 
 
@@ -1484,7 +1516,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(CORO_PARAM, uint32 dwCode, uint32 nX, uin
 
 
 DECLARE_CUSTOM_FUNCTION(AutoSave)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->AutoSave();
+	_vm->AutoSave(coroParam);
 }
 
 DECLARE_CUSTOM_FUNCTION(Abort)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -1492,33 +1524,41 @@ DECLARE_CUSTOM_FUNCTION(Abort)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 }
 
 DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32, uint32) {
-	uint32 i;
-	uint32 curTime = _vm->GetTime();
-	int dirx,diry;
-	
-	dirx = 1;
-	diry = 1;
+	CORO_BEGIN_CONTEXT;
+		uint32 i;
+		uint32 curTime;
+		int dirx,diry;
+	CORO_END_CONTEXT(_ctx);
 
-	while (_vm->GetTime() < curTime + nScosse) {
-		WaitFrame();
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->curTime = _vm->GetTime();
+	
+	_ctx->dirx = 1;
+	_ctx->diry = 1;
+
+	while (_vm->GetTime() < _ctx->curTime + nScosse) {
+		CORO_INVOKE_0(WaitFrame);
 
 		Freeze();
-		Loc->SetFixedScroll(RMPoint(1 * dirx, 1 * diry));
-		Tony->SetFixedScroll(RMPoint(1 * dirx, 1 * diry));
+		Loc->SetFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
+		Tony->SetFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
 		Unfreeze();
 
-		i = _vm->_randomSource.getRandomNumber(2);
+		_ctx->i = _vm->_randomSource.getRandomNumber(2);
 
-		if (i == 0 || i == 2)
-			dirx = -dirx;
-		else if (i == 1 || i == 2)
-			diry = -diry;
+		if (_ctx->i == 0 || _ctx->i == 2)
+			_ctx->dirx = -_ctx->dirx;
+		else if (_ctx->i == 1 || _ctx->i == 2)
+			_ctx->diry = -_ctx->diry;
 	}
 
 	Freeze();
 	Loc->SetFixedScroll(RMPoint(0, 0));
 	Tony->SetFixedScroll(RMPoint(0, 0));
 	Unfreeze();
+	
+	CORO_END_CODE;
 }
 
 
@@ -1607,7 +1647,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		if (bIsBack) {
 			curBackText = _ctx->text = new RMTextDialogScrolling(Loc);
 			if (bTonyIsSpeaking)
-				curBackText->Hide();
+				CORO_INVOKE_0(curBackText->Hide);
 		} else
 			_ctx->text = new RMTextDialog;
 
@@ -1649,7 +1689,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 
 		// Aspetta la fine della visualizzazione	
 		_ctx->text->SetCustomSkipHandle(hSkipIdle);
-		_ctx->text->WaitForEndDisplay();
+		CORO_INVOKE_0(_ctx->text->WaitForEndDisplay);
 
 		if (_ctx->curVoc) {
 			_ctx->voice->Stop();
@@ -1769,13 +1809,22 @@ DECLARE_CUSTOM_FUNCTION(MCharSetAlwaysBack)(CORO_PARAM, uint32 nChar, uint32 bAl
 
 
 DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMessage, uint32 bIsBack, uint32 nFont) {
-	RMMessage msg(dwMessage);
-	int i;
-	int parm;
-	RMPoint pt;
-	HANDLE h;
-	RMTextDialog *text;
-	int curOffset = 0;
+	CORO_BEGIN_CONTEXT;
+		RMMessage *msg;
+		int i;
+		int parm;
+		RMPoint pt;
+		uint32 h;
+		RMTextDialog *text;
+		int curOffset;
+		VoiceHeader *curVoc;
+		FPSFX *voice;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->msg = new RMMessage(dwMessage);
+	_ctx->curOffset = 0;
 
 	assert(nChar < 10);
 
@@ -1783,99 +1832,103 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 	// Calcola la posizione del testo in base al frame corrente
 	if (MCharacter[nChar].x==-1)
-		pt=MCharacter[nChar].item->CalculatePos()-RMPoint(-60,20)-Loc->ScrollPosition();
+		_ctx->pt=MCharacter[nChar].item->CalculatePos()-RMPoint(-60,20)-Loc->ScrollPosition();
 	else
-		pt=RMPoint(MCharacter[nChar].x,MCharacter[nChar].y);
+		_ctx->pt=RMPoint(MCharacter[nChar].x,MCharacter[nChar].y);
 	
 	// Parametro per le azioni speciali: random tra le parlate
-	parm = (MCharacter[nChar].curgroup * 10) + _vm->_randomSource.getRandomNumber(
+	_ctx->parm = (MCharacter[nChar].curgroup * 10) + _vm->_randomSource.getRandomNumber(
 			MCharacter[nChar].numtalks[MCharacter[nChar].curgroup] - 1) + 1;
 
 	// Cerca di eseguire la funzione custom per inizializzare la parlata
 	if (MCharacter[nChar].item) {
-		h = mpalQueryDoAction(30,MCharacter[nChar].item->MpalCode(), parm);
-		if (h != INVALID_HANDLE_VALUE)
-			WaitForSingleObject(h,INFINITE);
+		_ctx->h = mpalQueryDoActionU32(30, MCharacter[nChar].item->MpalCode(), _ctx->parm);
+		if (_ctx->h != INVALID_PID_VALUE) {
+			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+		}
 	}
 
-	VoiceHeader *curVoc = SearchVoiceHeader(0, dwMessage);
-	FPSFX *voice = NULL;
-	if (curVoc) {
+	_ctx->curVoc = SearchVoiceHeader(0, dwMessage);
+	_ctx->voice = NULL;
+	if (_ctx->curVoc) {
 		// Si posiziona all'interno del database delle voci all'inizio della prima
 		g_system->lockMutex(vdb);
 	//		fseek(_vm->m_vdbFP, curVoc->offset, SEEK_SET);
-		_vm->_vdbFP.seek(curVoc->offset);
-		curOffset = curVoc->offset;
+		_vm->_vdbFP.seek(_ctx->curVoc->offset);
+		_ctx->curOffset = _ctx->curVoc->offset;
 		g_system->unlockMutex(vdb);
 	}
 
-	for (i = 0; i < msg.NumPeriods() && !bSkipIdle; i++) {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !bSkipIdle; _ctx->i++) {
 		// Crea l'oggetto diverso se è back o no
 		if (bIsBack) {
-			curBackText=text = new RMTextDialogScrolling(Loc);
+			curBackText=_ctx->text = new RMTextDialogScrolling(Loc);
 			if (bTonyIsSpeaking)
-				curBackText->Hide();
+				CORO_INVOKE_0(curBackText->Hide);
 		}
 		else
-			text = new RMTextDialog;
+			_ctx->text = new RMTextDialog;
 
-		text->SetInput(Input);
+		_ctx->text->SetInput(Input);
 
 		// Skipping
-		text->SetSkipStatus(!bIsBack);
+		_ctx->text->SetSkipStatus(!bIsBack);
 	
 		// Allineamento
-		text->SetAlignType(RMText::HCENTER,RMText::VBOTTOM);
+		_ctx->text->SetAlignType(RMText::HCENTER,RMText::VBOTTOM);
 		
 		// Colore
-		text->SetColor(MCharacter[nChar].r,MCharacter[nChar].g,MCharacter[nChar].b);
+		_ctx->text->SetColor(MCharacter[nChar].r,MCharacter[nChar].g,MCharacter[nChar].b);
 
 		// Scrive il testo
-		text->WriteText(msg[i],nFont);
+		_ctx->text->WriteText((*_ctx->msg)[_ctx->i], nFont);
 
 		// Setta la posizione
-		text->SetPosition(pt);
+		_ctx->text->SetPosition(_ctx->pt);
 
 		// Setta l'always display
-		if (bAlwaysDisplay) { text->SetAlwaysDisplay(); text->ForceTime(); }
+		if (bAlwaysDisplay) { _ctx->text->SetAlwaysDisplay(); _ctx->text->ForceTime(); }
 
 		// Registra il testo
-		LinkGraphicTask(text);
+		LinkGraphicTask(_ctx->text);
 
-		if (curVoc) {
+		if (_ctx->curVoc) {
 			g_system->lockMutex(vdb);
-			_vm->_theSound.CreateSfx(&voice);
-			_vm->_vdbFP.seek(curOffset);
-			voice->LoadVoiceFromVDB(_vm->_vdbFP);
-			voice->SetLoop(false);
-			if (bIsBack) voice->SetVolume(55);
-			voice->Play();
-			text->SetCustomSkipHandle2(voice->hEndOfBuffer);
-			curOffset = _vm->_vdbFP.pos();
+			_vm->_theSound.CreateSfx(&_ctx->voice);
+			_vm->_vdbFP.seek(_ctx->curOffset);
+			_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
+			_ctx->voice->SetLoop(false);
+			if (bIsBack) _ctx->voice->SetVolume(55);
+			_ctx->voice->Play();
+			_ctx->text->SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+			_ctx->curOffset = _vm->_vdbFP.pos();
 			g_system->unlockMutex(vdb);
 		}
 
 		// Aspetta la fine della visualizzazione	
-		text->SetCustomSkipHandle(hSkipIdle);
-		text->WaitForEndDisplay();
+		_ctx->text->SetCustomSkipHandle(hSkipIdle);
+		CORO_INVOKE_0(_ctx->text->WaitForEndDisplay);
 
-		if (curVoc) {
-			voice->Stop();
-			voice->Release();
-			voice=NULL;
+		if (_ctx->curVoc) {
+			_ctx->voice->Stop();
+			_ctx->voice->Release();
+			_ctx->voice = NULL;
 		}
 
-	 	curBackText=NULL;
-		delete text;
+	 	curBackText = NULL;
+		delete _ctx->text;
+		delete _ctx->msg;
 	}
 
 
 	// Cerca di eseguire la funzione custom per chiudere la parlata
 	if (MCharacter[nChar].item) {
-		h = mpalQueryDoAction(31,MCharacter[nChar].item->MpalCode(),parm);
-		if (h!=INVALID_HANDLE_VALUE)
-			WaitForSingleObject(h,INFINITE);
+		_ctx->h = mpalQueryDoActionU32(31, MCharacter[nChar].item->MpalCode(), _ctx->parm);
+		if (_ctx->h != INVALID_PID_VALUE)
+			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 	}
+
+	CORO_END_CODE;
 }
 
 
@@ -1894,7 +1947,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		LPSTR string;
 		RMTextDialog *text;
 		int parm;
-		HANDLE h;
+		uint32 h;
 		bool bIsBack;
 		VoiceHeader *curVoc;
 		FPSFX *voice;
@@ -1968,12 +2021,10 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		_ctx->text->WriteText(_ctx->string, 0);
 		_ctx->text->SetPosition(_ctx->pt);
 	} else {
-		RMPoint pt;
-
 		if (MCharacter[nPers].x == -1)
-			pt = MCharacter[nPers].item->CalculatePos() - RMPoint(-60, 20) - Loc->ScrollPosition();
+			_ctx->pt = MCharacter[nPers].item->CalculatePos() - RMPoint(-60, 20) - Loc->ScrollPosition();
 		else
-			pt = RMPoint(MCharacter[nPers].x, MCharacter[nPers].y);
+			_ctx->pt = RMPoint(MCharacter[nPers].x, MCharacter[nPers].y);
 
 		// Parametro per le azioni speciali: random tra le parlate
 		_ctx->parm = (MCharacter[nPers].curgroup * 10) + _vm->_randomSource.getRandomNumber(
@@ -1983,9 +2034,9 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			MCharacter[nPers].numtexts--;
 		} else {
 			// Cerca di eseguire la funzione custom per inizializzare la parlata
-			_ctx->h = mpalQueryDoAction(30, MCharacter[nPers].item->MpalCode(), _ctx->parm);
-			if (_ctx->h != INVALID_HANDLE_VALUE)
-				WaitForSingleObject(_ctx->h,INFINITE);
+			_ctx->h = mpalQueryDoActionU32(30, MCharacter[nPers].item->MpalCode(), _ctx->parm);
+			if (_ctx->h != INVALID_PID_VALUE)
+				CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 
 			MCharacter[nPers].curTalk = _ctx->parm;
 				
@@ -1998,7 +2049,8 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		if (MCharacter[nPers].bAlwaysBack) {
 			_ctx->text = curBackText = new RMTextDialogScrolling(Loc);
 			if (bTonyIsSpeaking)
-				curBackText->Hide();
+				CORO_INVOKE_0(curBackText->Hide);
+
 			_ctx->bIsBack = true;
 		} else
 			_ctx->text = new RMTextDialog;
@@ -2006,7 +2058,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		_ctx->text->SetSkipStatus(!MCharacter[nPers].bAlwaysBack);
 		_ctx->text->SetColor(MCharacter[nPers].r,MCharacter[nPers].g,MCharacter[nPers].b);
 		_ctx->text->WriteText(_ctx->string,0);
-		_ctx->text->SetPosition(pt);
+		_ctx->text->SetPosition(_ctx->pt);
 	}
 
 	if (!bSkipIdle) {
@@ -2022,7 +2074,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 
 		// Aspetta la fine della visualizzazione	
 		_ctx->text->SetCustomSkipHandle(hSkipIdle);
-		_ctx->text->WaitForEndDisplay();
+		CORO_INVOKE_0(_ctx->text->WaitForEndDisplay);
 	}
 
 	if (_ctx->curVoc) {
@@ -2046,9 +2098,9 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			if ((MCharacter[nPers].bInTexts && MCharacter[nPers].numtexts== 0) || !MCharacter[nPers].bInTexts) {
 				// Cerca di eseguire la funzione custom per chiudere la parlata
 				MCharacter[nPers].curTalk = (MCharacter[nPers].curTalk%10) + MCharacter[nPers].curgroup*10;
-				_ctx->h = mpalQueryDoAction(31,MCharacter[nPers].item->MpalCode(),MCharacter[nPers].curTalk);
-				if (_ctx->h!=INVALID_HANDLE_VALUE)
-					WaitForSingleObject(_ctx->h,INFINITE);
+				_ctx->h = mpalQueryDoActionU32(31,MCharacter[nPers].item->MpalCode(),MCharacter[nPers].curTalk);
+				if (_ctx->h != INVALID_PID_VALUE)
+					CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 
 				MCharacter[nPers].bInTexts = false;
 				MCharacter[nPers].numtexts = 0;
@@ -2121,14 +2173,14 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 		// Attiva l'oggetto
 		LinkGraphicTask(&_ctx->dc);
-		_ctx->dc.Show();
+		CORO_INVOKE_0(_ctx->dc.Show);
 
 		// Disegna il puntatore
 		Pointer->SetSpecialPointer(Pointer->PTR_NONE);
 		MainShowMouse();
 			
 		while (!(Input->MouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {
-			WaitFrame();
+			CORO_INVOKE_0(WaitFrame);
 			Freeze();
 			_ctx->dc.DoFrame(Input->MousePos());
 			Unfreeze();
@@ -2137,7 +2189,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		// Nascondi il puntatore
 		MainHideMouse();
 		
-		_ctx->dc.Hide();
+		CORO_INVOKE_0(_ctx->dc.Hide);
 		mpalQueryDialogSelectionU32(_ctx->nChoice, _ctx->sl[_ctx->sel]);
 
 		// Chiude la scelta
@@ -2162,7 +2214,8 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
 //	EnterCriticalSection(&cs[num]);
-	WaitForSingleObject(mut[num],INFINITE);
+//	WaitForSingleObject(mut[num],INFINITE);
+	warning("TODO");
 }
 
 DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
@@ -2197,33 +2250,50 @@ int curSonoriz = 0;
 
 bool bFadeOutStop;
 
-void ThreadFadeInMusic(void *nMusic) {
-	int i;
-	int nChannel = (int)nMusic;
+void ThreadFadeInMusic(CORO_PARAM, const void *nMusic) {
+	CORO_BEGIN_CONTEXT;
+		int i;
+	CORO_END_CONTEXT(_ctx);
+
+	int nChannel = *(const int *)nMusic;
+
+	CORO_BEGIN_CODE(_ctx);
 
 	debug("Start FadeIn Music\n");
 
-	for (i = 0; i < 16; i++) {
-		_vm->SetMusicVolume(nChannel, i * 4);
-		Sleep(100);
+	for (_ctx->i = 0; _ctx->i < 16; _ctx->i++) {
+		_vm->SetMusicVolume(nChannel, _ctx->i * 4);
+
+		CORO_INVOKE_1(g_scheduler->sleep, 100);
 	}
 	_vm->SetMusicVolume(nChannel, 64);
 
 	debug("End FadeIn Music\n");
-	_endthread();
+	
+	CORO_KILL_SELF();
+
+	CORO_END_CODE;
 }
 
-void ThreadFadeOutMusic(void *nMusic) {
-	int i;
-	int nChannel = (int)nMusic;
-	int startVolume = _vm->GetMusicVolume(nChannel);
+void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
+	CORO_BEGIN_CONTEXT;
+		int i;
+		int startVolume;
+	CORO_END_CONTEXT(_ctx);
+
+	int nChannel = *(const int *)nMusic;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->startVolume = _vm->GetMusicVolume(nChannel);
 
 	debug("Start FadeOut Music\n");
 
-	for (i = 16; i > 0 && !bFadeOutStop; i--) {
-		if (i * 4 < startVolume)
-			_vm->SetMusicVolume(nChannel, i * 4);
-		Sleep(100);
+	for (_ctx->i = 16; _ctx->i > 0 && !bFadeOutStop; _ctx->i--) {
+		if (_ctx->i * 4 < _ctx->startVolume)
+			_vm->SetMusicVolume(nChannel, _ctx->i * 4);
+
+		CORO_INVOKE_1(g_scheduler->sleep, 100);
 	}
 	
 	if (!bFadeOutStop)
@@ -2235,25 +2305,29 @@ void ThreadFadeOutMusic(void *nMusic) {
 
 	debug("End FadeOut Music\n");
 
-	_endthread();
+	CORO_KILL_SELF();
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeInSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_beginthread(ThreadFadeInMusic, 10240, (void*)curSonoriz);
+	g_scheduler->createProcess(ThreadFadeInMusic, &curSonoriz, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeOutSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bFadeOutStop = false;
-	_beginthread(ThreadFadeOutMusic, 10240, (void *)curSonoriz);
+	g_scheduler->createProcess(ThreadFadeOutMusic, &curSonoriz, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeOutStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bFadeOutStop = false;
-	_beginthread(ThreadFadeOutMusic, 10240, (void*)2);
+	int channel = 2;
+	g_scheduler->createProcess(ThreadFadeOutMusic, &channel, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeInStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_beginthread(ThreadFadeInMusic, 10240, (void*)2);
+	int channel = 2;
+	g_scheduler->createProcess(ThreadFadeInMusic, &channel, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(StopSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -2475,12 +2549,12 @@ DECLARE_CUSTOM_FUNCTION(StacchettoFadeEnd)(CORO_PARAM, uint32 nStacc, uint32 bLo
 
 DECLARE_CUSTOM_FUNCTION(MustSkipIdleStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bSkipIdle = true;
-	SetEvent(hSkipIdle);
+	g_scheduler->setEvent(hSkipIdle);
 }
 
 DECLARE_CUSTOM_FUNCTION(MustSkipIdleEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bSkipIdle = false;
-	ResetEvent(hSkipIdle);
+	g_scheduler->resetEvent(hSkipIdle);
 }
 
 DECLARE_CUSTOM_FUNCTION(PatIrqFreeze)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
@@ -2488,70 +2562,94 @@ DECLARE_CUSTOM_FUNCTION(PatIrqFreeze)(CORO_PARAM, uint32 bStatus, uint32, uint32
 }
 
 DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	Freeze();
-	_vm->OpenInitLoadMenu();
+	CORO_INVOKE_0(_vm->OpenInitLoadMenu);
 	Unfreeze();
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(OpenInitOptions)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	Freeze();
-	_vm->OpenInitOptions();
+	CORO_INVOKE_0(_vm->OpenInitOptions);
 	Unfreeze();
+
+	CORO_END_CODE;
 }
 
 
 DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
-	RMMessage msg(nMsg);
-	RMTextDialog *text;
-	HANDLE hDisable = CreateEvent(NULL, true, false, NULL);
-	int i;
-	uint32 startTime;
-	
-	text = new RMTextDialog[msg.NumPeriods()];
+	CORO_BEGIN_CONTEXT;
+		RMMessage *msg;
+		RMTextDialog *text;
+		uint32 hDisable;
+		int i;
+		uint32 startTime;
+	CORO_END_CONTEXT(_ctx);
 
-	for (i = 0; i < msg.NumPeriods(); i++) 	{
-		text[i].SetInput(Input);
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->msg = new RMMessage(nMsg);
+	_ctx->hDisable = g_scheduler->createEvent(true, false);
+	
+	_ctx->text = new RMTextDialog[_ctx->msg->NumPeriods()];
+
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods(); _ctx->i++) 	{
+		_ctx->text[_ctx->i].SetInput(Input);
 
 		// Allineamento
-		if (msg[i][0] == '@') {
-			text[i].SetAlignType(RMText::HCENTER, RMText::VTOP);
-			text[i].WriteText(&msg[i][1], 3);
-			text[i].SetPosition(RMPoint(414, 70 + i * 26));  // 70
+		if ((*_ctx->msg)[_ctx->i][0] == '@') {
+			_ctx->text[_ctx->i].SetAlignType(RMText::HCENTER, RMText::VTOP);
+			_ctx->text[_ctx->i].WriteText(_ctx->msg[_ctx->i][1], 3);
+			_ctx->text[_ctx->i].SetPosition(RMPoint(414, 70 + _ctx->i * 26));  // 70
 		} else {
-			text[i].SetAlignType(RMText::HLEFT,RMText::VTOP);
-			text[i].WriteText(msg[i], 3);
-			text[i].SetPosition(RMPoint(260, 70 + i * 26));
+			_ctx->text[_ctx->i].SetAlignType(RMText::HLEFT,RMText::VTOP);
+			_ctx->text[_ctx->i].WriteText((*_ctx->msg)[_ctx->i], 3);
+			_ctx->text[_ctx->i].SetPosition(RMPoint(260, 70 + _ctx->i * 26));
 		}
 		
 	
 		// Setta la posizione
-		text[i].SetAlwaysDisplay();
-		text[i].SetForcedTime(dwTime * 1000);
-		text[i].SetNoTab();
+		_ctx->text[_ctx->i].SetAlwaysDisplay();
+		_ctx->text[_ctx->i].SetForcedTime(dwTime * 1000);
+		_ctx->text[_ctx->i].SetNoTab();
 
 		// Aspetta la fine della visualizzazione	
-		text[i].SetCustomSkipHandle(hDisable);
+		_ctx->text[_ctx->i].SetCustomSkipHandle(_ctx->hDisable);
 
 		// Registra il testo
-		LinkGraphicTask(&text[i]);
+		LinkGraphicTask(&_ctx->text[_ctx->i]);
 	}
 	
-	startTime = _vm->GetTime();
+	_ctx->startTime = _vm->GetTime();
 
-	while (startTime + dwTime * 1000 > _vm->GetTime()) {
-		WaitFrame();
+	while (_ctx->startTime + dwTime * 1000 > _vm->GetTime()) {
+		CORO_INVOKE_0(WaitFrame);
 		if (Input->MouseLeftClicked() || Input->MouseRightClicked())
 			break;
 		if ((GetAsyncKeyState(Common::KEYCODE_TAB) & 0x8001) == 0x8001)
 			break;
 	}
 
-	SetEvent(hDisable);
+	g_scheduler->setEvent(_ctx->hDisable);
 
-	WaitFrame();
-	WaitFrame();
+	CORO_INVOKE_0(WaitFrame);
+	CORO_INVOKE_0(WaitFrame);
 
-	delete[] text;
+	delete[] _ctx->text;
+	delete _ctx->msg;
+
+	CORO_END_CODE;
 }
 
 
@@ -2776,7 +2874,7 @@ void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 
 
 	// Crea l'evento per skippare le idle
-	hSkipIdle = CreateEvent(NULL, true, false, NULL);
+	hSkipIdle = g_scheduler->createEvent(true, false);
 }
 
 } // end of namespace Tony

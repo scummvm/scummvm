@@ -51,6 +51,7 @@
 #include "common/system.h"
 #include "tony/gfxcore.h"
 #include "tony/resid.h"
+#include "tony/sched.h"
 
 namespace Tony {
 
@@ -247,12 +248,12 @@ class RMTextDialog : public RMText {
     int m_time;
     bool m_bSkipStatus;
     RMPoint dst;
-    HANDLE hEndDisplay;
+    uint32 hEndDisplay;
     bool m_bShowed;
 	bool m_bForceTime;
     bool m_bForceNoTime;
-	HANDLE hCustomSkip;
-    HANDLE hCustomSkip2;
+	uint32 hCustomSkip;
+    uint32 hCustomSkip2;
     RMInput *m_input;
 	bool m_bAlwaysDisplay;
 	bool m_bNoTab;
@@ -267,7 +268,7 @@ class RMTextDialog : public RMText {
 
     // Overloading della funzione ereditata da RMGfxTask per decidere
     // quando eliminare un oggetto dalla OTLIST
-    virtual bool RemoveThis(void);
+    virtual void RemoveThis(CORO_PARAM, bool &result);
 
     // Overloading della funzione di deregistrazione, utilizzata per capire
     // quando ci leviamo di torno
@@ -280,9 +281,9 @@ class RMTextDialog : public RMText {
     void SetPosition(RMPoint pt) { dst=pt; }
 
     // Aspetta che venga finita la visualizzazione
-    void WaitForEndDisplay(void);
-    void SetCustomSkipHandle(HANDLE hCustomSkip);
-    void SetCustomSkipHandle2(HANDLE hCustomSkip);
+    void WaitForEndDisplay(CORO_PARAM);
+    void SetCustomSkipHandle(uint32 hCustomSkip);
+    void SetCustomSkipHandle2(uint32 hCustomSkip);
     void SetSkipStatus(bool bEnabled);
 	void SetForcedTime(uint32 dwTime);
 	void SetNoTab(void);
@@ -294,7 +295,7 @@ class RMTextDialog : public RMText {
     void SetInput(RMInput* input);
 
     void Show(void);
-    void Hide(void);
+    void Hide(CORO_PARAM);
 };
 
 class RMTextDialogScrolling : public RMTextDialog {
@@ -332,7 +333,7 @@ public:
     
     void SetMouseCoord(RMPoint m) { m_mpos=m; }
 
-    void DoFrame(RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
+    void DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
     virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
 
     RMPoint GetHotspot();
@@ -358,7 +359,7 @@ private:
     RMGfxSourceBuffer8 DlgText;
     RMGfxSourceBuffer8 DlgTextLine;
     RMPoint m_ptDrawPos;
-    HANDLE hUnreg;
+    uint32 hUnreg;
     bool bRemoveFromOT;
 
 protected:
@@ -389,8 +390,8 @@ public:
     // Mostra e nasconde la scelta, con eventuali animazioni
     // NOTA: Se non viene passato parametro alla Show(), è obbligo del 
     // chiamante assicurarsi che la classe venga inserita alla OTlist
-    void Show(RMGfxTargetBuffer* bigBuf = NULL);
-    void Hide(void);
+    void Show(CORO_PARAM, RMGfxTargetBuffer* bigBuf = NULL);
+    void Hide(CORO_PARAM);
 
     // Polling di aggiornamento
     void DoFrame(RMPoint ptMousePos);

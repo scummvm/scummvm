@@ -248,12 +248,12 @@ int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	return m_nCurSprite;
 }
 
-int RMPattern::Update(HANDLE hEndPattern, byte &bFlag, RMSfx *sfx) {
+int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 	int CurTime = _vm->GetTime();
 
 	// Se la speed e' 0, il pattern non avanza mai	
 	if (m_speed == 0) {
-		PulseEvent(hEndPattern);
+		g_scheduler->pulseEvent(hEndPattern);
 		bFlag=m_slots[m_nCurSlot].m_flag;
 		return m_nCurSprite;
 	}
@@ -266,7 +266,8 @@ int RMPattern::Update(HANDLE hEndPattern, byte &bFlag, RMSfx *sfx) {
 		if (m_nCurSlot == m_nSlots) {
 			m_nCurSlot = 0;
 			bFlag = m_slots[m_nCurSlot].m_flag;
-			PulseEvent(hEndPattern);
+
+			g_scheduler->pulseEvent(hEndPattern);
 
 			// @@@ Se non c'e' loop avverte che il pattern e' finito
 			// Se non c'e' loop rimane sull'ultimo frame
@@ -705,9 +706,8 @@ bool RMItem::DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 		return false;
 
 	// Facciamo un update del pattern, che ci ritorna anche il frame corrente
-	// FIXME: Get rid of HANDLE cast
 	if (m_nCurPattern != 0)
-		m_nCurSprite = m_patterns[m_nCurPattern].Update((HANDLE)m_hEndPattern, m_bCurFlag, m_sfx);
+		m_nCurSprite = m_patterns[m_nCurPattern].Update(m_hEndPattern, m_bCurFlag, m_sfx);
 
 	// Se la funzione ha ritornato -1, vuol dire che il pattern e' finito
 	if (m_nCurSprite == -1) {
@@ -844,7 +844,7 @@ RMItem::~RMItem() {
 }
 
 //FIXME: Pass uint32 directly for hCustomSkip
-void RMItem::WaitForEndPattern(CORO_PARAM, HANDLE hCustomSkip) {
+void RMItem::WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
 	CORO_BEGIN_CONTEXT;
 		uint32 h[2];
 	CORO_END_CONTEXT(_ctx);
@@ -852,10 +852,10 @@ void RMItem::WaitForEndPattern(CORO_PARAM, HANDLE hCustomSkip) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (m_nCurPattern != 0) {
-		if (hCustomSkip == INVALID_HANDLE_VALUE)
+		if (hCustomSkip == INVALID_PID_VALUE)
 			CORO_INVOKE_2(g_scheduler->waitForSingleObject, m_hEndPattern, INFINITE);
 		else {
-			_ctx->h[0] = (uint32)hCustomSkip;
+			_ctx->h[0] = hCustomSkip;
 			_ctx->h[1] = m_hEndPattern;
 			CORO_INVOKE_4(g_scheduler->waitForMultipleObjects, 2, &_ctx->h[0], false, INFINITE);
 		}
@@ -888,13 +888,13 @@ void RMItem::PauseSound(bool bPause) {
 
 
 RMWipe::RMWipe() {
-	m_hUnregistered=CreateEvent(NULL,false,false,NULL);
-	m_hEndOfFade=CreateEvent(NULL,false,false,NULL);
+	m_hUnregistered = g_scheduler->createEvent(false, false);
+	m_hEndOfFade = g_scheduler->createEvent(false, false);
 }
 
 RMWipe::~RMWipe() {
-	CloseHandle(m_hUnregistered);
-	CloseHandle(m_hEndOfFade);
+	g_scheduler->closeEvent(m_hUnregistered);
+	g_scheduler->closeEvent(m_hEndOfFade);
 }
 
 int RMWipe::Priority(void) {
@@ -904,19 +904,28 @@ int RMWipe::Priority(void) {
 void RMWipe::Unregister(void) {
 	RMGfxTask::Unregister();
 	assert(m_nInList == 0);
-	SetEvent(m_hUnregistered);
+	g_scheduler->setEvent(m_hUnregistered);
 }
 
 bool RMWipe::RemoveThis(void) {
 	return m_bUnregister;
 }
 
-void RMWipe::WaitForFadeEnd(void) {
-	WaitForSingleObject(m_hEndOfFade, INFINITE);	
+void RMWipe::WaitForFadeEnd(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_2(g_scheduler->waitForSingleObject, m_hEndOfFade, INFINITE);	
+
 	m_bEndFade = true;
 	m_bFading = false;
-	MainWaitFrame();
-	MainWaitFrame();
+
+	CORO_INVOKE_0(MainWaitFrame);
+	CORO_INVOKE_0(MainWaitFrame);
+
+	CORO_END_CODE;
 }
 
 void RMWipe::CloseFade(void) {
@@ -958,7 +967,7 @@ void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 		m_nFadeStep++;
 	
 		if (m_nFadeStep == 10) {
-			SetEvent(m_hEndOfFade);
+			g_scheduler->setEvent(m_hEndOfFade);
 		}
 	}
 }

@@ -92,7 +92,7 @@ public:
 	Common::RandomSource _randomSource;
 	MPAL::MemoryManager _memoryManager;
 	RMResUpdate _resUpdate;
-	HANDLE m_hEndOfFrame;
+	uint32 m_hEndOfFrame;
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND	_theSound;
@@ -191,7 +191,7 @@ public:
 	int GetMusicVolume(int nChannel);
 
 	// Salvataggio
-	void AutoSave(void);
+	void AutoSave(CORO_PARAM);
 	void SaveState(int n, const char *name);
 	void LoadState(int n);
 	void GetSaveStateFileName(int n, char *buf);
@@ -202,8 +202,8 @@ public:
 
 	void Quit(void) { m_bQuitNow = true; }
 
-	void OpenInitLoadMenu(void);
-	void OpenInitOptions(void);
+	void OpenInitLoadMenu(CORO_PARAM);
+	void OpenInitOptions(CORO_PARAM);
 };
 
 // Global reference to the TonyEngine object

@@ -2179,8 +2179,9 @@ void PASCAL FPSTREAM::PlayThread(FPSTREAM *This) {
 // sprintf(buf, "Exiting thread. Buffer = %x, MyThread = 0x%x\n", This->lpDSBuffer, GetCurrentThreadId());
 // warning(buf);
 	This->lpDSBuffer->Stop();
-#endif
+
 	ExitThread(0);
+#endif
 }
 
 

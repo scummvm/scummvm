@@ -2048,23 +2048,23 @@ RMTextDialog::RMTextDialog() : RMText() {
 	m_bForceNoTime = false;
 	m_bAlwaysDisplay = false;
 	m_bNoTab = false;
-	hCustomSkip = INVALID_HANDLE_VALUE;
-	hCustomSkip2 = INVALID_HANDLE_VALUE;
+	hCustomSkip = INVALID_PID_VALUE;
+	hCustomSkip2 = INVALID_PID_VALUE;
 	m_input = NULL;
 
 	// Crea l'evento di fine displaying
-	hEndDisplay = CreateEvent(NULL, false, false, NULL);
+	hEndDisplay = g_scheduler->createEvent(false, false);
 }
 
 RMTextDialog::~RMTextDialog() {
-	CloseHandle(hEndDisplay);
+	g_scheduler->closeEvent(hEndDisplay);
 }
 
 void RMTextDialog::Show(void) {
 	m_bShowed = true;
 }
 
-void RMTextDialog::Hide(void) {
+void RMTextDialog::Hide(CORO_PARAM) {
 	m_bShowed = false;
 }
 
@@ -2084,7 +2084,7 @@ void RMTextDialog::WriteText(RMString text, RMFontColor *font, int *time) {
 
 
 void RMTextDialog::SetSkipStatus(bool bEnabled) {
-	m_bSkipStatus=bEnabled;
+	m_bSkipStatus = bEnabled;
 }
 
 void RMTextDialog::ForceTime(void) {
@@ -2107,53 +2107,70 @@ void RMTextDialog::SetAlwaysDisplay(void) {
 	m_bAlwaysDisplay = true;
 }
 
-bool RMTextDialog::RemoveThis(void) {
+void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
+	CORO_BEGIN_CONTEXT;
+		bool expired;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	// Presume successful result
+	result = true;
+
 	// Frase NON di background
 	if (m_bSkipStatus) {
-		if (!(bCfgDubbing && hCustomSkip2 != INVALID_HANDLE_VALUE))
+		if (!(bCfgDubbing && hCustomSkip2 != INVALID_PID_VALUE))
 			if (bCfgTimerizedText) {
 				if (!m_bForceNoTime)
 					if (_vm->GetTime() > (uint32)m_time + m_startTime)
-						return true;
+						return;
 			}
 
 		if (!m_bNoTab)
 			if ((GetAsyncKeyState(Common::KEYCODE_TAB) & 0x8001) == 0x8001)
-				return true;
+				return;
 
 		if (!m_bNoTab)
 			if (m_input)
 				if (m_input->MouseLeftClicked() || m_input->MouseRightClicked())
-					return true;
+					return;
 	}
 	// Frase di background
 	else {
-		if (!(bCfgDubbing && hCustomSkip2 != INVALID_HANDLE_VALUE))
+		if (!(bCfgDubbing && hCustomSkip2 != INVALID_PID_VALUE))
 			if (!m_bForceNoTime)
 				if (_vm->GetTime() > (uint32)m_time + m_startTime)
-					return true;
+					return;
 	}
 
 	// Se il tempo è forzato
 	if (m_bForceTime)
 		if (_vm->GetTime() > (uint32)m_time + m_startTime)
-			return true;
+			return;
 
-	if (hCustomSkip != INVALID_HANDLE_VALUE)
-		if (WaitForSingleObject(hCustomSkip, 0) == WAIT_OBJECT_0)
-			return true;
+	if (hCustomSkip != INVALID_PID_VALUE) {
+		CORO_INVOKE_3(g_scheduler->waitForSingleObject, hCustomSkip, 0, &_ctx->expired);
+		// == WAIT_OBJECT_0
+		if (!_ctx->expired)
+			return;
+	}
 
-	if (bCfgDubbing && hCustomSkip2 != INVALID_HANDLE_VALUE)
-		if (WaitForSingleObject(hCustomSkip2,0) == WAIT_OBJECT_0)
-			return true;
+	if (bCfgDubbing && hCustomSkip2 != INVALID_PID_VALUE) {
+		CORO_INVOKE_3(g_scheduler->waitForSingleObject, hCustomSkip2, 0, &_ctx->expired);
+		// == WAIT_OBJECT_0
+		if (!_ctx->expired)
+			return;
+	}
 
-	return false;
+	result = false;
+
+	CORO_END_CODE;
 }
 
 void RMTextDialog::Unregister(void) {
 	RMGfxTask::Unregister();
 	assert(m_nInList == 0);
-	SetEvent(hEndDisplay);
+	g_scheduler->setEvent(hEndDisplay);
 }
 
 void RMTextDialog::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -2168,16 +2185,16 @@ void RMTextDialog::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	}
 }
 
-void RMTextDialog::SetCustomSkipHandle(HANDLE hCustom) {
+void RMTextDialog::SetCustomSkipHandle(uint32 hCustom) {
 	hCustomSkip = hCustom;
 }
 
-void RMTextDialog::SetCustomSkipHandle2(HANDLE hCustom) {
+void RMTextDialog::SetCustomSkipHandle2(uint32 hCustom) {
 	hCustomSkip2 = hCustom;
 }
 
-void RMTextDialog::WaitForEndDisplay(void) {
-	WaitForSingleObject(hEndDisplay, INFINITE);
+void RMTextDialog::WaitForEndDisplay(CORO_PARAM) {
+	g_scheduler->waitForSingleObject(coroParam, hEndDisplay, INFINITE);
 }
 
 void RMTextDialog::SetInput(RMInput *input) {
@@ -2231,9 +2248,16 @@ RMTextItemName::~RMTextItemName() {
 
 }
 
-void RMTextItemName::DoFrame(RMGfxTargetBuffer& bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv) {
-	RMString itemName;
-	RMItem *lastItem = m_item;
+void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv) {
+	CORO_BEGIN_CONTEXT;
+		RMString itemName;
+		RMItem *lastItem;
+		uint32 hThread;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->lastItem = m_item;
 
 	// Si aggiunge alla lista se c'e' bisogno
 	if (!m_nInList)
@@ -2248,27 +2272,29 @@ void RMTextItemName::DoFrame(RMGfxTargetBuffer& bigBuf, RMLocation &loc, RMPoint
 	else
 		m_item = loc.WhichItemIsIn(m_mpos);
 	
-	itemName = "";
+	_ctx->itemName = "";
 
 	// Si fa dare il nuovo nome
 	if (m_item != NULL)
-		m_item->GetName(itemName);
+		m_item->GetName(_ctx->itemName);
 
 	// Se lo scrive
-	WriteText(itemName, 1);
+	WriteText(_ctx->itemName, 1);
 
 	// Se e' diverso dal precedente, e' il caso di aggiornare anche il puntatore con la WhichPointer
-	if (lastItem != m_item) {
+	if (_ctx->lastItem != m_item) {
 		if (m_item == NULL)
 			ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 		else {
-			HANDLE hThread = mpalQueryDoAction(20, m_item->MpalCode(), 0);		
-			if (hThread == INVALID_HANDLE_VALUE)
+			_ctx->hThread = mpalQueryDoActionU32(20, m_item->MpalCode(), 0);		
+			if (_ctx->hThread == INVALID_PID_VALUE)
 				ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 			else
-				WaitForSingleObject(hThread,INFINITE);
+				CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->hThread, INFINITE);
 		}
 	}
+
+	CORO_END_CODE;
 }
 
 
@@ -2318,18 +2344,18 @@ RMDialogChoice::RMDialogChoice() {
 	DlgText.LoadPaletteWA(dlgpal);
 	DlgTextLine.LoadPaletteWA(dlgpal);
 	
-	hUnreg=CreateEvent(NULL, false, false, NULL);
+	hUnreg = g_scheduler->createEvent(false, false);
 	bRemoveFromOT = false;
 }
 
 RMDialogChoice::~RMDialogChoice() {
-	CloseHandle(hUnreg);
+	g_scheduler->closeEvent(hUnreg);
 }
 
 void RMDialogChoice::Unregister(void) {
 	RMGfxWoodyBuffer::Unregister();
 	assert(!m_nInList);
-	PulseEvent(hUnreg);
+	g_scheduler->pulseEvent(hUnreg);
 
 	bRemoveFromOT = false;
 }
@@ -2444,7 +2470,16 @@ void RMDialogChoice::SetSelected(int pos) {
 	m_curSelection = pos;
 }
 
-void RMDialogChoice::Show(RMGfxTargetBuffer *bigBuf) {
+void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
+	CORO_BEGIN_CONTEXT;
+		RMPoint destpt;
+		int deltay;
+		int starttime;
+		int elaps;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	Prepare();
 	m_bShow = false;
 
@@ -2454,30 +2489,28 @@ void RMDialogChoice::Show(RMGfxTargetBuffer *bigBuf) {
 	if (0) {
 		m_bShow = true;
 	} else {
-		RMPoint destpt;
-		int deltay;
-		int starttime = _vm->GetTime();
-		int elaps;
-
-		deltay=480 - m_ptDrawPos.y;
-		destpt = m_ptDrawPos;
+		_ctx->starttime = _vm->GetTime();
+		_ctx->deltay = 480 - m_ptDrawPos.y;
+		_ctx->destpt = m_ptDrawPos;
 		m_ptDrawPos.Set(0, 480);
 
   	if (!m_nInList && bigBuf != NULL)
 	  	bigBuf->AddPrim(new RMGfxPrimitive(this));
 		m_bShow = true;
 
-		elaps = 0;
-		while (elaps < 700) {
-			MainWaitFrame();
+		_ctx->elaps = 0;
+		while (_ctx->elaps < 700) {
+			CORO_INVOKE_0(MainWaitFrame);
 			MainFreeze();
-			elaps = _vm->GetTime() - starttime;
-			m_ptDrawPos.y = 480 - ((deltay * 100) / 700 * elaps) / 100;
+			_ctx->elaps = _vm->GetTime() - _ctx->starttime;
+			m_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
 			MainUnfreeze();
 		}
 
-		m_ptDrawPos.y = destpt.y;
+		m_ptDrawPos.y = _ctx->destpt.y;
 	}
+
+	CORO_END_CODE;
 }
 
 void RMDialogChoice::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -2489,26 +2522,34 @@ void RMDialogChoice::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
 
-void RMDialogChoice::Hide(void) {
-	if (1) {
+void RMDialogChoice::Hide(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
 		int deltay;
-		int starttime = _vm->GetTime();
+		int starttime;
 		int elaps;
+	CORO_END_CONTEXT(_ctx);
 
-		deltay=480 - m_ptDrawPos.y;
-		elaps = 0;
-		while (elaps < 700) {
-			MainWaitFrame();
+	CORO_BEGIN_CODE(_ctx);
+
+	if (1) {
+		_ctx->starttime = _vm->GetTime();
+
+		_ctx->deltay = 480 - m_ptDrawPos.y;
+		_ctx->elaps = 0;
+		while (_ctx->elaps < 700) {
+			CORO_INVOKE_0(MainWaitFrame);
 			MainFreeze();
-			elaps=_vm->GetTime()-starttime;
-			m_ptDrawPos.y=480-((deltay*100)/700*(700-elaps))/100;
+			_ctx->elaps = _vm->GetTime()-_ctx->starttime;
+			m_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
 			MainUnfreeze();
 		}
 	}
 
 	m_bShow = false;
 	bRemoveFromOT = true;
-	WaitForSingleObject(hUnreg, INFINITE);
+	CORO_INVOKE_2(g_scheduler->waitForSingleObject, hUnreg, INFINITE);
+
+	CORO_END_CODE;
 }
 
 

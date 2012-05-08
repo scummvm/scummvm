@@ -37,6 +37,7 @@ namespace Tony {
 #define MAX_PROCESSES 100
 
 #define INFINITE 0xffffffff
+#define INVALID_PID_VALUE 0
 
 typedef void (*CORO_ADDR)(CoroContext &, const void *);
 
@@ -125,7 +126,8 @@ public:
 	void giveWay(PPROCESS pReSchedProc = NULL);
 	void waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired = NULL);
 	void waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
-		uint32 duration, bool *expired = NULL);
+			uint32 duration, bool *expired = NULL);
+	void Scheduler::sleep(CORO_PARAM, uint32 duration);
 
 	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam);
 	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam) {

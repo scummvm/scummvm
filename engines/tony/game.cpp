@@ -112,8 +112,8 @@ void MainUnfreeze(void) {
 	_vm->GetEngine()->Unfreeze();
 }
 
-void MainWaitFrame(void) {
-	WaitForSingleObject(_vm->m_hEndOfFrame, INFINITE);
+void MainWaitFrame(CORO_PARAM) {
+	g_scheduler->waitForSingleObject(coroParam, _vm->m_hEndOfFrame, INFINITE);
 }
 
 void MainShowMouse(void) {
@@ -144,8 +144,8 @@ void MainCloseWipe(void) {
 	_vm->GetEngine()->CloseWipe();
 }
 
-void MainWaitWipeEnd(void) {
-	_vm->GetEngine()->WaitWipeEnd();
+void MainWaitWipeEnd(CORO_PARAM) {
+	_vm->GetEngine()->WaitWipeEnd(coroParam);
 }
 
 void MainEnableGUI(void) {

@@ -71,42 +71,8 @@ Out CopyMemory(Out dst, In first, int size) {
 *       Methods
 \****************************************************************************/
 
-extern void MessageBox(const Common::String &msg);
-
-extern uint32 timeGetTime();
-
-#define INFINITE 0xffffffff
-#define WAIT_OBJECT_0 -2
 // Horrendously bad cast
-#define INVALID_HANDLE_VALUE (void *)-3
-
-extern HANDLE CreateThread(void *lpThreadAttributes, size_t dwStackSize,
-		LPTHREAD_START_ROUTINE lpStartAddress, void *lpParameter,
-		uint32 dwCreationFlags, uint32 *lpThreadId);
-
-extern void _beginthread(LPTHREAD_ROUTINE lpStartAddress, size_t dwStackSize, void *lpParameter);
-
-extern void ExitThread(int ThreadId);
-
-extern void _endthread();
-
-extern void TerminateThread(HANDLE ThreadId, uint32 dwExitCode);
-
-extern void CloseHandle(HANDLE ThreadId);
-
-extern void Sleep(uint32 time);
-
-extern int WaitForSingleObject(HANDLE ThreadId, uint32 dwSleepTime);
-
-extern uint32 WaitForMultipleObjects(uint32 nCount, const HANDLE *lpHandles, bool bWaitAll, uint32 dwMilliseconds);
-
-extern HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInitialState, const char *lpName);
-
-extern void SetEvent(HANDLE hEvent);
-
-extern void ResetEvent(HANDLE hEvent);
-
-extern void PulseEvent(HANDLE hEvent);
+#define INVALID_HANDLE_VALUE (void *)-1
 
 extern uint16 GetAsyncKeyState(Common::KeyCode kc);
 

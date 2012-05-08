@@ -437,6 +437,40 @@ void Scheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, 
 	CORO_END_CODE;
 }
 
+/**
+ * Make the active process sleep for the given duration in milliseconds
+ * @param duration					Duration in milliseconds
+ * @remarks		This duration won't be precise, since it relies on the frequency the
+ * scheduler is called.
+ */
+void Scheduler::sleep(CORO_PARAM, uint32 duration) {
+	if (!pCurrent)
+		error("Called Scheduler::waitForSingleObject from the main process");
+
+	CORO_BEGIN_CONTEXT;
+		uint32 endTime;
+		PROCESS *pProcess;
+		EVENT *pEvent;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	// Signal as waiting
+	pCurrent->waiting = true;
+
+	_ctx->endTime = g_system->getMillis() + duration;
+
+	// Outer loop for doing checks until expiry 
+	while (g_system->getMillis() < _ctx->endTime) {
+		// Sleep until the next cycle
+		CORO_SLEEP(1);
+	}
+
+	// Signal waiting is done
+	pCurrent->waiting = false;
+
+	CORO_END_CODE;
+}
 
 /**
  * Creates a new process.

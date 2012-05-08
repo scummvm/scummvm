@@ -212,6 +212,7 @@ void RMTony::MoveAndDoAction(RMPoint dst, RMItem *item, int nAction, int nAction
 
 
 void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
+	// fixme: See if hThread can be converted to uint32
 	HANDLE hThread;
 	uint32 pid;
 	
@@ -241,53 +242,64 @@ void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
 		m_bAction = true;
 		pid = (uint32)hThread;
 		g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
-		hActionThread = hThread;
+		hActionThread = pid;
 	} else if (nAction != TA_GOTO) {
 		if (nAction == TA_TALK) {
 			hThread = mpalQueryDoAction(6, 1, 0); 
 			m_bAction = true;
 			pid = (uint32)hThread;
 			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
-  			hActionThread = hThread;
+  			hActionThread = pid;
 		} else if (nAction == TA_PALESATI) {
 			hThread = mpalQueryDoAction(7, 1, 0);
 			m_bAction = true; 
 			pid = (uint32)hThread;
 			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
-  			hActionThread=hThread;
+  			hActionThread = pid;
 		} else {
 			hThread = mpalQueryDoAction(5, 1, 0); 
 			m_bAction = true;
 			pid = (uint32)hThread;
 			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
-			hActionThread = hThread;
+			hActionThread = pid;
 		}
 	}
 }
 
 
-void RMTony::StopNoAction(void) {
+void RMTony::StopNoAction(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (m_bAction)
-		WaitForSingleObject(hActionThread, INFINITE);
+		CORO_INVOKE_2(g_scheduler->waitForSingleObject, hActionThread, INFINITE);
 
 	m_bActionPending = false;
 	m_ActionItem = NULL;
-	Stop();
+	CORO_INVOKE_0(Stop);
+
+	CORO_END_CODE;
 }
 
-void RMTony::Stop(void) {
-	HANDLE hThread;
+void RMTony::Stop(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+		uint32 hThread;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	if (m_ActionItem != NULL) {
 		// Richiama l'MPAL per scegliere la direzione
-		hThread = mpalQueryDoAction(21, m_ActionItem->MpalCode(), 0);
+		_ctx->hThread = mpalQueryDoActionU32(21, m_ActionItem->MpalCode(), 0);
 
-		if (hThread==INVALID_HANDLE_VALUE)
+		if (_ctx->hThread == INVALID_PID_VALUE)
 			RMCharacter::Stop();
 		else {
 			bNeedToStop = false;	// Se facciamo la OnWhichDirection, almeno dopo non dobbiamo fare la Stop()
 			bMoving = false;
-			WaitForSingleObject(hThread, INFINITE); // @@@ Mettere un assert dopo 10 secondi
+			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->hThread, INFINITE); // @@@ Mettere un assert dopo 10 secondi
 		}
 	} else {
 		RMCharacter::Stop();
@@ -301,6 +313,8 @@ void RMTony::Stop(void) {
 	ExecuteAction(m_Action, m_ActionItem->MpalCode(), m_ActionParm);
 	
 	m_ActionItem=NULL;
+
+	CORO_END_CODE;
 }
 
 

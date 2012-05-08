@@ -85,7 +85,7 @@ private:
 	OSystem::MutexRef csMainLoop;
 
 	int m_nWipeType;
-	HANDLE m_hWipeEvent;
+	uint32 m_hWipeEvent;
 	int m_nWipeStep;
 
 	bool m_bMustEnterMenu;
@@ -103,7 +103,7 @@ public:
     virtual ~RMGfxEngine();
 
 	// Draw the next frame
-	void DoFrame(bool bDrawLocation);
+	void DoFrame(CORO_PARAM, bool bDrawLocation);
 
 	// Initialises the graphics engine
 	void Init();
@@ -118,7 +118,7 @@ public:
 	void GDIControl(bool bCon);
 
 	// Warns when entering or exits the options menu
-	void OpenOptionScreen(int type);
+	void OpenOptionScreen(CORO_PARAM, int type);
 
 	// Enables or disables mouse input
 	void EnableInput(void);
@@ -157,7 +157,7 @@ public:
 	// Wipe
 	void InitWipe(int type);
 	void CloseWipe(void);
-	void WaitWipeEnd(void);
+	void WaitWipeEnd(CORO_PARAM);
 
 	void SetPalesati(bool bpal) { m_inter.SetPalesati(bpal); }
 };

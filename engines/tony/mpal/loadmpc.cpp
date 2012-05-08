@@ -174,10 +174,8 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	/* Periodi */
 	num = READ_LE_UINT16(lpBuf); lpBuf += 2;
 	
-	if (num >= MAX_PERIODS_PER_DIALOG - 1) {
-		Common::String msg = Common::String::format("Too much periods in dialog #%d", lpmdDialog->nObj);
-		MessageBox(msg);
-	}
+	if (num >= MAX_PERIODS_PER_DIALOG - 1)
+		error("Too much periods in dialog #%d", lpmdDialog->nObj);
 
 	for (i = 0; i < num; i++) {
 		lpmdDialog->PeriodNums[i] = READ_LE_UINT16(lpBuf); lpBuf += 2;
@@ -195,19 +193,15 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	num = READ_LE_UINT16(lpBuf); lpBuf += 2;
 	curCmd = 0;
 
-	if (num >= MAX_GROUPS_PER_DIALOG) {
-		Common::String msg = Common::String::format("Too much groups in dialog #%d", lpmdDialog->nObj);
-		MessageBox(msg);
-	}
+	if (num >= MAX_GROUPS_PER_DIALOG)
+		error("Too much groups in dialog #%d", lpmdDialog->nObj);
 
 	for (i = 0; i < num; i++) {
 		lpmdDialog->Group[i].num = READ_LE_UINT16(lpBuf); lpBuf += 2;
 		lpmdDialog->Group[i].nCmds = *lpBuf; lpBuf++;
 
-		if (lpmdDialog->Group[i].nCmds >= MAX_COMMANDS_PER_GROUP) {
-			Common::String msg = Common::String::format("Too much commands in group #%d in dialog #%d",lpmdDialog->Group[i].num,lpmdDialog->nObj);
-			MessageBox(msg);
-		}
+		if (lpmdDialog->Group[i].nCmds >= MAX_COMMANDS_PER_GROUP)
+			error("Too much commands in group #%d in dialog #%d",lpmdDialog->Group[i].num,lpmdDialog->nObj);
 
 		for (j = 0; j < lpmdDialog->Group[i].nCmds; j++) {
 			lpmdDialog->Command[curCmd].type = *lpBuf;
@@ -262,28 +256,22 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 		}
 	}
 
-	if (curCmd >= MAX_COMMANDS_PER_DIALOG) {
-		Common::String msg = Common::String::format("Too much commands in dialog #%d",lpmdDialog->nObj);
-		MessageBox(msg);
-	}
+	if (curCmd >= MAX_COMMANDS_PER_DIALOG)
+		error("Too much commands in dialog #%d",lpmdDialog->nObj);
 
 	/* Choices */
 	num=*(uint16 *)lpBuf; lpBuf += 2;
 
-	if (num >= MAX_CHOICES_PER_DIALOG) {
-		Common::String msg = Common::String::format("Too much choices in dialog #%d",lpmdDialog->nObj);
-		MessageBox(msg);
-	}
+	if (num >= MAX_CHOICES_PER_DIALOG)
+		error("Too much choices in dialog #%d",lpmdDialog->nObj);
 
 	for (i = 0; i < num; i++) {
 		lpmdDialog->Choice[i].nChoice = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 		num2 = *lpBuf++;
 
-		if (num2 >= MAX_SELECTS_PER_CHOICE) {
-			Common::String msg = Common::String::format("Too much selects in choice #%d in dialog #%d",lpmdDialog->Choice[i].nChoice,lpmdDialog->nObj);
-			MessageBox(msg);
-		}
+		if (num2 >= MAX_SELECTS_PER_CHOICE)
+			error("Too much selects in choice #%d in dialog #%d",lpmdDialog->Choice[i].nChoice,lpmdDialog->nObj);
 
 		for (j = 0; j < num2; j++) {
 			// When
@@ -311,10 +299,8 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			// PlayGroup
 			num3 = *lpBuf; *lpBuf++;
 
-  			if (num3 >= MAX_PLAYGROUPS_PER_SELECT) {
-				Common::String msg = Common::String::format("Too much playgroups in select #%d in choice #%d in dialog #%d", j, lpmdDialog->Choice[i].nChoice, lpmdDialog->nObj);
-				MessageBox(msg);
-			}
+  			if (num3 >= MAX_PLAYGROUPS_PER_SELECT)
+				error("Too much playgroups in select #%d in choice #%d in dialog #%d", j, lpmdDialog->Choice[i].nChoice, lpmdDialog->nObj);
 
 			for (z = 0; z < num3; z++) {
 				lpmdDialog->Choice[i].Select[j].wPlayGroup[z] = READ_LE_UINT16(lpBuf); lpBuf += 2;
@@ -365,10 +351,8 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	CopyMemory(lpmiItem->lpszDescribe,lpBuf, MIN((byte)127, len));
 	lpBuf+=len;
 
-	if (len >= MAX_DESCRIBE_SIZE) {
-		Common::String msg = Common::String::format("Describe too long in item #%d",lpmiItem->nObj);
-		MessageBox(msg);
-	}
+	if (len >= MAX_DESCRIBE_SIZE)
+		error("Describe too long in item #%d",lpmiItem->nObj);
 
 	lpmiItem->nActions=*lpBuf;
 	lpBuf++;
@@ -408,10 +392,8 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 		lpmiItem->Action[i].nCmds=*lpBuf;
 		lpBuf++;
 
-		if (lpmiItem->Action[i].nCmds >= MAX_COMMANDS_PER_ACTION) {
-			Common::String msg = Common::String::format("Too much commands in action #%d in item #%d",lpmiItem->Action[i].num,lpmiItem->nObj);
-			MessageBox(msg);
-		}
+		if (lpmiItem->Action[i].nCmds >= MAX_COMMANDS_PER_ACTION)
+			error("Too much commands in action #%d in item #%d",lpmiItem->Action[i].num,lpmiItem->nObj);
 
 		for (j=0;j<lpmiItem->Action[i].nCmds;j++) {
 			lpmiItem->Command[curCmd].type=*lpBuf;
@@ -455,9 +437,8 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 				curCmd++;
 
 				if (curCmd >= MAX_COMMANDS_PER_ITEM) {
-					Common::String msg = Common::String::format("Too much commands in item #%d",lpmiItem->nObj);
-					MessageBox(msg);
-					curCmd=0;
+					error("Too much commands in item #%d",lpmiItem->nObj);
+					//curCmd=0;
 				}
 			}
 		}

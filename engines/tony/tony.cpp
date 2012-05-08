@@ -68,7 +68,7 @@ Common::Error TonyEngine::run() {
  * Initialise the game
  */
 Common::ErrorCode TonyEngine::Init() {
-	m_hEndOfFrame = CreateEvent(NULL, false, false, NULL);
+	m_hEndOfFrame = g_scheduler->createEvent(false, false);
 
 	m_bPaused = false;
 	m_bDrawLocation = true;
@@ -295,16 +295,22 @@ void TonyEngine::GetSaveStateFileName(int n, char *buf) {
 	name += ".sav";
 }
 
-void TonyEngine::AutoSave(void) {
-	char buf[256];
+void TonyEngine::AutoSave(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+		char buf[256];
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	GrabThumbnail();
-	MainWaitFrame();
-	MainWaitFrame();
+	CORO_INVOKE_0(MainWaitFrame);
+	CORO_INVOKE_0(MainWaitFrame);
 	MainFreeze();
-	GetSaveStateFileName(0,buf);
-	_theEngine.SaveState(buf, (byte *)m_curThumbnail, "Autosave", true);
+	GetSaveStateFileName(0, _ctx->buf);
+	_theEngine.SaveState(_ctx->buf, (byte *)m_curThumbnail, "Autosave", true);
 	MainUnfreeze();
+
+	CORO_END_CODE;
 }
 
 
@@ -375,12 +381,12 @@ void TonyEngine::GrabThumbnail(void) {
 void TonyEngine::OptionScreen(void) {
 }
 
-void TonyEngine::OpenInitLoadMenu(void) {
-	_theEngine.OpenOptionScreen(1);
+void TonyEngine::OpenInitLoadMenu(CORO_PARAM) {
+	_theEngine.OpenOptionScreen(coroParam, 1);
 }
 
-void TonyEngine::OpenInitOptions(void) {
-	_theEngine.OpenOptionScreen(2);
+void TonyEngine::OpenInitOptions(CORO_PARAM) {
+	_theEngine.OpenOptionScreen(coroParam, 2);
 }
 
 void TonyEngine::Abort(void) {
@@ -400,10 +406,11 @@ void TonyEngine::Play(void) {
 		_scheduler.schedule();
 
   		// Call the engine to handle the next frame
-		_theEngine.DoFrame(m_bDrawLocation);
+		// FIXME: This needs to be moved into it's own process
+		_theEngine.DoFrame(nullContext, m_bDrawLocation);
 
 		// Warns that a frame is finished
-		PulseEvent(m_hEndOfFrame);
+		g_scheduler->pulseEvent(m_hEndOfFrame);
 
 		// Handle drawing the frame
 		if (!m_bPaused) {
@@ -422,7 +429,7 @@ void TonyEngine::Play(void) {
 
 void TonyEngine::Close(void) {
 	CloseMusic();
-	CloseHandle(m_hEndOfFrame);
+	g_scheduler->closeEvent(m_hEndOfFrame);
 	_theBoxes.Close();
 	_theEngine.Close();
 	_window.Close();
