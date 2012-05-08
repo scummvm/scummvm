@@ -65,13 +65,16 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_datafilePrefix = "DREAMWEB.";
 	_speechDirName = "SPEECH";
 	// ES and FR CD release use a different data file prefix
+	// and speech directory naming.
 	if (isCD()) {
 		switch(getLanguage()) {
 		case Common::ES_ESP:
 			_datafilePrefix = "DREAMWSP.";
+			_speechDirName = "SPANISH";
 			break;
 		case Common::FR_FRA:
 			_datafilePrefix = "DREAMWFR.";
+			_speechDirName = "FRENCH";
 			break;
 		default:
 			// Nothing to do
