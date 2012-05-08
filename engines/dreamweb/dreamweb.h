@@ -164,6 +164,7 @@ private:
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
 	Common::String _datafilePrefix;
+	Common::String _speechDirName;
 
 	uint _speed;
 	bool _turbo;

@@ -177,7 +177,7 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 		return false;
 
 	Common::File file;
-	if (!file.open("speech/" + filename))
+	if (!file.open(_speechDirName + "/" + filename))
 		return false;
 
 	debug(1, "loadSpeech(%s)", filename.c_str());
