@@ -2937,7 +2937,7 @@ void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
 	Common::String fileName = Common::String::format("CUBES%d.GFX", curWord);
 	_byte10806 = curWord + 0x30;
 
-	_vm->_bufferCubegfx = _vm->loadVGA(fileName, false);
+	_vm->_bufferCubegfx = _vm->loadVGA(fileName, 61440, false);
 	_vm->displayFunction9();
 	_vm->displayFunction15();
 }

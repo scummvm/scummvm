@@ -310,7 +310,7 @@ public:
 	void sub1693A(int index);
 
 	void initGame(const LilliputGameDescription *gd);
-	byte *loadVGA(Common::String filename, bool loadPal);
+	byte *loadVGA(Common::String filename, int fileSize, bool loadPal);
 	byte *loadRaw(Common::String filename);
 	void loadRules();
 
