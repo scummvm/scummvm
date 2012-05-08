@@ -61,7 +61,9 @@ enum GameType {
 enum LilliputDebugChannels {
 	kDebugEngine    = 1 << 0,
 	kDebugScript    = 1 << 1,
-	kDebugSound     = 1 << 2
+	kDebugSound     = 1 << 2,
+	kDebugEngineTBC = 1 << 3,
+	kDebugScriptTBC = 1 << 4
 };
 
 struct LilliputGameDescription;
@@ -90,8 +92,7 @@ public:
 	struct18560 _arr18560[4];
 	byte _byte1714E;
 	byte _byte184F4;
-	byte _nextDisplayCharacterX;
-	byte _nextDisplayCharacterY;
+	Common::Point _nextDisplayCharacterPos;
 	byte _sound_byte16F06;
 	byte _byte16F09;
 	byte _keyboard_nextIndex;
@@ -239,7 +240,7 @@ public:
 	void displayFunction17();
 	void displayFunction18(int var1, int var2, int var3, int var4);
 
-	void displayCharacter(int index, int x, int y, int flags);
+	void displayCharacter(int index, Common::Point pos, int flags);
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
 	void sub130B6();
@@ -263,7 +264,7 @@ public:
 	byte sub166EA(int index);
 	void sub167EF(int index);
 
-	void renderCharacters(byte *buf, byte x, byte y);
+	void renderCharacters(byte *buf, Common::Point pos);
 
 	byte sub16799(int param1, int index);
 	int getDirection(Common::Point param1, Common::Point param2);
@@ -285,8 +286,8 @@ public:
 	void sub1305C(byte index, byte var2);
 	void checkInterfaceHotspots(bool &forceReturnFl);
 	int sub13240(Common::Point mousePos, int var3, int var4);
-	void sub131B2(int var2, int var4, bool &forceReturnFl);
-	void sub131FC(int var2, int var4);
+	void sub131B2(Common::Point pos, bool &forceReturnFl);
+	void sub131FC(Common::Point pos);
 	void sub1546F(byte displayX, byte displayY);
 	void sub15498(byte x, byte y, int var2);
 	void sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex);

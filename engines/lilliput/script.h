@@ -40,7 +40,7 @@ enum KValueType {
 	kCompareOperation,
 	kComputeOperation,
 	kGetValue1,
-	kgetPosFromScript,
+	kgetPosFromScript
 };
 
 
@@ -115,6 +115,9 @@ private:
 	int _word16F00;
 	int _word18776;
 	int _word18821;
+	int _word129A3;
+
+	char _array129A5[4];
 
 	int handleOpcode(ScriptStream *script);
 	byte handleOpcodeType1(int curWord);
