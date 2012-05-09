@@ -33,6 +33,10 @@
 #include "BSoundBuffer.h"
 #include "BFileManager.h"
 #include "utils.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/vorbis.h"
+#include "common/system.h"
 
 namespace WinterMute {
 
@@ -44,9 +48,8 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBSoundBuffer::CBSoundBuffer(CBGame *inGame): CBBase(inGame) {
-#if 0
 	_stream = NULL;
-	_sync = NULL;
+//	_sync = NULL;
 
 	_streamed = false;
 	_filename = NULL;
@@ -59,7 +62,6 @@ CBSoundBuffer::CBSoundBuffer(CBGame *inGame): CBBase(inGame) {
 	_type = SOUND_SFX;
 
 	_freezePaused = false;
-#endif
 }
 
 
@@ -91,11 +93,15 @@ void CBSoundBuffer::SetStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSi
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
+	warning("BSoundBuffer::LoadFromFile(%s,%d)", Filename, ForceReload);
 #if 0
 	if (_stream) {
 		BASS_StreamFree(_stream);
 		_stream = NULL;
 	}
+#endif
+	delete _stream;
+	_stream = NULL;
 
 	if (_file) Game->_fileManager->CloseFile(_file);
 
@@ -104,7 +110,12 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 		Game->LOG(0, "Error opening sound file '%s'", Filename);
 		return E_FAIL;
 	}
-
+	
+	_stream = Audio::makeVorbisStream(_file->getMemStream(), DisposeAfterUse::YES);
+	CBUtils::SetString(&_filename, Filename);
+	
+	return S_OK;
+#if 0
 	BASS_FILEPROCS fileProc;
 	fileProc.close = CBSoundBuffer::FileCloseProc;
 	fileProc.read = CBSoundBuffer::FileReadProc;
@@ -166,13 +177,13 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Play(bool Looping, uint32 StartSample) {
-#if 0
+	warning("Play: %s", _filename);
 	if (_stream) {
 		SetLooping(Looping);
-		BASS_ChannelPlay(_stream, TRUE);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream);
+		//BASS_ChannelPlay(_stream, TRUE);
 	}
 	return S_OK;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

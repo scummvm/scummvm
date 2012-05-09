@@ -33,6 +33,11 @@
 #include "BBase.h"
 //#include "bass.h"
 
+namespace Audio {
+	class SeekableAudioStream;
+	class SoundHandle;
+}
+
 namespace WinterMute {
 
 class CBFile;
@@ -72,6 +77,8 @@ public:
 
 	//HSTREAM _stream;
 	//HSYNC _sync;
+	Audio::SeekableAudioStream *_stream;
+	Audio::SoundHandle *_handle;
 
 	bool _freezePaused;
 	uint32 _loopStart;
