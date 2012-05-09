@@ -957,12 +957,12 @@ void LilliputScript::runMenuScript(ScriptStream script) {
 }
 
 void LilliputScript::sub185ED(byte index, byte subIndex) {
-	debugC(2, kDebugScriptTBC, "sub185ED");
+	debugC(2, kDebugScript, "sub185ED(%d, %d)", index, subIndex);
 
 	if (_vm->_arr18560[index]._field0 != 1)
 		return;
 
-	_vm->displayFunction1(_vm->_bufferIdeogram, _vm->_arr18560[index]._field5[subIndex], Common::Point(_vm->_arr18560[index]._field1, _vm->_arr18560[index]._field3));
+	_vm->display16x16IndexedBuf(_vm->_bufferIdeogram, _vm->_arr18560[index]._field5[subIndex], _vm->_arr18560[index]._field1);
 }
 
 byte LilliputScript::compareValues(byte var1, int oper, int var2) {
@@ -3086,7 +3086,7 @@ void LilliputScript::OC_sub184D7() {
 }
 
 void LilliputScript::OC_displayTitleScreen() {
-	debugC(1, kDebugScriptTBC, "OC_displayTitleScreen()");
+	debugC(1, kDebugScript, "OC_displayTitleScreen()");
 
 	_vm->_byte184F4 = (_currScript->readUint16LE() & 0xFF);
 	_vm->_sound_byte16F06 = _vm->_byte184F4;
@@ -3098,7 +3098,7 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_mouseButton = 0;
 	_vm->_byte16F09 = 0;
 
-	for (;;) {
+	while(!_vm->_shouldQuit) {
 		sub185B4_display();
 		_vm->update();
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
@@ -3146,16 +3146,16 @@ void LilliputScript::OC_sub1864D() {
 }
 
 void LilliputScript::OC_initArr18560() {
-	debugC(1, kDebugScriptTBC, "OC_initArr18560()");
+	debugC(1, kDebugScript, "OC_initArr18560()");
 
-	int curWord = _currScript->readUint16LE();
-	assert (curWord < 4);
-	_vm->_arr18560[curWord]._field0 = 1;
-	_vm->_arr18560[curWord]._field1 = _currScript->readUint16LE();
-	_vm->_arr18560[curWord]._field3 = _currScript->readUint16LE();
+	int index = _currScript->readUint16LE();
+	assert (index < 4);
+	_vm->_arr18560[index]._field0 = 1;
+	_vm->_arr18560[index]._field1.x = _currScript->readSint16LE();
+	_vm->_arr18560[index]._field1.y = _currScript->readSint16LE();
 
 	for (int i = 0; i < 8; i++)
-		_vm->_arr18560[curWord]._field5[i] = _currScript->readUint16LE();
+		_vm->_arr18560[index]._field5[i] = _currScript->readSint16LE();
 }
 
 void LilliputScript::OC_sub18678() {
@@ -3184,15 +3184,10 @@ void LilliputScript::OC_sub186E5_snd() {
 	int index = getValue1();
 	assert(index < 40);
 
-	byte var4h = 0xFF;
-	byte var4l = (index & 0xFF);
-	byte var3h = _array16123PosX[index];
-	byte var3l = _array1614BPosY[index];
-	byte var2h = (_viewportPos.x & 0xFF);
-	byte var2l = (_viewportPos.y & 0xFF);
-	int var1 = _currScript->readUint16LE();
-
-	_vm->_soundHandler->contentFct2();
+	Common::Point var4 = Common::Point(0xFF, index & 0xFF);
+	int var1 = (_currScript->readUint16LE() & 0xFF);
+	
+	_vm->_soundHandler->contentFct2(var1, _viewportPos, Common::Point(_array16123PosX[index], _array1614BPosY[index]), var4);
 }
 
 void LilliputScript::OC_sub1870A_snd() {
@@ -3203,7 +3198,7 @@ void LilliputScript::OC_sub1870A_snd() {
 	Common::Point var2 = _viewportPos;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->contentFct2();
+	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_sub18725_snd() {
@@ -3229,13 +3224,15 @@ void LilliputScript::OC_sub1873F_snd() {
 }
 
 void LilliputScript::OC_sub18746_snd() {
-	debugC(1, kDebugScriptTBC, "OC_sub18746_snd()");
+	debugC(1, kDebugScript, "OC_sub18746_snd()");
 
-	int var4 = -1;
-	int var2 = (_viewportPos.x << 8) + _viewportPos.y;
-	int var1 = _currScript->readUint16LE() & 0xFF;
+	Common::Point var4 = Common::Point(-1, -1);
+	Common::Point var2 = _viewportPos;
+	int var1 = _currScript->readSint16LE() & 0xFF;
+	warning("OC_sub18746_snd: unknown value for var3");
+	Common::Point var3 = Common::Point(-1, -1);
 
-	_vm->_soundHandler->contentFct2();
+	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_sub1875D_snd() {
