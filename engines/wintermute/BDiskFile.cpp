@@ -56,13 +56,11 @@ CBDiskFile::~CBDiskFile() {
 HRESULT CBDiskFile::Open(Common::String Filename) {
 	Close();
 
-	warning("CBDiskFile::Open(%s)", Filename.c_str());
 	char FullPath[MAX_PATH];
 
 	for (int i = 0; i < Game->_fileManager->_singlePaths.GetSize(); i++) {
 		sprintf(FullPath, "%s%s", Game->_fileManager->_singlePaths[i], Filename.c_str());
 		CorrectSlashes(FullPath);
-		warning("CBDiskFile::Open - Attempting: %s", FullPath);
 		//_file = Common::createFileStream(FullPath);
 		Common::File *tempFile = new Common::File();
 		if(tempFile->open(FullPath)) {
@@ -80,7 +78,6 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 	if (!_file) {
 		strcpy(FullPath, Filename.c_str());
 		CorrectSlashes(FullPath);
-		warning("CBDiskFile::Open - Attempting2: %s", FullPath);
 		//error("Tried to open %s, TODO: add SearchMan-support", Filename.c_str());
 		//_file = Common::createFileStream(FullPath);
 		Common::File *tempFile = new Common::File();
@@ -89,10 +86,6 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 		} else {
 			delete tempFile;
 		}
-	}
-
-	if (!_file) {
-		warning("Couldn't load %s", Filename.c_str());
 	}
 	
 	if (_file) {

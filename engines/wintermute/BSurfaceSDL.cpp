@@ -301,7 +301,13 @@ bool CBSurfaceSDL::IsTransparentAtLite(int X, int Y) {
 	Uint32 format;
 	int access;
 	int width, height;
-	warning("CBSurfaceSDL::IsTransparentAtLite not ported yet");
+	// This particular warning is rather messy, as this function is called a ton,
+	// thus we avoid printing it more than once.
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		warning("CBSurfaceSDL::IsTransparentAtLite not ported yet");
+		hasWarned = true;
+	}
 	//SDL_QueryTexture(_texture, &format, &access, &width, &height);
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
 	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
@@ -378,8 +384,13 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 	byte g = D3DCOLGetG(Alpha);
 	byte b = D3DCOLGetB(Alpha);
 	byte a = D3DCOLGetA(Alpha);
-
-	warning("CBSurfaceSDL::DrawSprite not ported yet"); // TODO.
+	// This particular warning is rather messy, as this function is called a ton,
+	// thus we avoid printing it more than once.
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		warning("CBSurfaceSDL::DrawSprite not ported yet"); // TODO.
+		hasWarned = true;
+	}
 #if 0
 	SDL_SetTextureColorMod(_texture, r, g, b);
 	SDL_SetTextureAlphaMod(_texture, a);

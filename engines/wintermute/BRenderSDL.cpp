@@ -235,7 +235,13 @@ HRESULT CBRenderSDL::Fade(WORD Alpha) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
-	warning("Implement CBRenderSDL::FadeToColor");
+	// This particular warning is rather messy, as this function is called a ton,
+	// thus we avoid printing it more than once.
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		warning("Implement CBRenderSDL::FadeToColor"); // TODO.
+		hasWarned = true;
+	}
 #if 0
 	SDL_Rect fillRect;
 

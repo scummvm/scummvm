@@ -678,7 +678,6 @@ bool CBFileManager::IsValidPackage(const AnsiString &fileName) const {
 //////////////////////////////////////////////////////////////////////////
 Common::File *CBFileManager::OpenPackage(char *Name) {
 	//TODO: Is it really necessary to do this when we have the ScummVM-system?
-	warning("OpenPackage(%s)", Name);
 	
 	//RestoreCurrentDir();
 
@@ -822,17 +821,14 @@ CBFile *CBFileManager::OpenFileRaw(const char *Filename) {
 		}
 	}
 	warning("BFileManager::OpenFileRaw(%s)", Filename);
-	warning("Trying DiskFile");
 	CBDiskFile *DiskFile = new CBDiskFile(Game);
 	if (SUCCEEDED(DiskFile->Open(Filename))) return DiskFile;
 
 	delete DiskFile;
-	warning("Trying PkgFile");
 	CBPkgFile *PkgFile = new CBPkgFile(Game);
 	if (SUCCEEDED(PkgFile->Open(Filename))) return PkgFile;
 
 	delete PkgFile;
-	warning("Trying ResourceFile");
 	CBResourceFile *ResFile = new CBResourceFile(Game);
 	if (SUCCEEDED(ResFile->Open(Filename))) return ResFile;
 

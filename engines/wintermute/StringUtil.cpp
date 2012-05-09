@@ -80,7 +80,7 @@ bool StringUtil::CompareNoCase(const AnsiString &str1, const AnsiString &str2) {
 
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::Utf8ToWide(const Utf8String &Utf8Str) {
-	error("WideString not supported yet");
+	error("StringUtil::Utf8ToWide - WideString not supported yet");
 /*	size_t WideSize = Utf8Str.size();
 
 	if (sizeof(wchar_t) == 2) {
@@ -129,7 +129,7 @@ WideString StringUtil::Utf8ToWide(const Utf8String &Utf8Str) {
 
 //////////////////////////////////////////////////////////////////////////
 Utf8String StringUtil::WideToUtf8(const WideString &WideStr) {
-	error("Widestring not supported yet");
+	error("StringUtil::WideToUtf8 - Widestring not supported yet");
 /*	size_t WideSize = WideStr.length();
 
 	if (sizeof(wchar_t) == 2) {
@@ -179,7 +179,7 @@ Utf8String StringUtil::WideToUtf8(const WideString &WideStr) {
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::AnsiToWide(const AnsiString &str) {
 	// using default os locale!
-	error("WideString not supported yet");
+	error("StringUtil::AnsiToWide - WideString not supported yet");
 /*	setlocale(LC_CTYPE, "");
 	size_t WideSize = mbstowcs(NULL, str.c_str(), 0) + 1;
 	wchar_t *wstr = new wchar_t[WideSize];
@@ -193,7 +193,7 @@ WideString StringUtil::AnsiToWide(const AnsiString &str) {
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::WideToAnsi(const WideString &wstr) {
 	// using default os locale!
-	error("WideString not supported yet");
+	error("StringUtil::WideToAnsi - WideString not supported yet");
 /*	setlocale(LC_CTYPE, "");
 	size_t WideSize = wcstombs(NULL, wstr.c_str(), 0) + 1;
 	char *str = new char[WideSize];
