@@ -30,7 +30,9 @@
 #define WINTERMUTE_BRENDERER_SDL_H
 
 #include "BRenderer.h"
-#include "SDL.h"
+/*#include "SDL.h"*/
+#include "common/rect.h"
+#include "graphics/surface.h"
 
 class SDL_Window;
 class SDL_Renderer;
@@ -58,15 +60,15 @@ public:
 	CBImage *TakeScreenshot();
 
 	SDL_Renderer *GetSdlRenderer() const {
-		return _renderer;
+//		return _renderer;
 	}
 	SDL_Window *GetSdlWindow() const {
-		return _win;
+//		return _win;
 	}
 
 	HRESULT SetViewport(int left, int top, int right, int bottom);
 
-	void ModTargetRect(SDL_Rect *rect);
+	void ModTargetRect(Common::Rect *rect);
 	void PointFromScreen(POINT *point);
 	void PointToScreen(POINT *point);
 
@@ -80,8 +82,9 @@ public:
 	}
 
 private:
-	SDL_Renderer *_renderer;
-	SDL_Window *_win;
+/*	SDL_Renderer *_renderer;
+	SDL_Window *_win;*/
+	Graphics::Surface *_renderSurface;
 	AnsiString _name;
 
 	int _borderLeft;

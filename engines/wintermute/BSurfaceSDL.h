@@ -30,6 +30,7 @@
 #define WINTERMUTE_BSURFACESDL_H
 
 #include "BSurface.h"
+#include "SDL.h" // TODO, remove
 class SDL_Texture;
 class SDL_Surface;
 namespace WinterMute {

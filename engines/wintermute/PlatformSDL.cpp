@@ -34,6 +34,8 @@ THE SOFTWARE.
 #include "common/str.h"
 #include "common/textconsole.h"
 
+#include "SDL.h" // TODO remove
+
 #ifdef __WIN32__
 #   include <dbghelp.h>
 #   include <direct.h>

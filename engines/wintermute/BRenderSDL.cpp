@@ -36,14 +36,17 @@
 #include "engines/wintermute/BGame.h"
 #include "engines/wintermute/BSprite.h"
 
+#include "SDL.h"
+
 namespace WinterMute {
 
 // TODO: Redo everything here.	
 
 //////////////////////////////////////////////////////////////////////////
 CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
-	_renderer = NULL;
-	_win = NULL;
+/*	_renderer = NULL;
+	_win = NULL;*/
+	_renderSurface = NULL;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
@@ -140,8 +143,9 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	                         SDL_WINDOWPOS_UNDEFINED,
 	                         _realWidth, _realHeight,
 	                         flags);
-#endif
+
 	if (!_win) return E_FAIL;
+#endif
 
 	SDL_ShowCursor(SDL_DISABLE);
 
@@ -153,9 +157,12 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 #endif
 #if 0
 	_renderer = SDL_CreateRenderer(_win, -1, 0);
-#endif
-	if (!_renderer) return E_FAIL;
 
+	if (!_renderer) return E_FAIL;
+#endif
+	_renderSurface = new Graphics::Surface();
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_renderSurface->create(640,480, format); // TODO: Unhardcode this.
 	_active = true;
 
 
@@ -228,6 +235,8 @@ HRESULT CBRenderSDL::Fade(WORD Alpha) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
+	warning("Implement CBRenderSDL::FadeToColor");
+#if 0
 	SDL_Rect fillRect;
 
 	if (rect) {
@@ -253,7 +262,7 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 	//SDL_RenderFillRect(_renderer, &fillRect);
-
+#endif
 	return S_OK;
 }
 
@@ -324,13 +333,13 @@ HRESULT CBRenderSDL::SwitchFullscreen() {
 //////////////////////////////////////////////////////////////////////////
 const char *CBRenderSDL::GetName() {
 	if (_name.empty()) {
-		if (_renderer) {
 #if 0
+		if (_renderer) {
 			SDL_RendererInfo info;
 			SDL_GetRendererInfo(_renderer, &info);
 			_name = AnsiString(info.name);
-#endif
 		}
+#endif
 	}
 	return _name.c_str();
 }
@@ -351,7 +360,7 @@ HRESULT CBRenderSDL::SetViewport(int left, int top, int right, int bottom) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::ModTargetRect(SDL_Rect *rect) {
+void CBRenderSDL::ModTargetRect(Common::Rect *rect) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
