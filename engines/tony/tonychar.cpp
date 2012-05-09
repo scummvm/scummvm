@@ -213,53 +213,48 @@ void RMTony::MoveAndDoAction(RMPoint dst, RMItem *item, int nAction, int nAction
 
 void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
 	// fixme: See if hThread can be converted to uint32
-	HANDLE hThread;
 	uint32 pid;
 	
 	if (nAction == TA_COMBINE) {
-		hThread = mpalQueryDoAction(TA_COMBINE, nParm, nActionItem);
+		pid = mpalQueryDoAction(TA_COMBINE, nParm, nActionItem);
 		
 		// Se è fallito il combine, proviamo con il ReceiveCombine
-		if (hThread == INVALID_HANDLE_VALUE) {
-			hThread = mpalQueryDoAction(TA_RECEIVECOMBINE, nActionItem, nParm); 
+		if (pid == INVALID_PID_VALUE) {
+			pid = mpalQueryDoAction(TA_RECEIVECOMBINE, nActionItem, nParm); 
 			
 			// Se è fallito il receive, andiamo con quelli generici
 			// @@@ CombineGive!
-			if (hThread == INVALID_HANDLE_VALUE) {
-				hThread = mpalQueryDoAction(TA_COMBINE, nParm, 0);
+			if (pid == INVALID_PID_VALUE) {
+				pid = mpalQueryDoAction(TA_COMBINE, nParm, 0);
 				
-				if (hThread == INVALID_HANDLE_VALUE){
-					hThread = mpalQueryDoAction(TA_RECEIVECOMBINE, nActionItem, 0);
+				if (pid == INVALID_PID_VALUE){
+					pid = mpalQueryDoAction(TA_RECEIVECOMBINE, nActionItem, 0);
 				}
 			}
 		}
 	} else {
 		// Perform the action
-		hThread = mpalQueryDoAction(nAction, nActionItem, 0); 
+		pid = mpalQueryDoAction(nAction, nActionItem, 0); 
 	}
 					
-	if (hThread != INVALID_HANDLE_VALUE) {
+	if (pid != INVALID_PID_VALUE) {
 		m_bAction = true;
-		pid = (uint32)hThread;
 		g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
 		hActionThread = pid;
 	} else if (nAction != TA_GOTO) {
 		if (nAction == TA_TALK) {
-			hThread = mpalQueryDoAction(6, 1, 0); 
+			pid = mpalQueryDoAction(6, 1, 0); 
 			m_bAction = true;
-			pid = (uint32)hThread;
 			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
   			hActionThread = pid;
 		} else if (nAction == TA_PALESATI) {
-			hThread = mpalQueryDoAction(7, 1, 0);
+			pid = mpalQueryDoAction(7, 1, 0);
 			m_bAction = true; 
-			pid = (uint32)hThread;
 			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
   			hActionThread = pid;
 		} else {
-			hThread = mpalQueryDoAction(5, 1, 0); 
+			pid = mpalQueryDoAction(5, 1, 0); 
 			m_bAction = true;
-			pid = (uint32)hThread;
 			g_scheduler->createProcess(WaitEndOfAction, &pid, sizeof(uint32));
 			hActionThread = pid;
 		}
@@ -285,21 +280,21 @@ void RMTony::StopNoAction(CORO_PARAM) {
 
 void RMTony::Stop(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		uint32 hThread;
+		uint32 pid;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	if (m_ActionItem != NULL) {
 		// Richiama l'MPAL per scegliere la direzione
-		_ctx->hThread = mpalQueryDoActionU32(21, m_ActionItem->MpalCode(), 0);
+		_ctx->pid = mpalQueryDoAction(21, m_ActionItem->MpalCode(), 0);
 
-		if (_ctx->hThread == INVALID_PID_VALUE)
+		if (_ctx->pid == INVALID_PID_VALUE)
 			RMCharacter::Stop();
 		else {
 			bNeedToStop = false;	// Se facciamo la OnWhichDirection, almeno dopo non dobbiamo fare la Stop()
 			bMoving = false;
-			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->hThread, INFINITE); // @@@ Mettere un assert dopo 10 secondi
+			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->pid, INFINITE); // @@@ Mettere un assert dopo 10 secondi
 		}
 	} else {
 		RMCharacter::Stop();

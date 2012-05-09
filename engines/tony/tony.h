@@ -82,6 +82,7 @@ private:
 	bool OpenVoiceDatabase();
 	void CloseVoiceDatabase();
 	void InitCustomFunctionMap();
+	static void PlayProcess(CORO_PARAM, const void *param);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -193,7 +194,7 @@ public:
 	// Salvataggio
 	void AutoSave(CORO_PARAM);
 	void SaveState(int n, const char *name);
-	void LoadState(int n);
+	void LoadState(CORO_PARAM, int n);
 	void GetSaveStateFileName(int n, char *buf);
 
 	// Prende il thumbnail

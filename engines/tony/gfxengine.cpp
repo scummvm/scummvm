@@ -165,7 +165,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 	}
 	
   if (m_bOption) {
-		m_opt.DoFrame(&m_input);
+		CORO_INVOKE_1(m_opt.DoFrame, &m_input);
 		m_bOption = !m_opt.IsClosing();
 		if (!m_bOption) {
 			DisableMouse();
@@ -220,15 +220,15 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 				if (m_bGUIOption) {
 					if (!m_tony.InAction() && m_bInput) {
 						if ((m_input.MouseLeftClicked() && m_input.MousePos().x < 3 && m_input.MousePos().y < 3)) {
-							OpenOptionScreen(nullContext, 0);
+							CORO_INVOKE_1(OpenOptionScreen, 0);
 							goto SKIPCLICKSINISTRO;
 						} else if ((GetAsyncKeyState(Common::KEYCODE_ESCAPE)&0x8001) == 0x8001)
-							OpenOptionScreen(nullContext, 0);
+							CORO_INVOKE_1(OpenOptionScreen, 0);
 						else if (_vm->getIsDemo()) {
 							if ((GetAsyncKeyState(Common::KEYCODE_F3) & 0x8001) == 0x8001)
-								OpenOptionScreen(nullContext, 3);
+								CORO_INVOKE_1(OpenOptionScreen, 3);
 							else if ((GetAsyncKeyState(Common::KEYCODE_F2) & 0x8001) == 0x8001)
-								OpenOptionScreen(nullContext, 4);
+								CORO_INVOKE_1(OpenOptionScreen, 4);
 						}
 					}
 				}
@@ -494,7 +494,7 @@ void RMGfxEngine::InitForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint star
 	mpalStartIdlePoll(m_nCurLoc);
 }
 
-HANDLE RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
+uint32 RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	bool bLoaded;
 	int i;
 
@@ -529,10 +529,10 @@ HANDLE RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	m_bLocationLoaded = true;
 
 	// On Enter per la locazion
-	return INVALID_HANDLE_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
+	return INVALID_PID_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
 }
 
-void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
+void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 	CORO_BEGIN_CONTEXT;
 		uint32 h;
 	CORO_END_CONTEXT(_ctx);
@@ -544,7 +544,7 @@ void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
 
 	// On Exit?
 	if (bDoOnExit) {
-		_ctx->h = mpalQueryDoActionU32(1, m_nCurLoc, 0);
+		_ctx->h = mpalQueryDoAction(1, m_nCurLoc, 0);
 		if (_ctx->h != INVALID_PID_VALUE)
 			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 	}
@@ -557,7 +557,7 @@ void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
 	m_loc.Unload();
 
 	if (result != NULL)
-		*result = INVALID_HANDLE_VALUE;
+		*result = INVALID_PID_VALUE;
 
 	CORO_END_CODE;
 }
@@ -707,7 +707,7 @@ void SaveChangedHotspot(Common::OutSaveFile *f);
 void LoadChangedHotspot(Common::InSaveFile *f);
 void ReapplyChangedHotspot(void);
 
-void RestoreMusic(void);
+void RestoreMusic(CORO_PARAM);
 void SaveMusic(Common::OutSaveFile *f);
 void LoadMusic(Common::InSaveFile *f);
 
@@ -827,153 +827,159 @@ void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bo
 	delete f;
 }
 
-void RMGfxEngine::LoadState(const char *fn) {
+void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 	// PROBLEMA: Bisognerebbe caricare la locazione in un thread a parte per fare la OnEnter ...
-	Common::InSaveFile *f;
-	byte *state, *statecmp;
-	uint size, sizecmp;
-	char buf[4];
-	RMPoint tp;
-	int loc;
-	int ver;
-	int i;
+	CORO_BEGIN_CONTEXT;
+		Common::InSaveFile *f;
+		byte *state, *statecmp;
+		uint size, sizecmp;
+		char buf[4];
+		RMPoint tp;
+		int loc;
+		int ver;
+		int i;
+	CORO_END_CONTEXT(_ctx);
 
-	f = g_system->getSavefileManager()->openForLoading(fn);
-	if (f == NULL) return;
-	f->read(buf, 4);
-	if (buf[0] != 'R' || buf[1] != 'M' || buf[2] != 'S') {
-		delete f;
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->f = g_system->getSavefileManager()->openForLoading(fn);
+	if (_ctx->f == NULL) return;
+	_ctx->f->read(_ctx->buf, 4);
+	if (_ctx->buf[0] != 'R' || _ctx->buf[1] != 'M' || _ctx->buf[2] != 'S') {
+		delete _ctx->f;
 		return;
 	}
 	
-	ver = buf[3];
+	_ctx->ver = _ctx->buf[3];
 	
-	if (ver != 0x1 && ver != 0x2 && ver != 0x3 && ver != 0x4 && ver != 0x5 && ver != 0x6 && ver != 0x7) {
-		delete f;
+	if (_ctx->ver != 0x1 && _ctx->ver != 0x2 && _ctx->ver != 0x3 && _ctx->ver != 0x4 && _ctx->ver != 0x5 && _ctx->ver != 0x6 && _ctx->ver != 0x7) {
+		delete _ctx->f;
 		return;
 	}
 	
-	if (ver >= 0x3) {
-		// C'è il thumbnail. Se ver >= 5, è compresso
-		if (ver >= 0x5) {
-			i = 0;
-			i = f->readUint32LE();
-			f->seek(i);
+	if (_ctx->ver >= 0x3) {
+		// C'è il thumbnail. Se _ctx->ver >= 5, è compresso
+		if (_ctx->ver >= 0x5) {
+			_ctx->i = 0;
+			_ctx->i = _ctx->f->readUint32LE();
+			_ctx->f->seek(_ctx->i);
 		} else
-			f->seek(160 * 120 * 2, SEEK_CUR);
+			_ctx->f->seek(160 * 120 * 2, SEEK_CUR);
 	}
 
-	if (ver >= 0x5) {
+	if (_ctx->ver >= 0x5) {
 		// Skip del livello di difficoltà
-		f->seek(1, SEEK_CUR);
+		_ctx->f->seek(1, SEEK_CUR);
 	}
 
-	if (ver >= 0x4) {	// Skippa il nome, che non serve a nessuno
-		i = f->readByte();
-		f->seek(i, SEEK_CUR);
+	if (_ctx->ver >= 0x4) {	// Skippa il nome, che non serve a nessuno
+		_ctx->i = _ctx->f->readByte();
+		_ctx->f->seek(_ctx->i, SEEK_CUR);
 	}
 
-	loc = f->readUint32LE();
-	loc = f->readUint32LE();
-	tp.x = f->readUint32LE();
-	tp.y = f->readUint32LE();
-	size = f->readUint32LE();
+	_ctx->loc = _ctx->f->readUint32LE();
+	_ctx->loc = _ctx->f->readUint32LE();
+	_ctx->tp.x = _ctx->f->readUint32LE();
+	_ctx->tp.y = _ctx->f->readUint32LE();
+	_ctx->size = _ctx->f->readUint32LE();
 
-	if (ver >= 0x5) {
+	if (_ctx->ver >= 0x5) {
 		// Stato MPAL compresso!
-		sizecmp = f->readUint32LE();
-		state = new byte[size];
-		statecmp = new byte[sizecmp];
-		f->read(statecmp, sizecmp);
-		lzo1x_decompress(statecmp,sizecmp,state,&size);
-		delete[] statecmp;
+		_ctx->sizecmp = _ctx->f->readUint32LE();
+		_ctx->state = new byte[_ctx->size];
+		_ctx->statecmp = new byte[_ctx->sizecmp];
+		_ctx->f->read(_ctx->statecmp, _ctx->sizecmp);
+		lzo1x_decompress(_ctx->statecmp,_ctx->sizecmp,_ctx->state,&_ctx->size);
+		delete[] _ctx->statecmp;
 	} else {
-		state = new byte[size];
-		f->read(state, size);
+		_ctx->state = new byte[_ctx->size];
+		_ctx->f->read(_ctx->state, _ctx->size);
 	}
 
-	mpalLoadState(state);
-	delete[] state;
+	mpalLoadState(_ctx->state);
+	delete[] _ctx->state;
 
 
 	// inventario
-	size = f->readUint32LE();
-	state = new byte[size];
-	f->read(state, size);
-	m_inv.LoadState(state);
-	delete[] state;
+	_ctx->size = _ctx->f->readUint32LE();
+	_ctx->state = new byte[_ctx->size];
+	_ctx->f->read(_ctx->state, _ctx->size);
+	m_inv.LoadState(_ctx->state);
+	delete[] _ctx->state;
 
-	if (ver >= 0x2) {	  // Versione 2: box please
-		size = f->readUint32LE();
-		state = new byte[size];
-		f->read(state, size);
-		_vm->_theBoxes.LoadState(state);
-		delete[] state;
+	if (_ctx->ver >= 0x2) {	  // Versione 2: box please
+		_ctx->size = _ctx->f->readUint32LE();
+		_ctx->state = new byte[_ctx->size];
+		_ctx->f->read(_ctx->state, _ctx->size);
+		_vm->_theBoxes.LoadState(_ctx->state);
+		delete[] _ctx->state;
 	}
 
-	if (ver >= 5) {
+	if (_ctx->ver >= 5) {
 	  // Versione 5: 
 		bool bStat = false;
 		
-		bStat = f->readByte();
+		bStat = _ctx->f->readByte();
 		m_tony.SetPastorella(bStat);		
-		bStat = f->readByte();
+		bStat = _ctx->f->readByte();
 		m_inter.SetPalesati(bStat);		
 
-		CharsLoadAll(f);
+		CharsLoadAll(_ctx->f);
 	}
 
-	if (ver >= 6) {
+	if (_ctx->ver >= 6) {
 		// Carica le opzioni
-		bCfgInvLocked = f->readByte();
-		bCfgInvNoScroll = f->readByte();
-		bCfgTimerizedText = f->readByte();
-		bCfgInvUp = f->readByte();
-		bCfgAnni30 = f->readByte();
-		bCfgAntiAlias = f->readByte();
-		bCfgSottotitoli = f->readByte();
-		bCfgTransparence = f->readByte();
-		bCfgInterTips = f->readByte();
-		bCfgDubbing = f->readByte();
-		bCfgMusic = f->readByte();
-		bCfgSFX = f->readByte();
-		nCfgTonySpeed = f->readByte();
-		nCfgTextSpeed = f->readByte();
-		nCfgDubbingVolume = f->readByte();
-		nCfgMusicVolume = f->readByte();
-		nCfgSFXVolume = f->readByte();
+		bCfgInvLocked = _ctx->f->readByte();
+		bCfgInvNoScroll = _ctx->f->readByte();
+		bCfgTimerizedText = _ctx->f->readByte();
+		bCfgInvUp = _ctx->f->readByte();
+		bCfgAnni30 = _ctx->f->readByte();
+		bCfgAntiAlias = _ctx->f->readByte();
+		bCfgSottotitoli = _ctx->f->readByte();
+		bCfgTransparence = _ctx->f->readByte();
+		bCfgInterTips = _ctx->f->readByte();
+		bCfgDubbing = _ctx->f->readByte();
+		bCfgMusic = _ctx->f->readByte();
+		bCfgSFX = _ctx->f->readByte();
+		nCfgTonySpeed = _ctx->f->readByte();
+		nCfgTextSpeed = _ctx->f->readByte();
+		nCfgDubbingVolume = _ctx->f->readByte();
+		nCfgMusicVolume = _ctx->f->readByte();
+		nCfgSFXVolume = _ctx->f->readByte();
 
 		// Carica gli hotspot
-		LoadChangedHotspot(f);
+		LoadChangedHotspot(_ctx->f);
 	}
 
-	if (ver >= 7) {
-		LoadMusic(f);
+	if (_ctx->ver >= 7) {
+		LoadMusic(_ctx->f);
 	}
 
-	delete f;
+	delete _ctx->f;
 
-	UnloadLocation(nullContext, false, NULL);
-	LoadLocation(loc,tp,RMPoint(-1, -1));
+	CORO_INVOKE_2(UnloadLocation, false, NULL);
+	LoadLocation(_ctx->loc,_ctx->tp,RMPoint(-1, -1));
 	m_tony.SetPattern(RMTony::PAT_STANDRIGHT);
 	MainUnfreeze();
 	
 	// Le versioni vecchie necessitano di On enter
-	if (ver < 5)
-		mpalQueryDoActionU32(0, loc, 0);
+	if (_ctx->ver < 5)
+		mpalQueryDoAction(0, _ctx->loc, 0);
 	else {
 		// In quelle nuove, ci basta resettare gli mcode
 		MCharResetCodes();
 	}
 
-	if (ver >= 6)
+	if (_ctx->ver >= 6)
 		ReapplyChangedHotspot();
 
-	RestoreMusic();
+	CORO_INVOKE_0(RestoreMusic);
 
 	m_bGUIInterface = true;
 	m_bGUIInventory = true;
 	m_bGUIOption = true;
+
+	CORO_END_CODE;
 }
 
 void RMGfxEngine::PauseSound(bool bPause) {

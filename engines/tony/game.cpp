@@ -92,11 +92,11 @@ bool bPatIrqFreeze;
 /*  Funzioni globali per la DLL Custom	*/
 /****************************************/
 
-HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
+uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
 	return _vm->GetEngine()->LoadLocation(nLoc, pt,start);
 }
 
-void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result) {
+void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 	_vm->GetEngine()->UnloadLocation(coroParam, bDoOnExit, result);
 }
 
@@ -934,110 +934,110 @@ void RMOptionScreen::ChangeState(STATE newState) {
 	InitState();	
 }
 
-void RMOptionScreen::DoFrame(RMInput *input) {	
-	bool bLeftClick, bRightClick;
-	RMPoint mousePos;
-	bool bRefresh;
-	int i;
+void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {	
+	CORO_BEGIN_CONTEXT;
+		bool bLeftClick, bRightClick;
+		RMPoint mousePos;
+		bool bRefresh;
+		int i;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 
 	// Se non è completamente aperto, non fare nulla
 	if (m_FadeStep != 6)
 		return;
 
 	// Legge l'input
-	mousePos = input->MousePos();
-	bLeftClick = input->MouseLeftClicked();
-	bRightClick = input->MouseRightClicked();
+	_ctx->mousePos = input->MousePos();
+	_ctx->bLeftClick = input->MouseLeftClicked();
+	_ctx->bRightClick = input->MouseRightClicked();
 
-	bRefresh = false;
+	_ctx->bRefresh = false;
 
 	if (m_bQuitConfirm) {
-		bRefresh |= m_ButtonQuitYes->DoFrame(mousePos, bLeftClick, bRightClick);
-		bRefresh |= m_ButtonQuitNo->DoFrame(mousePos, bLeftClick, bRightClick);
+		_ctx->bRefresh |= m_ButtonQuitYes->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+		_ctx->bRefresh |= m_ButtonQuitNo->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 	} else {
-		bRefresh |= m_ButtonExit->DoFrame(mousePos, bLeftClick, bRightClick);
+		_ctx->bRefresh |= m_ButtonExit->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
 		// Controlla se ha clickato sull'uscita
 		if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
 			// bottoni senza grafica...
-			m_ButtonGameMenu->DoFrame(mousePos, bLeftClick, bRightClick);
-			m_ButtonGfxMenu->DoFrame(mousePos, bLeftClick, bRightClick);
-			m_ButtonSoundMenu->DoFrame(mousePos, bLeftClick, bRightClick);
+			m_ButtonGameMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			m_ButtonGfxMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			m_ButtonSoundMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
 			// bottoni con grafica
 			if (!m_bNoLoadSave) {
 				if (!_vm->getIsDemo()) {
-					bRefresh |= m_ButtonLoad->DoFrame(mousePos, bLeftClick, bRightClick);
-					bRefresh |= m_ButtonSave->DoFrame(mousePos, bLeftClick, bRightClick);
+					_ctx->bRefresh |= m_ButtonLoad->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+					_ctx->bRefresh |= m_ButtonSave->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 				}
 
-				bRefresh |= m_ButtonQuit->DoFrame(mousePos, bLeftClick, bRightClick);
+				_ctx->bRefresh |= m_ButtonQuit->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			}
 		}
 
-		switch (m_nState) {
-		case MENUGAME:
-			bRefresh |= m_ButtonGame_Lock->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonGame_TimerizedText->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonGame_Scrolling->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonGame_InterUp->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_SlideTextSpeed->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_SlideTonySpeed->DoFrame(mousePos, bLeftClick, bRightClick);
-			break;
+		if (m_nState == MENUGAME) {
+			_ctx->bRefresh |= m_ButtonGame_Lock->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonGame_TimerizedText->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonGame_Scrolling->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonGame_InterUp->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_SlideTextSpeed->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_SlideTonySpeed->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-		case MENUGFX:
-			bRefresh |= m_ButtonGfx_Anni30->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonGfx_AntiAlias->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonGfx_Sottotitoli->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonGfx_Tips->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonGfx_Trans->DoFrame(mousePos, bLeftClick, bRightClick);
-			break;
+		} else if (m_nState == MENUGFX) {
+			_ctx->bRefresh |= m_ButtonGfx_Anni30->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonGfx_AntiAlias->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonGfx_Sottotitoli->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonGfx_Tips->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonGfx_Trans->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-		case MENUSOUND:
-			bRefresh |= m_SliderSound_Dubbing->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_SliderSound_Music->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_SliderSound_SFX->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonSound_DubbingOn->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonSound_MusicOn->DoFrame(mousePos, bLeftClick, bRightClick);
-			bRefresh |= m_ButtonSound_SFXOn->DoFrame(mousePos, bLeftClick, bRightClick);
-			break;
-
-		case MENULOAD:
-		case MENUSAVE:
-			for (i=0;i<6;i++)
-				m_ButtonSave_States[i]->DoFrame(mousePos, bLeftClick, bRightClick);
+		} else if (m_nState == MENUSOUND) {
+			_ctx->bRefresh |= m_SliderSound_Dubbing->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_SliderSound_Music->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_SliderSound_SFX->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonSound_DubbingOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonSound_MusicOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= m_ButtonSound_SFXOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			
+		} else if (m_nState == MENULOAD || m_nState == MENUSAVE) {
+			for (_ctx->i=0;_ctx->i<6;_ctx->i++)
+				m_ButtonSave_States[_ctx->i]->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 	
 			if (m_statePos > 0)
-				bRefresh |= m_ButtonSave_ArrowLeft->DoFrame(mousePos, bLeftClick, bRightClick);
+				_ctx->bRefresh |= m_ButtonSave_ArrowLeft->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			if (m_statePos < 90)
-				bRefresh |= m_ButtonSave_ArrowRight->DoFrame(mousePos, bLeftClick, bRightClick);
-			break;			
+				_ctx->bRefresh |= m_ButtonSave_ArrowRight->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+
 		}
 	}
 		
 #define KEYPRESS(c)		((GetAsyncKeyState(c)&0x8001)==0x8001)
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
-	m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; bRefresh = true; }
+	m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
 
 	/**************** STATO BOTTONI **************/
 	if (m_bEditSaveName) {
 		if (KEYPRESS(Common::KEYCODE_BACKSPACE)) {
 			if (m_EditName[0] != '\0') {
 				m_EditName[strlen(m_EditName) - 1] = '\0';
-				bRefresh = true;
+				_ctx->bRefresh = true;
 			}
 		}
 
-		for (i=0;i<26 && strlen(m_EditName)<12;i++)
+		for (_ctx->i=0;_ctx->i<26 && strlen(m_EditName)<12;_ctx->i++)
 			if ((GetAsyncKeyState(Common::KEYCODE_LSHIFT) & 0x8000) ||
 					(GetAsyncKeyState(Common::KEYCODE_RSHIFT) & 0x8000)) {
-				PROCESS_CHAR((Common::KeyCode)((int)'a' + i), i + 'A');
+				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'A');
 			} else {
-				PROCESS_CHAR((Common::KeyCode)((int)'a' + i), i + 'a');
+				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'a');
 			}
 
-		for (i = 0; i < 10 && strlen(m_EditName) < 12; i++)
-			PROCESS_CHAR((Common::KeyCode)((int)'0' + i), i + '0');
+		for (_ctx->i = 0; _ctx->i < 10 && strlen(m_EditName) < 12; _ctx->i++)
+			PROCESS_CHAR((Common::KeyCode)((int)'0' + _ctx->i), _ctx->i + '0');
 		
 		if (strlen(m_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_SPACE,' ');
@@ -1056,7 +1056,7 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 		// ANNULLA
 		if (KEYPRESS(Common::KEYCODE_ESCAPE)) {	
 			m_bEditSaveName = false;
-			bRefresh = true;
+			_ctx->bRefresh = true;
 		}
 
 		// OK
@@ -1066,7 +1066,7 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 			Close();
 		}
 
-	} else if (bLeftClick) {
+	} else if (_ctx->bLeftClick) {
 		if (m_nState == MENULOAD || m_nState == MENUSAVE) {
 			if (m_ButtonExit->IsActive()) {
 				if (m_bLoadMenuOnly) {
@@ -1074,14 +1074,14 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 					Close();
 				} else {
 					ChangeState(m_nLastState);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				}
 			} else if (m_ButtonSave_ArrowLeft->IsActive()) {
 				if (m_statePos > 0) {
 					m_statePos -= 6;
 					if (m_statePos < 0) m_statePos = 0;
 					m_ButtonSave_ArrowLeft->SetActiveState(false);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 					RefreshThumbnails();
 				}
 			} else if (m_ButtonSave_ArrowRight->IsActive()) {
@@ -1089,25 +1089,25 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 					m_statePos += 6;
 					if (m_statePos > 90) m_statePos = 90;
 					m_ButtonSave_ArrowRight->SetActiveState(false);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 					RefreshThumbnails();
 				}
 			} else {
-				for (i = 0; i < 6; i++)
-					if (m_ButtonSave_States[i]->IsActive()) {		
+				for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
+					if (m_ButtonSave_States[_ctx->i]->IsActive()) {		
 						// C'è da effettuare il salvataggio o il caricamento!!!!
-						if (m_nState == MENULOAD && m_curThumb[i] != NULL) {
+						if (m_nState == MENULOAD && m_curThumb[_ctx->i] != NULL) {
 							// Caricamento
-							_vm->LoadState(m_statePos+i);
+							CORO_INVOKE_1(_vm->LoadState, m_statePos+_ctx->i);
 							Close();
-						} else if (m_nState == MENUSAVE && (m_statePos != 0 || i != 0)) {
+						} else if (m_nState == MENUSAVE && (m_statePos != 0 || _ctx->i != 0)) {
 							// Attiva la modalità di editing
 							m_bEditSaveName = true;
-							m_nEditPos = i;
-							strcpy(m_EditName, m_curThumbName[i]);
-							bRefresh = true;
+							m_nEditPos = _ctx->i;
+							strcpy(m_EditName, m_curThumbName[_ctx->i]);
+							_ctx->bRefresh = true;
 
-							//_vm->SaveState(m_statePos+i,"No name");
+							//_vm->SaveState(m_statePos+_ctx->i,"No name");
 							//Close();
 						}
 
@@ -1120,10 +1120,10 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 			if (m_bQuitConfirm) {
 				if (m_ButtonQuitNo->IsActive()) {
 					m_bQuitConfirm = false;
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				} else if (m_ButtonQuitYes->IsActive()) {
 					m_bQuitConfirm = false;
-					bRefresh = true;
+					_ctx->bRefresh = true;
 
 					_vm->Quit();
 				}
@@ -1132,24 +1132,24 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 					m_bQuitConfirm = true;
 					m_ButtonQuitNo->SetActiveState(false);
 					m_ButtonQuitYes->SetActiveState(false);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				} else if (m_ButtonExit->IsActive())
 					Close();
 				else if (m_ButtonLoad->IsActive()) {
 					ChangeState(MENULOAD);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				} else if (m_ButtonSave->IsActive()) {
 					ChangeState(MENUSAVE);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				} else if (m_ButtonGameMenu->IsActive() && m_nState != MENUGAME) {
 					ChangeState(MENUGAME);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				} else if (m_ButtonGfxMenu->IsActive() && m_nState != MENUGFX) {
 					ChangeState(MENUGFX);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				} else if (m_ButtonSoundMenu->IsActive() && m_nState != MENUSOUND) {
 					ChangeState(MENUSOUND);
-					bRefresh = true;
+					_ctx->bRefresh = true;
 				}
 
 				if (m_nState == MENUGFX) {
@@ -1177,8 +1177,10 @@ void RMOptionScreen::DoFrame(RMInput *input) {
 		if (!m_bQuitConfirm && KEYPRESS(Common::KEYCODE_ESCAPE))
 			Close();
 
-	if (bRefresh)
+	if (_ctx->bRefresh)
 		RefreshAll();
+
+	CORO_END_CODE;
 }
 
 

@@ -1570,7 +1570,7 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 *               uint32 dwParam           Eventuale parametro per l'azione
 *
 * Return:       Handle del thread che sta eseguendo l'azione, oppure
-*               INVALID_HANDLE_VALUE se l'azione non e' definita, o l'item
+*               INVALID_PID_VALUE se l'azione non e' definita, o l'item
 *               e' disattivato.
 *
 * Note:         Si puo' ottenere l'indice dell'item a partire dal suo numero
@@ -1580,7 +1580,7 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 *
 \****************************************************************************/
 
-static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
+static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	LPMPALITEM item = lpmiItems;
 	int i;
 	LPMPALITEM newitem;
@@ -1589,7 +1589,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	item+=ordItem;
 	Common::String buf = Common::String::format("Status.%u", item->nObj);
 	if (varGetValue(buf.c_str()) <= 0)
-		return INVALID_HANDLE_VALUE;
+		return INVALID_PID_VALUE;
 
 	for (i = 0; i < item->nActions; i++) {
 		if (item->Action[i].num != nAction)
@@ -1607,7 +1607,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// Duplichiamo l'item corrente e copiamo la azione #i nella #0
 		newitem = (LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
 		if (newitem == NULL)
-			return INVALID_HANDLE_VALUE;
+			return INVALID_PID_VALUE;
 
 		// Nella nuova versione scriviamo il numero dell'azione in dwRes
 		Common::copy((byte *)item, (byte *)item + sizeof(MPALITEM), (byte *)newitem);
@@ -1621,26 +1621,18 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 
 		// !!! New thread management
 		if ((h = g_scheduler->createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == NULL)
-			return INVALID_HANDLE_VALUE;
+			return INVALID_PID_VALUE;
 
-		if ((h = g_scheduler->createProcess(ShutUpActionThread, &h, sizeof(uint32))) == NULL)
-			return INVALID_HANDLE_VALUE;
+		if (g_scheduler->createProcess(ShutUpActionThread, &h, sizeof(uint32)) == NULL)
+			return INVALID_PID_VALUE;
 
-/*
-	 if ((h=(void*)_beginthread(ActionThread, 10240,(void *)newitem))==(void*)-1)
-     return INVALID_HANDLE_VALUE;
-		
-	 if ((h=(void*)_beginthread(ShutUpActionThread, 10240,(void *)h))==(void*)-1)
-     return INVALID_HANDLE_VALUE;
-
-*/
 		nExecutingAction = item->nObj;
 		bExecutingAction = true;
 
-		return (HANDLE)h;
+		return h;
 	}
 
-	return INVALID_HANDLE_VALUE;
+	return INVALID_PID_VALUE;
 }
 
 /**
@@ -1649,7 +1641,7 @@ static HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
  * @param nDlgOrd				The index of the dialog in the dialog list
  * @param nGroup				Number of the group to perform
  * @returns						The process Id of the process running the dialog
- *								or INVALID_HANDLE_VALUE on error
+ *								or INVALID_PID_VALUE on error
  * @remarks						The dialogue runs in a thread created on purpose, 
  * so that must inform through an event and when 'necessary to you make a choice. 
  * The data on the choices may be obtained through various queries.
@@ -1669,14 +1661,14 @@ static uint32 DoDialog(uint32 nDlgOrd, uint32 nGroup) {
 	// Create a thread that performs the dialogue group
 
 	// Create the process
-	if ((h = g_scheduler->createProcess(GroupThread, &nGroup, sizeof(uint32))) == 0)
-		return 0;
+	if ((h = g_scheduler->createProcess(GroupThread, &nGroup, sizeof(uint32))) == INVALID_PID_VALUE)
+		return INVALID_PID_VALUE;
 
 	// Create a thread that waits until the end of the dialog process, and will restore the global variables
-	if (g_scheduler->createProcess(ShutUpDialogThread, &h, sizeof(uint32)) == 0) {
+	if (g_scheduler->createProcess(ShutUpDialogThread, &h, sizeof(uint32)) == INVALID_PID_VALUE) {
 		// Something went wrong, so kill the previously started dialog process
 		g_scheduler->killMatchingProcess(h);
-		return 0;
+		return INVALID_PID_VALUE;
 	}
 
 	return h;
@@ -1912,16 +1904,23 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 *
 \****************************************************************************/
 
-#define GETARG(type)   va_arg(v,type)
+#define GETARG(type)   va_arg(v, type)
 
-void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
-	CORO_BEGIN_CONTEXT;
-		int x, y, z;
-		char *n;
-		Common::String buf;
-	CORO_END_CONTEXT(_ctx);
+/**
+ * MPAL Query variation #1 - dword return
+ * This variation handles mpal query types that need to return a dword result.
+ *
+ * @param wQueryType					Query type
+ * @param v								Variable length argument list
+ */
+uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
+	int x, y, z;
+	Common::String buf;
+	uint32 dwRet = 0;
+	char *n;
 
-	CORO_BEGIN_CODE(_ctx);
+	va_list v;
+	va_start(v, wQueryType);
 
 	mpalError = OK;
 
@@ -1929,31 +1928,30 @@ void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
 		/*
 		 *  uint32 mpalQuery(MPQ_VERSION);
 		 */
-		*dwRet = HEX_VERSION;
+		dwRet = HEX_VERSION;
 
 	} else if (wQueryType == MPQ_GLOBAL_VAR) {
 		/*
 		 *  uint32 mpalQuery(MPQ_GLOBAL_VAR, char * lpszVarName);
 		 */
 		LockVar();
-		*dwRet = (uint32)varGetValue(GETARG(char *));
+		dwRet = (uint32)varGetValue(GETARG(char *));
 		UnlockVar();
 
 	} else if (wQueryType == MPQ_MESSAGE) {
 		/*
 		 *  char * mpalQuery(MPQ_MESSAGE, uint32 nMsg);
 		 */
-		LockMsg();
-		*dwRet = (uint32)DuplicateMessage(msgGetOrderFromNum(GETARG(uint32)));
-		UnlockMsg();
+		error("mpalQuery(MPQ_MESSAGE, uint32 nMsg) used incorrect method variant");
+
 		
 	} else if (wQueryType == MPQ_ITEM_PATTERN) {
 		/*
 		 *  uint32 mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem);
 		 */
 		LockVar();
-		_ctx->buf = Common::String::format("Pattern.%u", GETARG(uint32));
-		*dwRet = (uint32)varGetValue(_ctx->buf.c_str());
+		buf = Common::String::format("Pattern.%u", GETARG(uint32));
+		dwRet = (uint32)varGetValue(buf.c_str());
 		UnlockVar();
 		
 	} else if (wQueryType == MPQ_LOCATION_SIZE) {
@@ -1961,61 +1959,56 @@ void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
 		 *  uint32 mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord);
 		 */
 		LockLocations();
-		_ctx->x = locGetOrderFromNum(GETARG(uint32));
-		_ctx->y = GETARG(uint32);
-		if (_ctx->x != -1) {
-			if (_ctx->y == MPQ_X)
-				*dwRet = lpmlLocations[_ctx->x].dwXlen;
-			else if (_ctx->y == MPQ_Y)
-				*dwRet = lpmlLocations[_ctx->x].dwYlen;
+		x = locGetOrderFromNum(GETARG(uint32));
+		y = GETARG(uint32);
+		if (x != -1) {
+			if (y == MPQ_X)
+				dwRet = lpmlLocations[x].dwXlen;
+			else if (y == MPQ_Y)
+				dwRet = lpmlLocations[x].dwYlen;
 			else
 				mpalError = 1;
 		} else
 			mpalError = 1;
+
 		UnlockLocations();
 		
 	} else if (wQueryType == MPQ_LOCATION_IMAGE) {
 		/*
 		 *  HGLOBAL mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc);
 		 */
-		LockLocations();
-		_ctx->x = locGetOrderFromNum(GETARG(uint32));
-		*dwRet = (uint32)resLoad(lpmlLocations[_ctx->x].dwPicRes);
-		UnlockLocations();
+		error("mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc) used incorrect variant");
 
 	} else if (wQueryType == MPQ_RESOURCE) {
 		/*
 		 *  HGLOBAL mpalQuery(MPQ_RESOURCE, uint32 dwRes);
 		 */
-		*dwRet = (uint32)resLoad(GETARG(uint32));
+		error("mpalQuery(MPQ_RESOURCE, uint32 dwRes) used incorrect variant");
 
 	} else if (wQueryType == MPQ_ITEM_LIST) {
 		/*
 		 *  uint32 mpalQuery(MPQ_ITEM_LIST, uint32 nLoc);
 		 */
-		LockVar();
-		*dwRet = (uint32)GetItemList(GETARG(uint32));
-		LockVar();
+		error("mpalQuery(MPQ_ITEM_LIST, uint32 nLoc) used incorrect variant");
 
 	} else if (wQueryType == MPQ_ITEM_DATA) {
 		/*
 		 *  LPITEM mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
 		 */
-		LockItems();
-		*dwRet = (uint32)GetItemData(itemGetOrderFromNum(GETARG(uint32)));
-		UnlockItems();
+		error("mpalQuery(MPQ_ITEM_DATA, uint32 nItem) used incorrect variant");
 
 	} else if (wQueryType == MPQ_ITEM_IS_ACTIVE) {
 		/*
 		 *  bool mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem);
 		 */
 		LockVar();
-		_ctx->x = GETARG(uint32);
-		_ctx->buf = Common::String::format("Status.%u", _ctx->x);
-		if (varGetValue(_ctx->buf.c_str()) <= 0)
-			*dwRet = (uint32)false;
+		x = GETARG(uint32);
+		buf = Common::String::format("Status.%u", x);
+		if (varGetValue(buf.c_str()) <= 0)
+			dwRet = (uint32)false;
 		else
-			*dwRet = (uint32)true;
+			dwRet = (uint32)true;
+
 		UnlockVar();
 
 	} else if (wQueryType == MPQ_ITEM_NAME) {
@@ -2023,15 +2016,191 @@ void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
 		 *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char * lpszName);
 		 */
 		LockVar();
-		_ctx->x = GETARG(uint32);
-		_ctx->n = GETARG(char *);
-		_ctx->buf = Common::String::format("Status.%u", _ctx->x);
-		if (varGetValue(_ctx->buf.c_str()) <= 0)
-			_ctx->n[0]='\0';
+		x = GETARG(uint32);
+		n = GETARG(char *);
+		buf = Common::String::format("Status.%u", x);
+		if (varGetValue(buf.c_str()) <= 0)
+			n[0]='\0';
 		else {
 			LockItems();
-			_ctx->y = itemGetOrderFromNum(_ctx->x);
-			CopyMemory(_ctx->n, (char *)(lpmiItems+_ctx->y)->lpszDescribe, MAX_DESCRIBE_SIZE);
+			y = itemGetOrderFromNum(x);
+			CopyMemory(n, (char *)(lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
+			UnlockItems();
+		}
+
+		UnlockVar();
+
+	} else if (wQueryType == MPQ_DIALOG_PERIOD) {
+		/*
+		 *  char *mpalQuery(MPQ_DIALOG_PERIOD, uint32 nDialog, uint32 nPeriod);
+		 */
+		error("mpalQuery(MPQ_DIALOG_PERIOD, uint32 nDialog, uint32 nPeriod) used incorrect variant");
+
+	} else if (wQueryType == MPQ_DIALOG_WAITFORCHOICE) {
+		/*
+		 *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
+		 */
+		error("mpalQuery(MPQ_DIALOG_WAITFORCHOICE) used incorrect variant");
+
+	} else if (wQueryType == MPQ_DIALOG_SELECTLIST) {
+		/*
+		 *  uint32 *mpalQuery(MPQ_DIALOG_SELECTLIST, uint32 nChoice);
+		 */
+		error("mpalQuery(MPQ_DIALOG_SELECTLIST, uint32 nChoice) used incorrect variant");
+
+	} else if (wQueryType == MPQ_DIALOG_SELECTION) {
+		/*
+		 *  bool mpalQuery(MPQ_DIALOG_SELECTION, uint32 nChoice, uint32 dwData);
+		 */
+		LockDialogs();
+		x = GETARG(uint32);
+		y = GETARG(uint32);
+		dwRet = (uint32)DoSelection(x, y);
+
+		UnlockDialogs();
+
+	} else if (wQueryType == MPQ_DO_ACTION) {
+		/*
+		 *  int mpalQuery(MPQ_DO_ACTION, uint32 nAction, uint32 nItem, uint32 dwParam);
+		 */
+		LockItems();
+		LockVar();
+		x = GETARG(uint32);
+		z = GETARG(uint32);
+		y = itemGetOrderFromNum(z);
+		if (y != -1) {
+			dwRet = DoAction(x, y, GETARG(uint32));
+		} else {
+			dwRet = INVALID_PID_VALUE;
+			mpalError = 1;
+		}
+
+		UnlockVar();
+		UnlockItems();
+
+	} else if (wQueryType == MPQ_DO_DIALOG) {
+		/*
+		 *  int mpalQuery(MPQ_DO_DIALOG, uint32 nDialog, uint32 nGroup);
+		 */
+		if (!bExecutingDialog) {
+			LockDialogs();
+
+			x = dialogGetOrderFromNum(GETARG(uint32));
+			y = GETARG(uint32);
+			dwRet = DoDialog(x, y);
+			UnlockDialogs();
+		}
+	} else {
+		/*
+		 *  DEFAULT -> ERROR
+		 */
+		mpalError = 1;
+	}
+
+	va_end(v);
+	return dwRet;
+}
+
+/**
+ * MPAL Query variation #1 - dword return
+ * This variation handles mpal query types that need to return a pointer/handle result
+ *
+ * @param wQueryType					Query type
+ * @param v								Variable length argument list
+ */
+HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
+	int x, y;
+	char *n;
+	Common::String buf;
+	va_list v;
+	va_start(v, wQueryType);
+	void *hRet = NULL;
+
+	mpalError = OK;
+
+	if (wQueryType == MPQ_VERSION) {
+		/*
+		 *  uint32 mpalQuery(MPQ_VERSION);
+		 */
+		error("mpalQuery(MPQ_VERSION) used incorrect variant");
+
+	} else if (wQueryType == MPQ_GLOBAL_VAR) {
+		/*
+		 *  uint32 mpalQuery(MPQ_GLOBAL_VAR, char * lpszVarName);
+		 */
+		error("mpalQuery(MPQ_GLOBAL_VAR, char * lpszVarName) used incorrect variant");
+
+	} else if (wQueryType == MPQ_MESSAGE) {
+		/*
+		 *  char * mpalQuery(MPQ_MESSAGE, uint32 nMsg);
+		 */
+		LockMsg();
+		hRet = DuplicateMessage(msgGetOrderFromNum(GETARG(uint32)));
+		UnlockMsg();
+		
+	} else if (wQueryType == MPQ_ITEM_PATTERN) {
+		/*
+		 *  uint32 mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem);
+		 */
+		error("mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem) used incorrect variant");
+		
+	} else if (wQueryType == MPQ_LOCATION_SIZE) {
+		/*
+		 *  uint32 mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord);
+		 */
+		error("mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord) used incorrect variant");
+		
+	} else if (wQueryType == MPQ_LOCATION_IMAGE) {
+		/*
+		 *  HGLOBAL mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc);
+		 */
+		LockLocations();
+		x = locGetOrderFromNum(GETARG(uint32));
+		hRet = resLoad(lpmlLocations[x].dwPicRes);
+		UnlockLocations();
+
+	} else if (wQueryType == MPQ_RESOURCE) {
+		/*
+		 *  HGLOBAL mpalQuery(MPQ_RESOURCE, uint32 dwRes);
+		 */
+		hRet = resLoad(GETARG(uint32));
+
+	} else if (wQueryType == MPQ_ITEM_LIST) {
+		/*
+		 *  uint32 mpalQuery(MPQ_ITEM_LIST, uint32 nLoc);
+		 */
+		LockVar();
+		hRet = GetItemList(GETARG(uint32));
+		LockVar();
+
+	} else if (wQueryType == MPQ_ITEM_DATA) {
+		/*
+		 *  LPITEM mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
+		 */
+		LockItems();
+		hRet = GetItemData(itemGetOrderFromNum(GETARG(uint32)));
+		UnlockItems();
+
+	} else if (wQueryType == MPQ_ITEM_IS_ACTIVE) {
+		/*
+		 *  bool mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem);
+		 */
+		error("mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem) used incorrect variant");
+
+	} else if (wQueryType == MPQ_ITEM_NAME) {
+		/*
+		 *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char *lpszName);
+		 */
+		LockVar();
+		x = GETARG(uint32);
+		n = GETARG(char *);
+		buf = Common::String::format("Status.%u", x);
+		if (varGetValue(buf.c_str()) <= 0)
+			n[0]='\0';
+		else {
+			LockItems();
+			y = itemGetOrderFromNum(x);
+			CopyMemory(n, (char *)(lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
 			UnlockItems();
 		}
 
@@ -2042,11 +2211,71 @@ void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
 		 *  char * mpalQuery(MPQ_DIALOG_PERIOD, uint32 nDialog, uint32 nPeriod);
 		 */
 		LockDialogs();
-		_ctx->y = GETARG(uint32);
-		*dwRet = (uint32)DuplicateDialogPeriod(_ctx->y);
+		y = GETARG(uint32);
+		hRet = DuplicateDialogPeriod(y);
 		UnlockDialogs();
 
 	} else if (wQueryType == MPQ_DIALOG_WAITFORCHOICE) {
+		/*
+		 *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
+		 */
+		error("mpalQuery(MPQ_DIALOG_WAITFORCHOICE) used incorrect variant");
+
+	} else if (wQueryType == MPQ_DIALOG_SELECTLIST) {
+		/*
+		 *  uint32 *mpalQuery(MPQ_DIALOG_SELECTLIST, uint32 nChoice);
+		 */
+		LockDialogs();
+		hRet = GetSelectList(GETARG(uint32));
+		UnlockDialogs();
+
+	} else if (wQueryType == MPQ_DIALOG_SELECTION) {
+		/*
+		 *  bool mpalQuery(MPQ_DIALOG_SELECTION, uint32 nChoice, uint32 dwData);
+		 */
+		error("mpalQuery(MPQ_DIALOG_SELECTION, uint32 nChoice, uint32 dwData) used incorrect variant");
+
+	} else if (wQueryType == MPQ_DO_ACTION) {
+		/*
+		 *  int mpalQuery(MPQ_DO_ACTION, uint32 nAction, uint32 nItem, uint32 dwParam);
+		 */
+		error("mpalQuery(MPQ_DO_ACTION, uint32 nAction, uint32 nItem, uint32 dwParam) used incorrect variant");
+
+	} else if (wQueryType == MPQ_DO_DIALOG) {
+		/*
+		 *  int mpalQuery(MPQ_DO_DIALOG, uint32 nDialog, uint32 nGroup);
+		 */
+		error("mpalQuery(MPQ_DO_DIALOG, uint32 nDialog, uint32 nGroup) used incorrect variant");
+	} else {
+		/*
+		 *  DEFAULT -> ERROR
+		 */
+		mpalError = 1;
+	}
+
+	va_end(v);
+	return hRet;
+}
+
+/**
+ * MPAL Query variation #1 - dword return
+ * This variation handles mpal query types that need to return a pointer/handle result
+ *
+ * @param wQueryType					Query type
+ * @param dwRet							DWORD return value (when coroutine method completes)
+ * @param v								Variable length argument list
+ */
+void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
+	CORO_BEGIN_CONTEXT;
+		uint32 dwRet;
+	CORO_END_CONTEXT(_ctx);
+
+	va_list v;
+	va_start(v, dwRet);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (wQueryType == MPQ_DIALOG_WAITFORCHOICE) {
 		/*
 		 *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
 		 */
@@ -2058,83 +2287,11 @@ void mpalQueryInner(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, va_list v) {
 			*dwRet = (uint32)nExecutingChoice;
 		else
 			*dwRet = (uint32)((int)-1);
-
-	} else if (wQueryType == MPQ_DIALOG_SELECTLIST) {
-		/*
-		 *  uint32 *mpalQuery(MPQ_DIALOG_SELECTLIST, uint32 nChoice);
-		 */
-		LockDialogs();
-		*dwRet = (uint32)GetSelectList(GETARG(uint32));
-		UnlockDialogs();
-		break;
-
-	} else if (wQueryType == MPQ_DIALOG_SELECTION) {
-		/*
-		 *  bool mpalQuery(MPQ_DIALOG_SELECTION, uint32 nChoice, uint32 dwData);
-		 */
-		LockDialogs();
-		_ctx->x = GETARG(uint32);
-		_ctx->y = GETARG(uint32);
-		*dwRet = (uint32)DoSelection(_ctx->x,_ctx->y);
-		UnlockDialogs();
-
-	} else if (wQueryType == MPQ_DO_ACTION) {
-		/*
-		 *  int mpalQuery(MPQ_DO_ACTION, uint32 nAction, uint32 nItem, uint32 dwParam);
-		 */
-		LockItems();
-		LockVar();
-		_ctx->x = GETARG(uint32);
-		_ctx->z = GETARG(uint32);
-		_ctx->y = itemGetOrderFromNum(_ctx->z);
-		if (_ctx->y!=-1) {
-			*dwRet = (uint32)DoAction(_ctx->x, _ctx->y, GETARG(uint32));
-		} else {
-			*dwRet = (uint32)INVALID_HANDLE_VALUE;
-			mpalError = 1;
-		}
-		UnlockVar();
-		UnlockItems();
-
-	} else if (wQueryType == MPQ_DO_DIALOG) {
-		/*
-		 *  int mpalQuery(MPQ_DO_DIALOG, uint32 nDialog, uint32 nGroup);
-		 */
-		if (!bExecutingDialog) {
-			LockDialogs();
-
-			_ctx->x = dialogGetOrderFromNum(GETARG(uint32));
-			_ctx->y = GETARG(uint32);
-			*dwRet = DoDialog(_ctx->x, _ctx->y);
-			UnlockDialogs();
-		}
 	} else {
-		/*
-		 *  DEFAULT -> ERROR
-		 */
-		mpalError = 1;
+		error("mpalQueryCORO called with unsupported query type");
 	}
 
 	CORO_END_CODE;
-}
-
-uint32 mpalQuery(uint16 wQueryType, ...) {
-	uint32 dwRet;
-	va_list v;
-	va_start(v, wQueryType);
-
-	mpalQueryInner(nullContext, wQueryType, &dwRet, v);
-
-	va_end(v);
-
-	return dwRet;
-}
-
-void mpalQueryCoro(CORO_PARAM, uint32 *dwRet, uint16 wQueryType, ...) {
-	va_list v;
-	va_start(v, wQueryType);
-
-	mpalQueryInner(coroParam, wQueryType, dwRet, v);
 
 	va_end(v);
 }
@@ -2171,7 +2328,6 @@ uint32 mpalGetError(void) {
 bool EXPORT mpalExecuteScript(int nScript) {
 	int n;
 	LPMPALSCRIPT s;
-	uint32 dwId;
 
 	LockScripts();
 	n = scriptGetOrderFromNum(nScript);

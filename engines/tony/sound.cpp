@@ -1021,7 +1021,7 @@ FPSFX::FPSFX(LPDIRECTSOUND lpds, HWND hWnd, bool bSoundOn) {
 	lpDSNotify = NULL;
 	lpDS = lpds;
 	lastVolume = 63;
-	hEndOfBuffer = INVALID_HANDLE_VALUE;
+	hEndOfBuffer = INVALID_PID_VALUE;
 	bIsVoice = false;
 
 	if (bSoundSupported == false)
@@ -1053,7 +1053,7 @@ FPSFX::~FPSFX() {
 
 	RELEASE(lpDSNotify);
 
-	if (hEndOfBuffer != INVALID_HANDLE_VALUE)
+	if (hEndOfBuffer != INVALID_PID_VALUE)
 		CloseHandle(hEndOfBuffer);
 
 	RELEASE(lpDSBuffer);
@@ -1415,7 +1415,7 @@ bool FPSFX::LoadFile(const char *lpszFileName, uint32 dwCodec) {
 bool FPSFX::Play() {
 #ifdef REFACTOR_ME
 	if (bFileLoaded) {
-		if (hEndOfBuffer != INVALID_HANDLE_VALUE)
+		if (hEndOfBuffer != INVALID_PID_VALUE)
 			ResetEvent(hEndOfBuffer);
 
 		lpDSBuffer->SetCurrentPosition(0);

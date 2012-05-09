@@ -2236,7 +2236,7 @@ void RMTextDialogScrolling::ClipOnScreen(RMGfxPrimitive *prim) {
 
 
 /****************************************************************************\
-*       Metodi di RMTextItemName
+*       RMTextItemName Methods
 \****************************************************************************/
 
 RMTextItemName::RMTextItemName() : RMText() {
@@ -2259,14 +2259,14 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 
 	_ctx->lastItem = m_item;
 
-	// Si aggiunge alla lista se c'e' bisogno
+	// Adds to the list if there is need
 	if (!m_nInList)
 		bigBuf.AddPrim(new RMGfxPrimitive(this));
 	
-	// Aggiorna le coordinate di scrolling
+	// Update the scrolling co-ordinates
 	m_curscroll = loc.ScrollPosition();
 
-	// Controlla se siamo sopra l'inventario
+	// Check if we are on the inventory
 	if (inv.ItemInFocus(m_mpos))
 		m_item = inv.WhichItemIsIn(m_mpos);
 	else
@@ -2274,19 +2274,19 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 	
 	_ctx->itemName = "";
 
-	// Si fa dare il nuovo nome
+	// If there an item, get it's name
 	if (m_item != NULL)
 		m_item->GetName(_ctx->itemName);
 
-	// Se lo scrive
+	// Write it
 	WriteText(_ctx->itemName, 1);
 
-	// Se e' diverso dal precedente, e' il caso di aggiornare anche il puntatore con la WhichPointer
+	// Handle the change If the selected item is different from the previous one
 	if (_ctx->lastItem != m_item) {
 		if (m_item == NULL)
 			ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 		else {
-			_ctx->hThread = mpalQueryDoActionU32(20, m_item->MpalCode(), 0);		
+			_ctx->hThread = mpalQueryDoAction(20, m_item->MpalCode(), 0);		
 			if (_ctx->hThread == INVALID_PID_VALUE)
 				ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 			else

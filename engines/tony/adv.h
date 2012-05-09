@@ -91,8 +91,8 @@ enum RMTonyAction {
 };
 
 // Funzioni globali
-HANDLE MainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
-void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result);
+uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
+void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 void MainLinkGraphicTask(RMGfxTask *task);
 void MainFreeze(void);
 void MainUnfreeze(void);

@@ -322,11 +322,17 @@ void TonyEngine::SaveState(int n, const char *name) {
 }
 
 
-void TonyEngine::LoadState(int n) {
-	char buf[256];
+void TonyEngine::LoadState(CORO_PARAM, int n) {
+	CORO_BEGIN_CONTEXT;
+		char buf[256];
+	CORO_END_CONTEXT(_ctx);
 
-	GetSaveStateFileName(n, buf);
-	_theEngine.LoadState(buf);
+	CORO_BEGIN_CODE(_ctx);
+
+	GetSaveStateFileName(n, _ctx->buf);
+	CORO_INVOKE_1(_theEngine.LoadState, _ctx->buf);
+
+	CORO_END_CODE;
 }
 
 bool TonyEngine::OpenVoiceDatabase() {
@@ -393,35 +399,66 @@ void TonyEngine::Abort(void) {
 	m_bQuitNow = true;
 }
 
-void TonyEngine::Play(void) {
-	// Main game loop
-	while (!shouldQuit() && !m_bQuitNow) {
+/**
+ * Main process for playing the game.
+ *
+ * @remarks		This needs to be in a separate process, since there are some things that can briefly
+ * block the execution of process. For now, all ScummVm event handling is dispatched to within the context of this
+ * process. If it ever proves a problem, we may have to look into whether it's feasible to have it still remain
+ * in the outer 'main' process.
+ */
+void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	// Infinite loop. We rely on the outer main process to detect if a shutdown is required,
+	// and kill the scheudler and all the processes, including this one
+	for (;;) {
 		// Se siamo in pausa, entra nel loop appropriato
-		if (m_bPaused)
-			PauseLoop();
+		if (_vm->m_bPaused)
+			_vm->PauseLoop();
 
-		g_system->delayMillis(50);
-
-		// Call any scheduled processes
-		_scheduler.schedule();
+		// Wait for the next frame
+		CORO_INVOKE_1(g_scheduler->sleep, 50);
 
   		// Call the engine to handle the next frame
 		// FIXME: This needs to be moved into it's own process
-		_theEngine.DoFrame(nullContext, m_bDrawLocation);
+		CORO_INVOKE_1(_vm->_theEngine.DoFrame, _vm->m_bDrawLocation);
 
 		// Warns that a frame is finished
-		g_scheduler->pulseEvent(m_hEndOfFrame);
+		g_scheduler->pulseEvent(_vm->m_hEndOfFrame);
 
 		// Handle drawing the frame
-		if (!m_bPaused) {
-			if (!_theEngine.m_bWiping)
-				_window.GetNewFrame(_theEngine, NULL);
+		if (!_vm->m_bPaused) {
+			if (!_vm->_theEngine.m_bWiping)
+				_vm->_window.GetNewFrame(_vm->_theEngine, NULL);
 			else
-				_window.GetNewFrame(_theEngine, &_theEngine.m_rcWipeEllipse);
+				_vm->_window.GetNewFrame(_vm->_theEngine, &_vm->_theEngine.m_rcWipeEllipse);
 		}
 
 		// Paint the frame onto the screen
-		_window.Repaint();
+		_vm->_window.Repaint();
+	}
+
+	CORO_END_CODE;
+}
+
+/**
+ * Play the game
+ */
+void TonyEngine::Play(void) {
+	// Create the game player process
+	g_scheduler->createProcess(PlayProcess, NULL);
+
+	// Loop through calling the scheduler until it's time for the game to quit
+	while (!shouldQuit() && !m_bQuitNow) {
+		// Delay for a brief amount
+		g_system->delayMillis(10);
+
+		// Call any scheduled processes
+		_scheduler.schedule();
 	}
 }
 

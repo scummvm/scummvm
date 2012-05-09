@@ -72,8 +72,8 @@ RMLocation *Loc;
 RMInventory *Inventory;
 RMInput *Input;
 
-HANDLE (*LoadLocation)(int, RMPoint, RMPoint start);
-void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, HANDLE *result);
+uint32 (*LoadLocation)(int, RMPoint, RMPoint start);
+void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, uint32 *result);
 void (*LinkGraphicTask)(RMGfxTask *task);
 void (*Freeze)(void); 
 void (*Unfreeze)(void); 
@@ -521,7 +521,7 @@ DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, ui
 		LoadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
 
 	Unfreeze();
-	_ctx->h = mpalQueryDoActionU32(0, nLoc, 0);
+	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
 	// On Enter?
 	if (_ctx->h != INVALID_PID_VALUE)
@@ -698,7 +698,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	Unfreeze();
 
 
-	_ctx->h = mpalQueryDoActionU32(0, nLoc, 0);
+	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
 	if (!bNoOcchioDiBue) {
   		CORO_INVOKE_0(WaitWipeEnd);
@@ -1842,7 +1842,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 	// Cerca di eseguire la funzione custom per inizializzare la parlata
 	if (MCharacter[nChar].item) {
-		_ctx->h = mpalQueryDoActionU32(30, MCharacter[nChar].item->MpalCode(), _ctx->parm);
+		_ctx->h = mpalQueryDoAction(30, MCharacter[nChar].item->MpalCode(), _ctx->parm);
 		if (_ctx->h != INVALID_PID_VALUE) {
 			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 		}
@@ -1923,7 +1923,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 	// Cerca di eseguire la funzione custom per chiudere la parlata
 	if (MCharacter[nChar].item) {
-		_ctx->h = mpalQueryDoActionU32(31, MCharacter[nChar].item->MpalCode(), _ctx->parm);
+		_ctx->h = mpalQueryDoAction(31, MCharacter[nChar].item->MpalCode(), _ctx->parm);
 		if (_ctx->h != INVALID_PID_VALUE)
 			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 	}
@@ -2034,7 +2034,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			MCharacter[nPers].numtexts--;
 		} else {
 			// Cerca di eseguire la funzione custom per inizializzare la parlata
-			_ctx->h = mpalQueryDoActionU32(30, MCharacter[nPers].item->MpalCode(), _ctx->parm);
+			_ctx->h = mpalQueryDoAction(30, MCharacter[nPers].item->MpalCode(), _ctx->parm);
 			if (_ctx->h != INVALID_PID_VALUE)
 				CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 
@@ -2098,7 +2098,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			if ((MCharacter[nPers].bInTexts && MCharacter[nPers].numtexts== 0) || !MCharacter[nPers].bInTexts) {
 				// Cerca di eseguire la funzione custom per chiudere la parlata
 				MCharacter[nPers].curTalk = (MCharacter[nPers].curTalk%10) + MCharacter[nPers].curgroup*10;
-				_ctx->h = mpalQueryDoActionU32(31,MCharacter[nPers].item->MpalCode(),MCharacter[nPers].curTalk);
+				_ctx->h = mpalQueryDoAction(31,MCharacter[nPers].item->MpalCode(),MCharacter[nPers].curTalk);
 				if (_ctx->h != INVALID_PID_VALUE)
 					CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
 
@@ -2142,7 +2142,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 	curDialog = nDialog;
 	
 	// Call MPAL to start the dialog
-	mpalQueryDoDialogU32(nDialog, nStartGroup);
+	mpalQueryDoDialog(nDialog, nStartGroup);
 
 	// Wait until a choice is selected
 	mpalQueryDialogWaitForChoice(&_ctx->nChoice);
@@ -2154,7 +2154,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 		// Se c'e' una sola opzione, la fa automaticamente, e aspetta la prossima scelta
 		if (_ctx->num == 1) {
-			mpalQueryDialogSelectionU32(_ctx->nChoice, _ctx->sl[0]);
+			mpalQueryDialogSelection(_ctx->nChoice, _ctx->sl[0]);
 			GlobalFree(_ctx->sl);
 			continue;
 		}
@@ -2190,7 +2190,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		MainHideMouse();
 		
 		CORO_INVOKE_0(_ctx->dc.Hide);
-		mpalQueryDialogSelectionU32(_ctx->nChoice, _ctx->sl[_ctx->sel]);
+		mpalQueryDialogSelection(_ctx->nChoice, _ctx->sl[_ctx->sel]);
 
 		// Chiude la scelta
 		_ctx->dc.Close();
@@ -2501,10 +2501,18 @@ DECLARE_CUSTOM_FUNCTION(PlayItemSfx)(CORO_PARAM, uint32 nItem, uint32 nSFX, uint
 }
 
 
-void RestoreMusic(void) {
-	PlaySonoriz(nullContext, lastMusic, 0, 0, 0);
+void RestoreMusic(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_4(PlaySonoriz, lastMusic, 0, 0, 0);
+
 	if (lastTappeto != 0)
 		CustPlayMusic(4, tappetiFile[lastTappeto], 0, true);
+
+	CORO_END_CODE;
 }
 
 void SaveMusic(Common::OutSaveFile *f) {

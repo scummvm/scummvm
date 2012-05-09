@@ -156,7 +156,7 @@ enum QueryCoordinates {
 /****************************************************************************\
 *       enum QueryTypes
 *       ---------------
-* Description: Query can be used with mpalQuery (). In practice corresponds
+* Description: Query can be used with mpalQuery methods. In practice corresponds
 *              all claims that can do at the library
 \****************************************************************************/
 
@@ -252,7 +252,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryVersion()                              \
-        (uint16)mpalQuery(MPQ_VERSION)
+        (uint16)mpalQueryDWORD(MPQ_VERSION)
 
 
 
@@ -273,7 +273,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryGlobalVar(lpszVarName)                 \
-        (uint32)mpalQuery(MPQ_GLOBAL_VAR,(const char *)(lpszVarName))
+        mpalQueryDWORD(MPQ_GLOBAL_VAR, (const char *)(lpszVarName))
 
 
 
@@ -291,7 +291,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryResource(dwResId)                      \
-        (HGLOBAL)mpalQuery(MPQ_RESOURCE,(uint32)(dwResId))
+        mpalQueryHANDLE(MPQ_RESOURCE, (uint32)(dwResId))
 
 
 
@@ -311,7 +311,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryMessage(nMsg)                          \
-        (LPSTR)mpalQuery(MPQ_MESSAGE,(uint32)(nMsg))
+        (LPSTR)mpalQueryHANDLE(MPQ_MESSAGE, (uint32)(nMsg))
 
 
 
@@ -328,7 +328,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryLocationImage(nLoc)                    \
-        (HGLOBAL)mpalQuery(MPQ_LOCATION_IMAGE,(uint32)(nLoc))
+        mpalQueryHANDLE(MPQ_LOCATION_IMAGE, (uint32)(nLoc))
 
 
 
@@ -346,7 +346,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryLocationSize(nLoc,dwCoord)             \
-        (uint32)mpalQuery(MPQ_LOCATION_SIZE,(uint32)(nLoc),(uint32)(dwCoord))
+        mpalQueryDWORD(MPQ_LOCATION_SIZE,(uint32)(nLoc),(uint32)(dwCoord))
 
 
 
@@ -361,9 +361,9 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 * Return:       List of objects (accessible by Item [0], Item [1], etc.)
 *
 \****************************************************************************/
-
+// TODO: Check if the results of this are endian safe
 #define mpalQueryItemList(nLoc)                         \
-        (uint32 *)mpalQuery(MPQ_ITEM_LIST,(uint32)(nLoc))
+        (uint32 *)mpalQueryHANDLE(MPQ_ITEM_LIST,(uint32)(nLoc))
 
 
 
@@ -380,7 +380,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryItemData(nItem)                          \
-        (LPITEM)mpalQuery(MPQ_ITEM_DATA,(uint32)(nItem))
+        (LPITEM)mpalQueryHANDLE(MPQ_ITEM_DATA,(uint32)(nItem))
 
 
 
@@ -400,7 +400,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryItemPattern(nItem)                  \
-        (uint32)mpalQuery(MPQ_ITEM_PATTERN,(uint32)(nItem))
+        mpalQueryDWORD(MPQ_ITEM_PATTERN,(uint32)(nItem))
 
 
 
@@ -417,7 +417,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryItemIsActive(nItem)                  \
-        (bool)mpalQuery(MPQ_ITEM_IS_ACTIVE,(uint32)(nItem))
+        (bool)mpalQueryDWORD(MPQ_ITEM_IS_ACTIVE,(uint32)(nItem))
 
 
 /****************************************************************************\
@@ -435,8 +435,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *
 \****************************************************************************/
 
-#define mpalQueryItemName(nItem,lpszName)             \
-        (uint32)mpalQuery(MPQ_ITEM_NAME,(uint32)(nItem),(LPSTR)(lpszName))
+#define mpalQueryItemName(nItem, lpszName)             \
+        mpalQueryHANDLE(MPQ_ITEM_NAME,(uint32)(nItem), (LPSTR)(lpszName))
 
 
 
@@ -459,7 +459,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryDialogPeriod(nPeriod)                  \
-        (LPSTR)mpalQuery(MPQ_DIALOG_PERIOD,(uint32)(nPeriod))
+        (LPSTR)mpalQueryHANDLE(MPQ_DIALOG_PERIOD, (uint32)(nPeriod))
 
 
 
@@ -475,7 +475,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryDialogWaitForChoice(dwRet)                  \
-        CORO_INVOKE_2(mpalQueryCoro, dwRet, MPQ_DIALOG_WAITFORCHOICE)
+        CORO_INVOKE_2(mpalQueryCORO, MPQ_DIALOG_WAITFORCHOICE, dwRet)
 
 /****************************************************************************\
 *
@@ -496,7 +496,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryDialogSelectList(nChoice)              \
-        (uint32 *)mpalQuery(MPQ_DIALOG_SELECTLIST,(uint32)(nChoice))
+        (uint32 *)mpalQueryHANDLE(MPQ_DIALOG_SELECTLIST,(uint32)(nChoice))
 
 
 
@@ -521,10 +521,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryDialogSelection(nChoice,dwData)        \
-        (bool)mpalQuery(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
+        (bool)mpalQueryDWORD(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
 
-#define mpalQueryDialogSelectionU32(nChoice, dwData)        \
-        mpalQuery(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
 
 /****************************************************************************\
 *
@@ -539,7 +537,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *               uint32 dwParam           Action parameter
 *
 * Return:       Handle to the thread that is performing the action, or
-*				INVALID_HANDLE_VALUE if the action is not 'defined for 
+*				INVALID_PID_VALUE if the action is not 'defined for 
 *				the item, or the item and 'off.
 *
 * Note:         The parameter is used primarily to implement actions 
@@ -549,10 +547,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryDoAction(nAction, nItem, dwParam)      \
-        (HANDLE)mpalQuery(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
+        mpalQueryDWORD(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
 
-#define mpalQueryDoActionU32(nAction, nItem, dwParam)      \
-        mpalQuery(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
 
 
 /****************************************************************************\
@@ -565,15 +561,12 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *               uint32 nGroup            Group number to use
 *
 * Return:       Handle to the thread that is running the box, or
-*				INVALID_HANDLE_VALUE if the dialogue does not exist.
+*				INVALID_PID_VALUE if the dialogue does not exist.
 *
 \****************************************************************************/
 
 #define mpalQueryDoDialog(nDialog,nGroup)               \
-        (HANDLE)mpalQuery(MPQ_DO_DIALOG,(uint32)(nDialog),(uint32)(nGroup))
-
-#define mpalQueryDoDialogU32(nDialog, nGroup)               \
-        mpalQuery(MPQ_DO_DIALOG,(uint32)(nDialog),(uint32)(nGroup))
+        mpalQueryHANDLE(MPQ_DO_DIALOG, (uint32)(nDialog),(uint32)(nGroup))
 
 
 /****************************************************************************\
@@ -623,9 +616,13 @@ bool EXPORT mpalInit(const char *lpszFileName, const char *lpszMprFileName,
 *
 \****************************************************************************/
 
-uint32 EXPORT mpalQuery(uint16 wQueryType, ...);
+typedef void *HANDLE;
 
-void mpalQueryCoro(CORO_PARAM, uint32 *dwRet, uint16 wQueryType, ...);
+uint32 mpalQueryDWORD(uint16 wQueryType, ...);
+
+HANDLE mpalQueryHANDLE(uint16 wQueryType, ...);
+
+void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...);
 
 /****************************************************************************\
 *

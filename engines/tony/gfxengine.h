@@ -137,8 +137,8 @@ public:
 	void LinkGraphicTask(RMGfxTask *task) { m_bigBuf.AddPrim(new RMGfxPrimitive(task)); };
 
 	// Manage a location
-	HANDLE LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
-	void UnloadLocation(CORO_PARAM, bool bDoOnExit, HANDLE *result);
+	uint32 LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
+	void UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 
 	// Freeze and unfreeze
 	void Freeze(void);
@@ -146,7 +146,7 @@ public:
 
 	// State management
 	void SaveState(const char *fn, byte *curThumb, const char *name, bool bFastCompress = false);
-	void LoadState(const char *fn);
+	void LoadState(CORO_PARAM, const char *fn);
 
 	// Selects a location
 	void SelectLocation(RMPoint ptTonyStart=RMPoint(-1,-1), RMPoint start=RMPoint(-1,-1));

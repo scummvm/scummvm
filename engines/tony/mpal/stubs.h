@@ -71,9 +71,6 @@ Out CopyMemory(Out dst, In first, int size) {
 *       Methods
 \****************************************************************************/
 
-// Horrendously bad cast
-#define INVALID_HANDLE_VALUE (void *)-1
-
 extern uint16 GetAsyncKeyState(Common::KeyCode kc);
 
 } // end of namespace MPAL

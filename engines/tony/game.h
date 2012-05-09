@@ -300,7 +300,7 @@ public:
 	bool RemoveThis();
 
 	// Polling per l'option screen
-	void DoFrame(RMInput *m_input);
+	void DoFrame(CORO_PARAM, RMInput *m_input);
 
 protected:
 
