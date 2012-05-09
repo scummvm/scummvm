@@ -135,7 +135,7 @@ HRESULT CBSprite::LoadFile(char *Filename, int LifeTime, TSpriteCacheType CacheT
 	HRESULT ret;
 
 	AnsiString ext = PathUtil::GetExtension(Filename);
-	if (StringUtil::StartsWith(Filename, "savegame:", true) || StringUtil::CompareNoCase(ext, ".bmp") || StringUtil::CompareNoCase(ext, ".tga") || StringUtil::CompareNoCase(ext, ".png") || StringUtil::CompareNoCase(ext, ".jpg")) {
+	if (StringUtil::StartsWith(Filename, "savegame:", true) || StringUtil::CompareNoCase(ext, "bmp") || StringUtil::CompareNoCase(ext, "tga") || StringUtil::CompareNoCase(ext, "png") || StringUtil::CompareNoCase(ext, "jpg")) {
 		CBFrame *frame = new CBFrame(Game);
 		CBSubFrame *subframe = new CBSubFrame(Game);
 		subframe->SetSurface(Filename, true, 0, 0, 0, LifeTime, true);

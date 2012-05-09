@@ -371,7 +371,7 @@ HRESULT CBFileManager::RegisterPackages() {
 	RegisterPackage("data.dcp");
 	RegisterPackage("english.dcp");
 #if 0
-	AnsiString extension = AnsiString(".") + AnsiString(PACKAGE_EXTENSION);
+	AnsiString extension = AnsiString(PACKAGE_EXTENSION);
 
 	for (int i = 0; i < _packagePaths.GetSize(); i++) {
 		boost::filesystem::path absPath = boost::filesystem::syste_complete(_packagePaths[i]);
