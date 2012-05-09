@@ -3791,8 +3791,10 @@ void CBGame::SetWindowTitle() {
 		if (_textEncoding == TEXT_UTF8) {
 			title = Utf8String(Title);
 		} else {
-			WideString wstr = StringUtil::AnsiToWide(Title);
-			title = StringUtil::WideToUtf8(wstr);
+			warning("CBGame::SetWindowTitle -Ignoring textencoding");
+			title = Utf8String(Title);
+/*			WideString wstr = StringUtil::AnsiToWide(Title);
+			title = StringUtil::WideToUtf8(wstr);*/
 		}
 
 		CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_renderer);
