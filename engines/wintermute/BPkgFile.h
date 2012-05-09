@@ -37,6 +37,7 @@
 #define COMPRESSED_BUFFER_SIZE 4096
 
 namespace Common {
+	class SeekableReadStream;
 	class File;
 }
 
@@ -55,9 +56,7 @@ private:
 	HRESULT SeekToPos(uint32 NewPos);
 	bool _compressed;
 	CBFileEntry *_fileEntry;
-	z_stream _stream;
-	byte _compBuffer[COMPRESSED_BUFFER_SIZE];
-	Common::File *_file;
+	Common::SeekableReadStream *_file;
 };
 
 } // end of namespace WinterMute

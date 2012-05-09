@@ -31,6 +31,7 @@
 #include "BGame.h"
 #include "BFileManager.h"
 #include "common/file.h"
+#include "common/stream.h"
 
 namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ HRESULT CBPackage::Close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPackage::Read(Common::File *file, uint32 offset, byte *buffer, uint32 size) {
+HRESULT CBPackage::Read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size) {
 	HRESULT ret;
 	if (FAILED(ret = Open())) return ret;
 	else {
@@ -85,7 +86,7 @@ HRESULT CBPackage::Read(Common::File *file, uint32 offset, byte *buffer, uint32 
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::File *CBPackage::GetFilePointer() {
+Common::SeekableReadStream *CBPackage::GetFilePointer() {
 	Common::File *file = Game->_fileManager->OpenPackage(_name);
 	if (!file) {
 		Game->_fileManager->RequestCD(_cD, _name, "");
@@ -95,7 +96,7 @@ Common::File *CBPackage::GetFilePointer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPackage::CloseFilePointer(Common::File*& file) {
+void CBPackage::CloseFilePointer(Common::SeekableReadStream*& file) {
 	delete file;
 	file = NULL;
 }

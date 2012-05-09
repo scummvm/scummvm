@@ -33,24 +33,24 @@
 #include "BBase.h"
 
 namespace Common {
-	class File;
+	class SeekableReadStream;
 }
 
 namespace WinterMute {
 
 class CBPackage : public CBBase {
 public:
-	Common::File *GetFilePointer();
-	void CloseFilePointer(Common::File*& file);
+	Common::SeekableReadStream *GetFilePointer();
+	void CloseFilePointer(Common::SeekableReadStream*& file);
 
 	bool _boundToExe;
 	byte _priority;
-	HRESULT Read(Common::File *file, uint32 offset, byte *buffer, uint32 size);
+	HRESULT Read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size);
 	HRESULT Close();
 	HRESULT Open();
 	char *_name;
 	int _cD;
-	Common::File *_file;
+	Common::SeekableReadStream *_file;
 	CBPackage(CBGame *inGame);
 	virtual ~CBPackage();
 

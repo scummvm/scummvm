@@ -677,8 +677,8 @@ bool CBFileManager::IsValidPackage(const AnsiString &fileName) const {
 
 //////////////////////////////////////////////////////////////////////////
 Common::File *CBFileManager::OpenPackage(char *Name) {
-	//TODO
-	warning("Implement OpenPackage %s", Name);
+	//TODO: Is it really necessary to do this when we have the ScummVM-system?
+	warning("OpenPackage(%s)", Name);
 	
 	//RestoreCurrentDir();
 
@@ -687,12 +687,18 @@ Common::File *CBFileManager::OpenPackage(char *Name) {
 
 	for (int i = 0; i < _packagePaths.GetSize(); i++) {
 		sprintf(Filename, "%s%s.%s", _packagePaths[i], Name, PACKAGE_EXTENSION);
-		//ret = fopen(Filename, "rb");
 		ret->open(Filename);
 		if (ret->isOpen()) {
 			return ret;
 		}
 	}
+
+	sprintf(Filename, "%s.%s", Name, PACKAGE_EXTENSION);
+	ret->open(Filename);
+	if (ret->isOpen()) {
+		return ret;
+	}
+	warning("CBFileManager::OpenPackage - Couldn't load file %s", Name);
 	delete ret;
 	return NULL;
 }
@@ -815,22 +821,23 @@ CBFile *CBFileManager::OpenFileRaw(const char *Filename) {
 			return NULL;
 		}
 	}
-
+	warning("BFileManager::OpenFileRaw(%s)", Filename);
+	warning("Trying DiskFile");
 	CBDiskFile *DiskFile = new CBDiskFile(Game);
 	if (SUCCEEDED(DiskFile->Open(Filename))) return DiskFile;
 
 	delete DiskFile;
-
+	warning("Trying PkgFile");
 	CBPkgFile *PkgFile = new CBPkgFile(Game);
 	if (SUCCEEDED(PkgFile->Open(Filename))) return PkgFile;
 
 	delete PkgFile;
-
+	warning("Trying ResourceFile");
 	CBResourceFile *ResFile = new CBResourceFile(Game);
 	if (SUCCEEDED(ResFile->Open(Filename))) return ResFile;
 
 	delete ResFile;
-
+	warning("BFileManager::OpenFileRaw - Failed to open %s", Filename);
 	return NULL;
 }
 

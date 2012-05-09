@@ -32,17 +32,10 @@
 #include "BGame.h"
 #include "BFileManager.h"
 #include "common/util.h"
-
-#if _DEBUG
-#pragma comment(lib, "zlib_d.lib")
-#else
-#pragma comment(lib, "zlib.lib")
-#endif
-
-
-extern "C" {
-#include "zlib.h"
-}
+#include "common/file.h"
+#include "common/stream.h"
+#include "common/substream.h"
+#include "common/zlib.h"
 
 namespace WinterMute {
 
@@ -52,13 +45,7 @@ CBPkgFile::CBPkgFile(CBGame *inGame): CBFile(inGame) {
 	_file = NULL;
 	_compressed = false;
 
-	_stream.zalloc = (alloc_func)0;
-	_stream.zfree = (free_func)0;
-	_stream.opaque = (voidpf)0;
-
-	_inflateInit = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 CBPkgFile::~CBPkgFile() {
@@ -84,10 +71,16 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 	_file = _fileEntry->_package->GetFilePointer();
 	if (!_file) return E_FAIL;
 
-
+	// TODO: Cleanup
 	_compressed = (_fileEntry->_compressedLength != 0);
 	_size = _fileEntry->_length;
-
+	
+	if (_compressed) {
+		// TODO: Really, most of this logic might be doable directly in the fileEntry?
+		// But for now, this should get us rolling atleast.
+		_file = wrapCompressedReadStream(new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES));
+	}
+	
 	SeekToPos(0);
 
 	return S_OK;
@@ -102,11 +95,9 @@ HRESULT CBPkgFile::Close() {
 	}
 	_file = NULL;
 
+	// TODO: Do we really need to take care of our position and size at all (or could (Safe)SubStreams fix that for us?
 	_pos = 0;
 	_size = 0;
-
-	if (_inflateInit) inflateEnd(&_stream);
-	_inflateInit = false;
 
 	return S_OK;
 }
@@ -123,32 +114,7 @@ HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
 		if (Size == 0) return E_FAIL;
 	}
 
-	if (_compressed) {
-		uint32 InitOut = _stream.total_out;
-
-		_stream.avail_out = Size;
-		_stream.next_out = (byte  *)Buffer;
-
-		while (_stream.total_out - InitOut < Size && _stream.total_in < _fileEntry->_compressedLength) {
-			// needs to read more data?
-			if (_stream.avail_in == 0) {
-				_stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, _fileEntry->_compressedLength - _stream.total_in); // TODO: long unsigned int????
-				_fileEntry->_package->Read(_file, _fileEntry->_offset + _stream.total_in, _compBuffer, _stream.avail_in);
-				_stream.next_in = _compBuffer;
-			}
-
-			int res = inflate(&_stream, Z_SYNC_FLUSH);
-			if (res != Z_OK && res != Z_STREAM_END) {
-				Game->LOG(0, "zlib error: %d", res);
-				ret = E_FAIL;
-				break;
-			}
-		}
-
-
-	} else {
-		ret = _fileEntry->_package->Read(_file, _fileEntry->_offset + _pos, (byte  *)Buffer, Size);
-	}
+	ret = _file->read(Buffer, Size);
 
 	_pos += Size;
 
@@ -186,42 +152,6 @@ HRESULT CBPkgFile::SeekToPos(uint32 NewPos) {
 	HRESULT ret = S_OK;
 
 	// seek compressed stream to NewPos
-	if (_compressed) {
-		byte StreamBuffer[STREAM_BUFFER_SIZE];
-		if (_inflateInit) inflateEnd(&_stream);
-		_inflateInit = false;
-
-		_stream.avail_in = 0;
-		_stream.next_in = _compBuffer;
-		_stream.avail_out = MIN((uint32)STREAM_BUFFER_SIZE, NewPos); //TODO: remove cast.
-		_stream.next_out = StreamBuffer;
-		inflateInit(&_stream);
-		_inflateInit = true;
-
-		while (_stream.total_out < NewPos && _stream.total_in < _fileEntry->_compressedLength) {
-			// needs to read more data?
-			if (_stream.avail_in == 0) {
-				_stream.avail_in = MIN((long unsigned int)COMPRESSED_BUFFER_SIZE, _fileEntry->_compressedLength - _stream.total_in); // TODO: long unsigned int???
-				_fileEntry->_package->Read(_file, _fileEntry->_offset + _stream.total_in, _compBuffer, _stream.avail_in);
-				_stream.next_in = _compBuffer;
-			}
-
-			// needs more space?
-			if (_stream.avail_out == 0) {
-				_stream.next_out = StreamBuffer;
-				_stream.avail_out = MIN((long unsigned int)STREAM_BUFFER_SIZE, NewPos - _stream.total_out); // TODO: long unsigned int???.
-			}
-
-			// stream on!
-			int res = inflate(&_stream, Z_SYNC_FLUSH);
-			if (res != Z_OK && res != Z_STREAM_END) {
-				ret = E_FAIL;
-				break;
-			}
-		}
-
-	}
-
 	_pos = NewPos;
 	return ret;
 }
