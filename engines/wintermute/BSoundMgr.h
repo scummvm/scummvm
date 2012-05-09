@@ -38,31 +38,31 @@ namespace WinterMute {
 
 class CBSoundMgr : public CBBase {
 public:
-	float PosToPan(int X, int Y);
-	HRESULT ResumeAll();
-	HRESULT PauseAll(bool IncludingMusic = true);
-	HRESULT Cleanup();
+	float posToPan(int X, int Y);
+	HRESULT resumeAll();
+	HRESULT pauseAll(bool IncludingMusic = true);
+	HRESULT cleanup();
 	//DECLARE_PERSISTENT(CBSoundMgr, CBBase);
-	byte GetMasterVolumePercent();
-	HRESULT SetMasterVolumePercent(byte  Percent);
-	byte GetVolumePercent(TSoundType Type);
-	HRESULT SetVolumePercent(TSoundType Type, byte Percent);
-	HRESULT SetVolume(TSoundType Type, int Volume);
+	byte getMasterVolumePercent();
+	HRESULT setMasterVolumePercent(byte  Percent);
+	byte getVolumePercent(TSoundType Type);
+	HRESULT setVolumePercent(TSoundType Type, byte Percent);
+	HRESULT setVolume(TSoundType Type, int Volume);
 	uint32 _volumeOriginal;
 	int _volumeMaster;
 	int _volumeMusic;
 	int _volumeSpeech;
 	int _volumeSFX;
-	HRESULT RemoveSound(CBSoundBuffer *Sound);
-	CBSoundBuffer *AddSound(const char *Filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
-	HRESULT AddSound(CBSoundBuffer *Sound, TSoundType Type = SOUND_SFX);
-	HRESULT InitLoop();
-	HRESULT Initialize();
+	HRESULT removeSound(CBSoundBuffer *Sound);
+	CBSoundBuffer *addSound(const char *Filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
+	HRESULT addSound(CBSoundBuffer *Sound, TSoundType Type = SOUND_SFX);
+	HRESULT initLoop();
+	HRESULT initialize();
 	bool _soundAvailable;
 	CBSoundMgr(CBGame *inGame);
 	virtual ~CBSoundMgr();
 	CBArray<CBSoundBuffer *, CBSoundBuffer *> _sounds;
-	void SaveSettings();
+	void saveSettings();
 };
 
 } // end of namespace WinterMute

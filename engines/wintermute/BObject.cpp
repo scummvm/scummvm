@@ -1076,7 +1076,7 @@ HRESULT CBObject::UpdateOneSound(CBSound *Sound) {
 
 	if (Sound) {
 		if (_autoSoundPanning)
-			Ret = Sound->SetPan(Game->_soundMgr->PosToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
+			Ret = Sound->SetPan(Game->_soundMgr->posToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
 
 		Ret = Sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 	}

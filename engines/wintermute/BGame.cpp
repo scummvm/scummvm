@@ -600,7 +600,7 @@ HRESULT CBGame::InitLoop() {
 
 	GetDebugMgr()->OnGameTick();
 	_renderer->InitLoop();
-	_soundMgr->InitLoop();
+	_soundMgr->initLoop();
 	UpdateMusicCrossfade();
 
 	_surfaceStorage->InitLoop();
@@ -1516,7 +1516,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalSFXVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->SetVolumePercent(SOUND_SFX, (byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte )Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1526,7 +1526,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalSpeechVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->SetVolumePercent(SOUND_SPEECH, (byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte )Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1536,7 +1536,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalMusicVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->SetVolumePercent(SOUND_MUSIC, (byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte )Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1546,7 +1546,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalMasterVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->SetMasterVolumePercent((byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setMasterVolumePercent((byte )Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1556,7 +1556,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetGlobalSFXVolume") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_soundMgr->GetVolumePercent(SOUND_SFX));
+		Stack->PushInt(_soundMgr->getVolumePercent(SOUND_SFX));
 		return S_OK;
 	}
 
@@ -1565,7 +1565,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetGlobalSpeechVolume") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_soundMgr->GetVolumePercent(SOUND_SPEECH));
+		Stack->PushInt(_soundMgr->getVolumePercent(SOUND_SPEECH));
 		return S_OK;
 	}
 
@@ -1574,7 +1574,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetGlobalMusicVolume") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_soundMgr->GetVolumePercent(SOUND_MUSIC));
+		Stack->PushInt(_soundMgr->getVolumePercent(SOUND_MUSIC));
 		return S_OK;
 	}
 
@@ -1583,7 +1583,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetGlobalMasterVolume") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_soundMgr->GetMasterVolumePercent());
+		Stack->PushInt(_soundMgr->getMasterVolumePercent());
 		return S_OK;
 	}
 
@@ -2219,7 +2219,7 @@ CScValue *CBGame::ScGetProperty(char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SFXVolume") == 0) {
 		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->GetVolumePercent(SOUND_SFX));
+		_scValue->SetInt(_soundMgr->getVolumePercent(SOUND_SFX));
 		return _scValue;
 	}
 
@@ -2228,7 +2228,7 @@ CScValue *CBGame::ScGetProperty(char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SpeechVolume") == 0) {
 		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->GetVolumePercent(SOUND_SPEECH));
+		_scValue->SetInt(_soundMgr->getVolumePercent(SOUND_SPEECH));
 		return _scValue;
 	}
 
@@ -2237,7 +2237,7 @@ CScValue *CBGame::ScGetProperty(char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MusicVolume") == 0) {
 		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->GetVolumePercent(SOUND_MUSIC));
+		_scValue->SetInt(_soundMgr->getVolumePercent(SOUND_MUSIC));
 		return _scValue;
 	}
 
@@ -2246,7 +2246,7 @@ CScValue *CBGame::ScGetProperty(char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MasterVolume") == 0) {
 		Game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->GetMasterVolumePercent());
+		_scValue->SetInt(_soundMgr->getMasterVolumePercent());
 		return _scValue;
 	}
 
@@ -2543,7 +2543,7 @@ HRESULT CBGame::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SFXVolume") == 0) {
 		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		Game->_soundMgr->SetVolumePercent(SOUND_SFX, (byte )Value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte )Value->GetInt());
 		return S_OK;
 	}
 
@@ -2552,7 +2552,7 @@ HRESULT CBGame::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SpeechVolume") == 0) {
 		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		Game->_soundMgr->SetVolumePercent(SOUND_SPEECH, (byte )Value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte )Value->GetInt());
 		return S_OK;
 	}
 
@@ -2561,7 +2561,7 @@ HRESULT CBGame::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MusicVolume") == 0) {
 		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		Game->_soundMgr->SetVolumePercent(SOUND_MUSIC, (byte )Value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte )Value->GetInt());
 		return S_OK;
 	}
 
@@ -2570,7 +2570,7 @@ HRESULT CBGame::ScSetProperty(char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MasterVolume") == 0) {
 		Game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
-		Game->_soundMgr->SetMasterVolumePercent((byte )Value->GetInt());
+		Game->_soundMgr->setMasterVolumePercent((byte )Value->GetInt());
 		return S_OK;
 	}
 
@@ -3667,7 +3667,7 @@ HRESULT CBGame::FocusWindow(CUIWindow *Window) {
 HRESULT CBGame::Freeze(bool IncludingMusic) {
 	if (_freezeLevel == 0) {
 		_scEngine->PauseAll();
-		_soundMgr->PauseAll(IncludingMusic);
+		_soundMgr->pauseAll(IncludingMusic);
 		_origState = _state;
 		_origInteractive = _interactive;
 		_interactive = true;
@@ -3688,7 +3688,7 @@ HRESULT CBGame::Unfreeze() {
 		_state = _origState;
 		_interactive = _origInteractive;
 		_scEngine->ResumeAll();
-		_soundMgr->ResumeAll();
+		_soundMgr->resumeAll();
 	}
 
 	return S_OK;
@@ -4026,7 +4026,7 @@ HRESULT CBGame::DisplayIndicator() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::UpdateMusicCrossfade() {
-	byte GlobMusicVol = _soundMgr->GetVolumePercent(SOUND_MUSIC);
+	byte GlobMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC);
 
 	if (!_musicCrossfadeRunning) return S_OK;
 	if (_state == GAME_FROZEN) return S_OK;
@@ -4154,8 +4154,8 @@ HRESULT CBGame::OnActivate(bool Activate, bool RefreshMouse) {
 		SetActiveObject(_renderer->GetObjectAt(p.x, p.y));
 	}
 
-	if (Activate) _soundMgr->ResumeAll();
-	else _soundMgr->PauseAll();
+	if (Activate) _soundMgr->resumeAll();
+	else _soundMgr->pauseAll();
 
 	return S_OK;
 }
@@ -4390,7 +4390,7 @@ HRESULT CBGame::MiniUpdate() {
 	if (!_miniUpdateEnabled) return S_OK;
 
 	if (CBPlatform::GetTime() - _lastMiniUpdate > 200) {
-		if (_soundMgr) _soundMgr->InitLoop();
+		if (_soundMgr) _soundMgr->initLoop();
 		_lastMiniUpdate = CBPlatform::GetTime();
 	}
 	return S_OK;
@@ -4446,7 +4446,7 @@ bool CBGame::IsDoubleClick(int buttonIndex) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::AutoSaveOnExit() {
-	_soundMgr->SaveSettings();
+	_soundMgr->saveSettings();
 	_registry->SaveValues();
 
 	if (!_autoSaveOnExit) return;

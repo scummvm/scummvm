@@ -56,7 +56,7 @@ CBSound::CBSound(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSound::~CBSound() {
-	if (_sound) Game->_soundMgr->RemoveSound(_sound);
+	if (_sound) Game->_soundMgr->removeSound(_sound);
 	_sound = NULL;
 	
 	delete[] _soundFilename;
@@ -67,13 +67,13 @@ CBSound::~CBSound() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSound::SetSound(char *Filename, TSoundType Type, bool Streamed) {
 	if (_sound) {
-		Game->_soundMgr->RemoveSound(_sound);
+		Game->_soundMgr->removeSound(_sound);
 		_sound = NULL;
 	}
 	delete[] _soundFilename;
 	_soundFilename = NULL;
 
-	_sound = Game->_soundMgr->AddSound(Filename, Type, Streamed);
+	_sound = Game->_soundMgr->addSound(Filename, Type, Streamed);
 	if (_sound) {
 		_soundFilename = new char[strlen(Filename) + 1];
 		strcpy(_soundFilename, Filename);
@@ -88,7 +88,7 @@ HRESULT CBSound::SetSound(char *Filename, TSoundType Type, bool Streamed) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSound::SetSoundSimple() {
-	_sound = Game->_soundMgr->AddSound(_soundFilename, _soundType, _soundStreamed);
+	_sound = Game->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
 		if (_soundPosition) _sound->SetPosition(_soundPosition);
 		_sound->SetLooping(_soundLooping);

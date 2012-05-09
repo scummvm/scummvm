@@ -141,7 +141,7 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 #endif
 
 	// initialize sound manager (non-fatal if we fail)
-	ret = Game->_soundMgr->Initialize();
+	ret = Game->_soundMgr->initialize();
 	if (FAILED(ret)) {
 		Game->LOG(ret, "Sound is NOT available.");
 	}
