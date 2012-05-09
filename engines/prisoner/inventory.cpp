@@ -182,11 +182,11 @@ void PrisonerEngine::updateInventoryItems() {
 
 void PrisonerEngine::handleInventoryInput() {
 
-	bool flag = true, backedupScreen;
+	bool canLeave = true, backedupScreen;
 	int16 oldInventoryItemCursor;
 
 	// TODO: resetDirtyRects();
-	// TODO: _inventoryWarpMouse = arg2;
+	_inventoryWarpMouse = false;
 	_buildInventoryClickBoxes = true;
 
 	_screen->fillRect(0, 0, 639, 81, 0);
@@ -216,14 +216,14 @@ void PrisonerEngine::handleInventoryInput() {
 
 		updateEvents();
 
-		if (flag) {
+		if (canLeave) {
 			if (_mouseY >= 82) {
 				_inventoryBarFlag = true;
 				debug("break");
 				break;
 			}
 		} else {
-			flag = true;
+			canLeave = true;
 		}
 
 		getInputStatus(keyState, buttonState);
@@ -279,8 +279,8 @@ void PrisonerEngine::handleInventoryInput() {
 					updateInventoryItems();
 					_screen->setClipRect(0, 82, 639, 397);
 					drawSprites(_cameraX, _cameraY);
-					_screen->setClipRect(0, 0, 639, 479);
 					updateScreenTexts();
+					_screen->setClipRect(0, 0, 639, 479);
 					updateMouseCursorAnimation();
 					if (buttonState != 0 || _autoAdvanceScreenTexts) {
 						advanceScreenTexts();
@@ -295,7 +295,7 @@ void PrisonerEngine::handleInventoryInput() {
 
 				_inventoryActive = false;
 				_inventoryWarpMouse = true;
-				flag = false;
+				canLeave = false;
 
 			} else {
 				_inventoryItemCursor = -1;

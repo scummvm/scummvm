@@ -200,7 +200,6 @@ void PrisonerEngine::setCameraFollowsActor(int16 actorIndex) {
 }
 
 void PrisonerEngine::updateScreen(bool fullRedraw, int16 x, int16 y) {
-	//debug("PrisonerEngine::updateScreen(%d, %d, %d)", fullRedraw, x, y);
 	updateCameraFollowing();
 	updateBackground(fullRedraw);
 	_screen->setClipRect(0, 82, 639, 397);
@@ -228,7 +227,6 @@ void PrisonerEngine::updateCurrZone(int16 x, int16 y) {
 
 	case kCursorLook:
 		if (_mainActorIndex != -1 && _exitZoneActionFlag) {
-			// Was: setMainActorLookInExitZoneDirection()
 			Actor *actor = &_actors[_mainActorIndex];
 			actor->walkDestX = x;
 			actor->walkDestY = y;
