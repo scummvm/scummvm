@@ -65,6 +65,9 @@ public:
 	SDL_Window *GetSdlWindow() const {
 //		return _win;
 	}
+	
+	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest);
+
 
 	HRESULT SetViewport(int left, int top, int right, int bottom);
 

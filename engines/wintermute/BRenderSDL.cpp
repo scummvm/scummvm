@@ -35,7 +35,7 @@
 #include "engines/wintermute/MathUtil.h"
 #include "engines/wintermute/BGame.h"
 #include "engines/wintermute/BSprite.h"
-
+#include "common/system.h"
 #include "SDL.h"
 
 namespace WinterMute {
@@ -161,8 +161,7 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	if (!_renderer) return E_FAIL;
 #endif
 	_renderSurface = new Graphics::Surface();
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	_renderSurface->create(640,480, format); // TODO: Unhardcode this.
+	_renderSurface->create(640,480, g_system->getScreenFormat()); // TODO: Unhardcode this.
 	_active = true;
 
 
@@ -211,8 +210,9 @@ HRESULT CBRenderSDL::Flip() {
 		}
 	}
 #endif
-
-
+	// TODO, unhardcode.
+	g_system->copyRectToScreen((byte*)_renderSurface->pixels, _renderSurface->pitch, 0, 0, 640, 480);
+	g_system->updateScreen();
 	//SDL_RenderPresent(_renderer);
 
 	return S_OK;
@@ -272,6 +272,14 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
 	return S_OK;
 }
 
+// Replacement for SDL2's SDL_RenderCopy	
+void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect) {
+	for (int i = 0; i < srcRect->height(); i++) {
+		void *destPtr = _renderSurface->getBasePtr(dstRect->left, dstRect->top + i);
+		void *srcPtr = surf->getBasePtr(srcRect->left, srcRect->top + i);
+		memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel * srcRect->width());
+	}
+}
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	byte r = D3DCOLGetR(Color);

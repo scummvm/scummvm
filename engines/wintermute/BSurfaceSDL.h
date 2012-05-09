@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_BSURFACESDL_H
 #define WINTERMUTE_BSURFACESDL_H
 
+#include "graphics/surface.h"
 #include "BSurface.h"
 #include "SDL.h" // TODO, remove
 class SDL_Texture;
@@ -64,7 +65,8 @@ public:
 	static long DLL_CALLCONV TellProc(fi_handle handle);*/
 
 private:
-	SDL_Texture *_texture;
+//	SDL_Texture *_texture;
+	Graphics::Surface *_surface;
 
 	HRESULT DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float ZoomY, uint32 Alpha, bool AlphaDisable, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY, int offsetX = 0, int offsetY = 0);
 	void GenAlphaMask(SDL_Surface *surface);

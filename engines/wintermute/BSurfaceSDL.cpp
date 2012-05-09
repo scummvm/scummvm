@@ -44,7 +44,7 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
-	_texture = NULL;
+	_surface = new Graphics::Surface();
 	_alphaMask = NULL;
 
 	_lockPixels = NULL;
@@ -54,6 +54,7 @@ CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CBSurfaceSDL::~CBSurfaceSDL() {
 	//TODO
+	delete _surface;
 #if 0
 	if (_texture) SDL_DestroyTexture(_texture);
 	delete[] _alphaMask;
@@ -124,12 +125,14 @@ HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte 
 	uint32 bmask = surface->format.bMax() << surface->format.bShift;
 	uint32 amask = surface->format.aMax();
 	
-	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(surface->pixels, _width, _height, surface->format.bytesPerPixel * 8, surface->pitch, rmask, gmask, bmask, amask);
+//	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(surface->pixels, _width, _height, surface->format.bytesPerPixel * 8, surface->pitch, rmask, gmask, bmask, amask);
 
 	// no alpha, set color key
-	if (surface->format.bytesPerPixel != 4)
-		SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));
-
+/*	if (surface->format.bytesPerPixel != 4)
+		SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
+	_surface = new Graphics::Surface();
+	_surface->copyFrom(*surface);
+	
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
 	//_texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 	warning("Surface-textures not fully ported yet");
@@ -281,7 +284,13 @@ HRESULT CBSurfaceSDL::CreateFromSDLSurface(SDL_Surface *surface) {
 bool CBSurfaceSDL::IsTransparentAt(int X, int Y) {
 	int access;
 	int width, height;
-	warning("CBSurfaceSDL::IsTransparentAt not ported yet");
+	// This particular warning is rather messy, as this function is called a ton,
+	// thus we avoid printing it more than once.
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		warning("CBSurfaceSDL::IsTransparentAt not ported yet");
+		hasWarned = true;
+	}
 	//SDL_QueryTexture(_texture, NULL, &access, &width, &height); //TODO
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
 	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
@@ -388,7 +397,7 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("CBSurfaceSDL::DrawSprite not ported yet"); // TODO.
+		warning("CBSurfaceSDL::DrawSprite not fully ported yet"); // TODO.
 		hasWarned = true;
 	}
 #if 0
@@ -399,24 +408,33 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_NONE);
 	else
 		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
+#endif
+	// TODO: This _might_ miss the intended behaviour by 1 in each direction
+	// But I think it fits the model used in Wintermute.
+	Common::Rect srcRect;
+	srcRect.left = Rect->left;
+	srcRect.top = Rect->top;
+	srcRect.setWidth(Rect->right - Rect->left);
+	srcRect.setHeight(Rect->bottom - Rect->top);
 
-	SDL_Rect srcRect;
-	srcRect.x = Rect->left;
-	srcRect.y = Rect->top;
-	srcRect.w = Rect->right - Rect->left;
-	srcRect.h = Rect->bottom - Rect->top;
-
-	SDL_Rect position;
-	position.x = X;
-	position.y = Y;
-	position.w = (float)srcRect.w * ZoomX / 100.f;
-	position.h = (float)srcRect.h * ZoomX / 100.f;
+	Common::Rect position;
+	position.left = X;
+	position.top = Y;
+	// TODO: Scaling...
+	/*
+	position.setWidth((float)srcRect.width() * ZoomX / 100.f);
+	position.setHeight((float)srcRect.height() * ZoomX / 100.f);
+*/
+	position.setWidth(srcRect.width());
+	position.setHeight(srcRect.height());
 
 	renderer->ModTargetRect(&position);
 
-	position.x += offsetX;
-	position.y += offsetY;
+	position.left += offsetX;
+	position.top += offsetY;
 
+	renderer->drawFromSurface(_surface, &srcRect, &position);
+#if 0
 	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
 #endif
 
