@@ -150,7 +150,7 @@ HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte 
 	_cKRed = ck_red;
 	_cKGreen = ck_green;
 	_cKBlue = ck_blue;
-
+#endif
 
 	if (!_filename || scumm_stricmp(_filename, Filename) != 0) {
 		SetFilename(Filename);
@@ -163,7 +163,7 @@ HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte 
 	if (_keepLoaded) _lifeTime = -1;
 
 	_valid = true;
-
+#if 0
 	Game->AddMem(_width * _height * 4);
 #endif
 
