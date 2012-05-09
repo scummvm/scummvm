@@ -130,7 +130,7 @@ private:
 	void sub16C86(int index, byte *buf);
 	void sub16C5C(int index, byte var3);
 	void sub17D40(bool &forceReturnFl);
-	void sub18A56(byte *buf);
+	void decodePackedText(char *buf);
 	void sub18B3C(int var);
 	void sub18BE6(byte var1, int var2, int var4);
 	byte *getMapPtr(Common::Point val);

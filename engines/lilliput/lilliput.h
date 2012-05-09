@@ -138,7 +138,7 @@ public:
 	int _word17081_nextIndex;
 	int _word16EFE;
 	int _word1817B;
-	Common::Point _word15BC8Pos;
+	Common::Point _savedSurfaceUnderMousePos;
 	int _word15AC2;
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
@@ -170,13 +170,13 @@ public:
 	byte _characterVariables_[1400 + 3120];
 	byte *_currentCharacterVariables;
 	byte _rulesBuffer2_16[40 * 32];
-	int *_rulesChunk3;
-	int _rulesChunk3_size;
-	byte *_rulesChunk4;
+	int *_packedStringIndex;
+	int _packedStringNumb;
+	char *_packedStrings;
 	byte *_initScript;
-	int _initScript_size;
+	int _initScriptSize;
 	byte *_menuScript;
-	int _menuScript_size;
+	int _menuScriptSize;
 	int *_arrayGameScriptIndex;
 	int _gameScriptIndexSize;
 	byte *_arrayGameScripts;
@@ -196,7 +196,7 @@ public:
 	byte _rulesBuffer13_4[20];
 	int16 _array10999PosX[40];
 	int16 _array109C1PosY[40];
-	byte _array15AC8[256];
+	byte _savedSurfaceUnderMouse[16 * 16];
 	byte _charactersToDisplay[40];
 	int16 _characterRelativePositionX[40];
 	int16 _characterRelativePositionY[40];
@@ -222,10 +222,10 @@ public:
 
 	void displayFunction1(byte *buf, int var1, Common::Point pos);
 	void displayFunction1a(byte *buf, Common::Point pos);
-	void displayFunction2(byte *buf, Common::Point pos);
+	void SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos);
 	void displayFunction3(int var1, int var2, int var4);
-	void displayFunction4();
-	void displayFunction5();
+	void displayMousePointer();
+	void restoreSurfaceUnderMousePointer();
 	void displayFunction6();
 	void displayFunction7();
 	void displayInterfaceHotspots();
