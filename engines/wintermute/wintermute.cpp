@@ -72,7 +72,7 @@ namespace WinterMute {
 	Common::Error WinterMuteEngine::run() {
 		// Initialize graphics using following:
 		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		initGraphics(640, 480, false, &format);
+		initGraphics(800, 600, false, &format);
 		
 		// You could use backend transactions directly as an alternative,
 		// but it isn't recommended, until you want to handle the error values

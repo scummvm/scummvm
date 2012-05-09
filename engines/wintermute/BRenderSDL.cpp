@@ -161,7 +161,7 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	if (!_renderer) return E_FAIL;
 #endif
 	_renderSurface = new Graphics::Surface();
-	_renderSurface->create(640,480, g_system->getScreenFormat()); // TODO: Unhardcode this.
+	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_active = true;
 
 
@@ -210,8 +210,7 @@ HRESULT CBRenderSDL::Flip() {
 		}
 	}
 #endif
-	// TODO, unhardcode.
-	g_system->copyRectToScreen((byte*)_renderSurface->pixels, _renderSurface->pitch, 0, 0, 640, 480);
+	g_system->copyRectToScreen((byte*)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 	g_system->updateScreen();
 	//SDL_RenderPresent(_renderer);
 
@@ -277,7 +276,14 @@ void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect
 	for (int i = 0; i < srcRect->height(); i++) {
 		void *destPtr = _renderSurface->getBasePtr(dstRect->left, dstRect->top + i);
 		void *srcPtr = surf->getBasePtr(srcRect->left, srcRect->top + i);
-		memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel * srcRect->width());
+		for (int j = 0; j < srcRect->width(); j++) {
+			// TODO: Replace this with something less ugly, and more portable.
+			if (((byte*)srcPtr)[0] == 255) {
+				memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel);	
+			}
+			((byte*)srcPtr)+=_renderSurface->format.bytesPerPixel;
+			((byte*)destPtr)+=_renderSurface->format.bytesPerPixel;
+		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////
