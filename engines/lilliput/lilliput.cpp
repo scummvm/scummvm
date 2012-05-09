@@ -340,11 +340,10 @@ void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 	}
 }
 
-// display mouse cursor, if any
-void LilliputEngine::displayFunction1(byte *buf, int var1, Common::Point pos) {
-	debugC(2, kDebugEngineTBC, "displayFunction1(buf, %d, %d, %d)", var1, pos.x, pos.y);
+void LilliputEngine::display16x16IndexedBuf(byte *buf, int index, Common::Point pos) {
+	debugC(2, kDebugEngine, "display16x16IndexedBuf(buf, %d, %d, %d)", index, pos.x, pos.y);
 
-	int index1 = ((var1 & 0xFF) << 8) + (var1 >> 8);
+	int index1 = ((index & 0xFF) << 8) + (index >> 8);
 	byte *newBuf = &buf[index1];
 
 	int tmpVal = ((pos.y & 0xFF) << 8) + (pos.y >> 8);
@@ -362,10 +361,10 @@ void LilliputEngine::displayFunction1(byte *buf, int var1, Common::Point pos) {
 	_system->updateScreen();
 }
 
-void LilliputEngine::displayFunction1a(byte *buf, Common::Point pos) {
-	debugC(2, kDebugEngineTBC, "displayFunction1a(buf, %d, %d)", pos.x, pos.y);
+void LilliputEngine::display16x16Buf(byte *buf, Common::Point pos) {
+	debugC(2, kDebugEngine, "display16x16Buf(buf, %d, %d)", pos.x, pos.y);
 
-	displayFunction1(buf, 0, pos);
+	display16x16IndexedBuf(buf, 0, pos);
 }
 
 void LilliputEngine::SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos) {
@@ -405,7 +404,7 @@ void LilliputEngine::displayMousePointer() {
 
 		_savedSurfaceUnderMousePos = _mouseDisplayPos;
 		SaveSurfaceUnderMouseCursor(_savedSurfaceUnderMouse, _mouseDisplayPos);
-		displayFunction1(_bufferIdeogram, _word15AC2 + 80, _mouseDisplayPos);
+		display16x16IndexedBuf(_bufferIdeogram, _word15AC2 + 80, _mouseDisplayPos);
 
 		_skipDisplayFlag1 = 1;
 		_skipDisplayFlag2 = 0;
@@ -417,7 +416,7 @@ void LilliputEngine::restoreSurfaceUnderMousePointer() {
 
 	if ((_skipDisplayFlag1 != 0) && (_skipDisplayFlag2 != 1)) {
 		_skipDisplayFlag2 = 1;
-		displayFunction1a(_savedSurfaceUnderMouse, _savedSurfaceUnderMousePos);
+		display16x16Buf(_savedSurfaceUnderMouse, _savedSurfaceUnderMousePos);
 		_skipDisplayFlag1 = 0;
 		_skipDisplayFlag2 = 0;
 	}
@@ -467,7 +466,7 @@ void LilliputEngine::displayInterfaceHotspots() {
 	int tmpVal;
 	for (index = 0; index < _word12F68_ERULES; index++) {
 		tmpVal = ((_scriptHandler->_array122E9[index] << 2) + (_scriptHandler->_array122E9[index] << 4)) & 0xFF;
-		displayFunction1(_bufferIdeogram, tmpVal + index, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]));
+		display16x16IndexedBuf(_bufferIdeogram, tmpVal + index, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]));
 	}
 
 	displayMousePointer();
@@ -841,7 +840,7 @@ void LilliputEngine::paletteFadeOut() {
 }
 
 void LilliputEngine::paletteFadeIn() {
-	debugC(2, kDebugEngineTBC, "paletteFadeIn()");
+	debugC(2, kDebugEngine, "paletteFadeIn()");
 
 	byte palette[768];
 	for (int fade = 8; fade <= 256;	fade += 8) {
@@ -1683,7 +1682,7 @@ void LilliputEngine::sub16626() {
 				result = sub1675D(index, var1);
 				break;
 			case 11:
-				result = sub16729(index);
+				result = sub16729(index, var1);
 				break;
 			case 12:
 				result = sub16799(index, var1);
@@ -1754,13 +1753,12 @@ byte LilliputEngine::sub16722(int index, Common::Point var1) {
 	return 2;
 }
 
-byte LilliputEngine::sub16729(int index) {
-	debugC(2, kDebugEngineTBC, "sub16729(%d)", index);
+byte LilliputEngine::sub16729(int index, Common::Point var1) {
+	debugC(2, kDebugEngineTBC, "sub16729(%d, %d - %d)", index, var1.x, var1.y);
 
-	int arg1 = index | 0xFF00;
-	Common::Point pos1 = Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]);
-	Common::Point pos2 = _scriptHandler->_viewportPos;
-	_soundHandler->contentFct2(); // TODO: add arg pos1 and pos2
+	int param4x = ((index | 0xFF00) >> 8);
+	int param1 = var1.y;
+	_soundHandler->contentFct2(param1, _scriptHandler->_viewportPos, Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]), Common::Point(param4x, 0));
 	return 2;
 }
 
@@ -2267,7 +2265,7 @@ void LilliputEngine::displayHeroismIndicator() {
 }
 
 void LilliputEngine::pollEvent() {
-	debugC(2, kDebugEngineTBC, "pollEvent()");
+	debugC(2, kDebugEngine, "pollEvent()");
 
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
@@ -2722,8 +2720,7 @@ void LilliputEngine::initialize() {
 
 	for (int i = 0; i < 4; i++) {
 		_arr18560[i]._field0 = 0;
-		_arr18560[i]._field1 = 0;
-		_arr18560[i]._field3 = 0;
+		_arr18560[i]._field1 = Common::Point(0, 0);
 		for (int j = 0; j < 8; j ++)
 			_arr18560[i]._field5[j] = 0;
 	}

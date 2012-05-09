@@ -34,7 +34,7 @@ public:
 
 	void contentFct0();
 	void contentFct1();
-	void contentFct2();
+	void contentFct2(int var1, Common::Point var2, Common::Point var3, Common::Point var4);
 	void contentFct3();
 	void contentFct4();
 	void contentFct5();

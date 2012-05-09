@@ -70,8 +70,7 @@ struct LilliputGameDescription;
 
 struct struct18560 {
 	byte _field0;
-	int16 _field1;
-	int16 _field3;
+	Common::Point _field1;
 	int16 _field5[8];
 };
 
@@ -220,8 +219,8 @@ public:
 	void newInt8();
 	void update();
 
-	void displayFunction1(byte *buf, int var1, Common::Point pos);
-	void displayFunction1a(byte *buf, Common::Point pos);
+	void display16x16IndexedBuf(byte *buf, int var1, Common::Point pos);
+	void display16x16Buf(byte *buf, Common::Point pos);
 	void SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos);
 	void displayFunction3(int var1, int var2, int var4);
 	void displayMousePointer();
@@ -305,7 +304,7 @@ public:
 	void sub16B31(int index, int val);
 	void sub16B8F(int index, int x, int y, int flag);
 	byte sub1675D(int index, Common::Point var1);
-	byte sub16729(int index);
+	byte sub16729(int index, Common::Point var1);
 	byte sub166F7(int index, Common::Point var1, int tmpVal);
 	void sub1693A(int index);
 
@@ -341,6 +340,8 @@ public:
 	byte _numCharactersToDisplay;
 	byte _byte16C9F;
 	int _word10804;
+	bool _shouldQuit;
+
 
 	void pollEvent();
 	void sub170EE(int index);
@@ -357,7 +358,6 @@ public:
 
 protected:
 	Common::EventManager *_eventMan;
-	bool _shouldQuit;
 	int _lastTime;
 
 	// Engine APIs
