@@ -820,7 +820,7 @@ CBFile *CBFileManager::OpenFileRaw(const char *Filename) {
 			return NULL;
 		}
 	}
-	warning("BFileManager::OpenFileRaw(%s)", Filename);
+
 	CBDiskFile *DiskFile = new CBDiskFile(Game);
 	if (SUCCEEDED(DiskFile->Open(Filename))) return DiskFile;
 

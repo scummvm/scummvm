@@ -135,7 +135,14 @@ HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte 
 	
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
 	//_texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
-	warning("Surface-textures not fully ported yet");
+
+	// This particular warning is rather messy, as this function is called a ton,
+	// thus we avoid printing it more than once.
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		warning("Surface-textures not fully ported yet");
+		hasWarned = true;
+	}
 #if 0
 	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 	if (!_texture) {
