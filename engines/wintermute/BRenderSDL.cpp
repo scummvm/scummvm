@@ -54,13 +54,13 @@ CBRenderSDL::~CBRenderSDL() {
 #if 0
 	if (_renderer) SDL_DestroyRenderer(_renderer);
 	if (_win) SDL_DestroyWindow(_win);
-#endif
 	SDL_Quit();
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) return E_FAIL;
+	//if (SDL_Init(SDL_INIT_VIDEO) < 0) return E_FAIL;
 
 #if 0
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
