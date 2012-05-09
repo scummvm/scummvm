@@ -86,7 +86,7 @@ LilliputScript::~LilliputScript() {
 }
 
 byte LilliputScript::handleOpcodeType1(int curWord) {
-	debugC(2, kDebugScriptTBC, "handleOpcodeType1(0x%x)", curWord);
+	debugC(2, kDebugScript, "handleOpcodeType1(0x%x)", curWord);
 	switch (curWord) {
 	case 0x0:
 		return OC_checkCharacterGoalPos();
@@ -245,7 +245,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 }
 
 void LilliputScript::handleOpcodeType2(int curWord) {
-	debugC(2, kDebugScriptTBC, "handleOpcodeType2(0x%x)", curWord);
+	debugC(2, kDebugScript, "handleOpcodeType2(0x%x)", curWord);
 	switch (curWord) {
 	case 0x0:
 		OC_setWord18821();
@@ -905,7 +905,7 @@ void LilliputScript::disasmScript( ScriptStream script) {
 }
 
 int LilliputScript::handleOpcode(ScriptStream *script) {
-	debugC(2, kDebugScriptTBC, "handleOpcode");
+	debugC(2, kDebugScript, "handleOpcode");
 
 	_currScript = script;
 	uint16 curWord = _currScript->readUint16LE();
@@ -939,7 +939,7 @@ int LilliputScript::handleOpcode(ScriptStream *script) {
 }
 
 void LilliputScript::runScript(ScriptStream script) {
-	debugC(1, kDebugScriptTBC, "runScript");
+	debugC(1, kDebugScript, "runScript");
 
 	_byte16F05_ScriptHandler = 1;
 	
@@ -1179,8 +1179,8 @@ void LilliputScript::sub189B8() {
 	_vm->displayFunction11(_vm->_displayStringBuf);
 }
 
-void LilliputScript::sub18A56(byte *buf) {
-	debugC(2, kDebugScriptTBC, "sub18A56(buf)");
+void LilliputScript::decodePackedText(char *buf) {
+	debugC(2, kDebugScriptTBC, "decodePackedText(buf)");
 
 	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |is the |is a |in a |To the |to the |by |going |here |The|the|and |some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|have |you|I''ve |can''t |up |to |he |she |down |what|What|with|are |and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|''s |''t |re|gg|tt|pp|nn|ay|ar|wh|";
 
@@ -1237,9 +1237,9 @@ void LilliputScript::sub18A56(byte *buf) {
 int LilliputScript::sub18BB7(int index) {
 	debugC(2, kDebugScriptTBC, "sub18BB7(%d)", index);
 	
-	int chunk4Index = _vm->_rulesChunk3[index];
+	int chunk4Index = _vm->_packedStringIndex[index];
 	int result = 0;
-	while (_vm->_rulesChunk4[chunk4Index + result] == 0x5B)
+	while (_vm->_packedStrings[chunk4Index + result] == 0x5B)
 		++result;
 	
 	return result + 1;
@@ -1253,9 +1253,9 @@ void LilliputScript::sub18B3C(int var) {
 
 	_word18776 = var;
 
-	int index = _vm->_rulesChunk3[var];
+	int index = _vm->_packedStringIndex[var];
 	int count = 0;
-	while (_vm->_rulesChunk4[index + count] != 0x5B)
+	while (_vm->_packedStrings[index + count] != 0x5B)
 		++count;
 
 	int i = 0;
@@ -1265,12 +1265,12 @@ void LilliputScript::sub18B3C(int var) {
 			for (int j = 0; j < tmpVal; j++) {
 				do
 					++i;
-				while (_vm->_rulesChunk4[index + count + i] != 0x5B);
+				while (_vm->_packedStrings[index + count + i] != 0x5B);
 			}
 		}
 	}
 
-	sub18A56(&_vm->_rulesChunk4[index + count + i]);
+	decodePackedText(&_vm->_packedStrings[index + count + i]);
 }
 
 int16 LilliputScript::getValue1() {
@@ -1546,8 +1546,8 @@ byte LilliputScript::OC_compareCoords_1() {
 	int index = _currScript->readUint16LE();
 	assert(index < 40);
 
-	int var3 = _vm->_rectXMinMax[index];
-	int var4 = _vm->_rectYMinMax[index];
+	int16 var3 = _vm->_rectXMinMax[index];
+	int16 var4 = _vm->_rectYMinMax[index];
 	Common::Point var1 = _vm->_currentScriptCharacterPos;
 
 	if ((var1.x < (var3 >> 8)) || (var1.x > (var3 & 0xFF)) || (var1.y < (var4 >> 8)) || (var1.y > (var4 & 0xFF)))
@@ -1560,11 +1560,11 @@ byte LilliputScript::OC_compareCoords_1() {
 byte LilliputScript::OC_compareCoords_2() {
 	debugC(1, kDebugScriptTBC, "OC_compareCoords_2()");
 
-	int index = getValue1();
+	int16 index = getValue1();
 	Common::Point var1 = Common::Point(_array16123PosX[index], _array1614BPosY[index]);
-	uint16 var2 = _currScript->readUint16LE();
-	uint16 var3 = _vm->_rectXMinMax[var2];
-	uint16 var4 = _vm->_rectYMinMax[var2];
+	index = _currScript->readUint16LE();
+	uint16 var3 = _vm->_rectXMinMax[index];
+	uint16 var4 = _vm->_rectYMinMax[index];
 
 	if ((var1.x < (var3 >> 8)) || (var1.x > (var3 & 0xFF)) || (var1.y < (var4 >> 8)) || (var1.y > (var4 & 0xFF)))
 		return 0;
@@ -2137,23 +2137,23 @@ void LilliputScript::sub18B7C(int var1, int var3) {
 		return;
 
 	_word18776 = var1;
-	int index = _vm->_rulesChunk3[var1];
+	int index = _vm->_packedStringIndex[var1];
 
-	while (_vm->_rulesChunk4[index] == 91)
+	while (_vm->_packedStrings[index] == 91)
 		++index;
 
 	for (int i = 0; i < var3; i++) {
 		int tmpVal = 93;
 		while (tmpVal == 93) {
-			tmpVal = _vm->_rulesChunk4[index];
+			tmpVal = _vm->_packedStrings[index];
 			++index;
 		}
 	}
 	
-	if (_vm->_rulesChunk4[index] == 0)
+	if (_vm->_packedStrings[index] == 0)
 		return;
 
-	sub18A56(&_vm->_rulesChunk4[index]);
+	decodePackedText(&_vm->_packedStrings[index]);
 }
 
 void LilliputScript::OC_sub17D7F() {
@@ -2917,7 +2917,7 @@ void LilliputScript::OC_sub182EC() {
 }
 
 void LilliputScript::OC_PaletteFadeOut() {
-	debugC(1, kDebugScriptTBC, "OC_PaletteFadeOut()");
+	debugC(1, kDebugScript, "OC_PaletteFadeOut()");
 
 	_byte12A09 = 1;
 	_vm->paletteFadeOut();
@@ -2925,7 +2925,7 @@ void LilliputScript::OC_PaletteFadeOut() {
 }
 
 void LilliputScript::OC_PaletteFadeIn() {
-	debugC(1, kDebugScriptTBC, "OC_PaletteFadeIn()");
+	debugC(1, kDebugScript, "OC_PaletteFadeIn()");
 
 	_byte12A09 = 1;
 	_vm->paletteFadeIn();
@@ -3016,7 +3016,7 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	_vm->_byte15EAD = var1;
 
 	_byte12A09 = 1;
-	_word1881B = 0xFFFF;
+	_word1881B = -1;
 	OC_PaletteFadeOut();
 	_vm->_word15AC2 = 1;
 	_vm->displayVGAFile("AERIAL.GFX");
@@ -3049,9 +3049,9 @@ void LilliputScript::OC_sub1847F() {
 	int var4 = _currScript->readUint16LE();
 
 	if (_vm->_displayMap != 1) {
-		_vm->displayFunction5();
+		_vm->restoreSurfaceUnderMousePointer();
 		sub18BE6(var1 & 0xFF, var2, var4);
-		_vm->displayFunction4();
+		_vm->displayMousePointer();
 	}
 }
 
@@ -3069,16 +3069,16 @@ void LilliputScript::sub18BE6(byte var1, int var2, int var4) {
 }
 
 void LilliputScript::OC_displayVGAFile() {
-	debugC(1, kDebugScriptTBC, "OC_displayVGAFile()");
+	debugC(1, kDebugScript, "OC_displayVGAFile()");
 
 	_byte12A09 = 1;
-	OC_PaletteFadeOut();
+	_vm->paletteFadeOut();
 	int curWord = _currScript->readUint16LE();
-	int index = _vm->_rulesChunk3[curWord];
-	Common::String fileName = Common::String((const char *)&_vm->_rulesChunk4[index]);
-	_word1881B = 0xFFFF;
+	int index = _vm->_packedStringIndex[curWord];
+	Common::String fileName = Common::String((const char *)&_vm->_packedStrings[index]);
+	_word1881B = -1;
 	_vm->displayVGAFile(fileName);
-	OC_PaletteFadeIn();
+	_vm->paletteFadeIn();
 }
 
 void LilliputScript::OC_sub184D7() {
