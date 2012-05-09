@@ -104,8 +104,14 @@ namespace WinterMute {
 		debugC(3, kWinterMuteDebugExample | kWinterMuteDebugExample2, "Example debug call two");
 		
 		CAdGame *game = new CAdGame;
-		CBPlatform::Initialize(game, NULL, 0);
 		
+		int ret = 1;
+		
+		ret = CBPlatform::Initialize(game, NULL, 0);
+		
+		if (ret == 0) {
+			ret = CBPlatform::MessageLoop();
+		}
 		return Common::kNoError;
 	}
 	
