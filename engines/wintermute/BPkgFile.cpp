@@ -79,6 +79,8 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 		// TODO: Really, most of this logic might be doable directly in the fileEntry?
 		// But for now, this should get us rolling atleast.
 		_file = wrapCompressedReadStream(new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES));
+	} else {
+		_file = new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES);
 	}
 	
 	SeekToPos(0);
