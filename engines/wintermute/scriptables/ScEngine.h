@@ -62,34 +62,30 @@ public:
 			_buffer = new byte[Size];
 			if (_buffer) memcpy(_buffer, Buffer, Size);
 			_size = Size;
-			_filename = new char[strlen(Filename) + 1];
-			if (_filename) strcpy(_filename, Filename);
+			_filename = Filename;
 		};
 
 		~CScCachedScript() {
 			if (_buffer) delete [] _buffer;
-			if (_filename) delete [] _filename;
 		};
 
 		uint32 _timestamp;
 		byte *_buffer;
 		uint32 _size;
-		char *_filename;
+		Common::String _filename;
 	};
 
 	class CScBreakpoint {
 	public:
 		CScBreakpoint(const char *Filename) {
-			_filename = NULL;
-			CBUtils::SetString(&_filename, Filename);
+			_filename = Filename;
 		}
 
 		~CScBreakpoint() {
-			if (_filename) delete [] _filename;
 			_lines.RemoveAll();
 		}
 
-		char *_filename;
+		Common::String _filename;
 		CBArray<int, int> _lines;
 	};
 

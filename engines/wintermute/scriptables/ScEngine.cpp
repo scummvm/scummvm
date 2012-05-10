@@ -271,7 +271,7 @@ byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreC
 	// is script in cache?
 	if (!IgnoreCache) {
 		for (i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename, Filename) == 0) {
+			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename.c_str(), Filename) == 0) {
 				_cachedScripts[i]->_timestamp = CBPlatform::GetTime();
 				*OutSize = _cachedScripts[i]->_size;
 				return _cachedScripts[i]->_buffer;
@@ -667,7 +667,7 @@ HRESULT CScEngine::AddBreakpoint(char *ScriptFilename, int Line) {
 
 	CScBreakpoint *Bp = NULL;
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename, ScriptFilename) == 0) {
+		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), ScriptFilename) == 0) {
 			Bp = _breakpoints[i];
 			break;
 		}
@@ -693,7 +693,7 @@ HRESULT CScEngine::RemoveBreakpoint(char *ScriptFilename, int Line) {
 	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename, ScriptFilename) == 0) {
+		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), ScriptFilename) == 0) {
 			for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
 				if (_breakpoints[i]->_lines[j] == Line) {
 					_breakpoints[i]->_lines.RemoveAt(j);
@@ -730,7 +730,7 @@ HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *Script) {
 	if (!Script || !Script->_filename) return E_FAIL;
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename, Script->_filename) == 0) {
+		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), Script->_filename) == 0) {
 			Script->_breakpoints.Copy(_breakpoints[i]->_lines);
 			return S_OK;
 		}
