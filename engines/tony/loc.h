@@ -439,7 +439,7 @@ private:
 	RMPoint Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint punto);
 	RMPoint NearestPoint(RMPoint punto);
 	
-	void GoTo(RMPoint destcoord, bool bReversed=false);
+	void GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed=false);
 	short ScanLine(RMPoint punto);
 	RMPoint InvScanLine(RMPoint punto);
 	RMPoint NearestHotSpot(int sourcebox, int destbox);
@@ -461,7 +461,7 @@ public:
 	virtual bool RemoveThis(void);
 	
 	// Aggiorna la posizione del personaggio	
-	void DoFrame(RMGfxTargetBuffer* bigBuf, int loc);		
+	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);		
 
 	// Overloading del Draw
 	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
@@ -470,13 +470,13 @@ public:
 	bool EndOfPath() { return bEndOfPath; }
 
 	// Cambia il pattern del personaggio per fermarlo
-	virtual void Stop(void);
+	virtual void Stop(CORO_PARAM);
 
 	// Controlla se il personaggio si sta muovendo
 	bool IsMoving() { return bMoving; }
 
 	// Muove il personaggio a una certa posizione
-	bool Move(RMPoint pt);
+	void Move(CORO_PARAM, RMPoint pt, bool *result = NULL);
 
 	// Posiziona il personaggio a una certa posizione SENZA farlo muovere
 	void SetPosition(RMPoint pt, int newloc=-1);

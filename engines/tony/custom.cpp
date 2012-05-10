@@ -1337,7 +1337,7 @@ DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(CORO_PARAM, uint32 nX, uint32 nY, uint3
 
 	CORO_BEGIN_CODE(_ctx);
 
-	Tony->Move(RMPoint(nX, nY));
+	CORO_INVOKE_1(Tony->Move, RMPoint(nX, nY));
 	
 	if (!bSkipIdle)
 		CORO_INVOKE_0(Tony->WaitForEndMovement);
@@ -1346,7 +1346,7 @@ DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(CORO_PARAM, uint32 nX, uint32 nY, uint3
 }
 
 DECLARE_CUSTOM_FUNCTION(MoveTony)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint32) {
-	Tony->Move(RMPoint(nX, nY));
+	Tony->Move(coroParam, RMPoint(nX, nY));
 }
 
 DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) {

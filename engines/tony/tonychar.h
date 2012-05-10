@@ -385,7 +385,7 @@ public:
 	void Close(void);
 
 	// Fa un frame di Tony, aggiornando il movimento, etc
-	void DoFrame(RMGfxTargetBuffer *bigBuf, int curLoc);
+	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc);
 
 	// Metodi di Draw, che controlla la variabile di show
 	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -395,7 +395,7 @@ public:
 	void Hide(bool bShowOmbra = false);
 
 	// Si muove e fa un azione, se necessario
-	void MoveAndDoAction(RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
+	void MoveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
 
 	// Ferma Tony (dalla parte giusta rispetto a un eventuale oggetto)
 	virtual void Stop(CORO_PARAM);

@@ -208,7 +208,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 				// ***************
 				if (m_input.MouseRightReleased()) {
 					if (m_inv.RightRelease(m_input.MousePos(), m_curAction)) {
-						m_tony.MoveAndDoAction(m_itemName.GetHotspot(),m_itemName.GetSelectedItem(),m_curAction);
+						CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_curAction);
 
 						m_curAction = TA_GOTO;
 						m_point.SetAction(m_curAction);
@@ -240,9 +240,9 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 					//if (m_itemName.IsItemSelected())
 					{
 						if (m_curAction != TA_COMBINE)
-							m_tony.MoveAndDoAction(m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_point.CurAction());
+							CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_point.CurAction());
 						else if (m_itemName.GetSelectedItem() != NULL)
-							m_tony.MoveAndDoAction(m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), TA_COMBINE, m_curActionObj);
+							CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), TA_COMBINE, m_curActionObj);
 					}
 					
 					if (m_curAction == TA_COMBINE) {
@@ -283,7 +283,7 @@ SKIPCLICKSINISTRO:
 					if (m_bGUIInterface) {
 						if (m_inter.Released(m_input.MousePos(),m_curAction)) {
 							m_point.SetAction(m_curAction);
-							m_tony.MoveAndDoAction(m_itemName.GetHotspot(),m_itemName.GetSelectedItem(), m_curAction);
+							CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_curAction);
 
 							m_curAction = TA_GOTO;
 							m_point.SetAction(m_curAction);
@@ -304,7 +304,7 @@ SKIPCLICKSINISTRO:
 	}
 
 	// Anima Tony
-	m_tony.DoFrame(&m_bigBuf, m_nCurLoc);
+	CORO_INVOKE_2(m_tony.DoFrame, &m_bigBuf, m_nCurLoc);
 	
 	// Aggiorna lo scrolling per tenere Tony dentro lo schermo
 	if (m_tony.MustUpdateScrolling() && m_bLocationLoaded) {

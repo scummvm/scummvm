@@ -1087,10 +1087,15 @@ short RMCharacter::FindPath(short source, short destination) {
 }
 
 
-void RMCharacter::GoTo(RMPoint destcoord, bool bReversed) {
+void RMCharacter::GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (m_pos == destcoord) {
 		if (minpath == 0) {
-			Stop();
+			CORO_INVOKE_0(Stop);
 			g_scheduler->pulseEvent(hEndOfPath);
 			return;
 		}
@@ -1149,6 +1154,7 @@ void RMCharacter::GoTo(RMPoint destcoord, bool bReversed) {
 	olddy = dy;
 
 	// ResetEvent(hTonyEndMovement);  @@@
+	CORO_END_CODE;
 }
 
 
@@ -1413,10 +1419,15 @@ void RMCharacter::NewBoxEntered(int nBox) {
 	mpalQueryDoAction(2, curLocation, curbox);
 }
 	
-void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
-	bool bEndNow;
+void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
+	CORO_BEGIN_CONTEXT;
+		bool bEndNow;
+		RMBoxLoc *cur;
+	CORO_END_CONTEXT(_ctx);
 
-	bEndNow = false;
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->bEndNow = false;
 	bEndOfPath = false;
 	bDrawNow = (curLocation == loc);
 
@@ -1435,7 +1446,7 @@ void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
 			if (((walkspeed > 0) && (m_pos.x > lineend.x)) || ((walkspeed < 0) && (m_pos.x < lineend.x))) {
 				m_pos = lineend;
 				status = STAND;
-				bEndNow = true;
+				_ctx->bEndNow = true;
 			}
 		}
     
@@ -1450,7 +1461,7 @@ void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
 			if (((walkspeed > 0) && (m_pos.y > lineend.y)) || ((walkspeed < 0) && (m_pos.y < lineend.y))) {
 				m_pos = lineend;
 				status = STAND;
-				bEndNow = true;
+				_ctx->bEndNow = true;
 			}
 		}
 
@@ -1463,9 +1474,9 @@ void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
 
 		// Se siamo appena arrivati alla destinazione temporanea ed è finito il percorso minimo, 
 		// ci fermiamo definitivamente
-		if (bEndNow && minpath == 0) {
+		if (_ctx->bEndNow && minpath == 0) {
 			if (!bEndOfPath)
-				Stop();
+				CORO_INVOKE_0(Stop);
 			bEndOfPath = true;
 			g_scheduler->pulseEvent(hEndOfPath);
 		}
@@ -1487,15 +1498,15 @@ void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
 	if (status == STAND) {
 		// Controlliamo se c'è ancora percorso minimo da calcolare
 		if (minpath == 1) {
-			RMBoxLoc *cur = theBoxes->GetBoxes(curLocation);
+			_ctx->cur = theBoxes->GetBoxes(curLocation);
 
 			// Se dobbiamo ancora attraversare un box
 			if (pathcount < pathlenght) {
 				// Controlliamo che il box su cui stiamo entrando sia attivo
-				if (cur->boxes[path[pathcount-1]].attivo) {
+				if (_ctx->cur->boxes[path[pathcount-1]].attivo) {
 					// Muoviti in linea retta verso l'hotspot più vicino, tenendo conto del reversing please
 					// NEWBOX = path[pathcount-1]
-					GoTo(NearestHotSpot(path[pathcount-1], path[pathcount]), cur->boxes[path[pathcount-1]].bReversed);
+					CORO_INVOKE_2(GoTo, NearestHotSpot(path[pathcount-1], path[pathcount]), _ctx->cur->boxes[path[pathcount-1]].bReversed);
 					pathcount++;
 				} else {
 					// Se il box è disattivato, possiamo solo bloccare tutto
@@ -1503,7 +1514,7 @@ void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
 					// la ricerca del percorso minimo
 					minpath = 0;
 					if (!bEndOfPath)
-						Stop();
+						CORO_INVOKE_0(Stop);
 					bEndOfPath = true;
 					g_scheduler->pulseEvent(hEndOfPath);
 				}
@@ -1512,7 +1523,7 @@ void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
 				//  punto di arrivo
 				// NEWBOX = InWhichBox(pathend)
 				minpath = 0;
-				GoTo(pathend, cur->boxes[InWhichBox(pathend)].bReversed);
+				CORO_INVOKE_2(GoTo, pathend, _ctx->cur->boxes[InWhichBox(pathend)].bReversed);
 			}
 		}
 	}
@@ -1521,9 +1532,16 @@ void RMCharacter::DoFrame(RMGfxTargetBuffer* bigBuf, int loc) {
 
 	// Richiama il DoFrame dell'item
 	RMItem::DoFrame(bigBuf);
+
+	CORO_END_CODE;
 }
 
-void RMCharacter::Stop(void) {
+void RMCharacter::Stop(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	bMoving = false;
 
 	// Non si sa mai...
@@ -1558,6 +1576,8 @@ void RMCharacter::Stop(void) {
 		SetPattern(PAT_STANDDOWN);
 		break;
 	}
+
+	CORO_END_CODE;
 }
 
 inline int RMCharacter::InWhichBox(RMPoint pt) { 
@@ -1565,9 +1585,14 @@ inline int RMCharacter::InWhichBox(RMPoint pt) {
 }
 
 
-bool RMCharacter::Move(RMPoint pt) {
-	RMPoint dest;
-	int numbox;
+void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
+	CORO_BEGIN_CONTEXT;
+		RMPoint dest;
+		int numbox;
+		RMBoxLoc *cur;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	bMoving = true;
 	
@@ -1575,31 +1600,33 @@ bool RMCharacter::Move(RMPoint pt) {
 	if (pt.x == 0 && pt.y == 0) {
 		minpath = 0;
 		status = STAND;
-		Stop();
-		return true;
+		CORO_INVOKE_0(Stop);
+		if (result)
+			*result = true;
+		return;
 	}
 
 	// Se clicko fuori dai box
- 	numbox = InWhichBox(pt);
-	if (numbox == -1) {
+ 	_ctx->numbox = InWhichBox(pt);
+	if (_ctx->numbox == -1) {
 		// Trova il punto più vicino dentro i box
-		dest = NearestPoint(pt);
+		_ctx->dest = NearestPoint(pt);
 
 		// ???!??
-		if (dest == pt)
-			dest = InvScanLine(pt);
+		if (_ctx->dest == pt)
+			_ctx->dest = InvScanLine(pt);
 
-		pt = dest;
-		numbox = InWhichBox(pt);
+		pt = _ctx->dest;
+		_ctx->numbox = InWhichBox(pt);
 	}
 
-	RMBoxLoc *cur = theBoxes->GetBoxes(curLocation);
+	_ctx->cur = theBoxes->GetBoxes(curLocation);
 
 	minpath = 0;
 	status = STAND;
 	bMovingWithoutMinpath = true;
 	if (ScanLine(pt)) 
-		GoTo(pt, cur->boxes[numbox].bReversed);
+		CORO_INVOKE_2(GoTo, pt, _ctx->cur->boxes[_ctx->numbox].bReversed);
 	else if (FindPath(InWhichBox(m_pos), InWhichBox(pt))) {
 		bMovingWithoutMinpath = false;
 		minpath = 1;
@@ -1609,22 +1636,30 @@ bool RMCharacter::Move(RMPoint pt) {
 		// @@@ Questo caso è se un hotspot è dentro un box
 		//  ma non c'è un path per arrivarci. Usiamo quindi
 		//  la invscanline per cercare un punto intorno
-		dest = InvScanLine(pt);
-		pt = dest;
+		_ctx->dest = InvScanLine(pt);
+		pt = _ctx->dest;
 		
 		if (ScanLine(pt)) 
-			GoTo(pt,cur->boxes[numbox].bReversed);
+			CORO_INVOKE_2(GoTo, pt, _ctx->cur->boxes[_ctx->numbox].bReversed);
 		else if (FindPath(InWhichBox(m_pos), InWhichBox(pt))) {
 			bMovingWithoutMinpath = false;
 			minpath = 1;
 			pathcount = 1;
 			pathend = pt;
-			return true;
-		} else
-			return false;
+			if (result)
+				*result = true;
+		} else {
+			if (result)
+				*result = false;
+		}
+
+		return;
 	}
 
-	return true;
+	if (result)
+		*result = true;
+
+	CORO_END_CODE;
 }
 
 void RMCharacter::SetPosition(RMPoint pt, int newloc) {

@@ -125,20 +125,26 @@ void RMTony::Close(void) {
 	m_ombra.Destroy();
 }
 
-void RMTony::DoFrame(RMGfxTargetBuffer *bigBuf, int curLoc) {
+void RMTony::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
+	CORO_BEGIN_CONTEXT;
+		int time;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (!m_nInList && m_bShow)
 		bigBuf->AddPrim(new RMGfxPrimitive(this));
 	
 	SetSpeed(nCfgTonySpeed);	
 
 	// Esegue il movimento normale del personaggio
-	int time = _vm->GetTime();
+	_ctx->time = _vm->GetTime();
 
 	do {
 		m_nTimeLastStep += (1000 / 40);
-		RMCharacter::DoFrame(bigBuf, curLoc);
+		CORO_INVOKE_2(RMCharacter::DoFrame, bigBuf, curLoc);
 
-	} while (time > m_nTimeLastStep + (1000 / 40));
+	} while (_ctx->time > m_nTimeLastStep + (1000 / 40));
 
 	// Controlla se siamo alla fine del percorso
 	if (EndOfPath() && m_bActionPending) {
@@ -148,6 +154,8 @@ void RMTony::DoFrame(RMGfxTargetBuffer *bigBuf, int curLoc) {
 
 	if (m_bIsTalking || m_bIsStaticTalk)
 		m_body.DoFrame(bigBuf, false);
+
+	CORO_END_CODE;
 }
 
 void RMTony::Show(void) {
@@ -192,7 +200,13 @@ void RMTony::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	}
 }
 
-void RMTony::MoveAndDoAction(RMPoint dst, RMItem *item, int nAction, int nActionParm) {
+void RMTony::MoveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm) {
+	CORO_BEGIN_CONTEXT;
+		bool result;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	// Fa il movimento normale, ma si ricorda se deve poi eseguire un azione
 	if (item == NULL) {
 		m_bActionPending = false;
@@ -204,10 +218,13 @@ void RMTony::MoveAndDoAction(RMPoint dst, RMItem *item, int nAction, int nAction
 		m_bActionPending = true;
 	}
 
-	if (!RMCharacter::Move(dst)) {
+	CORO_INVOKE_2(RMCharacter::Move, dst, &_ctx->result);
+	if (!_ctx->result) {
 		m_bActionPending = false;
 		m_ActionItem = NULL;
 	}
+
+	CORO_END_CODE;
 }
 
 
@@ -290,14 +307,14 @@ void RMTony::Stop(CORO_PARAM) {
 		_ctx->pid = mpalQueryDoAction(21, m_ActionItem->MpalCode(), 0);
 
 		if (_ctx->pid == INVALID_PID_VALUE)
-			RMCharacter::Stop();
+			CORO_INVOKE_0(RMCharacter::Stop);
 		else {
 			bNeedToStop = false;	// Se facciamo la OnWhichDirection, almeno dopo non dobbiamo fare la Stop()
 			bMoving = false;
 			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->pid, INFINITE); // @@@ Mettere un assert dopo 10 secondi
 		}
 	} else {
-		RMCharacter::Stop();
+		CORO_INVOKE_0(RMCharacter::Stop);
 	}
 
 	if (!m_bActionPending)
