@@ -35,16 +35,6 @@ THE SOFTWARE.
 #include "common/textconsole.h"
 #include "common/system.h"
 
-#include "SDL.h" // TODO remove
-
-#ifdef __WIN32__
-#   include <dbghelp.h>
-#   include <direct.h>
-#else
-#   include <unistd.h>
-#endif
-
-
 namespace WinterMute {
 
 CBGame *CBPlatform::Game = NULL;
@@ -313,7 +303,7 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBPlatform::SDLEventWatcher(void *userdata, SDL_Event *event) {
+int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 	//TODO
 /*	if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_MINIMIZED) {
 		if (Game) Game->AutoSaveOnExit();
@@ -346,17 +336,16 @@ void CBPlatform::OutputDebugString(LPCSTR lpOutputString) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBPlatform::GetTime() {
-	return SDL_GetTicks();
+	return g_system->getMillis();
 }
 
 //////////////////////////////////////////////////////////////////////////
 BOOL CBPlatform::GetCursorPos(LPPOINT lpPoint) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
-	int x, y;
-	SDL_GetMouseState(&x, &y);
-	lpPoint->x = x;
-	lpPoint->y = y;
+	Common::Point p = g_system->getEventManager()->getMousePos();
+	lpPoint->x = p.x;
+	lpPoint->y = p.y;
 
 	renderer->PointFromScreen(lpPoint);
 

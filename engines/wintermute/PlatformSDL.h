@@ -34,12 +34,9 @@
 #include "wintypes.h"
 #include "common/events.h"
 
-union SDL_Event;
-
 namespace WinterMute {
 
 class CBGame;
-
 
 //////////////////////////////////////////////////////////////////////////
 class CBPlatform {
@@ -82,7 +79,7 @@ public:
 	static char *strlwr(char *string);
 
 	// sdl event callback
-	static int SDLEventWatcher(void *userdata, SDL_Event *event);
+	static int SDLEventWatcher(void *userdata, Common::Event *event);
 
 private:
 	static CBGame *Game;
