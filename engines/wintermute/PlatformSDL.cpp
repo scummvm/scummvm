@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include "engines/wintermute/scriptables/ScEngine.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "common/system.h"
 
 #include "SDL.h" // TODO remove
 
@@ -179,8 +180,8 @@ int CBPlatform::MessageLoop() {
 	bool done = false;
 
 	while (!done) {
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
 			HandleEvent(&event);
 		}
 
@@ -224,12 +225,34 @@ int CBPlatform::MessageLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPlatform::HandleEvent(SDL_Event *event) {
+void CBPlatform::HandleEvent(Common::Event *event) {
 	switch (event->type) {
 
-	case SDL_MOUSEBUTTONDOWN:
-
-#ifdef __IPHONEOS__
+	case Common::EVENT_LBUTTONDOWN:
+		if (Game) {
+			if (Game->IsLeftDoubleClick()) Game->OnMouseLeftDblClick();
+			else Game->OnMouseLeftDown();
+		}
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		if (Game) {
+			if (Game->IsRightDoubleClick()) Game->OnMouseRightDblClick();
+			else Game->OnMouseRightDown();
+		}
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+		if (Game) Game->OnMouseMiddleDown();
+		break;
+	case Common::EVENT_LBUTTONUP:
+		if (Game) Game->OnMouseLeftUp();
+		break;
+	case Common::EVENT_RBUTTONUP:
+		if (Game) Game->OnMouseRightUp();
+		break;
+	case Common::EVENT_MBUTTONUP:
+		if (Game) Game->OnMouseMiddleUp();
+		break;
+/*#ifdef __IPHONEOS__
 		{
 			CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 			POINT p;
@@ -241,39 +264,8 @@ void CBPlatform::HandleEvent(SDL_Event *event) {
 				if (btn->_visible && !btn->_disable) btn->_press = true;
 			}
 		}
-#endif
-		switch (event->button.button) {
-		case SDL_BUTTON_LEFT:
-			if (Game) {
-				if (Game->IsLeftDoubleClick()) Game->OnMouseLeftDblClick();
-				else Game->OnMouseLeftDown();
-			}
-			break;
-		case SDL_BUTTON_RIGHT:
-			if (Game) {
-				if (Game->IsRightDoubleClick()) Game->OnMouseRightDblClick();
-				else Game->OnMouseRightDown();
-			}
-			break;
-		case SDL_BUTTON_MIDDLE:
-			if (Game) Game->OnMouseMiddleDown();
-			break;
-		}
-		break;
+#endif*/
 
-	case SDL_MOUSEBUTTONUP:
-		switch (event->button.button) {
-		case SDL_BUTTON_LEFT:
-			if (Game) Game->OnMouseLeftUp();
-			break;
-		case SDL_BUTTON_RIGHT:
-			if (Game) Game->OnMouseRightUp();
-			break;
-		case SDL_BUTTON_MIDDLE:
-			if (Game) Game->OnMouseMiddleUp();
-			break;
-		}
-		break;
 //TODO
 /*	case SDL_MOUSEWHEEL:
 		if (Game) Game->HandleMouseWheel(event->wheel.y);
@@ -305,7 +297,7 @@ void CBPlatform::HandleEvent(SDL_Event *event) {
 		}
 		break;
 */
-	case SDL_QUIT:
+	case Common::EVENT_QUIT:
 #ifdef __IPHONEOS__
 		if (Game) {
 			Game->AutoSaveOnExit();

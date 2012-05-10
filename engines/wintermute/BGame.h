@@ -37,6 +37,7 @@
 #include "engines/wintermute/BObject.h"
 #include "engines/wintermute/persistent.h"
 #include "coll_templ.h"
+#include "common/events.h"
 
 namespace WinterMute {
 
@@ -257,7 +258,7 @@ public:
 	bool _quitting;
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
 
-	virtual bool HandleKeypress(SDL_Event *event);
+	virtual bool HandleKeypress(Common::Event *event);
 	int _freezeLevel;
 	HRESULT Unfreeze();
 	HRESULT Freeze(bool IncludingMusic = true);

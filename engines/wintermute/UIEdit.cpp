@@ -46,6 +46,7 @@
 #include "engines/wintermute/scriptables/ScScript.h"
 #include "engines/wintermute/utils.h"
 #include "common/util.h"
+#include "common/keyboard.h"
 
 namespace WinterMute {
 
@@ -685,18 +686,18 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::HandleKeypress(SDL_Event *event) {
+bool CUIEdit::HandleKeypress(Common::Event *event) {
 	bool Handled = false;
 
-	if (event->type == SDL_KEYDOWN) {
-		switch (event->key.keysym.sym) {
-		case SDLK_ESCAPE:
-		case SDLK_TAB:
-		case SDLK_RETURN:
+	if (event->type == Common::EVENT_KEYDOWN) {
+		switch (event->kbd.keycode) {
+		case Common::KEYCODE_ESCAPE:
+		case Common::KEYCODE_TAB:
+		case Common::KEYCODE_RETURN:
 			return false;
 
 			// ctrl+A
-		case SDLK_a:
+		case Common::KEYCODE_a:
 			if (CBKeyboardState::IsControlDown()) {
 				_selStart = 0;
 				_selEnd = strlen(_text);
@@ -704,7 +705,7 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 			}
 			break;
 
-		case SDLK_BACKSPACE:
+		case Common::KEYCODE_BACKSPACE:
 			if (_selStart == _selEnd) {
 				if (Game->_textRTL) DeleteChars(_selStart, _selStart + 1);
 				else DeleteChars(_selStart - 1, _selStart);
@@ -715,21 +716,21 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 			Handled = true;
 			break;
 
-		case SDLK_LEFT:
-		case SDLK_UP:
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_UP:
 			_selEnd--;
 			if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			Handled = true;
 			break;
 
-		case SDLK_RIGHT:
-		case SDLK_DOWN:
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_DOWN:
 			_selEnd++;
 			if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
 			Handled = true;
 			break;
 
-		case SDLK_HOME:
+		case Common::KEYCODE_HOME:
 			if (Game->_textRTL) {
 				_selEnd = strlen(_text);
 				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
@@ -740,7 +741,7 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 			Handled = true;
 			break;
 
-		case SDLK_END:
+		case Common::KEYCODE_END:
 			if (Game->_textRTL) {
 				_selEnd = 0;
 				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
@@ -751,7 +752,7 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 			Handled = true;
 			break;
 
-		case SDLK_DELETE:
+		case Common::KEYCODE_DELETE:
 			if (_selStart == _selEnd) {
 				if (Game->_textRTL) {
 					DeleteChars(_selStart - 1, _selStart);
@@ -763,6 +764,8 @@ bool CUIEdit::HandleKeypress(SDL_Event *event) {
 
 			_selStart = _selEnd;
 			Handled = true;
+			break;
+		default:
 			break;
 		}
 		return Handled;

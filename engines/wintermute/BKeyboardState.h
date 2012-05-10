@@ -33,7 +33,7 @@
 #include "BBase.h"
 #include "BScriptable.h"
 #include "common/keyboard.h"
-#include <SDL.h>
+#include "common/events.h"
 
 namespace WinterMute {
 
@@ -50,7 +50,7 @@ public:
 	DECLARE_PERSISTENT(CBKeyboardState, CBScriptable)
 	CBKeyboardState(CBGame *inGame);
 	virtual ~CBKeyboardState();
-	HRESULT ReadKey(SDL_Event *event);
+	HRESULT ReadKey(Common::Event *event);
 
 	static bool IsShiftDown();
 	static bool IsControlDown();
@@ -63,7 +63,7 @@ public:
 	virtual char *ScToString();
 
 private:
-	uint32 KeyCodeToVKey(SDL_Event *event);
+	uint32 KeyCodeToVKey(Common::Event *event);
 	Common::KeyCode VKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
 

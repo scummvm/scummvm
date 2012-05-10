@@ -30,6 +30,8 @@
 #include "BKeyboardState.h"
 #include "engines/wintermute/scriptables/ScValue.h"
 #include "engines/wintermute/scriptables/ScStack.h"
+#include "common/system.h"
+#include "common/keyboard.h"
 
 namespace WinterMute {
 
@@ -177,7 +179,7 @@ char *CBKeyboardState::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::ReadKey(SDL_Event *event) {
+HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = KeyCodeToVKey(event);
 	//_currentKeyData = KeyData;
@@ -207,31 +209,31 @@ HRESULT CBKeyboardState::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBKeyboardState::IsShiftDown() {
-	int mod = SDL_GetModState();
-	return (mod & KMOD_LSHIFT) || (mod & KMOD_RSHIFT);
+	int mod = g_system->getEventManager()->getModifierState();
+	return (mod & Common::KBD_SHIFT);
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CBKeyboardState::IsControlDown() {
-	int mod = SDL_GetModState();
-	return (mod & KMOD_LCTRL) || (mod & KMOD_RCTRL);
+	int mod = g_system->getEventManager()->getModifierState();
+	return (mod & Common::KBD_CTRL);
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CBKeyboardState::IsAltDown() {
-	int mod = SDL_GetModState();
-	return (mod & KMOD_LALT) || (mod & KMOD_RALT);
+	int mod = g_system->getEventManager()->getModifierState();
+	return (mod & Common::KBD_ALT);
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBKeyboardState::KeyCodeToVKey(SDL_Event *event) {
-	if (event->type != SDL_KEYDOWN) return 0;
+uint32 CBKeyboardState::KeyCodeToVKey(Common::Event *event) {
+	if (event->type != Common::EVENT_KEYDOWN) return 0;
 
-	switch (event->key.keysym.sym) {
-	case SDLK_KP_ENTER:
-		return SDLK_RETURN;
+	switch (event->kbd.keycode) {
+	case Common::KEYCODE_KP_ENTER:
+		return Common::KEYCODE_RETURN;
 	default:
-		return event->key.keysym.sym;
+		return (uint32)event->kbd.keycode;
 	}
 }
 

@@ -69,6 +69,7 @@
 #include "engines/wintermute/scriptables/SXString.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "common/keyboard.h"
 
 #ifdef __IPHONEOS__
 #   include "ios_utils.h"
@@ -3696,16 +3697,19 @@ HRESULT CBGame::Unfreeze() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::HandleKeypress(SDL_Event *event) {
+bool CBGame::HandleKeypress(Common::Event *event) {
 #ifdef __WIN32__
+	// TODO: Do we really need to handle this in-engine?
 	// handle Alt+F4 on windows
-	if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_F4 && (event->key.keysym.mod == KMOD_LALT || event->key.keysym.mod == KMOD_RALT)) {
+	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_F4 && (event->kbd.flags == Common::KBD_ALT)) {
 		OnWindowClose();
 		return true;
+		//TODO
 	}
 #endif
 
-	if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_RETURN && (event->key.keysym.mod == KMOD_LALT || event->key.keysym.mod == KMOD_RALT)) {
+	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_RETURN && (event->kbd.flags == Common::KBD_ALT)) {
+		// TODO: Handle alt-enter as well as alt-return.
 		_renderer->SwitchFullscreen();
 		return true;
 	}

@@ -31,6 +31,7 @@
 
 #include "persistent.h"
 #include "UIObject.h"
+#include "common/events.h"
 
 namespace WinterMute {
 class CBFont;
@@ -43,7 +44,7 @@ public:
 	bool _cursorVisible;
 	uint32 _lastBlinkTime;
 	virtual HRESULT Display(int OffsetX, int OffsetY);
-	virtual bool HandleKeypress(SDL_Event *event);
+	virtual bool HandleKeypress(Common::Event *event);
 	int _scrollOffset;
 	int _frameWidth;
 	uint32 _cursorBlinkRate;

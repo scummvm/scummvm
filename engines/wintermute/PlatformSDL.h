@@ -32,6 +32,7 @@
 #include "dctypes.h"
 
 #include "wintypes.h"
+#include "common/events.h"
 
 union SDL_Event;
 
@@ -45,7 +46,7 @@ class CBPlatform {
 public:
 	static int Initialize(CBGame *inGame, int argc, char *argv[]);
 	static int MessageLoop();
-	static void HandleEvent(SDL_Event *event);
+	static void HandleEvent(Common::Event *event);
 
 	static AnsiString GetSystemFontPath();
 	static AnsiString GetPlatformName();
