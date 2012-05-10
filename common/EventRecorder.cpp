@@ -34,7 +34,6 @@ namespace Common {
 
 DECLARE_SINGLETON(EventRecorder);
 
-#define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1
 
 uint32 readTime(ReadStream *inFile) {
@@ -66,7 +65,6 @@ void EventRecorder::readEvent(RecorderEvent &event) {
 	switch (event.type) {
 	case EVENT_TIMER:
 		event.time = _playbackFile->readUint32LE();
-		event.count = _playbackFile->readUint32LE();
 		break;
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP:
@@ -98,20 +96,18 @@ void EventRecorder::writeEvent(const RecorderEvent &event) {
 	if (_recordMode != kRecorderRecord) {
 		return;
 	}
-
-	_recordFile->writeUint32LE((uint32)event.type);
 	_recordCount++;
+	_tmpRecordFile.writeUint32LE((uint32)event.type);
 	switch (event.type) {
 	case EVENT_TIMER:
-		_recordFile->writeUint32LE((uint32)_fakeTimer);
-		_recordFile->writeUint32LE((uint32)_eventCount);
+		_tmpRecordFile.writeUint32LE(event.time);
 		break;
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP:
-		_recordFile->writeUint32LE((uint32)_fakeTimer);
-		_recordFile->writeSint32LE(event.kbd.keycode);
-		_recordFile->writeUint16LE(event.kbd.ascii);
-		_recordFile->writeByte(event.kbd.flags);
+		_tmpRecordFile.writeUint32LE(event.time);
+		_tmpRecordFile.writeSint32LE(event.kbd.keycode);
+		_tmpRecordFile.writeUint16LE(event.kbd.ascii);
+		_tmpRecordFile.writeByte(event.kbd.flags);
 		break;
 	case EVENT_MOUSEMOVE:
 	case EVENT_LBUTTONDOWN:
@@ -122,26 +118,46 @@ void EventRecorder::writeEvent(const RecorderEvent &event) {
 	case EVENT_WHEELDOWN:
 	case EVENT_MBUTTONDOWN:
 	case EVENT_MBUTTONUP:
-		_recordFile->writeUint32LE((uint32)_fakeTimer);
-		_recordFile->writeSint16LE(event.mouse.x);
-		_recordFile->writeSint16LE(event.mouse.y);
+		_tmpRecordFile.writeUint32LE(event.time);
+		_tmpRecordFile.writeSint16LE(event.mouse.x);
+		_tmpRecordFile.writeSint16LE(event.mouse.y);
 		break;
 	default:
-		_recordFile->writeUint32LE((uint32)_fakeTimer);
+		_tmpRecordFile.writeUint32LE(event.time);
 		break;
+	}
+	if (_recordCount == kMaxBufferedRecords) {
+		dumpRecordsToFile();
+		_recordCount = 0;
 	}
 }
 
+void EventRecorder::dumpRecordsToFile() {
+	if (!_headerDumped) {
+		dumpHeaderToFile();
+		_headerDumped = true;
+	}
+	_recordFile->write(_recordBuffer, _tmpRecordFile.pos());
+	_tmpRecordFile.seek(0);
+}
 
-EventRecorder::EventRecorder() {
+void EventRecorder::dumpHeaderToFile() {
+	writeFormatId();
+	writeVersion();
+	writeHeader();
+	writeGameHash();
+	writeRandomRecords();
+	_recordFile->writeUint32LE(MKTAG('R','C','D','S'));
+	_recordFile->writeUint32LE(0);
+}
+
+EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize) {
 	_timeMutex = g_system->createMutex();
 	_recorderMutex = g_system->createMutex();
 	_recordMode = kPassthrough;
 }
 
 EventRecorder::~EventRecorder() {
-	deinit();
-
 	g_system->deleteMutex(_timeMutex);
 	g_system->deleteMutex(_recorderMutex);
 }
@@ -167,13 +183,13 @@ void EventRecorder::deinit() {
 	}
 
 	if (_recordFile != NULL) {
+		dumpRecordsToFile();
 		_recordFile->finalize();
 		delete _recordFile;
 	}
 	g_system->unlockMutex(_timeMutex);
 	g_system->unlockMutex(_recorderMutex);
 }
-
 
 
 void EventRecorder::processMillis(uint32 &millis) {
@@ -222,6 +238,7 @@ bool EventRecorder::notifyEvent(const Event &ev) {
 
 	RecorderEvent e;
 	memcpy(&e, &ev, sizeof(ev));
+	e.time = _fakeTimer;
 	writeEvent(e);
 
 	return false;
@@ -295,9 +312,11 @@ uint32 EventRecorder::getRandomSeed(const String &name) {
 	return result;
 }
 
-void EventRecorder::init(Common::String gameId, const ADGameDescription* desc) {
+void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDesc) {
 	_playbackFile = NULL;
 	_recordFile = NULL;
+	_recordCount = 0;
+
 	String recordModeString = ConfMan.get("record_mode");
 	if (recordModeString.compareToIgnoreCase("record") == 0) {
 		_recordMode = kRecorderRecord;
@@ -311,32 +330,36 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription* desc) {
 			debugC(3, kDebugLevelEventRec, "EventRecorder: passthrough");
 		}
 	}	
-	openRecordFile(gameId);
-	if (desc != NULL) {
-		if (_recordMode == kRecorderRecord) {
-			writeGameHash(desc);
-			_recordFile->writeString(getAutor());
-			_recordFile->writeByte(0);
-			_recordFile->writeString(getComment());
-			_recordFile->writeByte(0);
+	if (!openRecordFile(gameId)) {
+		_recordMode = kPassthrough;
+		return;
+	}
+
+	if (_recordMode == kRecorderRecord) {
+		for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			_hashRecords[fileDesc->fileName] = fileDesc->md5;
 		}
-		if (_recordMode == kRecorderPlayback) {
-			checkGameHash(desc);
-			warning("%s", readString().c_str());
-			warning("%s", readString().c_str());
-			getNextEvent();
+		_tmpRecordFile.seek(0);
+	}
+
+	if (_recordMode == kRecorderPlayback) {
+		if (!parsePlaybackFile()) {
+			_recordMode = kPassthrough;
+			return;
 		}
+		if (!checkGameHash(gameDesc)) {
+			_recordMode = kPassthrough;
+			return;
+		}
+		getNextEvent();
 	}
 	switchMixer();
 	_fakeTimer = 0;
-	_recordCount = 0;
 	_lastMillis = 0;
-	_eventCount = 1;
-	_lastEventCount = 0;
-	_lastEventMillis = 0;
+	_headerDumped = false;
 }
 
-void EventRecorder::openRecordFile(Common::String gameId) {
+bool EventRecorder::openRecordFile(const String &gameId) {
 	Common::String fileName;
 	if (gameId.empty()) {
 		warning("Game id is undefined. Using default record file name.");
@@ -347,98 +370,47 @@ void EventRecorder::openRecordFile(Common::String gameId) {
 
 	if (_recordMode == kRecorderRecord) {
 		_recordFile = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(fileName), 128 * 1024);
-		_recordFile->writeUint32LE(RECORD_SIGNATURE);
-		_recordFile->writeUint32LE(RECORD_VERSION);
+		if (!_recordFile) {
+			warning("Cannot open file %s for recording. Record was switched off", fileName.c_str());
+			return false;
+		}
 	}
 
 	if (_recordMode == kRecorderPlayback) {
-		uint32 sign;
-		uint32 version;
-
 		_playbackFile = wrapBufferedSeekableReadStream(g_system->getSavefileManager()->openForLoading(fileName), 128 * 1024, DisposeAfterUse::YES);
 		if (!_playbackFile) {
 			warning("Cannot open playback file %s. Playback was switched off", fileName.c_str());
-			_recordMode = kPassthrough;
-			return;
-		}
-
-		sign = _playbackFile->readUint32LE();
-		if (sign != RECORD_SIGNATURE) {
-			warning("Unknown playback file signature");
-			_recordMode = kPassthrough;
-		}
-
-		version = _playbackFile->readUint32LE(); 
-		if (version != RECORD_VERSION) {
-			warning("Incorrect playback file version. Current version is %d", RECORD_VERSION);
-			_recordMode = kPassthrough;
+			return false;
 		}
 	}
+	return true;
 }
 
-void EventRecorder::checkGameHash(const ADGameDescription* gameDesc) {
-	uint8 md5RecordsCount = _playbackFile->readByte();
-	if ((gameDesc == NULL) && (md5RecordsCount != 0)) {
+bool EventRecorder::checkGameHash(const ADGameDescription* gameDesc) {
+	if ((gameDesc == NULL) && (_hashRecords.size() != 0)) {
 		warning("Engine doesn't contain description table");
-		_recordMode = kPassthrough;
-		return;
+		return false;
 	}
-	for (int i = 0; i < md5RecordsCount; ++i) {
-		String storedFileName = readString();
-		String storedMd5Hash = readString();
-		String engineMd5Hash = findMd5ByFileName(gameDesc, storedFileName);
-		if (!engineMd5Hash.empty()) {
-			if (!storedMd5Hash.equals(engineMd5Hash)) {
-				warning("Incorrect version of game file %s. Stored md5 is %s. Md5 of loaded game is %s", storedFileName, storedMd5Hash, engineMd5Hash);
-				_recordMode = kPassthrough;
-				return;
-			}
-		} else {
-			warning("Md5 hash for file %s not found", storedFileName);
+	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (_hashRecords.find(fileDesc->fileName) == _hashRecords.end()) {
+			warning("MD5 hash for file %s not found in record file", fileDesc->fileName);
+			return false;
+		}
+		if (_hashRecords[fileDesc->fileName] != fileDesc->md5) {
+			warning("Incorrect version of game file %s. Stored MD5 is %s. MD5 of loaded game is %s", fileDesc->fileName, _hashRecords[fileDesc->fileName].c_str(), fileDesc->md5);
+			return false;
 		}
 	}
+	return true;
 }
 
-Common::String EventRecorder::findMd5ByFileName(const ADGameDescription* gameDesc, String fileName) {
+Common::String EventRecorder::findMD5ByFileName(const ADGameDescription* gameDesc, const String &fileName) {
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 		if (fileName.equals(fileDesc->fileName)) {
 			return fileDesc->md5;
 		}
 	}
 	return String();
-}
-
-void EventRecorder::writeGameHash(const ADGameDescription* gameDesc) {
-	byte md5RecordsCount = 0;
-	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-		md5RecordsCount++;
-	}
-	_recordFile->writeByte(md5RecordsCount);
-	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-		_recordFile->writeString(fileDesc->fileName);
-		_recordFile->writeByte(0);
-		_recordFile->writeString(fileDesc->md5);
-		_recordFile->writeByte(0);
-	}
-}
-
-String EventRecorder::readString() {
-	String result;
-	char buf[50];
-	int count = 0;
-	char *ptr = buf;
-	while (*ptr = _playbackFile->readByte()) {
-		ptr++;
-		count++;
-		if (count > 48) {
-			*ptr = 0;
-			result += buf;
-			ptr = buf;
-		}
-	}
-	*ptr = 0;
-	result += buf;
-	return result;
 }
 
 void EventRecorder::registerMixerManager(SdlMixerManager* mixerManager) {
@@ -463,12 +435,223 @@ SdlMixerManager* EventRecorder::getMixerManager() {
 	}
 }
 
-Common::String EventRecorder::getAutor() {
-	return "Unknown Autor";
+Common::String EventRecorder::getAuthor() {
+	return "Unknown Author";
 }
 
 Common::String EventRecorder::getComment() {
 	return "Empty\ncomment";
 }
 
+bool EventRecorder::parsePlaybackFile() {
+	ChunkHeader nextChunk;
+	_playbackParseState = kFileStateCheckFormat;
+	nextChunk = readChunkHeader();
+	while ((_playbackParseState != kFileStateDone) && (_playbackParseState != kFileStateError)) {
+		if (processChunk(nextChunk)) {
+			nextChunk = readChunkHeader();
+		}
+	}
+	return _playbackParseState == kFileStateDone;
+}
+
+ChunkHeader EventRecorder::readChunkHeader() {
+	ChunkHeader result;
+	result.id = _playbackFile->readUint32LE();
+	result.len = _playbackFile->readUint32LE();
+	return result;
+}
+
+bool EventRecorder::processChunk(ChunkHeader &nextChunk) {
+	switch (_playbackParseState) {
+	case kFileStateCheckFormat:
+		if ((nextChunk.id == MKTAG('P','B','C','K')) && (nextChunk.len = _playbackFile->size() - 8)) {
+			_playbackParseState = kFileStateCheckVersion;
+		} else {
+			warning("Unknown playback file signature");
+			_playbackParseState = kFileStateError;
+		}
+		break;
+	case kFileStateCheckVersion:
+		if ((nextChunk.id == MKTAG('V','E','R','S')) && checkPlaybackFileVersion()) {
+			_playbackParseState = kFileStateSelectSection;
+		} else {
+			_recordMode = kPassthrough;
+			_playbackParseState = kFileStateError;
+		}
+		break;
+	case kFileStateSelectSection:
+		switch (nextChunk.id) {
+		case MKTAG('H','E','A','D'): 
+			_playbackParseState = kFileStateProcessHeader;
+			break;
+		case MKTAG('H','A','S','H'): 
+			_playbackParseState = kFileStateProcessHash;
+			break;
+		case MKTAG('R','A','N','D'): 
+			_playbackParseState = kFileStateProcessRandom;
+			break;
+		case MKTAG('R','C','D','S'): 
+			_playbackParseState = kFileStateDone;
+			return false;
+		default:
+			_playbackFile->skip(nextChunk.len);
+			break;
+		}
+		break;
+	case kFileStateProcessHeader:
+		switch (nextChunk.id) {
+		case MKTAG('H','A','U','T'): 
+			readAuthor(nextChunk);
+			break;
+		case MKTAG('H','C','M','T'):
+			readComment(nextChunk);
+			break;
+		default:
+			_playbackParseState = kFileStateSelectSection;
+			return false;
+		}
+		break;
+	case kFileStateProcessHash:
+		if (nextChunk.id == MKTAG('H','R','C','D')) {
+			readHashMap(nextChunk);
+		} else {
+			_playbackParseState = kFileStateSelectSection;
+			return false;
+		}
+		break;
+	case kFileStateProcessRandom:
+		if (nextChunk.id == MKTAG('R','R','C','D')) {
+			processRndSeedRecord(nextChunk);
+		} else {
+			_playbackParseState = kFileStateSelectSection;
+			return false;
+		}
+		break;
+	}
+	return true;
+}
+
+bool EventRecorder::checkPlaybackFileVersion() {
+	uint32 version;
+	version = _playbackFile->readUint32LE();
+	if (version != RECORD_VERSION) {
+		warning("Incorrect playback file version. Expected version %d, but got %d.", RECORD_VERSION, version);
+		return false;
+	}
+	return true;
+}
+
+void EventRecorder::readAuthor(ChunkHeader chunk) {
+	String author = readString(chunk.len);
+	warning("Author: %s", author.c_str());
+}
+
+void EventRecorder::readComment(ChunkHeader chunk) {
+	String comment = readString(chunk.len);
+	warning("Comments: %s", comment.c_str());
+}
+
+void EventRecorder::processRndSeedRecord(ChunkHeader chunk) {
+	String randomSourceName = readString(chunk.len - 4);
+	uint32 randomSourceSeed = _playbackFile->readUint32LE();
+	_randomSourceRecords[randomSourceName] = randomSourceSeed;
+}
+
+void EventRecorder::readHashMap(ChunkHeader chunk) {
+	String hashName = readString(chunk.len - 32);
+	String hashMd5 = readString(32);
+	_hashRecords[hashName] = hashMd5;
+}
+
+
+String EventRecorder::readString(int len) {
+	String result;
+	char buf[50];
+	int readSize = 49;
+	while (len > 0)	{
+		if (len <= 49) {
+			readSize = len;
+		}
+		_playbackFile->read(buf, readSize);
+		buf[readSize] = 0;
+		result += buf;
+		len -= readSize;
+	}
+	return result;
+}
+
+void EventRecorder::writeFormatId() {
+	_recordFile->writeUint32LE(MKTAG('P','B','C','K'));
+	_recordFile->writeUint32LE(0);
+}
+
+void EventRecorder::writeVersion() {
+	_recordFile->writeUint32LE(MKTAG('V','E','R','S'));
+	_recordFile->writeUint32LE(4);
+	_recordFile->writeUint32LE(RECORD_VERSION);
+}
+
+void EventRecorder::writeHeader() {
+	String author = getAuthor();
+	String comment = getComment();
+	uint32 headerSize = 0;
+	if (!author.empty()) {
+		headerSize = author.size() + 8;
+	}
+	if (!comment.empty()) {
+		headerSize += comment.size() + 8;
+	}
+	if (headerSize == 0) {
+		return;
+	}
+	_recordFile->writeUint32LE(MKTAG('H','E','A','D'));
+	_recordFile->writeUint32LE(headerSize);
+	if (!author.empty()) {
+		_recordFile->writeUint32LE(MKTAG('H','A','U','T'));
+		_recordFile->writeUint32LE(author.size());
+		_recordFile->writeString(author);
+	}
+	if (!comment.empty()) {
+		_recordFile->writeUint32LE(MKTAG('H','C','M','T'));
+		_recordFile->writeUint32LE(comment.size());
+		_recordFile->writeString(comment);
+	}
+}
+
+void EventRecorder::writeGameHash() {
+	uint32 hashSectionSize = 0;
+	for (StringMap::iterator i = _hashRecords.begin(); i != _hashRecords.end(); ++i) {
+		hashSectionSize = hashSectionSize + i->_key.size() + i->_value.size() + 8;
+	}
+	if (_hashRecords.size() == 0) {
+		return;
+	}
+	_recordFile->writeUint32LE(MKTAG('H','A','S','H'));
+	_recordFile->writeUint32LE(hashSectionSize);
+	for (StringMap::iterator i = _hashRecords.begin(); i != _hashRecords.end(); ++i) {
+		_recordFile->writeUint32LE(MKTAG('H','R','C','D'));
+		_recordFile->writeUint32LE(i->_key.size() + i->_value.size());
+		_recordFile->writeString(i->_key);
+		_recordFile->writeString(i->_value);
+	}
+}
+
+void EventRecorder::writeRandomRecords() {
+	uint32 randomSectionSize = 0;
+	for (randomSeedsDictionary::iterator i = _randomSourceRecords.begin(); i != _randomSourceRecords.end(); ++i) {
+		randomSectionSize = randomSectionSize + i->_key.size() + 12;
+	}
+	if (_randomSourceRecords.size() == 0) {
+		return;
+	}
+	_recordFile->writeUint32LE(MKTAG('R','A','N','D'));
+	_recordFile->writeUint32LE(randomSectionSize);
+	for (randomSeedsDictionary::iterator i = _randomSourceRecords.begin(); i != _randomSourceRecords.end(); ++i) {
+		_recordFile->writeUint32LE(MKTAG('R','R','C','D'));
+		_recordFile->writeUint32LE(i->_key.size() + 4);
+		_recordFile->writeString(i->_key);
+		_recordFile->writeUint32LE(i->_value);
+	}
+}
 } // End of namespace Common

@@ -34,8 +34,13 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "engines/advancedDetector.h"
+#include "common/hashmap.h"
 
 #define g_eventRec (Common::EventRecorder::instance())
+
+//capacity of records buffer
+#define kMaxBufferedRecords 10000
+#define kRecordBuffSize sizeof(RecorderEvent) * kMaxBufferedRecords
 
 namespace Common {
 
@@ -43,9 +48,14 @@ class RandomSource;
 class SeekableReadStream;
 class WriteStream;
 
-struct RecorderEvent :Common::Event {
+struct RecorderEvent : Common::Event {
 	uint32 time;
 	uint32 count;
+};
+
+struct ChunkHeader {
+	uint32 id;
+	uint32 len;
 };
 
 /**
@@ -71,20 +81,47 @@ public:
 	void init(Common::String gameid, const ADGameDescription* desc = NULL);
 	uint32 getTimer() {return _fakeTimer;}
 private:
+	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
+	enum PlaybackFileState {
+		kFileStateCheckFormat,
+		kFileStateCheckVersion,
+		kFileStateProcessHash,
+		kFileStateProcessHeader,
+		kFileStateProcessRandom,
+		kFileStateReadRnd,
+		kFileStateSelectSection,
+		kFileStateDone,
+		kFileStateError
+	};
+	bool parsePlaybackFile();
+	ChunkHeader readChunkHeader();
+	bool processChunk(ChunkHeader &nextChunk);
+	bool checkPlaybackFileVersion();
+	void readAuthor(ChunkHeader chunk);
+	void readComment(ChunkHeader chunk);
+	void readHashMap(ChunkHeader chunk);
+	void processRndSeedRecord(ChunkHeader chunk);
+
+	bool _headerDumped;
+	PlaybackFileState _playbackParseState;
 	MutexRef _recorderMutex;
 	SdlMixerManager* _realMixerManager;
 	NullSdlMixerManager* _fakeMixerManager;
 	void switchMixer();
 	void switchFastMode();
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
-	void openRecordFile(Common::String gameId);
-	void checkGameHash(const ADGameDescription* desc);
-	void writeGameHash(const ADGameDescription* desc);
+	void writeVersion();
+	void writeHeader();
+	void writeFormatId();
+	void writeGameHash();
+	void writeRandomRecords();
+	bool openRecordFile(const String &gameId);
+	bool checkGameHash(const ADGameDescription* desc);
 	bool notifyEvent(const Event &ev);
-	String getAutor();
+	String getAuthor();
 	String getComment();
-	String findMd5ByFileName(const ADGameDescription* gameDesc, String fileName);
-	Common::String readString();
+	String findMD5ByFileName(const ADGameDescription* gameDesc, const String &fileName);
+	Common::String readString(int len);
 	bool notifyPoll();
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
@@ -93,18 +130,16 @@ private:
 	void writeEvent(const RecorderEvent &event);
 	void checkForKeyCode(const Event &event);
 	void togglePause();
-	class RandomSourceRecord {
-	public:
-		String name;
-		uint32 seed;
-	};
+	void dumpRecordsToFile();
+	void dumpHeaderToFile();
 	RecorderEvent _nextEvent;
 	randomSeedsDictionary _randomSourceRecords;
+	StringMap _hashRecords;
 
 	volatile uint32 _recordCount;
-	volatile uint32 _lastRecordEvent;
-	volatile uint32 _lastEventMillis;
-	volatile uint32 _delayMillis;
+	volatile uint32 _recordSize;
+	byte _recordBuffer[kRecordBuffSize];
+	SeekableMemoryWriteStream _tmpRecordFile;
 	WriteStream *_recordFile;
 	MutexRef _timeMutex;
 	volatile uint32 _lastMillis;
@@ -114,9 +149,6 @@ private:
 	volatile bool _hasPlaybackEvent;
 	Event _playbackEvent;
 	SeekableReadStream *_playbackFile;
-
-	volatile uint32 _eventCount;
-	volatile uint32 _lastEventCount;
 
 	enum RecordMode {
 		kPassthrough = 0,
