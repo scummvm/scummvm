@@ -61,7 +61,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	}
 
 	for (int i = 0; i < 32; i++)
-		_array1813B[i] = 0;
+		_array1813BPos[i] = Common::Point(0, 0);
 
 	for (int i = 0; i < 40; i++) {
 		_characterScriptEnabled[i] = 1;
@@ -2826,25 +2826,25 @@ void LilliputScript::OC_sub1817F() {
 	
 	int b1 = var1 & 0xFF;
 	int b2 = var2 & 0xFF;
-	sub1818B(b1,b2);
+	sub1818B(Common::Point(b1, b2));
 }
 
 //TODO checkme: parameter order is maybe wrong
-void LilliputScript::sub1818B(int b1, int b2) {
-	debugC(2, kDebugScriptTBC, "sub1818B(%d, %d)", b1, b2);
+void LilliputScript::sub1818B(Common::Point pos) {
+	debugC(2, kDebugScriptTBC, "sub1818B(%d - %d)", pos.x, pos.y);
 	for (int i = 0; i <  _vm->_word1817B; i++) {
-		if ((_array1813B[i] >> 8) == b2 ) {
-			b2 += _array1813B[i] & 0xFF;
-			if (b2 > 0xFF) {
-				b2 = 0xFF;
-				++b1;
-			}
-			_array1813B[i] = (b1 << 8) + b2;
+		if (_array1813BPos[i].x == pos.x) {
+			pos.y += _array1813BPos[i].y;
+			if (pos.y > 0xFF)
+				pos.y = 0xFF;
+
+			_array1813BPos[i] = pos;
 			return;
 		}
 	}
 
-	_array1813B[_vm->_word1817B++] = (b1 << 8) + b2;
+	_array1813BPos[_vm->_word1817B] = pos;
+	++_vm->_word1817B;
 }
 
 //TODO checkme: case 0x2D is dubious
@@ -2874,8 +2874,7 @@ void LilliputScript::OC_sub181BB() {
 
 	int a = (_currScript->readUint16LE() * c) + (c & 0xFF);
 	b = (b & 0xFF00) + a;
-	sub1818B(b & 0xFF, b >> 8);
-
+	sub1818B(Common::Point(b >> 8, b & 0xFF));
 }
 
 void LilliputScript::OC_sub18213() {
@@ -2887,9 +2886,9 @@ void LilliputScript::OC_sub18213() {
 	int maxItem = var1 & 0xFF;
 
 	for (int i = 0; i < _vm->_word1817B; i++) {
-		if ((_array1813B[i] & 0xFF) > maxValue) {
-			maxValue = _array1813B[i] & 0xFF;
-			maxItem = _array1813B[i] >> 8;
+		if (_array1813BPos[i].y > maxValue) {
+			maxValue = _array1813BPos[i].y;
+			maxItem = _array1813BPos[i].x;
 		}
 	}
 	sub1823E(_vm->_currentScriptCharacter, maxItem, _vm->_currentCharacterVariables);
