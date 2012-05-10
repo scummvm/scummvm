@@ -82,7 +82,7 @@ public:
 	Common::Point _array12311[640];
 	byte _array128EF[40];
 	byte _array12839[40];
-	int _array1813B[32];
+	Common::Point _array1813BPos[32];
 
 	void sub130B6();
 
@@ -264,7 +264,7 @@ private:
 	void OC_sub1810A();
 	void OC_sub1812D();
 	void OC_sub1817F();
-	void sub1818B(int b1, int b2);
+	void sub1818B(Common::Point pos);
 	void OC_sub181BB();
 	void OC_sub18213();
 	void OC_sub18252();
