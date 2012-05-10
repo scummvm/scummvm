@@ -166,7 +166,7 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 			long_line = true;
 		}
 
-		if (str[index + 1] == '\0' || (MaxLenght >= 0 && index == MaxLenght - 1)) {
+		if (str.size() == (index + 1) || (MaxLenght >= 0 && index == MaxLenght - 1)) {
 			done = true;
 			if (!new_line) {
 				end = index;
