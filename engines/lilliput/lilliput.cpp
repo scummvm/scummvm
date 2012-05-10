@@ -590,7 +590,6 @@ void LilliputEngine::displayFunction12() {
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
 
-
 	displayFunction6();
 	displayFunction7();
 	displayInterfaceHotspots();
@@ -659,7 +658,7 @@ void LilliputEngine::restoreMapPoints() {
 void LilliputEngine::displayCharactersOnMap() {
 	debugC(2, kDebugEngineTBC, "displayCharactersOnMap()");
 
-	sub16217();
+	moveCharacters();
 	restoreSurfaceUnderMousePointer();
 
 	byte *buf = (byte *)_mainSurface->getPixels();
@@ -676,8 +675,8 @@ void LilliputEngine::displayCharactersOnMap() {
 	displayMousePointer();
 }
 
-void LilliputEngine::sub16217() {
-	debugC(2, kDebugEngineTBC, "sub16217()");
+void LilliputEngine::moveCharacters() {
+	debugC(2, kDebugEngine, "moveCharacters()");
 
 	_numCharactersToDisplay = 0;
 	int index = _numCharacters - 1;
@@ -711,8 +710,8 @@ void LilliputEngine::sub16217() {
 			_characterPositionY[i] = var4;
 		}
 
-		_scriptHandler->_array16123PosX[i] = _characterPositionX[i] >> 3;
-		_scriptHandler->_array1614BPosY[i] = _characterPositionY[i] >> 3;
+		_scriptHandler->_array16123PosX[i] = (_characterPositionX[i] >> 3);
+		_scriptHandler->_array1614BPosY[i] = (_characterPositionY[i] >> 3);
 		_characterRelativePositionX[i] = 0xFF;
 		_characterRelativePositionY[i] = 0xFF;
 		_characterDisplayX[i] = 0xFF;
@@ -737,7 +736,7 @@ void LilliputEngine::sub16217() {
 }
 
 void LilliputEngine::setNextDisplayCharacter(int var1) {
-	debugC(2, kDebugEngineTBC, "setNextDisplayCharacter(%d)", var1);
+	debugC(2, kDebugEngine, "setNextDisplayCharacter(%d)", var1);
 
 	byte charNum = var1 & 0xFF;
 	if ( charNum < _numCharactersToDisplay) {
@@ -751,7 +750,7 @@ void LilliputEngine::setNextDisplayCharacter(int var1) {
 void LilliputEngine::displayFunction15() {
 	debugC(2, kDebugEngineTBC, "displayFunction15()");
 
-	sub16217();
+	moveCharacters();
 	_currentDisplayCharacter = 0;
 	setNextDisplayCharacter(0);
 
@@ -964,7 +963,7 @@ void LilliputEngine::sub15F31(bool &forceReturnFl) {
 	sub130B6();
 	displayFunction12();
 	_scriptHandler->_heroismLevel = 0;
-	sub16217();
+	moveCharacters();
 	paletteFadeIn();
 	forceReturnFl = true;
 }
@@ -1135,14 +1134,13 @@ void LilliputEngine::displayChar(int index, int var1) {
 }
 
 void LilliputEngine::sortCharacters() {
-	debugC(2, kDebugEngineTBC, "sortCharacters()");
+	debugC(2, kDebugEngine, "sortCharacters()");
 
 	if (_numCharactersToDisplay <= 1)
 		return;
 
-	int var3;
-	for (int var4 = _numCharactersToDisplay - 1; var4 != 0; var4--) {
-		var3 = 0;
+	for (int var4 = _numCharactersToDisplay - 1; var4 > 0; var4--) {
+		bool found = false;
 
 		for (int var2 = 0; var2 < var4; var2++) {
 			int index1 = _charactersToDisplay[var2];
@@ -1169,10 +1167,10 @@ void LilliputEngine::sortCharacters() {
 			byte tmpVal = _charactersToDisplay[var2];
 			_charactersToDisplay[var2] = _charactersToDisplay[var2 + 1];
 			_charactersToDisplay[var2 + 1] = tmpVal;
-			++var3;
+			found = true;
 		}
 
-		if (var3 == 0)
+		if (!found)
 			return;
 	}
 }
