@@ -50,7 +50,6 @@
 #include "common/system.h"
 #include "common/fs.h"
 #include "common/file.h"
-//#include <boost/filesystem.hpp>
 
 #ifdef __WIN32__
 #   include <direct.h>
@@ -58,9 +57,9 @@
 #   include <unistd.h>
 #endif
 
-#ifdef __APPLE__
+/*#ifdef __APPLE__
 #   include <CoreFoundation/CoreFoundation.h>
-#endif
+#endif*/
 
 
 #if _DEBUG
@@ -316,7 +315,7 @@ HRESULT CBFileManager::InitPaths() {
 	// package files paths
 	AddPath(PATH_PACKAGE, "./");
 
-#ifdef __APPLE__
+/*#ifdef __APPLE__
 	// search .app path and Resources dir in the bundle
 	CFURLRef appUrlRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
 	CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
@@ -340,7 +339,7 @@ HRESULT CBFileManager::InitPaths() {
 	CFRelease(appUrlRef);
 	CFRelease(macPath);
 #endif
-#endif
+#endif*/
 
 
 	pathList = Game->_registry->ReadString("Resource", "PackagePaths", "");
