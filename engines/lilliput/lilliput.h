@@ -346,7 +346,7 @@ public:
 	void pollEvent();
 	void sub170EE(int index);
 	void sub130DD();
-	void sub16217();
+	void moveCharacters();
 	void setNextDisplayCharacter(int var1);
 	void handleGameScripts();
 
