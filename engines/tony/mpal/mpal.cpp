@@ -422,7 +422,7 @@ static int locGetOrderFromNum(uint32 nLoc) {
 
 static int msgGetOrderFromNum(uint32 nMsg) {
 	int i;
-	LPMPALMSG msg=lpmmMsgs;
+	LPMPALMSG msg = lpmmMsgs;
 
 	for (i = 0; i < nMsgs; i++, msg++)
 		if (msg->wNum == nMsg)
@@ -542,7 +542,7 @@ static char *DuplicateMessage(uint32 nMsgOrd) {
 	origmsg = (const char *)GlobalLock(lpmmMsgs[nMsgOrd].hText);
 
 	j = 0;
-	while (origmsg[j] != '\0' || origmsg[j+1] != '\0')
+	while (origmsg[j] != '\0' || origmsg[j + 1] != '\0')
 		j++;
 	j += 2;
 

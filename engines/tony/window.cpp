@@ -128,12 +128,32 @@ void RMWindow::WipeEffect(Common::Rect &rcBoundEllipse) {
 }
 
 void RMWindow::GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
-	Common::Rect bounds = (rcBoundEllipse) ? *rcBoundEllipse : Common::Rect(0, 0, RM_SX, RM_SY);
-
-	// Update a screen section
-	g_system->copyRectToScreen(lpBuf, RM_SX * 2, bounds.left, bounds.top, bounds.width(), bounds.height());
+	if (rcBoundEllipse != NULL) {
+		// Circular wipe effect
+		GetNewFrameWipe(lpBuf, *rcBoundEllipse);
+	} else {
+		// Standard screen copy
+		g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
+	}
 }
 
+/**
+ * Copies a section of the game frame in a circle bounded by the specified rectangle
+ */
+void RMWindow::GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
+	// Clear the screen
+	g_system->fillScreen(0);
+
+	if (!rcBoundEllipse.isValidRect())
+		return;
+
+	// TODO: Do a proper circular wipe
+	for (int yp = rcBoundEllipse.top; yp < rcBoundEllipse.bottom; ++yp) {
+		const byte *pSrc = lpBuf + (yp * RM_SX * 2) + rcBoundEllipse.left * 2;
+		
+		g_system->copyRectToScreen(pSrc, RM_SX * 2, rcBoundEllipse.left, yp, rcBoundEllipse.width(), 1);
+	}
+}
 
 /****************************************************************************\
 *       RMSnapshot Methods

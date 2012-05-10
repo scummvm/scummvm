@@ -97,6 +97,7 @@ protected:
 
 	void CreateBWPrecalcTable(void);
 	void WipeEffect(Common::Rect &rcBoundEllipse);
+	void GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse);
 
 public:
 	RMWindow();

@@ -566,7 +566,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 \****************************************************************************/
 
 #define mpalQueryDoDialog(nDialog,nGroup)               \
-        mpalQueryHANDLE(MPQ_DO_DIALOG, (uint32)(nDialog),(uint32)(nGroup))
+        mpalQueryDWORD(MPQ_DO_DIALOG, (uint32)(nDialog),(uint32)(nGroup))
 
 
 /****************************************************************************\

@@ -2615,10 +2615,10 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods(); _ctx->i++) 	{
 		_ctx->text[_ctx->i].SetInput(Input);
 
-		// Allineamento
+		// Alignment
 		if ((*_ctx->msg)[_ctx->i][0] == '@') {
 			_ctx->text[_ctx->i].SetAlignType(RMText::HCENTER, RMText::VTOP);
-			_ctx->text[_ctx->i].WriteText(_ctx->msg[_ctx->i][1], 3);
+			_ctx->text[_ctx->i].WriteText(&(*_ctx->msg)[_ctx->i][1], 3);
 			_ctx->text[_ctx->i].SetPosition(RMPoint(414, 70 + _ctx->i * 26));  // 70
 		} else {
 			_ctx->text[_ctx->i].SetAlignType(RMText::HLEFT,RMText::VTOP);
