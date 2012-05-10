@@ -49,6 +49,7 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 CBSoundBuffer::CBSoundBuffer(CBGame *inGame): CBBase(inGame) {
 	_stream = NULL;
+	_handle = new Audio::SoundHandle;
 //	_sync = NULL;
 
 	_streamed = false;
