@@ -472,8 +472,8 @@ void LilliputEngine::displayInterfaceHotspots() {
 	displayMousePointer();
 }
 
-void LilliputEngine::displayFunction9() {
-	debugC(2, kDebugEngineTBC, "displayFunction9()");
+void LilliputEngine::displayLandscape() {
+	debugC(2, kDebugEngine, "displayLandscape()");
 
 	memcpy(_buffer2_45k, _buffer3_45k, 45056);
 
@@ -484,12 +484,11 @@ void LilliputEngine::displayFunction9() {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8 ; j++) {
 			var2 = (j << 8) + i;
-			displayFunction13(_buffer2_45k, _bufferIsoMap[var1 + index], var2, 0);
+			displayIsometricBlock(_buffer2_45k, _bufferIsoMap[var1 + index], var2, 0);
 			index += 4;
 		}
 		index += 224;
 	}
-
 }
 
 // Display dialog bubble
@@ -595,7 +594,7 @@ void LilliputEngine::displayFunction12() {
 	displayFunction6();
 	displayFunction7();
 	displayInterfaceHotspots();
-	displayFunction9();
+	displayLandscape();
 	displayFunction15();
 	displayFunction14();
 
@@ -603,9 +602,9 @@ void LilliputEngine::displayFunction12() {
 	free(tmpBuf);
 }
 
-void LilliputEngine::displayFunction13(byte *buf, int var1, int var2, int var3) {
-	debugC(1, kDebugEngineTBC, "displayFunction13(buf, %d, %d, %d)", var1, var2, var3);
-	
+void LilliputEngine::displayIsometricBlock(byte *buf, int var1, int var2, int var3) {
+	debugC(1, kDebugEngine, "displayIsometricBlock(buf, %d, %d, %d)", var1, var2, var3);
+
 	byte tmpByte1 = ((7 + (var2 >> 8) - (var2 & 0xFF)) << 4) & 0xFF;
 	byte tmpByte2 = ((4 + (var2 >> 8) + (var2 & 0xFF) - (var3 >> 7) ) << 3) & 0xFF;
 
@@ -768,7 +767,7 @@ void LilliputEngine::displayFunction15() {
 				int var1 = map[1];
 				if (_rulesChunk9[var1] != 128)
 					var1 += _scriptHandler->_byte12A04;
-				displayFunction13(_buffer1_45k, var1, tmpVal, 1 << 8);
+				displayIsometricBlock(_buffer1_45k, var1, tmpVal, 1 << 8);
 			}
 			renderCharacters(map, Common::Point(j, i));
 
@@ -776,7 +775,7 @@ void LilliputEngine::displayFunction15() {
 				int var1 = map[2];
 				if (_rulesChunk9[var1] != 128)
 					var1 += _scriptHandler->_byte12A04;
-				displayFunction13(_buffer1_45k, var1, tmpVal, 2 << 8);
+				displayIsometricBlock(_buffer1_45k, var1, tmpVal, 2 << 8);
 			}
 			map += 4;
 		}
@@ -1242,7 +1241,7 @@ void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
 		_scriptHandler->_viewportPos.x += dx;
 		_scriptHandler->_viewportPos.y += dy;
 		
-		displayFunction9();
+		displayLandscape();
 		displayFunction15();
 		displayFunction14();
 
@@ -1271,17 +1270,16 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 	}
 
 	int index = _charactersToDisplay[_currentDisplayCharacter];
-	int displayX = _characterDisplayX[index];
-	int displayY = _characterDisplayY[index];
+	Common::Point characterPos = Common::Point(_characterDisplayX[index], _characterDisplayY[index]);
 
 	if (index == _scriptHandler->_word1881B)
-		sub1546F(displayX, displayY);
+		sub1546F(characterPos);
 
 	if (_byte16552 != 1) {
-		int flag = _characterDirectionArray[index];
-		int frame = _characterFrameArray[index];
+		byte flag = _characterDirectionArray[index];
+		int16 frame = _characterFrameArray[index];
 
-		if (frame != 0xFFFF) {
+		if (frame != -1) {
 			frame += _scriptHandler->_array10AB1[index];
 			if ((flag & 1) == 1)
 				frame += _spriteSizeArray[index];
@@ -1292,7 +1290,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 				frame = -frame;
 			}
 
-			displayCharacter(frame, Common::Point(displayX, displayY), flag);
+			displayCharacter(frame, characterPos, flag);
 		}
 	}
 
@@ -1302,11 +1300,11 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 	renderCharacters(buf, pos);
 }
 
-void LilliputEngine::sub1546F(byte displayX, byte displayY) {
-	debugC(2, kDebugEngineTBC, "sub1546F(%d, %d)", displayX, displayY);
+void LilliputEngine::sub1546F(Common::Point displayPos) {
+	debugC(2, kDebugEngineTBC, "sub1546F(%d, %d)", displayPos.x, displayPos.y);
 	
-	int orgX = displayX + 8;
-	int orgY = displayY;
+	int orgX = displayPos.x + 8;
+	int orgY = displayPos.y;
 	int var2 = 0;
 	
 	int x = orgX;
@@ -1539,7 +1537,7 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	if (var2 == -1)
 		return 1;
 
-	int _word16A74 = var2; // useless?
+//	int _word16A74 = var2; // useless?
 
 	var1h = _word16937Pos.x;
 	var1l = _word16937Pos.y;

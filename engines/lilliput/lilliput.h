@@ -155,7 +155,7 @@ public:
 	int16 _characterPositionX[40];
 	int16 _characterPositionY[40];
 	char _characterPositionAltitude[40];
-	int _characterFrameArray[40];
+	int16 _characterFrameArray[40];
 	byte _rulesBuffer2_5[40];
 	byte _rulesBuffer2_6[40];
 	byte _rulesBuffer2_7[40];
@@ -228,11 +228,11 @@ public:
 	void displayFunction6();
 	void displayFunction7();
 	void displayInterfaceHotspots();
-	void displayFunction9();
+	void displayLandscape();
 	void displayFunction10();
 	void displayFunction11(byte *buf);
 	void displayFunction12();
-	void displayFunction13(byte *buf, int var1, int var2, int var3);
+	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);
 	void displayFunction14();
 	void displayFunction15();
 	void displayFunction16();
@@ -287,7 +287,7 @@ public:
 	int sub13240(Common::Point mousePos, int var3, int var4);
 	void sub131B2(Common::Point pos, bool &forceReturnFl);
 	void sub131FC(Common::Point pos);
-	void sub1546F(byte displayX, byte displayY);
+	void sub1546F(Common::Point displayPos);
 	void sub15498(byte x, byte y, int var2);
 	void sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex);
 	void sub15F31(bool &forceReturnFl);

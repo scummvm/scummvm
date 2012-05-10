@@ -64,7 +64,7 @@ public:
 	char _array16123PosX[40];
 	char _array1614BPosY[40];
 	byte _array12811[40];
-	byte _array10AB1[40];
+	char _array10AB1[40];
 	byte _array122FD[20];
 	byte _array122C1[40];
 	byte _array10A39[40];
@@ -146,14 +146,14 @@ private:
 	Common::Point getPosFromScript();
 
 	byte *getCharacterVariablePtr();
-	byte compareValues(byte var1, int oper, int var2);
+	byte compareValues(int var1, int oper, int var2);
 	void computeOperation(byte *bufPtr, int oper, int var2);
 
 	//Opcodes Type 1
 	byte OC_checkCharacterGoalPos();
 	byte OC_comparePos();
 	byte OC_sub1740A();
-	byte OC_sub17434();
+	byte OC_compareCharacterId();
 	byte OC_sub17468();
 	byte OC_getRandom();
 	byte OC_for();

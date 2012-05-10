@@ -98,7 +98,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_sub1740A();
 		break;
 	case 0x3:
-		return OC_sub17434();
+		return OC_compareCharacterId();
 		break;
 	case 0x4:
 		return OC_sub17468();
@@ -563,7 +563,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_checkCharacterGoalPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_comparePos", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
 	{ "OC_sub1740A", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub17434", 4, kGetValue1, kImmediateValue, kCompareOperation, kImmediateValue, kNone },
+	{ "OC_compareCharacterId", 4, kGetValue1, kImmediateValue, kCompareOperation, kImmediateValue, kNone },
 	{ "OC_sub17468", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_getRandom", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_for", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
@@ -965,18 +965,25 @@ void LilliputScript::sub185ED(byte index, byte subIndex) {
 	_vm->display16x16IndexedBuf(_vm->_bufferIdeogram, _vm->_arr18560[index]._field5[subIndex], _vm->_arr18560[index]._field1);
 }
 
-byte LilliputScript::compareValues(byte var1, int oper, int var2) {
-	debugC(2, kDebugScriptTBC, "compareValues(%d, %c, %d)", var1, oper & 0xFF, var2);
+byte LilliputScript::compareValues(int var1, int oper, int var2) {
+	debugC(2, kDebugScript, "compareValues(%d, %c, %d)", var1, oper & 0xFF, var2);
 
 	switch (oper & 0xFF) {
 	case '<':
-		return (var1 < var2);
+		if (var1 < var2)
+			return 1;
+		break;
 	case '>':
-		return (var1 > var2);
+		if (var1 > var2)
+			return 1;
+		break;
 	default:
-		return (var1 == var2);
+		if (var1 == var2)
+			return 1;
 		break;
 	}
+
+	return 0;
 }
 
 void LilliputScript::computeOperation(byte *bufPtr, int oper, int var3) {
@@ -1274,7 +1281,7 @@ void LilliputScript::sub18B3C(int var) {
 }
 
 int16 LilliputScript::getValue1() {
-	debugC(2, kDebugScriptTBC, "getValue1()");
+	debugC(2, kDebugScript, "getValue1()");
 
 	int16 curWord = _currScript->readUint16LE();
 	if (curWord < 1000)
@@ -1366,7 +1373,7 @@ void LilliputScript::sub130B6() {
 }
 
 byte *LilliputScript::getCharacterVariablePtr() {
-	debugC(2, kDebugScriptTBC, "getCharacterVariablePtr()");
+	debugC(2, kDebugScript, "getCharacterVariablePtr()");
 
 	int8 tmpVal = (int8) (getValue1() & 0xFF);
 	int index = tmpVal * 32;
@@ -1420,9 +1427,8 @@ byte LilliputScript::OC_sub1740A() {
 	}
 }
 
-// Compare field0 with value -> character id?
-byte LilliputScript::OC_sub17434() {
-	debugC(1, kDebugScriptTBC, "OC_sub17434()");
+byte LilliputScript::OC_compareCharacterId() {
+	debugC(1, kDebugScript, "OC_compareCharacterId()");
 
 	byte *tmpArr = getCharacterVariablePtr();
 	byte var1 = tmpArr[0];
@@ -2410,7 +2416,7 @@ void LilliputScript::OC_sub17C0E() {
 
 	if (b2 == 0) {
 		_byte12A09 = 1;
-		_vm->displayFunction9();
+		_vm->displayLandscape();
 		_byte12A09 = 0;
 	}
 }
@@ -2802,7 +2808,7 @@ void LilliputScript::OC_sub1810A() {
 	_viewportCharacterTarget = 0xFFFF;
 	_viewportPos = getPosFromScript();
 
-	_vm->displayFunction9();
+	_vm->displayLandscape();
 	_vm->displayFunction15();
 }
 
@@ -2933,15 +2939,15 @@ void LilliputScript::OC_PaletteFadeIn() {
 }
 
 void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
-	debugC(1, kDebugScriptTBC, "OC_loadAndDisplayCUBESx_GFX()");
+	debugC(1, kDebugScript, "OC_loadAndDisplayCUBESx_GFX()");
 
-	int curWord = _currScript->readUint16LE();
+	int curWord = (_currScript->readUint16LE() & 0xFF);
 	assert((curWord >= 0) && (curWord <= 9));
 	Common::String fileName = Common::String::format("CUBES%d.GFX", curWord);
-	_byte10806 = curWord + 0x30;
+	_byte10806 = curWord + 0x30; // Useless?
 
 	_vm->_bufferCubegfx = _vm->loadVGA(fileName, 61440, false);
-	_vm->displayFunction9();
+	_vm->displayLandscape();
 	_vm->displayFunction15();
 }
 
