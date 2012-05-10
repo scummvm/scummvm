@@ -252,9 +252,9 @@ bool StringUtil::EndsWith(const AnsiString &str, const AnsiString &pattern, bool
 		if (strLength < patternLength || patternLength == 0)
 			return false;
 		
-		Common::String endPart(str.c_str(), strLength - patternLength);
+		Common::String endPart(str.c_str() + (strLength - patternLength), patternLength);
 		uint32 likeness = str.compareToIgnoreCase(pattern.c_str());
-		return (likeness == 0);
+		return (likeness != 0);
 	}
 }
 
