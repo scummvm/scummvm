@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+//#include <ft2build.h>
+//#include FT_FREETYPE_H
 #include "dcgf.h"
 #include "BFile.h"
 #include "BFontTT.h"
@@ -56,10 +56,10 @@ CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
 
-
+#if 0
 	_fTFace = NULL;
 	_fTStream = NULL;
-
+#endif
 	_glyphCache = NULL;
 
 	_ascender = _descender = _lineHeight = _pointSize = _underlinePos = 0;
@@ -81,14 +81,14 @@ CBFontTT::~CBFontTT(void) {
 
 	delete _glyphCache;
 	_glyphCache = NULL;
-
+#if 0
 	if (_fTFace) {
 		FT_Done_Face(_fTFace);
 		_fTFace = NULL;
 	}
 	delete[] _fTStream;
 	_fTStream = NULL;
-
+#endif
 }
 
 
@@ -596,7 +596,8 @@ void CBFontTT::AfterLoad() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFontTT::InitFont() {
 	if (!_fontFile) return E_FAIL;
-
+	warning("BFontTT::InitFont - Not ported yet");
+	return E_FAIL;
 	CBFile *file = Game->_fileManager->OpenFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
@@ -608,7 +609,7 @@ HRESULT CBFontTT::InitFont() {
 			return E_FAIL;
 		}
 	}
-
+#if 0
 	FT_Error error;
 
 	float vertDpi = 96.0;
@@ -665,7 +666,7 @@ HRESULT CBFontTT::InitFont() {
 	_glyphCache = new FontGlyphCache();
 	_glyphCache->Initialize();
 
-
+#endif
 	return S_OK;
 }
 
@@ -673,6 +674,7 @@ HRESULT CBFontTT::InitFont() {
 //////////////////////////////////////////////////////////////////////////
 // I/O bridge between FreeType and WME file system
 //////////////////////////////////////////////////////////////////////////
+/*
 unsigned long CBFontTT::FTReadSeekProc(FT_Stream stream, unsigned long offset,  unsigned char *buffer, unsigned long count) {
 	CBFile *f = static_cast<CBFile *>(stream->descriptor.pointer);
 	if (!f) return 0;
@@ -694,7 +696,7 @@ void CBFontTT::FTCloseProc(FT_Stream stream) {
 
 	Game->_fileManager->CloseFile(f);
 	stream->descriptor.pointer = NULL;
-}
+}*/
 
 
 
@@ -800,7 +802,7 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 float CBFontTT::GetKerning(wchar_t leftChar, wchar_t rightChar) {
 	GlyphInfo *infoLeft = _glyphCache->GetGlyph(leftChar);
 	GlyphInfo *infoRight = _glyphCache->GetGlyph(rightChar);
-
+#if 0
 	if (!infoLeft || !infoRight) return 0;
 
 	FT_Vector delta;
@@ -808,6 +810,8 @@ float CBFontTT::GetKerning(wchar_t leftChar, wchar_t rightChar) {
 	if (error) return 0;
 
 	return delta.x * (1.0f / 64.0f);
+#endif
+	return 0;
 }
 
 
@@ -822,6 +826,7 @@ void CBFontTT::PrepareGlyphs(const WideString &text) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::CacheGlyph(wchar_t ch) {
+#if 0
 	FT_UInt glyphIndex = FT_Get_Char_Index(_fTFace, ch);
 	if (!glyphIndex) return;
 
@@ -857,6 +862,7 @@ void CBFontTT::CacheGlyph(wchar_t ch) {
 	_glyphCache->AddGlyph(ch, glyphIndex, _fTFace->glyph, _fTFace->glyph->bitmap.width, _fTFace->glyph->bitmap.rows, pixels, stride);
 
 	if (tempBuffer) delete [] tempBuffer;
+#endif
 }
 
 } // end of namespace WinterMute

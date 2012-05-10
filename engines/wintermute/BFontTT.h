@@ -127,8 +127,8 @@ public:
 	HRESULT LoadBuffer(byte  *Buffer);
 	HRESULT LoadFile(char *Filename);
 
-	static unsigned long FTReadSeekProc(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count);
-	static void FTCloseProc(FT_Stream stream);
+/*	static unsigned long FTReadSeekProc(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count);
+	static void FTCloseProc(FT_Stream stream);*/
 
 	FontGlyphCache *GetGlyphCache() {
 		return _glyphCache;
@@ -157,8 +157,8 @@ private:
 	CBCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
 
 	HRESULT InitFont();
-	FT_Stream _fTStream;
-	FT_Face _fTFace;
+	//FT_Stream _fTStream;
+	//FT_Face _fTFace;
 
 	FontGlyphCache *_glyphCache;
 

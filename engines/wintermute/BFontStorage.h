@@ -34,8 +34,8 @@
 #include "persistent.h"
 #include "coll_templ.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+/*#include <ft2build.h>
+#include FT_FREETYPE_H*/
 
 namespace WinterMute {
 
@@ -52,13 +52,13 @@ public:
 	CBArray<CBFont *, CBFont *> _fonts;
 	HRESULT InitLoop();
 
-	FT_Library GetFTLibrary() const {
+/*	FT_Library GetFTLibrary() const {
 		return _fTLibrary;
-	}
+	}*/
 
 private:
 	void InitFreeType();
-	FT_Library _fTLibrary;
+	//FT_Library _fTLibrary;
 };
 
 } // end of namespace WinterMute

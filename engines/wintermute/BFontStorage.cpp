@@ -43,7 +43,7 @@ IMPLEMENT_PERSISTENT(CBFontStorage, true)
 
 //////////////////////////////////////////////////////////////////////////
 CBFontStorage::CBFontStorage(CBGame *inGame): CBBase(inGame) {
-	_fTLibrary = NULL;
+//	_fTLibrary = NULL;
 	InitFreeType();
 }
 
@@ -56,10 +56,12 @@ CBFontStorage::~CBFontStorage() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBFontStorage::InitFreeType() {
+#if 0
 	FT_Error error = FT_Init_FreeType(&_fTLibrary);
 	if (error) {
 		Game->LOG(0, "Error initializing FreeType library.");
 	}
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -72,9 +74,9 @@ HRESULT CBFontStorage::Cleanup(bool Warn) {
 	}
 	_fonts.RemoveAll();
 
-
+#if 0
 	if (_fTLibrary) FT_Done_FreeType(_fTLibrary);
-
+#endif
 
 	return S_OK;
 }

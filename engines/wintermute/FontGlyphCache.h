@@ -109,7 +109,7 @@ public:
 	void Initialize();
 	bool HasGlyph(wchar_t ch);
 	GlyphInfo *GetGlyph(wchar_t ch);
-	void AddGlyph(wchar_t ch, int glyphIndex, FT_GlyphSlot glyphSlot, size_t width, size_t height, byte *pixels, size_t stride = 0);
+	//void AddGlyph(wchar_t ch, int glyphIndex, FT_GlyphSlot glyphSlot, size_t width, size_t height, byte *pixels, size_t stride = 0);
 
 private:
 	//typedef Common::HashMap<wchar_t, GlyphInfo *> GlyphInfoMap;
