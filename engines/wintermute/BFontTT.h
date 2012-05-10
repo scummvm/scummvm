@@ -32,10 +32,11 @@
 #include "BFontStorage.h"
 #include "BFont.h"
 #include "BSurface.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
 
 #define NUM_CACHED_TEXTS 30
-class SDL_Surface;
-class SDL_Rect;
+
 namespace WinterMute {
 
 class FontGlyphCache;
@@ -150,7 +151,7 @@ private:
 	void CacheGlyph(wchar_t ch);
 
 	CBSurface *RenderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
-	void BlitSurface(SDL_Surface *src, SDL_Surface *target, SDL_Rect *targetRect);
+	void BlitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect);
 
 
 	CBCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];

@@ -181,7 +181,10 @@ HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte 
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBSurfaceSDL::GenAlphaMask(SDL_Surface *surface) {
+void CBSurfaceSDL::GenAlphaMask(Graphics::Surface *surface) {
+	warning("CBSurfaceSDL::GenAlphaMask - Not ported yet");
+	return;
+#if 0
 	delete[] _alphaMask;
 	_alphaMask = NULL;
 	if (!surface) return;
@@ -220,13 +223,16 @@ void CBSurfaceSDL::GenAlphaMask(SDL_Surface *surface) {
 		delete[] _alphaMask;
 		_alphaMask = NULL;
 	}
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
-Uint32 CBSurfaceSDL::GetPixel(SDL_Surface *surface, int x, int y) {
+uint32 CBSurfaceSDL::GetPixel(Graphics::Surface *surface, int x, int y) {
+	warning("CBSurfaceSDL::GetPixel - Not ported yet");
+#if 0
 	int bpp = surface->format->BytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
 	switch (bpp) {
 	case 1:
@@ -251,6 +257,7 @@ Uint32 CBSurfaceSDL::GetPixel(SDL_Surface *surface, int x, int y) {
 	default:
 		return 0;       /* shouldn't happen, but avoids warnings */
 	}
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -271,7 +278,7 @@ HRESULT CBSurfaceSDL::Create(int Width, int Height) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::CreateFromSDLSurface(SDL_Surface *surface) {
+HRESULT CBSurfaceSDL::CreateFromSDLSurface(Graphics::Surface *surface) {
 	warning("CBSurfaceSDL::CreateFromSDLSurface not ported yet"); //TODO
 #if 0
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
@@ -314,7 +321,7 @@ bool CBSurfaceSDL::IsTransparentAt(int X, int Y) {
 bool CBSurfaceSDL::IsTransparentAtLite(int X, int Y) {
 	//if (!_lockPixels) return false;
 
-	Uint32 format;
+	uint32 format;
 	int access;
 	int width, height;
 	// This particular warning is rather messy, as this function is called a ton,

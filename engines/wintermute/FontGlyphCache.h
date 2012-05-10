@@ -27,8 +27,8 @@ THE SOFTWARE.
 #define __WmeFontGlyphCache_H__
 
 
-#include "SDL.h"
 #include "BFontStorage.h"
+#include "graphics/surface.h"
 
 namespace WinterMute {
 
@@ -46,7 +46,8 @@ public:
 	}
 
 	~GlyphInfo() {
-		if (_image) SDL_FreeSurface(_image);
+		// TODO
+		//if (_image) SDL_FreeSurface(_image);
 	}
 
 	void SetGlyphInfo(float AdvanceX, float AdvanceY, int BearingX, int BearingY) {
@@ -79,7 +80,7 @@ public:
 	int GetBearingY() {
 		return _bearingY;
 	}
-	SDL_Surface *GetImage() {
+	Graphics::Surface *GetImage() {
 		return _image;
 	}
 
@@ -94,7 +95,7 @@ private:
 	int _width;
 	int _height;
 
-	SDL_Surface *_image;
+	Graphics::Surface *_image;
 };
 
 

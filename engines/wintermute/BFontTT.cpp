@@ -238,7 +238,8 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 
 
 	TextLineList::iterator it;
-
+	warning("CBFontTT::RenderTextToTexture - Not ported yet");
+#if 0 //TODO
 	int textHeight = lines.size() * (_maxCharHeight + _ascender);
 	SDL_Surface *surface = SDL_CreateRGBSurface(0, width, textHeight, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 
@@ -328,21 +329,24 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 		delete wmeSurface;
 		return NULL;
 	}
+#endif
+	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::BlitSurface(SDL_Surface *src, SDL_Surface *target, SDL_Rect *targetRect) {
+void CBFontTT::BlitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect) {
 	//SDL_BlitSurface(src, NULL, target, targetRect);
-
+	warning("CBFontTT::BlitSurface - not ported yet");
+#if 0
 	for (int y = 0; y < src->h; y++) {
 		if (targetRect->y + y < 0 || targetRect->y + y >= target->h) continue;
 
 
-		Uint8 *srcBuf = (Uint8 *)src->pixels + y * src->pitch;
-		Uint8 *tgtBuf = (Uint8 *)target->pixels + (y + targetRect->y) * target->pitch;
+		uint8 *srcBuf = (uint8 *)src->pixels + y * src->pitch;
+		uint8 *tgtBuf = (uint8 *)target->pixels + (y + targetRect->y) * target->pitch;
 
-		Uint32 *srcBuf32 = (Uint32 *)srcBuf;
-		Uint32 *tgtBuf32 = (Uint32 *)tgtBuf;
+		uint32 *srcBuf32 = (uint32 *)srcBuf;
+		uint32 *tgtBuf32 = (uint32 *)tgtBuf;
 
 		for (int x = 0; x < src->w; x++) {
 			if (targetRect->x + x < 0 || targetRect->x + x >= target->w) continue;
@@ -350,7 +354,7 @@ void CBFontTT::BlitSurface(SDL_Surface *src, SDL_Surface *target, SDL_Rect *targ
 			tgtBuf32[x + targetRect->x] = srcBuf32[x];
 		}
 	}
-
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

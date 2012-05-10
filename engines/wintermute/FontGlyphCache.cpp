@@ -71,6 +71,8 @@ void FontGlyphCache::AddGlyph(wchar_t ch, int glyphIndex, FT_GlyphSlot glyphSlot
 
 //////////////////////////////////////////////////////////////////////////
 void GlyphInfo::SetGlyphImage(size_t width, size_t height, size_t stride, byte *pixels) {
+	warning("GlyphInfo::SetGlyphImage - Not ported yet");
+#if 0
 	if (_image) SDL_FreeSurface(_image);
 
 	_image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
@@ -91,6 +93,7 @@ void GlyphInfo::SetGlyphImage(size_t width, size_t height, size_t stride, byte *
 	}
 
 	SDL_UnlockSurface(_image);
+#endif
 }
 
 } // end of namespace WinterMute

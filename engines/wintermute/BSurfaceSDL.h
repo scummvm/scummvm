@@ -31,9 +31,8 @@
 
 #include "graphics/surface.h"
 #include "BSurface.h"
-#include "SDL.h" // TODO, remove
-class SDL_Texture;
-class SDL_Surface;
+#include "graphics/surface.h"
+
 namespace WinterMute {
 
 class CBSurfaceSDL : public CBSurface {
@@ -44,7 +43,7 @@ public:
 	HRESULT Create(char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
 	HRESULT Create(int Width, int Height);
 
-	HRESULT CreateFromSDLSurface(SDL_Surface *surface);
+	HRESULT CreateFromSDLSurface(Graphics::Surface *surface); //TODO: Rename function
 
 	bool IsTransparentAt(int X, int Y);
 	bool IsTransparentAtLite(int X, int Y);
@@ -69,8 +68,8 @@ private:
 	Graphics::Surface *_surface;
 
 	HRESULT DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float ZoomY, uint32 Alpha, bool AlphaDisable, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY, int offsetX = 0, int offsetY = 0);
-	void GenAlphaMask(SDL_Surface *surface);
-	uint32 GetPixel(SDL_Surface *surface, int x, int y);
+	void GenAlphaMask(Graphics::Surface *surface);
+	uint32 GetPixel(Graphics::Surface *surface, int x, int y);
 
 	void *_lockPixels;
 	int _lockPitch;

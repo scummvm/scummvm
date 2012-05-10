@@ -30,7 +30,6 @@
 #define WINTERMUTE_BRENDERER_SDL_H
 
 #include "BRenderer.h"
-/*#include "SDL.h"*/
 #include "common/rect.h"
 #include "graphics/surface.h"
 

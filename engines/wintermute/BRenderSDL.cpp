@@ -36,7 +36,6 @@
 #include "engines/wintermute/BGame.h"
 #include "engines/wintermute/BSprite.h"
 #include "common/system.h"
-#include "SDL.h"
 
 namespace WinterMute {
 
@@ -147,7 +146,8 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	if (!_win) return E_FAIL;
 #endif
 
-	SDL_ShowCursor(SDL_DISABLE);
+	warning("TODO: Hide cursor");
+	//SDL_ShowCursor(SDL_DISABLE);
 
 #ifdef __IPHONEOS__
 	// SDL defaults to OGL ES2, which doesn't work on old devices
@@ -366,11 +366,12 @@ const char *CBRenderSDL::GetName() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::SetViewport(int left, int top, int right, int bottom) {
-	SDL_Rect rect;
-	rect.x = left + _borderLeft;
-	rect.y = top + _borderTop;
-	rect.w = (right - left) * _ratioX;
-	rect.h = (bottom - top) * _ratioY;
+	Common::Rect rect;
+	// TODO: Hopefully this is the same logic that ScummVM uses.
+	rect.left = left + _borderLeft;
+	rect.top = top + _borderTop;
+	rect.right = (right - left) * _ratioX;
+	rect.bottom = (bottom - top) * _ratioY;
 
 	// TODO fix this once viewports work correctly in SDL/landscape
 #ifndef __IPHONEOS__
