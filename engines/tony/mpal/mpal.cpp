@@ -996,7 +996,6 @@ void ActionThread(CORO_PARAM, const void *param) {
 			LockVar();
 			varSetValue(item->Command[_ctx->k].lpszVarName, EvaluateExpression(item->Command[_ctx->k].expr));
 			UnlockVar();
-			break;
 
 		} else {
 			mpalError = 1;
