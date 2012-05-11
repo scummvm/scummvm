@@ -49,7 +49,7 @@ IMPLEMENT_PERSISTENT(CScEngine, true)
 CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 	Game->LOG(0, "Initializing scripting engine...");
 
-
+/*
 #ifdef __WIN32__
 	char CompilerPath[MAX_PATH];
 	strcpy(CompilerPath, COMPILER_DLL);
@@ -88,14 +88,15 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 			c.Dll_LoadFile = LoadFile;
 			ExtSetCallbacks(&c, Game);
 			*/
-
+/*
 			_compilerAvailable = true;
 		}
 	} else _compilerAvailable = false;
 #else
+*/
 	_compilerAvailable = false;
 	_compilerDLL = NULL;
-#endif
+//#endif
 
 
 	if (_compilerAvailable) Game->LOG(0, "  Script compiler bound successfuly");

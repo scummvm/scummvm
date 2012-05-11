@@ -103,9 +103,7 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 		delete Game;
 		Game = NULL;
 
-#ifdef __WIN32__
-		::MessageBox(NULL, "Some of the essential files are missing. Please reinstall.", NULL, MB_OK | MB_ICONERROR);
-#endif
+		warning("Some of the essential files are missing. Please reinstall.");
 		return 2;
 	}
 
@@ -325,18 +323,16 @@ int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 // Win32 API bindings
 //////////////////////////////////////////////////////////////////////////
 HINSTANCE CBPlatform::ShellExecute(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, INT nShowCmd) {
-#ifdef __WIN32__
-	return ::ShellExecute(hwnd, lpOperation, lpFile, lpParameters, lpDirectory, nShowCmd);
-#else
 	return NULL;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBPlatform::OutputDebugString(LPCSTR lpOutputString) {
+/*
 #ifdef __WIN32__
 	::OutputDebugString(lpOutputString);
 #endif
+*/
 }
 
 
@@ -373,11 +369,7 @@ BOOL CBPlatform::SetCursorPos(int X, int Y) {
 
 //////////////////////////////////////////////////////////////////////////
 BOOL CBPlatform::ShowWindow(HWND hWnd, int nCmdShow) {
-#ifdef __WIN32__
-	return ::ShowWindow(hWnd, nCmdShow);
-#else
 	return FALSE;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -400,29 +392,17 @@ bool CBPlatform::CopyFile(const char *from, const char *to, bool failIfExists) {
 
 //////////////////////////////////////////////////////////////////////////
 HWND CBPlatform::SetCapture(HWND hWnd) {
-#ifdef __WIN32__
-	return ::SetCapture(hWnd);
-#else
 	return NULL;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 BOOL CBPlatform::ReleaseCapture() {
-#ifdef __WIN32__
-	return ::ReleaseCapture();
-#else
 	return FALSE;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 BOOL CBPlatform::SetForegroundWindow(HWND hWnd) {
-#ifdef __WIN32__
-	return ::SetForegroundWindow(hWnd);
-#else
 	return FALSE;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -539,20 +519,12 @@ AnsiString CBPlatform::GetPlatformName() {
 
 //////////////////////////////////////////////////////////////////////////
 int scumm_stricmp(const char *str1, const char *str2) {
-#ifdef __WIN32__
-	return ::stricmp(str1, str2);
-#else
 	return ::strcasecmp(str1, str2);
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 int scumm_strnicmp(const char *str1, const char *str2, size_t maxCount) {
-#ifdef __WIN32__
-	return ::strnicmp(str1, str2, maxCount);
-#else
 	return ::strncasecmp(str1, str2, maxCount);
-#endif
 }
 
 

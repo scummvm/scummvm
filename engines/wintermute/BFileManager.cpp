@@ -50,30 +50,7 @@
 #include "common/system.h"
 #include "common/fs.h"
 #include "common/file.h"
-/*
-#ifdef __WIN32__
-#   include <direct.h>
-#else
-#   include <unistd.h>
-#endif
-*/
-/*#ifdef __APPLE__
-#   include <CoreFoundation/CoreFoundation.h>
-#endif*/
 
-/*
-#if _DEBUG
-#pragma comment(lib, "zlib_d.lib")
-#else
-#pragma comment(lib, "zlib.lib")
-#endif
-
-
-extern "C"
-{
-#include "zlib.h"
-}
-*/
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////

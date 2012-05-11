@@ -1796,15 +1796,8 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// OpenDocument
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "OpenDocument") == 0) {
-#ifdef __WIN32__
-		Stack->CorrectParams(1);
-		if (!_renderer->_windowed) CBPlatform::ShowWindow(_renderer->_window, SW_MINIMIZE);
-		HINSTANCE i = CBPlatform::ShellExecute(_renderer->_window, "open", Stack->Pop()->GetString(), NULL, NULL, SW_MAXIMIZE);
-		Stack->PushBool((int)i > 32);
-#else
 		Stack->CorrectParams(0);
 		Stack->PushNULL();
-#endif
 		return S_OK;
 	}
 
@@ -4421,11 +4414,7 @@ bool CBGame::IsDoubleClick(int buttonIndex) {
 	int maxMoveX = 4;
 	int maxMoveY = 4;
 
-#if __WIN32__
-	maxDoubleCLickTime = GetDoubleClickTime();
-	maxMoveX = GetSystemMetrics(SM_CXDOUBLECLK);
-	maxMoveY = GetSystemMetrics(SM_CYDOUBLECLK);
-#elif __IPHONEOS__
+#if __IPHONEOS__
 	maxMoveX = 16;
 	maxMoveY = 16;
 #endif
