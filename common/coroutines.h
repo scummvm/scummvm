@@ -8,53 +8,38 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  */
 
-#ifndef TINSEL_COROUTINE_H
-#define TINSEL_COROUTINE_H
+#ifndef COMMON_COROUTINES_H
+#define COMMON_COROUTINES_H
 
 #include "common/scummsys.h"
 #include "common/util.h"	// for SCUMMVM_CURRENT_FUNCTION
+#include "common/list.h"
+#include "common/singleton.h"
 
-namespace Tinsel {
+namespace Common {
 
 /**
- * @defgroup TinselCoroutines	Coroutine support for Tinsel
+ * @defgroup Coroutine support for simulating multi-threading.
  *
  * The following is loosely based on an article by Simon Tatham:
  *   <http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html>.
  * However, many improvements and tweaks have been made, in particular
  * by taking advantage of C++ features not available in C.
- *
- * Why is this code here? Well, the Tinsel engine apparently used
- * setjmp/longjmp based coroutines as a core tool from the start, and
- * so they are deeply ingrained into the whole code base. When we
- * started to get Tinsel ready for ScummVM, we had to deal with that.
- * It soon got clear that we could not simply rewrite the code to work
- * without some form of coroutines. While possible in principle, it
- * would have meant a major restructuring of the entire code base, a
- * rather daunting task. Also, it would have very likely introduced
- * tons of regressons.
- *
- * So instead of getting rid of the coroutines, we chose to implement
- * them in an alternate way, using Simon Tatham's trick as described
- * above. While the trick is dirty, the result seems to be clear enough,
- * we hope; plus, it allowed us to stay relatively close to the
- * original structure of the code, which made it easier to avoid
- * regressions, and will be helpful in the future when comparing things
- * against the original code base.
  */
 //@{
+
+#define CoroScheduler (Common::CoroutineScheduler::instance())
 
 
 // Enable this macro to enable some debugging support in the coroutine code.
@@ -78,7 +63,10 @@ struct CoroBaseContext {
 typedef CoroBaseContext *CoroContext;
 
 
-// FIXME: Document this!
+/** This is a special constant that can be temporarily used as a parameter to call coroutine-ised
+ * from methods from methods that haven't yet been converted to being a coroutine, so code at least
+ * compiles correctly. Be aware, though, that if you use this, you will get runtime errors.
+ */
 extern CoroContext nullContext;
 
 /**
@@ -105,8 +93,8 @@ public:
 	}
 };
 
-
-#define CORO_PARAM    CoroContext &coroParam
+/** Methods that have been converted to being a coroutine should have this as the first parameter */
+#define CORO_PARAM    Common::CoroContext &coroParam
 
 
 /**
@@ -131,7 +119,7 @@ public:
  * context, and so compilers won't complain about ";" following the macro.
  */
 #define CORO_BEGIN_CONTEXT  \
-	struct CoroContextTag : CoroBaseContext { \
+	struct CoroContextTag : Common::CoroBaseContext { \
 		CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) {} \
 		int DUMMY
 
@@ -148,9 +136,9 @@ public:
  * @see CORO_BEGIN_CODE
  */
 #define CORO_BEGIN_CODE(x) \
-		if (&coroParam == &nullContext) assert(!nullContext);\
+		if (&coroParam == &Common::nullContext) assert(!Common::nullContext);\
 		if (!x) {coroParam = x = new CoroContextTag();}\
-		CoroContextHolder tmpHolder(coroParam);\
+		Common::CoroContextHolder tmpHolder(coroParam);\
 		switch (coroParam->_line) { case 0:;
 
 /**
@@ -158,9 +146,9 @@ public:
  * @see CORO_END_CODE
  */
 #define CORO_END_CODE \
-			if (&coroParam == &nullContext) { \
-				delete nullContext; \
-				nullContext = NULL; \
+			if (&coroParam == &Common::nullContext) { \
+				delete Common::nullContext; \
+				Common::nullContext = NULL; \
 			} \
 		}
 
@@ -170,12 +158,12 @@ public:
 #define CORO_SLEEP(delay) do {\
 			coroParam->_line = __LINE__;\
 			coroParam->_sleep = delay;\
-			assert(&coroParam != &nullContext);\
+			assert(&coroParam != &Common::nullContext);\
 			return; case __LINE__:;\
 		} while (0)
 
-#define CORO_GIVE_WAY do { g_scheduler->giveWay(); CORO_SLEEP(1); } while (0)
-#define CORO_RESCHEDULE do { g_scheduler->reschedule(); CORO_SLEEP(1); } while (0)
+#define CORO_GIVE_WAY do { CoroScheduler.giveWay(); CORO_SLEEP(1); } while (0)
+#define CORO_RESCHEDULE do { CoroScheduler.reschedule(); CORO_SLEEP(1); } while (0)
 
 /**
  * Stop the currently running coroutine and all calling coroutines.
@@ -186,7 +174,7 @@ public:
  * then delete the entire coroutine's state, including all subcontexts).
  */
 #define CORO_KILL_SELF() \
-		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while (0)
+		do { if (&coroParam != &Common::nullContext) { coroParam->_sleep = -1; } return; } while (0)
 
 
 /**
@@ -223,7 +211,7 @@ public:
 				subCoro ARGS;\
 				if (!coroParam->_subctx) break;\
 				coroParam->_sleep = coroParam->_subctx->_sleep;\
-				assert(&coroParam != &nullContext);\
+				assert(&coroParam != &Common::nullContext);\
 				return; case __LINE__:;\
 			} while (1);\
 		} while (0)
@@ -242,7 +230,7 @@ public:
 				subCoro ARGS;\
 				if (!coroParam->_subctx) break;\
 				coroParam->_sleep = coroParam->_subctx->_sleep;\
-				assert(&coroParam != &nullContext);\
+				assert(&coroParam != &Common::nullContext);\
 				return RESULT; case __LINE__:;\
 			} while (1);\
 		} while (0)
@@ -275,8 +263,136 @@ public:
 #define CORO_INVOKE_3(subCoroutine, a0,a1,a2) \
 			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0,a1,a2))
 
+/**
+ * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
+ * with four parameters.
+ */
+#define CORO_INVOKE_4(subCoroutine, a0,a1,a2,a3) \
+			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0,a1,a2,a3))
+
+
+
+// the size of process specific info
+#define	CORO_PARAM_SIZE	32
+
+// the maximum number of processes
+#define	CORO_NUM_PROCESS	100
+#define CORO_MAX_PROCESSES	100
+
+#define CORO_INFINITE 0xffffffff
+#define CORO_INVALID_PID_VALUE 0
+
+typedef void (*CORO_ADDR)(CoroContext &, const void *);
+
+/** process structure */
+struct PROCESS {
+	PROCESS *pNext;		///< pointer to next process in active or free list
+	PROCESS *pPrevious;	///< pointer to previous process in active or free list
+
+	CoroContext state;		///< the state of the coroutine
+	CORO_ADDR  coroAddr;	///< the entry point of the coroutine
+
+	int sleepTime;		///< number of scheduler cycles to sleep
+	uint32 pid;			///< process ID
+	bool waiting;		///< process is currently in a waiting state
+	char param[CORO_PARAM_SIZE];	///< process specific info
+};
+typedef PROCESS *PPROCESS;
+
+
+/** Event structure */
+struct EVENT {
+	uint32 pid;
+	bool manualReset;
+	bool signalled;
+};
+
+
+/**
+ * Creates and manages "processes" (really coroutines).
+ */
+class CoroutineScheduler: public Singleton<CoroutineScheduler> {
+public:
+	/** Pointer to a function of the form "void function(PPROCESS)" */
+	typedef void (*VFPTRPP)(PROCESS *);
+
+private:
+
+	/** list of all processes */
+	PROCESS *processList;
+
+	/** active process list - also saves scheduler state */
+	PROCESS *active;
+
+	/** pointer to free process list */
+	PROCESS *pFreeProcesses;
+
+	/** the currently active process */
+	PROCESS *pCurrent;
+
+	/** Auto-incrementing process Id */
+	int pidCounter;
+
+	/** Event list */
+	Common::List<EVENT *> _events;
+
+#ifdef DEBUG
+	// diagnostic process counters
+	int numProcs;
+	int maxProcs;
+
+	void CheckStack();
+#endif
+
+	/**
+	 * Called from killProcess() to enable other resources
+	 * a process may be allocated to be released.
+	 */
+	VFPTRPP pRCfunction;
+
+	PROCESS *getProcess(uint32 pid);
+	EVENT *getEvent(uint32 pid);
+public:
+
+	CoroutineScheduler();
+	~CoroutineScheduler();
+
+	void reset();
+
+	#ifdef	DEBUG
+	void printStats();
+	#endif
+
+	void schedule();
+	void rescheduleAll();
+	void reschedule(PPROCESS pReSchedProc = NULL);
+	void giveWay(PPROCESS pReSchedProc = NULL);
+	void waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired = NULL);
+	void waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
+			uint32 duration, bool *expired = NULL);
+	void sleep(CORO_PARAM, uint32 duration);
+
+	PROCESS *createProcess(uint32 pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
+	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam);
+	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam);
+	void killProcess(PROCESS *pKillProc);
+
+	PROCESS *getCurrentProcess();
+	int getCurrentPID() const;
+	int killMatchingProcess(uint32 pidKill, int pidMask = -1);
+
+	void setResourceCallback(VFPTRPP pFunc);
+
+	/* Event methods */
+	uint32 createEvent(bool bManualReset, bool bInitialState);
+	void closeEvent(uint32 pidEvent);
+	void setEvent(uint32 pidEvent);
+	void resetEvent(uint32 pidEvent);
+	void pulseEvent(uint32 pidEvent);
+};
+
 //@}
 
-} // End of namespace Tinsel
+} // end of namespace Common
 
-#endif		// TINSEL_COROUTINE_H
+#endif		// COMMON_COROUTINES_H

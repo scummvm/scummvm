@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	archive.o \
 	config-file.o \
 	config-manager.o \
+	coroutines.o \
 	dcl.o \
 	debug.o \
 	error.o \
