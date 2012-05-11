@@ -64,6 +64,7 @@ EWmeDebuggerVariableType;
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugScript {
 public:
+	virtual ~IWmeDebugScript() {}
 	virtual int DbgGetLine() = 0;
 	virtual const char *DbgGetFilename() = 0;
 	virtual TScriptState DbgGetState() = 0;
@@ -80,6 +81,7 @@ class IWmeDebugProp {
 public:
 	virtual EWmeDebuggerPropType DbgGetType() = 0;
 
+	virtual ~IWmeDebugProp() {}
 	// getters
 	virtual int DbgGetValInt() = 0;
 	virtual double DbgGetValFloat() = 0;
@@ -104,6 +106,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugObject {
 public:
+	virtual ~IWmeDebugObject() {}
 	virtual const char *DbgGetNativeClass() = 0;
 	virtual IWmeDebugProp *DbgGetProperty(const char *Name) = 0;
 };
@@ -111,6 +114,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugClient {
 public:
+	virtual ~IWmeDebugClient() {}
 	virtual bool OnGameInit() = 0;
 	virtual bool OnGameShutdown() = 0;
 
@@ -135,6 +139,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugServer {
 public:
+	virtual ~IWmeDebugServer() {}
 	virtual bool AttachClient(IWmeDebugClient *Client) = 0;
 	virtual bool DetachClient(IWmeDebugClient *Client) = 0;
 
