@@ -59,7 +59,7 @@ public:
 	float _scaleY;
 	float _relativeScale;
 	virtual bool IsReady();
-	virtual bool GetExtendedFlag(char *FlagName);
+	virtual bool GetExtendedFlag(const char *FlagName);
 	virtual HRESULT ResetSoundPan();
 	virtual HRESULT UpdateSounds();
 	HRESULT UpdateOneSound(CBSound *Sound);

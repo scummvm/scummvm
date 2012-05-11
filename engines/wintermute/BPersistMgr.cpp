@@ -107,7 +107,7 @@ uint32 makeUint32(byte first, byte second, byte third, byte fourth) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::InitSave(char *Desc) {
+HRESULT CBPersistMgr::InitSave(const char *Desc) {
 	if (!Desc) return E_FAIL;
 
 	HRESULT res;

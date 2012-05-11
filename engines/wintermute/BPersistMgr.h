@@ -52,7 +52,7 @@ public:
 	void PutString(const char *Val);
 	void Cleanup();
 	HRESULT InitLoad(const char *Filename);
-	HRESULT InitSave(char *Desc);
+	HRESULT InitSave(const char *Desc);
 	HRESULT GetBytes(byte  *Buffer, uint32 Size);
 	HRESULT PutBytes(byte  *Buffer, uint32 Size);
 	uint32 _offset;

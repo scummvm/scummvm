@@ -168,7 +168,7 @@ bool CBScriptable::CanHandleMethod(char *EventMethod) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CBScriptable::InvokeMethodThread(char *MethodName) {
+CScScript *CBScriptable::InvokeMethodThread(const char *MethodName) {
 	return NULL;
 }
 

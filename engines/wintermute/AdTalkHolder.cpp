@@ -61,7 +61,7 @@ CAdTalkHolder::~CAdTalkHolder() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdTalkHolder::GetTalkStance(char *Stance) {
+CBSprite *CAdTalkHolder::GetTalkStance(const char *Stance) {
 	CBSprite *ret = NULL;
 
 

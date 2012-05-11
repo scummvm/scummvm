@@ -1121,7 +1121,7 @@ char *CAdActor::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdActor::GetTalkStance(char *Stance) {
+CBSprite *CAdActor::GetTalkStance(const char *Stance) {
 	// forced stance?
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
@@ -1171,7 +1171,7 @@ CBSprite *CAdActor::GetTalkStance(char *Stance) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdActor::GetTalkStanceOld(char *Stance) {
+CBSprite *CAdActor::GetTalkStanceOld(const char *Stance) {
 	CBSprite *ret = NULL;
 
 	if (Stance != NULL) {

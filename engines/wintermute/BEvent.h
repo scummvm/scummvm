@@ -38,8 +38,8 @@ namespace WinterMute {
 class CBEvent : public CBBase {
 public:
 	DECLARE_PERSISTENT(CBEvent, CBBase)
-	void SetScript(char *Script);
-	void SetName(char *Name);
+	void SetScript(const char *Script);
+	void SetName(const char *Name);
 	static const char *GetEventName(TEventType Type);
 	char *_script;
 	char *_name;

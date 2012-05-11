@@ -1004,7 +1004,7 @@ HRESULT CAdObject::ResetSoundPan() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdObject::GetExtendedFlag(char *FlagName) {
+bool CAdObject::GetExtendedFlag(const char *FlagName) {
 	if (!FlagName) return false;
 	else if (strcmp(FlagName, "usable") == 0) return true;
 

@@ -1093,7 +1093,7 @@ HRESULT CBObject::ResetSoundPan() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::GetExtendedFlag(char *FlagName) {
+bool CBObject::GetExtendedFlag(const char *FlagName) {
 	return false;
 }
 

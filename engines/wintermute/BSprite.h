@@ -72,7 +72,7 @@ public:
 	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF);
 	bool _looping;
 	int _currentFrame;
-	HRESULT AddFrame(char *Filename, uint32 Delay = 0, int HotspotX = 0, int HotspotY = 0, RECT *Rect = NULL);
+	HRESULT AddFrame(const char *Filename, uint32 Delay = 0, int HotspotX = 0, int HotspotY = 0, RECT *Rect = NULL);
 	CBSprite(CBGame *inGame, CBObject *Owner = NULL);
 	virtual ~CBSprite();
 	CBArray<CBFrame *, CBFrame *> _frames;

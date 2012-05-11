@@ -47,7 +47,7 @@ public:
 	HRESULT Update();
 	DECLARE_PERSISTENT(CAdItem, CAdTalkHolder)
 	HRESULT Display(int X, int Y);
-	bool GetExtendedFlag(char *FlagName);
+	bool GetExtendedFlag(const char *FlagName);
 	bool _inInventory;
 	bool _cursorCombined;
 	CBSprite *_spriteHover;

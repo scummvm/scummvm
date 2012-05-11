@@ -108,8 +108,8 @@ public:
 	HRESULT ScheduleChangeScene(const char *Filename, bool FadeIn);
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
-	void SetPrevSceneName(char *Name);
-	void SetPrevSceneFilename(char *Name);
+	void SetPrevSceneName(const char *Name);
+	void SetPrevSceneFilename(const char *Name);
 	char *_prevSceneName;
 	char *_prevSceneFilename;
 	virtual HRESULT LoadGame(const char *Filename);

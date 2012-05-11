@@ -745,7 +745,7 @@ HRESULT CAdItem::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::GetExtendedFlag(char *FlagName) {
+bool CAdItem::GetExtendedFlag(const char *FlagName) {
 	if (!FlagName) return false;
 	else if (strcmp(FlagName, "usable") == 0) return true;
 	else return CAdObject::GetExtendedFlag(FlagName);

@@ -188,7 +188,7 @@ CScValue *CScValue::GetProp(const char *Name) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::DeleteProp(char *Name) {
+HRESULT CScValue::DeleteProp(const char *Name) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->DeleteProp(Name);
 
 	_valIter = _valObject.find(Name);
@@ -247,7 +247,7 @@ HRESULT CScValue::SetProp(const char *Name, CScValue *Val, bool CopyWhole, bool 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::PropExists(char *Name) {
+bool CScValue::PropExists(const char *Name) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->PropExists(Name);
 	_valIter = _valObject.find(Name);
 

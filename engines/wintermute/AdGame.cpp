@@ -1330,7 +1330,7 @@ void CAdGame::AfterLoadScene(void *Scene, void *Data) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::SetPrevSceneName(char *Name) {
+void CAdGame::SetPrevSceneName(const char *Name) {
 	delete[] _prevSceneName;
 	_prevSceneName = NULL;
 	if (Name) {
@@ -1341,7 +1341,7 @@ void CAdGame::SetPrevSceneName(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::SetPrevSceneFilename(char *Name) {
+void CAdGame::SetPrevSceneFilename(const char *Name) {
 	delete[] _prevSceneFilename;
 	_prevSceneFilename = NULL;
 	if (Name) {

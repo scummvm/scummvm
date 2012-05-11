@@ -45,16 +45,16 @@ class CBFileManager: CBBase {
 public:
 	bool FindPackageSignature(Common::File *f, uint32 *Offset);
 	HRESULT Cleanup();
-	HRESULT SetBasePath(char *Path);
+	HRESULT SetBasePath(const char *Path);
 	HRESULT RestoreCurrentDir();
 	char *_basePath;
-	bool GetFullPath(char *Filename, char *Fullname);
+	bool GetFullPath(const char *Filename, char *Fullname);
 	CBFile *OpenFileRaw(const char *Filename);
 	HRESULT CloseFile(CBFile *File);
 	CBFile *OpenFile(const char *Filename, bool AbsPathWarning = true);
 	CBFileEntry *GetPackageEntry(const char *Filename);
-	Common::File *OpenSingleFile(char *Name);
-	Common::File *OpenPackage(char *Name);
+	Common::File *OpenSingleFile(const char *Name);
+	Common::File *OpenPackage(const char *Name);
 	HRESULT RegisterPackages();
 	HRESULT InitPaths();
 	HRESULT ReloadPaths();

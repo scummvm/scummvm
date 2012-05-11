@@ -45,7 +45,7 @@ public:
 	HRESULT GetObjects(CBArray<CUIObject *, CUIObject *>& Objects, bool InteractiveOnly);
 
 	HRESULT HandleResponse(CAdResponse *Response);
-	void SetLastResponseText(char *Text, char *TextOrig);
+	void SetLastResponseText(const char *Text, const char *TextOrig);
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;
 	DECLARE_PERSISTENT(CAdResponseBox, CBObject)

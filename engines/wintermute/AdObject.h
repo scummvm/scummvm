@@ -64,7 +64,7 @@ public:
 	HRESULT UpdateBlockRegion();
 	bool _forcedTalkAnimUsed;
 	char *_forcedTalkAnimName;
-	virtual bool GetExtendedFlag(char *FlagName);
+	virtual bool GetExtendedFlag(const char *FlagName);
 	virtual HRESULT ResetSoundPan();
 	virtual HRESULT UpdateSounds();
 	HRESULT Reset();

@@ -62,8 +62,8 @@ public:
 	bool _dragging;
 	DECLARE_PERSISTENT(CUIWindow, CUIObject)
 	bool _transparent;
-	HRESULT ShowWidget(char *Name, bool Visible = true);
-	HRESULT EnableWidget(char *Name, bool Enable = true);
+	HRESULT ShowWidget(const char *Name, bool Visible = true);
+	HRESULT EnableWidget(const char *Name, bool Enable = true);
 	RECT _titleRect;
 	RECT _dragRect;
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);

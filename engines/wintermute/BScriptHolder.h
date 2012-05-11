@@ -41,7 +41,7 @@ public:
 
 	CBScriptHolder(CBGame *inGame);
 	virtual ~CBScriptHolder();
-	virtual CScScript *InvokeMethodThread(char *MethodName);
+	virtual CScScript *InvokeMethodThread(const char *MethodName);
 	virtual void MakeFreezable(bool Freezable);
 	bool CanHandleEvent(const char *EventName);
 	virtual bool CanHandleMethod(const char *EventMethod);

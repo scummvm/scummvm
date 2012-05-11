@@ -57,7 +57,7 @@ public:
 	HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 	void SetValue(CScValue *Val);
 	bool _persistent;
-	bool PropExists(char *Name);
+	bool PropExists(const char *Name);
 	void Copy(CScValue *orig, bool CopyWhole = false);
 	void SetStringVal(const char *Val);
 	TValType GetType();
@@ -67,7 +67,7 @@ public:
 	const char *GetString();
 	void *GetMemBuffer();
 	CBScriptable *GetNative();
-	HRESULT DeleteProp(char *Name);
+	HRESULT DeleteProp(const char *Name);
 	void DeleteProps();
 	void CleanProps(bool IncludingNatives);
 	void SetBool(bool Val);

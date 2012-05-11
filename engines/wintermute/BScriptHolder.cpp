@@ -424,7 +424,7 @@ void CBScriptHolder::MakeFreezable(bool Freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CBScriptHolder::InvokeMethodThread(char *MethodName) {
+CScScript *CBScriptHolder::InvokeMethodThread(const char *MethodName) {
 	for (int i = _scripts.GetSize() - 1; i >= 0; i--) {
 		if (_scripts[i]->CanHandleMethod(MethodName)) {
 

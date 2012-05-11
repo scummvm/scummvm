@@ -668,7 +668,7 @@ HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::EnableWidget(char *Name, bool Enable) {
+HRESULT CUIWindow::EnableWidget(const char *Name, bool Enable) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_disable = !Enable;
 	}
@@ -677,7 +677,7 @@ HRESULT CUIWindow::EnableWidget(char *Name, bool Enable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::ShowWidget(char *Name, bool Visible) {
+HRESULT CUIWindow::ShowWidget(const char *Name, bool Visible) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_visible = Visible;
 	}

@@ -100,7 +100,7 @@ const char *CBEvent::GetEventName(TEventType Type) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBEvent::SetScript(char *Script) {
+void CBEvent::SetScript(const char *Script) {
 	if (_script) delete [] _script;
 
 	_script = new char [strlen(Script) + 1];
@@ -109,7 +109,7 @@ void CBEvent::SetScript(char *Script) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBEvent::SetName(char *Name) {
+void CBEvent::SetName(const char *Name) {
 	if (_name) delete [] _name;
 
 	_name = new char [strlen(Name) + 1];

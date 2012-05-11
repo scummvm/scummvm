@@ -675,7 +675,7 @@ bool CBFileManager::IsValidPackage(const AnsiString &fileName) const {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::File *CBFileManager::OpenPackage(char *Name) {
+Common::File *CBFileManager::OpenPackage(const char *Name) {
 	//TODO: Is it really necessary to do this when we have the ScummVM-system?
 	
 	//RestoreCurrentDir();
@@ -703,7 +703,7 @@ Common::File *CBFileManager::OpenPackage(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-Common::File *CBFileManager::OpenSingleFile(char *Name) {
+Common::File *CBFileManager::OpenSingleFile(const char *Name) {
 	RestoreCurrentDir();
 	
 	Common::File *ret = NULL;
@@ -728,7 +728,7 @@ Common::File *CBFileManager::OpenSingleFile(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::GetFullPath(char *Filename, char *Fullname) {
+bool CBFileManager::GetFullPath(const char *Filename, char *Fullname) {
 	RestoreCurrentDir();
 
 	FILE *f = NULL;
@@ -848,7 +848,7 @@ HRESULT CBFileManager::RestoreCurrentDir() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::SetBasePath(char *Path) {
+HRESULT CBFileManager::SetBasePath(const char *Path) {
 	Cleanup();
 
 	if (Path) {

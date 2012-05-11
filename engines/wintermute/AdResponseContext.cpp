@@ -58,7 +58,7 @@ HRESULT CAdResponseContext::Persist(CBPersistMgr *PersistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseContext::SetContext(char *Context) {
+void CAdResponseContext::SetContext(const char *Context) {
 	delete[] _context;
 	_context = NULL;
 	if (Context) {

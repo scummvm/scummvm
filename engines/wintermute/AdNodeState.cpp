@@ -68,7 +68,7 @@ CAdNodeState::~CAdNodeState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetName(char *Name) {
+void CAdNodeState::SetName(const char *Name) {
 	delete[] _name;
 	_name = NULL;
 	CBUtils::SetString(&_name, Name);
@@ -107,7 +107,7 @@ HRESULT CAdNodeState::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetCaption(char *Caption, int Case) {
+void CAdNodeState::SetCaption(const char *Caption, int Case) {
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7) return;
 
