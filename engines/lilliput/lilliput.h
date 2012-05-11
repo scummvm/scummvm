@@ -114,16 +114,12 @@ public:
 
 	byte _array147D1[3];
 	byte _array1692B[4];
-	byte _buffer1[45056];
-	byte _buffer2[45056];
-	byte _buffer3[45056];
 	byte *_bufferIsoMap;
 	byte *_bufferCubegfx;
 	byte *_bufferMen;
 	byte *_bufferMen2;
 	byte *_bufferIsoChars;
 	byte *_bufferIdeogram;
-	byte _buffer10[4032];
 	byte _curPalette[768];
 	byte _displayStringBuf[160];
 
@@ -207,10 +203,10 @@ public:
 	byte _array16E94[40];
 	byte _array16C54[4];
 	byte _array16C58[4];
-	byte _buffer1_45k[45056];
-	byte _buffer2_45k[45056];
-	byte _buffer3_45k[45056];
-	byte _buffer10_4032[4032];
+	byte _savedSurfaceGameArea1[176 * 256]; // 45056
+	byte _savedSurfaceGameArea2[176 * 256]; // 45056
+	byte _savedSurfaceGameArea3[176 * 256]; // 45056
+	byte _savedSurfaceSpeech[16 * 252];
 
 	const LilliputGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -225,18 +221,18 @@ public:
 	void displayFunction3(int var1, int var2, int var4);
 	void displayMousePointer();
 	void restoreSurfaceUnderMousePointer();
-	void displayFunction6();
-	void displayFunction7();
+	void saveSurfaceGameArea();
+	void saveSurfaceSpeech();
 	void displayInterfaceHotspots();
 	void displayLandscape();
 	void displayFunction10();
 	void displayFunction11(byte *buf);
 	void displayFunction12();
 	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);
-	void displayFunction14();
+	void displayGameArea();
 	void displayFunction15();
 	void displayFunction16();
-	void displayFunction17();
+	void restoreSurfaceSpeech();
 	void displayFunction18(int var1, int var2, int var3, int var4);
 
 	void displayCharacter(int index, Common::Point pos, int flags);
