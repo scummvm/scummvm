@@ -175,7 +175,7 @@ Class521::Class521(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	
 	SetUpdateHandler(&Class521::update);
 	SetMessageHandler(&Class521::handleMessage);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 
 	// TODO createSurface2(200, dword_4AF4C0);
 	createSurface(200, 640, 480); //TODO: Remove once the line above is done
@@ -244,7 +244,7 @@ uint32 Class521::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1019:
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 		break;
 	/* NOTE: Implemented in setPathPoints
 	case 0x2000:
@@ -317,7 +317,7 @@ uint32 Class521::handleMessage(int messageNum, const MessageParam &param, Entity
 					if (_currPointIndex == 0) {
 						moveToPrevPoint();
 					} else {
-						SetSpriteCallback(NULL);
+						SetSpriteUpdate(NULL);
 					}
 				} else {
 					if (minMatchIndex > _currPointIndex) {
@@ -336,14 +336,14 @@ uint32 Class521::handleMessage(int messageNum, const MessageParam &param, Entity
 		_moreY = param.asInteger();
 		_steps = 0;
 		_flag10E = 0;
-		SetSpriteCallback(&Class521::suMoveToPrevPoint);
+		SetSpriteUpdate(&Class521::suMoveToPrevPoint);
 		_lastDistance = 640;
 		break;
 	case 0x2008:
 		_moreY = param.asInteger();
 		_steps = 0;
 		_flag10E = 0;
-		SetSpriteCallback(&Class521::suMoveToNextPoint);
+		SetSpriteUpdate(&Class521::suMoveToNextPoint);
 		_lastDistance = 640;
 		break;
 	case 0x2009:
@@ -397,7 +397,7 @@ uint32 Class521::handleMessage45CCA0(int messageNum, const MessageParam &param, 
 
 void Class521::sub45CD00() {
 	bool doDeltaX = _doDeltaX;
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	_againDestPtFlag = 0;
 	_againDestPointFlag = 0;
 	_flag10E = 0;
@@ -425,12 +425,12 @@ void Class521::sub45CDC0() {
 		_lastDistance = 640;
 		_flag113 = 0;
 		_flag10E = 0;
-		SetSpriteCallback(&Class521::suMoveToNextPoint);
+		SetSpriteUpdate(&Class521::suMoveToNextPoint);
 	} else if (_value112 == 2) {
 		_lastDistance = 640;
 		_flag113 = 0;
 		_flag10E = 0;
-		SetSpriteCallback(&Class521::suMoveToPrevPoint);
+		SetSpriteUpdate(&Class521::suMoveToPrevPoint);
 	}
 }
 
@@ -581,7 +581,7 @@ void Class521::moveToNextPoint() {
 				NextState(&Class521::sub45D100);
 			}
 			_flag10E = 0;
-			SetSpriteCallback(&Class521::suMoveToNextPoint);
+			SetSpriteUpdate(&Class521::suMoveToNextPoint);
 			_lastDistance = 640;
 		}
 	}
@@ -643,7 +643,7 @@ void Class521::moveToPrevPoint() {
 				NextState(&Class521::sub45D100);
 			}
 			_flag10E = 0;
-			SetSpriteCallback(&Class521::suMoveToPrevPoint);
+			SetSpriteUpdate(&Class521::suMoveToPrevPoint);
 			_lastDistance = 640;
 		}
 	}

@@ -30,7 +30,7 @@
 
 namespace Neverhood {
 
-#define SetSpriteCallback(callback) _spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback); debug(2, "SetSpriteCallback(" #callback ")"); _spriteUpdateCbName = #callback
+#define SetSpriteUpdate(callback) _spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback); debug(2, "SetSpriteUpdate(" #callback ")"); _spriteUpdateCbName = #callback
 #define SetFilterX(callback) _filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug(2, "SetFilterX(" #callback ")")
 #define SetFilterY(callback) _filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug(2, "SetFilterY(" #callback ")")
 

@@ -258,7 +258,7 @@ void Class526::spriteUpdate466720() {
 	if (_rect.y1 <= 150) {
 		_soundResource.play(0x0E32247F);
 		stopAnimation();
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 		SetMessageHandler(NULL);
 		setVisible(false);
 	}
@@ -266,7 +266,7 @@ void Class526::spriteUpdate466720() {
 
 void Class526::sub466770() {
 	startAnimation(0x34880040, 0, -1);
-	SetSpriteCallback(&Class526::spriteUpdate466720);
+	SetSpriteUpdate(&Class526::spriteUpdate466720);
 }
 
 Class527::Class527(NeverhoodEngine *vm, Sprite *class526)
@@ -296,7 +296,7 @@ void Class527::spriteUpdate466920() {
 	if (_rect.y1 <= 150) {
 		_soundResource.play(0x18020439);
 		stopAnimation();
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 		SetMessageHandler(NULL);
 		setVisible(false);
 	}
@@ -304,7 +304,7 @@ void Class527::spriteUpdate466920() {
 
 void Class527::sub466970() {
 	startAnimation(0x103B8020, 0, -1);
-	SetSpriteCallback(&Class527::spriteUpdate466920);
+	SetSpriteUpdate(&Class527::spriteUpdate466920);
 }
 
 Class528::Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag)
@@ -577,13 +577,13 @@ void Class489::sub434D80() {
 		sendMessage(_class525, 0x483A, 0);
 		stopAnimation();
 		SetMessageHandler(&Sprite::handleMessage);
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 		setVisible(false);
 	}
 }
 
 void Class489::sub434DD0() {
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Class489::handleMessage);
 	startAnimation(0x10E3042B, 0, -1);
 }
@@ -591,20 +591,20 @@ void Class489::sub434DD0() {
 void Class489::sub434DF0() {
 	_remX = getGlobalVar(0x04A10F33) * 108 + _class489Item->point.x;
 	startAnimation(0x14A10137, 0, -1);
-	SetSpriteCallback(&Class489::spriteUpdate434B60);
+	SetSpriteUpdate(&Class489::spriteUpdate434B60);
 	SetMessageHandler(&Class489::handleMessage);
 	_soundResource2.play(0xEC008474);
 }
 
 void Class489::sub434E60() {
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Class489::handleMessage434B20);
 	startAnimation(0x80C32213, 0, -1);
 	NextState(&Class489::sub434E90);
 }
 
 void Class489::sub434E90() {
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Class489::handleMessage4348E0);
 	startAnimation(0xD23B207F, 0, -1);
 }
@@ -612,7 +612,7 @@ void Class489::sub434E90() {
 void Class489::sub434EC0() {
 	startAnimation(0x50A80517, 0, -1);
 	SetMessageHandler(&Class489::handleMessage434B20);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	NextState(&Class489::sub434F40);
 	setGlobalVar(0x12A10DB3, 1);
 	_soundResource1.play(0xCC4A8456);
@@ -623,13 +623,13 @@ void Class489::sub434EC0() {
 void Class489::sub434F40() {
 	sendMessage(_parentScene, 0x480F, 0);
 	startAnimation(0xD833207F, 0, -1);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Class489::handleMessage4348E0);
 }
 
 void Class489::sub434F80() {
 	startAnimation(0x50A94417, 0, -1);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Class489::handleMessage434B20);
 	NextState(&Class489::sub434E90);
 	setGlobalVar(0x12A10DB3, 0);
@@ -640,7 +640,7 @@ void Class489::sub434F80() {
 void Class489::sub434FF0() {
 	_remX = getGlobalVar(0x04A10F33) * 108 + _class489Item->point.x;
 	startAnimation(0x22CB4A33, 0, -1);
-	SetSpriteCallback(&Class489::spriteUpdate434B60);
+	SetSpriteUpdate(&Class489::spriteUpdate434B60);
 	SetMessageHandler(&Class489::handleMessage434B20);
 	NextState(&Class489::sub434DF0);
 }
@@ -648,7 +648,7 @@ void Class489::sub434FF0() {
 void Class489::sub435040() {
 	setGlobalVar(0x04A105B3, 4);
 	setGlobalVar(0x04A10F33, 0);
-	SetSpriteCallback(&Class489::sub434D80);
+	SetSpriteUpdate(&Class489::sub434D80);
 	SetMessageHandler(&Sprite::handleMessage);
 	startAnimation(0x708D4712, 0, -1);
 	_soundResource3.play();
@@ -1208,7 +1208,7 @@ uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param
 void AsScene1407Mouse::stIdleLookAtGoodHole() {
 	setDoDeltaX(kScene1407MouseHoles[kScene1407MouseSections[_currSectionIndex].goodHoleIndex].x < _x ? 1 : 0);
 	startAnimation(0x72215194, 0, -1);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	SetMessageHandler(&AsScene1407Mouse::handleMessage);
 }
 
@@ -1216,7 +1216,7 @@ void AsScene1407Mouse::stWalkToDest() {
 	if (_walkDestX != _x) {
 		setDoDeltaX(_walkDestX < _x ? 1 : 0);
 		startAnimation(0x22291510, 0, -1);
-		SetSpriteCallback(&AsScene1407Mouse::suWalkTo);
+		SetSpriteUpdate(&AsScene1407Mouse::suWalkTo);
 		SetMessageHandler(&AsScene1407Mouse::handleMessage);
 		NextState(&AsScene1407Mouse::stIdleLookAtGoodHole);
 	}
@@ -1225,14 +1225,14 @@ void AsScene1407Mouse::stWalkToDest() {
 void AsScene1407Mouse::stWalkToHole() {
 	setDoDeltaX(_walkDestX < _x ? 1 : 0);
 	startAnimation(0x22291510, 0, -1);
-	SetSpriteCallback(&AsScene1407Mouse::suWalkTo);
+	SetSpriteUpdate(&AsScene1407Mouse::suWalkTo);
 	SetMessageHandler(&AsScene1407Mouse::handleMessage);
 	NextState(&AsScene1407Mouse::stGoThroughHole);
 }
 
 void AsScene1407Mouse::stGoThroughHole() {
 	startAnimation(0x72215194, 0, -1);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	SetMessageHandler(NULL);
 	SetUpdateHandler(&AsScene1407Mouse::upGoThroughHole);
 	NextState(&AsScene1407Mouse::stArriveAtHole);

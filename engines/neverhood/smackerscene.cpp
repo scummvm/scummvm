@@ -82,7 +82,6 @@ void SmackerScene::nextVideo() {
 		}
 		if (_fileHashListIndex == 0) {
 			_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, smackerFileHash, _doubleSurface, false));
-			// TODO? Screen.hSmack = _smackerPlayer;
 		} else {
 			_smackerPlayer->open(smackerFileHash, false);
 		}
@@ -108,9 +107,8 @@ uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, En
 			_playNextVideoFlag = true;
 		break;
 	case 0x000C:
-		if (_canAbort) {
+		if (_canAbort)
 			sendMessage(_parentModule, 0x1009, 0);
-		}
 		break;
 	case 0x3002:
 		_playNextVideoFlag = true;

@@ -346,7 +346,7 @@ SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
 	
 	SetUpdateHandler(&SsScene1302Fence::update);
 	SetMessageHandler(&SsScene1302Fence::handleMessage);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	_firstY = _y;
 	if (getGlobalVar(0x80101B1E))
 		_y += 152;
@@ -364,12 +364,12 @@ uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param
 	switch (messageNum) {
 	case 0x4808:
 		_soundResource1.play();
-		SetSpriteCallback(&SsScene1302Fence::suMoveDown);
+		SetSpriteUpdate(&SsScene1302Fence::suMoveDown);
 		SetMessageHandler(NULL);
 		break;
 	case 0x4809:
 		_soundResource2.play();
-		SetSpriteCallback(&SsScene1302Fence::suMoveUp);
+		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
 		SetMessageHandler(NULL);
 		break;
 	}
@@ -381,7 +381,7 @@ void SsScene1302Fence::suMoveDown() {
 		_y += 8;
 	else {
 		SetMessageHandler(&SsScene1302Fence::handleMessage);
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -390,7 +390,7 @@ void SsScene1302Fence::suMoveUp() {
 		_y -= 8;
 	else {
 		SetMessageHandler(&SsScene1302Fence::handleMessage);
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -590,7 +590,7 @@ AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
 	_y = 390;
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1303Balloon::handleMessage);
-	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	startAnimation(0x800278D2, 0, -1);
 }
 
@@ -1179,7 +1179,7 @@ void AsScene1307Key::suRemoveKey() {
 		processDelta();
 		_pointIndex++;
 	} else {
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -1192,7 +1192,7 @@ void AsScene1307Key::suInsertKey() {
 		if (_pointIndex == 7)
 			_soundResource1.play();
 	} else {
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 		sendMessage(_parentScene, 0x2002, 0);
 	}
 }
@@ -1215,7 +1215,7 @@ void AsScene1307Key::suMoveKey() {
 void AsScene1307Key::stRemoveKey() {
 	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
 	_pointIndex = 0;
-	SetSpriteCallback(&AsScene1307Key::suRemoveKey);
+	SetSpriteUpdate(&AsScene1307Key::suRemoveKey);
 	startAnimation(fileHashes[0], 0, -1);
 	_soundResource2.play();
 }
@@ -1224,7 +1224,7 @@ void AsScene1307Key::stInsertKey() {
 	_pointIndex = 0;
 	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4]);
 	setClipRect(_clipRects[getSubVar(0xA010B810, _index) % 4]);
-	SetSpriteCallback(&AsScene1307Key::suInsertKey);
+	SetSpriteUpdate(&AsScene1307Key::suInsertKey);
 	_newStickFrameIndex = -2;
 }
 
@@ -1244,7 +1244,7 @@ void AsScene1307Key::stMoveKey() {
 		_currFrameIndex = 0;
 		_deltaX = newX - _x;
 		_deltaY = newY - _y;
-		SetSpriteCallback(&AsScene1307Key::suMoveKey);
+		SetSpriteUpdate(&AsScene1307Key::suMoveKey);
 		startAnimation(fileHashes[0], 0, -1);
 	}
 }
@@ -1778,12 +1778,12 @@ Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x08284011);
 	showMouse(false);
 	_smackerFileHash = 0;
-	_smackerFlag1 = false;
+	_keepLastSmackerFrame = false;
 }
 
 void Scene1317::update() {
 	if (_smackerFileHash) {
-		_smackerPlayer->open(_smackerFileHash, _smackerFlag1);
+		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
 		_smackerFileHash = 0;
 	}
 	Scene::update();
@@ -1805,7 +1805,7 @@ void Scene1317::upChooseKing() {
 		stNoDecisionYet();
 			
 	if (_smackerFileHash) {
-		_smackerPlayer->open(_smackerFileHash, _smackerFlag1);
+		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
 		_smackerFileHash = 0;
 	}
 
@@ -1887,7 +1887,7 @@ void Scene1317::stChooseKing() {
 	SetMessageHandler(&Scene1317::hmChooseKing);
 	SetUpdateHandler(&Scene1317::upChooseKing);
 	_smackerFileHash = 0x10982841;
-	_smackerFlag1 = true;
+	_keepLastSmackerFrame = true;
 	_decisionCountdown = 450;
 	_klaymanBlinks = false;
 	_klaymanBlinkCountdown = _vm->_rnd->getRandomNumber(30 - 1) + 15;
@@ -1898,7 +1898,7 @@ void Scene1317::stNoDecisionYet() {
 	SetMessageHandler(&Scene1317::hmNoDecisionYet);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x20982841;
-	_smackerFlag1 = false;
+	_keepLastSmackerFrame = false;
 }
 
 void Scene1317::stHoborgAsKing() {
@@ -1906,7 +1906,7 @@ void Scene1317::stHoborgAsKing() {
 	SetMessageHandler(&Scene1317::hmHoborgAsKing);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x40982841;
-	_smackerFlag1 = false;
+	_keepLastSmackerFrame = false;
 }
 
 void Scene1317::stKlaymanAsKing() {
@@ -1914,7 +1914,7 @@ void Scene1317::stKlaymanAsKing() {
 	SetMessageHandler(&Scene1317::hmKlaymanAsKing);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x80982841;
-	_smackerFlag1 = false;
+	_keepLastSmackerFrame = false;
 }
 
 void Scene1317::stEndMovie() {
@@ -1922,7 +1922,7 @@ void Scene1317::stEndMovie() {
 	SetMessageHandler(&Scene1317::hmEndMovie);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x40800711;
-	_smackerFlag1 = false;
+	_keepLastSmackerFrame = false;
 }
 
 } // End of namespace Neverhood

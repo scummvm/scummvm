@@ -668,7 +668,7 @@ AsScene1002Door::AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect)
 	
 	SetUpdateHandler(&AsScene1002Door::update);
 	SetMessageHandler(&AsScene1002Door::handleMessage);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	StaticSprite::update();
 	
 }
@@ -683,11 +683,11 @@ uint32 AsScene1002Door::handleMessage(int messageNum, const MessageParam &param,
 	switch (messageNum) {
 	case 0x4808:
 		setGlobalVar(0x8306F218, 1);
-		SetSpriteCallback(&AsScene1002Door::suOpenDoor);
+		SetSpriteUpdate(&AsScene1002Door::suOpenDoor);
 		break;
 	case 0x4809:
 		setGlobalVar(0x8306F218, 0);
-		SetSpriteCallback(&AsScene1002Door::suCloseDoor);
+		SetSpriteUpdate(&AsScene1002Door::suCloseDoor);
 		break;
 	}
 	return messageResult;
@@ -697,7 +697,7 @@ void AsScene1002Door::suOpenDoor() {
 	if (_y > 49) {
 		_y -= 8;
 		if (_y < 49) {
-			SetSpriteCallback(NULL);
+			SetSpriteUpdate(NULL);
 			_y = 49;
 		}
 		_needRefresh = true;
@@ -708,7 +708,7 @@ void AsScene1002Door::suCloseDoor() {
 	if (_y < 239) {
 		_y += 8;
 		if (_y > 239) {
-			SetSpriteCallback(NULL);
+			SetSpriteUpdate(NULL);
 			_y = 239;
 		}
 		_needRefresh = true;
@@ -747,7 +747,7 @@ AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Sce
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1002DoorSpy::handleMessage);
-	SetSpriteCallback(&AsScene1002DoorSpy::suDoorSpy);
+	SetSpriteUpdate(&AsScene1002DoorSpy::suDoorSpy);
 	createSurface(800, 136, 147);
 	setClipRect(clipRect);
 	suDoorSpy();
@@ -909,7 +909,7 @@ AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *par
 
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage);
-	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 
 	if (!_flag) {
 		if (getGlobalVar(0x8306F218)) {

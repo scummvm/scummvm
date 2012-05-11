@@ -841,7 +841,7 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 	}
 
 	if (_xDelta > _yDelta) {
-		SetSpriteCallback(&SsScene2202PuzzleTile::suMoveTileX);
+		SetSpriteUpdate(&SsScene2202PuzzleTile::suMoveTileX);
 		if (_xIncr > 0) {
 			if (_newX - _x >= 180)
 				_xFlagPos = _newX - 90;
@@ -855,7 +855,7 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 		}
 		_soundResource1.play();
 	} else {
-		SetSpriteCallback(&SsScene2202PuzzleTile::suMoveTileY);
+		SetSpriteUpdate(&SsScene2202PuzzleTile::suMoveTileY);
 		if (_yIncr > 0) {
 			if (_newY - _y >= 180)
 				_xFlagPos = _newY - 90;
@@ -879,7 +879,7 @@ void SsScene2202PuzzleTile::stopMoving() {
 	_drawRect.width = _spriteResource.getDimensions().width;
 	_drawRect.height = _spriteResource.getDimensions().height;
 	_needRefresh = true;
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 	_isMoving = false;
 	sendMessage(_parentScene, 0x2002, _tileIndex);
 }
@@ -1413,7 +1413,7 @@ Class603::Class603(NeverhoodEngine *vm, uint32 fileHash)
 		_x -= 63;
 	SetUpdateHandler(&Class603::update);
 	SetMessageHandler(&Class603::handleMessage);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 }
 
 void Class603::update() {
@@ -1427,13 +1427,13 @@ uint32 Class603::handleMessage(int messageNum, const MessageParam &param, Entity
 	case 0x4808:
 		_index = 0;
 		SetMessageHandler(NULL);
-		SetSpriteCallback(&Class603::spriteUpdate481E60);
+		SetSpriteUpdate(&Class603::spriteUpdate481E60);
 		_soundResource.play(0x032746E0);
 		break;
 	case 0x4809:
 		_index = 0;
 		SetMessageHandler(NULL);
-		SetSpriteCallback(&Class603::spriteUpdate481E90);
+		SetSpriteUpdate(&Class603::spriteUpdate481E90);
 		_soundResource.play(0x002642C0);
 		break;
 	}
@@ -1446,7 +1446,7 @@ void Class603::spriteUpdate481E60() {
 		_index++;
 	} else {
 		SetMessageHandler(&Class603::handleMessage);
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -1456,7 +1456,7 @@ void Class603::spriteUpdate481E90() {
 		_index++;
 	} else {
 		SetMessageHandler(&Class603::handleMessage);
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -1465,7 +1465,7 @@ Class604::Class604(NeverhoodEngine *vm, uint32 fileHash)
 
 	SetUpdateHandler(&Class604::update);
 	SetMessageHandler(&Class604::handleMessage);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 }
 
 void Class604::update() {
@@ -1478,7 +1478,7 @@ uint32 Class604::handleMessage(int messageNum, const MessageParam &param, Entity
 	switch (messageNum) {
 	case 0x4803:
 		SetMessageHandler(NULL);
-		SetSpriteCallback(&Class604::spriteUpdate482020);
+		SetSpriteUpdate(&Class604::spriteUpdate482020);
 		_yDelta = 0;
 		break;
 	}
@@ -1708,7 +1708,7 @@ AsScene2207Elevator::AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene
 	createSurface(1100, 129, 103);
 	startAnimation(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, 0, 0);
 	SetUpdateHandler(&AsScene2207Elevator::update);
-	SetSpriteCallback(&AsScene2207Elevator::suSetPosition);
+	SetSpriteUpdate(&AsScene2207Elevator::suSetPosition);
 	SetMessageHandler(&AsScene2207Elevator::handleMessage);
 	_newStickFrameIndex = 0;
 }

@@ -35,9 +35,8 @@ SmackerSurface::SmackerSurface(NeverhoodEngine *vm)
 }
 
 void SmackerSurface::draw() {
-	if (_smackerFrame && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
+	if (_smackerFrame && _visible && _drawRect.width > 0 && _drawRect.height > 0)
 		_vm->_screen->drawSurface2(_smackerFrame, _drawRect, _clipRect, false);
-	}
 }
 
 void SmackerSurface::setSmackerFrame(const Graphics::Surface *smackerFrame) {
@@ -60,15 +59,14 @@ SmackerDoubleSurface::SmackerDoubleSurface(NeverhoodEngine *vm)
 }
 
 void SmackerDoubleSurface::draw() {
-	if (_smackerFrame && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
+	if (_smackerFrame && _visible && _drawRect.width > 0 && _drawRect.height > 0)
 		_vm->_screen->drawDoubleSurface2(_smackerFrame, _drawRect);
-	}
 }
 
 // SmackerPlayer
 
 SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag)
-	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _dirtyFlag(false), _flag2(false),
+	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _dirtyFlag(false), _videoDone(false),
 	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true),
 	_drawX(-1), _drawY(-1) {
 
@@ -146,6 +144,8 @@ void SmackerPlayer::setDrawPos(int16 x, int16 y) {
 
 void SmackerPlayer::rewind() {
 
+	// TODO Quite dirty, try to implement this in the decoder
+
 	delete _smackerDecoder;
 	_smackerDecoder = NULL;
 	_stream = NULL;
@@ -170,37 +170,17 @@ void SmackerPlayer::update() {
 		_dirtyFlag = false;
 	}
 
-#if 0
-	if (!_smackerDecoder->endOfVideo()) {
-		updateFrame();
-		if (_smackerDecoder->endOfVideo() && !_keepLastFrame) {
-			// Inform the scene about the end of the video playback
-			if (_scene) {
-				sendMessage(_scene, 0x3002, 0);
-			}
-			_flag2 = true;
-		} else {
-			if (_smackerDecoder->endOfVideo()) {
-				rewind();
-				updateFrame();
-			}
-			_flag2 = false;
-		}
-	}
-#endif
-
 	if (!_smackerDecoder->endOfVideo()) {
 		updateFrame();
 	} else if (!_keepLastFrame) {
 		// Inform the scene about the end of the video playback
-		if (_scene) {
+		if (_scene)
 			sendMessage(_scene, 0x3002, 0);
-		}
-		_flag2 = true;
+		_videoDone = true;
 	} else {
 		rewind();
 		updateFrame();
-		_flag2 = false;
+		_videoDone = false;
 	}
 	
 }
@@ -231,9 +211,9 @@ void SmackerPlayer::updateFrame() {
 	// TODO _vm->_screen->_skipUpdate = true;
 	_dirtyFlag = true;
 
-	if (_smackerDecoder->hasDirtyPalette()) {
+	if (_smackerDecoder->hasDirtyPalette())
 		updatePalette();
-	}
+		
 }
 
 void SmackerPlayer::updatePalette() {

@@ -42,14 +42,22 @@ struct NDimensions {
 
 struct NRect {
 	int16 x1, y1, x2, y2;
+
 	NRect() : x1(0), y1(0), x2(0), y2(0) {}
+
 	NRect(int16 x01, int16 y01, int16 x02, int16 y02) : x1(x01), y1(y01), x2(x02), y2(y02) {}
+
 	void set(int16 x01, int16 y01, int16 x02, int16 y02) {
 		x1 = x01;
 		y1 = y01;
 		x2 = x02;
 		y2 = y02;
 	}
+
+	bool contains(int16 x, int16 y) const {
+		return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+	}
+
 };
 
 typedef Common::Array<NRect> NRectArray;

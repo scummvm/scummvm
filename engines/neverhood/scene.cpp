@@ -387,13 +387,11 @@ bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
 	if (_rectType == 1) {
 		RectList &rectList = *_rectList;
 		for (uint i = 0; i < rectList.size(); i++) {
-			debug("(%d, %d) ? (%d, %d, %d, %d)", klaymanX, klaymanY, rectList[i].rect.x1, rectList[i].rect.y1, rectList[i].rect.x2, rectList[i].rect.y2);
-			if (klaymanX >= rectList[i].rect.x1 && klaymanX <= rectList[i].rect.x2 && 
-				klaymanY >= rectList[i].rect.y1 && klaymanY <= rectList[i].rect.y2) {
+			debug(2, "(%d, %d) ? (%d, %d, %d, %d)", klaymanX, klaymanY, rectList[i].rect.x1, rectList[i].rect.y1, rectList[i].rect.x2, rectList[i].rect.y2);
+			if (rectList[i].rect.contains(klaymanX, klaymanY)) {
 				for (uint j = 0; j < rectList[i].subRects.size(); j++) {
-					debug("  (%d, %d) ? (%d, %d, %d, %d)", mouseX, mouseY, rectList[i].subRects[j].rect.x1, rectList[i].subRects[j].rect.y1, rectList[i].subRects[j].rect.x2, rectList[i].subRects[j].rect.y2);
-					if (mouseX >= rectList[i].subRects[j].rect.x1 && mouseX <= rectList[i].subRects[j].rect.x2 && 
-						mouseY >= rectList[i].subRects[j].rect.y1 && mouseY <= rectList[i].subRects[j].rect.y2) {
+					debug(2, "  (%d, %d) ? (%d, %d, %d, %d)", mouseX, mouseY, rectList[i].subRects[j].rect.x1, rectList[i].subRects[j].rect.y1, rectList[i].subRects[j].rect.x2, rectList[i].subRects[j].rect.y2);
+					if (rectList[i].subRects[j].rect.contains(mouseX, mouseY)) {
 						debug("Scene::queryPositionRectList() -> %08X", rectList[i].subRects[j].messageListId);
 						return setMessageList2(rectList[i].subRects[j].messageListId);
 					}

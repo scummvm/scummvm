@@ -98,7 +98,7 @@ void BlbArchive::load(uint index, byte *buffer, uint32 size) {
 		Common::decompressDCL(&_fd, buffer, entry.diskSize, entry.size);
 		break;
 	default:
-		;
+		error("BlbArchive::load() Unknown compression type %d", entry.comprType);
 	}
 
 }

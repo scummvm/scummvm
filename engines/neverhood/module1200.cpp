@@ -329,7 +329,7 @@ Class464::Class464(NeverhoodEngine *vm)
 	createSurface(1200, 69, 98);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Class464::handleMessage);
-	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	setVisible(false);
 }
 
@@ -415,13 +415,13 @@ void AsScene1201TntMan::spriteUpdate40CD10() {
 void AsScene1201TntMan::sub40CD30() {
 	startAnimation(0x654913D0, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
-	SetSpriteCallback(NULL);
+	SetSpriteUpdate(NULL);
 }
 
 void AsScene1201TntMan::sub40CD60() {
 	startAnimation(0x356803D0, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage40CCD0);
-	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	NextState(&AsScene1201TntMan::sub40CD30);
 }
 
@@ -431,7 +431,7 @@ void AsScene1201TntMan::sub40CD90() {
 	_flag = true;
 	startAnimation(0x85084190, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
-	SetSpriteCallback(&AsScene1201TntMan::spriteUpdate40CD10);
+	SetSpriteUpdate(&AsScene1201TntMan::spriteUpdate40CD10);
 	_newStickFrameIndex = -2;
 }
 
@@ -441,7 +441,7 @@ Class465::Class465(NeverhoodEngine *vm, Sprite *asTntMan)
 	createSurface1(0x828C0411, 995);
 	SetUpdateHandler(&Class465::update);
 	SetMessageHandler(&Sprite::handleMessage);
-	SetSpriteCallback(&Class465::spriteUpdate40D150);
+	SetSpriteUpdate(&Class465::spriteUpdate40D150);
 	startAnimation(0x828C0411, 0, -1);
 	setVisible(false);
 }
@@ -471,7 +471,7 @@ AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
 	createSurface(1100, 57, 60);
 	SetUpdateHandler(&AsScene1201Match::update);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C2D0);
-	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	
 	switch (getGlobalVar(0x0112090A)) {
 	case 0:

@@ -70,7 +70,7 @@ protected:
 	bool _doubleSurface;
 	Common::SeekableReadStream *_stream;
 	bool _keepLastFrame;
-	bool _flag2;
+	bool _videoDone;
 	bool _dirtyFlag;
 	int _drawX, _drawY;
 	void update();

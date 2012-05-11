@@ -670,7 +670,7 @@ AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene3009HorizontalIndicator::handleMessage);
 	if (varValue == 8 || varValue == 9 || varValue == 10) {
-		SetSpriteCallback(&AsScene3009HorizontalIndicator::suMoveRight);
+		SetSpriteUpdate(&AsScene3009HorizontalIndicator::suMoveRight);
 		_x = 280;
 	}
 }
@@ -691,7 +691,7 @@ uint32 AsScene3009HorizontalIndicator::handleMessage(int messageNum, const Messa
 void AsScene3009HorizontalIndicator::suMoveLeft() {
 	_x -= 6;
 	if (_x < 92) {
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 		_x = 92;
 	}
 }
@@ -699,7 +699,7 @@ void AsScene3009HorizontalIndicator::suMoveLeft() {
 void AsScene3009HorizontalIndicator::suMoveRight() {
 	_x += 6;
 	if (_x > 533) {
-		SetSpriteCallback(NULL);
+		SetSpriteUpdate(NULL);
 		_x = 533;
 	}
 }
@@ -713,12 +713,12 @@ void AsScene3009HorizontalIndicator::show() {
 
 void AsScene3009HorizontalIndicator::stMoveLeft() {
 	_x = 533;
-	SetSpriteCallback(&AsScene3009HorizontalIndicator::suMoveLeft);
+	SetSpriteUpdate(&AsScene3009HorizontalIndicator::suMoveLeft);
 }
 
 void AsScene3009HorizontalIndicator::stMoveRight() {
 	_x = 330;
-	SetSpriteCallback(&AsScene3009HorizontalIndicator::suMoveRight);
+	SetSpriteUpdate(&AsScene3009HorizontalIndicator::suMoveRight);
 }
 
 AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int index)

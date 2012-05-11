@@ -31,6 +31,7 @@
 #include "common/system.h"
 #include "audio/mixer.h"
 #include "engines/engine.h"
+#include "neverhood/messages.h"
 
 namespace Neverhood {
 

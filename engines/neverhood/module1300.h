@@ -300,7 +300,7 @@ protected:
 	int _klaymanBlinkCountdown;
 	int _decisionCountdown;
 	uint32 _smackerFileHash;
-	bool _smackerFlag1;
+	bool _keepLastSmackerFrame;
 	void update();
 	void upChooseKing();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

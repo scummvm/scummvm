@@ -56,13 +56,10 @@ void CollisionMan::clearHitRects() {
 }
 
 HitRect *CollisionMan::findHitRectAtPos(int16 x, int16 y) {
-	if (_hitRects) {
-		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++) {
-			HitRect *hitRect = &(*it);
-			if (x >= hitRect->rect.x1 && x <= hitRect->rect.x2 && y >= hitRect->rect.y1 && y <= hitRect->rect.y2)
-				return hitRect;
-		}
-	}
+	if (_hitRects)
+		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++)
+			if ((*it).rect.contains(x, y))
+				return &(*it);
 	return &defaultHitRect; 
 }
 
