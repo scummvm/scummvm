@@ -233,7 +233,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_sub17A07();
 		break;
 	case 0x31:
-		return OC_sub17757();
+		return OC_checkViewPortCharacterTarget();
 		break;
 	default:
 		error("Unexpected opcode %d", curWord);
@@ -422,10 +422,10 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub180C3();
 		break;
 	case 0x3B:
-		OC_sub1810A();
+		OC_setViewPortPos();
 		break;
 	case 0x3C:
-		OC_sub1812D();
+		OC_setCurrentCharacterAltitude();
 		break;
 	case 0x3D:
 		OC_sub1817F();
@@ -606,7 +606,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_sub179E5", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_sub17A07", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
-	{ "OC_sub17757", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_checkViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
 };
 
 
@@ -670,8 +670,8 @@ static const OpCode opCodes2[] = {
 /* 0x38 */	{ "OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x39 */	{ "OC_sub18099", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x3a */	{ "OC_sub180C3", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-/* 0x3b */	{ "OC_sub1810A", 1, kgetPosFromScript, kNone, kNone, kNone, kNone }, 
-/* 0x3c */	{ "OC_sub1812D", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x3b */	{ "OC_setViewPortPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone }, 
+/* 0x3c */	{ "OC_setCurrentCharacterAltitude", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x3d */	{ "OC_sub1817F", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x3e */	{ "OC_sub181BB", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
 /* 0x3f */	{ "OC_sub18213", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
@@ -2056,11 +2056,11 @@ byte LilliputScript::OC_sub17A07() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub17757() {
-	debugC(1, kDebugScriptTBC, "OC_sub17757()");
+byte LilliputScript::OC_checkViewPortCharacterTarget() {
+	debugC(1, kDebugScript, "OC_checkViewPortCharacterTarget()");
 
 	int var1 = getValue1();
-	if ( var1 == _viewportCharacterTarget )
+	if (var1 == _viewportCharacterTarget)
 		return 1;
 	
 	return 0;
@@ -2247,7 +2247,7 @@ void LilliputScript::OC_sub17A8D() {
 	assert(tmpVal < 40);
 
 	if (tmpVal == _vm->_word10804)
-		_viewportCharacterTarget = 0xFFFF;
+		_viewportCharacterTarget = -1;
 
 	_vm->_characterPositionX[tmpVal] = -1;
 	_vm->_characterPositionY[tmpVal] = -1;
@@ -2742,7 +2742,8 @@ void LilliputScript::OC_sub18099() {
 
 void LilliputScript::OC_sub180C3() {
 	debugC(1, kDebugScriptTBC, "OC_sub180C3()");
-	_viewportCharacterTarget = 0xFFFF;
+
+	_viewportCharacterTarget = -1;
 
 	int var1 = _currScript->readUint16LE();
 	
@@ -2769,18 +2770,18 @@ void LilliputScript::OC_sub180C3() {
 	_byte12A09 = 0;
 }
 
-void LilliputScript::OC_sub1810A() {
-	debugC(1, kDebugScriptTBC, "OC_sub1810A()");
+void LilliputScript::OC_setViewPortPos() {
+	debugC(1, kDebugScript, "OC_setViewPortPos()");
 
-	_viewportCharacterTarget = 0xFFFF;
+	_viewportCharacterTarget = -1;
 	_viewportPos = getPosFromScript();
 
 	_vm->displayLandscape();
-	_vm->displayFunction15();
+	_vm->prepareGameArea();
 }
 
-void LilliputScript::OC_sub1812D() {
-	debugC(1, kDebugScriptTBC, "OC_sub1812D()");
+void LilliputScript::OC_setCurrentCharacterAltitude() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacterAltitude()");
 
 	_vm->_characterPositionAltitude[_vm->_currentScriptCharacter] = (_currScript->readUint16LE() & 0xFF);
 }
@@ -2914,7 +2915,7 @@ void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
 
 	_vm->_bufferCubegfx = _vm->loadVGA(fileName, 61440, false);
 	_vm->displayLandscape();
-	_vm->displayFunction15();
+	_vm->prepareGameArea();
 }
 
 void LilliputScript::OC_sub1834C() {

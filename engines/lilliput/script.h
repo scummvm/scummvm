@@ -194,7 +194,7 @@ private:
 	byte OC_sub179C2();
 	byte OC_sub179E5();
 	byte OC_sub17A07();
-	byte OC_sub17757();
+	byte OC_checkViewPortCharacterTarget();
 
 	// Opcodes Type 2
 	void OC_setWord18821();
@@ -256,8 +256,8 @@ private:
 	void OC_setCurrentCharacterDirection();
 	void OC_sub18099();
 	void OC_sub180C3();
-	void OC_sub1810A();
-	void OC_sub1812D();
+	void OC_setViewPortPos();
+	void OC_setCurrentCharacterAltitude();
 	void OC_sub1817F();
 	void sub1818B(Common::Point pos);
 	void OC_sub181BB();
