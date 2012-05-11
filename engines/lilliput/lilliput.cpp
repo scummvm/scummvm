@@ -148,7 +148,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte16552 = 0;
 	_byte12FE4 = 0xFF;
 	_byte12FE3 = 0;
-	_byte16F08 = 0;	
+	_byte16F08 = 0;
 	_byte16C9F = 0;
 
 	_currentScriptCharacter = 0;
@@ -260,7 +260,7 @@ void LilliputEngine::newInt8() {
 	}
 	--_byte12A06;
 	// TODO: check 'out 20h, 20h'
-	
+
 	// hack for the title stars because _int8installed is not set at the good place for the moment
 	//if (!_int8installed)
 	//	return;
@@ -304,7 +304,7 @@ Common::Platform LilliputEngine::getPlatform() const {
 void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 	debugC(2, kDebugEngineTBC, "displayCharacter(%d, %d - %d, %d)", index, pos.x, pos.y, flags);
 
-	byte *buf = _buffer1_45k + (pos.y << 8) + pos.x;
+	byte *buf = _savedSurfaceGameArea1 + (pos.y << 8) + pos.x;
 
 	byte *src = _bufferMen;
 	if (index < 0) {
@@ -330,7 +330,7 @@ void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 		// Sprite mirror
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				// May need a hack of 1 pixel 
+				// May need a hack of 1 pixel
 				if (src[15 - x] != 0)
 					buf[x] = src[15 - x];
 			}
@@ -422,37 +422,51 @@ void LilliputEngine::restoreSurfaceUnderMousePointer() {
 	}
 }
 
-// save game area
-void LilliputEngine::displayFunction6() {
-	debugC(2, kDebugEngineTBC, "displayFunction6()");
+void LilliputEngine::saveSurfaceGameArea() {
+	debugC(2, kDebugEngineTBC, "saveSurfaceGameArea()");
 
 	restoreSurfaceUnderMousePointer();
 
-	int index = (16 * 320) + 64;
+	int index = (16 * 320) + 64; // 5184
 	for (int i = 0; i < 176; i++) {
 		for (int j = 0; j < 256; j++)
-			_buffer3_45k[(i * 256) + j] = ((byte *)_mainSurface->getPixels())[index + j];
+			_savedSurfaceGameArea3[(i * 256) + j] = ((byte *)_mainSurface->getPixels())[index + j];
 		index += 320;
 	}
 
 	displayMousePointer();
 }
 
-// save speech zone
-void LilliputEngine::displayFunction7() {
-	debugC(2, kDebugEngineTBC, "displayFunction7()");
+void LilliputEngine::saveSurfaceSpeech() {
+	debugC(2, kDebugEngine, "saveSurfaceSpeech()");
 
 	restoreSurfaceUnderMousePointer();
 
 	int index = 66;
 	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 252; j++)
-			_buffer10_4032[(i * 252) + j] = ((byte *)_mainSurface->getPixels())[index + j];
+			_savedSurfaceSpeech[(i * 252) + j] = ((byte *)_mainSurface->getPixels())[index + j];
 		index += 320;
 	}
 
 	displayMousePointer();
 }
+
+void LilliputEngine::restoreSurfaceSpeech() {
+	debugC(2, kDebugEngine, "restoreSurfaceSpeech()");
+
+	restoreSurfaceUnderMousePointer();
+
+	int index = 66;
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 252; j++)
+			((byte *)_mainSurface->getPixels())[index + j] = _savedSurfaceSpeech[(i * 252) + j];
+		index += 320;
+	}
+
+	displayMousePointer();
+}
+
 
 void LilliputEngine::displayInterfaceHotspots() {
 	debugC(2, kDebugEngineTBC, "displayInterfaceHotspots()");
@@ -475,7 +489,7 @@ void LilliputEngine::displayInterfaceHotspots() {
 void LilliputEngine::displayLandscape() {
 	debugC(2, kDebugEngine, "displayLandscape()");
 
-	memcpy(_buffer2_45k, _buffer3_45k, 45056);
+	memcpy(_savedSurfaceGameArea2, _savedSurfaceGameArea3, 176 * 256); // 45056
 
 	int var1 = (_scriptHandler->_viewportPos.y >> 8) + ((_scriptHandler->_viewportPos.y & 0xFF) << 8) + (_scriptHandler->_viewportPos.x << 2);
 	int var2;
@@ -484,7 +498,7 @@ void LilliputEngine::displayLandscape() {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8 ; j++) {
 			var2 = (j << 8) + i;
-			displayIsometricBlock(_buffer2_45k, _bufferIsoMap[var1 + index], var2, 0);
+			displayIsometricBlock(_savedSurfaceGameArea2, _bufferIsoMap[var1 + index], var2, 0);
 			index += 4;
 		}
 		index += 224;
@@ -585,17 +599,17 @@ void LilliputEngine::displayFunction12() {
 
 	restoreSurfaceUnderMousePointer();
 
-	byte *tmpBuf = loadVGA("SCREEN.GFX", 64000, true);
-	memcpy(_mainSurface->getPixels(), tmpBuf, 320*200);
+	byte *tmpBuf = loadVGA("SCREEN.GFX", 320 * 200, true);
+	memcpy(_mainSurface->getPixels(), tmpBuf, 320 * 200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
 
-	displayFunction6();
-	displayFunction7();
+	saveSurfaceGameArea();
+	saveSurfaceSpeech();
 	displayInterfaceHotspots();
 	displayLandscape();
 	displayFunction15();
-	displayFunction14();
+	displayGameArea();
 
 	displayMousePointer();
 	free(tmpBuf);
@@ -620,8 +634,8 @@ void LilliputEngine::displayIsometricBlock(byte *buf, int var1, int var2, int va
 	}
 }
 
-void LilliputEngine::displayFunction14() {
-	debugC(2, kDebugEngineTBC, "displayFunction14()");
+void LilliputEngine::displayGameArea() {
+	debugC(2, kDebugEngine, "displayGameArea()");
 
 	if (_displayMap == 1)
 		return;
@@ -629,10 +643,10 @@ void LilliputEngine::displayFunction14() {
 	if (_mouseDisplayPos.x > 48)
 		restoreSurfaceUnderMousePointer();
 
-	int index = (16 * 320) + 64;
+	int index = (16 * 320) + 64; // 5184
 	for (int i = 0; i < 176; i++) {
 		for (int j = 0; j < 256; j++)
-			((byte *)_mainSurface->getPixels())[index + j] = _buffer1_45k[(i * 256) + j];
+			((byte *)_mainSurface->getPixels())[index + j] = _savedSurfaceGameArea1[(i * 256) + j];
 		index += 320;
 	}
 
@@ -667,7 +681,7 @@ void LilliputEngine::displayCharactersOnMap() {
 			 int y = (3 * _scriptHandler->_array1614BPosY[index]) + 1;
 			 int x = (_scriptHandler->_array16123PosX[index] * 4) + 1;
 
-			 _word15E5D[index] = y * 320 + x; 
+			 _word15E5D[index] = y * 320 + x;
 			 _byte15E35[index] = buf[y * 320 + x];
 			 buf[y * 320 + x] = _scriptHandler->_array128EF[index];
 		}
@@ -729,7 +743,7 @@ void LilliputEngine::moveCharacters() {
 			_characterDisplayY[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
 			_charactersToDisplay[_numCharactersToDisplay] = i;
 			++_numCharactersToDisplay;
- 		}
+		}
 	}
 
 	sortCharacters();
@@ -754,7 +768,7 @@ void LilliputEngine::displayFunction15() {
 	_currentDisplayCharacter = 0;
 	setNextDisplayCharacter(0);
 
-	memcpy(_buffer1_45k, _buffer2_45k, 45056);
+	memcpy(_savedSurfaceGameArea1, _savedSurfaceGameArea2, 176 * 256); // 45056;
 
 	int index1 = (_scriptHandler->_viewportPos.y >> 8) + ((_scriptHandler->_viewportPos.y & 0xFF) << 8) + (_scriptHandler->_viewportPos.x << 2);
 	byte *map = &_bufferIsoMap[index1];
@@ -766,7 +780,7 @@ void LilliputEngine::displayFunction15() {
 				int var1 = map[1];
 				if (_rulesChunk9[var1] != 128)
 					var1 += _scriptHandler->_byte12A04;
-				displayIsometricBlock(_buffer1_45k, var1, tmpVal, 1 << 8);
+				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 1 << 8);
 			}
 			renderCharacters(map, Common::Point(j, i));
 
@@ -774,7 +788,7 @@ void LilliputEngine::displayFunction15() {
 				int var1 = map[2];
 				if (_rulesChunk9[var1] != 128)
 					var1 += _scriptHandler->_byte12A04;
-				displayIsometricBlock(_buffer1_45k, var1, tmpVal, 2 << 8);
+				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 2 << 8);
 			}
 			map += 4;
 		}
@@ -802,7 +816,7 @@ void LilliputEngine::displayFunction16() {
 		scrollToViewportCharacterTarget();
 		sub189DE();
 		displayFunction15();
-		displayFunction14();
+		displayGameArea();
 		sub16626();
 		sub12F37();
 		sub16CA0();
@@ -815,6 +829,8 @@ void LilliputEngine::displayFunction16() {
 }
 
 void LilliputEngine::sub1863B() {
+	debugC(2, kDebugEngineTBC, "sub1863B()");
+
 	_arr18560[0]._field0 = 0;
 	_arr18560[1]._field0 = 0;
 	_arr18560[2]._field0 = 0;
@@ -859,7 +875,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	int dx = x2 - x1;
 	int dy = y2 - y1;
 
-	int word16DCB = 0; 
+	int word16DCB = 0;
 	int word16DCD = 0;
 	int word16DD1 = 0;
 	int word16DCF = 0;
@@ -898,7 +914,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	word16DCB += word16DCD;
 
 	int var1 = byte16DD4;
-	int count = 0; 
+	int count = 0;
 
 	while ( *isoMap == 0xFF ) {
 		if (var1 > 0) {
@@ -908,7 +924,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 			isoMap += word16DCF;
 			var1 += byte16DD4;
 		}
-		
+
 		count++;
 		if (count == dy) {
 			return 0;
@@ -922,12 +938,12 @@ void LilliputEngine::sub15F75() {
 
 	_byte129A0 = 0xFF;
 	_savedMousePosDivided = Common::Point(-1, -1);
-	byte newX = _mousePos.x >> 2; 
+	byte newX = _mousePos.x >> 2;
 	byte newY = _mousePos.y / 3;
 
 	if ((newX >= 64) || (newY >= 64))
 		return;
-	
+
 	_savedMousePosDivided = Common::Point(newX, newY);
 	_byte16F07_menuId = 5;
 }
@@ -956,7 +972,7 @@ void LilliputEngine::sub15F31(bool &forceReturnFl) {
 
 	_mouseButton = 0;
 	sub15F75();
-	
+
 	_displayMap = 0;
 	paletteFadeOut();
 	_word15AC2 = 0;
@@ -980,20 +996,20 @@ void LilliputEngine::sub16CA0() {
 
 		for (int index2 = _numCharacters - 1; index2 >= 0; index2--) {
 			_byte16C9F = 0;
-			if ((index != index2 ) && 
+			if ((index != index2 ) &&
 				(_rulesBuffer2_5[index] != index2) &&
 				(_rulesBuffer2_5[index2] != index) &&
 				(_rulesBuffer2_11[index2] & 2) == 0) {
 				int d1 = _scriptHandler->_array16123PosX[index2];
 				int d2 = _scriptHandler->_array1614BPosY[index2];
-	
+
 				if (d1 != 0xFF) {
 					int x = c1 - d1;
 					if ((x > -6) && (x < 6)) {
 						int y = c2 - d2;
 						if ((y > -6) && (y < 6)) {
 							_byte16C9F = 1;
-	
+
 							if ((c1 == d1) && (c2 == d2)) {
 								_byte16C9F = 4;
 							} else if((_rulesBuffer2_11[index] & 4) != 0) {
@@ -1007,7 +1023,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								} else if (_characterDirectionArray[index] == 1) {
 									if (d2 < c2) {
@@ -1017,7 +1033,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								} else if (_characterDirectionArray[index] == 2) {
 									if (d2 > c2) {
@@ -1027,7 +1043,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								} else {
 									if (d1 < c1) {
@@ -1037,7 +1053,7 @@ void LilliputEngine::sub16CA0() {
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
-											_byte16C9F = 1;	
+											_byte16C9F = 1;
 									}
 								}
 							}
@@ -1052,34 +1068,22 @@ void LilliputEngine::sub16CA0() {
 				_scriptHandler->_characterScriptEnabled[index] = 1;
 				val = (val & 0xFF00) | _byte16C9F;
 			}
-			_scriptHandler->_array10B51[index2 + index * 40] = val;	
+			_scriptHandler->_array10B51[index2 + index * 40] = val;
 
 		}
 
 	}
 }
 
-void LilliputEngine::displayFunction17() {
-	debugC(2, kDebugEngineTBC, "displayFunction17()");
-
-	restoreSurfaceUnderMousePointer();
-
-	for (int i = 0; i < 16; i++)
-		for (int j = 0; j < 252; j++)
-			((byte *)_mainSurface->getPixels())[66 + (i * 320) + j] = _buffer10_4032[(252 * i) + j];
-
-	displayMousePointer();
-}
-
 void LilliputEngine::displayFunction18(int var1, int var2, int var3, int var4) {
 	debugC(2, kDebugEngineTBC, "displayFunction18(%d, %d, %d, %d)", var1, var2, var3, var4);
-	
+
 	restoreSurfaceUnderMousePointer();
-	
+
 	if ((var1 & 0xFF) == 0x2D) {
 		var2 += 35;
 		var3 -= 35;
-		
+
 		if (var3 < 0) {
 			var2 += var3;
 			var3 = -var3;
@@ -1089,17 +1093,17 @@ void LilliputEngine::displayFunction18(int var1, int var2, int var3, int var4) {
 	byte *vgaBuf = (byte *)_mainSurface->getPixels();
 	int tmpVal = (var3 >> 8) + ((var3 & 0xFF) << 8);
 	int vgaIndex = var2 + tmpVal + (tmpVal >> 2);
-	
+
 	if (var3 == 0)
 		++var3;
-	
+
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < var3; j++) {
 			vgaBuf[vgaIndex + j] = 2;
 		}
 		vgaIndex += 320;
 	}
-	
+
 	displayMousePointer();
 }
 
@@ -1145,8 +1149,8 @@ void LilliputEngine::sortCharacters() {
 		for (int var2 = 0; var2 < var4; var2++) {
 			int index1 = _charactersToDisplay[var2];
 			int index2 = _charactersToDisplay[var2 + 1];
-		
-			if (_characterRelativePositionY[index1] < _characterRelativePositionY[index2]) 
+
+			if (_characterRelativePositionY[index1] < _characterRelativePositionY[index2])
 				continue;
 
 			if (_characterRelativePositionY[index1] == _characterRelativePositionY[index2]) {
@@ -1238,10 +1242,10 @@ void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
 	do {
 		_scriptHandler->_viewportPos.x += dx;
 		_scriptHandler->_viewportPos.y += dy;
-		
+
 		displayLandscape();
 		displayFunction15();
-		displayFunction14();
+		displayGameArea();
 
 		if (goalPos.x == _scriptHandler->_viewportPos.x)
 			dx = 0;
@@ -1281,7 +1285,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 			frame += _scriptHandler->_array10AB1[index];
 			if ((flag & 1) == 1)
 				frame += _spriteSizeArray[index];
-			
+
 			if (_array12299[index] != 0xFF) {
 				frame = _array12299[index] + 82;
 				--_array12299[index];
@@ -1300,11 +1304,11 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 
 void LilliputEngine::sub1546F(Common::Point displayPos) {
 	debugC(2, kDebugEngineTBC, "sub1546F(%d, %d)", displayPos.x, displayPos.y);
-	
+
 	int orgX = displayPos.x + 8;
 	int orgY = displayPos.y;
 	int var2 = 0;
-	
+
 	int x = orgX;
 	int y = orgY;
 	do {
@@ -1312,10 +1316,10 @@ void LilliputEngine::sub1546F(Common::Point displayPos) {
 		--x;
 		y >>= 1;
 	} while (y != 0);
-	
+
 	x = orgX + 1;
 	y = orgY >> 1;
-	
+
 	while (y != 0) {
 		sub15498(x, y, var2);
 		++x;
@@ -1325,10 +1329,10 @@ void LilliputEngine::sub1546F(Common::Point displayPos) {
 
 void LilliputEngine::sub15498(byte x, byte y, int var2) {
 	debugC(2, kDebugEngineTBC, "sub15498(%d, %d, %d)", x, y, var2);
-	
+
 	int index = x + ((var2 & 0xFF) << 8) + (var2 >> 8);
 	for (int i = 1 + y - var2; i > 0; i--) {
-		_buffer1_45k[index] = 17;
+		_savedSurfaceGameArea1[index] = 17;
 		index += 256;
 	}
 }
@@ -1339,7 +1343,7 @@ void LilliputEngine::sub189DE() {
 	if (_byte1881D != 0) {
 		--_byte1881D;
 		if (_byte1881D == 0) {
-			displayFunction17();
+			restoreSurfaceSpeech();
 			_scriptHandler->_word1881B = -1;
 		}
 	}
@@ -1404,24 +1408,24 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 
 void LilliputEngine::sub167EF(int index) {
 	debugC(2, kDebugEngineTBC, "sub167EF(%d)", index);
-	
+
 	int word167EB = findHotspot(Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]));
 	int word167ED = findHotspot(Common::Point(_array10999PosX[index], _array109C1PosY[index]));
-	
+
 	if (word167EB == word167ED) {
 		_array109E9PosX[index] = _array10999PosX[index];
 		_array10A11PosY[index] = _array109C1PosY[index];
 		return;
 	}
-	
+
 	if (word167EB == -1) {
 		int tmpVal = reverseFindHotspot(Common::Point(_array10999PosX[index], _array109C1PosY[index]));
 		_array109E9PosX[index] = _rulesBuffer12Pos4[tmpVal].x;
 		_array10A11PosY[index] = _rulesBuffer12Pos4[tmpVal].y;
 		return;
 	}
-	
-	if ((word167ED != -1) && 
+
+	if ((word167ED != -1) &&
 		  (_array10999PosX[index] >= (_rectXMinMax[word167EB] >> 8)) &&
 		  (_array10999PosX[index] <= (_rectXMinMax[word167EB] & 0xFF)) &&
 		  (_array109C1PosY[index] >= (_rectYMinMax[word167EB] >> 8)) &&
@@ -1430,18 +1434,18 @@ void LilliputEngine::sub167EF(int index) {
 		_array10A11PosY[index] = _rulesBuffer12Pos4[word167ED].y;
 		return;
 	}
-	
+
 	_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
 	_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
 	int var4h = (_rectXMinMax[index] >> 8);
 	int var4l = (_rectXMinMax[index] & 0xFF);
-	
+
 	if (var4h != var4l) {
 		if (_array109E9PosX[index] == var4h) {
 			--_array109E9PosX[index];
 			return;
 		}
-		
+
 		if (_array109E9PosX[index] == var4l) {
 			++_array109E9PosX[index];
 			return;
@@ -1458,7 +1462,7 @@ void LilliputEngine::sub167EF(int index) {
 			return;
 		}
 	}
-	
+
 	// var4h == var4l
 	int mapIndex = (((_array10A11PosY[index] << 8) >> 2) + _array109E9PosX[index]) << 2;
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
@@ -1468,25 +1472,25 @@ void LilliputEngine::sub167EF(int index) {
 		--_array10A11PosY[index];
 	else if ((tmpVal & 2) != 0)
 		++_array10A11PosY[index];
-	else 
+	else
 		--_array109E9PosX[index];
-	
+
 	return;
 }
 
 void LilliputEngine::sub1693A(int index) {
 	debugC(2, kDebugEngineTBC, "sub1693A(%d)", index);
-	
+
 	static const uint16 _array1692F[4] = {4, 0xFF00, 0x100, 0xFFFC};
 
 	_word16937Pos = Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]);
 
 	sub16A08(index);
-	
+
 	int var2 = (_characterDirectionArray[index] ^ 3);
 	_array1692B[var2] += 0xF8;
 	_byte16939 = 0;
-	
+
 	int mapIndex = ((((_word16937Pos.y << 8) >> 2) + _word16937Pos.x) << 2);
 	int subMapIndex = 0;
 	int retVal = 0;
@@ -1496,7 +1500,7 @@ void LilliputEngine::sub1693A(int index) {
 			if ((_bufferIsoMap[mapIndex + subMapIndex + 3] & 0x80) != 0) {
 				if (sub16A76(i, index) != 0)
 					_array1692B[i] += 0xEC;
-				
+
 				int tmpVal = ((_rulesBuffer2_10[index] & 7) ^ 7);
 				retVal = _rulesChunk9[_bufferIsoMap[mapIndex + subMapIndex]];
 				tmpVal &= retVal;
@@ -1518,7 +1522,7 @@ void LilliputEngine::sub1693A(int index) {
 			tmpVal = _array1692B[i];
 		}
 	}
-	
+
 	_characterDirectionArray[index] = retVal;
 }
 
@@ -1527,7 +1531,7 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 
 	static const char _array16A6C[4] = {1, 0, 0, -1};
 	static const char _array16A70[4] = {0, -1, 1, 0};
-	   
+
 	char var1h = _word16937Pos.x + _array16A6C[indexb];
 	char var1l = _word16937Pos.y + _array16A70[indexs];
 
@@ -1613,7 +1617,7 @@ void LilliputEngine::addCharToBuf(byte character) {
 
 void LilliputEngine::prepareGoldAmount(int param1) {
 	debugC(2, kDebugEngineTBC, "prepareGoldAmount(%d)", param1);
-	
+
 	static const int _array18AE3[6] = {10000, 1000, 100, 10, 1};
 
 	int count;
@@ -1629,7 +1633,7 @@ void LilliputEngine::prepareGoldAmount(int param1) {
 		--count;
 
 		byte tmpVal = count + 0x30;
-		
+
 		if (i == 4)
 			addCharToBuf(tmpVal);
 		else if ((count != 0) || (!hideZeros)) {
@@ -1736,7 +1740,7 @@ byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
 
 byte LilliputEngine::sub166DD(int index, Common::Point var1) {
 	debugC(2, kDebugEngineTBC, "sub166DD(%d, %d - %d)", index, var1.x, var1.y);
-	
+
 	_characterDirectionArray[index] = (var1.x & 3);
 	sub16685(index, var1);
 	return 0;
@@ -1786,7 +1790,7 @@ void LilliputEngine::sub16EBC() {
 	int index2 = 3;
 
 	for (int index1 = _numCharacters - 1; index1 >= 0; index1--) {
-		int var2 = (_scriptHandler->_array1614BPosY[index1] << 8) + (_scriptHandler->_array16123PosX[index1] << 2); 
+		int var2 = (_scriptHandler->_array1614BPosY[index1] << 8) + (_scriptHandler->_array16123PosX[index1] << 2);
 		int var1 = (_bufferIsoMap[index2 + var2] & 0x40);
 
 		if (var1 == _array16E94[index1])
@@ -1813,7 +1817,7 @@ void LilliputEngine::sub12F37() {
 				--varPtr[0];
 				if (varPtr[0] == 1)
 					_scriptHandler->_characterScriptEnabled[index2] = 1;
-			}			
+			}
 		}
 
 		index1 += 32;
@@ -1971,7 +1975,7 @@ byte LilliputEngine::sub16675(int idx, Common::Point var1) {
 	debugC(2, kDebugEngineTBC, "sub16675(%d, %d - %d)", idx, var1.x, var1.y);
 
 	sub16685(idx, var1);
-	int index = var1.y;	
+	int index = var1.y;
 	switch (var1.x) {
 	case 0:
 		break;
@@ -2139,7 +2143,7 @@ void LilliputEngine::sub17224(int var1, int var4) {
 		sub17264(var1, var4);
 		return;
 	}
-	
+
 	if (type == 3) {
 		for (int i = _numCharacters - 1; i >= 0; i--)
 			sub17264(i, var4);
@@ -2232,7 +2236,7 @@ void LilliputEngine::displayHeroismIndicator() {
 	}
 
 	_scriptHandler->_heroismLevel += var2;
-	
+
 	int index = _scriptHandler->_heroismBarX + _scriptHandler->_heroismBarBottomY * 320 ;
 
 	var2 = _scriptHandler->_heroismLevel & 0xFF;
@@ -2284,7 +2288,7 @@ void LilliputEngine::pollEvent() {
 			break;
 		}
 	}
-	
+
 	if (_mousePos != _oldMousePos) {
 		_oldMousePos = _mousePos;
 		if (_skipDisplayFlag1 != 0) {
@@ -2385,7 +2389,7 @@ void LilliputEngine::loadRules() {
 		error("Missing game file ERULES.PRG");
 
 	_word10800_ERULES = f.readUint16LE();
-	
+
 	// Chunk 1
 	int size = f.readUint16LE();
 	_rulesChunk1 = (byte *)malloc(sizeof(byte) * size);
@@ -2694,7 +2698,7 @@ Common::Error LilliputEngine::run() {
 
 	_scriptHandler->runScript(ScriptStream(_initScript, _initScriptSize));
 
-	// Hack, see above 
+	// Hack, see above
 	_int8installed = true;
 
 	while(!_shouldQuit) {
