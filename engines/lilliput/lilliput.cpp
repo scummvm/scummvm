@@ -609,7 +609,7 @@ void LilliputEngine::displayFunction12() {
 	saveSurfaceSpeech();
 	displayInterfaceHotspots();
 	displayLandscape();
-	displayFunction15();
+	prepareGameArea();
 	displayGameArea();
 
 	displayMousePointer();
@@ -762,8 +762,8 @@ void LilliputEngine::setNextDisplayCharacter(int var1) {
 	}
 }
 
-void LilliputEngine::displayFunction15() {
-	debugC(2, kDebugEngineTBC, "displayFunction15()");
+void LilliputEngine::prepareGameArea() {
+	debugC(2, kDebugEngineTBC, "prepareGameArea()");
 
 	moveCharacters();
 	_currentDisplayCharacter = 0;
@@ -816,7 +816,7 @@ void LilliputEngine::displayFunction16() {
 	} else {
 		scrollToViewportCharacterTarget();
 		sub189DE();
-		displayFunction15();
+		prepareGameArea();
 		displayGameArea();
 		sub16626();
 		sub12F37();
@@ -1211,11 +1211,10 @@ void LilliputEngine::sortCharacters() {
 	}
 }
 
-// Move view port to x/y
 void LilliputEngine::scrollToViewportCharacterTarget() {
 	debugC(2, kDebugEngineTBC, "scrollToViewportCharacterTarget()");
 
-	if (_scriptHandler->_viewportCharacterTarget == 0xFFFF)
+	if (_scriptHandler->_viewportCharacterTarget == -1)
 		return;
 
 	int var2 = (_characterPositionX[_scriptHandler->_viewportCharacterTarget] >> 3) - _scriptHandler->_viewportPos.x;
@@ -1276,7 +1275,7 @@ void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
 		_scriptHandler->_viewportPos.y += dy;
 
 		displayLandscape();
-		displayFunction15();
+		prepareGameArea();
 		displayGameArea();
 
 		if (goalPos.x == _scriptHandler->_viewportPos.x)

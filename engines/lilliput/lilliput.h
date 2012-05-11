@@ -233,7 +233,7 @@ public:
 	void displayFunction12();
 	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);
 	void displayGameArea();
-	void displayFunction15();
+	void prepareGameArea();
 	void displayFunction16();
 	void restoreSurfaceSpeech();
 	void displayFunction18(int var1, int var2, int var3, int var4);
