@@ -105,7 +105,6 @@ public:
 	byte _byte12A07;
 	byte _byte12A08;
 	byte _byte12A09;
-	byte _byte1881D;
 	byte _byte16552;
 	byte _byte12FE4;
 	byte _byte12FE3;
@@ -221,7 +220,7 @@ public:
 	void display16x16IndexedBuf(byte *buf, int var1, Common::Point pos);
 	void display16x16Buf(byte *buf, Common::Point pos);
 	void SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos);
-	void displayFunction3(int var1, int var2, int var4);
+	void fill16x16Rect(int var1, int var2, int var4);
 	void displayMousePointer();
 	void restoreSurfaceUnderMousePointer();
 	void saveSurfaceGameArea();
@@ -252,7 +251,7 @@ public:
 	void sortCharacters();
 	void scrollToViewportCharacterTarget();
 	void viewportScrollTo(Common::Point goalPos);
-	void sub189DE();
+	void checkSpeechClosing();
 	void sub16626();
 	void sub16A08(int index);
 	byte sub16A76(int indexb, int indexs);
@@ -289,9 +288,9 @@ public:
 	void sub131B2(Common::Point pos, bool &forceReturnFl);
 	void sub131FC(Common::Point pos);
 	void sub1546F(Common::Point displayPos);
-	void sub15498(byte x, byte y, int var2);
+	void sub15498(Common::Point pos, int var2);
 	void sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex);
-	void sub15F31(bool &forceReturnFl);
+	void checkMapClosing(bool &forceReturnFl);
 	void sub16B63(int index);
 	void sub16B76(int index);
 	void sub166C0(int index);

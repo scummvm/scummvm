@@ -57,6 +57,7 @@ struct OpCode {
 class LilliputScript {
 public:
 	byte _heroismLevel;
+	byte _speechTimer;
 
 	byte _characterScriptEnabled[40];
 	byte _array122E9[20];
@@ -73,7 +74,7 @@ public:
 
 	Common::Point _viewportPos;
 	int _viewportCharacterTarget;
-	int _word1881B;
+	int _talkingCharacter;
 	int _heroismBarX;
 	int _heroismBarBottomY;
 
@@ -106,8 +107,7 @@ private:
 	byte _byte16F04;
 	byte _byte1881A;
 	byte _byte18823;
-	byte _byte1881E;
-	byte _byte1881D;
+	byte _speechDisplaySpeed;
 
 	int _word16F00;
 	int _word18776;
@@ -199,19 +199,19 @@ private:
 	// Opcodes Type 2
 	void OC_setWord18821();
 	void OC_sub17A3E();
-	void OC_sub17D57();
-	void OC_sub17D7F();
-	void OC_sub17DB9();
-	void OC_sub17DF9();
-	void OC_sub17E07();
-	void OC_sub17E15();
+	void OC_sub17D57_speech1();
+	void OC_sub17D7F_speech2();
+	void OC_sub17DB9_speech3();
+	void OC_sub17DF9_speech1param();
+	void OC_sub17E07_speech4param();
+	void OC_sub17E15_speech2param();
 	void OC_sub17B03();
 	void OC_getRandom_type2();
 	void OC_setCharacterPosition();
 	void OC_sub17A8D();
 	void OC_saveAndQuit();
 	void OC_sub17B93();
-	void OC_sub17E37();
+	void OC_sub17E37_speech4();
 	void OC_resetByte1714E();
 	void OC_deleteSavegameAndQuit();
 	void OC_incByte16F04();
@@ -278,7 +278,7 @@ private:
 	void OC_sub183A2();
 	void OC_sub183C6();
 	void OC_loadFile_AERIAL_GFX();
-	void OC_sub17E22();
+	void OC_sub17E22_speech1IfSoundOff();
 	void OC_sub1844A();
 	void OC_sub1847F();
 	void OC_displayVGAFile();
