@@ -56,7 +56,6 @@ struct OpCode {
 
 class LilliputScript {
 public:
-	byte _byte12A04;
 	byte _heroismLevel;
 
 	byte _characterScriptEnabled[40];
@@ -77,7 +76,6 @@ public:
 	int _word1881B;
 	int _heroismBarX;
 	int _heroismBarBottomY;
-	int _word1855E;
 
 	Common::Point _array12311[640];
 	byte _array128EF[40];
@@ -102,7 +100,6 @@ private:
 	byte _byte16F05_ScriptHandler;
 	byte _byte12A09;
 	byte _byte129A0;
-	byte _byte1855D;
 	byte _byte10806;
 	byte _byte12FE4;
 	byte _byte16F02;
@@ -123,8 +120,6 @@ private:
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 	
-	void sub185ED(byte index, byte subIndex);
-	void sub185B4_display();
 	void sub1823E(byte index, byte var1, byte *curBufPtr);
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
@@ -291,7 +286,7 @@ private:
 	void OC_displayTitleScreen();
 	void OC_sub1853B();
 	void OC_sub1864D();
-	void OC_initArr18560();
+	void OC_initSmallAnim();
 	void OC_sub18678();
 	void OC_sub18690();
 	void OC_setViewPortCharacterTarget();
