@@ -417,7 +417,6 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 		warning("CBSurfaceSDL::DrawSprite not fully ported yet"); // TODO.
 		hasWarned = true;
 	}
-	return S_OK;
 #if 0
 	byte r = D3DCOLGetR(Alpha);
 	byte g = D3DCOLGetG(Alpha);
