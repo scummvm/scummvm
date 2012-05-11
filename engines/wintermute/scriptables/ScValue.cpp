@@ -724,13 +724,13 @@ HRESULT CScValue::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(_valNative));
 
 	int size;
-	char *str;
+	const char *str;
 	if (PersistMgr->_saving) {
 		size = _valObject.size();
 		PersistMgr->Transfer("", &size);
 		_valIter = _valObject.begin();
 		while (_valIter != _valObject.end()) {
-			str = (char *)_valIter->_key.c_str();
+			str = _valIter->_key.c_str();
 			PersistMgr->Transfer("", &str);
 			PersistMgr->Transfer("", &_valIter->_value);
 
@@ -800,7 +800,7 @@ HRESULT CScValue::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		Buffer->PutTextIndent(Indent, "PROPERTY {\n");
-		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)_valIter->_key.c_str());
+		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _valIter->_key.c_str());
 		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", _valIter->_value->GetString());
 		Buffer->PutTextIndent(Indent, "}\n\n");
 
@@ -868,15 +868,15 @@ HRESULT CScValue::DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariable
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::SetProperty(const char *PropName, int Value) {
 	CScValue *Val = new CScValue(Game, Value);
-	bool Ret =  SUCCEEDED(SetProp((char *)PropName, Val));
+	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
 	delete Val;
 	return Ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::SetProperty(const char *PropName, const char *Value) {
-	CScValue *Val = new CScValue(Game, (char *)Value);
-	bool Ret =  SUCCEEDED(SetProp((char *)PropName, Val));
+	CScValue *Val = new CScValue(Game, Value);
+	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
 	delete Val;
 	return Ret;
 }
@@ -884,7 +884,7 @@ bool CScValue::SetProperty(const char *PropName, const char *Value) {
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::SetProperty(const char *PropName, double Value) {
 	CScValue *Val = new CScValue(Game, Value);
-	bool Ret =  SUCCEEDED(SetProp((char *)PropName, Val));
+	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
 	delete Val;
 	return Ret;
 }
@@ -893,7 +893,7 @@ bool CScValue::SetProperty(const char *PropName, double Value) {
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::SetProperty(const char *PropName, bool Value) {
 	CScValue *Val = new CScValue(Game, Value);
-	bool Ret =  SUCCEEDED(SetProp((char *)PropName, Val));
+	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
 	delete Val;
 	return Ret;
 }
@@ -902,7 +902,7 @@ bool CScValue::SetProperty(const char *PropName, bool Value) {
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::SetProperty(const char *PropName) {
 	CScValue *Val = new CScValue(Game);
-	bool Ret =  SUCCEEDED(SetProp((char *)PropName, Val));
+	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
 	delete Val;
 	return Ret;
 }
@@ -977,7 +977,7 @@ bool CScValue::DbgSetVal(bool Value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::DbgSetVal(const char *Value) {
-	SetString((char *)Value);
+	SetString(Value);
 	return true;
 }
 

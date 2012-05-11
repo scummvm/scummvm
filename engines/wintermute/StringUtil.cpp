@@ -269,7 +269,7 @@ AnsiString StringUtil::Replace(const AnsiString &str, const AnsiString &from, co
 	if (from.empty() || from == to) return str;
 
 	AnsiString result = str;
-	size_t pos = 0;
+	/*size_t pos = 0;*/
 
 	while (result.contains(from)) {
 		const char *startPtr = strstr(result.c_str(), from.c_str());
@@ -323,11 +323,11 @@ int StringUtil::LastIndexOf(const WideString &str, const WideString &toFind, siz
 	/*size_t pos = str.rfind(toFind, startFrom);
 	if (pos == str.npos) return -1;
 	else return pos;*/
-	uint32 lastIndex = -1;
+	int32 lastIndex = -1;
 	bool found = false;
-	for (int i = startFrom; i < str.size(); i++) {
+	for (size_t i = startFrom; i < str.size(); i++) {
 		found = false;
-		for (int j = 0; j < toFind.size(); j++) {
+		for (size_t j = 0; j < toFind.size(); j++) {
 			if (str[i + j] != toFind[j]) {
 				found = false;
 				break;
@@ -346,7 +346,7 @@ AnsiString StringUtil::ToString(size_t val) {
 	/*  std::ostringstream str;
 	    str << val;
 	    return str.str();*/
-	return Common::String::format("%u", val);
+	return Common::String::format("%u", (uint32)val);
 }
 
 //////////////////////////////////////////////////////////////////////////

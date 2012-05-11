@@ -150,7 +150,7 @@ HRESULT CScScript::InitTables() {
 
 	TScriptHeader *Header = (TScriptHeader *)_buffer;
 
-	uint32 i;
+	int32 i;
 
 	// load symbol table
 	_iP = Header->symbol_table;
@@ -471,7 +471,7 @@ HRESULT CScScript::ExecuteInstruction() {
 	case II_DEF_GLOB_VAR:
 	case II_DEF_CONST_VAR: {
 		dw = GetDWORD();
-		char *Temp = _symbols[dw]; // TODO delete
+/*		char *Temp = _symbols[dw]; // TODO delete */
 		// only create global var if it doesn't exist
 		if (!_engine->_globals->PropExists(_symbols[dw])) {
 			_operand->SetNULL();
@@ -1544,7 +1544,7 @@ HRESULT CScScript::DbgSendVariables(IWmeDebugClient *Client) {
 	// send scope variables
 	if (_scopeStack->_sP >= 0) {
 		for (int i = 0; i <= _scopeStack->_sP; i++) {
-			CScValue *Scope = _scopeStack->GetAt(i);
+		//	CScValue *Scope = _scopeStack->GetAt(i);
 			//Scope->DbgSendVariables(Client, WME_DBGVAR_SCOPE, this, (unsigned int)Scope);
 		}
 	}

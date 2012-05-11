@@ -224,7 +224,7 @@ void CBArray<TYPE, ARG_TYPE>::SetSize(int nNewSize, int nGrowBy) {
 		_nSize = nNewSize;
 	} else {
 		// otherwise, grow array
-		int nGrowBy = _nGrowBy;
+		nGrowBy = _nGrowBy;
 		if (nGrowBy == 0) {
 			// heuristically determine growth when nGrowBy == 0
 			//  (this avoids heap fragmentation in many situations)

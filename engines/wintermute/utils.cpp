@@ -129,7 +129,7 @@ char *CBUtils::SetString(char **String, const char *Value) {
 //////////////////////////////////////////////////////////////////////////
 int CBUtils::StrNumEntries(const char *Str, const char Delim) {
 	int NumEntries = 1;
-	for (int i = 0; i < strlen(Str); i++) {
+	for (uint32 i = 0; i < strlen(Str); i++) {
 		if (Str[i] == Delim) NumEntries++;
 	}
 	return NumEntries;
@@ -143,7 +143,7 @@ char *CBUtils::StrEntry(int Entry, const char *Str, const char Delim) {
 	const char *Start = NULL;
 	int Len = 0;
 
-	for (int i = 0; i <= strlen(Str); i++) {
+	for (uint32 i = 0; i <= strlen(Str); i++) {
 		if (NumEntries == Entry) {
 			if (!Start) Start = Str + i;
 			else Len++;
@@ -294,9 +294,9 @@ void CBUtils::RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL) {
 		if (H > 1) H -= 1;
 	}
 
-	*OutH = H * 255;
-	*OutS = S * 255;
-	*OutL = L * 255;
+	*OutH = (byte)(H * 255);
+	*OutS = (byte)(S * 255);
+	*OutL = (byte)(L * 255);
 }
 
 
@@ -310,9 +310,9 @@ uint32 CBUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 
 
 	if (S == 0) {
-		R = L * 255;
-		G = L * 255;
-		B = L * 255;
+		R = (byte)(L * 255);
+		G = (byte)(L * 255);
+		B = (byte)(L * 255);
 	} else {
 		float var_1, var_2;
 
@@ -321,9 +321,9 @@ uint32 CBUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 
 		var_1 = 2.0f * L - var_2;
 
-		R = 255 * Hue2RGB(var_1, var_2, H + (1.0f / 3.0f));
-		G = 255 * Hue2RGB(var_1, var_2, H);
-		B = 255 * Hue2RGB(var_1, var_2, H - (1.0f / 3.0f));
+		R = (byte)(255 * Hue2RGB(var_1, var_2, H + (1.0f / 3.0f)));
+		G = (byte)(255 * Hue2RGB(var_1, var_2, H));
+		B = (byte)(255 * Hue2RGB(var_1, var_2, H - (1.0f / 3.0f)));
 	}
 	return DRGBA(255, R, G, B);
 }

@@ -36,7 +36,7 @@
 #include "graphics/decoders/bmp.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "stream.h"
+#include "common/stream.h"
 #include "BFileManager.h"
 #include "PlatformSDL.h"
 
@@ -66,7 +66,7 @@ CBSurfaceSDL::~CBSurfaceSDL() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+/*	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
 	Common::String strFileName(Filename);
 
 	Graphics::ImageDecoder *imgDecoder;
@@ -120,10 +120,10 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 	    FreeImage_FlipVertical(img);*/
 
 	//TODO: This is rather endian-specific, but should be replaced by non-SDL-code anyhow:
-	uint32 rmask = surface->format.rMax() << surface->format.rShift;
+/*	uint32 rmask = surface->format.rMax() << surface->format.rShift;
 	uint32 gmask = surface->format.gMax() << surface->format.gShift;
 	uint32 bmask = surface->format.bMax() << surface->format.bShift;
-	uint32 amask = surface->format.aMax();
+	uint32 amask = surface->format.aMax();*/
 
 //	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(surface->pixels, _width, _height, surface->format.bytesPerPixel * 8, surface->pitch, rmask, gmask, bmask, amask);
 
@@ -258,6 +258,7 @@ uint32 CBSurfaceSDL::GetPixel(Graphics::Surface *surface, int x, int y) {
 		return 0;       /* shouldn't happen, but avoids warnings */
 	}
 #endif
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -296,8 +297,6 @@ HRESULT CBSurfaceSDL::CreateFromSDLSurface(Graphics::Surface *surface) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBSurfaceSDL::IsTransparentAt(int X, int Y) {
-	int access;
-	int width, height;
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
@@ -305,6 +304,9 @@ bool CBSurfaceSDL::IsTransparentAt(int X, int Y) {
 		warning("CBSurfaceSDL::IsTransparentAt not ported yet");
 		hasWarned = true;
 	}
+#if 0
+	int access;
+	int width, height;
 	//SDL_QueryTexture(_texture, NULL, &access, &width, &height); //TODO
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
 	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
@@ -315,15 +317,14 @@ bool CBSurfaceSDL::IsTransparentAt(int X, int Y) {
 	EndPixelOp();
 
 	return ret;
+#endif
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CBSurfaceSDL::IsTransparentAtLite(int X, int Y) {
 	//if (!_lockPixels) return false;
 
-	uint32 format;
-	int access;
-	int width, height;
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
@@ -331,13 +332,19 @@ bool CBSurfaceSDL::IsTransparentAtLite(int X, int Y) {
 		warning("CBSurfaceSDL::IsTransparentAtLite not ported yet");
 		hasWarned = true;
 	}
+#if 0
+	uint32 format;
+	int access;
+	int width, height;
+
 	//SDL_QueryTexture(_texture, &format, &access, &width, &height);
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
 	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
 
 	if (!_alphaMask) return false;
 	else return _alphaMask[Y * width + X] <= 128;
-
+#endif
+	return false;
 	/*
 	Uint32* dst = (Uint32*)((Uint8*)_lockPixels + Y * _lockPitch);
 	Uint32 pixel = dst[X];
@@ -403,10 +410,6 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 
 	if (renderer->_forceAlphaColor != 0) Alpha = renderer->_forceAlphaColor;
 
-	byte r = D3DCOLGetR(Alpha);
-	byte g = D3DCOLGetG(Alpha);
-	byte b = D3DCOLGetB(Alpha);
-	byte a = D3DCOLGetA(Alpha);
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
@@ -414,7 +417,13 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 		warning("CBSurfaceSDL::DrawSprite not fully ported yet"); // TODO.
 		hasWarned = true;
 	}
+	return S_OK;
 #if 0
+	byte r = D3DCOLGetR(Alpha);
+	byte g = D3DCOLGetG(Alpha);
+	byte b = D3DCOLGetB(Alpha);
+	byte a = D3DCOLGetA(Alpha);
+
 	SDL_SetTextureColorMod(_texture, r, g, b);
 	SDL_SetTextureAlphaMod(_texture, a);
 
