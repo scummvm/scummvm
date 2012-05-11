@@ -86,7 +86,7 @@ void RMInput::Poll(void) {
 			} else if (_event.type == Common::EVENT_RBUTTONDOWN) {
 				_rightButton = true;
 				_rightClickMouse = true;
-			} else if (_event.type == Common::EVENT_RBUTTONDOWN) {
+			} else if (_event.type == Common::EVENT_RBUTTONUP) {
 				_rightButton = false;
 				_rightReleaseMouse = true;
 			} else
