@@ -779,7 +779,7 @@ void LilliputEngine::displayFunction15() {
 			int tmpVal = (j << 8) + i;
 			if (map[1] != 0xFF) {
 				int var1 = map[1];
-				if (_rulesChunk9[var1] != 128)
+				if ((_rulesChunk9[var1] & 128) != 0)
 					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 1 << 8);
 			}
@@ -787,7 +787,7 @@ void LilliputEngine::displayFunction15() {
 
 			if (map[2] != 0xFF) {
 				int var1 = map[2];
-				if (_rulesChunk9[var1] != 128)
+				if ((_rulesChunk9[var1] & 128) != 0)
 					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 2 << 8);
 			}
@@ -2243,7 +2243,7 @@ void LilliputEngine::sub12FE5() {
 		}
 	}
 
-	if (count !=0)
+	if (count != 0)
 		displayInterfaceHotspots();
 }
 
