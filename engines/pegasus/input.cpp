@@ -37,95 +37,88 @@ DECLARE_SINGLETON(Pegasus::InputDeviceManager);
 namespace Pegasus {
 
 InputDeviceManager::InputDeviceManager() {
+	// Set all keys to "not down"
+	_keyMap[Common::KEYCODE_UP] = false;
+	_keyMap[Common::KEYCODE_KP8] = false;
+	_keyMap[Common::KEYCODE_LEFT] = false;
+	_keyMap[Common::KEYCODE_KP4] = false;
+	_keyMap[Common::KEYCODE_DOWN] = false;
+	_keyMap[Common::KEYCODE_KP5] = false;
+	_keyMap[Common::KEYCODE_RIGHT] = false;
+	_keyMap[Common::KEYCODE_KP6] = false;
+	_keyMap[Common::KEYCODE_RETURN] = false;
+	_keyMap[Common::KEYCODE_SPACE] = false;
+	_keyMap[Common::KEYCODE_t] = false;
+	_keyMap[Common::KEYCODE_KP_EQUALS] = false;
+	_keyMap[Common::KEYCODE_i] = false;
+	_keyMap[Common::KEYCODE_KP_DIVIDE] = false;
+	_keyMap[Common::KEYCODE_q] = false;
+	_keyMap[Common::KEYCODE_ESCAPE] = false;
+	_keyMap[Common::KEYCODE_p] = false;
+	_keyMap[Common::KEYCODE_TILDE] = false;
+	_keyMap[Common::KEYCODE_BACKQUOTE] = false;
+	_keyMap[Common::KEYCODE_NUMLOCK] = false;
+	_keyMap[Common::KEYCODE_BACKSPACE] = false;
+	_keyMap[Common::KEYCODE_KP_MULTIPLY] = false;
+	_keyMap[Common::KEYCODE_LALT] = false;
+	_keyMap[Common::KEYCODE_RALT] = false;
+	_keyMap[Common::KEYCODE_e] = false;
+
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 	_lastRawBits = kAllUpBits;
+	_consoleRequested = false;
+}
+
+InputDeviceManager::~InputDeviceManager() {
+	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 }
 
 void InputDeviceManager::getInput(Input &input, const InputBits filter) {
-	InputBits currentBits = 0;
-	bool consoleRequested = false;
-	bool altDown = false;
-
+	// Poll for events, but ignore them!
+	// We'll pick them up in notifyEvent()
+	// We do that so that any pollEvent() call can update the variables
+	// (ie. if one uses enter to access the restore menu, we never receive
+	// the key up event, which leads to bad things)
+	// This is to closely emulate what the GetKeys() function did on Mac OS
 	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		// We only care about key down here
-		// We're mapping from ScummVM events to pegasus events, which
-		// are based on pippin events.
-		if (event.type == Common::EVENT_KEYDOWN) {
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP8:
-				currentBits |= (kRawButtonDown << kUpButtonShift);
-				break;
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_KP4:
-				currentBits |= (kRawButtonDown << kLeftButtonShift);
-				break;
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_KP5:
-				currentBits |= (kRawButtonDown << kDownButtonShift);
-				break;
-			case Common::KEYCODE_RIGHT:
-			case Common::KEYCODE_KP6:
-				currentBits |= (kRawButtonDown << kRightButtonShift);
-				break;
-			case Common::KEYCODE_RETURN:
-			case Common::KEYCODE_SPACE:
-				currentBits |= (kRawButtonDown << kTwoButtonShift);
-				break;
-			case Common::KEYCODE_t:
-			case Common::KEYCODE_KP_EQUALS:
-				currentBits |= (kRawButtonDown << kThreeButtonShift);
-				break;
-			case Common::KEYCODE_i:
-			case Common::KEYCODE_KP_DIVIDE:
-				currentBits |= (kRawButtonDown << kFourButtonShift);
-				break;
-			case Common::KEYCODE_q:
-				currentBits |= (kRawButtonDown << kMod1ButtonShift);
-				break;
-			case Common::KEYCODE_ESCAPE:
-			case Common::KEYCODE_p:
-				currentBits |= (kRawButtonDown << kMod3ButtonShift);
-				break;
-			case Common::KEYCODE_TILDE:
-			case Common::KEYCODE_BACKQUOTE:
-			case Common::KEYCODE_NUMLOCK: // Yes, the original uses Num Lock/Clear on the Mac...
-				currentBits |= (kRawButtonDown << kLeftFireButtonShift);
-				break;
-			case Common::KEYCODE_BACKSPACE:
-			case Common::KEYCODE_KP_MULTIPLY:
-				currentBits |= (kRawButtonDown << kRightFireButtonShift);
-				break;
-			case Common::KEYCODE_d:
-				if (event.kbd.flags & Common::KBD_CTRL) // Console!
-					consoleRequested = true;
-				break;
-			case Common::KEYCODE_s:
-				// We support meta where available and control elsewhere
-				if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
-					((PegasusEngine *)g_engine)->requestSave();
-				break;
-			case Common::KEYCODE_o: // o for open (original)
-			case Common::KEYCODE_l: // l for load (ScummVM terminology)
-				// We support meta where available and control elsewhere
-				if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
-					((PegasusEngine *)g_engine)->requestLoad();
-				break;
-			default:
-				break;
-			}
+	while (g_system->getEventManager()->pollEvent(event))
+		;
 
-			// WORKAROUND: The original had a specific key for this, but
-			// pressing alt would count as an event (and mess up someone
-			// trying to do alt+enter or something). Since it's only used
-			// as an easter egg, I'm just going to handle it as a separate
-			// bool value.
-			// WORKAROUND x2: I'm also accepting control here since an
-			// alt+click is often intercepted by the OS.
-			if (event.kbd.flags & (Common::KBD_ALT|Common::KBD_CTRL))
-				altDown = true;
-		}
-	}
+	// Now create the bitfield
+	InputBits currentBits = 0;
+
+	if (_keyMap[Common::KEYCODE_UP] || _keyMap[Common::KEYCODE_KP8])
+		currentBits |= (kRawButtonDown << kUpButtonShift);
+
+	if (_keyMap[Common::KEYCODE_DOWN] || _keyMap[Common::KEYCODE_KP5])
+		currentBits |= (kRawButtonDown << kDownButtonShift);
+
+	if (_keyMap[Common::KEYCODE_LEFT] || _keyMap[Common::KEYCODE_KP4])
+		currentBits |= (kRawButtonDown << kLeftButtonShift);
+
+	if (_keyMap[Common::KEYCODE_RIGHT] || _keyMap[Common::KEYCODE_KP6])
+		currentBits |= (kRawButtonDown << kRightButtonShift);
+
+	if (_keyMap[Common::KEYCODE_SPACE] || _keyMap[Common::KEYCODE_RETURN])
+		currentBits |= (kRawButtonDown << kTwoButtonShift);
+
+	if (_keyMap[Common::KEYCODE_t] || _keyMap[Common::KEYCODE_KP_EQUALS])
+		currentBits |= (kRawButtonDown << kThreeButtonShift);
+
+	if (_keyMap[Common::KEYCODE_i] || _keyMap[Common::KEYCODE_KP_DIVIDE])
+		currentBits |= (kRawButtonDown << kFourButtonShift);
+
+	if (_keyMap[Common::KEYCODE_q])
+		currentBits |= (kRawButtonDown << kMod1ButtonShift);
+
+	if (_keyMap[Common::KEYCODE_ESCAPE] || _keyMap[Common::KEYCODE_p])
+		currentBits |= (kRawButtonDown << kMod3ButtonShift);
+
+	if (_keyMap[Common::KEYCODE_TILDE] || _keyMap[Common::KEYCODE_BACKQUOTE] || _keyMap[Common::KEYCODE_NUMLOCK])
+		currentBits |= (kRawButtonDown << kLeftFireButtonShift);
+
+	if (_keyMap[Common::KEYCODE_BACKSPACE] || _keyMap[Common::KEYCODE_KP_MULTIPLY])
+		currentBits |= (kRawButtonDown << kRightFireButtonShift);
 
 	// Update mouse button state
 	// Note that we don't use EVENT_LBUTTONUP/EVENT_LBUTTONDOWN because
@@ -145,10 +138,17 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	_lastRawBits = currentBits;
 
 	// Set the console to be requested or not
-	input.setConsoleRequested(consoleRequested);
+	input.setConsoleRequested(_consoleRequested);
 
-	// Same for alt
-	input.setAltDown(altDown);
+	// WORKAROUND: The original had this in currentBits, but then
+	// pressing alt would count as an event (and mess up someone
+	// trying to do alt+enter or something). Since it's only used
+	// as an easter egg, I'm just going to handle it as a separate
+	// bool value.
+	// WORKAROUND x2: I'm also accepting 'e' here since an
+	// alt+click is often intercepted by the OS. 'e' is used as the
+	// easter egg key in Buried in Time and Legacy of Time.
+	input.setAltDown(_keyMap[Common::KEYCODE_LALT] || _keyMap[Common::KEYCODE_RALT] || _keyMap[Common::KEYCODE_e]);
 }
 
 // Wait until the input device stops returning input allowed by filter...
@@ -161,6 +161,48 @@ void InputDeviceManager::waitInput(const InputBits filter) {
 				break;
 		}
 	}
+}
+
+bool InputDeviceManager::notifyEvent(const Common::Event &event) {
+	// We're mapping from ScummVM events to pegasus events, which
+	// are based on pippin events.
+	_consoleRequested = false;
+
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_d:
+			if (event.kbd.flags & Common::KBD_CTRL) // Console!
+				_consoleRequested = true;
+			break;
+		case Common::KEYCODE_s:
+			// We support meta where available and control elsewhere
+			if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
+				((PegasusEngine *)g_engine)->requestSave();
+			break;
+		case Common::KEYCODE_o: // o for open (original)
+		case Common::KEYCODE_l: // l for load (ScummVM terminology)
+			// We support meta where available and control elsewhere
+			if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
+				((PegasusEngine *)g_engine)->requestLoad();
+			break;
+		default:
+			// Otherwise, set the key to down if we have it
+			if (_keyMap.contains(event.kbd.keycode))
+				_keyMap[event.kbd.keycode] = true;
+			break;
+		}
+		break;
+	case Common::EVENT_KEYUP:
+		// Set the key to up if we have it
+		if (_keyMap.contains(event.kbd.keycode))
+			_keyMap[event.kbd.keycode] = false;
+		break;
+	default:
+		break;
+	}
+
+	return false;
 }
 
 int operator==(const Input &arg1, const Input &arg2) {

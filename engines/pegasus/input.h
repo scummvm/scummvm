@@ -26,6 +26,8 @@
 #ifndef PEGASUS_INPUT_H
 #define PEGASUS_INPUT_H
 
+#include "common/events.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/singleton.h"
 
@@ -37,10 +39,12 @@ namespace Pegasus {
 class Hotspot;
 class Input;
 
-class InputDeviceManager : public Common::Singleton<InputDeviceManager> {
+class InputDeviceManager : public Common::Singleton<InputDeviceManager>, public Common::EventObserver {
 public:
 	InputDeviceManager();
-	~InputDeviceManager() {}
+	~InputDeviceManager();
+
+	bool notifyEvent(const Common::Event &event);
 
 	void getInput(Input &, const InputBits);
 
@@ -49,7 +53,10 @@ public:
 protected:
 	friend class Common::Singleton<SingletonBaseType>;
 
+	// Keep track of which keys are down (= true) or not
+	Common::HashMap<uint, bool> _keyMap;
 	InputBits _lastRawBits;
+	bool _consoleRequested;
 };
 
 enum {

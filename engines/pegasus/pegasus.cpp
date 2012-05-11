@@ -104,6 +104,7 @@ PegasusEngine::~PegasusEngine() {
 	delete _rnd;
 	delete _introTimer;
 	delete _aiSaveStream;
+	InputDeviceManager::destroy();
 
 	// NOTE: This must be deleted last!
 	delete _gfx;
