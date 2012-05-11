@@ -883,13 +883,13 @@ void ScriptThread(CORO_PARAM, const void *param) {
 	for (_ctx->i = 0; _ctx->i < s->nMoments; _ctx->i++) {
 		// Dorme il tempo necessario per arrivare al momento successivo
 		if (s->Moment[_ctx->i].dwTime == -1) {
-			CORO_INVOKE_4(g_scheduler->waitForMultipleObjects, _ctx->numHandles, cfHandles, true, INFINITE);
+			CORO_INVOKE_4(CoroScheduler.waitForMultipleObjects, _ctx->numHandles, cfHandles, true, CORO_INFINITE);
 			_ctx->dwStartTime = _vm->GetTime();
 		} else {
 			_ctx->dwCurTime = _vm->GetTime();
 			if (_ctx->dwCurTime < _ctx->dwStartTime + (s->Moment[_ctx->i].dwTime * 100)) {
   //     warning("PlayScript(): Sleeping %lums\n",_ctx->dwStartTime+(s->Moment[_ctx->i].dwTime*100)-_ctx->dwCurTime);
-				CORO_INVOKE_1(g_scheduler->sleep, _ctx->dwStartTime+(s->Moment[_ctx->i].dwTime * 100) - _ctx->dwCurTime);
+				CORO_INVOKE_1(CoroScheduler.sleep, _ctx->dwStartTime+(s->Moment[_ctx->i].dwTime * 100) - _ctx->dwCurTime);
 			}
 		}
 
@@ -913,7 +913,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 				_ctx->p->arg4=s->Command[_ctx->k].arg4;
 
 					 // !!! Nuova gestione dei thread
-				if ((cfHandles[_ctx->numHandles++] = g_scheduler->createProcess(CustomThread, &_ctx->p, sizeof(LPCFCALL))) == 0) {
+				if ((cfHandles[_ctx->numHandles++] = CoroScheduler.createProcess(CustomThread, &_ctx->p, sizeof(LPCFCALL))) == 0) {
 					mpalError = 1;
 
 					CORO_KILL_SELF();
@@ -976,7 +976,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 		if (item->Command[_ctx->k].type == 1) {
 			// Custom function
 			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Call=%s params=%d,%d,%d,%d",
-				g_scheduler->getCurrentPID(), lplpFunctionStrings[item->Command[_ctx->k].nCf].c_str(),
+				CoroScheduler.getCurrentPID(), lplpFunctionStrings[item->Command[_ctx->k].nCf].c_str(),
 				item->Command[_ctx->k].arg1, item->Command[_ctx->k].arg2,
 				item->Command[_ctx->k].arg3, item->Command[_ctx->k].arg4
 			);
@@ -991,7 +991,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 		} else if (item->Command[_ctx->k].type == 2) {
 			// Variable assign
 			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Variable=%s",
-				g_scheduler->getCurrentPID(), item->Command[_ctx->k].lpszVarName);
+				CoroScheduler.getCurrentPID(), item->Command[_ctx->k].lpszVarName);
 
 			LockVar();
 			varSetValue(item->Command[_ctx->k].lpszVarName, EvaluateExpression(item->Command[_ctx->k].expr));
@@ -1005,7 +1005,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 
 	GlobalFree(item);
 	
-	debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d ended", g_scheduler->getCurrentPID());
+	debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d ended", CoroScheduler.getCurrentPID());
 
 	CORO_KILL_SELF();
 
@@ -1026,7 +1026,7 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_2(g_scheduler->waitForSingleObject, pid, INFINITE);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, pid, CORO_INFINITE);
 
 	bExecutingAction = false;
 
@@ -1200,7 +1200,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		/* Ci addormentiamo, ma controllando sempre l'evento che viene settato
 			quando viene richiesta la nostra chiusura */
 		
-		CORO_INVOKE_3(g_scheduler->waitForSingleObject, hEndPollingLocations[id], _ctx->dwSleepTime, &_ctx->expired);
+		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, hEndPollingLocations[id], _ctx->dwSleepTime, &_ctx->expired);
 
 		//if (_ctx->k == WAIT_OBJECT_0)
 		if (!_ctx->expired)
@@ -1208,7 +1208,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
 			if (_ctx->MyThreads[_ctx->i].nItem != 0) {
-				CORO_INVOKE_3(g_scheduler->waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 0, &_ctx->delayExpired);
+				CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 0, &_ctx->delayExpired);
 
 				// if result ) == WAIT_OBJECT_0)
 				if (!_ctx->delayExpired)
@@ -1279,7 +1279,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					_ctx->MyThreads[_ctx->i].nItem = _ctx->MyActions[_ctx->k].nItem;
 
 					// !!! Nuova gestione dei thread
-					if ((_ctx->MyThreads[_ctx->i].hThread = g_scheduler->createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == 0) {
+					if ((_ctx->MyThreads[_ctx->i].hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == 0) {
 					//if ((_ctx->MyThreads[_ctx->i].hThread=(void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem))==(void*)-1)
 						GlobalFree(_ctx->newItem);
 						GlobalFree(_ctx->MyThreads);
@@ -1309,18 +1309,18 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	// Set idle skip on
 	// FIXME: Convert to co-routine
-	lplpFunctions[200](nullContext, 0, 0, 0, 0);
+	CORO_INVOKE_4(lplpFunctions[200], 0, 0, 0, 0);
 
 	for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
 		if (_ctx->MyThreads[_ctx->i].nItem != 0) {
-			CORO_INVOKE_3(g_scheduler->waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 5000, &_ctx->delayExpired);
+			CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 5000, &_ctx->delayExpired);
 
 /*
 			//if (result != WAIT_OBJECT_0)
 			if (_ctx->delayExpired)
 				TerminateThread(_ctx->MyThreads[_ctx->i].hThread, 0);
 */
-			g_scheduler->killMatchingProcess(_ctx->MyThreads[_ctx->i].hThread);
+			CoroScheduler.killMatchingProcess(_ctx->MyThreads[_ctx->i].hThread);
 		}
 
 	// Set idle skip off
@@ -1361,13 +1361,13 @@ void ShutUpDialogThread(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_2(g_scheduler->waitForSingleObject, pid, INFINITE);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, pid, CORO_INFINITE);
 
 	bExecutingDialog = false;
 	nExecutingDialog = 0;
 	nExecutingChoice = 0;
 
-	g_scheduler->setEvent(hAskChoice);
+	CoroScheduler.setEvent(hAskChoice);
 
 	CORO_KILL_SELF();
 
@@ -1519,9 +1519,9 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 
 		/* Avvertiamo il gioco che c'e' una scelta da far fare all'utente,
 			e restiamo in attesa della risposta */
-		g_scheduler->resetEvent(hDoneChoice);
-		g_scheduler->setEvent(hAskChoice);
-		CORO_INVOKE_2(g_scheduler->waitForSingleObject, hDoneChoice, INFINITE);
+		CoroScheduler.resetEvent(hDoneChoice);
+		CoroScheduler.setEvent(hAskChoice);
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hDoneChoice, CORO_INFINITE);
 
 		/* Ora che la scelta e' stata effettuata, possiamo eseguire _ctx->i gruppi
 			associati con la scelta */
@@ -1569,7 +1569,7 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 *               uint32 dwParam           Eventuale parametro per l'azione
 *
 * Return:       Handle del thread che sta eseguendo l'azione, oppure
-*               INVALID_PID_VALUE se l'azione non e' definita, o l'item
+*               CORO_INVALID_PID_VALUE se l'azione non e' definita, o l'item
 *               e' disattivato.
 *
 * Note:         Si puo' ottenere l'indice dell'item a partire dal suo numero
@@ -1588,7 +1588,7 @@ static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	item+=ordItem;
 	Common::String buf = Common::String::format("Status.%u", item->nObj);
 	if (varGetValue(buf.c_str()) <= 0)
-		return INVALID_PID_VALUE;
+		return CORO_INVALID_PID_VALUE;
 
 	for (i = 0; i < item->nActions; i++) {
 		if (item->Action[i].num != nAction)
@@ -1606,7 +1606,7 @@ static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// Duplichiamo l'item corrente e copiamo la azione #i nella #0
 		newitem = (LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
 		if (newitem == NULL)
-			return INVALID_PID_VALUE;
+			return CORO_INVALID_PID_VALUE;
 
 		// Nella nuova versione scriviamo il numero dell'azione in dwRes
 		Common::copy((byte *)item, (byte *)item + sizeof(MPALITEM), (byte *)newitem);
@@ -1619,11 +1619,11 @@ static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// 0 dell'item, e poi liberera' la memoria con la GlobalFree()
 
 		// !!! New thread management
-		if ((h = g_scheduler->createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == NULL)
-			return INVALID_PID_VALUE;
+		if ((h = CoroScheduler.createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == NULL)
+			return CORO_INVALID_PID_VALUE;
 
-		if (g_scheduler->createProcess(ShutUpActionThread, &h, sizeof(uint32)) == NULL)
-			return INVALID_PID_VALUE;
+		if (CoroScheduler.createProcess(ShutUpActionThread, &h, sizeof(uint32)) == NULL)
+			return CORO_INVALID_PID_VALUE;
 
 		nExecutingAction = item->nObj;
 		bExecutingAction = true;
@@ -1631,7 +1631,7 @@ static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		return h;
 	}
 
-	return INVALID_PID_VALUE;
+	return CORO_INVALID_PID_VALUE;
 }
 
 /**
@@ -1640,7 +1640,7 @@ static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
  * @param nDlgOrd				The index of the dialog in the dialog list
  * @param nGroup				Number of the group to perform
  * @returns						The process Id of the process running the dialog
- *								or INVALID_PID_VALUE on error
+ *								or CORO_INVALID_PID_VALUE on error
  * @remarks						The dialogue runs in a thread created on purpose, 
  * so that must inform through an event and when 'necessary to you make a choice. 
  * The data on the choices may be obtained through various queries.
@@ -1654,20 +1654,20 @@ static uint32 DoDialog(uint32 nDlgOrd, uint32 nGroup) {
 	// Enables the flag to indicate that there is' a running dialogue
 	bExecutingDialog = true;
 
-	g_scheduler->resetEvent(hAskChoice);
-	g_scheduler->resetEvent(hDoneChoice);
+	CoroScheduler.resetEvent(hAskChoice);
+	CoroScheduler.resetEvent(hDoneChoice);
 
 	// Create a thread that performs the dialogue group
 
 	// Create the process
-	if ((h = g_scheduler->createProcess(GroupThread, &nGroup, sizeof(uint32))) == INVALID_PID_VALUE)
-		return INVALID_PID_VALUE;
+	if ((h = CoroScheduler.createProcess(GroupThread, &nGroup, sizeof(uint32))) == CORO_INVALID_PID_VALUE)
+		return CORO_INVALID_PID_VALUE;
 
 	// Create a thread that waits until the end of the dialog process, and will restore the global variables
-	if (g_scheduler->createProcess(ShutUpDialogThread, &h, sizeof(uint32)) == INVALID_PID_VALUE) {
+	if (CoroScheduler.createProcess(ShutUpDialogThread, &h, sizeof(uint32)) == CORO_INVALID_PID_VALUE) {
 		// Something went wrong, so kill the previously started dialog process
-		g_scheduler->killMatchingProcess(h);
-		return INVALID_PID_VALUE;
+		CoroScheduler.killMatchingProcess(h);
+		return CORO_INVALID_PID_VALUE;
 	}
 
 	return h;
@@ -1700,7 +1700,7 @@ bool DoSelection(uint32 i, uint32 dwData) {
 		return false;
 
 	nSelectedChoice = j;
-	g_scheduler->setEvent(hDoneChoice);
+	CoroScheduler.setEvent(hDoneChoice);
 	return true;
 }
 
@@ -1877,8 +1877,8 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	/* Crea l'evento che verra' utilizzato per avvertire il gioco che c'e'
 		da effettuare una scelta */
-	hAskChoice = g_scheduler->createEvent(true, false);
-	hDoneChoice = g_scheduler->createEvent(true, false);
+	hAskChoice = CoroScheduler.createEvent(true, false);
+	hDoneChoice = CoroScheduler.createEvent(true, false);
 
 	return true;
 }
@@ -2070,7 +2070,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		if (y != -1) {
 			dwRet = DoAction(x, y, GETARG(uint32));
 		} else {
-			dwRet = INVALID_PID_VALUE;
+			dwRet = CORO_INVALID_PID_VALUE;
 			mpalError = 1;
 		}
 
@@ -2278,9 +2278,9 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
 		/*
 		 *  void mpalQuery(MPQ_DIALOG_WAITFORCHOICE);
 		 */
-		CORO_INVOKE_2(g_scheduler->waitForSingleObject, hAskChoice, INFINITE);
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hAskChoice, CORO_INFINITE);
 
-		g_scheduler->resetEvent(hAskChoice);
+		CoroScheduler.resetEvent(hAskChoice);
 
 		if (bExecutingDialog)
 			*dwRet = (uint32)nExecutingChoice;
@@ -2338,7 +2338,7 @@ bool EXPORT mpalExecuteScript(int nScript) {
 	UnlockScripts();
 
 	// !!! Nuova gestione dei thread
-	if (g_scheduler->createProcess(ScriptThread, &s, sizeof(LPMPALSCRIPT)) == INVALID_PID_VALUE)
+	if (CoroScheduler.createProcess(ScriptThread, &s, sizeof(LPMPALSCRIPT)) == CORO_INVALID_PID_VALUE)
  		return false;
 
 	return true;
@@ -2388,9 +2388,9 @@ bool mpalStartIdlePoll(int nLoc) {
 		if (nPollingLocations[i] == 0) {
 			nPollingLocations[i] = nLoc;
 
-			hEndPollingLocations[i] = g_scheduler->createEvent(true, false);
+			hEndPollingLocations[i] = CoroScheduler.createEvent(true, false);
 // !!! Nuova gestione dei thread
-			if ((PollingThreads[i] = g_scheduler->createProcess(LocationPollThread, &i, sizeof(uint32))) == 0)
+			if ((PollingThreads[i] = CoroScheduler.createProcess(LocationPollThread, &i, sizeof(uint32))) == 0)
 //			 if ((hEndPollingLocations[i]=(void*)_beginthread(LocationPollThread, 10240,(void *)i))==(void*)-1)
 				return false;
 
@@ -2425,11 +2425,11 @@ void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result) {
 
 	for (_ctx->i = 0; _ctx->i < MAXPOLLINGLOCATIONS; _ctx->i++) {
 		if (nPollingLocations[_ctx->i] == (uint32)nLoc) {
-			g_scheduler->setEvent(hEndPollingLocations[_ctx->i]);
+			CoroScheduler.setEvent(hEndPollingLocations[_ctx->i]);
 
-			CORO_INVOKE_2(g_scheduler->waitForSingleObject, PollingThreads[_ctx->i], INFINITE);
+			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, PollingThreads[_ctx->i], CORO_INFINITE);
 
-			g_scheduler->closeEvent(hEndPollingLocations[_ctx->i]);
+			CoroScheduler.closeEvent(hEndPollingLocations[_ctx->i]);
 			nPollingLocations[_ctx->i] = 0;
 
 			if (result)

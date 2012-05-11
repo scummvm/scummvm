@@ -49,6 +49,7 @@
 #define TONY_FONT_H
 
 #include "common/system.h"
+#include "common/coroutines.h"
 #include "tony/gfxcore.h"
 #include "tony/resid.h"
 #include "tony/sched.h"

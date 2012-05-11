@@ -48,8 +48,8 @@
 #ifndef TONY_TONYCHAR_H
 #define TONY_TONYCHAR_H
 
+#include "common/coroutines.h"
 #include "tony/mpal/stubs.h"
-#include "tony/coroutine.h"
 #include "tony/loc.h"
 
 namespace Tony {
@@ -408,7 +408,7 @@ public:
 	int GetCurPattern();
 
 	// Attende la fine di un pattern
-	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = INVALID_PID_VALUE) { 
+	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) { 
 		RMCharacter::WaitForEndPattern(coroParam, hCustomSkip);
 	}
 

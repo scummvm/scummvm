@@ -2048,16 +2048,16 @@ RMTextDialog::RMTextDialog() : RMText() {
 	m_bForceNoTime = false;
 	m_bAlwaysDisplay = false;
 	m_bNoTab = false;
-	hCustomSkip = INVALID_PID_VALUE;
-	hCustomSkip2 = INVALID_PID_VALUE;
+	hCustomSkip = CORO_INVALID_PID_VALUE;
+	hCustomSkip2 = CORO_INVALID_PID_VALUE;
 	m_input = NULL;
 
 	// Crea l'evento di fine displaying
-	hEndDisplay = g_scheduler->createEvent(false, false);
+	hEndDisplay = CoroScheduler.createEvent(false, false);
 }
 
 RMTextDialog::~RMTextDialog() {
-	g_scheduler->closeEvent(hEndDisplay);
+	CoroScheduler.closeEvent(hEndDisplay);
 }
 
 void RMTextDialog::Show(void) {
@@ -2119,7 +2119,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 
 	// Frase NON di background
 	if (m_bSkipStatus) {
-		if (!(bCfgDubbing && hCustomSkip2 != INVALID_PID_VALUE))
+		if (!(bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
 			if (bCfgTimerizedText) {
 				if (!m_bForceNoTime)
 					if (_vm->GetTime() > (uint32)m_time + m_startTime)
@@ -2137,7 +2137,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 	}
 	// Frase di background
 	else {
-		if (!(bCfgDubbing && hCustomSkip2 != INVALID_PID_VALUE))
+		if (!(bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
 			if (!m_bForceNoTime)
 				if (_vm->GetTime() > (uint32)m_time + m_startTime)
 					return;
@@ -2148,15 +2148,15 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 		if (_vm->GetTime() > (uint32)m_time + m_startTime)
 			return;
 
-	if (hCustomSkip != INVALID_PID_VALUE) {
-		CORO_INVOKE_3(g_scheduler->waitForSingleObject, hCustomSkip, 0, &_ctx->expired);
+	if (hCustomSkip != CORO_INVALID_PID_VALUE) {
+		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, hCustomSkip, 0, &_ctx->expired);
 		// == WAIT_OBJECT_0
 		if (!_ctx->expired)
 			return;
 	}
 
-	if (bCfgDubbing && hCustomSkip2 != INVALID_PID_VALUE) {
-		CORO_INVOKE_3(g_scheduler->waitForSingleObject, hCustomSkip2, 0, &_ctx->expired);
+	if (bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE) {
+		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, hCustomSkip2, 0, &_ctx->expired);
 		// == WAIT_OBJECT_0
 		if (!_ctx->expired)
 			return;
@@ -2170,7 +2170,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 void RMTextDialog::Unregister(void) {
 	RMGfxTask::Unregister();
 	assert(m_nInList == 0);
-	g_scheduler->setEvent(hEndDisplay);
+	CoroScheduler.setEvent(hEndDisplay);
 }
 
 void RMTextDialog::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -2194,7 +2194,7 @@ void RMTextDialog::SetCustomSkipHandle2(uint32 hCustom) {
 }
 
 void RMTextDialog::WaitForEndDisplay(CORO_PARAM) {
-	g_scheduler->waitForSingleObject(coroParam, hEndDisplay, INFINITE);
+	CoroScheduler.waitForSingleObject(coroParam, hEndDisplay, CORO_INFINITE);
 }
 
 void RMTextDialog::SetInput(RMInput *input) {
@@ -2287,10 +2287,10 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 			ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 		else {
 			_ctx->hThread = mpalQueryDoAction(20, m_item->MpalCode(), 0);		
-			if (_ctx->hThread == INVALID_PID_VALUE)
+			if (_ctx->hThread == CORO_INVALID_PID_VALUE)
 				ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 			else
-				CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->hThread, INFINITE);
+				CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->hThread, CORO_INFINITE);
 		}
 	}
 
@@ -2344,18 +2344,18 @@ RMDialogChoice::RMDialogChoice() {
 	DlgText.LoadPaletteWA(dlgpal);
 	DlgTextLine.LoadPaletteWA(dlgpal);
 	
-	hUnreg = g_scheduler->createEvent(false, false);
+	hUnreg = CoroScheduler.createEvent(false, false);
 	bRemoveFromOT = false;
 }
 
 RMDialogChoice::~RMDialogChoice() {
-	g_scheduler->closeEvent(hUnreg);
+	CoroScheduler.closeEvent(hUnreg);
 }
 
 void RMDialogChoice::Unregister(void) {
 	RMGfxWoodyBuffer::Unregister();
 	assert(!m_nInList);
-	g_scheduler->pulseEvent(hUnreg);
+	CoroScheduler.pulseEvent(hUnreg);
 
 	bRemoveFromOT = false;
 }
@@ -2547,7 +2547,7 @@ void RMDialogChoice::Hide(CORO_PARAM) {
 
 	m_bShow = false;
 	bRemoveFromOT = true;
-	CORO_INVOKE_2(g_scheduler->waitForSingleObject, hUnreg, INFINITE);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hUnreg, CORO_INFINITE);
 
 	CORO_END_CODE;
 }

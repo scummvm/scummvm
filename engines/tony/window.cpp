@@ -178,7 +178,7 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 		wsprintf(bufName,"rm%d00",i);
 		_makepath(fn,bufDrive,bufDir,bufName,".bmp");
 		h = CreateFile(fn,GENERIC_READ,FILE_SHARE_READ, NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h == INVALID_PID_VALUE)
+		if (h == CORO_INVALID_PID_VALUE)
 			break;
 		CloseHandle(h);
 	}
@@ -189,7 +189,7 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 		wsprintf(bufName,"rm%d%d0",i,j);
 		_makepath(fn,bufDrive,bufDir,bufName,".bmp");
 		h=CreateFile(fn,GENERIC_READ,FILE_SHARE_READ, NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h==INVALID_PID_VALUE)
+		if (h==CORO_INVALID_PID_VALUE)
 			break;
 		CloseHandle(h);
 	}
@@ -200,7 +200,7 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 		wsprintf(bufName,"rm%d%d%d",i,j,k);
 		_makepath(fn,bufDrive,bufDir,bufName,".bmp");
 		h = CreateFile(fn,GENERIC_READ,FILE_SHARE_READ, NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h==INVALID_PID_VALUE)
+		if (h==CORO_INVALID_PID_VALUE)
 			break;
 		CloseHandle(h);
 	}

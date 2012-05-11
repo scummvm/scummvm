@@ -292,7 +292,7 @@ public:
 	void Unload(void);
 
 	// Aspetta la fine del pattern in play
-	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = INVALID_PID_VALUE);
+	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE);
 
 	// Setta un nuovo hotspot per l'oggetto
 	void ChangeHotspot(RMPoint pt);

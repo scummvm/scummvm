@@ -48,8 +48,8 @@
 #ifndef TONY_ADV_H
 #define TONY_ADV_H
 
+#include "common/coroutines.h"
 #include "tony/mpal/memory.h"
-#include "tony/coroutine.h"
 #include "tony/gfxcore.h"
 
 

@@ -1021,7 +1021,7 @@ FPSFX::FPSFX(LPDIRECTSOUND lpds, HWND hWnd, bool bSoundOn) {
 	lpDSNotify = NULL;
 	lpDS = lpds;
 	lastVolume = 63;
-	hEndOfBuffer = INVALID_PID_VALUE;
+	hEndOfBuffer = CORO_INVALID_PID_VALUE;
 	bIsVoice = false;
 
 	if (bSoundSupported == false)
@@ -1053,7 +1053,7 @@ FPSFX::~FPSFX() {
 
 	RELEASE(lpDSNotify);
 
-	if (hEndOfBuffer != INVALID_PID_VALUE)
+	if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
 		CloseHandle(hEndOfBuffer);
 
 	RELEASE(lpDSBuffer);
@@ -1415,7 +1415,7 @@ bool FPSFX::LoadFile(const char *lpszFileName, uint32 dwCodec) {
 bool FPSFX::Play() {
 #ifdef REFACTOR_ME
 	if (bFileLoaded) {
-		if (hEndOfBuffer != INVALID_PID_VALUE)
+		if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
 			ResetEvent(hEndOfBuffer);
 
 		lpDSBuffer->SetCurrentPosition(0);
@@ -2012,7 +2012,7 @@ bool FPSTREAM::Stop(bool bSync) {
  
 		/* Avverte il thread che deve uscire e aspetta che si chiuda */
 		SetEvent(hThreadEnd);
-		WaitForSingleObject(hPlayThread, INFINITE);
+		WaitForSingleObject(hPlayThread, CORO_INFINITE);
 
 		/* Chiude l'handle del thread e disalloca la memoria temporanea */
 		CloseHandle(hPlayThread);
@@ -2048,7 +2048,7 @@ void FPSTREAM::WaitForSync(FPSTREAM *toplay) {
 		this->lpDSBuffer, &this->SyncToPlay, SyncToPlay, &bSyncExit, bSyncExit, GetCurrentThreadId());
 	warning(buf);
 
-	WaitForSingleObject(hPlayThread, INFINITE);
+	WaitForSingleObject(hPlayThread, CORO_INFINITE);
 
 	/* Chiude l'handle del thread e disalloca la memoria temporanea */
 	CloseHandle(hPlayThread);
@@ -2109,7 +2109,7 @@ void PASCAL FPSTREAM::PlayThread(FPSTREAM *This) {
 
 // sprintf(buf, "WFMO: %x (buf status: %x) MyThread: 0x%x\n", This->lpDSBuffer, dwBufStatus, GetCurrentThreadId());
 // warning(buf);
-		dwResult = WaitForMultipleObjects(5, hList, false, INFINITE);
+		dwResult = WaitForMultipleObjects(5, hList, false, CORO_INFINITE);
 
 /*	uint32 dwPlay, dwWrite;
 	This->lpDSBuffer->GetCurrentPosition(&dwPlay, &dwWrite);

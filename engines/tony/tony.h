@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/array.h"
+#include "common/coroutines.h"
 #include "common/error.h"
 #include "common/random.h"
 #include "common/util.h"
@@ -97,7 +98,6 @@ public:
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND	_theSound;
-	Scheduler _scheduler;
 
 	enum DATADIR {
 		DD_BASE = 1,

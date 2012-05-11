@@ -140,7 +140,7 @@ void RMGfxEngine::OpenOptionScreen(CORO_PARAM, int type) {
 
 			bIdleExited = false;
 
-			g_scheduler->createProcess(ExitAllIdles, &m_nCurLoc, sizeof(int));
+			CoroScheduler.createProcess(ExitAllIdles, &m_nCurLoc, sizeof(int));
 		}
 	}
 
@@ -242,7 +242,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 						if (m_curAction != TA_COMBINE)
 							CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_point.CurAction());
 						else if (m_itemName.GetSelectedItem() != NULL)
-							CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), TA_COMBINE, m_curActionObj);
+							CORO_INVOKE_4(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), TA_COMBINE, m_curActionObj);
 					}
 					
 					if (m_curAction == TA_COMBINE) {
@@ -333,7 +333,7 @@ SKIPCLICKSINISTRO:
 		switch (m_nWipeType) {
 			case 1:
 				if (!(m_rcWipeEllipse.bottom - m_rcWipeEllipse.top >= FSTEP * 2)) {
-					g_scheduler->setEvent(m_hWipeEvent);
+					CoroScheduler.setEvent(m_hWipeEvent);
 					m_nWipeType = 3;
 					break;
 				}
@@ -346,7 +346,7 @@ SKIPCLICKSINISTRO:
 
 			case 2:
 				if (!(m_rcWipeEllipse.bottom - m_rcWipeEllipse.top < 480 - FSTEP)) {
-					g_scheduler->setEvent(m_hWipeEvent);
+					CoroScheduler.setEvent(m_hWipeEvent);
 					m_nWipeType = 3;
 					break;
 				}
@@ -529,7 +529,7 @@ uint32 RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	m_bLocationLoaded = true;
 
 	// On Enter per la locazion
-	return INVALID_PID_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
+	return CORO_INVALID_PID_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
 }
 
 void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
@@ -545,8 +545,8 @@ void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 	// On Exit?
 	if (bDoOnExit) {
 		_ctx->h = mpalQueryDoAction(1, m_nCurLoc, 0);
-		if (_ctx->h != INVALID_PID_VALUE)
-			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+		if (_ctx->h != CORO_INVALID_PID_VALUE)
+			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 	}
 
 	MainFreeze();
@@ -557,7 +557,7 @@ void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 	m_loc.Unload();
 
 	if (result != NULL)
-		*result = INVALID_PID_VALUE;
+		*result = CORO_INVALID_PID_VALUE;
 
 	CORO_END_CODE;
 }
@@ -598,7 +598,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	bIdleExited = false;
 	m_bOption = false;
 	m_bWiping = false;
-	m_hWipeEvent = g_scheduler->createEvent(false, false);
+	m_hWipeEvent = CoroScheduler.createEvent(false, false);
 
 	// Crea l'evento di freeze
 	csMainLoop = g_system->createMutex();
@@ -1003,7 +1003,7 @@ void RMGfxEngine::CloseWipe(void) {
 }
 
 void RMGfxEngine::WaitWipeEnd(CORO_PARAM) {
-	g_scheduler->waitForSingleObject(coroParam, m_hWipeEvent, INFINITE);
+	CoroScheduler.waitForSingleObject(coroParam, m_hWipeEvent, CORO_INFINITE);
 }
 
 } // End of namespace Tony

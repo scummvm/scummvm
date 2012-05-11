@@ -118,9 +118,9 @@
 #define TONY_MPAL_H
 
 #include "common/scummsys.h"
+#include "common/coroutines.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "tony/coroutine.h"
 
 namespace Tony {
 
@@ -537,7 +537,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *               uint32 dwParam           Action parameter
 *
 * Return:       Handle to the thread that is performing the action, or
-*				INVALID_PID_VALUE if the action is not 'defined for 
+*				CORO_INVALID_PID_VALUE if the action is not 'defined for 
 *				the item, or the item and 'off.
 *
 * Note:         The parameter is used primarily to implement actions 
@@ -561,7 +561,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *               uint32 nGroup            Group number to use
 *
 * Return:       Handle to the thread that is running the box, or
-*				INVALID_PID_VALUE if the dialogue does not exist.
+*				CORO_INVALID_PID_VALUE if the dialogue does not exist.
 *
 \****************************************************************************/
 

@@ -113,7 +113,7 @@ void MainUnfreeze(void) {
 }
 
 void MainWaitFrame(CORO_PARAM) {
-	g_scheduler->waitForSingleObject(coroParam, _vm->m_hEndOfFrame, INFINITE);
+	CoroScheduler.waitForSingleObject(coroParam, _vm->m_hEndOfFrame, CORO_INFINITE);
 }
 
 void MainShowMouse(void) {

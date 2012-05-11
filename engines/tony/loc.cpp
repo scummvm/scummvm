@@ -253,7 +253,7 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 
 	// Se la speed e' 0, il pattern non avanza mai	
 	if (m_speed == 0) {
-		g_scheduler->pulseEvent(hEndPattern);
+		CoroScheduler.pulseEvent(hEndPattern);
 		bFlag=m_slots[m_nCurSlot].m_flag;
 		return m_nCurSprite;
 	}
@@ -267,7 +267,7 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 			m_nCurSlot = 0;
 			bFlag = m_slots[m_nCurSlot].m_flag;
 
-			g_scheduler->pulseEvent(hEndPattern);
+			CoroScheduler.pulseEvent(hEndPattern);
 
 			// @@@ Se non c'e' loop avverte che il pattern e' finito
 			// Se non c'e' loop rimane sull'ultimo frame
@@ -835,12 +835,12 @@ RMItem::RMItem() {
 	m_bPal = 0;
 	m_nCurSprite = 0;
 
-	m_hEndPattern = g_scheduler->createEvent(false, false);
+	m_hEndPattern = CoroScheduler.createEvent(false, false);
 }
 
 RMItem::~RMItem() {
 	Unload();
-	g_scheduler->closeEvent(m_hEndPattern);
+	CoroScheduler.closeEvent(m_hEndPattern);
 }
 
 //FIXME: Pass uint32 directly for hCustomSkip
@@ -852,12 +852,12 @@ void RMItem::WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (m_nCurPattern != 0) {
-		if (hCustomSkip == INVALID_PID_VALUE)
-			CORO_INVOKE_2(g_scheduler->waitForSingleObject, m_hEndPattern, INFINITE);
+		if (hCustomSkip == CORO_INVALID_PID_VALUE)
+			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, m_hEndPattern, CORO_INFINITE);
 		else {
 			_ctx->h[0] = hCustomSkip;
 			_ctx->h[1] = m_hEndPattern;
-			CORO_INVOKE_4(g_scheduler->waitForMultipleObjects, 2, &_ctx->h[0], false, INFINITE);
+			CORO_INVOKE_4(CoroScheduler.waitForMultipleObjects, 2, &_ctx->h[0], false, CORO_INFINITE);
 		}
 	}
 
@@ -888,13 +888,13 @@ void RMItem::PauseSound(bool bPause) {
 
 
 RMWipe::RMWipe() {
-	m_hUnregistered = g_scheduler->createEvent(false, false);
-	m_hEndOfFade = g_scheduler->createEvent(false, false);
+	m_hUnregistered = CoroScheduler.createEvent(false, false);
+	m_hEndOfFade = CoroScheduler.createEvent(false, false);
 }
 
 RMWipe::~RMWipe() {
-	g_scheduler->closeEvent(m_hUnregistered);
-	g_scheduler->closeEvent(m_hEndOfFade);
+	CoroScheduler.closeEvent(m_hUnregistered);
+	CoroScheduler.closeEvent(m_hEndOfFade);
 }
 
 int RMWipe::Priority(void) {
@@ -904,7 +904,7 @@ int RMWipe::Priority(void) {
 void RMWipe::Unregister(void) {
 	RMGfxTask::Unregister();
 	assert(m_nInList == 0);
-	g_scheduler->setEvent(m_hUnregistered);
+	CoroScheduler.setEvent(m_hUnregistered);
 }
 
 bool RMWipe::RemoveThis(void) {
@@ -917,7 +917,7 @@ void RMWipe::WaitForFadeEnd(CORO_PARAM) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_2(g_scheduler->waitForSingleObject, m_hEndOfFade, INFINITE);	
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, m_hEndOfFade, CORO_INFINITE);	
 
 	m_bEndFade = true;
 	m_bFading = false;
@@ -930,7 +930,7 @@ void RMWipe::WaitForFadeEnd(CORO_PARAM) {
 
 void RMWipe::CloseFade(void) {
 //	m_bUnregister=true;
-//	WaitForSingleObject(m_hUnregistered,INFINITE);
+//	WaitForSingleObject(m_hUnregistered,CORO_INFINITE);
 	m_wip0r.Unload();
 }
 
@@ -967,7 +967,7 @@ void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 		m_nFadeStep++;
 	
 		if (m_nFadeStep == 10) {
-			g_scheduler->setEvent(m_hEndOfFade);
+			CoroScheduler.setEvent(m_hEndOfFade);
 		}
 	}
 }
@@ -1096,7 +1096,7 @@ void RMCharacter::GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	if (m_pos == destcoord) {
 		if (minpath == 0) {
 			CORO_INVOKE_0(Stop);
-			g_scheduler->pulseEvent(hEndOfPath);
+			CoroScheduler.pulseEvent(hEndOfPath);
 			return;
 		}
 	}
@@ -1478,7 +1478,7 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 			if (!bEndOfPath)
 				CORO_INVOKE_0(Stop);
 			bEndOfPath = true;
-			g_scheduler->pulseEvent(hEndOfPath);
+			CoroScheduler.pulseEvent(hEndOfPath);
 		}
 		
 		walkcount++;
@@ -1516,7 +1516,7 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 					if (!bEndOfPath)
 						CORO_INVOKE_0(Stop);
 					bEndOfPath = true;
-					g_scheduler->pulseEvent(hEndOfPath);
+					CoroScheduler.pulseEvent(hEndOfPath);
 				}
 			} else {
 				// Se siamo già entrati nell'ultimo box, dobbiamo solo muoverci in linea retta verso il
@@ -1687,7 +1687,7 @@ void RMCharacter::WaitForEndMovement(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (bMoving) 
-		CORO_INVOKE_2(g_scheduler->waitForSingleObject, hEndOfPath, INFINITE); 
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hEndOfPath, CORO_INFINITE); 
 
 	CORO_END_CODE;
 }
@@ -1701,7 +1701,7 @@ bool RMCharacter::RemoveThis(void) {
 
 RMCharacter::RMCharacter() {
 	csMove = g_system->createMutex();
-	hEndOfPath = g_scheduler->createEvent(false, false);
+	hEndOfPath = CoroScheduler.createEvent(false, false);
 	minpath = 0;
 	curSpeed = 3;
 	bRemoveFromOT = false;
@@ -1722,7 +1722,7 @@ RMCharacter::RMCharacter() {
 
 RMCharacter::~RMCharacter() {
 	g_system->deleteMutex(csMove);
-	g_scheduler->closeEvent(hEndOfPath);
+	CoroScheduler.closeEvent(hEndOfPath);
 }
 
 void RMCharacter::LinkToBoxes(RMGameBoxes *boxes) {

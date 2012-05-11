@@ -327,7 +327,7 @@ DECLARE_CUSTOM_FUNCTION(MySleep)(CORO_PARAM, uint32 dwTime, uint32, uint32, uint
 	CORO_BEGIN_CODE(_ctx);
 
 	if (!bSkipIdle)
-		CORO_INVOKE_1(g_scheduler->sleep, dwTime);
+		CORO_INVOKE_1(CoroScheduler.sleep, dwTime);
 
 	CORO_END_CODE;
 }
@@ -524,8 +524,8 @@ DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, ui
 	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
 	// On Enter?
-	if (_ctx->h != INVALID_PID_VALUE)
-		CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+	if (_ctx->h != CORO_INVALID_PID_VALUE)
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 
 	CORO_END_CODE;
 }
@@ -708,8 +708,8 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	bNoOcchioDiBue = false;
 
 	// On Enter?
-	if (_ctx->h != INVALID_PID_VALUE)
-		CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+	if (_ctx->h != CORO_INVALID_PID_VALUE)
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 
 	CORO_END_CODE;
 }
@@ -1843,8 +1843,8 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 	// Cerca di eseguire la funzione custom per inizializzare la parlata
 	if (MCharacter[nChar].item) {
 		_ctx->h = mpalQueryDoAction(30, MCharacter[nChar].item->MpalCode(), _ctx->parm);
-		if (_ctx->h != INVALID_PID_VALUE) {
-			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+		if (_ctx->h != CORO_INVALID_PID_VALUE) {
+			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 		}
 	}
 
@@ -1924,8 +1924,8 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 	// Cerca di eseguire la funzione custom per chiudere la parlata
 	if (MCharacter[nChar].item) {
 		_ctx->h = mpalQueryDoAction(31, MCharacter[nChar].item->MpalCode(), _ctx->parm);
-		if (_ctx->h != INVALID_PID_VALUE)
-			CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+		if (_ctx->h != CORO_INVALID_PID_VALUE)
+			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 	}
 
 	CORO_END_CODE;
@@ -2035,8 +2035,8 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		} else {
 			// Cerca di eseguire la funzione custom per inizializzare la parlata
 			_ctx->h = mpalQueryDoAction(30, MCharacter[nPers].item->MpalCode(), _ctx->parm);
-			if (_ctx->h != INVALID_PID_VALUE)
-				CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+			if (_ctx->h != CORO_INVALID_PID_VALUE)
+				CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 
 			MCharacter[nPers].curTalk = _ctx->parm;
 				
@@ -2099,8 +2099,8 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 				// Cerca di eseguire la funzione custom per chiudere la parlata
 				MCharacter[nPers].curTalk = (MCharacter[nPers].curTalk%10) + MCharacter[nPers].curgroup*10;
 				_ctx->h = mpalQueryDoAction(31,MCharacter[nPers].item->MpalCode(),MCharacter[nPers].curTalk);
-				if (_ctx->h != INVALID_PID_VALUE)
-					CORO_INVOKE_2(g_scheduler->waitForSingleObject, _ctx->h, INFINITE);
+				if (_ctx->h != CORO_INVALID_PID_VALUE)
+					CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 
 				MCharacter[nPers].bInTexts = false;
 				MCharacter[nPers].numtexts = 0;
@@ -2214,7 +2214,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
 //	EnterCriticalSection(&cs[num]);
-//	WaitForSingleObject(mut[num],INFINITE);
+//	WaitForSingleObject(mut[num],CORO_INFINITE);
 	warning("TODO");
 }
 
@@ -2264,7 +2264,7 @@ void ThreadFadeInMusic(CORO_PARAM, const void *nMusic) {
 	for (_ctx->i = 0; _ctx->i < 16; _ctx->i++) {
 		_vm->SetMusicVolume(nChannel, _ctx->i * 4);
 
-		CORO_INVOKE_1(g_scheduler->sleep, 100);
+		CORO_INVOKE_1(CoroScheduler.sleep, 100);
 	}
 	_vm->SetMusicVolume(nChannel, 64);
 
@@ -2293,7 +2293,7 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 		if (_ctx->i * 4 < _ctx->startVolume)
 			_vm->SetMusicVolume(nChannel, _ctx->i * 4);
 
-		CORO_INVOKE_1(g_scheduler->sleep, 100);
+		CORO_INVOKE_1(CoroScheduler.sleep, 100);
 	}
 	
 	if (!bFadeOutStop)
@@ -2311,23 +2311,23 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeInSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	g_scheduler->createProcess(ThreadFadeInMusic, &curSonoriz, sizeof(int));
+	CoroScheduler.createProcess(ThreadFadeInMusic, &curSonoriz, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeOutSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bFadeOutStop = false;
-	g_scheduler->createProcess(ThreadFadeOutMusic, &curSonoriz, sizeof(int));
+	CoroScheduler.createProcess(ThreadFadeOutMusic, &curSonoriz, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeOutStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bFadeOutStop = false;
 	int channel = 2;
-	g_scheduler->createProcess(ThreadFadeOutMusic, &channel, sizeof(int));
+	CoroScheduler.createProcess(ThreadFadeOutMusic, &channel, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeInStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	int channel = 2;
-	g_scheduler->createProcess(ThreadFadeInMusic, &channel, sizeof(int));
+	CoroScheduler.createProcess(ThreadFadeInMusic, &channel, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(StopSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -2557,12 +2557,12 @@ DECLARE_CUSTOM_FUNCTION(StacchettoFadeEnd)(CORO_PARAM, uint32 nStacc, uint32 bLo
 
 DECLARE_CUSTOM_FUNCTION(MustSkipIdleStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bSkipIdle = true;
-	g_scheduler->setEvent(hSkipIdle);
+	CoroScheduler.setEvent(hSkipIdle);
 }
 
 DECLARE_CUSTOM_FUNCTION(MustSkipIdleEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	bSkipIdle = false;
-	g_scheduler->resetEvent(hSkipIdle);
+	CoroScheduler.resetEvent(hSkipIdle);
 }
 
 DECLARE_CUSTOM_FUNCTION(PatIrqFreeze)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
@@ -2608,7 +2608,7 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->msg = new RMMessage(nMsg);
-	_ctx->hDisable = g_scheduler->createEvent(true, false);
+	_ctx->hDisable = CoroScheduler.createEvent(true, false);
 	
 	_ctx->text = new RMTextDialog[_ctx->msg->NumPeriods()];
 
@@ -2649,7 +2649,7 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 			break;
 	}
 
-	g_scheduler->setEvent(_ctx->hDisable);
+	CoroScheduler.setEvent(_ctx->hDisable);
 
 	CORO_INVOKE_0(WaitFrame);
 	CORO_INVOKE_0(WaitFrame);
@@ -2882,7 +2882,7 @@ void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 
 
 	// Crea l'evento per skippare le idle
-	hSkipIdle = g_scheduler->createEvent(true, false);
+	hSkipIdle = CoroScheduler.createEvent(true, false);
 }
 
 } // end of namespace Tony

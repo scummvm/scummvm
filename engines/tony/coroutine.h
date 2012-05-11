@@ -113,7 +113,7 @@ public:
  * context, and so compilers won't complain about ";" following the macro.
  */
 #define CORO_BEGIN_CONTEXT  \
-	struct CoroContextTag : CoroBaseContext { \
+	struct CoroContextTag : Common::CoroBaseContext { \
 		CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) {} \
 		int DUMMY
 
@@ -156,8 +156,8 @@ public:
 			return; case __LINE__:;\
 		} while (0)
 
-#define CORO_GIVE_WAY do { g_scheduler->giveWay(); CORO_SLEEP(1); } while (0)
-#define CORO_RESCHEDULE do { g_scheduler->reschedule(); CORO_SLEEP(1); } while (0)
+#define CORO_GIVE_WAY do { CoroScheduler.giveWay(); CORO_SLEEP(1); } while (0)
+#define CORO_RESCHEDULE do { CoroScheduler.reschedule(); CORO_SLEEP(1); } while (0)
 
 /**
  * Stop the currently running coroutine and all calling coroutines.

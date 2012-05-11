@@ -36,7 +36,7 @@ namespace Tony {
 TonyEngine *_vm;
 
 TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst), 
-		_gameDescription(gameDesc), _randomSource("tony"), _scheduler() {
+		_gameDescription(gameDesc), _randomSource("tony") {
 	_vm = this;
 
 	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");
@@ -48,6 +48,9 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 TonyEngine::~TonyEngine() {
 	// Close the voice database
 	CloseVoiceDatabase();
+
+	// Reset the coroutine scheduler
+	CoroScheduler.reset();
 }
 
 /**
@@ -68,14 +71,14 @@ Common::Error TonyEngine::run() {
  * Initialise the game
  */
 Common::ErrorCode TonyEngine::Init() {
-	m_hEndOfFrame = g_scheduler->createEvent(false, false);
+	m_hEndOfFrame = CoroScheduler.createEvent(false, false);
 
 	m_bPaused = false;
 	m_bDrawLocation = true;
 	m_startTime = g_system->getMillis();
 
 	// Reset the scheduler
-	_scheduler.reset();
+	CoroScheduler.reset();
 
 	// Initialise the graphics window
 	_window.Init();
@@ -413,7 +416,7 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Infinite loop. We rely on the outer main process to detect if a shutdown is required,
+	// CORO_INFINITE loop. We rely on the outer main process to detect if a shutdown is required,
 	// and kill the scheudler and all the processes, including this one
 	for (;;) {
 		// Se siamo in pausa, entra nel loop appropriato
@@ -421,14 +424,14 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 			_vm->PauseLoop();
 
 		// Wait for the next frame
-		CORO_INVOKE_1(g_scheduler->sleep, 50);
+		CORO_INVOKE_1(CoroScheduler.sleep, 50);
 
   		// Call the engine to handle the next frame
 		// FIXME: This needs to be moved into it's own process
 		CORO_INVOKE_1(_vm->_theEngine.DoFrame, _vm->m_bDrawLocation);
 
 		// Warns that a frame is finished
-		g_scheduler->pulseEvent(_vm->m_hEndOfFrame);
+		CoroScheduler.pulseEvent(_vm->m_hEndOfFrame);
 
 		// Handle drawing the frame
 		if (!_vm->m_bPaused) {
@@ -450,7 +453,7 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
  */
 void TonyEngine::Play(void) {
 	// Create the game player process
-	g_scheduler->createProcess(PlayProcess, NULL);
+	CoroScheduler.createProcess(PlayProcess, NULL);
 
 	// Loop through calling the scheduler until it's time for the game to quit
 	while (!shouldQuit() && !m_bQuitNow) {
@@ -458,7 +461,7 @@ void TonyEngine::Play(void) {
 		g_system->delayMillis(10);
 
 		// Call any scheduled processes
-		_scheduler.schedule();
+		CoroScheduler.schedule();
 	}
 }
 
@@ -466,7 +469,7 @@ void TonyEngine::Play(void) {
 
 void TonyEngine::Close(void) {
 	CloseMusic();
-	g_scheduler->closeEvent(m_hEndOfFrame);
+	CoroScheduler.closeEvent(m_hEndOfFrame);
 	_theBoxes.Close();
 	_theEngine.Close();
 	_window.Close();
