@@ -36,8 +36,8 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_byte16F04 = 0;
 	_byte1881A = 0;
 	_byte18823 = 0;
-	_byte1881E = 3;
-	_byte1881D = 0;
+	_speechDisplaySpeed = 3;
+	_speechTimer = 0;
 	_word16F00 = -1;
 	_word129A3 = 0;
 	_viewportCharacterTarget = -1;
@@ -251,22 +251,22 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub17A3E();
 		break;
 	case 0x2:
-		OC_sub17D57();
+		OC_sub17D57_speech1();
 		break;
 	case 0x3:
-		OC_sub17D7F();
+		OC_sub17D7F_speech2();
 		break;
 	case 0x4:
-		OC_sub17DB9();
+		OC_sub17DB9_speech3();
 		break;
 	case 0x5:
-		OC_sub17DF9();
+		OC_sub17DF9_speech1param();
 		break;
 	case 0x6:
-		OC_sub17E07();
+		OC_sub17E07_speech4param();
 		break;
 	case 0x7:
-		OC_sub17E15();
+		OC_sub17E15_speech2param();
 		break;
 	case 0x8:
 		OC_sub17B03();
@@ -287,7 +287,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub17B93();
 		break;
 	case 0xE:
-		OC_sub17E37();
+		OC_sub17E37_speech4();
 		break;
 	case 0xF:
 		OC_resetByte1714E();
@@ -485,7 +485,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_loadFile_AERIAL_GFX();
 		break;
 	case 0x50:
-		OC_sub17E22();
+		OC_sub17E22_speech1IfSoundOff();
 		break;
 	case 0x51:
 		OC_sub1844A();
@@ -613,19 +613,19 @@ static const OpCode opCodes1[] = {
 static const OpCode opCodes2[] = {
 /* 0x00 */	{ "OC_setWord18821", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x01 */	{ "OC_sub17A3E", 3, kgetPosFromScript, kImmediateValue, kImmediateValue, kNone, kNone },
-/* 0x02 */	{ "OC_sub17D57", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x03 */	{ "OC_sub17D7F", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x04 */	{ "OC_sub17DB9", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, // todo
-/* 0x05 */	{ "OC_sub17DF9", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x06 */	{ "OC_sub17E07", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
-/* 0x07 */	{ "OC_sub17E15", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+/* 0x02 */	{ "OC_sub17D57_speech1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x03 */	{ "OC_sub17D7F_speech2", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x04 */	{ "OC_sub17DB9_speech3", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, // todo
+/* 0x05 */	{ "OC_sub17DF9_speech1param", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x06 */	{ "OC_sub17E07_speech4param", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
+/* 0x07 */	{ "OC_sub17E15_speech2param", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x08 */	{ "OC_sub17B03", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
 /* 0x09 */	{ "OC_getRandom_type2", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
 /* 0x0a */	{ "OC_setCharacterPosition", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
 /* 0x0b */	{ "OC_sub17A8D", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x0c */	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x0d */	{ "OC_sub17B93", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
-/* 0x0e */	{ "OC_sub17E37", 0, kNone, kNone, kNone, kNone, kNone },  // todo
+/* 0x0e */	{ "OC_sub17E37_speech4", 0, kNone, kNone, kNone, kNone, kNone },  // todo
 /* 0x0f */	{ "OC_resetByte1714E", 0, kNone, kNone, kNone, kNone, kNone },  
 /* 0x10 */	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },  
 /* 0x11 */	{ "OC_incByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
@@ -691,7 +691,7 @@ static const OpCode opCodes2[] = {
 /* 0x4d */	{ "OC_sub183A2", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4e */	{ "OC_sub183C6", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
 /* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-/* 0x50 */	{ "OC_sub17E22", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x50 */	{ "OC_sub17E22_speech1IfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x52 */	{ "OC_sub1847F", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
 /* 0x53 */	{ "OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
@@ -1146,9 +1146,9 @@ void LilliputScript::sub189B8() {
 		++index;
 	}
 
-	index /= _byte1881E;
+	index /= _speechDisplaySpeed;
 	index += 4;
-	_byte1881D = index;
+	_speechTimer = index;
 	_vm->displayFunction10();
 	_vm->displayFunction11(_vm->_displayStringBuf);
 }
@@ -2068,8 +2068,10 @@ byte LilliputScript::OC_checkViewPortCharacterTarget() {
 
 void LilliputScript::OC_setWord18821() {
 	debugC(1, kDebugScriptTBC, "OC_setWord18821()");
+
 	_word18821 = getValue1();
 }
+
 void LilliputScript::OC_sub17A3E() {
 	debugC(1, kDebugScriptTBC, "OC_sub17A3E()");
 	Common::Point var1 = getPosFromScript();
@@ -2088,8 +2090,8 @@ void LilliputScript::OC_sub17A3E() {
 	}
 }
 
-void LilliputScript::OC_sub17D57() {
-	debugC(1, kDebugScriptTBC, "OC_sub17D57()");
+void LilliputScript::OC_sub17D57_speech1() {
+	debugC(1, kDebugScriptTBC, "OC_sub17D57_speech1()");
 
 	int curWord = _currScript->readUint16LE();
 
@@ -2098,7 +2100,7 @@ void LilliputScript::OC_sub17D57() {
 	if (forceReturnFl)
 		return;
 
-	_word1881B = _vm->_currentScriptCharacter;
+	_talkingCharacter = _vm->_currentScriptCharacter;
 	sub18B3C(curWord);
 
 }
@@ -2129,8 +2131,8 @@ void LilliputScript::sub18B7C(int var1, int var3) {
 	decodePackedText(&_vm->_packedStrings[index]);
 }
 
-void LilliputScript::OC_sub17D7F() {
-	debugC(1, kDebugScriptTBC, "OC_sub17D7F()");
+void LilliputScript::OC_sub17D7F_speech2() {
+	debugC(1, kDebugScriptTBC, "OC_sub17D7F_speech2()");
 
 	int var1 = getCharacterVariablePtr()[0];
 	int var2 = (_currScript->readUint16LE() & 0xFF);
@@ -2143,13 +2145,13 @@ void LilliputScript::OC_sub17D7F() {
 	if (forceReturnFl)
 		return;
 
-	_word1881B = _vm->_currentScriptCharacter;
+	_talkingCharacter = _vm->_currentScriptCharacter;
 
 	sub18B7C(var1, var3);
 }
 
-void LilliputScript::OC_sub17DB9() {
-	debugC(1, kDebugScriptTBC, "OC_sub17DB9()");
+void LilliputScript::OC_sub17DB9_speech3() {
+	debugC(1, kDebugScriptTBC, "OC_sub17DB9_speech3()");
 
 	int index = _currScript->readUint16LE();
 	int maxValue = sub18BB7(index);
@@ -2165,28 +2167,28 @@ void LilliputScript::OC_sub17DB9() {
 	if (forceReturnFl)
 		return;
 
-	_word1881B = _vm->_currentScriptCharacter;
+	_talkingCharacter = _vm->_currentScriptCharacter;
 
 	sub18B7C(index, oldVal);
 	
 }
 
-void LilliputScript::OC_sub17DF9() {
-	debugC(1, kDebugScriptTBC, "OC_sub17DF9()");
+void LilliputScript::OC_sub17DF9_speech1param() {
+	debugC(1, kDebugScriptTBC, "OC_sub17DF9_speech1param()");
 
-	if ((_word1881B & 0xFF) == 0xFF) {
-		OC_sub17D57();
+	if (_talkingCharacter == -1) {
+		OC_sub17D57_speech1();
 		return;
 	}
 
 	_currScript->readUint16LE();
 }
 
-void LilliputScript::OC_sub17E07() {
-	debugC(1, kDebugScriptTBC, "OC_sub17E07()");
+void LilliputScript::OC_sub17E07_speech4param() {
+	debugC(1, kDebugScriptTBC, "OC_sub17E07_speech4param()");
 
-	if ((_word1881B & 0xFF) == 0xFF) {
-		OC_sub17D7F();
+	if (_talkingCharacter == -1) {
+		OC_sub17D7F_speech2();
 		return;
 	}
 	_currScript->readUint16LE();
@@ -2196,11 +2198,11 @@ void LilliputScript::OC_sub17E07() {
 
 }
 
-void LilliputScript::OC_sub17E15() {
-	debugC(1, kDebugScriptTBC, "OC_sub17E15()");
+void LilliputScript::OC_sub17E15_speech2param() {
+	debugC(1, kDebugScriptTBC, "OC_sub17E15_speech2param()");
 
-	if ((_word1881B & 0xFF) == 0xFF) {
-		OC_sub17DB9();
+	if (_talkingCharacter == -1) {
+		OC_sub17DB9_speech3();
 		return;
 	}
 	_currScript->readUint16LE();
@@ -2264,8 +2266,8 @@ void LilliputScript::OC_sub17B93() {
 	sub17B6C(var1);
 }
 
-void LilliputScript::OC_sub17E37() {
-	warning("OC_sub17E37");
+void LilliputScript::OC_sub17E37_speech4() {
+	warning("OC_sub17E37_speech4");
 }
 
 void LilliputScript::OC_resetByte1714E() {
@@ -2989,7 +2991,7 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	_vm->_byte15EAD = var1;
 
 	_byte12A09 = 1;
-	_word1881B = -1;
+	_talkingCharacter = -1;
 	OC_PaletteFadeOut();
 	_vm->_word15AC2 = 1;
 	_vm->displayVGAFile("AERIAL.GFX");
@@ -3003,9 +3005,10 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	_vm->_byte12A09 = 0;
 }
 
-void LilliputScript::OC_sub17E22() {
-	warning("OC_sub17E22");
+void LilliputScript::OC_sub17E22_speech1IfSoundOff() {
+	warning("OC_sub17E22_speech1IfSoundOff");
 }
+
 void LilliputScript::OC_sub1844A() {
 	warning("OC_sub1844A");
 }
@@ -3049,7 +3052,7 @@ void LilliputScript::OC_displayVGAFile() {
 	int curWord = _currScript->readUint16LE();
 	int index = _vm->_packedStringIndex[curWord];
 	Common::String fileName = Common::String((const char *)&_vm->_packedStrings[index]);
-	_word1881B = -1;
+	_talkingCharacter = -1;
 	_vm->displayVGAFile(fileName);
 	_vm->paletteFadeIn();
 }
