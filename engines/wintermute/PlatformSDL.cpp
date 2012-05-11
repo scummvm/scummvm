@@ -322,7 +322,7 @@ int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 // Win32 API bindings
 //////////////////////////////////////////////////////////////////////////
-HINSTANCE CBPlatform::ShellExecute(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, INT nShowCmd) {
+HINSTANCE CBPlatform::ShellExecute(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, int nShowCmd) {
 	return NULL;
 }
 
@@ -342,7 +342,7 @@ uint32 CBPlatform::GetTime() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::GetCursorPos(LPPOINT lpPoint) {
+bool CBPlatform::GetCursorPos(LPPOINT lpPoint) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
 	Common::Point p = g_system->getEventManager()->getMousePos();
@@ -351,11 +351,11 @@ BOOL CBPlatform::GetCursorPos(LPPOINT lpPoint) {
 
 	renderer->PointFromScreen(lpPoint);
 
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::SetCursorPos(int X, int Y) {
+bool CBPlatform::SetCursorPos(int X, int Y) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
 	POINT p;
@@ -364,12 +364,12 @@ BOOL CBPlatform::SetCursorPos(int X, int Y) {
 	renderer->PointToScreen(&p);
 // TODO
 	//SDL_WarpMouseInWindow(renderer->GetSdlWindow(), p.x, p.y);
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::ShowWindow(HWND hWnd, int nCmdShow) {
-	return FALSE;
+bool CBPlatform::ShowWindow(HWND hWnd, int nCmdShow) {
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -396,63 +396,63 @@ HWND CBPlatform::SetCapture(HWND hWnd) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::ReleaseCapture() {
-	return FALSE;
+bool CBPlatform::ReleaseCapture() {
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::SetForegroundWindow(HWND hWnd) {
-	return FALSE;
+bool CBPlatform::SetForegroundWindow(HWND hWnd) {
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::SetRectEmpty(LPRECT lprc) {
+bool CBPlatform::SetRectEmpty(LPRECT lprc) {
 	lprc->left = lprc->right = lprc->top = lprc->bottom = 0;
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::IsRectEmpty(const LPRECT lprc) {
+bool CBPlatform::IsRectEmpty(const LPRECT lprc) {
 	return (lprc->left >= lprc->right) || (lprc->top >= lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::PtInRect(LPRECT lprc, POINT p) {
+bool CBPlatform::PtInRect(LPRECT lprc, POINT p) {
 	return (p.x >= lprc->left) && (p.x < lprc->right) && (p.y >= lprc->top) && (p.y < lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::SetRect(LPRECT lprc, int left, int top, int right, int bottom) {
+bool CBPlatform::SetRect(LPRECT lprc, int left, int top, int right, int bottom) {
 	lprc->left   = left;
 	lprc->top    = top;
 	lprc->right  = right;
 	lprc->bottom = bottom;
 
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::IntersectRect(LPRECT lprcDst, CONST LPRECT lprcSrc1, CONST LPRECT lprcSrc2) {
+bool CBPlatform::IntersectRect(LPRECT lprcDst, const LPRECT lprcSrc1, const LPRECT lprcSrc2) {
 	if (IsRectEmpty(lprcSrc1) || IsRectEmpty(lprcSrc2) ||
 	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
 	        lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
 		SetRectEmpty(lprcDst);
-		return FALSE;
+		return false;
 	}
 	lprcDst->left   = MAX(lprcSrc1->left, lprcSrc2->left);
 	lprcDst->right  = MIN(lprcSrc1->right, lprcSrc2->right);
 	lprcDst->top    = MAX(lprcSrc1->top, lprcSrc2->top);
 	lprcDst->bottom = MIN(lprcSrc1->bottom, lprcSrc2->bottom);
 
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::UnionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2) {
+bool CBPlatform::UnionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2) {
 	if (IsRectEmpty(lprcSrc1)) {
 		if (IsRectEmpty(lprcSrc2)) {
 			SetRectEmpty(lprcDst);
-			return FALSE;
+			return false;
 		} else {
 			*lprcDst = *lprcSrc2;
 		}
@@ -467,31 +467,31 @@ BOOL CBPlatform::UnionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2) {
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::CopyRect(LPRECT lprcDst, RECT *lprcSrc) {
-	if (lprcDst == NULL || lprcSrc == NULL) return FALSE;
+bool CBPlatform::CopyRect(LPRECT lprcDst, RECT *lprcSrc) {
+	if (lprcDst == NULL || lprcSrc == NULL) return false;
 
 	*lprcDst = *lprcSrc;
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::OffsetRect(LPRECT lprc, int dx, int dy) {
-	if (lprc == NULL) return FALSE;
+bool CBPlatform::OffsetRect(LPRECT lprc, int dx, int dy) {
+	if (lprc == NULL) return false;
 
 	lprc->left   += dx;
 	lprc->top    += dy;
 	lprc->right  += dx;
 	lprc->bottom += dy;
 
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BOOL CBPlatform::EqualRect(LPRECT rect1, LPRECT rect2) {
+bool CBPlatform::EqualRect(LPRECT rect1, LPRECT rect2) {
 	return rect1->left == rect2->left && rect1->right == rect2->right && rect1->top == rect2->top && rect1->bottom == rect2->bottom;
 }
 

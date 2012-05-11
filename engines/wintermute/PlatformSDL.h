@@ -49,27 +49,27 @@ public:
 	static AnsiString GetPlatformName();
 
 	// Win32 API bindings
-	static HINSTANCE ShellExecute(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, INT nShowCmd);
+	static HINSTANCE ShellExecute(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, int nShowCmd);
 	static void OutputDebugString(LPCSTR lpOutputString);
 	static uint32 GetTime();
-	static BOOL GetCursorPos(LPPOINT lpPoint);
-	static BOOL SetCursorPos(int X, int Y);
-	static BOOL ShowWindow(HWND hWnd, int nCmdShow);
+	static bool GetCursorPos(LPPOINT lpPoint);
+	static bool SetCursorPos(int X, int Y);
+	static bool ShowWindow(HWND hWnd, int nCmdShow);
 	static bool DeleteFile(const char *lpFileName);
 	static bool CopyFile(const char *from, const char *to, bool failIfExists);
 	static HWND SetCapture(HWND hWnd);
-	static BOOL ReleaseCapture();
-	static BOOL SetForegroundWindow(HWND hWnd);
+	static bool ReleaseCapture();
+	static bool SetForegroundWindow(HWND hWnd);
 
-	static BOOL SetRectEmpty(LPRECT lprc);
-	static BOOL IsRectEmpty(const LPRECT lprc);
-	static BOOL PtInRect(LPRECT lprc, POINT p);
-	static BOOL SetRect(LPRECT lprc, int left, int top, int right, int bottom);
-	static BOOL IntersectRect(LPRECT lprcDst, const LPRECT lprcSrc1, const LPRECT lprcSrc2);
-	static BOOL UnionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2);
-	static BOOL CopyRect(LPRECT lprcDst, RECT *lprcSrc);
-	static BOOL OffsetRect(LPRECT lprc, int dx, int dy);
-	static BOOL EqualRect(LPRECT rect1, LPRECT rect2);
+	static bool SetRectEmpty(LPRECT lprc);
+	static bool IsRectEmpty(const LPRECT lprc);
+	static bool PtInRect(LPRECT lprc, POINT p);
+	static bool SetRect(LPRECT lprc, int left, int top, int right, int bottom);
+	static bool IntersectRect(LPRECT lprcDst, const LPRECT lprcSrc1, const LPRECT lprcSrc2);
+	static bool UnionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2);
+	static bool CopyRect(LPRECT lprcDst, RECT *lprcSrc);
+	static bool OffsetRect(LPRECT lprc, int dx, int dy);
+	static bool EqualRect(LPRECT rect1, LPRECT rect2);
 
 
 	// string functions

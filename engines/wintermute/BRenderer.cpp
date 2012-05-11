@@ -180,7 +180,7 @@ HRESULT CBRenderer::DrawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int W
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::Fade(WORD Alpha) {
+HRESULT CBRenderer::Fade(uint16 Alpha) {
 	return E_FAIL;
 }
 

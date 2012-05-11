@@ -51,7 +51,7 @@ public:
 	virtual HRESULT SetViewport(int left, int top, int right, int bottom);
 	virtual HRESULT SetViewport(RECT *Rect);
 	virtual HRESULT SetScreenViewport();
-	virtual HRESULT Fade(WORD Alpha);
+	virtual HRESULT Fade(uint16 Alpha);
 	virtual HRESULT FadeToColor(uint32 Color, RECT *rect = NULL);
 	virtual HRESULT DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
 	virtual HRESULT DrawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width = 1);

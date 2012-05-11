@@ -64,7 +64,7 @@ inline void DCCopyElements(TYPE *pDest, const TYPE *pSrc, int nCount) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-BOOL DCCompareElements(const TYPE *pElement1, const ARG_TYPE *pElement2) {
+bool DCCompareElements(const TYPE *pElement1, const ARG_TYPE *pElement2) {
 	return *pElement1 == *pElement2;
 }
 

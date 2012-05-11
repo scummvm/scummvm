@@ -49,7 +49,7 @@ public:
 	HRESULT Flip();
 	HRESULT Fill(byte  r, byte g, byte b, RECT *rect);
 
-	HRESULT Fade(WORD Alpha);
+	HRESULT Fade(uint16 Alpha);
 	HRESULT FadeToColor(uint32 Color, RECT *rect = NULL);
 
 	HRESULT SwitchFullscreen();

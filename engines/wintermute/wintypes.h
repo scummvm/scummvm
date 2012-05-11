@@ -33,68 +33,38 @@
 #include "common/scummsys.h"
 
 //namespace WinterMute {
-//#include <cstdio>
-//#include <stdio.h>
 #ifndef __WIN32__
 
 #define WINAPI
 #define CALLBACK
 
-#ifndef __OBJC__
-typedef int BOOL;
-#endif
-
-#ifndef TRUE
-#   define TRUE 1
-#   define FALSE 0
-#endif
-
 #define PI ((float) 3.141592653589793f)
 #define DRGBA(r,g,b,a) ((uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
 #define D3DCOLGetB(rgb)  ((byte )(rgb))
-#define D3DCOLGetG(rgb)  ((byte )(((WORD)(rgb)) >> 8))
+#define D3DCOLGetG(rgb)  ((byte )(((uint16)(rgb)) >> 8))
 #define D3DCOLGetR(rgb)  ((byte )((rgb)>>16))
 #define D3DCOLGetA(rgb)  ((byte )((rgb)>>24))
-/*
-#ifndef MAX
-#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef MIN
-#define MIN(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-*/
-#define CONST const
 
 #define MAX_PATH 512
 
-typedef char CHAR;
-typedef short SHORT;
-typedef int32_t LONG;
-
-typedef uint16 WORD;
-//typedef uint32 QWORD; // HACK for now
-typedef int      INT;
-typedef unsigned int UINT;
-
-typedef CHAR *NPSTR, *LPSTR, *PSTR;
+typedef char *NPSTR, *LPSTR, *PSTR;
 typedef PSTR *PZPSTR;
 typedef const PSTR *PCZPSTR;
-typedef const CHAR *LPCSTR, *PCSTR;
+typedef const char *LPCSTR, *PCSTR;
 typedef PCSTR *PZPCSTR;
 
 typedef struct tagRECT {
-	LONG    left;
-	LONG    top;
-	LONG    right;
-	LONG    bottom;
+	uint32	left;
+	uint32	top;
+	uint32  right;
+	uint32	bottom;
 } RECT, *LPRECT;
 
 
 typedef struct tagPOINT {
-	LONG  x;
-	LONG  y;
+	uint32  x;
+	uint32  y;
 } POINT, *LPPOINT;
 
 
@@ -102,8 +72,7 @@ typedef uint32 HINSTANCE;
 typedef uint32 HMODULE;
 typedef uint32 HWND;
 
-//typedef uint32 HRESULT;
-typedef long HRESULT;
+typedef int32 HRESULT;
 
 #define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
 #define FAILED(hr) (((HRESULT)(hr)) < 0)

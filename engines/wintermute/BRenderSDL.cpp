@@ -226,7 +226,7 @@ HRESULT CBRenderSDL::Fill(byte  r, byte g, byte b, RECT *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::Fade(WORD Alpha) {
+HRESULT CBRenderSDL::Fade(uint16 Alpha) {
 	uint32 dwAlpha = 255 - Alpha;
 	return FadeToColor(dwAlpha << 24);
 }
