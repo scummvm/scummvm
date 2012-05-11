@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BPATHUTILS_H
-#define WINTERMUTE_BPATHUTILS_H
+#ifndef WINTERMUTE_PATHUTILS_H
+#define WINTERMUTE_PATHUTILS_H
 
 #include "PlatformSDL.h"
 
@@ -53,4 +53,4 @@ public:
 
 } // end of namespace WinterMute
 
-#endif // __WmePathUtils_H__
+#endif // WINTERMUTE_PATHUTILS_H

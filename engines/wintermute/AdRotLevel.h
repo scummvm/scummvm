@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdRotLevel_H__
-#define __WmeAdRotLevel_H__
+#ifndef WINTERMUTE_ADROTLEVEL_H
+#define WINTERMUTE_ADROTLEVEL_H
 
 #include "BObject.h"
 

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeWintypes_H__
-#define __WmeWintypes_H__
+#ifndef WINTERMUTE_WINTYPES_H
+#define WINTERMUTE_WINTYPES_H
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
@@ -117,4 +117,4 @@ typedef long HRESULT;
 
 //} // end of namespace WinterMute
 
-#endif // __WmeWintypes_H__
+#endif // WINTERMUTE_WINTYPES_H

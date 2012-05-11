@@ -90,4 +90,4 @@ typedef enum {
 
 } // end of namespace WinterMute
 
-#endif // __WmeAdTypes_H__
+#endif // WINTERMUTE_ADTYPES_H

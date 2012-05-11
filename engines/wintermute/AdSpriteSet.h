@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdSpriteSet_H__
-#define __WmeAdSpriteSet_H__
+#ifndef WINTERMUTE_ADSPRITESET_H
+#define WINTERMUTE_ADSPRITESET_H
 
 
 #include "BObject.h"

@@ -67,4 +67,4 @@ public:
 
 } // end of namespace WinterMute
 
-#endif // __WmeStringUtil_H__
+#endif // WINTERMUTE_STRINGUTIL_H

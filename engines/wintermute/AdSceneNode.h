@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdSceneNode_H__
-#define __WmeAdSceneNode_H__
+#ifndef WINTERMUTE_ADSCENENODE_H
+#define WINTERMUTE_ADSCENENODE_H
 
 
 #include "AdTypes.h"    // Added by ClassView

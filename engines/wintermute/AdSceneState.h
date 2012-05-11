@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdSceneState_H__
-#define __WmeAdSceneState_H__
+#ifndef WINTERMUTE_ADSCENESTATE_H
+#define WINTERMUTE_ADSCENESTATE_H
 
 #include "persistent.h"
 #include "BBase.h"

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdWaypointGroup_H__
-#define __WmeAdWaypointGroup_H__
+#ifndef WINTERMUTE_ADWAYPOINTGROUP_H
+#define WINTERMUTE_ADWAYPOINTGROUP_H
 
 #include "BObject.h"
 

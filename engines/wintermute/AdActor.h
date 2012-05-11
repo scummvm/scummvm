@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdActor_H__
-#define __WmeAdActor_H__
+#ifndef WINTERMUTE_ADACTOR_H
+#define WINTERMUTE_ADACTOR_H
 
 
 #include "dctypes.h"    // Added by ClassView
@@ -104,4 +104,4 @@ private:
 
 } // end of namespace WinterMute
 
-#endif // __WmeAdActor_H__
+#endif // WINTERMUTE_ADACTOR_H

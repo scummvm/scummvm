@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdSentence_H__
-#define __WmeAdSentence_H__
+#ifndef WINTERMUTE_ADSENTENCE_H
+#define WINTERMUTE_ADSENTENCE_H
 
 
 #include "BBase.h"

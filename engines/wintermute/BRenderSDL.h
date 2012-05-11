@@ -93,4 +93,4 @@ private:
 
 } // end of namespace WinterMute
 
-#endif // __WmeBRenderSDL_H__
+#endif // WINTERMUTE_BRENDERER_SDL_H

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdScaleLevel_H__
-#define __WmeAdScaleLevel_H__
+#ifndef WINTERMUTE_ADSCALELEVEL_H
+#define WINTERMUTE_ADSCALELEVEL_H
 
 
 #include "BObject.h"

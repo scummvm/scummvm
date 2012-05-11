@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdPathPoint_H__
-#define __WmeAdPathPoint_H__
+#ifndef WINTERMUTE_ADPATHPOINT_H
+#define WINTERMUTE_ADPATHPOINT_H
 
 #include "persistent.h"
 #include "BPoint.h"

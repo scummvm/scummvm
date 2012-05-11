@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdResponseContext_H__
-#define __WmeAdResponseContext_H__
+#ifndef WINTERMUTE_ADRESPONSECONTEXT_H
+#define WINTERMUTE_ADRESPONSECONTEXT_H
 
 #include "persistent.h"
 #include "BBase.h"

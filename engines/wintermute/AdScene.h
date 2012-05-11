@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdScene_H__
-#define __WmeAdScene_H__
+#ifndef WINTERMUTE_ADSCENE_H
+#define WINTERMUTE_ADSCENE_H
 
 #include "BFader.h"
 

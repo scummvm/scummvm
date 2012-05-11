@@ -25,8 +25,8 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#ifndef __WmeAdGame_H__
-#define __WmeAdGame_H__
+#ifndef WINTERMUTE_ADGAME_H
+#define WINTERMUTE_ADGAME_H
 
 #include "AdTypes.h"
 #include "BGame.h"

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdLayer_H__
-#define __WmeAdLayer_H__
+#ifndef WINTERMUTE_ADLAYER_H
+#define WINTERMUTE_ADLAYER_H
 
 namespace WinterMute {
 class CAdSceneNode;

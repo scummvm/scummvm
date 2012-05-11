@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdNodeState_H__
-#define __WmeAdNodeState_H__
+#ifndef WINTERMUTE_ADNODESTATE_H
+#define WINTERMUTE_ADNODESTATE_H
 
 namespace WinterMute {
 

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdIte_h__
-#define __WmeAdIte_h__
+#ifndef WINTERMUTE_ADITEM_H
+#define WINTERMUTE_ADITEM_H
 
 
 #include "AdTalkHolder.h"

@@ -78,4 +78,4 @@ private:
 
 } // end of namespace WinterMute
 
-#endif // __WmeBSurfaceSDL_H__
+#endif // WINTERMUTE_BSURFACESDL_H

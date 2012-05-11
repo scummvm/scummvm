@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdPath_H__
-#define __WmeAdPath_H__
+#ifndef WINTERMUTE_ADPATH_H
+#define WINTERMUTE_ADPATH_H
 
 #include "persistent.h"
 #include "coll_templ.h"

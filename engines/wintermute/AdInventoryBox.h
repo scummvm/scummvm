@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdInventoryBox_H__
-#define __WmeAdInventoryBox_H__
+#ifndef WINTERMUTE_ADINVENTORYBOX_H
+#define WINTERMUTE_ADINVENTORYBOX_H
 
 #include "BObject.h"
 

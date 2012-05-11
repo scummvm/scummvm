@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdRegion_H__
-#define __WmeAdRegion_H__
+#ifndef WINTERMUTE_ADREGION_H
+#define WINTERMUTE_ADREGION_H
 
 #include "BRegion.h"
 

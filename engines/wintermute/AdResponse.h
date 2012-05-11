@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdResponse_H__
-#define __WmeAdResponse_H__
+#ifndef WINTERMUTE_ADRESPONSE_H
+#define WINTERMUTE_ADRESPONSE_H
 
 
 #include "BObject.h"

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdActorDir_H__
-#define __WmeAdActorDir_H__
+#ifndef WINTERMUTE_ADACTORDIR_H
+#define WINTERMUTE_ADACTORDIR_H
 
 #include "persistent.h"
 #include "BBase.h"
@@ -43,4 +43,4 @@ public:
 
 } // end of namespace WinterMute
 
-#endif // __WmeAdActorDir_H__
+#endif // WINTERMUTE_ADACTORDIR_H

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdTalkDef_H__
-#define __WmeAdTalkDef_H__
+#ifndef WINTERMUTE_ADTALKDEF_H
+#define WINTERMUTE_ADTALKDEF_H
 
 #include "coll_templ.h"
 #include "BObject.h"

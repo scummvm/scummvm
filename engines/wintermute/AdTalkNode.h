@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeAdTalkNode_H__
-#define __WmeAdTalkNode_H__
+#ifndef WINTERMUTE_ADTALKNODE_H
+#define WINTERMUTE_ADTALKNODE_H
 
 #include "persistent.h"
 #include "BBase.h"

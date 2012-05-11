@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef __WmeSXString_H__
-#define __WmeSXString_H__
+#ifndef WINTERMUTE_SXSTRING_H
+#define WINTERMUTE_SXSTRING_H
 
 
 #include "engines/wintermute/BScriptable.h"
