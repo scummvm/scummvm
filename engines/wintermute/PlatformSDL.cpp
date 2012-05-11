@@ -298,6 +298,9 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 #endif
 
 		break;
+	default:
+		// TODO: Do we care about any other events?
+		break;
 
 	}
 }
