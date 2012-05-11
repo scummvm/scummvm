@@ -80,6 +80,8 @@ class RMWindow {
 private:
 	bool Lock();
 	void Unlock();
+	void plotSplices(const byte *lpBuf, const Common::Point &center, int x, int y);
+	void plotLines(const byte *lpBuf, const Common::Point &center, int x, int y);
 
 protected:
 	void * /*LPDIRECTDRAWCLIPPER*/ m_MainClipper;

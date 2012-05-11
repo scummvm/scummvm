@@ -147,11 +147,58 @@ void RMWindow::GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
 	if (!rcBoundEllipse.isValidRect())
 		return;
 
-	// TODO: Do a proper circular wipe
-	for (int yp = rcBoundEllipse.top; yp < rcBoundEllipse.bottom; ++yp) {
-		const byte *pSrc = lpBuf + (yp * RM_SX * 2) + rcBoundEllipse.left * 2;
-		
-		g_system->copyRectToScreen(pSrc, RM_SX * 2, rcBoundEllipse.left, yp, rcBoundEllipse.width(), 1);
+	Common::Point center(rcBoundEllipse.left + rcBoundEllipse.width() / 2, 
+		rcBoundEllipse.top + rcBoundEllipse.height() / 2);
+	int radius = rcBoundEllipse.width() / 2;
+
+	int error = -radius;
+	int x = radius;
+	int y = 0;
+
+	while (x >= y) {
+		plotSplices(lpBuf, center, x, y);
+ 
+		error += y;
+		++y;
+		error += y;
+ 
+		if (error >= 0) {
+			error -= x;
+			--x;
+			error -= x;
+		}
+	}
+}
+
+/**
+ * Handles drawing the line splices for the circle of viewable area
+ */
+void RMWindow::plotSplices(const byte *lpBuf, const Common::Point &center, int x, int y) {
+	plotLines(lpBuf, center, x, y);
+	if (x != y) 
+		plotLines(lpBuf, center, y, x);
+}
+
+/**
+ * Handles drawing the line splices for the circle of viewable area
+ */
+void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, int y) {
+	// Skips lines that have no width (i.e. at the top of the circle)
+	if ((x == 0) || (y > center.y))
+		return;
+
+	const byte *pSrc;
+
+	if ((center.y - y) >= 0) {
+		// Draw line in top half of circle
+		pSrc = lpBuf + ((center.y - y) * RM_SX * 2) + (center.x - x) * 2;
+		g_system->copyRectToScreen(pSrc, RM_SX * 2, center.x - x, center.y - y, x * 2, 1);
+	}
+
+	if ((center.y + y) < RM_SY) {
+		// Draw line in bottom half of circle
+		pSrc = lpBuf + ((center.y + y) * RM_SX * 2) + (center.x - x) * 2;
+		g_system->copyRectToScreen(pSrc, RM_SX * 2, center.x - x, center.y + y, x * 2, 1);
 	}
 }
 
