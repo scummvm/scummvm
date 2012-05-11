@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -74,7 +74,7 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 	// TODO: Cleanup
 	_compressed = (_fileEntry->_compressedLength != 0);
 	_size = _fileEntry->_length;
-	
+
 	if (_compressed) {
 		// TODO: Really, most of this logic might be doable directly in the fileEntry?
 		// But for now, this should get us rolling atleast.
@@ -82,7 +82,7 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 	} else {
 		_file = new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES);
 	}
-	
+
 	SeekToPos(0);
 
 	return S_OK;

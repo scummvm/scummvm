@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2669,7 +2669,7 @@ CBObject *CAdScene::GetPrevAccessObject(CBObject *CurrObject) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::GetSceneObjects(CBArray<CAdObject *, CAdObject *>& Objects, bool InteractiveOnly) {
+HRESULT CAdScene::GetSceneObjects(CBArray<CAdObject *, CAdObject *> &Objects, bool InteractiveOnly) {
 	for (int i = 0; i < _layers.GetSize(); i++) {
 		// close-up layer -> remove everything below it
 		if (InteractiveOnly && _layers[i]->_closeUp) Objects.RemoveAll();
@@ -2725,7 +2725,7 @@ HRESULT CAdScene::GetSceneObjects(CBArray<CAdObject *, CAdObject *>& Objects, bo
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::GetRegionObjects(CAdRegion *Region, CBArray<CAdObject *, CAdObject *>& Objects, bool InteractiveOnly) {
+HRESULT CAdScene::GetRegionObjects(CAdRegion *Region, CBArray<CAdObject *, CAdObject *> &Objects, bool InteractiveOnly) {
 	CAdGame *AdGame = (CAdGame *)Game;
 	CAdObject *Obj;
 

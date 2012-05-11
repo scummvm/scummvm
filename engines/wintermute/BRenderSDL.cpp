@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,12 +39,12 @@
 
 namespace WinterMute {
 
-// TODO: Redo everything here.	
+// TODO: Redo everything here.
 
 //////////////////////////////////////////////////////////////////////////
 CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
-/*	_renderer = NULL;
-	_win = NULL;*/
+	/*  _renderer = NULL;
+	    _win = NULL;*/
 	_renderSurface = NULL;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
@@ -138,10 +138,10 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 
 #if 0
 	_win = SDL_CreateWindow("WME Lite",
-	                         SDL_WINDOWPOS_UNDEFINED,
-	                         SDL_WINDOWPOS_UNDEFINED,
-	                         _realWidth, _realHeight,
-	                         flags);
+	                        SDL_WINDOWPOS_UNDEFINED,
+	                        SDL_WINDOWPOS_UNDEFINED,
+	                        _realWidth, _realHeight,
+	                        flags);
 
 	if (!_win) return E_FAIL;
 #endif
@@ -210,7 +210,7 @@ HRESULT CBRenderSDL::Flip() {
 		}
 	}
 #endif
-	g_system->copyRectToScreen((byte*)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+	g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 	g_system->updateScreen();
 	//SDL_RenderPresent(_renderer);
 
@@ -271,18 +271,18 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
 	return S_OK;
 }
 
-// Replacement for SDL2's SDL_RenderCopy	
+// Replacement for SDL2's SDL_RenderCopy
 void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect) {
 	for (int i = 0; i < srcRect->height(); i++) {
 		void *destPtr = _renderSurface->getBasePtr(dstRect->left, dstRect->top + i);
 		void *srcPtr = surf->getBasePtr(srcRect->left, srcRect->top + i);
 		for (int j = 0; j < srcRect->width(); j++) {
 			// TODO: Replace this with something less ugly, and more portable.
-			if (((byte*)srcPtr)[0] == 255) {
-				memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel);	
+			if (((byte *)srcPtr)[0] == 255) {
+				memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel);
 			}
-			((byte*)srcPtr)+=_renderSurface->format.bytesPerPixel;
-			((byte*)destPtr)+=_renderSurface->format.bytesPerPixel;
+			((byte *)srcPtr) += _renderSurface->format.bytesPerPixel;
+			((byte *)destPtr) += _renderSurface->format.bytesPerPixel;
 		}
 	}
 }
@@ -329,7 +329,7 @@ CBImage *CBRenderSDL::TakeScreenshot() {
 
 	for (unsigned y = 0; y < FreeImage_GetHeight(dib); y++) {
 		byte *bits = FreeImage_GetScanLine(dib, y);
-		byte *src = (byte  *)surface->pixels + (viewport.h - y - 1) * surface->pitch;
+		byte *src = (byte *)surface->pixels + (viewport.h - y - 1) * surface->pitch;
 		memcpy(bits, src, bytespp * viewport.w);
 	}
 
@@ -344,7 +344,7 @@ HRESULT CBRenderSDL::SwitchFullscreen() {
 	else SDL_SetWindowFullscreen(_win, SDL_FALSE);
 
 	_windowed = !_windowed;
-*/
+	*/
 	Game->_registry->WriteBool("Video", "Windowed", _windowed);
 
 	return S_OK;

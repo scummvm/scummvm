@@ -242,51 +242,51 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 	case Common::EVENT_MBUTTONUP:
 		if (Game) Game->OnMouseMiddleUp();
 		break;
-/*#ifdef __IPHONEOS__
-		{
-			CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
-			POINT p;
-			GetCursorPos(&p);
-			Game->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
+		/*#ifdef __IPHONEOS__
+		        {
+		            CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+		            POINT p;
+		            GetCursorPos(&p);
+		            Game->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
 
-			if (Game->_activeObject != NULL && strcmp(Game->_activeObject->GetClassName(), "CUIButton") == 0) {
-				CUIButton *btn = static_cast<CUIButton *>(Game->_activeObject);
-				if (btn->_visible && !btn->_disable) btn->_press = true;
-			}
-		}
-#endif*/
+		            if (Game->_activeObject != NULL && strcmp(Game->_activeObject->GetClassName(), "CUIButton") == 0) {
+		                CUIButton *btn = static_cast<CUIButton *>(Game->_activeObject);
+		                if (btn->_visible && !btn->_disable) btn->_press = true;
+		            }
+		        }
+		#endif*/
 
 //TODO
-/*	case SDL_MOUSEWHEEL:
-		if (Game) Game->HandleMouseWheel(event->wheel.y);
-		break;
+		/*  case SDL_MOUSEWHEEL:
+		        if (Game) Game->HandleMouseWheel(event->wheel.y);
+		        break;
 
-	case SDL_KEYDOWN:
-	case SDL_TEXTINPUT:
-		if (Game) Game->HandleKeypress(event);
-		break;
+		    case SDL_KEYDOWN:
+		    case SDL_TEXTINPUT:
+		        if (Game) Game->HandleKeypress(event);
+		        break;
 
-	case SDL_WINDOWEVENT:
-		switch (event->window.event) {
-		case SDL_WINDOWEVENT_FOCUS_GAINED:
-		case SDL_WINDOWEVENT_RESTORED:
-			if (Game) Game->OnActivate(true, true);
-			SDL_ShowCursor(SDL_DISABLE);
-			break;
-		case SDL_WINDOWEVENT_FOCUS_LOST:
-		case SDL_WINDOWEVENT_MINIMIZED:
-#ifndef __IPHONEOS__
-			if (Game) Game->OnActivate(false, false);
-			SDL_ShowCursor(SDL_ENABLE);
-#endif
-			break;
+		    case SDL_WINDOWEVENT:
+		        switch (event->window.event) {
+		        case SDL_WINDOWEVENT_FOCUS_GAINED:
+		        case SDL_WINDOWEVENT_RESTORED:
+		            if (Game) Game->OnActivate(true, true);
+		            SDL_ShowCursor(SDL_DISABLE);
+		            break;
+		        case SDL_WINDOWEVENT_FOCUS_LOST:
+		        case SDL_WINDOWEVENT_MINIMIZED:
+		#ifndef __IPHONEOS__
+		            if (Game) Game->OnActivate(false, false);
+		            SDL_ShowCursor(SDL_ENABLE);
+		#endif
+		            break;
 
-		case SDL_WINDOWEVENT_CLOSE:
-			break;
+		        case SDL_WINDOWEVENT_CLOSE:
+		            break;
 
-		}
-		break;
-*/
+		        }
+		        break;
+		*/
 	case Common::EVENT_QUIT:
 #ifdef __IPHONEOS__
 		if (Game) {
@@ -308,12 +308,12 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 	//TODO
-/*	if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_MINIMIZED) {
-		if (Game) Game->AutoSaveOnExit();
-		if (Game) Game->OnActivate(false, false);
-		SDL_ShowCursor(SDL_ENABLE);
-	}
-*/
+	/*  if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_MINIMIZED) {
+	        if (Game) Game->AutoSaveOnExit();
+	        if (Game) Game->OnActivate(false, false);
+	        SDL_ShowCursor(SDL_ENABLE);
+	    }
+	*/
 	return 1;
 }
 

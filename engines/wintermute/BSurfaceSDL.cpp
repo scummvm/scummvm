@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -68,9 +68,9 @@ CBSurfaceSDL::~CBSurfaceSDL() {
 HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 	Common::String strFileName(Filename);
-	
+
 	Graphics::ImageDecoder *imgDecoder;
-	
+
 	if (strFileName.hasSuffix(".png")) {
 		imgDecoder = new Graphics::PNGDecoder();
 	} else if (strFileName.hasSuffix(".bmp")) {
@@ -78,10 +78,10 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 	} else {
 		error("CBSurfaceSDL::Create : Unsupported fileformat %s", Filename);
 	}
-	
+
 	CBFile *file = Game->_fileManager->OpenFile(Filename);
 	if (!file) return E_FAIL;
-	
+
 	imgDecoder->loadStream(*file->getMemStream());
 	const Graphics::Surface *surface = imgDecoder->getSurface();
 	Game->_fileManager->CloseFile(file);
@@ -98,41 +98,41 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 	bool isSaveGameGrayscale = scumm_strnicmp(Filename, "savegame:", 9) == 0 && (Filename[strFileName.size() - 1] == 'g' || Filename[strFileName.size() - 1] == 'G');
 	if (isSaveGameGrayscale) {
 		warning("grayscaleConversion not yet implemented");
-/*		FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img);
-		if (newImg) {
-			FreeImage_Unload(img);
-			img = newImg;
-		}*/
+		/*      FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img);
+		        if (newImg) {
+		            FreeImage_Unload(img);
+		            img = newImg;
+		        }*/
 	}
 
 	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
-/*	if (FreeImage_GetBPP(img) != 32 || (imgFormat == FIF_BMP && FreeImage_GetBPP(img) != 24)) {
-		FIBITMAP *newImg = FreeImage_ConvertTo24Bits(img);
-		if (newImg) {
-			FreeImage_Unload(img);
-			img = newImg;
-		} else {
-			FreeImage_Unload(img);
-			return -1;
-		}
-	}
+	/*  if (FreeImage_GetBPP(img) != 32 || (imgFormat == FIF_BMP && FreeImage_GetBPP(img) != 24)) {
+	        FIBITMAP *newImg = FreeImage_ConvertTo24Bits(img);
+	        if (newImg) {
+	            FreeImage_Unload(img);
+	            img = newImg;
+	        } else {
+	            FreeImage_Unload(img);
+	            return -1;
+	        }
+	    }
 
-	FreeImage_FlipVertical(img);*/
+	    FreeImage_FlipVertical(img);*/
 
 	//TODO: This is rather endian-specific, but should be replaced by non-SDL-code anyhow:
 	uint32 rmask = surface->format.rMax() << surface->format.rShift;
 	uint32 gmask = surface->format.gMax() << surface->format.gShift;
 	uint32 bmask = surface->format.bMax() << surface->format.bShift;
 	uint32 amask = surface->format.aMax();
-	
+
 //	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(surface->pixels, _width, _height, surface->format.bytesPerPixel * 8, surface->pitch, rmask, gmask, bmask, amask);
 
 	// no alpha, set color key
-/*	if (surface->format.bytesPerPixel != 4)
-		SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
+	/*  if (surface->format.bytesPerPixel != 4)
+	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
 	_surface = new Graphics::Surface();
 	_surface->copyFrom(*surface);
-	
+
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
 	//_texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 
@@ -194,11 +194,11 @@ void CBSurfaceSDL::GenAlphaMask(Graphics::Surface *surface) {
 	bool hasColorKey;
 	Uint32 colorKey;
 	Uint8 ckRed, ckGreen, ckBlue;
-/*	if (SDL_GetColorKey(surface, &colorKey) == 0) {
-		hasColorKey = true;
-		SDL_GetRGB(colorKey, surface->format, &ckRed, &ckGreen, &ckBlue);
-	} else hasColorKey = false;
-*/ //TODO
+	/*  if (SDL_GetColorKey(surface, &colorKey) == 0) {
+	        hasColorKey = true;
+	        SDL_GetRGB(colorKey, surface->format, &ckRed, &ckGreen, &ckBlue);
+	    } else hasColorKey = false;
+	*/ //TODO
 	_alphaMask = new byte[surface->w * surface->h];
 
 	bool hasTransparency = false;
@@ -438,7 +438,7 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 	/*
 	position.setWidth((float)srcRect.width() * ZoomX / 100.f);
 	position.setHeight((float)srcRect.height() * ZoomX / 100.f);
-*/
+	*/
 	position.setWidth(srcRect.width());
 	position.setHeight(srcRect.height());
 

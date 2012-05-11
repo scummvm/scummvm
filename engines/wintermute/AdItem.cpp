@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -412,11 +412,11 @@ HRESULT CAdItem::Display(int X, int Y) {
 
 		CBFont *Font = _font ? _font : Game->_systemFont;
 		if (Font) {
-			if (_amountString) Font->DrawText((byte  *)_amountString, AmountX, AmountY, Width, _amountAlign);
+			if (_amountString) Font->DrawText((byte *)_amountString, AmountX, AmountY, Width, _amountAlign);
 			else {
 				char Str[256];
 				sprintf(Str, "%d", _amount);
-				Font->DrawText((byte  *)Str, AmountX, AmountY, Width, _amountAlign);
+				Font->DrawText((byte *)Str, AmountX, AmountY, Width, _amountAlign);
 			}
 		}
 	}

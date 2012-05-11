@@ -224,7 +224,7 @@ crc crc_initialize(void) {
 
 crc crc_process_byte(unsigned char byte, crc remainder) {
 	unsigned char  data;
-	data = (unsigned char)(REFLECT_DATA(byte ) ^ (remainder >> (WIDTH - 8)));
+	data = (unsigned char)(REFLECT_DATA(byte) ^ (remainder >> (WIDTH - 8)));
 	remainder = crcTable[data] ^ (remainder << 8);
 	return remainder;
 }

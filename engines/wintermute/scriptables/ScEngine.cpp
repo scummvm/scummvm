@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -319,7 +319,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 		// We have const char* everywhere but in the DLL-interfaces...
 		char *tempFileName = new char[strlen(Filename) + 1];
 		memcpy(tempFileName, Filename, strlen(Filename) + 1);
-		
+
 		SetFileToCompile(Filename);
 		CompBuffer = ExtCompileFile(tempFileName, &CompSize);
 		delete[] tempFileName;
@@ -828,26 +828,26 @@ void CScEngine::DisableProfiling() {
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::DumpStats() {
 	error("DumpStats not ported to ScummVM yet");
-/*	uint32 totalTime = CBPlatform::GetTime() - _profilingStartTime;
+	/*  uint32 totalTime = CBPlatform::GetTime() - _profilingStartTime;
 
-	typedef std::vector <std::pair<uint32, std::string> > TimeVector;
-	TimeVector times;
+	    typedef std::vector <std::pair<uint32, std::string> > TimeVector;
+	    TimeVector times;
 
-	ScriptTimes::iterator it;
-	for (it = _scriptTimes.begin(); it != _scriptTimes.end(); it++) {
-		times.push_back(std::pair<uint32, std::string> (it->_value, it->_key));
-	}
-	std::sort(times.begin(), times.end());
+	    ScriptTimes::iterator it;
+	    for (it = _scriptTimes.begin(); it != _scriptTimes.end(); it++) {
+	        times.push_back(std::pair<uint32, std::string> (it->_value, it->_key));
+	    }
+	    std::sort(times.begin(), times.end());
 
 
-	TimeVector::reverse_iterator tit;
+	    TimeVector::reverse_iterator tit;
 
-	Game->LOG(0, "***** Script profiling information: *****");
-	Game->LOG(0, "  %-40s %fs", "Total execution time", (float)totalTime / 1000);
+	    Game->LOG(0, "***** Script profiling information: *****");
+	    Game->LOG(0, "  %-40s %fs", "Total execution time", (float)totalTime / 1000);
 
-	for (tit = times.rbegin(); tit != times.rend(); tit++) {
-		Game->LOG(0, "  %-40s %fs (%f%%)", tit->second.c_str(), (float)tit->first / 1000, (float)tit->first / (float)totalTime * 100);
-	}*/
+	    for (tit = times.rbegin(); tit != times.rend(); tit++) {
+	        Game->LOG(0, "  %-40s %fs (%f%%)", tit->second.c_str(), (float)tit->first / 1000, (float)tit->first / (float)totalTime * 100);
+	    }*/
 }
 
 } // end of namespace WinterMute

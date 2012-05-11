@@ -61,11 +61,11 @@ GlyphInfo *FontGlyphCache::GetGlyph(wchar_t ch) {
 /*
 //////////////////////////////////////////////////////////////////////////
 void FontGlyphCache::AddGlyph(wchar_t ch, int glyphIndex, FT_GlyphSlot glyphSlot, size_t width, size_t height, byte *pixels, size_t stride) {
-	if (stride == 0) stride = width;
+    if (stride == 0) stride = width;
 
-	_glyphs[ch] = new GlyphInfo(glyphIndex);
-	_glyphs[ch]->SetGlyphInfo(glyphSlot->advance.x / 64.f, glyphSlot->advance.y / 64.f, glyphSlot->bitmap_left, glyphSlot->bitmap_top);
-	_glyphs[ch]->SetGlyphImage(width, height, stride, pixels);
+    _glyphs[ch] = new GlyphInfo(glyphIndex);
+    _glyphs[ch]->SetGlyphInfo(glyphSlot->advance.x / 64.f, glyphSlot->advance.y / 64.f, glyphSlot->bitmap_left, glyphSlot->bitmap_top);
+    _glyphs[ch]->SetGlyphImage(width, height, stride, pixels);
 }
 */
 

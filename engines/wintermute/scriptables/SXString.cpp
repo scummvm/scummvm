@@ -103,22 +103,22 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (end < start) CBUtils::Swap(&start, &end);
 
 		//try {
-			WideString str;
-			if (Game->_textEncoding == TEXT_UTF8)
-				str = StringUtil::Utf8ToWide(_string);
-			else
-				str = StringUtil::AnsiToWide(_string);
+		WideString str;
+		if (Game->_textEncoding == TEXT_UTF8)
+			str = StringUtil::Utf8ToWide(_string);
+		else
+			str = StringUtil::AnsiToWide(_string);
 
-			//WideString subStr = str.substr(start, end - start + 1);
-			WideString subStr(str.c_str() + start, end - start + 1);
+		//WideString subStr = str.substr(start, end - start + 1);
+		WideString subStr(str.c_str() + start, end - start + 1);
 
-			if (Game->_textEncoding == TEXT_UTF8)
-				Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
-			else
-				Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
-	//	} catch (std::exception &) {
-	//		Stack->PushNULL();
-	//	}
+		if (Game->_textEncoding == TEXT_UTF8)
+			Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
+		else
+			Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
+		//  } catch (std::exception &) {
+		//      Stack->PushNULL();
+		//  }
 
 		return S_OK;
 	}
@@ -141,19 +141,19 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		if (val->IsNULL()) len = strlen(_string) - start;
 
 //		try {
-			WideString str;
-			if (Game->_textEncoding == TEXT_UTF8)
-				str = StringUtil::Utf8ToWide(_string);
-			else
-				str = StringUtil::AnsiToWide(_string);
+		WideString str;
+		if (Game->_textEncoding == TEXT_UTF8)
+			str = StringUtil::Utf8ToWide(_string);
+		else
+			str = StringUtil::AnsiToWide(_string);
 
 //			WideString subStr = str.substr(start, len);
-			WideString subStr(str.c_str() + start, len);
+		WideString subStr(str.c_str() + start, len);
 
-			if (Game->_textEncoding == TEXT_UTF8)
-				Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
-			else
-				Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
+		if (Game->_textEncoding == TEXT_UTF8)
+			Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
+		else
+			Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
 //		} catch (std::exception &) {
 //			Stack->PushNULL();
 //		}
@@ -371,11 +371,11 @@ HRESULT CSXString::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(_capacity));
 
 	if (PersistMgr->_saving) {
-		if (_capacity > 0) PersistMgr->PutBytes((byte  *)_string, _capacity);
+		if (_capacity > 0) PersistMgr->PutBytes((byte *)_string, _capacity);
 	} else {
 		if (_capacity > 0) {
 			_string = new char[_capacity];
-			PersistMgr->GetBytes((byte  *)_string, _capacity);
+			PersistMgr->GetBytes((byte *)_string, _capacity);
 		} else _string = NULL;
 	}
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -562,8 +562,8 @@ void CUIButton::CorrectSize() {
 
 	if (_text) {
 		int text_height;
-		if (_font) text_height = _font->GetTextHeight((byte  *)_text, _width);
-		else text_height = Game->_systemFont->GetTextHeight((byte  *)_text, _width);
+		if (_font) text_height = _font->GetTextHeight((byte *)_text, _width);
+		else text_height = Game->_systemFont->GetTextHeight((byte *)_text, _width);
 
 		if (text_height > _height) _height = text_height;
 	}
@@ -631,8 +631,8 @@ HRESULT CUIButton::Display(int OffsetX, int OffsetY) {
 	if (image) image->Draw(ImageX + ((_press || _oneTimePress) && back ? 1 : 0), ImageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
 
 	if (font && _text) {
-		int text_offset = (_height - font->GetTextHeight((byte  *)_text, _width)) / 2;
-		font->DrawText((byte  *)_text, OffsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), OffsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
+		int text_offset = (_height - font->GetTextHeight((byte *)_text, _width)) / 2;
+		font->DrawText((byte *)_text, OffsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), OffsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
 	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));

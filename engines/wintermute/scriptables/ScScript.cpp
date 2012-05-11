@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1322,7 +1322,7 @@ HRESULT CScScript::ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript:
 					Buffer->PutDWORD(Val->GetInt());
 					break;
 				case TYPE_BYTE:
-					Buffer->PutDWORD((byte )Val->GetInt());
+					Buffer->PutDWORD((byte)Val->GetInt());
 					break;
 				case TYPE_STRING:
 					if (Val->IsNULL()) Buffer->PutDWORD(0);
@@ -1363,13 +1363,13 @@ HRESULT CScScript::ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript:
 			// return
 			switch (Function->returns) {
 			case TYPE_BOOL:
-				Stack->PushBool((byte )ret != 0);
+				Stack->PushBool((byte)ret != 0);
 				break;
 			case TYPE_LONG:
 				Stack->PushInt(ret);
 				break;
 			case TYPE_BYTE:
-				Stack->PushInt((byte )ret);
+				Stack->PushInt((byte)ret);
 				break;
 				break;
 			case TYPE_STRING:

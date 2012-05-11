@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -88,12 +88,12 @@ CSysInstance *CSysClass::AddInstance(void *instance, int id, int savedId) {
 bool CSysClass::RemoveInstance(void *instance) {
 	InstanceMap::iterator mapIt = _instanceMap.find(instance);
 	if (mapIt == _instanceMap.end()) return false;
-/*
-	Instances::iterator it = _instances.find((*mapIt).second);
-	if (it != _instances.end()) {
-		delete(*it);
-		_instances.erase(it);
-	}*/
+	/*
+	    Instances::iterator it = _instances.find((*mapIt).second);
+	    if (it != _instances.end()) {
+	        delete(*it);
+	        _instances.erase(it);
+	    }*/
 
 	delete mapIt->_value;
 	_instanceMap.erase(mapIt);
@@ -113,7 +113,7 @@ void *CSysClass::IDToPointer(int savedID) {
 	//slow
 	/*Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		if ((*it)->GetSavedID() == savedID) return (*it)->GetInstance();
+	    if ((*it)->GetSavedID() == savedID) return (*it)->GetInstance();
 	}*/
 	InstanceMap::iterator it;
 	for (it = _instanceMap.begin(); it != _instanceMap.end(); ++it) {
@@ -130,7 +130,7 @@ int CSysClass::GetNumInstances() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::Dump(void *stream) {
-	fprintf((FILE*)stream, "%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), GetNumInstances());
+	fprintf((FILE *)stream, "%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), GetNumInstances());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ void CSysClass::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 	/*
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		PersistMgr->PutDWORD((*it)->GetID());
+	    PersistMgr->PutDWORD((*it)->GetID());
 	}*/
 }
 
@@ -165,7 +165,7 @@ void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 			}
 
 			InstanceMap::iterator it = _instanceMap.begin();
-/*			Instances::iterator it = _instances.begin();*/
+			/*          Instances::iterator it = _instances.begin();*/
 			if (it != _instanceMap.end()) {
 				(it->_value)->SetSavedID(instId);
 				CSysClassRegistry::GetInstance()->AddInstanceToTable((it->_value), (it->_value)->GetInstance());

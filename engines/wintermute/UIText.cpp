@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -79,12 +79,12 @@ HRESULT CUIText::Display(int OffsetX, int OffsetY) {
 			text_offset = 0;
 			break;
 		case VAL_BOTTOM:
-			text_offset = _height - font->GetTextHeight((byte  *)_text, _width);
+			text_offset = _height - font->GetTextHeight((byte *)_text, _width);
 			break;
 		default:
-			text_offset = (_height - font->GetTextHeight((byte  *)_text, _width)) / 2;
+			text_offset = (_height - font->GetTextHeight((byte *)_text, _width)) / 2;
 		}
-		font->DrawText((byte  *)_text, OffsetX + _posX, OffsetY + _posY + text_offset, _width, _textAlign, _height);
+		font->DrawText((byte *)_text, OffsetX + _posX, OffsetY + _posY + text_offset, _width, _textAlign, _height);
 	}
 
 	//Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
@@ -387,7 +387,7 @@ HRESULT CUIText::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HeightToFit") == 0) {
 		Stack->CorrectParams(0);
-		if (_font && _text) _height = _font->GetTextHeight((byte  *)_text, _width);
+		if (_font && _text) _height = _font->GetTextHeight((byte *)_text, _width);
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -475,8 +475,8 @@ HRESULT CUIText::Persist(CBPersistMgr *PersistMgr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIText::SizeToFit() {
 	if (_font && _text) {
-		_width = _font->GetTextWidth((byte  *)_text);
-		_height = _font->GetTextHeight((byte  *)_text, _width);
+		_width = _font->GetTextWidth((byte *)_text);
+		_height = _font->GetTextHeight((byte *)_text, _width);
 	}
 	return S_OK;
 }

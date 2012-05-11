@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -131,12 +131,12 @@ void CBFontTT::InitLoop() {
 int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 	WideString text;
 
-/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);*/
+	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	    else text = StringUtil::AnsiToWide((char *)Text);*/
 
-	if (MaxLength >= 0 && text.size() > MaxLength) 
+	if (MaxLength >= 0 && text.size() > MaxLength)
 		text = Common::String(text.c_str(), MaxLength);
-		//text = text.substr(0, MaxLength); // TODO: Remove
+	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	int textWidth, textHeight;
 	MeasureText(text, -1, -1, textWidth, textHeight);
@@ -148,8 +148,8 @@ int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 	WideString text;
 
-/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);*/
+	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	    else text = StringUtil::AnsiToWide((char *)Text);*/
 
 
 	int textWidth, textHeight;
@@ -167,12 +167,12 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 	WideString text;
 
 	// TODO: Why do we still insist on Widestrings everywhere?
-/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);*/
+	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	    else text = StringUtil::AnsiToWide((char *)Text);*/
 
-	if (MaxLength >= 0 && text.size() > MaxLength) 
+	if (MaxLength >= 0 && text.size() > MaxLength)
 		text = Common::String(text.c_str(), MaxLength);
-		//text = text.substr(0, MaxLength); // TODO: Remove
+	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	CBRenderSDL *_renderer = (CBRenderSDL *)Game->_renderer;
 
@@ -437,7 +437,7 @@ HRESULT CBFontTT::LoadBuffer(byte  *Buffer) {
 		Game->LOG(0, "'TTFONT' keyword expected.");
 		return E_FAIL;
 	}
-	Buffer = (byte  *)params;
+	Buffer = (byte *)params;
 
 	uint32 BaseColor = 0x00000000;
 
@@ -491,7 +491,7 @@ HRESULT CBFontTT::LoadBuffer(byte  *Buffer) {
 
 		case TOKEN_LAYER: {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
-			if (Layer && SUCCEEDED(ParseLayer(Layer, (byte  *)params))) _layers.Add(Layer);
+			if (Layer && SUCCEEDED(ParseLayer(Layer, (byte *)params))) _layers.Add(Layer);
 			else {
 				delete Layer;
 				Layer = NULL;
@@ -695,26 +695,26 @@ HRESULT CBFontTT::InitFont() {
 //////////////////////////////////////////////////////////////////////////
 /*
 unsigned long CBFontTT::FTReadSeekProc(FT_Stream stream, unsigned long offset,  unsigned char *buffer, unsigned long count) {
-	CBFile *f = static_cast<CBFile *>(stream->descriptor.pointer);
-	if (!f) return 0;
+    CBFile *f = static_cast<CBFile *>(stream->descriptor.pointer);
+    if (!f) return 0;
 
-	f->Seek(offset, SEEK_TO_BEGIN);
-	if (count) {
-		uint32 oldPos = f->GetPos();
-		f->Read(buffer, count);
-		return f->GetPos() - oldPos;
-	} else return 0;
+    f->Seek(offset, SEEK_TO_BEGIN);
+    if (count) {
+        uint32 oldPos = f->GetPos();
+        f->Read(buffer, count);
+        return f->GetPos() - oldPos;
+    } else return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::FTCloseProc(FT_Stream stream) {
-	CBFile *f = static_cast<CBFile *>(stream->descriptor.pointer);
-	if (!f) return;
+    CBFile *f = static_cast<CBFile *>(stream->descriptor.pointer);
+    if (!f) return;
 
-	CBGame *Game = f->Game;
+    CBGame *Game = f->Game;
 
-	Game->_fileManager->CloseFile(f);
-	stream->descriptor.pointer = NULL;
+    Game->_fileManager->CloseFile(f);
+    stream->descriptor.pointer = NULL;
 }*/
 
 

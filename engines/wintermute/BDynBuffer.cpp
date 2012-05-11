@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -74,7 +74,7 @@ HRESULT CBDynBuffer::Init(uint32 InitSize) {
 
 	if (InitSize == 0) InitSize = _initSize;
 
-	_buffer = (byte  *)malloc(InitSize);
+	_buffer = (byte *)malloc(InitSize);
 	if (!_buffer) {
 		Game->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", InitSize);
 		return E_FAIL;
@@ -93,7 +93,7 @@ HRESULT CBDynBuffer::PutBytes(byte  *Buffer, uint32 Size) {
 
 	while (_offset + Size > _realSize) {
 		_realSize += _growBy;
-		_buffer = (byte  *)realloc(_buffer, _realSize);
+		_buffer = (byte *)realloc(_buffer, _realSize);
 		if (!_buffer) {
 			Game->LOG(0, "CBDynBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
 			return E_FAIL;
@@ -126,14 +126,14 @@ HRESULT CBDynBuffer::GetBytes(byte  *Buffer, uint32 Size) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBDynBuffer::PutDWORD(uint32 Val) {
-	PutBytes((byte  *)&Val, sizeof(uint32));
+	PutBytes((byte *)&Val, sizeof(uint32));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBDynBuffer::GetDWORD() {
 	uint32 ret;
-	GetBytes((byte  *)&ret, sizeof(uint32));
+	GetBytes((byte *)&ret, sizeof(uint32));
 	return ret;
 }
 
@@ -143,7 +143,7 @@ void CBDynBuffer::PutString(const char *Val) {
 	if (!Val) PutString("(null)");
 	else {
 		PutDWORD(strlen(Val) + 1);
-		PutBytes((byte  *)Val, strlen(Val) + 1);
+		PutBytes((byte *)Val, strlen(Val) + 1);
 	}
 }
 
@@ -186,7 +186,7 @@ void CBDynBuffer::PutTextIndent(int Indent, LPCSTR fmt, ...) {
 void CBDynBuffer::PutTextForm(const char *format, va_list argptr) {
 	char buff[32768];
 	vsprintf(buff, format, argptr);
-	PutBytes((byte  *)buff, strlen(buff));
+	PutBytes((byte *)buff, strlen(buff));
 }
 
 } // end of namespace WinterMute

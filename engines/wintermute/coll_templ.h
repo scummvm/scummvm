@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -189,7 +189,7 @@ template<class TYPE, class ARG_TYPE>
 CBArray<TYPE, ARG_TYPE>::~CBArray() {
 	if (_pData != NULL) {
 		DCDestructElements<TYPE>(_pData, _nSize);
-		delete[](byte  *)_pData;
+		delete[](byte *)_pData;
 	}
 }
 
@@ -203,7 +203,7 @@ void CBArray<TYPE, ARG_TYPE>::SetSize(int nNewSize, int nGrowBy) {
 		// shrink to nothing
 		if (_pData != NULL) {
 			DCDestructElements<TYPE>(_pData, _nSize);
-			delete[](byte  *)_pData;
+			delete[](byte *)_pData;
 			_pData = NULL;
 		}
 		_nSize = _nMaxSize = 0;
@@ -246,7 +246,7 @@ void CBArray<TYPE, ARG_TYPE>::SetSize(int nNewSize, int nGrowBy) {
 		DCConstructElements<TYPE>(&pNewData[_nSize], nNewSize - _nSize);
 
 		// get rid of old stuff (note: no destructors called)
-		delete[](byte  *)_pData;
+		delete[](byte *)_pData;
 		_pData = pNewData;
 		_nSize = nNewSize;
 		_nMaxSize = nNewMax;
@@ -282,7 +282,7 @@ void CBArray<TYPE, ARG_TYPE>::FreeExtra() {
 		}
 
 		// get rid of old stuff (note: no destructors called)
-		delete[](byte  *)_pData;
+		delete[](byte *)_pData;
 		_pData = pNewData;
 		_nMaxSize = _nSize;
 	}

@@ -200,7 +200,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		uint32 BufSize = FILE_BUFFER_SIZE;
-		byte *Buf = (byte  *)malloc(BufSize);
+		byte *Buf = (byte *)malloc(BufSize);
 		uint32 Counter = 0;
 		byte b;
 		bool FoundNewLine = false;
@@ -210,7 +210,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			if (FAILED(Ret)) break;
 
 			if (Counter > BufSize) {
-				Buf = (byte  *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
+				Buf = (byte *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
 				BufSize += FILE_BUFFER_SIZE;
 			}
 			if (b == '\n') {
@@ -225,7 +225,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		} while (SUCCEEDED(Ret));
 
 		if (Counter > BufSize) {
-			Buf = (byte  *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
+			Buf = (byte *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
 			BufSize += FILE_BUFFER_SIZE;
 		}
 		Buf[Counter] = '\0';
@@ -251,7 +251,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		uint32 BufSize = FILE_BUFFER_SIZE;
-		byte *Buf = (byte  *)malloc(BufSize);
+		byte *Buf = (byte *)malloc(BufSize);
 		uint32 Counter = 0;
 		byte b;
 
@@ -261,7 +261,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			if (FAILED(Ret)) break;
 
 			if (Counter > BufSize) {
-				Buf = (byte  *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
+				Buf = (byte *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
 				BufSize += FILE_BUFFER_SIZE;
 			}
 			if (b == 0x0D) continue;
@@ -272,7 +272,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		}
 
 		if (Counter > BufSize) {
-			Buf = (byte  *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
+			Buf = (byte *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
 			BufSize += FILE_BUFFER_SIZE;
 		}
 		Buf[Counter] = '\0';
@@ -335,7 +335,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		byte Val;
-		if (SUCCEEDED(_readFile->Read(&Val, sizeof(byte )))) Stack->PushInt(Val);
+		if (SUCCEEDED(_readFile->Read(&Val, sizeof(byte)))) Stack->PushInt(Val);
 		else Stack->PushNULL();
 
 		return S_OK;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -573,13 +573,13 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 	_selEnd   = MIN((size_t)_selEnd,   strlen(_text));
 
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
-	int CursorWidth = font->GetTextWidth((byte  *)_cursorChar);
+	int CursorWidth = font->GetTextWidth((byte *)_cursorChar);
 
 	int s1, s2;
 	bool CurFirst;
 	// modify scroll offset
 	if (_selStart >= _selEnd) {
-		while (font->GetTextWidth((byte  *)_text + _scrollOffset, std::max(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
+		while (font->GetTextWidth((byte *)_text + _scrollOffset, std::max(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= strlen(_text)) break;
 		}
@@ -590,8 +590,8 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 		s2 = _selStart;
 		CurFirst = true;
 	} else {
-		while (font->GetTextWidth((byte  *)_text + _scrollOffset, std::max(0, _selStart - _scrollOffset)) +
-		        sfont->GetTextWidth((byte  *)(_text + std::max(_scrollOffset, _selStart)), _selEnd - std::max(_scrollOffset, _selStart))
+		while (font->GetTextWidth((byte *)_text + _scrollOffset, std::max(0, _selStart - _scrollOffset)) +
+		        sfont->GetTextWidth((byte *)(_text + std::max(_scrollOffset, _selStart)), _selEnd - std::max(_scrollOffset, _selStart))
 
 		        > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
@@ -625,9 +625,9 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 
 		// unselected 1
 		if (s1 > _scrollOffset) {
-			if (Count) font->DrawText((byte  *)_text + _scrollOffset, xxx, yyy, width - xxx, Align, height, s1 - _scrollOffset);
-			xxx += font->GetTextWidth((byte  *)_text + _scrollOffset, s1 - _scrollOffset);
-			AlignOffset += font->GetTextWidth((byte  *)_text + _scrollOffset, s1 - _scrollOffset);
+			if (Count) font->DrawText((byte *)_text + _scrollOffset, xxx, yyy, width - xxx, Align, height, s1 - _scrollOffset);
+			xxx += font->GetTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
+			AlignOffset += font->GetTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
 		}
 
 		// cursor
@@ -638,7 +638,7 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
-					font->DrawText((byte  *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
+					font->DrawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
 			xxx += CursorWidth;
 			AlignOffset += CursorWidth;
@@ -648,9 +648,9 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 		int s3 = std::max(s1, _scrollOffset);
 
 		if (s2 - s3 > 0) {
-			if (Count) sfont->DrawText((byte  *)_text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
-			xxx += sfont->GetTextWidth((byte  *)_text + s3, s2 - s3);
-			AlignOffset += sfont->GetTextWidth((byte  *)_text + s3, s2 - s3);
+			if (Count) sfont->DrawText((byte *)_text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
+			xxx += sfont->GetTextWidth((byte *)_text + s3, s2 - s3);
+			AlignOffset += sfont->GetTextWidth((byte *)_text + s3, s2 - s3);
 		}
 
 		// cursor
@@ -661,15 +661,15 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
-					font->DrawText((byte  *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
+					font->DrawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
 			xxx += CursorWidth;
 			AlignOffset += CursorWidth;
 		}
 
 		// unselected 2
-		if (Count) font->DrawText((byte  *)_text + s2, xxx, yyy, width - xxx, Align, height);
-		AlignOffset += font->GetTextWidth((byte  *)_text + s2);
+		if (Count) font->DrawText((byte *)_text + s2, xxx, yyy, width - xxx, Align, height);
+		AlignOffset += font->GetTextWidth((byte *)_text + s2);
 
 		AlignOffset = (_width - 2 * _frameWidth) - AlignOffset;
 		if (AlignOffset < 0) AlignOffset = 0;
@@ -775,7 +775,7 @@ bool CUIEdit::HandleKeypress(Common::Event *event) {
 		if (_selStart != _selEnd) DeleteChars(_selStart, _selEnd);
 
 		WideString wstr = StringUtil::Utf8ToWide(event->text.text);
-		_selEnd += InsertChars(_selEnd, (byte  *)StringUtil::WideToAnsi(wstr).c_str(), 1);
+		_selEnd += InsertChars(_selEnd, (byte *)StringUtil::WideToAnsi(wstr).c_str(), 1);
 
 		if (Game->_textRTL) _selEnd = _selStart;
 		else _selStart = _selEnd;

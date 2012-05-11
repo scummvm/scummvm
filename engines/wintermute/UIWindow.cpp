@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -182,7 +182,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 	if (image) image->Draw(_posX + OffsetX, _posY + OffsetY, _transparent ? NULL : this);
 
 	if (!CBPlatform::IsRectEmpty(&_titleRect) && font && _text) {
-		font->DrawText((byte  *)_text, _posX + OffsetX + _titleRect.left, _posY + OffsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
+		font->DrawText((byte *)_text, _posX + OffsetX + _titleRect.left, _posY + OffsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
 	if (!_transparent && !image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, _posX + OffsetX, _posY + OffsetY, _width, _height, 100, 100, false));
@@ -360,7 +360,7 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_IMAGE_INACTIVE:
 			delete _imageInactive,
-			_imageInactive = new CBSprite(Game);
+			       _imageInactive = new CBSprite(Game);
 			if (!_imageInactive || FAILED(_imageInactive->LoadFile((char *)params))) {
 				delete _imageInactive;
 				_imageInactive = NULL;
@@ -1294,7 +1294,7 @@ void CUIWindow::MakeFreezable(bool Freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::GetWindowObjects(CBArray<CUIObject *, CUIObject *>& Objects, bool InteractiveOnly) {
+HRESULT CUIWindow::GetWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		CUIObject *Control = _widgets[i];
 		if (Control->_disable && InteractiveOnly) continue;

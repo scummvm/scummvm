@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -315,31 +315,31 @@ HRESULT CBFileManager::InitPaths() {
 	// package files paths
 	AddPath(PATH_PACKAGE, "./");
 
-/*#ifdef __APPLE__
-	// search .app path and Resources dir in the bundle
-	CFURLRef appUrlRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
-	const char *pathPtr = CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding());
+	/*#ifdef __APPLE__
+	    // search .app path and Resources dir in the bundle
+	    CFURLRef appUrlRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	    CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
+	    const char *pathPtr = CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding());
 
-#ifdef __IPHONE__
-	AddPath(PATH_PACKAGE, pathPtr);
-	AddPath(PATH_SINGLE, pathPtr);
-#else
-	char bundlePath[MAX_PATH];
+	#ifdef __IPHONE__
+	    AddPath(PATH_PACKAGE, pathPtr);
+	    AddPath(PATH_SINGLE, pathPtr);
+	#else
+	    char bundlePath[MAX_PATH];
 
-	sprintf(bundlePath, "%s/../", pathPtr);
-	AddPath(PATH_PACKAGE, bundlePath);
-	AddPath(PATH_SINGLE, bundlePath);
+	    sprintf(bundlePath, "%s/../", pathPtr);
+	    AddPath(PATH_PACKAGE, bundlePath);
+	    AddPath(PATH_SINGLE, bundlePath);
 
-	sprintf(bundlePath, "%s/Contents/Resources/", pathPtr);
-	AddPath(PATH_PACKAGE, bundlePath);
-	AddPath(PATH_SINGLE, bundlePath);
+	    sprintf(bundlePath, "%s/Contents/Resources/", pathPtr);
+	    AddPath(PATH_PACKAGE, bundlePath);
+	    AddPath(PATH_SINGLE, bundlePath);
 
 
-	CFRelease(appUrlRef);
-	CFRelease(macPath);
-#endif
-#endif*/
+	    CFRelease(appUrlRef);
+	    CFRelease(macPath);
+	#endif
+	#endif*/
 
 
 	pathList = Game->_registry->ReadString("Resource", "PackagePaths", "");
@@ -365,7 +365,7 @@ HRESULT CBFileManager::RegisterPackages() {
 
 	Game->LOG(0, "Scanning packages...");
 	warning("Scanning packages");
-	
+
 // TODO: Actually scan the folder, for now we just hardcode the files for Dirty Split.
 	RegisterPackage("data.dcp");
 	RegisterPackage("english.dcp");
@@ -413,10 +413,10 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 		Game->LOG(0, "  Error opening package file '%s'. Ignoring.", Filename.c_str());
 		return S_OK;
 	}
-	
+
 	uint32 AbsoluteOffset = 0;
 	bool BoundToExe = false;
-	
+
 	if (SearchSignature) {
 		uint32 Offset;
 		if (!FindPackageSignature(package, &Offset)) {
@@ -428,7 +428,7 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 			BoundToExe = true;
 		}
 	}
-	
+
 	TPackageHeader hdr;
 	hdr.readFromStream(package);
 //	package->read(&hdr, sizeof(TPackageHeader), 1, f);
@@ -437,11 +437,11 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 		delete package;
 		return S_OK;
 	}
-	
+
 	if (hdr.PackageVersion != PACKAGE_VERSION) {
 		Game->LOG(0, "  Warning: package file '%s' is outdated.", Filename);
 	}
-	
+
 	// new in v2
 	if (hdr.PackageVersion == PACKAGE_VERSION) {
 		uint32 DirOffset;
@@ -449,55 +449,55 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 		DirOffset += AbsoluteOffset;
 		package->seek(DirOffset, SEEK_SET);
 	}
-	
+
 	for (int i = 0; i < hdr.NumDirs; i++) {
 		CBPackage *pkg = new CBPackage(Game);
 		if (!pkg) return E_FAIL;
-		
+
 		pkg->_boundToExe = BoundToExe;
-		
+
 		// read package info
 		byte NameLength = package->readByte();
 		pkg->_name = new char[NameLength];
 		package->read(pkg->_name, NameLength);
 		pkg->_cD = package->readByte();
 		pkg->_priority = hdr.Priority;
-		
+
 		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
 		_packages.Add(pkg);
-		
-		
+
+
 		// read file entries
 		uint32 NumFiles = package->readUint32LE();
-		
+
 		for (int j = 0; j < NumFiles; j++) {
 			char *Name;
 			uint32 Offset, Length, CompLength, Flags, TimeDate1, TimeDate2;
-			
+
 			NameLength = package->readByte();
 			Name = new char[NameLength];
 			package->read(Name, NameLength);
-			
+
 			// v2 - xor name
 			if (hdr.PackageVersion == PACKAGE_VERSION) {
 				for (int k = 0; k < NameLength; k++) {
-					((byte  *)Name)[k] ^= 'D';
+					((byte *)Name)[k] ^= 'D';
 				}
 			}
-			
+
 			// some old version of ProjectMan writes invalid directory entries
 			// so at least prevent strupr from corrupting memory
 			Name[NameLength - 1] = '\0';
-			
-			
+
+
 			CBPlatform::strupr(Name);
-			
+
 			Offset = package->readUint32LE();
 			Offset += AbsoluteOffset;
 			Length = package->readUint32LE();
 			CompLength = package->readUint32LE();
 			Flags = package->readUint32LE();
-			
+
 			if (hdr.PackageVersion == PACKAGE_VERSION) {
 				TimeDate1 = package->readUint32LE();
 				TimeDate2 = package->readUint32LE();
@@ -510,7 +510,7 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 				file->_length = Length;
 				file->_compressedLength = CompLength;
 				file->_flags = Flags;
-				
+
 				_files[Name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
@@ -525,8 +525,8 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 			delete [] Name;
 		}
 	}
-	
-	
+
+
 	delete package;
 	return S_OK;
 }
@@ -587,10 +587,10 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 
 		// read package info
 		byte NameLength;
-		fread(&NameLength, sizeof(byte ), 1, f);
+		fread(&NameLength, sizeof(byte), 1, f);
 		pkg->_name = new char[NameLength];
 		fread(pkg->_name, NameLength, 1, f);
-		fread(&pkg->_cD, sizeof(byte ), 1, f);
+		fread(&pkg->_cD, sizeof(byte), 1, f);
 		pkg->_priority = hdr.Priority;
 
 		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
@@ -605,14 +605,14 @@ HRESULT CBFileManager::RegisterPackage(const char *Path, const char *Name, bool 
 			char *Name;
 			uint32 Offset, Length, CompLength, Flags, TimeDate1, TimeDate2;
 
-			fread(&NameLength, sizeof(byte ), 1, f);
+			fread(&NameLength, sizeof(byte), 1, f);
 			Name = new char[NameLength];
 			fread(Name, NameLength, 1, f);
 
 			// v2 - xor name
 			if (hdr.PackageVersion == PACKAGE_VERSION) {
 				for (int k = 0; k < NameLength; k++) {
-					((byte  *)Name)[k] ^= 'D';
+					((byte *)Name)[k] ^= 'D';
 				}
 			}
 
@@ -677,7 +677,7 @@ bool CBFileManager::IsValidPackage(const AnsiString &fileName) const {
 //////////////////////////////////////////////////////////////////////////
 Common::File *CBFileManager::OpenPackage(const char *Name) {
 	//TODO: Is it really necessary to do this when we have the ScummVM-system?
-	
+
 	//RestoreCurrentDir();
 
 	Common::File *ret = new Common::File();
@@ -705,17 +705,17 @@ Common::File *CBFileManager::OpenPackage(const char *Name) {
 //////////////////////////////////////////////////////////////////////////
 Common::File *CBFileManager::OpenSingleFile(const char *Name) {
 	RestoreCurrentDir();
-	
+
 	Common::File *ret = NULL;
 	char Filename[MAX_PATH];
-	
+
 	for (int i = 0; i < _singlePaths.GetSize(); i++) {
 		sprintf(Filename, "%s%s", _singlePaths[i], Name);
 		ret->open(Filename);
-		if (ret->isOpen()) 
+		if (ret->isOpen())
 			return ret;
 	}
-	
+
 	// didn't find in search paths, try to open directly
 	ret->open(Name);
 	if (ret->isOpen()) {

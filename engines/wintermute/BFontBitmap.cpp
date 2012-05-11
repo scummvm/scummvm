@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -92,9 +92,9 @@ int CBFontBitmap::GetTextWidth(byte  *text, int MaxLength) {
 		str = AnsiString((char *)text);
 	}
 
-	if (MaxLength >= 0 && str.size() > MaxLength) 
+	if (MaxLength >= 0 && str.size() > MaxLength)
 		str = Common::String(str.c_str(), MaxLength);
-		//str.substr(0, MaxLength); // TODO: Remove
+	//str.substr(0, MaxLength); // TODO: Remove
 
 	int TextWidth = 0;
 	for (size_t i = 0; i < str.size(); i++) {
@@ -309,7 +309,7 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 		Game->LOG(0, "'FONT' keyword expected.");
 		return E_FAIL;
 	}
-	Buffer = (byte  *)params;
+	Buffer = (byte *)params;
 
 	int widths[300];
 	int num = 0, default_width = 8;
@@ -343,7 +343,7 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 		case TOKEN_WIDTHS:
 			parser.ScanStr(params, "%D", widths, &num);
 			for (i = 0; last_width < NUM_CHARACTERS, num > 0; last_width++, num--, i++) {
-				_widths[last_width] = (byte )widths[i];
+				_widths[last_width] = (byte)widths[i];
 			}
 			break;
 
@@ -388,7 +388,7 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty((byte  *)params, false);
+			ParseEditorProperty((byte *)params, false);
 			break;
 		}
 
@@ -426,7 +426,7 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 				int NewWidth = (int)_widths[i] + ExpandWidth;
 				if (NewWidth < 0) NewWidth = 0;
 
-				_widths[i] = (byte )NewWidth;
+				_widths[i] = (byte)NewWidth;
 			}
 		}
 

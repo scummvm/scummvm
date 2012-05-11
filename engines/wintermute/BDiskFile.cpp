@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -63,15 +63,15 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 		CorrectSlashes(FullPath);
 		//_file = Common::createFileStream(FullPath);
 		Common::File *tempFile = new Common::File();
-		if(tempFile->open(FullPath)) {
+		if (tempFile->open(FullPath)) {
 			_file = tempFile;
 		} else {
 			delete tempFile;
 		}
-/*		if (_file != NULL) {
-			error("Tried to open %s, but failed", Filename.c_str());
-			break;
-		}*/
+		/*      if (_file != NULL) {
+		            error("Tried to open %s, but failed", Filename.c_str());
+		            break;
+		        }*/
 	}
 
 	// if we didn't find it in search paths, try to open directly
@@ -87,7 +87,7 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 			delete tempFile;
 		}
 	}
-	
+
 	if (_file) {
 		uint32 magic1, magic2;
 		magic1 = _file->readUint32LE();
@@ -134,7 +134,7 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 			_pos = 0;
 			_file->seek(0, SEEK_END);
 			_size = _file->pos() - _prefixSize;
-			_file->seek(_prefixSize,SEEK_SET);
+			_file->seek(_prefixSize, SEEK_SET);
 		}
 
 		return S_OK;
@@ -146,7 +146,7 @@ HRESULT CBDiskFile::Open(Common::String Filename) {
 HRESULT CBDiskFile::Close() {
 	if (_file) {
 		delete _file;
-	}	
+	}
 	_file = NULL;
 	_pos = 0;
 	_size = 0;

@@ -183,11 +183,11 @@ HRESULT CPartParticle::Display(CPartEmitter *Emitter) {
 
 	_sprite->GetCurrentFrame();
 	return _sprite->Display(_pos.x, _pos.y,
-	                         NULL,
-	                         _scale, _scale,
-	                         DRGBA(255, 255, 255, _currentAlpha),
-	                         _rotation,
-	                         Emitter->_blendMode);
+	                        NULL,
+	                        _scale, _scale,
+	                        DRGBA(255, 255, 255, _currentAlpha),
+	                        _rotation,
+	                        Emitter->_blendMode);
 }
 
 

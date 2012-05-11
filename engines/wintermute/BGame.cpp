@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -294,7 +294,7 @@ CBGame::~CBGame() {
 	delete[] _localSaveDir;
 	delete[] _settingsGameFile;
 	delete[] _savedGameExt;
-	
+
 	delete _cachedThumbnail;
 
 	delete _saveLoadImage;
@@ -321,7 +321,7 @@ CBGame::~CBGame() {
 
 	_saveLoadImage = NULL;
 	_mathClass = NULL;
-	
+
 	_transMgr = NULL;
 	_scEngine = NULL;
 	_fontStorage = NULL;
@@ -333,7 +333,7 @@ CBGame::~CBGame() {
 	_fileManager = NULL;
 	_registry = NULL;
 	_stringTable = NULL;
-	
+
 	DEBUG_DebugDisable();
 	CBPlatform::OutputDebugString("--- shutting down normally ---\n");
 }
@@ -516,7 +516,7 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 		_dEBUG_LogFile = fopen(safeLogFileName.c_str(), "a+");
 	}
 
-	if (_dEBUG_LogFile != NULL) fprintf((FILE*)_dEBUG_LogFile, "\n");
+	if (_dEBUG_LogFile != NULL) fprintf((FILE *)_dEBUG_LogFile, "\n");
 #endif
 
 	time_t timeNow;
@@ -542,7 +542,7 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 void CBGame::DEBUG_DebugDisable() {
 	if (_dEBUG_LogFile != NULL) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
-		fclose((FILE*)_dEBUG_LogFile);
+		fclose((FILE *)_dEBUG_LogFile);
 		_dEBUG_LogFile = NULL;
 	}
 	_dEBUG_DebugMode = false;
@@ -578,8 +578,8 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 	if (_debugMgr) _debugMgr->OnLog(res, buff);
 
 	warning("%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
-	fprintf((FILE*)_dEBUG_LogFile, "%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
-	fflush((FILE*)_dEBUG_LogFile);
+	fprintf((FILE *)_dEBUG_LogFile, "%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
+	fflush((FILE *)_dEBUG_LogFile);
 #endif
 
 	//QuickMessage(buff);
@@ -1517,7 +1517,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalSFXVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1527,7 +1527,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalSpeechVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1537,7 +1537,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalMusicVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1547,7 +1547,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetGlobalMasterVolume") == 0) {
 		Stack->CorrectParams(1);
-		Game->_soundMgr->setMasterVolumePercent((byte )Stack->Pop()->GetInt());
+		Game->_soundMgr->setMasterVolumePercent((byte)Stack->Pop()->GetInt());
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -1831,7 +1831,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			delete[] _loadImageName;
 			_loadImageName = NULL;
 		} else {
-			CBUtils::SetString(&_loadImageName, Val->GetString());	
+			CBUtils::SetString(&_loadImageName, Val->GetString());
 		}
 		Stack->PushNULL();
 		return S_OK;
@@ -2544,7 +2544,7 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SFXVolume") == 0) {
 		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte )Value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)Value->GetInt());
 		return S_OK;
 	}
 
@@ -2553,7 +2553,7 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SpeechVolume") == 0) {
 		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte )Value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)Value->GetInt());
 		return S_OK;
 	}
 
@@ -2562,7 +2562,7 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MusicVolume") == 0) {
 		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte )Value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)Value->GetInt());
 		return S_OK;
 	}
 
@@ -2571,7 +2571,7 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "MasterVolume") == 0) {
 		Game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
-		Game->_soundMgr->setMasterVolumePercent((byte )Value->GetInt());
+		Game->_soundMgr->setMasterVolumePercent((byte)Value->GetInt());
 		return S_OK;
 	}
 
@@ -2706,8 +2706,8 @@ HRESULT CBGame::DisplayQuickMsg() {
 
 	// display
 	for (i = 0; i < _quickMessages.GetSize(); i++) {
-		_systemFont->DrawText((byte  *)_quickMessages[i]->GetText(), 0, PosY, _renderer->_width);
-		PosY += _systemFont->GetTextHeight((byte  *)_quickMessages[i]->GetText(), _renderer->_width);
+		_systemFont->DrawText((byte *)_quickMessages[i]->GetText(), 0, PosY, _renderer->_width);
+		PosY += _systemFont->GetTextHeight((byte *)_quickMessages[i]->GetText(), _renderer->_width);
 	}
 	return S_OK;
 }
@@ -3797,8 +3797,8 @@ void CBGame::SetWindowTitle() {
 		} else {
 			warning("CBGame::SetWindowTitle -Ignoring textencoding");
 			title = Utf8String(Title);
-/*			WideString wstr = StringUtil::AnsiToWide(Title);
-			title = StringUtil::WideToUtf8(wstr);*/
+			/*          WideString wstr = StringUtil::AnsiToWide(Title);
+			            title = StringUtil::WideToUtf8(wstr);*/
 		}
 
 		CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_renderer);
@@ -3917,9 +3917,9 @@ HRESULT CBGame::PopViewport() {
 
 	if (_viewportSP >= 0 && _viewportSP < _viewportStack.GetSize()) _renderer->SetViewport(_viewportStack[_viewportSP]->GetRect());
 	else _renderer->SetViewport(_renderer->_drawOffsetX,
-		                             _renderer->_drawOffsetY,
-		                             _renderer->_width + _renderer->_drawOffsetX,
-		                             _renderer->_height + _renderer->_drawOffsetY);
+		                            _renderer->_drawOffsetY,
+		                            _renderer->_width + _renderer->_drawOffsetX,
+		                            _renderer->_height + _renderer->_drawOffsetY);
 
 	return S_OK;
 }
@@ -4308,7 +4308,7 @@ HRESULT CBGame::DisplayDebugInfo() {
 
 	if (_dEBUG_ShowFPS) {
 		sprintf(str, "FPS: %d", Game->_fps);
-		_systemFont->DrawText((byte  *)str, 0, 0, 100, TAL_LEFT);
+		_systemFont->DrawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
 	if (Game->_dEBUG_DebugMode) {
@@ -4320,23 +4320,23 @@ HRESULT CBGame::DisplayDebugInfo() {
 		strcat(str, " (");
 		strcat(str, _renderer->GetName());
 		strcat(str, ")");
-		_systemFont->DrawText((byte  *)str, 0, 0, _renderer->_width, TAL_RIGHT);
+		_systemFont->DrawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
 
 		_renderer->DisplayDebugInfo();
 
 		int ScrTotal, ScrRunning, ScrWaiting, ScrPersistent;
 		ScrTotal = _scEngine->GetNumScripts(&ScrRunning, &ScrWaiting, &ScrPersistent);
 		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", ScrTotal, ScrRunning, ScrWaiting, ScrPersistent);
-		_systemFont->DrawText((byte  *)str, 0, 70, _renderer->_width, TAL_RIGHT);
+		_systemFont->DrawText((byte *)str, 0, 70, _renderer->_width, TAL_RIGHT);
 
 
 		sprintf(str, "Timer: %d", _timer);
-		Game->_systemFont->DrawText((byte  *)str, 0, 130, _renderer->_width, TAL_RIGHT);
+		Game->_systemFont->DrawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
 
-		if (_activeObject != NULL) _systemFont->DrawText((byte  *)_activeObject->_name, 0, 150, _renderer->_width, TAL_RIGHT);
+		if (_activeObject != NULL) _systemFont->DrawText((byte *)_activeObject->_name, 0, 150, _renderer->_width, TAL_RIGHT);
 
 		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
-		_systemFont->DrawText((byte  *)str, 0, 170, _renderer->_width, TAL_RIGHT);
+		_systemFont->DrawText((byte *)str, 0, 170, _renderer->_width, TAL_RIGHT);
 
 	}
 

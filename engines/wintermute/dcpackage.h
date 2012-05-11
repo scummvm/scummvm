@@ -59,7 +59,7 @@ struct TPackageHeader {
 		PackageVersion = stream->readUint32LE();
 
 		GameVersion = stream->readUint32LE();
-		
+
 		Priority = stream->readByte();
 		CD = stream->readByte();
 		MasterIndex = stream->readByte();

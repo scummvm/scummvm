@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -91,7 +91,7 @@ HRESULT CSXMemBuffer::Resize(int NewSize) {
 	}
 
 	if (_buffer && _size > OldSize) {
-		memset((byte  *)_buffer + OldSize, 0, _size - OldSize);
+		memset((byte *)_buffer + OldSize, 0, _size - OldSize);
 	}
 	return S_OK;
 }
@@ -138,7 +138,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(bool))) Stack->PushNULL();
-		else Stack->PushBool(*(bool *)((byte  *)_buffer + Start));
+		else Stack->PushBool(*(bool *)((byte *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -149,8 +149,8 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "GetByte") == 0) {
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
-		if (!CheckBounds(Script, Start, sizeof(byte ))) Stack->PushNULL();
-		else Stack->PushInt(*(byte  *)((byte  *)_buffer + Start));
+		if (!CheckBounds(Script, Start, sizeof(byte))) Stack->PushNULL();
+		else Stack->PushInt(*(byte *)((byte *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -162,7 +162,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(short))) Stack->PushNULL();
-		else Stack->PushInt(65536 + * (short *)((byte  *)_buffer + Start));
+		else Stack->PushInt(65536 + * (short *)((byte *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -174,7 +174,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(int))) Stack->PushNULL();
-		else Stack->PushInt(*(int *)((byte  *)_buffer + Start));
+		else Stack->PushInt(*(int *)((byte *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -186,7 +186,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(float))) Stack->PushNULL();
-		else Stack->PushFloat(*(float *)((byte  *)_buffer + Start));
+		else Stack->PushFloat(*(float *)((byte *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -198,7 +198,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(double))) Stack->PushNULL();
-		else Stack->PushFloat(*(double *)((byte  *)_buffer + Start));
+		else Stack->PushFloat(*(double *)((byte *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -240,7 +240,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		int Start = Stack->Pop()->GetInt();
 		if (!CheckBounds(Script, Start, sizeof(void *))) Stack->PushNULL();
 		else {
-			void *Pointer = *(void **)((byte  *)_buffer + Start);
+			void *Pointer = *(void **)((byte *)_buffer + Start);
 			CSXMemBuffer *Buf = new CSXMemBuffer(Game, Pointer);
 			Stack->PushNative(Buf, false);
 		}
@@ -257,7 +257,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(bool))) Stack->PushBool(false);
 		else {
-			*(bool *)((byte  *)_buffer + Start) = Val;
+			*(bool *)((byte *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -269,11 +269,11 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "SetByte") == 0) {
 		Stack->CorrectParams(2);
 		int Start = Stack->Pop()->GetInt();
-		byte Val = (byte )Stack->Pop()->GetInt();
+		byte Val = (byte)Stack->Pop()->GetInt();
 
-		if (!CheckBounds(Script, Start, sizeof(byte ))) Stack->PushBool(false);
+		if (!CheckBounds(Script, Start, sizeof(byte))) Stack->PushBool(false);
 		else {
-			*(byte  *)((byte  *)_buffer + Start) = Val;
+			*(byte *)((byte *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -289,7 +289,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(short))) Stack->PushBool(false);
 		else {
-			*(short *)((byte  *)_buffer + Start) = Val;
+			*(short *)((byte *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -305,7 +305,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(int))) Stack->PushBool(false);
 		else {
-			*(int *)((byte  *)_buffer + Start) = Val;
+			*(int *)((byte *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -321,7 +321,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(float))) Stack->PushBool(false);
 		else {
-			*(float *)((byte  *)_buffer + Start) = Val;
+			*(float *)((byte *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -337,7 +337,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, sizeof(double))) Stack->PushBool(false);
 		else {
-			*(double *)((byte  *)_buffer + Start) = Val;
+			*(double *)((byte *)_buffer + Start) = Val;
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -353,7 +353,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 		if (!CheckBounds(Script, Start, strlen(Val) + 1)) Stack->PushBool(false);
 		else {
-			memcpy((byte  *)_buffer + Start, Val, strlen(Val) + 1);
+			memcpy((byte *)_buffer + Start, Val, strlen(Val) + 1);
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -454,11 +454,11 @@ HRESULT CSXMemBuffer::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(_size));
 
 	if (PersistMgr->_saving) {
-		if (_size > 0) PersistMgr->PutBytes((byte  *)_buffer, _size);
+		if (_size > 0) PersistMgr->PutBytes((byte *)_buffer, _size);
 	} else {
 		if (_size > 0) {
 			_buffer = malloc(_size);
-			PersistMgr->GetBytes((byte  *)_buffer, _size);
+			PersistMgr->GetBytes((byte *)_buffer, _size);
 		} else _buffer = NULL;
 	}
 
