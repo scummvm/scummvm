@@ -2258,7 +2258,7 @@ void ThreadFadeInMusic(CORO_PARAM, const void *nMusic) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	debug("Start FadeIn Music\n");
+	debug("Start FadeIn Music");
 
 	for (_ctx->i = 0; _ctx->i < 16; _ctx->i++) {
 		_vm->SetMusicVolume(nChannel, _ctx->i * 4);
@@ -2267,7 +2267,7 @@ void ThreadFadeInMusic(CORO_PARAM, const void *nMusic) {
 	}
 	_vm->SetMusicVolume(nChannel, 64);
 
-	debug("End FadeIn Music\n");
+	debug("End FadeIn Music");
 	
 	CORO_KILL_SELF();
 
@@ -2286,7 +2286,7 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 
 	_ctx->startVolume = _vm->GetMusicVolume(nChannel);
 
-	debug("Start FadeOut Music\n");
+	debug("Start FadeOut Music");
 
 	for (_ctx->i = 16; _ctx->i > 0 && !bFadeOutStop; _ctx->i--) {
 		if (_ctx->i * 4 < _ctx->startVolume)
@@ -2302,7 +2302,7 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 	if (nChannel == 2)
 		_vm->StopMusic(2);
 
-	debug("End FadeOut Music\n");
+	debug("End FadeOut Music");
 
 	CORO_KILL_SELF();
 
@@ -2470,14 +2470,14 @@ const char *staccFileNames[] = {
 void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int nSync = 0) {
 	if (nSync == 0)
 		nSync = 2000;
-	debug("Start CustPlayMusic\n");
+	debug("Start CustPlayMusic");
 	PlayMusic(nChannel, mFN, nFX, bLoop, nSync);
-	debug("End CustPlayMusic\n");
+	debug("End CustPlayMusic");
 }
 
 DECLARE_CUSTOM_FUNCTION(PlaySonoriz)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bNoLoop, uint32) {
 	if (nFX == 0 || nFX == 1 || nFX==2) {
-		debug("PlaySonoriz stop fadeout\n");
+		debug("PlaySonoriz stop fadeout");
 		bFadeOutStop = true;
 	}
 	
