@@ -243,13 +243,13 @@ static INT_CONTEXT *AllocateInterpretContext(GSORT gsort) {
 
 	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++) {
 		if (pic->GSort == GS_NONE) {
-			pic->pProc = g_scheduler->getCurrentProcess();
+			pic->pProc = CoroScheduler.getCurrentProcess();
 			pic->GSort = gsort;
 			return pic;
 		}
 #ifdef DEBUG
 		else {
-			if (pic->pProc == g_scheduler->getCurrentProcess())
+			if (pic->pProc == CoroScheduler.getCurrentProcess())
 				error("Found unreleased interpret context");
 		}
 #endif
@@ -277,7 +277,7 @@ static void FreeWaitCheck(PINT_CONTEXT pic, bool bVoluntary) {
 			if ((g_icList + i)->waitNumber1 == pic->waitNumber2) {
 				(g_icList + i)->waitNumber1 = 0;
 				(g_icList + i)->resumeCode = bVoluntary ? RES_FINISHED : RES_CUTSHORT;
-				g_scheduler->reschedule((g_icList + i)->pProc);
+				CoroScheduler.reschedule((g_icList + i)->pProc);
 				break;
 			}
 		}
@@ -301,7 +301,7 @@ static void FreeInterpretContextPi(INT_CONTEXT *pic) {
  * Ensures that interpret contexts don't get lost when an Interpret()
  * call doesn't complete.
  */
-void FreeInterpretContextPr(PROCESS *pProc) {
+void FreeInterpretContextPr(Common::PROCESS *pProc) {
 	INT_CONTEXT *pic;
 	int	i;
 
@@ -393,7 +393,7 @@ INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric) {
 	ic = AllocateInterpretContext(GS_NONE);	// Sort will soon be overridden
 
 	memcpy(ic, ric, sizeof(INT_CONTEXT));
-	ic->pProc = g_scheduler->getCurrentProcess();
+	ic->pProc = CoroScheduler.getCurrentProcess();
 	ic->resumeState = RES_1;
 
 	LockCode(ic);
@@ -422,7 +422,7 @@ void RegisterGlobals(int num) {
 		if (g_icList == NULL) {
 			error("Cannot allocate memory for interpret contexts");
 		}
-		g_scheduler->setResourceCallback(FreeInterpretContextPr);
+		CoroScheduler.setResourceCallback(FreeInterpretContextPr);
 	} else {
 		// Check size is still the same
 		assert(g_numGlobals == num);
@@ -433,7 +433,7 @@ void RegisterGlobals(int num) {
 
 	if (TinselV2) {
 		// read initial values
-		CdCD(nullContext);
+		CdCD(Common::nullContext);
 
 		Common::File f;
 		if (!f.open(GLOBALS_FILENAME))
@@ -839,7 +839,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
  * Associates an interpret context with the
  * process that will run it.
  */
-void AttachInterpret(INT_CONTEXT *pic, PROCESS *pProc) {
+void AttachInterpret(INT_CONTEXT *pic, Common::PROCESS *pProc) {
 	// Attach the process which is using this context
 	pic->pProc = pProc;
 }
@@ -869,9 +869,9 @@ static uint32 UniqueWaitNumber() {
 /**
  * WaitInterpret
  */
-void WaitInterpret(CORO_PARAM, PPROCESS pWaitProc, bool *result) {
+void WaitInterpret(CORO_PARAM, Common::PPROCESS pWaitProc, bool *result) {
 	int i;
-	PPROCESS currentProcess = g_scheduler->getCurrentProcess();
+	Common::PPROCESS currentProcess = CoroScheduler.getCurrentProcess();
 	assert(currentProcess);
 	assert(currentProcess != pWaitProc);
 	if (result) *result = false;

@@ -1075,7 +1075,7 @@ static void PrimeSceneHopper() {
 	uint32 vSize;
 
 	// Open the file (it's on the CD)
-	CdCD(nullContext);
+	CdCD(Common::nullContext);
 	if (!f.open(HOPPER_FILENAME))
 		error(CANNOT_FIND_FILE, HOPPER_FILENAME);
 
@@ -1191,13 +1191,13 @@ static void HopAction() {
 	debugC(DEBUG_BASIC, kTinselDebugAnimations, "Scene hopper chose scene %xh,%d\n", hScene, eNumber);
 
 	if (FROM_LE_32(pEntry->flags) & fCall) {
-		SaveScene(nullContext);
-		NewScene(nullContext, g_pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
+		SaveScene(Common::nullContext);
+		NewScene(Common::nullContext, g_pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
 	}
 	else if (FROM_LE_32(pEntry->flags) & fHook)
 		HookScene(hScene, eNumber, TRANS_FADE);
 	else
-		NewScene(nullContext, hScene, eNumber, TRANS_CUT);
+		NewScene(Common::nullContext, hScene, eNumber, TRANS_CUT);
 }
 
 /**************************************************************************/
@@ -1406,13 +1406,13 @@ static void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, 
 		return;
 
 	g_GlitterIndex = index;
-	g_scheduler->createProcess(PID_TCODE, ObjectProcess, &to, sizeof(to));
+	CoroScheduler.createProcess(PID_TCODE, ObjectProcess, &to, sizeof(to));
 }
 
 extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, int myEscape, bool *result) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PROCESS		*pProc;
+		Common::PROCESS		*pProc;
 		INV_OBJECT	*pInvo;
 		OP_INIT		op;
 	CORO_END_CONTEXT(_ctx);
@@ -1428,7 +1428,7 @@ extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, i
 	_ctx->op.event = event;
 	_ctx->op.myEscape = myEscape;
 
-	g_scheduler->createProcess(PID_TCODE, ObjectProcess, &_ctx->op, sizeof(_ctx->op));
+	CoroScheduler.createProcess(PID_TCODE, ObjectProcess, &_ctx->op, sizeof(_ctx->op));
 
 	if (bWait)
 		CORO_INVOKE_2(WaitInterpret, _ctx->pProc, result);
@@ -3540,9 +3540,9 @@ extern void ConvAction(int index) {
 		}
 
 		if (g_thisConvPoly != NOPOLY)
-			PolygonEvent(nullContext, g_thisConvPoly, CONVERSE, 0, false, 0);
+			PolygonEvent(Common::nullContext, g_thisConvPoly, CONVERSE, 0, false, 0);
 		else
-			ActorEvent(nullContext, g_thisConvActor, CONVERSE, false, 0);
+			ActorEvent(Common::nullContext, g_thisConvActor, CONVERSE, false, 0);
 	}
 
 }
@@ -5128,7 +5128,7 @@ static void InvPickup(int index) {
 			if (TinselV2)
 				InvPutDown(index);
 			else
-				g_scheduler->createProcess(PID_TCODE, InvPdProcess, &index, sizeof(index));
+				CoroScheduler.createProcess(PID_TCODE, InvPdProcess, &index, sizeof(index));
 		}
 	}
 }
