@@ -64,7 +64,7 @@ public:
 	bool GetBool(bool Default = false);
 	int GetInt(int Default = 0);
 	double GetFloat(double Default = 0.0f);
-	char *GetString();
+	const char *GetString();
 	void *GetMemBuffer();
 	CBScriptable *GetNative();
 	HRESULT DeleteProp(char *Name);
@@ -85,8 +85,8 @@ public:
 	bool IsFloat();
 	bool IsInt();
 	bool IsObject();
-	HRESULT SetProp(char *Name, CScValue *Val, bool CopyWhole = false, bool SetAsConst = false);
-	CScValue *GetProp(char *Name);
+	HRESULT SetProp(const char *Name, CScValue *Val, bool CopyWhole = false, bool SetAsConst = false);
+	CScValue *GetProp(const char *Name);
 	CBScriptable *_valNative;
 	CScValue *_valRef;
 	bool _valBool;

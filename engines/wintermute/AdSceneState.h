@@ -38,7 +38,7 @@ class CAdNodeState;
 class CAdSceneState : public CBBase {
 public:
 	CAdNodeState *GetNodeState(char *Name, bool Saving);
-	void SetFilename(char *Filename);
+	void SetFilename(const char *Filename);
 	DECLARE_PERSISTENT(CAdSceneState, CBBase)
 	CAdSceneState(CBGame *inGame);
 	virtual ~CAdSceneState();

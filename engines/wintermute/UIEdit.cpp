@@ -94,7 +94,7 @@ CUIEdit::~CUIEdit() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::LoadFile(char *Filename) {
+HRESULT CUIEdit::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIEdit::LoadFile failed for file '%s'", Filename);
@@ -534,7 +534,7 @@ char *CUIEdit::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIEdit::SetCursorChar(char *Char) {
+void CUIEdit::SetCursorChar(const char *Char) {
 	if (!Char) return;
 	delete[] _cursorChar;
 	_cursorChar = new char [strlen(Char) + 1];

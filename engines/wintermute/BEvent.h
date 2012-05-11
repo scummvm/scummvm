@@ -47,7 +47,7 @@ public:
 	CBEvent(CBGame *inGame);
 	CBEvent(CBGame *inGame, TEventType Type, char *Script);
 	virtual ~CBEvent();
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 };
 

@@ -62,7 +62,7 @@ HRESULT CAdSceneState::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSceneState::SetFilename(char *Filename) {
+void CAdSceneState::SetFilename(const char *Filename) {
 	SAFE_DELETE_ARRAY(_filename);
 	_filename = new char [strlen(Filename) + 1];
 	if (_filename) strcpy(_filename, Filename);

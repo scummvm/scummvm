@@ -74,7 +74,7 @@ HRESULT CBScriptable::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBScriptable::ScGetProperty(char *Name) {
+CScValue *CBScriptable::ScGetProperty(const char *Name) {
 	if (!_scProp) _scProp = new CScValue(Game);
 	if (_scProp) return _scProp->GetProp(Name);
 	else return NULL;
@@ -82,7 +82,7 @@ CScValue *CBScriptable::ScGetProperty(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::ScSetProperty(char *Name, CScValue *Value) {
+HRESULT CBScriptable::ScSetProperty(const char *Name, CScValue *Value) {
 	if (!_scProp) _scProp = new CScValue(Game);
 	if (_scProp) return _scProp->SetProp(Name, Value);
 	else return E_FAIL;

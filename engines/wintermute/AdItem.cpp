@@ -84,7 +84,7 @@ CAdItem::~CAdItem() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::LoadFile(char *Filename) {
+HRESULT CAdItem::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", Filename);
@@ -438,7 +438,7 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		bool SetCurrent = false;
 		if (_currentSprite && _currentSprite == _spriteHover) SetCurrent = true;
 
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		delete _spriteHover;
 		_spriteHover = NULL;
@@ -481,7 +481,7 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	if (strcmp(Name, "SetNormalCursor") == 0) {
 		Stack->CorrectParams(1);
 
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		delete _cursorNormal;
 		_cursorNormal = NULL;
@@ -524,7 +524,7 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	if (strcmp(Name, "SetHoverCursor") == 0) {
 		Stack->CorrectParams(1);
 
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		delete _cursorHover;
 		_cursorHover = NULL;

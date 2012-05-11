@@ -55,7 +55,7 @@ public:
 	CBSprite *_cursorHover;
 	CAdItem(CBGame *inGame);
 	virtual ~CAdItem();
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 
 	// scripting interface

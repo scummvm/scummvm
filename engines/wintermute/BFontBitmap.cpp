@@ -242,7 +242,7 @@ void CBFontBitmap::DrawChar(byte  c, int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::LoadFile(char *Filename) {
+HRESULT CBFontBitmap::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", Filename);

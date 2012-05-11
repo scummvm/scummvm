@@ -163,7 +163,7 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
 
-		char *Filename = Val->GetString();
+		const char *Filename = Val->GetString();
 
 		delete _image;
 		_image = NULL;
@@ -238,7 +238,7 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			}
 			// find by name
 			else {
-				char *name = val->GetString();
+				const char *name = val->GetString();
 				for (i = 0; i < win->_widgets.GetSize(); i++) {
 					if (scumm_stricmp(win->_widgets[i]->_name, name) == 0) {
 						found = true;

@@ -223,7 +223,7 @@ HRESULT CScScript::InitTables() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Create(char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner) {
+HRESULT CScScript::Create(const char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner) {
 	Cleanup();
 
 	_thread = false;
@@ -442,7 +442,7 @@ HRESULT CScScript::ExecuteInstruction() {
 	HRESULT ret = S_OK;
 
 	uint32 dw;
-	char *str;
+	const char *str;
 
 	//CScValue* op = new CScValue(Game);
 	_operand->Cleanup();
@@ -761,11 +761,11 @@ HRESULT CScScript::ExecuteInstruction() {
 
 		if (op1->IsNULL() || op2->IsNULL()) _operand->SetNULL();
 		else if (op1->GetType() == VAL_STRING || op2->GetType() == VAL_STRING) {
-			str = new char [strlen(op1->GetString()) + strlen(op2->GetString()) + 1];
-			strcpy(str, op1->GetString());
-			strcat(str, op2->GetString());
+			char *tempStr = new char [strlen(op1->GetString()) + strlen(op2->GetString()) + 1];
+			strcpy(tempStr, op1->GetString());
+			strcat(tempStr, op2->GetString());
 			_operand->SetString(str);
-			delete [] str;
+			delete [] tempStr;
 		} else if (op1->GetType() == VAL_INT && op2->GetType() == VAL_INT)
 			_operand->SetInt(op1->GetInt() + op2->GetInt());
 		else _operand->SetFloat(op1->GetFloat() + op2->GetFloat());
@@ -1244,13 +1244,13 @@ uint32 CScScript::GetEventPos(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::CanHandleEvent(char *EventName) {
+bool CScScript::CanHandleEvent(const char *EventName) {
 	return GetEventPos(EventName) != 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::CanHandleMethod(char *MethodName) {
+bool CScScript::CanHandleMethod(const char *MethodName) {
 	return GetMethodPos(MethodName) != 0;
 }
 

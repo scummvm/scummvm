@@ -55,14 +55,14 @@ public:
 	HRESULT AfterLoad();
 
 	HRESULT GetRegionsAt(int X, int Y, CAdRegion **RegionList, int NumRegions);
-	HRESULT HandleItemAssociations(char *ItemName, bool Show);
+	HRESULT HandleItemAssociations(const char *ItemName, bool Show);
 	CUIWindow *_shieldWindow;
 	float GetRotationAt(int X, int Y);
 	HRESULT LoadState();
 	HRESULT SaveState();
 	bool _persistentState;
 	bool _persistentStateSprites;
-	CBObject *GetNodeByName(char *Name);
+	CBObject *GetNodeByName(const char *Name);
 	void SetOffset(int OffsetLeft, int OffsetTop);
 	bool PointInViewport(int X, int Y);
 	int GetOffsetTop();
@@ -123,7 +123,7 @@ public:
 	CBArray<CAdLayer *, CAdLayer *> _layers;
 	CBArray<CAdObject *, CAdObject *> _objects;
 	CBArray<CAdWaypointGroup *, CAdWaypointGroup *> _waypointGroups;
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	int _width;
 	int _height;

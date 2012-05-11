@@ -55,7 +55,7 @@ CBNamedObject::~CBNamedObject(void) {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBNamedObject::SetName(char *Name) {
+void CBNamedObject::SetName(const char *Name) {
 	delete[] _name;
 
 	_name = new char [strlen(Name) + 1];

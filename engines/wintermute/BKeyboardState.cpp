@@ -68,9 +68,10 @@ HRESULT CBKeyboardState::ScCallMethod(CScScript *Script, CScStack *Stack, CScSta
 		int vKey;
 
 		if (val->_type == VAL_STRING && strlen(val->GetString()) > 0) {
-			char *str = val->GetString();
-			if (str[0] >= 'A' && str[0] <= 'Z') str[0] += ('a' - 'A');
-			vKey = (int)str[0];
+			const char *str = val->GetString();
+			char temp = str[0];
+			if (temp >= 'A' && temp <= 'Z') temp += ('a' - 'A');
+			vKey = (int)temp;
 		} else vKey = val->GetInt();
 
 		warning("BKeyboardState doesnt yet have state-support"); //TODO;

@@ -65,7 +65,7 @@ CBSurfaceSDL::~CBSurfaceSDL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::Create(char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 	Common::String strFileName(Filename);
 	

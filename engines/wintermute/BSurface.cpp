@@ -60,7 +60,7 @@ CBSurface::~CBSurface() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::Create(char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+HRESULT CBSurface::Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	return E_FAIL;
 }
 

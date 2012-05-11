@@ -90,7 +90,7 @@ HRESULT CBFontStorage::InitLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBFont *CBFontStorage::AddFont(char *Filename) {
+CBFont *CBFontStorage::AddFont(const char *Filename) {
 	if (!Filename) return NULL;
 
 	for (int i = 0; i < _fonts.GetSize(); i++) {

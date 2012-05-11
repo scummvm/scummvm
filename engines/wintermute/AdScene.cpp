@@ -504,7 +504,7 @@ HRESULT CAdScene::InitLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::LoadFile(char *Filename) {
+HRESULT CAdScene::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdScene::LoadFile failed for file '%s'", Filename);
@@ -1353,7 +1353,7 @@ HRESULT CAdScene::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			if (layer < 0 || layer >= _layers.GetSize()) Stack->PushNULL();
 			else Stack->PushNative(_layers[layer], true);
 		} else {
-			char *LayerName = val->GetString();
+			const char *LayerName = val->GetString();
 			bool LayerFound = false;
 			for (int i = 0; i < _layers.GetSize(); i++) {
 				if (scumm_stricmp(LayerName, _layers[i]->_name) == 0) {
@@ -1383,7 +1383,7 @@ HRESULT CAdScene::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetNode") == 0) {
 		Stack->CorrectParams(1);
-		char *Name = Stack->Pop()->GetString();
+		const char *Name = Stack->Pop()->GetString();
 
 		CBObject *node = GetNodeByName(Name);
 		if (node) Stack->PushNative((CBScriptable *)node, true);
@@ -1404,7 +1404,7 @@ HRESULT CAdScene::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			int Index = Val->GetInt();
 			if (Index >= 0 && Index < _objects.GetSize()) Ret = _objects[Index];
 		} else {
-			char *Name = Val->GetString();
+			const char *Name = Val->GetString();
 			for (int i = 0; i < _objects.GetSize(); i++) {
 				if (_objects[i] && _objects[i]->_name && scumm_stricmp(_objects[i]->_name, Name) == 0) {
 					Ret = _objects[i];
@@ -2426,7 +2426,7 @@ void CAdScene::SetOffset(int OffsetLeft, int OffsetTop) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdScene::GetNodeByName(char *Name) {
+CBObject *CAdScene::GetNodeByName(const char *Name) {
 	int i;
 	CBObject *ret = NULL;
 
@@ -2574,7 +2574,7 @@ float CAdScene::GetRotationAt(int X, int Y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::HandleItemAssociations(char *ItemName, bool Show) {
+HRESULT CAdScene::HandleItemAssociations(const char *ItemName, bool Show) {
 	int i;
 
 	for (i = 0; i < _layers.GetSize(); i++) {

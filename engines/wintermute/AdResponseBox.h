@@ -75,7 +75,7 @@ public:
 	RECT _responseArea;
 	int _verticalAlign;
 	TTextAlign _align;
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 };

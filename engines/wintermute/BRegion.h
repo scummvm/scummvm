@@ -50,7 +50,7 @@ public:
 	virtual ~CBRegion();
 	bool PointInRegion(int X, int Y);
 	bool CreateRegion();
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	RECT _rect;
 	CBArray<CBPoint *, CBPoint *> _points;

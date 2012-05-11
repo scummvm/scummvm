@@ -61,7 +61,7 @@ CAdLayer::~CAdLayer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::LoadFile(char *Filename) {
+HRESULT CAdLayer::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdLayer::LoadFile failed for file '%s'", Filename);

@@ -145,7 +145,7 @@ CAdObject::~CAdObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::PlayAnim(char *Filename) {
+HRESULT CAdObject::PlayAnim(const char *Filename) {
 	SAFE_DELETE(_animSprite);
 	_animSprite = new CBSprite(Game, this);
 	if (!_animSprite) {
@@ -232,7 +232,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ForceTalkAnim") == 0) {
 		Stack->CorrectParams(1);
-		char *AnimName = Stack->Pop()->GetString();
+		const char *AnimName = Stack->Pop()->GetString();
 		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
 		_forcedTalkAnimName = new char[strlen(AnimName) + 1];
 		strcpy(_forcedTalkAnimName, AnimName);
@@ -248,12 +248,12 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "Talk") == 0 || strcmp(Name, "TalkAsync") == 0) {
 		Stack->CorrectParams(5);
 
-		char *Text    = Stack->Pop()->GetString();
+		const char *Text    = Stack->Pop()->GetString();
 		CScValue *SoundVal = Stack->Pop();
 		int Duration  = Stack->Pop()->GetInt();
 		CScValue *ValStances = Stack->Pop();
 
-		char *Stances = ValStances->IsNULL() ? NULL : ValStances->GetString();
+		const char *Stances = ValStances->IsNULL() ? NULL : ValStances->GetString();
 
 		int Align;
 		CScValue *val = Stack->Pop();
@@ -262,7 +262,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		Align = MIN(MAX(0, Align), NUM_TEXT_ALIGN - 1);
 
-		char *Sound = SoundVal->IsNULL() ? NULL : SoundVal->GetString();
+		const char *Sound = SoundVal->IsNULL() ? NULL : SoundVal->GetString();
 
 		Talk(Text, Sound, Duration, Stances, (TTextAlign)Align);
 		if (strcmp(Name, "TalkAsync") != 0) Script->WaitForExclusive(this);
@@ -286,7 +286,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			_stickRegion = NULL;
 			RegFound = true;
 		} else if (Val->IsString()) {
-			char *RegionName = Val->GetString();
+			const char *RegionName = Val->GetString();
 			for (i = 0; i < Main->_nodes.GetSize(); i++) {
 				if (Main->_nodes[i]->_type == OBJECT_REGION && Main->_nodes[i]->_region->_name && scumm_stricmp(Main->_nodes[i]->_region->_name, RegionName) == 0) {
 					_stickRegion = Main->_nodes[i]->_region;
@@ -349,9 +349,9 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		CScValue *val = Stack->Pop();
 		if (!val->IsNULL()) {
-			char *ItemName = val->GetString();
+			const char *ItemName = val->GetString();
 			val = Stack->Pop();
-			char *InsertAfter = val->IsNULL() ? NULL : val->GetString();
+			const char *InsertAfter = val->IsNULL() ? NULL : val->GetString();
 			if (FAILED(_inventory->InsertItem(ItemName, InsertAfter))) Script->RuntimeError("Cannot add item '%s' to inventory", ItemName);
 			else {
 				// hide associated entities
@@ -475,7 +475,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddAttachment") == 0) {
 		Stack->CorrectParams(4);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		bool PreDisplay = Stack->Pop()->GetBool(true);
 		int OffsetX = Stack->Pop()->GetInt();
 		int OffsetY = Stack->Pop()->GetInt();
@@ -528,7 +528,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 				}
 			}
 		} else {
-			char *Name = Val->GetString();
+			const char *Name = Val->GetString();
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, Name) == 0) {
 					Found = true;
@@ -571,7 +571,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 				CurrIndex++;
 			}
 		} else {
-			char *Name = Val->GetString();
+			const char *Name = Val->GetString();
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, Name) == 0) {
 					Ret = _attachmentsPre[i];
@@ -783,7 +783,7 @@ char *CAdObject::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::SetFont(char *Filename) {
+HRESULT CAdObject::SetFont(const char *Filename) {
 	if (_font) Game->_fontStorage->RemoveFont(_font);
 	if (Filename) {
 		_font = Game->_fontStorage->AddFont(Filename);
@@ -815,7 +815,7 @@ int CAdObject::GetHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdObject::Talk(char *Text, char *Sound, uint32 Duration, char *Stances, TTextAlign Align) {
+void CAdObject::Talk(const char *Text, const char *Sound, uint32 Duration, const char *Stances, TTextAlign Align) {
 	if (!_sentence) _sentence = new CAdSentence(Game);
 	if (!_sentence) return;
 

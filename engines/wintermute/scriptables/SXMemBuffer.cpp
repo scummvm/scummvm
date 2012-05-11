@@ -349,7 +349,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "SetString") == 0) {
 		Stack->CorrectParams(2);
 		int Start = Stack->Pop()->GetInt();
-		char *Val = Stack->Pop()->GetString();
+		const char *Val = Stack->Pop()->GetString();
 
 		if (!CheckBounds(Script, Start, strlen(Val) + 1)) Stack->PushBool(false);
 		else {

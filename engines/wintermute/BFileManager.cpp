@@ -182,7 +182,7 @@ byte *CBFileManager::ReadWholeFile(const char *Filename, uint32 *Size, bool Must
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::SaveFile(char *Filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
+HRESULT CBFileManager::SaveFile(const char *Filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
 	// TODO
 	warning("Implement SaveFile");
 #if 0

@@ -42,7 +42,7 @@ public:
 	CBNamedObject(TDynamicConstructor, TDynamicConstructor);
 
 	char *_name;
-	void SetName(char *Name);
+	void SetName(const char *Name);
 };
 
 } // end of namespace WinterMute

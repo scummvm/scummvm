@@ -47,7 +47,7 @@ CBImage::~CBImage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::SaveBMPFile(char *Filename) {
+HRESULT CBImage::SaveBMPFile(const char *Filename) {
 #if 0
 	if (!_bitmap) return E_FAIL;
 

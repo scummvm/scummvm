@@ -55,7 +55,7 @@ CUIEntity::~CUIEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::LoadFile(char *Filename) {
+HRESULT CUIEntity::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIEntity::LoadFile failed for file '%s'", Filename);
@@ -208,7 +208,7 @@ HRESULT CUIEntity::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::SetEntity(char *Filename) {
+HRESULT CUIEntity::SetEntity(const char *Filename) {
 	if (_entity) Game->UnregisterObject(_entity);
 	_entity = new CAdEntity(Game);
 	if (!_entity || FAILED(_entity->LoadFile(Filename))) {
@@ -270,7 +270,7 @@ HRESULT CUIEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "SetEntity") == 0) {
 		Stack->CorrectParams(1);
 
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		if (SUCCEEDED(SetEntity(Filename)))
 			Stack->PushBool(true);

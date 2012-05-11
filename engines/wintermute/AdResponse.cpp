@@ -65,14 +65,14 @@ CAdResponse::~CAdResponse() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponse::SetText(char *Text) {
+void CAdResponse::SetText(const char *Text) {
 	CBUtils::SetString(&_text, Text);
 	CBUtils::SetString(&_textOrig, Text);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::SetIcon(char *Filename) {
+HRESULT CAdResponse::SetIcon(const char *Filename) {
 	delete _icon;
 	_icon = new CBSprite(Game);
 	if (!_icon || FAILED(_icon->LoadFile(Filename))) {
@@ -85,7 +85,7 @@ HRESULT CAdResponse::SetIcon(char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::SetFont(char *Filename) {
+HRESULT CAdResponse::SetFont(const char *Filename) {
 	if (_font) Game->_fontStorage->RemoveFont(_font);
 	_font = Game->_fontStorage->AddFont(Filename);
 	if (!_font) {
@@ -96,7 +96,7 @@ HRESULT CAdResponse::SetFont(char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::SetIconHover(char *Filename) {
+HRESULT CAdResponse::SetIconHover(const char *Filename) {
 	delete _iconHover;
 	_iconHover = new CBSprite(Game);
 	if (!_iconHover || FAILED(_iconHover->LoadFile(Filename))) {
@@ -110,7 +110,7 @@ HRESULT CAdResponse::SetIconHover(char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::SetIconPressed(char *Filename) {
+HRESULT CAdResponse::SetIconPressed(const char *Filename) {
 	delete _iconPressed;
 	_iconPressed = new CBSprite(Game);
 	if (!_iconPressed || FAILED(_iconPressed->LoadFile(Filename))) {

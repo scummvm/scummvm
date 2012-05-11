@@ -376,7 +376,7 @@ int CBFontTT::GetLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::LoadFile(char *Filename) {
+HRESULT CBFontTT::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBFontTT::LoadFile failed for file '%s'", Filename);

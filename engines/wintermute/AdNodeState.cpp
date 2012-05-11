@@ -76,7 +76,7 @@ void CAdNodeState::SetName(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetFilename(char *Filename) {
+void CAdNodeState::SetFilename(const char *Filename) {
 	delete[] _filename;
 	_filename = NULL;
 	CBUtils::SetString(&_filename, Filename);
@@ -84,7 +84,7 @@ void CAdNodeState::SetFilename(char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetCursor(char *Filename) {
+void CAdNodeState::SetCursor(const char *Filename) {
 	delete[] _cursor;
 	_cursor = NULL;
 	CBUtils::SetString(&_cursor, Filename);

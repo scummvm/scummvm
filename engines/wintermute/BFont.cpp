@@ -71,7 +71,7 @@ int CBFont::GetTextWidth(byte  *text, int MaxLenght) {
 
 /*
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFont::LoadFile(char * Filename)
+HRESULT CBFont::LoadFile(const char * Filename)
 {
     BYTE* Buffer = Game->_fileManager->ReadWholeFile(Filename);
     if(Buffer==NULL){
@@ -152,7 +152,7 @@ HRESULT CBFont::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFont *CBFont::CreateFromFile(CBGame *Game, char *Filename) {
+CBFont *CBFont::CreateFromFile(CBGame *Game, const char *Filename) {
 	if (IsTrueType(Game, Filename)) {
 		CBFontTT *Font = new CBFontTT(Game);
 		if (Font) {
@@ -180,7 +180,7 @@ TOKEN_DEF(FONT)
 TOKEN_DEF(TTFONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CBFont::IsTrueType(CBGame *Game, char *Filename) {
+bool CBFont::IsTrueType(CBGame *Game, const char *Filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONT)
 	TOKEN_TABLE(TTFONT)

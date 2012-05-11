@@ -209,7 +209,7 @@ uint16 getHighWord(uint32 dword) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::InitLoad(char *Filename) {
+HRESULT CBPersistMgr::InitLoad(const char *Filename) {
 	Cleanup();
 
 	_saving = false;
@@ -293,7 +293,7 @@ init_fail:
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::SaveFile(char *Filename) {
+HRESULT CBPersistMgr::SaveFile(const char *Filename) {
 	return Game->_fileManager->SaveFile(Filename, _buffer, _offset, Game->_compressedSavegames, _richBuffer, _richBufferSize);
 }
 

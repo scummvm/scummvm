@@ -111,7 +111,7 @@ CPartEmitter::~CPartEmitter(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::AddSprite(char *Filename) {
+HRESULT CPartEmitter::AddSprite(const char *Filename) {
 	if (!Filename) return E_FAIL;
 
 	// do we already have the file?
@@ -134,7 +134,7 @@ HRESULT CPartEmitter::AddSprite(char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::RemoveSprite(char *Filename) {
+HRESULT CPartEmitter::RemoveSprite(const char *Filename) {
 	for (int i = 0; i < _sprites.GetSize(); i++) {
 		if (scumm_stricmp(Filename, _sprites[i]) == 0) {
 			delete [] _sprites[i];
@@ -359,7 +359,7 @@ HRESULT CPartEmitter::SetBorderThickness(int ThicknessLeft, int ThicknessRight, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-CPartForce *CPartEmitter::AddForceByName(char *Name) {
+CPartForce *CPartEmitter::AddForceByName(const char *Name) {
 	CPartForce *Force = NULL;
 
 	for (int i = 0; i < _forces.GetSize(); i++) {
@@ -380,7 +380,7 @@ CPartForce *CPartEmitter::AddForceByName(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::AddForce(char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength) {
+HRESULT CPartEmitter::AddForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength) {
 	CPartForce *Force = AddForceByName(Name);
 	if (!Force) return E_FAIL;
 
@@ -396,7 +396,7 @@ HRESULT CPartEmitter::AddForce(char *Name, CPartForce::TForceType Type, int PosX
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::RemoveForce(char *Name) {
+HRESULT CPartEmitter::RemoveForce(const char *Name) {
 	for (int i = 0; i < _forces.GetSize(); i++) {
 		if (scumm_stricmp(Name, _forces[i]->_name) == 0) {
 			delete _forces[i];
@@ -445,7 +445,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddSprite") == 0) {
 		Stack->CorrectParams(1);
-		char *SpriteFile = Stack->Pop()->GetString();
+		const char *SpriteFile = Stack->Pop()->GetString();
 		Stack->PushBool(SUCCEEDED(AddSprite(SpriteFile)));
 
 		return S_OK;
@@ -455,7 +455,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RemoveSprite") == 0) {
 		Stack->CorrectParams(1);
-		char *SpriteFile = Stack->Pop()->GetString();
+		const char *SpriteFile = Stack->Pop()->GetString();
 		Stack->PushBool(SUCCEEDED(RemoveSprite(SpriteFile)));
 
 		return S_OK;
@@ -516,7 +516,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddGlobalForce") == 0) {
 		Stack->CorrectParams(3);
-		char *Name = Stack->Pop()->GetString();
+		const char *Name = Stack->Pop()->GetString();
 		float Angle = Stack->Pop()->GetFloat();
 		float Strength = Stack->Pop()->GetFloat();
 
@@ -530,7 +530,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddPointForce") == 0) {
 		Stack->CorrectParams(5);
-		char *Name = Stack->Pop()->GetString();
+		const char *Name = Stack->Pop()->GetString();
 		int PosX = Stack->Pop()->GetInt();
 		int PosY = Stack->Pop()->GetInt();
 		float Angle = Stack->Pop()->GetFloat();
@@ -546,7 +546,7 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RemoveForce") == 0) {
 		Stack->CorrectParams(1);
-		char *Name = Stack->Pop()->GetString();
+		const char *Name = Stack->Pop()->GetString();
 
 		Stack->PushBool(SUCCEEDED(RemoveForce(Name)));
 

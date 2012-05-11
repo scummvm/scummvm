@@ -38,13 +38,13 @@ public:
 	DECLARE_PERSISTENT(CUIEntity, CUIObject)
 	CUIEntity(CBGame *inGame);
 	virtual ~CUIEntity();
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
 	CAdEntity *_entity;
-	HRESULT SetEntity(char *Filename);
+	HRESULT SetEntity(const char *Filename);
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);

@@ -114,7 +114,7 @@ public:
 	virtual HRESULT ResetContent();
 
 	void DEBUG_DumpClassRegistry();
-	HRESULT SetWaitCursor(char *Filename);
+	HRESULT SetWaitCursor(const char *Filename);
 	char *_localSaveDir;
 	bool _saveDirChecked;
 
@@ -274,12 +274,12 @@ public:
 	static void AfterLoadScript(void *script, void *data);
 	static void InvalidateValues(void *Value, void *Data);
 
-	HRESULT LoadSettings(char *Filename);
+	HRESULT LoadSettings(const char *Filename);
 	HRESULT ResumeMusic(int Channel);
 	HRESULT SetMusicStartTime(int Channel, uint32 Time);
 	HRESULT PauseMusic(int Channel);
 	HRESULT StopMusic(int Channel);
-	HRESULT PlayMusic(int Channel, char *Filename, bool Looping = true, uint32 LoopStart = 0);
+	HRESULT PlayMusic(int Channel, const char *Filename, bool Looping = true, uint32 LoopStart = 0);
 	CBSound *_music[NUM_MUSIC_CHANNELS];
 	bool _musicCrossfadeRunning;
 	bool _musicCrossfadeSwap;
@@ -292,7 +292,7 @@ public:
 	bool _useD3D;
 	virtual HRESULT Cleanup();
 	virtual HRESULT LoadGame(int Slot);
-	virtual HRESULT LoadGame(char *Filename);
+	virtual HRESULT LoadGame(const char *Filename);
 	virtual HRESULT SaveGame(int slot, char *desc, bool quickSave = false);
 	virtual HRESULT ShowCursor();
 
@@ -316,7 +316,7 @@ public:
 	bool ValidObject(CBObject *Object);
 	HRESULT UnregisterObject(CBObject *Object);
 	HRESULT RegisterObject(CBObject *Object);
-	void QuickMessage(char *Text);
+	void QuickMessage(const char *Text);
 	void QuickMessageForm(LPSTR fmt, ...);
 	HRESULT DisplayQuickMsg();
 	uint32 _fps;

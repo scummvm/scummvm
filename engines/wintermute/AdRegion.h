@@ -42,7 +42,7 @@ public:
 	bool _decoration;
 	CAdRegion(CBGame *inGame);
 	virtual ~CAdRegion();
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 

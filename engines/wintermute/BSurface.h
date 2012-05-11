@@ -60,7 +60,7 @@ public:
 	virtual HRESULT DisplayZoom(int X, int Y, RECT rect, float ZoomX, float ZoomY, uint32 Alpha = 0xFFFFFFFF, bool Transparent = false, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
 	virtual HRESULT DisplayTransform(int X, int Y, int HotX, int HotY, RECT Rect, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
 	virtual HRESULT Restore();
-	virtual HRESULT Create(char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
+	virtual HRESULT Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
 	virtual HRESULT Create(int Width, int Height);
 	virtual HRESULT PutPixel(int X, int Y, byte R, byte G, byte B, int A = -1);
 	virtual HRESULT GetPixel(int X, int Y, byte *R, byte *G, byte *B, byte *A = NULL);

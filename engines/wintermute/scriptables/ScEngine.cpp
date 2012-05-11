@@ -232,7 +232,7 @@ void WINAPI CScEngine::ParseElement(void *Data, int Line, int Type, void *Elemen
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CScEngine::RunScript(char *Filename, CBScriptHolder *Owner) {
+CScScript *CScEngine::RunScript(const char *Filename, CBScriptHolder *Owner) {
 	byte *CompBuffer;
 	uint32 CompSize;
 
@@ -265,7 +265,7 @@ CScScript *CScEngine::RunScript(char *Filename, CBScriptHolder *Owner) {
 
 
 //////////////////////////////////////////////////////////////////////////
-byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreCache) {
+byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool IgnoreCache) {
 	int i;
 
 	// is script in cache?
@@ -316,8 +316,13 @@ byte *CScEngine::GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreC
 		// publish native interfaces
 		Game->PublishNatives();
 
+		// We have const char* everywhere but in the DLL-interfaces...
+		char *tempFileName = new char[strlen(Filename) + 1];
+		memcpy(tempFileName, Filename, strlen(Filename) + 1);
+		
 		SetFileToCompile(Filename);
-		CompBuffer = ExtCompileFile(Filename, &CompSize);
+		CompBuffer = ExtCompileFile(tempFileName, &CompSize);
+		delete[] tempFileName;
 		if (!CompBuffer) {
 			Game->QuickMessage("Script compiler error. View log for details.");
 			delete [] Buffer;
@@ -604,7 +609,7 @@ HRESULT CScEngine::ResumeAll() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::SetFileToCompile(char *Filename) {
+HRESULT CScEngine::SetFileToCompile(const char *Filename) {
 	delete[] _fileToCompile;
 	_fileToCompile = new char[strlen(Filename) + 1];
 	if (_fileToCompile) {

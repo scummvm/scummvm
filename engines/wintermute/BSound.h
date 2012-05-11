@@ -64,7 +64,7 @@ public:
 	TSoundType _soundType;
 	char *_soundFilename;
 	HRESULT SetSoundSimple();
-	HRESULT SetSound(char *Filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
+	HRESULT SetSound(const char *Filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
 	CBSound(CBGame *inGame);
 	virtual ~CBSound();
 

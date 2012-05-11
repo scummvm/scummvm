@@ -62,7 +62,7 @@ public:
 
 	CBArray<char *, char *> _speechDirs;
 	HRESULT AddSpeechDir(const char *Dir);
-	HRESULT RemoveSpeechDir(char *Dir);
+	HRESULT RemoveSpeechDir(const char *Dir);
 	char *FindSpeechFile(char *StringID);
 
 	HRESULT DeleteItem(CAdItem *Item);
@@ -70,7 +70,7 @@ public:
 	bool _tempDisableSaveState;
 	virtual HRESULT ResetContent();
 	HRESULT AddItem(CAdItem *Item);
-	CAdItem *GetItemByName(char *Name);
+	CAdItem *GetItemByName(const char *Name);
 	CBArray<CAdItem *, CAdItem *> _items;
 	CAdObject *_inventoryOwner;
 	bool IsItemTaken(char *ItemName);
@@ -105,14 +105,14 @@ public:
 	TTalkSkipButton _talkSkipButton;
 
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
-	HRESULT ScheduleChangeScene(char *Filename, bool FadeIn);
+	HRESULT ScheduleChangeScene(const char *Filename, bool FadeIn);
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
 	void SetPrevSceneName(char *Name);
 	void SetPrevSceneFilename(char *Name);
 	char *_prevSceneName;
 	char *_prevSceneFilename;
-	virtual HRESULT LoadGame(char *Filename);
+	virtual HRESULT LoadGame(const char *Filename);
 	CAdItem *_selectedItem;
 	HRESULT Cleanup();
 	DECLARE_PERSISTENT(CAdGame, CBGame)
@@ -124,7 +124,7 @@ public:
 	CAdInventoryBox *_inventoryBox;
 	HRESULT DisplaySentences(bool Frozen);
 	void AddSentence(CAdSentence *Sentence);
-	HRESULT ChangeScene(char *Filename, bool FadeIn);
+	HRESULT ChangeScene(const char *Filename, bool FadeIn);
 	HRESULT RemoveObject(CAdObject *Object);
 	HRESULT AddObject(CAdObject *Object);
 	CAdScene *_scene;
@@ -143,7 +143,7 @@ public:
 	virtual HRESULT LoadFile(const char *Filename);
 	virtual HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 
-	HRESULT LoadItemsFile(char *Filename, bool Merge = false);
+	HRESULT LoadItemsFile(const char *Filename, bool Merge = false);
 	HRESULT LoadItemsBuffer(byte  *Buffer, bool Merge = false);
 
 

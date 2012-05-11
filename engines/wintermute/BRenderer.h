@@ -46,7 +46,7 @@ public:
 	int _drawOffsetX;
 	int _drawOffsetY;
 
-	virtual void DumpData(char *Filename) {};
+	virtual void DumpData(const char *Filename) {};
 	virtual CBImage *TakeScreenshot();
 	virtual HRESULT SetViewport(int left, int top, int right, int bottom);
 	virtual HRESULT SetViewport(RECT *Rect);

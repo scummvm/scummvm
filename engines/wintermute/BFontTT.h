@@ -126,7 +126,7 @@ public:
 	virtual int GetLetterHeight();
 
 	HRESULT LoadBuffer(byte  *Buffer);
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 
 /*	static unsigned long FTReadSeekProc(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count);
 	static void FTCloseProc(FT_Stream stream);*/

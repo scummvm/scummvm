@@ -949,7 +949,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 		}
 	}
 
-	if (!_systemFont) _systemFont = Game->_fontStorage->AddFont("syste_font.fnt");
+	if (!_systemFont) _systemFont = Game->_fontStorage->AddFont("system_font.fnt");
 
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -1017,7 +1017,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LoadStringTable") == 0) {
 		Stack->CorrectParams(2);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		CScValue *Val = Stack->Pop();
 
 		bool ClearOld;
@@ -1113,7 +1113,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			Channel = Stack->Pop()->GetInt();
 		}
 
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		CScValue *ValLooping = Stack->Pop();
 		bool Looping = ValLooping->IsNULL() ? true : ValLooping->GetBool();
 
@@ -1317,7 +1317,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		Stack->CorrectParams(1);
 
 		int Length = 0;
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		CBSound *Sound = new CBSound(Game);
 		if (Sound && SUCCEEDED(Sound->SetSound(Filename, SOUND_MUSIC, true))) {
@@ -1404,7 +1404,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RegWriteNumber") == 0) {
 		Stack->CorrectParams(2);
-		char *Key = Stack->Pop()->GetString();
+		const char *Key = Stack->Pop()->GetString();
 		int Val = Stack->Pop()->GetInt();
 		_registry->WriteInt("PrivateSettings", Key, Val);
 		Stack->PushNULL();
@@ -1416,7 +1416,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RegReadNumber") == 0) {
 		Stack->CorrectParams(2);
-		char *Key = Stack->Pop()->GetString();
+		const char *Key = Stack->Pop()->GetString();
 		int InitVal = Stack->Pop()->GetInt();
 		Stack->PushInt(_registry->ReadInt("PrivateSettings", Key, InitVal));
 		return S_OK;
@@ -1427,8 +1427,8 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RegWriteString") == 0) {
 		Stack->CorrectParams(2);
-		char *Key = Stack->Pop()->GetString();
-		char *Val = Stack->Pop()->GetString();
+		const char *Key = Stack->Pop()->GetString();
+		const char *Val = Stack->Pop()->GetString();
 		_registry->WriteString("PrivateSettings", Key, Val);
 		Stack->PushNULL();
 		return S_OK;
@@ -1439,8 +1439,8 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RegReadString") == 0) {
 		Stack->CorrectParams(2);
-		char *Key = Stack->Pop()->GetString();
-		char *InitVal = Stack->Pop()->GetString();
+		const char *Key = Stack->Pop()->GetString();
+		const char *InitVal = Stack->Pop()->GetString();
 		AnsiString val = _registry->ReadString("PrivateSettings", Key, InitVal);
 		Stack->PushString((char *)val.c_str());
 		return S_OK;
@@ -1452,7 +1452,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "SaveGame") == 0) {
 		Stack->CorrectParams(3);
 		int Slot = Stack->Pop()->GetInt();
-		char *xdesc = Stack->Pop()->GetString();
+		const char *xdesc = Stack->Pop()->GetString();
 		bool quick = Stack->Pop()->GetBool(false);
 
 		char *Desc = new char[strlen(xdesc) + 1];
@@ -1650,7 +1650,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "FileExists") == 0) {
 		Stack->CorrectParams(1);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		CBFile *File = _fileManager->OpenFile(Filename, false);
 		if (!File) Stack->PushBool(false);
@@ -1744,7 +1744,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ScreenshotEx") == 0) {
 		Stack->CorrectParams(3);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		int SizeX = Stack->Pop()->GetInt(_renderer->_width);
 		int SizeY = Stack->Pop()->GetInt(_renderer->_height);
 
@@ -1917,7 +1917,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "DisplayLoadingIcon") == 0) {
 		Stack->CorrectParams(4);
 
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		_loadingIconX = Stack->Pop()->GetInt();
 		_loadingIconY = Stack->Pop()->GetInt();
 		_loadingIconPersistent = Stack->Pop()->GetBool();
@@ -1953,7 +1953,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DumpTextureStats") == 0) {
 		Stack->CorrectParams(1);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		_renderer->DumpData(Filename);
 
@@ -1966,7 +1966,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AccOutputText") == 0) {
 		Stack->CorrectParams(2);
-		char *Str = Stack->Pop()->GetString();
+		const char *Str = Stack->Pop()->GetString();
 		int Type = Stack->Pop()->GetInt();
 		// do nothing
 		Stack->PushNULL();
@@ -2007,7 +2007,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetFileChecksum") == 0) {
 		Stack->CorrectParams(2);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		bool AsHex = Stack->Pop()->GetBool(false);
 
 		CBFile *File = _fileManager->OpenFile(Filename, false);
@@ -2715,7 +2715,7 @@ HRESULT CBGame::DisplayQuickMsg() {
 
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
-void CBGame::QuickMessage(char *Text) {
+void CBGame::QuickMessage(const char *Text) {
 	if (_quickMessages.GetSize() >= MAX_QUICK_MSG) {
 		delete _quickMessages[0];
 		_quickMessages.RemoveAt(0);
@@ -3091,7 +3091,7 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ToString") == 0) {
 		Stack->CorrectParams(1);
-		char *Str = Stack->Pop()->GetString();
+		const char *Str = Stack->Pop()->GetString();
 		char *Str2 = new char[strlen(Str) + 1];
 		strcpy(Str2, Str);
 		Stack->PushString(Str2);
@@ -3215,7 +3215,7 @@ HRESULT CBGame::LoadGame(int Slot) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::LoadGame(char *Filename) {
+HRESULT CBGame::LoadGame(const char *Filename) {
 	LOG(0, "Loading game '%s'...", Filename);
 	GetDebugMgr()->OnGameShutdown();
 
@@ -3343,7 +3343,7 @@ HRESULT CBGame::DisplayWindows(bool InGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::PlayMusic(int Channel, char *Filename, bool Looping, uint32 LoopStart) {
+HRESULT CBGame::PlayMusic(int Channel, const char *Filename, bool Looping, uint32 LoopStart) {
 	if (Channel >= NUM_MUSIC_CHANNELS) {
 		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", Channel, NUM_MUSIC_CHANNELS);
 		return E_FAIL;
@@ -3423,7 +3423,7 @@ HRESULT CBGame::SetMusicStartTime(int Channel, uint32 Time) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::LoadSettings(char *Filename) {
+HRESULT CBGame::LoadSettings(const char *Filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SETTINGS)
 	TOKEN_TABLE(GAME)
@@ -4121,7 +4121,7 @@ HRESULT CBGame::RestoreDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::SetWaitCursor(char *Filename) {
+HRESULT CBGame::SetWaitCursor(const char *Filename) {
 	delete _cursorNoninteractive;
 	_cursorNoninteractive = NULL;
 

@@ -63,7 +63,7 @@ public:
 	} TPathType;
 	HRESULT AddPath(TPathType Type, const char *Path);
 	HRESULT RequestCD(int CD, char *PackageFile, char *Filename);
-	HRESULT SaveFile(char *Filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
+	HRESULT SaveFile(const char *Filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
 	byte *ReadWholeFile(const char *Filename, uint32 *Size = NULL, bool MustExist = true);
 	CBFileManager(CBGame *inGame = NULL);
 	virtual ~CBFileManager();

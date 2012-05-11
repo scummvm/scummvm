@@ -56,8 +56,8 @@ public:
 
 	static bool MatchesPattern(const char *pattern, const char *string);
 
-	static char *GetPath(char *Filename);
-	static char *GetFilename(char *Filename);
+	static char *GetPath(const char *Filename);
+	static char *GetFilename(const char *Filename);
 
 	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
 	static uint32 HSLtoRGB(byte  H, byte S, byte L);

@@ -78,7 +78,7 @@ CAdEntity::~CAdEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::LoadFile(char *Filename) {
+HRESULT CAdEntity::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdEntity::LoadFile failed for file '%s'", Filename);
@@ -934,12 +934,12 @@ HRESULT CAdEntity::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdEntity::SetItem(char *ItemName) {
+void CAdEntity::SetItem(const char *ItemName) {
 	CBUtils::SetString(&_item, ItemName);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::SetSprite(char *Filename) {
+HRESULT CAdEntity::SetSprite(const char *Filename) {
 	bool SetCurrent = false;
 	if (_currentSprite == _sprite) {
 		_currentSprite = NULL;

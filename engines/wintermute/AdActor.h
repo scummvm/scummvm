@@ -67,7 +67,7 @@ public:
 	TDirection _dir;
 	CAdActor(CBGame *inGame/*=NULL*/);
 	virtual ~CAdActor();
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 
 	// new anim system
@@ -77,8 +77,8 @@ public:
 	char *_turnLeftAnimName;
 	char *_turnRightAnimName;
 	CBArray<CAdSpriteSet *, CAdSpriteSet *> _anims;
-	virtual HRESULT PlayAnim(char *Filename);
-	CAdSpriteSet *GetAnimByName(char *AnimName);
+	virtual HRESULT PlayAnim(const char *Filename);
+	CAdSpriteSet *GetAnimByName(const char *AnimName);
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);
@@ -89,7 +89,7 @@ public:
 private:
 	HRESULT SetDefaultAnimNames();
 	CBSprite *GetTalkStanceOld(char *Stance);
-	HRESULT MergeAnims(char *AnimsFilename);
+	HRESULT MergeAnims(const char *AnimsFilename);
 	CBSprite *_animSprite2;
 
 	void InitLine(CBPoint StartPt, CBPoint EndPt);

@@ -72,7 +72,7 @@ public:
 	virtual bool HandleKeypress(SDL_Event *event);
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	CUITiledImage *_backInactive;
 	CBFont *_fontInactive;

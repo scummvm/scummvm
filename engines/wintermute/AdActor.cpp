@@ -145,7 +145,7 @@ CAdActor::~CAdActor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::LoadFile(char *Filename) {
+HRESULT CAdActor::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdActor::LoadFile failed for file '%s'", Filename);
@@ -957,7 +957,7 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "UnloadAnim") == 0) {
 		Stack->CorrectParams(1);
-		char *AnimName = Stack->Pop()->GetString();
+		const char *AnimName = Stack->Pop()->GetString();
 
 		bool Found = false;
 		for (int i = 0; i < _anims.GetSize(); i++) {
@@ -983,7 +983,7 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HasAnim") == 0) {
 		Stack->CorrectParams(1);
-		char *AnimName = Stack->Pop()->GetString();
+		const char *AnimName = Stack->Pop()->GetString();
 		Stack->PushBool(GetAnimByName(AnimName) != NULL);
 		return S_OK;
 	}
@@ -1273,7 +1273,7 @@ int CAdActor::GetHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSpriteSet *CAdActor::GetAnimByName(char *AnimName) {
+CAdSpriteSet *CAdActor::GetAnimByName(const char *AnimName) {
 	if (!AnimName) return NULL;
 
 	for (int i = 0; i < _anims.GetSize(); i++) {
@@ -1283,7 +1283,7 @@ CAdSpriteSet *CAdActor::GetAnimByName(char *AnimName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::MergeAnims(char *AnimsFilename) {
+HRESULT CAdActor::MergeAnims(const char *AnimsFilename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ANIMATION)
 	TOKEN_TABLE_END
@@ -1319,7 +1319,7 @@ HRESULT CAdActor::MergeAnims(char *AnimsFilename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::PlayAnim(char *Filename) {
+HRESULT CAdActor::PlayAnim(const char *Filename) {
 	// if we have an anim with this name, use it
 	CAdSpriteSet *Anim = GetAnimByName(Filename);
 	if (Anim) {

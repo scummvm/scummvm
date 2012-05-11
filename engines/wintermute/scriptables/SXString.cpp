@@ -211,7 +211,7 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "IndexOf") == 0) {
 		Stack->CorrectParams(2);
 
-		char *strToFind = Stack->Pop()->GetString();
+		const char *strToFind = Stack->Pop()->GetString();
 		int index = Stack->Pop()->GetInt();
 
 		WideString str;

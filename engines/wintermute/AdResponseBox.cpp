@@ -183,7 +183,7 @@ HRESULT CAdResponseBox::CreateButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::LoadFile(char *Filename) {
+HRESULT CAdResponseBox::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", Filename);

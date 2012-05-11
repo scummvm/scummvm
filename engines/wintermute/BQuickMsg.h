@@ -38,7 +38,7 @@ public:
 	char *GetText();
 	uint32 _startTime;
 	char *_text;
-	CBQuickMsg(CBGame *inGame, char *Text);
+	CBQuickMsg(CBGame *inGame, const char *Text);
 	virtual ~CBQuickMsg();
 
 };

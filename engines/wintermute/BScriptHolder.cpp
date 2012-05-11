@@ -68,7 +68,7 @@ HRESULT CBScriptHolder::Cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////
-void CBScriptHolder::SetFilename(char *Filename) {
+void CBScriptHolder::SetFilename(const char *Filename) {
 	if (_filename != NULL) delete [] _filename;
 
 	_filename = new char [strlen(Filename) + 1];
@@ -169,7 +169,7 @@ HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DetachScript") == 0) {
 		Stack->CorrectParams(2);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		bool KillThreads = Stack->Pop()->GetBool(false);
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
@@ -189,7 +189,7 @@ HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsScriptRunning") == 0) {
 		Stack->CorrectParams(1);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
@@ -273,7 +273,7 @@ HRESULT CBScriptHolder::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::AddScript(char *Filename) {
+HRESULT CBScriptHolder::AddScript(const char *Filename) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
@@ -319,7 +319,7 @@ HRESULT CBScriptHolder::RemoveScript(CScScript *Script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::CanHandleEvent(char *EventName) {
+bool CBScriptHolder::CanHandleEvent(const char *EventName) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->CanHandleEvent(EventName)) return true;
 	}
@@ -328,7 +328,7 @@ bool CBScriptHolder::CanHandleEvent(char *EventName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::CanHandleMethod(char *MethodName) {
+bool CBScriptHolder::CanHandleMethod(const char *MethodName) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->CanHandleMethod(MethodName)) return true;
 	}

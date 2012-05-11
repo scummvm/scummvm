@@ -119,7 +119,7 @@ void CBEvent::SetName(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBEvent::LoadFile(char *Filename) {
+HRESULT CBEvent::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBEvent::LoadFile failed for file '%s'", Filename);

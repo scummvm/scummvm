@@ -368,7 +368,7 @@ HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *T
 			_surfaceFilename = NULL;
 			Stack->PushBool(true);
 		} else {
-			char *Filename = Val->GetString();
+			const char *Filename = Val->GetString();
 			if (SUCCEEDED(SetSurface(Filename))) {
 				SetDefaultRect();
 				Stack->PushBool(true);
@@ -549,7 +549,7 @@ char *CBSubFrame::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::SetSurface(char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+HRESULT CBSubFrame::SetSurface(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	if (_surface) {
 		Game->_surfaceStorage->RemoveSurface(_surface);
 		_surface = NULL;

@@ -69,15 +69,15 @@ public:
 	virtual HRESULT UpdateSounds();
 	HRESULT Reset();
 	DECLARE_PERSISTENT(CAdObject, CBObject)
-	virtual void Talk(char *Text, char *Sound = NULL, uint32 Duration = 0, char *Stances = NULL, TTextAlign Align = TAL_CENTER);
+	virtual void Talk(const char *Text, const char *Sound = NULL, uint32 Duration = 0, const char *Stances = NULL, TTextAlign Align = TAL_CENTER);
 	virtual int GetHeight();
 	CAdSentence *_sentence;
-	HRESULT SetFont(char *Filename);
+	HRESULT SetFont(const char *Filename);
 	virtual HRESULT Update();
 	virtual HRESULT Display();
 	bool _drawn;
 	bool _active;
-	virtual HRESULT PlayAnim(char *Filename);
+	virtual HRESULT PlayAnim(const char *Filename);
 	CBSprite *_animSprite;
 	CBSprite *_currentSprite;
 	TObjectState _state;

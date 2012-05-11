@@ -68,8 +68,8 @@ public:
 	bool _freezable;
 	HRESULT Resume();
 	HRESULT Pause();
-	bool CanHandleEvent(char *EventName);
-	bool CanHandleMethod(char *MethodName);
+	bool CanHandleEvent(const char *EventName);
+	bool CanHandleMethod(const char *MethodName);
 	HRESULT CreateThread(CScScript *Original, uint32 InitIP, const char *EventName);
 	HRESULT CreateMethodThread(CScScript *Original, const char *MethodName);
 	CScScript *InvokeEventHandler(const char *EventName, bool Unbreakable = false);
@@ -140,7 +140,7 @@ public:
 	uint32 GetDWORD();
 	double GetFloat();
 	void Cleanup();
-	HRESULT Create(char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner);
+	HRESULT Create(const char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner);
 	uint32 _iP;
 	uint32 _bufferSize;
 	byte *_buffer;

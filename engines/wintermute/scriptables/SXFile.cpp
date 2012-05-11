@@ -96,7 +96,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "SetFilename") == 0) {
 		Stack->CorrectParams(1);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		Cleanup();
 		CBUtils::SetString(&_filename, Filename);
 		Stack->PushNULL();
@@ -181,7 +181,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Copy") == 0) {
 		Stack->CorrectParams(2);
-		char *Dest = Stack->Pop()->GetString();
+		const char *Dest = Stack->Pop()->GetString();
 		bool Overwrite = Stack->Pop()->GetBool(true);
 
 		Close();
@@ -290,7 +290,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "WriteLine") == 0 || strcmp(Name, "WriteText") == 0) {
 		Stack->CorrectParams(1);
-		char *Line = Stack->Pop()->GetString();
+		const char *Line = Stack->Pop()->GetString();
 		if (!_textMode || !_writeFile) {
 			Script->RuntimeError("File.%s: File must be open for writing in text mode.", Name);
 			Stack->PushBool(false);
@@ -547,7 +547,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "WriteString") == 0) {
 		Stack->CorrectParams(1);
-		char *Val = Stack->Pop()->GetString();
+		const char *Val = Stack->Pop()->GetString();
 
 		if (_textMode || !_writeFile) {
 			Script->RuntimeError("File.%s: File must be open for writing in binary mode.", Name);

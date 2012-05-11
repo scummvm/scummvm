@@ -135,7 +135,7 @@ HRESULT CBObject::Cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBObject::SetCaption(char *Caption, int Case) {
+void CBObject::SetCaption(const char *Caption, int Case) {
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7) return;
 
@@ -268,7 +268,7 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LoadSound") == 0) {
 		Stack->CorrectParams(1);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		if (SUCCEEDED(PlaySFX(Filename, false, false)))
 			Stack->PushBool(true);
 		else
@@ -283,7 +283,7 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "PlaySound") == 0) {
 		Stack->CorrectParams(3);
 
-		char *Filename;
+		const char *Filename;
 		bool Looping;
 		uint32 LoopStart;
 
@@ -313,8 +313,8 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "PlaySoundEvent") == 0) {
 		Stack->CorrectParams(2);
 
-		char *Filename;
-		char *EventName;
+		const char *Filename;
+		const char *EventName;
 
 		CScValue *val1 = Stack->Pop();
 		CScValue *val2 = Stack->Pop();
@@ -919,7 +919,7 @@ HRESULT CBObject::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::SetCursor(char *Filename) {
+HRESULT CBObject::SetCursor(const char *Filename) {
 	if (!_sharedCursors) {
 		delete _cursor;
 		_cursor = NULL;
@@ -936,7 +936,7 @@ HRESULT CBObject::SetCursor(char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::SetActiveCursor(char *Filename) {
+HRESULT CBObject::SetActiveCursor(const char *Filename) {
 	delete _activeCursor;
 	_activeCursor = new CBSprite(Game);
 	if (!_activeCursor || FAILED(_activeCursor->LoadFile(Filename))) {
@@ -972,7 +972,7 @@ bool CBObject::HandleMouseWheel(int Delta) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::PlaySFX(char *Filename, bool Looping, bool PlayNow, char *EventName, uint32 LoopStart) {
+HRESULT CBObject::PlaySFX(const char *Filename, bool Looping, bool PlayNow, const char *EventName, uint32 LoopStart) {
 	// just play loaded sound
 	if (Filename == NULL && _sFX) {
 		if (Game->_editorMode || _sFXStart) {
@@ -1105,7 +1105,7 @@ bool CBObject::IsReady() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBObject::SetSoundEvent(char *EventName) {
+void CBObject::SetSoundEvent(const char *EventName) {
 	delete[] _soundEvent;
 	_soundEvent = NULL;
 	if (EventName) {

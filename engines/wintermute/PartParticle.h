@@ -68,7 +68,7 @@ public:
 	HRESULT Update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta);
 	HRESULT Display(CPartEmitter *Emitter);
 
-	HRESULT SetSprite(char *Filename);
+	HRESULT SetSprite(const char *Filename);
 
 	HRESULT FadeIn(uint32 CurrentTime, int FadeTime);
 	HRESULT FadeOut(uint32 CurrentTime, int FadeTime);

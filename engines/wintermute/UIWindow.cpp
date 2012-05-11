@@ -200,7 +200,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::LoadFile(char *Filename) {
+HRESULT CUIWindow::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIWindow::LoadFile failed for file '%s'", Filename);
@@ -733,7 +733,7 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		delete _imageInactive;
 		_imageInactive = new CBSprite(Game);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		if (!_imageInactive || FAILED(_imageInactive->LoadFile(Filename))) {
 			delete _imageInactive;
 			_imageInactive = NULL;

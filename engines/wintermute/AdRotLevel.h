@@ -40,7 +40,7 @@ public:
 	virtual ~CAdRotLevel();
 	float _rotation;
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 };
 

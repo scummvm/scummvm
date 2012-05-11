@@ -49,7 +49,7 @@ CAdInventory::~CAdInventory() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::InsertItem(char *Name, char *InsertAfter) {
+HRESULT CAdInventory::InsertItem(const char *Name, const char *InsertAfter) {
 	if (Name == NULL) return E_FAIL;
 
 	CAdItem *item = ((CAdGame *)Game)->GetItemByName(Name);
@@ -74,7 +74,7 @@ HRESULT CAdInventory::InsertItem(char *Name, char *InsertAfter) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::RemoveItem(char *Name) {
+HRESULT CAdInventory::RemoveItem(const char *Name) {
 	if (Name == NULL) return E_FAIL;
 
 	for (int i = 0; i < _takenItems.GetSize(); i++) {

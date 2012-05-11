@@ -47,7 +47,7 @@ public:
 
 	byte *CreateBMPBuffer(uint32 *BufferSize = NULL);
 	HRESULT Resize(int NewWidth, int NewHeight);
-	HRESULT SaveBMPFile(char *Filename);
+	HRESULT SaveBMPFile(const char *Filename);
 	HRESULT CopyFrom(CBImage *OrigImage, int NewWidth = 0, int NewHeight = 0);
 
 	FIBITMAP *GetBitmap() const {

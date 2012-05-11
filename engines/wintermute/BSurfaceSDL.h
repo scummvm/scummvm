@@ -40,7 +40,7 @@ public:
 	CBSurfaceSDL(CBGame *inGame);
 	~CBSurfaceSDL();
 
-	HRESULT Create(char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
+	HRESULT Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
 	HRESULT Create(int Width, int Height);
 
 	HRESULT CreateFromSDLSurface(Graphics::Surface *surface); //TODO: Rename function

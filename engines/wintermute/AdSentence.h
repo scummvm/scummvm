@@ -46,7 +46,7 @@ public:
 	CBSprite *_currentSprite;
 	char *_currentSkelAnim;
 	HRESULT Update(TDirection Dir = DI_DOWN);
-	HRESULT SetupTalkFile(char *SoundFilename);
+	HRESULT SetupTalkFile(const char *SoundFilename);
 	DECLARE_PERSISTENT(CAdSentence, CBBase)
 	HRESULT Finish();
 	void SetSound(CBSound *Sound);
@@ -59,8 +59,8 @@ public:
 	CBFont *_font;
 	char *GetNextStance();
 	char *GetCurrentStance();
-	void SetStances(char *Stances);
-	void SetText(char *Text);
+	void SetStances(const char *Stances);
+	void SetText(const char *Text);
 	int _currentStance;
 	uint32 _startTime;
 	char *_stances;

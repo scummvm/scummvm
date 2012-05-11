@@ -38,7 +38,7 @@ namespace WinterMute {
 class CBStringTable : public CBBase {
 public:
 	const char *ExpandStatic(const char *String, bool ForceExpand = false);
-	HRESULT LoadFile(char *Filename, bool DeleteAll = true);
+	HRESULT LoadFile(const char *Filename, bool DeleteAll = true);
 	void Expand(char **Str, bool ForceExpand = false);
 	HRESULT AddString(const char *Key, const char *Val, bool ReportDuplicities = true);
 	CBStringTable(CBGame *inGame);

@@ -95,7 +95,7 @@ HRESULT CUIText::Display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::LoadFile(char *Filename) {
+HRESULT CUIText::LoadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIText::LoadFile failed for file '%s'", Filename);

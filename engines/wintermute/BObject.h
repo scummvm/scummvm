@@ -51,7 +51,7 @@ public:
 	float _relativeRotate;
 	bool _rotateValid;
 	float _rotate;
-	void SetSoundEvent(char *EventName);
+	void SetSoundEvent(const char *EventName);
 	bool _rotatable;
 	uint32 _alphaColor;
 	float _scale;
@@ -71,7 +71,7 @@ public:
 	HRESULT ResumeSFX();
 	HRESULT PauseSFX();
 	HRESULT StopSFX(bool DeleteSound = true);
-	HRESULT PlaySFX(char *Filename, bool Looping = false, bool PlayNow = true, char *EventName = NULL, uint32 LoopStart = 0);
+	HRESULT PlaySFX(const char *Filename, bool Looping = false, bool PlayNow = true, const char *EventName = NULL, uint32 LoopStart = 0);
 	CBSound *_sFX;
 
 	TSFXType _sFXType;
@@ -84,11 +84,11 @@ public:
 	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
 	virtual bool HandleKeypress(SDL_Event *event);
 	virtual int GetHeight();
-	HRESULT SetCursor(char *Filename);
-	HRESULT SetActiveCursor(char *Filename);
+	HRESULT SetCursor(const char *Filename);
+	HRESULT SetActiveCursor(const char *Filename);
 	HRESULT Cleanup();
 	char *GetCaption(int Case = 1);
-	void SetCaption(char *Caption, int Case = 1);
+	void SetCaption(const char *Caption, int Case = 1);
 	bool _editorSelected;
 	bool _editorAlwaysRegister;
 	bool _editorOnly;

@@ -45,13 +45,13 @@ public:
 	byte _savedVerBuild;
 	byte _savedExtMajor;
 	byte _savedExtMinor;
-	HRESULT SaveFile(char *Filename);
+	HRESULT SaveFile(const char *Filename);
 	uint32 GetDWORD();
 	void PutDWORD(uint32 Val);
 	char *GetString();
 	void PutString(const char *Val);
 	void Cleanup();
-	HRESULT InitLoad(char *Filename);
+	HRESULT InitLoad(const char *Filename);
 	HRESULT InitSave(char *Desc);
 	HRESULT GetBytes(byte  *Buffer, uint32 Size);
 	HRESULT PutBytes(byte  *Buffer, uint32 Size);

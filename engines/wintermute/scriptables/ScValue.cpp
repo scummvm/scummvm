@@ -156,7 +156,7 @@ CScValue::~CScValue() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CScValue::GetProp(char *Name) {
+CScValue *CScValue::GetProp(const char *Name) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->GetProp(Name);
 
 	if (_type == VAL_STRING && strcmp(Name, "Length") == 0) {
@@ -203,7 +203,7 @@ HRESULT CScValue::DeleteProp(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::SetProp(char *Name, CScValue *Val, bool CopyWhole, bool SetAsConst) {
+HRESULT CScValue::SetProp(const char *Name, CScValue *Val, bool CopyWhole, bool SetAsConst) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->SetProp(Name, Val);
 
 	HRESULT ret = E_FAIL;
@@ -410,7 +410,10 @@ void CScValue::SetString(const char *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetStringVal(const char *Val) {
-	if (_valString) delete [] _valString;
+	if (_valString) {
+		delete [] _valString;
+		_valString = NULL;
+	}
 
 	if (Val == NULL) {
 		_valString = NULL;
@@ -575,7 +578,7 @@ void *CScValue::GetMemBuffer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CScValue::GetString() {
+const char *CScValue::GetString() {
 	if (_type == VAL_VARIABLE_REF) return _valRef->GetString();
 
 	switch (_type) {

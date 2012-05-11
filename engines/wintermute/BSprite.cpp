@@ -121,7 +121,7 @@ HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zoom
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::LoadFile(char *Filename, int LifeTime, TSpriteCacheType CacheType) {
+HRESULT CBSprite::LoadFile(const char *Filename, int LifeTime, TSpriteCacheType CacheType) {
 	CBFile *File = Game->_fileManager->OpenFile(Filename);
 	if (!File) {
 		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", Filename);
@@ -562,7 +562,7 @@ HRESULT CBSprite::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "AddFrame") == 0) {
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
-		char *Filename = NULL;
+		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
 		CBFrame *Frame = new CBFrame(Game);
@@ -588,7 +588,7 @@ HRESULT CBSprite::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		if (Index < 0) Index = 0;
 
 		CScValue *Val = Stack->Pop();
-		char *Filename = NULL;
+		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
 		CBFrame *Frame = new CBFrame(Game);

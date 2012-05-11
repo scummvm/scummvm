@@ -57,7 +57,7 @@ class CScEngine : public CBBase {
 public:
 	class CScCachedScript {
 	public:
-		CScCachedScript(char *Filename, byte *Buffer, uint32 Size) {
+		CScCachedScript(const char *Filename, byte *Buffer, uint32 Size) {
 			_timestamp = CBPlatform::GetTime();
 			_buffer = new byte[Size];
 			if (_buffer) memcpy(_buffer, Buffer, Size);
@@ -116,7 +116,7 @@ public:
 	PARSE_ELEMENT_CALLBACK _parseElementCallback;
 	void *_parseElementCallbackData;
 
-	HRESULT SetFileToCompile(char *Filename);
+	HRESULT SetFileToCompile(const char *Filename);
 	char *_fileToCompile;
 	CScScript *_currentScript;
 	HRESULT ResumeAll();
@@ -125,13 +125,13 @@ public:
 	HRESULT ResetObject(CBObject *Object);
 	HRESULT ResetScript(CScScript *Script);
 	HRESULT EmptyScriptCache();
-	byte *GetCompiledScript(char *Filename, uint32 *OutSize, bool IgnoreCache = false);
+	byte *GetCompiledScript(const char *Filename, uint32 *OutSize, bool IgnoreCache = false);
 	DECLARE_PERSISTENT(CScEngine, CBBase)
 	HRESULT Cleanup();
 	int GetNumScripts(int *Running = NULL, int *Waiting = NULL, int *Persistent = NULL);
 	HRESULT Tick();
 	CScValue *_globals;
-	CScScript *RunScript(char *Filename, CBScriptHolder *Owner = NULL);
+	CScScript *RunScript(const char *Filename, CBScriptHolder *Owner = NULL);
 	bool _compilerAvailable;
 	HINSTANCE _compilerDLL;
 	CScEngine(CBGame *inGame);

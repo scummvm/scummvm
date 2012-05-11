@@ -91,7 +91,7 @@ CAdSentence::~CAdSentence() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::SetText(char *Text) {
+void CAdSentence::SetText(const char *Text) {
 	if (_text) delete [] _text;
 	_text = new char[strlen(Text) + 1];
 	if (_text) strcpy(_text, Text);
@@ -99,7 +99,7 @@ void CAdSentence::SetText(char *Text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::SetStances(char *Stances) {
+void CAdSentence::SetStances(const char *Stances) {
 	if (_stances) delete [] _stances;
 	if (Stances) {
 		_stances = new char[strlen(Stances) + 1];
@@ -238,7 +238,7 @@ HRESULT CAdSentence::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::SetupTalkFile(char *SoundFilename) {
+HRESULT CAdSentence::SetupTalkFile(const char *SoundFilename) {
 	delete _talkDef;
 	_talkDef = NULL;
 	_currentSprite = NULL;

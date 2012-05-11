@@ -58,7 +58,7 @@ public:
 	CBFrame(CBGame *inGame);
 	virtual ~CBFrame();
 
-	CBArray<char *, char *> _applyEvent;
+	CBArray<const char *, const char *> _applyEvent;
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(char *Name);

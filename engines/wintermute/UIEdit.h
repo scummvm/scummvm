@@ -48,7 +48,7 @@ public:
 	int _scrollOffset;
 	int _frameWidth;
 	uint32 _cursorBlinkRate;
-	void SetCursorChar(char *Char);
+	void SetCursorChar(const char *Char);
 	char *_cursorChar;
 	int _selEnd;
 	int _selStart;
@@ -56,7 +56,7 @@ public:
 	CUIEdit(CBGame *inGame);
 	virtual ~CUIEdit();
 
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 

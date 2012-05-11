@@ -479,7 +479,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "AddSubframe") == 0) {
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
-		char *Filename = NULL;
+		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
 		CBSubFrame *Sub = new CBSubFrame(Game);
@@ -502,7 +502,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		if (Index < 0) Index = 0;
 
 		CScValue *Val = Stack->Pop();
-		char *Filename = NULL;
+		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
 		CBSubFrame *Sub = new CBSubFrame(Game);
@@ -535,7 +535,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddEvent") == 0) {
 		Stack->CorrectParams(1);
-		char *Event = Stack->Pop()->GetString();
+		const char *Event = Stack->Pop()->GetString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
 				Stack->PushNULL();
@@ -552,7 +552,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DeleteEvent") == 0) {
 		Stack->CorrectParams(1);
-		char *Event = Stack->Pop()->GetString();
+		const char *Event = Stack->Pop()->GetString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
 				delete [] _applyEvent[i];

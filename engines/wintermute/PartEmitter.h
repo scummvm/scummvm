@@ -104,13 +104,13 @@ public:
 	HRESULT Display(CBRegion *Region = NULL);
 
 	HRESULT SortParticlesByZ();
-	HRESULT AddSprite(char *Filename);
-	HRESULT RemoveSprite(char *Filename);
+	HRESULT AddSprite(const char *Filename);
+	HRESULT RemoveSprite(const char *Filename);
 	HRESULT SetBorder(int X, int Y, int Width, int Height);
 	HRESULT SetBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom);
 
-	HRESULT AddForce(char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
-	HRESULT RemoveForce(char *Name);
+	HRESULT AddForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
+	HRESULT RemoveForce(const char *Name);
 
 	CBArray<CPartForce *, CPartForce *> _forces;
 
@@ -122,7 +122,7 @@ public:
 
 
 private:
-	CPartForce *AddForceByName(char *Name);
+	CPartForce *AddForceByName(const char *Name);
 	int static CompareZ(const void *Obj1, const void *Obj2);
 	HRESULT InitParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta);
 	HRESULT UpdateInternal(uint32 CurrentTime, uint32 TimerDelta);

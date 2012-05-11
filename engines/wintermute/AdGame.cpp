@@ -240,7 +240,7 @@ HRESULT CAdGame::RemoveObject(CAdObject *Object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ChangeScene(char *Filename, bool FadeIn) {
+HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 	if (_scene == NULL) {
 		_scene = new CAdScene(Game);
 		RegisterObject(_scene);
@@ -319,7 +319,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "ChangeScene") == 0) {
 		Stack->CorrectParams(3);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		CScValue *valFadeOut = Stack->Pop();
 		CScValue *valFadeIn = Stack->Pop();
 
@@ -461,7 +461,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "AddResponse") == 0 || strcmp(Name, "AddResponseOnce") == 0 || strcmp(Name, "AddResponseOnceGame") == 0) {
 		Stack->CorrectParams(6);
 		int id = Stack->Pop()->GetInt();
-		char *text = Stack->Pop()->GetString();
+		const char *text = Stack->Pop()->GetString();
 		CScValue *val1 = Stack->Pop();
 		CScValue *val2 = Stack->Pop();
 		CScValue *val3 = Stack->Pop();
@@ -571,17 +571,13 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "StartDlgBranch") == 0) {
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
-		char *BranchName = NULL;
-		bool DeleteName = false;
+		Common::String BranchName;
 		if (Val->IsNULL()) {
-			BranchName = new char[20];
-			sprintf(BranchName, "line%d", Script->_currentLine);
-			DeleteName = true;
+			BranchName.format("line%d", Script->_currentLine);
 		} else BranchName = Val->GetString();
 
-		StartDlgBranch(BranchName, Script->_filename == NULL ? "" : Script->_filename, Script->_threadEvent == NULL ? "" : Script->_threadEvent);
+		StartDlgBranch(BranchName.c_str(), Script->_filename == NULL ? "" : Script->_filename, Script->_threadEvent == NULL ? "" : Script->_threadEvent);
 		Stack->PushNULL();
-		if (DeleteName) delete[] BranchName;
 
 		return S_OK;
 	}
@@ -592,7 +588,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "EndDlgBranch") == 0) {
 		Stack->CorrectParams(1);
 
-		char *BranchName = NULL;
+		const char *BranchName = NULL;
 		CScValue *Val = Stack->Pop();
 		if (!Val->IsNULL()) BranchName = Val->GetString();
 		EndDlgBranch(BranchName, Script->_filename == NULL ? "" : Script->_filename, Script->_threadEvent == NULL ? "" : Script->_threadEvent);
@@ -701,7 +697,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LoadResponseBox") == 0) {
 		Stack->CorrectParams(1);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		Game->UnregisterObject(_responseBox);
 		_responseBox = new CAdResponseBox(Game);
@@ -720,7 +716,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LoadInventoryBox") == 0) {
 		Stack->CorrectParams(1);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 
 		Game->UnregisterObject(_inventoryBox);
 		_inventoryBox = new CAdInventoryBox(Game);
@@ -740,7 +736,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "LoadItems") == 0) {
 		Stack->CorrectParams(2);
-		char *Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		bool Merge = Stack->Pop()->GetBool(false);
 
 		HRESULT Ret = LoadItemsFile(Filename, Merge);
@@ -754,7 +750,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddSpeechDir") == 0) {
 		Stack->CorrectParams(1);
-		char *Dir = Stack->Pop()->GetString();
+		const char *Dir = Stack->Pop()->GetString();
 		Stack->PushBool(SUCCEEDED(AddSpeechDir(Dir)));
 
 		return S_OK;
@@ -765,7 +761,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RemoveSpeechDir") == 0) {
 		Stack->CorrectParams(1);
-		char *Dir = Stack->Pop()->GetString();
+		const char *Dir = Stack->Pop()->GetString();
 		Stack->PushBool(SUCCEEDED(RemoveSpeechDir(Dir)));
 
 		return S_OK;
@@ -1314,7 +1310,7 @@ HRESULT CAdGame::Persist(CBPersistMgr *PersistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::LoadGame(char *Filename) {
+HRESULT CAdGame::LoadGame(const char *Filename) {
 	HRESULT ret = CBGame::LoadGame(Filename);
 	if (SUCCEEDED(ret)) CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadRegion, "CAdRegion", NULL);
 	return ret;
@@ -1356,7 +1352,7 @@ void CAdGame::SetPrevSceneFilename(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ScheduleChangeScene(char *Filename, bool FadeIn) {
+HRESULT CAdGame::ScheduleChangeScene(const char *Filename, bool FadeIn) {
 	delete[] _scheduledScene;
 	_scheduledScene = NULL;
 
@@ -1384,7 +1380,7 @@ HRESULT CAdGame::GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byt
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::LoadItemsFile(char *Filename, bool Merge) {
+HRESULT CAdGame::LoadItemsFile(const char *Filename, bool Merge) {
 	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdGame::LoadItemsFile failed for file '%s'", Filename);
@@ -1776,7 +1772,7 @@ bool CAdGame::IsItemTaken(char *ItemName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CAdItem *CAdGame::GetItemByName(char *Name) {
+CAdItem *CAdGame::GetItemByName(const char *Name) {
 	for (int i = 0; i < _items.GetSize(); i++) {
 		if (scumm_stricmp(_items[i]->_name, Name) == 0) return _items[i];
 	}
@@ -1875,7 +1871,7 @@ HRESULT CAdGame::AddSpeechDir(const char *Dir) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::RemoveSpeechDir(char *Dir) {
+HRESULT CAdGame::RemoveSpeechDir(const char *Dir) {
 	if (!Dir || Dir[0] == '\0') return E_FAIL;
 
 	char *Temp = new char[strlen(Dir) + 2];

@@ -417,7 +417,7 @@ void CBRenderSDL::PointToScreen(POINT *point) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::DumpData(char *Filename) {
+void CBRenderSDL::DumpData(const char *Filename) {
 	FILE *f = fopen(Filename, "wt");
 	if (!f) return;
 

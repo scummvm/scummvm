@@ -50,8 +50,8 @@ public:
 
 	// high level scripting interface
 	virtual bool CanHandleMethod(char *EventMethod);
-	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
-	virtual CScValue *ScGetProperty(char *Name);
+	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
+	virtual CScValue *ScGetProperty(const char *Name);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	virtual char *ScToString();
 	virtual void *ScToMemBuffer();

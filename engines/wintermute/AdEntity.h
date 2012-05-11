@@ -35,11 +35,11 @@ namespace WinterMute {
 
 class CAdEntity : public CAdTalkHolder {
 public:
-	HRESULT SetSprite(char *Filename);
+	HRESULT SetSprite(const char *Filename);
 	int _walkToX;
 	int _walkToY;
 	TDirection _walkToDir;
-	void SetItem(char *ItemName);
+	void SetItem(const char *ItemName);
 	char *_item;
 	DECLARE_PERSISTENT(CAdEntity, CAdTalkHolder)
 	void UpdatePosition();
@@ -50,7 +50,7 @@ public:
 	virtual HRESULT Display();
 	CAdEntity(CBGame *inGame);
 	virtual ~CAdEntity();
-	HRESULT LoadFile(char *Filename);
+	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	TEntityType _subtype;
 

@@ -101,7 +101,7 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ValidateProducts") == 0) {
 		stack->CorrectParams(1);
-		char *prodIdList = stack->Pop()->GetString();
+		const char *prodIdList = stack->Pop()->GetString();
 		_lastProductRequestOwner = script->_owner;
 		ValidateProducts(prodIdList);
 		stack->PushNULL();
@@ -162,7 +162,7 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Purchase") == 0) {
 		stack->CorrectParams(1);
-		char *prodId = stack->Pop()->GetString();
+		const char *prodId = stack->Pop()->GetString();
 		stack->PushBool(Purchase(script, prodId));
 
 		return S_OK;
@@ -172,7 +172,7 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FinishTransaction") == 0) {
 		stack->CorrectParams(1);
-		char *transId = stack->Pop()->GetString();
+		const char *transId = stack->Pop()->GetString();
 		stack->PushBool(FinishTransaction(script, transId));
 
 		return S_OK;
@@ -193,7 +193,7 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnlockProduct") == 0) {
 		stack->CorrectParams(1);
-		char *prodId = stack->Pop()->GetString();
+		const char *prodId = stack->Pop()->GetString();
 
 		Game->_registry->WriteBool("Purchases", prodId, true);
 		Game->_registry->SaveValues();
@@ -208,7 +208,7 @@ HRESULT CSXStore::ScCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsProductUnlocked") == 0) {
 		stack->CorrectParams(1);
-		char *prodId = stack->Pop()->GetString();
+		const char *prodId = stack->Pop()->GetString();
 
 		stack->PushBool(Game->_registry->ReadBool("Purchases", prodId, false));
 

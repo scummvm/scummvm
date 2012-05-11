@@ -65,7 +65,7 @@ CBSound::~CBSound() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::SetSound(char *Filename, TSoundType Type, bool Streamed) {
+HRESULT CBSound::SetSound(const char *Filename, TSoundType Type, bool Streamed) {
 	if (_sound) {
 		Game->_soundMgr->removeSound(_sound);
 		_sound = NULL;

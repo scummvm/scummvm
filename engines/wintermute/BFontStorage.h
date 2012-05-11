@@ -46,7 +46,7 @@ public:
 	DECLARE_PERSISTENT(CBFontStorage, CBBase)
 	HRESULT Cleanup(bool Warn = false);
 	HRESULT RemoveFont(CBFont *Font);
-	CBFont *AddFont(char *Filename);
+	CBFont *AddFont(const char *Filename);
 	CBFontStorage(CBGame *inGame);
 	virtual ~CBFontStorage();
 	CBArray<CBFont *, CBFont *> _fonts;
