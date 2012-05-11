@@ -52,7 +52,6 @@
 #include "common/coroutines.h"
 #include "tony/gfxcore.h"
 #include "tony/resid.h"
-#include "tony/sched.h"
 
 namespace Tony {
 

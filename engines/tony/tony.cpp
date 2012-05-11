@@ -162,7 +162,85 @@ OSystem::MutexRef csMusic;
 
 
 void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync) {
-	warning("TonyEngine::PlayMusic");
+	warning("TODO: TonyEngine::PlayMusic");
+	g_system->lockMutex(csMusic);
+
+	if (nChannel < 4)
+		if (flipflop)
+			nChannel = nChannel + 1;
+	
+	switch (nFX) {
+	case 0:
+	case 1:
+	case 2:
+		m_stream[nChannel]->Stop();
+		m_stream[nChannel]->UnloadFile();
+		break;
+
+	case 22:
+		break;
+	}
+	
+#ifdef REFACTOR_ME	
+	// Mette il path giusto
+	if (nChannel < 4)
+		GetDataDirectory(DD_MUSIC, path_buffer);
+	else
+		GetDataDirectory(DD_LAYER, path_buffer);
+	_splitpath(path_buffer,drive,dir,NULL,NULL);
+	_splitpath(fn,NULL,NULL,fname,ext);
+	_makepath(path_buffer,drive,dir,fname,ext);
+
+	_makepath(path_buffer,drive,dir,fname,ext);
+
+	if (nFX==22) // Sync a tempo
+	{
+		curChannel=nChannel;		
+		strcpy(nextMusic, path_buffer);
+		nextLoop=bLoop;
+		nextSync=nSync;
+		if (flipflop)
+			nextChannel=nChannel-1;
+		else
+		  nextChannel=nChannel+1;
+		DWORD id;
+		HANDLE hThread=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)DoNextMusic,m_stream,0,&id);
+		SetThreadPriority(hThread,THREAD_PRIORITY_HIGHEST);
+	}
+	else if (nFX==44) // Cambia canale e lascia finire il primo
+	{
+		if (flipflop)
+			nextChannel=nChannel-1;
+		else
+		  nextChannel=nChannel+1;
+
+		m_stream[nextChannel]->Stop();
+		m_stream[nextChannel]->UnloadFile();
+#ifndef DEMO
+		if (!m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
+			theGame.Abort();
+#else
+		m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
+#endif
+		m_stream[nextChannel]->SetLoop(bLoop);
+		m_stream[nextChannel]->Play();
+
+		flipflop = 1-flipflop;
+	}
+	else
+	{
+#ifndef DEMO
+		if (!m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
+			theGame.Abort();
+#else
+		m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
+#endif
+		m_stream[nChannel]->SetLoop(bLoop);
+		m_stream[nChannel]->Play();
+	}
+#endif
+
+	g_system->unlockMutex(csMusic);
 }
 
 void TonyEngine::PlaySFX(int nChannel, int nFX) {
@@ -183,19 +261,40 @@ void TonyEngine::PlaySFX(int nChannel, int nFX) {
 }
 
 void TonyEngine::StopMusic(int nChannel) {
-	warning("TODO TonyEngine::StopMusic");
+	g_system->lockMutex(csMusic);
+
+	if (nChannel < 4)
+		m_stream[nChannel+flipflop]->Stop();
+	else
+		m_stream[nChannel]->Stop();
+
+	g_system->unlockMutex(csMusic);
 }
 
 void TonyEngine::StopSFX(int nChannel) {
-	warning("TODO TonyEngine::StopSFX");
+	m_sfx[nChannel]->Stop();
 }
 
 void TonyEngine::PlayUtilSFX(int nChannel, int nFX) {
-	warning("TODO TonyEngine::PlayUtilSFX");
+	if (m_utilSfx[nChannel]==NULL)
+		return;
+
+	switch (nFX) {
+	case 0:
+		m_utilSfx[nChannel]->SetLoop(false);
+		break;
+
+	case 1:
+		m_utilSfx[nChannel]->SetLoop(true);
+		break;
+	}
+
+	m_utilSfx[nChannel]->SetVolume(52);
+	m_utilSfx[nChannel]->Play();
 }
 
 void TonyEngine::StopUtilSFX(int nChannel) {
-	warning("TODO TonyEngine::StopUtilSFX");
+	m_utilSfx[nChannel]->Stop();
 }
 
 void TonyEngine::PreloadSFX(int nChannel, const char *fn) {

@@ -51,7 +51,6 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "tony/sched.h"
 #include "tony/tony.h"
 #include "tony/mpal/lzo.h"	
 #include "tony/mpal/mpal.h"

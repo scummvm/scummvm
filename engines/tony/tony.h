@@ -36,7 +36,6 @@
 #include "tony/mpal/memory.h"
 #include "tony/gfxengine.h"
 #include "tony/loc.h"
-#include "tony/sched.h"
 #include "tony/utils.h"
 #include "tony/window.h"
 

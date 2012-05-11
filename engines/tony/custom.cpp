@@ -56,7 +56,6 @@
 #include "tony/font.h"
 #include "tony/game.h"
 #include "tony/gfxcore.h"
-#include "tony/sched.h"
 #include "tony/tony.h"
 #include "tony/tonychar.h"
 #include "tony/utils.h"
