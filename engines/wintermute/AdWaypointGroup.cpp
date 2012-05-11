@@ -33,6 +33,8 @@
 #include "BGame.h"
 #include "BRegion.h"
 #include "BFileManager.h"
+#include <limits.h>
+
 namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CAdWaypointGroup, false)

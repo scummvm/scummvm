@@ -177,10 +177,10 @@ HRESULT CBPersistMgr::InitSave(const char *Desc) {
 
 		PutDWORD(DataOffset);
 		PutString(Desc);
-
-		time_t Timestamp;
+// TODO: Add usefull timestamps, we can't use ctime...
+/*		time_t Timestamp;
 		time(&Timestamp);
-		PutDWORD((uint32)Timestamp);
+		PutDWORD((uint32)Timestamp);*/
 	}
 	return res;
 }

@@ -30,7 +30,7 @@
 #define WINTERMUTE_BFILEMANAGER_H
 
 
-#include <map>
+//#include <map>
 #include "coll_templ.h"
 #include "BFileEntry.h"
 #include "common/archive.h"

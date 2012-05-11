@@ -579,26 +579,26 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 	bool CurFirst;
 	// modify scroll offset
 	if (_selStart >= _selEnd) {
-		while (font->GetTextWidth((byte *)_text + _scrollOffset, std::max(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
+		while (font->GetTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= strlen(_text)) break;
 		}
 
-		_scrollOffset = std::min(_scrollOffset, _selEnd);
+		_scrollOffset = MIN(_scrollOffset, _selEnd);
 
 		s1 = _selEnd;
 		s2 = _selStart;
 		CurFirst = true;
 	} else {
-		while (font->GetTextWidth((byte *)_text + _scrollOffset, std::max(0, _selStart - _scrollOffset)) +
-		        sfont->GetTextWidth((byte *)(_text + std::max(_scrollOffset, _selStart)), _selEnd - std::max(_scrollOffset, _selStart))
+		while (font->GetTextWidth((byte *)_text + _scrollOffset, MAX(0, _selStart - _scrollOffset)) +
+		        sfont->GetTextWidth((byte *)(_text + MAX(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
 
 		        > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= strlen(_text)) break;
 		}
 
-		_scrollOffset = std::min(_scrollOffset, _selEnd);
+		_scrollOffset = MIN(_scrollOffset, _selEnd);
 
 		s1 = _selStart;
 		s2 = _selEnd;
@@ -616,7 +616,7 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 		yyy = _posY + _frameWidth + OffsetY;
 
 		width = _posX + _width + OffsetX - _frameWidth;
-		height = std::max(font->GetLetterHeight(), sfont->GetLetterHeight());
+		height = MAX(font->GetLetterHeight(), sfont->GetLetterHeight());
 
 		if (Game->_textRTL) xxx += AlignOffset;
 
@@ -645,7 +645,7 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 		}
 
 		// selected
-		int s3 = std::max(s1, _scrollOffset);
+		int s3 = MAX(s1, _scrollOffset);
 
 		if (s2 - s3 > 0) {
 			if (Count) sfont->DrawText((byte *)_text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
@@ -710,7 +710,7 @@ bool CUIEdit::HandleKeypress(Common::Event *event) {
 				if (Game->_textRTL) DeleteChars(_selStart, _selStart + 1);
 				else DeleteChars(_selStart - 1, _selStart);
 			} else DeleteChars(_selStart, _selEnd);
-			if (_selEnd >= _selStart) _selEnd -= std::max(1, _selEnd - _selStart);
+			if (_selEnd >= _selStart) _selEnd -= MAX(1, _selEnd - _selStart);
 			_selStart = _selEnd;
 
 			Handled = true;
@@ -798,7 +798,7 @@ int CUIEdit::DeleteChars(int Start, int End) {
 	char *str = new char[strlen(_text) - (End - Start) + 1];
 	if (str) {
 		if (Start > 0) memcpy(str, _text, Start);
-		memcpy(str + std::max(0, Start), _text + End, strlen(_text) - End + 1);
+		memcpy(str + MAX(0, Start), _text + End, strlen(_text) - End + 1);
 
 		delete[] _text;
 		_text = str;

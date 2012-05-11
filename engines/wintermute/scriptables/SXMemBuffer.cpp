@@ -26,6 +26,10 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
+#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
 #include "engines/wintermute/BScriptable.h"
 #include "engines/wintermute/scriptables/ScStack.h"
 #include "engines/wintermute/scriptables/ScScript.h"

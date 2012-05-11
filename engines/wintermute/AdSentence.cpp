@@ -183,9 +183,9 @@ HRESULT CAdSentence::Display() {
 		}
 
 
-		x = std::max(x, 0);
-		x = std::min(x, Game->_renderer->_width - _width);
-		y = std::max(y, 0);
+		x = MAX(x, 0);
+		x = MIN(x, Game->_renderer->_width - _width);
+		y = MAX(y, 0);
 
 		_font->DrawText((byte *)_text, x, y, _width, _align);
 	}

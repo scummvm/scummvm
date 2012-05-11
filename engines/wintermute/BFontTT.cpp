@@ -44,6 +44,7 @@
 #include "PlatformSDL.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
+#include <limits.h>
 
 namespace WinterMute {
 
@@ -281,7 +282,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 			GlyphInfo *glyph = _glyphCache->GetGlyph(ch);
 			if (!glyph) continue;
 
-			textOffset = std::max(textOffset, glyph->GetBearingY());
+			textOffset = MAX(textOffset, glyph->GetBearingY());
 		}
 
 
@@ -811,7 +812,7 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 	TextLineList::iterator it;
 	for (it = lines.begin(); it != lines.end(); ++it) {
 		TextLine *line = (*it);
-		textWidth = std::max(textWidth, line->GetWidth());
+		textWidth = MAX(textWidth, line->GetWidth());
 		SAFE_DELETE(line);
 	}
 }

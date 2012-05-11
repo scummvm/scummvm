@@ -278,8 +278,8 @@ HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 
 		case TOKEN_EDITOR_BG_ALPHA:
 			parser.ScanStr((char *)params, "%d", &_editorBgAlpha);
-			_editorBgAlpha = std::min(_editorBgAlpha, 255);
-			_editorBgAlpha = std::max(_editorBgAlpha, 0);
+			_editorBgAlpha = MIN(_editorBgAlpha, 255);
+			_editorBgAlpha = MAX(_editorBgAlpha, 0);
 			break;
 
 		case TOKEN_FRAME: {

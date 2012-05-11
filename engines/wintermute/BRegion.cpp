@@ -36,6 +36,7 @@
 #include "engines/wintermute/scriptables/ScValue.h"
 #include "engines/wintermute/BFileManager.h"
 #include "engines/wintermute/PlatformSDL.h"
+#include <limits.h>
 
 namespace WinterMute {
 
@@ -443,9 +444,9 @@ bool CBRegion::PtInPolygon(int X, int Y) {
 		p2.x = (double)_points[i % _points.GetSize()]->x;
 		p2.y = (double)_points[i % _points.GetSize()]->y;
 
-		if (p.y > std::min(p1.y, p2.y)) {
-			if (p.y <= std::max(p1.y, p2.y)) {
-				if (p.x <= std::max(p1.x, p2.x)) {
+		if (p.y > MIN(p1.y, p2.y)) {
+			if (p.y <= MAX(p1.y, p2.y)) {
+				if (p.x <= MAX(p1.x, p2.x)) {
 					if (p1.y != p2.y) {
 						xinters = (p.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
 						if (p1.x == p2.x || p.x <= xinters)
@@ -471,11 +472,11 @@ HRESULT CBRegion::GetBoundingRect(RECT *Rect) {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
 
 		for (int i = 0; i < _points.GetSize(); i++) {
-			MinX = std::min(MinX, _points[i]->x);
-			MinY = std::min(MinY, _points[i]->y);
+			MinX = MIN(MinX, _points[i]->x);
+			MinY = MIN(MinY, _points[i]->y);
 
-			MaxX = std::max(MaxX, _points[i]->x);
-			MaxY = std::max(MaxY, _points[i]->y);
+			MaxX = MAX(MaxX, _points[i]->x);
+			MaxY = MAX(MaxY, _points[i]->y);
 		}
 		CBPlatform::SetRect(Rect, MinX, MinY, MaxX, MaxY);
 	}

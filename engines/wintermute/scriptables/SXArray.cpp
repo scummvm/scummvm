@@ -209,7 +209,7 @@ HRESULT CSXArray::Persist(CBPersistMgr *PersistMgr) {
 bool CSXArray::ValidNumber(const char *OrigStr, char *OutStr) {
 	bool IsNumber = true;
 	for (int i = 0; i < strlen(OrigStr); i++) {
-		if (!isdigit(OrigStr[i])) {
+		if (!(OrigStr[i] >= '0' && OrigStr[i] <= '9')) {
 			IsNumber = false;
 			break;
 		}

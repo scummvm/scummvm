@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
 #include "dcgf.h"
 #include "AdTalkHolder.h"
 #include "BDynBuffer.h"

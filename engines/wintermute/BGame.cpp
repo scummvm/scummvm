@@ -1336,10 +1336,10 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		Stack->CorrectParams(2);
 		int x = Stack->Pop()->GetInt();
 		int y = Stack->Pop()->GetInt();
-		x = std::max(x, 0);
-		x = std::min(x, _renderer->_width);
-		y = std::max(y, 0);
-		y = std::min(y, _renderer->_height);
+		x = MAX(x, 0);
+		x = MIN(x, _renderer->_width);
+		y = MAX(y, 0);
+		y = MIN(y, _renderer->_height);
 		POINT p;
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
@@ -2623,7 +2623,7 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SoundBufferSize") == 0) {
 		_soundBufferSizeSec = Value->GetInt();
-		_soundBufferSizeSec = std::max(3, _soundBufferSizeSec);
+		_soundBufferSizeSec = MAX(3, _soundBufferSizeSec);
 		return S_OK;
 	}
 
@@ -4373,11 +4373,11 @@ void CBGame::GetMousePos(POINT *Pos) {
 
 	if (_mouseLockRect.left != 0 && _mouseLockRect.right != 0 && _mouseLockRect.top != 0 && _mouseLockRect.bottom != 0) {
 		if (!CBPlatform::PtInRect(&_mouseLockRect, *Pos)) {
-			Pos->x = std::max(_mouseLockRect.left, Pos->x);
-			Pos->y = std::max(_mouseLockRect.top, Pos->y);
+			Pos->x = MAX(_mouseLockRect.left, Pos->x);
+			Pos->y = MAX(_mouseLockRect.top, Pos->y);
 
-			Pos->x = std::min(_mouseLockRect.right, Pos->x);
-			Pos->y = std::min(_mouseLockRect.bottom, Pos->y);
+			Pos->x = MIN(_mouseLockRect.right, Pos->x);
+			Pos->y = MIN(_mouseLockRect.bottom, Pos->y);
 
 			POINT NewPos = *Pos;
 

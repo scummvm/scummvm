@@ -163,7 +163,7 @@ HRESULT CAdResponseBox::CreateButtons() {
 
 			// make the responses touchable
 			if (Game->_touchInterface)
-				btn->_height = std::max(btn->_height, 50);
+				btn->_height = MAX(btn->_height, 50);
 
 			//btn->SetListener(this, btn, _responses[i]->_iD);
 			btn->SetListener(this, btn, i);

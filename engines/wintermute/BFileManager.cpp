@@ -27,7 +27,7 @@
  */
 
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "dcgf.h"
 #include "BFileManager.h"
 #include "StringUtil.h"
@@ -50,18 +50,18 @@
 #include "common/system.h"
 #include "common/fs.h"
 #include "common/file.h"
-
+/*
 #ifdef __WIN32__
 #   include <direct.h>
 #else
 #   include <unistd.h>
 #endif
-
+*/
 /*#ifdef __APPLE__
 #   include <CoreFoundation/CoreFoundation.h>
 #endif*/
 
-
+/*
 #if _DEBUG
 #pragma comment(lib, "zlib_d.lib")
 #else
@@ -73,7 +73,7 @@ extern "C"
 {
 #include "zlib.h"
 }
-
+*/
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
@@ -731,23 +731,23 @@ Common::File *CBFileManager::OpenSingleFile(const char *Name) {
 bool CBFileManager::GetFullPath(const char *Filename, char *Fullname) {
 	RestoreCurrentDir();
 
-	FILE *f = NULL;
+	Common::File f;
 	bool found = false;
 
 	for (int i = 0; i < _singlePaths.GetSize(); i++) {
 		sprintf(Fullname, "%s%s", _singlePaths[i], Filename);
-		f = fopen(Fullname, "rb");
-		if (f) {
-			fclose(f);
+		f.open(Fullname);
+		if (f.isOpen()) {
+			f.close();
 			found = true;
 			break;
 		}
 	}
 
 	if (!found) {
-		f = fopen(Filename, "rb");
-		if (f) {
-			fclose(f);
+		f.open(Filename);
+		if (f.isOpen()) {
+			f.close();
 			found = true;
 			strcpy(Fullname, Filename);
 		}
