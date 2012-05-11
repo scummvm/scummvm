@@ -342,7 +342,7 @@ HRESULT CBSubFrame::Persist(CBPersistMgr *PersistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetImage
@@ -383,7 +383,7 @@ HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *T
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBSubFrame::ScGetProperty(char *Name) {
+CScValue *CBSubFrame::ScGetProperty(const char *Name) {
 	if (!_scValue) _scValue = new CScValue(Game);
 	_scValue->SetNULL();
 
@@ -473,7 +473,7 @@ CScValue *CBSubFrame::ScGetProperty(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::ScSetProperty(char *Name, CScValue *Value) {
+HRESULT CBSubFrame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////

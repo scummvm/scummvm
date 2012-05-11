@@ -39,8 +39,8 @@ public:
 	DECLARE_PERSISTENT(CSXMath, CBScriptable)
 	CSXMath(CBGame *inGame);
 	virtual ~CSXMath();
-	virtual CScValue *ScGetProperty(char *Name);
-	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
+	virtual CScValue *ScGetProperty(const char *Name);
+	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
 
 private:
 	double DegreeToRadian(double Value);

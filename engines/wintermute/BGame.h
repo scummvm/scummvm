@@ -226,9 +226,9 @@ public:
 	virtual void PublishNatives();
 	virtual HRESULT ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 	// scripting interface
-	virtual CScValue *ScGetProperty(char *Name);
-	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
-	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
+	virtual CScValue *ScGetProperty(const char *Name);
+	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
+	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
 	virtual char *ScToString();
 	// compatibility bits
 	bool _compatKillMethodThreads;
@@ -331,7 +331,7 @@ public:
 	int _subtitlesSpeed;
 	void SetInteractive(bool State);
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
-	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name);
+	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, const char *Name);
 	HRESULT GetCurrentViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
 	HRESULT GetCurrentViewportRect(RECT *Rect, bool *Custom = NULL);
 	HRESULT PopViewport();

@@ -93,9 +93,9 @@ public:
 	HRESULT StartDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName);
 	HRESULT EndDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName);
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
-	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name);
+	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, const char *Name);
 
-	CAdSceneState *GetSceneState(char *Filename, bool Saving);
+	CAdSceneState *GetSceneState(const char *Filename, bool Saving);
 	CBViewport *_sceneViewport;
 	int _texItemLifeTime;
 	int _texWalkLifeTime;
@@ -151,9 +151,9 @@ public:
 	virtual HRESULT ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
 
 	// scripting interface
-	virtual CScValue *ScGetProperty(char *Name);
-	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
-	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
+	virtual CScValue *ScGetProperty(const char *Name);
+	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
+	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
 	bool ValidMouse();
 };
 

@@ -117,7 +117,7 @@ char *CSXMemBuffer::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSize
 	//////////////////////////////////////////////////////////////////////////
@@ -400,7 +400,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXMemBuffer::ScGetProperty(char *Name) {
+CScValue *CSXMemBuffer::ScGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -424,7 +424,7 @@ CScValue *CSXMemBuffer::ScGetProperty(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::ScSetProperty(char *Name, CScValue *Value) {
+HRESULT CSXMemBuffer::ScSetProperty(const char *Name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length

@@ -48,9 +48,9 @@ public:
 	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
 
 	// scripting interface
-	virtual CScValue *ScGetProperty(char *Name);
-	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
-	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
+	virtual CScValue *ScGetProperty(const char *Name);
+	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
+	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
 	virtual char *ScToString();
 };
 

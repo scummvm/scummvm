@@ -72,7 +72,7 @@ char *CSXDate::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 #if 0
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
@@ -214,7 +214,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXDate::ScGetProperty(char *Name) {
+CScValue *CSXDate::ScGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -230,7 +230,7 @@ CScValue *CSXDate::ScGetProperty(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXDate::ScSetProperty(char *Name, CScValue *Value) {
+HRESULT CSXDate::ScSetProperty(const char *Name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name

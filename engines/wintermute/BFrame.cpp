@@ -401,7 +401,7 @@ HRESULT CBFrame::Persist(CBPersistMgr *PersistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSound
@@ -573,7 +573,7 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBFrame::ScGetProperty(char *Name) {
+CScValue *CBFrame::ScGetProperty(const char *Name) {
 	if (!_scValue) _scValue = new CScValue(Game);
 	_scValue->SetNULL();
 
@@ -650,7 +650,7 @@ CScValue *CBFrame::ScGetProperty(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::ScSetProperty(char *Name, CScValue *Value) {
+HRESULT CBFrame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////

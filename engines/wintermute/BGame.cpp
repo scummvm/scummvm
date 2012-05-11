@@ -968,7 +968,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LOG
 	//////////////////////////////////////////////////////////////////////////
@@ -2094,7 +2094,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBGame::ScGetProperty(char *Name) {
+CScValue *CBGame::ScGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2485,7 +2485,7 @@ CScValue *CBGame::ScGetProperty(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::ScSetProperty(char *Name, CScValue *Value) {
+HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -3966,7 +3966,7 @@ HRESULT CBGame::WindowLoadHook(CUIWindow *Win, char **Buf, char **Params) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name) {
+HRESULT CBGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, const char *Name) {
 	return E_FAIL;
 }
 

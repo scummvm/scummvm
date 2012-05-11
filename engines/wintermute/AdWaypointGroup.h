@@ -49,8 +49,8 @@ public:
 	virtual ~CAdWaypointGroup();
 	CBArray<CBPoint *, CBPoint *> _points;
 	int _editorSelectedPoint;
-	virtual CScValue *ScGetProperty(char *Name);
-	virtual HRESULT ScSetProperty(char *Name, CScValue *Value);
+	virtual CScValue *ScGetProperty(const char *Name);
+	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
 };
 
 } // end of namespace WinterMute

@@ -61,7 +61,7 @@ CBScriptable::~CBScriptable() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+HRESULT CBScriptable::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	/*
 	Stack->CorrectParams(0);
 	Stack->PushNULL();

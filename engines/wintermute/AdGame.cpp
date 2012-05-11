@@ -313,7 +313,7 @@ void CAdGame::FinishSentences() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name) {
+HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ChangeScene
 	//////////////////////////////////////////////////////////////////////////
@@ -794,7 +794,7 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdGame::ScGetProperty(char *Name) {
+CScValue *CAdGame::ScGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -948,7 +948,7 @@ CScValue *CAdGame::ScGetProperty(char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ScSetProperty(char *Name, CScValue *Value) {
+HRESULT CAdGame::ScSetProperty(const char *Name, CScValue *Value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SelectedItem
@@ -1450,7 +1450,7 @@ HRESULT CAdGame::LoadItemsBuffer(byte  *Buffer, bool Merge) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSceneState *CAdGame::GetSceneState(char *Filename, bool Saving) {
+CAdSceneState *CAdGame::GetSceneState(const char *Filename, bool Saving) {
 	char *FilenameCor = new char[strlen(Filename) + 1];
 	strcpy(FilenameCor, Filename);
 	for (int i = 0; i < strlen(FilenameCor); i++) {
@@ -1514,7 +1514,7 @@ HRESULT CAdGame::WindowLoadHook(CUIWindow *Win, char **Buffer, char **params) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, char *Name) {
+HRESULT CAdGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, const char *Name) {
 	if (strcmp(Name, "CreateEntityContainer") == 0) {
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
