@@ -68,10 +68,10 @@ enum LilliputDebugChannels {
 
 struct LilliputGameDescription;
 
-struct struct18560 {
-	byte _field0;
-	Common::Point _field1;
-	int16 _field5[8];
+struct SmallAnim {
+	bool _active;
+	Common::Point _pos;
+	int16 _frameIndex[8];
 };
 
 class LilliputEngine : public Engine {
@@ -88,15 +88,18 @@ public:
 	LilliputSound *_soundHandler;
 	Graphics::Surface *_mainSurface;
 
-	struct18560 _arr18560[4];
+	SmallAnim _smallAnims[4];
+	int _smallAnimsFrameIndex;
+
 	byte _byte1714E;
 	byte _byte184F4;
+	byte _lastAnimationTick;
+	byte _animationTick;
 	Common::Point _nextDisplayCharacterPos;
 	byte _sound_byte16F06;
 	byte _byte16F09;
 	byte _keyboard_nextIndex;
 	byte _keyboard_oldIndex;
-	byte _byte12A04;
 	byte _byte12A05;
 	byte _byte12A06;
 	byte _byte12A07;
@@ -234,13 +237,15 @@ public:
 	void displayFunction16();
 	void restoreSurfaceSpeech();
 	void displayFunction18(int var1, int var2, int var3, int var4);
-
 	void displayCharacter(int index, Common::Point pos, int flags);
 	void displayString(byte *buf, int var2, int var4);
 	void displayChar(int index, int var1);
+	void displaySmallAnims();
+	void displaySmallIndexedAnim(byte index, byte subIndex);
+
 	void sub130B6();
 	void sub15F75();
-	void sub1863B();
+	void resetSmallAnims();
 	void paletteFadeOut();
 	void paletteFadeIn();
 

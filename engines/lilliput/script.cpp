@@ -30,8 +30,6 @@ namespace Lilliput {
 
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
 	_byte129A0 = 0xFF;
-	_byte1855D = 0;
-	_byte12A04 = 0;
 	_byte10806 = 0;
 	_byte12FE4 = 0xFF;
 	_byte16F02 = 0;
@@ -40,7 +38,6 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_byte18823 = 0;
 	_byte1881E = 3;
 	_byte1881D = 0;
-	_word1855E = 0;
 	_word16F00 = -1;
 	_word129A3 = 0;
 	_viewportCharacterTarget = -1;
@@ -512,7 +509,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub1864D();
 		break;
 	case 0x58:
-		OC_initArr18560();
+		OC_initSmallAnim();
 		break;
 	case 0x59:
 		OC_sub18678();
@@ -702,7 +699,7 @@ static const OpCode opCodes2[] = {
 /* 0x55 */	{ "OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x56 */	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x57 */	{ "OC_sub1864D", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },  // TODO
-/* 0x58 */	{ "OC_initArr18560", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+/* 0x58 */	{ "OC_initSmallAnim", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
 /* 0x59 */	{ "OC_sub18678", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
 /* 0x5a */	{ "OC_sub18690", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },  //TODO
 /* 0x5b */	{ "OC_setViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
@@ -956,15 +953,6 @@ void LilliputScript::runMenuScript(ScriptStream script) {
 		_vm->update();
 }
 
-void LilliputScript::sub185ED(byte index, byte subIndex) {
-	debugC(2, kDebugScript, "sub185ED(%d, %d)", index, subIndex);
-
-	if (_vm->_arr18560[index]._field0 != 1)
-		return;
-
-	_vm->display16x16IndexedBuf(_vm->_bufferIdeogram, _vm->_arr18560[index]._field5[subIndex], _vm->_arr18560[index]._field1);
-}
-
 byte LilliputScript::compareValues(int var1, int oper, int var2) {
 	debugC(2, kDebugScript, "compareValues(%d, %c, %d)", var1, oper & 0xFF, var2);
 
@@ -1031,27 +1019,6 @@ void LilliputScript::computeOperation(byte *bufPtr, int oper, int var3) {
 		break;
 		}
 	}
-}
-
-void LilliputScript::sub185B4_display() {
-	if (_vm->_byte12A04 == _byte1855D)
-		return;
-
-	_byte1855D = _vm->_byte12A04;
-	
-	assert(_word1855E < 8);
-	int subIndex = _word1855E;
-	sub185ED(0, subIndex);
-	sub185ED(1, subIndex);
-	sub185ED(2, subIndex);
-	sub185ED(3, subIndex);
-
-	// In the original, increment by 2 as it's an array of words
-	++subIndex;
-	if (subIndex == 8)
-		subIndex = 0;
-
-	_word1855E = subIndex;
 }
 
 void LilliputScript::sub1823E(byte index, byte var1, byte *curBufPtr) {
@@ -3104,7 +3071,7 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_byte16F09 = 0;
 
 	while(!_vm->_shouldQuit) {
-		sub185B4_display();
+		_vm->displaySmallAnims();
 		_vm->update();
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
 			_vm->_byte16F09 = _vm->_keyboard_getch();
@@ -3150,17 +3117,17 @@ void LilliputScript::OC_sub1864D() {
 	_vm->displayFunction18(var1, var2, var3, var4);
 }
 
-void LilliputScript::OC_initArr18560() {
-	debugC(1, kDebugScript, "OC_initArr18560()");
+void LilliputScript::OC_initSmallAnim() {
+	debugC(1, kDebugScript, "OC_initSmallAnim()");
 
 	int index = _currScript->readUint16LE();
 	assert (index < 4);
-	_vm->_arr18560[index]._field0 = 1;
-	_vm->_arr18560[index]._field1.x = _currScript->readSint16LE();
-	_vm->_arr18560[index]._field1.y = _currScript->readSint16LE();
+	_vm->_smallAnims[index]._active = true;
+	_vm->_smallAnims[index]._pos.x = _currScript->readSint16LE();
+	_vm->_smallAnims[index]._pos.y = _currScript->readSint16LE();
 
 	for (int i = 0; i < 8; i++)
-		_vm->_arr18560[index]._field5[i] = _currScript->readSint16LE();
+		_vm->_smallAnims[index]._frameIndex[i] = _currScript->readUint16LE();
 }
 
 void LilliputScript::OC_sub18678() {

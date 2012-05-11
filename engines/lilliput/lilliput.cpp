@@ -138,7 +138,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte129A0 = 0xFF;
 	_numCharactersToDisplay = 0;
 	_nextDisplayCharacterPos = Common::Point(0, 0);
-	_byte12A04 = 0;
+	_animationTick = 0;
 	_byte12A05 = 10;
 	_byte12A06 = 2;
 	_byte12A07 = 0;
@@ -150,6 +150,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12FE3 = 0;
 	_byte16F08 = 0;
 	_byte16C9F = 0;
+	_lastAnimationTick = 0;
 
 	_currentScriptCharacter = 0;
 	_currentScriptCharacterPos = Common::Point(0, 0);
@@ -277,7 +278,7 @@ void LilliputEngine::newInt8() {
 			if (_sound_byte16F06 != 0)
 				--_sound_byte16F06;
 
-			_byte12A04 ^= 1;
+			_animationTick ^= 1;
 			if (_byte12A09 != 1 && _int8installed) // hack for the title stars because _int8installed is not set at the good place for the moment
 				displayFunction16();
 		}
@@ -779,7 +780,7 @@ void LilliputEngine::displayFunction15() {
 			if (map[1] != 0xFF) {
 				int var1 = map[1];
 				if (_rulesChunk9[var1] != 128)
-					var1 += _scriptHandler->_byte12A04;
+					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 1 << 8);
 			}
 			renderCharacters(map, Common::Point(j, i));
@@ -787,7 +788,7 @@ void LilliputEngine::displayFunction15() {
 			if (map[2] != 0xFF) {
 				int var1 = map[2];
 				if (_rulesChunk9[var1] != 128)
-					var1 += _scriptHandler->_byte12A04;
+					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 2 << 8);
 			}
 			map += 4;
@@ -828,20 +829,51 @@ void LilliputEngine::displayFunction16() {
 	}
 }
 
-void LilliputEngine::sub1863B() {
-	debugC(2, kDebugEngineTBC, "sub1863B()");
+void LilliputEngine::resetSmallAnims() {
+	debugC(2, kDebugEngine, "resetSmallAnims()");
 
-	_arr18560[0]._field0 = 0;
-	_arr18560[1]._field0 = 0;
-	_arr18560[2]._field0 = 0;
-	_arr18560[3]._field0 = 0;
-	_scriptHandler->_word1855E = 0;
+	_smallAnims[0]._active = false;
+	_smallAnims[1]._active = false;
+	_smallAnims[2]._active = false;
+	_smallAnims[3]._active = false;
+	_smallAnimsFrameIndex = 0;
+}
+
+void LilliputEngine::displaySmallIndexedAnim(byte index, byte subIndex) {
+	debugC(2, kDebugEngine, "displaySmallIndexedAnim(%d, %d)", index, subIndex);
+
+	if (!_smallAnims[index]._active)
+		return;
+
+	display16x16IndexedBuf(_bufferIdeogram, _smallAnims[index]._frameIndex[subIndex], _smallAnims[index]._pos);
+}
+
+void LilliputEngine::displaySmallAnims() {
+	debugC(2, kDebugEngineTBC, "displaySmallAnims()");
+
+	if (_animationTick == _lastAnimationTick)
+		return;
+
+	_lastAnimationTick = _animationTick;
+	
+	assert(_smallAnimsFrameIndex < 8);
+	int subIndex = _smallAnimsFrameIndex;
+	displaySmallIndexedAnim(0, subIndex);
+	displaySmallIndexedAnim(1, subIndex);
+	displaySmallIndexedAnim(2, subIndex);
+	displaySmallIndexedAnim(3, subIndex);
+
+	++subIndex;
+	if (subIndex == 8)
+		subIndex = 0;
+
+	_smallAnimsFrameIndex = subIndex;
 }
 
 void LilliputEngine::paletteFadeOut() {
 	debugC(2, kDebugEngine, "paletteFadeOut()");
 
-	sub1863B();
+	resetSmallAnims();
 	byte palette[768];
 	for (int fade = 256; fade >= 0;	fade -= 8) {
 		for (int i = 0; i < 768; i++) {
@@ -1805,7 +1837,7 @@ void LilliputEngine::sub16EBC() {
 void LilliputEngine::sub12F37() {
 	debugC(2, kDebugEngineTBC, "sub12F37()");
 
-	int index1 = _byte12A04 + 2;
+	int index1 = _animationTick + 2;
 	int index2 = 0;
 
 	for (int i = 0; i < _numCharacters; i++) {
@@ -2196,7 +2228,7 @@ void LilliputEngine::sub171CF() {
 void LilliputEngine::sub12FE5() {
 	debugC(2, kDebugEngineTBC, "sub12FE5()");
 
-	if (_byte12A04 != 1)
+	if (_animationTick != 1)
 		return;
 
 	int index = 0;
@@ -2587,7 +2619,7 @@ void LilliputEngine::sub170EE(int index) {
 	int var2 = _characterPositionX[index];
 	int var4 = _characterPositionY[index];
 
-	_currentScriptCharacterPos = Common::Point((var2 >> 3) & 0xFF, (var4 >> 3) & 0xFF);
+	_currentScriptCharacterPos = Common::Point(var2 >> 3, var4 >> 3);
 	_currentCharacterVariables = getCharacterVariablesPtr(_currentScriptCharacter * 32);
 }
 
@@ -2719,10 +2751,10 @@ void LilliputEngine::initialize() {
 	_shouldQuit = false;
 
 	for (int i = 0; i < 4; i++) {
-		_arr18560[i]._field0 = 0;
-		_arr18560[i]._field1 = Common::Point(0, 0);
+		_smallAnims[i]._active = false;
+		_smallAnims[i]._pos = Common::Point(0, 0);
 		for (int j = 0; j < 8; j ++)
-			_arr18560[i]._field5[j] = 0;
+			_smallAnims[i]._frameIndex[j] = 0;
 	}
 }
 
