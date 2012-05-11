@@ -34,6 +34,7 @@
 #include "BSurface.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "graphics/font.h"
 
 #define NUM_CACHED_TEXTS 30
 
@@ -159,7 +160,8 @@ private:
 	HRESULT InitFont();
 	//FT_Stream _fTStream;
 	//FT_Face _fTFace;
-
+	Graphics::Font *_font;
+	const Graphics::Font *_fallbackFont;
 	FontGlyphCache *_glyphCache;
 
 	float _ascender;

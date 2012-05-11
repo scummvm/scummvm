@@ -42,6 +42,8 @@
 #include "BFileManager.h"
 #include "utils.h"
 #include "PlatformSDL.h"
+#include "graphics/fonts/ttf.h"
+#include "graphics/fontman.h"
 
 namespace WinterMute {
 
@@ -53,6 +55,8 @@ CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
 	_isBold = _isItalic = _isUnderline = _isStriked = false;
 
 	_fontFile = NULL;
+	_font = NULL;
+	_fallbackFont = NULL;
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
 
@@ -78,6 +82,12 @@ CBFontTT::~CBFontTT(void) {
 
 	delete[] _fontFile;
 	_fontFile = NULL;
+
+	delete _font;
+	_font = NULL;
+
+	delete _fallbackFont;
+	_fallbackFont = NULL;
 
 	delete _glyphCache;
 	_glyphCache = NULL;
@@ -121,8 +131,8 @@ void CBFontTT::InitLoop() {
 int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 	WideString text;
 
-	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);
+/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	else text = StringUtil::AnsiToWide((char *)Text);*/
 
 	if (MaxLength >= 0 && text.size() > MaxLength) 
 		text = Common::String(text.c_str(), MaxLength);
@@ -138,8 +148,8 @@ int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 	WideString text;
 
-	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);
+/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	else text = StringUtil::AnsiToWide((char *)Text);*/
 
 
 	int textWidth, textHeight;
@@ -151,12 +161,14 @@ int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
+	warning("Draw text: %s", Text);
 	if (Text == NULL || strcmp((char *)Text, "") == 0) return;
 
 	WideString text;
 
-	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);
+	// TODO: Why do we still insist on Widestrings everywhere?
+/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	else text = StringUtil::AnsiToWide((char *)Text);*/
 
 	if (MaxLength >= 0 && text.size() > MaxLength) 
 		text = Common::String(text.c_str(), MaxLength);
@@ -597,18 +609,25 @@ void CBFontTT::AfterLoad() {
 HRESULT CBFontTT::InitFont() {
 	if (!_fontFile) return E_FAIL;
 	warning("BFontTT::InitFont - Not ported yet");
-	return E_FAIL;
+
 	CBFile *file = Game->_fileManager->OpenFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
 		AnsiString fontFileName = PathUtil::Combine(CBPlatform::GetSystemFontPath(), PathUtil::GetFileName(_fontFile));
 		file = Game->_fileManager->OpenFile((char *)fontFileName.c_str(), false);
-
 		if (!file) {
 			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);
-			return E_FAIL;
+			//return E_FAIL;
 		}
 	}
+	warning("I guess we got a file");
+	if (file) {
+		_font = Graphics::loadTTFFont(*file->getMemStream(), 12);
+	} else {
+		_fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);
+	}
+	return S_OK;
 #if 0
 	FT_Error error;
 
