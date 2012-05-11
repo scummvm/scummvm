@@ -48,13 +48,13 @@ void CdCD(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	while (g_bChangingCD) {
-		if (g_scheduler->getCurrentProcess()) {
-			// FIXME: CdCD gets passed a nullContext in RegisterGlobals() and
+		if (CoroScheduler.getCurrentProcess()) {
+			// FIXME: CdCD gets passed a Common::nullContext in RegisterGlobals() and
 			//        PrimeSceneHopper(), because I didn't know how to get a proper
 			//        context without converting the whole calling stack to CORO'd
 			//        functions. If these functions really get called while a CD
 			//        change is requested, this needs to be resolved.
-			if (coroParam == nullContext)
+			if (coroParam == Common::nullContext)
 				error("CdCD needs context");
 			CORO_SLEEP(1);
 		} else

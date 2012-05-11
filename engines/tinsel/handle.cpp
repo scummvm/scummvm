@@ -361,7 +361,7 @@ byte *LockMem(SCNHANDLE offset) {
 
 			if (TinselV2) {
 				SetCD(pH->flags2 & fAllCds);
-				CdCD(nullContext);
+				CdCD(Common::nullContext);
 			}
 			LoadFile(pH);
 		}

@@ -31,7 +31,7 @@
 namespace Tinsel {
 
 struct OBJECT;
-struct PROCESS;
+struct Common::PROCESS;
 
 enum NPS {NOT_IN, GOING_UP, GOING_DOWN, LEAVING, ENTERING};
 
@@ -110,7 +110,7 @@ struct MOVER {
 	/* NOTE: If effect polys can overlap, this needs improving */
 	bool		bInEffect;
 
-	PROCESS		*pProc;
+	Common::PROCESS		*pProc;
 
 	// Discworld 2 specific fields
 	int32		zOverride;

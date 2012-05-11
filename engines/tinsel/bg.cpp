@@ -255,17 +255,17 @@ void StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 	g_BGspeed = ONE_SECOND / FROM_LE_32(pfilm->frate);
 
 	// Start display process for each reel in the film
-	g_scheduler->createProcess(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
+	CoroScheduler.createProcess(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
 
 	if (TinselV0) {
 		for (uint i = 1; i < FROM_LE_32(pfilm->numreels); ++i)
-			g_scheduler->createProcess(PID_REEL, BGotherProcess, &pfilm->reels[i], sizeof(FREEL));
+			CoroScheduler.createProcess(PID_REEL, BGotherProcess, &pfilm->reels[i], sizeof(FREEL));
 	}
 
 	if (g_pBG[0] == NULL)
 		ControlStartOff();
 
-	if (TinselV2 && (coroParam != nullContext))
+	if (TinselV2 && (coroParam != Common::nullContext))
 		CORO_GIVE_WAY;
 
 	CORO_END_CODE;
