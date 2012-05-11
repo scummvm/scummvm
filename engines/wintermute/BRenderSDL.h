@@ -57,13 +57,6 @@ public:
 	HRESULT DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
 
 	CBImage *TakeScreenshot();
-
-	SDL_Renderer *GetSdlRenderer() const {
-//		return _renderer;
-	}
-	SDL_Window *GetSdlWindow() const {
-//		return _win;
-	}
 	
 	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest);
 
