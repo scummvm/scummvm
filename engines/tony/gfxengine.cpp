@@ -713,66 +713,55 @@ void RestoreMusic(CORO_PARAM);
 void SaveMusic(Common::OutSaveFile *f);
 void LoadMusic(Common::InSaveFile *f);
 
-unsigned char wrkmem[LZO1X_999_MEM_COMPRESS];
+#define TONY_SAVEGAME_VERSION 8
 
 void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bool bFastCompress) {
 	Common::OutSaveFile *f;
-	byte *state, *statecmp;
-	byte *thumbcmp; 
-	uint thumbsizecmp, thumbsize;
-	uint size, sizecmp;
+	byte *state;
+	uint thumbsize;
+	uint size;
 	int i;
 	char buf[4];
 	RMPoint tp = m_tony.Position();
 
-	// Salvataggio: variabili mpal + locazione corrente + posizione di tony + inventario
+	// Saving: mpal variables, current location, + tony inventory position
 
-	// Per ora salviamo solo lo stato MPAL
-	size=mpalGetSaveStateSize();
+	// For now, we only save the MPAL state
+	size = mpalGetSaveStateSize();
 	state = new byte[size];
-	statecmp = new byte[size*2];
 	mpalSaveState(state);
 
-	thumbcmp = new byte[160 * 120 * 4];
 	thumbsize = 160 * 120 * 2;
 	
-	if (bFastCompress) {
-		lzo1x_1_compress(state,size,statecmp,&sizecmp,wrkmem);
-		lzo1x_1_compress(curThumb,thumbsize,thumbcmp,&thumbsizecmp,wrkmem);
-	} else {
-		lzo1x_999_compress(state,size,statecmp,&sizecmp,wrkmem);
-		lzo1x_999_compress(curThumb,thumbsize,thumbcmp,&thumbsizecmp,wrkmem);
-	}
-
 	buf[0] = 'R';
 	buf[1] = 'M';
 	buf[2] = 'S';
-	buf[3] = 0x7;
+	buf[3] = TONY_SAVEGAME_VERSION;
 
 	f = g_system->getSavefileManager()->openForSaving(fn);
-	if (f==NULL) return;
-	f->write(buf, 4);
-	f->writeUint32LE(thumbsizecmp);
-	f->write(thumbcmp, thumbsizecmp);
+	if (f == NULL) 
+		return;
 
-	// Livello di difficoltà
+	f->write(buf, 4);
+	f->writeUint32LE(thumbsize);
+	f->write(curThumb, thumbsize);
+
+	// Difficulty level
 	i = mpalQueryGlobalVar("VERSIONEFACILE");
 	f->writeByte(i);
 
-	i=strlen(name);
+	i = strlen(name);
 	f->writeByte(i);
 	f->write(name, i);
 	f->writeUint32LE(m_nCurLoc);
 	f->writeUint32LE(tp.x);
 	f->writeUint32LE(tp.y);
-	f->writeUint32LE(size);
-	f->writeUint32LE(sizecmp);
-	f->write(statecmp, sizecmp);
-	delete[] state;
-	delete[] statecmp;
-	delete[] thumbcmp;
 
-	// inventario
+	f->writeUint32LE(size);
+	f->write(state, size);
+	delete[] state;
+
+	// Inventory
 	size = m_inv.GetSaveStateSize();
 	state = new byte[size];
 	m_inv.SaveState(state);
@@ -791,16 +780,16 @@ void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bo
 	// New Ver5
 	bool bStat;
 	
-	// Salva lo stato della pastorella e del palesati
+	// Saves the state of the shepherdess and show yourself
 	bStat = m_tony.GetPastorella();
 	f->writeByte(bStat);
 	bStat = m_inter.GetPalesati();
 	f->writeByte(bStat);
 	
-	// Salva gli mchar
+	// Save the chars
 	CharsSaveAll(f);
 
-	// Salva le opzioni
+	// Save the options
 	f->writeByte(bCfgInvLocked);
 	f->writeByte(bCfgInvNoScroll);
 	f->writeByte(bCfgTimerizedText);
@@ -819,10 +808,10 @@ void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bo
 	f->writeByte(nCfgMusicVolume);
 	f->writeByte(nCfgSFXVolume);
 
-	// Salva gli hotspot
+	// Save the hotspots
 	SaveChangedHotspot(f);
 
-	// Salva la musica
+	// Save the music
 	SaveMusic(f);
 
 	f->finalize();
@@ -845,8 +834,10 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->f = g_system->getSavefileManager()->openForLoading(fn);
-	if (_ctx->f == NULL) return;
+	if (_ctx->f == NULL) 
+		return;
 	_ctx->f->read(_ctx->buf, 4);
+
 	if (_ctx->buf[0] != 'R' || _ctx->buf[1] != 'M' || _ctx->buf[2] != 'S') {
 		delete _ctx->f;
 		return;
@@ -854,39 +845,43 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 	
 	_ctx->ver = _ctx->buf[3];
 	
-	if (_ctx->ver != 0x1 && _ctx->ver != 0x2 && _ctx->ver != 0x3 && _ctx->ver != 0x4 && _ctx->ver != 0x5 && _ctx->ver != 0x6 && _ctx->ver != 0x7) {
+	if (_ctx->ver == 0 || _ctx->ver > TONY_SAVEGAME_VERSION) {
 		delete _ctx->f;
 		return;
 	}
 	
 	if (_ctx->ver >= 0x3) {
-		// C'è il thumbnail. Se _ctx->ver >= 5, è compresso
-		if (_ctx->ver >= 0x5) {
+		// There is a thumbnail. If the version is between 5 and 7, it's compressed
+		if ((_ctx->ver >= 0x5) && (_ctx->ver <= 0x7)) {
 			_ctx->i = 0;
 			_ctx->i = _ctx->f->readUint32LE();
 			_ctx->f->seek(_ctx->i);
-		} else
+		} else {
+			if (_ctx->ver >= 8)
+				// Skip thumbnail size
+				_ctx->f->skip(4);
+
 			_ctx->f->seek(160 * 120 * 2, SEEK_CUR);
+		}
 	}
 
 	if (_ctx->ver >= 0x5) {
-		// Skip del livello di difficoltà
+		// Skip the difficulty level
 		_ctx->f->seek(1, SEEK_CUR);
 	}
 
-	if (_ctx->ver >= 0x4) {	// Skippa il nome, che non serve a nessuno
+	if (_ctx->ver >= 0x4) {	// Skip the savegame name, which serves no purpose
 		_ctx->i = _ctx->f->readByte();
 		_ctx->f->seek(_ctx->i, SEEK_CUR);
 	}
 
 	_ctx->loc = _ctx->f->readUint32LE();
-	_ctx->loc = _ctx->f->readUint32LE();
 	_ctx->tp.x = _ctx->f->readUint32LE();
 	_ctx->tp.y = _ctx->f->readUint32LE();
 	_ctx->size = _ctx->f->readUint32LE();
 
-	if (_ctx->ver >= 0x5) {
-		// Stato MPAL compresso!
+	if ((_ctx->ver >= 0x5) && (_ctx->ver <= 7)) {
+		// MPAL was packed!
 		_ctx->sizecmp = _ctx->f->readUint32LE();
 		_ctx->state = new byte[_ctx->size];
 		_ctx->statecmp = new byte[_ctx->sizecmp];
@@ -894,6 +889,7 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 		lzo1x_decompress(_ctx->statecmp,_ctx->sizecmp,_ctx->state,&_ctx->size);
 		delete[] _ctx->statecmp;
 	} else {
+		// Read uncompressed MPAL data
 		_ctx->state = new byte[_ctx->size];
 		_ctx->f->read(_ctx->state, _ctx->size);
 	}
@@ -901,8 +897,7 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 	mpalLoadState(_ctx->state);
 	delete[] _ctx->state;
 
-
-	// inventario
+	// Inventory
 	_ctx->size = _ctx->f->readUint32LE();
 	_ctx->state = new byte[_ctx->size];
 	_ctx->f->read(_ctx->state, _ctx->size);
@@ -930,7 +925,7 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 	}
 
 	if (_ctx->ver >= 6) {
-		// Carica le opzioni
+		// Load options
 		bCfgInvLocked = _ctx->f->readByte();
 		bCfgInvNoScroll = _ctx->f->readByte();
 		bCfgTimerizedText = _ctx->f->readByte();
@@ -949,7 +944,7 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 		nCfgMusicVolume = _ctx->f->readByte();
 		nCfgSFXVolume = _ctx->f->readByte();
 
-		// Carica gli hotspot
+		// Load hotspots
 		LoadChangedHotspot(_ctx->f);
 	}
 
@@ -964,11 +959,11 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 	m_tony.SetPattern(RMTony::PAT_STANDRIGHT);
 	MainUnfreeze();
 	
-	// Le versioni vecchie necessitano di On enter
+	// On older versions, need to an enter action
 	if (_ctx->ver < 5)
 		mpalQueryDoAction(0, _ctx->loc, 0);
 	else {
-		// In quelle nuove, ci basta resettare gli mcode
+		// In the new ones, we just reset the mcode
 		MCharResetCodes();
 	}
 

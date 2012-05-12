@@ -90,7 +90,8 @@ void RMWindow::Close(void) {
 }
 
 void RMWindow::GrabThumbnail(uint16 *thumbmem) {
-	warning("TODO: RMWindow::GrabThumbnail");
+	m_bGrabThumbnail = true;
+	m_wThumbBuf = thumbmem;
 }
 
 /**
@@ -134,6 +135,14 @@ void RMWindow::GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
 	} else {
 		// Standard screen copy
 		g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
+	}
+
+	if (m_bGrabThumbnail) {
+		// Need to generate a thumbnail
+		RMSnapshot s;
+
+		s.GrabScreenshot(lpBuf, 4, m_wThumbBuf);
+		m_bGrabThumbnail = false;
 	}
 }
 
@@ -270,7 +279,6 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 }
 
 void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
-#ifdef REFACTOR_ME
 	uint16 *src = (uint16 *)lpBuf;
 	
 	int dimx = RM_SX / dezoom;
@@ -278,15 +286,15 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 
 	int u, v, curv;
 
-	uint16	appo;
-	uint32	k = 0;
+	uint16 appo;
+	uint32 k = 0;
 	int sommar, sommab, sommag;
 	uint16 *cursrc;
 		
 	if (lpDestBuf == NULL)
 		src += (RM_SY - 1) * RM_BBX;
 
-	if (dezoom == 1 && 0) { // @@@ NON E' TESTATA MOLTO BENE!!!
+	if (dezoom == 1 && 0) {
 		byte *curOut = rgb;
 		
 		for (int y = 0; y < dimy; y++) {
@@ -329,9 +337,10 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 					rgb[k + 2] = (byte) (sommar * 8 / (dezoom * dezoom));
 
 					if (lpDestBuf!=NULL)
-						lpDestBuf[k/3] = ((int)rgb[k+0]>>3) | (((int)rgb[k+1]>>3)<<5) | (((int)rgb[k+2]>>3)<<10);
+						lpDestBuf[k / 3] = ((int)rgb[k + 0] >> 3) | (((int)rgb[k + 1] >> 3) << 5) | 
+							(((int)rgb[k + 2] >> 3) << 10);
 
-					k+=3;
+					k += 3;
 			}
 
 			if (lpDestBuf == NULL)
@@ -340,48 +349,6 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 				src += RM_BBX * dezoom;
 		}
 	}
-
-
-	if (lpDestBuf == NULL) {
-		if (!GetFreeSnapName(filename))
-			return;
-
-		HANDLE	hFile = CreateFile(filename,
-									GENERIC_WRITE,
-									0,
-									NULL,
-									CREATE_ALWAYS,
-									FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
-									NULL);
-
-		BITMAPFILEHEADER bmfHeader;
-		bmfHeader.bfType = ((uint16) ('M' << 8) | 'B');
-		bmfHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dimx * dimy * 3;
-		bmfHeader.bfReserved1 = 0;
-		bmfHeader.bfReserved2 = 0;
-		bmfHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-
-		BITMAPINFOHEADER	bmiHeader;
-		bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmiHeader.biWidth = dimx;
-		bmiHeader.biHeight = dimy;
-		bmiHeader.biPlanes = 1;
-		bmiHeader.biBitCount = 24;
-		bmiHeader.biCompression = BI_RGB;
-		bmiHeader.biSizeImage = dimx * dimy * 3;
-		bmiHeader.biXPelsPerMeter = 0xB12;
-		bmiHeader.biYPelsPerMeter = 0xB12;
-		bmiHeader.biClrUsed = 0;
-		bmiHeader.biClrImportant = 0;
-
-		uint32	dwWritten;
-		WriteFile(hFile, &bmfHeader, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
-		WriteFile(hFile, &bmiHeader, sizeof(BITMAPINFOHEADER), &dwWritten, NULL);
-
-		WriteFile(hFile, rgb, dimx * dimy * 3, &dwWritten, NULL);
-		CloseHandle(hFile);
-	}
-#endif
 }
 
 } // End of namespace Tony

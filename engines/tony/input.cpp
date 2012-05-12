@@ -127,4 +127,14 @@ bool RMInput::MouseRight() {
 	return _rightButton;
 }
 
+/**
+ * Return true if a key has been pressed */
+bool RMInput::GetAsyncKeyState(Common::KeyCode kc) { 
+	// The act of testing for a particular key automatically clears the state, to prevent
+	// the same key being registered in multiple different frames
+	bool result = _keyDown[(int)kc]; 
+	_keyDown[(int)kc] = false;
+	return result;
+}
+
 } // End of namespace Tony

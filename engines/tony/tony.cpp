@@ -389,20 +389,13 @@ int TonyEngine::GetMusicVolume(int nChannel) {
 }
 
 
-void TonyEngine::GetSaveStateFileName(int n, char *buf) {
-	RMString name;
-
-	if (n > 0)
-		name.Format("%02d", n);	
-	else
-		name.Format("autosave");	
-
-	name += ".sav";
+Common::String TonyEngine::GetSaveStateFileName(int n) {
+	return Common::String::format("tony.%03d", n);
 }
 
 void TonyEngine::AutoSave(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		char buf[256];
+		Common::String buf;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -411,8 +404,8 @@ void TonyEngine::AutoSave(CORO_PARAM) {
 	CORO_INVOKE_0(MainWaitFrame);
 	CORO_INVOKE_0(MainWaitFrame);
 	MainFreeze();
-	GetSaveStateFileName(0, _ctx->buf);
-	_theEngine.SaveState(_ctx->buf, (byte *)m_curThumbnail, "Autosave", true);
+	_ctx->buf = GetSaveStateFileName(0);
+	_theEngine.SaveState(_ctx->buf.c_str(), (byte *)m_curThumbnail, "Autosave", true);
 	MainUnfreeze();
 
 	CORO_END_CODE;
@@ -420,22 +413,20 @@ void TonyEngine::AutoSave(CORO_PARAM) {
 
 
 void TonyEngine::SaveState(int n, const char *name) {
-	char buf[256];
-
-	GetSaveStateFileName(n, buf);
-	_theEngine.SaveState(buf,(byte *)m_curThumbnail, name);
+	Common::String buf = GetSaveStateFileName(n);
+	_theEngine.SaveState(buf.c_str(), (byte *)m_curThumbnail, name);
 }
 
 
 void TonyEngine::LoadState(CORO_PARAM, int n) {
 	CORO_BEGIN_CONTEXT;
-		char buf[256];
+		Common::String buf;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GetSaveStateFileName(n, _ctx->buf);
-	CORO_INVOKE_1(_theEngine.LoadState, _ctx->buf);
+	_ctx->buf = GetSaveStateFileName(n);
+	CORO_INVOKE_1(_theEngine.LoadState, _ctx->buf.c_str());
 
 	CORO_END_CODE;
 }
@@ -485,8 +476,7 @@ void TonyEngine::CloseVoiceDatabase() {
 }
 
 void TonyEngine::GrabThumbnail(void) {
-	//_window.GrabThumbnail(m_curThumbnail);
-	warning("TODO: TonyEngine::GrabThumbnail");
+	_window.GrabThumbnail(m_curThumbnail);
 }
 
 void TonyEngine::OptionScreen(void) {

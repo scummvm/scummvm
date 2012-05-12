@@ -371,6 +371,7 @@ RMOptionScreen::RMOptionScreen(void) {
 	m_menu = NULL;
 	m_HideLoadSave = NULL;
 	m_QuitConfirm = NULL;
+	m_bQuitConfirm = false;
 
 	Create(RM_SX, RM_SY);
 
@@ -1401,10 +1402,11 @@ void RMOptionScreen::RemoveThis(CORO_PARAM, bool &result) {
 }
 
 
-bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMString& name, byte &diff) {	
-	char buf[256];
-	char namebuf[256]; int i;
-	Common::File f;
+bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMString &name, byte &diff) {	
+	Common::String buf;
+	char namebuf[256]; 
+	int i;
+	Common::InSaveFile *f;
 	char id[4];
 	
 	// Pulisce la destinazione
@@ -1412,60 +1414,68 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 	name = "No name";
 	diff = 10;
 
-	// Si fa dare il nome del salvataggio
-	_vm->GetSaveStateFileName(nState, buf);
+	// Get the savegame filename for the given slot
+	buf = _vm->GetSaveStateFileName(nState);
 	
-	// Guarda se esiste
-	if (f.open(buf))
+	// Try and open the savegame
+	f = g_system->getSavefileManager()->openForLoading(buf);
+	if (f == NULL)
 		return false;
 
-	// Controlla se è giusto l'header
-	f.read(id, 4);
+	// Check to see if the file has a valid header
+	f->read(id, 4);
 	if (id[0] != 'R' || id[1] != 'M' || id[2] != 'S') {
-		f.close();
+		delete f;
 		return false;
 	}
 
 	if (id[3] < 0x3) {
-		// Versione vecchia, niente screenshot
-		f.close();
+		// Very old version that doesn't have screenshots
+		delete f;
 		return true;
 	}
 
-	// legge lo screenshot
-	if (id[3] >= 0x5) {
+	// Load the screenshot
+	if ((id[3] >= 0x5) && (id[3] < 0x8)) {
+		// Read it as an LZO compressed data block
 		byte *cmpbuf;
 		uint32 cmpsize, size;
 
 		cmpbuf = new byte[160 * 120 * 4];
 		
 		// Se la versione >= 5, è compresso!
-		cmpsize = f.readUint32LE();
-		f.read(cmpbuf, cmpsize);
+		cmpsize = f->readUint32LE();
+		f->read(cmpbuf, cmpsize);
 
 		lzo1x_decompress(cmpbuf,cmpsize,lpDestBuf,&size);
 
 		delete[] cmpbuf;
-	} else
-		f.read(lpDestBuf, 160 * 120 * 2);
+	} else {
+		// Read in the screenshot as an uncompressed data block
+		if (id[3] >= 8)
+			// Recent versions use hardcoded 160x120 uncomrpessed data, so size can be skipped
+			f->skip(4);	
+
+		f->read(lpDestBuf, 160 * 120 * 2);
+	}
 
 	if (id[3] >= 0x5) {
-		// Legge il livello di difficoltà
-		diff = f.readByte();
+		// Read in the difficulty level
+		diff = f->readByte();
 	}
 
 	if (id[3] < 0x4) {
-		// Versione vecchia, niente nome
-		f.close();
+		// Savegame version doesn't have a stored name
+		delete f;
 		return true;
 	}
 
-	i = f.readByte();
-	f.read(namebuf, i);
+	i = f->readByte();
+	f->read(namebuf, i);
 	namebuf[i] = '\0';
 	name = namebuf;
 
-	f.close();
+	delete f;
 	return true;
 }
 

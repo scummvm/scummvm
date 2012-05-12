@@ -98,7 +98,7 @@ public:
 	bool MouseBothReleased() { return _leftReleaseMouse && _rightReleaseMouse; }
 
 	// Returns true if the given key is pressed
-	bool GetAsyncKeyState(Common::KeyCode kc) { return _keyDown[(int)kc]; }
+	bool GetAsyncKeyState(Common::KeyCode kc);
 };
 
 } // End of namespace Tony
