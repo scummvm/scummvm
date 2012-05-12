@@ -31,7 +31,6 @@
 namespace Tinsel {
 
 struct OBJECT;
-struct Common::PROCESS;
 
 enum NPS {NOT_IN, GOING_UP, GOING_DOWN, LEAVING, ENTERING};
 
