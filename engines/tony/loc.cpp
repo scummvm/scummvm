@@ -321,6 +321,13 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 
 RMPattern::RMPattern() {
 	m_slots = NULL;
+	m_speed = 0;
+	m_bLoop  = 0;
+    m_nSlots = 0;
+	m_nCurSlot = 0;
+	m_nCurSprite = 0;
+	m_nStartTime = 0;
+    m_slots = NULL;
 }
 
 RMPattern::~RMPattern() {
@@ -706,8 +713,17 @@ bool RMItem::DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 		return false;
 
 	// Facciamo un update del pattern, che ci ritorna anche il frame corrente
-	if (m_nCurPattern != 0)
+	if (m_nCurPattern != 0) {
 		m_nCurSprite = m_patterns[m_nCurPattern].Update(m_hEndPattern, m_bCurFlag, m_sfx);
+
+		// WORKAROUND: Currently, m_nCurSprite = -1 is used to flag that an item should be removed.
+		// However, this seems to be done inside a process waiting on an event pulsed inside the pattern
+		// Update method. So the value of m_nCurSprite = -1 is being destroyed with the return value
+		// replacing it. It may be that the current coroutine PulseEvent implementation is wrong somehow.
+		// In any case, a special check here is done for items that have ended
+		if (m_nCurPattern == 0)
+			m_nCurSprite = -1;
+	}
 
 	// Se la funzione ha ritornato -1, vuol dire che il pattern e' finito
 	if (m_nCurSprite == -1) {
@@ -764,7 +780,7 @@ void RMItem::RemoveThis(CORO_PARAM, bool &result) {
 
 
 void RMItem::SetStatus(int nStatus) {
-	m_bIsActive = (nStatus>0);
+	m_bIsActive = (nStatus > 0);
 }
 
 void RMItem::SetPattern(int nPattern, bool bPlayP0) {
