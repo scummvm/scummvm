@@ -89,6 +89,7 @@ public:
 	~LilliputScript();
 
 	void disasmScript(ScriptStream script);
+	void listAllTexts();
 	static Common::String getArgumentString(KValueType type, ScriptStream& script);
 	void runScript(ScriptStream script);
 	void runMenuScript(ScriptStream script);
@@ -172,19 +173,19 @@ private:
 	byte OC_sub177C6();
 	byte OC_compWord16EFE();
 	byte OC_sub177F5();
-	byte OC_sub17812();
+	byte OC_CurrentCharacterVar0Equals();
 	byte OC_sub17825();
 	byte OC_sub17844();
 	byte OC_sub1785C();
 	byte OC_sub17886();
 	byte OC_CompareGameVariables();
 	byte OC_skipNextOpcode();
-	byte OC_sub178C2();
+	byte OC_CurrentCharacterVar2Equals1();
 	byte OC_sub178D2();
 	byte OC_sub178E8();
 	byte OC_sub178FC();
 	byte OC_sub1790F();
-	byte OC_sub1792A();
+	byte OC_CurrentCharacterVar1Equals();
 	byte OC_sub1793E();
 	byte OC_sub1795E();
 	byte OC_checkCharacterDirection();
@@ -218,7 +219,7 @@ private:
 	void OC_sub17BA5();
 	void OC_setByte18823();
 	void OC_callScript();
-	void OC_sub17BF2();
+	void OC_callScriptAndReturn();
 	void OC_setCurrentScriptCharacterPos();
 	void OC_resetByte16F04();
 	void OC_sub17AE1();
@@ -234,7 +235,7 @@ private:
 	void OC_sub17CD1();
 	void OC_resetWord16EFE();
 	void OC_sub17CEF();
-	void OC_sub17D1B();
+	void OC_IncCurrentCharacterVar1();
 	void OC_sub17D23();
 	void OC_sub17E6D();
 	void OC_changeCurrentCharacterSprite();
@@ -248,8 +249,8 @@ private:
 	void OC_sub17FD2();
 	void OC_sub17FDD();
 	void OC_setByte10B29();
-	void OC_sub18007();
-	void OC_sub18014();
+	void OC_setCurrentCharacterVar2();
+	void OC_SetCurrentCharacterVar2ToZero();
 	void OC_sub1801D();
 	void OC_sub1805D();
 	void OC_sub18074();
