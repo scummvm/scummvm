@@ -1078,7 +1078,8 @@ HRESULT CPartEmitter::ScSetProperty(const char *Name, CScValue *Value) {
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "EmitEvent") == 0) {
-		SAFE_DELETE_ARRAY(_emitEvent);
+		delete[] _emitEvent;
+		_emitEvent = NULL;
 		if (!Value->IsNULL()) CBUtils::SetString(&_emitEvent, Value->GetString());
 		return S_OK;
 	}

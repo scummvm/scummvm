@@ -128,7 +128,7 @@ HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
 HRESULT CBPkgFile::Seek(uint32 Pos, TSeek Origin) {
 	if (!_fileEntry) return E_FAIL;
 
-	uint32 NewPos = 0;
+	int32 NewPos = 0;
 
 	switch (Origin) {
 	case SEEK_TO_BEGIN:

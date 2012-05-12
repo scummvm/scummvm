@@ -813,7 +813,8 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 	for (it = lines.begin(); it != lines.end(); ++it) {
 		TextLine *line = (*it);
 		textWidth = MAX(textWidth, line->GetWidth());
-		SAFE_DELETE(line);
+		delete line;
+		line = NULL;
 	}
 }
 

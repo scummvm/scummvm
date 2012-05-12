@@ -196,7 +196,8 @@ HRESULT CAdGame::Cleanup() {
 HRESULT CAdGame::InitLoop() {
 	if (_scheduledScene && _transMgr->IsReady()) {
 		ChangeScene(_scheduledScene, _scheduledFadeIn);
-		SAFE_DELETE_ARRAY(_scheduledScene);
+		delete[] _scheduledScene;
+		_scheduledScene = NULL;
 
 		Game->_activeObject = NULL;
 	}
@@ -705,7 +706,8 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			RegisterObject(_responseBox);
 			Stack->PushBool(true);
 		} else {
-			SAFE_DELETE(_responseBox);
+			delete _responseBox;
+			_responseBox = NULL;
 			Stack->PushBool(false);
 		}
 		return S_OK;

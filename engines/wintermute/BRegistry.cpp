@@ -116,7 +116,7 @@ bool CBRegistry::WriteBool(const AnsiString &subKey, const AnsiString &key, bool
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::SetIniName(char *Name) {
+void CBRegistry::SetIniName(const char *Name) {
 	delete[] _iniName;
 	_iniName = NULL;
 

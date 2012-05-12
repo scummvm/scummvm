@@ -80,7 +80,7 @@ HRESULT CBResourceFile::Read(void *Buffer, uint32 Size) {
 HRESULT CBResourceFile::Seek(uint32 Pos, TSeek Origin) {
 	if (!_data) return E_FAIL;
 
-	uint32 NewPos = 0;
+	int32 NewPos = 0;
 
 	switch (Origin) {
 	case SEEK_TO_BEGIN:

@@ -107,16 +107,22 @@ CAdObject::CAdObject(CBGame *inGame): CBObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CAdObject::~CAdObject() {
 	_currentSprite = NULL; // reference only, don't delete
-	SAFE_DELETE(_animSprite);
-	SAFE_DELETE(_sentence);
-	SAFE_DELETE_ARRAY(_forcedTalkAnimName);
+	delete _animSprite;
+	_animSprite = NULL;
+	delete _sentence;
+	_sentence = NULL;
+	delete[] _forcedTalkAnimName;
+	_forcedTalkAnimName = NULL;
 
-	SAFE_DELETE(_blockRegion);
-	SAFE_DELETE(_wptGroup);
+	delete _blockRegion;
+	_blockRegion = NULL;
+	delete _wptGroup;
+	_wptGroup = NULL;
 
-	SAFE_DELETE(_currentBlockRegion);
-	SAFE_DELETE(_currentWptGroup);
-
+	delete _currentBlockRegion;
+	_currentBlockRegion = NULL;
+	delete _currentWptGroup;
+	_currentWptGroup = NULL;
 
 	_tempSprite2 = NULL; // reference only
 	_stickRegion = NULL;
@@ -146,7 +152,8 @@ CAdObject::~CAdObject() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::PlayAnim(const char *Filename) {
-	SAFE_DELETE(_animSprite);
+	delete _animSprite;
+	_animSprite = NULL;
 	_animSprite = new CBSprite(Game, this);
 	if (!_animSprite) {
 		Game->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
@@ -155,7 +162,8 @@ HRESULT CAdObject::PlayAnim(const char *Filename) {
 	HRESULT res = _animSprite->LoadFile(Filename);
 	if (FAILED(res)) {
 		Game->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
-		SAFE_DELETE(_animSprite);
+		delete _animSprite;
+		_animSprite = NULL;
 		return res;
 	}
 	_state = STATE_PLAYING_ANIM;
@@ -233,7 +241,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	else if (strcmp(Name, "ForceTalkAnim") == 0) {
 		Stack->CorrectParams(1);
 		const char *AnimName = Stack->Pop()->GetString();
-		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
+		delete[] _forcedTalkAnimName;
 		_forcedTalkAnimName = new char[strlen(AnimName) + 1];
 		strcpy(_forcedTalkAnimName, AnimName);
 		_forcedTalkAnimUsed = false;
@@ -483,7 +491,8 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		HRESULT res;
 		CAdEntity *Ent = new CAdEntity(Game);
 		if (FAILED(res = Ent->LoadFile(Filename))) {
-			SAFE_DELETE(Ent);
+			delete Ent;
+			Ent = NULL;
 			Script->RuntimeError("AddAttachment() failed loading entity '%s'", Filename);
 			Stack->PushBool(false);
 		} else {
@@ -820,11 +829,13 @@ void CAdObject::Talk(const char *Text, const char *Sound, uint32 Duration, const
 	if (!_sentence) return;
 
 	if (_forcedTalkAnimName && _forcedTalkAnimUsed) {
-		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
+		delete[] _forcedTalkAnimName;
+		_forcedTalkAnimName = NULL;
 		_forcedTalkAnimUsed = false;
 	}
 
-	SAFE_DELETE(_sentence->_sound);
+	delete (_sentence->_sound);
+	_sentence->_sound = NULL;
 
 	_sentence->SetText(Text);
 	Game->_stringTable->Expand(&_sentence->_text);
@@ -927,7 +938,8 @@ void CAdObject::Talk(const char *Text, const char *Sound, uint32 Duration, const
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::Reset() {
 	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL) {
-		SAFE_DELETE(_animSprite);
+		delete _animSprite;
+		_animSprite = NULL;
 	} else if (_state == STATE_TALKING && _sentence) {
 		_sentence->Finish();
 	}

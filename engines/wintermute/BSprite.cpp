@@ -94,7 +94,8 @@ void CBSprite::Cleanup() {
 		delete _frames[i];
 	_frames.RemoveAll();
 
-	SAFE_DELETE_ARRAY(_editorBgFile);
+	delete[] _editorBgFile;
+	_editorBgFile = NULL;
 
 	SetDefaults();
 }
@@ -262,7 +263,7 @@ HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 
 		case TOKEN_EDITOR_BG_FILE:
 			if (Game->_editorMode) {
-				SAFE_DELETE_ARRAY(_editorBgFile);
+				delete[] _editorBgFile;
 				_editorBgFile = new char[strlen((char *)params) + 1];
 				if (_editorBgFile) strcpy(_editorBgFile, (char *)params);
 			}

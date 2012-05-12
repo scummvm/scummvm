@@ -700,8 +700,12 @@ HRESULT CAdItem::ScSetProperty(const char *Name, CScValue *Value) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AmountString") == 0) {
-		if (Value->IsNULL()) SAFE_DELETE_ARRAY(_amountString);
-		else CBUtils::SetString(&_amountString, Value->GetString());
+		if (Value->IsNULL()) {
+			delete[] _amountString;
+			_amountString = NULL;
+		} else {
+			CBUtils::SetString(&_amountString, Value->GetString());
+		}
 		return S_OK;
 	}
 

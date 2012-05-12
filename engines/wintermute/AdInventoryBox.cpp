@@ -69,7 +69,8 @@ CAdInventoryBox::~CAdInventoryBox() {
 	Game->UnregisterObject(_window);
 	_window = NULL;
 
-	SAFE_DELETE(_closeButton);
+	delete _closeButton;
+	_closeButton = NULL;
 }
 
 
@@ -237,10 +238,11 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_WINDOW:
-			SAFE_DELETE(_window);
+			delete _window;
 			_window = new CUIWindow(Game);
 			if (!_window || FAILED(_window->LoadBuffer(params, false))) {
-				SAFE_DELETE(_window);
+				delete _window;
+				_window = NULL;
 				cmd = PARSERR_GENERIC;
 			} else Game->RegisterObject(_window);
 			break;
@@ -292,7 +294,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 	}
 
 	if (_exclusive) {
-		SAFE_DELETE(_closeButton);
+		delete _closeButton;
 		_closeButton = new CUIButton(Game);
 		if (_closeButton) {
 			_closeButton->SetName("close");

@@ -92,7 +92,7 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 		Game->_smartCache = false;
 	}
 
-	bool AllowDirectDraw = Game->_registry->ReadBool("Debug", "AllowDirectDraw", false);
+/*	bool AllowDirectDraw = Game->_registry->ReadBool("Debug", "AllowDirectDraw", false);*/
 
 	// load general game settings
 	Game->Initialize1();

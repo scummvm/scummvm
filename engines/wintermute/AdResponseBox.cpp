@@ -73,10 +73,14 @@ CAdResponseBox::CAdResponseBox(CBGame *inGame): CBObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CAdResponseBox::~CAdResponseBox() {
 
-	SAFE_DELETE(_window);
-	SAFE_DELETE(_shieldWindow);
-	SAFE_DELETE_ARRAY(_lastResponseText);
-	SAFE_DELETE_ARRAY(_lastResponseTextOrig);
+	delete _window;
+	_window = NULL;
+	delete _shieldWindow;
+	_shieldWindow = NULL;
+	delete[] _lastResponseText;
+	_lastResponseText = NULL;
+	delete[] _lastResponseTextOrig;
+	_lastResponseTextOrig = NULL;
 
 	if (_font) Game->_fontStorage->RemoveFont(_font);
 	if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
@@ -255,10 +259,11 @@ HRESULT CAdResponseBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_WINDOW:
-			SAFE_DELETE(_window);
+			delete _window;
 			_window = new CUIWindow(Game);
 			if (!_window || FAILED(_window->LoadBuffer(params, false))) {
-				SAFE_DELETE(_window);
+				delete _window;
+				_window = NULL;
 				cmd = PARSERR_GENERIC;
 			} else if (_shieldWindow) _shieldWindow->_parent = _window;
 			break;
@@ -304,10 +309,11 @@ HRESULT CAdResponseBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			SAFE_DELETE(_cursor);
+			delete _cursor;
 			_cursor = new CBSprite(Game);
 			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
-				SAFE_DELETE(_cursor);
+				delete _cursor;
+				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;

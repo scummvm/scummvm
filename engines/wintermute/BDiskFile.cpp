@@ -180,7 +180,7 @@ HRESULT CBDiskFile::Read(void *Buffer, uint32 Size) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBDiskFile::Seek(uint32 Pos, TSeek Origin) {
 	if (_compressed) {
-		uint32 NewPos = 0;
+		int32 NewPos = 0;
 
 		switch (Origin) {
 		case SEEK_TO_BEGIN:

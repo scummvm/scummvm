@@ -45,7 +45,8 @@ CAdSceneState::CAdSceneState(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdSceneState::~CAdSceneState() {
-	SAFE_DELETE_ARRAY(_filename);
+	delete[] _filename;
+	_filename = NULL;
 
 	for (int i = 0; i < _nodeStates.GetSize(); i++) delete _nodeStates[i];
 	_nodeStates.RemoveAll();
@@ -63,7 +64,7 @@ HRESULT CAdSceneState::Persist(CBPersistMgr *PersistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdSceneState::SetFilename(const char *Filename) {
-	SAFE_DELETE_ARRAY(_filename);
+	delete[] _filename;
 	_filename = new char [strlen(Filename) + 1];
 	if (_filename) strcpy(_filename, Filename);
 }

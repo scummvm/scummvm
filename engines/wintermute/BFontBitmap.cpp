@@ -401,7 +401,10 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 	if (sprite_file != NULL) {
 		delete _sprite;
 		_sprite = new CBSprite(Game, this);
-		if (!_sprite || FAILED(_sprite->LoadFile(sprite_file))) SAFE_DELETE(_sprite);
+		if (!_sprite || FAILED(_sprite->LoadFile(sprite_file))) {
+			delete _sprite;
+			_sprite = NULL;
+		}
 	}
 
 	if (surface_file != NULL && !_sprite) {

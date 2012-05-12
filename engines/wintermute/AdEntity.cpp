@@ -220,7 +220,8 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SPRITE: {
-			SAFE_DELETE(_sprite);
+			delete _sprite;
+			_sprite = NULL;
 			spr = new CBSprite(Game, this);
 			if (!spr || FAILED(spr->LoadFile((char *)params))) cmd = PARSERR_GENERIC;
 			else _sprite = spr;
@@ -297,10 +298,11 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			SAFE_DELETE(_cursor);
+			delete _cursor;
 			_cursor = new CBSprite(Game);
 			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
-				SAFE_DELETE(_cursor);
+				delete _cursor;
+				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -322,13 +324,17 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_BLOCKED_REGION: {
-			SAFE_DELETE(_blockRegion);
-			SAFE_DELETE(_currentBlockRegion);
+			delete _blockRegion;
+			_blockRegion = NULL;
+			delete _currentBlockRegion;
+			_currentBlockRegion = NULL;
 			CBRegion *rgn = new CBRegion(Game);
 			CBRegion *crgn = new CBRegion(Game);
 			if (!rgn || !crgn || FAILED(rgn->LoadBuffer(params, false))) {
-				SAFE_DELETE(_blockRegion);
-				SAFE_DELETE(_currentBlockRegion);
+				delete _blockRegion;
+				_blockRegion = NULL;
+				delete _currentBlockRegion;
+				_currentBlockRegion = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
@@ -339,13 +345,17 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_WAYPOINTS: {
-			SAFE_DELETE(_wptGroup);
-			SAFE_DELETE(_currentWptGroup);
+			delete _wptGroup;
+			_wptGroup = NULL;
+			delete _currentWptGroup;
+			_currentWptGroup = NULL;
 			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
 			CAdWaypointGroup *cwpt = new CAdWaypointGroup(Game);
 			if (!wpt || !cwpt || FAILED(wpt->LoadBuffer(params, false))) {
-				SAFE_DELETE(_wptGroup);
-				SAFE_DELETE(_currentWptGroup);
+				delete _wptGroup;
+				_wptGroup = NULL;
+				delete _currentWptGroup;
+				_currentWptGroup = NULL;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
@@ -361,7 +371,8 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_SUBTYPE: {
 			if (scumm_stricmp((char *)params, "sound") == 0) {
-				SAFE_DELETE(_sprite);
+				delete _sprite;
+				_sprite = NULL;
 				if (Game->_editorMode) {
 					spr = new CBSprite(Game, this);
 					if (!spr || FAILED(spr->LoadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
@@ -514,7 +525,8 @@ HRESULT CAdEntity::Update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
-		SAFE_DELETE(_animSprite);
+		delete _animSprite;
+		_animSprite = NULL;
 	}
 
 	// finished playing animation?
@@ -946,10 +958,12 @@ HRESULT CAdEntity::SetSprite(const char *Filename) {
 		SetCurrent = true;
 	}
 
-	SAFE_DELETE(_sprite);
+	delete _sprite;
+	_sprite = NULL;
 	CBSprite *spr = new CBSprite(Game, this);
 	if (!spr || FAILED(spr->LoadFile(Filename))) {
-		SAFE_DELETE(_sprite);
+		delete _sprite;
+		_sprite = NULL;
 		return E_FAIL;
 	} else {
 		_sprite = spr;

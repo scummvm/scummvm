@@ -3458,7 +3458,7 @@ HRESULT CBGame::LoadSettings(const char *Filename) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_GAME:
-			SAFE_DELETE_ARRAY(_settingsGameFile);
+			delete[] _settingsGameFile;
 			_settingsGameFile = new char[strlen((char *)params) + 1];
 			if (_settingsGameFile) strcpy(_settingsGameFile, (char *)params);
 			break;
@@ -4012,7 +4012,7 @@ HRESULT CBGame::DisplayIndicator() {
 		else _saveLoadImage->DisplayTrans(_saveImageX, _saveImageY, rc);
 	}
 
-	if (!_indicatorDisplay && _indicatorWidth <= 0 || _indicatorHeight <= 0) return S_OK;
+	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) return S_OK;
 	_renderer->SetupLines();
 	for (int i = 0; i < _indicatorHeight; i++)
 		_renderer->DrawLine(_indicatorX, _indicatorY + i, _indicatorX + (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f)), _indicatorY + i, _indicatorColor);

@@ -68,7 +68,8 @@ CBFrame::~CBFrame() {
 	_subframes.RemoveAll();
 
 	for (i = 0; i < _applyEvent.GetSize(); i++) {
-		SAFE_DELETE_ARRAY(_applyEvent[i]);
+		delete[] _applyEvent[i];
+		_applyEvent[i] = NULL;
 	}
 	_applyEvent.RemoveAll();
 }
