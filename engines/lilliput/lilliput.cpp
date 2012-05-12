@@ -2675,6 +2675,8 @@ void LilliputEngine::handleGameScripts() {
 	if (tmpVal == 0xFF)
 		return;
 /*
+	_scriptHandler->listAllTexts();
+
 	for (int i = 0; i < _gameScriptIndexSize; i++) {
 		assert(tmpVal < _gameScriptIndexSize);
 		debugC(1, kDebugEngineTBC, "================= Game Script %d ==================", i);
@@ -2683,7 +2685,14 @@ void LilliputEngine::handleGameScripts() {
 		debugC(1, kDebugEngineTBC, "============= End Game Script %d ==================", i);
 	}
 
-while(1);*/
+while(1);
+
+	if(tmpVal == 6) {
+		warning("e");
+	}
+	*/
+	i = index;
+	//debugC(1, kDebugEngineTBC, "before char %d, pos %d %d, var0 %d, var1 %d, var2 %d var16 %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], *getCharacterVariablesPtr(i * 32 + 0), *getCharacterVariablesPtr(i * 32 + 1), *getCharacterVariablesPtr(i * 32 + 2),  *getCharacterVariablesPtr(i * 32 + 22), _scriptHandler->_characterScriptEnabled[i]);
 
 	assert(tmpVal < _gameScriptIndexSize);
 	debugC(1, kDebugEngineTBC, "================= Game Script %d for character %d ==================", tmpVal, index);
@@ -2692,8 +2701,7 @@ while(1);*/
 
 
 	//warning("dump char stat");
-	i = index;
-	debugC(3, kDebugEngineTBC, "char %d, pos %d %d, state %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], *getCharacterVariablesPtr(i * 32 + 0), _scriptHandler->_characterScriptEnabled[i]);
+	//debugC(1, kDebugEngineTBC, "after char %d, pos %d %d, var0 %d, var1 %d, var2 %d var16 %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], *getCharacterVariablesPtr(i * 32 + 0), *getCharacterVariablesPtr(i * 32 + 1), *getCharacterVariablesPtr(i * 32 + 2),  *getCharacterVariablesPtr(i * 32 + 22), _scriptHandler->_characterScriptEnabled[i]);
 }
 
 Common::Error LilliputEngine::run() {
