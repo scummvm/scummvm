@@ -20,8 +20,9 @@
  */
 
 #include "common/coroutines.h"
-#include "common/textconsole.h"
+#include "common/algorithm.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Common {
 
@@ -159,7 +160,7 @@ void CoroutineScheduler::reset() {
 	while (pProc != NULL) {
 		delete pProc->state;
 		pProc->state = 0;
-		pProc->waiting = false;
+		Common::fill(&pProc->pidWaiting[0], &pProc->pidWaiting[CORO_MAX_PID_WAITING], 0);
 		pProc = pProc->pNext;
 	}
 
@@ -373,8 +374,8 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Signal as waiting
-	pCurrent->waiting = true;
+	// Signal the process Id this process is now waiting for
+	pCurrent->pidWaiting[0] = pid;
 
 	_ctx->endTime = (duration == CORO_INFINITE) ? CORO_INFINITE : g_system->getMillis() + duration;
 	if (expired)
@@ -412,7 +413,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 	}
 
 	// Signal waiting is done
-	pCurrent->waiting = false;
+	Common::fill(&pCurrent->pidWaiting[0], &pCurrent->pidWaiting[CORO_MAX_PID_WAITING], 0);
 
 	CORO_END_CODE;
 }
@@ -442,8 +443,9 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Signal as waiting
-	pCurrent->waiting = true;
+	// Signal the waiting events
+	assert(nCount < CORO_MAX_PID_WAITING);
+	Common::copy(pidList, pidList + nCount, pCurrent->pidWaiting);
 
 	_ctx->endTime = (duration == CORO_INFINITE) ? CORO_INFINITE : g_system->getMillis() + duration;
 	if (expired)
@@ -487,7 +489,7 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 	}
 
 	// Signal waiting is done
-	pCurrent->waiting = false;
+	Common::fill(&pCurrent->pidWaiting[0], &pCurrent->pidWaiting[CORO_MAX_PID_WAITING], 0);
 
 	CORO_END_CODE;
 }
@@ -510,9 +512,6 @@ void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Signal as waiting
-	pCurrent->waiting = true;
-
 	_ctx->endTime = g_system->getMillis() + duration;
 
 	// Outer loop for doing checks until expiry 
@@ -520,9 +519,6 @@ void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 		// Sleep until the next cycle
 		CORO_SLEEP(1);
 	}
-
-	// Signal waiting is done
-	pCurrent->waiting = false;
 
 	CORO_END_CODE;
 }
@@ -848,23 +844,27 @@ void CoroutineScheduler::pulseEvent(uint32 pidEvent) {
 		pNext = pProc->pNext;
 
 		// Only call processes that are currently waiting (either in waitForSingleObject or
-		// waitForMultipleObjects). If one is found, execute it immediately
-		if (pProc->waiting) {
-			// Dispatch the process
-			pCurrent = pProc;
-			pProc->coroAddr(pProc->state, pProc->param);
+		// waitForMultipleObjects) for the given event Pid
+		for (int i = 0; i < CORO_MAX_PID_WAITING; ++i) {
+			if (pProc->pidWaiting[i] == pidEvent) {
+				// Dispatch the process
+				pCurrent = pProc;
+				pProc->coroAddr(pProc->state, pProc->param);
 
-			if (!pProc->state || pProc->state->_sleep <= 0) {
-				// Coroutine finished
-				pCurrent = pCurrent->pPrevious;
-				killProcess(pProc);
-			} else {
-				pProc->sleepTime = pProc->state->_sleep;
+				if (!pProc->state || pProc->state->_sleep <= 0) {
+					// Coroutine finished
+					pCurrent = pCurrent->pPrevious;
+					killProcess(pProc);
+				} else {
+					pProc->sleepTime = pProc->state->_sleep;
+				}
+
+				// pCurrent may have been changed
+				pNext = pCurrent->pNext;
+				pCurrent = NULL;
+
+				break;
 			}
-
-			// pCurrent may have been changed
-			pNext = pCurrent->pNext;
-			pCurrent = NULL;
 		}
 
 		pProc = pNext;

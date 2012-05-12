@@ -278,6 +278,7 @@ public:
 // the maximum number of processes
 #define	CORO_NUM_PROCESS	100
 #define CORO_MAX_PROCESSES	100
+#define CORO_MAX_PID_WAITING 5
 
 #define CORO_INFINITE 0xffffffff
 #define CORO_INVALID_PID_VALUE 0
@@ -294,7 +295,7 @@ struct PROCESS {
 
 	int sleepTime;		///< number of scheduler cycles to sleep
 	uint32 pid;			///< process ID
-	bool waiting;		///< process is currently in a waiting state
+	uint32 pidWaiting[CORO_MAX_PID_WAITING];	///< Process ID(s) process is currently waiting on
 	char param[CORO_PARAM_SIZE];	///< process specific info
 };
 typedef PROCESS *PPROCESS;
