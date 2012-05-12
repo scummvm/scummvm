@@ -737,7 +737,7 @@ HRESULT CBSprite::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBSprite::ScToString() {
+const char *CBSprite::ScToString() {
 	return "[sprite]";
 }
 

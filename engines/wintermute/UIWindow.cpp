@@ -1092,7 +1092,7 @@ HRESULT CUIWindow::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CUIWindow::ScToString() {
+const char *CUIWindow::ScToString() {
 	return "[window]";
 }
 

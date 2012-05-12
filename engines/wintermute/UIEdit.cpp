@@ -528,7 +528,7 @@ HRESULT CUIEdit::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CUIEdit::ScToString() {
+const char *CUIEdit::ScToString() {
 	return "[edit]";
 }
 

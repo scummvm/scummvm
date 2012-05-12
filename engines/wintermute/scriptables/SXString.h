@@ -42,7 +42,7 @@ public:
 	HRESULT ScSetProperty(const char *Name, CScValue *Value);
 	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
 	void ScSetString(const char *Val);
-	char *ScToString();
+	const char *ScToString();
 	void SetStringVal(const char *Val);
 
 	CSXString(CBGame *inGame, CScStack *Stack);

@@ -455,7 +455,7 @@ HRESULT CUIText::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CUIText::ScToString() {
+const char *CUIText::ScToString() {
 	return "[static]";
 }
 

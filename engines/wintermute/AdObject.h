@@ -102,7 +102,7 @@ public:
 	virtual CScValue *ScGetProperty(const char *Name);
 	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	virtual char *ScToString();
+	virtual const char *ScToString();
 
 	CBArray<CAdObject *, CAdObject *> _attachmentsPre;
 	CBArray<CAdObject *, CAdObject *> _attachmentsPost;

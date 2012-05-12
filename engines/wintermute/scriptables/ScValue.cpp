@@ -591,7 +591,7 @@ const char *CScValue::GetString() {
 		break;
 
 	case VAL_NATIVE: {
-		char *StrVal = _valNative->ScToString();
+		const char *StrVal = _valNative->ScToString();
 		SetStringVal(StrVal);
 		return StrVal;
 		break;

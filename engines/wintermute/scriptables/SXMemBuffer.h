@@ -41,7 +41,7 @@ public:
 	CScValue *ScGetProperty(const char *Name);
 	HRESULT ScSetProperty(const char *Name, CScValue *Value);
 	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	char *ScToString();
+	const char *ScToString();
 	CSXMemBuffer(CBGame *inGame, CScStack *Stack);
 	CSXMemBuffer(CBGame *inGame, void *Buffer);
 	virtual ~CSXMemBuffer();

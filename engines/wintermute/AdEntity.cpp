@@ -809,7 +809,7 @@ HRESULT CAdEntity::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdEntity::ScToString() {
+const char *CAdEntity::ScToString() {
 	return "[entity object]";
 }
 

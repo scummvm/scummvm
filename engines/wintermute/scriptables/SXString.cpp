@@ -81,7 +81,7 @@ void CSXString::SetStringVal(const char *Val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CSXString::ScToString() {
+const char *CSXString::ScToString() {
 	if (_string) return _string;
 	else return "[null string]";
 }

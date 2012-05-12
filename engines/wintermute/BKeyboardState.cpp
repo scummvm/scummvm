@@ -174,7 +174,7 @@ HRESULT CBKeyboardState::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBKeyboardState::ScToString() {
+const char *CBKeyboardState::ScToString() {
 	return "[keyboard state]";
 }
 

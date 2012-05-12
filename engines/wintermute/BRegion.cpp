@@ -372,7 +372,7 @@ HRESULT CBRegion::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBRegion::ScToString() {
+const char *CBRegion::ScToString() {
 	return "[region]";
 }
 

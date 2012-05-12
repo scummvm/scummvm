@@ -777,7 +777,7 @@ HRESULT CAdObject::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdObject::ScToString() {
+const char *CAdObject::ScToString() {
 	return "[ad object]";
 }
 

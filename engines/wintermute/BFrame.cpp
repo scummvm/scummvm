@@ -700,7 +700,7 @@ HRESULT CBFrame::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBFrame::ScToString() {
+const char *CBFrame::ScToString() {
 	return "[frame]";
 }
 

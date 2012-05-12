@@ -623,7 +623,7 @@ HRESULT CBFontTT::InitFont() {
 	}
 	warning("I guess we got a file");
 	if (file) {
-		_font = Graphics::loadTTFFont(*file->getMemStream(), 12);
+		//_font = Graphics::loadTTFFont(*file->getMemStream(), 12);
 	} else {
 		_fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);

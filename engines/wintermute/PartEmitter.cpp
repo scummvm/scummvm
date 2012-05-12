@@ -1088,7 +1088,7 @@ HRESULT CPartEmitter::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CPartEmitter::ScToString() {
+const char *CPartEmitter::ScToString() {
 	return "[particle emitter]";
 }
 

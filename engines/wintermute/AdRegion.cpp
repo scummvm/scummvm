@@ -342,7 +342,7 @@ HRESULT CAdRegion::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdRegion::ScToString() {
+const char *CAdRegion::ScToString() {
 	return "[ad region]";
 }
 

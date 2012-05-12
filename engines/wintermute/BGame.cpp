@@ -2673,7 +2673,7 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBGame::ScToString() {
+const char *CBGame::ScToString() {
 	return "[game object]";
 }
 

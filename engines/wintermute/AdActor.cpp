@@ -1115,7 +1115,7 @@ HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdActor::ScToString() {
+const char *CAdActor::ScToString() {
 	return "[actor object]";
 }
 

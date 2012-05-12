@@ -543,7 +543,7 @@ HRESULT CBSubFrame::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBSubFrame::ScToString() {
+const char *CBSubFrame::ScToString() {
 	return "[subframe]";
 }
 

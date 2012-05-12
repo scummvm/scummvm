@@ -718,7 +718,7 @@ HRESULT CAdItem::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdItem::ScToString() {
+const char *CAdItem::ScToString() {
 	return "[item]";
 }
 

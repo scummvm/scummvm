@@ -90,7 +90,7 @@ HRESULT CBScriptable::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBScriptable::ScToString() {
+const char *CBScriptable::ScToString() {
 	return "[native object]";
 }
 

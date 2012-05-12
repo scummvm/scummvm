@@ -845,7 +845,7 @@ HRESULT CBObject::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBObject::ScToString() {
+const char *CBObject::ScToString() {
 	return "[object]";
 }
 

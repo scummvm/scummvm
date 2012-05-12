@@ -480,7 +480,7 @@ HRESULT CUIObject::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CUIObject::ScToString() {
+const char *CUIObject::ScToString() {
 	return "[ui_object]";
 }
 

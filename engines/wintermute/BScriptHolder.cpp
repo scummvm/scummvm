@@ -252,7 +252,7 @@ HRESULT CBScriptHolder::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBScriptHolder::ScToString() {
+const char *CBScriptHolder::ScToString() {
 	return "[script_holder]";
 }
 

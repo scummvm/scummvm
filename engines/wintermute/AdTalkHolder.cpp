@@ -320,7 +320,7 @@ HRESULT CAdTalkHolder::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdTalkHolder::ScToString() {
+const char *CAdTalkHolder::ScToString() {
 	return "[talk-holder object]";
 }
 

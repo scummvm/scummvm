@@ -44,7 +44,7 @@ public:
 	CScValue *ScGetProperty(const char *Name);
 	HRESULT ScSetProperty(const char *Name, CScValue *Value);
 	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	char *ScToString();
+	const char *ScToString();
 	int _length;
 	CScValue *_values;
 };

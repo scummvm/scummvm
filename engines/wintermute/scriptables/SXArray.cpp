@@ -69,7 +69,7 @@ CSXArray::~CSXArray() {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CSXArray::ScToString() {
+const char *CSXArray::ScToString() {
 	static char Dummy[32768];
 	strcpy(Dummy, "");
 	char PropName[20];

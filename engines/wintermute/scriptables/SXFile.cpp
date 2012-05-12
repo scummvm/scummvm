@@ -86,7 +86,7 @@ void CSXFile::Close() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CSXFile::ScToString() {
+const char *CSXFile::ScToString() {
 	if (_filename) return _filename;
 	else return "[file object]";
 }

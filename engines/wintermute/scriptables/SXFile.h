@@ -42,7 +42,7 @@ public:
 	CScValue *ScGetProperty(const char *Name);
 	HRESULT ScSetProperty(const char *Name, CScValue *Value);
 	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	char *ScToString();
+	const char *ScToString();
 	CSXFile(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXFile();
 private:

@@ -66,7 +66,7 @@ CSXDate::~CSXDate() {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CSXDate::ScToString() {
+const char *CSXDate::ScToString() {
 #if 0
 	return asctime(&_tm);
 #endif

@@ -115,7 +115,7 @@ bool CSXMemBuffer::CheckBounds(CScScript *Script, int Start, int Length) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CSXMemBuffer::ScToString() {
+const char *CSXMemBuffer::ScToString() {
 	return "[membuffer object]";
 }
 

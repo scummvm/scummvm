@@ -410,13 +410,13 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 	hdr.readFromStream(package);
 //	package->read(&hdr, sizeof(TPackageHeader), 1, f);
 	if (hdr.Magic1 != PACKAGE_MAGIC_1 || hdr.Magic2 != PACKAGE_MAGIC_2 || hdr.PackageVersion > PACKAGE_VERSION) {
-		Game->LOG(0, "  Invalid header in package file '%s'. Ignoring.", Filename);
+		Game->LOG(0, "  Invalid header in package file '%s'. Ignoring.", Filename.c_str());
 		delete package;
 		return S_OK;
 	}
 
 	if (hdr.PackageVersion != PACKAGE_VERSION) {
-		Game->LOG(0, "  Warning: package file '%s' is outdated.", Filename);
+		Game->LOG(0, "  Warning: package file '%s' is outdated.", Filename.c_str());
 	}
 
 	// new in v2

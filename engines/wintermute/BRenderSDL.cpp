@@ -274,24 +274,29 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
 // Replacement for SDL2's SDL_RenderCopy
 void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect) {
 	for (int i = 0; i < srcRect->height(); i++) {
-		void *destPtr = _renderSurface->getBasePtr(dstRect->left, dstRect->top + i);
-		void *srcPtr = surf->getBasePtr(srcRect->left, srcRect->top + i);
+		byte *destPtr = (byte*)_renderSurface->getBasePtr(dstRect->left, dstRect->top + i);
+		byte *srcPtr = (byte*)surf->getBasePtr(srcRect->left, srcRect->top + i);
 		for (int j = 0; j < srcRect->width(); j++) {
 			// TODO: Replace this with something less ugly, and more portable.
 			if (((byte *)srcPtr)[0] == 255) {
 				memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel);
 			}
-			((byte *)srcPtr) += _renderSurface->format.bytesPerPixel;
-			((byte *)destPtr) += _renderSurface->format.bytesPerPixel;
+			srcPtr += _renderSurface->format.bytesPerPixel;
+			destPtr += _renderSurface->format.bytesPerPixel;
 		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
-	byte r = D3DCOLGetR(Color);
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		warning("CBRenderSDL::DrawLine - not fully ported yet");
+		hasWarned = true;
+	}
+/*	byte r = D3DCOLGetR(Color);
 	byte g = D3DCOLGetG(Color);
 	byte b = D3DCOLGetB(Color);
-	byte a = D3DCOLGetA(Color);
+	byte a = D3DCOLGetA(Color);*/
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);

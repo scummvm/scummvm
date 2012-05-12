@@ -1942,7 +1942,7 @@ HRESULT CAdScene::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdScene::ScToString() {
+const char *CAdScene::ScToString() {
 	return "[scene object]";
 }
 

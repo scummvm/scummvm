@@ -322,7 +322,7 @@ HRESULT CUIEntity::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CUIEntity::ScToString() {
+const char *CUIEntity::ScToString() {
 	return "[entity container]";
 }
 

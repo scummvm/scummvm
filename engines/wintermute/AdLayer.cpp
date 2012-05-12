@@ -472,7 +472,7 @@ HRESULT CAdLayer::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdLayer::ScToString() {
+const char *CAdLayer::ScToString() {
 	return "[layer]";
 }
 

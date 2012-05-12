@@ -1002,7 +1002,7 @@ HRESULT CUIButton::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CUIButton::ScToString() {
+const char *CUIButton::ScToString() {
 	return "[button]";
 }
 
