@@ -763,7 +763,7 @@ void RMOptionScreen::CloseState(void) {
 	m_menu = NULL;
 
 	delete m_ButtonExit;
-	m_ButtonExit = false;
+	m_ButtonExit = NULL;
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
 		int i;
