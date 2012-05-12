@@ -181,7 +181,7 @@ void RMInventory::Init(void) {
 
 	// Prepara il primo inventario
 	Prepare();
-	DrawOT();
+	DrawOT(Common::nullContext);
 	ClearOT();
 }
 
@@ -205,50 +205,62 @@ void RMInventory::Reset(void) {
 	EndCombine();
 }
 
-void RMInventory::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMInventory::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+		RMPoint pos;
+		RMPoint pos2;
+		RMGfxPrimitive *p;
+		RMGfxPrimitive *p2;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (m_state == OPENING || m_state == CLOSING)
 		prim->SetDst(RMPoint(0, m_curPutY));
 	else
 		prim->SetDst(RMPoint(0, m_curPutY));
 
 	g_system->lockMutex(m_csModifyInterface);
-	RMGfxWoodyBuffer::Draw(bigBuf, prim);
+	CORO_INVOKE_2(RMGfxWoodyBuffer::Draw, bigBuf, prim);
 	g_system->unlockMutex(m_csModifyInterface);
 
 	if (m_state == SELECTING) {
-		RMPoint pos;
-		RMPoint pos2;
 
 		if (!bCfgInvUp) {
-			pos.Set((m_nSelectObj+1)*64 - 20,RM_SY - 113);
-			pos2.Set((m_nSelectObj+1)*64 + 34,RM_SY - 150);
+			_ctx->pos.Set((m_nSelectObj+1)*64 - 20,RM_SY - 113);
+			_ctx->pos2.Set((m_nSelectObj+1)*64 + 34,RM_SY - 150);
 		} else {
-			pos.Set((m_nSelectObj+1)*64 - 20, 72 - 4); // la parte marrone sta in alto :(
-			pos2.Set((m_nSelectObj+1)*64 + 34, 119 - 4);
+			_ctx->pos.Set((m_nSelectObj+1)*64 - 20, 72 - 4); // la parte marrone sta in alto :(
+			_ctx->pos2.Set((m_nSelectObj+1)*64 + 34, 119 - 4);
 		}
 		
-		RMGfxPrimitive p(prim->m_task, pos);
-		RMGfxPrimitive p2(prim->m_task, pos2);
+		_ctx->p = new RMGfxPrimitive(prim->m_task, _ctx->pos);
+		_ctx->p2 = new RMGfxPrimitive(prim->m_task, _ctx->pos2);
 
 		// Disegna l'interfaccina stupida
-		miniInterface.Draw(bigBuf,&p);
+		CORO_INVOKE_2(miniInterface.Draw, bigBuf, _ctx->p);
 
 		if (bCfgInterTips) {
 			if (miniAction == 1) // Esamina
-				m_hints[0].Draw(bigBuf, &p2);
+				CORO_INVOKE_2(m_hints[0].Draw, bigBuf, _ctx->p2);
 			else if (miniAction == 2) // Parla
-				m_hints[1].Draw(bigBuf, &p2);
+				CORO_INVOKE_2(m_hints[1].Draw, bigBuf, _ctx->p2);
 			else if (miniAction == 3) // Usa
-				m_hints[2].Draw(bigBuf, &p2);
+				CORO_INVOKE_2(m_hints[2].Draw, bigBuf, _ctx->p2);
 		}
+
+		delete _ctx->p;
+		delete _ctx->p2;
 	}
+
+	CORO_END_CODE;
 }
 
-bool RMInventory::RemoveThis(void) {
+void RMInventory::RemoveThis(CORO_PARAM, bool &result) {
 	if (m_state == CLOSED)
-		return true;
-
-	return false;
+		result = true;
+	else
+		result = false;
 }
 
 void RMInventory::RemoveItem(int code) {
@@ -263,7 +275,7 @@ void RMInventory::RemoveItem(int code) {
 			m_nInv--;
 	
 			Prepare();
-			DrawOT();
+			DrawOT(Common::nullContext);
 			ClearOT();
 			g_system->unlockMutex(m_csModifyInterface);
 			return;
@@ -287,7 +299,7 @@ void RMInventory::AddItem(int code) {
 		m_inv[m_nInv++]=code-10000;
 
 		Prepare();
-		DrawOT();
+		DrawOT(Common::nullContext);
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	}
@@ -302,7 +314,7 @@ void RMInventory::ChangeItemStatus(uint32 code, uint32 dwStatus) {
 		m_items[code - 10000].status = dwStatus;
 
 		Prepare();
-		DrawOT();
+		DrawOT(Common::nullContext);
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	}
@@ -384,7 +396,7 @@ bool RMInventory::LeftClick(RMPoint mpos, int& nCombineObj) {
 		}
 
 		Prepare();
-		DrawOT();
+		DrawOT(Common::nullContext);
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	}
@@ -405,7 +417,7 @@ bool RMInventory::LeftClick(RMPoint mpos, int& nCombineObj) {
 		}
 
 		Prepare();
-		DrawOT();
+		DrawOT(Common::nullContext);
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	}
@@ -450,7 +462,7 @@ void RMInventory::RightClick(RMPoint mpos) {
 		}
 
 		Prepare();
-		DrawOT();
+		DrawOT(Common::nullContext);
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	} else if ((m_state == OPENED) && m_bBlinkingLeft) {
@@ -470,7 +482,7 @@ void RMInventory::RightClick(RMPoint mpos) {
 		}
 
 		Prepare();
-		DrawOT();
+		DrawOT(Common::nullContext);
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	}
@@ -550,7 +562,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		g_system->unlockMutex(m_csModifyInterface);
 	}
  
-	if ((GetAsyncKeyState(Common::KEYCODE_i) & 0x8001) == 0x8001) {
+	if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_i)) {
 		bCfgInvLocked = !bCfgInvLocked;
 	}
 
@@ -759,7 +771,7 @@ int RMInventory::LoadState(byte *state) {
 		m_items[28].icon.SetPattern(1);
 
 	Prepare();
-	DrawOT();
+	DrawOT(Common::nullContext);
 	ClearOT();
 
 	return GetSaveStateSize();
@@ -795,30 +807,35 @@ int RMInterface::OnWhichBox(RMPoint pt) {
 	return -1;
 }
 
-void RMInterface::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int h;
+void RMInterface::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+		int h;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	prim->Dst().TopLeft() = m_openStart;
-	RMGfxSourceBuffer8RLEByte::Draw(bigBuf, prim);
+	CORO_INVOKE_2(RMGfxSourceBuffer8RLEByte::Draw, bigBuf, prim);
 
 	// Controlla se c'e' da disegnare una zona calda
-	h = OnWhichBox(m_mpos);
-	if (h != -1) {
+	_ctx->h = OnWhichBox(m_mpos);
+	if (_ctx->h != -1) {
 		prim->Dst().TopLeft() = m_openStart;
-		m_hotzone[h].Draw(bigBuf, prim);
+		CORO_INVOKE_2(m_hotzone[_ctx->h].Draw, bigBuf, prim);
 		
-		if (m_lastHotZone != h) {
-			m_lastHotZone = h;
+		if (m_lastHotZone != _ctx->h) {
+			m_lastHotZone = _ctx->h;
 			_vm->PlayUtilSFX(1);
 		}
 
 		if (bCfgInterTips) {
 			prim->Dst().TopLeft() = m_openStart + RMPoint(70, 177);
-			m_hints[h].Draw(bigBuf,prim);
+			CORO_INVOKE_2(m_hints[_ctx->h].Draw, bigBuf, prim);
 		}
 	} else
 		m_lastHotZone = -1;
 
+	CORO_END_CODE;
 }
 
 

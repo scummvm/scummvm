@@ -129,6 +129,7 @@ public:
 	void DisableMouse(void);
 
 	operator byte *() { return (byte *)m_bigBuf; }
+	RMInput &GetInput() { return m_input; }
 
 	// Link to the custom function list
 	void InitCustomDll(void);

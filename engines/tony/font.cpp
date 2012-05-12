@@ -152,12 +152,19 @@ RMGfxPrimitive *RMFont::MakeLetterPrimitive(byte bChar, int &nLength) {
 	return prim;
 }
 
-void RMFont::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim2) {
-  RMFontPrimitive *prim = (RMFontPrimitive *)prim2;
+void RMFont::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim2) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
 
-  // Richiama la Draw della lettera assegnata alla primitiva
-  if (prim->m_nChar != -1)
-	  m_letter[prim->m_nChar].Draw(bigBuf,prim);
+	RMFontPrimitive *prim = (RMFontPrimitive *)prim2;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	// Richiama la Draw della lettera assegnata alla primitiva
+	if (prim->m_nChar != -1)
+		CORO_INVOKE_2(m_letter[prim->m_nChar].Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 void RMFont::Close(void) {
@@ -1845,10 +1852,10 @@ void RMText::SetMaxLineLength(int max) {
 	maxLineLength = max;
 }
 
-bool RMText::RemoveThis() {
+void RMText::RemoveThis(CORO_PARAM, bool &result) {
  // Qui possiamo fare i controlli sul numero di frame, sul tempo trascorso
  // etc.
-	return true;
+	result = true;
 }
 
 
@@ -2007,7 +2014,11 @@ void RMText::ClipOnScreen(RMGfxPrimitive *prim) {
 	if (prim->Dst().y1+m_dimy > 475) prim->Dst().y1 = 475 - m_dimy;
 }
 
-void RMText::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMText::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 	// Allinea orizzontalmente
 	if (aHorType == HCENTER)
 		prim->Dst().TopLeft() -= RMPoint(m_dimx / 2, 0);
@@ -2016,22 +2027,20 @@ void RMText::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 
 	// Alinea verticalemente
-	switch (aVerType) {
-	case VTOP:
-		break;
+	if (aVerType == VTOP) {
 
-	case VCENTER:
-		prim->Dst().y1-=m_dimy/2;
-		break;
+	} else if (aVerType == VCENTER) {
+		prim->Dst().y1 -= m_dimy / 2;
 
-	case VBOTTOM:
-		prim->Dst().y1-=m_dimy;
-		break;
+	} else if (aVerType == VBOTTOM) {
+		prim->Dst().y1 -= m_dimy;
 	}
 
 	ClipOnScreen(prim);
 
-	RMGfxWoodyBuffer::Draw(bigBuf,prim);
+	CORO_INVOKE_2(RMGfxWoodyBuffer::Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 /****************************************************************************\
@@ -2127,7 +2136,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 			}
 
 		if (!m_bNoTab)
-			if ((GetAsyncKeyState(Common::KEYCODE_TAB) & 0x8001) == 0x8001)
+			if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
 				return;
 
 		if (!m_bNoTab)
@@ -2173,16 +2182,23 @@ void RMTextDialog::Unregister(void) {
 	CoroScheduler.setEvent(hEndDisplay);
 }
 
-void RMTextDialog::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMTextDialog::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (m_startTime == 0)
 		m_startTime = _vm->GetTime();
 	
 	if (m_bShowed) {
 		if (bCfgSottotitoli || m_bAlwaysDisplay) {
 			prim->Dst().TopLeft() = dst;
-			RMText::Draw(bigBuf, prim);
+			CORO_INVOKE_2(RMText::Draw, bigBuf, prim);
 		}
 	}
+
+	CORO_END_CODE;
 }
 
 void RMTextDialog::SetCustomSkipHandle(uint32 hCustom) {
@@ -2217,17 +2233,23 @@ RMTextDialogScrolling::RMTextDialogScrolling(RMLocation *loc) {
 RMTextDialogScrolling::~RMTextDialogScrolling() {
 }
 
-void RMTextDialogScrolling::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	RMPoint curDst;
+void RMTextDialogScrolling::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+		RMPoint curDst;
+	CORO_END_CONTEXT(_ctx);
 
-	curDst = dst;
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->curDst = dst;
 
 	if (curLoc != NULL)
 		dst -= curLoc->ScrollPosition() - startScroll;
 
-	RMTextDialog::Draw(bigBuf, prim);
+	CORO_INVOKE_2(RMTextDialog::Draw, bigBuf, prim);
 
-	dst = curDst;
+	dst = _ctx->curDst;
+
+	CORO_END_CODE;
 }
 
 void RMTextDialogScrolling::ClipOnScreen(RMGfxPrimitive *prim) {
@@ -2298,7 +2320,12 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 }
 
 
-void RMTextItemName::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMTextItemName::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	// Se non c'e' testo, e' inutile continuare
 	if (m_buf == NULL)
 		return;
@@ -2306,7 +2333,9 @@ void RMTextItemName::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	// Setta come coordinate destinazione quelle del mouse
 	prim->Dst().TopLeft() = m_mpos-RMPoint(0, 30);
 
-	RMText::Draw(bigBuf,prim);
+	CORO_INVOKE_2(RMText::Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 RMPoint RMTextItemName::GetHotspot() { 
@@ -2411,9 +2440,13 @@ void RMDialogChoice::AddChoice(RMString string) {
 	m_drawedStrings[m_curAdded++].WriteText(string,0);	
 }
 
-void RMDialogChoice::Prepare(void) {
-	int i;
-	RMPoint ptPos;
+void RMDialogChoice::Prepare(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+		int i;
+		RMPoint ptPos;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	AddPrim(new RMGfxPrimitive(&DlgText,RMPoint(0,0)));
 	AddPrim(new RMGfxPrimitive(&DlgTextLine,RMPoint(0,155)));
@@ -2421,53 +2454,60 @@ void RMDialogChoice::Prepare(void) {
 	AddPrim(new RMGfxPrimitive(&DlgTextLine,RMPoint(0,155+83+83)));
 	AddPrim(new RMGfxPrimitive(&DlgTextLine,RMPoint(0,155+83+83+83)));
 
-	ptPos.Set(20,90);
+	_ctx->ptPos.Set(20,90);
 
-	for (i = 0; i < m_numChoices; i++) {
-		AddPrim(new RMGfxPrimitive(&m_drawedStrings[i], ptPos));
-		m_ptDrawStrings[i] = ptPos;
-		ptPos.Offset(0,m_drawedStrings[i].Dimy() + 15);
+	for (_ctx->i = 0; _ctx->i < m_numChoices; _ctx->i++) {
+		AddPrim(new RMGfxPrimitive(&m_drawedStrings[_ctx->i], _ctx->ptPos));
+		m_ptDrawStrings[_ctx->i] = _ctx->ptPos;
+		_ctx->ptPos.Offset(0,m_drawedStrings[_ctx->i].Dimy() + 15);
 	}
 
-	DrawOT();
+	CORO_INVOKE_0(DrawOT);
 	ClearOT();
 
-	m_ptDrawPos.Set(0,480-ptPos.y);
+	m_ptDrawPos.Set(0,480-_ctx->ptPos.y);
+
+	CORO_END_CODE;
 }
 
-void RMDialogChoice::SetSelected(int pos) {
-	//uint16 * buf = (uint16 *)m_buf;
-	RMGfxBox box;
-	RMRect rc;
+void RMDialogChoice::SetSelected(CORO_PARAM, int pos) {
+	CORO_BEGIN_CONTEXT;
+		RMGfxBox box;
+		RMRect rc;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 
 	if (pos == m_curSelection)
 		return;
 
-	box.SetPriority(5);
+	_ctx->box.SetPriority(5);
 
 	if (m_curSelection != -1) {
-		box.SetColor(0xCC, 0xCC, 0xFF);
-		rc.TopLeft()=RMPoint(18, m_ptDrawStrings[m_curSelection].y); 
-		rc.BottomRight() = rc.TopLeft() + RMPoint(597, m_drawedStrings[m_curSelection].Dimy());
-		AddPrim(new RMGfxPrimitive(&box, rc));
+		_ctx->box.SetColor(0xCC, 0xCC, 0xFF);
+		_ctx->rc.TopLeft()=RMPoint(18, m_ptDrawStrings[m_curSelection].y); 
+		_ctx->rc.BottomRight() = _ctx->rc.TopLeft() + RMPoint(597, m_drawedStrings[m_curSelection].Dimy());
+		AddPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
 
 		AddPrim(new RMGfxPrimitive(&m_drawedStrings[m_curSelection], m_ptDrawStrings[m_curSelection]));
-		DrawOT();
+		CORO_INVOKE_0(DrawOT);
 		ClearOT();
 	}
 
 	if (pos != -1) {
-		box.SetColor(100, 100, 100);
-		rc.TopLeft()=RMPoint(18, m_ptDrawStrings[pos].y); 
-		rc.BottomRight() = rc.TopLeft()+RMPoint(597, m_drawedStrings[pos].Dimy());
-		AddPrim(new RMGfxPrimitive(&box, rc));
+		_ctx->box.SetColor(100, 100, 100);
+		_ctx->rc.TopLeft()=RMPoint(18, m_ptDrawStrings[pos].y); 
+		_ctx->rc.BottomRight() = _ctx->rc.TopLeft()+RMPoint(597, m_drawedStrings[pos].Dimy());
+		AddPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
 		AddPrim(new RMGfxPrimitive(&m_drawedStrings[pos], m_ptDrawStrings[pos]));
 	}
 
-	DrawOT();
+	CORO_INVOKE_0(DrawOT);
 	ClearOT();
 
 	m_curSelection = pos;
+
+	CORO_END_CODE;
 }
 
 void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
@@ -2480,7 +2520,7 @@ void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	Prepare();
+	CORO_INVOKE_0(Prepare);
 	m_bShow = false;
 
 	if (!m_nInList && bigBuf != NULL)
@@ -2513,12 +2553,19 @@ void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 	CORO_END_CODE;
 }
 
-void RMDialogChoice::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMDialogChoice::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (m_bShow == false)
 		return;
 
 	prim->SetDst(m_ptDrawPos);
-	RMGfxSourceBuffer16::Draw(bigBuf, prim);
+	CORO_INVOKE_2(RMGfxSourceBuffer16::Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 
@@ -2553,24 +2600,30 @@ void RMDialogChoice::Hide(CORO_PARAM) {
 }
 
 
-bool RMDialogChoice::RemoveThis(void) {
-	return bRemoveFromOT;
+void RMDialogChoice::RemoveThis(CORO_PARAM, bool &result) {
+	result = bRemoveFromOT;
 }
 
-void RMDialogChoice::DoFrame(RMPoint ptMousePos) {
-	int i;
-	
+void RMDialogChoice::DoFrame(CORO_PARAM, RMPoint ptMousePos) {
+	CORO_BEGIN_CONTEXT;
+		int i;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (ptMousePos.y > m_ptDrawPos.y) {		
-		for (i = 0; i < m_numChoices; i++) {
-			if ((ptMousePos.y >= m_ptDrawPos.y+m_ptDrawStrings[i].y) && (ptMousePos.y < m_ptDrawPos.y+m_ptDrawStrings[i].y+m_drawedStrings[i].Dimy())) {
-				SetSelected(i);
+		for (_ctx->i = 0; _ctx->i < m_numChoices; _ctx->i++) {
+			if ((ptMousePos.y >= m_ptDrawPos.y+m_ptDrawStrings[_ctx->i].y) && (ptMousePos.y < m_ptDrawPos.y+m_ptDrawStrings[_ctx->i].y+m_drawedStrings[_ctx->i].Dimy())) {
+				CORO_INVOKE_1(SetSelected, _ctx->i);
 				break;
 			}
 		}
 
-		if (i == m_numChoices)
-			SetSelected(-1);
+		if (_ctx->i == m_numChoices)
+			CORO_INVOKE_1(SetSelected, -1);
 	}
+
+	CORO_END_CODE;
 }
 
 int RMDialogChoice::GetSelection(void) {

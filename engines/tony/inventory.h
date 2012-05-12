@@ -119,10 +119,10 @@ public:
 	void Reset(void);
 
 	// Overload per la rimozione da otlist
-	bool RemoveThis(void);
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Overload per il disegno (per la posizione x&y e l'interfaccina)
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Metodo per determinare se l'inventario sta comandando gli input
 	bool HaveFocus(RMPoint mpos);
@@ -205,7 +205,7 @@ public:
 	bool GetPalesati(void);
 
 	// Overloading del Draw per il posizionamente
-	virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 } // End of namespace Tony

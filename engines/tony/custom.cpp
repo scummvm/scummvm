@@ -2155,6 +2155,9 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		if (_ctx->num == 1) {
 			mpalQueryDialogSelection(_ctx->nChoice, _ctx->sl[0]);
 			GlobalFree(_ctx->sl);
+
+			// Wait for the next choice to be made
+			mpalQueryDialogWaitForChoice(&_ctx->nChoice);
 			continue;
 		}
 		
@@ -2181,7 +2184,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		while (!(Input->MouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {
 			CORO_INVOKE_0(WaitFrame);
 			Freeze();
-			_ctx->dc.DoFrame(Input->MousePos());
+			CORO_INVOKE_1(_ctx->dc.DoFrame, Input->MousePos());
 			Unfreeze();
 		}	
 
@@ -2214,7 +2217,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
 //	EnterCriticalSection(&cs[num]);
 //	WaitForSingleObject(mut[num],CORO_INFINITE);
-	warning("TODO");
+	warning("TODO: TakeOwnership");
 }
 
 DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
@@ -2644,7 +2647,7 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 		CORO_INVOKE_0(WaitFrame);
 		if (Input->MouseLeftClicked() || Input->MouseRightClicked())
 			break;
-		if ((GetAsyncKeyState(Common::KEYCODE_TAB) & 0x8001) == 0x8001)
+		if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
 			break;
 	}
 

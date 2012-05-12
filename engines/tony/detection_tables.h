@@ -32,7 +32,11 @@ static const TonyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 14972409),
 			Common::EN_ANY,
 			Common::kPlatformPC,
+#ifdef TEMPORARY_DISABLED
 			ADGF_DEMO,
+#else
+			ADGF_NO_FLAGS,
+#endif
 			GUIO1(GUIO_NONE)
 		},
 	},

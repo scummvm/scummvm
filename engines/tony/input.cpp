@@ -52,12 +52,16 @@ namespace Tony {
 #define DIRELEASE(x)		if (x) { (x)->Release(); (x)=NULL; }
 
 RMInput::RMInput() {
+	// Setup mouse fields
 	_clampMouse = false;	
 	_mousePos.Set(0, 0);
 	_leftButton = _rightButton = false;;
 
 	_leftClickMouse = _leftReleaseMouse = false;
 	_rightClickMouse = _rightReleaseMouse = false;
+
+	// Setup keyboard fields
+	Common::fill(&_keyDown[0], &_keyDown[350], 0);
 }
 
 RMInput::~RMInput() {
@@ -93,6 +97,14 @@ void RMInput::Poll(void) {
 				continue;
 
 			// Since a mouse button has changed, don't do any further event processing this frame
+			return;
+
+		case Common::EVENT_KEYDOWN:
+			_keyDown[(int)_event.kbd.keycode] = true;
+			return;
+
+		case Common::EVENT_KEYUP:
+			_keyDown[(int)_event.kbd.keycode] = false;
 			return;
 
 		default:

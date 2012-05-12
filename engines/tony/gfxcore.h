@@ -49,6 +49,7 @@
 #define TONY_GFXCORE_H
 
 #include "common/system.h"
+#include "common/coroutines.h"
 #include "tony/utils.h"
 
 namespace Tony {
@@ -190,8 +191,8 @@ public:
 	virtual ~RMGfxTask() { }
 
 	virtual int Priority();
-    virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) = 0;
-    virtual bool RemoveThis();
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) = 0;
+    virtual void RemoveThis(CORO_PARAM, bool &result);
 		
 	// Registration
 	virtual void Register(void) { m_nInList++; }
@@ -217,8 +218,8 @@ public:
 	virtual ~RMGfxClearTask() { }
 
 	int Priority();
-    void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
-	bool RemoveThis();
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 };
 
 
@@ -233,8 +234,8 @@ public:
 	virtual ~RMGfxBox() { }
 
 	void SetColor(byte r, byte g, byte b);
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	bool RemoveThis();
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 };
 
 
@@ -277,7 +278,7 @@ public:
 	void Create(int dimx, int dimy, bool bUseDDraw = false);
 
     int Bpp();
-    virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -322,7 +323,7 @@ public:
 	void Create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int Bpp();
-    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive *prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer& bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -335,7 +336,7 @@ protected:
 
 public:
 	virtual ~RMGfxSourceBuffer8AB();
-	virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -376,7 +377,7 @@ public:
 	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	// Draw image with RLE decompression
-	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Sets the color that will be alpha blended
 	void SetAlphaBlendColor(int color);
@@ -443,7 +444,7 @@ public:
 	virtual ~RMGfxSourceBuffer8AA();
 
 	// Draw con antialiasing
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -452,7 +453,7 @@ protected:
 	void PrepareImage(void);
 
 public:
-	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded initialisation methods
 	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
@@ -466,7 +467,7 @@ protected:
 	void PrepareImage(void);
 
 public:
-	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded initialisation method
 	virtual void Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette = false);
@@ -488,7 +489,7 @@ public:
 	void Create(int dimx, int dimy, bool bUseDDraw = false);
 
     int Bpp();
-    virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -520,7 +521,7 @@ public:
 
 	// management of the OT list
 	void ClearOT(void);
-	void DrawOT(void);
+	void DrawOT(CORO_PARAM);
 	void AddPrim(RMGfxPrimitive *prim); // The pointer must be delted
 
 	// Adds a task to clear the screen
@@ -547,7 +548,7 @@ public:
     RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw = false);
 	virtual ~RMGfxWoodyBuffer();
 
-    virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 } // End of namespace Tony

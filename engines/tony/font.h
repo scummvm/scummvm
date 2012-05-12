@@ -112,7 +112,7 @@ public:
     virtual void Close(void);
 
     // Funzione del task da overloadare
-    void Draw(RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
 
     // Crea una primitiva per una lettera
     RMGfxPrimitive *MakeLetterPrimitive(byte bChar, int& nLength);
@@ -230,10 +230,10 @@ public:
 
     // Overloading della funzione ereditata da RMGfxTask per decidere
     // quando eliminare un oggetto dalla OTLIST
-    virtual bool RemoveThis(void);
+    virtual void RemoveThis(CORO_PARAM, bool &result);
 
     // Overloading del Draw per centrare la scritta, se necessario
-    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
     // Setta il colore di base
     void SetColor(byte r, byte g, byte b) { m_r=r; m_g=g; m_b=b; }
@@ -275,7 +275,7 @@ class RMTextDialog : public RMText {
     virtual void Unregister(void);
 
     // Overloading del Draw per centrare la scritta, se necessario
-    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
     // Setta la posizione
     void SetPosition(RMPoint pt) { dst=pt; }
@@ -310,7 +310,7 @@ public:
     RMTextDialogScrolling(RMLocation* loc);
 	virtual ~RMTextDialogScrolling();
 
-    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -334,14 +334,14 @@ public:
     void SetMouseCoord(RMPoint m) { m_mpos=m; }
 
     void DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
-    virtual void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
     RMPoint GetHotspot();
     RMItem *GetSelectedItem();
     bool IsItemSelected();
     bool IsNormalItemSelected();
 
-    virtual bool RemoveThis() { return true; }
+    virtual void RemoveThis(CORO_PARAM, bool &result) { result = true; }
 };
 
 
@@ -363,12 +363,12 @@ private:
     bool bRemoveFromOT;
 
 protected:
-    void Prepare(void);
-    void SetSelected(int pos);
+    void Prepare(CORO_PARAM);
+    void SetSelected(CORO_PARAM, int pos);
   
 public:
-    bool RemoveThis(void);
-    void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+    virtual void RemoveThis(CORO_PARAM, bool &result);
+    virtual void Draw(CORO_PARAM, RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
     void Unregister(void);
 
 public:
@@ -394,7 +394,7 @@ public:
     void Hide(CORO_PARAM);
 
     // Polling di aggiornamento
-    void DoFrame(RMPoint ptMousePos);
+    void DoFrame(CORO_PARAM, RMPoint ptMousePos);
 
     // Ritorna la voce attualmente selezionata, o -1 se nessuna è selezionata
     int GetSelection(void);

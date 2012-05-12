@@ -108,15 +108,15 @@ void RMGfxEngine::OpenOptionScreen(CORO_PARAM, int type) {
 	_ctx->bRes = false;
 
 	if (type == 0)
-		_ctx->bRes = m_opt.Init(m_bigBuf);
+		CORO_INVOKE_2(m_opt.Init, m_bigBuf, _ctx->bRes);
 	else if (type == 1)
-		_ctx->bRes = m_opt.InitLoadMenuOnly(m_bigBuf, true);
+		CORO_INVOKE_3(m_opt.InitLoadMenuOnly, m_bigBuf, true, _ctx->bRes);
 	else if (type == 2)
-		_ctx->bRes = m_opt.InitNoLoadSave(m_bigBuf);
+		CORO_INVOKE_2(m_opt.InitNoLoadSave, m_bigBuf, _ctx->bRes);
 	else if (type == 3)
-		_ctx->bRes = m_opt.InitLoadMenuOnly(m_bigBuf, false);
+		CORO_INVOKE_3(m_opt.InitLoadMenuOnly, m_bigBuf, false, _ctx->bRes);
 	else if (type == 4)
-		_ctx->bRes = m_opt.InitSaveMenuOnly(m_bigBuf, false);
+		CORO_INVOKE_3(m_opt.InitSaveMenuOnly, m_bigBuf, false, _ctx->bRes);
 
 	if (_ctx->bRes) {
 		_vm->PauseSound(true);
@@ -222,12 +222,14 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 						if ((m_input.MouseLeftClicked() && m_input.MousePos().x < 3 && m_input.MousePos().y < 3)) {
 							CORO_INVOKE_1(OpenOptionScreen, 0);
 							goto SKIPCLICKSINISTRO;
-						} else if ((GetAsyncKeyState(Common::KEYCODE_ESCAPE)&0x8001) == 0x8001)
+						} else if (m_input.GetAsyncKeyState(Common::KEYCODE_ESCAPE))
 							CORO_INVOKE_1(OpenOptionScreen, 0);
-						else if (_vm->getIsDemo()) {
-							if ((GetAsyncKeyState(Common::KEYCODE_F3) & 0x8001) == 0x8001)
+						else if (!_vm->getIsDemo()) {
+							if (m_input.GetAsyncKeyState(Common::KEYCODE_F3) || m_input.GetAsyncKeyState(Common::KEYCODE_F5))
+								// Save game screen
 								CORO_INVOKE_1(OpenOptionScreen, 3);
-							else if ((GetAsyncKeyState(Common::KEYCODE_F2) & 0x8001) == 0x8001)
+							else if (m_input.GetAsyncKeyState(Common::KEYCODE_F2) || m_input.GetAsyncKeyState(Common::KEYCODE_F7))
+								// Load game screen
 								CORO_INVOKE_1(OpenOptionScreen, 4);
 						}
 					}
@@ -324,7 +326,7 @@ SKIPCLICKSINISTRO:
 	// **********************
 	// Disegna la lista di OT
 	// **********************
-	m_bigBuf.DrawOT();
+	m_bigBuf.DrawOT(Common::nullContext);
 
 #define FSTEP (480/32)
 
@@ -579,7 +581,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	RMGfxSourceBuffer16 *load = NULL;
 	INIT_GFX16_FROMRAW(20038, load);
 	m_bigBuf.AddPrim(new RMGfxPrimitive(load));
-	m_bigBuf.DrawOT();
+	m_bigBuf.DrawOT(Common::nullContext);
 	m_bigBuf.ClearOT();
 	delete load;
 	_vm->_window.GetNewFrame(*this, NULL);

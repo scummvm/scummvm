@@ -63,8 +63,8 @@ int RMGfxTask::Priority() {
 	return m_nPrior;
 }
 
-bool RMGfxTask::RemoveThis() {
- return true;
+void RMGfxTask::RemoveThis(CORO_PARAM, bool &result) {
+	result = true;
 }
 
 
@@ -261,12 +261,19 @@ RMGfxWoodyBuffer::~RMGfxWoodyBuffer() {
 
 }
 
-void RMGfxWoodyBuffer::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMGfxWoodyBuffer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	// Prima si fa disegnare tramite la propria OT list
-	DrawOT();
+	CORO_INVOKE_0(DrawOT);
 
 	// Poi disegna se stesso nel target buffer
-	RMGfxSourceBuffer16::Draw(bigBuf, prim);
+	CORO_INVOKE_2(RMGfxSourceBuffer16::Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
@@ -316,47 +323,53 @@ void RMGfxTargetBuffer::ClearOT(void) {
 	g_system->unlockMutex(csModifyingOT);
 }
 
-void RMGfxTargetBuffer::DrawOT(void) {
-	OTList *cur;
-	OTList *prev;
-	OTList *next;
-	RMGfxPrimitive *myprim;
+void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+		OTList *cur;
+		OTList *prev;
+		OTList *next;
+		RMGfxPrimitive *myprim;
+		bool result;
+	CORO_END_CONTEXT(_ctx);
 
-	prev = NULL;
-	cur = otlist;
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->prev = NULL;
+	_ctx->cur = otlist;
 
 	// Lock del buffer per accederci
 	Lock();
 	g_system->lockMutex(csModifyingOT);
 
- 	while (cur != NULL) {
+ 	while (_ctx->cur != NULL) {
 		// Richiama la draw sul task, passandogli una copia della primitiva
-		myprim=cur->prim->Duplicate();
-		cur->prim->m_task->Draw(*this, myprim);
-		delete myprim;
+		_ctx->myprim=_ctx->cur->prim->Duplicate();
+		CORO_INVOKE_2(_ctx->cur->prim->m_task->Draw, *this, _ctx->myprim);
+		delete _ctx->myprim;
 
 		// Controlla se e' arrivato il momento di rimuovere il task dalla OTlist
-		if (cur->prim->m_task->RemoveThis()) {
+		CORO_INVOKE_1(_ctx->cur->prim->m_task->RemoveThis, _ctx->result);
+		if (_ctx->result) {
 			// Deregistra il task
-			cur->prim->m_task->Unregister();
+			_ctx->cur->prim->m_task->Unregister();
 
  			// Cancella il task liberando la memoria
-			delete cur->prim;
-			next=cur->next;
-			delete cur;
+			delete _ctx->cur->prim;
+			_ctx->next = _ctx->cur->next;
+			delete _ctx->cur;
 
 			// Se era il primo elemento, aggiorna la testa della lista
-			if (prev == NULL)
-				otlist = next;
+			if (_ctx->prev == NULL)
+				otlist = _ctx->next;
 			// Altrimenti aggiorna il puntatore al successivo dell'elemento precedente
 			else
-				prev->next = next;
+				_ctx->prev->next = _ctx->next;
 
-			cur = next;
+			_ctx->cur = _ctx->next;
 		} else {
 			// Aggiorna il puntatore al precedente e scorre la lista
-			prev = cur;
-			cur = cur->next;
+			_ctx->prev = _ctx->cur;
+			_ctx->cur = _ctx->cur->next;
 		}
 	}
 
@@ -364,6 +377,8 @@ void RMGfxTargetBuffer::DrawOT(void) {
 
 	// Unlock dopo la scrittura
 	Unlock();
+
+	CORO_END_CODE;
 }
 
 void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
@@ -490,7 +505,7 @@ int RMGfxSourceBufferPal::LoadPaletteWA(uint32 resID, bool bSwapped) {
 *				Metodi di RMGfxSourceBuffer4
 \****************************************************************************/
 
-void RMGfxSourceBuffer4::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMGfxSourceBuffer4::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
 RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
@@ -524,7 +539,7 @@ RMGfxSourceBuffer8::~RMGfxSourceBuffer8() {
 
 }
 
-void RMGfxSourceBuffer8::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMGfxSourceBuffer8::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	int x, y, width, height, u, v;
 	int bufx = bigBuf.Dimx();
 	uint16 *buf = bigBuf;
@@ -637,7 +652,7 @@ int RMGfxSourceBuffer8AB::CalcTrasp(int fore, int back)
 }
 
 
-void RMGfxSourceBuffer8AB::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	int x, y, width, height, u, v;
 	int bufx=bigBuf.Dimx();
 	uint16 *buf = bigBuf;
@@ -838,7 +853,7 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 	Common::copy(MegaRLEBuf, MegaRLEBuf + x, m_buf);
 }
 
-void RMGfxSourceBuffer8RLE::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	int y;
 	byte *src;
 	uint16 *buf = bigBuf;
@@ -1750,9 +1765,16 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 
 
-void RMGfxSourceBuffer8AA::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	RMGfxSourceBuffer8::Draw(bigBuf, prim);
+void RMGfxSourceBuffer8AA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_2(RMGfxSourceBuffer8::Draw, bigBuf, prim);
 	DrawAA(bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 
@@ -1770,10 +1792,17 @@ void RMGfxSourceBuffer8RLEByteAA::PrepareImage(void) {
 	CompressRLE();
 }
 
-void RMGfxSourceBuffer8RLEByteAA::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	RMGfxSourceBuffer8RLE::Draw(bigBuf,prim);
+void RMGfxSourceBuffer8RLEByteAA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::Draw, bigBuf, prim);
 	if (bCfgAntiAlias)
 		DrawAA(bigBuf,prim);
+
+	CORO_END_CODE;
 }
 
 int RMGfxSourceBuffer8RLEByteAA::Init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
@@ -1801,10 +1830,17 @@ void RMGfxSourceBuffer8RLEWordAA::PrepareImage(void) {
 	CompressRLE();
 }
 
-void RMGfxSourceBuffer8RLEWordAA::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	RMGfxSourceBuffer8RLE::Draw(bigBuf,prim);
+void RMGfxSourceBuffer8RLEWordAA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::Draw, bigBuf, prim);
 	if (bCfgAntiAlias)
 		DrawAA(bigBuf,prim);
+
+	CORO_END_CODE;
 }
 
 int RMGfxSourceBuffer8RLEWordAA::Init(byte *buf, int dimx, int dimy, bool bLoadPalette) {
@@ -1833,7 +1869,7 @@ RMGfxSourceBuffer16::RMGfxSourceBuffer16(bool bTrasp0) {
 RMGfxSourceBuffer16::~RMGfxSourceBuffer16() {
 }
 
-void RMGfxSourceBuffer16::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMGfxSourceBuffer16::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	int x, y;
 	uint16 *buf = bigBuf;
 	uint16 *raw = (uint16*)m_buf;
@@ -1927,8 +1963,8 @@ void RMGfxSourceBuffer16::Create(int dimx, int dimy, bool bUseDDraw) {
 *				Metodi di RMGfxBox
 \****************************************************************************/
 
-bool RMGfxBox::RemoveThis(void) {
-	return true;
+void RMGfxBox::RemoveThis(CORO_PARAM, bool &result) {
+	result = true;
 }
 
 void RMGfxBox::SetColor(byte r, byte g, byte b) {
@@ -1938,7 +1974,7 @@ void RMGfxBox::SetColor(byte r, byte g, byte b) {
 	wFillColor = (r << 10) | (g << 5) | b;
 }
 
-void RMGfxBox::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMGfxBox::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	int i, j;
 	uint16 *buf = bigBuf;
 	RMRect rcDst;
@@ -1966,14 +2002,14 @@ int RMGfxClearTask::Priority() {
 	return 1;
 }
 
-void RMGfxClearTask::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *) {
+void RMGfxClearTask::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *) {
 	// Pulisce tutto il target buffer
 	Common::fill((byte *)bigBuf, (byte *)bigBuf + (bigBuf.Dimx() * bigBuf.Dimy() * 2), 0x0);
 }
 
-bool RMGfxClearTask::RemoveThis() {
+void RMGfxClearTask::RemoveThis(CORO_PARAM, bool &result) {
 	// Il task di clear si disattiva sempre
-	return true;
+	result = true;
 }
 
 } // End of namespace Tony

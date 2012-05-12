@@ -216,12 +216,14 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 
 		m_stream[nextChannel]->Stop();
 		m_stream[nextChannel]->UnloadFile();
-#ifndef DEMO
-		if (!m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
-			theGame.Abort();
-#else
-		m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
-#endif
+
+		if (!getIsDemo()) {
+			if (!m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
+				theGame.Abort();
+		} else {
+			m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
+		}
+
 		m_stream[nextChannel]->SetLoop(bLoop);
 		m_stream[nextChannel]->Play();
 
@@ -229,12 +231,13 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 	}
 	else
 	{
-#ifndef DEMO
-		if (!m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
-			theGame.Abort();
-#else
-		m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
-#endif
+		if (!getIsDemo()) {
+			if (!m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
+				theGame.Abort();
+		} else {
+			m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
+		}
+
 		m_stream[nChannel]->SetLoop(bLoop);
 		m_stream[nChannel]->Play();
 	}

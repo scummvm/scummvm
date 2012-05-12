@@ -187,7 +187,12 @@ void RMTony::Hide(bool bShowOmbra) {
 }
 
 
-void RMTony::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMTony::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	// Richiama il Draw() della classe madre se tony è visibile
 	if (m_bShow && bDrawNow) {
 		if (m_bCorpoDavanti) {
@@ -195,7 +200,7 @@ void RMTony::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 			prim->Dst().Offset(-44, -134);
 			if (m_bPastorella)
 				prim->Dst().Offset(1, 4);
-			RMCharacter::Draw(bigBuf, prim);
+			CORO_INVOKE_2(RMCharacter::Draw, bigBuf, prim);
 		}
 
 		if (m_bIsTalking || m_bIsStaticTalk) {
@@ -205,7 +210,7 @@ void RMTony::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
     		prim->Dst().Offset(m_pos);
 			prim->Dst().Offset(-44, -134);
 			prim->Dst() += m_nBodyOffset;	
-			m_body.Draw(bigBuf, prim);
+			CORO_INVOKE_2(m_body.Draw, bigBuf, prim);
 		}
 
 		if (!m_bCorpoDavanti) {
@@ -213,9 +218,11 @@ void RMTony::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 			prim->Dst().Offset(-44, -134);
 			if (m_bPastorella)
 				prim->Dst().Offset(0, 3);
-			RMCharacter::Draw(bigBuf, prim);
+			CORO_INVOKE_2(RMCharacter::Draw, bigBuf, prim);
 		}
 	}
+
+	CORO_END_CODE;
 }
 
 void RMTony::MoveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm) {

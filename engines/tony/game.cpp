@@ -217,12 +217,19 @@ bool RMOptionButton::DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick
 
 
 
-void RMOptionButton::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMOptionButton::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);	
+
 	if (!m_bActive)
 		return;
 
 	if (m_bHasGfx)
-		m_buf->Draw(bigBuf,prim);
+		CORO_INVOKE_2(m_buf->Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 void RMOptionButton::AddToList(RMGfxTargetBuffer &bigBuf) {
@@ -310,37 +317,43 @@ bool RMOptionSlide::DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick)
 	return bRefresh;
 }
 
-void RMOptionSlide::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int i;
-	int val;
+void RMOptionSlide::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+		int i;
+		int val;
+		RMPoint pos;
+	CORO_END_CONTEXT(_ctx);
 
-	RMPoint pos;
-	pos = m_pos;
-	pos.x += 4;
-	pos.y += 4;
+	CORO_BEGIN_CODE(_ctx);
 
-	val = m_nValue * m_nStep;
-	if (val < 1) val = 1;
-	else if (val > 100) val = 100;
+	_ctx->pos = m_pos;
+	_ctx->pos.x += 4;
+	_ctx->pos.y += 4;
 
-	if (val == 1) {
-		prim->SetDst(pos);
-		m_SliderSingle->Draw(bigBuf, prim);
+	_ctx->val = m_nValue * m_nStep;
+	if (_ctx->val < 1) _ctx->val = 1;
+	else if (_ctx->val > 100) _ctx->val = 100;
+
+	if (_ctx->val == 1) {
+		prim->SetDst(_ctx->pos);
+		CORO_INVOKE_2(m_SliderSingle->Draw, bigBuf, prim);
 	} else {
-		prim->SetDst(pos);
-		m_SliderLeft->Draw(bigBuf, prim);
-		pos.x += 3;
+		prim->SetDst(_ctx->pos);
+		CORO_INVOKE_2(m_SliderLeft->Draw, bigBuf, prim);
+		_ctx->pos.x += 3;
 
-		for (i = 1; i < val - 1; i++) {
-			prim->SetDst(pos);
-			m_SliderCenter->Draw(bigBuf, prim);
-			pos.x += 3;
+		for (_ctx->i = 1; _ctx->i < _ctx->val - 1; _ctx->i++) {
+			prim->SetDst(_ctx->pos);
+			CORO_INVOKE_2(m_SliderCenter->Draw, bigBuf, prim);
+			_ctx->pos.x += 3;
 		}
 
-		prim->SetDst(pos);
-		m_SliderRight->Draw(bigBuf, prim);
-		pos.x += 3;
+		prim->SetDst(_ctx->pos);
+		CORO_INVOKE_2(m_SliderRight->Draw, bigBuf, prim);
+		_ctx->pos.x += 3;
 	}
+
+	CORO_END_CODE;
 }
 
 void RMOptionSlide::AddToList(RMGfxTargetBuffer &bigBuf) {
@@ -379,12 +392,49 @@ RMOptionScreen::RMOptionScreen(void) {
 	}
 
 	m_statePos = 0;
+	m_ButtonQuitYes = NULL;
+	m_ButtonQuitNo = NULL;
+	m_ButtonQuit = NULL;
+	m_SaveEasy = NULL;
+	m_SaveHard = NULL;
+	m_ButtonGfx_Tips = NULL;
+	m_ButtonSound_DubbingOn = NULL;
+	m_ButtonSound_MusicOn = NULL;
+	m_ButtonSound_SFXOn = NULL;
+	m_SlideTonySpeed = NULL;
+	m_SlideTextSpeed = NULL;
+	m_ButtonGame_Lock = NULL;
+	m_ButtonGfx_Anni30 = NULL;
+	m_SliderSound_Music = NULL;
+	m_ButtonGame_TimerizedText = NULL;
+	m_ButtonGfx_AntiAlias = NULL;
+	m_SliderSound_SFX = NULL;
+	m_ButtonGame_Scrolling = NULL;
+	m_ButtonGfx_Sottotitoli = NULL;
+	m_SliderSound_Dubbing = NULL;
+	m_ButtonGame_InterUp = NULL;
+	m_ButtonGfx_Trans = NULL;
+
+	m_FadeStep = 0;
+	m_FadeY = 0;
+	m_FadeTime = 0;
+	m_nEditPos = 0;
+	m_nLastState = MENUGAME;
 }
+
 
 RMOptionScreen::~RMOptionScreen(void) {
 }
 
-void RMOptionScreen::RefreshAll(void) {
+void RMOptionScreen::RefreshAll(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+		RMGfxSourceBuffer16 *thumb;
+		RMText* title;
+		RMText *num[6];
+		int i;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 	ClearOT();
 
 	AddPrim(new RMGfxPrimitive(m_menu));
@@ -428,22 +478,21 @@ void RMOptionScreen::RefreshAll(void) {
 		m_ButtonSound_SFXOn->AddToList(*this);
 	}
 
-	RMGfxSourceBuffer16 *thumb = NULL;
-	RMText* title = NULL;
-	RMText* num[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
-	int i;
+	_ctx->thumb = NULL;
+	_ctx->title = NULL;
+	Common::fill(&_ctx->num[0], &_ctx->num[6], (RMText *)NULL);
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
-		title = new RMText;
+		_ctx->title = new RMText;
 		if (m_nState == MENULOAD) {
 			RMMessage msg(10);
-			title->WriteText(msg[0], 1);
+			_ctx->title->WriteText(msg[0], 1);
 		} else {
 			RMMessage msg(11);
-			title->WriteText(msg[0], 1);
+			_ctx->title->WriteText(msg[0], 1);
 		}
 
-		AddPrim(new RMGfxPrimitive(title, RMPoint(320, 10)));
+		AddPrim(new RMGfxPrimitive(_ctx->title, RMPoint(320, 10)));
 
 		if (m_curThumbDiff[0] == 0) AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 57)));
 		else if (m_curThumbDiff[0] == 1) AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 57)));
@@ -466,56 +515,62 @@ void RMOptionScreen::RefreshAll(void) {
 		if (m_curThumb[5] && !(m_bEditSaveName && m_nEditPos == 5)) AddPrim(new RMGfxPrimitive(m_curThumb[5], RMPoint(432, 239)));
 
 		if (m_bEditSaveName) {
-			thumb = new RMGfxSourceBuffer16;
-			thumb->Init((byte *)_vm->GetThumbnail(), 640 / 4, 480 / 4);
+			_ctx->thumb = new RMGfxSourceBuffer16;
+			_ctx->thumb->Init((byte *)_vm->GetThumbnail(), 640 / 4, 480 / 4);
 
-			switch (m_nEditPos) {
-			case 0:	AddPrim(new RMGfxPrimitive(thumb,RMPoint(48, 57))); break;
-			case 1:	AddPrim(new RMGfxPrimitive(thumb,RMPoint(240, 57))); break;
-			case 2:	AddPrim(new RMGfxPrimitive(thumb,RMPoint(432, 57))); break;
-			case 3:	AddPrim(new RMGfxPrimitive(thumb,RMPoint(48, 239))); break;
-			case 4:	AddPrim(new RMGfxPrimitive(thumb,RMPoint(240, 239))); break;
-			case 5:	AddPrim(new RMGfxPrimitive(thumb,RMPoint(432, 239))); break;
-			}
+			if (m_nEditPos == 0)
+				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(48, 57))); 
+			else if (m_nEditPos == 1)
+				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(240, 57)));
+			else if (m_nEditPos == 2)
+				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(432, 57)));
+			else if (m_nEditPos == 3)
+				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(48, 239)));
+			else if (m_nEditPos == 4)
+				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(240, 239)));
+			else if (m_nEditPos == 5)
+				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(432, 239)));
 		}
 
-		for (i = 0; i < 6; i++) {
+		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++) {
 			RMString s;
 			
-			if (m_bEditSaveName && m_nEditPos == i)
-				s.Format("%02d)%s*", m_statePos + i, m_EditName);
+			if (m_bEditSaveName && m_nEditPos == _ctx->i)
+				s.Format("%02d)%s*", m_statePos + _ctx->i, m_EditName);
 			else {
-				if (m_statePos == 0 && i == 0)
+				if (m_statePos == 0 && _ctx->i == 0)
 					s.Format("Autosave");
 				else
-					s.Format("%02d)%s", m_statePos + i, (const char *)m_curThumbName[i]);
+					s.Format("%02d)%s", m_statePos + _ctx->i, (const char *)m_curThumbName[_ctx->i]);
 			}
 			
-			num[i] = new RMText;
-			num[i]->SetAlignType(RMText::HLEFT, RMText::VTOP);
-			num[i]->WriteText(s, 2);
+			_ctx->num[_ctx->i] = new RMText;
+			_ctx->num[_ctx->i]->SetAlignType(RMText::HLEFT, RMText::VTOP);
+			_ctx->num[_ctx->i]->WriteText(s, 2);
 		}
 		
-		AddPrim(new RMGfxPrimitive(num[0], RMPoint(55 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(num[1], RMPoint(247 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(num[2],RMPoint(439 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(num[3],RMPoint(55 - 3, 362 + 14)));
-		AddPrim(new RMGfxPrimitive(num[4],RMPoint(247 - 3, 362 + 14)));
-		AddPrim(new RMGfxPrimitive(num[5],RMPoint(439 - 3, 362 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[0], RMPoint(55 - 3, 180 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[1], RMPoint(247 - 3, 180 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[2],RMPoint(439 - 3, 180 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[3],RMPoint(55 - 3, 362 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[4],RMPoint(247 - 3, 362 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[5],RMPoint(439 - 3, 362 + 14)));
 		
 		m_ButtonSave_ArrowLeft->AddToList(*this);
 		m_ButtonSave_ArrowRight->AddToList(*this);
 	}
 		
-	DrawOT();
+	CORO_INVOKE_0(DrawOT);
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
-		if (thumb) delete thumb;
-		if (title) delete title;
+		if (_ctx->thumb) delete _ctx->thumb;
+		if (_ctx->title) delete _ctx->title;
 
-		for (i = 0; i < 6; i++)
-			if (num[i]) delete num[i];
+		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
+			if (_ctx->num[_ctx->i]) delete _ctx->num[_ctx->i];
 	}
+
+	CORO_END_CODE;
 }
 
 void RMOptionScreen::RefreshThumbnails(void) {
@@ -537,25 +592,29 @@ void RMOptionScreen::RefreshThumbnails(void) {
 }
 
 
-void RMOptionScreen::InitState(void) {
-	RMResRaw *raw;
+void RMOptionScreen::InitState(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+		RMResRaw *raw;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
 	
 	if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND)
-		raw = new RMResRaw(20000 + m_nState);
+		_ctx->raw = new RMResRaw(20000 + m_nState);
 	else if (m_nState == MENULOAD || m_nState == MENUSAVE) {
 		if (m_bAlterGfx)
-			raw = new RMResRaw(20024);
+			_ctx->raw = new RMResRaw(20024);
 		else
-			raw = new RMResRaw(20003);
+			_ctx->raw = new RMResRaw(20003);
 	} else {
 		error("Invalid state");
 	}
 
-	assert(raw->IsValid());
+	assert(_ctx->raw->IsValid());
 	assert(m_menu == NULL);
 	m_menu = new RMGfxSourceBuffer16(false);
-	m_menu->Init(*raw, raw->Width(), raw->Height());
-	delete raw;
+	m_menu->Init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+	delete _ctx->raw;
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
 		if (m_bAlterGfx) {
@@ -566,8 +625,8 @@ void RMOptionScreen::InitState(void) {
 			m_ButtonExit = new RMOptionButton(20012, RMPoint(560, 404));
 		}
 
-		INIT_GFX8_FROMRAW(20036, m_SaveEasy);
-		INIT_GFX8_FROMRAW(20037, m_SaveHard);
+		INIT_GFX8_FROMRAW(_ctx->raw, 20036, m_SaveEasy);
+		INIT_GFX8_FROMRAW(_ctx->raw, 20037, m_SaveHard);
 
 		RefreshThumbnails();
 
@@ -612,12 +671,12 @@ void RMOptionScreen::InitState(void) {
 		assert(m_ButtonSoundMenu == NULL);
 		m_ButtonSoundMenu = new RMOptionButton(RMRect(212, 32, 306, 64));
 
-		raw = new RMResRaw(20021);
-		assert(raw->IsValid());
+		_ctx->raw = new RMResRaw(20021);
+		assert(_ctx->raw->IsValid());
 		assert(m_QuitConfirm == NULL);
 		m_QuitConfirm = new RMGfxSourceBuffer16(false);
-		m_QuitConfirm->Init(*raw, raw->Width(), raw->Height());
-		delete raw;
+		m_QuitConfirm->Init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+		delete _ctx->raw;
 
 		assert(m_ButtonQuitYes == NULL);
 		m_ButtonQuitYes = new RMOptionButton(20022, RMPoint(281, 265));
@@ -627,12 +686,12 @@ void RMOptionScreen::InitState(void) {
 		m_ButtonQuitNo->SetPriority(30);
 
 		if (m_bNoLoadSave) {
-			raw = new RMResRaw(20028);
-			assert(raw->IsValid());
+			_ctx->raw = new RMResRaw(20028);
+			assert(_ctx->raw->IsValid());
 			assert(m_HideLoadSave == NULL);
 			m_HideLoadSave = new RMGfxSourceBuffer16(false);
-			m_HideLoadSave->Init(*raw, raw->Width(), raw->Height());
-			delete raw;
+			m_HideLoadSave->Init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+			delete _ctx->raw;
 		}
 
 		// Menu GAME
@@ -693,7 +752,9 @@ void RMOptionScreen::InitState(void) {
 		}
 	}
 
-	RefreshAll();
+	CORO_INVOKE_0(RefreshAll);
+
+	CORO_END_CODE;
 }
 
 void RMOptionScreen::CloseState(void) {
@@ -828,9 +889,16 @@ void RMOptionScreen::ReInit(RMGfxTargetBuffer &bigBuf) {
 	bigBuf.AddPrim(new RMGfxPrimitive(this));
 }
 
-bool RMOptionScreen::Init(RMGfxTargetBuffer &bigBuf) {
-	if (m_FadeStep != 0)
-		return false;
+void RMOptionScreen::Init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (m_FadeStep != 0) {
+		result = false;
+		return;
+	}
 
 	m_FadeStep = 1;
 	m_FadeY = -20;
@@ -844,14 +912,24 @@ bool RMOptionScreen::Init(RMGfxTargetBuffer &bigBuf) {
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE)
 		m_nState = MENUGAME;
-	InitState();
+
+	CORO_INVOKE_0(InitState);
    
-	return true;
+	result = true;
+
+	CORO_END_CODE;
 }
 
-bool RMOptionScreen::InitLoadMenuOnly(RMGfxTargetBuffer &bigBuf, bool bAlternateGfx) {
-	if (m_FadeStep != 0)
-		return false;
+void RMOptionScreen::InitLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (m_FadeStep != 0) {
+		result = false;
+		return;
+	}
 
 	m_FadeStep = 1;
 	m_FadeY = -20;
@@ -864,14 +942,23 @@ bool RMOptionScreen::InitLoadMenuOnly(RMGfxTargetBuffer &bigBuf, bool bAlternate
 	bigBuf.AddPrim(new RMGfxPrimitive(this));
 
 	m_nState = MENULOAD;
-	InitState();
+	CORO_INVOKE_0(InitState);
    
-	return true;
+	result = true;
+
+	CORO_END_CODE;
 }
 
-bool RMOptionScreen::InitSaveMenuOnly(RMGfxTargetBuffer &bigBuf, bool bAlternateGfx) {
-	if (m_FadeStep != 0)
-		return false;
+void RMOptionScreen::InitSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+ 
+	if (m_FadeStep != 0) {
+		result = false;
+		return;
+	}
 
 	m_FadeStep = 1;
 	m_FadeY = -20;
@@ -884,14 +971,23 @@ bool RMOptionScreen::InitSaveMenuOnly(RMGfxTargetBuffer &bigBuf, bool bAlternate
 	bigBuf.AddPrim(new RMGfxPrimitive(this));
 
 	m_nState = MENUSAVE;
-	InitState();
+	CORO_INVOKE_0(InitState);
    
-	return true;
+	result = true;
+
+	CORO_END_CODE;
 }
 
-bool RMOptionScreen::InitNoLoadSave(RMGfxTargetBuffer &bigBuf) {
-	if (m_FadeStep != 0)
-		return false;
+void RMOptionScreen::InitNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (m_FadeStep != 0) {
+		result = false;
+		return;
+	}
 
 	m_FadeStep = 1;
 	m_FadeY = -20;
@@ -903,9 +999,11 @@ bool RMOptionScreen::InitNoLoadSave(RMGfxTargetBuffer &bigBuf) {
 	bigBuf.AddPrim(new RMGfxPrimitive(this));
 
 	m_nState = MENUGAME;
-	InitState();
+	CORO_INVOKE_0(InitState);
    
-	return true;
+	result = true;
+
+	CORO_END_CODE;
 }
 
 bool RMOptionScreen::Close(void) {
@@ -927,11 +1025,18 @@ int RMOptionScreen::Priority() {
 	return 190;
 }
 
-void RMOptionScreen::ChangeState(STATE newState) {
+void RMOptionScreen::ChangeState(CORO_PARAM, STATE newState) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	CloseState();
 	m_nLastState = m_nState;
 	m_nState = newState;
-	InitState();	
+	CORO_INVOKE_0(InitState);
+
+	CORO_END_CODE;
 }
 
 void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {	
@@ -1015,7 +1120,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 		
-#define KEYPRESS(c)		((GetAsyncKeyState(c)&0x8001)==0x8001)
+#define KEYPRESS(c)		(_vm->GetEngine()->GetInput().GetAsyncKeyState(c))
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
 	m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
 
@@ -1029,8 +1134,8 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		}
 
 		for (_ctx->i=0;_ctx->i<26 && strlen(m_EditName)<12;_ctx->i++)
-			if ((GetAsyncKeyState(Common::KEYCODE_LSHIFT) & 0x8000) ||
-					(GetAsyncKeyState(Common::KEYCODE_RSHIFT) & 0x8000)) {
+			if (KEYPRESS(Common::KEYCODE_LSHIFT) ||
+					KEYPRESS(Common::KEYCODE_RSHIFT)) {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'A');
 			} else {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'a');
@@ -1073,7 +1178,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 					// Se è solo il menu di loading, chiudiamo
 					Close();
 				} else {
-					ChangeState(m_nLastState);
+					CORO_INVOKE_1(ChangeState, m_nLastState);
 					_ctx->bRefresh = true;
 				}
 			} else if (m_ButtonSave_ArrowLeft->IsActive()) {
@@ -1136,19 +1241,19 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 				} else if (m_ButtonExit->IsActive())
 					Close();
 				else if (m_ButtonLoad->IsActive()) {
-					ChangeState(MENULOAD);
+					CORO_INVOKE_1(ChangeState, MENULOAD);
 					_ctx->bRefresh = true;
 				} else if (m_ButtonSave->IsActive()) {
-					ChangeState(MENUSAVE);
+					CORO_INVOKE_1(ChangeState, MENUSAVE);
 					_ctx->bRefresh = true;
 				} else if (m_ButtonGameMenu->IsActive() && m_nState != MENUGAME) {
-					ChangeState(MENUGAME);
+					CORO_INVOKE_1(ChangeState, MENUGAME);
 					_ctx->bRefresh = true;
 				} else if (m_ButtonGfxMenu->IsActive() && m_nState != MENUGFX) {
-					ChangeState(MENUGFX);
+					CORO_INVOKE_1(ChangeState, MENUGFX);
 					_ctx->bRefresh = true;
 				} else if (m_ButtonSoundMenu->IsActive() && m_nState != MENUSOUND) {
-					ChangeState(MENUSOUND);
+					CORO_INVOKE_1(ChangeState, MENUSOUND);
 					_ctx->bRefresh = true;
 				}
 
@@ -1178,24 +1283,29 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 			Close();
 
 	if (_ctx->bRefresh)
-		RefreshAll();
+		CORO_INVOKE_0(RefreshAll);
 
 	CORO_END_CODE;
 }
 
 
-void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int curTime = _vm->GetTime();
+void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+		int curTime;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->curTime = _vm->GetTime();
 
 #define FADE_SPEED 20
-#define SYNC	(curTime-m_FadeTime) / 25
+#define SYNC	(_ctx->curTime-m_FadeTime) / 25
 	
 	if (m_bExit)
 		return;
 
-	switch (m_FadeStep) {
+	if (m_FadeStep == 1) {
 	// Discesa veloce
-	case 1:
 		if (m_FadeTime == -1)
 			m_FadeY += FADE_SPEED;
 		else
@@ -1207,10 +1317,9 @@ void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 		// Setta la parte da disegnare per lo scrolling
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
-		break;
-	
-	// Rimbalzo 1
-	case 2:
+
+	} else if (m_FadeStep == 2) {
+		// Rimbalzo 1
 		m_FadeY -= FADE_SPEED / 2 * SYNC;
 		if (m_FadeY < 400) {
 			m_FadeY = 400;
@@ -1218,9 +1327,8 @@ void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		}
 
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
-		break;
 
-	case 3:
+	} else if (m_FadeStep == 3) {
 		m_FadeY -= FADE_SPEED / 4 * SYNC;
 		if (m_FadeY < 380) {
 			m_FadeY = 380;
@@ -1228,10 +1336,9 @@ void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		}
 
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
-		break;
 
-	// Rimbalzo 1 - 2
-	case 4:
+	} else if (m_FadeStep == 4) {
+		// Rimbalzo 1 - 2
 		m_FadeY += FADE_SPEED / 3 * SYNC;
 		if (m_FadeY > 420) {
 			m_FadeY = 420;
@@ -1239,9 +1346,8 @@ void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		}
 
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
-		break;
 
-	case 5:
+	} else if (m_FadeStep == 5) {
 		m_FadeY += FADE_SPEED / 2 * SYNC;
 		if (m_FadeY > 480) {
 			m_FadeY = 480;
@@ -1250,29 +1356,25 @@ void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		}
 
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
-		break;
 
-	// Menu ON
-	case 6:
-		break;
+	} else if (m_FadeStep == 6) {
+		// Menu ON
 
-	// Menu OFF
-	case 7:
+	} else if (m_FadeStep == 7) {
+		// Menu OFF
 		_vm->ShowLocation();
 		m_FadeStep++;
-		break;
 
-	case 8:
+	} else if (m_FadeStep == 8) {
 		m_FadeY -= FADE_SPEED * SYNC;
 		if (m_FadeY < 0) {
 			m_FadeY = 0;
 			m_FadeStep++;
 		}
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
-		break;
 
-	// Ciao ciao!
-	case 9:
+	} else if (m_FadeStep == 9) {
+		// Ciao ciao!
 		m_bExit = true;
 		m_FadeStep = 0;
 
@@ -1280,21 +1382,22 @@ void RMOptionScreen::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		CloseState();
 		return;
 
-	default:
+	} else {
 		m_FadeStep = 0;
-		break;
 	}
 
-	m_FadeTime = curTime;
+	m_FadeTime = _ctx->curTime;
 
-	RMGfxWoodyBuffer::Draw(bigBuf,prim);
+	CORO_INVOKE_2(RMGfxWoodyBuffer::Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
-bool RMOptionScreen::RemoveThis() {
+void RMOptionScreen::RemoveThis(CORO_PARAM, bool &result) {
 	if (m_bExit)
-		return true;
-
-	return false;
+		result = true;
+	else
+		result = false;
 }
 
 
@@ -1434,30 +1537,36 @@ int RMPointer::Priority() {
 	return 200;
 }
 
-void RMPointer::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int n;
+void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+		int n;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);	
 
 	// Controlla il pointer
-	n = m_nCurPointer;
-	if (n == TA_COMBINE) n = TA_USE;
+	_ctx->n = m_nCurPointer;
+	if (_ctx->n == TA_COMBINE) _ctx->n = TA_USE;
 
 	// Copia le coordinate di destinazione nella primitiva
 	prim->SetDst(m_pos);
 
 	if (m_pos.x >= 0 && m_pos.y >= 0 && m_pos.x < RM_SX && m_pos.y < RM_SY) {
 		// Richiama il draw del puntatore
-		prim->Dst()-=m_hotspot[n];
+		prim->Dst()-=m_hotspot[_ctx->n];
 
 		if (m_nCurSpecialPointer == 0) {
-			m_pointer[n]->Draw(bigBuf,prim);
+			CORO_INVOKE_2(m_pointer[_ctx->n]->Draw, bigBuf, prim);
 		} else {
 			if (m_nCurSpecialPointer == PTR_CUSTOM)
-				m_nCurCustomPointer->Draw(bigBuf, prim);
+				CORO_INVOKE_2(m_nCurCustomPointer->Draw, bigBuf, prim);
 			else
 				// Richiama il draw sul puntatore speciale
-				m_specialPointer[m_nCurSpecialPointer-1]->Draw(bigBuf, prim);
+				CORO_INVOKE_2(m_specialPointer[m_nCurSpecialPointer-1]->Draw, bigBuf, prim);
 		}
 	}
+
+	CORO_END_CODE;
 }
 
 void RMPointer::DoFrame(RMGfxTargetBuffer *bigBuf) {
@@ -1469,9 +1578,9 @@ void RMPointer::DoFrame(RMGfxTargetBuffer *bigBuf) {
 		m_specialPointer[m_nCurSpecialPointer-1]->DoFrame(bigBuf,false);
 }
 
-bool RMPointer::RemoveThis() {
+void RMPointer::RemoveThis(CORO_PARAM, bool &result) {
 	// Si leva sempre dalla lista di OT, per supportare la DisableInput
-	return true;
+	result = true;
 }
 
 int RMPointer::CurAction(void) {

@@ -56,14 +56,15 @@ namespace Tony {
 class RMInput {
 private:
 	Common::Event _event;
-	RMPoint _mousePos;
 
-//	DIMOUSESTATE m_mState;
+	// Mouse related fields
+	RMPoint _mousePos;
 	bool _clampMouse;
 	bool _leftButton, _rightButton;
-
 	bool _leftClickMouse, _leftReleaseMouse, _rightClickMouse, _rightReleaseMouse;
 
+	// Keyboard related fields
+	bool _keyDown[350];
 private:
 	// Deinizializza DirectInput
 	void DIClose(void);
@@ -96,8 +97,8 @@ public:
 	bool MouseRightReleased() { return _rightReleaseMouse; }
 	bool MouseBothReleased() { return _leftReleaseMouse && _rightReleaseMouse; }
 
-	// Warns when we are in the GDI loop
-	void GDIControl(bool bCon);
+	// Returns true if the given key is pressed
+	bool GetAsyncKeyState(Common::KeyCode kc) { return _keyDown[(int)kc]; }
 };
 
 } // End of namespace Tony

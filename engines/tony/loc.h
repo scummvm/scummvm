@@ -202,7 +202,7 @@ public:
 
 	void Init(RMGfxSourceBuffer* buf);
 	friend RMDataStream& operator>>(RMDataStream& ds, RMSprite& sprite);
-	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void SetPalette(byte *lpBuf);
 	void GetSizeFromStream(RMDataStream& ds, int* dimx, int* dimy);
 	void LOXGetSizeFromStream(RMDataStream& ds, int* dimx, int* dimy);
@@ -265,10 +265,10 @@ public:
 	void SetScrollPosition(RMPoint scroll);
 
 	// Overloading della funzione per la rimozione da ot list
-	virtual bool RemoveThis();
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 	
 	// Overloading del draw
-	virtual void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloading della priorità: è la Z
 	virtual int Priority() { return m_z; }
@@ -457,13 +457,13 @@ public:
 
 	void LinkToBoxes(RMGameBoxes* theBoxes);
 
-	virtual bool RemoveThis(void);
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 	
 	// Aggiorna la posizione del personaggio	
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);		
 
 	// Overloading del Draw
-	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// TRUE se si è appena fermato
 	bool EndOfPath() { return bEndOfPath; }
@@ -505,14 +505,14 @@ public:
 	virtual ~RMWipe();
 
 	void DoFrame(RMGfxTargetBuffer& bigBuf);
-	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	
 	void InitFade(int type);
 	void CloseFade(void);
 	void WaitForFadeEnd(CORO_PARAM);
 
 	virtual void Unregister(void);
-	virtual bool RemoveThis(void);
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 	virtual int Priority(void);
 };
 
@@ -557,7 +557,7 @@ public:
 	void Unload(void);
 
 	// Overloading del Draw
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Prepara un frame disegnando la locazione e tutti i suoi item
 	void DoFrame(RMGfxTargetBuffer *bigBuf);

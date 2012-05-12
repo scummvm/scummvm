@@ -398,8 +398,8 @@ void RMSprite::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	m_buf->Init(ds, dimx,dimy);
 }
 
-void RMSprite::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	m_buf->Draw(bigBuf, prim);
+void RMSprite::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	m_buf->Draw(coroParam, bigBuf, prim);
 }
 
 void RMSprite::SetPalette(byte *buf) {
@@ -727,7 +727,12 @@ RMPoint RMItem::CalculatePos(void) {
 	return m_pos + m_patterns[m_nCurPattern].Pos();
 }
 
-void RMItem::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMItem::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	// Se CurSprite == -1, allora e' finito il pattern
 	if (m_nCurSprite == -1)
 	  return;
@@ -746,13 +751,15 @@ void RMItem::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	prim->SetStrecth(false);
 
 	// Ora la passiamo alla routine di drawing generica per surface
-	m_sprites[m_nCurSprite].Draw(bigBuf, prim);
+	CORO_INVOKE_2(m_sprites[m_nCurSprite].Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 
-bool RMItem::RemoveThis() {
+void RMItem::RemoveThis(CORO_PARAM, bool &result) {
 	// Rimuove dalla OT list se il frame corrente e' -1 (pattern finito)
-	return (m_nCurSprite == -1);
+	result = (m_nCurSprite == -1);
 }
 
 
@@ -907,8 +914,8 @@ void RMWipe::Unregister(void) {
 	CoroScheduler.setEvent(m_hUnregistered);
 }
 
-bool RMWipe::RemoveThis(void) {
-	return m_bUnregister;
+void RMWipe::RemoveThis(CORO_PARAM, bool &result) {
+	result = m_bUnregister;
 }
 
 void RMWipe::WaitForFadeEnd(CORO_PARAM) {
@@ -972,13 +979,20 @@ void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 	}
 }
 
-void RMWipe::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMWipe::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (m_bFading) {
-		m_wip0r.Draw(bigBuf, prim);
+		CORO_INVOKE_2(m_wip0r.Draw, bigBuf, prim);
 	}
 
 	if (m_bEndFade)
 		Common::fill((byte *)bigBuf, (byte *)bigBuf + bigBuf.Dimx() * bigBuf.Dimy() * 2, 0x0);
+
+	CORO_END_CODE;
 }
 
 
@@ -1369,12 +1383,19 @@ RMPoint RMCharacter::NearestHotSpot(int sourcebox, int destbox) {
 	return puntocaldo;
 }
 
-void RMCharacter::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMCharacter::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (bDrawNow) {
 		prim->Dst() += m_fixedScroll;
 
-		RMItem::Draw(bigBuf, prim);
+		CORO_INVOKE_2(RMItem::Draw, bigBuf, prim);
 	}
+
+	CORO_END_CODE;
 }
 
 void RMCharacter::NewBoxEntered(int nBox) {
@@ -1692,11 +1713,18 @@ void RMCharacter::WaitForEndMovement(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-bool RMCharacter::RemoveThis(void) {
-	if (bRemoveFromOT)
-		return true;
+void RMCharacter::RemoveThis(CORO_PARAM, bool &result) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
 
-	return RMItem::RemoveThis();
+	CORO_BEGIN_CODE(_ctx);
+
+	if (bRemoveFromOT)
+		result = true;
+	else
+		CORO_INVOKE_1(RMItem::RemoveThis, result);
+
+	CORO_END_CODE;
 }
 
 RMCharacter::RMCharacter() {
@@ -2214,7 +2242,12 @@ bool RMLocation::LoadLOX(RMDataStream &ds) {
 *
 \****************************************************************************/
 
-void RMLocation::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMLocation::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	// Setta la posizione sorgente dello scrolling
 	if (m_buf->Dimy()>RM_SY || m_buf->Dimx()>RM_SX) {
 		prim->SetSrc(RMRect(m_curScroll,m_curScroll+RMPoint(640,480)));
@@ -2224,7 +2257,9 @@ void RMLocation::Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	
 	// Richiama il metodo di drawing della classe dell'immagine, che disegnerà il background
 	// della locazione
-	m_buf->Draw(bigBuf, prim);
+	CORO_INVOKE_2(m_buf->Draw, bigBuf, prim);
+
+	CORO_END_CODE;
 }
 
 

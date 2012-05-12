@@ -390,7 +390,7 @@ public:
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc);
 
 	// Metodi di Draw, che controlla la variabile di show
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Mostra o nascondi
 	void Show(void);

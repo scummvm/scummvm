@@ -64,7 +64,7 @@ namespace Tony {
 	(buf16)->Init(*raw,raw->Width(),raw->Height()); \
 	delete raw;
 
-#define INIT_GFX8_FROMRAW(dwRes, buf8)	\
+#define INIT_GFX8_FROMRAW(raw, dwRes, buf8)	\
 	raw = new RMResRaw(dwRes);	\
 	assert(raw->IsValid());			\
 	assert((buf8) == NULL);			\
@@ -135,13 +135,13 @@ public:
 	int Priority();
 
 	// Overloading draw method
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	
 	// Sets the current co-ordinates
 	void SetCoord(RMPoint pt) { m_pos = pt; }
 
 	// Overloading of the method to see if rising from the list
-	bool RemoveThis();
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Sets a new action as current
 	void SetAction(RMTonyAction action) {	m_nCurPointer = action; }
@@ -174,7 +174,7 @@ public:
 	virtual ~RMOptionButton();
 
 	bool DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick);
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void AddToList(RMGfxTargetBuffer &bigBuf);
 	bool IsActive() { return m_bActive; }
 	void SetActiveState(bool bState) { m_bActive=bState; }
@@ -199,7 +199,7 @@ public:
 	virtual ~RMOptionSlide();
 
 	bool DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick);
-	void Draw(RMGfxTargetBuffer& bigBuf, RMGfxPrimitive* prim);
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void AddToList(RMGfxTargetBuffer& bigBuf);
 
 	int GetValue() { return m_nValue; }
@@ -286,18 +286,18 @@ public:
 	RMOptionScreen();
 	virtual ~RMOptionScreen();
 
-	bool Init(RMGfxTargetBuffer& bigBuf);
-	bool InitLoadMenuOnly(RMGfxTargetBuffer &bigBuf, bool bAlternateGfx = false);
-	bool InitSaveMenuOnly(RMGfxTargetBuffer &bigBuf, bool bAlternateGfx = false);
-	bool InitNoLoadSave(RMGfxTargetBuffer &bigBuf);
+	void Init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
+	void InitLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);
+	void  InitSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);
+	void InitNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
 	void ReInit(RMGfxTargetBuffer &bigBuf);
 	bool Close();
 	bool IsClosing();
 
 	// Metodi in overloading da RMGfxTask
 	int Priority();
-	void Draw(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	bool RemoveThis();
+	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Polling per l'option screen
 	void DoFrame(CORO_PARAM, RMInput *m_input);
@@ -305,12 +305,12 @@ public:
 protected:
 
 	// Inizializza tutto per il nuovo stato
-	void InitState(void);
+	void InitState(CORO_PARAM);
 	void CloseState(void);
-	void ChangeState(STATE newState);
+	void ChangeState(CORO_PARAM, STATE newState);
 
 	// Ridisegna tutto il menu delle opzioni
-	void RefreshAll(void);
+	void RefreshAll(CORO_PARAM);
 	void RefreshThumbnails(void);
 	
 	// Carica lo screenshot per il salvataggio
