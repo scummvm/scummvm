@@ -2069,7 +2069,7 @@ void FPSTREAM::WaitForSync(FPSTREAM *toplay) {
 *
 \****************************************************************************/
 
-void PASCAL FPSTREAM::PlayThread(FPSTREAM *This) {
+void FPSTREAM::PlayThread(FPSTREAM *This) {
 #ifdef REFACTOR_ME
 	byte *lpLockBuf;
 	uint32 dwResult;

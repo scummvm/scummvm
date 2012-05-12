@@ -816,7 +816,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 
 /****************************************************************************\
 *
-* Function:     void PASCAL CustomThread(LPCFCALL p);
+* Function:     void CustomThread(LPCFCALL p);
 *
 * Description:  Thread che richiama una funzione custom. Viene usato negli
 *               script, in modo che ciascuna funzione venga eseguita senza
@@ -848,7 +848,7 @@ void CustomThread(CORO_PARAM, const void *param) {
 
 /****************************************************************************\
 *
-* Function:     void PASCAL ScriptThread(LPMPALSCRIPT s);
+* Function:     void ScriptThread(LPMPALSCRIPT s);
 *
 * Description:  Esegue uno script. Questa funzione e' pensata come starting
 *               point per un thread
@@ -946,7 +946,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 
 /****************************************************************************\
 *
-* Function:     void PASCAL ActionThread(LPMPALITEM item);
+* Function:     void ActionThread(LPMPALITEM item);
 *
 * Description:  Thread che esegue una azione su un item. Il thread
 *               esegue sempre l'azione 0, per cui e' necessario creare
@@ -1036,7 +1036,7 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 
 /****************************************************************************\
 *
-* Function:     void PASCAL LocationPollThread(uint32 id);
+* Function:     void LocationPollThread(uint32 id);
 *
 * Description:  Esegue il polling di una locazione (starting point di un
 *               thread).
@@ -2323,7 +2323,7 @@ uint32 mpalGetError(void) {
 *
 \****************************************************************************/
 
-bool EXPORT mpalExecuteScript(int nScript) {
+bool mpalExecuteScript(int nScript) {
 	int n;
 	LPMPALSCRIPT s;
 
@@ -2355,7 +2355,7 @@ bool EXPORT mpalExecuteScript(int nScript) {
 *
 \****************************************************************************/
 
-void EXPORT mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
+void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
 	lpiifCustom = lpiifCus;
 }
 

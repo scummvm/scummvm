@@ -138,7 +138,6 @@ namespace MPAL {
 
 #define MAXPOLLINGLOCATIONS   64
 
-#define EXPORT
 #define LPSTR char *
 
 /****************************************************************************\
@@ -570,12 +569,9 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 
 
 /****************************************************************************\
-*       Functions exported DLL
+*       Functions exported to the main game
 \****************************************************************************/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /****************************************************************************\
 *
@@ -593,7 +589,7 @@ extern "C" {
 *
 \****************************************************************************/
 
-bool EXPORT mpalInit(const char *lpszFileName, const char *lpszMprFileName,
+bool mpalInit(const char *lpszFileName, const char *lpszMprFileName,
 					 LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings);
 
 
@@ -636,7 +632,7 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...);
 *
 \****************************************************************************/
 
-bool EXPORT mpalExecuteScript(int nScript);
+bool mpalExecuteScript(int nScript);
 
 
 
@@ -650,7 +646,7 @@ bool EXPORT mpalExecuteScript(int nScript);
 *
 \****************************************************************************/
 
-uint32 EXPORT mpalGetError(void);
+uint32 mpalGetError(void);
 
 
 
@@ -665,7 +661,7 @@ uint32 EXPORT mpalGetError(void);
 *
 \****************************************************************************/
 
-void EXPORT mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCustom);
+void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCustom);
 
 
 /****************************************************************************\
@@ -684,7 +680,7 @@ void EXPORT mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCustom);
 *
 \****************************************************************************/
 
-bool EXPORT mpalStartIdlePoll(int nLoc);
+bool mpalStartIdlePoll(int nLoc);
 
 
 /****************************************************************************\
@@ -715,7 +711,7 @@ void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result);
 *
 \****************************************************************************/
 
-int EXPORT mpalLoadState(byte *buf);
+int mpalLoadState(byte *buf);
 
 
 
@@ -730,7 +726,7 @@ int EXPORT mpalLoadState(byte *buf);
 *
 \****************************************************************************/
 
-void EXPORT mpalSaveState(byte *buf);
+void mpalSaveState(byte *buf);
 
 
 
@@ -744,11 +740,8 @@ void EXPORT mpalSaveState(byte *buf);
 *
 \****************************************************************************/
 
-int EXPORT mpalGetSaveStateSize(void);
+int mpalGetSaveStateSize(void);
 
-#ifdef __cplusplus
-}
-#endif
 
 /****************************************************************************\
 *
