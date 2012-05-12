@@ -90,6 +90,17 @@ RMGfxEngine::RMGfxEngine() {
 	m_bigBuf.OffsetY(RM_SKIPY);
 
 	csMainLoop = NULL;
+	m_nCurLoc = 0;
+	m_curAction = TA_GOTO;
+	m_curActionObj = 0;
+	m_nWipeType	= 0;
+	m_hWipeEvent = 0;
+	m_nWipeStep	= 0;
+	m_bMustEnterMenu = false;
+	m_bWiping = false;
+	m_bGUIOption = false;
+	m_bGUIInterface = false;
+	m_bGUIInventory = false;
 }
 
 RMGfxEngine::~RMGfxEngine() {

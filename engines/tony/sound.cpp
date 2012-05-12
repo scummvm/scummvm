@@ -775,6 +775,8 @@ uint32 CODECADPCMSTEREO::Decompress(Common::File &fp, void *buf, uint32 dwSize) 
 FPSOUND::FPSOUND() {
 	lpDS = NULL;
 	lpDSBPrimary = NULL;
+	hwnd = 0;
+	bSoundSupported = false;
 }
 
 
@@ -1028,6 +1030,19 @@ FPSFX::FPSFX(LPDIRECTSOUND lpds, HWND hWnd, bool bSoundOn) {
 		return;
 
 	/* Poiché non abbiamo ancora nessun dato sull'effetto sonoro, non possiamo fare nulla */
+#else
+	bIsVoice = false;
+	lastVolume = 0;
+	dwFreq = 0;
+	hEndOfBuffer = CORO_INVALID_PID_VALUE;
+	bFileLoaded = false;
+	bSoundSupported = false;
+	bLoop = false;
+	bPaused = false;
+	bStereo = false;
+	b16bit = false;
+	bIsPlaying = false;
+	bIsVoice = false;
 #endif
 }
 
