@@ -104,7 +104,7 @@ protected:
 
 	// Controlla se la posizione Y del mouse è corretta, anche in base
 	// alla posizione dell'inventario su schermo
-	bool CheckPointInside(RMPoint &pt);
+	bool CheckPointInside(const RMPoint &pt);
 
 public:
 	RMInventory();
@@ -125,17 +125,17 @@ public:
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Metodo per determinare se l'inventario sta comandando gli input
-	bool HaveFocus(RMPoint mpos);
+	bool HaveFocus(const RMPoint &mpos);
 
 	// Metodo per determinare se la mini interfaccia è attiva
 	bool MiniActive(void);
 
 	// Gestisce il click sinistro del mouse (solo quando c'ha focus)
-	bool LeftClick(RMPoint mpos, int &nCombineObj);
+	bool LeftClick(const RMPoint &mpos, int &nCombineObj);
 	
 	// Gestisce il tasto destro del mouse (solo quando c'ha focus)
-	void RightClick(RMPoint mpos);
-	bool RightRelease(RMPoint mpos, RMTonyAction &curAction);
+	void RightClick(const RMPoint &mpos);
+	bool RightRelease(const RMPoint &mpos, RMTonyAction &curAction);
 
 	// Avverte che è finito il combine
 	void EndCombine(void);
@@ -151,8 +151,8 @@ public:
 	void RemoveItem(int code);
 
 	// Siamo sopra un oggetto?
-	RMItem* WhichItemIsIn(RMPoint mpt);
-	bool ItemInFocus(RMPoint mpt);
+	RMItem *WhichItemIsIn(const RMPoint &mpt);
+	bool ItemInFocus(const RMPoint &mpt);
 
 	// Cambia l'icona di un oggetto
 	void ChangeItemStatus(uint32 dwCode, uint32 dwStatus);
@@ -197,8 +197,8 @@ public:
 	void Reset(void);
 
 	// Avverte dei click e rilasci del mouse
-	void Clicked(RMPoint mousepos);
-	bool Released(RMPoint mousepos, RMTonyAction &action);
+	void Clicked(const RMPoint &mousepos);
+	bool Released(const RMPoint &mousepos, RMTonyAction &action);
 
 	// Attiva o disattiva il quinto verbo
 	void SetPalesati(bool bOn);

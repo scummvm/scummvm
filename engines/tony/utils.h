@@ -185,7 +185,7 @@ public:
     RMString(const int ch);
 
     // Metodi generici
-    int Length();
+    int Length() const;
     void Compact();
 
     // Access characters within string
@@ -247,7 +247,7 @@ public:
 
     // Offset
     void Offset(int xOff, int yOff);
-    void Offset(RMPoint p);
+    void Offset(const RMPoint &p);
     friend RMPoint operator+(RMPoint p1, RMPoint p2);
     friend RMPoint operator-(RMPoint p1, RMPoint p2);
     RMPoint &operator+=(RMPoint p);
@@ -273,7 +273,7 @@ public:
 public:
     RMRect();
     RMRect(int x1, int y1, int x2, int y2);
-    RMRect(RMPoint p1, RMPoint p2);
+    RMRect(const RMPoint &p1, const RMPoint &p2);
     RMRect(const RMRect &rc);
 
     // Attributes
@@ -287,7 +287,7 @@ public:
 
     // Set
     void SetRect(int x1, int y1, int x2, int y2);
-    void SetRect(RMPoint p1, RMPoint p2);
+    void SetRect(const RMPoint &p1, const RMPoint &p2);
     void SetEmpty(void);
 
     // Copiers
@@ -297,7 +297,7 @@ public:
 
     // Offset
     void Offset(int xOff, int yOff);
-    void Offset(RMPoint p);
+    void Offset(const RMPoint &p);
     friend RMRect operator+(const RMRect &rc, RMPoint p);
     friend RMRect operator-(const RMRect &rc, RMPoint p);
     friend RMRect operator+(RMPoint p, const RMRect &rc);
@@ -313,7 +313,7 @@ public:
     void NormalizeRect();
 
 	// Point in rect
-	bool PtInRect(RMPoint pt) { return (pt.x>=x1 && pt.x<=x2 && pt.y>=y1 && pt.y<=y2); }
+	bool PtInRect(const RMPoint &pt) { return (pt.x >= x1 && pt.x <= x2 && pt.y >= y1 && pt.y <= y2); }
 
     // Extract from data stream
     friend RMDataStream &operator>>(RMDataStream& ds, RMRect &rc);

@@ -286,7 +286,6 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 
 	int u, v, curv;
 
-	uint16 appo;
 	uint32 k = 0;
 	int sommar, sommab, sommag;
 	uint16 *cursrc;

@@ -424,7 +424,7 @@ public:
 	RMPoint Position() { return m_pos; }
 
 	// Setta la posizione di scrolling
-	void SetScrollPosition(RMPoint pt) { RMCharacter::SetScrollPosition(pt); }
+	void SetScrollPosition(const RMPoint &pt) { RMCharacter::SetScrollPosition(pt); }
 
 	// Setta l'animazione di Take
 	void Take(int nWhere, int nPart);

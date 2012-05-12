@@ -437,7 +437,7 @@ void RMGfxEngine::ItemIrq(uint32 dwItem, int nPattern, int nStatus) {
 */
 
 
-void RMGfxEngine::SelectLocation(RMPoint ptTonyStart, RMPoint start) {
+void RMGfxEngine::SelectLocation(const RMPoint &ptTonyStart, const RMPoint &start) {
 #if 0
 	OPENFILENAME ofn;
 	char lpszFileName[512];

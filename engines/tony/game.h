@@ -138,7 +138,7 @@ public:
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	
 	// Sets the current co-ordinates
-	void SetCoord(RMPoint pt) { m_pos = pt; }
+	void SetCoord(const RMPoint &pt) { m_pos = pt; }
 
 	// Overloading of the method to see if rising from the list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
@@ -170,10 +170,10 @@ public:
 
 public:
 	RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState = false);
-	RMOptionButton(RMRect pt);
+	RMOptionButton(const RMRect &pt);
 	virtual ~RMOptionButton();
 
-	bool DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick);
+	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void AddToList(RMGfxTargetBuffer &bigBuf);
 	bool IsActive() { return m_bActive; }
@@ -195,10 +195,10 @@ private:
 	int m_nStep;
 
 public:
-	RMOptionSlide(RMPoint pt, int m_nRange=100, int m_nStartValue=0, int slideSize=300);
+	RMOptionSlide(const RMPoint &pt, int m_nRange = 100, int m_nStartValue = 0, int slideSize = 300);
 	virtual ~RMOptionSlide();
 
-	bool DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick);
+	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void AddToList(RMGfxTargetBuffer& bigBuf);
 

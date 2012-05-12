@@ -180,7 +180,7 @@ RMOptionButton::RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState) {
 	m_bDoubleState = bDoubleState;
 }
 
-RMOptionButton::RMOptionButton(RMRect pt) {
+RMOptionButton::RMOptionButton(const RMRect &pt) {
 	m_rect = pt;
 	m_bActive = false;
 	m_bHasGfx = false;
@@ -192,7 +192,7 @@ RMOptionButton::~RMOptionButton() {
 		delete m_buf;
 }
 
-bool RMOptionButton::DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick) {
+bool RMOptionButton::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
 	if (!m_bDoubleState) {
 		if (m_rect.PtInRect(mousePos)) {
 			if (!m_bActive) {
@@ -201,7 +201,7 @@ bool RMOptionButton::DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick
 			}
 		} else {
 			if (m_bActive) {
-				m_bActive=false;
+				m_bActive = false;
 				return true;
 			}
 		}
@@ -241,7 +241,7 @@ void RMOptionButton::AddToList(RMGfxTargetBuffer &bigBuf) {
 *       Metodi di RMOptionSlide
 \****************************************************************************/
 
-RMOptionSlide::RMOptionSlide(RMPoint pt, int nRange, int nStartValue, int slideSize) {
+RMOptionSlide::RMOptionSlide(const RMPoint &pt, int nRange, int nStartValue, int slideSize) {
 	RMResRaw *raw;
 
 	m_pos = pt;
@@ -283,7 +283,7 @@ RMOptionSlide::~RMOptionSlide() {
 	m_PushRight = NULL;
 }
 
-bool RMOptionSlide::DoFrame(RMPoint mousePos, bool bLeftClick, bool bRightClick) {
+bool RMOptionSlide::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
 	bool bRefresh = false;
 
 	// Doframe dei bottoni

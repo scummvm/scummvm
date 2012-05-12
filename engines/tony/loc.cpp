@@ -576,7 +576,7 @@ RMGfxSourceBuffer *RMItem::NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 		return new RMGfxSourceBuffer16;
 }
 
-bool RMItem::IsIn(RMPoint pt, int *size)  { 
+bool RMItem::IsIn(const RMPoint &pt, int *size)  { 
 	RMRect rc;
 	
 	if (!m_bIsActive) 
@@ -701,7 +701,7 @@ RMGfxPrimitive *RMItem::NewItemPrimitive() {
 	return new RMGfxPrimitive(this);
 }
 
-void RMItem::SetScrollPosition(RMPoint scroll) {
+void RMItem::SetScrollPosition(const RMPoint &scroll) {
 	m_curScroll = scroll;
 }
 
@@ -810,7 +810,7 @@ void RMItem::SetPattern(int nPattern, bool bPlayP0) {
 }
 
 
-bool RMItem::GetName(RMString& name)
+bool RMItem::GetName(RMString &name)
 {
 	char buf[256];
 
@@ -887,7 +887,7 @@ void RMItem::WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
 	CORO_END_CODE;
 }
 
-void RMItem::ChangeHotspot(RMPoint pt) {
+void RMItem::ChangeHotspot(const RMPoint &pt) {
 	m_hot = pt;
 }
 
@@ -1246,7 +1246,7 @@ RMPoint RMCharacter::Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 }
 
 
-RMPoint RMCharacter::NearestPoint(RMPoint punto) {
+RMPoint RMCharacter::NearestPoint(const RMPoint &punto) {
 /*
  RMPoint tofind;
  signed short difx,dify;
@@ -1273,7 +1273,7 @@ RMPoint RMCharacter::NearestPoint(RMPoint punto) {
 }
 
 
-short RMCharacter::ScanLine(RMPoint punto) {
+short RMCharacter::ScanLine(const RMPoint &punto) {
 	int Ldx, Ldy, Lcount;
 	float Lfx, Lfy, Lslope;
 	RMPoint Lstart, Lend, Lscan;
@@ -1321,7 +1321,7 @@ short RMCharacter::ScanLine(RMPoint punto) {
 }
 
 // Calcola intersezioni tra la traiettoria rettilinea ed il più vicino BBOX
-RMPoint RMCharacter::InvScanLine(RMPoint punto) {
+RMPoint RMCharacter::InvScanLine(const RMPoint &punto) {
 	int Ldx, Ldy, Lcount;
 	float Lfx, Lfy, Lslope;
 	RMPoint Lstart, Lend, Lscan;
@@ -1617,8 +1617,8 @@ void RMCharacter::Stop(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-inline int RMCharacter::InWhichBox(RMPoint pt) { 
-	return theBoxes->WhichBox(curLocation,pt); 
+inline int RMCharacter::InWhichBox(const RMPoint &pt) { 
+	return theBoxes->WhichBox(curLocation, pt); 
 }
 
 
@@ -1699,7 +1699,7 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 	CORO_END_CODE;
 }
 
-void RMCharacter::SetPosition(RMPoint pt, int newloc) {
+void RMCharacter::SetPosition(const RMPoint &pt, int newloc) {
 	RMBoxLoc *box;
 	
 	minpath = 0;
@@ -1912,7 +1912,7 @@ RMBoxLoc *RMGameBoxes::GetBoxes(int nLoc) {
 	return m_allBoxes[nLoc];
 }
 
-bool RMGameBoxes::IsInBox(int nLoc, int nBox, RMPoint pt) {
+bool RMGameBoxes::IsInBox(int nLoc, int nBox, const RMPoint &pt) {
 	RMBoxLoc *cur = GetBoxes(nLoc);
 
 	if ((pt.x >= cur->boxes[nBox].left) && (pt.x <= cur->boxes[nBox].right) &&
@@ -1922,7 +1922,7 @@ bool RMGameBoxes::IsInBox(int nLoc, int nBox, RMPoint pt) {
 		return false;
 }
 
-int RMGameBoxes::WhichBox(int nLoc, RMPoint punto) {
+int RMGameBoxes::WhichBox(int nLoc, const RMPoint &punto) {
 	int i;
 	RMBoxLoc *cur = GetBoxes(nLoc);
 	
@@ -2311,7 +2311,7 @@ RMItem *RMLocation::GetItemFromCode(uint32 dwCode) {
 	return NULL;	
 }
 
-RMItem *RMLocation::WhichItemIsIn(RMPoint pt) {
+RMItem *RMLocation::WhichItemIsIn(const RMPoint &pt) {
 	int found = -1;
 	int foundSize = 0;
 	int size;
@@ -2351,7 +2351,7 @@ void RMLocation::Unload(void) {
 	}
 }
 
-void RMLocation::UpdateScrolling(RMPoint ptShowThis) {
+void RMLocation::UpdateScrolling(const RMPoint &ptShowThis) {
 	RMPoint oldScroll = m_curScroll;
 
 	if (m_curScroll.x + 250 > ptShowThis.x) {

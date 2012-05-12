@@ -83,7 +83,7 @@ RMInventory::~RMInventory() {
 	g_system->deleteMutex(m_csModifyInterface);
 }
 
-bool RMInventory::CheckPointInside(RMPoint &pt) {
+bool RMInventory::CheckPointInside(const RMPoint &pt) {
 	if (!bCfgInvUp)
 		return pt.y > RM_SY - 70;
 	else
@@ -343,7 +343,7 @@ bool RMInventory::MiniActive(void) {
 	return m_state == SELECTING;
 }
 
-bool RMInventory::HaveFocus(RMPoint mpos) {
+bool RMInventory::HaveFocus(const RMPoint &mpos) {
 	// In fase di combine abbiamo il focus solo se siamo su una freccia (per poter scrollare)
 	if (m_state == OPENED && m_bCombining && CheckPointInside(mpos) && (mpos.x < 64 || mpos.x > RM_SX - 64))
 		return true;
@@ -363,7 +363,7 @@ void RMInventory::EndCombine(void) {
 	m_bCombining = false;
 }
 
-bool RMInventory::LeftClick(RMPoint mpos, int& nCombineObj) {
+bool RMInventory::LeftClick(const RMPoint &mpos, int& nCombineObj) {
 	int n;
 
 	// Il click sinistro prende in mano un oggetto dell'inventario per utilizzarlo con lo sfondo
@@ -427,7 +427,7 @@ bool RMInventory::LeftClick(RMPoint mpos, int& nCombineObj) {
 }
 
 
-void RMInventory::RightClick(RMPoint mpos) {
+void RMInventory::RightClick(const RMPoint &mpos) {
 	int n;
 
 	assert(CheckPointInside(mpos));
@@ -488,7 +488,7 @@ void RMInventory::RightClick(RMPoint mpos) {
 	}
 }
 
-bool RMInventory::RightRelease(RMPoint mpos, RMTonyAction& curAction) {
+bool RMInventory::RightRelease(const RMPoint &mpos, RMTonyAction& curAction) {
 	if (m_state == SELECTING) {
 		m_state = OPENED;
 
@@ -701,14 +701,14 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 }
 
 
-bool RMInventory::ItemInFocus(RMPoint mpt) {
+bool RMInventory::ItemInFocus(const RMPoint &mpt) {
 	if ((m_state == OPENED || m_state == OPENING) && CheckPointInside(mpt))
 		return true;
 	else
 		return false;
 }
 
-RMItem *RMInventory::WhichItemIsIn(RMPoint mpt) {
+RMItem *RMInventory::WhichItemIsIn(const RMPoint &mpt) {
 	int n;
 
 	if (m_state == OPENED) {
@@ -847,7 +847,7 @@ void RMInterface::DoFrame(RMGfxTargetBuffer &bigBuf, RMPoint mousepos) {
 	m_mpos = mousepos;
 }
 
-void RMInterface::Clicked(RMPoint mousepos) {
+void RMInterface::Clicked(const RMPoint &mousepos) {
 	m_bActive = true;
 	m_openPos = mousepos;
 
@@ -865,7 +865,7 @@ void RMInterface::Clicked(RMPoint mousepos) {
 	_vm->PlayUtilSFX(0);
 }
 
-bool RMInterface::Released(RMPoint mousepos, RMTonyAction &action) {
+bool RMInterface::Released(const RMPoint &mousepos, RMTonyAction &action) {
 	if (!m_bActive)
 		return false;
 

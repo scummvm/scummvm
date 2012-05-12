@@ -118,8 +118,8 @@ public:
     RMGfxPrimitive *MakeLetterPrimitive(byte bChar, int& nLength);
 
     // Lunghezza in pixel di una stringa con il font corrente
-    int StringLen(RMString text);
-    int StringLen(char bChar, char bNext=0);
+    int StringLen(const RMString &text);
+    int StringLen(char bChar, char bNext = 0);
 };
 
 
@@ -225,8 +225,8 @@ public:
     void SetMaxLineLength(int max);
 
     // Scrive un testo
-    void WriteText(RMString text, int font, int *time = NULL);
-    void WriteText(RMString text, RMFontColor* font, int *time = NULL);
+    void WriteText(const RMString &text, int font, int *time = NULL);
+    void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
 
     // Overloading della funzione ereditata da RMGfxTask per decidere
     // quando eliminare un oggetto dalla OTLIST
@@ -263,8 +263,8 @@ class RMTextDialog : public RMText {
     virtual ~RMTextDialog();
 
     // Scrive un testo
-    void WriteText(RMString text, int font, int *time=NULL);
-    void WriteText(RMString text, RMFontColor* font, int *time=NULL);
+    void WriteText(const RMString &text, int font, int *time = NULL);
+    void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
 
     // Overloading della funzione ereditata da RMGfxTask per decidere
     // quando eliminare un oggetto dalla OTLIST
@@ -278,7 +278,7 @@ class RMTextDialog : public RMText {
     virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
     // Setta la posizione
-    void SetPosition(RMPoint pt) { dst=pt; }
+    void SetPosition(const RMPoint &pt) { dst = pt; }
 
     // Aspetta che venga finita la visualizzazione
     void WaitForEndDisplay(CORO_PARAM);
@@ -331,7 +331,7 @@ public:
     RMTextItemName();
 	virtual ~RMTextItemName();
     
-    void SetMouseCoord(RMPoint m) { m_mpos=m; }
+    void SetMouseCoord(const RMPoint &m) { m_mpos = m; }
 
     void DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
     virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -385,7 +385,7 @@ public:
     void SetNumChoices(int num);
 
     // Aggiunge una stringa con la scelta
-    void AddChoice(RMString string);
+    void AddChoice(const RMString &string);
 
     // Mostra e nasconde la scelta, con eventuali animazioni
     // NOTA: Se non viene passato parametro alla Show(), è obbligo del 

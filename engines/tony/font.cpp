@@ -171,7 +171,7 @@ void RMFont::Close(void) {
 	Unload();
 }
 
-int RMFont::StringLen(RMString text) {
+int RMFont::StringLen(const RMString &text) {
 	int len, i;
 
 	len = 0;
@@ -1859,7 +1859,7 @@ void RMText::RemoveThis(CORO_PARAM, bool &result) {
 }
 
 
-void RMText::WriteText(RMString text, int nFont, int *time) {
+void RMText::WriteText(const RMString &text, int nFont, int *time) {
 	// Inizializza i font (una volta sola)	
 	if (m_fonts[0] == NULL) {
 		m_fonts[0] = new RMFontParla; m_fonts[0]->Init();
@@ -1876,7 +1876,7 @@ void RMText::WriteText(RMString text, int nFont, int *time) {
 }
 
 
-void RMText::WriteText(RMString text, RMFontColor *font, int *time) {
+void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	RMGfxPrimitive *prim;
 	char *p, *old_p;
 	int i, j, x, y;
@@ -2077,14 +2077,14 @@ void RMTextDialog::Hide(CORO_PARAM) {
 	m_bShowed = false;
 }
 
-void RMTextDialog::WriteText(RMString text, int font, int *time) {
+void RMTextDialog::WriteText(const RMString &text, int font, int *time) {
 	RMText::WriteText(text,font,&m_time);
 
 	if (time != NULL)
 		*time = m_time;
 }
 
-void RMTextDialog::WriteText(RMString text, RMFontColor *font, int *time) {
+void RMTextDialog::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	RMText::WriteText(text,font,&m_time);
 
 	if (time != NULL)
@@ -2434,10 +2434,10 @@ void RMDialogChoice::SetNumChoices(int num) {
 	}
 }
 
-void RMDialogChoice::AddChoice(RMString string) {
+void RMDialogChoice::AddChoice(const RMString &string) {
 	// Si disegna la stringa
 	assert(m_curAdded < m_numChoices);
-	m_drawedStrings[m_curAdded++].WriteText(string,0);	
+	m_drawedStrings[m_curAdded++].WriteText(string, 0);	
 }
 
 void RMDialogChoice::Prepare(CORO_PARAM) {

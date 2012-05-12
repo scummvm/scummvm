@@ -262,7 +262,7 @@ public:
 	bool DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList = true);
 
 	// Setta la posizione corrente di scrolling
-	void SetScrollPosition(RMPoint scroll);
+	void SetScrollPosition(const RMPoint &scroll);
 
 	// Overloading della funzione per la rimozione da ot list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
@@ -282,9 +282,9 @@ public:
 	// Setta un nuovo status.
 	void SetStatus(int nStatus);
 
-	bool IsIn(RMPoint pt, int* size=NULL);
+	bool IsIn(const RMPoint &pt, int *size = NULL);
 	RMPoint Hotspot() { return m_hot; }
-	bool GetName(RMString& name);
+	bool GetName(RMString &name);
 	int MpalCode() { return m_mpalCode; }
 
 	// Scarica l'item
@@ -294,7 +294,7 @@ public:
 	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE);
 
 	// Setta un nuovo hotspot per l'oggetto
-	void ChangeHotspot(RMPoint pt);
+	void ChangeHotspot(const RMPoint &pt);
 
 	void SetInitCurPattern(bool status) { m_bInitCurPattern=status; }
 
@@ -375,10 +375,10 @@ public:
 	RMBoxLoc *GetBoxes(int nLoc);
 	
 	// Calcola in quale box si trova il punto
-	int WhichBox(int nLoc, RMPoint pt);
+	int WhichBox(int nLoc, const RMPoint &pt);
 
 	// Controlla che il punto sia dentro un certo box
-	bool IsInBox(int nLoc, int nBox, RMPoint pt);
+	bool IsInBox(int nLoc, int nBox, const RMPoint &pt);
 	
 	// Cambia lo stato di un box
 	void ChangeBoxStatus(int nLoc, int nBox, int status);
@@ -432,15 +432,15 @@ private:
 	RMPoint m_fixedScroll;
 	
 private:
-	int InWhichBox(RMPoint pt); 
+	int InWhichBox(const RMPoint &pt); 
 	
 	short FindPath(short source, short destination);
 	RMPoint Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint punto);
-	RMPoint NearestPoint(RMPoint punto);
+	RMPoint NearestPoint(const RMPoint &punto);
 	
 	void GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed=false);
-	short ScanLine(RMPoint punto);
-	RMPoint InvScanLine(RMPoint punto);
+	short ScanLine(const RMPoint &punto);
+	RMPoint InvScanLine(const RMPoint &punto);
 	RMPoint NearestHotSpot(int sourcebox, int destbox);
 
 	void NewBoxEntered(int nBox);
@@ -478,13 +478,13 @@ public:
 	void Move(CORO_PARAM, RMPoint pt, bool *result = NULL);
 
 	// Posiziona il personaggio a una certa posizione SENZA farlo muovere
-	void SetPosition(RMPoint pt, int newloc=-1);
+	void SetPosition(const RMPoint &pt, int newloc = -1);
 
 	// Aspetta la fine del movimento
 	void WaitForEndMovement(CORO_PARAM);
 
-	void SetFixedScroll(RMPoint fix) { m_fixedScroll = fix; }
-	void SetSpeed(int speed) { curSpeed=speed; }
+	void SetFixedScroll(const RMPoint &fix) { m_fixedScroll = fix; }
+	void SetSpeed(int speed) { curSpeed = speed; }
 };
 
 
@@ -563,7 +563,7 @@ public:
 	void DoFrame(RMGfxTargetBuffer *bigBuf);
 
 	// Si fa dare il numero dell'item
-	RMItem* WhichItemIsIn(RMPoint pt);
+	RMItem *WhichItemIsIn(const RMPoint &pt);
 
 	// Si fa dare un elemento dal suo codice MPAL
 	RMItem* GetItemFromCode(uint32 dwCode);
@@ -575,7 +575,7 @@ public:
 	void SetFixedScroll(const RMPoint &scroll);
 
 	// Aggiorna le coordinate di scrolling in modo da visualizzare sempre il punto fornito
-	void UpdateScrolling(RMPoint ptShowThis);
+	void UpdateScrolling(const RMPoint &ptShowThis);
 
 	// Legge la posizione di scrolling corrente
 	RMPoint ScrollPosition() { return m_curScroll; }

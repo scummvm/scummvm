@@ -150,7 +150,7 @@ public:
 	void LoadState(CORO_PARAM, const char *fn);
 
 	// Selects a location
-	void SelectLocation(RMPoint ptTonyStart=RMPoint(-1,-1), RMPoint start=RMPoint(-1,-1));
+	void SelectLocation(const RMPoint &ptTonyStart = RMPoint(-1, -1), const RMPoint &start = RMPoint(-1,-1));
 
 	// Pauses sound
 	void PauseSound(bool bPause);

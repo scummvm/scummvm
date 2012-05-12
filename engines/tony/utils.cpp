@@ -109,7 +109,7 @@ RMString::RMString(const int ch) {
  * Returns the length of the string
  * @returns					Length
  */
-int RMString::Length() {
+int RMString::Length() const {
  return m_length;
 }
 
@@ -785,7 +785,7 @@ RMPoint &RMPoint::operator=(RMPoint p) {
 /**
  * Offsets the point by another point
  */
-void RMPoint::Offset(RMPoint p) {
+void RMPoint::Offset(const RMPoint &p) {
 	x += p.x;
 	y += p.y;
 }
@@ -878,7 +878,7 @@ void RMRect::SetEmpty(void) {
 	x1 = y1 = x2 = y2 = 0;
 }
 
-RMRect::RMRect(RMPoint p1, RMPoint p2) {
+RMRect::RMRect(const RMPoint &p1, const RMPoint &p2) {
 	SetRect(p1, p2);
 }
 
@@ -890,7 +890,7 @@ RMRect::RMRect(const RMRect &rc) {
 	CopyRect(rc);
 }
 
-void RMRect::SetRect(RMPoint p1, RMPoint p2) {
+void RMRect::SetRect(const RMPoint &p1, const RMPoint &p2) {
 	x1 = p1.x;
 	y1 = p1.y;
 	x2 = p2.x;
@@ -957,7 +957,7 @@ void RMRect::Offset(int xOff, int yOff) {
 	y2 += yOff;
 }
 
-void RMRect::Offset(RMPoint p) {
+void RMRect::Offset(const RMPoint &p) {
 	x1 += p.x;
 	y1 += p.y;
 	x2 += p.x;
