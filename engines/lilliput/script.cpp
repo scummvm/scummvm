@@ -807,10 +807,10 @@ void LilliputScript::disasmScript( ScriptStream script) {
 
 		bool hasIf = false;
 
-		if(val != 0xFFF8) {
+		if (val != 0xFFF8) {
 			hasIf = true;
-			
 		}
+
 		bool firstIf = true; 
 
 
@@ -827,25 +827,26 @@ void LilliputScript::disasmScript( ScriptStream script) {
 
 			// op code type 1
 			assert(val < sizeof(opCodes1)/sizeof(OpCode));
-			const OpCode* opCode = &opCodes1[val];
-			const KValueType* opArgType = &opCode->_arg1;
+			const OpCode *opCode = &opCodes1[val];
+			const KValueType *opArgType = &opCode->_arg1;
 
 			Common::String str;
 
-			if(firstIf) {
+			if (firstIf) {
 				str = "if (";
 				firstIf = false;
 			} else {
 				str = "    ";
 			}
-			if (neg) str += "not ";
+			if (neg)
+				str += "not ";
 			str += Common::String(opCode->_opName);
 			str += "(";
 
 			for (int p = 0; p < opCode->_numArgs; p++) {
 				
 				str += getArgumentString(*opArgType, script);
-				if(p != opCode->_numArgs - 1)
+				if (p != opCode->_numArgs - 1)
 					str += ", ";
 
 				opArgType++;
@@ -856,7 +857,7 @@ void LilliputScript::disasmScript( ScriptStream script) {
 
 			val = script.readUint16LE();
 
-			if(val == 0xFFF8) {
+			if (val == 0xFFF8) {
 				str += ")";
 			}
 
@@ -870,9 +871,9 @@ void LilliputScript::disasmScript( ScriptStream script) {
 		while (val != 0xFFF7) {
 			
 			// op code type 2 
-			assert(val < sizeof(opCodes2)/sizeof(OpCode));
-			const OpCode* opCode = &opCodes2[val];
-			const KValueType* opArgType = &opCode->_arg1;
+			assert(val < sizeof(opCodes2) / sizeof(OpCode));
+			const OpCode *opCode = &opCodes2[val];
+			const KValueType *opArgType = &opCode->_arg1;
 
 			Common::String str;
 
