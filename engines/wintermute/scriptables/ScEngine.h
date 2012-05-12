@@ -42,7 +42,7 @@ typedef byte *(*DLL_COMPILE_BUFFER)(byte  *Buffer, char *Source, uint32 BufferSi
 typedef byte *(*DLL_COMPILE_FILE)(char *Filename, uint32 *CompiledSize);
 typedef void (*DLL_RELEASE_BUFFER)(unsigned char *Buffer);
 typedef void (*DLL_SET_CALLBACKS)(CALLBACKS *callbacks, void *Data);
-typedef int (*DLL_DEFINE_FUNCTION)(char *Name);
+typedef int (*DLL_DEFINE_FUNCTION)(const char *Name);
 typedef int (*DLL_DEFINE_VARIABLE)(char *Name);
 
 typedef void (*COMPILE_ERROR_CALLBACK)(int Line, char *Text , void *Data);
