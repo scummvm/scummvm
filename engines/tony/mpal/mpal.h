@@ -522,6 +522,9 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryDialogSelection(nChoice,dwData)        \
         (bool)mpalQueryDWORD(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
 
+#define mpalQueryDialogSelectionDWORD(nChoice,dwData)        \
+        mpalQueryDWORD(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
+
 
 /****************************************************************************\
 *

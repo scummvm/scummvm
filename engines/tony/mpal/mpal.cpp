@@ -1618,10 +1618,10 @@ static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// 0 dell'item, e poi liberera' la memoria con la GlobalFree()
 
 		// !!! New thread management
-		if ((h = CoroScheduler.createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == NULL)
+		if ((h = CoroScheduler.createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE)
 			return CORO_INVALID_PID_VALUE;
 
-		if (CoroScheduler.createProcess(ShutUpActionThread, &h, sizeof(uint32)) == NULL)
+		if (CoroScheduler.createProcess(ShutUpActionThread, &h, sizeof(uint32)) == CORO_INVALID_PID_VALUE)
 			return CORO_INVALID_PID_VALUE;
 
 		nExecutingAction = item->nObj;

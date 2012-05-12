@@ -2130,7 +2130,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 	CORO_BEGIN_CONTEXT;
 		uint32 nChoice;
 		uint32 *sl;
-		int i, num;
+		uint32 i, num;
 		char *string;
 		RMDialogChoice dc;
 		int sel;
@@ -2153,7 +2153,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 		// Se c'e' una sola opzione, la fa automaticamente, e aspetta la prossima scelta
 		if (_ctx->num == 1) {
-			mpalQueryDialogSelection(_ctx->nChoice, _ctx->sl[0]);
+			mpalQueryDialogSelectionDWORD(_ctx->nChoice, _ctx->sl[0]);
 			GlobalFree(_ctx->sl);
 
 			// Wait for the next choice to be made
@@ -2192,7 +2192,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		MainHideMouse();
 		
 		CORO_INVOKE_0(_ctx->dc.Hide);
-		mpalQueryDialogSelection(_ctx->nChoice, _ctx->sl[_ctx->sel]);
+		mpalQueryDialogSelectionDWORD(_ctx->nChoice, _ctx->sl[_ctx->sel]);
 
 		// Chiude la scelta
 		_ctx->dc.Close();
