@@ -2145,7 +2145,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 	// Wait until a choice is selected
 	mpalQueryDialogWaitForChoice(&_ctx->nChoice);
-	while (_ctx->nChoice != -1) {
+	while (_ctx->nChoice != (uint32)-1) {
 		// Si fa dare la lista di opzioni e le conta
 		_ctx->sl = mpalQueryDialogSelectList(_ctx->nChoice);
 		for (_ctx->num = 0; _ctx->sl[_ctx->num] != 0; _ctx->num++)
