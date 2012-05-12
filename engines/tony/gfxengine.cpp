@@ -371,6 +371,7 @@ void RMGfxEngine::InitCustomDll(void) {
 	SetupGlobalVars(&m_tony, &m_point, &_vm->_theBoxes, &m_loc, &m_inv, &m_input);
 }
 
+// FIXME: Casting nPattern from int to RMGfxEngine *
 void RMGfxEngine::ItemIrq(uint32 dwItem, int nPattern, int nStatus) {
 	static RMGfxEngine *This = NULL;
 	RMItem *item;
