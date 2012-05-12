@@ -59,6 +59,24 @@ namespace Tony {
 
 bool RMTony::m_bAction = false;
 
+RMTony::RMTony() {
+	m_bShow = false;
+	m_bShowOmbra = false;
+	m_bCorpoDavanti = false;
+	m_bActionPending = false;
+	m_ActionItem = NULL;
+	m_Action = 0;
+	m_ActionParm = 0;
+	m_bPastorella = false;
+	m_bIsStaticTalk = false;
+	m_bIsTalking = false;
+	m_nPatB4Talking = 0;
+	m_nTalkType = TALK_NORMAL;
+	m_TalkDirection = UP;
+	m_nTimeLastStep = 0;
+	hActionThread = CORO_INVALID_PID_VALUE;
+}
+
 void RMTony::WaitEndOfAction(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);

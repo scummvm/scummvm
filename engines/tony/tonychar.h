@@ -127,7 +127,7 @@ private:
 
 protected:
 	// Overload dell'allocazione degli sprites per cambiare il tipo
-	virtual RMGfxSourceBuffer* NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
+	virtual RMGfxSourceBuffer *NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
 
 	// Thread which waits for the end of an action
 	static void WaitEndOfAction(CORO_PARAM, const void *param);
@@ -378,6 +378,8 @@ public: // per farlo rialzare, altrimenti private
 	};
 
 public:
+	RMTony();
+
 	// Inizializza Tony
 	void Init(void);
 	

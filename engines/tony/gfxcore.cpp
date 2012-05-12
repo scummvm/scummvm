@@ -287,6 +287,7 @@ RMGfxClearTask RMGfxTargetBuffer::taskClear;
 
 RMGfxTargetBuffer::RMGfxTargetBuffer() {
 	otlist = NULL;
+	m_otSize = 0;
 	csModifyingOT = g_system->createMutex();
 }
 

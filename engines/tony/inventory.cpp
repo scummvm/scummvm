@@ -64,6 +64,18 @@ RMInventory::RMInventory() {
 	m_bCombining = false;
 	m_csModifyInterface = g_system->createMutex();
 	m_nItems = 0;
+
+	Common::fill(m_inv, m_inv + 256, 0);
+	m_nInv = 0;
+	m_curPutY = 0;
+	m_curPutTime = 0;
+	m_curPos = 0;
+	m_bHasFocus = false;
+	m_nSelectObj = 0;
+	m_nCombine = 0;
+	m_bBlinkingRight = false;
+	m_bBlinkingLeft = false;
+	miniAction = 0;
 }
 
 RMInventory::~RMInventory() {
@@ -932,6 +944,7 @@ void RMInterface::Init(void) {
 */
 	m_bActive = false;
 	m_bPalesati = false;
+	m_lastHotZone = 0;
 }
 
 void RMInterface::Close(void) {
