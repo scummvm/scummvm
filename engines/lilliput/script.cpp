@@ -1222,7 +1222,7 @@ int LilliputScript::sub18BB7(int index) {
 void LilliputScript::sub18B3C(int var) {
 	debugC(2, kDebugScriptTBC, "sub18B3C(%d)", var);
 
-	if (var == 0xFFFF)
+	if (var == -1)
 		return;
 
 	_word18776 = var;
@@ -1611,21 +1611,18 @@ byte LilliputScript::OC_sub17640() {
 
 	int var4 = _currScript->readUint16LE();
 	int index = _vm->_currentScriptCharacter * 40;
-	int subIndex = 0xFFFF;
-
 	int tmpVal = _currScript->readUint16LE();
 
 	if (tmpVal >= 2000) {
 		int var1 = tmpVal;
 
 		if (var1 == 3000) {
-			subIndex = 0;
 			for (int i = 0; i < _vm->_numCharacters; i++) {
 				tmpVal = _array10B51[index + i];
 				byte v1 = tmpVal & 0xFF;
 				byte v2 = tmpVal >> 8;
 				if ((v1 >= (var4 & 0xFF)) && (v2 < (var4 & 0xFF))) {
-					_word16F00 = subIndex;
+					_word16F00 = i;
 					return 1;
 				}
 			}
@@ -1637,8 +1634,8 @@ byte LilliputScript::OC_sub17640() {
 				tmpVal = _array10B51[index + i];
 				byte v1 = tmpVal & 0xFF;
 				byte v2 = tmpVal >> 8;
-				if ((v1 >= (var4 & 0xFF)) && (v2 < (var4 & 0xFF)) && (_vm->_rulesBuffer2_12[subIndex] != (var4 >> 8))) {
-					_word16F00 = subIndex;
+				if ((v1 >= (var4 & 0xFF)) && (v2 < (var4 & 0xFF)) && (_vm->_rulesBuffer2_12[i] != (var4 >> 8))) {
+					_word16F00 = i;
 					return 1;
 				}
 			}
@@ -1646,7 +1643,7 @@ byte LilliputScript::OC_sub17640() {
 		}
 	} else {
 		_currScript->seek(_currScript->pos() - 2);
-		subIndex = getValue1();
+		int subIndex = getValue1();
 		tmpVal = _array10B51[index + subIndex];
 		byte v1 = tmpVal & 0xFF;
 		byte v2 = tmpVal >> 8;
