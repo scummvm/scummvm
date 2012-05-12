@@ -89,6 +89,9 @@ HRESULT CAdInventoryBox::Listen(CBScriptHolder *param1, uint32 param2) {
 			_scrollOffset += _scrollBy;
 		} else return CBObject::Listen(param1, param2);
 		break;
+	default:
+		error("CAdInventoryBox::Listen - Unhandled enum");
+		break;
 	}
 
 	return S_OK;

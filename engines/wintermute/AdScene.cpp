@@ -1000,6 +1000,9 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 				if (!Update) DisplayRegionContent(Node->_region);
 			}
 			break;
+			default:
+				error("AdScene::TraverseNodes - Unhandled enum");
+				break;
 			} // switch
 		} // each node
 

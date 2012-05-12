@@ -378,7 +378,7 @@ const char *CBRegion::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::SaveAsText(CBDynBuffer *Buffer, int Indent, char *NameOverride) {
+HRESULT CBRegion::SaveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride) {
 	if (!NameOverride) Buffer->PutTextIndent(Indent, "REGION {\n");
 	else Buffer->PutTextIndent(Indent, "%s {\n", NameOverride);
 

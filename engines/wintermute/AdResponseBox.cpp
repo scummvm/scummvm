@@ -361,6 +361,9 @@ HRESULT CAdResponseBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	case TAL_CENTER:
 		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
+	default:
+		error("CAdResponseBox::SaveAsText - Unhandled enum");
+		break;
 	}
 
 	switch (_verticalAlign) {
@@ -550,6 +553,9 @@ HRESULT CAdResponseBox::WeedResponses() {
 				_responses.RemoveAt(i);
 				i--;
 			}
+			break;
+		default:
+			error("CAdResponseBox::WeedResponses - Unhandled enum");
 			break;
 		}
 	}

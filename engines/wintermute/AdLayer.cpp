@@ -506,6 +506,9 @@ HRESULT CAdLayer::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		case OBJECT_REGION:
 			_nodes[i]->_region->SaveAsText(Buffer, Indent + 2);
 			break;
+		default:
+			error("CAdLayer::SaveAsText - Unhandled enum");
+			break;
 		}
 	}
 

@@ -327,6 +327,9 @@ HRESULT CUIText::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	case TAL_CENTER:
 		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
+	default:
+		error("CUIText::SaveAsText - Unhandled enum");
+		break;
 	}
 
 	switch (_verticalAlign) {

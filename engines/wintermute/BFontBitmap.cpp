@@ -188,6 +188,9 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 			case TAL_LEFT:
 				StartX = x;
 				break;
+			default:
+				error("CBFontBitmap::TextHeightDraw - Unhandled enum");
+				break;
 			}
 			for (i = start; i < end + 1; i++) {
 				if (draw) DrawChar(str[i], StartX, y);
