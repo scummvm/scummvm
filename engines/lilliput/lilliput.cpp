@@ -847,7 +847,7 @@ void LilliputEngine::displaySmallIndexedAnim(byte index, byte subIndex) {
 }
 
 void LilliputEngine::displaySmallAnims() {
-	debugC(2, kDebugEngineTBC, "displaySmallAnims()");
+	debugC(2, kDebugEngine, "displaySmallAnims()");
 
 	if (_animationTick == _lastAnimationTick)
 		return;
@@ -2674,8 +2674,14 @@ void LilliputEngine::handleGameScripts() {
 	int tmpVal = _rulesBuffer2_12[index];
 	if (tmpVal == 0xFF)
 		return;
+
 /*
 	_scriptHandler->listAllTexts();
+
+	debugC(1, kDebugEngineTBC, "================= Menu Script ==================");
+	ScriptStream script = ScriptStream(_menuScript, _menuScriptSize);
+	_scriptHandler->disasmScript(script);
+	debugC(1, kDebugEngineTBC, "============= End Menu Script ==================");
 
 	for (int i = 0; i < _gameScriptIndexSize; i++) {
 		assert(tmpVal < _gameScriptIndexSize);
@@ -2684,8 +2690,8 @@ void LilliputEngine::handleGameScripts() {
 		_scriptHandler->disasmScript(script);
 		debugC(1, kDebugEngineTBC, "============= End Game Script %d ==================", i);
 	}
-
-while(1);
+	
+	while(1);
 
 	if(tmpVal == 6) {
 		warning("e");
