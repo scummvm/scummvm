@@ -101,6 +101,10 @@ RMGfxEngine::RMGfxEngine() {
 	m_bGUIOption = false;
 	m_bGUIInterface = false;
 	m_bGUIInventory = false;
+	m_bAlwaysDrawMouse = false;
+	m_bOption = false;
+	m_bLocationLoaded = false;
+	m_bInput = false;
 }
 
 RMGfxEngine::~RMGfxEngine() {
