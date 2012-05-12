@@ -40,6 +40,10 @@ uint16 GetAsyncKeyState(Common::KeyCode kc) {
 	return 0;
 }
 
+void CopyMemory(void *dst, const void *first, int size) {
+	Common::copy((const byte *)first, (const byte *)first + size, (byte *)dst);
+}
+
 } // end of namespace MPAL
 
 } // end of namespace Tony

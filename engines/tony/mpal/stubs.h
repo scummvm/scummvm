@@ -54,22 +54,10 @@ typedef void (*LPTHREAD_ROUTINE)(void *lpThreadParameter);
 #define PASCAL
 
 /****************************************************************************\
-*       Templates
-\****************************************************************************/
-
-/**
- * Copies data from the range [first, last) to [dst, dst + (last - first)).
- * It requires the range [dst, dst + (last - first)) to be valid.
- * It also requires dst not to be in the range [first, last).
- */
-template<class In, class Out>
-Out CopyMemory(Out dst, In first, int size) {
-	return Common::copy(first, first + size, dst);
-}
-
-/****************************************************************************\
 *       Methods
 \****************************************************************************/
+
+extern void CopyMemory(void *dst, const void *first, int size);
 
 extern uint16 GetAsyncKeyState(Common::KeyCode kc);
 
