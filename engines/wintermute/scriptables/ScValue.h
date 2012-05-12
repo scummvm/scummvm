@@ -89,10 +89,12 @@ public:
 	CScValue *GetProp(const char *Name);
 	CBScriptable *_valNative;
 	CScValue *_valRef;
+protected:
 	bool _valBool;
 	int _valInt;
 	double _valFloat;
 	char *_valString;
+public:
 	TValType _type;
 	CScValue(CBGame *inGame);
 	CScValue(CBGame *inGame, bool Val);
