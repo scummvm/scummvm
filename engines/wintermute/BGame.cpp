@@ -3148,7 +3148,7 @@ HRESULT CBGame::ShowCursor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::SaveGame(int slot, char *desc, bool quickSave) {
+HRESULT CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 	char Filename[MAX_PATH + 1];
 	GetSaveSlotFilename(slot, Filename);
 
@@ -3793,10 +3793,10 @@ void CBGame::SetWindowTitle() {
 			/*          WideString wstr = StringUtil::AnsiToWide(Title);
 			            title = StringUtil::WideToUtf8(wstr);*/
 		}
-
+#if 0
 		CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_renderer);
 		// TODO
-#if 0
+
 		SDL_SetWindowTitle(renderer->GetSdlWindow(), title.c_str());
 #endif
 	}

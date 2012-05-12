@@ -80,7 +80,7 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 			::FreeLibrary(_compilerDLL);
 			_compilerDLL = NULL;
 		} else {
-			/*
+		*/	/*
 			// publish external methods to the compiler
 			CALLBACKS c;
 			c.Dll_AddError = AddError;
@@ -759,7 +759,7 @@ HRESULT CScEngine::SaveBreakpoints() {
 		for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
 			Count++;
 			sprintf(Key, "Breakpoint%d", Count);
-			sprintf(Text, "%s:%d", _breakpoints[i]->_filename, _breakpoints[i]->_lines[j]);
+			sprintf(Text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
 
 			Game->_registry->WriteString("Debug", Key, Text);
 		}

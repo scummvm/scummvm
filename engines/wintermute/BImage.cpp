@@ -101,6 +101,7 @@ byte *CBImage::CreateBMPBuffer(uint32 *BufferSize) {
 
 	return Buffer;
 #endif
+	return NULL;
 }
 
 

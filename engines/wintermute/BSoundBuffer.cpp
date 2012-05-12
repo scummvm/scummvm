@@ -204,8 +204,8 @@ HRESULT CBSoundBuffer::Resume() {
 	if (_stream) {
 		BASS_ChannelPlay(_stream, FALSE);
 	}
-	return S_OK;
 #endif
+	return S_OK;
 }
 
 
@@ -237,6 +237,7 @@ uint32 CBSoundBuffer::GetLength() {
 	QWORD len = BASS_ChannelGetLength(_stream, BASS_POS_BYTE);
 	return 1000 * BASS_ChannelBytes2Seconds(_stream, len);
 #endif
+	return 0;
 }
 
 

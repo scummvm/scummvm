@@ -293,7 +293,7 @@ public:
 	virtual HRESULT Cleanup();
 	virtual HRESULT LoadGame(int Slot);
 	virtual HRESULT LoadGame(const char *Filename);
-	virtual HRESULT SaveGame(int slot, char *desc, bool quickSave = false);
+	virtual HRESULT SaveGame(int slot, const char *desc, bool quickSave = false);
 	virtual HRESULT ShowCursor();
 
 	CBSprite *_cursorNoninteractive;
