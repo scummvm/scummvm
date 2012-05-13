@@ -509,7 +509,7 @@ static RMGfxClearTask taskClear;
 	};
 
 private:
-	OSystem::MutexRef csModifyingOT;
+//	OSystem::MutexRef csModifyingOT;
 
 protected:
 	OTList *otlist;

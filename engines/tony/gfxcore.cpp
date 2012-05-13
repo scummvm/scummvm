@@ -295,18 +295,18 @@ RMGfxClearTask RMGfxTargetBuffer::taskClear;
 RMGfxTargetBuffer::RMGfxTargetBuffer() {
 	otlist = NULL;
 	m_otSize = 0;
-	csModifyingOT = g_system->createMutex();
+//	csModifyingOT = g_system->createMutex();
 }
 
 RMGfxTargetBuffer::~RMGfxTargetBuffer() {
 	ClearOT();
-	g_system->deleteMutex(csModifyingOT);
+//	g_system->deleteMutex(csModifyingOT);
 }
 
 void RMGfxTargetBuffer::ClearOT(void) {
 	OTList *cur, *n;
 
-	g_system->lockMutex(csModifyingOT);
+//	g_system->lockMutex(csModifyingOT);
 
 	cur = otlist;
 
@@ -320,7 +320,7 @@ void RMGfxTargetBuffer::ClearOT(void) {
 
 	otlist = NULL;
 
-	g_system->unlockMutex(csModifyingOT);
+//	g_system->unlockMutex(csModifyingOT);
 }
 
 void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
@@ -339,7 +339,7 @@ void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
 
 	// Lock del buffer per accederci
 	Lock();
-	g_system->lockMutex(csModifyingOT);
+//	g_system->lockMutex(csModifyingOT);
 
  	while (_ctx->cur != NULL) {
 		// Richiama la draw sul task, passandogli una copia della primitiva
@@ -373,7 +373,7 @@ void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
 		}
 	}
 
-	g_system->unlockMutex(csModifyingOT);
+//	g_system->unlockMutex(csModifyingOT);
 
 	// Unlock dopo la scrittura
 	Unlock();
@@ -385,7 +385,7 @@ void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
 	int nPrior;
 	OTList *cur, *n;
 
-	g_system->lockMutex(csModifyingOT);
+//	g_system->lockMutex(csModifyingOT);
 
 	// Avverte che e' in lista di OT
 	prim->m_task->Register();
@@ -412,7 +412,7 @@ void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
 		cur->next = n;
 	}
 
-	g_system->unlockMutex(csModifyingOT);
+//	g_system->unlockMutex(csModifyingOT);
 }
 
 void RMGfxTargetBuffer::AddClearTask(void) {
