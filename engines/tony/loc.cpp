@@ -1021,7 +1021,6 @@ void RMWipe::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 /***************************************************************************/
 
 short RMCharacter::FindPath(short source, short destination) {
-	// FIXME: Refactor
 	static RMBox BOX[MAXBOXES];            // Matrice di Adjacenza
 	static short COSTO[MAXBOXES];               // Costi per Nodo
 	static short VALIDO[MAXBOXES];              // 0:non valido 1:valido 2:saturo

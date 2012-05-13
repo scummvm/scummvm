@@ -1229,7 +1229,6 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 */
 
 	// Set idle skip on
-	// FIXME: Convert to co-routine
 	CORO_INVOKE_4(GLOBALS.lplpFunctions[200], 0, 0, 0, 0);
 
 	for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)

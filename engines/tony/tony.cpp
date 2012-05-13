@@ -514,7 +514,6 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 		CORO_INVOKE_1(CoroScheduler.sleep, 50);
 
   		// Call the engine to handle the next frame
-		// FIXME: This needs to be moved into it's own process
 		CORO_INVOKE_1(_vm->_theEngine.DoFrame, _vm->m_bDrawLocation);
 
 		// Warns that a frame is finished
