@@ -43,7 +43,7 @@ namespace Common {
 
 
 // Enable this macro to enable some debugging support in the coroutine code.
-//#define COROUTINE_DEBUG	1
+//#define COROUTINE_DEBUG
 
 /**
  * The core of any coroutine context which captures the 'state' of a coroutine.
@@ -53,7 +53,7 @@ struct CoroBaseContext {
 	int _line;
 	int _sleep;
 	CoroBaseContext *_subctx;
-#if COROUTINE_DEBUG
+#ifdef COROUTINE_DEBUG
 	const char *_funcName;
 #endif
 	CoroBaseContext(const char *func);

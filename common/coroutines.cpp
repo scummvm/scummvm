@@ -21,6 +21,9 @@
 
 #include "common/coroutines.h"
 #include "common/algorithm.h"
+#include "common/debug.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -32,7 +35,7 @@ CoroContext nullContext = NULL;
 DECLARE_SINGLETON(CoroutineScheduler);
 
 
-#if COROUTINE_DEBUG
+#ifdef COROUTINE_DEBUG
 namespace {
 static int s_coroCount = 0;
 
@@ -64,7 +67,7 @@ static void displayCoroStats() {
 
 CoroBaseContext::CoroBaseContext(const char *func)
 	: _line(0), _sleep(0), _subctx(0) {
-#if COROUTINE_DEBUG
+#ifdef COROUTINE_DEBUG
 	_funcName = func;
 	changeCoroStats(_funcName, +1);
 	s_coroCount++;
@@ -72,7 +75,7 @@ CoroBaseContext::CoroBaseContext(const char *func)
 }
 
 CoroBaseContext::~CoroBaseContext() {
-#if COROUTINE_DEBUG
+#ifdef COROUTINE_DEBUG
 	s_coroCount--;
 	changeCoroStats(_funcName, -1);
 	debug("Deleting coro in %s at %p (subctx %p)",
