@@ -887,7 +887,7 @@ void LilliputScript::disasmScript( ScriptStream script) {
 				if (p != opCode->_numArgs - 1)
 					str += ", ";
 
-				if ( p < 5 )
+				if ( p < 4 )
 					opArgType++;
 			}
 			str += ");";
@@ -1105,7 +1105,7 @@ void LilliputScript::sub189F5() {
 	int var1;
 
 	for (;;) {
-		var1 = _vm->_displayStringBuf[index];
+		var1 = _vm->_displayStringBuf[index++];
 		if (var1 == 0)
 			break;
 

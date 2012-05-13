@@ -289,7 +289,7 @@ public:
 	void sub131FC(Common::Point pos);
 	void sub1546F(Common::Point displayPos);
 	void sub15498(Common::Point pos, int var2);
-	void sub15A4C(int &vgaIndex, byte *srcBuf, int &bufIndex);
+	void sub15A4C(int vgaIndex, byte *srcBuf, int &bufIndex);
 	void checkMapClosing(bool &forceReturnFl);
 	void sub16B63(int index);
 	void sub16B76(int index);
