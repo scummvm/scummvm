@@ -93,6 +93,8 @@ const char *getSciVersionDesc(SciVersion version) {
 
 //#define SCI_VERBOSE_RESMAN 1
 
+// FIXME: This list is out of sync with the enum in resource.h with
+// its indices.
 static const char *const sci_error_types[] = {
 	"No error",
 	"I/O error",

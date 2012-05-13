@@ -54,6 +54,7 @@ enum ResourceStatus {
 	kResStatusLocked /**< Allocated and in use */
 };
 
+// FIXME: This enum is out of sync with its textual descriptions in resource.cpp
 /** Initialization result types */
 enum {
 	SCI_ERROR_IO_ERROR = 1,
@@ -64,6 +65,7 @@ enum {
 	SCI_ERROR_DECOMPRESSION_ERROR = 6,	/**< sanity checks failed during decompression */
 	SCI_ERROR_RESOURCE_TOO_BIG = 8	/**< Resource size exceeds SCI_MAX_RESOURCE_SIZE */
 
+	// FIXME: This comment makes no sense. Track down in history what it means:
 	/* the first critical error number */
 };
 
