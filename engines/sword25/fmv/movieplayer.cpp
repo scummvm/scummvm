@@ -167,7 +167,7 @@ void MoviePlayer::setScaleFactor(float scaleFactor) {
 }
 
 double MoviePlayer::getTime() {
-	return _decoder.getElapsedTime() / 1000.0;
+	return _decoder.getTime() / 1000.0;
 }
 
 #else // USE_THEORADEC

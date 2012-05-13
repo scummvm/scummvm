@@ -81,7 +81,7 @@ public:
 	}
 
 	Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	uint32 getTimeToNextFrame() const;
 
 	bool endOfVideo() const;

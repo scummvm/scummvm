@@ -236,13 +236,13 @@ void PSXStreamDecoder::close() {
 	reset();
 }
 
-uint32 PSXStreamDecoder::getElapsedTime() const {
+uint32 PSXStreamDecoder::getTime() const {
 	// TODO: Currently, the audio is always after the video so using this
 	// can often lead to gaps in the audio...
 	//if (_audStream)
 	//	return _mixer->getSoundElapsedTime(_audHandle);
 
-	return VideoDecoder::getElapsedTime();
+	return VideoDecoder::getTime();
 }
 
 uint32 PSXStreamDecoder::getTimeToNextFrame() const {
@@ -250,7 +250,7 @@ uint32 PSXStreamDecoder::getTimeToNextFrame() const {
 		return 0;
 
 	uint32 nextTimeMillis = _nextFrameStartTime.msecs();
-	uint32 elapsedTime = getElapsedTime();
+	uint32 elapsedTime = getTime();
 
 	if (elapsedTime > nextTimeMillis)
 		return 0;

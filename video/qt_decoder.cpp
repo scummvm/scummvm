@@ -185,7 +185,7 @@ bool QuickTimeDecoder::endOfVideo() const {
 	return true;
 }
 
-uint32 QuickTimeDecoder::getElapsedTime() const {
+uint32 QuickTimeDecoder::getTime() const {
 	// Try to base sync off an active audio track
 	for (uint32 i = 0; i < _audioHandles.size(); i++) {
 		if (g_system->getMixer()->isSoundHandleActive(_audioHandles[i])) {
@@ -196,7 +196,7 @@ uint32 QuickTimeDecoder::getElapsedTime() const {
 	}
 
 	// Just use time elapsed since the beginning
-	return SeekableVideoDecoder::getElapsedTime();
+	return SeekableVideoDecoder::getTime();
 }
 
 uint32 QuickTimeDecoder::getTimeToNextFrame() const {
@@ -211,7 +211,7 @@ uint32 QuickTimeDecoder::getTimeToNextFrame() const {
 
 		// TODO: Add support for rate modification
 
-		uint32 elapsedTime = getElapsedTime();
+		uint32 elapsedTime = getTime();
 
 		if (elapsedTime < nextFrameStartTime)
 			return nextFrameStartTime - elapsedTime;

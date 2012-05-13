@@ -45,7 +45,7 @@ bool VideoDecoder::loadFile(const Common::String &filename) {
 	return loadStream(file);
 }
 
-uint32 VideoDecoder::getElapsedTime() const {
+uint32 VideoDecoder::getTime() const {
 	return g_system->getMillis() - _startTime;
 }
 
@@ -98,7 +98,7 @@ uint32 FixedRateVideoDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _curFrame < 0)
 		return 0;
 
-	uint32 elapsedTime = getElapsedTime();
+	uint32 elapsedTime = getTime();
 	uint32 nextFrameStartTime = getFrameBeginTime(_curFrame + 1);
 
 	// If the time that the next frame should be shown has past

@@ -49,7 +49,7 @@ void VideoEntry::clear() {
 }
 
 bool VideoEntry::endOfVideo() {
-	return !video || video->endOfVideo() || video->getElapsedTime() >= (uint)end.msecs();
+	return !video || video->endOfVideo() || video->getTime() >= (uint)end.msecs();
 }
 
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
@@ -481,9 +481,9 @@ uint32 VideoManager::getFrameCount(VideoHandle handle) {
 	return _videoStreams[handle]->getFrameCount();
 }
 
-uint32 VideoManager::getElapsedTime(VideoHandle handle) {
+uint32 VideoManager::getTime(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
-	return _videoStreams[handle]->getElapsedTime();
+	return _videoStreams[handle]->getTime();
 }
 
 uint32 VideoManager::getDuration(VideoHandle handle) {

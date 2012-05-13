@@ -305,11 +305,11 @@ void AviDecoder::close() {
 	reset();
 }
 
-uint32 AviDecoder::getElapsedTime() const {
+uint32 AviDecoder::getTime() const {
 	if (_audStream)
 		return _mixer->getSoundElapsedTime(*_audHandle);
 
-	return FixedRateVideoDecoder::getElapsedTime();
+	return FixedRateVideoDecoder::getTime();
 }
 
 const Graphics::Surface *AviDecoder::decodeNextFrame() {

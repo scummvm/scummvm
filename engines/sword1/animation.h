@@ -60,7 +60,7 @@ public:
 	DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
 	~DXADecoderWithSound() {}
 
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 
 private:
 	Audio::Mixer *_mixer;

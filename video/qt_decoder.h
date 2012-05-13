@@ -106,7 +106,7 @@ public:
 	bool isVideoLoaded() const { return isOpen(); }
 	const Graphics::Surface *decodeNextFrame();
 	bool endOfVideo() const;
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	uint32 getTimeToNextFrame() const;
 	Graphics::PixelFormat getPixelFormat() const;
 

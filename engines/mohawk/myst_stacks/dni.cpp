@@ -103,7 +103,7 @@ void Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	VideoHandle atrus = _vm->_video->findVideoHandle(_video);
 
 	// Good ending and Atrus asked to give page
-	if (_globals.ending == 1 && _vm->_video->getElapsedTime(atrus) > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
+	if (_globals.ending == 1 && _vm->_video->getTime(atrus) > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
 		_globals.ending = 2;
 		_globals.heldPage = 0;
 		_vm->setMainCursor(kDefaultMystCursor);
