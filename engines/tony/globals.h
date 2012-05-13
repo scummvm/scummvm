@@ -29,6 +29,8 @@
 #include "tony/inventory.h"
 #include "tony/loc.h"
 #include "tony/tonychar.h"
+#include "tony/mpal/mpal.h"
+#include "tony/mpal/mpaldll.h"
 
 namespace Tony {
 
@@ -140,6 +142,28 @@ struct ChangedHotspotStruct {
 	}
 };
 
+/****************************************************************************\
+*       typedef CFCALL
+*       --------------
+* Description: Descrizione di una chiamata a una custom function
+\****************************************************************************/
+
+typedef struct {
+  int nCf;
+
+  int arg1, arg2, arg3, arg4;
+} CFCALL;
+typedef CFCALL*         LPCFCALL;
+typedef LPCFCALL*       LPLPCFCALL;
+
+
+/****************************************************************************\
+*       Global variables
+\****************************************************************************/
+
+/**
+ * Globals class
+ */
 class Globals {
 public:
 	Globals();
@@ -225,6 +249,48 @@ public:
 	int tappeti[200];
 	RMPoint SFM_pt;
 	int SFM_nLoc;
+
+	/**
+	 * @defgroup MPAL variables
+	 *
+	*/
+	uint32                  mpalError;
+	LPITEMIRQFUNCTION       lpiifCustom;
+	LPLPCUSTOMFUNCTION      lplpFunctions;
+	Common::String *		lplpFunctionStrings;
+	uint16                   nObjs;
+	uint16                   nVars;
+	HGLOBAL                  hVars;
+	LPMPALVAR                lpmvVars;
+	uint16                   nMsgs;
+	HGLOBAL                  hMsgs;
+	LPMPALMSG                lpmmMsgs;
+	uint16                   nDialogs;
+	HGLOBAL                  hDialogs;
+	LPMPALDIALOG             lpmdDialogs;
+	uint16                   nItems;
+	HGLOBAL                  hItems;
+	LPMPALITEM               lpmiItems;
+	uint16                   nLocations;
+	HGLOBAL                  hLocations;
+	LPMPALLOCATION           lpmlLocations;
+	uint16                   nScripts;
+	HGLOBAL                  hScripts;
+	LPMPALSCRIPT             lpmsScripts;
+	Common::File             hMpr;
+	uint16                   nResources;
+	uint32 *                 lpResources;
+	bool                     bExecutingAction;
+	bool                     bExecutingDialog;
+	uint32					nPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32					hEndPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32					PollingThreads[MAXPOLLINGLOCATIONS];
+	uint32					hAskChoice;
+	uint32					hDoneChoice;
+	uint32                    nExecutingAction;
+	uint32                    nExecutingDialog;
+	uint32                    nExecutingChoice;
+	uint32                    nSelectedChoice;
 };
 
 } // End of namespace Tony

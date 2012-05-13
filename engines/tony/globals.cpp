@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "tony/globals.h"
 
 namespace Tony {
@@ -31,6 +32,8 @@ Globals::Globals() {
 	curChannel = 0;
 	flipflop = 0;
 	curBackText = NULL;
+	bTonyIsSpeaking = false;
+	curChangedHotspot = 0;
 	Tony = NULL;
 	Pointer = NULL;
 	Boxes = NULL;
@@ -89,6 +92,44 @@ Globals::Globals() {
 	Common::fill(&tappeti[0], &tappeti[200], 0);
 	SFM_nLoc = 0;
 	vdb = NULL;
+
+	// MPAL global variables
+	mpalError = 0;
+	lpiifCustom = NULL;
+	lplpFunctions = NULL;
+	lplpFunctionStrings = NULL;
+	nObjs = 0;
+	nVars = 0;
+	hVars = NULL;
+	lpmvVars = NULL;
+	nMsgs = 0;
+	hMsgs = NULL;
+	lpmmMsgs = NULL;
+	nDialogs = 0;
+	hDialogs = NULL;
+	lpmdDialogs = NULL;
+	nItems = 0;
+	hItems = NULL;
+	lpmiItems = NULL;
+	nLocations = 0;
+	hLocations = NULL;
+	lpmlLocations = NULL;
+	nScripts = 0;
+	hScripts = NULL;
+	lpmsScripts = NULL;
+	nResources = 0;
+	lpResources = NULL;
+	bExecutingAction = false;
+	bExecutingDialog = false;
+	Common::fill(&nPollingLocations[0], &nPollingLocations[MAXPOLLINGLOCATIONS], 0);
+	Common::fill(&hEndPollingLocations[0], &hEndPollingLocations[MAXPOLLINGLOCATIONS], 0);
+	Common::fill(&PollingThreads[0], &PollingThreads[MAXPOLLINGLOCATIONS], 0);
+	hAskChoice = 0;
+	hDoneChoice = 0;
+	nExecutingAction = 0;
+	nExecutingDialog = 0;
+	nExecutingChoice = 0;
+	nSelectedChoice = 0;
 }
 
 } // End of namespace Tony

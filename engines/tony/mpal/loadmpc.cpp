@@ -517,58 +517,58 @@ bool ParseMpc(const byte *lpBuf) {
 		return false;
 
 	lpBuf += 4;
-	nVars = READ_LE_UINT16(lpBuf);
+	GLOBALS.nVars = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
-	hVars = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALVAR) * (uint32)nVars);
-	if (hVars == NULL)
+	GLOBALS.hVars = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALVAR) * (uint32)GLOBALS.nVars);
+	if (GLOBALS.hVars == NULL)
 		return false;
 
-	lpmvVars = (LPMPALVAR)GlobalLock(hVars);
+	GLOBALS.lpmvVars = (LPMPALVAR)GlobalLock(GLOBALS.hVars);
 
-	for (i = 0; i < nVars; i++) {
+	for (i = 0; i < GLOBALS.nVars; i++) {
 		wLen = *(const byte *)lpBuf;
 		lpBuf++;
-		CopyMemory(lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
+		CopyMemory(GLOBALS.lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
 		lpBuf += wLen;
-		lpmvVars->dwVal = READ_LE_UINT32(lpBuf);
+		GLOBALS.lpmvVars->dwVal = READ_LE_UINT32(lpBuf);
 		lpBuf += 4;
 
 		lpBuf++;             // Salta 'ext'
-		lpmvVars++;
+		GLOBALS.lpmvVars++;
 	}
 
-	GlobalUnlock(hVars);
+	GlobalUnlock(GLOBALS.hVars);
 
 	/* 2. Messaggi */
 	if (lpBuf[0] != 'M' || lpBuf[1] != 'S' || lpBuf[2] != 'G' || lpBuf[3] != 'S')
 		return false;
 
 	lpBuf += 4;
-	nMsgs = READ_LE_UINT16(lpBuf);
+	GLOBALS.nMsgs = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
 #ifdef NEED_LOCK_MSGS
-	hMsgs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)nMsgs);
-	if (hMsgs == NULL)
+	GLOBALS.hMsgs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)GLOBALS.nMsgs);
+	if (GLOBALS.hMsgs == NULL)
 		return false;
 
-	lpmmMsgs = (LPMPALMSG)GlobalLock(hMsgs);
+	GLOBALS.lpmmMsgs = (LPMPALMSG)GlobalLock(GLOBALS.hMsgs);
 #else
-	lpmmMsgs=(LPMPALMSG)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(MPALMSG)*(uint32)nMsgs);
-	if (lpmmMsgs==NULL)
+	GLOBALS.lpmmMsgs=(LPMPALMSG)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(MPALMSG)*(uint32)GLOBALS.nMsgs);
+	if (GLOBALS.lpmmMsgs==NULL)
 		return false;
 #endif
 
-	for (i = 0; i < nMsgs; i++) {
-		lpmmMsgs->wNum = READ_LE_UINT16(lpBuf);
+	for (i = 0; i < GLOBALS.nMsgs; i++) {
+		GLOBALS.lpmmMsgs->wNum = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
 
 		for (j = 0; lpBuf[j] != 0;)
 			j += lpBuf[j] + 1;
 
-		lpmmMsgs->hText = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
-		lpTemp2 = lpTemp = (byte *)GlobalLock(lpmmMsgs->hText);
+		GLOBALS.lpmmMsgs->hText = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
+		lpTemp2 = lpTemp = (byte *)GlobalLock(GLOBALS.lpmmMsgs->hText);
 
 		for (j = 0; lpBuf[j] != 0;) {
 			CopyMemory(lpTemp, &lpBuf[j + 1], lpBuf[j]);
@@ -580,12 +580,12 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += j + 1;
 		*lpTemp = '\0';
 
-		GlobalUnlock(lpmmMsgs->hText);
-		lpmmMsgs++;
+		GlobalUnlock(GLOBALS.lpmmMsgs->hText);
+		GLOBALS.lpmmMsgs++;
 	}
 
 #ifdef NEED_LOCK_MSGS
-	GlobalUnlock(hMsgs);
+	GlobalUnlock(GLOBALS.hMsgs);
 #endif
 
 	/* 3. Oggetti */
@@ -593,96 +593,96 @@ bool ParseMpc(const byte *lpBuf) {
 		return false;
 
 	lpBuf += 4;
-	nObjs = READ_LE_UINT16(lpBuf);
+	GLOBALS.nObjs = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
 	// Controlla i dialoghi
-	nDialogs = 0;
-	hDialogs = lpmdDialogs = NULL;
+	GLOBALS.nDialogs = 0;
+	GLOBALS.hDialogs = GLOBALS.lpmdDialogs = NULL;
 	if (*((const byte *)lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Dialog", 6) == 0) {
-		nDialogs = READ_LE_UINT16(lpBuf); lpBuf += 2;
+		GLOBALS.nDialogs = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		hDialogs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nDialogs * sizeof(MPALDIALOG));
-		if (hDialogs == NULL)
+		GLOBALS.hDialogs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nDialogs * sizeof(MPALDIALOG));
+		if (GLOBALS.hDialogs == NULL)
 			return false;
 
-		lpmdDialogs = (LPMPALDIALOG)GlobalLock(hDialogs);
+		GLOBALS.lpmdDialogs = (LPMPALDIALOG)GlobalLock(GLOBALS.hDialogs);
 
-		for (i = 0;i < nDialogs; i++)
-			if ((lpBuf = ParseDialog(lpBuf + 7, &lpmdDialogs[i])) == NULL)
+		for (i = 0;i < GLOBALS.nDialogs; i++)
+			if ((lpBuf = ParseDialog(lpBuf + 7, &GLOBALS.lpmdDialogs[i])) == NULL)
 				return false;
 
-		GlobalUnlock(hDialogs);
+		GlobalUnlock(GLOBALS.hDialogs);
 	}
 
 	// Controlla gli item
-	nItems = 0;
-	hItems = lpmiItems = NULL;
+	GLOBALS.nItems = 0;
+	GLOBALS.hItems = GLOBALS.lpmiItems = NULL;
 	if (*(lpBuf + 2) == 4 && strncmp((const char *)lpBuf + 3, "Item", 4)==0) {
-		nItems = READ_LE_UINT16(lpBuf); lpBuf += 2;
+		GLOBALS.nItems = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 		// Alloca la memoria e li legge
-		hItems=GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nItems * sizeof(MPALITEM));
-		if (hItems == NULL)
+		GLOBALS.hItems = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nItems * sizeof(MPALITEM));
+		if (GLOBALS.hItems == NULL)
 			return false;
 
-		lpmiItems=(LPMPALITEM)GlobalLock(hItems);
+		GLOBALS.lpmiItems=(LPMPALITEM)GlobalLock(GLOBALS.hItems);
 
-		for (i = 0; i < nItems; i++)
-			if ((lpBuf = ParseItem(lpBuf + 5, &lpmiItems[i])) == NULL)
+		for (i = 0; i < GLOBALS.nItems; i++)
+			if ((lpBuf = ParseItem(lpBuf + 5, &GLOBALS.lpmiItems[i])) == NULL)
 				return false;
 
-		GlobalUnlock(hItems);
+		GlobalUnlock(GLOBALS.hItems);
 	}
 
 	// Controlla le locazioni
-	nLocations = 0;
-	hLocations = lpmlLocations = NULL;
+	GLOBALS.nLocations = 0;
+	GLOBALS.hLocations = GLOBALS.lpmlLocations = NULL;
 	if (*(lpBuf + 2) == 8 && strncmp((const char *)lpBuf + 3, "Location", 8)==0) {
-		nLocations = READ_LE_UINT16(lpBuf); lpBuf += 2;
+		GLOBALS.nLocations = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 		// Alloca la memoria e li legge
-		hLocations=GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nLocations*sizeof(MPALLOCATION));
-		if (hLocations == NULL)
+		GLOBALS.hLocations=GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nLocations*sizeof(MPALLOCATION));
+		if (GLOBALS.hLocations == NULL)
 			return false;
 
-		lpmlLocations = (LPMPALLOCATION)GlobalLock(hLocations);
+		GLOBALS.lpmlLocations = (LPMPALLOCATION)GlobalLock(GLOBALS.hLocations);
 
-		for (i = 0; i < nLocations; i++)
-			if ((lpBuf = ParseLocation(lpBuf + 9, &lpmlLocations[i])) == NULL)
+		for (i = 0; i < GLOBALS.nLocations; i++)
+			if ((lpBuf = ParseLocation(lpBuf + 9, &GLOBALS.lpmlLocations[i])) == NULL)
 				return false;
 
-		GlobalUnlock(hLocations);
+		GlobalUnlock(GLOBALS.hLocations);
 	}
 
 	// Controlla gli script
-	nScripts = 0;
-	hScripts = lpmsScripts = NULL;
+	GLOBALS.nScripts = 0;
+	GLOBALS.hScripts = GLOBALS.lpmsScripts = NULL;
 	if (*(lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Script", 6) == 0) {
-		nScripts = READ_LE_UINT16(lpBuf); lpBuf += 2;
+		GLOBALS.nScripts = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 		// Alloca la memoria
-		hScripts = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)nScripts * sizeof(MPALSCRIPT));
-		if (hScripts == NULL)
+		GLOBALS.hScripts = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nScripts * sizeof(MPALSCRIPT));
+		if (GLOBALS.hScripts == NULL)
 			return false;
 
-		lpmsScripts = (LPMPALSCRIPT)GlobalLock(hScripts);
+		GLOBALS.lpmsScripts = (LPMPALSCRIPT)GlobalLock(GLOBALS.hScripts);
 
-		for (i = 0; i < nScripts; i++) {
-			if ((lpBuf = ParseScript(lpBuf + 7, &lpmsScripts[i])) == NULL)
+		for (i = 0; i < GLOBALS.nScripts; i++) {
+			if ((lpBuf = ParseScript(lpBuf + 7, &GLOBALS.lpmsScripts[i])) == NULL)
 			return false;
 
 			// Ordina i vari moments dello script
 			//qsort(
-			//lpmsScripts[i].Moment,
-			//lpmsScripts[i].nMoments,
-			//sizeof(lpmsScripts[i].Moment[0]),
+			//GLOBALS.lpmsScripts[i].Moment,
+			//GLOBALS.lpmsScripts[i].nMoments,
+			//sizeof(GLOBALS.lpmsScripts[i].Moment[0]),
 			//(int (*)(const void *, const void *))CompareMoments
 			//);
 
 		}
 
-		GlobalUnlock(hScripts);
+		GlobalUnlock(GLOBALS.hScripts);
 	}
 
 	if (lpBuf[0] != 'E' || lpBuf[1] != 'N' || lpBuf[2] != 'D' || lpBuf[3] != '0')

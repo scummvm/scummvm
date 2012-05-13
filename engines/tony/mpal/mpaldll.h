@@ -51,8 +51,10 @@
 #define __MPALDLL_H
 
 #include "common/file.h"
-#include "memory.h"
-#include "stubs.h"
+#include "tony/mpal/memory.h"
+#include "tony/mpal/stubs.h"
+#include "tony/mpal/loadmpc.h"
+#include "tony/mpal/expr.h"
 
 namespace Tony {
 
@@ -332,41 +334,6 @@ typedef LPMPALSCRIPT*   LPLPMPALSCRIPT;
 
 #include "common/pack-end.h"
 
-/****************************************************************************\
-*       Variabili globali
-\****************************************************************************/
-
-extern uint32                   mpalError;
-extern LPLPCUSTOMFUNCTION       lplpFunctions;
-extern uint16                   nObjs;
-
-extern uint16                   nVars;
-extern HGLOBAL                  hVars;
-extern LPMPALVAR                lpmvVars;
-
-extern uint16                   nMsgs;
-extern HGLOBAL                  hMsgs;
-extern LPMPALMSG                lpmmMsgs;
-
-extern uint16					nDialogs;
-extern HGLOBAL                  hDialogs;
-extern LPMPALDIALOG             lpmdDialogs;
-
-extern uint16                   nItems;
-extern HGLOBAL                  hItems;
-extern LPMPALITEM               lpmiItems;
-
-extern uint16                   nLocations;
-extern HGLOBAL                  hLocations;
-extern LPMPALLOCATION           lpmlLocations;
-
-extern uint16                   nScripts;
-extern HGLOBAL                  hScripts;
-extern LPMPALSCRIPT             lpmsScripts;
-
-extern Common::File             hMpr;
-extern uint16                   nResources;
-extern uint32 *                 lpResources;
 
 /****************************************************************************\
 *       Prototipi di funzione
@@ -411,9 +378,6 @@ void varSetValue(const char *lpszVarName, int32 val);
 } // end of namespace MPAL
 
 } // end of namespace Tony
-
-#include "loadmpc.h"
-#include "expr.h"
 
 #endif
 
