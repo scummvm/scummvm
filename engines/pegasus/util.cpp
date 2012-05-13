@@ -68,7 +68,7 @@ void FunctionPtr::callFunction() {
 		(*_function)(this, _functionArg);
 }
 
-inline int32 pegasusRound(const int32 a, const int32 b) {
+int32 pegasusRound(const int32 a, const int32 b) {
 	if (b < 0)
 		if (a < 0)
 			return -((a - (-b >> 1)) / -b);
