@@ -2425,16 +2425,24 @@ void RMLocation::PauseSound(bool bPause) {
 \****************************************************************************/
 
 RMMessage::RMMessage(uint32 dwId) {	
-	lpMessage=mpalQueryMessage(dwId);
-	assert(lpMessage != NULL);
-	
-	if (lpMessage)
-		ParseMessage();
+	Load(dwId);
+}
+
+RMMessage::RMMessage() {
+	lpMessage = NULL;
 }
 
 RMMessage::~RMMessage() {
 	if (lpMessage)
 		GlobalFree(lpMessage);
+}
+
+void RMMessage::Load(uint32 dwId) {
+	lpMessage = mpalQueryMessage(dwId);
+	assert(lpMessage != NULL);
+	
+	if (lpMessage)
+		ParseMessage();
 }
 
 void RMMessage::ParseMessage(void) {

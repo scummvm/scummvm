@@ -379,7 +379,7 @@ VoiceHeader *SearchVoiceHeader(uint32 codehi, uint32 codelo) {
 
 DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX, uint32 nY, uint32) {
 	CORO_BEGIN_CONTEXT;
-		RMMessage *msg;
+		RMMessage msg;
 		int i;
 		int curOffset;
 		VoiceHeader *curVoc;
@@ -393,9 +393,8 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 	if (bSkipIdle) return;
 
-	_ctx->msg = new RMMessage(dwMessage);
-	if (!_ctx->msg->IsValid()) {
-		delete _ctx->msg;
+	_ctx->msg.Load(dwMessage);
+	if (!_ctx->msg.IsValid()) {
 		return;
 	}
 
@@ -424,7 +423,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		if (!bStaticTalk)
 			nTonyNextTalkType = Tony->TALK_NORMAL;
 	} else {
-		if (_ctx->msg->NumPeriods() > 1)
+		if (_ctx->msg.NumPeriods() > 1)
 			CORO_INVOKE_1(Tony->StartTalk, Tony->TALK_FIANCHI);
 		else
 			CORO_INVOKE_1(Tony->StartTalk, Tony->TALK_NORMAL);
@@ -435,17 +434,17 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 	bTonyIsSpeaking = true;
 
-	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !bSkipIdle; _ctx->i++) {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg.NumPeriods() && !bSkipIdle; _ctx->i++) {
 		_ctx->text.SetInput(Input);
 	
 		// Allineamento
-		_ctx->text.SetAlignType(RMText::HCENTER,RMText::VBOTTOM);
+		_ctx->text.SetAlignType(RMText::HCENTER, RMText::VBOTTOM);
 		
 		// Colore
 		_ctx->text.SetColor(0,255,0);
 
 		// Scrive il testo
-		_ctx->text.WriteText((*_ctx->msg)[_ctx->i],0);
+		_ctx->text.WriteText(_ctx->msg[_ctx->i], 0);
 
 		// Setta la posizione
 		if (nX == 0 && nY == 0)
@@ -494,7 +493,6 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		curBackText->Show();
 
 	CORO_INVOKE_0(Tony->EndTalk);
-	delete _ctx->msg;
 
 	CORO_END_CODE;
 }
@@ -2205,9 +2203,6 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 	CORO_END_CODE;
 }
-
-
-
 
 
 /*

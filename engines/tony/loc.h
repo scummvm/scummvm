@@ -598,9 +598,11 @@ private:
 	void ParseMessage(void);
 
 public:
+	RMMessage();
 	RMMessage(uint32 dwId);
 	virtual ~RMMessage();
 
+	void Load(uint32 dwId);
 	bool IsValid() { return lpMessage != NULL; }
 	int NumPeriods() { return nPeriods; }
 	char *Period(int num) { return lpPeriods[num]; }
