@@ -119,23 +119,23 @@ Common::ErrorCode TonyEngine::Init() {
 	m_curThumbnail = new uint16[160 * 120];
 
 	// Configurazione di default
-	bCfgInvLocked = false;
-	bCfgInvNoScroll = false;
-	bCfgTimerizedText = true;
-	bCfgInvUp = false;
-	bCfgAnni30 = false;
-	bCfgAntiAlias = false;
-	bCfgTransparence = true;
-	bCfgInterTips = true;
-	bCfgSottotitoli = true;
-	nCfgTonySpeed = 3;
-	nCfgTextSpeed = 5;
-	bCfgDubbing = true;
-	bCfgMusic = true;
-	bCfgSFX = true;
-	nCfgDubbingVolume = 10;
-	nCfgMusicVolume = 7;
-	nCfgSFXVolume = 10;
+	GLOBALS.bCfgInvLocked = false;
+	GLOBALS.bCfgInvNoScroll = false;
+	GLOBALS.bCfgTimerizedText = true;
+	GLOBALS.bCfgInvUp = false;
+	GLOBALS.bCfgAnni30 = false;
+	GLOBALS.bCfgAntiAlias = false;
+	GLOBALS.bCfgTransparence = true;
+	GLOBALS.bCfgInterTips = true;
+	GLOBALS.bCfgSottotitoli = true;
+	GLOBALS.nCfgTonySpeed = 3;
+	GLOBALS.nCfgTextSpeed = 5;
+	GLOBALS.bCfgDubbing = true;
+	GLOBALS.bCfgMusic = true;
+	GLOBALS.bCfgSFX = true;
+	GLOBALS.nCfgDubbingVolume = 10;
+	GLOBALS.nCfgMusicVolume = 7;
+	GLOBALS.nCfgSFXVolume = 10;
 	m_bQuitNow = false;
 
 	return Common::kNoError;
@@ -152,21 +152,12 @@ void TonyEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
 }
 
-char nextMusic[MAX_PATH];
-bool nextLoop;
-int nextChannel;
-int nextSync;
-int curChannel;
-int flipflop=0;
-OSystem::MutexRef csMusic;
-
-
 void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync) {
 	warning("TODO: TonyEngine::PlayMusic");
-	g_system->lockMutex(csMusic);
+//	g_system->lockMutex(csMusic);
 
 	if (nChannel < 4)
-		if (flipflop)
+		if (GLOBALS.flipflop)
 			nChannel = nChannel + 1;
 	
 	switch (nFX) {
@@ -243,7 +234,7 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 	}
 #endif
 
-	g_system->unlockMutex(csMusic);
+//	g_system->unlockMutex(csMusic);
 }
 
 void TonyEngine::PlaySFX(int nChannel, int nFX) {
@@ -264,14 +255,14 @@ void TonyEngine::PlaySFX(int nChannel, int nFX) {
 }
 
 void TonyEngine::StopMusic(int nChannel) {
-	g_system->lockMutex(csMusic);
+//	g_system->lockMutex(csMusic);
 
 	if (nChannel < 4)
-		m_stream[nChannel+flipflop]->Stop();
+		m_stream[nChannel + GLOBALS.flipflop]->Stop();
 	else
 		m_stream[nChannel]->Stop();
 
-	g_system->unlockMutex(csMusic);
+//	g_system->unlockMutex(csMusic);
 }
 
 void TonyEngine::StopSFX(int nChannel) {
@@ -279,7 +270,7 @@ void TonyEngine::StopSFX(int nChannel) {
 }
 
 void TonyEngine::PlayUtilSFX(int nChannel, int nFX) {
-	if (m_utilSfx[nChannel]==NULL)
+	if (m_utilSfx[nChannel] == NULL)
 		return;
 
 	switch (nFX) {
@@ -355,7 +346,7 @@ void TonyEngine::InitMusic() {
 	}
 
 	// Crea la critical section per la musica
-	csMusic = g_system->createMutex();
+//	csMusic = g_system->createMutex();
 
 	// Carica effetti sonori
 //	PreloadUtilSFX(0,"AccendiOpzione.ADP");
@@ -372,7 +363,7 @@ void TonyEngine::CloseMusic() {
 		m_stream[i]->Release();
 	}
 
-	g_system->deleteMutex(csMusic);
+//	g_system->deleteMutex(csMusic);
 
 	UnloadAllSFX();
 	UnloadAllUtilSFX();

@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	game.o \
 	gfxcore.o \
 	gfxengine.o \
+	globals.o \
 	input.o \
 	inventory.o \
 	loc.o \

@@ -72,26 +72,6 @@ namespace Tony {
 	(buf8)->Init(*raw, raw->Width(), raw->Height(), true); \
 	delete raw;
 
-extern bool bCfgInvLocked;
-extern bool bCfgInvNoScroll;
-extern bool bCfgTimerizedText;
-extern bool bCfgInvUp;
-extern bool bCfgAnni30;
-extern bool bCfgAntiAlias;
-extern bool bCfgSottotitoli;
-extern bool bCfgTransparence;
-extern bool bCfgInterTips;
-extern bool bCfgDubbing;
-extern bool bCfgMusic;
-extern bool bCfgSFX;
-extern int  nCfgTonySpeed;
-extern int  nCfgTextSpeed;
-extern int	 nCfgDubbingVolume;
-extern int	 nCfgMusicVolume;
-extern int	 nCfgSFXVolume;
-extern bool bSkipSfxNoLoop;
-
-extern bool bPatIrqFreeze;
 
 class RMPointer : public RMGfxTask {
 private:

@@ -38,6 +38,7 @@
 #include "tony/loc.h"
 #include "tony/utils.h"
 #include "tony/window.h"
+#include "tony/globals.h"
 
 /**
  * This is the namespace of the Tony engine.
@@ -50,6 +51,8 @@
 namespace Tony {
 
 using namespace MPAL;
+
+class Globals;
 
 enum {
 	kTonyDebugAnimations = 1 << 0,
@@ -97,6 +100,7 @@ public:
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND	_theSound;
+	Globals _globals;
 
 	enum DATADIR {
 		DD_BASE = 1,
@@ -208,6 +212,8 @@ public:
 
 // Global reference to the TonyEngine object
 extern TonyEngine *_vm;
+
+#define GLOBALS _vm->_globals
 
 } // End of namespace Tony
 

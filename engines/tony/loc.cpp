@@ -55,8 +55,6 @@ namespace Tony {
 
 using namespace ::Tony::MPAL;
 
-extern bool bSkipSfxNoLoop;
-
 
 /****************************************************************************\
 *       Metodi di RMPalette
@@ -186,7 +184,7 @@ void RMPattern::StopSfx(RMSfx *sfx) {
 		if (m_slots[i].m_type == SOUND) {
 			if (sfx[m_slots[i].m_data].m_name[0] == '_')
 				sfx[m_slots[i].m_data].Stop();
-			else if (bSkipSfxNoLoop)
+			else if (GLOBALS.bSkipSfxNoLoop)
 				sfx[m_slots[i].m_data].Stop();
 		}
 	}

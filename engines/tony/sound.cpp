@@ -51,13 +51,6 @@
 
 namespace Tony {
 
-extern bool bCfgMusic;
-extern bool bCfgSFX;
-extern bool bCfgDubbing;
-extern int nCfgSFXVolume;
-extern int nCfgMusicVolume;
-extern int nCfgDubbingVolume;
-
 
 /****************************************************************************\
 *       Defines
@@ -1527,15 +1520,15 @@ void FPSFX::SetVolume(int dwVolume) {
 	lastVolume = dwVolume;
 
 	if (bIsVoice) {
-		if (!bCfgDubbing) dwVolume = 0;
+		if (!GLOBALS.bCfgDubbing) dwVolume = 0;
 		else {
-			dwVolume -= (10 - nCfgDubbingVolume) * 2;
+			dwVolume -= (10 - GLOBALS.nCfgDubbingVolume) * 2;
 			if (dwVolume<0) dwVolume = 0;
 		}
 	} else {
-		if (!bCfgSFX) dwVolume = 0;
+		if (!GLOBALS.bCfgSFX) dwVolume = 0;
 		else {
-			dwVolume -= (10 - nCfgSFXVolume) * 2;
+			dwVolume -= (10 - GLOBALS.nCfgSFXVolume) * 2;
 			if (dwVolume < 0) dwVolume = 0;
 		}
 	}
@@ -2273,9 +2266,9 @@ void FPSTREAM::SetVolume(int dwVolume) {
 	
 	lastVolume = dwVolume;
 
-	if (!bCfgMusic) dwVolume = 0;
+	if (!GLOBALS.bCfgMusic) dwVolume = 0;
 	else {
-		dwVolume -= (10 - nCfgMusicVolume) * 2;
+		dwVolume -= (10 - GLOBALS.nCfgMusicVolume) * 2;
 		if (dwVolume<0) dwVolume = 0;
 	}
 

@@ -54,16 +54,10 @@
 
 namespace Tony {
 
-extern bool bIdleExited;
-extern bool bPatIrqFreeze;
-extern bool bSkipSfxNoLoop;
-
 
 /****************************************************************************\
 *       Metodi di RMGfxEngine
 \****************************************************************************/
-
-bool bIdleExited;
 
 void ExitAllIdles(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
@@ -74,12 +68,12 @@ void ExitAllIdles(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// Chiude le idle
-	bSkipSfxNoLoop = true;
+	GLOBALS.bSkipSfxNoLoop = true;
 
 	CORO_INVOKE_2(mpalEndIdlePoll, nCurLoc, NULL);
 
-	bIdleExited = true;
-	bSkipSfxNoLoop = false;
+	GLOBALS.bIdleExited = true;
+	GLOBALS.bSkipSfxNoLoop = false;
 
 	CORO_END_CODE;
 }
@@ -149,11 +143,11 @@ void RMGfxEngine::OpenOptionScreen(CORO_PARAM, int type) {
 		// Esce la IDLE onde evitare la morte prematura in caricamento
 		m_bMustEnterMenu = true;							
 		if (type == 1 || type == 2) {
-			bIdleExited = true;
+			GLOBALS.bIdleExited = true;
 		} else {
 			CORO_INVOKE_0(m_tony.StopNoAction);
 
-			bIdleExited = false;
+			GLOBALS.bIdleExited = false;
 
 			CoroScheduler.createProcess(ExitAllIdles, &m_nCurLoc, sizeof(int));
 		}
@@ -173,10 +167,10 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 	// Poll dei dispositivi di input
 	m_input.Poll();
 
-	if (m_bMustEnterMenu && bIdleExited) {
+	if (m_bMustEnterMenu && GLOBALS.bIdleExited) {
 		m_bOption = true;
 		m_bMustEnterMenu = false;
-		bIdleExited = false;
+		GLOBALS.bIdleExited = false;
 	}
 	
   if (m_bOption) {
@@ -401,10 +395,10 @@ void RMGfxEngine::ItemIrq(uint32 dwItem, int nPattern, int nStatus) {
 		item=This->m_loc.GetItemFromCode(dwItem);
 		if (item != NULL) {
 			if (nPattern!=-1) {
-				if (bPatIrqFreeze)
+				if (GLOBALS.bPatIrqFreeze)
 					MainFreeze();
 				item->SetPattern(nPattern,true);
-				if (bPatIrqFreeze)
+				if (GLOBALS.bPatIrqFreeze)
 					MainUnfreeze();
 			}
 			if (nStatus!=-1)
@@ -604,16 +598,16 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 
 
 
-	bPatIrqFreeze = true;
+	GLOBALS.bPatIrqFreeze = true;
 
 	// GUI attivabile
 	m_bGUIOption = true;
 	m_bGUIInterface = true;
 	m_bGUIInventory = true;
 
-	bSkipSfxNoLoop = false;
+	GLOBALS.bSkipSfxNoLoop = false;
 	m_bMustEnterMenu = false;
-	bIdleExited = false;
+	GLOBALS.bIdleExited = false;
 	m_bOption = false;
 	m_bWiping = false;
 	m_hWipeEvent = CoroScheduler.createEvent(false, false);
@@ -806,23 +800,23 @@ void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bo
 	CharsSaveAll(f);
 
 	// Save the options
-	f->writeByte(bCfgInvLocked);
-	f->writeByte(bCfgInvNoScroll);
-	f->writeByte(bCfgTimerizedText);
-	f->writeByte(bCfgInvUp);
-	f->writeByte(bCfgAnni30);
-	f->writeByte(bCfgAntiAlias);
-	f->writeByte(bCfgSottotitoli);
-	f->writeByte(bCfgTransparence);
-	f->writeByte(bCfgInterTips);
-	f->writeByte(bCfgDubbing);
-	f->writeByte(bCfgMusic);
-	f->writeByte(bCfgSFX);
-	f->writeByte(nCfgTonySpeed);
-	f->writeByte(nCfgTextSpeed);
-	f->writeByte(nCfgDubbingVolume);
-	f->writeByte(nCfgMusicVolume);
-	f->writeByte(nCfgSFXVolume);
+	f->writeByte(GLOBALS.bCfgInvLocked);
+	f->writeByte(GLOBALS.bCfgInvNoScroll);
+	f->writeByte(GLOBALS.bCfgTimerizedText);
+	f->writeByte(GLOBALS.bCfgInvUp);
+	f->writeByte(GLOBALS.bCfgAnni30);
+	f->writeByte(GLOBALS.bCfgAntiAlias);
+	f->writeByte(GLOBALS.bCfgSottotitoli);
+	f->writeByte(GLOBALS.bCfgTransparence);
+	f->writeByte(GLOBALS.bCfgInterTips);
+	f->writeByte(GLOBALS.bCfgDubbing);
+	f->writeByte(GLOBALS.bCfgMusic);
+	f->writeByte(GLOBALS.bCfgSFX);
+	f->writeByte(GLOBALS.nCfgTonySpeed);
+	f->writeByte(GLOBALS.nCfgTextSpeed);
+	f->writeByte(GLOBALS.nCfgDubbingVolume);
+	f->writeByte(GLOBALS.nCfgMusicVolume);
+	f->writeByte(GLOBALS.nCfgSFXVolume);
 
 	// Save the hotspots
 	SaveChangedHotspot(f);
@@ -942,23 +936,23 @@ void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
 
 	if (_ctx->ver >= 6) {
 		// Load options
-		bCfgInvLocked = _ctx->f->readByte();
-		bCfgInvNoScroll = _ctx->f->readByte();
-		bCfgTimerizedText = _ctx->f->readByte();
-		bCfgInvUp = _ctx->f->readByte();
-		bCfgAnni30 = _ctx->f->readByte();
-		bCfgAntiAlias = _ctx->f->readByte();
-		bCfgSottotitoli = _ctx->f->readByte();
-		bCfgTransparence = _ctx->f->readByte();
-		bCfgInterTips = _ctx->f->readByte();
-		bCfgDubbing = _ctx->f->readByte();
-		bCfgMusic = _ctx->f->readByte();
-		bCfgSFX = _ctx->f->readByte();
-		nCfgTonySpeed = _ctx->f->readByte();
-		nCfgTextSpeed = _ctx->f->readByte();
-		nCfgDubbingVolume = _ctx->f->readByte();
-		nCfgMusicVolume = _ctx->f->readByte();
-		nCfgSFXVolume = _ctx->f->readByte();
+		GLOBALS.bCfgInvLocked = _ctx->f->readByte();
+		GLOBALS.bCfgInvNoScroll = _ctx->f->readByte();
+		GLOBALS.bCfgTimerizedText = _ctx->f->readByte();
+		GLOBALS.bCfgInvUp = _ctx->f->readByte();
+		GLOBALS.bCfgAnni30 = _ctx->f->readByte();
+		GLOBALS.bCfgAntiAlias = _ctx->f->readByte();
+		GLOBALS.bCfgSottotitoli = _ctx->f->readByte();
+		GLOBALS.bCfgTransparence = _ctx->f->readByte();
+		GLOBALS.bCfgInterTips = _ctx->f->readByte();
+		GLOBALS.bCfgDubbing = _ctx->f->readByte();
+		GLOBALS.bCfgMusic = _ctx->f->readByte();
+		GLOBALS.bCfgSFX = _ctx->f->readByte();
+		GLOBALS.nCfgTonySpeed = _ctx->f->readByte();
+		GLOBALS.nCfgTextSpeed = _ctx->f->readByte();
+		GLOBALS.nCfgDubbingVolume = _ctx->f->readByte();
+		GLOBALS.nCfgMusicVolume = _ctx->f->readByte();
+		GLOBALS.nCfgSFXVolume = _ctx->f->readByte();
 
 		// Load hotspots
 		LoadChangedHotspot(_ctx->f);

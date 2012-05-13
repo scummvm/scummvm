@@ -47,6 +47,7 @@
 
 #include "tony/gfxengine.h"
 #include "tony/mpal/mpalutils.h"
+#include "tony/tony.h"
 
 namespace Tony {
 
@@ -1437,7 +1438,7 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 	int i, n;
 	int r, g, b, r2, g2, b2;
 
-	if (!bCfgTransparence) {
+	if (!GLOBALS.bCfgTransparence) {
 		RMGfxSourceBuffer8RLEWord::RLEDecompressLine(dst, src, nStartSkip, nLength);
 		return;
 	}
@@ -1799,7 +1800,7 @@ void RMGfxSourceBuffer8RLEByteAA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 	CORO_BEGIN_CODE(_ctx);
 
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::Draw, bigBuf, prim);
-	if (bCfgAntiAlias)
+	if (GLOBALS.bCfgAntiAlias)
 		DrawAA(bigBuf,prim);
 
 	CORO_END_CODE;
@@ -1837,7 +1838,7 @@ void RMGfxSourceBuffer8RLEWordAA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 	CORO_BEGIN_CODE(_ctx);
 
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::Draw, bigBuf, prim);
-	if (bCfgAntiAlias)
+	if (GLOBALS.bCfgAntiAlias)
 		DrawAA(bigBuf,prim);
 
 	CORO_END_CODE;

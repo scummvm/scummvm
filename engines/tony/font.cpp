@@ -2003,7 +2003,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	}
 
 	if (time != NULL)
-		*time = 1000 + numchar * (11 - nCfgTextSpeed) * 14;
+		*time = 1000 + numchar * (11 - GLOBALS.nCfgTextSpeed) * 14;
 }
 
 void RMText::ClipOnScreen(RMGfxPrimitive *prim) {
@@ -2128,8 +2128,8 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 
 	// Frase NON di background
 	if (m_bSkipStatus) {
-		if (!(bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
-			if (bCfgTimerizedText) {
+		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
+			if (GLOBALS.bCfgTimerizedText) {
 				if (!m_bForceNoTime)
 					if (_vm->GetTime() > (uint32)m_time + m_startTime)
 						return;
@@ -2146,7 +2146,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 	}
 	// Frase di background
 	else {
-		if (!(bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
+		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
 			if (!m_bForceNoTime)
 				if (_vm->GetTime() > (uint32)m_time + m_startTime)
 					return;
@@ -2164,7 +2164,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 			return;
 	}
 
-	if (bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE) {
+	if (GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE) {
 		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, hCustomSkip2, 0, &_ctx->expired);
 		// == WAIT_OBJECT_0
 		if (!_ctx->expired)
@@ -2192,7 +2192,7 @@ void RMTextDialog::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 		m_startTime = _vm->GetTime();
 	
 	if (m_bShowed) {
-		if (bCfgSottotitoli || m_bAlwaysDisplay) {
+		if (GLOBALS.bCfgSottotitoli || m_bAlwaysDisplay) {
 			prim->Dst().TopLeft() = dst;
 			CORO_INVOKE_2(RMText::Draw, bigBuf, prim);
 		}

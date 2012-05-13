@@ -63,32 +63,6 @@ namespace Tony {
 using namespace MPAL;
 
 /****************************************/
-/*  Variabili globali di configurazione */
-/****************************************/
-
-// FIXME: Move into a class instance
-bool bCfgInvLocked;
-bool bCfgInvNoScroll;
-bool bCfgTimerizedText;
-bool bCfgInvUp;
-bool bCfgAnni30;
-bool bCfgAntiAlias;
-bool bCfgSottotitoli;
-bool bCfgTransparence;
-bool bCfgInterTips;
-bool bCfgDubbing;
-bool bCfgMusic;
-bool bCfgSFX;
-int  nCfgTonySpeed;
-int  nCfgTextSpeed;
-int	 nCfgDubbingVolume;
-int	 nCfgMusicVolume;
-int	 nCfgSFXVolume;
-bool bSkipSfxNoLoop;
-
-bool bPatIrqFreeze;
-
-/****************************************/
 /*  Funzioni globali per la DLL Custom	*/
 /****************************************/
 
@@ -699,57 +673,57 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 		if (m_nState == MENUGAME) {
 			assert(m_ButtonGame_Lock == NULL);
 			m_ButtonGame_Lock = new RMOptionButton(20008,RMPoint(176, 262), true);
-			m_ButtonGame_Lock->SetActiveState(bCfgInvLocked);
+			m_ButtonGame_Lock->SetActiveState(GLOBALS.bCfgInvLocked);
 			assert(m_ButtonGame_TimerizedText == NULL);
 			m_ButtonGame_TimerizedText = new RMOptionButton(20009,RMPoint(463, 273), true);
-			m_ButtonGame_TimerizedText->SetActiveState(!bCfgTimerizedText);
+			m_ButtonGame_TimerizedText->SetActiveState(!GLOBALS.bCfgTimerizedText);
 			assert(m_ButtonGame_Scrolling == NULL);
 			m_ButtonGame_Scrolling = new RMOptionButton(20010, RMPoint(315, 263), true);
-			m_ButtonGame_Scrolling->SetActiveState(bCfgInvNoScroll);
+			m_ButtonGame_Scrolling->SetActiveState(GLOBALS.bCfgInvNoScroll);
 			assert(m_ButtonGame_InterUp == NULL);
 			m_ButtonGame_InterUp = new RMOptionButton(20011,RMPoint(36, 258), true);
-			m_ButtonGame_InterUp->SetActiveState(bCfgInvUp);
+			m_ButtonGame_InterUp->SetActiveState(GLOBALS.bCfgInvUp);
 
 			assert(m_SlideTextSpeed == NULL);
-			m_SlideTextSpeed = new RMOptionSlide(RMPoint(165, 122), 10, nCfgTextSpeed);
+			m_SlideTextSpeed = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgTextSpeed);
 			assert(m_SlideTonySpeed == NULL);
-			m_SlideTonySpeed = new RMOptionSlide(RMPoint(165, 226), 5, nCfgTonySpeed);
+			m_SlideTonySpeed = new RMOptionSlide(RMPoint(165, 226), 5, GLOBALS.nCfgTonySpeed);
 		}
 		// Menu Graphics
 		else if (m_nState == MENUGFX) {
 			assert(m_ButtonGfx_Anni30 == NULL);
 			m_ButtonGfx_Anni30 = new RMOptionButton(20015,RMPoint(247, 178), true);
-			m_ButtonGfx_Anni30->SetActiveState(bCfgAnni30);
+			m_ButtonGfx_Anni30->SetActiveState(GLOBALS.bCfgAnni30);
 			assert(m_ButtonGfx_AntiAlias == NULL);
 			m_ButtonGfx_AntiAlias = new RMOptionButton(20016, RMPoint(430, 83), true);
-			m_ButtonGfx_AntiAlias->SetActiveState(!bCfgAntiAlias);
+			m_ButtonGfx_AntiAlias->SetActiveState(!GLOBALS.bCfgAntiAlias);
 			assert(m_ButtonGfx_Sottotitoli == NULL);
 			m_ButtonGfx_Sottotitoli = new RMOptionButton(20017,RMPoint(98, 82), true);
-			m_ButtonGfx_Sottotitoli->SetActiveState(!bCfgSottotitoli);
+			m_ButtonGfx_Sottotitoli->SetActiveState(!GLOBALS.bCfgSottotitoli);
 			assert(m_ButtonGfx_Tips == NULL);
 			m_ButtonGfx_Tips = new RMOptionButton(20018,RMPoint(431, 246), true);
-			m_ButtonGfx_Tips->SetActiveState(bCfgInterTips);
+			m_ButtonGfx_Tips->SetActiveState(GLOBALS.bCfgInterTips);
 			assert(m_ButtonGfx_Trans == NULL);
 			m_ButtonGfx_Trans = new RMOptionButton(20019,RMPoint(126, 271), true);
-			m_ButtonGfx_Trans->SetActiveState(!bCfgTransparence);
+			m_ButtonGfx_Trans->SetActiveState(!GLOBALS.bCfgTransparence);
 
 		} else if (m_nState == MENUSOUND) {
 			assert(m_SliderSound_Dubbing == NULL);
-			m_SliderSound_Dubbing = new RMOptionSlide(RMPoint(165, 122), 10, nCfgDubbingVolume);
+			m_SliderSound_Dubbing = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgDubbingVolume);
 			assert(m_SliderSound_Music == NULL);
-			m_SliderSound_Music = new RMOptionSlide(RMPoint(165, 226), 10, nCfgMusicVolume);
+			m_SliderSound_Music = new RMOptionSlide(RMPoint(165, 226), 10, GLOBALS.nCfgMusicVolume);
 			assert(m_SliderSound_SFX == NULL);
-			m_SliderSound_SFX = new RMOptionSlide(RMPoint(165, 330), 10, nCfgSFXVolume);
+			m_SliderSound_SFX = new RMOptionSlide(RMPoint(165, 330), 10, GLOBALS.nCfgSFXVolume);
 
 			assert(m_ButtonSound_DubbingOn == NULL);
 			m_ButtonSound_DubbingOn = new RMOptionButton(20033, RMPoint(339, 75), true);
-			m_ButtonSound_DubbingOn->SetActiveState(bCfgDubbing);
+			m_ButtonSound_DubbingOn->SetActiveState(GLOBALS.bCfgDubbing);
 			assert(m_ButtonSound_MusicOn == NULL);
 			m_ButtonSound_MusicOn = new RMOptionButton(20034,RMPoint(338, 179), true);
-			m_ButtonSound_MusicOn->SetActiveState(bCfgMusic);
+			m_ButtonSound_MusicOn->SetActiveState(GLOBALS.bCfgMusic);
 			assert(m_ButtonSound_SFXOn == NULL);
 			m_ButtonSound_SFXOn = new RMOptionButton(20035,RMPoint(338, 283), true);
-			m_ButtonSound_SFXOn->SetActiveState(bCfgSFX);
+			m_ButtonSound_SFXOn->SetActiveState(GLOBALS.bCfgSFX);
 		}
 	}
 
@@ -815,71 +789,71 @@ void RMOptionScreen::CloseState(void) {
 		}
 
 		if (m_nState == MENUGAME) {
-			bCfgInvLocked = m_ButtonGame_Lock->IsActive();
+			GLOBALS.bCfgInvLocked = m_ButtonGame_Lock->IsActive();
 			delete m_ButtonGame_Lock;
 			m_ButtonGame_Lock = NULL;
 
-			bCfgTimerizedText = !m_ButtonGame_TimerizedText->IsActive();
+			GLOBALS.bCfgTimerizedText = !m_ButtonGame_TimerizedText->IsActive();
 			delete m_ButtonGame_TimerizedText;
 			m_ButtonGame_TimerizedText = NULL;
 
-			bCfgInvNoScroll = m_ButtonGame_Scrolling->IsActive();
+			GLOBALS.bCfgInvNoScroll = m_ButtonGame_Scrolling->IsActive();
 			delete m_ButtonGame_Scrolling;
 			m_ButtonGame_Scrolling = NULL;
 
-			bCfgInvUp = m_ButtonGame_InterUp->IsActive();
+			GLOBALS.bCfgInvUp = m_ButtonGame_InterUp->IsActive();
 			delete m_ButtonGame_InterUp;
 			m_ButtonGame_InterUp = NULL;
 
-			nCfgTextSpeed = m_SlideTextSpeed->GetValue();
+			GLOBALS.nCfgTextSpeed = m_SlideTextSpeed->GetValue();
 			delete m_SlideTextSpeed;
 			m_SlideTextSpeed = NULL;
 
-			nCfgTonySpeed = m_SlideTonySpeed->GetValue();
+			GLOBALS.nCfgTonySpeed = m_SlideTonySpeed->GetValue();
 			delete m_SlideTonySpeed;
 			m_SlideTonySpeed = NULL;
 		} else if (m_nState == MENUGFX) {
-			bCfgAnni30 = m_ButtonGfx_Anni30->IsActive();
+			GLOBALS.bCfgAnni30 = m_ButtonGfx_Anni30->IsActive();
 			delete m_ButtonGfx_Anni30;
 			m_ButtonGfx_Anni30 = NULL;
 
-			bCfgAntiAlias = !m_ButtonGfx_AntiAlias->IsActive();
+			GLOBALS.bCfgAntiAlias = !m_ButtonGfx_AntiAlias->IsActive();
 			delete m_ButtonGfx_AntiAlias;
 			m_ButtonGfx_AntiAlias = NULL;
 
-			bCfgSottotitoli = !m_ButtonGfx_Sottotitoli->IsActive();
+			GLOBALS.bCfgSottotitoli = !m_ButtonGfx_Sottotitoli->IsActive();
 			delete m_ButtonGfx_Sottotitoli;
 			m_ButtonGfx_Sottotitoli = NULL;
 
-			bCfgInterTips = m_ButtonGfx_Tips->IsActive();
+			GLOBALS.bCfgInterTips = m_ButtonGfx_Tips->IsActive();
 			delete m_ButtonGfx_Tips;
 			m_ButtonGfx_Tips = NULL;
 
-			bCfgTransparence = !m_ButtonGfx_Trans->IsActive();
+			GLOBALS.bCfgTransparence = !m_ButtonGfx_Trans->IsActive();
 			delete m_ButtonGfx_Trans;
 			m_ButtonGfx_Trans = NULL;
 		} else if (m_nState == MENUSOUND) {
-			nCfgDubbingVolume = m_SliderSound_Dubbing->GetValue();
+			GLOBALS.nCfgDubbingVolume = m_SliderSound_Dubbing->GetValue();
 			delete m_SliderSound_Dubbing;
 			m_SliderSound_Dubbing = NULL;
 			
-			nCfgMusicVolume = m_SliderSound_Music->GetValue();
+			GLOBALS.nCfgMusicVolume = m_SliderSound_Music->GetValue();
 			delete m_SliderSound_Music;
 			m_SliderSound_Music = NULL;
 			
-			nCfgSFXVolume = m_SliderSound_SFX->GetValue();
+			GLOBALS.nCfgSFXVolume = m_SliderSound_SFX->GetValue();
 			delete m_SliderSound_SFX;
 			m_SliderSound_SFX = NULL;
 
-			bCfgDubbing = m_ButtonSound_DubbingOn->IsActive();
+			GLOBALS.bCfgDubbing = m_ButtonSound_DubbingOn->IsActive();
 			delete m_ButtonSound_DubbingOn;
 			m_ButtonSound_DubbingOn = NULL;
 
-			bCfgMusic = m_ButtonSound_MusicOn->IsActive();
+			GLOBALS.bCfgMusic = m_ButtonSound_MusicOn->IsActive();
 			delete m_ButtonSound_MusicOn;
 			m_ButtonSound_MusicOn = NULL;
 
-			bCfgSFX = m_ButtonSound_SFXOn->IsActive();
+			GLOBALS.bCfgSFX = m_ButtonSound_SFXOn->IsActive();
 			delete m_ButtonSound_SFXOn;
 			m_ButtonSound_SFXOn = NULL;
 		}
@@ -1261,19 +1235,19 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 				if (m_nState == MENUGFX) {
 					// Queste opzioni hanno effetto immediato
 					if (m_ButtonGfx_Anni30->IsActive())
-						bCfgAnni30 = true;
+						GLOBALS.bCfgAnni30 = true;
 					else
-						bCfgAnni30 = false;
+						GLOBALS.bCfgAnni30 = false;
 
 					if (m_ButtonGfx_AntiAlias->IsActive())
-						bCfgAntiAlias = false;
+						GLOBALS.bCfgAntiAlias = false;
 					else
-						bCfgAntiAlias = true;
+						GLOBALS.bCfgAntiAlias = true;
 
 					if (m_ButtonGfx_Trans->IsActive())
-						bCfgTransparence = false;
+						GLOBALS.bCfgTransparence = false;
 					else
-						bCfgTransparence = true;
+						GLOBALS.bCfgTransparence = true;
 				}
 			}
 		}
