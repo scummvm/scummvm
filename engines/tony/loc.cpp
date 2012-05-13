@@ -864,7 +864,7 @@ RMItem::~RMItem() {
 	CoroScheduler.closeEvent(m_hEndPattern);
 }
 
-//FIXME: Pass uint32 directly for hCustomSkip
+
 void RMItem::WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
 	CORO_BEGIN_CONTEXT;
 		uint32 h[2];

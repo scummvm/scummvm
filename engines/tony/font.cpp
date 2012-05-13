@@ -1816,8 +1816,11 @@ void RMFontObj::Init(void) {
 \****************************************************************************/
 
 RMFontColor *RMText::m_fonts[4] = { NULL, NULL, NULL, NULL };
-OSystem::MutexRef RMText::m_cs;
 RMGfxClearTask RMText::m_clear;
+
+void RMText::InitStatics() {
+	Common::fill(&m_fonts[0], &m_fonts[4], (RMFontColor *)NULL);
+}
 
 RMText::RMText() {
 	// Colore di default: bianco
@@ -1843,8 +1846,6 @@ void RMText::Unload() {
 		delete m_fonts[2];
 		delete m_fonts[3];
 		m_fonts[0] =  m_fonts[1] = m_fonts[2] = m_fonts[3] = 0;
-
-		g_system->unlockMutex(m_cs);
 	}
 }
 
@@ -1866,13 +1867,9 @@ void RMText::WriteText(const RMString &text, int nFont, int *time) {
 		m_fonts[1] = new RMFontObj;   m_fonts[1]->Init();
 		m_fonts[2] = new RMFontMacc;  m_fonts[2]->Init();
 		m_fonts[3] = new RMFontCredits;  m_fonts[3]->Init();
-
-		m_cs = g_system->createMutex();
 	}
 
-	g_system->lockMutex(m_cs);
-	WriteText(text,m_fonts[nFont],time);
-	g_system->unlockMutex(m_cs);
+	WriteText(text, m_fonts[nFont], time);
 }
 
 

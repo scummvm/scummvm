@@ -88,6 +88,7 @@ Globals::Globals() {
 	lastTappeto = 0;
 	Common::fill(&tappeti[0], &tappeti[200], 0);
 	SFM_nLoc = 0;
+	vdb = NULL;
 }
 
 } // End of namespace Tony

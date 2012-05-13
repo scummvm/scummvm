@@ -77,6 +77,10 @@ Common::ErrorCode TonyEngine::Init() {
 	m_bDrawLocation = true;
 	m_startTime = g_system->getMillis();
 
+	// Init static class fields 
+	RMText::InitStatics();
+	RMTony::InitStatics();
+
 	// Reset the scheduler
 	CoroScheduler.reset();
 

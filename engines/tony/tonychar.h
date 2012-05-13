@@ -378,6 +378,7 @@ public: // per farlo rialzare, altrimenti private
 	};
 
 public:
+	static void InitStatics();
 	RMTony();
 
 	// Inizializza Tony

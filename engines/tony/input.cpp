@@ -49,8 +49,6 @@
 
 namespace Tony {
 
-#define DIRELEASE(x)		if (x) { (x)->Release(); (x)=NULL; }
-
 RMInput::RMInput() {
 	// Setup mouse fields
 	_clampMouse = false;	
@@ -128,7 +126,8 @@ bool RMInput::MouseRight() {
 }
 
 /**
- * Return true if a key has been pressed */
+ * Return true if a key has been pressed 
+ */
 bool RMInput::GetAsyncKeyState(Common::KeyCode kc) { 
 	// The act of testing for a particular key automatically clears the state, to prevent
 	// the same key being registered in multiple different frames

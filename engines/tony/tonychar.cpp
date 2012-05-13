@@ -59,6 +59,10 @@ namespace Tony {
 
 bool RMTony::m_bAction = false;
 
+void RMTony::InitStatics() {
+	m_bAction = false;
+}
+
 RMTony::RMTony() {
 	m_bShow = false;
 	m_bShowOmbra = false;

@@ -53,7 +53,6 @@
 
 namespace Tony {
 
-#define DDRELEASE(x)		if (x) { (x)->Release(); (x)=NULL; }
 
 /****************************************************************************\
 *       RMWindow Methods

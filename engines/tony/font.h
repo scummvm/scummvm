@@ -188,7 +188,6 @@ class RMText : public RMGfxWoodyBuffer {
 private:
     static RMFontColor *m_fonts[4];
     static RMGfxClearTask m_clear;
-	static OSystem::MutexRef m_cs;
     int maxLineLength;
 
 public:
@@ -216,6 +215,7 @@ protected:
 public:
     RMText();
     virtual ~RMText();
+	static void InitStatics();
 	static void Unload();
 
     // Setta il tipo di allineamento
