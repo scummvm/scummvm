@@ -1760,6 +1760,11 @@ RMCharacter::RMCharacter() {
 	pathlenght = pathcount = 0;
 	status = STAND;
 	theBoxes = NULL;
+	walkcount = 0;
+	bEndOfPath = false;
+	bMovingWithoutMinpath = false;
+	bDrawNow = false;
+	bNeedToStop = false;
 
 	m_pos.Set(0, 0);
 }
