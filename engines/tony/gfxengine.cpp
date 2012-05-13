@@ -341,7 +341,7 @@ SKIPCLICKSINISTRO:
 	// **********************
 	// Disegna la lista di OT
 	// **********************
-	m_bigBuf.DrawOT(Common::nullContext);
+	CORO_INVOKE_0(m_bigBuf.DrawOT);
 
 #define FSTEP (480/32)
 

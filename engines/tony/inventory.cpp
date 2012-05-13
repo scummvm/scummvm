@@ -266,11 +266,11 @@ void RMInventory::RemoveThis(CORO_PARAM, bool &result) {
 void RMInventory::RemoveItem(int code) {
 	int i;
 
-	for (i=0;i<m_nInv;i++)
+	for (i = 0; i < m_nInv; i++)
 		if (m_inv[i] == code - 10000) {
 			g_system->lockMutex(m_csModifyInterface);
 
-			Common::copy_backward(&m_inv[i + 1], &m_inv[i + 1] + (m_nInv - i), &m_inv[i]);
+			Common::copy(&m_inv[i + 1], &m_inv[i + 1] + (m_nInv - i), &m_inv[i]);
 //			m_inv[m_nInv-1]=0;
 			m_nInv--;
 	
