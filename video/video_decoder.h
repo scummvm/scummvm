@@ -247,11 +247,6 @@ class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
 public:
 	/**
 	 * Seek to the specified time.
-	 *
-	 * This will round to the previous frame showing. If the time would happen to
-	 * land while a frame is showing, this function will seek to the beginning of that
-	 * frame. In other words, there is *no* subframe accuracy. This may change in a
-	 * later revision of the API.
 	 */
 	virtual void seekToTime(Audio::Timestamp time) = 0;
 
