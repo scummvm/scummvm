@@ -149,6 +149,7 @@ struct SelectorCache {
 
 	Selector fixPriority;
 	Selector mirrored;
+	Selector visible;
 
 	Selector useInsetRect;
 	Selector inTop, inLeft, inBottom, inRight;

@@ -237,6 +237,7 @@ void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	memset(itemEntry, 0, sizeof(FrameoutEntry));
 	itemEntry->object = object;
 	itemEntry->givenOrderNr = _screenItems.size();
+	itemEntry->visible = true;
 	_screenItems.push_back(itemEntry);
 
 	kernelUpdateScreenItem(object);
@@ -266,6 +267,11 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 	itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
 	itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
 	itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+	itemEntry->visible = true;
+
+	// Check if the entry can be hidden
+	if (lookupSelector(_segMan, object, SELECTOR(visible), NULL, NULL) != kSelectorNone)
+		itemEntry->visible = readSelectorValue(_segMan, object, SELECTOR(visible));
 }
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
@@ -433,6 +439,7 @@ void GfxFrameout::createPlaneItemList(reg_t planeObject, FrameoutList &itemList)
 				picEntry->x = planePicture->getSci32celX(pictureCelNr);
 				picEntry->picStartX = pictureIt->startX;
 				picEntry->picStartY = pictureIt->startY;
+				picEntry->visible = true;
 
 				picEntry->priority = planePicture->getSci32celPriority(pictureCelNr);
 
@@ -541,6 +548,9 @@ void GfxFrameout::kernelFrameout() {
 		for (FrameoutList::iterator listIterator = itemList.begin(); listIterator != itemList.end(); listIterator++) {
 			FrameoutEntry *itemEntry = *listIterator;
 
+			if (!itemEntry->visible)
+				continue;
+			
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
 				itemEntry->x = upscaleHorizontalCoordinate(itemEntry->x);

@@ -60,6 +60,7 @@ struct FrameoutEntry {
 	GfxPicture *picture;
 	int16 picStartX;
 	int16 picStartY;
+	bool visible;
 };
 
 typedef Common::List<FrameoutEntry *> FrameoutList;
