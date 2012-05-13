@@ -1640,6 +1640,8 @@ void FullTSA::playTBPMonitor() {
 			extra = kTSA0BTBPProcedure;
 			GameState.setScoringSawProcedure(true);
 			break;
+		default:
+			error("Invalid monitor mode");
 		}
 
 		GameState.setT0BMonitorMode(GameState.getT0BMonitorMode() | kPlayingTBPMask);
@@ -1796,6 +1798,8 @@ void FullTSA::playLeftComparison() {
 			extra = kTSA0BWSCAltered;
 			GameState.setScoringSawWSCAltered(true);
 			break;
+		default:
+			error("Invalid monitor mode");
 		}
 
 		GameState.setT0BMonitorMode(GameState.getT0BMonitorMode() | kPlayingLeftComparisonMask);
@@ -1846,6 +1850,8 @@ void FullTSA::playRightComparison() {
 			extra = kTSA0BWSCUnaltered;
 			GameState.setScoringSawWSCNormal(true);
 			break;
+		default:
+			error("Invalid monitor mode");
 		}
 
 		GameState.setT0BMonitorMode(GameState.getT0BMonitorMode() | kPlayingRightComparisonMask);

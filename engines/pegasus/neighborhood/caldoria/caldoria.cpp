@@ -1495,6 +1495,8 @@ void Caldoria::clickOnDoorbell(const HotSpotID doorBellSpotID) {
 	case kCaldoria35DoorbellSpotID:
 		extra = kCaldoria35Doorbell;
 		break;
+	default:
+		error("Invalid doorbell hotspot");
 	}
 
 	getExtraEntry(extra, entry);

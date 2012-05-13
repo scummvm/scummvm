@@ -138,9 +138,6 @@ void OpticalChip::playOpMemMovie(HotSpotID id) {
 
 	ItemState state = getItemState(), newState;
 	switch (state) {
-	case kOptical000:
-		// Can never happen.
-		break;
 	case kOptical001:
 		newState = kOptical002;
 		break;
@@ -176,6 +173,9 @@ void OpticalChip::playOpMemMovie(HotSpotID id) {
 		else
 			newState = kOptical211;
 		break;
+	case kOptical000: // Can never happen.
+	default:
+		error("Invalid optical chip state");
 	}
 
 	setItemState(newState);

@@ -153,6 +153,8 @@ void PegasusChip::clickInPegasusHotspot() {
 	case kPegasusWSC10:
 		hiliteState = kPegasusWSC11;
 		break;
+	default:
+		error("Invalid pegasus chip state");
 	}
 
 	// WORKAROUND: The original called setItemState() here. However,
