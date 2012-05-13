@@ -57,7 +57,7 @@ struct CoroBaseContext {
 	const char *_funcName;
 #endif
 	CoroBaseContext(const char *func);
-	~CoroBaseContext();
+	virtual ~CoroBaseContext();
 };
 
 typedef CoroBaseContext *CoroContext;
