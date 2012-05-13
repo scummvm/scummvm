@@ -2272,10 +2272,11 @@ RMTextItemName::~RMTextItemName() {
 
 void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv) {
 	CORO_BEGIN_CONTEXT;
-		RMString itemName;
 		RMItem *lastItem;
 		uint32 hThread;
 	CORO_END_CONTEXT(_ctx);
+
+	RMString itemName;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -2294,14 +2295,14 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 	else
 		m_item = loc.WhichItemIsIn(m_mpos);
 	
-	_ctx->itemName = "";
+	itemName = "";
 
 	// If there an item, get it's name
 	if (m_item != NULL)
-		m_item->GetName(_ctx->itemName);
+		m_item->GetName(itemName);
 
 	// Write it
-	WriteText(_ctx->itemName, 1);
+	WriteText(itemName, 1);
 
 	// Handle the change If the selected item is different from the previous one
 	if (_ctx->lastItem != m_item) {
