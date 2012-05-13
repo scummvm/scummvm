@@ -406,7 +406,7 @@ void QuickTimeDecoder::freeAllTrackHandlers() {
 	_handlers.clear();
 }
 
-void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
+void QuickTimeDecoder::seekToTime(const Audio::Timestamp &time) {
 	stopAudio();
 	_audioStartOffset = time;
 

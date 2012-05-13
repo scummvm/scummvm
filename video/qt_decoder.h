@@ -112,7 +112,7 @@ public:
 
 	// SeekableVideoDecoder API
 	void seekToFrame(uint32 frame);
-	void seekToTime(Audio::Timestamp time);
+	void seekToTime(const Audio::Timestamp &time);
 	uint32 getDuration() const { return _duration * 1000 / _timeScale; }
 
 protected:

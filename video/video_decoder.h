@@ -253,7 +253,7 @@ public:
 	/**
 	 * Seek to the specified time.
 	 */
-	virtual void seekToTime(Audio::Timestamp time) = 0;
+	virtual void seekToTime(const Audio::Timestamp &time) = 0;
 
 	/**
 	 * Seek to the specified time (in ms).
