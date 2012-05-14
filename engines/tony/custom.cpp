@@ -2134,15 +2134,12 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
  */
 
 DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-//	EnterCriticalSection(&cs[num]);
-//	WaitForSingleObject(mut[num],CORO_INFINITE);
-	warning("TODO: TakeOwnership");
+	CoroScheduler.waitForSingleObject(coroParam, GLOBALS.mut[num], CORO_INFINITE);
 }
 
 DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-//	LeaveCriticalSection(&cs[num]);
-//	g_system->unlockMutex(mut[num]);
-	warning("TODO: ReleaseOwnership");
+	CoroScheduler.pulseEvent(GLOBALS.mut[num]);	
+	warning("TODO: Validate that the use of events in TakeOwnership/ReleaseOwnership match original");
 }
 
 
@@ -2646,11 +2643,9 @@ void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS.bAlwaysDisplay = false;
 	int i;
 
-/*	for (i = 0;i < 10; i++)
-		cs[i] = g_system->createMutex();
 	for (i = 0;i < 10; i++)
-		mut[i] = CreateMutex(NULL, false, NULL);
-*/
+		GLOBALS.mut[i] = CoroScheduler.createEvent(false, false);
+
 	for (i = 0; i < 200; i++)
 		GLOBALS.tappeti[i] = 0;
 

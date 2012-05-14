@@ -83,9 +83,8 @@ Globals::Globals() {
 	curSonoriz = 0;
 	bFadeOutStop = false;
 
-//	OSystem::MutexRef cs[10];
 //	OSystem::MutexRef vdb;
-	Common::fill(&mut[0], &mut[10], (HANDLE)NULL);
+	Common::fill(&mut[0], &mut[10], 0);
 	bSkipIdle = false;
 	hSkipIdle = 0;
 	lastMusic = 0;
