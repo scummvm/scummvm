@@ -27,6 +27,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      Engine tab when adding or editing a configuration for a game. In most
      cases, you will have to run each game once or readd them all in ScummVM's
      launcher in order to get the custom options tab.
+   - Improved predicitve dialog look.
+   - Various GUI improvements.
 
  SDL ports:
    - Added support for OpenGL (GSoC Task).
