@@ -1510,7 +1510,7 @@ void LilliputEngine::sub167EF(int index) {
 void LilliputEngine::sub1693A(int index) {
 	debugC(2, kDebugEngineTBC, "sub1693A(%d)", index);
 	
-	static const uint16 _array1692F[4] = {4, 0xFF00, 0x100, 0xFFFC};
+	static const int16 _array1692F[4] = {4, -256, 256, -4};
 
 	_word16937Pos = Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]);
 
@@ -1609,8 +1609,8 @@ int LilliputEngine::reverseFindHotspot(Common::Point pos) {
 void LilliputEngine::sub16A08(int index) {
 	debugC(2, kDebugEngineTBC, "sub16A08(%d)", index);
 
-	static const byte _array169F8[4] = {1, 0, 0, 0xFF};
-	static const byte _array169FC[4] = {0, 0xFF, 1, 0};
+	static const char _array169F8[4] = {1, 0, 0, -1};
+	static const char _array169FC[4] = {0, -1, 1, 0};
 
 	int _array16A00[4];
 
@@ -1684,11 +1684,18 @@ void LilliputEngine::sub16626() {
 			if (var2 == 16)
 				break;
 
+			/*if (index == 3)
+				debugC(1,"");
+			else
+				break;*/
+
 			var2 = (2 * (var2 & 0xFF)) + (index << 5);
 			Common::Point var1 = _scriptHandler->_array12311[var2 / 2];
 			int tmpVal = var2;
 			var2 = (var1.x >> 3);
 			var2 &= 0xFE;
+
+			//warning(" step %d : var1 x:%d y:%d  var:%d", _scriptHandler->_array12811[index], var1.x, var1.y, var2 / 2);
 
 			switch (var2 / 2) {
 			case 0:
