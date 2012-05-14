@@ -176,7 +176,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			"cruise",
 			0,
 			AD_ENTRY1("D1", "a0011075413b7335e003e8e3c9cf51b9"),
-			Common::EN_ANY,
+			Common::IT_ITA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
 			GUIO0()
