@@ -1326,8 +1326,8 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 	CORO_BEGIN_CODE(_ctx);
 
 	// Prende le coordinate di quanto scrollare
-	_ctx->lx=*((int*)&nX);
-	_ctx->ly=*((int*)&nY);
+	_ctx->lx = (int32)nX;
+	_ctx->ly = (int32)nY;
 	_ctx->dimx = _ctx->lx;
 	_ctx->dimy = _ctx->ly;
 	if (_ctx->lx < 0) _ctx->dimx = -_ctx->lx;
