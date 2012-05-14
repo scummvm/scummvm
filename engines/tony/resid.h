@@ -19,14 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 /*
- *	ResID.H	- Include per le risorse MPAL
+ * This code is based on original Tony Tough source code
  *
- *	Coded by Giovanni Bajo - Nayma/Prograph
- *
- *	(C) 1997-98, Nayma Software
- *  (C) 1998, Prograph Research srl
- *
+ * Copyright (c) 1997-2003 Nayma Software
  */
 
 /*

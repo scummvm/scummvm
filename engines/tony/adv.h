@@ -19,31 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-/**************************************************************************
- *                                     様様様様様様様様様様様様様様様様様 *
- *                                             Nayma Software srl         *
- *                    e                -= We create much MORE than ALL =- *
- *        u-        z$$$c        '.    様様様様様様様様様様様様様様様様様 *
- *      .d"        d$$$$$b        "b.                                     *
- *   .z$*         d$$$$$$$L        ^*$c.                                  *
- *  #$$$.         $$$$$$$$$         .$$$" Project: Roasted Moths........  *
- *    ^*$b       4$$$$$$$$$F      .d$*"                                   *
- *      ^$$.     4$$$$$$$$$F     .$P"     Module:  ADV.CPP..............  *
- *        *$.    '$$$$$$$$$     4$P 4                                     *
- *     J   *$     "$$$$$$$"     $P   r    Author:  Giovanni Bajo........  *
- *    z$   '$$$P*4c.*$$$*.z@*R$$$    $.                                   *
- *   z$"    ""       #$F^      ""    '$c                                  *
- *  z$$beu     .ue="  $  "=e..    .zed$$c                                 *
- *      "#$e z$*"   .  `.   ^*Nc e$""                                     *
- *         "$$".  .r"   ^4.  .^$$"                                        *
- *          ^.@*"6L=\ebu^+C$"*b."                                         *
- *        "**$.  "c 4$$$  J"  J$P*"    OS:  [ ] DOS  [X] WIN95  [ ] PORT  *
- *            ^"--.^ 9$"  .--""      COMP:  [ ] WATCOM  [X] VISUAL C++    *
- *                    "                     [ ] EIFFEL  [ ] GCC/GXX/DJGPP *
- *                                                                        *
- * This source code is Copyright (C) Nayma Software.  ALL RIGHTS RESERVED *
- *                                                                        *
- **************************************************************************/
+
+/*
+ * This code is based on original Tony Tough source code
+ *
+ * Copyright (c) 1997-2003 Nayma Software
+ */
 
 #ifndef TONY_ADV_H
 #define TONY_ADV_H
@@ -59,7 +40,7 @@ namespace Tony {
 #define RM_SX			640
 #define RM_SY			480
 
-// Dimensioni X&Y del bigbuf
+// X&Y dimensions of bigbuf
 #define RM_BBX		(RM_SX)
 #define RM_BBY		(RM_SY)
 
@@ -90,7 +71,7 @@ enum RMTonyAction {
 	TA_RECEIVECOMBINEGIVE
 };
 
-// Funzioni globali
+// Global Functions
 uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
 void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 void MainLinkGraphicTask(RMGfxTask *task);

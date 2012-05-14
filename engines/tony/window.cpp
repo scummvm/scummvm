@@ -19,31 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-/**************************************************************************
- *                                     様様様様様様様様様様様様様様様様様 *
- *                                             Nayma Software srl         *
- *                    e                -= We create much MORE than ALL =- *
- *        u-        z$$$c        '.    様様様様様様様様様様様様様様様様様 *
- *      .d"        d$$$$$b        "b.                                     *
- *   .z$*         d$$$$$$$L        ^*$c.                                  *
- *  #$$$.         $$$$$$$$$         .$$$" Project: Roasted Moths........  *
- *    ^*$b       4$$$$$$$$$F      .d$*"                                   *
- *      ^$$.     4$$$$$$$$$F     .$P"     Module:  Window.HPP...........  *
- *        *$.    '$$$$$$$$$     4$P 4                                     *
- *     J   *$     "$$$$$$$"     $P   r    Author:  Giovanni Bajo........  *
- *    z$   '$$$P*4c.*$$$*.z@*R$$$    $.                                   *
- *   z$"    ""       #$F^      ""    '$c  Desc:    Classi per la gestione *
- *  z$$beu     .ue="  $  "=e..    .zed$$c          di una finestra Direct 
- *      "#$e z$*"   .  `.   ^*Nc e$""              Draw.................  *
- *         "$$".  .r"   ^4.  .^$$"                 .....................  *
- *          ^.@*"6L=\ebu^+C$"*b."                                         *
- *        "**$.  "c 4$$$  J"  J$P*"    OS:  [ ] DOS  [X] WIN95  [ ] PORT  *
- *            ^"--.^ 9$"  .--""      COMP:  [ ] WATCOM  [X] VISUAL C++    *
- *                    "                     [ ] EIFFEL  [ ] GCC/GXX/DJGPP *
- *                                                                        *
- * This source code is Copyright (C) Nayma Software.  ALL RIGHTS RESERVED *
- *                                                                        *
- **************************************************************************/
+
+/*
+ * This code is based on original Tony Tough source code
+ *
+ * Copyright (c) 1997-2003 Nayma Software
+ */
 
 #include "common/scummsys.h"
 #include "util.h"
