@@ -211,9 +211,9 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 	_splitpath(fn, bufDrive, bufDir, NULL, NULL);
 
 	for (i = 1; i < 10; i++) {
-		wsprintf(bufName,"rm%d00",i);
-		_makepath(fn,bufDrive,bufDir,bufName,".bmp");
-		h = CreateFile(fn,GENERIC_READ,FILE_SHARE_READ, NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL, NULL);
+		wsprintf(bufName, "rm%d00", i);
+		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
+		h = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (h == CORO_INVALID_PID_VALUE)
 			break;
 		CloseHandle(h);
@@ -222,10 +222,10 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 	i--;
 
 	for (j = 1; j < 10; j++) {
-		wsprintf(bufName,"rm%d%d0",i,j);
-		_makepath(fn,bufDrive,bufDir,bufName,".bmp");
-		h=CreateFile(fn,GENERIC_READ,FILE_SHARE_READ, NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h==CORO_INVALID_PID_VALUE)
+		wsprintf(bufName, "rm%d%d0", i, j);
+		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
+		h = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (h == CORO_INVALID_PID_VALUE)
 			break;
 		CloseHandle(h);
 	}
@@ -233,10 +233,10 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 	j--;
 
 	for (k = 0; k < 10; k++) {
-		wsprintf(bufName,"rm%d%d%d",i,j,k);
-		_makepath(fn,bufDrive,bufDir,bufName,".bmp");
-		h = CreateFile(fn,GENERIC_READ,FILE_SHARE_READ, NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h==CORO_INVALID_PID_VALUE)
+		wsprintf(bufName, "rm%d%d%d", i, j, k);
+		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
+		h = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (h == CORO_INVALID_PID_VALUE)
 			break;
 		CloseHandle(h);
 	}
@@ -251,8 +251,8 @@ bool RMSnapshot::GetFreeSnapName(char *fn) {
 				return false;
 		}
 
-		wsprintf(bufName,"rm%d%d%d",i,j,k);
-		_makepath(fn,bufDrive,bufDir,bufName,".bmp");
+		wsprintf(bufName, "rm%d%d%d", i, j, k);
+		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
 	}
 #endif
 	return true;
@@ -299,7 +299,7 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 				cursrc = &src[RM_SKIPX + x * dezoom];
 				sommar = sommab = sommag = 0;
 				
-				for (v = 0; v < dezoom; v++)
+				for (v = 0; v < dezoom; v++) {
 					for (u = 0; u < dezoom; u++) {
 						if (lpDestBuf == NULL)
 							curv = -v;
@@ -310,16 +310,16 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 						sommag += (cursrc[curv*RM_BBX + u] >> 5) & 0x1F;
 						sommar += (cursrc[curv*RM_BBX + u] >> 10) & 0x1F;
 					}
+				}
+				rgb[k + 0] = (byte) (sommab * 8 / (dezoom * dezoom));
+				rgb[k + 1] = (byte) (sommag * 8 / (dezoom * dezoom));
+				rgb[k + 2] = (byte) (sommar * 8 / (dezoom * dezoom));
 
-					rgb[k + 0] = (byte) (sommab * 8 / (dezoom * dezoom));
-					rgb[k + 1] = (byte) (sommag * 8 / (dezoom * dezoom));
-					rgb[k + 2] = (byte) (sommar * 8 / (dezoom * dezoom));
+				if (lpDestBuf!=NULL)
+					lpDestBuf[k / 3] = ((int)rgb[k + 0] >> 3) | (((int)rgb[k + 1] >> 3) << 5) | 
+						(((int)rgb[k + 2] >> 3) << 10);
 
-					if (lpDestBuf!=NULL)
-						lpDestBuf[k / 3] = ((int)rgb[k + 0] >> 3) | (((int)rgb[k + 1] >> 3) << 5) | 
-							(((int)rgb[k + 2] >> 3) << 10);
-
-					k += 3;
+				k += 3;
 			}
 
 			if (lpDestBuf == NULL)

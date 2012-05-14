@@ -73,8 +73,7 @@ void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palRes
 	if (nChars == 112 && palResID == RES_F_PAL) {
 		// Font parla
 		DumpFontBMP("font_parla.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
-	}
-	else if (nChars == 102 && palResID == RES_F_PAL) {
+	} else if (nChars == 102 && palResID == RES_F_PAL) {
 		// Font macc
 		DumpFontBMP("font_macc.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
 	} else if (nChars == 85 && palResID == RES_F_PAL) {
@@ -82,7 +81,7 @@ void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palRes
 		DumpFontBMP("font_obj.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
 	} else if (nChars == 112 && palResID == RES_F_CPAL) {
 		// Font credits
-		DumpFontBMP("font_credits.bmp", buf, nChars, dimx, dimy, RMRes(palResID));		
+		DumpFontBMP("font_credits.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
 	}
 #endif
 
@@ -96,7 +95,7 @@ void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palRes
 	m_fontDimx = dimx;
 	m_fontDimy = dimy;
 
-	nLetters=nChars;
+	nLetters = nChars;
 }
 
 void RMFont::Load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID) {
@@ -172,7 +171,7 @@ int RMFont::StringLen(char bChar, char bNext) {
 \****************************************************************************/
 
 RMFontColor::RMFontColor() : RMFont() {
- m_r = m_g = m_b = 255;
+	m_r = m_g = m_b = 255;
 }
 
 RMFontColor::~RMFontColor() {
@@ -189,7 +188,7 @@ void RMFontColor::SetBaseColor(byte r1, byte g1, byte b1) {
 	int bstep = b / 14;
 
 	int i;
-	byte pal[768*3];
+	byte pal[768 * 3];
 
 	// Controlla se siamo gia' sul colore giusto
 	if (m_r == r1 && m_g == g1 && m_b == b1)
@@ -201,18 +200,18 @@ void RMFontColor::SetBaseColor(byte r1, byte g1, byte b1) {
 
 	// Costruisce la nuova palette per il font
 	for (i = 1; i < 16; i++) {
-		pal[i * 3 + 0] = r >> 16;	
-		pal[i * 3 + 1] = g >> 16;	
-		pal[i * 3 + 2] = b >> 16;	
+		pal[i * 3 + 0] = r >> 16;
+		pal[i * 3 + 1] = g >> 16;
+		pal[i * 3 + 2] = b >> 16;
 
 		r -= rstep;
 		g -= gstep;
 		b -= bstep;
 	}
 
-	pal[15*3 + 0] += 8;
-	pal[15*3 + 1] += 8;
-	pal[15*3 + 2] += 8;
+	pal[15 * 3 + 0] += 8;
+	pal[15 * 3 + 1] += 8;
+	pal[15 * 3 + 2] += 8;
 
 	// La mette in tutte le lettere
 	for (i = 0; i < nLetters; i++)
@@ -229,12 +228,12 @@ void RMFontParla::Init(void) {
 
 	// bernie: numero di caratteri nel font
 	int nchars =
-		 112	// base
-		+ 18	// polish
-		+ 66	// russian
-		+ 30	// czech
-		+  8	// french
-		+  5;	// deutsch
+	    112    // base
+	    + 18    // polish
+	    + 66    // russian
+	    + 30    // czech
+	    +  8    // french
+	    +  5;   // deutsch
 
 	Load(RES_F_PARL, nchars, 20, 20);
 
@@ -306,8 +305,8 @@ void RMFontParla::Init(void) {
 	cTable[(byte)'Ê'] = 107;
 	cTable[(byte)'∆'] = 108;
 	cTable[(byte)'¯'] = 109;
-	//cTable['É'] = 110;  integrale 
-	cTable['\''] = 111; 
+	//cTable['É'] = 110;  integrale
+	cTable['\''] = 111;
 
 	// Un po' di lunghezze
 	lTable[' '] = 9;
@@ -346,7 +345,7 @@ void RMFontParla::Init(void) {
 	// Polish characters
 	//AaCcEeLlNnOoSsZzZz
 	//•π∆Ê Í£≥—Ò”ÛåúØøèü
-	
+
 	cTable[(byte)'•'] = 112;
 	cTable[(byte)'π'] = 113;
 	cTable[(byte)'∆'] = 114;
@@ -487,7 +486,7 @@ void RMFontParla::Init(void) {
 	lTable[(byte)'ÿ'] = 17;
 	lTable[(byte)'Ÿ'] = 18;
 	lTable[(byte)'‹'] = 16;
-	lTable[(byte)'⁄'] = 18;	
+	lTable[(byte)'⁄'] = 18;
 	lTable[(byte)'€'] = 19;
 	lTable[(byte)'›'] = 11;
 	lTable[(byte)'ﬁ'] = 16;
@@ -640,12 +639,12 @@ void RMFontMacc::Init(void) {
 
 	// bernie: numero di caratteri nel font
 	int nchars =
-		 102	// base
-		+ 18	// polish
-		+ 66	// russian
-		+ 30	// czech
-		+  8	// francais
-		+  5;	// deutsch
+	    102    // base
+	    + 18    // polish
+	    + 66    // russian
+	    + 30    // czech
+	    +  8    // francais
+	    +  5;   // deutsch
 
 
 	Load(RES_F_MACC, nchars, 11, 16);
@@ -654,41 +653,41 @@ void RMFontMacc::Init(void) {
 	lDefault = 10;
 	hDefault = 17;
 	Common::fill(&l2Table[0][0], &l2Table[0][0] + (256 * 256), '\0');
-	
+
 	for (i = 0; i < 256; i++) {
 		cTable[i] = -1;
 		lTable[i] = lDefault;
 	}
 
 	for (i = 0; i < 26; i++)
-		cTable['A'+i] = i + 0;
+		cTable['A' + i] = i + 0;
 
 	for (i = 0; i < 26; i++)
-		cTable['a'+i] = i + 26;
+		cTable['a' + i] = i + 26;
 
 	for (i = 0; i < 10; i++)
-		cTable['0'+i] = i + 52;
+		cTable['0' + i] = i + 52;
 
 	cTable['!'] = 62;
-	//cTable['!'] = 63;			// ! rovescia
-	cTable['\"'] = 64;		
-	cTable['$'] = 65;		
-	cTable['%'] = 66;		
-	cTable['&'] = 67;		
-	cTable['/'] = 68;		
-	cTable['('] = 69;		
-	cTable[')'] = 70;		
-	cTable['='] = 71;		
-	cTable['?'] = 72;		
-	//cTable['?'] = 73;		   // ? rovescia
-	cTable['*'] = 74;		
-	cTable['+'] = 75;		
-	cTable[(byte)'Ò'] = 76;		
-	cTable[';'] = 77;		
-	cTable[','] = 78;		
+	//cTable['!'] = 63;         // ! rovescia
+	cTable['\"'] = 64;
+	cTable['$'] = 65;
+	cTable['%'] = 66;
+	cTable['&'] = 67;
+	cTable['/'] = 68;
+	cTable['('] = 69;
+	cTable[')'] = 70;
+	cTable['='] = 71;
+	cTable['?'] = 72;
+	//cTable['?'] = 73;        // ? rovescia
+	cTable['*'] = 74;
+	cTable['+'] = 75;
+	cTable[(byte)'Ò'] = 76;
+	cTable[';'] = 77;
+	cTable[','] = 78;
 	cTable['.'] = 79;
-	cTable[':'] = 80;		
-	cTable['-'] = 81;		
+	cTable[':'] = 80;
+	cTable['-'] = 81;
 	cTable['<'] = 82;
 	cTable['>'] = 83;
 	cTable['/'] = 84;
@@ -698,22 +697,22 @@ void RMFontMacc::Init(void) {
 	cTable[(byte)'Â'] = 88;
 	cTable[(byte)'Ë'] = 89;
 	cTable[(byte)'Î'] = 90;
-	//cTable[(byte)''] = 91;		  // e col pallino
-	cTable[(byte)'Ï'] = 92;		
-	cTable[(byte)'Ô'] = 93;		
-	//cTable[(byte)''] = 94;			// i col pallino
-	cTable[(byte)'Ú'] = 95;		
-	cTable[(byte)'ˆ'] = 96;		
-	//cTable[(byte)''] = 97;		  // o col pallino
-	cTable[(byte)'˘'] = 98;		
-	cTable[(byte)'¸'] = 99;		
-	//cTable[(byte)''] = 100;		  // u col pallino
-	cTable[(byte)'Á'] = 101;		
+	//cTable[(byte)''] = 91;          // e col pallino
+	cTable[(byte)'Ï'] = 92;
+	cTable[(byte)'Ô'] = 93;
+	//cTable[(byte)''] = 94;            // i col pallino
+	cTable[(byte)'Ú'] = 95;
+	cTable[(byte)'ˆ'] = 96;
+	//cTable[(byte)''] = 97;          // o col pallino
+	cTable[(byte)'˘'] = 98;
+	cTable[(byte)'¸'] = 99;
+	//cTable[(byte)''] = 100;         // u col pallino
+	cTable[(byte)'Á'] = 101;
 
 	// Polish characters
 	//AaCcEeLlNnOoSsZzZz
 	//•π∆Ê Í£≥—Ò”ÛåúØøèü
-	
+
 	cTable[(byte)'•'] = 102;
 	cTable[(byte)'π'] = 103;
 	cTable[(byte)'∆'] = 104;
@@ -732,7 +731,7 @@ void RMFontMacc::Init(void) {
 	cTable[(byte)'ø'] = 117;
 	cTable[(byte)'è'] = 118;
 	cTable[(byte)'ü'] = 119;
-	
+
 	lTable[(byte)'•'] = 14;
 	lTable[(byte)'π'] = 16;
 	lTable[(byte)'∆'] = 12;
@@ -898,7 +897,7 @@ void RMFontMacc::Init(void) {
 #endif // FONT_RUSSIAN
 
 #ifdef FONT_CZECH
-	
+
 	cTable[(byte)'Ã'] = 186;
 	cTable[(byte)'ä'] = 187;
 	cTable[(byte)'»'] = 188;
@@ -1007,21 +1006,21 @@ void RMFontCredits::Init(void) {
 
 	// bernie: numero di caratteri nel font
 	int nchars =
-		 112	// base
-		+ 18	// polish
-		+ 66	// russian
-		+ 30	// czech
-		+  8	// french
-		+  2;	// deutsch
+	    112    // base
+	    + 18    // polish
+	    + 66    // russian
+	    + 30    // czech
+	    +  8    // french
+	    +  2;   // deutsch
 
 
 	Load(RES_F_CREDITS, nchars, 27, 28, RES_F_CPAL);
 
 	// Default
-	lDefault=10;
-	hDefault=28;
+	lDefault = 10;
+	hDefault = 28;
 	Common::fill(&l2Table[0][0], &l2Table[0][0] + (256 * 256), '\0');
-	
+
 	for (i = 0; i < 256; i++) {
 		cTable[i] = -1;
 		lTable[i] = lDefault;
@@ -1040,7 +1039,7 @@ void RMFontCredits::Init(void) {
 //	cTable[''] = 54; // a ^
 //	cTable[''] = 55; // a pallini
 	cTable[(byte)'Ë'] = 56;
-	cTable[(byte)'È'] = 57; 
+	cTable[(byte)'È'] = 57;
 //	cTable[''] = 58; // e ^
 //	cTable[''] = 59; // e pallini
 	cTable[(byte)'Ï'] = 60;
@@ -1057,14 +1056,14 @@ void RMFontCredits::Init(void) {
 //	cTable[''] = 71; // u pallini
 //	cTable[''] = 72; // y pallini
 	cTable[(byte)'Ò'] = 73;
-	cTable[(byte)'Á'] = 74; 
+	cTable[(byte)'Á'] = 74;
 //	cTable[''] = 75; // o barrato
 //	cTable[''] = 76; // ac
 	cTable[(byte)'©'] = 77;
 //	cTable[''] = 78; // ? rovesciato
-	cTable['?'] = 79; 
+	cTable['?'] = 79;
 //	cTable[''] = 80; // ! rovesciato
-	cTable['!'] = 81; 
+	cTable['!'] = 81;
 //	cTable[''] = 82; // 1/2
 //	cTable[''] = 83; // 1/4
 	cTable['('] = 84;
@@ -1081,13 +1080,13 @@ void RMFontCredits::Init(void) {
 	cTable[','] = 95;
 	cTable['^'] = 96;
 	cTable['='] = 97;
-	cTable['_'] = 98; 
-	cTable['*'] = 99; 
-	cTable['.'] = 100;  
+	cTable['_'] = 98;
+	cTable['*'] = 99;
+	cTable['.'] = 100;
 
 	for (i = 0; i < 10; i++)
-		cTable['0'+i] = i+101;
-	cTable['\''] = 111;  
+		cTable['0' + i] = i + 101;
+	cTable['\''] = 111;
 
 	lTable[' '] = 11;
 	lTable[(byte)'ƒ'] = lTable['A'] = 19;
@@ -1168,7 +1167,7 @@ void RMFontCredits::Init(void) {
 	// Polish characters
 	//AaCcEeLlNnOoSsZzZz
 	//•π∆Ê Í£≥—Ò”ÛåúØøèü
-	
+
 	cTable[(byte)'•'] = 112;
 	cTable[(byte)'π'] = 113;
 	cTable[(byte)'∆'] = 114;
@@ -1187,7 +1186,7 @@ void RMFontCredits::Init(void) {
 	cTable[(byte)'ø'] = 127;
 	cTable[(byte)'è'] = 128;
 	cTable[(byte)'ü'] = 129;
-	
+
 	lTable[(byte)'•'] = 20;
 	lTable[(byte)'π'] = 12;
 	lTable[(byte)'∆'] = 15;
@@ -1310,7 +1309,7 @@ void RMFontCredits::Init(void) {
 	lTable[(byte)'ÿ'] = 23;
 	lTable[(byte)'Ÿ'] = 23;
 	lTable[(byte)'‹'] = 10;
-	lTable[(byte)'⁄'] = 12;	
+	lTable[(byte)'⁄'] = 12;
 	lTable[(byte)'€'] = 16;
 	lTable[(byte)'›'] = 12;
 	lTable[(byte)'ﬁ'] = 20;
@@ -1462,8 +1461,8 @@ void RMFontCredits::Init(void) {
 *       Metodi di RMFontObj
 \****************************************************************************/
 
-#define TOUPPER(a)	((a) >='a'&&(a)<='z'?(a)+'A'-'a':(a))
-#define TOLOWER(a)	((a) >='A'&&(a)<='Z'?(a)+'a'-'A':(a))
+#define TOUPPER(a)  ((a) >='a'&&(a)<='z'?(a)+'A'-'a':(a))
+#define TOLOWER(a)  ((a) >='A'&&(a)<='Z'?(a)+'a'-'A':(a))
 
 void RMFontObj::SetBothCase(int nChar, int nNext, signed char spiazz) {
 	l2Table[TOUPPER(nChar)][TOUPPER(nNext)] = spiazz;
@@ -1478,12 +1477,12 @@ void RMFontObj::Init(void) {
 
 	//bernie: numero di caratteri nel font (solo maiuscolo)
 	int nchars =
-		  85	// base
-		+  9	// polish
-		+ 33	// russian
-		+ 15	// czech
-		+  0	// francais (no uppercase chars)
-		+  1;	// deutsch
+	    85    // base
+	    +  9    // polish
+	    + 33    // russian
+	    + 15    // czech
+	    +  0    // francais (no uppercase chars)
+	    +  1;   // deutsch
 
 
 	Load(RES_F_OBJ, nchars, 25, 30);
@@ -1499,8 +1498,8 @@ void RMFontObj::Init(void) {
 	}
 
 	for (i = 0; i < 26; i++) {
-		cTable['A' + i] = i+0;
-		cTable['a' + i] = i+0;
+		cTable['A' + i] = i + 0;
+		cTable['a' + i] = i + 0;
 	}
 
 	for (i = 0; i < 10; i++)
@@ -1547,13 +1546,13 @@ void RMFontObj::Init(void) {
 	//cTable[(byte)' '] = 74;   e cerchietto
 	cTable[(byte)'Ã'] = 75;
 	cTable[(byte)'œ'] = 76;
-	//cTable[(byte)' '] = 77;	  i cerchietto
+	//cTable[(byte)' '] = 77;     i cerchietto
 	cTable[(byte)'“'] = 78;
 	cTable[(byte)'÷'] = cTable[(byte)'ˆ'] = 79;
-	//cTable[(byte)' '] = 80;		o cerchietto
+	//cTable[(byte)' '] = 80;       o cerchietto
 	cTable[(byte)'Ÿ'] = 81;
 	cTable[(byte)'‹'] = cTable[(byte)'¸'] = 82;
-	//cTable[' '] = 83;		u cerchietto
+	//cTable[' '] = 83;     u cerchietto
 	//cTable[' '] = 84;   y dieresi
 
 	/* Un po' di lunghezze */
@@ -1572,7 +1571,7 @@ void RMFontObj::Init(void) {
 	lTable['8'] = 20;
 	lTable['9'] = 20;
 
-	
+
 	lTable['a'] = lTable['A'] = lTable['‰'] = lTable['ƒ'] = 17;
 	lTable['b'] = lTable['B'] = 17;
 	lTable['c'] = lTable['C'] = 19;
@@ -1601,17 +1600,17 @@ void RMFontObj::Init(void) {
 	lTable[(byte)'—'] = 17;
 
 	/* Casi particolari */
-	SetBothCase('C','C',2);
-	SetBothCase('A','T',-2);
-	SetBothCase('R','S',2);
-	SetBothCase('H','I',-2);
-	SetBothCase('T','S',2);
-	SetBothCase('O','R',2);
-	SetBothCase('O','L',2);
-	SetBothCase('O','G',2);
-	SetBothCase('Z','A',-1);
-	SetBothCase('R','R',1);
-	SetBothCase('R','U',3);
+	SetBothCase('C', 'C', 2);
+	SetBothCase('A', 'T', -2);
+	SetBothCase('R', 'S', 2);
+	SetBothCase('H', 'I', -2);
+	SetBothCase('T', 'S', 2);
+	SetBothCase('O', 'R', 2);
+	SetBothCase('O', 'L', 2);
+	SetBothCase('O', 'G', 2);
+	SetBothCase('Z', 'A', -1);
+	SetBothCase('R', 'R', 1);
+	SetBothCase('R', 'U', 3);
 
 
 	// Polish characters
@@ -1622,10 +1621,10 @@ void RMFontObj::Init(void) {
 
 	cTable[(byte)'∆'] = cTable[(byte)'Ê'] = 86;
 	lTable[(byte)'∆'] = lTable[(byte)'Ê'] = 22;
-	
+
 	cTable[(byte)' '] = cTable[(byte)'Í'] = 87;
 	lTable[(byte)' '] = lTable[(byte)'Í'] = 17;
-	
+
 	cTable[(byte)'£'] = cTable[(byte)'≥'] = 88;
 	lTable[(byte)'£'] = lTable[(byte)'≥'] = 19;
 
@@ -1654,39 +1653,39 @@ void RMFontObj::Init(void) {
 	cTable[(byte)'•'] = cTable[(byte)'π'] = 85;
 	lTable[(byte)'•'] = lTable[(byte)'π'] = 20;
 
-	cTable[(byte)'¿'] = cTable[(byte)'‡'] =94;
-	cTable[(byte)'¡'] = cTable[(byte)'·'] =95;
-	cTable[(byte)'¬'] = cTable[(byte)'‚'] =96;
-	cTable[(byte)'√'] = cTable[(byte)'„'] =97;
-	cTable[(byte)'ƒ'] = cTable[(byte)'‰'] =98;
-	cTable[(byte)'≈'] = cTable[(byte)'Â'] =99;
-	cTable[(byte)'®'] = cTable[(byte)'∏'] =100;
-	cTable[(byte)'∆'] = cTable[(byte)'Ê'] =101;
-	cTable[(byte)'«'] = cTable[(byte)'Á'] =102;
-	cTable[(byte)'»'] = cTable[(byte)'Ë'] =103;
-	cTable[(byte)'…'] = cTable[(byte)'È'] =104;
-	cTable[(byte)' '] = cTable[(byte)'Í'] =105;
-	cTable[(byte)'À'] = cTable[(byte)'Î'] =106;
-	cTable[(byte)'Ã'] = cTable[(byte)'Ï'] =107;
-	cTable[(byte)'Õ'] = cTable[(byte)'Ì'] =108;
-	cTable[(byte)'Œ'] = cTable[(byte)'Ó'] =109;
-	cTable[(byte)'œ'] = cTable[(byte)'Ô'] =110;
-	cTable[(byte)'–'] = cTable[(byte)''] =111;
-	cTable[(byte)'—'] = cTable[(byte)'Ò'] =112;
-	cTable[(byte)'“'] = cTable[(byte)'Ú'] =113;
-	cTable[(byte)'”'] = cTable[(byte)'Û'] =114;
-	cTable[(byte)'‘'] = cTable[(byte)'Ù'] =115;
-	cTable[(byte)'’'] = cTable[(byte)'ı'] =116;
-	cTable[(byte)'÷'] = cTable[(byte)'ˆ'] =117;
-	cTable[(byte)'◊'] = cTable[(byte)'˜'] =118;
-	cTable[(byte)'ÿ'] = cTable[(byte)'¯'] =119;
-	cTable[(byte)'Ÿ'] = cTable[(byte)'˘'] =120;
-	cTable[(byte)'‹'] = cTable[(byte)'¸'] =121;
-	cTable[(byte)'⁄'] = cTable[(byte)'˙'] =122;
-	cTable[(byte)'€'] = cTable[(byte)'˚'] =123;
-	cTable[(byte)'›'] = cTable[(byte)'˝'] =124;
-	cTable[(byte)'ﬁ'] = cTable[(byte)'˛'] =125;
-	cTable[(byte)'ﬂ'] = cTable[(byte)'ˇ'] =126;
+	cTable[(byte)'¿'] = cTable[(byte)'‡'] = 94;
+	cTable[(byte)'¡'] = cTable[(byte)'·'] = 95;
+	cTable[(byte)'¬'] = cTable[(byte)'‚'] = 96;
+	cTable[(byte)'√'] = cTable[(byte)'„'] = 97;
+	cTable[(byte)'ƒ'] = cTable[(byte)'‰'] = 98;
+	cTable[(byte)'≈'] = cTable[(byte)'Â'] = 99;
+	cTable[(byte)'®'] = cTable[(byte)'∏'] = 100;
+	cTable[(byte)'∆'] = cTable[(byte)'Ê'] = 101;
+	cTable[(byte)'«'] = cTable[(byte)'Á'] = 102;
+	cTable[(byte)'»'] = cTable[(byte)'Ë'] = 103;
+	cTable[(byte)'…'] = cTable[(byte)'È'] = 104;
+	cTable[(byte)' '] = cTable[(byte)'Í'] = 105;
+	cTable[(byte)'À'] = cTable[(byte)'Î'] = 106;
+	cTable[(byte)'Ã'] = cTable[(byte)'Ï'] = 107;
+	cTable[(byte)'Õ'] = cTable[(byte)'Ì'] = 108;
+	cTable[(byte)'Œ'] = cTable[(byte)'Ó'] = 109;
+	cTable[(byte)'œ'] = cTable[(byte)'Ô'] = 110;
+	cTable[(byte)'–'] = cTable[(byte)''] = 111;
+	cTable[(byte)'—'] = cTable[(byte)'Ò'] = 112;
+	cTable[(byte)'“'] = cTable[(byte)'Ú'] = 113;
+	cTable[(byte)'”'] = cTable[(byte)'Û'] = 114;
+	cTable[(byte)'‘'] = cTable[(byte)'Ù'] = 115;
+	cTable[(byte)'’'] = cTable[(byte)'ı'] = 116;
+	cTable[(byte)'÷'] = cTable[(byte)'ˆ'] = 117;
+	cTable[(byte)'◊'] = cTable[(byte)'˜'] = 118;
+	cTable[(byte)'ÿ'] = cTable[(byte)'¯'] = 119;
+	cTable[(byte)'Ÿ'] = cTable[(byte)'˘'] = 120;
+	cTable[(byte)'‹'] = cTable[(byte)'¸'] = 121;
+	cTable[(byte)'⁄'] = cTable[(byte)'˙'] = 122;
+	cTable[(byte)'€'] = cTable[(byte)'˚'] = 123;
+	cTable[(byte)'›'] = cTable[(byte)'˝'] = 124;
+	cTable[(byte)'ﬁ'] = cTable[(byte)'˛'] = 125;
+	cTable[(byte)'ﬂ'] = cTable[(byte)'ˇ'] = 126;
 
 
 	lTable[(byte)'¿'] = lTable[(byte)'‡'] = 18;
@@ -1717,7 +1716,7 @@ void RMFontObj::Init(void) {
 	lTable[(byte)'ÿ'] = lTable[(byte)'¯'] = 19;
 	lTable[(byte)'Ÿ'] = lTable[(byte)'˘'] = 22;
 	lTable[(byte)'‹'] = lTable[(byte)'¸'] = 18;
-	lTable[(byte)'⁄'] = lTable[(byte)'˙'] = 19;	
+	lTable[(byte)'⁄'] = lTable[(byte)'˙'] = 19;
 	lTable[(byte)'€'] = lTable[(byte)'˚'] = 19;
 	lTable[(byte)'›'] = lTable[(byte)'˝'] = 15;
 	lTable[(byte)'ﬁ'] = lTable[(byte)'˛'] = 18;
@@ -1726,7 +1725,7 @@ void RMFontObj::Init(void) {
 #endif // FONT_RUSSIAN
 
 #ifdef FONT_CZECH
-	// rep. ceca characters	
+	// rep. ceca characters
 
 	cTable[(byte)'Ã'] = cTable[(byte)'Ï'] = 127;
 	cTable[(byte)'ä'] = cTable[(byte)'ö'] = 128;
@@ -1744,21 +1743,21 @@ void RMFontObj::Init(void) {
 	cTable[(byte)'Ÿ'] = cTable[(byte)'˘'] = 140;
 	cTable[(byte)'⁄'] = cTable[(byte)'˙'] = 141;
 
-	lTable[(byte)'Ã'] = lTable[(byte)'Ï'] =17;
-	lTable[(byte)'ä'] = lTable[(byte)'ö'] =15;
-	lTable[(byte)'»'] = lTable[(byte)'Ë'] =22;
-	lTable[(byte)'ÿ'] = lTable[(byte)'¯'] =18;
-	lTable[(byte)'é'] = lTable[(byte)'û'] =21;
-	lTable[(byte)'›'] = lTable[(byte)'˝'] =16;
-	lTable[(byte)'¡'] = lTable[(byte)'·'] =18;
-	lTable[(byte)'Õ'] = lTable[(byte)'Ì'] =19;
-	lTable[(byte)'…'] = lTable[(byte)'È'] =17;
-	lTable[(byte)'œ'] = lTable[(byte)'Ô'] =23;
-	lTable[(byte)'ç'] = lTable[(byte)'ù'] =24;
-	lTable[(byte)'“'] = lTable[(byte)'Ú'] =17;
-	lTable[(byte)'”'] = lTable[(byte)'Û'] =22;
-	lTable[(byte)'Ÿ'] = lTable[(byte)'˘'] =16;
-	lTable[(byte)'⁄'] = lTable[(byte)'˙'] =16;
+	lTable[(byte)'Ã'] = lTable[(byte)'Ï'] = 17;
+	lTable[(byte)'ä'] = lTable[(byte)'ö'] = 15;
+	lTable[(byte)'»'] = lTable[(byte)'Ë'] = 22;
+	lTable[(byte)'ÿ'] = lTable[(byte)'¯'] = 18;
+	lTable[(byte)'é'] = lTable[(byte)'û'] = 21;
+	lTable[(byte)'›'] = lTable[(byte)'˝'] = 16;
+	lTable[(byte)'¡'] = lTable[(byte)'·'] = 18;
+	lTable[(byte)'Õ'] = lTable[(byte)'Ì'] = 19;
+	lTable[(byte)'…'] = lTable[(byte)'È'] = 17;
+	lTable[(byte)'œ'] = lTable[(byte)'Ô'] = 23;
+	lTable[(byte)'ç'] = lTable[(byte)'ù'] = 24;
+	lTable[(byte)'“'] = lTable[(byte)'Ú'] = 17;
+	lTable[(byte)'”'] = lTable[(byte)'Û'] = 22;
+	lTable[(byte)'Ÿ'] = lTable[(byte)'˘'] = 16;
+	lTable[(byte)'⁄'] = lTable[(byte)'˙'] = 16;
 
 #endif // FONT_CZECH
 
@@ -1817,7 +1816,7 @@ RMText::RMText() {
 }
 
 RMText::~RMText() {
-	
+
 }
 
 void RMText::Unload() {
@@ -1835,19 +1834,23 @@ void RMText::SetMaxLineLength(int max) {
 }
 
 void RMText::RemoveThis(CORO_PARAM, bool &result) {
- // Qui possiamo fare i controlli sul numero di frame, sul tempo trascorso
- // etc.
+// Qui possiamo fare i controlli sul numero di frame, sul tempo trascorso
+// etc.
 	result = true;
 }
 
 
 void RMText::WriteText(const RMString &text, int nFont, int *time) {
-	// Inizializza i font (una volta sola)	
+	// Inizializza i font (una volta sola)
 	if (m_fonts[0] == NULL) {
-		m_fonts[0] = new RMFontParla; m_fonts[0]->Init();
-		m_fonts[1] = new RMFontObj;   m_fonts[1]->Init();
-		m_fonts[2] = new RMFontMacc;  m_fonts[2]->Init();
-		m_fonts[3] = new RMFontCredits;  m_fonts[3]->Init();
+		m_fonts[0] = new RMFontParla;
+		m_fonts[0]->Init();
+		m_fonts[1] = new RMFontObj;
+		m_fonts[1]->Init();
+		m_fonts[2] = new RMFontMacc;
+		m_fonts[2]->Init();
+		m_fonts[3] = new RMFontCredits;
+		m_fonts[3]->Init();
 	}
 
 	WriteText(text, m_fonts[nFont], time);
@@ -1870,13 +1873,13 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	// Si autodistrugge il buffer prima di iniziare
 	Destroy();
 
-	// Se la stringa Ë vuota, non fare nulla	
+	// Se la stringa Ë vuota, non fare nulla
 	if (text == NULL || text[0] == '\0')
 		return;
-	
+
 	// Divide la frase in linee. In questo ciclo, X contiene la lunghezza massima raggiunta da una linea
 	// e I il numero delle linee
-	string=p = text;
+	string = p = text;
 	i = j = x = 0;
 	while (*p != '\0') {
 		j += font->StringLen(*p);
@@ -1912,7 +1915,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	}
 
 	if (j > x) x = j;
- 
+
 	i++;
 	numlines = i;
 
@@ -1945,7 +1948,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 
 		case HLEFTPAR:
 			if (i == numlines)
-				x=0;
+				x = 0;
 			else
 				x = 25;
 			break;
@@ -1988,8 +1991,8 @@ void RMText::ClipOnScreen(RMGfxPrimitive *prim) {
 	// Cerca di non farlo uscire dallo schermo
 	if (prim->Dst().x1 < 5) prim->Dst().x1 = 5;
 	if (prim->Dst().y1 < 5) prim->Dst().y1 = 5;
-	if (prim->Dst().x1+m_dimx > 635) prim->Dst().x1 = 635 - m_dimx;
-	if (prim->Dst().y1+m_dimy > 475) prim->Dst().y1 = 475 - m_dimy;
+	if (prim->Dst().x1 + m_dimx > 635) prim->Dst().x1 = 635 - m_dimx;
+	if (prim->Dst().y1 + m_dimy > 475) prim->Dst().y1 = 475 - m_dimy;
 }
 
 void RMText::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -2027,7 +2030,7 @@ void RMText::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 RMTextDialog::RMTextDialog() : RMText() {
 	m_startTime = 0;
-	dst = RMPoint(0,0);
+	dst = RMPoint(0, 0);
 
 	m_bSkipStatus = true;
 	m_bShowed = true;
@@ -2056,14 +2059,14 @@ void RMTextDialog::Hide(CORO_PARAM) {
 }
 
 void RMTextDialog::WriteText(const RMString &text, int font, int *time) {
-	RMText::WriteText(text,font,&m_time);
+	RMText::WriteText(text, font, &m_time);
 
 	if (time != NULL)
 		*time = m_time;
 }
 
 void RMTextDialog::WriteText(const RMString &text, RMFontColor *font, int *time) {
-	RMText::WriteText(text,font,&m_time);
+	RMText::WriteText(text, font, &m_time);
 
 	if (time != NULL)
 		*time = m_time;
@@ -2087,7 +2090,7 @@ void RMTextDialog::SetNoTab(void) {
 }
 
 void RMTextDialog::SetForcedTime(uint32 dwTime) {
-	m_time = dwTime;	
+	m_time = dwTime;
 }
 
 void RMTextDialog::SetAlwaysDisplay(void) {
@@ -2096,7 +2099,7 @@ void RMTextDialog::SetAlwaysDisplay(void) {
 
 void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 	CORO_BEGIN_CONTEXT;
-		bool expired;
+	bool expired;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2168,7 +2171,7 @@ void RMTextDialog::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 
 	if (m_startTime == 0)
 		m_startTime = _vm->GetTime();
-	
+
 	if (m_bShowed) {
 		if (GLOBALS.bCfgSottotitoli || m_bAlwaysDisplay) {
 			prim->Dst().TopLeft() = dst;
@@ -2213,7 +2216,7 @@ RMTextDialogScrolling::~RMTextDialogScrolling() {
 
 void RMTextDialogScrolling::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
-		RMPoint curDst;
+	RMPoint curDst;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2250,8 +2253,8 @@ RMTextItemName::~RMTextItemName() {
 
 void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv) {
 	CORO_BEGIN_CONTEXT;
-		RMItem *lastItem;
-		uint32 hThread;
+	RMItem *lastItem;
+	uint32 hThread;
 	CORO_END_CONTEXT(_ctx);
 
 	RMString itemName;
@@ -2263,7 +2266,7 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 	// Adds to the list if there is need
 	if (!m_nInList)
 		bigBuf.AddPrim(new RMGfxPrimitive(this));
-	
+
 	// Update the scrolling co-ordinates
 	m_curscroll = loc.ScrollPosition();
 
@@ -2272,7 +2275,7 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 		m_item = inv.WhichItemIsIn(m_mpos);
 	else
 		m_item = loc.WhichItemIsIn(m_mpos);
-	
+
 	itemName = "";
 
 	// If there an item, get it's name
@@ -2287,7 +2290,7 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 		if (m_item == NULL)
 			ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 		else {
-			_ctx->hThread = mpalQueryDoAction(20, m_item->MpalCode(), 0);		
+			_ctx->hThread = mpalQueryDoAction(20, m_item->MpalCode(), 0);
 			if (_ctx->hThread == CORO_INVALID_PID_VALUE)
 				ptr.SetSpecialPointer(RMPointer::PTR_NONE);
 			else
@@ -2310,30 +2313,30 @@ void RMTextItemName::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		return;
 
 	// Setta come coordinate destinazione quelle del mouse
-	prim->Dst().TopLeft() = m_mpos-RMPoint(0, 30);
+	prim->Dst().TopLeft() = m_mpos - RMPoint(0, 30);
 
 	CORO_INVOKE_2(RMText::Draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
-RMPoint RMTextItemName::GetHotspot() { 
-	if (m_item == NULL) 
-		return m_mpos + m_curscroll; 
-	else 
-		return m_item->Hotspot();  
+RMPoint RMTextItemName::GetHotspot() {
+	if (m_item == NULL)
+		return m_mpos + m_curscroll;
+	else
+		return m_item->Hotspot();
 }
 
-RMItem *RMTextItemName::GetSelectedItem() { 
-	return m_item; 
+RMItem *RMTextItemName::GetSelectedItem() {
+	return m_item;
 }
 
-bool RMTextItemName::IsItemSelected() { 
-	return m_item != NULL; 
+bool RMTextItemName::IsItemSelected() {
+	return m_item != NULL;
 }
 
-bool RMTextItemName::IsNormalItemSelected() { 
-	return m_item != NULL && m_itemName.Length() > 0; 
+bool RMTextItemName::IsNormalItemSelected() {
+	return m_item != NULL && m_itemName.Length() > 0;
 }
 
 
@@ -2345,13 +2348,13 @@ RMDialogChoice::RMDialogChoice() {
 	RMResRaw dlg1(RES_I_DLGTEXT);
 	RMResRaw dlg2(RES_I_DLGTEXTLINE);
 	RMRes dlgpal(RES_I_DLGTEXTPAL);
-	
+
 	DlgText.Init(dlg1, dlg1.Width(), dlg1.Height());
 	DlgTextLine.Init(dlg2, dlg2.Width(), dlg2.Height());
 
 	DlgText.LoadPaletteWA(dlgpal);
 	DlgTextLine.LoadPaletteWA(dlgpal);
-	
+
 	hUnreg = CoroScheduler.createEvent(false, false);
 	bRemoveFromOT = false;
 }
@@ -2368,8 +2371,7 @@ void RMDialogChoice::Unregister(void) {
 	bRemoveFromOT = false;
 }
 
-void RMDialogChoice::Init(void)
-{
+void RMDialogChoice::Init(void) {
 	m_numChoices = 0;
 	m_drawedStrings = NULL;
 	m_ptDrawStrings = NULL;
@@ -2399,7 +2401,7 @@ void RMDialogChoice::SetNumChoices(int num) {
 
 	m_numChoices = num;
 	m_curAdded = 0;
-	
+
 	// Alloca lo spazio per le stringhe disegnate
 	m_drawedStrings = new RMText[num];
 	m_ptDrawStrings = new RMPoint[num];
@@ -2416,43 +2418,43 @@ void RMDialogChoice::SetNumChoices(int num) {
 void RMDialogChoice::AddChoice(const RMString &string) {
 	// Si disegna la stringa
 	assert(m_curAdded < m_numChoices);
-	m_drawedStrings[m_curAdded++].WriteText(string, 0);	
+	m_drawedStrings[m_curAdded++].WriteText(string, 0);
 }
 
 void RMDialogChoice::Prepare(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		int i;
-		RMPoint ptPos;
+	int i;
+	RMPoint ptPos;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	AddPrim(new RMGfxPrimitive(&DlgText,RMPoint(0,0)));
-	AddPrim(new RMGfxPrimitive(&DlgTextLine,RMPoint(0,155)));
-	AddPrim(new RMGfxPrimitive(&DlgTextLine,RMPoint(0,155+83)));
-	AddPrim(new RMGfxPrimitive(&DlgTextLine,RMPoint(0,155+83+83)));
-	AddPrim(new RMGfxPrimitive(&DlgTextLine,RMPoint(0,155+83+83+83)));
+	AddPrim(new RMGfxPrimitive(&DlgText, RMPoint(0, 0)));
+	AddPrim(new RMGfxPrimitive(&DlgTextLine, RMPoint(0, 155)));
+	AddPrim(new RMGfxPrimitive(&DlgTextLine, RMPoint(0, 155 + 83)));
+	AddPrim(new RMGfxPrimitive(&DlgTextLine, RMPoint(0, 155 + 83 + 83)));
+	AddPrim(new RMGfxPrimitive(&DlgTextLine, RMPoint(0, 155 + 83 + 83 + 83)));
 
-	_ctx->ptPos.Set(20,90);
+	_ctx->ptPos.Set(20, 90);
 
 	for (_ctx->i = 0; _ctx->i < m_numChoices; _ctx->i++) {
 		AddPrim(new RMGfxPrimitive(&m_drawedStrings[_ctx->i], _ctx->ptPos));
 		m_ptDrawStrings[_ctx->i] = _ctx->ptPos;
-		_ctx->ptPos.Offset(0,m_drawedStrings[_ctx->i].Dimy() + 15);
+		_ctx->ptPos.Offset(0, m_drawedStrings[_ctx->i].Dimy() + 15);
 	}
 
 	CORO_INVOKE_0(DrawOT);
 	ClearOT();
 
-	m_ptDrawPos.Set(0,480-_ctx->ptPos.y);
+	m_ptDrawPos.Set(0, 480 - _ctx->ptPos.y);
 
 	CORO_END_CODE;
 }
 
 void RMDialogChoice::SetSelected(CORO_PARAM, int pos) {
 	CORO_BEGIN_CONTEXT;
-		RMGfxBox box;
-		RMRect rc;
+	RMGfxBox box;
+	RMRect rc;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2464,7 +2466,7 @@ void RMDialogChoice::SetSelected(CORO_PARAM, int pos) {
 
 	if (m_curSelection != -1) {
 		_ctx->box.SetColor(0xCC, 0xCC, 0xFF);
-		_ctx->rc.TopLeft()=RMPoint(18, m_ptDrawStrings[m_curSelection].y); 
+		_ctx->rc.TopLeft() = RMPoint(18, m_ptDrawStrings[m_curSelection].y);
 		_ctx->rc.BottomRight() = _ctx->rc.TopLeft() + RMPoint(597, m_drawedStrings[m_curSelection].Dimy());
 		AddPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
 
@@ -2475,8 +2477,8 @@ void RMDialogChoice::SetSelected(CORO_PARAM, int pos) {
 
 	if (pos != -1) {
 		_ctx->box.SetColor(100, 100, 100);
-		_ctx->rc.TopLeft()=RMPoint(18, m_ptDrawStrings[pos].y); 
-		_ctx->rc.BottomRight() = _ctx->rc.TopLeft()+RMPoint(597, m_drawedStrings[pos].Dimy());
+		_ctx->rc.TopLeft() = RMPoint(18, m_ptDrawStrings[pos].y);
+		_ctx->rc.BottomRight() = _ctx->rc.TopLeft() + RMPoint(597, m_drawedStrings[pos].Dimy());
 		AddPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
 		AddPrim(new RMGfxPrimitive(&m_drawedStrings[pos], m_ptDrawStrings[pos]));
 	}
@@ -2491,10 +2493,10 @@ void RMDialogChoice::SetSelected(CORO_PARAM, int pos) {
 
 void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 	CORO_BEGIN_CONTEXT;
-		RMPoint destpt;
-		int deltay;
-		int starttime;
-		int elaps;
+	RMPoint destpt;
+	int deltay;
+	int starttime;
+	int elaps;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2513,8 +2515,8 @@ void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 		_ctx->destpt = m_ptDrawPos;
 		m_ptDrawPos.Set(0, 480);
 
-  	if (!m_nInList && bigBuf != NULL)
-	  	bigBuf->AddPrim(new RMGfxPrimitive(this));
+		if (!m_nInList && bigBuf != NULL)
+			bigBuf->AddPrim(new RMGfxPrimitive(this));
 		m_bShow = true;
 
 		_ctx->elaps = 0;
@@ -2550,9 +2552,9 @@ void RMDialogChoice::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 void RMDialogChoice::Hide(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		int deltay;
-		int starttime;
-		int elaps;
+	int deltay;
+	int starttime;
+	int elaps;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2565,7 +2567,7 @@ void RMDialogChoice::Hide(CORO_PARAM) {
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(MainWaitFrame);
 			MainFreeze();
-			_ctx->elaps = _vm->GetTime()-_ctx->starttime;
+			_ctx->elaps = _vm->GetTime() - _ctx->starttime;
 			m_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
 			MainUnfreeze();
 		}
@@ -2585,14 +2587,14 @@ void RMDialogChoice::RemoveThis(CORO_PARAM, bool &result) {
 
 void RMDialogChoice::DoFrame(CORO_PARAM, RMPoint ptMousePos) {
 	CORO_BEGIN_CONTEXT;
-		int i;
+	int i;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (ptMousePos.y > m_ptDrawPos.y) {		
+	if (ptMousePos.y > m_ptDrawPos.y) {
 		for (_ctx->i = 0; _ctx->i < m_numChoices; _ctx->i++) {
-			if ((ptMousePos.y >= m_ptDrawPos.y+m_ptDrawStrings[_ctx->i].y) && (ptMousePos.y < m_ptDrawPos.y+m_ptDrawStrings[_ctx->i].y+m_drawedStrings[_ctx->i].Dimy())) {
+			if ((ptMousePos.y >= m_ptDrawPos.y + m_ptDrawStrings[_ctx->i].y) && (ptMousePos.y < m_ptDrawPos.y + m_ptDrawStrings[_ctx->i].y + m_drawedStrings[_ctx->i].Dimy())) {
 				CORO_INVOKE_1(SetSelected, _ctx->i);
 				break;
 			}

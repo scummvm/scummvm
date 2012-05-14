@@ -37,19 +37,19 @@
 
 namespace Tony {
 
-#define INIT_GFX16_FROMRAW(dwRes, buf16)	\
-	raw = new RMResRaw(dwRes);	\
-	assert(raw->IsValid());			\
-	assert((buf16) == NULL);			\
-	(buf16) = new RMGfxSourceBuffer16(false); \
-	(buf16)->Init(*raw,raw->Width(),raw->Height()); \
+#define INIT_GFX16_FROMRAW(dwRes, buf16)                 \
+	raw = new RMResRaw(dwRes);                             \
+	assert(raw->IsValid());                                \
+	assert((buf16) == NULL);                               \
+	(buf16) = new RMGfxSourceBuffer16(false);              \
+	(buf16)->Init(*raw,raw->Width(),raw->Height());        \
 	delete raw;
 
-#define INIT_GFX8_FROMRAW(raw, dwRes, buf8)	\
-	raw = new RMResRaw(dwRes);	\
-	assert(raw->IsValid());			\
-	assert((buf8) == NULL);			\
-	(buf8) = new RMGfxSourceBuffer8RLEByte(); \
+#define INIT_GFX8_FROMRAW(raw, dwRes, buf8)              \
+	raw = new RMResRaw(dwRes);                             \
+	assert(raw->IsValid());                                \
+	assert((buf8) == NULL);                                \
+	(buf8) = new RMGfxSourceBuffer8RLEByte();              \
 	(buf8)->Init(*raw, raw->Width(), raw->Height(), true); \
 	delete raw;
 
@@ -80,7 +80,7 @@ public:
 
 public:
 	// Constructor & destructor
-	RMPointer();	
+	RMPointer();
 	virtual ~RMPointer();
 
 	// Initialisation
@@ -97,25 +97,34 @@ public:
 
 	// Overloading draw method
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	
+
 	// Sets the current co-ordinates
-	void SetCoord(const RMPoint &pt) { m_pos = pt; }
+	void SetCoord(const RMPoint &pt) {
+		m_pos = pt;
+	}
 
 	// Overloading of the method to see if rising from the list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Sets a new action as current
-	void SetAction(RMTonyAction action) {	m_nCurPointer = action; }
+	void SetAction(RMTonyAction action) {
+		m_nCurPointer = action;
+	}
 
 	// Sets a new pointer
-	void SetSpecialPointer(POINTER ptr) {	
-		m_nCurSpecialPointer=ptr; 
-		if (m_nCurSpecialPointer && m_nCurSpecialPointer != PTR_CUSTOM) m_specialPointer[ptr-1]->SetPattern(1);  
+	void SetSpecialPointer(POINTER ptr) {
+		m_nCurSpecialPointer = ptr;
+		if (m_nCurSpecialPointer && m_nCurSpecialPointer != PTR_CUSTOM)
+			m_specialPointer[ptr - 1]->SetPattern(1);
 	}
-	POINTER GetSpecialPointer(void) { return (POINTER)m_nCurSpecialPointer; }
+	POINTER GetSpecialPointer(void) {
+		return (POINTER)m_nCurSpecialPointer;
+	}
 
 	// Set the new custom pointer
-	void SetCustomPointer(RMGfxSourceBuffer8 *ptr) { m_nCurCustomPointer = ptr; }
+	void SetCustomPointer(RMGfxSourceBuffer8 *ptr) {
+		m_nCurCustomPointer = ptr;
+	}
 
 	// Return the current action to be applied according to the pointer
 	int CurAction(void);
@@ -137,18 +146,22 @@ public:
 	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void AddToList(RMGfxTargetBuffer &bigBuf);
-	bool IsActive() { return m_bActive; }
-	void SetActiveState(bool bState) { m_bActive=bState; }
+	bool IsActive() {
+		return m_bActive;
+	}
+	void SetActiveState(bool bState) {
+		m_bActive = bState;
+	}
 };
 
 class RMOptionSlide : public RMGfxTaskSetPrior {
 private:
-	RMOptionButton* m_PushLeft;
-	RMOptionButton* m_PushRight;
-	RMGfxSourceBuffer16* m_SliderCenter;
-	RMGfxSourceBuffer16* m_SliderLeft;
-	RMGfxSourceBuffer16* m_SliderRight;
-	RMGfxSourceBuffer16* m_SliderSingle;
+	RMOptionButton *m_PushLeft;
+	RMOptionButton *m_PushRight;
+	RMGfxSourceBuffer16 *m_SliderCenter;
+	RMGfxSourceBuffer16 *m_SliderLeft;
+	RMGfxSourceBuffer16 *m_SliderRight;
+	RMGfxSourceBuffer16 *m_SliderSingle;
 	int m_nSlideSize;
 	RMPoint m_pos;
 	int m_nValue;
@@ -161,9 +174,11 @@ public:
 
 	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	void AddToList(RMGfxTargetBuffer& bigBuf);
+	void AddToList(RMGfxTargetBuffer &bigBuf);
 
-	int GetValue() { return m_nValue; }
+	int GetValue() {
+		return m_nValue;
+	}
 };
 
 class RMOptionScreen : public RMGfxWoodyBuffer {
@@ -202,7 +217,7 @@ private:
 	bool m_bEditSaveName;
 	int m_nEditPos;
 	char m_EditName[256];
-	
+
 	union {
 		RMOptionButton *m_ButtonGame_Lock;
 		RMOptionButton *m_ButtonGfx_Anni30;
@@ -233,11 +248,11 @@ private:
 	bool m_bAlterGfx;
 
 	enum STATE {
-		MENUGAME,
-		MENUGFX,
-		MENUSOUND,
-		MENULOAD,
-		MENUSAVE
+	    MENUGAME,
+	    MENUGFX,
+	    MENUSOUND,
+	    MENULOAD,
+	    MENUSAVE
 	};
 
 	STATE m_nState;
@@ -276,7 +291,7 @@ protected:
 	// Ridisegna tutto il menu delle opzioni
 	void RefreshAll(CORO_PARAM);
 	void RefreshThumbnails(void);
-	
+
 };
 
 } // End of namespace Tony

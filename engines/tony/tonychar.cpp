@@ -334,14 +334,14 @@ void RMTony::Stop(CORO_PARAM) {
 
 	ExecuteAction(m_Action, m_ActionItem->MpalCode(), m_ActionParm);
 	
-	m_ActionItem=NULL;
+	m_ActionItem = NULL;
 
 	CORO_END_CODE;
 }
 
 
 int RMTony::GetCurPattern(void) {
-	int nPatt=RMCharacter::GetCurPattern();
+	int nPatt = RMCharacter::GetCurPattern();
 
 	if (!m_bPastorella)
 		return nPatt;
@@ -355,7 +355,6 @@ int RMTony::GetCurPattern(void) {
 		return PAT_STANDLEFT;
 	case PAT_PAST_STANDRIGHT:
 		return PAT_STANDRIGHT;
-
 	case PAT_PAST_WALKUP:
 		return PAT_WALKUP;
 	case PAT_PAST_WALKDOWN:
@@ -438,7 +437,6 @@ void RMTony::Take(int nWhere, int nPart) {
 			}
 			break;
 
-
 		case PAT_STANDLEFT:
 			switch (nWhere) {
 			case 0:
@@ -454,7 +452,7 @@ void RMTony::Take(int nWhere, int nPart) {
 			break;
 		}
 	} else if (nPart == 1) {
-		SetPattern(GetCurPattern()+1);
+		SetPattern(GetCurPattern() + 1);
 	} else if (nPart == 2) {
 		switch (GetCurPattern()) {
 		case PAT_TAKEUP_UP2:
@@ -514,7 +512,6 @@ void RMTony::Put(int nWhere, int nPart) {
 			}
 			break;
 
-
 		case PAT_STANDLEFT:
 			switch (nWhere) {
 			case 0:
@@ -530,7 +527,7 @@ void RMTony::Put(int nWhere, int nPart) {
 			break;
 		}
 	} else if (nPart == 1) {
-		SetPattern(GetCurPattern()+1);
+		SetPattern(GetCurPattern() + 1);
 	} else if (nPart == 2) {
 		switch (GetCurPattern()) {
 		case PAT_PUTUP_UP2:
@@ -567,7 +564,7 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 	if (!m_bIsStaticTalk) {
 		switch (m_nPatB4Talking) {
 		case PAT_STANDDOWN:
-			m_TalkDirection=DOWN;
+			m_TalkDirection = DOWN;
 			break;
 
 		case PAT_TAKELEFT_UP2:
@@ -575,7 +572,7 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case PAT_TAKELEFT_DOWN2:
 		case PAT_SIRIALZALEFT:
 		case PAT_STANDLEFT:
-			m_TalkDirection=LEFT;
+			m_TalkDirection = LEFT;
 			break;
 		
 		case PAT_TAKERIGHT_UP2:
@@ -583,14 +580,14 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case PAT_TAKERIGHT_DOWN2:
 		case PAT_SIRIALZARIGHT:
 		case PAT_STANDRIGHT:
-			m_TalkDirection=RIGHT;
+			m_TalkDirection = RIGHT;
 			break;
 
 		case PAT_TAKEUP_UP2:
 		case PAT_TAKEUP_MID2:
 		case PAT_TAKEUP_DOWN2:
 		case PAT_STANDUP:
-			m_TalkDirection=UP;
+			m_TalkDirection = UP;
 			break;
 		}
 
@@ -1220,9 +1217,9 @@ bool RMTony::EndTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPa
 
 	case TALK_RIDE:
 	case TALK_RIDE2:
-		if (m_TalkDirection==LEFT)
+		if (m_TalkDirection == LEFT)
 			headEndPat = PAT_RIDELEFT_END;
-		else if (m_TalkDirection==RIGHT)
+		else if (m_TalkDirection == RIGHT)
 			headEndPat = PAT_RIDERIGHT_END;
 			
 		bodyEndPat = 0;
@@ -1532,7 +1529,7 @@ void RMTony::StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 
 	switch (nPat) {
 	case PAT_STANDDOWN:
-		m_TalkDirection=DOWN;
+		m_TalkDirection = DOWN;
 		headPat = PAT_TESTA_RIGHT;
 		break;
 
@@ -1541,7 +1538,7 @@ void RMTony::StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 	case PAT_TAKELEFT_DOWN2:
 	case PAT_SIRIALZALEFT:
 	case PAT_STANDLEFT:
-		m_TalkDirection=LEFT;
+		m_TalkDirection = LEFT;
 		headPat = PAT_TESTA_LEFT;
 		break;
 		
@@ -1550,7 +1547,7 @@ void RMTony::StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 	case PAT_TAKERIGHT_DOWN2:
 	case PAT_SIRIALZARIGHT:
 	case PAT_STANDRIGHT:
-		m_TalkDirection=RIGHT;
+		m_TalkDirection = RIGHT;
 		headPat = PAT_TESTA_RIGHT;
 		break;
 
@@ -1558,7 +1555,7 @@ void RMTony::StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 	case PAT_TAKEUP_MID2:
 	case PAT_TAKEUP_DOWN2:
 	case PAT_STANDUP:
-		m_TalkDirection=UP;
+		m_TalkDirection = UP;
 		headPat = PAT_TESTA_LEFT;
 		break;
 	}

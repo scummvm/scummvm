@@ -64,9 +64,9 @@ void RMGfxTaskSetPrior::SetPriority(int nPrior) {
 \****************************************************************************/
 
 RMGfxBuffer::RMGfxBuffer() {
- m_dimx = m_dimy = 0;
- m_bUseDDraw = false;
- m_origBuf = m_buf = NULL;
+	m_dimx = m_dimy = 0;
+	m_bUseDDraw = false;
+	m_origBuf = m_buf = NULL;
 }
 
 RMGfxBuffer::~RMGfxBuffer() {
@@ -102,7 +102,7 @@ void RMGfxBuffer::Destroy(void) {
 
 void RMGfxBuffer::Lock(void) {
 	if (m_bUseDDraw) {
-	 // Gestisce l'accelerazione
+		// Gestisce l'accelerazione
 	}
 }
 
@@ -113,7 +113,7 @@ void RMGfxBuffer::Unlock(void) {
 }
 
 void RMGfxBuffer::OffsetY(int nLines, int nBpp) {
-	m_buf += nLines* Dimx() * nBpp / 8;
+	m_buf += nLines * Dimx() * nBpp / 8;
 }
 
 
@@ -148,7 +148,7 @@ RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw) {
 int RMGfxSourceBuffer::Init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
 	Create(dimx, dimy, Bpp());
 	CopyMemory(m_buf, buf, dimx * dimy * Bpp() / 8);
-	
+
 	// Richiama la funzione di preparazione della surface (ereditata)
 	PrepareImage();
 
@@ -156,10 +156,10 @@ int RMGfxSourceBuffer::Init(const byte *buf, int dimx, int dimy, bool bLoadPalet
 }
 
 
-void RMGfxSourceBuffer::Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette) {
-	Create(dimx, dimy,Bpp());
-	ds.Read(m_buf, dimx * dimy*Bpp() / 8);
-	
+void RMGfxSourceBuffer::Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+	Create(dimx, dimy, Bpp());
+	ds.Read(m_buf, dimx * dimy * Bpp() / 8);
+
 	// Richiama la funzione di preparazione della surface (ereditata)
 	PrepareImage();
 }
@@ -171,11 +171,11 @@ void RMGfxSourceBuffer::PrepareImage(void) {
 	// Non fa nulla: puo' essere overloadata se necessaria
 }
 
-bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer* buf) {
+bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf) {
 	int destw, desth;
 
 /*
-   OBSOLETE CODE: 
+	OBSOLETE CODE:
 
 	if (buf == NULL) {
 		destw=RM_SX;
@@ -185,6 +185,7 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 		desth = buf->Dimy();
 	}
 */
+
 	destw = buf->Dimx();
 	desth = buf->Dimy();
 
@@ -193,20 +194,25 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 		width = m_dimx;
 		height = m_dimy;
 	}
-	
-	if (x1 > destw - 1)	return false;
-	if (y1 > desth - 1) return false;
 
-	if (x1 < 0)	 {
+	if (x1 > destw - 1)
+		return false;
+		
+	if (y1 > desth - 1)
+		return false;
+
+	if (x1 < 0) {
 		width += x1;
-		if (width < 0) return false;
+		if (width < 0)
+			return false;
 		u -= x1;
-		x1 = 0;	
+		x1 = 0;
 	}
 
-	if (y1 < 0) {	
+	if (y1 < 0) {
 		height += y1;
-		if (height < 0) return false;
+		if (height < 0)
+			return false;
 		v -= y1;
 		y1 = 0;
 	}
@@ -227,7 +233,7 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 * Description:  Carica una surface partendo dall'ID della risorsa
 *
 * Input:        uint32 resID             ID della risorsa
-*               int dimx, dimy					Dimensione del buffer
+*               int dimx, dimy                  Dimensione del buffer
 *
 \****************************************************************************/
 
@@ -263,7 +269,7 @@ RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
 }
 
 RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
-	  : RMGfxBuffer(dimx,dimy,16,bUseDDraw) {
+	: RMGfxBuffer(dimx, dimy, 16, bUseDDraw) {
 
 }
 
@@ -307,11 +313,11 @@ void RMGfxTargetBuffer::ClearOT(void) {
 
 void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		OTList *cur;
-		OTList *prev;
-		OTList *next;
-		RMGfxPrimitive *myprim;
-		bool result;
+	OTList *cur;
+	OTList *prev;
+	OTList *next;
+	RMGfxPrimitive *myprim;
+	bool result;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -323,9 +329,9 @@ void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
 	Lock();
 //	g_system->lockMutex(csModifyingOT);
 
- 	while (_ctx->cur != NULL) {
+	while (_ctx->cur != NULL) {
 		// Richiama la draw sul task, passandogli una copia della primitiva
-		_ctx->myprim=_ctx->cur->prim->Duplicate();
+		_ctx->myprim = _ctx->cur->prim->Duplicate();
 		CORO_INVOKE_2(_ctx->cur->prim->m_task->Draw, *this, _ctx->myprim);
 		delete _ctx->myprim;
 
@@ -335,7 +341,7 @@ void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
 			// Deregistra il task
 			_ctx->cur->prim->m_task->Unregister();
 
- 			// Cancella il task liberando la memoria
+			// Cancella il task liberando la memoria
 			delete _ctx->cur->prim;
 			_ctx->next = _ctx->cur->next;
 			delete _ctx->cur;
@@ -388,7 +394,7 @@ void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
 	} else {
 		cur = otlist;
 		while (cur->next != NULL && nPrior > cur->next->prim->m_task->Priority())
-			cur=cur->next;
+			cur = cur->next;
 
 		n->next = cur->next;
 		cur->next = n;
@@ -403,7 +409,7 @@ void RMGfxTargetBuffer::AddClearTask(void) {
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBufferPal
+*               Metodi di RMGfxSourceBufferPal
 \****************************************************************************/
 
 RMGfxSourceBufferPal::~RMGfxSourceBufferPal() {
@@ -420,11 +426,11 @@ int RMGfxSourceBufferPal::LoadPaletteWA(const byte *buf, bool bSwapped) {
 			m_pal[i * 3 + 2] = buf[i * 3 + 0];
 		}
 	else
-		CopyMemory(m_pal,buf,(1<<Bpp())*3);
-	
+		CopyMemory(m_pal, buf, (1 << Bpp()) * 3);
+
 	PreparePalette();
 
-	return (1<<Bpp())*3;
+	return (1 << Bpp()) * 3;
 }
 
 int RMGfxSourceBufferPal::LoadPalette(const byte *buf) {
@@ -432,7 +438,7 @@ int RMGfxSourceBufferPal::LoadPalette(const byte *buf) {
 
 	for (i = 0; i < 256; i++)
 		CopyMemory(m_pal + i * 3, buf + i * 4, 3);
-	
+
 	PreparePalette();
 
 	return (1 << Bpp()) * 4;
@@ -444,17 +450,17 @@ void RMGfxSourceBufferPal::PreparePalette(void) {
 
 	for (i = 0; i < 256; i++) {
 		m_palFinal[i] = (((int)m_pal[i * 3 + 0] >> 3) <<  10) |
-									(((int)m_pal[i * 3 + 1] >> 3) <<  5) | 
-									(((int)m_pal[i * 3 + 2] >> 3) <<  0);
+		                (((int)m_pal[i * 3 + 1] >> 3) <<  5) |
+		                (((int)m_pal[i * 3 + 2] >> 3) <<  0);
 	}
 }
 
 int RMGfxSourceBufferPal::Init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
 	int read;
-	
+
 	// Carica l'immagine RAW
 	read = RMGfxSourceBuffer::Init(buf, dimx, dimy);
-	
+
 	// Carica la palette se necessario
 	if (bLoadPalette)
 		read += LoadPaletteWA(&buf[read]);
@@ -465,7 +471,7 @@ int RMGfxSourceBufferPal::Init(const byte *buf, int dimx, int dimy, bool bLoadPa
 void RMGfxSourceBufferPal::Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	// Carica l'immagine RAW
 	RMGfxSourceBuffer::Init(ds, dimx, dimy);
-	
+
 	// Carica la palette se necessario
 	if (bLoadPalette) {
 		byte *suxpal = new byte[256 * 3];
@@ -484,14 +490,14 @@ int RMGfxSourceBufferPal::LoadPaletteWA(uint32 resID, bool bSwapped) {
 }
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer4
+*               Metodi di RMGfxSourceBuffer4
 \****************************************************************************/
 
 void RMGfxSourceBuffer4::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
 RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
-		: RMGfxBuffer(dimx,dimy,4,bUseDDraw) {
+	: RMGfxBuffer(dimx, dimy, 4, bUseDDraw) {
 	SetPriority(0);
 }
 
@@ -510,11 +516,11 @@ int RMGfxSourceBuffer4::Bpp() {
 }
 
 void RMGfxSourceBuffer4::Create(int dimx, int dimy, bool bUseDDraw) {
-	RMGfxBuffer::Create(dimx,dimy,4,bUseDDraw);
+	RMGfxBuffer::Create(dimx, dimy, 4, bUseDDraw);
 }
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8
+*               Metodi di RMGfxSourceBuffer8
 \****************************************************************************/
 
 RMGfxSourceBuffer8::~RMGfxSourceBuffer8() {
@@ -530,13 +536,13 @@ void RMGfxSourceBuffer8::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 	// Destination nel buffer
 	RMRect dst;
 	if (prim->HaveDst())
-		dst=prim->Dst();
-	
+		dst = prim->Dst();
+
 	// Esegue il clip
 	if (prim->HaveSrc()) {
 		u = prim->Src().x1;
 		v = prim->Src().y1;
-		
+
 		width = prim->Src().Width();
 		height = prim->Src().Height();
 	}
@@ -567,7 +573,7 @@ void RMGfxSourceBuffer8::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 			for (x = 0; x < width; x += 2) {
 				buf[0] = m_palFinal[raw[0]];
 				buf[1] = m_palFinal[raw[1]];
-				
+
 				buf += 2;
 				raw += 2;
 			}
@@ -578,7 +584,7 @@ void RMGfxSourceBuffer8::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 }
 
 RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
-		: RMGfxBuffer(dimx,dimy,8,bUseDDraw) {
+	: RMGfxBuffer(dimx, dimy, 8, bUseDDraw) {
 	SetPriority(0);
 }
 
@@ -601,26 +607,25 @@ int RMGfxSourceBuffer8::Bpp() {
 	return 8;
 }
 
-void RMGfxSourceBuffer8::Create(int dimx, int dimy, bool bUseDDraw) {	
+void RMGfxSourceBuffer8::Create(int dimx, int dimy, bool bUseDDraw) {
 	RMGfxBuffer::Create(dimx, dimy, 8, bUseDDraw);
 }
 
-#define GETRED(x)	(((x) >> 10) & 0x1F)
+#define GETRED(x)   (((x) >> 10) & 0x1F)
 #define GETGREEN(x) (((x) >> 5) & 0x1F)
 #define GETBLUE(x) ((x) & 0x1F)
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8AB
+*               Metodi di RMGfxSourceBuffer8AB
 \****************************************************************************/
 
 RMGfxSourceBuffer8AB::~RMGfxSourceBuffer8AB() {
 
 }
 
-int RMGfxSourceBuffer8AB::CalcTrasp(int fore, int back)
-{
-	int r,g,b;
+int RMGfxSourceBuffer8AB::CalcTrasp(int fore, int back) {
+	int r, g, b;
 
 	r = (GETRED(fore) >> 2) + (GETRED(back) >> 1);
 	g = (GETGREEN(fore) >> 2) + (GETGREEN(back) >> 1);
@@ -630,13 +635,13 @@ int RMGfxSourceBuffer8AB::CalcTrasp(int fore, int back)
 	if (g > 0x1F) g = 0x1F;
 	if (b > 0x1F) b = 0x1F;
 
-	return (r<<10)|(g<<5)|b;
+	return (r << 10) | (g << 5) | b;
 }
 
 
 void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	int x, y, width, height, u, v;
-	int bufx=bigBuf.Dimx();
+	int bufx = bigBuf.Dimx();
 	uint16 *buf = bigBuf;
 	byte *raw = m_buf;
 
@@ -644,12 +649,12 @@ void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 	RMRect dst;
 	if (prim->HaveDst())
 		dst = prim->Dst();
-	
+
 	// Esegue il clip
 	if (prim->HaveSrc()) {
-		u=prim->Src().x1;
-		v=prim->Src().y1;
-		
+		u = prim->Src().x1;
+		v = prim->Src().y1;
+
 		width = prim->Src().Width();
 		height = prim->Src().Height();
 	}
@@ -675,12 +680,12 @@ void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 		}
 	} else {
 		for (y = 0; y < height; y++) {
-			raw = m_buf + (y+v) * m_dimx + u;
+			raw = m_buf + (y + v) * m_dimx + u;
 
 			for (x = 0; x < width; x += 2) {
 				buf[0] = CalcTrasp(m_palFinal[raw[0]], buf[0]);
 				buf[1] = CalcTrasp(m_palFinal[raw[1]], buf[1]);
-				
+
 				buf += 2;
 				raw += 2;
 			}
@@ -695,7 +700,7 @@ void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8RLE
+*               Metodi di RMGfxSourceBuffer8RLE
 \****************************************************************************/
 
 byte RMGfxSourceBuffer8RLE::MegaRLEBuf[512 * 1024];
@@ -724,7 +729,7 @@ int RMGfxSourceBuffer8RLE::Init(const byte *buf, int dimx, int dimy, bool bLoadP
 
 void RMGfxSourceBuffer8RLE::Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	if (bNeedRLECompress) {
-		RMGfxSourceBufferPal::Init(ds, dimx, dimy,bLoadPalette);
+		RMGfxSourceBufferPal::Init(ds, dimx, dimy, bLoadPalette);
 	} else {
 		int size;
 
@@ -745,7 +750,7 @@ void RMGfxSourceBuffer8RLE::PreparePalette(void) {
 	if (alphaBlendColor != -1) {
 		alphaR = (m_palFinal[alphaBlendColor] >> 10) & 0x1F;
 		alphaG = (m_palFinal[alphaBlendColor] >> 5) & 0x1F;
-  		alphaB = (m_palFinal[alphaBlendColor]) & 0x1F;
+		alphaB = (m_palFinal[alphaBlendColor]) & 0x1F;
 	}
 }
 
@@ -770,14 +775,14 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 	byte *src;
 	byte *startsrc;
 	int rep;
-	
+
 	// Esegue la compressione RLE, per linee
 	cur = MegaRLEBuf;
 	src = m_buf;
-	for (y = 0;y < m_dimy; y++) {
+	for (y = 0; y < m_dimy; y++) {
 		// Si salva l'inizio della linea
 		startline = cur;
-		
+
 		// Lascia lo spazio per la lunghezza della linea
 		cur += 2;
 
@@ -787,7 +792,7 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 		startsrc = src;
 		for (x = 0; x < m_dimx;) {
 			if ((curdata == 0 && *src == 0) || (curdata == 1 && *src == alphaBlendColor)
-					|| (curdata == 2 && (*src != alphaBlendColor && *src != 0))) {
+			        || (curdata == 2 && (*src != alphaBlendColor && *src != 0))) {
 				src++;
 				rep++;
 				x++;
@@ -795,8 +800,7 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 				if (curdata == 0) {
 					RLEWriteTrasp(cur, rep);
 					curdata++;
-				}
-				else if (curdata == 1) {
+				} else if (curdata == 1) {
 					RLEWriteAlphaBlend(cur, rep);
 					curdata++;
 				} else {
@@ -807,14 +811,14 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 				rep = 0;
 				startsrc = src;
 			}
-		}	
-		
+		}
+
 		// Dati in sospeso?
 		if (curdata == 1) {
 			RLEWriteAlphaBlend(cur, rep);
 			RLEWriteData(cur, 0, NULL);
 		}
-		
+
 		if (curdata == 2) {
 			RLEWriteData(cur, rep, startsrc);
 		}
@@ -825,9 +829,9 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 		// Scrive la lunghezza della linea
 		WRITE_LE_UINT16(startline, (uint16)(cur - startline));
 	}
-	
+
 	// Cancella l'immagine originale
-	delete[] m_buf; 
+	delete[] m_buf;
 
 	// Ci copia l'immagine compressa
 	x = cur - MegaRLEBuf;
@@ -840,20 +844,20 @@ void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 	byte *src;
 	uint16 *buf = bigBuf;
 	int x1, y1, u, v, width, height;
-	
+
 	// Clippiamo lo sprite
-	x1=prim->Dst().x1;
-	y1=prim->Dst().y1;
-	if (!Clip2D(x1,y1,u,v,width,height,false,&bigBuf))
+	x1 = prim->Dst().x1;
+	y1 = prim->Dst().y1;
+	if (!Clip2D(x1, y1, u, v, width, height, false, &bigBuf))
 		return;
 
 	// Andiamo avanti di V linee nell'immagine RLE
 	src = m_buf;
-	for (y = 0;y<v;y++)
+	for (y = 0; y < v; y++)
 		src += READ_LE_UINT16(src);
 
 	// Posizionamoci nel buffer di destinazione
-	buf += y1*bigBuf.Dimx();
+	buf += y1 * bigBuf.Dimx();
 
 	// Looppone
 	if (prim->IsFlipped()) {
@@ -861,8 +865,8 @@ void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 //		width = m_dimx;
 //		x1=prim->Dst().x1;
 
-	  // Flippiamo il clipping
-		u = m_dimx - (width+u);
+		// Flippiamo il clipping
+		u = m_dimx - (width + u);
 		x1 = (prim->Dst().x1 + m_dimx - 1) - u;
 
 		for (y = 0; y < height; y++) {
@@ -873,7 +877,7 @@ void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 			src += READ_LE_UINT16(src);
 
 			// Skippa alla linea successiva
-			buf += bigBuf.Dimx();		
+			buf += bigBuf.Dimx();
 		}
 	} else {
 		for (y = 0; y < height; y++) {
@@ -884,14 +888,14 @@ void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 			src += READ_LE_UINT16(src);
 
 			// Skippa alla linea successiva
-			buf += bigBuf.Dimx();		
+			buf += bigBuf.Dimx();
 		}
 	}
 }
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8RLEByte
+*               Metodi di RMGfxSourceBuffer8RLEByte
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEByte::~RMGfxSourceBuffer8RLEByte() {
@@ -900,18 +904,18 @@ RMGfxSourceBuffer8RLEByte::~RMGfxSourceBuffer8RLEByte() {
 
 void RMGfxSourceBuffer8RLEByte::RLEWriteTrasp(byte *&cur, int rep) {
 	assert(rep < 255);
-	*cur ++= rep;
+	*cur ++ = rep;
 }
 
 void RMGfxSourceBuffer8RLEByte::RLEWriteAlphaBlend(byte *&cur, int rep) {
 	assert(rep < 255);
-	*cur ++= rep;
+	*cur ++ = rep;
 }
 
 void RMGfxSourceBuffer8RLEByte::RLEWriteData(byte *&cur, int rep, byte *src) {
 	assert(rep < 256);
-	
-	*cur ++= rep;
+
+	*cur ++ = rep;
 	if (rep > 0) {
 		CopyMemory(cur, src, rep);
 		cur += rep;
@@ -922,15 +926,15 @@ void RMGfxSourceBuffer8RLEByte::RLEWriteData(byte *&cur, int rep, byte *src) {
 }
 
 void RMGfxSourceBuffer8RLEByte::RLEWriteEOL(byte *&cur) {
-	*cur ++= 0xFF;
+	*cur ++ = 0xFF;
 }
 
 void RMGfxSourceBuffer8RLEByte::RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
 	int i, n;
 	int r, g, b;
 
-  if (nStartSkip == 0)
-	  goto RLEByteDoTrasp;
+	if (nStartSkip == 0)
+		goto RLEByteDoTrasp;
 
 	while (1) {
 		assert(nStartSkip > 0);
@@ -939,7 +943,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLine(uint16 *dst, byte *src, int nS
 		n =  *src++;
 		if (n == 0xFF)
 			return;
-		
+
 		if (n >= nStartSkip) {
 			dst += n - nStartSkip;
 			nLength -= n - nStartSkip;
@@ -952,7 +956,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLine(uint16 *dst, byte *src, int nS
 
 
 		assert(nStartSkip > 0);
-		
+
 		// ALPHA
 		n = *src++;
 		if (n >= nStartSkip) {
@@ -979,11 +983,11 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLine(uint16 *dst, byte *src, int nS
 RLEByteDoTrasp:
 		// Via il trasp di merda
 		n = *src++;
-		
+
 		// EOL?
 		if (n == 0xFF)
-		  return;
-			
+			return;
+
 		dst += n;
 		nLength -= n;
 		if (nLength <= 0)
@@ -997,15 +1001,15 @@ RLEByteDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 		for (i = 0; i < n; i++) {
-			r=(*dst >> 10) & 0x1F;
-			g=(*dst >> 5) & 0x1F;
-			b=*dst & 0x1F;
+			r = (*dst >> 10) & 0x1F;
+			g = (*dst >> 5) & 0x1F;
+			b = *dst & 0x1F;
 
-			r=(r >> 2) + (alphaR >> 1);
-			g=(g >> 2) + (alphaG >> 1);
-			b=(b >> 2) + (alphaB >> 1);
+			r = (r >> 2) + (alphaR >> 1);
+			g = (g >> 2) + (alphaG >> 1);
+			b = (b >> 2) + (alphaB >> 1);
 
-			*dst ++= (r << 10) | (g << 5) | b;
+			*dst ++ = (r << 10) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1020,9 +1024,9 @@ RLEByteDoAlpha2:
 RLEByteDoCopy2:
 		if (n > nLength)
 			n = nLength;
-		
-		for (i = 0; i < n; i++)	
-			*dst ++= m_palFinal[*src++];
+
+		for (i = 0; i < n; i++)
+			*dst ++ = m_palFinal[*src++];
 
 		nLength -= n;
 		if (!nLength)
@@ -1035,8 +1039,8 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 	int i, n;
 	int r, g, b;
 
-  if (nStartSkip == 0)
-	  goto RLEByteFlippedDoTrasp;
+	if (nStartSkip == 0)
+		goto RLEByteFlippedDoTrasp;
 
 	while (1) {
 		assert(nStartSkip > 0);
@@ -1045,7 +1049,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 		n = *src++;
 		if (n == 0xFF)
 			return;
-		
+
 		if (n >= nStartSkip) {
 			dst -= n - nStartSkip;
 			nLength -= n - nStartSkip;
@@ -1058,7 +1062,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 
 
 		assert(nStartSkip > 0);
-		
+
 		// ALPHA
 		n = *src++;
 		if (n >= nStartSkip) {
@@ -1071,7 +1075,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 
 		// DATA
 		n = *src++;
-		if (n >= nStartSkip){
+		if (n >= nStartSkip) {
 			src += nStartSkip;
 			n -= nStartSkip;
 			goto RLEByteFlippedDoCopy2;
@@ -1085,11 +1089,11 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 RLEByteFlippedDoTrasp:
 		// Via il trasp di merda
 		n = *src++;
-		
+
 		// EOL?
 		if (n == 0xFF)
-		  return;
-			
+			return;
+
 		dst -= n;
 		nLength -= n;
 		if (nLength <= 0)
@@ -1103,15 +1107,15 @@ RLEByteFlippedDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 		for (i = 0; i < n; i++) {
-			r=(*dst >> 10) & 0x1F;
-			g=(*dst >> 5) & 0x1F;
-			b=*dst & 0x1F;
+			r = (*dst >> 10) & 0x1F;
+			g = (*dst >> 5) & 0x1F;
+			b = *dst & 0x1F;
 
-			r=(r >> 2) + (alphaR >> 1);
-			g=(g >> 2) + (alphaG >> 1);
-			b=(b >> 2) + (alphaB >> 1);
+			r = (r >> 2) + (alphaR >> 1);
+			g = (g >> 2) + (alphaG >> 1);
+			b = (b >> 2) + (alphaB >> 1);
 
-			*dst--=(r << 10) | (g << 5) | b;
+			*dst-- = (r << 10) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1126,9 +1130,9 @@ RLEByteFlippedDoAlpha2:
 RLEByteFlippedDoCopy2:
 		if (n > nLength)
 			n = nLength;
-		
-		for (i = 0; i < n; i++)	
-			*dst --= m_palFinal[*src++];
+
+		for (i = 0; i < n; i++)
+			*dst -- = m_palFinal[*src++];
 
 		nLength -= n;
 		if (!nLength)
@@ -1139,10 +1143,10 @@ RLEByteFlippedDoCopy2:
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8RLEWord
+*               Metodi di RMGfxSourceBuffer8RLEWord
 \****************************************************************************/
 
-RMGfxSourceBuffer8RLEWord::~RMGfxSourceBuffer8RLEWord(){
+RMGfxSourceBuffer8RLEWord::~RMGfxSourceBuffer8RLEWord() {
 
 }
 
@@ -1161,23 +1165,23 @@ void RMGfxSourceBuffer8RLEWord::RLEWriteData(byte *&cur, int rep, byte *src) {
 	cur += 2;
 
 	if (rep > 0) {
-		CopyMemory(cur, src,rep);
+		CopyMemory(cur, src, rep);
 		cur += rep;
-		src +=rep;
+		src += rep;
 	}
 }
 
 void RMGfxSourceBuffer8RLEWord::RLEWriteEOL(byte *&cur) {
-	*cur ++= 0xFF;
-	*cur ++= 0xFF;
+	*cur ++ = 0xFF;
+	*cur ++ = 0xFF;
 }
 
 void RMGfxSourceBuffer8RLEWord::RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
 	int i, n;
 	int r, g, b;
 
-  if (nStartSkip == 0)
-	  goto RLEWordDoTrasp;
+	if (nStartSkip == 0)
+		goto RLEWordDoTrasp;
 
 	while (1) {
 		assert(nStartSkip > 0);
@@ -1188,11 +1192,11 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLine(uint16 *dst, byte *src, int nS
 
 		if (n == 0xFFFF)
 			return;
-		
+
 		if (n >= nStartSkip) {
 			dst += n - nStartSkip;
 			nLength -= n - nStartSkip;
-			
+
 			if (nLength > 0)
 				goto RLEWordDoAlpha;
 			else
@@ -1215,7 +1219,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLine(uint16 *dst, byte *src, int nS
 		// DATA
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 		if (n >= nStartSkip) {
 			src += nStartSkip;
 			n -= nStartSkip;
@@ -1231,11 +1235,11 @@ RLEWordDoTrasp:
 		// Via il trasp di merda
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 		// EOL?
 		if (n == 0xFFFF)
-		  return;
-			
+			return;
+
 		dst += n;
 
 		nLength -= n;
@@ -1252,15 +1256,15 @@ RLEWordDoAlpha2:
 			n = nLength;
 
 		for (i = 0; i < n; i++) {
-			r=(*dst >> 10) & 0x1F;
-			g=(*dst >> 5) & 0x1F;
-			b=*dst & 0x1F;
+			r = (*dst >> 10) & 0x1F;
+			g = (*dst >> 5) & 0x1F;
+			b = *dst & 0x1F;
 
-			r=(r >> 2) + (alphaR >> 1);
-			g=(g >> 2) + (alphaG >> 1);
-			b=(b >> 2) + (alphaB >> 1);
+			r = (r >> 2) + (alphaR >> 1);
+			g = (g >> 2) + (alphaG >> 1);
+			b = (b >> 2) + (alphaB >> 1);
 
-			*dst++=(r<<10)|(g<<5)|b;
+			*dst++ = (r << 10) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1273,29 +1277,29 @@ RLEWordDoAlpha2:
 		// Copia la roba
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 RLEWordDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++)	
-			*dst ++= m_palFinal[*src++];
+		for (i = 0; i < n; i++)
+			*dst ++ = m_palFinal[*src++];
 
 		nLength -= n;
 		if (!nLength)
 			return;
-		
+
 		assert(nLength > 0);
 
 	}
 }
 
 void RMGfxSourceBuffer8RLEWord::RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) {
-	int i,n;
-	int r,g,b;
+	int i, n;
+	int r, g, b;
 
-  if (nStartSkip == 0)
-	  goto RLEWordFlippedDoTrasp;
+	if (nStartSkip == 0)
+		goto RLEWordFlippedDoTrasp;
 
 	while (1) {
 		assert(nStartSkip > 0);
@@ -1306,11 +1310,11 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 
 		if (n == 0xFFFF)
 			return;
-		
+
 		if (n >= nStartSkip) {
 			dst -= n - nStartSkip;
 			nLength -= n - nStartSkip;
-			
+
 			if (nLength > 0)
 				goto RLEWordFlippedDoAlpha;
 			else
@@ -1333,7 +1337,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 		// DATA
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 		if (n >= nStartSkip) {
 			src += nStartSkip;
 			n -= nStartSkip;
@@ -1349,11 +1353,11 @@ RLEWordFlippedDoTrasp:
 		// Via il trasp di merda
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 		// EOL?
 		if (n == 0xFFFF)
-		  return;
-			
+			return;
+
 		dst -= n;
 
 		nLength -= n;
@@ -1370,15 +1374,15 @@ RLEWordFlippedDoAlpha2:
 			n = nLength;
 
 		for (i = 0; i < n; i++) {
-			r=(*dst >> 10) & 0x1F;
-			g=(*dst >> 5) & 0x1F;
-			b=*dst & 0x1F;
+			r = (*dst >> 10) & 0x1F;
+			g = (*dst >> 5) & 0x1F;
+			b = *dst & 0x1F;
 
-			r=(r >> 2) + (alphaR >> 1);
-			g=(g >> 2) + (alphaG >> 1);
-			b=(b >> 2) + (alphaB >> 1);
+			r = (r >> 2) + (alphaR >> 1);
+			g = (g >> 2) + (alphaG >> 1);
+			b = (b >> 2) + (alphaB >> 1);
 
-			*dst--=(r << 10) | (g << 5) | b;
+			*dst-- = (r << 10) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1391,24 +1395,24 @@ RLEWordFlippedDoAlpha2:
 		// Copia la roba
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 RLEWordFlippedDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0;i<n;i++)	
-			*dst --= m_palFinal[*src++];
+		for (i = 0; i < n; i++)
+			*dst -- = m_palFinal[*src++];
 
 		nLength -= n;
 		if (!nLength)
 			return;
-		
+
 		assert(nLength > 0);
 	}
 }
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8RLEWord
+*               Metodi di RMGfxSourceBuffer8RLEWord
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEWordAB::~RMGfxSourceBuffer8RLEWordAB() {
@@ -1424,8 +1428,8 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 		return;
 	}
 
-  if (nStartSkip == 0)
-	  goto RLEWordDoTrasp;
+	if (nStartSkip == 0)
+		goto RLEWordDoTrasp;
 
 	while (1) {
 		assert(nStartSkip > 0);
@@ -1436,11 +1440,11 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 
 		if (n == 0xFFFF)
 			return;
-		
+
 		if (n >= nStartSkip) {
 			dst += n - nStartSkip;
 			nLength -= n - nStartSkip;
-			
+
 			if (nLength > 0)
 				goto RLEWordDoAlpha;
 			else
@@ -1463,7 +1467,7 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 		// DATA
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 		if (n >= nStartSkip) {
 			src += nStartSkip;
 			n -= nStartSkip;
@@ -1479,11 +1483,11 @@ RLEWordDoTrasp:
 		// Via il trasp di merda
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 		// EOL?
 		if (n == 0xFFFF)
-		  return;
-			
+			return;
+
 		dst += n;
 
 		nLength -= n;
@@ -1499,17 +1503,17 @@ RLEWordDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 
-		// @@@ NON DOVREBBE ESSERCI!!!!! 
+		// @@@ NON DOVREBBE ESSERCI!!!!!
 		for (i = 0; i < n; i++) {
-			r=(*dst >> 10) & 0x1F;
-			g=(*dst >> 5) & 0x1F;
-			b=*dst & 0x1F;
+			r = (*dst >> 10) & 0x1F;
+			g = (*dst >> 5) & 0x1F;
+			b = *dst & 0x1F;
 
-			r=(r >> 2) + (alphaR >> 1);
-			g=(g >> 2) + (alphaG >> 1);
-			b=(b >> 2) + (alphaB >> 1);
+			r = (r >> 2) + (alphaR >> 1);
+			g = (g >> 2) + (alphaG >> 1);
+			b = (b >> 2) + (alphaB >> 1);
 
-			*dst++=(r<<10)|(g<<5)|b;
+			*dst++ = (r << 10) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1522,7 +1526,7 @@ RLEWordDoAlpha2:
 		// Copia la roba
 		n = READ_LE_UINT16(src);
 		src += 2;
-		
+
 RLEWordDoCopy2:
 		if (n > nLength)
 			n = nLength;
@@ -1540,14 +1544,14 @@ RLEWordDoCopy2:
 			g = (g >> 1) + (g2 >> 1);
 			b = (b >> 1) + (b2 >> 1);
 
-			*dst ++= (r << 10) | (g << 5) | b;
+			*dst ++ = (r << 10) | (g << 5) | b;
 			src++;
 		}
 
 		nLength -= n;
 		if (!nLength)
 			return;
-		
+
 		assert(nLength > 0);
 
 	}
@@ -1555,16 +1559,16 @@ RLEWordDoCopy2:
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8AA
+*               Metodi di RMGfxSourceBuffer8AA
 \****************************************************************************/
 
-byte RMGfxSourceBuffer8AA::MegaAABuf[256*1024];
-byte RMGfxSourceBuffer8AA::MegaAABuf2[64*1024];
+byte RMGfxSourceBuffer8AA::MegaAABuf[256 * 1024];
+byte RMGfxSourceBuffer8AA::MegaAABuf2[64 * 1024];
 
 void RMGfxSourceBuffer8AA::PrepareImage(void) {
 	// Richiama il metodo padre
 	RMGfxSourceBuffer::PrepareImage();
-		
+
 	// Prepara il buffer di antialiasing
 	CalculateAA();
 }
@@ -1574,44 +1578,44 @@ void RMGfxSourceBuffer8AA::CalculateAA(void) {
 	// Io suxo tu suxi egli suxa noi suxiamo voi suxate essi suxano  ---> ANTI ALIASING SUX!
 	// ************************************************************
 
-	int x,y;
+	int x, y;
 	byte *src, *srcaa;
 
 	/* Prima passata: cerchiamo i bordi */
 	Common::fill(MegaAABuf, MegaAABuf + m_dimx * m_dimy, 0);
-	
+
 	src = m_buf;
-	srcaa=MegaAABuf;
-	for (y = 0;y < m_dimy; y++) {
+	srcaa = MegaAABuf;
+	for (y = 0; y < m_dimy; y++) {
 		for (x = 0; x < m_dimx; x++) {
 			if (*src == 0) {
 				if ((y > 0 && src[-m_dimx] != 0) ||
-						(y<m_dimy-1 && src[m_dimx] != 0) ||
-						(x > 0 && src[-1] != 0) ||
-						(x<m_dimx-1 && src[1] != 0))
+				        (y < m_dimy - 1 && src[m_dimx] != 0) ||
+				        (x > 0 && src[-1] != 0) ||
+				        (x < m_dimx - 1 && src[1] != 0))
 					*srcaa = 1;
 			}
 
 			src++;
 			srcaa++;
-		}			
+		}
 	}
 
 	src = m_buf;
-	srcaa=MegaAABuf;
+	srcaa = MegaAABuf;
 	for (y = 0; y < m_dimy; y++) {
 		for (x = 0; x < m_dimx; x++) {
 			if (*src != 0) {
-				if ((y > 0 && srcaa[-m_dimx]==1) ||
-						(y<m_dimy-1 && srcaa[m_dimx]==1) ||
-						(x > 0 && srcaa[-1]==1) ||
-						(x<m_dimx-1 && srcaa[1]==1))
+				if ((y > 0 && srcaa[-m_dimx] == 1) ||
+				        (y < m_dimy - 1 && srcaa[m_dimx] == 1) ||
+				        (x > 0 && srcaa[-1] == 1) ||
+				        (x < m_dimx - 1 && srcaa[1] == 1))
 					*srcaa = 2;
 			}
 
 			src++;
 			srcaa++;
-		}			
+		}
 	}
 
 	if (m_aabuf != NULL)
@@ -1631,14 +1635,14 @@ RMGfxSourceBuffer8AA::~RMGfxSourceBuffer8AA() {
 }
 
 void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int x,y;
+	int x, y;
 	byte *src;
 	uint16 *mybuf;
 	uint16 *buf;
 	int x1, y1, u, v, width, height;
 	int r, g, b;
 	int step;
-	
+
 	// Clippiamo lo sprite
 	x1 = prim->Dst().x1;
 	y1 = prim->Dst().y1;
@@ -1652,7 +1656,7 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 	// Annulliamo il clipping orizzontale
 
-    // Flippiamo il clipping
+	// Flippiamo il clipping
 	if (prim->IsFlipped()) {
 		u = m_dimx - (width + u);
 		x1 = (prim->Dst().x1 + m_dimx - 1) - u;
@@ -1660,7 +1664,7 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 //	width = m_dimx;
 //	x1=prim->Dst().x1;
 
-	
+
 	// Posizionamoci nel buffer di destinazione
 	buf = bigBuf;
 	buf += y1 * bigBuf.Dimx();
@@ -1673,12 +1677,12 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	// Looppone
 	buf += bigBuf.Dimx(); // skippa la prima linea
 	for (y = 1; y < height - 1; y++) {
-/*
-		if (prim->IsFlipped())
-			mybuf=&buf[x1+m_dimx-1];
-		else
-*/
-			mybuf=&buf[x1];
+		/*
+		        if (prim->IsFlipped())
+		            mybuf=&buf[x1+m_dimx-1];
+		        else
+		*/
+		mybuf = &buf[x1];
 
 		for (x = 0; x < width; x++, mybuf += step)
 			if (m_aabuf[(y + v) * m_dimx + x + u] == 2 && x != 0 && x != width - 1) {
@@ -1689,7 +1693,7 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				r += GETRED(mybuf[0]);
 				g += GETGREEN(mybuf[0]);
 				b += GETBLUE(mybuf[0]);
-				
+
 				r /= 5;
 				g /= 5;
 				b /= 5;
@@ -1698,28 +1702,28 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				if (g > 31) g = 31;
 				if (b > 31) b = 31;
 
-				mybuf[0]=(r<<10)|(g<<5)|b;
+				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
-		
+
 		// Skippa alla linea successiva
-		buf += bigBuf.Dimx();		
+		buf += bigBuf.Dimx();
 	}
 
 // Posizionamoci nel buffer di destinazione
 	buf = bigBuf;
-	buf += y1*bigBuf.Dimx();
+	buf += y1 * bigBuf.Dimx();
 
 	// Looppone
-	buf+=bigBuf.Dimx();		
+	buf += bigBuf.Dimx();
 	for (y = 1; y < height - 1; y++) {
-/*
-		if (prim->IsFlipped())
-			mybuf=&buf[x1+m_dimx-1];
-		else
-*/
-			mybuf=&buf[x1];
+		/*
+		        if (prim->IsFlipped())
+		            mybuf=&buf[x1+m_dimx-1];
+		        else
+		*/
+		mybuf = &buf[x1];
 
-		for (x = 0;x < width; x++, mybuf += step)
+		for (x = 0; x < width; x++, mybuf += step)
 			if (m_aabuf[(y + v) * m_dimx + x + u] == 1 && x != 0 && x != width - 1) {
 				r = GETRED(mybuf[1]) + GETRED(mybuf[-1]) + GETRED(mybuf[-bigBuf.Dimx()]) + GETRED(mybuf[bigBuf.Dimx()]);
 				g = GETGREEN(mybuf[1]) + GETGREEN(mybuf[-1]) + GETGREEN(mybuf[-bigBuf.Dimx()]) + GETGREEN(mybuf[bigBuf.Dimx()]);
@@ -1728,7 +1732,7 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				r += GETRED(mybuf[0]) * 2;
 				g += GETGREEN(mybuf[0]) * 2;
 				b += GETBLUE(mybuf[0]) * 2;
-				
+
 				r /= 6;
 				g /= 6;
 				b /= 6;
@@ -1737,11 +1741,11 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				if (g > 31) g = 31;
 				if (b > 31) b = 31;
 
-				mybuf[0]=(r<<10)|(g<<5)|b;
+				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
-		
+
 		// Skippa alla linea successiva
-		buf += bigBuf.Dimx();		
+		buf += bigBuf.Dimx();
 	}
 }
 
@@ -1761,7 +1765,7 @@ void RMGfxSourceBuffer8AA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer8RLEAA
+*               Metodi di RMGfxSourceBuffer8RLEAA
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEByteAA::~RMGfxSourceBuffer8RLEByteAA() {
@@ -1782,7 +1786,7 @@ void RMGfxSourceBuffer8RLEByteAA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::Draw, bigBuf, prim);
 	if (GLOBALS.bCfgAntiAlias)
-		DrawAA(bigBuf,prim);
+		DrawAA(bigBuf, prim);
 
 	CORO_END_CODE;
 }
@@ -1791,8 +1795,8 @@ int RMGfxSourceBuffer8RLEByteAA::Init(const byte *buf, int dimx, int dimy, bool 
 	return RMGfxSourceBuffer8RLE::Init(buf, dimx, dimy, bLoadPalette);
 }
 
-void RMGfxSourceBuffer8RLEByteAA::Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette) {
-	RMGfxSourceBuffer8RLE::Init(ds, dimx, dimy,bLoadPalette);
+void RMGfxSourceBuffer8RLEByteAA::Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+	RMGfxSourceBuffer8RLE::Init(ds, dimx, dimy, bLoadPalette);
 
 	if (!bNeedRLECompress) {
 		// Carica la maschera di antialiasing
@@ -1820,17 +1824,17 @@ void RMGfxSourceBuffer8RLEWordAA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::Draw, bigBuf, prim);
 	if (GLOBALS.bCfgAntiAlias)
-		DrawAA(bigBuf,prim);
+		DrawAA(bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
 int RMGfxSourceBuffer8RLEWordAA::Init(byte *buf, int dimx, int dimy, bool bLoadPalette) {
-	return RMGfxSourceBuffer8RLE::Init(buf, dimx, dimy,bLoadPalette);
+	return RMGfxSourceBuffer8RLE::Init(buf, dimx, dimy, bLoadPalette);
 }
 
-void RMGfxSourceBuffer8RLEWordAA::Init(RMDataStream& ds, int dimx, int dimy, bool bLoadPalette) {
-	RMGfxSourceBuffer8RLE::Init(ds, dimx, dimy,bLoadPalette);
+void RMGfxSourceBuffer8RLEWordAA::Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+	RMGfxSourceBuffer8RLE::Init(ds, dimx, dimy, bLoadPalette);
 
 	if (!bNeedRLECompress) {
 		// Carica la maschera di antialiasing
@@ -1841,11 +1845,11 @@ void RMGfxSourceBuffer8RLEWordAA::Init(RMDataStream& ds, int dimx, int dimy, boo
 
 
 /****************************************************************************\
-*				Metodi di RMGfxSourceBuffer16
+*               Metodi di RMGfxSourceBuffer16
 \****************************************************************************/
 
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(bool bTrasp0) {
-	m_bTrasp0=bTrasp0;
+	m_bTrasp0 = bTrasp0;
 }
 
 RMGfxSourceBuffer16::~RMGfxSourceBuffer16() {
@@ -1854,10 +1858,10 @@ RMGfxSourceBuffer16::~RMGfxSourceBuffer16() {
 void RMGfxSourceBuffer16::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	int x, y;
 	uint16 *buf = bigBuf;
-	uint16 *raw = (uint16*)m_buf;
+	uint16 *raw = (uint16 *)m_buf;
 	int dimx, dimy;
-	int u,v;
-	int x1,y1;
+	int u, v;
+	int x1, y1;
 
 	dimx = m_dimx;
 	dimy = m_dimy;
@@ -1881,16 +1885,16 @@ void RMGfxSourceBuffer16::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 	if (!Clip2D(x1, y1, u, v, dimx, dimy, true, &bigBuf))
 		return;
 
-	raw += v * m_dimx+u;
+	raw += v * m_dimx + u;
 	buf += y1 * bigBuf.Dimx() + x1;
 
 	if (m_bTrasp0) {
 		for (y = 0; y < dimy; y++) {
 			for (x = 0; x < dimx;) {
-				while (x<dimx && raw[x] == 0)
+				while (x < dimx && raw[x] == 0)
 					x++;
 
-				while (x<dimx && raw[x] != 0) {
+				while (x < dimx && raw[x] != 0) {
 					buf[x] = raw[x];
 					x++;
 				}
@@ -1919,7 +1923,7 @@ void RMGfxSourceBuffer16::PrepareImage(void) {
 
 
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
-		: RMGfxBuffer(dimx,dimy,16,bUseDDraw) {
+	: RMGfxBuffer(dimx, dimy, 16, bUseDDraw) {
 	SetPriority(0);
 }
 
@@ -1938,11 +1942,11 @@ int RMGfxSourceBuffer16::Bpp() {
 }
 
 void RMGfxSourceBuffer16::Create(int dimx, int dimy, bool bUseDDraw) {
-	RMGfxBuffer::Create(dimx,dimy,16,bUseDDraw);
+	RMGfxBuffer::Create(dimx, dimy, 16, bUseDDraw);
 }
 
 /****************************************************************************\
-*				Metodi di RMGfxBox
+*               Metodi di RMGfxBox
 \****************************************************************************/
 
 void RMGfxBox::RemoveThis(CORO_PARAM, bool &result) {
@@ -1960,15 +1964,15 @@ void RMGfxBox::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 	int i, j;
 	uint16 *buf = bigBuf;
 	RMRect rcDst;
-	
+
 	// Prende il rettangolo di destinazione
 	rcDst = prim->Dst();
-	buf += rcDst.y1*bigBuf.Dimx() + rcDst.x1;
+	buf += rcDst.y1 * bigBuf.Dimx() + rcDst.x1;
 
 	// Fa il suo bravo loop di put
 	for (j = 0; j < rcDst.Height(); j++) {
 		for (i = 0; i < rcDst.Width(); i++)
-			*buf ++= wFillColor;
+			*buf ++ = wFillColor;
 
 		buf += bigBuf.Dimx() - rcDst.Width();
 	}

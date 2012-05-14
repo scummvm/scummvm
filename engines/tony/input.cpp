@@ -32,7 +32,7 @@ namespace Tony {
 
 RMInput::RMInput() {
 	// Setup mouse fields
-	_clampMouse = false;	
+	_clampMouse = false;
 	_mousePos.Set(0, 0);
 	_leftButton = _rightButton = false;;
 
@@ -89,7 +89,7 @@ void RMInput::Poll(void) {
 		default:
 			break;
 		}
-	}			
+	}
 }
 
 void RMInput::Init() {
@@ -107,12 +107,12 @@ bool RMInput::MouseRight() {
 }
 
 /**
- * Return true if a key has been pressed 
+ * Return true if a key has been pressed
  */
-bool RMInput::GetAsyncKeyState(Common::KeyCode kc) { 
+bool RMInput::GetAsyncKeyState(Common::KeyCode kc) {
 	// The act of testing for a particular key automatically clears the state, to prevent
 	// the same key being registered in multiple different frames
-	bool result = _keyDown[(int)kc]; 
+	bool result = _keyDown[(int)kc];
 	_keyDown[(int)kc] = false;
 	return result;
 }

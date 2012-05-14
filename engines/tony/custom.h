@@ -38,32 +38,30 @@ namespace Tony {
 using namespace MPAL;
 
 /*
- *	Defines
+ *  Defines
  */
 
 typedef uint32 HWND;
 
-#define INIT_CUSTOM_FUNCTION					MapCustomFunctions
-#define INIT_CUSTOM_FUNCTION_STRING		"MapCustomFunctions"
+#define INIT_CUSTOM_FUNCTION            MapCustomFunctions
+#define INIT_CUSTOM_FUNCTION_STRING     "MapCustomFunctions"
 
-#define DECLARE_CUSTOM_FUNCTION(x)		void x
+#define DECLARE_CUSTOM_FUNCTION(x)      void x
 
-#define BEGIN_CUSTOM_FUNCTION_MAP()																					\
-	static void AssignError(int num)	{ \
-		error("Custom function %u has been already assigned!", num);		\
-	}																																					\
+#define BEGIN_CUSTOM_FUNCTION_MAP()                                            \
+	static void AssignError(int num) {                                           \
+		error("Custom function %u has been already assigned!", num);               \
+	}                                                                            \
 	void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap, Common::String *lpStrMap) \
-	{																																				
+	{
 
-
-#define END_CUSTOM_FUNCTION_MAP()		\
+#define END_CUSTOM_FUNCTION_MAP()                                              \
 	}
 
-
-#define ASSIGN(num, func)				\
-	if (lpMap[num] != NULL)				\
-		AssignError(num);				\
-	lpMap[num] = func;					\
+#define ASSIGN(num, func)                                                      \
+	if (lpMap[num] != NULL)                                                      \
+		AssignError(num);                                                          \
+	lpMap[num] = func;                                                           \
 	lpStrMap[num] = #func;
 
 class RMTony;

@@ -44,8 +44,8 @@ Common::Language TonyEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-bool TonyEngine::getIsDemo() const { 
-	return _gameDescription->desc.flags & ADGF_DEMO; 
+bool TonyEngine::getIsDemo() const {
+	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
 }
@@ -79,14 +79,14 @@ public:
 
 bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
+	    (f == kSupportsListSaves) ||
 //		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+	    (f == kSupportsDeleteSave);
 }
 
 bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+	    (f == kSupportsRTL);
 }
 
 bool TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -104,7 +104,7 @@ SaveStateList TonyMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = "tony.0??";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -126,7 +126,9 @@ SaveStateList TonyMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int TonyMetaEngine::getMaximumSaveSlot() const { return 99; }
+int TonyMetaEngine::getMaximumSaveSlot() const {
+	return 99;
+}
 
 void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Tony::TonyEngine::GetSaveStateFileName(slot);
@@ -135,7 +137,7 @@ void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TONY)
-	REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
+REGISTER_PLUGIN_STATIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
 #endif

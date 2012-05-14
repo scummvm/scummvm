@@ -44,7 +44,7 @@ namespace Tony {
 
 class RMGfxEngine {
 private:
-    RMGfxTargetBuffer m_bigBuf;
+	RMGfxTargetBuffer m_bigBuf;
 	RMInput m_input;
 	RMPointer m_point;
 	RMLocation m_loc;
@@ -62,7 +62,7 @@ private:
 
 	int m_nCurLoc;
 	RMTonyAction m_curAction;
-	int	m_curActionObj;
+	int m_curActionObj;
 	OSystem::MutexRef csMainLoop;
 
 	int m_nWipeType;
@@ -80,8 +80,8 @@ public:
 	bool m_bGUIInterface;
 	bool m_bGUIInventory;
 public:
-    RMGfxEngine();
-    virtual ~RMGfxEngine();
+	RMGfxEngine();
+	virtual ~RMGfxEngine();
 
 	// Draw the next frame
 	void DoFrame(CORO_PARAM, bool bDrawLocation);
@@ -109,14 +109,20 @@ public:
 	void EnableMouse(void);
 	void DisableMouse(void);
 
-	operator byte *() { return (byte *)m_bigBuf; }
-	RMInput &GetInput() { return m_input; }
+	operator byte *() {
+		return (byte *)m_bigBuf;
+	}
+	RMInput &GetInput() {
+		return m_input;
+	}
 
 	// Link to the custom function list
 	void InitCustomDll(void);
 
 	// Link to graphic task
-	void LinkGraphicTask(RMGfxTask *task) { m_bigBuf.AddPrim(new RMGfxPrimitive(task)); };
+	void LinkGraphicTask(RMGfxTask *task) {
+		m_bigBuf.AddPrim(new RMGfxPrimitive(task));
+	};
 
 	// Manage a location
 	uint32 LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
@@ -131,7 +137,7 @@ public:
 	void LoadState(CORO_PARAM, const char *fn);
 
 	// Selects a location
-	void SelectLocation(const RMPoint &ptTonyStart = RMPoint(-1, -1), const RMPoint &start = RMPoint(-1,-1));
+	void SelectLocation(const RMPoint &ptTonyStart = RMPoint(-1, -1), const RMPoint &start = RMPoint(-1, -1));
 
 	// Pauses sound
 	void PauseSound(bool bPause);
@@ -141,7 +147,9 @@ public:
 	void CloseWipe(void);
 	void WaitWipeEnd(CORO_PARAM);
 
-	void SetPalesati(bool bpal) { m_inter.SetPalesati(bpal); }
+	void SetPalesati(bool bpal) {
+		m_inter.SetPalesati(bpal);
+	}
 };
 
 } // End of namespace Tony

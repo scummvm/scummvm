@@ -44,11 +44,11 @@ namespace Tony {
 using namespace MPAL;
 
 /****************************************/
-/*  Funzioni globali per la DLL Custom	*/
+/*  Funzioni globali per la DLL Custom  */
 /****************************************/
 
 uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
-	return _vm->GetEngine()->LoadLocation(nLoc, pt,start);
+	return _vm->GetEngine()->LoadLocation(nLoc, pt, start);
 }
 
 void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
@@ -72,11 +72,11 @@ void MainWaitFrame(CORO_PARAM) {
 }
 
 void MainShowMouse(void) {
-  _vm->GetEngine()->EnableMouse();
+	_vm->GetEngine()->EnableMouse();
 }
 
 void MainHideMouse(void) {
-  _vm->GetEngine()->DisableMouse();
+	_vm->GetEngine()->DisableMouse();
 }
 
 void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
@@ -161,7 +161,7 @@ bool RMOptionButton::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRig
 			}
 		}
 	} else {
-		if (bLeftClick && m_rect.PtInRect(mousePos)) {	
+		if (bLeftClick && m_rect.PtInRect(mousePos)) {
 			m_bActive = !m_bActive;
 			return true;
 		}
@@ -176,7 +176,7 @@ void RMOptionButton::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	CORO_BEGIN_CODE(_ctx);	
+	CORO_BEGIN_CODE(_ctx);
 
 	if (!m_bActive)
 		return;
@@ -274,9 +274,9 @@ bool RMOptionSlide::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRigh
 
 void RMOptionSlide::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
-		int i;
-		int val;
-		RMPoint pos;
+	int i;
+	int val;
+	RMPoint pos;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -384,22 +384,22 @@ RMOptionScreen::~RMOptionScreen(void) {
 
 void RMOptionScreen::RefreshAll(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		RMGfxSourceBuffer16 *thumb;
-		RMText* title;
-		RMText *num[6];
-		int i;
+	RMGfxSourceBuffer16 *thumb;
+	RMText *title;
+	RMText *num[6];
+	int i;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 	ClearOT();
 
 	AddPrim(new RMGfxPrimitive(m_menu));
-	
+
 	if (m_bNoLoadSave)
-		AddPrim(new RMGfxPrimitive(m_HideLoadSave,RMPoint(0, 401)));
+		AddPrim(new RMGfxPrimitive(m_HideLoadSave, RMPoint(0, 401)));
 
 	if (m_bQuitConfirm) {
-		AddPrim(new RMGfxPrimitive(m_QuitConfirm,RMPoint(270, 200)));
+		AddPrim(new RMGfxPrimitive(m_QuitConfirm, RMPoint(270, 200)));
 		m_ButtonQuitYes->AddToList(*this);
 		m_ButtonQuitNo->AddToList(*this);
 	}
@@ -450,47 +450,65 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 
 		AddPrim(new RMGfxPrimitive(_ctx->title, RMPoint(320, 10)));
 
-		if (m_curThumbDiff[0] == 0) AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 57)));
-		else if (m_curThumbDiff[0] == 1) AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 57)));
-		if (m_curThumbDiff[1] == 0) AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 57)));
-		else if (m_curThumbDiff[1] == 1) AddPrim(new RMGfxPrimitive(m_SaveEasy,RMPoint(240, 57)));
-		if (m_curThumbDiff[2] == 0) AddPrim(new RMGfxPrimitive(m_SaveHard,RMPoint(432, 57)));
-		else if (m_curThumbDiff[2] == 1) AddPrim(new RMGfxPrimitive(m_SaveEasy,RMPoint(432, 57)));
-		if (m_curThumbDiff[3] == 0) AddPrim(new RMGfxPrimitive(m_SaveHard,RMPoint(48, 239)));
-		else if (m_curThumbDiff[3] == 1) AddPrim(new RMGfxPrimitive(m_SaveEasy,RMPoint(48, 239)));
-		if (m_curThumbDiff[4] == 0) AddPrim(new RMGfxPrimitive(m_SaveHard,RMPoint(240, 239)));
-		else if (m_curThumbDiff[4] == 1) AddPrim(new RMGfxPrimitive(m_SaveEasy,RMPoint(240, 239)));
-		if (m_curThumbDiff[5] == 0) AddPrim(new RMGfxPrimitive(m_SaveHard,RMPoint(432, 239)));
-		else if (m_curThumbDiff[5] == 1) AddPrim(new RMGfxPrimitive(m_SaveEasy,RMPoint(432, 239)));
+		if (m_curThumbDiff[0] == 0)
+			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 57)));
+		else if (m_curThumbDiff[0] == 1)
+			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 57)));
+		if (m_curThumbDiff[1] == 0)
+			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 57)));
+		else if (m_curThumbDiff[1] == 1)
+			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 57)));
+		if (m_curThumbDiff[2] == 0)
+			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 57)));
+		else if (m_curThumbDiff[2] == 1)
+			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 57)));
+		if (m_curThumbDiff[3] == 0)
+			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 239)));
+		else if (m_curThumbDiff[3] == 1)
+			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 239)));
+		if (m_curThumbDiff[4] == 0)
+			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 239)));
+		else if (m_curThumbDiff[4] == 1)
+			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 239)));
+		if (m_curThumbDiff[5] == 0)
+			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 239)));
+		else if (m_curThumbDiff[5] == 1)
+			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 239)));
 
-		if (m_curThumb[0] && !(m_bEditSaveName && m_nEditPos == 0)) AddPrim(new RMGfxPrimitive(m_curThumb[0], RMPoint(48, 57)));
-		if (m_curThumb[1] && !(m_bEditSaveName && m_nEditPos == 1)) AddPrim(new RMGfxPrimitive(m_curThumb[1], RMPoint(240, 57)));
-		if (m_curThumb[2] && !(m_bEditSaveName && m_nEditPos == 2)) AddPrim(new RMGfxPrimitive(m_curThumb[2], RMPoint(432, 57)));
-		if (m_curThumb[3] && !(m_bEditSaveName && m_nEditPos == 3)) AddPrim(new RMGfxPrimitive(m_curThumb[3], RMPoint(48, 239)));
-		if (m_curThumb[4] && !(m_bEditSaveName && m_nEditPos == 4)) AddPrim(new RMGfxPrimitive(m_curThumb[4], RMPoint(240, 239)));
-		if (m_curThumb[5] && !(m_bEditSaveName && m_nEditPos == 5)) AddPrim(new RMGfxPrimitive(m_curThumb[5], RMPoint(432, 239)));
+		if (m_curThumb[0] && !(m_bEditSaveName && m_nEditPos == 0))
+			AddPrim(new RMGfxPrimitive(m_curThumb[0], RMPoint(48, 57)));
+		if (m_curThumb[1] && !(m_bEditSaveName && m_nEditPos == 1))
+			AddPrim(new RMGfxPrimitive(m_curThumb[1], RMPoint(240, 57)));
+		if (m_curThumb[2] && !(m_bEditSaveName && m_nEditPos == 2))
+			AddPrim(new RMGfxPrimitive(m_curThumb[2], RMPoint(432, 57)));
+		if (m_curThumb[3] && !(m_bEditSaveName && m_nEditPos == 3))
+			AddPrim(new RMGfxPrimitive(m_curThumb[3], RMPoint(48, 239)));
+		if (m_curThumb[4] && !(m_bEditSaveName && m_nEditPos == 4))
+			AddPrim(new RMGfxPrimitive(m_curThumb[4], RMPoint(240, 239)));
+		if (m_curThumb[5] && !(m_bEditSaveName && m_nEditPos == 5))
+			AddPrim(new RMGfxPrimitive(m_curThumb[5], RMPoint(432, 239)));
 
 		if (m_bEditSaveName) {
 			_ctx->thumb = new RMGfxSourceBuffer16;
 			_ctx->thumb->Init((byte *)_vm->GetThumbnail(), 640 / 4, 480 / 4);
 
 			if (m_nEditPos == 0)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(48, 57))); 
+				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 57)));
 			else if (m_nEditPos == 1)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(240, 57)));
+				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 57)));
 			else if (m_nEditPos == 2)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(432, 57)));
+				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 57)));
 			else if (m_nEditPos == 3)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(48, 239)));
+				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 239)));
 			else if (m_nEditPos == 4)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(240, 239)));
+				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 239)));
 			else if (m_nEditPos == 5)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb,RMPoint(432, 239)));
+				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 239)));
 		}
 
 		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++) {
 			RMString s;
-			
+
 			if (m_bEditSaveName && m_nEditPos == _ctx->i)
 				s.Format("%02d)%s*", m_statePos + _ctx->i, m_EditName);
 			else {
@@ -499,23 +517,23 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 				else
 					s.Format("%02d)%s", m_statePos + _ctx->i, (const char *)m_curThumbName[_ctx->i]);
 			}
-			
+
 			_ctx->num[_ctx->i] = new RMText;
 			_ctx->num[_ctx->i]->SetAlignType(RMText::HLEFT, RMText::VTOP);
 			_ctx->num[_ctx->i]->WriteText(s, 2);
 		}
-		
+
 		AddPrim(new RMGfxPrimitive(_ctx->num[0], RMPoint(55 - 3, 180 + 14)));
 		AddPrim(new RMGfxPrimitive(_ctx->num[1], RMPoint(247 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[2],RMPoint(439 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[3],RMPoint(55 - 3, 362 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[4],RMPoint(247 - 3, 362 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[5],RMPoint(439 - 3, 362 + 14)));
-		
+		AddPrim(new RMGfxPrimitive(_ctx->num[2], RMPoint(439 - 3, 180 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[3], RMPoint(55 - 3, 362 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[4], RMPoint(247 - 3, 362 + 14)));
+		AddPrim(new RMGfxPrimitive(_ctx->num[5], RMPoint(439 - 3, 362 + 14)));
+
 		m_ButtonSave_ArrowLeft->AddToList(*this);
 		m_ButtonSave_ArrowRight->AddToList(*this);
 	}
-		
+
 	CORO_INVOKE_0(DrawOT);
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
@@ -535,7 +553,7 @@ void RMOptionScreen::RefreshThumbnails(void) {
 	for (i = 0; i < 6; i++) {
 		if (m_curThumb[i])
 			delete m_curThumb[i];
-		
+
 		m_curThumb[i] = new RMGfxSourceBuffer16;
 		m_curThumb[i]->Create(640 / 4, 480 / 4);
 		if (!LoadThumbnailFromSaveState(m_statePos + i, *m_curThumb[i], m_curThumbName[i], m_curThumbDiff[i])) {
@@ -550,11 +568,11 @@ void RMOptionScreen::RefreshThumbnails(void) {
 
 void RMOptionScreen::InitState(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		RMResRaw *raw;
+	RMResRaw *raw;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-	
+
 	if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND)
 		_ctx->raw = new RMResRaw(20000 + m_nState);
 	else if (m_nState == MENULOAD || m_nState == MENUSAVE) {
@@ -601,14 +619,14 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 
 		if (m_bAlterGfx) {
 			assert(m_ButtonSave_ArrowLeft == NULL);
-			m_ButtonSave_ArrowLeft = new RMOptionButton(20026,RMPoint(3,196));
+			m_ButtonSave_ArrowLeft = new RMOptionButton(20026, RMPoint(3, 196));
 			assert(m_ButtonSave_ArrowRight == NULL);
 			m_ButtonSave_ArrowRight = new RMOptionButton(20027, RMPoint(601, 197));
 		} else {
 			assert(m_ButtonSave_ArrowLeft == NULL);
 			m_ButtonSave_ArrowLeft = new RMOptionButton(20013, RMPoint(0, 197));
 			assert(m_ButtonSave_ArrowRight == NULL);
-			m_ButtonSave_ArrowRight = new RMOptionButton(20014,RMPoint(601, 197));
+			m_ButtonSave_ArrowRight = new RMOptionButton(20014, RMPoint(601, 197));
 		}
 	} else if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
 		assert(m_ButtonExit == NULL);
@@ -638,7 +656,7 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 		m_ButtonQuitYes = new RMOptionButton(20022, RMPoint(281, 265));
 		m_ButtonQuitYes->SetPriority(30);
 		assert(m_ButtonQuitNo == NULL);
-		m_ButtonQuitNo = new RMOptionButton(20023,RMPoint(337, 264));
+		m_ButtonQuitNo = new RMOptionButton(20023, RMPoint(337, 264));
 		m_ButtonQuitNo->SetPriority(30);
 
 		if (m_bNoLoadSave) {
@@ -653,16 +671,16 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 		// Menu GAME
 		if (m_nState == MENUGAME) {
 			assert(m_ButtonGame_Lock == NULL);
-			m_ButtonGame_Lock = new RMOptionButton(20008,RMPoint(176, 262), true);
+			m_ButtonGame_Lock = new RMOptionButton(20008, RMPoint(176, 262), true);
 			m_ButtonGame_Lock->SetActiveState(GLOBALS.bCfgInvLocked);
 			assert(m_ButtonGame_TimerizedText == NULL);
-			m_ButtonGame_TimerizedText = new RMOptionButton(20009,RMPoint(463, 273), true);
+			m_ButtonGame_TimerizedText = new RMOptionButton(20009, RMPoint(463, 273), true);
 			m_ButtonGame_TimerizedText->SetActiveState(!GLOBALS.bCfgTimerizedText);
 			assert(m_ButtonGame_Scrolling == NULL);
 			m_ButtonGame_Scrolling = new RMOptionButton(20010, RMPoint(315, 263), true);
 			m_ButtonGame_Scrolling->SetActiveState(GLOBALS.bCfgInvNoScroll);
 			assert(m_ButtonGame_InterUp == NULL);
-			m_ButtonGame_InterUp = new RMOptionButton(20011,RMPoint(36, 258), true);
+			m_ButtonGame_InterUp = new RMOptionButton(20011, RMPoint(36, 258), true);
 			m_ButtonGame_InterUp->SetActiveState(GLOBALS.bCfgInvUp);
 
 			assert(m_SlideTextSpeed == NULL);
@@ -673,19 +691,19 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 		// Menu Graphics
 		else if (m_nState == MENUGFX) {
 			assert(m_ButtonGfx_Anni30 == NULL);
-			m_ButtonGfx_Anni30 = new RMOptionButton(20015,RMPoint(247, 178), true);
+			m_ButtonGfx_Anni30 = new RMOptionButton(20015, RMPoint(247, 178), true);
 			m_ButtonGfx_Anni30->SetActiveState(GLOBALS.bCfgAnni30);
 			assert(m_ButtonGfx_AntiAlias == NULL);
 			m_ButtonGfx_AntiAlias = new RMOptionButton(20016, RMPoint(430, 83), true);
 			m_ButtonGfx_AntiAlias->SetActiveState(!GLOBALS.bCfgAntiAlias);
 			assert(m_ButtonGfx_Sottotitoli == NULL);
-			m_ButtonGfx_Sottotitoli = new RMOptionButton(20017,RMPoint(98, 82), true);
+			m_ButtonGfx_Sottotitoli = new RMOptionButton(20017, RMPoint(98, 82), true);
 			m_ButtonGfx_Sottotitoli->SetActiveState(!GLOBALS.bCfgSottotitoli);
 			assert(m_ButtonGfx_Tips == NULL);
-			m_ButtonGfx_Tips = new RMOptionButton(20018,RMPoint(431, 246), true);
+			m_ButtonGfx_Tips = new RMOptionButton(20018, RMPoint(431, 246), true);
 			m_ButtonGfx_Tips->SetActiveState(GLOBALS.bCfgInterTips);
 			assert(m_ButtonGfx_Trans == NULL);
-			m_ButtonGfx_Trans = new RMOptionButton(20019,RMPoint(126, 271), true);
+			m_ButtonGfx_Trans = new RMOptionButton(20019, RMPoint(126, 271), true);
 			m_ButtonGfx_Trans->SetActiveState(!GLOBALS.bCfgTransparence);
 
 		} else if (m_nState == MENUSOUND) {
@@ -700,10 +718,10 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 			m_ButtonSound_DubbingOn = new RMOptionButton(20033, RMPoint(339, 75), true);
 			m_ButtonSound_DubbingOn->SetActiveState(GLOBALS.bCfgDubbing);
 			assert(m_ButtonSound_MusicOn == NULL);
-			m_ButtonSound_MusicOn = new RMOptionButton(20034,RMPoint(338, 179), true);
+			m_ButtonSound_MusicOn = new RMOptionButton(20034, RMPoint(338, 179), true);
 			m_ButtonSound_MusicOn->SetActiveState(GLOBALS.bCfgMusic);
 			assert(m_ButtonSound_SFXOn == NULL);
-			m_ButtonSound_SFXOn = new RMOptionButton(20035,RMPoint(338, 283), true);
+			m_ButtonSound_SFXOn = new RMOptionButton(20035, RMPoint(338, 283), true);
 			m_ButtonSound_SFXOn->SetActiveState(GLOBALS.bCfgSFX);
 		}
 	}
@@ -728,7 +746,7 @@ void RMOptionScreen::CloseState(void) {
 				delete m_curThumb[i];
 				m_curThumb[i] = NULL;
 			}
-			
+
 			delete m_ButtonSave_States[i];
 			m_ButtonSave_States[i] = NULL;
 		}
@@ -817,11 +835,11 @@ void RMOptionScreen::CloseState(void) {
 			GLOBALS.nCfgDubbingVolume = m_SliderSound_Dubbing->GetValue();
 			delete m_SliderSound_Dubbing;
 			m_SliderSound_Dubbing = NULL;
-			
+
 			GLOBALS.nCfgMusicVolume = m_SliderSound_Music->GetValue();
 			delete m_SliderSound_Music;
 			m_SliderSound_Music = NULL;
-			
+
 			GLOBALS.nCfgSFXVolume = m_SliderSound_SFX->GetValue();
 			delete m_SliderSound_SFX;
 			m_SliderSound_SFX = NULL;
@@ -870,7 +888,7 @@ void RMOptionScreen::Init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
 		m_nState = MENUGAME;
 
 	CORO_INVOKE_0(InitState);
-   
+
 	result = true;
 
 	CORO_END_CODE;
@@ -899,7 +917,7 @@ void RMOptionScreen::InitLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, boo
 
 	m_nState = MENULOAD;
 	CORO_INVOKE_0(InitState);
-   
+
 	result = true;
 
 	CORO_END_CODE;
@@ -910,7 +928,7 @@ void RMOptionScreen::InitSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, boo
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
- 
+
 	if (m_FadeStep != 0) {
 		result = false;
 		return;
@@ -928,7 +946,7 @@ void RMOptionScreen::InitSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, boo
 
 	m_nState = MENUSAVE;
 	CORO_INVOKE_0(InitState);
-   
+
 	result = true;
 
 	CORO_END_CODE;
@@ -956,7 +974,7 @@ void RMOptionScreen::InitNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool 
 
 	m_nState = MENUGAME;
 	CORO_INVOKE_0(InitState);
-   
+
 	result = true;
 
 	CORO_END_CODE;
@@ -995,12 +1013,12 @@ void RMOptionScreen::ChangeState(CORO_PARAM, STATE newState) {
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {	
+void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 	CORO_BEGIN_CONTEXT;
-		bool bLeftClick, bRightClick;
-		RMPoint mousePos;
-		bool bRefresh;
-		int i;
+	bool bLeftClick, bRightClick;
+	RMPoint mousePos;
+	bool bRefresh;
+	int i;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1063,11 +1081,11 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 			_ctx->bRefresh |= m_ButtonSound_DubbingOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			_ctx->bRefresh |= m_ButtonSound_MusicOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			_ctx->bRefresh |= m_ButtonSound_SFXOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			
+
 		} else if (m_nState == MENULOAD || m_nState == MENUSAVE) {
-			for (_ctx->i=0;_ctx->i<6;_ctx->i++)
+			for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
 				m_ButtonSave_States[_ctx->i]->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-	
+
 			if (m_statePos > 0)
 				_ctx->bRefresh |= m_ButtonSave_ArrowLeft->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			if (m_statePos < 90)
@@ -1075,10 +1093,10 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 
 		}
 	}
-		
-#define KEYPRESS(c)		(_vm->GetEngine()->GetInput().GetAsyncKeyState(c))
+
+#define KEYPRESS(c)     (_vm->GetEngine()->GetInput().GetAsyncKeyState(c))
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
-	m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
+		m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
 
 	/**************** STATO BOTTONI **************/
 	if (m_bEditSaveName) {
@@ -1089,9 +1107,9 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 			}
 		}
 
-		for (_ctx->i=0;_ctx->i<26 && strlen(m_EditName)<12;_ctx->i++)
+		for (_ctx->i = 0; _ctx->i < 26 && strlen(m_EditName) < 12; _ctx->i++)
 			if (KEYPRESS(Common::KEYCODE_LSHIFT) ||
-					KEYPRESS(Common::KEYCODE_RSHIFT)) {
+			        KEYPRESS(Common::KEYCODE_RSHIFT)) {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'A');
 			} else {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'a');
@@ -1099,23 +1117,33 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 
 		for (_ctx->i = 0; _ctx->i < 10 && strlen(m_EditName) < 12; _ctx->i++)
 			PROCESS_CHAR((Common::KeyCode)((int)'0' + _ctx->i), _ctx->i + '0');
-		
+
 		if (strlen(m_EditName) < 12)
-			PROCESS_CHAR(Common::KEYCODE_SPACE,' ');
-		
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP0, '0');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP1, '1');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP2, '2');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP3, '3');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP4, '4');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP5, '5');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP6, '6');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP7, '7');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP8, '8');
-		if (strlen(m_EditName)<12) PROCESS_CHAR(Common::KEYCODE_KP9, '9');
+			PROCESS_CHAR(Common::KEYCODE_SPACE, ' ');
+
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP0, '0');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP1, '1');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP2, '2');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP3, '3');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP4, '4');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP5, '5');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP6, '6');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP7, '7');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP8, '8');
+		if (strlen(m_EditName) < 12)
+			PROCESS_CHAR(Common::KEYCODE_KP9, '9');
 
 		// ANNULLA
-		if (KEYPRESS(Common::KEYCODE_ESCAPE)) {	
+		if (KEYPRESS(Common::KEYCODE_ESCAPE)) {
 			m_bEditSaveName = false;
 			_ctx->bRefresh = true;
 		}
@@ -1155,11 +1183,11 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 				}
 			} else {
 				for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
-					if (m_ButtonSave_States[_ctx->i]->IsActive()) {		
+					if (m_ButtonSave_States[_ctx->i]->IsActive()) {
 						// C'è da effettuare il salvataggio o il caricamento!!!!
 						if (m_nState == MENULOAD && m_curThumb[_ctx->i] != NULL) {
 							// Caricamento
-							CORO_INVOKE_1(_vm->LoadState, m_statePos+_ctx->i);
+							CORO_INVOKE_1(_vm->LoadState, m_statePos + _ctx->i);
 							Close();
 						} else if (m_nState == MENUSAVE && (m_statePos != 0 || _ctx->i != 0)) {
 							// Attiva la modalità di editing
@@ -1247,7 +1275,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 
 void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
-		int curTime;
+	int curTime;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1255,17 +1283,17 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 	_ctx->curTime = _vm->GetTime();
 
 #define FADE_SPEED 20
-#define SYNC	(_ctx->curTime-m_FadeTime) / 25
-	
+#define SYNC    (_ctx->curTime-m_FadeTime) / 25
+
 	if (m_bExit)
 		return;
 
 	if (m_FadeStep == 1) {
-	// Discesa veloce
+		// Discesa veloce
 		if (m_FadeTime == -1)
 			m_FadeY += FADE_SPEED;
 		else
-			m_FadeY += FADE_SPEED*SYNC;
+			m_FadeY += FADE_SPEED * SYNC;
 		if (m_FadeY > 480) {
 			m_FadeY = 480;
 			m_FadeStep++;
@@ -1334,7 +1362,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		m_bExit = true;
 		m_FadeStep = 0;
 
-		// Libera la memoria			
+		// Libera la memoria
 		CloseState();
 		return;
 
@@ -1357,13 +1385,13 @@ void RMOptionScreen::RemoveThis(CORO_PARAM, bool &result) {
 }
 
 
-bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMString &name, byte &diff) {	
+bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMString &name, byte &diff) {
 	Common::String buf;
-	char namebuf[256]; 
+	char namebuf[256];
 	int i;
 	Common::InSaveFile *f;
 	char id[4];
-	
+
 	// Pulisce la destinazione
 	Common::fill(lpDestBuf, lpDestBuf + 160 * 120 * 2, 0);
 	name = "No name";
@@ -1371,7 +1399,7 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 
 	// Get the savegame filename for the given slot
 	buf = _vm->GetSaveStateFileName(nState);
-	
+
 	// Try and open the savegame
 	f = g_system->getSavefileManager()->openForLoading(buf);
 	if (f == NULL)
@@ -1397,19 +1425,19 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 		uint32 cmpsize, size;
 
 		cmpbuf = new byte[160 * 120 * 4];
-		
+
 		// Se la versione >= 5, è compresso!
 		cmpsize = f->readUint32LE();
 		f->read(cmpbuf, cmpsize);
 
-		lzo1x_decompress(cmpbuf,cmpsize,lpDestBuf,&size);
+		lzo1x_decompress(cmpbuf, cmpsize, lpDestBuf, &size);
 
 		delete[] cmpbuf;
 	} else {
 		// Read in the screenshot as an uncompressed data block
 		if (id[3] >= 8)
 			// Recent versions use hardcoded 160x120 uncomrpessed data, so size can be skipped
-			f->skip(4);	
+			f->skip(4);
 
 		f->read(lpDestBuf, 160 * 120 * 2);
 	}
@@ -1467,7 +1495,7 @@ void RMPointer::Init(void) {
 		m_specialPointer[i] = new RMItem;
 		ds >> *m_specialPointer[i];
 	}
-	
+
 	//m_hotspot[0].Set(19,5);
 	m_hotspot[0].Set(5, 1);
 	m_hotspot[1].Set(32, 28);
@@ -1504,10 +1532,10 @@ int RMPointer::Priority() {
 
 void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
-		int n;
+	int n;
 	CORO_END_CONTEXT(_ctx);
 
-	CORO_BEGIN_CODE(_ctx);	
+	CORO_BEGIN_CODE(_ctx);
 
 	// Controlla il pointer
 	_ctx->n = m_nCurPointer;
@@ -1518,7 +1546,7 @@ void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 
 	if (m_pos.x >= 0 && m_pos.y >= 0 && m_pos.x < RM_SX && m_pos.y < RM_SY) {
 		// Richiama il draw del puntatore
-		prim->Dst()-=m_hotspot[_ctx->n];
+		prim->Dst() -= m_hotspot[_ctx->n];
 
 		if (m_nCurSpecialPointer == 0) {
 			CORO_INVOKE_2(m_pointer[_ctx->n]->Draw, bigBuf, prim);
@@ -1527,7 +1555,7 @@ void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 				CORO_INVOKE_2(m_nCurCustomPointer->Draw, bigBuf, prim);
 			else
 				// Richiama il draw sul puntatore speciale
-				CORO_INVOKE_2(m_specialPointer[m_nCurSpecialPointer-1]->Draw, bigBuf, prim);
+				CORO_INVOKE_2(m_specialPointer[m_nCurSpecialPointer - 1]->Draw, bigBuf, prim);
 		}
 	}
 
@@ -1539,8 +1567,8 @@ void RMPointer::DoFrame(RMGfxTargetBuffer *bigBuf) {
 	bigBuf->AddPrim(new RMGfxPrimitive(this));
 
 	// Se c'e' un puntatore speciale, fa la DoFrame
-	if (m_nCurSpecialPointer!=0 && m_nCurSpecialPointer!=PTR_CUSTOM)
-		m_specialPointer[m_nCurSpecialPointer-1]->DoFrame(bigBuf,false);
+	if (m_nCurSpecialPointer != 0 && m_nCurSpecialPointer != PTR_CUSTOM)
+		m_specialPointer[m_nCurSpecialPointer - 1]->DoFrame(bigBuf, false);
 }
 
 void RMPointer::RemoveThis(CORO_PARAM, bool &result) {

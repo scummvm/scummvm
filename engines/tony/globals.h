@@ -150,12 +150,12 @@ struct ChangedHotspotStruct {
 \****************************************************************************/
 
 typedef struct {
-  int nCf;
+	int nCf;
 
-  int arg1, arg2, arg3, arg4;
+	int arg1, arg2, arg3, arg4;
 } CFCALL;
-typedef CFCALL*         LPCFCALL;
-typedef LPCFCALL*       LPLPCFCALL;
+typedef CFCALL         *LPCFCALL;
+typedef LPCFCALL       *LPLPCFCALL;
 
 
 /****************************************************************************\
@@ -201,9 +201,9 @@ public:
 	bool bCfgSFX;
 	int  nCfgTonySpeed;
 	int  nCfgTextSpeed;
-	int	 nCfgDubbingVolume;
-	int	 nCfgMusicVolume;
-	int	 nCfgSFXVolume;
+	int  nCfgDubbingVolume;
+	int  nCfgMusicVolume;
+	int  nCfgSFXVolume;
 	bool bSkipSfxNoLoop;
 	bool bIdleExited;
 	bool bNoOcchioDiBue;
@@ -219,18 +219,18 @@ public:
 	RMInput *Input;
 	RMGfxEngine *GfxEngine;
 
-	uint32 (*LoadLocation)(int, RMPoint, RMPoint start);
+	uint32(*LoadLocation)(int, RMPoint, RMPoint start);
 	void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, uint32 *result);
 	void (*LinkGraphicTask)(RMGfxTask *task);
-	void (*Freeze)(void); 
-	void (*Unfreeze)(void); 
-	void (*WaitFrame)(CORO_PARAM); 
+	void (*Freeze)(void);
+	void (*Unfreeze)(void);
+	void (*WaitFrame)(CORO_PARAM);
 	void (*PlayMusic)(int nChannel, const char *fileName, int nFX, bool bLoop, int nSync);
-	void (*WaitWipeEnd)(CORO_PARAM); 
-	void (*CloseWipe)(void); 
-	void (*InitWipe)(int type); 
-	void (*EnableGUI)(void); 
-	void (*DisableGUI)(void); 
+	void (*WaitWipeEnd)(CORO_PARAM);
+	void (*CloseWipe)(void);
+	void (*InitWipe)(int type);
+	void (*EnableGUI)(void);
+	void (*DisableGUI)(void);
 	void (*SetPalesati)(bool bpal);
 
 	uint32 dwTonyNumTexts;
@@ -259,7 +259,7 @@ public:
 	uint32                  mpalError;
 	LPITEMIRQFUNCTION       lpiifCustom;
 	LPLPCUSTOMFUNCTION      lplpFunctions;
-	Common::String *		lplpFunctionStrings;
+	Common::String         *lplpFunctionStrings;
 	uint16                   nObjs;
 	uint16                   nVars;
 	HGLOBAL                  hVars;
@@ -281,14 +281,14 @@ public:
 	LPMPALSCRIPT             lpmsScripts;
 	Common::File             hMpr;
 	uint16                   nResources;
-	uint32 *                 lpResources;
+	uint32                  *lpResources;
 	bool                     bExecutingAction;
 	bool                     bExecutingDialog;
-	uint32					nPollingLocations[MAXPOLLINGLOCATIONS];
-	uint32					hEndPollingLocations[MAXPOLLINGLOCATIONS];
-	uint32					PollingThreads[MAXPOLLINGLOCATIONS];
-	uint32					hAskChoice;
-	uint32					hDoneChoice;
+	uint32                  nPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32                  hEndPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32                  PollingThreads[MAXPOLLINGLOCATIONS];
+	uint32                  hAskChoice;
+	uint32                  hDoneChoice;
 	uint32                    nExecutingAction;
 	uint32                    nExecutingDialog;
 	uint32                    nExecutingChoice;

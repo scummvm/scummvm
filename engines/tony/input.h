@@ -49,7 +49,7 @@ private:
 private:
 	// Deinizializza DirectInput
 	void DIClose(void);
-	
+
 public:
 	RMInput();
 	~RMInput();
@@ -64,19 +64,33 @@ public:
 	void Poll(void);
 
 	// Reading of the mouse
-	RMPoint MousePos() { return _mousePos; }
+	RMPoint MousePos() {
+		return _mousePos;
+	}
 
 	// Current status of the mouse buttons
 	bool MouseLeft();
 	bool MouseRight();
 
 	// Events of mouse clicks
-	bool MouseLeftClicked() { return _leftClickMouse; }
-	bool MouseRightClicked() { return _rightClickMouse; }
-	bool MouseBothClicked() { return _leftClickMouse && _rightClickMouse; }
-	bool MouseLeftReleased() { return _leftReleaseMouse; }
-	bool MouseRightReleased() { return _rightReleaseMouse; }
-	bool MouseBothReleased() { return _leftReleaseMouse && _rightReleaseMouse; }
+	bool MouseLeftClicked() {
+		return _leftClickMouse;
+	}
+	bool MouseRightClicked() {
+		return _rightClickMouse;
+	}
+	bool MouseBothClicked() {
+		return _leftClickMouse && _rightClickMouse;
+	}
+	bool MouseLeftReleased() {
+		return _leftReleaseMouse;
+	}
+	bool MouseRightReleased() {
+		return _rightReleaseMouse;
+	}
+	bool MouseBothReleased() {
+		return _leftReleaseMouse && _rightReleaseMouse;
+	}
 
 	// Returns true if the given key is pressed
 	bool GetAsyncKeyState(Common::KeyCode kc);

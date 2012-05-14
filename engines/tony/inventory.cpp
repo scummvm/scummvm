@@ -36,7 +36,7 @@ namespace Tony {
 
 
 /****************************************************************************\
-* 			RMInventory Methods
+*           RMInventory Methods
 \****************************************************************************/
 
 RMInventory::RMInventory() {
@@ -74,7 +74,7 @@ bool RMInventory::CheckPointInside(const RMPoint &pt) {
 
 
 void RMInventory::Init(void) {
-	int i,j;
+	int i, j;
 	int curres;
 
 	// Crea il buffer principale
@@ -87,7 +87,7 @@ void RMInventory::Init(void) {
 	m_bCombining = false;
 
 	// Nuovi oggetti
-	m_nItems = 78;	// @@@ Numero di oggetti prendibili
+	m_nItems = 78;  // @@@ Numero di oggetti prendibili
 	m_items = new RMInventoryItem[m_nItems + 1];
 
 	curres = 10500;
@@ -115,14 +115,14 @@ void RMInventory::Init(void) {
 
 		curres++;
 		if (i == 0 || i == 28 || i == 29) continue;
-		
+
 		m_items[i].pointer = new RMGfxSourceBuffer8RLEByteAA[m_items[i].icon.NumPattern()];
 
 		for (j = 0; j < m_items[i].icon.NumPattern(); j++) {
 			RMResRaw raw(curres);
 
 			assert(raw.IsValid());
-			
+
 			m_items[i].pointer[j].Init((const byte *)raw, raw.Width(), raw.Height(), true);
 			curres++;
 		}
@@ -141,24 +141,24 @@ void RMInventory::Init(void) {
 	ds.Close();
 
 	// Crea il testo per gli hints sulla mini interfaccia
-	m_hints[0].SetAlignType(RMText::HCENTER,RMText::VTOP);
-	m_hints[1].SetAlignType(RMText::HCENTER,RMText::VTOP);
-	m_hints[2].SetAlignType(RMText::HCENTER,RMText::VTOP);
+	m_hints[0].SetAlignType(RMText::HCENTER, RMText::VTOP);
+	m_hints[1].SetAlignType(RMText::HCENTER, RMText::VTOP);
+	m_hints[2].SetAlignType(RMText::HCENTER, RMText::VTOP);
 
 	// Il testo viene preso da MPAL per la traduzione
 	RMMessage msg1(15);
 	RMMessage msg2(13);
 	RMMessage msg3(14);
 
-	m_hints[0].WriteText(msg1[0],1);
-	m_hints[1].WriteText(msg2[0],1);
-	m_hints[2].WriteText(msg3[0],1);
+	m_hints[0].WriteText(msg1[0], 1);
+	m_hints[1].WriteText(msg2[0], 1);
+	m_hints[2].WriteText(msg3[0], 1);
 
-/*
-	m_hints[0].WriteText("Examine",1);
-	m_hints[1].WriteText("Talk",1);
-	m_hints[2].WriteText("Use",1);
-*/
+	/*
+	    m_hints[0].WriteText("Examine",1);
+	    m_hints[1].WriteText("Talk",1);
+	    m_hints[2].WriteText("Use",1);
+	*/
 
 	// Prepara il primo inventario
 	Prepare();
@@ -167,7 +167,7 @@ void RMInventory::Init(void) {
 }
 
 void RMInventory::Close(void) {
-	// Ciao memoria 
+	// Ciao memoria
 	if (m_items != NULL) {
 		// Delete the item pointers
 		for (int i = 0; i <= m_nItems; i++)
@@ -188,10 +188,10 @@ void RMInventory::Reset(void) {
 
 void RMInventory::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
-		RMPoint pos;
-		RMPoint pos2;
-		RMGfxPrimitive *p;
-		RMGfxPrimitive *p2;
+	RMPoint pos;
+	RMPoint pos2;
+	RMGfxPrimitive *p;
+	RMGfxPrimitive *p2;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -208,13 +208,13 @@ void RMInventory::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	if (m_state == SELECTING) {
 
 		if (!GLOBALS.bCfgInvUp) {
-			_ctx->pos.Set((m_nSelectObj+1)*64 - 20,RM_SY - 113);
-			_ctx->pos2.Set((m_nSelectObj+1)*64 + 34,RM_SY - 150);
+			_ctx->pos.Set((m_nSelectObj + 1) * 64 - 20, RM_SY - 113);
+			_ctx->pos2.Set((m_nSelectObj + 1) * 64 + 34, RM_SY - 150);
 		} else {
-			_ctx->pos.Set((m_nSelectObj+1)*64 - 20, 72 - 4); // la parte marrone sta in alto :(
-			_ctx->pos2.Set((m_nSelectObj+1)*64 + 34, 119 - 4);
+			_ctx->pos.Set((m_nSelectObj + 1) * 64 - 20, 72 - 4); // la parte marrone sta in alto :(
+			_ctx->pos2.Set((m_nSelectObj + 1) * 64 + 34, 119 - 4);
 		}
-		
+
 		_ctx->p = new RMGfxPrimitive(prim->m_task, _ctx->pos);
 		_ctx->p2 = new RMGfxPrimitive(prim->m_task, _ctx->pos2);
 
@@ -254,7 +254,7 @@ void RMInventory::RemoveItem(int code) {
 			Common::copy(&m_inv[i + 1], &m_inv[i + 1] + (m_nInv - i), &m_inv[i]);
 //			m_inv[m_nInv-1]=0;
 			m_nInv--;
-	
+
 			Prepare();
 			DrawOT(Common::nullContext);
 			ClearOT();
@@ -272,12 +272,12 @@ void RMInventory::AddItem(int code) {
 		warning("Cannot find a valid icon for this item, and then it will not be added to the inventory");
 	} else {
 		g_system->lockMutex(m_csModifyInterface);
-		if (m_curPos + 8 == m_nInv)	{
+		if (m_curPos + 8 == m_nInv) {
 			// Sfondiamo l'inventario! Attivo il pattern di lampeggio
 			m_items[28].icon.SetPattern(2);
 		}
 
-		m_inv[m_nInv++]=code-10000;
+		m_inv[m_nInv++] = code - 10000;
 
 		Prepare();
 		DrawOT(Common::nullContext);
@@ -302,8 +302,7 @@ void RMInventory::ChangeItemStatus(uint32 code, uint32 dwStatus) {
 }
 
 
-void RMInventory::Prepare(void)
-{
+void RMInventory::Prepare(void) {
 	int i;
 
 	for (i = 1; i < RM_SX / 64 - 1; i++) {
@@ -332,7 +331,7 @@ bool RMInventory::HaveFocus(const RMPoint &mpos) {
 	// Se l'inventario è aperto, abbiamo il focus quando ci andiamo sopra
 	if (m_state == OPENED && !m_bCombining && CheckPointInside(mpos))
 		return true;
- 
+
 	// Se stiamo selezionando un verbo (quindi tasto destro premuto), abbiamo il focus alltime
 	if (m_state == SELECTING)
 		return true;
@@ -344,11 +343,11 @@ void RMInventory::EndCombine(void) {
 	m_bCombining = false;
 }
 
-bool RMInventory::LeftClick(const RMPoint &mpos, int& nCombineObj) {
+bool RMInventory::LeftClick(const RMPoint &mpos, int &nCombineObj) {
 	int n;
 
 	// Il click sinistro prende in mano un oggetto dell'inventario per utilizzarlo con lo sfondo
-	n=mpos.x / 64;
+	n = mpos.x / 64;
 
 	if (m_state == OPENED) {
 		if (n > 0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0) {
@@ -360,13 +359,13 @@ bool RMInventory::LeftClick(const RMPoint &mpos, int& nCombineObj) {
 			return true;
 		}
 	}
-	
+
 	// Click sulla freccia destra
 	if ((m_state == OPENED) && m_bBlinkingRight) {
 		g_system->lockMutex(m_csModifyInterface);
 		m_curPos++;
 
-		if (m_curPos+8 >= m_nInv) {
+		if (m_curPos + 8 >= m_nInv) {
 			m_bBlinkingRight = false;
 			m_items[28].icon.SetPattern(1);
 		}
@@ -383,7 +382,7 @@ bool RMInventory::LeftClick(const RMPoint &mpos, int& nCombineObj) {
 	}
 	// Click sulla freccia sinistra
 	else if ((m_state == OPENED) && m_bBlinkingLeft) {
-		assert(m_curPos>0);
+		assert(m_curPos > 0);
 		g_system->lockMutex(m_csModifyInterface);
 		m_curPos--;
 
@@ -417,7 +416,7 @@ void RMInventory::RightClick(const RMPoint &mpos) {
 		// Apre l'interfaccina contestuale
 		n = mpos.x / 64;
 
-		if (n > 0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0) {	
+		if (n > 0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0) {
 			m_state = SELECTING;
 			miniAction = 0;
 			m_nSelectObj = n - 1;
@@ -437,7 +436,7 @@ void RMInventory::RightClick(const RMPoint &mpos) {
 			m_items[28].icon.SetPattern(1);
 		}
 
-		if (m_curPos>0) {
+		if (m_curPos > 0) {
 			m_bBlinkingLeft = true;
 			m_items[29].icon.SetPattern(2);
 		}
@@ -469,7 +468,7 @@ void RMInventory::RightClick(const RMPoint &mpos) {
 	}
 }
 
-bool RMInventory::RightRelease(const RMPoint &mpos, RMTonyAction& curAction) {
+bool RMInventory::RightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 	if (m_state == SELECTING) {
 		m_state = OPENED;
 
@@ -488,7 +487,7 @@ bool RMInventory::RightRelease(const RMPoint &mpos, RMTonyAction& curAction) {
 	return false;
 }
 
-#define INVSPEED	20
+#define INVSPEED    20
 
 void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
 	int i;
@@ -523,7 +522,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 					m_items[29].icon.SetPattern(3);
 					m_bBlinkingLeft = true;
 					bNeedRedraw = true;
-   				}
+				}
 			} else if (m_bBlinkingLeft) {
 				m_items[29].icon.SetPattern(2);
 				m_bBlinkingLeft = false;
@@ -542,12 +541,12 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 
 		g_system->unlockMutex(m_csModifyInterface);
 	}
- 
+
 	if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_i)) {
 		GLOBALS.bCfgInvLocked = !GLOBALS.bCfgInvLocked;
 	}
 
-	if (m_bCombining) {//m_state == COMBINING) 
+	if (m_bCombining) {//m_state == COMBINING)
 		ptr.SetCustomPointer(&m_items[m_nCombine].pointer[m_items[m_nCombine].status - 1]);
 		ptr.SetSpecialPointer(RMPointer::PTR_CUSTOM);
 	}
@@ -557,12 +556,12 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			if (!GLOBALS.bCfgInvNoScroll) {
 				m_state = OPENING;
 				m_curPutY = RM_SY - 1;
-				m_curPutTime=_vm->GetTime();
+				m_curPutTime = _vm->GetTime();
 			} else {
 				m_state = OPENED;
 				m_curPutY = RM_SY - 68;
 			}
-		} else if (m_state == OPENED) { 
+		} else if (m_state == OPENED) {
 			if ((mpos.y < RM_SY - 70 && !GLOBALS.bCfgInvLocked) || !bCanOpen) {
 				if (!GLOBALS.bCfgInvNoScroll) {
 					m_state = CLOSING;
@@ -593,18 +592,17 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				m_state = CLOSED;
 		}
 	} else {
-		if ((m_state == CLOSED) && (mpos.y<10 || GLOBALS.bCfgInvLocked) && bCanOpen) {
+		if ((m_state == CLOSED) && (mpos.y < 10 || GLOBALS.bCfgInvLocked) && bCanOpen) {
 			if (!GLOBALS.bCfgInvNoScroll) {
 				m_state = OPENING;
-				m_curPutY =- 68;
+				m_curPutY = - 68;
 				m_curPutTime = _vm->GetTime();
 			} else {
 				m_state = OPENED;
 				m_curPutY = 0;
 			}
-		}
-		else if (m_state == OPENED) { 
-			if ((mpos.y>70 && !GLOBALS.bCfgInvLocked) || !bCanOpen) {
+		} else if (m_state == OPENED) {
+			if ((mpos.y > 70 && !GLOBALS.bCfgInvLocked) || !bCanOpen) {
 				if (!GLOBALS.bCfgInvNoScroll) {
 					m_state = CLOSING;
 					m_curPutY = -2;
@@ -637,31 +635,31 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 	if (m_state == SELECTING) {
 		int startx = (m_nSelectObj + 1) * 64 - 20;
 		int starty;
-		
+
 		if (!GLOBALS.bCfgInvUp)
-			starty=RM_SY-109;
+			starty = RM_SY - 109;
 		else
-			starty=70;
-		
+			starty = 70;
+
 		// Controlla se si trova su uno dei verbi
 		if (mpos.y > starty && mpos.y < starty + 45) {
-			if (mpos.x > startx && mpos.x < startx + 40) { 	
-				if (miniAction !=1 ) {
+			if (mpos.x > startx && mpos.x < startx + 40) {
+				if (miniAction != 1) {
 					miniInterface.SetPattern(2);
 					miniAction = 1;
-	  				_vm->PlayUtilSFX(1);
+					_vm->PlayUtilSFX(1);
 				}
 			} else if (mpos.x >= startx + 40 && mpos.x < startx + 80) {
 				if (miniAction != 2) {
 					miniInterface.SetPattern(3);
 					miniAction = 2;
 					_vm->PlayUtilSFX(1);
-     			}
+				}
 			} else if (mpos.x >= startx + 80 && mpos.x < startx + 108) {
 				if (miniAction != 3) {
 					miniInterface.SetPattern(4);
 					miniAction = 3;
-    				_vm->PlayUtilSFX(1);
+					_vm->PlayUtilSFX(1);
 				}
 			} else {
 				miniInterface.SetPattern(1);
@@ -671,12 +669,12 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			miniInterface.SetPattern(1);
 			miniAction = 0;
 		}
-	
+
 		// Aggiorna la miniinterface
 		miniInterface.DoFrame(&bigBuf, false);
 	}
 
-	if ((m_state!= CLOSED) && !m_nInList) {
+	if ((m_state != CLOSED) && !m_nInList) {
 		bigBuf.AddPrim(new RMGfxPrimitive(this));
 	}
 }
@@ -694,10 +692,10 @@ RMItem *RMInventory::WhichItemIsIn(const RMPoint &mpt) {
 
 	if (m_state == OPENED) {
 		if (CheckPointInside(mpt)) {
-			n=mpt.x / 64;
-			if (n>0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0 && (!m_bCombining || m_inv[n - 1 + m_curPos] != m_nCombine))
+			n = mpt.x / 64;
+			if (n > 0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0 && (!m_bCombining || m_inv[n - 1 + m_curPos] != m_nCombine))
 				return &m_items[m_inv[n - 1 + m_curPos]].icon;
-		} 
+		}
 	}
 
 	return NULL;
@@ -707,14 +705,16 @@ RMItem *RMInventory::WhichItemIsIn(const RMPoint &mpt) {
 
 int RMInventory::GetSaveStateSize(void) {
 	//     m_inv   pattern   m_nInv
-	return 256*4 + 256*4   +  4     ;
+	return 256 * 4 + 256 * 4   +  4     ;
 }
 
 void RMInventory::SaveState(byte *state) {
 	int i, x;
 
-	WRITE_LE_UINT32(state, m_nInv); state += 4;
-	Common::copy(m_inv, m_inv + 256, (uint32 *)state); state += 256 * 4;
+	WRITE_LE_UINT32(state, m_nInv);
+	state += 4;
+	Common::copy(m_inv, m_inv + 256, (uint32 *)state);
+	state += 256 * 4;
 
 	for (i = 0; i < 256; i++) {
 		if (i < m_nItems)
@@ -722,19 +722,23 @@ void RMInventory::SaveState(byte *state) {
 		else
 			x = 0;
 
-		WRITE_LE_UINT32(state, x); state += 4;
+		WRITE_LE_UINT32(state, x);
+		state += 4;
 	}
 }
 
 int RMInventory::LoadState(byte *state) {
 	int i, x;
 
-	m_nInv = READ_LE_UINT32(state); state += 4;
-	Common::copy((uint32 *)state, (uint32 *)state + 256, m_inv); state += 256 * 4;
+	m_nInv = READ_LE_UINT32(state);
+	state += 4;
+	Common::copy((uint32 *)state, (uint32 *)state + 256, m_inv);
+	state += 256 * 4;
 
 	for (i = 0; i < 256; i++) {
-		x = READ_LE_UINT32(state);	state += 4;
-		
+		x = READ_LE_UINT32(state);
+		state += 4;
+
 		if (i < m_nItems) {
 			m_items[i].status = x;
 			m_items[i].icon.SetPattern(x);
@@ -745,7 +749,7 @@ int RMInventory::LoadState(byte *state) {
 	m_bCombining = false;
 
 	m_items[29].icon.SetPattern(1);
-	
+
 	if (m_nInv > 8)
 		m_items[28].icon.SetPattern(2);
 	else
@@ -760,7 +764,7 @@ int RMInventory::LoadState(byte *state) {
 
 
 /****************************************************************************\
-* 			RMInterface methods
+*           RMInterface methods
 \****************************************************************************/
 
 RMInterface::~RMInterface() {
@@ -777,8 +781,9 @@ int RMInterface::OnWhichBox(RMPoint pt) {
 	pt -= m_openStart;
 
 	// Controlla quanti verbi bisogna considerare
-	max = 4; if (m_bPalesati) max = 5;
-	
+	max = 4;
+	if (m_bPalesati) max = 5;
+
 	// Cerca il verbo
 	for (i = 0; i < max; i++)
 		if (m_hotbbox[i].PtInRect(pt))
@@ -790,7 +795,7 @@ int RMInterface::OnWhichBox(RMPoint pt) {
 
 void RMInterface::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
-		int h;
+	int h;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -803,7 +808,7 @@ void RMInterface::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	if (_ctx->h != -1) {
 		prim->Dst().TopLeft() = m_openStart;
 		CORO_INVOKE_2(m_hotzone[_ctx->h].Draw, bigBuf, prim);
-		
+
 		if (m_lastHotZone != _ctx->h) {
 			m_lastHotZone = _ctx->h;
 			_vm->PlayUtilSFX(1);
@@ -839,8 +844,8 @@ void RMInterface::Clicked(const RMPoint &mousepos) {
 	// La tiene dentro lo schermo
 	if (m_openStart.x < 0) m_openStart.x = 0;
 	if (m_openStart.y < 0) m_openStart.y = 0;
-	if (m_openStart.x+m_dimx > RM_SX) m_openStart.x = RM_SX - m_dimx;
-	if (m_openStart.y+m_dimy > RM_SY) m_openStart.y = RM_SY - m_dimy;
+	if (m_openStart.x + m_dimx > RM_SX) m_openStart.x = RM_SX - m_dimx;
+	if (m_openStart.y + m_dimy > RM_SY) m_openStart.y = RM_SY - m_dimy;
 
 	// Play dell'effetto sonoro
 	_vm->PlayUtilSFX(0);
@@ -868,16 +873,16 @@ bool RMInterface::Released(const RMPoint &mousepos, RMTonyAction &action) {
 	case 3:
 		action = TA_EXAMINE;
 		break;
-	
+
 	case 4:
 		action = TA_PALESATI;
 		break;
 
-	default:		// Nessun verbo
+	default:        // Nessun verbo
 		return false;
-	} 
-	
-	return true;	
+	}
+
+	return true;
 }
 
 void RMInterface::Reset(void) {
@@ -885,7 +890,7 @@ void RMInterface::Reset(void) {
 }
 
 void RMInterface::SetPalesati(bool bOn) {
-	m_bPalesati=bOn;
+	m_bPalesati = bOn;
 }
 
 bool RMInterface::GetPalesati(void) {
@@ -894,7 +899,7 @@ bool RMInterface::GetPalesati(void) {
 
 void RMInterface::Init(void) {
 	int i;
-	RMResRaw inter(RES_I_INTERFACE);	
+	RMResRaw inter(RES_I_INTERFACE);
 	RMRes pal(RES_I_INTERPPAL);
 
 	SetPriority(191);
@@ -909,8 +914,8 @@ void RMInterface::Init(void) {
 		m_hotzone[i].LoadPaletteWA(pal);
 	}
 
-	m_hotbbox[0].SetRect(126, 123, 159, 208);	// prendi
-	m_hotbbox[1].SetRect(90, 130, 125, 186);	// parla
+	m_hotbbox[0].SetRect(126, 123, 159, 208);   // prendi
+	m_hotbbox[1].SetRect(90, 130, 125, 186);    // parla
 	m_hotbbox[2].SetRect(110, 60, 152, 125);
 	m_hotbbox[3].SetRect(56, 51, 93, 99);
 	m_hotbbox[4].SetRect(51, 105, 82, 172);
@@ -933,13 +938,13 @@ void RMInterface::Init(void) {
 	m_hints[2].WriteText(msg2[0], 1);
 	m_hints[3].WriteText(msg3[0], 1);
 	m_hints[4].WriteText(msg4[0], 1);
-/*
-	m_hints[0].WriteText("Take",1);
-	m_hints[1].WriteText("Talk",1);
-	m_hints[2].WriteText("Use",1);
-	m_hints[3].WriteText("Examine",1);
-	m_hints[4].WriteText("Palesati",1);
-*/
+	/*
+	    m_hints[0].WriteText("Take",1);
+	    m_hints[1].WriteText("Talk",1);
+	    m_hints[2].WriteText("Use",1);
+	    m_hints[3].WriteText("Examine",1);
+	    m_hints[4].WriteText("Palesati",1);
+	*/
 	m_bActive = false;
 	m_bPalesati = false;
 	m_lastHotZone = 0;
