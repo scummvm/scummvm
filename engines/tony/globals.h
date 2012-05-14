@@ -25,6 +25,7 @@
 
 #include "common/savefile.h"
 #include "tony/adv.h"
+#include "tony/gfxengine.h"
 #include "tony/input.h"
 #include "tony/inventory.h"
 #include "tony/loc.h"
@@ -216,6 +217,7 @@ public:
 	RMLocation *Loc;
 	RMInventory *Inventory;
 	RMInput *Input;
+	RMGfxEngine *GfxEngine;
 
 	uint32 (*LoadLocation)(int, RMPoint, RMPoint start);
 	void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, uint32 *result);

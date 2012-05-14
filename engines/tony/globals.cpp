@@ -40,6 +40,7 @@ Globals::Globals() {
 	Loc = NULL;
 	Inventory = NULL;
 	Input = NULL;
+	GfxEngine = NULL;
 	LoadLocation = NULL;
 	UnloadLocation = NULL;
 	LinkGraphicTask = NULL;

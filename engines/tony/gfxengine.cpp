@@ -361,28 +361,21 @@ void RMGfxEngine::InitCustomDll(void) {
 	SetupGlobalVars(&m_tony, &m_point, &_vm->_theBoxes, &m_loc, &m_inv, &m_input);
 }
 
-// FIXME: Casting nPattern from int to RMGfxEngine *
 void RMGfxEngine::ItemIrq(uint32 dwItem, int nPattern, int nStatus) {
-	static RMGfxEngine *This = NULL;
 	RMItem *item;
+	assert(GLOBALS.GfxEngine);
 
-	// Inizializzazione!
-	if ((int)dwItem == -1) {
-		This = (RMGfxEngine*)nPattern;
-		return;
-	}
-
-	if (This->m_bLocationLoaded) {
-		item=This->m_loc.GetItemFromCode(dwItem);
+	if (GLOBALS.GfxEngine->m_bLocationLoaded) {
+		item = GLOBALS.GfxEngine->m_loc.GetItemFromCode(dwItem);
 		if (item != NULL) {
-			if (nPattern!=-1) {
+			if (nPattern != -1) {
 				if (GLOBALS.bPatIrqFreeze)
 					MainFreeze();
 				item->SetPattern(nPattern,true);
 				if (GLOBALS.bPatIrqFreeze)
 					MainUnfreeze();
 			}
-			if (nStatus!=-1)
+			if (nStatus != -1)
 				item->SetStatus(nStatus);
 		}
 	}
@@ -597,7 +590,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	csMainLoop = g_system->createMutex();
 
 	// Inizializza la funzione di IRQ di Item per l'MPAL
-	ItemIrq((uint32)-1, (uint32)this, 0);
+	GLOBALS.GfxEngine = this;
 	mpalInstallItemIrq(ItemIrq);
 	
 	// Inizializza DirectInput	
