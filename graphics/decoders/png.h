@@ -73,6 +73,7 @@ public:
 	void destroy();
 	const Graphics::Surface *getSurface() const { return _outputSurface; }
 	const byte *getPalette() const { return _palette; }
+	uint16 getPaletteColorCount() const { return _paletteEntries; }
 
 private:
 	enum PNGColorType {

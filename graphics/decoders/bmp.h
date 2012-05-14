@@ -52,10 +52,12 @@ public:
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 	virtual const Surface *getSurface() const { return _surface; }
 	const byte *getPalette() const { return _palette; }
+	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 private:
 	Surface *_surface;
 	byte *_palette;
+	uint16 _paletteColorCount;
 };
 
 } // End of namespace Graphics

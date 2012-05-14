@@ -31,6 +31,7 @@ namespace Graphics {
 BitmapDecoder::BitmapDecoder() {
 	_surface = 0;
 	_palette = 0;
+	_paletteColorCount = 0;
 }
 
 BitmapDecoder::~BitmapDecoder() {
@@ -44,6 +45,7 @@ void BitmapDecoder::destroy() {
 	}
 
 	delete[] _palette; _palette = 0;
+	_paletteColorCount = 0;
 }
 
 bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -95,16 +97,16 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	/* uint32 imageSize = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
-	uint32 colorsUsed = stream.readUint32LE();
+	_paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
-	if (colorsUsed == 0)
-		colorsUsed = 256;
+	if (_paletteColorCount == 0)
+		_paletteColorCount = 256;
 
 	if (bitsPerPixel == 8) {
 		// Read the palette
-		_palette = new byte[colorsUsed * 3];
-		for (uint16 i = 0; i < colorsUsed; i++) {
+		_palette = new byte[_paletteColorCount * 3];
+		for (uint16 i = 0; i < _paletteColorCount; i++) {
 			_palette[i * 3 + 2] = stream.readByte();
 			_palette[i * 3 + 1] = stream.readByte();
 			_palette[i * 3 + 0] = stream.readByte();
