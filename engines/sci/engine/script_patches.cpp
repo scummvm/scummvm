@@ -775,7 +775,7 @@ const uint16 mothergoose256PatchReplay[] = {
 	PATCH_END
 };
 
-// when saving, it also checks if the savegame-id is below 13.
+// when saving, it also checks if the savegame ID is below 13.
 //  we change this to check if below 113 instead
 const byte mothergoose256SignatureSaveLimit[] = {
 	5,

@@ -331,7 +331,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), virtualId, "__throwaway");
 		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-			error("kDeviceInfo(deleteSave): invalid savegame-id specified");
+			error("kDeviceInfo(deleteSave): invalid savegame ID specified");
 		uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 		Common::Array<SavegameDesc> saves;
 		listSavegames(saves);
@@ -526,7 +526,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	char *saveNamePtr = saveNames;
 
 	for (uint i = 0; i < totalSaves; i++) {
-		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame-id ffs. see above
+		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame ID ffs. see above
 		strcpy(saveNamePtr, saves[i].name);
 		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
 	}
@@ -1187,10 +1187,10 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	// Param 2: the selected slot
 
 	SciString *resultString = s->_segMan->lookupString(argv[0]);
-	uint16 saveSlot = argv[2].toUint16();
-	// For some reason, the save slot is incremented by 100... fix it here
-	if (saveSlot > 100)
-		saveSlot -= 100;
+	uint16 virtualId = argv[2].toUint16();
+	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+		error("kMakeSaveFileName: invalid savegame ID specified");
+	uint saveSlot = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 	
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
