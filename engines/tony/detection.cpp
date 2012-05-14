@@ -27,6 +27,7 @@
 #include "common/system.h"
 
 #include "tony/tony.h"
+#include "tony/game.h"
 
 
 namespace Tony {
@@ -71,10 +72,16 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+		(f == kSupportsListSaves) ||
+//		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave);
 }
 
 bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
@@ -88,6 +95,43 @@ bool TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Tony::TonyEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+SaveStateList TonyMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = "tony.0??";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+
+		if (slotNum >= 0 && slotNum <= 999) {
+			byte thumbnailData[160 * 120 * 2];
+			Tony::RMString saveName;
+			byte difficulty;
+
+			if (Tony::RMOptionScreen::LoadThumbnailFromSaveState(slotNum, thumbnailData, saveName, difficulty)) {
+				// Add the save name to the savegame list
+				saveList.push_back(SaveStateDescriptor(slotNum, (const char *)saveName));
+			}
+		}
+	}
+
+	return saveList;
+}
+
+int TonyMetaEngine::getMaximumSaveSlot() const { return 99; }
+
+void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String filename = Tony::TonyEngine::GetSaveStateFileName(slot);
+
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TONY)

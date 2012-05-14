@@ -198,7 +198,7 @@ public:
 	void AutoSave(CORO_PARAM);
 	void SaveState(int n, const char *name);
 	void LoadState(CORO_PARAM, int n);
-	Common::String GetSaveStateFileName(int n);
+	static Common::String GetSaveStateFileName(int n);
 
 	// Prende il thumbnail
 	void GrabThumbnail(void);

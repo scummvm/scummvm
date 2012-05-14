@@ -263,6 +263,9 @@ public:
 	// Polling per l'option screen
 	void DoFrame(CORO_PARAM, RMInput *m_input);
 
+	// Retrieves a savegame's thumbnail, description, and difficulty level
+	static bool LoadThumbnailFromSaveState(int numState, byte *lpDestBuf, RMString &name, byte &diff);
+
 protected:
 
 	// Inizializza tutto per il nuovo stato
@@ -274,8 +277,6 @@ protected:
 	void RefreshAll(CORO_PARAM);
 	void RefreshThumbnails(void);
 	
-	// Carica lo screenshot per il salvataggio
-	bool LoadThumbnailFromSaveState(int numState, byte *lpDestBuf, RMString &name, byte &diff);
 };
 
 } // End of namespace Tony
