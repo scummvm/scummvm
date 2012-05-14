@@ -96,27 +96,27 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 	int curCmd,j,len;
 	uint i;
 
-	lpmsScript->nObj=*(int *)lpBuf;
-	lpBuf+=4;
+	lpmsScript->nObj = (int32)READ_LE_UINT32(lpBuf);
+	lpBuf += 4;
 
-	lpmsScript->nMoments=*(uint16 *)lpBuf;
-	lpBuf+=2;
+	lpmsScript->nMoments = READ_LE_UINT16(lpBuf);
+	lpBuf += 2;
 
 	curCmd=0;
 
 	for (i=0;i<lpmsScript->nMoments;i++) {
-		lpmsScript->Moment[i].dwTime=*(int *)lpBuf; lpBuf+=4;
+		lpmsScript->Moment[i].dwTime = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
 		lpmsScript->Moment[i].nCmds=*lpBuf;       lpBuf++;
 
 		for (j=0;j<lpmsScript->Moment[i].nCmds;j++) {
 			lpmsScript->Command[curCmd].type=*lpBuf; lpBuf++;
 			switch (lpmsScript->Command[curCmd].type) {
 			case 1:
-				lpmsScript->Command[curCmd].nCf =*(uint16 *)(lpBuf); lpBuf+=2;
-				lpmsScript->Command[curCmd].arg1=*(int *)(lpBuf); lpBuf+=4;
-				lpmsScript->Command[curCmd].arg2=*(int *)(lpBuf); lpBuf+=4;
-				lpmsScript->Command[curCmd].arg3=*(int *)(lpBuf); lpBuf+=4;
-				lpmsScript->Command[curCmd].arg4=*(int *)(lpBuf); lpBuf+=4;
+				lpmsScript->Command[curCmd].nCf = READ_LE_UINT16(lpBuf); lpBuf += 2;
+				lpmsScript->Command[curCmd].arg1 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmsScript->Command[curCmd].arg2 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmsScript->Command[curCmd].arg3 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmsScript->Command[curCmd].arg4 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
 				break;
 
 			case 2:          // Variable assign
@@ -260,7 +260,7 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 		error("Too much commands in dialog #%d",lpmdDialog->nObj);
 
 	/* Choices */
-	num=*(uint16 *)lpBuf; lpBuf += 2;
+	num = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
 	if (num >= MAX_CHOICES_PER_DIALOG)
 		error("Too much choices in dialog #%d",lpmdDialog->nObj);
@@ -343,8 +343,8 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	uint32 i,j,kk;
 	uint32 curCmd;
 
-	lpmiItem->nObj=*(int *)lpBuf;
-	lpBuf+=4;
+	lpmiItem->nObj = (int32)READ_LE_UINT32(lpBuf);
+	lpBuf += 4;
 
 	len=*lpBuf;
 	lpBuf++;
@@ -367,12 +367,12 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 		lpmiItem->Action[i].num=*lpBuf;
 		lpBuf++;
 
-		lpmiItem->Action[i].wParm=*(uint16 *)lpBuf;
-		lpBuf+=2;
+		lpmiItem->Action[i].wParm = READ_LE_UINT16(lpBuf);
+		lpBuf += 2;
 
 		if (lpmiItem->Action[i].num==0xFF) {
-			lpmiItem->Action[i].wTime=*(uint16 *)lpBuf;
-			lpBuf+=2;
+			lpmiItem->Action[i].wTime = READ_LE_UINT16(lpBuf);
+			lpBuf += 2;
 
 			lpmiItem->Action[i].perc=*lpBuf;
 			lpBuf++;
@@ -400,11 +400,11 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 			lpBuf++;
 			switch (lpmiItem->Command[curCmd].type) {
 			case 1:          // Call custom function
-				lpmiItem->Command[curCmd].nCf =*(uint16 *)(lpBuf); lpBuf+=2;
-				lpmiItem->Command[curCmd].arg1=*(int *)(lpBuf); lpBuf+=4;
-				lpmiItem->Command[curCmd].arg2=*(int *)(lpBuf); lpBuf+=4;
-				lpmiItem->Command[curCmd].arg3=*(int *)(lpBuf); lpBuf+=4;
-				lpmiItem->Command[curCmd].arg4=*(int *)(lpBuf); lpBuf+=4;
+				lpmiItem->Command[curCmd].nCf  = READ_LE_UINT16(lpBuf); lpBuf += 2;
+				lpmiItem->Command[curCmd].arg1 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmiItem->Command[curCmd].arg2 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmiItem->Command[curCmd].arg3 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
+				lpmiItem->Command[curCmd].arg4 = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
 				break;
 
 			case 2:          // Variable assign
@@ -444,7 +444,7 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 		}
 	}
 
-	lpmiItem->dwRes=*(uint32 *)lpBuf; lpBuf+=4;
+	lpmiItem->dwRes = READ_LE_UINT32(lpBuf); lpBuf += 4;
 
 	return lpBuf;
 }
@@ -468,14 +468,14 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 \****************************************************************************/
 
 static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation) {
-	lpmlLocation->nObj=*(int *)lpBuf;
-	lpBuf+=4;
-	lpmlLocation->dwXlen=*(uint16 *)lpBuf;
-	lpBuf+=2;
-	lpmlLocation->dwYlen=*(uint16 *)lpBuf;
-	lpBuf+=2;
-	 lpmlLocation->dwPicRes=*(uint32 *)lpBuf;
-	lpBuf+=4;
+	lpmlLocation->nObj = (int32)READ_LE_UINT32(lpBuf);
+	lpBuf += 4;
+	lpmlLocation->dwXlen = READ_LE_UINT16(lpBuf);
+	lpBuf += 2;
+	lpmlLocation->dwYlen = READ_LE_UINT16(lpBuf);
+	lpBuf += 2;
+	 lpmlLocation->dwPicRes = READ_LE_UINT32(lpBuf);
+	lpBuf += 4;
 
 	return lpBuf;
 }

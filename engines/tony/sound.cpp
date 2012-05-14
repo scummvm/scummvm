@@ -1122,7 +1122,7 @@ bool FPSFX::LoadFile(byte *lpBuf, uint32 dwCodec) {
 		return false;
 	lpBuf += 4;
 
-	dwSize = *(uint32*)lpBuf;
+	dwSize = READ_LE_UINT32(lpBuf);
 	lpBuf += 4;
 
 	b16bit = (WAVHeader->nBitsPerSample == 16);
