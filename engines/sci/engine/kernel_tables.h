@@ -500,6 +500,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
 
@@ -512,18 +514,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// Debug function used to track resources
 	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 	
-	// SCI2 functions that are used in the original save/load menus. Marked as dummy, so
-	// that the engine errors out on purpose. TODO: Implement once the original save/load
-	// menus are implemented.
-
-	// Creates the name of the save catalogue/directory to save into.
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveCatName),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
-	// Creates the name of the save file to save into
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveFileName),    SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 
 	// AddMagnify/DeleteMagnify are both called by script 64979 (the Magnifier
