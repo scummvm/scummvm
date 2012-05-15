@@ -101,6 +101,9 @@ public:
 		#if defined(USE_SEQ_MIDI)
 		LINK_PLUGIN(SEQ)
 		#endif
+		#if defined(USE_SNDIO)
+		LINK_PLUGIN(SNDIO)
+		#endif
 		#if defined(__MINT__)
 		LINK_PLUGIN(STMIDI)
 		#endif
