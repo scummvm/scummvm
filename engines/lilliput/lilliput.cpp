@@ -1733,7 +1733,7 @@ void LilliputEngine::sub16626() {
 				result = sub166EA(index);
 				break;
 			default:
-				warning("sub16626 - unexpected value %d", var2 / 2);
+				error("sub16626 - unexpected value %d", var2 / 2);
 				break;
 			}
 
@@ -2011,6 +2011,7 @@ byte LilliputEngine::sub16675(int idx, Common::Point var1) {
 	debugC(2, kDebugEngineTBC, "sub16675(%d, %d - %d)", idx, var1.x, var1.y);
 
 	sub16685(idx, var1);
+
 	int index = idx;	
 	switch (var1.x) {
 	case 0:
@@ -2105,7 +2106,7 @@ void LilliputEngine::sub166B6(int index) {
 void LilliputEngine::sub166BB(int index) {
 	debugC(2, kDebugEngineTBC, "sub166BB(%d)", index);
 
-	sub16B31(index, 0xFE);
+	sub16B31(index, -2);
 }
 
 void LilliputEngine::sub166D8(int index) {
@@ -2681,10 +2682,10 @@ void LilliputEngine::handleGameScripts() {
 	int tmpVal = _rulesBuffer2_12[index];
 	if (tmpVal == 0xFF)
 		return;
-/*
+
+/* Decompiler follows
+
 	_scriptHandler->listAllTexts();
-
-
 
 	debugC(1, kDebugEngineTBC, "================= Menu Script ==================");
 	ScriptStream script = ScriptStream(_menuScript, _menuScriptSize);
@@ -2777,10 +2778,11 @@ void LilliputEngine::initialize() {
 byte *LilliputEngine::getCharacterVariablesPtr(int16 index) {
 	debugC(1, kDebugEngineTBC, "getCharacterVariablesPtr(%d)", index);
 
+/* used to debug
 	if(index == 96 + 22) {	
 		int a = 0;
 	}
-
+*/
 
 	assert((index > -3120) && (index < 1400));
 	if (index >= 0)
