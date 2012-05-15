@@ -698,7 +698,7 @@ void LoadMusic(Common::InSaveFile *f);
 
 #define TONY_SAVEGAME_VERSION 8
 
-void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bool bFastCompress) {
+void RMGfxEngine::SaveState(const Common::String &fn, byte *curThumb, const Common::String &name) {
 	Common::OutSaveFile *f;
 	byte *state;
 	uint thumbsize;
@@ -733,9 +733,9 @@ void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bo
 	i = mpalQueryGlobalVar("VERSIONEFACILE");
 	f->writeByte(i);
 
-	i = strlen(name);
+	i = strlen(name.c_str());
 	f->writeByte(i);
-	f->write(name, i);
+	f->write(name.c_str(), i);
 	f->writeUint32LE(m_nCurLoc);
 	f->writeUint32LE(tp.x);
 	f->writeUint32LE(tp.y);
@@ -801,7 +801,7 @@ void RMGfxEngine::SaveState(const char *fn, byte *curThumb, const char *name, bo
 	delete f;
 }
 
-void RMGfxEngine::LoadState(CORO_PARAM, const char *fn) {
+void RMGfxEngine::LoadState(CORO_PARAM, const Common::String &fn) {
 	// PROBLEMA: Bisognerebbe caricare la locazione in un thread a parte per fare la OnEnter ...
 	CORO_BEGIN_CONTEXT;
 	Common::InSaveFile *f;
@@ -984,6 +984,10 @@ void RMGfxEngine::CloseWipe(void) {
 
 void RMGfxEngine::WaitWipeEnd(CORO_PARAM) {
 	CoroScheduler.waitForSingleObject(coroParam, m_hWipeEvent, CORO_INFINITE);
+}
+
+bool RMGfxEngine::CanLoadSave() {
+	return m_bInput && !m_tony.InAction();
 }
 
 } // End of namespace Tony

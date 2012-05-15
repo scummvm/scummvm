@@ -43,6 +43,14 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	DebugMan.addDebugChannel(kTonyDebugActions, "actions", "Actions debugging");
 	DebugMan.addDebugChannel(kTonyDebugSound, "sound", "Sound debugging");
 	DebugMan.addDebugChannel(kTonyDebugMusic, "music", "Music debugging");
+
+	// Set up load slot number
+	_loadSlotNumber = -1;
+	if (ConfMan.hasKey("save_slot")) {
+		int slotNumber = ConfMan.getInt("save_slot");
+		if (slotNumber >= 0 && slotNumber <= 99)
+			_loadSlotNumber = slotNumber;
+	}
 }
 
 TonyEngine::~TonyEngine() {
@@ -400,7 +408,7 @@ void TonyEngine::AutoSave(CORO_PARAM) {
 	CORO_INVOKE_0(MainWaitFrame);
 	MainFreeze();
 	_ctx->buf = GetSaveStateFileName(0);
-	_theEngine.SaveState(_ctx->buf.c_str(), (byte *)m_curThumbnail, "Autosave", true);
+	_theEngine.SaveState(_ctx->buf, (byte *)m_curThumbnail, "Autosave");
 	MainUnfreeze();
 
 	CORO_END_CODE;
@@ -499,16 +507,25 @@ void TonyEngine::Abort(void) {
  */
 void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
+		Common::String fn;
 	CORO_END_CONTEXT(_ctx);
+
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// CORO_INFINITE loop. We rely on the outer main process to detect if a shutdown is required,
+	// Game loop. We rely on the outer main process to detect if a shutdown is required,
 	// and kill the scheudler and all the processes, including this one
 	for (;;) {
 		// Se siamo in pausa, entra nel loop appropriato
 		if (_vm->m_bPaused)
 			_vm->PauseLoop();
+
+		// If a savegame needs to be loaded, then do so
+		if (_vm->_loadSlotNumber != -1 && GLOBALS.GfxEngine != NULL) {
+			_ctx->fn = GetSaveStateFileName(_vm->_loadSlotNumber);
+			CORO_INVOKE_1(GLOBALS.GfxEngine->LoadState, _ctx->fn);
+			_vm->_loadSlotNumber = -1;
+		}
 
 		// Wait for the next frame
 		CORO_INVOKE_1(CoroScheduler.sleep, 50);
@@ -625,6 +642,29 @@ void TonyEngine::UnfreezeTime(void) {
  */
 uint32 TonyEngine::GetTime() {
 	return g_system->getMillis();
+}
+
+bool TonyEngine::canLoadGameStateCurrently() {
+	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->CanLoadSave();
+}
+bool TonyEngine::canSaveGameStateCurrently() {
+	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->CanLoadSave();
+}
+
+Common::Error TonyEngine::loadGameState(int slot) {
+	_loadSlotNumber = slot;
+	return Common::kNoError;
+}
+
+Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
+	if (!GLOBALS.GfxEngine)
+		return Common::kUnknownError;
+
+	RMSnapshot s;
+	s.GrabScreenshot(*GLOBALS.GfxEngine, 4, m_curThumbnail);
+
+	GLOBALS.GfxEngine->SaveState(GetSaveStateFileName(slot), (byte *)m_curThumbnail, desc);
+	return Common::kNoError;
 }
 
 } // End of namespace Tony

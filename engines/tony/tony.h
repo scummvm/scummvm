@@ -78,8 +78,9 @@ struct VoiceHeader {
 
 class TonyEngine : public Engine {
 private:
-	Common::ErrorCode Init();
+	int _loadSlotNumber;
 
+	Common::ErrorCode Init();
 	void InitMusic();
 	void CloseMusic();
 	bool OpenVoiceDatabase();
@@ -141,6 +142,11 @@ public:
 	bool getIsDemo() const;
 	RMGfxEngine *GetEngine() { return &_theEngine; }
 	void GUIError(const Common::String &msg);
+
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
+	Common::Error TonyEngine::loadGameState(int slot);
+	Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc);
 
 	// Avverte che siamo guidati dal GDI
 	void GDIControl(bool bCon);

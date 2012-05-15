@@ -133,8 +133,8 @@ public:
 	void Unfreeze(void);
 
 	// State management
-	void SaveState(const char *fn, byte *curThumb, const char *name, bool bFastCompress = false);
-	void LoadState(CORO_PARAM, const char *fn);
+	void SaveState(const Common::String &fn, byte *curThumb, const Common::String &name);
+	void LoadState(CORO_PARAM, const Common::String &fn);
 
 	// Selects a location
 	void SelectLocation(const RMPoint &ptTonyStart = RMPoint(-1, -1), const RMPoint &start = RMPoint(-1, -1));
@@ -150,6 +150,7 @@ public:
 	void SetPalesati(bool bpal) {
 		m_inter.SetPalesati(bpal);
 	}
+	bool CanLoadSave();
 };
 
 } // End of namespace Tony

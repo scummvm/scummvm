@@ -25,6 +25,7 @@
 
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "graphics/surface.h"
 
 #include "tony/tony.h"
 #include "tony/game.h"
@@ -75,18 +76,23 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
-//		(f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
 }
 
 bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
 	return
-	    (f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 bool TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -135,6 +141,30 @@ void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
+
+SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Tony::RMString saveName;
+	byte difficulty;
+
+	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	Graphics::Surface *thumbnail = new Graphics::Surface();
+	thumbnail->create(160, 120, pixelFormat);
+
+	if (Tony::RMOptionScreen::LoadThumbnailFromSaveState(slot, (byte *)thumbnail->pixels, saveName, difficulty)) {
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, (const char *)saveName);
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+		desc.setThumbnail(thumbnail);
+
+		return desc;
+	}
+
+	thumbnail->free();
+	delete thumbnail;
+	return SaveStateDescriptor();
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(TONY)
 REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
