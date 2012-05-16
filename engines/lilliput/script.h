@@ -161,7 +161,7 @@ private:
 	byte OC_compareCoords_1();
 	byte OC_compareCoords_2();
 	byte OC_CompareDistanceFromCharacterToPositionWith();
-	byte OC_sub1759E();
+	byte OC_compareRandomCharacterId();
 	byte OC_IsCurrentCharacterIndex();
 	byte OC_sub175C8();
 	byte OC_sub17640();

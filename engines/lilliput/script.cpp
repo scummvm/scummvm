@@ -131,7 +131,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_CompareDistanceFromCharacterToPositionWith();
 		break;
 	case 0xF:
-		return OC_sub1759E();
+		return OC_compareRandomCharacterId();
 		break;
 	case 0x10:
 		return OC_IsCurrentCharacterIndex();
@@ -572,7 +572,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_compareCoords_1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_compareCoords_2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_CompareDistanceFromCharacterToPositionWith", 3, kgetPosFromScript, kCompareOperation, kImmediateValue, kNone, kNone },
-	{ "OC_sub1759E", 3, kGetValue1, kCompareOperation, kImmediateValue, kNone, kNone },
+	{ "OC_compareRandomCharacterId", 3, kGetValue1, kCompareOperation, kImmediateValue, kNone, kNone },
 	{ "OC_IsCurrentCharacterIndex", 1, kGetValue1, kNone, kNone, kNone, kNone },
 	{ "OC_sub175C8", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
 	{ "OC_sub17640", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
@@ -1493,13 +1493,12 @@ byte LilliputScript::OC_checkSaveFlag() {
 }
 
 byte LilliputScript::OC_compByte16F04() {
-	warning("OC_compByte16F04");
+	debugC(1, kDebugScriptTBC, "OC_compByte16F04()");
 
-	byte var1 = _byte16F04;
 	uint16 oper = _currScript->readUint16LE();
 	int16 var2 = _currScript->readUint16LE();
 
-	return compareValues(var1, oper, var2);
+	return compareValues(_byte16F04, oper, var2);
 }
 
 byte LilliputScript::OC_sub174D8() {
@@ -1577,6 +1576,7 @@ byte LilliputScript::OC_compareCoords_2() {
 
 byte LilliputScript::OC_CompareDistanceFromCharacterToPositionWith() {
 	debugC(1, kDebugScriptTBC, "OC_CompareDistanceFromCharacterToPositionWith()");
+
 	Common::Point var1 = getPosFromScript();
 	Common::Point pos = _vm->_currentScriptCharacterPos;
 	
@@ -1589,13 +1589,19 @@ byte LilliputScript::OC_CompareDistanceFromCharacterToPositionWith() {
 	int dist = dx + dy;
 		
 	uint16 operation = _currScript->readUint16LE();
-	int16 var2 = _currScript->readUint16LE();
+	int16 var2 = _currScript->readSint16LE();
 	
 	return compareValues(dist, operation, var2);
 }
-byte LilliputScript::OC_sub1759E() {
-	warning("OC_sub1759E");
-	return 0;
+byte LilliputScript::OC_compareRandomCharacterId() {
+	debugC(1, kDebugScriptTBC, "OC_compareRandomCharacterId()");
+
+	byte *tmpArr = getCharacterVariablePtr();
+	_byte16F02 = _vm->_rnd->getRandomNumber(tmpArr[0] + 1);
+	uint16 oper = _currScript->readUint16LE();
+	int16 var2 = _currScript->readSint16LE();
+
+	return compareValues(_byte16F02, oper, var2);
 }
 
 byte LilliputScript::OC_IsCurrentCharacterIndex() {
@@ -2309,7 +2315,15 @@ void LilliputScript::OC_sub17B93() {
 }
 
 void LilliputScript::OC_sub17E37_speech4() {
-	warning("OC_sub17E37_speech4");
+	debugC(1, kDebugScriptTBC, "OC_sub17E37_speech4()");
+
+	bool forceReturnFl = false;
+	sub17D40(forceReturnFl);
+	if (forceReturnFl)
+		return;
+
+	_talkingCharacter = _vm->_currentScriptCharacter;
+	sub18B3C(5);
 }
 
 void LilliputScript::OC_resetByte1714E() {
@@ -2588,17 +2602,19 @@ void LilliputScript::OC_sub17E99() {
 }
 
 void LilliputScript::OC_sub17EC5() {
-	//debugC(1, kDebugScriptTBC, "OC_sub17EC5()");
-	warning("OC_sub17EC5");
-	/*byte *compBuf = sub173D2();
+	debugC(1, kDebugScriptTBC, "OC_sub17EC5()");
+
+	int indexChunk10 = _currScript->readUint16LE();
+
+	byte *compBuf = sub173D2();
+	int indexChunk11 = _vm->_rulesChunk10[indexChunk10] + compBuf[0];
+
 	int oper = _currScript->readUint16LE();
-	int index = _currScript->readUint16LE();	
 
-	byte *buf = sub173D2();
-	byte var1 = buf[0];
-	byte var3 = _vm->_rulesChunk11[var1 + _vm->_rulesChunk10[index]];
-
-	computeOperation(compBuf, oper, var3);*/
+	byte *tmpBuf = sub173D2();
+	int var3 = tmpBuf[0];
+	
+	computeOperation(&_vm->_rulesChunk11[indexChunk11], oper, var3);
 }
 
 Common::Point LilliputScript::getCharacterTilePos(int index) {
