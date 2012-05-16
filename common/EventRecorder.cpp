@@ -147,7 +147,10 @@ void EventRecorder::dumpHeaderToFile() {
 	writeHeader();
 	writeGameHash();
 	writeRandomRecords();
+	writeGameSettings();
 	_recordFile->writeUint32LE(MKTAG('R','C','D','S'));
+	//we don't know how many records will be in this section and this value will not used later
+	//I write zero to avoid creation of temporary file
 	_recordFile->writeUint32LE(0);
 }
 
@@ -351,6 +354,7 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDes
 			_recordMode = kPassthrough;
 			return;
 		}
+		applyPlaybackSettings();
 		getNextEvent();
 	}
 	switchMixer();
@@ -358,6 +362,14 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDes
 	_lastMillis = 0;
 	_headerDumped = false;
 }
+
+/**
+ * Opens or creates file depend of recording mode.
+ *
+ *@param id of recording or playing back game
+ *@return true in case of success, false in case of error
+ *
+ */
 
 bool EventRecorder::openRecordFile(const String &gameId) {
 	Common::String fileName;
@@ -494,6 +506,10 @@ bool EventRecorder::processChunk(ChunkHeader &nextChunk) {
 		case MKTAG('R','C','D','S'): 
 			_playbackParseState = kFileStateDone;
 			return false;
+		case MKTAG('S','E','T','T'):
+			_playbackParseState = kFileStateProcessSettings;
+			warning("Loading record header");
+			break;
 		default:
 			_playbackFile->skip(nextChunk.len);
 			break;
@@ -523,6 +539,17 @@ bool EventRecorder::processChunk(ChunkHeader &nextChunk) {
 	case kFileStateProcessRandom:
 		if (nextChunk.id == MKTAG('R','R','C','D')) {
 			processRndSeedRecord(nextChunk);
+		} else {
+			_playbackParseState = kFileStateSelectSection;
+			return false;
+		}
+		break;
+	case kFileStateProcessSettings:
+		if (nextChunk.id == MKTAG('S','R','E','C')) {
+			if (!processSettingsRecord(nextChunk)) {
+				_playbackParseState = kFileStateError;
+				return false;
+			}
 		} else {
 			_playbackParseState = kFileStateSelectSection;
 			return false;
@@ -654,4 +681,77 @@ void EventRecorder::writeRandomRecords() {
 		_recordFile->writeUint32LE(i->_value);
 	}
 }
+
+void EventRecorder::writeGameSettings() {
+	getConfig();
+	if (_settingsSectionSize == 0) {
+		return;
+	}
+	_recordFile->writeUint32LE(MKTAG('S','E','T','T'));
+	_recordFile->writeUint32LE(_settingsSectionSize);
+	for (StringMap::iterator i = _settingsRecords.begin(); i != _settingsRecords.end(); ++i) {
+		_recordFile->writeUint32LE(MKTAG('S','R','E','C'));
+		_recordFile->writeUint32LE(i->_key.size() + i->_value.size() + 16);
+		_recordFile->writeUint32LE(MKTAG('S','K','E','Y'));
+		_recordFile->writeUint32LE(i->_key.size());
+		_recordFile->writeString(i->_key);
+		_recordFile->writeUint32LE(MKTAG('S','V','A','L'));
+		_recordFile->writeUint32LE(i->_value.size());
+		_recordFile->writeString(i->_value);
+	}
+}
+
+void EventRecorder::getConfigFromDomain(ConfigManager::Domain* domain) {
+	for (ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
+		_settingsRecords[entry->_key] = entry->_value;
+		_settingsSectionSize = _settingsSectionSize + entry->_key.size() + entry->_value.size() + 24;
+	}
+}
+
+void EventRecorder::getConfig() {
+	_settingsSectionSize = 0;
+	getConfigFromDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
+	getConfigFromDomain(ConfMan.getActiveDomain());
+	getConfigFromDomain(ConfMan.getDomain(ConfMan.kTransientDomain));
+}
+
+bool EventRecorder::processSettingsRecord(ChunkHeader chunk) {
+	ChunkHeader keyChunk = readChunkHeader();
+	if (keyChunk.id != MKTAG('S','K','E','Y')) {
+		warning("Invalid format of settings section");
+		return false;
+	}
+	String key = readString(keyChunk.len);
+	ChunkHeader valueChunk = readChunkHeader();
+	if (valueChunk.id != MKTAG('S','V','A','L')) {
+		warning("Invalid format of settings section");
+		return false;
+	}
+	String value = readString(valueChunk.len);
+	_settingsRecords[key] = value;
+	return true;
+}
+
+void EventRecorder::applyPlaybackSettings() {
+	for (StringMap::iterator i = _settingsRecords.begin(); i != _settingsRecords.end(); ++i) {
+		String currentValue = ConfMan.get(i->_key);
+		if (currentValue != i->_value) {
+			warning("Config value <%s>: %s -> %s", i->_key.c_str(), i->_value.c_str(), currentValue.c_str());
+			ConfMan.set(i->_key,i->_value);
+		}
+	}
+	removeDifferentEntriesInDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
+	removeDifferentEntriesInDomain(ConfMan.getActiveDomain());
+	removeDifferentEntriesInDomain(ConfMan.getDomain(ConfMan.kTransientDomain));
+}
+
+void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain* domain) {
+	for (ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
+		if (_settingsRecords.find(entry->_key) == _settingsRecords.end()) {
+			warning("Config value <%s>: %s -> (null)", entry->_key.c_str(), entry->_value.c_str());
+			domain->erase(entry->_key);
+		}
+	}
+}
+
 } // End of namespace Common

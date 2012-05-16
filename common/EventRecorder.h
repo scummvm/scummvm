@@ -35,6 +35,7 @@
 #include "common/hash-str.h"
 #include "engines/advancedDetector.h"
 #include "common/hashmap.h"
+#include "common/config-manager.h"
 
 #define g_eventRec (Common::EventRecorder::instance())
 
@@ -90,18 +91,24 @@ private:
 		kFileStateProcessRandom,
 		kFileStateReadRnd,
 		kFileStateSelectSection,
+		kFileStateProcessSettings,
+		kFileStateProcessSettingsRecord,
 		kFileStateDone,
 		kFileStateError
 	};
 	bool parsePlaybackFile();
 	ChunkHeader readChunkHeader();
+	void getConfig();
+	void applyPlaybackSettings();
+	void removeDifferentEntriesInDomain(ConfigManager::Domain* domain);
+	void getConfigFromDomain(ConfigManager::Domain* domain);
 	bool processChunk(ChunkHeader &nextChunk);
 	bool checkPlaybackFileVersion();
 	void readAuthor(ChunkHeader chunk);
 	void readComment(ChunkHeader chunk);
 	void readHashMap(ChunkHeader chunk);
 	void processRndSeedRecord(ChunkHeader chunk);
-
+	bool processSettingsRecord(ChunkHeader chunk);
 	bool _headerDumped;
 	PlaybackFileState _playbackParseState;
 	MutexRef _recorderMutex;
@@ -129,13 +136,15 @@ private:
 	void readEvent(RecorderEvent &event);
 	void writeEvent(const RecorderEvent &event);
 	void checkForKeyCode(const Event &event);
+	void writeGameSettings();
 	void togglePause();
 	void dumpRecordsToFile();
 	void dumpHeaderToFile();
+	int _settingsSectionSize;
 	RecorderEvent _nextEvent;
 	randomSeedsDictionary _randomSourceRecords;
 	StringMap _hashRecords;
-
+	StringMap _settingsRecords;
 	volatile uint32 _recordCount;
 	volatile uint32 _recordSize;
 	byte _recordBuffer[kRecordBuffSize];
