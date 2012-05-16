@@ -132,7 +132,6 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_scriptHandler = new LilliputScript(this);
 	_soundHandler = new LilliputSound(this);
 
-	_byte16939 = 0;
 	_byte1714E = 0;
 	_byte12FCE = 0;
 	_byte129A0 = 0xFF;
@@ -1510,38 +1509,39 @@ void LilliputEngine::sub167EF(int index) {
 void LilliputEngine::sub1693A(int index) {
 	debugC(2, kDebugEngineTBC, "sub1693A(%d)", index);
 	
-	static const int16 _array1692F[4] = {4, -256, 256, -4};
+	static const int16 mapArrayMove[4] = {4, -256, 256, -4};
 
 	_word16937Pos = Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]);
 
 	sub16A08(index);
 	
 	int var2 = (_characterDirectionArray[index] ^ 3);
+	// initialized by sub16A08, values: [0, 6[
 	_array1692B[var2] += 0xF8;
-	_byte16939 = 0;
+	byte byte16939 = 0;
 	
 	int mapIndex = ((((_word16937Pos.y << 8) >> 2) + _word16937Pos.x) << 2);
-	int subMapIndex = 0;
+	int mapIndexDiff = 0;
 	int retVal = 0;
 	for (int i = 3; i >= 0; i--) {
-		subMapIndex = _array1692F[i];
-		if (((_bufferIsoMap[mapIndex + subMapIndex + 3] & _array16C54[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _array16C58[i]) != 0)) {
-			if ((_bufferIsoMap[mapIndex + subMapIndex + 3] & 0x80) != 0) {
+		mapIndexDiff = mapArrayMove[i];
+		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _array16C54[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _array16C58[i]) != 0)) {
+			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0) {
 				if (sub16A76(i, index) != 0)
 					_array1692B[i] += 0xEC;
-				
+
 				int tmpVal = ((_rulesBuffer2_10[index] & 7) ^ 7);
-				retVal = _rulesChunk9[_bufferIsoMap[mapIndex + subMapIndex]];
+				retVal = _rulesChunk9[_bufferIsoMap[mapIndex + mapIndexDiff]];
 				tmpVal &= retVal;
 				if (tmpVal == 0)
 					continue;
 			}
 		}
 		_array1692B[i] = 0x9E;
-		++_byte16939;
+		++byte16939;
 	}
 
-	if (_byte16939 != 0)
+	if (byte16939 != 0)
 		_array1692B[_characterDirectionArray[index]] += 3;
 
 	int tmpVal = 0x9D;
@@ -1609,29 +1609,30 @@ int LilliputEngine::reverseFindHotspot(Common::Point pos) {
 void LilliputEngine::sub16A08(int index) {
 	debugC(2, kDebugEngineTBC, "sub16A08(%d)", index);
 
-	static const char _array169F8[4] = {1, 0, 0, -1};
-	static const char _array169FC[4] = {0, -1, 1, 0};
+	static const char arrayMoveX[4] = {1, 0, 0, -1};
+	static const char arrayMoveY[4] = {0, -1, 1, 0};
 
-	int _array16A00[4];
+	int arrayDistance[4];
 
 	for (int i = 3; i >= 0; i--) {
-		int16 var1h = _word16937Pos.x + _array169F8[i] - _array109E9PosX[index];
-		int16 var1l = _word16937Pos.y + _array169FC[i] - _array10A11PosY[index];
-		_array16A00[i] = (var1l * var1l) + (var1h * var1h);
+		int16 var1h = _word16937Pos.x + arrayMoveX[i] - _array109E9PosX[index];
+		int16 var1l = _word16937Pos.y + arrayMoveY[i] - _array10A11PosY[index];
+		arrayDistance[i] = (var1l * var1l) + (var1h * var1h);
 	}
-	_array1692B[0] = 0;
-	_array1692B[2] = 0;
+	
+	for (int i = 0; i < 4; i++)
+		_array1692B[i] = 0;
 
+	int8 tmpIndex = 0;
 	for (int i = 6; i > 0; i--) {
-		int tmpVal = 0x7FFF;
-		int tmpIndex = 0;
+		int16 tmpVal = 0x7FFF;
 		for (int j = 0; j < 4; j++) {
-			if (tmpVal > _array16A00[j]) {
-				tmpVal = _array16A00[j];
+			if (tmpVal > arrayDistance[j]) {
+				tmpVal = arrayDistance[j];
 				tmpIndex = j;
 			}
 		}
-		_array16A00[tmpIndex] = 0x7FFF;
+		arrayDistance[tmpIndex] = 0x7FFF;
 		_array1692B[tmpIndex] = i;
 	}
 }

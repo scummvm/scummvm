@@ -112,7 +112,6 @@ public:
 	byte _byte15EAD;
 	byte _debugFlag; // Mostly useless, as the associated functions are empty
 	byte _byte14837; // Unused byte, set by an opcode
-	byte _byte16939;
 
 	byte _array147D1[3];
 	byte _array1692B[4];
