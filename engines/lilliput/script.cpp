@@ -718,23 +718,23 @@ static const OpCode opCodes2[] = {
 Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& script) {
 	
 	Common::String str;
-	if(type == kImmediateValue) {
+	if (type == kImmediateValue) {
 		str =  Common::String::format("0x%x", script.readUint16LE());
 	} else if (type == kGetValue1) {
 		int val = script.readUint16LE();
-		if(val < 1000) { 
+		if (val < 1000) { 
 			str = Common::String::format("0x%x", val);
 		} else if (val > 1004) { 
 			str = Common::String::format("getValue1(0x%x)", val);
-		} else if ( val == 1000 ) {
+		} else if (val == 1000) {
 			str = Common::String("_byte129A0");
-		} else if( val == 1001 ) {
+		} else if (val == 1001) {
 			str = Common::String("characterIndex");
-		} else if( val == 1002 ) {
+		} else if (val == 1002) {
 			str = Common::String("_word16F00");
-		} else if( val == 1003 ) {
+		} else if (val == 1003) {
 			str = Common::String("_currentCharacterVariables[6]");
-		} else if( val == 1004 ) {
+		} else if (val == 1004) {
 			str = Common::String("_word10804");
 		}
 	} else if (type == kgetPosFromScript) {
@@ -787,20 +787,20 @@ Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& 
 		}
 	} else if (type == kCompareOperation) {
 		int comp = script.readUint16LE();
-		if(comp != '<' && comp != '>')
+		if (comp != '<' && comp != '>')
 			comp = '=';
-		str = Common::String::format("%c", comp );
+		str = Common::String::format("%c", comp);
 	}
 	else if (type == kComputeOperation) {
 		int comp = script.readUint16LE();
-		str = Common::String::format("%c", comp );
+		str = Common::String::format("%c", comp);
 	}
 	return str;
 }
 
-void LilliputScript::disasmScript( ScriptStream script) {
+void LilliputScript::disasmScript(ScriptStream script) {
 	
-	while(!script.eos()) {
+	while (!script.eos()) {
 		uint16 val = script.readUint16LE();
 		if (val == 0xFFF6) // end of script
 			return;
@@ -887,7 +887,7 @@ void LilliputScript::disasmScript( ScriptStream script) {
 				if (p != opCode->_numArgs - 1)
 					str += ", ";
 
-				if ( p < 4 )
+				if (p < 4)
 					opArgType++;
 			}
 			str += ");";
@@ -1415,7 +1415,7 @@ byte LilliputScript::OC_sub1740A() {
 	int var3 = _currScript->readUint16LE();
 	int var4 = 8 >> var3;
 
-	if( var2 & var4 ) {
+	if (var2 & var4) {
 		return 1;
 	} else { 
 		return 0;
@@ -2491,7 +2491,7 @@ void LilliputScript::OC_sub17C8B() {
 	int var1 = 2 << 8;
 	int var4 = _currScript->readUint16LE();
 	int var2 = _currScript->readUint16LE();
-	var2 = ((var2 & 0xFF) << 8 ) + _vm->_currentScriptCharacter;
+	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
 	
 	sub171AF(var1, var2, var4);
 }
@@ -2502,7 +2502,7 @@ void LilliputScript::OC_sub17CA2() {
 	int var1 = 1 << 8;
 	int var4 = _currScript->readUint16LE();
 	int var2 = _currScript->readUint16LE();
-	var2 = ((var2 & 0xFF) << 8 ) + _vm->_currentScriptCharacter;
+	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
 	
 	sub171AF(var1, var2, var4);
 }
@@ -2513,7 +2513,7 @@ void LilliputScript::OC_sub17CB9() {
 	int var4 = _currScript->readUint16LE();
 	int var1 = getValue1();
 	int var2 = _currScript->readUint16LE();
-	var2 = ((var2 & 0xFF) << 8 ) + _vm->_currentScriptCharacter;
+	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
 	
 	sub171AF(var1, var2, var4);
 }
@@ -2524,7 +2524,7 @@ void LilliputScript::OC_sub17CD1() {
 	int var1 = 3 << 8;
 	int var4 = _currScript->readUint16LE();
 	int var2 = _currScript->readUint16LE();
-	var2 = ((var2 & 0xFF) << 8 ) + _vm->_currentScriptCharacter;
+	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
 	
 	sub171AF(var1, var2, var4);
 }
@@ -2811,16 +2811,16 @@ void LilliputScript::OC_sub180C3() {
 	int x = _viewportPos.x + _byte180B3[var1];
 	int y = _viewportPos.y + _byte180BB[var1];
 
-	if ( x < 0 )
+	if (x < 0)
 		x = 0;
 
-	if ( y < 0 )
+	if (y < 0)
 		y = 0;
 	
-	if ( x > 56 )
+	if (x > 56)
 		x = 56;
 
-	if ( y > 56 )
+	if (y > 56)
 		y = 56;
 
 	_byte12A09 = 1;
@@ -2883,17 +2883,17 @@ void LilliputScript::OC_sub181BB() {
 	int c = _vm->_currentCharacterVariables[s];
 	int c2 = 0;
 
-	if ( d == 0x2D ) {
+	if (d == 0x2D) {
 		c = - 1 - c;
-	} else if ( d == 0x3E ) {
+	} else if (d == 0x3E) {
 		c = c - 0x80;
-		if ( c < 0 ) 
+		if (c < 0) 
 			c = 0;
 		c = c * 2;
-	} else if ( d == 0x3C ) {
+	} else if (d == 0x3C) {
 		c = -1 - c;
 		c = c - 0x80;
-		if ( c < 0 )
+		if (c < 0)
 			c = 0;
 		c = c * 2;
 	}
@@ -3147,7 +3147,7 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_mouseButton = 0;
 	_vm->_byte16F09 = 0;
 
-	while(!_vm->_shouldQuit) {
+	while (!_vm->_shouldQuit) {
 		_vm->displaySmallAnims();
 		_vm->update();
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
@@ -3243,7 +3243,7 @@ void LilliputScript::OC_sub186A1() {
 		frame -= 0xF0;
 	}
 
-	_vm->display16x16IndexedBuf(buf, frame, Common::Point(var2, var3) );
+	_vm->display16x16IndexedBuf(buf, frame, Common::Point(var2, var3));
 }
 
 void LilliputScript::OC_sub186E5_snd() {
