@@ -244,7 +244,7 @@ GUI::Debugger *LilliputEngine::getDebugger() {
 void LilliputEngine::update() {
 	// update every 20 ms.
 	int currentTime = _system->getMillis();
-	if(currentTime - _lastTime > 20) {
+	if (currentTime - _lastTime > 20) {
 		_lastTime += ((currentTime - _lastTime) / 20) * 20;
 		newInt8();
 		pollEvent();
@@ -316,7 +316,7 @@ void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 
 	src += ((index & 0xFF) << 8) + (index >> 8);
 
-	if ( (flags & 2) == 0 ) {
+	if ((flags & 2) == 0) {
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
 				if (src[x] != 0)
@@ -617,7 +617,7 @@ void LilliputEngine::displayIsometricBlock(byte *buf, int var1, int var2, int va
 	debugC(1, kDebugEngine, "displayIsometricBlock(buf, %d, %d, %d)", var1, var2, var3);
 
 	byte tmpByte1 = ((7 + (var2 >> 8) - (var2 & 0xFF)) << 4) & 0xFF;
-	byte tmpByte2 = ((4 + (var2 >> 8) + (var2 & 0xFF) - (var3 >> 7) ) << 3) & 0xFF;
+	byte tmpByte2 = ((4 + (var2 >> 8) + (var2 & 0xFF) - (var3 >> 7)) << 3) & 0xFF;
 
 	int index = (tmpByte2 << 8) + tmpByte1;
 	int index2 = var1 << 10;
@@ -751,7 +751,7 @@ void LilliputEngine::setNextDisplayCharacter(int var1) {
 	debugC(2, kDebugEngine, "setNextDisplayCharacter(%d)", var1);
 
 	byte charNum = var1 & 0xFF;
-	if ( charNum < _numCharactersToDisplay) {
+	if (charNum < _numCharactersToDisplay) {
 		int index = _charactersToDisplay[charNum];
 		_nextDisplayCharacterPos = Common::Point(_characterRelativePositionX[index], _characterRelativePositionY[index]);
 	} else {
@@ -912,21 +912,21 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	byte byte16DD4 = 0;
 	byte byte16DD3 = 0;
 
-	if(dx < 0) {
+	if (dx < 0) {
 		dx = -dx;
 		word16DCB = -4;
 	} else {
 		word16DCB = 4;
 	}
 
-	if(dy < 0) {
+	if (dy < 0) {
 		dy = -dy;
 		word16DCD = -256;
 	} else {
 		word16DCD = 256;
 	}
 
-	if(dy > dx) {
+	if (dy > dx) {
 		word16DD1 = 0;
 		word16DCF = word16DCB;
 	} else {
@@ -945,7 +945,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	int var1 = byte16DD4;
 	int count = 0; 
 
-	while ( *isoMap == 0xFF ) {
+	while (*isoMap == 0xFF) {
 		if (var1 > 0) {
 			isoMap += word16DCB;
 			var1 += byte16DD3;
@@ -1025,7 +1025,7 @@ void LilliputEngine::sub16CA0() {
 
 		for (int index2 = _numCharacters - 1; index2 >= 0; index2--) {
 			_byte16C9F = 0;
-			if ((index != index2 ) && 
+			if ((index != index2) && 
 				(_rulesBuffer2_5[index] != index2) &&
 				(_rulesBuffer2_5[index2] != index) &&
 				(_rulesBuffer2_11[index2] & 2) == 0) {
@@ -1041,7 +1041,7 @@ void LilliputEngine::sub16CA0() {
 	
 							if ((c1 == d1) && (c2 == d2)) {
 								_byte16C9F = 4;
-							} else if((_rulesBuffer2_11[index] & 4) != 0) {
+							} else if ((_rulesBuffer2_11[index] & 4) != 0) {
 								_byte16C9F = 0;
 							} else {
 								if (_characterDirectionArray[index] == 0) {
@@ -1058,7 +1058,7 @@ void LilliputEngine::sub16CA0() {
 									if (d2 < c2) {
 										_byte16C9F = 2;
 
-										if(d1 == c1)
+										if (d1 == c1)
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
@@ -1068,7 +1068,7 @@ void LilliputEngine::sub16CA0() {
 									if (d2 > c2) {
 										_byte16C9F = 2;
 
-										if(d1 == c1)
+										if (d1 == c1)
 											_byte16C9F = 3;
 
 										if (sub16DD5(c1, d1, c2, d2) != 0)
@@ -1093,7 +1093,7 @@ void LilliputEngine::sub16CA0() {
 
 			int val = _scriptHandler->_array10B51[index2 + index * 40];
 			val = (val & 0xFF) + ((val & 0xFF) << 8);
-			if( (val & 0xFF) != _byte16C9F ) {
+			if ((val & 0xFF) != _byte16C9F) {
 				_scriptHandler->_characterScriptEnabled[index] = 1;
 				val = (val & 0xFF00) | _byte16C9F;
 			}
@@ -1455,7 +1455,7 @@ void LilliputEngine::sub167EF(int index) {
 		  (_array10999PosX[index] >= (_rectXMinMax[word167EB] >> 8)) &&
 		  (_array10999PosX[index] <= (_rectXMinMax[word167EB] & 0xFF)) &&
 		  (_array109C1PosY[index] >= (_rectYMinMax[word167EB] >> 8)) &&
-		  (_array109C1PosY[index] <= (_rectYMinMax[word167EB] & 0xFF)) ) {
+		  (_array109C1PosY[index] <= (_rectYMinMax[word167EB] & 0xFF))) {
 		_array109E9PosX[index] = _rulesBuffer12Pos4[word167ED].x;
 		_array10A11PosY[index] = _rulesBuffer12Pos4[word167ED].y;
 		return;
@@ -1845,7 +1845,7 @@ void LilliputEngine::sub12F37() {
 
 	for (int i = 0; i < _numCharacters; i++) {
 		byte *varPtr = getCharacterVariablesPtr(index1);
-		if (varPtr[0] != 0 ) {
+		if (varPtr[0] != 0) {
 			if (varPtr[0] == 1) {
 				varPtr[0] = 0;
 			} else {
@@ -2592,7 +2592,7 @@ void LilliputEngine::displayVGAFile(Common::String fileName) {
 
 void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
 	debugC(1, kDebugEngine, "fixPaletteEntries(palette, %d)", num);
-	// Color values are coded on 6bits ( for old 6bits DAC )
+	// Color values are coded on 6bits (for old 6bits DAC)
 	for (int32 i = 0; i < num * 3; i++) {
 		int32 a = palette[i];
 		assert(a < 64);
@@ -2700,7 +2700,7 @@ void LilliputEngine::handleGameScripts() {
 		debugC(1, kDebugEngineTBC, "============= End Game Script %d ==================", i);
 	}
 	
-	while(1);
+	while (1);
 */
 	
 	i = index;
@@ -2749,7 +2749,7 @@ Common::Error LilliputEngine::run() {
 	// Hack, see above 
 	_int8installed = true;
 
-	while(!_shouldQuit) {
+	while (!_shouldQuit) {
 		handleMenu();
 		handleGameScripts();
 		// To be removed when handled in the previous fonctions
@@ -2778,7 +2778,7 @@ byte *LilliputEngine::getCharacterVariablesPtr(int16 index) {
 	debugC(1, kDebugEngineTBC, "getCharacterVariablesPtr(%d)", index);
 
 /* used to debug
-	if(index == 96 + 22) {	
+	if (index == 96 + 22) {	
 		int a = 0;
 	}
 */
