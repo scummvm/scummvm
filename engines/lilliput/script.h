@@ -128,7 +128,7 @@ private:
 	void sub17D40(bool &forceReturnFl);
 	void decodePackedText(char *buf);
 	void sub18B3C(int var);
-	void sub18BE6(byte var1, int var2, int var4);
+	void displayNumber(byte var1, Common::Point pos);
 	byte *getMapPtr(Common::Point val);
 	byte *sub173D2();
 	void sub171AF(int var1, int var2, int var4);
