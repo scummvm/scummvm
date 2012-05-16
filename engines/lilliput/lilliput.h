@@ -236,7 +236,7 @@ public:
 	void restoreSurfaceSpeech();
 	void displayFunction18(int var1, int var2, int var3, int var4);
 	void displayCharacter(int index, Common::Point pos, int flags);
-	void displayString(byte *buf, int var2, int var4);
+	void displayString(byte *buf, Common::Point pos);
 	void displayChar(int index, int var1);
 	void displaySmallAnims();
 	void displaySmallIndexedAnim(byte index, byte subIndex);

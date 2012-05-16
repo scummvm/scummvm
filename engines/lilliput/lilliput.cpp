@@ -1136,12 +1136,10 @@ void LilliputEngine::displayFunction18(int var1, int var2, int var3, int var4) {
 	displayMousePointer();
 }
 
-void LilliputEngine::displayString(byte *buf, int var2, int var4) {
-	debugC(2, kDebugEngineTBC, "displayString(buf, %d, %d)", var2, var4);
+void LilliputEngine::displayString(byte *buf, Common::Point pos) {
+	debugC(2, kDebugEngineTBC, "displayString(buf, %d - %d)", pos.x, pos.y);
 
-	int index = var2;
-	int tmpVar4 = (var4 >> 8) + ((var4 & 0xFF) << 8);
-	index = index + tmpVar4 + (tmpVar4 >> 2);
+	int index = (pos.y * 320) + pos.x;
 
 	int i = 0;
 	while (buf[i] != 0) {

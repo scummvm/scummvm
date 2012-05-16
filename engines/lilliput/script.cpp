@@ -1244,9 +1244,6 @@ void LilliputScript::listAllTexts() {
 			decodePackedText(&_vm->_packedStrings[index + variantCount]);
 			debugC(1, kDebugScriptTBC, "Text 0x%x variant 0 : %s", i, _vm->_displayStringBuf);
 		/* }*/ 
-
-
-
 	}
 }
 
@@ -2712,7 +2709,6 @@ void LilliputScript::OC_sub17FD2() {
 	
 	int var1 = getValue1();
 	_vm->_currentCharacterVariables[6] = var1 & 0xFF;
-
 }
 
 void LilliputScript::OC_sub17FDD() {
@@ -2728,6 +2724,7 @@ void LilliputScript::OC_sub17FDD() {
 
 void LilliputScript::OC_setByte10B29() {
 	debugC(1, kDebugScriptTBC, "OC_setByte10B29()");
+
 	int var1 = getValue1();
 	_characterScriptEnabled[var1] = 1;
 }
@@ -2764,6 +2761,7 @@ void LilliputScript::OC_sub1801D() {
 	_vm->_characterDirectionArray[var1] = _currScript->readUint16LE();
 
 }
+
 void LilliputScript::OC_sub1805D() {
 	debugC(1, kDebugScriptTBC, "OC_sub1805D()");
 
@@ -3096,18 +3094,18 @@ void LilliputScript::OC_sub1847F() {
 	int curWord = _currScript->readUint16LE();
 	assert(curWord != 0);
 	int var1 = tmpVal / (curWord & 0xFF);
-	int var2 = _currScript->readUint16LE();
-	int var4 = _currScript->readUint16LE();
+	int var2 = _currScript->readSint16LE();
+	int var4 = _currScript->readSint16LE();
 
 	if (_vm->_displayMap != 1) {
 		_vm->restoreSurfaceUnderMousePointer();
-		sub18BE6(var1 & 0xFF, var2, var4);
+		displayNumber(var1 & 0xFF, Common::Point(var2, var4));
 		_vm->displayMousePointer();
 	}
 }
 
-void LilliputScript::sub18BE6(byte var1, int var2, int var4) {
-	debugC(1, kDebugScriptTBC, "sub18BE6(%d, %d, %d)", var1, var2, var4);
+void LilliputScript::displayNumber(byte var1, Common::Point pos) {
+	debugC(1, kDebugScriptTBC, "displayNumber(%d, %d - %d)", var1, pos.x, pos.y);
 
 	_vm->_displayStringIndex = 0;
 	_vm->_displayStringBuf[0] = 32;
@@ -3116,7 +3114,7 @@ void LilliputScript::sub18BE6(byte var1, int var2, int var4) {
 	_vm->_displayStringBuf[3] = 0;
 
 	_vm->prepareGoldAmount(var1);
-	_vm->displayString(_vm->_displayStringBuf, var2, var4);
+	_vm->displayString(_vm->_displayStringBuf, pos);
 }
 
 void LilliputScript::OC_displayVGAFile() {
