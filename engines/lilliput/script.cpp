@@ -1358,7 +1358,7 @@ Common::Point LilliputScript::getPosFromScript() {
 }
 
 void LilliputScript::sub130B6() {
-	debugC(1, kDebugScriptTBC, "sub130B6()");
+	debugC(1, kDebugScript, "sub130B6()");
 
 	assert(_vm->_word12F68_ERULES <= 20);
 	for (int i = 0; i < _vm->_word12F68_ERULES; i++) {
@@ -3174,7 +3174,7 @@ void LilliputScript::OC_sub1853B() {
 	_heroismLevel = 0;
 	sub130B6();
 
-	_vm->displayFunction12();
+	_vm->initGameAreaDisplay();
 
 	OC_PaletteFadeIn();
 	_byte12A09 = 0;
@@ -3228,14 +3228,13 @@ void LilliputScript::OC_sub186A1() {
 	debugC(1, kDebugScriptTBC, "OC_sub186A1()");
 
 	int var1 = getValue1();
-	int var2 = _currScript->readUint16LE();
-	int var3 = _currScript->readUint16LE();
-	int var4 = 16;
+	int posX = _currScript->readUint16LE();
+	int posY = _currScript->readUint16LE();
+	Common::Point pos = Common::Point(posX, posY);
 
-	_vm->fill16x16Rect(var4, var2, var3);
+	_vm->fill16x16Rect(16, pos);
 
 	int frame = _vm->_characterFrameArray[var1];
-
 	byte* buf = _vm->_bufferMen;
 
 	if (frame > 0xF0) {
@@ -3243,7 +3242,7 @@ void LilliputScript::OC_sub186A1() {
 		frame -= 0xF0;
 	}
 
-	_vm->display16x16IndexedBuf(buf, frame, Common::Point(var2, var3));
+	_vm->display16x16IndexedBuf(buf, frame, pos);
 }
 
 void LilliputScript::OC_sub186E5_snd() {

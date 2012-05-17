@@ -219,7 +219,7 @@ public:
 	void display16x16IndexedBuf(byte *buf, int var1, Common::Point pos);
 	void display16x16Buf(byte *buf, Common::Point pos);
 	void SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos);
-	void fill16x16Rect(int var1, int var2, int var4);
+	void fill16x16Rect(byte col, Common::Point pos);
 	void displayMousePointer();
 	void restoreSurfaceUnderMousePointer();
 	void saveSurfaceGameArea();
@@ -228,7 +228,7 @@ public:
 	void displayLandscape();
 	void displayFunction10();
 	void displayFunction11(byte *buf);
-	void displayFunction12();
+	void initGameAreaDisplay();
 	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);
 	void displayGameArea();
 	void prepareGameArea();
