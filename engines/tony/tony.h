@@ -145,8 +145,8 @@ public:
 
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
-	Common::Error TonyEngine::loadGameState(int slot);
-	Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc);
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 
 	// Avverte che siamo guidati dal GDI
 	void GDIControl(bool bCon);

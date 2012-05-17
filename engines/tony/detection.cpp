@@ -78,7 +78,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
