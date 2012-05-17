@@ -161,6 +161,9 @@ public:
 		LINK_PLUGIN(COREMIDI)
 		#endif
 
+		// Scaler plugins
+		LINK_PLUGIN(NORMAL)
+
 		return pl;
 	}
 };
