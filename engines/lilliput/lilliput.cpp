@@ -1463,8 +1463,8 @@ void LilliputEngine::sub167EF(int index) {
 	
 	_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
 	_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
-	int var4h = (_rectXMinMax[index] >> 8);
-	int var4l = (_rectXMinMax[index] & 0xFF);
+	int var4h = (_rectXMinMax[word167EB] >> 8);
+	int var4l = (_rectXMinMax[word167EB] & 0xFF);
 	
 	if (var4h != var4l) {
 		if (_array109E9PosX[index] == var4h) {
@@ -1477,8 +1477,8 @@ void LilliputEngine::sub167EF(int index) {
 			return;
 		}
 
-		var4h = (_rectYMinMax[index] >> 8);
-		var4l = (_rectYMinMax[index] & 0xFF);
+		var4h = (_rectYMinMax[word167EB] >> 8);
+		var4l = (_rectYMinMax[word167EB] & 0xFF);
 
 		if (var4h != var4l) {
 			if (_array10A11PosY[index] == var4h)
@@ -1506,7 +1506,7 @@ void LilliputEngine::sub167EF(int index) {
 
 void LilliputEngine::sub1693A(int index) {
 	debugC(2, kDebugEngineTBC, "sub1693A(%d)", index);
-	
+
 	static const int16 mapArrayMove[4] = {4, -256, 256, -4};
 
 	_word16937Pos = Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]);
@@ -1514,8 +1514,8 @@ void LilliputEngine::sub1693A(int index) {
 	sub16A08(index);
 	
 	int var2 = (_characterDirectionArray[index] ^ 3);
-	// initialized by sub16A08, values: [0, 6[
-	_array1692B[var2] += 0xF8;
+	// initialized by sub16A08, values: [0, 3[
+	_array1692B[var2] -= 8;
 	byte byte16939 = 0;
 	
 	int mapIndex = ((((_word16937Pos.y << 8) >> 2) + _word16937Pos.x) << 2);
@@ -1524,25 +1524,24 @@ void LilliputEngine::sub1693A(int index) {
 	for (int i = 3; i >= 0; i--) {
 		mapIndexDiff = mapArrayMove[i];
 		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _array16C54[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _array16C58[i]) != 0)) {
-			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0) {
-				if (sub16A76(i, index) != 0)
-					_array1692B[i] += 0xEC;
-
-				int tmpVal = ((_rulesBuffer2_10[index] & 7) ^ 7);
-				retVal = _rulesChunk9[_bufferIsoMap[mapIndex + mapIndexDiff]];
-				tmpVal &= retVal;
-				if (tmpVal == 0)
-					continue;
+			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0 && (sub16A76(i, index) != 0)) {
+				_array1692B[i] -= 20;
 			}
+
+			int tmpVal = ((_rulesBuffer2_10[index] & 7) ^ 7);
+			retVal = _rulesChunk9[_bufferIsoMap[mapIndex + mapIndexDiff]];
+			tmpVal &= retVal;
+			if (tmpVal == 0)
+				continue;
 		}
-		_array1692B[i] = 0x9E;
+		_array1692B[i] = -98;
 		++byte16939;
 	}
 
 	if (byte16939 != 0)
 		_array1692B[_characterDirectionArray[index]] += 3;
 
-	int tmpVal = 0x9D;
+	int tmpVal = -97;
 	for (int i = 3; i >= 0; i--) {
 		if (tmpVal < _array1692B[i]) {
 			retVal = i;
@@ -1622,7 +1621,7 @@ void LilliputEngine::sub16A08(int index) {
 		_array1692B[i] = 0;
 
 	int8 tmpIndex = 0;
-	for (int i = 6; i > 0; i--) {
+	for (int i = 3; i > 0; i--) {
 		int16 tmpVal = 0x7FFF;
 		for (int j = 0; j < 4; j++) {
 			if (tmpVal > arrayDistance[j]) {
@@ -2684,7 +2683,7 @@ void LilliputEngine::handleGameScripts() {
 
 /* Decompiler follows
 
-	_scriptHandler->listAllTexts();
+	//_scriptHandler->listAllTexts();
 
 	debugC(1, kDebugEngineTBC, "================= Menu Script ==================");
 	ScriptStream script = ScriptStream(_menuScript, _menuScriptSize);
