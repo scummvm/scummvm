@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	scaler.o \
 	scaler/thumbnail_intern.o \
 	screen.o \
+	scaler/normal.o \
 	sjis.o \
 	surface.o \
 	transform_struct.o \
