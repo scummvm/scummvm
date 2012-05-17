@@ -491,7 +491,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub1844A();
 		break;
 	case 0x52:
-		OC_sub1847F();
+		OC_displayNumericCharacterVariable();
 		break;
 	case 0x53:
 		OC_displayVGAFile();
@@ -503,7 +503,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_displayTitleScreen();
 		break;
 	case 0x56:
-		OC_sub1853B();
+		OC_initGameAreaDisplay();
 		break;
 	case 0x57:
 		OC_sub1864D();
@@ -548,7 +548,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub18764();
 		break;
 	case 0x65:
-		OC_sub1853B();
+		OC_initGameAreaDisplay();
 		break;
 	default:
 		error("Unknown opcode %d", curWord);
@@ -693,11 +693,11 @@ static const OpCode opCodes2[] = {
 /* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x50 */	{ "OC_sub17E22_speech1IfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-/* 0x52 */	{ "OC_sub1847F", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
+/* 0x52 */	{ "OC_displayNumericCharacterVariable", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
 /* 0x53 */	{ "OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x54 */	{ "OC_sub184D7", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // TODO
 /* 0x55 */	{ "OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-/* 0x56 */	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x56 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x57 */	{ "OC_sub1864D", 6, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue}, 
 /* 0x58 */	{ "OC_initSmallAnim", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
 /* 0x59 */	{ "OC_sub18678", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
@@ -712,7 +712,7 @@ static const OpCode opCodes2[] = {
 /* 0x62 */	{ "OC_sub18746_snd", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x63 */	{ "OC_sub1875D_snd", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x64 */	{ "OC_sub18764", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-/* 0x65 */	{ "OC_sub1853B", 0, kNone, kNone, kNone, kNone, kNone }
+/* 0x65 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone }
 };
 
 Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& script) {
@@ -3086,26 +3086,26 @@ void LilliputScript::OC_sub1844A() {
 	}
 }
 
-void LilliputScript::OC_sub1847F() {
-	debugC(1, kDebugScriptTBC, "OC_sub1847F()");
+void LilliputScript::OC_displayNumericCharacterVariable() {
+	debugC(1, kDebugScript, "OC_displayNumericCharacterVariable()");
 
 	byte *buf215Ptr = getCharacterVariablePtr();
 	byte tmpVal = buf215Ptr[0];
 	int curWord = _currScript->readUint16LE();
 	assert(curWord != 0);
-	int var1 = tmpVal / (curWord & 0xFF);
-	int var2 = _currScript->readSint16LE();
-	int var4 = _currScript->readSint16LE();
+	int displayVal = tmpVal / (curWord & 0xFF);
+	int posX = _currScript->readSint16LE();
+	int posY = _currScript->readSint16LE();
 
 	if (_vm->_displayMap != 1) {
 		_vm->restoreSurfaceUnderMousePointer();
-		displayNumber(var1 & 0xFF, Common::Point(var2, var4));
+		displayNumber(displayVal, Common::Point(posX, posY));
 		_vm->displayMousePointer();
 	}
 }
 
 void LilliputScript::displayNumber(byte var1, Common::Point pos) {
-	debugC(1, kDebugScriptTBC, "displayNumber(%d, %d - %d)", var1, pos.x, pos.y);
+	debugC(1, kDebugScript, "displayNumber(%d, %d - %d)", var1, pos.x, pos.y);
 
 	_vm->_displayStringIndex = 0;
 	_vm->_displayStringBuf[0] = 32;
@@ -3166,8 +3166,8 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_mouseButton = 0;
 }
 
-void LilliputScript::OC_sub1853B() {
-	debugC(1, kDebugScriptTBC, "OC_sub1853B()");
+void LilliputScript::OC_initGameAreaDisplay() {
+	debugC(1, kDebugScript, "OC_initGameAreaDisplay()");
 
 	OC_PaletteFadeOut();
 	_vm->_displayMap = 0;
