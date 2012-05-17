@@ -139,6 +139,9 @@ public:
 		LINK_PLUGIN(TIMIDITY)
 		#endif
 
+		// Scaler plugins
+		LINK_PLUGIN(NORMAL)
+
 		return pl;
 	}
 };

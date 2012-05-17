@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \
+	scaler/normal.o \
 	sjis.o \
 	surface.o \
 	thumbnail.o \
