@@ -149,7 +149,7 @@ private:
 	byte OC_checkCharacterGoalPos();
 	byte OC_comparePos();
 	byte OC_sub1740A();
-	byte OC_compareCharacterId();
+	byte OC_compareCharacterVariable();
 	byte OC_CompareByte16F02With();
 	byte OC_getRandom();
 	byte OC_for();
@@ -206,7 +206,7 @@ private:
 	void OC_sub17DF9_speech1param();
 	void OC_sub17E07_speech4param();
 	void OC_sub17E15_speech2param();
-	void OC_sub17B03();
+	void OC_ComputeCharacterVariable();
 	void OC_getRandom_type2();
 	void OC_setCharacterPosition();
 	void OC_DisableCharacter();
@@ -265,7 +265,7 @@ private:
 	void OC_sub18213();
 	void OC_sub18252();
 	void OC_sub18260();
-	void OC_sub182EC();
+	void OC_CharacterVariableAddOrRemoveFlag();
 	void OC_PaletteFadeOut();
 	void OC_PaletteFadeIn();
 	void OC_loadAndDisplayCUBESx_GFX();

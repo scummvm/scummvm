@@ -114,7 +114,7 @@ public:
 	byte _byte14837; // Unused byte, set by an opcode
 
 	byte _array147D1[3];
-	byte _array1692B[4];
+	char _array1692B[4];
 	byte *_bufferIsoMap;
 	byte *_bufferCubegfx;
 	byte *_bufferMen;
