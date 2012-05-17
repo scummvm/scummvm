@@ -23,8 +23,10 @@
 
 #include "base/plugins.h"
 
+#include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 #include "tony/tony.h"
@@ -145,23 +147,35 @@ void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Tony::RMString saveName;
 	byte difficulty;
+	byte thumbData[160 * 120 * 2];	
 
-	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	Graphics::Surface *thumbnail = new Graphics::Surface();
-	thumbnail->create(160, 120, pixelFormat);
+	if (Tony::RMOptionScreen::LoadThumbnailFromSaveState(slot, thumbData, saveName, difficulty)) {
+		// Convert the 565 thumbnail data to the needed overlay format
+		Common::MemoryReadStream thumbStream(thumbData, 160 * 120 * 2);
+		Graphics::PixelFormat destFormat = g_system->getOverlayFormat();
+		Graphics::Surface *to = new Graphics::Surface();
+		to->create(160, 120, destFormat);
 
-	if (Tony::RMOptionScreen::LoadThumbnailFromSaveState(slot, (byte *)thumbnail->pixels, saveName, difficulty)) {
+		OverlayColor *pixels = (OverlayColor *)to->pixels;
+		for (int y = 0; y < to->h; ++y) {
+			for (int x = 0; x < to->w; ++x) {
+				uint8 r, g, b;
+				Graphics::colorToRGB<Graphics::ColorMasks<555> >(thumbStream.readUint16LE(), r, g, b);
+
+				// converting to current OSystem Color
+				*pixels++ = destFormat.RGBToColor(r, g, b);
+			}
+		}
+
 		// Create the return descriptor
 		SaveStateDescriptor desc(slot, (const char *)saveName);
 		desc.setDeletableFlag(true);
 		desc.setWriteProtectedFlag(false);
-		desc.setThumbnail(thumbnail);
+		desc.setThumbnail(to);
 
 		return desc;
 	}
 
-	thumbnail->free();
-	delete thumbnail;
 	return SaveStateDescriptor();
 }
 
