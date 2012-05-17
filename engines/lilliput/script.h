@@ -281,11 +281,11 @@ private:
 	void OC_loadFile_AERIAL_GFX();
 	void OC_sub17E22_speech1IfSoundOff();
 	void OC_sub1844A();
-	void OC_sub1847F();
+	void OC_displayNumericCharacterVariable();
 	void OC_displayVGAFile();
 	void OC_sub184D7();
 	void OC_displayTitleScreen();
-	void OC_sub1853B();
+	void OC_initGameAreaDisplay();
 	void OC_sub1864D();
 	void OC_initSmallAnim();
 	void OC_sub18678();
