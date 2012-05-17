@@ -987,7 +987,7 @@ void RMGfxEngine::WaitWipeEnd(CORO_PARAM) {
 }
 
 bool RMGfxEngine::CanLoadSave() {
-	return m_bInput && !m_tony.InAction();
+	return m_bInput && !m_tony.InAction() && !_vm->getIsDemo();
 }
 
 } // End of namespace Tony
