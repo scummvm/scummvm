@@ -61,6 +61,8 @@ namespace Tony {
 
 namespace MPAL {
 
+#define GETARG(type)   va_arg(v, type)
+
 /****************************************************************************\
 *       Copyright
 \****************************************************************************/
@@ -76,39 +78,25 @@ const char *mpalCopyright =
 *       Internal functions
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     void LockVar(void);
-*
-* Description:  Locka le variabili per accederci
-*
-\****************************************************************************/
-
+/**
+ * Locks the variables for access
+ */
 void LockVar(void) {
 	GLOBALS.lpmvVars = (LPMPALVAR)GlobalLock(GLOBALS.hVars);
 }
 
-/****************************************************************************\
-*
-* Function:     void UnlockVar(void);
-*
-* Description:  Unlocka le variabili dopo l'uso
-*
-\****************************************************************************/
 
+/**
+ * Unlocks variables after use
+ */
 void UnlockVar(void) {
 	GlobalUnlock(GLOBALS.hVars);
 }
 
 
-/****************************************************************************\
-*
-* Function:     void LockMsg(void);
-*
-* Description:  Locka i messaggi per accederci
-*
-\****************************************************************************/
-
+/**
+ * Locks the messages for access
+ */
 static void LockMsg(void) {
 #ifdef NEED_LOCK_MSGS
 	GLOBALS.lpmmMsgs = (LPMPALMSG)GlobalLock(GLOBALS.hMsgs);
@@ -116,14 +104,9 @@ static void LockMsg(void) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void UnlockMsg(void);
-*
-* Description:  Unlocka i messaggi dopo l'uso
-*
-\****************************************************************************/
-
+/**
+ * Unlocks the messages after use
+ */
 static void UnlockMsg(void) {
 #ifdef NEED_LOCK_MSGS
 	GlobalUnlock(GLOBALS.hMsgs);
@@ -131,125 +114,79 @@ static void UnlockMsg(void) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void LockDialogs(void);
-*
-* Description:  Locka i dialoghi per accederci
-*
-\****************************************************************************/
-
+/**
+ * Locks the dialogs for access
+ */
 static void LockDialogs(void) {
 	GLOBALS.lpmdDialogs = (LPMPALDIALOG)GlobalLock(GLOBALS.hDialogs);
 }
 
 
-/****************************************************************************\
-*
-* Function:     void UnlockDialogs(void);
-*
-* Description:  Unlocka i dialoghi dopo l'uso
-*
-\****************************************************************************/
-
+/**
+ * Unlocks the dialogs after use
+ */
 static void UnlockDialogs(void) {
 	GlobalUnlock(GLOBALS.hDialogs);
 }
 
 
-/****************************************************************************\
-*
-* Function:     void LockLocations(void);
-*
-* Description:  Locka le strutture di dati sulle locazioni
-*
-\****************************************************************************/
-
+/**
+ * Locks the location data structures for access
+ */
 static void LockLocations(void) {
 	GLOBALS.lpmlLocations = (LPMPALLOCATION)GlobalLock(GLOBALS.hLocations);
 }
 
 
-/****************************************************************************\
-*
-* Function:     void UnlockLocations(void);
-*
-* Description:  Unlocka le strutture di dati sulle locazioni
-*
-\****************************************************************************/
-
+/**
+ * Unlocks the location structures after use
+ */
 static void UnlockLocations(void) {
 	GlobalUnlock(GLOBALS.hLocations);
 }
 
 
-/****************************************************************************\
-*
-* Function:     void LockItems(void);
-*
-* Description:  Locka le strutture di dati sugli item
-*
-\****************************************************************************/
-
+/**
+ * Locks the items structures for use
+ */
 static void LockItems(void) {
 	GLOBALS.lpmiItems = (LPMPALITEM)GlobalLock(GLOBALS.hItems);
 }
 
 
-/****************************************************************************\
-*
-* Function:     void UnlockItems(void);
-*
-* Description:  Unlocka le strutture di dati sugli item
-*
-\****************************************************************************/
-
+/**
+ * Unlocks the items structures after use
+ */
 static void UnlockItems(void) {
 	GlobalUnlock(GLOBALS.hItems);
 }
 
-/****************************************************************************\
-*
-* Function:     void LockScripts(void);
-*
-* Description:  Locka le strutture di dati sugli script
-*
-\****************************************************************************/
 
+/**
+ * Locks the script data structures for use
+ */
 static void LockScripts(void) {
 	GLOBALS.lpmsScripts = (LPMPALSCRIPT)GlobalLock(GLOBALS.hScripts);
 }
 
 
-/****************************************************************************\
-*
-* Function:     void UnlockScripts(void);
-*
-* Description:  Unlocka le strutture di dati sugli script
-*
-\****************************************************************************/
-
+/**
+ * Unlocks the script data structures after use
+ */
 static void UnlockScripts(void) {
 	GlobalUnlock(GLOBALS.hScripts);
 }
 
 
-/****************************************************************************\
-*
-* Function:     int varGetValue(char * lpszVarName);
-*
-* Description:  Restituisce il valore corrente di una variabile globale
-*
-* Input:        char * lpszVarName       Nome della variabile
-*
-* Return:       Valore corrente
-*
-* Note:         Prima di questa funzione, bisogna richiamare LockVar() che
-*               locka le variabili globali per l'utilizzo. Dopo inoltre bi-
-*               sogna ricordarsi di chiamare UnlockVar()
-*
-\****************************************************************************/
-
+/**
+ * Returns the current value of a global variable
+ *
+ * @param lpszVarName		Name of the variable
+ * @returns		Current value
+ * @remarks		Before using this method, you must call LockVar() to
+ * lock the global variablves for use. Then afterwards, you will
+ * need to remember to call UnlockVar()
+ */
 int32 varGetValue(const char *lpszVarName) {
 	int i;
 	LPMPALVAR v=GLOBALS.lpmvVars;
@@ -263,17 +200,11 @@ int32 varGetValue(const char *lpszVarName) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void varSetValue(char * lpszVarName, int val);
-*
-* Description:  Setta un nuovo valore per una variabile globale di MPAL
-*
-* Input:        char * lpszVarName       Nome della variabile
-*               int val                 Valore da settare
-*
-\****************************************************************************/
-
+/**
+ * Sets the value of a MPAL global variable
+ * @param lpszVarName       Name of the variable
+ * @param val				Value to set
+ */
 void varSetValue(const char *lpszVarName, int32 val) {
 	uint i;
 	LPMPALVAR v = GLOBALS.lpmvVars;
@@ -298,22 +229,14 @@ void varSetValue(const char *lpszVarName, int32 val) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     int locGetOrderFromNum(uint32 nLoc);
-*
-* Description:  Trova l'indice della locazione #nLoc all'interno dell'array
-*               delle strutture delle locazioni
-*
-* Input:        uint32 nLoc              Numero della locazione da cercare
-*
-* Return:       Indice, o -1 se la locazione non e' presente
-*
-* Note:         Per funzionare, la funzione necessita che le locazioni siano
-*               state lockate con LockLoc()
-*
-\****************************************************************************/
-
+/**
+ * Find the index of a location within the location array. Remember to call LockLoc() beforehand.
+ *
+ * @param nLoc				Location number to search for
+ * @returns		Index, or -1 if the location is not present
+ * @remarks		This function requires the location list to have
+ * first been locked with a call to LockLoc().
+ */
 static int locGetOrderFromNum(uint32 nLoc) {
 	int i;
 	LPMPALLOCATION loc = GLOBALS.lpmlLocations;
@@ -325,22 +248,14 @@ static int locGetOrderFromNum(uint32 nLoc) {
 	return -1;
 }
 
-/****************************************************************************\
-*
-* Function:     int msgGetOrderFromNum(uint32 nMsg);
-*
-* Description:  Trova l'indice del messaggio #nMsg all'interno dell'array
-*               delle strutture dei messaggi
-*
-* Input:        uint32 nMsg              Numero del messaggio da cercare
-*
-* Return:       Indice, o -1 se il messaggio non e' presente
-*
-* Note:         Per funzionare, la funzione necessita che i messaggi siano
-*               stati lockati con LockMsg()
-*
-\****************************************************************************/
 
+/**
+ * Find the index of a message within the messages array
+ * @param nMsg				Message number to search for
+ * @returns		Index, or -1 if the message is not present
+ * @remarks		This function requires the message list to have
+ * first been locked with a call to LockMsg()
+ */
 static int msgGetOrderFromNum(uint32 nMsg) {
 	int i;
 	LPMPALMSG msg = GLOBALS.lpmmMsgs;
@@ -352,23 +267,13 @@ static int msgGetOrderFromNum(uint32 nMsg) {
 	return -1;
 }
 
-
-/****************************************************************************\
-*
-* Function:     int itemGetOrderFromNum(uint32 nItem);
-*
-* Description:  Trova l'indice dell'item #nItem all'interno dell'array delle
-*               strutture degli item
-*
-* Input:        uint32 nItem             Numero dell'item da cercare
-*
-* Return:       Indice, o -1 se l'item non e' presente
-*
-* Note:         Per funzionare, questa funzione necessita che gli item siano
-*               stati lockati tramite LockItem()
-*
-\****************************************************************************/
-
+/**
+ * Find the index of an item within the items array
+ * @param nItem				Item number to search for
+ * @returns		Index, or -1 if the item is not present
+ * @remarks		This function requires the item list to have
+ * first been locked with a call to LockItems()
+ */
 static int itemGetOrderFromNum(uint32 nItem) {
 	int i;
 	LPMPALITEM item = GLOBALS.lpmiItems;
@@ -381,22 +286,13 @@ static int itemGetOrderFromNum(uint32 nItem) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     int scriptGetOrderFromNum(uint32 nScript);
-*
-* Description:  Trova l'indice dello script #nScript all'interno dell'array
-*               delle strutture degli script
-*
-* Input:        uint32 nScript           Numero dello script da cercare
-*
-* Return:       Indice, o -1 se lo script non e' presente
-*
-* Note:         Per funzionare, questa funzione necessita che gli script siano
-*               stati lockati tramite LockScript()
-*
-\****************************************************************************/
-
+/**
+ * Find the index of a script within the scripts array
+ * @param nScript			Script number to search for
+ * @returns		Index, or -1 if the script is not present
+ * @remarks		This function requires the script list to have
+ * first been locked with a call to LockScripts()
+ */
 static int scriptGetOrderFromNum(uint32 nScript) {
 	int i;
 	LPMPALSCRIPT script = GLOBALS.lpmsScripts;
@@ -409,22 +305,13 @@ static int scriptGetOrderFromNum(uint32 nScript) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     int dialogGetOrderFromNum(uint32 nDialog);
-*
-* Description:  Trova l'indice del dialog #nDialog all'interno dell'array
-*               delle strutture dei dialog
-*
-* Input:        uint32 nDialog           Numero del dialog da cercare
-*
-* Return:       Indice, o -1 se il dialog non e' presente
-*
-* Note:         Per funzionare, questa funzione necessita che i dialog siano
-*               stati lockati tramite LockDialogs()
-*
-\****************************************************************************/
-
+/**
+ * Find the index of a dialog within the dialogs array
+ * @param nDialog			Dialog number to search for
+ * @returns		Index, or -1 if the dialog is not present
+ * @remarks		This function requires the dialog list to have
+ * first been locked with a call to LockDialogs()
+ */
 static int dialogGetOrderFromNum(uint32 nDialog) {
 	int i;
 	LPMPALDIALOG dialog = GLOBALS.lpmdDialogs;
@@ -437,21 +324,12 @@ static int dialogGetOrderFromNum(uint32 nDialog) {
 }
 
 
-
-/****************************************************************************\
-*
-* Function:     char * DuplicateMessage(uint32 nMsgOrd);
-*
-* Description:  Duplica un messaggio
-*
-* Input:        uint32 nMsgOrd           Indice del messaggio dentro l'array
-*                                       di strutture dei messaggi
-*
-* Return:       Pointer al messaggio duplicato (che puo' essere liberato
-*               con GlobalFree()).
-*
-\****************************************************************************/
-
+/**
+ * Duplicates a message
+ * @param nMsgOrd			Index of the message inside the messages array
+ * @returns		Pointer to the duplicated message.
+ * @remarks		Remember to free the duplicated message when done with it.
+ */
 static char *DuplicateMessage(uint32 nMsgOrd) {
 	const char *origmsg;
 	char *clonemsg;
@@ -478,22 +356,13 @@ static char *DuplicateMessage(uint32 nMsgOrd) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     char * DuplicateDialogPeriod(uint32 nDlgOrd, uint32 nPeriod);
-*
-* Description:  Duplica una frase di un dialog
-*
-* Input:        uint32 nDlgOrd           Indice del dialogo dentro l'array di
-*                                       strutture dei dialoghi
-*
-*               uint32 nPeriod           Numero della frase da duplicare
-*
-* Return:       Pointer alla frase duplicata (che puo' essere liberata con
-*               GlobalFree()).
-*
-\****************************************************************************/
-
+/**
+ * Duplicate a sentence of a dialog
+ * @param nDlgOrd			Index of the dialog in the dialogs array
+ * @param nPeriod           Sentence number to be duplicated.
+ * @returns		Pointer to the duplicated phrase. Remember to free it
+ * when done with it.
+ */
 static char *DuplicateDialogPeriod(uint32 nPeriod) {
 	const char *origmsg;
 	char *clonemsg;
@@ -524,19 +393,12 @@ static char *DuplicateDialogPeriod(uint32 nPeriod) {
 }
 
 
-
-/****************************************************************************\
-*
-* Function:     HGLOBAL resLoad(uint32 dwId);
-*
-* Description:  Carica una risorsa dal file MPR
-*
-* Input:        uint32 dwId              ID della risorsa da caricare
-*
-* Return:       Handle alla memoria in cui si trova la risorsa
-*
-\****************************************************************************/
-
+/**
+ * Load a resource from the MPR file
+ *
+ * @param dwId				ID of the resource to load
+ * @returns		Handle to the loaded resource
+ */
 HGLOBAL resLoad(uint32 dwId) {
 	int i;
 	HGLOBAL h;
@@ -736,21 +598,13 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void CustomThread(LPCFCALL p);
-*
-* Description:  Thread che richiama una funzione custom. Viene usato negli
-*               script, in modo che ciascuna funzione venga eseguita senza
-*               ritardare le altre
-*
-* Input:        LPCFCALL p              Struttura che definisce la chiamata
-*
-* Note:         La struttura passata come parametro viene freeata con
-*               GlobalFree() alla fine dell'esecuzione.
-*
-\****************************************************************************/
-
+/** 
+ * Thread that calls a custom function. It is used in scripts, so that each script
+ * function is executed without delaying the others.
+ *
+ * @param param				pointer to a pointer to the structure that defines the call.
+ * @remarks		The passed structure is freed when the process finishes.
+ */
 void CustomThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 		LPCFCALL p;
@@ -768,20 +622,12 @@ void CustomThread(CORO_PARAM, const void *param) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void ScriptThread(LPMPALSCRIPT s);
-*
-* Description:  Esegue uno script. Questa funzione e' pensata come starting
-*               point per un thread
-*
-* Input:        LPMPALSCRIPT s          Script da eseguire
-*
-* Note:         Lo script passato come parametro viene, alla fine dell'ese-
-*               cuzione, freeato con una GlobalFree()
-*
-\****************************************************************************/
-
+/**
+ * Main process for running a script.
+ *
+ * @param param				Pointer to a pointer to a structure containing the script data.
+ * @remarks		The passed structure is freed when the process finishes.
+ */
 void ScriptThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 		uint i, j, k;
@@ -866,20 +712,13 @@ void ScriptThread(CORO_PARAM, const void *param) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void ActionThread(LPMPALITEM item);
-*
-* Description:  Thread che esegue una azione su un item. Il thread
-*               esegue sempre l'azione 0, per cui e' necessario creare
-*               un item nuovo in cui l'azione 0 sia quella richiesta.
-*               Inoltre non viene controllata l'espressione when, ma viene
-*               sempre eseguita l'azione.
-*
-* Input:        LPMPALITEM item         Item che contiene l'azione
-*
-\****************************************************************************/
-
+/**
+ * Thread that performs an action on an item. the thread always executes the action, 
+ * so it should create a new item in which the action is the one required.
+ * Furthermore, the expression is not checked, but it is always performed the action.
+ *
+ * @param param				Pointer to a pointer to a structure containing the action.
+ */
 void ActionThread(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
@@ -935,8 +774,8 @@ void ActionThread(CORO_PARAM, const void *param) {
 
 /**
  * This thread monitors a created action to detect when it ends.
- * @remarks				Since actions can spawn sub-actions, this needs to be a
- *						separate thread to determine when the outer action is done
+ * @remarks		Since actions can spawn sub-actions, this needs to be a
+ * separate thread to determine when the outer action is done
  */
 void ShutUpActionThread(CORO_PARAM, const void *param) {
 	// COROUTINE
@@ -956,18 +795,12 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
-/****************************************************************************\
-*
-* Function:     void LocationPollThread(uint32 id);
-*
-* Description:  Esegue il polling di una locazione (starting point di un
-*               thread).
-*
-* Input:        uint32 id                Indice per gli array relativi ai
-*                                       polling degli item delle locazioni
-*
-\****************************************************************************/
 
+/**
+ * Polls one location (starting point of a process)
+ *
+ * @param param				Pointer to an index in the array of polling locations.
+ */
 void LocationPollThread(CORO_PARAM, const void *param) {
 	typedef struct {
 		uint32 nItem, nAction;
@@ -1257,22 +1090,17 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 
 
-/****************************************************************************\
-*
-* Function:     void ShutUpDialogThread(HANDLE hThread);
-*
-* Description:  Aspetta la fine dell'esecuzione del dialog thread e ripri-
-*               stina le variabili globali indicando che il dialogo e' finito.
-*
-* Input:        HANDLE hThread          Handle del dialog thread
-*
-* Note:         Si ricorre a questo thread aggiuntivo, al posto di azzerare
-*               le variabili all'interno del dialog thread stesso, poiche',
-*               a causa della natura ricorsiva di un dialogo, non e' sempre
-*               possibile sapere quando esattamente finisce un dialogo.
-*
-\****************************************************************************/
 
+
+/**
+ * Wait for the end of the dialog execution thread, and then restore global 
+ * variables indicating that the dialogue has finished.
+ *
+ * @param param				Pointer to a handle to the dialog 
+ * @remarks		This additional process is used, instead of clearing variables
+ * within the same dialog thread, because due to the recursive nature of a dialog,
+ * it would be difficult to know within it when the dialog is actually ending.
+ */
 void ShutUpDialogThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -1296,9 +1124,10 @@ void ShutUpDialogThread(CORO_PARAM, const void *param) {
 
 void DoChoice(CORO_PARAM, uint32 nChoice);
 
+
 /**
  * Executes a group of the current dialog. Can 'be the Starting point of a process.
- * @parm nGroup					Number of the group to perform
+ * @parm nGroup				Number of the group to perform
  */
 void GroupThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
@@ -1371,16 +1200,11 @@ void GroupThread(CORO_PARAM, const void *param) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void DoChoice(uint32 nChoice);
-*
-* Description:  Esegue una scelta nel dialogo corrente
-*
-* Input:        uint32 nChoice           Numero della scelta da eseguire
-*
-\****************************************************************************/
-
+/**
+ * Make a choice in the current dialog.
+ *
+ * @param nChoice			Number of choice to perform
+ */
 void DoChoice(CORO_PARAM, uint32 nChoice) {
 	CORO_BEGIN_CONTEXT;
 		LPMPALDIALOG dialog;
@@ -1476,29 +1300,18 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 }
 
 
-
-/****************************************************************************\
-*
-* Function:     HANDLE DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam);
-*
-* Description:  Esegue una azione su un certo item
-*
-* Input:        uint32 nAction           Numero dell'azione
-*               uint32 ordItem           Indice dell'item nelle strutture
-*                                       degli item
-*               uint32 dwParam           Eventuale parametro per l'azione
-*
-* Return:       Handle del thread che sta eseguendo l'azione, oppure
-*               CORO_INVALID_PID_VALUE se l'azione non e' definita, o l'item
-*               e' disattivato.
-*
-* Note:         Si puo' ottenere l'indice dell'item a partire dal suo numero
-*               tramite la funzione itemGetOrderFromNum().
-*               Gli item devono essere lockati, perche' questa funzione
-*               funzioni, tramite LockItem();
-*
-\****************************************************************************/
-
+/**
+ * Perform an action on a certain item.
+ *
+ * @param nAction			Action number
+ * @param ordItem           Index of the item in the items list
+ * @param dwParam			Any parameter for the action.
+ * @returns		Id of the process that was launched to perform the action, or
+ * CORO_INVALID_PID_VALUE if the action was not defined, or the item was inactive.
+ * @remarks		You can get the index of an item from it's number by using
+ * the itemGetOrderFromNum() function. The items list must first be locked
+ * by calling LockItem().
+ */
 static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	LPMPALITEM item = GLOBALS.lpmiItems;
 	int i;
@@ -1594,20 +1407,14 @@ static uint32 DoDialog(uint32 nDlgOrd, uint32 nGroup) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     bool DoSelection(uint32 nChoice, uint32 dwData);
-*
-* Description:  Prende nota del select scelto dall'utente, e avverte il
-*               thread che stava eseguendo il dialogo che puo' continuare.
-*
-* Input:        uint32 nChoice           Numero della scelta che era in corso
-*               uint32 dwData            Dato abbinato al select selezionato
-*
-* Return:       true se tutto OK, false in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Takes note of the selection chosen by the user, and warns the process that was running 
+ * the box that it can continue.
+ *
+ * @param nChoice           Number of choice that was in progress
+ * @param dwData			Since combined with select selection
+ * @returns		True if everything is OK, false on failure
+ */
 bool DoSelection(uint32 i, uint32 dwData) {
 	LPMPALDIALOG dialog=GLOBALS.lpmdDialogs+GLOBALS.nExecutingDialog;
 	int j;
@@ -1625,30 +1432,18 @@ bool DoSelection(uint32 i, uint32 dwData) {
 }
 
 
+/**
+ * @defgroup Exported functions
+ */
 
-/****************************************************************************\
-*       Exported functions
-\****************************************************************************/
-
-/****************************************************************************\
-*
-* Function:     bool mpalInit(LPSTR lpszMpcFileName, LPSTR lpszMprFileName,
-*                 LPLPCUSTOMFUNCTION lplpcfArray);
-*
-* Description:  Inizializza la libreria MPAL, e apre un file .MPC, che
-*               verra' utilizzato per tutte le query
-*
-* Input:        char * lpszMpcFileName   Nome del file .MPC, comprensivo di
-*                                       estensione
-*               char * lpszMprFileName   Nome del file .MPR, comprensivo di
-*                                       estensione
-*               LPLPCUSTOMFUNCTION
-*                 lplpcfArray           Array di pointer a funzioni custom
-*
-* Return:       true se tutto OK, false in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Initialises the MPAL library and opens the .MPC file, which will be used for all queries.
+ *
+ * @param lpszMpcFileName   Name of the MPC file
+ * @param lpszMprFileName   Name of the MPR file
+ * @param lplpcfArray		Array of pointers to custom functions.
+ * @returns		True if everything is OK, false on failure
+ */
 bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName, 
 			  LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings) {
 	Common::File hMpc;
@@ -1803,34 +1598,15 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	return true;
 }
 
-/****************************************************************************\
-*
-* Function:     uint32 mpalQuery(uint16 wQueryType, ...);
-*
-* Description:  Questa e' la funzione generale per comunicare con la libreria,
-*               per richiedere informazioni riguardo a quanto si trova nel
-*               file .MPC
-*
-* Input:        uint16 wQueryType         Tipo di query. La lista e' in
-*                                       enum QueryTypes
-*
-* Return:       4 bytes che dipendono dal tipo di query
-*
-* Note:         E' _FORTEMENTE_ consigliato utilizzare le macro
-*               definite sopra per utilizzare le query, dato che
-*               permettono di evitare spiacevoli bug dovuti a dimenticanze
-*               di parametri.
-*
-\****************************************************************************/
-
-#define GETARG(type)   va_arg(v, type)
 
 /**
- * MPAL Query variation #1 - dword return
- * This variation handles mpal query types that need to return a dword result.
+ * This is a general function to communicate with the library, to request information
+ * about what is in the .MPC file
  *
- * @param wQueryType					Query type
- * @param v								Variable length argument list
+ * @param wQueryType		Type of query. The list is in the QueryTypes enum.
+ * @returns		4 bytes depending on the type of query
+ * @remarks		This is the specialised version of the original single mpalQuery
+ * method that returns numeric results.
  */
 uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 	int x, y, z;
@@ -1844,6 +1620,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 	GLOBALS.mpalError = OK;
 
 	if (wQueryType == MPQ_VERSION) {
+
 		/*
 		 *  uint32 mpalQuery(MPQ_VERSION);
 		 */
@@ -2021,11 +1798,13 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 }
 
 /**
- * MPAL Query variation #1 - dword return
- * This variation handles mpal query types that need to return a pointer/handle result
+ * This is a general function to communicate with the library, to request information
+ * about what is in the .MPC file
  *
- * @param wQueryType					Query type
- * @param v								Variable length argument list
+ * @param wQueryType		Type of query. The list is in the QueryTypes enum.
+ * @returns		4 bytes depending on the type of query
+ * @remarks		This is the specialised version of the original single mpalQuery
+ * method that returns a pointer or handle.
  */
 HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 	int x, y;
@@ -2176,13 +1955,15 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 	return hRet;
 }
 
+
 /**
- * MPAL Query variation #1 - dword return
- * This variation handles mpal query types that need to return a pointer/handle result
+ * This is a general function to communicate with the library, to request information
+ * about what is in the .MPC file
  *
- * @param wQueryType					Query type
- * @param dwRet							DWORD return value (when coroutine method completes)
- * @param v								Variable length argument list
+ * @param wQueryType		Type of query. The list is in the QueryTypes enum.
+ * @returns		4 bytes depending on the type of query
+ * @remarks		This is the specialised version of the original single mpalQuery
+ * method that needs to run within a co-routine context.
  */
 void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
 	CORO_BEGIN_CONTEXT;
@@ -2216,34 +1997,22 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     uint32 mpalGetError(void);
-*
-* Description:  Ritorna il codice di errore corrente di MPAL
-*
-* Return:       Codice di errore
-*
-\****************************************************************************/
-
+/**
+ * Returns the current MPAL error code
+ *
+ * @returns		Error code
+ */
 uint32 mpalGetError(void) {
 	return GLOBALS.mpalError;
 }
 
 
-/****************************************************************************\
-*
-* Function:     void mpalExecuteScript(int nScript);
-*
-* Description:  Esegue uno script. Lo script viene eseguito in multitasking
-*               tramite un thread.
-*
-* Input:        int nScript             Numero dello script da eseguire
-*
-* Return:       true se lo script e' stato avviato, false in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Execute a script. The script runs on multitasking by a thread.
+ *
+ * @param nScript			Script number to run
+ * @returns		TRUE if the script 'was launched, FALSE on failure
+ */
 bool mpalExecuteScript(int nScript) {
 	int n;
 	LPMPALSCRIPT s;
@@ -2265,38 +2034,26 @@ bool mpalExecuteScript(int nScript) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     void mpalInstallItemIrq(LPITEMIRQFUNCTION GLOBALS.lpiifCustom);
-*
-* Description:  Install a custom routine that will be called by MPAL every
-*               time the pattern of an item has been changed.
-*
-* Input:        LPITEMIRQFUNCTION GLOBALS.lpiifCustom   Custom function to install
-*
-\****************************************************************************/
-
+/**
+ * Install a custom routine That will be called by MPAL every time the pattern 
+ * of an item has been changed.
+ *
+ * @param lpiifCustom		Custom function to install
+ */
 void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
 	GLOBALS.lpiifCustom = lpiifCus;
 }
 
 
-/****************************************************************************\
-*
-* Function:     bool mpalStartIdlePoll(int nLoc);
-*
-* Description:  Process the idle actions of the items on one location.
-*
-* Input:        int nLoc                Number of the location whose items
-*                                       must be processed for idle actions.
-*
-* Return:       true se tutto OK, false se si e' superato il limite massimo.
-*
-* Note:         Il numero massimo delle locazione che e' possibile pollare
-*               contemporaneamente e' contenuto nel define MAXPOLLINGFUNCIONS
-*
-\****************************************************************************/
-
+/**
+ * Process the idle actions of the items on one location.
+ *
+ * @param nLoc				Number of the location whose items must be processed 
+ * for idle actions.
+ * @returns		TRUE if all OK, and FALSE if it exceeded the maximum limit.
+ * @remarks		The maximum number of locations that can be polled
+ * simultaneously is defined defined by MAXPOLLINGFUNCIONS
+ */
 bool mpalStartIdlePoll(int nLoc) {
 	uint32 i;
 
@@ -2322,20 +2079,13 @@ bool mpalStartIdlePoll(int nLoc) {
 }
 
 
-
-/****************************************************************************\
-*
-* Function:     bool mpalEndIdlePoll(int nLoc);
-*
-* Description:  Stop processing the idle actions of the items on one location.
-*
-* Input:        int nLoc                Number of the location
-*
-* Return:       true se tutto OK, false se la locazione specificata non era
-*               in fase di polling
-*
-\****************************************************************************/
-
+/**
+ * Stop processing the idle actions of the items on one location.
+ *
+ * @param nLo				Number of the location
+ * @returns		TRUE if all OK, FALSE if the specified location was not
+ * in the process of polling
+ */
 void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result) {
 	CORO_BEGIN_CONTEXT;
 		int i;
@@ -2365,33 +2115,22 @@ void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result) {
 }
 
 
-
-/****************************************************************************\
-*
-* Function:     int mpalGetSaveStateSize(void);
-*
-* Description:  Acquire the length of a save state
-*
-* Return:       Length in bytes
-*
-\****************************************************************************/
-
+/**
+ * Retrieve the length of a save state
+ *
+ * @returns		Length in bytes
+ */
 int mpalGetSaveStateSize(void) {
 	return GLOBALS.nVars * sizeof(MPALVAR) + 4;
 }
 
 
-/****************************************************************************\
-*
-* Function:     void mpalSaveState(byte *buf);
-*
-* Description:  Store the save state into a buffer. The buffer must be
-*								length at least the size specified with mpalGetSaveStateSize
-*
-* Input:				byte *buf							Buffer where to store the state
-*
-\****************************************************************************/
-
+/**
+ * Store the save state into a buffer. The buffer must be
+ * length at least the size specified with mpalGetSaveStateSize
+ *
+ * @param buf				Buffer where to store the state
+ */
 void mpalSaveState(byte *buf) {
 	LockVar();
 	WRITE_LE_UINT32(buf, GLOBALS.nVars);
@@ -2399,18 +2138,13 @@ void mpalSaveState(byte *buf) {
 	UnlockVar();	
 }
 
-/****************************************************************************\
-*
-* Function:     int mpalLoadState(byte *buf);
-*
-* Description:  Load a save state from a buffer. 
-*
-* Input:				byte *buf							Buffer where to store the state
-*
-*	Return:				Length of the state in bytes
-*
-\****************************************************************************/
 
+/**
+ * Load a save state from a buffer.
+ *
+ * @param buf				Buffer where to store the state
+ * @returns		Length of the state buffer in bytes
+ */
 int mpalLoadState(byte *buf) {
 	// Dobbiamo distruggere tutte le variabili e ricrearle
 	GlobalFree(GLOBALS.hVars);
