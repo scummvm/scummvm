@@ -41,6 +41,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			{
 				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
 				{"dreamweb.r02", 0, "28458718167a040d7e988cf7d2298eae", 210466},
+				{"dreamweb.exe", 0, "56b1d73aa56e964b45872ff552402341", 64985},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -58,6 +59,27 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			{
 				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
 				{"dreamweb.r02", 0, "d6fe5e3590ec1eea42ff65c10b023e0f", 198681},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_CD | ADGF_TESTING,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
+	// UK-V (Early UK) CD Release - From bug #3526483
+	// Note: r00 and r02 files are identical to international floppy release
+	//       so was misidentified as floppy, resulting in disabled CD speech.
+	//       Added executable to detection to avoid this.
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
+				{"dreamweb.r02", 0, "28458718167a040d7e988cf7d2298eae", 210466},
+				{"dreamweb.exe", 0, "dd1c7793b151489e67b83cd1ecab51cd", -1},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
