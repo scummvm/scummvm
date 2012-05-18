@@ -31,7 +31,6 @@ namespace Lilliput {
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
 	_byte129A0 = 0xFF;
 	_byte10806 = 0;
-	_byte12FE4 = 0xFF;
 	_byte16F02 = 0;
 	_byte16F04 = 0;
 	_byte1881A = 0;
@@ -53,7 +52,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_savedBuffer215Ptr = NULL;
 
 	for (int i = 0; i < 20; i++) {
-		_array122E9[i] = 0;
+		_interfaceHotspotStatus[i] = kHotspotOff;
 		_array122FD[i] = 0;
 	}
 
@@ -170,10 +169,10 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_CurrentCharacterVar0Equals();
 		break;
 	case 0x1C:
-		return OC_sub17825();
+		return OC_checkLastInterfaceHotspotIndexMenu13();
 		break;
 	case 0x1D:
-		return OC_sub17844();
+		return OC_checkLastInterfaceHotspotIndexMenu2();
 		break;
 	case 0x1E:
 		return OC_CompareNumberOfCharacterWithVar0Equals();
@@ -215,7 +214,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_checkCharacterDirection();
 		break;
 	case 0x2B:
-		return OC_sub17984();
+		return OC_checkLastInterfaceHotspotIndex();
 		break;
 	case 0x2C:
 		return OC_checkSavedMousePos();
@@ -416,7 +415,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_setCurrentCharacterDirection();
 		break;
 	case 0x39:
-		OC_sub18099();
+		OC_setInterfaceHotspot();
 		break;
 	case 0x3A:
 		OC_sub180C3();
@@ -479,7 +478,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub183A2();
 		break;
 	case 0x4E:
-		OC_sub183C6();
+		OC_disableInterfaceHotspot();
 		break;
 	case 0x4F:
 		OC_loadFile_AERIAL_GFX();
@@ -585,8 +584,8 @@ static const OpCode opCodes1[] = {
 	{ "OC_compWord16EFE", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_AreCurrentCharacterVar0AndVar1EqualsTo", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_CurrentCharacterVar0Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub17825", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub17844", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_checkLastInterfaceHotspotIndexMenu13", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_checkLastInterfaceHotspotIndexMenu2", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_CompareNumberOfCharacterWithVar0Equals", 3, kImmediateValue, kCompareOperation, kImmediateValue, kNone, kNone },
 	{ "OC_IsPositionInViewport", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_CompareGameVariables", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
@@ -600,7 +599,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_sub1793E", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_CurrentCharacterVar3Equals1", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_sub17984", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkSavedMousePos", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179AE", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
@@ -668,7 +667,7 @@ static const OpCode opCodes2[] = {
 /* 0x36 */	{ "OC_sub1805D", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
 /* 0x37 */	{ "OC_sub18074", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x38 */	{ "OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
-/* 0x39 */	{ "OC_sub18099", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x39 */	{ "OC_setInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x3a */	{ "OC_sub180C3", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x3b */	{ "OC_setViewPortPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone }, 
 /* 0x3c */	{ "OC_setCurrentCharacterAltitude", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
@@ -689,7 +688,7 @@ static const OpCode opCodes2[] = {
 /* 0x4b */	{ "OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4c */	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4d */	{ "OC_sub183A2", 0, kNone, kNone, kNone, kNone, kNone }, 
-/* 0x4e */	{ "OC_sub183C6", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
+/* 0x4e */	{ "OC_disableInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
 /* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x50 */	{ "OC_sub17E22_speech1IfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
@@ -1357,16 +1356,6 @@ Common::Point LilliputScript::getPosFromScript() {
 	}
 }
 
-void LilliputScript::sub130B6() {
-	debugC(1, kDebugScript, "sub130B6()");
-
-	assert(_vm->_word12F68_ERULES <= 20);
-	for (int i = 0; i < _vm->_word12F68_ERULES; i++) {
-		if (_array122E9[i] == 3)
-			_array122E9[i] = 2;
-	}
-}
-
 byte *LilliputScript::getCharacterVariablePtr() {
 	debugC(2, kDebugScript, "getCharacterVariablePtr()");
 
@@ -1843,29 +1832,29 @@ byte LilliputScript::OC_CurrentCharacterVar0Equals() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub17825() {
-	debugC(1, kDebugScriptTBC, "OC_sub17825()");
+byte LilliputScript::OC_checkLastInterfaceHotspotIndexMenu13() {
+	debugC(1, kDebugScript, "OC_checkLastInterfaceHotspotIndexMenu13()");
 
 	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
 	
 	if ((_vm->_byte16F07_menuId != 1) && (_vm->_byte16F07_menuId != 3))
 		return 0;
 
-	if (tmpVal == _byte12FE4)
+	if (tmpVal == _vm->_lastInterfaceHotspotIndex)
 		return 1;
 
 	return 0;
 }
 
-byte LilliputScript::OC_sub17844() {
-	debugC(1, kDebugScriptTBC, "OC_sub17844()");
+byte LilliputScript::OC_checkLastInterfaceHotspotIndexMenu2() {
+	debugC(1, kDebugScriptTBC, "OC_checkLastInterfaceHotspotIndexMenu2()");
 
-	int tmpVal = _currScript->readUint16LE();
+	int8 hotspotIndex = (_currScript->readUint16LE() & 0xFF);
 
-	if ((_vm->_byte16F07_menuId == 2) || ((tmpVal & 0xFF) != _byte12FE4))
-		return 0;
+	if ((_vm->_byte16F07_menuId == 2) || (hotspotIndex == _vm->_lastInterfaceHotspotIndex))
+		return 1;
 
-	return 1;
+	return 0;
 }
 
 byte LilliputScript::OC_CompareNumberOfCharacterWithVar0Equals() {
@@ -2020,15 +2009,15 @@ byte LilliputScript::OC_checkCharacterDirection() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub17984() {
-	debugC(1, kDebugScriptTBC, "OC_sub17984()");
+byte LilliputScript::OC_checkLastInterfaceHotspotIndex() {
+	debugC(1, kDebugScriptTBC, "OC_checkLastInterfaceHotspotIndex()");
 
 	int index = _currScript->readUint16LE();
-	int var2 = _currScript->readUint16LE();
+	int8 var2 = (_currScript->readUint16LE() & 0xFF);
 
 	assert(index < 20);
 
-	if (_array122E9[index] == (var2 & 0xFF))
+	if (_interfaceHotspotStatus[index] == var2)
 		return 1;
 
 	return 0;
@@ -2573,21 +2562,21 @@ void LilliputScript::OC_changeCurrentCharacterSprite() {
 
 }
 
-byte *LilliputScript::sub173D2() {
-	debugC(2, kDebugScriptTBC, "sub173D2()");
+byte *LilliputScript::getCurrentCharacterVarFromScript() {
+	debugC(2, kDebugScript, "getCurrentCharacterVarFromScript()");
 
 	int index = _currScript->readUint16LE();	
 	return &_vm->_currentCharacterVariables[index];
 }
 
 void LilliputScript::OC_sub17E99() {
-	debugC(1, kDebugScriptTBC, "OC_sub17E99()");
+	debugC(1, kDebugScript, "OC_sub17E99()");
 
-	byte *compBuf = sub173D2();
+	byte *compBuf = getCurrentCharacterVarFromScript();
 	int oper = _currScript->readUint16LE();
 	int index = _currScript->readUint16LE();	
 
-	byte *buf = sub173D2();
+	byte *buf = getCurrentCharacterVarFromScript();
 	byte var1 = buf[0];
 	byte var3 = _vm->_rulesChunk11[var1 + _vm->_rulesChunk10[index]];
 
@@ -2599,12 +2588,12 @@ void LilliputScript::OC_sub17EC5() {
 
 	int indexChunk10 = _currScript->readUint16LE();
 
-	byte *compBuf = sub173D2();
+	byte *compBuf = getCurrentCharacterVarFromScript();
 	int indexChunk11 = _vm->_rulesChunk10[indexChunk10] + compBuf[0];
 
 	int oper = _currScript->readUint16LE();
 
-	byte *tmpBuf = sub173D2();
+	byte *tmpBuf = getCurrentCharacterVarFromScript();
 	int var3 = tmpBuf[0];
 	
 	computeOperation(&_vm->_rulesChunk11[indexChunk11], oper, var3);
@@ -2781,14 +2770,14 @@ void LilliputScript::OC_setCurrentCharacterDirection() {
 	_vm->_characterDirectionArray[_vm->_currentScriptCharacter] = (_currScript->readUint16LE() & 0xFF);
 }
 
-void LilliputScript::OC_sub18099() {
-	debugC(1, kDebugScriptTBC, "OC_sub18099()");
+void LilliputScript::OC_setInterfaceHotspot() {
+	debugC(1, kDebugScript, "OC_setInterfaceHotspot()");
 
-	int index = _currScript->readUint16LE();
+	int16 index = _currScript->readSint16LE();
+	uint16 curWord = _currScript->readUint16LE();
+
 	assert((index >= 0) && (index < 20));
-	int curWord = _currScript->readUint16LE();
-
-	_array122E9[index] = (curWord & 0xFF);
+	_interfaceHotspotStatus[index] = (curWord & 0xFF);
 	_array122FD[index] = (curWord >> 8);
 
 	_vm->displayInterfaceHotspots();
@@ -3033,12 +3022,12 @@ void LilliputScript::OC_sub183A2() {
 	warning("OC_sub183A2");
 }
 
-void LilliputScript::OC_sub183C6() {
-	debugC(1, kDebugScriptTBC, "OC_sub183C6()");
-		
+void LilliputScript::OC_disableInterfaceHotspot() {
+	debugC(1, kDebugScriptTBC, "OC_disableInterfaceHotspot()");
+
 	int index = _currScript->readUint16LE();
 	_array122FD[index] = (_currScript->readUint16LE() & 0xff);
-	_array122E9[index] = 1;
+	_interfaceHotspotStatus[index] = kHotspotDisabled;
 
 	_vm->displayInterfaceHotspots();
 }
@@ -3168,7 +3157,7 @@ void LilliputScript::OC_initGameAreaDisplay() {
 	OC_PaletteFadeOut();
 	_vm->_displayMap = 0;
 	_heroismLevel = 0;
-	sub130B6();
+	_vm->unselectInterfaceHotspots();
 
 	_vm->initGameAreaDisplay();
 

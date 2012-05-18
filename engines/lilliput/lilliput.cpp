@@ -144,8 +144,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12A08 = 0;
 	_byte12A09 = 0;
 	_byte16552 = 0;
-	_byte12FE4 = 0xFF;
-	_byte12FE3 = 0;
+	_lastInterfaceHotspotIndex = -1;
+	_lastInterfaceHotspotButton = 0;
 	_byte16F08 = 0;	
 	_byte16C9F = 0;
 	_lastAnimationTick = 0;
@@ -340,7 +340,7 @@ void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 }
 
 void LilliputEngine::display16x16IndexedBuf(byte *buf, int index, Common::Point pos) {
-	debugC(2, kDebugEngine, "display16x16IndexedBuf(buf, %d, %d, %d)", index, pos.x, pos.y);
+	debugC(2, kDebugEngine, "display16x16IndexedBuf(buf, %d, %d - %d)", index, pos.x, pos.y);
 
 	int index1 = index * 16 * 16;
 	byte *newBuf = &buf[index1];
@@ -471,8 +471,8 @@ void LilliputEngine::displayInterfaceHotspots() {
 	restoreSurfaceUnderMousePointer();
 
 	int tmpVal;
-	for (int index = 0; index < _word12F68_ERULES; index++) {
-		tmpVal = _scriptHandler->_array122E9[index] * 20;
+	for (int index = 0; index < _interfaceHotspotNumb; index++) {
+		tmpVal = _scriptHandler->_interfaceHotspotStatus[index] * 20;
 		display16x16IndexedBuf(_bufferIdeogram, tmpVal + index, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]));
 	}
 
@@ -975,12 +975,12 @@ void LilliputEngine::sub15F75() {
 	_byte16F07_menuId = 5;
 }
 
-void LilliputEngine::sub130B6() {
-	debugC(2, kDebugEngineTBC, "sub130B6()");
+void LilliputEngine::unselectInterfaceHotspots() {
+	debugC(2, kDebugEngine, "unselectInterfaceHotspots()");
 
-	for (int index = 0; index < _word12F68_ERULES; index++) {
-		if (_scriptHandler->_array122E9[index] == 3)
-			_scriptHandler->_array122E9[index] = 2;
+	for (int index = 0; index < _interfaceHotspotNumb; index++) {
+		if (_scriptHandler->_interfaceHotspotStatus[index] == kHotspotSelected)
+			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
 	}
 }
 
@@ -1003,7 +1003,7 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 	_displayMap = 0;
 	paletteFadeOut();
 	_word15AC2 = 0;
-	sub130B6();
+	unselectInterfaceHotspots();
 	initGameAreaDisplay();
 	_scriptHandler->_heroismLevel = 0;
 	moveCharacters();
@@ -1871,8 +1871,8 @@ void LilliputEngine::sub130EE() {
 	_mouseButton = 0;
 
 	if (button & 2) {
-		if (_byte12FE4 != 0xFF)
-			sub1305C(_byte12FE4, button);
+		if (_lastInterfaceHotspotIndex != -1)
+			sub1305C(_lastInterfaceHotspotIndex, button);
 		return;
 	}
 
@@ -1937,7 +1937,7 @@ void LilliputEngine::checkInterfaceHotspots(bool &forceReturnFl) {
 	debugC(2, kDebugEngineTBC, "checkInterfaceHotspots()");
 
 	forceReturnFl = false;
-	for (int index = _word12F68_ERULES - 1; index >= 0; index--) {
+	for (int index = _interfaceHotspotNumb - 1; index >= 0; index--) {
 		if (sub13240(_mousePos, _interfaceHotspotsX[index], _interfaceHotspotsY[index]) == 0) {
 			sub1305C(index, 1);
 			forceReturnFl = true;
@@ -1964,15 +1964,15 @@ int LilliputEngine::sub13240(Common::Point mousePos, int var3, int var4) {
 void LilliputEngine::sub1305C(byte index, byte button) {
 	debugC(2, kDebugEngineTBC, "sub1305C(%d, %d)", index, button);
 
-	if (_scriptHandler->_array122E9[index] < 2)
+	if (_scriptHandler->_interfaceHotspotStatus[index] < kHotspotEnabled)
 		return;
 
-	_byte12FE4 = index;
-	_byte12FE3 = button;
+	_lastInterfaceHotspotIndex = index;
+	_lastInterfaceHotspotButton = button;
 
-	if (button == 2) {
+	if (button &= 2) {
 		if (_byte12FCE != 1) {
-			_scriptHandler->_array122E9[index] = 2;
+			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
 			_byte16F07_menuId = 2;
 			displayInterfaceHotspots();
 		}
@@ -1984,8 +1984,8 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 		return;
 	}
 
-	_scriptHandler->sub130B6();
-	_scriptHandler->_array122E9[index] = 3;
+	unselectInterfaceHotspots();
+	_scriptHandler->_interfaceHotspotStatus[index] = kHotspotSelected;
 	if (_rulesBuffer13_1[index] == 1) {
 		_byte12FCE = 1;
 		_word15AC2 = 1;
@@ -2234,11 +2234,11 @@ void LilliputEngine::sub12FE5() {
 
 	int index = 0;
 	int count = 0;
-	for (int i = 0; i < _word12F68_ERULES; i++) {
+	for (int i = 0; i < _interfaceHotspotNumb; i++) {
 		if (_scriptHandler->_array122FD[index] != 0) {
 			--_scriptHandler->_array122FD[index];
 			if (_scriptHandler->_array122FD[index] == 0) {
-				_scriptHandler->_array122E9[index] = 2;
+				_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
 				++count;
 			}
 		}
@@ -2513,7 +2513,7 @@ void LilliputEngine::loadRules() {
 	assert(_rulesChunk10_size <= 20);
 
 	if (_rulesChunk10_size != 0) {
-		_rulesChunk10 = (int *)malloc(sizeof(int) * _rulesChunk10_size);
+		_rulesChunk10 = (int16 *)malloc(sizeof(int16) * _rulesChunk10_size);
 		int totalSize = 0;
 		for (int i = 0; i < _rulesChunk10_size; ++i) {
 			_rulesChunk10[i] = totalSize;
@@ -2541,7 +2541,7 @@ void LilliputEngine::loadRules() {
 	}
 
 	// Chunk 13
-	_word12F68_ERULES = f.readUint16LE();
+	_interfaceHotspotNumb = f.readUint16LE();
 	for (int i = 0 ; i < 20; i++)
 		_rulesBuffer13_1[i] = f.readByte();
 
