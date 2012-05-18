@@ -767,8 +767,6 @@ void ActionThread(CORO_PARAM, const void *param) {
 	
 	debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d ended", CoroScheduler.getCurrentPID());
 
-	CORO_KILL_SELF();
-
 	CORO_END_CODE;
 }
 
@@ -780,6 +778,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 void ShutUpActionThread(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
+		int slotNumber;
 	CORO_END_CONTEXT(_ctx);
 
 	uint32 pid = *(const uint32 *)param;
@@ -790,7 +789,13 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 
 	GLOBALS.bExecutingAction = false;
 
-	CORO_KILL_SELF();
+	if (_vm->_initialLoadSlotNumber != -1) {
+		_ctx->slotNumber = _vm->_initialLoadSlotNumber;
+		_vm->_initialLoadSlotNumber = -1;
+
+		CORO_INVOKE_1(_vm->LoadState, _ctx->slotNumber);
+	}
+
 
 	CORO_END_CODE;
 }

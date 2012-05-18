@@ -38,6 +38,7 @@ TonyEngine *_vm;
 TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst), 
 		_gameDescription(gameDesc), _randomSource("tony") {
 	_vm = this;
+	_loadSlotNumber = -1;
 
 	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTonyDebugActions, "actions", "Actions debugging");
@@ -45,11 +46,11 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	DebugMan.addDebugChannel(kTonyDebugMusic, "music", "Music debugging");
 
 	// Set up load slot number
-	_loadSlotNumber = -1;
+	_initialLoadSlotNumber = -1;
 	if (ConfMan.hasKey("save_slot")) {
 		int slotNumber = ConfMan.getInt("save_slot");
 		if (slotNumber >= 0 && slotNumber <= 99)
-			_loadSlotNumber = slotNumber;
+			_initialLoadSlotNumber = slotNumber;
 	}
 }
 

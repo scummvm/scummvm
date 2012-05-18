@@ -78,8 +78,6 @@ struct VoiceHeader {
 
 class TonyEngine : public Engine {
 private:
-	int _loadSlotNumber;
-
 	Common::ErrorCode Init();
 	void InitMusic();
 	void CloseMusic();
@@ -122,6 +120,8 @@ public:
 	bool m_bDrawLocation;
 	int m_startTime;
 	uint16 *m_curThumbnail;
+	int _initialLoadSlotNumber;
+	int _loadSlotNumber;
 
 	// Bounding box list manager
 	RMGameBoxes _theBoxes;
