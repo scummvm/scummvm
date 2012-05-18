@@ -203,8 +203,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_rulesBuffer2_10[i] = 0;
 		_rulesBuffer2_11[i] = 0;
 		_rulesBuffer2_12[i] = 0;
-		_rulesBuffer2_13[i] = 0;
-		_rulesBuffer2_14[i] = 0;
+		_rulesBuffer2_13_posX[i] = 0;
+		_rulesBuffer2_14_posY[i] = 0;
 		_array1289F[i] = 0xFFFF;
 	}
 
@@ -1135,7 +1135,7 @@ void LilliputEngine::displayFunction18(int var1, int var2, int var3, int var4) {
 }
 
 void LilliputEngine::displayString(byte *buf, Common::Point pos) {
-	debugC(2, kDebugEngineTBC, "displayString(buf, %d - %d)", pos.x, pos.y);
+	debugC(2, kDebugEngine, "displayString(%s, %d - %d)", buf, pos.x, pos.y);
 
 	int index = (pos.y * 320) + pos.x;
 
@@ -1148,7 +1148,7 @@ void LilliputEngine::displayString(byte *buf, Common::Point pos) {
 }
 
 void LilliputEngine::displayChar(int index, int var1) {
-	debugC(2, kDebugEngineTBC, "displayChar(%d, %d)", index, var1);
+	debugC(2, kDebugEngine, "displayChar(%d, %d)", index, var1);
 
 	int indexVga = index;
 	int indexChar = var1 << 5;
@@ -1633,15 +1633,15 @@ void LilliputEngine::sub16A08(int index) {
 }
 
 void LilliputEngine::addCharToBuf(byte character) {
-	debugC(2, kDebugEngineTBC, "addCharToBuf(%c)", character);
+	debugC(2, kDebugEngine, "addCharToBuf(%c)", character);
 
 	_displayStringBuf[_displayStringIndex] = character;
 	if (_displayStringIndex < 158)
 		++_displayStringIndex;
 }
 
-void LilliputEngine::prepareGoldAmount(int param1) {
-	debugC(2, kDebugEngineTBC, "prepareGoldAmount(%d)", param1);
+void LilliputEngine::numberToString(int param1) {
+	debugC(2, kDebugEngine, "numberToString(%d)", param1);
 	
 	static const int _array18AE3[6] = {10000, 1000, 100, 10, 1};
 
@@ -2454,8 +2454,8 @@ void LilliputEngine::loadRules() {
 		_rulesBuffer2_10[j] = f.readByte();
 		_rulesBuffer2_11[j] = f.readByte();
 		_rulesBuffer2_12[j] = f.readByte();
-		_rulesBuffer2_13[j] = f.readByte();
-		_rulesBuffer2_14[j] = f.readByte();
+		_rulesBuffer2_13_posX[j] = f.readByte();
+		_rulesBuffer2_14_posY[j] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
 			_characterVariables_[(j * 32) + k] = f.readByte();
@@ -2546,10 +2546,10 @@ void LilliputEngine::loadRules() {
 		_rulesBuffer13_1[i] = f.readByte();
 
 	for (int i = 0 ; i < 20; i++)
-		_interfaceHotspotsX[i] = f.readUint16LE();
+		_interfaceHotspotsX[i] = f.readSint16LE();
 
 	for (int i = 0 ; i < 20; i++)
-		_interfaceHotspotsY[i] = f.readUint16LE();
+		_interfaceHotspotsY[i] = f.readSint16LE();
 
 	for (int i = 0; i < 20; i++) {
 		byte curByte = f.readByte();
@@ -2611,16 +2611,16 @@ void LilliputEngine::initPalette() {
 	_system->getPaletteManager()->setPalette(_curPalette, 0, 256);
 }
 
-void LilliputEngine::sub170EE(int index) {
-	debugC(1, kDebugEngineTBC, "sub170EE(%d)", index);
+void LilliputEngine::setCurrentCharacter(int index) {
+	debugC(1, kDebugEngine, "setCurrentCharacter(%d)", index);
 
 	_currentScriptCharacter = index;
 
 	assert (index < 40);
-	int var2 = _characterPositionX[index];
-	int var4 = _characterPositionY[index];
+	int posX = _characterPositionX[index];
+	int posY = _characterPositionY[index];
 
-	_currentScriptCharacterPos = Common::Point(var2 >> 3, var4 >> 3);
+	_currentScriptCharacterPos = Common::Point(posX >> 3, posY >> 3);
 	_currentCharacterVariables = getCharacterVariablesPtr(_currentScriptCharacter * 32);
 }
 
@@ -2637,7 +2637,7 @@ void LilliputEngine::handleMenu() {
 	if ((_byte12FCE == 1) && (_byte16F07_menuId != 3))
 		return;
 
-	sub170EE(_word10804);
+	setCurrentCharacter(_word10804);
 	debugC(1, kDebugScriptTBC, "========================== Menu Script ==============================");
 	_scriptHandler->runMenuScript(ScriptStream(_menuScript, _menuScriptSize));
 	debugC(1, kDebugScriptTBC, "========================== End of Menu Script==============================");
@@ -2668,7 +2668,7 @@ void LilliputEngine::handleGameScripts() {
 
 
 	_scriptHandler->_characterScriptEnabled[index] = 0;
-	sub170EE(index);
+	setCurrentCharacter(index);
 
 
 	_word16EFE = _array11D49[index];

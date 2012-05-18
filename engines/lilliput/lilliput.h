@@ -161,8 +161,8 @@ public:
 	byte _rulesBuffer2_10[40];
 	byte _rulesBuffer2_11[40];
 	byte _rulesBuffer2_12[40];
-	byte _rulesBuffer2_13[40];
-	byte _rulesBuffer2_14[40];
+	byte _rulesBuffer2_13_posX[40];
+	byte _rulesBuffer2_14_posY[40];
 	byte _characterVariables_[1400 + 3120];
 	byte *_currentCharacterVariables;
 	byte _rulesBuffer2_16[40 * 32];
@@ -187,8 +187,8 @@ public:
 	Common::Point _rulesBuffer12Pos4[40];
 	int _word12F68_ERULES;
 	byte _rulesBuffer13_1[20];
-	int _interfaceHotspotsX[20];
-	int _interfaceHotspotsY[20];
+	int16 _interfaceHotspotsX[20];
+	int16 _interfaceHotspotsY[20];
 	byte _rulesBuffer13_4[20];
 	int16 _array10999PosX[40];
 	int16 _array109C1PosY[40];
@@ -216,7 +216,7 @@ public:
 	void newInt8();
 	void update();
 
-	void display16x16IndexedBuf(byte *buf, int var1, Common::Point pos);
+	void display16x16IndexedBuf(byte *buf, int index, Common::Point pos);
 	void display16x16Buf(byte *buf, Common::Point pos);
 	void SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos);
 	void fill16x16Rect(byte col, Common::Point pos);
@@ -267,7 +267,7 @@ public:
 	byte sub16799(int index, Common::Point param1);
 	int getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
-	void prepareGoldAmount(int param1);
+	void numberToString(int param1);
 	void sub12F37();
 	byte sub16675(int idx, Common::Point var1);
 	void sub16685(int idx, Common::Point var1);
@@ -343,7 +343,7 @@ public:
 
 
 	void pollEvent();
-	void sub170EE(int index);
+	void setCurrentCharacter(int index);
 	void sub130DD();
 	void moveCharacters();
 	void setNextDisplayCharacter(int var1);
