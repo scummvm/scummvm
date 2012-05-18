@@ -60,7 +60,7 @@ public:
 	byte _speechTimer;
 
 	byte _characterScriptEnabled[40];
-	byte _array122E9[20];
+	int8 _interfaceHotspotStatus[20];
 	char _array16123PosX[40];
 	char _array1614BPosY[40];
 	byte _array12811[40];
@@ -83,8 +83,6 @@ public:
 	byte _array12839[40];
 	Common::Point _array1813BPos[32];
 
-	void sub130B6();
-
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
 
@@ -103,7 +101,6 @@ private:
 	byte _byte12A09;
 	byte _byte129A0;
 	byte _byte10806;
-	byte _byte12FE4;
 	byte _byte16F02;
 	byte _byte16F04;
 	byte _byte1881A;
@@ -130,7 +127,7 @@ private:
 	void sub18B3C(int var);
 	void displayNumber(byte var1, Common::Point pos);
 	byte *getMapPtr(Common::Point val);
-	byte *sub173D2();
+	byte *getCurrentCharacterVarFromScript();
 	void sub171AF(int var1, int var2, int var4);
 	void sub18B7C(int var1, int var3);
 	void sub189B8();
@@ -174,8 +171,8 @@ private:
 	byte OC_compWord16EFE();
 	byte OC_AreCurrentCharacterVar0AndVar1EqualsTo();
 	byte OC_CurrentCharacterVar0Equals();
-	byte OC_sub17825();
-	byte OC_sub17844();
+	byte OC_checkLastInterfaceHotspotIndexMenu13();
+	byte OC_checkLastInterfaceHotspotIndexMenu2();
 	byte OC_CompareNumberOfCharacterWithVar0Equals();
 	byte OC_IsPositionInViewport();
 	byte OC_CompareGameVariables();
@@ -189,7 +186,7 @@ private:
 	byte OC_sub1793E();
 	byte OC_CurrentCharacterVar3Equals1();
 	byte OC_checkCharacterDirection();
-	byte OC_sub17984();
+	byte OC_checkLastInterfaceHotspotIndex();
 	byte OC_checkSavedMousePos();
 	byte OC_sub179AE();
 	byte OC_sub179C2();
@@ -255,7 +252,7 @@ private:
 	void OC_sub1805D();
 	void OC_sub18074();
 	void OC_setCurrentCharacterDirection();
-	void OC_sub18099();
+	void OC_setInterfaceHotspot();
 	void OC_sub180C3();
 	void OC_setViewPortPos();
 	void OC_setCurrentCharacterAltitude();
@@ -277,7 +274,7 @@ private:
 	void OC_setDebugFlag();
 	void OC_setByte14837();
 	void OC_sub183A2();
-	void OC_sub183C6();
+	void OC_disableInterfaceHotspot();
 	void OC_loadFile_AERIAL_GFX();
 	void OC_sub17E22_speech1IfSoundOff();
 	void OC_sub1844A();

@@ -66,6 +66,13 @@ enum LilliputDebugChannels {
 	kDebugScriptTBC = 1 << 4
 };
 
+enum InterfaceHotspotStatus {
+	kHotspotOff      = 0,
+	kHotspotDisabled = 1,
+	kHotspotEnabled  = 2,
+	kHotspotSelected = 3
+};
+
 struct LilliputGameDescription;
 
 struct SmallAnim {
@@ -106,8 +113,8 @@ public:
 	byte _byte12A08;
 	byte _byte12A09;
 	byte _byte16552;
-	byte _byte12FE4;
-	byte _byte12FE3;
+	int8 _lastInterfaceHotspotIndex;
+	byte _lastInterfaceHotspotButton; // Unused: set by 2 functions, but never used elsewhere
 	byte _byte16F08;
 	byte _byte15EAD;
 	byte _debugFlag; // Mostly useless, as the associated functions are empty
@@ -177,15 +184,15 @@ public:
 	int _gameScriptIndexSize;
 	byte *_arrayGameScripts;
 	byte _rulesChunk9[60];
-	int _rulesChunk10_size;
-	int *_rulesChunk10;
+	byte _rulesChunk10_size;
+	int16 *_rulesChunk10;
 	byte *_rulesChunk11;
-	int _rulesChunk12_size;
+	int16 _rulesChunk12_size;
 	int16 _rectXMinMax[40];
 	int16 _rectYMinMax[40];
 	Common::Point _rulesBuffer12Pos3[40];
 	Common::Point _rulesBuffer12Pos4[40];
-	int _word12F68_ERULES;
+	int _interfaceHotspotNumb;
 	byte _rulesBuffer13_1[20];
 	int16 _interfaceHotspotsX[20];
 	int16 _interfaceHotspotsY[20];
@@ -241,7 +248,7 @@ public:
 	void displaySmallAnims();
 	void displaySmallIndexedAnim(byte index, byte subIndex);
 
-	void sub130B6();
+	void unselectInterfaceHotspots();
 	void sub15F75();
 	void resetSmallAnims();
 	void paletteFadeOut();
@@ -340,7 +347,6 @@ public:
 	byte _byte16C9F; 
 	int16 _word10804;
 	bool _shouldQuit;
-
 
 	void pollEvent();
 	void setCurrentCharacter(int index);
