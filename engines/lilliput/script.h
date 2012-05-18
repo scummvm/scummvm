@@ -121,7 +121,7 @@ private:
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
 	
-	void sub1823E(byte index, byte var1, byte *curBufPtr);
+	void enableCharacterScript(byte index, byte var1, byte *curBufPtr);
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
 	void sub16C5C(int index, byte var3);
@@ -234,7 +234,7 @@ private:
 	void OC_sub17CB9();
 	void OC_sub17CD1();
 	void OC_resetWord16EFE();
-	void OC_sub17CEF();
+	void OC_enableCurrentCharacterScript();
 	void OC_IncCurrentCharacterVar1();
 	void OC_sub17D23();
 	void OC_sub17E6D();
@@ -272,7 +272,7 @@ private:
 	void OC_sub1834C();
 	void OC_setArray122C1();
 	void OC_sub18367();
-	void OC_sub17D04();
+	void OC_enableCharacterScript();
 	void OC_sub18387();
 	void OC_setDebugFlag();
 	void OC_setByte14837();
@@ -288,7 +288,7 @@ private:
 	void OC_initGameAreaDisplay();
 	void OC_sub1864D();
 	void OC_initSmallAnim();
-	void OC_sub18678();
+	void OC_setCharacterHeroismBar();
 	void OC_sub18690();
 	void OC_setViewPortCharacterTarget();
 	void OC_sub186A1();
@@ -299,7 +299,7 @@ private:
 	void OC_sub1873F_snd();
 	void OC_sub18746_snd();
 	void OC_sub1875D_snd();
-	void OC_sub18764();
+	void OC_setArray128E();
 };
 
 } // End of namespace Lilliput
