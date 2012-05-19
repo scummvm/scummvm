@@ -27,6 +27,7 @@
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
+#include "graphics/scalerplugin.h"
 #include "common/events.h"
 #include "common/system.h"
 
@@ -289,6 +290,8 @@ protected:
 
 	// Indicates whether it is needed to free _hwSurface in destructor
 	bool _displayDisabled;
+
+	ScalerPlugin *_scalerPlugin;
 
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
