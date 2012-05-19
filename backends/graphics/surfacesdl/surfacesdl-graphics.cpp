@@ -1207,6 +1207,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		width = _videoMode.overlayWidth;
 		height = _videoMode.overlayHeight;
 		scalerProc = Normal1x;
+		// The overlay does not need to be scaled
+		(*_scalerPlugin)->disableScaling();
 
 		scale1 = 1;
 	}
@@ -1397,6 +1399,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			SDL_UpdateRects(_hwScreen, _numDirtyRects, _dirtyRectList);
 		}
 	}
+
+	if (_overlayVisible)
+		(*_scalerPlugin)->enableScaling();
 
 	_numDirtyRects = 0;
 	_forceRedraw = false;

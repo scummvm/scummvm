@@ -24,6 +24,10 @@
 
 void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	if (!_doScale) {
+		Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		return;
+	}
 	switch (_factor) {
 		case 1:
 			Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);

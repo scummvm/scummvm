@@ -19,21 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef GRAPHICS_SCALER_NORMAL_H
-#define GRAPHICS_SCALER_NORMAL_H
-
 #include "graphics/scalerplugin.h"
 
-class NormalPlugin : public ScalerPluginObject {
-public:
-	NormalPlugin() { _factor = 1;}
-	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height);
-	virtual int increaseFactor();
-	virtual int decreaseFactor();
-	virtual int getFactor();
-	virtual const char *getName() const;
-};
+ScalerPluginObject::ScalerPluginObject() {
+	_doScale = true;
+}
 
+void ScalerPluginObject::disableScaling() {
+	_doScale = false;
+}
 
-#endif
+void ScalerPluginObject::enableScaling() {
+	_doScale = true;
+}
