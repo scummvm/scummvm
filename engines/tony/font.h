@@ -77,10 +77,10 @@ protected:
 
 protected:
 	// Conversione (da overloadare)
-	virtual int ConvertToLetter(int nChar) = 0;
+	virtual int ConvertToLetter(byte nChar) = 0;
 
 	// Lunghezza dei caratteri (da overloadare)
-	virtual int LetterLength(int nChar, int nNext = 0) = 0;
+	virtual int LetterLength(byte nChar, byte nNext = 0) = 0;
 
 public:
 	virtual int LetterHeight(void) = 0;
@@ -126,10 +126,10 @@ protected:
 
 protected:
 	// Overload dei metodi
-	int ConvertToLetter(int nChar) {
+	int ConvertToLetter(byte nChar) {
 		return cTable[nChar];
 	}
-	int LetterLength(int nChar, int nNext = 0) {
+	int LetterLength(byte nChar, byte nNext = 0) {
 		return (nChar != -1 ? lTable[nChar] + l2Table[nChar][nNext] : lDefault);
 	}
 

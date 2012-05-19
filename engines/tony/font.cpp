@@ -1162,297 +1162,293 @@ void RMFontCredits::Init(void) {
 	lTable[':'] = 5;
 	lTable['\''] = 5;
 
+	if (_vm->getLanguage() == Common::PL_POL) {
+		// Polish characters
+		//AaCcEeLlNnOoSsZzZz
+		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
 
+		cTable[(byte)'¥'] = 112;
+		cTable[(byte)'¹'] = 113;
+		cTable[(byte)'Æ'] = 114;
+		cTable[(byte)'æ'] = 115;
+		cTable[(byte)'Ê'] = 116;
+		cTable[(byte)'ê'] = 117;
+		cTable[(byte)'£'] = 118;
+		cTable[(byte)'³'] = 119;
+		cTable[(byte)'Ñ'] = 120;
+		cTable[(byte)'ñ'] = 121;
+		cTable[(byte)'Ó'] = 122;
+		cTable[(byte)'ó'] = 123;
+		cTable[(byte)'Œ'] = 124;
+		cTable[(byte)'œ'] = 125;
+		cTable[(byte)'¯'] = 126;
+		cTable[(byte)'¿'] = 127;
+		cTable[(byte)''] = 128;
+		cTable[(byte)'Ÿ'] = 129;
 
-	// Polish characters
-	//AaCcEeLlNnOoSsZzZz
-	//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
+		lTable[(byte)'¥'] = 20;
+		lTable[(byte)'¹'] = 12;
+		lTable[(byte)'Æ'] = 15;
+		lTable[(byte)'æ'] = 10;
+		lTable[(byte)'Ê'] = 15;
+		lTable[(byte)'ê'] = 10;
+		lTable[(byte)'£'] = 14;
+		lTable[(byte)'³'] = 11;
+		lTable[(byte)'Ñ'] = 16;
+		lTable[(byte)'ñ'] = 10;
+		lTable[(byte)'Ó'] = 15;
+		lTable[(byte)'ó'] = 11;
+		lTable[(byte)'Œ'] = 15;
+		lTable[(byte)'œ'] = 10;
+		lTable[(byte)'¯'] = 15;
+		lTable[(byte)'¿'] = 10;
+		lTable[(byte)''] = 15;
+		lTable[(byte)'Ÿ'] = 10;
 
-	cTable[(byte)'¥'] = 112;
-	cTable[(byte)'¹'] = 113;
-	cTable[(byte)'Æ'] = 114;
-	cTable[(byte)'æ'] = 115;
-	cTable[(byte)'Ê'] = 116;
-	cTable[(byte)'ê'] = 117;
-	cTable[(byte)'£'] = 118;
-	cTable[(byte)'³'] = 119;
-	cTable[(byte)'Ñ'] = 120;
-	cTable[(byte)'ñ'] = 121;
-	cTable[(byte)'Ó'] = 122;
-	cTable[(byte)'ó'] = 123;
-	cTable[(byte)'Œ'] = 124;
-	cTable[(byte)'œ'] = 125;
-	cTable[(byte)'¯'] = 126;
-	cTable[(byte)'¿'] = 127;
-	cTable[(byte)''] = 128;
-	cTable[(byte)'Ÿ'] = 129;
+	} else if (_vm->getLanguage() == Common::RU_RUS) {
 
-	lTable[(byte)'¥'] = 20;
-	lTable[(byte)'¹'] = 12;
-	lTable[(byte)'Æ'] = 15;
-	lTable[(byte)'æ'] = 10;
-	lTable[(byte)'Ê'] = 15;
-	lTable[(byte)'ê'] = 10;
-	lTable[(byte)'£'] = 14;
-	lTable[(byte)'³'] = 11;
-	lTable[(byte)'Ñ'] = 16;
-	lTable[(byte)'ñ'] = 10;
-	lTable[(byte)'Ó'] = 15;
-	lTable[(byte)'ó'] = 11;
-	lTable[(byte)'Œ'] = 15;
-	lTable[(byte)'œ'] = 10;
-	lTable[(byte)'¯'] = 15;
-	lTable[(byte)'¿'] = 10;
-	lTable[(byte)''] = 15;
-	lTable[(byte)'Ÿ'] = 10;
+		// Russian Characters
+		// WARNING: Il russo usa molti dei caratteri ISO-Latin-1 che servono
+		// per le altre traduzioni. Per compilare Tony in altre lingue,
+		// commentare via queste definizioni.
 
+		cTable[(byte)'À'] = 130;
+		cTable[(byte)'Á'] = 131;
+		cTable[(byte)'Â'] = 132;
+		cTable[(byte)'Ã'] = 133;
+		cTable[(byte)'Ä'] = 134;
+		cTable[(byte)'Å'] = 135;
+		cTable[(byte)'¨'] = 136;
+		cTable[(byte)'Æ'] = 137;
+		cTable[(byte)'Ç'] = 138;
+		cTable[(byte)'È'] = 139;
+		cTable[(byte)'É'] = 140;
+		cTable[(byte)'Ê'] = 141;
+		cTable[(byte)'Ë'] = 142;
+		cTable[(byte)'Ì'] = 143;
+		cTable[(byte)'Í'] = 144;
+		cTable[(byte)'Î'] = 145;
+		cTable[(byte)'Ï'] = 146;
+		cTable[(byte)'Ð'] = 147;
+		cTable[(byte)'Ñ'] = 148;
+		cTable[(byte)'Ò'] = 149;
+		cTable[(byte)'Ó'] = 150;
+		cTable[(byte)'Ô'] = 151;
+		cTable[(byte)'Õ'] = 152;
+		cTable[(byte)'Ö'] = 153;
+		cTable[(byte)'×'] = 154;
+		cTable[(byte)'Ø'] = 155;
+		cTable[(byte)'Ù'] = 156;
+		cTable[(byte)'Ü'] = 157;
+		cTable[(byte)'Ú'] = 158;
+		cTable[(byte)'Û'] = 159;
+		cTable[(byte)'Ý'] = 160;
+		cTable[(byte)'Þ'] = 161;
+		cTable[(byte)'ß'] = 162;
 
-#ifdef FONT_RUSSIAN
-	// Russian Characters
-	// WARNING: Il russo usa molti dei caratteri ISO-Latin-1 che servono
-	// per le altre traduzioni. Per compilare Tony in altre lingue,
-	// commentare via queste definizioni.
+		cTable[(byte)'à'] = 163;
+		cTable[(byte)'á'] = 164;
+		cTable[(byte)'â'] = 165;
+		cTable[(byte)'ã'] = 166;
+		cTable[(byte)'ä'] = 167;
+		cTable[(byte)'å'] = 168;
+		cTable[(byte)'¸'] = 169;
+		cTable[(byte)'æ'] = 170;
+		cTable[(byte)'ç'] = 171;
+		cTable[(byte)'è'] = 172;
+		cTable[(byte)'é'] = 173;
+		cTable[(byte)'ê'] = 174;
+		cTable[(byte)'ë'] = 175;
+		cTable[(byte)'ì'] = 176;
+		cTable[(byte)'í'] = 177;
+		cTable[(byte)'î'] = 178;
+		cTable[(byte)'ï'] = 179;
+		cTable[(byte)'ð'] = 180;
+		cTable[(byte)'ñ'] = 181;
+		cTable[(byte)'ò'] = 182;
+		cTable[(byte)'ó'] = 183;
+		cTable[(byte)'ô'] = 184;
+		cTable[(byte)'õ'] = 185;
+		cTable[(byte)'ö'] = 186;
+		cTable[(byte)'÷'] = 187;
+		cTable[(byte)'ø'] = 188;
+		cTable[(byte)'ù'] = 189;
+		cTable[(byte)'ü'] = 190;
+		cTable[(byte)'ú'] = 191;
+		cTable[(byte)'û'] = 192;
+		cTable[(byte)'ý'] = 193;
+		cTable[(byte)'þ'] = 194;
+		cTable[(byte)'ÿ'] = 195;
 
-	cTable[(byte)'À'] = 130;
-	cTable[(byte)'Á'] = 131;
-	cTable[(byte)'Â'] = 132;
-	cTable[(byte)'Ã'] = 133;
-	cTable[(byte)'Ä'] = 134;
-	cTable[(byte)'Å'] = 135;
-	cTable[(byte)'¨'] = 136;
-	cTable[(byte)'Æ'] = 137;
-	cTable[(byte)'Ç'] = 138;
-	cTable[(byte)'È'] = 139;
-	cTable[(byte)'É'] = 140;
-	cTable[(byte)'Ê'] = 141;
-	cTable[(byte)'Ë'] = 142;
-	cTable[(byte)'Ì'] = 143;
-	cTable[(byte)'Í'] = 144;
-	cTable[(byte)'Î'] = 145;
-	cTable[(byte)'Ï'] = 146;
-	cTable[(byte)'Ð'] = 147;
-	cTable[(byte)'Ñ'] = 148;
-	cTable[(byte)'Ò'] = 149;
-	cTable[(byte)'Ó'] = 150;
-	cTable[(byte)'Ô'] = 151;
-	cTable[(byte)'Õ'] = 152;
-	cTable[(byte)'Ö'] = 153;
-	cTable[(byte)'×'] = 154;
-	cTable[(byte)'Ø'] = 155;
-	cTable[(byte)'Ù'] = 156;
-	cTable[(byte)'Ü'] = 157;
-	cTable[(byte)'Ú'] = 158;
-	cTable[(byte)'Û'] = 159;
-	cTable[(byte)'Ý'] = 160;
-	cTable[(byte)'Þ'] = 161;
-	cTable[(byte)'ß'] = 162;
+		lTable[(byte)'À'] = 20;
+		lTable[(byte)'Á'] = 16;
+		lTable[(byte)'Â'] = 16;
+		lTable[(byte)'Ã'] = 14;
+		lTable[(byte)'Ä'] = 22;
+		lTable[(byte)'Å'] = 15;
+		lTable[(byte)'¨'] = 15;
+		lTable[(byte)'Æ'] = 20;
+		lTable[(byte)'Ç'] = 12;
+		lTable[(byte)'È'] = 16;
+		lTable[(byte)'É'] = 16;
+		lTable[(byte)'Ê'] = 16;
+		lTable[(byte)'Ë'] = 22;
+		lTable[(byte)'Ì'] = 18;
+		lTable[(byte)'Í'] = 16;
+		lTable[(byte)'Î'] = 15;
+		lTable[(byte)'Ï'] = 14;
+		lTable[(byte)'Ð'] = 13;
+		lTable[(byte)'Ñ'] = 15;
+		lTable[(byte)'Ò'] = 12;
+		lTable[(byte)'Ó'] = 14;
+		lTable[(byte)'Ô'] = 15;
+		lTable[(byte)'Õ'] = 13;
+		lTable[(byte)'Ö'] = 16;
+		lTable[(byte)'×'] = 14;
+		lTable[(byte)'Ø'] = 23;
+		lTable[(byte)'Ù'] = 23;
+		lTable[(byte)'Ü'] = 10;
+		lTable[(byte)'Ú'] = 12;
+		lTable[(byte)'Û'] = 16;
+		lTable[(byte)'Ý'] = 12;
+		lTable[(byte)'Þ'] = 20;
+		lTable[(byte)'ß'] = 15;
 
-	cTable[(byte)'à'] = 163;
-	cTable[(byte)'á'] = 164;
-	cTable[(byte)'â'] = 165;
-	cTable[(byte)'ã'] = 166;
-	cTable[(byte)'ä'] = 167;
-	cTable[(byte)'å'] = 168;
-	cTable[(byte)'¸'] = 169;
-	cTable[(byte)'æ'] = 170;
-	cTable[(byte)'ç'] = 171;
-	cTable[(byte)'è'] = 172;
-	cTable[(byte)'é'] = 173;
-	cTable[(byte)'ê'] = 174;
-	cTable[(byte)'ë'] = 175;
-	cTable[(byte)'ì'] = 176;
-	cTable[(byte)'í'] = 177;
-	cTable[(byte)'î'] = 178;
-	cTable[(byte)'ï'] = 179;
-	cTable[(byte)'ð'] = 180;
-	cTable[(byte)'ñ'] = 181;
-	cTable[(byte)'ò'] = 182;
-	cTable[(byte)'ó'] = 183;
-	cTable[(byte)'ô'] = 184;
-	cTable[(byte)'õ'] = 185;
-	cTable[(byte)'ö'] = 186;
-	cTable[(byte)'÷'] = 187;
-	cTable[(byte)'ø'] = 188;
-	cTable[(byte)'ù'] = 189;
-	cTable[(byte)'ü'] = 190;
-	cTable[(byte)'ú'] = 191;
-	cTable[(byte)'û'] = 192;
-	cTable[(byte)'ý'] = 193;
-	cTable[(byte)'þ'] = 194;
-	cTable[(byte)'ÿ'] = 195;
+		lTable[(byte)'à'] = 12;
+		lTable[(byte)'á'] = 10;
+		lTable[(byte)'â'] = 10;
+		lTable[(byte)'ã'] = 11;
+		lTable[(byte)'ä'] = 16;
+		lTable[(byte)'å'] = 10;
+		lTable[(byte)'¸'] = 11;
+		lTable[(byte)'æ'] = 13;
+		lTable[(byte)'ç'] = 12;
+		lTable[(byte)'è'] = 13;
+		lTable[(byte)'é'] = 13;
+		lTable[(byte)'ê'] = 12;
+		lTable[(byte)'ë'] = 13;
+		lTable[(byte)'ì'] = 14;
+		lTable[(byte)'í'] = 11;
+		lTable[(byte)'î'] = 11;
+		lTable[(byte)'ï'] = 11;
+		lTable[(byte)'ð'] = 12;
+		lTable[(byte)'ñ'] = 10;
+		lTable[(byte)'ò'] = 10;
+		lTable[(byte)'ó'] = 10;
+		lTable[(byte)'ô'] = 11;
+		lTable[(byte)'õ'] = 10;
+		lTable[(byte)'ö'] = 11;
+		lTable[(byte)'÷'] = 10;
+		lTable[(byte)'ø'] = 15;
+		lTable[(byte)'ù'] = 15;
+		lTable[(byte)'ü'] = 10;
+		lTable[(byte)'ú'] = 12;
+		lTable[(byte)'û'] = 16;
+		lTable[(byte)'ý'] = 11;
+		lTable[(byte)'þ'] = 13;
+		lTable[(byte)'ÿ'] = 11;
 
-	lTable[(byte)'À'] = 20;
-	lTable[(byte)'Á'] = 16;
-	lTable[(byte)'Â'] = 16;
-	lTable[(byte)'Ã'] = 14;
-	lTable[(byte)'Ä'] = 22;
-	lTable[(byte)'Å'] = 15;
-	lTable[(byte)'¨'] = 15;
-	lTable[(byte)'Æ'] = 20;
-	lTable[(byte)'Ç'] = 12;
-	lTable[(byte)'È'] = 16;
-	lTable[(byte)'É'] = 16;
-	lTable[(byte)'Ê'] = 16;
-	lTable[(byte)'Ë'] = 22;
-	lTable[(byte)'Ì'] = 18;
-	lTable[(byte)'Í'] = 16;
-	lTable[(byte)'Î'] = 15;
-	lTable[(byte)'Ï'] = 14;
-	lTable[(byte)'Ð'] = 13;
-	lTable[(byte)'Ñ'] = 15;
-	lTable[(byte)'Ò'] = 12;
-	lTable[(byte)'Ó'] = 14;
-	lTable[(byte)'Ô'] = 15;
-	lTable[(byte)'Õ'] = 13;
-	lTable[(byte)'Ö'] = 16;
-	lTable[(byte)'×'] = 14;
-	lTable[(byte)'Ø'] = 23;
-	lTable[(byte)'Ù'] = 23;
-	lTable[(byte)'Ü'] = 10;
-	lTable[(byte)'Ú'] = 12;
-	lTable[(byte)'Û'] = 16;
-	lTable[(byte)'Ý'] = 12;
-	lTable[(byte)'Þ'] = 20;
-	lTable[(byte)'ß'] = 15;
+	} else if (_vm->getLanguage() == Common::CZ_CZE) {
+		// CZECH Language
 
-	lTable[(byte)'à'] = 12;
-	lTable[(byte)'á'] = 10;
-	lTable[(byte)'â'] = 10;
-	lTable[(byte)'ã'] = 11;
-	lTable[(byte)'ä'] = 16;
-	lTable[(byte)'å'] = 10;
-	lTable[(byte)'¸'] = 11;
-	lTable[(byte)'æ'] = 13;
-	lTable[(byte)'ç'] = 12;
-	lTable[(byte)'è'] = 13;
-	lTable[(byte)'é'] = 13;
-	lTable[(byte)'ê'] = 12;
-	lTable[(byte)'ë'] = 13;
-	lTable[(byte)'ì'] = 14;
-	lTable[(byte)'í'] = 11;
-	lTable[(byte)'î'] = 11;
-	lTable[(byte)'ï'] = 11;
-	lTable[(byte)'ð'] = 12;
-	lTable[(byte)'ñ'] = 10;
-	lTable[(byte)'ò'] = 10;
-	lTable[(byte)'ó'] = 10;
-	lTable[(byte)'ô'] = 11;
-	lTable[(byte)'õ'] = 10;
-	lTable[(byte)'ö'] = 11;
-	lTable[(byte)'÷'] = 10;
-	lTable[(byte)'ø'] = 15;
-	lTable[(byte)'ù'] = 15;
-	lTable[(byte)'ü'] = 10;
-	lTable[(byte)'ú'] = 12;
-	lTable[(byte)'û'] = 16;
-	lTable[(byte)'ý'] = 11;
-	lTable[(byte)'þ'] = 13;
-	lTable[(byte)'ÿ'] = 11;
+		cTable[(byte)'Ì'] = 196;
+		cTable[(byte)'Š'] = 197;
+		cTable[(byte)'È'] = 198;
+		cTable[(byte)'Ø'] = 199;
+		cTable[(byte)'Ž'] = 200;
+		cTable[(byte)'Ý'] = 201;
+		cTable[(byte)'Á'] = 202;
+		cTable[(byte)'Í'] = 203;
+		cTable[(byte)'É'] = 204;
+		cTable[(byte)'Ï'] = 205;
+		cTable[(byte)''] = 206;
+		cTable[(byte)'Ò'] = 207;
+		cTable[(byte)'Ó'] = 208;
+		cTable[(byte)'Ù'] = 209;
+		cTable[(byte)'Ú'] = 210;
 
-#endif // FONT_RUSSIAN
+		cTable[(byte)'ì'] = 211;
+		cTable[(byte)'š'] = 212;
+		cTable[(byte)'è'] = 213;
+		cTable[(byte)'ø'] = 214;
+		cTable[(byte)'ž'] = 215;
+		cTable[(byte)'ý'] = 216;
+		cTable[(byte)'á'] = 217;
+		cTable[(byte)'í'] = 218;
+		cTable[(byte)'é'] = 219;
+		cTable[(byte)'ï'] = 220;
+		cTable[(byte)''] = 221;
+		cTable[(byte)'ò'] = 222;
+		cTable[(byte)'ó'] = 223;
+		cTable[(byte)'ù'] = 224;
+		cTable[(byte)'ú'] = 225;
 
-#ifdef FONT_CZECH
+		lTable[(byte)'Ì'] = 15;
+		lTable[(byte)'Š'] = 15;
+		lTable[(byte)'È'] = 15;
+		lTable[(byte)'Ø'] = 15;
+		lTable[(byte)'Ž'] = 15;
+		lTable[(byte)'Ý'] = 14;
+		lTable[(byte)'Á'] = 20;
+		lTable[(byte)'Í'] = 7;
+		lTable[(byte)'É'] = 15;
+		lTable[(byte)'Ï'] = 20;
+		lTable[(byte)''] = 19;
+		lTable[(byte)'Ò'] = 16;
+		lTable[(byte)'Ó'] = 15;
+		lTable[(byte)'Ù'] = 13;
+		lTable[(byte)'Ú'] = 13;
 
-	cTable[(byte)'Ì'] = 196;
-	cTable[(byte)'Š'] = 197;
-	cTable[(byte)'È'] = 198;
-	cTable[(byte)'Ø'] = 199;
-	cTable[(byte)'Ž'] = 200;
-	cTable[(byte)'Ý'] = 201;
-	cTable[(byte)'Á'] = 202;
-	cTable[(byte)'Í'] = 203;
-	cTable[(byte)'É'] = 204;
-	cTable[(byte)'Ï'] = 205;
-	cTable[(byte)''] = 206;
-	cTable[(byte)'Ò'] = 207;
-	cTable[(byte)'Ó'] = 208;
-	cTable[(byte)'Ù'] = 209;
-	cTable[(byte)'Ú'] = 210;
+		lTable[(byte)'ì'] = 11;
+		lTable[(byte)'š'] = 11;
+		lTable[(byte)'è'] = 11;
+		lTable[(byte)'ø'] = 11;
+		lTable[(byte)'ž'] = 11;
+		lTable[(byte)'ý'] = 10;
+		lTable[(byte)'á'] = 12;
+		lTable[(byte)'í'] = 6;
+		lTable[(byte)'é'] = 10;
+		lTable[(byte)'ï'] = 15;
+		lTable[(byte)''] = 12;
+		lTable[(byte)'ò'] = 11;
+		lTable[(byte)'ó'] = 11;
+		lTable[(byte)'ù'] = 10;
+		lTable[(byte)'ú'] = 10;
 
-	cTable[(byte)'ì'] = 211;
-	cTable[(byte)'š'] = 212;
-	cTable[(byte)'è'] = 213;
-	cTable[(byte)'ø'] = 214;
-	cTable[(byte)'ž'] = 215;
-	cTable[(byte)'ý'] = 216;
-	cTable[(byte)'á'] = 217;
-	cTable[(byte)'í'] = 218;
-	cTable[(byte)'é'] = 219;
-	cTable[(byte)'ï'] = 220;
-	cTable[(byte)''] = 221;
-	cTable[(byte)'ò'] = 222;
-	cTable[(byte)'ó'] = 223;
-	cTable[(byte)'ù'] = 224;
-	cTable[(byte)'ú'] = 225;
+	} else if (_vm->getLanguage() == Common::FR_FRA) {
+		// French
 
-	lTable[(byte)'Ì'] = 15;
-	lTable[(byte)'Š'] = 15;
-	lTable[(byte)'È'] = 15;
-	lTable[(byte)'Ø'] = 15;
-	lTable[(byte)'Ž'] = 15;
-	lTable[(byte)'Ý'] = 14;
-	lTable[(byte)'Á'] = 20;
-	lTable[(byte)'Í'] = 7;
-	lTable[(byte)'É'] = 15;
-	lTable[(byte)'Ï'] = 20;
-	lTable[(byte)''] = 19;
-	lTable[(byte)'Ò'] = 16;
-	lTable[(byte)'Ó'] = 15;
-	lTable[(byte)'Ù'] = 13;
-	lTable[(byte)'Ú'] = 13;
+		cTable[(byte)'â'] = 226;
+		cTable[(byte)'é'] = 227;
+		cTable[(byte)'ê'] = 228;
+		cTable[(byte)'î'] = 229;
+		cTable[(byte)'ù'] = 230;
+		cTable[(byte)'û'] = 231;
+		cTable[(byte)'ô'] = 232;
+		cTable[(byte)'ö'] = 233;
 
-	lTable[(byte)'ì'] = 11;
-	lTable[(byte)'š'] = 11;
-	lTable[(byte)'è'] = 11;
-	lTable[(byte)'ø'] = 11;
-	lTable[(byte)'ž'] = 11;
-	lTable[(byte)'ý'] = 10;
-	lTable[(byte)'á'] = 12;
-	lTable[(byte)'í'] = 6;
-	lTable[(byte)'é'] = 10;
-	lTable[(byte)'ï'] = 15;
-	lTable[(byte)''] = 12;
-	lTable[(byte)'ò'] = 11;
-	lTable[(byte)'ó'] = 11;
-	lTable[(byte)'ù'] = 10;
-	lTable[(byte)'ú'] = 10;
+		lTable[(byte)'â'] = 12;
+		lTable[(byte)'é'] = 10;
+		lTable[(byte)'ê'] = 10;
+		lTable[(byte)'î'] = 6;
+		lTable[(byte)'ù'] = 10;
+		lTable[(byte)'û'] = 10;
+		lTable[(byte)'ô'] = 11;
+		lTable[(byte)'ö'] = 11;
 
-#endif // FONT_CZECH
+	} else if (_vm->getLanguage() == Common::DE_DEU) {
+		// German
 
-#ifdef FONT_FRENCH
+		cTable[(byte)'ß'] = 234;
+		// 'SS' = 235
 
-	cTable[(byte)'â'] = 226;
-	cTable[(byte)'é'] = 227;
-	cTable[(byte)'ê'] = 228;
-	cTable[(byte)'î'] = 229;
-	cTable[(byte)'ù'] = 230;
-	cTable[(byte)'û'] = 231;
-	cTable[(byte)'ô'] = 232;
-	cTable[(byte)'ö'] = 233;
+		// old chars overrides
+		cTable[(byte)'Ä'] = cTable[(byte)'ä'] = 55;
+		cTable[(byte)'Ö'] = cTable[(byte)'ö'] = 67;
+		cTable[(byte)'Ü'] = cTable[(byte)'ü'] = 71;
 
-	lTable[(byte)'â'] = 12;
-	lTable[(byte)'é'] = 10;
-	lTable[(byte)'ê'] = 10;
-	lTable[(byte)'î'] = 6;
-	lTable[(byte)'ù'] = 10;
-	lTable[(byte)'û'] = 10;
-	lTable[(byte)'ô'] = 11;
-	lTable[(byte)'ö'] = 11;
-
-#endif // FONT_FRENCH
-
-#ifdef FONT_GERMAN
-	cTable[(byte)'ß'] = 234;
-	// 'SS' = 235
-
-	// old chars overrides
-	cTable[(byte)'Ä'] = cTable[(byte)'ä'] = 55;
-	cTable[(byte)'Ö'] = cTable[(byte)'ö'] = 67;
-	cTable[(byte)'Ü'] = cTable[(byte)'ü'] = 71;
-
-	lTable[(byte)'ß'] = 11;
-
-#endif // FONT_GERMAN
+		lTable[(byte)'ß'] = 11;
+	}
 }
 
 
