@@ -645,7 +645,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 	_ctx->dwStartTime = _vm->GetTime();
 	_ctx->numHandles = 0;
 
-// warning("PlayScript(): Moments: %u\n",s->nMoments);
+// debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Moments: %u\n",s->nMoments);
 	for (_ctx->i = 0; _ctx->i < s->nMoments; _ctx->i++) {
 		// Dorme il tempo necessario per arrivare al momento successivo
 		if (s->Moment[_ctx->i].dwTime == -1) {
@@ -654,7 +654,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 		} else {
 			_ctx->dwCurTime = _vm->GetTime();
 			if (_ctx->dwCurTime < _ctx->dwStartTime + (s->Moment[_ctx->i].dwTime * 100)) {
-  //     warning("PlayScript(): Sleeping %lums\n",_ctx->dwStartTime+(s->Moment[_ctx->i].dwTime*100)-_ctx->dwCurTime);
+  //     debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Sleeping %lums\n",_ctx->dwStartTime+(s->Moment[_ctx->i].dwTime*100)-_ctx->dwCurTime);
 				CORO_INVOKE_1(CoroScheduler.sleep, _ctx->dwStartTime+(s->Moment[_ctx->i].dwTime * 100) - _ctx->dwCurTime);
 			}
 		}
@@ -2199,7 +2199,7 @@ void OutputStartMsgComment(uint16 wNum, Common::OutSaveFile *f) {
 
 	for (i = 0; MsgComments[i].wStart != 0; i++)
 		if (MsgComments[i].wStart == wNum) {
-			warning("Start: %d\n", wNum);
+			debugC(DEBUG_BASIC, kTonyDebugMPAL, "Start: %d\n", wNum);
 
 			f->writeString("</TABLE>\n<P>\n<P>\n");
 
@@ -2217,7 +2217,7 @@ void OutputEndMsgComment(uint16 wNum, Common::OutSaveFile *f) {
 
 	for (i = 0; MsgComments[i].wEnd != 0; i++)
 		if (MsgComments[i].wEnd == wNum) {
-warning("End: %d\n", wNum);
+			debugC(DEBUG_BASIC, kTonyDebugMPAL, "End: %d\n", wNum);
 
 			if (strcmp(MsgComments[i].pComment, "###") != 0 && strncmp(MsgComments[i].pComment, "@@@", 3) != 0) {
 				f->writeString("</TABLE>\n<P>\n");
@@ -2276,7 +2276,7 @@ void mpalDumpMessages(void) {
 
 	bDontOutput = false;
 
-	warning("Dumping MESSAGES.HTM...\n");
+	debugC(DEBUG_BASIC, kTonyDebugMPAL, "Dumping MESSAGES.HTM...\n");
 	
 	f = g_system->getSavefileManager()->openForSaving("Messages.htm");
 	f->writeString("<HTML>\n<BODY>\n<TABLE WIDTH = 100%% BORDER = 1>\n");
@@ -2369,7 +2369,7 @@ void mpalDumpOthers(void) {
 	
 	bDontOutput = false;
 	
-	warning("Dumping OTHERS.HTM...\n");
+	debugC(DEBUG_BASIC, kTonyDebugMPAL, "Dumping OTHERS.HTM...\n");
 
 	f->writeString("<HTML>\n<BODY>\n");
 	

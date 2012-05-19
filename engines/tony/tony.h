@@ -58,7 +58,8 @@ enum {
 	kTonyDebugAnimations = 1 << 0,
 	kTonyDebugActions = 1 << 1,
 	kTonyDebugSound = 1 << 2,
-	kTonyDebugMusic = 2 << 3
+	kTonyDebugMusic = 1 << 3,
+	kTonyDebugMPAL = 1 << 4
 };
 
 #define DEBUG_BASIC 1
