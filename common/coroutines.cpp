@@ -386,7 +386,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 		*expired = true;
 
 	// Outer loop for doing checks until expiry 
-	while (g_system->getMillis() < _ctx->endTime) {
+	while (g_system->getMillis() <= _ctx->endTime) {
 		// Check to see if a process or event with the given Id exists
 		_ctx->pProcess = getProcess(pid);
 		_ctx->pEvent = !_ctx->pProcess ? getEvent(pid) : NULL;
@@ -456,7 +456,7 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 		*expired = true;
 
 	// Outer loop for doing checks until expiry 
-	while (g_system->getMillis() < _ctx->endTime) {
+	while (g_system->getMillis() <= _ctx->endTime) {
 		_ctx->signalled = bWaitAll;
 
 		for (_ctx->i = 0; _ctx->i < nCount; ++_ctx->i) {
