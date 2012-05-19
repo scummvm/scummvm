@@ -22,7 +22,7 @@
 #include "graphics/scaler/normal.h"
 #include "graphics/scaler.h"
 
-void NearestNeighborPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	switch (_factor) {
 		case 1:
@@ -37,24 +37,24 @@ void NearestNeighborPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-int NearestNeighborPlugin::increaseFactor() {
+int NormalPlugin::increaseFactor() {
 	if (_factor < 3)
 		++_factor;
 	return _factor;
 }
 
-int NearestNeighborPlugin::decreaseFactor() {
+int NormalPlugin::decreaseFactor() {
 	if (_factor > 1)
 		--_factor;
 	return _factor;
 }
 
-const char *NearestNeighborPlugin::getName() const {
-	return "NearestNeighbor";
+const char *NormalPlugin::getName() const {
+	return "Normal";
 }
 
-int NearestNeighborPlugin::getFactor() {
+int NormalPlugin::getFactor() {
 	return _factor;
 }
 
-REGISTER_PLUGIN_STATIC(NORMAL, PLUGIN_TYPE_SCALER, NearestNeighborPlugin);
+REGISTER_PLUGIN_STATIC(NORMAL, PLUGIN_TYPE_SCALER, NormalPlugin);
