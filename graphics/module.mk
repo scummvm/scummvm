@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	pixelformat.o \
 	primitives.o \
 	scaler.o \
+	scalerplugin.o \
 	scaler/thumbnail_intern.o \
 	screen.o \
 	scaler/normal.o \
