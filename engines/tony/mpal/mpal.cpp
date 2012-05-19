@@ -1312,7 +1312,7 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
  * @param dwParam			Any parameter for the action.
  * @returns		Id of the process that was launched to perform the action, or
  * CORO_INVALID_PID_VALUE if the action was not defined, or the item was inactive.
- * @remarks		You can get the index of an item from it's number by using
+ * @remarks		You can get the index of an item from its number by using
  * the itemGetOrderFromNum() function. The items list must first be locked
  * by calling LockItem().
  */

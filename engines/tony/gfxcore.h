@@ -536,7 +536,7 @@ public:
 
 
 /**
- * Destination buffer which manages it's own internal list of tasks
+ * Destination buffer which manages its own internal list of tasks
  */
 class RMGfxTargetBuffer : public virtual RMGfxBuffer {
 private:

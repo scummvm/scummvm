@@ -77,7 +77,7 @@ static bool CompareCommands(struct command *cmd1, struct command *cmd2) {
 
 
 /**
- * Parses a script from the MPC file, and inserts it's data into a structure
+ * Parses a script from the MPC file, and inserts its data into a structure
  *
  * @param lpBuf				Buffer containing the compiled script.
  * @param lpmsScript		Pointer to a structure that will be filled with the
@@ -138,7 +138,7 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 
 
 /**
- * Parses a dialog from the MPC file, and inserts it's data into a structure
+ * Parses a dialog from the MPC file, and inserts its data into a structure
  *
  * @param lpBuf				Buffer containing the compiled dialog.
  * @param lpmdDialog		Pointer to a structure that will be filled with the
@@ -303,7 +303,7 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 
 
 /**
- * Parses an item from the MPC file, and inserts it's data into a structure
+ * Parses an item from the MPC file, and inserts its data into a structure
  *
  * @param lpBuf				Buffer containing the compiled dialog.
  * @param lpmiItem			Pointer to a structure that will be filled with the
@@ -425,7 +425,7 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 
 
 /**
- * Parses a location from the MPC file, and inserts it's data into a structure
+ * Parses a location from the MPC file, and inserts its data into a structure
  *
  * @param lpBuf				Buffer containing the compiled location.
  * @param lpmiLocation		Pointer to a structure that will be filled with the

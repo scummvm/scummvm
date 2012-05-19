@@ -2277,7 +2277,7 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 
 	itemName = "";
 
-	// If there an item, get it's name
+	// If there an item, get its name
 	if (m_item != NULL)
 		m_item->GetName(itemName);
 

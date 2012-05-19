@@ -91,7 +91,7 @@ MemoryItem &MemoryManager::allocate(uint32 size, uint flags) {
 }
 
 /**
- * Allocates a new memory block and returns it's data pointer
+ * Allocates a new memory block and returns its data pointer
  * @returns					Data pointer to allocated block
  */
 HGLOBAL MemoryManager::alloc(uint32 size, uint flags) {
@@ -123,7 +123,7 @@ MemoryItem &MemoryManager::operator[](HGLOBAL handle) {
 }
 
 /**
- * Returns a size of a memory block given it's pointer
+ * Returns a size of a memory block given its pointer
  */
 uint32 MemoryManager::getSize(HGLOBAL handle) {
 	MemoryItem &item = getItem(handle);
