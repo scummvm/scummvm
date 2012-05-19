@@ -66,7 +66,7 @@ namespace MPAL {
 #define HEX_VERSION             0x0170
 
 /*
-  SICURA
+  Safe
 
 #define MAX_ACTIONS_PER_ITEM    40
 #define MAX_COMMANDS_PER_ITEM   256
@@ -90,7 +90,7 @@ namespace MPAL {
 
 
 /*
-   Versione sicura!
+   Secure version!
 
 #define MAX_GROUPS_PER_DIALOG   128
 #define MAX_COMMANDS_PER_DIALOG 640
@@ -111,7 +111,7 @@ namespace MPAL {
 #define MAX_PERIODS_PER_DIALOG  400
 
 /*
-  Prima di Rufus:
+  Before Rufus:
 
 #define MAX_GROUPS_PER_DIALOG   128
 #define MAX_COMMANDS_PER_DIALOG 512
@@ -131,90 +131,75 @@ namespace MPAL {
 
 #include "common/pack-start.h"
 
-/****************************************************************************\
-*       typedef MPALVAR
-*       ---------------
-* Description: Variabile globale di MPAL
-\****************************************************************************/
-
+/**
+ * MPAL global variables
+ */
 struct MPALVAR {
-	uint32 dwVal;                   // Valore della variabile
-	char lpszVarName[33];			// Nome della variabile
+	uint32 dwVal;				// Variable value
+	char lpszVarName[33];		// Variable name
 } PACKED_STRUCT;
-typedef MPALVAR*        LPMPALVAR;
-typedef LPMPALVAR*      LPLPMPALVAR;
+typedef MPALVAR *LPMPALVAR;
+typedef LPMPALVAR *LPLPMPALVAR;
 
 
-/****************************************************************************\
-*       typedef MPALMSG
-*       ---------------
-* Description: Messaggio di MPAL
-\****************************************************************************/
-
+/**
+ * MPAL Messages
+ */
 struct MPALMSG {
-  HGLOBAL hText;                // Handle al testo del messaggio
-  uint16 wNum;                    // Numero del messaggio
+  HGLOBAL hText;				// Handle to the message text
+  uint16 wNum;					// Message number
 } PACKED_STRUCT;
-typedef MPALMSG*        LPMPALMSG;
-typedef LPMPALMSG*      LPLPMPALMSG;
+typedef MPALMSG *LPMPALMSG;
+typedef LPMPALMSG *LPLPMPALMSG;
 
 
-/****************************************************************************\
-*       typedef MPALLOCATION
-*       --------------------
-* Description: Locazione di MPAL
-\****************************************************************************/
-
+/**
+ * MPAL Locations
+ */
 struct MPALLOCATION {
-	uint32 nObj;						// Numero della locazione
-	uint32 dwXlen, dwYlen;			// Dimensione
-	uint32 dwPicRes;				// Risorsa che contiene l'immagine
+	uint32 nObj;				// Location number
+	uint32 dwXlen, dwYlen;		// Dimensions
+	uint32 dwPicRes;			// Resource that contains the image
 } PACKED_STRUCT;
-typedef MPALLOCATION*   LPMPALLOCATION;
-typedef LPMPALLOCATION* LPLPMPALLOCATION;
+typedef MPALLOCATION *LPMPALLOCATION;
+typedef LPMPALLOCATION *LPLPMPALLOCATION;
 
 
-/****************************************************************************\
-*       struct command
-*       --------------
-* Description: Gestisce un comando, cioe' le tag utilizzate dalle OnAction
-*   negli item, dalle Time negli script e dai Group nei Dialog
-\****************************************************************************/
-
+/**
+ * All the data for a command, ie. tags used by OnAction in the item, the time
+ * in the script, and in the group dialog.
+ */
 struct command {
   /*
-   * Tipi di comandi riconosciuti:
+   * Types of commands that are recognised
    *
-   *   #1 -> Chiamata a funzione custom         (ITEM, SCRIPT, DIALOG)
-   *   #2 -> Assegnazione di variabile          (ITEM, SCRIPT, DIALOG)
-   *   #3 -> Esecuzione di una scelta           (DIALOG)
+   *   #1 -> Custom function call		(ITEM, SCRIPT, DIALOG)
+   *   #2 -> Variable assignment		(ITEM, SCRIPT, DIALOG)
+   *   #3 -> Making a choice			(DIALOG)
    *
    */
-	byte  type;						// Tipo di comando
+	byte  type;						// Type of control
 
 	union {
-		int32 nCf;                  // Numero funzione custom         [#1]
-		char *lpszVarName;			// Nome variabile                 [#2]
-		int32 nChoice;              // Numero di scelta da fare       [#3]
+		int32 nCf;                  // Custom function call			[#1]
+		char *lpszVarName;			// Variable name				[#2]
+		int32 nChoice;              // Number of choice you make	[#3]
 	};
 
 	union {
-		int32 arg1;                 // Argomento 1 funzione custom    [#1]
-		HGLOBAL expr;				// Espressione da assegnare alla
-									//   variabile                    [#2]
+		int32 arg1;                 // Argument for custom function			[#1]
+		HGLOBAL expr;				// Expression to assign to a variable	[#2]
 	};
 
-	int32 arg2,arg3,arg4;			// Argomenti per funzione custom  [#1]
+	int32 arg2, arg3, arg4;			// Arguments for custom function		[#1]
 } PACKED_STRUCT;
 
-/****************************************************************************\
-*       typedef MPALDIALOG
-*       ------------------
-* Description: Dialog di MPAL
-\****************************************************************************/
 
+/**
+ * MPAL dialog
+ */
 struct MPALDIALOG {
-	uint32 nObj;                    // Numero dialog
+	uint32 nObj;                    // Dialog number
 
 	struct command Command[MAX_COMMANDS_PER_DIALOG];
 
@@ -227,11 +212,10 @@ struct MPALDIALOG {
 	} Group[MAX_GROUPS_PER_DIALOG];
 
 	struct {
-		// L'ultima choice ha nChoice==0
+		// The last choice has nChoice == 0
 		uint16 nChoice;
 
-		// Non c'e' il numero di Select (siamo abbastanza avari di RAM). L'ultimo
-		// select ha dwData==0
+		// The select number (we're pretty stingy with RAM). The last select has dwData == 0
 		struct {
 			HGLOBAL when;
 			uint32 dwData;
@@ -240,8 +224,8 @@ struct MPALDIALOG {
 			// Bit 0=endchoice   Bit 1=enddialog
 			byte attr;
 
-			// Modificata a run-time: 0 se il select e' correntemente disabilitato,
-			// 1 se e' correntemente attivato
+			// Modified at run-time: 0 if the select is currently disabled,
+			// and 1 if currently active
 			byte curActive;
 		} Select[MAX_SELECTS_PER_CHOICE];
 
@@ -251,50 +235,48 @@ struct MPALDIALOG {
 	HGLOBAL Periods[MAX_PERIODS_PER_DIALOG];
 
 } PACKED_STRUCT;
-typedef MPALDIALOG*     LPMPALDIALOG;
-typedef LPMPALDIALOG*   LPLPMPALDIALOG;
+typedef MPALDIALOG *LPMPALDIALOG;
+typedef LPMPALDIALOG *LPLPMPALDIALOG;
 
-/****************************************************************************\
-*       typedef MPALITEM
-*       ----------------
-* Description: Item di MPAL
-\****************************************************************************/
 
+/**
+ * MPAL Item
+ */
 struct ItemAction {
-	byte    num;                // Numero dell'azione
-	uint16    wTime;              // In caso di idle, il tempo che deve passare
-    byte    perc;               // Percentuale di eseguire l'idle
-    HGLOBAL when;               // Espressione da calcolare: se !=0, allora
-                                //  l'azione puo' essere eseguita
-    uint16    wParm;              // Parametro per l'azione
+	byte	num;                // Action number
+	uint16	wTime;              // If idle, the time which must pass
+    byte	perc;               // Percentage of the idle run
+    HGLOBAL	when;               // Expression to compute. If != 0, then
+								// action can be done
+    uint16	wParm;              // Parameter for action
 
-    byte nCmds;                 // Numero comandi da eseguire
-    uint32 CmdNum[MAX_COMMANDS_PER_ACTION]; // Comando da eseguire
+    byte	nCmds;				// Number of commands to be executed
+    uint32	CmdNum[MAX_COMMANDS_PER_ACTION]; // Commands to execute
 } PACKED_STRUCT;
 
 struct MPALITEM {
-	uint32 nObj;                    // Numero item
+	uint32 nObj;				// Item number
 
-	byte lpszDescribe[MAX_DESCRIBE_SIZE]; // Nome
-	byte nActions;                // Numero delle azioni gestite
-	uint32 dwRes;                  // Risorsa che contiene frame e pattern
+	byte lpszDescribe[MAX_DESCRIBE_SIZE]; // Name
+	byte nActions;				// Number of managed actions
+	uint32 dwRes;				// Resource that contains frames and patterns
 
 	struct command Command[MAX_COMMANDS_PER_ITEM];
 
-  // Array di strutture contenenti le varie azioni gestite. In pratica, di
-  // ogni azione sappiamo quali comandi eseguire, tra quelli definiti nella
-  // struttura qui sopra
+  // Array of structures containing various managed activities. In practice, of
+  // every action we know what commands to run, including those defined in
+  // structures above
 /*
   struct
   {
-    byte    num;                // Numero dell'azione
-    uint16    wTime;              // In caso di idle, il tempo che deve passare
-    byte    perc;               // Percentuale di eseguire l'idle
-    HGLOBAL when;               // Espressione da calcolare: se !=0, allora
-                                //  l'azione puo' essere eseguita
-    uint16    wParm;              // Parametro per l'azione
+    byte    num;			// Numero dell'azione
+    uint16    wTime;		// In caso di idle, il tempo che deve passare
+    byte    perc;			// Percentuale di eseguire l'idle
+    HGLOBAL when;			// Espressione da calcolare: se !=0, allora
+							//  l'azione puo' essere eseguita
+    uint16    wParm;		// Parametro per l'azione
 
-    byte nCmds;                 // Numero comandi da eseguire
+    byte nCmds;				// Numero comandi da eseguire
     uint32 CmdNum[MAX_COMMANDS_PER_ACTION]; // Comando da eseguire
 
   } Action[MAX_ACTIONS_PER_ITEM];
@@ -306,12 +288,9 @@ typedef MPALITEM*       LPMPALITEM;
 typedef LPMPALITEM*     LPLPMPALITEM;
 
 
-/****************************************************************************\
-*       typedef MPALSCRIPT
-*       ------------------
-* Description: Script di MPAL
-\****************************************************************************/
-
+/**
+ * MPAL Script
+ */
 struct MPALSCRIPT {
 	uint32 nObj;
 
@@ -335,44 +314,27 @@ typedef LPMPALSCRIPT*   LPLPMPALSCRIPT;
 
 
 /****************************************************************************\
-*       Prototipi di funzione
+*       Function prototypes
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     int32 varGetValue(const char *lpszVarName);
-*
-* Description:  Restituisce il valore corrente di una variabile globale
-*
-* Input:        const char *lpszVarName       Nome della variabile
-*
-* Return:       Valore corrente
-*
-* Note:         Prima di questa funzione, bisogna richiamare LockVar() che
-*               locka le variabili globali per l'utilizzo. Dopo inoltre bi-
-*               sogna ricordarsi di chiamare UnlockVar()
-*
-\****************************************************************************/
-
-int32 varGetValue(const char *lpszVarName);
+/**
+ * Returns the current value of a global variable
+ *
+ * @param lpszVarName		Name of the variable
+ * @returns		Current value
+ * @remarks		Before using this method, you must call LockVar() to
+ * lock the global variablves for use. Then afterwards, you will
+ * need to remember to call UnlockVar()
+ */
+extern int32 varGetValue(const char *lpszVarName);
 
 
-/****************************************************************************\
-*
-* Function:     void varSetValue(const char *lpszVarName, int32 val);
-*
-* Description:  Setta un nuovo valore per una variabile globale di MPAL
-*
-* Input:        const char *lpszVarName       Nome della variabile
-*               int32 val                 Valore da settare
-*
-\****************************************************************************/
-
-void varSetValue(const char *lpszVarName, int32 val);
-
-/****************************************************************************\
-*       Includes the various modules
-\****************************************************************************/
+/**
+ * Sets the value of a MPAL global variable
+ * @param lpszVarName       Name of the variable
+ * @param val				Value to set
+ */
+extern void varSetValue(const char *lpszVarName, int32 val);
 
 } // end of namespace MPAL
 

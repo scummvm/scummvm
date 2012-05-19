@@ -370,10 +370,10 @@ static char *DuplicateDialogPeriod(uint32 nPeriod) {
 
 	for (j = 0; dialog->Periods[j] != NULL; j++)
 		if (dialog->PeriodNums[j] == nPeriod) {
-			/* Trovata la frase, va duplicata */
+			/* Found the phrase, it should be duplicated */
 			origmsg = (const char *)GlobalLock(dialog->Periods[j]);
 
-			/* Calcola la lunghezza e alloca la memoria */
+			/* Calculate the length and allocate memory */
 			i = 0;
 			while (origmsg[i] != '\0') i++;
 
@@ -448,13 +448,13 @@ static uint32 *GetSelectList(uint32 i) {
 	int j,k,num;
 	LPMPALDIALOG dialog=GLOBALS.lpmdDialogs+GLOBALS.nExecutingDialog;
 
-	/* Conta quanti select attivi ci sono */
+	/* Count how many are active selects */
 	num = 0;
 	for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
 		if (dialog->Choice[i].Select[j].curActive)
 			num++;
 
-	/* Se sono 0, e' un errore */
+	/* If there are 0, it's a mistake */
 	if (num == 0)
 		return NULL;
 
@@ -462,7 +462,7 @@ static uint32 *GetSelectList(uint32 i) {
 	if (sl == NULL)
 		return NULL;
 
-	/* Copia il dato di ogni select attivo dentro la lista */
+	/* Copy all the data inside the active select list */
 	k = 0;
 	for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
 		if (dialog->Choice[i].Select[j].curActive)
@@ -509,7 +509,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	char *patlength;
 	uint32 dim;
 
-	// Lo zeroinit e' obbligatorio!!!!
+	// Zeroing out the allocated memory is required!!!
 	ret = (LPITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(ITEM));
 	if (ret == NULL)
 		return NULL;
@@ -519,16 +519,16 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	dat = (char *)GlobalLock(hDat);
 
 	if (dat[0] == 'D' && dat[1] == 'A' && dat[2] == 'T') {
-		i = dat[3];            // Versione!! Per ora 1.0
+		i = dat[3];			// For version 1.0!!
 		dat += 4;
 
-		if (i >= 0x10) { // Dalla 1.0 c'e' il punto di destinazione per ogni oggetto
+		if (i >= 0x10) {	// From 1.0, there's a destination point for each object
 			ret->destX = (int16)READ_LE_UINT16(dat);
 			ret->destY = (int16)READ_LE_UINT16(dat + 2);
 			dat+=4;
 		}
 
-		if (i >= 0x11) {// Dalla 1.1 c'e' la velocita' di animazione
+		if (i >= 0x11) {	// From 1.1, there's animation speed
 			ret->speed = READ_LE_UINT16(dat);
 			dat += 2;
 		} else
@@ -539,21 +539,21 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	ret->numpattern=*dat++;
 	ret->Zvalue=*dat++;
 
-	// Carica le coordinate left&top di ogni frame
+	// Upload the left & top co-ordinates of each frame
 	for (i = 0; i < ret->numframe; i++) {
 		ret->frameslocations[i].left = (int16)READ_LE_UINT16(dat);
 		ret->frameslocations[i].top = (int16)READ_LE_UINT16(dat + 2);
 		dat += 4;
 	}
 
-	// Carica le dimensioni di ogni frame e calcola right&bottom
+	// Upload the size of each frame and calculate the right & bottom
 	for (i = 0; i < ret->numframe; i++) {
 		ret->frameslocations[i].right = (int16)READ_LE_UINT16(dat) + ret->frameslocations[i].left;
 		ret->frameslocations[i].bottom = (int16)READ_LE_UINT16(dat + 2) + ret->frameslocations[i].top;
 		dat+=4;
 	}
 
-	// Carica i bounding box di ogni frame
+	// Upload the bounding boxes of each frame
 	for (i = 0; i < ret->numframe; i++) {
 		ret->bbox[i].left = (int16)READ_LE_UINT16(dat);
 		ret->bbox[i].top = (int16)READ_LE_UINT16(dat + 2);
@@ -562,7 +562,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 		dat+=8;
 	}
 
-	// Carica i pattern di animazione
+	// Load the animation pattern
 	patlength = dat;
 	dat+=ret->numpattern;
 
@@ -573,7 +573,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 		dat += patlength[i];
 	}
 
-	// Carica i singoli frame di animazione
+	// Upload the individual frames of animations
 	for (i = 1; i < ret->numframe; i++) {
 		dim=(uint32)(ret->frameslocations[i].right-ret->frameslocations[i].left) *
 			(uint32)(ret->frameslocations[i].bottom-ret->frameslocations[i].top);
@@ -585,7 +585,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 		dat += dim;
 	}
 
-	// Controlla se siamo arrivati fino alla fine del file
+	// Check if we've got to the end of the file
 	i = READ_LE_UINT16(dat);
 	if (i != 0xABCD)
 		return NULL;
@@ -678,7 +678,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 				_ctx->p->arg3=s->Command[_ctx->k].arg3;
 				_ctx->p->arg4=s->Command[_ctx->k].arg4;
 
-					 // !!! Nuova gestione dei thread
+					 // !!! New process management
 				if ((cfHandles[_ctx->numHandles++] = CoroScheduler.createProcess(CustomThread, &_ctx->p, sizeof(LPCFCALL))) == 0) {
 					GLOBALS.mpalError = 1;
 
@@ -845,16 +845,14 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
- /* Tanto per cominciare, e' necessario richiedere la lista degli item
-    presenti nella locazione. */
+	/* To begin with, we need to request the item list from the location */
 	_ctx->il = mpalQueryItemList(GLOBALS.nPollingLocations[id]);
 
- /* Contiamo gli items */
+	/* Count the items */
 	for (_ctx->numitems = 0; _ctx->il[_ctx->numitems] != 0; _ctx->numitems++)
 		;
 
- /* Cerchiamo gli items della locazione senza idle actions e li eliminiamo
-    dalla lista */
+	/* We look for items without idle actions, and eliminate them from the list */
 	LockItems();
 	_ctx->nIdleActions = 0;
 	_ctx->nRealItems = 0;
@@ -873,7 +871,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		_ctx->nIdleActions += _ctx->k;
 
 		if (_ctx->k == 0)
-			/* Possiamo eliminare questo item dalla lista */
+			/* We can remove this item from the list */
 			_ctx->il[_ctx->i] = (uint32)NULL;
 		else
 			_ctx->nRealItems++;
@@ -894,13 +892,9 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		return;
 	}
 
-	/* Inizializziamo le routine random */
-	//curTime = _vm->GetTime();
-	//srand(curTime);
 
-
- /* Abbiamo appurato che esiste almeno un item che contiene idle actions.
-    Ora creaiamo le copie speculari delle idle actions */
+	/* We have established that there is at least one item that contains idle actions.
+	   Now we created the mirrored copies of the idle actions. */
 	_ctx->MyActions = (MYACTION *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nIdleActions * sizeof(MYACTION));
 	if (_ctx->MyActions == NULL) {
 		GlobalFree(_ctx->MyThreads);
@@ -937,11 +931,11 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	UnlockItems();
 
-	/* La item list non ci serve piu' */
+	/* We don't need the item list anymore */
 	GlobalFree(_ctx->il);
 
 
-	/* Eccoci al ciclo principale. */
+	/* Here's the main loop */
 	while (1) {
 		/* Cerchiamo tra tutte le idle actions quella a cui manca meno tempo per
 			l'esecuzione */
@@ -955,9 +949,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		     } else
 				_ctx->dwSleepTime = MIN(_ctx->dwSleepTime, _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime - _ctx->curTime);
 
-		/* Ci addormentiamo, ma controllando sempre l'evento che viene settato
-			quando viene richiesta la nostra chiusura */
-		
+		/* We fall alseep, but always checking that the event is set when prompted for closure */
 		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, GLOBALS.hEndPollingLocations[id], _ctx->dwSleepTime, &_ctx->expired);
 
 		//if (_ctx->k == WAIT_OBJECT_0)
@@ -968,28 +960,26 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 			if (_ctx->MyThreads[_ctx->i].nItem != 0) {
 				CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 0, &_ctx->delayExpired);
 
-				// if result ) == WAIT_OBJECT_0)
+				// if result == WAIT_OBJECT_0)
 				if (!_ctx->delayExpired)
 					_ctx->MyThreads[_ctx->i].nItem = 0;
 			}
 
 		_ctx->curTime = _vm->GetTime();
 
-		/* Cerchiamo all'interno delle idle actions quale e' necessario eseguire */
+		/* Loop through all the necessary idle actions */
 		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++)
 			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
 				_ctx->MyActions[_ctx->k].dwLastTime += _ctx->MyActions[_ctx->k].wTime;
 
-			   /* E' _ctx->il momento di tirare _ctx->il nostro dado virtuale, e controllare
-				  se la sorte e' dalla parte della idle action */
+			   /* It's time to check to see if fortune is on the side of the idle action */
 				byte randomVal = (byte)_vm->_randomSource.getRandomNumber(99);
 				if (randomVal < _ctx->MyActions[_ctx->k].perc) {
-					/* Controlliamo se c'e' una action in esecuzione sull'item */
+					/* Check if there is an action running on the item */
 					if ((GLOBALS.bExecutingAction) && (GLOBALS.nExecutingAction == _ctx->MyActions[_ctx->k].nItem))
 						continue;
 
-					/* Controlliamo se c'e' gia' un'altra idle function in esecuzione
-						sullo stesso item */
+					/* Check to see if there already another idle funning running on the item */
 					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
 						if (_ctx->MyThreads[_ctx->i].nItem == _ctx->MyActions[_ctx->k].nItem)
 							break;
@@ -997,11 +987,11 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					if (_ctx->i < _ctx->nRealItems)
 						continue;
 
-					/* Ok, siamo gli unici :) */
+					/* Ok, we are the only ones :) */
 					LockItems();
 					_ctx->curItem=GLOBALS.lpmiItems+itemGetOrderFromNum(_ctx->MyActions[_ctx->k].nItem);
 
-					/* Controlliamo se c'e' un esperessione WhenExecute */
+					/* Check if there is a WhenExecute expression */
 					_ctx->j=_ctx->MyActions[_ctx->k].nAction;
 					if (_ctx->curItem->Action[_ctx->j].when != NULL)
 						if (!EvaluateExpression(_ctx->curItem->Action[_ctx->j].when)) {
@@ -1009,8 +999,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 							continue;
 						}
 
-					/* Ok, possiamo eseguire la azione. Per comodita' lo facciamo in
-						un nuovo thread */
+					/* Ok, we can perform the action. For convenience, we do it in a new process */
 					_ctx->newItem = (LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
 					if (_ctx->newItem == false) {
 						GlobalFree(_ctx->MyThreads);
@@ -1023,21 +1012,20 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					CopyMemory(_ctx->newItem,_ctx->curItem, sizeof(MPALITEM));
 					UnlockItems();
 
-					/* Copiamo l'azione nella #0 */
+					/* We copy the action in #0 */
 //					_ctx->newItem->Action[0].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
 //					CopyMemory(_ctx->newItem->Action[0].CmdNum,_ctx->curItem->Action[_ctx->j].CmdNum,_ctx->newItem->Action[0].nCmds*sizeof(_ctx->newItem->Action[0].CmdNum[0]));
 					_ctx->newItem->dwRes=_ctx->j;
 
-					/* Creaiamo l'action thread. Provvedera' lui a liberare la memoria
-						allocata per _ctx->il nuovo item */
+					/* We will create an action, and will provide the necessary details */
 					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
 						if (_ctx->MyThreads[_ctx->i].nItem == 0)
 							break;
 
 					_ctx->MyThreads[_ctx->i].nItem = _ctx->MyActions[_ctx->k].nItem;
 
-					// !!! Nuova gestione dei thread
-					if ((_ctx->MyThreads[_ctx->i].hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == 0) {
+					// Create the process
+					if ((_ctx->MyThreads[_ctx->i].hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE) {
 					//if ((_ctx->MyThreads[_ctx->i].hThread=(void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem))==(void*)-1)
 						GlobalFree(_ctx->newItem);
 						GlobalFree(_ctx->MyThreads);
@@ -1047,23 +1035,11 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 						return;
 					}
 
-					/* Skippa tutte le idle action dello stesso item */
+					/* Skip all idle actions of the same item */
 				}
 			}
 	}
 
-	/* Chiude tutti _ctx->i thread interni */
-
-	/*
-
-		CODICE OBSOLETO: ANDIAMO DI SKIP CHE RULLA
-
- for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
-   if (_ctx->MyThreads[_ctx->i].nItem != 0) {
-     TerminateThread(_ctx->MyThreads[_ctx->i].hThread, 0);
-     CloseHandle(_ctx->MyThreads[_ctx->i].hThread);
-   }
-*/
 
 	// Set idle skip on
 	CORO_INVOKE_4(GLOBALS.lplpFunctions[200], 0, 0, 0, 0);
@@ -1083,7 +1059,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	// Set idle skip off
 	CORO_INVOKE_4(GLOBALS.lplpFunctions[201], 0, 0, 0, 0);
 
-	/* Abbiamo finito */
+	/* We're finished */
 	GlobalFree(_ctx->MyThreads);
 	GlobalFree(_ctx->MyActions);
 	
@@ -1218,20 +1194,20 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	/* Locka _ctx->i dialoghi */
+	/* Lock the dialogs */
 	LockDialogs();
 
-	/* Trova il puntatore al dialogo corrente */
-	_ctx->dialog=GLOBALS.lpmdDialogs+GLOBALS.nExecutingDialog;
+	/* Get a pointer to the current dialog */
+	_ctx->dialog = GLOBALS.lpmdDialogs + GLOBALS.nExecutingDialog;
 
-	/* Cerca la scelta richiesta tra quelle nel dialogo */
+	/* Search the choice between those required in the dialog */
 	for (_ctx->i = 0; _ctx->dialog->Choice[_ctx->i].nChoice != 0; _ctx->i++)
 		if (_ctx->dialog->Choice[_ctx->i].nChoice == nChoice)
 			break;
 
-	/* Se non l'ha trovata, esce con errore */
+	/* If nothing has been found, exit with an error */
 	if (_ctx->dialog->Choice[_ctx->i].nChoice == 0) {
-		/* Se siamo qui, non abbiamo trovato la choice richiesta */
+		/* If we're here, we did not find the required choice */
 		GLOBALS.mpalError = 1;
 		UnlockDialogs();
 
@@ -1239,16 +1215,14 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 		return;
 	}
 
-	/* Abbiamo trova la choice richiesta. Ricordiamoci qual e' nella
-		variabile globale */
+	/* We've found the requested choice. Remember what in global variables */
 	GLOBALS.nExecutingChoice = _ctx->i;
 
 	while (1) {
 		GLOBALS.nExecutingChoice = _ctx->i;
 
 		_ctx->k = 0;
-		/* Calcoliamo le when expression di ciascun select, per vedere se sono
-			attivi o disattivi */
+		/* Calculate the expression of each selection, to see if they're active or inactive */
 		for (_ctx->j = 0; _ctx->dialog->Choice[_ctx->i].Select[_ctx->j].dwData != 0; _ctx->j++)
 			if (_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].when == NULL) {
 				_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].curActive = 1;
@@ -1259,42 +1233,41 @@ void DoChoice(CORO_PARAM, uint32 nChoice) {
 			} else
 				_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].curActive = 0;
 
-		/* Se non ci sono scelte attivate, la scelta e' finita */
+		/* If there are no choices activated, then the dialog is finished. */
 		if (_ctx->k == 0) {
 			UnlockDialogs();
 			break;
 		}
 
-		/* Avvertiamo il gioco che c'e' una scelta da far fare all'utente,
-			e restiamo in attesa della risposta */
+		/* There are choices available to the user, so wait for them to make one */
 		CoroScheduler.resetEvent(GLOBALS.hDoneChoice);
 		CoroScheduler.setEvent(GLOBALS.hAskChoice);
 		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, GLOBALS.hDoneChoice, CORO_INFINITE);
 
-		/* Ora che la scelta e' stata effettuata, possiamo eseguire _ctx->i gruppi
-			associati con la scelta */
+		/* Now that the choice has been made, we can run the groups associated with the choice tbontbtitq
+		*/
 		_ctx->j = GLOBALS.nSelectedChoice;
 		for (_ctx->k = 0; _ctx->dialog->Choice[_ctx->i].Select[_ctx->j].wPlayGroup[_ctx->k] != 0; _ctx->k++) {
 			_ctx->nGroup = _ctx->dialog->Choice[_ctx->i].Select[_ctx->j].wPlayGroup[_ctx->k];
 			CORO_INVOKE_1(GroupThread, &_ctx->nGroup);
 		}
 
-		/* Controllo sugli attributi */
+		/* Control attribute */
 		if (_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].attr & (1 << 0)) {
-			/* Bit 0 settato: fine della scelta */
+			/* Bit 0 set: the end of the choice */
 			UnlockDialogs();
 			break;
 		}
 
 		if (_ctx->dialog->Choice[_ctx->i].Select[_ctx->j].attr & (1 << 1)) {
-			/* Bit 1 settato: fine del dialogo */
+			/* Bit 1 set: the end of the dialog */
 			UnlockDialogs();
 			
 			CORO_KILL_SELF();
 			return;
 		}
 
-		/* Fine della scelta senza attributi: bisogna rifarla */
+		/* End of choic ewithout attributes. We must do it again */
 	}
 
 	// If we're here, we found an end choice. Return to the caller group
@@ -1339,23 +1312,23 @@ static uint32 DoAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 				continue;
 		}
 
-		// Ora abbiamo trova l'azione giusta che deve essere eseguita.
-		// Duplichiamo l'item corrente e copiamo la azione #i nella #0
+		// Now we find the right action to be performed
+		// Duplicate the item and copy the current action in #i into #0
 		newitem = (LPMPALITEM)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
 		if (newitem == NULL)
 			return CORO_INVALID_PID_VALUE;
 
-		// Nella nuova versione scriviamo il numero dell'azione in dwRes
+		// In the new version number of the action in writing dwRes
 		Common::copy((byte *)item, (byte *)item + sizeof(MPALITEM), (byte *)newitem);
 /*   newitem->Action[0].nCmds=item->Action[i].nCmds;
    CopyMemory(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
 */
 		newitem->dwRes = i;
 
-		// E finalmente possiamo richiamare il thread, che eseguira' l'azione
-		// 0 dell'item, e poi liberera' la memoria con la GlobalFree()
+		// And finally we can laucnh the process that will execute the action,
+		// and a second process to free up the memory when the action is finished.
 
-		// !!! New thread management
+		// !!! New process management
 		if ((h = CoroScheduler.createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE)
 			return CORO_INVALID_PID_VALUE;
 
@@ -1420,7 +1393,7 @@ static uint32 DoDialog(uint32 nDlgOrd, uint32 nGroup) {
  * @returns		True if everything is OK, false on failure
  */
 bool DoSelection(uint32 i, uint32 dwData) {
-	LPMPALDIALOG dialog=GLOBALS.lpmdDialogs+GLOBALS.nExecutingDialog;
+	LPMPALDIALOG dialog = GLOBALS.lpmdDialogs+GLOBALS.nExecutingDialog;
 	int j;
 
 	for (j = 0; dialog->Choice[i].Select[j].dwData != 0; j++)
@@ -1461,15 +1434,15 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
  //printf("Script: %lu\n", sizeof(MPALSCRIPT));
  //printf("Dialog: %lu\n", sizeof(MPALDIALOG));
 
-	/* Si salva l'array delle funzioni custom */
+	/* Save the array of custom functions */
 	GLOBALS.lplpFunctions = lplpcfArray;
 	GLOBALS.lplpFunctionStrings = lpcfStrings;
 
-	/* Apre il file MPC in lettura */
+	/* OPen the MPC file for reading */
 	if (!hMpc.open(lpszMpcFileName))
 		return false;
 
-	/* Legge e controlla l'header */
+	/* Read and check the header */
 	nBytesRead = hMpc.read(buf, 5);
 	if (nBytesRead != 5)
 		return false;
@@ -1479,7 +1452,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	bCompress = buf[4];
 
-	/* Legge la dimensione del file decompresso, e alloca la memoria */
+	/* Reads the size of the uncompressed file, and allocate memory */
 	dwSizeDecomp = hMpc.readUint32LE();
 	if (hMpc.err())
 		return false;
@@ -1489,8 +1462,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		return false;
 
 	if (bCompress) {
-		/* Se il file e' compresso, guarda quanto e' grande e alloca la
-			memoria temporanea per la decompressione */
+		/* Get the compressed size and read the data in */
 		dwSizeComp = hMpc.readUint32LE();
 		if (hMpc.err())
 			return false;
@@ -1503,30 +1475,29 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		if (nBytesRead != dwSizeComp)
 			return false;
 
-		/* Decomprime l'immagine */
+		/* Decompress the data */
 		lzo1x_decompress(cmpbuf, dwSizeComp, lpMpcImage, &nBytesRead);
 		if (nBytesRead != dwSizeDecomp)
 			return false;
 
 		GlobalFree(cmpbuf);
 	} else {
-		/* Se il file non e' compresso, lo legge all'interno della memoria gia'
-			allocata */
+		/* If the file is not compressed, we directly read in the data */
 		nBytesRead = hMpc.read(lpMpcImage, dwSizeDecomp);
 		if (nBytesRead != dwSizeDecomp)
 			return false;
 	}
 
-	/* Chiude il file */
+	/* Close the file */
 	hMpc.close();
 
-	/* Parsa l'immagine */
+	/* Process the data */
 	if (ParseMpc(lpMpcImage) == false)
 		return false;
 
 	GlobalFree(lpMpcImage);
 
-	/* Calcola utilizzo di memoria */
+	/* Calculate memory usage */
 	/*
  {
 	 char errbuf[256];
@@ -1541,11 +1512,11 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
  }
 */
 
-	/* Apre il file MPR in lettura */
+	/* Open the MPR file */
 	if (!GLOBALS.hMpr.open(lpszMprFileName))
 		return false;
 
-	/* Si posiziona a 8 byte dalla fine del file */
+	/* Seek to the end of the file to read overall information */
 	GLOBALS.hMpr.seek(-12, SEEK_END);
 
 	dwSizeComp = GLOBALS.hMpr.readUint32LE();
@@ -1563,7 +1534,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	if (buf[0] !='E' || buf[1] != 'N' || buf[2] != 'D' || buf[3] != '0')
 		return false;
 
-	/* Si posiziona all'inizio dell'header delle risorse */
+	/* Move to the start of the resources header */
 	GLOBALS.hMpr.seek(-(12 + (int)dwSizeComp), SEEK_END);
 
 	GLOBALS.lpResources = (uint32 *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, GLOBALS.nResources * 8);
@@ -1584,18 +1555,17 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	GlobalFree(cmpbuf);
 
-	/* Si riposiziona all'inizio lasciando il file di risorse aperto */
+	/* Reset back to the start of the file, leaving it open */
 	GLOBALS.hMpr.seek(0, SEEK_SET);
 
-	/* Non c'e' nessuna azione ne' dialogo in esecuzione */
+	/* There is no action or dialog running by default */
 	GLOBALS.bExecutingAction = false;
 	GLOBALS.bExecutingDialog = false;
 
-	/* Non c'e' nessuna locazione in polling */
+	/* There's no polling location */
 	Common::fill(GLOBALS.nPollingLocations, GLOBALS.nPollingLocations + MAXPOLLINGLOCATIONS, 0);
 
-	/* Crea l'evento che verra' utilizzato per avvertire il gioco che c'e'
-		da effettuare una scelta */
+	/* Create the event that will be used to co-ordinate making choices and choices finishing */
 	GLOBALS.hAskChoice = CoroScheduler.createEvent(true, false);
 	GLOBALS.hDoneChoice = CoroScheduler.createEvent(true, false);
 
@@ -2030,7 +2000,7 @@ bool mpalExecuteScript(int nScript) {
 	CopyMemory(s, GLOBALS.lpmsScripts + n, sizeof(MPALSCRIPT));
 	UnlockScripts();
 
-	// !!! Nuova gestione dei thread
+	// !!! New process management
 	if (CoroScheduler.createProcess(ScriptThread, &s, sizeof(LPMPALSCRIPT)) == CORO_INVALID_PID_VALUE)
  		return false;
 
@@ -2070,7 +2040,7 @@ bool mpalStartIdlePoll(int nLoc) {
 			GLOBALS.nPollingLocations[i] = nLoc;
 
 			GLOBALS.hEndPollingLocations[i] = CoroScheduler.createEvent(true, false);
-// !!! Nuova gestione dei thread
+// !!! New process management
 			if ((GLOBALS.PollingThreads[i] = CoroScheduler.createProcess(LocationPollThread, &i, sizeof(uint32))) == CORO_INVALID_PID_VALUE)
 //			 if ((GLOBALS.hEndPollingLocations[i]=(void*)_beginthread(LocationPollThread, 10240,(void *)i))==(void*)-1)
 				return false;
@@ -2150,7 +2120,7 @@ void mpalSaveState(byte *buf) {
  * @returns		Length of the state buffer in bytes
  */
 int mpalLoadState(byte *buf) {
-	// Dobbiamo distruggere tutte le variabili e ricrearle
+	// We must destroy and recreate all the variables
 	GlobalFree(GLOBALS.hVars);
 
 	GLOBALS.nVars = READ_LE_UINT32(buf);
@@ -2325,20 +2295,20 @@ void mpalDumpMessages(void) {
 			OutputStartMsgComment(GLOBALS.lpmmMsgs[i].wNum, f);
 
 			while (1) {
-				// Trova la fine del periodo corrente
+				// Find the end of the current period
 				while (*p != '\0')
 					p++;
 
-				// Se c'e' un altro '\0' siamo alla fine del messaggio
+				// If there is another '\0' at the end of the message, then finish
 				p++;
 				if (*p == '\0')
 					break;
 
-				// Altrimenti c'e' un altro periodo, e ci ricordiamo il suo inizio
+				// Otherwise there is another line, so remember the next one's start
 				lpPeriods[nPeriods++] = p;
 			}
 
-			// Ora fa un ciclo su tutti i periodi
+			// Now make a loop over all the periods
 			for (j = 0;j<nPeriods; j++) {
 				if (nPeriods == 1)
 					sprintf(fname, "000-%05d.WAV", GLOBALS.lpmmMsgs[i].wNum);
@@ -2411,20 +2381,20 @@ void mpalDumpOthers(void) {
 			
 			if (OutputStartOther(GLOBALS.lpmmMsgs[i].wNum, f)) {	
 				while (1) {
-					// Trova la fine del periodo corrente
+					// Find the end of the current period
 					while (*p!='\0')
 						p++;
 					
-					// Se c'e' un altro '\0' siamo alla fine del messaggio
+					// If there is another '0' at the end, then the message is finished
 					p++;
 					if (*p == '\0')
 						break;
 					
-					// Altrimenti c'e' un altro periodo, e ci ricordiamo il suo inizio
+					// Remember the start of the next line
 					lpPeriods[nPeriods++] = p;
 				}
 				
-				// Ora fa un ciclo su tutti i periodi
+				// Now loop over all the periods
 				for (j = 0; j < nPeriods; j++) {
 					if (nPeriods == 1)
 						sprintf(fname, "000-%05d.WAV", GLOBALS.lpmmMsgs[i].wNum);
@@ -2893,7 +2863,7 @@ void mpalDumpDialog(LPMPALDIALOG dlg) {
 		for (c = 0;c<dlg->Group[g].nCmds; c++) {
 			curCmd = &dlg->Command[dlg->Group[g].CmdNum[c]];
 
-			// Se è una funzione custom, e richiama la SendDialogMessage(nPers, nMsg)
+			// If it's a custom function, call SendDialogMessage(nPers, nMsg)
 			if (curCmd->type == 1 && curCmd->nCf == 71) {
 				sprintf(fname, "%03d-%05d.WAV", dlg->nObj, curCmd->arg2);
 				
