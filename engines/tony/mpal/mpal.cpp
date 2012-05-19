@@ -67,11 +67,11 @@ namespace MPAL {
 \****************************************************************************/
 
 const char *mpalCopyright =
-  "\n\nMPAL - MultiPurpose Adventure Language for Windows 95\n"
-  "Copyright 1997-98 Giovanni Bajo and Luca Giusti\n"
-  "ALL RIGHTS RESERVED\n"
-  "\n"
-  "\n";
+	"\n\nMPAL - MultiPurpose Adventure Language for Windows 95\n"
+	"Copyright 1997-98 Giovanni Bajo and Luca Giusti\n"
+	"ALL RIGHTS RESERVED\n"
+	"\n"
+	"\n";
 
 /****************************************************************************\
 *       Internal functions
@@ -344,7 +344,7 @@ static char *DuplicateMessage(uint32 nMsgOrd) {
 		j++;
 	j += 2;
 
-	clonemsg=(char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, j);
+	clonemsg = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, j);
 	if (clonemsg == NULL)
 		return NULL;
 
@@ -483,7 +483,7 @@ static uint32 *GetItemList(uint32 nLoc) {
 			num++;
 	}
 
-	il=(uint32 *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(uint32) * (num + 1));
+	il = (uint32 *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(uint32) * (num + 1));
 	if (il == NULL)
 		return NULL;
 
@@ -569,15 +569,15 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	for (i = 1; i < ret->numpattern; i++) {
 		for (j = 0; j < patlength[i]; j++)
 			ret->pattern[i][j] = dat[j];
-		ret->pattern[i][(int)patlength[i]] = 255;   // Termina i pattern
+		ret->pattern[i][(int)patlength[i]] = 255;   // Terminate pattern
 		dat += patlength[i];
 	}
 
 	// Upload the individual frames of animations
 	for (i = 1; i < ret->numframe; i++) {
-		dim=(uint32)(ret->frameslocations[i].right-ret->frameslocations[i].left) *
+		dim = (uint32)(ret->frameslocations[i].right-ret->frameslocations[i].left) *
 			(uint32)(ret->frameslocations[i].bottom-ret->frameslocations[i].top);
-		ret->frames[i]=(char *)GlobalAlloc(GMEM_FIXED,dim);
+		ret->frames[i] = (char *)GlobalAlloc(GMEM_FIXED,dim);
    
 		if (ret->frames[i] == NULL)
 			return NULL;
@@ -664,7 +664,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 			_ctx->k = s->Moment[_ctx->i].CmdNum[_ctx->j];
 
 			if (s->Command[_ctx->k].type == 1) {
-				_ctx->p=(LPCFCALL)GlobalAlloc(GMEM_FIXED, sizeof(CFCALL));
+				_ctx->p = (LPCFCALL)GlobalAlloc(GMEM_FIXED, sizeof(CFCALL));
 				if (_ctx->p == NULL) {
 					GLOBALS.mpalError = 1;
 
@@ -1026,7 +1026,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 					// Create the process
 					if ((_ctx->MyThreads[_ctx->i].hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE) {
-					//if ((_ctx->MyThreads[_ctx->i].hThread=(void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem))==(void*)-1)
+					//if ((_ctx->MyThreads[_ctx->i].hThread = (void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem))= = (void*)-1)
 						GlobalFree(_ctx->newItem);
 						GlobalFree(_ctx->MyThreads);
 						GlobalFree(_ctx->MyActions);
@@ -1457,7 +1457,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	if (hMpc.err())
 		return false;
 
-	byte *lpMpcImage = (byte *)GlobalAlloc(GMEM_FIXED,dwSizeDecomp+16);
+	byte *lpMpcImage = (byte *)GlobalAlloc(GMEM_FIXED, dwSizeDecomp + 16);
 	if (lpMpcImage == NULL)
 		return false;
 
@@ -1467,7 +1467,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		if (hMpc.err())
 			return false;
 
-		cmpbuf = (byte *)GlobalAlloc(GMEM_FIXED,dwSizeComp);
+		cmpbuf = (byte *)GlobalAlloc(GMEM_FIXED, dwSizeComp);
 		if (cmpbuf == NULL)
 			return false;
 
@@ -1550,7 +1550,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		return false;
 
 	lzo1x_decompress((const byte *)cmpbuf, dwSizeComp, (byte *)GLOBALS.lpResources, (uint32 *)&nBytesRead);
-	if (nBytesRead != (uint32)GLOBALS.nResources*8)
+	if (nBytesRead != (uint32)GLOBALS.nResources * 8)
 		return false;
 
 	GlobalFree(cmpbuf);
@@ -2042,7 +2042,7 @@ bool mpalStartIdlePoll(int nLoc) {
 			GLOBALS.hEndPollingLocations[i] = CoroScheduler.createEvent(true, false);
 // !!! New process management
 			if ((GLOBALS.PollingThreads[i] = CoroScheduler.createProcess(LocationPollThread, &i, sizeof(uint32))) == CORO_INVALID_PID_VALUE)
-//			 if ((GLOBALS.hEndPollingLocations[i]=(void*)_beginthread(LocationPollThread, 10240,(void *)i))==(void*)-1)
+//			 if ((GLOBALS.hEndPollingLocations[i] = (void*)_beginthread(LocationPollThread, 10240,(void *)i))= = (void*)-1)
 				return false;
 
 			return true;
@@ -2130,7 +2130,7 @@ int mpalLoadState(byte *buf) {
 	CopyMemory((byte *)GLOBALS.lpmvVars, buf + 4, GLOBALS.nVars * sizeof(MPALVAR));
 	UnlockVar();
 
-	return GLOBALS.nVars*sizeof(MPALVAR)+4;
+	return GLOBALS.nVars * sizeof(MPALVAR) + 4;
 }
 
 bool bDontOutput;
