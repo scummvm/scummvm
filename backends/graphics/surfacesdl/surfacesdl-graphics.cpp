@@ -180,6 +180,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 	_scalerProc = Normal2x;
+	// HACK: just pick first scaler plugin
+	_scalerPlugin = ScalerMan.getPlugins().front();
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
@@ -555,7 +557,8 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	_transactionDetails.needUpdatescreen = true;
 
 	_videoMode.mode = mode;
-	_videoMode.scaleFactor = newScaleFactor;
+	//_videoMode.scaleFactor = newScaleFactor;
+	_videoMode.scaleFactor = (*_scalerPlugin)->getFactor();
 
 	return true;
 }
@@ -1088,7 +1091,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 					dst_y = real2Aspect(dst_y);
 
 				assert(scalerProc != NULL);
-				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+				//scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+				//  (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
+				(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 					(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 			}
 
@@ -1586,7 +1591,9 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
-	_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
+	//_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
+	//(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight);
+	(*_scalerPlugin)->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight);
 
 #ifdef USE_SCALERS
@@ -2171,6 +2178,10 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		if (0 <= factor && factor <= 3) {
 			newMode = s_gfxModeSwitchTable[_scalerType][factor];
 		}
+		if (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS)
+			(*_scalerPlugin)->decreaseFactor();
+		else
+			(*_scalerPlugin)->increaseFactor();
 	}
 
 	const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_9);

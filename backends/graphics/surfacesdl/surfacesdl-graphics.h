@@ -27,6 +27,7 @@
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
+#include "graphics/scalerplugin.h"
 #include "common/events.h"
 #include "common/system.h"
 
@@ -231,6 +232,8 @@ protected:
 	ScalerProc *_scalerProc;
 	int _scalerType;
 	int _transactionMode;
+
+	ScalerPlugin *_scalerPlugin;
 
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
