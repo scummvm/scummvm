@@ -138,7 +138,7 @@ public:
 	int _word10800_ERULES;
 	int _numCharacters;
 	Common::Point _currentScriptCharacterPos;
-	int _word17081_nextIndex;
+	int _nextCharacterIndex;
 	int _word16EFE;
 	int _word1817B;
 	Common::Point _savedSurfaceUnderMousePos;
