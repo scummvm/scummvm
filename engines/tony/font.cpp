@@ -120,6 +120,7 @@ RMGfxPrimitive *RMFont::MakeLetterPrimitive(byte bChar, int &nLength) {
 
 	// Converte da carattere a lettera
 	nLett = ConvertToLetter(bChar);
+	assert(nLett < nLetters);
 
 	// Crea la primitiva per il font
 	prim = new RMFontPrimitive(this);
