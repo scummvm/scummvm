@@ -225,7 +225,7 @@ private:
 	void OC_sub17C0E();
 	void OC_sub17C55();
 	void OC_sub17C76();
-	void OC_sub17AFC();
+	void OC_setCurrentCharacter();
 	void OC_sub17C8B();
 	void OC_sub17CA2();
 	void OC_sub17CB9();

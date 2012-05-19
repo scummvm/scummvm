@@ -334,7 +334,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub17C76();
 		break;
 	case 0x1E:
-		OC_sub17AFC();
+		OC_setCurrentCharacter();
 		break;
 	case 0x1F:
 		OC_sub17C8B();
@@ -640,7 +640,7 @@ static const OpCode opCodes2[] = {
 /* 0x1b */	{ "OC_sub17C0E", 0, kNone, kNone, kNone, kNone, kNone },  
 /* 0x1c */ 	{ "OC_sub17C55", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone }, 
 /* 0x1d */	{ "OC_sub17C76", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-/* 0x1e */	{ "OC_sub17AFC", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x1e */	{ "OC_setCurrentCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x1f */	{ "OC_sub17C8B", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x20 */	{ "OC_sub17CA2", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x21 */	{ "OC_sub17CB9", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone }, 
@@ -975,7 +975,7 @@ byte LilliputScript::compareValues(int var1, int oper, int var2) {
 }
 
 void LilliputScript::computeOperation(byte *bufPtr, int oper, int var3) {
-	debugC(1, kDebugScriptTBC, "computeOperation(bufPtr, %c, %d)", oper & 0xFF, var3 & 0xFF);
+	debugC(1, kDebugScript, "computeOperation(bufPtr, %c, %d)", oper & 0xFF, var3 & 0xFF);
 
 	switch (oper & 0xFF) {
 	case '=':
@@ -1515,7 +1515,7 @@ byte LilliputScript::OC_sub174D8() {
 }
 
 byte LilliputScript::OC_CompareCharacterVariables() {
-	debugC(1, kDebugScriptTBC, "OC_CompareCharacterVariables()");
+	debugC(1, kDebugScript, "OC_CompareCharacterVariables()");
 
 	byte* buf1 = getCharacterVariablePtr();
 	int var1 = *buf1;
@@ -1786,7 +1786,7 @@ byte LilliputScript::OC_CompareMapValueWith() {
 }
 
 byte LilliputScript::OC_IsCharacterValid() {
-	debugC(1, kDebugScriptTBC, "OC_IsCharacterValid()");
+	debugC(1, kDebugScript, "OC_IsCharacterValid()");
 
 	int index = getValue1();
 	if (_vm->_characterPositionX[index] == -1)
@@ -2240,26 +2240,26 @@ void LilliputScript::OC_sub17E15_speech2param() {
 }
 
 void LilliputScript::OC_ComputeCharacterVariable() {
-	debugC(1, kDebugScriptTBC, "OC_ComputeCharacterVariable()");
+	debugC(1, kDebugScript, "OC_ComputeCharacterVariable()");
 
 	byte *bufPtr = getCharacterVariablePtr();
-	int oper = _currScript->readUint16LE();
-	int var3 = _currScript->readUint16LE();
+	int16 oper = _currScript->readUint16LE();
+	int16 var3 = _currScript->readSint16LE();
 
 	computeOperation(bufPtr, oper, var3);
 }
 
 void LilliputScript::OC_getRandom_type2() {
-	debugC(1, kDebugScriptTBC, "OC_getRandom_type2()");
+	debugC(1, kDebugScript, "OC_getRandom_type2()");
 
-	byte* bufPtr = getCharacterVariablePtr();
+	byte *bufPtr = getCharacterVariablePtr();
 	int maxVal = _currScript->readUint16LE(); 
 	int randomVal = _vm->_rnd->getRandomNumber(maxVal);
 	*bufPtr = randomVal;
 }
 
 void LilliputScript::OC_setCharacterPosition() {
-	debugC(1, kDebugScriptTBC, "OC_setCharacterPosition()");
+	debugC(1, kDebugScript, "OC_setCharacterPosition()");
 	
 	int index = getValue1();
 	Common::Point tmpVal = getPosFromScript();
@@ -2441,6 +2441,7 @@ void LilliputScript::OC_sub17C55() {
 	_vm->_rulesBuffer2_6[var2] = var3 & 0xFF;
 	_vm->_rulesBuffer2_7[var2] = var4 & 0xFF;
 }
+
 void LilliputScript::OC_sub17C76() {
 	debugC(1, kDebugScriptTBC, "OC_sub17C76()");
 	
@@ -2450,8 +2451,9 @@ void LilliputScript::OC_sub17C76() {
 	_characterScriptEnabled[var1] = 1;
 
 }
-void LilliputScript::OC_sub17AFC() {
-	debugC(1, kDebugScriptTBC, "OC_sub17AFC()");
+
+void LilliputScript::OC_setCurrentCharacter() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacter()");
 	int var1 = getValue1();
 	_vm->setCurrentCharacter(var1);
 }
@@ -2715,7 +2717,7 @@ void LilliputScript::OC_setByte10B29() {
 }
 
 void LilliputScript::OC_setCurrentCharacterVar2() {
-	debugC(1, kDebugScriptTBC, "OC_setCurrentCharacterVar2()");
+	debugC(1, kDebugScript, "OC_setCurrentCharacterVar2()");
 
 	int curWord = _currScript->readUint16LE();
 	assert(_vm->_currentCharacterVariables != NULL);
@@ -3210,7 +3212,7 @@ void LilliputScript::OC_sub18690() {
 }
 
 void LilliputScript::OC_setViewPortCharacterTarget() {
-	debugC(1, kDebugScriptTBC, "OC_setViewPortCharacterTarget()");
+	debugC(1, kDebugScript, "OC_setViewPortCharacterTarget()");
 
 	_viewportCharacterTarget = getValue1();
 }
