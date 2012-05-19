@@ -52,7 +52,6 @@
 
 #include "common/file.h"
 #include "tony/mpal/memory.h"
-#include "tony/mpal/stubs.h"
 #include "tony/mpal/loadmpc.h"
 #include "tony/mpal/expr.h"
 

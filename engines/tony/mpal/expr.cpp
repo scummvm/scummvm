@@ -47,10 +47,9 @@
  *                                                                        *
  **************************************************************************/
 
-#include "mpal.h"
-#include "memory.h"
-#include "mpaldll.h"
-#include "stubs.h"
+#include "tony/mpal/mpal.h"
+#include "tony/mpal/memory.h"
+#include "tony/mpal/mpaldll.h"
 #include "tony/tony.h"
 
 /*

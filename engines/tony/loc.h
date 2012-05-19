@@ -32,7 +32,6 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/file.h"
-#include "tony/mpal/stubs.h"
 #include "tony/sound.h"
 #include "tony/utils.h"
 

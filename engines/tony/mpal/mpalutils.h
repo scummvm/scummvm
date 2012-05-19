@@ -25,8 +25,7 @@
 #define TONY_MPAL_MPALUTILS
 
 #include "common/scummsys.h"
-#include "memory.h"
-#include "stubs.h"
+#include "tony/mpal/memory.h"
 
 namespace Tony {
 

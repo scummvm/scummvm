@@ -146,6 +146,15 @@ void MemoryManager::erase(HGLOBAL handle) {
 	erase(&item);
 }
 
+/****************************************************************************\
+*       Stand-alone methods
+\****************************************************************************/
+
+void CopyMemory(void *dst, const void *first, int size) {
+	Common::copy((const byte *)first, (const byte *)first + size, (byte *)dst);
+}
+
+
 } // end of namespace MPAL
 
 } // end of namespace Tony

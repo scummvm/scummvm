@@ -30,7 +30,6 @@
 #define TONY_TONYCHAR_H
 
 #include "common/coroutines.h"
-#include "tony/mpal/stubs.h"
 #include "tony/loc.h"
 
 namespace Tony {

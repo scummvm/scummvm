@@ -55,7 +55,6 @@
 #include "tony/mpal/lzo.h"	
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/mpaldll.h"
-#include "tony/mpal/stubs.h"
 
 namespace Tony {
 

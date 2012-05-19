@@ -33,7 +33,6 @@
 #include "tony/mpal/memory.h"
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/mpalutils.h"
-#include "tony/mpal/stubs.h"
 #include "tony/custom.h"
 #include "tony/game.h"
 #include "tony/gfxengine.h"

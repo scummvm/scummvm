@@ -28,7 +28,6 @@
 
 #include "common/textconsole.h"
 #include "tony/mpal/mpalutils.h"
-#include "tony/mpal/stubs.h"
 #include "tony/font.h"
 #include "tony/input.h"
 #include "tony/inventory.h"

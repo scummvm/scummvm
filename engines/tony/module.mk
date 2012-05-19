@@ -21,8 +21,7 @@ MODULE_OBJS := \
 	mpal/memory.o \
 	mpal/mpal.o \
 	mpal/mpalutils.o \
-	mpal/lzo.o \
-	mpal/stubs.o
+	mpal/lzo.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TONY), DYNAMIC_PLUGIN)
