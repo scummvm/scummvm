@@ -55,59 +55,36 @@ namespace Tony {
 namespace MPAL {
 
 /****************************************************************************\
-*       Prototipi di funzione
+*       Function Prototypes
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     byte *ParseExpression(byte *buf, HGLOBAL *h);
-*
-* Description:  Esegue il parsing da file .MPC di un'espressione matematica.
-*
-* Input:        byte *buf              Buffer contenente l'espressione
-*                                       compilata.
-*               HGLOBAL *h              Pointer a un handle che, alla fine
-*                                       dell'esecuzione, puntera' alla
-*                                       zona di memoria contenete l'espres-
-*                                       sione parsata
-*
-* Return:       Puntatore al buffer subito dopo l'espressione, o NULL in caso
-*               di errore.
-*
-\****************************************************************************/
-
+/**
+ * Parses a mathematical expression from the MPC file
+ *
+ * @param buf				Buffer containing the expression to evaluate
+ * @param h					Pointer to a handle that, at the end of execution, 
+ * will point to the area of memory containing the parsed expression
+ * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
+ */
 const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h);
 
 
-/****************************************************************************\
-*
-* Function:     int EvaluateExpression(HGLOBAL h);
-*
-* Description:  Calcola il valore di un'espressione matematica
-*
-* Input:        HGLOBAL h               Handle all'espressione
-*
-* Return:       Valore numerico
-*
-\****************************************************************************/
-
+/**
+ * Calculate the value of a mathamatical expression
+ *
+ * @param h					Handle to the expression
+ * @returns		Numeric value
+ */
 int EvaluateExpression(HGLOBAL h);
 
 
-/****************************************************************************\
-*
-* Function:     bool CompareExpressions(HGLOBAL h1, HGLOBAL h2);
-*
-* Description:  Confronta due espressioni matematiche tra loro
-*
-* Input:        HGLOBAL h1,h2            Espressioni da confrontare
-*
-* Return:       TRUE se sono uguali, FALSE se sono diverse
-*
-\****************************************************************************/
-
+/**
+ * Compare two mathematical expressions together
+ *
+ * @param h1				Expression to be compared
+ * @param h2				Expression to be compared
+ */
 bool CompareExpressions(HGLOBAL h1, HGLOBAL h2);
-
 
 } // end of namespace MPAL
 

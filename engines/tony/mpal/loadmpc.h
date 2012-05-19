@@ -58,20 +58,13 @@ namespace MPAL {
 *       Prototipi di funzione
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     BOOL ParseMpc(LPBYTE lpBuf);
-*
-* Description:  Legge e interpreta un file MPC, e crea le strutture per le
-*               varie direttive nelle variabili globali
-*
-* Input:        LPBYTE lpBuf            Immagine in memoria del file MPC,
-*                                       escluso l'header
-*
-* Return:       TRUE se tutto OK, FALSE in caso di errore.
-*
-\****************************************************************************/
-
+/**
+ * Reads and interprets the MPC file, and create structures for various directives 
+ * in the global variables
+ *
+ * @param lpBuf				Buffer containing the MPC file data, excluding the header.
+ * @returns		True if succeeded OK, false if failure.
+ */
 bool ParseMpc(const byte *lpBuf);
 
 

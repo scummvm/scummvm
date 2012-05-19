@@ -61,9 +61,9 @@ namespace Tony {
 
 namespace MPAL {
 
-/****************************************************************************\
-*       Operazioni matematiche gestite
-\****************************************************************************/
+/**
+ * @defgroup Mathamatical operations
+ */
 
 #define OP_MUL     ((1<<4)|0)
 #define OP_DIV     ((1<<4)|1)
@@ -85,32 +85,24 @@ namespace MPAL {
 #define OP_OR      ((10<<4)|0)
 
 
-/****************************************************************************\
-*       enum ExprListTypes
-*       ------------------
-* Description: Tipi di oggetto che possono essere contenuti in una struttura
-*   EXPRESSION.
-\****************************************************************************/
-
-enum ExprListTypes
-{
-  ELT_NUMBER=1,
-  ELT_VAR=2,
-  ELT_PARENTH=3,
-  ELT_PARENTH2=4
+/**
+ * Object types that can be contained in an EXPRESSION structure
+ */
+enum ExprListTypes {
+	ELT_NUMBER = 1,
+	ELT_VAR = 2,
+	ELT_PARENTH = 3,
+	ELT_PARENTH2 = 4
 };
 
 
-/****************************************************************************\
-*       Structures
-\****************************************************************************/
+/**
+ * @defgroup Structures
+ */
 
-/****************************************************************************\
-*       typedef EXPRESSION
-*       ------------------
-* Description: Struttura per gestire le operazioni matematiche
-\****************************************************************************/
-
+/**
+ * Mathamatical framework to manage operations
+ */
 typedef struct {
 	byte type;						// Tipo di oggetto (vedi enum ExprListTypes)
 	byte unary;						// Unary operatore (NON SUPPORTATO)
@@ -128,38 +120,31 @@ typedef struct {
 typedef EXPRESSION*     LPEXPRESSION;
 
 
-/****************************************************************************\
-*
-* Function:     LPEXPRESSION DuplicateExpression(HGLOBAL h);
-*
-* Description:  Duplica un'espressione matematica. L'espressione duplicata
-*               sara' formata da memoria non swappabile.
-*
-* Input:        HGLOBAL h               Handle dell'espressione originale
-*
-* Return:       Pointer all'espressione clone della prima
-*
-\****************************************************************************/
-
+/**
+ * Duplicate a mathematical expression.
+ *
+ * @param h				Handle to the original expression
+ * @retruns		Pointer to the cloned expression
+ */
 static byte *DuplicateExpression(HGLOBAL h) {
 	int i, num;
 	byte *orig, *clone;
 	LPEXPRESSION one, two;
 
-	orig=(byte *)GlobalLock(h);
+	orig = (byte *)GlobalLock(h);
 
-	num=*(byte *)orig;
-	one=(LPEXPRESSION)(orig+1);
+	num = *(byte *)orig;
+	one = (LPEXPRESSION)(orig+1);
 
-	clone = (byte *)GlobalAlloc(GMEM_FIXED, sizeof(EXPRESSION)*num+1);
-	two=(LPEXPRESSION)(clone+1);
+	clone = (byte *)GlobalAlloc(GMEM_FIXED, sizeof(EXPRESSION) * num + 1);
+	two = (LPEXPRESSION)(clone + 1);
 
-	CopyMemory(clone,orig,sizeof(EXPRESSION)*num+1);
+	CopyMemory(clone, orig, sizeof(EXPRESSION) * num + 1);
 
-	for (i=0;i<num;i++) {
-		if (one->type==ELT_PARENTH) {
-			two->type=ELT_PARENTH2;
-			two->val.pson=DuplicateExpression(two->val.son);
+	for (i = 0; i < num; i++) {
+		if (one->type == ELT_PARENTH) {
+			two->type = ELT_PARENTH2;
+			two->val.pson = DuplicateExpression(two->val.son);
 		}
 
 		one++;
@@ -173,41 +158,41 @@ static byte *DuplicateExpression(HGLOBAL h) {
 static int Compute(int a, int b, byte symbol) {
 	switch (symbol) {
 	case OP_MUL:
-		return a*b;
+		return a * b;
     case OP_DIV:
-		return a/b;
+		return a / b;
     case OP_MODULE:
-		return a%b;
+		return a % b;
     case OP_ADD:
-		return a+b;
+		return a + b;
     case OP_SUB:
-		return a-b;
+		return a - b;
     case OP_SHL:
-		return a<<b;
+		return a << b;
     case OP_SHR:
-		return a>>b;
+		return a >> b;
     case OP_MINOR:
-		return a<b;
+		return a < b;
     case OP_MAJOR:
-		return a>b;
+		return a > b;
     case OP_MINEQ:
-		return a<=b;
+		return a <= b;
     case OP_MAJEQ:
-		return a>=b;
+		return a >= b;
     case OP_EQUAL:
-		return a==b;
+		return a == b;
     case OP_NOEQUAL:
-		return a!=b;
+		return a != b;
     case OP_BITAND:
-		return a&b;
+		return a & b;
     case OP_BITXOR:
-		return a^b;
+		return a ^ b;
     case OP_BITOR:
-		return a|b;
+		return a | b;
     case OP_AND:
-		return a&&b;
+		return a && b;
     case OP_OR:
-		return a||b;
+		return a || b;
     default:
 		GLOBALS.mpalError = 1;
 		break;
@@ -220,52 +205,45 @@ static void Solve(LPEXPRESSION one, int num) {
 	LPEXPRESSION two, three;
 	int j;
 
-	while (num>1) {
-		two=one+1;
-		if ((two->symbol==0) || (one->symbol&0xF0) <= (two->symbol&0xF0)) {
-			two->val.num=Compute(one->val.num,two->val.num,one->symbol);
-			CopyMemory(one,two,(num-1)*sizeof(EXPRESSION));
+	while (num > 1) {
+		two=one + 1;
+		if ((two->symbol == 0) || (one->symbol & 0xF0) <= (two->symbol & 0xF0)) {
+			two->val.num=Compute(one->val.num, two->val.num,one->symbol);
+			CopyMemory(one, two, (num - 1) * sizeof(EXPRESSION));
 			num--;
 		} else {
-			j=1;
-			three=two+1;
-			while ((three->symbol!=0) && (two->symbol&0xF0)>(three->symbol&0xF0)) {
+			j = 1;
+			three = two + 1;
+			while ((three->symbol != 0) && (two->symbol & 0xF0)>(three->symbol & 0xF0)) {
 				two++;
 				three++;
 				j++;
 			}
 
-			three->val.num=Compute(two->val.num,three->val.num,two->symbol);
-			CopyMemory(two,three,(num-j-1)*sizeof(EXPRESSION));
+			three->val.num = Compute(two->val.num, three->val.num, two->symbol);
+			CopyMemory(two, three, (num - j - 1) * sizeof(EXPRESSION));
 			num--;
 		}
 	}
 }
 
 
-/****************************************************************************\
-*
-* Function:     int EvaluateAndFreeExpression(byte *expr);
-*
-* Description:  Calcola il risultato di una espressione matematica, sosti-
-*               tuendo ad eventuali variabili il valore corrente.
-*
-* Input:        byte *expr             Pointer all'espressione duplicata
-*                                       tramite DuplicateExpression
-*
-* Return:       Valore dell'espressione
-*
-\****************************************************************************/
-
+/**
+ * Calculates the result of a mathematical expression, replacing the current 
+ * value of any variable.
+ *
+ * @param expr				Pointer to an expression duplicated by DuplicateExpression
+ * @returns		Value
+ */
 static int EvaluateAndFreeExpression(byte *expr) {
 	int i,num,val;
 	LPEXPRESSION one,cur;
 
-	num=*expr;
-	one=(LPEXPRESSION)(expr+1);
+	num = *expr;
+	one = (LPEXPRESSION)(expr + 1);
 
 	// 1) Sostituzioni delle variabili
-	for (i=0,cur=one;i<num;i++,cur++) {
+	for (i=0, cur=one; i < num; i++, cur++) {
 		if (cur->type==ELT_VAR) {
 			cur->type=ELT_NUMBER;
 			cur->val.num=varGetValue(cur->val.name);
@@ -273,39 +251,30 @@ static int EvaluateAndFreeExpression(byte *expr) {
 	}
 
 	// 2) Sostituzioni delle parentesi (tramite ricorsione)
-	for (i=0,cur=one;i<num;i++,cur++) {
-		if (cur->type==ELT_PARENTH2) {
-			cur->type=ELT_NUMBER;
-			cur->val.num=EvaluateAndFreeExpression(cur->val.pson);
+	for (i = 0, cur = one; i < num; i++, cur++) {
+		if (cur->type == ELT_PARENTH2) {
+			cur->type = ELT_NUMBER;
+			cur->val.num = EvaluateAndFreeExpression(cur->val.pson);
 		}
 	}
 
 	// 3) Risoluzione algebrica
-	Solve(one,num);
-	val=one->val.num;
+	Solve(one, num);
+	val = one->val.num;
 	GlobalFree(expr);
 
 	return val;
 }
 
-/****************************************************************************\
-*
-* Function:     byte *ParseExpression(byte *buf, HGLOBAL *h);
-*
-* Description:  Esegue il parsing da file .MPC di un'espressione matematica.
-*
-* Input:        byte *buf              Buffer contenente l'espressione
-*                                       compilata.
-*               HGLOBAL *h              Pointer a un handle che, alla fine
-*                                       dell'esecuzione, puntera' alla
-*                                       zona di memoria contenete l'espres-
-*                                       sione parsata
-*
-* Return:       Puntatore al buffer subito dopo l'espressione, o NULL in caso
-*               di errore.
-*
-\****************************************************************************/
 
+/**
+ * Parses a mathematical expression from the MPC file
+ *
+ * @param buf				Buffer containing the expression to evaluate
+ * @param h					Pointer to a handle that, at the end of execution, 
+ * will point to the area of memory containing the parsed expression
+ * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
+ */
 const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 	LPEXPRESSION cur;
 	byte *start;
@@ -317,36 +286,36 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 	if (num == 0)
 		return NULL;
 
-	*h = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
+	*h = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
 	if (*h==NULL)
 		return NULL;
 
-	start=(byte *)GlobalLock(*h);
-	*start=(byte)num;
+	start = (byte *)GlobalLock(*h);
+	*start = (byte)num;
 
-	cur=(LPEXPRESSION)(start+1);
+	cur = (LPEXPRESSION)(start + 1);
 
-	for (i=0;i<num;i++) {
-		cur->type=*(lpBuf);
-		cur->unary=*(lpBuf+1);
-		lpBuf+=2;
+	for (i = 0;i < num; i++) {
+		cur->type = *(lpBuf);
+		cur->unary = *(lpBuf + 1);
+		lpBuf += 2;
 		switch (cur->type) {
 		case ELT_NUMBER:
-			cur->val.num=*(int *)lpBuf;
-			lpBuf+=4;
+			cur->val.num = *(int *)lpBuf;
+			lpBuf += 4;
 			break;
 
 		case ELT_VAR:
-			cur->val.name=(char *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,(*lpBuf)+1);
-			if (cur->val.name==NULL)
+			cur->val.name = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, (*lpBuf) + 1);
+			if (cur->val.name == NULL)
 				return NULL;
-			CopyMemory(cur->val.name,lpBuf+1,*lpBuf);
-			lpBuf+=*lpBuf+1;
+			CopyMemory(cur->val.name, lpBuf + 1, *lpBuf);
+			lpBuf += *lpBuf + 1;
 			break;
 
 		case ELT_PARENTH:
-			lpBuf=ParseExpression(lpBuf,&cur->val.son);
-			if (lpBuf==NULL)
+			lpBuf=ParseExpression(lpBuf, &cur->val.son);
+			if (lpBuf == NULL)
 				return NULL;
 			break;
 
@@ -354,13 +323,13 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 			return NULL;
 		}
 
-		cur->symbol=*lpBuf;
+		cur->symbol = *lpBuf;
 		lpBuf++;
 
 		cur++;
 	}
 
-	if (*lpBuf!=0)
+	if (*lpBuf != 0)
 		return NULL;
 
 	lpBuf++;
@@ -369,18 +338,12 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     int EvaluateExpression(HGLOBAL h);
-*
-* Description:  Calcola il valore di un'espressione matematica
-*
-* Input:        HGLOBAL h               Handle all'espressione
-*
-* Return:       Valore numerico
-*
-\****************************************************************************/
-
+/**
+ * Calculate the value of a mathamatical expression
+ *
+ * @param h					Handle to the expression
+ * @returns		Numeric value
+ */
 int EvaluateExpression(HGLOBAL h) {
 	int ret;
 
@@ -392,28 +355,22 @@ int EvaluateExpression(HGLOBAL h) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     bool CompareExpressions(HGLOBAL h1, HGLOBAL h2);
-*
-* Description:  Confronta due espressioni matematiche tra loro
-*
-* Input:        HGLOBAL h1,h2            Espressioni da confrontare
-*
-* Return:       true se sono uguali, false se sono diverse
-*
-\****************************************************************************/
-
+/**
+ * Compare two mathematical expressions together
+ *
+ * @param h1				Expression to be compared
+ * @param h2				Expression to be compared
+ */
 bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
-	int i,num1,num2;
+	int i, num1, num2;
 	byte *e1, *e2;
 	LPEXPRESSION one, two;
 
-	e1=(byte *)GlobalLock(h1);
-	e2=(byte *)GlobalLock(h2);
+	e1 = (byte *)GlobalLock(h1);
+	e2 = (byte *)GlobalLock(h2);
 
-	num1=*(byte *)e1;
-	num2=*(byte *)e2;
+	num1 = *(byte *)e1;
+	num2 = *(byte *)e2;
 
 	if (num1 != num2) {
 		GlobalUnlock(h1);
@@ -421,11 +378,11 @@ bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
 		return false;
 	}
 
-	one=(LPEXPRESSION)(e1+1);
-	two=(LPEXPRESSION)(e2+1);
+	one = (LPEXPRESSION)(e1+1);
+	two = (LPEXPRESSION)(e2+1);
 
-	for (i=0;i<num1;i++) {
-		if (one->type!=two->type || (i!=num1-1 && one->symbol!=two->symbol)) {
+	for (i = 0; i < num1; i++) {
+		if (one->type != two->type || (i != num1 - 1 && one->symbol != two->symbol)) {
 			GlobalUnlock(h1);
 			GlobalUnlock(h2);
 			return false;
@@ -449,7 +406,7 @@ bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
 			break;
 	
 		case ELT_PARENTH:
-			if (!CompareExpressions(one->val.son,two->val.son)) {
+			if (!CompareExpressions(one->val.son, two->val.son)) {
 				GlobalUnlock(h1);
 				GlobalUnlock(h2);
 				return false;

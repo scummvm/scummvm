@@ -76,22 +76,14 @@ static bool CompareCommands(struct command *cmd1, struct command *cmd2) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     LPBTYE ParseScript(byte *lpBuf, LPMPALSCRIPT lpmsScript);
-*
-* Description:  Esegue il parsing da file .MPC di uno script e inserisce il
-*               tutto dentro una struttura
-*
-* Input:        byte *lpBuf            Buffer contenente lo script compilato
-*               LPMPALSCRIPT lpmsScript Puntatore a una struttura che verra'
-*                                       riempita con i dati dello script
-*                                       lato
-*
-* Return:       Puntatore al buffer dopo l'item, o NULL in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Parses a script from the MPC file, and inserts it's data into a structure
+ *
+ * @param lpBuf				Buffer containing the compiled script.
+ * @param lpmsScript		Pointer to a structure that will be filled with the
+ * data of the script.
+ * @returns		Pointer to the buffer after the item, or NULL on failure.
+ */
 static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 	int curCmd,j,len;
 	uint i;
@@ -102,14 +94,14 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 	lpmsScript->nMoments = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
-	curCmd=0;
+	curCmd = 0;
 
-	for (i=0;i<lpmsScript->nMoments;i++) {
+	for (i = 0; i < lpmsScript->nMoments; i++) {
 		lpmsScript->Moment[i].dwTime = (int32)READ_LE_UINT32(lpBuf); lpBuf += 4;
-		lpmsScript->Moment[i].nCmds=*lpBuf;       lpBuf++;
+		lpmsScript->Moment[i].nCmds = *lpBuf; lpBuf++;
 
-		for (j=0;j<lpmsScript->Moment[i].nCmds;j++) {
-			lpmsScript->Command[curCmd].type=*lpBuf; lpBuf++;
+		for (j = 0; j < lpmsScript->Moment[i].nCmds; j++) {
+			lpmsScript->Command[curCmd].type = *lpBuf; lpBuf++;
 			switch (lpmsScript->Command[curCmd].type) {
 			case 1:
 				lpmsScript->Command[curCmd].nCf = READ_LE_UINT16(lpBuf); lpBuf += 2;
@@ -121,14 +113,14 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 
 			case 2:          // Variable assign
 				len=*lpBuf; lpBuf++;
-				lpmsScript->Command[curCmd].lpszVarName=(char *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,len+1);
-				if (lpmsScript->Command[curCmd].lpszVarName==NULL)
+				lpmsScript->Command[curCmd].lpszVarName = (char *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,len+1);
+				if (lpmsScript->Command[curCmd].lpszVarName == NULL)
 					return NULL;
 				CopyMemory(lpmsScript->Command[curCmd].lpszVarName, lpBuf, len);
 				lpBuf+=len;
 
 				lpBuf = ParseExpression(lpBuf, &lpmsScript->Command[curCmd].expr);
-				if (lpBuf==NULL)
+				if (lpBuf == NULL)
 				return NULL;
 				break;
 
@@ -136,7 +128,7 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 				return NULL;
 			}
 
-			lpmsScript->Moment[i].CmdNum[j]=curCmd;
+			lpmsScript->Moment[i].CmdNum[j] = curCmd;
 			curCmd++;
 		}
 	}
@@ -145,26 +137,17 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     byte *ParseDialog(byte *lpBuf, LPMPALDIALOG lpmdDialog);
-*
-* Description:  Esegue il parsing da file .MPC di un dialog, e inserisce il
-*               tutto dentro una struttura
-*
-* Input:        byte *lpBuf            Buffer contenente il dialogo compi-
-*                                       lato
-*               LPMPALDIALOG lpmdDialog Puntatore a una struttura che verra'
-*                                       riempita con i dati del dialogo
-*                                       compilato
-*
-* Return:       Puntatore al buffer dopo il dialogo, o NULL in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Parses a dialog from the MPC file, and inserts it's data into a structure
+ *
+ * @param lpBuf				Buffer containing the compiled dialog.
+ * @param lpmdDialog		Pointer to a structure that will be filled with the
+ * data of the dialog.
+ * @returns		Pointer to the buffer after the item, or NULL on failure.
+ */
 static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
-	uint32 i,j,z,kk;
-	uint32 num,num2,num3;
+	uint32 i, j, z, kk;
+	uint32 num, num2, num3;
 	byte *lpLock;
 	uint32 curCmd;
 	uint32 len;
@@ -309,7 +292,7 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			lpmdDialog->Choice[i].Select[j].wPlayGroup[num3] = 0;
 		}
 
-		// Segna l'ultimo select
+		// Mark the last selection
 		lpmdDialog->Choice[i].Select[num2].dwData = 0;
 	}
 
@@ -318,70 +301,61 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	return lpBuf;
 }
 
-/****************************************************************************\
-*
-* Function:     byte *ParseItem(byte *lpBuf, LPMPALITEM lpmiItem);
-*
-* Description:  Esegue il parsing da file .MPC di un item, e inserisce il
-*               tutto dentro una struttura
-*
-* Input:        byte *lpBuf            Buffer contenete l'item compilato
-*               LPMPALITEM lpmiItem     Puntatore a una struttura che verra'
-*                                       riempita con i dati dell'item
-*                                       compilato
-*
-* Return:       Puntatore al buffer dopo l'item, o NULL in caso di errore
-*
-* Note:         E' necessario che la struttura passata come parametro sia
-*               stata completamente inizializzata a 0 (con una ZeroMemory,
-*               ad esempio).
-*
-\****************************************************************************/
 
+/**
+ * Parses an item from the MPC file, and inserts it's data into a structure
+ *
+ * @param lpBuf				Buffer containing the compiled dialog.
+ * @param lpmiItem			Pointer to a structure that will be filled with the
+ * data of the item.
+ * @returns		Pointer to the buffer after the item, or NULL on failure.
+ * @remarks		It's necessary that the structure that is passed  has been
+ * completely initialised to 0 beforehand.
+ */
 static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	byte len;
-	uint32 i,j,kk;
+	uint32 i, j, kk;
 	uint32 curCmd;
 
 	lpmiItem->nObj = (int32)READ_LE_UINT32(lpBuf);
 	lpBuf += 4;
 
-	len=*lpBuf;
+	len = *lpBuf;
 	lpBuf++;
-	CopyMemory(lpmiItem->lpszDescribe,lpBuf, MIN((byte)127, len));
-	lpBuf+=len;
+	CopyMemory(lpmiItem->lpszDescribe, lpBuf, MIN((byte)127, len));
+	lpBuf += len;
 
 	if (len >= MAX_DESCRIBE_SIZE)
-		error("Describe too long in item #%d",lpmiItem->nObj);
+		error("Describe too long in item #%d", lpmiItem->nObj);
 
 	lpmiItem->nActions=*lpBuf;
 	lpBuf++;
 
 	/* Alloca le azioni */
-	if (lpmiItem->nActions>0)
-		lpmiItem->Action = (ItemAction *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(struct ItemAction)*(int)lpmiItem->nActions);
+	if (lpmiItem->nActions > 0)
+		lpmiItem->Action = (ItemAction *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(struct ItemAction) * (int)lpmiItem->nActions);
 
-	curCmd=0;
+	curCmd = 0;
 
-	for (i=0;i<lpmiItem->nActions;i++) {
-		lpmiItem->Action[i].num=*lpBuf;
+	for (i = 0; i < lpmiItem->nActions; i++) {
+		lpmiItem->Action[i].num = *lpBuf;
 		lpBuf++;
 
 		lpmiItem->Action[i].wParm = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
 
-		if (lpmiItem->Action[i].num==0xFF) {
+		if (lpmiItem->Action[i].num == 0xFF) {
 			lpmiItem->Action[i].wTime = READ_LE_UINT16(lpBuf);
 			lpBuf += 2;
 
-			lpmiItem->Action[i].perc=*lpBuf;
+			lpmiItem->Action[i].perc = *lpBuf;
 			lpBuf++;
 		}
 
 
-		if (*lpBuf==0) {
+		if (*lpBuf == 0) {
 			lpBuf++;
-			lpmiItem->Action[i].when=NULL;
+			lpmiItem->Action[i].when = NULL;
 		} else {
 			lpBuf++;
 			lpBuf = ParseExpression(lpBuf,&lpmiItem->Action[i].when);
@@ -395,8 +369,8 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 		if (lpmiItem->Action[i].nCmds >= MAX_COMMANDS_PER_ACTION)
 			error("Too much commands in action #%d in item #%d",lpmiItem->Action[i].num,lpmiItem->nObj);
 
-		for (j=0;j<lpmiItem->Action[i].nCmds;j++) {
-			lpmiItem->Command[curCmd].type=*lpBuf;
+		for (j = 0; j < lpmiItem->Action[i].nCmds; j++) {
+			lpmiItem->Command[curCmd].type = *lpBuf;
 			lpBuf++;
 			switch (lpmiItem->Command[curCmd].type) {
 			case 1:          // Call custom function
@@ -408,16 +382,16 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 				break;
 
 			case 2:          // Variable assign
-				len=*lpBuf;
+				len = *lpBuf;
 				lpBuf++;
-				lpmiItem->Command[curCmd].lpszVarName=(char *)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,len+1);
-				if (lpmiItem->Command[curCmd].lpszVarName==NULL)
+				lpmiItem->Command[curCmd].lpszVarName = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
+				if (lpmiItem->Command[curCmd].lpszVarName == NULL)
 					return NULL;
-				CopyMemory(lpmiItem->Command[curCmd].lpszVarName,lpBuf,len);
-				lpBuf+=len;
+				CopyMemory(lpmiItem->Command[curCmd].lpszVarName, lpBuf, len);
+				lpBuf += len;
 
-				lpBuf=ParseExpression(lpBuf,&lpmiItem->Command[curCmd].expr);
-				if (lpBuf==NULL)
+				lpBuf=ParseExpression(lpBuf, &lpmiItem->Command[curCmd].expr);
+				if (lpBuf == NULL)
 					return NULL;
 				break;
 
@@ -425,15 +399,15 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 				return NULL;
 			}
 
-			for (kk=0;kk<curCmd;kk++) {
+			for (kk = 0; kk < curCmd; kk++) {
 				if (CompareCommands(&lpmiItem->Command[kk],&lpmiItem->Command[curCmd])) {
-					lpmiItem->Action[i].CmdNum[j]=kk;
+					lpmiItem->Action[i].CmdNum[j] = kk;
 					break;
 				}
 			}
 
 			if (kk==curCmd) {	
-				lpmiItem->Action[i].CmdNum[j]=curCmd;
+				lpmiItem->Action[i].CmdNum[j] = curCmd;
 				curCmd++;
 
 				if (curCmd >= MAX_COMMANDS_PER_ITEM) {
@@ -450,23 +424,14 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     byte *ParseLocation(byte *buf, LPMPALLOCATIONN lpmlLocation)
-*
-* Description:  Esegue il parsing da file .MPC di una locazione, riempendo
-*               una struttura
-*
-* Input:        byte *buf              Buffer contenente la locazione
-*                                       compilata
-*               LPMPALLOCATION
-*                lpmlLocation           Pointer alla struttura che verra'
-*                                       riempita con i dati sulla locazione
-*
-* Return:       Puntatore al buffer dopo l'item, o NULL in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Parses a location from the MPC file, and inserts it's data into a structure
+ *
+ * @param lpBuf				Buffer containing the compiled location.
+ * @param lpmiLocation		Pointer to a structure that will be filled with the
+ * data of the location.
+ * @returns		Pointer to the buffer after the location, or NULL on failure.
+ */
 static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation) {
 	lpmlLocation->nObj = (int32)READ_LE_UINT32(lpBuf);
 	lpBuf += 4;
@@ -480,39 +445,27 @@ static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation)
 	return lpBuf;
 }
 
-/*static int CompareMoments(int * a, int * b) {
-	if (*a<*b)
-		return -1;
-	else if (*a>*b)
-		return 1;
-	else
-		return 0;
-}*/
 
 /****************************************************************************\
-*       Funzioni globali
+*       Exported functions
 \****************************************************************************/
+/**
+ * @defgroup Exported functions
+ */
 
-/****************************************************************************\
-*
-* Function:     bool ParseMpc(byte *lpBuf);
-*
-* Description:  Legge e interpreta un file MPC, e crea le strutture per le
-*               varie direttive nelle variabili globali
-*
-* Input:        byte *lpBuf            Immagine in memoria del file MPC,
-*                                       escluso l'header
-*
-* Return:       true se tutto OK, false in caso di errore.
-*
-\****************************************************************************/
-
+/**
+ * Reads and interprets the MPC file, and create structures for various directives 
+ * in the global variables
+ *
+ * @param lpBuf				Buffer containing the MPC file data, excluding the header.
+ * @returns		True if succeeded OK, false if failure.
+ */
 bool ParseMpc(const byte *lpBuf) {
 	uint16 i, j;
 	uint16 wLen;
 	byte *lpTemp, *lpTemp2;
 
-	/* 1. Variabili */
+	/* 1. Variables */
 	if (lpBuf[0] != 'V' || lpBuf[1] != 'A' || lpBuf[2] != 'R' || lpBuf[3] != 'S')
 		return false;
 
@@ -540,7 +493,7 @@ bool ParseMpc(const byte *lpBuf) {
 
 	GlobalUnlock(GLOBALS.hVars);
 
-	/* 2. Messaggi */
+	/* 2. Messages */
 	if (lpBuf[0] != 'M' || lpBuf[1] != 'S' || lpBuf[2] != 'G' || lpBuf[3] != 'S')
 		return false;
 
@@ -588,7 +541,7 @@ bool ParseMpc(const byte *lpBuf) {
 	GlobalUnlock(GLOBALS.hMsgs);
 #endif
 
-	/* 3. Oggetti */
+	/* 3. Objects */
 	if (lpBuf[0] != 'O' || lpBuf[1] != 'B' || lpBuf[2] != 'J' || lpBuf[3] != 'S')
 		return false;
 
@@ -596,7 +549,7 @@ bool ParseMpc(const byte *lpBuf) {
 	GLOBALS.nObjs = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
-	// Controlla i dialoghi
+	// Check out the dialogs
 	GLOBALS.nDialogs = 0;
 	GLOBALS.hDialogs = GLOBALS.lpmdDialogs = NULL;
 	if (*((const byte *)lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Dialog", 6) == 0) {
@@ -615,13 +568,13 @@ bool ParseMpc(const byte *lpBuf) {
 		GlobalUnlock(GLOBALS.hDialogs);
 	}
 
-	// Controlla gli item
+	// Check the items
 	GLOBALS.nItems = 0;
 	GLOBALS.hItems = GLOBALS.lpmiItems = NULL;
 	if (*(lpBuf + 2) == 4 && strncmp((const char *)lpBuf + 3, "Item", 4)==0) {
 		GLOBALS.nItems = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		// Alloca la memoria e li legge
+		// Allocate memory and read them in
 		GLOBALS.hItems = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nItems * sizeof(MPALITEM));
 		if (GLOBALS.hItems == NULL)
 			return false;
@@ -635,13 +588,13 @@ bool ParseMpc(const byte *lpBuf) {
 		GlobalUnlock(GLOBALS.hItems);
 	}
 
-	// Controlla le locazioni
+	// Check the locations
 	GLOBALS.nLocations = 0;
 	GLOBALS.hLocations = GLOBALS.lpmlLocations = NULL;
 	if (*(lpBuf + 2) == 8 && strncmp((const char *)lpBuf + 3, "Location", 8)==0) {
 		GLOBALS.nLocations = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		// Alloca la memoria e li legge
+		// Allocate memory and read them in
 		GLOBALS.hLocations=GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nLocations*sizeof(MPALLOCATION));
 		if (GLOBALS.hLocations == NULL)
 			return false;
@@ -655,13 +608,13 @@ bool ParseMpc(const byte *lpBuf) {
 		GlobalUnlock(GLOBALS.hLocations);
 	}
 
-	// Controlla gli script
+	// Check the scripts
 	GLOBALS.nScripts = 0;
 	GLOBALS.hScripts = GLOBALS.lpmsScripts = NULL;
 	if (*(lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Script", 6) == 0) {
 		GLOBALS.nScripts = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		// Alloca la memoria
+		// Allocate memory
 		GLOBALS.hScripts = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nScripts * sizeof(MPALSCRIPT));
 		if (GLOBALS.hScripts == NULL)
 			return false;
@@ -672,7 +625,7 @@ bool ParseMpc(const byte *lpBuf) {
 			if ((lpBuf = ParseScript(lpBuf + 7, &GLOBALS.lpmsScripts[i])) == NULL)
 			return false;
 
-			// Ordina i vari moments dello script
+			// Sort the various moments of the script
 			//qsort(
 			//GLOBALS.lpmsScripts[i].Moment,
 			//GLOBALS.lpmsScripts[i].nMoments,
