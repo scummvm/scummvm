@@ -24,9 +24,9 @@
 
 #include "graphics/scalerplugin.h"
 
-class NearestNeighborPlugin : public ScalerPluginObject {
+class NormalPlugin : public ScalerPluginObject {
 public:
-	NearestNeighborPlugin() { _factor = 1;}
+	NormalPlugin() { _factor = 1;}
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height);
 	virtual int increaseFactor();
