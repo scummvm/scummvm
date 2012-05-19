@@ -301,7 +301,7 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 		lpBuf += 2;
 		switch (cur->type) {
 		case ELT_NUMBER:
-			cur->val.num = *(int *)lpBuf;
+			cur->val.num = (int32)READ_LE_UINT32(lpBuf);
 			lpBuf += 4;
 			break;
 
