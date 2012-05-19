@@ -26,6 +26,7 @@
 
 class ScalerPluginObject : public PluginObject {
 public:
+	ScalerPluginObject();
 	virtual ~ScalerPluginObject() {}
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height) = 0;
@@ -43,6 +44,17 @@ public:
 	 * @return the new factor
 	 */
 	virtual int decreaseFactor() = 0;
+
+	/**
+	 * Temporarily switch to a 1:1 scale ratio.
+	 * Useful for when the overlay is being displayed.
+	 */
+	virtual void disableScaling();
+
+	virtual void enableScaling();
+protected:
+	int _factor;
+	bool _doScale;
 };
 
 typedef PluginSubclass<ScalerPluginObject> ScalerPlugin;
