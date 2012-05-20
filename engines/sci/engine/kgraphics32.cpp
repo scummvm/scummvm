@@ -25,7 +25,6 @@
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"	// temporary, for the fadeIn()/fadeOut() functions below
 
 #include "gui/message.h"
 
@@ -227,46 +226,6 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// Taken from the SCI16 GfxTransitions class
-static void fadeOut() {
-	byte oldPalette[3 * 256], workPalette[3 * 256];
-	int16 stepNr, colorNr;
-	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
-	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
-	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
-
-	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
-
-	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
-		for (colorNr = 1; colorNr <= tillColorNr; colorNr++) {
-			if (g_sci->_gfxPalette->colorIsFromMacClut(colorNr)) {
-				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3];
-				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1];
-				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2];
-			} else {
-				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3] * stepNr / 100;
-				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1] * stepNr / 100;
-				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2] * stepNr / 100;
-			}
-		}
-		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, tillColorNr);
-		g_sci->getEngineState()->wait(2);
-	}
-}
-
-// Taken from the SCI16 GfxTransitions class
-static void fadeIn() {
-	int16 stepNr;
-	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
-	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
-	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
-
-	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
-		g_sci->_gfxPalette->kernelSetIntensity(1, tillColorNr + 1, stepNr, true);
-		g_sci->getEngineState()->wait(2);
-	}
-}
-
 /**
  * Used for scene transitions, replacing (but reusing parts of) the old
  * transition code.
@@ -299,38 +258,22 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	// TODO: Proper implementation. This is a very basic version. I'm not even
-	// sure if the rest of the styles will work with this mechanism.
-
-	// Check if the passed parameters are the ones we expect
-	if (showStyle == 13 || showStyle == 14) {	// fade out / fade in
-		if (seconds != 1)
-			warning("kSetShowStyle(fade): seconds isn't 1, it's %d", seconds);
-		if (backColor != 0 && backColor != 0xFFFF)
-			warning("kSetShowStyle(fade): backColor isn't 0 or 0xFFFF, it's %d", backColor);
-		if (priority != 200)
-			warning("kSetShowStyle(fade): priority isn't 200, it's %d", priority);
-		if (animate != 0)
-			warning("kSetShowStyle(fade): animate isn't 0, it's %d", animate);
-		if (refFrame != 0)
-			warning("kSetShowStyle(fade): refFrame isn't 0, it's %d", refFrame);
-		if (divisions >= 0 && divisions != 20)
-			warning("kSetShowStyle(fade): divisions isn't 20, it's %d", divisions);
-	}
+	// GK1 calls fadeout (13) / fadein (14) with the following parameters:
+	// seconds: 1
+	// backColor: 0 / -1
+	// fade: 200
+	// animate: 0
+	// refFrame: 0
+	// divisions: 0 / 20
 
 	// TODO: Check if the plane is in the list of planes to draw
 
 	switch (showStyle) {
 	//case 0:	// no transition, perhaps? (like in the previous SCI versions)
 	case 13:	// fade out
-		// TODO: Temporary implementation, which ignores all additional parameters
-		fadeOut();
-		break;
+		// TODO
 	case 14:	// fade in
-		// TODO: Temporary implementation, which ignores all additional parameters
-		g_sci->_gfxFrameout->kernelFrameout();	// draw new scene before fading in
-		fadeIn();
-		break;
+		// TODO
 	default:
 		// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
 		kStub(s, argc, argv);
