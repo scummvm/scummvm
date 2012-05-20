@@ -1205,7 +1205,7 @@ void LilliputEngine::sortCharacters() {
 }
 
 void LilliputEngine::scrollToViewportCharacterTarget() {
-	debugC(2, kDebugEngineTBC, "scrollToViewportCharacterTarget()");
+	debugC(2, kDebugEngine, "scrollToViewportCharacterTarget()");
 
 	if (_scriptHandler->_viewportCharacterTarget == -1)
 		return;
@@ -1215,7 +1215,7 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 	Common::Point newPos = _scriptHandler->_viewportPos;
 
 	if (var2 >= 1) {
-		if (var2 >= 6) {
+		if (var2 > 6) {
 			newPos.x += 4;
 			if (newPos.x > 56)
 				newPos.x = 56;
@@ -1226,16 +1226,17 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 			newPos.x = 0;
 	}
 
-	if (var4 >= 1) {
+	if ((var4 < 1) && (newPos.y < 4))
+		newPos.y = 0;
+	else {
+		if (var4 < 1)
+			newPos.y -= 4;
+
 		if (var4 > 6) {
 			newPos.y += 4;
 			if (newPos.y >= 56)
 				newPos.y = 56;
 		}
-	} else {
-		newPos.y -= 4;
-		if (newPos.y < 0)
-			newPos.y = 0;
 	}
 
 	viewportScrollTo(newPos);
@@ -1362,7 +1363,7 @@ void LilliputEngine::sub15498(Common::Point pos, int var2) {
 }
 
 void LilliputEngine::checkSpeechClosing() {
-	debugC(2, kDebugEngineTBC, "checkSpeechClosing()");
+	debugC(2, kDebugEngine, "checkSpeechClosing()");
 
 	if (_scriptHandler->_speechTimer != 0) {
 		--_scriptHandler->_speechTimer;

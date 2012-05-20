@@ -155,7 +155,7 @@ public:
 	int _array12861[30];
 
 	byte *_rulesChunk1;
-	int _currentScriptCharacter;
+	int16 _currentScriptCharacter;
 	int16 _characterPositionX[40];
 	int16 _characterPositionY[40];
 	char _characterPositionAltitude[40];

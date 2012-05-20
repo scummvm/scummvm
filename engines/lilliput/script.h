@@ -73,8 +73,8 @@ public:
 	byte *_savedBuffer215Ptr;
 
 	Common::Point _viewportPos;
-	int _viewportCharacterTarget;
-	int _talkingCharacter;
+	int16 _viewportCharacterTarget;
+	int16 _talkingCharacter;
 	int _heroismBarX;
 	int _heroismBarBottomY;
 
@@ -108,7 +108,7 @@ private:
 	byte _speechDisplaySpeed;
 
 	int _word16F00;
-	int _word18776;
+	int _currentSpeechId;
 	int _word18821;
 	int _word129A3;
 
@@ -122,9 +122,9 @@ private:
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
 	void sub16C5C(int index, byte var3);
-	void sub17D40(bool &forceReturnFl);
+	void checkSpeechAllowed(bool &forceReturnFl);
 	void decodePackedText(char *buf);
-	void sub18B3C(int var);
+	void startSpeech(int var);
 	void displayNumber(byte var1, Common::Point pos);
 	byte *getMapPtr(Common::Point val);
 	byte *getCurrentCharacterVarFromScript();
@@ -150,7 +150,7 @@ private:
 	byte OC_CompareLastRandomValue();
 	byte OC_getRandom();
 	byte OC_for();
-	byte OC_compWord18776();
+	byte OC_compCurrentSpeechId();
 	byte OC_checkSaveFlag();
 	byte OC_compByte16F04();
 	byte OC_sub174D8();
@@ -197,10 +197,10 @@ private:
 	// Opcodes Type 2
 	void OC_setWord18821();
 	void OC_ChangeIsoMap();
-	void OC_sub17D57_speech1();
+	void OC_startSpeech();
 	void OC_sub17D7F_speech2();
 	void OC_sub17DB9_speech3();
-	void OC_sub17DF9_speech1param();
+	void OC_startSpeechIfMute();
 	void OC_sub17E07_speech4param();
 	void OC_sub17E15_speech2param();
 	void OC_ComputeCharacterVariable();
