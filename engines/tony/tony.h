@@ -152,9 +152,6 @@ public:
 	// Warn when are being controlled by the GDI
 	void GDIControl(bool bCon);
 
-	// Loop that handles messages when the game is paused
-	void PauseLoop(void);
-
 	void Play();
 	void Close();
 	void Abort();
@@ -166,10 +163,6 @@ public:
 
 	void ShowLocation(void) { m_bDrawLocation = true; }
 	void HideLocation(void) { m_bDrawLocation = false; }
-
-	// Handle pause mode
-	void Pause(bool bPause);
-	bool IsPaused() { return m_bPaused; }
 
 	// Reads the time
 	uint32 GetTime(void);

@@ -503,10 +503,6 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 	// Game loop. We rely on the outer main process to detect if a shutdown is required,
 	// and kill the scheudler and all the processes, including this one
 	for (;;) {
-		// Se siamo in pausa, entra nel loop appropriato
-		if (_vm->m_bPaused)
-			_vm->PauseLoop();
-
 		// If a savegame needs to be loaded, then do so
 		if (_vm->_loadSlotNumber != -1 && GLOBALS.GfxEngine != NULL) {
 			_ctx->fn = GetSaveStateFileName(_vm->_loadSlotNumber);
@@ -575,44 +571,6 @@ void TonyEngine::GDIControl(bool bCon) {
 	_theEngine.GDIControl(bCon);
 }
 
-
-void TonyEngine::PauseLoop(void) {
-	warning("TODO: TonyEngine::PauseLoop");
-
-#if 0
-	MSG msg;
-	int st,et;
-
-	st = GetTime();
-
-	while (m_bPaused && GetMessage(&msg,_window,0,0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	et = GetTime();
-
-	m_startTime += et - st;
-#endif
-}
-
-void TonyEngine::Pause(bool bPause) {
-	// If the new status already matches the current one, do nothing
-	if (m_bPaused == bPause)
-		return;
-
-warning("TODO: TonyEninge::Pause");
-/*
-	m_bPaused = bPause;										
-	theEngine.GDIControl(m_bPaused);
-
-	if (m_bPaused) {
-		SetWindowText(_window, "Tony Tough and the night of Roasted Moths - PAUSED");
-	} else {
-		SetWindowText(_window, "Tony Tough and the night of Roasted Moths");
-	}
-*/
-}
 
 void TonyEngine::FreezeTime(void) {
 	m_bTimeFreezed = true;
