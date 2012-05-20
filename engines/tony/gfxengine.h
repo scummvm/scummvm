@@ -136,9 +136,6 @@ public:
 	void SaveState(const Common::String &fn, byte *curThumb, const Common::String &name);
 	void LoadState(CORO_PARAM, const Common::String &fn);
 
-	// Selects a location
-	void SelectLocation(const RMPoint &ptTonyStart = RMPoint(-1, -1), const RMPoint &start = RMPoint(-1, -1));
-
 	// Pauses sound
 	void PauseSound(bool bPause);
 

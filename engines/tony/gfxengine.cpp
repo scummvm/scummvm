@@ -227,14 +227,11 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 				// Left Click
 				// **************
 				if (m_input.MouseLeftClicked() && !m_inter.Active()) {
-					// If click inside an item, perform action
-					//if (m_itemName.IsItemSelected())
-					{
-						if (m_curAction != TA_COMBINE)
-							CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_point.CurAction());
-						else if (m_itemName.GetSelectedItem() != NULL)
-							CORO_INVOKE_4(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), TA_COMBINE, m_curActionObj);
-					}
+
+					if (m_curAction != TA_COMBINE)
+						CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_point.CurAction());
+					else if (m_itemName.GetSelectedItem() != NULL)
+						CORO_INVOKE_4(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), TA_COMBINE, m_curActionObj);
 
 					if (m_curAction == TA_COMBINE) {
 						m_inv.EndCombine();
@@ -380,80 +377,6 @@ void RMGfxEngine::ItemIrq(uint32 dwItem, int nPattern, int nStatus) {
 	}
 }
 
-/*
-    // WINBUG: This is a special case for the file open/save dialog,
-    //  which sometimes pumps while it is coming up but before it has
-    //  disabled the main window.
-    HWND hWndFocus = ::GetFocus();
-    bool bEnableParent = false;
-    m_ofn.hwndOwner = PreModal();
-    AfxUnhookWindowCreate();
-    if (m_ofn.hwndOwner != NULL && ::IsWindowEnabled(m_ofn.hwndOwner)) {
-        bEnableParent = true;
-        ::EnableWindow(m_ofn.hwndOwner, false);
-    }
-
-    _AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
-    ASSERT(pThreadState->m_pAlternateWndInit == NULL);
-
-    if (m_ofn.Flags & OFN_EXPLORER)
-        pThreadState->m_pAlternateWndInit = this;
-    else
-        AfxHookWindowCreate(this);
-
-    int nResult;
-    if (m_bOpenFileDialog)
-        nResult = ::GetOpenFileName(&m_ofn);
-    else
-        nResult = ::GetSaveFileName(&m_ofn);
-
-    if (nResult)
-        ASSERT(pThreadState->m_pAlternateWndInit == NULL);
-    pThreadState->m_pAlternateWndInit = NULL;
-
-    // WINBUG: Second part of special case for file open/save dialog.
-    if (bEnableParent)
-        ::EnableWindow(m_ofn.hwndOwner, true);
-    if (::IsWindow(hWndFocus))
-        ::SetFocus(hWndFocus);
-*/
-
-
-void RMGfxEngine::SelectLocation(const RMPoint &ptTonyStart, const RMPoint &start) {
-#if 0
-	OPENFILENAME ofn;
-	char lpszFileName[512];
-
-	// @@@ Con TonyStart=-1,-1 allora usa la posizione scritta nella locazione
-
-	// Sceglie la locazione
-	ZeroMemory(lpszFileName, 512);
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = NULL;
-	ofn.lpstrFilter = "Locazione (*.LOC)\0*.LOC\0Locazione ottimizzata (*.LOX)\0*.LOX\0Tutti i files (*.*)\0*.*\0";
-	ofn.lpstrCustomFilter = NULL;
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFile = lpszFileName;
-	ofn.nMaxFile = 512;
-	ofn.lpstrInitialDir = NULL;
-	ofn.lpstrTitle = "Load Location";
-	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST;
-
-	if (!GetOpenFileName(&ofn))
-		ASSERT(0);
-
-	// Carica la locazione
-	m_loc.Load(lpszFileName);
-	m_bLocationLoaded = true;
-	m_nCurLoc = m_loc.TEMPGetNumLoc();
-
-	if (ptTonyStart.x == -1 && ptTonyStart.y == -1)
-		InitForNewLocation(m_loc.TEMPGetNumLoc(), m_loc.TEMPGetTonyStart(), RMPoint(-1, -1));
-	else
-		InitForNewLocation(m_loc.TEMPGetNumLoc(), ptTonyStart, start);
-#endif
-}
 
 void RMGfxEngine::InitForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	if (start.x == -1 || start.y == -1) {
@@ -487,18 +410,11 @@ uint32 RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 
 	bLoaded = false;
 	for (i = 0; i < 5; i++) {
-		// Retry the loading of the location
+		// Try the loading of the location
 		RMRes res(m_nCurLoc);
 		if (!res.IsValid())
 			continue;
-#if 0
-		// codice per dumpare una locazione in caso serva una modifica
-		if (nLoc == 106) {
-			FILE *f = fopen("loc106.lox", "wb");
-			fwrite(res.DataPointer(), res.Size(), 1, f);
-			fclose(f);
-		}
-#endif
+
 		m_loc.Load(res);
 		InitForNewLocation(nLoc, ptTonyStart, start);
 		bLoaded = true;
@@ -506,7 +422,7 @@ uint32 RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	}
 
 	if (!bLoaded)
-		SelectLocation(ptTonyStart, start);
+		error("Location was not loaded");
 
 	if (m_bOption)
 		m_opt.ReInit(m_bigBuf);
@@ -547,19 +463,8 @@ void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 	CORO_END_CODE;
 }
 
-void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
-	/*
-	    //RECUPERARE UNA LOCAZIONE:
-
-	    RMRes res(5);
-	    ASSERT(res.IsValid());
-	    FILE *f;
-	    f=fopen("c:\\code\\rm\\new\\pippo.loc","wb");
-	    fwrite(res,1,5356900,f);
-	    fclose(f);
-	*/
-
-	// Schermata di loading
+void RMGfxEngine::Init() {
+	// Screen loading
 	RMResRaw *raw;
 	RMGfxSourceBuffer16 *load = NULL;
 	INIT_GFX16_FROMRAW(20038, load);
@@ -573,7 +478,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 
 	GLOBALS.bPatIrqFreeze = true;
 
-	// GUI attivabile
+	// Activate GUI
 	m_bGUIOption = true;
 	m_bGUIInterface = true;
 	m_bGUIInventory = true;
@@ -593,7 +498,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	mpalInstallItemIrq(ItemIrq);
 
 	// Initialise the input
-	m_input.Init(/*hInst*/);
+	m_input.Init();
 
 	// Initialise the mouse pointer
 	m_point.Init();
@@ -608,40 +513,11 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 
 	// Download the location and set priorities   @@@@@
 	m_bLocationLoaded = false;
-	/*
-	    m_nCurLoc=1;
-	    RMRes res(m_nCurLoc);
-	    m_loc.Load(res);
-	    m_loc.SetPriority(1);
-	    m_tony.SetPosition(RMPoint(201,316),1);
-	    //m_tony.SetPosition(RMPoint(522,305),2);
-	    //m_tony.SetPosition(RMPoint(158,398),4);
-	    m_tony.SetPattern(m_tony.PAT_STANDDOWN);
-	    m_curAction=TA_GOTO;
-	*/
+
 	EnableInput();
 
 	// Starting the game
-	//m_tony.ExecuteAction(4,1,0);    //PREGAME
-
 	m_tony.ExecuteAction(20, 1, 0);
-
-//	theLog << "Seleziona la locazione\n";
-	//LoadLocation(1,RMPoint(201,316),RMPoint(-1,-1));
-	//SelectLocation();
-	//LoadLocation(5,RMPoint(685,338),RMPoint(-1,-1));
-	//LoadLocation(7,RMPoint(153,424),RMPoint(-1,-1));
-	//LoadLocation(70,RMPoint(10,10),RMPoint(-1,-1));
-	//LoadLocation(20,RMPoint(112,348),RMPoint(-1,-1));
-	//LoadLocation(26,RMPoint(95,456),RMPoint(-1,-1));
-	//LoadLocation(12,RMPoint(221,415),RMPoint(-1,-1));
-	//LoadLocation(25,RMPoint(221,415),RMPoint(-1,-1));
-	//LoadLocation(16,RMPoint(111,438),RMPoint(-1,-1));
-	//LoadLocation(60,RMPoint(18,302),RMPoint(-1,-1));
-
-	// CASTELLO
-
-	//LoadLocation(40,RMPoint(233,441),RMPoint(-1,-1));
 }
 
 void RMGfxEngine::Close(void) {

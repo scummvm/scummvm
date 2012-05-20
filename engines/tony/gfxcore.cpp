@@ -162,18 +162,6 @@ void RMGfxSourceBuffer::PrepareImage(void) {
 bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf) {
 	int destw, desth;
 
-/*
-	OBSOLETE CODE:
-
-	if (buf == NULL) {
-		destw=RM_SX;
-		desth=RM_SY;
-	} else {
-		destw = buf->Dimx();
-		desth = buf->Dimy();
-	}
-*/
-
 	destw = buf->Dimx();
 	desth = buf->Dimy();
 

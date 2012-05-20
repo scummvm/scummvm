@@ -311,15 +311,6 @@ void TonyEngine::PreloadSFX(int nChannel, const char *fn) {
 
 	_theSound.CreateSfx(&m_sfx[nChannel]);
 
-/*	
-	// Mette il path giusto
-	GetDataDirectory(DD_UTILSFX, path_buffer);
-	_splitpath(path_buffer,drive,dir,NULL,NULL);
-	_splitpath(fn,NULL,NULL,fname,ext);
-	_makepath(path_buffer,drive,dir,fname,ext);
-
-	m_sfx[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM);
-*/
 	m_sfx[nChannel]->LoadFile(fn, FPCODEC_ADPCM);
 }
 
@@ -360,9 +351,6 @@ void TonyEngine::InitMusic() {
 //	csMusic = g_system->createMutex();
 
 	// Preload sound effects
-//	PreloadUtilSFX(0,"AccendiOpzione.ADP");
-//	PreloadUtilSFX(1,"ApriInterfaccia.ADP");
-	
 	PreloadUtilSFX(0, "U01.ADP"); // Reversed!!
 	PreloadUtilSFX(1, "U02.ADP");
 }

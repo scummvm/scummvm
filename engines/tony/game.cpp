@@ -1194,9 +1194,6 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 							m_nEditPos = _ctx->i;
 							strcpy(m_EditName, m_curThumbName[_ctx->i]);
 							_ctx->bRefresh = true;
-
-							//_vm->SaveState(m_statePos+_ctx->i,"No name");
-							//Close();
 						}
 
 						break;

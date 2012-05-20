@@ -149,15 +149,10 @@ void RMInventory::Init(void) {
 	RMMessage msg2(13);
 	RMMessage msg3(14);
 
-	m_hints[0].WriteText(msg1[0], 1);
-	m_hints[1].WriteText(msg2[0], 1);
-	m_hints[2].WriteText(msg3[0], 1);
+	m_hints[0].WriteText(msg1[0], 1);		// Examine
+	m_hints[1].WriteText(msg2[0], 1);		// Take
+	m_hints[2].WriteText(msg3[0], 1);		// Use
 
-	/*
-	    m_hints[0].WriteText("Examine",1);
-	    m_hints[1].WriteText("Talk",1);
-	    m_hints[2].WriteText("Use",1);
-	*/
 
 	// Prepare initial inventory
 	Prepare();
@@ -251,7 +246,6 @@ void RMInventory::RemoveItem(int code) {
 			g_system->lockMutex(m_csModifyInterface);
 
 			Common::copy(&m_inv[i + 1], &m_inv[i + 1] + (m_nInv - i), &m_inv[i]);
-//			m_inv[m_nInv-1]=0;
 			m_nInv--;
 
 			Prepare();
@@ -260,8 +254,6 @@ void RMInventory::RemoveItem(int code) {
 			g_system->unlockMutex(m_csModifyInterface);
 			return;
 		}
-
-	//MessageBox(NULL,"Specified object is not in the inventory","INTERNAL ERROR",MB_OK|MB_ICONEXCLAMATION);
 }
 
 void RMInventory::AddItem(int code) {
@@ -313,8 +305,6 @@ void RMInventory::Prepare(void) {
 	// Frecce
 	AddPrim(new RMGfxPrimitive(&m_items[29].icon, RMPoint(0, 0)));
 	AddPrim(new RMGfxPrimitive(&m_items[28].icon, RMPoint(640 - 64, 0)));
-
-	//AddPrim(new RMGfxPrimitive(&m_items[0].icon,RMPoint(0,0)));
 }
 
 bool RMInventory::MiniActive(void) {
@@ -931,18 +921,12 @@ void RMInterface::Init(void) {
 	RMMessage msg3(15);
 	RMMessage msg4(16);
 
-	m_hints[0].WriteText(msg0[0], 1);
-	m_hints[1].WriteText(msg1[0], 1);
-	m_hints[2].WriteText(msg2[0], 1);
-	m_hints[3].WriteText(msg3[0], 1);
-	m_hints[4].WriteText(msg4[0], 1);
-	/*
-	    m_hints[0].WriteText("Take",1);
-	    m_hints[1].WriteText("Talk",1);
-	    m_hints[2].WriteText("Use",1);
-	    m_hints[3].WriteText("Examine",1);
-	    m_hints[4].WriteText("Palesati",1);
-	*/
+	m_hints[0].WriteText(msg0[0], 1);	// Take
+	m_hints[1].WriteText(msg1[0], 1);	// Talk
+	m_hints[2].WriteText(msg2[0], 1);	// Use
+	m_hints[3].WriteText(msg3[0], 1);	// Examine
+	m_hints[4].WriteText(msg4[0], 1);	// Show Yourself
+
 	m_bActive = false;
 	m_bPalesati = false;
 	m_lastHotZone = 0;

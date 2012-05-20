@@ -892,8 +892,6 @@ void RMWipe::WaitForFadeEnd(CORO_PARAM) {
 }
 
 void RMWipe::CloseFade(void) {
-//	m_bUnregister = true;
-//	WaitForSingleObject(m_hUnregistered,CORO_INFINITE);
 	m_wip0r.Unload();
 }
 
@@ -1122,7 +1120,6 @@ void RMCharacter::GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	olddx = dx;
 	olddy = dy;
 
-	// ResetEvent(hTonyEndMovement);  @@@
 	CORO_END_CODE;
 }
 
@@ -1186,28 +1183,6 @@ RMPoint RMCharacter::Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 
 
 RMPoint RMCharacter::NearestPoint(const RMPoint &punto) {
-/*
- RMPoint tofind;
- signed short difx,dify;
-
- difx = m_pos.x-punto.x;
- dify = m_pos.y-punto.y;
-
- if ((difx>0) && (dify>0)) tofind=Searching(0,1,1,0,punto);
- if ((difx>0) && (dify<0)) tofind=Searching(1,0,1,0,punto);
- if ((difx<0) && (dify>0)) tofind=Searching(0,1,0,1,punto);
- if ((difx<0) && (dify<0)) tofind=Searching(1,0,0,1,punto);
-
- // Could be removed? Think @@@@
- if ((difx= = 0) && (dify>0)) tofind=Searching(0,1,1,1,punto);
- if ((difx= = 0) && (dify<0)) tofind=Searching(1,0,1,1,punto);
- if ((dify= = 0) && (difx>0)) tofind=Searching(1,1,1,0,punto);
- if ((dify= = 0) && (difx<0)) tofind=Searching(1,1,0,1,punto);
-
- if ((dify= = 0) && (difx= = 0)) tofind=punto;
-
- return tofind;
-*/
 	return Searching(1, 1, 1, 1, punto);
 }
 
@@ -1547,8 +1522,6 @@ void RMCharacter::Stop(CORO_PARAM) {
 		break;
 	
 	default:
-//			assert(0);
-//			MessageBox(NULL,"E' lo stesso errore di prima, ma non crasha","Ehi!",MB_OK);
 		SetPattern(PAT_STANDDOWN);
 		break;
 	}
@@ -1989,27 +1962,11 @@ bool RMLocation::Load(const char *lpszFileName) {
  */
 bool RMLocation::Load(Common::File &file) {
 	int size;
-//	byte *buf;
-//	uint32 dwReadBytes;
 	bool bRet;
 
 	// Calcola la lunghezza del file
 	size = file.size();
 	file.seek(0);
-
-/*
- // Alloca la memoria per caricare il file in memoria
- buf=(LPBYTE)GlobalAlloc(GMEM_FIXED,size);
-
- // Legge il file in memoria
- ReadFile(hFile,buf,size,&dwReadBytes,0);
-
- // Parsing del file, utilizzando la funzione di load da memorira
- bRet=Load(buf);
-
- // Free della memoria
- GlobalFree(buf);
-*/
 
 	RMFileStreamSlow fs;
 
@@ -2112,10 +2069,6 @@ bool RMLocation::Load(RMDataStream &ds) {
 		ds >> m_items[i];
 	_vm->UnfreezeTime();
 
-	// Sets the initial pattern @@@ duplication!
-	//for (i = 0;i<m_nItems;i++)
-	//	m_items[i].SetPattern(mpalQueryItemPattern(m_items[i].MpalCode()));
-
 	return ds.IsError();
 }
 
@@ -2147,9 +2100,6 @@ bool RMLocation::LoadLOX(RMDataStream &ds) {
 	// Initialise the surface, loading in the palette if necessary
 	m_buf->Init(ds, dimx, dimy, true);
  
-	// Check the size of the location
-//	assert(dimy!=512);
-
 	// Number of items
 	ds >> m_nItems;
 

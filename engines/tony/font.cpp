@@ -66,23 +66,7 @@ void DumpFontBMP(const char *filename, const byte *buf, int nChars, int charX, i
 void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID) {
 	m_letter = new RMGfxSourceBuffer8RLEByte[nChars];
 
-#if 0
-	if (nChars == 112 && palResID == RES_F_PAL) {
-		// Font parla
-		DumpFontBMP("font_parla.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
-	} else if (nChars == 102 && palResID == RES_F_PAL) {
-		// Font macc
-		DumpFontBMP("font_macc.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
-	} else if (nChars == 85 && palResID == RES_F_PAL) {
-		// Font obj
-		DumpFontBMP("font_obj.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
-	} else if (nChars == 112 && palResID == RES_F_CPAL) {
-		// Font credits
-		DumpFontBMP("font_credits.bmp", buf, nChars, dimx, dimy, RMRes(palResID));
-	}
-#endif
-
-	// Initialisation the fonts
+	// Initialise the fonts
 	for (int i = 0; i < nChars; i++) {
 		// Initialise the buffer with the letters
 		m_letter[i].Init(buf + i * (dimx * dimy + 8) + 8, dimx, dimy);

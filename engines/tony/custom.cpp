@@ -276,11 +276,10 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 		// First time allocation
 		g_system->lockMutex(GLOBALS.vdb);
-		// fseek(_vm->m_vdbFP, _ctx->curOffset, SEEK_SET);
 		_vm->_vdbFP.seek(_ctx->curOffset);
 		_vm->_theSound.CreateSfx(&_ctx->voice);
+
 		_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
-		// _ctx->curOffset = ftell(_vm->m_vdbFP);
 		_ctx->curOffset = _vm->_vdbFP.pos();
 
 		_ctx->voice->SetLoop(false);
@@ -337,11 +336,10 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 				_ctx->text.SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			} else {
 				g_system->lockMutex(GLOBALS.vdb);
-				// fseek(_vm->m_vdbFP, _ctx->curOffset, SEEK_SET);
 				_vm->_vdbFP.seek(_ctx->curOffset);
 				_vm->_theSound.CreateSfx(&_ctx->voice);
 				_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
-				// _ctx->curOffset = ftell(_vm->m_vdbFP);
+
 				_ctx->curOffset = _vm->_vdbFP.pos();
 				_ctx->voice->SetLoop(false);
 				_ctx->voice->Play();
@@ -517,7 +515,7 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 
 	_vm->StopMusic(4);
 
-	// On Exit e lascia freezzato
+	// On exit, unload and unfreeze
 	CORO_INVOKE_2(GLOBALS.UnloadLocation, true, NULL);
 	GLOBALS.Unfreeze();
 
@@ -541,7 +539,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 		_vm->StopMusic(4);
 	}
 
-	// On Exit e lascia freezzato
+	// On exit, unfreeze
 	CORO_INVOKE_2(GLOBALS.UnloadLocation, true, NULL);
 
 	GLOBALS.curChangedHotspot = 0;
@@ -1314,37 +1312,6 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 
 		}
 
-/*
-		sX = _ctx->stepX * (_ctx->dwCurTime-dwLastTime) / (1000 / 35);
-		sY = _ctx->stepY * (_ctx->dwCurTime-dwLastTime) / (1000 / 35);
-
-		if (_ctx->lx > 0) {
-			_ctx->lx -= sX;
-			if (_ctx->lx < 0)
-				_ctx->lx = 0;
-			_ctx->pt.Offset(sX, 0);
-		} else if (_ctx->lx < 0) {
-			_ctx->lx += sX;
-
-			if (_ctx->lx > 0)
-				_ctx->lx = 0;
-
-			_ctx->pt.Offset(-sX, 0);
-		}
-
-		if (_ctx->ly > 0) {
-			_ctx->ly -= sY;
-			if (_ctx->ly < 0)
-				_ctx->ly = 0;
-				_ctx->pt.Offset(0, sY);
-		} else if (_ctx->ly < 0) {
-			_ctx->ly += sY;
-			if (_ctx->ly > 0)
-				_ctx->ly = 0;
-
-			_ctx->pt.Offset(0, -sY);
-		}
-*/
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
 		GLOBALS.Freeze();
@@ -1519,7 +1486,6 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 	_ctx->voice = NULL;
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
-		// fseek(_vm->m_vdbFP, _ctx->curVoc->offset, SEEK_SET);
 		g_system->lockMutex(GLOBALS.vdb);
 		_vm->_vdbFP.seek(_ctx->curVoc->offset);
 		_ctx->curOffset = _ctx->curVoc->offset;
@@ -1853,7 +1819,6 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
 		g_system->lockMutex(GLOBALS.vdb);
-		// fseek(_vm->m_vdbFP, _ctx->curVoc->offset, SEEK_SET);
 		_vm->_vdbFP.seek(_ctx->curVoc->offset);
 		_vm->_theSound.CreateSfx(&_ctx->voice);
 		_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
@@ -2119,8 +2084,8 @@ DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32
 
 
 /*
- *  Musica
- *  ------
+ *  Music
+ *  -----
  *
  * Fadeout effects supposed:
  *
