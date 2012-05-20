@@ -283,12 +283,12 @@ public:
 
 protected:
 
-	// Inizializza tutto per il nuovo stato
+	// Initialisation and state change
 	void InitState(CORO_PARAM);
 	void CloseState(void);
 	void ChangeState(CORO_PARAM, STATE newState);
 
-	// Repaaint the options menu
+	// Repaint the options menu
 	void RefreshAll(CORO_PARAM);
 	void RefreshThumbnails(void);
 };

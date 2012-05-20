@@ -647,7 +647,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 
 // debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Moments: %u\n",s->nMoments);
 	for (_ctx->i = 0; _ctx->i < s->nMoments; _ctx->i++) {
-		// Dorme il tempo necessario per arrivare al momento successivo
+		// Sleep for the required time
 		if (s->Moment[_ctx->i].dwTime == -1) {
 			CORO_INVOKE_4(CoroScheduler.waitForMultipleObjects, _ctx->numHandles, cfHandles, true, CORO_INFINITE);
 			_ctx->dwStartTime = _vm->GetTime();
@@ -878,7 +878,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	}
 	UnlockItems();
 
-	/* Se non e' rimasto nessuno possiamo uscire */
+	/* If there is nothing left, we can exit */
 	if (_ctx->nRealItems == 0) {
 		GlobalFree(_ctx->il);
 		CORO_KILL_SELF();
@@ -1170,7 +1170,7 @@ void GroupThread(CORO_PARAM, const void *param) {
 		}
 	}
 
-	/* Se siamo qui, vuol dire che non abbiamo trovato il gruppo richiesto */
+	/* If we are here, it means that we have not found the requested group */
 	GLOBALS.mpalError = 1;
 	UnlockDialogs();
 	
@@ -2750,7 +2750,7 @@ const char *DLG600[] = { "Tony", "Jack", "Jack", NULL, "Jack", NULL, NULL, NULL,
 case num:	\
 	if (nPers >= (int)(sizeof(DLG##num) / sizeof(const char *)) || DLG##num[nPers] == NULL)	\
 	{	\
-		warning("ERROR: Il personaggio #%d non esiste nel dialogo %d!\n", nPers, nDlg);	\
+		warning("ERROR: The character #%d does not exist in dialog %d!\n", nPers, nDlg);	\
 		return "ERROR";	\
 	}	\
 	else	\
@@ -2819,7 +2819,7 @@ const char *GetPersonName(uint16 nDlg, int nPers) {
 	HANDLE_DIALOG(600);
 
 	default:
-		warning("ERROR: Il dialogo %d non esiste!\n", (int)nDlg);
+		warning("ERROR: Dialog %d does not exist!", (int)nDlg);
 		return "ERROR";
 	}
 }
@@ -2872,7 +2872,7 @@ void mpalDumpDialog(LPMPALDIALOG dlg) {
 						break;
 						
 				if (dlg->Periods[j] == NULL)
-					warning("ERROR: Dialogo %d, Periodo %d non trovato!\n", (int)dlg->nObj, (int)curCmd->arg2);
+					warning("ERROR: Dialog %d, Period %d not found!", (int)dlg->nObj, (int)curCmd->arg2);
 				else {	
 					frase = (char *)GlobalLock(dlg->Periods[j]);
 					strcpy(copia, frase);

@@ -178,7 +178,7 @@ void RMTony::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Richiama il Draw() della classe madre se tony è visibile
+	// Call the Draw() of the parent class if Tony is visible
 	if (m_bShow && bDrawNow) {
 		if (m_bCorpoDavanti) {
 			prim->Dst().SetEmpty();
@@ -189,7 +189,7 @@ void RMTony::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		}
 
 		if (m_bIsTalking || m_bIsStaticTalk) {
-			// Offset inverso per lo scrolling
+			// Offest direction from scrolling
 			prim->Dst().SetEmpty();
 			prim->Dst().Offset(-m_curScroll);
     		prim->Dst().Offset(m_pos);
@@ -217,7 +217,7 @@ void RMTony::MoveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction,
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Fa il movimento normale, ma si ricorda se deve poi eseguire un azione
+	// Makes normal movement, but remember if you must then perform an action
 	if (item == NULL) {
 		m_bActionPending = false;
 		m_ActionItem = NULL;

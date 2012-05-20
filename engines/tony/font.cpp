@@ -51,8 +51,8 @@ RMFont::~RMFont() {
 
 /**
  * Dumps a font to a buffer
- * @param buf					Buffer contenente il font
- * @param nChars				Numero di caratteri (max 256)
+ * @param buf					Buffer for font contents
+ * @param nChars				Number of characters (max 256)
  * @param dimx					X dimension in pixels
  * @param dimy					Y dimension in pixels
 *
@@ -2209,7 +2209,7 @@ void RMTextDialogScrolling::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 }
 
 void RMTextDialogScrolling::ClipOnScreen(RMGfxPrimitive *prim) {
-	// Non dobbiamo fare nulla!
+	// We must not do anything!
 }
 
 
@@ -2283,7 +2283,7 @@ void RMTextItemName::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Se non c'e' testo, e' inutile continuare
+	// If there is no text, it's pointless to continue
 	if (m_buf == NULL)
 		return;
 

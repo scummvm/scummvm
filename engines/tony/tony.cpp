@@ -609,7 +609,7 @@ void TonyEngine::PauseLoop(void) {
 }
 
 void TonyEngine::Pause(bool bPause) {
-	// Se non e' cambiato lo stato di pausing, non fare nulla
+	// If the new status already matches the current one, do nothing
 	if (m_bPaused == bPause)
 		return;
 

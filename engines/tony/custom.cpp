@@ -139,7 +139,6 @@ void LoadChangedHotspot(Common::InSaveFile *f) {
  * ChangeLocation -> theEngine.ChangeLocation()
  * AddInventory -> theEngine.AddInventory()
 */
-
 void MCharResetCodes(void) {
 	for (int i = 0; i < 10; i++)
 		GLOBALS.MCharacter[i].item = GLOBALS.Loc->GetItemFromCode(GLOBALS.MCharacter[i].code);

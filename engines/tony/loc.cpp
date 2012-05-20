@@ -1520,7 +1520,7 @@ void RMCharacter::Stop(CORO_PARAM) {
 
 	bMoving = false;
 
-	// Non si sa mai...
+	// You never know..
 	status = STAND;
 	minpath = 0;
 
@@ -1609,9 +1609,8 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 		pathcount = 1;
 		pathend = pt;
 	} else {
-		// @@@ Questo caso è se un hotspot è dentro un box
-		//  ma non c'è un path per arrivarci. Usiamo quindi
-		//  la invscanline per cercare un punto intorno
+		// @@@ This case is whether a hotspot is inside a box, but there is
+		// a path to get there. We use the InvScanLine to search around a point
 		_ctx->dest = InvScanLine(pt);
 		pt = _ctx->dest;
 		
