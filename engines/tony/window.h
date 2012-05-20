@@ -78,21 +78,21 @@ public:
 	RMWindow();
 	~RMWindow();
 
-	// Initialization
+	// Initialisation
 	void Init(/*HINSTANCE hInst*/);
 	void InitDirectDraw(void);
 	void Close(void);
 
-	// Repaint grafico tramite DirectDraw
+	// Drawing
 	void Repaint(void);
 
-	// Switch tra windowed e fullscreen
+	// Switch between windowed and fullscreen
 	void SwitchFullscreen(bool bFull) {}
 
-	// Legge il prossimo frame
+	// Reads the next frame
 	void GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
 
-	// Avverte di grabbare un thumbnail per il salvataggio
+	// Request a thumbnail be grabbed during the next frame
 	void GrabThumbnail(uint16 *buf);
 
 	int getFps() const { return fps; }

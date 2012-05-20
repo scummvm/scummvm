@@ -40,9 +40,9 @@ namespace Tony {
  * Constructor
  */
 RMString::RMString() {
-	m_string=NULL;
-	m_length=0;
-	m_realLength=0;
+	m_string = NULL;
+	m_length = 0;
+	m_realLength = 0;
 }
 
 /**
@@ -188,8 +188,8 @@ const RMString& RMString::operator=(const int ch) {
 		// Destroy the current string
 		if (m_realLength > 0) {
 			delete [] m_string;
-			m_string=NULL;
-			m_length=m_realLength=0;
+			m_string = NULL;
+			m_length = m_realLength = 0;
 		}
 	} else {
 		// Resize if necessary
@@ -213,7 +213,7 @@ void RMString::Connect(const char *str, int size) {
 
 	if (size > 0) {
 		// Calculate the new lenght
-		nlen=m_length+size;
+		nlen = m_length+size;
 
 		// Resize
 		Resize(nlen + 1, true);
@@ -242,7 +242,7 @@ const RMString &RMString::operator+=(RMString &str) {
  * @returns					Refrence to our string
  */
 const RMString &RMString::operator+=(const char *str) {
-	Connect(str,strlen(str));
+	Connect(str, strlen(str));
 	return *this;
 }
 
@@ -385,7 +385,7 @@ void RMString::Format(const char *str, ...) {
 }
 
 /****************************************************************************\
-*       Metodi di RMFileStreamSlow
+*       RMFileStreamSlow Methods
 \****************************************************************************/
 
 RMFileStreamSlow::RMFileStreamSlow() : RMDataStream() {
@@ -410,7 +410,7 @@ bool RMFileStreamSlow::OpenFile(Common::File &file) {
 
 
 bool RMFileStreamSlow::OpenFile(const char *lpFN) {
-	// Apre il file in lettura
+	// Open file for reading
 	Common::File f;
 	if (!f.open(lpFN))
 		return false;
@@ -679,13 +679,13 @@ int RMDataStream::Seek(int nBytes, RMDSPos origin) {
 		break;
 
 	case START:
-		m_pos=0;
+		m_pos = 0;
 		break;
 
 	case END:
 		if (m_length == SIZENOTKNOWN)
 			return m_pos;
-		m_pos=m_length;
+		m_pos = m_length;
 		break;
 	}
 
@@ -741,8 +741,8 @@ RMPoint::RMPoint() {
  * Copy constructor
  */
 RMPoint::RMPoint(const RMPoint &p) {
-	x=p.x;
-	y=p.y;
+	x = p.x;
+	y = p.y;
 }
 
 /**
@@ -969,13 +969,13 @@ RMRect operator-(const RMRect& rc, RMPoint p) {
 RMRect operator+(RMPoint p, const RMRect& rc) {
 	RMRect r(rc);
 
-	return (r+=p);
+	return (r += p);
 }
 
 RMRect operator-(RMPoint p, const RMRect& rc) {
 	RMRect r(rc);
 
-	return (r+=p);
+	return (r += p);
 }
 
 bool RMRect::operator==(const RMRect& rc) {
@@ -987,7 +987,7 @@ bool RMRect::operator!=(const RMRect& rc) {
 }
 
 void RMRect::NormalizeRect(void) {
-	SetRect(MIN(x1,x2), MIN(y1,y2), MAX(x1,x2), MAX(y1,y2));
+	SetRect(MIN(x1, x2), MIN(y1, y2), MAX(x1, x2), MAX(y1, y2));
 }
 
 RMDataStream &operator>>(RMDataStream &ds, RMRect &rc) {
@@ -1029,7 +1029,7 @@ void RMResUpdate::Init(const Common::String &fileName) {
 	_infos = new ResUpdInfo[_numUpd];
 
 	// Load the index of the resources in the file
-	for (i=0; i<_numUpd; ++i) {
+	for (i = 0; i < _numUpd; ++i) {
 		ResUpdInfo &info = _infos[i];
 
 		info.dwRes = _hFile.readUint32LE();
@@ -1045,7 +1045,7 @@ HGLOBAL RMResUpdate::QueryResource(uint32 dwRes) {
 		return NULL;
 
 	uint32 i;
-	for (i=0; i < _numUpd; ++i)
+	for (i = 0; i < _numUpd; ++i)
 		if (_infos[i].dwRes == dwRes)
 			// Found the index
 			break;

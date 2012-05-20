@@ -128,8 +128,8 @@ public:
 
 private:
     int m_speed;
-    RMPoint m_pos; // Coordinate babbo
-	RMPoint m_curPos; // Coordinate babbo+figlio
+    RMPoint m_pos;		// Parent coordinates
+	RMPoint m_curPos;	// Parent + child coordinates
     int m_bLoop;
     int m_nSlots;
 	int m_nCurSlot;
@@ -237,29 +237,29 @@ public:
 
     friend RMDataStream& operator>>(RMDataStream &ds, RMItem &item);
 
-	// Processa l'oggetto per fare andare avanti eventuale animazioni. Ritorna TRUE se dovrà
-	// essere ridisegnato il prossimo frame
+	// Process to make the object move on any animations.
+	// Returns TRUE if it should be redrawn on the next frame
 	bool DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList = true);
 
-	// Setta la posizione corrente di scrolling
+	// Sets the current scrolling position
 	void SetScrollPosition(const RMPoint &scroll);
 
-	// Overloading della funzione per la rimozione da ot list
+	// Overloading of check whether to remove from active list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 	
-	// Overloading del draw
+	// Overloaded Draw
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Overloading della priorità: è la Z
+	// Overloaded priority: it's based on Z ordering
 	virtual int Priority() { return m_z; }
 
-	// Numero di pattern
+	// Pattern number
 	int NumPattern() { return m_nPatterns; }
 
-	// Setta un nuovo pattern di animazione, cambiando bruscamente da quello corrente
+	// Set anew animation pattern, changing abruptly from the current
 	virtual void SetPattern(int nPattern, bool bPlayP0 = false);
 
-	// Setta un nuovo status.
+	// Set a new status
 	void SetStatus(int nStatus);
 
 	bool IsIn(const RMPoint &pt, int *size = NULL);
@@ -267,13 +267,13 @@ public:
 	bool GetName(RMString &name);
 	int MpalCode() { return m_mpalCode; }
 
-	// Scarica l'item
+	// Unload
 	void Unload(void);
 
-	// Aspetta la fine del pattern in play
+	// Wait for the end of the current pattern
 	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE);
 
-	// Setta un nuovo hotspot per l'oggetto
+	// Sets a new hotspot fro the object
 	void ChangeHotspot(const RMPoint &pt);
 
 	void SetInitCurPattern(bool status) { m_bInitCurPattern=status; }
@@ -285,30 +285,30 @@ void ReadFromStream(RMDataStream& ds, bool bLOX=false);
 	void PauseSound(bool bPause);
 
 protected:
-	// Crea una primitiva che ha come task l'item stesso
+	// Create a primitive that has as it's task this item
 	virtual RMGfxPrimitive *NewItemPrimitive();
 
-	// Alloca la memoria per gli sprites
-	virtual RMGfxSourceBuffer* NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
+	// Allocate memory for the sprites
+	virtual RMGfxSourceBuffer *NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
 };
 
 
-#define MAXBOXES	50		// Non si puo' cambiare, comanda cosi' il boxed
-#define MAXHOTSPOT 20		// Idem
+#define MAXBOXES	50		// Maximum number of allowed boxes
+#define MAXHOTSPOT 20		// Maximum nimber of allowed hotspots
 
 class RMBox {
 public:
 	struct T_HOTSPOT {
-		int hotx, hoty;          // coordinate HotSpot
-		int destination;         // destinazione HotSpot
+		int hotx, hoty;          // Hotspot coordinates
+		int destination;         // Hotspot destination
 	};
 
 public:
-	int left,top,right,bottom;		// Vertici BoundingBox
-	int adj[MAXBOXES];				// Lista di adjacenza
-	int numhotspot;					// Numero HotSpot
-	uint8 Zvalue;					// Zvalue per quel BoundingBox
-	T_HOTSPOT hotspot[MAXHOTSPOT];	// Lista degli HotSpot
+	int left, top, right, bottom;	// Vertici bounding boxes
+	int adj[MAXBOXES];				// List of adjacent bounding boxes
+	int numhotspot;					// Hotspot number
+	uint8 Zvalue;					// Z value for the bounding box
+	T_HOTSPOT hotspot[MAXHOTSPOT];	// List of hotspots
 
 	bool attivo;
 	bool bReversed;
@@ -351,19 +351,19 @@ public:
 	void Init(void);		
 	void Close(void);
 
-	// Prende i box di una locazione
+	// Get binding boxes for a given location
 	RMBoxLoc *GetBoxes(int nLoc);
 	
-	// Calcola in quale box si trova il punto
+	// Return the box which contains a given point
 	int WhichBox(int nLoc, const RMPoint &pt);
 
-	// Controlla che il punto sia dentro un certo box
+	// Check whether a point is inside a given box
 	bool IsInBox(int nLoc, int nBox, const RMPoint &pt);
 	
-	// Cambia lo stato di un box
+	// Change the status of a box
 	void ChangeBoxStatus(int nLoc, int nBox, int status);
 
-	// Salvataggi
+	// Save state handling
 	int GetSaveStateSize(void);
 	void SaveState(byte *buf);
 	void LoadState(byte *buf);
@@ -429,38 +429,38 @@ protected:
 	bool bMoving;
 	bool bDrawNow;
 	bool bNeedToStop;
-//		virtual RMGfxPrimitive* NewItemPrimitive();
+//		virtual RMGfxPrimitive *NewItemPrimitive();
 
 public:
 	RMCharacter();
 	virtual ~RMCharacter();
 
-	void LinkToBoxes(RMGameBoxes* theBoxes);
+	void LinkToBoxes(RMGameBoxes *theBoxes);
 
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 	
-	// Aggiorna la posizione del personaggio	
+	// Update the position of a character
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);		
 
-	// Overloading del Draw
+	// Overloaded draw
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// TRUE se si è appena fermato
+	// TRUE if you just stopped
 	bool EndOfPath() { return bEndOfPath; }
 
-	// Cambia il pattern del personaggio per fermarlo
+	// Change the pattern of a character to STOP
 	virtual void Stop(CORO_PARAM);
 
-	// Controlla se il personaggio si sta muovendo
+	// Check if the character is moving
 	bool IsMoving() { return bMoving; }
 
-	// Muove il personaggio a una certa posizione
+	// Move the character to a certain position
 	void Move(CORO_PARAM, RMPoint pt, bool *result = NULL);
 
-	// Posiziona il personaggio a una certa posizione SENZA farlo muovere
+	// Place the character in a certain position WITHOUT moving
 	void SetPosition(const RMPoint &pt, int newloc = -1);
 
-	// Aspetta la fine del movimento
+	// Wait for the end of movement
 	void WaitForEndMovement(CORO_PARAM);
 
 	void SetFixedScroll(const RMPoint &fix) { m_fixedScroll = fix; }
@@ -502,16 +502,16 @@ public:
  */
 class RMLocation : public RMGfxTaskSetPrior {
 public:
-    RMString m_name;                  // Nome
+    RMString m_name;				// Name
 
   private:
-    RMColorMode m_cmode;              // Color mode
-	RMGfxSourceBuffer* m_buf;					// Immagine della locazione
+    RMColorMode m_cmode;			// Color mode
+	RMGfxSourceBuffer *m_buf;		// Location picture
 
-	int m_nItems;                     // Numero oggetti
-RMItem* m_items;                  // Oggetti
+	int m_nItems;					// Number of objects
+	RMItem *m_items;				// Objects
 
-	RMPoint m_curScroll;							// Posizione corrente di scroll
+	RMPoint m_curScroll;			// Current scroll position
 	RMPoint m_fixedScroll;
 
 public:
@@ -526,41 +526,41 @@ public:
 	RMLocation();
 	virtual ~RMLocation();
 
-	// Caricamento da disco
+	// Load variations
 	bool Load(const char *lpszFileName);
 	bool Load(Common::File &file);
 	bool Load(const byte *buf);
 	bool Load(RMDataStream &ds);
 	bool LoadLOX(RMDataStream &ds);
 
-	// Scaricamento
+	// Unload
 	void Unload(void);
 
-	// Overloading del Draw
+	// Overloaded draw
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Prepara un frame disegnando la locazione e tutti i suoi item
+	// Prepare a frame by drawing the location and all it's items
 	void DoFrame(RMGfxTargetBuffer *bigBuf);
 
-	// Si fa dare il numero dell'item
+	// Return the item at a given point
 	RMItem *WhichItemIsIn(const RMPoint &pt);
 
-	// Si fa dare un elemento dal suo codice MPAL
-	RMItem* GetItemFromCode(uint32 dwCode);
+	// Return the item based on it's MPAL code
+	RMItem *GetItemFromCode(uint32 dwCode);
 
-	// Setta la posizione corrente di scrolling
+	// Set the current scroll position
 	void SetScrollPosition(const RMPoint &scroll);
 
-	// Setta un offset aggiuntivo di scrolling da aggiungere sempre
+	// Sets an additinal offset for scrolling
 	void SetFixedScroll(const RMPoint &scroll);
 
-	// Aggiorna le coordinate di scrolling in modo da visualizzare sempre il punto fornito
+	// Update the scrolling coordinates to display the specified point
 	void UpdateScrolling(const RMPoint &ptShowThis);
 
-	// Legge la posizione di scrolling corrente
+	// Read the current scroll position
 	RMPoint ScrollPosition() { return m_curScroll; }
 
-	// Pausa sonoro
+	// Pause sound
 	void PauseSound(bool bPause);
 };
 
@@ -588,7 +588,6 @@ public:
 	char *Period(int num) { return lpPeriods[num]; }
 	char *operator[](int num) { return lpPeriods[num]; }
 };
-
 
 } // End of namespace Tony
 

@@ -71,7 +71,7 @@ public:
     void OpenBuffer(const byte *buf, int size = SIZENOTKNOWN);
 	void Close(void);
 
-    // Attributi
+    // Attributei
     int Length();
     virtual int Pos();
 
@@ -86,14 +86,14 @@ public:
     friend RMDataStream &operator>>(RMDataStream &df, int &var);
     friend RMDataStream &operator>>(RMDataStream &df, uint32 &var);
 
-    // Lettura generica
+    // General read
     virtual bool Read(void *buf, int size);
 
     // Skipping & Seeking
     virtual RMDataStream &operator+=(int nBytes);
     virtual int Seek(int nBytes, RMDSPos origin = CUR);
 
-    // Gestione errori
+    // Error handling
     void SetError(int ecode);
     int GetError();
     bool IsError();
@@ -111,7 +111,7 @@ public:
 	RMFileStream();
 	virtual ~RMFileStream();
 
-	// Apre lo stream da file
+	// Methods for opening file
 	bool OpenFile(const char *lpFN);
 	bool OpenFile(Common::File &file);
 
@@ -165,7 +165,7 @@ public:
     RMString(const char *str);
     RMString(const int ch);
 
-    // Metodi generici
+    // General methods
     int Length() const;
     void Compact();
 
@@ -196,10 +196,10 @@ public:
     friend RMString operator+(RMString &str, const char *s);
     friend RMString operator+(const char *s, RMString &str);
 
-    // Estrazione da data stream
+    // Extraction from data streams
     friend RMDataStream& operator>>(RMDataStream& df, RMString &var);
 
-	// Formattazione di stringa
+	// String formatting
 	void Format(const char *str, ...);
 
 private:
@@ -220,11 +220,11 @@ public:
     RMPoint(const RMPoint &p);
     RMPoint(int x1, int y1);
 
-    // Copia
+    // Copy
     RMPoint& operator=(RMPoint p);
 
 	// Set
-	void Set(int x1, int y1) { x=x1; y=y1; }
+	void Set(int x1, int y1) { x = x1; y = y1; }
 
     // Offset
     void Offset(int xOff, int yOff);
@@ -235,7 +235,7 @@ public:
     RMPoint &operator-=(RMPoint p);
     RMPoint operator-();
 
-    // Confronti
+    // Comparison
     bool operator==(RMPoint p);
     bool operator!=(RMPoint p);
 

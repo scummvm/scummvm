@@ -245,9 +245,9 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 						else
 							curv = v;
 						
-						sommab += cursrc[curv*RM_BBX + u] & 0x1F;
-						sommag += (cursrc[curv*RM_BBX + u] >> 5) & 0x1F;
-						sommar += (cursrc[curv*RM_BBX + u] >> 10) & 0x1F;
+						sommab += cursrc[curv * RM_BBX + u] & 0x1F;
+						sommag += (cursrc[curv * RM_BBX + u] >> 5) & 0x1F;
+						sommar += (cursrc[curv * RM_BBX + u] >> 10) & 0x1F;
 					}
 				}
 				rgb[k + 0] = (byte) (sommab * 8 / (dezoom * dezoom));

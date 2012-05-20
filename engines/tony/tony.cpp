@@ -124,14 +124,12 @@ Common::ErrorCode TonyEngine::Init() {
 
 	// Link to the custom graphics engine
 	_theEngine.InitCustomDll();
-
-	// Inizializza il gfxEngine
 	_theEngine.Init();
 
-	// Memoria per il thumbnail
+	// Allocate space for thumbnails when saving the game
 	m_curThumbnail = new uint16[160 * 120];
 
-	// Configurazione di default
+	// Set up global defaults
 	GLOBALS.bCfgInvLocked = false;
 	GLOBALS.bCfgInvNoScroll = false;
 	GLOBALS.bCfgTimerizedText = true;
@@ -358,14 +356,14 @@ void TonyEngine::InitMusic() {
 		m_sfx[i] = m_utilSfx[i] = NULL;
 	}
 
-	// Crea la critical section per la musica
+	// Create the mutex for controlling music access
 //	csMusic = g_system->createMutex();
 
-	// Carica effetti sonori
+	// Preload sound effects
 //	PreloadUtilSFX(0,"AccendiOpzione.ADP");
 //	PreloadUtilSFX(1,"ApriInterfaccia.ADP");
 	
-	PreloadUtilSFX(0, "U01.ADP"); // invertiti!!
+	PreloadUtilSFX(0, "U01.ADP"); // Reversed!!
 	PreloadUtilSFX(1, "U02.ADP");
 }
 

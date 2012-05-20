@@ -38,47 +38,34 @@ using namespace ::Tony::MPAL;
 
 
 /****************************************************************************\
-*       Metodi di RMPalette
+*       RMPalette Methods
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     friend RMDataStream &operator>>(RMDataStream &ds,
-*                 RMPalette& pal);
-*
-* Description:  Operatore di estrazione di palette da data stream
-*
-* Input:        RMDataStream &ds        Data stream
-*               RMPalette& pal          Palette di destinazione
-*
-* Return:       Reference allo stream
-*
-\****************************************************************************/
-
+/**
+ * Operator for reading palette information from a data stream.
+ *
+ * @param ds				Data stream
+ * @param pal				Destination palette 
+ *
+ * @returns		Reference to the data stream
+ */
 RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal) {
 	ds.Read(pal.m_data,1024);
 	return ds;
 }
 
 /****************************************************************************\
-*       Metodi di RMSlot
+*       RMSlot Methods
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     friend RMDataStream &operator>>(RMDataStream &ds,
-*                 RMSlot& slot)
-*
-* Description:  Operatore per estrarre uno slot di un pattern da un data
-*               stream
-*
-* Input:        RMDataStream &ds        Data stream
-*               RMSlot& slot            Slot di destinazione
-*
-* Return:       Reference allo stream
-*
-\****************************************************************************/
-
+/**
+ * Operator for reading slot information from a data stream.
+ *
+ * @param ds				Data stream
+ * @param slot				Destination slot
+ *
+ * @returns		Reference to the data stream
+ */
 RMDataStream &operator>>(RMDataStream &ds, RMPattern::RMSlot &slot) {
 	slot.ReadFromStream(ds);
 	return ds;
@@ -107,20 +94,14 @@ void RMPattern::RMSlot::ReadFromStream(RMDataStream &ds, bool bLOX) {
 *       Metodi di RMPattern
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     friend RMDataStream &operator>>(RMDataStream &ds,
-*                 RMPattern& pat)
-*
-* Description:  Operatore per estrarre un pattern da un data stream
-*
-* Input:        RMDataStream &ds        Data stream
-*               RMPattern& pat          Pattern di destinazione
-*
-* Return:       Reference allo stream
-*
-\****************************************************************************/
-
+/**
+ * Operator for reading pattern information from a data stream
+ *
+ * @param ds				Data stream
+ * @param pat				Destination pattern
+ *
+ * @returns		Reference to the data stream
+ */
 RMDataStream &operator>>(RMDataStream &ds, RMPattern &pat) {
 	pat.ReadFromStream(ds);
 	return ds;
@@ -129,23 +110,23 @@ RMDataStream &operator>>(RMDataStream &ds, RMPattern &pat) {
 void RMPattern::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	int i;
 
-	// Nome del pattern
+	// Pattern name
 	if (!bLOX)
 		ds >> m_name;
 
-	// Velocita'
+	// Velocity
 	ds >> m_speed;
 
-	// Posizione
+	// Position
 	ds >> m_pos;
 
-	// Flag di loop del pattern
+	// Flag for pattern looping
 	ds >> m_bLoop;
 
-	// Numero di slot
+	// Number of slots
 	ds >> m_nSlots;
 
-	// Creazione e lettura degli slot
+	// Create and read the slots
 	m_slots = new RMSlot[m_nSlots];
 
 	for (i = 0; i < m_nSlots && !ds.IsError(); i++) {
@@ -174,11 +155,11 @@ void RMPattern::StopSfx(RMSfx *sfx) {
 int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	int i;
 
-	// Prendiamo il tempo corrente
+	// Read the current time
 	m_nStartTime = _vm->GetTime();
 	m_nCurSlot = 0;
 
-	// Cerca il primo frame nel pattern
+	// Find the first frame of the pattern
 	i = 0;
 	while (m_slots[i].m_type != SPRITE) {
 		assert(i + 1 < m_nSlots);
@@ -190,13 +171,13 @@ int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	if (bFlag)
 		*bFlag = m_slots[i].m_flag;
 	
-	// Calcola le coordinate correnti
+	// Calculate the current coordinates
 	UpdateCoord();
 	
-	// Controlla per il sonoro: 
-	//  Se sta alla slot 0, lo playa
-	//  Se speed = 0, deve suonare solo se va in loop '_', oppure se specificato dal parametro
-	//  Se speed! = 0, suona solo quelli in loop
+	// Check for sound:
+	//  If the slot is 0, play
+	//  If speed = 0, must playing unless it goes into loop '_', or if specified by the parameter
+	//  If speed != 0, play only the loop
 	for (i = 0;i < m_nSlots; i++) {
 		if (m_slots[i].m_type == SOUND) {
 			if (i == 0) {
@@ -230,14 +211,14 @@ int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 	int CurTime = _vm->GetTime();
 
-	// Se la speed e' 0, il pattern non avanza mai	
+	// If the speed is 0, then the pattern never advances
 	if (m_speed == 0) {
 		CoroScheduler.pulseEvent(hEndPattern);
 		bFlag=m_slots[m_nCurSlot].m_flag;
 		return m_nCurSprite;
 	}
 
-	// E' arrivato il momento di cambiare slot?
+	// Is it time to change the slots?
 	while (m_nStartTime + m_speed <= (uint32)CurTime) {
 		m_nStartTime += m_speed; 
 		if (m_slots[m_nCurSlot].m_type == SPRITE)
@@ -248,8 +229,8 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 
 			CoroScheduler.pulseEvent(hEndPattern);
 
-			// @@@ Se non c'e' loop avverte che il pattern e' finito
-			// Se non c'e' loop rimane sull'ultimo frame
+			// @@@ If there is no loop pattern, and there's a warning that it's the final
+			// frame, then remain on the last frame
 			if (!m_bLoop) {
 				m_nCurSlot = m_nSlots - 1;
 				bFlag = m_slots[m_nCurSlot].m_flag;
@@ -260,10 +241,10 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 		for (;;) {
 			switch (m_slots[m_nCurSlot].m_type) {
 			case SPRITE:
-				// Legge il prossimo sprite
+				// Read the next sprite
 				m_nCurSprite = m_slots[m_nCurSlot].m_data;
 			
-				// Aggiorna le coordinate babbo+figlio
+				// Update the parent & child coordinates
 				UpdateCoord();
 				break;
 
@@ -293,7 +274,7 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 		} 
 	}
 
-	// Ritorna lo sprite corrente
+	// Return the current sprite
 	bFlag=m_slots[m_nCurSlot].m_flag;
 	return m_nCurSprite;
 }
@@ -320,23 +301,17 @@ RMPattern::~RMPattern() {
 
 
 /****************************************************************************\
-*       Metodi di RMSprite
+*       RMSprite Methods
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     friend RMDataStream &operator>>(RMDataStream &ds,
-*                 RMSprite& sprite)
-*
-* Description:  Operatore per estrarre uno sprite da un data stream
-*
-* Input:        RMDataStream &ds        Data stream
-*               RMItem &item            Sprite di destinazione
-*
-* Return:       Reference allo stream
-*
-\****************************************************************************/
-
+/**
+ * Operator for reading sprite information from a data stream.
+ *
+ * @param ds				Data stream
+ * @param sprite			Destination slot
+ *
+ * @returns		Reference to the data stream
+ */
 RMDataStream &operator>>(RMDataStream &ds, RMSprite &sprite) {
 	sprite.ReadFromStream(ds);
 	return ds;
@@ -366,22 +341,22 @@ void RMSprite::GetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy) {
 void RMSprite::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	int dimx,dimy;
 	
-	// Nome dello sprite
+	// Sprite name
 	if (!bLOX)
 		ds >> m_name;
 
-	// Dimensioni
+	// Dimensions
 	ds >> dimx >> dimy;
 
-	// Bouding box
+	// Bounding box
 	ds >> m_rcBox;
 
-	// Spazio inutilizzato
+	// Unused space
 	if (!bLOX)
-		ds+=32;
+		ds += 32;
 
-	// Crezione del buffer e lettura
-	m_buf->Init(ds, dimx,dimy);
+	// Create buffer and read
+	m_buf->Init(ds, dimx, dimy);
 }
 
 void RMSprite::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -405,23 +380,17 @@ RMSprite::~RMSprite() {
 
 
 /****************************************************************************\
-*       Metodi di RMSfx
+*       RMSfx Methods
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     friend RMDataStream &operator>>(RMDataStream &ds,
-*                 RMSfx &sfx)
-*
-* Description:  Operatore per estrarre uno sfx da un data stream
-*
-* Input:        RMDataStream &ds        Data stream
-*               RMSfx &sfx              Sfx di destinazione
-*
-* Return:       Reference allo stream
-*
-\****************************************************************************/
-
+/**
+ * Operator for reading SFX information from a data stream.
+ *
+ * @param ds				Data stream
+ * @param sfx				Destination SFX
+ *
+ * @returns		Reference to the data stream
+ */
 RMDataStream &operator>>(RMDataStream &ds, RMSfx &sfx) {
 	sfx.ReadFromStream(ds);
 	return ds;
@@ -432,29 +401,29 @@ void RMSfx::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	int size;
 	byte *raw;
  
-	// Nome dello sfx
+	// sfx name
 	ds >> m_name;
  
 	ds >> size;
 
-	// Carica l'effetto sonoro dal buffer
-	ds.Read(id,4);
+	// Upload the sound effect identifier from the buffer
+	ds.Read(id, 4);
 
-	// Controlla che sia un riff
+	// Ensure it's a RIFF
 	assert(id[0] == 'R' && id[1] == 'I' && id[2] == 'F' && id[3] == 'F');
 
-	// Legge la dimensione
+	// Read the size
 	ds >> size;
 
-	// Carica il wav
+	// Read the raw WAV data
 	raw = new byte[size]; 
 	ds.Read(raw, size);
 
-	// Crea l'effetto sonoro
+	// Create the sound effect
 	m_fx = _vm->CreateSFX(raw);
 	m_fx->SetLoop(false);
 
-	// Cancella il buffer che non serve più a nessuno
+	// Close the read buffer which is no longer needed
 	delete[] raw;
 }
 
@@ -476,7 +445,7 @@ void RMSfx::Play(bool bLoop) {
 		m_fx->Play();
 
 		if (bLoop)
-			m_bPlayingLoop=true;
+			m_bPlayingLoop = true;
 	}
 }
 
@@ -502,23 +471,17 @@ void RMSfx::Stop(void) {
 
 
 /****************************************************************************\
-*       Metodi di RMItem
+*       RMItem Methods
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     friend RMDataStream &operator>>(RMDataStream &ds,
-*                 RMItem &item)
-*
-* Description:  Operatore per estrarre un item da un data stream
-*
-* Input:        RMDataStream &ds        Data stream
-*               RMItem &item            Item di destinazione
-*
-* Return:       Reference allo stream
-*
-\****************************************************************************/
-
+/**
+ * Operator for reading item information from a data stream.
+ *
+ * @param ds				Data stream
+ * @param tem				Destination item
+ *
+ * @returns		Reference to the data stream
+ */
 RMDataStream &operator>>(RMDataStream &ds, RMItem &item) {
 	item.ReadFromStream(ds);
 	return ds;
@@ -561,13 +524,12 @@ bool RMItem::IsIn(const RMPoint &pt, int *size)  {
 	if (!m_bIsActive) 
 		return false; 
 	
-	// Cerca il rettangolo giusto da usare, che è quello dello sprite se ce l'ha, altrimenti
-	// quello generico dell'oggeto
+	// Search for the right bounding box to use - use the sprite's if it has one, otherwise use the generic one
 	if (m_nCurPattern != 0 && !m_sprites[m_nCurSprite].m_rcBox.IsEmpty())
 		rc=m_sprites[m_nCurSprite].m_rcBox + CalculatePos();
 	else if (!m_rcBox.IsEmpty())
 		rc = m_rcBox;
-	// Se non ha box, esce subito
+	// If no box, return immediately
 	else
 		return false;
 	
@@ -582,16 +544,16 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	int i, dimx, dimy;
 	byte cm;
 
-	// Codice mpal
+	// MPAL code
 	ds >> m_mpalCode;
 
-	// Nome dell'oggetto
+	// Object name
 	ds >> m_name;
 
 	// Z (signed)
 	ds >> m_z;
 
-	// Posizione nonno
+	// Parent position
 	ds >> m_pos;
 
 	// Hotspot
@@ -600,22 +562,22 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	// Bounding box
 	ds >> m_rcBox;
 
-	// Numero sprite, effetti sonori e pattern
+	// Number of sprites, sound effects, and patterns
 	ds >> m_nSprites >> m_nSfx >> m_nPatterns;
 
 	// Color mode
 	ds >> cm; m_cm=(RMColorMode)cm;
 
-	// Flag di presenza della palette differnziata
+	// Flag for the presence of custom palette differences
 	ds >> m_bPal;
 
 	if (m_cm == CM_256) {
-		//  Se c'e' la palette, leggiamola
+		//  If there is a palette, read it in
 		if (m_bPal)
 			ds >> m_pal;
 	}
 
-	// Dati MPAL
+	// MPAL data
 	if (!bLOX)
 		ds += 20;
  
@@ -625,17 +587,17 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	if (!bLOX)
 	ds += 106;
  
-	// Creazione delle classi
+	// Create sub-classes
 	if (m_nSprites > 0)
 		 m_sprites = new RMSprite[m_nSprites];
 	if (m_nSfx > 0)
 		m_sfx = new RMSfx[m_nSfx];
 	m_patterns = new RMPattern[m_nPatterns+1];
 
-	// Lettura delle classi
+	// Read in class data
 	if (!ds.IsError())
 		for (i = 0; i < m_nSprites && !ds.IsError(); i++) {
-		 // Carica lo sprite
+		 // Download the sprites
 		 if (bLOX) {
 			 m_sprites[i].LOXGetSizeFromStream(ds, &dimx, &dimy);
 			 m_sprites[i].Init(NewItemSpriteBuffer(dimx, dimy, true));
@@ -658,7 +620,7 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 				m_sfx[i].ReadFromStream(ds, false);
 		}
 
-	// Leggiamo i pattern a partire dal pattern 1
+	// Read the pattern from pattern 1
 	if (!ds.IsError())
 		for (i = 1;i <= m_nPatterns && !ds.IsError(); i++) {
 			if (bLOX)
@@ -667,12 +629,12 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 				m_patterns[i].ReadFromStream(ds, false);
 		}
 
-	// Inizializza il curpattern
+	// Initialise the current pattern
 	if (m_bInitCurPattern)
 		SetPattern(mpalQueryItemPattern(m_mpalCode));
 
-	// Inizializza lo stato di attivazione
-	m_bIsActive=mpalQueryItemIsActive(m_mpalCode);
+	// Initailise the current activation state
+	m_bIsActive = mpalQueryItemIsActive(m_mpalCode);
 }
 
 
@@ -687,11 +649,11 @@ void RMItem::SetScrollPosition(const RMPoint &scroll) {
 bool RMItem::DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 	int oldSprite = m_nCurSprite;
 
-	// Pattern 0 = Non disegnare nulla!
+	// Pattern 0 = Do not draw anything!
 	if (m_nCurPattern == 0)
 		return false;
 
-	// Facciamo un update del pattern, che ci ritorna anche il frame corrente
+	// We do an update of the pattern, which also returns the current frame
 	if (m_nCurPattern != 0) {
 		m_nCurSprite = m_patterns[m_nCurPattern].Update(m_hEndPattern, m_bCurFlag, m_sfx);
 
@@ -704,14 +666,14 @@ bool RMItem::DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 			m_nCurSprite = -1;
 	}
 
-	// Se la funzione ha ritornato -1, vuol dire che il pattern e' finito
+	// If the function returned -1, it means that the pattern has finished
 	if (m_nCurSprite == -1) {
-		// Mettiamo il pattern 0, e usciamo. La classe si auto-deregistrera' della OT list
+		// We have pattern 0, so leave. The class will self de-register from the OT list
 		m_nCurPattern = 0;
 		return false;
 	}
 
-	// Se non siamo in OT list, mettiamoci
+	// If we are not in the OT list, add ourselves
 	if (!m_nInList && bAddToList)
 		bigBuf->AddPrim(NewItemPrimitive());
 
@@ -728,24 +690,24 @@ void RMItem::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Se CurSprite == -1, allora e' finito il pattern
+	// If CurSprite == -1, then the pattern is finished
 	if (m_nCurSprite == -1)
 	  return;
 	
-	// Settiamo la flag
+	// Set the flag
 	prim->SetFlag(m_bCurFlag);
 
-	// Offset inverso per lo scrolling
+	// Offset direction for scrolling
 	prim->Dst().Offset(-m_curScroll);
 
-	// Dobbiamo sparaflashare le coordinate dell'item dentro la primitiva.
-	// Si calcola nonno+(babbo+figlio)
+	// We must offset the cordinates of the item inside the primitive
+	// It is estimated as nonno + (babbo + figlio)
 	prim->Dst().Offset(CalculatePos());
 
 	// No stretching, please
 	prim->SetStrecth(false);
 
-	// Ora la passiamo alla routine di drawing generica per surface
+	// Now we turn to the generic surface drawing routines
 	CORO_INVOKE_2(m_sprites[m_nCurSprite].Draw, bigBuf, prim);
 
 	CORO_END_CODE;
@@ -753,7 +715,7 @@ void RMItem::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 
 void RMItem::RemoveThis(CORO_PARAM, bool &result) {
-	// Rimuove dalla OT list se il frame corrente e' -1 (pattern finito)
+	// Remove from the OT list if the current frame is -1 (pattern over)
 	result = (m_nCurSprite == -1);
 }
 
@@ -771,16 +733,16 @@ void RMItem::SetPattern(int nPattern, bool bPlayP0) {
 		if (m_nCurPattern>0)
 			m_patterns[m_nCurPattern].StopSfx(m_sfx);
 	
-	// Si ricorda il pattern corrente
+	// Remember the current pattern
 	m_nCurPattern = nPattern;
 
-	// Inizia il pattern per cominciare l'animazione
+	// Start the pattern to start the animation
 	if (m_nCurPattern != 0)
 		m_nCurSprite = m_patterns[m_nCurPattern].Init(m_sfx, bPlayP0, &m_bCurFlag);
 	else {
 		m_nCurSprite = -1;
 		
-		// Cerca l'effetto sonoro per il pattern 0
+		// Look for the sound effect for pattern 0
 		if (bPlayP0)
 			for (i = 0;i < m_nSfx; i++)
 				if (strcmp(m_sfx[i].m_name, "p0") == 0)
@@ -789,8 +751,7 @@ void RMItem::SetPattern(int nPattern, bool bPlayP0) {
 }
 
 
-bool RMItem::GetName(RMString &name)
-{
+bool RMItem::GetName(RMString &name) {
 	char buf[256];
 
 	mpalQueryItemName(m_mpalCode, buf);
@@ -885,7 +846,7 @@ void RMItem::PauseSound(bool bPause) {
 
 
 /****************************************************************************\
-*       Metodi di RMWipe
+*       RMWipe Methods
 \****************************************************************************/
 
 
@@ -931,13 +892,13 @@ void RMWipe::WaitForFadeEnd(CORO_PARAM) {
 }
 
 void RMWipe::CloseFade(void) {
-//	m_bUnregister=true;
+//	m_bUnregister = true;
 //	WaitForSingleObject(m_hUnregistered,CORO_INFINITE);
 	m_wip0r.Unload();
 }
 
 void RMWipe::InitFade(int type) {
-	// Attiva il fade
+	// Activate the fade
 	m_bUnregister = false;
 	m_bEndFade = false;
 
@@ -993,19 +954,19 @@ void RMWipe::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 
 /****************************************************************************\
-*       Metodi di RMCharacter
+*       RMCharacter Methods
 \****************************************************************************/
 
-/***************************************************************************/
-/* Cerca il percorso minimo tra due nodi del grafo di connessione dei BOX  */
-/* Restituisce il percorso lungo pathlenght nel vettore path[]             */
-/***************************************************************************/
+/****************************************************************************/
+/* Find the shortest path between two nodes of the graph connecting the BOX */
+/* Returns path along the vector path path[]                                */
+/****************************************************************************/
 
 short RMCharacter::FindPath(short source, short destination) {
-	static RMBox BOX[MAXBOXES];            // Matrice di Adjacenza
-	static short COSTO[MAXBOXES];               // Costi per Nodo
-	static short VALIDO[MAXBOXES];              // 0:non valido 1:valido 2:saturo
-	static short NEXT[MAXBOXES];                // Prossimo Nodo
+	static RMBox BOX[MAXBOXES];			// Matrix of adjacent boxes
+	static short COSTO[MAXBOXES];       // Cost per node
+	static short VALIDO[MAXBOXES];      // 0:Invalid 1:Valid 2:Saturated
+	static short NEXT[MAXBOXES];        // Prossimo Nodo
 	short i, j, k, costominimo, fine, errore = 0;
 	RMBoxLoc *cur;
 
@@ -1016,37 +977,37 @@ short RMCharacter::FindPath(short source, short destination) {
 		return 0;
 	}
 
-	// Si fa dare i box
+	// Get the boxes
 	cur = theBoxes->GetBoxes(curLocation);
 
-	// Effettua una copia di riserva per lavorarci
+	// Make a backup copy to work on
 	for (i = 0; i < cur->numbbox; i++)
 		memcpy(&BOX[i], &cur->boxes[i], sizeof(RMBox));
 
-	// Invalida tutti i Nodi
+	// Invalidate all nodes
 	for (i = 0; i < cur->numbbox; i++) 
 		VALIDO[i] = 0;
 	
-	// Prepara sorgente e variabili globali alla procedura
+	// Prepare source and variables for the procedure
 	COSTO[source] = 0;
 	VALIDO[source] = 1;
 	fine = 0;
  
- 	 // Ricerca del percorso minimo
+ 	 // Find the shortest path
 	while(!fine) {
-		costominimo = 32000;                  // risetta il costo minimo
-		errore = 1;                           // errore possibile
+		costominimo = 32000;				// Reset the minimum cost
+		errore = 1;							// Possible error
 
-		// 1° ciclo : ricerca di possibili nuovi nodi
+		// 1st cycle: explore possible new nodes
 		for (i = 0; i < cur->numbbox; i++)
 			if (VALIDO[i] == 1) {
-				errore = 0;                                        // errore sfatato
+				errore = 0;					// Failure de-bunked
 				j = 0;
 				while (((BOX[i].adj[j]) != 1) && (j < cur->numbbox)) 
 					j++;
       
 				if (j >= cur->numbbox) 
-					VALIDO[i] = 2;                     // nodo saturo?
+					VALIDO[i] = 2;                     // nodo saturated?
 				else {
 					NEXT[i] = j;
 					if (COSTO[i] + 1 < costominimo) 
@@ -1055,9 +1016,9 @@ short RMCharacter::FindPath(short source, short destination) {
 			}
 
 		if (errore) 
-			fine = 1;                                 // tutti i nodi saturi
+			fine = 1;                                 // All nodes saturated
 
-		// 2° ciclo : aggiunta nuovi nodi trovati , saturazione nodi vecchi
+		// 2nd cycle: adding new nodes that were found, saturate old nodes
 		for (i = 0; i < cur->numbbox; i++)
 			if ((VALIDO[i] == 1) && ((COSTO[i] + 1) == costominimo)) {
 				BOX[i].adj[NEXT[i]] = 2;
@@ -1072,7 +1033,7 @@ short RMCharacter::FindPath(short source, short destination) {
 			}
 	}
 
-	// Estrazione del percorso dalla matrice di adiacenza modificata
+	// Remove the path from the adjacent modified matrixes
 	if (!errore) {
 		pathlenght = COSTO[destination];
 		k = pathlenght;
@@ -1133,7 +1094,7 @@ void RMCharacter::GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 			walkspeed = -walkspeed;
 		walkstatus = 1;
     
-		// Cambia il proprio pattern per la nuova direzione
+		// Change the pattern for the new direction
 		bNeedToStop = true;
 		if ((walkspeed < 0 && !bReversed) || (walkspeed >= 0 && bReversed))  {
    		if (nPatt != PAT_WALKLEFT)
@@ -1148,7 +1109,7 @@ void RMCharacter::GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 			walkspeed = -walkspeed;
 		walkstatus = 0;
     
-		bNeedToStop=true;
+		bNeedToStop = true;
 		if ((walkspeed < 0 && !bReversed) || (walkspeed >= 0 && bReversed)) {
    			if (nPatt != PAT_WALKUP)
 				SetPattern(PAT_WALKUP);  
@@ -1237,7 +1198,7 @@ RMPoint RMCharacter::NearestPoint(const RMPoint &punto) {
  if ((difx<0) && (dify>0)) tofind=Searching(0,1,0,1,punto);
  if ((difx<0) && (dify<0)) tofind=Searching(1,0,0,1,punto);
 
- // potrebbero essere tolti? Pensaci @@@@
+ // Could be removed? Think @@@@
  if ((difx= = 0) && (dify>0)) tofind=Searching(0,1,1,1,punto);
  if ((difx= = 0) && (dify<0)) tofind=Searching(1,0,1,1,punto);
  if ((dify= = 0) && (difx>0)) tofind=Searching(1,1,1,0,punto);
@@ -1259,8 +1220,8 @@ short RMCharacter::ScanLine(const RMPoint &punto) {
 
 	Lstart = m_pos;
 	Lend = punto;
-	Ldx = Lstart.x-Lend.x;
-	Ldy = Lstart.y-Lend.y;
+	Ldx = Lstart.x - Lend.x;
+	Ldy = Lstart.y - Lend.y;
 	Lfx = Ldx;
 	Lfy = Ldy;
 	Ldx = ABS(Ldx);
@@ -1278,7 +1239,7 @@ short RMCharacter::ScanLine(const RMPoint &punto) {
 		Lstatus = 0;
 	}
 
-	Lscan = Lstart;   // Inizio scansione
+	Lscan = Lstart;   // Start scanning
 	while (InWhichBox(Lscan) != -1) {
 		Lcount++;
 		if (Lstatus) {
@@ -1298,7 +1259,9 @@ short RMCharacter::ScanLine(const RMPoint &punto) {
 	return 0;
 }
 
-// Calcola intersezioni tra la traiettoria rettilinea ed il più vicino BBOX
+/**
+ * Calculates intersections between the straight line and the closest BBOX
+ */
 RMPoint RMCharacter::InvScanLine(const RMPoint &punto) {
 	int Ldx, Ldy, Lcount;
 	float Lfx, Lfy, Lslope;
@@ -1351,9 +1314,9 @@ RMPoint RMCharacter::InvScanLine(const RMPoint &punto) {
 }
 
 
-/***************************************************************************/
-/* Ritorna la coordinata dell'HotSpot di uscita più vicino al giocatore    */
-/***************************************************************************/
+/**
+ * Returns the HotSpot coordinate closest to the player
+ */
 
 RMPoint RMCharacter::NearestHotSpot(int sourcebox, int destbox) {
 	RMPoint puntocaldo;
@@ -1396,21 +1359,21 @@ void RMCharacter::NewBoxEntered(int nBox) {
 	RMBoxLoc *cur;
 	bool bOldReverse;
 	
-	// Richiama la On ExitBox
+	// Recall on ExitBox
 	mpalQueryDoAction(3, curLocation, curbox);
 
 	cur = theBoxes->GetBoxes(curLocation);
 	bOldReverse = cur->boxes[curbox].bReversed;
 	curbox = nBox;
 
-	// Se è cambiata la Z, dobbiamo rimuoverlo dalla OT
+	// If Z is changed, we must remove it from the OT
 	if (cur->boxes[curbox].Zvalue != m_z) {
 		bRemoveFromOT = true;
 		m_z = cur->boxes[curbox].Zvalue;
 	}
 
-	// Gestisce l'inversione del movimento SOLO se non siamo nel percorso minimo: se siamo in percorso
-	//  minimo è direttamente la DoFrame a farlo
+	// Movement management is reversed, only if we are not in the shortest path. If we are in the shortest
+	// path, directly do the DoFrame
 	if (bMovingWithoutMinpath) {
 		if ((cur->boxes[curbox].bReversed && !bOldReverse) || (!cur->boxes[curbox].bReversed && bOldReverse)) {
 			switch (GetCurPattern()) {
@@ -1430,7 +1393,7 @@ void RMCharacter::NewBoxEntered(int nBox) {
 		}
 	}
 
-	// Richiama la On EnterBox
+	// Recall On EnterBox
 	mpalQueryDoAction(2, curLocation, curbox);
 }
 	
@@ -1448,16 +1411,16 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 
 	g_system->lockMutex(csMove);
 
-	// Se stiamo camminando...
+	// If we're walking..
 	if (status != STAND) {
-		// Se stiamo andando in orizzontale
+		// If we are going horizontally
 		if (walkstatus == 1) {
 			dx = walkspeed * walkcount;
 			dy = slope * dx;
 			m_pos.x = linestart.x + dx;
 			m_pos.y = linestart.y + dy;
 
-			// Destra
+			// Right
 			if (((walkspeed > 0) && (m_pos.x > lineend.x)) || ((walkspeed < 0) && (m_pos.x < lineend.x))) {
 				m_pos = lineend;
 				status = STAND;
@@ -1465,14 +1428,14 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 			}
 		}
     
-		// Se stiamo andando in verticale
+		// If we are going vertical
 		if (walkstatus == 0) {
 			dy = walkspeed * walkcount;
 			dx = slope * dy;
 			m_pos.x = linestart.x + dx;
 			m_pos.y = linestart.y + dy;
 
-			// Basso
+			// Down
 			if (((walkspeed > 0) && (m_pos.y > lineend.y)) || ((walkspeed < 0) && (m_pos.y < lineend.y))) {
 				m_pos = lineend;
 				status = STAND;
@@ -1480,15 +1443,13 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 			}
 		}
 
-		// Controlla se il personaggio è uscito dai BOX per errore, nel qual caso
-		//  lo fa rientrare subito
+		// Check if the character came out of the BOX in error, in which case he returns immediately
 		if (InWhichBox(m_pos) == -1) {
 			m_pos.x = linestart.x + olddx;
 			m_pos.y = linestart.y + olddy;
 		}
 
-		// Se siamo appena arrivati alla destinazione temporanea ed è finito il percorso minimo, 
-		// ci fermiamo definitivamente
+		// If we have just moved to a temporary location, and is over the shortest path, we stop permanently
 		if (_ctx->bEndNow && minpath == 0) {
 			if (!bEndOfPath)
 				CORO_INVOKE_0(Stop);
@@ -1498,35 +1459,35 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 		
 		walkcount++;
 
-		// Aggiorna la Z del personaggio @@@ bisognerebbe rimuoverlo solo se è cambiata la Z
+		// Update the character Z. @@@ Should remove only if the Z was changed
 		
-		// Controlla se abbiamo cambiato box
+		// Check if the box was changed
 		if (!theBoxes->IsInBox(curLocation, curbox, m_pos))
 			NewBoxEntered(InWhichBox(m_pos));
 
-		// Aggiorna le vecchie coordinate
+		// Update the old coordinates
 		olddx = dx;
 		olddy = dy;
 	}
 
-	// Se siamo fermi
+	// If we stop
 	if (status == STAND) {
-		// Controlliamo se c'è ancora percorso minimo da calcolare
+		// Check if there is still the shortest path to calculate
 		if (minpath == 1) {
 			_ctx->cur = theBoxes->GetBoxes(curLocation);
 
-			// Se dobbiamo ancora attraversare un box
+			// If we still have to go through a box
 			if (pathcount < pathlenght) {
-				// Controlliamo che il box su cui stiamo entrando sia attivo
+				// Check if the box we're going into is active
 				if (_ctx->cur->boxes[path[pathcount-1]].attivo) {
-					// Muoviti in linea retta verso l'hotspot più vicino, tenendo conto del reversing please
+					// Move in a straight line towards the nearest hotspot, taking into account the reversing
 					// NEWBOX = path[pathcount-1]
 					CORO_INVOKE_2(GoTo, NearestHotSpot(path[pathcount-1], path[pathcount]), _ctx->cur->boxes[path[pathcount-1]].bReversed);
 					pathcount++;
 				} else {
-					// Se il box è disattivato, possiamo solo bloccare tutto
-					// @@@ Questo non dovrebbe più avvenire, dato che abbiamo migliorato
-					// la ricerca del percorso minimo
+					// If the box is off, we can only block all
+					// @@@ Whilst this should not happen, because have improved
+					// the search for the minimum path
 					minpath = 0;
 					if (!bEndOfPath)
 						CORO_INVOKE_0(Stop);
@@ -1534,8 +1495,8 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 					CoroScheduler.pulseEvent(hEndOfPath);
 				}
 			} else {
-				// Se siamo già entrati nell'ultimo box, dobbiamo solo muoverci in linea retta verso il
-				//  punto di arrivo
+				// If we have already entered the last box, we just have to move in a straight line towards the 
+				// point of arrival
 				// NEWBOX = InWhichBox(pathend)
 				minpath = 0;
 				CORO_INVOKE_2(GoTo, pathend, _ctx->cur->boxes[InWhichBox(pathend)].bReversed);
@@ -1545,7 +1506,7 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 
 	g_system->unlockMutex(csMove);
 
-	// Richiama il DoFrame dell'item
+	// Invoke the DoFrame of the item
 	RMItem::DoFrame(bigBuf);
 
 	CORO_END_CODE;
@@ -1611,7 +1572,7 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 
 	bMoving = true;
 	
-	// Se 0,0, non fare nulla, anzi fermati
+	// 0, 0 does not do anything, just stops the character
 	if (pt.x == 0 && pt.y == 0) {
 		minpath = 0;
 		status = STAND;
@@ -1621,10 +1582,10 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 		return;
 	}
 
-	// Se clicko fuori dai box
+	// If clicked outside the box
  	_ctx->numbox = InWhichBox(pt);
 	if (_ctx->numbox == -1) {
-		// Trova il punto più vicino dentro i box
+		// Find neareste point inside the box
 		_ctx->dest = NearestPoint(pt);
 
 		// ???!??
@@ -1687,7 +1648,7 @@ void RMCharacter::SetPosition(const RMPoint &pt, int newloc) {
 	if (newloc != -1)
 		curLocation = newloc;
 
-	// Aggiorna la Z del personaggio
+	// Update the character's Z value
 	box = theBoxes->GetBoxes(curLocation);
 	curbox = InWhichBox(m_pos);
 	assert(curbox != -1);
@@ -1771,7 +1732,7 @@ void RMBox::ReadFromStream(RMDataStream &ds) {
 	ds >> right;
 	ds >> bottom;
 
-	// Adiacenza
+	// Adjacency
 	for (i = 0; i < MAXBOXES; i++) {
 		ds >> adj[i];
 	}
@@ -1784,8 +1745,8 @@ void RMBox::ReadFromStream(RMDataStream &ds) {
 	ds >> b;
 	bReversed = b;
 
-	// Spazio di espansione
-	ds+=30;
+	// Reversed expansion space
+	ds += 30;
 
 	// Hotspots
 	for (i = 0; i < numhotspot; i++) {
@@ -1818,18 +1779,18 @@ void RMBoxLoc::ReadFromStream(RMDataStream &ds) {
 	char buf[2];
 	byte ver;
 
-	// ID and versione
+	// ID and version
 	ds >> buf[0] >> buf[1] >> ver;
 	assert(buf[0] == 'B' && buf[1] == 'X');
 	assert(ver == 3);
 
-	// Numero dei box
+	// Number of boxes
 	ds >> numbbox;
 
-	// Alloca la memoria per i box
+	// Allocate memory for the boxes
 	boxes = new RMBox[numbbox];
 
-	// Li legge da disco
+	// Read in boxes
 	for (i = 0; i < numbbox; i++)
 		ds >> boxes[i];
 }
@@ -1950,7 +1911,7 @@ void RMGameBoxes::SaveState(byte *state) {
 	// For each location, write out the number of boxes and their status
 	for (i=1; i <= m_nLocBoxes; i++) {
 		WRITE_LE_UINT32(state, m_allBoxes[i]->numbbox);
-		state+=4;
+		state += 4;
 				
 		for (j = 0; j < m_allBoxes[i]->numbbox; j++)
 			*state++ = m_allBoxes[i]->boxes[j].attivo;
@@ -1958,17 +1919,16 @@ void RMGameBoxes::SaveState(byte *state) {
 }
 
 void RMGameBoxes::LoadState(byte *state) {
-	int i,j;
-	int nloc,nbox;
+	int i, j;
+	int nloc, nbox;
 
-	// Load number of locations with box
+	// Load number of items
 	nloc = *(int*)state;
-	state+=4;
+	state += 4;
 
-	// Controlla che siano meno di quelli correnti
 	assert(nloc <= m_nLocBoxes);
 
-	// Per ogni locazione, salva il numero di box e il loro stato
+	// For each location, read the number of boxes and their status
 	for (i = 1; i <= nloc; i++) {
 		nbox = READ_LE_UINT32(state);
 		state += 4;
@@ -1985,17 +1945,12 @@ void RMGameBoxes::LoadState(byte *state) {
 }
 
 /****************************************************************************\
-*       Metodi di RMLocation
+*       RMLocation Methods
 \****************************************************************************/
 
-/****************************************************************************\
-*
-* Function:     RMLocation::RMLocation();
-*
-* Description:  Costruttore standard
-*
-\****************************************************************************/
-
+/**
+ * Standard constructor
+ */
 RMLocation::RMLocation() {
 	m_nItems = 0;
 	m_items = NULL;
@@ -2003,49 +1958,36 @@ RMLocation::RMLocation() {
 }
 
 
-/****************************************************************************\
-*
-* Function:     bool RMLocation::Load(char *lpszFileName);
-*
-* Description:  Carica una locazione (.LOC) da un file di cui viene fornito
-*               il pathname.
-*
-* Input:        char *lpszFileName      Nome del file di dati
-*
-* Return:       true se tutto OK, false in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Load a location (.LOC) from a file that is provided.
+ *
+ * @param lpszFileName			Name of the file
+ */
 bool RMLocation::Load(const char *lpszFileName) {
 	Common::File f;
 	bool bRet;
 
-	// Apre il file in lettura
+	// Open the file for reading
 	if (!f.open(lpszFileName))
 		return false;
 
-	// Lo passa alla routine di loading da file aperto
+	// Passes to the method variation for loading from the opened file
 	bRet = Load(f);
 
-	// Chiude il file
+	// Close the file
 	f.close();
 
 	return bRet;
 }
 
 
-/****************************************************************************\
-*
-* Function:     bool RMLocation::Load(HANDLE hFile);
-*
-* Description:  Carica una locazione (.LOC) da un handle di file aperto
-*
-* Input:        HANDLE hFile            Handle del file
-*
-* Return:       true se tutto OK, false in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Load a location (.LOC) from a given open file
+ *
+ * @param hFile					File reference
+ *
+ * @returns		True if succeeded OK, false in case of error.
+ */
 bool RMLocation::Load(Common::File &file) {
 	int size;
 //	byte *buf;
@@ -2091,20 +2033,12 @@ bool RMLocation::Load(const byte *buf) {
 }
 
 
-
-/****************************************************************************\
-*
-* Function:     bool RMLocation::Load(byte *buf);
-*
-* Description:  Carica una locazione (.LOC) parsando il file gia' caricato
-*               in memoria.
-*
-* Input:        byte *buf              Buffer con il file caricato
-*
-* Return:       true se ok, false in caso di errore
-*
-\****************************************************************************/
-
+/**
+ * Load a location (.LOC) from a given data stream
+ *
+ * @param ds						Data stream
+ * @returns		True if succeeded OK, false in case of error.
+ */
 bool RMLocation::Load(RMDataStream &ds) {
 	char id[3];
 	int dimx, dimy;
@@ -2112,40 +2046,40 @@ bool RMLocation::Load(RMDataStream &ds) {
 	byte cm;
 	int i;
 
-	// Controlla l'ID
+	// Check the ID
 	ds >> id[0] >> id[1] >> id[2];
 	
-	// Controlla se siamo in un LOX
+	// Check if we are in a LOX
 	if (id[0] == 'L' && id[1] == 'O' && id[2] == 'X')
 		return LoadLOX(ds);
 	
-	// Altrimenti, controlla che sia un LOC normale	
+	// Otherwise, check that it is a normal LOC
 	if (id[0] != 'L' || id[1] != 'O' || id[2] != 'C')
 	  return false;
 
-	// Versione
+	// Version
 	ds >> ver;
 	assert(ver == 6);
 
-	// Nome della locazione
+	// Location name
 	ds >> m_name;
 
-	// Skippa i salvataggi MPAL (64 bytes)
+	// Skip the MPAL bailouts (64 bytes)
 	ds >> TEMPNumLoc;
 	ds >> TEMPTonyStart.x >> TEMPTonyStart.y;
 	ds += 64 - 4 * 3;
 
-	// Skippa il flag di background associato (?!)
+	// Skip flag associated with the background (?)
 	ds += 1;
 
-	// Dimensioni della locazione
+	// Location dimensions
 	ds >> dimx >> dimy;
 	m_curScroll.Set(0, 0);
 
-	// Legge il color mode
+	// Read the colour mode
 	ds >> cm; m_cmode = (RMColorMode)cm;
 
-	// Inizializza il source buffer e leggi la locazione dentro
+	// Initialise the source buffer and read the location
 	switch (m_cmode)	 {
 	case CM_256:
 		m_buf = new RMGfxSourceBuffer8;
@@ -2160,16 +2094,16 @@ bool RMLocation::Load(RMDataStream &ds) {
 		break;
 	};
 
-	// Inizializza la surface, caricando anche la palette se necessario
+	// Initialise the surface, loading the palette if necessary
 	m_buf->Init(ds, dimx, dimy, true);
  
-	// Controlla le dimensioni della locazione
+	// Check the size of the location
 //	assert(dimy!=512);
 
-	// Numero oggetti
+	// Number of objects
 	ds >> m_nItems;
 
-	// Creazione e lettura degli oggetti
+	// Create and read in the objects
 	if (m_nItems > 0)
 		m_items = new RMItem[m_nItems];
 
@@ -2179,7 +2113,7 @@ bool RMLocation::Load(RMDataStream &ds) {
 		ds >> m_items[i];
 	_vm->UnfreezeTime();
 
-	// Setta i pattern iniziali @@@ doppione!!
+	// Sets the initial pattern @@@ duplication!
 	//for (i = 0;i<m_nItems;i++)
 	//	m_items[i].SetPattern(mpalQueryItemPattern(m_items[i].MpalCode()));
 
@@ -2192,35 +2126,35 @@ bool RMLocation::LoadLOX(RMDataStream &ds) {
 	byte ver;
 	int i;
 
-	// Versione
+	// Version
 	ds >> ver;
 	assert(ver == 1);
 
-	// Nome locazione
+	// Location name
 	ds >> m_name;
 
-	// Numero loc
+	// Location number
 	ds >> TEMPNumLoc;
 	ds >> TEMPTonyStart.x >> TEMPTonyStart.y;
 
-	// Dimensioni
+	// Dimensions
 	ds >> dimx >> dimy;
 	m_curScroll.Set(0, 0);
 
-	// Color mode è sempre 65K
+	// It's always 65K (16-bit) mode
 	m_cmode = CM_65K;
 	m_buf = new RMGfxSourceBuffer16;
 
-	// Inizializza la surface, caricando anche la palette se necessario
+	// Initialise the surface, loading in the palette if necessary
 	m_buf->Init(ds, dimx, dimy, true);
  
-	// Controlla le dimensioni della locazione
+	// Check the size of the location
 //	assert(dimy!=512);
 
-	// Numero oggetti
+	// Number of items
 	ds >> m_nItems;
 
-	// Creazione e lettura degli oggetti
+	// Create and read objects
 	if (m_nItems > 0)
 		m_items = new RMItem[m_nItems];
 	
@@ -2231,54 +2165,40 @@ bool RMLocation::LoadLOX(RMDataStream &ds) {
 }
 
 
-
-/****************************************************************************\
-*
-* Function:     void RMLocation::Draw(RMGfxTargetBuffer* bigBuf, 
-*									RMGfxPrimitive* prim);
-*
-* Description:  Metodo di drawing in overloading da RMGfxSourceBuffer8
-*
-\****************************************************************************/
-
+/**
+ * Draw method overloaded from RMGfxSourceBUffer8
+ */
 void RMLocation::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Setta la posizione sorgente dello scrolling
+	// Set the position of the source scrolling
 	if (m_buf->Dimy()>RM_SY || m_buf->Dimx()>RM_SX) {
 		prim->SetSrc(RMRect(m_curScroll,m_curScroll+RMPoint(640,480)));
 	}
 
 	prim->SetDst(m_fixedScroll);
 	
-	// Richiama il metodo di drawing della classe dell'immagine, che disegnerà il background
-	// della locazione
+	// Invoke the drawing method fo the image class, which will draw the location background
 	CORO_INVOKE_2(m_buf->Draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
 
-/****************************************************************************\
-*
-* Function:     void RMLocation::DoFrame(void);
-*
-* Description:  Prepara un frame, aggiungendo alla OTList la locazione stessa
-*								e tutti gli item che hanno cambiato frame di animazione
-*
-\****************************************************************************/
-
+/**
+ * Prepare a frame, adding the location to the OT list, and all the items that have changed animation frame.
+ */
 void RMLocation::DoFrame(RMGfxTargetBuffer *bigBuf) {
 	int i;
 
-	// Se la locazione non e' in OT list, la aggiunge
+	// If the location is not in the OT list, add it in
 	if (!m_nInList)
 		bigBuf->AddPrim(new RMGfxPrimitive(this));
 
-	// Processa tutti gli item della locazione
+	// Process all the location items
 	for (i = 0;i < m_nItems; i++)
 		m_items[i].DoFrame(bigBuf);
 }
@@ -2321,13 +2241,13 @@ RMLocation::~RMLocation() {
 }
 
 void RMLocation::Unload(void) {
-	// Cancella la memoria
+	// Clear memory
 	if (m_items) {
 		delete[] m_items;
 		m_items = NULL;
 	}
 
-	// Cancella il buffer
+	// Destroy the buffer
 	if (m_buf) {
 		delete m_buf;
 		m_buf = NULL;
@@ -2399,7 +2319,7 @@ void RMLocation::PauseSound(bool bPause) {
 
 
 /****************************************************************************\
-*       Metodi di RMMessage
+*       RMMessage Methods
 \****************************************************************************/
 
 RMMessage::RMMessage(uint32 dwId) {	
@@ -2432,16 +2352,16 @@ void RMMessage::ParseMessage(void) {
 	p = lpPeriods[0] = lpMessage;
 	
 	for (;;) {
-		// Trova la fine del periodo corrente
+		// Find the end of the current period
 		while (*p != '\0')
 			p++;
 
-		// Se c'e' un altro '\0' siamo alla fine del messaggio
+		// If there is another '0' at the end of the string, the end has been found
 		p++;
 		if (*p == '\0')
 			break;
 
-		// Altrimenti c'e' un altro periodo, e ci ricordiamo il suo inizio
+		// Otherwise there is another line, and remember it's start
 		lpPeriods[nPeriods++] = p;
 	}
 }

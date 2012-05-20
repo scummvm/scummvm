@@ -106,13 +106,13 @@ private:
 	uint32 hActionThread;
 
 protected:
-	// Overload dell'allocazione degli sprites per cambiare il tipo
+	// Overload of the allocation allocation of sprites
 	virtual RMGfxSourceBuffer *NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
 
-	// Thread which waits for the end of an action
+	// Watch thread which waits for the end of an action
 	static void WaitEndOfAction(CORO_PARAM, const void *param);
 
-public: // per farlo rialzare, altrimenti private
+public: 
 	enum PATTERNS {
 		PAT_TAKEUP_UP1 = 9,
 		PAT_TAKEUP_UP2,
@@ -140,7 +140,7 @@ public: // per farlo rialzare, altrimenti private
 		PAT_SIRIALZARIGHT,
 		PAT_PERTERRARIGHT,
 
-		// Pastorella!
+		// Sheperdess!
 		PAT_PAST_WALKUP,
 		PAT_PAST_WALKDOWN,
 		PAT_PAST_WALKLEFT,
@@ -151,19 +151,19 @@ public: // per farlo rialzare, altrimenti private
 		PAT_PAST_STANDLEFT,
 		PAT_PAST_STANDRIGHT,
 
-		// Parlata
+		// Speech
 		PAT_TALK_UP,
 		PAT_TALK_DOWN,
 		PAT_TALK_LEFT,
 		PAT_TALK_RIGHT,
 
-		// Testa statica
+		// Static head
 		PAT_TESTA_UP,
 		PAT_TESTA_DOWN,
 		PAT_TESTA_LEFT,
 		PAT_TESTA_RIGHT,
 
-		// Risata
+		// Laugh
 		PAT_RIDELEFT_START,
 		PAT_RIDELEFT_LOOP,
 		PAT_RIDELEFT_END,
@@ -171,13 +171,13 @@ public: // per farlo rialzare, altrimenti private
 		PAT_RIDERIGHT_LOOP,
 		PAT_RIDERIGHT_END,
 
-		// Parlata da pastorella
+		// Speaking as a shepherdess
 		PAT_PAST_TALKUP,
 		PAT_PAST_TALKDOWN,
 		PAT_PAST_TALKLEFT,
 		PAT_PAST_TALKRIGHT,
 
-		// Spavento
+		// Fear
 		PAT_SPAVENTOLEFT_START,
 		PAT_SPAVENTOLEFT_LOOP,
 		PAT_SPAVENTOLEFT_END,
@@ -188,16 +188,16 @@ public: // per farlo rialzare, altrimenti private
 		PAT_SPAVENTODOWN_LOOP,
 		PAT_SPAVENTODOWN_END,
 
-		// Con oggetti: corpo completo
+		// With objects: full body
 		PAT_CONBICCHIERE,
 		PAT_CONCORDA,
 		PAT_CONVERME,
 		PAT_CONMARTELLO,
 
-		// Suona il fischietto
+		// Sound the whistle
 		PAT_FISCHIETTORIGHT,
 
-		// Testa con barba
+		// Head with beard
 		PAT_TALKBARBA_LEFT,
 		PAT_TALKBARBA_RIGHT,
 
@@ -205,7 +205,7 @@ public: // per farlo rialzare, altrimenti private
 		PAT_SNIFFA_LEFT,
 		PAT_SNIFFA_RIGHT,
 
-		// Schifato
+		// Disgusted
 		PAT_SCHIFATOLEFT_START,
 		PAT_SCHIFATOLEFT_LOOP,
 		PAT_SCHIFATOLEFT_END,
@@ -219,7 +219,7 @@ public: // per farlo rialzare, altrimenti private
 		PAT_NAAHRIGHT_LOOP,
 		PAT_NAAHRIGHT_END,
 
-		// Stand spaventato
+		// Stand scared
 		PAT_SPAVENTOLEFT_STAND,
 		PAT_SPAVENTORIGHT_STAND,
 		PAT_SPAVENTODOWN_STAND,
@@ -361,80 +361,79 @@ public:
 	static void InitStatics();
 	RMTony();
 
-	// Inizializza Tony
+	// Initialise Tony
 	void Init(void);
 	
-	// Libera tutta la memoria
+	// Free all memory
 	void Close(void);
 
-	// Fa un frame di Tony, aggiornando il movimento, etc
+	// Tony makes a frame, updating the movement, etc.
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc);
 
-	// Metodi di Draw, che controlla la variabile di show
+	// Draw method, which controls chararacter display
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Mostra o nascondi
+	// Show or hide
 	void Show(void);
 	void Hide(bool bShowOmbra = false);
 
-	// Si muove e fa un azione, se necessario
+	// Move and make an action, if necessary
 	void MoveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
 
-	// Ferma Tony (dalla parte giusta rispetto a un eventuale oggetto)
+	// Tony stops (on the right side with respect to any subject)
 	virtual void Stop(CORO_PARAM);
 	void StopNoAction(CORO_PARAM);
 
-	// Setta un pattern
+	// Set a pattern
 	void SetPattern(int npatt, bool bPlayP0 = false);
 
-	// Legge il pattern corrente
+	// Reads the current pattern
 	int GetCurPattern();
 
-	// Attende la fine di un pattern
+	// Waits until the end of a pattern
 	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) { 
 		RMCharacter::WaitForEndPattern(coroParam, hCustomSkip);
 	}
 
-	// Controlla se si trova in azione
-	bool InAction() { return (m_bActionPending&&m_Action != 0) | m_bAction; }
+	// Check if currently in an action
+	bool InAction() { return (m_bActionPending && m_Action != 0) | m_bAction; }
 
-	// Controlla se c'è da aggiornare il movimento di scrolling
+	// Check if there needs to be an update for scrolling movement
 	bool MustUpdateScrolling() { return ((!InAction()) || (IsMoving())); }
 
-	// Prende la posizione di Tony
+	// Returns Tony's position
 	RMPoint Position() { return m_pos; }
 
-	// Setta la posizione di scrolling
+	// Set the scrolling position
 	void SetScrollPosition(const RMPoint &pt) { RMCharacter::SetScrollPosition(pt); }
 
-	// Setta l'animazione di Take
+	// Set the take animation
 	void Take(int nWhere, int nPart);
 	void Put(int nWhere, int nPart);
 
-	// Start e End Talk
+	// Start or End Talk
 	bool StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &bodyStartPat,
 			int &headLoopPat, int &bodyLoopPat);
 	void StartTalk(CORO_PARAM, TALKTYPE nTalkType);
 	bool EndTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic);
 	void EndTalk(CORO_PARAM);
 
-	// Start e End Static
+	// Start or End Static
 	void StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat,
 			int &bodyStartPat, int &bodyLoopPat);
 	void StartStatic(CORO_PARAM, TALKTYPE nTalkType);
 	void EndStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
 	void EndStatic(CORO_PARAM, TALKTYPE nTalkType);
 
-	// Tony si traveste!
+	// Tony disguises himself!
 	void SetPastorella(bool bIsPast) { m_bPastorella=bIsPast; }
 	int GetPastorella(void) { return m_bPastorella; }
 
-	// Esegue una azione
+	// Perform an action
 	void ExecuteAction(int nAction, int nActionItem, int nParm);
 
 	void PlaySfx(int nSfx) { RMItem::PlaySfx(nSfx); }
 };
-
 
 } // End of namespace Tony
 

@@ -149,10 +149,10 @@ public:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
-	// Avverte che siamo guidati dal GDI
+	// Warn when are being controlled by the GDI
 	void GDIControl(bool bCon);
 
-	// Loop che gestisce i messaggi quando siamo in pausa
+	// Loop that handles messages when the game is paused
 	void PauseLoop(void);
 
 	void Play();
@@ -167,7 +167,7 @@ public:
 	void ShowLocation(void) { m_bDrawLocation = true; }
 	void HideLocation(void) { m_bDrawLocation = false; }
 
-	// Mette o leva la pausa
+	// Handle pause mode
 	void Pause(bool bPause);
 	bool IsPaused() { return m_bPaused; }
 
@@ -195,19 +195,19 @@ public:
 	void PreloadUtilSFX(int nSfx, const char *fn);
 	void UnloadAllUtilSFX(void);
 
-	// Ferma tutta la parte audio
+	// Stop all the audio
 	void PauseSound(bool bPause);
 
 	void SetMusicVolume(int nChannel, int volume);
 	int GetMusicVolume(int nChannel);
 
-	// Salvataggio
+	// Handle saving
 	void AutoSave(CORO_PARAM);
 	void SaveState(int n, const char *name);
 	void LoadState(CORO_PARAM, int n);
 	static Common::String GetSaveStateFileName(int n);
 
-	// Prende il thumbnail
+	// Get a thumbnail
 	void GrabThumbnail(void);
 	uint16 *GetThumbnail(void) { return m_curThumbnail; }
 

@@ -93,10 +93,10 @@ void RMTony::Init(void) {
 	RMRes body(9999);
 	RMDataStream ds;
 
-	// Mostra Tony di default
-	m_bShow=m_bShowOmbra = true;
+	// Tony is shown by default
+	m_bShow = m_bShowOmbra = true;
 
-	// Nessuna azione in attesa
+	// No action pending
 	m_bActionPending = false;
 	m_bAction = false;
 
@@ -104,18 +104,18 @@ void RMTony::Init(void) {
 	m_bIsTalking = false;
 	m_bIsStaticTalk = false;
 
-	// Apre il buffer
+	// Opens the buffer
 	ds.OpenBuffer(tony);
 
-	// Legge dallo stream l'oggetto corrente (cioè Tony)
-	ReadFromStream(ds, true);	// da OGX
+	// Reads his details from the stream
+	ReadFromStream(ds, true);
 	
-	// Chiude il buffer
+	// Closes the buffer
 	ds.Close();
 
-	// Legge il corpo di Tony
+	// Reads Tony's body
 	ds.OpenBuffer(body);
-	m_body.ReadFromStream(ds, true); // da OGX
+	m_body.ReadFromStream(ds, true);
 	ds.Close();
 	m_body.SetPattern(0);
 
@@ -124,7 +124,7 @@ void RMTony::Init(void) {
 
 
 void RMTony::Close(void) {
-	// Disalloca @@@ Manca la disallocazione di un item
+	// Disalloca @@@ Deallocation of missing item
 	m_ombra.Destroy();
 }
 
@@ -140,7 +140,7 @@ void RMTony::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 	
 	SetSpeed(GLOBALS.nCfgTonySpeed);	
 
-	// Esegue il movimento normale del personaggio
+	// Runs the normal character movement
 	_ctx->time = _vm->GetTime();
 
 	do {
@@ -149,9 +149,9 @@ void RMTony::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 
 	} while (_ctx->time > m_nTimeLastStep + (1000 / 40));
 
-	// Controlla se siamo alla fine del percorso
+	// Check if we are at the end of a path
 	if (EndOfPath() && m_bActionPending) {
-		// Bisogna eseguire l'azione sulla quale abbiamo clickato
+		// Must perform the action on which we clicked
 		m_bActionPending = false;	
 	}
 
@@ -239,17 +239,16 @@ void RMTony::MoveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction,
 
 
 void RMTony::ExecuteAction(int nAction, int nActionItem, int nParm) {
-	// fixme: See if hThread can be converted to uint32
 	uint32 pid;
 	
 	if (nAction == TA_COMBINE) {
 		pid = mpalQueryDoAction(TA_COMBINE, nParm, nActionItem);
 		
-		// Se è fallito il combine, proviamo con il ReceiveCombine
+		// If you failed the combine, we have RECEIVECOMBINE as a fallback
 		if (pid == CORO_INVALID_PID_VALUE) {
 			pid = mpalQueryDoAction(TA_RECEIVECOMBINE, nActionItem, nParm); 
 			
-			// Se è fallito il receive, andiamo con quelli generici
+			// If you failed with that, go with the generic
 			// @@@ CombineGive!
 			if (pid == CORO_INVALID_PID_VALUE) {
 				pid = mpalQueryDoAction(TA_COMBINE, nParm, 0);
@@ -313,15 +312,15 @@ void RMTony::Stop(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (m_ActionItem != NULL) {
-		// Richiama l'MPAL per scegliere la direzione
+		// Call MPAL to choose the direction
 		_ctx->pid = mpalQueryDoAction(21, m_ActionItem->MpalCode(), 0);
 
 		if (_ctx->pid == CORO_INVALID_PID_VALUE)
 			CORO_INVOKE_0(RMCharacter::Stop);
 		else {
-			bNeedToStop = false;	// Se facciamo la OnWhichDirection, almeno dopo non dobbiamo fare la Stop()
+			bNeedToStop = false;	// If we make the OnWhichDirection, we don't need at least after the Stop().
 			bMoving = false;
-			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->pid, CORO_INFINITE); // @@@ Mettere un assert dopo 10 secondi
+			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->pid, CORO_INFINITE); // @@@ Put an assert after 10 seconds
 		}
 	} else {
 		CORO_INVOKE_0(RMCharacter::Stop);
@@ -406,7 +405,7 @@ void RMTony::Take(int nWhere, int nPart) {
 	if (nPart == 0) {
 		switch (GetCurPattern()) {
 		case PAT_STANDDOWN:
-			assert(0);	// Non esiste il prende mentre sei in StandDown
+			assert(0);	// Not while you're doing a StandDown
 			break;
 
 		case PAT_STANDUP:
@@ -481,7 +480,7 @@ void RMTony::Put(int nWhere, int nPart) {
 	if (nPart == 0) {
 		switch (GetCurPattern()) {
 		case PAT_STANDDOWN:
-			//assert(0);	// Non esiste il prende mentre sei in StandDown
+			//assert(0);
 			break;
 
 		case PAT_STANDUP:
@@ -560,7 +559,7 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 	m_nPatB4Talking = GetCurPattern();
 	m_nTalkType = nTalkType;
 
-	// Setta la direzione di parlata SOLO se non siamo in una static animation (perché l'ha già fatto)
+	// Set the direction of speech ONLY if we are not in a static animation (since it would have already been done)
 	if (!m_bIsStaticTalk) {
 		switch (m_nPatB4Talking) {
 		case PAT_STANDDOWN:
@@ -591,12 +590,12 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 		}
 
-		// Mette davanti il corpo di default
+		// Puts the body in front by default
 		m_bCorpoDavanti = true;
 	}
 
 	if (m_bPastorella) {
-		// Da pastorella, c'è un solo parlato
+		// Talking whilst a shepherdess
 		MainFreeze();
 		switch (m_TalkDirection) {
 		case UP:
@@ -967,8 +966,7 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		}
 		break;
 
-	// La barba è l'unico caso in cui la testa è animata a parte
-	//  mentre il corpo è quello standard
+	// The beard is the only case in which the head is animated separately while the body is the standard
 	case TALK_CONBARBASTATIC:
 		switch (m_TalkDirection) {
 		case LEFT:
@@ -1127,7 +1125,7 @@ void RMTony::StartTalk(CORO_PARAM, TALKTYPE nTalkType) {
 			_ctx->headLoopPat, _ctx->bodyLoopPat))
 		return;
 
-	// Esegue il set dei pattern vero e proprio
+	// Perform the set pattern
 	if (_ctx->headStartPat != 0 || _ctx->bodyStartPat != 0) {
 		MainFreeze();
 		SetPattern(_ctx->headStartPat);
@@ -1446,7 +1444,7 @@ void RMTony::EndTalk(CORO_PARAM) {
 	if (!EndTalkCalculate(_ctx->headStandPat, _ctx->headEndPat, _ctx->bodyEndPat, _ctx->finalPat, _ctx->bStatic))
 		return;
 
-	// Gestisce la fine di una animazione static lasciando tutto invariato
+	// Handles the end of an animated and static, leaving everything unchanged
 	if (m_bIsStaticTalk) {
 		if (m_nTalkType == TALK_CONBARBASTATIC) {
 			MainFreeze();
@@ -1471,7 +1469,7 @@ void RMTony::EndTalk(CORO_PARAM) {
 		return;
 	}
 
-	// Set dei pattern
+	// Set the pattern
 	if (_ctx->headEndPat != 0 && _ctx->bodyEndPat != 0) {
 		MainFreeze();
 		SetPattern(_ctx->headEndPat);
