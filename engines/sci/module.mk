@@ -81,6 +81,7 @@ ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	graphics/controls32.o \
 	graphics/frameout.o \
+	engine/kgraphics32.o \
 	graphics/paint32.o \
 	graphics/text32.o \
 	video/robot_decoder.o
