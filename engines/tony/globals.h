@@ -146,12 +146,10 @@ struct ChangedHotspotStruct {
 	}
 };
 
-/****************************************************************************\
-*       typedef CFCALL
-*       --------------
-* Description: Descrizione di una chiamata a una custom function
-\****************************************************************************/
 
+/**
+ * Description of a call to a custom function.
+ */
 typedef struct {
 	int nCf;
 

@@ -270,12 +270,12 @@ public:
 	bool Close();
 	bool IsClosing();
 
-	// Metodi in overloading da RMGfxTask
-	int Priority();
+	// Overloaded methods
+	virtual int Priority();
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
-	// Polling per l'option screen
+	// Polling for the option screen
 	void DoFrame(CORO_PARAM, RMInput *m_input);
 
 	// Retrieves a savegame's thumbnail, description, and difficulty level
@@ -288,10 +288,9 @@ protected:
 	void CloseState(void);
 	void ChangeState(CORO_PARAM, STATE newState);
 
-	// Ridisegna tutto il menu delle opzioni
+	// Repaaint the options menu
 	void RefreshAll(CORO_PARAM);
 	void RefreshThumbnails(void);
-
 };
 
 } // End of namespace Tony

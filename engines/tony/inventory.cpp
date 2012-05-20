@@ -77,37 +77,36 @@ void RMInventory::Init(void) {
 	int i, j;
 	int curres;
 
-	// Crea il buffer principale
+	// Create the main buffer
 	Create(RM_SX, 68);
 	SetPriority(185);
 
-	// Pulisce l'inventario
+	// Setup the inventory
 	m_nInv = 0;
 	m_curPos = 0;
 	m_bCombining = false;
 
-	// Nuovi oggetti
-	m_nItems = 78;  // @@@ Numero di oggetti prendibili
+	// New items
+	m_nItems = 78;  // @@@ Number of takeable items
 	m_items = new RMInventoryItem[m_nItems + 1];
 
 	curres = 10500;
 
-	// Loop sugli oggetti
+	// Loop through the items
 	for (i = 0; i <= m_nItems; i++) {
-		// Carica l'oggetto da risorsa
+		// Load the items from the resource
 		RMRes res(curres);
 		RMDataStream ds;
 
 		assert(res.IsValid());
 
-		// Non deve inizializzare il cur pattern dell'oggetto dell'inventario leggendolo da MPAL!
-		// Glelo mettiamo noi a MANO, e non c'entra nulla con l'oggetto in MPAL
+		// Initialise the MPAL inventory item by reading it in. 
 		m_items[i].icon.SetInitCurPattern(false);
 		ds.OpenBuffer(res);
 		ds >> m_items[i].icon;
 		ds.Close();
 
-		// Mette di default a pattern 1
+		// Puts in the default pattern 1
 		m_items[i].pointer = NULL;
 		m_items[i].status = 1;
 		m_items[i].icon.SetPattern(1);
@@ -131,7 +130,7 @@ void RMInventory::Init(void) {
 	m_items[28].icon.SetPattern(1);
 	m_items[29].icon.SetPattern(1);
 
-	// Carica l'interfaccina
+	// Download interface
 	RMDataStream ds;
 	RMRes res(RES_I_MINIINTER);
 	assert(res.IsValid());
@@ -140,12 +139,12 @@ void RMInventory::Init(void) {
 	miniInterface.SetPattern(1);
 	ds.Close();
 
-	// Crea il testo per gli hints sulla mini interfaccia
+	// Create the text for hints on the mini interface
 	m_hints[0].SetAlignType(RMText::HCENTER, RMText::VTOP);
 	m_hints[1].SetAlignType(RMText::HCENTER, RMText::VTOP);
 	m_hints[2].SetAlignType(RMText::HCENTER, RMText::VTOP);
 
-	// Il testo viene preso da MPAL per la traduzione
+	// The text is taken from MPAL for translation
 	RMMessage msg1(15);
 	RMMessage msg2(13);
 	RMMessage msg3(14);
@@ -160,14 +159,14 @@ void RMInventory::Init(void) {
 	    m_hints[2].WriteText("Use",1);
 	*/
 
-	// Prepara il primo inventario
+	// Prepare initial inventory
 	Prepare();
 	DrawOT(Common::nullContext);
 	ClearOT();
 }
 
 void RMInventory::Close(void) {
-	// Ciao memoria
+	// Has memory
 	if (m_items != NULL) {
 		// Delete the item pointers
 		for (int i = 0; i <= m_nItems; i++)
@@ -211,22 +210,22 @@ void RMInventory::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 			_ctx->pos.Set((m_nSelectObj + 1) * 64 - 20, RM_SY - 113);
 			_ctx->pos2.Set((m_nSelectObj + 1) * 64 + 34, RM_SY - 150);
 		} else {
-			_ctx->pos.Set((m_nSelectObj + 1) * 64 - 20, 72 - 4); // la parte marrone sta in alto :(
+			_ctx->pos.Set((m_nSelectObj + 1) * 64 - 20, 72 - 4); // The brown part is at the top :(
 			_ctx->pos2.Set((m_nSelectObj + 1) * 64 + 34, 119 - 4);
 		}
 
 		_ctx->p = new RMGfxPrimitive(prim->m_task, _ctx->pos);
 		_ctx->p2 = new RMGfxPrimitive(prim->m_task, _ctx->pos2);
 
-		// Disegna l'interfaccina stupida
+		// Draw the mini interface
 		CORO_INVOKE_2(miniInterface.Draw, bigBuf, _ctx->p);
 
 		if (GLOBALS.bCfgInterTips) {
-			if (miniAction == 1) // Esamina
+			if (miniAction == 1) // Examine
 				CORO_INVOKE_2(m_hints[0].Draw, bigBuf, _ctx->p2);
-			else if (miniAction == 2) // Parla
+			else if (miniAction == 2) // Talk
 				CORO_INVOKE_2(m_hints[1].Draw, bigBuf, _ctx->p2);
-			else if (miniAction == 3) // Usa
+			else if (miniAction == 3) // Use
 				CORO_INVOKE_2(m_hints[2].Draw, bigBuf, _ctx->p2);
 		}
 
@@ -267,13 +266,12 @@ void RMInventory::RemoveItem(int code) {
 
 void RMInventory::AddItem(int code) {
 	if (code <= 10000 && code >= 10101) {
-		// Se siamo qui, vuol dire che stiamo aggiungendo un oggetto che non dovrebbe essere
-		// nell'inventario
+		// If we are here, it means that we are adding an item that should not be in the inventory
 		warning("Cannot find a valid icon for this item, and then it will not be added to the inventory");
 	} else {
 		g_system->lockMutex(m_csModifyInterface);
 		if (m_curPos + 8 == m_nInv) {
-			// Sfondiamo l'inventario! Attivo il pattern di lampeggio
+			// Break through the inventory! On the flashing pattern
 			m_items[28].icon.SetPattern(2);
 		}
 
@@ -324,15 +322,15 @@ bool RMInventory::MiniActive(void) {
 }
 
 bool RMInventory::HaveFocus(const RMPoint &mpos) {
-	// In fase di combine abbiamo il focus solo se siamo su una freccia (per poter scrollare)
+	// When we combine, have the focus only if we are on an arrow (to scroll)
 	if (m_state == OPENED && m_bCombining && CheckPointInside(mpos) && (mpos.x < 64 || mpos.x > RM_SX - 64))
 		return true;
 
-	// Se l'inventario è aperto, abbiamo il focus quando ci andiamo sopra
+	// If the inventory is open, focus we we go over it
 	if (m_state == OPENED && !m_bCombining && CheckPointInside(mpos))
 		return true;
 
-	// Se stiamo selezionando un verbo (quindi tasto destro premuto), abbiamo il focus alltime
+	// If we are selecting a verb (and then right down), we always focus
 	if (m_state == SELECTING)
 		return true;
 
@@ -346,12 +344,12 @@ void RMInventory::EndCombine(void) {
 bool RMInventory::LeftClick(const RMPoint &mpos, int &nCombineObj) {
 	int n;
 
-	// Il click sinistro prende in mano un oggetto dell'inventario per utilizzarlo con lo sfondo
+	// The left click picks an item from your inventory to use it with the background
 	n = mpos.x / 64;
 
 	if (m_state == OPENED) {
 		if (n > 0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0) {
-			m_bCombining = true; //m_state=COMBINING;
+			m_bCombining = true; //m_state = COMBINING;
 			m_nCombine = m_inv[n - 1 + m_curPos];
 			nCombineObj = m_nCombine + 10000;
 
@@ -360,7 +358,7 @@ bool RMInventory::LeftClick(const RMPoint &mpos, int &nCombineObj) {
 		}
 	}
 
-	// Click sulla freccia destra
+	// Click the right arrow
 	if ((m_state == OPENED) && m_bBlinkingRight) {
 		g_system->lockMutex(m_csModifyInterface);
 		m_curPos++;
@@ -380,7 +378,7 @@ bool RMInventory::LeftClick(const RMPoint &mpos, int &nCombineObj) {
 		ClearOT();
 		g_system->unlockMutex(m_csModifyInterface);
 	}
-	// Click sulla freccia sinistra
+	// Click the left arrow
 	else if ((m_state == OPENED) && m_bBlinkingLeft) {
 		assert(m_curPos > 0);
 		g_system->lockMutex(m_csModifyInterface);
@@ -413,7 +411,7 @@ void RMInventory::RightClick(const RMPoint &mpos) {
 	assert(CheckPointInside(mpos));
 
 	if (m_state == OPENED && !m_bCombining) {
-		// Apre l'interfaccina contestuale
+		// Open the context interface
 		n = mpos.x / 64;
 
 		if (n > 0 && n < RM_SX / 64 - 1 && m_inv[n - 1 + m_curPos] != 0) {
@@ -494,12 +492,12 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 	bool bNeedRedraw = false;
 
 	if (m_state != CLOSED) {
-		// Pulisce l'OTList
+		// Clean up the OT list
 		g_system->lockMutex(m_csModifyInterface);
 		ClearOT();
 
-		// Fa il DoFrame di tutti gli oggetti contenuti attualmente nell'inventario
-		// @@@ forse bisognerebbe farlo di tutti gli oggetti takeable? Probabilmente non serve a nulla
+		// DoFrame makes all the objects currently in the inventory be displayed
+		// @@@ Maybe we should do all takeable objects? Please does not help
 		for (i = 0; i < m_nInv; i++)
 			if (m_items[m_inv[i]].icon.DoFrame(this, false) && (i >= m_curPos && i <= m_curPos + 7))
 				bNeedRedraw = true;
@@ -641,7 +639,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		else
 			starty = 70;
 
-		// Controlla se si trova su uno dei verbi
+		// Make sure it is on one of the verbs
 		if (mpos.y > starty && mpos.y < starty + 45) {
 			if (mpos.x > startx && mpos.x < startx + 40) {
 				if (miniAction != 1) {
@@ -670,7 +668,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			miniAction = 0;
 		}
 
-		// Aggiorna la miniinterface
+		// Update the mini-interface
 		miniInterface.DoFrame(&bigBuf, false);
 	}
 
@@ -780,16 +778,16 @@ int RMInterface::OnWhichBox(RMPoint pt) {
 
 	pt -= m_openStart;
 
-	// Controlla quanti verbi bisogna considerare
+	// Check how many verbs you have to consider
 	max = 4;
 	if (m_bPalesati) max = 5;
 
-	// Cerca il verbo
+	// Find the verb
 	for (i = 0; i < max; i++)
 		if (m_hotbbox[i].PtInRect(pt))
 			return i;
 
-	// Nessun verbo trovato
+	// Found no verb
 	return -1;
 }
 
@@ -803,7 +801,7 @@ void RMInterface::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	prim->Dst().TopLeft() = m_openStart;
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLEByte::Draw, bigBuf, prim);
 
-	// Controlla se c'e' da disegnare una zona calda
+	// Check if there is a draw hot zone
 	_ctx->h = OnWhichBox(m_mpos);
 	if (_ctx->h != -1) {
 		prim->Dst().TopLeft() = m_openStart;
@@ -826,7 +824,7 @@ void RMInterface::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 
 void RMInterface::DoFrame(RMGfxTargetBuffer &bigBuf, RMPoint mousepos) {
-	// Se c'è bisogna, schedula nella OT list
+	// If needed, add to the OT schedule list
 	if (!m_nInList && m_bActive)
 		bigBuf.AddPrim(new RMGfxPrimitive(this));
 
@@ -837,17 +835,17 @@ void RMInterface::Clicked(const RMPoint &mousepos) {
 	m_bActive = true;
 	m_openPos = mousepos;
 
-	// Calcola l'angolo in alto a sinistra dell'interfaccia
+	// Calculate the top left corner of the interface
 	m_openStart = m_openPos - RMPoint(m_dimx / 2, m_dimy / 2);
 	m_lastHotZone = -1;
 
-	// La tiene dentro lo schermo
+	// Keep it inside the screen
 	if (m_openStart.x < 0) m_openStart.x = 0;
 	if (m_openStart.y < 0) m_openStart.y = 0;
 	if (m_openStart.x + m_dimx > RM_SX) m_openStart.x = RM_SX - m_dimx;
 	if (m_openStart.y + m_dimy > RM_SY) m_openStart.y = RM_SY - m_dimy;
 
-	// Play dell'effetto sonoro
+	// Play the sound effect
 	_vm->PlayUtilSFX(0);
 }
 
@@ -878,7 +876,7 @@ bool RMInterface::Released(const RMPoint &mousepos, RMTonyAction &action) {
 		action = TA_PALESATI;
 		break;
 
-	default:        // Nessun verbo
+	default:        // No verb
 		return false;
 	}
 
@@ -914,8 +912,8 @@ void RMInterface::Init(void) {
 		m_hotzone[i].LoadPaletteWA(pal);
 	}
 
-	m_hotbbox[0].SetRect(126, 123, 159, 208);   // prendi
-	m_hotbbox[1].SetRect(90, 130, 125, 186);    // parla
+	m_hotbbox[0].SetRect(126, 123, 159, 208);   // Take
+	m_hotbbox[1].SetRect(90, 130, 125, 186);    // About
 	m_hotbbox[2].SetRect(110, 60, 152, 125);
 	m_hotbbox[3].SetRect(56, 51, 93, 99);
 	m_hotbbox[4].SetRect(51, 105, 82, 172);
@@ -926,7 +924,7 @@ void RMInterface::Init(void) {
 	m_hints[3].SetAlignType(RMText::HRIGHT, RMText::VTOP);
 	m_hints[4].SetAlignType(RMText::HRIGHT, RMText::VTOP);
 
-	// Il testo viene preso da MPAL per la traduzione
+	// The text is taken from MPAL for translation
 	RMMessage msg0(12);
 	RMMessage msg1(13);
 	RMMessage msg2(14);

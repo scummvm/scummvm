@@ -37,7 +37,7 @@ namespace Tony {
 
 
 /****************************************************************************\
-*       Metodi di RMGfxEngine
+*       RMGfxEngine Methods
 \****************************************************************************/
 
 void ExitAllIdles(CORO_PARAM, const void *param) {
@@ -48,7 +48,7 @@ void ExitAllIdles(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Chiude le idle
+	// Closes idle
 	GLOBALS.bSkipSfxNoLoop = true;
 
 	CORO_INVOKE_2(mpalEndIdlePoll, nCurLoc, NULL);
@@ -60,7 +60,7 @@ void ExitAllIdles(CORO_PARAM, const void *param) {
 }
 
 RMGfxEngine::RMGfxEngine() {
-	// Crea il big buffer dove verranno disegnati i frame
+	// Create big buffer where the frame will be rendered
 	m_bigBuf.Create(RM_BBX, RM_BBY, 16);
 	m_bigBuf.OffsetY(RM_SKIPY);
 
@@ -83,7 +83,7 @@ RMGfxEngine::RMGfxEngine() {
 }
 
 RMGfxEngine::~RMGfxEngine() {
-	// Chiude il buffer
+	// Close the buffer
 	m_bigBuf.Destroy();
 	g_system->deleteMutex(csMainLoop);
 }
@@ -121,7 +121,7 @@ void RMGfxEngine::OpenOptionScreen(CORO_PARAM, int type) {
 		EnableMouse();
 		_vm->GrabThumbnail();
 
-		// Esce la IDLE onde evitare la morte prematura in caricamento
+		// Exists the IDLE to avoid premature death in loading
 		m_bMustEnterMenu = true;
 		if (type == 1 || type == 2) {
 			GLOBALS.bIdleExited = true;
@@ -145,7 +145,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 
 	g_system->lockMutex(csMainLoop);
 
-	// Poll dei dispositivi di input
+	// Poll of input devices
 	m_input.Poll();
 
 	if (m_bMustEnterMenu && GLOBALS.bIdleExited) {
@@ -166,25 +166,25 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 	}
 
 	if (bDrawLocation && m_bLocationLoaded) {
-		// Locazione e oggetti
+		// Location and objects
 		m_loc.DoFrame(&m_bigBuf);
 
-		// Controlla gli input del mouse
+		// Check the mouse input
 		if (m_bInput && !m_tony.InAction()) {
-			// Se siamo sull'inventario, è lui che controlla tutti gli input
+			// If we are on the inventory, it is it who controls all input
 			if (m_inv.HaveFocus(m_input.MousePos()) && !m_inter.Active()) {
-				// CLICK SINISTRO
-				// **************
+				// Left Click
+				// **********
 				if (m_input.MouseLeftClicked()/* && m_itemName.IsItemSelected()*/) {
-					// Left click attiva il combine, se siamo su un oggetto
+					// Left click activates the combine, if we are on an object
 					if (m_inv.LeftClick(m_input.MousePos(), m_curActionObj)) {
 						m_curAction = TA_COMBINE;
 						m_point.SetAction(m_curAction);
 					}
 				} else
 
-					// CLICK DESTRO
-					// ************
+					// Right Click
+					// ***********
 					if (m_input.MouseRightClicked()) {
 						if (m_itemName.IsItemSelected()) {
 							m_curActionObj = 0;
@@ -193,8 +193,8 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 							m_inv.RightClick(m_input.MousePos());
 					} else
 
-						// RILASCIO DESTRO
-						// ***************
+						// Right Release
+						// *************
 						if (m_input.MouseRightReleased()) {
 							if (m_inv.RightRelease(m_input.MousePos(), m_curAction)) {
 								CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_curAction);
@@ -204,7 +204,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 							}
 						}
 			} else {
-				// Menu Opzioni
+				// Options Menu
 				// ************
 				if (m_bGUIOption) {
 					if (!m_tony.InAction() && m_bInput) {
@@ -224,10 +224,10 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 					}
 				}
 
-				// CLICK SINISTRO
+				// Left Click
 				// **************
 				if (m_input.MouseLeftClicked() && !m_inter.Active()) {
-					// Se clicko dentro un oggetto, esegui l'azione
+					// If click inside an item, perform action
 					//if (m_itemName.IsItemSelected())
 					{
 						if (m_curAction != TA_COMBINE)
@@ -246,10 +246,10 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 				}
 
 SKIPCLICKSINISTRO:
-				// CLICK DESTRO
+				// Right Click
 				// ************
 				if (m_curAction == TA_COMBINE) {
-					// Durante il combine, lo annulla.
+					// During a combine, it cancels it
 					if (m_input.MouseRightClicked()) {
 						m_inv.EndCombine();
 						m_curActionObj = 0;
@@ -259,7 +259,7 @@ SKIPCLICKSINISTRO:
 					}
 				} else if (m_input.MouseRightClicked() && m_itemName.IsItemSelected() && m_point.GetSpecialPointer() == RMPointer::PTR_NONE) {
 					if (m_bGUIInterface) {
-						// Prima di aprire l'interfaccia, rimette GOTO
+						// Before opening the interface, replaces GOTO
 						m_curAction = TA_GOTO;
 						m_curActionObj = 0;
 						m_point.SetAction(m_curAction);
@@ -268,8 +268,8 @@ SKIPCLICKSINISTRO:
 				}
 
 
-				// RILASCIO DESTRO
-				// ***************
+				// Right Release
+				// *************
 				if (m_input.MouseRightReleased()) {
 					if (m_bGUIInterface) {
 						if (m_inter.Released(m_input.MousePos(), m_curAction)) {
@@ -283,21 +283,21 @@ SKIPCLICKSINISTRO:
 				}
 			}
 
-			// Aggiorna il nome sotto il puntatore del mouse
+			// Update the name under the mouse pointer
 			m_itemName.SetMouseCoord(m_input.MousePos());
 			if (!m_inter.Active() && !m_inv.MiniActive())
 				CORO_INVOKE_4(m_itemName.DoFrame, m_bigBuf, m_loc, m_point, m_inv);
 		}
 
-		// Inventario & interfaccia
+		// Interface & Inventory
 		m_inter.DoFrame(m_bigBuf, m_input.MousePos());
 		m_inv.DoFrame(m_bigBuf, m_point, m_input.MousePos(), (!m_tony.InAction() && !m_inter.Active() && m_bGUIInventory));
 	}
 
-	// Anima Tony
+	// Animate Tony
 	CORO_INVOKE_2(m_tony.DoFrame, &m_bigBuf, m_nCurLoc);
 
-	// Aggiorna lo scrolling per tenere Tony dentro lo schermo
+	// Update screen scrolling to keep Tony in focus
 	if (m_tony.MustUpdateScrolling() && m_bLocationLoaded) {
 		RMPoint showThis = m_tony.Position();
 		showThis.y -= 60;
@@ -313,7 +313,7 @@ SKIPCLICKSINISTRO:
 	}
 
 	// **********************
-	// Disegna la lista di OT
+	// Draw the list in the OT
 	// **********************
 	CORO_INVOKE_0(m_bigBuf.DrawOT);
 
@@ -487,7 +487,7 @@ uint32 RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 
 	bLoaded = false;
 	for (i = 0; i < 5; i++) {
-		// Retry sul loading della locazione
+		// Retry the loading of the location
 		RMRes res(m_nCurLoc);
 		if (!res.IsValid())
 			continue;
@@ -513,7 +513,7 @@ uint32 RMGfxEngine::LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 
 	m_bLocationLoaded = true;
 
-	// On Enter per la locazion
+	// On entering the location
 	return CORO_INVALID_PID_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
 }
 
@@ -524,7 +524,7 @@ void RMGfxEngine::UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Scarica tutta la memoria della locazione
+	// Release the location
 	CORO_INVOKE_2(mpalEndIdlePoll, m_nCurLoc, NULL);
 
 	// On Exit?
@@ -585,28 +585,28 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	m_bWiping = false;
 	m_hWipeEvent = CoroScheduler.createEvent(false, false);
 
-	// Crea l'evento di freeze
+	// Create the freeze event
 	csMainLoop = g_system->createMutex();
 
-	// Inizializza la funzione di IRQ di Item per l'MPAL
+	// Initialise the IRQ function for items for MPAL
 	GLOBALS.GfxEngine = this;
 	mpalInstallItemIrq(ItemIrq);
 
-	// Inizializza DirectInput
+	// Initialise the input
 	m_input.Init(/*hInst*/);
 
-	// Inizializza il puntatore del mouse
+	// Initialise the mouse pointer
 	m_point.Init();
 
-	// Inizializza Tony
+	// Initialise Tony
 	m_tony.Init();
 	m_tony.LinkToBoxes(&_vm->_theBoxes);
 
-	// Inizializza l'inventario e l'interfaccia
+	// Initialise the inventory and the interface
 	m_inv.Init();
 	m_inter.Init();
 
-	// Carica la locazione e setta le priorità      @@@@@
+	// Download the location and set priorities   @@@@@
 	m_bLocationLoaded = false;
 	/*
 	    m_nCurLoc=1;
@@ -621,7 +621,7 @@ void RMGfxEngine::Init(/*HINSTANCE hInst*/) {
 	*/
 	EnableInput();
 
-	// Inizio del gioco
+	// Starting the game
 	//m_tony.ExecuteAction(4,1,0);    //PREGAME
 
 	m_tony.ExecuteAction(20, 1, 0);
@@ -707,7 +707,7 @@ void RMGfxEngine::SaveState(const Common::String &fn, byte *curThumb, const Comm
 	char buf[4];
 	RMPoint tp = m_tony.Position();
 
-	// Saving: mpal variables, current location, + tony inventory position
+	// Saving: MPAL variables, current location, and Tony inventory position
 
 	// For now, we only save the MPAL state
 	size = mpalGetSaveStateSize();
@@ -802,7 +802,7 @@ void RMGfxEngine::SaveState(const Common::String &fn, byte *curThumb, const Comm
 }
 
 void RMGfxEngine::LoadState(CORO_PARAM, const Common::String &fn) {
-	// PROBLEMA: Bisognerebbe caricare la locazione in un thread a parte per fare la OnEnter ...
+	// PROBLEM: You should change the location in a separate process to do the OnEnter
 	CORO_BEGIN_CONTEXT;
 	Common::InSaveFile *f;
 	byte *state, *statecmp;
@@ -896,7 +896,7 @@ void RMGfxEngine::LoadState(CORO_PARAM, const Common::String &fn) {
 	}
 
 	if (_ctx->ver >= 5) {
-		// Versione 5:
+		// Versione 5
 		bool bStat = false;
 
 		bStat = _ctx->f->readByte();

@@ -39,13 +39,13 @@ namespace Tony {
 *       Prototipi di classi
 \****************************************************************************/
 
-//    Nome della classe           Albero genealogico     Astratto?
-class RMGfxTask;             //                             Si
-class RMGfxTaskSetPrior;     //     Task                    Si
+//    Class Name				Family Treee			Abstract?
+class RMGfxTask;             //                             Yes
+class RMGfxTaskSetPrior;     //     Task                    Yes
 class RMGfxBuffer;           //
-class RMGfxSourceBuffer;     //     TaskP+[Buffer]          Si
+class RMGfxSourceBuffer;     //     TaskP+[Buffer]          Yes
 class RMGfxTargetBuffer;     //     [Buffer]
-class RMGfxSourceBufferPal;  //     Source                  Si
+class RMGfxSourceBufferPal;  //     Source                  Yes
 class RMGfxSourceBuffer4;    //     SourcePal
 class RMGfxSourceBuffer8;    //     SourcePal
 class RMGfxSourceBuffer16;   //     Source
@@ -221,7 +221,7 @@ protected:
 	int m_nInList;
 
 public:
-	// Costruttore standard
+	// Standard constructor
 	RMGfxTask();
 	virtual ~RMGfxTask() { }
 
@@ -284,7 +284,7 @@ public:
  */
 class RMGfxSourceBuffer : public virtual RMGfxBuffer, public RMGfxTaskSetPrior {
 public:
-	// Carica i dati della surface a basso livello
+	// Load the data for the surface
 	virtual int Init(uint32 resID, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
@@ -316,7 +316,7 @@ public:
 	RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw = false);
 	virtual ~RMGfxSourceBuffer16();
 
-	// Inizializzazione
+	// Initialisation
 	void Create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int Bpp();
@@ -329,7 +329,7 @@ public:
  */
 class RMGfxSourceBufferPal : public RMGfxSourceBuffer {
 protected:
-	// The size of the palette is  (1<<Bpp())*4
+	// The size of the palette is  (1 << Bpp()) * 4
 	byte m_pal[256 * 3];
 	uint16 m_palFinal[256];
 
@@ -361,7 +361,7 @@ public:
 	RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw = false);
 	virtual ~RMGfxSourceBuffer8();
 
-	// Inizializzazione
+	// Initialisation
 	void Create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int Bpp();
@@ -406,7 +406,7 @@ protected:
 	void CompressRLE(void);
 
 protected:
-	// Overriding initialization methods
+	// Overriding initialisation methods
 	virtual void PrepareImage(void);
 	virtual void PreparePalette(void);
 
@@ -414,7 +414,7 @@ public:
 	RMGfxSourceBuffer8RLE();
 	virtual ~RMGfxSourceBuffer8RLE();
 
-	// Overload of the initialization method
+	// Overload of the initialisation method
 	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
@@ -472,10 +472,10 @@ protected:
 	static byte MegaAABuf2[];
 	byte *m_aabuf;
 
-	// Calcola il buffer per l'antialiasing
+	// Calculate the buffer for the anti-aliasing
 	void CalculateAA(void);
 
-	// Disegna l'AA
+	// Draw the AA
 	void DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 protected:
@@ -485,7 +485,7 @@ public:
 	RMGfxSourceBuffer8AA();
 	virtual ~RMGfxSourceBuffer8AA();
 
-	// Draw con antialiasing
+	// Draw with anti-aliasing
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
@@ -511,7 +511,7 @@ protected:
 public:
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Overloaded initialisation method
+	// Overloaded initialisation methods
 	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int Init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 

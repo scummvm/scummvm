@@ -43,7 +43,7 @@ class RMLocation;
 class RMPointer;
 
 /**
- * Gestisce un font, in cui ha varie surface per ogni lettera
+ * Manages a font, in which there is a different surface for each letter
  */
 class RMFont : public RMGfxTaskSetPrior {
 protected:
@@ -68,18 +68,18 @@ private:
 	};
 
 protected:
-	// Caricamento del font
+	// Loads the font
 	void Load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
 	void Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
 
-	// Scaricamente del font (anche da distruttore)
+	// Remove the font
 	void Unload(void);
 
 protected:
-	// Conversione (da overloadare)
+	// Conversion form character to font index
 	virtual int ConvertToLetter(byte nChar) = 0;
 
-	// Lunghezza dei caratteri (da overloadare)
+	// Character width
 	virtual int LetterLength(byte nChar, byte nNext = 0) = 0;
 
 public:
@@ -89,17 +89,17 @@ public:
 	RMFont();
 	virtual ~RMFont();
 
-	// Inizializzazione e chiusura
+	// Initialisation and closing
 	virtual void Init(void) = 0;
 	virtual void Close(void);
 
-	// Funzione del task da overloadare
+	// Drawing
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
 
-	// Crea una primitiva per una lettera
+	// Create a primitive for a letter
 	RMGfxPrimitive *MakeLetterPrimitive(byte bChar, int &nLength);
 
-	// Lunghezza in pixel di una stringa con il font corrente
+	// Length in pixels of a string with the current font
 	int StringLen(const RMString &text);
 	int StringLen(char bChar, char bNext = 0);
 };
@@ -125,7 +125,7 @@ protected:
 	signed char l2Table[256][256];
 
 protected:
-	// Overload dei metodi
+	// Overloaded methods
 	int ConvertToLetter(byte nChar) {
 		return cTable[nChar];
 	}
@@ -170,7 +170,7 @@ public:
 };
 
 /**
- * Gestisce una scritta su schermo, con tutte le possibilita' di formattazione disponibile
+ * Manages writing text onto9 the screen
  */
 class RMText : public RMGfxWoodyBuffer {
 private:
@@ -206,27 +206,26 @@ public:
 	static void InitStatics();
 	static void Unload();
 
-	// Setta il tipo di allineamento
+	// Set the alignment type
 	void SetAlignType(HORALIGN aHor, VERALIGN aVer) {
 		aHorType = aHor;
 		aVerType = aVer;
 	}
 
-	// Setta la lunghezza massima di una linea in pixel (utilizzato per formattare il testo)
+	// Sets the maximum length of a line in pixels (used to format the text)
 	void SetMaxLineLength(int max);
 
-	// Scrive un testo
+	// Write the text
 	void WriteText(const RMString &text, int font, int *time = NULL);
 	void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
 
-	// Overloading della funzione ereditata da RMGfxTask per decidere
-	// quando eliminare un oggetto dalla OTLIST
+	// Overloaded function to decide when you delete the object from the OT list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
-	// Overloading del Draw per centrare la scritta, se necessario
+	// Overloading of the Draw to center the text, if necessary
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Setta il colore di base
+	// Set the base colour
 	void SetColor(byte r, byte g, byte b) {
 		m_r = r;
 		m_g = g;
@@ -235,7 +234,7 @@ public:
 };
 
 /**
- * Gestisce il testo di un dialogo
+ * Manages text in a dialog
  */
 class RMTextDialog : public RMText {
 protected:
@@ -257,27 +256,25 @@ public:
 	RMTextDialog();
 	virtual ~RMTextDialog();
 
-	// Scrive un testo
+	// Write the text
 	void WriteText(const RMString &text, int font, int *time = NULL);
 	void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
 
-	// Overloading della funzione ereditata da RMGfxTask per decidere
-	// quando eliminare un oggetto dalla OTLIST
+	// Overloaded function to decide when you delete the object from the OT list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
-	// Overloading della funzione di deregistrazione, utilizzata per capire
-	// quando ci leviamo di torno
+	// Overloaded de-registration
 	virtual void Unregister(void);
 
-	// Overloading del Draw per centrare la scritta, se necessario
+	// Overloading of the Draw to center the text, if necessary
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Setta la posizione
+	// Set the position
 	void SetPosition(const RMPoint &pt) {
 		dst = pt;
 	}
 
-	// Aspetta che venga finita la visualizzazione
+	// Waiting
 	void WaitForEndDisplay(CORO_PARAM);
 	void SetCustomSkipHandle(uint32 hCustomSkip);
 	void SetCustomSkipHandle2(uint32 hCustomSkip);
@@ -288,7 +285,7 @@ public:
 	void ForceNoTime(void);
 	void SetAlwaysDisplay(void);
 
-	// Setta il dispositivo di input, per permettere skip da mouse
+	// Set the input device, to allow skip from mouse
 	void SetInput(RMInput *input);
 
 	void Show(void);
@@ -311,12 +308,9 @@ public:
 };
 
 
-/****************************************************************************\
-*       class RMTextItemName
-*       --------------------
-* Description: Gestisce il nome dell'oggetto selezionato su schermo
-\****************************************************************************/
-
+/**
+ * Manages the name of a selected item on the screen
+ */
 class RMTextItemName : protected RMText {
 protected:
 	RMPoint m_mpos;
@@ -373,31 +367,30 @@ public:
 	void Unregister(void);
 
 public:
-	// Inizializzazione
+	// Initialisation
 	RMDialogChoice();
 	virtual ~RMDialogChoice();
 
-	// Inizializzazione e chiusura
+	// Initialisation and closure
 	void Init(void);
 	void Close(void);
 
-	// Setta il numero delle frasi possibili, che dovranno essere poi aggiunte
-	// con AddChoice()
+	// Sets the number of possible sentences, which then be added with AddChoice()
 	void SetNumChoices(int num);
 
-	// Aggiunge una stringa con la scelta
+	// Adds a string with the choice
 	void AddChoice(const RMString &string);
 
-	// Mostra e nasconde la scelta, con eventuali animazioni
-	// NOTA: Se non viene passato parametro alla Show(), è obbligo del
-	// chiamante assicurarsi che la classe venga inserita alla OTlist
+	// Show and hide the selection, with possible animations.
+	// NOTE: If no parameter is passed to Show(), it is the obligation of
+	// caller to ensure that the class is inserted into OT list
 	void Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf = NULL);
 	void Hide(CORO_PARAM);
 
-	// Polling di aggiornamento
+	// Polling Update
 	void DoFrame(CORO_PARAM, RMPoint ptMousePos);
 
-	// Ritorna la voce attualmente selezionata, o -1 se nessuna è selezionata
+	// Returns the currently selected item, or -1 if none is selected
 	int GetSelection(void);
 };
 

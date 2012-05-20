@@ -79,66 +79,64 @@ protected:
 	OSystem::MutexRef m_csModifyInterface;
 
 protected:
-	// Prepara l'immagine dell'inventario. Va richiamato ogni volta
-	//  che l'inventario cambia
+	// Prepare the image inventory. It should be recalled whenever the inventory changes
 	void Prepare(void);
 
-	// Controlla se la posizione Y del mouse è corretta, anche in base
-	// alla posizione dell'inventario su schermo
+	// Check if the mouse Y position is conrrect, even under the inventory portion of the screen
 	bool CheckPointInside(const RMPoint &pt);
 
 public:
 	RMInventory();
 	virtual ~RMInventory();
 
-	// Prepara un frame
+	// Prepare a frame
 	void DoFrame(RMGfxTargetBuffer& bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen);
 
-	// Inizializzazione e chiusura
+	// Initialisation and closing
 	void Init(void);
 	void Close(void);
 	void Reset(void);
 
-	// Overload per la rimozione da otlist
+	// Overload test for removal from OT list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
-	// Overload per il disegno (per la posizione x&y e l'interfaccina)
+	// Overload the drawing of the inventory
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Metodo per determinare se l'inventario sta comandando gli input
+	// Method for determining whether the inventory currently has the focus
 	bool HaveFocus(const RMPoint &mpos);
 
-	// Metodo per determinare se la mini interfaccia è attiva
+	// Method for determining if the mini interface is active
 	bool MiniActive(void);
 
-	// Gestisce il click sinistro del mouse (solo quando c'ha focus)
+	// Handle the left mouse click (only when the inventory has the focus)
 	bool LeftClick(const RMPoint &mpos, int &nCombineObj);
 	
-	// Gestisce il tasto destro del mouse (solo quando c'ha focus)
+	// Handle the right mouse button (only when the inventory has the focus)
 	void RightClick(const RMPoint &mpos);
 	bool RightRelease(const RMPoint &mpos, RMTonyAction &curAction);
 
-	// Avverte che è finito il combine
+	// Warn that an item combine is over
 	void EndCombine(void);
 	
 public:		
-	// Aggiunta di un oggetto all'inventario
+	// Add an item to the inventory
 	void AddItem(int code);
 	RMInventory& operator+=(RMItem *item) { AddItem(item->MpalCode()); return *this; }
 	RMInventory& operator+=(RMItem &item) { AddItem(item.MpalCode()); return *this; }
 	RMInventory& operator+=(int code) { AddItem(code); return *this; }
 
-	// Rimozione di oggetto
+	// Removes an item
 	void RemoveItem(int code);
 
-	// Siamo sopra un oggetto?
+	// We are on an object?
 	RMItem *WhichItemIsIn(const RMPoint &mpt);
 	bool ItemInFocus(const RMPoint &mpt);
 
-	// Cambia l'icona di un oggetto
+	// Change the icon of an item
 	void ChangeItemStatus(uint32 dwCode, uint32 dwStatus);
 
-	// Salvataggio
+	// Save methods
 	int GetSaveStateSize(void);
 	void SaveState(byte *state);
 	int LoadState(byte *state);
@@ -158,34 +156,34 @@ private:
 	int m_lastHotZone;
 
 protected:
-	// Dice su quale zona calda si trova il punto	
+	// Return which box a given point is in
 	int OnWhichBox(RMPoint pt);
 
 public:
 	virtual ~RMInterface();
 
-	// Il solito DoFrame (polling del motore grafico)
+	// The usual DoFrame (poll the graphics engine)
 	void DoFrame(RMGfxTargetBuffer& bigBuf, RMPoint mousepos);		
 
-	// TRUE se è attiva (non si può selezionare oggetti)		
+	// TRUE if it is active (you can select items)
 	bool Active(); 
 
-	// Inizializzazione
+	// Initialisation
 	void Init(void);
 	void Close(void);
 
-	// Resetta l'interfaccia
+	// Reset the interface
 	void Reset(void);
 
-	// Avverte dei click e rilasci del mouse
+	// Warns of mouse clicks and releases
 	void Clicked(const RMPoint &mousepos);
 	bool Released(const RMPoint &mousepos, RMTonyAction &action);
 
-	// Attiva o disattiva il quinto verbo
+	// Enalbes or disables the fifth verb
 	void SetPalesati(bool bOn);
 	bool GetPalesati(void);
 
-	// Overloading del Draw per il posizionamente
+	// Overloaded Draw
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 

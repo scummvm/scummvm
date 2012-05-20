@@ -33,7 +33,7 @@
 namespace Tony {
 
 /****************************************************************************\
-*       Metodi di RMGfxTask
+*       RMGfxTask Methods
 \****************************************************************************/
 
 RMGfxTask::RMGfxTask() {
@@ -51,7 +51,7 @@ void RMGfxTask::RemoveThis(CORO_PARAM, bool &result) {
 
 
 /****************************************************************************\
-*       Metodi di RMGfxTaskSetPrior
+*       RMGfxTaskSetPrior Methods
 \****************************************************************************/
 
 void RMGfxTaskSetPrior::SetPriority(int nPrior) {
@@ -60,7 +60,7 @@ void RMGfxTaskSetPrior::SetPriority(int nPrior) {
 
 
 /****************************************************************************\
-*       Metodi di RMGfxBuffer
+*       RMGfxBuffer Methods
 \****************************************************************************/
 
 RMGfxBuffer::RMGfxBuffer() {
@@ -74,17 +74,17 @@ RMGfxBuffer::~RMGfxBuffer() {
 }
 
 void RMGfxBuffer::Create(int dimx, int dimy, int nBpp, bool bUseDDraw) {
-	// Distruggi il buffer se esiste di gia'
+	// Destroy the buffer it is already exists
 	if (m_buf != NULL)
 		Destroy();
 
-	// Copia i parametri nei membri privati
+	// Copy the parameters in the private members
 	m_dimx = dimx;
 	m_dimy = dimy;
 	m_bUseDDraw = bUseDDraw;
 
 	if (!m_bUseDDraw) {
-		// Alloca il buffer
+		// Allocate a buffer
 		m_origBuf = m_buf = new byte[m_dimx * m_dimy * nBpp / 8];
 		assert(m_buf != NULL);
 		Common::fill(m_origBuf, m_origBuf + m_dimx * m_dimy * nBpp / 8, 0);
@@ -102,13 +102,13 @@ void RMGfxBuffer::Destroy(void) {
 
 void RMGfxBuffer::Lock(void) {
 	if (m_bUseDDraw) {
-		// Gestisce l'accelerazione
+		// Manages acceleration
 	}
 }
 
 void RMGfxBuffer::Unlock(void) {
 	if (m_bUseDDraw) {
-		// Gestisce l'accelerazione
+		// Manages acceleration
 	}
 }
 
@@ -130,26 +130,14 @@ RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw) {
 }
 
 /****************************************************************************\
-*       Metodi di RMGfxSourceBuffer
-\****************************************************************************/
-
-/****************************************************************************\
-*
-* Function:
-*
-* Description:
-*
-* Input:
-*
-* Return:
-*
+*       RMGfxSourceBuffer Methods
 \****************************************************************************/
 
 int RMGfxSourceBuffer::Init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
 	Create(dimx, dimy, Bpp());
 	CopyMemory(m_buf, buf, dimx * dimy * Bpp() / 8);
 
-	// Richiama la funzione di preparazione della surface (ereditata)
+	// Invokes the method for preparing the surface (inherited)
 	PrepareImage();
 
 	return dimx * dimy * Bpp() / 8;
@@ -160,7 +148,7 @@ void RMGfxSourceBuffer::Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPal
 	Create(dimx, dimy, Bpp());
 	ds.Read(m_buf, dimx * dimy * Bpp() / 8);
 
-	// Richiama la funzione di preparazione della surface (ereditata)
+	// Invokes the method for preparing the surface (inherited)
 	PrepareImage();
 }
 
@@ -168,7 +156,7 @@ RMGfxSourceBuffer::~RMGfxSourceBuffer() {
 }
 
 void RMGfxSourceBuffer::PrepareImage(void) {
-	// Non fa nulla: puo' essere overloadata se necessaria
+	// Do nothing. Can be overloaded if necessary
 }
 
 bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf) {
@@ -226,23 +214,20 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 	return true;
 }
 
-/****************************************************************************\
-*
-* Function:     void RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy);
-*
-* Description:  Carica una surface partendo dall'ID della risorsa
-*
-* Input:        uint32 resID             ID della risorsa
-*               int dimx, dimy                  Dimensione del buffer
-*
-\****************************************************************************/
 
-int RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
+/**
+ * Initialises a surface by resource Id
+ *
+ * @param resID					Resource ID
+ * @param dimx					Buffer X dimension
+ * @param dimy					Buffer Y dimension
+ */
+ int RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
 	return Init(RMRes(resID), dimx, dimy, bLoadPalette);
 }
 
 /****************************************************************************\
-*       Metodi di RMGfxWoodyBuffer
+*       RMGfxWoodyBuffer Methods
 \****************************************************************************/
 
 RMGfxWoodyBuffer::~RMGfxWoodyBuffer() {
@@ -255,10 +240,10 @@ void RMGfxWoodyBuffer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitiv
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Prima si fa disegnare tramite la propria OT list
+	// Draw the OT list
 	CORO_INVOKE_0(DrawOT);
 
-	// Poi disegna se stesso nel target buffer
+	// Draw itself into the target buffer
 	CORO_INVOKE_2(RMGfxSourceBuffer16::Draw, bigBuf, prim);
 
 	CORO_END_CODE;
@@ -275,7 +260,7 @@ RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
 
 
 /****************************************************************************\
-*       Metodi di RMGfxTargetBuffer
+*       RMGfxTargetBuffer Methods
 \****************************************************************************/
 
 RMGfxClearTask RMGfxTargetBuffer::taskClear;
@@ -325,37 +310,37 @@ void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
 	_ctx->prev = NULL;
 	_ctx->cur = otlist;
 
-	// Lock del buffer per accederci
+	// Lock the buffer to access it
 	Lock();
 //	g_system->lockMutex(csModifyingOT);
 
 	while (_ctx->cur != NULL) {
-		// Richiama la draw sul task, passandogli una copia della primitiva
+		// Call the task Draw method, passing it a copy of the original
 		_ctx->myprim = _ctx->cur->prim->Duplicate();
 		CORO_INVOKE_2(_ctx->cur->prim->m_task->Draw, *this, _ctx->myprim);
 		delete _ctx->myprim;
 
-		// Controlla se e' arrivato il momento di rimuovere il task dalla OTlist
+		// Check if it's time to remove the task from the OT list
 		CORO_INVOKE_1(_ctx->cur->prim->m_task->RemoveThis, _ctx->result);
 		if (_ctx->result) {
-			// Deregistra il task
+			// De-register the task
 			_ctx->cur->prim->m_task->Unregister();
 
-			// Cancella il task liberando la memoria
+			// Delete task, freeing the memory
 			delete _ctx->cur->prim;
 			_ctx->next = _ctx->cur->next;
 			delete _ctx->cur;
 
-			// Se era il primo elemento, aggiorna la testa della lista
+			// If it was the first item, update the list head
 			if (_ctx->prev == NULL)
 				otlist = _ctx->next;
-			// Altrimenti aggiorna il puntatore al successivo dell'elemento precedente
+			// Otherwise update the next pinter of the previous item
 			else
 				_ctx->prev->next = _ctx->next;
 
 			_ctx->cur = _ctx->next;
 		} else {
-			// Aggiorna il puntatore al precedente e scorre la lista
+			// Update the pointer to the previous item, and the current to the next
 			_ctx->prev = _ctx->cur;
 			_ctx->cur = _ctx->cur->next;
 		}
@@ -363,7 +348,7 @@ void RMGfxTargetBuffer::DrawOT(CORO_PARAM) {
 
 //	g_system->unlockMutex(csModifyingOT);
 
-	// Unlock dopo la scrittura
+	//Unlock after writing
 	Unlock();
 
 	CORO_END_CODE;
@@ -375,19 +360,19 @@ void RMGfxTargetBuffer::AddPrim(RMGfxPrimitive *prim) {
 
 //	g_system->lockMutex(csModifyingOT);
 
-	// Avverte che e' in lista di OT
+	// Warn of the OT listing
 	prim->m_task->Register();
 
-	// Controlla la sua priorita'
+	// Check the priority
 	nPrior = prim->m_task->Priority();
 	n = new OTList(prim);
 
-	// Lista vuota
+	// Empty list
 	if (otlist == NULL) {
 		otlist = n;
 		otlist->next = NULL;
 	}
-	// Inserimento in testa
+	// Inclusion in the head
 	else if (nPrior < otlist->prim->m_task->Priority()) {
 		n->next = otlist;
 		otlist = n;
@@ -409,7 +394,7 @@ void RMGfxTargetBuffer::AddClearTask(void) {
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBufferPal
+*               RMGfxSourceBufferPal Methods
 \****************************************************************************/
 
 RMGfxSourceBufferPal::~RMGfxSourceBufferPal() {
@@ -458,10 +443,10 @@ void RMGfxSourceBufferPal::PreparePalette(void) {
 int RMGfxSourceBufferPal::Init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
 	int read;
 
-	// Carica l'immagine RAW
+	// Load the RAW image
 	read = RMGfxSourceBuffer::Init(buf, dimx, dimy);
 
-	// Carica la palette se necessario
+	// Load the palette if necessary
 	if (bLoadPalette)
 		read += LoadPaletteWA(&buf[read]);
 
@@ -469,10 +454,10 @@ int RMGfxSourceBufferPal::Init(const byte *buf, int dimx, int dimy, bool bLoadPa
 }
 
 void RMGfxSourceBufferPal::Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
-	// Carica l'immagine RAW
+	// Load the RAW image
 	RMGfxSourceBuffer::Init(ds, dimx, dimy);
 
-	// Carica la palette se necessario
+	// Load the palette if necessary
 	if (bLoadPalette) {
 		byte *suxpal = new byte[256 * 3];
 		ds.Read(suxpal, 256 * 3);
@@ -490,7 +475,7 @@ int RMGfxSourceBufferPal::LoadPaletteWA(uint32 resID, bool bSwapped) {
 }
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer4
+*               RMGfxSourceBuffer4 Methods
 \****************************************************************************/
 
 void RMGfxSourceBuffer4::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -501,16 +486,12 @@ RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
 	SetPriority(0);
 }
 
-/****************************************************************************\
-*
-* Function:     int RMGfxSourceBuffer4::Bpp();
-*
-* Description:  Ritorna il numero di bit per pixel della surface
-*
-* Return:       Bit per pixel
-*
-\****************************************************************************/
 
+/**
+ * Returns the number of bits per pixel of the surface
+ *
+ * @returns		Bit per pixel
+ */
 int RMGfxSourceBuffer4::Bpp() {
 	return 4;
 }
@@ -520,7 +501,7 @@ void RMGfxSourceBuffer4::Create(int dimx, int dimy, bool bUseDDraw) {
 }
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8
+*               RMGfxSourceBuffer8 Methods
 \****************************************************************************/
 
 RMGfxSourceBuffer8::~RMGfxSourceBuffer8() {
@@ -533,12 +514,12 @@ void RMGfxSourceBuffer8::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 	uint16 *buf = bigBuf;
 	byte *raw = m_buf;
 
-	// Destination nel buffer
+	// Destination buffer
 	RMRect dst;
 	if (prim->HaveDst())
 		dst = prim->Dst();
 
-	// Esegue il clip
+	// Clipping
 	if (prim->HaveSrc()) {
 		u = prim->Src().x1;
 		v = prim->Src().y1;
@@ -550,10 +531,10 @@ void RMGfxSourceBuffer8::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 	if (!Clip2D(dst.x1, dst.y1, u, v, width, height, prim->HaveSrc(), &bigBuf))
 		return;
 
-	// Offset iniziale nel buffer
+	// Starting offset into the buffer
 	buf += dst.y1 * bufx + dst.x1;
 
-	// Passaggio normale
+	// Normal step
 	if (m_bTrasp0) {
 		for (y = 0; y < height; y++) {
 			raw = m_buf + (y + v) * m_dimx + u;
@@ -593,16 +574,11 @@ RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
 }
 
 
-/****************************************************************************\
-*
-* Function:     int RMGfxSourceBuffer8::Bpp();
-*
-* Description:  Ritorna il numero di bit per pixel della surface
-*
-* Return:       Bit per pixel
-*
-\****************************************************************************/
-
+/**
+ * Returns the number of bits per pixel of the surface
+ *
+ * @returns		Bit per pixel
+ */
 int RMGfxSourceBuffer8::Bpp() {
 	return 8;
 }
@@ -617,7 +593,7 @@ void RMGfxSourceBuffer8::Create(int dimx, int dimy, bool bUseDDraw) {
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8AB
+*               RMGfxSourceBuffer8AB Methods
 \****************************************************************************/
 
 RMGfxSourceBuffer8AB::~RMGfxSourceBuffer8AB() {
@@ -645,12 +621,12 @@ void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 	uint16 *buf = bigBuf;
 	byte *raw = m_buf;
 
-	// Destination nel buffer
+	// Destination buffer
 	RMRect dst;
 	if (prim->HaveDst())
 		dst = prim->Dst();
 
-	// Esegue il clip
+	// Clipping
 	if (prim->HaveSrc()) {
 		u = prim->Src().x1;
 		v = prim->Src().y1;
@@ -662,7 +638,7 @@ void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 	if (!Clip2D(dst.x1, dst.y1, u, v, width, height, prim->HaveSrc(), &bigBuf))
 		return;
 
-	// Offset iniziale nel buffer
+	// Starting offset into the buffer
 	buf += dst.y1 * bufx + dst.x1;
 
 	// Passaggio normale
@@ -700,7 +676,7 @@ void RMGfxSourceBuffer8AB::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8RLE
+*               RMGfxSourceBuffer8RLE Methods
 \****************************************************************************/
 
 byte RMGfxSourceBuffer8RLE::MegaRLEBuf[512 * 1024];
@@ -743,10 +719,10 @@ void RMGfxSourceBuffer8RLE::Init(RMDataStream &ds, int dimx, int dimy, bool bLoa
 }
 
 void RMGfxSourceBuffer8RLE::PreparePalette(void) {
-	// Richiama il metodo padre
+	// Invoke the parent method
 	RMGfxSourceBuffer8::PreparePalette();
 
-	// Si salva gli RGB di alpha blending
+	// Handle RGB alpha blending
 	if (alphaBlendColor != -1) {
 		alphaR = (m_palFinal[alphaBlendColor] >> 10) & 0x1F;
 		alphaG = (m_palFinal[alphaBlendColor] >> 5) & 0x1F;
@@ -755,10 +731,10 @@ void RMGfxSourceBuffer8RLE::PreparePalette(void) {
 }
 
 void RMGfxSourceBuffer8RLE::PrepareImage(void) {
-	// Richiama il metodo padre
+	// Invoke the parent method
 	RMGfxSourceBuffer::PrepareImage();
 
-	// Comprime
+	// Compress
 	CompressRLE();
 }
 
@@ -776,17 +752,17 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 	byte *startsrc;
 	int rep;
 
-	// Esegue la compressione RLE, per linee
+	// Perform RLE compression for lines
 	cur = MegaRLEBuf;
 	src = m_buf;
 	for (y = 0; y < m_dimy; y++) {
-		// Si salva l'inizio della linea
+		// Save the beginning of the line
 		startline = cur;
 
-		// Lascia lo spazio per la lunghezza della linea
+		// Leave space for the length of the line
 		cur += 2;
 
-		// Si parte dallo spazio vuoto
+		// It starts from the empty space
 		curdata = 0;
 		rep = 0;
 		startsrc = src;
@@ -813,7 +789,7 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 			}
 		}
 
-		// Dati in sospeso?
+		// Pending data?
 		if (curdata == 1) {
 			RLEWriteAlphaBlend(cur, rep);
 			RLEWriteData(cur, 0, NULL);
@@ -823,17 +799,17 @@ void RMGfxSourceBuffer8RLE::CompressRLE(void) {
 			RLEWriteData(cur, rep, startsrc);
 		}
 
-		// Fine linea
+		// End of line
 		RLEWriteEOL(cur);
 
-		// Scrive la lunghezza della linea
+		// Write the length of the line
 		WRITE_LE_UINT16(startline, (uint16)(cur - startline));
 	}
 
-	// Cancella l'immagine originale
+	// Delete the original image
 	delete[] m_buf;
 
-	// Ci copia l'immagine compressa
+	// Copy the compressed image
 	x = cur - MegaRLEBuf;
 	m_buf = new byte[x];
 	Common::copy(MegaRLEBuf, MegaRLEBuf + x, m_buf);
@@ -845,27 +821,27 @@ void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 	uint16 *buf = bigBuf;
 	int x1, y1, u, v, width, height;
 
-	// Clippiamo lo sprite
+	// Clipping
 	x1 = prim->Dst().x1;
 	y1 = prim->Dst().y1;
 	if (!Clip2D(x1, y1, u, v, width, height, false, &bigBuf))
 		return;
 
-	// Andiamo avanti di V linee nell'immagine RLE
+	// Go forward through the RLE lines
 	src = m_buf;
 	for (y = 0; y < v; y++)
 		src += READ_LE_UINT16(src);
 
-	// Posizionamoci nel buffer di destinazione
+	// Calculate the position in the destination buffer
 	buf += y1 * bigBuf.Dimx();
 
-	// Looppone
+	// Loop
 	if (prim->IsFlipped()) {
-// Annulliamo il clipping orizzontale
+// Eliminate horizontal clipping
 //		width = m_dimx;
 //		x1=prim->Dst().x1;
 
-		// Flippiamo il clipping
+		// Clipping
 		u = m_dimx - (width + u);
 		x1 = (prim->Dst().x1 + m_dimx - 1) - u;
 
@@ -873,21 +849,21 @@ void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 			// Decompressione
 			RLEDecompressLineFlipped(buf + x1, src + 2, u, width);
 
-			// Prossima linea
+			// Next line
 			src += READ_LE_UINT16(src);
 
-			// Skippa alla linea successiva
+			// Skip to the next line
 			buf += bigBuf.Dimx();
 		}
 	} else {
 		for (y = 0; y < height; y++) {
-			// Decompressione
+			// Decompression
 			RLEDecompressLine(buf + x1, src + 2, u, width);
 
-			// Prossima linea
+			// Next line
 			src += READ_LE_UINT16(src);
 
-			// Skippa alla linea successiva
+			// Skip to the next line
 			buf += bigBuf.Dimx();
 		}
 	}
@@ -895,7 +871,7 @@ void RMGfxSourceBuffer8RLE::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8RLEByte
+*               RMGfxSourceBuffer8RLEByte Methods
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEByte::~RMGfxSourceBuffer8RLEByte() {
@@ -981,7 +957,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLine(uint16 *dst, byte *src, int nS
 
 	while (1) {
 RLEByteDoTrasp:
-		// Via il trasp di merda
+		// Get the trasp of s**t
 		n = *src++;
 
 		// EOL?
@@ -1018,7 +994,7 @@ RLEByteDoAlpha2:
 		assert(nLength > 0);
 
 //RLEByteDoCopy:
-		// Copia la roba
+		// Copy the stuff
 		n = *src++;
 
 RLEByteDoCopy2:
@@ -1087,7 +1063,7 @@ void RMGfxSourceBuffer8RLEByte::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 
 	while (1) {
 RLEByteFlippedDoTrasp:
-		// Via il trasp di merda
+		// Get the trasp of s**t
 		n = *src++;
 
 		// EOL?
@@ -1124,7 +1100,7 @@ RLEByteFlippedDoAlpha2:
 		assert(nLength > 0);
 
 //RLEByteFlippedDoCopy:
-		// Copia la roba
+		// Copy the data
 		n = *src++;
 
 RLEByteFlippedDoCopy2:
@@ -1143,7 +1119,7 @@ RLEByteFlippedDoCopy2:
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8RLEWord
+*               RMGfxSourceBuffer8RLEWord Methods
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEWord::~RMGfxSourceBuffer8RLEWord() {
@@ -1232,7 +1208,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLine(uint16 *dst, byte *src, int nS
 
 	while (1) {
 RLEWordDoTrasp:
-		// Via il trasp di merda
+		// Get the trasp of s**t
 		n = READ_LE_UINT16(src);
 		src += 2;
 
@@ -1274,7 +1250,7 @@ RLEWordDoAlpha2:
 		assert(nLength > 0);
 
 //RLEWordDoCopy:
-		// Copia la roba
+		// Copy the data
 		n = READ_LE_UINT16(src);
 		src += 2;
 
@@ -1350,7 +1326,7 @@ void RMGfxSourceBuffer8RLEWord::RLEDecompressLineFlipped(uint16 *dst, byte *src,
 
 	while (1) {
 RLEWordFlippedDoTrasp:
-		// Via il trasp di merda
+		// Get the trasp of s**t
 		n = READ_LE_UINT16(src);
 		src += 2;
 
@@ -1392,7 +1368,7 @@ RLEWordFlippedDoAlpha2:
 		assert(nLength > 0);
 
 //RLEWordFlippedDoCopy:
-		// Copia la roba
+		// Copy the data
 		n = READ_LE_UINT16(src);
 		src += 2;
 
@@ -1480,7 +1456,7 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 
 	while (1) {
 RLEWordDoTrasp:
-		// Via il trasp di merda
+		// Get the trasp of s**t
 		n = READ_LE_UINT16(src);
 		src += 2;
 
@@ -1503,7 +1479,7 @@ RLEWordDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 
-		// @@@ NON DOVREBBE ESSERCI!!!!!
+		// @@@ SHOULD NOT BE THERE !!!!!
 		for (i = 0; i < n; i++) {
 			r = (*dst >> 10) & 0x1F;
 			g = (*dst >> 5) & 0x1F;
@@ -1523,7 +1499,7 @@ RLEWordDoAlpha2:
 		assert(nLength > 0);
 
 //RLEWordDoCopy:
-		// Copia la roba
+		// Copy the data
 		n = READ_LE_UINT16(src);
 		src += 2;
 
@@ -1566,22 +1542,22 @@ byte RMGfxSourceBuffer8AA::MegaAABuf[256 * 1024];
 byte RMGfxSourceBuffer8AA::MegaAABuf2[64 * 1024];
 
 void RMGfxSourceBuffer8AA::PrepareImage(void) {
-	// Richiama il metodo padre
+	// Invoke the parent method
 	RMGfxSourceBuffer::PrepareImage();
 
-	// Prepara il buffer di antialiasing
+	// Prepare the buffer for anti-aliasing
 	CalculateAA();
 }
 
 
 void RMGfxSourceBuffer8AA::CalculateAA(void) {
-	// Io suxo tu suxi egli suxa noi suxiamo voi suxate essi suxano  ---> ANTI ALIASING SUX!
+	// I suck, you suck, he sucks, we suck, they all suck  ---> ANTI ALIASING SUX!
 	// ************************************************************
 
 	int x, y;
 	byte *src, *srcaa;
 
-	/* Prima passata: cerchiamo i bordi */
+	/* First pass: fill the edges */
 	Common::fill(MegaAABuf, MegaAABuf + m_dimx * m_dimy, 0);
 
 	src = m_buf;
@@ -1643,20 +1619,19 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	int r, g, b;
 	int step;
 
-	// Clippiamo lo sprite
+	// Clip the sprite
 	x1 = prim->Dst().x1;
 	y1 = prim->Dst().y1;
 	if (!Clip2D(x1, y1, u, v, width, height, false, &bigBuf))
 		return;
 
-	// Andiamo avanti di V linee nell'immagine RLE
+	// Go forward through the RLE lines
 	src = m_buf;
 	for (y = 0; y < v; y++)
 		src += READ_LE_UINT16(src);
 
-	// Annulliamo il clipping orizzontale
+	// Eliminate horizontal clipping
 
-	// Flippiamo il clipping
 	if (prim->IsFlipped()) {
 		u = m_dimx - (width + u);
 		x1 = (prim->Dst().x1 + m_dimx - 1) - u;
@@ -1665,7 +1640,7 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 //	x1=prim->Dst().x1;
 
 
-	// Posizionamoci nel buffer di destinazione
+	// Poisition into the destination buffer
 	buf = bigBuf;
 	buf += y1 * bigBuf.Dimx();
 
@@ -1674,8 +1649,8 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	else
 		step = 1;
 
-	// Looppone
-	buf += bigBuf.Dimx(); // skippa la prima linea
+	// Loop
+	buf += bigBuf.Dimx(); // Skip the first line
 	for (y = 1; y < height - 1; y++) {
 		/*
 		        if (prim->IsFlipped())
@@ -1705,11 +1680,11 @@ void RMGfxSourceBuffer8AA::DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
 
-		// Skippa alla linea successiva
+		// Skip to the next line
 		buf += bigBuf.Dimx();
 	}
 
-// Posizionamoci nel buffer di destinazione
+// Position into the destination buffer
 	buf = bigBuf;
 	buf += y1 * bigBuf.Dimx();
 
@@ -1765,7 +1740,7 @@ void RMGfxSourceBuffer8AA::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8RLEAA
+*               RMGfxSourceBuffer8RLEAA Methods
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEByteAA::~RMGfxSourceBuffer8RLEByteAA() {
@@ -1799,7 +1774,7 @@ void RMGfxSourceBuffer8RLEByteAA::Init(RMDataStream &ds, int dimx, int dimy, boo
 	RMGfxSourceBuffer8RLE::Init(ds, dimx, dimy, bLoadPalette);
 
 	if (!bNeedRLECompress) {
-		// Carica la maschera di antialiasing
+		// Load the anti-aliasing mask
 		m_aabuf = new byte[dimx * dimy];
 		ds.Read(m_aabuf, dimx * dimy);
 	}
@@ -1845,7 +1820,7 @@ void RMGfxSourceBuffer8RLEWordAA::Init(RMDataStream &ds, int dimx, int dimy, boo
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer16
+*               RMGfxSourceBuffer16 Methods
 \****************************************************************************/
 
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(bool bTrasp0) {
@@ -1913,7 +1888,7 @@ void RMGfxSourceBuffer16::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 }
 
 void RMGfxSourceBuffer16::PrepareImage(void) {
-	// Color space conversion se necessario!
+	// Colour space conversion if necessary!
 	int i;
 	uint16 *buf = (uint16 *)m_buf;
 
@@ -1927,16 +1902,12 @@ RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
 	SetPriority(0);
 }
 
-/****************************************************************************\
-*
-* Function:     int RMGfxSourceBuffer16::Bpp();
-*
-* Description:  Ritorna il numero di bit per pixel della surface
-*
-* Return:       Bit per pixel
-*
-\****************************************************************************/
 
+/**
+ * Returns the number of bits per pixel of the surface
+ *
+ * @returns		Bit per pixel
+ */
 int RMGfxSourceBuffer16::Bpp() {
 	return 16;
 }
@@ -1946,7 +1917,7 @@ void RMGfxSourceBuffer16::Create(int dimx, int dimy, bool bUseDDraw) {
 }
 
 /****************************************************************************\
-*               Metodi di RMGfxBox
+*               RMGfxBox Methods
 \****************************************************************************/
 
 void RMGfxBox::RemoveThis(CORO_PARAM, bool &result) {
@@ -1965,11 +1936,11 @@ void RMGfxBox::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 	uint16 *buf = bigBuf;
 	RMRect rcDst;
 
-	// Prende il rettangolo di destinazione
+	// It takes the destination rectangle
 	rcDst = prim->Dst();
 	buf += rcDst.y1 * bigBuf.Dimx() + rcDst.x1;
 
-	// Fa il suo bravo loop di put
+	// Loop through the pixels
 	for (j = 0; j < rcDst.Height(); j++) {
 		for (i = 0; i < rcDst.Width(); i++)
 			*buf ++ = wFillColor;
@@ -1980,21 +1951,21 @@ void RMGfxBox::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 
 
 /****************************************************************************\
-*       Metodi di RMGfxClearTask
+*       RMGfxClearTask Methods
 \****************************************************************************/
 
 int RMGfxClearTask::Priority() {
-	// Priorita' massima (deve essere fatto per primo)
+	// Maximum priority (must be done first)
 	return 1;
 }
 
 void RMGfxClearTask::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *) {
-	// Pulisce tutto il target buffer
+	// Clean the target buffer
 	Common::fill((byte *)bigBuf, (byte *)bigBuf + (bigBuf.Dimx() * bigBuf.Dimy() * 2), 0x0);
 }
 
 void RMGfxClearTask::RemoveThis(CORO_PARAM, bool &result) {
-	// Il task di clear si disattiva sempre
+	// The task is fine to be removed
 	result = true;
 }
 

@@ -37,7 +37,7 @@
 namespace Tony {
 
 /****************************************************************************\
-*       Metodi di RMFont
+*       RMFont Methods
 \****************************************************************************/
 
 RMFont::RMFont() {
@@ -48,15 +48,13 @@ RMFont::~RMFont() {
 	Unload();
 }
 
-/****************************************************************************\
-*
-* Function:     void RMFont::Load(byte *buf, int nChars, int dimx, int dimy);
-*
-* Description:  Carica un font da buffer
-*
-* Input:        byte *buf              Buffer contenente il font
-*               int nChars              Numero di caratteri (max 256)
-*               int dimx,dimy           Dimensione in pixel di un carattere
+
+/**
+ * Dumps a font to a buffer
+ * @param buf					Buffer contenente il font
+ * @param nChars				Numero di caratteri (max 256)
+ * @param dimx					X dimension in pixels
+ * @param dimy					Y dimension in pixels
 *
 \****************************************************************************/
 
@@ -84,9 +82,9 @@ void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palRes
 	}
 #endif
 
-	// Carichiamoce 'sto font
+	// Initialisation the fonts
 	for (int i = 0; i < nChars; i++) {
-		// Inizializza il buffer con le lettere
+		// Initialise the buffer with the letters
 		m_letter[i].Init(buf + i * (dimx * dimy + 8) + 8, dimx, dimy);
 		m_letter[i].LoadPaletteWA(palResID);
 	}
@@ -118,15 +116,15 @@ RMGfxPrimitive *RMFont::MakeLetterPrimitive(byte bChar, int &nLength) {
 	RMFontPrimitive *prim;
 	int nLett;
 
-	// Converte da carattere a lettera
+	// Convert from character to glyph index
 	nLett = ConvertToLetter(bChar);
 	assert(nLett < nLetters);
 
-	// Crea la primitiva per il font
+	// Create primitive font
 	prim = new RMFontPrimitive(this);
 	prim->m_nChar = nLett;
 
-	// Si fa' dare la lunghezza della lettera in pixel
+	// Get the length of the character in pixels
 	nLength = LetterLength(bChar);
 
 	return prim;
@@ -140,7 +138,7 @@ void RMFont::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim2) 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Richiama la Draw della lettera assegnata alla primitiva
+	// Call the draw method of the letter assigned to the primitive
 	if (prim->m_nChar != -1)
 		CORO_INVOKE_2(m_letter[prim->m_nChar].Draw, bigBuf, prim);
 
@@ -190,7 +188,7 @@ void RMFontColor::SetBaseColor(byte r1, byte g1, byte b1) {
 	int i;
 	byte pal[768 * 3];
 
-	// Controlla se siamo gia' sul colore giusto
+	// Check if we are already on the right colour
 	if (m_r == r1 && m_g == g1 && m_b == b1)
 		return;
 
@@ -198,7 +196,7 @@ void RMFontColor::SetBaseColor(byte r1, byte g1, byte b1) {
 	m_g = g1;
 	m_b = b1;
 
-	// Costruisce la nuova palette per il font
+	// Constructs a new paletter for the font
 	for (i = 1; i < 16; i++) {
 		pal[i * 3 + 0] = r >> 16;
 		pal[i * 3 + 1] = g >> 16;
@@ -213,20 +211,20 @@ void RMFontColor::SetBaseColor(byte r1, byte g1, byte b1) {
 	pal[15 * 3 + 1] += 8;
 	pal[15 * 3 + 2] += 8;
 
-	// La mette in tutte le lettere
+	// Puts in all the letters
 	for (i = 0; i < nLetters; i++)
 		m_letter[i].LoadPaletteWA(pal);
 }
 
 
 /***************************************************************************\
-*       Metodi di RMFontParla
+*       RMFontParla Methods
 \****************************************************************************/
 
 void RMFontParla::Init(void) {
 	int i;
 
-	// bernie: numero di caratteri nel font
+	// bernie: Number of characters in the font
 	int nchars =
 	    112    // base
 	    + 18    // polish
@@ -237,7 +235,7 @@ void RMFontParla::Init(void) {
 
 	Load(RES_F_PARL, nchars, 20, 20);
 
-	// Inizializziamo le tabelline del cazzo
+	// Initialise the f**king table
 	lDefault = 13;
 	hDefault = 18;
 	Common::fill(&l2Table[0][0], &l2Table[0][0] + (256 * 256), '\0');
@@ -265,9 +263,9 @@ void RMFontParla::Init(void) {
 	cTable['<'] = 69;
 	cTable['>'] = 70;
 	cTable['!'] = 71;
-	//cTable['!'] = 72;  Esclamativo alla rovescia
+	//cTable['!'] = 72;  Exclamation countdown
 	cTable['?'] = 73;
-	//cTable['?'] = 74;  Interrogativo alla rovescia
+	//cTable['?'] = 74;  Question down
 	cTable['('] = 75;
 	cTable[')'] = 76;
 	cTable['\"'] = 77;
@@ -295,20 +293,20 @@ void RMFontParla::Init(void) {
 	cTable[(byte)'ü'] = 97;
 	cTable[(byte)'ÿ'] = 98;
 	cTable[(byte)'å'] = 99;
-	//cTable[' '] = 100;  e cerchietto
-	//cTable[' '] = 101;  i cerchietto
-	//cTable[' '] = 102;  o cerchietto
-	//cTable[' '] = 103;  u cerchietto
+	//cTable[' '] = 100;  e circlet
+	//cTable[' '] = 101;  i circlet
+	//cTable[' '] = 102;  o circlet
+	//cTable[' '] = 103;  u circlet
 	cTable[(byte)'ñ'] = 104;
 	cTable[(byte)'Ñ'] = 105;
 	cTable[(byte)'ç'] = 106;
 	cTable[(byte)'æ'] = 107;
 	cTable[(byte)'Æ'] = 108;
 	cTable[(byte)'ø'] = 109;
-	//cTable['ƒ'] = 110;  integrale
+	//cTable['ƒ'] = 110;  integral
 	cTable['\''] = 111;
 
-	// Un po' di lunghezze
+	// Little lengths
 	lTable[' '] = 9;
 	lTable['\''] = 5;
 	lTable['.'] = 5;
@@ -387,9 +385,9 @@ void RMFontParla::Init(void) {
 	} else if (_vm->getLanguage() == Common::RU_RUS) {
 
 		// Russian Characters
-		// WARNING: Il russo usa molti dei caratteri ISO-Latin-1 che servono
-		// per le altre traduzioni. Per compilare Tony in altre lingue,
-		// commentare via queste definizioni.
+		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
+		// allowing for further translations. To support Tonyin other langauges, 
+		// these mappings could be used as a basis
 
 		cTable[(byte)'À'] = 130;
 		cTable[(byte)'Á'] = 131;
@@ -627,13 +625,13 @@ void RMFontParla::Init(void) {
 
 
 /***************************************************************************\
-*       Metodi di RMFontMacc
+*       RMFontMacc Methods
 \****************************************************************************/
 
 void RMFontMacc::Init(void) {
 	int i;
 
-	// bernie: numero di caratteri nel font
+	// bernie: Number of characters in the font
 	int nchars =
 	    102    // base
 	    + 18    // polish
@@ -693,16 +691,16 @@ void RMFontMacc::Init(void) {
 	cTable[(byte)'å'] = 88;
 	cTable[(byte)'è'] = 89;
 	cTable[(byte)'ë'] = 90;
-	//cTable[(byte)''] = 91;          // e col pallino
+	//cTable[(byte)''] = 91;          // e with ball
 	cTable[(byte)'ì'] = 92;
 	cTable[(byte)'ï'] = 93;
-	//cTable[(byte)''] = 94;            // i col pallino
+	//cTable[(byte)''] = 94;            // i with ball
 	cTable[(byte)'ò'] = 95;
 	cTable[(byte)'ö'] = 96;
-	//cTable[(byte)''] = 97;          // o col pallino
+	//cTable[(byte)''] = 97;          // o with ball
 	cTable[(byte)'ù'] = 98;
 	cTable[(byte)'ü'] = 99;
-	//cTable[(byte)''] = 100;         // u col pallino
+	//cTable[(byte)''] = 100;         // u with ball
 	cTable[(byte)'ç'] = 101;
 
 	if (_vm->getLanguage() == Common::PL_POL) {	
@@ -750,10 +748,9 @@ void RMFontMacc::Init(void) {
 
 	} else if (_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
-		// WARNING: Il russo usa molti dei caratteri ISO-Latin-1 che servono
-		// per le altre traduzioni. Per compilare Tony in altre lingue,
-		// commentare via queste definizioni.
-
+		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
+		// allowing for further translations. To support Tonyin other langauges, 
+		// these mappings could be used as a basis
 		cTable[(byte)'À'] = 120;
 		cTable[(byte)'Á'] = 121;
 		cTable[(byte)'Â'] = 122;
@@ -992,13 +989,13 @@ void RMFontMacc::Init(void) {
 }
 
 /***************************************************************************\
-*       Metodi di RMFontCredits
+*       RMFontCredits Methods
 \****************************************************************************/
 
 void RMFontCredits::Init(void) {
 	int i;
 
-	// bernie: numero di caratteri nel font
+	// bernie: Number of characters in the font
 	int nchars =
 	    112    // base
 	    + 18    // polish
@@ -1200,12 +1197,10 @@ void RMFontCredits::Init(void) {
 		lTable[(byte)'Ÿ'] = 10;
 
 	} else if (_vm->getLanguage() == Common::RU_RUS) {
-
 		// Russian Characters
-		// WARNING: Il russo usa molti dei caratteri ISO-Latin-1 che servono
-		// per le altre traduzioni. Per compilare Tony in altre lingue,
-		// commentare via queste definizioni.
-
+		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
+		// allowing for further translations. To support Tonyin other langauges, 
+		// these mappings could be used as a basis
 		cTable[(byte)'À'] = 130;
 		cTable[(byte)'Á'] = 131;
 		cTable[(byte)'Â'] = 132;
@@ -1465,7 +1460,7 @@ void RMFontObj::SetBothCase(int nChar, int nNext, signed char spiazz) {
 void RMFontObj::Init(void) {
 	int i;
 
-	//bernie: numero di caratteri nel font (solo maiuscolo)
+	//bernie: Number of characters in the font (solo maiuscolo)
 	int nchars =
 	    85    // base
 	    +  9    // polish
@@ -1477,7 +1472,7 @@ void RMFontObj::Init(void) {
 
 	Load(RES_F_OBJ, nchars, 25, 30);
 
-	// Inizializziamo le tabelline del cazzo
+	// Initialise the f**king table
 	lDefault = 26;
 	hDefault = 30;
 	Common::fill(&l2Table[0][0], &l2Table[0][0] + (256 * 256), '\0');
@@ -1502,7 +1497,7 @@ void RMFontObj::Init(void) {
 	cTable['-'] = 40;
 	cTable['+'] = 41;
 	cTable['!'] = 42;
-	// cTable['!'] = 43; Esclamativo alla rovescia
+	// cTable['!'] = 43; Exclamation countdown
 	cTable['?'] = 44;
 	//cTable['?'] = 45;  Interrogativo alla rovescia
 	cTable['/'] = 46;
@@ -1523,7 +1518,7 @@ void RMFontObj::Init(void) {
 	cTable[(byte)'»'] = 61;
 	cTable[(byte)'ø'] = 62;
 	cTable[(byte)'ç'] = 63;
-	//cTable[(byte)'ƒ'] = 64;   integrale
+	//cTable[(byte)'ƒ'] = 64;   integral
 	cTable[(byte)'Ñ'] = 65;
 	cTable[(byte)'®'] = 66;
 	cTable[(byte)'©'] = 67;
@@ -1533,19 +1528,19 @@ void RMFontObj::Init(void) {
 	cTable[(byte)'Å'] = 71;
 	cTable[(byte)'È'] = 72;
 	cTable[(byte)'Ë'] = 73;
-	//cTable[(byte)' '] = 74;   e cerchietto
+	//cTable[(byte)' '] = 74;   e circlet
 	cTable[(byte)'Ì'] = 75;
 	cTable[(byte)'Ï'] = 76;
-	//cTable[(byte)' '] = 77;     i cerchietto
+	//cTable[(byte)' '] = 77;     i circlet
 	cTable[(byte)'Ò'] = 78;
 	cTable[(byte)'Ö'] = cTable[(byte)'ö'] = 79;
-	//cTable[(byte)' '] = 80;       o cerchietto
+	//cTable[(byte)' '] = 80;       o circlet
 	cTable[(byte)'Ù'] = 81;
 	cTable[(byte)'Ü'] = cTable[(byte)'ü'] = 82;
-	//cTable[' '] = 83;     u cerchietto
+	//cTable[' '] = 83;     u circlet
 	//cTable[' '] = 84;   y dieresi
 
-	/* Un po' di lunghezze */
+	/* Little lengths */
 	lTable[' '] = 11;
 	lTable['.'] = 8;
 	lTable['-'] = 12;
@@ -1635,9 +1630,9 @@ void RMFontObj::Init(void) {
 
 	} else if (_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
-		// WARNING: Il russo usa molti dei caratteri ISO-Latin-1 che servono
-		// per le altre traduzioni. Per compilare Tony in altre lingue,
-		// commentare via queste definizioni.
+	// WARNING: The Russian font uses many of the ISO-Latin-1 font,
+		// allowing for further translations. To support Tonyin other langauges, 
+		// these mappings could be used as a basis
 
 		cTable[(byte)'¥'] = cTable[(byte)'¹'] = 85;
 		lTable[(byte)'¥'] = lTable[(byte)'¹'] = 20;
@@ -1749,7 +1744,7 @@ void RMFontObj::Init(void) {
 	} else if (_vm->getLanguage() == Common::FR_FRA) {	
 		// French
 
-		// traduci le lettere accentate in lettere normali
+		// Translate accented characters as normal letters
 
 		cTable[(byte)'à'] = cTable[(byte)'á'] = cTable[(byte)'â'] = 0; // a
 		lTable[(byte)'à'] = lTable[(byte)'á'] = lTable[(byte)'â'] = 17;
@@ -1778,7 +1773,7 @@ void RMFontObj::Init(void) {
 
 
 /****************************************************************************\
-*       Metodi di RMText
+*       RMText Methods
 \****************************************************************************/
 
 RMFontColor *RMText::m_fonts[4] = { NULL, NULL, NULL, NULL };
@@ -1789,10 +1784,10 @@ void RMText::InitStatics() {
 }
 
 RMText::RMText() {
-	// Colore di default: bianco
+	// Default colour: white
 	m_r = m_g = m_b = 255;
 
-	// Lunghezza di default
+	// Default length
 	maxLineLength = 350;
 
 	m_bTrasp0 = true;
@@ -1820,14 +1815,13 @@ void RMText::SetMaxLineLength(int max) {
 }
 
 void RMText::RemoveThis(CORO_PARAM, bool &result) {
-// Qui possiamo fare i controlli sul numero di frame, sul tempo trascorso
-// etc.
+	// Here we can do checks on the number of frames, time spent, etc.
 	result = true;
 }
 
 
 void RMText::WriteText(const RMString &text, int nFont, int *time) {
-	// Inizializza i font (una volta sola)
+	// Initialises the font (only once)
 	if (m_fonts[0] == NULL) {
 		m_fonts[0] = new RMFontParla;
 		m_fonts[0]->Init();
@@ -1853,18 +1847,18 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	char *string;
 	int numlines;
 
-	// Setta il colore di base
+	// Set the base colour
 	font->SetBaseColor(m_r, m_g, m_b);
 
-	// Si autodistrugge il buffer prima di iniziare
+	// Destroy the buffer before starting
 	Destroy();
 
-	// Se la stringa è vuota, non fare nulla
+	// If the string is empty, do nothing
 	if (text == NULL || text[0] == '\0')
 		return;
 
-	// Divide la frase in linee. In questo ciclo, X contiene la lunghezza massima raggiunta da una linea
-	// e I il numero delle linee
+	// Divide the words into lines. In this cycle, X contains the maximum length reached by a line,
+	// and the number of lines
 	string = p = text;
 	i = j = x = 0;
 	while (*p != '\0') {
@@ -1873,14 +1867,11 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 			j -= font->StringLen(*p, p[1]);
 			if (j > x) x = j;
 
-			// Torna indietro al primo spazio utile
+			// Back to the first usable space
 			//
-			// BERNIE: nella versione originale le frasi contenenti
-			// parole che superano la larghezza di una riga causavano
-			// l'interruzione dell'intera frase.
-			// Questo workaround e' parziale: la parola troppo lunga
-			// viene spezzata bruscamente e si perde una lettera.
-			// Oltre allo spazio e' ammesso il wrap sul carattere '-'.
+			// BERNIE: In the original, sentences containing words that exceed the
+			// width of a line caused discontinuation of the whole sentence. 
+			// This workaround has the partial word broken up so it will still display
 			//
 			old_p = p;
 			while (*p != ' ' && *p != '-' && p > string) p--;
@@ -1888,7 +1879,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 			if (p == string)
 				p = old_p;
 
-			// Controlla se sono tutti spazi fino alla fine
+			// Check if there are any blanks to end
 			while (*p == ' ' && *p != '\0') p++;
 			if (*p == '\0')
 				break;
@@ -1905,15 +1896,13 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	i++;
 	numlines = i;
 
-	// X=Lunghezza della linea piu' lunga. Controlla se puo' essere puttata a X1
-	//x+=font->StringLen(-1)+1;          // Meglio esagerare per sicurezza
 	x += 8;
 
-	// Posizione di partenza per la surface: X1,Y
+	// Starting position for the surface: X1, Y
 	width = x;
 	height = (numlines - 1) * font->LetterHeight() + font->m_fontDimy;
 
-	// Crea la surface
+	// Create the surface
 	Create(width, height);
 	//AddPrim(new RMGfxPrimitive(&m_clear));
 	Common::fill(m_buf, m_buf + width * height * 2, 0);
@@ -1923,7 +1912,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	y = 0;
 	numchar = 0;
 	for (; i > 0; i--) {
-		// Misura la lunghezza della linea
+		// Measure the length of the line
 		x = 0;
 		j = font->StringLen(RMString(p));
 
@@ -1974,7 +1963,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 }
 
 void RMText::ClipOnScreen(RMGfxPrimitive *prim) {
-	// Cerca di non farlo uscire dallo schermo
+	// Don't let it go outside the screen
 	if (prim->Dst().x1 < 5) prim->Dst().x1 = 5;
 	if (prim->Dst().y1 < 5) prim->Dst().y1 = 5;
 	if (prim->Dst().x1 + m_dimx > 635) prim->Dst().x1 = 635 - m_dimx;
@@ -1986,14 +1975,14 @@ void RMText::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-	// Allinea orizzontalmente
+	// Horizontally
 	if (aHorType == HCENTER)
 		prim->Dst().TopLeft() -= RMPoint(m_dimx / 2, 0);
 	else if (aHorType == HRIGHT)
 		prim->Dst().TopLeft() -= RMPoint(m_dimx, 0);
 
 
-	// Alinea verticalemente
+	// Vertically
 	if (aVerType == VTOP) {
 
 	} else if (aVerType == VCENTER) {
@@ -2011,7 +2000,7 @@ void RMText::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
 /****************************************************************************\
-*       Metodi di RMTextDialog
+*       RMTextDialog Methods
 \****************************************************************************/
 
 RMTextDialog::RMTextDialog() : RMText() {
@@ -2028,7 +2017,7 @@ RMTextDialog::RMTextDialog() : RMText() {
 	hCustomSkip2 = CORO_INVALID_PID_VALUE;
 	m_input = NULL;
 
-	// Crea l'evento di fine displaying
+	// Create the event for displaying the end
 	hEndDisplay = CoroScheduler.createEvent(false, false);
 }
 
@@ -2093,7 +2082,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 	// Presume successful result
 	result = true;
 
-	// Frase NON di background
+	// Don't erase the background
 	if (m_bSkipStatus) {
 		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
 			if (GLOBALS.bCfgTimerizedText) {
@@ -2111,7 +2100,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 				if (m_input->MouseLeftClicked() || m_input->MouseRightClicked())
 					return;
 	}
-	// Frase di background
+	// Erase the background
 	else {
 		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
 			if (!m_bForceNoTime)
@@ -2119,7 +2108,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 					return;
 	}
 
-	// Se il tempo è forzato
+	// If time is forced
 	if (m_bForceTime)
 		if (_vm->GetTime() > (uint32)m_time + m_startTime)
 			return;
@@ -2185,7 +2174,7 @@ void RMTextDialog::SetInput(RMInput *input) {
 }
 
 /****************************************************************************\
-*       Metodi di RMTextDialogScrolling
+*       RMTextDialogScrolling Methods
 \****************************************************************************/
 
 RMTextDialogScrolling::RMTextDialogScrolling() {
@@ -2298,7 +2287,7 @@ void RMTextItemName::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 	if (m_buf == NULL)
 		return;
 
-	// Setta come coordinate destinazione quelle del mouse
+	// Set the destination coordinates of the mouse
 	prim->Dst().TopLeft() = m_mpos - RMPoint(0, 30);
 
 	CORO_INVOKE_2(RMText::Draw, bigBuf, prim);
@@ -2327,7 +2316,7 @@ bool RMTextItemName::IsNormalItemSelected() {
 
 
 /****************************************************************************\
-*       Metodi di RMDialogChoice
+*       RMDialogChoice Methods
 \****************************************************************************/
 
 RMDialogChoice::RMDialogChoice() {
@@ -2388,11 +2377,11 @@ void RMDialogChoice::SetNumChoices(int num) {
 	m_numChoices = num;
 	m_curAdded = 0;
 
-	// Alloca lo spazio per le stringhe disegnate
+	// Allocate space for drawn strings
 	m_drawedStrings = new RMText[num];
 	m_ptDrawStrings = new RMPoint[num];
 
-	// Le inizializza
+	// Initialisation
 	for (i = 0; i < m_numChoices; i++) {
 		m_drawedStrings[i].SetColor(0, 255, 0);
 		m_drawedStrings[i].SetAlignType(RMText::HLEFTPAR, RMText::VTOP);
@@ -2402,7 +2391,7 @@ void RMDialogChoice::SetNumChoices(int num) {
 }
 
 void RMDialogChoice::AddChoice(const RMString &string) {
-	// Si disegna la stringa
+	// Draw the string
 	assert(m_curAdded < m_numChoices);
 	m_drawedStrings[m_curAdded++].WriteText(string, 0);
 }

@@ -43,7 +43,7 @@ namespace Tony {
 using namespace MPAL;
 
 /****************************************/
-/*  Funzioni globali per la DLL Custom  */
+/*  Global functions					*/
 /****************************************/
 
 uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
@@ -119,7 +119,7 @@ void MainSetPalesati(bool bPalesati) {
 }
 
 /****************************************************************************\
-*       Metodi di RMOptionButton
+*       RMOptionButton Methods
 \****************************************************************************/
 
 RMOptionButton::RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState) {
@@ -192,7 +192,7 @@ void RMOptionButton::AddToList(RMGfxTargetBuffer &bigBuf) {
 }
 
 /****************************************************************************\
-*       Metodi di RMOptionSlide
+*       RMOptionSlide Methods
 \****************************************************************************/
 
 RMOptionSlide::RMOptionSlide(const RMPoint &pt, int nRange, int nStartValue, int slideSize) {
@@ -240,7 +240,7 @@ RMOptionSlide::~RMOptionSlide() {
 bool RMOptionSlide::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
 	bool bRefresh = false;
 
-	// Doframe dei bottoni
+	// Do the button DoFrame's
 	m_PushLeft->DoFrame(mousePos, bLeftClick, bRightClick);
 	m_PushRight->DoFrame(mousePos, bLeftClick, bRightClick);
 
@@ -317,7 +317,7 @@ void RMOptionSlide::AddToList(RMGfxTargetBuffer &bigBuf) {
 
 
 /****************************************************************************\
-*       Metodi di RMOptionScreen
+*       RMOptionScreen Methods
 \****************************************************************************/
 
 RMOptionScreen::RMOptionScreen(void) {
@@ -983,7 +983,7 @@ bool RMOptionScreen::Close(void) {
 	if (m_FadeStep != 6)
 		return false;
 
-	// Inizia il fade out
+	// Start fade out
 	m_FadeStep++;
 	m_FadeTime = _vm->GetTime();
 	return true;
@@ -994,7 +994,7 @@ bool RMOptionScreen::IsClosing(void) {
 }
 
 int RMOptionScreen::Priority() {
-	// Appena sotto il mouse
+	// Just below the mouse
 	return 190;
 }
 
@@ -1023,11 +1023,11 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 	CORO_BEGIN_CODE(_ctx);
 
 
-	// Se non è completamente aperto, non fare nulla
+	// If it is fully open, do nothing
 	if (m_FadeStep != 6)
 		return;
 
-	// Legge l'input
+	// Reads input
 	_ctx->mousePos = input->MousePos();
 	_ctx->bLeftClick = input->MouseLeftClicked();
 	_ctx->bRightClick = input->MouseRightClicked();
@@ -1040,14 +1040,14 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 	} else {
 		_ctx->bRefresh |= m_ButtonExit->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-		// Controlla se ha clickato sull'uscita
+		// Check if you have clicked on the output
 		if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
-			// bottoni senza grafica...
+			// Buttons without graphics...
 			m_ButtonGameMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			m_ButtonGfxMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			m_ButtonSoundMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-			// bottoni con grafica
+			// Buttons with graphics
 			if (!m_bNoLoadSave) {
 				if (!_vm->getIsDemo()) {
 					_ctx->bRefresh |= m_ButtonLoad->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
@@ -1097,7 +1097,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
 		m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
 
-	/**************** STATO BOTTONI **************/
+	/**************** State Buttons **************/
 	if (m_bEditSaveName) {
 		if (KEYPRESS(Common::KEYCODE_BACKSPACE)) {
 			if (m_EditName[0] != '\0') {
@@ -1141,7 +1141,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		if (strlen(m_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP9, '9');
 
-		// ANNULLA
+		// Cancel
 		if (KEYPRESS(Common::KEYCODE_ESCAPE)) {
 			m_bEditSaveName = false;
 			_ctx->bRefresh = true;
@@ -1158,7 +1158,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		if (m_nState == MENULOAD || m_nState == MENUSAVE) {
 			if (m_ButtonExit->IsActive()) {
 				if (m_bLoadMenuOnly) {
-					// Se è solo il menu di loading, chiudiamo
+					// If only the loading menu, close
 					Close();
 				} else {
 					CORO_INVOKE_1(ChangeState, m_nLastState);
@@ -1183,13 +1183,13 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 			} else {
 				for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
 					if (m_ButtonSave_States[_ctx->i]->IsActive()) {
-						// C'è da effettuare il salvataggio o il caricamento!!!!
+						// There by saving or loading!!!
 						if (m_nState == MENULOAD && m_curThumb[_ctx->i] != NULL) {
 							// Caricamento
 							CORO_INVOKE_1(_vm->LoadState, m_statePos + _ctx->i);
 							Close();
 						} else if (m_nState == MENUSAVE && (m_statePos != 0 || _ctx->i != 0)) {
-							// Attiva la modalità di editing
+							// Turn on edit mode
 							m_bEditSaveName = true;
 							m_nEditPos = _ctx->i;
 							strcpy(m_EditName, m_curThumbName[_ctx->i]);
@@ -1241,7 +1241,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 				}
 
 				if (m_nState == MENUGFX) {
-					// Queste opzioni hanno effetto immediato
+					// These options take effect immediately
 					if (m_ButtonGfx_Anni30->IsActive())
 						GLOBALS.bCfgAnni30 = true;
 					else
@@ -1288,7 +1288,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		return;
 
 	if (m_FadeStep == 1) {
-		// Discesa veloce
+		// Downhill fast
 		if (m_FadeTime == -1)
 			m_FadeY += FADE_SPEED;
 		else
@@ -1298,11 +1298,11 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 			m_FadeStep++;
 		}
 
-		// Setta la parte da disegnare per lo scrolling
+		// Set the part to draw the scrolling
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 2) {
-		// Rimbalzo 1
+		// Bounce 1
 		m_FadeY -= FADE_SPEED / 2 * SYNC;
 		if (m_FadeY < 400) {
 			m_FadeY = 400;
@@ -1321,7 +1321,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 4) {
-		// Rimbalzo 1 - 2
+		// Bounce 1 - 2
 		m_FadeY += FADE_SPEED / 3 * SYNC;
 		if (m_FadeY > 420) {
 			m_FadeY = 420;
@@ -1357,11 +1357,11 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 9) {
-		// Ciao ciao!
+		// Hello hello!
 		m_bExit = true;
 		m_FadeStep = 0;
 
-		// Libera la memoria
+		// Free memory
 		CloseState();
 		return;
 
@@ -1391,7 +1391,7 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 	Common::InSaveFile *f;
 	char id[4];
 
-	// Pulisce la destinazione
+	// Cleans the destination
 	Common::fill(lpDestBuf, lpDestBuf + 160 * 120 * 2, 0);
 	name = "No name";
 	diff = 10;
@@ -1463,7 +1463,7 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 
 
 /****************************************************************************\
-*       Metodi di RMPointer
+*       RMPointer Methods
 \****************************************************************************/
 
 RMPointer::RMPointer() {
@@ -1525,7 +1525,7 @@ void RMPointer::Close(void) {
 
 
 int RMPointer::Priority() {
-	// Priorita' minima: davanti a tutto
+	// Pointer has minimum priority so it will be drawn last
 	return 200;
 }
 
@@ -1536,15 +1536,15 @@ void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Controlla il pointer
+	// Check the pointer
 	_ctx->n = m_nCurPointer;
 	if (_ctx->n == TA_COMBINE) _ctx->n = TA_USE;
 
-	// Copia le coordinate di destinazione nella primitiva
+	// Copy the destination coordinates in the primitive
 	prim->SetDst(m_pos);
 
 	if (m_pos.x >= 0 && m_pos.y >= 0 && m_pos.x < RM_SX && m_pos.y < RM_SY) {
-		// Richiama il draw del puntatore
+		// Call the Draw method of the poitner
 		prim->Dst() -= m_hotspot[_ctx->n];
 
 		if (m_nCurSpecialPointer == 0) {
@@ -1553,7 +1553,7 @@ void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 			if (m_nCurSpecialPointer == PTR_CUSTOM)
 				CORO_INVOKE_2(m_nCurCustomPointer->Draw, bigBuf, prim);
 			else
-				// Richiama il draw sul puntatore speciale
+				// Call the draw on the special pointer
 				CORO_INVOKE_2(m_specialPointer[m_nCurSpecialPointer - 1]->Draw, bigBuf, prim);
 		}
 	}
@@ -1562,16 +1562,16 @@ void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 }
 
 void RMPointer::DoFrame(RMGfxTargetBuffer *bigBuf) {
-	// Si aggiunge alla lista delle primitive
+	// Add it to the list of primitives
 	bigBuf->AddPrim(new RMGfxPrimitive(this));
 
-	// Se c'e' un puntatore speciale, fa la DoFrame
+	// If there is a special pointer, does DoFrame
 	if (m_nCurSpecialPointer != 0 && m_nCurSpecialPointer != PTR_CUSTOM)
 		m_specialPointer[m_nCurSpecialPointer - 1]->DoFrame(bigBuf, false);
 }
 
 void RMPointer::RemoveThis(CORO_PARAM, bool &result) {
-	// Si leva sempre dalla lista di OT, per supportare la DisableInput
+	// Always remove from the OT list, to support disabling the pointer
 	result = true;
 }
 
