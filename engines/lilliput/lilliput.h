@@ -276,7 +276,7 @@ public:
 	void addCharToBuf(byte character);
 	void numberToString(int param1);
 	void sub12F37();
-	byte sub16675(int idx, Common::Point var1);
+	byte sub16675_moveCharacter(int idx, Common::Point var1);
 	void sub16685(int idx, Common::Point var1);
 	void sub16EBC();
 	void sub16CA0();
@@ -297,8 +297,8 @@ public:
 	void sub15498(Common::Point pos, int var2);
 	void sub15A4C(int vgaIndex, byte *srcBuf, int &bufIndex);
 	void checkMapClosing(bool &forceReturnFl);
-	void sub16B63(int index);
-	void sub16B76(int index);
+	void turnCharacter1(int index);
+	void turnCharacter2(int index);
 	void moveCharacterUp1(int index);
 	void moveCharacterUp2(int index);
 	void moveCharacterDown1(int index);
