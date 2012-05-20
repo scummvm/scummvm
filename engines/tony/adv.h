@@ -40,11 +40,11 @@ namespace Tony {
 #define RM_SX       640
 #define RM_SY       480
 
-// X&Y dimensions of bigbuf
+// X & Y dimensions of bigbuf
 #define RM_BBX      (RM_SX)
 #define RM_BBY      (RM_SY)
 
-// Skipping X&Y
+// Skipping X & Y
 #define RM_SKIPY    ((RM_BBY - RM_SY) / 2)
 #define RM_SKIPX    0
 
