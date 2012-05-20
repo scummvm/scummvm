@@ -63,7 +63,7 @@ public:
 	int8 _interfaceHotspotStatus[20];
 	char _array16123PosX[40];
 	char _array1614BPosY[40];
-	byte _array12811[40];
+	char _array12811[40];
 	char _array10AB1[40];
 	byte _array122FD[20];
 	byte _array122C1[40];

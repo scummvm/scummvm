@@ -897,63 +897,64 @@ void LilliputEngine::paletteFadeIn() {
 int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	debugC(2, kDebugEngineTBC, "sub16DD5(%d, %d, %d, %d)", x1, y1, x2, y2);
 
-	byte *isoMap = _bufferIsoMap + (x1 << 8) + (y1 << 2) + 1;
+	byte *isoMap = _bufferIsoMap + (y1 << 8) + (x1 << 2) + 1;
 
 	int dx = x2 - x1;
 	int dy = y2 - y1;
 
-	int word16DCB = 0; 
-	int word16DCD = 0;
-	int word16DD1 = 0;
-	int word16DCF = 0;
+	int16 tmpMapMoveX = 0; 
+	int16 tmpMapMoveY = 0;
+	int16 mapMoveY = 0;
+	int16 mapMoveX = 0;
 
-	byte byte16DD4 = 0;
-	byte byte16DD3 = 0;
+	int8 byte16DD4 = 0;
+	int8 byte16DD3 = 0;
 
 	if (dx < 0) {
 		dx = -dx;
-		word16DCB = -4;
+		tmpMapMoveX = -4;
 	} else {
-		word16DCB = 4;
+		tmpMapMoveX = 4;
 	}
 
 	if (dy < 0) {
 		dy = -dy;
-		word16DCD = -256;
+		tmpMapMoveY = -256;
 	} else {
-		word16DCD = 256;
+		tmpMapMoveY = 256;
 	}
 
-	if (dy > dx) {
-		word16DD1 = 0;
-		word16DCF = word16DCB;
+	if (dx >= dy) {
+		mapMoveY = 0;
+		mapMoveX = tmpMapMoveX;
 	} else {
-		int tmp = dx;
+		int tmp = dy;
 		dy = dx;
 		dx = tmp;
-		word16DCF = 0;
-		word16DD1 = word16DCD;
+		mapMoveX = 0;
+		mapMoveY = tmpMapMoveY;
 	}
 
-	byte16DD4 = (dx << 1) - dy;
-	byte16DD3 = (dx << 1) - 2 * dy;
-	word16DCF += word16DD1;
-	word16DCB += word16DCD;
+	byte16DD4 = dy << 1;
+	int var1 = byte16DD4 - dx;
+	byte16DD3 = byte16DD4 - (dx * 2);
 
-	int var1 = byte16DD4;
+	mapMoveX += mapMoveY;
+	tmpMapMoveX += tmpMapMoveY;
+
 	int count = 0; 
 
 	while (*isoMap == 0xFF) {
-		if (var1 > 0) {
-			isoMap += word16DCB;
+		if (var1 >= 0) {
+			isoMap += tmpMapMoveX;
 			var1 += byte16DD3;
 		} else {
-			isoMap += word16DCF;
+			isoMap += mapMoveX;
 			var1 += byte16DD4;
 		}
 		
 		count++;
-		if (count == dy) {
+		if (count > dx) {
 			return 0;
 		}
 	}
@@ -1030,7 +1031,7 @@ void LilliputEngine::sub16CA0() {
 				int d1 = _scriptHandler->_array16123PosX[index2];
 				int d2 = _scriptHandler->_array1614BPosY[index2];
 	
-				if (d1 != 0xFF) {
+				if (d1 != -1) {
 					int x = c1 - d1;
 					if ((x > -6) && (x < 6)) {
 						int y = c2 - d2;
@@ -1096,9 +1097,7 @@ void LilliputEngine::sub16CA0() {
 				val = (val & 0xFF00) | _byte16C9F;
 			}
 			_scriptHandler->_array10B51[index2 + index * 40] = val;	
-
 		}
-
 	}
 }
 
@@ -1696,7 +1695,7 @@ void LilliputEngine::sub16626() {
 
 			switch (var2 / 2) {
 			case 0:
-				result = sub16675(index, var1);
+				result = sub16675_moveCharacter(index, var1);
 				break;
 			case 1:
 				result = sub166DD(index, var1);
@@ -1745,15 +1744,15 @@ void LilliputEngine::sub16626() {
 }
 
 byte LilliputEngine::sub166EA(int index) {
-	debugC(2, kDebugEngineTBC, "sub166EA(%d)", index);
+	debugC(2, kDebugEngine, "sub166EA(%d)", index);
 
-	_scriptHandler->_array12811[index] = 0x10;
+	_scriptHandler->_array12811[index] = 16;
 	_scriptHandler->_characterScriptEnabled[index] = 1;
 	return 1;
 }
 
 byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
-	debugC(2, kDebugEngineTBC, "sub166F7(%d, %d - %d, %d)", index, var1.x, var1.y, tmpVal);
+	debugC(2, kDebugEngine, "sub166F7(%d, %d - %d, %d)", index, var1.x, var1.y, tmpVal);
 
 	byte a2 = var1.y;
 	if (a2 != 0) {
@@ -1772,10 +1771,11 @@ byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
 }
 
 byte LilliputEngine::sub166DD(int index, Common::Point var1) {
-	debugC(2, kDebugEngineTBC, "sub166DD(%d, %d - %d)", index, var1.x, var1.y);
+	debugC(2, kDebugEngine, "sub166DD(%d, %d - %d)", index, var1.x, var1.y);
 	
-	_characterDirectionArray[index] = (var1.x & 3);
-	sub16685(index, var1);
+	char var1h = var1.x & 3;
+	_characterDirectionArray[index] = var1h;
+	sub16685(index, Common::Point(var1h, var1.y));
 	return 0;
 }
 
@@ -1998,14 +1998,14 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 }
 
 void LilliputEngine::sub16685(int idx, Common::Point var1) {
-	debugC(2, kDebugEngineTBC, "sub16685(%d, %d - %d)", idx, var1.x, var1.y);
+	debugC(2, kDebugEngine, "sub16685(%d, %d - %d)", idx, var1.x, var1.y);
 
 	int index = (idx << 5) + var1.y;
 	_scriptHandler->_array10AB1[idx] = _rulesBuffer2_16[index];
 }
 
-byte LilliputEngine::sub16675(int idx, Common::Point var1) {
-	debugC(2, kDebugEngineTBC, "sub16675(%d, %d - %d)", idx, var1.x, var1.y);
+byte LilliputEngine::sub16675_moveCharacter(int idx, Common::Point var1) {
+	debugC(2, kDebugEngine, "sub16675_moveCharacter(%d, %d - %d)", idx, var1.x, var1.y);
 
 	sub16685(idx, var1);
 
@@ -2023,10 +2023,10 @@ byte LilliputEngine::sub16675(int idx, Common::Point var1) {
 		moveCharacterBack2(index);
 		break;
 	case 4:
-		sub16B63(index);
+		turnCharacter1(index);
 		break;
 	case 5:
-		sub16B76(index);
+		turnCharacter2(index);
 		break;
 	case 6:
 		moveCharacterUp1(index);
@@ -2044,21 +2044,21 @@ byte LilliputEngine::sub16675(int idx, Common::Point var1) {
 		moveCharacterSpeed3(index);
 		break;
 	default:
-		warning("sub16675 - Unexpected value %d", var1.x);
+		warning("sub16675_moveCharacter - Unexpected value %d", var1.x);
 	}
 
 	return 0;
 }
 
-void LilliputEngine::sub16B63(int index) {
-	debugC(2, kDebugEngineTBC, "sub16B63(%d)", index);
+void LilliputEngine::turnCharacter1(int index) {
+	debugC(2, kDebugEngine, "turnCharacter1(%d)", index);
 
 	static const byte nextDirection[4] = {1, 3, 0, 2};
 	_characterDirectionArray[index] = nextDirection[_characterDirectionArray[index]];
 }
 
-void LilliputEngine::sub16B76(int index) {
-	debugC(2, kDebugEngineTBC, "sub16B76(%d)", index);
+void LilliputEngine::turnCharacter2(int index) {
+	debugC(2, kDebugEngine, "turnCharacter2(%d)", index);
 
 	static const byte nextDirection[4] = {2, 0, 3, 1};
 	_characterDirectionArray[index] = nextDirection[_characterDirectionArray[index]];
