@@ -152,7 +152,7 @@ public:
 	byte _byte15E35[40];
 	int _array11D49[40];
 	int _array1289F[40];
-	int _array12861[30];
+	int16 _array12861[30];
 
 	byte *_rulesChunk1;
 	int16 _currentScriptCharacter;
@@ -187,7 +187,7 @@ public:
 	byte _rulesChunk10_size;
 	int16 *_rulesChunk10;
 	byte *_rulesChunk11;
-	int16 _rulesChunk12_size;
+	int16 _rectNumb;
 	int16 _rectXMinMax[40];
 	int16 _rectYMinMax[40];
 	Common::Point _rulesBuffer12Pos3[40];
@@ -263,8 +263,8 @@ public:
 	byte sub16A76(int indexb, int indexs);
 	void sub17224(int var1, int var4);
 	void sub17264(int index, int var4);
-	int findHotspot(Common::Point pos);
-	int reverseFindHotspot(Common::Point pos);
+	int16 findHotspot(Common::Point pos);
+	int16 reverseFindHotspot(Common::Point pos);
 	byte sub16722(int index, Common::Point var1);
 	byte sub166EA(int index);
 	void sub167EF(int index);
@@ -272,7 +272,7 @@ public:
 	void renderCharacters(byte *buf, Common::Point pos);
 
 	byte sub16799(int index, Common::Point param1);
-	int getDirection(Common::Point param1, Common::Point param2);
+	byte getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
 	void numberToString(int param1);
 	void sub12F37();
@@ -299,16 +299,16 @@ public:
 	void checkMapClosing(bool &forceReturnFl);
 	void sub16B63(int index);
 	void sub16B76(int index);
-	void sub166C0(int index);
-	void sub166C6(int index);
-	void sub166CC(int index);
-	void sub166D2(int index);
-	void sub166B1(int index);
-	void sub166B6(int index);
-	void sub166BB(int index);
-	void sub166D8(int index);
-	void sub16B31(int index, int val);
-	void sub16B8F(int index, int x, int y, int flag);
+	void moveCharacterUp1(int index);
+	void moveCharacterUp2(int index);
+	void moveCharacterDown1(int index);
+	void moveCharacterDown2(int index);
+	void moveCharacterSpeed2(int index);
+	void moveCharacterSpeed4(int index);
+	void moveCharacterBack2(int index);
+	void moveCharacterSpeed3(int index);
+	void sub16B31_moveCharacter(int index, int16 speed);
+	void sub16B8F_moveCharacter(int index, Common::Point pos, int direction);
 	byte sub1675D(int index, Common::Point var1);
 	byte sub16729(int index, Common::Point var1);
 	byte sub166F7(int index, Common::Point var1, int tmpVal);
