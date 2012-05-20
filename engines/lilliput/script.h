@@ -101,7 +101,7 @@ private:
 	byte _byte12A09;
 	byte _byte129A0;
 	byte _byte10806;
-	byte _byte16F02;
+	byte _lastRandomValue;
 	byte _byte16F04;
 	byte _byte1881A;
 	byte _byte18823;
@@ -139,15 +139,15 @@ private:
 	Common::Point getPosFromScript();
 
 	byte *getCharacterVariablePtr();
-	byte compareValues(int var1, int oper, int var2);
-	void computeOperation(byte *bufPtr, int oper, int var2);
+	byte compareValues(int16 var1, uint16 oper, int16 var2);
+	void computeOperation(byte *bufPtr, uint16 oper, int16 var2);
 
 	//Opcodes Type 1
 	byte OC_checkCharacterGoalPos();
 	byte OC_comparePos();
 	byte OC_sub1740A();
 	byte OC_compareCharacterVariable();
-	byte OC_CompareByte16F02With();
+	byte OC_CompareLastRandomValue();
 	byte OC_getRandom();
 	byte OC_for();
 	byte OC_compWord18776();
@@ -183,7 +183,7 @@ private:
 	byte OC_IsCurrentCharacterVar0LessEqualThan();
 	byte OC_sub1790F();
 	byte OC_CurrentCharacterVar1Equals();
-	byte OC_sub1793E();
+	byte OC_isCurrentCharacterActive();
 	byte OC_CurrentCharacterVar3Equals1();
 	byte OC_checkCharacterDirection();
 	byte OC_checkLastInterfaceHotspotIndex();
@@ -266,7 +266,7 @@ private:
 	void OC_PaletteFadeOut();
 	void OC_PaletteFadeIn();
 	void OC_loadAndDisplayCUBESx_GFX();
-	void OC_sub1834C();
+	void OC_setCurrentCharacterVar3();
 	void OC_setArray122C1();
 	void OC_sub18367();
 	void OC_enableCharacterScript();
