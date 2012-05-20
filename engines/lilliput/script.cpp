@@ -2456,12 +2456,12 @@ void LilliputScript::OC_setCurrentCharacter() {
 	_vm->setCurrentCharacter(var1);
 }
 
-void LilliputScript::sub171AF(int var1, int var2, int var4) {
-	debugC(2, kDebugScriptTBC, "sub171AF()");
+void LilliputScript::sub171AF(int16 var1, int16 var2, int16 var4) {
+	debugC(2, kDebugScript, "sub171AF()");
 
 	int index = 0;
 	for (int i = 0; i < 10; i++) {
-		if (_vm->_array12861[index + 1] == 0xFFFF) {
+		if (_vm->_array12861[index + 1] == -1) {
 			_vm->_array12861[index + 1] = var1;
 			_vm->_array12861[index + 2] = var2;
 			_vm->_array12861[index + 0] = _vm->_word1289D + var4;
@@ -2493,11 +2493,11 @@ void LilliputScript::OC_sub17CA2() {
 }
 
 void LilliputScript::OC_sub17CB9() {
-	debugC(1, kDebugScriptTBC, "OC_sub17CB9()");
+	debugC(1, kDebugScript, "OC_sub17CB9()");
 
-	int var4 = _currScript->readUint16LE();
-	int var1 = getValue1();
-	int var2 = _currScript->readUint16LE();
+	int16 var4 = _currScript->readSint16LE();
+	int16 var1 = getValue1();
+	int16 var2 = _currScript->readSint16LE();
 	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
 	
 	sub171AF(var1, var2, var4);

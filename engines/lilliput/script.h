@@ -128,7 +128,7 @@ private:
 	void displayNumber(byte var1, Common::Point pos);
 	byte *getMapPtr(Common::Point val);
 	byte *getCurrentCharacterVarFromScript();
-	void sub171AF(int var1, int var2, int var4);
+	void sub171AF(int16 var1, int16 var2, int16 var4);
 	void sub18B7C(int var1, int var3);
 	void sub189B8();
 	void sub189F5();
