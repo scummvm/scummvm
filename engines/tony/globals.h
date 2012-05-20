@@ -44,6 +44,9 @@ namespace Tony {
 #define T_MAREMETA 7
 
 
+#define MAX_PATH    255
+
+
 struct CharacterStruct {
 	uint32 code;
 	RMItem *item;

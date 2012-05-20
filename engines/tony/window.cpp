@@ -195,68 +195,7 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 *       RMSnapshot Methods
 \****************************************************************************/
 
-char RMSnapshot::bufDrive[MAX_DRIVE];
-char RMSnapshot::bufDir[MAX_DIR];
-char RMSnapshot::bufName[MAX_FNAME];
-char RMSnapshot::bufExt[MAX_EXT];
-char RMSnapshot::filename[512];
 byte RMSnapshot::rgb[RM_SX * RM_SY * 3];
-
-bool RMSnapshot::GetFreeSnapName(char *fn) {
-#ifdef REFACTOR_ME
-	int i, j, k;
-	uint32 h;
-
-	theGame.GetDataDirectory(RMGame::DD_SHOTS, fn);
-	_splitpath(fn, bufDrive, bufDir, NULL, NULL);
-
-	for (i = 1; i < 10; i++) {
-		wsprintf(bufName, "rm%d00", i);
-		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
-		h = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h == CORO_INVALID_PID_VALUE)
-			break;
-		CloseHandle(h);
-	}
-
-	i--;
-
-	for (j = 1; j < 10; j++) {
-		wsprintf(bufName, "rm%d%d0", i, j);
-		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
-		h = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h == CORO_INVALID_PID_VALUE)
-			break;
-		CloseHandle(h);
-	}
-
-	j--;
-
-	for (k = 0; k < 10; k++) {
-		wsprintf(bufName, "rm%d%d%d", i, j, k);
-		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
-		h = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (h == CORO_INVALID_PID_VALUE)
-			break;
-		CloseHandle(h);
-	}
-
-	if (k == 10) {
-		k = 0;
-		j++;
-		if (j == 10) {
-			j = 0;
-			i++;
-			if (i == 10)
-				return false;
-		}
-
-		wsprintf(bufName, "rm%d%d%d", i, j, k);
-		_makepath(fn, bufDrive, bufDir, bufName, ".bmp");
-	}
-#endif
-	return true;
-}
 
 void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	uint16 *src = (uint16 *)lpBuf;

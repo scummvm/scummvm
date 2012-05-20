@@ -41,16 +41,8 @@ struct DDSURFACEDESC {
 
 class RMSnapshot {
 private:
-	// Buffer used to create a path
-	static char bufDrive[MAX_DRIVE], bufDir[MAX_DIR], bufName[MAX_FNAME], bufExt[MAX_EXT];
-	static char filename[512];
-
-	// Buffer used to convert a RGB
+	// Buffer used to convert to RGB
 	static byte	rgb[RM_SX * RM_SY * 3];
-
-private:
-	bool GetFreeSnapName(char *fn);
-
 public:
 	// Take a screenshot
 	void GrabScreenshot(byte *lpBuf, int dezoom = 1, uint16 *lpDestBuf = NULL);
