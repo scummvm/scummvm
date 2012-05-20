@@ -321,8 +321,9 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGraphUpdateBox_workarounds[] = {
 	{ GID_ECOQUEST2,     100,   333,  0,        "showEcorder", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // necessary workaround for our ecorder script patch, because there isn't enough space to patch the function
-	{ GID_PQ3,           202,   202,  0,            "MapEdit", "movePt",         -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #3038077
 	{ GID_PQ3,           202,   202,  0,            "MapEdit", "addPt",          -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #3038077
+	{ GID_PQ3,           202,   202,  0,            "MapEdit", "movePt",         -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #3038077
+	{ GID_PQ3,           202,   202,  0,            "MapEdit", "dispose",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
