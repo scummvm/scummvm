@@ -94,6 +94,8 @@ private:
 	bool cmdPlayVideo(int argc, const char **argv);
 	bool cmdAnimateList(int argc, const char **argv);
 	bool cmdWindowList(int argc, const char **argv);
+	bool cmdPlaneList(int argc, const char **argv);
+	bool cmdPlaneItemList(int argc, const char **argv);
 	bool cmdSavedBits(int argc, const char **argv);
 	bool cmdShowSavedBits(int argc, const char **argv);
 	// Segments

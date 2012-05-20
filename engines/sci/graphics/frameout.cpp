@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
+#include "sci/console.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -675,6 +676,56 @@ void GfxFrameout::kernelFrameout() {
 	_screen->copyToScreen();
 
 	g_sci->getEngineState()->_throttleTrigger = true;
+}
+
+void GfxFrameout::printPlaneList(Console *con) {
+	for (PlaneList::const_iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		PlaneEntry p = *it;
+		Common::String curPlaneName = _segMan->getObjectName(p.object);
+		Common::Rect r = p.upscaledPlaneRect;
+		Common::Rect cr = p.upscaledPlaneClipRect;
+
+		con->DebugPrintf("%04x:%04x (%s): prio %d, lastprio %d, offsetX %d, offsetY %d, pic %d, mirror %d, back %d\n",
+							PRINT_REG(p.object), curPlaneName.c_str(),
+							(int16)p.priority, (int16)p.lastPriority,
+							p.planeOffsetX, p.planeOffsetY, p.pictureId,
+							p.planePictureMirrored, p.planeBack);
+		con->DebugPrintf("  rect: (%d, %d, %d, %d), clip rect: (%d, %d, %d, %d)\n",
+							r.left, r.top, r.right, r.bottom,
+							cr.left, cr.top, cr.right, cr.bottom);
+
+		if (p.pictureId != 0xffff && p.pictureId != 0xfffe) {
+			con->DebugPrintf("Pictures:\n");
+
+			for (PlanePictureList::iterator pictureIt = _planePictures.begin(); pictureIt != _planePictures.end(); pictureIt++) {
+				if (pictureIt->object == p.object) {
+					con->DebugPrintf("    Picture %d: x %d, y %d\n", pictureIt->pictureId, pictureIt->startX, pictureIt->startY);
+				}
+			}
+		}
+	}
+}
+
+void GfxFrameout::printPlaneItemList(Console *con, reg_t planeObject) {
+	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
+		FrameoutEntry *e = *listIterator;
+		reg_t itemPlane = readSelector(_segMan, e->object, SELECTOR(plane));
+			
+		if (planeObject == itemPlane) {
+			Common::String curItemName = _segMan->getObjectName(e->object);
+			Common::Rect icr = e->celRect;
+			GuiResourceId picId = e->picture ? e->picture->getResourceId() : 0;
+
+			con->DebugPrintf("%d: %04x:%04x (%s), view %d, loop %d, cel %d, x %d, y %d, z %d, "
+							 "signal %d, scale signal %d, scaleX %d, scaleY %d, rect (%d, %d, %d, %d), "
+							 "pic %d, picX %d, picY %d, visible %d\n",
+							 e->givenOrderNr, PRINT_REG(e->object), curItemName.c_str(),
+							 e->viewId, e->loopNo, e->celNo, e->x, e->y, e->z,
+							 e->signal, e->scaleSignal, e->scaleX, e->scaleY,
+							 icr.left, icr.top, icr.right, icr.bottom,
+							 picId, e->picStartX, e->picStartY, e->visible);
+		}
+	}
 }
 
 } // End of namespace Sci
