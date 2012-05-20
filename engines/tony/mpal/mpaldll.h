@@ -44,42 +44,17 @@ namespace MPAL {
 
 #define HEX_VERSION             0x0170
 
-/*
-  Safe
-
-#define MAX_ACTIONS_PER_ITEM    40
-#define MAX_COMMANDS_PER_ITEM   256
-#define MAX_COMMANDS_PER_ACTION 64
-#define MAX_DESCRIBE_SIZE				128
-*/
 
 #define MAX_ACTIONS_PER_ITEM    40
 #define MAX_COMMANDS_PER_ITEM   128
 #define MAX_COMMANDS_PER_ACTION 128
-#define MAX_DESCRIBE_SIZE				64
-
+#define MAX_DESCRIBE_SIZE		64
 
 
 #define MAX_MOMENTS_PER_SCRIPT  256
 #define MAX_COMMANDS_PER_SCRIPT 256
 #define MAX_COMMANDS_PER_MOMENT 32
 
-
-
-
-
-/*
-   Secure version!
-
-#define MAX_GROUPS_PER_DIALOG   128
-#define MAX_COMMANDS_PER_DIALOG 640
-#define MAX_COMMANDS_PER_GROUP  64
-#define MAX_CHOICES_PER_DIALOG  64
-#define MAX_SELECTS_PER_CHOICE  33
-#define MAX_PLAYGROUPS_PER_SELECT 9
-#define MAX_PERIODS_PER_DIALOG  640
-
-*/
 
 #define MAX_GROUPS_PER_DIALOG   128
 #define MAX_COMMANDS_PER_DIALOG 480
@@ -89,17 +64,6 @@ namespace MPAL {
 #define MAX_PLAYGROUPS_PER_SELECT 9
 #define MAX_PERIODS_PER_DIALOG  400
 
-/*
-  Before Rufus:
-
-#define MAX_GROUPS_PER_DIALOG   128
-#define MAX_COMMANDS_PER_DIALOG 512
-#define MAX_COMMANDS_PER_GROUP  32
-#define MAX_CHOICES_PER_DIALOG  64
-#define MAX_SELECTS_PER_CHOICE  32
-#define MAX_PLAYGROUPS_PER_SELECT 4
-#define MAX_PERIODS_PER_DIALOG  512
-*/
 
 #define NEED_LOCK_MSGS
 
@@ -242,29 +206,13 @@ struct MPALITEM {
 
 	struct command Command[MAX_COMMANDS_PER_ITEM];
 
-  // Array of structures containing various managed activities. In practice, of
-  // every action we know what commands to run, including those defined in
-  // structures above
-/*
-  struct
-  {
-    byte    num;			// Numero dell'azione
-    uint16    wTime;		// In caso di idle, il tempo che deve passare
-    byte    perc;			// Percentuale di eseguire l'idle
-    HGLOBAL when;			// Espressione da calcolare: se !=0, allora
-							//  l'azione puo' essere eseguita
-    uint16    wParm;		// Parametro per l'azione
-
-    byte nCmds;				// Numero comandi da eseguire
-    uint32 CmdNum[MAX_COMMANDS_PER_ACTION]; // Comando da eseguire
-
-  } Action[MAX_ACTIONS_PER_ITEM];
-	*/
+	// Pointer to array of structures containing various managed activities. In practice, of
+	// every action we know what commands to run, including those defined in structures above
 	struct ItemAction *Action;
 
 } PACKED_STRUCT;
-typedef MPALITEM*       LPMPALITEM;
-typedef LPMPALITEM*     LPLPMPALITEM;
+typedef MPALITEM *LPMPALITEM;
+typedef LPMPALITEM *LPLPMPALITEM;
 
 
 /**

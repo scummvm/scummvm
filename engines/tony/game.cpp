@@ -1422,7 +1422,7 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 
 		cmpbuf = new byte[160 * 120 * 4];
 
-		// Se la versione >= 5, è compresso!
+		// Read in the compressed data
 		cmpsize = f->readUint32LE();
 		f->read(cmpbuf, cmpsize);
 

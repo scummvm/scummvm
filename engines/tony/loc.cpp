@@ -1964,7 +1964,7 @@ bool RMLocation::Load(Common::File &file) {
 	int size;
 	bool bRet;
 
-	// Calcola la lunghezza del file
+	// Get the file size
 	size = file.size();
 	file.seek(0);
 

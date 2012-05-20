@@ -1800,7 +1800,7 @@ void RMGfxSourceBuffer8RLEWordAA::Init(RMDataStream &ds, int dimx, int dimy, boo
 	RMGfxSourceBuffer8RLE::Init(ds, dimx, dimy, bLoadPalette);
 
 	if (!bNeedRLECompress) {
-		// Carica la maschera di antialiasing
+		// Load the anti-aliasing mask
 		m_aabuf = new byte[dimx * dimy];
 		ds.Read(m_aabuf, dimx * dimy);
 	}

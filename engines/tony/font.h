@@ -341,7 +341,7 @@ public:
 
 
 /**
- * Gestisce la schermata di scelta delle voci di un dialogo
+ * Manages the selection of screen items in a box
  */
 class RMDialogChoice : public RMGfxWoodyBuffer {
 private:
