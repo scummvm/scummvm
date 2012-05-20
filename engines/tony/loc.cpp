@@ -1923,7 +1923,7 @@ void RMGameBoxes::LoadState(byte *state) {
 	int nloc, nbox;
 
 	// Load number of items
-	nloc = *(int*)state;
+	nloc = READ_LE_UINT32(state);
 	state += 4;
 
 	assert(nloc <= m_nLocBoxes);
