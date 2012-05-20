@@ -139,7 +139,7 @@ enum {
 	GC_INTERVAL = 0x8000
 };
 
-enum sciOpcodes {
+enum SciOpcodes {
 	op_bnot     = 0x00,	// 000
 	op_add      = 0x01,	// 001
 	op_sub      = 0x02,	// 002
