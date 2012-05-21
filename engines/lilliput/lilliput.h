@@ -233,7 +233,7 @@ public:
 	void saveSurfaceSpeech();
 	void displayInterfaceHotspots();
 	void displayLandscape();
-	void displayFunction10();
+	void displaySpeechBubble();
 	void displaySpeech(byte *buf);
 	void initGameAreaDisplay();
 	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);

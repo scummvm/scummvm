@@ -499,8 +499,8 @@ void LilliputEngine::displayLandscape() {
 }
 
 // Display dialog bubble
-void LilliputEngine::displayFunction10() {
-	debugC(2, kDebugEngineTBC, "displayFunction10()");
+void LilliputEngine::displaySpeechBubble() {
+	debugC(2, kDebugEngine, "displaySpeechBubble()");
 	static const byte _array15976[16] = {244, 248, 250, 250, 252, 252, 252, 252, 252, 252, 252, 252, 250, 250, 248, 244};
 
 	restoreSurfaceUnderMousePointer();
@@ -523,7 +523,7 @@ void LilliputEngine::displayFunction10() {
 }
 
 void LilliputEngine::displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex) {
-	debugC(2, kDebugEngineTBC, "displaySpeechLine()");
+	debugC(2, kDebugEngine, "displaySpeechLine()");
 
 	int var3 = 0;
 	int var1;
@@ -551,7 +551,6 @@ void LilliputEngine::displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex
 		displayChar(vgaIndex, var1);
 		vgaIndex += 4;
 	}
-
 }
 
 void LilliputEngine::displaySpeech(byte *buf) {
