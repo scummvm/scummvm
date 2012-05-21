@@ -150,8 +150,8 @@ public:
 
 	short _word15E5D[40];
 	byte _byte15E35[40];
-	int _array11D49[40];
-	int _array1289F[40];
+	int16 _array11D49[40];
+	int16 _array1289F[40];
 	int16 _array12861[30];
 
 	byte *_rulesChunk1;
