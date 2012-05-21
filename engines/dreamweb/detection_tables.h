@@ -82,7 +82,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 				{"dreamweb.exe", 0, "dd1c7793b151489e67b83cd1ecab51cd", -1},
 				AD_LISTEND
 			},
-			Common::EN_ANY,
+			Common::EN_GRB,
 			Common::kPlatformPC,
 			ADGF_CD | ADGF_TESTING,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
@@ -101,7 +101,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::EN_USA,
 			Common::kPlatformPC,
-			ADGF_CD,
+			ADGF_CD | ADGF_TESTING,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},

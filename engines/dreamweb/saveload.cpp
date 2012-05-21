@@ -839,8 +839,9 @@ void DreamWebEngine::showOpBox() {
 
 	// This call displays half of the ops dialog in the CD version. It's not
 	// in the floppy version, and if it's called, a stray red dot is shown in
-	// the game dialogs.
-	if (isCD())
+	// the game dialogs. It is included in the early UK CD release, which had
+	// similar data files as the floppy release (bug #3528160).
+	if (isCD() && getLanguage() != Common::EN_GRB)
 		showFrame(_saveGraphics, kOpsx, kOpsy + 55, 4, 0);
 }
 
