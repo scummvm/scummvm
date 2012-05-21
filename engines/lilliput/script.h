@@ -131,7 +131,7 @@ private:
 	void sub171AF(int16 var1, int16 var2, int16 var4);
 	void sub18B7C(int var1, int var3);
 	void sub189B8();
-	void sub189F5();
+	void formatSpeechString();
 	Common::Point getCharacterTilePos(int index);
 	int sub18BB7(int index);
 
