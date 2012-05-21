@@ -36,8 +36,8 @@ namespace Tony {
 
 TonyEngine *_vm;
 
-TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst), 
-		_gameDescription(gameDesc), _randomSource("tony") {
+TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst),
+	_gameDescription(gameDesc), _randomSource("tony") {
 	_vm = this;
 	_loadSlotNumber = -1;
 
@@ -90,7 +90,7 @@ Common::ErrorCode TonyEngine::Init() {
 	m_bDrawLocation = true;
 	m_startTime = g_system->getMillis();
 
-	// Init static class fields 
+	// Init static class fields
 	RMText::InitStatics();
 	RMTony::InitStatics();
 
@@ -174,7 +174,7 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 	if (nChannel < 4)
 		if (GLOBALS.flipflop)
 			nChannel = nChannel + 1;
-	
+
 	switch (nFX) {
 	case 0:
 	case 1:
@@ -186,62 +186,57 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 	case 22:
 		break;
 	}
-	
-#ifdef REFACTOR_ME	
+
+#ifdef REFACTOR_ME
 	// Mette il path giusto
 	if (nChannel < 4)
 		GetDataDirectory(DD_MUSIC, path_buffer);
 	else
 		GetDataDirectory(DD_LAYER, path_buffer);
-	_splitpath(path_buffer,drive,dir,NULL,NULL);
-	_splitpath(fn,NULL,NULL,fname,ext);
-	_makepath(path_buffer,drive,dir,fname,ext);
+	_splitpath(path_buffer, drive, dir, NULL, NULL);
+	_splitpath(fn, NULL, NULL, fname, ext);
+	_makepath(path_buffer, drive, dir, fname, ext);
 
-	_makepath(path_buffer,drive,dir,fname,ext);
+	_makepath(path_buffer, drive, dir, fname, ext);
 
-	if (nFX==22) // Sync a tempo
-	{
-		curChannel=nChannel;		
+	if (nFX == 22) { // Sync a tempo
+		curChannel = nChannel;
 		strcpy(nextMusic, path_buffer);
-		nextLoop=bLoop;
-		nextSync=nSync;
+		nextLoop = bLoop;
+		nextSync = nSync;
 		if (flipflop)
-			nextChannel=nChannel-1;
+			nextChannel = nChannel - 1;
 		else
-		  nextChannel=nChannel+1;
+			nextChannel = nChannel + 1;
 		DWORD id;
-		HANDLE hThread=CreateThread(NULL,10240,(LPTHREAD_START_ROUTINE)DoNextMusic,m_stream,0,&id);
-		SetThreadPriority(hThread,THREAD_PRIORITY_HIGHEST);
-	}
-	else if (nFX==44) // Cambia canale e lascia finire il primo
-	{
+		HANDLE hThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)DoNextMusic, m_stream, 0, &id);
+		SetThreadPriority(hThread, THREAD_PRIORITY_HIGHEST);
+	} else if (nFX == 44) { // Cambia canale e lascia finire il primo
 		if (flipflop)
-			nextChannel=nChannel-1;
+			nextChannel = nChannel - 1;
 		else
-		  nextChannel=nChannel+1;
+			nextChannel = nChannel + 1;
 
 		m_stream[nextChannel]->Stop();
 		m_stream[nextChannel]->UnloadFile();
 
 		if (!getIsDemo()) {
-			if (!m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
+			if (!m_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
 				theGame.Abort();
 		} else {
-			m_stream[nextChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
+			m_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
 		}
 
 		m_stream[nextChannel]->SetLoop(bLoop);
 		m_stream[nextChannel]->Play();
 
-		flipflop = 1-flipflop;
-	}
-	else
-	{
+		flipflop = 1 - flipflop;
+	} else {
 		if (!getIsDemo()) {
-			if (!m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync))
+			if (!m_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
 				theGame.Abort();
 		} else {
-			m_stream[nChannel]->LoadFile(path_buffer,FPCODEC_ADPCM,nSync);
+			m_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
 		}
 
 		m_stream[nChannel]->SetLoop(bLoop);
@@ -320,9 +315,9 @@ void TonyEngine::PreloadSFX(int nChannel, const char *fn) {
 
 FPSFX *TonyEngine::CreateSFX(byte *buf) {
 	FPSFX *sfx;
-	
+
 	_theSound.CreateSfx(&sfx);
-	sfx->LoadFile(buf,FPCODEC_WAV);
+	sfx->LoadFile(buf, FPCODEC_WAV);
 	return sfx;
 }
 
@@ -343,7 +338,7 @@ void TonyEngine::InitMusic() {
 
 	_theSound.Init(/*_window*/);
 	_theSound.SetMasterVolume(63);
-	
+
 	for (i = 0; i < 6; i++)
 		_theSound.CreateStream(&m_stream[i]);
 
@@ -389,7 +384,7 @@ Common::String TonyEngine::GetSaveStateFileName(int n) {
 
 void TonyEngine::AutoSave(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
-		Common::String buf;
+	Common::String buf;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -414,7 +409,7 @@ void TonyEngine::SaveState(int n, const char *name) {
 
 void TonyEngine::LoadState(CORO_PARAM, int n) {
 	CORO_BEGIN_CONTEXT;
-		Common::String buf;
+	Common::String buf;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -491,14 +486,14 @@ void TonyEngine::Abort(void) {
 /**
  * Main process for playing the game.
  *
- * @remarks		This needs to be in a separate process, since there are some things that can briefly
+ * @remarks     This needs to be in a separate process, since there are some things that can briefly
  * block the execution of process. For now, all ScummVm event handling is dispatched to within the context of this
  * process. If it ever proves a problem, we may have to look into whether it's feasible to have it still remain
  * in the outer 'main' process.
  */
 void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
-		Common::String fn;
+	Common::String fn;
 	CORO_END_CONTEXT(_ctx);
 
 
@@ -517,7 +512,7 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 		// Wait for the next frame
 		CORO_INVOKE_1(CoroScheduler.sleep, 50);
 
-  		// Call the engine to handle the next frame
+		// Call the engine to handle the next frame
 		CORO_INVOKE_1(_vm->_theEngine.DoFrame, _vm->m_bDrawLocation);
 
 		// Warns that a frame is finished

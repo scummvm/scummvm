@@ -51,10 +51,10 @@ RMFont::~RMFont() {
 
 /**
  * Dumps a font to a buffer
- * @param buf					Buffer for font contents
- * @param nChars				Number of characters (max 256)
- * @param dimx					X dimension in pixels
- * @param dimy					Y dimension in pixels
+ * @param buf                   Buffer for font contents
+ * @param nChars                Number of characters (max 256)
+ * @param dimx                  X dimension in pixels
+ * @param dimy                  Y dimension in pixels
 *
 \****************************************************************************/
 
@@ -323,7 +323,7 @@ void RMFontParla::Init(void) {
 	lTable['E'] = 10;
 	lTable['F'] = 11;
 
-	if (_vm->getLanguage() == Common::PL_POL) {	
+	if (_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
 		//AaCcEeLlNnOoSsZzZz
 		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
@@ -370,7 +370,7 @@ void RMFontParla::Init(void) {
 
 		// Russian Characters
 		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
-		// allowing for further translations. To support Tonyin other langauges, 
+		// allowing for further translations. To support Tonyin other langauges,
 		// these mappings could be used as a basis
 
 		cTable[(byte)'À'] = 130;
@@ -575,7 +575,7 @@ void RMFontParla::Init(void) {
 		lTable[(byte)'ù'] = 13;
 		lTable[(byte)'ú'] = 13;
 
-	} else if (_vm->getLanguage() == Common::FR_FRA) {	
+	} else if (_vm->getLanguage() == Common::FR_FRA) {
 		// French
 
 		cTable[(byte)'â'] = 226;
@@ -687,7 +687,7 @@ void RMFontMacc::Init(void) {
 	//cTable[(byte)''] = 100;         // u with ball
 	cTable[(byte)'ç'] = 101;
 
-	if (_vm->getLanguage() == Common::PL_POL) {	
+	if (_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
 		//AaCcEeLlNnOoSsZzZz
 		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
@@ -733,7 +733,7 @@ void RMFontMacc::Init(void) {
 	} else if (_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
 		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
-		// allowing for further translations. To support Tonyin other langauges, 
+		// allowing for further translations. To support Tonyin other langauges,
 		// these mappings could be used as a basis
 		cTable[(byte)'À'] = 120;
 		cTable[(byte)'Á'] = 121;
@@ -1183,7 +1183,7 @@ void RMFontCredits::Init(void) {
 	} else if (_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
 		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
-		// allowing for further translations. To support Tonyin other langauges, 
+		// allowing for further translations. To support Tonyin other langauges,
 		// these mappings could be used as a basis
 		cTable[(byte)'À'] = 130;
 		cTable[(byte)'Á'] = 131;
@@ -1581,7 +1581,7 @@ void RMFontObj::Init(void) {
 	SetBothCase('R', 'R', 1);
 	SetBothCase('R', 'U', 3);
 
-	if (_vm->getLanguage() == Common::PL_POL) {	
+	if (_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
 		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
 		//AaCcEeLlNnOoSsZzZz
@@ -1614,8 +1614,8 @@ void RMFontObj::Init(void) {
 
 	} else if (_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
-	// WARNING: The Russian font uses many of the ISO-Latin-1 font,
-		// allowing for further translations. To support Tonyin other langauges, 
+		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
+		// allowing for further translations. To support Tonyin other langauges,
 		// these mappings could be used as a basis
 
 		cTable[(byte)'¥'] = cTable[(byte)'¹'] = 85;
@@ -1725,7 +1725,7 @@ void RMFontObj::Init(void) {
 		lTable[(byte)'Ù'] = lTable[(byte)'ù'] = 16;
 		lTable[(byte)'Ú'] = lTable[(byte)'ú'] = 16;
 
-	} else if (_vm->getLanguage() == Common::FR_FRA) {	
+	} else if (_vm->getLanguage() == Common::FR_FRA) {
 		// French
 
 		// Translate accented characters as normal letters
@@ -1854,7 +1854,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 			// Back to the first usable space
 			//
 			// BERNIE: In the original, sentences containing words that exceed the
-			// width of a line caused discontinuation of the whole sentence. 
+			// width of a line caused discontinuation of the whole sentence.
 			// This workaround has the partial word broken up so it will still display
 			//
 			old_p = p;

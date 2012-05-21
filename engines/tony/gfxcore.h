@@ -39,7 +39,7 @@ namespace Tony {
 *       Prototipi di classi
 \****************************************************************************/
 
-//    Class Name				Family Treee			Abstract?
+//    Class Name                Family Treee            Abstract?
 class RMGfxTask;             //                             Yes
 class RMGfxTaskSetPrior;     //     Task                    Yes
 class RMGfxBuffer;           //

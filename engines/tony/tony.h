@@ -69,7 +69,7 @@ enum {
 
 struct TonyGameDescription;
 
-#define MAX_SFX_CHANNELS	32
+#define MAX_SFX_CHANNELS    32
 
 struct VoiceHeader {
 	int offset;
@@ -100,7 +100,7 @@ public:
 	uint32 m_hEndOfFrame;
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
-	FPSOUND	_theSound;
+	FPSOUND _theSound;
 	Globals _globals;
 	Debugger *_debugger;
 
@@ -143,7 +143,9 @@ public:
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
 	bool getIsDemo() const;
-	RMGfxEngine *GetEngine() { return &_theEngine; }
+	RMGfxEngine *GetEngine() {
+		return &_theEngine;
+	}
 	void GUIError(const Common::String &msg);
 
 	virtual bool canLoadGameStateCurrently();
@@ -163,8 +165,12 @@ public:
 	void SwitchFullscreen(bool bFull);
 	void OptionScreen(void);
 
-	void ShowLocation(void) { m_bDrawLocation = true; }
-	void HideLocation(void) { m_bDrawLocation = false; }
+	void ShowLocation(void) {
+		m_bDrawLocation = true;
+	}
+	void HideLocation(void) {
+		m_bDrawLocation = false;
+	}
 
 	// Reads the time
 	uint32 GetTime(void);
@@ -186,7 +192,7 @@ public:
 
 	void PreloadSFX(int nSfx, const char *fn);
 	void UnloadAllSFX(void);
-	
+
 	void PreloadUtilSFX(int nSfx, const char *fn);
 	void UnloadAllUtilSFX(void);
 
@@ -204,9 +210,13 @@ public:
 
 	// Get a thumbnail
 	void GrabThumbnail(void);
-	uint16 *GetThumbnail(void) { return m_curThumbnail; }
+	uint16 *GetThumbnail(void) {
+		return m_curThumbnail;
+	}
 
-	void Quit(void) { m_bQuitNow = true; }
+	void Quit(void) {
+		m_bQuitNow = true;
+	}
 
 	void OpenInitLoadMenu(CORO_PARAM);
 	void OpenInitOptions(CORO_PARAM);

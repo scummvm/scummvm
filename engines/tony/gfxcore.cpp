@@ -173,7 +173,7 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 
 	if (x1 > destw - 1)
 		return false;
-		
+
 	if (y1 > desth - 1)
 		return false;
 
@@ -206,11 +206,11 @@ bool RMGfxSourceBuffer::Clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 /**
  * Initialises a surface by resource Id
  *
- * @param resID					Resource ID
- * @param dimx					Buffer X dimension
- * @param dimy					Buffer Y dimension
+ * @param resID                 Resource ID
+ * @param dimx                  Buffer X dimension
+ * @param dimy                  Buffer Y dimension
  */
- int RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
+int RMGfxSourceBuffer::Init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
 	return Init(RMRes(resID), dimx, dimy, bLoadPalette);
 }
 
@@ -478,7 +478,7 @@ RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
 /**
  * Returns the number of bits per pixel of the surface
  *
- * @returns		Bit per pixel
+ * @returns     Bit per pixel
  */
 int RMGfxSourceBuffer4::Bpp() {
 	return 4;
@@ -565,7 +565,7 @@ RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
 /**
  * Returns the number of bits per pixel of the surface
  *
- * @returns		Bit per pixel
+ * @returns     Bit per pixel
  */
 int RMGfxSourceBuffer8::Bpp() {
 	return 8;
@@ -1894,7 +1894,7 @@ RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
 /**
  * Returns the number of bits per pixel of the surface
  *
- * @returns		Bit per pixel
+ * @returns     Bit per pixel
  */
 int RMGfxSourceBuffer16::Bpp() {
 	return 16;

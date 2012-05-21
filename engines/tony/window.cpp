@@ -39,7 +39,7 @@ namespace Tony {
 *       RMWindow Methods
 \****************************************************************************/
 
-RMWindow::RMWindow() { 
+RMWindow::RMWindow() {
 
 }
 
@@ -93,7 +93,7 @@ void RMWindow::Unlock() {
  */
 void RMWindow::WipeEffect(Common::Rect &rcBoundEllipse) {
 	if ((rcBoundEllipse.left == 0) && (rcBoundEllipse.top == 0) &&
-		(rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
+	        (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
 		// Full screen clear wanted, so use shortcut method
 		g_system->fillScreen(0);
 	} else {
@@ -136,14 +136,14 @@ void RMWindow::GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
 	if (!rcBoundEllipse.isValidRect())
 		return;
 
-	Common::Point center(rcBoundEllipse.left + rcBoundEllipse.width() / 2, 
-		rcBoundEllipse.top + rcBoundEllipse.height() / 2);
+	Common::Point center(rcBoundEllipse.left + rcBoundEllipse.width() / 2,
+	                     rcBoundEllipse.top + rcBoundEllipse.height() / 2);
 
 	// The rectangle technically defines the area inside the ellipse, with the corners touching
 	// the ellipse boundary. Since we're currently simulating the ellipse using a plain circle,
 	// we need to calculate a necessary width using the hypotenuse of X/2 & Y/2
 	int x2y2 = (rcBoundEllipse.width() / 2) * (rcBoundEllipse.width() / 2) +
-			(rcBoundEllipse.height() / 2) * (rcBoundEllipse.height() / 2);
+	           (rcBoundEllipse.height() / 2) * (rcBoundEllipse.height() / 2);
 	int radius = 0;
 	while ((radius * radius) < x2y2)
 		++radius;
@@ -155,11 +155,11 @@ void RMWindow::GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
 
 	while (x >= y) {
 		plotSplices(lpBuf, center, x, y);
- 
+
 		error += y;
 		++y;
 		error += y;
- 
+
 		if (error >= 0) {
 			error -= x;
 			--x;
@@ -173,7 +173,7 @@ void RMWindow::GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
  */
 void RMWindow::plotSplices(const byte *lpBuf, const Common::Point &center, int x, int y) {
 	plotLines(lpBuf, center, x, y);
-	if (x != y) 
+	if (x != y)
 		plotLines(lpBuf, center, y, x);
 }
 
@@ -206,11 +206,11 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 *       RMSnapshot Methods
 \****************************************************************************/
 
-byte RMSnapshot::rgb[RM_SX * RM_SY * 3];
+byte RMSnapshot::rgb[RM_SX *RM_SY * 3];
 
 void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	uint16 *src = (uint16 *)lpBuf;
-	
+
 	int dimx = RM_SX / dezoom;
 	int dimy = RM_SY / dezoom;
 
@@ -219,13 +219,13 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	uint32 k = 0;
 	int sommar, sommab, sommag;
 	uint16 *cursrc;
-		
+
 	if (lpDestBuf == NULL)
 		src += (RM_SY - 1) * RM_BBX;
 
 	if (dezoom == 1 && 0) {
 		byte *curOut = rgb;
-		
+
 		for (int y = 0; y < dimy; y++) {
 			for (int x = 0; x < dimx; x++) {
 				cursrc = &src[RM_SKIPX + x];
@@ -242,32 +242,32 @@ void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 				src -= RM_BBX;
 			else
 				src += RM_BBX;
-		}			
+		}
 	} else {
 		for (int y = 0; y < dimy; y++) {
-			for(int x = 0; x < dimx; x++) {
+			for (int x = 0; x < dimx; x++) {
 				cursrc = &src[RM_SKIPX + x * dezoom];
 				sommar = sommab = sommag = 0;
-				
+
 				for (v = 0; v < dezoom; v++) {
 					for (u = 0; u < dezoom; u++) {
 						if (lpDestBuf == NULL)
 							curv = -v;
 						else
 							curv = v;
-						
+
 						sommab += cursrc[curv * RM_BBX + u] & 0x1F;
 						sommag += (cursrc[curv * RM_BBX + u] >> 5) & 0x1F;
 						sommar += (cursrc[curv * RM_BBX + u] >> 10) & 0x1F;
 					}
 				}
-				rgb[k + 0] = (byte) (sommab * 8 / (dezoom * dezoom));
-				rgb[k + 1] = (byte) (sommag * 8 / (dezoom * dezoom));
-				rgb[k + 2] = (byte) (sommar * 8 / (dezoom * dezoom));
+				rgb[k + 0] = (byte)(sommab * 8 / (dezoom * dezoom));
+				rgb[k + 1] = (byte)(sommag * 8 / (dezoom * dezoom));
+				rgb[k + 2] = (byte)(sommar * 8 / (dezoom * dezoom));
 
-				if (lpDestBuf!=NULL)
-					lpDestBuf[k / 3] = ((int)rgb[k + 0] >> 3) | (((int)rgb[k + 1] >> 3) << 5) | 
-						(((int)rgb[k + 2] >> 3) << 10);
+				if (lpDestBuf != NULL)
+					lpDestBuf[k / 3] = ((int)rgb[k + 0] >> 3) | (((int)rgb[k + 1] >> 3) << 5) |
+					                   (((int)rgb[k + 2] >> 3) << 10);
 
 				k += 3;
 			}

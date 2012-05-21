@@ -112,7 +112,7 @@ protected:
 	// Watch thread which waits for the end of an action
 	static void WaitEndOfAction(CORO_PARAM, const void *param);
 
-public: 
+public:
 	enum PATTERNS {
 		PAT_TAKEUP_UP1 = 9,
 		PAT_TAKEUP_UP2,
@@ -120,7 +120,7 @@ public:
 		PAT_TAKEUP_MID2,
 		PAT_TAKEUP_DOWN1,
 		PAT_TAKEUP_DOWN2,
-	
+
 		PAT_TAKELEFT_UP1,
 		PAT_TAKELEFT_UP2,
 		PAT_TAKELEFT_MID1,
@@ -242,7 +242,7 @@ public:
 		PAT_PUTUP_MID2,
 		PAT_PUTUP_DOWN1,
 		PAT_PUTUP_DOWN2,
-	
+
 		PAT_CONSEGRETARIA
 	};
 
@@ -363,7 +363,7 @@ public:
 
 	// Initialise Tony
 	void Init(void);
-	
+
 	// Free all memory
 	void Close(void);
 
@@ -391,21 +391,29 @@ public:
 	int GetCurPattern();
 
 	// Waits until the end of a pattern
-	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) { 
+	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) {
 		RMCharacter::WaitForEndPattern(coroParam, hCustomSkip);
 	}
 
 	// Check if currently in an action
-	bool InAction() { return (m_bActionPending && m_Action != 0) | m_bAction; }
+	bool InAction() {
+		return (m_bActionPending && m_Action != 0) | m_bAction;
+	}
 
 	// Check if there needs to be an update for scrolling movement
-	bool MustUpdateScrolling() { return ((!InAction()) || (IsMoving())); }
+	bool MustUpdateScrolling() {
+		return ((!InAction()) || (IsMoving()));
+	}
 
 	// Returns Tony's position
-	RMPoint Position() { return m_pos; }
+	RMPoint Position() {
+		return m_pos;
+	}
 
 	// Set the scrolling position
-	void SetScrollPosition(const RMPoint &pt) { RMCharacter::SetScrollPosition(pt); }
+	void SetScrollPosition(const RMPoint &pt) {
+		RMCharacter::SetScrollPosition(pt);
+	}
 
 	// Set the take animation
 	void Take(int nWhere, int nPart);
@@ -413,26 +421,32 @@ public:
 
 	// Start or End Talk
 	bool StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &bodyStartPat,
-			int &headLoopPat, int &bodyLoopPat);
+	                        int &headLoopPat, int &bodyLoopPat);
 	void StartTalk(CORO_PARAM, TALKTYPE nTalkType);
 	bool EndTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic);
 	void EndTalk(CORO_PARAM);
 
 	// Start or End Static
 	void StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat,
-			int &bodyStartPat, int &bodyLoopPat);
+	                          int &bodyStartPat, int &bodyLoopPat);
 	void StartStatic(CORO_PARAM, TALKTYPE nTalkType);
 	void EndStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
 	void EndStatic(CORO_PARAM, TALKTYPE nTalkType);
 
 	// Tony disguises himself!
-	void SetPastorella(bool bIsPast) { m_bPastorella=bIsPast; }
-	int GetPastorella(void) { return m_bPastorella; }
+	void SetPastorella(bool bIsPast) {
+		m_bPastorella = bIsPast;
+	}
+	int GetPastorella(void) {
+		return m_bPastorella;
+	}
 
 	// Perform an action
 	void ExecuteAction(int nAction, int nActionItem, int nParm);
 
-	void PlaySfx(int nSfx) { RMItem::PlaySfx(nSfx); }
+	void PlaySfx(int nSfx) {
+		RMItem::PlaySfx(nSfx);
+	}
 };
 
 } // End of namespace Tony

@@ -44,13 +44,13 @@ using namespace ::Tony::MPAL;
 /**
  * Operator for reading palette information from a data stream.
  *
- * @param ds				Data stream
- * @param pal				Destination palette 
+ * @param ds                Data stream
+ * @param pal               Destination palette
  *
- * @returns		Reference to the data stream
+ * @returns     Reference to the data stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal) {
-	ds.Read(pal.m_data,1024);
+	ds.Read(pal.m_data, 1024);
 	return ds;
 }
 
@@ -61,10 +61,10 @@ RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal) {
 /**
  * Operator for reading slot information from a data stream.
  *
- * @param ds				Data stream
- * @param slot				Destination slot
+ * @param ds                Data stream
+ * @param slot              Destination slot
  *
- * @returns		Reference to the data stream
+ * @returns     Reference to the data stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMPattern::RMSlot &slot) {
 	slot.ReadFromStream(ds);
@@ -78,7 +78,7 @@ void RMPattern::RMSlot::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	// Type
 	ds >> type;
 	m_type = (RMPattern::RMSlotType)type;
- 
+
 	// Dati
 	ds >> m_data;
 
@@ -97,10 +97,10 @@ void RMPattern::RMSlot::ReadFromStream(RMDataStream &ds, bool bLOX) {
 /**
  * Operator for reading pattern information from a data stream
  *
- * @param ds				Data stream
- * @param pat				Destination pattern
+ * @param ds                Data stream
+ * @param pat               Destination pattern
  *
- * @returns		Reference to the data stream
+ * @returns     Reference to the data stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMPattern &pat) {
 	pat.ReadFromStream(ds);
@@ -170,35 +170,35 @@ int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	m_nCurSprite = m_slots[i].m_data;
 	if (bFlag)
 		*bFlag = m_slots[i].m_flag;
-	
+
 	// Calculate the current coordinates
 	UpdateCoord();
-	
+
 	// Check for sound:
 	//  If the slot is 0, play
 	//  If speed = 0, must playing unless it goes into loop '_', or if specified by the parameter
 	//  If speed != 0, play only the loop
-	for (i = 0;i < m_nSlots; i++) {
+	for (i = 0; i < m_nSlots; i++) {
 		if (m_slots[i].m_type == SOUND) {
 			if (i == 0) {
 				if (sfx[m_slots[i].m_data].m_name[0] == '_') {
-	  			sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
+					sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play(true);
 				} else {
-	  				sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
+					sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play();
 				}
 			} else if (m_speed == 0) {
 				if (bPlayP0) {
-	  				sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
+					sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play();
 				} else if (sfx[m_slots[i].m_data].m_name[0] == '_') {
-	  				sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
+					sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play(true);
 				}
 			} else {
 				if (m_bLoop && sfx[m_slots[i].m_data].m_name[0] == '_') {
-	  				sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
+					sfx[m_slots[i].m_data].SetVolume(m_slots[i].Pos().x);
 					sfx[m_slots[i].m_data].Play(true);
 				}
 			}
@@ -214,13 +214,13 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 	// If the speed is 0, then the pattern never advances
 	if (m_speed == 0) {
 		CoroScheduler.pulseEvent(hEndPattern);
-		bFlag=m_slots[m_nCurSlot].m_flag;
+		bFlag = m_slots[m_nCurSlot].m_flag;
 		return m_nCurSprite;
 	}
 
 	// Is it time to change the slots?
 	while (m_nStartTime + m_speed <= (uint32)CurTime) {
-		m_nStartTime += m_speed; 
+		m_nStartTime += m_speed;
 		if (m_slots[m_nCurSlot].m_type == SPRITE)
 			m_nCurSlot++;
 		if (m_nCurSlot == m_nSlots) {
@@ -234,7 +234,7 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 			if (!m_bLoop) {
 				m_nCurSlot = m_nSlots - 1;
 				bFlag = m_slots[m_nCurSlot].m_flag;
-				return m_nCurSprite;			
+				return m_nCurSprite;
 			}
 		}
 
@@ -243,7 +243,7 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 			case SPRITE:
 				// Read the next sprite
 				m_nCurSprite = m_slots[m_nCurSlot].m_data;
-			
+
 				// Update the parent & child coordinates
 				UpdateCoord();
 				break;
@@ -262,7 +262,7 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 			case COMMAND:
 				assert(0);
 				break;
-			
+
 			default:
 				assert(0);
 				break;
@@ -271,11 +271,11 @@ int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 			if (m_slots[m_nCurSlot].m_type == SPRITE)
 				break;
 			m_nCurSlot++;
-		} 
+		}
 	}
 
 	// Return the current sprite
-	bFlag=m_slots[m_nCurSlot].m_flag;
+	bFlag = m_slots[m_nCurSlot].m_flag;
 	return m_nCurSprite;
 }
 
@@ -283,11 +283,11 @@ RMPattern::RMPattern() {
 	m_slots = NULL;
 	m_speed = 0;
 	m_bLoop  = 0;
-    m_nSlots = 0;
+	m_nSlots = 0;
 	m_nCurSlot = 0;
 	m_nCurSprite = 0;
 	m_nStartTime = 0;
-    m_slots = NULL;
+	m_slots = NULL;
 }
 
 RMPattern::~RMPattern() {
@@ -307,10 +307,10 @@ RMPattern::~RMPattern() {
 /**
  * Operator for reading sprite information from a data stream.
  *
- * @param ds				Data stream
- * @param sprite			Destination slot
+ * @param ds                Data stream
+ * @param sprite            Destination slot
  *
- * @returns		Reference to the data stream
+ * @returns     Reference to the data stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMSprite &sprite) {
 	sprite.ReadFromStream(ds);
@@ -339,8 +339,8 @@ void RMSprite::GetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy) {
 }
 
 void RMSprite::ReadFromStream(RMDataStream &ds, bool bLOX) {
-	int dimx,dimy;
-	
+	int dimx, dimy;
+
 	// Sprite name
 	if (!bLOX)
 		ds >> m_name;
@@ -364,11 +364,11 @@ void RMSprite::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 }
 
 void RMSprite::SetPalette(byte *buf) {
-	((RMGfxSourceBufferPal*)m_buf)->LoadPalette(buf);
+	((RMGfxSourceBufferPal *)m_buf)->LoadPalette(buf);
 }
 
 RMSprite::RMSprite() {
-	m_buf= NULL;
+	m_buf = NULL;
 }
 
 RMSprite::~RMSprite() {
@@ -386,10 +386,10 @@ RMSprite::~RMSprite() {
 /**
  * Operator for reading SFX information from a data stream.
  *
- * @param ds				Data stream
- * @param sfx				Destination SFX
+ * @param ds                Data stream
+ * @param sfx               Destination SFX
  *
- * @returns		Reference to the data stream
+ * @returns     Reference to the data stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMSfx &sfx) {
 	sfx.ReadFromStream(ds);
@@ -400,10 +400,10 @@ void RMSfx::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	char id[4];
 	int size;
 	byte *raw;
- 
+
 	// sfx name
 	ds >> m_name;
- 
+
 	ds >> size;
 
 	// Upload the sound effect identifier from the buffer
@@ -416,7 +416,7 @@ void RMSfx::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	ds >> size;
 
 	// Read the raw WAV data
-	raw = new byte[size]; 
+	raw = new byte[size];
 	ds.Read(raw, size);
 
 	// Create the sound effect
@@ -477,10 +477,10 @@ void RMSfx::Stop(void) {
 /**
  * Operator for reading item information from a data stream.
  *
- * @param ds				Data stream
- * @param tem				Destination item
+ * @param ds                Data stream
+ * @param tem               Destination item
  *
- * @returns		Reference to the data stream
+ * @returns     Reference to the data stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMItem &item) {
 	item.ReadFromStream(ds);
@@ -491,15 +491,15 @@ RMDataStream &operator>>(RMDataStream &ds, RMItem &item) {
 RMGfxSourceBuffer *RMItem::NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE) {
 	if (m_cm == CM_256) {
 		RMGfxSourceBuffer8RLE *spr;
-		
-		if (m_FX == 2) {	// AB
+
+		if (m_FX == 2) {    // AB
 			spr = new RMGfxSourceBuffer8RLEWordAB;
-		} else if (m_FX == 1) {	// OMBRA+AA
+		} else if (m_FX == 1) { // OMBRA+AA
 			if (dimx == -1 || dimx > 255)
 				spr = new RMGfxSourceBuffer8RLEWordAA;
 			else
 				spr = new RMGfxSourceBuffer8RLEByteAA;
-				
+
 			spr->SetAlphaBlendColor(m_FXparm);
 			if (bPreRLE)
 				spr->SetAlreadyCompressed();
@@ -518,25 +518,25 @@ RMGfxSourceBuffer *RMItem::NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 		return new RMGfxSourceBuffer16;
 }
 
-bool RMItem::IsIn(const RMPoint &pt, int *size)  { 
+bool RMItem::IsIn(const RMPoint &pt, int *size)  {
 	RMRect rc;
-	
-	if (!m_bIsActive) 
-		return false; 
-	
+
+	if (!m_bIsActive)
+		return false;
+
 	// Search for the right bounding box to use - use the sprite's if it has one, otherwise use the generic one
 	if (m_nCurPattern != 0 && !m_sprites[m_nCurSprite].m_rcBox.IsEmpty())
-		rc=m_sprites[m_nCurSprite].m_rcBox + CalculatePos();
+		rc = m_sprites[m_nCurSprite].m_rcBox + CalculatePos();
 	else if (!m_rcBox.IsEmpty())
 		rc = m_rcBox;
 	// If no box, return immediately
 	else
 		return false;
-	
-	if (size != NULL) 
-		*size = rc.Size(); 
-		
-	return rc.PtInRect(pt + m_curScroll); 
+
+	if (size != NULL)
+		*size = rc.Size();
+
+	return rc.PtInRect(pt + m_curScroll);
 }
 
 
@@ -566,7 +566,8 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	ds >> m_nSprites >> m_nSfx >> m_nPatterns;
 
 	// Color mode
-	ds >> cm; m_cm=(RMColorMode)cm;
+	ds >> cm;
+	m_cm = (RMColorMode)cm;
 
 	// Flag for the presence of custom palette differences
 	ds >> m_bPal;
@@ -580,40 +581,40 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	// MPAL data
 	if (!bLOX)
 		ds += 20;
- 
+
 	ds >> m_FX;
 	ds >> m_FXparm;
 
 	if (!bLOX)
-	ds += 106;
- 
+		ds += 106;
+
 	// Create sub-classes
 	if (m_nSprites > 0)
-		 m_sprites = new RMSprite[m_nSprites];
+		m_sprites = new RMSprite[m_nSprites];
 	if (m_nSfx > 0)
 		m_sfx = new RMSfx[m_nSfx];
-	m_patterns = new RMPattern[m_nPatterns+1];
+	m_patterns = new RMPattern[m_nPatterns + 1];
 
 	// Read in class data
 	if (!ds.IsError())
 		for (i = 0; i < m_nSprites && !ds.IsError(); i++) {
-		 // Download the sprites
-		 if (bLOX) {
-			 m_sprites[i].LOXGetSizeFromStream(ds, &dimx, &dimy);
-			 m_sprites[i].Init(NewItemSpriteBuffer(dimx, dimy, true));
-			 m_sprites[i].ReadFromStream(ds, true);
-		 } else {
-			 m_sprites[i].GetSizeFromStream(ds, &dimx, &dimy);
-			 m_sprites[i].Init(NewItemSpriteBuffer(dimx, dimy, false));
-			 m_sprites[i].ReadFromStream(ds, false);
-		 }
+			// Download the sprites
+			if (bLOX) {
+				m_sprites[i].LOXGetSizeFromStream(ds, &dimx, &dimy);
+				m_sprites[i].Init(NewItemSpriteBuffer(dimx, dimy, true));
+				m_sprites[i].ReadFromStream(ds, true);
+			} else {
+				m_sprites[i].GetSizeFromStream(ds, &dimx, &dimy);
+				m_sprites[i].Init(NewItemSpriteBuffer(dimx, dimy, false));
+				m_sprites[i].ReadFromStream(ds, false);
+			}
 
-		 if (m_cm == CM_256 && m_bPal)
+			if (m_cm == CM_256 && m_bPal)
 				m_sprites[i].SetPalette(m_pal.m_data);
-   }
+		}
 
 	if (!ds.IsError())
-		for (i = 0;i < m_nSfx && !ds.IsError(); i++) {
+		for (i = 0; i < m_nSfx && !ds.IsError(); i++) {
 			if (bLOX)
 				m_sfx[i].ReadFromStream(ds, true);
 			else
@@ -622,7 +623,7 @@ void RMItem::ReadFromStream(RMDataStream &ds, bool bLOX) {
 
 	// Read the pattern from pattern 1
 	if (!ds.IsError())
-		for (i = 1;i <= m_nPatterns && !ds.IsError(); i++) {
+		for (i = 1; i <= m_nPatterns && !ds.IsError(); i++) {
 			if (bLOX)
 				m_patterns[i].ReadFromStream(ds, true);
 			else
@@ -692,8 +693,8 @@ void RMItem::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 
 	// If CurSprite == -1, then the pattern is finished
 	if (m_nCurSprite == -1)
-	  return;
-	
+		return;
+
 	// Set the flag
 	prim->SetFlag(m_bCurFlag);
 
@@ -730,9 +731,9 @@ void RMItem::SetPattern(int nPattern, bool bPlayP0) {
 	assert(nPattern >= 0 && nPattern <= m_nPatterns);
 
 	if (m_sfx)
-		if (m_nCurPattern>0)
+		if (m_nCurPattern > 0)
 			m_patterns[m_nCurPattern].StopSfx(m_sfx);
-	
+
 	// Remember the current pattern
 	m_nCurPattern = nPattern;
 
@@ -741,10 +742,10 @@ void RMItem::SetPattern(int nPattern, bool bPlayP0) {
 		m_nCurSprite = m_patterns[m_nCurPattern].Init(m_sfx, bPlayP0, &m_bCurFlag);
 	else {
 		m_nCurSprite = -1;
-		
+
 		// Look for the sound effect for pattern 0
 		if (bPlayP0)
-			for (i = 0;i < m_nSfx; i++)
+			for (i = 0; i < m_nSfx; i++)
 				if (strcmp(m_sfx[i].m_name, "p0") == 0)
 					m_sfx[i].Play();
 	}
@@ -758,7 +759,7 @@ bool RMItem::GetName(RMString &name) {
 	name = buf;
 	if (buf[0] == '\0')
 		return false;
-	return true; 
+	return true;
 }
 
 
@@ -767,12 +768,12 @@ void RMItem::Unload(void) {
 		delete[] m_patterns;
 		m_patterns = NULL;
 	}
-	
+
 	if (m_sprites != NULL) {
 		delete[] m_sprites;
 		m_sprites = NULL;
 	}
-	
+
 	if (m_sfx != NULL) {
 		delete[] m_sfx;
 		m_sfx = NULL;
@@ -809,7 +810,7 @@ RMItem::~RMItem() {
 
 void RMItem::WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
 	CORO_BEGIN_CONTEXT;
-		uint32 h[2];
+	uint32 h[2];
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -880,7 +881,7 @@ void RMWipe::WaitForFadeEnd(CORO_PARAM) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, m_hEndOfFade, CORO_INFINITE);	
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, m_hEndOfFade, CORO_INFINITE);
 
 	m_bEndFade = true;
 	m_bFading = false;
@@ -910,7 +911,7 @@ void RMWipe::InitFade(int type) {
 	ds.OpenBuffer(res);
 	ds >> m_wip0r;
 	ds.Close();
-	
+
 	m_wip0r.SetPattern(1);
 
 	m_bFading = true;
@@ -921,12 +922,12 @@ void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 		bigBuf.AddPrim(new RMGfxPrimitive(this));
 		m_bMustRegister = false;
 	}
-	
+
 	if (m_bFading) {
 		m_wip0r.DoFrame(&bigBuf, false);
 
 		m_nFadeStep++;
-	
+
 		if (m_nFadeStep == 10) {
 			CoroScheduler.setEvent(m_hEndOfFade);
 		}
@@ -961,17 +962,17 @@ void RMWipe::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 /****************************************************************************/
 
 short RMCharacter::FindPath(short source, short destination) {
-	static RMBox BOX[MAXBOXES];			// Matrix of adjacent boxes
+	static RMBox BOX[MAXBOXES];         // Matrix of adjacent boxes
 	static short COSTO[MAXBOXES];       // Cost per node
 	static short VALIDO[MAXBOXES];      // 0:Invalid 1:Valid 2:Saturated
 	static short NEXT[MAXBOXES];        // Prossimo Nodo
 	short i, j, k, costominimo, fine, errore = 0;
 	RMBoxLoc *cur;
 
-	g_system->lockMutex(csMove);  
+	g_system->lockMutex(csMove);
 
 	if (source == -1 || destination == -1) {
-		g_system->unlockMutex(csMove); 
+		g_system->unlockMutex(csMove);
 		return 0;
 	}
 
@@ -983,37 +984,37 @@ short RMCharacter::FindPath(short source, short destination) {
 		memcpy(&BOX[i], &cur->boxes[i], sizeof(RMBox));
 
 	// Invalidate all nodes
-	for (i = 0; i < cur->numbbox; i++) 
+	for (i = 0; i < cur->numbbox; i++)
 		VALIDO[i] = 0;
-	
+
 	// Prepare source and variables for the procedure
 	COSTO[source] = 0;
 	VALIDO[source] = 1;
 	fine = 0;
- 
- 	 // Find the shortest path
-	while(!fine) {
-		costominimo = 32000;				// Reset the minimum cost
-		errore = 1;							// Possible error
+
+	// Find the shortest path
+	while (!fine) {
+		costominimo = 32000;                // Reset the minimum cost
+		errore = 1;                         // Possible error
 
 		// 1st cycle: explore possible new nodes
 		for (i = 0; i < cur->numbbox; i++)
 			if (VALIDO[i] == 1) {
-				errore = 0;					// Failure de-bunked
+				errore = 0;                 // Failure de-bunked
 				j = 0;
-				while (((BOX[i].adj[j]) != 1) && (j < cur->numbbox)) 
+				while (((BOX[i].adj[j]) != 1) && (j < cur->numbbox))
 					j++;
-      
-				if (j >= cur->numbbox) 
+
+				if (j >= cur->numbbox)
 					VALIDO[i] = 2;                     // nodo saturated?
 				else {
 					NEXT[i] = j;
-					if (COSTO[i] + 1 < costominimo) 
+					if (COSTO[i] + 1 < costominimo)
 						costominimo = COSTO[i] + 1;
 				}
 			}
 
-		if (errore) 
+		if (errore)
 			fine = 1;                                 // All nodes saturated
 
 		// 2nd cycle: adding new nodes that were found, saturate old nodes
@@ -1023,10 +1024,10 @@ short RMCharacter::FindPath(short source, short destination) {
 				COSTO[NEXT[i]] = costominimo;
 				VALIDO[NEXT[i]] = 1;
 				for (j = 0; j < cur->numbbox; j++)
-					if (BOX[j].adj[NEXT[i]] == 1) 
+					if (BOX[j].adj[NEXT[i]] == 1)
 						BOX[j].adj[NEXT[i]] = 0;
-				
-				if (NEXT[i] == destination) 
+
+				if (NEXT[i] == destination)
 					fine = 1;
 			}
 	}
@@ -1036,7 +1037,7 @@ short RMCharacter::FindPath(short source, short destination) {
 		pathlenght = COSTO[destination];
 		k = pathlenght;
 		path[k] = destination;
-		
+
 		while (path[k] != source) {
 			i = 0;
 			while (BOX[i].adj[path[k]] != 2)
@@ -1044,7 +1045,7 @@ short RMCharacter::FindPath(short source, short destination) {
 			k--;
 			path[k] = i;
 		}
-   
+
 		pathlenght++;
 	}
 
@@ -1081,38 +1082,38 @@ void RMCharacter::GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	walkcount = 0;
 
 	if (bReversed) {
-		while (0) ;	
+		while (0) ;
 	}
 
 	int nPatt = GetCurPattern();
 
 	if (dx > dy) {
 		slope = fy / fx;
-		if (lineend.x < linestart.x) 
+		if (lineend.x < linestart.x)
 			walkspeed = -walkspeed;
 		walkstatus = 1;
-    
+
 		// Change the pattern for the new direction
 		bNeedToStop = true;
 		if ((walkspeed < 0 && !bReversed) || (walkspeed >= 0 && bReversed))  {
-   		if (nPatt != PAT_WALKLEFT)
-				SetPattern(PAT_WALKLEFT);  
+			if (nPatt != PAT_WALKLEFT)
+				SetPattern(PAT_WALKLEFT);
 		} else {
-   			if (nPatt != PAT_WALKRIGHT)
+			if (nPatt != PAT_WALKRIGHT)
 				SetPattern(PAT_WALKRIGHT);
 		}
 	} else {
 		slope = fx / fy;
-		if (lineend.y < linestart.y) 
+		if (lineend.y < linestart.y)
 			walkspeed = -walkspeed;
 		walkstatus = 0;
-    
+
 		bNeedToStop = true;
 		if ((walkspeed < 0 && !bReversed) || (walkspeed >= 0 && bReversed)) {
-   			if (nPatt != PAT_WALKUP)
-				SetPattern(PAT_WALKUP);  
+			if (nPatt != PAT_WALKUP)
+				SetPattern(PAT_WALKUP);
 		} else {
-   			if (nPatt != PAT_WALKDOWN)
+			if (nPatt != PAT_WALKDOWN)
 				SetPattern(PAT_WALKDOWN);
 		}
 	}
@@ -1132,9 +1133,12 @@ RMPoint RMCharacter::Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (UP) {
 		nuovo = punto;
 		passi = 0;
-		while((InWhichBox(nuovo) == -1) && (nuovo.y >= 0)) { nuovo.y--; passi++; }
-		if ((InWhichBox(nuovo) != -1) && (passi < minimo)&&
-				FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
+		while ((InWhichBox(nuovo) == -1) && (nuovo.y >= 0)) {
+			nuovo.y--;
+			passi++;
+		}
+		if ((InWhichBox(nuovo) != -1) && (passi < minimo) &&
+		        FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
 			minimo = passi;
 			nuovo.y--;       // to avoid error?
 			trovato = nuovo;
@@ -1144,9 +1148,12 @@ RMPoint RMCharacter::Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (DOWN) {
 		nuovo = punto;
 		passi = 0;
-		while ((InWhichBox(nuovo) == -1) && (nuovo.y < 480)) { nuovo.y++; passi++; }
+		while ((InWhichBox(nuovo) == -1) && (nuovo.y < 480)) {
+			nuovo.y++;
+			passi++;
+		}
 		if ((InWhichBox(nuovo) != -1) && (passi < minimo) &&
-				FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
+		        FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
 			minimo = passi;
 			nuovo.y++;     // to avoid error?
 			trovato = nuovo;
@@ -1156,9 +1163,12 @@ RMPoint RMCharacter::Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (RIGHT) {
 		nuovo = punto;
 		passi = 0;
-		while ((InWhichBox(nuovo) == -1) && (nuovo.x < 640)) { nuovo.x++; passi++; }
+		while ((InWhichBox(nuovo) == -1) && (nuovo.x < 640)) {
+			nuovo.x++;
+			passi++;
+		}
 		if ((InWhichBox(nuovo) != -1) && (passi < minimo) &&
-				FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
+		        FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
 			minimo = passi;
 			nuovo.x++;     // to avoid error?
 			trovato = nuovo;
@@ -1168,9 +1178,12 @@ RMPoint RMCharacter::Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (LEFT) {
 		nuovo = punto;
 		passi = 0;
-		while ((InWhichBox(nuovo) == -1) && (nuovo.x >= 0)) { nuovo.x--; passi++; }
+		while ((InWhichBox(nuovo) == -1) && (nuovo.x >= 0)) {
+			nuovo.x--;
+			passi++;
+		}
 		if ((InWhichBox(nuovo) != -1) && (passi < minimo) &&
-				FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
+		        FindPath(InWhichBox(m_pos), InWhichBox(nuovo))) {
 			minimo = passi;
 			nuovo.x--;     // to avoid error?
 			trovato = nuovo;
@@ -1210,7 +1223,7 @@ short RMCharacter::ScanLine(const RMPoint &punto) {
 		Lstatus = 1;
 	} else {
 		Lslope = Lfx / Lfy;
-		if (Lend.y < Lstart.y) Lspeed =- Lspeed;
+		if (Lend.y < Lstart.y) Lspeed = - Lspeed;
 		Lstatus = 0;
 	}
 
@@ -1227,7 +1240,7 @@ short RMCharacter::ScanLine(const RMPoint &punto) {
 
 		Lscan.x = Lstart.x + Ldx;
 		Lscan.y = Lstart.y + Ldy;
-   
+
 		if ((ABS(Lscan.x - Lend.x) <= 1) && (ABS(Lscan.y - Lend.y) <= 1)) return 1;
 	}
 
@@ -1253,11 +1266,11 @@ RMPoint RMCharacter::InvScanLine(const RMPoint &punto) {
 	Ldy = ABS(Ldy);
 	Lspeed = 1;
 	Lcount = 0;
- 
+
 	if (Ldx > Ldy) {
 		Lslope = Lfy / Lfx;
 		if (Lend.x < Lstart.x) Lspeed = -Lspeed;
-		Lstatus=1;
+		Lstatus = 1;
 	} else {
 		Lslope = Lfx / Lfy;
 		if (Lend.y < Lstart.y) Lspeed = -Lspeed;
@@ -1268,9 +1281,9 @@ RMPoint RMCharacter::InvScanLine(const RMPoint &punto) {
 	for (;;) {
 		if (InWhichBox(Lscan) != -1) {
 			if (InWhichBox(Lscan) != Lbox) {
-				if (InWhichBox(m_pos) == InWhichBox(Lscan) || FindPath(InWhichBox(m_pos),InWhichBox(Lscan)))
+				if (InWhichBox(m_pos) == InWhichBox(Lscan) || FindPath(InWhichBox(m_pos), InWhichBox(Lscan)))
 					return Lscan;
-				else 
+				else
 					Lbox = InWhichBox(Lscan);
 			}
 		}
@@ -1279,10 +1292,10 @@ RMPoint RMCharacter::InvScanLine(const RMPoint &punto) {
 		if (Lstatus) {
 			Ldx = Lspeed * Lcount;
 			Ldy = Lslope * Ldx;
-        } else {
+		} else {
 			Ldy = Lspeed * Lcount;
 			Ldx = Lslope * Ldy;
-         }
+		}
 		Lscan.x = Lstart.x + Ldx;
 		Lscan.y = Lstart.y + Ldy;
 	}
@@ -1299,19 +1312,19 @@ RMPoint RMCharacter::NearestHotSpot(int sourcebox, int destbox) {
 	int x, y, distanzaminima;
 	distanzaminima = 10000000;
 	RMBoxLoc *cur = theBoxes->GetBoxes(curLocation);
- 
+
 	for (cc = 0; cc < cur->boxes[sourcebox].numhotspot; cc++)
 		if ((cur->boxes[sourcebox].hotspot[cc].destination) == destbox) {
 			x = ABS(cur->boxes[sourcebox].hotspot[cc].hotx - m_pos.x);
 			y = ABS(cur->boxes[sourcebox].hotspot[cc].hoty - m_pos.y);
-      
+
 			if ((x * x + y * y) < distanzaminima) {
 				distanzaminima = x * x + y * y;
 				puntocaldo.x = cur->boxes[sourcebox].hotspot[cc].hotx;
 				puntocaldo.y = cur->boxes[sourcebox].hotspot[cc].hoty;
 			}
 		}
- 
+
 	return puntocaldo;
 }
 
@@ -1333,7 +1346,7 @@ void RMCharacter::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 void RMCharacter::NewBoxEntered(int nBox) {
 	RMBoxLoc *cur;
 	bool bOldReverse;
-	
+
 	// Recall on ExitBox
 	mpalQueryDoAction(3, curLocation, curbox);
 
@@ -1371,11 +1384,11 @@ void RMCharacter::NewBoxEntered(int nBox) {
 	// Recall On EnterBox
 	mpalQueryDoAction(2, curLocation, curbox);
 }
-	
-void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
+
+void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 	CORO_BEGIN_CONTEXT;
-		bool bEndNow;
-		RMBoxLoc *cur;
+	bool bEndNow;
+	RMBoxLoc *cur;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1402,7 +1415,7 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 				_ctx->bEndNow = true;
 			}
 		}
-    
+
 		// If we are going vertical
 		if (walkstatus == 0) {
 			dy = walkspeed * walkcount;
@@ -1431,11 +1444,11 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 			bEndOfPath = true;
 			CoroScheduler.pulseEvent(hEndOfPath);
 		}
-		
+
 		walkcount++;
 
 		// Update the character Z. @@@ Should remove only if the Z was changed
-		
+
 		// Check if the box was changed
 		if (!theBoxes->IsInBox(curLocation, curbox, m_pos))
 			NewBoxEntered(InWhichBox(m_pos));
@@ -1454,10 +1467,10 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 			// If we still have to go through a box
 			if (pathcount < pathlenght) {
 				// Check if the box we're going into is active
-				if (_ctx->cur->boxes[path[pathcount-1]].attivo) {
+				if (_ctx->cur->boxes[path[pathcount - 1]].attivo) {
 					// Move in a straight line towards the nearest hotspot, taking into account the reversing
 					// NEWBOX = path[pathcount-1]
-					CORO_INVOKE_2(GoTo, NearestHotSpot(path[pathcount-1], path[pathcount]), _ctx->cur->boxes[path[pathcount-1]].bReversed);
+					CORO_INVOKE_2(GoTo, NearestHotSpot(path[pathcount - 1], path[pathcount]), _ctx->cur->boxes[path[pathcount - 1]].bReversed);
 					pathcount++;
 				} else {
 					// If the box is off, we can only block all
@@ -1470,7 +1483,7 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer* bigBuf, int loc) {
 					CoroScheduler.pulseEvent(hEndOfPath);
 				}
 			} else {
-				// If we have already entered the last box, we just have to move in a straight line towards the 
+				// If we have already entered the last box, we just have to move in a straight line towards the
 				// point of arrival
 				// NEWBOX = InWhichBox(pathend)
 				minpath = 0;
@@ -1520,7 +1533,7 @@ void RMCharacter::Stop(CORO_PARAM) {
 	case PAT_WALKRIGHT:
 		SetPattern(PAT_STANDRIGHT);
 		break;
-	
+
 	default:
 		SetPattern(PAT_STANDDOWN);
 		break;
@@ -1529,22 +1542,22 @@ void RMCharacter::Stop(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-inline int RMCharacter::InWhichBox(const RMPoint &pt) { 
-	return theBoxes->WhichBox(curLocation, pt); 
+inline int RMCharacter::InWhichBox(const RMPoint &pt) {
+	return theBoxes->WhichBox(curLocation, pt);
 }
 
 
 void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 	CORO_BEGIN_CONTEXT;
-		RMPoint dest;
-		int numbox;
-		RMBoxLoc *cur;
+	RMPoint dest;
+	int numbox;
+	RMBoxLoc *cur;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	bMoving = true;
-	
+
 	// 0, 0 does not do anything, just stops the character
 	if (pt.x == 0 && pt.y == 0) {
 		minpath = 0;
@@ -1556,7 +1569,7 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 	}
 
 	// If clicked outside the box
- 	_ctx->numbox = InWhichBox(pt);
+	_ctx->numbox = InWhichBox(pt);
 	if (_ctx->numbox == -1) {
 		// Find neareste point inside the box
 		_ctx->dest = NearestPoint(pt);
@@ -1574,7 +1587,7 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 	minpath = 0;
 	status = STAND;
 	bMovingWithoutMinpath = true;
-	if (ScanLine(pt)) 
+	if (ScanLine(pt))
 		CORO_INVOKE_2(GoTo, pt, _ctx->cur->boxes[_ctx->numbox].bReversed);
 	else if (FindPath(InWhichBox(m_pos), InWhichBox(pt))) {
 		bMovingWithoutMinpath = false;
@@ -1586,8 +1599,8 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 		// a path to get there. We use the InvScanLine to search around a point
 		_ctx->dest = InvScanLine(pt);
 		pt = _ctx->dest;
-		
-		if (ScanLine(pt)) 
+
+		if (ScanLine(pt))
 			CORO_INVOKE_2(GoTo, pt, _ctx->cur->boxes[_ctx->numbox].bReversed);
 		else if (FindPath(InWhichBox(m_pos), InWhichBox(pt))) {
 			bMovingWithoutMinpath = false;
@@ -1612,11 +1625,11 @@ void RMCharacter::Move(CORO_PARAM, RMPoint pt, bool *result) {
 
 void RMCharacter::SetPosition(const RMPoint &pt, int newloc) {
 	RMBoxLoc *box;
-	
+
 	minpath = 0;
 	status = STAND;
 	m_pos = pt;
-	
+
 	if (newloc != -1)
 		curLocation = newloc;
 
@@ -1628,14 +1641,14 @@ void RMCharacter::SetPosition(const RMPoint &pt, int newloc) {
 	bRemoveFromOT = true;
 }
 
-void RMCharacter::WaitForEndMovement(CORO_PARAM) { 
+void RMCharacter::WaitForEndMovement(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (bMoving) 
-		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hEndOfPath, CORO_INFINITE); 
+	if (bMoving)
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hEndOfPath, CORO_INFINITE);
 
 	CORO_END_CODE;
 }
@@ -1722,9 +1735,12 @@ void RMBox::ReadFromStream(RMDataStream &ds) {
 
 	// Hotspots
 	for (i = 0; i < numhotspot; i++) {
-		ds >> w; hotspot[i].hotx = w;
-		ds >> w; hotspot[i].hoty = w;
-		ds >> w; hotspot[i].destination = w;
+		ds >> w;
+		hotspot[i].hotx = w;
+		ds >> w;
+		hotspot[i].hoty = w;
+		ds >> w;
+		hotspot[i].destination = w;
 	}
 }
 
@@ -1811,7 +1827,7 @@ void RMGameBoxes::Init(void) {
 		RMRes res(10000 + i);
 
 		ds.OpenBuffer(res);
-		
+
 		m_allBoxes[i] = new RMBoxLoc();
 		ds >> *m_allBoxes[i];
 
@@ -1832,7 +1848,7 @@ bool RMGameBoxes::IsInBox(int nLoc, int nBox, const RMPoint &pt) {
 	RMBoxLoc *cur = GetBoxes(nLoc);
 
 	if ((pt.x >= cur->boxes[nBox].left) && (pt.x <= cur->boxes[nBox].right) &&
-			(pt.y >= cur->boxes[nBox].top)  && (pt.y <= cur->boxes[nBox].bottom)) 
+	        (pt.y >= cur->boxes[nBox].top)  && (pt.y <= cur->boxes[nBox].bottom))
 		return true;
 	else
 		return false;
@@ -1841,20 +1857,20 @@ bool RMGameBoxes::IsInBox(int nLoc, int nBox, const RMPoint &pt) {
 int RMGameBoxes::WhichBox(int nLoc, const RMPoint &punto) {
 	int i;
 	RMBoxLoc *cur = GetBoxes(nLoc);
-	
+
 	if (!cur) return -1;
 
-	for (i = 0; i<cur->numbbox; i++)
+	for (i = 0; i < cur->numbbox; i++)
 		if (cur->boxes[i].attivo)
-		  if ((punto.x >= cur->boxes[i].left) && (punto.x <= cur->boxes[i].right) &&
-					(punto.y >= cur->boxes[i].top)  && (punto.y <= cur->boxes[i].bottom)) 
+			if ((punto.x >= cur->boxes[i].left) && (punto.x <= cur->boxes[i].right) &&
+			        (punto.y >= cur->boxes[i].top)  && (punto.y <= cur->boxes[i].bottom))
 				return i;
 
 	return -1;
 }
 
 void RMGameBoxes::ChangeBoxStatus(int nLoc, int nBox, int status) {
-	m_allBoxes[nLoc]->boxes[nBox].attivo=status;
+	m_allBoxes[nLoc]->boxes[nBox].attivo = status;
 	m_allBoxes[nLoc]->RecalcAllAdj();
 }
 
@@ -1863,9 +1879,9 @@ int RMGameBoxes::GetSaveStateSize(void) {
 	int size;
 	int i;
 
-	size=4;
+	size = 4;
 
-	for (i=1; i <= m_nLocBoxes; i++) {
+	for (i = 1; i <= m_nLocBoxes; i++) {
 		size += 4;
 		size += m_allBoxes[i]->numbbox;
 	}
@@ -1874,17 +1890,17 @@ int RMGameBoxes::GetSaveStateSize(void) {
 }
 
 void RMGameBoxes::SaveState(byte *state) {
-	int i,j;
-	
+	int i, j;
+
 	// Save the number of locations with boxes
 	WRITE_LE_UINT32(state, m_nLocBoxes);
 	state += 4;
 
 	// For each location, write out the number of boxes and their status
-	for (i=1; i <= m_nLocBoxes; i++) {
+	for (i = 1; i <= m_nLocBoxes; i++) {
 		WRITE_LE_UINT32(state, m_allBoxes[i]->numbbox);
 		state += 4;
-				
+
 		for (j = 0; j < m_allBoxes[i]->numbbox; j++)
 			*state++ = m_allBoxes[i]->boxes[j].attivo;
 	}
@@ -1905,8 +1921,8 @@ void RMGameBoxes::LoadState(byte *state) {
 		nbox = READ_LE_UINT32(state);
 		state += 4;
 
-		for (j = 0; j<nbox ; j++) {
-			if (j < m_allBoxes[i]->numbbox)	
+		for (j = 0; j < nbox ; j++) {
+			if (j < m_allBoxes[i]->numbbox)
 				m_allBoxes[i]->boxes[j].attivo = *state;
 
 			state++;
@@ -1933,7 +1949,7 @@ RMLocation::RMLocation() {
 /**
  * Load a location (.LOC) from a file that is provided.
  *
- * @param lpszFileName			Name of the file
+ * @param lpszFileName          Name of the file
  */
 bool RMLocation::Load(const char *lpszFileName) {
 	Common::File f;
@@ -1956,9 +1972,9 @@ bool RMLocation::Load(const char *lpszFileName) {
 /**
  * Load a location (.LOC) from a given open file
  *
- * @param hFile					File reference
+ * @param hFile                 File reference
  *
- * @returns		True if succeeded OK, false in case of error.
+ * @returns     True if succeeded OK, false in case of error.
  */
 bool RMLocation::Load(Common::File &file) {
 	int size;
@@ -1973,7 +1989,7 @@ bool RMLocation::Load(Common::File &file) {
 	fs.OpenFile(file);
 	bRet = Load(fs);
 	fs.Close();
- 
+
 	return bRet;
 }
 
@@ -1992,8 +2008,8 @@ bool RMLocation::Load(const byte *buf) {
 /**
  * Load a location (.LOC) from a given data stream
  *
- * @param ds						Data stream
- * @returns		True if succeeded OK, false in case of error.
+ * @param ds                        Data stream
+ * @returns     True if succeeded OK, false in case of error.
  */
 bool RMLocation::Load(RMDataStream &ds) {
 	char id[3];
@@ -2004,14 +2020,14 @@ bool RMLocation::Load(RMDataStream &ds) {
 
 	// Check the ID
 	ds >> id[0] >> id[1] >> id[2];
-	
+
 	// Check if we are in a LOX
 	if (id[0] == 'L' && id[1] == 'O' && id[2] == 'X')
 		return LoadLOX(ds);
-	
+
 	// Otherwise, check that it is a normal LOC
 	if (id[0] != 'L' || id[1] != 'O' || id[2] != 'C')
-	  return false;
+		return false;
 
 	// Version
 	ds >> ver;
@@ -2033,10 +2049,11 @@ bool RMLocation::Load(RMDataStream &ds) {
 	m_curScroll.Set(0, 0);
 
 	// Read the colour mode
-	ds >> cm; m_cmode = (RMColorMode)cm;
+	ds >> cm;
+	m_cmode = (RMColorMode)cm;
 
 	// Initialise the source buffer and read the location
-	switch (m_cmode)	 {
+	switch (m_cmode)     {
 	case CM_256:
 		m_buf = new RMGfxSourceBuffer8;
 		break;
@@ -2044,7 +2061,7 @@ bool RMLocation::Load(RMDataStream &ds) {
 	case CM_65K:
 		m_buf = new RMGfxSourceBuffer16;
 		break;
-	
+
 	default:
 		assert(0);
 		break;
@@ -2052,7 +2069,7 @@ bool RMLocation::Load(RMDataStream &ds) {
 
 	// Initialise the surface, loading the palette if necessary
 	m_buf->Init(ds, dimx, dimy, true);
- 
+
 	// Check the size of the location
 //	assert(dimy!=512);
 
@@ -2065,7 +2082,7 @@ bool RMLocation::Load(RMDataStream &ds) {
 
 
 	_vm->FreezeTime();
-	for (i = 0;i < m_nItems && !ds.IsError(); i++)
+	for (i = 0; i < m_nItems && !ds.IsError(); i++)
 		ds >> m_items[i];
 	_vm->UnfreezeTime();
 
@@ -2099,14 +2116,14 @@ bool RMLocation::LoadLOX(RMDataStream &ds) {
 
 	// Initialise the surface, loading in the palette if necessary
 	m_buf->Init(ds, dimx, dimy, true);
- 
+
 	// Number of items
 	ds >> m_nItems;
 
 	// Create and read objects
 	if (m_nItems > 0)
 		m_items = new RMItem[m_nItems];
-	
+
 	for (i = 0; i < m_nItems && !ds.IsError(); i++)
 		m_items[i].ReadFromStream(ds, true);
 
@@ -2124,12 +2141,12 @@ void RMLocation::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	CORO_BEGIN_CODE(_ctx);
 
 	// Set the position of the source scrolling
-	if (m_buf->Dimy()>RM_SY || m_buf->Dimx()>RM_SX) {
-		prim->SetSrc(RMRect(m_curScroll,m_curScroll+RMPoint(640,480)));
+	if (m_buf->Dimy() > RM_SY || m_buf->Dimx() > RM_SX) {
+		prim->SetSrc(RMRect(m_curScroll, m_curScroll + RMPoint(640, 480)));
 	}
 
 	prim->SetDst(m_fixedScroll);
-	
+
 	// Invoke the drawing method fo the image class, which will draw the location background
 	CORO_INVOKE_2(m_buf->Draw, bigBuf, prim);
 
@@ -2148,33 +2165,33 @@ void RMLocation::DoFrame(RMGfxTargetBuffer *bigBuf) {
 		bigBuf->AddPrim(new RMGfxPrimitive(this));
 
 	// Process all the location items
-	for (i = 0;i < m_nItems; i++)
+	for (i = 0; i < m_nItems; i++)
 		m_items[i].DoFrame(bigBuf);
 }
 
 
 RMItem *RMLocation::GetItemFromCode(uint32 dwCode) {
 	int i;
-	
+
 	for (i = 0; i < m_nItems; i++)
 		if (m_items[i].MpalCode() == (int)dwCode)
 			return &m_items[i];
-	
-	return NULL;	
+
+	return NULL;
 }
 
 RMItem *RMLocation::WhichItemIsIn(const RMPoint &pt) {
 	int found = -1;
 	int foundSize = 0;
 	int size;
-		
+
 	for (int i = 0; i < m_nItems; i++) {
 		size = 0;
 		if (m_items[i].IsIn(pt, &size)) {
 			if (found == -1 || size < foundSize) {
 				foundSize = size;
 				found = i;
-			} 
+			}
 		}
 	}
 
@@ -2249,8 +2266,8 @@ void RMLocation::SetScrollPosition(const RMPoint &scroll) {
 	RMPoint pt = scroll;
 	if (pt.x < 0) pt.x = 0;
 	if (pt.y < 0) pt.y = 0;
-	if (pt.x + RM_SX>m_buf->Dimx()) pt.x = m_buf->Dimx() - RM_SX;
-	if (pt.y + RM_SY>m_buf->Dimy()) pt.y = m_buf->Dimy() - RM_SY;
+	if (pt.x + RM_SX > m_buf->Dimx()) pt.x = m_buf->Dimx() - RM_SX;
+	if (pt.y + RM_SY > m_buf->Dimy()) pt.y = m_buf->Dimy() - RM_SY;
 
 	m_curScroll = pt;
 
@@ -2271,7 +2288,7 @@ void RMLocation::PauseSound(bool bPause) {
 *       RMMessage Methods
 \****************************************************************************/
 
-RMMessage::RMMessage(uint32 dwId) {	
+RMMessage::RMMessage(uint32 dwId) {
 	Load(dwId);
 }
 
@@ -2287,19 +2304,19 @@ RMMessage::~RMMessage() {
 void RMMessage::Load(uint32 dwId) {
 	lpMessage = mpalQueryMessage(dwId);
 	assert(lpMessage != NULL);
-	
+
 	if (lpMessage)
 		ParseMessage();
 }
 
 void RMMessage::ParseMessage(void) {
 	char *p;
-	
+
 	assert(lpMessage != NULL);
-	
+
 	nPeriods = 1;
 	p = lpPeriods[0] = lpMessage;
-	
+
 	for (;;) {
 		// Find the end of the current period
 		while (*p != '\0')

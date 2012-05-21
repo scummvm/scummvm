@@ -40,7 +40,7 @@ namespace Tony {
 
 struct RMInventoryItem {
 	RMItem icon;
-	RMGfxSourceBuffer8RLEByteAA	*pointer;
+	RMGfxSourceBuffer8RLEByteAA *pointer;
 	int status;
 };
 
@@ -57,7 +57,7 @@ private:
 protected:
 	int m_nItems;
 	RMInventoryItem *m_items;
-	
+
 	int m_inv[256];
 	int m_nInv;
 	int m_curPutY;
@@ -69,13 +69,13 @@ protected:
 	int m_nSelectObj;
 	int m_nCombine;
 	bool m_bCombining;
-	
+
 	bool m_bBlinkingRight, m_bBlinkingLeft;
 
 	int miniAction;
 	RMItem miniInterface;
 	RMText m_hints[3];
-	
+
 	OSystem::MutexRef m_csModifyInterface;
 
 protected:
@@ -90,7 +90,7 @@ public:
 	virtual ~RMInventory();
 
 	// Prepare a frame
-	void DoFrame(RMGfxTargetBuffer& bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen);
+	void DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen);
 
 	// Initialisation and closing
 	void Init(void);
@@ -111,20 +111,29 @@ public:
 
 	// Handle the left mouse click (only when the inventory has the focus)
 	bool LeftClick(const RMPoint &mpos, int &nCombineObj);
-	
+
 	// Handle the right mouse button (only when the inventory has the focus)
 	void RightClick(const RMPoint &mpos);
 	bool RightRelease(const RMPoint &mpos, RMTonyAction &curAction);
 
 	// Warn that an item combine is over
 	void EndCombine(void);
-	
-public:		
+
+public:
 	// Add an item to the inventory
 	void AddItem(int code);
-	RMInventory& operator+=(RMItem *item) { AddItem(item->MpalCode()); return *this; }
-	RMInventory& operator+=(RMItem &item) { AddItem(item.MpalCode()); return *this; }
-	RMInventory& operator+=(int code) { AddItem(code); return *this; }
+	RMInventory &operator+=(RMItem *item) {
+		AddItem(item->MpalCode());
+		return *this;
+	}
+	RMInventory &operator+=(RMItem &item) {
+		AddItem(item.MpalCode());
+		return *this;
+	}
+	RMInventory &operator+=(int code) {
+		AddItem(code);
+		return *this;
+	}
 
 	// Removes an item
 	void RemoveItem(int code);
@@ -163,10 +172,10 @@ public:
 	virtual ~RMInterface();
 
 	// The usual DoFrame (poll the graphics engine)
-	void DoFrame(RMGfxTargetBuffer& bigBuf, RMPoint mousepos);		
+	void DoFrame(RMGfxTargetBuffer &bigBuf, RMPoint mousepos);
 
 	// TRUE if it is active (you can select items)
-	bool Active(); 
+	bool Active();
 
 	// Initialisation
 	void Init(void);

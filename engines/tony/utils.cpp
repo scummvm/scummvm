@@ -67,7 +67,7 @@ RMString::RMString(const RMString &str) {
 /**
  * Constructor from a char *
  */
-RMString::RMString(const char* str) {
+RMString::RMString(const char *str) {
 	// Use the overloaded '=' when copying
 	m_string = NULL;
 	m_length = 0;
@@ -88,16 +88,16 @@ RMString::RMString(const int ch) {
 
 /**
  * Returns the length of the string
- * @returns					Length
+ * @returns                 Length
  */
 int RMString::Length() const {
- return m_length;
+	return m_length;
 }
 
 /**
  * Gets the character at the given index
- * @param nIndex			Position of the character to return
- * @returns					Character
+ * @param nIndex            Position of the character to return
+ * @returns                 Character
  */
 char RMString::GetAt(int nIndex) {
 	assert(nIndex < m_length);
@@ -106,8 +106,8 @@ char RMString::GetAt(int nIndex) {
 
 /**
  * Sets the character at the given index
- * @param nIndex			Position of the character to change
- * @param c					Character
+ * @param nIndex            Position of the character to change
+ * @param c                 Character
  */
 void RMString::SetAt(int nIndex, char c) {
 	assert(nIndex < m_length);
@@ -116,8 +116,8 @@ void RMString::SetAt(int nIndex, char c) {
 
 /**
  * Overloaded square brackets operator for accessing characters within the string
- * @param nIndex			Position of the charactre to reference
- * @params					Reference to the character
+ * @param nIndex            Position of the charactre to reference
+ * @params                  Reference to the character
  */
 char &RMString::operator[](int nIndex) {
 	assert(nIndex < m_length);
@@ -126,8 +126,8 @@ char &RMString::operator[](int nIndex) {
 
 /**
  * Copies a string
- * @param str				String to copy
- * @returns					Refrence to our string
+ * @param str               String to copy
+ * @returns                 Refrence to our string
  */
 const RMString &RMString::operator=(const RMString &str) {
 	// Set the new length
@@ -147,16 +147,16 @@ const RMString &RMString::operator=(const RMString &str) {
 		// Copy the string
 		Common::copy(str.m_string, str.m_string + m_length + 1, m_string);
 	}
- 
+
 	return *this;
 }
 
 /**
  * Copies a char * string
- * @param str				String to copy
- * @returns					Refrence to our string
+ * @param str               String to copy
+ * @returns                 Refrence to our string
  */
-const RMString& RMString::operator=(const char* str) {
+const RMString &RMString::operator=(const char *str) {
 	// If the source is empty, then destroy the current string buffer
 	if (str == NULL) {
 		if (m_realLength > 0) {
@@ -180,11 +180,11 @@ const RMString& RMString::operator=(const char* str) {
 
 /**
  * Forms a string from a passed character
- * @param ch				Character to copy
- * @returns					Refrence to our string
+ * @param ch                Character to copy
+ * @returns                 Refrence to our string
  */
-const RMString& RMString::operator=(const int ch) {
-	if (ch=='\0')  {
+const RMString &RMString::operator=(const int ch) {
+	if (ch == '\0')  {
 		// Destroy the current string
 		if (m_realLength > 0) {
 			delete [] m_string;
@@ -203,17 +203,17 @@ const RMString& RMString::operator=(const int ch) {
 	return *this;
 }
 
-/** 
+/**
  * Concatenate a string into the current one
- * @param str				String to concatenate
- * @param size				Length of the string
+ * @param str               String to concatenate
+ * @param size              Length of the string
  */
 void RMString::Connect(const char *str, int size) {
 	int nlen;
 
 	if (size > 0) {
 		// Calculate the new lenght
-		nlen = m_length+size;
+		nlen = m_length + size;
 
 		// Resize
 		Resize(nlen + 1, true);
@@ -228,18 +228,18 @@ void RMString::Connect(const char *str, int size) {
 
 /**
  * Concatenate a string
- * @param str				String to concatenate
- * @returns					Refrence to our string
+ * @param str               String to concatenate
+ * @returns                 Refrence to our string
  */
 const RMString &RMString::operator+=(RMString &str) {
-	Connect(str,str.Length());
+	Connect(str, str.Length());
 	return *this;
 }
 
 /**
  * Concatenate a string
- * @param str				String to concatenate
- * @returns					Refrence to our string
+ * @param str               String to concatenate
+ * @returns                 Refrence to our string
  */
 const RMString &RMString::operator+=(const char *str) {
 	Connect(str, strlen(str));
@@ -248,8 +248,8 @@ const RMString &RMString::operator+=(const char *str) {
 
 /**
  * Concatenate a character
- * @param ch				Character to concatenate
- * @returns					Refrence to our string
+ * @param ch                Character to concatenate
+ * @returns                 Refrence to our string
  */
 const RMString &RMString::operator+=(const int ch) {
 	char str[2];
@@ -264,17 +264,17 @@ const RMString &RMString::operator+=(const int ch) {
 
 /**
  * Casts a string as char *
- * @returns					char * reference to string
+ * @returns                 char * reference to string
  */
-RMString::operator char*() const {
+RMString::operator char *() const {
 	return m_string;
 }
 
 /**
  * Resize a string as necessary
- * @param size				New size necessary (in bytes)
- * @param bMaintain			If true we must keep the original string, 
-							if false we can destroy.
+ * @param size              New size necessary (in bytes)
+ * @param bMaintain         If true we must keep the original string,
+                            if false we can destroy.
  */
 void RMString::Resize(int size, bool bMantain) {
 	if (m_realLength == 0) {
@@ -282,7 +282,7 @@ void RMString::Resize(int size, bool bMantain) {
 		m_realLength = size;
 	} else if (size > m_realLength) {
 		if (bMantain) {
-			char* app;
+			char *app;
 
 			app = new char[size];
 			Common::copy(m_string, m_string + m_length + 1, app);
@@ -346,13 +346,13 @@ RMString operator+(RMString &str, const char *s) {
 RMString operator+(const char *s, RMString &str) {
 	RMString ret(s);
 
-	return (ret+=str);
+	return (ret += str);
 }
 
 /**
  * Extracts a string from a data stream
- * @param df				data stream
- * @param var				String
+ * @param df                data stream
+ * @param var               String
  */
 RMDataStream &operator>>(RMDataStream &df, RMString &var) {
 	uint8 len;
@@ -360,14 +360,14 @@ RMDataStream &operator>>(RMDataStream &df, RMString &var) {
 
 	df >> len;
 	var.Resize(len + 1);
-	var.m_length=len+1;
- 
+	var.m_length = len + 1;
+
 	for (i = 0; i < len; i++)
 		df >> var[i];
 
-	var[i] = '\0';	
+	var[i] = '\0';
 	var.m_length = len;
- 
+
 	return df;
 }
 
@@ -422,7 +422,7 @@ bool RMFileStreamSlow::OpenFile(const char *lpFN) {
 }
 
 
-RMDataStream& RMFileStreamSlow::operator+=(int nBytes) {
+RMDataStream &RMFileStreamSlow::operator+=(int nBytes) {
 	Seek(nBytes);
 	return *this;
 }
@@ -440,7 +440,7 @@ int RMFileStreamSlow::Seek(int nBytes, RMDSPos where) {
 	switch (where) {
 	case START:
 		return _stream->seek(nBytes);
-		
+
 	case END:
 		return _stream->seek(nBytes, SEEK_END);
 
@@ -467,7 +467,7 @@ RMFileStreamSlow &operator>>(RMFileStreamSlow &df, char &var) {
 }
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, byte &var) {
-	df.Read(&var,1);
+	df.Read(&var, 1);
 	return df;
 }
 
@@ -487,7 +487,7 @@ RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int16 &var) {
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int &var) {
 	int v;
-	df.Read(&v,4);
+	df.Read(&v, 4);
 	var = FROM_LE_32(v);
 	return df;
 }
@@ -530,10 +530,10 @@ void RMDataStream::Close(void) {
 
 /**
  * Takes the address of the buffer from which will be read the data.
- * @param lpBuf			Data buffer
- * @param size			Size of the buffer
- * @remarks				If the length of the buffer is not known, and cannot be
- *						specified, then EOF() and Seek() to end won't work.
+ * @param lpBuf         Data buffer
+ * @param size          Size of the buffer
+ * @remarks             If the length of the buffer is not known, and cannot be
+ *                      specified, then EOF() and Seek() to end won't work.
  */
 void RMDataStream::OpenBuffer(const byte *lpBuf, int size) {
 	m_length = size;
@@ -544,7 +544,7 @@ void RMDataStream::OpenBuffer(const byte *lpBuf, int size) {
 
 /**
  * Returns the length of the stream
- * @returns				Stream length
+ * @returns             Stream length
  */
 int RMDataStream::Length() {
 	return m_length;
@@ -552,7 +552,7 @@ int RMDataStream::Length() {
 
 /**
  * Determines if the end of the stream has been reached
- * @returns				true if end of stream reached, false if not
+ * @returns             true if end of stream reached, false if not
  */
 bool RMDataStream::IsEOF() {
 	return (m_pos >= m_length);
@@ -560,9 +560,9 @@ bool RMDataStream::IsEOF() {
 
 /**
  * Extracts data from the stream
- * @param df				Stream
- * @param var				Variable of a supported type
- * @returns					Value read from the stream
+ * @param df                Stream
+ * @param var               Variable of a supported type
+ * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, char &var) {
 	df.Read(&var, 1);
@@ -571,9 +571,9 @@ RMDataStream &operator>>(RMDataStream &df, char &var) {
 
 /**
  * Extracts data from the stream
- * @param df				Stream
- * @param var				Variable of a supported type
- * @returns					Value read from the stream
+ * @param df                Stream
+ * @param var               Variable of a supported type
+ * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, uint8 &var) {
 	df.Read(&var, 1);
@@ -582,9 +582,9 @@ RMDataStream &operator>>(RMDataStream &df, uint8 &var) {
 
 /**
  * Extracts data from the stream
- * @param df				Stream
- * @param var				Variable of a supported type
- * @returns					Value read from the stream
+ * @param df                Stream
+ * @param var               Variable of a supported type
+ * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, uint16 &var) {
 	uint16 v;
@@ -596,9 +596,9 @@ RMDataStream &operator>>(RMDataStream &df, uint16 &var) {
 
 /**
  * Extracts data from the stream
- * @param df				Stream
- * @param var				Variable of a supported type
- * @returns					Value read from the stream
+ * @param df                Stream
+ * @param var               Variable of a supported type
+ * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, int16 &var) {
 	uint16 v;
@@ -610,9 +610,9 @@ RMDataStream &operator>>(RMDataStream &df, int16 &var) {
 
 /**
  * Extracts data from the stream
- * @param df				Stream
- * @param var				Variable of a supported type
- * @returns					Value read from the stream
+ * @param df                Stream
+ * @param var               Variable of a supported type
+ * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, int &var) {
 	uint32 v;
@@ -624,9 +624,9 @@ RMDataStream &operator>>(RMDataStream &df, int &var) {
 
 /**
  * Extracts data from the stream
- * @param df				Stream
- * @param var				Variable of a supported type
- * @returns					Value read from the stream
+ * @param df                Stream
+ * @param var               Variable of a supported type
+ * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, uint32 &var) {
 	uint32 v;
@@ -638,9 +638,9 @@ RMDataStream &operator>>(RMDataStream &df, uint32 &var) {
 
 /**
  * Reads a series of data from the stream in a buffer
- * @param lpBuf				Data buffer
- * @param size				Size of the buffer
- * @returns					true if we have reached the end, false if not
+ * @param lpBuf             Data buffer
+ * @param size              Size of the buffer
+ * @returns                 true if we have reached the end, false if not
  */
 bool RMDataStream::Read(void *lpBuf, int size) {
 	byte *dest = (byte *)lpBuf;
@@ -659,19 +659,19 @@ bool RMDataStream::Read(void *lpBuf, int size) {
 
 /**
  * Skips a number of bytes in the stream
- * @param nBytres			Number of bytes to skip
- * @returns					The stream
+ * @param nBytres           Number of bytes to skip
+ * @returns                 The stream
  */
 RMDataStream &RMDataStream::operator+=(int nBytes) {
-	m_pos+=nBytes;
+	m_pos += nBytes;
 	return *this;
 }
 
 /**
  * Seeks to a position within the stream
- * @param nBytes			Number of bytes from specified origin
- * @param origin			Origin to do offset from
- * @returns					The absolute current position in bytes
+ * @param nBytes            Number of bytes from specified origin
+ * @param origin            Origin to do offset from
+ * @returns                 The absolute current position in bytes
  */
 int RMDataStream::Seek(int nBytes, RMDSPos origin) {
 	switch (origin) {
@@ -689,13 +689,13 @@ int RMDataStream::Seek(int nBytes, RMDSPos origin) {
 		break;
 	}
 
-	m_pos+=nBytes;
+	m_pos += nBytes;
 	return m_pos;
 }
 
 /**
  * Returns the current position of the stream
- * @returns					The current position
+ * @returns                 The current position
  */
 int RMDataStream::Pos() {
 	return m_pos;
@@ -703,7 +703,7 @@ int RMDataStream::Pos() {
 
 /**
  * Check if an error occurred during reading the stream
- * @returns					true if there was an error, false otherwise
+ * @returns                 true if there was an error, false otherwise
  */
 bool RMDataStream::IsError() {
 	return m_bError;
@@ -711,7 +711,7 @@ bool RMDataStream::IsError() {
 
 /**
  * Sets an error code for the stream
- * @param code				Error code
+ * @param code              Error code
  */
 void RMDataStream::SetError(int code) {
 	m_bError = true;
@@ -720,7 +720,7 @@ void RMDataStream::SetError(int code) {
 
 /**
  * Returns the error code for the stream
- * @returns					Error code
+ * @returns                 Error code
  */
 int RMDataStream::GetError() {
 	return m_ecode;
@@ -903,11 +903,11 @@ RMPoint &RMRect::TopLeft() {
 
 RMPoint &RMRect::BottomRight() {
 	// FIXME: This seems very bad
-	return *((RMPoint*)this + 1);
+	return *((RMPoint *)this + 1);
 }
 
 RMPoint RMRect::Center() {
-	return RMPoint((x2 - x1) / 2,(y2 - y1) / 2);
+	return RMPoint((x2 - x1) / 2, (y2 - y1) / 2);
 }
 
 int RMRect::Width() const {
@@ -926,7 +926,7 @@ bool RMRect::IsEmpty() const {
 	return (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0);
 }
 
-const RMRect& RMRect::operator=(const RMRect &rc) {
+const RMRect &RMRect::operator=(const RMRect &rc) {
 	CopyRect(rc);
 	return *this;
 }
@@ -960,29 +960,29 @@ RMRect operator+(const RMRect &rc, RMPoint p) {
 	return (r += p);
 }
 
-RMRect operator-(const RMRect& rc, RMPoint p) {
+RMRect operator-(const RMRect &rc, RMPoint p) {
 	RMRect r(rc);
 
 	return (r -= p);
 }
 
-RMRect operator+(RMPoint p, const RMRect& rc) {
+RMRect operator+(RMPoint p, const RMRect &rc) {
 	RMRect r(rc);
 
 	return (r += p);
 }
 
-RMRect operator-(RMPoint p, const RMRect& rc) {
+RMRect operator-(RMPoint p, const RMRect &rc) {
 	RMRect r(rc);
 
 	return (r += p);
 }
 
-bool RMRect::operator==(const RMRect& rc) {
+bool RMRect::operator==(const RMRect &rc) {
 	return ((x1 == rc.x1) && (y1 == rc.y1) && (x2 == rc.x2) && (y2 == rc.y2));
 }
 
-bool RMRect::operator!=(const RMRect& rc) {
+bool RMRect::operator!=(const RMRect &rc) {
 	return ((x1 != rc.x1) || (y1 != rc.y1) || (x2 != rc.x2) || (y2 != rc.y2));
 }
 
@@ -1050,7 +1050,7 @@ HGLOBAL RMResUpdate::QueryResource(uint32 dwRes) {
 			// Found the index
 			break;
 
-	if (i==_numUpd)
+	if (i == _numUpd)
 		// Couldn't find a matching resource, so return NULL
 		return NULL;
 

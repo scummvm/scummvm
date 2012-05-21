@@ -42,7 +42,7 @@ struct DDSURFACEDESC {
 class RMSnapshot {
 private:
 	// Buffer used to convert to RGB
-	static byte	rgb[RM_SX * RM_SY * 3];
+	static byte rgb[RM_SX *RM_SY * 3];
 public:
 	// Take a screenshot
 	void GrabScreenshot(byte *lpBuf, int dezoom = 1, uint16 *lpDestBuf = NULL);
@@ -95,7 +95,9 @@ public:
 	// Request a thumbnail be grabbed during the next frame
 	void GrabThumbnail(uint16 *buf);
 
-	int getFps() const { return fps; }
+	int getFps() const {
+		return fps;
+	}
 };
 
 } // End of namespace Tony

@@ -147,7 +147,7 @@ void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Tony::RMString saveName;
 	byte difficulty;
-	byte thumbData[160 * 120 * 2];	
+	byte thumbData[160 * 120 * 2];
 
 	if (Tony::RMOptionScreen::LoadThumbnailFromSaveState(slot, thumbData, saveName, difficulty)) {
 		// Convert the 565 thumbnail data to the needed overlay format

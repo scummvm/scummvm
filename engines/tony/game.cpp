@@ -43,7 +43,7 @@ namespace Tony {
 using namespace MPAL;
 
 /****************************************/
-/*  Global functions					*/
+/*  Global functions                    */
 /****************************************/
 
 uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {

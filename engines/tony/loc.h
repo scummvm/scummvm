@@ -62,7 +62,7 @@ public:
 	byte m_data[1024];
 
 public:
-    friend RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal);
+	friend RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal);
 };
 
 
@@ -79,14 +79,14 @@ public:
 	RMSfx();
 	virtual ~RMSfx();
 
-    friend RMDataStream& operator>>(RMDataStream &ds, RMSfx &sfx);
+	friend RMDataStream &operator>>(RMDataStream &ds, RMSfx &sfx);
 
 	void Play(bool bLoop = false);
 	void SetVolume(int vol);
 	void Pause(bool bPause);
 	void Stop(void);
 
-    void ReadFromStream(RMDataStream& ds, bool bLOX = false);
+	void ReadFromStream(RMDataStream &ds, bool bLOX = false);
 };
 
 
@@ -111,44 +111,46 @@ public:
 		RMPoint m_pos; // Child co-ordinates
 
 	public:
-	    RMSlotType m_type;
+		RMSlotType m_type;
 		int m_data;
 		byte m_flag;
 
 	public:
-		friend RMDataStream& operator>>(RMDataStream& ds, RMSlot& slot);
+		friend RMDataStream &operator>>(RMDataStream &ds, RMSlot &slot);
 
-		RMPoint Pos() { return m_pos; }
+		RMPoint Pos() {
+			return m_pos;
+		}
 
-		void ReadFromStream(RMDataStream& ds, bool bLOX = false);
+		void ReadFromStream(RMDataStream &ds, bool bLOX = false);
 	};
 
 public:
-    RMString m_name;
+	RMString m_name;
 
 private:
-    int m_speed;
-    RMPoint m_pos;		// Parent coordinates
-	RMPoint m_curPos;	// Parent + child coordinates
-    int m_bLoop;
-    int m_nSlots;
+	int m_speed;
+	RMPoint m_pos;      // Parent coordinates
+	RMPoint m_curPos;   // Parent + child coordinates
+	int m_bLoop;
+	int m_nSlots;
 	int m_nCurSlot;
 	int m_nCurSprite;
 
-    RMSlot *m_slots;
+	RMSlot *m_slots;
 
 	uint32 m_nStartTime;
 
 public:
 	RMPattern();
 	virtual ~RMPattern();
-		
-	friend RMDataStream& operator>>(RMDataStream& ds, RMPattern& pat);
+
+	friend RMDataStream &operator>>(RMDataStream &ds, RMPattern &pat);
 
 	// A warning that the pattern now and the current
-	int Init(RMSfx* sfx, bool bPlayP0=false, byte* bFlag=NULL);
+	int Init(RMSfx *sfx, bool bPlayP0 = false, byte *bFlag = NULL);
 
-	// Update the pattern, checking to see if it's time to change slot and executing 
+	// Update the pattern, checking to see if it's time to change slot and executing
 	// any associated commands
 	int Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx);
 
@@ -156,9 +158,11 @@ public:
 	void StopSfx(RMSfx *sfx);
 
 	// Reads the position of the pattern
-	RMPoint Pos() { return m_curPos; }
+	RMPoint Pos() {
+		return m_curPos;
+	}
 
-    void ReadFromStream(RMDataStream& ds, bool bLOX = false);
+	void ReadFromStream(RMDataStream &ds, bool bLOX = false);
 
 private:
 	void UpdateCoord(void);
@@ -170,24 +174,24 @@ private:
  */
 class RMSprite : public RMGfxTask {
 public:
-    RMString m_name;
-    RMRect m_rcBox;
+	RMString m_name;
+	RMRect m_rcBox;
 
 protected:
-	RMGfxSourceBuffer* m_buf;
+	RMGfxSourceBuffer *m_buf;
 
 public:
 	RMSprite();
 	virtual ~RMSprite();
 
-	void Init(RMGfxSourceBuffer* buf);
-	friend RMDataStream& operator>>(RMDataStream& ds, RMSprite& sprite);
+	void Init(RMGfxSourceBuffer *buf);
+	friend RMDataStream &operator>>(RMDataStream &ds, RMSprite &sprite);
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void SetPalette(byte *lpBuf);
-	void GetSizeFromStream(RMDataStream& ds, int* dimx, int* dimy);
-	void LOXGetSizeFromStream(RMDataStream& ds, int* dimx, int* dimy);
+	void GetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy);
+	void LOXGetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy);
 
-    void ReadFromStream(RMDataStream& ds, bool bLOX = false);
+	void ReadFromStream(RMDataStream &ds, bool bLOX = false);
 };
 
 
@@ -196,31 +200,33 @@ public:
  */
 class RMItem : public RMGfxTask {
 public:
-    RMString m_name;
+	RMString m_name;
 
 protected:
-    int m_z;
-    RMPoint m_pos;  // Coordinate nonno
+	int m_z;
+	RMPoint m_pos;  // Coordinate nonno
 	RMColorMode m_cm;
 	RMPoint m_curScroll;
 
 	byte m_FX;
 	byte m_FXparm;
 
-	virtual int GetCurPattern() { return m_nCurPattern; }
+	virtual int GetCurPattern() {
+		return m_nCurPattern;
+	}
 
 private:
 	int m_nCurPattern;
 	int m_mpalCode;
-    RMPoint m_hot;
+	RMPoint m_hot;
 	RMRect m_rcBox;
-    int m_nSprites,m_nSfx,m_nPatterns;
-    byte m_bPal;
-    RMPalette m_pal;
+	int m_nSprites, m_nSfx, m_nPatterns;
+	byte m_bPal;
+	RMPalette m_pal;
 
-    RMSprite *m_sprites;
-    RMSfx *m_sfx;
-    RMPattern *m_patterns;
+	RMSprite *m_sprites;
+	RMSfx *m_sfx;
+	RMPattern *m_patterns;
 
 	byte m_bCurFlag;
 	int m_nCurSprite;
@@ -235,7 +241,7 @@ public:
 	RMItem();
 	virtual ~RMItem();
 
-    friend RMDataStream& operator>>(RMDataStream &ds, RMItem &item);
+	friend RMDataStream &operator>>(RMDataStream &ds, RMItem &item);
 
 	// Process to make the object move on any animations.
 	// Returns TRUE if it should be redrawn on the next frame
@@ -246,15 +252,19 @@ public:
 
 	// Overloading of check whether to remove from active list
 	virtual void RemoveThis(CORO_PARAM, bool &result);
-	
+
 	// Overloaded Draw
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded priority: it's based on Z ordering
-	virtual int Priority() { return m_z; }
+	virtual int Priority() {
+		return m_z;
+	}
 
 	// Pattern number
-	int NumPattern() { return m_nPatterns; }
+	int NumPattern() {
+		return m_nPatterns;
+	}
 
 	// Set anew animation pattern, changing abruptly from the current
 	virtual void SetPattern(int nPattern, bool bPlayP0 = false);
@@ -263,9 +273,13 @@ public:
 	void SetStatus(int nStatus);
 
 	bool IsIn(const RMPoint &pt, int *size = NULL);
-	RMPoint Hotspot() { return m_hot; }
+	RMPoint Hotspot() {
+		return m_hot;
+	}
 	bool GetName(RMString &name);
-	int MpalCode() { return m_mpalCode; }
+	int MpalCode() {
+		return m_mpalCode;
+	}
 
 	// Unload
 	void Unload(void);
@@ -276,11 +290,13 @@ public:
 	// Sets a new hotspot fro the object
 	void ChangeHotspot(const RMPoint &pt);
 
-	void SetInitCurPattern(bool status) { m_bInitCurPattern=status; }
+	void SetInitCurPattern(bool status) {
+		m_bInitCurPattern = status;
+	}
 
 	void PlaySfx(int nSfx);
 
-void ReadFromStream(RMDataStream& ds, bool bLOX=false);
+	void ReadFromStream(RMDataStream &ds, bool bLOX = false);
 
 	void PauseSound(bool bPause);
 
@@ -293,8 +309,8 @@ protected:
 };
 
 
-#define MAXBOXES	50		// Maximum number of allowed boxes
-#define MAXHOTSPOT 20		// Maximum nimber of allowed hotspots
+#define MAXBOXES    50      // Maximum number of allowed boxes
+#define MAXHOTSPOT 20       // Maximum nimber of allowed hotspots
 
 class RMBox {
 public:
@@ -304,11 +320,11 @@ public:
 	};
 
 public:
-	int left, top, right, bottom;	// Vertici bounding boxes
-	int adj[MAXBOXES];				// List of adjacent bounding boxes
-	int numhotspot;					// Hotspot number
-	uint8 Zvalue;					// Z value for the bounding box
-	T_HOTSPOT hotspot[MAXHOTSPOT];	// List of hotspots
+	int left, top, right, bottom;   // Vertici bounding boxes
+	int adj[MAXBOXES];              // List of adjacent bounding boxes
+	int numhotspot;                 // Hotspot number
+	uint8 Zvalue;                   // Z value for the bounding box
+	T_HOTSPOT hotspot[MAXHOTSPOT];  // List of hotspots
 
 	bool attivo;
 	bool bReversed;
@@ -327,19 +343,19 @@ public:
 	RMBox *boxes;
 
 private:
-	void ReadFromStream(RMDataStream& ds);
+	void ReadFromStream(RMDataStream &ds);
 
 public:
 	RMBoxLoc();
 	virtual ~RMBoxLoc();
 
-	friend RMDataStream& operator >>(RMDataStream &ds, RMBoxLoc &bl);
+	friend RMDataStream &operator >>(RMDataStream &ds, RMBoxLoc &bl);
 	void RecalcAllAdj(void);
 };
 
 #define GAME_BOXES_SIZE 200
 
-class RMGameBoxes {	
+class RMGameBoxes {
 protected:
 	RMBoxLoc *m_allBoxes[GAME_BOXES_SIZE];
 	int m_nLocBoxes;
@@ -348,19 +364,19 @@ public:
 	RMGameBoxes();
 	~RMGameBoxes();
 
-	void Init(void);		
+	void Init(void);
 	void Close(void);
 
 	// Get binding boxes for a given location
 	RMBoxLoc *GetBoxes(int nLoc);
 	int GetLocBoxesCount() const { return m_nLocBoxes; }
-	
+
 	// Return the box which contains a given point
 	int WhichBox(int nLoc, const RMPoint &pt);
 
 	// Check whether a point is inside a given box
 	bool IsInBox(int nLoc, int nBox, const RMPoint &pt);
-	
+
 	// Change the status of a box
 	void ChangeBoxStatus(int nLoc, int nBox, int status);
 
@@ -380,7 +396,7 @@ public:
 		PAT_WALKUP,
 		PAT_WALKDOWN,
 		PAT_WALKLEFT,
-		PAT_WALKRIGHT	
+		PAT_WALKRIGHT
 	};
 
 private:
@@ -399,7 +415,7 @@ private:
 	short path[MAXBOXES];
 	short pathlenght, pathcount;
 	int curbox;
-	
+
 	STATUS status;
 	int curSpeed;
 	bool bEndOfPath;
@@ -409,17 +425,17 @@ private:
 	bool bRemoveFromOT;
 	bool bMovingWithoutMinpath;
 	RMGameBoxes *theBoxes;
-	
+
 	RMPoint m_fixedScroll;
-	
+
 private:
-	int InWhichBox(const RMPoint &pt); 
-	
+	int InWhichBox(const RMPoint &pt);
+
 	short FindPath(short source, short destination);
 	RMPoint Searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint punto);
 	RMPoint NearestPoint(const RMPoint &punto);
-	
-	void GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed=false);
+
+	void GoTo(CORO_PARAM, RMPoint destcoord, bool bReversed = false);
 	short ScanLine(const RMPoint &punto);
 	RMPoint InvScanLine(const RMPoint &punto);
 	RMPoint NearestHotSpot(int sourcebox, int destbox);
@@ -439,21 +455,25 @@ public:
 	void LinkToBoxes(RMGameBoxes *theBoxes);
 
 	virtual void RemoveThis(CORO_PARAM, bool &result);
-	
+
 	// Update the position of a character
-	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);		
+	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);
 
 	// Overloaded draw
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// TRUE if you just stopped
-	bool EndOfPath() { return bEndOfPath; }
+	bool EndOfPath() {
+		return bEndOfPath;
+	}
 
 	// Change the pattern of a character to STOP
 	virtual void Stop(CORO_PARAM);
 
 	// Check if the character is moving
-	bool IsMoving() { return bMoving; }
+	bool IsMoving() {
+		return bMoving;
+	}
 
 	// Move the character to a certain position
 	void Move(CORO_PARAM, RMPoint pt, bool *result = NULL);
@@ -464,8 +484,12 @@ public:
 	// Wait for the end of movement
 	void WaitForEndMovement(CORO_PARAM);
 
-	void SetFixedScroll(const RMPoint &fix) { m_fixedScroll = fix; }
-	void SetSpeed(int speed) { curSpeed = speed; }
+	void SetFixedScroll(const RMPoint &fix) {
+		m_fixedScroll = fix;
+	}
+	void SetSpeed(int speed) {
+		curSpeed = speed;
+	}
 };
 
 
@@ -485,9 +509,9 @@ public:
 	RMWipe();
 	virtual ~RMWipe();
 
-	void DoFrame(RMGfxTargetBuffer& bigBuf);
+	void DoFrame(RMGfxTargetBuffer &bigBuf);
 	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	
+
 	void InitFade(int type);
 	void CloseFade(void);
 	void WaitForFadeEnd(CORO_PARAM);
@@ -503,25 +527,29 @@ public:
  */
 class RMLocation : public RMGfxTaskSetPrior {
 public:
-    RMString m_name;				// Name
+	RMString m_name;                // Name
 
-  private:
-    RMColorMode m_cmode;			// Color mode
-	RMGfxSourceBuffer *m_buf;		// Location picture
+private:
+	RMColorMode m_cmode;            // Color mode
+	RMGfxSourceBuffer *m_buf;       // Location picture
 
-	int m_nItems;					// Number of objects
-	RMItem *m_items;				// Objects
+	int m_nItems;                   // Number of objects
+	RMItem *m_items;                // Objects
 
-	RMPoint m_curScroll;			// Current scroll position
+	RMPoint m_curScroll;            // Current scroll position
 	RMPoint m_fixedScroll;
 
 public:
 	// @@@@@@@@@@@@@@@@@@@@@@@
 	RMPoint TEMPTonyStart;
-	RMPoint TEMPGetTonyStart() { return TEMPTonyStart; }
+	RMPoint TEMPGetTonyStart() {
+		return TEMPTonyStart;
+	}
 
 	int TEMPNumLoc;
-	int TEMPGetNumLoc() { return TEMPNumLoc; }
+	int TEMPGetNumLoc() {
+		return TEMPNumLoc;
+	}
 
 public:
 	RMLocation();
@@ -559,7 +587,9 @@ public:
 	void UpdateScrolling(const RMPoint &ptShowThis);
 
 	// Read the current scroll position
-	RMPoint ScrollPosition() { return m_curScroll; }
+	RMPoint ScrollPosition() {
+		return m_curScroll;
+	}
 
 	// Pause sound
 	void PauseSound(bool bPause);
@@ -584,10 +614,18 @@ public:
 	virtual ~RMMessage();
 
 	void Load(uint32 dwId);
-	bool IsValid() { return lpMessage != NULL; }
-	int NumPeriods() { return nPeriods; }
-	char *Period(int num) { return lpPeriods[num]; }
-	char *operator[](int num) { return lpPeriods[num]; }
+	bool IsValid() {
+		return lpMessage != NULL;
+	}
+	int NumPeriods() {
+		return nPeriods;
+	}
+	char *Period(int num) {
+		return lpPeriods[num];
+	}
+	char *operator[](int num) {
+		return lpPeriods[num];
+	}
 };
 
 } // End of namespace Tony

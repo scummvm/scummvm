@@ -45,58 +45,58 @@ using namespace ::Tony::MPAL;
 class RMDataStream {
 protected:
 	const byte *m_buf;
-    int m_length;
-    int m_pos;
-    bool m_bError;
-    int m_ecode;
+	int m_length;
+	int m_pos;
+	bool m_bError;
+	int m_ecode;
 
 public:
-    enum RMDSPos {
-      CUR,
-      START,
-      END
-    };
+	enum RMDSPos {
+		CUR,
+		START,
+		END
+	};
 
 private:
-    enum {
-      SIZENOTKNOWN = 0x7FFFFFFF
-    };
+	enum {
+		SIZENOTKNOWN = 0x7FFFFFFF
+	};
 
 public:
-    // Constructor and destructor
-    RMDataStream();
-    virtual ~RMDataStream();
+	// Constructor and destructor
+	RMDataStream();
+	virtual ~RMDataStream();
 
-    // Loading buffer
-    void OpenBuffer(const byte *buf, int size = SIZENOTKNOWN);
+	// Loading buffer
+	void OpenBuffer(const byte *buf, int size = SIZENOTKNOWN);
 	void Close(void);
 
-    // Attributei
-    int Length();
-    virtual int Pos();
+	// Attributei
+	int Length();
+	virtual int Pos();
 
-    // EOF
-    virtual bool IsEOF();
+	// EOF
+	virtual bool IsEOF();
 
-    // Read methods
-    friend RMDataStream &operator>>(RMDataStream &df, char &var);
-    friend RMDataStream &operator>>(RMDataStream &df, byte &var);
-    friend RMDataStream &operator>>(RMDataStream &df, uint16 &var);
-    friend RMDataStream &operator>>(RMDataStream &df, int16 &var);
-    friend RMDataStream &operator>>(RMDataStream &df, int &var);
-    friend RMDataStream &operator>>(RMDataStream &df, uint32 &var);
+	// Read methods
+	friend RMDataStream &operator>>(RMDataStream &df, char &var);
+	friend RMDataStream &operator>>(RMDataStream &df, byte &var);
+	friend RMDataStream &operator>>(RMDataStream &df, uint16 &var);
+	friend RMDataStream &operator>>(RMDataStream &df, int16 &var);
+	friend RMDataStream &operator>>(RMDataStream &df, int &var);
+	friend RMDataStream &operator>>(RMDataStream &df, uint32 &var);
 
-    // General read
-    virtual bool Read(void *buf, int size);
+	// General read
+	virtual bool Read(void *buf, int size);
 
-    // Skipping & Seeking
-    virtual RMDataStream &operator+=(int nBytes);
-    virtual int Seek(int nBytes, RMDSPos origin = CUR);
+	// Skipping & Seeking
+	virtual RMDataStream &operator+=(int nBytes);
+	virtual int Seek(int nBytes, RMDSPos origin = CUR);
 
-    // Error handling
-    void SetError(int ecode);
-    int GetError();
-    bool IsError();
+	// Error handling
+	void SetError(int ecode);
+	int GetError();
+	bool IsError();
 };
 
 
@@ -131,20 +131,20 @@ public:
 
 	void Close(void);
 
-    RMDataStream& operator+=(int nBytes);
-    int Seek(int nBytes, RMDSPos where = CUR);
+	RMDataStream &operator+=(int nBytes);
+	int Seek(int nBytes, RMDSPos where = CUR);
 
 	int Pos();
 	virtual bool IsEOF();
 
 	bool Read(void *buf, int size);
 
-    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, char &var);
-    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, byte &var);
-    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, uint16 &var);
-    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, int16 &var);
-    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, int &var);
-    friend RMFileStreamSlow& operator>>(RMFileStreamSlow &df, uint32 &var);
+	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, char &var);
+	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, byte &var);
+	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint16 &var);
+	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int16 &var);
+	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int &var);
+	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint32 &var);
 };
 
 /**
@@ -154,57 +154,57 @@ class RMString {
 private:
 	char *m_string;
 	int m_length;
-    int m_realLength;
+	int m_realLength;
 
 public:
-    RMString();
-    ~RMString();
+	RMString();
+	~RMString();
 
-    // Assignment constructors
-    RMString(const RMString &str);
-    RMString(const char *str);
-    RMString(const int ch);
+	// Assignment constructors
+	RMString(const RMString &str);
+	RMString(const char *str);
+	RMString(const int ch);
 
-    // General methods
-    int Length() const;
-    void Compact();
+	// General methods
+	int Length() const;
+	void Compact();
 
-    // Access characters within string
-    char GetAt(int nIndex);
-    void SetAt(int nIndex, char c);
-    char& operator[](int nIndex);
+	// Access characters within string
+	char GetAt(int nIndex);
+	void SetAt(int nIndex, char c);
+	char &operator[](int nIndex);
 
-    // String cast
-    operator char*() const;
+	// String cast
+	operator char *() const;
 
-    // String assignments
-    const RMString &operator=(const RMString &str);
-    const RMString &operator=(const char *str);
-    const RMString &operator=(const int ch);
+	// String assignments
+	const RMString &operator=(const RMString &str);
+	const RMString &operator=(const char *str);
+	const RMString &operator=(const int ch);
 
-    // String concatenation
-    const RMString &operator+=(RMString &str);
-    const RMString &operator+=(const char *str);
-    const RMString &operator+=(const int ch);
+	// String concatenation
+	const RMString &operator+=(RMString &str);
+	const RMString &operator+=(const char *str);
+	const RMString &operator+=(const int ch);
 
-    // Concatentation of string or character
-    friend RMString operator+(const RMString &str1, const RMString &str2);
+	// Concatentation of string or character
+	friend RMString operator+(const RMString &str1, const RMString &str2);
 
-    friend RMString operator+(RMString& str, const int ch);
-    friend RMString operator+(const int ch, RMString &str);
+	friend RMString operator+(RMString &str, const int ch);
+	friend RMString operator+(const int ch, RMString &str);
 
-    friend RMString operator+(RMString &str, const char *s);
-    friend RMString operator+(const char *s, RMString &str);
+	friend RMString operator+(RMString &str, const char *s);
+	friend RMString operator+(const char *s, RMString &str);
 
-    // Extraction from data streams
-    friend RMDataStream& operator>>(RMDataStream& df, RMString &var);
+	// Extraction from data streams
+	friend RMDataStream &operator>>(RMDataStream &df, RMString &var);
 
 	// String formatting
 	void Format(const char *str, ...);
 
 private:
-    void Resize(int size, bool bMantain = false);
-    void Connect(const char* str, int size);
+	void Resize(int size, bool bMantain = false);
+	void Connect(const char *str, int size);
 };
 
 /**
@@ -215,89 +215,94 @@ public:
 	int x, y;
 
 public:
-    // Constructor
-    RMPoint();
-    RMPoint(const RMPoint &p);
-    RMPoint(int x1, int y1);
+	// Constructor
+	RMPoint();
+	RMPoint(const RMPoint &p);
+	RMPoint(int x1, int y1);
 
-    // Copy
-    RMPoint& operator=(RMPoint p);
+	// Copy
+	RMPoint &operator=(RMPoint p);
 
 	// Set
-	void Set(int x1, int y1) { x = x1; y = y1; }
+	void Set(int x1, int y1) {
+		x = x1;
+		y = y1;
+	}
 
-    // Offset
-    void Offset(int xOff, int yOff);
-    void Offset(const RMPoint &p);
-    friend RMPoint operator+(RMPoint p1, RMPoint p2);
-    friend RMPoint operator-(RMPoint p1, RMPoint p2);
-    RMPoint &operator+=(RMPoint p);
-    RMPoint &operator-=(RMPoint p);
-    RMPoint operator-();
+	// Offset
+	void Offset(int xOff, int yOff);
+	void Offset(const RMPoint &p);
+	friend RMPoint operator+(RMPoint p1, RMPoint p2);
+	friend RMPoint operator-(RMPoint p1, RMPoint p2);
+	RMPoint &operator+=(RMPoint p);
+	RMPoint &operator-=(RMPoint p);
+	RMPoint operator-();
 
-    // Comparison
-    bool operator==(RMPoint p);
-    bool operator!=(RMPoint p);
+	// Comparison
+	bool operator==(RMPoint p);
+	bool operator!=(RMPoint p);
 
-    // Casting a POINT
+	// Casting a POINT
 	operator Common::Point() const;
 
-    // Extraction from data streams
-    friend RMDataStream& operator>>(RMDataStream &ds, RMPoint &p);
+	// Extraction from data streams
+	friend RMDataStream &operator>>(RMDataStream &ds, RMPoint &p);
 };
 
 class RMRect {
 public:
-	int x1,y1;
-    int x2,y2;
+	int x1, y1;
+	int x2, y2;
 
 public:
-    RMRect();
-    RMRect(int x1, int y1, int x2, int y2);
-    RMRect(const RMPoint &p1, const RMPoint &p2);
-    RMRect(const RMRect &rc);
+	RMRect();
+	RMRect(int x1, int y1, int x2, int y2);
+	RMRect(const RMPoint &p1, const RMPoint &p2);
+	RMRect(const RMRect &rc);
 
-    // Attributes
-    RMPoint &TopLeft();
-    RMPoint &BottomRight();
-    RMPoint Center();
-    int Width() const;
-    int Height() const;
-    bool IsEmpty() const;
+	// Attributes
+	RMPoint &TopLeft();
+	RMPoint &BottomRight();
+	RMPoint Center();
+	int Width() const;
+	int Height() const;
+	bool IsEmpty() const;
 	int Size() const;
 
-    // Set
-    void SetRect(int x1, int y1, int x2, int y2);
-    void SetRect(const RMPoint &p1, const RMPoint &p2);
-    void SetEmpty(void);
+	// Set
+	void SetRect(int x1, int y1, int x2, int y2);
+	void SetRect(const RMPoint &p1, const RMPoint &p2);
+	void SetEmpty(void);
 
-    // Copiers
-    void SetRect(const RMRect &rc);
-    void CopyRect(const RMRect &rc);
-    const RMRect &operator=(const RMRect &rc);
+	// Copiers
+	void SetRect(const RMRect &rc);
+	void CopyRect(const RMRect &rc);
+	const RMRect &operator=(const RMRect &rc);
 
-    // Offset
-    void Offset(int xOff, int yOff);
-    void Offset(const RMPoint &p);
-    friend RMRect operator+(const RMRect &rc, RMPoint p);
-    friend RMRect operator-(const RMRect &rc, RMPoint p);
-    friend RMRect operator+(RMPoint p, const RMRect &rc);
-    friend RMRect operator-(RMPoint p, const RMRect &rc);
-    const RMRect &operator+=(RMPoint p);
-    const RMRect &operator-=(RMPoint p);
+	// Offset
+	void Offset(int xOff, int yOff);
+	void Offset(const RMPoint &p);
+	friend RMRect operator+(const RMRect &rc, RMPoint p);
+	friend RMRect operator-(const RMRect &rc, RMPoint p);
+	friend RMRect operator+(RMPoint p, const RMRect &rc);
+	friend RMRect operator-(RMPoint p, const RMRect &rc);
+	const RMRect &operator+=(RMPoint p);
+	const RMRect &operator-=(RMPoint p);
 
-    // Comparison
-    bool operator==(const RMRect &rc);
-    bool operator!=(const RMRect &rc);
+	// Comparison
+	bool operator==(const RMRect &rc);
+	bool operator!=(const RMRect &rc);
 
-    // Normalise
-    void NormalizeRect();
+	// Normalise
+	void NormalizeRect();
 
 	// Point in rect
-	bool PtInRect(const RMPoint &pt) { return (pt.x >= x1 && pt.x <= x2 && pt.y >= y1 && pt.y <= y2); }
+	bool PtInRect(const RMPoint &pt) {
+		return (pt.x >= x1 && pt.x <= x2 && pt.y >= y1 && pt.y <= y2);
+	}
 
-    // Extract from data stream
-    friend RMDataStream &operator>>(RMDataStream& ds, RMRect &rc);
+	// Extract from data stream
+	friend RMDataStream &operator>>(RMDataStream &ds, RMRect &rc);
 };
 
 /**
