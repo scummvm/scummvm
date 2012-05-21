@@ -1096,8 +1096,8 @@ void LilliputScript::checkSpeechAllowed(bool &forceReturnFl) {
 	return;
 }
 
-void LilliputScript::sub189F5() {
-	debugC(2, kDebugScriptTBC, "sub189F5()");
+void LilliputScript::formatSpeechString() {
+	debugC(2, kDebugScript, "formatSpeechString()");
 
 	int index = 0;
 	int var2 = 0x100;
@@ -1135,9 +1135,9 @@ void LilliputScript::sub189F5() {
 }
 
 void LilliputScript::sub189B8() {
-	debugC(2, kDebugScriptTBC, "sub189B8()");
+	debugC(2, kDebugScript, "sub189B8()");
 
-	sub189F5();
+	formatSpeechString();
 	int index = 0;
 
 	for (;;) {
@@ -1150,11 +1150,11 @@ void LilliputScript::sub189B8() {
 	index += 4;
 	_speechTimer = index;
 	_vm->displayFunction10();
-	_vm->displayFunction11(_vm->_displayStringBuf);
+	_vm->displaySpeech(_vm->_displayStringBuf);
 }
 
 void LilliputScript::decodePackedText(char *buf) {
-	debugC(2, kDebugScriptTBC, "decodePackedText(buf)");
+	debugC(2, kDebugScript, "decodePackedText(buf)");
 
 	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |is the |is a |in a |To the |to the |by |going |here |The|the|and |some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|have |you|I''ve |can''t |up |to |he |she |down |what|What|with|are |and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|''s |''t |re|gg|tt|pp|nn|ay|ar|wh|";
 
@@ -1247,7 +1247,7 @@ void LilliputScript::listAllTexts() {
 }
 
 void LilliputScript::startSpeech(int speechId) {
-	debugC(2, kDebugScriptTBC, "startSpeech(%d)", speechId);
+	debugC(2, kDebugScript, "startSpeech(%d)", speechId);
 
 	if (speechId == -1)
 		return;
@@ -1256,7 +1256,7 @@ void LilliputScript::startSpeech(int speechId) {
 
 	int index = _vm->_packedStringIndex[speechId];
 	int count = 0;
-	while (_vm->_packedStrings[index + count] == 0x5B)
+	while (_vm->_packedStrings[index + count] == '[')
 		++count;
 
 	int i = 0;
@@ -1266,7 +1266,7 @@ void LilliputScript::startSpeech(int speechId) {
 			for (int j = 0; j < tmpVal; j++) {
 				do
 					++i;
-				while (_vm->_packedStrings[index + count + i] != 0x5B);
+				while (_vm->_packedStrings[index + count + i] != ']');
 			}
 		}
 	}

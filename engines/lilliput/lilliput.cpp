@@ -190,7 +190,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array10A11PosY[i] = -1;
 		_array16E94[i] = 0;
 
-		_array11D49[i] = 0xFFFF;
+		_array11D49[i] = -1;
 		_characterPositionX[i] = -1;
 		_characterPositionY[i] = -1;
 		_characterPositionAltitude[i] = 0;
@@ -205,7 +205,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_rulesBuffer2_12[i] = 0;
 		_rulesBuffer2_13_posX[i] = 0;
 		_rulesBuffer2_14_posY[i] = 0;
-		_array1289F[i] = 0xFFFF;
+		_array1289F[i] = -1;
 	}
 
 	for (int i = 0; i < 30; i++)
@@ -522,8 +522,8 @@ void LilliputEngine::displayFunction10() {
 	displayMousePointer();
 }
 
-void LilliputEngine::sub15A4C(int vgaIndex, byte *srcBuf, int &bufIndex) {
-	debugC(2, kDebugEngineTBC, "sub15A4C()");
+void LilliputEngine::displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex) {
+	debugC(2, kDebugEngineTBC, "displaySpeechLine()");
 
 	int var3 = 0;
 	int var1;
@@ -554,16 +554,16 @@ void LilliputEngine::sub15A4C(int vgaIndex, byte *srcBuf, int &bufIndex) {
 
 }
 
-void LilliputEngine::displayFunction11(byte *buf) {
-	debugC(2, kDebugEngineTBC, "displayFunction11(%s)", buf);
+void LilliputEngine::displaySpeech(byte *buf) {
+	debugC(2, kDebugEngine, "displaySpeech(%s)", buf);
 
 	restoreSurfaceUnderMousePointer();
 
 	int vgaIndex = 70;
 	int bufIndex = 0;
 
-	byte _byte15A0C = 0;
-	int var1;
+	bool multiLineFlag = false;
+	byte var1;
 
 	for (;;) {
 		var1 = buf[bufIndex];
@@ -571,17 +571,17 @@ void LilliputEngine::displayFunction11(byte *buf) {
 		if (var1 == 0) {
 			vgaIndex += (4 * 320);
 			break;
-		} else if (var1 == 0x7C) {
-			_byte15A0C = 1;
+		} else if (var1 == '|') {
+			multiLineFlag = true;
 			break;
 		}
 	}
 
 	bufIndex = 0;
-	sub15A4C(vgaIndex, buf, bufIndex);
-	if (_byte15A0C == 1) {
+	displaySpeechLine(vgaIndex, buf, bufIndex);
+	if (multiLineFlag) {
 		vgaIndex += (8 * 320);
-		sub15A4C(vgaIndex, buf, bufIndex);
+		displaySpeechLine(vgaIndex, buf, bufIndex);
 	}
 
 	displayMousePointer();
@@ -2674,7 +2674,7 @@ void LilliputEngine::handleGameScripts() {
 
 
 	_word16EFE = _array11D49[index];
-	_array11D49[index] = 0xFFFF;
+	_array11D49[index] = -1;
 	_word1817B = 0;
 
 	int tmpVal = _rulesBuffer2_12[index];

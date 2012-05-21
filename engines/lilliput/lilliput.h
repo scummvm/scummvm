@@ -234,7 +234,7 @@ public:
 	void displayInterfaceHotspots();
 	void displayLandscape();
 	void displayFunction10();
-	void displayFunction11(byte *buf);
+	void displaySpeech(byte *buf);
 	void initGameAreaDisplay();
 	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);
 	void displayGameArea();
@@ -295,7 +295,7 @@ public:
 	void sub131FC(Common::Point pos);
 	void sub1546F(Common::Point displayPos);
 	void sub15498(Common::Point pos, int var2);
-	void sub15A4C(int vgaIndex, byte *srcBuf, int &bufIndex);
+	void displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex);
 	void checkMapClosing(bool &forceReturnFl);
 	void turnCharacter1(int index);
 	void turnCharacter2(int index);
