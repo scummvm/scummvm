@@ -1149,14 +1149,14 @@ void LilliputScript::sub189B8() {
 	index /= _speechDisplaySpeed;
 	index += 4;
 	_speechTimer = index;
-	_vm->displayFunction10();
+	_vm->displaySpeechBubble();
 	_vm->displaySpeech(_vm->_displayStringBuf);
 }
 
 void LilliputScript::decodePackedText(char *buf) {
 	debugC(2, kDebugScript, "decodePackedText(buf)");
 
-	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |is the |is a |in a |To the |to the |by |going |here |The|the|and |some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|have |you|I''ve |can''t |up |to |he |she |down |what|What|with|are |and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|''s |''t |re|gg|tt|pp|nn|ay|ar|wh|";
+	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |is the |is a |in a |To the |to the |by |going |here |The|the|and |some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|have |you|I've |can't |up |to |he |she |down |what|What|with|are |and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|'s |'t |re|gg|tt|pp|nn|ay|ar|wh|";
 
 	_vm->_displayStringIndex = 0;
 	_byte1881A = 0;
@@ -2412,17 +2412,17 @@ void LilliputScript::OC_setWord10804() {
 }
 
 void LilliputScript::OC_sub17C0E() {
-	debugC(1, kDebugScriptTBC, "OC_sub17C0E()");
+	debugC(1, kDebugScript, "OC_sub17C0E()");
 
 	assert(_vm->_currentCharacterVariables != NULL);
 	Common::Point var1 = Common::Point(_vm->_currentCharacterVariables[4], _vm->_currentCharacterVariables[5]);
-	byte b2 = _vm->_currentCharacterVariables[6];
+	byte var2 = _vm->_currentCharacterVariables[6];
 
 	byte *mapPtr = getMapPtr(var1);
-	mapPtr[b2] = _vm->_currentCharacterVariables[7];
+	mapPtr[var2] = _vm->_currentCharacterVariables[7];
 	mapPtr[3] = _vm->_currentCharacterVariables[8];
 
-	if (b2 == 0) {
+	if (var2 == 0) {
 		_byte12A09 = 1;
 		_vm->displayLandscape();
 		_byte12A09 = 0;
@@ -2485,11 +2485,11 @@ void LilliputScript::OC_sub17C8B() {
 }
 
 void LilliputScript::OC_sub17CA2() {
-	debugC(1, kDebugScriptTBC, "OC_sub17CA2()");
+	debugC(1, kDebugScript, "OC_sub17CA2()");
 
-	int var1 = 1 << 8;
-	int var4 = _currScript->readUint16LE();
-	int var2 = _currScript->readUint16LE();
+	int16 var1 = 1 << 8;
+	int16 var4 = _currScript->readSint16LE();
+	uint16 var2 = _currScript->readUint16LE();
 	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
 	
 	sub171AF(var1, var2, var4);
@@ -2539,13 +2539,13 @@ void LilliputScript::OC_IncCurrentCharacterVar1() {
 }
 
 void LilliputScript::OC_sub17D23() {
-	debugC(1, kDebugScriptTBC, "OC_sub17D23()");
+	debugC(1, kDebugScript, "OC_sub17D23()");
 
-	uint16 var1 = _currScript->readUint16LE();
-	Common::Point var2 = getPosFromScript();
+	uint16 oper = _currScript->readUint16LE();
+	Common::Point var1 = getPosFromScript();
 	byte* buf = _vm->_currentCharacterVariables + 4;
-	computeOperation(buf, var1, var2.x);
-	computeOperation(buf + 1, var1, var2.y);
+	computeOperation(buf, oper, var1.x);
+	computeOperation(buf + 1, oper, var1.y);
 }
 
 void LilliputScript::OC_sub17E6D() {
