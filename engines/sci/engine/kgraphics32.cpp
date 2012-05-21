@@ -236,11 +236,11 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// tables inside graphics/transitions.cpp
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
 	reg_t planeObj = argv[1];	// the affected plane
-	uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
-	uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
-	int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
-	uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
-	uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
+	//uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
+	//uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
+	//int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
+	//uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
+	//uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
 	int16 divisions;
 
 	// If the game has the pFadeArray selector, another parameter is used here,
