@@ -353,6 +353,7 @@ public:
 
 	// Get binding boxes for a given location
 	RMBoxLoc *GetBoxes(int nLoc);
+	int GetLocBoxesCount() const { return m_nLocBoxes; }
 	
 	// Return the box which contains a given point
 	int WhichBox(int nLoc, const RMPoint &pt);

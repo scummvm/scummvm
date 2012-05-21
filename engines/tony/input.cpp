@@ -27,6 +27,7 @@
  */
 
 #include "tony/gfxengine.h"
+#include "tony/tony.h"
 
 namespace Tony {
 
@@ -79,7 +80,15 @@ void RMInput::Poll(void) {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			_keyDown[(int)_event.kbd.keycode] = true;
+			// Check for debugger
+			if ((_event.kbd.keycode == Common::KEYCODE_d) && (_event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				_vm->_debugger->attach();
+				_vm->_debugger->onFrame();
+			} else {
+				// Flag the given key as being down
+				_keyDown[(int)_event.kbd.keycode] = true;
+			}
 			return;
 
 		case Common::EVENT_KEYUP:

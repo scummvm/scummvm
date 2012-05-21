@@ -34,6 +34,7 @@
 
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/memory.h"
+#include "tony/debugger.h"
 #include "tony/gfxengine.h"
 #include "tony/loc.h"
 #include "tony/utils.h"
@@ -101,6 +102,7 @@ public:
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND	_theSound;
 	Globals _globals;
+	Debugger *_debugger;
 
 	enum DATADIR {
 		DD_BASE = 1,

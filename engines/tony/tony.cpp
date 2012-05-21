@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "tony/tony.h"
 #include "tony/custom.h"
+#include "tony/debugger.h"
 #include "tony/game.h"
 #include "tony/mpal/mpal.h"
 
@@ -40,6 +41,7 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	_vm = this;
 	_loadSlotNumber = -1;
 
+	_debugger = new Debugger();
 	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTonyDebugActions, "actions", "Actions debugging");
 	DebugMan.addDebugChannel(kTonyDebugSound, "sound", "Sound debugging");
@@ -60,6 +62,8 @@ TonyEngine::~TonyEngine() {
 
 	// Reset the coroutine scheduler
 	CoroScheduler.reset();
+
+	delete _debugger;
 }
 
 /**
@@ -529,6 +533,9 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 
 		// Paint the frame onto the screen
 		_vm->_window.Repaint();
+
+		// Signal the ScummVM debugger
+		_vm->_debugger->onFrame();
 	}
 
 	CORO_END_CODE;
