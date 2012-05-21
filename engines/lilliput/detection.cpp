@@ -161,7 +161,9 @@ bool LilliputMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate);
 }
 
-int LilliputMetaEngine::getMaximumSaveSlot() const { return 99; }
+int LilliputMetaEngine::getMaximumSaveSlot() const {
+	return 99;
+}
 
 SaveStateList LilliputMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();

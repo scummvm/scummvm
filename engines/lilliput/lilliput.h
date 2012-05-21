@@ -344,7 +344,7 @@ public:
 	byte _byte12FCE;
 	byte _byte129A0;
 	byte _numCharactersToDisplay;
-	byte _byte16C9F; 
+	byte _byte16C9F;
 	int16 _word10804;
 	bool _shouldQuit;
 
