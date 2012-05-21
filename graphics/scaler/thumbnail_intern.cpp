@@ -217,6 +217,22 @@ bool createThumbnailFromScreen(Graphics::Surface* surf) {
 	return createThumbnail(*surf, screen);
 }
 
+bool createScreenShot(Graphics::Surface &surf) {
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+	//convert surface to 2 bytes pixel format to avoid problems with palette saving and loading
+	if (screenFormat.bytesPerPixel == 1) {
+		return grabScreen565(&surf);
+	} else {
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen) {
+			return false;
+		}
+		surf.copyFrom(*screen);
+		g_system->unlockScreen();
+		return true;
+	}
+}
+
 bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette) {
 	assert(surf);
 
