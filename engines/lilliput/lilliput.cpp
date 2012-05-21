@@ -1818,7 +1818,7 @@ byte LilliputEngine::sub1675D(int index, Common::Point var1) {
 }
 
 void LilliputEngine::sub16EBC() {
-	debugC(2, kDebugEngineTBC, "sub16EBC()");
+	debugC(2, kDebugEngine, "sub16EBC()");
 
 	int index2 = 3;
 
@@ -1836,7 +1836,7 @@ void LilliputEngine::sub16EBC() {
 }
 
 void LilliputEngine::sub12F37() {
-	debugC(2, kDebugEngineTBC, "sub12F37()");
+	debugC(2, kDebugEngine, "sub12F37()");
 
 	int index1 = _animationTick + 2;
 	int index2 = 0;
@@ -2171,7 +2171,7 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 }
 
 void LilliputEngine::sub17224(int var1, int var4) {
-	debugC(2, kDebugEngineTBC, "sub17224(%d, %d)", var1, var4);
+	debugC(2, kDebugEngine, "sub17224(%d, %d)", var1, var4);
 
 	byte type = (var1 >> 8);
 	if (type == 0) {
@@ -2187,16 +2187,16 @@ void LilliputEngine::sub17224(int var1, int var4) {
 
 	int index = var4 & 0xFF;
 	for (int i = 0; i < _numCharacters; i++) {
-		if (_scriptHandler->_array10B51[index] >= type)
+		if ((_scriptHandler->_array10B51[index] & 0xFF) >= type)
 			sub17264(i, var4);
 		index += 40;
 	}
 }
 
 void LilliputEngine::sub17264(int index, int var4) {
-	debugC(2, kDebugEngineTBC, "sub17264(%d, %d)", index, var4);
+	debugC(2, kDebugEngine, "sub17264(%d, %d)", index, var4);
 
-	if (_array11D49[index] != 0xFFFF) {
+	if (_array11D49[index] != -1) {
 		_array1289F[index] = var4;
 	} else {
 		_scriptHandler->_characterScriptEnabled[index] = 1;
@@ -2205,12 +2205,12 @@ void LilliputEngine::sub17264(int index, int var4) {
 }
 
 void LilliputEngine::sub171CF() {
-	debugC(2, kDebugEngineTBC, "sub171CF()");
+	debugC(2, kDebugEngine, "sub171CF()");
 
 	for (int i = 0; i < _numCharacters; i++) {
-		if (_array1289F[i] != 0xFFFF) {
+		if (_array1289F[i] != -1) {
 			_array11D49[i] = _array1289F[i];
-			_array1289F[i] = 0xFFFF;
+			_array1289F[i] = -1;
 			_scriptHandler->_characterScriptEnabled[i] = 1;
 		}
 	}
@@ -2229,7 +2229,7 @@ void LilliputEngine::sub171CF() {
 }
 
 void LilliputEngine::sub12FE5() {
-	debugC(2, kDebugEngineTBC, "sub12FE5()");
+	debugC(2, kDebugEngine, "sub12FE5()");
 
 	if (_animationTick != 1)
 		return;

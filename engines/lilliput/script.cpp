@@ -1057,7 +1057,7 @@ void LilliputScript::sub17B6C(int var1) {
 }
 
 void LilliputScript::sub16C86(int index, byte *buf) {
-	debugC(1, kDebugScriptTBC, "sub16C86()");
+	debugC(1, kDebugScript, "sub16C86()");
 
 	_array12811[index] = 0;
 
@@ -1399,10 +1399,10 @@ byte LilliputScript::OC_sub1740A() {
 	}
 
 	byte *isoMapBuf = getMapPtr(var);
-	int var2 = isoMapBuf[3];
+	uint16 var2 = isoMapBuf[3];
 
-	int var3 = _currScript->readUint16LE();
-	int var4 = 8 >> var3;
+	int16 var3 = _currScript->readUint16LE();
+	uint16 var4 = 8 >> var3;
 
 	if (var2 & var4) {
 		return 1;
@@ -1444,7 +1444,7 @@ byte LilliputScript::OC_getRandom() {
 }
 
 byte LilliputScript::OC_for() {
-	debugC(1, kDebugScriptTBC, "OC_for()");
+	debugC(1, kDebugScript, "OC_for()");
 
 	int var1 = _currScript->readUint16LE();
 	int tmpVal = _currScript->readUint16LE() + 1;
@@ -1560,24 +1560,27 @@ byte LilliputScript::OC_compareCoords_2() {
 }
 
 byte LilliputScript::OC_CompareDistanceFromCharacterToPositionWith() {
-	debugC(1, kDebugScriptTBC, "OC_CompareDistanceFromCharacterToPositionWith()");
+	debugC(1, kDebugScript, "OC_CompareDistanceFromCharacterToPositionWith()");
 
 	Common::Point var1 = getPosFromScript();
 	Common::Point pos = _vm->_currentScriptCharacterPos;
 	
 	int dx = var1.x - pos.x;
-	if (dx < 0) dx = -dx;
+	if (dx < 0)
+		dx = -dx;
 
 	int dy = var1.y - pos.y;
-	if (dy < 0) dy = -dy;
+	if (dy < 0)
+		dy = -dy;
 
-	int dist = dx + dy;
+	int16 dist = dx + dy;
 		
 	uint16 operation = _currScript->readUint16LE();
 	int16 var2 = _currScript->readSint16LE();
 	
 	return compareValues(dist, operation, var2);
 }
+
 byte LilliputScript::OC_compareRandomCharacterId() {
 	debugC(1, kDebugScriptTBC, "OC_compareRandomCharacterId()");
 
@@ -1761,13 +1764,13 @@ byte LilliputScript::OC_sub17782() {
 }
 
 byte *LilliputScript::getMapPtr(Common::Point val) {
-	debugC(1, kDebugScriptTBC, "getMapPtr(%d %d)", val.x, val.y);
+	debugC(1, kDebugScript, "getMapPtr(%d %d)", val.x, val.y);
 
 	return &_vm->_bufferIsoMap[(val.y * 64 + val.x) << 2];
 }
 
 byte LilliputScript::OC_CompareMapValueWith() {
-	debugC(1, kDebugScriptTBC, "OC_CompareMapValueWith()");
+	debugC(1, kDebugScript, "OC_CompareMapValueWith()");
 
 	Common::Point tmpVal = getPosFromScript();
 
@@ -1775,11 +1778,11 @@ byte LilliputScript::OC_CompareMapValueWith() {
 		_currScript->seek(_currScript->pos() + 6);
 		return 0;
 	}
-	int var2 = _currScript->readUint16LE();
+	int16 var2 = _currScript->readUint16LE();
 	byte *buf = getMapPtr(tmpVal);
-	byte var1 = buf[var2];
-	int oper = _currScript->readUint16LE();
-	var2 = _currScript->readUint16LE();
+	int16 var1 = buf[var2];
+	uint16 oper = _currScript->readUint16LE();
+	var2 = _currScript->readSint16LE();
 	
 	return compareValues(var1, oper, var2);
 }
@@ -2553,10 +2556,10 @@ void LilliputScript::OC_sub17E6D() {
 }
 
 void LilliputScript::OC_changeCurrentCharacterSprite() {
-	debugC(2, kDebugScriptTBC, "OC_changeCurrentCharacterSprite()");
+	debugC(2, kDebugScript, "OC_changeCurrentCharacterSprite()");
 
-	int var1 = _currScript->readUint16LE();
-	int var2 = _currScript->readUint16LE();
+	int16 var1 = _currScript->readSint16LE();
+	byte var2 = (_currScript->readUint16LE() & 0xFF);
 	_vm->_characterFrameArray[_vm->_currentScriptCharacter] = var1;
 	_vm->_spriteSizeArray[_vm->_currentScriptCharacter] = var2;
 
@@ -2919,7 +2922,7 @@ void LilliputScript::OC_sub18260() {
 }
 
 void LilliputScript::OC_CharacterVariableAddOrRemoveFlag() {
-	debugC(1, kDebugScriptTBC, "OC_CharacterVariableAddOrRemoveFlag()");
+	debugC(1, kDebugScript, "OC_CharacterVariableAddOrRemoveFlag()");
 
 	byte *tmpArr = getCharacterVariablePtr();
 
