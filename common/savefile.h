@@ -105,7 +105,8 @@ public:
 
 	/**
 	 * Open the savefile with the specified name in the given directory for saving.
-	 * @param name	the name of the savefile
+	 * @param name		the name of the savefile
+	 * @param compress	toggles whether to compress the resulting save file (default) or not.
 	 * @return pointer to an OutSaveFile, or NULL if an error occurred.
 	 */
 	virtual OutSaveFile *openForSaving(const String &name, bool compress = true) = 0;
