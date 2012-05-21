@@ -217,7 +217,11 @@ int QuickTimeParser::readDefault(Atom atom) {
 
 		a.size -= 8;
 
-		if (_parseTable[i].type == 0) { // skip leaf atoms data
+		if (a.size + (uint32)_fd->pos() > (uint32)_fd->size()) {
+			_fd->seek(_fd->size());
+			debug(0, "Skipping junk found at the end of the QuickTime file");
+			return 0;
+		} else if (_parseTable[i].type == 0) { // skip leaf atom data
 			debug(0, ">>> Skipped [%s]", tag2str(a.type));
 
 			_fd->seek(a.size, SEEK_CUR);
