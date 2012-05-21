@@ -138,8 +138,17 @@ void RMWindow::GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
 
 	Common::Point center(rcBoundEllipse.left + rcBoundEllipse.width() / 2, 
 		rcBoundEllipse.top + rcBoundEllipse.height() / 2);
-	int radius = rcBoundEllipse.width() / 2;
 
+	// The rectangle technically defines the area inside the ellipse, with the corners touching
+	// the ellipse boundary. Since we're currently simulating the ellipse using a plain circle,
+	// we need to calculate a necessary width using the hypotenuse of X/2 & Y/2
+	int x2y2 = (rcBoundEllipse.width() / 2) * (rcBoundEllipse.width() / 2) +
+			(rcBoundEllipse.height() / 2) * (rcBoundEllipse.height() / 2);
+	int radius = 0;
+	while ((radius * radius) < x2y2)
+		++radius;
+
+	// Proceed copying a circular area of the frame with the calculated radius onto the screen
 	int error = -radius;
 	int x = radius;
 	int y = 0;
@@ -177,17 +186,19 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 		return;
 
 	const byte *pSrc;
+	int xs = MAX(center.x - x, 0);
+	int width = MIN(RM_SX - xs, x * 2);
 
 	if ((center.y - y) >= 0) {
 		// Draw line in top half of circle
-		pSrc = lpBuf + ((center.y - y) * RM_SX * 2) + (center.x - x) * 2;
-		g_system->copyRectToScreen(pSrc, RM_SX * 2, center.x - x, center.y - y, x * 2, 1);
+		pSrc = lpBuf + ((center.y - y) * RM_SX * 2) + xs * 2;
+		g_system->copyRectToScreen(pSrc, RM_SX * 2, xs, center.y - y, width, 1);
 	}
 
 	if ((center.y + y) < RM_SY) {
 		// Draw line in bottom half of circle
-		pSrc = lpBuf + ((center.y + y) * RM_SX * 2) + (center.x - x) * 2;
-		g_system->copyRectToScreen(pSrc, RM_SX * 2, center.x - x, center.y + y, x * 2, 1);
+		pSrc = lpBuf + ((center.y + y) * RM_SX * 2) + xs * 2;
+		g_system->copyRectToScreen(pSrc, RM_SX * 2, xs, center.y + y, width, 1);
 	}
 }
 
