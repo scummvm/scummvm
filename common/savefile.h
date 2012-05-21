@@ -108,7 +108,7 @@ public:
 	 * @param name	the name of the savefile
 	 * @return pointer to an OutSaveFile, or NULL if an error occurred.
 	 */
-	virtual OutSaveFile *openForSaving(const String &name) = 0;
+	virtual OutSaveFile *openForSaving(const String &name, bool compress = true) = 0;
 
 	/**
 	 * Open the file with the specified name in the given directory for loading.

@@ -97,7 +97,7 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String 
 	return Common::wrapCompressedReadStream(sf);
 }
 
-Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String &filename) {
+Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String &filename, bool compress) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	Common::String savePathName = getSavePath();
 	checkPath(Common::FSNode(savePathName));
@@ -112,7 +112,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 	// Open the file for saving
 	Common::WriteStream *sf = file.createWriteStream();
 
-	return Common::wrapCompressedWriteStream(sf);
+	return compress ? Common::wrapCompressedWriteStream(sf) : sf;
 }
 
 bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
