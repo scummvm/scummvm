@@ -73,7 +73,8 @@ enum EventType {
 	 * An associated enumerated type can accomplish this.
 	 **/
 	EVENT_PREDICTIVE_DIALOG = 12,
-	EVENT_TIMER = 24
+	EVENT_TIMER = 24,
+	EVENT_SCREENSHOT = 27
 
 #ifdef ENABLE_KEYMAPPER
 	,

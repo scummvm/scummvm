@@ -217,6 +217,10 @@ bool createThumbnailFromScreen(Graphics::Surface* surf) {
 	return createThumbnail(*surf, screen);
 }
 
+bool createScreenShot(Graphics::Surface &surf) {
+	return grabScreen565(&surf);
+}
+
 bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette) {
 	assert(surf);
 

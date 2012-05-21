@@ -89,4 +89,12 @@ extern bool createThumbnailFromScreen(Graphics::Surface *surf);
  */
 extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
 
+/**
+ * Creates a thumbnail from the current screen (wrapper for grabScreen565 function).
+ *
+ * @param surf	a surface
+ * @return		false if a error occurred
+ */
+extern bool createScreenShot(Graphics::Surface &surf);
+
 #endif

@@ -137,6 +137,17 @@ bool saveThumbnail(Common::WriteStream &out) {
 	return success;
 }
 
+bool saveScreenShot(Common::WriteStream &out) {
+	Graphics::Surface screen;
+	bool result;
+	if (!createScreenShot(screen)) {
+		return false;
+	}
+	result = saveThumbnail(out, screen);
+	screen.free();
+	return result;
+}
+
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	if (thumb.format.bytesPerPixel != 2) {
 		warning("trying to save thumbnail with bpp different than 2");

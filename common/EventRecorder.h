@@ -158,6 +158,9 @@ private:
 	volatile bool _hasPlaybackEvent;
 	Event _playbackEvent;
 	SeekableReadStream *_playbackFile;
+	uint32 _lastScreenshotTime;
+	uint32 _screenshotPeriod;
+	void MakeScreenShot();
 
 	enum RecordMode {
 		kPassthrough = 0,
