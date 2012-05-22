@@ -2423,9 +2423,9 @@ void LilliputScript::OC_sub17C0E() {
 	mapPtr[3] = _vm->_currentCharacterVariables[8];
 
 	if (var2 == 0) {
-		_byte12A09 = 1;
+		_vm->_refreshScreenFlag = true;
 		_vm->displayLandscape();
-		_byte12A09 = 0;
+		_vm->_refreshScreenFlag = false;
 	}
 }
 
@@ -2680,9 +2680,9 @@ void LilliputScript::OC_sub17F68() {
 	if (newPosY > 56)
 		newPosY = 56;
 
-	_byte12A09 = 1;
+	_vm->_refreshScreenFlag = true;
 	_vm->viewportScrollTo(Common::Point(newPosX, newPosY));
-	_byte12A09 = 0;
+	_vm->_refreshScreenFlag = false;
 
 }
 
@@ -2811,9 +2811,9 @@ void LilliputScript::OC_sub180C3() {
 	if (y > 56)
 		y = 56;
 
-	_byte12A09 = 1;
+	_vm->_refreshScreenFlag = true;
 	_vm->viewportScrollTo(Common::Point(x, y));
-	_byte12A09 = 0;
+	_vm->_refreshScreenFlag = false;
 }
 
 void LilliputScript::OC_setViewPortPos() {
@@ -2833,19 +2833,20 @@ void LilliputScript::OC_setCurrentCharacterAltitude() {
 }
 
 void LilliputScript::OC_sub1817F() {
-	debugC(1, kDebugScriptTBC, "OC_sub1817F()");
+	debugC(1, kDebugScript, "OC_sub1817F()");
 
-	int var1 = _currScript->readUint16LE();
-	int var2 = _currScript->readUint16LE();
+	int16 var1 = _currScript->readUint16LE();
+	int16 var2 = _currScript->readUint16LE();
 	
-	int b1 = var1 & 0xFF;
-	int b2 = var2 & 0xFF;
-	sub1818B(Common::Point(b1, b2));
+	int16 x = var1 & 0xFF;
+	int16 y = var2 & 0xFF;
+	sub1818B(Common::Point(x, y));
 }
 
-//TODO checkme: parameter order is maybe wrong
-void LilliputScript::sub1818B(Common::Point pos) {
-	debugC(2, kDebugScriptTBC, "sub1818B(%d - %d)", pos.x, pos.y);
+void LilliputScript::sub1818B(Common::Point point) {
+	debugC(2, kDebugScriptTBC, "sub1818B(%d - %d)", point.x, point.y);
+
+	Common::Point pos = point;
 	for (int i = 0; i <  _vm->_word1817B; i++) {
 		if (_array1813BPos[i].x == pos.x) {
 			pos.y += _array1813BPos[i].y;
@@ -2861,34 +2862,38 @@ void LilliputScript::sub1818B(Common::Point pos) {
 	++_vm->_word1817B;
 }
 
-//TODO checkme: case 0x2D is dubious
 void LilliputScript::OC_sub181BB() {
 	debugC(1, kDebugScriptTBC, "OC_sub181BB()");
 	
-	int b = _currScript->readUint16LE();
-	int d = _currScript->readUint16LE() & 0xFF;
-	int s = _currScript->readUint16LE();
-	int c = _vm->_currentCharacterVariables[s];
-	int c2 = 0;
+	int16 x = _currScript->readUint16LE() & 0xFF;
+	int8 oper = _currScript->readUint16LE() & 0xFF;
+	int16 index = _currScript->readSint16LE();
+	int16 c = _vm->_currentCharacterVariables[index];
 
-	if (d == 0x2D) {
+	switch (oper) {
+	case '-':
 		c = - 1 - c;
-	} else if (d == 0x3E) {
-		c = c - 0x80;
+		break;
+	case '>':
+		c -= 128;
 		if (c < 0) 
 			c = 0;
-		c = c * 2;
-	} else if (d == 0x3C) {
-		c = -1 - c;
-		c = c - 0x80;
+		c *= 2;
+		break;
+	case '<':
+		c = -1 - c - 128;
 		if (c < 0)
 			c = 0;
-		c = c * 2;
+		c *= 2;
+		break;
+	default:
+		warning("OC_sub181BB: skipped oper 0x%x", oper);
+		break;
 	}
-
-	int a = (_currScript->readUint16LE() * c) + (c & 0xFF);
-	b = (b & 0xFF00) + a;
-	sub1818B(Common::Point(b >> 8, b & 0xFF));
+	c &= 0xFF;
+	int y = (_currScript->readSint16LE() * c) + c;
+	y >>= 8;
+	sub1818B(Common::Point(x, y));
 }
 
 void LilliputScript::OC_sub18213() {
@@ -2938,17 +2943,17 @@ void LilliputScript::OC_CharacterVariableAddOrRemoveFlag() {
 void LilliputScript::OC_PaletteFadeOut() {
 	debugC(1, kDebugScript, "OC_PaletteFadeOut()");
 
-	_byte12A09 = 1;
+	_vm->_refreshScreenFlag = true;
 	_vm->paletteFadeOut();
-	_byte12A09 = 0;
+	_vm->_refreshScreenFlag = false;
 }
 
 void LilliputScript::OC_PaletteFadeIn() {
 	debugC(1, kDebugScript, "OC_PaletteFadeIn()");
 
-	_byte12A09 = 1;
+	_vm->_refreshScreenFlag = true;
 	_vm->paletteFadeIn();
-	_byte12A09 = 0;
+	_vm->_refreshScreenFlag = false;
 }
 
 void LilliputScript::OC_loadAndDisplayCUBESx_GFX() {
@@ -3041,7 +3046,7 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	int var1 = _currScript->readUint16LE() & 0xff;
 	_vm->_byte15EAD = var1;
 
-	_byte12A09 = 1;
+	_vm->_refreshScreenFlag = true;
 	_talkingCharacter = -1;
 	OC_PaletteFadeOut();
 	_vm->_word15AC2 = 1;
@@ -3053,7 +3058,7 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	_vm->_keyboard_oldIndex = 0;
 	_vm->_keyboard_nextIndex = 0;
 
-	_vm->_byte12A09 = 0;
+	_vm->_refreshScreenFlag = false;
 }
 
 void LilliputScript::OC_sub17E22_speech1IfSoundOff() {
@@ -3108,7 +3113,7 @@ void LilliputScript::displayNumber(byte var1, Common::Point pos) {
 void LilliputScript::OC_displayVGAFile() {
 	debugC(1, kDebugScript, "OC_displayVGAFile()");
 
-	_byte12A09 = 1;
+	_vm->_refreshScreenFlag = true;
 	_vm->paletteFadeOut();
 	int curWord = _currScript->readUint16LE();
 	int index = _vm->_packedStringIndex[curWord];
@@ -3165,7 +3170,7 @@ void LilliputScript::OC_initGameAreaDisplay() {
 	_vm->initGameAreaDisplay();
 
 	OC_PaletteFadeIn();
-	_byte12A09 = 0;
+	_vm->_refreshScreenFlag = false;
 	
 	_vm->_soundHandler->contentFct5();
 }
