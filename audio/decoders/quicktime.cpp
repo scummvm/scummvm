@@ -338,7 +338,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::seek(const Timestamp &where) {
 	_queue = createStream();
 	_samplesQueued = 0;
 
-	if (where > getLength()) {
+	if (where >= getLength()) {
 		// We're done
 		_curEdit = _parentTrack->editCount;
 		return true;
