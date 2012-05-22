@@ -55,6 +55,7 @@ void DreamWebEngine::volumeAdjust() {
 }
 
 void DreamWebEngine::playChannel0(uint8 index, uint8 repeat) {
+	debug(1, "playChannel0(index:%d, repeat:%d)", index, repeat);
 	_channel0Playing = index;
 	if (index >= 12)
 		index -= 12;
@@ -72,6 +73,7 @@ void DreamWebEngine::playChannel1(uint8 index) {
 }
 
 void DreamWebEngine::cancelCh0() {
+	debug(1, "cancelCh0()");
 	_channel0Repeat = 0;
 	_channel0Playing = 255;
 	stopSound(0);
@@ -83,6 +85,7 @@ void DreamWebEngine::cancelCh1() {
 }
 
 void DreamWebEngine::loadRoomsSample() {
+	debug(1, "loadRoomsSample() _roomsSample:%d", _roomsSample);
 	uint8 sample = _roomsSample;
 
 	if (sample == 255 || _currentSample == sample)
@@ -190,6 +193,11 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 }
 
 void DreamWebEngine::soundHandler() {
+	static uint8 volumeOld = 0, channel0Old = 0, channel0PlayingOld = 0;
+	if (_volume != volumeOld || _channel0 != channel0Old || _channel0Playing != channel0PlayingOld)
+		debug(1, "soundHandler() _volume: %d _channel0: %d _channel0Playing: %d", _volume, _channel0, _channel0Playing);
+	volumeOld = _volume, channel0Old = _channel0, channel0PlayingOld = _channel0Playing;
+
 	_subtitles = ConfMan.getBool("subtitles");
 	volumeAdjust();
 
@@ -230,6 +238,8 @@ void DreamWebEngine::soundHandler() {
 		}
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
+		if (_channel0Playing != 255 && _channel0 != 0)
+			debug(1, "!_mixer->isSoundHandleActive _channelHandle[0] _channel0Playing:%d _channel0:%d", _channel0Playing, _channel0);
 		_channel0Playing = 255;
 		_channel0 = 0;
 	}
@@ -237,7 +247,6 @@ void DreamWebEngine::soundHandler() {
 		_channel1Playing = 255;
 		_channel1 = 0;
 	}
-
 }
 
 void DreamWebEngine::loadSounds(uint bank, const Common::String &suffix) {
