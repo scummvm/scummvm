@@ -2073,16 +2073,6 @@ DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32
 	warning("TODO: Validate that the use of events in TakeOwnership/ReleaseOwnership match original");
 }
 
-
-
-
-
-
-
-
-
-
-
 /*
  *  Music
  *  -----

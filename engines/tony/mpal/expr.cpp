@@ -43,36 +43,35 @@ namespace MPAL {
  * @defgroup Mathamatical operations
  */
 
-#define OP_MUL     ((1<<4)|0)
-#define OP_DIV     ((1<<4)|1)
-#define OP_MODULE  ((1<<4)|2)
-#define OP_ADD     ((2<<4)|0)
-#define OP_SUB     ((2<<4)|1)
-#define OP_SHL     ((3<<4)|0)
-#define OP_SHR     ((3<<4)|1)
-#define OP_MINOR   ((4<<4)|0)
-#define OP_MAJOR   ((4<<4)|1)
-#define OP_MINEQ   ((4<<4)|2)
-#define OP_MAJEQ   ((4<<4)|3)
-#define OP_EQUAL   ((5<<4)|0)
-#define OP_NOEQUAL ((5<<4)|1)
-#define OP_BITAND  ((6<<4)|0)
-#define OP_BITXOR  ((7<<4)|0)
-#define OP_BITOR   ((8<<4)|0)
-#define OP_AND     ((9<<4)|0)
-#define OP_OR      ((10<<4)|0)
+#define OP_MUL     ((1  << 4) | 0)
+#define OP_DIV     ((1  << 4) | 1)
+#define OP_MODULE  ((1  << 4) | 2)
+#define OP_ADD     ((2  << 4) | 0)
+#define OP_SUB     ((2  << 4) | 1)
+#define OP_SHL     ((3  << 4) | 0)
+#define OP_SHR     ((3  << 4) | 1)
+#define OP_MINOR   ((4  << 4) | 0)
+#define OP_MAJOR   ((4  << 4) | 1)
+#define OP_MINEQ   ((4  << 4) | 2)
+#define OP_MAJEQ   ((4  << 4) | 3)
+#define OP_EQUAL   ((5  << 4) | 0)
+#define OP_NOEQUAL ((5  << 4) | 1)
+#define OP_BITAND  ((6  << 4) | 0)
+#define OP_BITXOR  ((7  << 4) | 0)
+#define OP_BITOR   ((8  << 4) | 0)
+#define OP_AND     ((9  << 4) | 0)
+#define OP_OR      ((10 << 4) | 0)
 
 
 /**
  * Object types that can be contained in an EXPRESSION structure
  */
 enum ExprListTypes {
-	ELT_NUMBER = 1,
-	ELT_VAR = 2,
-	ELT_PARENTH = 3,
+	ELT_NUMBER   = 1,
+	ELT_VAR      = 2,
+	ELT_PARENTH  = 3,
 	ELT_PARENTH2 = 4
 };
-
 
 /**
  * @defgroup Structures
@@ -95,7 +94,7 @@ typedef struct {
 	byte symbol;					// Simbolo matematico (vedi #define OP_*)
 
 } EXPRESSION;
-typedef EXPRESSION*     LPEXPRESSION;
+typedef EXPRESSION *LPEXPRESSION;
 
 
 /**
@@ -186,13 +185,13 @@ static void Solve(LPEXPRESSION one, int num) {
 	while (num > 1) {
 		two=one + 1;
 		if ((two->symbol == 0) || (one->symbol & 0xF0) <= (two->symbol & 0xF0)) {
-			two->val.num=Compute(one->val.num, two->val.num,one->symbol);
+			two->val.num = Compute(one->val.num, two->val.num,one->symbol);
 			CopyMemory(one, two, (num - 1) * sizeof(EXPRESSION));
 			num--;
 		} else {
 			j = 1;
 			three = two + 1;
-			while ((three->symbol != 0) && (two->symbol & 0xF0)>(three->symbol & 0xF0)) {
+			while ((three->symbol != 0) && (two->symbol & 0xF0) > (three->symbol & 0xF0)) {
 				two++;
 				three++;
 				j++;
@@ -221,10 +220,10 @@ static int EvaluateAndFreeExpression(byte *expr) {
 	one = (LPEXPRESSION)(expr + 1);
 
 	// 1) Sostituzioni delle variabili
-	for (i=0, cur=one; i < num; i++, cur++) {
-		if (cur->type==ELT_VAR) {
-			cur->type=ELT_NUMBER;
-			cur->val.num=varGetValue(cur->val.name);
+	for (i = 0, cur = one; i < num; i++, cur++) {
+		if (cur->type == ELT_VAR) {
+			cur->type = ELT_NUMBER;
+			cur->val.num = varGetValue(cur->val.name);
 		}
 	}
 
@@ -265,7 +264,7 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 		return NULL;
 
 	*h = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
-	if (*h==NULL)
+	if (*h == NULL)
 		return NULL;
 
 	start = (byte *)GlobalLock(*h);
@@ -332,7 +331,6 @@ int EvaluateExpression(HGLOBAL h) {
 	return ret;
 }
 
-
 /**
  * Compare two mathematical expressions together
  *
@@ -356,8 +354,8 @@ bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
 		return false;
 	}
 
-	one = (LPEXPRESSION)(e1+1);
-	two = (LPEXPRESSION)(e2+1);
+	one = (LPEXPRESSION)(e1 + 1);
+	two = (LPEXPRESSION)(e2 + 1);
 
 	for (i = 0; i < num1; i++) {
 		if (one->type != two->type || (i != num1 - 1 && one->symbol != two->symbol)) {

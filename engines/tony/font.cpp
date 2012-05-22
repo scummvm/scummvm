@@ -1430,8 +1430,8 @@ void RMFontCredits::Init(void) {
 *       Metodi di RMFontObj
 \****************************************************************************/
 
-#define TOUPPER(a)  ((a) >='a'&&(a)<='z'?(a)+'A'-'a':(a))
-#define TOLOWER(a)  ((a) >='A'&&(a)<='Z'?(a)+'a'-'A':(a))
+#define TOUPPER(a)  ((a) >= 'a' && (a) <= 'z' ? (a) + 'A' - 'a' : (a))
+#define TOLOWER(a)  ((a) >= 'A' && (a) <= 'Z' ? (a) + 'a' - 'A' : (a))
 
 void RMFontObj::SetBothCase(int nChar, int nNext, signed char spiazz) {
 	l2Table[TOUPPER(nChar)][TOUPPER(nNext)] = spiazz;
@@ -1849,7 +1849,8 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 		j += font->StringLen(*p);
 		if (j > (((aHorType == HLEFTPAR) && (i > 0)) ? maxLineLength - 25 : maxLineLength)) {
 			j -= font->StringLen(*p, p[1]);
-			if (j > x) x = j;
+			if (j > x)
+				x = j;
 
 			// Back to the first usable space
 			//
@@ -1858,13 +1859,15 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 			// This workaround has the partial word broken up so it will still display
 			//
 			old_p = p;
-			while (*p != ' ' && *p != '-' && p > string) p--;
+			while (*p != ' ' && *p != '-' && p > string)
+				p--;
 
 			if (p == string)
 				p = old_p;
 
 			// Check if there are any blanks to end
-			while (*p == ' ' && *p != '\0') p++;
+			while (*p == ' ' && *p != '\0')
+				p++;
 			if (*p == '\0')
 				break;
 			p--;
@@ -1875,7 +1878,8 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 		p++;
 	}
 
-	if (j > x) x = j;
+	if (j > x)
+		x = j;
 
 	i++;
 	numlines = i;
@@ -1948,10 +1952,14 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 
 void RMText::ClipOnScreen(RMGfxPrimitive *prim) {
 	// Don't let it go outside the screen
-	if (prim->Dst().x1 < 5) prim->Dst().x1 = 5;
-	if (prim->Dst().y1 < 5) prim->Dst().y1 = 5;
-	if (prim->Dst().x1 + m_dimx > 635) prim->Dst().x1 = 635 - m_dimx;
-	if (prim->Dst().y1 + m_dimy > 475) prim->Dst().y1 = 475 - m_dimy;
+	if (prim->Dst().x1 < 5)
+		prim->Dst().x1 = 5;
+	if (prim->Dst().y1 < 5)
+		prim->Dst().y1 = 5;
+	if (prim->Dst().x1 + m_dimx > 635)
+		prim->Dst().x1 = 635 - m_dimx;
+	if (prim->Dst().y1 + m_dimy > 475)
+		prim->Dst().y1 = 475 - m_dimy;
 }
 
 void RMText::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -2068,34 +2076,40 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 
 	// Don't erase the background
 	if (m_bSkipStatus) {
-		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
+		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
 			if (GLOBALS.bCfgTimerizedText) {
-				if (!m_bForceNoTime)
+				if (!m_bForceNoTime) {
 					if (_vm->GetTime() > (uint32)m_time + m_startTime)
 						return;
+				}
 			}
+		}
 
-		if (!m_bNoTab)
+		if (!m_bNoTab) {
 			if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
 				return;
+		}
 
-		if (!m_bNoTab)
-			if (m_input)
+		if (!m_bNoTab) {
+			if (m_input) {
 				if (m_input->MouseLeftClicked() || m_input->MouseRightClicked())
 					return;
+			}
+		}
 	}
 	// Erase the background
-	else {
-		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE))
-			if (!m_bForceNoTime)
-				if (_vm->GetTime() > (uint32)m_time + m_startTime)
-					return;
+	else if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
+		if (!m_bForceNoTime) {
+			if (_vm->GetTime() > (uint32)m_time + m_startTime)
+				return;
+		}
 	}
 
 	// If time is forced
-	if (m_bForceTime)
+	if (m_bForceTime) {
 		if (_vm->GetTime() > (uint32)m_time + m_startTime)
 			return;
+	}
 
 	if (hCustomSkip != CORO_INVALID_PID_VALUE) {
 		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, hCustomSkip, 0, &_ctx->expired);

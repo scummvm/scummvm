@@ -47,7 +47,6 @@ namespace MPAL {
  */
 const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h);
 
-
 /**
  * Calculate the value of a mathamatical expression
  *
@@ -55,7 +54,6 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h);
  * @returns		Numeric value
  */
 int EvaluateExpression(HGLOBAL h);
-
 
 /**
  * Compare two mathematical expressions together

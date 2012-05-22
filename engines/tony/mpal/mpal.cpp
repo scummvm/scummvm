@@ -345,7 +345,7 @@ static char *DuplicateDialogPeriod(uint32 nPeriod) {
 	const char *origmsg;
 	char *clonemsg;
 	LPMPALDIALOG dialog = GLOBALS.lpmdDialogs + GLOBALS.nExecutingDialog;
-	int i,j;
+	int i, j;
 
 	for (j = 0; dialog->Periods[j] != NULL; j++)
 		if (dialog->PeriodNums[j] == nPeriod) {
@@ -457,7 +457,7 @@ static uint32 *GetItemList(uint32 nLoc) {
 	LPMPALVAR v = GLOBALS.lpmvVars;
 
 	num = 0;
-	for (i = 0; i < GLOBALS.nVars; i++,v++) {
+	for (i = 0; i < GLOBALS.nVars; i++, v++) {
 		if (strncmp(v->lpszVarName,"Location",8) == 0 && v->dwVal == nLoc)
 			num++;
 	}
@@ -468,8 +468,8 @@ static uint32 *GetItemList(uint32 nLoc) {
 
 	v = GLOBALS.lpmvVars;
 	j = 0;
-	for (i = 0; i < GLOBALS.nVars; i++,v++) {
-		if (strncmp(v->lpszVarName,"Location",8) == 0 && v->dwVal == nLoc) {
+	for (i = 0; i < GLOBALS.nVars; i++, v++) {
+		if (strncmp(v->lpszVarName, "Location", 8) == 0 && v->dwVal == nLoc) {
 			sscanf(v->lpszVarName, "Location.%u", &il[j]);
 			j++;
 		}
@@ -504,7 +504,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 		if (i >= 0x10) {	// From 1.0, there's a destination point for each object
 			ret->destX = (int16)READ_LE_UINT16(dat);
 			ret->destY = (int16)READ_LE_UINT16(dat + 2);
-			dat+=4;
+			dat += 4;
 		}
 
 		if (i >= 0x11) {	// From 1.1, there's animation speed
@@ -514,9 +514,9 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 			ret->speed = 150;
 	}
 
-	ret->numframe=*dat++;
-	ret->numpattern=*dat++;
-	ret->Zvalue=*dat++;
+	ret->numframe = *dat++;
+	ret->numpattern = *dat++;
+	ret->Zvalue = *dat++;
 
 	// Upload the left & top co-ordinates of each frame
 	for (i = 0; i < ret->numframe; i++) {
@@ -529,7 +529,7 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 	for (i = 0; i < ret->numframe; i++) {
 		ret->frameslocations[i].right = (int16)READ_LE_UINT16(dat) + ret->frameslocations[i].left;
 		ret->frameslocations[i].bottom = (int16)READ_LE_UINT16(dat + 2) + ret->frameslocations[i].top;
-		dat+=4;
+		dat += 4;
 	}
 
 	// Upload the bounding boxes of each frame
@@ -538,12 +538,12 @@ static LPITEM GetItemData(uint32 nOrdItem) {
 		ret->bbox[i].top = (int16)READ_LE_UINT16(dat + 2);
 		ret->bbox[i].right = (int16)READ_LE_UINT16(dat + 4);
 		ret->bbox[i].bottom = (int16)READ_LE_UINT16(dat + 6);
-		dat+=8;
+		dat += 8;
 	}
 
 	// Load the animation pattern
 	patlength = dat;
-	dat+=ret->numpattern;
+	dat += ret->numpattern;
 
 	for (i = 1; i < ret->numpattern; i++) {
 		for (j = 0; j < patlength[i]; j++)
@@ -639,7 +639,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 		}
 
 		_ctx->numHandles = 0;
-		for (_ctx->j = 0; _ctx->j<s->Moment[_ctx->i].nCmds; _ctx->j++) {
+		for (_ctx->j = 0; _ctx->j < s->Moment[_ctx->i].nCmds; _ctx->j++) {
 			_ctx->k = s->Moment[_ctx->i].CmdNum[_ctx->j];
 
 			if (s->Command[_ctx->k].type == 1) {
@@ -1046,9 +1046,6 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	CORO_END_CODE;
 }
-
-
-
 
 
 /**
@@ -1847,7 +1844,7 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		n = GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
-			n[0]='\0';
+			n[0] = '\0';
 		else {
 			LockItems();
 			y = itemGetOrderFromNum(x);
@@ -2288,7 +2285,7 @@ void mpalDumpMessages(void) {
 			}
 
 			// Now make a loop over all the periods
-			for (j = 0;j<nPeriods; j++) {
+			for (j = 0; j < nPeriods; j++) {
 				if (nPeriods == 1)
 					sprintf(fname, "000-%05d.WAV", GLOBALS.lpmmMsgs[i].wNum);
 				else
@@ -2300,7 +2297,8 @@ void mpalDumpMessages(void) {
 					*p = '\"';
 
 				p = frase;
-				while (*p == ' ') p++;
+				while (*p == ' ')
+					p++;
 				if (*p == '\0')
 					continue;
 
@@ -2361,7 +2359,7 @@ void mpalDumpOthers(void) {
 			if (OutputStartOther(GLOBALS.lpmmMsgs[i].wNum, f)) {	
 				while (1) {
 					// Find the end of the current period
-					while (*p!='\0')
+					while (*p != '\0')
 						p++;
 					
 					// If there is another '0' at the end, then the message is finished
@@ -2382,11 +2380,12 @@ void mpalDumpOthers(void) {
 
 					strcpy(frase,lpPeriods[j]);
 					
-					while ((p = strchr(frase,'^')) != NULL)
+					while ((p = strchr(frase, '^')) != NULL)
 						*p = '\"';
 
 					p = frase;
-					while (*p == ' ') p++;
+					while (*p == ' ')
+						p++;
 					if (*p == '\0')
 						continue;		
 					
@@ -2861,7 +2860,8 @@ void mpalDumpDialog(LPMPALDIALOG dlg) {
 						*p = '\"';
 
 					p = frase;
-					while (*p == ' ') p++;
+					while (*p == ' ')
+						p++;
 					if (*p == '\0')
 						continue;				
 
