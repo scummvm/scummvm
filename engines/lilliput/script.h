@@ -98,7 +98,6 @@ private:
 	Common::Stack<ScriptStream *> _scriptStack;
 
 	byte _byte16F05_ScriptHandler;
-	byte _byte12A09;
 	byte _byte129A0;
 	byte _byte10806;
 	byte _lastRandomValue;
@@ -257,7 +256,7 @@ private:
 	void OC_setViewPortPos();
 	void OC_setCurrentCharacterAltitude();
 	void OC_sub1817F();
-	void sub1818B(Common::Point pos);
+	void sub1818B(Common::Point point);
 	void OC_sub181BB();
 	void OC_sub18213();
 	void OC_sub18252();

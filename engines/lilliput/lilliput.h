@@ -111,7 +111,7 @@ public:
 	byte _byte12A06;
 	byte _byte12A07;
 	byte _byte12A08;
-	byte _byte12A09;
+	bool _refreshScreenFlag;
 	byte _byte16552;
 	int8 _lastInterfaceHotspotIndex;
 	byte _lastInterfaceHotspotButton; // Unused: set by 2 functions, but never used elsewhere
@@ -239,7 +239,7 @@ public:
 	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);
 	void displayGameArea();
 	void prepareGameArea();
-	void displayFunction16();
+	void displayRefreshScreen();
 	void restoreSurfaceSpeech();
 	void displayFunction18(int var1, int var2, int var3, int var4);
 	void displayCharacter(int index, Common::Point pos, int flags);

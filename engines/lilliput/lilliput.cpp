@@ -141,11 +141,11 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_byte12A06 = 2;
 	_byte12A07 = 0;
 	_byte12A08 = 0;
-	_byte12A09 = 0;
+	_refreshScreenFlag = false;
 	_byte16552 = 0;
 	_lastInterfaceHotspotIndex = -1;
 	_lastInterfaceHotspotButton = 0;
-	_byte16F08 = 0;	
+	_byte16F08 = 0;
 	_byte16C9F = 0;
 	_lastAnimationTick = 0;
 
@@ -258,10 +258,9 @@ void LilliputEngine::newInt8() {
 	}
 	--_byte12A06;
 	// TODO: check 'out 20h, 20h'
-	
-	// hack for the title stars because _int8installed is not set at the good place for the moment
-	//if (!_int8installed)
-	//	return;
+
+	if (!_int8installed)
+	  return;
 
 	// if (_soundEnabled)
 	_soundHandler->contentFct1();
@@ -276,8 +275,8 @@ void LilliputEngine::newInt8() {
 				--_sound_byte16F06;
 
 			_animationTick ^= 1;
-			if (_byte12A09 != 1 && _int8installed) // hack for the title stars because _int8installed is not set at the good place for the moment
-				displayFunction16();
+			if (!_refreshScreenFlag)
+				displayRefreshScreen();
 		}
 		_byte12A08 = 0;
 	}
@@ -328,7 +327,7 @@ void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 		// Sprite mirror
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				// May need a hack of 1 pixel 
+				// May need a hack of 1 pixel
 				if (src[15 - x] != 0)
 					buf[x] = src[15 - x];
 			}
@@ -737,7 +736,7 @@ void LilliputEngine::moveCharacters() {
 			_characterDisplayY[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
 			_charactersToDisplay[_numCharactersToDisplay] = i;
 			++_numCharactersToDisplay;
- 		}
+		}
 	}
 
 	sortCharacters();
@@ -790,8 +789,8 @@ void LilliputEngine::prepareGameArea() {
 	}
 }
 
-void LilliputEngine::displayFunction16() {
-	debugC(2, kDebugEngineTBC, "displayFunction16()");
+void LilliputEngine::displayRefreshScreen() {
+	debugC(2, kDebugEngineTBC, "displayRefreshScreen()");
 
 	if (_displayMap == 1) {
 		bool forceReturnFl = false;
@@ -848,7 +847,7 @@ void LilliputEngine::displaySmallAnims() {
 		return;
 
 	_lastAnimationTick = _animationTick;
-	
+
 	assert(_smallAnimsFrameIndex < 8);
 	int subIndex = _smallAnimsFrameIndex;
 	displaySmallIndexedAnim(0, subIndex);
@@ -2316,7 +2315,7 @@ void LilliputEngine::pollEvent() {
 		case Common::EVENT_QUIT:
 			_shouldQuit = true;
 			break;
-		// TODO: handle keyboard
+			// TODO: handle keyboard
 		default:
 			break;
 		}
@@ -2735,16 +2734,11 @@ Common::Error LilliputEngine::run() {
 	_bufferIsoMap = loadRaw("ISOMAP.DTA");
 
 	loadRules();
-	// Hack: int8 should be installed at this point, but it's crashing during the
-	// rendering when the title screens are displayed
-	//_int8installed = true;
+	_int8installed = true;
 
 	_lastTime = _system->getMillis();
 
 	_scriptHandler->runScript(ScriptStream(_initScript, _initScriptSize));
-
-	// Hack, see above
-	_int8installed = true;
 
 	while (!_shouldQuit) {
 		handleMenu();
