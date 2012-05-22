@@ -385,7 +385,7 @@ bool SciEngine::gameHasFanMadePatch() {
 		{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
 		{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
 		{ GID_QFG1VGA,    994,   4388,      0,  0x00 },
-		{ GID_QFG3,       994,   4714,      0,  0x00 },
+		{ GID_QFG3,        33,    260,      0,  0x00 },
 		// TODO: Disabled, as it fixes a whole lot of bugs which can't be tested till SCI2.1 support is finished
 		//{ GID_QFG4,       710,  11477,      0,  0x00 },
 		{ GID_SQ1,        994,   4740,      0,  0x00 },
