@@ -146,6 +146,13 @@ class ComposerEngine : public Engine {
 protected:
 	Common::Error run();
 
+#ifdef SAVING_ANYWHERE
+	bool canLoadGameStateCurrently() { return true; }
+	Common::Error loadGameState(int slot);
+	bool canSaveGameStateCurrently() { return true; }
+	Common::Error saveGameState(int slot, const Common::String &desc);
+#endif
+
 public:
 	ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc);
 	virtual ~ComposerEngine();
@@ -203,6 +210,9 @@ private:
 	uint16 _mouseSpriteId;
 	Common::Point _mouseOffset;
 
+#ifdef SAVING_ANYWHERE
+	Common::String makeSaveGameName(int slot);
+#endif
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getFilename(const Common::String &section, uint id);
 	Common::String mangleFilename(Common::String filename);
