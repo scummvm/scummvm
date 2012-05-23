@@ -80,7 +80,7 @@ protected:
 	virtual int ConvertToLetter(byte nChar) = 0;
 
 	// Character width
-	virtual int LetterLength(byte nChar, byte nNext = 0) = 0;
+	virtual int LetterLength(int nChar, int nNext = 0) = 0;
 
 public:
 	virtual int LetterHeight(void) = 0;
@@ -129,8 +129,8 @@ protected:
 	int ConvertToLetter(byte nChar) {
 		return cTable[nChar];
 	}
-	int LetterLength(byte nChar, byte nNext = 0) {
-		return (nChar != -1 ? lTable[nChar] + l2Table[nChar][nNext] : lDefault);
+	int LetterLength(int nChar, int nNext = 0) {
+		return (nChar != -1 ? lTable[(byte)nChar] + l2Table[(byte)nChar][(byte)nNext] : lDefault);
 	}
 
 public:
