@@ -669,7 +669,7 @@ void LilliputEngine::displayCharactersOnMap() {
 	restoreSurfaceUnderMousePointer();
 
 	byte *buf = (byte *)_mainSurface->getPixels();
-	for (int index = _numCharacters - 1; index >=0; index--) {
+	for (int index = _numCharacters - 1; index >= 0; index--) {
 		if (((_rulesBuffer2_11[index] & 2) == 0) && (_scriptHandler->_array1614BPosY[index] != -1)) {
 			int y = (3 * _scriptHandler->_array1614BPosY[index]) + 1;
 			int x = (_scriptHandler->_array16123PosX[index] * 4) + 1;
@@ -1098,12 +1098,12 @@ void LilliputEngine::sub16CA0() {
 	}
 }
 
-void LilliputEngine::displayFunction18(int var1, int var2, int var3, int var4) {
-	debugC(2, kDebugEngineTBC, "displayFunction18(%d, %d, %d, %d)", var1, var2, var3, var4);
+void LilliputEngine::displayCharacterStatBar(int8 var1, int16 var2, int8 var3, int16 var4) {
+	debugC(2, kDebugEngineTBC, "displayCharacterStatBar(%d, %d, %d, %d)", var1, var2, var3, var4);
 
 	restoreSurfaceUnderMousePointer();
 
-	if ((var1 & 0xFF) == 0x2D) {
+	if (var1 == 45) {
 		var2 += 35;
 		var3 -= 35;
 
@@ -1114,8 +1114,7 @@ void LilliputEngine::displayFunction18(int var1, int var2, int var3, int var4) {
 	}
 
 	byte *vgaBuf = (byte *)_mainSurface->getPixels();
-	int tmpVal = (var3 >> 8) + ((var3 & 0xFF) << 8);
-	int vgaIndex = var2 + tmpVal + (tmpVal >> 2);
+	int vgaIndex = var2 + (320 * var4);
 
 	if (var3 == 0)
 		++var3;
@@ -2248,7 +2247,7 @@ void LilliputEngine::sub12FE5() {
 }
 
 void LilliputEngine::displayHeroismIndicator() {
-	debugC(2, kDebugEngineTBC, "displayHeroismIndicator()");
+	debugC(2, kDebugEngine, "displayHeroismIndicator()");
 
 	if (_scriptHandler->_savedBuffer215Ptr == NULL)
 		return;
@@ -2269,7 +2268,7 @@ void LilliputEngine::displayHeroismIndicator() {
 
 	_scriptHandler->_heroismLevel += var2;
 
-	int index = _scriptHandler->_heroismBarX + _scriptHandler->_heroismBarBottomY * 320 ;
+	int index = _scriptHandler->_heroismBarX + (_scriptHandler->_heroismBarBottomY * 320);
 
 	var2 = _scriptHandler->_heroismLevel & 0xFF;
 	if (var2 != 0) {

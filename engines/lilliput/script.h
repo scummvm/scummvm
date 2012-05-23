@@ -282,7 +282,7 @@ private:
 	void OC_sub184D7();
 	void OC_displayTitleScreen();
 	void OC_initGameAreaDisplay();
-	void OC_sub1864D();
+	void OC_displayCharacterStatBar();
 	void OC_initSmallAnim();
 	void OC_setCharacterHeroismBar();
 	void OC_sub18690();
