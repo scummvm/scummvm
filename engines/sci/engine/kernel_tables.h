@@ -507,13 +507,20 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SetScroll - called by script 64909, Styler::doit()
 	// PalCycle - called by Game::newRoom. Related to RemapColors.
-	// VibrateMouse - used in QFG4
 
 	// SCI2 Empty functions
 	
 	// Debug function used to track resources
 	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
+	// Future TODO: This call is used in the floppy version of QFG4 to add
+	// vibration to exotic mice with force feedback, such as the Logitech
+	// Cyberman and Wingman mice. Since this is only used for very exotic
+	// hardware and we have no direct and cross-platform way of communicating
+	// with them via SDL, plus we would probably need to make changes to common
+	// code, this call is mapped to an empty function for now as it's a rare
+	// feature not worth the effort.
+	{ MAP_EMPTY(VibrateMouse),      SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 
 	// AddMagnify/DeleteMagnify are both called by script 64979 (the Magnifier
