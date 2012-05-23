@@ -120,6 +120,7 @@ private:
 	void writeVersion();
 	void writeHeader();
 	void writeFormatId();
+	void checkScreenShot();
 	void writeGameHash();
 	void writeRandomRecords();
 	bool openRecordFile(const String &gameId);
@@ -140,6 +141,11 @@ private:
 	void togglePause();
 	void dumpRecordsToFile();
 	void dumpHeaderToFile();
+	void writeScreenSettings();
+	void processScreenSettings();
+	void reallocBitmapBuff(uint16 widht, uint16 height, byte bpp);
+	uint32 _bitmapBuffSize;
+	byte *_bitmapBuff;
 	int _settingsSectionSize;
 	RecorderEvent _nextEvent;
 	randomSeedsDictionary _randomSourceRecords;
@@ -150,6 +156,7 @@ private:
 	byte _recordBuffer[kRecordBuffSize];
 	SeekableMemoryWriteStream _tmpRecordFile;
 	WriteStream *_recordFile;
+	WriteStream *_screenshotsFile;
 	MutexRef _timeMutex;
 	volatile uint32 _lastMillis;
 	volatile uint32 _fakeTimer;

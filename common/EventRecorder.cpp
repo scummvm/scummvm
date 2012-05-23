@@ -30,12 +30,15 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "graphics/thumbnail.h"
+#include "graphics/surface.h"
+#include "graphics/scaler.h"
 namespace Common {
 
 DECLARE_SINGLETON(EventRecorder);
 
 #define RECORD_VERSION 1
-#define kDefaultScreenshotPeriod 60000;
+#define kDefaultScreenshotPeriod 60000
+#define kDefaultBPP 2
 
 uint32 readTime(ReadStream *inFile) {
 	uint32 d = inFile->readByte();
@@ -149,6 +152,7 @@ void EventRecorder::dumpHeaderToFile() {
 	writeGameHash();
 	writeRandomRecords();
 	writeGameSettings();
+	writeScreenSettings();
 	_recordFile->writeUint32LE(MKTAG('R','C','D','S'));
 	//we don't know how many records will be in this section and this value will not used later
 	//I write zero to avoid creation of temporary file
@@ -159,6 +163,7 @@ EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize) 
 	_timeMutex = g_system->createMutex();
 	_recorderMutex = g_system->createMutex();
 	_recordMode = kPassthrough;
+	_bitmapBuff = NULL;
 }
 
 EventRecorder::~EventRecorder() {
@@ -185,7 +190,10 @@ void EventRecorder::deinit() {
 	if (_playbackFile != NULL) {
 		delete _playbackFile;
 	}
-
+	if (_screenshotsFile != NULL) {
+		_screenshotsFile->finalize();
+		delete _screenshotsFile;
+	}
 	if (_recordFile != NULL) {
 		dumpRecordsToFile();
 		_recordFile->finalize();
@@ -322,6 +330,7 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDes
 	_recordFile = NULL;
 	_recordCount = 0;
 	_lastScreenshotTime = 0;
+	_bitmapBuffSize = 0;
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
 	if (_screenshotPeriod == 0) {
 		_screenshotPeriod = kDefaultScreenshotPeriod;
@@ -400,6 +409,7 @@ bool EventRecorder::openRecordFile(const String &gameId) {
 			warning("Cannot open playback file %s. Playback was switched off", fileName.c_str());
 			return false;
 		}
+		_screenshotsFile = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving("screenshots.bin"), 128 * 1024);
 	}
 	return true;
 }
@@ -515,6 +525,9 @@ bool EventRecorder::processChunk(ChunkHeader &nextChunk) {
 		case MKTAG('S','E','T','T'):
 			_playbackParseState = kFileStateProcessSettings;
 			warning("Loading record header");
+			break;
+		case MKTAG('S','C','R','N'):
+			processScreenSettings();
 			break;
 		default:
 			_playbackFile->skip(nextChunk.len);
@@ -688,6 +701,30 @@ void EventRecorder::writeRandomRecords() {
 	}
 }
 
+void EventRecorder::writeScreenSettings() {
+	_recordFile->writeUint32LE(MKTAG('S','C','R','N'));
+	_recordFile->writeUint32LE(4);
+	_recordFile->writeUint16LE(g_system->getWidth());
+	_recordFile->writeSint16LE(g_system->getHeight());
+}
+
+void EventRecorder::processScreenSettings() {
+	uint16 width = _playbackFile->readUint16LE();
+	uint16 height = _playbackFile->readUint16LE();
+	reallocBitmapBuff(width, height, kDefaultBPP);
+}
+
+void EventRecorder::reallocBitmapBuff(uint16 width, uint16 height, byte bpp) {
+	uint32 newBitmapBuffSize = width * height * bpp;
+	if (_bitmapBuffSize != newBitmapBuffSize) {
+		_bitmapBuffSize = newBitmapBuffSize;
+		if (_bitmapBuff != NULL) {
+			free(_bitmapBuff);
+		}
+		_bitmapBuff = (byte*)malloc(_bitmapBuffSize);
+	}
+}
+
 void EventRecorder::writeGameSettings() {
 	getConfig();
 	if (_settingsSectionSize == 0) {
@@ -764,10 +801,46 @@ void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain* domain
 
 void EventRecorder::MakeScreenShot() {
 	if (((_fakeTimer - _lastScreenshotTime) > _screenshotPeriod) && _headerDumped) {
+		dumpRecordsToFile();
+		_recordCount = 0;
 		_lastScreenshotTime = _fakeTimer;
 		_recordFile->writeUint32LE(EVENT_SCREENSHOT);
 		_recordFile->writeUint32LE(_fakeTimer);
 		Graphics::saveScreenShot(*_recordFile);
+	}
+}
+
+void EventRecorder::checkScreenShot() {
+	Graphics::Surface screenShot;
+	createScreenShot(screenShot);
+	_screenshotsFile->writeUint32LE(EVENT_SCREENSHOT);
+	_screenshotsFile->writeUint32LE(_fakeTimer);
+	Graphics::saveScreenShot(*_screenshotsFile);
+	uint16 b1;
+	uint16 b2;
+	if (screenShot.w * screenShot.h * screenShot.format.bytesPerPixel != _bitmapBuffSize) {
+		warning("Recorded and current screenshots have different sizes");
+		return;
+	}
+	switch(screenShot.format.bytesPerPixel) {
+		case 2: {
+			uint16 *src = (uint16*)_bitmapBuff;
+			uint16 *dst = (uint16*)screenShot.pixels;
+			for (int i = 0; i < _bitmapBuffSize/2; i++){
+				b1 = FROM_BE_16(*src);
+				b2 = READ_LE_UINT16(dst);
+				if (b1 != b2) {
+					warning("Recorded and current screenshots are different");
+					return;
+				}
+				src++;
+				dst++;
+			}
+			break;
+		}
+		default:
+			warning("Unsupprorted pixel format");
+			break;
 	}
 }
 } // End of namespace Common
