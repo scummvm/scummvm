@@ -64,18 +64,17 @@ void EventRecorder::readEvent(RecorderEvent &event) {
 		return;
 	}
 	_recordCount++;
-
-	event.type = (EventType)_playbackFile->readUint32LE();
+	event.type = (EventType)_tmpPlaybackFile.readUint32LE();
 	switch (event.type) {
 	case EVENT_TIMER:
-		event.time = _playbackFile->readUint32LE();
+		event.time = _tmpPlaybackFile.readUint32LE();
 		break;
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP:
-		event.time = _playbackFile->readUint32LE();
-		event.kbd.keycode = (KeyCode)_playbackFile->readSint32LE();
-		event.kbd.ascii = _playbackFile->readUint16LE();
-		event.kbd.flags = _playbackFile->readByte();
+		event.time = _tmpPlaybackFile.readUint32LE();
+		event.kbd.keycode = (KeyCode)_tmpPlaybackFile.readSint32LE();
+		event.kbd.ascii = _tmpPlaybackFile.readUint16LE();
+		event.kbd.flags = _tmpPlaybackFile.readByte();
 		break;
 	case EVENT_MOUSEMOVE:
 	case EVENT_LBUTTONDOWN:
@@ -86,12 +85,12 @@ void EventRecorder::readEvent(RecorderEvent &event) {
 	case EVENT_WHEELDOWN:
 	case EVENT_MBUTTONDOWN:
 	case EVENT_MBUTTONUP:
-		event.time = _playbackFile->readUint32LE();
-		event.mouse.x = _playbackFile->readSint16LE();
-		event.mouse.y = _playbackFile->readSint16LE();
+		event.time = _tmpPlaybackFile.readUint32LE();
+		event.mouse.x = _tmpPlaybackFile.readSint16LE();
+		event.mouse.y = _tmpPlaybackFile.readSint16LE();
 		break;
 	default:
-		event.time = _playbackFile->readUint32LE();
+		event.time = _tmpPlaybackFile.readUint32LE();
 		break;
 	}
 }
@@ -132,7 +131,6 @@ void EventRecorder::writeEvent(const RecorderEvent &event) {
 	}
 	if (_recordCount == kMaxBufferedRecords) {
 		dumpRecordsToFile();
-		_recordCount = 0;
 	}
 }
 
@@ -141,10 +139,14 @@ void EventRecorder::dumpRecordsToFile() {
 		dumpHeaderToFile();
 		_headerDumped = true;
 	}
+	if (_recordCount == 0) {
+		return;
+	}
 	_recordFile->writeUint32LE(MKTAG('E','V','N','T'));
 	_recordFile->writeUint32LE(_tmpRecordFile.pos());
 	_recordFile->write(_recordBuffer, _tmpRecordFile.pos());
 	_tmpRecordFile.seek(0);
+	_recordCount = 0;
 }
 
 void EventRecorder::dumpHeaderToFile() {
@@ -292,9 +294,28 @@ void EventRecorder::switchFastMode() {
 }
 
 void EventRecorder::getNextEvent() {
-	if(!_playbackFile->eos()) {
-		readEvent(_nextEvent);
+	if (_tmpPlaybackFile.pos() == _eventsSize) {
+		ChunkHeader header;
+		header.id = 0;
+		while (header.id != MKTAG('E','V','N','T')) {
+			header = readChunkHeader();
+			if (_playbackFile->eos()) {
+				break;
+			}
+			switch (header.id) {
+			case MKTAG('E','V','N','T'):
+				readEventsToBuffer(header.len);
+				break;
+			case MKTAG('B','M','H','T'):
+				readAndCheckScreenShot();
+				break;
+			default:
+				_playbackFile->skip(header.len);
+				break;
+			}
+		}
 	}
+	readEvent(_nextEvent);		
 }
 
 void EventRecorder::togglePause() {
@@ -326,6 +347,7 @@ uint32 EventRecorder::getRandomSeed(const String &name) {
 void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDesc) {
 	_playbackFile = NULL;
 	_recordFile = NULL;
+	_screenshotsFile = NULL;
 	_recordCount = 0;
 	_lastScreenshotTime = 0;
 	_bitmapBuffSize = 0;
@@ -816,8 +838,6 @@ void EventRecorder::readAndCheckScreenShot() {
 	Graphics::Surface screenShot;
 	readScreenshotFromPlaybackFile();
 	createScreenShot(screenShot);
-	_screenshotsFile->writeUint32LE(EVENT_SCREENSHOT);
-	_screenshotsFile->writeUint32LE(_fakeTimer);
 	Graphics::saveScreenShot(*_screenshotsFile);
 	uint16 b1;
 	uint16 b2;
@@ -862,6 +882,7 @@ void EventRecorder::readScreenshotFromPlaybackFile() {
 
 void EventRecorder::readEventsToBuffer(uint32 size) {
 	_playbackFile->read(_recordBuffer, size);
-	_eventsSize = size;
+	_tmpPlaybackFile.seek(0);
+	_eventsSize = size;	
 }
 } // End of namespace Common
