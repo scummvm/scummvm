@@ -505,7 +505,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_initGameAreaDisplay();
 		break;
 	case 0x57:
-		OC_sub1864D();
+		OC_displayCharacterStatBar();
 		break;
 	case 0x58:
 		OC_initSmallAnim();
@@ -697,7 +697,7 @@ static const OpCode opCodes2[] = {
 /* 0x54 */	{ "OC_sub184D7", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // TODO
 /* 0x55 */	{ "OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x56 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone }, 
-/* 0x57 */	{ "OC_sub1864D", 6, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue}, 
+/* 0x57 */	{ "OC_displayCharacterStatBar", 6, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue}, 
 /* 0x58 */	{ "OC_initSmallAnim", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
 /* 0x59 */	{ "OC_setCharacterHeroismBar", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
 /* 0x5a */	{ "OC_sub18690", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },  //TODO
@@ -1943,7 +1943,7 @@ byte LilliputScript::OC_CharacterVariableAnd() {
 }
 
 byte LilliputScript::OC_IsCurrentCharacterVar0LessEqualThan() {
-	debugC(1, kDebugScriptTBC, "OC_IsCurrentCharacterVar0LessEqualThan()");
+	debugC(1, kDebugScript, "OC_IsCurrentCharacterVar0LessEqualThan()");
 
 	assert(_vm->_currentCharacterVariables != NULL);
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
@@ -3175,16 +3175,16 @@ void LilliputScript::OC_initGameAreaDisplay() {
 	_vm->_soundHandler->contentFct5();
 }
 
-void LilliputScript::OC_sub1864D() {
-	debugC(1, kDebugScriptTBC, "OC_sub1864D()");
+void LilliputScript::OC_displayCharacterStatBar() {
+	debugC(1, kDebugScriptTBC, "OC_displayCharacterStatBar()");
 
 	byte *tmpArr = getCharacterVariablePtr();
-	int var1 = (_currScript->readUint16LE() & 0xFF);
-	int var3 = ((70 * tmpArr[0]) / (_currScript->readUint16LE() & 0xFF) & 0xFF);
-	int var2 = _currScript->readUint16LE();
-	int var4 = _currScript->readUint16LE();
+	int8 var1 = (_currScript->readUint16LE() & 0xFF);
+	int8 var3 = (((70 * tmpArr[0]) / (_currScript->readUint16LE() & 0xFF)) & 0xFF);
+	int16 var2 = _currScript->readSint16LE();
+	int16 var4 = _currScript->readSint16LE();
 	
-	_vm->displayFunction18(var1, var2, var3, var4);
+	_vm->displayCharacterStatBar(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_initSmallAnim() {
