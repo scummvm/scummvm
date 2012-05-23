@@ -241,7 +241,7 @@ public:
 	void prepareGameArea();
 	void displayRefreshScreen();
 	void restoreSurfaceSpeech();
-	void displayCharacterStatBar(int8 var1, int16 var2, int8 var3, int16 var4);
+	void displayCharacterStatBar(int8 type, int16 averagePosX, int8 score, int16 posY);
 	void displayCharacter(int index, Common::Point pos, int flags);
 	void displayString(byte *buf, Common::Point pos);
 	void displayChar(int index, int var1);
