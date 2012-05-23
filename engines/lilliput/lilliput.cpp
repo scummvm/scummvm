@@ -1122,6 +1122,7 @@ void LilliputEngine::displayCharacterStatBar(int8 type, int16 averagePosX, int8 
 	if (score == 0)
 		++score;
 
+	// Draw bar, color green, high = 4, width = score
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < score; j++) {
 			vgaBuf[vgaIndex + j] = 2;
@@ -1980,7 +1981,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	}
 
 	if (_byte12FCE == 1) {
-		sub130DD();
+		unselectInterfaceButton();
 		return;
 	}
 
@@ -2169,12 +2170,11 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 	_characterPositionY[index] = pos.y;
 }
 
-void LilliputEngine::sub17224(int var1, int var4) {
-	debugC(2, kDebugEngine, "sub17224(%d, %d)", var1, var4);
+void LilliputEngine::sub17224(byte type, byte index, int var4) {
+	debugC(2, kDebugEngine, "sub17224(%d, %d, %d)", type, index, var4);
 
-	byte type = (var1 >> 8);
 	if (type == 0) {
-		sub17264(var1, var4);
+		sub17264(index, var4);
 		return;
 	}
 
@@ -2184,15 +2184,15 @@ void LilliputEngine::sub17224(int var1, int var4) {
 		return;
 	}
 
-	int index = var4 & 0xFF;
+	int index2 = var4 & 0xFF;
 	for (int i = 0; i < _numCharacters; i++) {
-		if ((_scriptHandler->_array10B51[index] & 0xFF) >= type)
+		if ((_scriptHandler->_array10B51[index2] & 0xFF) >= type)
 			sub17264(i, var4);
-		index += 40;
+		index2 += 40;
 	}
 }
 
-void LilliputEngine::sub17264(int index, int var4) {
+void LilliputEngine::sub17264(byte index, int var4) {
 	debugC(2, kDebugEngine, "sub17264(%d, %d)", index, var4);
 
 	if (_array11D49[index] != -1) {
@@ -2218,11 +2218,14 @@ void LilliputEngine::sub171CF() {
 
 	for (int i = 0; i < 10; i++) {
 		if ((_array12861[(3 * i) + 1] != -1) && (_array12861[3 * i] == _word1289D)) {
-			int var1 = _array12861[(3 * i) + 1];
+			int16 var1 = _array12861[(3 * i) + 1];
 			int var4 = _array12861[(3 * i) + 2];
 			_array12861[(3 * i) + 1] = -1;
 
-			sub17224(var1, var4);
+			byte type = var1 >> 8;
+			byte index = var1 & 0xFF;
+
+			sub17224(type, index, var4);
 		}
 	}
 }
@@ -2625,8 +2628,14 @@ void LilliputEngine::setCurrentCharacter(int index) {
 	_currentCharacterVariables = getCharacterVariablesPtr(_currentScriptCharacter * 32);
 }
 
-void LilliputEngine::sub130DD() {
-	warning("sub130DD()");
+void LilliputEngine::unselectInterfaceButton() {
+	debugC(1, kDebugEngine, "unselectInterfaceButton()");
+
+	_byte12FCE = 0;
+	_word15AC2 = 0;
+	_lastInterfaceHotspotButton = 0;
+	unselectInterfaceHotspots();
+	displayInterfaceHotspots();
 }
 
 void LilliputEngine::handleMenu() {
@@ -2646,7 +2655,7 @@ void LilliputEngine::handleMenu() {
 	_byte129A0 = 0xFF;
 
 	if (_byte16F07_menuId == 3)
-		sub130DD();
+		unselectInterfaceButton();
 
 	_byte16F07_menuId = 0;
 }

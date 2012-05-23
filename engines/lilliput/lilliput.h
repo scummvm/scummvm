@@ -261,8 +261,8 @@ public:
 	void sub16626();
 	void sub16A08(int index);
 	byte sub16A76(int indexb, int indexs);
-	void sub17224(int var1, int var4);
-	void sub17264(int index, int var4);
+	void sub17224(byte type, byte index, int var4);
+	void sub17264(byte index, int var4);
 	int16 findHotspot(Common::Point pos);
 	int16 reverseFindHotspot(Common::Point pos);
 	byte sub16722(int index, Common::Point var1);
@@ -350,7 +350,7 @@ public:
 
 	void pollEvent();
 	void setCurrentCharacter(int index);
-	void sub130DD();
+	void unselectInterfaceButton();
 	void moveCharacters();
 	void setNextDisplayCharacter(int var1);
 	void handleGameScripts();
