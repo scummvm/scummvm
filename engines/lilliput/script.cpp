@@ -2460,7 +2460,7 @@ void LilliputScript::OC_setCurrentCharacter() {
 }
 
 void LilliputScript::sub171AF(int16 var1, int16 var2, int16 var4) {
-	debugC(2, kDebugScript, "sub171AF()");
+	debugC(2, kDebugScriptTBC, "sub171AF()");
 
 	int index = 0;
 	for (int i = 0; i < 10; i++) {
@@ -2476,23 +2476,23 @@ void LilliputScript::sub171AF(int16 var1, int16 var2, int16 var4) {
 void LilliputScript::OC_sub17C8B() {
 	debugC(1, kDebugScriptTBC, "OC_sub17C8B()");
 
-	int var1 = 2 << 8;
-	int var4 = _currScript->readUint16LE();
-	int var2 = _currScript->readUint16LE();
-	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
+	int16 type = 2 << 8;
+	int16 var4 = _currScript->readSint16LE();
+	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
+	uint16 var2 = (tmpVal << 8) + _vm->_currentScriptCharacter;
 	
-	sub171AF(var1, var2, var4);
+	sub171AF(type, var2, var4);
 }
 
 void LilliputScript::OC_sub17CA2() {
 	debugC(1, kDebugScript, "OC_sub17CA2()");
 
-	int16 var1 = 1 << 8;
+	int16 type = 1 << 8;
 	int16 var4 = _currScript->readSint16LE();
-	uint16 var2 = _currScript->readUint16LE();
-	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
+	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
+	uint16 var2 = (tmpVal << 8) + _vm->_currentScriptCharacter;
 	
-	sub171AF(var1, var2, var4);
+	sub171AF(type, var2, var4);
 }
 
 void LilliputScript::OC_sub17CB9() {
@@ -2500,8 +2500,8 @@ void LilliputScript::OC_sub17CB9() {
 
 	int16 var4 = _currScript->readSint16LE();
 	int16 var1 = getValue1();
-	int16 var2 = _currScript->readSint16LE();
-	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
+	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
+	uint16 var2 = (tmpVal << 8) + _vm->_currentScriptCharacter;
 	
 	sub171AF(var1, var2, var4);
 }
@@ -2509,12 +2509,12 @@ void LilliputScript::OC_sub17CB9() {
 void LilliputScript::OC_sub17CD1() {
 	debugC(1, kDebugScriptTBC, "OC_sub17CD1()");
 
-	int var1 = 3 << 8;
-	int var4 = _currScript->readUint16LE();
-	int var2 = _currScript->readUint16LE();
-	var2 = ((var2 & 0xFF) << 8) + _vm->_currentScriptCharacter;
+	int16 type = 3 << 8;
+	int16 var4 = _currScript->readSint16LE();
+	int tmpVal = (_currScript->readUint16LE() & 0xFF);
+	uint16 var2 = (tmpVal << 8) + _vm->_currentScriptCharacter;
 	
-	sub171AF(var1, var2, var4);
+	sub171AF(type, var2, var4);
 }
 
 void LilliputScript::OC_resetWord16EFE() {
