@@ -157,7 +157,7 @@ void EventRecorder::dumpHeaderToFile() {
 	writeScreenSettings();
 }
 
-EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize) {
+EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize), _tmpPlaybackFile(_recordBuffer, kRecordBuffSize) {
 	_timeMutex = g_system->createMutex();
 	_recorderMutex = g_system->createMutex();
 	_recordMode = kPassthrough;
@@ -329,6 +329,7 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDes
 	_recordCount = 0;
 	_lastScreenshotTime = 0;
 	_bitmapBuffSize = 0;
+	_eventsSize = 0;
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
 	if (_screenshotPeriod == 0) {
 		_screenshotPeriod = kDefaultScreenshotPeriod;
@@ -517,7 +518,12 @@ bool EventRecorder::processChunk(ChunkHeader &nextChunk) {
 		case MKTAG('R','A','N','D'): 
 			_playbackParseState = kFileStateProcessRandom;
 			break;
-		case MKTAG('R','C','D','S'): 
+		case MKTAG('E','V','N','T'): 
+			readEventsToBuffer(nextChunk.len);
+			_playbackParseState = kFileStateDone;
+			return false;
+		case MKTAG('T','H','M','B'): 
+			readAndCheckScreenShot();
 			_playbackParseState = kFileStateDone;
 			return false;
 		case MKTAG('S','E','T','T'):
@@ -806,8 +812,9 @@ void EventRecorder::MakeScreenShot() {
 	}
 }
 
-void EventRecorder::checkScreenShot() {
+void EventRecorder::readAndCheckScreenShot() {
 	Graphics::Surface screenShot;
+	readScreenshotFromPlaybackFile();
 	createScreenShot(screenShot);
 	_screenshotsFile->writeUint32LE(EVENT_SCREENSHOT);
 	_screenshotsFile->writeUint32LE(_fakeTimer);
@@ -838,5 +845,23 @@ void EventRecorder::checkScreenShot() {
 			warning("Unsupprorted pixel format");
 			break;
 	}
+}
+
+void EventRecorder::readScreenshotFromPlaybackFile() {
+	uint32 screenShotSize;
+	uint16 screenShotWidth;
+	uint16 screenShotHeight;
+	byte screenShotBpp;
+	_playbackFile->skip(1); //skip version
+	screenShotWidth = _playbackFile->readUint16BE();
+	screenShotHeight = _playbackFile->readUint16BE();
+	screenShotBpp = _playbackFile->readByte();
+	reallocBitmapBuff(screenShotWidth, screenShotHeight, screenShotBpp);
+	_playbackFile->read(_bitmapBuff, _bitmapBuffSize);
+}
+
+void EventRecorder::readEventsToBuffer(uint32 size) {
+	_playbackFile->read(_recordBuffer, size);
+	_eventsSize = size;
 }
 } // End of namespace Common
