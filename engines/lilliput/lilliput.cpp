@@ -1098,29 +1098,32 @@ void LilliputEngine::sub16CA0() {
 	}
 }
 
-void LilliputEngine::displayCharacterStatBar(int8 var1, int16 var2, int8 var3, int16 var4) {
-	debugC(2, kDebugEngineTBC, "displayCharacterStatBar(%d, %d, %d, %d)", var1, var2, var3, var4);
+void LilliputEngine::displayCharacterStatBar(int8 type, int16 averagePosX, int8 score, int16 posY) {
+	debugC(2, kDebugEngine, "displayCharacterStatBar(%d, %d, %d, %d)", type, averagePosX, score, posY);
 
 	restoreSurfaceUnderMousePointer();
 
-	if (var1 == 45) {
-		var2 += 35;
-		var3 -= 35;
+	int16 posX = averagePosX;
 
-		if (var3 < 0) {
-			var2 += var3;
-			var3 = -var3;
+	// If var equals 45 ('-'), score bar from -x to +x. If not (usually 43 '+'), score bar from 0 to x.
+	if (type == 45) {
+		posX += 35;
+		score -= 35;
+
+		if (score < 0) {
+			posX += score;
+			score = -score;
 		}
 	}
 
 	byte *vgaBuf = (byte *)_mainSurface->getPixels();
-	int vgaIndex = var2 + (320 * var4);
+	int vgaIndex = posX + (320 * posY);
 
-	if (var3 == 0)
-		++var3;
+	if (score == 0)
+		++score;
 
 	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < var3; j++) {
+		for (int j = 0; j < score; j++) {
 			vgaBuf[vgaIndex + j] = 2;
 		}
 		vgaIndex += 320;

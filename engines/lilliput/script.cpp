@@ -3176,15 +3176,15 @@ void LilliputScript::OC_initGameAreaDisplay() {
 }
 
 void LilliputScript::OC_displayCharacterStatBar() {
-	debugC(1, kDebugScriptTBC, "OC_displayCharacterStatBar()");
+	debugC(1, kDebugScript, "OC_displayCharacterStatBar()");
 
 	byte *tmpArr = getCharacterVariablePtr();
-	int8 var1 = (_currScript->readUint16LE() & 0xFF);
-	int8 var3 = (((70 * tmpArr[0]) / (_currScript->readUint16LE() & 0xFF)) & 0xFF);
-	int16 var2 = _currScript->readSint16LE();
-	int16 var4 = _currScript->readSint16LE();
+	int8 type = (_currScript->readUint16LE() & 0xFF);
+	int8 score = (((70 * tmpArr[0]) / (_currScript->readUint16LE() & 0xFF)) & 0xFF);
+	int16 posX = _currScript->readSint16LE();
+	int16 posY = _currScript->readSint16LE();
 	
-	_vm->displayCharacterStatBar(var1, var2, var3, var4);
+	_vm->displayCharacterStatBar(type, posX, score, posY);
 }
 
 void LilliputScript::OC_initSmallAnim() {
