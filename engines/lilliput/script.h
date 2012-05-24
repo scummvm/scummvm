@@ -144,7 +144,7 @@ private:
 	//Opcodes Type 1
 	byte OC_checkCharacterGoalPos();
 	byte OC_comparePos();
-	byte OC_sub1740A();
+	byte OC_checkIsoMap3();
 	byte OC_compareCharacterVariable();
 	byte OC_CompareLastRandomValue();
 	byte OC_getRandom();
@@ -189,7 +189,7 @@ private:
 	byte OC_checkSavedMousePos();
 	byte OC_sub179AE();
 	byte OC_sub179C2();
-	byte OC_sub179E5();
+	byte OC_checkKeyPressed();
 	byte OC_sub17A07();
 	byte OC_checkViewPortCharacterTarget();
 
@@ -240,7 +240,7 @@ private:
 	void OC_setCharacterDirectionTowardsPos();
 	void OC_sub17F08();
 	void OC_sub17F4F();
-	void OC_sub17F68();
+	void OC_scrollAwayFromCharacter();
 	void OC_skipNextVal();
 	void OC_sub17FD2();
 	void OC_sub17FDD();

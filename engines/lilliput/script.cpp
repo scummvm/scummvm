@@ -91,7 +91,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_comparePos();
 		break;
 	case 0x2:
-		return OC_sub1740A();
+		return OC_checkIsoMap3();
 		break;
 	case 0x3:
 		return OC_compareCharacterVariable();
@@ -226,7 +226,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_sub179C2();
 		break;
 	case 0x2F:
-		return OC_sub179E5();
+		return OC_checkKeyPressed();
 		break;
 	case 0x30:
 		return OC_sub17A07();
@@ -382,7 +382,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub17F4F();
 		break;
 	case 0x2E:
-		OC_sub17F68();
+		OC_scrollAwayFromCharacter();
 		break;
 	case 0x2F:
 		OC_skipNextVal();
@@ -558,7 +558,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 static const OpCode opCodes1[] = {
 	{ "OC_checkCharacterGoalPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_comparePos", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
-	{ "OC_sub1740A", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_checkIsoMap3", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_compareCharacterVariable", 4, kGetValue1, kImmediateValue, kCompareOperation, kImmediateValue, kNone },
 	{ "OC_CompareLastRandomValue", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_getRandom", 1, kImmediateValue, kNone, kNone, kNone, kNone },
@@ -603,7 +603,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_checkSavedMousePos", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179AE", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_sub179E5", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_checkKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_sub17A07", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
 	{ "OC_checkViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
 };
@@ -656,7 +656,7 @@ static const OpCode opCodes2[] = {
 /* 0x2b */	{ "OC_setCharacterDirectionTowardsPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone }, 
 /* 0x2c */	{ "OC_sub17F08", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x2d */	{ "OC_sub17F4F", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
-/* 0x2e */	{ "OC_sub17F68", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x2e */	{ "OC_scrollAwayFromCharacter", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x2f */	{ "OC_skipNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x30 */	{ "OC_sub17FD2", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x31 */	{ "OC_sub17FDD", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
@@ -1389,8 +1389,8 @@ byte LilliputScript::OC_comparePos() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub1740A() {
-	debugC(1, kDebugScriptTBC, "OC_sub1740A()");
+byte LilliputScript::OC_checkIsoMap3() {
+	debugC(1, kDebugScript, "OC_checkIsoMap3()");
 
 	Common::Point var = _vm->_currentScriptCharacterPos;
 	if (var == Common::Point(-1, -1)) {
@@ -1399,16 +1399,16 @@ byte LilliputScript::OC_sub1740A() {
 	}
 
 	byte *isoMapBuf = getMapPtr(var);
-	uint16 var2 = isoMapBuf[3];
+	byte var2 = isoMapBuf[3];
 
 	int16 var3 = _currScript->readUint16LE();
-	uint16 var4 = 8 >> var3;
+	byte var4 = 8 >> var3;
 
-	if (var2 & var4) {
+	if ((var2 & var4) != 0) {
 		return 1;
-	} else { 
-		return 0;
 	}
+
+	return 0;
 }
 
 byte LilliputScript::OC_compareCharacterVariable() {
@@ -2053,14 +2053,14 @@ byte LilliputScript::OC_sub179C2() {
 
 	return 0;
 }
-byte LilliputScript::OC_sub179E5() {
-	debugC(1, kDebugScriptTBC, "OC_sub17A07()");
+byte LilliputScript::OC_checkKeyPressed() {
+	debugC(1, kDebugScript, "OC_checkKeyPressed()");
 
-	static const byte _byte179DB[10] = {0x44, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42, 0x43};
+	static const byte specialKeys[10] = {0x44, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42, 0x43};
 
-	int var1 = (_currScript->readUint16LE() & 0xFF) - 0x30;
+	int8 index = (_currScript->readUint16LE() & 0xFF) - 0x30;
 	
-	if (_byte179DB[var1] == _vm->_byte16F09)
+	if (specialKeys[index] == _vm->_lastKeyPressed)
 		return 1;
 
 	return 0;
@@ -2508,7 +2508,7 @@ void LilliputScript::OC_sub17CB9() {
 }
 
 void LilliputScript::OC_sub17CD1() {
-	debugC(1, kDebugScriptTBC, "OC_sub17CD1()");
+	debugC(1, kDebugScript, "OC_sub17CD1()");
 
 	int16 type = 3 << 8;
 	int16 var4 = _currScript->readSint16LE();
@@ -2604,9 +2604,9 @@ void LilliputScript::OC_sub17EC5() {
 }
 
 Common::Point LilliputScript::getCharacterTilePos(int index) {
-	debugC(2, kDebugScriptTBC, "getCharacterTilePos(%d)", index);
+	debugC(2, kDebugScript, "getCharacterTilePos(%d)", index);
 
-	return Common::Point(_vm->_characterPositionX[index] >> 3, _vm->_characterPositionY[index] >> 3);
+	return Common::Point(_vm->_characterPositionX[index] / 8, _vm->_characterPositionY[index] / 8);
 }
 
 void LilliputScript::OC_setCharacterDirectionTowardsPos() {
@@ -2652,17 +2652,17 @@ void LilliputScript::OC_sub17F4F() {
 	_vm->_array109E9PosX[_vm->_currentScriptCharacter] = -1;
 }
 
-void LilliputScript::OC_sub17F68() {
-	debugC(1, kDebugScriptTBC, "OC_sub17F68()");
+void LilliputScript::OC_scrollAwayFromCharacter() {
+	debugC(1, kDebugScript, "OC_scrollAwayFromCharacter()");
 
 	if (_vm->_currentScriptCharacter != _viewportCharacterTarget)
 		return;
 
-	static const char _byte17F60[] = {-1, -3, -3, -6};
-	static const char _byte17F64[] = {-3, -6, -1, -3};
+	static const char speedX[] = {-1, -3, -3, -6};
+	static const char speedY[] = {-3, -6, -1, -3};
 	
-	int cx = _byte17F60[_vm->_characterDirectionArray[_vm->_currentScriptCharacter]];
-	int cy = _byte17F64[_vm->_characterDirectionArray[_vm->_currentScriptCharacter]];
+	int cx = speedX[_vm->_characterDirectionArray[_vm->_currentScriptCharacter]];
+	int cy = speedY[_vm->_characterDirectionArray[_vm->_currentScriptCharacter]];
 
 	Common::Point pos = getCharacterTilePos(_vm->_currentScriptCharacter);
 
@@ -3141,13 +3141,13 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_keyboard_oldIndex = 0;
 	//
 	_vm->_mouseButton = 0;
-	_vm->_byte16F09 = 0;
+	_vm->_lastKeyPressed = 0;
 
 	while (!_vm->_shouldQuit) {
 		_vm->displaySmallAnims();
 		_vm->update();
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
-			_vm->_byte16F09 = _vm->_keyboard_getch();
+			_vm->_lastKeyPressed = _vm->_keyboard_getch();
 			_vm->_keyboard_getch();
 			break;
 		}
