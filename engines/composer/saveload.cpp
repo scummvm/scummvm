@@ -34,7 +34,7 @@
 
 namespace Composer {
 Common::String ComposerEngine::makeSaveGameName(int slot) {
-	return (_targetName + Common::String::format(".%02d",slot));
+	return (_targetName + Common::String::format(".%02d", slot));
 }
 
 Common::Error ComposerEngine::loadGameState(int slot) {
@@ -45,7 +45,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 
 	Common::Serializer ser(in, NULL);
 	byte magic[4];
-	ser.syncBytes(magic,4);
+	ser.syncBytes(magic, 4);
 	if (magic[0] != 'C' || magic[1] != 'M' || magic[2] != 'P' || magic[3] != 'S') 
 		return Common::kUnknownError;
 
@@ -73,14 +73,14 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	ser.syncString(_bookGroup);
 	_libraries.clear();
 	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i >0; i--) {
+	for (uint32 i = tmp; i > 0; i--) {
 		uint16 id;
 		ser.syncAsUint16LE(id);
 		loadLibrary(id);
 	}
 	_sprites.clear();
 	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i >0; i--) {
+	for (uint32 i = tmp; i > 0; i--) {
 		uint16 id;
 		ser.syncAsUint16LE(id);
 		Sprite sprite;
@@ -91,23 +91,23 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 
 	_pendingPageChanges.clear();
 	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i >0; i--) {
+	for (uint32 i = tmp; i > 0; i--) {
 		uint16 id;
 		bool remove;
 		ser.syncAsUint16LE(id);
 		ser.syncAsByte(remove);
-		_pendingPageChanges.push_back(PendingPageChange(id,remove));
+		_pendingPageChanges.push_back(PendingPageChange(id, remove));
 	}
 	_stack.clear();
 	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i >0; i--) {
+	for (uint32 i = tmp; i > 0; i--) {
 		uint16 svar;
 		ser.syncAsUint16LE(svar);
 		_stack.push_back(svar);
 	}
 	_vars.clear();
 	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i >0; i--) {
+	for (uint32 i = tmp; i > 0; i--) {
 		uint16 var;
 		ser.syncAsUint16LE(var);
 		_vars.push_back(var);
@@ -118,24 +118,24 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	}
 	_oldScripts.clear();
 	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i >0; i--) {
+	for (uint32 i = tmp; i > 0; i--) {
 		uint16 id;
 		uint32 delay;
 		ser.syncAsUint16LE(id);
 		ser.syncAsUint32LE(delay);
-		OldScript *oTmp = new OldScript(id,getResource(ID_SCRP, id));
+		OldScript *oTmp = new OldScript(id, getResource(ID_SCRP, id));
 		oTmp->_currDelay = delay;
 		_oldScripts.push_back(oTmp);
 	}
 	_queuedScripts.clear();
 	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i >0; i--) {
+	for (uint32 i = tmp; i > 0; i--) {
 		QueuedScript qTmp;
 		ser.syncAsUint32LE(qTmp._baseTime);
 		qTmp._baseTime += timeDelta;
 		ser.syncAsUint32LE(qTmp._duration);
 		ser.syncAsUint32LE(qTmp._count);
-		if(qTmp._count !=0) {
+		if(qTmp._count != 0) {
 			assert(qTmp._count != 0);
 		}
 		ser.syncAsUint16LE(qTmp._scriptId);
@@ -147,10 +147,10 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	ser.syncAsUint16LE(_mouseSpriteId);
 	_dirtyRects.clear();
 
-	_dirtyRects.push_back(Common::Rect(0,0,640,480));
+	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	byte palbuf[256 * 3];
-	ser.syncBytes(palbuf,256 * 3);
-	_system->getPaletteManager()->setPalette(palbuf,0,256);
+	ser.syncBytes(palbuf, 256 * 3);
+	_system->getPaletteManager()->setPalette(palbuf, 0, 256);
 	_needsUpdate = true;
 
 	return Common::kNoError;
@@ -164,7 +164,7 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 
 	Common::Serializer ser(NULL, out);
 	byte magic[4] = {'C', 'M', 'P', 'S'};
-	ser.syncBytes(magic,4);
+	ser.syncBytes(magic, 4);
 	ser.syncVersion(0);
 	Common::String desctmp = desc;
 	ser.syncString(desctmp);
@@ -221,7 +221,7 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 		tmp = (*i)._duration;
 		ser.syncAsUint32LE(tmp);
 		tmp = (*i)._count;
-		if(tmp !=0) {
+		if(tmp != 0) {
 			assert(tmp != 0);
 		}
 		uint16 tmp16 = (*i)._scriptId;
@@ -233,8 +233,8 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	ser.syncAsUint16LE(_mouseSpriteId);
 
 	byte palbuf[256 * 3];
-	_system->getPaletteManager()->grabPalette(palbuf,0,256);
-	ser.syncBytes(palbuf,256 * 3);
+	_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
+	ser.syncBytes(palbuf, 256 * 3);
 
 	out->finalize();
 	return Common::kNoError;

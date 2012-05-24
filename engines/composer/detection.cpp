@@ -25,7 +25,7 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
-#endif //SAVING_ANYWHERE
+#endif // SAVING_ANYWHERE
 #include "engines/advancedDetector.h"
 
 #include "composer/composer.h"
@@ -423,12 +423,12 @@ bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
 		return (f == kSupportsListSaves);
 #else
 	return false;
-#endif //SAVING_ANYWHERE
+#endif // SAVING_ANYWHERE
 }
 
 #ifdef SAVING_ANYWHERE
 Common::String getSaveName(Common::InSaveFile *in) {
-	Common::Serializer ser(in,NULL);
+	Common::Serializer ser(in, NULL);
 	Common::String name;
 	uint32 tmp;
 	ser.syncAsUint32LE(tmp);
@@ -443,7 +443,7 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.??",target);
+	Common::String pattern = Common::String::format("%s.??", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
@@ -465,13 +465,13 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
-#endif //SAVING_ANYWHERE
+#endif // SAVING_ANYWHERE
 
 bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL 
 #ifdef SAVING_ANYWHERE
 			|| f == kSupportsSavingDuringRuntime || f == kSupportsLoadingDuringRuntime
-#endif //SAVING_ANYWHERE
+#endif // SAVING_ANYWHERE
 			);
 }
 
