@@ -104,7 +104,7 @@ public:
 	byte _animationTick;
 	Common::Point _nextDisplayCharacterPos;
 	byte _sound_byte16F06;
-	byte _byte16F09;
+	byte _lastKeyPressed;
 	byte _keyboard_nextIndex;
 	byte _keyboard_oldIndex;
 	byte _byte12A05;
