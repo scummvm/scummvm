@@ -23,13 +23,19 @@
 #define GRAPHICS_SCALERPLUGIN_H
 
 #include "base/plugins.h"
+#include "graphics/pixelformat.h"
 
 class ScalerPluginObject : public PluginObject {
 public:
+
 	ScalerPluginObject();
+
 	virtual ~ScalerPluginObject() {}
+	
+	virtual void initialize(Graphics::PixelFormat format) = 0;
+
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height) = 0;
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) = 0;
 
 	virtual int getFactor() = 0;
 
@@ -45,16 +51,18 @@ public:
 	 */
 	virtual int decreaseFactor() = 0;
 
-	/**
-	 * Temporarily switch to a 1:1 scale ratio.
-	 * Useful for when the overlay is being displayed.
-	 */
+	virtual int extraPixels() = 0;
+
+	virtual bool canDrawCursor() = 0;
+
+	// temporary HACK
 	virtual void disableScaling();
 
 	virtual void enableScaling();
+
 protected:
 	int _factor;
-	bool _doScale;
+	bool _doScale; // < temporary
 };
 
 typedef PluginSubclass<ScalerPluginObject> ScalerPlugin;
