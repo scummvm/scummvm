@@ -236,7 +236,7 @@ public:
 	void displaySpeechBubble();
 	void displaySpeech(byte *buf);
 	void initGameAreaDisplay();
-	void displayIsometricBlock(byte *buf, int var1, int var2, int var3);
+	void displayIsometricBlock(byte *buf, int var1, int posX, int posY, int var3);
 	void displayGameArea();
 	void prepareGameArea();
 	void displayRefreshScreen();
@@ -290,7 +290,7 @@ public:
 	void sub130EE();
 	void sub1305C(byte index, byte var2);
 	void checkInterfaceHotspots(bool &forceReturnFl);
-	int sub13240(Common::Point mousePos, int var3, int var4);
+	bool isMouseOverHotspot(Common::Point mousePos, Common::Point hotspotPos);
 	void sub131B2(Common::Point pos, bool &forceReturnFl);
 	void sub131FC(Common::Point pos);
 	void sub1546F(Common::Point displayPos);
@@ -316,7 +316,7 @@ public:
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, int fileSize, bool loadPal);
-	byte *loadRaw(Common::String filename);
+	byte *loadRaw(Common::String filename, int filesize);
 	void loadRules();
 
 	void displayVGAFile(Common::String fileName);
