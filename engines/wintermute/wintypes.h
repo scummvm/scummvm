@@ -55,16 +55,16 @@ typedef const char *LPCSTR, *PCSTR;
 typedef PCSTR *PZPCSTR;
 
 typedef struct tagRECT {
-	uint32	left;
-	uint32	top;
-	uint32  right;
-	uint32	bottom;
+	int32	left;
+	int32	top;
+	int32  right;
+	int32	bottom;
 } RECT, *LPRECT;
 
 
 typedef struct tagPOINT {
-	uint32  x;
-	uint32  y;
+	int32  x;
+	int32  y;
 } POINT, *LPPOINT;
 
 
