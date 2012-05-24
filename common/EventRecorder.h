@@ -120,8 +120,9 @@ private:
 	void writeVersion();
 	void writeHeader();
 	void writeFormatId();
-	void readAndCheckScreenShot();
-	void readScreenshotFromPlaybackFile();
+	void loadScreenShot();
+	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
+	void skipScreenshot();
 	void writeGameHash();
 	void writeRandomRecords();
 	bool openRecordFile(const String &gameId);
@@ -145,7 +146,6 @@ private:
 	void writeScreenSettings();
 	void readEventsToBuffer(uint32 size);
 	void processScreenSettings();
-	void reallocBitmapBuff(uint16 widht, uint16 height, byte bpp);
 	uint32 _bitmapBuffSize;
 	byte *_bitmapBuff;
 	int _settingsSectionSize;
@@ -171,8 +171,8 @@ private:
 	SeekableReadStream *_playbackFile;
 	uint32 _lastScreenshotTime;
 	uint32 _screenshotPeriod;
-	void MakeScreenShot();
-
+	void saveScreenShot();
+	void checkRecordedMD5();
 	enum RecordMode {
 		kPassthrough = 0,
 		kRecorderRecord = 1,

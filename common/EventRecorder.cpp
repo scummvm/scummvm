@@ -26,6 +26,7 @@
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "common/bufferedstream.h"
 #include "common/config-manager.h"
+#include "common/md5.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
@@ -164,6 +165,10 @@ EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize),
 	_recorderMutex = g_system->createMutex();
 	_recordMode = kPassthrough;
 	_bitmapBuff = NULL;
+	_playbackFile = NULL;
+	_recordFile = NULL;
+	_screenshotsFile = NULL;
+
 }
 
 EventRecorder::~EventRecorder() {
@@ -218,7 +223,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 		timerEvent.type = EVENT_TIMER;
 		timerEvent.time = _fakeTimer;
 		writeEvent(timerEvent);
-		MakeScreenShot();
+		saveScreenShot();
 	}
 
 	if (_recordMode == kRecorderPlayback) {
@@ -307,7 +312,10 @@ void EventRecorder::getNextEvent() {
 				readEventsToBuffer(header.len);
 				break;
 			case MKTAG('B','M','H','T'):
-				readAndCheckScreenShot();
+				loadScreenShot();
+				break;
+			case MKTAG('M','D','5',' '):
+				checkRecordedMD5();
 				break;
 			default:
 				_playbackFile->skip(header.len);
@@ -345,9 +353,6 @@ uint32 EventRecorder::getRandomSeed(const String &name) {
 }
 
 void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDesc) {
-	_playbackFile = NULL;
-	_recordFile = NULL;
-	_screenshotsFile = NULL;
 	_recordCount = 0;
 	_lastScreenshotTime = 0;
 	_bitmapBuffSize = 0;
@@ -544,8 +549,8 @@ bool EventRecorder::processChunk(ChunkHeader &nextChunk) {
 			readEventsToBuffer(nextChunk.len);
 			_playbackParseState = kFileStateDone;
 			return false;
-		case MKTAG('T','H','M','B'): 
-			readAndCheckScreenShot();
+		case MKTAG('B','M','H','T'): 
+			loadScreenShot();
 			_playbackParseState = kFileStateDone;
 			return false;
 		case MKTAG('S','E','T','T'):
@@ -729,6 +734,7 @@ void EventRecorder::writeRandomRecords() {
 
 void EventRecorder::writeScreenSettings() {
 	_recordFile->writeUint32LE(MKTAG('S','C','R','N'));
+	//Chunk size = 4 (width(2 bytes) + height(2 bytes))
 	_recordFile->writeUint32LE(4);
 	_recordFile->writeUint16LE(g_system->getWidth());
 	_recordFile->writeSint16LE(g_system->getHeight());
@@ -737,19 +743,8 @@ void EventRecorder::writeScreenSettings() {
 void EventRecorder::processScreenSettings() {
 	uint16 width = _playbackFile->readUint16LE();
 	uint16 height = _playbackFile->readUint16LE();
-	reallocBitmapBuff(width, height, kDefaultBPP);
 }
 
-void EventRecorder::reallocBitmapBuff(uint16 width, uint16 height, byte bpp) {
-	uint32 newBitmapBuffSize = width * height * bpp;
-	if (_bitmapBuffSize != newBitmapBuffSize) {
-		_bitmapBuffSize = newBitmapBuffSize;
-		if (_bitmapBuff != NULL) {
-			free(_bitmapBuff);
-		}
-		_bitmapBuff = (byte*)malloc(_bitmapBuffSize);
-	}
-}
 
 void EventRecorder::writeGameSettings() {
 	getConfig();
@@ -825,49 +820,40 @@ void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain* domain
 	}
 }
 
-void EventRecorder::MakeScreenShot() {
+void EventRecorder::saveScreenShot() {
 	if (((_fakeTimer - _lastScreenshotTime) > _screenshotPeriod) && _headerDumped) {
 		dumpRecordsToFile();
 		_recordCount = 0;
 		_lastScreenshotTime = _fakeTimer;
-		Graphics::saveScreenShot(*_recordFile);
-	}
-}
-
-void EventRecorder::readAndCheckScreenShot() {
-	Graphics::Surface screenShot;
-	readScreenshotFromPlaybackFile();
-	createScreenShot(screenShot);
-	Graphics::saveScreenShot(*_screenshotsFile);
-	uint16 b1;
-	uint16 b2;
-	if (screenShot.w * screenShot.h * screenShot.format.bytesPerPixel != _bitmapBuffSize) {
-		warning("Recorded and current screenshots have different sizes");
-		return;
-	}
-	switch(screenShot.format.bytesPerPixel) {
-		case 2: {
-			uint16 *src = (uint16*)_bitmapBuff;
-			uint16 *dst = (uint16*)screenShot.pixels;
-			for (int i = 0; i < _bitmapBuffSize/2; i++){
-				b1 = FROM_BE_16(*src);
-				b2 = READ_LE_UINT16(dst);
-				if (b1 != b2) {
-					warning("Recorded and current screenshots are different");
-					return;
-				}
-				src++;
-				dst++;
-			}
-			break;
+		uint8 md5[16];
+		Graphics::Surface screen;
+		if (!grabScreenAndComputeMD5(screen, md5)) {
+			return;
 		}
-		default:
-			warning("Unsupprorted pixel format");
-			break;
+		_recordFile->writeUint32LE(MKTAG('M','D','5',' '));
+		_recordFile->writeUint32LE(16);
+		_recordFile->write(md5, 16);
+		Graphics::saveThumbnail(*_recordFile, screen);
+		screen.free();
 	}
 }
 
-void EventRecorder::readScreenshotFromPlaybackFile() {
+//TODO: Implement showing screenshots difference in case of different MD5 hashes
+void EventRecorder::loadScreenShot() {
+	skipScreenshot();
+}
+
+bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]) {
+	if (!createScreenShot(screen)) {
+		warning("Can't save screenshot");
+		return false;
+	}	
+	MemoryReadStream bitmapStream((const byte*)screen.pixels, screen.w * screen.h * screen.format.bytesPerPixel);
+	computeStreamMD5(bitmapStream, md5);
+	return true;
+}
+
+void EventRecorder::skipScreenshot() {
 	uint32 screenShotSize;
 	uint16 screenShotWidth;
 	uint16 screenShotHeight;
@@ -876,8 +862,7 @@ void EventRecorder::readScreenshotFromPlaybackFile() {
 	screenShotWidth = _playbackFile->readUint16BE();
 	screenShotHeight = _playbackFile->readUint16BE();
 	screenShotBpp = _playbackFile->readByte();
-	reallocBitmapBuff(screenShotWidth, screenShotHeight, screenShotBpp);
-	_playbackFile->read(_bitmapBuff, _bitmapBuffSize);
+	_playbackFile->skip(screenShotWidth*screenShotHeight*screenShotBpp);
 }
 
 void EventRecorder::readEventsToBuffer(uint32 size) {
@@ -885,4 +870,21 @@ void EventRecorder::readEventsToBuffer(uint32 size) {
 	_tmpPlaybackFile.seek(0);
 	_eventsSize = size;	
 }
+
+void EventRecorder::checkRecordedMD5() {
+	uint8 currentMD5[16];
+	uint8 savedMD5[16];
+	Graphics::Surface screen;
+	if (!grabScreenAndComputeMD5(screen, currentMD5)) {
+		return;
+	}
+	_playbackFile->read(savedMD5, 16);
+	if (memcmp(savedMD5, currentMD5, 16) != 0) {
+		warning("Recorded and current screenshots are different");
+	}
+	Graphics::saveThumbnail(*_screenshotsFile, screen);
+	screen.free();
+}
+
+
 } // End of namespace Common
