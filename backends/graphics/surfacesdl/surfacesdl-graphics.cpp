@@ -497,8 +497,8 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	assert(_transactionMode == kTransactionActive);
 
-	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
-		return true;
+	//if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
+	//	return true;
 
 	int newScaleFactor = 1;
 
@@ -550,15 +550,15 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 		return false;
 	}
 
-	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
+	newScaleFactor = (*_scalerPlugin)->getFactor();
+	_transactionDetails.normal1xScaler = (newScaleFactor == 1);
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
 	_transactionDetails.needUpdatescreen = true;
 
 	_videoMode.mode = mode;
-	//_videoMode.scaleFactor = newScaleFactor;
-	_videoMode.scaleFactor = (*_scalerPlugin)->getFactor();
+	_videoMode.scaleFactor = newScaleFactor;
 
 	return true;
 }
@@ -1367,8 +1367,8 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 	if (!realCoordinates) {
 		x--;
 		y--;
-		w+=2;
-		h+=2;
+		w+= (*_scalerPlugin)->extraPixels()*2;
+		h+= (*_scalerPlugin)->extraPixels()*2;
 	}
 
 	// clip
