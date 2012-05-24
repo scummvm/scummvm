@@ -32,29 +32,47 @@ public:
 
 	virtual ~ScalerPluginObject() {}
 	
+	/**
+	 * This function will be called before any scaler is used.
+	 * Precomputed data should be generated here.
+	 * @param format The pixel format to scale.
+	 */
 	virtual void initialize(Graphics::PixelFormat format) = 0;
 
+	/**
+	 * This is called when the plugin is not needed. It should clean
+	 * up memory from the initialize method.
+	 */
 	virtual void deinitialize() {}
 
-	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) = 0;
+	virtual void scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                   uint32 dstPitch, int width, int height, int x, int y) = 0;
 
-	virtual int getFactor() = 0;
 
 	/**
 	 * Increase the factor of scaling.
-	 * @return the new factor
+	 * @return The new factor
 	 */
 	virtual int increaseFactor() = 0;
 
 	/**
 	 * Decrease the factor of scaling.
-	 * @return the new factor
+	 * @return The new factor
 	 */
 	virtual int decreaseFactor() = 0;
 
+	virtual int getFactor() = 0;
+
+	/**
+	 * Indicates how far outside the scaling region this scaler "looks"
+	 * @return The number of pixels in any direction
+	 */
 	virtual int extraPixels() = 0;
 
+	/**
+	 * Some scalers are not suitable for scaling the cursor.
+	 * Blurring scalers should return false.
+	 */
 	virtual bool canDrawCursor() = 0;
 
 	// temporary HACK

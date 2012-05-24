@@ -24,7 +24,6 @@
 
 void NormalPlugin::initialize(Graphics::PixelFormat format) {}
 
-
 void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (!_doScale) {
@@ -58,18 +57,6 @@ int NormalPlugin::decreaseFactor() {
 
 const char *NormalPlugin::getName() const {
 	return "Normal";
-}
-
-int NormalPlugin::getFactor() {
-	return _factor;
-}
-
-bool NormalPlugin::canDrawCursor() {
-	return true;
-}
-
-int NormalPlugin::extraPixels() {
-	return 0;
 }
 
 
