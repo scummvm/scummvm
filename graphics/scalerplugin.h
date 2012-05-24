@@ -34,6 +34,8 @@ public:
 	
 	virtual void initialize(Graphics::PixelFormat format) = 0;
 
+	virtual void deinitialize() {}
+
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) = 0;
 
