@@ -2777,11 +2777,13 @@ void LilliputScript::OC_setInterfaceHotspot() {
 	debugC(1, kDebugScript, "OC_setInterfaceHotspot()");
 
 	int16 index = _currScript->readSint16LE();
-	uint16 curWord = _currScript->readUint16LE();
-
 	assert((index >= 0) && (index < 20));
+
+	uint16 curWord = _currScript->readUint16LE();
 	_interfaceHotspotStatus[index] = (curWord & 0xFF);
 	_array122FD[index] = (curWord >> 8);
+	if (_array122FD[index] != 0)
+		warning("debug - OC_setInterfaceHotspot - _array122FD[index] = %d", _array122FD[index]);
 
 	_vm->displayInterfaceHotspots();
 }

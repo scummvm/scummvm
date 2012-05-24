@@ -346,9 +346,13 @@ void LilliputEngine::display16x16IndexedBuf(byte *buf, int index, Common::Point 
 	int index2 = pos.x + (pos.y * 320);
 
 	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			if (newBuf[j] != 0)
-				((byte *)_mainSurface->getPixels())[index2 + j] = newBuf[j];
+		// clip on y
+		if (pos.y + i < 200) {
+			for (int j = 0; j < 16; j++) {
+				// clip on x
+				if ((newBuf[j] != 0) && (pos.x + j < 320))
+					((byte *)_mainSurface->getPixels())[index2 + j] = newBuf[j];
+			}
 		}
 		index2 += 320;
 		newBuf += 16;
@@ -482,14 +486,12 @@ void LilliputEngine::displayLandscape() {
 
 	memcpy(_savedSurfaceGameArea2, _savedSurfaceGameArea3, 176 * 256); // 45056
 
-	int var1 = (_scriptHandler->_viewportPos.y >> 8) + ((_scriptHandler->_viewportPos.y & 0xFF) << 8) + (_scriptHandler->_viewportPos.x << 2);
-	int var2;
-	int index = 0;
+	int index = (_scriptHandler->_viewportPos.y * 64 + _scriptHandler->_viewportPos.x) * 4;
 
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8 ; j++) {
-			var2 = (j << 8) + i;
-			displayIsometricBlock(_savedSurfaceGameArea2, _bufferIsoMap[var1 + index], var2, 0);
+	for (int posY = 0; posY < 8; posY++) {
+		for (int posX = 0; posX < 8 ; posX++) {
+			assert (index < 16384);
+			displayIsometricBlock(_savedSurfaceGameArea2, _bufferIsoMap[index], posX, posY, 0);
 			index += 4;
 		}
 		index += 224;
@@ -608,11 +610,11 @@ void LilliputEngine::initGameAreaDisplay() {
 	free(tmpBuf);
 }
 
-void LilliputEngine::displayIsometricBlock(byte *buf, int var1, int var2, int var3) {
-	debugC(1, kDebugEngine, "displayIsometricBlock(buf, %d, %d, %d)", var1, var2, var3);
+void LilliputEngine::displayIsometricBlock(byte *buf, int var1, int posX, int posY, int var3) {
+	debugC(1, kDebugEngine, "displayIsometricBlock(buf, %d, %d - %d, %d)", var1, posX, posY, var3);
 
-	byte tmpByte1 = ((7 + (var2 >> 8) - (var2 & 0xFF)) << 4) & 0xFF;
-	byte tmpByte2 = ((4 + (var2 >> 8) + (var2 & 0xFF) - (var3 >> 7)) << 3) & 0xFF;
+	byte tmpByte1 = ((7 + posX - posY) << 4) & 0xFF;
+	byte tmpByte2 = ((4 + posX + posY - (var3 >> 7)) << 3) & 0xFF;
 
 	int index = (tmpByte2 << 8) + tmpByte1;
 	int index2 = var1 << 10;
@@ -763,25 +765,25 @@ void LilliputEngine::prepareGameArea() {
 
 	memcpy(_savedSurfaceGameArea1, _savedSurfaceGameArea2, 176 * 256); // 45056;
 
-	int index1 = (_scriptHandler->_viewportPos.y >> 8) + ((_scriptHandler->_viewportPos.y & 0xFF) << 8) + (_scriptHandler->_viewportPos.x << 2);
+	int index1 = (_scriptHandler->_viewportPos.y * 64 + _scriptHandler->_viewportPos.x) * 4;
+	assert(index1 < 16384);
 	byte *map = &_bufferIsoMap[index1];
 
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			int tmpVal = (j << 8) + i;
+	for (int posY = 0; posY < 8; posY++) {
+		for (int posX = 0; posX < 8; posX++) {
 			if (map[1] != 0xFF) {
 				int var1 = map[1];
 				if ((_rulesChunk9[var1] & 128) != 0)
 					var1 += _animationTick;
-				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 1 << 8);
+				displayIsometricBlock(_savedSurfaceGameArea1, var1, posX, posY, 1 << 8);
 			}
-			renderCharacters(map, Common::Point(j, i));
+			renderCharacters(map, Common::Point(posX, posY));
 
 			if (map[2] != 0xFF) {
 				int var1 = map[2];
 				if ((_rulesChunk9[var1] & 128) != 0)
 					var1 += _animationTick;
-				displayIsometricBlock(_savedSurfaceGameArea1, var1, tmpVal, 2 << 8);
+				displayIsometricBlock(_savedSurfaceGameArea1, var1, posX, posY, 2 << 8);
 			}
 			map += 4;
 		}
@@ -894,7 +896,9 @@ void LilliputEngine::paletteFadeIn() {
 int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	debugC(2, kDebugEngineTBC, "sub16DD5(%d, %d, %d, %d)", x1, y1, x2, y2);
 
-	byte *isoMap = _bufferIsoMap + (y1 << 8) + (x1 << 2) + 1;
+	int index = (y1 * 64 + x1) * 4;
+	assert(index < 16384);
+	byte *isoMap = &_bufferIsoMap[1];
 
 	int dx = x2 - x1;
 	int dy = y2 - y1;
@@ -1488,7 +1492,9 @@ void LilliputEngine::sub167EF(int index) {
 	}
 
 	// var4h == var4l
-	int mapIndex = (((_array10A11PosY[index] << 8) >> 2) + _array109E9PosX[index]) << 2;
+	int mapIndex = (_array10A11PosY[index] * 64 + _array109E9PosX[index]) * 4;
+	assert(mapIndex < 16384);
+
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
 	if ((tmpVal & 8) != 0)
 		++_array109E9PosX[index];
@@ -1521,6 +1527,7 @@ void LilliputEngine::sub1693A(int index) {
 	int retVal = 0;
 	for (int i = 3; i >= 0; i--) {
 		mapIndexDiff = mapArrayMove[i];
+		assert(mapIndex + mapIndexDiff + 3 < 16384);
 		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _array16C54[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _array16C58[i]) != 0)) {
 			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0 && (sub16A76(i, index) != 0)) {
 				_array1692B[i] -= 20;
@@ -1820,13 +1827,12 @@ byte LilliputEngine::sub1675D(int index, Common::Point var1) {
 void LilliputEngine::sub16EBC() {
 	debugC(2, kDebugEngine, "sub16EBC()");
 
-	int index2 = 3;
-
 	for (int index1 = _numCharacters - 1; index1 >= 0; index1--) {
-		int var2 = (_scriptHandler->_array1614BPosY[index1] << 8) + (_scriptHandler->_array16123PosX[index1] << 2);
-		int var1 = (_bufferIsoMap[index2 + var2] & 0x40);
+		int mapIndex = (_scriptHandler->_array1614BPosY[index1] * 64 + _scriptHandler->_array16123PosX[index1]) * 4;
+		assert(mapIndex < 16384);
+		byte var1 = _bufferIsoMap[mapIndex + 3];
 
-		if (var1 == _array16E94[index1])
+		if ((var1 & 0x40) == _array16E94[index1])
 			continue;
 
 		_array16E94[index1] = var1;
@@ -1935,11 +1941,11 @@ void LilliputEngine::sub131B2(Common::Point pos, bool &forceReturnFl) {
 }
 
 void LilliputEngine::checkInterfaceHotspots(bool &forceReturnFl) {
-	debugC(2, kDebugEngineTBC, "checkInterfaceHotspots()");
+	debugC(2, kDebugEngine, "checkInterfaceHotspots()");
 
 	forceReturnFl = false;
 	for (int index = _interfaceHotspotNumb - 1; index >= 0; index--) {
-		if (sub13240(_mousePos, _interfaceHotspotsX[index], _interfaceHotspotsY[index]) == 0) {
+		if (isMouseOverHotspot(_mousePos, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]))) {
 			sub1305C(index, 1);
 			forceReturnFl = true;
 			return;
@@ -1947,19 +1953,13 @@ void LilliputEngine::checkInterfaceHotspots(bool &forceReturnFl) {
 	}
 }
 
-int LilliputEngine::sub13240(Common::Point mousePos, int var3, int var4) {
-	debugC(2, kDebugEngineTBC, "sub13240(%d, %d, %d, %d)", mousePos.x, mousePos.y, var3, var4);
+bool LilliputEngine::isMouseOverHotspot(Common::Point mousePos, Common::Point hotspotPos) {
+	debugC(2, kDebugEngine, "isMouseOverHotspot(%d - %d, %d - %d)", mousePos.x, mousePos.y, hotspotPos.x, hotspotPos.y);
 
-	if ((mousePos.x < var3) || (mousePos.y < var4))
-		return -1;
+	if ((mousePos.x < hotspotPos.x) || (mousePos.y < hotspotPos.y) || (mousePos.x > hotspotPos.x + 16) || (mousePos.y > hotspotPos.y + 16))
+		return false;
 
-	var3 += 16;
-	var4 += 16;
-
-	if ((mousePos.x > var3) || (mousePos.y > var4))
-		return -1;
-
-	return 0;
+	return true;
 }
 
 void LilliputEngine::sub1305C(byte index, byte button) {
@@ -2147,8 +2147,8 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 	if ((pos.x < 0) || (pos.x >= 512) || (pos.y < 0) || (pos.y >= 512))
 		return;
 
-	int mapIndex = (_scriptHandler->_array1614BPosY[index] << 6) + _scriptHandler->_array16123PosX[index];
-	mapIndex <<= 2;
+	int mapIndex = (_scriptHandler->_array1614BPosY[index] * 64 + _scriptHandler->_array16123PosX[index]) * 4;
+	assert(mapIndex < 16384);
 
 	if ((_bufferIsoMap[mapIndex + 3] & _array16C58[direction]) == 0)
 		return;
@@ -2398,7 +2398,7 @@ byte *LilliputEngine::loadVGA(Common::String filename, int expectedSize, bool lo
 	return decodeBuffer;
 }
 
-byte *LilliputEngine::loadRaw(Common::String filename) {
+byte *LilliputEngine::loadRaw(Common::String filename, int filesize) {
 	debugC(1, kDebugEngine, "loadRaw(%s)", filename.c_str());
 
 	Common::File f;
@@ -2406,9 +2406,8 @@ byte *LilliputEngine::loadRaw(Common::String filename) {
 	if (!f.open(filename))
 		error("Missing game file %s", filename.c_str());
 
-	int size = f.size();
-	byte *res = (byte *)malloc(sizeof(byte) * size);
-	for (int i = 0; i < size; ++i)
+	byte *res = (byte *)malloc(sizeof(byte) * filesize);
+	for (int i = 0; i < filesize; ++i)
 		res[i] = f.readByte();
 
 	f.close();
@@ -2742,7 +2741,7 @@ Common::Error LilliputEngine::run() {
 	_bufferMen = loadVGA("MEN.VGA", 61440, false);
 	_bufferMen2 = loadVGA("MEN2.VGA", 61440, false);
 	_bufferIsoChars = loadVGA("ISOCHARS.VGA", 4096, false);
-	_bufferIsoMap = loadRaw("ISOMAP.DTA");
+	_bufferIsoMap = loadRaw("ISOMAP.DTA", 16384);
 
 	loadRules();
 	_int8installed = true;
