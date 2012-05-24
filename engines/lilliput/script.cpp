@@ -64,7 +64,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array128EF[i] = 15;
 		_array10AB1[i] = 0;
 		_array12811[i] = 16;
-		_array12839[i] = 0xFF;
+		_array12839[i] = -1;
 		_array16123PosX[i] = 0;
 		_array1614BPosY[i] = 0;
 		_array122C1[i] = 0;
@@ -1066,7 +1066,7 @@ void LilliputScript::sub16C86(int index, byte *buf) {
 	}
 }
 
-void LilliputScript::sub16C5C(int index, byte var3) {
+void LilliputScript::sub16C5C(int index, int8 var3) {
 	debugC(1, kDebugScript, "sub16C5C(%d, %d)", index, var3);
 
 	assert(index < 40);
@@ -1744,9 +1744,9 @@ byte LilliputScript::OC_compWord10804() {
 }
 
 byte LilliputScript::OC_sub17766() {
-	debugC(1, kDebugScriptTBC, "OC_sub17766()");
+	debugC(1, kDebugScript, "OC_sub17766()");
 
-	byte var1 = (_currScript->readUint16LE() & 0xFF);
+	int8 var1 = (_currScript->readUint16LE() & 0xFF);
 	if ((var1 == _array12839[_vm->_currentScriptCharacter]) && (_array12811[_vm->_currentScriptCharacter] != 16))
 		return 1;
 
@@ -1756,7 +1756,7 @@ byte LilliputScript::OC_sub17766() {
 byte LilliputScript::OC_sub17782() {
 	debugC(1, kDebugScript, "OC_sub17782()");
 
-	byte var1 = (_currScript->readUint16LE() & 0xFF);
+	int8 var1 = (_currScript->readUint16LE() & 0xFF);
 	if ((var1 == _array12839[_vm->_currentScriptCharacter]) && (_array12811[_vm->_currentScriptCharacter] == 16))
 		return 1;
 
@@ -2394,14 +2394,14 @@ void LilliputScript::OC_resetByte16F04() {
 void LilliputScript::OC_sub17AE1() {
 	debugC(1, kDebugScript, "OC_sub17AE1()");
 
-	byte var3 = (_currScript->readUint16LE() & 0xFF);
+	int8 var3 = (_currScript->readUint16LE() & 0xFF);
 	sub16C5C(_vm->_currentScriptCharacter, var3);
 }
 
 void LilliputScript::OC_sub17AEE() {
 	debugC(1, kDebugScript, "OC_sub17AEE()");
 
-	byte var3 = (_currScript->readUint16LE() & 0xFF);
+	int8 var3 = (_currScript->readUint16LE() & 0xFF);
 	sub16C5C(_vm->_currentScriptCharacter + 1, var3);
 }
 
@@ -2460,7 +2460,7 @@ void LilliputScript::OC_setCurrentCharacter() {
 }
 
 void LilliputScript::sub171AF(int16 var1, int16 var2, int16 var4) {
-	debugC(2, kDebugScriptTBC, "sub171AF()");
+	debugC(2, kDebugScript, "sub171AF()");
 
 	int index = 0;
 	for (int i = 0; i < 10; i++) {
@@ -2468,6 +2468,7 @@ void LilliputScript::sub171AF(int16 var1, int16 var2, int16 var4) {
 			_vm->_array12861[index + 1] = var1;
 			_vm->_array12861[index + 2] = var2;
 			_vm->_array12861[index + 0] = _vm->_word1289D + var4;
+			return;
 		}
 		index += 3;
 	}

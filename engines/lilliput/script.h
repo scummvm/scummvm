@@ -80,7 +80,7 @@ public:
 
 	Common::Point _array12311[640];
 	byte _array128EF[40];
-	byte _array12839[40];
+	int8 _array12839[40];
 	Common::Point _array1813BPos[32];
 
 	LilliputScript(LilliputEngine *vm);
@@ -120,7 +120,7 @@ private:
 	void enableCharacterScript(byte index, byte var1, byte *curBufPtr);
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
-	void sub16C5C(int index, byte var3);
+	void sub16C5C(int index, int8 var3);
 	void checkSpeechAllowed(bool &forceReturnFl);
 	void decodePackedText(char *buf);
 	void startSpeech(int var);
