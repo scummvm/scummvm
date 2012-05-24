@@ -27,11 +27,14 @@
 class NormalPlugin : public ScalerPluginObject {
 public:
 	NormalPlugin() { _factor = 1;}
+	virtual void initialize(Graphics::PixelFormat format);
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height);
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
 	virtual int increaseFactor();
 	virtual int decreaseFactor();
 	virtual int getFactor();
+	virtual bool canDrawCursor();
+	virtual int extraPixels();
 	virtual const char *getName() const;
 };
 
