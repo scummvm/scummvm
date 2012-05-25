@@ -142,6 +142,7 @@ public:
 		// Scaler plugins
 		LINK_PLUGIN(NORMAL)
 		LINK_PLUGIN(HQ)
+		LINK_PLUGIN(SAI)
 
 		return pl;
 	}
