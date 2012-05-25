@@ -720,6 +720,19 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
 
+	// WORKAROUND: EcoQuest French and German draw the fish and anemone sprites
+	// with priority 15 in scene 440. Afterwards, a dialog is shown on top of
+	// these sprites with priority 15 as well. This is undefined behavior
+	// actually, as the sprites and dialog share the same priority, so in our
+	// implementation the sprites get drawn incorrectly on top of the dialog.
+	// Perhaps this worked by mistake in SSCI because of subtle differences in
+	// how sprites are drawn. We compensate for this by resetting the priority
+	// of all sprites that have a priority of 15 in scene 440 to priority 14,
+	// so that the speech bubble can be drawn correctly on top of them. Fixes
+	// bug #3040625.
+	if (g_sci->getGameId() == GID_ECOQUEST && g_sci->getEngineState()->currentRoomNumber() == 440 && priority == 15)
+		priority = 14;
+
 	if (!_EGAmapping) {
 		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {

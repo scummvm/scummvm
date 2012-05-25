@@ -193,7 +193,7 @@ void SendSceneTinselProcess(TINSEL_EVENT event) {
 			init.event = event;
 			init.hTinselCode = ss->hSceneScript;
 
-			g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+			CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 		}
 	}
 }
@@ -271,7 +271,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 					init.event = STARTUP;
 					init.hTinselCode = es->hScript;
 
-					g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+					CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 				}
 				break;
 			}
@@ -291,7 +291,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 			init.event = STARTUP;
 			init.hTinselCode = ss->hSceneScript;
 
-			g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+			CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 		}
 	}
 
@@ -344,7 +344,7 @@ void EndScene() {
 	KillAllObjects();
 
 	// kill all destructable process
-	g_scheduler->killMatchingProcess(PID_DESTROY, PID_DESTROY);
+	CoroScheduler.killMatchingProcess(PID_DESTROY, PID_DESTROY);
 }
 
 /**
@@ -405,16 +405,16 @@ void PrimeScene() {
 	if (!TinselV2)
 		EnableTags();		// Next scene with tags enabled
 
-	g_scheduler->createProcess(PID_SCROLL, ScrollProcess, NULL, 0);
-	g_scheduler->createProcess(PID_SCROLL, EffectPolyProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_SCROLL, ScrollProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_SCROLL, EffectPolyProcess, NULL, 0);
 
 #ifdef DEBUG
 	if (g_ShowPosition)
-		g_scheduler->createProcess(PID_POSITION, CursorPositionProcess, NULL, 0);
+		CoroScheduler.createProcess(PID_POSITION, CursorPositionProcess, NULL, 0);
 #endif
 
-	g_scheduler->createProcess(PID_TAG, TagProcess, NULL, 0);
-	g_scheduler->createProcess(PID_TAG, PointProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_TAG, TagProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_TAG, PointProcess, NULL, 0);
 
 	// init the current background
 	PrimeBackground();
@@ -471,7 +471,7 @@ void DoHailScene(SCNHANDLE scene) {
 		init.event = NOEVENT;
 		init.hTinselCode = ss->hSceneScript;
 
-		g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+		CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 	}
 }
 

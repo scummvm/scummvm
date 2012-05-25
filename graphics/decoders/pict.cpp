@@ -38,6 +38,7 @@ namespace Graphics {
 
 PICTDecoder::PICTDecoder() {
 	_outputSurface = 0;
+	_paletteColorCount = 0;
 }
 
 PICTDecoder::~PICTDecoder() {
@@ -50,6 +51,8 @@ void PICTDecoder::destroy() {
 		delete _outputSurface;
 		_outputSurface = 0;
 	}
+
+	_paletteColorCount = 0;
 }
 
 #define OPCODE(a, b, c) _opcodes.push_back(PICTOpcode(a, &PICTDecoder::b, c))
@@ -298,9 +301,9 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool hasPal
 		// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-267.html
 		stream.readUint32BE(); // seed
 		stream.readUint16BE(); // flags
-		uint16 colorCount = stream.readUint16BE() + 1;
+		_paletteColorCount = stream.readUint16BE() + 1;
 
-		for (uint32 i = 0; i < colorCount; i++) {
+		for (uint32 i = 0; i < _paletteColorCount; i++) {
 			stream.readUint16BE();
 			_palette[i * 3] = stream.readUint16BE() >> 8;
 			_palette[i * 3 + 1] = stream.readUint16BE() >> 8;

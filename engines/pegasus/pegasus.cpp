@@ -2093,7 +2093,7 @@ void PegasusEngine::doSubChase() {
 	if (!video->loadFile("Images/Norad Alpha/Sub Chase Movie"))
 		error("Failed to load sub chase");
 
-	while (!shouldQuit() && !video->endOfVideo() && video->getElapsedTime() < endTime) {
+	while (!shouldQuit() && !video->endOfVideo() && video->getTime() < endTime) {
 		if (video->needsUpdate()) {
 			const Graphics::Surface *frame = video->decodeNextFrame();
 

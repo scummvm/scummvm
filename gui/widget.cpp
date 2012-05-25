@@ -281,7 +281,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -290,7 +290,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 	  _cmd(cmd), _lastTime(0) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 

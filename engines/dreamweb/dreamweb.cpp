@@ -63,14 +63,18 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_channel1 = 0;
 
 	_datafilePrefix = "DREAMWEB.";
+	_speechDirName = "SPEECH";
 	// ES and FR CD release use a different data file prefix
+	// and speech directory naming.
 	if (isCD()) {
 		switch(getLanguage()) {
 		case Common::ES_ESP:
 			_datafilePrefix = "DREAMWSP.";
+			_speechDirName = "SPANISH";
 			break;
 		case Common::FR_FRA:
 			_datafilePrefix = "DREAMWFR.";
+			_speechDirName = "FRENCH";
 			break;
 		default:
 			// Nothing to do
@@ -381,7 +385,7 @@ Common::Error DreamWebEngine::run() {
 
 	ConfMan.registerDefault("originalsaveload", "false");
 	ConfMan.registerDefault("bright_palette", true);
-	_hasSpeech = Common::File::exists("speech/r01c0000.raw") && !ConfMan.getBool("speech_mute");
+	_hasSpeech = Common::File::exists(_speechDirName + "/r01c0000.raw") && !ConfMan.getBool("speech_mute");
 	_brightPalette = ConfMan.getBool("bright_palette");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");

@@ -100,7 +100,7 @@ public:
 	VideoHandle findVideoHandle(const Common::String &filename);
 	int32 getCurFrame(VideoHandle handle);
 	uint32 getFrameCount(VideoHandle handle);
-	uint32 getElapsedTime(VideoHandle handle);
+	uint32 getTime(VideoHandle handle);
 	uint32 getDuration(VideoHandle videoHandle);
 	bool endOfVideo(VideoHandle handle);
 	void setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end);

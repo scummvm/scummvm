@@ -626,15 +626,12 @@ void DreamWebEngine::signOn() {
 	_monAdX = prevX;
 	_monAdY = prevY;
 
-	inputLine = (const char *)_inputLine;
-	inputLine.toUppercase();
-
 	// The entered line has zeroes in-between each character
 	uint32 len = strlen(monitorKeyEntries[foundIndex].password);
 	bool found = true;
 
 	for (uint32 i = 0; i < len; i++) {
-		if (monitorKeyEntries[foundIndex].password[i] != inputLine[i * 2]) {
+		if (monitorKeyEntries[foundIndex].password[i] != _inputLine[i * 2]) {
 			found = false;
 			break;
 		}

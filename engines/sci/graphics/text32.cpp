@@ -187,8 +187,11 @@ void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t t
 
 	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
 
-	if (!memoryPtr)
-		error("Attempt to draw an invalid text bitmap");
+	if (!memoryPtr) {
+		// Happens when restoring in some SCI32 games
+		warning("Attempt to draw an invalid text bitmap");
+		return;
+	}
 
 	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 

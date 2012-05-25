@@ -979,7 +979,7 @@ void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
 		return;
 
 	// Run the opcode if we can at this point
-	if (force || _video->getElapsedTime(handle) >= _scriptMan->getStoredMovieOpcodeTime())
+	if (force || _video->getTime(handle) >= _scriptMan->getStoredMovieOpcodeTime())
 		_scriptMan->runStoredMovieOpcode();
 }
 

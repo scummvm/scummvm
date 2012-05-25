@@ -289,11 +289,11 @@ SmackerDecoder::~SmackerDecoder() {
 	close();
 }
 
-uint32 SmackerDecoder::getElapsedTime() const {
+uint32 SmackerDecoder::getTime() const {
 	if (_audioStream && _audioStarted)
 		return _mixer->getSoundElapsedTime(_audioHandle);
 
-	return FixedRateVideoDecoder::getElapsedTime();
+	return FixedRateVideoDecoder::getTime();
 }
 
 bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {

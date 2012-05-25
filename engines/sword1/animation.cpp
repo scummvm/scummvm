@@ -510,11 +510,11 @@ DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle
 	: _mixer(mixer), _bgSoundHandle(bgSoundHandle)  {
 }
 
-uint32 DXADecoderWithSound::getElapsedTime() const {
+uint32 DXADecoderWithSound::getTime() const {
 	if (_mixer->isSoundHandleActive(*_bgSoundHandle))
 		return _mixer->getSoundElapsedTime(*_bgSoundHandle);
 
-	return DXADecoder::getElapsedTime();
+	return DXADecoder::getTime();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

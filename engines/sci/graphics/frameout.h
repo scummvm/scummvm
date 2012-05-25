@@ -60,6 +60,7 @@ struct FrameoutEntry {
 	GfxPicture *picture;
 	int16 picStartX;
 	int16 picStartY;
+	bool visible;
 };
 
 typedef Common::List<FrameoutEntry *> FrameoutList;
@@ -103,6 +104,8 @@ public:
 	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY = 0);
 	void deletePlanePictures(reg_t object);
 	void clear();
+	void printPlaneList(Console *con);
+	void printPlaneItemList(Console *con, reg_t planeObject);
 
 private:
 	void showVideo();

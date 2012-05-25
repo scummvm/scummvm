@@ -500,29 +500,26 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
 
 	// SetScroll - called by script 64909, Styler::doit()
 	// PalCycle - called by Game::newRoom. Related to RemapColors.
-	// VibrateMouse - used in QFG4
 
 	// SCI2 Empty functions
 	
 	// Debug function used to track resources
 	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
-	// SCI2 functions that are used in the original save/load menus. Marked as dummy, so
-	// that the engine errors out on purpose. TODO: Implement once the original save/load
-	// menus are implemented.
-
-	// Creates the name of the save catalogue/directory to save into.
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveCatName),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
-	// Creates the name of the save file to save into
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveFileName),    SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	// Future TODO: This call is used in the floppy version of QFG4 to add
+	// vibration to exotic mice with force feedback, such as the Logitech
+	// Cyberman and Wingman mice. Since this is only used for very exotic
+	// hardware and we have no direct and cross-platform way of communicating
+	// with them via SDL, plus we would probably need to make changes to common
+	// code, this call is mapped to an empty function for now as it's a rare
+	// feature not worth the effort.
+	{ MAP_EMPTY(VibrateMouse),      SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 

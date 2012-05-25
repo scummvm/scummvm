@@ -125,15 +125,20 @@ public:
 	virtual uint32 getFrameCount() const = 0;
 
 	/**
-	 * Returns the time (in ms) that the video has been running.
-	 * This is based on the "wall clock" time as determined by
-	 * OSystem::getMillis, and takes pausing the video into account.
+	 * Returns the time position (in ms) of the current video.
+	 * This can be based on the "wall clock" time as determined by
+	 * OSystem::getMillis() or the current time of any audio track
+	 * running in the video, and takes pausing the video into account.
 	 *
-	 * As such, it can differ from what multiplying getCurFrame() by
+	 * As such, it will differ from what multiplying getCurFrame() by
 	 * some constant would yield, e.g. for a video with non-constant
 	 * frame rate.
+	 *
+	 * Due to the nature of the timing, this value may not always be
+	 * completely accurate (since our mixer does not have precise
+	 * timing).
 	 */
-	virtual uint32 getElapsedTime() const;
+	virtual uint32 getTime() const;
 
 	/**
 	 * Return the time (in ms) until the next frame should be displayed.
@@ -247,13 +252,8 @@ class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
 public:
 	/**
 	 * Seek to the specified time.
-	 *
-	 * This will round to the previous frame showing. If the time would happen to
-	 * land while a frame is showing, this function will seek to the beginning of that
-	 * frame. In other words, there is *no* subframe accuracy. This may change in a
-	 * later revision of the API.
 	 */
-	virtual void seekToTime(Audio::Timestamp time) = 0;
+	virtual void seekToTime(const Audio::Timestamp &time) = 0;
 
 	/**
 	 * Seek to the specified time (in ms).

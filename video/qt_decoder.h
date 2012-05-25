@@ -106,13 +106,13 @@ public:
 	bool isVideoLoaded() const { return isOpen(); }
 	const Graphics::Surface *decodeNextFrame();
 	bool endOfVideo() const;
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	uint32 getTimeToNextFrame() const;
 	Graphics::PixelFormat getPixelFormat() const;
 
 	// SeekableVideoDecoder API
 	void seekToFrame(uint32 frame);
-	void seekToTime(Audio::Timestamp time);
+	void seekToTime(const Audio::Timestamp &time);
 	uint32 getDuration() const { return _duration * 1000 / _timeScale; }
 
 protected:

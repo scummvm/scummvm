@@ -198,7 +198,7 @@ void Movie::updateTime() {
 
 		uint32 startTime = _startTime * getScale() / _startScale;
 		uint32 stopTime = _stopTime * getScale() / _stopScale;
-		uint32 actualTime = CLIP<int>(_video->getElapsedTime() * getScale() / 1000, startTime, stopTime);
+		uint32 actualTime = CLIP<int>(_video->getTime() * getScale() / 1000, startTime, stopTime);
 		_time = Common::Rational(actualTime, getScale());
 	}
 }

@@ -1299,14 +1299,14 @@ static void SetOffWithinNodePath(PMOVER pMover, HPOLYGON StartPath, HPOLYGON Des
  */
 void SSetActorDest(PMOVER pActor) {
 	if (pActor->UtargetX != -1 && pActor->UtargetY != -1) {
-		Stand(nullContext, pActor->actorID, pActor->objX, pActor->objY, 0);
+		Stand(Common::nullContext, pActor->actorID, pActor->objX, pActor->objY, 0);
 
 		if (pActor->UtargetX != -1 && pActor->UtargetY != -1) {
 			SetActorDest(pActor, pActor->UtargetX, pActor->UtargetY,
 					pActor->bIgPath, 0);
 		}
 	} else {
-		Stand(nullContext, pActor->actorID, pActor->objX, pActor->objY, 0);
+		Stand(Common::nullContext, pActor->actorID, pActor->objX, pActor->objY, 0);
 	}
 }
 
