@@ -433,7 +433,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
 						   uint32 duration, bool *expired) {
 	if (!pCurrent)
-		error("Called CoroutineScheduler::waitForMultipleEvents from the main process");
+		error("Called CoroutineScheduler::waitForMultipleObjects from the main process");
 
 	CORO_BEGIN_CONTEXT;
 		uint32 endTime;
@@ -505,7 +505,7 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
  */
 void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 	if (!pCurrent)
-		error("Called CoroutineScheduler::waitForSingleObject from the main process");
+		error("Called CoroutineScheduler::sleep from the main process");
 
 	CORO_BEGIN_CONTEXT;
 		uint32 endTime;
