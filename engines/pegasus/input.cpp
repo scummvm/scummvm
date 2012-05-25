@@ -63,6 +63,7 @@ InputDeviceManager::InputDeviceManager() {
 	_keyMap[Common::KEYCODE_LALT] = false;
 	_keyMap[Common::KEYCODE_RALT] = false;
 	_keyMap[Common::KEYCODE_e] = false;
+	_keyMap[Common::KEYCODE_KP_ENTER] = false;
 
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 	_lastRawBits = kAllUpBits;
@@ -99,7 +100,7 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	if (_keyMap[Common::KEYCODE_RIGHT] || _keyMap[Common::KEYCODE_KP6])
 		currentBits |= (kRawButtonDown << kRightButtonShift);
 
-	if (_keyMap[Common::KEYCODE_SPACE] || _keyMap[Common::KEYCODE_RETURN])
+	if (_keyMap[Common::KEYCODE_SPACE] || _keyMap[Common::KEYCODE_RETURN] || _keyMap[Common::KEYCODE_KP_ENTER])
 		currentBits |= (kRawButtonDown << kTwoButtonShift);
 
 	if (_keyMap[Common::KEYCODE_t] || _keyMap[Common::KEYCODE_KP_EQUALS])
