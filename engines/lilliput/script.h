@@ -247,7 +247,7 @@ private:
 	void OC_setByte10B29();
 	void OC_setCurrentCharacterVar2();
 	void OC_SetCurrentCharacterVar2ToZero();
-	void OC_sub1801D();
+	void OC_setCharacterProperties();
 	void OC_sub1805D();
 	void OC_sub18074();
 	void OC_setCurrentCharacterDirection();
