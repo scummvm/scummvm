@@ -160,8 +160,8 @@ public:
 	int16 _characterPositionY[40];
 	int8 _characterPositionAltitude[40];
 	int16 _characterFrameArray[40];
-	byte _rulesBuffer2_5[40];
-	byte _rulesBuffer2_6[40];
+	int8 _rulesBuffer2_5[40];
+	int8 _rulesBuffer2_6[40];
 	byte _rulesBuffer2_7[40];
 	byte _spriteSizeArray[40];
 	byte _characterDirectionArray[40];

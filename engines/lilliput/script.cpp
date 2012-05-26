@@ -1491,7 +1491,7 @@ byte LilliputScript::OC_compByte16F04() {
 byte LilliputScript::OC_sub174D8() {
 	debugC(1, kDebugScript, "OC_sub174D8()");
 
-	byte tmpVal = getValue1() & 0xFF;
+	int8 tmpVal = getValue1() & 0xFF;
 	uint16 curWord = _currScript->readUint16LE();
 	
 	if (curWord == 3000) {
@@ -1646,9 +1646,9 @@ byte LilliputScript::OC_sub175C8() {
 byte LilliputScript::OC_sub17640() {
 	debugC(1, kDebugScript, "OC_sub17640()");
 
-	int var4 = _currScript->readUint16LE();
+	uint16 var4 = _currScript->readUint16LE();
 	int index = _vm->_currentScriptCharacter * 40;
-	int tmpVal = _currScript->readUint16LE();
+	uint16 tmpVal = _currScript->readUint16LE();
 
 	if (tmpVal < 2000) {
 		_currScript->seek(_currScript->pos() - 2);
@@ -1917,13 +1917,12 @@ byte LilliputScript::OC_CurrentCharacterVar2Equals1() {
 }
 
 byte LilliputScript::OC_sub178D2() {
-	debugC(1, kDebugScriptTBC, "OC_sub178D2()");
+	debugC(1, kDebugScript, "OC_sub178D2()");
 
 	int index = getValue1();
 	assert (index < 40);
 
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
-
 	if (curByte == _vm->_rulesBuffer2_12[index])
 		return 1;
 
@@ -1959,7 +1958,7 @@ byte LilliputScript::OC_sub1790F() {
 
 	int index = getValue1();
 	assert(index < 40);
-	if (_vm->_rulesBuffer2_5[index] == 0xFF)
+	if (_vm->_rulesBuffer2_5[index] == -1)
 		return 0;
 
 	_word16F00 = _vm->_rulesBuffer2_5[index];
@@ -2433,15 +2432,18 @@ void LilliputScript::OC_sub17C0E() {
 void LilliputScript::OC_sub17C55() {
 	debugC(1, kDebugScriptTBC, "OC_sub17C55()");
 
-	int var1 = getValue1();
-	int var2 = getValue1();
+	byte var1 = ((uint16)getValue1()) & 0xFF;
+	int16 index = getValue1();
 
-	int var3 = _currScript->readUint16LE();
-	int var4 = _currScript->readUint16LE();
+	int8 var3 = (_currScript->readUint16LE() & 0xFF);
+	byte var4 = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_rulesBuffer2_5[var2] = var1 & 0xFF;
-	_vm->_rulesBuffer2_6[var2] = var3 & 0xFF;
-	_vm->_rulesBuffer2_7[var2] = var4 & 0xFF;
+	assert((index >= 0) && (index < 40));
+	_vm->_rulesBuffer2_5[index] = var1;
+	_vm->_rulesBuffer2_6[index] = var3;
+	_vm->_rulesBuffer2_7[index] = var4;
+
+	warning("debug - OC_sub17C55 index %d, var1 0x%x var3 0x%x var4 0x%x", index, var1, var3, var4);
 }
 
 void LilliputScript::OC_sub17C76() {
@@ -2553,7 +2555,7 @@ void LilliputScript::OC_sub17D23() {
 void LilliputScript::OC_sub17E6D() {
 	debugC(1, kDebugScriptTBC, "OC_sub17E6D()");
 	
-	int var1 = _currScript->readUint16LE();
+	uint16 var1 = _currScript->readUint16LE();
 	_vm->_rulesBuffer2_12[_vm->_currentScriptCharacter] = (var1 - 2000) & 0xFF;
 }
 
