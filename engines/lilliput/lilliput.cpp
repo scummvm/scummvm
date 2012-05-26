@@ -657,7 +657,7 @@ void LilliputEngine::restoreMapPoints() {
 	restoreSurfaceUnderMousePointer();
 
 	byte *buf = (byte *)_mainSurface->getPixels();
-	for (int index = 0; index < _numCharacters; index++) {
+	for (byte index = 0; index < _numCharacters; index++) {
 		buf[_word15E5D[index]] = _byte15E35[index];
 	}
 
@@ -688,7 +688,7 @@ void LilliputEngine::moveCharacters() {
 	debugC(2, kDebugEngine, "moveCharacters()");
 
 	_numCharactersToDisplay = 0;
-	int index = _numCharacters - 1;
+	byte index = _numCharacters - 1;
 	Common::Point _pos16213 = Common::Point(_scriptHandler->_viewportPos.x << 3, _scriptHandler->_viewportPos.y << 3);
 
 	for (int i = index; i >= 0; i--) {
@@ -1683,19 +1683,12 @@ void LilliputEngine::sub16626() {
 	while (index >= 0) {
 		result = 2;
 		while (result & 2) {
-			int var2 = _scriptHandler->_array12811[index];
-			if (var2 == 16)
+			if (_scriptHandler->_array12811[index] == 16)
 				break;
 
-			/*if (index == 3)
-				debugC(1,"");
-			else
-				break;*/
-
-			var2 = (2 * (var2 & 0xFF)) + (index << 5);
-			Common::Point var1 = _scriptHandler->_array12311[var2 / 2];
-			int tmpVal = var2;
-			var2 = (var1.x >> 3);
+			uint16 index2 = _scriptHandler->_array12811[index] + (index * 16);
+			Common::Point var1 = _scriptHandler->_array12311[index2];
+			int16 var2 = (var1.x >> 3);
 			var2 &= 0xFE;
 
 			//warning(" step %d : var1 x:%d y:%d  var:%d", _scriptHandler->_array12811[index], var1.x, var1.y, var2 / 2);
@@ -1730,7 +1723,7 @@ void LilliputEngine::sub16626() {
 				result = sub16722(index, var1);
 				break;
 			case 14:
-				result = sub166F7(index, var1, tmpVal);
+				result = sub166F7(index, var1, index2);
 				break;
 			case 15:
 				result = sub166EA(index);
@@ -1847,7 +1840,7 @@ void LilliputEngine::sub12F37() {
 	int index1 = _animationTick + 2;
 	int index2 = 0;
 
-	for (int i = 0; i < _numCharacters; i++) {
+	for (byte i = 0; i < _numCharacters; i++) {
 		byte *varPtr = getCharacterVariablesPtr(index1);
 		if (varPtr[0] != 0) {
 			if (varPtr[0] == 1) {
@@ -1926,7 +1919,7 @@ void LilliputEngine::sub131B2(Common::Point pos, bool &forceReturnFl) {
 
 	forceReturnFl = false;
 
-	for (int i = 0; i < _numCharacters; i++) {
+	for (byte i = 0; i < _numCharacters; i++) {
 		if ((pos.x >= _characterDisplayX[i]) && (pos.x <= _characterDisplayX[i] + 17) && (pos.y >= _characterDisplayY[i]) && (pos.y <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_byte129A0 = i;
 			_byte16F07_menuId = 4;
@@ -2185,7 +2178,7 @@ void LilliputEngine::sub17224(byte type, byte index, int var4) {
 	}
 
 	int index2 = var4 & 0xFF;
-	for (int i = 0; i < _numCharacters; i++) {
+	for (byte i = 0; i < _numCharacters; i++) {
 		if ((_scriptHandler->_array10B51[index2] & 0xFF) >= type)
 			sub17264(i, var4);
 		index2 += 40;
@@ -2206,7 +2199,7 @@ void LilliputEngine::sub17264(byte index, int var4) {
 void LilliputEngine::sub171CF() {
 	debugC(2, kDebugEngine, "sub171CF()");
 
-	for (int i = 0; i < _numCharacters; i++) {
+	for (byte i = 0; i < _numCharacters; i++) {
 		if (_array1289F[i] != -1) {
 			_array11D49[i] = _array1289F[i];
 			_array1289F[i] = -1;
@@ -2433,8 +2426,8 @@ void LilliputEngine::loadRules() {
 		_rulesChunk1[i] = f.readByte();
 
 	// Chunk 2
-	_numCharacters = f.readSint16LE();
-	assert(_numCharacters <= 40);
+	_numCharacters = (f.readUint16LE() & 0xFF);
+	assert((_numCharacters > 0) && (_numCharacters <= 40));
 
 	for (int i = _numCharacters, j = 0; i != 0; i--, j++) {
 		curWord = f.readUint16LE();
