@@ -812,7 +812,8 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		bytesRead = f->_in->read(buf, size);
-		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
+		if (bytesRead > 0)
+			s->_segMan->memcpy(argv[1], (const byte*)buf, size);
 	}
 
 	delete[] buf;
