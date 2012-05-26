@@ -44,9 +44,9 @@ bool Sprite::contains(const Common::Point &pos) const {
 }
 
 enum {
-	kAnimOpEvent = 1,
-	kAnimOpPlayWave = 2,
-	kAnimOpPlayAnim = 3,
+	kAnimOpEvent = 1, 
+	kAnimOpPlayWave = 2, 
+	kAnimOpPlayAnim = 3, 
 	kAnimOpDrawSprite = 4
 };
 
@@ -124,7 +124,7 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		// and then fish the requested animation out of it.
 		if (type != 1) {
 			_pipeStreams.push_back(stream);
-			newPipe = new Pipe(stream);
+			newPipe = new Pipe(stream, animId);
 			_pipes.push_front(newPipe);
 			newPipe->nextFrame();
 			stream = newPipe->getResource(ID_ANIM, animId, false);
@@ -376,7 +376,7 @@ void ComposerEngine::playPipe(uint16 id) {
 	}
 
 	Common::SeekableReadStream *stream = getResource(ID_PIPE, id);
-	OldPipe *pipe = new OldPipe(stream);
+	OldPipe *pipe = new OldPipe(stream, id);
 	_pipes.push_front(pipe);
 	//pipe->nextFrame();
 

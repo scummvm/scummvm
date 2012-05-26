@@ -248,10 +248,11 @@ bool ComposerArchive::openStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-Pipe::Pipe(Common::SeekableReadStream *stream) {
+Pipe::Pipe(Common::SeekableReadStream *stream, uint16 pipeId) {
 	_offset = 0;
 	_stream = stream;
 	_anim = NULL;
+	_pipeId = pipeId;
 }
 
 Pipe::~Pipe() {
@@ -335,7 +336,7 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
-OldPipe::OldPipe(Common::SeekableReadStream *stream) : Pipe(stream), _currFrame(0) {
+OldPipe::OldPipe(Common::SeekableReadStream *stream, uint16 pipeId) : Pipe(stream, pipeId), _currFrame(0) {
 	uint32 tag = _stream->readUint32BE();
 	if (tag != ID_PIPE)
 		error("invalid tag for pipe (%08x)", tag);
