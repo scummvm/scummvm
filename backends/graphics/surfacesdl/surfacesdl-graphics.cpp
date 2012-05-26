@@ -1587,10 +1587,13 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 		height = _videoMode.overlayHeight;
 	}
 
-	// Extend the dirty region by 1 pixel for scalers
+	// Extend the dirty region for scalers
 	// that "smear" the screen, e.g. 2xSAI
 	if (!realCoordinates) {
 		int adjust = (*_scalerPlugin)->extraPixels();
+		// Aspect ratio correction requires this to be at least one
+		if (adjust == 0)
+			adjust = 1;
 		x -= adjust;
 		y -= adjust;
 		w += adjust * 2;
