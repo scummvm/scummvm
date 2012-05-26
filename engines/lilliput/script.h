@@ -238,7 +238,7 @@ private:
 	void OC_sub17E99();
 	void OC_sub17EC5();
 	void OC_setCharacterDirectionTowardsPos();
-	void OC_sub17F08();
+	void OC_turnCharacterTowardsAnother();
 	void OC_sub17F4F();
 	void OC_scrollAwayFromCharacter();
 	void OC_skipNextVal();
