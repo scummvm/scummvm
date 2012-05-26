@@ -54,11 +54,6 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	}
 	_anims.clear();
 
-	for (Common::List<Pipe *>::iterator i = _pipes.begin(); i != _pipes.end(); i++) {
-		delete *i;
-	}
-	_pipes.clear();
-
 	ser.syncVersion(0);
 	Common::String desc;
 	ser.syncString(desc);
@@ -85,7 +80,20 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 		ser.syncAsUint16LE(id);
 		Sprite sprite;
 		sprite._id = id;
-		initSprite(sprite);
+		ser.syncAsSint16LE(sprite._pos.x);
+		ser.syncAsSint16LE(sprite._pos.y);
+		ser.syncAsUint16LE(sprite._surface.w);
+		ser.syncAsUint16LE(sprite._surface.h);
+		ser.syncAsUint16LE(sprite._surface.pitch);
+		ser.syncAsUint16LE(sprite._zorder);
+		sprite._surface.pixels = malloc(sprite._surface.h * sprite._surface.pitch);
+		byte *dest = static_cast<byte *>(sprite._surface.pixels);
+		for (uint16 y = 0; y < sprite._surface.h; y++) {
+			for (uint16 x = 0; x < sprite._surface.w; x++) {
+				ser.syncAsByte(dest[x]);
+			}
+			dest += sprite._surface.pitch;
+		}
 		_sprites.push_back(sprite);
 	}
 
@@ -141,11 +149,34 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 		ser.syncAsUint16LE(qTmp._scriptId);
 		_queuedScripts.push_back(qTmp);
 	}
-
+	ser.syncAsSint16LE(_lastMousePos.x);
+	ser.syncAsSint16LE(_lastMousePos.y);
 	ser.syncAsByte(_mouseEnabled);
 	ser.syncAsByte(_mouseVisible);
 	ser.syncAsUint16LE(_mouseSpriteId);
 	_dirtyRects.clear();
+
+	for (Common::List<Pipe *>::iterator i = _pipes.begin(); i != _pipes.end(); i++) {
+		delete *i;
+	}
+	_pipes.clear();
+	for (Common::Array<Common::SeekableReadStream *>::iterator i = _pipeStreams.begin(); i != _pipeStreams.end(); i++) {
+		delete *i;
+	}
+	_pipeStreams.clear();
+
+	ser.syncAsUint32LE(tmp);
+	for (uint32 i = tmp; i > 0; i--) {
+		uint16 id;
+		uint32 offset;
+		ser.syncAsUint16LE(id);
+		ser.syncAsUint32LE(offset);
+		Common::SeekableReadStream *stream = getResource(ID_ANIM, id);
+		Pipe *pipe = new Pipe(stream, id);
+		pipe->setOffset(offset);
+		_pipes.push_back(pipe);
+		_pipeStreams.push_back(stream);
+	}
 
 	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	byte palbuf[256 * 3];
@@ -182,8 +213,21 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	tmp = _sprites.size();
 	ser.syncAsUint32LE(tmp);
 	for (Common::List<Sprite>::const_iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		uint16 tmp = (*i)._id;
-		ser.syncAsUint16LE(tmp);
+		Sprite sprite(*i);
+		ser.syncAsUint16LE(sprite._id);
+		ser.syncAsSint16LE(sprite._pos.x);
+		ser.syncAsSint16LE(sprite._pos.y);
+		ser.syncAsUint16LE(sprite._surface.w);
+		ser.syncAsUint16LE(sprite._surface.h);
+		ser.syncAsUint16LE(sprite._surface.pitch);
+		ser.syncAsUint16LE(sprite._zorder);
+		byte *src = static_cast<byte *>((*i)._surface.pixels);
+		for (uint16 y = 0; y < sprite._surface.h; y++) {
+			for (uint x = 0; x < sprite._surface.w; x++) {
+				ser.syncAsByte(src[x]);
+			}
+			src += (*i)._surface.pitch;
+		}
 	}
 	tmp = _pendingPageChanges.size();
 	ser.syncAsUint32LE(tmp);
@@ -228,9 +272,20 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 		ser.syncAsUint32LE(tmp);
 		ser.syncAsUint16LE(tmp16);
 	}
+	ser.syncAsSint16LE(_lastMousePos.x);
+	ser.syncAsSint16LE(_lastMousePos.y);
 	ser.syncAsByte(_mouseEnabled);
 	ser.syncAsByte(_mouseVisible);
 	ser.syncAsUint16LE(_mouseSpriteId);
+
+	tmp = _pipes.size();
+	ser.syncAsUint32LE(tmp);
+	for (Common::List<Pipe *>::const_iterator i = _pipes.begin(); i != _pipes.end(); i++) {
+		uint16 tmp16 = (*i)->id();
+		tmp = (*i)->offset();
+		ser.syncAsUint16LE(tmp16);
+		ser.syncAsUint32LE(tmp);
+	}
 
 	byte palbuf[256 * 3];
 	_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
