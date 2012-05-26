@@ -136,7 +136,7 @@ public:
 	byte _displayMap;
 
 	int _word10800_ERULES;
-	int _numCharacters;
+	byte _numCharacters;
 	Common::Point _currentScriptCharacterPos;
 	int _nextCharacterIndex;
 	int _word16EFE;

@@ -2646,10 +2646,11 @@ void LilliputScript::OC_turnCharacterTowardsAnother() {
 }
 
 void LilliputScript::OC_sub17F4F() {
-	debugC(1, kDebugScriptTBC, "OC_sub17F4F()");
+	debugC(1, kDebugScript, "OC_sub17F4F()");
 
-	int var = getValue1();
-	_array10A39[_vm->_currentScriptCharacter] = var & 0xFF;
+	int16 var = getValue1();
+	_array10A39[_vm->_currentScriptCharacter] = (byte)(var & 0xFF);
+	warning("debug - OC_sub17F4F: _array10A39[%d] = %d", _vm->_currentScriptCharacter, var);
 	_vm->_array109E9PosX[_vm->_currentScriptCharacter] = -1;
 }
 
