@@ -140,7 +140,7 @@ public:
 	Common::Point _currentScriptCharacterPos;
 	int _nextCharacterIndex;
 	int _word16EFE;
-	int _word1817B;
+	uint16 _word1817B;
 	Common::Point _savedSurfaceUnderMousePos;
 	int _word15AC2;
 	int _currentDisplayCharacter;
@@ -158,7 +158,7 @@ public:
 	int16 _currentScriptCharacter;
 	int16 _characterPositionX[40];
 	int16 _characterPositionY[40];
-	char _characterPositionAltitude[40];
+	int8 _characterPositionAltitude[40];
 	int16 _characterFrameArray[40];
 	byte _rulesBuffer2_5[40];
 	byte _rulesBuffer2_6[40];
@@ -170,7 +170,7 @@ public:
 	byte _rulesBuffer2_12[40];
 	byte _rulesBuffer2_13_posX[40];
 	byte _rulesBuffer2_14_posY[40];
-	byte _characterVariables_[1400 + 3120];
+	byte _characterVariables[1400 + 3120];
 	byte *_currentCharacterVariables;
 	byte _rulesBuffer2_16[40 * 32];
 	int *_packedStringIndex;

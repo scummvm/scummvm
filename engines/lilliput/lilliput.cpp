@@ -217,7 +217,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_displayStringBuf[i] = 0;
 
 	for (int i = 0; i < 1400 + 3120; i++) {
-		_characterVariables_[i] = 0;
+		_characterVariables[i] = 0;
 	}
 
 	_currentCharacterVariables = NULL;
@@ -2461,7 +2461,7 @@ void LilliputEngine::loadRules() {
 		_rulesBuffer2_14_posY[j] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
-			_characterVariables_[(j * 32) + k] = f.readByte();
+			_characterVariables[(j * 32) + k] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
 			_rulesBuffer2_16[(j * 32) + k] = f.readByte();
@@ -2780,9 +2780,9 @@ byte *LilliputEngine::getCharacterVariablesPtr(int16 index) {
 
 	assert((index > -3120) && (index < 1400));
 	if (index >= 0)
-		return &_characterVariables_[index];
+		return &_characterVariables[index];
 	else
-		return &_characterVariables_[1400 - index];
+		return &_characterVariables[1400 - index];
 }
 
 void LilliputEngine::syncSoundSettings() {
