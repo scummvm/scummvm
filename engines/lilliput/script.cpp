@@ -376,7 +376,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_setCharacterDirectionTowardsPos();
 		break;
 	case 0x2C:
-		OC_sub17F08();
+		OC_turnCharacterTowardsAnother();
 		break;
 	case 0x2D:
 		OC_sub17F4F();
@@ -654,7 +654,7 @@ static const OpCode opCodes2[] = {
 /* 0x29 */	{ "OC_sub17E99", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
 /* 0x2a */	{ "OC_sub17EC5", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, 
 /* 0x2b */	{ "OC_setCharacterDirectionTowardsPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone }, 
-/* 0x2c */	{ "OC_sub17F08", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x2c */	{ "OC_turnCharacterTowardsAnother", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x2d */	{ "OC_sub17F4F", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x2e */	{ "OC_scrollAwayFromCharacter", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x2f */	{ "OC_skipNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
@@ -2618,15 +2618,15 @@ void LilliputScript::OC_setCharacterDirectionTowardsPos() {
 	_vm->_characterDirectionArray[_vm->_currentScriptCharacter] = _vm->getDirection(tilePos, pos1);
 }
 
-void LilliputScript::OC_sub17F08() {
-	debugC(1, kDebugScriptTBC, "OC_sub17F08()");
+void LilliputScript::OC_turnCharacterTowardsAnother() {
+	debugC(1, kDebugScript, "OC_turnCharacterTowardsAnother()");
 	
 	int index = getValue1();
 
 	static const byte _directionsArray[] = { 0, 2, 0, 1, 3, 2, 3, 1 };
 
-	int dx = _vm->_characterPositionX[index] - _vm->_characterDisplayX[_vm->_currentScriptCharacter];
-	int dy = _vm->_characterPositionY[index] - _vm->_characterDisplayY[_vm->_currentScriptCharacter];
+	int dx = _vm->_characterPositionX[index] - _vm->_characterPositionX[_vm->_currentScriptCharacter];
+	int dy = _vm->_characterPositionY[index] - _vm->_characterPositionY[_vm->_currentScriptCharacter];
 
 	int flag = 0;
 	if (dx < 0) {
