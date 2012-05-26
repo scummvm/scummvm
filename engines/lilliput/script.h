@@ -61,14 +61,14 @@ public:
 
 	byte _characterScriptEnabled[40];
 	int8 _interfaceHotspotStatus[20];
-	char _array16123PosX[40];
-	char _array1614BPosY[40];
-	char _array12811[40];
-	char _array10AB1[40];
+	int8 _array16123PosX[40];
+	int8 _array1614BPosY[40];
+	int8 _array12811[40];
+	int8 _array10AB1[40];
 	byte _array122FD[20];
 	byte _array122C1[40];
 	byte _array10A39[40];
-	short _array10B51[40 * 40];
+	int16 _array10B51[40 * 40];
 
 	byte *_savedBuffer215Ptr;
 
@@ -127,7 +127,7 @@ private:
 	void displayNumber(byte var1, Common::Point pos);
 	byte *getMapPtr(Common::Point val);
 	byte *getCurrentCharacterVarFromScript();
-	void sub171AF(int16 var1, int16 var2, int16 var4);
+	void sub171AF(int16 var1, uint16 var2, int16 var4);
 	void sub18B7C(int var1, int var3);
 	void sub189B8();
 	void formatSpeechString();

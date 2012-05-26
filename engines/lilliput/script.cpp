@@ -1376,16 +1376,17 @@ byte LilliputScript::OC_checkCharacterGoalPos() {
 }
 
 byte LilliputScript::OC_comparePos() {
-	debugC(2, kDebugScriptTBC, "OC_comparePos()");
+	debugC(2, kDebugScript, "OC_comparePos()");
 
 	int index = getValue1();
-	byte d1 = _array16123PosX[index];
-	byte d2 = _array1614BPosY[index];
+	int8 d1 = _array16123PosX[index];
+	int8 d2 = _array1614BPosY[index];
 	Common::Point var1 = getPosFromScript();
 
 	if (var1 == Common::Point(d1, d2))
 		return 1;
 
+	warning("OC_comparePos - debug: %d-%d %d-%d", var1.x, var1.y, d1, d2);
 	return 0;
 }
 
@@ -2459,7 +2460,7 @@ void LilliputScript::OC_setCurrentCharacter() {
 	_vm->setCurrentCharacter(var1);
 }
 
-void LilliputScript::sub171AF(int16 var1, int16 var2, int16 var4) {
+void LilliputScript::sub171AF(int16 var1, uint16 var2, int16 var4) {
 	debugC(2, kDebugScript, "sub171AF()");
 
 	int index = 0;
@@ -2475,7 +2476,7 @@ void LilliputScript::sub171AF(int16 var1, int16 var2, int16 var4) {
 }
 
 void LilliputScript::OC_sub17C8B() {
-	debugC(1, kDebugScriptTBC, "OC_sub17C8B()");
+	debugC(1, kDebugScript, "OC_sub17C8B()");
 
 	int16 type = 2 << 8;
 	int16 var4 = _currScript->readSint16LE();
