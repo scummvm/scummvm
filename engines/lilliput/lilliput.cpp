@@ -1246,12 +1246,12 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 }
 
 void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
-	debugC(2, kDebugEngineTBC, "viewportScrollTo(%d, %d)", goalPos.x, goalPos.y);
+	debugC(2, kDebugEngine, "viewportScrollTo(%d, %d)", goalPos.x, goalPos.y);
 
 	if (goalPos == _scriptHandler->_viewportPos)
 		return;
 
-	int dx = 0;
+	int16 dx = 0;
 	if (goalPos.x != _scriptHandler->_viewportPos.x) {
 		if (goalPos.x < _scriptHandler->_viewportPos.x)
 			--dx;
@@ -1259,7 +1259,7 @@ void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
 			++dx;
 	}
 
-	int dy = 0;
+	int16 dy = 0;
 	if (goalPos.y != _scriptHandler->_viewportPos.y) {
 		if (goalPos.y < _scriptHandler->_viewportPos.y)
 			--dy;
@@ -1280,7 +1280,7 @@ void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
 
 		if (goalPos.y == _scriptHandler->_viewportPos.y)
 			dy = 0;
-	} while ((dx != 0) && (dy != 0));
+	} while ((dx != 0) || (dy != 0));
 
 	_soundHandler->contentFct5();
 }
