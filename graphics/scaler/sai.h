@@ -35,7 +35,7 @@ public:
 	virtual int decreaseFactor();
 	virtual int getFactor() { return _factor; }
 	virtual bool canDrawCursor() { return false; }
-	virtual int extraPixels() { return 1; }
+	virtual int extraPixels() { return 2; }
 	virtual const char *getName() const;
 private:
 	Graphics::PixelFormat _format;
