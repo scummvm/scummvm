@@ -194,7 +194,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterPositionY[i] = -1;
 		_characterPositionAltitude[i] = 0;
 		_characterFrameArray[i] = 0;
-		_rulesBuffer2_5[i] = 0xFF;
+		_rulesBuffer2_5[i] = -1;
 		_rulesBuffer2_6[i] = 4;
 		_rulesBuffer2_7[i] = 0;
 		_spriteSizeArray[i] = 20;
@@ -692,10 +692,10 @@ void LilliputEngine::moveCharacters() {
 	Common::Point _pos16213 = Common::Point(_scriptHandler->_viewportPos.x << 3, _scriptHandler->_viewportPos.y << 3);
 
 	for (int i = index; i >= 0; i--) {
-		if (_rulesBuffer2_5[i] != 0xFF) {
+		if (_rulesBuffer2_5[i] != -1) {
 			int index2 = _rulesBuffer2_5[i];
 			_characterPositionAltitude[i] = _characterPositionAltitude[index2] + _rulesBuffer2_7[i];
-			int tmpVal = _rulesBuffer2_6[i];
+			int8 tmpVal = _rulesBuffer2_6[i];
 			_characterDirectionArray[i] = _characterDirectionArray[index2];
 			int var3 = _characterPositionX[index2];
 			int var4 = _characterPositionY[index2];
@@ -1688,12 +1688,11 @@ void LilliputEngine::sub16626() {
 
 			uint16 index2 = _scriptHandler->_array12811[index] + (index * 16);
 			Common::Point var1 = _scriptHandler->_array12311[index2];
-			int16 var2 = (var1.x >> 3);
-			var2 &= 0xFE;
+			int16 var2 = var1.x / 16;
 
 			//warning(" step %d : var1 x:%d y:%d  var:%d", _scriptHandler->_array12811[index], var1.x, var1.y, var2 / 2);
 
-			switch (var2 / 2) {
+			switch (var2) {
 			case 0:
 				result = sub16675_moveCharacter(index, var1);
 				break;
@@ -1729,7 +1728,7 @@ void LilliputEngine::sub16626() {
 				result = sub166EA(index);
 				break;
 			default:
-				error("sub16626 - unexpected value %d", var2 / 2);
+				error("sub16626 - unexpected value %d", var2);
 				break;
 			}
 
@@ -2442,8 +2441,8 @@ void LilliputEngine::loadRules() {
 
 		_characterPositionAltitude[j] = (f.readUint16LE() & 0xFF);
 		_characterFrameArray[j] = f.readUint16LE();
-		_rulesBuffer2_5[j] = f.readByte();
-		_rulesBuffer2_6[j] = f.readByte();
+		_rulesBuffer2_5[j] = (int8)f.readByte();
+		_rulesBuffer2_6[j] = (int8)f.readByte();
 		_rulesBuffer2_7[j] = f.readByte();
 		_spriteSizeArray[j] = f.readByte();
 		_characterDirectionArray[j] = f.readByte();

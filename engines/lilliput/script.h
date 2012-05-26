@@ -106,7 +106,7 @@ private:
 	byte _byte18823;
 	byte _speechDisplaySpeed;
 
-	int _word16F00;
+	int16 _word16F00;
 	int _currentSpeechId;
 	int _word18821;
 	int _word129A3;
