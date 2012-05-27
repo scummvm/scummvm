@@ -103,6 +103,8 @@ private:
 
 extern ResourceLoader *g_resourceloader;
 
+Common::String fixFilename(const Common::String filename, bool append = true);
+
 } // end of namespace Grim
 
 #endif
