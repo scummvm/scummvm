@@ -893,23 +893,23 @@ void LilliputEngine::paletteFadeIn() {
 	}
 }
 
-int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
-	debugC(2, kDebugEngineTBC, "sub16DD5(%d, %d, %d, %d)", x1, y1, x2, y2);
+int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
+	debugC(2, kDebugEngine, "sub16DD5(%d, %d, %d, %d)", x1, y1, x2, y2);
 
 	int index = (y1 * 64 + x1) * 4;
-	assert(index < 16384);
+	assert(index <= 16380);
 	byte *isoMap = &_bufferIsoMap[1];
 
-	int dx = x2 - x1;
-	int dy = y2 - y1;
+	int16 dx = x2 - x1;
+	int16 dy = y2 - y1;
 
 	int16 tmpMapMoveX = 0;
 	int16 tmpMapMoveY = 0;
 	int16 mapMoveY = 0;
 	int16 mapMoveX = 0;
 
-	int8 byte16DD4 = 0;
-	int8 byte16DD3 = 0;
+	int16 byte16DD4 = 0;
+	int16 byte16DD3 = 0;
 
 	if (dx < 0) {
 		dx = -dx;
@@ -929,15 +929,15 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 		mapMoveY = 0;
 		mapMoveX = tmpMapMoveX;
 	} else {
-		int tmp = dy;
+		int16 tmp = dy;
 		dy = dx;
 		dx = tmp;
 		mapMoveX = 0;
 		mapMoveY = tmpMapMoveY;
 	}
 
-	byte16DD4 = dy << 1;
-	int var1 = byte16DD4 - dx;
+	byte16DD4 = dy * 2;
+	int16 var1 = byte16DD4 - dx;
 	byte16DD3 = byte16DD4 - (dx * 2);
 
 	mapMoveX += mapMoveY;
@@ -959,7 +959,7 @@ int LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 			return 0;
 		}
 	}
-	return 1;
+	return tmpMapMoveY;
 }
 
 void LilliputEngine::sub15F75() {
@@ -1091,7 +1091,7 @@ void LilliputEngine::sub16CA0() {
 				}
 			}
 
-			int val = _scriptHandler->_array10B51[index2 + index * 40];
+			int16 val = _scriptHandler->_array10B51[index2 + index * 40];
 			val = (val & 0xFF) + ((val & 0xFF) << 8);
 			if ((val & 0xFF) != _byte16C9F) {
 				_scriptHandler->_characterScriptEnabled[index] = 1;
@@ -1406,7 +1406,7 @@ byte LilliputEngine::getDirection(Common::Point param1, Common::Point param2) {
 }
 
 byte LilliputEngine::sub16799(int index, Common::Point param1) {
-	debugC(2, kDebugEngineTBC, "sub16799(%d, %d - %d)", index, param1.x, param1.y);
+	debugC(2, kDebugEngine, "sub16799(%d, %d - %d)", index, param1.x, param1.y);
 
 	Common::Point var3 = Common::Point(_array109E9PosX[index], _array10A11PosY[index]);
 
@@ -1558,15 +1558,15 @@ void LilliputEngine::sub1693A(int index) {
 }
 
 byte LilliputEngine::sub16A76(int indexb, int indexs) {
-	debugC(2, kDebugEngineTBC, "sub16A76(%d, %d)", indexb, indexs);
+	debugC(2, kDebugEngine, "sub16A76(%d, %d)", indexb, indexs);
 
 	static const char _array16A6C[4] = {1, 0, 0, -1};
 	static const char _array16A70[4] = {0, -1, 1, 0};
 
 	char var1h = _word16937Pos.x + _array16A6C[indexb];
-	char var1l = _word16937Pos.y + _array16A70[indexs];
+	char var1l = _word16937Pos.y + _array16A70[indexb];
 
-	int var2 = findHotspot(Common::Point(var1h, var1l));
+	int16 var2 = findHotspot(Common::Point(var1h, var1l));
 	if (var2 == -1)
 		return 1;
 
@@ -1609,12 +1609,12 @@ int16 LilliputEngine::reverseFindHotspot(Common::Point pos) {
 
 
 void LilliputEngine::sub16A08(int index) {
-	debugC(2, kDebugEngineTBC, "sub16A08(%d)", index);
+	debugC(2, kDebugEngine, "sub16A08(%d)", index);
 
-	static const char arrayMoveX[4] = {1, 0, 0, -1};
-	static const char arrayMoveY[4] = {0, -1, 1, 0};
+	static const int8 arrayMoveX[4] = {1, 0, 0, -1};
+	static const int8 arrayMoveY[4] = {0, -1, 1, 0};
 
-	int arrayDistance[4];
+	int16 arrayDistance[4];
 
 	for (int i = 3; i >= 0; i--) {
 		int16 var1h = _word16937Pos.x + arrayMoveX[i] - _array109E9PosX[index];
