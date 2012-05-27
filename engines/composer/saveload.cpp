@@ -154,7 +154,6 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	ser.syncAsByte(_mouseEnabled);
 	ser.syncAsByte(_mouseVisible);
 	ser.syncAsUint16LE(_mouseSpriteId);
-	_dirtyRects.clear();
 
 	for (Common::List<Pipe *>::iterator i = _pipes.begin(); i != _pipes.end(); i++) {
 		delete *i;
@@ -174,10 +173,11 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 		Common::SeekableReadStream *stream = getResource(ID_ANIM, id);
 		Pipe *pipe = new Pipe(stream, id);
 		pipe->setOffset(offset);
-		_pipes.push_back(pipe);
+		_pipes.push_front(pipe);
 		_pipeStreams.push_back(stream);
 	}
 
+	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	byte palbuf[256 * 3];
 	ser.syncBytes(palbuf, 256 * 3);
@@ -206,7 +206,7 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	ser.syncString(_bookGroup);
 	tmp = _libraries.size();
 	ser.syncAsUint32LE(tmp);
-	for (Common::List<Library>::const_iterator i = _libraries.begin(); i != _libraries.end(); i++) {
+	for (Common::List<Library>::const_iterator i = _libraries.reverse_begin(); i != _libraries.end(); i--) {
 		uint16 tmp = (*i)._id;
 		ser.syncAsUint16LE(tmp);
 	}
@@ -280,7 +280,7 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 
 	tmp = _pipes.size();
 	ser.syncAsUint32LE(tmp);
-	for (Common::List<Pipe *>::const_iterator i = _pipes.begin(); i != _pipes.end(); i++) {
+	for (Common::List<Pipe *>::const_iterator i = _pipes.reverse_begin(); i != _pipes.end(); i--) {
 		uint16 tmp16 = (*i)->id();
 		tmp = (*i)->offset();
 		ser.syncAsUint16LE(tmp16);
