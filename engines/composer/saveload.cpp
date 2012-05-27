@@ -21,6 +21,8 @@
  */
 
 #ifdef SAVING_ANYWHERE
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
@@ -49,11 +51,6 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	if (magic[0] != 'C' || magic[1] != 'M' || magic[2] != 'P' || magic[3] != 'S') 
 		return Common::kUnknownError;
 
-	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
-		delete *i;
-	}
-	_anims.clear();
-
 	ser.syncVersion(0);
 	Common::String desc;
 	ser.syncString(desc);
@@ -66,35 +63,16 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	ser.syncAsUint32LE(_lastTime);
 	_lastTime += timeDelta;
 	ser.syncString(_bookGroup);
-	_libraries.clear();
+	Common::Array<uint16> libIds;
+	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++) 
+		libIds.push_back((*i)._id);
+	for (uint32 i = 0; i < libIds.size(); i++) 
+		unloadLibrary(libIds[i]);
 	ser.syncAsUint32LE(tmp);
 	for (uint32 i = tmp; i > 0; i--) {
 		uint16 id;
 		ser.syncAsUint16LE(id);
 		loadLibrary(id);
-	}
-	_sprites.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 id;
-		ser.syncAsUint16LE(id);
-		Sprite sprite;
-		sprite._id = id;
-		ser.syncAsSint16LE(sprite._pos.x);
-		ser.syncAsSint16LE(sprite._pos.y);
-		ser.syncAsUint16LE(sprite._surface.w);
-		ser.syncAsUint16LE(sprite._surface.h);
-		ser.syncAsUint16LE(sprite._surface.pitch);
-		ser.syncAsUint16LE(sprite._zorder);
-		sprite._surface.pixels = malloc(sprite._surface.h * sprite._surface.pitch);
-		byte *dest = static_cast<byte *>(sprite._surface.pixels);
-		for (uint16 y = 0; y < sprite._surface.h; y++) {
-			for (uint16 x = 0; x < sprite._surface.w; x++) {
-				ser.syncAsByte(dest[x]);
-			}
-			dest += sprite._surface.pitch;
-		}
-		_sprites.push_back(sprite);
 	}
 
 	_pendingPageChanges.clear();
@@ -177,6 +155,94 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 		_pipeStreams.push_back(stream);
 	}
 
+	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
+		delete *i;
+	}
+	_anims.clear();
+	ser.syncAsUint32LE(tmp);
+	for (uint32 i = tmp; i > 0; i--) {
+		uint16 animId, x, y;
+		uint32 offset, state, param, size;
+		ser.syncAsUint16LE(animId);
+		ser.syncAsUint32LE(offset);
+		ser.syncAsUint16LE(x);
+		ser.syncAsUint16LE(y);
+		ser.syncAsUint32LE(state);
+		ser.syncAsUint32LE(param);
+		ser.syncAsUint32LE(size);
+		Common::SeekableReadStream *stream = NULL;
+
+		//TODO: extract following out into "loadAnim"
+		// First, check the existing pipes.
+		for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
+			Pipe *pipe = *j;
+			if (!pipe->hasResource(ID_ANIM, animId))
+				continue;
+			stream = pipe->getResource(ID_ANIM, animId, false);
+			if (stream->size() >= size) break;
+			stream = NULL;
+		}
+		// If we didn't find it, try the libraries.
+		if (!stream) {
+			Common::List<Library>::iterator i;
+			for (i = _libraries.begin(); i != _libraries.end(); i++) {
+				if (!hasResource(ID_ANIM, animId)) continue;
+				stream = getResource(ID_ANIM, animId);
+				if (stream->size() >= size) break;
+				stream = NULL;
+			}
+			if (!stream) {
+				warning("ignoring attempt to play invalid anim %d", animId);
+				continue;
+			}
+
+			uint32 type = i->_archive->getResourceFlags(ID_ANIM, animId);
+
+			// If the resource is a pipe itself, then load the pipe
+			// and then fish the requested animation out of it.
+			if (type != 1) {
+				_pipeStreams.push_back(stream);
+				Pipe *newPipe = new Pipe(stream, animId);
+				_pipes.push_front(newPipe);
+				newPipe->nextFrame();
+				stream = newPipe->getResource(ID_ANIM, animId, false);
+			}
+		}
+
+		Animation *anim = new Animation(stream, animId, Common::Point(x, y), param);
+		anim->_offset = offset;
+		anim->_state = state;
+		uint32 tmp2;
+		ser.syncAsUint32LE(tmp2);
+		for (uint32 j = 0; j < tmp2; j++) {
+			ser.syncAsUint32LE(anim->_entries[j].state);
+			ser.syncAsUint16LE(anim->_entries[j].counter);
+			ser.syncAsUint16LE(anim->_entries[j].prevValue);
+		}
+		_anims.push_back(anim);
+	}
+	_sprites.clear();
+	ser.syncAsUint32LE(tmp);
+	for (uint32 i = tmp; i > 0; i--) {
+		Sprite sprite;
+		ser.syncAsUint16LE(sprite._id);
+		ser.syncAsUint16LE(sprite._animId);
+		ser.syncAsSint16LE(sprite._pos.x);
+		ser.syncAsSint16LE(sprite._pos.y);
+		ser.syncAsUint16LE(sprite._surface.w);
+		ser.syncAsUint16LE(sprite._surface.h);
+		ser.syncAsUint16LE(sprite._surface.pitch);
+		ser.syncAsUint16LE(sprite._zorder);
+		sprite._surface.pixels = malloc(sprite._surface.h * sprite._surface.pitch);
+		byte *dest = static_cast<byte *>(sprite._surface.pixels);
+		for (uint16 y = 0; y < sprite._surface.h; y++) {
+			for (uint16 x = 0; x < sprite._surface.w; x++) {
+				ser.syncAsByte(dest[x]);
+			}
+			dest += sprite._surface.pitch;
+		}
+		_sprites.push_back(sprite);
+	}
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	byte palbuf[256 * 3];
@@ -184,6 +250,17 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	_system->getPaletteManager()->setPalette(palbuf, 0, 256);
 	_needsUpdate = true;
 
+	_mixer->stopAll();
+	_audioStream = NULL;
+	ser.syncAsUint32LE(tmp);
+	tmp <<= 1;
+	byte *audioBuf = (byte *)malloc(tmp);
+	ser.syncBytes(audioBuf, tmp);
+	_audioStream = Audio::makeQueuingAudioStream(22050, false);
+	_audioStream->queueBuffer(audioBuf, tmp, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	_currSoundPriority = 0;
+	if (!_mixer->isSoundHandleActive(_soundHandle))
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 	return Common::kNoError;
 }
 
@@ -207,27 +284,8 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	tmp = _libraries.size();
 	ser.syncAsUint32LE(tmp);
 	for (Common::List<Library>::const_iterator i = _libraries.reverse_begin(); i != _libraries.end(); i--) {
-		uint16 tmp = (*i)._id;
-		ser.syncAsUint16LE(tmp);
-	}
-	tmp = _sprites.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::List<Sprite>::const_iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		Sprite sprite(*i);
-		ser.syncAsUint16LE(sprite._id);
-		ser.syncAsSint16LE(sprite._pos.x);
-		ser.syncAsSint16LE(sprite._pos.y);
-		ser.syncAsUint16LE(sprite._surface.w);
-		ser.syncAsUint16LE(sprite._surface.h);
-		ser.syncAsUint16LE(sprite._surface.pitch);
-		ser.syncAsUint16LE(sprite._zorder);
-		byte *src = static_cast<byte *>((*i)._surface.pixels);
-		for (uint16 y = 0; y < sprite._surface.h; y++) {
-			for (uint x = 0; x < sprite._surface.w; x++) {
-				ser.syncAsByte(src[x]);
-			}
-			src += (*i)._surface.pitch;
-		}
+		uint16 tmp16 = (*i)._id;
+		ser.syncAsUint16LE(tmp16);
 	}
 	tmp = _pendingPageChanges.size();
 	ser.syncAsUint32LE(tmp);
@@ -240,14 +298,14 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	tmp = _stack.size();
 	ser.syncAsUint32LE(tmp);
 	for (Common::Array<uint16>::const_iterator i = _stack.begin(); i != _stack.end(); i++) {
-		uint16 tmp = (*i);
-		ser.syncAsUint16LE(tmp);
+		uint16 tmp16 = (*i);
+		ser.syncAsUint16LE(tmp16);
 	}
 	tmp = _vars.size();
 	ser.syncAsUint32LE(tmp);
 	for (Common::Array<uint16>::const_iterator i = _vars.begin(); i != _vars.end(); i++) {
-		uint16 tmp = (*i);
-		ser.syncAsUint16LE(tmp);
+		uint16 tmp16 = (*i);
+		ser.syncAsUint16LE(tmp16);
 	}
 	tmp = _oldScripts.size();
 	ser.syncAsUint32LE(tmp);
@@ -287,10 +345,62 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 		ser.syncAsUint32LE(tmp);
 	}
 
-	byte palbuf[256 * 3];
-	_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
-	ser.syncBytes(palbuf, 256 * 3);
-
+	tmp = _anims.size();
+	ser.syncAsUint32LE(tmp);
+	for (Common::List<Animation *>::const_iterator i = _anims.begin(); i != _anims.end(); i++) {
+		uint16 tmp16 = (*i)->_id;
+		tmp = (*i)->_offset;
+		ser.syncAsUint16LE(tmp16);
+		ser.syncAsUint32LE(tmp);
+		tmp16 = (*i)->_basePos.x;
+		ser.syncAsUint16LE(tmp16);
+		tmp16 = (*i)->_basePos.y;
+		ser.syncAsUint16LE(tmp16);
+		tmp = (*i)->_state;
+		ser.syncAsUint32LE(tmp);
+		tmp = (*i)->_eventParam;
+		ser.syncAsUint32LE(tmp);
+		tmp = (*i)->_size;
+		ser.syncAsUint32LE(tmp);
+		tmp = (*i)->_entries.size();
+		ser.syncAsUint32LE(tmp);
+		for (Common::Array<AnimationEntry>::const_iterator j = (*i)->_entries.begin(); j != (*i)->_entries.end(); j++) {
+			tmp = (*j).state;
+			tmp16 = (*j).counter;
+			ser.syncAsUint32LE(tmp);
+			ser.syncAsUint16LE(tmp16);
+			tmp16 = (*j).prevValue;
+			ser.syncAsUint16LE(tmp16);
+		}
+	}
+	tmp = _sprites.size();
+	ser.syncAsUint32LE(tmp);
+	for (Common::List<Sprite>::const_iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		Sprite sprite(*i);
+		ser.syncAsUint16LE(sprite._id);
+		ser.syncAsUint16LE(sprite._animId);
+		ser.syncAsSint16LE(sprite._pos.x);
+		ser.syncAsSint16LE(sprite._pos.y);
+		ser.syncAsUint16LE(sprite._surface.w);
+		ser.syncAsUint16LE(sprite._surface.h);
+		ser.syncAsUint16LE(sprite._surface.pitch);
+		ser.syncAsUint16LE(sprite._zorder);
+		byte *src = static_cast<byte *>((*i)._surface.pixels);
+		for (uint16 y = 0; y < sprite._surface.h; y++) {
+			for (uint x = 0; x < sprite._surface.w; x++) {
+				ser.syncAsByte(src[x]);
+			}
+			src += (*i)._surface.pitch;
+		}
+	}
+	byte paletteBuffer[256 * 3];
+	_system->getPaletteManager()->grabPalette(paletteBuffer, 0, 256);
+	ser.syncBytes(paletteBuffer, 256 * 3);
+	byte *audioBuffer = (byte *)malloc(22050 * 60 * 2);
+ 	int32 numSamples = _audioStream->readBuffer((int16 *)audioBuffer, 22050 * 60);
+	if (numSamples == -1) numSamples = 0;
+	ser.syncAsUint32LE(numSamples);
+	ser.syncBytes((byte *)audioBuffer, numSamples * 2);
 	out->finalize();
 	return Common::kNoError;
 }
