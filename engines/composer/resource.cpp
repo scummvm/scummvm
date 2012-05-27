@@ -252,7 +252,9 @@ Pipe::Pipe(Common::SeekableReadStream *stream, uint16 pipeId) {
 	_offset = 0;
 	_stream = stream;
 	_anim = NULL;
+#ifdef SAVING_ANYWHERE
 	_pipeId = pipeId;
+#endif
 }
 
 Pipe::~Pipe() {
