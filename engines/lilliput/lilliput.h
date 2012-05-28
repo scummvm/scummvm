@@ -342,7 +342,7 @@ public:
 
 	byte _byte16F07_menuId;
 	byte _byte12FCE;
-	byte _byte129A0;
+	int8 _byte129A0;
 	byte _numCharactersToDisplay;
 	byte _byte16C9F;
 	int16 _word10804;

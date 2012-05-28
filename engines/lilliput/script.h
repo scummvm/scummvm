@@ -98,7 +98,6 @@ private:
 	Common::Stack<ScriptStream *> _scriptStack;
 
 	byte _byte16F05_ScriptHandler;
-	byte _byte129A0;
 	byte _byte10806;
 	byte _lastRandomValue;
 	byte _byte16F04;
@@ -242,7 +241,7 @@ private:
 	void OC_sub17F4F();
 	void OC_scrollAwayFromCharacter();
 	void OC_skipNextVal();
-	void OC_sub17FD2();
+	void OC_setCurrentCharacterVar6();
 	void OC_sub17FDD();
 	void OC_setByte10B29();
 	void OC_setCurrentCharacterVar2();
