@@ -39,15 +39,15 @@ void HQPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 		return;
 	}
 	switch (_factor) {
-		case 1:
-			Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-			break;
-		case 2:
-			HQ2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-			break;
-		case 3:
-			HQ3x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-			break;
+	case 1:
+		Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		break;
+	case 2:
+		HQ2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		break;
+	case 3:
+		HQ3x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		break;
 	}
 }
 
