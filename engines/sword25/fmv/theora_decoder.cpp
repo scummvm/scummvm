@@ -289,7 +289,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 
 		if (_audStream)
-			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _audHandle, _audStream);
+			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _audHandle, _audStream, -1, getVolume(), getBalance());
 	} else {
 		// tear down the partial vorbis setup
 		vorbis_info_clear(&_vorbisInfo);
@@ -548,6 +548,16 @@ void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer) {
 	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
 	Graphics::convertYUV420ToRGB(&_surface, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+}
+
+void TheoraDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(*_audHandle))
+		g_system->getMixer()->setChannelVolume(*_audHandle, getVolume());
+}
+
+void TheoraDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(*_audHandle))
+		g_system->getMixer()->setChannelBalance(*_audHandle, getBalance());
 }
 
 } // End of namespace Sword25

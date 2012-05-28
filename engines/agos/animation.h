@@ -83,6 +83,11 @@ public:
 	void nextFrame();
 	virtual void stopVideo();
 
+protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
 private:
 	void handleNextFrame();
 	bool processFrame();

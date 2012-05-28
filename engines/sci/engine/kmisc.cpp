@@ -356,10 +356,52 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	Common::String setting = s->_segMan->getString(argv[0]);
 	reg_t data = readSelector(s->_segMan, argv[1], SELECTOR(data));
 
-	warning("Get config setting %s", setting.c_str());
-	s->_segMan->strcpy(data, "");
+	// This function is used to get the benchmarked results stored in the
+	// resource.cfg configuration file in Phantasmagoria 1. Normally,
+	// the configuration file contains values stored by the installer
+	// regarding audio and video settings, which are then used by the
+	// executable. In Phantasmagoria, two extra executable files are used
+	// to perform system benchmarks:
+	// - CPUID for the CPU benchmarks, sets the cpu and cpuspeed settings
+	// - HDDTEC for the graphics and CD-ROM benchmarks, sets the videospeed setting
+	//
+	// These settings are then used by the game scripts directly to modify
+	// the game speed and graphics output. The result of this call is stored
+	// in global 178. The scripts check these values against the value 425.
+	// Anything below that makes Phantasmagoria awfully sluggish, so we're
+	// setting everything to 500, which makes the game playable.
+
+	if (setting == "videospeed") {
+		s->_segMan->strcpy(data, "500");
+	} else if (setting == "cpu") {
+		// We always return the fastest CPU setting that CPUID can detect
+		// (i.e. 586).
+		s->_segMan->strcpy(data, "586");
+	} else if (setting == "cpuspeed") {
+		s->_segMan->strcpy(data, "500");
+	} else {
+		error("GetConfig: Unknown configuration setting %s", setting.c_str());
+	}
+
 	return argv[1];
 }
+
+reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
+	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
+	if (category != "config")
+		error("GetSierraProfileInt: category isn't 'config', it's '%s'", category.c_str());
+
+	Common::String setting = s->_segMan->getString(argv[1]);
+	if (setting != "videospeed")
+		error("GetSierraProfileInt: setting isn't 'videospeed', it's '%s'", setting.c_str());
+
+	// The game scripts pass 425 as the third parameter for some unknown reason,
+	// as after the call they compare the result to 425 anyway...
+
+	// We return the same fake value for videospeed as with kGetConfig
+	return make_reg(0, 500);
+}
+
 #endif
 
 // kIconBar is really a subop of kMacPlatform for SCI1.1 Mac

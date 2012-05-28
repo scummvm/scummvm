@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-05-20 22:39+0100\n"
-"PO-Revision-Date: 2012-03-17 19:07+0100\n"
+"PO-Revision-Date: 2012-05-22 21:02+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -194,9 +194,8 @@ msgid "Platform:"
 msgstr "Platforma:"
 
 #: gui/launcher.cpp:231
-#, fuzzy
 msgid "Engine"
-msgstr "Prohlédnout"
+msgstr "Jádro"
 
 #: gui/launcher.cpp:239 gui/options.cpp:1062 gui/options.cpp:1079
 msgid "Graphics"
@@ -1250,12 +1249,12 @@ msgstr "Pøesto spustit"
 #: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
 #: engines/sci/detection.cpp:390
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení"
 
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
 msgid "Use the original save/load screens, instead of the ScummVM ones"
-msgstr ""
+msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení místo ze ScummVM"
 
 #: engines/agi/saveload.cpp:827 engines/sci/engine/kfile.cpp:674
 msgid "Restore game:"
@@ -1266,78 +1265,76 @@ msgid "Restore"
 msgstr "Obnovit"
 
 #: engines/dreamweb/detection.cpp:57
-#, fuzzy
 msgid "Use bright palette mode"
-msgstr "Polo¾ka vpravo nahoøe"
+msgstr "Pou¾ít re¾im jasné palety"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Zobrazit grafiku pomocí jasné palety hry"
 
 #: engines/sci/detection.cpp:370
 msgid "EGA undithering"
 msgstr "Nerozkládání EGA"
 
 #: engines/sci/detection.cpp:371
-#, fuzzy
 msgid "Enable undithering in EGA games"
-msgstr "Povolit nerozkládání v EGA hrách, které to podporují"
+msgstr "Povolit nerozkládání v EGA hrách"
 
 #: engines/sci/detection.cpp:380
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Hlasitost speciálních zvukových efektù"
+msgstr "Upøednostòovat digitální zvukové efekty"
 
 #: engines/sci/detection.cpp:381
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Upøednostòovat digitální zvukové efekty pøed syntetizovanými"
 
 #: engines/sci/detection.cpp:400
 msgid "Use IMF/Yahama FB-01 for MIDI output"
-msgstr ""
+msgstr "Pou¾ít IMF/Yahama FB-01 pro výstup MIDI"
 
 #: engines/sci/detection.cpp:401
 msgid ""
 "Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Pou¾ít kartu IBM Music Feature nebo modul syntetizátoru Yahama FB-01 FM pro "
+"výstup MIDI"
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
-msgstr ""
+msgstr "Pou¾ít zvuky na CD"
 
 #: engines/sci/detection.cpp:412
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Pou¾ít zvuky na CD místo ve høe, pokud je dostupné"
 
 #: engines/sci/detection.cpp:422
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Pou¾ít kurzory Windows"
 
 #: engines/sci/detection.cpp:423
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr ""
+msgstr "Pou¾ít kurzory Windows (men¹í a èernobílé) místo kurzorù z DOS"
 
 #: engines/sci/detection.cpp:433
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "Obyèejný kurzor"
+msgstr "Pou¾ít støíbrné kurzory"
 
 #: engines/sci/detection.cpp:434
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
-msgstr ""
+msgstr "Pou¾ít alternativní sadu støíbrných kurzorù místo standardních zlatých"
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr "Vlo¾te Disk %c a Stisknìte Tlaèítko Pro Poraèování."
+msgstr "Vlo¾te Disk %c a Stisknìte Tlaèítko Pro Pokraèování."
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr "Nelze Najít %s, (%c%d) Stsikìte Tlaèítko."
+msgstr "Nelze Najít %s, (%c%d) Stisknìte Tlaèítko."
 
 #: engines/scumm/dialogs.cpp:177
 #, c-format
@@ -2080,61 +2077,59 @@ msgstr "Nelze ulo¾it hru."
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr ""
+msgstr "Publikum ve studiu"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Povolit publikum ve studiu"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Podpora pøeskoèení"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Umo¾nit, aby text a videa mohly být pøeskoèeny"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr ""
+msgstr "Héliový re¾im"
 
 #: engines/kyra/detection.cpp:85
-#, fuzzy
 msgid "Enable helium mode"
-msgstr "Zapnout re¾im Roland GS"
+msgstr "Zapnout héliový re¾im"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "Plynulé posunování"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "Povolit plynulé posunování pøi chùzi"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
-#, fuzzy
 msgid "Floating cursors"
-msgstr "Obyèejný kurzor"
+msgstr "Plovoucí kurzory"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "Povolit plovoucí kurzory"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr ""
+msgstr "Sloupcový indikátor zdraví"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Povolit sloupcový indikátor zdraví"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -2200,11 +2195,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr ""
+msgstr "Úvod z diskety"
 
 #: engines/queen/queen.cpp:60 engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "Pou¾ít verzi úvodu z diskety (Pouze verze CD)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2286,11 +2281,11 @@ msgstr "Videa PSX nalezena, ale ScummVM byl sestaven bez podpory barev RGB"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr ""
+msgstr "Zobrazit jmenovky objektù"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Zobrazit jmenovky objektù pøi najetí my¹i"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format

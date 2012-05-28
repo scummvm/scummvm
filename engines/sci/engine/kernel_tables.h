@@ -239,6 +239,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
 	{ SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
 	{ SIG_SCI32,          17, MAP_CALL(FileIOCreateSaveSlot),      "ir",                   NULL },
+	{ SIG_SCI32,          18, MAP_EMPTY(FileIOChangeDirectory),    "r",                    NULL }, // for SQ6, when changing the savegame directory in the save/load dialog
 	{ SIG_SCI32,          19, MAP_CALL(Stub),                      "r",                    NULL }, // for Torin / Torin demo
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
@@ -560,6 +561,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
+	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -578,11 +580,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
 	// the game window in Phantasmagoria 2. We ignore these settings completely.
 	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,             "ii",                  NULL,            NULL },
-
-	// Used by the Windows version of Phantasmagoria 1 to get the video speed setting. This is called after
-	// kGetConfig and overrides the setting obtained by it. It is a dummy function in the DOS Version. We can
-	// just use GetConfig and mark this one as empty, like the DOS version does.
-	{ MAP_EMPTY(GetSierraProfileInt), SIG_EVERYWHERE,        "(.*)",                  NULL,            NULL },
 
 	// Debug function called whenever the current room changes
 	{ MAP_EMPTY(NewRoom),           SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },

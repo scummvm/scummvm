@@ -77,8 +77,14 @@ public:
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
 protected:
-	Common::Rational getFrameRate() const { return _frameRate; }
 	Common::SeekableReadStream *_fileStream;
+
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
+	// FixedRateVideoDecoder API
+	Common::Rational getFrameRate() const { return _frameRate; }
 
 protected:
 	void unpackPalette();

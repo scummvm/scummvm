@@ -97,7 +97,7 @@ void QuickTimeDecoder::startAudio() {
 	updateAudioBuffer();
 
 	for (uint32 i = 0; i < _audioTracks.size(); i++) {
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandles[i], _audioTracks[i], -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandles[i], _audioTracks[i], -1, getVolume(), getBalance(), DisposeAfterUse::NO);
 
 		// Pause the audio again if we're still paused
 		if (isPaused())
@@ -234,6 +234,18 @@ bool QuickTimeDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	init();
 	return true;
+}
+
+void QuickTimeDecoder::updateVolume() {
+	for (uint32 i = 0; i < _audioHandles.size(); i++)
+		if (g_system->getMixer()->isSoundHandleActive(_audioHandles[i]))
+			g_system->getMixer()->setChannelVolume(_audioHandles[i], getVolume());
+}
+
+void QuickTimeDecoder::updateBalance() {
+	for (uint32 i = 0; i < _audioHandles.size(); i++)
+		if (g_system->getMixer()->isSoundHandleActive(_audioHandles[i]))
+			g_system->getMixer()->setChannelBalance(_audioHandles[i], getBalance());
 }
 
 void QuickTimeDecoder::init() {

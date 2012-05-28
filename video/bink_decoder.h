@@ -78,7 +78,12 @@ public:
 
 	// Bink specific
 	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
+
 protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
 	static const int kAudioChannelsMax  = 2;
 	static const int kAudioBlockSizeMax = (kAudioChannelsMax << 11);
 

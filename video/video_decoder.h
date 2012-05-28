@@ -185,6 +185,40 @@ public:
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
 
+	/**
+	 * Get the current volume at which the audio in the video is being played
+	 * @return the current volume at which the audio in the video is being played
+	 */
+	virtual byte getVolume() const { return _audioVolume; }
+
+	/**
+	 * Set the volume at which the audio in the video should be played.
+	 * This setting remains until reset() is called (which may be called
+	 * from loadStream() or close()). The default volume is the maximum.
+	 *
+	 * @note This function calls updateVolume() by default.
+	 *
+	 * @param volume The volume at which to play the audio in the video
+	 */
+	virtual void setVolume(byte volume);
+
+	/**
+	 * Get the current balance at which the audio in the video is being played
+	 * @return the current balance at which the audio in the video is being played
+	 */
+	virtual int8 getBalance() const { return _audioBalance; }
+
+	/**
+	 * Set the balance at which the audio in the video should be played.
+	 * This setting remains until reset() is called (which may be called
+	 * from loadStream() or close()). The default balance is 0.
+	 *
+	 * @note This function calls updateBalance() by default.
+	 *
+	 * @param balance The balance at which to play the audio in the video
+	 */
+	virtual void setBalance(int8 balance);
+
 protected:
 	/**
 	 * Resets _curFrame and _startTime. Should be called from every close() function.
@@ -207,12 +241,24 @@ protected:
 	 */
 	void resetPauseStartTime();
 
+	/**
+	 * Update currently playing audio tracks with the new volume setting
+	 */
+	virtual void updateVolume() {}
+
+	/**
+	 * Update currently playing audio tracks with the new balance setting
+	 */
+	virtual void updateBalance() {}
+
 	int32 _curFrame;
 	int32 _startTime;
 
 private:
 	uint32 _pauseLevel;
 	uint32 _pauseStartTime;
+	byte _audioVolume;
+	int8 _audioBalance;
 };
 
 /**
