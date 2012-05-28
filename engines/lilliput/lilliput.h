@@ -293,8 +293,8 @@ public:
 	bool isMouseOverHotspot(Common::Point mousePos, Common::Point hotspotPos);
 	void sub131B2(Common::Point pos, bool &forceReturnFl);
 	void sub131FC(Common::Point pos);
-	void sub1546F(Common::Point displayPos);
-	void sub15498(Common::Point pos, int var2);
+	void displaySpeechBubbleTail(Common::Point displayPos);
+	void displaySpeechBubbleTailLine(Common::Point pos, int var2);
 	void displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex);
 	void checkMapClosing(bool &forceReturnFl);
 	void turnCharacter1(int index);
@@ -312,7 +312,7 @@ public:
 	byte sub1675D(int index, Common::Point var1);
 	byte sub16729(int index, Common::Point var1);
 	byte sub166F7(int index, Common::Point var1, int tmpVal);
-	void sub1693A(int index);
+	void sub1693A_chooseDirections(int index);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, int fileSize, bool loadPal);
