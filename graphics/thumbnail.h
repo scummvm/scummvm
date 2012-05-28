@@ -62,13 +62,6 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in);
 bool saveThumbnail(Common::WriteStream &out);
 
 /**
-
- * Saves a screenshot without changing a scale to the given write stream
- */
-bool saveScreenShot(Common::WriteStream &out);
-
-/**
-¸
  * Saves a (given) thumbnail to the given write stream.
  */
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb);
