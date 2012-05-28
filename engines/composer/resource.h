@@ -106,7 +106,7 @@ struct PipeResource {
 
 class Pipe {
 public:
-	Pipe(Common::SeekableReadStream *stream, uint16 pipeId);
+	Pipe(Common::SeekableReadStream *stream, uint16 id);
 	virtual ~Pipe();
 	virtual void nextFrame();
 
@@ -117,9 +117,11 @@ public:
 
 	virtual const Common::Array<uint16> *getScripts() { return NULL; }
 #ifdef SAVING_ANYWHERE
-	uint16 id() const { return _pipeId; }
+	uint16 pipeId() const { return _pipeId; }
 	uint32 offset() const { return _offset; }
-	void setOffset(uint32 offset) { while (_offset < offset) nextFrame(); }
+	void setOffset(uint32 off) { while (_offset < off) nextFrame(); }
+	typedef Common::HashMap<uint32, Common::List<uint16>> DelMap;
+	Common::Array<DelMap> _bufferedResources;
 #endif
 
 protected:
@@ -130,6 +132,7 @@ protected:
 	TypeMap _types;
 #ifdef SAVING_ANYWHERE
 	uint16 _pipeId;
+	DelMap _currBufferedResources;
 #endif
 
 	uint32 _offset;

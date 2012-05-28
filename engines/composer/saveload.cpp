@@ -150,9 +150,23 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 		ser.syncAsUint32LE(offset);
 		Common::SeekableReadStream *stream = getResource(ID_ANIM, id);
 		Pipe *pipe = new Pipe(stream, id);
-		pipe->setOffset(offset);
 		_pipes.push_front(pipe);
 		_pipeStreams.push_back(stream);
+		ser.syncAsUint32LE(tmp);
+		for (uint32 j = tmp; j > 0; j--) {
+			ser.syncAsUint32LE(tmp);
+			for (uint32 k = tmp; k > 0; k--) {
+				uint32 tag;
+				ser.syncAsUint32LE(tag);
+				ser.syncAsUint32LE(tmp);
+				for (uint32 l = tmp; l > 0; l--) {
+					ser.syncAsUint16LE(id);
+					pipe->getResource(tag, id, true);
+				}
+			}
+			pipe->nextFrame();
+		}
+		pipe->setOffset(offset);
 	}
 
 	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
@@ -162,7 +176,8 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	ser.syncAsUint32LE(tmp);
 	for (uint32 i = tmp; i > 0; i--) {
 		uint16 animId, x, y;
-		uint32 offset, state, param, size;
+		uint32 offset, state, param;
+		int32 size;
 		ser.syncAsUint16LE(animId);
 		ser.syncAsUint32LE(offset);
 		ser.syncAsUint16LE(x);
@@ -252,15 +267,18 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 
 	_mixer->stopAll();
 	_audioStream = NULL;
-	ser.syncAsUint32LE(tmp);
-	tmp <<= 1;
-	byte *audioBuf = (byte *)malloc(tmp);
-	ser.syncBytes(audioBuf, tmp);
+
+	ser.syncAsSint16LE(_currSoundPriority);
+	int32 numSamples;
+	ser.syncAsSint32LE(numSamples);
+	int16 *audioBuffer = (int16 *)malloc(numSamples * 2);
+	for (int32 i = 0; i < numSamples; i++)
+		ser.syncAsSint16LE(audioBuffer[i]);
 	_audioStream = Audio::makeQueuingAudioStream(22050, false);
-	_audioStream->queueBuffer(audioBuf, tmp, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
-	_currSoundPriority = 0;
+	_audioStream->queueBuffer((byte *)audioBuffer, numSamples * 2, DisposeAfterUse::YES, Audio::FLAG_16BITS);
 	if (!_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+
 	return Common::kNoError;
 }
 
@@ -339,10 +357,26 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	tmp = _pipes.size();
 	ser.syncAsUint32LE(tmp);
 	for (Common::List<Pipe *>::const_iterator i = _pipes.reverse_begin(); i != _pipes.end(); i--) {
-		uint16 tmp16 = (*i)->id();
+		uint16 tmp16 = (*i)->pipeId();
 		tmp = (*i)->offset();
 		ser.syncAsUint16LE(tmp16);
 		ser.syncAsUint32LE(tmp);
+		tmp = (*i)->_bufferedResources.size();
+		ser.syncAsUint32LE(tmp);
+		for (Common::Array<Pipe::DelMap>::const_iterator j = (*i)->_bufferedResources.begin(); j != (*i)->_bufferedResources.end(); j++) {
+			tmp = (*j).size();
+			ser.syncAsUint32LE(tmp);
+			for (Pipe::DelMap::const_iterator k = (*j).begin(); k != (*j).end(); k++) {
+				tmp = (*k)._key;
+				ser.syncAsUint32LE(tmp);
+				tmp = (*k)._value.size();
+				ser.syncAsUint32LE(tmp);
+				for (Common::List<uint16>::const_iterator l = (*k)._value.begin(); l != (*k)._value.end(); l++) {
+					tmp16 = (*l);
+					ser.syncAsUint16LE(tmp16);
+				}
+			}
+		}
 	}
 
 	tmp = _anims.size();
@@ -396,11 +430,15 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	byte paletteBuffer[256 * 3];
 	_system->getPaletteManager()->grabPalette(paletteBuffer, 0, 256);
 	ser.syncBytes(paletteBuffer, 256 * 3);
-	byte *audioBuffer = (byte *)malloc(22050 * 60 * 2);
- 	int32 numSamples = _audioStream->readBuffer((int16 *)audioBuffer, 22050 * 60);
-	if (numSamples == -1) numSamples = 0;
-	ser.syncAsUint32LE(numSamples);
-	ser.syncBytes((byte *)audioBuffer, numSamples * 2);
+
+	ser.syncAsSint16LE(_currSoundPriority);
+	int16 audioBuffer[22050];
+	int32 numSamples = _audioStream->readBuffer(audioBuffer, 22050);
+	if (numSamples  == -1) numSamples = 0;
+	ser.syncAsSint32LE(numSamples);
+	for (int32 i = 0; i < numSamples; i++)
+		ser.syncAsSint16LE(audioBuffer[i]);
+
 	out->finalize();
 	return Common::kNoError;
 }

@@ -248,12 +248,12 @@ bool ComposerArchive::openStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-Pipe::Pipe(Common::SeekableReadStream *stream, uint16 pipeId) {
+Pipe::Pipe(Common::SeekableReadStream *stream, uint16 id) {
 	_offset = 0;
 	_stream = stream;
 	_anim = NULL;
 #ifdef SAVING_ANYWHERE
-	_pipeId = pipeId;
+	_pipeId = id;
 #endif
 }
 
@@ -263,6 +263,8 @@ Pipe::~Pipe() {
 void Pipe::nextFrame() {
 	if (_offset == (uint)_stream->size())
 		return;
+	_bufferedResources.push_back(_currBufferedResources);
+	_currBufferedResources.clear();
 
 	_stream->seek(_offset, SEEK_SET);
 
@@ -315,8 +317,10 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	if (res.entries.size() == 1) {
 		Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(_stream,
 			res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
-		if (buffering)
+		if (buffering) {
 			_types[tag].erase(id);
+			_currBufferedResources[tag].push_back(id);
+		}
 		return stream;
 	}
 
@@ -333,8 +337,10 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 		_stream->read(buffer + offset, res.entries[i].size);
 		offset += res.entries[i].size;
 	}
-	if (buffering)
+	if (buffering) {
 		_types[tag].erase(id);
+		_currBufferedResources[tag].push_back(id);
+	}
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
