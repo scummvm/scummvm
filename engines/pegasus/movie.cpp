@@ -122,7 +122,8 @@ void Movie::moveMovieBoxTo(const CoordType h, const CoordType v) {
 }
 
 void Movie::setVolume(uint16 volume) {
-	// TODO
+	if (_video)
+		_video->setVolume(MIN<uint>(volume, 0xFF));
 }
 
 void Movie::setTime(const TimeValue time, const TimeScale scale) {
