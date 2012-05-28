@@ -20,22 +20,24 @@
  *
  */
 
-#include "common/archive.h"
-#include "common/str.h"
+#ifndef COMMON_INSTALLSHIELD_CAB_H
+#define COMMON_INSTALLSHIELD_CAB_H
 
-#ifndef AGOS_INSTALLSHIELD_CAB_H
-#define AGOS_INSTALLSHIELD_CAB_H
+#include "common/types.h"
 
-namespace AGOS {
+namespace Common {
+
+class Archive;
+class SeekableReadStream;
 
 /**
  * This factory method creates an Archive instance corresponding to the content
- * of the InstallShield compressed file with the given name.
+ * of the InstallShield compressed stream.
  *
  * May return 0 in case of a failure.
  */
-Common::Archive *makeInstallShieldArchive(const Common::String &name);
+Archive *makeInstallShieldArchive(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-} // End of namespace AGOS
+} // End of namespace Common
 
 #endif
