@@ -43,13 +43,13 @@ void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-int NormalPlugin::increaseFactor() {
+uint NormalPlugin::increaseFactor() {
 	if (_factor < 3)
 		++_factor;
 	return _factor;
 }
 
-int NormalPlugin::decreaseFactor() {
+uint NormalPlugin::decreaseFactor() {
 	if (_factor > 1)
 		--_factor;
 	return _factor;
