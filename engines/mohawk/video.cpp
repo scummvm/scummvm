@@ -315,7 +315,7 @@ VideoHandle VideoManager::playMovieRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping");
-			return createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0);
+			return createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0, _mlstRecords[i].volume);
 		}
 
 	return NULL_VID_HANDLE;
@@ -371,7 +371,7 @@ void VideoManager::disableAllMovies() {
 		_videoStreams[i].enabled = false;
 }
 
-VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop) {
+VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, byte volume) {
 	// First, check to see if that video is already playing
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (_videoStreams[i].id == id)
@@ -381,6 +381,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	Video::QuickTimeDecoder *decoder = new Video::QuickTimeDecoder();
 	decoder->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
 	decoder->loadStream(_vm->getResource(ID_TMOV, id));
+	decoder->setVolume(volume);
 
 	VideoEntry entry;
 	entry.clear();
@@ -403,7 +404,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	return _videoStreams.size() - 1;
 }
 
-VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop) {
+VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop, byte volume) {
 	// First, check to see if that video is already playing
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (_videoStreams[i].filename == filename)
@@ -426,6 +427,7 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 	}
 
 	entry->loadStream(file);
+	entry->setVolume(volume);
 
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
