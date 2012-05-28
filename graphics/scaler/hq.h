@@ -26,7 +26,7 @@
 
 class HQPlugin : public ScalerPluginObject {
 public:
-	HQPlugin() { _factor = 1;}
+	HQPlugin() { _factor = 1; }
 	virtual void initialize(Graphics::PixelFormat format);
 	virtual void deinitialize();
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
