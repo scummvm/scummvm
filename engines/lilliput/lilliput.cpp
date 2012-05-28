@@ -792,7 +792,7 @@ void LilliputEngine::prepareGameArea() {
 }
 
 void LilliputEngine::displayRefreshScreen() {
-	debugC(2, kDebugEngineTBC, "displayRefreshScreen()");
+	debugC(2, kDebugEngine, "displayRefreshScreen()");
 
 	if (_displayMap == 1) {
 		bool forceReturnFl = false;
@@ -1303,7 +1303,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 	Common::Point characterPos = Common::Point(_characterDisplayX[index], _characterDisplayY[index]);
 
 	if (index == _scriptHandler->_talkingCharacter)
-		sub1546F(characterPos);
+		displaySpeechBubbleTail(characterPos);
 
 	if (_byte16552 != 1) {
 		byte flag = _characterDirectionArray[index];
@@ -1330,8 +1330,8 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 	renderCharacters(buf, pos);
 }
 
-void LilliputEngine::sub1546F(Common::Point displayPos) {
-	debugC(2, kDebugEngineTBC, "sub1546F(%d, %d)", displayPos.x, displayPos.y);
+void LilliputEngine::displaySpeechBubbleTail(Common::Point displayPos) {
+	debugC(2, kDebugEngine, "displaySpeechBubbleTail(%d, %d)", displayPos.x, displayPos.y);
 
 	int orgX = displayPos.x + 8;
 	int orgY = displayPos.y;
@@ -1340,25 +1340,25 @@ void LilliputEngine::sub1546F(Common::Point displayPos) {
 	int x = orgX;
 	int y = orgY;
 	do {
-		sub15498(Common::Point(x, y), var2);
+		displaySpeechBubbleTailLine(Common::Point(x, y), var2);
 		--x;
-		y >>= 1;
+		y /= 2;
 	} while (y != 0);
 
 	x = orgX + 1;
-	y = orgY >> 1;
+	y = orgY / 2;
 
 	while (y != 0) {
-		sub15498(Common::Point(x, y), var2);
+		displaySpeechBubbleTailLine(Common::Point(x, y), var2);
 		++x;
-		y >>= 1;
+		y /= 2;
 	}
 }
 
-void LilliputEngine::sub15498(Common::Point pos, int var2) {
-	debugC(2, kDebugEngineTBC, "sub15498(%d - %d, %d)", pos.x, pos.y, var2);
+void LilliputEngine::displaySpeechBubbleTailLine(Common::Point pos, int var2) {
+	debugC(2, kDebugEngine, "displaySpeechBubbleTailLine(%d - %d, %d)", pos.x, pos.y, var2);
 
-	int index = pos.x + ((var2 & 0xFF) << 8) + (var2 >> 8);
+	int index = pos.x + (var2 * 256);
 	for (int i = 1 + pos.y - var2; i > 0; i--) {
 		_savedSurfaceGameArea1[index] = 17;
 		index += 256;
@@ -1412,7 +1412,7 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 
 	if (var3.x != -1) {
 		if ((var3.x != _scriptHandler->_array16123PosX[index]) || (var3.y != _scriptHandler->_array1614BPosY[index])) {
-			sub1693A(index);
+			sub1693A_chooseDirections(index);
 			_scriptHandler->_array12811[index] -= (param1.x & 0x0F);
 			return 3;
 		}
@@ -1428,7 +1428,7 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 
 	_characterDirectionArray[index] = getDirection(pos1, pos2);
 
-	sub1693A(index);
+	sub1693A_chooseDirections(index);
 	_scriptHandler->_array12811[index] -= (param1.x & 0x0F);
 	return 3;
 
@@ -1508,8 +1508,8 @@ void LilliputEngine::sub167EF(int index) {
 	return;
 }
 
-void LilliputEngine::sub1693A(int index) {
-	debugC(2, kDebugEngineTBC, "sub1693A(%d)", index);
+void LilliputEngine::sub1693A_chooseDirections(int index) {
+	debugC(2, kDebugEngine, "sub1693A_chooseDirections(%d)", index);
 
 	static const int16 mapArrayMove[4] = {4, -256, 256, -4};
 
@@ -1522,7 +1522,7 @@ void LilliputEngine::sub1693A(int index) {
 	_array1692B[var2] -= 8;
 	byte byte16939 = 0;
 
-	int mapIndex = ((((_word16937Pos.y << 8) >> 2) + _word16937Pos.x) << 2);
+	int mapIndex = ((_word16937Pos.y * 64) + _word16937Pos.x) * 4;
 	int mapIndexDiff = 0;
 	int retVal = 0;
 	for (int i = 3; i >= 0; i--) {
@@ -1546,7 +1546,7 @@ void LilliputEngine::sub1693A(int index) {
 	if (byte16939 != 0)
 		_array1692B[_characterDirectionArray[index]] += 3;
 
-	int tmpVal = -97;
+	int tmpVal = -99;
 	for (int i = 3; i >= 0; i--) {
 		if (tmpVal < _array1692B[i]) {
 			retVal = i;
@@ -1676,7 +1676,7 @@ void LilliputEngine::numberToString(int param1) {
 }
 
 void LilliputEngine::sub16626() {
-	debugC(2, kDebugEngineTBC, "sub16626()");
+	debugC(2, kDebugEngine, "sub16626()");
 
 	int index = _numCharacters - 1;
 	byte result;
@@ -1688,9 +1688,9 @@ void LilliputEngine::sub16626() {
 
 			uint16 index2 = _scriptHandler->_array12811[index] + (index * 16);
 			Common::Point var1 = _scriptHandler->_array12311[index2];
-			int16 var2 = var1.x / 16;
 
-			//warning(" step %d : var1 x:%d y:%d  var:%d", _scriptHandler->_array12811[index], var1.x, var1.y, var2 / 2);
+			// /8, then /2 as the function array is a word array 
+			int16 var2 = var1.x / 16;
 
 			switch (var2) {
 			case 0:
