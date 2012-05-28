@@ -37,12 +37,12 @@ void SAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 		return;
 	}
 	switch (_factor) {
-		case 1:
-			Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-			break;
-		case 2:
-			_2xSaI(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-			break;
+	case 1:
+		Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		break;
+	case 2:
+		_2xSaI(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		break;
 	}
 }
 
