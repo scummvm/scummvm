@@ -163,6 +163,7 @@ public:
 
 		// Scaler plugins
 		LINK_PLUGIN(NORMAL)
+		LINK_PLUGIN(HQ)
 
 		return pl;
 	}
