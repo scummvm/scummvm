@@ -29,7 +29,6 @@
 namespace Lilliput {
 
 LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) {
-	_byte129A0 = 0xFF;
 	_byte10806 = 0;
 	_lastRandomValue = 0;
 	_byte16F04 = 0;
@@ -388,7 +387,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_skipNextVal();
 		break;
 	case 0x30:
-		OC_sub17FD2();
+		OC_setCurrentCharacterVar6();
 		break;
 	case 0x31:
 		OC_sub17FDD();
@@ -658,7 +657,7 @@ static const OpCode opCodes2[] = {
 /* 0x2d */	{ "OC_sub17F4F", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x2e */	{ "OC_scrollAwayFromCharacter", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x2f */	{ "OC_skipNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x30 */	{ "OC_sub17FD2", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
+/* 0x30 */	{ "OC_setCurrentCharacterVar6", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x31 */	{ "OC_sub17FDD", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x32 */	{ "OC_setByte10B29", 1, kGetValue1, kNone, kNone, kNone, kNone }, 
 /* 0x33 */	{ "OC_setCurrentCharacterVar2", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
@@ -1283,13 +1282,13 @@ int16 LilliputScript::getValue1() {
 
 	switch (curWord) {
 	case 1000:
-		return (int)_byte129A0;
+		return _vm->_byte129A0;
 	case 1001:
 		return _vm->_currentScriptCharacter;
 	case 1002:
 		return _word16F00;
 	case 1003:
-		return (int)_vm->_currentCharacterVariables[6];
+		return (int16)_vm->_currentCharacterVariables[6];
 	case 1004:
 		return _vm->_word10804;
 	default:
@@ -1891,10 +1890,10 @@ byte LilliputScript::OC_IsPositionInViewport() {
 }
 
 byte LilliputScript::OC_CompareGameVariables() {
-	debugC(1, kDebugScriptTBC, "OC_CompareGameVariables()");
+	debugC(1, kDebugScript, "OC_CompareGameVariables()");
 
-	int var1 = getValue1();
-	int var2 = getValue1();
+	int16 var1 = getValue1();
+	int16 var2 = getValue1();
 	if (var1 == var2)
 		return 1;
 	return 0;
@@ -2028,16 +2027,16 @@ byte LilliputScript::OC_checkLastInterfaceHotspotIndex() {
 byte LilliputScript::OC_checkSavedMousePos() {
 	debugC(1, kDebugScriptTBC, "OC_checkSavedMousePos()");
 
-	if ((_byte129A0 != 0xFF) || (_vm->_savedMousePosDivided == Common::Point(-1, -1)))
+	if ((_vm->_byte129A0 != -1) || (_vm->_savedMousePosDivided == Common::Point(-1, -1)))
 		return 0;
 
 	return 1;
 }
 
 byte LilliputScript::OC_sub179AE() {
-	debugC(1, kDebugScriptTBC, "OC_sub179AE()");
+	debugC(1, kDebugScript, "OC_sub179AE()");
 
-	if ((_vm->_byte12FCE == 1) || (_byte129A0 == 0xFF))
+	if ((_vm->_byte12FCE == 1) || (_vm->_byte129A0 == -1))
 		return 0;
 
 	return 1;
@@ -2430,12 +2429,12 @@ void LilliputScript::OC_sub17C0E() {
 }
 
 void LilliputScript::OC_sub17C55() {
-	debugC(1, kDebugScriptTBC, "OC_sub17C55()");
+	debugC(1, kDebugScript, "OC_sub17C55()");
 
-	byte var1 = ((uint16)getValue1()) & 0xFF;
+	int8 var1 = (getValue1() & 0xFF);
 	int16 index = getValue1();
 
-	int8 var3 = (_currScript->readUint16LE() & 0xFF);
+	int8 var3 = (_currScript->readSint16LE() & 0xFF);
 	byte var4 = (_currScript->readUint16LE() & 0xFF);
 
 	assert((index >= 0) && (index < 40));
@@ -2450,7 +2449,7 @@ void LilliputScript::OC_sub17C76() {
 	debugC(1, kDebugScriptTBC, "OC_sub17C76()");
 	
 	int var1 = getValue1();
-	_vm->_rulesBuffer2_5[var1] = 0xFF;
+	_vm->_rulesBuffer2_5[var1] = -1;
 	_vm->_characterPositionAltitude[var1] = 0;
 	_characterScriptEnabled[var1] = 1;
 
@@ -2697,10 +2696,11 @@ void LilliputScript::OC_skipNextVal() {
 	 _currScript->readUint16LE();
 }
 
-void LilliputScript::OC_sub17FD2() {
-	debugC(1, kDebugScriptTBC, "OC_sub17FD2()");
+void LilliputScript::OC_setCurrentCharacterVar6() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacterVar6()");
 	
-	int var1 = getValue1();
+	uint16 var1 = (uint16)getValue1();
+	warning("debug - OC_setCurrentCharacterVar6 %d", var1);
 	_vm->_currentCharacterVariables[6] = var1 & 0xFF;
 }
 

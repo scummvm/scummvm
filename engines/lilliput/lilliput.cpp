@@ -133,7 +133,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 	_byte1714E = 0;
 	_byte12FCE = 0;
-	_byte129A0 = 0xFF;
+	_byte129A0 = -1;
 	_numCharactersToDisplay = 0;
 	_nextDisplayCharacterPos = Common::Point(0, 0);
 	_animationTick = 0;
@@ -974,7 +974,7 @@ int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 void LilliputEngine::sub15F75() {
 	debugC(2, kDebugEngineTBC, "sub15F75()");
 
-	_byte129A0 = 0xFF;
+	_byte129A0 = -1;
 	_savedMousePosDivided = Common::Point(-1, -1);
 	byte newX = _mousePos.x >> 2;
 	byte newY = _mousePos.y / 3;
@@ -1927,7 +1927,7 @@ void LilliputEngine::sub131B2(Common::Point pos, bool &forceReturnFl) {
 
 	forceReturnFl = false;
 
-	for (byte i = 0; i < _numCharacters; i++) {
+	for (int8 i = 0; i < _numCharacters; i++) {
 		if ((pos.x >= _characterDisplayX[i]) && (pos.x <= _characterDisplayX[i] + 17) && (pos.y >= _characterDisplayY[i]) && (pos.y <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_byte129A0 = i;
 			_byte16F07_menuId = 4;
@@ -2653,7 +2653,7 @@ void LilliputEngine::handleMenu() {
 	_scriptHandler->runMenuScript(ScriptStream(_menuScript, _menuScriptSize));
 	debugC(1, kDebugScriptTBC, "========================== End of Menu Script==============================");
 	_savedMousePosDivided = Common::Point(-1, -1);
-	_byte129A0 = 0xFF;
+	_byte129A0 = -1;
 
 	if (_byte16F07_menuId == 3)
 		unselectInterfaceButton();
