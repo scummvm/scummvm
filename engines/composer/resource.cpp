@@ -263,7 +263,9 @@ Pipe::~Pipe() {
 void Pipe::nextFrame() {
 	if (_offset == (uint)_stream->size())
 		return;
+#ifdef SAVING_ANYWHERE
 	_bufferedResources.push_back(_currBufferedResources);
+#endif
 	_currBufferedResources.clear();
 
 	_stream->seek(_offset, SEEK_SET);
@@ -319,7 +321,9 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 			res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
 		if (buffering) {
 			_types[tag].erase(id);
+#ifdef SAVING_ANYWHERE
 			_currBufferedResources[tag].push_back(id);
+#endif
 		}
 		return stream;
 	}
@@ -339,7 +343,9 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	}
 	if (buffering) {
 		_types[tag].erase(id);
+#ifdef SAVING_ANYWHERE
 		_currBufferedResources[tag].push_back(id);
+#endif
 	}
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
