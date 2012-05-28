@@ -234,6 +234,7 @@ protected:
 	int _transactionMode;
 
 	ScalerPlugin *_scalerPlugin;
+	int _scalerIndex;
 
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;

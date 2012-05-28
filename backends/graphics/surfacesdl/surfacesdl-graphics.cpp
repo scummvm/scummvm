@@ -182,6 +182,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_scalerProc = Normal2x;
 	// HACK: just pick first scaler plugin
 	_scalerPlugin = ScalerMan.getPlugins().front();
+	_scalerIndex = 0;
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
@@ -548,6 +549,12 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	default:
 		warning("unknown gfx mode %d", mode);
 		return false;
+	}
+
+	if (ScalerMan.getPlugins()[_scalerIndex] != _scalerPlugin) {
+		(*_scalerPlugin)->deinitialize();
+		_scalerPlugin = ScalerMan.getPlugins()[_scalerIndex];
+		(*_scalerPlugin)->initialize(_videoMode.format);
 	}
 
 	newScaleFactor = (*_scalerPlugin)->getFactor();
@@ -1365,10 +1372,11 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 	// Extend the dirty region by 1 pixel for scalers
 	// that "smear" the screen, e.g. 2xSAI
 	if (!realCoordinates) {
-		x--;
-		y--;
-		w+= (*_scalerPlugin)->extraPixels()*2;
-		h+= (*_scalerPlugin)->extraPixels()*2;
+		int adjust = (*_scalerPlugin)->extraPixels();
+		x -= adjust;
+		y -= adjust;
+		w += adjust * 2;
+		h += adjust * 2;
 	}
 
 	// clip
@@ -2173,20 +2181,18 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 	}
 
 	int newMode = -1;
-	int factor = _videoMode.scaleFactor - 1;
+	int factor = _videoMode.scaleFactor;
 	SDLKey sdlKey = (SDLKey)key;
 
 	// Increase/decrease the scale factor
 	if (sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
 		sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS) {
 		factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
-		if (0 <= factor && factor <= 3) {
-			newMode = s_gfxModeSwitchTable[_scalerType][factor];
-		}
 		if (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS)
-			(*_scalerPlugin)->decreaseFactor();
+			factor = (*_scalerPlugin)->decreaseFactor();
 		else
-			(*_scalerPlugin)->increaseFactor();
+			factor = (*_scalerPlugin)->increaseFactor();
+		newMode = GFX_NORMAL;
 	}
 
 	const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_9);
@@ -2203,21 +2209,38 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		newMode = s_gfxModeSwitchTable[_scalerType][factor];
 	}
 
+	if (sdlKey == SDLK_LEFTBRACKET) {
+		_scalerIndex--;
+		if (_scalerIndex < 0) {
+			_scalerIndex = ScalerMan.getPlugins().size() - 1;
+		}
+		newMode = GFX_NORMAL; // temporary, bogus
+	}
+
+	if (sdlKey == SDLK_RIGHTBRACKET) {
+		_scalerIndex++;
+		if (_scalerIndex >= ScalerMan.getPlugins().size()) {
+			_scalerIndex = 0;
+		}
+		newMode = GFX_NORMAL; // temporary, bogus
+	}
+
+
 	if (newMode >= 0) {
 		beginGFXTransaction();
 			setGraphicsMode(newMode);
 		endGFXTransaction();
 #ifdef USE_OSD
 		if (_osdSurface) {
-			const char *newScalerName = 0;
-			const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
-			while (g->name) {
-				if (g->id == _videoMode.mode) {
-					newScalerName = g->description;
-					break;
-				}
-				g++;
-			}
+			const char *newScalerName = (*_scalerPlugin)->getName();
+			//const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
+			//while (g->name) {
+			//	if (g->id == _videoMode.mode) {
+			//		newScalerName = g->description;
+			//		break;
+			//	}
+			//	g++;
+			//}
 			if (newScalerName) {
 				char buffer[128];
 				sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
