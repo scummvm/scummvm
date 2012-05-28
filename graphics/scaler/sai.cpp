@@ -46,13 +46,13 @@ void SAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-int SAIPlugin::increaseFactor() {
+uint SAIPlugin::increaseFactor() {
 	if (_factor < 2)
 		++_factor;
 	return _factor;
 }
 
-int SAIPlugin::decreaseFactor() {
+uint SAIPlugin::decreaseFactor() {
 	if (_factor > 1)
 		--_factor;
 	return _factor;

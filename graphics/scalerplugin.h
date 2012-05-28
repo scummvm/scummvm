@@ -53,27 +53,27 @@ public:
 	 * Increase the factor of scaling.
 	 * @return The new factor
 	 */
-	virtual int increaseFactor() = 0;
+	virtual uint increaseFactor() = 0;
 
 	/**
 	 * Decrease the factor of scaling.
 	 * @return The new factor
 	 */
-	virtual int decreaseFactor() = 0;
+	virtual uint decreaseFactor() = 0;
 
-	virtual int getFactor() = 0;
+	virtual uint getFactor() const = 0;
 
 	/**
 	 * Indicates how far outside the scaling region this scaler "looks"
 	 * @return The number of pixels in any direction
 	 */
-	virtual int extraPixels() = 0;
+	virtual uint extraPixels() const = 0;
 
 	/**
 	 * Some scalers are not suitable for scaling the cursor.
 	 * Blurring scalers should return false.
 	 */
-	virtual bool canDrawCursor() = 0;
+	virtual bool canDrawCursor() const = 0;
 
 	// temporary HACK
 	virtual void disableScaling();
@@ -81,7 +81,7 @@ public:
 	virtual void enableScaling();
 
 protected:
-	int _factor;
+	uint _factor;
 	bool _doScale; // < temporary
 };
 
@@ -102,7 +102,7 @@ public:
 	 * can access out of bounds. Useful for adding extra rows and columns
 	 * to surfaces.
 	 */
-	int getMaxExtraPixels() const;
+	uint getMaxExtraPixels() const;
 };
 
 /** Convenience shortcut for accessing singleton */

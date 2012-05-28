@@ -51,13 +51,13 @@ void HQPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-int HQPlugin::increaseFactor() {
+uint HQPlugin::increaseFactor() {
 	if (_factor < 3)
 		++_factor;
 	return _factor;
 }
 
-int HQPlugin::decreaseFactor() {
+uint HQPlugin::decreaseFactor() {
 	if (_factor > 1)
 		--_factor;
 	return _factor;
