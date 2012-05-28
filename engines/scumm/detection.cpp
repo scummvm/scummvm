@@ -156,6 +156,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 	case kGenHEMac:
 	case kGenHEMacNoParens:
 	case kGenHEPC:
+	case kGenHEIOS:
 		if (_game.heversion >= 98 && room >= 0) {
 			int disk = 0;
 			if (_heV7DiskOffsets)
@@ -168,7 +169,11 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 				break;
 			case 1:
 				id = 'a';
-				result = Common::String::format("%s.(a)", _filenamePattern.pattern);
+				// Some of the newer HE games for iOS use the ".hea" suffix instead
+				if (_filenamePattern.genMethod == kGenHEIOS)
+					result = Common::String::format("%s.hea", _filenamePattern.pattern);
+				else
+					result = Common::String::format("%s.(a)", _filenamePattern.pattern);
 				break;
 			default:
 				id = '0';
@@ -180,7 +185,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 			id = (room == 0) ? '0' : '1';
 		}
 
-		if (_filenamePattern.genMethod == kGenHEPC) {
+		if (_filenamePattern.genMethod == kGenHEPC || _filenamePattern.genMethod == kGenHEIOS) {
 			// For HE >= 98, we already called snprintf above.
 			if (_game.heversion < 98 || room < 0)
 				result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);
@@ -217,6 +222,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 		break;
 
 	case kGenHEPC:
+	case kGenHEIOS:
 		result = Common::String::format("%s.he0", pattern);
 		break;
 
