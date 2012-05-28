@@ -806,6 +806,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 
 void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
 	int srcX, srcY;
+	int clampWidth, clampHeight;
 
 	if (x >= _gameWidth || y >= _gameHeight)
 		return;
@@ -824,10 +825,14 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	}
 
 	if (x + width > _gameWidth)
-		width -= (x + width) - _gameWidth;
+		clampWidth = _gameWidth - x;
+	else
+		clampWidth = width;
 
 	if (y + height > _gameHeight)
-		height -= (y + height) - _gameHeight;
+		clampHeight = _gameHeight - y;
+	else
+		clampHeight = height;
 
 	dst += (x + (y * _gameWidth)) * format.bytesPerPixel;
 	src += (srcX + (srcY * width)) * format.bytesPerPixel;
@@ -836,8 +841,8 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	Graphics::PixelBuffer dstBuf(format, dst);
 
 	if (!trans) {
-		for (int l = 0; l < height; l++) {
-			dstBuf.copyBuffer(0, width, srcBuf);
+		for (int l = 0; l < clampHeight; l++) {
+			dstBuf.copyBuffer(0, clampWidth, srcBuf);
 			dstBuf.shiftBy(_gameWidth);
 			srcBuf.shiftBy(width);
 		}
@@ -849,8 +854,8 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 				l = l->next;
 			}
 		} else {
-			for (int l = 0; l < height; l++) {
-				for (int r = 0; r < width; ++r) {
+			for (int l = 0; l < clampHeight; l++) {
+				for (int r = 0; r < clampWidth; ++r) {
 					if (srcBuf.getValueAt(r) != 0xf81f) {
 						dstBuf.setPixelAt(r, srcBuf);
 					}
