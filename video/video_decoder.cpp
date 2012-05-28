@@ -22,6 +22,8 @@
 
 #include "video/video_decoder.h"
 
+#include "audio/mixer.h" // for kMaxChannelVolume
+
 #include "common/rational.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -61,6 +63,8 @@ void VideoDecoder::reset() {
 	_curFrame = -1;
 	_startTime = 0;
 	_pauseLevel = 0;
+	_audioVolume = Audio::Mixer::kMaxChannelVolume;
+	_audioBalance = 0;
 }
 
 bool VideoDecoder::endOfVideo() const {
@@ -92,6 +96,16 @@ void VideoDecoder::pauseVideo(bool pause) {
 void VideoDecoder::resetPauseStartTime() {
 	if (isPaused())
 		_pauseStartTime = g_system->getMillis();
+}
+
+void VideoDecoder::setVolume(byte volume) {
+	_audioVolume = volume;
+	updateVolume();
+}
+
+void VideoDecoder::setBalance(int8 balance) {
+	_audioBalance = balance;
+	updateBalance();
 }
 
 uint32 FixedRateVideoDecoder::getTimeToNextFrame() const {

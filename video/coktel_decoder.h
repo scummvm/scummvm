@@ -284,6 +284,11 @@ public:
 
 	Graphics::PixelFormat getPixelFormat() const;
 
+protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
 private:
 	enum Command {
 		kCommandNextSound   = 0xFF00,
@@ -387,6 +392,11 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	Graphics::PixelFormat getPixelFormat() const;
+
+protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
 
 private:
 	enum PartType {

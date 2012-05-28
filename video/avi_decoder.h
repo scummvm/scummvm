@@ -202,6 +202,11 @@ public:
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
+	// FixedRateVideoDecoder API
 	Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
 private:

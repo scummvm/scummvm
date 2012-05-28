@@ -1292,7 +1292,7 @@ void IMDDecoder::processFrame() {
 	// Start the audio stream if necessary
 	if (startSound && _soundEnabled) {
 			_mixer->playStream(_soundType, &_audioHandle, _audioStream,
-					-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+					-1, getVolume(), getBalance(), DisposeAfterUse::NO);
 		_soundStage = kSoundPlaying;
 	}
 
@@ -1472,6 +1472,16 @@ void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
 
 Graphics::PixelFormat IMDDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
+}
+
+void IMDDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelVolume(_audioHandle, getVolume());
+}
+
+void IMDDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelBalance(_audioHandle, getBalance());
 }
 
 
@@ -2161,7 +2171,7 @@ void VMDDecoder::processFrame() {
 	if (startSound && _soundEnabled) {
 		if (_hasSound && _audioStream) {
 			_mixer->playStream(_soundType, &_audioHandle, _audioStream,
-					-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+					-1, getVolume(), getBalance(), DisposeAfterUse::NO);
 			_soundStage = kSoundPlaying;
 		} else
 			_soundStage = kSoundNone;
@@ -2685,6 +2695,16 @@ bool VMDDecoder::hasVideo() const {
 
 bool VMDDecoder::isPaletted() const {
 	return _isPaletted;
+}
+
+void VMDDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelVolume(_audioHandle, getVolume());
+}
+
+void VMDDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelBalance(_audioHandle, getBalance());
 }
 
 } // End of namespace Video

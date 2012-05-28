@@ -87,6 +87,9 @@ public:
 	bool endOfVideo() const;
 
 protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
 	void pauseVideoIntern(bool pause);
 
 private:

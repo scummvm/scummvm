@@ -81,6 +81,11 @@ public:
 	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
 	bool endOfVideo() const { return _stream->pos() >= _stream->size(); }
 
+protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
 private:
 	void initCommon();
 	Common::SeekableReadStream *_stream;

@@ -133,6 +133,10 @@ protected:
 
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
 
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
 private:
 	void init();
 
