@@ -187,6 +187,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_scalerProc = Normal2x;
 	// HACK: just pick first scaler plugin
 	_scalerPlugin = ScalerMan.getPlugins().front();
+	_scalerIndex = 0;
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
@@ -629,6 +630,12 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) {
 	if (newScaleFactor == -1) {
 		warning("unknown gfx mode %d", mode);
 		return false;
+	}
+
+	if (ScalerMan.getPlugins()[_scalerIndex] != _scalerPlugin) {
+		(*_scalerPlugin)->deinitialize();
+		_scalerPlugin = ScalerMan.getPlugins()[_scalerIndex];
+		(*_scalerPlugin)->initialize(_videoMode.format);
 	}
 
 	newScaleFactor = (*_scalerPlugin)->getFactor();
@@ -1583,10 +1590,11 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 	// Extend the dirty region by 1 pixel for scalers
 	// that "smear" the screen, e.g. 2xSAI
 	if (!realCoordinates) {
-		x--;
-		y--;
-		w+= (*_scalerPlugin)->extraPixels()*2;
-		h+= (*_scalerPlugin)->extraPixels()*2;
+		int adjust = (*_scalerPlugin)->extraPixels();
+		x -= adjust;
+		y -= adjust;
+		w += adjust * 2;
+		h += adjust * 2;
 	}
 
 	// clip
