@@ -143,6 +143,7 @@ public:
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
 	bool getIsDemo() const;
+	bool isCompressed() const;
 	RMGfxEngine *GetEngine() {
 		return &_theEngine;
 	}

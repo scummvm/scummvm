@@ -32,8 +32,11 @@
 #include "tony/tony.h"
 #include "tony/game.h"
 
-
 namespace Tony {
+
+enum {
+	GF_COMPRESSED = (1 << 0)
+};
 
 struct TonyGameDescription {
 	ADGameDescription desc;
@@ -51,7 +54,11 @@ bool TonyEngine::getIsDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
+bool TonyEngine::isCompressed() const {
+	return _gameDescription->desc.flags & GF_COMPRESSED;
 }
+
+} // End of namespace Tony
 
 static const PlainGameDescriptor tonyGames[] = {
 	{"tony", "Tony Tough and the Night of Roasted Moths"},

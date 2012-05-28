@@ -26,6 +26,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/installshield_cab.h"
 #include "tony/tony.h"
 #include "tony/custom.h"
 #include "tony/debugger.h"
@@ -84,6 +85,18 @@ Common::Error TonyEngine::run() {
  * Initialise the game
  */
 Common::ErrorCode TonyEngine::Init() {
+	if (isCompressed()) {
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
+		if (!stream)
+			error("Failed to open data1.cab");
+
+		Common::Archive *cabinet = Common::makeInstallShieldArchive(stream);
+		if (!cabinet)
+			error("Failed to parse data1.cab");
+
+		SearchMan.add("data1.cab", cabinet);
+	}
+
 	m_hEndOfFrame = CoroScheduler.createEvent(false, false);
 
 	m_bPaused = false;
