@@ -561,3 +561,16 @@ DECLARE_SINGLETON(ScalerManager);
 const ScalerPlugin::List &ScalerManager::getPlugins() const {
 	return (const ScalerPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_SCALER);
 }
+
+int ScalerManager::getMaxExtraPixels() const {
+	int maxPixels = 0;
+	ScalerPlugin::List plugins = getPlugins();
+	ScalerPlugin::List::iterator i = plugins.begin();
+	for (; i != plugins.end(); ++i) {
+		int n = (**i)->extraPixels();
+		if (n > maxPixels) {
+			maxPixels = n;
+		}
+	}
+	return maxPixels;
+}
