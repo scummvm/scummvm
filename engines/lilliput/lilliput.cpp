@@ -337,7 +337,7 @@ void LilliputEngine::displayCharacter(int index, Common::Point pos, int flags) {
 	}
 }
 
-void LilliputEngine::display16x16IndexedBuf(byte *buf, int index, Common::Point pos) {
+void LilliputEngine::display16x16IndexedBuf(byte *buf, int index, Common::Point pos, bool transparent, bool updateScreen) {
 	debugC(2, kDebugEngine, "display16x16IndexedBuf(buf, %d, %d - %d)", index, pos.x, pos.y);
 
 	int index1 = index * 16 * 16;
@@ -350,21 +350,24 @@ void LilliputEngine::display16x16IndexedBuf(byte *buf, int index, Common::Point 
 		if (pos.y + i < 200) {
 			for (int j = 0; j < 16; j++) {
 				// clip on x
-				if ((newBuf[j] != 0) && (pos.x + j < 320))
+				if ((newBuf[j] != 0 || !transparent) && (pos.x + j < 320))
 					((byte *)_mainSurface->getPixels())[vgaIndex + j] = newBuf[j];
 			}
 		}
 		vgaIndex += 320;
 		newBuf += 16;
 	}
-	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
-	_system->updateScreen();
+
+	if (updateScreen) {
+		_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
+		_system->updateScreen();
+	}
 }
 
-void LilliputEngine::display16x16Buf(byte *buf, Common::Point pos) {
+void LilliputEngine::display16x16Buf(byte *buf, Common::Point pos, bool transparent, bool updateScreen) {
 	debugC(2, kDebugEngine, "display16x16Buf(buf, %d, %d)", pos.x, pos.y);
 
-	display16x16IndexedBuf(buf, 0, pos);
+	display16x16IndexedBuf(buf, 0, pos, transparent, updateScreen);
 }
 
 void LilliputEngine::SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos) {
@@ -412,7 +415,7 @@ void LilliputEngine::restoreSurfaceUnderMousePointer() {
 
 	if ((_skipDisplayFlag1 != 0) && (_skipDisplayFlag2 != 1)) {
 		_skipDisplayFlag2 = 1;
-		display16x16Buf(_savedSurfaceUnderMouse, _savedSurfaceUnderMousePos);
+		display16x16Buf(_savedSurfaceUnderMouse, _savedSurfaceUnderMousePos, false, false);
 		_skipDisplayFlag1 = 0;
 		_skipDisplayFlag2 = 0;
 	}
@@ -839,7 +842,7 @@ void LilliputEngine::displaySmallIndexedAnim(byte index, byte subIndex) {
 	if (!_smallAnims[index]._active)
 		return;
 
-	display16x16IndexedBuf(_bufferIdeogram, _smallAnims[index]._frameIndex[subIndex], _smallAnims[index]._pos);
+	display16x16IndexedBuf(_bufferIdeogram, _smallAnims[index]._frameIndex[subIndex], _smallAnims[index]._pos, false);
 }
 
 void LilliputEngine::displaySmallAnims() {
@@ -847,6 +850,8 @@ void LilliputEngine::displaySmallAnims() {
 
 	if (_animationTick == _lastAnimationTick)
 		return;
+
+	restoreSurfaceUnderMousePointer();
 
 	_lastAnimationTick = _animationTick;
 
@@ -862,6 +867,8 @@ void LilliputEngine::displaySmallAnims() {
 		subIndex = 0;
 
 	_smallAnimsFrameIndex = subIndex;
+
+	displayMousePointer();
 }
 
 void LilliputEngine::paletteFadeOut() {
@@ -876,6 +883,7 @@ void LilliputEngine::paletteFadeOut() {
 		_system->getPaletteManager()->setPalette(palette, 0, 256);
 		_system->updateScreen();
 		_system->delayMillis(20);
+		pollEvent();
 	}
 }
 
@@ -890,6 +898,7 @@ void LilliputEngine::paletteFadeIn() {
 		_system->getPaletteManager()->setPalette(palette, 0, 256);
 		_system->updateScreen();
 		_system->delayMillis(20);
+		pollEvent();
 	}
 }
 
@@ -2572,14 +2581,15 @@ void LilliputEngine::loadRules() {
 void LilliputEngine::displayVGAFile(Common::String fileName) {
 	debugC(1, kDebugEngine, "displayVGAFile(%s)", fileName.c_str());
 
-	displayMousePointer();
+	restoreSurfaceUnderMousePointer();
 
 	byte *buffer = loadVGA(fileName, 64000, true);
 	memcpy(_mainSurface->getPixels(), buffer, 320*200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
+	
+	displayMousePointer();
 
-	restoreSurfaceUnderMousePointer();
 }
 
 void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
