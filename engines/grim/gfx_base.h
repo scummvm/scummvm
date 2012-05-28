@@ -249,6 +249,7 @@ public:
 	virtual void selectScreenBuffer() {}
 	virtual void selectCleanBuffer() {}
 	virtual void clearCleanBuffer() {}
+	virtual void drawCleanBuffer() {}
 
 	virtual void createSpecialtyTextures() = 0;
 	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
