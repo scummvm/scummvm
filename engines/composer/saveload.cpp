@@ -199,8 +199,8 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 		}
 		// If we didn't find it, try the libraries.
 		if (!stream) {
-			Common::List<Library>::iterator i;
-			for (i = _libraries.begin(); i != _libraries.end(); i++) {
+			Common::List<Library>::iterator j;
+			for (j = _libraries.begin(); j != _libraries.end(); j++) {
 				if (!hasResource(ID_ANIM, animId)) continue;
 				stream = getResource(ID_ANIM, animId);
 				if (stream->size() >= size) break;
@@ -211,7 +211,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 				continue;
 			}
 
-			uint32 type = i->_archive->getResourceFlags(ID_ANIM, animId);
+			uint32 type = j->_archive->getResourceFlags(ID_ANIM, animId);
 
 			// If the resource is a pipe itself, then load the pipe
 			// and then fish the requested animation out of it.
@@ -308,9 +308,9 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	tmp = _pendingPageChanges.size();
 	ser.syncAsUint32LE(tmp);
 	for (Common::Array<PendingPageChange>::const_iterator i = _pendingPageChanges.begin(); i != _pendingPageChanges.end(); i++) {
-		uint16 tmp = (*i)._pageId;
+		uint16 tmp16 = (*i)._pageId;
 		bool tmpb = (*i)._remove;
-		ser.syncAsUint16LE(tmp);
+		ser.syncAsUint16LE(tmp16);
 		ser.syncAsByte(tmpb);
 	}
 	tmp = _stack.size();
@@ -357,8 +357,8 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	tmp = _pipes.size();
 	ser.syncAsUint32LE(tmp);
 	for (Common::List<Pipe *>::const_iterator i = _pipes.reverse_begin(); i != _pipes.end(); i--) {
-		uint16 tmp16 = (*i)->pipeId();
-		tmp = (*i)->offset();
+		uint16 tmp16 = (*i)->getPipeId();
+		tmp = (*i)->getOffset();
 		ser.syncAsUint16LE(tmp16);
 		ser.syncAsUint32LE(tmp);
 		tmp = (*i)->_bufferedResources.size();

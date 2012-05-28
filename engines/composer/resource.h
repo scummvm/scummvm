@@ -117,10 +117,10 @@ public:
 
 	virtual const Common::Array<uint16> *getScripts() { return NULL; }
 #ifdef SAVING_ANYWHERE
-	uint16 pipeId() const { return _pipeId; }
-	uint32 offset() const { return _offset; }
-	void setOffset(uint32 off) { while (_offset < off) nextFrame(); }
-	typedef Common::HashMap<uint32, Common::List<uint16>> DelMap;
+	uint16 getPipeId() const { return _pipeId; }
+	uint32 getOffset() const { return _offset; }
+	void setOffset(uint32 offset) { while (_offset < offset) nextFrame(); }
+	typedef Common::HashMap<uint32, Common::List<uint16> > DelMap;
 	Common::Array<DelMap> _bufferedResources;
 #endif
 
