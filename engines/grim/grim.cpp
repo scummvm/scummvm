@@ -555,6 +555,7 @@ void GrimEngine::updateDisplayScene() {
 		// including 3D objects such as Manny and the message tube
 		_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
+		g_driver->drawCleanBuffer();
 		drawPrimitives();
 	} else if (_mode == DrawMode) {
 		_doFlip = false;

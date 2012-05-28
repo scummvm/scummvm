@@ -117,6 +117,7 @@ public:
 	void selectScreenBuffer();
 	void selectCleanBuffer();
 	void clearCleanBuffer();
+	void drawCleanBuffer();
 
 	void createSpecialtyTextures();
 
