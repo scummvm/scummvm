@@ -223,8 +223,8 @@ public:
 	void newInt8();
 	void update();
 
-	void display16x16IndexedBuf(byte *buf, int index, Common::Point pos);
-	void display16x16Buf(byte *buf, Common::Point pos);
+	void display16x16IndexedBuf(byte *buf, int index, Common::Point pos, bool transparent = true, bool updateScreen = true);
+	void display16x16Buf(byte *buf, Common::Point pos, bool transparent = true, bool updateScreen = true);
 	void SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos);
 	void fill16x16Rect(byte col, Common::Point pos);
 	void displayMousePointer();
