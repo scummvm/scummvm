@@ -96,6 +96,13 @@ private:
 
 public:
 	const ScalerPlugin::List &getPlugins() const;
+
+	/**
+	 * Queries all scaler plugins for the maximum number of pixels they
+	 * can access out of bounds. Useful for adding extra rows and columns
+	 * to surfaces.
+	 */
+	int getMaxExtraPixels() const;
 };
 
 /** Convenience shortcut for accessing singleton */
