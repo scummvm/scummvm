@@ -93,6 +93,70 @@ void Inter_v7::o7_draw0x0C() {
 	WRITE_VAR(17, 0);
 }
 
+void Inter_v7::resizeCursors(int16 width, int16 height, int16 count, bool transparency) {
+	if (width <= 0)
+		width = _vm->_draw->_cursorWidth;
+	if (height <= 0)
+		height = _vm->_draw->_cursorHeight;
+
+	width  = MAX<uint16>(width , _vm->_draw->_cursorWidth);
+	height = MAX<uint16>(height, _vm->_draw->_cursorHeight);
+
+	_vm->_draw->_transparentCursor = transparency;
+
+	// Cursors sprite already big enough
+	if ((_vm->_draw->_cursorWidth >= width) && (_vm->_draw->_cursorHeight >= height) &&
+	    (_vm->_draw->_cursorCount >= count))
+		return;
+
+	_vm->_draw->_cursorCount  = count;
+	_vm->_draw->_cursorWidth  = width;
+	_vm->_draw->_cursorHeight = height;
+
+	_vm->_draw->freeSprite(Draw::kCursorSurface);
+	_vm->_draw->_cursorSprites.reset();
+	_vm->_draw->_cursorSpritesBack.reset();
+	_vm->_draw->_scummvmCursor.reset();
+
+	_vm->_draw->initSpriteSurf(Draw::kCursorSurface, width * count, height, 2);
+
+	_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[Draw::kCursorSurface];
+	_vm->_draw->_cursorSprites     = _vm->_draw->_cursorSpritesBack;
+
+	_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(width, height, SCUMMVM_CURSOR);
+
+	for (int i = 0; i < 40; i++) {
+		_vm->_draw->_cursorAnimLow[i] = -1;
+		_vm->_draw->_cursorAnimDelays[i] = 0;
+		_vm->_draw->_cursorAnimHigh[i] = 0;
+	}
+	_vm->_draw->_cursorAnimLow[1] = 0;
+
+	delete[] _vm->_draw->_doCursorPalettes;
+	delete[] _vm->_draw->_cursorPalettes;
+	delete[] _vm->_draw->_cursorKeyColors;
+	delete[] _vm->_draw->_cursorPaletteStarts;
+	delete[] _vm->_draw->_cursorPaletteCounts;
+	delete[] _vm->_draw->_cursorHotspotsX;
+	delete[] _vm->_draw->_cursorHotspotsY;
+
+	_vm->_draw->_cursorPalettes      = new byte[256 * 3 * count];
+	_vm->_draw->_doCursorPalettes    = new bool[count];
+	_vm->_draw->_cursorKeyColors     = new byte[count];
+	_vm->_draw->_cursorPaletteStarts = new uint16[count];
+	_vm->_draw->_cursorPaletteCounts = new uint16[count];
+	_vm->_draw->_cursorHotspotsX     = new int32[count];
+	_vm->_draw->_cursorHotspotsY     = new int32[count];
+
+	memset(_vm->_draw->_cursorPalettes     , 0, count * 256 * 3);
+	memset(_vm->_draw->_doCursorPalettes   , 0, count * sizeof(bool));
+	memset(_vm->_draw->_cursorKeyColors    , 0, count * sizeof(byte));
+	memset(_vm->_draw->_cursorPaletteStarts, 0, count * sizeof(uint16));
+	memset(_vm->_draw->_cursorPaletteCounts, 0, count * sizeof(uint16));
+	memset(_vm->_draw->_cursorHotspotsX    , 0, count * sizeof(int32));
+	memset(_vm->_draw->_cursorHotspotsY    , 0, count * sizeof(int32));
+}
+
 void Inter_v7::o7_loadCursor() {
 	int16          cursorIndex = _vm->_game->_script->readValExpr();
 	Common::String cursorName  = _vm->_game->_script->evalString();
@@ -101,6 +165,14 @@ void Inter_v7::o7_loadCursor() {
 	_vm->_draw->_cursorSprites->fillRect(cursorIndex * _vm->_draw->_cursorWidth, 0,
 			cursorIndex * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
+
+	// If the cursor name is empty, that cursor will be drawn by the scripts
+	if (cursorName.empty()) {
+		// Make sure the cursors sprite is big enough and set to non-extern palette
+		resizeCursors(-1, -1, cursorIndex + 1, true);
+		_vm->_draw->_doCursorPalettes[cursorIndex] = false;
+		return;
+	}
 
 	Graphics::WinCursorGroup *cursorGroup = 0;
 	Graphics::Cursor *defaultCursor = 0;
@@ -118,69 +190,16 @@ void Inter_v7::o7_loadCursor() {
 	} else
 		cursor = cursorGroup->cursors[0].cursor;
 
-	// Cursor sprite dimensions mismatch, recreate the cursor sprites
-	if ((cursor->getWidth()  > _vm->_draw->_cursorWidth ) ||
-	    (cursor->getHeight() > _vm->_draw->_cursorHeight) ||
-	    (_vm->_draw->_cursorSprites->getWidth() < ((cursorIndex + 1) * _vm->_draw->_cursorWidth)) ||
-	    !_vm->_draw->_cursorPalettes) {
-
-		const int count = cursorIndex + 1;
-
-		_vm->_draw->freeSprite(Draw::kCursorSurface);
-		_vm->_draw->_cursorSprites.reset();
-		_vm->_draw->_cursorSpritesBack.reset();
-		_vm->_draw->_scummvmCursor.reset();
-
-		_vm->_draw->_cursorWidth  = MAX<uint16>(cursor->getWidth() , _vm->_draw->_cursorWidth);
-		_vm->_draw->_cursorHeight = MAX<uint16>(cursor->getHeight(), _vm->_draw->_cursorHeight);
-
-		_vm->_draw->_transparentCursor = 1;
-
-		_vm->_draw->initSpriteSurf(Draw::kCursorSurface, _vm->_draw->_cursorWidth * count,
-		                           _vm->_draw->_cursorHeight, 2);
-
-		_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[Draw::kCursorSurface];
-		_vm->_draw->_cursorSprites     = _vm->_draw->_cursorSpritesBack;
-
-		_vm->_draw->_scummvmCursor =
-			_vm->_video->initSurfDesc(_vm->_draw->_cursorWidth, _vm->_draw->_cursorHeight, SCUMMVM_CURSOR);
-
-		for (int i = 0; i < 40; i++) {
-			_vm->_draw->_cursorAnimLow[i] = -1;
-			_vm->_draw->_cursorAnimDelays[i] = 0;
-			_vm->_draw->_cursorAnimHigh[i] = 0;
-		}
-		_vm->_draw->_cursorAnimLow[1] = 0;
-
-		delete[] _vm->_draw->_cursorPalettes;
-		delete[] _vm->_draw->_cursorKeyColors;
-		delete[] _vm->_draw->_cursorPaletteStarts;
-		delete[] _vm->_draw->_cursorPaletteCounts;
-		delete[] _vm->_draw->_cursorHotspotsX;
-		delete[] _vm->_draw->_cursorHotspotsY;
-
-		_vm->_draw->_cursorPalettes      = new byte[256 * 3 * count];
-		_vm->_draw->_cursorKeyColors     = new byte[count];
-		_vm->_draw->_cursorPaletteStarts = new uint16[count];
-		_vm->_draw->_cursorPaletteCounts = new uint16[count];
-		_vm->_draw->_cursorHotspotsX     = new int32[count];
-		_vm->_draw->_cursorHotspotsY     = new int32[count];
-
-		memset(_vm->_draw->_cursorPalettes     , 0, count * 256 * 3);
-		memset(_vm->_draw->_cursorKeyColors    , 0, count * sizeof(byte));
-		memset(_vm->_draw->_cursorPaletteStarts, 0, count * sizeof(uint16));
-		memset(_vm->_draw->_cursorPaletteCounts, 0, count * sizeof(uint16));
-		memset(_vm->_draw->_cursorHotspotsX    , 0, count * sizeof(int32));
-		memset(_vm->_draw->_cursorHotspotsY    , 0, count * sizeof(int32));
-	}
+	// Make sure the cursors sprite it big enough
+	resizeCursors(cursor->getWidth(), cursor->getHeight(), cursorIndex + 1, true);
 
 	Surface cursorSurf(cursor->getWidth(), cursor->getHeight(), 1, cursor->getSurface());
 
-	_vm->_draw->_cursorSprites->blit(cursorSurf, 0, 0, cursor->getWidth() - 1, cursor->getHeight() - 1,
-			cursorIndex * _vm->_draw->_cursorWidth, 0, 0);
+	_vm->_draw->_cursorSprites->blit(cursorSurf, cursorIndex * _vm->_draw->_cursorWidth, 0);
 
 	memcpy(_vm->_draw->_cursorPalettes + cursorIndex * 256 * 3, cursor->getPalette(), cursor->getPaletteCount() * 3);
 
+	_vm->_draw->_doCursorPalettes   [cursorIndex] = true;
 	_vm->_draw->_cursorKeyColors    [cursorIndex] = cursor->getKeyColor();
 	_vm->_draw->_cursorPaletteStarts[cursorIndex] = cursor->getPaletteStartIndex();
 	_vm->_draw->_cursorPaletteCounts[cursorIndex] = cursor->getPaletteCount();

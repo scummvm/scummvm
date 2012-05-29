@@ -145,6 +145,8 @@ public:
 	int8 _cursorAnimHigh[40];
 	int8 _cursorAnimDelays[40];
 
+	int32 _cursorCount;
+	bool *_doCursorPalettes;
 	byte *_cursorPalettes;
 	byte *_cursorKeyColors;
 	uint16 *_cursorPaletteStarts;

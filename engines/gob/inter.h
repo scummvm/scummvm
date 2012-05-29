@@ -693,6 +693,7 @@ private:
 	Common::String findFile(const Common::String &mask);
 
 	bool loadCursorFile();
+	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);
 };
 
 } // End of namespace Gob

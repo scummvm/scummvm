@@ -157,13 +157,13 @@ void Draw_v2::animateCursor(int16 cursor) {
 				_cursorHeight - 1, 0, 0);
 
 		uint32 keyColor = 0;
-		if (_cursorKeyColors)
+		if (_doCursorPalettes && _cursorKeyColors && _doCursorPalettes[cursorIndex])
 			keyColor = _cursorKeyColors[cursorIndex];
 
 		CursorMan.replaceCursor(_scummvmCursor->getData(),
 				_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, 1, &_vm->getPixelFormat());
 
-		if (_cursorPalettes) {
+		if (_doCursorPalettes && _doCursorPalettes[cursorIndex]) {
 			CursorMan.replaceCursorPalette(_cursorPalettes + (cursorIndex * 256 * 3),
 					_cursorPaletteStarts[cursorIndex], _cursorPaletteCounts[cursorIndex]);
 			CursorMan.disableCursorPalette(false);

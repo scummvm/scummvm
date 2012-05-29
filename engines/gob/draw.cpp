@@ -117,6 +117,8 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 		_cursorAnimDelays[i] = 0;
 	}
 
+	_cursorCount         = 0;
+	_doCursorPalettes    = 0;
 	_cursorPalettes      = 0;
 	_cursorKeyColors     = 0;
 	_cursorPaletteStarts = 0;
@@ -142,6 +144,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 
 Draw::~Draw() {
 	delete[] _cursorPalettes;
+	delete[] _doCursorPalettes;
 	delete[] _cursorKeyColors;
 	delete[] _cursorPaletteStarts;
 	delete[] _cursorPaletteCounts;
