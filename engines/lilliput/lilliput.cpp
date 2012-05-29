@@ -184,7 +184,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterRelativePositionY[i] = -1;
 		_characterDisplayX[i] = 0;
 		_characterDisplayY[i] = 0;
-		_array12299[i] = 0xFF;
+		_array12299[i] = -1;
 		_array109E9PosX[i] = -1;
 		_array10A11PosY[i] = -1;
 		_array16E94[i] = 0;
@@ -1329,7 +1329,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 			if ((flag & 1) == 1)
 				frame += _spriteSizeArray[index];
 
-			if (_array12299[index] != 0xFF) {
+			if (_array12299[index] != -1) {
 				frame = _array12299[index] + 82;
 				--_array12299[index];
 				frame = -frame;
@@ -1801,7 +1801,7 @@ byte LilliputEngine::sub16722(int index, Common::Point var1) {
 }
 
 byte LilliputEngine::sub16729(int index, Common::Point var1) {
-	debugC(2, kDebugEngineTBC, "sub16729(%d, %d - %d)", index, var1.x, var1.y);
+	debugC(2, kDebugEngine, "sub16729(%d, %d - %d)", index, var1.x, var1.y);
 
 	int param4x = ((index | 0xFF00) >> 8);
 	int param1 = var1.y;
@@ -1810,19 +1810,15 @@ byte LilliputEngine::sub16729(int index, Common::Point var1) {
 }
 
 byte LilliputEngine::sub1675D(int index, Common::Point var1) {
-	debugC(2, kDebugEngineTBC, "sub1675D(%d, %d - %d)", index, var1.x, var1.y);
+	debugC(2, kDebugEngine, "sub1675D(%d, %d - %d)", index, var1.x, var1.y);
 
 	int var2 = _scriptHandler->_array10A39[index];
-	int var1h = _scriptHandler->_array16123PosX[var2];
-	int var1l = _scriptHandler->_array1614BPosY[var2];
-	int var3 = _array109E9PosX[index];
+	int8 var1h = _scriptHandler->_array16123PosX[var2];
+	int8 var1l = _scriptHandler->_array1614BPosY[var2];
 
-	if ((var3 != 0xFF) && (var3 == _array10999PosX[index])) {
-		var3 = _array10A11PosY[index];
-		if (var3 == _array109C1PosY[index]) {
-			_array109E9PosX[index] = var1h;
-			_array10A11PosY[index] = var1l;
-		}
+	if ((_array109E9PosX[index] != -1) && (_array109E9PosX[index] == _array10999PosX[index]) && (_array10A11PosY[index] == _array109C1PosY[index])) {
+		_array109E9PosX[index] = var1h;
+		_array10A11PosY[index] = var1l;
 	}
 
 	_array10999PosX[index] = var1h;

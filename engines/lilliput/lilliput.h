@@ -205,7 +205,7 @@ public:
 	int16 _characterRelativePositionY[40];
 	int16 _characterDisplayX[40];
 	int16 _characterDisplayY[40];
-	byte _array12299[40];
+	int8 _array12299[40];
 	int16 _array109E9PosX[40];
 	int16 _array10A11PosY[40];
 	byte _array16E94[40];
