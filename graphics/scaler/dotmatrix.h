@@ -33,9 +33,13 @@ public:
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
 	virtual uint getFactor() const { return _factor; }
-	virtual bool canDrawCursor() const { return true; }
+	virtual bool canDrawCursor() const { return false; }
 	virtual uint extraPixels() const { return 0; }
 	virtual const char *getName() const;
+private:
+	uint16 lookup[16];
+	void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+			uint32 dstPitch, int width, int height, int x, int y);
 };
 
 
