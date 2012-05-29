@@ -110,6 +110,9 @@ struct Library {
 	uint _id;
 	Archive *_archive;
 
+#ifdef SAVING_ANYWHERE
+	Common::String _group;
+#endif
 	Common::List<Button> _buttons;
 	Common::List<KeyboardHandler> _keyboardHandlers;
 };
