@@ -145,6 +145,13 @@ public:
 	int8 _cursorAnimHigh[40];
 	int8 _cursorAnimDelays[40];
 
+	byte *_cursorPalettes;
+	byte *_cursorKeyColors;
+	uint16 *_cursorPaletteStarts;
+	uint16 *_cursorPaletteCounts;
+	int32 *_cursorHotspotsX;
+	int32 *_cursorHotspotsY;
+
 	int16 _palLoadData1[4];
 	int16 _palLoadData2[4];
 

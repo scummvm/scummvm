@@ -83,7 +83,7 @@ void Draw_v2::blitCursor() {
 void Draw_v2::animateCursor(int16 cursor) {
 	int16 cursorIndex = cursor;
 	int16 newX = 0, newY = 0;
-	uint16 hotspotX = 0, hotspotY = 0;
+	uint16 hotspotX, hotspotY;
 
 	_showCursor |= 1;
 
@@ -133,15 +133,22 @@ void Draw_v2::animateCursor(int16 cursor) {
 		}
 		// '------
 
-		newX = _vm->_global->_inter_mouseX;
-		newY = _vm->_global->_inter_mouseY;
+		hotspotX = 0;
+		hotspotY = 0;
+
 		if (_cursorHotspotXVar != -1) {
-			newX -= hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
-			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
+			hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
+			hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
 		} else if (_cursorHotspotX != -1) {
-			newX -= hotspotX = _cursorHotspotX;
-			newY -= hotspotY = _cursorHotspotY;
+			hotspotX = _cursorHotspotX;
+			hotspotY = _cursorHotspotY;
+		} else if (_cursorHotspotsX != 0) {
+			hotspotX = _cursorHotspotsX[_cursorIndex];
+			hotspotY = _cursorHotspotsY[_cursorIndex];
 		}
+
+		newX = _vm->_global->_inter_mouseX - hotspotX;
+		newY = _vm->_global->_inter_mouseY - hotspotY;
 
 		_scummvmCursor->clear();
 		_scummvmCursor->blit(*_cursorSprites,
@@ -149,11 +156,19 @@ void Draw_v2::animateCursor(int16 cursor) {
 				(cursorIndex + 1) * _cursorWidth - 1,
 				_cursorHeight - 1, 0, 0);
 
-		if ((_vm->getGameType() != kGameTypeAdibou2) &&
-		    (_vm->getGameType() != kGameTypeAdi2) &&
-		    (_vm->getGameType() != kGameTypeAdi4))
-			CursorMan.replaceCursor(_scummvmCursor->getData(),
-					_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, 1, &_vm->getPixelFormat());
+		uint32 keyColor = 0;
+		if (_cursorKeyColors)
+			keyColor = _cursorKeyColors[cursorIndex];
+
+		CursorMan.replaceCursor(_scummvmCursor->getData(),
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, 1, &_vm->getPixelFormat());
+
+		if (_cursorPalettes) {
+			CursorMan.replaceCursorPalette(_cursorPalettes + (cursorIndex * 256 * 3),
+					_cursorPaletteStarts[cursorIndex], _cursorPaletteCounts[cursorIndex]);
+			CursorMan.disableCursorPalette(false);
+		} else
+			CursorMan.disableCursorPalette(true);
 
 		if (_frontSurface != _backSurface) {
 			if (!_noInvalidated) {
