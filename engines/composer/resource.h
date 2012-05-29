@@ -118,10 +118,10 @@ public:
 	virtual const Common::Array<uint16> *getScripts() { return NULL; }
 #ifdef SAVING_ANYWHERE
 	uint16 getPipeId() const { return _pipeId; }
-	uint32 getOffset() const { return _offset; }
-	void setOffset(uint32 offset) { while (_offset < offset) nextFrame(); }
+	virtual uint32 getOffset() const { return _offset; }
+	virtual void setOffset(uint32 offset) { while (_offset < offset) nextFrame(); }
 	typedef Common::HashMap<uint32, Common::List<uint16> > DelMap;
-	Common::Array<DelMap> _bufferedResources;
+	DelMap _bufferedResources;
 #endif
 
 protected:
@@ -132,7 +132,6 @@ protected:
 	TypeMap _types;
 #ifdef SAVING_ANYWHERE
 	uint16 _pipeId;
-	DelMap _currBufferedResources;
 #endif
 
 	uint32 _offset;
@@ -144,6 +143,10 @@ public:
 	void nextFrame();
 
 	const Common::Array<uint16> *getScripts() { return &_scripts; }
+#ifdef SAVING_ANYWHERE
+	uint32 getOffset() const { return _currFrame; }
+	void setOffset(uint32 offset) { while (_currFrame < offset) nextFrame(); }
+#endif
 
 protected:
 	uint32 _currFrame, _numFrames;
