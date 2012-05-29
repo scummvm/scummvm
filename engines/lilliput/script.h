@@ -200,7 +200,7 @@ private:
 	void OC_sub17DB9_speech3();
 	void OC_startSpeechIfMute();
 	void OC_sub17E07_speech4param();
-	void OC_sub17E15_speech2param();
+	void OC_startSpeechIfSilent();
 	void OC_ComputeCharacterVariable();
 	void OC_getRandom_type2();
 	void OC_setCharacterPosition();
@@ -243,7 +243,7 @@ private:
 	void OC_skipNextVal();
 	void OC_setCurrentCharacterVar6();
 	void OC_sub17FDD();
-	void OC_setByte10B29();
+	void OC_setCharacterScriptEnabled();
 	void OC_setCurrentCharacterVar2();
 	void OC_SetCurrentCharacterVar2ToZero();
 	void OC_setCharacterProperties();
@@ -278,7 +278,7 @@ private:
 	void OC_sub1844A();
 	void OC_displayNumericCharacterVariable();
 	void OC_displayVGAFile();
-	void OC_sub184D7();
+	void OC_startSpeechWithoutSpeeker();
 	void OC_displayTitleScreen();
 	void OC_initGameAreaDisplay();
 	void OC_displayCharacterStatBar();
@@ -294,7 +294,7 @@ private:
 	void OC_sub1873F_snd();
 	void OC_sub18746_snd();
 	void OC_sub1875D_snd();
-	void OC_setArray128E();
+	void OC_setArray128EF();
 };
 
 } // End of namespace Lilliput
