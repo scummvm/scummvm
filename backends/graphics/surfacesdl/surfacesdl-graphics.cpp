@@ -554,7 +554,12 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	if (ScalerMan.getPlugins()[_scalerIndex] != _scalerPlugin) {
 		(*_scalerPlugin)->deinitialize();
 		_scalerPlugin = ScalerMan.getPlugins()[_scalerIndex];
-		(*_scalerPlugin)->initialize(_videoMode.format);
+		Graphics::PixelFormat format(_tmpscreen->format->BytesPerPixel,
+	                                 8 - _tmpscreen->format->Rloss, 8 - _tmpscreen->format->Gloss,
+	                                 8 - _tmpscreen->format->Bloss, 8 - _tmpscreen->format->Aloss,
+	                                 _tmpscreen->format->Rshift, _tmpscreen->format->Gshift,
+	                                 _tmpscreen->format->Bshift, _tmpscreen->format->Ashift);
+		(*_scalerPlugin)->initialize(format);
 	}
 
 	newScaleFactor = (*_scalerPlugin)->getFactor();
