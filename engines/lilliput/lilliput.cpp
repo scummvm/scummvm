@@ -907,7 +907,7 @@ int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 
 	int index = (y1 * 64 + x1) * 4;
 	assert(index <= 16380);
-	byte *isoMap = &_bufferIsoMap[1];
+	byte *isoMap = &_bufferIsoMap[index + 1];
 
 	int16 dx = x2 - x1;
 	int16 dy = y2 - y1;
@@ -1023,7 +1023,7 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 }
 
 void LilliputEngine::sub16CA0() {
-	debugC(2, kDebugEngineTBC, "sub16CA0()");
+	debugC(2, kDebugEngine, "sub16CA0()");
 
 	for (int index = _numCharacters - 1; index >= 0; index--) {
 		if (_rulesBuffer2_11[index] & 1)
@@ -1053,46 +1053,51 @@ void LilliputEngine::sub16CA0() {
 							} else if ((_rulesBuffer2_11[index] & 4) != 0) {
 								_byte16C9F = 0;
 							} else {
-								if (_characterDirectionArray[index] == 0) {
+								switch (_characterDirectionArray[index]) {
+								case 0:
 									if (d1 > c1) {
 										_byte16C9F = 2;
 
 										if (d2 == c2)
 											_byte16C9F = 3;
 
-										if (sub16DD5(c1, d1, c2, d2) != 0)
+										if (sub16DD5(c1, c2, d1, d2) != 0)
 											_byte16C9F = 1;
 									}
-								} else if (_characterDirectionArray[index] == 1) {
+									break;
+								case 1:
 									if (d2 < c2) {
 										_byte16C9F = 2;
 
 										if (d1 == c1)
 											_byte16C9F = 3;
 
-										if (sub16DD5(c1, d1, c2, d2) != 0)
+										if (sub16DD5(c1, c2, d1, d2) != 0)
 											_byte16C9F = 1;
 									}
-								} else if (_characterDirectionArray[index] == 2) {
+									break;
+								case 2:
 									if (d2 > c2) {
 										_byte16C9F = 2;
 
 										if (d1 == c1)
 											_byte16C9F = 3;
 
-										if (sub16DD5(c1, d1, c2, d2) != 0)
+										if (sub16DD5(c1, c2, d1, d2) != 0)
 											_byte16C9F = 1;
 									}
-								} else {
+									break;
+								default:
 									if (d1 < c1) {
 										_byte16C9F = 2;
 
 										if (d2 == c2)
 											_byte16C9F = 3;
 
-										if (sub16DD5(c1, d1, c2, d2) != 0)
+										if (sub16DD5(c1, c2, d1, d2) != 0)
 											_byte16C9F = 1;
 									}
+									break;
 								}
 							}
 						}
@@ -1100,13 +1105,14 @@ void LilliputEngine::sub16CA0() {
 				}
 			}
 
-			int16 val = _scriptHandler->_array10B51[index2 + index * 40];
-			val = (val & 0xFF) + ((val & 0xFF) << 8);
-			if ((val & 0xFF) != _byte16C9F) {
+			int8 v2 = _scriptHandler->_array10B51[index2 + (index * 40)] & 0xFF;
+			int8 v1 = v2;
+
+			if (v2 != _byte16C9F) {
 				_scriptHandler->_characterScriptEnabled[index] = 1;
-				val = (val & 0xFF00) | _byte16C9F;
+				v2 =  _byte16C9F;
 			}
-			_scriptHandler->_array10B51[index2 + index * 40] = val;
+			_scriptHandler->_array10B51[index2 + (index * 40)] = (v1 << 8) + v2;
 		}
 	}
 }

@@ -1546,7 +1546,7 @@ byte LilliputScript::OC_compareCoords_1() {
 
 // TODO Rename function to "Check if character pos in rectangle"
 byte LilliputScript::OC_compareCoords_2() {
-	debugC(1, kDebugScriptTBC, "OC_compareCoords_2()");
+	debugC(1, kDebugScript, "OC_compareCoords_2()");
 
 	int16 index = getValue1();
 	Common::Point var1 = Common::Point(_array16123PosX[index], _array1614BPosY[index]);
