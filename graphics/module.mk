@@ -44,6 +44,7 @@ MODULE_OBJS := \
 ifdef USE_SCALERS
 MODULE_OBJS += \
 	scaler/2xsai.o \
+	scaler/dotmatrix.o \
 	scaler/sai.o \
 	scaler/aspect.o \
 	scaler/downscaler.o \
