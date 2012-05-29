@@ -542,8 +542,8 @@ void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 /**
  * Creates a new process.
  *
- * @param pid	process identifier
- * @param CORO_ADDR		Coroutine start address
+ * @param pid			process identifier
+ * @param coroAddr		Coroutine start address
  * @param pParam		Process specific info
  * @param sizeParam		Size of process specific info
  */
@@ -614,7 +614,7 @@ PROCESS *CoroutineScheduler::createProcess(uint32 pid, CORO_ADDR coroAddr, const
 /**
  * Creates a new process with an auto-incrementing Process Id.
  *
- * @param CORO_ADDR		Coroutine start address
+ * @param coroAddr		Coroutine start address
  * @param pParam		Process specific info
  * @param sizeParam		Size of process specific info
  */
@@ -626,7 +626,7 @@ uint32 CoroutineScheduler::createProcess(CORO_ADDR coroAddr, const void *pParam,
 /**
  * Creates a new process with an auto-incrementing Process Id, and a single pointer parameter.
  *
- * @param CORO_ADDR		Coroutine start address
+ * @param coroAddr		Coroutine start address
  * @param pParam		Process specific info
  * @param sizeParam		Size of process specific info
  */
