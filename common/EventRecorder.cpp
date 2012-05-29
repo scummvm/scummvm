@@ -886,5 +886,21 @@ void EventRecorder::checkRecordedMD5() {
 	screen.free();
 }
 
+TimerManager* EventRecorder::getTimerManager() {
+	return _timerManager;
+}
+
+void EventRecorder::registerTimerManager(TimerManager* timerManager) {
+	_timerManager = timerManager;
+}
+
+void EventRecorder::switchTimerManagers() {
+	delete _timerManager;
+	if (_recordMode == kPassthrough) {
+		_timerManager = new DefaultTimerManager();
+	} else {
+		_timerManager = new SdlTimerManager();
+	}
+}
 
 } // End of namespace Common

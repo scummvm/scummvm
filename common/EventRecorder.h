@@ -33,6 +33,8 @@
 #include "backends/mixer/nullmixer/nullsdl-mixer.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "backends/timer/sdl/sdl-timer.h"
+#include "backends/timer/default/default-timer.h"
 #include "engines/advancedDetector.h"
 #include "common/hashmap.h"
 #include "common/config-manager.h"
@@ -78,8 +80,10 @@ public:
 	void processMillis(uint32 &millis);
 	SdlMixerManager *getMixerManager();
 	void registerMixerManager(SdlMixerManager *mixerManager);
+	TimerManager* getTimerManager();
 	uint32 getRandomSeed(const String &name);
 	void init(Common::String gameid, const ADGameDescription* desc = NULL);
+	void registerTimerManager(TimerManager* timerManager);
 	uint32 getTimer() {return _fakeTimer;}
 private:
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
@@ -114,9 +118,11 @@ private:
 	MutexRef _recorderMutex;
 	SdlMixerManager* _realMixerManager;
 	NullSdlMixerManager* _fakeMixerManager;
+	TimerManager* _timerManager;
 	void switchMixer();
 	void switchFastMode();
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
+	void switchTimerManagers();
 	void writeVersion();
 	void writeHeader();
 	void writeFormatId();

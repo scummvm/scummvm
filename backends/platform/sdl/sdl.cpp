@@ -133,6 +133,7 @@ void OSystem_SDL::init() {
 
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
+	g_eventRec.registerTimerManager(_timerManager);
 
 #if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)

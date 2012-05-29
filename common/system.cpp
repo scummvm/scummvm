@@ -30,6 +30,7 @@
 #include "common/taskbar.h"
 #include "common/updates.h"
 #include "common/textconsole.h"
+#include "common/EventRecorder.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
@@ -151,4 +152,8 @@ Common::String OSystem::getDefaultConfigFileName() {
 
 Common::String OSystem::getSystemLanguage() const {
 	return "en_US";
+}
+
+Common::TimerManager * OSystem::getTimerManager() {
+	return g_eventRec.getTimerManager();
 }
