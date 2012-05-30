@@ -31,18 +31,18 @@ void DotMatrixPlugin::initialize(Graphics::PixelFormat format) {
 	lookup[5] = lookup[7] =
 		lookup[9] = lookup[13] =
 		lookup[15] = lookup[16] = format.RGBToColor(0, 0, 0);
-
+	_format = format;
 }
 
 void DotMatrixPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (!_doScale) {
-		Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
 		return;
 	}
 	switch (_factor) {
 	case 1:
-		Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
 		break;
 	case 2:
 		scaleIntern(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
