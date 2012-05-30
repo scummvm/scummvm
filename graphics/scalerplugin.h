@@ -64,6 +64,15 @@ public:
 	virtual uint getFactor() const = 0;
 
 	/**
+	 * Set the scaling factor.
+	 * Intended to be used with GUI to set a known valid factor.
+	 * Plugins should override if they require additional state changes.
+	 * @param factor A valid scaling factor for the plugin
+	 * @return The factor set
+	 */
+	virtual uint setFactor(uint factor) { return _factor = factor; }
+
+	/**
 	 * Indicates how far outside the scaling region this scaler "looks"
 	 * @return The number of pixels in any direction
 	 */
