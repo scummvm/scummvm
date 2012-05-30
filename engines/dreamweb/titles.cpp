@@ -134,7 +134,7 @@ void DreamWebEngine::bibleQuote() {
 
 void DreamWebEngine::hangOne(uint16 delay) {
 	do {
-		vSync();
+		waitForVSync();
 		if (_lastHardKey == 1)
 			return; // "hangonearly"
 	} while	(--delay);
@@ -200,13 +200,13 @@ void DreamWebEngine::runIntroSeq() {
 	_getBack = 0;
 
 	do {
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
 
 		spriteUpdate();
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
@@ -216,14 +216,14 @@ void DreamWebEngine::runIntroSeq() {
 		reelsOnScreen();
 		afterIntroRoom();
 		useTimedText();
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
 
 		dumpMap();
 		dumpTimedText();
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
@@ -247,18 +247,18 @@ void DreamWebEngine::runEndSeq() {
 	_getBack = 0;
 
 	do {
-		vSync();
+		waitForVSync();
 		spriteUpdate();
-		vSync();
+		waitForVSync();
 		delEverything();
 		printSprites();
 		reelsOnScreen();
 		afterIntroRoom();
 		useTimedText();
-		vSync();
+		waitForVSync();
 		dumpMap();
 		dumpTimedText();
-		vSync();
+		waitForVSync();
 	} while (_getBack != 1 && !_quitRequested);
 }
 

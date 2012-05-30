@@ -202,7 +202,7 @@ void DreamWebEngine::input() {
 	_cursLocY = _monAdY;
 	while (true) {
 		printCurs();
-		vSync();
+		waitForVSync();
 		delCurs();
 		readKey();
 		if (_quitRequested)
@@ -318,8 +318,8 @@ void DreamWebEngine::accessLightOff() {
 
 void DreamWebEngine::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
-		vSync();
-		vSync();
+		waitForVSync();
+		waitForVSync();
 		uint16 v = _rnd.getRandomNumber(15);
 		if (v < 10)
 			accessLightOff();

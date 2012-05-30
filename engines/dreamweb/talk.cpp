@@ -52,7 +52,7 @@ void DreamWebEngine::talk() {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		_getBack = 0;
@@ -211,7 +211,7 @@ bool DreamWebEngine::hangOnPQ() {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		checkCoords(quitList);

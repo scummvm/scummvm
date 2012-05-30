@@ -136,7 +136,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 			delPointer();
 			readMouse();
 			showPointer();
-			vSync();
+			waitForVSync();
 			dumpPointer();
 			dumpTextLine();
 			RectWithCallback loadlist[] = {
@@ -227,7 +227,7 @@ void DreamWebEngine::saveGame() {
 			checkInput();
 			readMouse();
 			showPointer();
-			vSync();
+			waitForVSync();
 			dumpPointer();
 			dumpTextLine();
 
@@ -348,7 +348,7 @@ void DreamWebEngine::doSaveLoad() {
 
 			readMouse();
 			showPointer();
-			vSync();
+			waitForVSync();
 			dumpPointer();
 			dumpTextLine();
 			delPointer();
@@ -429,7 +429,7 @@ void DreamWebEngine::discOps() {
 		delPointer();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		checkCoords(discOpsList);

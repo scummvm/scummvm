@@ -65,7 +65,7 @@ void DreamWebEngine::selectLocation() {
 		delPointer();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 

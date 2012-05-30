@@ -52,7 +52,7 @@ void DreamWebEngine::fadeDOS() {
 	return; // FIXME later
 
 	waitForVSync();
-	//processEvents will be called from vsync
+	//processEvents will be called from waitForVSync
 	uint8 *dst = _startPal;
 	getPalette(dst, 0, 64);
 	for (int fade = 0; fade < 64; ++fade) {

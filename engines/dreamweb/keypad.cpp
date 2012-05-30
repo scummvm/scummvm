@@ -62,11 +62,11 @@ void DreamWebEngine::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 d
 		readMouse();
 		showKeypad();
 		showPointer();
-		vSync();
+		waitForVSync();
 		if (_pressCount == 0) {
 			_pressed = 255;
 			_graphicPress = 255;
-			vSync();
+			waitForVSync();
 		} else
 			--_pressCount;
 
@@ -252,7 +252,7 @@ void DreamWebEngine::useMenu() {
 		showMenu();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpMenu();
 		dumpTextLine();
@@ -311,7 +311,7 @@ void DreamWebEngine::viewFolder() {
 		delPointer();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		checkFolderCoords();
@@ -508,7 +508,7 @@ void DreamWebEngine::enterSymbol() {
 		showSymbol();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		dumpSymbol();
@@ -743,7 +743,7 @@ void DreamWebEngine::useDiary() {
 		readMouse();
 		showDiaryKeys();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpDiaryKeys();
 		dumpTextLine();

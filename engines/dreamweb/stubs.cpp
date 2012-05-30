@@ -754,7 +754,7 @@ void DreamWebEngine::screenUpdate() {
 	showPointer();
 	if ((_vars._watchingTime == 0) && (_newLocation != 0xff))
 		return;
-	vSync();
+	waitForVSync();
 	uint16 mouseState = 0;
 	mouseState |= readMouseState();
 	dumpPointer();
@@ -769,7 +769,7 @@ void DreamWebEngine::screenUpdate() {
 	showPointer();
 	if (_wonGame)
 		return;
-	vSync();
+	waitForVSync();
 	mouseState |= readMouseState();
 	dumpPointer();
 
@@ -781,7 +781,7 @@ void DreamWebEngine::screenUpdate() {
 	afterNewRoom();
 
 	showPointer();
-	vSync();
+	waitForVSync();
 	mouseState |= readMouseState();
 	dumpPointer();
 
@@ -790,7 +790,7 @@ void DreamWebEngine::screenUpdate() {
 	delPointer();
 
 	showPointer();
-	vSync();
+	waitForVSync();
 	_oldButton = _mouseButton;
 	mouseState |= readMouseState();
 	_mouseButton = mouseState;
@@ -871,7 +871,7 @@ void DreamWebEngine::loadTextSegment(TextFile &file, Common::File &inFile, unsig
 void DreamWebEngine::hangOnCurs(uint16 frameCount) {
 	for (uint16 i = 0; i < frameCount; ++i) {
 		printCurs();
-		vSync();
+		waitForVSync();
 		delCurs();
 	}
 }
@@ -1634,7 +1634,7 @@ bool DreamWebEngine::checkIfSet(uint8 x, uint8 y) {
 
 void DreamWebEngine::hangOn(uint16 frameCount) {
 	while (frameCount) {
-		vSync();
+		waitForVSync();
 		--frameCount;
 		if (_quitRequested)
 			break;
@@ -1647,7 +1647,7 @@ void DreamWebEngine::hangOnW(uint16 frameCount) {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		--frameCount;
 		if (_quitRequested)
@@ -1665,7 +1665,7 @@ void DreamWebEngine::hangOnP(uint16 count) {
 	readMouse();
 	animPointer();
 	showPointer();
-	vSync();
+	waitForVSync();
 	dumpPointer();
 
 	count *= 3;
@@ -1674,7 +1674,7 @@ void DreamWebEngine::hangOnP(uint16 count) {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		if (_quitRequested)
 			break;
@@ -2132,7 +2132,7 @@ void DreamWebEngine::workToScreenM() {
 	animPointer();
 	readMouse();
 	showPointer();
-	vSync();
+	waitForVSync();
 	workToScreen();
 	delPointer();
 }
@@ -2607,7 +2607,7 @@ void DreamWebEngine::decide() {
 
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		delPointer();
