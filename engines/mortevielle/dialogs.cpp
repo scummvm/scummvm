@@ -39,41 +39,38 @@ namespace Mortevielle {
  * @remarks	Originally called 'do_alert'
  */
 int Alert::show(const Common::String &msg, int n) {
-	int coldep, esp, i, caseNumb, quoi, ix;
-	Common::String st, chaine;
-	int limit[3][3];
-	Common::String s[3];
-	Common::Point curPos;
-	int nbcol, lignNumb;
-	bool newaff, test, test1, test2, test3, dum;
-	Common::String cas;
-
 	// Make a copy of the current screen surface for later restore
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
 
-	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
-	int do_alert_result;
 	g_vm->_mouse.hideMouse();
 	while (g_vm->keyPressed())
 		g_vm->getChar();
 
 	g_vm->setMouseClick(false);
-	decodeAlertDetails(msg, caseNumb, lignNumb, nbcol, chaine, cas);
+
+	int colNumb = 0;
+	int lignNumb = 0;
+	int caseNumb = 0;
+	Common::String alertStr = "";
+	Common::String caseStr;
+
+	decodeAlertDetails(msg, caseNumb, lignNumb, colNumb, alertStr, caseStr);
 	g_vm->sauvecr(50, (NUM_LINES + 1) << 4);
 
-	i = 0;
-	if (chaine == "") {
-		drawAlertBox(10, 5, nbcol);
+	int i = 0;
+	Common::Point curPos;
+	if (alertStr == "") {
+		drawAlertBox(10, 5, colNumb);
 	} else {
-		drawAlertBox(8, 7, nbcol);
+		drawAlertBox(8, 7, colNumb);
 		i = 0;
 		g_vm->_screenSurface._textPos.y = 70;
 		do {
 			curPos.x = 320;
-			st = "";
-			while ((chaine[i + 1] != '\174') && (chaine[i + 1] != '\135')) {
+			Common::String displayStr = "";
+			while ((alertStr[i + 1] != '\174') && (alertStr[i + 1] != '\135')) {
 				++i;
-				st = st + chaine[i];
+				displayStr += alertStr[i];
 				if (g_vm->_res == 2)
 					curPos.x -= 3;
 				else
@@ -81,78 +78,87 @@ int Alert::show(const Common::String &msg, int n) {
 			}
 			g_vm->_screenSurface.putxy(curPos.x, g_vm->_screenSurface._textPos.y);
 			g_vm->_screenSurface._textPos.y += 6;
-			g_vm->_screenSurface.drawString(st, 4);
+			g_vm->_screenSurface.drawString(displayStr, 4);
 			++i;
-		} while (chaine[i] != ']');
+		} while (alertStr[i] != ']');
 	}
+	int esp;
 	if (caseNumb == 1)
-		esp = nbcol - 40;
+		esp = colNumb - 40;
 	else
-		esp = (uint)(nbcol - caseNumb * 40) >> 1;
-	coldep = 320 - ((uint)nbcol >> 1) + ((uint)esp >> 1);
-	setButtonText(cas, coldep, caseNumb, &s[0], esp);
-	limit[1][1] = ((uint)(coldep) >> 1) * g_vm->_res;
+		esp = (uint)(colNumb - caseNumb * 40) / 2;
+
+	int coldep = 320 - ((uint)colNumb / 2) + ((uint)esp / 2);
+	Common::String buttonStr[3];
+	setButtonText(caseStr, coldep, caseNumb, &buttonStr[0], esp);
+
+	int limit[3][3];
+	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
+
+	limit[1][1] = ((uint)(coldep) / 2) * g_vm->_res;
 	limit[1][2] = limit[1][1] + 40;
 	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * g_vm->_res;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * g_vm->_res;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
 	g_vm->_mouse.showMouse();
-	quoi = 0;
-	dum = false;
+	int id = 0;
+	bool dummyFl = false;
+	bool test3;
 	do {
 		char dummyKey = '\377';
-		g_vm->_mouse.moveMouse(dum, dummyKey);
+		g_vm->_mouse.moveMouse(dummyFl, dummyKey);
 		CHECK_QUIT0;
 
 		curPos = g_vm->_mouse._pos;
-		test = (curPos.y > 95) && (curPos.y < 105);
-		newaff = false;
-		if (test) {
-			test1 = (curPos.x > limit[1][1]) && (curPos.x < limit[1][2]);
-			test2 = test1;
+		bool newaff = false;
+		if ((curPos.y > 95) && (curPos.y < 105)) {
+			bool test1 = (curPos.x > limit[1][1]) && (curPos.x < limit[1][2]);
+			bool test2 = test1;
 			if (caseNumb > 1)
-				test2 = test1 || ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2]));
+				test2 |= ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2]));
 			if (test2) {
 				newaff = true;
+
+				int ix;
 				if (test1)
 					ix = 1;
 				else
 					ix = 2;
-				if (ix != quoi) {
+				if (ix != id) {
 					g_vm->_mouse.hideMouse();
-					if (quoi != 0) {
-						setPosition(quoi, coldep, esp);
+					if (id != 0) {
+						setPosition(id, coldep, esp);
 
-						Common::String tmp(" ");
-						tmp += s[quoi];
-						tmp += " ";
-						g_vm->_screenSurface.drawString(tmp, 0);
+						Common::String tmpStr(" ");
+						tmpStr += buttonStr[id];
+						tmpStr += " ";
+						g_vm->_screenSurface.drawString(tmpStr, 0);
 					}
 					setPosition(ix, coldep, esp);
 
 					Common::String tmp2 = " ";
-					tmp2 += s[ix];
+					tmp2 += buttonStr[ix];
 					tmp2 += " ";
 					g_vm->_screenSurface.drawString(tmp2, 1);
 
-					quoi = ix;
+					id = ix;
 					g_vm->_mouse.showMouse();
 				}
 			}
 		}
-		if ((quoi != 0) && ! newaff) {
+		if ((id != 0) && !newaff) {
 			g_vm->_mouse.hideMouse();
-			setPosition(quoi, coldep, esp);
+			setPosition(id, coldep, esp);
 
 			Common::String tmp3(" ");
-			tmp3 += s[quoi];
+			tmp3 += buttonStr[id];
 			tmp3 += " ";
 			g_vm->_screenSurface.drawString(tmp3, 0);
 
-			quoi = 0;
+			id = 0;
 			g_vm->_mouse.showMouse();
 		}
 		test3 = (curPos.y > 95) && (curPos.y < 105) && (((curPos.x > limit[1][1]) && (curPos.x < limit[1][2]))
@@ -161,21 +167,20 @@ int Alert::show(const Common::String &msg, int n) {
 	g_vm->setMouseClick(false);
 	g_vm->_mouse.hideMouse();
 	if (!test3)  {
-		quoi = n;
+		id = n;
 		setPosition(n, coldep, esp);
 		Common::String tmp4(" ");
-		tmp4 += s[n];
+		tmp4 += buttonStr[n];
 		tmp4 += " ";
 		g_vm->_screenSurface.drawString(tmp4, 1);
 	}
-	g_vm->charecr(50, (NUM_LINES + 1) << 4);
+	g_vm->charecr(50, (NUM_LINES + 1) * 16);
 	g_vm->_mouse.showMouse();
 
 	/* Restore the background area */
 	g_vm->_screenSurface.copyFrom(g_vm->_backgroundSurface, 0, 0);
 
-	do_alert_result = quoi;
-	return do_alert_result;
+	return id;
 }
 
 /**
@@ -233,10 +238,10 @@ void Alert::setPosition(int ji, int coldep, int esp) {
 void Alert::drawAlertBox(int lidep, int nli, int tx) {
 	if (tx > 640)
 		tx = 640;
-	int x = 320 - ((uint)tx >> 1);
-	int y = (lidep - 1) << 3;
+	int x = 320 - ((uint)tx / 2);
+	int y = (lidep - 1) * 8;
 	int xx = x + tx;
-	int yy = y + (nli << 3);
+	int yy = y + (nli * 8);
 	g_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
@@ -247,16 +252,13 @@ void Alert::drawAlertBox(int lidep, int nli, int tx) {
  * @remarks	Originally called 'fait_choix'
  */
 void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp) {
-	int i, l, x;
-	char ch;
-
-	i = 1;
-	x = coldep;
-	for (l = 1; l <= nbcase; ++l) {
+	int i = 1;
+	int x = coldep;
+	for (int l = 1; l <= nbcase; ++l) {
 		str[l] = "";
 		do {
 			++i;
-			ch = c[i];
+			char ch = c[i];
 			str[l] += ch;
 		} while (c[i + 1] != ']');
 		i += 2;
@@ -284,12 +286,6 @@ bool KnowledgeCheck::show() {
 	const int textIndexArr[10] = {511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
 	const int correctAnswerArr[10] = {4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
 
-	char key;
-	int optionPosY;
-	int maxLength;
-	int rep;
-	int firstOption, lastOption;
-
 	Hotspot coor[kMaxHotspots+1];
 
 	for (int i = 0; i <= kMaxHotspots; ++i) {
@@ -315,6 +311,9 @@ bool KnowledgeCheck::show() {
 		Common::String tmpStr = g_vm->getString(textIndexArr[indx]);
 		g_vm->_text.displayStr(tmpStr, 20, 15, 100, 2, 0);
 
+		int firstOption;
+		int lastOption;
+
 		if (indx != 9) {
 			firstOption = textIndexArr[indx] + 1;
 			lastOption = textIndexArr[indx + 1] - 1;
@@ -322,8 +321,8 @@ bool KnowledgeCheck::show() {
 			firstOption = 503;
 			lastOption = 510;
 		}
-		optionPosY = 35;
-		maxLength = 0;
+		int optionPosY = 35;
+		int maxLength = 0;
 
 		prevChoice = 1;
 		for (int j = firstOption; j <= lastOption; ++j, ++prevChoice) {
@@ -344,6 +343,7 @@ bool KnowledgeCheck::show() {
 			}
 		}
 		coor[lastOption - firstOption + 2]._enabled = false;
+		int rep;
 		if (g_vm->_res == 1)
 			rep = 10;
 		else
@@ -356,6 +356,7 @@ bool KnowledgeCheck::show() {
 		do {
 			g_vm->setMouseClick(false);
 			bool flag;
+			char key;
 			g_vm->_mouse.moveMouse(flag, key);
 			CHECK_QUIT0;
 
