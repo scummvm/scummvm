@@ -46,8 +46,8 @@ void LilliputSound::contentFct2(int var1, Common::Point var2, Common::Point var3
 	debugC(1, kDebugSound, "contentFct2(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
 }
 
-void LilliputSound::contentFct3() {
-	debugC(1, kDebugSound, "contentFct3()");
+void LilliputSound::contentFct3(Common::Point pos) {
+	debugC(1, kDebugSound, "contentFct3(%d - %d)", pos.x, pos.y);
 }
 
 void LilliputSound::contentFct4() {
