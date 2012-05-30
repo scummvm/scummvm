@@ -20,6 +20,7 @@
  */
 
 #include "graphics/scalerplugin.h"
+#include "graphics/scaler.h"
 
 ScalerPluginObject::ScalerPluginObject() {
 	_doScale = true;
@@ -31,4 +32,16 @@ void ScalerPluginObject::disableScaling() {
 
 void ScalerPluginObject::enableScaling() {
 	_doScale = true;
+}
+
+void ScalerPluginObject::scale1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                uint32 dstPitch, int width, int height, int bytesPerPixel) {
+	assert(bytesPerPixel == 2); // TODO add support for 4 bytes
+	Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}
+
+void ScalerPluginObject::scale1o5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                uint32 dstPitch, int width, int height, int bytesPerPixel) {
+	assert(bytesPerPixel == 2); // TODO add support for 4 bytes
+	Normal1o5x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
