@@ -75,6 +75,18 @@ public:
 	 */
 	virtual bool canDrawCursor() const = 0;
 
+	/**
+	 * Usable for any scaler when 1x scaling is desired
+	 */
+	static void scale1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                   uint32 dstPitch, int width, int height, int bytesPerPixel);
+
+	/**
+	 * Useful for scaling the mouse
+	 */
+	static void scale1o5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                   uint32 dstPitch, int width, int height, int bytesPerPixel);
+
 	// temporary HACK
 	virtual void disableScaling();
 
@@ -82,6 +94,7 @@ public:
 
 protected:
 	uint _factor;
+	Graphics::PixelFormat _format;
 	bool _doScale; // < temporary
 };
 
