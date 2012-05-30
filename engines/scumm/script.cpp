@@ -318,7 +318,7 @@ void ScummEngine::runScriptNested(int script) {
 	nest = &vm.nest[vm.numNestedScripts];
 
 	if (_currentScript == 0xFF) {
-		nest->number = 0xFF;
+		nest->number = 0;
 		nest->where = 0xFF;
 	} else {
 		// Store information about the currently running script
@@ -338,7 +338,7 @@ void ScummEngine::runScriptNested(int script) {
 	if (vm.numNestedScripts != 0)
 		vm.numNestedScripts--;
 
-	if (nest->number != 0xFF) {
+	if (nest->number) {
 		// Try to resume the script which called us, if its status has not changed
 		// since it invoked us. In particular, we only resume it if it hasn't been
 		// stopped in the meantime, and if it did not already move on.
