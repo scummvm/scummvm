@@ -40,7 +40,6 @@ bool DreamWebEngine::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 	return result;
 }
 
-
 void DreamWebEngine::volumeAdjust() {
 	if (_volumeDirection == 0)
 		return;
@@ -57,9 +56,6 @@ void DreamWebEngine::volumeAdjust() {
 void DreamWebEngine::playChannel0(uint8 index, uint8 repeat) {
 	debug(1, "playChannel0(index:%d, repeat:%d)", index, repeat);
 	_channel0Playing = index;
-	if (index >= 12)
-		index -= 12;
-
 	_channel0Repeat = repeat;
 }
 
@@ -68,14 +64,12 @@ void DreamWebEngine::playChannel1(uint8 index) {
 		return;
 
 	_channel1Playing = index;
-	if (index >= 12)
-		index -= 12;
 }
 
 void DreamWebEngine::cancelCh0() {
 	debug(1, "cancelCh0()");
-	_channel0Repeat = 0;
 	_channel0Playing = 255;
+	_channel0Repeat = 0;
 	stopSound(0);
 }
 
@@ -103,11 +97,6 @@ void DreamWebEngine::loadRoomsSample() {
 		cancelCh1();
 	loadSounds(1, sampleSuffix.c_str());
 }
-
-} // End of namespace DreamWeb
-
-
-namespace DreamWeb {
 
 void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
