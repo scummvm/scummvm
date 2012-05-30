@@ -48,7 +48,7 @@ private:
 	static void drawAlertBox(int lidep, int nli, int tx);
 	static void setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
 public:
-	static int show(const Common::String &s, int n);
+	static int show(const Common::String &msg, int n);
 };
 
 class KnowledgeCheck {
