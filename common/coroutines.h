@@ -64,7 +64,7 @@ typedef CoroBaseContext *CoroContext;
 
 
 /** This is a special constant that can be temporarily used as a parameter to call coroutine-ised
- * from methods from methods that haven't yet been converted to being a coroutine, so code at least
+ * methods from code that haven't yet been converted to being a coroutine, so code at least
  * compiles correctly. Be aware, though, that an error will occur if a coroutine that was passed
  * the nullContext tries to sleep or yield control.
  */
