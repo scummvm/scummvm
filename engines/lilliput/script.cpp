@@ -3285,17 +3285,17 @@ void LilliputScript::OC_sub1870A_snd() {
 void LilliputScript::OC_sub18725_snd() {
 	debugC(1, kDebugScript, "OC_sub18725_snd()");
 
-	int var4 = getValue1() | 0xFF00;
+	Common::Point var4 = Common::Point(-1, getValue1() & 0xFF);
 
-	_vm->_soundHandler->contentFct3();
+	_vm->_soundHandler->contentFct3(var4);
 }
 
 void LilliputScript::OC_sub18733_snd() {
-	debugC(1, kDebugScriptTBC, "OC_sub18733_snd()");
+	debugC(1, kDebugScript, "OC_sub18733_snd()");
 
 	Common::Point var4 = getPosFromScript();
 
-	_vm->_soundHandler->contentFct3();
+	_vm->_soundHandler->contentFct3(var4);
 }
 
 void LilliputScript::OC_sub1873F_snd() {

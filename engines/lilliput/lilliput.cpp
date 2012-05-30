@@ -1450,10 +1450,10 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 }
 
 void LilliputEngine::sub167EF(int index) {
-	debugC(2, kDebugEngineTBC, "sub167EF(%d)", index);
+	debugC(2, kDebugEngine, "sub167EF(%d)", index);
 
-	int word167EB = findHotspot(Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]));
-	int word167ED = findHotspot(Common::Point(_array10999PosX[index], _array109C1PosY[index]));
+	int16 word167EB = findHotspot(Common::Point(_scriptHandler->_array16123PosX[index], _scriptHandler->_array1614BPosY[index]));
+	int16 word167ED = findHotspot(Common::Point(_array10999PosX[index], _array109C1PosY[index]));
 
 	if (word167EB == word167ED) {
 		_array109E9PosX[index] = _array10999PosX[index];
@@ -1484,13 +1484,15 @@ void LilliputEngine::sub167EF(int index) {
 	int var4l = (_rectXMinMax[word167EB] & 0xFF);
 
 	if (var4h != var4l) {
-		if (_array109E9PosX[index] == var4h) {
-			--_array109E9PosX[index];
+		if (_rulesBuffer12Pos4[word167EB].x == var4h) {
+			_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
+			_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
 			return;
 		}
 
-		if (_array109E9PosX[index] == var4l) {
-			++_array109E9PosX[index];
+		if (_rulesBuffer12Pos4[word167EB].x == var4l) {
+			_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
+			_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
 			return;
 		}
 
@@ -1498,28 +1500,35 @@ void LilliputEngine::sub167EF(int index) {
 		var4l = (_rectYMinMax[word167EB] & 0xFF);
 
 		if (var4h != var4l) {
-			if (_array10A11PosY[index] == var4h)
-				--_array10A11PosY[index];
-			else
-				++_array10A11PosY[index];
+			if (_rulesBuffer12Pos4[word167EB].y == var4h) {
+				_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
+				_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
+			} else {
+				_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
+				_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
+			}
 			return;
 		}
 	}
 
 	// var4h == var4l
-	int mapIndex = (_array10A11PosY[index] * 64 + _array109E9PosX[index]) * 4;
+	int mapIndex = (_rulesBuffer12Pos4[word167EB].y * 64 + _rulesBuffer12Pos4[word167EB].x) * 4;
 	assert(mapIndex < 16384);
 
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
-	if ((tmpVal & 8) != 0)
-		++_array109E9PosX[index];
-	else if ((tmpVal & 4) != 0)
-		--_array10A11PosY[index];
-	else if ((tmpVal & 2) != 0)
-		++_array10A11PosY[index];
-	else
-		--_array109E9PosX[index];
-
+	if ((tmpVal & 8) != 0) {
+		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
+		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
+	} else if ((tmpVal & 4) != 0) {
+		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
+		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
+	} else if ((tmpVal & 2) != 0) {
+		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
+		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
+	} else {
+		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
+		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
+	}
 	return;
 }
 
@@ -1966,7 +1975,7 @@ bool LilliputEngine::isMouseOverHotspot(Common::Point mousePos, Common::Point ho
 }
 
 void LilliputEngine::sub1305C(byte index, byte button) {
-	debugC(2, kDebugEngineTBC, "sub1305C(%d, %d)", index, button);
+	debugC(2, kDebugEngine, "sub1305C(%d, %d)", index, button);
 
 	if (_scriptHandler->_interfaceHotspotStatus[index] < kHotspotEnabled)
 		return;
@@ -2717,9 +2726,9 @@ void LilliputEngine::handleGameScripts() {
 	//debugC(1, kDebugEngineTBC, "before char %d, pos %d %d, var0 %d, var1 %d, var2 %d var16 %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], *getCharacterVariablesPtr(i * 32 + 0), *getCharacterVariablesPtr(i * 32 + 1), *getCharacterVariablesPtr(i * 32 + 2),  *getCharacterVariablesPtr(i * 32 + 22), _scriptHandler->_characterScriptEnabled[i]);
 
 	assert(tmpVal < _gameScriptIndexSize);
-	debugC(1, kDebugEngineTBC, "================= Game Script %d for character %d ==================", tmpVal, index);
+	debugC(1, kDebugEngine, "================= Game Script %d for character %d ==================", tmpVal, index);
 	_scriptHandler->runScript(ScriptStream(&_arrayGameScripts[_arrayGameScriptIndex[tmpVal]], _arrayGameScriptIndex[tmpVal + 1] - _arrayGameScriptIndex[tmpVal]));
-	debugC(1, kDebugEngineTBC, "============= End Game Script %d for character %d ==================", tmpVal, index);
+	debugC(1, kDebugEngine, "============= End Game Script %d for character %d ==================", tmpVal, index);
 
 	//warning("dump char stat");
 	//debugC(1, kDebugEngineTBC, "after char %d, pos %d %d, var0 %d, var1 %d, var2 %d var16 %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], *getCharacterVariablesPtr(i * 32 + 0), *getCharacterVariablesPtr(i * 32 + 1), *getCharacterVariablesPtr(i * 32 + 2),  *getCharacterVariablesPtr(i * 32 + 22), _scriptHandler->_characterScriptEnabled[i]);
