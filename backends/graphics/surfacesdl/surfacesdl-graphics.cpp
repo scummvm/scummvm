@@ -181,7 +181,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 	_scalerProc = Normal2x;
 	// HACK: just pick first scaler plugin
-	_scalerPlugin = ScalerMan.getPlugins().front();
+	_normalPlugin = _scalerPlugin = ScalerMan.getPlugins().front();
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 #else // for small screen platforms
@@ -1779,8 +1779,8 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, 
 
 		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
 		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_mouseCurState.w + 2,
-						_mouseCurState.h + 2,
+						_mouseCurState.w + _maxExtraPixels * 2,
+						_mouseCurState.h + _maxExtraPixels * 2,
 						16,
 						_hwscreen->format->Rmask,
 						_hwscreen->format->Gmask,
@@ -1817,6 +1817,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	if (!_mouseOrigSurface || !_mouseData)
 		return;
 
+	int bytesPerPixel = _mouseOrigSurface->format->BytesPerPixel;
+
 	_mouseNeedsRedraw = true;
 
 	w = _mouseCurState.w;
@@ -1825,16 +1827,16 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	SDL_LockSurface(_mouseOrigSurface);
 
 	// Make whole surface transparent
-	for (i = 0; i < h + 2; i++) {
+	for (i = 0; i < h + _maxExtraPixels * 2; i++) {
 		dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * i;
-		for (j = 0; j < w + 2; j++) {
+		for (j = 0; j < w + _maxExtraPixels * 2; j++) {
 			*(uint16 *)dstPtr = kMouseColorKey;
-			dstPtr += 2;
+			dstPtr += bytesPerPixel;
 		}
 	}
 
 	// Draw from [1,1] since AdvMame2x adds artefact at 0,0
-	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2;
+	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel;
 
 	SDL_Color *palette;
 
@@ -1857,7 +1859,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 						r, g, b);
 				}
-				dstPtr += 2;
+				dstPtr += bytesPerPixel;
 				srcPtr += _cursorFormat.bytesPerPixel;
 			} else {
 #endif
@@ -1872,7 +1874,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 			}
 #endif
 		}
-		dstPtr += _mouseOrigSurface->pitch - w * 2;
+		dstPtr += _mouseOrigSurface->pitch - w * bytesPerPixel;
 	}
 
 	int rW, rH;
@@ -1949,20 +1951,38 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	SDL_LockSurface(_mouseSurface);
 
-	ScalerProc *scalerProc;
-
 	// If possible, use the same scaler for the cursor as for the rest of
 	// the game. This only works well with the non-blurring scalers so we
-	// actually only use the 1x, 1.5x, 2x and AdvMame scalers.
-
-	if (_cursorTargetScale == 1 && (_videoMode.mode == GFX_DOUBLESIZE || _videoMode.mode == GFX_TRIPLESIZE))
-		scalerProc = _scalerProc;
-	else
-		scalerProc = scalersMagn[_cursorTargetScale - 1][_videoMode.scaleFactor - 1];
-
-	scalerProc((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
-		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-		_mouseCurState.w, _mouseCurState.h);
+	// otherwise use the Normal scaler
+	if (_cursorTargetScale == 1) {
+		if ((*_scalerPlugin)->canDrawCursor()) {
+		(*_scalerPlugin)->scale(
+			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+			_mouseCurState.w, _mouseCurState.h, 0, 0);
+		} else {
+			int tmpFactor = (*_normalPlugin)->getFactor();
+			(*_normalPlugin)->setFactor(_videoMode.scaleFactor);
+			(*_normalPlugin)->scale(
+				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+				_mouseCurState.w, _mouseCurState.h, 0, 0);
+			(*_normalPlugin)->setFactor(tmpFactor);
+		}
+	} else if (_cursorTargetScale == 3 || _videoMode.scaleFactor < 3) {
+			int tmpFactor = (*_normalPlugin)->getFactor();
+			(*_normalPlugin)->setFactor(1);
+			(*_normalPlugin)->scale(
+				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+				_mouseCurState.w, _mouseCurState.h, 0, 0);
+			(*_normalPlugin)->setFactor(tmpFactor);
+	} else {
+		ScalerPluginObject::scale1o5x(
+			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel ,
+			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+			_mouseCurState.w, _mouseCurState.h, bytesPerPixel);
+	}
 
 #ifdef USE_SCALERS
 	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1)

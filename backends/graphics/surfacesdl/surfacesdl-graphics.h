@@ -234,6 +234,7 @@ protected:
 	int _transactionMode;
 
 	ScalerPlugin *_scalerPlugin;
+	ScalerPlugin *_normalPlugin;
 	int _scalerIndex;
 	uint _maxExtraPixels;
 
