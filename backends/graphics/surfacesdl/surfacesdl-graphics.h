@@ -292,6 +292,7 @@ protected:
 	bool _displayDisabled;
 
 	ScalerPlugin *_scalerPlugin;
+	ScalerPlugin *_normalPlugin;
 	int _scalerIndex;
 	uint _maxExtraPixels;
 
