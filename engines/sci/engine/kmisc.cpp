@@ -371,6 +371,8 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	// Anything below that makes Phantasmagoria awfully sluggish, so we're
 	// setting everything to 500, which makes the game playable.
 
+	setting.toLowercase();
+
 	if (setting == "videospeed") {
 		s->_segMan->strcpy(data, "500");
 	} else if (setting == "cpu") {
@@ -388,10 +390,12 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
+	category.toLowercase();
 	if (category != "config")
 		error("GetSierraProfileInt: category isn't 'config', it's '%s'", category.c_str());
 
 	Common::String setting = s->_segMan->getString(argv[1]);
+	setting.toLowercase();
 	if (setting != "videospeed")
 		error("GetSierraProfileInt: setting isn't 'videospeed', it's '%s'", setting.c_str());
 
