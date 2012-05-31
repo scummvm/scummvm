@@ -36,6 +36,7 @@
 #include "engines/wintermute/BGame.h"
 #include "engines/wintermute/BSprite.h"
 #include "common/system.h"
+#include "engines/wintermute/graphics/transparentSurface.h"
 
 namespace WinterMute {
 
@@ -273,18 +274,8 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
 
 // Replacement for SDL2's SDL_RenderCopy
 void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect) {
-	for (int i = 0; i < srcRect->height(); i++) {
-		byte *destPtr = (byte*)_renderSurface->getBasePtr(dstRect->left, dstRect->top + i);
-		byte *srcPtr = (byte*)surf->getBasePtr(srcRect->left, srcRect->top + i);
-		for (int j = 0; j < srcRect->width(); j++) {
-			// TODO: Replace this with something less ugly, and more portable.
-			if (((byte *)srcPtr)[0] == 255) {
-				memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel);
-			}
-			srcPtr += _renderSurface->format.bytesPerPixel;
-			destPtr += _renderSurface->format.bytesPerPixel;
-		}
-	}
+	TransparentSurface src(*surf, false);
+	src.blit(*_renderSurface, dstRect->left, dstRect->top, TransparentSurface::FLIP_NONE, srcRect,BS_ARGB(255, 255, 255, 255), dstRect->width(), dstRect->height() );
 }
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {

@@ -36,9 +36,11 @@
 #include "graphics/decoders/bmp.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+#include "engines/wintermute/graphics/transparentSurface.h"
 #include "common/stream.h"
 #include "BFileManager.h"
 #include "PlatformSDL.h"
+#include "common/system.h"
 
 namespace WinterMute {
 
@@ -130,9 +132,12 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 	// no alpha, set color key
 	/*  if (surface->format.bytesPerPixel != 4)
 	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
-	_surface = new Graphics::Surface();
-	_surface->copyFrom(*surface);
-
+	if (surface->format.bytesPerPixel == 4 && surface->format != g_system->getScreenFormat()) {
+		_surface = surface->convertTo(g_system->getScreenFormat());
+	} else {
+		_surface = new Graphics::Surface();
+		_surface->copyFrom(*surface);
+	}
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
 	//_texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 
@@ -184,16 +189,16 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 void CBSurfaceSDL::GenAlphaMask(Graphics::Surface *surface) {
 	warning("CBSurfaceSDL::GenAlphaMask - Not ported yet");
 	return;
-#if 0
+
 	delete[] _alphaMask;
 	_alphaMask = NULL;
 	if (!surface) return;
-
+#if 0
 	SDL_LockSurface(surface);
-
+#endif
 	bool hasColorKey;
-	Uint32 colorKey;
-	Uint8 ckRed, ckGreen, ckBlue;
+	uint32 colorKey;
+	uint8 ckRed, ckGreen, ckBlue;
 	/*  if (SDL_GetColorKey(surface, &colorKey) == 0) {
 	        hasColorKey = true;
 	        SDL_GetRGB(colorKey, surface->format, &ckRed, &ckGreen, &ckBlue);
@@ -204,10 +209,11 @@ void CBSurfaceSDL::GenAlphaMask(Graphics::Surface *surface) {
 	bool hasTransparency = false;
 	for (int y = 0; y < surface->h; y++) {
 		for (int x = 0; x < surface->w; x++) {
-			Uint32 pixel = GetPixel(surface, x, y);
+			uint32 pixel = GetPixel(surface, x, y);
 
-			Uint8 r, g, b, a;
-			SDL_GetRGBA(pixel, surface->format, &r, &g, &b, &a);
+			uint8 r, g, b, a;
+			surface->format.colorToARGB(pixel, a, r, g, b);
+			//SDL_GetRGBA(pixel, surface->format, &r, &g, &b, &a);
 
 			if (hasColorKey && r == ckRed && g == ckGreen && b == ckBlue)
 				a = 0;
@@ -216,23 +222,21 @@ void CBSurfaceSDL::GenAlphaMask(Graphics::Surface *surface) {
 			if (a < 255) hasTransparency = true;
 		}
 	}
-
+#if 0
 	SDL_UnlockSurface(surface);
-
+#endif
 	if (!hasTransparency) {
 		delete[] _alphaMask;
 		_alphaMask = NULL;
 	}
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBSurfaceSDL::GetPixel(Graphics::Surface *surface, int x, int y) {
 	warning("CBSurfaceSDL::GetPixel - Not ported yet");
-#if 0
-	int bpp = surface->format->BytesPerPixel;
+	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	uint8 *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
 	switch (bpp) {
 	case 1:
@@ -240,24 +244,26 @@ uint32 CBSurfaceSDL::GetPixel(Graphics::Surface *surface, int x, int y) {
 		break;
 
 	case 2:
-		return *(Uint16 *)p;
+		return *(uint16 *)p;
 		break;
 
 	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+#ifdef SCUMM_BIG_ENDIAN
+	//	if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
 			return p[0] << 16 | p[1] << 8 | p[2];
-		else
+#else
+		//else
 			return p[0] | p[1] << 8 | p[2] << 16;
+#endif
 		break;
 
 	case 4:
-		return *(Uint32 *)p;
+		return *(uint32 *)p;
 		break;
 
 	default:
 		return 0;       /* shouldn't happen, but avoids warnings */
 	}
-#endif
 	return 0;
 }
 
@@ -267,14 +273,14 @@ HRESULT CBSurfaceSDL::Create(int Width, int Height) {
 #if 0
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 	_texture = SDL_CreateTexture(renderer->GetSdlRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, Width, Height);
-
+#endif
 	_width = Width;
 	_height = Height;
-
+#if 0
 	Game->AddMem(_width * _height * 4);
-
-	_valid = true;
 #endif
+	_valid = true;
+
 	return S_OK;
 }
 
@@ -284,14 +290,21 @@ HRESULT CBSurfaceSDL::CreateFromSDLSurface(Graphics::Surface *surface) {
 #if 0
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surface);
-
+#endif
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = NULL;
+	}
+	_surface = new Graphics::Surface();
+	_surface->copyFrom(*surface);
 	_width = surface->w;
 	_height = surface->h;
-
+#if 0
 	Game->AddMem(_width * _height * 4);
-
-	_valid = true;
 #endif
+	_valid = true;
+
 	return S_OK;
 }
 

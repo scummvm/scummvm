@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	scriptables/SXMemBuffer.o \
 	scriptables/SXStore.o \
 	scriptables/SXString.o \
+	graphics/transparentSurface.o \
 	AdActor.o \
 	AdActorDir.o \
 	AdEntity.o \
