@@ -20,27 +20,52 @@
  *
  */
 
-#include "dreamweb/dreamweb.h"
-
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
-
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/file.h"
+
+#include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
-bool DreamWebEngine::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
+DreamWebSound::DreamWebSound(DreamWebEngine *vm) : _vm(vm) {
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+
+	_channel0 = 0;
+	_channel1 = 0;
+
+	_currentSample = 0xff;
+	_channel0Playing = 0;
+	_channel0Repeat = 0;
+	_channel1Playing = 255;
+
+	_volume = 0;
+	_volumeTo = 0;
+	_volumeDirection = 0;
+	_volumeCount = 0;
+}
+
+DreamWebSound::~DreamWebSound() {
+}
+
+bool DreamWebSound::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 	cancelCh1();
 
 	Common::String name = Common::String::format("%c%02d%c%04d.RAW", type1, idx1, type2, idx2);
-	//debug("name = %s", name.c_str());
-	bool result = loadSpeech(name);
-
-	_speechLoaded = result;
-	return result;
+	debug(2, "loadSpeech() name:%s", name.c_str());
+	return loadSpeech(name);
 }
 
-void DreamWebEngine::volumeAdjust() {
+void DreamWebSound::volumeChange(uint8 value, int8 direction) {
+	_volumeTo = value;
+	_volumeDirection = direction;
+}
+
+void DreamWebSound::volumeAdjust() {
 	if (_volumeDirection == 0)
 		return;
 	if (_volume != _volumeTo) {
@@ -53,34 +78,33 @@ void DreamWebEngine::volumeAdjust() {
 	}
 }
 
-void DreamWebEngine::playChannel0(uint8 index, uint8 repeat) {
+void DreamWebSound::playChannel0(uint8 index, uint8 repeat) {
 	debug(1, "playChannel0(index:%d, repeat:%d)", index, repeat);
 	_channel0Playing = index;
 	_channel0Repeat = repeat;
 }
 
-void DreamWebEngine::playChannel1(uint8 index) {
+void DreamWebSound::playChannel1(uint8 index) {
 	if (_channel1Playing == 7)
 		return;
 
 	_channel1Playing = index;
 }
 
-void DreamWebEngine::cancelCh0() {
+void DreamWebSound::cancelCh0() {
 	debug(1, "cancelCh0()");
 	_channel0Playing = 255;
 	_channel0Repeat = 0;
 	stopSound(0);
 }
 
-void DreamWebEngine::cancelCh1() {
+void DreamWebSound::cancelCh1() {
 	_channel1Playing = 255;
 	stopSound(1);
 }
 
-void DreamWebEngine::loadRoomsSample() {
-	debug(1, "loadRoomsSample() _roomsSample:%d", _roomsSample);
-	uint8 sample = _roomsSample;
+void DreamWebSound::loadRoomsSample(uint8 sample) {
+	debug(1, "loadRoomsSample(sample:%d)", sample);
 
 	if (sample == 255 || _currentSample == sample)
 		return; // loaded already
@@ -98,7 +122,7 @@ void DreamWebEngine::loadRoomsSample() {
 	loadSounds(1, sampleSuffix.c_str());
 }
 
-void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
+void DreamWebSound::playSound(uint8 channel, uint8 id, uint8 loops) {
 	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
 
 	int bank = 0;
@@ -149,27 +173,27 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	} else
 		stream = raw;
 
-	if (_mixer->isSoundHandleActive(_channelHandle[channel]))
-		_mixer->stopHandle(_channelHandle[channel]);
-	_mixer->playStream(type, &_channelHandle[channel], stream);
+	if (_vm->_mixer->isSoundHandleActive(_channelHandle[channel]))
+		_vm->_mixer->stopHandle(_channelHandle[channel]);
+	_vm->_mixer->playStream(type, &_channelHandle[channel], stream);
 }
 
-void DreamWebEngine::stopSound(uint8 channel) {
+void DreamWebSound::stopSound(uint8 channel) {
 	debug(1, "stopSound(%u)", channel);
 	assert(channel == 0 || channel == 1);
-	_mixer->stopHandle(_channelHandle[channel]);
+	_vm->_mixer->stopHandle(_channelHandle[channel]);
 	if (channel == 0)
 		_channel0 = 0;
 	else
 		_channel1 = 0;
 }
 
-bool DreamWebEngine::loadSpeech(const Common::String &filename) {
-	if (!hasSpeech())
+bool DreamWebSound::loadSpeech(const Common::String &filename) {
+	if (!_vm->hasSpeech())
 		return false;
 
 	Common::File file;
-	if (!file.open(_speechDirName + "/" + filename))
+	if (!file.open(_vm->getSpeechDirName() + "/" + filename))
 		return false;
 
 	debug(1, "loadSpeech(%s)", filename.c_str());
@@ -181,13 +205,13 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 	return true;
 }
 
-void DreamWebEngine::soundHandler() {
+void DreamWebSound::soundHandler() {
 	static uint8 volumeOld = 0, channel0Old = 0, channel0PlayingOld = 0;
 	if (_volume != volumeOld || _channel0 != channel0Old || _channel0Playing != channel0PlayingOld)
 		debug(1, "soundHandler() _volume: %d _channel0: %d _channel0Playing: %d", _volume, _channel0, _channel0Playing);
 	volumeOld = _volume, channel0Old = _channel0, channel0PlayingOld = _channel0Playing;
 
-	_subtitles = ConfMan.getBool("subtitles");
+	_vm->_subtitles = ConfMan.getBool("subtitles");
 	volumeAdjust();
 
 	uint volume = _volume;
@@ -204,7 +228,7 @@ void DreamWebEngine::soundHandler() {
 	if (volume >= 8)
 		volume = 7;
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
-	_mixer->setChannelVolume(_channelHandle[0], volume);
+	_vm->_mixer->setChannelVolume(_channelHandle[0], volume);
 
 	uint8 ch0 = _channel0Playing;
 	if (ch0 == 255)
@@ -226,20 +250,20 @@ void DreamWebEngine::soundHandler() {
 			playSound(1, ch1, 1);
 		}
 	}
-	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
+	if (!_vm->_mixer->isSoundHandleActive(_channelHandle[0])) {
 		if (_channel0Playing != 255 && _channel0 != 0)
 			debug(1, "!_mixer->isSoundHandleActive _channelHandle[0] _channel0Playing:%d _channel0:%d", _channel0Playing, _channel0);
 		_channel0Playing = 255;
 		_channel0 = 0;
 	}
-	if (!_mixer->isSoundHandleActive(_channelHandle[1])) {
+	if (!_vm->_mixer->isSoundHandleActive(_channelHandle[1])) {
 		_channel1Playing = 255;
 		_channel1 = 0;
 	}
 }
 
-void DreamWebEngine::loadSounds(uint bank, const Common::String &suffix) {
-	Common::String filename = getDatafilePrefix() + suffix;
+void DreamWebSound::loadSounds(uint bank, const Common::String &suffix) {
+	Common::String filename = _vm->getDatafilePrefix() + suffix;
 	debug(1, "loadSounds(%u, %s)", bank, filename.c_str());
 	Common::File file;
 	if (!file.open(filename)) {

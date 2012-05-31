@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -97,7 +98,7 @@ void DreamWebEngine::useMon() {
 	_textFile3.clear();
 
 	_getBack = 1;
-	playChannel1(26);
+	_sound->playChannel1(26);
 	_manIsOffScreen = 0;
 	restoreAll();
 	redrawMainScrn();
@@ -180,7 +181,7 @@ void DreamWebEngine::monitorLogo() {
 		printLogo();
 		//fadeUpMon(); // FIXME: Commented out in ASM
 		printLogo();
-		playChannel1(26);
+		_sound->playChannel1(26);
 		randomAccess(20);
 	} else {
 		printLogo();
@@ -288,7 +289,7 @@ void DreamWebEngine::scrollMonitor() {
 	printLogo();
 	printUnderMonitor();
 	workToScreen();
-	playChannel1(25);
+	_sound->playChannel1(25);
 }
 
 void DreamWebEngine::showCurrentFile() {

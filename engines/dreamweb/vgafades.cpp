@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -123,7 +124,7 @@ void DreamWebEngine::fadeUpMonFirst() {
 	_colourPos = 0;
 	_numToFade = 128;
 	hangOn(64);
-	playChannel1(26);
+	_sound->playChannel1(26);
 	hangOn(64);
 }
 

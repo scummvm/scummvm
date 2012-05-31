@@ -20,7 +20,9 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+
 #include "engines/metaengine.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
@@ -181,7 +183,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 	_saveGraphics.clear();
 
 	startLoading(g_madeUpRoomDat);
-	loadRoomsSample();
+	_sound->loadRoomsSample(_roomsSample);
 	_roomLoaded = 1;
 	_newLocation = 255;
 	clearSprites();

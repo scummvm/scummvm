@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -149,7 +150,7 @@ void DreamWebEngine::madmanText() {
 	if (hasSpeech()) {
 		if (_speechCount > 15)
 			return;
-		if (_channel1Playing != 255)
+		if (_sound->isChannel1Playing())
 			return;
 		origCount = _speechCount;
 		++_speechCount;
@@ -250,7 +251,7 @@ bool DreamWebEngine::checkSpeed(ReelRoutine &routine) {
 
 void DreamWebEngine::sparkyDrip(ReelRoutine &routine) {
 	if (checkSpeed(routine))
-		playChannel0(14, 0);
+		_sound->playChannel0(14, 0);
 }
 
 void DreamWebEngine::genericPerson(ReelRoutine &routine) {
@@ -430,7 +431,7 @@ void DreamWebEngine::drinker(ReelRoutine &routine) {
 void DreamWebEngine::alleyBarkSound(ReelRoutine &routine) {
 	uint16 prevReelPointer = routine.reelPointer() - 1;
 	if (prevReelPointer == 0) {
-		playChannel1(14);
+		_sound->playChannel1(14);
 		routine.setReelPointer(1000);
 	} else {
 		routine.setReelPointer(prevReelPointer);
@@ -523,7 +524,7 @@ void DreamWebEngine::gates(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 116)
-			playChannel1(17);
+			_sound->playChannel1(17);
 		if (nextReelPointer >= 110)
 			routine.period = 2;
 		if (nextReelPointer == 120) {
@@ -579,12 +580,12 @@ void DreamWebEngine::carParkDrip(ReelRoutine &routine) {
 	if (!checkSpeed(routine))
 		return; // cantdrip2
 
-	playChannel1(14);
+	_sound->playChannel1(14);
 }
 
 void DreamWebEngine::foghornSound(ReelRoutine &routine) {
 	if (randomNumber() == 198)
-		playChannel1(13);
+		_sound->playChannel1(13);
 }
 
 void DreamWebEngine::train(ReelRoutine &routine) {
@@ -1027,8 +1028,7 @@ void DreamWebEngine::endGameSeq(ReelRoutine &routine) {
 			fadeScreenDownHalf();
 		} else if (nextReelPointer == 324) {
 			fadeScreenDowns();
-			_volumeTo = 7;
-			_volumeDirection = 1;
+			_sound->volumeChange(7, 1);
 		}
 
 		if (nextReelPointer == 340)

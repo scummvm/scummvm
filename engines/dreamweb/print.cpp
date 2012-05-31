@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -246,10 +247,9 @@ const char *DreamWebEngine::monPrint(const char *string) {
 }
 
 void DreamWebEngine::rollEndCreditsGameWon() {
-	playChannel0(16, 255);
-	_volume = 7;
-	_volumeTo = 0;
-	_volumeDirection = -1;
+	_sound->playChannel0(16, 255);
+	_sound->volumeSet(7);
+	_sound->volumeChange(0, -1);
 
 	multiGet(_mapStore, 75, 20, 160, 160);
 
