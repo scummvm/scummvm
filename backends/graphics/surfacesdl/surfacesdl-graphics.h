@@ -295,6 +295,7 @@ protected:
 	ScalerPlugin *_normalPlugin;
 	int _scalerIndex;
 	uint _maxExtraPixels;
+	uint _extraPixels;
 
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
