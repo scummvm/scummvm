@@ -2292,6 +2292,7 @@ void LilliputScript::OC_DisableCharacter() {
 
 void LilliputScript::OC_saveAndQuit() {
 	warning("OC_saveAndQuit");
+    _vm->_shouldQuit = true;
 }
 
 void LilliputScript::OC_sub17B93() {
@@ -2321,6 +2322,7 @@ void LilliputScript::OC_resetByte1714E() {
 
 void LilliputScript::OC_deleteSavegameAndQuit() {
 	warning("OC_deleteSavegameAndQuit");
+    _vm->_shouldQuit = true;
 }
 
 void LilliputScript::OC_incByte16F04() {
