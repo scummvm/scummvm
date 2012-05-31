@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/advancedDetector.h"
 #include "engines/wintermute/wintermute.h"
 
 #include "common/config-manager.h"
@@ -28,24 +29,54 @@
 
 #include "engines/metaengine.h"
 
-static const PlainGameDescriptor WinterMute_setting[] = {
-	{ "wintermute", "WinterMute - Unspecified game" },
+namespace WinterMute {
+
+static const ADGameDescription gameDescriptions[] = {
+	{
+		"wintermute",
+		"Dirty Split",
+		AD_ENTRY1s("data.dcp", "8f3dae199361ece0f59fb20cfff6eed3", 88577621),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
+	{
+		"wintermute",
+		"Five Magical Amulets",
+		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
+	AD_TABLE_END_MARKER
+};
+
+}
+
+static const PlainGameDescriptor wintermuteGames[] = {
+	{ "wintermute", "Wintermute - Unspecified game" },
 	{ 0, 0 }
 };
 
-class WinterMuteMetaEngine : public MetaEngine {
+class WinterMuteMetaEngine : public AdvancedMetaEngine {
 public:
+	WinterMuteMetaEngine() : AdvancedMetaEngine(WinterMute::gameDescriptions, sizeof(ADGameDescription), wintermuteGames) {
+	}
 	virtual const char *getName() const {
-		return "WinterMute Lite";
+		return "Wintermute";
 	}
 
 	virtual const char *getOriginalCopyright() const {
 		return "Copyright (c) 2011 Jan Nedoma";
 	}
 
-	virtual GameList getSupportedGames() const {
+/*	virtual GameList getSupportedGames() const {
 		GameList games;
-		const PlainGameDescriptor *g = WinterMute_setting;
+		const PlainGameDescriptor *g = wintermuteGames;
 		while (g->gameid) {
 			games.push_back(*g);
 			g++;
@@ -55,16 +86,16 @@ public:
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {
-		const PlainGameDescriptor *g = WinterMute_setting;
+		const PlainGameDescriptor *g = wintermuteGames;
 		while (g->gameid) {
 			if (0 == scumm_stricmp(gameid, g->gameid))
 				break;
 			g++;
 		}
 		return GameDescriptor(g->gameid, g->description);
-	}
+	}*/
 
-	virtual GameList detectGames(const Common::FSList &fslist) const {
+/*	virtual GameList detectGames(const Common::FSList &fslist) const {
 		GameList detectedGames;
 
 		// Iterate over all files in the given directory
@@ -80,9 +111,8 @@ public:
 			}
 		}
 		return detectedGames;
-	}
-
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+	}*/
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		assert(syst);
 		assert(engine);
 
@@ -101,12 +131,12 @@ public:
 			if (detectedGames[i].gameid() == gameid) {
 				// At this point you may want to perform additional sanity checks.
 				*engine = new WinterMute::WinterMuteEngine(syst);
-				return Common::kNoError;
+				return true;
 			}
 		}
 
 		// Failed to find any game data
-		return Common::kNoGameDataFoundError;
+		return false;
 	}
 };
 
