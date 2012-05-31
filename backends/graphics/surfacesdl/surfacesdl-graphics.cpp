@@ -410,6 +410,17 @@ Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedForma
 	return _supportedFormats;
 }
 
+static void convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) {
+	*out = Graphics::PixelFormat(in->BytesPerPixel,
+		8 - in->Rloss, 8 - in->Gloss,
+		8 - in->Bloss, 8 - in->Aloss,
+		in->Rshift, in->Gshift,
+		in->Bshift, in->Ashift);
+	// Workaround to SDL not providing an accurate Aloss value on Mac OS X.
+	if (in->Amask == 0)
+		out->aLoss = 8;
+}
+
 void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 
 	// Clear old list
@@ -456,15 +467,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	if (_hwscreen) {
 		// Get our currently set hardware format
-		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel,
-			8 - _hwscreen->format->Rloss, 8 - _hwscreen->format->Gloss,
-			8 - _hwscreen->format->Bloss, 8 - _hwscreen->format->Aloss,
-			_hwscreen->format->Rshift, _hwscreen->format->Gshift,
-			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
-
-		// Workaround to MacOSX SDL not providing an accurate Aloss value.
-		if (_hwscreen->format->Amask == 0)
-			format.aLoss = 8;
+		convertSDLPixelFormat(_hwscreen->format, &format);
 
 		// Push it first, as the prefered format.
 		_supportedFormats.push_back(format);
@@ -555,11 +558,8 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	if (ScalerMan.getPlugins()[_scalerIndex] != _scalerPlugin) {
 		(*_scalerPlugin)->deinitialize();
 		_scalerPlugin = ScalerMan.getPlugins()[_scalerIndex];
-		Graphics::PixelFormat format(_tmpscreen->format->BytesPerPixel,
-	                                 8 - _tmpscreen->format->Rloss, 8 - _tmpscreen->format->Gloss,
-	                                 8 - _tmpscreen->format->Bloss, 8 - _tmpscreen->format->Aloss,
-	                                 _tmpscreen->format->Rshift, _tmpscreen->format->Gshift,
-	                                 _tmpscreen->format->Bshift, _tmpscreen->format->Ashift);
+		Graphics::PixelFormat format;
+		convertSDLPixelFormat(_hwscreen->format, &format);
 		(*_scalerPlugin)->initialize(format);
 		_extraPixels = (*_scalerPlugin)->extraPixels();
 	}
