@@ -27,7 +27,7 @@
  */
 
 #include "AdInventory.h"
-#include "ADGame.h"
+#include "AdGame.h"
 #include "AdItem.h"
 #include "PlatformSDL.h"
 #include "common/str.h"

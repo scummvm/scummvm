@@ -70,7 +70,8 @@ int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 				char *IniName = CBUtils::GetFilename(param);
 
 				// switch to ini's dir
-				chdir(IniDir);
+				warning("TODO: Place ini-files somewhere");
+//				chdir(IniDir);
 
 				// set ini name
 				sprintf(param, "./%s", IniName);

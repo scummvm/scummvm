@@ -31,7 +31,7 @@
 #include "common/fs.h"
 
 #include "engines/util.h"
-#include "engines/wintermute/ADGame.h"
+#include "engines/wintermute/AdGame.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/PlatformSDL.h"
 
