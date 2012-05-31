@@ -56,7 +56,7 @@ void DreamWebEngine::monkSpeaking() {
 		for (int i = 40; i < 48; i++) {
 			_speechLoaded = _sound->loadSpeech('T', 83, 'T', i);
 
-			_sound->playChannel1(50 + 12);
+			_sound->playChannel1(62);
 
 			do {
 				waitForVSync();

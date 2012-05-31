@@ -102,7 +102,7 @@ void DreamWebEngine::startTalk() {
 		_speechLoaded = _sound->loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
 		if (_speechLoaded) {
 			_sound->volumeChange(6, 1);
-			_sound->playChannel1(50 + 12);
+			_sound->playChannel1(62);
 		}
 	}
 }

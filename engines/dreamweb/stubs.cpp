@@ -969,7 +969,7 @@ void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, 
 	if (hasSpeech() && voiceIndex != 0) {
 		_speechLoaded = _sound->loadSpeech('T', voiceIndex, 'T', textIndex);
 		if (_speechLoaded)
-			_sound->playChannel1(50+12);
+			_sound->playChannel1(62);
 
 		if (_speechLoaded && !_subtitles)
 			return;
