@@ -37,6 +37,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "engines/wintermute/graphics/transparentSurface.h"
+#include "engines/wintermute/graphics/tga.h"
 #include "common/stream.h"
 #include "BFileManager.h"
 #include "PlatformSDL.h"
@@ -76,7 +77,10 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 	if (strFileName.hasSuffix(".png")) {
 		imgDecoder = new Graphics::PNGDecoder();
 	} else if (strFileName.hasSuffix(".bmp")) {
+		warning("Loaded BMP WITH FILENAME!!!! %s", Filename);
 		imgDecoder = new Graphics::BitmapDecoder();
+	} else if (strFileName.hasSuffix(".tga")) {
+		imgDecoder = new WinterMute::TGA();
 	} else {
 		error("CBSurfaceSDL::Create : Unsupported fileformat %s", Filename);
 	}

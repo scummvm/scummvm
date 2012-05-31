@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	scriptables/SXStore.o \
 	scriptables/SXString.o \
 	graphics/transparentSurface.o \
+	graphics/tga.o \
 	AdActor.o \
 	AdActorDir.o \
 	AdEntity.o \
