@@ -250,7 +250,7 @@ void ScummEngine::stopScript(int script) {
 		if (vm.nest[i].number == script &&
 				(vm.nest[i].where == WIO_GLOBAL || vm.nest[i].where == WIO_LOCAL)) {
 			nukeArrays(vm.nest[i].slot);
-			vm.nest[i].number = 0xFF;
+			vm.nest[i].number = 0;
 			vm.nest[i].slot = 0xFF;
 			vm.nest[i].where = 0xFF;
 		}
@@ -284,7 +284,7 @@ void ScummEngine::stopObjectScript(int script) {
 		if (vm.nest[i].number == script &&
 				(vm.nest[i].where == WIO_ROOM || vm.nest[i].where == WIO_INVENTORY || vm.nest[i].where == WIO_FLOBJECT)) {
 			nukeArrays(vm.nest[i].slot);
-			vm.nest[i].number = 0xFF;
+			vm.nest[i].number = 0;
 			vm.nest[i].slot = 0xFF;
 			vm.nest[i].where = 0xFF;
 		}
