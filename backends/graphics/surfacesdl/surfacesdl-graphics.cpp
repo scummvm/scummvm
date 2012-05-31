@@ -642,6 +642,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) {
 	                                 _tmpscreen->format->Rshift, _tmpscreen->format->Gshift,
 	                                 _tmpscreen->format->Bshift, _tmpscreen->format->Ashift);
 		(*_scalerPlugin)->initialize(format);
+		_extraPixels = (*_scalerPlugin)->extraPixels();
 	}
 
 	newScaleFactor = (*_scalerPlugin)->getFactor();
@@ -1598,7 +1599,7 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 	// that "smear" the screen, e.g. 2xSAI
 	if (!realCoordinates) {
 		// Aspect ratio correction requires this to be at least one
-		int adjust = MAX((*_scalerPlugin)->extraPixels(), (uint)1);
+		int adjust = MAX(_extraPixels, (uint)1);
 		x -= adjust;
 		y -= adjust;
 		w += adjust * 2;
