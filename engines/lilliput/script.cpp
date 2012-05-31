@@ -2059,7 +2059,7 @@ byte LilliputScript::OC_checkKeyPressed() {
 
 	int8 index = (_currScript->readUint16LE() & 0xFF) - 0x30;
 	
-	if (specialKeys[index] == _vm->_lastKeyPressed)
+	if (specialKeys[index] == _vm->_lastKeyPressed.keycode)
 		return 1;
 
 	return 0;
@@ -2292,7 +2292,7 @@ void LilliputScript::OC_DisableCharacter() {
 
 void LilliputScript::OC_saveAndQuit() {
 	warning("OC_saveAndQuit");
-    _vm->_shouldQuit = true;
+	_vm->_shouldQuit = true;
 }
 
 void LilliputScript::OC_sub17B93() {
@@ -2322,7 +2322,7 @@ void LilliputScript::OC_resetByte1714E() {
 
 void LilliputScript::OC_deleteSavegameAndQuit() {
 	warning("OC_deleteSavegameAndQuit");
-    _vm->_shouldQuit = true;
+	_vm->_shouldQuit = true;
 }
 
 void LilliputScript::OC_incByte16F04() {
@@ -3156,11 +3156,12 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_keyboard_oldIndex = 0;
 	//
 	_vm->_mouseButton = 0;
-	_vm->_lastKeyPressed = 0;
+//	_vm->_lastKeyPressed = 0;
 
 	while (!_vm->_shouldQuit) {
 		_vm->displaySmallAnims();
 		_vm->update();
+		_vm->pollEvent();
 		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
 			_vm->_lastKeyPressed = _vm->_keyboard_getch();
 			_vm->_keyboard_getch();

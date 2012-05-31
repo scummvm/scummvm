@@ -2332,7 +2332,18 @@ void LilliputEngine::pollEvent() {
 		case Common::EVENT_QUIT:
 			_shouldQuit = true;
 			break;
-			// TODO: handle keyboard
+		case Common::EVENT_KEYDOWN: {
+			if (event.kbd == _lastKeyPressed)
+				break;
+
+			_lastKeyPressed = event.kbd;
+			int nextIndex = (_keyboard_nextIndex + 1) % 8;
+			if (_keyboard_oldIndex != nextIndex) {
+				_keyboard_buffer[_keyboard_nextIndex] = event.kbd;
+				_keyboard_nextIndex = nextIndex;
+			}
+			}
+			break;
 		default:
 			break;
 		}
@@ -2808,9 +2819,15 @@ Common::String LilliputEngine::getSavegameFilename(int slot) {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
 
-byte LilliputEngine::_keyboard_getch() {
+Common::KeyState LilliputEngine::_keyboard_getch() {
 	warning("getch()");
-	return ' ';
+	while(_keyboard_nextIndex == _keyboard_oldIndex)
+		pollEvent();
+
+	Common::KeyState tmpEvent = _keyboard_buffer[_keyboard_oldIndex];
+	_keyboard_oldIndex = (_keyboard_oldIndex + 1) % 8;
+
+	return tmpEvent;
 }
 
 } // End of namespace Lilliput
