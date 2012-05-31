@@ -503,6 +503,17 @@ static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 }
 #endif
 
+static void convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) {
+	*out = Graphics::PixelFormat(in->BytesPerPixel,
+		8 - in->Rloss, 8 - in->Gloss,
+		8 - in->Bloss, 8 - in->Aloss,
+		in->Rshift, in->Gshift,
+		in->Bshift, in->Ashift);
+	// Workaround to SDL not providing an accurate Aloss value on Mac OS X.
+	if (in->Amask == 0)
+		out->aLoss = 8;
+}
+
 void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	_supportedFormats.clear();
 
@@ -580,15 +591,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 
 	if (_hwScreen) {
 		// Get our currently set hardware format
-		Graphics::PixelFormat hwFormat(_hwScreen->format->BytesPerPixel,
-			8 - _hwScreen->format->Rloss, 8 - _hwScreen->format->Gloss,
-			8 - _hwScreen->format->Bloss, 8 - _hwScreen->format->Aloss,
-			_hwScreen->format->Rshift, _hwScreen->format->Gshift,
-			_hwScreen->format->Bshift, _hwScreen->format->Ashift);
-
-		// Workaround to SDL not providing an accurate Aloss value on Mac OS X.
-		if (_hwScreen->format->Amask == 0)
-			hwFormat.aLoss = 8;
+		convertSDLPixelFormat(_hwscreen->format, &format);
 
 		_supportedFormats.push_back(hwFormat);
 
@@ -673,11 +676,8 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	if (ScalerMan.getPlugins()[_scalerIndex] != _scalerPlugin) {
 		(*_scalerPlugin)->deinitialize();
 		_scalerPlugin = ScalerMan.getPlugins()[_scalerIndex];
-		Graphics::PixelFormat format(_tmpscreen->format->BytesPerPixel,
-	                                 8 - _tmpscreen->format->Rloss, 8 - _tmpscreen->format->Gloss,
-	                                 8 - _tmpscreen->format->Bloss, 8 - _tmpscreen->format->Aloss,
-	                                 _tmpscreen->format->Rshift, _tmpscreen->format->Gshift,
-	                                 _tmpscreen->format->Bshift, _tmpscreen->format->Ashift);
+		Graphics::PixelFormat format;
+		convertSDLPixelFormat(_hwscreen->format, &format);
 		(*_scalerPlugin)->initialize(format);
 		_extraPixels = (*_scalerPlugin)->extraPixels();
 	}
