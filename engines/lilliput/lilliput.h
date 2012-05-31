@@ -30,6 +30,7 @@
 
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/events.h"
 
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -104,9 +105,10 @@ public:
 	byte _animationTick;
 	Common::Point _nextDisplayCharacterPos;
 	byte _sound_byte16F06;
-	byte _lastKeyPressed;
+	Common::KeyState _lastKeyPressed;
 	byte _keyboard_nextIndex;
 	byte _keyboard_oldIndex;
+	Common::KeyState _keyboard_buffer[8];
 	byte _byte12A05;
 	byte _byte12A06;
 	byte _byte12A07;
@@ -359,7 +361,7 @@ public:
 	byte *getCharacterVariablesPtr(int16 index);
 
 	// Temporary stubs
-	byte _keyboard_getch();
+	Common::KeyState _keyboard_getch();
 
 protected:
 	Common::EventManager *_eventMan;
