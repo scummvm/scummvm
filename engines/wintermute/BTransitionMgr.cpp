@@ -114,7 +114,8 @@ HRESULT CBTransitionMgr::Update() {
 		if (time > FADE_DURATION) _state = TRANS_MGR_READY;
 	}
 	break;
-
+	default:
+		error("CBTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");	
 	}
 
 	if (IsReady()) {

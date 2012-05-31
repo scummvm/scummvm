@@ -588,7 +588,7 @@ HRESULT CUIButton::Display(int OffsetX, int OffsetY) {
 	_hover = (!_disable && Game->_activeObject == this && (Game->_interactive || Game->_state == GAME_SEMI_FROZEN));
 
 	if ((_press && _hover && !Game->_mouseLeftDown) ||
-	        _oneTimePress && CBPlatform::GetTime() - _oneTimePressTime >= 100) Press();
+	        (_oneTimePress && CBPlatform::GetTime() - _oneTimePressTime >= 100)) Press();
 
 
 	if (_disable) {

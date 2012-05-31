@@ -944,8 +944,8 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 	Game->_renderer->Setup2D();
 
 	// for each layer
-	int MainOffsetX = 0;
-	int MainOffsetY = 0;
+	/* int MainOffsetX = 0; */
+	/* int MainOffsetY = 0; */
 
 	for (j = 0; j < _layers.GetSize(); j++) {
 		if (!_layers[j]->_active) continue;

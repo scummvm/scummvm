@@ -577,6 +577,8 @@ HRESULT CAdEntity::Update() {
 		}
 	}
 	break;
+	default:
+		error("AdEntity::Update - Unhandled enum");
 	}
 
 

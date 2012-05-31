@@ -342,6 +342,8 @@ HRESULT CUIText::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	case VAL_CENTER:
 		Buffer->PutTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
 		break;
+	default:
+		error("UIText::SaveAsText - Unhandled enum value: NUM_VERTICAL_ALIGN");
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");

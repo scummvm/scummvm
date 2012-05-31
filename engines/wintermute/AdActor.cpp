@@ -742,6 +742,8 @@ HRESULT CAdActor::Update() {
 			}
 		}
 		break;
+	default:
+		error("AdActor::Update - Unhandled enum");
 	}
 
 

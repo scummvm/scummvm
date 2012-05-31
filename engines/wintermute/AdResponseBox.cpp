@@ -502,6 +502,8 @@ HRESULT CAdResponseBox::Listen(CBScriptHolder *param1, uint32 param2) {
 			ClearResponses();
 		} else return CBObject::Listen(param1, param2);
 		break;
+		default:
+		error("AdResponseBox::Listen - Unhandled enum");
 	}
 
 	return S_OK;

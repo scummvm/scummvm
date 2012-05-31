@@ -777,7 +777,7 @@ HRESULT CScEngine::LoadBreakpoints() {
 
 	int Count = Game->_registry->ReadInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= Count; i++) {
-		uint32 BufSize = 512;
+	/*	uint32 BufSize = 512; */
 		sprintf(Key, "Breakpoint%d", i);
 		AnsiString breakpoint = Game->_registry->ReadString("Debug", Key, "");
 

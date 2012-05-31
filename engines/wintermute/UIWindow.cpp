@@ -609,6 +609,8 @@ HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	case TAL_CENTER:
 		Buffer->PutTextIndent(Indent + 2, "TITLE_ALIGN=\"%s\"\n", "center");
 		break;
+	default:
+		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
 	if (!CBPlatform::IsRectEmpty(&_titleRect)) {

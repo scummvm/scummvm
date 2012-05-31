@@ -152,7 +152,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		int bShiftTarget = target.format.bShift;
 		int gShiftTarget = target.format.gShift;
 		int rShiftTarget = target.format.rShift;
-		int aShiftTarget = target.format.aShift;
 
 		for (int i = 0; i < img->h; i++) {
 			out = outo;
