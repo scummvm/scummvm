@@ -22,7 +22,15 @@
 #include "graphics/scaler/normal.h"
 #include "graphics/scaler.h"
 
-void NormalPlugin::initialize(Graphics::PixelFormat format) {}
+NormalPlugin::NormalPlugin() {
+	_factor = 1;
+	_factors.push_back(1);
+	_factors.push_back(2);
+	_factors.push_back(3);
+}
+
+void NormalPlugin::initialize(Graphics::PixelFormat format) {
+}
 
 void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {

@@ -26,7 +26,7 @@
 
 class NormalPlugin : public ScalerPluginObject {
 public:
-	NormalPlugin() { _factor = 1;}
+	NormalPlugin();
 	virtual void initialize(Graphics::PixelFormat format);
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
