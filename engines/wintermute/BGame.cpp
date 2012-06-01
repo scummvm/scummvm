@@ -1373,9 +1373,43 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// PlayVideo
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PlayVideo") == 0) {
-		Stack->CorrectParams(0);
+/*		Stack->CorrectParams(0);
 		Stack->PushBool(false);
 
+		return S_OK;
+		// TODO: ADDVIDEO
+		*/
+		
+		Game->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
+		
+		Stack->CorrectParams(6);
+		const char* Filename = Stack->Pop()->GetString();
+		warning("PlayVideo: %s - not implemented yet", Filename);
+		CScValue* valType = Stack->Pop();
+		int Type;
+		if(valType->IsNULL()) Type = (int)VID_PLAY_STRETCH;
+		else Type = valType->GetInt();
+		
+		int X = Stack->Pop()->GetInt();
+		int Y = Stack->Pop()->GetInt();
+		bool FreezeMusic = Stack->Pop()->GetBool(true);
+		
+		CScValue* valSub = Stack->Pop();
+		const char* SubtitleFile = valSub->IsNULL()?NULL:valSub->GetString();
+		
+		if(Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
+		
+		/*if(SUCCEEDED(Game->m_VideoPlayer->Initialize(Filename, SubtitleFile)))
+		{
+			if(SUCCEEDED(Game->m_VideoPlayer->Play((TVideoPlayback)Type, X, Y, FreezeMusic)))
+			{
+				Stack->PushBool(true);
+				Script->Sleep(0);
+			}
+			else Stack->PushBool(false);
+		}
+		else */Stack->PushBool(false);
+		
 		return S_OK;
 	}
 
@@ -1383,9 +1417,45 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PlayTheora") == 0) {
-		Stack->CorrectParams(0);
+	/*	Stack->CorrectParams(0);
 		Stack->PushBool(false);
 
+		return S_OK;
+		// TODO: ADDVIDEO
+		*/
+		Stack->CorrectParams(7);
+		const char* Filename = Stack->Pop()->GetString();
+		warning("PlayTheora: %s - not implemented yet", Filename);
+		CScValue* valType = Stack->Pop();
+		int Type;
+		if(valType->IsNULL()) Type = (int)VID_PLAY_STRETCH;
+		else Type = valType->GetInt();
+		
+		int X = Stack->Pop()->GetInt();
+		int Y = Stack->Pop()->GetInt();
+		bool FreezeMusic = Stack->Pop()->GetBool(true);
+		bool DropFrames = Stack->Pop()->GetBool(true);
+		
+		CScValue* valSub = Stack->Pop();
+		const char* SubtitleFile = valSub->IsNULL()?NULL:valSub->GetString();
+		
+		
+		if(Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
+		
+		/*SAFE_DELETE(m_TheoraPlayer);
+		m_TheoraPlayer = new CVidTheoraPlayer(this);
+		if(m_TheoraPlayer && SUCCEEDED(m_TheoraPlayer->Initialize(Filename, SubtitleFile)))
+		{
+			m_TheoraPlayer->m_DontDropFrames = !DropFrames;
+			if(SUCCEEDED(m_TheoraPlayer->Play((TVideoPlayback)Type, X, Y, true, FreezeMusic)))
+			{
+				Stack->PushBool(true);
+				Script->Sleep(0);
+			}
+			else Stack->PushBool(false);
+		}
+		else */Stack->PushBool(false);
+		
 		return S_OK;
 	}
 

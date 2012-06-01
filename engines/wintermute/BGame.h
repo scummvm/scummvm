@@ -263,7 +263,8 @@ public:
 	HRESULT Unfreeze();
 	HRESULT Freeze(bool IncludingMusic = true);
 	HRESULT FocusWindow(CUIWindow *Window);
-
+/*	CVidPlayer* _videoPlayer;
+	CVidTheoraPlayer* _theoraPlayer;*/
 	bool _loadInProgress;
 	CUIWindow *_focusedWindow;
 	bool _editorForceScripts;

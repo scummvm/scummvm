@@ -92,6 +92,8 @@ MODULE_OBJS := \
 	crc.o \
 	detection.o \
 	FontGlyphCache.o \
+	graphics/transparentSurface.o \
+	graphics/tga.o \
 	MathUtil.o \
 	Matrix4.o \
 	PathUtil.o \
@@ -116,6 +118,8 @@ MODULE_OBJS := \
 	UIWindow.o \
 	utils.o \
 	Vector2.o \
+	VidPlayer.o \
+	VidTheoraPlayer.o \
 	wintermute.o
  
 MODULE_DIRS += \
