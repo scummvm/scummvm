@@ -999,7 +999,7 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 	debugC(2, kDebugEngineTBC, "checkMapClosing()");
 
 	forceReturnFl = false;
-	if (_displayMap)
+	if (!_displayMap)
 		return;
 
 	pollEvent();
@@ -2447,8 +2447,25 @@ void LilliputEngine::loadRules() {
 	Common::File f;
 	uint16 curWord;
 
-	if (!f.open("ERULES.PRG"))
-		error("Missing game file ERULES.PRG");
+	Common::String filename = "ERULES.PRG";
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+
+	switch (lang) {
+	case Common::FR_FRA:
+		filename = "FRULES.PRG";
+		break;
+	case Common::IT_ITA:
+		filename = "IRULES.PRG";
+		break;
+	case Common::DE_DEU:
+		filename = "GRULES.PRG";
+		break;
+	default:
+		warning("unsupported language, switching back to English");
+	}
+
+	if (!f.open(filename))
+		error("Missing game file %s", filename.c_str());
 
 	_word10800_ERULES = f.readUint16LE();
 
