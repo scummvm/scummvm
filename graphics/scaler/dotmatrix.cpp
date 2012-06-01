@@ -22,6 +22,12 @@
 #include "graphics/scaler/dotmatrix.h"
 #include "graphics/scaler.h"
 
+DotMatrixPlugin::DotMatrixPlugin() {
+	_factor = 1;
+	_factors.push_back(1);
+	_factors.push_back(2);
+}
+
 void DotMatrixPlugin::initialize(Graphics::PixelFormat format) {
 	lookup[0] = lookup[10] = format.RGBToColor(0, 63, 0);
 	lookup[1] = lookup[11] = format.RGBToColor(0, 0, 63);
