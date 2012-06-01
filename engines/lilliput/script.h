@@ -271,7 +271,7 @@ private:
 	void OC_sub18387();
 	void OC_setDebugFlag();
 	void OC_setByte14837();
-	void OC_sub183A2();
+	void OC_waitForEvent();
 	void OC_disableInterfaceHotspot();
 	void OC_loadFile_AERIAL_GFX();
 	void OC_sub17E22_speech1IfSoundOff();

@@ -124,7 +124,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_savedMousePosDivided = Common::Point(-1, -1);
 	_skipDisplayFlag1 = 1;
 	_skipDisplayFlag2 = 0;
-	_displayMap = 0;
+	_displayMap = false;
 	_debugFlag = 0;
 	_byte14837 = 0;
 
@@ -470,7 +470,7 @@ void LilliputEngine::restoreSurfaceSpeech() {
 void LilliputEngine::displayInterfaceHotspots() {
 	debugC(2, kDebugEngine, "displayInterfaceHotspots()");
 
-	if (_displayMap == 1)
+	if (_displayMap)
 		return;
 
 	restoreSurfaceUnderMousePointer();
@@ -635,7 +635,7 @@ void LilliputEngine::displayIsometricBlock(byte *buf, int var1, int posX, int po
 void LilliputEngine::displayGameArea() {
 	debugC(2, kDebugEngine, "displayGameArea()");
 
-	if (_displayMap == 1)
+	if (_displayMap)
 		return;
 
 	if (_mouseDisplayPos.x > 48)
@@ -797,7 +797,7 @@ void LilliputEngine::prepareGameArea() {
 void LilliputEngine::displayRefreshScreen() {
 	debugC(2, kDebugEngine, "displayRefreshScreen()");
 
-	if (_displayMap == 1) {
+	if (_displayMap) {
 		bool forceReturnFl = false;
 		checkMapClosing(forceReturnFl);
 		if (forceReturnFl)
@@ -999,19 +999,22 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 	debugC(2, kDebugEngineTBC, "checkMapClosing()");
 
 	forceReturnFl = false;
-	if (_displayMap != 1)
+	if (_displayMap)
 		return;
 
 	pollEvent();
-	warning("checkMapClosing- TODO: Check keyboard");
-
-	if ((_mouseButton & 1) == 0)
+	if (_keyboard_checkKeyboard()) {
+		_keyboard_getch();
 		return;
+	} else {
+		if ((_mouseButton & 1) == 0)
+			return;
 
-	_mouseButton = 0;
-	sub15F75();
+		_mouseButton = 0;
+		sub15F75();
+	}
 
-	_displayMap = 0;
+	_displayMap = false;
 	paletteFadeOut();
 	_word15AC2 = 0;
 	unselectInterfaceHotspots();
@@ -2828,6 +2831,14 @@ Common::KeyState LilliputEngine::_keyboard_getch() {
 	_keyboard_oldIndex = (_keyboard_oldIndex + 1) % 8;
 
 	return tmpEvent;
+}
+
+bool LilliputEngine::_keyboard_checkKeyboard() {
+	return (_keyboard_nextIndex != _keyboard_oldIndex);
+}
+
+void LilliputEngine::_keyboard_resetKeyboardBuffer() {
+	_keyboard_nextIndex = _keyboard_oldIndex = 0;
 }
 
 } // End of namespace Lilliput

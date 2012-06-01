@@ -118,7 +118,6 @@ public:
 	int8 _lastInterfaceHotspotIndex;
 	byte _lastInterfaceHotspotButton; // Unused: set by 2 functions, but never used elsewhere
 	byte _byte16F08;
-	byte _byte15EAD;
 	byte _debugFlag; // Mostly useless, as the associated functions are empty
 	byte _byte14837; // Unused byte, set by an opcode
 
@@ -135,7 +134,7 @@ public:
 
 	bool _saveFlag;
 	bool _int8installed;
-	byte _displayMap;
+	bool _displayMap;
 
 	int _word10800_ERULES;
 	byte _numCharacters;
@@ -362,6 +361,8 @@ public:
 
 	// Temporary stubs
 	Common::KeyState _keyboard_getch();
+	bool _keyboard_checkKeyboard();
+	void _keyboard_resetKeyboardBuffer();
 
 protected:
 	Common::EventManager *_eventMan;
