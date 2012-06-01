@@ -474,7 +474,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_setByte14837();
 		break;
 	case 0x4D:
-		OC_sub183A2();
+		OC_waitForEvent();
 		break;
 	case 0x4E:
 		OC_disableInterfaceHotspot();
@@ -686,7 +686,7 @@ static const OpCode opCodes2[] = {
 /* 0x4a */	{ "OC_sub18387", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x4b */	{ "OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4c */	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
-/* 0x4d */	{ "OC_sub183A2", 0, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x4d */	{ "OC_waitForEvent", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4e */	{ "OC_disableInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
 /* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x50 */	{ "OC_sub17E22_speech1IfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
@@ -1088,7 +1088,7 @@ void LilliputScript::checkSpeechAllowed(bool &forceReturnFl) {
 	debugC(1, kDebugScript, "checkSpeechAllowed()");
 
 	forceReturnFl = false;
-	if ((_vm->_displayMap != 1) && (_vm->_characterRelativePositionX[_vm->_currentScriptCharacter] != 0xFF))
+	if ((!_vm->_displayMap) && (_vm->_characterRelativePositionX[_vm->_currentScriptCharacter] != 0xFF))
 		return;
 
 	forceReturnFl = true;
@@ -3041,8 +3041,23 @@ void LilliputScript::OC_setByte14837() {
 	_vm->_byte14837 = 1;
 }
 
-void LilliputScript::OC_sub183A2() {
-	warning("OC_sub183A2");
+void LilliputScript::OC_waitForEvent() {
+	debugC(1, kDebugScriptTBC, "OC_waitForEvent()");
+
+	_vm->_refreshScreenFlag = true;
+	while (true) {
+		if (_vm->_keyboard_checkKeyboard()) {
+			_vm->_keyboard_getch();
+			break;;
+		}
+		if (_vm->_mouseButton & 1)
+			break;
+
+		_vm->update();
+	}
+
+	_vm->_mouseButton = 0;
+	_vm->_refreshScreenFlag = false;
 }
 
 void LilliputScript::OC_disableInterfaceHotspot() {
@@ -3059,7 +3074,8 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	debugC(1, kDebugScriptTBC, "OC_loadFile_AERIAL_GFX()");
 	
 	int var1 = _currScript->readUint16LE() & 0xFF;
-	_vm->_byte15EAD = var1;
+//	unused variable
+//	byte _byte15EAD = var1;
 
 	_vm->_refreshScreenFlag = true;
 	_talkingCharacter = -1;
@@ -3069,9 +3085,9 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	OC_PaletteFadeIn();
 
 	_vm->displayCharactersOnMap();
-	_vm->_byte16F08 = 1;
-	_vm->_keyboard_oldIndex = 0;
-	_vm->_keyboard_nextIndex = 0;
+	_vm->_displayMap = true;
+
+	_vm->_keyboard_resetKeyboardBuffer();
 
 	_vm->_refreshScreenFlag = false;
 }
@@ -3105,7 +3121,7 @@ void LilliputScript::OC_displayNumericCharacterVariable() {
 	int posX = _currScript->readSint16LE();
 	int posY = _currScript->readSint16LE();
 
-	if (_vm->_displayMap != 1) {
+	if (!_vm->_displayMap) {
 		_vm->restoreSurfaceUnderMousePointer();
 		displayNumber(displayVal, Common::Point(posX, posY));
 		_vm->displayMousePointer();
@@ -3151,20 +3167,19 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_byte184F4 = (_currScript->readUint16LE() & 0xFF);
 	_vm->_sound_byte16F06 = _vm->_byte184F4;
 
-	// TODO: Rewrite keyboard handling (this code was in a separated function)
-	_vm->_keyboard_nextIndex = 0;
-	_vm->_keyboard_oldIndex = 0;
-	//
+	_vm->_keyboard_resetKeyboardBuffer();
+
 	_vm->_mouseButton = 0;
-//	_vm->_lastKeyPressed = 0;
+	_vm->_lastKeyPressed = Common::KeyState();
 
 	while (!_vm->_shouldQuit) {
 		_vm->displaySmallAnims();
 		_vm->update();
 		_vm->pollEvent();
-		if (_vm->_keyboard_nextIndex != _vm->_keyboard_oldIndex) {
+		if (_vm->_keyboard_checkKeyboard()) {
 			_vm->_lastKeyPressed = _vm->_keyboard_getch();
-			_vm->_keyboard_getch();
+			// Removed: why asking for 2 keystrikes?
+			// _vm->_keyboard_getch();
 			break;
 		}
 		
@@ -3182,7 +3197,7 @@ void LilliputScript::OC_initGameAreaDisplay() {
 	debugC(1, kDebugScript, "OC_initGameAreaDisplay()");
 
 	OC_PaletteFadeOut();
-	_vm->_displayMap = 0;
+	_vm->_displayMap = false;
 	_heroismLevel = 0;
 	_vm->unselectInterfaceHotspots();
 
