@@ -3050,7 +3050,7 @@ void LilliputScript::OC_waitForEvent() {
 			_vm->_keyboard_getch();
 			break;;
 		}
-		if (_vm->_mouseButton & 1)
+		if (_vm->_mouseButton == 1)
 			break;
 
 		_vm->update();
@@ -3183,7 +3183,7 @@ void LilliputScript::OC_displayTitleScreen() {
 			break;
 		}
 		
-		if (_vm->_mouseButton & 1)
+		if (_vm->_mouseButton == 1)
 			break;
 		
 		if ((_vm->_byte184F4 != 0) && (_vm->_sound_byte16F06 == 0))

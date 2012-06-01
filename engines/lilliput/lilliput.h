@@ -272,6 +272,7 @@ public:
 
 	void renderCharacters(byte *buf, Common::Point pos);
 
+	void sub13156(bool &forceReturnFl);
 	byte sub16799(int index, Common::Point param1);
 	byte getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
@@ -337,6 +338,8 @@ public:
 	Common::Point _oldMousePos;
 	Common::Point _mouseDisplayPos;
 	int _mouseButton;
+	bool _mouseClicked;
+	Common::EventType _mousePreviousEventType;
 	Common::Point _savedMousePosDivided;
 	int _skipDisplayFlag1;
 	int _skipDisplayFlag2;

@@ -121,7 +121,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_oldMousePos = Common::Point(0, 0);
 	_mouseDisplayPos = Common::Point(0, 0);
 	_mouseButton = 0;
+	_mouseClicked = false;
 	_savedMousePosDivided = Common::Point(-1, -1);
+	_mousePreviousEventType = Common::EVENT_INVALID;
 	_skipDisplayFlag1 = 1;
 	_skipDisplayFlag2 = 0;
 	_displayMap = false;
@@ -1007,7 +1009,7 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 		_keyboard_getch();
 		return;
 	} else {
-		if ((_mouseButton & 1) == 0)
+		if (_mouseButton != 1)
 			return;
 
 		_mouseButton = 0;
@@ -1879,26 +1881,53 @@ void LilliputEngine::sub12F37() {
 	}
 }
 
+void LilliputEngine::sub13156(bool &forceReturnFl) {
+	debugC(2, kDebugEngine, "sub13156()");
+
+	forceReturnFl = false;
+
+	if (!_keyboard_checkKeyboard())
+		return;
+
+	Common::KeyState state = _keyboard_getch();
+	uint16 var1 = state.ascii;
+	for (int i = 0; i < 20; i++) {
+		warning("%d - 0x%x", i, _rulesBuffer13_4[i]);
+	}
+
+	// TODO: Very incomplete!
+
+	// sub1305C();
+	forceReturnFl = true;
+
+}
+
 void LilliputEngine::sub130EE() {
 	debugC(2, kDebugEngine, "sub130EE()");
 
 //	warning("sub147D7");
-//	warning("sub13156");
-
-	if (_mouseButton == 0)
-		// TODO: check _mouse_clicked
+	bool forceReturnFl = false;
+	sub13156(forceReturnFl);
+	if (forceReturnFl)
 		return;
+
+	if (_mouseButton == 0) {
+		if (!_mouseClicked)
+			return;
+		_mouseClicked = false;
+		_mouseButton = 2;
+	}
 
 	int button = _mouseButton;
 	_mouseButton = 0;
 
-	if (button & 2) {
+	if (button == 2) {
 		if (_lastInterfaceHotspotIndex != -1)
 			sub1305C(_lastInterfaceHotspotIndex, button);
 		return;
 	}
 
-	bool forceReturnFl = false;
+	forceReturnFl = false;
 	checkInterfaceHotspots(forceReturnFl);
 	if (forceReturnFl)
 		return;
@@ -1986,7 +2015,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	_lastInterfaceHotspotIndex = index;
 	_lastInterfaceHotspotButton = button;
 
-	if (button &= 2) {
+	if (button == 2) {
 		if (_byte12FCE != 1) {
 			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
 			_byte16F07_menuId = 2;
@@ -2323,14 +2352,34 @@ void LilliputEngine::pollEvent() {
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
-			_mousePos.x = CLIP<int>(event.mouse.x, 0, 304) + 5;
-			_mousePos.y = CLIP<int>(event.mouse.y, 0, 184) + 1;
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_mouseButton |= 1;
-			break;
-		case Common::EVENT_RBUTTONUP:
-			_mouseButton |= 2;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP: {
+			Common::Point newMousePos = Common::Point(CLIP<int>(event.mouse.x, 0, 304), CLIP<int>(event.mouse.y, 0, 184));
+
+			if (_mousePreviousEventType != event.type) {
+				_mousePreviousEventType = event.type;
+				if (_mouseButton != 1) {
+					_mouseButton = 2;
+					if (event.type != Common::EVENT_MOUSEMOVE) {
+						_mouseButton = 1;
+						_mousePos = Common::Point(newMousePos.x + 5, newMousePos.y + 1);
+					}
+				} else {
+					_mouseClicked = true;
+				}
+			}
+
+			if (newMousePos != _oldMousePos) {
+				_oldMousePos = newMousePos;
+				if (_skipDisplayFlag1 != 0) {
+					restoreSurfaceUnderMousePointer();
+					_mouseDisplayPos = newMousePos;
+					displayMousePointer();
+				} else {
+					_mouseDisplayPos = newMousePos;
+				}
+			}
+			}
 			break;
 		case Common::EVENT_QUIT:
 			_shouldQuit = true;
@@ -2349,17 +2398,6 @@ void LilliputEngine::pollEvent() {
 			break;
 		default:
 			break;
-		}
-	}
-
-	if (_mousePos != _oldMousePos) {
-		_oldMousePos = _mousePos;
-		if (_skipDisplayFlag1 != 0) {
-			restoreSurfaceUnderMousePointer();
-			_mouseDisplayPos = _mousePos;
-			displayMousePointer();
-		} else {
-			_mouseDisplayPos = _mousePos;
 		}
 	}
 }
