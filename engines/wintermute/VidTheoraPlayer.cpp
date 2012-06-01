@@ -328,6 +328,7 @@ HRESULT CVidTheoraPlayer::Initialize(char *Filename, char *SubtitleFile) {
 
 	return Res;
 #endif
+	return 0;
 }
 
 
@@ -588,6 +589,7 @@ float CVidTheoraPlayer::GetMovieTime() {
 	else if (m_Sound) return (float)(m_Sound->GetPosition()) / 1000.0f + m_TimeOffset;
 	else return (float)(m_CurrentTime - m_StartTime) / 1000.0f  + m_TimeOffset;
 #endif
+	return 0;
 }
 
 
@@ -599,6 +601,7 @@ int CVidTheoraPlayer::GetMovieFrame() {
 
 	return Time / ((double)m_TheoraInfo.fps_denominator / m_TheoraInfo.fps_numerator);
 #endif
+	return 0;
 }
 
 
@@ -808,6 +811,7 @@ byte CVidTheoraPlayer::GetAlphaAt(int X, int Y) {
 	if (_alphaImage) return _alphaImage->GetAlphaAt(X, Y);
 	else return 0xFF;
 #endif
+	return 0;
 }
 
 
@@ -894,6 +898,7 @@ HRESULT CVidTheoraPlayer::Pause() {
 		return S_OK;
 	} else return E_FAIL;
 #endif
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -905,6 +910,7 @@ HRESULT CVidTheoraPlayer::Resume() {
 		return S_OK;
 	} else return E_FAIL;
 #endif
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

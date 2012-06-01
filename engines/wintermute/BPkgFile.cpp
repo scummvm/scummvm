@@ -61,7 +61,7 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 	strcpy(fileName, Filename.c_str());
 
 	// correct slashes
-	for (int i = 0; i < strlen(fileName); i++) {
+	for (uint32 i = 0; i < strlen(fileName); i++) {
 		if (fileName[i] == '/') fileName[i] = '\\';
 	}
 
@@ -78,7 +78,7 @@ HRESULT CBPkgFile::Open(Common::String Filename) {
 	if (_compressed) {
 		// TODO: Really, most of this logic might be doable directly in the fileEntry?
 		// But for now, this should get us rolling atleast.
-		_file = wrapCompressedReadStream(new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES));
+		_file = Common::wrapCompressedReadStream(new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES));
 	} else {
 		_file = new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES);
 	}
@@ -128,7 +128,7 @@ HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
 HRESULT CBPkgFile::Seek(uint32 Pos, TSeek Origin) {
 	if (!_fileEntry) return E_FAIL;
 
-	int32 NewPos = 0;
+	uint32 NewPos = 0;
 
 	switch (Origin) {
 	case SEEK_TO_BEGIN:

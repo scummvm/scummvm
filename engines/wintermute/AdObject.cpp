@@ -873,7 +873,7 @@ void CAdObject::Talk(const char *Text, const char *Sound, uint32 Duration, const
 
 	// set duration by text length
 	if (_sentence->_duration <= 0) {// TODO: Avoid longs.
-		_sentence->_duration = MAX((unsigned long)1000, Game->_subtitlesSpeed * strlen(_sentence->_text));
+		_sentence->_duration = MAX((size_t)1000, Game->_subtitlesSpeed * strlen(_sentence->_text));
 	}
 
 

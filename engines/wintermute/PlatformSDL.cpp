@@ -519,17 +519,6 @@ AnsiString CBPlatform::GetPlatformName() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int scumm_stricmp(const char *str1, const char *str2) {
-	return ::strcasecmp(str1, str2);
-}
-
-//////////////////////////////////////////////////////////////////////////
-int scumm_strnicmp(const char *str1, const char *str2, size_t maxCount) {
-	return ::strncasecmp(str1, str2, maxCount);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 char *CBPlatform::strupr(char *string) {
 	if (string) {
 		for (size_t i = 0; i < strlen(string); ++i) {

@@ -442,7 +442,7 @@ HRESULT CScScript::ExecuteInstruction() {
 	HRESULT ret = S_OK;
 
 	uint32 dw;
-	const char *str;
+	const char *str = NULL;
 
 	//CScValue* op = new CScValue(Game);
 	_operand->Cleanup();

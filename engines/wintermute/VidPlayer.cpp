@@ -119,6 +119,7 @@ HRESULT CVidPlayer::Cleanup() {
 
 	return SetDefaults();
 #endif
+	return 0;
 }
 
 
@@ -268,6 +269,7 @@ HRESULT CVidPlayer::Update() {
 		} else return E_FAIL;
 	} else return S_OK;
 #endif
+	return 0;
 }
 
 
@@ -289,6 +291,7 @@ HRESULT CVidPlayer::Display() {
 
 	return res;
 #endif
+	return 0;
 }
 
 

@@ -89,7 +89,7 @@ long CBParser::GetObject(char **buf, TokenDesc *tokens, char **name, char **data
 	if (tokens->id == 0) {
 		char *p = strchr(*buf, '\n');
 		if (p && p > *buf) {
-			strncpy(_lastOffender, *buf, MIN((long int)255, p - *buf)); // TODO, clean
+			strncpy(_lastOffender, *buf, MIN((uint32)255, (uint32)(p - *buf))); // TODO, clean
 		} else strcpy(_lastOffender, "");
 
 		return PARSERR_TOKENNOTFOUND;

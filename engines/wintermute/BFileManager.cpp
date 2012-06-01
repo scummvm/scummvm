@@ -427,7 +427,7 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 		package->seek(DirOffset, SEEK_SET);
 	}
 
-	for (int i = 0; i < hdr.NumDirs; i++) {
+	for (uint32 i = 0; i < hdr.NumDirs; i++) {
 		CBPackage *pkg = new CBPackage(Game);
 		if (!pkg) return E_FAIL;
 
@@ -447,7 +447,7 @@ HRESULT CBFileManager::RegisterPackage(Common::String Filename , bool SearchSign
 		// read file entries
 		uint32 NumFiles = package->readUint32LE();
 
-		for (int j = 0; j < NumFiles; j++) {
+		for (uint32 j = 0; j < NumFiles; j++) {
 			char *Name;
 			uint32 Offset, Length, CompLength, Flags, TimeDate1, TimeDate2;
 
@@ -818,8 +818,10 @@ CBFile *CBFileManager::OpenFileRaw(const char *Filename) {
 HRESULT CBFileManager::RestoreCurrentDir() {
 	if (!_basePath) return S_OK;
 	else {
-		if (!chdir(_basePath)) return S_OK;
-		else return E_FAIL;
+		/*if (!chdir(_basePath)) return S_OK;
+		else return E_FAIL;*/
+		warning("CBFileManager::RestoreCurrentDir - ignored");
+		return S_OK;
 	}
 }
 
@@ -852,7 +854,7 @@ bool CBFileManager::FindPackageSignature(Common::File *f, uint32 *Offset) {
 
 	int StartPos = 1024 * 1024;
 
-	int BytesRead = StartPos;
+	uint32 BytesRead = StartPos;
 
 	while (BytesRead < FileSize - 16) {
 		int ToRead = MIN((unsigned int)32768, FileSize - BytesRead);
