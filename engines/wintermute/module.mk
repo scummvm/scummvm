@@ -13,35 +13,33 @@ MODULE_OBJS := \
 	scriptables/SXMemBuffer.o \
 	scriptables/SXStore.o \
 	scriptables/SXString.o \
-	graphics/transparentSurface.o \
-	graphics/tga.o \
-	AdActor.o \
-	AdActorDir.o \
-	AdEntity.o \
-	AdGame.o \
-	AdInventory.o \
-	AdInventoryBox.o \
-	AdItem.o \
-	AdLayer.o \
-	AdNodeState.o \
-	AdObject.o \
-	AdPath.o \
-	AdPathPoint.o \
-	AdRegion.o \
-	AdResponse.o \
-	AdResponseBox.o \
-	AdResponseContext.o \
-	AdRotLevel.o \
-	AdScaleLevel.o \
-	AdScene.o \
-	AdSceneNode.o \
-	AdSceneState.o \
-	AdSentence.o \
-	AdSpriteSet.o \
-	AdTalkDef.o \
-	AdTalkHolder.o \
-	AdTalkNode.o \
-	AdWaypointGroup.o \
+	Ad/AdActor.o \
+	Ad/AdActorDir.o \
+	Ad/AdEntity.o \
+	Ad/AdGame.o \
+	Ad/AdInventory.o \
+	Ad/AdInventoryBox.o \
+	Ad/AdItem.o \
+	Ad/AdLayer.o \
+	Ad/AdNodeState.o \
+	Ad/AdObject.o \
+	Ad/AdPath.o \
+	Ad/AdPathPoint.o \
+	Ad/AdRegion.o \
+	Ad/AdResponse.o \
+	Ad/AdResponseBox.o \
+	Ad/AdResponseContext.o \
+	Ad/AdRotLevel.o \
+	Ad/AdScaleLevel.o \
+	Ad/AdScene.o \
+	Ad/AdSceneNode.o \
+	Ad/AdSceneState.o \
+	Ad/AdSentence.o \
+	Ad/AdSpriteSet.o \
+	Ad/AdTalkDef.o \
+	Ad/AdTalkHolder.o \
+	Ad/AdTalkNode.o \
+	Ad/AdWaypointGroup.o \
 	BActiveRect.o \
 	BBase.o \
 	BDebugger.o \

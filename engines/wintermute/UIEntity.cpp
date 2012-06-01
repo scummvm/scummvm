@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/AdEntity.h"
+#include "engines/wintermute/Ad/AdEntity.h"
 #include "engines/wintermute/BGame.h"
 #include "engines/wintermute/BFileManager.h"
 #include "engines/wintermute/UIEntity.h"

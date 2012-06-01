@@ -27,7 +27,7 @@
  */
 
 #include "dcgf.h"
-#include "engines/wintermute/AdGame.h"
+#include "engines/wintermute/Ad/AdGame.h"
 #include "engines/wintermute/BScriptHolder.h"
 #include "engines/wintermute/BParser.h"
 #include "engines/wintermute/scriptables/ScValue.h"
