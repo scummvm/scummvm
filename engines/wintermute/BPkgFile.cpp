@@ -54,7 +54,7 @@ CBPkgFile::~CBPkgFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::Open(Common::String Filename) {
+HRESULT CBPkgFile::Open(const Common::String &Filename) {
 	Close();
 
 	char fileName[MAX_PATH];

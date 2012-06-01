@@ -51,7 +51,7 @@ CBSaveThumbFile::~CBSaveThumbFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::Open(Common::String Filename) {
+HRESULT CBSaveThumbFile::Open(const Common::String &Filename) {
 	Close();
 
 	if (scumm_strnicmp(Filename.c_str(), "savegame:", 9) != 0) return E_FAIL;

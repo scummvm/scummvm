@@ -53,7 +53,7 @@ CBDiskFile::~CBDiskFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDiskFile::Open(Common::String Filename) {
+HRESULT CBDiskFile::Open(const Common::String &Filename) {
 	Close();
 
 	char FullPath[MAX_PATH];

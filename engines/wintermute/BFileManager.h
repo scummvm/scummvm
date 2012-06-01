@@ -34,6 +34,7 @@
 #include "coll_templ.h"
 #include "BFileEntry.h"
 #include "common/archive.h"
+#include "common/str.h"
 
 namespace Common {
 class File;
@@ -49,7 +50,7 @@ public:
 	HRESULT RestoreCurrentDir();
 	char *_basePath;
 	bool GetFullPath(const char *Filename, char *Fullname);
-	CBFile *OpenFileRaw(const char *Filename);
+	CBFile *OpenFileRaw(const Common::String &filename);
 	HRESULT CloseFile(CBFile *File);
 	CBFile *OpenFile(const char *Filename, bool AbsPathWarning = true);
 	CBFileEntry *GetPackageEntry(const char *Filename);

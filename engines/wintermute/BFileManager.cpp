@@ -785,10 +785,10 @@ HRESULT CBFileManager::CloseFile(CBFile *File) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFile *CBFileManager::OpenFileRaw(const char *Filename) {
+CBFile *CBFileManager::OpenFileRaw(const Common::String &Filename) {
 	RestoreCurrentDir();
 
-	if (scumm_strnicmp(Filename, "savegame:", 9) == 0) {
+	if (scumm_strnicmp(Filename.c_str(), "savegame:", 9) == 0) {
 		CBSaveThumbFile *SaveThumbFile = new CBSaveThumbFile(Game);
 		if (SUCCEEDED(SaveThumbFile->Open(Filename))) return SaveThumbFile;
 		else {
@@ -809,7 +809,7 @@ CBFile *CBFileManager::OpenFileRaw(const char *Filename) {
 	if (SUCCEEDED(ResFile->Open(Filename))) return ResFile;
 
 	delete ResFile;
-	warning("BFileManager::OpenFileRaw - Failed to open %s", Filename);
+	warning("BFileManager::OpenFileRaw - Failed to open %s", Filename.c_str());
 	return NULL;
 }
 

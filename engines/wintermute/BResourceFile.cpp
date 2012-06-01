@@ -45,7 +45,7 @@ CBResourceFile::~CBResourceFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBResourceFile::Open(Common::String Filename) {
+HRESULT CBResourceFile::Open(const Common::String &Filename) {
 	Close();
 
 	if (CBResources::GetFile(Filename.c_str(), _data, _size)) {

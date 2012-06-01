@@ -45,7 +45,7 @@ public:
 	virtual HRESULT Seek(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
 	virtual HRESULT Read(void *Buffer, uint32 Size);
 	virtual HRESULT Close();
-	virtual HRESULT Open(Common::String Filename);
+	virtual HRESULT Open(const Common::String &Filename);
 private:
 	void CorrectSlashes(char *fileName);
 	Common::SeekableReadStream *_file;
