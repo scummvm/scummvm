@@ -63,6 +63,8 @@ public:
 
 	virtual uint getFactor() const = 0;
 
+	virtual const Common::Array<uint>& getFactors() const { return _factors; }
+
 	/**
 	 * Set the scaling factor.
 	 * Intended to be used with GUI to set a known valid factor.
@@ -103,6 +105,7 @@ public:
 
 protected:
 	uint _factor;
+	Common::Array<uint> _factors;
 	Graphics::PixelFormat _format;
 	bool _doScale; // < temporary
 };

@@ -26,7 +26,7 @@
 
 class SAIPlugin : public ScalerPluginObject {
 public:
-	SAIPlugin() { _factor = 1;}
+	SAIPlugin();
 	virtual void initialize(Graphics::PixelFormat format);
 	virtual void deinitialize();
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,

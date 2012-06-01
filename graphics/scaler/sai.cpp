@@ -22,6 +22,12 @@
 #include "graphics/scaler/sai.h"
 #include "graphics/scaler.h"
 
+SAIPlugin::SAIPlugin() {
+	_factor = 1;
+	_factors.push_back(1);
+	_factors.push_back(2);
+}
+
 void SAIPlugin::initialize(Graphics::PixelFormat format) {
 	_format = format;
 }
