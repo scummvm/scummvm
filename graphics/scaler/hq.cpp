@@ -24,6 +24,13 @@
 
 void InitLUT(Graphics::PixelFormat format);
 
+HQPlugin::HQPlugin() {
+	_factor = 1;
+	_factors.push_back(1);
+	_factors.push_back(2);
+	_factors.push_back(3);
+}
+
 void HQPlugin::initialize(Graphics::PixelFormat format) {
 	//InitLUT(format);
 	_format = format;
