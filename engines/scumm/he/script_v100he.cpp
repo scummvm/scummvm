@@ -2339,6 +2339,12 @@ void ScummEngine_v100he::o100_writeFile() {
 }
 
 void ScummEngine_v100he::o100_debugInput() {
+	// Backyard Basketball uses older code for this opcode
+	if (_game.id == GID_BASKETBALL) {
+		ScummEngine_v72he::o72_debugInput();
+		return;
+	}
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
