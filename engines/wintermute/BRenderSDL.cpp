@@ -137,6 +137,15 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	//_windowed = Game->_registry->ReadBool("Video", "Windowed", true);
 //	if (!windowed) flags |= SDL_WINDOW_FULLSCREEN;
 
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	g_system->beginGFXTransaction();
+	g_system->initSize(_width, _height, &format);
+	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+	
+	if (gfxError != OSystem::kTransactionSuccess) {
+		warning("Couldn't setup GFX-backend for %dx%dx%d", _width, _height, format.bytesPerPixel * 8);
+		return E_FAIL;
+	}
 #if 0
 	_win = SDL_CreateWindow("WME Lite",
 	                        SDL_WINDOWPOS_UNDEFINED,
