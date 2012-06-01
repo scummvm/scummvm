@@ -52,6 +52,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_USEEXTRAASTITLE,
 		GUIO0()
 	},
+	{
+		"wintermute",
+		"Rosemary",
+		AD_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
 	AD_TABLE_END_MARKER
 };
 
