@@ -361,6 +361,16 @@ bool CBSurfaceSDL::IsTransparentAtLite(int X, int Y) {
 		warning("CBSurfaceSDL::IsTransparentAtLite not ported yet");
 		hasWarned = true;
 	}
+	if (_surface->format.bytesPerPixel == 4) {
+		uint32 pixel = *(uint32*)_surface->getBasePtr(X, Y);
+		uint8 r,g,b,a;
+		_surface->format.colorToARGB(pixel, a, r, g, b);
+		if (a <= 128) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 #if 0
 	uint32 format;
 	int access;
