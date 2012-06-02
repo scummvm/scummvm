@@ -39,24 +39,23 @@
 
 namespace WinterMute {
 
-//////////////////////////////////////////////////////////////////////////
-CBPkgFile::CBPkgFile(CBGame *inGame): CBFile(inGame) {
-	_fileEntry = NULL;
-	_file = NULL;
-	_compressed = false;
+// HACK: wrapCompressedStream might set the size to 0, so we need a way to override it.
+class CBPkgFile : public Common::SeekableReadStream {
+	uint32 _size;
+	Common::SeekableReadStream *_stream;
+public:
+	CBPkgFile(Common::SeekableReadStream *stream, uint32 knownLength) : _size(knownLength), _stream(stream) {}
+	virtual ~CBPkgFile() { delete _stream; }
+	virtual uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+	virtual bool eos() const { return _stream->eos(); }
+	virtual int32 pos() const { return _stream->pos(); }
+	virtual int32 size() const { return _size; }
+	virtual bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
+};
 
-}
-
-//////////////////////////////////////////////////////////////////////////
-CBPkgFile::~CBPkgFile() {
-	Close();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::Open(const Common::String &Filename) {
-	Close();
-
+Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileManager *fileManager) {
+	CBFileEntry *fileEntry;
+	Common::SeekableReadStream *file = NULL;
 	char fileName[MAX_PATH];
 	strcpy(fileName, Filename.c_str());
 
@@ -65,97 +64,30 @@ HRESULT CBPkgFile::Open(const Common::String &Filename) {
 		if (fileName[i] == '/') fileName[i] = '\\';
 	}
 
-	_fileEntry = Game->_fileManager->GetPackageEntry(fileName);
-	if (!_fileEntry) return E_FAIL;
-
-	_file = _fileEntry->_package->GetFilePointer();
-	if (!_file) return E_FAIL;
-
+	fileEntry = fileManager->GetPackageEntry(fileName);
+	if (!fileEntry) return NULL;
+	
+	file = fileEntry->_package->GetFilePointer();
+	if (!file) return NULL;
+	
 	// TODO: Cleanup
-	_compressed = (_fileEntry->_compressedLength != 0);
-	_size = _fileEntry->_length;
-
-	if (_compressed) {
+	bool compressed = (fileEntry->_compressedLength != 0);
+	/* _size = fileEntry->_length; */
+	
+	if (compressed) {
 		// TODO: Really, most of this logic might be doable directly in the fileEntry?
 		// But for now, this should get us rolling atleast.
-		_file = Common::wrapCompressedReadStream(new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES));
+		file = Common::wrapCompressedReadStream(new Common::SeekableSubReadStream(file, fileEntry->_offset, fileEntry->_offset + fileEntry->_length, DisposeAfterUse::YES));
 	} else {
-		_file = new Common::SeekableSubReadStream(_file, _fileEntry->_offset, _fileEntry->_offset + _fileEntry->_length, DisposeAfterUse::YES);
+		file = new Common::SeekableSubReadStream(file, fileEntry->_offset, fileEntry->_offset + fileEntry->_length, DisposeAfterUse::YES);
+	}
+	if (file->size() == 0) {
+		file = new CBPkgFile(file, fileEntry->_length);
 	}
 
-	SeekToPos(0);
-
-	return S_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::Close() {
-	if (_fileEntry) {
-		_fileEntry->_package->CloseFilePointer(_file);
-		_fileEntry = NULL;
-	}
-	_file = NULL;
-
-	// TODO: Do we really need to take care of our position and size at all (or could (Safe)SubStreams fix that for us?
-	_pos = 0;
-	_size = 0;
-
-	return S_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
-	if (!_fileEntry) return E_FAIL;
-
-	HRESULT ret = S_OK;
-
-	if (_pos + Size > _size) {
-		Size = _size - _pos;
-		if (Size == 0) return E_FAIL;
-	}
-
-	ret = _file->read(Buffer, Size);
-
-	_pos += Size;
-
-	return ret;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::Seek(uint32 pos, TSeek origin) {
-	if (!_fileEntry) return E_FAIL;
-
-	uint32 newPos = 0;
-
-	switch (origin) {
-	case SEEK_TO_BEGIN:
-		newPos = pos;
-		break;
-	case SEEK_TO_END:
-		newPos = _size + pos;
-		break;
-	case SEEK_TO_CURRENT:
-		newPos = _pos + pos;
-		break;
-	}
-
-	if (newPos < 0 || newPos > _size) return E_FAIL;
-
-	return SeekToPos(newPos);
-}
-
-
-#define STREAM_BUFFER_SIZE 4096
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::SeekToPos(uint32 newPos) {
-	HRESULT ret = S_OK;
-
-	// seek compressed stream to NewPos
-	_pos = newPos;
-	return ret;
+	file->seek(0);
+	
+	return file;
 }
 
 } // end of namespace WinterMute

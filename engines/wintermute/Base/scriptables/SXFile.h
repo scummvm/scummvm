@@ -31,6 +31,7 @@
 
 
 #include "engines/wintermute/Base/BScriptable.h"
+#include "common/stream.h"
 
 namespace WinterMute {
 
@@ -46,7 +47,7 @@ public:
 	CSXFile(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXFile();
 private:
-	CBFile *_readFile;
+	Common::SeekableReadStream *_readFile;
 	FILE *_writeFile;
 	int _mode; // 0..none, 1..read, 2..write, 3..append
 	bool _textMode;

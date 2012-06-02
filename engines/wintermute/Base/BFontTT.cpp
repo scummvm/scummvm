@@ -611,7 +611,7 @@ HRESULT CBFontTT::InitFont() {
 	if (!_fontFile) return E_FAIL;
 	warning("BFontTT::InitFont - Not ported yet");
 
-	CBFile *file = Game->_fileManager->OpenFile(_fontFile);
+	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
 		AnsiString fontFileName = PathUtil::Combine(CBPlatform::GetSystemFontPath(), PathUtil::GetFileName(_fontFile));

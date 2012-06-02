@@ -42,7 +42,6 @@ MODULE_OBJS := \
 	Base/scriptables/SXString.o \
 	Base/file/BDiskFile.o \
 	Base/file/BFile.o \
-	Base/file/BResourceFile.o \
 	Base/file/BSaveThumbFile.o \
 	Base/file/BPkgFile.o \
 	Base/BActiveRect.o \

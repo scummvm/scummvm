@@ -29,6 +29,7 @@
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/BResources.h"
 #include "common/str.h"
+#include "common/memstream.h"
 
 namespace WinterMute {
 
@@ -2805,26 +2806,15 @@ unsigned char systemfont[] = {
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 } ;
 
-
-//////////////////////////////////////////////////////////////////////////
-bool CBResources::GetFile(const char *fileName, byte *&buffer, uint32 &size) {
-	// better!
-	if (scumm_stricmp(fileName, "invalid.bmp") == 0) {
-		buffer = invalid;
-		size = sizeof(invalid);
-		return true;
-	} else if (scumm_stricmp(fileName, "invalid_debug.bmp") == 0) {
-		buffer = invaliddebug;
-		size = sizeof(invaliddebug);
-		return true;
-	} else if (scumm_stricmp(fileName, "syste_font.bmp") == 0) {
-		buffer = systemfont;
-		size = sizeof(systemfont);
-		return true;
+Common::SeekableReadStream *CBResources::getFile(const Common::String& fileName) {
+	if (scumm_stricmp(fileName.c_str(), "invalid.bmp") == 0) {
+		return new Common::MemoryReadStream(invalid, sizeof(invalid), DisposeAfterUse::NO);
+	} else if (scumm_stricmp(fileName.c_str(), "invalid_debug.bmp") == 0) {
+		return new Common::MemoryReadStream(invaliddebug, sizeof(invalid), DisposeAfterUse::NO);
+	} else if (scumm_stricmp(fileName.c_str(), "syste_font.bmp") == 0) {
+		return new Common::MemoryReadStream(systemfont, sizeof(invalid), DisposeAfterUse::NO);
 	}
-
-
-	return false;
+	return NULL;
 }
 
 } // end of namespace WinterMute

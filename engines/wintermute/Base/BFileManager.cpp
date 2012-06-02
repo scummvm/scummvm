@@ -33,10 +33,10 @@
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/Base/file/BDiskFile.h"
-#include "engines/wintermute/Base/file/BResourceFile.h"
 #include "engines/wintermute/Base/file/BSaveThumbFile.h"
 #include "engines/wintermute/Base/BFileEntry.h"
 #include "engines/wintermute/Base/file/BPkgFile.h"
+#include "engines/wintermute/Base/BResources.h"
 #include "engines/wintermute/Base/BPackage.h"
 #include "engines/wintermute/Base/BRegistry.h"
 #include "engines/wintermute/Base/BGame.h"
@@ -96,7 +96,6 @@ HRESULT CBFileManager::Cleanup() {
 
 	// close open files
 	for (i = 0; i < _openFiles.GetSize(); i++) {
-		_openFiles[i]->Close();
 		delete _openFiles[i];
 	}
 	_openFiles.RemoveAll();
@@ -121,7 +120,7 @@ byte *CBFileManager::ReadWholeFile(const char *Filename, uint32 *Size, bool Must
 
 	byte *buffer = NULL;
 
-	CBFile *File = OpenFile(Filename);
+	Common::SeekableReadStream *File = OpenFile(Filename);
 	if (!File) {
 		if (MustExist) Game->LOG(0, "Error opening file '%s'", Filename);
 		return NULL;
@@ -136,22 +135,22 @@ byte *CBFileManager::ReadWholeFile(const char *Filename, uint32 *Size, bool Must
 	*/
 
 
-	buffer = new byte[File->getSize() + 1];
+	buffer = new byte[File->size() + 1];
 	if (buffer == NULL) {
-		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", Filename, File->getSize() + 1);
+		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", Filename, File->size() + 1);
 		CloseFile(File);
 		return NULL;
 	}
 
-	if (FAILED(File->Read(buffer, File->getSize()))) {
+	if (File->read(buffer, File->size()) != File->size()) {
 		Game->LOG(0, "Error reading file '%s'", Filename);
 		CloseFile(File);
 		delete [] buffer;
 		return NULL;
 	};
 
-	buffer[File->getSize()] = '\0';
-	if (Size != NULL) *Size = File->getSize();
+	buffer[File->size()] = '\0';
+	if (Size != NULL) *Size = File->size();
 	CloseFile(File);
 
 	return buffer;
@@ -751,10 +750,10 @@ CBFileEntry *CBFileManager::GetPackageEntry(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFile *CBFileManager::OpenFile(const char *Filename, bool AbsPathWarning) {
+Common::SeekableReadStream *CBFileManager::OpenFile(const char *Filename, bool AbsPathWarning) {
 	if (strcmp(Filename, "") == 0) return NULL;
 	//Game->LOG(0, "open file: %s", Filename);
-#ifdef __WIN32__
+/*#ifdef __WIN32__
 	if (Game->_dEBUG_DebugMode && Game->_dEBUG_AbsolutePathWarning && AbsPathWarning) {
 		char Drive[_MAX_DRIVE];
 		_splitpath(Filename, Drive, NULL, NULL, NULL);
@@ -762,19 +761,18 @@ CBFile *CBFileManager::OpenFile(const char *Filename, bool AbsPathWarning) {
 			Game->LOG(0, "WARNING: Referencing absolute path '%s'. The game will NOT work on another computer.", Filename);
 		}
 	}
-#endif
+#endif*/
 
-	CBFile *File = OpenFileRaw(Filename);
+	Common::SeekableReadStream *File = OpenFileRaw(Filename);
 	if (File) _openFiles.Add(File);
 	return File;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::CloseFile(CBFile *File) {
+HRESULT CBFileManager::CloseFile(Common::SeekableReadStream *File) {
 	for (int i = 0; i < _openFiles.GetSize(); i++) {
 		if (_openFiles[i] == File) {
-			_openFiles[i]->Close();
 			delete _openFiles[i];
 			_openFiles.RemoveAt(i);
 			return S_OK;
@@ -785,30 +783,29 @@ HRESULT CBFileManager::CloseFile(CBFile *File) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFile *CBFileManager::OpenFileRaw(const Common::String &Filename) {
+Common::SeekableReadStream *CBFileManager::OpenFileRaw(const Common::String &Filename) {
 	RestoreCurrentDir();
 
 	if (scumm_strnicmp(Filename.c_str(), "savegame:", 9) == 0) {
 		CBSaveThumbFile *SaveThumbFile = new CBSaveThumbFile(Game);
-		if (SUCCEEDED(SaveThumbFile->Open(Filename))) return SaveThumbFile;
+		if (SUCCEEDED(SaveThumbFile->Open(Filename))) return SaveThumbFile->getMemStream();
 		else {
 			delete SaveThumbFile;
 			return NULL;
 		}
 	}
 
-	CBDiskFile *DiskFile = new CBDiskFile(Game);
-	if (SUCCEEDED(DiskFile->Open(Filename))) return DiskFile;
+	Common::SeekableReadStream *ret = NULL;
+	
+	ret = openDiskFile(Filename, this);
+	if (ret) return ret;
 
-	delete DiskFile;
-	CBPkgFile *PkgFile = new CBPkgFile(Game);
-	if (SUCCEEDED(PkgFile->Open(Filename))) return PkgFile;
+	ret = openPkgFile(Filename, this);
+	if (ret) return ret;
+	
+	ret = CBResources::getFile(Filename);
+	if (ret) return ret;
 
-	delete PkgFile;
-	CBResourceFile *ResFile = new CBResourceFile(Game);
-	if (SUCCEEDED(ResFile->Open(Filename))) return ResFile;
-
-	delete ResFile;
 	warning("BFileManager::OpenFileRaw - Failed to open %s", Filename.c_str());
 	return NULL;
 }

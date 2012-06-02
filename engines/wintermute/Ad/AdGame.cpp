@@ -1903,7 +1903,7 @@ char *CAdGame::FindSpeechFile(char *StringID) {
 
 	for (int i = 0; i < _speechDirs.GetSize(); i++) {
 		sprintf(Ret, "%s%s.ogg", _speechDirs[i], StringID);
-		CBFile *File = _fileManager->OpenFile(Ret);
+		Common::SeekableReadStream *File = _fileManager->OpenFile(Ret);
 		if (File) {
 			_fileManager->CloseFile(File);
 			return Ret;

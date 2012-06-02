@@ -105,7 +105,7 @@ CBSurface *CBSurfaceStorage::AddSurface(const char *Filename, bool default_ck, b
 		}
 	}
 
-	CBFile *File = Game->_fileManager->OpenFile(Filename);
+	Common::SeekableReadStream *File = Game->_fileManager->OpenFile(Filename);
 	if (!File) {
 		if (Filename) Game->LOG(0, "Missing image: '%s'", Filename);
 		if (Game->_dEBUG_DebugMode)

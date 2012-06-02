@@ -85,10 +85,10 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 		error("CBSurfaceSDL::Create : Unsupported fileformat %s", Filename);
 	}
 
-	CBFile *file = Game->_fileManager->OpenFile(Filename);
+	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(Filename);
 	if (!file) return E_FAIL;
 
-	imgDecoder->loadStream(*file->getMemStream());
+	imgDecoder->loadStream(*file);
 	const Graphics::Surface *surface = imgDecoder->getSurface();
 	Game->_fileManager->CloseFile(file);
 

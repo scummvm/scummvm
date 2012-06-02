@@ -29,12 +29,7 @@
 #ifndef WINTERMUTE_BPKGFILE_H
 #define WINTERMUTE_BPKGFILE_H
 
-
-#include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BFileEntry.h"
-#include <zlib.h>   // Added by ClassView
-
-#define COMPRESSED_BUFFER_SIZE 4096
 
 namespace Common {
 class SeekableReadStream;
@@ -43,21 +38,8 @@ class File;
 
 namespace WinterMute {
 
-class CBPkgFile : public CBFile {
-public:
-	CBPkgFile(CBGame *inGame);
-	virtual ~CBPkgFile();
-	virtual HRESULT Seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN);
-	virtual HRESULT Read(void *buffer, uint32 size);
-	virtual HRESULT Close();
-	virtual HRESULT Open(const Common::String &filename);
-private:
-	bool _inflateInit;
-	HRESULT SeekToPos(uint32 newPos);
-	bool _compressed;
-	CBFileEntry *_fileEntry;
-	Common::SeekableReadStream *_file;
-};
+class CBFileManager;
+Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileManager *fileManager);
 
 } // end of namespace WinterMute
 

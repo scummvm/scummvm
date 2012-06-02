@@ -123,7 +123,7 @@ HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zoom
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBSprite::LoadFile(const char *Filename, int LifeTime, TSpriteCacheType CacheType) {
-	CBFile *File = Game->_fileManager->OpenFile(Filename);
+	Common::SeekableReadStream *File = Game->_fileManager->OpenFile(Filename);
 	if (!File) {
 		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", Filename);
 		if (Game->_dEBUG_DebugMode) return LoadFile("invalid_debug.bmp", LifeTime, CacheType);

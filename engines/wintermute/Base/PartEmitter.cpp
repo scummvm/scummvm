@@ -123,7 +123,7 @@ HRESULT CPartEmitter::AddSprite(const char *Filename) {
 	}
 
 	// check if file exists
-	CBFile *File = Game->_fileManager->OpenFile(Filename);
+	Common::SeekableReadStream *File = Game->_fileManager->OpenFile(Filename);
 	if (!File) {
 		Game->LOG(0, "Sprite '%s' not found", Filename);
 		return E_FAIL;

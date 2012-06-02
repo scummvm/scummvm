@@ -209,8 +209,8 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		bool FoundNewLine = false;
 		HRESULT Ret = E_FAIL;
 		do {
-			Ret = _readFile->Read(&b, 1);
-			if (FAILED(Ret)) break;
+			Ret = _readFile->read(&b, 1);
+			if (Ret != 1) break;
 
 			if (Counter > BufSize) {
 				Buf = (byte *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
@@ -260,8 +260,8 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		HRESULT Ret = E_FAIL;
 		while (Counter < TextLen) {
-			Ret = _readFile->Read(&b, 1);
-			if (FAILED(Ret)) break;
+			Ret = _readFile->read(&b, 1);
+			if (Ret != 1) break;
 
 			if (Counter > BufSize) {
 				Buf = (byte *)realloc(Buf, BufSize + FILE_BUFFER_SIZE);
@@ -321,7 +321,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		bool Val;
-		if (SUCCEEDED(_readFile->Read(&Val, sizeof(bool)))) Stack->PushBool(Val);
+		if (_readFile->read(&Val, sizeof(bool)) == sizeof(bool)) Stack->PushBool(Val);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -338,7 +338,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		byte Val;
-		if (SUCCEEDED(_readFile->Read(&Val, sizeof(byte)))) Stack->PushInt(Val);
+		if (_readFile->read(&Val, sizeof(byte)) == sizeof(byte)) Stack->PushInt(Val);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -355,7 +355,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		short Val;
-		if (SUCCEEDED(_readFile->Read(&Val, sizeof(short)))) Stack->PushInt(65536 + Val);
+		if (_readFile->read(&Val, sizeof(short)) == sizeof(short)) Stack->PushInt(65536 + Val);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -372,7 +372,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		int Val;
-		if (SUCCEEDED(_readFile->Read(&Val, sizeof(int)))) Stack->PushInt(Val);
+		if (_readFile->read(&Val, sizeof(int)) == sizeof(int)) Stack->PushInt(Val);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -389,7 +389,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		float Val;
-		if (SUCCEEDED(_readFile->Read(&Val, sizeof(float)))) Stack->PushFloat(Val);
+		if (_readFile->read(&Val, sizeof(float)) == sizeof(float)) Stack->PushFloat(Val);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -406,7 +406,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		double Val;
-		if (SUCCEEDED(_readFile->Read(&Val, sizeof(double)))) Stack->PushFloat(Val);
+		if (_readFile->read(&Val, sizeof(double)) == sizeof(double)) Stack->PushFloat(Val);
 		else Stack->PushNULL();
 
 		return S_OK;
@@ -423,10 +423,10 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		uint32 Size;
-		if (SUCCEEDED(_readFile->Read(&Size, sizeof(uint32)))) {
+		if (_readFile->read(&Size, sizeof(uint32)) == sizeof(uint32)) {
 			byte *Str = new byte[Size + 1];
 			if (Str) {
-				if (SUCCEEDED(_readFile->Read(Str, Size))) {
+				if (_readFile->read(Str, Size) == Size) {
 					Str[Size] = '\0';
 					Stack->PushString((char *)Str);
 				}
@@ -652,21 +652,21 @@ HRESULT CSXFile::ScSetProperty(const char *Name, CScValue *Value) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CSXFile::GetPos() {
-	if (_mode == 1 && _readFile) return _readFile->getPos();
+	if (_mode == 1 && _readFile) return _readFile->pos();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) return ftell(_writeFile);
 	else return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXFile::SetPos(uint32 Pos, TSeek Origin) {
-	if (_mode == 1 && _readFile) return SUCCEEDED(_readFile->Seek(Pos, Origin));
-	else if ((_mode == 2 || _mode == 3) && _writeFile) return fseek(_writeFile, Pos, (int)Origin) == 0;
+bool CSXFile::SetPos(uint32 pos, TSeek origin) {
+	if (_mode == 1 && _readFile) return _readFile->seek(pos, origin);
+	else if ((_mode == 2 || _mode == 3) && _writeFile) return fseek(_writeFile, pos, (int)origin) == 0;
 	else return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CSXFile::GetLength() {
-	if (_mode == 1 && _readFile) return _readFile->getSize();
+	if (_mode == 1 && _readFile) return _readFile->size();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		uint32 CurrentPos = ftell(_writeFile);
 		fseek(_writeFile, 0, SEEK_END);

@@ -50,9 +50,9 @@ public:
 	HRESULT RestoreCurrentDir();
 	char *_basePath;
 	bool GetFullPath(const char *Filename, char *Fullname);
-	CBFile *OpenFileRaw(const Common::String &filename);
-	HRESULT CloseFile(CBFile *File);
-	CBFile *OpenFile(const char *Filename, bool AbsPathWarning = true);
+	Common::SeekableReadStream *OpenFileRaw(const Common::String &filename);
+	HRESULT CloseFile(Common::SeekableReadStream *File);
+	Common::SeekableReadStream *OpenFile(const char *Filename, bool AbsPathWarning = true);
 	CBFileEntry *GetPackageEntry(const char *Filename);
 	Common::File *OpenSingleFile(const char *Name);
 	Common::File *OpenPackage(const char *Name);
@@ -71,7 +71,7 @@ public:
 	CBArray<char *, char *> _singlePaths;
 	CBArray<char *, char *> _packagePaths;
 	CBArray<CBPackage *, CBPackage *> _packages;
-	CBArray<CBFile *, CBFile *> _openFiles;
+	CBArray<Common::SeekableReadStream *, Common::SeekableReadStream *> _openFiles;
 
 	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:

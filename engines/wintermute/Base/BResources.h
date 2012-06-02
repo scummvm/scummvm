@@ -29,11 +29,14 @@
 #ifndef WINTERMUTE_BRESOURCES_H
 #define WINTERMUTE_BRESOURCES_H
 
+#include "common/stream.h"
+#include "common/str.h"
+
 namespace WinterMute {
 
 class CBResources {
 public:
-	static bool GetFile(const char *fileName, byte *&buffer, uint32 &size);
+	static Common::SeekableReadStream *getFile(const Common::String& fileName);
 };
 
 } // end of namespace WinterMute

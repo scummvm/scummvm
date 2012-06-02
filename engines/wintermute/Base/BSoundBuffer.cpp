@@ -112,7 +112,7 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 		return E_FAIL;
 	}
 
-	_stream = Audio::makeVorbisStream(_file->getMemStream(), DisposeAfterUse::YES);
+	_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::NO);
 	CBUtils::SetString(&_filename, Filename);
 
 	return S_OK;

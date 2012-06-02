@@ -32,6 +32,7 @@
 
 #include "engines/wintermute/Base/BBase.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 namespace Common {
 class SeekableReadStream;

@@ -29,30 +29,13 @@
 #ifndef WINTERMUTE_BDISKFILE_H
 #define WINTERMUTE_BDISKFILE_H
 
-
-#include "engines/wintermute/Base/file/BFile.h"
-
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace WinterMute {
 
-class CBDiskFile : public CBFile {
-public:
-	CBDiskFile(CBGame *inGame);
-	virtual ~CBDiskFile();
-	virtual HRESULT Seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN);
-	virtual HRESULT Read(void *buffer, uint32 size);
-	virtual HRESULT Close();
-	virtual HRESULT Open(const Common::String &filename);
-private:
-	void correctSlashes(char *fileName);
-	Common::SeekableReadStream *_file;
-	byte *_data;
-	bool _compressed;
-	uint32 _prefixSize;
-};
+Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileManager *fileManager);
 
 } // end of namespace WinterMute
 

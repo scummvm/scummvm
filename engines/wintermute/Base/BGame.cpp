@@ -1722,7 +1722,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		Stack->CorrectParams(1);
 		const char *Filename = Stack->Pop()->GetString();
 
-		CBFile *File = _fileManager->OpenFile(Filename, false);
+		Common::SeekableReadStream *File = _fileManager->OpenFile(Filename, false);
 		if (!File) Stack->PushBool(false);
 		else {
 			_fileManager->CloseFile(File);
@@ -2073,17 +2073,16 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		const char *Filename = Stack->Pop()->GetString();
 		bool AsHex = Stack->Pop()->GetBool(false);
 
-		CBFile *File = _fileManager->OpenFile(Filename, false);
+		Common::SeekableReadStream *File = _fileManager->OpenFile(Filename, false);
 		if (File) {
 			crc remainder = crc_initialize();
 			byte Buf[1024];
 			int BytesRead = 0;
 
-			while (BytesRead < File->getSize()) {
-				int BufSize = MIN((uint32)1024, File->getSize() - BytesRead);
-				BytesRead += BufSize;
+			while (BytesRead < File->size()) {
+				int BufSize = MIN((uint32)1024, (uint32)(File->size() - BytesRead));
+				BytesRead += File->read(Buf, BufSize);
 
-				File->Read(Buf, BufSize);
 				for (int i = 0; i < BufSize; i++) {
 					remainder = crc_process_byte(Buf[i], remainder);
 				}
@@ -3922,7 +3921,7 @@ bool CBGame::IsSaveSlotUsed(int Slot) {
 	char Filename[MAX_PATH + 1];
 	GetSaveSlotFilename(Slot, Filename);
 
-	CBFile *File = _fileManager->OpenFile(Filename, false);
+	Common::SeekableReadStream *File = _fileManager->OpenFile(Filename, false);
 	if (!File) return false;
 
 	_fileManager->CloseFile(File);

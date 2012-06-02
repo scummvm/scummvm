@@ -31,7 +31,7 @@
 
 
 #include "engines/wintermute/Base/BBase.h"
-//#include "bass.h"
+#include "common/stream.h"
 
 namespace Audio {
 class SeekableAudioStream;
@@ -84,7 +84,7 @@ public:
 	uint32 _loopStart;
 	TSoundType _type;
 	bool _looping;
-	CBFile *_file;
+	Common::SeekableReadStream *_file;
 	char *_filename;
 	bool _streamed;
 	int _privateVolume;
