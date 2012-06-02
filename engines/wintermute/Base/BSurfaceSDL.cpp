@@ -456,12 +456,12 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 		warning("CBSurfaceSDL::DrawSprite not fully ported yet"); // TODO.
 		hasWarned = true;
 	}
-#if 0
+
 	byte r = D3DCOLGetR(Alpha);
 	byte g = D3DCOLGetG(Alpha);
 	byte b = D3DCOLGetB(Alpha);
 	byte a = D3DCOLGetA(Alpha);
-
+#if 0
 	SDL_SetTextureColorMod(_texture, r, g, b);
 	SDL_SetTextureAlphaMod(_texture, a);
 
@@ -496,6 +496,11 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
 #endif
 
+	return S_OK;
+}
+
+HRESULT CBSurfaceSDL::PutSurface(const Graphics::Surface &surface) {
+	_surface->copyFrom(surface);
 	return S_OK;
 }
 

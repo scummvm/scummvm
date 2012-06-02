@@ -48,6 +48,7 @@ namespace WinterMute {
  * Decoder for Theora videos.
  * Video decoder used in engines:
  *  - sword25
+ *  - wintermute
  */
 class TheoraDecoder : public Video::VideoDecoder {
 public:

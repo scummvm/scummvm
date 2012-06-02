@@ -30,6 +30,7 @@
 #define WINTERMUTE_BSURFACE_H
 
 #include "engines/wintermute/Base/BBase.h"
+#include "graphics/surface.h"
 
 namespace WinterMute {
 
@@ -62,6 +63,7 @@ public:
 	virtual HRESULT Restore();
 	virtual HRESULT Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
 	virtual HRESULT Create(int Width, int Height);
+	virtual HRESULT PutSurface(const Graphics::Surface &surface) { return E_FAIL; }
 	virtual HRESULT PutPixel(int X, int Y, byte R, byte G, byte B, int A = -1);
 	virtual HRESULT GetPixel(int X, int Y, byte *R, byte *G, byte *B, byte *A = NULL);
 	virtual bool ComparePixel(int X, int Y, byte R, byte G, byte B, int A = -1);

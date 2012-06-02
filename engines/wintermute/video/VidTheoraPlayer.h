@@ -24,6 +24,8 @@
 #include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BSurface.h"
 #include "engines/wintermute/Base/BImage.h"
+#include "video/video_decoder.h"
+#include "common/stream.h"
 //#include <theora/theora.h>
 
 namespace WinterMute {
@@ -31,6 +33,8 @@ namespace WinterMute {
 class CVidTheoraPlayer : public CBBase {
 private:
 	enum { THEORA_STATE_NONE = 0, THEORA_STATE_PLAYING = 1, THEORA_STATE_PAUSED = 2, THEORA_STATE_FINISHED = 3 };
+	Video::VideoDecoder *_theoraDecoder;
+	Graphics::Surface _surface;
 public:
 	//DECLARE_PERSISTENT(CVidTheoraPlayer, CBBase);
 
@@ -59,7 +63,7 @@ public:
 
 
 	// external objects
-	CBFile *_file;
+	Common::SeekableReadStream *_file;
 	char *_filename;
 
 	//CBSoundTheora *_sound;
@@ -86,7 +90,6 @@ public:
 		return _state == THEORA_STATE_PLAYING;
 	};
 	bool IsFinished() {
-		return true; // HACK
 		return _state == THEORA_STATE_FINISHED;
 	};
 	bool IsPaused()   {

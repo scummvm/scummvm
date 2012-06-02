@@ -19,7 +19,13 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/video/vidtheoraplayer.h"
-
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BFileManager.h"
+#include "engines/wintermute/Base/BSurfaceSDL.h"
+#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/video/decoders/theora_decoder.h"
+#include "common/system.h"
 //#pragma comment(lib, "libtheora.lib")
 
 namespace WinterMute {
@@ -99,10 +105,10 @@ void CVidTheoraPlayer::SetDefaults() {
 CVidTheoraPlayer::~CVidTheoraPlayer(void) {
 	Cleanup();
 
-	SAFE_DELETE_ARRAY(_filename);
+/*	SAFE_DELETE_ARRAY(_filename);
 	SAFE_DELETE_ARRAY(_alphaFilename);
 	SAFE_DELETE(_texture);
-	SAFE_DELETE(_alphaImage);
+	SAFE_DELETE(_alphaImage);*/
 //	SAFE_DELETE(_subtitler);
 }
 
@@ -160,6 +166,28 @@ void CVidTheoraPlayer::Cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::initialize(const char *Filename, const char *SubtitleFile) {
+	Cleanup();
+	
+	_file = Game->_fileManager->OpenFile(Filename);
+	if (!_file) return E_FAIL;
+	
+	//if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
+	_theoraDecoder = new TheoraDecoder();
+	_theoraDecoder->loadStream(_file);
+	
+	if (!_theoraDecoder->isVideoLoaded())
+		return E_FAIL;
+	
+	_state = THEORA_STATE_PAUSED;
+
+	// Additional setup.
+	_surface.create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight(), _theoraDecoder->getPixelFormat());
+	_texture = new CBSurfaceSDL(Game);
+	_texture->Create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight());
+	_state = THEORA_STATE_PLAYING;
+	_playZoom = 100;
+	
+	return S_OK;
 #if 0
 	Cleanup();
 
@@ -346,6 +374,11 @@ HRESULT CVidTheoraPlayer::ResetStream() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeGame, bool FreezeMusic, bool Looping, uint32 StartTime, float ForceZoom, int Volume) {
+	if (_theoraDecoder) {
+		_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
+		_state = THEORA_STATE_PLAYING;
+		return S_OK;
+	}
 #if 0
 	if (ForceZoom < 0.0f) ForceZoom = 100.0f;
 	if (Volume < 0) m_Volume = Game->m_SoundMgr->GetVolumePercent(SOUND_SFX);
@@ -412,6 +445,21 @@ HRESULT CVidTheoraPlayer::stop() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::update() {
+	if (_theoraDecoder) {
+		if (_theoraDecoder->endOfVideo()) {
+			warning("Finished movie");
+			_state = THEORA_STATE_FINISHED;
+		}
+		if (_state == THEORA_STATE_PLAYING) {
+			if (_theoraDecoder->getTimeToNextFrame() > 0) {
+				_surface.copyFrom(*_theoraDecoder->decodeNextFrame()->convertTo(g_system->getScreenFormat()));
+			}
+			if (_texture) WriteVideo();
+			_videoFrameReady = true;
+			return S_OK;
+		}
+	}
+
 #if 0
 	m_CurrentTime = m_FreezeGame ? Game->m_LiveTimer : Game->m_Timer;
 
@@ -623,16 +671,17 @@ HRESULT CVidTheoraPlayer::WriteAudio() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::WriteVideo() {
-#if 0
-	if (!m_Texture) return E_FAIL;
 
+	if (!_texture) return E_FAIL;
+#if 0
 	yuv_buffer yuv;
 	theora_decode_YUVout(&m_TheoraState, &yuv);
-
-	m_Texture->StartPixelOp();
-	RenderFrame(m_Texture, &yuv);
-	m_Texture->EndPixelOp();
 #endif
+	_texture->StartPixelOp();
+	//RenderFrame(_texture, &yuv);
+	_texture->PutSurface(_surface);
+	_texture->EndPixelOp();
+
 	return S_OK;
 }
 
@@ -641,13 +690,13 @@ HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
 
 	RECT rc;
 	HRESULT Res;
-#if 0
-	if (m_Texture) {
-		SetRect(&rc, 0, 0, m_Texture->GetWidth(), m_Texture->GetHeight());
-		if (m_PlayZoom == 100.0f) Res = m_Texture->DisplayTrans(m_PosX, m_PosY, rc, Alpha);
-		else Res = m_Texture->DisplayTransZoom(m_PosX, m_PosY, rc, m_PlayZoom, m_PlayZoom, Alpha);
-	} else Res = E_FAIL;
 
+	if (_texture) {
+		CBPlatform::SetRect(&rc, 0, 0, _texture->GetWidth(), _texture->GetHeight());
+		if (_playZoom == 100.0f) Res = _texture->DisplayTrans(_posX, _posY, rc, Alpha);
+		else Res = _texture->DisplayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, Alpha);
+	} else Res = E_FAIL;
+#if 0
 	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->Display();
 #endif
 	return Res;
