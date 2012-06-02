@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_UIEDIT_H
 #define WINTERMUTE_UIEDIT_H
 
-#include "persistent.h"
+#include "engines/wintermute/persistent.h"
 #include "UIObject.h"
 #include "common/events.h"
 

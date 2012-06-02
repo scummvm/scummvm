@@ -26,12 +26,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "persistent.h"
+#include "engines/wintermute/persistent.h"
 #include "SysInstance.h"
 #include "SysClass.h"
 #include "SysClassRegistry.h"
-#include "BGame.h"
-#include "BPersistMgr.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BPersistMgr.h"
 
 namespace WinterMute {
 

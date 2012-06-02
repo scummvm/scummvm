@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/Ad/AdPathPoint.h"
-#include "engines/wintermute/BPersistMgr.h"
+#include "engines/wintermute/Base/BPersistMgr.h"
 
 namespace WinterMute {
 

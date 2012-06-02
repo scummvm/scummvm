@@ -28,11 +28,11 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Ad/AdRotLevel.h"
-#include "engines/wintermute/BParser.h"
-#include "engines/wintermute/BDynBuffer.h"
-#include "engines/wintermute/BGame.h"
-#include "engines/wintermute/BSprite.h"
-#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/Base/BParser.h"
+#include "engines/wintermute/Base/BDynBuffer.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BSprite.h"
+#include "engines/wintermute/Base/BFileManager.h"
 
 namespace WinterMute {
 

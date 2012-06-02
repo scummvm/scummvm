@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_UTILS_H
 #define WINTERMUTE_UTILS_H
 
-#include "wintypes.h"
+#include "engines/wintermute/wintypes.h"
 
 namespace WinterMute {
 

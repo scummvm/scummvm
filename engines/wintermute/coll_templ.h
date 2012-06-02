@@ -31,7 +31,7 @@
 
 
 #include <new>
-#include "BPersistMgr.h"
+#include "engines/wintermute/Base/BPersistMgr.h"
 
 namespace WinterMute {
 

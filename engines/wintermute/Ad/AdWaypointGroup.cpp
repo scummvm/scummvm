@@ -27,12 +27,12 @@
  */
 
 #include "engines/wintermute/Ad/AdWaypointGroup.h"
-#include "engines/wintermute/BParser.h"
-#include "engines/wintermute/BDynBuffer.h"
-#include "engines/wintermute/scriptables/ScValue.h"
-#include "engines/wintermute/BGame.h"
-#include "engines/wintermute/BRegion.h"
-#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/Base/BParser.h"
+#include "engines/wintermute/Base/BDynBuffer.h"
+#include "engines/wintermute/Base/scriptables/ScValue.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BRegion.h"
+#include "engines/wintermute/Base/BFileManager.h"
 #include <limits.h>
 
 namespace WinterMute {

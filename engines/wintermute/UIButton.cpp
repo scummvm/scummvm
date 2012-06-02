@@ -27,21 +27,21 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/BDynBuffer.h"
-#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/Base/BDynBuffer.h"
+#include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/UIButton.h"
 #include "engines/wintermute/UITiledImage.h"
-#include "engines/wintermute/BParser.h"
-#include "engines/wintermute/BActiveRect.h"
-#include "engines/wintermute/BFontStorage.h"
-#include "engines/wintermute/BFont.h"
-#include "engines/wintermute/BStringTable.h"
-#include "engines/wintermute/BSprite.h"
-#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/Base/BParser.h"
+#include "engines/wintermute/Base/BActiveRect.h"
+#include "engines/wintermute/Base/BFontStorage.h"
+#include "engines/wintermute/Base/BFont.h"
+#include "engines/wintermute/Base/BStringTable.h"
+#include "engines/wintermute/Base/BSprite.h"
+#include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/PlatformSDL.h"
-#include "engines/wintermute/scriptables/ScValue.h"
-#include "engines/wintermute/scriptables/ScScript.h"
-#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/Base/scriptables/ScValue.h"
+#include "engines/wintermute/Base/scriptables/ScScript.h"
+#include "engines/wintermute/Base/scriptables/ScStack.h"
 
 namespace WinterMute {
 

@@ -26,15 +26,15 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/BGame.h"
-#include "engines/wintermute/BSprite.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/UIObject.h"
 #include "engines/wintermute/UITiledImage.h"
 #include "engines/wintermute/UIWindow.h"
 #include "engines/wintermute/PlatformSDL.h"
-#include "engines/wintermute/scriptables/ScValue.h"
-#include "engines/wintermute/scriptables/ScStack.h"
-#include "engines/wintermute/BFontStorage.h"
+#include "engines/wintermute/Base/scriptables/ScValue.h"
+#include "engines/wintermute/Base/scriptables/ScStack.h"
+#include "engines/wintermute/Base/BFontStorage.h"
 
 namespace WinterMute {
 

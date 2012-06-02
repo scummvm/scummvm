@@ -33,7 +33,7 @@
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "engines/wintermute/Ad/AdTypes.h"    // Added by ClassView
 #include "engines/wintermute/Ad/AdTalkHolder.h"
-#include "engines/wintermute/BPoint.h" // Added by ClassView
+#include "engines/wintermute/Base/BPoint.h" // Added by ClassView
 #include "engines/wintermute/persistent.h"
 #include "common/str.h"
 

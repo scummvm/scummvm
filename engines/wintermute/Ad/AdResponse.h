@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADRESPONSE_H
 
 
-#include "engines/wintermute/BObject.h"
+#include "engines/wintermute/Base/BObject.h"
 #include "engines/wintermute/Ad/AdTypes.h"
 
 namespace WinterMute {

@@ -30,7 +30,7 @@
 #define WINTERMUTE_FONTGLYPHCACHE_H
 
 
-#include "BFontStorage.h"
+#include "engines/wintermute/Base/BFontStorage.h"
 #include "graphics/surface.h"
 
 namespace WinterMute {

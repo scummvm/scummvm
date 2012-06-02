@@ -28,9 +28,9 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Ad/AdResponse.h"
-#include "engines/wintermute/BGame.h"
-#include "engines/wintermute/BFontStorage.h"
-#include "engines/wintermute/BSprite.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BFontStorage.h"
+#include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/utils.h"
 
 namespace WinterMute {

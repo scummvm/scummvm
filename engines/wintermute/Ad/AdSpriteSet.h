@@ -30,8 +30,8 @@
 #define WINTERMUTE_ADSPRITESET_H
 
 
-#include "engines/wintermute/BObject.h"
-#include "engines/wintermute/BSprite.h"    // Added by ClassView
+#include "engines/wintermute/Base/BObject.h"
+#include "engines/wintermute/Base/BSprite.h"    // Added by ClassView
 
 namespace WinterMute {
 

@@ -27,14 +27,14 @@
  */
 
 #include "engines/wintermute/Ad/AdEntity.h"
-#include "engines/wintermute/BGame.h"
-#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/UIEntity.h"
-#include "engines/wintermute/BParser.h"
-#include "engines/wintermute/BDynBuffer.h"
-#include "engines/wintermute/scriptables/ScValue.h"
-#include "engines/wintermute/scriptables/ScScript.h"
-#include "engines/wintermute/scriptables/ScStack.h"
+#include "engines/wintermute/Base/BParser.h"
+#include "engines/wintermute/Base/BDynBuffer.h"
+#include "engines/wintermute/Base/scriptables/ScValue.h"
+#include "engines/wintermute/Base/scriptables/ScScript.h"
+#include "engines/wintermute/Base/scriptables/ScStack.h"
 
 namespace WinterMute {
 

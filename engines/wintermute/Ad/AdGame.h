@@ -29,7 +29,7 @@
 #define WINTERMUTE_ADGAME_H
 
 #include "engines/wintermute/Ad/AdTypes.h"
-#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/Base/BGame.h"
 
 namespace WinterMute {
 class CAdItem;

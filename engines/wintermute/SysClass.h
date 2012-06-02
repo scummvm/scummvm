@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_SYSCLASS_H
 #define WINTERMUTE_SYSCLASS_H
 
-#include "persistent.h"
-#include "dctypes.h"
+#include "engines/wintermute/persistent.h"
+#include "engines/wintermute/dctypes.h"
 
 //#include <set>
 //#include <map>

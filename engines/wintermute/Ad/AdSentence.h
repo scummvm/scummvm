@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADSENTENCE_H
 
 
-#include "engines/wintermute/BBase.h"
+#include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 

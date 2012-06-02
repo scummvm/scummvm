@@ -30,8 +30,8 @@
 #define WINTERMUTE_UIOBJECT_H
 
 
-#include "BObject.h"
-#include "dctypes.h"    // Added by ClassView
+#include "engines/wintermute/Base/BObject.h"
+#include "engines/wintermute/dctypes.h"    // Added by ClassView
 
 namespace WinterMute {
 

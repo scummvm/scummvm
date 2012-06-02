@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADROTLEVEL_H
 #define WINTERMUTE_ADROTLEVEL_H
 
-#include "engines/wintermute/BObject.h"
+#include "engines/wintermute/Base/BObject.h"
 
 namespace WinterMute {
 

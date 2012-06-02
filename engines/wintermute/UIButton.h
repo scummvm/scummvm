@@ -31,7 +31,7 @@
 
 
 #include "UIObject.h"
-#include "dctypes.h"    // Added by ClassView
+#include "engines/wintermute/dctypes.h"    // Added by ClassView
 
 namespace WinterMute {
 

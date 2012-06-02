@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADSCENESTATE_H
 
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/BBase.h"
+#include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/coll_templ.h"
 
 namespace WinterMute {

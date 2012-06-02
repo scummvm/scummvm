@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADWAYPOINTGROUP_H
 #define WINTERMUTE_ADWAYPOINTGROUP_H
 
-#include "engines/wintermute/BObject.h"
+#include "engines/wintermute/Base/BObject.h"
 
 namespace WinterMute {
 class CBPoint;

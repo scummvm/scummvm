@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Ad/AdResponseContext.h"
-#include "engines/wintermute/BPersistMgr.h"
+#include "engines/wintermute/Base/BPersistMgr.h"
 
 namespace WinterMute {
 

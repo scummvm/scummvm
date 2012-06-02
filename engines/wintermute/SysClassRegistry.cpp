@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "BGame.h"
-#include "PlatformSDL.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/PlatformSDL.h"
 #include "SysInstance.h"
 #include "SysClassRegistry.h"
 

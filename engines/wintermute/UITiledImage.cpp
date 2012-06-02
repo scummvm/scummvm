@@ -28,12 +28,12 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/UITiledImage.h"
-#include "engines/wintermute/BSurface.h"
-#include "engines/wintermute/BDynBuffer.h"
-#include "engines/wintermute/BParser.h"
-#include "engines/wintermute/BGame.h"
-#include "engines/wintermute/BSubFrame.h"
-#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/BDynBuffer.h"
+#include "engines/wintermute/Base/BParser.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BSubFrame.h"
+#include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/PlatformSDL.h"
 
 namespace WinterMute {

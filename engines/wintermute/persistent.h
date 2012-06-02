@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_PERSISTENT_H
 #define WINTERMUTE_PERSISTENT_H
 
-#include "wintypes.h"
+#include "engines/wintermute/wintypes.h"
 
 namespace WinterMute {
 

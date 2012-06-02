@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADPATHPOINT_H
 
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/BPoint.h"
+#include "engines/wintermute/Base/BPoint.h"
 
 namespace WinterMute {
 

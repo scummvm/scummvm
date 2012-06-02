@@ -32,12 +32,12 @@
 #include "engines/wintermute/Ad/AdTalkNode.h"
 #include "engines/wintermute/Ad/AdGame.h"
 #include "engines/wintermute/PathUtil.h"
-#include "engines/wintermute/BGame.h"
-#include "engines/wintermute/BSound.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BSound.h"
 #include "engines/wintermute/Ad/AdScene.h"
-#include "engines/wintermute/BFont.h"
-#include "engines/wintermute/BSprite.h"
-#include "engines/wintermute/BFileManager.h"
+#include "engines/wintermute/Base/BFont.h"
+#include "engines/wintermute/Base/BSprite.h"
+#include "engines/wintermute/Base/BFileManager.h"
 
 namespace WinterMute {
 

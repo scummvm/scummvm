@@ -20,10 +20,10 @@
 #ifndef WINTERMUTE_VIDTHEORAPLAYER_H
 #define WINTERMUTE_VIDTHEORAPLAYER_H
 
-#include "engines/wintermute/BBase.h"
-#include "engines/wintermute/BFile.h"
-#include "engines/wintermute/BSurface.h"
-#include "engines/wintermute/BImage.h"
+#include "engines/wintermute/Base/BBase.h"
+#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/BImage.h"
 //#include <theora/theora.h>
 
 namespace WinterMute {

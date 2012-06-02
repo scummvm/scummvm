@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_SYSCLASSREGISTRY_H
 #define WINTERMUTE_SYSCLASSREGISTRY_H
 
-#include "wintypes.h"
-#include "dctypes.h"
-#include "persistent.h"
+#include "engines/wintermute/wintypes.h"
+#include "engines/wintermute/dctypes.h"
+#include "engines/wintermute/persistent.h"
 //#include <set>
 //#include <map>
 #include "common/hashmap.h"

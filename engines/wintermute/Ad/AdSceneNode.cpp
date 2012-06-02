@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Ad/AdSceneNode.h"
-#include "engines/wintermute/BGame.h"
+#include "engines/wintermute/Base/BGame.h"
 
 namespace WinterMute {
 

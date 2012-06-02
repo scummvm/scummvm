@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADSCENE_H
 #define WINTERMUTE_ADSCENE_H
 
-#include "engines/wintermute/BFader.h"
+#include "engines/wintermute/Base/BFader.h"
 
 namespace WinterMute {
 

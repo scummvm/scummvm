@@ -26,12 +26,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "dcgf.h"
+#include "engines/wintermute/dcgf.h"
 #include "utils.h"
-#include "PlatformSDL.h"
-#include "wintypes.h"
+#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/wintypes.h"
 #include "PathUtil.h"
-#include "BGame.h"
+#include "engines/wintermute/Base/BGame.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 

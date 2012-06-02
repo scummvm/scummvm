@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADTALKDEF_H
 
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/BObject.h"
+#include "engines/wintermute/Base/BObject.h"
 
 namespace WinterMute {
 class CAdTalkNode;

@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "dcgf.h"
+#include "engines/wintermute/dcgf.h"
 #include <algorithm>
 #include <string>
 #include <sstream>

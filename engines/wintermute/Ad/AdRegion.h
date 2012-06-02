@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADREGION_H
 #define WINTERMUTE_ADREGION_H
 
-#include "engines/wintermute/BRegion.h"
+#include "engines/wintermute/Base/BRegion.h"
 
 namespace WinterMute {
 

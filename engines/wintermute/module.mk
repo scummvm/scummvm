@@ -1,18 +1,18 @@
 MODULE := engines/wintermute
  
 MODULE_OBJS := \
-	scriptables/ScEngine.o \
-	scriptables/ScScript.o \
-	scriptables/ScStack.o \
-	scriptables/ScValue.o \
-	scriptables/SXArray.o \
-	scriptables/SXDate.o \
-	scriptables/SXFile.o \
-	scriptables/SXMath.o \
-	scriptables/SxObject.o \
-	scriptables/SXMemBuffer.o \
-	scriptables/SXStore.o \
-	scriptables/SXString.o \
+	Base/scriptables/ScEngine.o \
+	Base/scriptables/ScScript.o \
+	Base/scriptables/ScStack.o \
+	Base/scriptables/ScValue.o \
+	Base/scriptables/SXArray.o \
+	Base/scriptables/SXDate.o \
+	Base/scriptables/SXFile.o \
+	Base/scriptables/SXMath.o \
+	Base/scriptables/SxObject.o \
+	Base/scriptables/SXMemBuffer.o \
+	Base/scriptables/SXStore.o \
+	Base/scriptables/SXString.o \
 	Ad/AdActor.o \
 	Ad/AdActorDir.o \
 	Ad/AdEntity.o \
@@ -40,52 +40,52 @@ MODULE_OBJS := \
 	Ad/AdTalkHolder.o \
 	Ad/AdTalkNode.o \
 	Ad/AdWaypointGroup.o \
-	BActiveRect.o \
-	BBase.o \
-	BDebugger.o \
-	BDiskFile.o \
-	BDynBuffer.o \
-	BFader.o \
-	BFile.o \
-	BFileEntry.o \
-	BFileManager.o \
-	BGame.o \
-	BFont.o \
-	BFontBitmap.o \
-	BFontStorage.o \
-	BFontTT.o \
-	BFrame.o \
-	BImage.o \
-	BKeyboardState.o \
-	BNamedObject.o \
-	BObject.o \
-	BPackage.o \
-	BParser.o \
-	BPersistMgr.o \
-	BPkgFile.o \
-	BPoint.o \
-	BQuickMsg.o \
-	BRegion.o \
-	BRegistry.o \
-	BRenderer.o \
-	BRenderSDL.o \
-	BResources.o \
-	BResourceFile.o \
-	BSaveThumbFile.o \
-	BSaveThumbHelper.o \
-	BScriptable.o \
-	BScriptHolder.o \
-	BSound.o \
-	BSoundBuffer.o \
-	BSoundMgr.o \
-	BSprite.o \
-	BStringTable.o \
-	BSubFrame.o \
-	BSurface.o \
-	BSurfaceSDL.o \
-	BSurfaceStorage.o \
-	BTransitionMgr.o \
-	BViewport.o \
+	Base/BActiveRect.o \
+	Base/BBase.o \
+	Base/BDebugger.o \
+	Base/BDiskFile.o \
+	Base/BDynBuffer.o \
+	Base/BFader.o \
+	Base/BFile.o \
+	Base/BFileEntry.o \
+	Base/BFileManager.o \
+	Base/BGame.o \
+	Base/BFont.o \
+	Base/BFontBitmap.o \
+	Base/BFontStorage.o \
+	Base/BFontTT.o \
+	Base/BFrame.o \
+	Base/BImage.o \
+	Base/BKeyboardState.o \
+	Base/BNamedObject.o \
+	Base/BObject.o \
+	Base/BPackage.o \
+	Base/BParser.o \
+	Base/BPersistMgr.o \
+	Base/BPkgFile.o \
+	Base/BPoint.o \
+	Base/BQuickMsg.o \
+	Base/BRegion.o \
+	Base/BRegistry.o \
+	Base/BRenderer.o \
+	Base/BRenderSDL.o \
+	Base/BResources.o \
+	Base/BResourceFile.o \
+	Base/BSaveThumbFile.o \
+	Base/BSaveThumbHelper.o \
+	Base/BScriptable.o \
+	Base/BScriptHolder.o \
+	Base/BSound.o \
+	Base/BSoundBuffer.o \
+	Base/BSoundMgr.o \
+	Base/BSprite.o \
+	Base/BStringTable.o \
+	Base/BSubFrame.o \
+	Base/BSurface.o \
+	Base/BSurfaceSDL.o \
+	Base/BSurfaceStorage.o \
+	Base/BTransitionMgr.o \
+	Base/BViewport.o \
 	ConvertUTF.o \
 	crc.o \
 	detection.o \
@@ -95,9 +95,9 @@ MODULE_OBJS := \
 	MathUtil.o \
 	Matrix4.o \
 	PathUtil.o \
-	PartParticle.o \
-	PartEmitter.o \
-	PartForce.o \
+	Base/PartParticle.o \
+	Base/PartEmitter.o \
+	Base/PartForce.o \
 	PlatformSDL.o \
 	StringUtil.o \
 	SysClass.o \

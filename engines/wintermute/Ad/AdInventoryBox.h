@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADINVENTORYBOX_H
 #define WINTERMUTE_ADINVENTORYBOX_H
 
-#include "engines/wintermute/BObject.h"
+#include "engines/wintermute/Base/BObject.h"
 
 namespace WinterMute {
 class CUIButton;

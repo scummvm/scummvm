@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADTALKNODE_H
 
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/BBase.h"
+#include "engines/wintermute/Base/BBase.h"
 
 namespace WinterMute {
 class CAdSpriteSet;

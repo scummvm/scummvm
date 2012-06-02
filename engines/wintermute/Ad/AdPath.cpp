@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Ad/AdPath.h"
-#include "engines/wintermute/BPoint.h"
+#include "engines/wintermute/Base/BPoint.h"
 
 namespace WinterMute {
 
