@@ -90,6 +90,7 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 
 	imgDecoder->loadStream(*file);
 	const Graphics::Surface *surface = imgDecoder->getSurface();
+	const byte* palette = imgDecoder->getPalette();
 	Game->_fileManager->CloseFile(file);
 
 	if (default_ck) {
@@ -136,7 +137,10 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 	// no alpha, set color key
 	/*  if (surface->format.bytesPerPixel != 4)
 	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
-	if (surface->format.bytesPerPixel == 4 && surface->format != g_system->getScreenFormat()) {
+	if (surface->format.bytesPerPixel == 1 && palette) {
+		_surface = surface->convertTo(g_system->getScreenFormat(), palette);
+	}
+	else if (surface->format.bytesPerPixel == 4 && surface->format != g_system->getScreenFormat()) {
 		_surface = surface->convertTo(g_system->getScreenFormat());
 	} else {
 		_surface = new Graphics::Surface();
