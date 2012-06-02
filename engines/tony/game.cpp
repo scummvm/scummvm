@@ -139,6 +139,7 @@ RMOptionButton::RMOptionButton(const RMRect &pt) {
 	m_bActive = false;
 	m_bHasGfx = false;
 	m_bDoubleState = false;
+	m_buf = NULL;
 }
 
 RMOptionButton::~RMOptionButton() {
@@ -321,7 +322,7 @@ void RMOptionSlide::AddToList(RMGfxTargetBuffer &bigBuf) {
 \****************************************************************************/
 
 RMOptionScreen::RMOptionScreen(void) {
-	m_nState = MENUGAME;
+	m_nState = MENUNONE;
 	m_menu = NULL;
 	m_HideLoadSave = NULL;
 	m_QuitConfirm = NULL;
@@ -379,6 +380,7 @@ RMOptionScreen::RMOptionScreen(void) {
 
 
 RMOptionScreen::~RMOptionScreen(void) {
+	CloseState();
 }
 
 void RMOptionScreen::RefreshAll(CORO_PARAM) {
@@ -856,6 +858,8 @@ void RMOptionScreen::CloseState(void) {
 			m_ButtonSound_SFXOn = NULL;
 		}
 	}
+
+	m_nState = MENUNONE;
 }
 
 void RMOptionScreen::ReInit(RMGfxTargetBuffer &bigBuf) {

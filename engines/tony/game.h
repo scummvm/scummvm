@@ -252,7 +252,8 @@ private:
 	    MENUGFX,
 	    MENUSOUND,
 	    MENULOAD,
-	    MENUSAVE
+	    MENUSAVE,
+		MENUNONE
 	};
 
 	STATE m_nState;
