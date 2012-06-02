@@ -40,13 +40,16 @@ MODULE_OBJS := \
 	Base/scriptables/SXMemBuffer.o \
 	Base/scriptables/SXStore.o \
 	Base/scriptables/SXString.o \
+	Base/file/BDiskFile.o \
+	Base/file/BFile.o \
+	Base/file/BResourceFile.o \
+	Base/file/BSaveThumbFile.o \
+	Base/file/BPkgFile.o \
 	Base/BActiveRect.o \
 	Base/BBase.o \
 	Base/BDebugger.o \
-	Base/BDiskFile.o \
 	Base/BDynBuffer.o \
 	Base/BFader.o \
-	Base/BFile.o \
 	Base/BFileEntry.o \
 	Base/BFileManager.o \
 	Base/BGame.o \
@@ -62,7 +65,6 @@ MODULE_OBJS := \
 	Base/BPackage.o \
 	Base/BParser.o \
 	Base/BPersistMgr.o \
-	Base/BPkgFile.o \
 	Base/BPoint.o \
 	Base/BQuickMsg.o \
 	Base/BRegion.o \
@@ -70,8 +72,6 @@ MODULE_OBJS := \
 	Base/BRenderer.o \
 	Base/BRenderSDL.o \
 	Base/BResources.o \
-	Base/BResourceFile.o \
-	Base/BSaveThumbFile.o \
 	Base/BSaveThumbHelper.o \
 	Base/BScriptable.o \
 	Base/BScriptHolder.o \

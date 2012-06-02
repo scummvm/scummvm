@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BPackage.h"
-#include "engines/wintermute/Base/BPkgFile.h"
+#include "engines/wintermute/Base/file/BPkgFile.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "common/util.h"

@@ -21,7 +21,7 @@
 #define WINTERMUTE_VIDTHEORAPLAYER_H
 
 #include "engines/wintermute/Base/BBase.h"
-#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BSurface.h"
 #include "engines/wintermute/Base/BImage.h"
 //#include <theora/theora.h>

@@ -33,7 +33,7 @@
 #include "engines/wintermute/Base/scriptables/ScScript.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/Base/BGame.h"
-#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/scriptables/SXFile.h"

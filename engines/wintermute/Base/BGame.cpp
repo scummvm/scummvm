@@ -30,7 +30,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFader.h"
-#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BFontTT.h"
 #include "engines/wintermute/Base/BFontStorage.h"

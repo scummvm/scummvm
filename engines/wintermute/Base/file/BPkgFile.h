@@ -26,44 +26,39 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BFile.h"
-#include "common/memstream.h"
+#ifndef WINTERMUTE_BPKGFILE_H
+#define WINTERMUTE_BPKGFILE_H
+
+
+#include "engines/wintermute/Base/file/BFile.h"
+#include "engines/wintermute/Base/BFileEntry.h"
+#include <zlib.h>   // Added by ClassView
+
+#define COMPRESSED_BUFFER_SIZE 4096
+
+namespace Common {
+class SeekableReadStream;
+class File;
+}
 
 namespace WinterMute {
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-CBFile::CBFile(CBGame *inGame): CBBase(inGame) {
-	_pos = 0;
-	_size = 0;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-CBFile::~CBFile() {
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool CBFile::IsEOF() {
-	return _pos == _size;
-}
-
-Common::SeekableReadStream *CBFile::getMemStream() {
-	uint32 oldPos = GetPos();
-	Seek(0);
-	byte *data = new byte[GetSize()];
-	Read(data, GetSize());
-	Seek(oldPos);
-	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(data, GetSize(), DisposeAfterUse::YES);
-	return memStream;
-}
-
+class CBPkgFile : public CBFile {
+public:
+	CBPkgFile(CBGame *inGame);
+	virtual ~CBPkgFile();
+	virtual HRESULT Seek(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
+	virtual HRESULT Read(void *Buffer, uint32 Size);
+	virtual HRESULT Close();
+	virtual HRESULT Open(const Common::String &Filename);
+private:
+	bool _inflateInit;
+	HRESULT SeekToPos(uint32 NewPos);
+	bool _compressed;
+	CBFileEntry *_fileEntry;
+	Common::SeekableReadStream *_file;
+};
 
 } // end of namespace WinterMute
+
+#endif

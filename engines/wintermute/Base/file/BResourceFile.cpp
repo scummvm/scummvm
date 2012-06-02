@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BResourceFile.h"
+#include "engines/wintermute/Base/file/BResourceFile.h"
 #include "engines/wintermute/Base/BResources.h"
 
 namespace WinterMute {

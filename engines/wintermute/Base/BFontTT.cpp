@@ -29,7 +29,7 @@
 //#include <ft2build.h>
 //#include FT_FREETYPE_H
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BFontTT.h"
 #include "engines/wintermute/FontGlyphCache.h"
 #include "engines/wintermute/utils/PathUtil.h"

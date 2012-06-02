@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_BRESOURCEFILE_H
 #define WINTERMUTE_BRESOURCEFILE_H
 
-#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/file/BFile.h"
 
 namespace WinterMute {
 

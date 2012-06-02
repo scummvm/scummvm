@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSoundMgr.h"
 #include "engines/wintermute/Base/BSoundBuffer.h"

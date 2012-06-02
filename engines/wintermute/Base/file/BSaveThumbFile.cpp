@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BGame.h"
-#include "engines/wintermute/Base/BSaveThumbFile.h"
+#include "engines/wintermute/Base/file/BSaveThumbFile.h"
 #include "engines/wintermute/PlatformSDL.h"
 
 namespace WinterMute {

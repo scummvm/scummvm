@@ -30,7 +30,7 @@
 #define WINTERMUTE_BDISKFILE_H
 
 
-#include "engines/wintermute/Base/BFile.h"
+#include "engines/wintermute/Base/file/BFile.h"
 
 namespace Common {
 class SeekableReadStream;
