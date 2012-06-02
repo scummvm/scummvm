@@ -241,7 +241,6 @@ public:
 
 	RMPoint StartLocPos[256];
 	OSystem::MutexRef cs[10];
-	OSystem::MutexRef vdb;
 	uint32 mut[10];
 
 	bool bSkipIdle;
