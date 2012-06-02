@@ -44,6 +44,8 @@ public:
 	      Direction direction);
 	~Meter();
 
+	/** Return the max value the meter is measuring. */
+	int32 getMaxValue() const;
 	/** Return the current value the meter is measuring. */
 	int32 getValue() const;
 

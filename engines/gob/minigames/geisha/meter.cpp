@@ -42,6 +42,10 @@ Meter::~Meter() {
 	delete _surface;
 }
 
+int32 Meter::getMaxValue() const {
+	return _maxValue;
+}
+
 int32 Meter::getValue() const {
 	return _value;
 }

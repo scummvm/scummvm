@@ -30,6 +30,7 @@
 #include "gob/aniobject.h"
 
 #include "gob/minigames/geisha/penetration.h"
+#include "gob/minigames/geisha/meter.h"
 
 namespace Gob {
 
@@ -54,17 +55,29 @@ static const byte kPalette[48] = {
 	0x15,  0x3F,  0x15
 };
 
-Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0) {
+Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0),
+	_shieldMeter(0), _healthMeter(0) {
+
 	_background = new Surface(320, 200, 1);
+
+	_shieldMeter = new Meter(11, 119, 92, 3, 11, 10, 1020, Meter::kFillToRight);
+	_healthMeter = new Meter(11, 137, 92, 3, 15, 10, 1020, Meter::kFillToRight);
 }
 
 Penetration::~Penetration() {
 	deinit();
 
+	delete _shieldMeter;
+	delete _healthMeter;
+
 	delete _background;
 }
 
 bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
+	_hasAccessPass = hasAccessPass;
+	_hasMaxEnergy  = hasMaxEnergy;
+	_testMode      = testMode;
+
 	init();
 	initScreen();
 
@@ -101,6 +114,23 @@ void Penetration::init() {
 
 	_sprites = new CMPFile(_vm, "tcifplai.cmp", 320, 200);
 	_objects = new ANIFile(_vm, "tcite.ani", 320);
+
+	// Draw the shield meter
+	_sprites->draw(*_background,   0,   0,  95,   6, 9, 117, 0); // Meter frame
+	_sprites->draw(*_background, 271, 176, 282, 183, 9, 108, 0); // Shield
+
+	// Draw the health meter
+	_sprites->draw(*_background,   0,   0,  95,   6, 9, 135, 0); // Meter frame
+	_sprites->draw(*_background, 283, 176, 292, 184, 9, 126, 0); // Heart
+
+	// The shield starts down
+	_shieldMeter->setValue(0);
+
+	// If we don't have the max energy tokens, the health starts at 1/3 strength
+	if (_hasMaxEnergy)
+		_healthMeter->setMaxValue();
+	else
+		_healthMeter->setValue(_healthMeter->getMaxValue() / 3);
 }
 
 void Penetration::deinit() {
@@ -151,6 +181,13 @@ void Penetration::updateAnims() {
 
 		(*a)->advance();
 	}
+
+	// Draw the meters
+	_shieldMeter->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+
+	_healthMeter->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 }
 
 } // End of namespace Geisha

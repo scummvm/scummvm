@@ -35,6 +35,8 @@ class ANIFile;
 
 namespace Geisha {
 
+class Meter;
+
 /** Geisha's "Penetration" minigame. */
 class Penetration {
 public:
@@ -46,12 +48,18 @@ public:
 private:
 	GobEngine *_vm;
 
+	bool _hasAccessPass;
+	bool _hasMaxEnergy;
+	bool _testMode;
+
 	Surface *_background;
 	CMPFile *_sprites;
 	ANIFile *_objects;
 
 	Common::List<ANIObject *> _anims;
 
+	Meter *_shieldMeter;
+	Meter *_healthMeter;
 
 	void init();
 	void deinit();
