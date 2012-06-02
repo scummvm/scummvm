@@ -35,10 +35,11 @@ RMInput::RMInput() {
 	// Setup mouse fields
 	_clampMouse = false;
 	_mousePos.Set(0, 0);
-	_leftButton = _rightButton = false;;
-
+	_leftButton = _rightButton = false;
 	_leftClickMouse = _leftReleaseMouse = false;
 	_rightClickMouse = _rightReleaseMouse = false;
+
+	Common::fill((byte *)&_event, (byte *)&_event + sizeof(Common::Event), 0);
 
 	// Setup keyboard fields
 	Common::fill(&_keyDown[0], &_keyDown[350], 0);
