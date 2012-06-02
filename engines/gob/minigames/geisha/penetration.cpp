@@ -62,7 +62,7 @@ Penetration::~Penetration() {
 	delete _background;
 }
 
-bool Penetration::play(uint16 var1, uint16 var2, uint16 var3) {
+bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	init();
 	initScreen();
 

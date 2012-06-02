@@ -39,7 +39,7 @@ public:
 	Penetration(GobEngine *vm);
 	~Penetration();
 
-	bool play(uint16 var1, uint16 var2, uint16 var3);
+	bool play(bool hasAccessPass, bool hasMaxEnergy, bool testMode);
 
 private:
 	GobEngine *_vm;

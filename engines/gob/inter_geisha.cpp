@@ -272,12 +272,12 @@ void Inter_Geisha::oGeisha_writeData(OpFuncParams &params) {
 }
 
 void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {
-	uint16 var1      = _vm->_game->_script->readUint16();
-	uint16 var2      = _vm->_game->_script->readUint16();
-	uint16 var3      = _vm->_game->_script->readUint16();
-	uint16 resultVar = _vm->_game->_script->readUint16();
+	uint16 hasAccessPass = _vm->_game->_script->readUint16();
+	uint16 hasMaxEnergy  = _vm->_game->_script->readUint16();
+	uint16 testMode      = _vm->_game->_script->readUint16();
+	uint16 resultVar     = _vm->_game->_script->readUint16();
 
-	bool result = _penetration->play(var1, var2, var3);
+	bool result = _penetration->play(hasAccessPass, hasMaxEnergy, testMode);
 
 	WRITE_VAR_UINT32(resultVar, result ? 1 : 0);
 }
