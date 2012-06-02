@@ -136,22 +136,22 @@ byte *CBFileManager::ReadWholeFile(const char *Filename, uint32 *Size, bool Must
 	*/
 
 
-	buffer = new byte[File->GetSize() + 1];
+	buffer = new byte[File->getSize() + 1];
 	if (buffer == NULL) {
-		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", Filename, File->GetSize() + 1);
+		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", Filename, File->getSize() + 1);
 		CloseFile(File);
 		return NULL;
 	}
 
-	if (FAILED(File->Read(buffer, File->GetSize()))) {
+	if (FAILED(File->Read(buffer, File->getSize()))) {
 		Game->LOG(0, "Error reading file '%s'", Filename);
 		CloseFile(File);
 		delete [] buffer;
 		return NULL;
 	};
 
-	buffer[File->GetSize()] = '\0';
-	if (Size != NULL) *Size = File->GetSize();
+	buffer[File->getSize()] = '\0';
+	if (Size != NULL) *Size = File->getSize();
 	CloseFile(File);
 
 	return buffer;

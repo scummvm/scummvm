@@ -45,10 +45,10 @@ CBResourceFile::~CBResourceFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBResourceFile::Open(const Common::String &Filename) {
+HRESULT CBResourceFile::Open(const Common::String &filename) {
 	Close();
 
-	if (CBResources::GetFile(Filename.c_str(), _data, _size)) {
+	if (CBResources::GetFile(filename.c_str(), _data, _size)) {
 		_pos = 0;
 		return S_OK;
 	}
@@ -66,36 +66,36 @@ HRESULT CBResourceFile::Close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBResourceFile::Read(void *Buffer, uint32 Size) {
-	if (!_data || _pos + Size > _size) return E_FAIL;
+HRESULT CBResourceFile::Read(void *buffer, uint32 size) {
+	if (!_data || _pos + size > _size) return E_FAIL;
 
-	memcpy(Buffer, (byte *)_data + _pos, Size);
-	_pos += Size;
+	memcpy(buffer, (byte *)_data + _pos, size);
+	_pos += size;
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBResourceFile::Seek(uint32 Pos, TSeek Origin) {
+HRESULT CBResourceFile::Seek(uint32 pos, TSeek origin) {
 	if (!_data) return E_FAIL;
 
-	int32 NewPos = 0;
+	int32 newPos = 0;
 
-	switch (Origin) {
+	switch (origin) {
 	case SEEK_TO_BEGIN:
-		NewPos = Pos;
+		newPos = pos;
 		break;
 	case SEEK_TO_END:
-		NewPos = _size + Pos;
+		newPos = _size + pos;
 		break;
 	case SEEK_TO_CURRENT:
-		NewPos = _pos + Pos;
+		newPos = _pos + pos;
 		break;
 	}
 
-	if (NewPos < 0 || NewPos > _size) return E_FAIL;
-	else _pos = NewPos;
+	if (newPos < 0 || newPos > _size) return E_FAIL;
+	else _pos = newPos;
 
 	return S_OK;
 }

@@ -47,13 +47,13 @@ class CBPkgFile : public CBFile {
 public:
 	CBPkgFile(CBGame *inGame);
 	virtual ~CBPkgFile();
-	virtual HRESULT Seek(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
-	virtual HRESULT Read(void *Buffer, uint32 Size);
+	virtual HRESULT Seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN);
+	virtual HRESULT Read(void *buffer, uint32 size);
 	virtual HRESULT Close();
-	virtual HRESULT Open(const Common::String &Filename);
+	virtual HRESULT Open(const Common::String &filename);
 private:
 	bool _inflateInit;
-	HRESULT SeekToPos(uint32 NewPos);
+	HRESULT SeekToPos(uint32 newPos);
 	bool _compressed;
 	CBFileEntry *_fileEntry;
 	Common::SeekableReadStream *_file;

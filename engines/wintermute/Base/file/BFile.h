@@ -44,16 +44,16 @@ protected:
 	uint32 _pos;
 	uint32 _size;
 public:
-	virtual uint32 GetSize() {
+	virtual uint32 getSize() {
 		return _size;
 	};
-	virtual uint32 GetPos() {
+	virtual uint32 getPos() {
 		return _pos;
 	};
-	virtual HRESULT Seek(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN) = 0;
-	virtual HRESULT Read(void *Buffer, uint32 Size) = 0;
+	virtual HRESULT Seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN) = 0;
+	virtual HRESULT Read(void *buffer, uint32 size) = 0;
 	virtual HRESULT Close() = 0;
-	virtual HRESULT Open(const Common::String &Filename) = 0;
+	virtual HRESULT Open(const Common::String &filename) = 0;
 	virtual bool IsEOF();
 	CBFile(CBGame *inGame);
 	virtual ~CBFile();

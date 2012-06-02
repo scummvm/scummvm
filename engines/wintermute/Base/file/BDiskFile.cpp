@@ -60,7 +60,7 @@ HRESULT CBDiskFile::Open(const Common::String &Filename) {
 
 	for (int i = 0; i < Game->_fileManager->_singlePaths.GetSize(); i++) {
 		sprintf(FullPath, "%s%s", Game->_fileManager->_singlePaths[i], Filename.c_str());
-		CorrectSlashes(FullPath);
+		correctSlashes(FullPath);
 		//_file = Common::createFileStream(FullPath);
 		Common::File *tempFile = new Common::File();
 		if (tempFile->open(FullPath)) {
@@ -77,7 +77,7 @@ HRESULT CBDiskFile::Open(const Common::String &Filename) {
 	// if we didn't find it in search paths, try to open directly
 	if (!_file) {
 		strcpy(FullPath, Filename.c_str());
-		CorrectSlashes(FullPath);
+		correctSlashes(FullPath);
 		//error("Tried to open %s, TODO: add SearchMan-support", Filename.c_str());
 		//_file = Common::createFileStream(FullPath);
 		Common::File *tempFile = new Common::File();
@@ -161,15 +161,15 @@ HRESULT CBDiskFile::Close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDiskFile::Read(void *Buffer, uint32 Size) {
+HRESULT CBDiskFile::Read(void *buffer, uint32 size) {
 	if (_compressed) {
-		memcpy(Buffer, _data + _pos, Size);
-		_pos += Size;
+		memcpy(buffer, _data + _pos, size);
+		_pos += size;
 		return S_OK;
 	} else {
 
 		if (_file) {
-			size_t count = _file->read(Buffer, Size);
+			size_t count = _file->read(buffer, size);
 			_pos += count;
 			return S_OK;
 		} else return E_FAIL;
@@ -178,39 +178,39 @@ HRESULT CBDiskFile::Read(void *Buffer, uint32 Size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDiskFile::Seek(uint32 Pos, TSeek Origin) {
+HRESULT CBDiskFile::Seek(uint32 pos, TSeek origin) {
 	// TODO: Should this really need to use uint32?
 	if (_compressed) {
-		uint32 NewPos = 0;
+		uint32 newPos = 0;
 
-		switch (Origin) {
+		switch (origin) {
 		case SEEK_TO_BEGIN:
-			NewPos = Pos;
+			newPos = pos;
 			break;
 		case SEEK_TO_END:
-			NewPos = _size + Pos;
+			newPos = _size + pos;
 			break;
 		case SEEK_TO_CURRENT:
-			NewPos = _pos + Pos;
+			newPos = _pos + pos;
 			break;
 		}
 
-		if (NewPos < 0 || NewPos > _size) return E_FAIL;
-		else _pos = NewPos;
+		if (newPos < 0 || newPos > _size) return E_FAIL;
+		else _pos = newPos;
 		return S_OK;
 	} else {
 		if (!_file) return E_FAIL;
 		int ret = 1;
 
-		switch (Origin) {
+		switch (origin) {
 		case SEEK_TO_BEGIN:
-			ret = _file->seek(_prefixSize + Pos, SEEK_SET);
+			ret = _file->seek(_prefixSize + pos, SEEK_SET);
 			break;
 		case SEEK_TO_END:
-			ret = _file->seek(Pos, SEEK_END);
+			ret = _file->seek(pos, SEEK_END);
 			break;
 		case SEEK_TO_CURRENT:
-			ret = _file->seek(Pos, SEEK_CUR);
+			ret = _file->seek(pos, SEEK_CUR);
 			break;
 		}
 		if (ret == 0) {
@@ -221,7 +221,7 @@ HRESULT CBDiskFile::Seek(uint32 Pos, TSeek Origin) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBDiskFile::CorrectSlashes(char *fileName) {
+void CBDiskFile::correctSlashes(char *fileName) {
 	for (size_t i = 0; i < strlen(fileName); i++) {
 		if (fileName[i] == '\\') fileName[i] = '/';
 	}

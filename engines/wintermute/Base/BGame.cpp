@@ -2079,8 +2079,8 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			byte Buf[1024];
 			int BytesRead = 0;
 
-			while (BytesRead < File->GetSize()) {
-				int BufSize = MIN((uint32)1024, File->GetSize() - BytesRead);
+			while (BytesRead < File->getSize()) {
+				int BufSize = MIN((uint32)1024, File->getSize() - BytesRead);
 				BytesRead += BufSize;
 
 				File->Read(Buf, BufSize);

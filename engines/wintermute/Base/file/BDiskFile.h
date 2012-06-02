@@ -42,12 +42,12 @@ class CBDiskFile : public CBFile {
 public:
 	CBDiskFile(CBGame *inGame);
 	virtual ~CBDiskFile();
-	virtual HRESULT Seek(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
-	virtual HRESULT Read(void *Buffer, uint32 Size);
+	virtual HRESULT Seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN);
+	virtual HRESULT Read(void *buffer, uint32 size);
 	virtual HRESULT Close();
-	virtual HRESULT Open(const Common::String &Filename);
+	virtual HRESULT Open(const Common::String &filename);
 private:
-	void CorrectSlashes(char *fileName);
+	void correctSlashes(char *fileName);
 	Common::SeekableReadStream *_file;
 	byte *_data;
 	bool _compressed;

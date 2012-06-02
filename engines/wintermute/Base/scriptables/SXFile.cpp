@@ -652,7 +652,7 @@ HRESULT CSXFile::ScSetProperty(const char *Name, CScValue *Value) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CSXFile::GetPos() {
-	if (_mode == 1 && _readFile) return _readFile->GetPos();
+	if (_mode == 1 && _readFile) return _readFile->getPos();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) return ftell(_writeFile);
 	else return 0;
 }
@@ -666,7 +666,7 @@ bool CSXFile::SetPos(uint32 Pos, TSeek Origin) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CSXFile::GetLength() {
-	if (_mode == 1 && _readFile) return _readFile->GetSize();
+	if (_mode == 1 && _readFile) return _readFile->getSize();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		uint32 CurrentPos = ftell(_writeFile);
 		fseek(_writeFile, 0, SEEK_END);

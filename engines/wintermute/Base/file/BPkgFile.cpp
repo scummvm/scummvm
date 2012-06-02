@@ -125,36 +125,36 @@ HRESULT CBPkgFile::Read(void *Buffer, uint32 Size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::Seek(uint32 Pos, TSeek Origin) {
+HRESULT CBPkgFile::Seek(uint32 pos, TSeek origin) {
 	if (!_fileEntry) return E_FAIL;
 
-	uint32 NewPos = 0;
+	uint32 newPos = 0;
 
-	switch (Origin) {
+	switch (origin) {
 	case SEEK_TO_BEGIN:
-		NewPos = Pos;
+		newPos = pos;
 		break;
 	case SEEK_TO_END:
-		NewPos = _size + Pos;
+		newPos = _size + pos;
 		break;
 	case SEEK_TO_CURRENT:
-		NewPos = _pos + Pos;
+		newPos = _pos + pos;
 		break;
 	}
 
-	if (NewPos < 0 || NewPos > _size) return E_FAIL;
+	if (newPos < 0 || newPos > _size) return E_FAIL;
 
-	return SeekToPos(NewPos);
+	return SeekToPos(newPos);
 }
 
 
 #define STREAM_BUFFER_SIZE 4096
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPkgFile::SeekToPos(uint32 NewPos) {
+HRESULT CBPkgFile::SeekToPos(uint32 newPos) {
 	HRESULT ret = S_OK;
 
 	// seek compressed stream to NewPos
-	_pos = NewPos;
+	_pos = newPos;
 	return ret;
 }
 
