@@ -137,10 +137,18 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 	// no alpha, set color key
 	/*  if (surface->format.bytesPerPixel != 4)
 	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
-	if (surface->format.bytesPerPixel == 1 && palette) {
+
+	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
+	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
+	if (strFileName.hasSuffix(".bmp") && surface->format.bytesPerPixel == 4) {
 		_surface = surface->convertTo(g_system->getScreenFormat(), palette);
-	}
-	else if (surface->format.bytesPerPixel == 4 && surface->format != g_system->getScreenFormat()) {
+		TransparentSurface trans(*_surface);
+		trans.applyColorKey(ck_red, ck_green, ck_blue);
+	} else if (surface->format.bytesPerPixel == 1 && palette) {
+		_surface = surface->convertTo(g_system->getScreenFormat(), palette);
+		TransparentSurface trans(*_surface);
+		trans.applyColorKey(ck_red, ck_green, ck_blue, true);
+	} else if (surface->format.bytesPerPixel == 4 && surface->format != g_system->getScreenFormat()) {
 		_surface = surface->convertTo(g_system->getScreenFormat());
 	} else {
 		_surface = new Graphics::Surface();

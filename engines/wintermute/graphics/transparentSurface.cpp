@@ -278,6 +278,7 @@ TransparentSurface *TransparentSurface::scale(int xSize, int ySize) const {
  * @param overwriteAlpha if true, all other alpha will be set fully opaque
  */
 void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha) {
+	assert(format.bytesPerPixel == 4);
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
 			uint32 pix = ((uint32 *)pixels)[i * w + j];
