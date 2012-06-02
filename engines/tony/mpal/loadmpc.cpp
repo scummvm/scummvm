@@ -278,10 +278,9 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			lpBuf += 4;
 
 			// PlayGroup
-			num3 = *lpBuf;
-			*lpBuf++;
+			num3 = *lpBuf++;
 
-  			if (num3 >= MAX_PLAYGROUPS_PER_SELECT)
+			if (num3 >= MAX_PLAYGROUPS_PER_SELECT)
 				error("Too much playgroups in select #%d in choice #%d in dialog #%d", j, lpmdDialog->Choice[i].nChoice, lpmdDialog->nObj);
 
 			for (z = 0; z < num3; z++) {
