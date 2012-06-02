@@ -60,6 +60,30 @@ static const int kColorHealth = 15;
 static const int kColorBlack  = 10;
 static const int kColorFloor  = 13;
 
+enum Animation {
+	kAnimationDriveS   =  4,
+	kAnimationDriveE   =  5,
+	kAnimationDriveN   =  6,
+	kAnimationDriveW   =  7,
+	kAnimationDriveSE  =  8,
+	kAnimationDriveNE  =  9,
+	kAnimationDriveSW  = 10,
+	kAnimationDriveNW  = 11,
+	kAnimationShootS   = 12,
+	kAnimationShootN   = 13,
+	kAnimationShootW   = 14,
+	kAnimationShootE   = 15,
+	kAnimationShootNE  = 16,
+	kAnimationShootSE  = 17,
+	kAnimationShootSW  = 18,
+	kAnimationShootNW  = 19,
+	kAnimationExplodeN = 28,
+	kAnimationExplodeS = 29,
+	kAnimationExplodeW = 30,
+	kAnimationExplodeE = 31,
+	kAnimationExit     = 32
+};
+
 static const int kMapTileWidth  = 24;
 static const int kMapTileHeight = 24;
 
@@ -169,7 +193,7 @@ const byte Penetration::kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight] =
 };
 
 
-Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0),
+Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
 	_shieldMeter(0), _healthMeter(0), _floor(0), _mapUpdate(false), _mapX(0), _mapY(0),
 	_subTileX(0), _subTileY(0) {
 
@@ -250,10 +274,20 @@ void Penetration::init() {
 	_floor = 0;
 
 	createMap();
+
+	_sub = new ANIObject(*_objects);
+
+	_sub->setAnimation(kAnimationDriveN);
+	_sub->setPosition(kPlayAreaX + kPlayAreaBorderWidth, kPlayAreaY + kPlayAreaBorderHeight);
+	_sub->setVisible(true);
+
+	_anims.push_back(_sub);
 }
 
 void Penetration::deinit() {
 	_anims.clear();
+
+	delete _sub;
 
 	delete _objects;
 	delete _sprites;
@@ -391,16 +425,16 @@ int16 Penetration::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseB
 
 void Penetration::handleSub(int16 key) {
 	if      (key == kKeyLeft)
-		moveSub(-5,  0);
+		moveSub(-5,  0, kAnimationDriveW);
 	else if (key == kKeyRight)
-		moveSub( 5,  0);
+		moveSub( 5,  0, kAnimationDriveE);
 	else if (key == kKeyUp)
-		moveSub( 0, -5);
+		moveSub( 0, -5, kAnimationDriveN);
 	else if (key == kKeyDown)
-		moveSub( 0,  5);
+		moveSub( 0,  5, kAnimationDriveS);
 }
 
-void Penetration::moveSub(int x, int y) {
+void Penetration::moveSub(int x, int y, uint16 animation) {
 	_mapX = CLIP<int16>(_mapX + x, 0, kMapWidth  * kMapTileWidth);
 	_mapY = CLIP<int16>(_mapY + y, 0, kMapHeight * kMapTileHeight);
 
@@ -408,6 +442,9 @@ void Penetration::moveSub(int x, int y) {
 	_subTileY  = _mapY / kMapTileHeight;
 
 	_mapUpdate = true;
+
+	if (_sub->getAnimation() != animation)
+		_sub->setAnimation(animation);
 }
 
 void Penetration::updateAnims() {

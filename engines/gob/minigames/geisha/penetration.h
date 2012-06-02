@@ -64,6 +64,8 @@ private:
 	CMPFile *_sprites;
 	ANIFile *_objects;
 
+	ANIObject *_sub;
+
 	Common::List<ANIObject *> _anims;
 
 	Meter *_shieldMeter;
@@ -93,7 +95,7 @@ private:
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
 
 	void handleSub(int16 key);
-	void moveSub(int x, int y);
+	void moveSub(int x, int y, uint16 animation);
 };
 
 } // End of namespace Geisha
