@@ -46,6 +46,14 @@ public:
 	bool play(bool hasAccessPass, bool hasMaxEnergy, bool testMode);
 
 private:
+	static const int kModeCount  = 2;
+	static const int kFloorCount = 3;
+
+	static const int kMapWidth  = 17;
+	static const int kMapHeight = 13;
+
+	static const byte kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight];
+
 	GobEngine *_vm;
 
 	bool _hasAccessPass;
@@ -61,8 +69,15 @@ private:
 	Meter *_shieldMeter;
 	Meter *_healthMeter;
 
+	uint8 _floor;
+
+	Surface *_map;
+	byte _mapTiles[kMapWidth * kMapHeight];
+
 	void init();
 	void deinit();
+
+	void createMap();
 
 	void initScreen();
 

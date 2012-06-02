@@ -55,17 +55,136 @@ static const byte kPalette[48] = {
 	0x15,  0x3F,  0x15
 };
 
+static const int kColorShield = 11;
+static const int kColorHealth = 15;
+static const int kColorBlack  = 10;
+static const int kColorFloor  = 13;
+
+static const int kMapTileWidth  = 24;
+static const int kMapTileHeight = 24;
+
+static const int kPlayAreaX      = 120;
+static const int kPlayAreaY      =   7;
+static const int kPlayAreaWidth  = 192;
+static const int kPlayAreaHeight = 113;
+
+static const int kPlayAreaBorderWidth  = kPlayAreaWidth  / 2;
+static const int kPlayAreaBorderHeight = kPlayAreaHeight / 2;
+
+const byte Penetration::kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight] = {
+	{
+		{ // Real mode, floor 0
+			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,
+			50, 50,  0,  0, 52, 53,  0,  0,  0,  0,  0,  0,  0,  0,  0, 50, 50,
+			50,  0,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
+			50,  0,  0, 50,  0,  0, 52, 53,  0,  0,  0,  0,  0,  0, 50,  0, 50,
+			50,  0, 50,  0,  0, 50, 50, 50, 50,  0, 54, 55,  0,  0, 50,  0, 50,
+			50,  0, 50, 49,  0, 50,  0, 52, 53,  0, 50, 50, 50,  0,  0,  0, 50,
+			50, 57,  0, 50,  0,  0,  0, 50, 50, 50,  0,  0, 56, 50, 54, 55, 50,
+			50, 50,  0,  0, 50, 50, 50,  0,  0,  0,  0, 50,  0,  0, 50,  0, 50,
+			50, 51, 50,  0, 54, 55,  0,  0, 50, 50, 50, 50, 52, 53, 50,  0, 50,
+			50,  0, 50,  0,  0,  0,  0,  0, 54, 55,  0,  0,  0, 50,  0,  0, 50,
+			50,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0,  0, 50,
+			50, 50,  0, 52, 53,  0,  0,  0,  0,  0,  0, 52, 53,  0,  0, 50, 50,
+			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0
+		},
+		{ // Real mode, floor 1
+			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,
+			50,  0, 52, 53,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 50,
+			50,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
+			50,  0, 50, 51, 52, 53,  0,  0, 52, 53,  0,  0,  0,  0, 50,  0, 50,
+			50,  0, 50,  0, 50, 50,  0, 50,  0, 50,  0, 50, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 52, 53,  0,  0,  0,  0,  0, 52, 53,  0, 52, 53, 50,
+			50, 57, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
+			50,  0, 50, 52, 53,  0,  0, 52, 53,  0,  0,  0,  0,  0, 54, 55, 50,
+			50,  0, 50,  0, 50,  0, 50, 50,  0, 50, 50,  0, 50,  0, 50, 50, 50,
+			50,  0, 50, 49,  0,  0, 52, 53,  0, 52, 53,  0,  0,  0, 50, 56, 50,
+			50,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
+			50,  0,  0,  0,  0,  0,  0,  0, 54, 55,  0,  0,  0,  0,  0,  0, 50,
+			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0
+		},
+		{ // Real mode, floor 2
+			 0, 50, 50, 50, 50, 50, 50, 50,  0, 50, 50, 50, 50, 50, 50, 50,  0,
+			50, 52, 53,  0,  0,  0,  0, 50, 50, 50,  0,  0,  0,  0, 52, 53, 50,
+			50,  0, 50, 50, 50,  0,  0,  0, 50,  0,  0,  0, 50, 50, 50,  0, 50,
+			50,  0, 50, 52, 53, 50, 50, 52, 53,  0, 50, 50, 54, 55, 50,  0, 50,
+			50,  0, 50,  0,  0,  0,  0, 50,  0, 50,  0,  0,  0,  0, 50,  0, 50,
+			50,  0,  0,  0, 50,  0,  0,  0, 50,  0,  0,  0, 50,  0, 52, 53, 50,
+			 0, 50,  0, 50, 50, 50,  0, 57, 50, 51,  0, 50, 50, 50,  0, 50,  0,
+			50,  0,  0,  0, 50,  0,  0,  0, 50,  0, 52, 53, 50,  0,  0,  0, 50,
+			50,  0, 50,  0,  0,  0,  0, 50, 56, 50,  0,  0,  0,  0, 50,  0, 50,
+			50,  0, 50, 54, 55, 50, 50,  0,  0,  0, 50, 50, 54, 55, 50,  0, 50,
+			50,  0, 50, 50, 50,  0,  0,  0, 50,  0,  0,  0, 50, 50, 50,  0, 50,
+			50, 52, 53,  0,  0,  0,  0, 50, 50, 50,  0,  0,  0,  0, 52, 53, 50,
+			 0, 50, 50, 50, 50, 50, 50, 50,  0, 50, 50, 50, 50, 50, 50, 50,  0
+		}
+	},
+	{
+		{ // Test mode, floor 0
+			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+			50, 56,  0, 50,  0,  0, 52, 53,  0,  0,  0,  0, 52, 53,  0, 51, 50,
+			50,  0,  0, 50,  0,  0,  0, 50,  0, 54, 55, 50,  0, 50, 50, 50, 50,
+			50, 52, 53, 50, 50,  0,  0, 50, 50, 50, 50, 50,  0, 50,  0,  0, 50,
+			50,  0,  0,  0,  0, 56,  0,  0,  0,  0,  0, 50, 49, 50,  0,  0, 50,
+			50,  0, 54, 55,  0, 50, 50, 54, 55,  0, 50, 50, 50,  0,  0,  0, 50,
+			50,  0,  0,  0,  0,  0,  0,  0,  0,  0, 52, 53,  0,  0, 54, 55, 50,
+			50,  0, 50,  0, 50,  0,  0, 50,  0,  0,  0, 50,  0,  0,  0,  0, 50,
+			50,  0, 50,  0, 50, 54, 55, 50,  0, 50, 50, 50,  0, 50,  0,  0, 50,
+			50, 50, 50, 50, 50,  0,  0, 50,  0,  0,  0,  0,  0, 50, 54, 55, 50,
+			50,  0,  0,  0,  0,  0,  0,  0, 50, 50, 50, 50, 50,  0,  0,  0, 50,
+			50, 57,  0, 52, 53,  0,  0,  0,  0, 54, 55,  0,  0,  0,  0, 56, 50,
+			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
+		},
+		{ // Test mode, floor 1
+			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+			50, 52, 53,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 50,
+			50,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 54, 55,  0, 50,
+			50,  0, 50, 52, 53,  0,  0, 50,  0,  0, 54, 55, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0,  0, 52, 53,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50, 50, 50, 50, 50, 49, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50,  0,  0, 50, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50, 51,  0,  0, 52, 53, 50,  0, 50,  0, 50,
+			50, 57, 50,  0, 50,  0, 50, 50, 50, 50, 50, 50, 50,  0, 50,  0, 50,
+			50, 50, 50,  0, 50, 56,  0,  0,  0, 54, 55,  0,  0,  0, 50,  0, 50,
+			50, 56,  0,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0, 50,
+			50, 50, 50, 50,  0,  0,  0,  0, 52, 53,  0,  0,  0,  0,  0,  0, 50,
+			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
+		},
+		{ // Test mode, floor 2
+			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+			50, 57, 50, 54, 55,  0, 50, 54, 55,  0, 50,  0, 52, 53, 50, 51, 50,
+			50,  0, 50,  0, 50,  0, 50,  0,  0,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50, 52, 53,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
+			50,  0,  0,  0, 50,  0, 50,  0, 50,  0,  0,  0, 50,  0, 50,  0, 50,
+			50,  0,  0,  0, 50, 52, 53,  0, 50, 52, 53, 56, 50,  0, 54, 55, 50,
+			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
+		}
+	}
+};
+
+
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0),
 	_shieldMeter(0), _healthMeter(0) {
 
 	_background = new Surface(320, 200, 1);
 
-	_shieldMeter = new Meter(11, 119, 92, 3, 11, 10, 1020, Meter::kFillToRight);
-	_healthMeter = new Meter(11, 137, 92, 3, 15, 10, 1020, Meter::kFillToRight);
+	_shieldMeter = new Meter(11, 119, 92, 3, kColorShield, kColorBlack, 1020, Meter::kFillToRight);
+	_healthMeter = new Meter(11, 137, 92, 3, kColorHealth, kColorBlack, 1020, Meter::kFillToRight);
+
+	_map = new Surface(kMapWidth  * kMapTileWidth  + kPlayAreaWidth ,
+	                   kMapHeight * kMapTileHeight + kPlayAreaHeight, 1);
 }
 
 Penetration::~Penetration() {
 	deinit();
+
+	delete _map;
 
 	delete _shieldMeter;
 	delete _healthMeter;
@@ -115,14 +234,6 @@ void Penetration::init() {
 	_sprites = new CMPFile(_vm, "tcifplai.cmp", 320, 200);
 	_objects = new ANIFile(_vm, "tcite.ani", 320);
 
-	// Draw the shield meter
-	_sprites->draw(*_background,   0,   0,  95,   6, 9, 117, 0); // Meter frame
-	_sprites->draw(*_background, 271, 176, 282, 183, 9, 108, 0); // Shield
-
-	// Draw the health meter
-	_sprites->draw(*_background,   0,   0,  95,   6, 9, 135, 0); // Meter frame
-	_sprites->draw(*_background, 283, 176, 292, 184, 9, 126, 0); // Heart
-
 	// The shield starts down
 	_shieldMeter->setValue(0);
 
@@ -131,6 +242,10 @@ void Penetration::init() {
 		_healthMeter->setMaxValue();
 	else
 		_healthMeter->setValue(_healthMeter->getMaxValue() / 3);
+
+	_floor = 0;
+
+	createMap();
 }
 
 void Penetration::deinit() {
@@ -143,6 +258,99 @@ void Penetration::deinit() {
 	_sprites = 0;
 }
 
+void Penetration::createMap() {
+	if (_floor >= kFloorCount)
+		error("Geisha: Invalid floor %d in minigame penetration", _floor);
+
+	// Copy the correct map
+	memcpy(_mapTiles, kMaps[_testMode ? 1 : 0][_floor], kMapWidth * kMapHeight);
+
+	_map->fill(kColorBlack);
+
+	// Draw the map tiles
+	for (int y = 0; y < kMapHeight; y++) {
+		for (int x = 0; x < kMapWidth; x++) {
+			byte *mapTile = _mapTiles + (y * kMapWidth + x);
+
+			const int posX = kPlayAreaBorderWidth  + x * kMapTileWidth;
+			const int posY = kPlayAreaBorderHeight + y * kMapTileHeight;
+
+			switch (*mapTile) {
+			case 0: // Floor
+				_sprites->draw(*_map, 30, posX, posY);
+				break;
+
+			case 49: // Emergency exit (needs access pass)
+
+				if (_hasAccessPass) {
+					// Draw an exit. Now works like a regular exit
+					_sprites->draw(*_map, 29, posX, posY);
+					*mapTile = 51;
+				} else
+					// Draw a wall
+					_sprites->draw(*_map, 31, posX, posY);
+
+				break;
+
+			case 50: // Wall
+				_sprites->draw(*_map, 31, posX, posY);
+				break;
+
+			case 51: // Regular exit
+
+				if (!_testMode) {
+					// When we're not in test mode, the last exit only works with an access pass
+
+					if (_floor == 2) {
+						if (!_hasAccessPass) {
+							// It's now a wall
+							_sprites->draw(*_map, 31, posX, posY);
+							*mapTile = 50;
+						} else
+							_sprites->draw(*_map, 29, posX, posY);
+
+					} else
+						_sprites->draw(*_map, 29, posX, posY);
+
+				} else
+					// Always works in test mode
+					_sprites->draw(*_map, 29, posX, posY);
+
+				break;
+
+			case 52: // Left side of biting mouth
+				_sprites->draw(*_map, 32, posX, posY);
+				break;
+
+			case 53: // Right side of biting mouth
+				*mapTile = 0; // Works like a floor
+				break;
+
+			case 54: // Left side of kissing mouth
+				_sprites->draw(*_map, 33, posX, posY);
+				break;
+
+			case 55: // Right side of kissing mouth
+				*mapTile = 0; // Works like a floor
+				break;
+
+			case 56: // Shield lying on the floor
+				_sprites->draw(*_map, 30, posX    , posY    ); // Floor
+				_sprites->draw(*_map, 25, posX + 4, posY + 8); // Shield
+
+				_map->fillRect(posX +  4, posY + 8, posX +  7, posY + 18, kColorFloor); // Area left to shield
+				_map->fillRect(posX + 17, posY + 8, posX + 20, posY + 18, kColorFloor); // Area right to shield
+				break;
+
+			case 57: // Start position
+				_sprites->draw(*_map, 30, posX, posY);
+				*mapTile = 0;
+				break;
+			}
+		}
+	}
+}
+
 void Penetration::initScreen() {
 	_vm->_util->setFrameRate(15);
 
@@ -150,6 +358,14 @@ void Penetration::initScreen() {
 	memcpy(_vm->_draw->_vgaSmallPalette, kPalette, 48);
 
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+
+	// Draw the shield meter
+	_sprites->draw(*_background,   0,   0,  95,   6, 9, 117, 0); // Meter frame
+	_sprites->draw(*_background, 271, 176, 282, 183, 9, 108, 0); // Shield
+
+	// Draw the health meter
+	_sprites->draw(*_background,   0,   0,  95,   6, 9, 135, 0); // Meter frame
+	_sprites->draw(*_background, 283, 176, 292, 184, 9, 126, 0); // Heart
 
 	_vm->_draw->_backSurface->blit(*_background);
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
