@@ -73,6 +73,7 @@ private:
 	uint8 _currentSample;
 	uint8 _channel0Playing;
 	uint8 _channel0Repeat;
+	bool _channel0NewSound;
 	uint8 _channel1Playing;
 
 	uint8 _volume;

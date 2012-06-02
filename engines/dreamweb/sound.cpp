@@ -41,6 +41,7 @@ DreamWebSound::DreamWebSound(DreamWebEngine *vm) : _vm(vm) {
 	_currentSample = 0xff;
 	_channel0Playing = 0;
 	_channel0Repeat = 0;
+	_channel0NewSound = false;
 	_channel1Playing = 255;
 
 	_volume = 0;
@@ -80,6 +81,12 @@ void DreamWebSound::volumeAdjust() {
 
 void DreamWebSound::playChannel0(uint8 index, uint8 repeat) {
 	debug(1, "playChannel0(index:%d, repeat:%d)", index, repeat);
+
+	if (index == _channel0Playing) {
+		warning("playChannel0(index: %d) already playing! Forcing restart...", index);
+		_channel0NewSound = true;
+	}
+
 	_channel0Playing = index;
 	_channel0Repeat = repeat;
 }
@@ -230,8 +237,9 @@ void DreamWebSound::soundHandler() {
 		ch1 = 0;
 	uint8 ch0loop = _channel0Repeat;
 
-	if (_channel0 != ch0) {
+	if (_channel0 != ch0 || _channel0NewSound) {
 		_channel0 = ch0;
+		_channel0NewSound = false;
 		if (ch0) {
 			playSound(0, ch0, ch0loop);
 		}
