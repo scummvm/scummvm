@@ -86,12 +86,12 @@ HRESULT CVidPlayer::SetDefaults() {
 
 //////////////////////////////////////////////////////////////////////////
 CVidPlayer::~CVidPlayer() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::Cleanup() {
+HRESULT CVidPlayer::cleanup() {
 #if 0
 	if (_sound) _sound->Stop();
 	if (_videoPGF) AVIStreamGetFrameClose(_videoPGF);
@@ -124,7 +124,7 @@ HRESULT CVidPlayer::Cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::Initialize(char *inFilename, char *SubtitleFile) {
+HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 #if 0
 	Cleanup();
 
@@ -204,7 +204,7 @@ HRESULT CVidPlayer::Initialize(char *inFilename, char *SubtitleFile) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::Update() {
+HRESULT CVidPlayer::update() {
 #if 0
 	if (!m_Playing) return S_OK;
 
@@ -274,7 +274,7 @@ HRESULT CVidPlayer::Update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::Display() {
+HRESULT CVidPlayer::display() {
 #if 0
 	if (!m_Playing) return S_OK;
 
@@ -298,7 +298,7 @@ HRESULT CVidPlayer::Display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::Play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
+HRESULT CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 #if 0
 	if (!_videoStream || !_vidRenderer) return E_FAIL;
 
@@ -359,7 +359,7 @@ HRESULT CVidPlayer::Play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::Stop() {
+HRESULT CVidPlayer::stop() {
 #if 0
 	if (!_playing) return S_OK;
 
@@ -372,13 +372,13 @@ HRESULT CVidPlayer::Stop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::IsPlaying() {
+bool CVidPlayer::isPlaying() {
 	return _playing;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::LoadSubtitles(char *Filename, char *SubtitleFile) {
+HRESULT CVidPlayer::loadSubtitles(const char *Filename, const char *SubtitleFile) {
 #if 0
 	if (!Filename) return S_OK;
 

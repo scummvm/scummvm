@@ -67,6 +67,8 @@
 #include "engines/wintermute/Base/scriptables/SXMath.h"
 #include "engines/wintermute/Base/scriptables/SXStore.h"
 #include "engines/wintermute/Base/scriptables/SXString.h"
+#include "engines/wintermute/video/VidPlayer.h"
+#include "engines/wintermute/video/VidTheoraPlayer.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/keyboard.h"
@@ -114,6 +116,9 @@ CBGame::CBGame(): CBObject(this) {
 
 	_systemFont = NULL;
 	_videoFont = NULL;
+
+	_videoPlayer = NULL;
+	_theoraPlayer = NULL;
 
 	_mainObject = NULL;
 	_activeObject = NULL;
@@ -304,6 +309,8 @@ CBGame::~CBGame() {
 	delete _scEngine;
 	delete _fontStorage;
 	delete _surfaceStorage;
+	delete _videoPlayer;
+	delete _theoraPlayer;
 	delete _soundMgr;
 	delete _debugMgr;
 	//SAFE_DELETE(_keyboardState);
@@ -326,6 +333,8 @@ CBGame::~CBGame() {
 	_scEngine = NULL;
 	_fontStorage = NULL;
 	_surfaceStorage = NULL;
+	_videoPlayer = NULL;
+	_theoraPlayer = NULL;
 	_soundMgr = NULL;
 	_debugMgr = NULL;
 
@@ -445,6 +454,9 @@ HRESULT CBGame::Initialize1() {
 
 	_scEngine = new CScEngine(this);
 	if (_scEngine == NULL) goto init_fail;
+	
+	_videoPlayer = new CVidPlayer(this);
+	if(_videoPlayer==NULL) goto init_fail;
 
 	_transMgr = new CBTransitionMgr(this);
 	if (_transMgr == NULL) goto init_fail;
@@ -473,6 +485,7 @@ init_fail:
 	if (_soundMgr) delete _soundMgr;
 	if (_fileManager) delete _fileManager;
 	if (_scEngine) delete _scEngine;
+	if (_videoPlayer) delete _videoPlayer;
 	return E_FAIL;
 }
 
@@ -1399,16 +1412,16 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		
 		if(Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
 		
-		/*if(SUCCEEDED(Game->m_VideoPlayer->Initialize(Filename, SubtitleFile)))
+		if(SUCCEEDED(Game->_videoPlayer->initialize(Filename, SubtitleFile)))
 		{
-			if(SUCCEEDED(Game->m_VideoPlayer->Play((TVideoPlayback)Type, X, Y, FreezeMusic)))
+			if(SUCCEEDED(Game->_videoPlayer->play((TVideoPlayback)Type, X, Y, FreezeMusic)))
 			{
 				Stack->PushBool(true);
 				Script->Sleep(0);
 			}
 			else Stack->PushBool(false);
 		}
-		else */Stack->PushBool(false);
+		else Stack->PushBool(false);
 		
 		return S_OK;
 	}
@@ -1441,20 +1454,20 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		
 		
 		if(Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
-		
-		/*SAFE_DELETE(m_TheoraPlayer);
-		m_TheoraPlayer = new CVidTheoraPlayer(this);
-		if(m_TheoraPlayer && SUCCEEDED(m_TheoraPlayer->Initialize(Filename, SubtitleFile)))
+
+		delete _theoraPlayer;
+		_theoraPlayer = new CVidTheoraPlayer(this);
+		if(_theoraPlayer && SUCCEEDED(_theoraPlayer->initialize(Filename, SubtitleFile)))
 		{
-			m_TheoraPlayer->m_DontDropFrames = !DropFrames;
-			if(SUCCEEDED(m_TheoraPlayer->Play((TVideoPlayback)Type, X, Y, true, FreezeMusic)))
+			_theoraPlayer->_dontDropFrames = !DropFrames;
+			if(SUCCEEDED(_theoraPlayer->play((TVideoPlayback)Type, X, Y, true, FreezeMusic)))
 			{
 				Stack->PushBool(true);
 				Script->Sleep(0);
 			}
 			else Stack->PushBool(false);
 		}
-		else */Stack->PushBool(false);
+		else Stack->PushBool(false);
 		
 		return S_OK;
 	}
@@ -4193,6 +4206,27 @@ HRESULT CBGame::SetWaitCursor(const char *Filename) {
 		_cursorNoninteractive = NULL;
 		return E_FAIL;
 	} else return S_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::IsVideoPlaying()
+{
+	if(_videoPlayer->isPlaying()) return true;
+	if(_theoraPlayer && _theoraPlayer->isPlaying()) return true;
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBGame::StopVideo()
+{
+	if(_videoPlayer->isPlaying()) _videoPlayer->stop();
+	if(_theoraPlayer && _theoraPlayer->isPlaying())
+	{
+		_theoraPlayer->stop();
+		delete _theoraPlayer;
+		_theoraPlayer = NULL;
+	}
+	return S_OK;
 }
 
 

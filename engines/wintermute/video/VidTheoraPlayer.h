@@ -71,21 +71,22 @@ public:
 	//CVidSubtitler *_subtitler;
 
 	// control methods
-	HRESULT Initialize(char *Filename, char *SubtitleFile = NULL);
-	HRESULT InitializeSimple();
-	HRESULT Update();
-	HRESULT Play(TVideoPlayback Type = VID_PLAY_CENTER, int X = 0, int Y = 0, bool FreezeGame = false, bool FreezeMusic = true, bool Looping = false, uint32 StartTime = 0, float ForceZoom = -1.0f, int Volume = -1);
-	HRESULT Stop();
-	HRESULT Display(uint32 Alpha = 0xFFFFFFFF);
+	HRESULT initialize(const char *Filename, const char *SubtitleFile = NULL);
+	HRESULT initializeSimple();
+	HRESULT update();
+	HRESULT play(TVideoPlayback Type = VID_PLAY_CENTER, int X = 0, int Y = 0, bool FreezeGame = false, bool FreezeMusic = true, bool Looping = false, uint32 StartTime = 0, float ForceZoom = -1.0f, int Volume = -1);
+	HRESULT stop();
+	HRESULT display(uint32 Alpha = 0xFFFFFFFF);
 	//HRESULT RenderFrame(CBSurface *Texture, yuv_buffer *yuv);
 
-	HRESULT Pause();
-	HRESULT Resume();
+	HRESULT pause();
+	HRESULT resume();
 
-	bool IsPlaying()  {
+	bool isPlaying()  {
 		return _state == THEORA_STATE_PLAYING;
 	};
 	bool IsFinished() {
+		return true; // HACK
 		return _state == THEORA_STATE_FINISHED;
 	};
 	bool IsPaused()   {

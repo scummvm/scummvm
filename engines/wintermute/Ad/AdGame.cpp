@@ -57,6 +57,8 @@
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/video/VidPlayer.h"
+#include "engines/wintermute/video/VidTheoraPlayer.h"
 #include "common/str.h"
 
 namespace WinterMute {
@@ -1689,40 +1691,58 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 	// fill black
 	_renderer->Fill(0, 0, 0);
 	if (!_editorMode) _renderer->SetScreenViewport();
-
-	// process scripts
-	if (Update) _scEngine->Tick();
-
-	POINT p;
-	GetMousePos(&p);
-
-	_scene->Update();
-	_scene->Display();
-
-
-	// display in-game windows
-	DisplayWindows(true);
-	if (_inventoryBox) _inventoryBox->Display();
-	if (_stateEx == GAME_WAITING_RESPONSE) _responseBox->Display();
-	if (_indicatorDisplay) DisplayIndicator();
-
-
-	if (Update || DisplayAll) {
-		// display normal windows
-		DisplayWindows(false);
-
-		SetActiveObject(Game->_renderer->GetObjectAt(p.x, p.y));
-
-		// textual info
-		DisplaySentences(_state == GAME_FROZEN);
-
-		ShowCursor();
-
-		if (_fader) _fader->Display();
-		_transMgr->Update();
+	
+	// playing exclusive video?
+	if(_videoPlayer->isPlaying())
+	{
+		if(Update) _videoPlayer->update();
+		_videoPlayer->display();
 	}
+	else if(_theoraPlayer)
+	{
+		if(_theoraPlayer->isPlaying()) {
+			if(Update) _theoraPlayer->update();
+			_theoraPlayer->display();
+		}
+		if(_theoraPlayer->IsFinished()) {
+			delete _theoraPlayer;
+			_theoraPlayer = NULL;
+		}
+	} else {
+
+		// process scripts
+		if (Update) _scEngine->Tick();
+
+		POINT p;
+		GetMousePos(&p);
+
+		_scene->Update();
+		_scene->Display();
 
 
+		// display in-game windows
+		DisplayWindows(true);
+		if (_inventoryBox) _inventoryBox->Display();
+		if (_stateEx == GAME_WAITING_RESPONSE) _responseBox->Display();
+		if (_indicatorDisplay) DisplayIndicator();
+
+
+		if (Update || DisplayAll) {
+			// display normal windows
+			DisplayWindows(false);
+
+			SetActiveObject(Game->_renderer->GetObjectAt(p.x, p.y));
+
+			// textual info
+			DisplaySentences(_state == GAME_FROZEN);
+
+			ShowCursor();
+
+			if (_fader) _fader->Display();
+			_transMgr->Update();
+		}
+
+	}
 	if (_loadingIcon) {
 		_loadingIcon->Display(_loadingIconX, _loadingIconY);
 		if (!_loadingIconPersistent) {

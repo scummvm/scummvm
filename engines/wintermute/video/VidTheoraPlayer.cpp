@@ -159,7 +159,7 @@ void CVidTheoraPlayer::Cleanup() {
 }*/
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Initialize(char *Filename, char *SubtitleFile) {
+HRESULT CVidTheoraPlayer::initialize(const char *Filename, const char *SubtitleFile) {
 #if 0
 	Cleanup();
 
@@ -328,7 +328,7 @@ HRESULT CVidTheoraPlayer::Initialize(char *Filename, char *SubtitleFile) {
 
 	return Res;
 #endif
-	return 0;
+	return E_FAIL;
 }
 
 
@@ -345,7 +345,7 @@ HRESULT CVidTheoraPlayer::ResetStream() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Play(TVideoPlayback Type, int X, int Y, bool FreezeGame, bool FreezeMusic, bool Looping, uint32 StartTime, float ForceZoom, int Volume) {
+HRESULT CVidTheoraPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeGame, bool FreezeMusic, bool Looping, uint32 StartTime, float ForceZoom, int Volume) {
 #if 0
 	if (ForceZoom < 0.0f) ForceZoom = 100.0f;
 	if (Volume < 0) m_Volume = Game->m_SoundMgr->GetVolumePercent(SOUND_SFX);
@@ -397,11 +397,11 @@ HRESULT CVidTheoraPlayer::Play(TVideoPlayback Type, int X, int Y, bool FreezeGam
 
 	Update();
 #endif
-	return S_OK;
+	return E_FAIL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Stop() {
+HRESULT CVidTheoraPlayer::stop() {
 #if 0
 	if (m_Sound) m_Sound->Stop();
 	m_State = THEORA_STATE_FINISHED;
@@ -411,7 +411,7 @@ HRESULT CVidTheoraPlayer::Stop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Update() {
+HRESULT CVidTheoraPlayer::update() {
 #if 0
 	m_CurrentTime = m_FreezeGame ? Game->m_LiveTimer : Game->m_Timer;
 
@@ -637,7 +637,7 @@ HRESULT CVidTheoraPlayer::WriteVideo() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Display(uint32 Alpha) {
+HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
 
 	RECT rc;
 	HRESULT Res;
@@ -890,7 +890,7 @@ finish:
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Pause() {
+HRESULT CVidTheoraPlayer::pause() {
 #if 0
 	if (m_State == THEORA_STATE_PLAYING) {
 		m_State = THEORA_STATE_PAUSED;
@@ -902,7 +902,7 @@ HRESULT CVidTheoraPlayer::Pause() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Resume() {
+HRESULT CVidTheoraPlayer::resume() {
 #if 0
 	if (_state == THEORA_STATE_PAUSED) {
 		_state = THEORA_STATE_PLAYING;
@@ -945,7 +945,7 @@ HRESULT CVidTheoraPlayer::Resume() {
 }
 */
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::InitializeSimple() {
+HRESULT CVidTheoraPlayer::initializeSimple() {
 #if 0
 	if (SUCCEEDED(Initialize(m_Filename))) {
 		if (m_AlphaFilename) SetAlphaImage(m_AlphaFilename);

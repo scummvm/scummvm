@@ -61,6 +61,8 @@ class CBSurfaceStorage;
 class CSXStore;
 class CSXMath;
 class CBKeyboardState;
+class CVidPlayer;
+class CVidTheoraPlayer;
 
 #define NUM_MUSIC_CHANNELS 5
 
@@ -263,8 +265,8 @@ public:
 	HRESULT Unfreeze();
 	HRESULT Freeze(bool IncludingMusic = true);
 	HRESULT FocusWindow(CUIWindow *Window);
-/*	CVidPlayer* _videoPlayer;
-	CVidTheoraPlayer* _theoraPlayer;*/
+	CVidPlayer* _videoPlayer;
+	CVidTheoraPlayer* _theoraPlayer;
 	bool _loadInProgress;
 	CUIWindow *_focusedWindow;
 	bool _editorForceScripts;
@@ -322,6 +324,9 @@ public:
 	HRESULT DisplayQuickMsg();
 	uint32 _fps;
 	HRESULT UpdateMusicCrossfade();
+
+	bool IsVideoPlaying();
+	HRESULT StopVideo();
 
 	CBArray<CBObject *, CBObject *> _regObjects;
 public:
