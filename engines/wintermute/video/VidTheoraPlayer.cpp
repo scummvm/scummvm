@@ -18,7 +18,7 @@
 
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/vidtheoraplayer.h"
+#include "engines/wintermute/video/vidtheoraplayer.h"
 
 //#pragma comment(lib, "libtheora.lib")
 

@@ -32,7 +32,7 @@
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
-#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
 
 #ifdef __IPHONEOS__
 #   include "IOS_StoreKit_interface.h"

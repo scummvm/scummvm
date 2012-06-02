@@ -32,7 +32,7 @@
 #include "engines/wintermute/Ad/AdEntity.h"
 #include "engines/wintermute/Base/BStringTable.h"
 #include "engines/wintermute/Base/BSprite.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
 

@@ -29,7 +29,7 @@
 #include "engines/wintermute/UI/UIEdit.h"
 #include "engines/wintermute/UI/UIObject.h"
 #include "engines/wintermute/UI/UITiledImage.h"
-#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/Base/BActiveRect.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BFont.h"
@@ -44,7 +44,7 @@
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "common/util.h"
 #include "common/keyboard.h"
 

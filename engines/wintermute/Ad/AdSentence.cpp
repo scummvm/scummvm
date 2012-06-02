@@ -31,7 +31,7 @@
 #include "engines/wintermute/Ad/AdTalkDef.h"
 #include "engines/wintermute/Ad/AdTalkNode.h"
 #include "engines/wintermute/Ad/AdGame.h"
-#include "engines/wintermute/PathUtil.h"
+#include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSound.h"
 #include "engines/wintermute/Ad/AdScene.h"

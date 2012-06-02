@@ -33,7 +33,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Ad/AdSpriteSet.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CAdTalkNode, false)

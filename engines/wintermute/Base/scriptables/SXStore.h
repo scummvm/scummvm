@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_SXSTORE_H
 #define WINTERMUTE_SXSTORE_H
 #include "engines/wintermute/Base/BPersistMgr.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/Base/BObject.h"
 
 namespace WinterMute {

@@ -32,7 +32,7 @@
 #include "engines/wintermute/Base/BSoundMgr.h"
 #include "engines/wintermute/Base/BSoundBuffer.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/vorbis.h"

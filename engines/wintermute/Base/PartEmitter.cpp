@@ -35,7 +35,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BRegion.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
 

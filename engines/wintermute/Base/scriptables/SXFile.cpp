@@ -31,7 +31,7 @@
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFile.h"
 #include "engines/wintermute/Base/BFileManager.h"

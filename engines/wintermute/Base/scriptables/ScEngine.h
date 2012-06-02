@@ -33,7 +33,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/wme_debugger.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
 
 namespace WinterMute {

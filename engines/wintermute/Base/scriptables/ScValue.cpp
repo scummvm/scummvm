@@ -31,7 +31,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
-#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/Base/BScriptable.h"
 
 namespace WinterMute {

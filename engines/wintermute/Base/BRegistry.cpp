@@ -29,10 +29,10 @@
 #include <fstream>
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BRegistry.h"
-#include "engines/wintermute/PathUtil.h"
-#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/utils/PathUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/tinyxml/tinyxml.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace WinterMute {
 

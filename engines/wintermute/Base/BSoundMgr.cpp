@@ -29,8 +29,8 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BSoundMgr.h"
 #include "engines/wintermute/Base/BRegistry.h"
-#include "engines/wintermute/PathUtil.h"
-#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/utils/PathUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 

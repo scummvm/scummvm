@@ -29,10 +29,10 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/Base/scriptables/SXString.h"
 #include "engines/wintermute/Base/scriptables/SXArray.h"
-#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
 
 namespace WinterMute {
 

@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BSprite.h"
-#include "engines/wintermute/StringUtil.h"
-#include "engines/wintermute/PathUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
+#include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
 #include "engines/wintermute/Base/BSurface.h"

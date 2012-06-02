@@ -30,7 +30,7 @@
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BStringTable.h"
-#include "engines/wintermute/StringUtil.h"
+#include "engines/wintermute/utils/StringUtil.h"
 #include "common/str.h"
 
 namespace WinterMute {

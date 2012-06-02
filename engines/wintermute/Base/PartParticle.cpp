@@ -31,7 +31,7 @@
 #include "engines/wintermute/Base/PartEmitter.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Base/BGame.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
 #include <math.h>

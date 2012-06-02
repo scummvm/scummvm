@@ -37,7 +37,7 @@
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BSound.h"
 #include "engines/wintermute/Base/BSprite.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"

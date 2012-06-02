@@ -29,7 +29,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BRenderSDL.h"
-#include "engines/wintermute/PathUtil.h"
+#include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/BRegistry.h"
 #include "engines/wintermute/Base/BSoundMgr.h"

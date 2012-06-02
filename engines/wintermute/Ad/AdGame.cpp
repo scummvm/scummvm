@@ -56,7 +56,7 @@
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "common/str.h"
 
 namespace WinterMute {

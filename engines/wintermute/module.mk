@@ -1,18 +1,6 @@
 MODULE := engines/wintermute
  
 MODULE_OBJS := \
-	Base/scriptables/ScEngine.o \
-	Base/scriptables/ScScript.o \
-	Base/scriptables/ScStack.o \
-	Base/scriptables/ScValue.o \
-	Base/scriptables/SXArray.o \
-	Base/scriptables/SXDate.o \
-	Base/scriptables/SXFile.o \
-	Base/scriptables/SXMath.o \
-	Base/scriptables/SxObject.o \
-	Base/scriptables/SXMemBuffer.o \
-	Base/scriptables/SXStore.o \
-	Base/scriptables/SXString.o \
 	Ad/AdActor.o \
 	Ad/AdActorDir.o \
 	Ad/AdEntity.o \
@@ -40,6 +28,18 @@ MODULE_OBJS := \
 	Ad/AdTalkHolder.o \
 	Ad/AdTalkNode.o \
 	Ad/AdWaypointGroup.o \
+	Base/scriptables/ScEngine.o \
+	Base/scriptables/ScScript.o \
+	Base/scriptables/ScStack.o \
+	Base/scriptables/ScValue.o \
+	Base/scriptables/SXArray.o \
+	Base/scriptables/SXDate.o \
+	Base/scriptables/SXFile.o \
+	Base/scriptables/SXMath.o \
+	Base/scriptables/SxObject.o \
+	Base/scriptables/SXMemBuffer.o \
+	Base/scriptables/SXStore.o \
+	Base/scriptables/SXString.o \
 	Base/BActiveRect.o \
 	Base/BBase.o \
 	Base/BDebugger.o \
@@ -86,8 +86,9 @@ MODULE_OBJS := \
 	Base/BSurfaceStorage.o \
 	Base/BTransitionMgr.o \
 	Base/BViewport.o \
-	ConvertUTF.o \
-	crc.o \
+	Base/PartParticle.o \
+	Base/PartEmitter.o \
+	Base/PartForce.o \
 	detection.o \
 	FontGlyphCache.o \
 	graphics/transparentSurface.o \
@@ -95,12 +96,7 @@ MODULE_OBJS := \
 	math/MathUtil.o \
 	math/Matrix4.o \
 	math/Vector2.o \
-	PathUtil.o \
-	Base/PartParticle.o \
-	Base/PartEmitter.o \
-	Base/PartForce.o \
 	PlatformSDL.o \
-	StringUtil.o \
 	Sys/SysClass.o \
 	Sys/SysClassRegistry.o \
 	Sys/SysInstance.o \
@@ -115,9 +111,13 @@ MODULE_OBJS := \
 	UI/UIText.o \
 	UI/UITiledImage.o \
 	UI/UIWindow.o \
-	utils.o \
-	VidPlayer.o \
-	VidTheoraPlayer.o \
+	utils/ConvertUTF.o \
+	utils/crc.o \
+	utils/PathUtil.o \
+	utils/StringUtil.o \
+	utils/utils.o \
+	video/VidPlayer.o \
+	video/VidTheoraPlayer.o \
 	wintermute.o
  
 MODULE_DIRS += \
