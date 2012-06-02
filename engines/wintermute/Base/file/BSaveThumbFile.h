@@ -34,6 +34,7 @@
 
 namespace WinterMute {
 
+//TODO: Get rid of this
 class CBSaveThumbFile : public CBFile {
 public:
 	CBSaveThumbFile(CBGame *Game);
