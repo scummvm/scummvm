@@ -381,6 +381,9 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(data, "586");
 	} else if (setting == "cpuspeed") {
 		s->_segMan->strcpy(data, "500");
+	} else if (setting == "language") {
+		Common::String languageId = Common::String::format("%d", g_sci->getSciLanguage());
+		s->_segMan->strcpy(data, languageId.c_str());
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
