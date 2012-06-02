@@ -56,7 +56,7 @@
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
-#include "engines/wintermute/UIWindow.h"
+#include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/utils.h"
 #include <math.h>
 #include <limits.h>

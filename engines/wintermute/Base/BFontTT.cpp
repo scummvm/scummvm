@@ -34,7 +34,7 @@
 #include "engines/wintermute/FontGlyphCache.h"
 #include "engines/wintermute/PathUtil.h"
 #include "engines/wintermute/StringUtil.h"
-#include "engines/wintermute/MathUtil.h"
+#include "engines/wintermute/math/MathUtil.h"
 #include "engines/wintermute/Base/BRenderSDL.h"
 #include "engines/wintermute/Base/BSurfaceSDL.h"
 #include "engines/wintermute/Base/BParser.h"

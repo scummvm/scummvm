@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/PartEmitter.h"
-#include "engines/wintermute/Vector2.h"
-#include "engines/wintermute/Matrix4.h"
+#include "engines/wintermute/math/Vector2.h"
+#include "engines/wintermute/math/Matrix4.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/BGame.h"

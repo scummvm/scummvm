@@ -54,7 +54,7 @@
 #include "engines/wintermute/crc.h"
 #include "engines/wintermute/PathUtil.h"
 #include "engines/wintermute/StringUtil.h"
-#include "engines/wintermute/UIWindow.h"
+#include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScEngine.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"

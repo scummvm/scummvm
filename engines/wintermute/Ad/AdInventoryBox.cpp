@@ -35,8 +35,8 @@
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BViewport.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
-#include "engines/wintermute/UIButton.h"
-#include "engines/wintermute/UIWindow.h"
+#include "engines/wintermute/UI/UIButton.h"
+#include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
 //#include <cmath>

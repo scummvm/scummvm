@@ -41,8 +41,8 @@ typedef HRESULT(WINAPI *PERSISTLOAD)(void *, CBPersistMgr *);
 typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
 } // end of namespace WinterMute
 
-#include "SysClass.h"
-#include "SysClassRegistry.h"
+#include "engines/wintermute/Sys/SysClass.h"
+#include "engines/wintermute/Sys/SysClassRegistry.h"
 namespace WinterMute {
 
 

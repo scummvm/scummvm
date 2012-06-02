@@ -29,7 +29,7 @@
 #include "engines/wintermute/Ad/AdEntity.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/UIEntity.h"
+#include "engines/wintermute/UI/UIEntity.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"

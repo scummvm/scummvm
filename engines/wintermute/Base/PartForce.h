@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/Base/BNamedObject.h"
-#include "engines/wintermute/Vector2.h"
+#include "engines/wintermute/math/Vector2.h"
 
 namespace WinterMute {
 

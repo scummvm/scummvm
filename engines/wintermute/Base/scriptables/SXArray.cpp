@@ -29,7 +29,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
-#include "engines/wintermute/SysInstance.h"
+#include "engines/wintermute/Sys/SysInstance.h"
 #include "engines/wintermute/Base/scriptables/SXArray.h"
 
 namespace WinterMute {

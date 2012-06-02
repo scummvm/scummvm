@@ -28,9 +28,9 @@
 
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSprite.h"
-#include "engines/wintermute/UIObject.h"
-#include "engines/wintermute/UITiledImage.h"
-#include "engines/wintermute/UIWindow.h"
+#include "engines/wintermute/UI/UIObject.h"
+#include "engines/wintermute/UI/UITiledImage.h"
+#include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"

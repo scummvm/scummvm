@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/Matrix4.h"
-#include "engines/wintermute/Vector2.h"
+#include "engines/wintermute/math/Matrix4.h"
+#include "engines/wintermute/math/Vector2.h"
 #include <math.h>
 
 namespace WinterMute {

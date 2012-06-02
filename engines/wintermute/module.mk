@@ -92,30 +92,30 @@ MODULE_OBJS := \
 	FontGlyphCache.o \
 	graphics/transparentSurface.o \
 	graphics/tga.o \
-	MathUtil.o \
-	Matrix4.o \
+	math/MathUtil.o \
+	math/Matrix4.o \
+	math/Vector2.o \
 	PathUtil.o \
 	Base/PartParticle.o \
 	Base/PartEmitter.o \
 	Base/PartForce.o \
 	PlatformSDL.o \
 	StringUtil.o \
-	SysClass.o \
-	SysClassRegistry.o \
-	SysInstance.o \
-	tinyxml.o \
-	tinystr.o \
-	tinyxmlparser.o \
-	tinyxmlerror.o \
-	UIButton.o \
-	UIEdit.o \
-	UIEntity.o \
-	UIObject.o \
-	UIText.o \
-	UITiledImage.o \
-	UIWindow.o \
+	Sys/SysClass.o \
+	Sys/SysClassRegistry.o \
+	Sys/SysInstance.o \
+	tinyxml/tinyxml.o \
+	tinyxml/tinystr.o \
+	tinyxml/tinyxmlparser.o \
+	tinyxml/tinyxmlerror.o \
+	UI/UIButton.o \
+	UI/UIEdit.o \
+	UI/UIEntity.o \
+	UI/UIObject.o \
+	UI/UIText.o \
+	UI/UITiledImage.o \
+	UI/UIWindow.o \
 	utils.o \
-	Vector2.o \
 	VidPlayer.o \
 	VidTheoraPlayer.o \
 	wintermute.o

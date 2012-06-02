@@ -32,7 +32,7 @@
 #include "engines/wintermute/Base/BPersistMgr.h"
 #include "engines/wintermute/Base/BSaveThumbHelper.h"
 #include "engines/wintermute/PlatformSDL.h"
-#include "engines/wintermute/Vector2.h"
+#include "engines/wintermute/math/Vector2.h"
 #include "engines/wintermute/StringUtil.h"
 #include "engines/wintermute/Base/BImage.h"
 #include "engines/wintermute/Base/BSound.h"

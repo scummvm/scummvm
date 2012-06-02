@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
-#include "engines/wintermute/UIText.h"
-#include "engines/wintermute/UITiledImage.h"
+#include "engines/wintermute/UI/UIText.h"
+#include "engines/wintermute/UI/UITiledImage.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"

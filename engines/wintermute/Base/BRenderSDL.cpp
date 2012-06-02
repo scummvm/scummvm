@@ -32,7 +32,7 @@
 #include "engines/wintermute/Base/BSurfaceSDL.h"
 #include "engines/wintermute/Base/BSurfaceStorage.h"
 #include "engines/wintermute/Base/BImage.h"
-#include "engines/wintermute/MathUtil.h"
+#include "engines/wintermute/math/MathUtil.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "common/system.h"

@@ -26,9 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/UIEdit.h"
-#include "engines/wintermute/UIObject.h"
-#include "engines/wintermute/UITiledImage.h"
+#include "engines/wintermute/UI/UIEdit.h"
+#include "engines/wintermute/UI/UIObject.h"
+#include "engines/wintermute/UI/UITiledImage.h"
 #include "engines/wintermute/StringUtil.h"
 #include "engines/wintermute/Base/BActiveRect.h"
 #include "engines/wintermute/Base/BFileManager.h"

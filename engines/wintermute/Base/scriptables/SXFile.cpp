@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/SysClassRegistry.h"
-#include "engines/wintermute/SysClass.h"
+#include "engines/wintermute/Sys/SysClassRegistry.h"
+#include "engines/wintermute/Sys/SysClass.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
