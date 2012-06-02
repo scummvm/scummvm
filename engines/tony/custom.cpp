@@ -2315,6 +2315,12 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 	uint32 hDisable;
 	int i;
 	uint32 startTime;
+
+	~CoroContextTag() {
+		delete msg;
+		delete[] text;
+	}
+
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2368,6 +2374,8 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 
 	delete[] _ctx->text;
 	delete _ctx->msg;
+	_ctx->text = NULL;
+	_ctx->msg = NULL;
 
 	CORO_END_CODE;
 }
