@@ -62,6 +62,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_USEEXTRAASTITLE,
 		GUIO0()
 	},
+	{
+		"wintermute",
+		"J.U.L.I.A. Demo",
+		AD_ENTRY1s("data.dcp", "f0bbc3394555a9811f6050dae428cab6", 7655237),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_USEEXTRAASTITLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	AD_TABLE_END_MARKER
 };
 
