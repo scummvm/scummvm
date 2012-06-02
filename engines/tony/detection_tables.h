@@ -23,12 +23,37 @@
 namespace Tony {
 
 static const TonyGameDescription gameDescriptions[] = {
+	{
+		// Tony Tough English
+		{
+			"tony",
+			"Extracted",
+			AD_ENTRY1s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
+	{
+		// Tony Tough English (Compressed)
+		{
+			"tony",
+			"",
+			AD_ENTRY1s("data1.cab", "ce82907242166bfb594d97bdb68f96d2", 4350),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS | GF_COMPRESSED,
+			GUIO1(GUIO_NONE)
+		},
+	},
 
 	{
 		// Tony Tough English Demo
 		{
 			"tony",
-			"Demo",
+			"Extracted Demo",
 			AD_ENTRY1s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 14972409),
 			Common::EN_ANY,
 			Common::kPlatformPC,
