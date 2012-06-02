@@ -87,9 +87,6 @@ CBFontTT::~CBFontTT(void) {
 	delete _font;
 	_font = NULL;
 
-	delete _fallbackFont;
-	_fallbackFont = NULL;
-
 	delete _glyphCache;
 	_glyphCache = NULL;
 #if 0
