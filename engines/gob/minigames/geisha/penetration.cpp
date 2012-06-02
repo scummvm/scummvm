@@ -25,7 +25,9 @@
 #include "gob/draw.h"
 #include "gob/video.h"
 #include "gob/decfile.h"
+#include "gob/cmpfile.h"
 #include "gob/anifile.h"
+#include "gob/aniobject.h"
 
 #include "gob/minigames/geisha/penetration.h"
 
@@ -52,7 +54,7 @@ static const byte kPalette[48] = {
 	0x15,  0x3F,  0x15
 };
 
-Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _objects(0) {
+Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0) {
 	_background = new Surface(320, 200, 1);
 }
 
@@ -68,11 +70,28 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
-	while (!_vm->_util->keyPressed() && !_vm->shouldQuit())
-		_vm->_util->longDelay(1);
+
+	while (!_vm->shouldQuit()) {
+		updateAnims();
+
+		// Draw and wait for the end of the frame
+		_vm->_draw->blitInvalidated();
+		_vm->_util->waitEndFrame();
+
+		// Handle input
+		_vm->_util->processInput();
+
+		int16 mouseX, mouseY;
+		MouseButtons mouseButtons;
+
+		int16 key = checkInput(mouseX, mouseY, mouseButtons);
+		// Aborting the game
+		if (key == kKeyEscape)
+			break;
+	}
 
 	deinit();
-	return true;
+	return false;
 }
 
 void Penetration::init() {
@@ -80,13 +99,18 @@ void Penetration::init() {
 
 	_vm->_video->drawPackedSprite("hyprmef2.cmp", *_background);
 
+	_sprites = new CMPFile(_vm, "tcifplai.cmp", 320, 200);
 	_objects = new ANIFile(_vm, "tcite.ani", 320);
 }
 
 void Penetration::deinit() {
+	_anims.clear();
+
 	delete _objects;
+	delete _sprites;
 
 	_objects = 0;
+	_sprites = 0;
 }
 
 void Penetration::initScreen() {
@@ -99,6 +123,34 @@ void Penetration::initScreen() {
 
 	_vm->_draw->_backSurface->blit(*_background);
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
+}
+
+int16 Penetration::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons) {
+	_vm->_util->getMouseState(&mouseX, &mouseY, &mouseButtons);
+
+	return _vm->_util->checkKey();
+}
+
+void Penetration::updateAnims() {
+	int16 left, top, right, bottom;
+
+	// Clear the previous animation frames
+	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
+			 a != _anims.end(); --a) {
+
+		(*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+	}
+
+	// Draw the current animation frames
+	for (Common::List<ANIObject *>::iterator a = _anims.begin();
+			 a != _anims.end(); ++a) {
+
+		(*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+
+		(*a)->advance();
+	}
 }
 
 } // End of namespace Geisha

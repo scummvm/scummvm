@@ -24,11 +24,13 @@
 #define GOB_MINIGAMES_GEISHA_PENETRATION_H
 
 #include "common/system.h"
+#include "common/list.h"
 
 namespace Gob {
 
 class GobEngine;
 class Surface;
+class CMPFile;
 class ANIFile;
 
 namespace Geisha {
@@ -45,13 +47,20 @@ private:
 	GobEngine *_vm;
 
 	Surface *_background;
+	CMPFile *_sprites;
 	ANIFile *_objects;
+
+	Common::List<ANIObject *> _anims;
 
 
 	void init();
 	void deinit();
 
 	void initScreen();
+
+	void updateAnims();
+
+	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
 };
 
 } // End of namespace Geisha
