@@ -170,7 +170,8 @@ const byte Penetration::kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight] =
 
 
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0),
-	_shieldMeter(0), _healthMeter(0) {
+	_shieldMeter(0), _healthMeter(0), _floor(0), _mapUpdate(false), _mapX(0), _mapY(0),
+	_subTileX(0), _subTileY(0) {
 
 	_background = new Surface(320, 200, 1);
 
@@ -220,6 +221,9 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 		// Aborting the game
 		if (key == kKeyEscape)
 			break;
+
+		// Handle the sub movement
+		handleSub(key);
 	}
 
 	deinit();
@@ -345,10 +349,18 @@ void Penetration::createMap() {
 			case 57: // Start position
 				_sprites->draw(*_map, 30, posX, posY);
 				*mapTile = 0;
+
+				_subTileX = x;
+				_subTileY = y;
+
+				_mapX = _subTileX * kMapTileWidth;
+				_mapY = _subTileY * kMapTileHeight;
 				break;
 			}
 		}
 	}
+
+	_mapUpdate = true;
 }
 
 void Penetration::initScreen() {
@@ -377,6 +389,27 @@ int16 Penetration::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseB
 	return _vm->_util->checkKey();
 }
 
+void Penetration::handleSub(int16 key) {
+	if      (key == kKeyLeft)
+		moveSub(-5,  0);
+	else if (key == kKeyRight)
+		moveSub( 5,  0);
+	else if (key == kKeyUp)
+		moveSub( 0, -5);
+	else if (key == kKeyDown)
+		moveSub( 0,  5);
+}
+
+void Penetration::moveSub(int x, int y) {
+	_mapX = CLIP<int16>(_mapX + x, 0, kMapWidth  * kMapTileWidth);
+	_mapY = CLIP<int16>(_mapY + y, 0, kMapHeight * kMapTileHeight);
+
+	_subTileX  = _mapX / kMapTileWidth;
+	_subTileY  = _mapY / kMapTileHeight;
+
+	_mapUpdate = true;
+}
+
 void Penetration::updateAnims() {
 	int16 left, top, right, bottom;
 
@@ -387,6 +420,15 @@ void Penetration::updateAnims() {
 		(*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom);
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 	}
+
+	if (_mapUpdate) {
+		_vm->_draw->_backSurface->blit(*_map, _mapX, _mapY,
+				_mapX + kPlayAreaWidth - 1, _mapY + kPlayAreaHeight - 1, kPlayAreaX, kPlayAreaY);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kPlayAreaX, kPlayAreaY,
+				kPlayAreaX + kPlayAreaWidth - 1, kPlayAreaY + kPlayAreaHeight - 1);
+	}
+
+	_mapUpdate = false;
 
 	// Draw the current animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.begin();

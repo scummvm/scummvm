@@ -74,6 +74,13 @@ private:
 	Surface *_map;
 	byte _mapTiles[kMapWidth * kMapHeight];
 
+	bool   _mapUpdate;
+	uint16 _mapX;
+	uint16 _mapY;
+
+	uint8 _subTileX;
+	uint8 _subTileY;
+
 	void init();
 	void deinit();
 
@@ -84,6 +91,9 @@ private:
 	void updateAnims();
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+
+	void handleSub(int16 key);
+	void moveSub(int x, int y);
 };
 
 } // End of namespace Geisha
