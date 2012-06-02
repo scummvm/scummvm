@@ -39,13 +39,12 @@ CVidTheoraPlayer::CVidTheoraPlayer(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 void CVidTheoraPlayer::SetDefaults() {
-#if 0
+
 	_file = NULL;
-	_filename = NULL;
+	_filename = "";
 	_startTime = 0;
 	_looping = false;
-	_sound = NULL;
-	_audiobufGranulepos = 0;
+
 	_freezeGame = false;
 	_currentTime = 0;
 
@@ -55,9 +54,6 @@ void CVidTheoraPlayer::SetDefaults() {
 	_audioFrameReady = false;
 	_videobufTime = 0;
 
-	_audioBuf = NULL;
-	_audioBufFill = 0;
-	_audioBufSize = 0;
 	_playbackStarted = false;
 	_dontDropFrames = false;
 
@@ -67,43 +63,28 @@ void CVidTheoraPlayer::SetDefaults() {
 
 	_frameRendered = false;
 
-
-/*	memset(&m_OggSyncState, 0, sizeof(ogg_sync_state));
-	memset(&m_OggPage, 0, sizeof(ogg_page));
-	memset(&m_VorbisStreamState, 0 , sizeof(ogg_stream_state));
-	memset(&m_TheoraStreamState, 0 , sizeof(ogg_stream_state));
-
-	memset(&m_TheoraInfo, 0, sizeof(theora_info));
-	memset(&m_TheoraComment, 0, sizeof(theora_comment));
-	memset(&m_TheoraState, 0, sizeof(theora_state));
-
-	memset(&m_VorbisInfo, 0, sizeof(vorbis_info));
-	memset(&m_VorbisDSPState, 0, sizeof(vorbis_dsp_state));
-	memset(&m_VorbisBlock, 0, sizeof(vorbis_block));
-	memset(&m_VorbisComment, 0, sizeof(vorbis_comment));*/
-
+	_seekingKeyframe = false;
+	_timeOffset = 0.0f;
+	
+	_posX = _posY = 0;
+	_playbackType = VID_PLAY_CENTER;
+	_playZoom = 0.0f;
+	
+	_savedState = THEORA_STATE_NONE;
+	_savedPos = 0;
+	_volume = 100;
+#if 0
 	_vorbisStreams = _theoraStreams = 0;
 
 	GenLookupTables();
 
-	_seekingKeyframe = false;
-	_timeOffset = 0.0f;
-
-	_posX = _posY = 0;
-	_playbackType = VID_PLAY_CENTER;
-	_playZoom = 0.0f;
-
 	_subtitler = NULL;
-
-	_savedState = THEORA_STATE_NONE;
-	_savedPos = 0;
-	_volume = 100;
 #endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 CVidTheoraPlayer::~CVidTheoraPlayer(void) {
-	Cleanup();
+	cleanup();
 
 /*	SAFE_DELETE_ARRAY(_filename);
 	SAFE_DELETE_ARRAY(_alphaFilename);
@@ -113,36 +94,12 @@ CVidTheoraPlayer::~CVidTheoraPlayer(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CVidTheoraPlayer::Cleanup() {
+void CVidTheoraPlayer::cleanup() {
 #if 0
-	if (_vorbisStreams) {
-		ogg_stream_clear(&m_VorbisStreamState);
-		vorbis_block_clear(&m_VorbisBlock);
-		vorbis_dsp_clear(&m_VorbisDSPState);
-		vorbis_comment_clear(&m_VorbisComment);
-		vorbis_info_clear(&m_VorbisInfo);
-
-		_vorbisStreams = 0;
-	}
-	if (m_TheoraStreams) {
-		ogg_stream_clear(&m_TheoraStreamState);
-		theora_clear(&m_TheoraState);
-		theora_comment_clear(&m_TheoraComment);
-		theora_info_clear(&m_TheoraInfo);
-
-		m_TheoraStreams = 0;
-	}
-	ogg_sync_clear(&m_OggSyncState);
-
-
-	if (m_File) Game->m_FileManager->CloseFile(m_File);
-	m_File = NULL;
-
 	if (m_Sound) {
 		Game->m_SoundMgr->RemoveSound(m_Sound);
 		m_Sound = NULL;
 	}
-
 
 	SAFE_DELETE_ARRAY(m_AudioBuf);
 	m_AudioBufFill = 0;
@@ -151,24 +108,10 @@ void CVidTheoraPlayer::Cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-/*int CVidTheoraPlayer::BufferData(ogg_sync_state *OggSyncState) {
-	if (!_file) return 0;
-
-	DWORD Size = 4096;
-	if (m_File->GetSize() - m_File->GetPos() < Size) Size = m_File->GetSize() - m_File->GetPos();
-
-	char *Buffer = ogg_sync_buffer(OggSyncState, Size);
-	m_File->Read(Buffer, Size);
-	ogg_sync_wrote(OggSyncState, Size);
-
-	return Size;
-}*/
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::initialize(const char *Filename, const char *SubtitleFile) {
-	Cleanup();
+HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Common::String &subtitleFile) {
+	cleanup();
 	
-	_file = Game->_fileManager->OpenFile(Filename);
+	_file = Game->_fileManager->OpenFile(filename, true, false);
 	if (!_file) return E_FAIL;
 	
 	//if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
@@ -361,7 +304,7 @@ HRESULT CVidTheoraPlayer::initialize(const char *Filename, const char *SubtitleF
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::ResetStream() {
+HRESULT CVidTheoraPlayer::resetStream() {
 #if 0
 	if (_sound) _sound->Stop();
 
@@ -451,11 +394,13 @@ HRESULT CVidTheoraPlayer::update() {
 			_state = THEORA_STATE_FINISHED;
 		}
 		if (_state == THEORA_STATE_PLAYING) {
-			if (_theoraDecoder->getTimeToNextFrame() > 0) {
-				_surface.copyFrom(*_theoraDecoder->decodeNextFrame()->convertTo(g_system->getScreenFormat()));
+			if (_theoraDecoder->getTimeToNextFrame() == 0) {
+				_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
+				_videoFrameReady = true;
 			}
-			if (_texture) WriteVideo();
-			_videoFrameReady = true;
+			if (_texture && _videoFrameReady) {
+				WriteVideo();
+			}
 			return S_OK;
 		}
 	}
@@ -540,109 +485,18 @@ HRESULT CVidTheoraPlayer::update() {
 	return S_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-/*int CVidTheoraPlayer::StreamInData() {
-#if 0
-	// no data yet for somebody.  Grab another page
-	int BytesRead = BufferData(&m_OggSyncState);
-	while (ogg_sync_pageout(&m_OggSyncState, &m_OggPage) > 0) {
-		if (m_TheoraStreams)
-			ogg_stream_pagein(&m_TheoraStreamState, &m_OggPage);
-		if (m_VorbisStreams)
-			ogg_stream_pagein(&m_VorbisStreamState, &m_OggPage);
+float CVidTheoraPlayer::getMovieTime() {
+	if (!_playbackStarted) {
+		return 0.0f;
+	} else {
+		return _theoraDecoder->getTime();
 	}
-	return BytesRead;
-#endif
-}*/
-
-//////////////////////////////////////////////////////////////////////////
-void CVidTheoraPlayer::DecodeVorbis() {
-#if 0
-	if (!m_Sound) return;
-
-	while (m_VorbisStreams && !m_AudioFrameReady) {
-		int ret;
-		float **pcm;
-
-		// if there's pending, decoded audio, grab it
-		if ((ret = vorbis_synthesis_pcmout(&m_VorbisDSPState, &pcm)) > 0 && !m_SeekingKeyframe) {
-			int count = m_AudioBufFill / 2;
-			int maxsamples = (m_AudioBufSize - m_AudioBufFill) / 2 / m_VorbisInfo.channels;
-
-			int i;
-			for (i = 0; i < ret && i < maxsamples; i++)
-				for (int j = 0; j < m_VorbisInfo.channels; j++) {
-					int val = (int)(pcm[j][i] * 32767.f);
-					if (val > 32767)   val = 32767;
-					if (val < -32768)  val = -32768;
-
-					m_AudioBuf[count++] = val;
-				}
-			vorbis_synthesis_read(&m_VorbisDSPState, i);
-			m_AudioBufFill += i * m_VorbisInfo.channels * 2;
-			if (m_AudioBufFill == m_AudioBufSize) m_AudioFrameReady = true;
-			if (m_VorbisDSPState.granulepos >= 0)
-				m_AudiobufGranulepos = m_VorbisDSPState.granulepos - ret + i;
-			else
-				m_AudiobufGranulepos += i;
-		} else {
-			ogg_packet opVorbis;
-
-			//no pending audio; is there a pending packet to decode?
-			if (ogg_stream_packetout(&m_VorbisStreamState, &opVorbis) > 0) {
-				//test for success!
-				if (vorbis_synthesis(&m_VorbisBlock, &opVorbis) == 0)
-					vorbis_synthesis_blockin(&m_VorbisDSPState, &m_VorbisBlock);
-			} else { //we need more data; break out to suck in another page
-				break;
-			}
-		}
-	} // while
-#endif
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CVidTheoraPlayer::DecodeTheora() {
-#if 0
-	ogg_packet opTheora;
-
-	while (m_TheoraStreams && !m_VideoFrameReady) {
-		// theora is one in, one out...
-		if (ogg_stream_packetout(&m_TheoraStreamState, &opTheora) > 0) {
-			theora_decode_packetin(&m_TheoraState, &opTheora);
-			m_VideobufTime = theora_granule_time(&m_TheoraState, m_TheoraState.granulepos);
-
-			if (m_SeekingKeyframe) {
-				if (!theora_packet_iskeyframe(&opTheora)) continue;
-				else {
-					m_SeekingKeyframe = false;
-					m_TimeOffset = m_VideobufTime;
-				}
-			}
-
-			if (m_VideobufTime >= GetMovieTime() || m_DontDropFrames) m_VideoFrameReady = true;
-		} else {
-			break;
-		}
-	}
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////
-float CVidTheoraPlayer::GetMovieTime() {
-#if 0
-	if (!m_PlaybackStarted) return 0.0f;
-	else if (m_Sound) return (float)(m_Sound->GetPosition()) / 1000.0f + m_TimeOffset;
-	else return (float)(m_CurrentTime - m_StartTime) / 1000.0f  + m_TimeOffset;
-#endif
-	return 0;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-int CVidTheoraPlayer::GetMovieFrame() {
+int CVidTheoraPlayer::getMovieFrame() {
 #if 0
 	if (!m_TheoraStreams) return 0;
 	float Time = GetMovieTime();
@@ -652,31 +506,10 @@ int CVidTheoraPlayer::GetMovieFrame() {
 	return 0;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::WriteAudio() {
-#if 0
-	if (m_AudioFrameReady) {
-		if (m_Sound->WriteBlock((BYTE *)m_AudioBuf, m_AudioBufSize)) {
-			m_AudioBufFill = 0;
-			m_AudioFrameReady = false;
-		}
-	} else if (m_File->IsEOF()) {
-		memset(m_AudioBuf, 0, m_AudioBufSize);
-		m_Sound->WriteBlock((BYTE *)m_AudioBuf, m_AudioBufSize);
-	}
-#endif
-	return S_OK;
-}
-
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::WriteVideo() {
-
 	if (!_texture) return E_FAIL;
-#if 0
-	yuv_buffer yuv;
-	theora_decode_YUVout(&m_TheoraState, &yuv);
-#endif
+
 	_texture->StartPixelOp();
 	//RenderFrame(_texture, &yuv);
 	_texture->PutSurface(_surface);
@@ -703,143 +536,8 @@ HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CVidTheoraPlayer::GenLookupTables() {
-	//used to bring the table into the high side (scale up) so we
-	//can maintain high precision and not use floats (FIXED POINT)
-	int scale = 1L << 13;
-	int temp;
-
-	for (unsigned int i = 0; i < 256; i++) {
-		temp = i - 128;
-
-		_yTable[i]  = (unsigned int)((1.164 * scale + 0.5) * (i - 16));    //Calc Y component
-
-		_rVTable[i] = (unsigned int)((1.596 * scale + 0.5) * temp);        //Calc R component
-
-		_gUTable[i] = (unsigned int)((0.391 * scale + 0.5) * temp);        //Calc G u & v components
-		_gVTable[i] = (unsigned int)((0.813 * scale + 0.5) * temp);
-
-		_bUTable[i] = (unsigned int)((2.018 * scale + 0.5) * temp);        //Calc B component
-	}
-}
-
-#define CLIP_RGB_COLOR( rgb_color_test ) max( min(rgb_color_test, 255), 0 )
-//////////////////////////////////////////////////////////////////////////
-#if 0
-HRESULT CVidTheoraPlayer::RenderFrame(CBSurface *Texture, yuv_buffer *yuv) {
-	//Convert 4:2:0 YUV YCrCb to an RGB24 Bitmap
-	//convenient pointers
-	int TargetX1 = 0;
-	int TargetX2 = 1;
-	int TargetY1 = 0;
-	int TargetY2 = 1;
-
-	unsigned char *ySrc = (unsigned char *)yuv->y;
-	unsigned char *uSrc = (unsigned char *)yuv->u;
-	unsigned char *vSrc = (unsigned char *)yuv->v;
-	unsigned char *ySrc2 = ySrc + yuv->y_stride;
-
-	//Calculate buffer offset
-	int yOff = (yuv->y_stride * 2) - yuv->y_width;
-
-
-	//Check if upside down, if so, reverse buffers and offsets
-	if (yuv->y_height < 0) {
-		yuv->y_height = -yuv->y_height;
-		ySrc         += (yuv->y_height - 1) * yuv->y_stride;
-
-		uSrc += ((yuv->y_height / 2) - 1) * yuv->uv_stride;
-		vSrc += ((yuv->y_height / 2) - 1) * yuv->uv_stride;
-
-		ySrc2 = ySrc - yuv->y_stride;
-		yOff  = -yuv->y_width - (yuv->y_stride * 2);
-
-		yuv->uv_stride = -yuv->uv_stride;
-	}
-
-	//Cut width and height in half (uv field is only half y field)
-	yuv->y_height = yuv->y_height >> 1;
-	yuv->y_width = yuv->y_width >> 1;
-
-	//Convientient temp vars
-	signed int r, g, b, u, v, bU, gUV, rV, rgbY;
-	int x;
-
-	//Loop does four blocks per iteration (2 rows, 2 pixels at a time)
-	for (int y = yuv->y_height; y > 0; --y) {
-		for (x = 0; x < yuv->y_width; ++x) {
-			//Get uv pointers for row
-			u = uSrc[x];
-			v = vSrc[x];
-
-			//get corresponding lookup values
-			rgbY = m_YTable[*ySrc];
-			rV  = m_RVTable[v];
-			gUV = m_GUTable[u] + m_GVTable[v];
-			bU  = m_BUTable[u];
-			++ySrc;
-
-			//scale down - brings are values back into the 8 bits of a byte
-			r = CLIP_RGB_COLOR((rgbY + rV) >> 13);
-			g = CLIP_RGB_COLOR((rgbY - gUV) >> 13);
-			b = CLIP_RGB_COLOR((rgbY + bU) >> 13);
-			Texture->PutPixel(TargetX1, TargetY1, r, g, b, GetAlphaAt(TargetX1, TargetY1));
-
-			//And repeat for other pixels (note, y is unique for each
-			//pixel, while uv are not)
-			rgbY = m_YTable[*ySrc];
-			r = CLIP_RGB_COLOR((rgbY + rV)  >> 13);
-			g = CLIP_RGB_COLOR((rgbY - gUV) >> 13);
-			b = CLIP_RGB_COLOR((rgbY + bU)  >> 13);
-			Texture->PutPixel(TargetX2, TargetY1, r, g, b, GetAlphaAt(TargetX2, TargetY1));
-			++ySrc;
-
-			rgbY = m_YTable[*ySrc2];
-			r = CLIP_RGB_COLOR((rgbY + rV)  >> 13);
-			g = CLIP_RGB_COLOR((rgbY - gUV) >> 13);
-			b = CLIP_RGB_COLOR((rgbY + bU)  >> 13);
-			Texture->PutPixel(TargetX1, TargetY2, r, g, b, GetAlphaAt(TargetX1, TargetY2));
-			++ySrc2;
-
-			rgbY = m_YTable[*ySrc2];
-			r = CLIP_RGB_COLOR((rgbY + rV)  >> 13);
-			g = CLIP_RGB_COLOR((rgbY - gUV) >> 13);
-			b = CLIP_RGB_COLOR((rgbY + bU)  >> 13);
-			Texture->PutPixel(TargetX2, TargetY2, r, g, b, GetAlphaAt(TargetX2, TargetY2));
-			++ySrc2;
-
-			/*
-			 Texture->PutPixel(TargetX1, TargetY1, 255, 0, 0, GetAlphaAt(TargetX1, TargetY1));
-			 Texture->PutPixel(TargetX2, TargetY1, 255, 0, 0, GetAlphaAt(TargetX2, TargetY1));
-			 Texture->PutPixel(TargetX1, TargetY2, 255, 0, 0, GetAlphaAt(TargetX1, TargetY2));
-			 Texture->PutPixel(TargetX2, TargetY2, 255, 0, 0, GetAlphaAt(TargetX2, TargetY2));
-			 */
-
-
-			//Advance inner loop offsets
-			TargetX1 += 2;
-			TargetX2 += 2;
-		} // end for x
-
-		//Advance destination pointers by offsets
-		TargetX1 = 0;
-		TargetX2 = 1;
-		TargetY1 += 2;
-		TargetY2 += 2;
-
-		ySrc            += yOff;
-		ySrc2           += yOff;
-		uSrc            += yuv->uv_stride;
-		vSrc            += yuv->uv_stride;
-	} //end for y
-
-	m_FrameRendered = true;
-
-	return S_OK;
-}
-#endif
-//////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::SetAlphaImage(const char *Filename) {
+HRESULT CVidTheoraPlayer::setAlphaImage(const char *filename) {
+	warning("CVidTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename);
 #if 0
 	SAFE_DELETE(m_AlphaImage);
 	m_AlphaImage = new CBImage(Game);
@@ -855,7 +553,7 @@ HRESULT CVidTheoraPlayer::SetAlphaImage(const char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-byte CVidTheoraPlayer::GetAlphaAt(int X, int Y) {
+byte CVidTheoraPlayer::getAlphaAt(int X, int Y) {
 #if 0
 	if (_alphaImage) return _alphaImage->GetAlphaAt(X, Y);
 	else return 0xFF;
@@ -876,7 +574,8 @@ inline int intlog(int num) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::SeekToTime(uint32 Time) {
+HRESULT CVidTheoraPlayer::SeekToTime(uint32 time) {
+	warning("CVidTheoraPlayer::SeekToTime(%d) - not supported", time);
 #if 0
 	if (!m_TheoraStreams) return E_FAIL;
 
@@ -940,26 +639,24 @@ finish:
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::pause() {
-#if 0
-	if (m_State == THEORA_STATE_PLAYING) {
-		m_State = THEORA_STATE_PAUSED;
-		if (m_Sound) m_Sound->Pause();
+	if (_state == THEORA_STATE_PLAYING) {
+		_state = THEORA_STATE_PAUSED;
+		_theoraDecoder->pauseVideo(true);
 		return S_OK;
-	} else return E_FAIL;
-#endif
-	return 0;
+	} else {
+		return E_FAIL;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::resume() {
-#if 0
 	if (_state == THEORA_STATE_PAUSED) {
 		_state = THEORA_STATE_PLAYING;
-		if (_sound) _sound->Resume();
+		_theoraDecoder->pauseVideo(false);
 		return S_OK;
-	} else return E_FAIL;
-#endif
-	return 0;
+	} else {
+		return E_FAIL;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -995,17 +692,16 @@ HRESULT CVidTheoraPlayer::resume() {
 */
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::initializeSimple() {
-#if 0
-	if (SUCCEEDED(Initialize(m_Filename))) {
-		if (m_AlphaFilename) SetAlphaImage(m_AlphaFilename);
-		Play(m_PlaybackType, m_PosX, m_PosY, false, false, m_Looping, m_SavedPos, m_PlayZoom);
-	} else m_State = THEORA_STATE_FINISHED;
-#endif
+	if (SUCCEEDED(initialize(_filename))) {
+		if (_alphaFilename) setAlphaImage(_alphaFilename);
+		play(_playbackType, _posX, _posY, false, false, _looping, _savedPos, _playZoom);
+	} else _state = THEORA_STATE_FINISHED;
+
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBSurface *CVidTheoraPlayer::GetTexture() {
+CBSurface *CVidTheoraPlayer::getTexture() {
 	return _texture;
 }
 

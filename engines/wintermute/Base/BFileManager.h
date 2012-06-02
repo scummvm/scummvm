@@ -46,26 +46,26 @@ class CBFileManager: CBBase {
 public:
 	bool FindPackageSignature(Common::File *f, uint32 *Offset);
 	HRESULT Cleanup();
-	HRESULT SetBasePath(const char *Path);
+	HRESULT SetBasePath(const Common::String &path);
 	HRESULT RestoreCurrentDir();
 	char *_basePath;
-	bool GetFullPath(const char *Filename, char *Fullname);
+	bool GetFullPath(const Common::String &filename, char *fullname);
 	Common::SeekableReadStream *OpenFileRaw(const Common::String &filename);
 	HRESULT CloseFile(Common::SeekableReadStream *File);
-	Common::SeekableReadStream *OpenFile(const char *Filename, bool AbsPathWarning = true);
-	CBFileEntry *GetPackageEntry(const char *Filename);
-	Common::File *OpenSingleFile(const char *Name);
-	Common::File *OpenPackage(const char *Name);
+	Common::SeekableReadStream *OpenFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
+	CBFileEntry *GetPackageEntry(const Common::String &filename);
+	Common::File *OpenSingleFile(const Common::String &name);
+	Common::File *OpenPackage(const Common::String &name);
 	HRESULT RegisterPackages();
 	HRESULT InitPaths();
 	HRESULT ReloadPaths();
 	typedef enum {
 	    PATH_PACKAGE, PATH_SINGLE
 	} TPathType;
-	HRESULT AddPath(TPathType Type, const char *Path);
+	HRESULT AddPath(TPathType Type, const Common::String &path);
 	HRESULT RequestCD(int CD, char *PackageFile, char *Filename);
-	HRESULT SaveFile(const char *Filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
-	byte *ReadWholeFile(const char *Filename, uint32 *Size = NULL, bool MustExist = true);
+	HRESULT SaveFile(const Common::String &filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
+	byte *ReadWholeFile(const Common::String &filename, uint32 *Size = NULL, bool MustExist = true);
 	CBFileManager(CBGame *inGame = NULL);
 	virtual ~CBFileManager();
 	CBArray<char *, char *> _singlePaths;
@@ -76,7 +76,7 @@ public:
 	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:
 	HRESULT RegisterPackage(const char *Path, const char *Name, bool SearchSignature = false);
-	HRESULT RegisterPackage(Common::String Filename, bool SearchSignature = false);
+	HRESULT RegisterPackage(const Common::String &filename, bool SearchSignature = false);
 	Common::HashMap<Common::String, CBFileEntry *>::iterator _filesIter;
 	bool IsValidPackage(const AnsiString &fileName) const;
 

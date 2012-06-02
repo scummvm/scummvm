@@ -54,28 +54,28 @@ public:
 	vorbis_info      m_VorbisInfo;
 	vorbis_dsp_state m_VorbisDSPState;
 	vorbis_block     m_VorbisBlock;
-	vorbis_comment   m_VorbisComment;*/
+	vorbis_comment   m_VorbisComment;
 
 	int _theoraStreams;
-	int _vorbisStreams;
+	int _vorbisStreams;*/
 
 	//ogg_int64_t m_AudiobufGranulepos; //time position of last sample
 
 
 	// external objects
 	Common::SeekableReadStream *_file;
-	char *_filename;
+	Common::String _filename;
 
 	//CBSoundTheora *_sound;
 	//ogg_int16_t *_audioBuf;
-	int _audioBufSize;
-	int _audioBufFill;
+	/*int _audioBufSize;
+	int _audioBufFill;*/
 
 	CBSurface *_texture;
 	//CVidSubtitler *_subtitler;
 
 	// control methods
-	HRESULT initialize(const char *Filename, const char *SubtitleFile = NULL);
+	HRESULT initialize(const Common::String &filename, const Common::String &subtitleFile = NULL);
 	HRESULT initializeSimple();
 	HRESULT update();
 	HRESULT play(TVideoPlayback Type = VID_PLAY_CENTER, int X = 0, int Y = 0, bool FreezeGame = false, bool FreezeMusic = true, bool Looping = false, uint32 StartTime = 0, float ForceZoom = -1.0f, int Volume = -1);
@@ -89,17 +89,17 @@ public:
 	bool isPlaying()  {
 		return _state == THEORA_STATE_PLAYING;
 	};
-	bool IsFinished() {
+	bool isFinished() {
 		return _state == THEORA_STATE_FINISHED;
 	};
-	bool IsPaused()   {
+	bool isPaused()   {
 		return _state == THEORA_STATE_PAUSED;
 	};
 
-	float GetMovieTime();
-	int GetMovieFrame();
+	float getMovieTime();
+	int getMovieFrame();
 
-	CBSurface *GetTexture();
+	CBSurface *getTexture();
 
 	int _state;
 	uint32 _startTime;
@@ -111,17 +111,17 @@ public:
 	// alpha related
 	CBImage *_alphaImage;
 	char *_alphaFilename;
-	HRESULT SetAlphaImage(const char *Filename);
-	__inline byte GetAlphaAt(int X, int Y);
+	HRESULT setAlphaImage(const char *Filename);
+	__inline byte getAlphaAt(int X, int Y);
 
 	HRESULT SeekToTime(uint32 Time);
 
 
-	void Cleanup();
-	HRESULT ResetStream();
+	void cleanup();
+	HRESULT resetStream();
 
 	// video properties
-	TVideoPlayback m_PlaybackType;
+	TVideoPlayback _playbackType;
 	int _posX;
 	int _posY;
 	float _playZoom;
@@ -134,37 +134,20 @@ public:
 
 
 private:
-	// data streaming
-	//int BufferData(ogg_sync_state *OggSyncState);
-	//int StreamInData();
-
-
-	// lookup tables
-	unsigned int _yTable[256];
-	unsigned int _bUTable[256];
-	unsigned int _gUTable[256];
-	unsigned int _gVTable[256];
-	unsigned int _rVTable[256];
-
-	void GenLookupTables();
-
-
 	// seeking support
 	bool _seekingKeyframe;
 	float _timeOffset;
 
 	bool _frameRendered;
 
-
-	// decoding
-	void DecodeVorbis();
-	void DecodeTheora();
-
+	void getIsFrameReady() {
+		return _videoFrameReady;
+	}
+private:
 	bool _audioFrameReady;
 	bool _videoFrameReady;
 	float _videobufTime;
 
-	HRESULT WriteAudio();
 	HRESULT WriteVideo();
 
 	bool _playbackStarted;
