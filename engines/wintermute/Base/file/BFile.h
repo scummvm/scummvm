@@ -40,9 +40,10 @@ class SeekableReadStream;
 namespace WinterMute {
 
 class CBFile : public CBBase {
-public:
+protected:
 	uint32 _pos;
 	uint32 _size;
+public:
 	virtual uint32 GetSize() {
 		return _size;
 	};
