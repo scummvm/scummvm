@@ -85,6 +85,7 @@ void DreamWebSound::playChannel0(uint8 index, uint8 repeat) {
 }
 
 void DreamWebSound::playChannel1(uint8 index) {
+	debug(1, "playChannel1(index:%d)", index);
 	if (_channel1Playing == 7)
 		return;
 
@@ -99,6 +100,7 @@ void DreamWebSound::cancelCh0() {
 }
 
 void DreamWebSound::cancelCh1() {
+	debug(1, "cancelCh1()");
 	_channel1Playing = 255;
 	stopSound(1);
 }
@@ -123,7 +125,7 @@ void DreamWebSound::loadRoomsSample(uint8 sample) {
 }
 
 void DreamWebSound::playSound(uint8 channel, uint8 id, uint8 loops) {
-	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
+	debug(1, "playSound(channel:%u, id:%u, loops:%u)", channel, id, loops);
 
 	int bank = 0;
 	bool speech = false;
@@ -153,23 +155,18 @@ void DreamWebSound::playSound(uint8 channel, uint8 id, uint8 loops) {
 			error("out of memory: cannot allocate memory for sound(%u bytes)", sample.size);
 		memcpy(buffer, data.data.begin() + sample.offset, sample.size);
 
-		raw = Audio::makeRawStream(
-			buffer,
-			sample.size, 22050, Audio::FLAG_UNSIGNED);
+		raw = Audio::makeRawStream(buffer, sample.size, 22050, Audio::FLAG_UNSIGNED);
 	} else {
 		uint8 *buffer = (uint8 *)malloc(_speechData.size());
 		if (!buffer)
 			error("out of memory: cannot allocate memory for sound(%u bytes)", _speechData.size());
 		memcpy(buffer, _speechData.begin(), _speechData.size());
-		raw = Audio::makeRawStream(
-			buffer,
-			_speechData.size(), 22050, Audio::FLAG_UNSIGNED);
-
+		raw = Audio::makeRawStream(buffer, _speechData.size(), 22050, Audio::FLAG_UNSIGNED);
 	}
 
 	Audio::AudioStream *stream;
 	if (loops > 1) {
-		stream = new Audio::LoopingAudioStream(raw, loops < 255? loops: 0);
+		stream = new Audio::LoopingAudioStream(raw, (loops < 255) ? loops : 0);
 	} else
 		stream = raw;
 
@@ -206,11 +203,6 @@ bool DreamWebSound::loadSpeech(const Common::String &filename) {
 }
 
 void DreamWebSound::soundHandler() {
-	static uint8 volumeOld = 0, channel0Old = 0, channel0PlayingOld = 0;
-	if (_volume != volumeOld || _channel0 != channel0Old || _channel0Playing != channel0PlayingOld)
-		debug(1, "soundHandler() _volume: %d _channel0: %d _channel0Playing: %d", _volume, _channel0, _channel0Playing);
-	volumeOld = _volume, channel0Old = _channel0, channel0PlayingOld = _channel0Playing;
-
 	_vm->_subtitles = ConfMan.getBool("subtitles");
 	volumeAdjust();
 
@@ -250,9 +242,8 @@ void DreamWebSound::soundHandler() {
 			playSound(1, ch1, 1);
 		}
 	}
+
 	if (!_vm->_mixer->isSoundHandleActive(_channelHandle[0])) {
-		if (_channel0Playing != 255 && _channel0 != 0)
-			debug(1, "!_mixer->isSoundHandleActive _channelHandle[0] _channel0Playing:%d _channel0:%d", _channel0Playing, _channel0);
 		_channel0Playing = 255;
 		_channel0 = 0;
 	}
@@ -271,9 +262,9 @@ void DreamWebSound::loadSounds(uint bank, const Common::String &suffix) {
 		return;
 	}
 
-	uint8 header[0x60];
+	uint8 header[96];
 	file.read(header, sizeof(header));
-	uint tablesize = READ_LE_UINT16(header + 0x32);
+	uint tablesize = READ_LE_UINT16(header + 50);
 	debug(1, "table size = %u", tablesize);
 
 	SoundData &soundData = _soundData[bank];
@@ -283,8 +274,8 @@ void DreamWebSound::loadSounds(uint bank, const Common::String &suffix) {
 		uint8 entry[6];
 		Sample &sample = soundData.samples[i];
 		file.read(entry, sizeof(entry));
-		sample.offset = entry[0] * 0x4000 + READ_LE_UINT16(entry + 1);
-		sample.size = READ_LE_UINT16(entry + 3) * 0x800;
+		sample.offset = entry[0] * 16384 + READ_LE_UINT16(entry + 1);
+		sample.size = READ_LE_UINT16(entry + 3) * 2048;
 		total += sample.size;
 		debug(1, "offset: %08x, size: %u", sample.offset, sample.size);
 	}
