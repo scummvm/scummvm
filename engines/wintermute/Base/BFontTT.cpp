@@ -249,11 +249,14 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 
 
 	TextLineList::iterator it;
-	warning("CBFontTT::RenderTextToTexture - Not ported yet");
+	warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
+	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color),D3DCOLGetB(_layers[0]->_color),D3DCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(width, _fontHeight, Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 5, 1, 0));
-	_fallbackFont->drawString(surface, text, 0, 0, width, 255);
+	surface->create(width, _fontHeight, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+
+	uint16 useColor = 0xffff;
+	_fallbackFont->drawString(surface, text, 0, 0, width, useColor);
 	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
 	retSurface->PutSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)));
 	delete surface;
@@ -615,7 +618,6 @@ void CBFontTT::AfterLoad() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFontTT::InitFont() {
 	if (!_fontFile) return E_FAIL;
-	warning("BFontTT::InitFont - Not ported yet");
 
 	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(_fontFile);
 	if (!file) {
@@ -627,11 +629,14 @@ HRESULT CBFontTT::InitFont() {
 			//return E_FAIL;
 		}
 	}
-	warning("I guess we got a file");
+
 	if (file) {
-		//_font = Graphics::loadTTFFont(*file->getMemStream(), _fontHeight);
-	} else {
-		_fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+#ifdef USE_FREETYPE2
+		_font = Graphics::loadTTFFont(*file, _fontHeight);
+#endif
+	} 
+	if (!_font) {
+		_fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);
 	}
 	return S_OK;
