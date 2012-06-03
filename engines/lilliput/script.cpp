@@ -225,7 +225,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_sub179C2();
 		break;
 	case 0x2F:
-		return OC_checkKeyPressed();
+		return OC_checkFunctionKeyPressed();
 		break;
 	case 0x30:
 		return OC_sub17A07();
@@ -602,7 +602,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_checkSavedMousePos", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179AE", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_checkKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_checkFunctionKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_sub17A07", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
 	{ "OC_checkViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
 };
@@ -2052,8 +2052,8 @@ byte LilliputScript::OC_sub179C2() {
 
 	return 0;
 }
-byte LilliputScript::OC_checkKeyPressed() {
-	debugC(1, kDebugScript, "OC_checkKeyPressed()");
+byte LilliputScript::OC_checkFunctionKeyPressed() {
+	debugC(1, kDebugScript, "OC_checkFunctionKeyPressed()");
 
 	static const Common::KeyCode specialKeys[10] = {
 		Common::KEYCODE_F10, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4,

@@ -188,7 +188,7 @@ private:
 	byte OC_checkSavedMousePos();
 	byte OC_sub179AE();
 	byte OC_sub179C2();
-	byte OC_checkKeyPressed();
+	byte OC_checkFunctionKeyPressed();
 	byte OC_sub17A07();
 	byte OC_checkViewPortCharacterTarget();
 
