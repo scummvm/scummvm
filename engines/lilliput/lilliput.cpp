@@ -2564,6 +2564,8 @@ void LilliputEngine::loadRules() {
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
 	switch (lang) {
+	case Common::EN_ANY:
+		break;
 	case Common::FR_FRA:
 		filename = "FRULES.PRG";
 		break;
