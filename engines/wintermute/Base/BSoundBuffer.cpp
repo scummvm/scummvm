@@ -68,12 +68,11 @@ CBSoundBuffer::CBSoundBuffer(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSoundBuffer::~CBSoundBuffer() {
-#if 0
 	Stop();
 
-	if (_stream) {
-		BASS_StreamFree(_stream);
-		_stream = NULL;
+	if (_handle) {
+		delete _handle;
+		_handle = NULL;
 	}
 
 	if (_file) {
@@ -81,8 +80,8 @@ CBSoundBuffer::~CBSoundBuffer() {
 		_file = NULL;
 	}
 
-	SAFE_DELETE_ARRAY(_filename);
-#endif
+	delete[] _filename;
+	_filename = NULL;
 }
 
 
@@ -178,17 +177,17 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Play(bool Looping, uint32 StartSample) {
-	warning("Play: %s", _filename);
+	// TODO: looping
 	if (_stream) {
 		SetLooping(Looping);
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream);
-		//BASS_ChannelPlay(_stream, TRUE);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBSoundBuffer::SetLooping(bool looping) {
+	warning("BSoundBuffer::SetLooping - not implemented yet");
 #if 0
 	_looping = looping;
 
@@ -200,43 +199,37 @@ void CBSoundBuffer::SetLooping(bool looping) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Resume() {
-#if 0
-	if (_stream) {
-		BASS_ChannelPlay(_stream, FALSE);
+	if (_stream && _handle) {
+		g_system->getMixer()->pauseHandle(*_handle, false);
 	}
-#endif
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Stop() {
-#if 0
-	if (_stream) {
-		BASS_ChannelStop(_stream);
+	if (_stream && _handle) {
+		g_system->getMixer()->stopHandle(*_handle);
 	}
-#endif
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::Pause() {
-#if 0
-	if (_stream) {
-		BASS_ChannelPause(_stream);
+	if (_stream && _handle) {
+		g_system->getMixer()->pauseHandle(*_handle, true);
 	}
-#endif
 	return S_OK;
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBSoundBuffer::GetLength() {
-#if 0
-	QWORD len = BASS_ChannelGetLength(_stream, BASS_POS_BYTE);
-	return 1000 * BASS_ChannelBytes2Seconds(_stream, len);
-#endif
+	if (_stream) {
+		uint32 len = _stream->getLength().msecs();
+		return len * 1000;
+	}
 	return 0;
 }
 
@@ -249,11 +242,10 @@ void CBSoundBuffer::SetType(TSoundType Type) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetVolume(int Volume) {
-#if 0
-	if (_stream) {
-		BASS_ChannelSetAttribute(_stream, BASS_ATTRIB_VOL, (float)Volume / 100.0f);
+	if (_stream && _handle) {
+		byte vol = Volume/100.f * Audio::Mixer::kMaxChannelVolume;
+		g_system->getMixer()->setChannelVolume(*_handle, vol);
 	}
-#endif
 	return S_OK;
 }
 
@@ -281,27 +273,27 @@ HRESULT CBSoundBuffer::SetPrivateVolume(int Volume) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBSoundBuffer::IsPlaying() {
-#if 0
-	return _freezePaused || BASS_ChannelIsActive(_stream) == BASS_ACTIVE_PLAYING;
-#endif
-	return false;
+	if (_stream && _handle) {
+		return _freezePaused || g_system->getMixer()->isSoundHandleActive(*_handle);
+	} else {
+		return false;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBSoundBuffer::GetPosition() {
-#if 0
-	if (_stream) {
-		QWORD len = BASS_ChannelGetPosition(_stream, BASS_POS_BYTE);
-		return 1000 * BASS_ChannelBytes2Seconds(_stream, len);
-	} else return 0;
-#endif
+	if (_stream && _handle) {
+		uint32 pos = g_system->getMixer()->getSoundElapsedTime(*_handle);
+		return pos;
+	}
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetPosition(uint32 Pos) {
+	warning("CBSoundBuffer::SetPosition - not implemented yet");
 #if 0
 	if (_stream) {
 		QWORD pos = BASS_ChannelSeconds2Bytes(_stream, (float)Pos / 1000.0f);
@@ -339,17 +331,16 @@ void CBSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void
 }
 #endif
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::SetPan(float Pan) {
-#if 0
+HRESULT CBSoundBuffer::SetPan(float pan) {
 	if (_stream) {
-		BASS_ChannelSetAttribute(_stream, BASS_ATTRIB_PAN, Pan);
+		g_system->getMixer()->setChannelBalance(*_handle, pan * 127);
 	}
-#endif
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::ApplyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4) {
+	warning("CBSoundBuffer::ApplyFX - not implemented yet");
 #if 0
 	switch (Type) {
 	case SFX_ECHO:
@@ -365,33 +356,4 @@ HRESULT CBSoundBuffer::ApplyFX(TSFXType Type, float Param1, float Param2, float 
 	return S_OK;
 }
 
-#if 0
-//////////////////////////////////////////////////////////////////////////
-void CBSoundBuffer::FileCloseProc(void *user) {
-	/*
-	CBFile* file = static_cast<CBFile*>(user);
-	file->Game->_fileManager->CloseFile(file);
-	*/
-}
-
-//////////////////////////////////////////////////////////////////////////
-QWORD CBSoundBuffer::FileLenProc(void *user) {
-	CBFile *file = static_cast<CBFile *>(user);
-	return file->GetSize();
-}
-
-//////////////////////////////////////////////////////////////////////////
-uint32 CBSoundBuffer::FileReadProc(void *buffer, uint32 length, void *user) {
-	CBFile *file = static_cast<CBFile *>(user);
-	uint32 oldPos = file->GetPos();
-	file->Read(buffer, length);
-	return file->GetPos() - oldPos;
-}
-
-//////////////////////////////////////////////////////////////////////////
-BOOL CBSoundBuffer::FileSeekProc(QWORD offset, void *user) {
-	CBFile *file = static_cast<CBFile *>(user);
-	return SUCCEEDED(file->Seek(offset));
-}
-#endif
 } // end of namespace WinterMute
