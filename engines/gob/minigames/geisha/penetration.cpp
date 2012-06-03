@@ -423,6 +423,15 @@ int16 Penetration::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseB
 	return _vm->_util->checkKey();
 }
 
+bool Penetration::isWalkable(byte tile) const {
+	// Only walls are nonwalkable
+
+	if (tile == 50)
+		return false;
+
+	return true;
+}
+
 void Penetration::handleSub(int16 key) {
 	if      (key == kKeyLeft)
 		moveSub(-5,  0, kAnimationDriveW);
@@ -435,11 +444,30 @@ void Penetration::handleSub(int16 key) {
 }
 
 void Penetration::moveSub(int x, int y, uint16 animation) {
-	_mapX = CLIP<int16>(_mapX + x, 0, kMapWidth  * kMapTileWidth);
-	_mapY = CLIP<int16>(_mapY + y, 0, kMapHeight * kMapTileHeight);
+	// Limit the movement to walkable tiles
 
-	_subTileX  = _mapX / kMapTileWidth;
-	_subTileY  = _mapY / kMapTileHeight;
+	int16 minX = 0;
+	if ((_subTileX > 0) && !isWalkable(_mapTiles[_subTileY * kMapWidth + (_subTileX - 1)]))
+		minX = _subTileX * kMapTileWidth;
+
+	int16 maxX = kMapWidth * kMapTileWidth;
+	if ((_subTileX < (kMapWidth - 1)) && !isWalkable(_mapTiles[_subTileY * kMapWidth + (_subTileX + 1)]))
+		maxX = _subTileX * kMapTileWidth;
+
+	int16 minY = 0;
+	if ((_subTileY > 0) && !isWalkable(_mapTiles[(_subTileY - 1) * kMapWidth + _subTileX]))
+		minY = _subTileY * kMapTileHeight;
+
+	int16 maxY = kMapHeight * kMapTileHeight;
+	if ((_subTileY < (kMapHeight - 1)) && !isWalkable(_mapTiles[(_subTileY + 1) * kMapWidth + _subTileX]))
+		maxY = _subTileY * kMapTileHeight;
+
+	_mapX = CLIP<int16>(_mapX + x, minX, maxX);
+	_mapY = CLIP<int16>(_mapY + y, minY, maxY);
+
+	// The tile the sub is on is where its mid-point is
+	_subTileX = (_mapX + (kMapTileWidth  / 2)) / kMapTileWidth;
+	_subTileY = (_mapY + (kMapTileHeight / 2)) / kMapTileHeight;
 
 	_mapUpdate = true;
 

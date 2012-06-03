@@ -96,6 +96,8 @@ private:
 
 	void handleSub(int16 key);
 	void moveSub(int x, int y, uint16 animation);
+
+	bool isWalkable(byte tile) const;
 };
 
 } // End of namespace Geisha
