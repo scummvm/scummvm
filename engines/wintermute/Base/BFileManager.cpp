@@ -343,8 +343,14 @@ HRESULT CBFileManager::RegisterPackages() {
 	warning("Scanning packages");
 
 // TODO: Actually scan the folder, for now we just hardcode the files for Dirty Split.
-	RegisterPackage("data.dcp");
-	RegisterPackage("english.dcp");
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, "*.dcp");
+	int size = files.size();
+	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
+		RegisterPackage((*it)->getName().c_str());
+	}
+/*	RegisterPackage("data.dcp");
+	RegisterPackage("english.dcp");*/
 #if 0
 	AnsiString extension = AnsiString(PACKAGE_EXTENSION);
 
