@@ -32,6 +32,7 @@
 
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BBase.h"
+#include "common/rect.h"
 
 namespace WinterMute {
 
@@ -52,7 +53,7 @@ public:
 	virtual HRESULT SetViewport(RECT *Rect);
 	virtual HRESULT SetScreenViewport();
 	virtual HRESULT Fade(uint16 Alpha);
-	virtual HRESULT FadeToColor(uint32 Color, RECT *rect = NULL);
+	virtual HRESULT FadeToColor(uint32 Color, Common::Rect *rect = NULL);
 	virtual HRESULT DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
 	virtual HRESULT DrawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width = 1);
 	CBRenderer(CBGame *inGame = NULL);
@@ -62,7 +63,7 @@ public:
 	};
 
 	virtual HRESULT WindowedBlt();
-	virtual HRESULT Fill(byte  r, byte g, byte b, RECT *rect = NULL);
+	virtual HRESULT Fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
 	virtual void OnWindowChange();
 	virtual HRESULT InitRenderer(int width, int height, bool windowed);
 	virtual HRESULT Flip();

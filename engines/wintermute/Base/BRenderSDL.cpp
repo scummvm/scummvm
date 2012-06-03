@@ -228,9 +228,18 @@ HRESULT CBRenderSDL::Flip() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::Fill(byte  r, byte g, byte b, RECT *rect) {
+HRESULT CBRenderSDL::Fill(byte  r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
+	uint32 color = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
+	if (!rect) {
+		rect = new Common::Rect();
+		rect->setWidth(_renderSurface->w);
+		rect->setHeight(_renderSurface->h);
+		_renderSurface->fillRect(*rect, color);
+		delete rect;
+	}
+	_renderSurface->fillRect(*rect, color);
 
 	return S_OK;
 }
@@ -243,7 +252,7 @@ HRESULT CBRenderSDL::Fade(uint16 Alpha) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
+HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;

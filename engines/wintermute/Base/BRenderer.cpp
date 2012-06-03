@@ -138,7 +138,7 @@ void CBRenderer::OnWindowChange() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::Fill(byte  r, byte g, byte b, RECT *rect) {
+HRESULT CBRenderer::Fill(byte  r, byte g, byte b, Common::Rect *rect) {
 	return E_FAIL;
 }
 
@@ -186,7 +186,7 @@ HRESULT CBRenderer::Fade(uint16 Alpha) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::FadeToColor(uint32 Color, RECT *rect) {
+HRESULT CBRenderer::FadeToColor(uint32 Color, Common::Rect *rect) {
 	return E_FAIL;
 }
 
