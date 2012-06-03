@@ -298,6 +298,8 @@ void Penetration::deinit() {
 
 	_objects = 0;
 	_sprites = 0;
+
+	_sub = 0;
 }
 
 void Penetration::createMap() {
@@ -503,14 +505,14 @@ void Penetration::checkShields() {
 }
 
 void Penetration::updateAnims() {
-	int16 left, top, right, bottom;
+	int16 left = 0, top = 0, right = 0, bottom = 0;
 
 	// Clear the previous animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
 			 a != _anims.end(); --a) {
 
-		(*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom);
-		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+		if ((*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom))
+			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 	}
 
 	if (_mapUpdate) {
@@ -526,8 +528,8 @@ void Penetration::updateAnims() {
 	for (Common::List<ANIObject *>::iterator a = _anims.begin();
 			 a != _anims.end(); ++a) {
 
-		(*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
-		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+		if ((*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom))
+			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 
 		(*a)->advance();
 	}

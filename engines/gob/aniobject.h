@@ -93,9 +93,9 @@ public:
 	bool lastFrame() const;
 
 	/** Draw the current frame onto the surface and return the affected rectangle. */
-	void draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 	/** Draw the current frame from the surface and return the affected rectangle. */
-	void clear(Surface &dest, int16 &left , int16 &top, int16 &right, int16 &bottom);
+	bool clear(Surface &dest, int16 &left , int16 &top, int16 &right, int16 &bottom);
 
 	/** Advance the animation to the next frame. */
 	virtual void advance();
@@ -123,8 +123,8 @@ private:
 	int16 _backgroundRight;  ///< The right position of the saved background.
 	int16 _backgroundBottom; ///< The bottom position of the saved background.
 
-	void drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
-	void drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 };
 
 } // End of namespace Gob
