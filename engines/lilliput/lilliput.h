@@ -198,7 +198,7 @@ public:
 	byte _rulesBuffer13_1[20];
 	int16 _interfaceHotspotsX[20];
 	int16 _interfaceHotspotsY[20];
-	byte _keyboardMapping[20];
+	Common::KeyCode _keyboardMapping[20];
 	int16 _array10999PosX[40];
 	int16 _array109C1PosY[40];
 	byte _savedSurfaceUnderMouse[16 * 16];

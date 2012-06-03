@@ -1890,16 +1890,22 @@ void LilliputEngine::sub13156(bool &forceReturnFl) {
 		return;
 
 	Common::Event event = _keyboard_getch();
-	uint16 var1 = event.kbd.ascii;
-	for (int i = 0; i < 20; i++) {
-		warning("%d - 0x%x", i, _keyboardMapping[i]);
+
+	int8 index = -1;
+	for (int8 i = 0; i < _interfaceHotspotNumb; i++) {
+		if (event.kbd.keycode == _keyboardMapping[i]) {
+			index = i;
+			break;
+		}
 	}
 
-	// TODO: Very incomplete!
-
-	// sub1305C();
-	forceReturnFl = true;
-
+	if (index != -1) {
+		byte button = 1;
+		if (event.type == Common::EVENT_KEYUP)
+			button = 2;
+		sub1305C(index, button);
+		forceReturnFl = true;
+	}
 }
 
 void LilliputEngine::sub147D7() {
@@ -2543,7 +2549,14 @@ byte *LilliputEngine::loadRaw(Common::String filename, int filesize) {
 void LilliputEngine::loadRules() {
 	debugC(1, kDebugEngine, "loadRules()");
 
-	static const byte _rulesXlatArray[26] = {30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37, 38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47, 17, 45, 21, 44};
+//	static const byte _rulesXlatArray[26] = {30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37, 38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47, 17, 45, 21, 44};
+	static const Common::KeyCode _rulesXlatArray[26] = {
+		Common::KEYCODE_a, Common::KEYCODE_b, Common::KEYCODE_c, Common::KEYCODE_d, Common::KEYCODE_e,
+		Common::KEYCODE_f, Common::KEYCODE_g, Common::KEYCODE_h, Common::KEYCODE_i, Common::KEYCODE_j,
+		Common::KEYCODE_k, Common::KEYCODE_l, Common::KEYCODE_m, Common::KEYCODE_n, Common::KEYCODE_o, 
+		Common::KEYCODE_p, Common::KEYCODE_q, Common::KEYCODE_r, Common::KEYCODE_s, Common::KEYCODE_t,
+		Common::KEYCODE_u, Common::KEYCODE_v, Common::KEYCODE_w, Common::KEYCODE_x, Common::KEYCODE_y, 
+		Common::KEYCODE_z};
 	Common::File f;
 	uint16 curWord;
 
@@ -2701,15 +2714,15 @@ void LilliputEngine::loadRules() {
 		byte curByte = f.readByte();
 
 		if (curByte == 0x20)
-			_keyboardMapping[i] = 0x39;
+			_keyboardMapping[i] = Common::KEYCODE_SPACE;
 		else if (curByte == 0xD)
-			_keyboardMapping[i] = 0x1C;
+			_keyboardMapping[i] = Common::KEYCODE_RETURN;
 		// Hack to avoid xlat out of bounds
 		else if (curByte == 0xFF)
-			_keyboardMapping[i] = 0x21;
+			_keyboardMapping[i] = Common::KEYCODE_INVALID; // 0x21; ?
 		// Hack to avoid xlat out of bounds
 		else if (curByte == 0x00)
-			_keyboardMapping[i] = 0xB4;
+			_keyboardMapping[i] = Common::KEYCODE_INVALID; // 0xB4; ?
 		else {
 			assert((curByte > 0x40) && (curByte <= 0x41 + 26));
 			_keyboardMapping[i] = _rulesXlatArray[curByte - 0x41];
