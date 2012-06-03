@@ -193,6 +193,10 @@ const byte Penetration::kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight] =
 };
 
 
+Penetration::Position::Position(uint16 pX, uint16 pY) : x(pX), y(pY) {
+}
+
+
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
 	_shieldMeter(0), _healthMeter(0), _floor(0), _mapUpdate(false), _mapX(0), _mapY(0),
 	_subTileX(0), _subTileY(0) {
@@ -303,6 +307,8 @@ void Penetration::createMap() {
 	// Copy the correct map
 	memcpy(_mapTiles, kMaps[_testMode ? 1 : 0][_floor], kMapWidth * kMapHeight);
 
+	_shields.clear();
+
 	_map->fill(kColorBlack);
 
 	// Draw the map tiles
@@ -378,6 +384,8 @@ void Penetration::createMap() {
 
 				_map->fillRect(posX +  4, posY + 8, posX +  7, posY + 18, kColorFloor); // Area left to shield
 				_map->fillRect(posX + 17, posY + 8, posX + 20, posY + 18, kColorFloor); // Area right to shield
+
+				_shields.push_back(Position(x, y));
 				break;
 
 			case 57: // Start position
@@ -473,6 +481,25 @@ void Penetration::moveSub(int x, int y, uint16 animation) {
 
 	if (_sub->getAnimation() != animation)
 		_sub->setAnimation(animation);
+
+	checkShields();
+}
+
+void Penetration::checkShields() {
+	for (Common::List<Position>::iterator pos = _shields.begin(); pos != _shields.end(); ++pos) {
+		if ((pos->x == _subTileX) && (pos->y == _subTileY)) {
+			// Charge shields
+			_shieldMeter->setMaxValue();
+
+			// Erase the shield from the map
+			const int mapX = kPlayAreaBorderWidth  + pos->x * kMapTileWidth;
+			const int mapY = kPlayAreaBorderHeight + pos->y * kMapTileHeight;
+			_sprites->draw(*_map, 30, mapX, mapY);
+
+			_shields.erase(pos);
+			break;
+		}
+	}
 }
 
 void Penetration::updateAnims() {

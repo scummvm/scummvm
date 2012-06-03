@@ -54,6 +54,13 @@ private:
 
 	static const byte kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight];
 
+	struct Position {
+		uint16 x;
+		uint16 y;
+
+		Position(uint16 pX, uint16 pY);
+	};
+
 	GobEngine *_vm;
 
 	bool _hasAccessPass;
@@ -83,6 +90,9 @@ private:
 	uint8 _subTileX;
 	uint8 _subTileY;
 
+	Common::List<Position> _shields;
+
+
 	void init();
 	void deinit();
 
@@ -98,6 +108,8 @@ private:
 	void moveSub(int x, int y, uint16 animation);
 
 	bool isWalkable(byte tile) const;
+
+	void checkShields();
 };
 
 } // End of namespace Geisha
