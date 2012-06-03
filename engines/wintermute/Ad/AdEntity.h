@@ -32,9 +32,10 @@
 #include "engines/wintermute/Ad/AdTalkHolder.h"
 
 namespace WinterMute {
-
+class CVidTheoraPlayer;
 class CAdEntity : public CAdTalkHolder {
 public:
+	CVidTheoraPlayer* _theora;
 	HRESULT SetSprite(const char *Filename);
 	int _walkToX;
 	int _walkToY;
