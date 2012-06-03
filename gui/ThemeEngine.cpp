@@ -454,7 +454,7 @@ void ThemeEngine::refresh() {
 
 		if (_useCursor) {
 			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
-			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
 		}
 	}
 }
@@ -465,7 +465,7 @@ void ThemeEngine::enable() {
 
 	if (_useCursor) {
 		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
 		CursorMan.showMouse(true);
 	}
 
@@ -1287,7 +1287,7 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 	_vectorRenderer->setSurface(&_screen);
 }
 
-bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
+bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY) {
 	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return true;
 
@@ -1305,7 +1305,6 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	// Set up the cursor parameters
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
-	_cursorTargetScale = scale;
 
 	_cursorWidth = cursor->w;
 	_cursorHeight = cursor->h;

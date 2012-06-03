@@ -269,7 +269,7 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 								int hotspotY, uint32 keycolor,
-								int cursorTargetScale,
+								bool dontScale,
 								const Graphics::PixelFormat *format);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 

@@ -49,7 +49,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_transactionMode(kTransactionNone),
 	_cursorNeedsRedraw(false), _cursorPaletteDisabled(true),
 	_cursorVisible(false), _cursorKeyColor(0),
-	_cursorTargetScale(1),
+	_cursorDontScale(false),
 	_formatBGR(false),
 	_displayX(0), _displayY(0), _displayWidth(0), _displayHeight(0) {
 
@@ -591,7 +591,7 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 	setInternalMousePosition(scaledX, scaledY);
 }
 
-void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (format)
 		_cursorFormat = *format;
@@ -616,7 +616,7 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 	_cursorState.hotX = hotspotX;
 	_cursorState.hotY = hotspotY;
 	_cursorKeyColor = keycolor;
-	_cursorTargetScale = cursorTargetScale;
+	_cursorDontScale = dontScale;
 	_cursorNeedsRedraw = true;
 
 	refreshCursorScale();
@@ -829,28 +829,19 @@ void OpenGLGraphicsManager::refreshCursor() {
 }
 
 void OpenGLGraphicsManager::refreshCursorScale() {
-	// Calculate the scale factors of the screen. We limit ourselves to 3 at
-	// most here to avoid really big (and ugly) cursors for big resolutions.
-	// It might be noteworthy that 3 is the (current) target scale for the
-	// modern theme and thus assures the cursor is *never* scaled.
+	// Calculate the scale factors of the screen.
 	// We also totally ignore the aspect of the overlay cursor, since aspect
 	// ratio correction only applies to the game screen.
-	uint screenScaleFactorX = MIN(30000, _videoMode.hardwareWidth * 10000 / _videoMode.screenWidth);
-	uint screenScaleFactorY = MIN(30000, _videoMode.hardwareHeight * 10000 / _videoMode.screenHeight);
+	// TODO: It might make sense to always ignore scaling of the mouse cursor
+	// when the overlay is visible.
+	uint screenScaleFactorX = _videoMode.hardwareWidth * 10000 / _videoMode.screenWidth;
+	uint screenScaleFactorY = _videoMode.hardwareHeight * 10000 / _videoMode.screenHeight;
 
-	// Apply the target scale factor to the cursor.
-	// It might be noteworthy we only apply any scaling to the cursor in case
-	// the current scale factor is bigger than the target scale to match
-	// SurfaceSdlGraphicsManager's behavior. Otherwise we would downscale the
-	// GUI cursor of the modern theme for example.
-	if (screenScaleFactorX > uint(_cursorTargetScale * 10000))
-		screenScaleFactorX /= _cursorTargetScale;
-	else
+	// Ignore scaling when the cursor should not be scaled.
+	if (_cursorDontScale) {
 		screenScaleFactorX = 10000;
-	if (screenScaleFactorY > uint(_cursorTargetScale * 10000))
-		screenScaleFactorY /= _cursorTargetScale;
-	else
 		screenScaleFactorY = 10000;
+	}
 
 	// Apply them (without any possible) aspect ratio correction to the
 	// overlay.
@@ -859,16 +850,19 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 	_cursorState.rHotX = (int16)(_cursorState.hotX * screenScaleFactorX / 10000);
 	_cursorState.rHotY = (int16)(_cursorState.hotY * screenScaleFactorY / 10000);
 
-	// Make sure we properly scale the cursor according to the desired aspect.
-	// It might be noteworthy that, unlike with the overlay, we do not limit
-	// the scale factor here to avoid odd looks if the game uses items as
-	// mouse cursor, which would otherwise suddenly be smaller.
-	int width, height;
-	calculateDisplaySize(width, height);
-	screenScaleFactorX = (width * 10000 / _videoMode.screenWidth) / _cursorTargetScale;
-	screenScaleFactorY = (height * 10000 / _videoMode.screenHeight) / _cursorTargetScale;
+	// Only apply scaling when it's desired.
+	if (_cursorDontScale) {
+		screenScaleFactorX = 10000;
+		screenScaleFactorY = 10000;
+	} else {
+		// Make sure we properly scale the cursor according to the desired aspect.
+		int width, height;
+		calculateDisplaySize(width, height);
+		screenScaleFactorX = (width * 10000 / _videoMode.screenWidth);
+		screenScaleFactorY = (height * 10000 / _videoMode.screenHeight);
+	}
 
-	// Always scale the cursor for the game.
+	// Apply the scale cursor scaling for the game screen.
 	_cursorState.vW = (int16)(_cursorState.w * screenScaleFactorX / 10000);
 	_cursorState.vH = (int16)(_cursorState.h * screenScaleFactorY / 10000);
 	_cursorState.vHotX = (int16)(_cursorState.hotX * screenScaleFactorX / 10000);

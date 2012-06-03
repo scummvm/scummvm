@@ -80,7 +80,7 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = 0);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = 0);
 
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);

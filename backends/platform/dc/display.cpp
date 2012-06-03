@@ -293,7 +293,7 @@ void OSystem_Dreamcast::warpMouse(int x, int y)
 
 void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
 				       int hotspot_x, int hotspot_y,
-				       uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format)
+				       uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format)
 {
   _ms_cur_w = w;
   _ms_cur_h = h;
