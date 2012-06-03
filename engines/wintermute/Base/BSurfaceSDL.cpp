@@ -34,6 +34,7 @@
 //#include "SdlUtil.h"
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/bmp.h"
+#include "graphics/decoders/jpeg.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "engines/wintermute/graphics/transparentSurface.h"
@@ -81,6 +82,8 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 		imgDecoder = new Graphics::BitmapDecoder();
 	} else if (strFileName.hasSuffix(".tga")) {
 		imgDecoder = new WinterMute::TGA();
+	} else if (strFileName.hasSuffix(".jpg")) {
+		imgDecoder = new Graphics::JPEGDecoder();
 	} else {
 		error("CBSurfaceSDL::Create : Unsupported fileformat %s", Filename);
 	}
