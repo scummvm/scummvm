@@ -105,10 +105,11 @@ public:
 	byte _animationTick;
 	Common::Point _nextDisplayCharacterPos;
 	byte _sound_byte16F06;
-	Common::KeyState _lastKeyPressed;
+	Common::Event _lastKeyPressed;
+	Common::EventType _lastEventType;
 	byte _keyboard_nextIndex;
 	byte _keyboard_oldIndex;
-	Common::KeyState _keyboard_buffer[8];
+	Common::Event _keyboard_buffer[8];
 	byte _byte12A05;
 	byte _byte12A06;
 	byte _byte12A07;
@@ -197,7 +198,7 @@ public:
 	byte _rulesBuffer13_1[20];
 	int16 _interfaceHotspotsX[20];
 	int16 _interfaceHotspotsY[20];
-	byte _rulesBuffer13_4[20];
+	byte _keyboardMapping[20];
 	int16 _array10999PosX[40];
 	int16 _array109C1PosY[40];
 	byte _savedSurfaceUnderMouse[16 * 16];
@@ -272,6 +273,7 @@ public:
 
 	void renderCharacters(byte *buf, Common::Point pos);
 
+	void sub147D7();
 	void sub13156(bool &forceReturnFl);
 	byte sub16799(int index, Common::Point param1);
 	byte getDirection(Common::Point param1, Common::Point param2);
@@ -345,7 +347,7 @@ public:
 	int _skipDisplayFlag2;
 
 	byte _byte16F07_menuId;
-	byte _byte12FCE;
+	bool _byte12FCE;
 	int8 _byte129A0;
 	byte _numCharactersToDisplay;
 	byte _byte16C9F;
@@ -363,7 +365,7 @@ public:
 	byte *getCharacterVariablesPtr(int16 index);
 
 	// Temporary stubs
-	Common::KeyState _keyboard_getch();
+	Common::Event _keyboard_getch();
 	bool _keyboard_checkKeyboard();
 	void _keyboard_resetKeyboardBuffer();
 
