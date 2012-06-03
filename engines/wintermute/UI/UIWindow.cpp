@@ -1100,16 +1100,14 @@ const char *CUIWindow::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::HandleKeypress(SDL_Event *event) {
+bool CUIWindow::HandleKeypress(Common::Event *event) {
 //TODO
-#if 0
-	if (event->type == SDL_KEYDOWN && event->key.keysym.scancode == SDL_SCANCODE_TAB) {
+	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
 		return SUCCEEDED(MoveFocus(!CBKeyboardState::IsShiftDown()));
 	} else {
 		if (_focusedWidget) return _focusedWidget->HandleKeypress(event);
 		else return false;
 	}
-#endif
 	return false;
 }
 

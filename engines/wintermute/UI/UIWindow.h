@@ -31,6 +31,7 @@
 
 
 #include "UIObject.h"
+#include "common/events.h"
 
 namespace WinterMute {
 
@@ -69,7 +70,7 @@ public:
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
 	CUIWindow(CBGame *inGame);
 	virtual ~CUIWindow();
-	virtual bool HandleKeypress(SDL_Event *event);
+	virtual bool HandleKeypress(Common::Event *event);
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
 	HRESULT LoadFile(const char *Filename);

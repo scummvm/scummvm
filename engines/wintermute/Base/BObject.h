@@ -32,8 +32,7 @@
 
 #include "engines/wintermute/Base/BScriptHolder.h"
 #include "engines/wintermute/persistent.h"
-
-union SDL_Event;
+#include "common/events.h"
 
 namespace WinterMute {
 
@@ -82,7 +81,7 @@ public:
 
 	virtual bool HandleMouseWheel(int Delta);
 	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
-	virtual bool HandleKeypress(SDL_Event *event);
+	virtual bool HandleKeypress(Common::Event *event);
 	virtual int GetHeight();
 	HRESULT SetCursor(const char *Filename);
 	HRESULT SetActiveCursor(const char *Filename);

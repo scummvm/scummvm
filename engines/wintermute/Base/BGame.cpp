@@ -3793,22 +3793,22 @@ bool CBGame::HandleKeypress(Common::Event *event) {
 
 	_keyboardState->ReadKey(event);
 // TODO
-#if 0
+
 	if (_focusedWindow) {
 		if (!Game->_focusedWindow->HandleKeypress(event)) {
-			if (event->type != SDL_TEXTINPUT) {
+			/*if (event->type != SDL_TEXTINPUT) {*/
 				if (Game->_focusedWindow->CanHandleEvent("Keypress"))
 					Game->_focusedWindow->ApplyEvent("Keypress");
 				else
 					ApplyEvent("Keypress");
-			}
+			/*}*/
 		}
 		return true;
-	} else if (event->type != SDL_TEXTINPUT) {
+	} else /*if (event->type != SDL_TEXTINPUT)*/ {
 		ApplyEvent("Keypress");
 		return true;
-	} else return true;
-#endif
+	} //else return true;
+
 	return false;
 }
 

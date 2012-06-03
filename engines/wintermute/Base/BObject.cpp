@@ -960,7 +960,7 @@ HRESULT CBObject::HandleMouse(TMouseEvent Event, TMouseButton Button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::HandleKeypress(SDL_Event *event) {
+bool CBObject::HandleKeypress(Common::Event *event) {
 	return false;
 }
 
