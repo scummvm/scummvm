@@ -162,7 +162,7 @@ void CBScriptable::ScDebuggerDesc(char *Buf, int BufSize) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::CanHandleMethod(char *EventMethod) {
+bool CBScriptable::CanHandleMethod(const char *EventMethod) {
 	return false;
 }
 

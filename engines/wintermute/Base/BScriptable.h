@@ -49,7 +49,7 @@ public:
 	virtual ~CBScriptable();
 
 	// high level scripting interface
-	virtual bool CanHandleMethod(char *EventMethod);
+	virtual bool CanHandleMethod(const char *EventMethod);
 	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
 	virtual CScValue *ScGetProperty(const char *Name);
 	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
