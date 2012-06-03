@@ -162,10 +162,10 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 	warning("Draw text: %s", Text);
 	if (Text == NULL || strcmp((char *)Text, "") == 0) return;
 
-	WideString text;
+	WideString text = (char*)Text;
 
 	// TODO: Why do we still insist on Widestrings everywhere?
-	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	    else text = StringUtil::AnsiToWide((char *)Text);*/
 
 	if (MaxLength >= 0 && text.size() > MaxLength)
@@ -244,11 +244,20 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 //////////////////////////////////////////////////////////////////////////
 CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
 	TextLineList lines;
-	WrapText(text, width, maxHeight, lines);
+	// TODO
+	//WrapText(text, width, maxHeight, lines);
 
 
 	TextLineList::iterator it;
 	warning("CBFontTT::RenderTextToTexture - Not ported yet");
+//	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(width, _fontHeight, Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 5, 1, 0));
+	_fallbackFont->drawString(surface, text, 0, 0, width, 255);
+	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
+	retSurface->PutSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)));
+	delete surface;
+	return retSurface;
 #if 0 //TODO
 	int textHeight = lines.size() * (_maxCharHeight + _ascender);
 	SDL_Surface *surface = SDL_CreateRGBSurface(0, width, textHeight, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
@@ -620,7 +629,7 @@ HRESULT CBFontTT::InitFont() {
 	}
 	warning("I guess we got a file");
 	if (file) {
-		//_font = Graphics::loadTTFFont(*file->getMemStream(), 12);
+		//_font = Graphics::loadTTFFont(*file->getMemStream(), _fontHeight);
 	} else {
 		_fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);

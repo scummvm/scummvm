@@ -76,10 +76,10 @@ public:
 	int _referenceCount;
 	char *_filename;
 
-	int GetWidth() {
+	virtual int GetWidth() {
 		return _width;
 	}
-	int GetHeight() {
+	virtual int GetHeight() {
 		return _height;
 	}
 	//void SetWidth(int Width){ _width = Width;    }

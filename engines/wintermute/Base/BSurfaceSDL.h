@@ -62,6 +62,18 @@ public:
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
 	    static long DLL_CALLCONV TellProc(fi_handle handle);*/
+	virtual int GetWidth() {
+		if (_surface) {
+			return _surface->w;
+		}
+		return _width;
+	}
+	virtual int GetHeight() {
+		if (_surface) {
+			return _surface->h;
+		}
+		return _height;
+	}
 
 private:
 //	SDL_Texture *_texture;

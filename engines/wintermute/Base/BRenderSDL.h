@@ -58,7 +58,7 @@ public:
 
 	CBImage *TakeScreenshot();
 
-	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest);
+	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, byte r = 255, byte g = 255, byte b = 255, byte a = 255);
 
 
 	HRESULT SetViewport(int left, int top, int right, int bottom);
