@@ -160,7 +160,8 @@ private:
 	HRESULT InitFont();
 	//FT_Stream _fTStream;
 	//FT_Face _fTFace;
-	Graphics::Font *_font;
+	Graphics::Font *_deletableFont;
+	const Graphics::Font *_font;
 	const Graphics::Font *_fallbackFont;
 	FontGlyphCache *_glyphCache;
 

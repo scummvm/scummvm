@@ -179,7 +179,7 @@ Utf8String StringUtil::WideToUtf8(const WideString &WideStr) {
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::AnsiToWide(const AnsiString &str) {
 	// using default os locale!
-	error("StringUtil::AnsiToWide - WideString not supported yet");
+	warning("StringUtil::AnsiToWide - WideString not supported yet");
 	/*  setlocale(LC_CTYPE, "");
 	    size_t WideSize = mbstowcs(NULL, str.c_str(), 0) + 1;
 	    wchar_t *wstr = new wchar_t[WideSize];
@@ -187,13 +187,13 @@ WideString StringUtil::AnsiToWide(const AnsiString &str) {
 	    WideString ResultString(wstr);
 	    delete [] wstr;
 	    return ResultString;*/
-	return "";
+	return WideString(str);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::WideToAnsi(const WideString &wstr) {
 	// using default os locale!
-	error("StringUtil::WideToAnsi - WideString not supported yet");
+	warning("StringUtil::WideToAnsi - WideString not supported yet");
 	/*  setlocale(LC_CTYPE, "");
 	    size_t WideSize = wcstombs(NULL, wstr.c_str(), 0) + 1;
 	    char *str = new char[WideSize];
@@ -201,7 +201,7 @@ AnsiString StringUtil::WideToAnsi(const WideString &wstr) {
 	    AnsiString ResultString(str);
 	    delete [] str;
 	    return ResultString;*/
-	return "";
+	return AnsiString(wstr);
 }
 
 //////////////////////////////////////////////////////////////////////////

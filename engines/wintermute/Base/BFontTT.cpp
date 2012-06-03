@@ -58,6 +58,7 @@ CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
 	_fontFile = NULL;
 	_font = NULL;
 	_fallbackFont = NULL;
+	_deletableFont = NULL;
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
 
@@ -84,7 +85,7 @@ CBFontTT::~CBFontTT(void) {
 	delete[] _fontFile;
 	_fontFile = NULL;
 
-	delete _font;
+	delete _deletableFont;
 	_font = NULL;
 
 	delete _glyphCache;
@@ -129,8 +130,8 @@ void CBFontTT::InitLoop() {
 int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 	WideString text;
 
-	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	    else text = StringUtil::AnsiToWide((char *)Text);*/
+	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	    else text = StringUtil::AnsiToWide((char *)Text);
 
 	if (MaxLength >= 0 && text.size() > MaxLength)
 		text = Common::String(text.c_str(), MaxLength);
@@ -146,8 +147,8 @@ int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 	WideString text;
 
-	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	    else text = StringUtil::AnsiToWide((char *)Text);*/
+	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	    else text = StringUtil::AnsiToWide((char *)Text);
 
 
 	int textWidth, textHeight;
@@ -636,9 +637,10 @@ HRESULT CBFontTT::InitFont() {
 #endif
 	} 
 	if (!_font) {
-		_fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);
 	}
+	_lineHeight = _font->getFontHeight();
 	return S_OK;
 #if 0
 	FT_Error error;
@@ -814,19 +816,32 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
-	TextLineList lines;
-	WrapText(text, maxWidth, maxHeight, lines);
+	//TextLineList lines;
+	warning("Todo: Test Mesuretext");
+	if (maxWidth >= 0) {
+		Common::Array<Common::String> lines;
+		_font->wordWrapText(text, maxWidth, lines);
+		Common::Array<Common::String>::iterator it;
+		textWidth = 0;
+		for (it = lines.begin(); it != lines.end(); it++) {
+			textWidth = MAX(textWidth, _font->getStringWidth(*it));
+		}
+	
+		//WrapText(text, maxWidth, maxHeight, lines);
 
-	textHeight = (int)(lines.size() * GetLineHeight());
-	textWidth = 0;
-
+		textHeight = (int)(lines.size() * GetLineHeight());
+	} else {
+		textWidth = _font->getStringWidth(text);
+		textHeight = _fontHeight;
+	}
+/*
 	TextLineList::iterator it;
 	for (it = lines.begin(); it != lines.end(); ++it) {
 		TextLine *line = (*it);
 		textWidth = MAX(textWidth, line->GetWidth());
 		delete line;
 		line = NULL;
-	}
+	}*/
 }
 
 
