@@ -1298,6 +1298,10 @@ RMPoint RMCharacter::InvScanLine(const RMPoint &punto) {
 		}
 		Lscan.x = Lstart.x + Ldx;
 		Lscan.y = Lstart.y + Ldy;
+
+		// WORKAROUND: Handles cases where the points never fall inside a bounding box
+		if (Lscan.x < -100 || Lscan.y < -100 || Lscan.x >= 1000 || Lscan.y >= 1000)
+			return punto;
 	}
 }
 
