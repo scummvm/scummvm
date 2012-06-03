@@ -22,6 +22,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BSurfaceSDL.h"
+#include "engines/wintermute/Base/BSoundMgr.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/video/decoders/theora_decoder.h"
@@ -317,20 +318,63 @@ HRESULT CVidTheoraPlayer::resetStream() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeGame, bool FreezeMusic, bool Looping, uint32 StartTime, float ForceZoom, int Volume) {
+	if (ForceZoom < 0.0f) 
+		ForceZoom = 100.0f;
+	if (Volume < 0) 
+		_volume = Game->_soundMgr->getVolumePercent(SOUND_SFX);
+	else _volume = Volume;
+	
+	_freezeGame = FreezeGame;
+	
+	if (!_playbackStarted && _freezeGame) 
+		Game->Freeze(FreezeMusic);
+	
+	_playbackStarted = false;
+	float Width, Height;
 	if (_theoraDecoder) {
 		_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
 		_state = THEORA_STATE_PLAYING;
-		return S_OK;
+		_looping = Looping;
+		_playbackType = Type;
+
+		_startTime = StartTime;
+		_volume = Volume;
+		_posX = X;
+		_posY = Y;
+		_playZoom = ForceZoom;
+		
+		Width = (float)_theoraDecoder->getWidth();
+		Height = (float)_theoraDecoder->getHeight();
+	} else {
+		Width = (float)Game->_renderer->_width;
+		Height = (float)Game->_renderer->_height;
 	}
+
+	switch (Type) {
+		case VID_PLAY_POS:
+			_playZoom = ForceZoom;
+			_posX = X;
+			_posY = Y;
+			break;
+			
+		case VID_PLAY_STRETCH: {
+			float ZoomX = (float)((float)Game->_renderer->_width / Width * 100);
+			float ZoomY = (float)((float)Game->_renderer->_height / Height * 100);
+			_playZoom = MIN(ZoomX, ZoomY);
+			_posX = (Game->_renderer->_width - Width * (_playZoom / 100)) / 2;
+			_posY = (Game->_renderer->_height - Height * (_playZoom / 100)) / 2;
+		}
+			break;
+			
+		case VID_PLAY_CENTER:
+			_playZoom = 100.0f;
+			_posX = (Game->_renderer->_width - Width) / 2;
+			_posY = (Game->_renderer->_height - Height) / 2;
+			break;
+	}
+	return S_OK;
 #if 0
-	if (ForceZoom < 0.0f) ForceZoom = 100.0f;
-	if (Volume < 0) m_Volume = Game->m_SoundMgr->GetVolumePercent(SOUND_SFX);
-	else m_Volume = Volume;
 
-	m_FreezeGame = FreezeGame;
-	if (!m_PlaybackStarted && m_FreezeGame) Game->Freeze(FreezeMusic);
-
-	m_PlaybackStarted = false;
 	m_State = THEORA_STATE_PLAYING;
 
 	m_Looping = Looping;
@@ -388,10 +432,21 @@ HRESULT CVidTheoraPlayer::stop() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::update() {
+	_currentTime = _freezeGame ? Game->_liveTimer : Game->_timer;
+	
+	if (!isPlaying()) return S_OK;
+	
+	if (_playbackStarted /*&& m_Sound && !m_Sound->IsPlaying()*/) return S_OK;
+	
+	if (_playbackStarted && !_freezeGame && Game->_state == GAME_FROZEN) return S_OK;
+	
+	int Counter = 0;
 	if (_theoraDecoder) {
 		if (_theoraDecoder->endOfVideo()) {
 			warning("Finished movie");
 			_state = THEORA_STATE_FINISHED;
+			_playbackStarted = false;
+			if (_freezeGame) Game->Unfreeze();
 		}
 		if (_state == THEORA_STATE_PLAYING) {
 			if (_theoraDecoder->getTimeToNextFrame() == 0) {
@@ -401,6 +456,18 @@ HRESULT CVidTheoraPlayer::update() {
 			if (_texture && _videoFrameReady) {
 				WriteVideo();
 			}
+			return S_OK;
+		}
+	}
+	// Skip the busy-loop?
+	if ((!_texture || !_videoFrameReady) && !_theoraDecoder->endOfVideo()) {
+		// end playback
+		if (!_looping) {
+			_state = THEORA_STATE_FINISHED;
+			if (_freezeGame) Game->Unfreeze();
+			return S_OK;
+		} else {
+			resetStream();
 			return S_OK;
 		}
 	}
