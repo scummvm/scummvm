@@ -134,7 +134,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_soundHandler = new LilliputSound(this);
 
 	_byte1714E = 0;
-	_byte12FCE = 0;
+	_byte12FCE = false;
 	_byte129A0 = -1;
 	_numCharactersToDisplay = 0;
 	_nextDisplayCharacterPos = Common::Point(0, 0);
@@ -1889,10 +1889,10 @@ void LilliputEngine::sub13156(bool &forceReturnFl) {
 	if (!_keyboard_checkKeyboard())
 		return;
 
-	Common::KeyState state = _keyboard_getch();
-	uint16 var1 = state.ascii;
+	Common::Event event = _keyboard_getch();
+	uint16 var1 = event.kbd.ascii;
 	for (int i = 0; i < 20; i++) {
-		warning("%d - 0x%x", i, _rulesBuffer13_4[i]);
+		warning("%d - 0x%x", i, _keyboardMapping[i]);
 	}
 
 	// TODO: Very incomplete!
@@ -1902,10 +1902,68 @@ void LilliputEngine::sub13156(bool &forceReturnFl) {
 
 }
 
+void LilliputEngine::sub147D7() {
+	debugC(2, kDebugEngine, "sub147D7()");
+
+	static bool altKeyFl = false;
+	static int16 keyCount = 0;
+
+	if (_keyboard_oldIndex == _keyboard_nextIndex)
+		return;
+
+	Common::Event oldEvent = _keyboard_buffer[_keyboard_oldIndex];
+	if ((oldEvent.kbd.keycode == Common::KEYCODE_LALT) || (oldEvent.kbd.keycode == Common::KEYCODE_RALT)) {
+		if (oldEvent.type == Common::EVENT_KEYDOWN) {
+			altKeyFl = true;
+			keyCount = 0;
+			return;
+		} else if (oldEvent.type == Common::EVENT_KEYUP) {
+			altKeyFl = false;
+			if (keyCount == 3)
+				_byte16F07_menuId = 6;
+			return;
+		}
+	}
+
+	if (keyCount >= 3)
+		return;
+
+	if ((altKeyFl) && (oldEvent.type == Common::EVENT_KEYDOWN)) {
+		switch (oldEvent.kbd.keycode) {
+		case Common::KEYCODE_KP0:
+		case Common::KEYCODE_KP1:
+		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_KP3:
+		case Common::KEYCODE_KP4:
+		case Common::KEYCODE_KP5:
+		case Common::KEYCODE_KP6:
+		case Common::KEYCODE_KP7:
+		case Common::KEYCODE_KP8:
+		case Common::KEYCODE_KP9:
+		case Common::KEYCODE_0:
+		case Common::KEYCODE_1:
+		case Common::KEYCODE_2:
+		case Common::KEYCODE_3:
+		case Common::KEYCODE_4:
+		case Common::KEYCODE_5:
+		case Common::KEYCODE_6:
+		case Common::KEYCODE_7:
+		case Common::KEYCODE_8:
+		case Common::KEYCODE_9:
+			_array147D1[keyCount] = oldEvent.kbd.keycode - Common::KEYCODE_0;
+			++keyCount;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void LilliputEngine::sub130EE() {
 	debugC(2, kDebugEngine, "sub130EE()");
 
-//	warning("sub147D7");
+	sub147D7();
+
 	bool forceReturnFl = false;
 	sub13156(forceReturnFl);
 	if (forceReturnFl)
@@ -1974,7 +2032,7 @@ void LilliputEngine::sub131B2(Common::Point pos, bool &forceReturnFl) {
 		if ((pos.x >= _characterDisplayX[i]) && (pos.x <= _characterDisplayX[i] + 17) && (pos.y >= _characterDisplayY[i]) && (pos.y <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_byte129A0 = i;
 			_byte16F07_menuId = 4;
-			if (_byte12FCE == 1)
+			if (_byte12FCE)
 				_byte16F07_menuId = 3;
 
 			return;
@@ -2016,7 +2074,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	_lastInterfaceHotspotButton = button;
 
 	if (button == 2) {
-		if (_byte12FCE != 1) {
+		if (!_byte12FCE) {
 			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
 			_byte16F07_menuId = 2;
 			displayInterfaceHotspots();
@@ -2024,7 +2082,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 		return;
 	}
 
-	if (_byte12FCE == 1) {
+	if (_byte12FCE) {
 		unselectInterfaceButton();
 		return;
 	}
@@ -2032,7 +2090,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	unselectInterfaceHotspots();
 	_scriptHandler->_interfaceHotspotStatus[index] = kHotspotSelected;
 	if (_rulesBuffer13_1[index] == 1) {
-		_byte12FCE = 1;
+		_byte12FCE = true;
 		_word15AC2 = 1;
 	} else {
 		_byte16F07_menuId = 1;
@@ -2379,21 +2437,25 @@ void LilliputEngine::pollEvent() {
 					_mouseDisplayPos = newMousePos;
 				}
 			}
+			_lastEventType = event.type;
 			}
 			break;
 		case Common::EVENT_QUIT:
 			_shouldQuit = true;
 			break;
+		case Common::EVENT_KEYUP:
 		case Common::EVENT_KEYDOWN: {
-			if (event.kbd == _lastKeyPressed)
+			if ((event.type == _lastKeyPressed.type) && (event.kbd == _lastKeyPressed.kbd))
 				break;
 
-			_lastKeyPressed = event.kbd;
+			_lastKeyPressed = event;
 			int nextIndex = (_keyboard_nextIndex + 1) % 8;
 			if (_keyboard_oldIndex != nextIndex) {
-				_keyboard_buffer[_keyboard_nextIndex] = event.kbd;
+				_keyboard_buffer[_keyboard_nextIndex] = event;
 				_keyboard_nextIndex = nextIndex;
 			}
+
+			_lastEventType = event.type;
 			}
 			break;
 		default:
@@ -2639,18 +2701,18 @@ void LilliputEngine::loadRules() {
 		byte curByte = f.readByte();
 
 		if (curByte == 0x20)
-			_rulesBuffer13_4[i] = 0x39;
+			_keyboardMapping[i] = 0x39;
 		else if (curByte == 0xD)
-			_rulesBuffer13_4[i] = 0x1C;
+			_keyboardMapping[i] = 0x1C;
 		// Hack to avoid xlat out of bounds
 		else if (curByte == 0xFF)
-			_rulesBuffer13_4[i] = 0x21;
+			_keyboardMapping[i] = 0x21;
 		// Hack to avoid xlat out of bounds
 		else if (curByte == 0x00)
-			_rulesBuffer13_4[i] = 0xB4;
+			_keyboardMapping[i] = 0xB4;
 		else {
 			assert((curByte > 0x40) && (curByte <= 0x41 + 26));
-			_rulesBuffer13_4[i] = _rulesXlatArray[curByte - 0x41];
+			_keyboardMapping[i] = _rulesXlatArray[curByte - 0x41];
 		}
 	}
 	f.close();
@@ -2712,7 +2774,7 @@ void LilliputEngine::setCurrentCharacter(int index) {
 void LilliputEngine::unselectInterfaceButton() {
 	debugC(1, kDebugEngine, "unselectInterfaceButton()");
 
-	_byte12FCE = 0;
+	_byte12FCE = false;
 	_word15AC2 = 0;
 	_lastInterfaceHotspotButton = 0;
 	unselectInterfaceHotspots();
@@ -2725,7 +2787,7 @@ void LilliputEngine::handleMenu() {
 	if (_byte16F07_menuId == 0)
 		return;
 
-	if ((_byte12FCE == 1) && (_byte16F07_menuId != 3))
+	if (_byte12FCE && (_byte16F07_menuId != 3))
 		return;
 
 	setCurrentCharacter(_word10804);
@@ -2877,12 +2939,12 @@ Common::String LilliputEngine::getSavegameFilename(int slot) {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
 
-Common::KeyState LilliputEngine::_keyboard_getch() {
+Common::Event LilliputEngine::_keyboard_getch() {
 	warning("getch()");
 	while(_keyboard_nextIndex == _keyboard_oldIndex)
 		pollEvent();
 
-	Common::KeyState tmpEvent = _keyboard_buffer[_keyboard_oldIndex];
+	Common::Event tmpEvent = _keyboard_buffer[_keyboard_oldIndex];
 	_keyboard_oldIndex = (_keyboard_oldIndex + 1) % 8;
 
 	return tmpEvent;

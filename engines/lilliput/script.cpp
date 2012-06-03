@@ -2036,7 +2036,7 @@ byte LilliputScript::OC_checkSavedMousePos() {
 byte LilliputScript::OC_sub179AE() {
 	debugC(1, kDebugScript, "OC_sub179AE()");
 
-	if ((_vm->_byte12FCE == 1) || (_vm->_byte129A0 == -1))
+	if (_vm->_byte12FCE || (_vm->_byte129A0 == -1))
 		return 0;
 
 	return 1;
@@ -2055,11 +2055,13 @@ byte LilliputScript::OC_sub179C2() {
 byte LilliputScript::OC_checkKeyPressed() {
 	debugC(1, kDebugScript, "OC_checkKeyPressed()");
 
-	static const byte specialKeys[10] = {0x44, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42, 0x43};
+	static const Common::KeyCode specialKeys[10] = {
+		Common::KEYCODE_F10, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4,
+		Common::KEYCODE_F5,  Common::KEYCODE_F6, Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9};
 
 	int8 index = (_currScript->readUint16LE() & 0xFF) - 0x30;
 	
-	if (specialKeys[index] == _vm->_lastKeyPressed.keycode)
+	if (specialKeys[index] == _vm->_lastKeyPressed.kbd.keycode)
 		return 1;
 
 	return 0;
@@ -3170,16 +3172,17 @@ void LilliputScript::OC_displayTitleScreen() {
 	_vm->_keyboard_resetKeyboardBuffer();
 
 	_vm->_mouseButton = 0;
-	_vm->_lastKeyPressed = Common::KeyState();
+	_vm->_lastKeyPressed = Common::Event();
 
 	while (!_vm->_shouldQuit) {
 		_vm->displaySmallAnims();
 		_vm->update();
 		_vm->pollEvent();
 		if (_vm->_keyboard_checkKeyboard()) {
-			_vm->_lastKeyPressed = _vm->_keyboard_getch();
-			// Removed: why asking for 2 keystrikes?
-			// _vm->_keyboard_getch();
+			Common::Event event = _vm->_keyboard_getch();
+			_vm->_lastKeyPressed = event;
+			if (event.type == Common::EVENT_KEYDOWN)
+				_vm->_keyboard_getch();
 			break;
 		}
 		
