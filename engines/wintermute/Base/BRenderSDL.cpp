@@ -282,9 +282,14 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, RECT *rect) {
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, byte r, byte g, byte b, byte a) {
+void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, byte r, byte g, byte b, byte a, bool mirrorX, bool mirrorY) {
 	TransparentSurface src(*surf, false);
-	src.blit(*_renderSurface, dstRect->left, dstRect->top, TransparentSurface::FLIP_NONE, srcRect,BS_ARGB(a, r, g, b), dstRect->width(), dstRect->height() );
+	int mirror = TransparentSurface::FLIP_NONE;
+	if (mirrorX)
+		mirror |= TransparentSurface::FLIP_V;
+	if (mirrorY)
+		mirror |= TransparentSurface::FLIP_H;
+	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, srcRect,BS_ARGB(a, r, g, b), dstRect->width(), dstRect->height() );
 }
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {

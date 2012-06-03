@@ -494,7 +494,7 @@ HRESULT CBSurfaceSDL::DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float Zo
 	position.left += offsetX;
 	position.top += offsetY;
 
-	renderer->drawFromSurface(_surface, &srcRect, &position, r, g, b, a);
+	renderer->drawFromSurface(_surface, &srcRect, &position, r, g, b, a, MirrorX, MirrorY);
 #if 0
 	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
 #endif
