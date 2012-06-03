@@ -557,7 +557,7 @@ HRESULT CAdResponseBox::WeedResponses() {
 			}
 			break;
 		default:
-			error("CAdResponseBox::WeedResponses - Unhandled enum");
+			warning("CAdResponseBox::WeedResponses - Unhandled enum");
 			break;
 		}
 	}
