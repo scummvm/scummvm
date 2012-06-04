@@ -65,8 +65,11 @@ uint SAIPlugin::decreaseFactor() {
 }
 
 const char *SAIPlugin::getName() const {
-	return "SAI";
+	return "sai";
 }
 
+const char *SAIPlugin::getPrettyName() const {
+	return "SAI";
+}
 
 REGISTER_PLUGIN_STATIC(SAI, PLUGIN_TYPE_SCALER, SAIPlugin);

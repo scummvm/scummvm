@@ -36,6 +36,7 @@ public:
 	virtual bool canDrawCursor() const { return false; }
 	virtual uint extraPixels() const { return 0; }
 	virtual const char *getName() const;
+	virtual const char *getPrettyName() const;
 private:
 	uint16 lookup[16];
 	void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
