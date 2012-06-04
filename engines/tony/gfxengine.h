@@ -44,110 +44,110 @@ namespace Tony {
 
 class RMGfxEngine {
 private:
-	RMGfxTargetBuffer m_bigBuf;
-	RMInput m_input;
-	RMPointer m_point;
-	RMLocation m_loc;
-	RMOptionScreen m_opt;
-	RMTony m_tony;
-	RMInventory m_inv;
-	RMInterface m_inter;
-	RMTextItemName m_itemName;
+	RMGfxTargetBuffer _bigBuf;
+	RMInput _input;
+	RMPointer _point;
+	RMLocation _loc;
+	RMOptionScreen _opt;
+	RMTony _tony;
+	RMInventory _inv;
+	RMInterface _inter;
+	RMTextItemName _itemName;
 
-	bool m_bOption;
-	bool m_bLocationLoaded;
+	bool _bOption;
+	bool _bLocationLoaded;
 
-	bool m_bInput;
-	bool m_bAlwaysDrawMouse;
+	bool _bInput;
+	bool _bAlwaysDrawMouse;
 
-	int m_nCurLoc;
-	RMTonyAction m_curAction;
-	int m_curActionObj;
-	OSystem::MutexRef csMainLoop;
+	int _nCurLoc;
+	RMTonyAction _curAction;
+	int _curActionObj;
+	OSystem::MutexRef _csMainLoop;
 
-	int m_nWipeType;
-	uint32 m_hWipeEvent;
-	int m_nWipeStep;
+	int _nWipeType;
+	uint32 _hWipeEvent;
+	int _nWipeStep;
 
-	bool m_bMustEnterMenu;
+	bool _bMustEnterMenu;
 protected:
-	static void ItemIrq(uint32 dwItem, int nPattern, int nStatus);
-	void InitForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
+	static void itemIrq(uint32 dwItem, int nPattern, int nStatus);
+	void initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
 public:
-	bool m_bWiping;
-	Common::Rect m_rcWipeEllipse;
-	bool m_bGUIOption;
-	bool m_bGUIInterface;
-	bool m_bGUIInventory;
+	bool _bWiping;
+	Common::Rect _rcWipeEllipse;
+	bool _bGUIOption;
+	bool _bGUIInterface;
+	bool _bGUIInventory;
 public:
 	RMGfxEngine();
 	virtual ~RMGfxEngine();
 
 	// Draw the next frame
-	void DoFrame(CORO_PARAM, bool bDrawLocation);
+	void doFrame(CORO_PARAM, bool bDrawLocation);
 
 	// Initialises the graphics engine
-	void Init();
+	void init();
 
 	// Closes the graphics engine
-	void Close(void);
+	void close(void);
 
 	// Warns when changing
-	void SwitchFullscreen(bool bFull);
+	void switchFullscreen(bool bFull);
 
 	// Warn that we are guided by the GDI
 	void GDIControl(bool bCon);
 
 	// Warns when entering or exits the options menu
-	void OpenOptionScreen(CORO_PARAM, int type);
+	void openOptionScreen(CORO_PARAM, int type);
 
 	// Enables or disables mouse input
-	void EnableInput(void);
-	void DisableInput(void);
+	void enableInput(void);
+	void disableInput(void);
 
 	// Enables and disables mouse draw
-	void EnableMouse(void);
-	void DisableMouse(void);
+	void enableMouse(void);
+	void disableMouse(void);
 
 	operator byte *() {
-		return (byte *)m_bigBuf;
+		return (byte *)_bigBuf;
 	}
-	RMInput &GetInput() {
-		return m_input;
+	RMInput &getInput() {
+		return _input;
 	}
 
 	// Link to the custom function list
-	void InitCustomDll(void);
+	void initCustomDll(void);
 
 	// Link to graphic task
-	void LinkGraphicTask(RMGfxTask *task) {
-		m_bigBuf.AddPrim(new RMGfxPrimitive(task));
+	void linkGraphicTask(RMGfxTask *task) {
+		_bigBuf.AddPrim(new RMGfxPrimitive(task));
 	};
 
 	// Manage a location
-	uint32 LoadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
-	void UnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
+	uint32 loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
+	void unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 
 	// Freeze and unfreeze
-	void Freeze(void);
-	void Unfreeze(void);
+	void freeze(void);
+	void unfreeze(void);
 
 	// State management
-	void SaveState(const Common::String &fn, byte *curThumb, const Common::String &name);
-	void LoadState(CORO_PARAM, const Common::String &fn);
+	void saveState(const Common::String &fn, byte *curThumb, const Common::String &name);
+	void loadState(CORO_PARAM, const Common::String &fn);
 
 	// Pauses sound
-	void PauseSound(bool bPause);
+	void pauseSound(bool bPause);
 
 	// Wipe
-	void InitWipe(int type);
-	void CloseWipe(void);
-	void WaitWipeEnd(CORO_PARAM);
+	void initWipe(int type);
+	void closeWipe(void);
+	void waitWipeEnd(CORO_PARAM);
 
-	void SetPalesati(bool bpal) {
-		m_inter.SetPalesati(bpal);
+	void setPalesati(bool bpal) {
+		_inter.SetPalesati(bpal);
 	}
-	bool CanLoadSave();
+	bool canLoadSave();
 };
 
 } // End of namespace Tony

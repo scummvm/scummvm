@@ -140,8 +140,8 @@ Common::ErrorCode TonyEngine::init() {
 	_theBoxes.Init();
 
 	// Link to the custom graphics engine
-	_theEngine.InitCustomDll();
-	_theEngine.Init();
+	_theEngine.initCustomDll();
+	_theEngine.init();
 
 	// Allocate space for thumbnails when saving the game
 	_curThumbnail = new uint16[160 * 120];
@@ -406,7 +406,7 @@ void TonyEngine::autoSave(CORO_PARAM) {
 	CORO_INVOKE_0(MainWaitFrame);
 	MainFreeze();
 	_ctx->buf = getSaveStateFileName(0);
-	_theEngine.SaveState(_ctx->buf, (byte *)_curThumbnail, "Autosave");
+	_theEngine.saveState(_ctx->buf, (byte *)_curThumbnail, "Autosave");
 	MainUnfreeze();
 
 	CORO_END_CODE;
@@ -415,7 +415,7 @@ void TonyEngine::autoSave(CORO_PARAM) {
 
 void TonyEngine::saveState(int n, const char *name) {
 	Common::String buf = getSaveStateFileName(n);
-	_theEngine.SaveState(buf.c_str(), (byte *)_curThumbnail, name);
+	_theEngine.saveState(buf.c_str(), (byte *)_curThumbnail, name);
 }
 
 
@@ -427,7 +427,7 @@ void TonyEngine::loadState(CORO_PARAM, int n) {
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->buf = getSaveStateFileName(n);
-	CORO_INVOKE_1(_theEngine.LoadState, _ctx->buf.c_str());
+	CORO_INVOKE_1(_theEngine.loadState, _ctx->buf.c_str());
 
 	CORO_END_CODE;
 }
@@ -484,11 +484,11 @@ void TonyEngine::optionScreen(void) {
 }
 
 void TonyEngine::openInitLoadMenu(CORO_PARAM) {
-	_theEngine.OpenOptionScreen(coroParam, 1);
+	_theEngine.openOptionScreen(coroParam, 1);
 }
 
 void TonyEngine::openInitOptions(CORO_PARAM) {
-	_theEngine.OpenOptionScreen(coroParam, 2);
+	_theEngine.openOptionScreen(coroParam, 2);
 }
 
 void TonyEngine::abortGame(void) {
@@ -517,7 +517,7 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 		// If a savegame needs to be loaded, then do so
 		if (_vm->_loadSlotNumber != -1 && GLOBALS.GfxEngine != NULL) {
 			_ctx->fn = getSaveStateFileName(_vm->_loadSlotNumber);
-			CORO_INVOKE_1(GLOBALS.GfxEngine->LoadState, _ctx->fn);
+			CORO_INVOKE_1(GLOBALS.GfxEngine->loadState, _ctx->fn);
 			_vm->_loadSlotNumber = -1;
 		}
 
@@ -525,17 +525,17 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 		CORO_INVOKE_1(CoroScheduler.sleep, 50);
 
 		// Call the engine to handle the next frame
-		CORO_INVOKE_1(_vm->_theEngine.DoFrame, _vm->_bDrawLocation);
+		CORO_INVOKE_1(_vm->_theEngine.doFrame, _vm->_bDrawLocation);
 
 		// Warns that a frame is finished
 		CoroScheduler.pulseEvent(_vm->_hEndOfFrame);
 
 		// Handle drawing the frame
 		if (!_vm->_bPaused) {
-			if (!_vm->_theEngine.m_bWiping)
+			if (!_vm->_theEngine._bWiping)
 				_vm->_window.GetNewFrame(_vm->_theEngine, NULL);
 			else
-				_vm->_window.GetNewFrame(_vm->_theEngine, &_vm->_theEngine.m_rcWipeEllipse);
+				_vm->_window.GetNewFrame(_vm->_theEngine, &_vm->_theEngine._rcWipeEllipse);
 		}
 
 		// Paint the frame onto the screen
@@ -569,14 +569,14 @@ void TonyEngine::close(void) {
 	closeMusic();
 	CoroScheduler.closeEvent(_hEndOfFrame);
 	_theBoxes.Close();
-	_theEngine.Close();
+	_theEngine.close();
 	_window.Close();
 	delete[] _curThumbnail;
 }
 
 void TonyEngine::switchFullscreen(bool bFull) {
 	_window.SwitchFullscreen(bFull);
-	_theEngine.SwitchFullscreen(bFull);
+	_theEngine.switchFullscreen(bFull);
 }
 
 void TonyEngine::GDIControl(bool bCon) {
@@ -601,10 +601,10 @@ uint32 TonyEngine::getTime() {
 }
 
 bool TonyEngine::canLoadGameStateCurrently() {
-	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->CanLoadSave();
+	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->canLoadSave();
 }
 bool TonyEngine::canSaveGameStateCurrently() {
-	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->CanLoadSave();
+	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->canLoadSave();
 }
 
 Common::Error TonyEngine::loadGameState(int slot) {
@@ -619,7 +619,7 @@ Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
 	RMSnapshot s;
 	s.GrabScreenshot(*GLOBALS.GfxEngine, 4, _curThumbnail);
 
-	GLOBALS.GfxEngine->SaveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
+	GLOBALS.GfxEngine->saveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
 	return Common::kNoError;
 }
 

@@ -530,7 +530,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		g_system->unlockMutex(m_csModifyInterface);
 	}
 
-	if (_vm->getEngine()->GetInput().getAsyncKeyState(Common::KEYCODE_i)) {
+	if (_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_i)) {
 		GLOBALS.bCfgInvLocked = !GLOBALS.bCfgInvLocked;
 	}
 

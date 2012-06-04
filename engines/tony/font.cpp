@@ -2086,7 +2086,7 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 		}
 
 		if (!m_bNoTab) {
-			if (_vm->getEngine()->GetInput().getAsyncKeyState(Common::KEYCODE_TAB))
+			if (_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
 				return;
 		}
 

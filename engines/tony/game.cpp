@@ -47,23 +47,23 @@ using namespace MPAL;
 /****************************************/
 
 uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
-	return _vm->getEngine()->LoadLocation(nLoc, pt, start);
+	return _vm->getEngine()->loadLocation(nLoc, pt, start);
 }
 
 void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
-	_vm->getEngine()->UnloadLocation(coroParam, bDoOnExit, result);
+	_vm->getEngine()->unloadLocation(coroParam, bDoOnExit, result);
 }
 
 void MainLinkGraphicTask(RMGfxTask *task) {
-	_vm->getEngine()->LinkGraphicTask(task);
+	_vm->getEngine()->linkGraphicTask(task);
 }
 
 void MainFreeze(void) {
-	_vm->getEngine()->Freeze();
+	_vm->getEngine()->freeze();
 }
 
 void MainUnfreeze(void) {
-	_vm->getEngine()->Unfreeze();
+	_vm->getEngine()->unfreeze();
 }
 
 void MainWaitFrame(CORO_PARAM) {
@@ -71,11 +71,11 @@ void MainWaitFrame(CORO_PARAM) {
 }
 
 void MainShowMouse(void) {
-	_vm->getEngine()->EnableMouse();
+	_vm->getEngine()->enableMouse();
 }
 
 void MainHideMouse(void) {
-	_vm->getEngine()->DisableMouse();
+	_vm->getEngine()->disableMouse();
 }
 
 void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
@@ -83,39 +83,39 @@ void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int 
 }
 
 void MainDisableInput(void) {
-	_vm->getEngine()->DisableInput();
+	_vm->getEngine()->disableInput();
 }
 
 void MainEnableInput(void) {
-	_vm->getEngine()->EnableInput();
+	_vm->getEngine()->enableInput();
 }
 
 void MainInitWipe(int type) {
-	_vm->getEngine()->InitWipe(type);
+	_vm->getEngine()->initWipe(type);
 }
 
 void MainCloseWipe(void) {
-	_vm->getEngine()->CloseWipe();
+	_vm->getEngine()->closeWipe();
 }
 
 void MainWaitWipeEnd(CORO_PARAM) {
-	_vm->getEngine()->WaitWipeEnd(coroParam);
+	_vm->getEngine()->waitWipeEnd(coroParam);
 }
 
 void MainEnableGUI(void) {
-	_vm->getEngine()->m_bGUIInterface = true;
-	_vm->getEngine()->m_bGUIInventory = true;
-	_vm->getEngine()->m_bGUIOption = true;
+	_vm->getEngine()->_bGUIInterface = true;
+	_vm->getEngine()->_bGUIInventory = true;
+	_vm->getEngine()->_bGUIOption = true;
 }
 
 void MainDisableGUI(void) {
-	_vm->getEngine()->m_bGUIInterface = false;
-	_vm->getEngine()->m_bGUIInventory = false;
-	_vm->getEngine()->m_bGUIOption = false;
+	_vm->getEngine()->_bGUIInterface = false;
+	_vm->getEngine()->_bGUIInventory = false;
+	_vm->getEngine()->_bGUIOption = false;
 }
 
 void MainSetPalesati(bool bPalesati) {
-	_vm->getEngine()->SetPalesati(bPalesati);
+	_vm->getEngine()->setPalesati(bPalesati);
 }
 
 /****************************************************************************\
@@ -1097,9 +1097,9 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 
-#define KEYPRESS(c)     (_vm->getEngine()->GetInput().getAsyncKeyState(c))
+#define KEYPRESS(c)     (_vm->getEngine()->getInput().getAsyncKeyState(c))
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
-		m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
+		m_EditName[strlen(m_EditName) + 1] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
 
 	/**************** State Buttons **************/
 	if (m_bEditSaveName) {

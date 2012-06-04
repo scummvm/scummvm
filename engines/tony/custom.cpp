@@ -2363,7 +2363,7 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 		if (GLOBALS.Input->mouseLeftClicked() || GLOBALS.Input->mouseRightClicked())
 			break;
-		if (_vm->getEngine()->GetInput().getAsyncKeyState(Common::KEYCODE_TAB))
+		if (_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
 			break;
 	}
 
@@ -2531,7 +2531,7 @@ ASSIGN(201, MustSkipIdleEnd);
 
 END_CUSTOM_FUNCTION_MAP()
 
-void SetupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input) {
+void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input) {
 	GLOBALS.Tony = tony;
 	GLOBALS.Pointer = ptr;
 	GLOBALS.Boxes = box;
