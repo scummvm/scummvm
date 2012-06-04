@@ -69,6 +69,10 @@ uint DotMatrixPlugin::decreaseFactor() {
 }
 
 const char *DotMatrixPlugin::getName() const {
+	return "dotmatrix";
+}
+
+const char *DotMatrixPlugin::getPrettyName() const {
 	return "DotMatrix";
 }
 

@@ -36,6 +36,7 @@ public:
 	virtual bool canDrawCursor() const { return true; }
 	virtual uint extraPixels() const { return 0; }
 	virtual const char *getName() const;
+	virtual const char *getPrettyName() const;
 };
 
 

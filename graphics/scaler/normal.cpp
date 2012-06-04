@@ -64,8 +64,11 @@ uint NormalPlugin::decreaseFactor() {
 }
 
 const char *NormalPlugin::getName() const {
-	return "Normal";
+	return "normal";
 }
 
+const char *NormalPlugin::getPrettyName() const {
+	return "Normal";
+}
 
 REGISTER_PLUGIN_STATIC(NORMAL, PLUGIN_TYPE_SCALER, NormalPlugin);

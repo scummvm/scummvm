@@ -37,6 +37,7 @@ public:
 	virtual bool canDrawCursor() const { return false; }
 	virtual uint extraPixels() const { return 2; }
 	virtual const char *getName() const;
+	virtual const char *getPrettyName() const;
 private:
 	Graphics::PixelFormat _format;
 };
