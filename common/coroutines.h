@@ -64,8 +64,9 @@ typedef CoroBaseContext *CoroContext;
 
 
 /** This is a special constant that can be temporarily used as a parameter to call coroutine-ised
- * from methods from methods that haven't yet been converted to being a coroutine, so code at least
- * compiles correctly. Be aware, though, that if you use this, you will get runtime errors.
+ * methods from code that haven't yet been converted to being a coroutine, so code at least
+ * compiles correctly. Be aware, though, that an error will occur if a coroutine that was passed
+ * the nullContext tries to sleep or yield control.
  */
 extern CoroContext nullContext;
 
@@ -283,6 +284,7 @@ public:
 #define CORO_INFINITE 0xffffffff
 #define CORO_INVALID_PID_VALUE 0
 
+/** Coroutine parameter for methods converted to coroutines */
 typedef void (*CORO_ADDR)(CoroContext &, const void *);
 
 /** process structure */
@@ -354,7 +356,6 @@ private:
 	PROCESS *getProcess(uint32 pid);
 	EVENT *getEvent(uint32 pid);
 public:
-
 	CoroutineScheduler();
 	~CoroutineScheduler();
 
@@ -364,31 +365,62 @@ public:
 	void printStats();
 	#endif
 
+	/** Give all active processes a chance to run */
 	void schedule();
+
+	/** Reschedules all the processes to run again this tick */
 	void rescheduleAll();
+
+	/** If the specified process has already run on this tick, make it run again on the current tick. */
 	void reschedule(PPROCESS pReSchedProc = NULL);
+
+	/** Moves the specified process to the end of the dispatch queue, so it can again in the current tick */
 	void giveWay(PPROCESS pReSchedProc = NULL);
+
+	/** Continously makes a given process wait for another process to finish or event to signal. */
 	void waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired = NULL);
+
+	/** Continously makes a given process wait for given prcesses to finished or events to be set */
 	void waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
 			uint32 duration, bool *expired = NULL);
-	void sleep(CORO_PARAM, uint32 duration);
 
+	/** Make the active process sleep for the given duration in milliseconds */
+	void sleep(CORO_PARAM, uint32 duration);
+	
+	/** Creates a new process. */
 	PROCESS *createProcess(uint32 pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
 	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam);
 	uint32 createProcess(CORO_ADDR coroAddr, const void *pParam);
+
+	/** Kills the specified process. */
 	void killProcess(PROCESS *pKillProc);
 
+	/** Returns a pointer to the currently running process. */
 	PROCESS *getCurrentProcess();
+
+	/** Returns the process identifier of the specified process. */
 	int getCurrentPID() const;
+
+	/** Kills any process matching the specified PID. The current process cannot be killed. */
 	int killMatchingProcess(uint32 pidKill, int pidMask = -1);
 
+	/** Set pointer to a function to be called by killProcess() */
 	void setResourceCallback(VFPTRPP pFunc);
 
 	/* Event methods */
+	/** Creates a new event (semaphore) object */
 	uint32 createEvent(bool bManualReset, bool bInitialState);
+
+	/** Destroys the given event */
 	void closeEvent(uint32 pidEvent);
+
+	/** Sets the event */
 	void setEvent(uint32 pidEvent);
+
+	/** Resets the event */
 	void resetEvent(uint32 pidEvent);
+
+	/** Temporarily sets a given event to true, allowing other waiting processes to fire */
 	void pulseEvent(uint32 pidEvent);
 };
 
