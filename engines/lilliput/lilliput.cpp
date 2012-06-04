@@ -148,7 +148,6 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_lastInterfaceHotspotIndex = -1;
 	_lastInterfaceHotspotButton = 0;
 	_byte16F08 = 0;
-	_byte16C9F = 0;
 	_lastAnimationTick = 0;
 
 	_currentScriptCharacter = 0;
@@ -907,8 +906,8 @@ void LilliputEngine::paletteFadeIn() {
 int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	debugC(2, kDebugEngine, "sub16DD5(%d, %d, %d, %d)", x1, y1, x2, y2);
 
-	int index = (y1 * 64 + x1) * 4;
-	assert(index <= 16380);
+	int index = ((y1 * 64) + x1) * 4;
+	assert((index > 0) && (index <= 16380));
 	byte *isoMap = &_bufferIsoMap[index + 1];
 
 	int16 dx = x2 - x1;
@@ -1037,8 +1036,13 @@ void LilliputEngine::sub16CA0() {
 		int c1 = _scriptHandler->_array16123PosX[index];
 		int c2 = _scriptHandler->_array1614BPosY[index];
 
+		// Hack: Skip if disabled (c2 negative)
+		if (c2 == -1)
+			continue;
+		//
+
 		for (int index2 = _numCharacters - 1; index2 >= 0; index2--) {
-			_byte16C9F = 0;
+			byte byte16C9F = 0;
 			if ((index != index2) &&
 			        (_rulesBuffer2_5[index] != index2) &&
 			        (_rulesBuffer2_5[index2] != index) &&
@@ -1051,56 +1055,56 @@ void LilliputEngine::sub16CA0() {
 					if ((x > -6) && (x < 6)) {
 						int y = c2 - d2;
 						if ((y > -6) && (y < 6)) {
-							_byte16C9F = 1;
+							byte16C9F = 1;
 
 							if ((c1 == d1) && (c2 == d2)) {
-								_byte16C9F = 4;
+								byte16C9F = 4;
 							} else if ((_rulesBuffer2_11[index] & 4) != 0) {
-								_byte16C9F = 0;
+								byte16C9F = 0;
 							} else {
 								switch (_characterDirectionArray[index]) {
 								case 0:
 									if (d1 > c1) {
-										_byte16C9F = 2;
+										byte16C9F = 2;
 
 										if (d2 == c2)
-											_byte16C9F = 3;
+											byte16C9F = 3;
 
 										if (sub16DD5(c1, c2, d1, d2) != 0)
-											_byte16C9F = 1;
+											byte16C9F = 1;
 									}
 									break;
 								case 1:
 									if (d2 < c2) {
-										_byte16C9F = 2;
+										byte16C9F = 2;
 
 										if (d1 == c1)
-											_byte16C9F = 3;
+											byte16C9F = 3;
 
 										if (sub16DD5(c1, c2, d1, d2) != 0)
-											_byte16C9F = 1;
+											byte16C9F = 1;
 									}
 									break;
 								case 2:
 									if (d2 > c2) {
-										_byte16C9F = 2;
+										byte16C9F = 2;
 
 										if (d1 == c1)
-											_byte16C9F = 3;
+											byte16C9F = 3;
 
 										if (sub16DD5(c1, c2, d1, d2) != 0)
-											_byte16C9F = 1;
+											byte16C9F = 1;
 									}
 									break;
 								default:
 									if (d1 < c1) {
-										_byte16C9F = 2;
+										byte16C9F = 2;
 
 										if (d2 == c2)
-											_byte16C9F = 3;
+											byte16C9F = 3;
 
 										if (sub16DD5(c1, c2, d1, d2) != 0)
-											_byte16C9F = 1;
+											byte16C9F = 1;
 									}
 									break;
 								}
@@ -1113,9 +1117,9 @@ void LilliputEngine::sub16CA0() {
 			int8 v2 = _scriptHandler->_array10B51[index2 + (index * 40)] & 0xFF;
 			int8 v1 = v2;
 
-			if (v2 != _byte16C9F) {
+			if (v2 != byte16C9F) {
 				_scriptHandler->_characterScriptEnabled[index] = 1;
-				v2 =  _byte16C9F;
+				v2 =  byte16C9F;
 			}
 			_scriptHandler->_array10B51[index2 + (index * 40)] = (v1 << 8) + v2;
 		}
@@ -1845,11 +1849,16 @@ void LilliputEngine::sub16EBC() {
 	debugC(2, kDebugEngine, "sub16EBC()");
 
 	for (int index1 = _numCharacters - 1; index1 >= 0; index1--) {
-		int mapIndex = (_scriptHandler->_array1614BPosY[index1] * 64 + _scriptHandler->_array16123PosX[index1]) * 4;
-		assert(mapIndex < 16384);
-		byte var1 = _bufferIsoMap[mapIndex + 3];
+		// Hack: The original doesn't check if it's disabled, which looks wrong
+		if (_scriptHandler->_array1614BPosY[index1] == -1)
+			continue;
+		//
 
-		if ((var1 & 0x40) == _array16E94[index1])
+		int mapIndex = 3 + (_scriptHandler->_array1614BPosY[index1] * 64 + _scriptHandler->_array16123PosX[index1]) * 4;
+		assert((mapIndex >= 0) && (mapIndex < 16384));
+		byte var1 = _bufferIsoMap[mapIndex] & 0x40;
+
+		if (var1 == _array16E94[index1])
 			continue;
 
 		_array16E94[index1] = var1;
@@ -2549,7 +2558,6 @@ byte *LilliputEngine::loadRaw(Common::String filename, int filesize) {
 void LilliputEngine::loadRules() {
 	debugC(1, kDebugEngine, "loadRules()");
 
-//	static const byte _rulesXlatArray[26] = {30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37, 38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47, 17, 45, 21, 44};
 	static const Common::KeyCode _rulesXlatArray[26] = {
 		Common::KEYCODE_a, Common::KEYCODE_b, Common::KEYCODE_c, Common::KEYCODE_d, Common::KEYCODE_e,
 		Common::KEYCODE_f, Common::KEYCODE_g, Common::KEYCODE_h, Common::KEYCODE_i, Common::KEYCODE_j,
@@ -2592,7 +2600,7 @@ void LilliputEngine::loadRules() {
 
 	// Chunk 2
 	_numCharacters = (f.readUint16LE() & 0xFF);
-	assert((_numCharacters > 0) && (_numCharacters <= 40));
+	assert(_numCharacters <= 40);
 
 	for (int i = _numCharacters, j = 0; i != 0; i--, j++) {
 		curWord = f.readUint16LE();
