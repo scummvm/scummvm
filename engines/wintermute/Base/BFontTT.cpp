@@ -244,20 +244,26 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 
 //////////////////////////////////////////////////////////////////////////
 CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
-	TextLineList lines;
+	//TextLineList lines;
 	// TODO
 	//WrapText(text, width, maxHeight, lines);
+	Common::Array<Common::String> lines;
+	_font->wordWrapText(text, width, lines);
 
-
-	TextLineList::iterator it;
 	warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
 	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color),D3DCOLGetB(_layers[0]->_color),D3DCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(width, _fontHeight, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+	surface->create(width, _fontHeight * lines.size(), Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 
 	uint16 useColor = 0xffff;
-	_fallbackFont->drawString(surface, text, 0, 0, width, useColor);
+	Common::Array<Common::String>::iterator it;
+	int heightOffset = 0;
+	for (it = lines.begin(); it != lines.end(); it++) {
+		_font->drawString(surface, *it, 0, heightOffset, width, useColor);	
+		heightOffset += _lineHeight;
+	}
+
 	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
 	retSurface->PutSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)));
 	delete surface;
@@ -633,7 +639,8 @@ HRESULT CBFontTT::InitFont() {
 
 	if (file) {
 #ifdef USE_FREETYPE2
-		_font = Graphics::loadTTFFont(*file, _fontHeight);
+		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight);
+		_font = _deletableFont;
 #endif
 	} 
 	if (!_font) {
