@@ -41,25 +41,13 @@
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
 
-static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
-#ifdef USE_SCALERS
-	{"2x", "2x", GFX_DOUBLESIZE},
-	{"3x", "3x", GFX_TRIPLESIZE},
-	{"2xsai", "2xSAI", GFX_2XSAI},
-	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
-	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
-	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
-	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
-#ifdef USE_HQ_SCALERS
-	{"hq2x", "HQ2x", GFX_HQ2X},
-	{"hq3x", "HQ3x", GFX_HQ3X},
-#endif
-	{"tv2x", "TV2x", GFX_TV2X},
-	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
-#endif
-	{0, 0, 0}
+struct GraphicsModeData {
+	const char * pluginName;
+	uint scaleFactor;
 };
+
+static Common::Array<OSystem::GraphicsMode> s_supportedGraphicsModes;
+static Common::Array<GraphicsModeData> s_supportedGraphicsModesData;
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
@@ -270,12 +258,44 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
+void static initGraphicsModes () {
+	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
+	OSystem::GraphicsMode gm;
+	GraphicsModeData gmd;
+	for (uint i = 0; i < plugins.size(); ++i) {
+		const Common::Array<uint> &factors = (*plugins[i])->getFactors();
+		const char * name = (*plugins[i])->getName();
+		const char * prettyName = (*plugins[i])->getPrettyName();
+		gmd.pluginName = name;
+		for (uint j = 0; j < factors.size(); ++j) {
+			Common::String n1 = Common::String::format("%s%dx", name, factors[j]);
+			Common::String n2 = Common::String::format("%s%dx", prettyName, factors[j]);
+			char * s1 = new char[n1.size()];
+			char * s2 = new char[n2.size()];
+			strcpy(s1, n1.c_str());
+			strcpy(s2, n2.c_str());
+			gm.name = s1;
+			gm.description = s2;
+			gm.id = s_supportedGraphicsModes.size();
+			s_supportedGraphicsModes.push_back(gm);
+			gmd.scaleFactor = factors[j];
+			s_supportedGraphicsModesData.push_back(gmd);
+		}
+	}
+	gm.name = 0;
+	gm.description = 0;
+	gm.id = 0;
+	s_supportedGraphicsModes.push_back(gm);
+}
+
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
-	return s_supportedGraphicsModes;
+	if (s_supportedGraphicsModes.size() < 2)
+		initGraphicsModes();
+	return &s_supportedGraphicsModes[0];
 }
 
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {
-	return s_supportedGraphicsModes;
+	return supportedGraphicsModes();
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
@@ -502,57 +522,27 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	assert(_transactionMode == kTransactionActive);
 
-	//if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
-	//	return true;
+	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
+		return true;
 
 	int newScaleFactor = 1;
 
-	switch (mode) {
-	case GFX_NORMAL:
-		newScaleFactor = 1;
-		break;
-#ifdef USE_SCALERS
-	case GFX_DOUBLESIZE:
-		newScaleFactor = 2;
-		break;
-	case GFX_TRIPLESIZE:
-		newScaleFactor = 3;
-		break;
-
-	case GFX_2XSAI:
-		newScaleFactor = 2;
-		break;
-	case GFX_SUPER2XSAI:
-		newScaleFactor = 2;
-		break;
-	case GFX_SUPEREAGLE:
-		newScaleFactor = 2;
-		break;
-	case GFX_ADVMAME2X:
-		newScaleFactor = 2;
-		break;
-	case GFX_ADVMAME3X:
-		newScaleFactor = 3;
-		break;
-#ifdef USE_HQ_SCALERS
-	case GFX_HQ2X:
-		newScaleFactor = 2;
-		break;
-	case GFX_HQ3X:
-		newScaleFactor = 3;
-		break;
-#endif
-	case GFX_TV2X:
-		newScaleFactor = 2;
-		break;
-	case GFX_DOTMATRIX:
-		newScaleFactor = 2;
-		break;
-#endif // USE_SCALERS
-
-	default:
+	if (mode >= s_supportedGraphicsModes.size()) {
 		warning("unknown gfx mode %d", mode);
 		return false;
+	}
+
+	OSystem::GraphicsMode gm = s_supportedGraphicsModes[mode];
+
+	const char * name = s_supportedGraphicsModesData[mode].pluginName;
+	newScaleFactor = s_supportedGraphicsModesData[mode].scaleFactor;
+	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
+
+	while (strcmp(name, (*plugins[_scalerIndex])->getName()) != 0) {
+		_scalerIndex++;
+		if (_scalerIndex >= plugins.size()) {
+			_scalerIndex = 0;
+		}
 	}
 
 	if (ScalerMan.getPlugins()[_scalerIndex] != _scalerPlugin) {
@@ -564,7 +554,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 		_extraPixels = (*_scalerPlugin)->extraPixels();
 	}
 
-	newScaleFactor = (*_scalerPlugin)->getFactor();
+	(*_scalerPlugin)->setFactor(newScaleFactor);
 	_transactionDetails.normal1xScaler = (newScaleFactor == 1);
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
