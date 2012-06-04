@@ -72,32 +72,32 @@ struct TonyGameDescription;
 #define MAX_SFX_CHANNELS    32
 
 struct VoiceHeader {
-	int offset;
-	int code;
-	int parts;
+	int _offset;
+	int _code;
+	int _parts;
 };
 #define VOICE_HEADER_SIZE 12
 
 class TonyEngine : public Engine {
 private:
-	Common::ErrorCode Init();
-	void InitMusic();
-	void CloseMusic();
-	bool OpenVoiceDatabase();
-	void CloseVoiceDatabase();
-	void InitCustomFunctionMap();
-	static void PlayProcess(CORO_PARAM, const void *param);
+	Common::ErrorCode init();
+	void initMusic();
+	void closeMusic();
+	bool openVoiceDatabase();
+	void closeVoiceDatabase();
+	void initCustomFunctionMap();
+	static void playProcess(CORO_PARAM, const void *param);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
-	LPCUSTOMFUNCTION FuncList[300];
-	Common::String FuncListStrings[300];
+	LPCUSTOMFUNCTION _funcList[300];
+	Common::String _funcListStrings[300];
 	Common::RandomSource _randomSource;
 	MPAL::MemoryManager _memoryManager;
 	RMResUpdate _resUpdate;
-	uint32 m_hEndOfFrame;
+	uint32 _hEndOfFrame;
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND _theSound;
@@ -115,14 +115,14 @@ public:
 		DD_BASE2
 	};
 
-	FPSTREAM *m_stream[6];
-	FPSFX *m_sfx[MAX_SFX_CHANNELS];
-	FPSFX *m_utilSfx[MAX_SFX_CHANNELS];
-	RMFont *fonts[2];
-	bool m_bPaused;
-	bool m_bDrawLocation;
-	int m_startTime;
-	uint16 *m_curThumbnail;
+	FPSTREAM *_stream[6];
+	FPSFX *_sfx[MAX_SFX_CHANNELS];
+	FPSFX *_utilSfx[MAX_SFX_CHANNELS];
+//	RMFont *_fonts[2];
+	bool _bPaused;
+	bool _bDrawLocation;
+	int _startTime;
+	uint16 *_curThumbnail;
 	int _initialLoadSlotNumber;
 	int _loadSlotNumber;
 
@@ -131,9 +131,9 @@ public:
 	RMWindow _window;
 	RMGfxEngine _theEngine;
 
-	bool m_bQuitNow;
-	bool m_bTimeFreezed;
-	int m_nTimeFreezed;
+	bool _bQuitNow;
+	bool _bTimeFreezed;
+	int  _nTimeFreezed;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();
@@ -144,7 +144,7 @@ public:
 	uint16 getVersion() const;
 	bool getIsDemo() const;
 	bool isCompressed() const;
-	RMGfxEngine *GetEngine() {
+	RMGfxEngine *getEngine() {
 		return &_theEngine;
 	}
 	void GUIError(const Common::String &msg);
@@ -157,70 +157,70 @@ public:
 	// Warn when are being controlled by the GDI
 	void GDIControl(bool bCon);
 
-	void Play();
-	void Close();
-	void Abort();
+	void play();
+	void close();
+	void abortGame();
 
-	void GetDataDirectory(DATADIR dir, char *path);
+	void getDataDirectory(DATADIR dir, char *path);
 
-	void SwitchFullscreen(bool bFull);
-	void OptionScreen(void);
+	void switchFullscreen(bool bFull);
+	void optionScreen(void);
 
-	void ShowLocation(void) {
-		m_bDrawLocation = true;
+	void showLocation(void) {
+		_bDrawLocation = true;
 	}
-	void HideLocation(void) {
-		m_bDrawLocation = false;
+	void hideLocation(void) {
+		_bDrawLocation = false;
 	}
 
 	// Reads the time
-	uint32 GetTime(void);
-	void FreezeTime(void);
-	void UnfreezeTime(void);
+	uint32 getTime(void);
+	void freezeTime(void);
+	void unfreezeTime(void);
 
 	// Music
 	// ******
-	void PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync);
-	void StopMusic(int nChannel);
+	void playMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync);
+	void stopMusic(int nChannel);
 
-	void PlaySFX(int nSfx, int nFX = 0);
-	void StopSFX(int nSfx);
+	void playSFX(int nSfx, int nFX = 0);
+	void stopSFX(int nSfx);
 
-	void PlayUtilSFX(int nSfx, int nFX = 0);
-	void StopUtilSFX(int nSfx);
+	void playUtilSFX(int nSfx, int nFX = 0);
+	void stopUtilSFX(int nSfx);
 
-	FPSFX *CreateSFX(byte *buf);
+	FPSFX *createSFX(byte *buf);
 
-	void PreloadSFX(int nSfx, const char *fn);
-	void UnloadAllSFX(void);
+	void preloadSFX(int nSfx, const char *fn);
+	void unloadAllSFX(void);
 
-	void PreloadUtilSFX(int nSfx, const char *fn);
-	void UnloadAllUtilSFX(void);
+	void preloadUtilSFX(int nSfx, const char *fn);
+	void unloadAllUtilSFX(void);
 
 	// Stop all the audio
-	void PauseSound(bool bPause);
+	void pauseSound(bool bPause);
 
-	void SetMusicVolume(int nChannel, int volume);
-	int GetMusicVolume(int nChannel);
+	void setMusicVolume(int nChannel, int volume);
+	int getMusicVolume(int nChannel);
 
 	// Handle saving
-	void AutoSave(CORO_PARAM);
-	void SaveState(int n, const char *name);
-	void LoadState(CORO_PARAM, int n);
-	static Common::String GetSaveStateFileName(int n);
+	void autoSave(CORO_PARAM);
+	void saveState(int n, const char *name);
+	void loadState(CORO_PARAM, int n);
+	static Common::String getSaveStateFileName(int n);
 
 	// Get a thumbnail
-	void GrabThumbnail(void);
-	uint16 *GetThumbnail(void) {
-		return m_curThumbnail;
+	void grabThumbnail(void);
+	uint16 *getThumbnail(void) {
+		return _curThumbnail;
 	}
 
-	void Quit(void) {
-		m_bQuitNow = true;
+	void quitGame(void) {
+		_bQuitNow = true;
 	}
 
-	void OpenInitLoadMenu(CORO_PARAM);
-	void OpenInitOptions(CORO_PARAM);
+	void openInitLoadMenu(CORO_PARAM);
+	void openInitOptions(CORO_PARAM);
 };
 
 // Global reference to the TonyEngine object

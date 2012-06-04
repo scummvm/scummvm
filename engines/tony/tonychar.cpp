@@ -119,7 +119,7 @@ void RMTony::Init(void) {
 	ds.Close();
 	m_body.SetPattern(0);
 
-	m_nTimeLastStep = _vm->GetTime();
+	m_nTimeLastStep = _vm->getTime();
 }
 
 
@@ -141,7 +141,7 @@ void RMTony::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 	SetSpeed(GLOBALS.nCfgTonySpeed);
 
 	// Runs the normal character movement
-	_ctx->time = _vm->GetTime();
+	_ctx->time = _vm->getTime();
 
 	do {
 		m_nTimeLastStep += (1000 / 40);

@@ -109,7 +109,7 @@ void RMGfxEngine::OpenOptionScreen(CORO_PARAM, int type) {
 		CORO_INVOKE_3(m_opt.InitSaveMenuOnly, m_bigBuf, false, _ctx->bRes);
 
 	if (_ctx->bRes) {
-		_vm->PauseSound(true);
+		_vm->pauseSound(true);
 
 		DisableInput();
 		m_inv.EndCombine();
@@ -119,7 +119,7 @@ void RMGfxEngine::OpenOptionScreen(CORO_PARAM, int type) {
 		m_point.SetSpecialPointer(RMPointer::PTR_NONE);
 		m_point.SetCustomPointer(NULL);
 		EnableMouse();
-		_vm->GrabThumbnail();
+		_vm->grabThumbnail();
 
 		// Exists the IDLE to avoid premature death in loading
 		m_bMustEnterMenu = true;
@@ -161,7 +161,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 			DisableMouse();
 			EnableInput();
 			mpalStartIdlePoll(m_nCurLoc);
-			_vm->PauseSound(false);
+			_vm->pauseSound(false);
 		}
 	}
 

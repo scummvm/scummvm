@@ -240,7 +240,7 @@ VoiceHeader *SearchVoiceHeader(uint32 codehi, uint32 codelo) {
 		return NULL;
 
 	for (i = 0; i < _vm->_voices.size(); i++)
-		if (_vm->_voices[i].code == code)
+		if (_vm->_voices[i]._code == code)
 			return &_vm->_voices[i];
 
 	return NULL;
@@ -272,7 +272,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 	_ctx->voice = NULL;
 	if (_ctx->curVoc) {
 		// Is positioned within the database of entries beginning at the first
-		_ctx->curOffset = _ctx->curVoc->offset;
+		_ctx->curOffset = _ctx->curVoc->_offset;
 
 		// First time allocation
 		_vm->_vdbFP.seek(_ctx->curOffset);
@@ -509,7 +509,7 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 	}
 
-	_vm->StopMusic(4);
+	_vm->stopMusic(4);
 
 	// On exit, unload and unfreeze
 	CORO_INVOKE_2(GLOBALS.UnloadLocation, true, NULL);
@@ -532,7 +532,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	}
 
 	if (GLOBALS.lastTappeto != GLOBALS.tappeti[nLoc]) {
-		_vm->StopMusic(4);
+		_vm->stopMusic(4);
 	}
 
 	// On exit, unfreeze
@@ -547,7 +547,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	if (GLOBALS.lastTappeto != GLOBALS.tappeti[nLoc]) {
 		GLOBALS.lastTappeto = GLOBALS.tappeti[nLoc];
 		if (GLOBALS.lastTappeto != 0)
-			_vm->PlayMusic(4, tappetiFile[GLOBALS.lastTappeto], 0, true, 2000);
+			_vm->playMusic(4, tappetiFile[GLOBALS.lastTappeto], 0, true, 2000);
 	}
 
 	if (!GLOBALS.bNoOcchioDiBue) {
@@ -1281,7 +1281,7 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 
 	_ctx->startpt = GLOBALS.Loc->ScrollPosition();
 
-	_ctx->dwStartTime = _vm->GetTime();
+	_ctx->dwStartTime = _vm->getTime();
 
 	if (sX)
 		_ctx->dwTotalTime = _ctx->dimx * (1000 / 35) / sX;
@@ -1289,7 +1289,7 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 		_ctx->dwTotalTime = _ctx->dimy * (1000 / 35) / sY;
 
 	while ((_ctx->lx != 0 || _ctx->ly != 0) && !GLOBALS.bSkipIdle) {
-		_ctx->dwCurTime = _vm->GetTime() - _ctx->dwStartTime;
+		_ctx->dwCurTime = _vm->getTime() - _ctx->dwStartTime;
 		if (_ctx->dwCurTime > _ctx->dwTotalTime)
 			break;
 
@@ -1362,11 +1362,11 @@ DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(CORO_PARAM, uint32 dwCode, uint32 nX, uin
 
 
 DECLARE_CUSTOM_FUNCTION(AutoSave)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->AutoSave(coroParam);
+	_vm->autoSave(coroParam);
 }
 
-DECLARE_CUSTOM_FUNCTION(Abort)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->Abort();
+DECLARE_CUSTOM_FUNCTION(AbortGame)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	_vm->abortGame();
 }
 
 DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32, uint32) {
@@ -1378,12 +1378,12 @@ DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->curTime = _vm->GetTime();
+	_ctx->curTime = _vm->getTime();
 
 	_ctx->dirx = 1;
 	_ctx->diry = 1;
 
-	while (_vm->GetTime() < _ctx->curTime + nScosse) {
+	while (_vm->getTime() < _ctx->curTime + nScosse) {
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
 		GLOBALS.Freeze();
@@ -1482,8 +1482,8 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 	_ctx->voice = NULL;
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
-		_vm->_vdbFP.seek(_ctx->curVoc->offset);
-		_ctx->curOffset = _ctx->curVoc->offset;
+		_vm->_vdbFP.seek(_ctx->curVoc->_offset);
+		_ctx->curOffset = _ctx->curVoc->_offset;
 	}
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
@@ -1694,8 +1694,8 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
 		// fseek(_vm->m_vdbFP, curVoc->offset, SEEK_SET);
-		_vm->_vdbFP.seek(_ctx->curVoc->offset);
-		_ctx->curOffset = _ctx->curVoc->offset;
+		_vm->_vdbFP.seek(_ctx->curVoc->_offset);
+		_ctx->curOffset = _ctx->curVoc->_offset;
 	}
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
@@ -1806,7 +1806,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
-		_vm->_vdbFP.seek(_ctx->curVoc->offset);
+		_vm->_vdbFP.seek(_ctx->curVoc->_offset);
 		_vm->_theSound.CreateSfx(&_ctx->voice);
 		_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
 		_ctx->voice->SetLoop(false);
@@ -2083,11 +2083,11 @@ void ThreadFadeInMusic(CORO_PARAM, const void *nMusic) {
 	debug("Start FadeIn Music");
 
 	for (_ctx->i = 0; _ctx->i < 16; _ctx->i++) {
-		_vm->SetMusicVolume(nChannel, _ctx->i * 4);
+		_vm->setMusicVolume(nChannel, _ctx->i * 4);
 
 		CORO_INVOKE_1(CoroScheduler.sleep, 100);
 	}
-	_vm->SetMusicVolume(nChannel, 64);
+	_vm->setMusicVolume(nChannel, 64);
 
 	debug("End FadeIn Music");
 
@@ -2106,23 +2106,23 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->startVolume = _vm->GetMusicVolume(nChannel);
+	_ctx->startVolume = _vm->getMusicVolume(nChannel);
 
 	debug("Start FadeOut Music");
 
 	for (_ctx->i = 16; _ctx->i > 0 && !GLOBALS.bFadeOutStop; _ctx->i--) {
 		if (_ctx->i * 4 < _ctx->startVolume)
-			_vm->SetMusicVolume(nChannel, _ctx->i * 4);
+			_vm->setMusicVolume(nChannel, _ctx->i * 4);
 
 		CORO_INVOKE_1(CoroScheduler.sleep, 100);
 	}
 
 	if (!GLOBALS.bFadeOutStop)
-		_vm->SetMusicVolume(nChannel, 0);
+		_vm->setMusicVolume(nChannel, 0);
 
 	// If there is a stacchetto, stop all
 	if (nChannel == 2)
-		_vm->StopMusic(2);
+		_vm->stopMusic(2);
 
 	debug("End FadeOut Music");
 
@@ -2152,28 +2152,28 @@ DECLARE_CUSTOM_FUNCTION(FadeInStacchetto)(CORO_PARAM, uint32, uint32, uint32, ui
 }
 
 DECLARE_CUSTOM_FUNCTION(StopSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->StopMusic(GLOBALS.curSonoriz);
+	_vm->stopMusic(GLOBALS.curSonoriz);
 }
 
 DECLARE_CUSTOM_FUNCTION(StopStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->StopMusic(2);
+	_vm->stopMusic(2);
 }
 
 DECLARE_CUSTOM_FUNCTION(MuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->SetMusicVolume(GLOBALS.curSonoriz, 0);
+	_vm->setMusicVolume(GLOBALS.curSonoriz, 0);
 }
 
 DECLARE_CUSTOM_FUNCTION(DemuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS.bFadeOutStop = true;
-	_vm->SetMusicVolume(GLOBALS.curSonoriz, 64);
+	_vm->setMusicVolume(GLOBALS.curSonoriz, 64);
 }
 
 DECLARE_CUSTOM_FUNCTION(MuteStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->SetMusicVolume(2, 0);
+	_vm->setMusicVolume(2, 0);
 }
 
 DECLARE_CUSTOM_FUNCTION(DemuteStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->SetMusicVolume(2, 64);
+	_vm->setMusicVolume(2, 64);
 }
 
 
@@ -2288,7 +2288,7 @@ DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(CORO_PARAM, uint32, uint32, uint32, ui
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	CORO_INVOKE_0(_vm->OpenInitLoadMenu);
+	CORO_INVOKE_0(_vm->openInitLoadMenu);
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -2301,7 +2301,7 @@ DECLARE_CUSTOM_FUNCTION(OpenInitOptions)(CORO_PARAM, uint32, uint32, uint32, uin
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	CORO_INVOKE_0(_vm->OpenInitOptions);
+	CORO_INVOKE_0(_vm->openInitOptions);
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -2357,13 +2357,13 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 		GLOBALS.LinkGraphicTask(&_ctx->text[_ctx->i]);
 	}
 
-	_ctx->startTime = _vm->GetTime();
+	_ctx->startTime = _vm->getTime();
 
-	while (_ctx->startTime + dwTime * 1000 > _vm->GetTime()) {
+	while (_ctx->startTime + dwTime * 1000 > _vm->getTime()) {
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 		if (GLOBALS.Input->MouseLeftClicked() || GLOBALS.Input->MouseRightClicked())
 			break;
-		if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
+		if (_vm->getEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
 			break;
 	}
 
@@ -2510,7 +2510,7 @@ ASSIGN(130,     StacchettoFadeEnd)
 
 ASSIGN(120,     TremaSchermo)
 ASSIGN(121,     AutoSave)
-ASSIGN(122,     Abort)
+ASSIGN(122,     AbortGame)
 ASSIGN(131,     NoOcchioDiBue)
 ASSIGN(132,     SendFullscreenMsgStart)
 ASSIGN(133,     SendFullscreenMsgEnd)

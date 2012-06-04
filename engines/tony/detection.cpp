@@ -146,7 +146,7 @@ int TonyMetaEngine::getMaximumSaveSlot() const {
 }
 
 void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Tony::TonyEngine::GetSaveStateFileName(slot);
+	Common::String filename = Tony::TonyEngine::getSaveStateFileName(slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }

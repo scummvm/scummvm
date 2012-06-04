@@ -2079,14 +2079,14 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
 			if (GLOBALS.bCfgTimerizedText) {
 				if (!m_bForceNoTime) {
-					if (_vm->GetTime() > (uint32)m_time + m_startTime)
+					if (_vm->getTime() > (uint32)m_time + m_startTime)
 						return;
 				}
 			}
 		}
 
 		if (!m_bNoTab) {
-			if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
+			if (_vm->getEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
 				return;
 		}
 
@@ -2100,14 +2100,14 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 	// Erase the background
 	else if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
 		if (!m_bForceNoTime) {
-			if (_vm->GetTime() > (uint32)m_time + m_startTime)
+			if (_vm->getTime() > (uint32)m_time + m_startTime)
 				return;
 		}
 	}
 
 	// If time is forced
 	if (m_bForceTime) {
-		if (_vm->GetTime() > (uint32)m_time + m_startTime)
+		if (_vm->getTime() > (uint32)m_time + m_startTime)
 			return;
 	}
 
@@ -2143,7 +2143,7 @@ void RMTextDialog::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 	CORO_BEGIN_CODE(_ctx);
 
 	if (m_startTime == 0)
-		m_startTime = _vm->GetTime();
+		m_startTime = _vm->getTime();
 
 	if (m_bShowed) {
 		if (GLOBALS.bCfgSottotitoli || m_bAlwaysDisplay) {
@@ -2483,7 +2483,7 @@ void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 	if (0) {
 		m_bShow = true;
 	} else {
-		_ctx->starttime = _vm->GetTime();
+		_ctx->starttime = _vm->getTime();
 		_ctx->deltay = 480 - m_ptDrawPos.y;
 		_ctx->destpt = m_ptDrawPos;
 		m_ptDrawPos.Set(0, 480);
@@ -2496,7 +2496,7 @@ void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(MainWaitFrame);
 			MainFreeze();
-			_ctx->elaps = _vm->GetTime() - _ctx->starttime;
+			_ctx->elaps = _vm->getTime() - _ctx->starttime;
 			m_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
 			MainUnfreeze();
 		}
@@ -2533,14 +2533,14 @@ void RMDialogChoice::Hide(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (1) {
-		_ctx->starttime = _vm->GetTime();
+		_ctx->starttime = _vm->getTime();
 
 		_ctx->deltay = 480 - m_ptDrawPos.y;
 		_ctx->elaps = 0;
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(MainWaitFrame);
 			MainFreeze();
-			_ctx->elaps = _vm->GetTime() - _ctx->starttime;
+			_ctx->elaps = _vm->getTime() - _ctx->starttime;
 			m_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
 			MainUnfreeze();
 		}

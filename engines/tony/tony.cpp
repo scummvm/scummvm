@@ -59,7 +59,7 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 
 TonyEngine::~TonyEngine() {
 	// Close the voice database
-	CloseVoiceDatabase();
+	closeVoiceDatabase();
 
 	// Reset the coroutine scheduler
 	CoroScheduler.reset();
@@ -71,12 +71,12 @@ TonyEngine::~TonyEngine() {
  * Run the game
  */
 Common::Error TonyEngine::run() {
-	Common::ErrorCode result = Init();
+	Common::ErrorCode result = init();
 	if (result != Common::kNoError)
 		return result;
 
-	Play();
-	Close();
+	play();
+	close();
 
 	return Common::kNoError;
 }
@@ -84,7 +84,7 @@ Common::Error TonyEngine::run() {
 /**
  * Initialise the game
  */
-Common::ErrorCode TonyEngine::Init() {
+Common::ErrorCode TonyEngine::init() {
 	if (isCompressed()) {
 		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
 		if (!stream)
@@ -97,11 +97,11 @@ Common::ErrorCode TonyEngine::Init() {
 		SearchMan.add("data1.cab", cabinet);
 	}
 
-	m_hEndOfFrame = CoroScheduler.createEvent(false, false);
+	_hEndOfFrame = CoroScheduler.createEvent(false, false);
 
-	m_bPaused = false;
-	m_bDrawLocation = true;
-	m_startTime = g_system->getMillis();
+	_bPaused = false;
+	_bDrawLocation = true;
+	_startTime = g_system->getMillis();
 
 	// Init static class fields
 	RMText::InitStatics();
@@ -114,8 +114,8 @@ Common::ErrorCode TonyEngine::Init() {
 	_window.Init();
 
 	// Initialise the function list
-	Common::fill(FuncList, FuncList + 300, (LPCUSTOMFUNCTION)NULL);
-	InitCustomFunctionMap();
+	Common::fill(_funcList, _funcList + 300, (LPCUSTOMFUNCTION)NULL);
+	initCustomFunctionMap();
 
 	// Initializes MPAL system, passing the custom functions list
 	Common::File f;
@@ -123,17 +123,17 @@ Common::ErrorCode TonyEngine::Init() {
 		return Common::kReadingFailed;
 	f.close();
 
-	if (!mpalInit("ROASTED.MPC", "ROASTED.MPR", FuncList, FuncListStrings))
+	if (!mpalInit("ROASTED.MPC", "ROASTED.MPR", _funcList, _funcListStrings))
 		return Common::kUnknownError;
 
 	// Initialise the update resources
 	_resUpdate.Init("ROASTED.MPU");
 
 	// Initialise the music
-	InitMusic();
+	initMusic();
 
 	// Initialise the voices database
-	if (!OpenVoiceDatabase())
+	if (!openVoiceDatabase())
 		return Common::kReadingFailed;
 
 	// Initialise the boxes
@@ -144,7 +144,7 @@ Common::ErrorCode TonyEngine::Init() {
 	_theEngine.Init();
 
 	// Allocate space for thumbnails when saving the game
-	m_curThumbnail = new uint16[160 * 120];
+	_curThumbnail = new uint16[160 * 120];
 
 	// Set up global defaults
 	GLOBALS.bCfgInvLocked = false;
@@ -164,13 +164,13 @@ Common::ErrorCode TonyEngine::Init() {
 	GLOBALS.nCfgDubbingVolume = 10;
 	GLOBALS.nCfgMusicVolume = 7;
 	GLOBALS.nCfgSFXVolume = 10;
-	m_bQuitNow = false;
+	_bQuitNow = false;
 
 	return Common::kNoError;
 }
 
-void TonyEngine::InitCustomFunctionMap() {
-	INIT_CUSTOM_FUNCTION(FuncList, FuncListStrings);
+void TonyEngine::initCustomFunctionMap() {
+	INIT_CUSTOM_FUNCTION(_funcList, _funcListStrings);
 }
 
 /**
@@ -180,8 +180,8 @@ void TonyEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
 }
 
-void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync) {
-	warning("TODO: TonyEngine::PlayMusic");
+void TonyEngine::playMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync) {
+	warning("TODO: TonyEngine::playMusic");
 //	g_system->lockMutex(csMusic);
 
 	if (nChannel < 4)
@@ -192,8 +192,8 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 	case 0:
 	case 1:
 	case 2:
-		m_stream[nChannel]->Stop();
-		m_stream[nChannel]->UnloadFile();
+		_stream[nChannel]->Stop();
+		_stream[nChannel]->UnloadFile();
 		break;
 
 	case 22:
@@ -222,7 +222,7 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 		else
 			nextChannel = nChannel + 1;
 		DWORD id;
-		HANDLE hThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)DoNextMusic, m_stream, 0, &id);
+		HANDLE hThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)DoNextMusic, _stream, 0, &id);
 		SetThreadPriority(hThread, THREAD_PRIORITY_HIGHEST);
 	} else if (nFX == 44) { // Cambia canale e lascia finire il primo
 		if (flipflop)
@@ -230,103 +230,103 @@ void TonyEngine::PlayMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 		else
 			nextChannel = nChannel + 1;
 
-		m_stream[nextChannel]->Stop();
-		m_stream[nextChannel]->UnloadFile();
+		_stream[nextChannel]->Stop();
+		_stream[nextChannel]->UnloadFile();
 
 		if (!getIsDemo()) {
-			if (!m_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
+			if (!_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
 				theGame.Abort();
 		} else {
-			m_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
+			_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
 		}
 
-		m_stream[nextChannel]->SetLoop(bLoop);
-		m_stream[nextChannel]->Play();
+		_stream[nextChannel]->SetLoop(bLoop);
+		_stream[nextChannel]->Play();
 
 		flipflop = 1 - flipflop;
 	} else {
 		if (!getIsDemo()) {
-			if (!m_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
+			if (!_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
 				theGame.Abort();
 		} else {
-			m_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
+			_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
 		}
 
-		m_stream[nChannel]->SetLoop(bLoop);
-		m_stream[nChannel]->Play();
+		_stream[nChannel]->SetLoop(bLoop);
+		_stream[nChannel]->Play();
 	}
 #endif
 
 //	g_system->unlockMutex(csMusic);
 }
 
-void TonyEngine::PlaySFX(int nChannel, int nFX) {
-	if (m_sfx[nChannel] == NULL)
+void TonyEngine::playSFX(int nChannel, int nFX) {
+	if (_sfx[nChannel] == NULL)
 		return;
 
 	switch (nFX) {
 	case 0:
-		m_sfx[nChannel]->SetLoop(false);
+		_sfx[nChannel]->SetLoop(false);
 		break;
 
 	case 1:
-		m_sfx[nChannel]->SetLoop(true);
+		_sfx[nChannel]->SetLoop(true);
 		break;
 	}
 
-	m_sfx[nChannel]->Play();
+	_sfx[nChannel]->Play();
 }
 
-void TonyEngine::StopMusic(int nChannel) {
+void TonyEngine::stopMusic(int nChannel) {
 //	g_system->lockMutex(csMusic);
 
 	if (nChannel < 4)
-		m_stream[nChannel + GLOBALS.flipflop]->Stop();
+		_stream[nChannel + GLOBALS.flipflop]->Stop();
 	else
-		m_stream[nChannel]->Stop();
+		_stream[nChannel]->Stop();
 
 //	g_system->unlockMutex(csMusic);
 }
 
-void TonyEngine::StopSFX(int nChannel) {
-	m_sfx[nChannel]->Stop();
+void TonyEngine::stopSFX(int nChannel) {
+	_sfx[nChannel]->Stop();
 }
 
-void TonyEngine::PlayUtilSFX(int nChannel, int nFX) {
-	if (m_utilSfx[nChannel] == NULL)
+void TonyEngine::playUtilSFX(int nChannel, int nFX) {
+	if (_utilSfx[nChannel] == NULL)
 		return;
 
 	switch (nFX) {
 	case 0:
-		m_utilSfx[nChannel]->SetLoop(false);
+		_utilSfx[nChannel]->SetLoop(false);
 		break;
 
 	case 1:
-		m_utilSfx[nChannel]->SetLoop(true);
+		_utilSfx[nChannel]->SetLoop(true);
 		break;
 	}
 
-	m_utilSfx[nChannel]->SetVolume(52);
-	m_utilSfx[nChannel]->Play();
+	_utilSfx[nChannel]->SetVolume(52);
+	_utilSfx[nChannel]->Play();
 }
 
-void TonyEngine::StopUtilSFX(int nChannel) {
-	m_utilSfx[nChannel]->Stop();
+void TonyEngine::stopUtilSFX(int nChannel) {
+	_utilSfx[nChannel]->Stop();
 }
 
-void TonyEngine::PreloadSFX(int nChannel, const char *fn) {
-	if (m_sfx[nChannel] != NULL) {
-		m_sfx[nChannel]->Stop();
-		m_sfx[nChannel]->Release();
-		m_sfx[nChannel] = NULL;
+void TonyEngine::preloadSFX(int nChannel, const char *fn) {
+	if (_sfx[nChannel] != NULL) {
+		_sfx[nChannel]->Stop();
+		_sfx[nChannel]->Release();
+		_sfx[nChannel] = NULL;
 	}
 
-	_theSound.CreateSfx(&m_sfx[nChannel]);
+	_theSound.CreateSfx(&_sfx[nChannel]);
 
-	m_sfx[nChannel]->LoadFile(fn, FPCODEC_ADPCM);
+	_sfx[nChannel]->LoadFile(fn, FPCODEC_ADPCM);
 }
 
-FPSFX *TonyEngine::CreateSFX(byte *buf) {
+FPSFX *TonyEngine::createSFX(byte *buf) {
 	FPSFX *sfx;
 
 	_theSound.CreateSfx(&sfx);
@@ -334,106 +334,105 @@ FPSFX *TonyEngine::CreateSFX(byte *buf) {
 	return sfx;
 }
 
-void TonyEngine::PreloadUtilSFX(int nChannel, const char *fn) {
-	warning("TonyEngine::PreloadUtilSFX");
+void TonyEngine::preloadUtilSFX(int nChannel, const char *fn) {
+	warning("TonyEngine::preloadUtilSFX");
 }
 
-void TonyEngine::UnloadAllSFX(void) {
-	warning("TonyEngine::UnloadAllSFX");
+void TonyEngine::unloadAllSFX(void) {
+	warning("TonyEngine::unloadAllSFX");
 }
 
-void TonyEngine::UnloadAllUtilSFX(void) {
-	warning("TonyEngine::UnloadAllUtilSFX");
+void TonyEngine::unloadAllUtilSFX(void) {
+	warning("TonyEngine::unloadAllUtilSFX");
 }
 
-void TonyEngine::InitMusic() {
+void TonyEngine::initMusic() {
 	int i;
 
 	_theSound.Init(/*_window*/);
 	_theSound.SetMasterVolume(63);
 
 	for (i = 0; i < 6; i++)
-		_theSound.CreateStream(&m_stream[i]);
+		_theSound.CreateStream(&_stream[i]);
 
 	for (i = 0; i < MAX_SFX_CHANNELS; i++) {
-		m_sfx[i] = m_utilSfx[i] = NULL;
+		_sfx[i] = _utilSfx[i] = NULL;
 	}
 
 	// Create the mutex for controlling music access
 //	csMusic = g_system->createMutex();
 
 	// Preload sound effects
-	PreloadUtilSFX(0, "U01.ADP"); // Reversed!!
-	PreloadUtilSFX(1, "U02.ADP");
+	preloadUtilSFX(0, "U01.ADP"); // Reversed!!
+	preloadUtilSFX(1, "U02.ADP");
 }
 
-void TonyEngine::CloseMusic() {
+void TonyEngine::closeMusic() {
 	for (int i = 0; i < 6; i++) {
-		m_stream[i]->Stop();
-		m_stream[i]->UnloadFile();
-		m_stream[i]->Release();
+		_stream[i]->Stop();
+		_stream[i]->UnloadFile();
+		_stream[i]->Release();
 	}
 
 //	g_system->deleteMutex(csMusic);
 
-	UnloadAllSFX();
-	UnloadAllUtilSFX();
+	unloadAllSFX();
+	unloadAllUtilSFX();
 }
 
-void TonyEngine::PauseSound(bool bPause) {
+void TonyEngine::pauseSound(bool bPause) {
 }
 
-void TonyEngine::SetMusicVolume(int nChannel, int volume) {
+void TonyEngine::setMusicVolume(int nChannel, int volume) {
 }
 
-int TonyEngine::GetMusicVolume(int nChannel) {
+int TonyEngine::getMusicVolume(int nChannel) {
 	return 255;
 }
 
-
-Common::String TonyEngine::GetSaveStateFileName(int n) {
+Common::String TonyEngine::getSaveStateFileName(int n) {
 	return Common::String::format("tony.%03d", n);
 }
 
-void TonyEngine::AutoSave(CORO_PARAM) {
+void TonyEngine::autoSave(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	Common::String buf;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GrabThumbnail();
+	grabThumbnail();
 	CORO_INVOKE_0(MainWaitFrame);
 	CORO_INVOKE_0(MainWaitFrame);
 	MainFreeze();
-	_ctx->buf = GetSaveStateFileName(0);
-	_theEngine.SaveState(_ctx->buf, (byte *)m_curThumbnail, "Autosave");
+	_ctx->buf = getSaveStateFileName(0);
+	_theEngine.SaveState(_ctx->buf, (byte *)_curThumbnail, "Autosave");
 	MainUnfreeze();
 
 	CORO_END_CODE;
 }
 
 
-void TonyEngine::SaveState(int n, const char *name) {
-	Common::String buf = GetSaveStateFileName(n);
-	_theEngine.SaveState(buf.c_str(), (byte *)m_curThumbnail, name);
+void TonyEngine::saveState(int n, const char *name) {
+	Common::String buf = getSaveStateFileName(n);
+	_theEngine.SaveState(buf.c_str(), (byte *)_curThumbnail, name);
 }
 
 
-void TonyEngine::LoadState(CORO_PARAM, int n) {
+void TonyEngine::loadState(CORO_PARAM, int n) {
 	CORO_BEGIN_CONTEXT;
 	Common::String buf;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->buf = GetSaveStateFileName(n);
+	_ctx->buf = getSaveStateFileName(n);
 	CORO_INVOKE_1(_theEngine.LoadState, _ctx->buf.c_str());
 
 	CORO_END_CODE;
 }
 
-bool TonyEngine::OpenVoiceDatabase() {
+bool TonyEngine::openVoiceDatabase() {
 	char id[4];
 	uint32 numfiles;
 
@@ -459,9 +458,9 @@ bool TonyEngine::OpenVoiceDatabase() {
 
 	for (uint32 i = 0; i < numfiles; ++i) {
 		VoiceHeader vh;
-		vh.offset = _vdbFP.readUint32LE();
-		vh.code = _vdbFP.readUint32LE();
-		vh.parts = _vdbFP.readUint32LE();
+		vh._offset = _vdbFP.readUint32LE();
+		vh._code = _vdbFP.readUint32LE();
+		vh._parts = _vdbFP.readUint32LE();
 
 		_voices.push_back(vh);
 	}
@@ -469,7 +468,7 @@ bool TonyEngine::OpenVoiceDatabase() {
 	return true;
 }
 
-void TonyEngine::CloseVoiceDatabase() {
+void TonyEngine::closeVoiceDatabase() {
 	if (_vdbFP.isOpen())
 		_vdbFP.close();
 
@@ -477,23 +476,23 @@ void TonyEngine::CloseVoiceDatabase() {
 		_voices.clear();
 }
 
-void TonyEngine::GrabThumbnail(void) {
-	_window.GrabThumbnail(m_curThumbnail);
+void TonyEngine::grabThumbnail(void) {
+	_window.GrabThumbnail(_curThumbnail);
 }
 
-void TonyEngine::OptionScreen(void) {
+void TonyEngine::optionScreen(void) {
 }
 
-void TonyEngine::OpenInitLoadMenu(CORO_PARAM) {
+void TonyEngine::openInitLoadMenu(CORO_PARAM) {
 	_theEngine.OpenOptionScreen(coroParam, 1);
 }
 
-void TonyEngine::OpenInitOptions(CORO_PARAM) {
+void TonyEngine::openInitOptions(CORO_PARAM) {
 	_theEngine.OpenOptionScreen(coroParam, 2);
 }
 
-void TonyEngine::Abort(void) {
-	m_bQuitNow = true;
+void TonyEngine::abortGame(void) {
+	_bQuitNow = true;
 }
 
 /**
@@ -504,7 +503,7 @@ void TonyEngine::Abort(void) {
  * process. If it ever proves a problem, we may have to look into whether it's feasible to have it still remain
  * in the outer 'main' process.
  */
-void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
+void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	Common::String fn;
 	CORO_END_CONTEXT(_ctx);
@@ -517,7 +516,7 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 	for (;;) {
 		// If a savegame needs to be loaded, then do so
 		if (_vm->_loadSlotNumber != -1 && GLOBALS.GfxEngine != NULL) {
-			_ctx->fn = GetSaveStateFileName(_vm->_loadSlotNumber);
+			_ctx->fn = getSaveStateFileName(_vm->_loadSlotNumber);
 			CORO_INVOKE_1(GLOBALS.GfxEngine->LoadState, _ctx->fn);
 			_vm->_loadSlotNumber = -1;
 		}
@@ -526,13 +525,13 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 		CORO_INVOKE_1(CoroScheduler.sleep, 50);
 
 		// Call the engine to handle the next frame
-		CORO_INVOKE_1(_vm->_theEngine.DoFrame, _vm->m_bDrawLocation);
+		CORO_INVOKE_1(_vm->_theEngine.DoFrame, _vm->_bDrawLocation);
 
 		// Warns that a frame is finished
-		CoroScheduler.pulseEvent(_vm->m_hEndOfFrame);
+		CoroScheduler.pulseEvent(_vm->_hEndOfFrame);
 
 		// Handle drawing the frame
-		if (!_vm->m_bPaused) {
+		if (!_vm->_bPaused) {
 			if (!_vm->_theEngine.m_bWiping)
 				_vm->_window.GetNewFrame(_vm->_theEngine, NULL);
 			else
@@ -552,12 +551,12 @@ void TonyEngine::PlayProcess(CORO_PARAM, const void *param) {
 /**
  * Play the game
  */
-void TonyEngine::Play(void) {
+void TonyEngine::play(void) {
 	// Create the game player process
-	CoroScheduler.createProcess(PlayProcess, NULL);
+	CoroScheduler.createProcess(playProcess, NULL);
 
 	// Loop through calling the scheduler until it's time for the game to quit
-	while (!shouldQuit() && !m_bQuitNow) {
+	while (!shouldQuit() && !_bQuitNow) {
 		// Delay for a brief amount
 		g_system->delayMillis(10);
 
@@ -566,18 +565,16 @@ void TonyEngine::Play(void) {
 	}
 }
 
-
-
-void TonyEngine::Close(void) {
-	CloseMusic();
-	CoroScheduler.closeEvent(m_hEndOfFrame);
+void TonyEngine::close(void) {
+	closeMusic();
+	CoroScheduler.closeEvent(_hEndOfFrame);
 	_theBoxes.Close();
 	_theEngine.Close();
 	_window.Close();
-	delete[] m_curThumbnail;
+	delete[] _curThumbnail;
 }
 
-void TonyEngine::SwitchFullscreen(bool bFull) {
+void TonyEngine::switchFullscreen(bool bFull) {
 	_window.SwitchFullscreen(bFull);
 	_theEngine.SwitchFullscreen(bFull);
 }
@@ -586,21 +583,20 @@ void TonyEngine::GDIControl(bool bCon) {
 	_theEngine.GDIControl(bCon);
 }
 
-
-void TonyEngine::FreezeTime(void) {
-	m_bTimeFreezed = true;
-	m_nTimeFreezed = GetTime() - m_startTime;
+void TonyEngine::freezeTime(void) {
+	_bTimeFreezed = true;
+	_nTimeFreezed = getTime() - _startTime;
 }
 
-void TonyEngine::UnfreezeTime(void) {
-	m_bTimeFreezed = false;
+void TonyEngine::unfreezeTime(void) {
+	_bTimeFreezed = false;
 }
 
 
 /**
  * Returns the millisecond timer
  */
-uint32 TonyEngine::GetTime() {
+uint32 TonyEngine::getTime() {
 	return g_system->getMillis();
 }
 
@@ -621,9 +617,9 @@ Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
 		return Common::kUnknownError;
 
 	RMSnapshot s;
-	s.GrabScreenshot(*GLOBALS.GfxEngine, 4, m_curThumbnail);
+	s.GrabScreenshot(*GLOBALS.GfxEngine, 4, _curThumbnail);
 
-	GLOBALS.GfxEngine->SaveState(GetSaveStateFileName(slot), (byte *)m_curThumbnail, desc);
+	GLOBALS.GfxEngine->SaveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
 	return Common::kNoError;
 }
 

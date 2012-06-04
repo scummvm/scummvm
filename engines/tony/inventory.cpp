@@ -343,7 +343,7 @@ bool RMInventory::LeftClick(const RMPoint &mpos, int &nCombineObj) {
 			m_nCombine = m_inv[n - 1 + m_curPos];
 			nCombineObj = m_nCombine + 10000;
 
-			_vm->PlayUtilSFX(1);
+			_vm->playUtilSFX(1);
 			return true;
 		}
 	}
@@ -409,7 +409,7 @@ void RMInventory::RightClick(const RMPoint &mpos) {
 			miniAction = 0;
 			m_nSelectObj = n - 1;
 
-			_vm->PlayUtilSFX(0);
+			_vm->playUtilSFX(0);
 		}
 	}
 
@@ -530,7 +530,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		g_system->unlockMutex(m_csModifyInterface);
 	}
 
-	if (_vm->GetEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_i)) {
+	if (_vm->getEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_i)) {
 		GLOBALS.bCfgInvLocked = !GLOBALS.bCfgInvLocked;
 	}
 
@@ -544,7 +544,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			if (!GLOBALS.bCfgInvNoScroll) {
 				m_state = OPENING;
 				m_curPutY = RM_SY - 1;
-				m_curPutTime = _vm->GetTime();
+				m_curPutTime = _vm->getTime();
 			} else {
 				m_state = OPENED;
 				m_curPutY = RM_SY - 68;
@@ -554,13 +554,13 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				if (!GLOBALS.bCfgInvNoScroll) {
 					m_state = CLOSING;
 					m_curPutY = RM_SY - 68;
-					m_curPutTime = _vm->GetTime();
+					m_curPutTime = _vm->getTime();
 				} else {
 					m_state = CLOSED;
 				}
 			}
 		} else if (m_state == OPENING) {
-			while (m_curPutTime + INVSPEED < _vm->GetTime()) {
+			while (m_curPutTime + INVSPEED < _vm->getTime()) {
 				m_curPutY -= 3;
 				m_curPutTime += INVSPEED;
 			}
@@ -571,7 +571,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			}
 
 		} else if (m_state == CLOSING) {
-			while (m_curPutTime + INVSPEED < _vm->GetTime()) {
+			while (m_curPutTime + INVSPEED < _vm->getTime()) {
 				m_curPutY += 3;
 				m_curPutTime += INVSPEED;
 			}
@@ -584,7 +584,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			if (!GLOBALS.bCfgInvNoScroll) {
 				m_state = OPENING;
 				m_curPutY = - 68;
-				m_curPutTime = _vm->GetTime();
+				m_curPutTime = _vm->getTime();
 			} else {
 				m_state = OPENED;
 				m_curPutY = 0;
@@ -594,13 +594,13 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				if (!GLOBALS.bCfgInvNoScroll) {
 					m_state = CLOSING;
 					m_curPutY = -2;
-					m_curPutTime = _vm->GetTime();
+					m_curPutTime = _vm->getTime();
 				} else {
 					m_state = CLOSED;
 				}
 			}
 		} else if (m_state == OPENING) {
-			while (m_curPutTime + INVSPEED < _vm->GetTime()) {
+			while (m_curPutTime + INVSPEED < _vm->getTime()) {
 				m_curPutY += 3;
 				m_curPutTime += INVSPEED;
 			}
@@ -610,7 +610,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				m_curPutY = 0;
 			}
 		} else if (m_state == CLOSING) {
-			while (m_curPutTime + INVSPEED < _vm->GetTime()) {
+			while (m_curPutTime + INVSPEED < _vm->getTime()) {
 				m_curPutY -= 3;
 				m_curPutTime += INVSPEED;
 			}
@@ -635,19 +635,19 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				if (miniAction != 1) {
 					miniInterface.SetPattern(2);
 					miniAction = 1;
-					_vm->PlayUtilSFX(1);
+					_vm->playUtilSFX(1);
 				}
 			} else if (mpos.x >= startx + 40 && mpos.x < startx + 80) {
 				if (miniAction != 2) {
 					miniInterface.SetPattern(3);
 					miniAction = 2;
-					_vm->PlayUtilSFX(1);
+					_vm->playUtilSFX(1);
 				}
 			} else if (mpos.x >= startx + 80 && mpos.x < startx + 108) {
 				if (miniAction != 3) {
 					miniInterface.SetPattern(4);
 					miniAction = 3;
-					_vm->PlayUtilSFX(1);
+					_vm->playUtilSFX(1);
 				}
 			} else {
 				miniInterface.SetPattern(1);
@@ -799,7 +799,7 @@ void RMInterface::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 		if (m_lastHotZone != _ctx->h) {
 			m_lastHotZone = _ctx->h;
-			_vm->PlayUtilSFX(1);
+			_vm->playUtilSFX(1);
 		}
 
 		if (GLOBALS.bCfgInterTips) {
@@ -836,7 +836,7 @@ void RMInterface::Clicked(const RMPoint &mousepos) {
 	if (m_openStart.y + m_dimy > RM_SY) m_openStart.y = RM_SY - m_dimy;
 
 	// Play the sound effect
-	_vm->PlayUtilSFX(0);
+	_vm->playUtilSFX(0);
 }
 
 bool RMInterface::Released(const RMPoint &mousepos, RMTonyAction &action) {

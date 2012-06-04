@@ -47,75 +47,75 @@ using namespace MPAL;
 /****************************************/
 
 uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
-	return _vm->GetEngine()->LoadLocation(nLoc, pt, start);
+	return _vm->getEngine()->LoadLocation(nLoc, pt, start);
 }
 
 void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
-	_vm->GetEngine()->UnloadLocation(coroParam, bDoOnExit, result);
+	_vm->getEngine()->UnloadLocation(coroParam, bDoOnExit, result);
 }
 
 void MainLinkGraphicTask(RMGfxTask *task) {
-	_vm->GetEngine()->LinkGraphicTask(task);
+	_vm->getEngine()->LinkGraphicTask(task);
 }
 
 void MainFreeze(void) {
-	_vm->GetEngine()->Freeze();
+	_vm->getEngine()->Freeze();
 }
 
 void MainUnfreeze(void) {
-	_vm->GetEngine()->Unfreeze();
+	_vm->getEngine()->Unfreeze();
 }
 
 void MainWaitFrame(CORO_PARAM) {
-	CoroScheduler.waitForSingleObject(coroParam, _vm->m_hEndOfFrame, CORO_INFINITE);
+	CoroScheduler.waitForSingleObject(coroParam, _vm->_hEndOfFrame, CORO_INFINITE);
 }
 
 void MainShowMouse(void) {
-	_vm->GetEngine()->EnableMouse();
+	_vm->getEngine()->EnableMouse();
 }
 
 void MainHideMouse(void) {
-	_vm->GetEngine()->DisableMouse();
+	_vm->getEngine()->DisableMouse();
 }
 
 void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
-	_vm->PlayMusic(nChannel, filename, nFX, bLoop, nSync);
+	_vm->playMusic(nChannel, filename, nFX, bLoop, nSync);
 }
 
 void MainDisableInput(void) {
-	_vm->GetEngine()->DisableInput();
+	_vm->getEngine()->DisableInput();
 }
 
 void MainEnableInput(void) {
-	_vm->GetEngine()->EnableInput();
+	_vm->getEngine()->EnableInput();
 }
 
 void MainInitWipe(int type) {
-	_vm->GetEngine()->InitWipe(type);
+	_vm->getEngine()->InitWipe(type);
 }
 
 void MainCloseWipe(void) {
-	_vm->GetEngine()->CloseWipe();
+	_vm->getEngine()->CloseWipe();
 }
 
 void MainWaitWipeEnd(CORO_PARAM) {
-	_vm->GetEngine()->WaitWipeEnd(coroParam);
+	_vm->getEngine()->WaitWipeEnd(coroParam);
 }
 
 void MainEnableGUI(void) {
-	_vm->GetEngine()->m_bGUIInterface = true;
-	_vm->GetEngine()->m_bGUIInventory = true;
-	_vm->GetEngine()->m_bGUIOption = true;
+	_vm->getEngine()->m_bGUIInterface = true;
+	_vm->getEngine()->m_bGUIInventory = true;
+	_vm->getEngine()->m_bGUIOption = true;
 }
 
 void MainDisableGUI(void) {
-	_vm->GetEngine()->m_bGUIInterface = false;
-	_vm->GetEngine()->m_bGUIInventory = false;
-	_vm->GetEngine()->m_bGUIOption = false;
+	_vm->getEngine()->m_bGUIInterface = false;
+	_vm->getEngine()->m_bGUIInventory = false;
+	_vm->getEngine()->m_bGUIOption = false;
 }
 
 void MainSetPalesati(bool bPalesati) {
-	_vm->GetEngine()->SetPalesati(bPalesati);
+	_vm->getEngine()->SetPalesati(bPalesati);
 }
 
 /****************************************************************************\
@@ -491,7 +491,7 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 
 		if (m_bEditSaveName) {
 			_ctx->thumb = new RMGfxSourceBuffer16;
-			_ctx->thumb->Init((byte *)_vm->GetThumbnail(), 640 / 4, 480 / 4);
+			_ctx->thumb->Init((byte *)_vm->getThumbnail(), 640 / 4, 480 / 4);
 
 			if (m_nEditPos == 0)
 				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 57)));
@@ -989,7 +989,7 @@ bool RMOptionScreen::Close(void) {
 
 	// Start fade out
 	m_FadeStep++;
-	m_FadeTime = _vm->GetTime();
+	m_FadeTime = _vm->getTime();
 	return true;
 }
 
@@ -1097,7 +1097,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 
-#define KEYPRESS(c)     (_vm->GetEngine()->GetInput().GetAsyncKeyState(c))
+#define KEYPRESS(c)     (_vm->getEngine()->GetInput().GetAsyncKeyState(c))
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
 		m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
 
@@ -1154,7 +1154,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		// OK
 		if (KEYPRESS(Common::KEYCODE_RETURN)) {
 			m_bEditSaveName = false;
-			_vm->SaveState(m_statePos + m_nEditPos, m_EditName);
+			_vm->saveState(m_statePos + m_nEditPos, m_EditName);
 			Close();
 		}
 
@@ -1190,7 +1190,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 						// There by saving or loading!!!
 						if (m_nState == MENULOAD && m_curThumb[_ctx->i] != NULL) {
 							// Caricamento
-							CORO_INVOKE_1(_vm->LoadState, m_statePos + _ctx->i);
+							CORO_INVOKE_1(_vm->loadState, m_statePos + _ctx->i);
 							Close();
 						} else if (m_nState == MENUSAVE && (m_statePos != 0 || _ctx->i != 0)) {
 							// Turn on edit mode
@@ -1214,7 +1214,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 					m_bQuitConfirm = false;
 					_ctx->bRefresh = true;
 
-					_vm->Quit();
+					_vm->quitGame();
 				}
 			} else {
 				if (m_ButtonQuit->IsActive()) {
@@ -1280,7 +1280,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->curTime = _vm->GetTime();
+	_ctx->curTime = _vm->getTime();
 
 #define FADE_SPEED 20
 #define SYNC    (_ctx->curTime-m_FadeTime) / 25
@@ -1336,7 +1336,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		if (m_FadeY > 480) {
 			m_FadeY = 480;
 			m_FadeStep++;
-			_vm->HideLocation();
+			_vm->hideLocation();
 		}
 
 		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
@@ -1346,7 +1346,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	} else if (m_FadeStep == 7) {
 		// Menu OFF
-		_vm->ShowLocation();
+		_vm->showLocation();
 		m_FadeStep++;
 
 	} else if (m_FadeStep == 8) {
@@ -1398,7 +1398,7 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 	diff = 10;
 
 	// Get the savegame filename for the given slot
-	buf = _vm->GetSaveStateFileName(nState);
+	buf = _vm->getSaveStateFileName(nState);
 
 	// Try and open the savegame
 	f = g_system->getSavefileManager()->openForLoading(buf);

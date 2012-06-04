@@ -156,7 +156,7 @@ int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	int i;
 
 	// Read the current time
-	m_nStartTime = _vm->GetTime();
+	m_nStartTime = _vm->getTime();
 	m_nCurSlot = 0;
 
 	// Find the first frame of the pattern
@@ -209,7 +209,7 @@ int RMPattern::Init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 }
 
 int RMPattern::Update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
-	int CurTime = _vm->GetTime();
+	int CurTime = _vm->getTime();
 
 	// If the speed is 0, then the pattern never advances
 	if (m_speed == 0) {
@@ -420,7 +420,7 @@ void RMSfx::ReadFromStream(RMDataStream &ds, bool bLOX) {
 	ds.Read(raw, size);
 
 	// Create the sound effect
-	m_fx = _vm->CreateSFX(raw);
+	m_fx = _vm->createSFX(raw);
 	m_fx->SetLoop(false);
 
 	// Close the read buffer which is no longer needed
@@ -2085,10 +2085,10 @@ bool RMLocation::Load(RMDataStream &ds) {
 		m_items = new RMItem[m_nItems];
 
 
-	_vm->FreezeTime();
+	_vm->freezeTime();
 	for (i = 0; i < m_nItems && !ds.IsError(); i++)
 		ds >> m_items[i];
-	_vm->UnfreezeTime();
+	_vm->unfreezeTime();
 
 	return ds.IsError();
 }
