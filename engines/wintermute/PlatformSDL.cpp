@@ -510,7 +510,8 @@ AnsiString CBPlatform::GetSystemFontPath() {
 	return PathUtil::Combine(AnsiString(winDir), "fonts");
 #else
 	// !PORTME
-	return "/Library/Fonts/";
+	//return "/Library/Fonts/";
+	return "";
 #endif
 }
 
