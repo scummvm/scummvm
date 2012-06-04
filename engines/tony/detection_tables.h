@@ -30,8 +30,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
-				// Fake md5 : to be fixed!
-				{"roasted.mpc", 0, "bad97eae03a4db3e99565e39b0b3c06a", 16384},
+				{"roasted.mpc", 0, "57c4a3860cf899443c357e0078ea6f49", 366773},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
