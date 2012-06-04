@@ -46,75 +46,75 @@ using namespace MPAL;
 /*  Global functions                    */
 /****************************************/
 
-uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
+uint32 mainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
 	return _vm->getEngine()->loadLocation(nLoc, pt, start);
 }
 
-void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
+void mainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 	_vm->getEngine()->unloadLocation(coroParam, bDoOnExit, result);
 }
 
-void MainLinkGraphicTask(RMGfxTask *task) {
+void mainLinkGraphicTask(RMGfxTask *task) {
 	_vm->getEngine()->linkGraphicTask(task);
 }
 
-void MainFreeze(void) {
+void mainFreeze(void) {
 	_vm->getEngine()->freeze();
 }
 
-void MainUnfreeze(void) {
+void mainUnfreeze(void) {
 	_vm->getEngine()->unfreeze();
 }
 
-void MainWaitFrame(CORO_PARAM) {
+void mainWaitFrame(CORO_PARAM) {
 	CoroScheduler.waitForSingleObject(coroParam, _vm->_hEndOfFrame, CORO_INFINITE);
 }
 
-void MainShowMouse(void) {
+void mainShowMouse(void) {
 	_vm->getEngine()->enableMouse();
 }
 
-void MainHideMouse(void) {
+void mainHideMouse(void) {
 	_vm->getEngine()->disableMouse();
 }
 
-void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
+void mainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
 	_vm->playMusic(nChannel, filename, nFX, bLoop, nSync);
 }
 
-void MainDisableInput(void) {
+void mainDisableInput(void) {
 	_vm->getEngine()->disableInput();
 }
 
-void MainEnableInput(void) {
+void mainEnableInput(void) {
 	_vm->getEngine()->enableInput();
 }
 
-void MainInitWipe(int type) {
+void mainInitWipe(int type) {
 	_vm->getEngine()->initWipe(type);
 }
 
-void MainCloseWipe(void) {
+void mainCloseWipe(void) {
 	_vm->getEngine()->closeWipe();
 }
 
-void MainWaitWipeEnd(CORO_PARAM) {
+void mainWaitWipeEnd(CORO_PARAM) {
 	_vm->getEngine()->waitWipeEnd(coroParam);
 }
 
-void MainEnableGUI(void) {
+void mainEnableGUI(void) {
 	_vm->getEngine()->_bGUIInterface = true;
 	_vm->getEngine()->_bGUIInventory = true;
 	_vm->getEngine()->_bGUIOption = true;
 }
 
-void MainDisableGUI(void) {
+void mainDisableGUI(void) {
 	_vm->getEngine()->_bGUIInterface = false;
 	_vm->getEngine()->_bGUIInventory = false;
 	_vm->getEngine()->_bGUIOption = false;
 }
 
-void MainSetPalesati(bool bPalesati) {
+void mainSetPalesati(bool bPalesati) {
 	_vm->getEngine()->setPalesati(bPalesati);
 }
 

@@ -402,12 +402,12 @@ void TonyEngine::autoSave(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	grabThumbnail();
-	CORO_INVOKE_0(MainWaitFrame);
-	CORO_INVOKE_0(MainWaitFrame);
-	MainFreeze();
+	CORO_INVOKE_0(mainWaitFrame);
+	CORO_INVOKE_0(mainWaitFrame);
+	mainFreeze();
 	_ctx->buf = getSaveStateFileName(0);
 	_theEngine.saveState(_ctx->buf, (byte *)_curThumbnail, "Autosave");
-	MainUnfreeze();
+	mainUnfreeze();
 
 	CORO_END_CODE;
 }

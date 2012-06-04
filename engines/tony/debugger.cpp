@@ -71,7 +71,7 @@ void DebugChangeScene(CORO_PARAM, const void *param) {
 
 	GLOBALS.LoadLocation(details->sceneNumber, scenePos, RMPoint(-1, -1));
 
-	MainEnableGUI();
+	mainEnableGUI();
 
 	CORO_END_CODE;
 }

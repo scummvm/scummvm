@@ -596,7 +596,7 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 	if (m_bPastorella) {
 		// Talking whilst a shepherdess
-		MainFreeze();
+		mainFreeze();
 		switch (m_TalkDirection) {
 		case UP:
 			SetPattern(PAT_PAST_TALKUP);
@@ -614,7 +614,7 @@ bool RMTony::StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			SetPattern(PAT_PAST_TALKRIGHT);
 			break;
 		}
-		MainUnfreeze();
+		mainUnfreeze();
 		return false;
 	}
 
@@ -1127,10 +1127,10 @@ void RMTony::StartTalk(CORO_PARAM, TALKTYPE nTalkType) {
 
 	// Perform the set pattern
 	if (_ctx->headStartPat != 0 || _ctx->bodyStartPat != 0) {
-		MainFreeze();
+		mainFreeze();
 		SetPattern(_ctx->headStartPat);
 		m_body.SetPattern(_ctx->bodyStartPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		if (_ctx->bodyStartPat != 0)
 			CORO_INVOKE_0(m_body.WaitForEndPattern);
@@ -1138,11 +1138,11 @@ void RMTony::StartTalk(CORO_PARAM, TALKTYPE nTalkType) {
 			CORO_INVOKE_0(WaitForEndPattern);
 	}
 
-	MainFreeze();
+	mainFreeze();
 	SetPattern(_ctx->headLoopPat);
 	if (_ctx->bodyLoopPat)
 		m_body.SetPattern(_ctx->bodyLoopPat);
-	MainUnfreeze();
+	mainUnfreeze();
 
 	CORO_END_CODE;
 }
@@ -1175,9 +1175,9 @@ bool RMTony::EndTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPa
 	}
 
 	if (m_bPastorella) {
-		MainFreeze();
+		mainFreeze();
 		SetPattern(finalPat);
-		MainUnfreeze();
+		mainUnfreeze();
 		m_bIsTalking = false;
 		return false;
 	}
@@ -1447,7 +1447,7 @@ void RMTony::EndTalk(CORO_PARAM) {
 	// Handles the end of an animated and static, leaving everything unchanged
 	if (m_bIsStaticTalk) {
 		if (m_nTalkType == TALK_CONBARBASTATIC) {
-			MainFreeze();
+			mainFreeze();
 			SetPattern(0);
 			if (m_TalkDirection == UP || m_TalkDirection == LEFT) {
 				m_body.SetPattern(BPAT_CONBARBALEFT_STATIC);
@@ -1456,11 +1456,11 @@ void RMTony::EndTalk(CORO_PARAM) {
 				m_body.SetPattern(BPAT_CONBARBARIGHT_STATIC);
 				m_nBodyOffset.Set(-26, -14);
 			}
-			MainUnfreeze();
+			mainUnfreeze();
 		} else {
-			MainFreeze();
+			mainFreeze();
 			SetPattern(_ctx->headStandPat);
-			MainUnfreeze();
+			mainUnfreeze();
 
 			CORO_INVOKE_0(m_body.WaitForEndPattern);
 		}
@@ -1471,36 +1471,36 @@ void RMTony::EndTalk(CORO_PARAM) {
 
 	// Set the pattern
 	if (_ctx->headEndPat != 0 && _ctx->bodyEndPat != 0) {
-		MainFreeze();
+		mainFreeze();
 		SetPattern(_ctx->headEndPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		CORO_INVOKE_0(m_body.WaitForEndPattern);
 
-		MainFreeze();
+		mainFreeze();
 		m_body.SetPattern(_ctx->bodyEndPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		CORO_INVOKE_0(WaitForEndPattern);
 		CORO_INVOKE_0(m_body.WaitForEndPattern);
 	} else if (_ctx->bodyEndPat != 0) {
-		MainFreeze();
+		mainFreeze();
 		SetPattern(_ctx->headStandPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		CORO_INVOKE_0(m_body.WaitForEndPattern);
 
-		MainFreeze();
+		mainFreeze();
 		m_body.SetPattern(_ctx->bodyEndPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		CORO_INVOKE_0(m_body.WaitForEndPattern);
 	} else if (_ctx->headEndPat != 0) {
 		CORO_INVOKE_0(m_body.WaitForEndPattern);
 
-		MainFreeze();
+		mainFreeze();
 		SetPattern(_ctx->headEndPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		CORO_INVOKE_0(WaitForEndPattern);
 	} else {
@@ -1508,10 +1508,10 @@ void RMTony::EndTalk(CORO_PARAM) {
 	}
 
 	if (_ctx->finalPat != 0) {
-		MainFreeze();
+		mainFreeze();
 		m_body.SetPattern(0);
 		SetPattern(_ctx->finalPat);
-		MainUnfreeze();
+		mainUnfreeze();
 	}
 
 	m_bIsTalking = false;
@@ -1740,19 +1740,19 @@ void RMTony::StartStatic(CORO_PARAM, TALKTYPE nTalk) {
 	// e vai con i pattern
 	m_bIsStaticTalk = true;
 
-	MainFreeze();
+	mainFreeze();
 	SetPattern(_ctx->headPat);
 	m_body.SetPattern(_ctx->bodyStartPat);
-	MainUnfreeze();
+	mainUnfreeze();
 
 	CORO_INVOKE_0(m_body.WaitForEndPattern);
 	CORO_INVOKE_0(WaitForEndPattern);
 
-	MainFreeze();
+	mainFreeze();
 	if (_ctx->headLoopPat != -1)
 		SetPattern(_ctx->headLoopPat);
 	m_body.SetPattern(_ctx->bodyLoopPat);
-	MainUnfreeze();
+	mainUnfreeze();
 
 	CORO_END_CODE;
 }
@@ -1910,24 +1910,24 @@ void RMTony::EndStatic(CORO_PARAM, TALKTYPE nTalk) {
 	EndStaticCalculate(nTalk, _ctx->bodyEndPat, _ctx->finalPat, _ctx->headEndPat);
 
 	if (_ctx->headEndPat != 0) {
-		MainFreeze();
+		mainFreeze();
 		SetPattern(_ctx->headEndPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		CORO_INVOKE_0(WaitForEndPattern);
 	} else {
 		// Play please
-		MainFreeze();
+		mainFreeze();
 		m_body.SetPattern(_ctx->bodyEndPat);
-		MainUnfreeze();
+		mainUnfreeze();
 
 		CORO_INVOKE_0(m_body.WaitForEndPattern);
 	}
 
-	MainFreeze();
+	mainFreeze();
 	SetPattern(_ctx->finalPat);
 	m_body.SetPattern(0);
-	MainUnfreeze();
+	mainUnfreeze();
 
 	m_bIsStaticTalk = false;
 

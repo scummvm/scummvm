@@ -366,10 +366,10 @@ void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
 		if (item != NULL) {
 			if (nPattern != -1) {
 				if (GLOBALS.bPatIrqFreeze)
-					MainFreeze();
+					mainFreeze();
 				item->SetPattern(nPattern, true);
 				if (GLOBALS.bPatIrqFreeze)
-					MainUnfreeze();
+					mainUnfreeze();
 			}
 			if (nStatus != -1)
 				item->SetStatus(nStatus);
@@ -450,7 +450,7 @@ void RMGfxEngine::unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 	}
 
-	MainFreeze();
+	mainFreeze();
 
 	_bLocationLoaded = false;
 
@@ -814,7 +814,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	CORO_INVOKE_2(unloadLocation, false, NULL);
 	loadLocation(_ctx->loc, _ctx->tp, RMPoint(-1, -1));
 	_tony.SetPattern(RMTony::PAT_STANDRIGHT);
-	MainUnfreeze();
+	mainUnfreeze();
 
 	// On older versions, need to an enter action
 	if (_ctx->ver < 5)

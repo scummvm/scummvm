@@ -886,8 +886,8 @@ void RMWipe::WaitForFadeEnd(CORO_PARAM) {
 	m_bEndFade = true;
 	m_bFading = false;
 
-	CORO_INVOKE_0(MainWaitFrame);
-	CORO_INVOKE_0(MainWaitFrame);
+	CORO_INVOKE_0(mainWaitFrame);
+	CORO_INVOKE_0(mainWaitFrame);
 
 	CORO_END_CODE;
 }

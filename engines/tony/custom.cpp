@@ -595,20 +595,17 @@ DECLARE_CUSTOM_FUNCTION(RestoreTonyPosition)(CORO_PARAM, uint32, uint32, uint32,
 	CORO_END_CODE;
 }
 
-
 DECLARE_CUSTOM_FUNCTION(DisableInput)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	MainDisableInput();
+	mainDisableInput();
 }
 
-
 DECLARE_CUSTOM_FUNCTION(EnableInput)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	MainEnableInput();
+	mainEnableInput();
 }
 
 DECLARE_CUSTOM_FUNCTION(StopTony)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS.Tony->StopNoAction(coroParam);
 }
-
 
 DECLARE_CUSTOM_FUNCTION(CustEnableGUI)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS.EnableGUI();
@@ -2018,7 +2015,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 		// Draw the pointer
 		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_NONE);
-		MainShowMouse();
+		mainShowMouse();
 
 		while (!(GLOBALS.Input->mouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {
 			CORO_INVOKE_0(GLOBALS.WaitFrame);
@@ -2028,7 +2025,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		}
 
 		// Hide the pointer
-		MainHideMouse();
+		mainHideMouse();
 
 		CORO_INVOKE_0(_ctx->dc.Hide);
 		mpalQueryDialogSelectionDWORD(_ctx->nChoice, _ctx->sl[_ctx->sel]);
@@ -2539,19 +2536,19 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS.Inventory = inv;
 	GLOBALS.Input = input;
 
-	GLOBALS.LoadLocation = MainLoadLocation;
-	GLOBALS.UnloadLocation = MainUnloadLocation;
-	GLOBALS.LinkGraphicTask = MainLinkGraphicTask;
-	GLOBALS.Freeze = MainFreeze;
-	GLOBALS.Unfreeze = MainUnfreeze;
-	GLOBALS.WaitFrame = MainWaitFrame;
-	GLOBALS.PlayMusic = MainPlayMusic;
-	GLOBALS.InitWipe = MainInitWipe;
-	GLOBALS.CloseWipe = MainCloseWipe;
-	GLOBALS.WaitWipeEnd = MainWaitWipeEnd;
-	GLOBALS.DisableGUI = MainDisableGUI;
-	GLOBALS.EnableGUI = MainEnableGUI;
-	GLOBALS.SetPalesati = MainSetPalesati;
+	GLOBALS.LoadLocation = mainLoadLocation;
+	GLOBALS.UnloadLocation = mainUnloadLocation;
+	GLOBALS.LinkGraphicTask = mainLinkGraphicTask;
+	GLOBALS.Freeze = mainFreeze;
+	GLOBALS.Unfreeze = mainUnfreeze;
+	GLOBALS.WaitFrame = mainWaitFrame;
+	GLOBALS.PlayMusic = mainPlayMusic;
+	GLOBALS.InitWipe = mainInitWipe;
+	GLOBALS.CloseWipe = mainCloseWipe;
+	GLOBALS.WaitWipeEnd = mainWaitWipeEnd;
+	GLOBALS.DisableGUI = mainDisableGUI;
+	GLOBALS.EnableGUI = mainEnableGUI;
+	GLOBALS.SetPalesati = mainSetPalesati;
 
 	GLOBALS.bAlwaysDisplay = false;
 	int i;

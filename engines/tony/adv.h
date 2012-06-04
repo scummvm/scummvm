@@ -64,23 +64,23 @@ enum RMTonyAction {
 };
 
 // Global Functions
-uint32 MainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
-void MainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
-void MainLinkGraphicTask(RMGfxTask *task);
-void MainFreeze(void);
-void MainUnfreeze(void);
-void MainWaitFrame(CORO_PARAM);
-void MainShowMouse(void);
-void MainHideMouse(void);
-void MainEnableInput(void);
-void MainDisableInput(void);
-void MainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync);
-void MainInitWipe(int type);
-void MainCloseWipe(void);
-void MainWaitWipeEnd(CORO_PARAM);
-void MainEnableGUI(void);
-void MainDisableGUI(void);
-void MainSetPalesati(bool bPalesati);
+uint32 mainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
+void mainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
+void mainLinkGraphicTask(RMGfxTask *task);
+void mainFreeze(void);
+void mainUnfreeze(void);
+void mainWaitFrame(CORO_PARAM);
+void mainShowMouse(void);
+void mainHideMouse(void);
+void mainEnableInput(void);
+void mainDisableInput(void);
+void mainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync);
+void mainInitWipe(int type);
+void mainCloseWipe(void);
+void mainWaitWipeEnd(CORO_PARAM);
+void mainEnableGUI(void);
+void mainDisableGUI(void);
+void mainSetPalesati(bool bPalesati);
 
 } // End of namespace Tony
 
