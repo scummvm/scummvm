@@ -118,6 +118,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 			delete file;
 			file = NULL;
 		} else {
+			file->seek(0, SEEK_SET);
 			return file;
 		}
 		
