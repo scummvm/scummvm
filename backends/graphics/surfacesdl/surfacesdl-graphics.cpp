@@ -51,20 +51,6 @@ static Common::Array<GraphicsModeData> s_supportedGraphicsModesData;
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
-// Table of relative scalers magnitudes
-// [definedScale - 1][scaleFactor - 1]
-static ScalerProc *scalersMagn[3][3] = {
-#ifdef USE_SCALERS
-	{ Normal1x, AdvMame2x, AdvMame3x },
-	{ Normal1x, Normal1x, Normal1o5x },
-	{ Normal1x, Normal1x, Normal1x }
-#else // remove dependencies on other scalers
-	{ Normal1x, Normal1x, Normal1x },
-	{ Normal1x, Normal1x, Normal1x },
-	{ Normal1x, Normal1x, Normal1x }
-#endif
-};
-
 static const int s_gfxModeSwitchTable[][4] = {
 		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
 		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
