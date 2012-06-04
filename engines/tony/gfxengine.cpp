@@ -146,7 +146,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 	g_system->lockMutex(csMainLoop);
 
 	// Poll of input devices
-	m_input.Poll();
+	m_input.poll();
 
 	if (m_bMustEnterMenu && GLOBALS.bIdleExited) {
 		m_bOption = true;
@@ -172,12 +172,12 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 		// Check the mouse input
 		if (m_bInput && !m_tony.InAction()) {
 			// If we are on the inventory, it is it who controls all input
-			if (m_inv.HaveFocus(m_input.MousePos()) && !m_inter.Active()) {
+			if (m_inv.HaveFocus(m_input.mousePos()) && !m_inter.Active()) {
 				// Left Click
 				// **********
-				if (m_input.MouseLeftClicked()/* && m_itemName.IsItemSelected()*/) {
+				if (m_input.mouseLeftClicked()/* && m_itemName.IsItemSelected()*/) {
 					// Left click activates the combine, if we are on an object
-					if (m_inv.LeftClick(m_input.MousePos(), m_curActionObj)) {
+					if (m_inv.LeftClick(m_input.mousePos(), m_curActionObj)) {
 						m_curAction = TA_COMBINE;
 						m_point.SetAction(m_curAction);
 					}
@@ -185,18 +185,18 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 
 					// Right Click
 					// ***********
-					if (m_input.MouseRightClicked()) {
+					if (m_input.mouseRightClicked()) {
 						if (m_itemName.IsItemSelected()) {
 							m_curActionObj = 0;
-							m_inv.RightClick(m_input.MousePos());
+							m_inv.RightClick(m_input.mousePos());
 						} else
-							m_inv.RightClick(m_input.MousePos());
+							m_inv.RightClick(m_input.mousePos());
 					} else
 
 						// Right Release
 						// *************
-						if (m_input.MouseRightReleased()) {
-							if (m_inv.RightRelease(m_input.MousePos(), m_curAction)) {
+						if (m_input.mouseRightReleased()) {
+							if (m_inv.RightRelease(m_input.mousePos(), m_curAction)) {
 								CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_curAction);
 
 								m_curAction = TA_GOTO;
@@ -208,16 +208,16 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 				// ************
 				if (m_bGUIOption) {
 					if (!m_tony.InAction() && m_bInput) {
-						if ((m_input.MouseLeftClicked() && m_input.MousePos().x < 3 && m_input.MousePos().y < 3)) {
+						if ((m_input.mouseLeftClicked() && m_input.mousePos().x < 3 && m_input.mousePos().y < 3)) {
 							CORO_INVOKE_1(OpenOptionScreen, 0);
 							goto SKIPCLICKSINISTRO;
-						} else if (m_input.GetAsyncKeyState(Common::KEYCODE_ESCAPE))
+						} else if (m_input.getAsyncKeyState(Common::KEYCODE_ESCAPE))
 							CORO_INVOKE_1(OpenOptionScreen, 0);
 						else if (!_vm->getIsDemo()) {
-							if (m_input.GetAsyncKeyState(Common::KEYCODE_F3) || m_input.GetAsyncKeyState(Common::KEYCODE_F5))
+							if (m_input.getAsyncKeyState(Common::KEYCODE_F3) || m_input.getAsyncKeyState(Common::KEYCODE_F5))
 								// Save game screen
 								CORO_INVOKE_1(OpenOptionScreen, 3);
-							else if (m_input.GetAsyncKeyState(Common::KEYCODE_F2) || m_input.GetAsyncKeyState(Common::KEYCODE_F7))
+							else if (m_input.getAsyncKeyState(Common::KEYCODE_F2) || m_input.getAsyncKeyState(Common::KEYCODE_F7))
 								// Load game screen
 								CORO_INVOKE_1(OpenOptionScreen, 4);
 						}
@@ -226,7 +226,7 @@ void RMGfxEngine::DoFrame(CORO_PARAM, bool bDrawLocation) {
 
 				// Left Click
 				// **************
-				if (m_input.MouseLeftClicked() && !m_inter.Active()) {
+				if (m_input.mouseLeftClicked() && !m_inter.Active()) {
 
 					if (m_curAction != TA_COMBINE)
 						CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_point.CurAction());
@@ -247,29 +247,29 @@ SKIPCLICKSINISTRO:
 				// ************
 				if (m_curAction == TA_COMBINE) {
 					// During a combine, it cancels it
-					if (m_input.MouseRightClicked()) {
+					if (m_input.mouseRightClicked()) {
 						m_inv.EndCombine();
 						m_curActionObj = 0;
 						m_curAction = TA_GOTO;
 						m_point.SetAction(m_curAction);
 						m_point.SetSpecialPointer(RMPointer::PTR_NONE);
 					}
-				} else if (m_input.MouseRightClicked() && m_itemName.IsItemSelected() && m_point.GetSpecialPointer() == RMPointer::PTR_NONE) {
+				} else if (m_input.mouseRightClicked() && m_itemName.IsItemSelected() && m_point.GetSpecialPointer() == RMPointer::PTR_NONE) {
 					if (m_bGUIInterface) {
 						// Before opening the interface, replaces GOTO
 						m_curAction = TA_GOTO;
 						m_curActionObj = 0;
 						m_point.SetAction(m_curAction);
-						m_inter.Clicked(m_input.MousePos());
+						m_inter.Clicked(m_input.mousePos());
 					}
 				}
 
 
 				// Right Release
 				// *************
-				if (m_input.MouseRightReleased()) {
+				if (m_input.mouseRightReleased()) {
 					if (m_bGUIInterface) {
-						if (m_inter.Released(m_input.MousePos(), m_curAction)) {
+						if (m_inter.Released(m_input.mousePos(), m_curAction)) {
 							m_point.SetAction(m_curAction);
 							CORO_INVOKE_3(m_tony.MoveAndDoAction, m_itemName.GetHotspot(), m_itemName.GetSelectedItem(), m_curAction);
 
@@ -281,14 +281,14 @@ SKIPCLICKSINISTRO:
 			}
 
 			// Update the name under the mouse pointer
-			m_itemName.SetMouseCoord(m_input.MousePos());
+			m_itemName.SetMouseCoord(m_input.mousePos());
 			if (!m_inter.Active() && !m_inv.MiniActive())
 				CORO_INVOKE_4(m_itemName.DoFrame, m_bigBuf, m_loc, m_point, m_inv);
 		}
 
 		// Interface & Inventory
-		m_inter.DoFrame(m_bigBuf, m_input.MousePos());
-		m_inv.DoFrame(m_bigBuf, m_point, m_input.MousePos(), (!m_tony.InAction() && !m_inter.Active() && m_bGUIInventory));
+		m_inter.DoFrame(m_bigBuf, m_input.mousePos());
+		m_inv.DoFrame(m_bigBuf, m_point, m_input.mousePos(), (!m_tony.InAction() && !m_inter.Active() && m_bGUIInventory));
 	}
 
 	// Animate Tony
@@ -305,7 +305,7 @@ SKIPCLICKSINISTRO:
 		m_tony.SetScrollPosition(m_loc.ScrollPosition());
 
 	if ((!m_tony.InAction() && m_bInput) || m_bAlwaysDrawMouse) {
-		m_point.SetCoord(m_input.MousePos());
+		m_point.SetCoord(m_input.mousePos());
 		m_point.DoFrame(&m_bigBuf);
 	}
 
@@ -498,7 +498,7 @@ void RMGfxEngine::Init() {
 	mpalInstallItemIrq(ItemIrq);
 
 	// Initialise the input
-	m_input.Init();
+	m_input.init();
 
 	// Initialise the mouse pointer
 	m_point.Init();
@@ -527,7 +527,7 @@ void RMGfxEngine::Close(void) {
 	m_inv.Close();
 	m_tony.Close();
 	m_point.Close();
-	m_input.Close();
+	m_input.close();
 }
 
 void RMGfxEngine::SwitchFullscreen(bool bFull) {

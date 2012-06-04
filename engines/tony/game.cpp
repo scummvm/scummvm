@@ -1032,9 +1032,9 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		return;
 
 	// Reads input
-	_ctx->mousePos = input->MousePos();
-	_ctx->bLeftClick = input->MouseLeftClicked();
-	_ctx->bRightClick = input->MouseRightClicked();
+	_ctx->mousePos = input->mousePos();
+	_ctx->bLeftClick = input->mouseLeftClicked();
+	_ctx->bRightClick = input->mouseRightClicked();
 
 	_ctx->bRefresh = false;
 
@@ -1097,7 +1097,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 
-#define KEYPRESS(c)     (_vm->getEngine()->GetInput().GetAsyncKeyState(c))
+#define KEYPRESS(c)     (_vm->getEngine()->GetInput().getAsyncKeyState(c))
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
 		m_EditName[strlen(m_EditName) +1 ] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
 

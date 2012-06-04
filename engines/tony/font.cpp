@@ -2086,13 +2086,13 @@ void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
 		}
 
 		if (!m_bNoTab) {
-			if (_vm->getEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
+			if (_vm->getEngine()->GetInput().getAsyncKeyState(Common::KEYCODE_TAB))
 				return;
 		}
 
 		if (!m_bNoTab) {
 			if (m_input) {
-				if (m_input->MouseLeftClicked() || m_input->MouseRightClicked())
+				if (m_input->mouseLeftClicked() || m_input->mouseRightClicked())
 					return;
 			}
 		}

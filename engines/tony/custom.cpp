@@ -2020,10 +2020,10 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_NONE);
 		MainShowMouse();
 
-		while (!(GLOBALS.Input->MouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {
+		while (!(GLOBALS.Input->mouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {
 			CORO_INVOKE_0(GLOBALS.WaitFrame);
 			GLOBALS.Freeze();
-			CORO_INVOKE_1(_ctx->dc.DoFrame, GLOBALS.Input->MousePos());
+			CORO_INVOKE_1(_ctx->dc.DoFrame, GLOBALS.Input->mousePos());
 			GLOBALS.Unfreeze();
 		}
 
@@ -2361,9 +2361,9 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 
 	while (_ctx->startTime + dwTime * 1000 > _vm->getTime()) {
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
-		if (GLOBALS.Input->MouseLeftClicked() || GLOBALS.Input->MouseRightClicked())
+		if (GLOBALS.Input->mouseLeftClicked() || GLOBALS.Input->mouseRightClicked())
 			break;
-		if (_vm->getEngine()->GetInput().GetAsyncKeyState(Common::KEYCODE_TAB))
+		if (_vm->getEngine()->GetInput().getAsyncKeyState(Common::KEYCODE_TAB))
 			break;
 	}
 

@@ -49,7 +49,7 @@ RMInput::~RMInput() {
 
 }
 
-void RMInput::Poll(void) {
+void RMInput::poll(void) {
 	_leftClickMouse = _leftReleaseMouse = _rightClickMouse = _rightReleaseMouse = false;
 
 	// Get pending events
@@ -102,24 +102,24 @@ void RMInput::Poll(void) {
 	}
 }
 
-void RMInput::Init() {
+void RMInput::init() {
 }
 
-void RMInput::Close(void) {
+void RMInput::close(void) {
 }
 
-bool RMInput::MouseLeft() {
+bool RMInput::mouseLeft() {
 	return _leftButton;
 }
 
-bool RMInput::MouseRight() {
+bool RMInput::mouseRight() {
 	return _rightButton;
 }
 
 /**
  * Return true if a key has been pressed
  */
-bool RMInput::GetAsyncKeyState(Common::KeyCode kc) {
+bool RMInput::getAsyncKeyState(Common::KeyCode kc) {
 	// The act of testing for a particular key automatically clears the state, to prevent
 	// the same key being registered in multiple different frames
 	bool result = _keyDown[(int)kc];

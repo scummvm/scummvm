@@ -55,45 +55,45 @@ public:
 	~RMInput();
 
 	// Class initialisation
-	void Init(/*uint32 hInst*/);
+	void init(/*uint32 hInst*/);
 
 	// Closes the class
-	void Close(void);
+	void close(void);
 
 	// Polling (must be performed once per frame)
-	void Poll(void);
+	void poll(void);
 
 	// Reading of the mouse
-	RMPoint MousePos() {
+	RMPoint mousePos() {
 		return _mousePos;
 	}
 
 	// Current status of the mouse buttons
-	bool MouseLeft();
-	bool MouseRight();
+	bool mouseLeft();
+	bool mouseRight();
 
 	// Events of mouse clicks
-	bool MouseLeftClicked() {
+	bool mouseLeftClicked() {
 		return _leftClickMouse;
 	}
-	bool MouseRightClicked() {
+	bool mouseRightClicked() {
 		return _rightClickMouse;
 	}
-	bool MouseBothClicked() {
+	bool mouseBothClicked() {
 		return _leftClickMouse && _rightClickMouse;
 	}
-	bool MouseLeftReleased() {
+	bool mouseLeftReleased() {
 		return _leftReleaseMouse;
 	}
-	bool MouseRightReleased() {
+	bool mouseRightReleased() {
 		return _rightReleaseMouse;
 	}
-	bool MouseBothReleased() {
+	bool mouseBothReleased() {
 		return _leftReleaseMouse && _rightReleaseMouse;
 	}
 
 	// Returns true if the given key is pressed
-	bool GetAsyncKeyState(Common::KeyCode kc);
+	bool getAsyncKeyState(Common::KeyCode kc);
 };
 
 } // End of namespace Tony
