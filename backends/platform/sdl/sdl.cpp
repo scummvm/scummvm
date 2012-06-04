@@ -138,11 +138,6 @@ void OSystem_SDL::init() {
 	if (_taskbarManager == 0)
 		_taskbarManager = new Common::TaskbarManager();
 #endif
-
-#ifdef USE_OPENGL
-	// Setup a list with both SDL and OpenGL graphics modes
-	setupGraphicsModes();
-#endif
 }
 
 void OSystem_SDL::initBackend() {
@@ -155,6 +150,11 @@ void OSystem_SDL::initBackend() {
 		_eventSource = new SdlEventSource();
 
 	int graphicsManagerType = 0;
+
+#ifdef USE_OPENGL
+	// Setup a list with both SDL and OpenGL graphics modes
+	setupGraphicsModes();
+#endif
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
