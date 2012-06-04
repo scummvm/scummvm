@@ -72,8 +72,11 @@ uint HQPlugin::decreaseFactor() {
 }
 
 const char *HQPlugin::getName() const {
-	return "HQ";
+	return "hq";
 }
 
+const char *HQPlugin::getPrettyName() const {
+	return "HQ";
+}
 
 REGISTER_PLUGIN_STATIC(HQ, PLUGIN_TYPE_SCALER, HQPlugin);
