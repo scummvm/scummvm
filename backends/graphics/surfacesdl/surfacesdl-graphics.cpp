@@ -79,15 +79,6 @@ const OSystem::GraphicsMode s_supportedStretchModes[] = {
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
-// Table of the cursor scalers [scaleFactor - 1]
-static ScalerProc *scalersMagn[3] = {
-#ifdef USE_SCALERS
-	Normal1x, AdvMame2x, AdvMame3x
-#else // remove dependencies on other scalers
-	Normal1x, Normal1x, Normal1x
-#endif
-};
-
 static const int s_gfxModeSwitchTable[][4] = {
 		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
 		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
