@@ -37,11 +37,15 @@ DECLARE_SINGLETON(CoroutineScheduler);
 
 #ifdef COROUTINE_DEBUG
 namespace {
+/** Count of active coroutines */
 static int s_coroCount = 0;
 
 typedef Common::HashMap<Common::String, int> CoroHashMap;
 static CoroHashMap *s_coroFuncs = 0;
 
+/**
+ * Change the current coroutine status
+ */
 static void changeCoroStats(const char *func, int change) {
 	if (!s_coroFuncs)
 		s_coroFuncs = new CoroHashMap();
@@ -49,6 +53,9 @@ static void changeCoroStats(const char *func, int change) {
 	(*s_coroFuncs)[func] += change;
 }
 
+/**
+ * Display the details of active coroutines
+ */
 static void displayCoroStats() {
 	debug("%d active coros", s_coroCount);
 
@@ -65,6 +72,9 @@ static void displayCoroStats() {
 }
 #endif
 
+/**
+ * Creates a coroutine context
+ */
 CoroBaseContext::CoroBaseContext(const char *func)
 	: _line(0), _sleep(0), _subctx(0) {
 #ifdef COROUTINE_DEBUG
@@ -74,6 +84,9 @@ CoroBaseContext::CoroBaseContext(const char *func)
 #endif
 }
 
+/**
+ * Destructor for coroutine context
+ */
 CoroBaseContext::~CoroBaseContext() {
 #ifdef COROUTINE_DEBUG
 	s_coroCount--;
@@ -386,7 +399,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 		*expired = true;
 
 	// Outer loop for doing checks until expiry 
-	while (g_system->getMillis() < _ctx->endTime) {
+	while (g_system->getMillis() <= _ctx->endTime) {
 		// Check to see if a process or event with the given Id exists
 		_ctx->pProcess = getProcess(pid);
 		_ctx->pEvent = !_ctx->pProcess ? getEvent(pid) : NULL;
@@ -433,7 +446,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
 						   uint32 duration, bool *expired) {
 	if (!pCurrent)
-		error("Called CoroutineScheduler::waitForMultipleEvents from the main process");
+		error("Called CoroutineScheduler::waitForMultipleObjects from the main process");
 
 	CORO_BEGIN_CONTEXT;
 		uint32 endTime;
@@ -456,7 +469,7 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 		*expired = true;
 
 	// Outer loop for doing checks until expiry 
-	while (g_system->getMillis() < _ctx->endTime) {
+	while (g_system->getMillis() <= _ctx->endTime) {
 		_ctx->signalled = bWaitAll;
 
 		for (_ctx->i = 0; _ctx->i < nCount; ++_ctx->i) {
@@ -499,13 +512,13 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 
 /**
  * Make the active process sleep for the given duration in milliseconds
- * @param duration					Duration in milliseconds
+ * @param duration		Duration in milliseconds
  * @remarks		This duration won't be precise, since it relies on the frequency the
  * scheduler is called.
  */
 void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 	if (!pCurrent)
-		error("Called CoroutineScheduler::waitForSingleObject from the main process");
+		error("Called CoroutineScheduler::sleep from the main process");
 
 	CORO_BEGIN_CONTEXT;
 		uint32 endTime;
@@ -529,10 +542,10 @@ void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 /**
  * Creates a new process.
  *
- * @param pid	process identifier
- * @param CORO_ADDR	coroutine start address
- * @param pParam	process specific info
- * @param sizeParam	size of process specific info
+ * @param pid			process identifier
+ * @param coroAddr		Coroutine start address
+ * @param pParam		Process specific info
+ * @param sizeParam		Size of process specific info
  */
 PROCESS *CoroutineScheduler::createProcess(uint32 pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc;
@@ -601,9 +614,9 @@ PROCESS *CoroutineScheduler::createProcess(uint32 pid, CORO_ADDR coroAddr, const
 /**
  * Creates a new process with an auto-incrementing Process Id.
  *
- * @param CORO_ADDR	coroutine start address
- * @param pParam	process specific info
- * @param sizeParam	size of process specific info
+ * @param coroAddr		Coroutine start address
+ * @param pParam		Process specific info
+ * @param sizeParam		Size of process specific info
  */
 uint32 CoroutineScheduler::createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc = createProcess(++pidCounter, coroAddr, pParam, sizeParam);
@@ -613,9 +626,9 @@ uint32 CoroutineScheduler::createProcess(CORO_ADDR coroAddr, const void *pParam,
 /**
  * Creates a new process with an auto-incrementing Process Id, and a single pointer parameter.
  *
- * @param CORO_ADDR	coroutine start address
- * @param pParam	process specific info
- * @param sizeParam	size of process specific info
+ * @param coroAddr		Coroutine start address
+ * @param pParam		Process specific info
+ * @param sizeParam		Size of process specific info
  */
 uint32 CoroutineScheduler::createProcess(CORO_ADDR coroAddr, const void *pParam) {
 	return createProcess(coroAddr, &pParam, sizeof(void *));
@@ -625,7 +638,7 @@ uint32 CoroutineScheduler::createProcess(CORO_ADDR coroAddr, const void *pParam)
 /**
  * Kills the specified process.
  *
- * @param pKillProc	which process to kill
+ * @param pKillProc		Which process to kill
  */
 void CoroutineScheduler::killProcess(PROCESS *pKillProc) {
 	// make sure a valid process pointer
@@ -674,7 +687,7 @@ PROCESS *CoroutineScheduler::getCurrentProcess() {
 /**
  * Returns the process identifier of the specified process.
  *
- * @param pProc	which process
+ * @param pProc			Which process
  */
 int CoroutineScheduler::getCurrentPID() const {
 	PROCESS *pProc = pCurrent;
@@ -690,9 +703,9 @@ int CoroutineScheduler::getCurrentPID() const {
  * Kills any process matching the specified PID. The current
  * process cannot be killed.
  *
- * @param pidKill	process identifier of process to kill
- * @param pidMask	mask to apply to process identifiers before comparison
- * @return The number of processes killed is returned.
+ * @param pidKill		Process identifier of process to kill
+ * @param pidMask		Mask to apply to process identifiers before comparison
+ * @return		The number of processes killed is returned.
  */
 int CoroutineScheduler::killMatchingProcess(uint32 pidKill, int pidMask) {
 	int numKilled = 0;
@@ -750,7 +763,7 @@ int CoroutineScheduler::killMatchingProcess(uint32 pidKill, int pidMask) {
  * called by killProcess() to allow the resource allocator to free
  * resources allocated to the dying process.
  *
- * @param pFunc	Function to be called by killProcess()
+ * @param pFunc			Function to be called by killProcess()
  */
 void CoroutineScheduler::setResourceCallback(VFPTRPP pFunc) {
 	pRCfunction = pFunc;
@@ -778,9 +791,9 @@ EVENT *CoroutineScheduler::getEvent(uint32 pid) {
 
 /**
  * Creates a new event object
- * @param bManualReset					Events needs to be manually reset. Otherwise, events
+ * @param bManualReset		Events needs to be manually reset. Otherwise, events
  * will be automatically reset after a process waits on the event finishes
- * @param bInitialState					Specifies whether the event is signalled or not initially
+ * @param bInitialState		Specifies whether the event is signalled or not initially
  */
 uint32 CoroutineScheduler::createEvent(bool bManualReset, bool bInitialState) {
 	EVENT *evt = new EVENT();
@@ -794,7 +807,7 @@ uint32 CoroutineScheduler::createEvent(bool bManualReset, bool bInitialState) {
 
 /**
  * Destroys the given event
- * @param pidEvent						Event PID
+ * @param pidEvent		Event Process Id
  */
 void CoroutineScheduler::closeEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
@@ -806,7 +819,7 @@ void CoroutineScheduler::closeEvent(uint32 pidEvent) {
 
 /**
  * Sets the event
- * @param pidEvent						Event PID
+ * @param pidEvent		Event Process Id
  */
 void CoroutineScheduler::setEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
@@ -816,7 +829,7 @@ void CoroutineScheduler::setEvent(uint32 pidEvent) {
 
 /**
  * Resets the event
- * @param pidEvent						Event PID
+ * @param pidEvent		Event Process Id
  */
 void CoroutineScheduler::resetEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
@@ -827,7 +840,7 @@ void CoroutineScheduler::resetEvent(uint32 pidEvent) {
 /**
  * Temporarily sets a given event to true, and then runs all waiting processes, allowing any
  * processes waiting on the event to be fired. It then immediately resets the event again.
- * @param pidEvent						Event PID
+ * @param pidEvent		Event Process Id
  *
  * @remarks		Should not be run inside of another process
  */
@@ -879,6 +892,5 @@ void CoroutineScheduler::pulseEvent(uint32 pidEvent) {
 	// Reset the event back to non-signalled
 	evt->signalled = false;
 }
-
 
 } // end of namespace Common
