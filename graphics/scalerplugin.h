@@ -1,5 +1,6 @@
 /* ScummVM - Graphic Adventure Engine
- * * ScummVM is the legal property of its developers, whose names
+ *
+ * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -88,7 +89,7 @@ public:
 	/**
 	 * This value will be displayed on the GUI.
 	 */
-	virtual const char * getPrettyName() const = 0;
+	virtual const char *getPrettyName() const = 0;
 
 	/**
 	 * Usable for any scaler when 1x scaling is desired
