@@ -29,6 +29,8 @@
 #include "gob/anifile.h"
 #include "gob/aniobject.h"
 
+#include "gob/sound/sound.h"
+
 #include "gob/minigames/geisha/penetration.h"
 #include "gob/minigames/geisha/meter.h"
 #include "gob/minigames/geisha/mouth.h"
@@ -280,6 +282,11 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 }
 
 void Penetration::init() {
+	// Load sounds
+	_vm->_sound->sampleLoad(&_soundShield, SOUND_SND, "boucl.snd");
+	_vm->_sound->sampleLoad(&_soundBite  , SOUND_SND, "pervet.snd");
+	_vm->_sound->sampleLoad(&_soundKiss  , SOUND_SND, "baise.snd");
+
 	_background->clear();
 
 	_vm->_video->drawPackedSprite("hyprmef2.cmp", *_background);
@@ -313,6 +320,10 @@ void Penetration::init() {
 }
 
 void Penetration::deinit() {
+	_soundShield.free();
+	_soundBite.free();
+	_soundKiss.free();
+
 	_mapAnims.clear();
 	_anims.clear();
 
@@ -528,6 +539,9 @@ void Penetration::checkShields() {
 			// Charge shields
 			_shieldMeter->setMaxValue();
 
+			// Play the shield sound
+			_vm->_sound->blasterPlay(&_soundShield, 1, 0);
+
 			// Erase the shield from the map
 			const int mapX = kPlayAreaBorderWidth  + pos->x * kMapTileWidth;
 			const int mapY = kPlayAreaBorderHeight + pos->y * kMapTileHeight;
@@ -548,6 +562,12 @@ void Penetration::checkMouths() {
 		    (((m->x + 1) == _subTileX) && (m->y == _subTileY))) {
 
 			m->mouth->activate();
+
+			// Play the mouth sound
+			if      (m->type == kMouthTypeBite)
+				_vm->_sound->blasterPlay(&_soundBite, 1, 0);
+			else if (m->type == kMouthTypeKiss)
+				_vm->_sound->blasterPlay(&_soundKiss, 1, 0);
 		}
 	}
 }

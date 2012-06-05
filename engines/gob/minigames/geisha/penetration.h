@@ -26,6 +26,8 @@
 #include "common/system.h"
 #include "common/list.h"
 
+#include "gob/sound/sounddesc.h"
+
 namespace Gob {
 
 class GobEngine;
@@ -106,6 +108,10 @@ private:
 
 	Common::List<Position>     _shields;
 	Common::List<ManagedMouth> _mouths;
+
+	SoundDesc _soundShield;
+	SoundDesc _soundBite;
+	SoundDesc _soundKiss;
 
 
 	void init();
