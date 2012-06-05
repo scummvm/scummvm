@@ -543,8 +543,6 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 		return false;
 	}
 
-	OSystem::GraphicsMode gm = s_supportedGraphicsModes[mode];
-
 	const char *name = s_supportedGraphicsModesData[mode].pluginName;
 	newScaleFactor = s_supportedGraphicsModesData[mode].scaleFactor;
 	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
