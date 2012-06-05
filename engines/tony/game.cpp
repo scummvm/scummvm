@@ -995,7 +995,7 @@ bool RMOptionScreen::IsClosing(void) {
 	return m_bExit;
 }
 
-int RMOptionScreen::Priority() {
+int RMOptionScreen::priority() {
 	// Just below the mouse
 	return 190;
 }
@@ -1375,7 +1375,7 @@ void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::RemoveThis(CORO_PARAM, bool &result) {
+void RMOptionScreen::removeThis(CORO_PARAM, bool &result) {
 	if (m_bExit)
 		result = true;
 	else
@@ -1523,7 +1523,7 @@ void RMPointer::Close(void) {
 }
 
 
-int RMPointer::Priority() {
+int RMPointer::priority() {
 	// Pointer has minimum priority so it will be drawn last
 	return 200;
 }
@@ -1569,7 +1569,7 @@ void RMPointer::DoFrame(RMGfxTargetBuffer *bigBuf) {
 		m_specialPointer[m_nCurSpecialPointer - 1]->DoFrame(bigBuf, false);
 }
 
-void RMPointer::RemoveThis(CORO_PARAM, bool &result) {
+void RMPointer::removeThis(CORO_PARAM, bool &result) {
 	// Always remove from the OT list, to support disabling the pointer
 	result = true;
 }

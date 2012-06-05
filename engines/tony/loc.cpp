@@ -715,7 +715,7 @@ void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
 
-void RMItem::RemoveThis(CORO_PARAM, bool &result) {
+void RMItem::removeThis(CORO_PARAM, bool &result) {
 	// Remove from the OT list if the current frame is -1 (pattern over)
 	result = (m_nCurSprite == -1);
 }
@@ -861,7 +861,7 @@ RMWipe::~RMWipe() {
 	CoroScheduler.closeEvent(m_hEndOfFade);
 }
 
-int RMWipe::Priority(void) {
+int RMWipe::priority(void) {
 	return 200;
 }
 
@@ -871,7 +871,7 @@ void RMWipe::Unregister(void) {
 	CoroScheduler.setEvent(m_hUnregistered);
 }
 
-void RMWipe::RemoveThis(CORO_PARAM, bool &result) {
+void RMWipe::removeThis(CORO_PARAM, bool &result) {
 	result = m_bUnregister;
 }
 
@@ -1657,7 +1657,7 @@ void RMCharacter::WaitForEndMovement(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-void RMCharacter::RemoveThis(CORO_PARAM, bool &result) {
+void RMCharacter::removeThis(CORO_PARAM, bool &result) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1666,7 +1666,7 @@ void RMCharacter::RemoveThis(CORO_PARAM, bool &result) {
 	if (bRemoveFromOT)
 		result = true;
 	else
-		CORO_INVOKE_1(RMItem::RemoveThis, result);
+		CORO_INVOKE_1(RMItem::removeThis, result);
 
 	CORO_END_CODE;
 }

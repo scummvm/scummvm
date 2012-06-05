@@ -251,13 +251,13 @@ public:
 	void SetScrollPosition(const RMPoint &scroll);
 
 	// Overloading of check whether to remove from active list
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Overloaded Draw
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded priority: it's based on Z ordering
-	virtual int Priority() {
+	virtual int priority() {
 		return m_z;
 	}
 
@@ -454,7 +454,7 @@ public:
 
 	void LinkToBoxes(RMGameBoxes *theBoxes);
 
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Update the position of a character
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);
@@ -517,8 +517,8 @@ public:
 	void WaitForFadeEnd(CORO_PARAM);
 
 	virtual void Unregister(void);
-	virtual void RemoveThis(CORO_PARAM, bool &result);
-	virtual int Priority(void);
+	virtual void removeThis(CORO_PARAM, bool &result);
+	virtual int priority(void);
 };
 
 

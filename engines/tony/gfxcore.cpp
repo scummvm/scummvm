@@ -1945,7 +1945,7 @@ void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 *       RMGfxClearTask Methods
 \****************************************************************************/
 
-int RMGfxClearTask::Priority() {
+int RMGfxClearTask::priority() {
 	// Maximum priority (must be done first)
 	return 1;
 }

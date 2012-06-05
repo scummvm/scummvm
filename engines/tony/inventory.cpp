@@ -231,7 +231,7 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	CORO_END_CODE;
 }
 
-void RMInventory::RemoveThis(CORO_PARAM, bool &result) {
+void RMInventory::removeThis(CORO_PARAM, bool &result) {
 	if (m_state == CLOSED)
 		result = true;
 	else

@@ -257,7 +257,7 @@ class RMGfxClearTask : public RMGfxTask {
 public:
 	virtual ~RMGfxClearTask() { }
 
-	int Priority();
+	int priority();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	virtual void removeThis(CORO_PARAM, bool &result);
 };

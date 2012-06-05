@@ -1798,7 +1798,7 @@ void RMText::SetMaxLineLength(int max) {
 	maxLineLength = max;
 }
 
-void RMText::RemoveThis(CORO_PARAM, bool &result) {
+void RMText::removeThis(CORO_PARAM, bool &result) {
 	// Here we can do checks on the number of frames, time spent, etc.
 	result = true;
 }
@@ -2064,7 +2064,7 @@ void RMTextDialog::SetAlwaysDisplay(void) {
 	m_bAlwaysDisplay = true;
 }
 
-void RMTextDialog::RemoveThis(CORO_PARAM, bool &result) {
+void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 	CORO_BEGIN_CONTEXT;
 	bool expired;
 	CORO_END_CONTEXT(_ctx);
@@ -2554,7 +2554,7 @@ void RMDialogChoice::Hide(CORO_PARAM) {
 }
 
 
-void RMDialogChoice::RemoveThis(CORO_PARAM, bool &result) {
+void RMDialogChoice::removeThis(CORO_PARAM, bool &result) {
 	result = bRemoveFromOT;
 }
 

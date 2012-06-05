@@ -220,7 +220,7 @@ public:
 	void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
 
 	// Overloaded function to decide when you delete the object from the OT list
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Overloading of the Draw to center the text, if necessary
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -261,7 +261,7 @@ public:
 	void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
 
 	// Overloaded function to decide when you delete the object from the OT list
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Overloaded de-registration
 	virtual void Unregister(void);
@@ -334,7 +334,7 @@ public:
 	bool IsItemSelected();
 	bool IsNormalItemSelected();
 
-	virtual void RemoveThis(CORO_PARAM, bool &result) {
+	virtual void removeThis(CORO_PARAM, bool &result) {
 		result = true;
 	}
 };
@@ -362,7 +362,7 @@ protected:
 	void SetSelected(CORO_PARAM, int pos);
 
 public:
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void Unregister(void);
 

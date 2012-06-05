@@ -98,7 +98,7 @@ public:
 	void Reset(void);
 
 	// Overload test for removal from OT list
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Overload the drawing of the inventory
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);

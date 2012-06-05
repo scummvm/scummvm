@@ -93,7 +93,7 @@ public:
 	void DoFrame(RMGfxTargetBuffer *bigBuf);
 
 	// Overloading of priorities
-	int Priority();
+	int priority();
 
 	// Overloading draw method
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -104,7 +104,7 @@ public:
 	}
 
 	// Overloading of the method to see if rising from the list
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Sets a new action as current
 	void SetAction(RMTonyAction action) {
@@ -272,9 +272,9 @@ public:
 	bool IsClosing();
 
 	// Overloaded methods
-	virtual int Priority();
+	virtual int priority();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Polling for the option screen
 	void DoFrame(CORO_PARAM, RMInput *m_input);
