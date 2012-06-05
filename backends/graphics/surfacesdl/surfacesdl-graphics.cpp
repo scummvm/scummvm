@@ -42,7 +42,7 @@
 #include "graphics/surface.h"
 
 struct GraphicsModeData {
-	const char * pluginName;
+	const char *pluginName;
 	uint scaleFactor;
 };
 
@@ -63,8 +63,8 @@ static const int s_gfxModeSwitchTable[][4] = {
 	};
 
 struct LegacyGraphicsMode {
-	const char * name;
-	const char * oldName;
+	const char *name;
+	const char *oldName;
 };
 
 
@@ -268,14 +268,14 @@ void static initGraphicsModes () {
 	GraphicsModeData gmd;
 	for (uint i = 0; i < plugins.size(); ++i) {
 		const Common::Array<uint> &factors = (*plugins[i])->getFactors();
-		const char * name = (*plugins[i])->getName();
-		const char * prettyName = (*plugins[i])->getPrettyName();
+		const char *name = (*plugins[i])->getName();
+		const char *prettyName = (*plugins[i])->getPrettyName();
 		gmd.pluginName = name;
 		for (uint j = 0; j < factors.size(); ++j) {
 			Common::String n1 = Common::String::format("%s%dx", name, factors[j]);
 			Common::String n2 = Common::String::format("%s%dx", prettyName, factors[j]);
-			char * s1 = new char[n1.size()+1];
-			char * s2 = new char[n2.size()+1];
+			char *s1 = new char[n1.size()+1];
+			char *s2 = new char[n2.size()+1];
 			strcpy(s1, n1.c_str());
 			strcpy(s2, n2.c_str());
 			gm.name = s1;
@@ -545,7 +545,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	OSystem::GraphicsMode gm = s_supportedGraphicsModes[mode];
 
-	const char * name = s_supportedGraphicsModesData[mode].pluginName;
+	const char *name = s_supportedGraphicsModesData[mode].pluginName;
 	newScaleFactor = s_supportedGraphicsModesData[mode].scaleFactor;
 	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
 
