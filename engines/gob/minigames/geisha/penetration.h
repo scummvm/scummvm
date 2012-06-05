@@ -36,6 +36,7 @@ class ANIFile;
 namespace Geisha {
 
 class Meter;
+class Mouth;
 
 /** Geisha's "Penetration" minigame. */
 class Penetration {
@@ -61,6 +62,19 @@ private:
 		Position(uint16 pX, uint16 pY);
 	};
 
+	enum MouthType {
+		kMouthTypeBite,
+		kMouthTypeKiss
+	};
+
+	struct ManagedMouth : public Position {
+		Mouth *mouth;
+		MouthType type;
+
+		ManagedMouth(uint16 pX, uint16 pY, MouthType t);
+		~ManagedMouth();
+	};
+
 	GobEngine *_vm;
 
 	bool _hasAccessPass;
@@ -74,6 +88,7 @@ private:
 	ANIObject *_sub;
 
 	Common::List<ANIObject *> _anims;
+	Common::List<ANIObject *> _mapAnims;
 
 	Meter *_shieldMeter;
 	Meter *_healthMeter;
@@ -83,14 +98,14 @@ private:
 	Surface *_map;
 	byte _mapTiles[kMapWidth * kMapHeight];
 
-	bool   _mapUpdate;
 	uint16 _mapX;
 	uint16 _mapY;
 
 	uint8 _subTileX;
 	uint8 _subTileY;
 
-	Common::List<Position> _shields;
+	Common::List<Position>     _shields;
+	Common::List<ManagedMouth> _mouths;
 
 
 	void init();
@@ -110,6 +125,7 @@ private:
 	bool isWalkable(byte tile) const;
 
 	void checkShields();
+	void checkMouths();
 };
 
 } // End of namespace Geisha

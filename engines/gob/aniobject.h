@@ -61,9 +61,9 @@ public:
 	void setMode(Mode mode);
 
 	/** Set the current position to the animation's default. */
-	void setPosition();
+	virtual void setPosition();
 	/** Set the current position. */
-	void setPosition(int16 x, int16 y);
+	virtual void setPosition(int16 x, int16 y);
 
 	/** Return the current position. */
 	void getPosition(int16 &x, int16 &y) const;
@@ -93,9 +93,9 @@ public:
 	bool lastFrame() const;
 
 	/** Draw the current frame onto the surface and return the affected rectangle. */
-	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	virtual bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 	/** Draw the current frame from the surface and return the affected rectangle. */
-	bool clear(Surface &dest, int16 &left , int16 &top, int16 &right, int16 &bottom);
+	virtual bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	/** Advance the animation to the next frame. */
 	virtual void advance();

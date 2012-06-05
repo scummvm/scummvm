@@ -80,6 +80,7 @@ MODULE_OBJS := \
 	minigames/geisha/oko.o \
 	minigames/geisha/meter.o \
 	minigames/geisha/diving.o \
+	minigames/geisha/mouth.o \
 	minigames/geisha/penetration.o \
 	save/savefile.o \
 	save/savehandler.o \

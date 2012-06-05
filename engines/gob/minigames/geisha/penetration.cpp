@@ -31,6 +31,7 @@
 
 #include "gob/minigames/geisha/penetration.h"
 #include "gob/minigames/geisha/meter.h"
+#include "gob/minigames/geisha/mouth.h"
 
 namespace Gob {
 
@@ -60,28 +61,39 @@ static const int kColorHealth = 15;
 static const int kColorBlack  = 10;
 static const int kColorFloor  = 13;
 
+enum Sprite {
+	kSpriteFloorShield = 25,
+	kSpriteExit        = 29,
+	kSpriteFloor       = 30,
+	kSpriteWall        = 31,
+	kSpriteMouthBite   = 32,
+	kSpriteMouthKiss   = 33
+};
+
 enum Animation {
-	kAnimationDriveS   =  4,
-	kAnimationDriveE   =  5,
-	kAnimationDriveN   =  6,
-	kAnimationDriveW   =  7,
-	kAnimationDriveSE  =  8,
-	kAnimationDriveNE  =  9,
-	kAnimationDriveSW  = 10,
-	kAnimationDriveNW  = 11,
-	kAnimationShootS   = 12,
-	kAnimationShootN   = 13,
-	kAnimationShootW   = 14,
-	kAnimationShootE   = 15,
-	kAnimationShootNE  = 16,
-	kAnimationShootSE  = 17,
-	kAnimationShootSW  = 18,
-	kAnimationShootNW  = 19,
-	kAnimationExplodeN = 28,
-	kAnimationExplodeS = 29,
-	kAnimationExplodeW = 30,
-	kAnimationExplodeE = 31,
-	kAnimationExit     = 32
+	kAnimationDriveS    =  4,
+	kAnimationDriveE    =  5,
+	kAnimationDriveN    =  6,
+	kAnimationDriveW    =  7,
+	kAnimationDriveSE   =  8,
+	kAnimationDriveNE   =  9,
+	kAnimationDriveSW   = 10,
+	kAnimationDriveNW   = 11,
+	kAnimationShootS    = 12,
+	kAnimationShootN    = 13,
+	kAnimationShootW    = 14,
+	kAnimationShootE    = 15,
+	kAnimationShootNE   = 16,
+	kAnimationShootSE   = 17,
+	kAnimationShootSW   = 18,
+	kAnimationShootNW   = 19,
+	kAnimationExplodeN  = 28,
+	kAnimationExplodeS  = 29,
+	kAnimationExplodeW  = 30,
+	kAnimationExplodeE  = 31,
+	kAnimationExit      = 32,
+	kAnimationMouthKiss = 33,
+	kAnimationMouthBite = 34
 };
 
 static const int kMapTileWidth  = 24;
@@ -197,8 +209,17 @@ Penetration::Position::Position(uint16 pX, uint16 pY) : x(pX), y(pY) {
 }
 
 
+Penetration::ManagedMouth::ManagedMouth(uint16 pX, uint16 pY, MouthType t) :
+	Position(pX, pY), mouth(0), type(t) {
+}
+
+Penetration::ManagedMouth::~ManagedMouth() {
+	delete mouth;
+}
+
+
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
-	_shieldMeter(0), _healthMeter(0), _floor(0), _mapUpdate(false), _mapX(0), _mapY(0),
+	_shieldMeter(0), _healthMeter(0), _floor(0), _mapX(0), _mapY(0),
 	_subTileX(0), _subTileY(0) {
 
 	_background = new Surface(320, 200, 1);
@@ -279,6 +300,9 @@ void Penetration::init() {
 
 	createMap();
 
+	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); m++)
+		_mapAnims.push_back(m->mouth);
+
 	_sub = new ANIObject(*_objects);
 
 	_sub->setAnimation(kAnimationDriveN);
@@ -289,7 +313,12 @@ void Penetration::init() {
 }
 
 void Penetration::deinit() {
+	_mapAnims.clear();
 	_anims.clear();
+
+	_shields.clear();
+
+	_mouths.clear();
 
 	delete _sub;
 
@@ -311,6 +340,8 @@ void Penetration::createMap() {
 
 	_shields.clear();
 
+	_mouths.clear();
+
 	_map->fill(kColorBlack);
 
 	// Draw the map tiles
@@ -323,23 +354,21 @@ void Penetration::createMap() {
 
 			switch (*mapTile) {
 			case 0: // Floor
-				_sprites->draw(*_map, 30, posX, posY);
+				_sprites->draw(*_map, kSpriteFloor, posX, posY);
 				break;
 
 			case 49: // Emergency exit (needs access pass)
 
 				if (_hasAccessPass) {
-					// Draw an exit. Now works like a regular exit
-					_sprites->draw(*_map, 29, posX, posY);
-					*mapTile = 51;
+					_sprites->draw(*_map, kSpriteExit, posX, posY);
+					*mapTile = 51; // Now works like a normal exit
 				} else
-					// Draw a wall
-					_sprites->draw(*_map, 31, posX, posY);
+					_sprites->draw(*_map, kSpriteWall, posX, posY);
 
 				break;
 
 			case 50: // Wall
-				_sprites->draw(*_map, 31, posX, posY);
+				_sprites->draw(*_map, kSpriteWall, posX, posY);
 				break;
 
 			case 51: // Regular exit
@@ -349,23 +378,27 @@ void Penetration::createMap() {
 
 					if (_floor == 2) {
 						if (!_hasAccessPass) {
-							// It's now a wall
-							_sprites->draw(*_map, 31, posX, posY);
-							*mapTile = 50;
+							_sprites->draw(*_map, kSpriteWall, posX, posY);
+							*mapTile = 50; // It's now a wall
 						} else
-							_sprites->draw(*_map, 29, posX, posY);
+							_sprites->draw(*_map, kSpriteExit, posX, posY);
 
 					} else
-						_sprites->draw(*_map, 29, posX, posY);
+						_sprites->draw(*_map, kSpriteExit, posX, posY);
 
 				} else
 					// Always works in test mode
-					_sprites->draw(*_map, 29, posX, posY);
+					_sprites->draw(*_map, kSpriteExit, posX, posY);
 
 				break;
 
 			case 52: // Left side of biting mouth
-				_sprites->draw(*_map, 32, posX, posY);
+				_mouths.push_back(ManagedMouth(x, y, kMouthTypeBite));
+
+				_mouths.back().mouth =
+					new Mouth(*_objects, *_sprites, kAnimationMouthBite, kSpriteMouthBite, kSpriteFloor);
+
+				_mouths.back().mouth->setPosition(posX, posY);
 				break;
 
 			case 53: // Right side of biting mouth
@@ -373,7 +406,12 @@ void Penetration::createMap() {
 				break;
 
 			case 54: // Left side of kissing mouth
-				_sprites->draw(*_map, 33, posX, posY);
+				_mouths.push_back(ManagedMouth(x, y, kMouthTypeKiss));
+
+				_mouths.back().mouth =
+					new Mouth(*_objects, *_sprites, kAnimationMouthKiss, kSpriteMouthKiss, kSpriteFloor);
+
+				_mouths.back().mouth->setPosition(posX, posY);
 				break;
 
 			case 55: // Right side of kissing mouth
@@ -381,8 +419,8 @@ void Penetration::createMap() {
 				break;
 
 			case 56: // Shield lying on the floor
-				_sprites->draw(*_map, 30, posX    , posY    ); // Floor
-				_sprites->draw(*_map, 25, posX + 4, posY + 8); // Shield
+				_sprites->draw(*_map, kSpriteFloor      , posX    , posY    ); // Floor
+				_sprites->draw(*_map, kSpriteFloorShield, posX + 4, posY + 8); // Shield
 
 				_map->fillRect(posX +  4, posY + 8, posX +  7, posY + 18, kColorFloor); // Area left to shield
 				_map->fillRect(posX + 17, posY + 8, posX + 20, posY + 18, kColorFloor); // Area right to shield
@@ -391,7 +429,7 @@ void Penetration::createMap() {
 				break;
 
 			case 57: // Start position
-				_sprites->draw(*_map, 30, posX, posY);
+				_sprites->draw(*_map, kSpriteFloor, posX, posY);
 				*mapTile = 0;
 
 				_subTileX = x;
@@ -403,8 +441,6 @@ void Penetration::createMap() {
 			}
 		}
 	}
-
-	_mapUpdate = true;
 }
 
 void Penetration::initScreen() {
@@ -479,12 +515,11 @@ void Penetration::moveSub(int x, int y, uint16 animation) {
 	_subTileX = (_mapX + (kMapTileWidth  / 2)) / kMapTileWidth;
 	_subTileY = (_mapY + (kMapTileHeight / 2)) / kMapTileHeight;
 
-	_mapUpdate = true;
-
 	if (_sub->getAnimation() != animation)
 		_sub->setAnimation(animation);
 
 	checkShields();
+	checkMouths();
 }
 
 void Penetration::checkShields() {
@@ -504,8 +539,36 @@ void Penetration::checkShields() {
 	}
 }
 
+void Penetration::checkMouths() {
+	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); ++m) {
+		if (!m->mouth->isDeactivated())
+			continue;
+
+		if ((( m->x      == _subTileX) && (m->y == _subTileY)) ||
+		    (((m->x + 1) == _subTileX) && (m->y == _subTileY))) {
+
+			m->mouth->activate();
+		}
+	}
+}
+
 void Penetration::updateAnims() {
 	int16 left = 0, top = 0, right = 0, bottom = 0;
+
+	// Clear the previous map animation frames
+	for (Common::List<ANIObject *>::iterator a = _mapAnims.reverse_begin();
+			 a != _mapAnims.end(); --a) {
+
+		(*a)->clear(*_map, left, top, right, bottom);
+	}
+
+	// Draw the current map animation frames
+	for (Common::List<ANIObject *>::iterator a = _mapAnims.begin();
+			 a != _mapAnims.end(); ++a) {
+
+		(*a)->draw(*_map, left, top, right, bottom);
+		(*a)->advance();
+	}
 
 	// Clear the previous animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
@@ -515,14 +578,11 @@ void Penetration::updateAnims() {
 			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 	}
 
-	if (_mapUpdate) {
-		_vm->_draw->_backSurface->blit(*_map, _mapX, _mapY,
-				_mapX + kPlayAreaWidth - 1, _mapY + kPlayAreaHeight - 1, kPlayAreaX, kPlayAreaY);
-		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kPlayAreaX, kPlayAreaY,
-				kPlayAreaX + kPlayAreaWidth - 1, kPlayAreaY + kPlayAreaHeight - 1);
-	}
-
-	_mapUpdate = false;
+	// Draw the map
+	_vm->_draw->_backSurface->blit(*_map, _mapX, _mapY,
+			_mapX + kPlayAreaWidth - 1, _mapY + kPlayAreaHeight - 1, kPlayAreaX, kPlayAreaY);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kPlayAreaX, kPlayAreaY,
+			kPlayAreaX + kPlayAreaWidth - 1, kPlayAreaY + kPlayAreaHeight - 1);
 
 	// Draw the current animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.begin();
