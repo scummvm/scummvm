@@ -62,24 +62,6 @@ static const int s_gfxModeSwitchTable[][4] = {
 		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
 	};
 
-struct LegacyGraphicsMode {
-	const char *name;
-	const char *oldName;
-};
-
-
-// Table for using old names for scalers in the configuration
-// to keep compatibiblity with old config files.
-static const LegacyGraphicsMode s_legacyGraphicsModes[] {
-	{ "supereagle2x", "supereagle" },
-	{ "dotmatrix2x", "dotmatrix" },
-	{ "sai2x", "2xsai" },
-	{ "normal1x", "1x" },
-	{ "normal2x", "2x" },
-	{ "normal3x", "3x" },
-	{ "supersai2x", "super2xsai" },
-};
-
 #ifdef USE_SCALERS
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 #endif
@@ -283,13 +265,6 @@ void static initGraphicsModes () {
 			gm.name = s1;
 			gm.description = s2;
 			gm.id = s_supportedGraphicsModes->size();
-			// Check if this is a legacy name
-			for (uint k = 0; k != ARRAYSIZE(s_legacyGraphicsModes); ++k) {
-				if (strcmp(s_legacyGraphicsModes[k].name, gm.name) == 0) {
-					gm.name = s_legacyGraphicsModes[k].oldName;
-					break;
-				}
-			}
 			s_supportedGraphicsModes->push_back(gm);
 			gmd.scaleFactor = factors[j];
 			s_supportedGraphicsModesData->push_back(gmd);
