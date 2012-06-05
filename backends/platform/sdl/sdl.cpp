@@ -73,6 +73,22 @@
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #include <SDL_clipboard.h>
 #endif
+struct LegacyGraphicsMode {
+	const char *name;
+	const char *oldName;
+};
+
+// Table for using old names for scalers in the configuration
+// to keep compatibiblity with old config files.
+static const LegacyGraphicsMode s_legacyGraphicsModes[] {
+	{ "supereagle2x", "supereagle" },
+	{ "dotmatrix2x", "dotmatrix" },
+	{ "sai2x", "2xsai" },
+	{ "normal1x", "1x" },
+	{ "normal2x", "2x" },
+	{ "normal3x", "3x" },
+	{ "supersai2x", "super2xsai" },
+};
 
 OSystem_SDL::OSystem_SDL()
 	:
@@ -235,6 +251,17 @@ void OSystem_SDL::initBackend() {
 
 	if (!_eventManager) {
 		_eventManager = new DefaultEventManager(_eventSourceWrapper ? _eventSourceWrapper : _eventSource);
+	}
+
+	// Search for legacy gfx_mode and replace it
+	if (ConfMan.hasKey("gfx_mode")) {
+		Common::String gfxMode(ConfMan.get("gfx_mode"));
+		for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
+			if (gfxMode == s_legacyGraphicsModes[i].oldName) {
+				ConfMan.set("gfx_mode", s_legacyGraphicsModes[i].name);
+				break;
+			}
+		}
 	}
 
 	if (_graphicsManager == 0) {
