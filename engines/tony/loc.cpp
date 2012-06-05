@@ -647,7 +647,7 @@ void RMItem::SetScrollPosition(const RMPoint &scroll) {
 	m_curScroll = scroll;
 }
 
-bool RMItem::DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
+bool RMItem::doFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 	int oldSprite = m_nCurSprite;
 
 	// Pattern 0 = Do not draw anything!
@@ -924,7 +924,7 @@ void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 	}
 
 	if (m_bFading) {
-		m_wip0r.DoFrame(&bigBuf, false);
+		m_wip0r.doFrame(&bigBuf, false);
 
 		m_nFadeStep++;
 
@@ -1499,7 +1499,7 @@ void RMCharacter::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 	g_system->unlockMutex(csMove);
 
 	// Invoke the DoFrame of the item
-	RMItem::DoFrame(bigBuf);
+	RMItem::doFrame(bigBuf);
 
 	CORO_END_CODE;
 }
@@ -2161,7 +2161,7 @@ void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 /**
  * Prepare a frame, adding the location to the OT list, and all the items that have changed animation frame.
  */
-void RMLocation::DoFrame(RMGfxTargetBuffer *bigBuf) {
+void RMLocation::doFrame(RMGfxTargetBuffer *bigBuf) {
 	int i;
 
 	// If the location is not in the OT list, add it in
@@ -2170,7 +2170,7 @@ void RMLocation::DoFrame(RMGfxTargetBuffer *bigBuf) {
 
 	// Process all the location items
 	for (i = 0; i < m_nItems; i++)
-		m_items[i].DoFrame(bigBuf);
+		m_items[i].doFrame(bigBuf);
 }
 
 

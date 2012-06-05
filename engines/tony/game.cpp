@@ -125,44 +125,44 @@ void mainSetPalesati(bool bPalesati) {
 RMOptionButton::RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState) {
 	RMResRaw raw(dwRes);
 	assert(raw.IsValid());
-	m_buf = new RMGfxSourceBuffer16(false);
-	m_buf->init(raw, raw.Width(), raw.Height());
+	_buf = new RMGfxSourceBuffer16(false);
+	_buf->init(raw, raw.Width(), raw.Height());
 
-	m_rect.SetRect(pt.x, pt.y, pt.x + raw.Width() - 1, pt.y + raw.Height() - 1);
-	m_bActive = false;
-	m_bHasGfx = true;
-	m_bDoubleState = bDoubleState;
+	_rect.SetRect(pt.x, pt.y, pt.x + raw.Width() - 1, pt.y + raw.Height() - 1);
+	_bActive = false;
+	_bHasGfx = true;
+	_bDoubleState = bDoubleState;
 }
 
 RMOptionButton::RMOptionButton(const RMRect &pt) {
-	m_rect = pt;
-	m_bActive = false;
-	m_bHasGfx = false;
-	m_bDoubleState = false;
-	m_buf = NULL;
+	_rect = pt;
+	_bActive = false;
+	_bHasGfx = false;
+	_bDoubleState = false;
+	_buf = NULL;
 }
 
 RMOptionButton::~RMOptionButton() {
-	if (m_bHasGfx)
-		delete m_buf;
+	if (_bHasGfx)
+		delete _buf;
 }
 
-bool RMOptionButton::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
-	if (!m_bDoubleState) {
-		if (m_rect.PtInRect(mousePos)) {
-			if (!m_bActive) {
-				m_bActive = true;
+bool RMOptionButton::doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
+	if (!_bDoubleState) {
+		if (_rect.PtInRect(mousePos)) {
+			if (!_bActive) {
+				_bActive = true;
 				return true;
 			}
 		} else {
-			if (m_bActive) {
-				m_bActive = false;
+			if (_bActive) {
+				_bActive = false;
 				return true;
 			}
 		}
 	} else {
-		if (bLeftClick && m_rect.PtInRect(mousePos)) {
-			m_bActive = !m_bActive;
+		if (bLeftClick && _rect.PtInRect(mousePos)) {
+			_bActive = !_bActive;
 			return true;
 		}
 	}
@@ -176,18 +176,18 @@ void RMOptionButton::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!m_bActive)
+	if (!_bActive)
 		return;
 
-	if (m_bHasGfx)
-		CORO_INVOKE_2(m_buf->draw, bigBuf, prim);
+	if (_bHasGfx)
+		CORO_INVOKE_2(_buf->draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
-void RMOptionButton::AddToList(RMGfxTargetBuffer &bigBuf) {
-	if (m_bHasGfx)
-		bigBuf.addPrim(new RMGfxPrimitive(this, m_rect));
+void RMOptionButton::addToList(RMGfxTargetBuffer &bigBuf) {
+	if (_bHasGfx)
+		bigBuf.addPrim(new RMGfxPrimitive(this, _rect));
 }
 
 /****************************************************************************\
@@ -197,74 +197,74 @@ void RMOptionButton::AddToList(RMGfxTargetBuffer &bigBuf) {
 RMOptionSlide::RMOptionSlide(const RMPoint &pt, int nRange, int nStartValue, int slideSize) {
 	RMResRaw *raw;
 
-	m_pos = pt;
-	m_nSlideSize = slideSize;
-	m_nMax = nRange;
-	m_nStep = 100 / m_nMax;
-	m_nValue = nStartValue;
+	_pos = pt;
+	_nSlideSize = slideSize;
+	_nMax = nRange;
+	_nStep = 100 / _nMax;
+	_nValue = nStartValue;
 
-	m_SliderCenter = NULL;
-	m_SliderLeft = NULL;
-	m_SliderRight = NULL;
-	m_SliderSingle = NULL;
+	_SliderCenter = NULL;
+	_SliderLeft = NULL;
+	_SliderRight = NULL;
+	_SliderSingle = NULL;
 
 	// Sliders
-	INIT_GFX16_FROMRAW(20029, m_SliderCenter);
-	INIT_GFX16_FROMRAW(20030, m_SliderLeft);
-	INIT_GFX16_FROMRAW(20031, m_SliderRight);
-	INIT_GFX16_FROMRAW(20032, m_SliderSingle);
+	INIT_GFX16_FROMRAW(20029, _SliderCenter);
+	INIT_GFX16_FROMRAW(20030, _SliderLeft);
+	INIT_GFX16_FROMRAW(20031, _SliderRight);
+	INIT_GFX16_FROMRAW(20032, _SliderSingle);
 
 	// Buttons
-	m_PushLeft = new RMOptionButton(RMRect(pt.x - 23, pt.y, pt.x - 23 + 22, pt.y + 26));
-	m_PushRight = new RMOptionButton(RMRect(pt.x + m_nSlideSize, pt.y, pt.x + m_nSlideSize + 5 + 22, pt.y + 26));
+	_PushLeft = new RMOptionButton(RMRect(pt.x - 23, pt.y, pt.x - 23 + 22, pt.y + 26));
+	_PushRight = new RMOptionButton(RMRect(pt.x + _nSlideSize, pt.y, pt.x + _nSlideSize + 5 + 22, pt.y + 26));
 }
 
 
 RMOptionSlide::~RMOptionSlide() {
-	delete m_SliderCenter;
-	m_SliderCenter = NULL;
-	delete m_SliderLeft;
-	m_SliderLeft = NULL;
-	delete m_SliderRight;
-	m_SliderRight = NULL;
-	delete m_SliderSingle;
-	m_SliderSingle = NULL;
+	delete _SliderCenter;
+	_SliderCenter = NULL;
+	delete _SliderLeft;
+	_SliderLeft = NULL;
+	delete _SliderRight;
+	_SliderRight = NULL;
+	delete _SliderSingle;
+	_SliderSingle = NULL;
 
-	delete m_PushLeft;
-	m_PushLeft = NULL;
-	delete m_PushRight;
-	m_PushRight = NULL;
+	delete _PushLeft;
+	_PushLeft = NULL;
+	delete _PushRight;
+	_PushRight = NULL;
 }
 
-bool RMOptionSlide::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
+bool RMOptionSlide::doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
 	bool bRefresh = false;
 
 	// Do the button DoFrame's
-	m_PushLeft->DoFrame(mousePos, bLeftClick, bRightClick);
-	m_PushRight->DoFrame(mousePos, bLeftClick, bRightClick);
+	_PushLeft->doFrame(mousePos, bLeftClick, bRightClick);
+	_PushRight->doFrame(mousePos, bLeftClick, bRightClick);
 
-	if (m_PushLeft->IsActive()) {
+	if (_PushLeft->isActive()) {
 		if (bLeftClick) {
 			bRefresh = true;
-			m_nValue--;
+			_nValue--;
 		} else if (bRightClick) {
 			bRefresh = true;
-			m_nValue -= 3;
+			_nValue -= 3;
 		}
-		if (m_nValue < 1)
-			m_nValue = 1;
-	} else if (m_PushRight->IsActive()) {
+		if (_nValue < 1)
+			_nValue = 1;
+	} else if (_PushRight->isActive()) {
 		bRefresh = true;
 
 		if (bLeftClick) {
 			bRefresh = true;
-			m_nValue++;
+			_nValue++;
 		} else if (bRightClick) {
 			bRefresh = true;
-			m_nValue += 3;
+			_nValue += 3;
 		}
-		if (m_nValue > m_nMax)
-			m_nValue = m_nMax;
+		if (_nValue > _nMax)
+			_nValue = _nMax;
 	}
 
 	return bRefresh;
@@ -279,37 +279,39 @@ void RMOptionSlide::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->pos = m_pos;
+	_ctx->pos = _pos;
 	_ctx->pos.x += 4;
 	_ctx->pos.y += 4;
 
-	_ctx->val = m_nValue * m_nStep;
-	if (_ctx->val < 1) _ctx->val = 1;
-	else if (_ctx->val > 100) _ctx->val = 100;
+	_ctx->val = _nValue * _nStep;
+	if (_ctx->val < 1)
+		_ctx->val = 1;
+	else if (_ctx->val > 100)
+		_ctx->val = 100;
 
 	if (_ctx->val == 1) {
 		prim->setDst(_ctx->pos);
-		CORO_INVOKE_2(m_SliderSingle->draw, bigBuf, prim);
+		CORO_INVOKE_2(_SliderSingle->draw, bigBuf, prim);
 	} else {
 		prim->setDst(_ctx->pos);
-		CORO_INVOKE_2(m_SliderLeft->draw, bigBuf, prim);
+		CORO_INVOKE_2(_SliderLeft->draw, bigBuf, prim);
 		_ctx->pos.x += 3;
 
 		for (_ctx->i = 1; _ctx->i < _ctx->val - 1; _ctx->i++) {
 			prim->setDst(_ctx->pos);
-			CORO_INVOKE_2(m_SliderCenter->draw, bigBuf, prim);
+			CORO_INVOKE_2(_SliderCenter->draw, bigBuf, prim);
 			_ctx->pos.x += 3;
 		}
 
 		prim->setDst(_ctx->pos);
-		CORO_INVOKE_2(m_SliderRight->draw, bigBuf, prim);
+		CORO_INVOKE_2(_SliderRight->draw, bigBuf, prim);
 		_ctx->pos.x += 3;
 	}
 
 	CORO_END_CODE;
 }
 
-void RMOptionSlide::AddToList(RMGfxTargetBuffer &bigBuf) {
+void RMOptionSlide::addToList(RMGfxTargetBuffer &bigBuf) {
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 }
 
@@ -320,68 +322,68 @@ void RMOptionSlide::AddToList(RMGfxTargetBuffer &bigBuf) {
 \****************************************************************************/
 
 RMOptionScreen::RMOptionScreen(void) {
-	m_nState = MENUNONE;
-	m_menu = NULL;
-	m_HideLoadSave = NULL;
-	m_QuitConfirm = NULL;
-	m_bQuitConfirm = false;
+	_nState = MENUNONE;
+	_menu = NULL;
+	_HideLoadSave = NULL;
+	_QuitConfirm = NULL;
+	_bQuitConfirm = false;
 
 	Create(RM_SX, RM_SY);
 
-	m_ButtonExit = NULL;
-	m_ButtonLoad = NULL;
-	m_ButtonSave = NULL;
-	m_ButtonGameMenu = NULL;
-	m_ButtonGfxMenu = NULL;
-	m_ButtonSoundMenu = NULL;
-	m_ButtonSave_ArrowLeft = NULL;
-	m_ButtonSave_ArrowRight = NULL;
-	m_bEditSaveName = false;
+	_ButtonExit = NULL;
+	_ButtonLoad = NULL;
+	_ButtonSave = NULL;
+	_ButtonGameMenu = NULL;
+	_ButtonGfxMenu = NULL;
+	_ButtonSoundMenu = NULL;
+	_ButtonSave_ArrowLeft = NULL;
+	_ButtonSave_ArrowRight = NULL;
+	_bEditSaveName = false;
 
 	int i;
 
 	for (i = 0; i < 6; i++) {
-		m_curThumb[i] = NULL;
-		m_ButtonSave_States[i] = NULL;
+		_curThumb[i] = NULL;
+		_ButtonSave_States[i] = NULL;
 	}
 
-	m_statePos = 0;
-	m_ButtonQuitYes = NULL;
-	m_ButtonQuitNo = NULL;
-	m_ButtonQuit = NULL;
-	m_SaveEasy = NULL;
-	m_SaveHard = NULL;
-	m_ButtonGfx_Tips = NULL;
-	m_ButtonSound_DubbingOn = NULL;
-	m_ButtonSound_MusicOn = NULL;
-	m_ButtonSound_SFXOn = NULL;
-	m_SlideTonySpeed = NULL;
-	m_SlideTextSpeed = NULL;
-	m_ButtonGame_Lock = NULL;
-	m_ButtonGfx_Anni30 = NULL;
-	m_SliderSound_Music = NULL;
-	m_ButtonGame_TimerizedText = NULL;
-	m_ButtonGfx_AntiAlias = NULL;
-	m_SliderSound_SFX = NULL;
-	m_ButtonGame_Scrolling = NULL;
-	m_ButtonGfx_Sottotitoli = NULL;
-	m_SliderSound_Dubbing = NULL;
-	m_ButtonGame_InterUp = NULL;
-	m_ButtonGfx_Trans = NULL;
+	_statePos = 0;
+	_ButtonQuitYes = NULL;
+	_ButtonQuitNo = NULL;
+	_ButtonQuit = NULL;
+	_SaveEasy = NULL;
+	_SaveHard = NULL;
+	_ButtonGfx_Tips = NULL;
+	_ButtonSound_DubbingOn = NULL;
+	_ButtonSound_MusicOn = NULL;
+	_ButtonSound_SFXOn = NULL;
+	_SlideTonySpeed = NULL;
+	_SlideTextSpeed = NULL;
+	_ButtonGame_Lock = NULL;
+	_ButtonGfx_Anni30 = NULL;
+	_SliderSound_Music = NULL;
+	_ButtonGame_TimerizedText = NULL;
+	_ButtonGfx_AntiAlias = NULL;
+	_SliderSound_SFX = NULL;
+	_ButtonGame_Scrolling = NULL;
+	_ButtonGfx_Sottotitoli = NULL;
+	_SliderSound_Dubbing = NULL;
+	_ButtonGame_InterUp = NULL;
+	_ButtonGfx_Trans = NULL;
 
-	m_FadeStep = 0;
-	m_FadeY = 0;
-	m_FadeTime = 0;
-	m_nEditPos = 0;
-	m_nLastState = MENUGAME;
+	_FadeStep = 0;
+	_FadeY = 0;
+	_FadeTime = 0;
+	_nEditPos = 0;
+	_nLastState = MENUGAME;
 }
 
 
 RMOptionScreen::~RMOptionScreen(void) {
-	CloseState();
+	closeState();
 }
 
-void RMOptionScreen::RefreshAll(CORO_PARAM) {
+void RMOptionScreen::refreshAll(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	RMGfxSourceBuffer16 *thumb;
 	RMText *title;
@@ -392,54 +394,54 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 	clearOT();
 
-	addPrim(new RMGfxPrimitive(m_menu));
+	addPrim(new RMGfxPrimitive(_menu));
 
-	if (m_bNoLoadSave)
-		addPrim(new RMGfxPrimitive(m_HideLoadSave, RMPoint(0, 401)));
+	if (_bNoLoadSave)
+		addPrim(new RMGfxPrimitive(_HideLoadSave, RMPoint(0, 401)));
 
-	if (m_bQuitConfirm) {
-		addPrim(new RMGfxPrimitive(m_QuitConfirm, RMPoint(270, 200)));
-		m_ButtonQuitYes->AddToList(*this);
-		m_ButtonQuitNo->AddToList(*this);
+	if (_bQuitConfirm) {
+		addPrim(new RMGfxPrimitive(_QuitConfirm, RMPoint(270, 200)));
+		_ButtonQuitYes->addToList(*this);
+		_ButtonQuitNo->addToList(*this);
 	}
 
-	m_ButtonExit->AddToList(*this);
+	_ButtonExit->addToList(*this);
 
-	if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
-		m_ButtonQuit->AddToList(*this);
-		m_ButtonLoad->AddToList(*this);
-		m_ButtonSave->AddToList(*this);
+	if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND) {
+		_ButtonQuit->addToList(*this);
+		_ButtonLoad->addToList(*this);
+		_ButtonSave->addToList(*this);
 	}
 
-	if (m_nState == MENUGAME) {
-		m_ButtonGame_Lock->AddToList(*this);
-		m_ButtonGame_TimerizedText->AddToList(*this);
-		m_ButtonGame_Scrolling->AddToList(*this);
-		m_ButtonGame_InterUp->AddToList(*this);
-		m_SlideTextSpeed->AddToList(*this);
-		m_SlideTonySpeed->AddToList(*this);
-	} else if (m_nState == MENUGFX) {
-		m_ButtonGfx_Anni30->AddToList(*this);
-		m_ButtonGfx_AntiAlias->AddToList(*this);
-		m_ButtonGfx_Sottotitoli->AddToList(*this);
-		m_ButtonGfx_Trans->AddToList(*this);
-		m_ButtonGfx_Tips->AddToList(*this);
-	} else if (m_nState == MENUSOUND) {
-		m_SliderSound_Dubbing->AddToList(*this);
-		m_SliderSound_Music->AddToList(*this);
-		m_SliderSound_SFX->AddToList(*this);
-		m_ButtonSound_DubbingOn->AddToList(*this);
-		m_ButtonSound_MusicOn->AddToList(*this);
-		m_ButtonSound_SFXOn->AddToList(*this);
+	if (_nState == MENUGAME) {
+		_ButtonGame_Lock->addToList(*this);
+		_ButtonGame_TimerizedText->addToList(*this);
+		_ButtonGame_Scrolling->addToList(*this);
+		_ButtonGame_InterUp->addToList(*this);
+		_SlideTextSpeed->addToList(*this);
+		_SlideTonySpeed->addToList(*this);
+	} else if (_nState == MENUGFX) {
+		_ButtonGfx_Anni30->addToList(*this);
+		_ButtonGfx_AntiAlias->addToList(*this);
+		_ButtonGfx_Sottotitoli->addToList(*this);
+		_ButtonGfx_Trans->addToList(*this);
+		_ButtonGfx_Tips->addToList(*this);
+	} else if (_nState == MENUSOUND) {
+		_SliderSound_Dubbing->addToList(*this);
+		_SliderSound_Music->addToList(*this);
+		_SliderSound_SFX->addToList(*this);
+		_ButtonSound_DubbingOn->addToList(*this);
+		_ButtonSound_MusicOn->addToList(*this);
+		_ButtonSound_SFXOn->addToList(*this);
 	}
 
 	_ctx->thumb = NULL;
 	_ctx->title = NULL;
 	Common::fill(&_ctx->num[0], &_ctx->num[6], (RMText *)NULL);
 
-	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
+	if (_nState == MENULOAD || _nState == MENUSAVE) {
 		_ctx->title = new RMText;
-		if (m_nState == MENULOAD) {
+		if (_nState == MENULOAD) {
 			RMMessage msg(10);
 			_ctx->title->WriteText(msg[0], 1);
 		} else {
@@ -449,72 +451,72 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 
 		addPrim(new RMGfxPrimitive(_ctx->title, RMPoint(320, 10)));
 
-		if (m_curThumbDiff[0] == 0)
-			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 57)));
-		else if (m_curThumbDiff[0] == 1)
-			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 57)));
-		if (m_curThumbDiff[1] == 0)
-			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 57)));
-		else if (m_curThumbDiff[1] == 1)
-			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 57)));
-		if (m_curThumbDiff[2] == 0)
-			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 57)));
-		else if (m_curThumbDiff[2] == 1)
-			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 57)));
-		if (m_curThumbDiff[3] == 0)
-			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 239)));
-		else if (m_curThumbDiff[3] == 1)
-			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 239)));
-		if (m_curThumbDiff[4] == 0)
-			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 239)));
-		else if (m_curThumbDiff[4] == 1)
-			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 239)));
-		if (m_curThumbDiff[5] == 0)
-			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 239)));
-		else if (m_curThumbDiff[5] == 1)
-			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 239)));
+		if (_curThumbDiff[0] == 0)
+			addPrim(new RMGfxPrimitive(_SaveHard, RMPoint(48, 57)));
+		else if (_curThumbDiff[0] == 1)
+			addPrim(new RMGfxPrimitive(_SaveEasy, RMPoint(48, 57)));
+		if (_curThumbDiff[1] == 0)
+			addPrim(new RMGfxPrimitive(_SaveHard, RMPoint(240, 57)));
+		else if (_curThumbDiff[1] == 1)
+			addPrim(new RMGfxPrimitive(_SaveEasy, RMPoint(240, 57)));
+		if (_curThumbDiff[2] == 0)
+			addPrim(new RMGfxPrimitive(_SaveHard, RMPoint(432, 57)));
+		else if (_curThumbDiff[2] == 1)
+			addPrim(new RMGfxPrimitive(_SaveEasy, RMPoint(432, 57)));
+		if (_curThumbDiff[3] == 0)
+			addPrim(new RMGfxPrimitive(_SaveHard, RMPoint(48, 239)));
+		else if (_curThumbDiff[3] == 1)
+			addPrim(new RMGfxPrimitive(_SaveEasy, RMPoint(48, 239)));
+		if (_curThumbDiff[4] == 0)
+			addPrim(new RMGfxPrimitive(_SaveHard, RMPoint(240, 239)));
+		else if (_curThumbDiff[4] == 1)
+			addPrim(new RMGfxPrimitive(_SaveEasy, RMPoint(240, 239)));
+		if (_curThumbDiff[5] == 0)
+			addPrim(new RMGfxPrimitive(_SaveHard, RMPoint(432, 239)));
+		else if (_curThumbDiff[5] == 1)
+			addPrim(new RMGfxPrimitive(_SaveEasy, RMPoint(432, 239)));
 
-		if (m_curThumb[0] && !(m_bEditSaveName && m_nEditPos == 0))
-			addPrim(new RMGfxPrimitive(m_curThumb[0], RMPoint(48, 57)));
-		if (m_curThumb[1] && !(m_bEditSaveName && m_nEditPos == 1))
-			addPrim(new RMGfxPrimitive(m_curThumb[1], RMPoint(240, 57)));
-		if (m_curThumb[2] && !(m_bEditSaveName && m_nEditPos == 2))
-			addPrim(new RMGfxPrimitive(m_curThumb[2], RMPoint(432, 57)));
-		if (m_curThumb[3] && !(m_bEditSaveName && m_nEditPos == 3))
-			addPrim(new RMGfxPrimitive(m_curThumb[3], RMPoint(48, 239)));
-		if (m_curThumb[4] && !(m_bEditSaveName && m_nEditPos == 4))
-			addPrim(new RMGfxPrimitive(m_curThumb[4], RMPoint(240, 239)));
-		if (m_curThumb[5] && !(m_bEditSaveName && m_nEditPos == 5))
-			addPrim(new RMGfxPrimitive(m_curThumb[5], RMPoint(432, 239)));
+		if (_curThumb[0] && !(_bEditSaveName && _nEditPos == 0))
+			addPrim(new RMGfxPrimitive(_curThumb[0], RMPoint(48, 57)));
+		if (_curThumb[1] && !(_bEditSaveName && _nEditPos == 1))
+			addPrim(new RMGfxPrimitive(_curThumb[1], RMPoint(240, 57)));
+		if (_curThumb[2] && !(_bEditSaveName && _nEditPos == 2))
+			addPrim(new RMGfxPrimitive(_curThumb[2], RMPoint(432, 57)));
+		if (_curThumb[3] && !(_bEditSaveName && _nEditPos == 3))
+			addPrim(new RMGfxPrimitive(_curThumb[3], RMPoint(48, 239)));
+		if (_curThumb[4] && !(_bEditSaveName && _nEditPos == 4))
+			addPrim(new RMGfxPrimitive(_curThumb[4], RMPoint(240, 239)));
+		if (_curThumb[5] && !(_bEditSaveName && _nEditPos == 5))
+			addPrim(new RMGfxPrimitive(_curThumb[5], RMPoint(432, 239)));
 
-		if (m_bEditSaveName) {
+		if (_bEditSaveName) {
 			_ctx->thumb = new RMGfxSourceBuffer16;
 			_ctx->thumb->init((byte *)_vm->getThumbnail(), 640 / 4, 480 / 4);
 
-			if (m_nEditPos == 0)
+			if (_nEditPos == 0)
 				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 57)));
-			else if (m_nEditPos == 1)
+			else if (_nEditPos == 1)
 				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 57)));
-			else if (m_nEditPos == 2)
+			else if (_nEditPos == 2)
 				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 57)));
-			else if (m_nEditPos == 3)
+			else if (_nEditPos == 3)
 				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 239)));
-			else if (m_nEditPos == 4)
+			else if (_nEditPos == 4)
 				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 239)));
-			else if (m_nEditPos == 5)
+			else if (_nEditPos == 5)
 				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 239)));
 		}
 
 		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++) {
 			RMString s;
 
-			if (m_bEditSaveName && m_nEditPos == _ctx->i)
-				s.Format("%02d)%s*", m_statePos + _ctx->i, m_EditName);
+			if (_bEditSaveName && _nEditPos == _ctx->i)
+				s.Format("%02d)%s*", _statePos + _ctx->i, _EditName);
 			else {
-				if (m_statePos == 0 && _ctx->i == 0)
+				if (_statePos == 0 && _ctx->i == 0)
 					s.Format("Autosave");
 				else
-					s.Format("%02d)%s", m_statePos + _ctx->i, (const char *)m_curThumbName[_ctx->i]);
+					s.Format("%02d)%s", _statePos + _ctx->i, (const char *)_curThumbName[_ctx->i]);
 			}
 
 			_ctx->num[_ctx->i] = new RMText;
@@ -529,13 +531,13 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 		addPrim(new RMGfxPrimitive(_ctx->num[4], RMPoint(247 - 3, 362 + 14)));
 		addPrim(new RMGfxPrimitive(_ctx->num[5], RMPoint(439 - 3, 362 + 14)));
 
-		m_ButtonSave_ArrowLeft->AddToList(*this);
-		m_ButtonSave_ArrowRight->AddToList(*this);
+		_ButtonSave_ArrowLeft->addToList(*this);
+		_ButtonSave_ArrowRight->addToList(*this);
 	}
 
 	CORO_INVOKE_0(drawOT);
 
-	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
+	if (_nState == MENULOAD || _nState == MENUSAVE) {
 		if (_ctx->thumb) delete _ctx->thumb;
 		if (_ctx->title) delete _ctx->title;
 
@@ -546,36 +548,36 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::RefreshThumbnails(void) {
+void RMOptionScreen::refreshThumbnails(void) {
 	int i;
 
 	for (i = 0; i < 6; i++) {
-		if (m_curThumb[i])
-			delete m_curThumb[i];
+		if (_curThumb[i])
+			delete _curThumb[i];
 
-		m_curThumb[i] = new RMGfxSourceBuffer16;
-		m_curThumb[i]->Create(640 / 4, 480 / 4);
-		if (!LoadThumbnailFromSaveState(m_statePos + i, *m_curThumb[i], m_curThumbName[i], m_curThumbDiff[i])) {
-			delete m_curThumb[i];
-			m_curThumb[i] = NULL;
-			m_curThumbName[i] = "";
-			m_curThumbDiff[i] = 11;
+		_curThumb[i] = new RMGfxSourceBuffer16;
+		_curThumb[i]->Create(640 / 4, 480 / 4);
+		if (!loadThumbnailFromSaveState(_statePos + i, *_curThumb[i], _curThumbName[i], _curThumbDiff[i])) {
+			delete _curThumb[i];
+			_curThumb[i] = NULL;
+			_curThumbName[i] = "";
+			_curThumbDiff[i] = 11;
 		}
 	}
 }
 
 
-void RMOptionScreen::InitState(CORO_PARAM) {
+void RMOptionScreen::initState(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	RMResRaw *raw;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND)
-		_ctx->raw = new RMResRaw(20000 + m_nState);
-	else if (m_nState == MENULOAD || m_nState == MENUSAVE) {
-		if (m_bAlterGfx)
+	if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND)
+		_ctx->raw = new RMResRaw(20000 + _nState);
+	else if (_nState == MENULOAD || _nState == MENUSAVE) {
+		if (_bAlterGfx)
 			_ctx->raw = new RMResRaw(20024);
 		else
 			_ctx->raw = new RMResRaw(20003);
@@ -584,415 +586,415 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 	}
 
 	assert(_ctx->raw->IsValid());
-	assert(m_menu == NULL);
-	m_menu = new RMGfxSourceBuffer16(false);
-	m_menu->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+	assert(_menu == NULL);
+	_menu = new RMGfxSourceBuffer16(false);
+	_menu->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
 	delete _ctx->raw;
 
-	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
-		if (m_bAlterGfx) {
-			assert(m_ButtonExit == NULL);
-			m_ButtonExit = new RMOptionButton(20025, RMPoint(561, 406));
+	if (_nState == MENULOAD || _nState == MENUSAVE) {
+		if (_bAlterGfx) {
+			assert(_ButtonExit == NULL);
+			_ButtonExit = new RMOptionButton(20025, RMPoint(561, 406));
 		} else {
-			assert(m_ButtonExit == NULL);
-			m_ButtonExit = new RMOptionButton(20012, RMPoint(560, 404));
+			assert(_ButtonExit == NULL);
+			_ButtonExit = new RMOptionButton(20012, RMPoint(560, 404));
 		}
 
-		INIT_GFX8_FROMRAW(_ctx->raw, 20036, m_SaveEasy);
-		INIT_GFX8_FROMRAW(_ctx->raw, 20037, m_SaveHard);
+		INIT_GFX8_FROMRAW(_ctx->raw, 20036, _SaveEasy);
+		INIT_GFX8_FROMRAW(_ctx->raw, 20037, _SaveHard);
 
-		RefreshThumbnails();
+		refreshThumbnails();
 
-		assert(m_ButtonSave_States[0] == NULL);
-		m_ButtonSave_States[0] = new RMOptionButton(RMRect(48, 57, 48 + 160, 57 + 120));
-		assert(m_ButtonSave_States[1] == NULL);
-		m_ButtonSave_States[1] = new RMOptionButton(RMRect(240, 57, 240 + 160, 57 + 120));
-		assert(m_ButtonSave_States[2] == NULL);
-		m_ButtonSave_States[2] = new RMOptionButton(RMRect(432, 57, 432 + 160, 57 + 120));
-		assert(m_ButtonSave_States[3] == NULL);
-		m_ButtonSave_States[3] = new RMOptionButton(RMRect(48, 239, 48 + 160, 239 + 120));
-		assert(m_ButtonSave_States[4] == NULL);
-		m_ButtonSave_States[4] = new RMOptionButton(RMRect(240, 239, 240 + 160, 239 + 120));
-		assert(m_ButtonSave_States[5] == NULL);
-		m_ButtonSave_States[5] = new RMOptionButton(RMRect(432, 239, 432 + 160, 239 + 120));
+		assert(_ButtonSave_States[0] == NULL);
+		_ButtonSave_States[0] = new RMOptionButton(RMRect(48, 57, 48 + 160, 57 + 120));
+		assert(_ButtonSave_States[1] == NULL);
+		_ButtonSave_States[1] = new RMOptionButton(RMRect(240, 57, 240 + 160, 57 + 120));
+		assert(_ButtonSave_States[2] == NULL);
+		_ButtonSave_States[2] = new RMOptionButton(RMRect(432, 57, 432 + 160, 57 + 120));
+		assert(_ButtonSave_States[3] == NULL);
+		_ButtonSave_States[3] = new RMOptionButton(RMRect(48, 239, 48 + 160, 239 + 120));
+		assert(_ButtonSave_States[4] == NULL);
+		_ButtonSave_States[4] = new RMOptionButton(RMRect(240, 239, 240 + 160, 239 + 120));
+		assert(_ButtonSave_States[5] == NULL);
+		_ButtonSave_States[5] = new RMOptionButton(RMRect(432, 239, 432 + 160, 239 + 120));
 
-		if (m_bAlterGfx) {
-			assert(m_ButtonSave_ArrowLeft == NULL);
-			m_ButtonSave_ArrowLeft = new RMOptionButton(20026, RMPoint(3, 196));
-			assert(m_ButtonSave_ArrowRight == NULL);
-			m_ButtonSave_ArrowRight = new RMOptionButton(20027, RMPoint(601, 197));
+		if (_bAlterGfx) {
+			assert(_ButtonSave_ArrowLeft == NULL);
+			_ButtonSave_ArrowLeft = new RMOptionButton(20026, RMPoint(3, 196));
+			assert(_ButtonSave_ArrowRight == NULL);
+			_ButtonSave_ArrowRight = new RMOptionButton(20027, RMPoint(601, 197));
 		} else {
-			assert(m_ButtonSave_ArrowLeft == NULL);
-			m_ButtonSave_ArrowLeft = new RMOptionButton(20013, RMPoint(0, 197));
-			assert(m_ButtonSave_ArrowRight == NULL);
-			m_ButtonSave_ArrowRight = new RMOptionButton(20014, RMPoint(601, 197));
+			assert(_ButtonSave_ArrowLeft == NULL);
+			_ButtonSave_ArrowLeft = new RMOptionButton(20013, RMPoint(0, 197));
+			assert(_ButtonSave_ArrowRight == NULL);
+			_ButtonSave_ArrowRight = new RMOptionButton(20014, RMPoint(601, 197));
 		}
-	} else if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
-		assert(m_ButtonExit == NULL);
-		m_ButtonExit = new RMOptionButton(20005, RMPoint(560, 405));
-		assert(m_ButtonQuit == NULL);
-		m_ButtonQuit = new RMOptionButton(20020, RMPoint(7, 408));
-		assert(m_ButtonLoad == NULL);
-		m_ButtonLoad = new RMOptionButton(20006, RMPoint(231, 401));
-		assert(m_ButtonSave == NULL);
-		m_ButtonSave = new RMOptionButton(20007, RMPoint(325, 401));
+	} else if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND) {
+		assert(_ButtonExit == NULL);
+		_ButtonExit = new RMOptionButton(20005, RMPoint(560, 405));
+		assert(_ButtonQuit == NULL);
+		_ButtonQuit = new RMOptionButton(20020, RMPoint(7, 408));
+		assert(_ButtonLoad == NULL);
+		_ButtonLoad = new RMOptionButton(20006, RMPoint(231, 401));
+		assert(_ButtonSave == NULL);
+		_ButtonSave = new RMOptionButton(20007, RMPoint(325, 401));
 
-		assert(m_ButtonGameMenu == NULL);
-		m_ButtonGameMenu = new RMOptionButton(RMRect(24, 32, 118, 64));
-		assert(m_ButtonGfxMenu == NULL);
-		m_ButtonGfxMenu = new RMOptionButton(RMRect(118, 32, 212, 64));
-		assert(m_ButtonSoundMenu == NULL);
-		m_ButtonSoundMenu = new RMOptionButton(RMRect(212, 32, 306, 64));
+		assert(_ButtonGameMenu == NULL);
+		_ButtonGameMenu = new RMOptionButton(RMRect(24, 32, 118, 64));
+		assert(_ButtonGfxMenu == NULL);
+		_ButtonGfxMenu = new RMOptionButton(RMRect(118, 32, 212, 64));
+		assert(_ButtonSoundMenu == NULL);
+		_ButtonSoundMenu = new RMOptionButton(RMRect(212, 32, 306, 64));
 
 		_ctx->raw = new RMResRaw(20021);
 		assert(_ctx->raw->IsValid());
-		assert(m_QuitConfirm == NULL);
-		m_QuitConfirm = new RMGfxSourceBuffer16(false);
-		m_QuitConfirm->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+		assert(_QuitConfirm == NULL);
+		_QuitConfirm = new RMGfxSourceBuffer16(false);
+		_QuitConfirm->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
 		delete _ctx->raw;
 
-		assert(m_ButtonQuitYes == NULL);
-		m_ButtonQuitYes = new RMOptionButton(20022, RMPoint(281, 265));
-		m_ButtonQuitYes->setPriority(30);
-		assert(m_ButtonQuitNo == NULL);
-		m_ButtonQuitNo = new RMOptionButton(20023, RMPoint(337, 264));
-		m_ButtonQuitNo->setPriority(30);
+		assert(_ButtonQuitYes == NULL);
+		_ButtonQuitYes = new RMOptionButton(20022, RMPoint(281, 265));
+		_ButtonQuitYes->setPriority(30);
+		assert(_ButtonQuitNo == NULL);
+		_ButtonQuitNo = new RMOptionButton(20023, RMPoint(337, 264));
+		_ButtonQuitNo->setPriority(30);
 
-		if (m_bNoLoadSave) {
+		if (_bNoLoadSave) {
 			_ctx->raw = new RMResRaw(20028);
 			assert(_ctx->raw->IsValid());
-			assert(m_HideLoadSave == NULL);
-			m_HideLoadSave = new RMGfxSourceBuffer16(false);
-			m_HideLoadSave->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+			assert(_HideLoadSave == NULL);
+			_HideLoadSave = new RMGfxSourceBuffer16(false);
+			_HideLoadSave->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
 			delete _ctx->raw;
 		}
 
 		// Menu GAME
-		if (m_nState == MENUGAME) {
-			assert(m_ButtonGame_Lock == NULL);
-			m_ButtonGame_Lock = new RMOptionButton(20008, RMPoint(176, 262), true);
-			m_ButtonGame_Lock->SetActiveState(GLOBALS.bCfgInvLocked);
-			assert(m_ButtonGame_TimerizedText == NULL);
-			m_ButtonGame_TimerizedText = new RMOptionButton(20009, RMPoint(463, 273), true);
-			m_ButtonGame_TimerizedText->SetActiveState(!GLOBALS.bCfgTimerizedText);
-			assert(m_ButtonGame_Scrolling == NULL);
-			m_ButtonGame_Scrolling = new RMOptionButton(20010, RMPoint(315, 263), true);
-			m_ButtonGame_Scrolling->SetActiveState(GLOBALS.bCfgInvNoScroll);
-			assert(m_ButtonGame_InterUp == NULL);
-			m_ButtonGame_InterUp = new RMOptionButton(20011, RMPoint(36, 258), true);
-			m_ButtonGame_InterUp->SetActiveState(GLOBALS.bCfgInvUp);
+		if (_nState == MENUGAME) {
+			assert(_ButtonGame_Lock == NULL);
+			_ButtonGame_Lock = new RMOptionButton(20008, RMPoint(176, 262), true);
+			_ButtonGame_Lock->setActiveState(GLOBALS.bCfgInvLocked);
+			assert(_ButtonGame_TimerizedText == NULL);
+			_ButtonGame_TimerizedText = new RMOptionButton(20009, RMPoint(463, 273), true);
+			_ButtonGame_TimerizedText->setActiveState(!GLOBALS.bCfgTimerizedText);
+			assert(_ButtonGame_Scrolling == NULL);
+			_ButtonGame_Scrolling = new RMOptionButton(20010, RMPoint(315, 263), true);
+			_ButtonGame_Scrolling->setActiveState(GLOBALS.bCfgInvNoScroll);
+			assert(_ButtonGame_InterUp == NULL);
+			_ButtonGame_InterUp = new RMOptionButton(20011, RMPoint(36, 258), true);
+			_ButtonGame_InterUp->setActiveState(GLOBALS.bCfgInvUp);
 
-			assert(m_SlideTextSpeed == NULL);
-			m_SlideTextSpeed = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgTextSpeed);
-			assert(m_SlideTonySpeed == NULL);
-			m_SlideTonySpeed = new RMOptionSlide(RMPoint(165, 226), 5, GLOBALS.nCfgTonySpeed);
+			assert(_SlideTextSpeed == NULL);
+			_SlideTextSpeed = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgTextSpeed);
+			assert(_SlideTonySpeed == NULL);
+			_SlideTonySpeed = new RMOptionSlide(RMPoint(165, 226), 5, GLOBALS.nCfgTonySpeed);
 		}
 		// Menu Graphics
-		else if (m_nState == MENUGFX) {
-			assert(m_ButtonGfx_Anni30 == NULL);
-			m_ButtonGfx_Anni30 = new RMOptionButton(20015, RMPoint(247, 178), true);
-			m_ButtonGfx_Anni30->SetActiveState(GLOBALS.bCfgAnni30);
-			assert(m_ButtonGfx_AntiAlias == NULL);
-			m_ButtonGfx_AntiAlias = new RMOptionButton(20016, RMPoint(430, 83), true);
-			m_ButtonGfx_AntiAlias->SetActiveState(!GLOBALS.bCfgAntiAlias);
-			assert(m_ButtonGfx_Sottotitoli == NULL);
-			m_ButtonGfx_Sottotitoli = new RMOptionButton(20017, RMPoint(98, 82), true);
-			m_ButtonGfx_Sottotitoli->SetActiveState(!GLOBALS.bCfgSottotitoli);
-			assert(m_ButtonGfx_Tips == NULL);
-			m_ButtonGfx_Tips = new RMOptionButton(20018, RMPoint(431, 246), true);
-			m_ButtonGfx_Tips->SetActiveState(GLOBALS.bCfgInterTips);
-			assert(m_ButtonGfx_Trans == NULL);
-			m_ButtonGfx_Trans = new RMOptionButton(20019, RMPoint(126, 271), true);
-			m_ButtonGfx_Trans->SetActiveState(!GLOBALS.bCfgTransparence);
+		else if (_nState == MENUGFX) {
+			assert(_ButtonGfx_Anni30 == NULL);
+			_ButtonGfx_Anni30 = new RMOptionButton(20015, RMPoint(247, 178), true);
+			_ButtonGfx_Anni30->setActiveState(GLOBALS.bCfgAnni30);
+			assert(_ButtonGfx_AntiAlias == NULL);
+			_ButtonGfx_AntiAlias = new RMOptionButton(20016, RMPoint(430, 83), true);
+			_ButtonGfx_AntiAlias->setActiveState(!GLOBALS.bCfgAntiAlias);
+			assert(_ButtonGfx_Sottotitoli == NULL);
+			_ButtonGfx_Sottotitoli = new RMOptionButton(20017, RMPoint(98, 82), true);
+			_ButtonGfx_Sottotitoli->setActiveState(!GLOBALS.bCfgSottotitoli);
+			assert(_ButtonGfx_Tips == NULL);
+			_ButtonGfx_Tips = new RMOptionButton(20018, RMPoint(431, 246), true);
+			_ButtonGfx_Tips->setActiveState(GLOBALS.bCfgInterTips);
+			assert(_ButtonGfx_Trans == NULL);
+			_ButtonGfx_Trans = new RMOptionButton(20019, RMPoint(126, 271), true);
+			_ButtonGfx_Trans->setActiveState(!GLOBALS.bCfgTransparence);
 
-		} else if (m_nState == MENUSOUND) {
-			assert(m_SliderSound_Dubbing == NULL);
-			m_SliderSound_Dubbing = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgDubbingVolume);
-			assert(m_SliderSound_Music == NULL);
-			m_SliderSound_Music = new RMOptionSlide(RMPoint(165, 226), 10, GLOBALS.nCfgMusicVolume);
-			assert(m_SliderSound_SFX == NULL);
-			m_SliderSound_SFX = new RMOptionSlide(RMPoint(165, 330), 10, GLOBALS.nCfgSFXVolume);
+		} else if (_nState == MENUSOUND) {
+			assert(_SliderSound_Dubbing == NULL);
+			_SliderSound_Dubbing = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgDubbingVolume);
+			assert(_SliderSound_Music == NULL);
+			_SliderSound_Music = new RMOptionSlide(RMPoint(165, 226), 10, GLOBALS.nCfgMusicVolume);
+			assert(_SliderSound_SFX == NULL);
+			_SliderSound_SFX = new RMOptionSlide(RMPoint(165, 330), 10, GLOBALS.nCfgSFXVolume);
 
-			assert(m_ButtonSound_DubbingOn == NULL);
-			m_ButtonSound_DubbingOn = new RMOptionButton(20033, RMPoint(339, 75), true);
-			m_ButtonSound_DubbingOn->SetActiveState(GLOBALS.bCfgDubbing);
-			assert(m_ButtonSound_MusicOn == NULL);
-			m_ButtonSound_MusicOn = new RMOptionButton(20034, RMPoint(338, 179), true);
-			m_ButtonSound_MusicOn->SetActiveState(GLOBALS.bCfgMusic);
-			assert(m_ButtonSound_SFXOn == NULL);
-			m_ButtonSound_SFXOn = new RMOptionButton(20035, RMPoint(338, 283), true);
-			m_ButtonSound_SFXOn->SetActiveState(GLOBALS.bCfgSFX);
+			assert(_ButtonSound_DubbingOn == NULL);
+			_ButtonSound_DubbingOn = new RMOptionButton(20033, RMPoint(339, 75), true);
+			_ButtonSound_DubbingOn->setActiveState(GLOBALS.bCfgDubbing);
+			assert(_ButtonSound_MusicOn == NULL);
+			_ButtonSound_MusicOn = new RMOptionButton(20034, RMPoint(338, 179), true);
+			_ButtonSound_MusicOn->setActiveState(GLOBALS.bCfgMusic);
+			assert(_ButtonSound_SFXOn == NULL);
+			_ButtonSound_SFXOn = new RMOptionButton(20035, RMPoint(338, 283), true);
+			_ButtonSound_SFXOn->setActiveState(GLOBALS.bCfgSFX);
 		}
 	}
 
-	CORO_INVOKE_0(RefreshAll);
+	CORO_INVOKE_0(refreshAll);
 
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::CloseState(void) {
-	delete m_menu;
-	m_menu = NULL;
+void RMOptionScreen::closeState(void) {
+	delete _menu;
+	_menu = NULL;
 
-	delete m_ButtonExit;
-	m_ButtonExit = NULL;
+	delete _ButtonExit;
+	_ButtonExit = NULL;
 
-	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
+	if (_nState == MENULOAD || _nState == MENUSAVE) {
 		int i;
 
 		for (i = 0; i < 6; i++) {
-			if (m_curThumb[i] != NULL) {
-				delete m_curThumb[i];
-				m_curThumb[i] = NULL;
+			if (_curThumb[i] != NULL) {
+				delete _curThumb[i];
+				_curThumb[i] = NULL;
 			}
 
-			delete m_ButtonSave_States[i];
-			m_ButtonSave_States[i] = NULL;
+			delete _ButtonSave_States[i];
+			_ButtonSave_States[i] = NULL;
 		}
 
-		delete m_ButtonSave_ArrowLeft;
-		m_ButtonSave_ArrowLeft = NULL;
-		delete m_ButtonSave_ArrowRight;
-		m_ButtonSave_ArrowRight = NULL;
+		delete _ButtonSave_ArrowLeft;
+		_ButtonSave_ArrowLeft = NULL;
+		delete _ButtonSave_ArrowRight;
+		_ButtonSave_ArrowRight = NULL;
 
-		delete m_SaveEasy;
-		m_SaveEasy = NULL;
-		delete m_SaveHard;
-		m_SaveHard = NULL;
+		delete _SaveEasy;
+		_SaveEasy = NULL;
+		delete _SaveHard;
+		_SaveHard = NULL;
 	}
 
-	if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
-		delete m_ButtonQuit;
-		m_ButtonQuit = NULL;
-		delete m_ButtonLoad;
-		m_ButtonLoad = NULL;
-		delete m_ButtonSave;
-		m_ButtonSave = NULL;
-		delete m_ButtonGameMenu;
-		m_ButtonGameMenu = NULL;
-		delete m_ButtonGfxMenu;
-		m_ButtonGfxMenu = NULL;
-		delete m_ButtonSoundMenu;
-		m_ButtonSoundMenu = NULL;
-		delete m_QuitConfirm;
-		m_QuitConfirm = NULL;
-		delete m_ButtonQuitYes;
-		m_ButtonQuitYes = NULL;
-		delete m_ButtonQuitNo;
-		m_ButtonQuitNo = NULL;
+	if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND) {
+		delete _ButtonQuit;
+		_ButtonQuit = NULL;
+		delete _ButtonLoad;
+		_ButtonLoad = NULL;
+		delete _ButtonSave;
+		_ButtonSave = NULL;
+		delete _ButtonGameMenu;
+		_ButtonGameMenu = NULL;
+		delete _ButtonGfxMenu;
+		_ButtonGfxMenu = NULL;
+		delete _ButtonSoundMenu;
+		_ButtonSoundMenu = NULL;
+		delete _QuitConfirm;
+		_QuitConfirm = NULL;
+		delete _ButtonQuitYes;
+		_ButtonQuitYes = NULL;
+		delete _ButtonQuitNo;
+		_ButtonQuitNo = NULL;
 
-		if (m_bNoLoadSave) {
-			delete m_HideLoadSave;
-			m_HideLoadSave = NULL;
+		if (_bNoLoadSave) {
+			delete _HideLoadSave;
+			_HideLoadSave = NULL;
 		}
 
-		if (m_nState == MENUGAME) {
-			GLOBALS.bCfgInvLocked = m_ButtonGame_Lock->IsActive();
-			delete m_ButtonGame_Lock;
-			m_ButtonGame_Lock = NULL;
+		if (_nState == MENUGAME) {
+			GLOBALS.bCfgInvLocked = _ButtonGame_Lock->isActive();
+			delete _ButtonGame_Lock;
+			_ButtonGame_Lock = NULL;
 
-			GLOBALS.bCfgTimerizedText = !m_ButtonGame_TimerizedText->IsActive();
-			delete m_ButtonGame_TimerizedText;
-			m_ButtonGame_TimerizedText = NULL;
+			GLOBALS.bCfgTimerizedText = !_ButtonGame_TimerizedText->isActive();
+			delete _ButtonGame_TimerizedText;
+			_ButtonGame_TimerizedText = NULL;
 
-			GLOBALS.bCfgInvNoScroll = m_ButtonGame_Scrolling->IsActive();
-			delete m_ButtonGame_Scrolling;
-			m_ButtonGame_Scrolling = NULL;
+			GLOBALS.bCfgInvNoScroll = _ButtonGame_Scrolling->isActive();
+			delete _ButtonGame_Scrolling;
+			_ButtonGame_Scrolling = NULL;
 
-			GLOBALS.bCfgInvUp = m_ButtonGame_InterUp->IsActive();
-			delete m_ButtonGame_InterUp;
-			m_ButtonGame_InterUp = NULL;
+			GLOBALS.bCfgInvUp = _ButtonGame_InterUp->isActive();
+			delete _ButtonGame_InterUp;
+			_ButtonGame_InterUp = NULL;
 
-			GLOBALS.nCfgTextSpeed = m_SlideTextSpeed->GetValue();
-			delete m_SlideTextSpeed;
-			m_SlideTextSpeed = NULL;
+			GLOBALS.nCfgTextSpeed = _SlideTextSpeed->getValue();
+			delete _SlideTextSpeed;
+			_SlideTextSpeed = NULL;
 
-			GLOBALS.nCfgTonySpeed = m_SlideTonySpeed->GetValue();
-			delete m_SlideTonySpeed;
-			m_SlideTonySpeed = NULL;
-		} else if (m_nState == MENUGFX) {
-			GLOBALS.bCfgAnni30 = m_ButtonGfx_Anni30->IsActive();
-			delete m_ButtonGfx_Anni30;
-			m_ButtonGfx_Anni30 = NULL;
+			GLOBALS.nCfgTonySpeed = _SlideTonySpeed->getValue();
+			delete _SlideTonySpeed;
+			_SlideTonySpeed = NULL;
+		} else if (_nState == MENUGFX) {
+			GLOBALS.bCfgAnni30 = _ButtonGfx_Anni30->isActive();
+			delete _ButtonGfx_Anni30;
+			_ButtonGfx_Anni30 = NULL;
 
-			GLOBALS.bCfgAntiAlias = !m_ButtonGfx_AntiAlias->IsActive();
-			delete m_ButtonGfx_AntiAlias;
-			m_ButtonGfx_AntiAlias = NULL;
+			GLOBALS.bCfgAntiAlias = !_ButtonGfx_AntiAlias->isActive();
+			delete _ButtonGfx_AntiAlias;
+			_ButtonGfx_AntiAlias = NULL;
 
-			GLOBALS.bCfgSottotitoli = !m_ButtonGfx_Sottotitoli->IsActive();
-			delete m_ButtonGfx_Sottotitoli;
-			m_ButtonGfx_Sottotitoli = NULL;
+			GLOBALS.bCfgSottotitoli = !_ButtonGfx_Sottotitoli->isActive();
+			delete _ButtonGfx_Sottotitoli;
+			_ButtonGfx_Sottotitoli = NULL;
 
-			GLOBALS.bCfgInterTips = m_ButtonGfx_Tips->IsActive();
-			delete m_ButtonGfx_Tips;
-			m_ButtonGfx_Tips = NULL;
+			GLOBALS.bCfgInterTips = _ButtonGfx_Tips->isActive();
+			delete _ButtonGfx_Tips;
+			_ButtonGfx_Tips = NULL;
 
-			GLOBALS.bCfgTransparence = !m_ButtonGfx_Trans->IsActive();
-			delete m_ButtonGfx_Trans;
-			m_ButtonGfx_Trans = NULL;
-		} else if (m_nState == MENUSOUND) {
-			GLOBALS.nCfgDubbingVolume = m_SliderSound_Dubbing->GetValue();
-			delete m_SliderSound_Dubbing;
-			m_SliderSound_Dubbing = NULL;
+			GLOBALS.bCfgTransparence = !_ButtonGfx_Trans->isActive();
+			delete _ButtonGfx_Trans;
+			_ButtonGfx_Trans = NULL;
+		} else if (_nState == MENUSOUND) {
+			GLOBALS.nCfgDubbingVolume = _SliderSound_Dubbing->getValue();
+			delete _SliderSound_Dubbing;
+			_SliderSound_Dubbing = NULL;
 
-			GLOBALS.nCfgMusicVolume = m_SliderSound_Music->GetValue();
-			delete m_SliderSound_Music;
-			m_SliderSound_Music = NULL;
+			GLOBALS.nCfgMusicVolume = _SliderSound_Music->getValue();
+			delete _SliderSound_Music;
+			_SliderSound_Music = NULL;
 
-			GLOBALS.nCfgSFXVolume = m_SliderSound_SFX->GetValue();
-			delete m_SliderSound_SFX;
-			m_SliderSound_SFX = NULL;
+			GLOBALS.nCfgSFXVolume = _SliderSound_SFX->getValue();
+			delete _SliderSound_SFX;
+			_SliderSound_SFX = NULL;
 
-			GLOBALS.bCfgDubbing = m_ButtonSound_DubbingOn->IsActive();
-			delete m_ButtonSound_DubbingOn;
-			m_ButtonSound_DubbingOn = NULL;
+			GLOBALS.bCfgDubbing = _ButtonSound_DubbingOn->isActive();
+			delete _ButtonSound_DubbingOn;
+			_ButtonSound_DubbingOn = NULL;
 
-			GLOBALS.bCfgMusic = m_ButtonSound_MusicOn->IsActive();
-			delete m_ButtonSound_MusicOn;
-			m_ButtonSound_MusicOn = NULL;
+			GLOBALS.bCfgMusic = _ButtonSound_MusicOn->isActive();
+			delete _ButtonSound_MusicOn;
+			_ButtonSound_MusicOn = NULL;
 
-			GLOBALS.bCfgSFX = m_ButtonSound_SFXOn->IsActive();
-			delete m_ButtonSound_SFXOn;
-			m_ButtonSound_SFXOn = NULL;
+			GLOBALS.bCfgSFX = _ButtonSound_SFXOn->isActive();
+			delete _ButtonSound_SFXOn;
+			_ButtonSound_SFXOn = NULL;
 		}
 	}
 
-	m_nState = MENUNONE;
+	_nState = MENUNONE;
 }
 
-void RMOptionScreen::ReInit(RMGfxTargetBuffer &bigBuf) {
+void RMOptionScreen::reInit(RMGfxTargetBuffer &bigBuf) {
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 }
 
-void RMOptionScreen::Init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
+void RMOptionScreen::init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (m_FadeStep != 0) {
+	if (_FadeStep != 0) {
 		result = false;
 		return;
 	}
 
-	m_FadeStep = 1;
-	m_FadeY = -20;
-	m_FadeTime = -1;
-	m_bExit = false;
-	m_bLoadMenuOnly = false;
-	m_bNoLoadSave = false;
-	m_bAlterGfx = false;
+	_FadeStep = 1;
+	_FadeY = -20;
+	_FadeTime = -1;
+	_bExit = false;
+	_bLoadMenuOnly = false;
+	_bNoLoadSave = false;
+	_bAlterGfx = false;
 
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 
-	if (m_nState == MENULOAD || m_nState == MENUSAVE)
-		m_nState = MENUGAME;
+	if (_nState == MENULOAD || _nState == MENUSAVE)
+		_nState = MENUGAME;
 
-	CORO_INVOKE_0(InitState);
+	CORO_INVOKE_0(initState);
 
 	result = true;
 
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::InitLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result) {
+void RMOptionScreen::initLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (m_FadeStep != 0) {
+	if (_FadeStep != 0) {
 		result = false;
 		return;
 	}
 
-	m_FadeStep = 1;
-	m_FadeY = -20;
-	m_FadeTime = -1;
-	m_bExit = false;
-	m_bLoadMenuOnly = true;
-	m_bNoLoadSave = false;
-	m_bAlterGfx = bAlternateGfx;
+	_FadeStep = 1;
+	_FadeY = -20;
+	_FadeTime = -1;
+	_bExit = false;
+	_bLoadMenuOnly = true;
+	_bNoLoadSave = false;
+	_bAlterGfx = bAlternateGfx;
 
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 
-	m_nState = MENULOAD;
-	CORO_INVOKE_0(InitState);
+	_nState = MENULOAD;
+	CORO_INVOKE_0(initState);
 
 	result = true;
 
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::InitSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result) {
+void RMOptionScreen::initSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (m_FadeStep != 0) {
+	if (_FadeStep != 0) {
 		result = false;
 		return;
 	}
 
-	m_FadeStep = 1;
-	m_FadeY = -20;
-	m_FadeTime = -1;
-	m_bExit = false;
-	m_bLoadMenuOnly = true;
-	m_bNoLoadSave = false;
-	m_bAlterGfx = bAlternateGfx;
+	_FadeStep = 1;
+	_FadeY = -20;
+	_FadeTime = -1;
+	_bExit = false;
+	_bLoadMenuOnly = true;
+	_bNoLoadSave = false;
+	_bAlterGfx = bAlternateGfx;
 
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 
-	m_nState = MENUSAVE;
-	CORO_INVOKE_0(InitState);
+	_nState = MENUSAVE;
+	CORO_INVOKE_0(initState);
 
 	result = true;
 
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::InitNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
+void RMOptionScreen::initNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (m_FadeStep != 0) {
+	if (_FadeStep != 0) {
 		result = false;
 		return;
 	}
 
-	m_FadeStep = 1;
-	m_FadeY = -20;
-	m_FadeTime = -1;
-	m_bExit = false;
-	m_bLoadMenuOnly = false;
-	m_bNoLoadSave = true;
+	_FadeStep = 1;
+	_FadeY = -20;
+	_FadeTime = -1;
+	_bExit = false;
+	_bLoadMenuOnly = false;
+	_bNoLoadSave = true;
 
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 
-	m_nState = MENUGAME;
-	CORO_INVOKE_0(InitState);
+	_nState = MENUGAME;
+	CORO_INVOKE_0(initState);
 
 	result = true;
 
 	CORO_END_CODE;
 }
 
-bool RMOptionScreen::Close(void) {
-	if (m_FadeStep != 6)
+bool RMOptionScreen::close(void) {
+	if (_FadeStep != 6)
 		return false;
 
 	// Start fade out
-	m_FadeStep++;
-	m_FadeTime = _vm->getTime();
+	_FadeStep++;
+	_FadeTime = _vm->getTime();
 	return true;
 }
 
-bool RMOptionScreen::IsClosing(void) {
-	return m_bExit;
+bool RMOptionScreen::isClosing(void) {
+	return _bExit;
 }
 
 int RMOptionScreen::priority() {
@@ -1000,21 +1002,21 @@ int RMOptionScreen::priority() {
 	return 190;
 }
 
-void RMOptionScreen::ChangeState(CORO_PARAM, STATE newState) {
+void RMOptionScreen::changeState(CORO_PARAM, STATE newState) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CloseState();
-	m_nLastState = m_nState;
-	m_nState = newState;
-	CORO_INVOKE_0(InitState);
+	closeState();
+	_nLastState = _nState;
+	_nState = newState;
+	CORO_INVOKE_0(initState);
 
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
+void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 	CORO_BEGIN_CONTEXT;
 	bool bLeftClick, bRightClick;
 	RMPoint mousePos;
@@ -1026,7 +1028,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 
 
 	// If it is fully open, do nothing
-	if (m_FadeStep != 6)
+	if (_FadeStep != 6)
 		return;
 
 	// Reads input
@@ -1036,79 +1038,79 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 
 	_ctx->bRefresh = false;
 
-	if (m_bQuitConfirm) {
-		_ctx->bRefresh |= m_ButtonQuitYes->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-		_ctx->bRefresh |= m_ButtonQuitNo->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+	if (_bQuitConfirm) {
+		_ctx->bRefresh |= _ButtonQuitYes->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+		_ctx->bRefresh |= _ButtonQuitNo->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 	} else {
-		_ctx->bRefresh |= m_ButtonExit->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+		_ctx->bRefresh |= _ButtonExit->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
 		// Check if you have clicked on the output
-		if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
+		if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND) {
 			// Buttons without graphics...
-			m_ButtonGameMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			m_ButtonGfxMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			m_ButtonSoundMenu->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ButtonGameMenu->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ButtonGfxMenu->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ButtonSoundMenu->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
 			// Buttons with graphics
-			if (!m_bNoLoadSave) {
+			if (!_bNoLoadSave) {
 				if (!_vm->getIsDemo()) {
-					_ctx->bRefresh |= m_ButtonLoad->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-					_ctx->bRefresh |= m_ButtonSave->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+					_ctx->bRefresh |= _ButtonLoad->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+					_ctx->bRefresh |= _ButtonSave->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 				}
 
-				_ctx->bRefresh |= m_ButtonQuit->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+				_ctx->bRefresh |= _ButtonQuit->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			}
 		}
 
-		if (m_nState == MENUGAME) {
-			_ctx->bRefresh |= m_ButtonGame_Lock->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonGame_TimerizedText->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonGame_Scrolling->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonGame_InterUp->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_SlideTextSpeed->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_SlideTonySpeed->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+		if (_nState == MENUGAME) {
+			_ctx->bRefresh |= _ButtonGame_Lock->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonGame_TimerizedText->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonGame_Scrolling->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonGame_InterUp->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _SlideTextSpeed->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _SlideTonySpeed->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-		} else if (m_nState == MENUGFX) {
-			_ctx->bRefresh |= m_ButtonGfx_Anni30->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonGfx_AntiAlias->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonGfx_Sottotitoli->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonGfx_Tips->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonGfx_Trans->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+		} else if (_nState == MENUGFX) {
+			_ctx->bRefresh |= _ButtonGfx_Anni30->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonGfx_AntiAlias->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonGfx_Sottotitoli->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonGfx_Tips->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonGfx_Trans->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-		} else if (m_nState == MENUSOUND) {
-			_ctx->bRefresh |= m_SliderSound_Dubbing->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_SliderSound_Music->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_SliderSound_SFX->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonSound_DubbingOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonSound_MusicOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			_ctx->bRefresh |= m_ButtonSound_SFXOn->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+		} else if (_nState == MENUSOUND) {
+			_ctx->bRefresh |= _SliderSound_Dubbing->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _SliderSound_Music->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _SliderSound_SFX->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonSound_DubbingOn->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonSound_MusicOn->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			_ctx->bRefresh |= _ButtonSound_SFXOn->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-		} else if (m_nState == MENULOAD || m_nState == MENUSAVE) {
+		} else if (_nState == MENULOAD || _nState == MENUSAVE) {
 			for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
-				m_ButtonSave_States[_ctx->i]->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+				_ButtonSave_States[_ctx->i]->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
-			if (m_statePos > 0)
-				_ctx->bRefresh |= m_ButtonSave_ArrowLeft->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-			if (m_statePos < 90)
-				_ctx->bRefresh |= m_ButtonSave_ArrowRight->DoFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			if (_statePos > 0)
+				_ctx->bRefresh |= _ButtonSave_ArrowLeft->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
+			if (_statePos < 90)
+				_ctx->bRefresh |= _ButtonSave_ArrowRight->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 
 		}
 	}
 
 #define KEYPRESS(c)     (_vm->getEngine()->getInput().getAsyncKeyState(c))
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
-		m_EditName[strlen(m_EditName) + 1] = '\0'; m_EditName[strlen(m_EditName)] = c; _ctx->bRefresh = true; }
+		_EditName[strlen(_EditName) + 1] = '\0'; _EditName[strlen(_EditName)] = c; _ctx->bRefresh = true; }
 
 	/**************** State Buttons **************/
-	if (m_bEditSaveName) {
+	if (_bEditSaveName) {
 		if (KEYPRESS(Common::KEYCODE_BACKSPACE)) {
-			if (m_EditName[0] != '\0') {
-				m_EditName[strlen(m_EditName) - 1] = '\0';
+			if (_EditName[0] != '\0') {
+				_EditName[strlen(_EditName) - 1] = '\0';
 				_ctx->bRefresh = true;
 			}
 		}
 
-		for (_ctx->i = 0; _ctx->i < 26 && strlen(m_EditName) < 12; _ctx->i++)
+		for (_ctx->i = 0; _ctx->i < 26 && strlen(_EditName) < 12; _ctx->i++)
 			if (KEYPRESS(Common::KEYCODE_LSHIFT) ||
 			        KEYPRESS(Common::KEYCODE_RSHIFT)) {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'A');
@@ -1116,85 +1118,87 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'a');
 			}
 
-		for (_ctx->i = 0; _ctx->i < 10 && strlen(m_EditName) < 12; _ctx->i++)
+		for (_ctx->i = 0; _ctx->i < 10 && strlen(_EditName) < 12; _ctx->i++)
 			PROCESS_CHAR((Common::KeyCode)((int)'0' + _ctx->i), _ctx->i + '0');
 
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_SPACE, ' ');
 
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP0, '0');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP1, '1');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP2, '2');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP3, '3');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP4, '4');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP5, '5');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP6, '6');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP7, '7');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP8, '8');
-		if (strlen(m_EditName) < 12)
+		if (strlen(_EditName) < 12)
 			PROCESS_CHAR(Common::KEYCODE_KP9, '9');
 
 		// Cancel
 		if (KEYPRESS(Common::KEYCODE_ESCAPE)) {
-			m_bEditSaveName = false;
+			_bEditSaveName = false;
 			_ctx->bRefresh = true;
 		}
 
 		// OK
 		if (KEYPRESS(Common::KEYCODE_RETURN)) {
-			m_bEditSaveName = false;
-			_vm->saveState(m_statePos + m_nEditPos, m_EditName);
-			Close();
+			_bEditSaveName = false;
+			_vm->saveState(_statePos + _nEditPos, _EditName);
+			close();
 		}
 
 	} else if (_ctx->bLeftClick) {
-		if (m_nState == MENULOAD || m_nState == MENUSAVE) {
-			if (m_ButtonExit->IsActive()) {
-				if (m_bLoadMenuOnly) {
+		if (_nState == MENULOAD || _nState == MENUSAVE) {
+			if (_ButtonExit->isActive()) {
+				if (_bLoadMenuOnly) {
 					// If only the loading menu, close
-					Close();
+					close();
 				} else {
-					CORO_INVOKE_1(ChangeState, m_nLastState);
+					CORO_INVOKE_1(changeState, _nLastState);
 					_ctx->bRefresh = true;
 				}
-			} else if (m_ButtonSave_ArrowLeft->IsActive()) {
-				if (m_statePos > 0) {
-					m_statePos -= 6;
-					if (m_statePos < 0) m_statePos = 0;
-					m_ButtonSave_ArrowLeft->SetActiveState(false);
+			} else if (_ButtonSave_ArrowLeft->isActive()) {
+				if (_statePos > 0) {
+					_statePos -= 6;
+					if (_statePos < 0)
+						_statePos = 0;
+					_ButtonSave_ArrowLeft->setActiveState(false);
 					_ctx->bRefresh = true;
-					RefreshThumbnails();
+					refreshThumbnails();
 				}
-			} else if (m_ButtonSave_ArrowRight->IsActive()) {
-				if (m_statePos < 90) {
-					m_statePos += 6;
-					if (m_statePos > 90) m_statePos = 90;
-					m_ButtonSave_ArrowRight->SetActiveState(false);
+			} else if (_ButtonSave_ArrowRight->isActive()) {
+				if (_statePos < 90) {
+					_statePos += 6;
+					if (_statePos > 90)
+						_statePos = 90;
+					_ButtonSave_ArrowRight->setActiveState(false);
 					_ctx->bRefresh = true;
-					RefreshThumbnails();
+					refreshThumbnails();
 				}
 			} else {
 				for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
-					if (m_ButtonSave_States[_ctx->i]->IsActive()) {
+					if (_ButtonSave_States[_ctx->i]->isActive()) {
 						// There by saving or loading!!!
-						if (m_nState == MENULOAD && m_curThumb[_ctx->i] != NULL) {
+						if (_nState == MENULOAD && _curThumb[_ctx->i] != NULL) {
 							// Caricamento
-							CORO_INVOKE_1(_vm->loadState, m_statePos + _ctx->i);
-							Close();
-						} else if (m_nState == MENUSAVE && (m_statePos != 0 || _ctx->i != 0)) {
+							CORO_INVOKE_1(_vm->loadState, _statePos + _ctx->i);
+							close();
+						} else if (_nState == MENUSAVE && (_statePos != 0 || _ctx->i != 0)) {
 							// Turn on edit mode
-							m_bEditSaveName = true;
-							m_nEditPos = _ctx->i;
-							strcpy(m_EditName, m_curThumbName[_ctx->i]);
+							_bEditSaveName = true;
+							_nEditPos = _ctx->i;
+							strcpy(_EditName, _curThumbName[_ctx->i]);
 							_ctx->bRefresh = true;
 						}
 
@@ -1203,55 +1207,55 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 			}
 		}
 
-		if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND) {
-			if (m_bQuitConfirm) {
-				if (m_ButtonQuitNo->IsActive()) {
-					m_bQuitConfirm = false;
+		if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND) {
+			if (_bQuitConfirm) {
+				if (_ButtonQuitNo->isActive()) {
+					_bQuitConfirm = false;
 					_ctx->bRefresh = true;
-				} else if (m_ButtonQuitYes->IsActive()) {
-					m_bQuitConfirm = false;
+				} else if (_ButtonQuitYes->isActive()) {
+					_bQuitConfirm = false;
 					_ctx->bRefresh = true;
 
 					_vm->quitGame();
 				}
 			} else {
-				if (m_ButtonQuit->IsActive()) {
-					m_bQuitConfirm = true;
-					m_ButtonQuitNo->SetActiveState(false);
-					m_ButtonQuitYes->SetActiveState(false);
+				if (_ButtonQuit->isActive()) {
+					_bQuitConfirm = true;
+					_ButtonQuitNo->setActiveState(false);
+					_ButtonQuitYes->setActiveState(false);
 					_ctx->bRefresh = true;
-				} else if (m_ButtonExit->IsActive())
-					Close();
-				else if (m_ButtonLoad->IsActive()) {
-					CORO_INVOKE_1(ChangeState, MENULOAD);
+				} else if (_ButtonExit->isActive())
+					close();
+				else if (_ButtonLoad->isActive()) {
+					CORO_INVOKE_1(changeState, MENULOAD);
 					_ctx->bRefresh = true;
-				} else if (m_ButtonSave->IsActive()) {
-					CORO_INVOKE_1(ChangeState, MENUSAVE);
+				} else if (_ButtonSave->isActive()) {
+					CORO_INVOKE_1(changeState, MENUSAVE);
 					_ctx->bRefresh = true;
-				} else if (m_ButtonGameMenu->IsActive() && m_nState != MENUGAME) {
-					CORO_INVOKE_1(ChangeState, MENUGAME);
+				} else if (_ButtonGameMenu->isActive() && _nState != MENUGAME) {
+					CORO_INVOKE_1(changeState, MENUGAME);
 					_ctx->bRefresh = true;
-				} else if (m_ButtonGfxMenu->IsActive() && m_nState != MENUGFX) {
-					CORO_INVOKE_1(ChangeState, MENUGFX);
+				} else if (_ButtonGfxMenu->isActive() && _nState != MENUGFX) {
+					CORO_INVOKE_1(changeState, MENUGFX);
 					_ctx->bRefresh = true;
-				} else if (m_ButtonSoundMenu->IsActive() && m_nState != MENUSOUND) {
-					CORO_INVOKE_1(ChangeState, MENUSOUND);
+				} else if (_ButtonSoundMenu->isActive() && _nState != MENUSOUND) {
+					CORO_INVOKE_1(changeState, MENUSOUND);
 					_ctx->bRefresh = true;
 				}
 
-				if (m_nState == MENUGFX) {
+				if (_nState == MENUGFX) {
 					// These options take effect immediately
-					if (m_ButtonGfx_Anni30->IsActive())
+					if (_ButtonGfx_Anni30->isActive())
 						GLOBALS.bCfgAnni30 = true;
 					else
 						GLOBALS.bCfgAnni30 = false;
 
-					if (m_ButtonGfx_AntiAlias->IsActive())
+					if (_ButtonGfx_AntiAlias->isActive())
 						GLOBALS.bCfgAntiAlias = false;
 					else
 						GLOBALS.bCfgAntiAlias = true;
 
-					if (m_ButtonGfx_Trans->IsActive())
+					if (_ButtonGfx_Trans->isActive())
 						GLOBALS.bCfgTransparence = false;
 					else
 						GLOBALS.bCfgTransparence = true;
@@ -1260,12 +1264,12 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 
-	if (m_nState == MENUGAME || m_nState == MENUGFX || m_nState == MENUSOUND)
-		if (!m_bQuitConfirm && KEYPRESS(Common::KEYCODE_ESCAPE))
-			Close();
+	if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND)
+		if (!_bQuitConfirm && KEYPRESS(Common::KEYCODE_ESCAPE))
+			close();
 
 	if (_ctx->bRefresh)
-		CORO_INVOKE_0(RefreshAll);
+		CORO_INVOKE_0(refreshAll);
 
 	CORO_END_CODE;
 }
@@ -1281,94 +1285,94 @@ void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 	_ctx->curTime = _vm->getTime();
 
 #define FADE_SPEED 20
-#define SYNC    (_ctx->curTime-m_FadeTime) / 25
+#define SYNC    (_ctx->curTime - _FadeTime) / 25
 
-	if (m_bExit)
+	if (_bExit)
 		return;
 
-	if (m_FadeStep == 1) {
+	if (_FadeStep == 1) {
 		// Downhill fast
-		if (m_FadeTime == -1)
-			m_FadeY += FADE_SPEED;
+		if (_FadeTime == -1)
+			_FadeY += FADE_SPEED;
 		else
-			m_FadeY += FADE_SPEED * SYNC;
-		if (m_FadeY > 480) {
-			m_FadeY = 480;
-			m_FadeStep++;
+			_FadeY += FADE_SPEED * SYNC;
+		if (_FadeY > 480) {
+			_FadeY = 480;
+			_FadeStep++;
 		}
 
 		// Set the part to draw the scrolling
-		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - _FadeY, 640, 480));
 
-	} else if (m_FadeStep == 2) {
+	} else if (_FadeStep == 2) {
 		// Bounce 1
-		m_FadeY -= FADE_SPEED / 2 * SYNC;
-		if (m_FadeY < 400) {
-			m_FadeY = 400;
-			m_FadeStep++;
+		_FadeY -= FADE_SPEED / 2 * SYNC;
+		if (_FadeY < 400) {
+			_FadeY = 400;
+			_FadeStep++;
 		}
 
-		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - _FadeY, 640, 480));
 
-	} else if (m_FadeStep == 3) {
-		m_FadeY -= FADE_SPEED / 4 * SYNC;
-		if (m_FadeY < 380) {
-			m_FadeY = 380;
-			m_FadeStep++;
+	} else if (_FadeStep == 3) {
+		_FadeY -= FADE_SPEED / 4 * SYNC;
+		if (_FadeY < 380) {
+			_FadeY = 380;
+			_FadeStep++;
 		}
 
-		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - _FadeY, 640, 480));
 
-	} else if (m_FadeStep == 4) {
+	} else if (_FadeStep == 4) {
 		// Bounce 1 - 2
-		m_FadeY += FADE_SPEED / 3 * SYNC;
-		if (m_FadeY > 420) {
-			m_FadeY = 420;
-			m_FadeStep++;
+		_FadeY += FADE_SPEED / 3 * SYNC;
+		if (_FadeY > 420) {
+			_FadeY = 420;
+			_FadeStep++;
 		}
 
-		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - _FadeY, 640, 480));
 
-	} else if (m_FadeStep == 5) {
-		m_FadeY += FADE_SPEED / 2 * SYNC;
-		if (m_FadeY > 480) {
-			m_FadeY = 480;
-			m_FadeStep++;
+	} else if (_FadeStep == 5) {
+		_FadeY += FADE_SPEED / 2 * SYNC;
+		if (_FadeY > 480) {
+			_FadeY = 480;
+			_FadeStep++;
 			_vm->hideLocation();
 		}
 
-		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - _FadeY, 640, 480));
 
-	} else if (m_FadeStep == 6) {
+	} else if (_FadeStep == 6) {
 		// Menu ON
 
-	} else if (m_FadeStep == 7) {
+	} else if (_FadeStep == 7) {
 		// Menu OFF
 		_vm->showLocation();
-		m_FadeStep++;
+		_FadeStep++;
 
-	} else if (m_FadeStep == 8) {
-		m_FadeY -= FADE_SPEED * SYNC;
-		if (m_FadeY < 0) {
-			m_FadeY = 0;
-			m_FadeStep++;
+	} else if (_FadeStep == 8) {
+		_FadeY -= FADE_SPEED * SYNC;
+		if (_FadeY < 0) {
+			_FadeY = 0;
+			_FadeStep++;
 		}
-		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - _FadeY, 640, 480));
 
-	} else if (m_FadeStep == 9) {
+	} else if (_FadeStep == 9) {
 		// Hello hello!
-		m_bExit = true;
-		m_FadeStep = 0;
+		_bExit = true;
+		_FadeStep = 0;
 
 		// Free memory
-		CloseState();
+		closeState();
 		return;
 
 	} else {
-		m_FadeStep = 0;
+		_FadeStep = 0;
 	}
 
-	m_FadeTime = _ctx->curTime;
+	_FadeTime = _ctx->curTime;
 
 	CORO_INVOKE_2(RMGfxWoodyBuffer::draw, bigBuf, prim);
 
@@ -1376,14 +1380,14 @@ void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 }
 
 void RMOptionScreen::removeThis(CORO_PARAM, bool &result) {
-	if (m_bExit)
+	if (_bExit)
 		result = true;
 	else
 		result = false;
 }
 
 
-bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMString &name, byte &diff) {
+bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMString &name, byte &diff) {
 	Common::String buf;
 	char namebuf[256];
 	int i;
@@ -1466,23 +1470,23 @@ bool RMOptionScreen::LoadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 \****************************************************************************/
 
 RMPointer::RMPointer() {
-	Common::fill(m_pointer, m_pointer + 16, (RMGfxSourceBuffer8 *)NULL);
-	Common::fill(m_specialPointer, m_specialPointer + 16, (RMItem *)NULL);
+	Common::fill(_pointer, _pointer + 16, (RMGfxSourceBuffer8 *)NULL);
+	Common::fill(_specialPointer, _specialPointer + 16, (RMItem *)NULL);
 }
 
 RMPointer::~RMPointer() {
-	Close();
+	close();
 }
 
-void RMPointer::Init(void) {
+void RMPointer::init(void) {
 	int i;
 
 	for (i = 0; i < 5; i++) {
 		RMResRaw res(RES_P_GO + i);
 
-		m_pointer[i] = new RMGfxSourceBuffer8RLEByteAA;
-		m_pointer[i]->init(res, res.Width(), res.Height(), false);
-		m_pointer[i]->loadPaletteWA(RES_P_PAL);
+		_pointer[i] = new RMGfxSourceBuffer8RLEByteAA;
+		_pointer[i]->init(res, res.Width(), res.Height(), false);
+		_pointer[i]->loadPaletteWA(RES_P_PAL);
 	}
 
 	for (i = 0; i < 5; i++) {
@@ -1490,34 +1494,34 @@ void RMPointer::Init(void) {
 		RMDataStream ds;
 
 		ds.OpenBuffer(res);
-		m_specialPointer[i] = new RMItem;
-		ds >> *m_specialPointer[i];
+		_specialPointer[i] = new RMItem;
+		ds >> *_specialPointer[i];
 	}
 
 	//m_hotspot[0].Set(19,5);
-	m_hotspot[0].Set(5, 1);
-	m_hotspot[1].Set(32, 28);
-	m_hotspot[2].Set(45, 23);
-	m_hotspot[3].Set(35, 25);
-	m_hotspot[4].Set(32, 28);
+	_hotspot[0].Set(5, 1);
+	_hotspot[1].Set(32, 28);
+	_hotspot[2].Set(45, 23);
+	_hotspot[3].Set(35, 25);
+	_hotspot[4].Set(32, 28);
 
 	// Default=GO
-	m_nCurPointer = 0;
-	m_nCurSpecialPointer = 0;
+	_nCurPointer = 0;
+	_nCurSpecialPointer = 0;
 }
 
-void RMPointer::Close(void) {
+void RMPointer::close(void) {
 	int i;
 
 	for (i = 0; i < 5; i++) {
-		if (m_pointer[i] != NULL) {
-			delete m_pointer[i];
-			m_pointer[i] = NULL;
+		if (_pointer[i] != NULL) {
+			delete _pointer[i];
+			_pointer[i] = NULL;
 		}
 
-		if (m_specialPointer[i] != NULL) {
-			delete m_specialPointer[i];
-			m_specialPointer[i] = NULL;
+		if (_specialPointer[i] != NULL) {
+			delete _specialPointer[i];
+			_specialPointer[i] = NULL;
 		}
 	}
 }
@@ -1536,37 +1540,37 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 	CORO_BEGIN_CODE(_ctx);
 
 	// Check the pointer
-	_ctx->n = m_nCurPointer;
+	_ctx->n = _nCurPointer;
 	if (_ctx->n == TA_COMBINE) _ctx->n = TA_USE;
 
 	// Copy the destination coordinates in the primitive
-	prim->setDst(m_pos);
+	prim->setDst(_pos);
 
-	if (m_pos.x >= 0 && m_pos.y >= 0 && m_pos.x < RM_SX && m_pos.y < RM_SY) {
+	if (_pos.x >= 0 && _pos.y >= 0 && _pos.x < RM_SX && _pos.y < RM_SY) {
 		// Call the Draw method of the poitner
-		prim->Dst() -= m_hotspot[_ctx->n];
+		prim->Dst() -= _hotspot[_ctx->n];
 
-		if (m_nCurSpecialPointer == 0) {
-			CORO_INVOKE_2(m_pointer[_ctx->n]->draw, bigBuf, prim);
+		if (_nCurSpecialPointer == 0) {
+			CORO_INVOKE_2(_pointer[_ctx->n]->draw, bigBuf, prim);
 		} else {
-			if (m_nCurSpecialPointer == PTR_CUSTOM)
-				CORO_INVOKE_2(m_nCurCustomPointer->draw, bigBuf, prim);
+			if (_nCurSpecialPointer == PTR_CUSTOM)
+				CORO_INVOKE_2(_nCurCustomPointer->draw, bigBuf, prim);
 			else
 				// Call the draw on the special pointer
-				CORO_INVOKE_2(m_specialPointer[m_nCurSpecialPointer - 1]->draw, bigBuf, prim);
+				CORO_INVOKE_2(_specialPointer[_nCurSpecialPointer - 1]->draw, bigBuf, prim);
 		}
 	}
 
 	CORO_END_CODE;
 }
 
-void RMPointer::DoFrame(RMGfxTargetBuffer *bigBuf) {
+void RMPointer::doFrame(RMGfxTargetBuffer *bigBuf) {
 	// Add it to the list of primitives
 	bigBuf->addPrim(new RMGfxPrimitive(this));
 
 	// If there is a special pointer, does DoFrame
-	if (m_nCurSpecialPointer != 0 && m_nCurSpecialPointer != PTR_CUSTOM)
-		m_specialPointer[m_nCurSpecialPointer - 1]->DoFrame(bigBuf, false);
+	if (_nCurSpecialPointer != 0 && _nCurSpecialPointer != PTR_CUSTOM)
+		_specialPointer[_nCurSpecialPointer - 1]->doFrame(bigBuf, false);
 }
 
 void RMPointer::removeThis(CORO_PARAM, bool &result) {
@@ -1574,11 +1578,11 @@ void RMPointer::removeThis(CORO_PARAM, bool &result) {
 	result = true;
 }
 
-int RMPointer::CurAction(void) {
-	if (m_nCurSpecialPointer != 0)
+int RMPointer::curAction(void) {
+	if (_nCurSpecialPointer != 0)
 		return 0;
 
-	return m_nCurPointer;
+	return _nCurPointer;
 }
 
 } // End of namespace Tony

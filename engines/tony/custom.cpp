@@ -209,23 +209,23 @@ DECLARE_CUSTOM_FUNCTION(SetAlwaysDisplay)(CORO_PARAM, uint32 val, uint32, uint32
 DECLARE_CUSTOM_FUNCTION(SetPointer)(CORO_PARAM, uint32 dwPointer, uint32, uint32, uint32) {
 	switch (dwPointer) {
 	case 1:
-		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_FRECCIASU);
+		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_FRECCIASU);
 		break;
 	case 2:
-		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_FRECCIAGIU);
+		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_FRECCIAGIU);
 		break;
 	case 3:
-		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_FRECCIASINISTRA);
+		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_FRECCIASINISTRA);
 		break;
 	case 4:
-		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_FRECCIADESTRA);
+		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_FRECCIADESTRA);
 		break;
 	case 5:
-		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_FRECCIAMAPPA);
+		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_FRECCIAMAPPA);
 		break;
 
 	default:
-		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_NONE);
+		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_NONE);
 		break;
 	}
 }
@@ -2014,7 +2014,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		CORO_INVOKE_0(_ctx->dc.Show);
 
 		// Draw the pointer
-		GLOBALS.Pointer->SetSpecialPointer(GLOBALS.Pointer->PTR_NONE);
+		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_NONE);
 		mainShowMouse();
 
 		while (!(GLOBALS.Input->mouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {

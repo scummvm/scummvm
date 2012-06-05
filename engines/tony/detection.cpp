@@ -131,7 +131,7 @@ SaveStateList TonyMetaEngine::listSaves(const char *target) const {
 			Tony::RMString saveName;
 			byte difficulty;
 
-			if (Tony::RMOptionScreen::LoadThumbnailFromSaveState(slotNum, thumbnailData, saveName, difficulty)) {
+			if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slotNum, thumbnailData, saveName, difficulty)) {
 				// Add the save name to the savegame list
 				saveList.push_back(SaveStateDescriptor(slotNum, (const char *)saveName));
 			}
@@ -156,7 +156,7 @@ SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int s
 	byte difficulty;
 	byte thumbData[160 * 120 * 2];
 
-	if (Tony::RMOptionScreen::LoadThumbnailFromSaveState(slot, thumbData, saveName, difficulty)) {
+	if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slot, thumbData, saveName, difficulty)) {
 		// Convert the 565 thumbnail data to the needed overlay format
 		Common::MemoryReadStream thumbStream(thumbData, 160 * 120 * 2);
 		Graphics::PixelFormat destFormat = g_system->getOverlayFormat();

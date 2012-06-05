@@ -2261,11 +2261,11 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 	// Handle the change If the selected item is different from the previous one
 	if (_ctx->lastItem != m_item) {
 		if (m_item == NULL)
-			ptr.SetSpecialPointer(RMPointer::PTR_NONE);
+			ptr.setSpecialPointer(RMPointer::PTR_NONE);
 		else {
 			_ctx->hThread = mpalQueryDoAction(20, m_item->MpalCode(), 0);
 			if (_ctx->hThread == CORO_INVALID_PID_VALUE)
-				ptr.SetSpecialPointer(RMPointer::PTR_NONE);
+				ptr.setSpecialPointer(RMPointer::PTR_NONE);
 			else
 				CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->hThread, CORO_INFINITE);
 		}

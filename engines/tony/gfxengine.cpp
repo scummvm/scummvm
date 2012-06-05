@@ -98,15 +98,15 @@ void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
 	_ctx->bRes = false;
 
 	if (type == 0)
-		CORO_INVOKE_2(_opt.Init, _bigBuf, _ctx->bRes);
+		CORO_INVOKE_2(_opt.init, _bigBuf, _ctx->bRes);
 	else if (type == 1)
-		CORO_INVOKE_3(_opt.InitLoadMenuOnly, _bigBuf, true, _ctx->bRes);
+		CORO_INVOKE_3(_opt.initLoadMenuOnly, _bigBuf, true, _ctx->bRes);
 	else if (type == 2)
-		CORO_INVOKE_2(_opt.InitNoLoadSave, _bigBuf, _ctx->bRes);
+		CORO_INVOKE_2(_opt.initNoLoadSave, _bigBuf, _ctx->bRes);
 	else if (type == 3)
-		CORO_INVOKE_3(_opt.InitLoadMenuOnly, _bigBuf, false, _ctx->bRes);
+		CORO_INVOKE_3(_opt.initLoadMenuOnly, _bigBuf, false, _ctx->bRes);
 	else if (type == 4)
-		CORO_INVOKE_3(_opt.InitSaveMenuOnly, _bigBuf, false, _ctx->bRes);
+		CORO_INVOKE_3(_opt.initSaveMenuOnly, _bigBuf, false, _ctx->bRes);
 
 	if (_ctx->bRes) {
 		_vm->pauseSound(true);
@@ -115,9 +115,9 @@ void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
 		_inv.EndCombine();
 		_curActionObj = 0;
 		_curAction = TA_GOTO;
-		_point.SetAction(_curAction);
-		_point.SetSpecialPointer(RMPointer::PTR_NONE);
-		_point.SetCustomPointer(NULL);
+		_point.setAction(_curAction);
+		_point.setSpecialPointer(RMPointer::PTR_NONE);
+		_point.setCustomPointer(NULL);
 		enableMouse();
 		_vm->grabThumbnail();
 
@@ -155,8 +155,8 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 	}
 
 	if (_bOption) {
-		CORO_INVOKE_1(_opt.DoFrame, &_input);
-		_bOption = !_opt.IsClosing();
+		CORO_INVOKE_1(_opt.doFrame, &_input);
+		_bOption = !_opt.isClosing();
 		if (!_bOption) {
 			disableMouse();
 			enableInput();
@@ -167,7 +167,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 
 	if (bDrawLocation && _bLocationLoaded) {
 		// Location and objects
-		_loc.DoFrame(&_bigBuf);
+		_loc.doFrame(&_bigBuf);
 
 		// Check the mouse input
 		if (_bInput && !_tony.InAction()) {
@@ -179,7 +179,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 					// Left click activates the combine, if we are on an object
 					if (_inv.LeftClick(_input.mousePos(), _curActionObj)) {
 						_curAction = TA_COMBINE;
-						_point.SetAction(_curAction);
+						_point.setAction(_curAction);
 					}
 				} else
 
@@ -200,7 +200,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 								CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), _curAction);
 
 								_curAction = TA_GOTO;
-								_point.SetAction(_curAction);
+								_point.setAction(_curAction);
 							}
 						}
 			} else {
@@ -229,17 +229,17 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 				if (_input.mouseLeftClicked() && !_inter.Active()) {
 
 					if (_curAction != TA_COMBINE)
-						CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), _point.CurAction());
+						CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), _point.curAction());
 					else if (_itemName.GetSelectedItem() != NULL)
 						CORO_INVOKE_4(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), TA_COMBINE, _curActionObj);
 
 					if (_curAction == TA_COMBINE) {
 						_inv.EndCombine();
-						_point.SetSpecialPointer(RMPointer::PTR_NONE);
+						_point.setSpecialPointer(RMPointer::PTR_NONE);
 					}
 
 					_curAction = TA_GOTO;
-					_point.SetAction(_curAction);
+					_point.setAction(_curAction);
 				}
 
 SKIPCLICKSINISTRO:
@@ -251,15 +251,15 @@ SKIPCLICKSINISTRO:
 						_inv.EndCombine();
 						_curActionObj = 0;
 						_curAction = TA_GOTO;
-						_point.SetAction(_curAction);
-						_point.SetSpecialPointer(RMPointer::PTR_NONE);
+						_point.setAction(_curAction);
+						_point.setSpecialPointer(RMPointer::PTR_NONE);
 					}
-				} else if (_input.mouseRightClicked() && _itemName.IsItemSelected() && _point.GetSpecialPointer() == RMPointer::PTR_NONE) {
+				} else if (_input.mouseRightClicked() && _itemName.IsItemSelected() && _point.getSpecialPointer() == RMPointer::PTR_NONE) {
 					if (_bGUIInterface) {
 						// Before opening the interface, replaces GOTO
 						_curAction = TA_GOTO;
 						_curActionObj = 0;
-						_point.SetAction(_curAction);
+						_point.setAction(_curAction);
 						_inter.Clicked(_input.mousePos());
 					}
 				}
@@ -270,11 +270,11 @@ SKIPCLICKSINISTRO:
 				if (_input.mouseRightReleased()) {
 					if (_bGUIInterface) {
 						if (_inter.Released(_input.mousePos(), _curAction)) {
-							_point.SetAction(_curAction);
+							_point.setAction(_curAction);
 							CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), _curAction);
 
 							_curAction = TA_GOTO;
-							_point.SetAction(_curAction);
+							_point.setAction(_curAction);
 						}
 					}
 				}
@@ -305,8 +305,8 @@ SKIPCLICKSINISTRO:
 		_tony.SetScrollPosition(_loc.ScrollPosition());
 
 	if ((!_tony.InAction() && _bInput) || _bAlwaysDrawMouse) {
-		_point.SetCoord(_input.mousePos());
-		_point.DoFrame(&_bigBuf);
+		_point.setCoord(_input.mousePos());
+		_point.doFrame(&_bigBuf);
 	}
 
 	// **********************
@@ -393,9 +393,9 @@ void RMGfxEngine::initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint star
 	}
 
 	_curAction = TA_GOTO;
-	_point.SetCustomPointer(NULL);
-	_point.SetSpecialPointer(RMPointer::PTR_NONE);
-	_point.SetAction(_curAction);
+	_point.setCustomPointer(NULL);
+	_point.setSpecialPointer(RMPointer::PTR_NONE);
+	_point.setAction(_curAction);
 	_inter.Reset();
 	_inv.Reset();
 
@@ -425,7 +425,7 @@ uint32 RMGfxEngine::loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 		error("Location was not loaded");
 
 	if (_bOption)
-		_opt.ReInit(_bigBuf);
+		_opt.reInit(_bigBuf);
 
 	_bLocationLoaded = true;
 
@@ -499,7 +499,7 @@ void RMGfxEngine::init() {
 	_input.init();
 
 	// Initialise the mouse pointer
-	_point.Init();
+	_point.init();
 
 	// Initialise Tony
 	_tony.init();
@@ -524,7 +524,7 @@ void RMGfxEngine::close(void) {
 	_inter.Close();
 	_inv.Close();
 	_tony.Close();
-	_point.Close();
+	_point.close();
 	_input.close();
 }
 

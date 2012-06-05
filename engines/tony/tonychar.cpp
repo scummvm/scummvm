@@ -156,7 +156,7 @@ void RMTony::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 	}
 
 	if (m_bIsTalking || m_bIsStaticTalk)
-		m_body.DoFrame(bigBuf, false);
+		m_body.doFrame(bigBuf, false);
 
 	CORO_END_CODE;
 }

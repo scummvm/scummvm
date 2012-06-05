@@ -245,7 +245,7 @@ public:
 
 	// Process to make the object move on any animations.
 	// Returns TRUE if it should be redrawn on the next frame
-	bool DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList = true);
+	bool doFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList = true);
 
 	// Sets the current scrolling position
 	void SetScrollPosition(const RMPoint &scroll);
@@ -569,7 +569,7 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Prepare a frame by drawing the location and all it's items
-	void DoFrame(RMGfxTargetBuffer *bigBuf);
+	void doFrame(RMGfxTargetBuffer *bigBuf);
 
 	// Return the item at a given point
 	RMItem *WhichItemIsIn(const RMPoint &pt);

@@ -110,7 +110,7 @@ void RMInventory::Init(void) {
 		m_items[i].pointer = NULL;
 		m_items[i].status = 1;
 		m_items[i].icon.SetPattern(1);
-		m_items[i].icon.DoFrame(this, false);
+		m_items[i].icon.doFrame(this, false);
 
 		curres++;
 		if (i == 0 || i == 28 || i == 29) continue;
@@ -489,7 +489,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		// DoFrame makes all the objects currently in the inventory be displayed
 		// @@@ Maybe we should do all takeable objects? Please does not help
 		for (i = 0; i < m_nInv; i++)
-			if (m_items[m_inv[i]].icon.DoFrame(this, false) && (i >= m_curPos && i <= m_curPos + 7))
+			if (m_items[m_inv[i]].icon.doFrame(this, false) && (i >= m_curPos && i <= m_curPos + 7))
 				bNeedRedraw = true;
 
 		if ((m_state == CLOSING || m_state == OPENING || m_state == OPENED) && CheckPointInside(mpos)) {
@@ -518,10 +518,10 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			}
 		}
 
-		if (m_items[28].icon.DoFrame(this, false))
+		if (m_items[28].icon.doFrame(this, false))
 			bNeedRedraw = true;
 
-		if (m_items[29].icon.DoFrame(this, false))
+		if (m_items[29].icon.doFrame(this, false))
 			bNeedRedraw = true;
 
 		if (bNeedRedraw)
@@ -535,8 +535,8 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 	}
 
 	if (m_bCombining) {//m_state == COMBINING)
-		ptr.SetCustomPointer(&m_items[m_nCombine].pointer[m_items[m_nCombine].status - 1]);
-		ptr.SetSpecialPointer(RMPointer::PTR_CUSTOM);
+		ptr.setCustomPointer(&m_items[m_nCombine].pointer[m_items[m_nCombine].status - 1]);
+		ptr.setSpecialPointer(RMPointer::PTR_CUSTOM);
 	}
 
 	if (!GLOBALS.bCfgInvUp) {
@@ -659,7 +659,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		}
 
 		// Update the mini-interface
-		miniInterface.DoFrame(&bigBuf, false);
+		miniInterface.doFrame(&bigBuf, false);
 	}
 
 	if ((m_state != CLOSED) && !_nInList) {

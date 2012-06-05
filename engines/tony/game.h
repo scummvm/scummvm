@@ -56,16 +56,16 @@ namespace Tony {
 
 class RMPointer : public RMGfxTask {
 private:
-	RMGfxSourceBuffer8 *m_pointer[16];
-	RMPoint m_hotspot[16];
-	RMPoint m_pos;
+	RMGfxSourceBuffer8 *_pointer[16];
+	RMPoint _hotspot[16];
+	RMPoint _pos;
 
-	RMItem *m_specialPointer[16];
+	RMItem *_specialPointer[16];
 
-	int m_nCurPointer;
-	int m_nCurSpecialPointer;
+	int _nCurPointer;
+	int _nCurSpecialPointer;
 
-	RMGfxSourceBuffer8 *m_nCurCustomPointer;
+	RMGfxSourceBuffer8 *_nCurCustomPointer;
 
 public:
 	enum POINTER {
@@ -84,13 +84,13 @@ public:
 	virtual ~RMPointer();
 
 	// Initialisation
-	void Init(void);
+	void init(void);
 
 	// Deinitialisation
-	void Close(void);
+	void close(void);
 
 	// Process a frame
-	void DoFrame(RMGfxTargetBuffer *bigBuf);
+	void doFrame(RMGfxTargetBuffer *bigBuf);
 
 	// Overloading of priorities
 	int priority();
@@ -99,153 +99,153 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Sets the current co-ordinates
-	void SetCoord(const RMPoint &pt) {
-		m_pos = pt;
+	void setCoord(const RMPoint &pt) {
+		_pos = pt;
 	}
 
 	// Overloading of the method to see if rising from the list
 	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Sets a new action as current
-	void SetAction(RMTonyAction action) {
-		m_nCurPointer = action;
+	void setAction(RMTonyAction action) {
+		_nCurPointer = action;
 	}
 
 	// Sets a new pointer
-	void SetSpecialPointer(POINTER ptr) {
-		m_nCurSpecialPointer = ptr;
-		if (m_nCurSpecialPointer && m_nCurSpecialPointer != PTR_CUSTOM)
-			m_specialPointer[ptr - 1]->SetPattern(1);
+	void setSpecialPointer(POINTER ptr) {
+		_nCurSpecialPointer = ptr;
+		if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
+			_specialPointer[ptr - 1]->SetPattern(1);
 	}
-	POINTER GetSpecialPointer(void) {
-		return (POINTER)m_nCurSpecialPointer;
+	POINTER getSpecialPointer(void) {
+		return (POINTER)_nCurSpecialPointer;
 	}
 
 	// Set the new custom pointer
-	void SetCustomPointer(RMGfxSourceBuffer8 *ptr) {
-		m_nCurCustomPointer = ptr;
+	void setCustomPointer(RMGfxSourceBuffer8 *ptr) {
+		_nCurCustomPointer = ptr;
 	}
 
 	// Return the current action to be applied according to the pointer
-	int CurAction(void);
+	int curAction(void);
 };
 
 class RMOptionButton: public RMGfxTaskSetPrior {
 public:
-	RMRect m_rect;
-	RMGfxSourceBuffer16 *m_buf;
-	bool m_bActive;
-	bool m_bHasGfx;
-	bool m_bDoubleState;
+	RMRect _rect;
+	RMGfxSourceBuffer16 *_buf;
+	bool _bActive;
+	bool _bHasGfx;
+	bool _bDoubleState;
 
 public:
 	RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState = false);
 	RMOptionButton(const RMRect &pt);
 	virtual ~RMOptionButton();
 
-	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
+	bool doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	void AddToList(RMGfxTargetBuffer &bigBuf);
-	bool IsActive() {
-		return m_bActive;
+	void addToList(RMGfxTargetBuffer &bigBuf);
+	bool isActive() {
+		return _bActive;
 	}
-	void SetActiveState(bool bState) {
-		m_bActive = bState;
+	void setActiveState(bool bState) {
+		_bActive = bState;
 	}
 };
 
 class RMOptionSlide : public RMGfxTaskSetPrior {
 private:
-	RMOptionButton *m_PushLeft;
-	RMOptionButton *m_PushRight;
-	RMGfxSourceBuffer16 *m_SliderCenter;
-	RMGfxSourceBuffer16 *m_SliderLeft;
-	RMGfxSourceBuffer16 *m_SliderRight;
-	RMGfxSourceBuffer16 *m_SliderSingle;
-	int m_nSlideSize;
-	RMPoint m_pos;
-	int m_nValue;
-	int m_nMax;
-	int m_nStep;
+	RMOptionButton *_PushLeft;
+	RMOptionButton *_PushRight;
+	RMGfxSourceBuffer16 *_SliderCenter;
+	RMGfxSourceBuffer16 *_SliderLeft;
+	RMGfxSourceBuffer16 *_SliderRight;
+	RMGfxSourceBuffer16 *_SliderSingle;
+	int _nSlideSize;
+	RMPoint _pos;
+	int _nValue;
+	int _nMax;
+	int _nStep;
 
 public:
 	RMOptionSlide(const RMPoint &pt, int m_nRange = 100, int m_nStartValue = 0, int slideSize = 300);
 	virtual ~RMOptionSlide();
 
-	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
+	bool doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	void AddToList(RMGfxTargetBuffer &bigBuf);
+	void addToList(RMGfxTargetBuffer &bigBuf);
 
-	int GetValue() {
-		return m_nValue;
+	int getValue() {
+		return _nValue;
 	}
 };
 
 class RMOptionScreen : public RMGfxWoodyBuffer {
 private:
-	RMGfxSourceBuffer16 *m_menu;
-	RMGfxSourceBuffer16 *m_QuitConfirm;
-	RMGfxSourceBuffer16 *m_HideLoadSave;
-	RMOptionButton *m_ButtonQuitYes;
-	RMOptionButton *m_ButtonQuitNo;
-	RMOptionButton *m_ButtonExit;
-	RMOptionButton *m_ButtonQuit;
-	RMOptionButton *m_ButtonLoad;
-	RMOptionButton *m_ButtonSave;
-	RMOptionButton *m_ButtonGameMenu;
-	RMOptionButton *m_ButtonGfxMenu;
-	RMOptionButton *m_ButtonSoundMenu;
-	RMGfxSourceBuffer8 *m_SaveEasy;
-	RMGfxSourceBuffer8 *m_SaveHard;
-	RMGfxSourceBuffer16 *m_curThumb[6];
-	RMString m_curThumbName[6];
-	byte m_curThumbDiff[6];
-	RMOptionButton *m_ButtonSave_States[6];
-	RMOptionButton *m_ButtonSave_ArrowLeft;
-	RMOptionButton *m_ButtonSave_ArrowRight;
-	RMOptionButton *m_ButtonGfx_Tips;
+	RMGfxSourceBuffer16 *_menu;
+	RMGfxSourceBuffer16 *_QuitConfirm;
+	RMGfxSourceBuffer16 *_HideLoadSave;
+	RMOptionButton *_ButtonQuitYes;
+	RMOptionButton *_ButtonQuitNo;
+	RMOptionButton *_ButtonExit;
+	RMOptionButton *_ButtonQuit;
+	RMOptionButton *_ButtonLoad;
+	RMOptionButton *_ButtonSave;
+	RMOptionButton *_ButtonGameMenu;
+	RMOptionButton *_ButtonGfxMenu;
+	RMOptionButton *_ButtonSoundMenu;
+	RMGfxSourceBuffer8 *_SaveEasy;
+	RMGfxSourceBuffer8 *_SaveHard;
+	RMGfxSourceBuffer16 *_curThumb[6];
+	RMString _curThumbName[6];
+	byte _curThumbDiff[6];
+	RMOptionButton *_ButtonSave_States[6];
+	RMOptionButton *_ButtonSave_ArrowLeft;
+	RMOptionButton *_ButtonSave_ArrowRight;
+	RMOptionButton *_ButtonGfx_Tips;
 
-	RMOptionButton *m_ButtonSound_DubbingOn;
-	RMOptionButton *m_ButtonSound_MusicOn;
-	RMOptionButton *m_ButtonSound_SFXOn;
+	RMOptionButton *_ButtonSound_DubbingOn;
+	RMOptionButton *_ButtonSound_MusicOn;
+	RMOptionButton *_ButtonSound_SFXOn;
 
-	RMOptionSlide *m_SlideTonySpeed;
-	RMOptionSlide *m_SlideTextSpeed;
+	RMOptionSlide *_SlideTonySpeed;
+	RMOptionSlide *_SlideTextSpeed;
 
 
-	int m_statePos;
-	bool m_bEditSaveName;
-	int m_nEditPos;
-	char m_EditName[256];
+	int _statePos;
+	bool _bEditSaveName;
+	int _nEditPos;
+	char _EditName[256];
 
 	union {
-		RMOptionButton *m_ButtonGame_Lock;
-		RMOptionButton *m_ButtonGfx_Anni30;
-		RMOptionSlide *m_SliderSound_Music;
+		RMOptionButton *_ButtonGame_Lock;
+		RMOptionButton *_ButtonGfx_Anni30;
+		RMOptionSlide *_SliderSound_Music;
 	};
 	union {
-		RMOptionButton *m_ButtonGame_TimerizedText;
-		RMOptionButton *m_ButtonGfx_AntiAlias;
-		RMOptionSlide *m_SliderSound_SFX;
+		RMOptionButton *_ButtonGame_TimerizedText;
+		RMOptionButton *_ButtonGfx_AntiAlias;
+		RMOptionSlide *_SliderSound_SFX;
 	};
 	union {
-		RMOptionButton *m_ButtonGame_Scrolling;
-		RMOptionButton *m_ButtonGfx_Sottotitoli;
-		RMOptionSlide *m_SliderSound_Dubbing;
+		RMOptionButton *_ButtonGame_Scrolling;
+		RMOptionButton *_ButtonGfx_Sottotitoli;
+		RMOptionSlide *_SliderSound_Dubbing;
 	};
 	union {
-		RMOptionButton *m_ButtonGame_InterUp;
-		RMOptionButton *m_ButtonGfx_Trans;
+		RMOptionButton *_ButtonGame_InterUp;
+		RMOptionButton *_ButtonGfx_Trans;
 	};
 
-	int m_FadeStep;
-	bool m_bExit;
-	bool m_bQuitConfirm;
-	int m_FadeY;
-	int m_FadeTime;
-	bool m_bLoadMenuOnly;
-	bool m_bNoLoadSave;
-	bool m_bAlterGfx;
+	int _FadeStep;
+	bool _bExit;
+	bool _bQuitConfirm;
+	int _FadeY;
+	int _FadeTime;
+	bool _bLoadMenuOnly;
+	bool _bNoLoadSave;
+	bool _bAlterGfx;
 
 	enum STATE {
 	    MENUGAME,
@@ -256,20 +256,20 @@ private:
 		MENUNONE
 	};
 
-	STATE m_nState;
-	STATE m_nLastState;
+	STATE _nState;
+	STATE _nLastState;
 
 public:
 	RMOptionScreen();
 	virtual ~RMOptionScreen();
 
-	void Init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
-	void InitLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);
-	void  InitSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);
-	void InitNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
-	void ReInit(RMGfxTargetBuffer &bigBuf);
-	bool Close();
-	bool IsClosing();
+	void init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
+	void initLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);
+	void initSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);
+	void initNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
+	void reInit(RMGfxTargetBuffer &bigBuf);
+	bool close();
+	bool isClosing();
 
 	// Overloaded methods
 	virtual int priority();
@@ -277,21 +277,21 @@ public:
 	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Polling for the option screen
-	void DoFrame(CORO_PARAM, RMInput *m_input);
+	void doFrame(CORO_PARAM, RMInput *m_input);
 
 	// Retrieves a savegame's thumbnail, description, and difficulty level
-	static bool LoadThumbnailFromSaveState(int numState, byte *lpDestBuf, RMString &name, byte &diff);
+	static bool loadThumbnailFromSaveState(int numState, byte *lpDestBuf, RMString &name, byte &diff);
 
 protected:
 
 	// Initialisation and state change
-	void InitState(CORO_PARAM);
-	void CloseState(void);
-	void ChangeState(CORO_PARAM, STATE newState);
+	void initState(CORO_PARAM);
+	void closeState(void);
+	void changeState(CORO_PARAM, STATE newState);
 
 	// Repaint the options menu
-	void RefreshAll(CORO_PARAM);
-	void RefreshThumbnails(void);
+	void refreshAll(CORO_PARAM);
+	void refreshThumbnails(void);
 };
 
 } // End of namespace Tony
