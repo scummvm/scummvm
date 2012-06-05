@@ -392,7 +392,7 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDes
 		return;
 	}
 
-	if (_recordMode == kRecorderRecord) {
+	if ((_recordMode == kRecorderRecord) && (gameDesc != NULL)) {
 		for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			_hashRecords[fileDesc->fileName] = fileDesc->md5;
 		}
@@ -404,7 +404,7 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDes
 			_recordMode = kPassthrough;
 			return;
 		}
-		if (!checkGameHash(gameDesc)) {
+		if ((gameDesc != NULL) && !checkGameHash(gameDesc)) {
 			_recordMode = kPassthrough;
 			return;
 		}
