@@ -46,8 +46,8 @@ struct GraphicsModeData {
 	uint scaleFactor;
 };
 
-static Common::Array<OSystem::GraphicsMode> s_supportedGraphicsModes;
-static Common::Array<GraphicsModeData> s_supportedGraphicsModesData;
+static Common::Array<OSystem::GraphicsMode> *s_supportedGraphicsModes = NULL;
+static Common::Array<GraphicsModeData> *s_supportedGraphicsModesData = NULL;
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
@@ -263,6 +263,8 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 }
 
 void static initGraphicsModes () {
+	s_supportedGraphicsModes = new Common::Array<OSystem::GraphicsMode>;
+	s_supportedGraphicsModesData = new Common::Array<GraphicsModeData>;
 	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
 	OSystem::GraphicsMode gm;
 	GraphicsModeData gmd;
@@ -280,7 +282,7 @@ void static initGraphicsModes () {
 			strcpy(s2, n2.c_str());
 			gm.name = s1;
 			gm.description = s2;
-			gm.id = s_supportedGraphicsModes.size();
+			gm.id = s_supportedGraphicsModes->size();
 			// Check if this is a legacy name
 			for (uint k = 0; k != ARRAYSIZE(s_legacyGraphicsModes); ++k) {
 				if (strcmp(s_legacyGraphicsModes[k].name, gm.name) == 0) {
@@ -288,21 +290,21 @@ void static initGraphicsModes () {
 					break;
 				}
 			}
-			s_supportedGraphicsModes.push_back(gm);
+			s_supportedGraphicsModes->push_back(gm);
 			gmd.scaleFactor = factors[j];
-			s_supportedGraphicsModesData.push_back(gmd);
+			s_supportedGraphicsModesData->push_back(gmd);
 		}
 	}
 	gm.name = 0;
 	gm.description = 0;
 	gm.id = 0;
-	s_supportedGraphicsModes.push_back(gm);
+	s_supportedGraphicsModes->push_back(gm);
 }
 
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
-	if (s_supportedGraphicsModes.size() < 2)
+	if (!s_supportedGraphicsModes)
 		initGraphicsModes();
-	return &s_supportedGraphicsModes[0];
+	return &(*s_supportedGraphicsModes)[0];
 }
 
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -538,13 +540,13 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	int newScaleFactor;
 
-	if (mode >= s_supportedGraphicsModes.size()) {
+	if (mode >= s_supportedGraphicsModes->size()) {
 		warning("unknown gfx mode %d", mode);
 		return false;
 	}
 
-	const char *name = s_supportedGraphicsModesData[mode].pluginName;
-	newScaleFactor = s_supportedGraphicsModesData[mode].scaleFactor;
+	const char *name = (*s_supportedGraphicsModesData)[mode].pluginName;
+	newScaleFactor = (*s_supportedGraphicsModesData)[mode].scaleFactor;
 	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
 
 	while (strcmp(name, (*plugins[_scalerIndex])->getName()) != 0) {
@@ -2133,14 +2135,14 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
  */
 int findGraphicsMode(int factor, uint scalerIndex) {
 	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
-	for (uint i = 0; i < s_supportedGraphicsModesData.size(); ++i) {
+	for (uint i = 0; i < s_supportedGraphicsModesData->size(); ++i) {
 		warning("%s, %d == %s, %d",
-				s_supportedGraphicsModesData[i].pluginName,
-				s_supportedGraphicsModesData[i].scaleFactor,
+				(*s_supportedGraphicsModesData)[i].pluginName,
+				(*s_supportedGraphicsModesData)[i].scaleFactor,
 				(*plugins[scalerIndex])->getName(),
 				factor);
-		if (strcmp(s_supportedGraphicsModesData[i].pluginName, (*plugins[scalerIndex])->getName()) == 0
-				&& s_supportedGraphicsModesData[i].scaleFactor == factor) {
+		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, (*plugins[scalerIndex])->getName()) == 0
+				&& (*s_supportedGraphicsModesData)[i].scaleFactor == factor) {
 			return i;
 		}
 	}
