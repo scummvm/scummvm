@@ -776,6 +776,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	f3d55aea441e260e9e9c7d2a187097e0	14337	en	Windows	-	Demo	-	khalek
 	65fa23d6884e8ca23d5d2406d70de7e8	-1	fr	Windows	-	Demo	-	gist974
 	2a446817ffcabfef8716e0c456ecaf81	-1	de	Windows	-	Demo	-	Joachim Eberhard
+	4e859d3ef1e146b41e7d93c35cd6cc62	-1	en	iOS	HE 100	Lite	-	clone2727
 
 PuttTime	Putt-Putt Travels Through Time
 	fcb78ebecab2757264c590890c319cc5	-1	nl	All	HE 85	-	-	adutchguy, daniel9

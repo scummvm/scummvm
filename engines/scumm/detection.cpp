@@ -1079,6 +1079,14 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
 
+	// We don't support the "Lite" version off puttzoo iOS because it contains
+	// the full game.
+	if (!strcmp(res.game.gameid, "puttzoo") && !strcmp(res.extra, "Lite")) {
+		GUIErrorMessage("The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid piracy.\n"
+		                "The full version is available for purchase from the iTunes Store.");
+		return Common::kUnsupportedGameidError;
+	}
+
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
 	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));
