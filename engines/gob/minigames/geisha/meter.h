@@ -55,10 +55,10 @@ public:
 	/** Set the current value the meter is measuring to the max value. */
 	void setMaxValue();
 
-	/** Increase the current value the meter is measuring. */
-	void increase(int32 n = 1);
-	/** Decrease the current value the meter is measuring. */
-	void decrease(int32 n = 1);
+	/** Increase the current value the meter is measuring, returning the overflow. */
+	int32 increase(int32 n = 1);
+	/** Decrease the current value the meter is measuring, returning the underflow. */
+	int32 decrease(int32 n = 1);
 
 	/** Draw the meter onto the surface and return the affected rectangle. */
 	void draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);

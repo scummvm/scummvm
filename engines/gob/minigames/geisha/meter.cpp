@@ -63,22 +63,36 @@ void Meter::setMaxValue() {
 	setValue(_maxValue);
 }
 
-void Meter::increase(int32 n) {
+int32 Meter::increase(int32 n) {
+	if (n < 0)
+		return decrease(-n);
+
+	int32 overflow = MAX(0, (_value + n) - _maxValue);
+
 	int32 value = CLIP<int32>(_value + n, 0, _maxValue);
 	if (_value == value)
-		return;
+		return overflow;
 
 	_value = value;
 	_needUpdate = true;
+
+	return overflow;
 }
 
-void Meter::decrease(int32 n) {
+int32 Meter::decrease(int32 n) {
+	if (n < 0)
+		return increase(-n);
+
+	int32 underflow = -MIN(0, _value - n);
+
 	int32 value = CLIP<int32>(_value - n, 0, _maxValue);
 	if (_value == value)
-		return;
+		return underflow;
 
 	_value = value;
 	_needUpdate = true;
+
+	return underflow;
 }
 
 void Meter::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) {

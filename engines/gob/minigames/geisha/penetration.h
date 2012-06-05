@@ -132,6 +132,9 @@ private:
 
 	void checkShields();
 	void checkMouths();
+
+	void healthGain(int amount);
+	void healthLose(int amount);
 };
 
 } // End of namespace Geisha

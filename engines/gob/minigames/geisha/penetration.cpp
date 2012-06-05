@@ -226,8 +226,8 @@ Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), 
 
 	_background = new Surface(320, 200, 1);
 
-	_shieldMeter = new Meter(11, 119, 92, 3, kColorShield, kColorBlack, 1020, Meter::kFillToRight);
-	_healthMeter = new Meter(11, 137, 92, 3, kColorHealth, kColorBlack, 1020, Meter::kFillToRight);
+	_shieldMeter = new Meter(11, 119, 92, 3, kColorShield, kColorBlack, 920, Meter::kFillToRight);
+	_healthMeter = new Meter(11, 137, 92, 3, kColorHealth, kColorBlack, 920, Meter::kFillToRight);
 
 	_map = new Surface(kMapWidth  * kMapTileWidth  + kPlayAreaWidth ,
 	                   kMapHeight * kMapTileHeight + kPlayAreaHeight, 1);
@@ -563,13 +563,27 @@ void Penetration::checkMouths() {
 
 			m->mouth->activate();
 
-			// Play the mouth sound
-			if      (m->type == kMouthTypeBite)
+			// Play the mouth sound and do health gain/loss
+			if      (m->type == kMouthTypeBite) {
 				_vm->_sound->blasterPlay(&_soundBite, 1, 0);
-			else if (m->type == kMouthTypeKiss)
+				healthLose(230);
+			} else if (m->type == kMouthTypeKiss) {
 				_vm->_sound->blasterPlay(&_soundKiss, 1, 0);
+				healthGain(120);
+			}
 		}
 	}
+}
+
+void Penetration::healthGain(int amount) {
+	if (_shieldMeter->getValue() > 0)
+		_healthMeter->increase(_shieldMeter->increase(amount));
+	else
+		_healthMeter->increase(amount);
+}
+
+void Penetration::healthLose(int amount) {
+	_healthMeter->decrease(_shieldMeter->decrease(amount));
 }
 
 void Penetration::updateAnims() {
