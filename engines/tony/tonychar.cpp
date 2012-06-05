@@ -40,7 +40,7 @@ namespace Tony {
 
 bool RMTony::m_bAction = false;
 
-void RMTony::InitStatics() {
+void RMTony::initStatics() {
 	m_bAction = false;
 }
 
@@ -82,13 +82,13 @@ RMGfxSourceBuffer *RMTony::NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 
 	assert(m_cm == CM_256);
 	spr = new RMGfxSourceBuffer8RLEByteAA;
-	spr->SetAlphaBlendColor(1);
+	spr->setAlphaBlendColor(1);
 	if (bPreRLE)
-		spr->SetAlreadyCompressed();
+		spr->setAlreadyCompressed();
 	return spr;
 }
 
-void RMTony::Init(void) {
+void RMTony::init(void) {
 	RMRes tony(0);
 	RMRes body(9999);
 	RMDataStream ds;
@@ -125,7 +125,7 @@ void RMTony::Init(void) {
 
 void RMTony::Close(void) {
 	// Disalloca @@@ Deallocation of missing item
-	m_ombra.Destroy();
+	m_ombra.destroy();
 }
 
 void RMTony::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
@@ -135,8 +135,8 @@ void RMTony::DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!m_nInList && m_bShow)
-		bigBuf->AddPrim(new RMGfxPrimitive(this));
+	if (!_nInList && m_bShow)
+		bigBuf->addPrim(new RMGfxPrimitive(this));
 
 	SetSpeed(GLOBALS.nCfgTonySpeed);
 
@@ -172,7 +172,7 @@ void RMTony::Hide(bool bShowOmbra) {
 }
 
 
-void RMTony::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMTony::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -185,7 +185,7 @@ void RMTony::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 			prim->Dst().Offset(-44, -134);
 			if (m_bPastorella)
 				prim->Dst().Offset(1, 4);
-			CORO_INVOKE_2(RMCharacter::Draw, bigBuf, prim);
+			CORO_INVOKE_2(RMCharacter::draw, bigBuf, prim);
 		}
 
 		if (m_bIsTalking || m_bIsStaticTalk) {
@@ -195,7 +195,7 @@ void RMTony::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 			prim->Dst().Offset(m_pos);
 			prim->Dst().Offset(-44, -134);
 			prim->Dst() += m_nBodyOffset;
-			CORO_INVOKE_2(m_body.Draw, bigBuf, prim);
+			CORO_INVOKE_2(m_body.draw, bigBuf, prim);
 		}
 
 		if (!m_bCorpoDavanti) {
@@ -203,7 +203,7 @@ void RMTony::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 			prim->Dst().Offset(-44, -134);
 			if (m_bPastorella)
 				prim->Dst().Offset(0, 3);
-			CORO_INVOKE_2(RMCharacter::Draw, bigBuf, prim);
+			CORO_INVOKE_2(RMCharacter::draw, bigBuf, prim);
 		}
 	}
 

@@ -356,15 +356,15 @@ void RMSprite::ReadFromStream(RMDataStream &ds, bool bLOX) {
 		ds += 32;
 
 	// Create buffer and read
-	m_buf->Init(ds, dimx, dimy);
+	m_buf->init(ds, dimx, dimy);
 }
 
-void RMSprite::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	m_buf->Draw(coroParam, bigBuf, prim);
+void RMSprite::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+	m_buf->draw(coroParam, bigBuf, prim);
 }
 
 void RMSprite::SetPalette(byte *buf) {
-	((RMGfxSourceBufferPal *)m_buf)->LoadPalette(buf);
+	((RMGfxSourceBufferPal *)m_buf)->loadPalette(buf);
 }
 
 RMSprite::RMSprite() {
@@ -500,9 +500,9 @@ RMGfxSourceBuffer *RMItem::NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 			else
 				spr = new RMGfxSourceBuffer8RLEByteAA;
 
-			spr->SetAlphaBlendColor(m_FXparm);
+			spr->setAlphaBlendColor(m_FXparm);
 			if (bPreRLE)
-				spr->SetAlreadyCompressed();
+				spr->setAlreadyCompressed();
 		} else {
 			if (dimx == -1 || dimx > 255)
 				spr = new RMGfxSourceBuffer8RLEWord;
@@ -510,7 +510,7 @@ RMGfxSourceBuffer *RMItem::NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 				spr = new RMGfxSourceBuffer8RLEByte;
 
 			if (bPreRLE)
-				spr->SetAlreadyCompressed();
+				spr->setAlreadyCompressed();
 		}
 
 		return spr;
@@ -675,8 +675,8 @@ bool RMItem::DoFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 	}
 
 	// If we are not in the OT list, add ourselves
-	if (!m_nInList && bAddToList)
-		bigBuf->AddPrim(NewItemPrimitive());
+	if (!_nInList && bAddToList)
+		bigBuf->addPrim(NewItemPrimitive());
 
 	return oldSprite != m_nCurSprite;
 }
@@ -685,7 +685,7 @@ RMPoint RMItem::CalculatePos(void) {
 	return m_pos + m_patterns[m_nCurPattern].Pos();
 }
 
-void RMItem::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -696,7 +696,7 @@ void RMItem::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		return;
 
 	// Set the flag
-	prim->SetFlag(m_bCurFlag);
+	prim->setFlag(m_bCurFlag);
 
 	// Offset direction for scrolling
 	prim->Dst().Offset(-m_curScroll);
@@ -706,10 +706,10 @@ void RMItem::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	prim->Dst().Offset(CalculatePos());
 
 	// No stretching, please
-	prim->SetStrecth(false);
+	prim->setStrecth(false);
 
 	// Now we turn to the generic surface drawing routines
-	CORO_INVOKE_2(m_sprites[m_nCurSprite].Draw, bigBuf, prim);
+	CORO_INVOKE_2(m_sprites[m_nCurSprite].draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
@@ -867,7 +867,7 @@ int RMWipe::Priority(void) {
 
 void RMWipe::Unregister(void) {
 	RMGfxTask::Unregister();
-	assert(m_nInList == 0);
+	assert(_nInList == 0);
 	CoroScheduler.setEvent(m_hUnregistered);
 }
 
@@ -919,7 +919,7 @@ void RMWipe::InitFade(int type) {
 
 void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 	if (m_bMustRegister) {
-		bigBuf.AddPrim(new RMGfxPrimitive(this));
+		bigBuf.addPrim(new RMGfxPrimitive(this));
 		m_bMustRegister = false;
 	}
 
@@ -934,18 +934,18 @@ void RMWipe::DoFrame(RMGfxTargetBuffer &bigBuf) {
 	}
 }
 
-void RMWipe::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMWipe::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	if (m_bFading) {
-		CORO_INVOKE_2(m_wip0r.Draw, bigBuf, prim);
+		CORO_INVOKE_2(m_wip0r.draw, bigBuf, prim);
 	}
 
 	if (m_bEndFade)
-		Common::fill((byte *)bigBuf, (byte *)bigBuf + bigBuf.Dimx() * bigBuf.Dimy() * 2, 0x0);
+		Common::fill((byte *)bigBuf, (byte *)bigBuf + bigBuf.getDimx() * bigBuf.getDimy() * 2, 0x0);
 
 	CORO_END_CODE;
 }
@@ -1332,7 +1332,7 @@ RMPoint RMCharacter::NearestHotSpot(int sourcebox, int destbox) {
 	return puntocaldo;
 }
 
-void RMCharacter::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMCharacter::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1341,7 +1341,7 @@ void RMCharacter::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	if (bDrawNow) {
 		prim->Dst() += m_fixedScroll;
 
-		CORO_INVOKE_2(RMItem::Draw, bigBuf, prim);
+		CORO_INVOKE_2(RMItem::draw, bigBuf, prim);
 	}
 
 	CORO_END_CODE;
@@ -2072,7 +2072,7 @@ bool RMLocation::Load(RMDataStream &ds) {
 	};
 
 	// Initialise the surface, loading the palette if necessary
-	m_buf->Init(ds, dimx, dimy, true);
+	m_buf->init(ds, dimx, dimy, true);
 
 	// Check the size of the location
 //	assert(dimy!=512);
@@ -2119,7 +2119,7 @@ bool RMLocation::LoadLOX(RMDataStream &ds) {
 	m_buf = new RMGfxSourceBuffer16;
 
 	// Initialise the surface, loading in the palette if necessary
-	m_buf->Init(ds, dimx, dimy, true);
+	m_buf->init(ds, dimx, dimy, true);
 
 	// Number of items
 	ds >> m_nItems;
@@ -2138,21 +2138,21 @@ bool RMLocation::LoadLOX(RMDataStream &ds) {
 /**
  * Draw method overloaded from RMGfxSourceBUffer8
  */
-void RMLocation::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	// Set the position of the source scrolling
-	if (m_buf->Dimy() > RM_SY || m_buf->Dimx() > RM_SX) {
-		prim->SetSrc(RMRect(m_curScroll, m_curScroll + RMPoint(640, 480)));
+	if (m_buf->getDimy() > RM_SY || m_buf->getDimx() > RM_SX) {
+		prim->setSrc(RMRect(m_curScroll, m_curScroll + RMPoint(640, 480)));
 	}
 
-	prim->SetDst(m_fixedScroll);
+	prim->setDst(m_fixedScroll);
 
 	// Invoke the drawing method fo the image class, which will draw the location background
-	CORO_INVOKE_2(m_buf->Draw, bigBuf, prim);
+	CORO_INVOKE_2(m_buf->draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
@@ -2165,8 +2165,8 @@ void RMLocation::DoFrame(RMGfxTargetBuffer *bigBuf) {
 	int i;
 
 	// If the location is not in the OT list, add it in
-	if (!m_nInList)
-		bigBuf->AddPrim(new RMGfxPrimitive(this));
+	if (!_nInList)
+		bigBuf->addPrim(new RMGfxPrimitive(this));
 
 	// Process all the location items
 	for (i = 0; i < m_nItems; i++)
@@ -2231,7 +2231,7 @@ void RMLocation::UpdateScrolling(const RMPoint &ptShowThis) {
 		m_curScroll.x = ptShowThis.x - 250;
 	} else if (m_curScroll.x + RM_SX - 250 < ptShowThis.x) {
 		m_curScroll.x = ptShowThis.x + 250 - RM_SX;
-	} else if (ABS(m_curScroll.x + RM_SX / 2 - ptShowThis.x) > 32 && m_buf->Dimx() > RM_SX) {
+	} else if (ABS(m_curScroll.x + RM_SX / 2 - ptShowThis.x) > 32 && m_buf->getDimx() > RM_SX) {
 		if (m_curScroll.x + RM_SX / 2 < ptShowThis.x)
 			m_curScroll.x++;
 		else
@@ -2242,17 +2242,21 @@ void RMLocation::UpdateScrolling(const RMPoint &ptShowThis) {
 		m_curScroll.y = ptShowThis.y - 180;
 	} else if (m_curScroll.y + RM_SY - 180 < ptShowThis.y) {
 		m_curScroll.y = ptShowThis.y + 180 - RM_SY;
-	} else if (ABS(m_curScroll.y + RM_SY / 2 - ptShowThis.y) > 16 && m_buf->Dimy() > RM_SY) {
+	} else if (ABS(m_curScroll.y + RM_SY / 2 - ptShowThis.y) > 16 && m_buf->getDimy() > RM_SY) {
 		if (m_curScroll.y + RM_SY / 2 < ptShowThis.y)
 			m_curScroll.y++;
 		else
 			m_curScroll.y--;
 	}
 
-	if (m_curScroll.x < 0) m_curScroll.x = 0;
-	if (m_curScroll.y < 0) m_curScroll.y = 0;
-	if (m_curScroll.x + RM_SX > m_buf->Dimx()) m_curScroll.x = m_buf->Dimx() - RM_SX;
-	if (m_curScroll.y + RM_SY > m_buf->Dimy()) m_curScroll.y = m_buf->Dimy() - RM_SY;
+	if (m_curScroll.x < 0)
+		m_curScroll.x = 0;
+	if (m_curScroll.y < 0)
+		m_curScroll.y = 0;
+	if (m_curScroll.x + RM_SX > m_buf->getDimx())
+		m_curScroll.x = m_buf->getDimx() - RM_SX;
+	if (m_curScroll.y + RM_SY > m_buf->getDimy())
+		m_curScroll.y = m_buf->getDimy() - RM_SY;
 
 	if (oldScroll != m_curScroll)
 		for (int i = 0; i < m_nItems; i++)
@@ -2268,10 +2272,14 @@ void RMLocation::SetFixedScroll(const RMPoint &scroll) {
 
 void RMLocation::SetScrollPosition(const RMPoint &scroll) {
 	RMPoint pt = scroll;
-	if (pt.x < 0) pt.x = 0;
-	if (pt.y < 0) pt.y = 0;
-	if (pt.x + RM_SX > m_buf->Dimx()) pt.x = m_buf->Dimx() - RM_SX;
-	if (pt.y + RM_SY > m_buf->Dimy()) pt.y = m_buf->Dimy() - RM_SY;
+	if (pt.x < 0)
+		pt.x = 0;
+	if (pt.y < 0)
+		pt.y = 0;
+	if (pt.x + RM_SX > m_buf->getDimx())
+		pt.x = m_buf->getDimx() - RM_SX;
+	if (pt.y + RM_SY > m_buf->getDimy())
+		pt.y = m_buf->getDimy() - RM_SY;
 
 	m_curScroll = pt;
 

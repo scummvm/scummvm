@@ -79,8 +79,8 @@ public:
 	~RMWindow();
 
 	// Initialisation
-	void Init(/*HINSTANCE hInst*/);
-	void InitDirectDraw(void);
+	void init(/*HINSTANCE hInst*/);
+	void initDirectDraw(void);
 	void Close(void);
 
 	// Drawing

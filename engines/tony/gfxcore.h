@@ -58,10 +58,10 @@ class RMGfxClearTask;        //     Task
  */
 class RMGfxBuffer {
 protected:
-	int m_dimx, m_dimy;
-	byte *m_buf;
-	byte *m_origBuf;
-	bool m_bUseDDraw;
+	int _dimx, _dimy;
+	byte *_buf;
+	byte *_origBuf;
+	bool _bUseDDraw;
 
 public:
 	RMGfxBuffer();
@@ -69,27 +69,27 @@ public:
 	virtual ~RMGfxBuffer();
 
 	// Attributes
-	int Dimx() {
-		return m_dimx;
+	int getDimx() {
+		return _dimx;
 	}
-	int Dimy() {
-		return m_dimy;
+	int getDimy() {
+		return _dimy;
 	}
 
 	// Creation
-	virtual void Create(int dimx, int dimy, int nBpp, bool bUseDDraw = false);
-	virtual void Destroy(void);
+	virtual void create(int dimx, int dimy, int nBpp, bool bUseDDraw = false);
+	virtual void destroy(void);
 
 	// Buffer access
-	void Lock(void);
-	void Unlock(void);
+	void lock(void);
+	void unlock(void);
 
 	// These are valid only if the buffer is locked
 	operator byte *();
 	operator void *();
 
 	// Getting the offset for a given Y position
-	void OffsetY(int nLines, int nBpp);
+	void offsetY(int nLines, int nBpp);
 };
 
 /**
@@ -97,116 +97,116 @@ public:
  */
 class RMGfxPrimitive {
 public:
-	RMGfxTask *m_task;
+	RMGfxTask *_task;
 
 protected:
-	RMRect m_src;
-	RMRect m_dst;
+	RMRect _src;
+	RMRect _dst;
 
-	bool m_bStretch;
-	byte m_bFlag;
+	bool _bStretch;
+	byte _bFlag;
 
 public:
 	RMGfxPrimitive() {
-		m_bFlag = 0;
-		m_task = NULL;
-		m_src.SetEmpty();
-		m_dst.SetEmpty();
+		_bFlag = 0;
+		_task = NULL;
+		_src.SetEmpty();
+		_dst.SetEmpty();
 	}
 
 	RMGfxPrimitive(RMGfxTask *task) {
-		m_task = task;
-		m_bFlag = 0;
+		_task = task;
+		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMRect &dst) {
-		m_task = task;
-		m_src = src;
-		m_dst = dst;
-		m_bFlag = 0;
-		m_bStretch = (src.Width() != dst.Width() || src.Height() != dst.Height());
+		_task = task;
+		_src = src;
+		_dst = dst;
+		_bFlag = 0;
+		_bStretch = (src.Width() != dst.Width() || src.Height() != dst.Height());
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMRect &dst) {
-		m_task = task;
-		m_src.TopLeft() = src;
-		m_dst = dst;
-		m_bFlag = 0;
+		_task = task;
+		_src.TopLeft() = src;
+		_dst = dst;
+		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMPoint &dst) {
-		m_task = task;
-		m_src.TopLeft() = src;
-		m_dst.TopLeft() = dst;
-		m_bFlag = 0;
+		_task = task;
+		_src.TopLeft() = src;
+		_dst.TopLeft() = dst;
+		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMPoint &dst) {
-		m_task = task;
-		m_src = src;
-		m_dst.TopLeft() = dst;
-		m_bFlag = 0;
+		_task = task;
+		_src = src;
+		_dst.TopLeft() = dst;
+		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &dst) {
-		m_task = task;
-		m_dst = dst;
-		m_src.SetEmpty();
-		m_bFlag = 0;
+		_task = task;
+		_dst = dst;
+		_src.SetEmpty();
+		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &dst) {
-		m_task = task;
-		m_dst.TopLeft() = dst;
-		m_src.SetEmpty();
-		m_bFlag = 0;
+		_task = task;
+		_dst.TopLeft() = dst;
+		_src.SetEmpty();
+		_bFlag = 0;
 	}
 
 	virtual ~RMGfxPrimitive() { }
 
-	void SetFlag(byte bFlag)        {
-		m_bFlag = bFlag;
+	void setFlag(byte bFlag)        {
+		_bFlag = bFlag;
 	}
-	void SetTask(RMGfxTask *task)   {
-		m_task = task;
+	void setTask(RMGfxTask *task)   {
+		_task = task;
 	}
-	void SetSrc(const RMRect &src)        {
-		m_src = src;
+	void setSrc(const RMRect &src)        {
+		_src = src;
 	}
-	void SetSrc(const RMPoint &src)       {
-		m_src.TopLeft() = src;
+	void setSrc(const RMPoint &src)       {
+		_src.TopLeft() = src;
 	}
-	void SetDst(const RMRect &dst)        {
-		m_dst = dst;
+	void setDst(const RMRect &dst)        {
+		_dst = dst;
 	}
-	void SetDst(const RMPoint &dst)       {
-		m_dst.TopLeft() = dst;
+	void setDst(const RMPoint &dst)       {
+		_dst.TopLeft() = dst;
 	}
-	void SetStrecth(bool bStretch)  {
-		m_bStretch = bStretch;
+	void setStrecth(bool bStretch)  {
+		_bStretch = bStretch;
 	}
 
-	bool HaveDst()                  {
-		return !m_dst.IsEmpty();
+	bool haveDst()                  {
+		return !_dst.IsEmpty();
 	}
 	RMRect &Dst()                   {
-		return m_dst;
+		return _dst;
 	}
 
-	bool HaveSrc()                  {
-		return !m_src.IsEmpty();
+	bool haveSrc()                  {
+		return !_src.IsEmpty();
 	}
 	RMRect &Src()                   {
-		return m_src;
+		return _src;
 	}
 
 	// Flags
-	bool IsFlipped()                {
-		return m_bFlag & 1;
+	bool isFlipped()                {
+		return _bFlag & 1;
 	}
 
 	// Duplicate
-	virtual RMGfxPrimitive *Duplicate() {
+	virtual RMGfxPrimitive *duplicate() {
 		return new RMGfxPrimitive(*this);
 	}
 };
@@ -217,25 +217,25 @@ public:
  */
 class RMGfxTask {
 protected:
-	int m_nPrior;
-	int m_nInList;
+	int _nPrior;
+	int _nInList;
 
 public:
 	// Standard constructor
 	RMGfxTask();
 	virtual ~RMGfxTask() { }
 
-	virtual int Priority();
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) = 0;
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual int priority();
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) = 0;
+	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Registration
 	virtual void Register(void) {
-		m_nInList++;
+		_nInList++;
 	}
 	virtual void Unregister(void) {
-		m_nInList--;
-		assert(m_nInList >= 0);
+		_nInList--;
+		assert(_nInList >= 0);
 	}
 };
 
@@ -246,7 +246,7 @@ public:
 class RMGfxTaskSetPrior : public RMGfxTask {
 public:
 	virtual ~RMGfxTaskSetPrior() { }
-	void SetPriority(int nPrior);
+	void setPriority(int nPrior);
 };
 
 
@@ -258,8 +258,8 @@ public:
 	virtual ~RMGfxClearTask() { }
 
 	int Priority();
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void removeThis(CORO_PARAM, bool &result);
 };
 
 
@@ -274,8 +274,8 @@ public:
 	virtual ~RMGfxBox() { }
 
 	void SetColor(byte r, byte g, byte b);
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	virtual void RemoveThis(CORO_PARAM, bool &result);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void removeThis(CORO_PARAM, bool &result);
 };
 
 
@@ -285,17 +285,17 @@ public:
 class RMGfxSourceBuffer : public virtual RMGfxBuffer, public RMGfxTaskSetPrior {
 public:
 	// Load the data for the surface
-	virtual int Init(uint32 resID, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
-	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(uint32 resID, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer();
 
 protected:
-	virtual void PrepareImage(void);
-	bool Clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf);
-	void OffsetY(int nLines) {
-		RMGfxBuffer::OffsetY(nLines, Bpp());
+	virtual void prepareImage(void);
+	bool clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf);
+	void offsetY(int nLines) {
+		RMGfxBuffer::offsetY(nLines, Bpp());
 	}
 
 public:
@@ -309,7 +309,7 @@ public:
 class RMGfxSourceBuffer16 : public RMGfxSourceBuffer {
 protected:
 	virtual void PrepareImage(void);
-	bool m_bTrasp0;
+	bool _bTrasp0;
 
 public:
 	RMGfxSourceBuffer16(bool bUseTrasp = false);
@@ -320,7 +320,7 @@ public:
 	void Create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int Bpp();
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -330,22 +330,22 @@ public:
 class RMGfxSourceBufferPal : public RMGfxSourceBuffer {
 protected:
 	// The size of the palette is  (1 << Bpp()) * 4
-	byte m_pal[256 * 3];
-	uint16 m_palFinal[256];
+	byte _pal[256 * 3];
+	uint16 _palFinal[256];
 
 	// Post process to prepare the palette for drawing
-	virtual void PreparePalette(void);
+	virtual void preparePalette(void);
 
 public:
 	virtual ~RMGfxSourceBufferPal();
 
-	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
-	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 
-	int LoadPaletteWA(uint32 resID, bool bSwapped = false);
-	int LoadPaletteWA(const byte *buf, bool bSwapped = false);
-	int LoadPalette(uint32 resID);
-	int LoadPalette(const byte *buf);
+	int loadPaletteWA(uint32 resID, bool bSwapped = false);
+	int loadPaletteWA(const byte *buf, bool bSwapped = false);
+	int loadPalette(uint32 resID);
+	int loadPalette(const byte *buf);
 };
 
 
@@ -354,7 +354,7 @@ public:
  */
 class RMGfxSourceBuffer8 : public RMGfxSourceBufferPal {
 protected:
-	bool m_bTrasp0;
+	bool _bTrasp0;
 
 public:
 	RMGfxSourceBuffer8(bool bTrasp0 = true);
@@ -362,10 +362,10 @@ public:
 	virtual ~RMGfxSourceBuffer8();
 
 	// Initialisation
-	void Create(int dimx, int dimy, bool bUseDDraw = false);
+	void create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int Bpp();
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -374,11 +374,11 @@ public:
  */
 class RMGfxSourceBuffer8AB : public RMGfxSourceBuffer8 {
 protected:
-	int CalcTrasp(int f, int b);
+	int calcTrasp(int f, int b);
 
 public:
 	virtual ~RMGfxSourceBuffer8AB();
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -403,29 +403,29 @@ protected:
 	virtual void RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) = 0;
 
 	// Perform image compression in RLE
-	void CompressRLE(void);
+	void compressRLE(void);
 
 protected:
 	// Overriding initialisation methods
-	virtual void PrepareImage(void);
-	virtual void PreparePalette(void);
+	virtual void prepareImage(void);
+	virtual void preparePalette(void);
 
 public:
 	RMGfxSourceBuffer8RLE();
 	virtual ~RMGfxSourceBuffer8RLE();
 
 	// Overload of the initialisation method
-	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	// Draw image with RLE decompression
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Sets the color that will be alpha blended
-	void SetAlphaBlendColor(int color);
+	void setAlphaBlendColor(int color);
 
 	// Warn if the data is already compressed
-	void SetAlreadyCompressed(void);
+	void setAlreadyCompressed(void);
 };
 
 class RMGfxSourceBuffer8RLEByte : public RMGfxSourceBuffer8RLE {
@@ -470,50 +470,50 @@ class RMGfxSourceBuffer8AA : public virtual RMGfxSourceBuffer8 {
 protected:
 	static byte MegaAABuf[];
 	static byte MegaAABuf2[];
-	byte *m_aabuf;
+	byte *_aabuf;
 
 	// Calculate the buffer for the anti-aliasing
-	void CalculateAA(void);
+	void calculateAA(void);
 
 	// Draw the AA
-	void DrawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	void drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 protected:
-	void PrepareImage(void);
+	void prepareImage(void);
 
 public:
 	RMGfxSourceBuffer8AA();
 	virtual ~RMGfxSourceBuffer8AA();
 
 	// Draw with anti-aliasing
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
 class RMGfxSourceBuffer8RLEByteAA : public RMGfxSourceBuffer8RLEByte, public RMGfxSourceBuffer8AA {
 protected:
-	void PrepareImage(void);
+	void prepareImage(void);
 
 public:
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded initialisation methods
-	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int Init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer8RLEByteAA();
 };
 
 class RMGfxSourceBuffer8RLEWordAA : public RMGfxSourceBuffer8RLEWord, public RMGfxSourceBuffer8AA {
 protected:
-	void PrepareImage(void);
+	void prepareImage(void);
 
 public:
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded initialisation methods
-	virtual void Init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int Init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer8RLEWordAA();
 };
@@ -531,7 +531,7 @@ public:
 	void Create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int Bpp();
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -557,34 +557,34 @@ private:
 
 protected:
 	OTList *otlist;
-	int m_otSize;
+	int _otSize;
 
 public:
 	RMGfxTargetBuffer();
 	virtual ~RMGfxTargetBuffer();
 
 	// management of the OT list
-	void ClearOT(void);
-	void DrawOT(CORO_PARAM);
-	void AddPrim(RMGfxPrimitive *prim); // The pointer must be delted
+	void clearOT(void);
+	void drawOT(CORO_PARAM);
+	void addPrim(RMGfxPrimitive *prim); // The pointer must be delted
 
 	// Adds a task to clear the screen
-	void AddClearTask(void);
+	void addClearTask(void);
 
 	operator byte *() {
-		return m_buf;
+		return _buf;
 	}
 	operator void *() {
-		return (void *)m_buf;
+		return (void *)_buf;
 	}
 	operator uint16 *() {
 		// FIXME: This may not be endian safe
-		return (uint16 *)m_buf;
+		return (uint16 *)_buf;
 	}
 
 	// Offseting buffer
-	void OffsetY(int nLines) {
-		RMGfxBuffer::OffsetY(nLines, 16);
+	void offsetY(int nLines) {
+		RMGfxBuffer::offsetY(nLines, 16);
 	}
 };
 
@@ -598,7 +598,7 @@ public:
 	RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw = false);
 	virtual ~RMGfxWoodyBuffer();
 
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 } // End of namespace Tony

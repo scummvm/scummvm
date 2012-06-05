@@ -42,7 +42,7 @@ namespace Tony {
 	assert(raw->IsValid());                                \
 	assert((buf16) == NULL);                               \
 	(buf16) = new RMGfxSourceBuffer16(false);              \
-	(buf16)->Init(*raw,raw->Width(),raw->Height());        \
+	(buf16)->init(*raw,raw->Width(),raw->Height());        \
 	delete raw;
 
 #define INIT_GFX8_FROMRAW(raw, dwRes, buf8)              \
@@ -50,7 +50,7 @@ namespace Tony {
 	assert(raw->IsValid());                                \
 	assert((buf8) == NULL);                                \
 	(buf8) = new RMGfxSourceBuffer8RLEByte();              \
-	(buf8)->Init(*raw, raw->Width(), raw->Height(), true); \
+	(buf8)->init(*raw, raw->Width(), raw->Height(), true); \
 	delete raw;
 
 
@@ -96,7 +96,7 @@ public:
 	int Priority();
 
 	// Overloading draw method
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Sets the current co-ordinates
 	void SetCoord(const RMPoint &pt) {
@@ -144,7 +144,7 @@ public:
 	virtual ~RMOptionButton();
 
 	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void AddToList(RMGfxTargetBuffer &bigBuf);
 	bool IsActive() {
 		return m_bActive;
@@ -173,7 +173,7 @@ public:
 	virtual ~RMOptionSlide();
 
 	bool DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void AddToList(RMGfxTargetBuffer &bigBuf);
 
 	int GetValue() {
@@ -273,7 +273,7 @@ public:
 
 	// Overloaded methods
 	virtual int Priority();
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Polling for the option screen

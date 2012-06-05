@@ -104,14 +104,14 @@ Common::ErrorCode TonyEngine::init() {
 	_startTime = g_system->getMillis();
 
 	// Init static class fields
-	RMText::InitStatics();
-	RMTony::InitStatics();
+	RMText::initStatics();
+	RMTony::initStatics();
 
 	// Reset the scheduler
 	CoroScheduler.reset();
 
 	// Initialise the graphics window
-	_window.Init();
+	_window.init();
 
 	// Initialise the function list
 	Common::fill(_funcList, _funcList + 300, (LPCUSTOMFUNCTION)NULL);

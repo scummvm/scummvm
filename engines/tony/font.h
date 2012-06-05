@@ -90,11 +90,11 @@ public:
 	virtual ~RMFont();
 
 	// Initialisation and closing
-	virtual void Init(void) = 0;
+	virtual void init(void) = 0;
 	virtual void Close(void);
 
 	// Drawing
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
 
 	// Create a primitive for a letter
 	RMGfxPrimitive *MakeLetterPrimitive(byte bChar, int &nLength);
@@ -143,7 +143,7 @@ public:
 
 class RMFontParla : public RMFontColor, public RMFontWithTables {
 public:
-	void Init(void);
+	void init(void);
 	virtual ~RMFontParla() {}
 };
 
@@ -152,19 +152,19 @@ private:
 	void SetBothCase(int nChar, int nNext, signed char spiazz);
 
 public:
-	void Init(void);
+	void init(void);
 	virtual ~RMFontObj() {}
 };
 
 class RMFontMacc : public RMFontColor, public RMFontWithTables {
 public:
-	void Init(void);
+	void init(void);
 	virtual ~RMFontMacc() {}
 };
 
 class RMFontCredits : public RMFontColor, public RMFontWithTables {
 public:
-	void Init(void);
+	void init(void);
 	virtual ~RMFontCredits() {}
 	virtual void SetBaseColor(byte r, byte g, byte b) {}
 };
@@ -203,7 +203,7 @@ protected:
 public:
 	RMText();
 	virtual ~RMText();
-	static void InitStatics();
+	static void initStatics();
 	static void Unload();
 
 	// Set the alignment type
@@ -223,7 +223,7 @@ public:
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Overloading of the Draw to center the text, if necessary
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Set the base colour
 	void SetColor(byte r, byte g, byte b) {
@@ -267,7 +267,7 @@ public:
 	virtual void Unregister(void);
 
 	// Overloading of the Draw to center the text, if necessary
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Set the position
 	void SetPosition(const RMPoint &pt) {
@@ -304,7 +304,7 @@ public:
 	RMTextDialogScrolling(RMLocation *loc);
 	virtual ~RMTextDialogScrolling();
 
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 
@@ -327,7 +327,7 @@ public:
 	}
 
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	RMPoint GetHotspot();
 	RMItem *GetSelectedItem();
@@ -363,7 +363,7 @@ protected:
 
 public:
 	virtual void RemoveThis(CORO_PARAM, bool &result);
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void Unregister(void);
 
 public:
@@ -372,7 +372,7 @@ public:
 	virtual ~RMDialogChoice();
 
 	// Initialisation and closure
-	void Init(void);
+	void init(void);
 	void Close(void);
 
 	// Sets the number of possible sentences, which then be added with AddChoice()

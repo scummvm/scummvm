@@ -61,8 +61,8 @@ void ExitAllIdles(CORO_PARAM, const void *param) {
 
 RMGfxEngine::RMGfxEngine() {
 	// Create big buffer where the frame will be rendered
-	_bigBuf.Create(RM_BBX, RM_BBY, 16);
-	_bigBuf.OffsetY(RM_SKIPY);
+	_bigBuf.create(RM_BBX, RM_BBY, 16);
+	_bigBuf.offsetY(RM_SKIPY);
 
 	_csMainLoop = NULL;
 	_nCurLoc = 0;
@@ -84,7 +84,7 @@ RMGfxEngine::RMGfxEngine() {
 
 RMGfxEngine::~RMGfxEngine() {
 	// Close the buffer
-	_bigBuf.Destroy();
+	_bigBuf.destroy();
 	g_system->deleteMutex(_csMainLoop);
 }
 
@@ -312,7 +312,7 @@ SKIPCLICKSINISTRO:
 	// **********************
 	// Draw the list in the OT
 	// **********************
-	CORO_INVOKE_0(_bigBuf.DrawOT);
+	CORO_INVOKE_0(_bigBuf.drawOT);
 
 #define FSTEP (480/32)
 
@@ -454,7 +454,7 @@ void RMGfxEngine::unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 
 	_bLocationLoaded = false;
 
-	_bigBuf.ClearOT();
+	_bigBuf.clearOT();
 	_loc.Unload();
 
 	if (result != NULL)
@@ -468,9 +468,9 @@ void RMGfxEngine::init() {
 	RMResRaw *raw;
 	RMGfxSourceBuffer16 *load = NULL;
 	INIT_GFX16_FROMRAW(20038, load);
-	_bigBuf.AddPrim(new RMGfxPrimitive(load));
-	_bigBuf.DrawOT(Common::nullContext);
-	_bigBuf.ClearOT();
+	_bigBuf.addPrim(new RMGfxPrimitive(load));
+	_bigBuf.drawOT(Common::nullContext);
+	_bigBuf.clearOT();
 	delete load;
 	_vm->_window.GetNewFrame(*this, NULL);
 
@@ -502,7 +502,7 @@ void RMGfxEngine::init() {
 	_point.Init();
 
 	// Initialise Tony
-	_tony.Init();
+	_tony.init();
 	_tony.LinkToBoxes(&_vm->_theBoxes);
 
 	// Initialise the inventory and the interface
@@ -519,7 +519,7 @@ void RMGfxEngine::init() {
 }
 
 void RMGfxEngine::close(void) {
-	_bigBuf.ClearOT();
+	_bigBuf.clearOT();
 
 	_inter.Close();
 	_inv.Close();

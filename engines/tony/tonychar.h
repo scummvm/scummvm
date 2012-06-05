@@ -358,11 +358,11 @@ public:
 	};
 
 public:
-	static void InitStatics();
+	static void initStatics();
 	RMTony();
 
 	// Initialise Tony
-	void Init(void);
+	void init(void);
 
 	// Free all memory
 	void Close(void);
@@ -371,7 +371,7 @@ public:
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc);
 
 	// Draw method, which controls chararacter display
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Show or hide
 	void Show(void);

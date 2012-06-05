@@ -121,7 +121,7 @@ public:
 
 	// Link to graphic task
 	void linkGraphicTask(RMGfxTask *task) {
-		_bigBuf.AddPrim(new RMGfxPrimitive(task));
+		_bigBuf.addPrim(new RMGfxPrimitive(task));
 	};
 
 	// Manage a location

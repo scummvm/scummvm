@@ -1998,7 +1998,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		}
 
 		// Making a choice for dialog
-		_ctx->dc.Init();
+		_ctx->dc.init();
 		_ctx->dc.SetNumChoices(_ctx->num);
 
 		// Writeall the possible options

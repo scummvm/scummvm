@@ -101,7 +101,7 @@ public:
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Overload the drawing of the inventory
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Method for determining whether the inventory currently has the focus
 	bool HaveFocus(const RMPoint &mpos);
@@ -193,7 +193,7 @@ public:
 	bool GetPalesati(void);
 
 	// Overloaded Draw
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
 } // End of namespace Tony

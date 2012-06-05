@@ -186,7 +186,7 @@ public:
 
 	void Init(RMGfxSourceBuffer *buf);
 	friend RMDataStream &operator>>(RMDataStream &ds, RMSprite &sprite);
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void SetPalette(byte *lpBuf);
 	void GetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy);
 	void LOXGetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy);
@@ -254,7 +254,7 @@ public:
 	virtual void RemoveThis(CORO_PARAM, bool &result);
 
 	// Overloaded Draw
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded priority: it's based on Z ordering
 	virtual int Priority() {
@@ -460,7 +460,7 @@ public:
 	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);
 
 	// Overloaded draw
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// TRUE if you just stopped
 	bool EndOfPath() {
@@ -510,7 +510,7 @@ public:
 	virtual ~RMWipe();
 
 	void DoFrame(RMGfxTargetBuffer &bigBuf);
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	void InitFade(int type);
 	void CloseFade(void);
@@ -566,7 +566,7 @@ public:
 	void Unload(void);
 
 	// Overloaded draw
-	virtual void Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Prepare a frame by drawing the location and all it's items
 	void DoFrame(RMGfxTargetBuffer *bigBuf);

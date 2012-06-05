@@ -126,7 +126,7 @@ RMOptionButton::RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState) {
 	RMResRaw raw(dwRes);
 	assert(raw.IsValid());
 	m_buf = new RMGfxSourceBuffer16(false);
-	m_buf->Init(raw, raw.Width(), raw.Height());
+	m_buf->init(raw, raw.Width(), raw.Height());
 
 	m_rect.SetRect(pt.x, pt.y, pt.x + raw.Width() - 1, pt.y + raw.Height() - 1);
 	m_bActive = false;
@@ -170,9 +170,7 @@ bool RMOptionButton::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRig
 	return false;
 }
 
-
-
-void RMOptionButton::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMOptionButton::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -182,14 +180,14 @@ void RMOptionButton::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		return;
 
 	if (m_bHasGfx)
-		CORO_INVOKE_2(m_buf->Draw, bigBuf, prim);
+		CORO_INVOKE_2(m_buf->draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
 void RMOptionButton::AddToList(RMGfxTargetBuffer &bigBuf) {
 	if (m_bHasGfx)
-		bigBuf.AddPrim(new RMGfxPrimitive(this, m_rect));
+		bigBuf.addPrim(new RMGfxPrimitive(this, m_rect));
 }
 
 /****************************************************************************\
@@ -272,7 +270,7 @@ bool RMOptionSlide::DoFrame(const RMPoint &mousePos, bool bLeftClick, bool bRigh
 	return bRefresh;
 }
 
-void RMOptionSlide::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMOptionSlide::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	int i;
 	int val;
@@ -290,21 +288,21 @@ void RMOptionSlide::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *
 	else if (_ctx->val > 100) _ctx->val = 100;
 
 	if (_ctx->val == 1) {
-		prim->SetDst(_ctx->pos);
-		CORO_INVOKE_2(m_SliderSingle->Draw, bigBuf, prim);
+		prim->setDst(_ctx->pos);
+		CORO_INVOKE_2(m_SliderSingle->draw, bigBuf, prim);
 	} else {
-		prim->SetDst(_ctx->pos);
-		CORO_INVOKE_2(m_SliderLeft->Draw, bigBuf, prim);
+		prim->setDst(_ctx->pos);
+		CORO_INVOKE_2(m_SliderLeft->draw, bigBuf, prim);
 		_ctx->pos.x += 3;
 
 		for (_ctx->i = 1; _ctx->i < _ctx->val - 1; _ctx->i++) {
-			prim->SetDst(_ctx->pos);
-			CORO_INVOKE_2(m_SliderCenter->Draw, bigBuf, prim);
+			prim->setDst(_ctx->pos);
+			CORO_INVOKE_2(m_SliderCenter->draw, bigBuf, prim);
 			_ctx->pos.x += 3;
 		}
 
-		prim->SetDst(_ctx->pos);
-		CORO_INVOKE_2(m_SliderRight->Draw, bigBuf, prim);
+		prim->setDst(_ctx->pos);
+		CORO_INVOKE_2(m_SliderRight->draw, bigBuf, prim);
 		_ctx->pos.x += 3;
 	}
 
@@ -312,7 +310,7 @@ void RMOptionSlide::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *
 }
 
 void RMOptionSlide::AddToList(RMGfxTargetBuffer &bigBuf) {
-	bigBuf.AddPrim(new RMGfxPrimitive(this));
+	bigBuf.addPrim(new RMGfxPrimitive(this));
 }
 
 
@@ -392,15 +390,15 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-	ClearOT();
+	clearOT();
 
-	AddPrim(new RMGfxPrimitive(m_menu));
+	addPrim(new RMGfxPrimitive(m_menu));
 
 	if (m_bNoLoadSave)
-		AddPrim(new RMGfxPrimitive(m_HideLoadSave, RMPoint(0, 401)));
+		addPrim(new RMGfxPrimitive(m_HideLoadSave, RMPoint(0, 401)));
 
 	if (m_bQuitConfirm) {
-		AddPrim(new RMGfxPrimitive(m_QuitConfirm, RMPoint(270, 200)));
+		addPrim(new RMGfxPrimitive(m_QuitConfirm, RMPoint(270, 200)));
 		m_ButtonQuitYes->AddToList(*this);
 		m_ButtonQuitNo->AddToList(*this);
 	}
@@ -449,62 +447,62 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 			_ctx->title->WriteText(msg[0], 1);
 		}
 
-		AddPrim(new RMGfxPrimitive(_ctx->title, RMPoint(320, 10)));
+		addPrim(new RMGfxPrimitive(_ctx->title, RMPoint(320, 10)));
 
 		if (m_curThumbDiff[0] == 0)
-			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 57)));
+			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 57)));
 		else if (m_curThumbDiff[0] == 1)
-			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 57)));
+			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 57)));
 		if (m_curThumbDiff[1] == 0)
-			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 57)));
+			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 57)));
 		else if (m_curThumbDiff[1] == 1)
-			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 57)));
+			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 57)));
 		if (m_curThumbDiff[2] == 0)
-			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 57)));
+			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 57)));
 		else if (m_curThumbDiff[2] == 1)
-			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 57)));
+			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 57)));
 		if (m_curThumbDiff[3] == 0)
-			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 239)));
+			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(48, 239)));
 		else if (m_curThumbDiff[3] == 1)
-			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 239)));
+			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(48, 239)));
 		if (m_curThumbDiff[4] == 0)
-			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 239)));
+			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(240, 239)));
 		else if (m_curThumbDiff[4] == 1)
-			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 239)));
+			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(240, 239)));
 		if (m_curThumbDiff[5] == 0)
-			AddPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 239)));
+			addPrim(new RMGfxPrimitive(m_SaveHard, RMPoint(432, 239)));
 		else if (m_curThumbDiff[5] == 1)
-			AddPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 239)));
+			addPrim(new RMGfxPrimitive(m_SaveEasy, RMPoint(432, 239)));
 
 		if (m_curThumb[0] && !(m_bEditSaveName && m_nEditPos == 0))
-			AddPrim(new RMGfxPrimitive(m_curThumb[0], RMPoint(48, 57)));
+			addPrim(new RMGfxPrimitive(m_curThumb[0], RMPoint(48, 57)));
 		if (m_curThumb[1] && !(m_bEditSaveName && m_nEditPos == 1))
-			AddPrim(new RMGfxPrimitive(m_curThumb[1], RMPoint(240, 57)));
+			addPrim(new RMGfxPrimitive(m_curThumb[1], RMPoint(240, 57)));
 		if (m_curThumb[2] && !(m_bEditSaveName && m_nEditPos == 2))
-			AddPrim(new RMGfxPrimitive(m_curThumb[2], RMPoint(432, 57)));
+			addPrim(new RMGfxPrimitive(m_curThumb[2], RMPoint(432, 57)));
 		if (m_curThumb[3] && !(m_bEditSaveName && m_nEditPos == 3))
-			AddPrim(new RMGfxPrimitive(m_curThumb[3], RMPoint(48, 239)));
+			addPrim(new RMGfxPrimitive(m_curThumb[3], RMPoint(48, 239)));
 		if (m_curThumb[4] && !(m_bEditSaveName && m_nEditPos == 4))
-			AddPrim(new RMGfxPrimitive(m_curThumb[4], RMPoint(240, 239)));
+			addPrim(new RMGfxPrimitive(m_curThumb[4], RMPoint(240, 239)));
 		if (m_curThumb[5] && !(m_bEditSaveName && m_nEditPos == 5))
-			AddPrim(new RMGfxPrimitive(m_curThumb[5], RMPoint(432, 239)));
+			addPrim(new RMGfxPrimitive(m_curThumb[5], RMPoint(432, 239)));
 
 		if (m_bEditSaveName) {
 			_ctx->thumb = new RMGfxSourceBuffer16;
-			_ctx->thumb->Init((byte *)_vm->getThumbnail(), 640 / 4, 480 / 4);
+			_ctx->thumb->init((byte *)_vm->getThumbnail(), 640 / 4, 480 / 4);
 
 			if (m_nEditPos == 0)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 57)));
+				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 57)));
 			else if (m_nEditPos == 1)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 57)));
+				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 57)));
 			else if (m_nEditPos == 2)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 57)));
+				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 57)));
 			else if (m_nEditPos == 3)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 239)));
+				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 239)));
 			else if (m_nEditPos == 4)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 239)));
+				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(240, 239)));
 			else if (m_nEditPos == 5)
-				AddPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 239)));
+				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(432, 239)));
 		}
 
 		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++) {
@@ -524,18 +522,18 @@ void RMOptionScreen::RefreshAll(CORO_PARAM) {
 			_ctx->num[_ctx->i]->WriteText(s, 2);
 		}
 
-		AddPrim(new RMGfxPrimitive(_ctx->num[0], RMPoint(55 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[1], RMPoint(247 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[2], RMPoint(439 - 3, 180 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[3], RMPoint(55 - 3, 362 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[4], RMPoint(247 - 3, 362 + 14)));
-		AddPrim(new RMGfxPrimitive(_ctx->num[5], RMPoint(439 - 3, 362 + 14)));
+		addPrim(new RMGfxPrimitive(_ctx->num[0], RMPoint(55 - 3, 180 + 14)));
+		addPrim(new RMGfxPrimitive(_ctx->num[1], RMPoint(247 - 3, 180 + 14)));
+		addPrim(new RMGfxPrimitive(_ctx->num[2], RMPoint(439 - 3, 180 + 14)));
+		addPrim(new RMGfxPrimitive(_ctx->num[3], RMPoint(55 - 3, 362 + 14)));
+		addPrim(new RMGfxPrimitive(_ctx->num[4], RMPoint(247 - 3, 362 + 14)));
+		addPrim(new RMGfxPrimitive(_ctx->num[5], RMPoint(439 - 3, 362 + 14)));
 
 		m_ButtonSave_ArrowLeft->AddToList(*this);
 		m_ButtonSave_ArrowRight->AddToList(*this);
 	}
 
-	CORO_INVOKE_0(DrawOT);
+	CORO_INVOKE_0(drawOT);
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
 		if (_ctx->thumb) delete _ctx->thumb;
@@ -588,7 +586,7 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 	assert(_ctx->raw->IsValid());
 	assert(m_menu == NULL);
 	m_menu = new RMGfxSourceBuffer16(false);
-	m_menu->Init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+	m_menu->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
 	delete _ctx->raw;
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE) {
@@ -650,22 +648,22 @@ void RMOptionScreen::InitState(CORO_PARAM) {
 		assert(_ctx->raw->IsValid());
 		assert(m_QuitConfirm == NULL);
 		m_QuitConfirm = new RMGfxSourceBuffer16(false);
-		m_QuitConfirm->Init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+		m_QuitConfirm->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
 		delete _ctx->raw;
 
 		assert(m_ButtonQuitYes == NULL);
 		m_ButtonQuitYes = new RMOptionButton(20022, RMPoint(281, 265));
-		m_ButtonQuitYes->SetPriority(30);
+		m_ButtonQuitYes->setPriority(30);
 		assert(m_ButtonQuitNo == NULL);
 		m_ButtonQuitNo = new RMOptionButton(20023, RMPoint(337, 264));
-		m_ButtonQuitNo->SetPriority(30);
+		m_ButtonQuitNo->setPriority(30);
 
 		if (m_bNoLoadSave) {
 			_ctx->raw = new RMResRaw(20028);
 			assert(_ctx->raw->IsValid());
 			assert(m_HideLoadSave == NULL);
 			m_HideLoadSave = new RMGfxSourceBuffer16(false);
-			m_HideLoadSave->Init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+			m_HideLoadSave->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
 			delete _ctx->raw;
 		}
 
@@ -863,7 +861,7 @@ void RMOptionScreen::CloseState(void) {
 }
 
 void RMOptionScreen::ReInit(RMGfxTargetBuffer &bigBuf) {
-	bigBuf.AddPrim(new RMGfxPrimitive(this));
+	bigBuf.addPrim(new RMGfxPrimitive(this));
 }
 
 void RMOptionScreen::Init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
@@ -885,7 +883,7 @@ void RMOptionScreen::Init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
 	m_bNoLoadSave = false;
 	m_bAlterGfx = false;
 
-	bigBuf.AddPrim(new RMGfxPrimitive(this));
+	bigBuf.addPrim(new RMGfxPrimitive(this));
 
 	if (m_nState == MENULOAD || m_nState == MENUSAVE)
 		m_nState = MENUGAME;
@@ -916,7 +914,7 @@ void RMOptionScreen::InitLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, boo
 	m_bNoLoadSave = false;
 	m_bAlterGfx = bAlternateGfx;
 
-	bigBuf.AddPrim(new RMGfxPrimitive(this));
+	bigBuf.addPrim(new RMGfxPrimitive(this));
 
 	m_nState = MENULOAD;
 	CORO_INVOKE_0(InitState);
@@ -945,7 +943,7 @@ void RMOptionScreen::InitSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, boo
 	m_bNoLoadSave = false;
 	m_bAlterGfx = bAlternateGfx;
 
-	bigBuf.AddPrim(new RMGfxPrimitive(this));
+	bigBuf.addPrim(new RMGfxPrimitive(this));
 
 	m_nState = MENUSAVE;
 	CORO_INVOKE_0(InitState);
@@ -973,7 +971,7 @@ void RMOptionScreen::InitNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool 
 	m_bLoadMenuOnly = false;
 	m_bNoLoadSave = true;
 
-	bigBuf.AddPrim(new RMGfxPrimitive(this));
+	bigBuf.addPrim(new RMGfxPrimitive(this));
 
 	m_nState = MENUGAME;
 	CORO_INVOKE_0(InitState);
@@ -1273,7 +1271,7 @@ void RMOptionScreen::DoFrame(CORO_PARAM, RMInput *input) {
 }
 
 
-void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	int curTime;
 	CORO_END_CONTEXT(_ctx);
@@ -1300,7 +1298,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		}
 
 		// Set the part to draw the scrolling
-		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 2) {
 		// Bounce 1
@@ -1310,7 +1308,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 			m_FadeStep++;
 		}
 
-		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 3) {
 		m_FadeY -= FADE_SPEED / 4 * SYNC;
@@ -1319,7 +1317,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 			m_FadeStep++;
 		}
 
-		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 4) {
 		// Bounce 1 - 2
@@ -1329,7 +1327,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 			m_FadeStep++;
 		}
 
-		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 5) {
 		m_FadeY += FADE_SPEED / 2 * SYNC;
@@ -1339,7 +1337,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 			_vm->hideLocation();
 		}
 
-		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 6) {
 		// Menu ON
@@ -1355,7 +1353,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 			m_FadeY = 0;
 			m_FadeStep++;
 		}
-		prim->SetSrc(RMRect(0, 480 - m_FadeY, 640, 480));
+		prim->setSrc(RMRect(0, 480 - m_FadeY, 640, 480));
 
 	} else if (m_FadeStep == 9) {
 		// Hello hello!
@@ -1372,7 +1370,7 @@ void RMOptionScreen::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	m_FadeTime = _ctx->curTime;
 
-	CORO_INVOKE_2(RMGfxWoodyBuffer::Draw, bigBuf, prim);
+	CORO_INVOKE_2(RMGfxWoodyBuffer::draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
@@ -1483,8 +1481,8 @@ void RMPointer::Init(void) {
 		RMResRaw res(RES_P_GO + i);
 
 		m_pointer[i] = new RMGfxSourceBuffer8RLEByteAA;
-		m_pointer[i]->Init(res, res.Width(), res.Height(), false);
-		m_pointer[i]->LoadPaletteWA(RES_P_PAL);
+		m_pointer[i]->init(res, res.Width(), res.Height(), false);
+		m_pointer[i]->loadPaletteWA(RES_P_PAL);
 	}
 
 	for (i = 0; i < 5; i++) {
@@ -1530,7 +1528,7 @@ int RMPointer::Priority() {
 	return 200;
 }
 
-void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
+void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	int n;
 	CORO_END_CONTEXT(_ctx);
@@ -1542,20 +1540,20 @@ void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 	if (_ctx->n == TA_COMBINE) _ctx->n = TA_USE;
 
 	// Copy the destination coordinates in the primitive
-	prim->SetDst(m_pos);
+	prim->setDst(m_pos);
 
 	if (m_pos.x >= 0 && m_pos.y >= 0 && m_pos.x < RM_SX && m_pos.y < RM_SY) {
 		// Call the Draw method of the poitner
 		prim->Dst() -= m_hotspot[_ctx->n];
 
 		if (m_nCurSpecialPointer == 0) {
-			CORO_INVOKE_2(m_pointer[_ctx->n]->Draw, bigBuf, prim);
+			CORO_INVOKE_2(m_pointer[_ctx->n]->draw, bigBuf, prim);
 		} else {
 			if (m_nCurSpecialPointer == PTR_CUSTOM)
-				CORO_INVOKE_2(m_nCurCustomPointer->Draw, bigBuf, prim);
+				CORO_INVOKE_2(m_nCurCustomPointer->draw, bigBuf, prim);
 			else
 				// Call the draw on the special pointer
-				CORO_INVOKE_2(m_specialPointer[m_nCurSpecialPointer - 1]->Draw, bigBuf, prim);
+				CORO_INVOKE_2(m_specialPointer[m_nCurSpecialPointer - 1]->draw, bigBuf, prim);
 		}
 	}
 
@@ -1564,7 +1562,7 @@ void RMPointer::Draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 
 void RMPointer::DoFrame(RMGfxTargetBuffer *bigBuf) {
 	// Add it to the list of primitives
-	bigBuf->AddPrim(new RMGfxPrimitive(this));
+	bigBuf->addPrim(new RMGfxPrimitive(this));
 
 	// If there is a special pointer, does DoFrame
 	if (m_nCurSpecialPointer != 0 && m_nCurSpecialPointer != PTR_CUSTOM)
