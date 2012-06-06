@@ -329,6 +329,7 @@ protected:
 	// Indicates whether it is needed to free _hwSurface in destructor
 	bool _displayDisabled;
 
+	const ScalerPlugin::List &_scalerPlugins;
 	ScalerPlugin *_scalerPlugin;
 	ScalerPlugin *_normalPlugin;
 	int _scalerIndex;
