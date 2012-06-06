@@ -23,8 +23,7 @@
 #include "graphics/scaler.h"
 
 SAIPlugin::SAIPlugin() {
-	_factor = 1;
-	_factors.push_back(1);
+	_factor = 2;
 	_factors.push_back(2);
 }
 
@@ -40,27 +39,16 @@ void SAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (!_doScale) {
 		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-		return;
-	}
-	switch (_factor) {
-	case 1:
-		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-		break;
-	case 2:
+	} else {
 		_2xSaI(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-		break;
 	}
 }
 
 uint SAIPlugin::increaseFactor() {
-	if (_factor < 2)
-		++_factor;
 	return _factor;
 }
 
 uint SAIPlugin::decreaseFactor() {
-	if (_factor > 1)
-		--_factor;
 	return _factor;
 }
 

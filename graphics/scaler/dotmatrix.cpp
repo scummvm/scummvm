@@ -23,8 +23,7 @@
 #include "graphics/scaler.h"
 
 DotMatrixPlugin::DotMatrixPlugin() {
-	_factor = 1;
-	_factors.push_back(1);
+	_factor = 2;
 	_factors.push_back(2);
 }
 
@@ -44,27 +43,16 @@ void DotMatrixPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (!_doScale) {
 		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-		return;
-	}
-	switch (_factor) {
-	case 1:
-		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-		break;
-	case 2:
+	} else {
 		scaleIntern(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
-		break;
 	}
 }
 
 uint DotMatrixPlugin::increaseFactor() {
-	if (_factor < 2)
-		++_factor;
 	return _factor;
 }
 
 uint DotMatrixPlugin::decreaseFactor() {
-	if (_factor > 1)
-		--_factor;
 	return _factor;
 }
 
