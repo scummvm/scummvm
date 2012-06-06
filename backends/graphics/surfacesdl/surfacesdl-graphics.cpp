@@ -117,7 +117,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
 #endif
-	_transactionMode(kTransactionNone) {
+	_transactionMode(kTransactionNone),
+	_scalerPlugins(ScalerMan.getPlugins()) {
 
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
@@ -155,7 +156,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 	_scalerProc = Normal2x;
 	// HACK: just pick first scaler plugin
-	_normalPlugin = _scalerPlugin = ScalerMan.getPlugins().front();
+	_normalPlugin = _scalerPlugin = _scalerPlugins.front();
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 #else // for small screen platforms
@@ -522,11 +523,10 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	const char *name = (*s_supportedGraphicsModesData)[mode].pluginName;
 	newScaleFactor = (*s_supportedGraphicsModesData)[mode].scaleFactor;
-	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
 
-	while (strcmp(name, (*plugins[_scalerIndex])->getName()) != 0) {
+	while (strcmp(name, (*_scalerPlugins[_scalerIndex])->getName()) != 0) {
 		_scalerIndex++;
-		if (_scalerIndex >= plugins.size()) {
+		if (_scalerIndex >= _scalerPlugins.size()) {
 			_scalerIndex = 0;
 		}
 	}
@@ -549,9 +549,9 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	if (!_screen || !_hwscreen)
 		return;
 
-	if (ScalerMan.getPlugins()[_scalerIndex] != _scalerPlugin) {
+	if (_scalerPlugins[_scalerIndex] != _scalerPlugin) {
 		(*_scalerPlugin)->deinitialize();
-		_scalerPlugin = ScalerMan.getPlugins()[_scalerIndex];
+		_scalerPlugin = _scalerPlugins[_scalerIndex];
 		Graphics::PixelFormat format;
 		convertSDLPixelFormat(_hwscreen->format, &format);
 		(*_scalerPlugin)->initialize(format);
@@ -2104,19 +2104,18 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 /**
  * Finds what the graphics mode should be using factor and plugin
  *
- * @param scalerIndex The index of the scaler plugin to match
+ * @param plugin      The scaler plugin to match
  * @param factor      The scale factor to match
  * @return            The graphics mode
  */
-int findGraphicsMode(int factor, uint scalerIndex) {
-	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
+int findGraphicsMode(int factor, ScalerPlugin *plugin) {
 	for (uint i = 0; i < s_supportedGraphicsModesData->size(); ++i) {
 		warning("%s, %d == %s, %d",
 				(*s_supportedGraphicsModesData)[i].pluginName,
 				(*s_supportedGraphicsModesData)[i].scaleFactor,
-				(*plugins[scalerIndex])->getName(),
+				(*plugin)->getName(),
 				factor);
-		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, (*plugins[scalerIndex])->getName()) == 0
+		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, (*plugin)->getName()) == 0
 				&& (*s_supportedGraphicsModesData)[i].scaleFactor == factor) {
 			return i;
 		}
@@ -2182,24 +2181,24 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 	if (sdlKey == SDLK_LEFTBRACKET) {
 		_scalerIndex--;
 		if (_scalerIndex < 0) {
-			_scalerIndex = ScalerMan.getPlugins().size() - 1;
+			_scalerIndex = _scalerPlugins.size() - 1;
 		}
 		needSwitch = true;
-		factor = (*ScalerMan.getPlugins()[_scalerIndex])->getFactor();
+		factor = (*_scalerPlugins[_scalerIndex])->getFactor();
 	}
 
 	if (sdlKey == SDLK_RIGHTBRACKET) {
 		_scalerIndex++;
-		if (_scalerIndex >= ScalerMan.getPlugins().size()) {
+		if (_scalerIndex >= _scalerPlugins.size()) {
 			_scalerIndex = 0;
 		}
 		needSwitch = true;
-		factor = (*ScalerMan.getPlugins()[_scalerIndex])->getFactor();
+		factor = (*_scalerPlugins[_scalerIndex])->getFactor();
 	}
 
 
 	if (needSwitch) {
-		int newMode = findGraphicsMode(factor, _scalerIndex);
+		int newMode = findGraphicsMode(factor, _scalerPlugins[_scalerIndex]);
 		beginGFXTransaction();
 			setGraphicsMode(newMode);
 		endGFXTransaction();

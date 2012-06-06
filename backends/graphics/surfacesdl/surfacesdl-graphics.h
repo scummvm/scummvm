@@ -233,6 +233,7 @@ protected:
 	int _scalerType;
 	int _transactionMode;
 
+	const ScalerPlugin::List &_scalerPlugins;
 	ScalerPlugin *_scalerPlugin;
 	ScalerPlugin *_normalPlugin;
 	int _scalerIndex;
