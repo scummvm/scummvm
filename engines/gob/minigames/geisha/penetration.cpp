@@ -73,27 +73,6 @@ enum Sprite {
 };
 
 enum Animation {
-	kAnimationDriveS    =  4,
-	kAnimationDriveE    =  5,
-	kAnimationDriveN    =  6,
-	kAnimationDriveW    =  7,
-	kAnimationDriveSE   =  8,
-	kAnimationDriveNE   =  9,
-	kAnimationDriveSW   = 10,
-	kAnimationDriveNW   = 11,
-	kAnimationShootS    = 12,
-	kAnimationShootN    = 13,
-	kAnimationShootW    = 14,
-	kAnimationShootE    = 15,
-	kAnimationShootNE   = 16,
-	kAnimationShootSE   = 17,
-	kAnimationShootSW   = 18,
-	kAnimationShootNW   = 19,
-	kAnimationExplodeN  = 28,
-	kAnimationExplodeS  = 29,
-	kAnimationExplodeW  = 30,
-	kAnimationExplodeE  = 31,
-	kAnimationExit      = 32,
 	kAnimationMouthKiss = 33,
 	kAnimationMouthBite = 34
 };
@@ -220,9 +199,18 @@ Penetration::ManagedMouth::~ManagedMouth() {
 }
 
 
+Penetration::ManagedSub::ManagedSub(uint16 pX, uint16 pY) : Position(pX, pY), sub(0) {
+	mapX = x * kMapTileWidth;
+	mapY = y * kMapTileHeight;
+}
+
+Penetration::ManagedSub::~ManagedSub() {
+	delete sub;
+}
+
+
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
-	_shieldMeter(0), _healthMeter(0), _floor(0), _mapX(0), _mapY(0),
-	_subTileX(0), _subTileY(0) {
+	_shieldMeter(0), _healthMeter(0), _floor(0) {
 
 	_background = new Surface(320, 200, 1);
 
@@ -255,7 +243,7 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldQuit() && !isDead() && !hasWon()) {
 		updateAnims();
 
 		// Draw and wait for the end of the frame
@@ -278,7 +266,8 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	}
 
 	deinit();
-	return false;
+
+	return hasWon();
 }
 
 void Penetration::init() {
@@ -286,6 +275,7 @@ void Penetration::init() {
 	_vm->_sound->sampleLoad(&_soundShield, SOUND_SND, "boucl.snd");
 	_vm->_sound->sampleLoad(&_soundBite  , SOUND_SND, "pervet.snd");
 	_vm->_sound->sampleLoad(&_soundKiss  , SOUND_SND, "baise.snd");
+	_vm->_sound->sampleLoad(&_soundShoot , SOUND_SND, "tirgim.snd");
 
 	_background->clear();
 
@@ -310,19 +300,14 @@ void Penetration::init() {
 	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); m++)
 		_mapAnims.push_back(m->mouth);
 
-	_sub = new ANIObject(*_objects);
-
-	_sub->setAnimation(kAnimationDriveN);
-	_sub->setPosition(kPlayAreaX + kPlayAreaBorderWidth, kPlayAreaY + kPlayAreaBorderHeight);
-	_sub->setVisible(true);
-
-	_anims.push_back(_sub);
+	_anims.push_back(_sub->sub);
 }
 
 void Penetration::deinit() {
 	_soundShield.free();
 	_soundBite.free();
 	_soundKiss.free();
+	_soundShoot.free();
 
 	_mapAnims.clear();
 	_anims.clear();
@@ -349,8 +334,10 @@ void Penetration::createMap() {
 	// Copy the correct map
 	memcpy(_mapTiles, kMaps[_testMode ? 1 : 0][_floor], kMapWidth * kMapHeight);
 
-	_shields.clear();
+	delete _sub;
+	_sub = 0;
 
+	_shields.clear();
 	_mouths.clear();
 
 	_map->fill(kColorBlack);
@@ -441,17 +428,22 @@ void Penetration::createMap() {
 
 			case 57: // Start position
 				_sprites->draw(*_map, kSpriteFloor, posX, posY);
+
 				*mapTile = 0;
 
-				_subTileX = x;
-				_subTileY = y;
+				delete _sub;
 
-				_mapX = _subTileX * kMapTileWidth;
-				_mapY = _subTileY * kMapTileHeight;
+				_sub = new ManagedSub(x, y);
+
+				_sub->sub = new Submarine(*_objects);
+				_sub->sub->setPosition(kPlayAreaX + kPlayAreaBorderWidth, kPlayAreaY + kPlayAreaBorderHeight);
 				break;
 			}
 		}
 	}
+
+	if (!_sub)
+		error("Geisha: No starting position in floor %d (testmode: %d", _floor, _testMode);
 }
 
 void Penetration::initScreen() {
@@ -491,51 +483,64 @@ bool Penetration::isWalkable(byte tile) const {
 
 void Penetration::handleSub(int16 key) {
 	if      (key == kKeyLeft)
-		moveSub(-5,  0, kAnimationDriveW);
+		subMove(-5,  0, Submarine::kDirectionW);
 	else if (key == kKeyRight)
-		moveSub( 5,  0, kAnimationDriveE);
+		subMove( 5,  0, Submarine::kDirectionE);
 	else if (key == kKeyUp)
-		moveSub( 0, -5, kAnimationDriveN);
+		subMove( 0, -5, Submarine::kDirectionN);
 	else if (key == kKeyDown)
-		moveSub( 0,  5, kAnimationDriveS);
+		subMove( 0,  5, Submarine::kDirectionS);
+	else if (key == kKeySpace)
+		subShoot();
 }
 
-void Penetration::moveSub(int x, int y, uint16 animation) {
+void Penetration::subMove(int x, int y, Submarine::Direction direction) {
+	if (!_sub->sub->canMove())
+		return;
+
 	// Limit the movement to walkable tiles
 
 	int16 minX = 0;
-	if ((_subTileX > 0) && !isWalkable(_mapTiles[_subTileY * kMapWidth + (_subTileX - 1)]))
-		minX = _subTileX * kMapTileWidth;
+	if ((_sub->x > 0) && !isWalkable(_mapTiles[_sub->y * kMapWidth + (_sub->x - 1)]))
+		minX = _sub->x * kMapTileWidth;
 
 	int16 maxX = kMapWidth * kMapTileWidth;
-	if ((_subTileX < (kMapWidth - 1)) && !isWalkable(_mapTiles[_subTileY * kMapWidth + (_subTileX + 1)]))
-		maxX = _subTileX * kMapTileWidth;
+	if ((_sub->x < (kMapWidth - 1)) && !isWalkable(_mapTiles[_sub->y * kMapWidth + (_sub->x + 1)]))
+		maxX = _sub->x * kMapTileWidth;
 
 	int16 minY = 0;
-	if ((_subTileY > 0) && !isWalkable(_mapTiles[(_subTileY - 1) * kMapWidth + _subTileX]))
-		minY = _subTileY * kMapTileHeight;
+	if ((_sub->y > 0) && !isWalkable(_mapTiles[(_sub->y - 1) * kMapWidth + _sub->x]))
+		minY = _sub->y * kMapTileHeight;
 
 	int16 maxY = kMapHeight * kMapTileHeight;
-	if ((_subTileY < (kMapHeight - 1)) && !isWalkable(_mapTiles[(_subTileY + 1) * kMapWidth + _subTileX]))
-		maxY = _subTileY * kMapTileHeight;
+	if ((_sub->y < (kMapHeight - 1)) && !isWalkable(_mapTiles[(_sub->y + 1) * kMapWidth + _sub->x]))
+		maxY = _sub->y * kMapTileHeight;
 
-	_mapX = CLIP<int16>(_mapX + x, minX, maxX);
-	_mapY = CLIP<int16>(_mapY + y, minY, maxY);
+	_sub->mapX = CLIP<int16>(_sub->mapX + x, minX, maxX);
+	_sub->mapY = CLIP<int16>(_sub->mapY + y, minY, maxY);
 
 	// The tile the sub is on is where its mid-point is
-	_subTileX = (_mapX + (kMapTileWidth  / 2)) / kMapTileWidth;
-	_subTileY = (_mapY + (kMapTileHeight / 2)) / kMapTileHeight;
+	_sub->x = (_sub->mapX + (kMapTileWidth  / 2)) / kMapTileWidth;
+	_sub->y = (_sub->mapY + (kMapTileHeight / 2)) / kMapTileHeight;
 
-	if (_sub->getAnimation() != animation)
-		_sub->setAnimation(animation);
+	_sub->sub->turn(direction);
 
 	checkShields();
 	checkMouths();
 }
 
+void Penetration::subShoot() {
+	if (!_sub->sub->canMove())
+		return;
+
+	_sub->sub->shoot();
+
+	_vm->_sound->blasterPlay(&_soundShoot, 1, 0);
+}
+
 void Penetration::checkShields() {
 	for (Common::List<Position>::iterator pos = _shields.begin(); pos != _shields.end(); ++pos) {
-		if ((pos->x == _subTileX) && (pos->y == _subTileY)) {
+		if ((pos->x == _sub->x) && (pos->y == _sub->y)) {
 			// Charge shields
 			_shieldMeter->setMaxValue();
 
@@ -558,13 +563,13 @@ void Penetration::checkMouths() {
 		if (!m->mouth->isDeactivated())
 			continue;
 
-		if ((( m->x      == _subTileX) && (m->y == _subTileY)) ||
-		    (((m->x + 1) == _subTileX) && (m->y == _subTileY))) {
+		if ((( m->x      == _sub->x) && (m->y == _sub->y)) ||
+		    (((m->x + 1) == _sub->x) && (m->y == _sub->y))) {
 
 			m->mouth->activate();
 
 			// Play the mouth sound and do health gain/loss
-			if      (m->type == kMouthTypeBite) {
+			if        (m->type == kMouthTypeBite) {
 				_vm->_sound->blasterPlay(&_soundBite, 1, 0);
 				healthLose(230);
 			} else if (m->type == kMouthTypeKiss) {
@@ -584,6 +589,17 @@ void Penetration::healthGain(int amount) {
 
 void Penetration::healthLose(int amount) {
 	_healthMeter->decrease(_shieldMeter->decrease(amount));
+
+	if (_healthMeter->getValue() == 0)
+		_sub->sub->die();
+}
+
+bool Penetration::isDead() const {
+	return _sub && _sub->sub->isDead();
+}
+
+bool Penetration::hasWon() const {
+	return _floor > kFloorCount;
 }
 
 void Penetration::updateAnims() {
@@ -612,11 +628,14 @@ void Penetration::updateAnims() {
 			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 	}
 
-	// Draw the map
-	_vm->_draw->_backSurface->blit(*_map, _mapX, _mapY,
-			_mapX + kPlayAreaWidth - 1, _mapY + kPlayAreaHeight - 1, kPlayAreaX, kPlayAreaY);
-	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kPlayAreaX, kPlayAreaY,
-			kPlayAreaX + kPlayAreaWidth - 1, kPlayAreaY + kPlayAreaHeight - 1);
+	if (_sub) {
+		// Draw the map
+
+		_vm->_draw->_backSurface->blit(*_map, _sub->mapX, _sub->mapY,
+				_sub->mapX + kPlayAreaWidth - 1, _sub->mapY + kPlayAreaHeight - 1, kPlayAreaX, kPlayAreaY);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kPlayAreaX, kPlayAreaY,
+				kPlayAreaX + kPlayAreaWidth - 1, kPlayAreaY + kPlayAreaHeight - 1);
+	}
 
 	// Draw the current animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.begin();

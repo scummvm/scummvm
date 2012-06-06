@@ -28,6 +28,8 @@
 
 #include "gob/sound/sounddesc.h"
 
+#include "gob/minigames/geisha/submarine.h"
+
 namespace Gob {
 
 class GobEngine;
@@ -77,6 +79,18 @@ private:
 		~ManagedMouth();
 	};
 
+	struct ManagedSub : public Position {
+		Submarine *sub;
+
+		uint16 mapX;
+		uint16 mapY;
+
+		ManagedSub(uint16 pX, uint16 pY);
+		~ManagedSub();
+
+		void setPosition(uint16 pX, uint16 pY);
+	};
+
 	GobEngine *_vm;
 
 	bool _hasAccessPass;
@@ -86,8 +100,6 @@ private:
 	Surface *_background;
 	CMPFile *_sprites;
 	ANIFile *_objects;
-
-	ANIObject *_sub;
 
 	Common::List<ANIObject *> _anims;
 	Common::List<ANIObject *> _mapAnims;
@@ -100,11 +112,7 @@ private:
 	Surface *_map;
 	byte _mapTiles[kMapWidth * kMapHeight];
 
-	uint16 _mapX;
-	uint16 _mapY;
-
-	uint8 _subTileX;
-	uint8 _subTileY;
+	ManagedSub *_sub;
 
 	Common::List<Position>     _shields;
 	Common::List<ManagedMouth> _mouths;
@@ -112,6 +120,7 @@ private:
 	SoundDesc _soundShield;
 	SoundDesc _soundBite;
 	SoundDesc _soundKiss;
+	SoundDesc _soundShoot;
 
 
 	void init();
@@ -126,7 +135,8 @@ private:
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
 
 	void handleSub(int16 key);
-	void moveSub(int x, int y, uint16 animation);
+	void subMove(int x, int y, Submarine::Direction direction);
+	void subShoot();
 
 	bool isWalkable(byte tile) const;
 
@@ -135,6 +145,9 @@ private:
 
 	void healthGain(int amount);
 	void healthLose(int amount);
+
+	bool isDead() const;
+	bool hasWon() const;
 };
 
 } // End of namespace Geisha

@@ -21,7 +21,6 @@
  */
 
 #include "common/util.h"
-#include "common/textconsole.h"
 
 #include "gob/minigames/geisha/mouth.h"
 
