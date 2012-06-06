@@ -277,19 +277,20 @@ static const char *kStrings[kLanguageCount][kStringCount] = {
 	},
 	{ // German
 		// NOTE: The original had very broken German there. We provide proper(ish) German instead.
-		"3. UNTERGESCHOSS",
-		"2. UNTERGESCHOSS",
-		"1. UNTERGESCHOSS",
+		//       B0rken text in the comments after each line
+		"3. UNTERGESCHOSS", // "3. U.-GESCHOSS""
+		"2. UNTERGESCHOSS", // "2. U.-GESCHOSS"
+		"1. UNTERGESCHOSS", // "1. U.-GESCHOSS"
 		"AUSGANG GESPERRT",
 		"Sie haben",
-		"zwei Ausg\204nge",
-		"einen Ausgang",
-		"um das obere",
-		"Stockwerk zu",
-		"erreichen",
-		"- STOCKWERK 0 -",
-		"PENETRATION",
-		"ERFOLGREICH",
+		"zwei Ausg\204nge", // "zwei Ausgang"
+		"einen Ausgang",    // "Fortsetztung"
+		"um das obere",     // ""
+		"Stockwerk zu",     // ""
+		"erreichen",        // ""
+		"- STOCKWERK 0 -",  // "0 - HOHE"
+		"PENETRATION",      // "DURCHDRIGEN"
+		"ERFOLGREICH",      // "ERFOLG"
 		"GEFAHR",
 		"GYNOIDE",
 		"AKTIVIERT",
