@@ -263,6 +263,8 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 
 		// Handle the sub movement
 		handleSub(key);
+
+		checkExited();
 	}
 
 	deinit();
@@ -276,6 +278,7 @@ void Penetration::init() {
 	_vm->_sound->sampleLoad(&_soundBite  , SOUND_SND, "pervet.snd");
 	_vm->_sound->sampleLoad(&_soundKiss  , SOUND_SND, "baise.snd");
 	_vm->_sound->sampleLoad(&_soundShoot , SOUND_SND, "tirgim.snd");
+	_vm->_sound->sampleLoad(&_soundExit  , SOUND_SND, "trouve.snd");
 
 	_background->clear();
 
@@ -296,11 +299,6 @@ void Penetration::init() {
 	_floor = 0;
 
 	createMap();
-
-	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); m++)
-		_mapAnims.push_back(m->mouth);
-
-	_anims.push_back(_sub->sub);
 }
 
 void Penetration::deinit() {
@@ -308,6 +306,7 @@ void Penetration::deinit() {
 	_soundBite.free();
 	_soundKiss.free();
 	_soundShoot.free();
+	_soundExit.free();
 
 	clearMap();
 
@@ -443,7 +442,12 @@ void Penetration::createMap() {
 	}
 
 	if (!_sub)
-		error("Geisha: No starting position in floor %d (testmode: %d", _floor, _testMode);
+		error("Geisha: No starting position in floor %d (testmode: %d)", _floor, _testMode);
+
+	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); m++)
+		_mapAnims.push_back(m->mouth);
+
+	_anims.push_back(_sub->sub);
 }
 
 void Penetration::initScreen() {
@@ -525,6 +529,7 @@ void Penetration::subMove(int x, int y, Submarine::Direction direction) {
 
 	checkShields();
 	checkMouths();
+	checkExits();
 }
 
 void Penetration::subShoot() {
@@ -578,6 +583,23 @@ void Penetration::checkMouths() {
 	}
 }
 
+void Penetration::checkExits() {
+	if (!_sub->sub->canMove())
+		return;
+
+	for (Common::List<Position>::iterator e = _exits.begin(); e != _exits.end(); ++e) {
+		if ((e->x == _sub->x) && (e->y == _sub->y)) {
+			_sub->mapX = e->x * kMapTileWidth;
+			_sub->mapY = e->y * kMapTileHeight;
+
+			_sub->sub->leave();
+
+			_vm->_sound->blasterPlay(&_soundExit, 1, 0);
+			break;
+		}
+	}
+}
+
 void Penetration::healthGain(int amount) {
 	if (_shieldMeter->getValue() > 0)
 		_healthMeter->increase(_shieldMeter->increase(amount));
@@ -592,12 +614,23 @@ void Penetration::healthLose(int amount) {
 		_sub->sub->die();
 }
 
+void Penetration::checkExited() {
+	if (_sub->sub->hasExited()) {
+		_floor++;
+
+		if (_floor >= kFloorCount)
+			return;
+
+		createMap();
+	}
+}
+
 bool Penetration::isDead() const {
 	return _sub && _sub->sub->isDead();
 }
 
 bool Penetration::hasWon() const {
-	return _floor > kFloorCount;
+	return _floor >= kFloorCount;
 }
 
 void Penetration::updateAnims() {

@@ -67,6 +67,9 @@ public:
 	/** Is the submarine dead? */
 	bool isDead() const;
 
+	/** Has the submarine finished exiting the level? */
+	bool hasExited() const;
+
 private:
 	enum State {
 		kStateNone = 0,

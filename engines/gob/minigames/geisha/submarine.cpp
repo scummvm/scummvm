@@ -109,11 +109,8 @@ void Submarine::advance() {
 		break;
 
 	case kStateExit:
-		if (isPaused()) {
+		if (isPaused())
 			_state = kStateExited;
-
-			setVisible(true);
-		}
 
 		break;
 
@@ -133,6 +130,10 @@ bool Submarine::canMove() const {
 
 bool Submarine::isDead() const {
 	return _state == kStateDead;
+}
+
+bool Submarine::hasExited() const {
+	return _state == kStateExited;
 }
 
 uint16 Submarine::directionToMove(Direction direction) const {

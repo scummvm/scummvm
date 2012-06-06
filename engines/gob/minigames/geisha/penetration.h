@@ -122,6 +122,7 @@ private:
 	SoundDesc _soundBite;
 	SoundDesc _soundKiss;
 	SoundDesc _soundShoot;
+	SoundDesc _soundExit;
 
 
 	void init();
@@ -142,11 +143,14 @@ private:
 
 	bool isWalkable(int16 x, int16 y) const;
 
+	void checkExits();
 	void checkShields();
 	void checkMouths();
 
 	void healthGain(int amount);
 	void healthLose(int amount);
+
+	void checkExited();
 
 	bool isDead() const;
 	bool hasWon() const;
