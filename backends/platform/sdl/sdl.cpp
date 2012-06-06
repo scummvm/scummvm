@@ -260,6 +260,19 @@ void OSystem_SDL::initBackend() {
 			}
 		}
 	}
+	// Look in all game domains as well
+	Common::ConfigManager::DomainMap &dm = ConfMan.getGameDomains();
+	for (Common::ConfigManager::DomainMap::iterator domain = dm.begin(); domain != dm.end(); ++domain) {
+		Common::ConfigManager::Domain::iterator gm = domain->_value.find("gfx_mode");
+		if (gm != domain->_value.end()) {
+			for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
+				if (gm->_value == s_legacyGraphicsModes[i].oldName) {
+					gm->_value = s_legacyGraphicsModes[i].name;
+					break;
+				}
+			}
+		}
+	}
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
