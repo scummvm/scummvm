@@ -40,10 +40,12 @@ namespace Gob {
 
 namespace Geisha {
 
-static const int kColorShield = 11;
-static const int kColorHealth = 15;
-static const int kColorBlack  = 10;
-static const int kColorFloor  = 13;
+static const int kColorShield    = 11;
+static const int kColorHealth    = 15;
+static const int kColorBlack     = 10;
+static const int kColorFloor     = 13;
+static const int kColorFloorText = 14;
+static const int kColorExitText  = 15;
 
 enum Sprite {
 	kSpriteFloorShield = 25,
@@ -69,6 +71,13 @@ static const int kPlayAreaHeight = 113;
 
 static const int kPlayAreaBorderWidth  = kPlayAreaWidth  / 2;
 static const int kPlayAreaBorderHeight = kPlayAreaHeight / 2;
+
+static const int kTextAreaLeft   =   9;
+static const int kTextAreaTop    =   7;
+static const int kTextAreaRight  = 104;
+static const int kTextAreaBottom = 107;
+
+static const int kTextAreaBigBottom = 142;
 
 const byte Penetration::kPalettes[kFloorCount][3 * kPaletteSize] = {
 	{
@@ -224,6 +233,122 @@ const byte Penetration::kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight] =
 	}
 };
 
+static const int kLanguageCount    = 5;
+static const int kFallbackLanguage = 2; // English
+
+enum String {
+	kString3rdBasement = 0,
+	kString2ndBasement,
+	kString1stBasement,
+	kStringNoExit,
+	kStringYouHave,
+	kString2Exits,
+	kString1Exit,
+	kStringToReach,
+	kStringUpperLevel1,
+	kStringUpperLevel2,
+	kStringLevel0,
+	kStringPenetration,
+	kStringSuccessful,
+	kStringDanger,
+	kStringGynoides,
+	kStringActivated,
+	kStringCount
+};
+
+static const char *kStrings[kLanguageCount][kStringCount] = {
+	{ // French
+		"3EME SOUS-SOL",
+		"2EME SOUS-SOL",
+		"1ER SOUS-SOL",
+		"SORTIE REFUSEE",
+		"Vous disposez",
+		"de deux sorties",
+		"d\'une sortie",
+		"pour l\'acc\212s au",
+		"niveau",
+		"sup\202rieur",
+		"- NIVEAU 0 -",
+		"PENETRATION",
+		"REUSSIE",
+		"DANGER",
+		"GYNOIDES",
+		"ACTIVEES"
+	},
+	{ // German
+		// NOTE: The original had very broken German there. We provide proper(ish) German instead.
+		"3. UNTERGESCHOSS",
+		"2. UNTERGESCHOSS",
+		"1. UNTERGESCHOSS",
+		"AUSGANG GESPERRT",
+		"Sie haben",
+		"zwei Ausg\204nge",
+		"einen Ausgang",
+		"um das obere",
+		"Stockwerk zu",
+		"erreichen",
+		"- STOCKWERK 0 -",
+		"PENETRATION",
+		"ERFOLGREICH",
+		"GEFAHR",
+		"GYNOIDE",
+		"AKTIVIERT",
+	},
+	{ // English
+		"3RD BASEMENT",
+		"2ND BASEMENT",
+		"1ST BASEMENT",
+		"NO EXIT",
+		"You have",
+		"2 exits",
+		"1 exit",
+		"to reach upper",
+		"level",
+		"",
+		"- 0 LEVEL -",
+		"PENETRATION",
+		"SUCCESSFUL",
+		"DANGER",
+		"GYNOIDES",
+		"ACTIVATED",
+	},
+	{ // Spanish
+		"3ER. SUBSUELO",
+		"2D. SUBSUELO",
+		"1ER. SUBSUELO",
+		"SALIDA RECHAZADA",
+		"Dispones",
+		"de dos salidas",
+		"de una salida",
+		"para acceso al",
+		"nivel",
+		"superior",
+		"- NIVEL 0 -",
+		"PENETRACION",
+		"CONSEGUIDA",
+		"PELIGRO",
+		"GYNOIDAS",
+		"ACTIVADAS",
+	},
+	{ // Italian
+		"SOTTOSUOLO 3",
+		"SOTTOSUOLO 2",
+		"SOTTOSUOLO 1",
+		"NON USCITA",
+		"avete",
+		"due uscite",
+		"un\' uscita",
+		"per accedere al",
+		"livello",
+		"superiore",
+		"- LIVELLO 0 -",
+		"PENETRAZIONE",
+		"RIUSCITA",
+		"PERICOLO",
+		"GYNOIDI",
+		"ATTIVATE",
+	}
+};
 
 Penetration::Position::Position(uint16 pX, uint16 pY) : x(pX), y(pY) {
 }
@@ -279,6 +404,8 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	init();
 	initScreen();
 
+	drawFloorText();
+
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
 
@@ -308,6 +435,7 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	}
 
 	deinit();
+	drawEndText();
 
 	return hasWon();
 }
@@ -488,6 +616,81 @@ void Penetration::createMap() {
 		_mapAnims.push_back(m->mouth);
 
 	_anims.push_back(_sub->sub);
+}
+
+void Penetration::drawFloorText() {
+	_vm->_draw->_backSurface->fillRect(kTextAreaLeft, kTextAreaTop, kTextAreaRight, kTextAreaBottom, kColorBlack);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kTextAreaLeft, kTextAreaTop, kTextAreaRight, kTextAreaBottom);
+
+	const Font *font = _vm->_draw->_fonts[2];
+	if (!font)
+		return;
+
+	const char **strings = kStrings[getLanguage()];
+
+	const char *floorString = 0;
+	if      (_floor == 0)
+		floorString = strings[kString3rdBasement];
+	else if (_floor == 1)
+		floorString = strings[kString2ndBasement];
+	else if (_floor == 2)
+		floorString = strings[kString1stBasement];
+
+	if (floorString)
+		_vm->_draw->drawString(floorString, 10, 15, kColorFloorText, kColorBlack, 1,
+		                       *_vm->_draw->_backSurface, *font);
+
+	if (_exits.size() > 0) {
+		int exitCount = kString2Exits;
+		if (_exits.size() == 1)
+			exitCount = kString1Exit;
+
+		_vm->_draw->drawString(strings[kStringYouHave]    , 10, 38, kColorExitText, kColorBlack, 1,
+		                       *_vm->_draw->_backSurface, *font);
+		_vm->_draw->drawString(strings[exitCount]         , 10, 53, kColorExitText, kColorBlack, 1,
+		                       *_vm->_draw->_backSurface, *font);
+		_vm->_draw->drawString(strings[kStringToReach]    , 10, 68, kColorExitText, kColorBlack, 1,
+		                       *_vm->_draw->_backSurface, *font);
+		_vm->_draw->drawString(strings[kStringUpperLevel1], 10, 84, kColorExitText, kColorBlack, 1,
+		                       *_vm->_draw->_backSurface, *font);
+		_vm->_draw->drawString(strings[kStringUpperLevel2], 10, 98, kColorExitText, kColorBlack, 1,
+		                       *_vm->_draw->_backSurface, *font);
+
+	} else
+		_vm->_draw->drawString(strings[kStringNoExit], 10, 53, kColorExitText, kColorBlack, 1,
+		                       *_vm->_draw->_backSurface, *font);
+}
+
+void Penetration::drawEndText() {
+	// Only draw the end text when we've won and this isn't a test run
+	if (!hasWon() || _testMode)
+		return;
+
+	_vm->_draw->_backSurface->fillRect(kTextAreaLeft, kTextAreaTop, kTextAreaRight, kTextAreaBigBottom, kColorBlack);
+
+	const Font *font = _vm->_draw->_fonts[2];
+	if (!font)
+		return;
+
+	const char **strings = kStrings[getLanguage()];
+
+	_vm->_draw->drawString(strings[kStringLevel0]     , 11, 21, kColorExitText, kColorBlack, 1,
+	                       *_vm->_draw->_backSurface, *font);
+	_vm->_draw->drawString(strings[kStringPenetration], 11, 42, kColorExitText, kColorBlack, 1,
+	                       *_vm->_draw->_backSurface, *font);
+	_vm->_draw->drawString(strings[kStringSuccessful] , 11, 58, kColorExitText, kColorBlack, 1,
+	                       *_vm->_draw->_backSurface, *font);
+
+	_vm->_draw->drawString(strings[kStringDanger]   , 11,  82, kColorFloorText, kColorBlack, 1,
+	                       *_vm->_draw->_backSurface, *font);
+	_vm->_draw->drawString(strings[kStringGynoides] , 11,  98, kColorFloorText, kColorBlack, 1,
+	                       *_vm->_draw->_backSurface, *font);
+	_vm->_draw->drawString(strings[kStringActivated], 11, 113, kColorFloorText, kColorBlack, 1,
+	                       *_vm->_draw->_backSurface, *font);
+
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kTextAreaLeft, kTextAreaTop, kTextAreaRight, kTextAreaBigBottom);
+	_vm->_draw->blitInvalidated();
+	_vm->_video->retrace();
 }
 
 void Penetration::fadeIn() {
@@ -680,6 +883,7 @@ void Penetration::checkExited() {
 
 		setPalette();
 		createMap();
+		drawFloorText();
 	}
 }
 
@@ -689,6 +893,13 @@ bool Penetration::isDead() const {
 
 bool Penetration::hasWon() const {
 	return _floor >= kFloorCount;
+}
+
+int Penetration::getLanguage() const {
+	if (_vm->_global->_language < kLanguageCount)
+		return _vm->_global->_language;
+
+	return kFallbackLanguage;
 }
 
 void Penetration::updateAnims() {

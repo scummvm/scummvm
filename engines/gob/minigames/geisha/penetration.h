@@ -141,6 +141,9 @@ private:
 	void setPalette();
 	void fadeIn();
 
+	void drawFloorText();
+	void drawEndText();
+
 	void updateAnims();
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
@@ -162,6 +165,8 @@ private:
 
 	bool isDead() const;
 	bool hasWon() const;
+
+	int getLanguage() const;
 };
 
 } // End of namespace Geisha
