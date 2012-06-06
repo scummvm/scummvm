@@ -112,7 +112,7 @@ void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
 		_vm->pauseSound(true);
 
 		disableInput();
-		_inv.EndCombine();
+		_inv.endCombine();
 		_curActionObj = 0;
 		_curAction = TA_GOTO;
 		_point.setAction(_curAction);
@@ -172,12 +172,12 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 		// Check the mouse input
 		if (_bInput && !_tony.InAction()) {
 			// If we are on the inventory, it is it who controls all input
-			if (_inv.HaveFocus(_input.mousePos()) && !_inter.Active()) {
+			if (_inv.haveFocus(_input.mousePos()) && !_inter.active()) {
 				// Left Click
 				// **********
 				if (_input.mouseLeftClicked()/* && m_itemName.IsItemSelected()*/) {
 					// Left click activates the combine, if we are on an object
-					if (_inv.LeftClick(_input.mousePos(), _curActionObj)) {
+					if (_inv.leftClick(_input.mousePos(), _curActionObj)) {
 						_curAction = TA_COMBINE;
 						_point.setAction(_curAction);
 					}
@@ -188,15 +188,15 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 					if (_input.mouseRightClicked()) {
 						if (_itemName.isItemSelected()) {
 							_curActionObj = 0;
-							_inv.RightClick(_input.mousePos());
+							_inv.rightClick(_input.mousePos());
 						} else
-							_inv.RightClick(_input.mousePos());
+							_inv.rightClick(_input.mousePos());
 					} else
 
 						// Right Release
 						// *************
 						if (_input.mouseRightReleased()) {
-							if (_inv.RightRelease(_input.mousePos(), _curAction)) {
+							if (_inv.rightRelease(_input.mousePos(), _curAction)) {
 								CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
 
 								_curAction = TA_GOTO;
@@ -226,7 +226,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 
 				// Left Click
 				// **************
-				if (_input.mouseLeftClicked() && !_inter.Active()) {
+				if (_input.mouseLeftClicked() && !_inter.active()) {
 
 					if (_curAction != TA_COMBINE)
 						CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _point.curAction());
@@ -234,7 +234,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 						CORO_INVOKE_4(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), TA_COMBINE, _curActionObj);
 
 					if (_curAction == TA_COMBINE) {
-						_inv.EndCombine();
+						_inv.endCombine();
 						_point.setSpecialPointer(RMPointer::PTR_NONE);
 					}
 
@@ -248,7 +248,7 @@ SKIPCLICKSINISTRO:
 				if (_curAction == TA_COMBINE) {
 					// During a combine, it cancels it
 					if (_input.mouseRightClicked()) {
-						_inv.EndCombine();
+						_inv.endCombine();
 						_curActionObj = 0;
 						_curAction = TA_GOTO;
 						_point.setAction(_curAction);
@@ -260,7 +260,7 @@ SKIPCLICKSINISTRO:
 						_curAction = TA_GOTO;
 						_curActionObj = 0;
 						_point.setAction(_curAction);
-						_inter.Clicked(_input.mousePos());
+						_inter.clicked(_input.mousePos());
 					}
 				}
 
@@ -269,7 +269,7 @@ SKIPCLICKSINISTRO:
 				// *************
 				if (_input.mouseRightReleased()) {
 					if (_bGUIInterface) {
-						if (_inter.Released(_input.mousePos(), _curAction)) {
+						if (_inter.released(_input.mousePos(), _curAction)) {
 							_point.setAction(_curAction);
 							CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
 
@@ -282,13 +282,13 @@ SKIPCLICKSINISTRO:
 
 			// Update the name under the mouse pointer
 			_itemName.setMouseCoord(_input.mousePos());
-			if (!_inter.Active() && !_inv.MiniActive())
+			if (!_inter.active() && !_inv.miniActive())
 				CORO_INVOKE_4(_itemName.doFrame, _bigBuf, _loc, _point, _inv);
 		}
 
 		// Interface & Inventory
-		_inter.DoFrame(_bigBuf, _input.mousePos());
-		_inv.doFrame(_bigBuf, _point, _input.mousePos(), (!_tony.InAction() && !_inter.Active() && _bGUIInventory));
+		_inter.doFrame(_bigBuf, _input.mousePos());
+		_inv.doFrame(_bigBuf, _point, _input.mousePos(), (!_tony.InAction() && !_inter.active() && _bGUIInventory));
 	}
 
 	// Animate Tony
@@ -396,7 +396,7 @@ void RMGfxEngine::initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint star
 	_point.setCustomPointer(NULL);
 	_point.setSpecialPointer(RMPointer::PTR_NONE);
 	_point.setAction(_curAction);
-	_inter.Reset();
+	_inter.reset();
 	_inv.reset();
 
 	mpalStartIdlePoll(_nCurLoc);
@@ -507,7 +507,7 @@ void RMGfxEngine::init() {
 
 	// Initialise the inventory and the interface
 	_inv.init();
-	_inter.Init();
+	_inter.init();
 
 	// Download the location and set priorities   @@@@@
 	_bLocationLoaded = false;
@@ -521,7 +521,7 @@ void RMGfxEngine::init() {
 void RMGfxEngine::close(void) {
 	_bigBuf.clearOT();
 
-	_inter.Close();
+	_inter.close();
 	_inv.close();
 	_tony.Close();
 	_point.close();
@@ -540,7 +540,7 @@ void RMGfxEngine::enableInput(void) {
 
 void RMGfxEngine::disableInput(void) {
 	_bInput = false;
-	_inter.Reset();
+	_inter.reset();
 }
 
 void RMGfxEngine::enableMouse(void) {
@@ -619,9 +619,9 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	delete[] state;
 
 	// Inventory
-	size = _inv.GetSaveStateSize();
+	size = _inv.getSaveStateSize();
 	state = new byte[size];
-	_inv.SaveState(state);
+	_inv.saveState(state);
 	f->writeUint32LE(size);
 	f->write(state, size);
 	delete[] state;
@@ -640,7 +640,7 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	// Saves the state of the shepherdess and show yourself
 	bStat = _tony.GetPastorella();
 	f->writeByte(bStat);
-	bStat = _inter.GetPalesati();
+	bStat = _inter.getPalesati();
 	f->writeByte(bStat);
 
 	// Save the chars
@@ -758,7 +758,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	_ctx->size = _ctx->f->readUint32LE();
 	_ctx->state = new byte[_ctx->size];
 	_ctx->f->read(_ctx->state, _ctx->size);
-	_inv.LoadState(_ctx->state);
+	_inv.loadState(_ctx->state);
 	delete[] _ctx->state;
 
 	if (_ctx->ver >= 0x2) {   // Versione 2: box please
@@ -776,7 +776,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		bStat = _ctx->f->readByte();
 		_tony.SetPastorella(bStat);
 		bStat = _ctx->f->readByte();
-		_inter.SetPalesati(bStat);
+		_inter.setPalesati(bStat);
 
 		CharsLoadAll(_ctx->f);
 	}

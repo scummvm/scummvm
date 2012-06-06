@@ -145,7 +145,7 @@ public:
 	void waitWipeEnd(CORO_PARAM);
 
 	void setPalesati(bool bpal) {
-		_inter.SetPalesati(bpal);
+		_inter.setPalesati(bpal);
 	}
 	bool canLoadSave();
 };

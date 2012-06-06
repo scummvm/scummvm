@@ -1559,15 +1559,15 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 }
 
 DECLARE_CUSTOM_FUNCTION(AddInventory)(CORO_PARAM, uint32 dwCode, uint32, uint32, uint32) {
-	GLOBALS.Inventory->AddItem(dwCode);
+	GLOBALS.Inventory->addItem(dwCode);
 }
 
 DECLARE_CUSTOM_FUNCTION(RemoveInventory)(CORO_PARAM, uint32 dwCode, uint32, uint32, uint32) {
-	GLOBALS.Inventory->RemoveItem(dwCode);
+	GLOBALS.Inventory->removeItem(dwCode);
 }
 
 DECLARE_CUSTOM_FUNCTION(ChangeInventoryStatus)(CORO_PARAM, uint32 dwCode, uint32 dwStatus, uint32, uint32) {
-	GLOBALS.Inventory->ChangeItemStatus(dwCode, dwStatus);
+	GLOBALS.Inventory->changeItemStatus(dwCode, dwStatus);
 }
 
 

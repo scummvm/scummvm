@@ -157,10 +157,9 @@ RMFontColor::RMFontColor() : RMFont() {
 }
 
 RMFontColor::~RMFontColor() {
-
 }
 
-void RMFontColor::SetBaseColor(byte r1, byte g1, byte b1) {
+void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 	int r = (int)r1 << 16;
 	int g = (int)g1 << 16;
 	int b = (int)b1 << 16;
@@ -1832,7 +1831,7 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 	int numlines;
 
 	// Set the base colour
-	font->SetBaseColor(m_r, m_g, m_b);
+	font->setBaseColor(m_r, m_g, m_b);
 
 	// Destroy the buffer before starting
 	destroy();
@@ -2244,8 +2243,8 @@ void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 	_curscroll = loc.ScrollPosition();
 
 	// Check if we are on the inventory
-	if (inv.ItemInFocus(_mpos))
-		_item = inv.WhichItemIsIn(_mpos);
+	if (inv.itemInFocus(_mpos))
+		_item = inv.whichItemIsIn(_mpos);
 	else
 		_item = loc.WhichItemIsIn(_mpos);
 

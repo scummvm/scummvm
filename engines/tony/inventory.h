@@ -55,35 +55,35 @@ private:
 	};
 
 protected:
-	int m_nItems;
-	RMInventoryItem *m_items;
+	int _nItems;
+	RMInventoryItem *_items;
 
-	int m_inv[256];
-	int m_nInv;
-	int m_curPutY;
-	uint32 m_curPutTime;
+	int _inv[256];
+	int _nInv;
+	int _curPutY;
+	uint32 _curPutTime;
 
-	int m_curPos;
-	STATE m_state;
-	bool m_bHasFocus;
-	int m_nSelectObj;
-	int m_nCombine;
-	bool m_bCombining;
+	int _curPos;
+	STATE _state;
+	bool _bHasFocus;
+	int _nSelectObj;
+	int _nCombine;
+	bool _bCombining;
 
-	bool m_bBlinkingRight, m_bBlinkingLeft;
+	bool _bBlinkingRight, _bBlinkingLeft;
 
 	int miniAction;
 	RMItem miniInterface;
-	RMText m_hints[3];
+	RMText _hints[3];
 
-	OSystem::MutexRef m_csModifyInterface;
+	OSystem::MutexRef _csModifyInterface;
 
 protected:
 	// Prepare the image inventory. It should be recalled whenever the inventory changes
 	void prepare(void);
 
 	// Check if the mouse Y position is conrrect, even under the inventory portion of the screen
-	bool CheckPointInside(const RMPoint &pt);
+	bool checkPointInside(const RMPoint &pt);
 
 public:
 	RMInventory();
@@ -104,93 +104,93 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Method for determining whether the inventory currently has the focus
-	bool HaveFocus(const RMPoint &mpos);
+	bool haveFocus(const RMPoint &mpos);
 
 	// Method for determining if the mini interface is active
-	bool MiniActive(void);
+	bool miniActive(void);
 
 	// Handle the left mouse click (only when the inventory has the focus)
-	bool LeftClick(const RMPoint &mpos, int &nCombineObj);
+	bool leftClick(const RMPoint &mpos, int &nCombineObj);
 
 	// Handle the right mouse button (only when the inventory has the focus)
-	void RightClick(const RMPoint &mpos);
-	bool RightRelease(const RMPoint &mpos, RMTonyAction &curAction);
+	void rightClick(const RMPoint &mpos);
+	bool rightRelease(const RMPoint &mpos, RMTonyAction &curAction);
 
 	// Warn that an item combine is over
-	void EndCombine(void);
+	void endCombine(void);
 
 public:
 	// Add an item to the inventory
-	void AddItem(int code);
+	void addItem(int code);
 	RMInventory &operator+=(RMItem *item) {
-		AddItem(item->MpalCode());
+		addItem(item->MpalCode());
 		return *this;
 	}
 	RMInventory &operator+=(RMItem &item) {
-		AddItem(item.MpalCode());
+		addItem(item.MpalCode());
 		return *this;
 	}
 	RMInventory &operator+=(int code) {
-		AddItem(code);
+		addItem(code);
 		return *this;
 	}
 
 	// Removes an item
-	void RemoveItem(int code);
+	void removeItem(int code);
 
 	// We are on an object?
-	RMItem *WhichItemIsIn(const RMPoint &mpt);
-	bool ItemInFocus(const RMPoint &mpt);
+	RMItem *whichItemIsIn(const RMPoint &mpt);
+	bool itemInFocus(const RMPoint &mpt);
 
 	// Change the icon of an item
-	void ChangeItemStatus(uint32 dwCode, uint32 dwStatus);
+	void changeItemStatus(uint32 dwCode, uint32 dwStatus);
 
 	// Save methods
-	int GetSaveStateSize(void);
-	void SaveState(byte *state);
-	int LoadState(byte *state);
+	int getSaveStateSize(void);
+	void saveState(byte *state);
+	int loadState(byte *state);
 };
 
 
 class RMInterface : public RMGfxSourceBuffer8RLEByte {
 private:
-	bool m_bActive;
-	RMPoint m_mpos;
-	RMPoint m_openPos;
-	RMPoint m_openStart;
-	RMText m_hints[5];
-	RMGfxSourceBuffer8RLEByte m_hotzone[5];
-	RMRect m_hotbbox[5];
-	bool m_bPalesati;
-	int m_lastHotZone;
+	bool _bActive;
+	RMPoint _mpos;
+	RMPoint _openPos;
+	RMPoint _openStart;
+	RMText _hints[5];
+	RMGfxSourceBuffer8RLEByte _hotzone[5];
+	RMRect _hotbbox[5];
+	bool _bPalesati;
+	int _lastHotZone;
 
 protected:
 	// Return which box a given point is in
-	int OnWhichBox(RMPoint pt);
+	int onWhichBox(RMPoint pt);
 
 public:
 	virtual ~RMInterface();
 
 	// The usual DoFrame (poll the graphics engine)
-	void DoFrame(RMGfxTargetBuffer &bigBuf, RMPoint mousepos);
+	void doFrame(RMGfxTargetBuffer &bigBuf, RMPoint mousepos);
 
 	// TRUE if it is active (you can select items)
-	bool Active();
+	bool active();
 
 	// Initialisation
-	void Init(void);
-	void Close(void);
+	void init(void);
+	void close(void);
 
 	// Reset the interface
-	void Reset(void);
+	void reset(void);
 
 	// Warns of mouse clicks and releases
-	void Clicked(const RMPoint &mousepos);
-	bool Released(const RMPoint &mousepos, RMTonyAction &action);
+	void clicked(const RMPoint &mousepos);
+	bool released(const RMPoint &mousepos, RMTonyAction &action);
 
 	// Enalbes or disables the fifth verb
-	void SetPalesati(bool bOn);
-	bool GetPalesati(void);
+	void setPalesati(bool bOn);
+	bool getPalesati(void);
 
 	// Overloaded Draw
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);

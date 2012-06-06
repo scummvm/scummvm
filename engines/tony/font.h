@@ -60,7 +60,7 @@ private:
 		RMFontPrimitive() : RMGfxPrimitive() {}
 		RMFontPrimitive(RMGfxTask *task) : RMGfxPrimitive(task) {}
 		virtual ~RMFontPrimitive() { }
-		virtual RMGfxPrimitive *Duplicate() {
+		virtual RMGfxPrimitive *duplicate() {
 			return new RMFontPrimitive(*this);
 		}
 
@@ -112,7 +112,7 @@ private:
 public:
 	RMFontColor();
 	virtual ~RMFontColor();
-	virtual void SetBaseColor(byte r, byte g, byte b);
+	virtual void setBaseColor(byte r, byte g, byte b);
 };
 
 
