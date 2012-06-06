@@ -45,14 +45,14 @@ private:
 	static byte rgb[RM_SX *RM_SY * 3];
 public:
 	// Take a screenshot
-	void GrabScreenshot(byte *lpBuf, int dezoom = 1, uint16 *lpDestBuf = NULL);
+	void grabScreenshot(byte *lpBuf, int dezoom = 1, uint16 *lpDestBuf = NULL);
 };
 
 
 class RMWindow {
 private:
-	bool Lock();
-	void Unlock();
+	bool lock();
+	void unlock();
 	void plotSplices(const byte *lpBuf, const Common::Point &center, int x, int y);
 	void plotLines(const byte *lpBuf, const Common::Point &center, int x, int y);
 
@@ -65,14 +65,14 @@ protected:
 
 	int mskRed, mskGreen, mskBlue;
 
-	bool m_bGrabScreenshot;
-	bool m_bGrabThumbnail;
-	bool m_bGrabMovie;
-	uint16 *m_wThumbBuf;
+	bool _bGrabScreenshot;
+	bool _bGrabThumbnail;
+	bool _bGrabMovie;
+	uint16 *_wThumbBuf;
 
-	void CreateBWPrecalcTable(void);
-	void WipeEffect(Common::Rect &rcBoundEllipse);
-	void GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse);
+	void createBWPrecalcTable(void);
+	void wipeEffect(Common::Rect &rcBoundEllipse);
+	void getNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse);
 
 public:
 	RMWindow();
@@ -81,19 +81,19 @@ public:
 	// Initialisation
 	void init(/*HINSTANCE hInst*/);
 	void initDirectDraw(void);
-	void Close(void);
+	void close(void);
 
 	// Drawing
-	void Repaint(void);
+	void repaint(void);
 
 	// Switch between windowed and fullscreen
-	void SwitchFullscreen(bool bFull) {}
+	void switchFullscreen(bool bFull) {}
 
 	// Reads the next frame
-	void GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
+	void getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
 
 	// Request a thumbnail be grabbed during the next frame
-	void GrabThumbnail(uint16 *buf);
+	void grabThumbnail(uint16 *buf);
 
 	int getFps() const {
 		return fps;

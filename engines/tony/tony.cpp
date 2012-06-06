@@ -477,7 +477,7 @@ void TonyEngine::closeVoiceDatabase() {
 }
 
 void TonyEngine::grabThumbnail(void) {
-	_window.GrabThumbnail(_curThumbnail);
+	_window.grabThumbnail(_curThumbnail);
 }
 
 void TonyEngine::optionScreen(void) {
@@ -533,13 +533,13 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 		// Handle drawing the frame
 		if (!_vm->_bPaused) {
 			if (!_vm->_theEngine._bWiping)
-				_vm->_window.GetNewFrame(_vm->_theEngine, NULL);
+				_vm->_window.getNewFrame(_vm->_theEngine, NULL);
 			else
-				_vm->_window.GetNewFrame(_vm->_theEngine, &_vm->_theEngine._rcWipeEllipse);
+				_vm->_window.getNewFrame(_vm->_theEngine, &_vm->_theEngine._rcWipeEllipse);
 		}
 
 		// Paint the frame onto the screen
-		_vm->_window.Repaint();
+		_vm->_window.repaint();
 
 		// Signal the ScummVM debugger
 		_vm->_debugger->onFrame();
@@ -570,12 +570,12 @@ void TonyEngine::close(void) {
 	CoroScheduler.closeEvent(_hEndOfFrame);
 	_theBoxes.Close();
 	_theEngine.close();
-	_window.Close();
+	_window.close();
 	delete[] _curThumbnail;
 }
 
 void TonyEngine::switchFullscreen(bool bFull) {
-	_window.SwitchFullscreen(bFull);
+	_window.switchFullscreen(bFull);
 	_theEngine.switchFullscreen(bFull);
 }
 
@@ -617,7 +617,7 @@ Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
 		return Common::kUnknownError;
 
 	RMSnapshot s;
-	s.GrabScreenshot(*GLOBALS.GfxEngine, 4, _curThumbnail);
+	s.grabScreenshot(*GLOBALS.GfxEngine, 4, _curThumbnail);
 
 	GLOBALS.GfxEngine->saveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
 	return Common::kNoError;

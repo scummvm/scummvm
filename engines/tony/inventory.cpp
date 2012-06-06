@@ -60,7 +60,7 @@ RMInventory::RMInventory() {
 }
 
 RMInventory::~RMInventory() {
-	Close();
+	close();
 	g_system->deleteMutex(m_csModifyInterface);
 }
 
@@ -72,8 +72,7 @@ bool RMInventory::CheckPointInside(const RMPoint &pt) {
 }
 
 
-
-void RMInventory::Init(void) {
+void RMInventory::init(void) {
 	int i, j;
 	int curres;
 
@@ -140,27 +139,27 @@ void RMInventory::Init(void) {
 	ds.Close();
 
 	// Create the text for hints on the mini interface
-	m_hints[0].SetAlignType(RMText::HCENTER, RMText::VTOP);
-	m_hints[1].SetAlignType(RMText::HCENTER, RMText::VTOP);
-	m_hints[2].SetAlignType(RMText::HCENTER, RMText::VTOP);
+	m_hints[0].setAlignType(RMText::HCENTER, RMText::VTOP);
+	m_hints[1].setAlignType(RMText::HCENTER, RMText::VTOP);
+	m_hints[2].setAlignType(RMText::HCENTER, RMText::VTOP);
 
 	// The text is taken from MPAL for translation
 	RMMessage msg1(15);
 	RMMessage msg2(13);
 	RMMessage msg3(14);
 
-	m_hints[0].WriteText(msg1[0], 1);       // Examine
-	m_hints[1].WriteText(msg2[0], 1);       // Take
-	m_hints[2].WriteText(msg3[0], 1);       // Use
+	m_hints[0].writeText(msg1[0], 1);       // Examine
+	m_hints[1].writeText(msg2[0], 1);       // Take
+	m_hints[2].writeText(msg3[0], 1);       // Use
 
 
 	// Prepare initial inventory
-	Prepare();
+	prepare();
 	drawOT(Common::nullContext);
 	clearOT();
 }
 
-void RMInventory::Close(void) {
+void RMInventory::close(void) {
 	// Has memory
 	if (m_items != NULL) {
 		// Delete the item pointers
@@ -175,7 +174,7 @@ void RMInventory::Close(void) {
 	destroy();
 }
 
-void RMInventory::Reset(void) {
+void RMInventory::reset(void) {
 	m_state = CLOSED;
 	EndCombine();
 }
@@ -248,7 +247,7 @@ void RMInventory::RemoveItem(int code) {
 			Common::copy(&m_inv[i + 1], &m_inv[i + 1] + (m_nInv - i), &m_inv[i]);
 			m_nInv--;
 
-			Prepare();
+			prepare();
 			drawOT(Common::nullContext);
 			clearOT();
 			g_system->unlockMutex(m_csModifyInterface);
@@ -269,7 +268,7 @@ void RMInventory::AddItem(int code) {
 
 		m_inv[m_nInv++] = code - 10000;
 
-		Prepare();
+		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
 		g_system->unlockMutex(m_csModifyInterface);
@@ -284,7 +283,7 @@ void RMInventory::ChangeItemStatus(uint32 code, uint32 dwStatus) {
 		m_items[code - 10000].icon.SetPattern(dwStatus);
 		m_items[code - 10000].status = dwStatus;
 
-		Prepare();
+		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
 		g_system->unlockMutex(m_csModifyInterface);
@@ -292,7 +291,7 @@ void RMInventory::ChangeItemStatus(uint32 code, uint32 dwStatus) {
 }
 
 
-void RMInventory::Prepare(void) {
+void RMInventory::prepare(void) {
 	int i;
 
 	for (i = 1; i < RM_SX / 64 - 1; i++) {
@@ -363,7 +362,7 @@ bool RMInventory::LeftClick(const RMPoint &mpos, int &nCombineObj) {
 			m_items[29].icon.SetPattern(2);
 		}
 
-		Prepare();
+		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
 		g_system->unlockMutex(m_csModifyInterface);
@@ -384,7 +383,7 @@ bool RMInventory::LeftClick(const RMPoint &mpos, int &nCombineObj) {
 			m_items[28].icon.SetPattern(2);
 		}
 
-		Prepare();
+		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
 		g_system->unlockMutex(m_csModifyInterface);
@@ -429,7 +428,7 @@ void RMInventory::RightClick(const RMPoint &mpos) {
 			m_items[29].icon.SetPattern(2);
 		}
 
-		Prepare();
+		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
 		g_system->unlockMutex(m_csModifyInterface);
@@ -449,7 +448,7 @@ void RMInventory::RightClick(const RMPoint &mpos) {
 			m_items[28].icon.SetPattern(2);
 		}
 
-		Prepare();
+		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
 		g_system->unlockMutex(m_csModifyInterface);
@@ -477,7 +476,7 @@ bool RMInventory::RightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 
 #define INVSPEED    20
 
-void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
+void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
 	int i;
 	bool bNeedRedraw = false;
 
@@ -525,7 +524,7 @@ void RMInventory::DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			bNeedRedraw = true;
 
 		if (bNeedRedraw)
-			Prepare();
+			prepare();
 
 		g_system->unlockMutex(m_csModifyInterface);
 	}
@@ -743,7 +742,7 @@ int RMInventory::LoadState(byte *state) {
 	else
 		m_items[28].icon.SetPattern(1);
 
-	Prepare();
+	prepare();
 	drawOT(Common::nullContext);
 	clearOT();
 
@@ -908,11 +907,11 @@ void RMInterface::Init(void) {
 	m_hotbbox[3].SetRect(56, 51, 93, 99);
 	m_hotbbox[4].SetRect(51, 105, 82, 172);
 
-	m_hints[0].SetAlignType(RMText::HRIGHT, RMText::VTOP);
-	m_hints[1].SetAlignType(RMText::HRIGHT, RMText::VTOP);
-	m_hints[2].SetAlignType(RMText::HRIGHT, RMText::VTOP);
-	m_hints[3].SetAlignType(RMText::HRIGHT, RMText::VTOP);
-	m_hints[4].SetAlignType(RMText::HRIGHT, RMText::VTOP);
+	m_hints[0].setAlignType(RMText::HRIGHT, RMText::VTOP);
+	m_hints[1].setAlignType(RMText::HRIGHT, RMText::VTOP);
+	m_hints[2].setAlignType(RMText::HRIGHT, RMText::VTOP);
+	m_hints[3].setAlignType(RMText::HRIGHT, RMText::VTOP);
+	m_hints[4].setAlignType(RMText::HRIGHT, RMText::VTOP);
 
 	// The text is taken from MPAL for translation
 	RMMessage msg0(12);
@@ -921,11 +920,11 @@ void RMInterface::Init(void) {
 	RMMessage msg3(15);
 	RMMessage msg4(16);
 
-	m_hints[0].WriteText(msg0[0], 1);   // Take
-	m_hints[1].WriteText(msg1[0], 1);   // Talk
-	m_hints[2].WriteText(msg2[0], 1);   // Use
-	m_hints[3].WriteText(msg3[0], 1);   // Examine
-	m_hints[4].WriteText(msg4[0], 1);   // Show Yourself
+	m_hints[0].writeText(msg0[0], 1);   // Take
+	m_hints[1].writeText(msg1[0], 1);   // Talk
+	m_hints[2].writeText(msg2[0], 1);   // Use
+	m_hints[3].writeText(msg3[0], 1);   // Examine
+	m_hints[4].writeText(msg4[0], 1);   // Show Yourself
 
 	m_bActive = false;
 	m_bPalesati = false;

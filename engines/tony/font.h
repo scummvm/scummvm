@@ -48,12 +48,12 @@ class RMPointer;
 class RMFont : public RMGfxTaskSetPrior {
 protected:
 	int nLetters;
-	RMGfxSourceBuffer8RLEByte *m_letter;
+	RMGfxSourceBuffer8RLEByte *_letter;
 public:
-	int m_fontDimx, m_fontDimy;
+	int _fontDimx, _fontDimy;
 
 private:
-	int m_dimx, m_dimy;
+	int _dimx, _dimy;
 
 	class RMFontPrimitive : public RMGfxPrimitive {
 	public:
@@ -64,26 +64,26 @@ private:
 			return new RMFontPrimitive(*this);
 		}
 
-		int m_nChar;
+		int _nChar;
 	};
 
 protected:
 	// Loads the font
-	void Load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
-	void Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
+	void load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
+	void load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
 
 	// Remove the font
-	void Unload(void);
+	void unload(void);
 
 protected:
 	// Conversion form character to font index
-	virtual int ConvertToLetter(byte nChar) = 0;
+	virtual int convertToLetter(byte nChar) = 0;
 
 	// Character width
-	virtual int LetterLength(int nChar, int nNext = 0) = 0;
+	virtual int letterLength(int nChar, int nNext = 0) = 0;
 
 public:
-	virtual int LetterHeight(void) = 0;
+	virtual int letterHeight(void) = 0;
 
 public:
 	RMFont();
@@ -91,17 +91,17 @@ public:
 
 	// Initialisation and closing
 	virtual void init(void) = 0;
-	virtual void Close(void);
+	virtual void close(void);
 
 	// Drawing
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
 
 	// Create a primitive for a letter
-	RMGfxPrimitive *MakeLetterPrimitive(byte bChar, int &nLength);
+	RMGfxPrimitive *makeLetterPrimitive(byte bChar, int &nLength);
 
 	// Length in pixels of a string with the current font
-	int StringLen(const RMString &text);
-	int StringLen(char bChar, char bNext = 0);
+	int stringLen(const RMString &text);
+	int stringLen(char bChar, char bNext = 0);
 };
 
 
@@ -126,15 +126,15 @@ protected:
 
 protected:
 	// Overloaded methods
-	int ConvertToLetter(byte nChar) {
+	int convertToLetter(byte nChar) {
 		return cTable[nChar];
 	}
-	int LetterLength(int nChar, int nNext = 0) {
+	int letterLength(int nChar, int nNext = 0) {
 		return (nChar != -1 ? lTable[(byte)nChar] + l2Table[(byte)nChar][(byte)nNext] : lDefault);
 	}
 
 public:
-	int LetterHeight() {
+	int letterHeight() {
 		return hDefault;
 	}
 	virtual ~RMFontWithTables() {}
@@ -149,7 +149,7 @@ public:
 
 class RMFontObj : public RMFontColor, public RMFontWithTables {
 private:
-	void SetBothCase(int nChar, int nNext, signed char spiazz);
+	void setBothCase(int nChar, int nNext, signed char spiazz);
 
 public:
 	void init(void);
@@ -166,7 +166,7 @@ class RMFontCredits : public RMFontColor, public RMFontWithTables {
 public:
 	void init(void);
 	virtual ~RMFontCredits() {}
-	virtual void SetBaseColor(byte r, byte g, byte b) {}
+	virtual void setBaseColor(byte r, byte g, byte b) {}
 };
 
 /**
@@ -174,8 +174,8 @@ public:
  */
 class RMText : public RMGfxWoodyBuffer {
 private:
-	static RMFontColor *m_fonts[4];
-	static RMGfxClearTask m_clear;
+	static RMFontColor *_fonts[4];
+	static RMGfxClearTask _clear;
 	int maxLineLength;
 
 public:
@@ -198,26 +198,26 @@ private:
 	byte m_r, m_g, m_b;
 
 protected:
-	virtual void ClipOnScreen(RMGfxPrimitive *prim);
+	virtual void clipOnScreen(RMGfxPrimitive *prim);
 
 public:
 	RMText();
 	virtual ~RMText();
 	static void initStatics();
-	static void Unload();
+	static void unload();
 
 	// Set the alignment type
-	void SetAlignType(HORALIGN aHor, VERALIGN aVer) {
+	void setAlignType(HORALIGN aHor, VERALIGN aVer) {
 		aHorType = aHor;
 		aVerType = aVer;
 	}
 
 	// Sets the maximum length of a line in pixels (used to format the text)
-	void SetMaxLineLength(int max);
+	void setMaxLineLength(int max);
 
 	// Write the text
-	void WriteText(const RMString &text, int font, int *time = NULL);
-	void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
+	void writeText(const RMString &text, int font, int *time = NULL);
+	void writeText(const RMString &text, RMFontColor *font, int *time = NULL);
 
 	// Overloaded function to decide when you delete the object from the OT list
 	virtual void removeThis(CORO_PARAM, bool &result);
@@ -226,7 +226,7 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Set the base colour
-	void SetColor(byte r, byte g, byte b) {
+	void setColor(byte r, byte g, byte b) {
 		m_r = r;
 		m_g = g;
 		m_b = b;
@@ -238,27 +238,27 @@ public:
  */
 class RMTextDialog : public RMText {
 protected:
-	int m_startTime;
-	int m_time;
-	bool m_bSkipStatus;
+	int _startTime;
+	int _time;
+	bool _bSkipStatus;
 	RMPoint dst;
 	uint32 hEndDisplay;
-	bool m_bShowed;
-	bool m_bForceTime;
-	bool m_bForceNoTime;
+	bool _bShowed;
+	bool _bForceTime;
+	bool _bForceNoTime;
 	uint32 hCustomSkip;
 	uint32 hCustomSkip2;
-	RMInput *m_input;
-	bool m_bAlwaysDisplay;
-	bool m_bNoTab;
+	RMInput *_input;
+	bool _bAlwaysDisplay;
+	bool _bNoTab;
 
 public:
 	RMTextDialog();
 	virtual ~RMTextDialog();
 
 	// Write the text
-	void WriteText(const RMString &text, int font, int *time = NULL);
-	void WriteText(const RMString &text, RMFontColor *font, int *time = NULL);
+	void writeText(const RMString &text, int font, int *time = NULL);
+	void writeText(const RMString &text, RMFontColor *font, int *time = NULL);
 
 	// Overloaded function to decide when you delete the object from the OT list
 	virtual void removeThis(CORO_PARAM, bool &result);
@@ -270,26 +270,26 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Set the position
-	void SetPosition(const RMPoint &pt) {
+	void setPosition(const RMPoint &pt) {
 		dst = pt;
 	}
 
 	// Waiting
-	void WaitForEndDisplay(CORO_PARAM);
-	void SetCustomSkipHandle(uint32 hCustomSkip);
-	void SetCustomSkipHandle2(uint32 hCustomSkip);
-	void SetSkipStatus(bool bEnabled);
-	void SetForcedTime(uint32 dwTime);
-	void SetNoTab(void);
-	void ForceTime(void);
-	void ForceNoTime(void);
-	void SetAlwaysDisplay(void);
+	void waitForEndDisplay(CORO_PARAM);
+	void setCustomSkipHandle(uint32 hCustomSkip);
+	void setCustomSkipHandle2(uint32 hCustomSkip);
+	void setSkipStatus(bool bEnabled);
+	void setForcedTime(uint32 dwTime);
+	void setNoTab(void);
+	void forceTime(void);
+	void forceNoTime(void);
+	void setAlwaysDisplay(void);
 
 	// Set the input device, to allow skip from mouse
-	void SetInput(RMInput *input);
+	void setInput(RMInput *input);
 
-	void Show(void);
-	void Hide(CORO_PARAM);
+	void show(void);
+	void hide(CORO_PARAM);
 };
 
 class RMTextDialogScrolling : public RMTextDialog {
@@ -297,7 +297,7 @@ protected:
 	RMLocation *curLoc;
 	RMPoint startScroll;
 
-	virtual void ClipOnScreen(RMGfxPrimitive *prim);
+	virtual void clipOnScreen(RMGfxPrimitive *prim);
 
 public:
 	RMTextDialogScrolling();
@@ -313,26 +313,26 @@ public:
  */
 class RMTextItemName : protected RMText {
 protected:
-	RMPoint m_mpos;
-	RMPoint m_curscroll;
-	RMItem *m_item;
-	RMString m_itemName;
+	RMPoint _mpos;
+	RMPoint _curscroll;
+	RMItem *_item;
+	RMString _itemName;
 
 public:
 	RMTextItemName();
 	virtual ~RMTextItemName();
 
-	void SetMouseCoord(const RMPoint &m) {
-		m_mpos = m;
+	void setMouseCoord(const RMPoint &m) {
+		_mpos = m;
 	}
 
-	void DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
+	void doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	RMPoint GetHotspot();
-	RMItem *GetSelectedItem();
-	bool IsItemSelected();
-	bool IsNormalItemSelected();
+	RMPoint getHotspot();
+	RMItem *getSelectedItem();
+	bool isItemSelected();
+	bool isNormalItemSelected();
 
 	virtual void removeThis(CORO_PARAM, bool &result) {
 		result = true;
@@ -345,21 +345,21 @@ public:
  */
 class RMDialogChoice : public RMGfxWoodyBuffer {
 private:
-	int m_curSelection;
-	int m_numChoices;
-	RMText *m_drawedStrings;
-	RMPoint *m_ptDrawStrings;
-	int m_curAdded;
-	bool m_bShow;
+	int _curSelection;
+	int _numChoices;
+	RMText *_drawedStrings;
+	RMPoint *_ptDrawStrings;
+	int _curAdded;
+	bool _bShow;
 	RMGfxSourceBuffer8 DlgText;
 	RMGfxSourceBuffer8 DlgTextLine;
-	RMPoint m_ptDrawPos;
+	RMPoint _ptDrawPos;
 	uint32 hUnreg;
 	bool bRemoveFromOT;
 
 protected:
-	void Prepare(CORO_PARAM);
-	void SetSelected(CORO_PARAM, int pos);
+	void prepare(CORO_PARAM);
+	void setSelected(CORO_PARAM, int pos);
 
 public:
 	virtual void removeThis(CORO_PARAM, bool &result);
@@ -373,25 +373,25 @@ public:
 
 	// Initialisation and closure
 	void init(void);
-	void Close(void);
+	void close(void);
 
 	// Sets the number of possible sentences, which then be added with AddChoice()
-	void SetNumChoices(int num);
+	void setNumChoices(int num);
 
 	// Adds a string with the choice
-	void AddChoice(const RMString &string);
+	void addChoice(const RMString &string);
 
 	// Show and hide the selection, with possible animations.
 	// NOTE: If no parameter is passed to Show(), it is the obligation of
 	// caller to ensure that the class is inserted into OT list
-	void Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf = NULL);
-	void Hide(CORO_PARAM);
+	void show(CORO_PARAM, RMGfxTargetBuffer *bigBuf = NULL);
+	void hide(CORO_PARAM);
 
 	// Polling Update
-	void DoFrame(CORO_PARAM, RMPoint ptMousePos);
+	void doFrame(CORO_PARAM, RMPoint ptMousePos);
 
 	// Returns the currently selected item, or -1 if none is selected
-	int GetSelection(void);
+	int getSelection(void);
 };
 
 } // End of namespace Tony

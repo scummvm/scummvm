@@ -80,7 +80,7 @@ protected:
 
 protected:
 	// Prepare the image inventory. It should be recalled whenever the inventory changes
-	void Prepare(void);
+	void prepare(void);
 
 	// Check if the mouse Y position is conrrect, even under the inventory portion of the screen
 	bool CheckPointInside(const RMPoint &pt);
@@ -90,12 +90,12 @@ public:
 	virtual ~RMInventory();
 
 	// Prepare a frame
-	void DoFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen);
+	void doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen);
 
 	// Initialisation and closing
-	void Init(void);
-	void Close(void);
-	void Reset(void);
+	void init(void);
+	void close(void);
+	void reset(void);
 
 	// Overload test for removal from OT list
 	virtual void removeThis(CORO_PARAM, bool &result);

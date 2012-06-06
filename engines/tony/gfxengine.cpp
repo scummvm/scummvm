@@ -186,7 +186,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 					// Right Click
 					// ***********
 					if (_input.mouseRightClicked()) {
-						if (_itemName.IsItemSelected()) {
+						if (_itemName.isItemSelected()) {
 							_curActionObj = 0;
 							_inv.RightClick(_input.mousePos());
 						} else
@@ -197,7 +197,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 						// *************
 						if (_input.mouseRightReleased()) {
 							if (_inv.RightRelease(_input.mousePos(), _curAction)) {
-								CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), _curAction);
+								CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
 
 								_curAction = TA_GOTO;
 								_point.setAction(_curAction);
@@ -229,9 +229,9 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 				if (_input.mouseLeftClicked() && !_inter.Active()) {
 
 					if (_curAction != TA_COMBINE)
-						CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), _point.curAction());
-					else if (_itemName.GetSelectedItem() != NULL)
-						CORO_INVOKE_4(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), TA_COMBINE, _curActionObj);
+						CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _point.curAction());
+					else if (_itemName.getSelectedItem() != NULL)
+						CORO_INVOKE_4(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), TA_COMBINE, _curActionObj);
 
 					if (_curAction == TA_COMBINE) {
 						_inv.EndCombine();
@@ -254,7 +254,7 @@ SKIPCLICKSINISTRO:
 						_point.setAction(_curAction);
 						_point.setSpecialPointer(RMPointer::PTR_NONE);
 					}
-				} else if (_input.mouseRightClicked() && _itemName.IsItemSelected() && _point.getSpecialPointer() == RMPointer::PTR_NONE) {
+				} else if (_input.mouseRightClicked() && _itemName.isItemSelected() && _point.getSpecialPointer() == RMPointer::PTR_NONE) {
 					if (_bGUIInterface) {
 						// Before opening the interface, replaces GOTO
 						_curAction = TA_GOTO;
@@ -271,7 +271,7 @@ SKIPCLICKSINISTRO:
 					if (_bGUIInterface) {
 						if (_inter.Released(_input.mousePos(), _curAction)) {
 							_point.setAction(_curAction);
-							CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.GetHotspot(), _itemName.GetSelectedItem(), _curAction);
+							CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
 
 							_curAction = TA_GOTO;
 							_point.setAction(_curAction);
@@ -281,14 +281,14 @@ SKIPCLICKSINISTRO:
 			}
 
 			// Update the name under the mouse pointer
-			_itemName.SetMouseCoord(_input.mousePos());
+			_itemName.setMouseCoord(_input.mousePos());
 			if (!_inter.Active() && !_inv.MiniActive())
-				CORO_INVOKE_4(_itemName.DoFrame, _bigBuf, _loc, _point, _inv);
+				CORO_INVOKE_4(_itemName.doFrame, _bigBuf, _loc, _point, _inv);
 		}
 
 		// Interface & Inventory
 		_inter.DoFrame(_bigBuf, _input.mousePos());
-		_inv.DoFrame(_bigBuf, _point, _input.mousePos(), (!_tony.InAction() && !_inter.Active() && _bGUIInventory));
+		_inv.doFrame(_bigBuf, _point, _input.mousePos(), (!_tony.InAction() && !_inter.Active() && _bGUIInventory));
 	}
 
 	// Animate Tony
@@ -397,7 +397,7 @@ void RMGfxEngine::initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint star
 	_point.setSpecialPointer(RMPointer::PTR_NONE);
 	_point.setAction(_curAction);
 	_inter.Reset();
-	_inv.Reset();
+	_inv.reset();
 
 	mpalStartIdlePoll(_nCurLoc);
 }
@@ -472,7 +472,7 @@ void RMGfxEngine::init() {
 	_bigBuf.drawOT(Common::nullContext);
 	_bigBuf.clearOT();
 	delete load;
-	_vm->_window.GetNewFrame(*this, NULL);
+	_vm->_window.getNewFrame(*this, NULL);
 
 	GLOBALS.bPatIrqFreeze = true;
 
@@ -506,7 +506,7 @@ void RMGfxEngine::init() {
 	_tony.LinkToBoxes(&_vm->_theBoxes);
 
 	// Initialise the inventory and the interface
-	_inv.Init();
+	_inv.init();
 	_inter.Init();
 
 	// Download the location and set priorities   @@@@@
@@ -522,7 +522,7 @@ void RMGfxEngine::close(void) {
 	_bigBuf.clearOT();
 
 	_inter.Close();
-	_inv.Close();
+	_inv.close();
 	_tony.Close();
 	_point.close();
 	_input.close();

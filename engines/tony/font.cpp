@@ -41,11 +41,11 @@ namespace Tony {
 \****************************************************************************/
 
 RMFont::RMFont() {
-	m_letter = NULL;
+	_letter = NULL;
 }
 
 RMFont::~RMFont() {
-	Unload();
+	unload();
 }
 
 
@@ -63,53 +63,53 @@ void DumpFontBMP(const char *filename, const byte *buf, int nChars, int charX, i
 }
 
 
-void RMFont::Load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID) {
-	m_letter = new RMGfxSourceBuffer8RLEByte[nChars];
+void RMFont::load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID) {
+	_letter = new RMGfxSourceBuffer8RLEByte[nChars];
 
 	// Initialise the fonts
 	for (int i = 0; i < nChars; i++) {
 		// Initialise the buffer with the letters
-		m_letter[i].init(buf + i * (dimx * dimy + 8) + 8, dimx, dimy);
-		m_letter[i].loadPaletteWA(palResID);
+		_letter[i].init(buf + i * (dimx * dimy + 8) + 8, dimx, dimy);
+		_letter[i].loadPaletteWA(palResID);
 	}
 
-	m_fontDimx = dimx;
-	m_fontDimy = dimy;
+	_fontDimx = dimx;
+	_fontDimy = dimy;
 
 	nLetters = nChars;
 }
 
-void RMFont::Load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID) {
+void RMFont::load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID) {
 	RMRes res(resID);
 
 	if ((int)res.Size() < nChars * (dimy * dimx + 8))
 		nChars = res.Size() / (dimy * dimx + 8);
 
-	Load(res, nChars, dimx, dimy, palResID);
+	load(res, nChars, dimx, dimy, palResID);
 }
 
-void RMFont::Unload(void) {
-	if (m_letter != NULL) {
-		delete[] m_letter;
-		m_letter = NULL;
+void RMFont::unload(void) {
+	if (_letter != NULL) {
+		delete[] _letter;
+		_letter = NULL;
 	}
 }
 
 
-RMGfxPrimitive *RMFont::MakeLetterPrimitive(byte bChar, int &nLength) {
+RMGfxPrimitive *RMFont::makeLetterPrimitive(byte bChar, int &nLength) {
 	RMFontPrimitive *prim;
 	int nLett;
 
 	// Convert from character to glyph index
-	nLett = ConvertToLetter(bChar);
+	nLett = convertToLetter(bChar);
 	assert(nLett < nLetters);
 
 	// Create primitive font
 	prim = new RMFontPrimitive(this);
-	prim->m_nChar = nLett;
+	prim->_nChar = nLett;
 
 	// Get the length of the character in pixels
-	nLength = LetterLength(bChar);
+	nLength = letterLength(bChar);
 
 	return prim;
 }
@@ -123,29 +123,29 @@ void RMFont::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim2) 
 	CORO_BEGIN_CODE(_ctx);
 
 	// Call the draw method of the letter assigned to the primitive
-	if (prim->m_nChar != -1)
-		CORO_INVOKE_2(m_letter[prim->m_nChar].draw, bigBuf, prim);
+	if (prim->_nChar != -1)
+		CORO_INVOKE_2(_letter[prim->_nChar].draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
-void RMFont::Close(void) {
-	Unload();
+void RMFont::close(void) {
+	unload();
 }
 
-int RMFont::StringLen(const RMString &text) {
+int RMFont::stringLen(const RMString &text) {
 	int len, i;
 
 	len = 0;
 	for (i = 0; i < text.Length() - 1; i++)
-		len += LetterLength(text[i], text[i + 1]);
-	len += LetterLength(text[i]);
+		len += letterLength(text[i], text[i + 1]);
+	len += letterLength(text[i]);
 
 	return len;
 }
 
-int RMFont::StringLen(char bChar, char bNext) {
-	return LetterLength(bChar, bNext);
+int RMFont::stringLen(char bChar, char bNext) {
+	return letterLength(bChar, bNext);
 }
 
 /****************************************************************************\
@@ -197,7 +197,7 @@ void RMFontColor::SetBaseColor(byte r1, byte g1, byte b1) {
 
 	// Puts in all the letters
 	for (i = 0; i < nLetters; i++)
-		m_letter[i].loadPaletteWA(pal);
+		_letter[i].loadPaletteWA(pal);
 }
 
 
@@ -217,7 +217,7 @@ void RMFontParla::init(void) {
 	    +  8    // french
 	    +  5;   // deutsch
 
-	Load(RES_F_PARL, nchars, 20, 20);
+	load(RES_F_PARL, nchars, 20, 20);
 
 	// Initialise the f**king table
 	lDefault = 13;
@@ -625,7 +625,7 @@ void RMFontMacc::init(void) {
 	    +  5;   // deutsch
 
 
-	Load(RES_F_MACC, nchars, 11, 16);
+	load(RES_F_MACC, nchars, 11, 16);
 
 	// Default
 	lDefault = 10;
@@ -989,7 +989,7 @@ void RMFontCredits::init(void) {
 	    +  2;   // deutsch
 
 
-	Load(RES_F_CREDITS, nchars, 27, 28, RES_F_CPAL);
+	load(RES_F_CREDITS, nchars, 27, 28, RES_F_CPAL);
 
 	// Default
 	lDefault = 10;
@@ -1433,7 +1433,7 @@ void RMFontCredits::init(void) {
 #define TOUPPER(a)  ((a) >= 'a' && (a) <= 'z' ? (a) + 'A' - 'a' : (a))
 #define TOLOWER(a)  ((a) >= 'A' && (a) <= 'Z' ? (a) + 'a' - 'A' : (a))
 
-void RMFontObj::SetBothCase(int nChar, int nNext, signed char spiazz) {
+void RMFontObj::setBothCase(int nChar, int nNext, signed char spiazz) {
 	l2Table[TOUPPER(nChar)][TOUPPER(nNext)] = spiazz;
 	l2Table[TOUPPER(nChar)][TOLOWER(nNext)] = spiazz;
 	l2Table[TOLOWER(nChar)][TOUPPER(nNext)] = spiazz;
@@ -1454,7 +1454,7 @@ void RMFontObj::init(void) {
 	    +  1;   // deutsch
 
 
-	Load(RES_F_OBJ, nchars, 25, 30);
+	load(RES_F_OBJ, nchars, 25, 30);
 
 	// Initialise the f**king table
 	lDefault = 26;
@@ -1569,17 +1569,17 @@ void RMFontObj::init(void) {
 	lTable[(byte)'Ñ'] = 17;
 
 	/* Casi particolari */
-	SetBothCase('C', 'C', 2);
-	SetBothCase('A', 'T', -2);
-	SetBothCase('R', 'S', 2);
-	SetBothCase('H', 'I', -2);
-	SetBothCase('T', 'S', 2);
-	SetBothCase('O', 'R', 2);
-	SetBothCase('O', 'L', 2);
-	SetBothCase('O', 'G', 2);
-	SetBothCase('Z', 'A', -1);
-	SetBothCase('R', 'R', 1);
-	SetBothCase('R', 'U', 3);
+	setBothCase('C', 'C', 2);
+	setBothCase('A', 'T', -2);
+	setBothCase('R', 'S', 2);
+	setBothCase('H', 'I', -2);
+	setBothCase('T', 'S', 2);
+	setBothCase('O', 'R', 2);
+	setBothCase('O', 'L', 2);
+	setBothCase('O', 'G', 2);
+	setBothCase('Z', 'A', -1);
+	setBothCase('R', 'R', 1);
+	setBothCase('R', 'U', 3);
 
 	if (_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
@@ -1760,11 +1760,11 @@ void RMFontObj::init(void) {
 *       RMText Methods
 \****************************************************************************/
 
-RMFontColor *RMText::m_fonts[4] = { NULL, NULL, NULL, NULL };
-RMGfxClearTask RMText::m_clear;
+RMFontColor *RMText::_fonts[4] = { NULL, NULL, NULL, NULL };
+RMGfxClearTask RMText::_clear;
 
 void RMText::initStatics() {
-	Common::fill(&m_fonts[0], &m_fonts[4], (RMFontColor *)NULL);
+	Common::fill(&_fonts[0], &_fonts[4], (RMFontColor *)NULL);
 }
 
 RMText::RMText() {
@@ -1784,17 +1784,17 @@ RMText::~RMText() {
 
 }
 
-void RMText::Unload() {
-	if (m_fonts[0] != NULL) {
-		delete m_fonts[0];
-		delete m_fonts[1];
-		delete m_fonts[2];
-		delete m_fonts[3];
-		m_fonts[0] =  m_fonts[1] = m_fonts[2] = m_fonts[3] = 0;
+void RMText::unload() {
+	if (_fonts[0] != NULL) {
+		delete _fonts[0];
+		delete _fonts[1];
+		delete _fonts[2];
+		delete _fonts[3];
+		_fonts[0] =  _fonts[1] = _fonts[2] = _fonts[3] = 0;
 	}
 }
 
-void RMText::SetMaxLineLength(int max) {
+void RMText::setMaxLineLength(int max) {
 	maxLineLength = max;
 }
 
@@ -1804,24 +1804,24 @@ void RMText::removeThis(CORO_PARAM, bool &result) {
 }
 
 
-void RMText::WriteText(const RMString &text, int nFont, int *time) {
+void RMText::writeText(const RMString &text, int nFont, int *time) {
 	// Initialises the font (only once)
-	if (m_fonts[0] == NULL) {
-		m_fonts[0] = new RMFontParla;
-		m_fonts[0]->init();
-		m_fonts[1] = new RMFontObj;
-		m_fonts[1]->init();
-		m_fonts[2] = new RMFontMacc;
-		m_fonts[2]->init();
-		m_fonts[3] = new RMFontCredits;
-		m_fonts[3]->init();
+	if (_fonts[0] == NULL) {
+		_fonts[0] = new RMFontParla;
+		_fonts[0]->init();
+		_fonts[1] = new RMFontObj;
+		_fonts[1]->init();
+		_fonts[2] = new RMFontMacc;
+		_fonts[2]->init();
+		_fonts[3] = new RMFontCredits;
+		_fonts[3]->init();
 	}
 
-	WriteText(text, m_fonts[nFont], time);
+	writeText(text, _fonts[nFont], time);
 }
 
 
-void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
+void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 	RMGfxPrimitive *prim;
 	char *p, *old_p;
 	int i, j, x, y;
@@ -1846,9 +1846,9 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	string = p = text;
 	i = j = x = 0;
 	while (*p != '\0') {
-		j += font->StringLen(*p);
+		j += font->stringLen(*p);
 		if (j > (((aHorType == HLEFTPAR) && (i > 0)) ? maxLineLength - 25 : maxLineLength)) {
-			j -= font->StringLen(*p, p[1]);
+			j -= font->stringLen(*p, p[1]);
 			if (j > x)
 				x = j;
 
@@ -1888,7 +1888,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 
 	// Starting position for the surface: X1, Y
 	width = x;
-	height = (numlines - 1) * font->LetterHeight() + font->m_fontDimy;
+	height = (numlines - 1) * font->letterHeight() + font->_fontDimy;
 
 	// Create the surface
 	Create(width, height);
@@ -1902,7 +1902,7 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 	for (; i > 0; i--) {
 		// Measure the length of the line
 		x = 0;
-		j = font->StringLen(RMString(p));
+		j = font->stringLen(RMString(p));
 
 		switch (aHorType) {
 		case HLEFT:
@@ -1927,30 +1927,30 @@ void RMText::WriteText(const RMString &text, RMFontColor *font, int *time) {
 
 		while (*p != '\0') {
 			if (*p == ' ') {
-				x += font->StringLen(*p);
+				x += font->stringLen(*p);
 				p++;
 				continue;
 			}
 
-			prim = font->MakeLetterPrimitive(*p, len);
+			prim = font->makeLetterPrimitive(*p, len);
 			prim->Dst().x1 = x;
 			prim->Dst().y1 = y;
 			addPrim(prim);
 
 			numchar++;
 
-			x += font->StringLen(*p, p[1]);
+			x += font->stringLen(*p, p[1]);
 			p++;
 		}
 		p++;
-		y += font->LetterHeight();
+		y += font->letterHeight();
 	}
 
 	if (time != NULL)
 		*time = 1000 + numchar * (11 - GLOBALS.nCfgTextSpeed) * 14;
 }
 
-void RMText::ClipOnScreen(RMGfxPrimitive *prim) {
+void RMText::clipOnScreen(RMGfxPrimitive *prim) {
 	// Don't let it go outside the screen
 	if (prim->Dst().x1 < 5)
 		prim->Dst().x1 = 5;
@@ -1984,7 +1984,7 @@ void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 		prim->Dst().y1 -= _dimy;
 	}
 
-	ClipOnScreen(prim);
+	clipOnScreen(prim);
 
 	CORO_INVOKE_2(RMGfxWoodyBuffer::draw, bigBuf, prim);
 
@@ -1996,18 +1996,18 @@ void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 \****************************************************************************/
 
 RMTextDialog::RMTextDialog() : RMText() {
-	m_startTime = 0;
+	_startTime = 0;
 	dst = RMPoint(0, 0);
 
-	m_bSkipStatus = true;
-	m_bShowed = true;
-	m_bForceTime = false;
-	m_bForceNoTime = false;
-	m_bAlwaysDisplay = false;
-	m_bNoTab = false;
+	_bSkipStatus = true;
+	_bShowed = true;
+	_bForceTime = false;
+	_bForceNoTime = false;
+	_bAlwaysDisplay = false;
+	_bNoTab = false;
 	hCustomSkip = CORO_INVALID_PID_VALUE;
 	hCustomSkip2 = CORO_INVALID_PID_VALUE;
-	m_input = NULL;
+	_input = NULL;
 
 	// Create the event for displaying the end
 	hEndDisplay = CoroScheduler.createEvent(false, false);
@@ -2017,51 +2017,51 @@ RMTextDialog::~RMTextDialog() {
 	CoroScheduler.closeEvent(hEndDisplay);
 }
 
-void RMTextDialog::Show(void) {
-	m_bShowed = true;
+void RMTextDialog::show(void) {
+	_bShowed = true;
 }
 
-void RMTextDialog::Hide(CORO_PARAM) {
-	m_bShowed = false;
+void RMTextDialog::hide(CORO_PARAM) {
+	_bShowed = false;
 }
 
-void RMTextDialog::WriteText(const RMString &text, int font, int *time) {
-	RMText::WriteText(text, font, &m_time);
+void RMTextDialog::writeText(const RMString &text, int font, int *time) {
+	RMText::writeText(text, font, &_time);
 
 	if (time != NULL)
-		*time = m_time;
+		*time = _time;
 }
 
-void RMTextDialog::WriteText(const RMString &text, RMFontColor *font, int *time) {
-	RMText::WriteText(text, font, &m_time);
+void RMTextDialog::writeText(const RMString &text, RMFontColor *font, int *time) {
+	RMText::writeText(text, font, &_time);
 
 	if (time != NULL)
-		*time = m_time;
+		*time = _time;
 }
 
 
-void RMTextDialog::SetSkipStatus(bool bEnabled) {
-	m_bSkipStatus = bEnabled;
+void RMTextDialog::setSkipStatus(bool bEnabled) {
+	_bSkipStatus = bEnabled;
 }
 
-void RMTextDialog::ForceTime(void) {
-	m_bForceTime = true;
+void RMTextDialog::forceTime(void) {
+	_bForceTime = true;
 }
 
-void RMTextDialog::ForceNoTime(void) {
-	m_bForceNoTime = true;
+void RMTextDialog::forceNoTime(void) {
+	_bForceNoTime = true;
 }
 
-void RMTextDialog::SetNoTab(void) {
-	m_bNoTab = true;
+void RMTextDialog::setNoTab(void) {
+	_bNoTab = true;
 }
 
-void RMTextDialog::SetForcedTime(uint32 dwTime) {
-	m_time = dwTime;
+void RMTextDialog::setForcedTime(uint32 dwTime) {
+	_time = dwTime;
 }
 
-void RMTextDialog::SetAlwaysDisplay(void) {
-	m_bAlwaysDisplay = true;
+void RMTextDialog::setAlwaysDisplay(void) {
+	_bAlwaysDisplay = true;
 }
 
 void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
@@ -2075,39 +2075,39 @@ void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 	result = true;
 
 	// Don't erase the background
-	if (m_bSkipStatus) {
+	if (_bSkipStatus) {
 		if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
 			if (GLOBALS.bCfgTimerizedText) {
-				if (!m_bForceNoTime) {
-					if (_vm->getTime() > (uint32)m_time + m_startTime)
+				if (!_bForceNoTime) {
+					if (_vm->getTime() > (uint32)_time + _startTime)
 						return;
 				}
 			}
 		}
 
-		if (!m_bNoTab) {
+		if (!_bNoTab) {
 			if (_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
 				return;
 		}
 
-		if (!m_bNoTab) {
-			if (m_input) {
-				if (m_input->mouseLeftClicked() || m_input->mouseRightClicked())
+		if (!_bNoTab) {
+			if (_input) {
+				if (_input->mouseLeftClicked() || _input->mouseRightClicked())
 					return;
 			}
 		}
 	}
 	// Erase the background
 	else if (!(GLOBALS.bCfgDubbing && hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
-		if (!m_bForceNoTime) {
-			if (_vm->getTime() > (uint32)m_time + m_startTime)
+		if (!_bForceNoTime) {
+			if (_vm->getTime() > (uint32)_time + _startTime)
 				return;
 		}
 	}
 
 	// If time is forced
-	if (m_bForceTime) {
-		if (_vm->getTime() > (uint32)m_time + m_startTime)
+	if (_bForceTime) {
+		if (_vm->getTime() > (uint32)_time + _startTime)
 			return;
 	}
 
@@ -2142,11 +2142,11 @@ void RMTextDialog::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (m_startTime == 0)
-		m_startTime = _vm->getTime();
+	if (_startTime == 0)
+		_startTime = _vm->getTime();
 
-	if (m_bShowed) {
-		if (GLOBALS.bCfgSottotitoli || m_bAlwaysDisplay) {
+	if (_bShowed) {
+		if (GLOBALS.bCfgSottotitoli || _bAlwaysDisplay) {
 			prim->Dst().TopLeft() = dst;
 			CORO_INVOKE_2(RMText::draw, bigBuf, prim);
 		}
@@ -2155,20 +2155,20 @@ void RMTextDialog::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 	CORO_END_CODE;
 }
 
-void RMTextDialog::SetCustomSkipHandle(uint32 hCustom) {
+void RMTextDialog::setCustomSkipHandle(uint32 hCustom) {
 	hCustomSkip = hCustom;
 }
 
-void RMTextDialog::SetCustomSkipHandle2(uint32 hCustom) {
+void RMTextDialog::setCustomSkipHandle2(uint32 hCustom) {
 	hCustomSkip2 = hCustom;
 }
 
-void RMTextDialog::WaitForEndDisplay(CORO_PARAM) {
+void RMTextDialog::waitForEndDisplay(CORO_PARAM) {
 	CoroScheduler.waitForSingleObject(coroParam, hEndDisplay, CORO_INFINITE);
 }
 
-void RMTextDialog::SetInput(RMInput *input) {
-	m_input = input;
+void RMTextDialog::setInput(RMInput *input) {
+	_input = input;
 }
 
 /****************************************************************************\
@@ -2206,7 +2206,7 @@ void RMTextDialogScrolling::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 	CORO_END_CODE;
 }
 
-void RMTextDialogScrolling::ClipOnScreen(RMGfxPrimitive *prim) {
+void RMTextDialogScrolling::clipOnScreen(RMGfxPrimitive *prim) {
 	// We must not do anything!
 }
 
@@ -2216,7 +2216,7 @@ void RMTextDialogScrolling::ClipOnScreen(RMGfxPrimitive *prim) {
 \****************************************************************************/
 
 RMTextItemName::RMTextItemName() : RMText() {
-	m_item = NULL;
+	_item = NULL;
 	setPriority(220);
 }
 
@@ -2224,7 +2224,7 @@ RMTextItemName::~RMTextItemName() {
 
 }
 
-void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv) {
+void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv) {
 	CORO_BEGIN_CONTEXT;
 	RMItem *lastItem;
 	uint32 hThread;
@@ -2234,36 +2234,36 @@ void RMTextItemName::DoFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->lastItem = m_item;
+	_ctx->lastItem = _item;
 
 	// Adds to the list if there is need
 	if (!_nInList)
 		bigBuf.addPrim(new RMGfxPrimitive(this));
 
 	// Update the scrolling co-ordinates
-	m_curscroll = loc.ScrollPosition();
+	_curscroll = loc.ScrollPosition();
 
 	// Check if we are on the inventory
-	if (inv.ItemInFocus(m_mpos))
-		m_item = inv.WhichItemIsIn(m_mpos);
+	if (inv.ItemInFocus(_mpos))
+		_item = inv.WhichItemIsIn(_mpos);
 	else
-		m_item = loc.WhichItemIsIn(m_mpos);
+		_item = loc.WhichItemIsIn(_mpos);
 
 	itemName = "";
 
 	// If there an item, get its name
-	if (m_item != NULL)
-		m_item->GetName(itemName);
+	if (_item != NULL)
+		_item->GetName(itemName);
 
 	// Write it
-	WriteText(itemName, 1);
+	writeText(itemName, 1);
 
 	// Handle the change If the selected item is different from the previous one
-	if (_ctx->lastItem != m_item) {
-		if (m_item == NULL)
+	if (_ctx->lastItem != _item) {
+		if (_item == NULL)
 			ptr.setSpecialPointer(RMPointer::PTR_NONE);
 		else {
-			_ctx->hThread = mpalQueryDoAction(20, m_item->MpalCode(), 0);
+			_ctx->hThread = mpalQueryDoAction(20, _item->MpalCode(), 0);
 			if (_ctx->hThread == CORO_INVALID_PID_VALUE)
 				ptr.setSpecialPointer(RMPointer::PTR_NONE);
 			else
@@ -2286,30 +2286,30 @@ void RMTextItemName::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		return;
 
 	// Set the destination coordinates of the mouse
-	prim->Dst().TopLeft() = m_mpos - RMPoint(0, 30);
+	prim->Dst().TopLeft() = _mpos - RMPoint(0, 30);
 
 	CORO_INVOKE_2(RMText::draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
-RMPoint RMTextItemName::GetHotspot() {
-	if (m_item == NULL)
-		return m_mpos + m_curscroll;
+RMPoint RMTextItemName::getHotspot() {
+	if (_item == NULL)
+		return _mpos + _curscroll;
 	else
-		return m_item->Hotspot();
+		return _item->Hotspot();
 }
 
-RMItem *RMTextItemName::GetSelectedItem() {
-	return m_item;
+RMItem *RMTextItemName::getSelectedItem() {
+	return _item;
 }
 
-bool RMTextItemName::IsItemSelected() {
-	return m_item != NULL;
+bool RMTextItemName::isItemSelected() {
+	return _item != NULL;
 }
 
-bool RMTextItemName::IsNormalItemSelected() {
-	return m_item != NULL && m_itemName.Length() > 0;
+bool RMTextItemName::isNormalItemSelected() {
+	return _item != NULL && _itemName.Length() > 0;
 }
 
 
@@ -2345,56 +2345,56 @@ void RMDialogChoice::Unregister(void) {
 }
 
 void RMDialogChoice::init(void) {
-	m_numChoices = 0;
-	m_drawedStrings = NULL;
-	m_ptDrawStrings = NULL;
-	m_curSelection = -1;
+	_numChoices = 0;
+	_drawedStrings = NULL;
+	_ptDrawStrings = NULL;
+	_curSelection = -1;
 
 	Create(640, 477);
 	setPriority(140);
 }
 
 
-void RMDialogChoice::Close(void) {
-	if (m_drawedStrings != NULL) {
-		delete[] m_drawedStrings;
-		m_drawedStrings = NULL;
+void RMDialogChoice::close(void) {
+	if (_drawedStrings != NULL) {
+		delete[] _drawedStrings;
+		_drawedStrings = NULL;
 	}
 
-	if (m_ptDrawStrings != NULL) {
-		delete[] m_ptDrawStrings;
-		m_ptDrawStrings = NULL;
+	if (_ptDrawStrings != NULL) {
+		delete[] _ptDrawStrings;
+		_ptDrawStrings = NULL;
 	}
 
 	destroy();
 }
 
-void RMDialogChoice::SetNumChoices(int num) {
+void RMDialogChoice::setNumChoices(int num) {
 	int i;
 
-	m_numChoices = num;
-	m_curAdded = 0;
+	_numChoices = num;
+	_curAdded = 0;
 
 	// Allocate space for drawn strings
-	m_drawedStrings = new RMText[num];
-	m_ptDrawStrings = new RMPoint[num];
+	_drawedStrings = new RMText[num];
+	_ptDrawStrings = new RMPoint[num];
 
 	// Initialisation
-	for (i = 0; i < m_numChoices; i++) {
-		m_drawedStrings[i].SetColor(0, 255, 0);
-		m_drawedStrings[i].SetAlignType(RMText::HLEFTPAR, RMText::VTOP);
-		m_drawedStrings[i].SetMaxLineLength(600);
-		m_drawedStrings[i].setPriority(10);
+	for (i = 0; i < _numChoices; i++) {
+		_drawedStrings[i].setColor(0, 255, 0);
+		_drawedStrings[i].setAlignType(RMText::HLEFTPAR, RMText::VTOP);
+		_drawedStrings[i].setMaxLineLength(600);
+		_drawedStrings[i].setPriority(10);
 	}
 }
 
-void RMDialogChoice::AddChoice(const RMString &string) {
+void RMDialogChoice::addChoice(const RMString &string) {
 	// Draw the string
-	assert(m_curAdded < m_numChoices);
-	m_drawedStrings[m_curAdded++].WriteText(string, 0);
+	assert(_curAdded < _numChoices);
+	_drawedStrings[_curAdded++].writeText(string, 0);
 }
 
-void RMDialogChoice::Prepare(CORO_PARAM) {
+void RMDialogChoice::prepare(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	int i;
 	RMPoint ptPos;
@@ -2410,21 +2410,21 @@ void RMDialogChoice::Prepare(CORO_PARAM) {
 
 	_ctx->ptPos.Set(20, 90);
 
-	for (_ctx->i = 0; _ctx->i < m_numChoices; _ctx->i++) {
-		addPrim(new RMGfxPrimitive(&m_drawedStrings[_ctx->i], _ctx->ptPos));
-		m_ptDrawStrings[_ctx->i] = _ctx->ptPos;
-		_ctx->ptPos.Offset(0, m_drawedStrings[_ctx->i].getDimy() + 15);
+	for (_ctx->i = 0; _ctx->i < _numChoices; _ctx->i++) {
+		addPrim(new RMGfxPrimitive(&_drawedStrings[_ctx->i], _ctx->ptPos));
+		_ptDrawStrings[_ctx->i] = _ctx->ptPos;
+		_ctx->ptPos.Offset(0, _drawedStrings[_ctx->i].getDimy() + 15);
 	}
 
 	CORO_INVOKE_0(drawOT);
 	clearOT();
 
-	m_ptDrawPos.Set(0, 480 - _ctx->ptPos.y);
+	_ptDrawPos.Set(0, 480 - _ctx->ptPos.y);
 
 	CORO_END_CODE;
 }
 
-void RMDialogChoice::SetSelected(CORO_PARAM, int pos) {
+void RMDialogChoice::setSelected(CORO_PARAM, int pos) {
 	CORO_BEGIN_CONTEXT;
 	RMGfxBox box;
 	RMRect rc;
@@ -2432,39 +2432,39 @@ void RMDialogChoice::SetSelected(CORO_PARAM, int pos) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (pos == m_curSelection)
+	if (pos == _curSelection)
 		return;
 
 	_ctx->box.setPriority(5);
 
-	if (m_curSelection != -1) {
+	if (_curSelection != -1) {
 		_ctx->box.SetColor(0xCC, 0xCC, 0xFF);
-		_ctx->rc.TopLeft() = RMPoint(18, m_ptDrawStrings[m_curSelection].y);
-		_ctx->rc.BottomRight() = _ctx->rc.TopLeft() + RMPoint(597, m_drawedStrings[m_curSelection].getDimy());
+		_ctx->rc.TopLeft() = RMPoint(18, _ptDrawStrings[_curSelection].y);
+		_ctx->rc.BottomRight() = _ctx->rc.TopLeft() + RMPoint(597, _drawedStrings[_curSelection].getDimy());
 		addPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
 
-		addPrim(new RMGfxPrimitive(&m_drawedStrings[m_curSelection], m_ptDrawStrings[m_curSelection]));
+		addPrim(new RMGfxPrimitive(&_drawedStrings[_curSelection], _ptDrawStrings[_curSelection]));
 		CORO_INVOKE_0(drawOT);
 		clearOT();
 	}
 
 	if (pos != -1) {
 		_ctx->box.SetColor(100, 100, 100);
-		_ctx->rc.TopLeft() = RMPoint(18, m_ptDrawStrings[pos].y);
-		_ctx->rc.BottomRight() = _ctx->rc.TopLeft() + RMPoint(597, m_drawedStrings[pos].getDimy());
+		_ctx->rc.TopLeft() = RMPoint(18, _ptDrawStrings[pos].y);
+		_ctx->rc.BottomRight() = _ctx->rc.TopLeft() + RMPoint(597, _drawedStrings[pos].getDimy());
 		addPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
-		addPrim(new RMGfxPrimitive(&m_drawedStrings[pos], m_ptDrawStrings[pos]));
+		addPrim(new RMGfxPrimitive(&_drawedStrings[pos], _ptDrawStrings[pos]));
 	}
 
 	CORO_INVOKE_0(drawOT);
 	clearOT();
 
-	m_curSelection = pos;
+	_curSelection = pos;
 
 	CORO_END_CODE;
 }
 
-void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
+void RMDialogChoice::show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 	CORO_BEGIN_CONTEXT;
 	RMPoint destpt;
 	int deltay;
@@ -2474,34 +2474,34 @@ void RMDialogChoice::Show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_0(Prepare);
-	m_bShow = false;
+	CORO_INVOKE_0(prepare);
+	_bShow = false;
 
 	if (!_nInList && bigBuf != NULL)
 		bigBuf->addPrim(new RMGfxPrimitive(this));
 
 	if (0) {
-		m_bShow = true;
+		_bShow = true;
 	} else {
 		_ctx->starttime = _vm->getTime();
-		_ctx->deltay = 480 - m_ptDrawPos.y;
-		_ctx->destpt = m_ptDrawPos;
-		m_ptDrawPos.Set(0, 480);
+		_ctx->deltay = 480 - _ptDrawPos.y;
+		_ctx->destpt = _ptDrawPos;
+		_ptDrawPos.Set(0, 480);
 
 		if (!_nInList && bigBuf != NULL)
 			bigBuf->addPrim(new RMGfxPrimitive(this));
-		m_bShow = true;
+		_bShow = true;
 
 		_ctx->elaps = 0;
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(mainWaitFrame);
 			mainFreeze();
 			_ctx->elaps = _vm->getTime() - _ctx->starttime;
-			m_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
+			_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
 			mainUnfreeze();
 		}
 
-		m_ptDrawPos.y = _ctx->destpt.y;
+		_ptDrawPos.y = _ctx->destpt.y;
 	}
 
 	CORO_END_CODE;
@@ -2513,17 +2513,17 @@ void RMDialogChoice::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (m_bShow == false)
+	if (_bShow == false)
 		return;
 
-	prim->setDst(m_ptDrawPos);
+	prim->setDst(_ptDrawPos);
 	CORO_INVOKE_2(RMGfxSourceBuffer16::draw, bigBuf, prim);
 
 	CORO_END_CODE;
 }
 
 
-void RMDialogChoice::Hide(CORO_PARAM) {
+void RMDialogChoice::hide(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	int deltay;
 	int starttime;
@@ -2535,18 +2535,18 @@ void RMDialogChoice::Hide(CORO_PARAM) {
 	if (1) {
 		_ctx->starttime = _vm->getTime();
 
-		_ctx->deltay = 480 - m_ptDrawPos.y;
+		_ctx->deltay = 480 - _ptDrawPos.y;
 		_ctx->elaps = 0;
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(mainWaitFrame);
 			mainFreeze();
 			_ctx->elaps = _vm->getTime() - _ctx->starttime;
-			m_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
+			_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
 			mainUnfreeze();
 		}
 	}
 
-	m_bShow = false;
+	_bShow = false;
 	bRemoveFromOT = true;
 	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hUnreg, CORO_INFINITE);
 
@@ -2558,30 +2558,30 @@ void RMDialogChoice::removeThis(CORO_PARAM, bool &result) {
 	result = bRemoveFromOT;
 }
 
-void RMDialogChoice::DoFrame(CORO_PARAM, RMPoint ptMousePos) {
+void RMDialogChoice::doFrame(CORO_PARAM, RMPoint ptMousePos) {
 	CORO_BEGIN_CONTEXT;
 	int i;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (ptMousePos.y > m_ptDrawPos.y) {
-		for (_ctx->i = 0; _ctx->i < m_numChoices; _ctx->i++) {
-			if ((ptMousePos.y >= m_ptDrawPos.y + m_ptDrawStrings[_ctx->i].y) && (ptMousePos.y < m_ptDrawPos.y + m_ptDrawStrings[_ctx->i].y + m_drawedStrings[_ctx->i].getDimy())) {
-				CORO_INVOKE_1(SetSelected, _ctx->i);
+	if (ptMousePos.y > _ptDrawPos.y) {
+		for (_ctx->i = 0; _ctx->i < _numChoices; _ctx->i++) {
+			if ((ptMousePos.y >= _ptDrawPos.y + _ptDrawStrings[_ctx->i].y) && (ptMousePos.y < _ptDrawPos.y + _ptDrawStrings[_ctx->i].y + _drawedStrings[_ctx->i].getDimy())) {
+				CORO_INVOKE_1(setSelected, _ctx->i);
 				break;
 			}
 		}
 
-		if (_ctx->i == m_numChoices)
-			CORO_INVOKE_1(SetSelected, -1);
+		if (_ctx->i == _numChoices)
+			CORO_INVOKE_1(setSelected, -1);
 	}
 
 	CORO_END_CODE;
 }
 
-int RMDialogChoice::GetSelection(void) {
-	return m_curSelection;
+int RMDialogChoice::getSelection(void) {
+	return _curSelection;
 }
 
 } // End of namespace Tony

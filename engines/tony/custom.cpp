@@ -297,32 +297,32 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 	}
 
 	if (GLOBALS.curBackText)
-		CORO_INVOKE_0(GLOBALS.curBackText->Hide);
+		CORO_INVOKE_0(GLOBALS.curBackText->hide);
 
 	GLOBALS.bTonyIsSpeaking = true;
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg.NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
-		_ctx->text.SetInput(GLOBALS.Input);
+		_ctx->text.setInput(GLOBALS.Input);
 
 		// Alignment
-		_ctx->text.SetAlignType(RMText::HCENTER, RMText::VBOTTOM);
+		_ctx->text.setAlignType(RMText::HCENTER, RMText::VBOTTOM);
 
 		// Colour
-		_ctx->text.SetColor(0, 255, 0);
+		_ctx->text.setColor(0, 255, 0);
 
 		// Writes the text
-		_ctx->text.WriteText(_ctx->msg[_ctx->i], 0);
+		_ctx->text.writeText(_ctx->msg[_ctx->i], 0);
 
 		// Set the position
 		if (nX == 0 && nY == 0)
-			_ctx->text.SetPosition(GLOBALS.Tony->Position() - RMPoint(0, 130) - GLOBALS.Loc->ScrollPosition());
+			_ctx->text.setPosition(GLOBALS.Tony->Position() - RMPoint(0, 130) - GLOBALS.Loc->ScrollPosition());
 		else
-			_ctx->text.SetPosition(RMPoint(nX, nY) - GLOBALS.Loc->ScrollPosition());
+			_ctx->text.setPosition(RMPoint(nX, nY) - GLOBALS.Loc->ScrollPosition());
 
 		// Handling for always display
 		if (GLOBALS.bAlwaysDisplay) {
-			_ctx->text.SetAlwaysDisplay();
-			_ctx->text.ForceTime();
+			_ctx->text.setAlwaysDisplay();
+			_ctx->text.forceTime();
 		}
 
 		// Record the text
@@ -331,7 +331,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		if (_ctx->curVoc) {
 			if (_ctx->i == 0) {
 				_ctx->voice->Play();
-				_ctx->text.SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+				_ctx->text.setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			} else {
 				_vm->_vdbFP.seek(_ctx->curOffset);
 				_vm->_theSound.CreateSfx(&_ctx->voice);
@@ -340,13 +340,13 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 				_ctx->curOffset = _vm->_vdbFP.pos();
 				_ctx->voice->SetLoop(false);
 				_ctx->voice->Play();
-				_ctx->text.SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+				_ctx->text.setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			}
 		}
 
 		// Wait for the end of the display
-		_ctx->text.SetCustomSkipHandle(GLOBALS.hSkipIdle);
-		CORO_INVOKE_0(_ctx->text.WaitForEndDisplay);
+		_ctx->text.setCustomSkipHandle(GLOBALS.hSkipIdle);
+		CORO_INVOKE_0(_ctx->text.waitForEndDisplay);
 
 		if (_ctx->curVoc) {
 			_ctx->voice->Stop();
@@ -357,7 +357,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 	GLOBALS.bTonyIsSpeaking = false;
 	if (GLOBALS.curBackText)
-		GLOBALS.curBackText->Show();
+		GLOBALS.curBackText->show();
 
 	CORO_INVOKE_0(GLOBALS.Tony->EndTalk);
 
@@ -418,36 +418,36 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 	GLOBALS.Unfreeze();
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
-		_ctx->text.SetInput(GLOBALS.Input);
+		_ctx->text.setInput(GLOBALS.Input);
 
 		// Alignment
-		_ctx->text.SetAlignType(RMText::HCENTER, RMText::VCENTER);
+		_ctx->text.setAlignType(RMText::HCENTER, RMText::VCENTER);
 
 		// Forces the text to disappear in time
-		_ctx->text.ForceTime();
+		_ctx->text.forceTime();
 
 		// Colour
-		_ctx->text.SetColor(255, 255, 255);
+		_ctx->text.setColor(255, 255, 255);
 
 		// Write the text
 		if (nFont == 0)
-			_ctx->text.WriteText((*_ctx->msg)[_ctx->i], 1);
+			_ctx->text.writeText((*_ctx->msg)[_ctx->i], 1);
 		else if (nFont == 1)
-			_ctx->text.WriteText((*_ctx->msg)[_ctx->i], 0);
+			_ctx->text.writeText((*_ctx->msg)[_ctx->i], 0);
 
 		// Set the position
-		_ctx->text.SetPosition(RMPoint(320, 240));
+		_ctx->text.setPosition(RMPoint(320, 240));
 
-		_ctx->text.SetAlwaysDisplay();
-		_ctx->text.ForceTime();
+		_ctx->text.setAlwaysDisplay();
+		_ctx->text.forceTime();
 
 		// Record the text
 		GLOBALS.LinkGraphicTask(&_ctx->clear);
 		GLOBALS.LinkGraphicTask(&_ctx->text);
 
 		// Wait for the end of display
-		_ctx->text.SetCustomSkipHandle(GLOBALS.hSkipIdle);
-		CORO_INVOKE_0(_ctx->text.WaitForEndDisplay);
+		_ctx->text.setCustomSkipHandle(GLOBALS.hSkipIdle);
+		CORO_INVOKE_0(_ctx->text.waitForEndDisplay);
 	}
 
 	delete _ctx->msg;
@@ -1487,31 +1487,31 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		if (bIsBack) {
 			GLOBALS.curBackText = _ctx->text = new RMTextDialogScrolling(GLOBALS.Loc);
 			if (GLOBALS.bTonyIsSpeaking)
-				CORO_INVOKE_0(GLOBALS.curBackText->Hide);
+				CORO_INVOKE_0(GLOBALS.curBackText->hide);
 		} else
 			_ctx->text = new RMTextDialog;
 
-		_ctx->text->SetInput(GLOBALS.Input);
+		_ctx->text->setInput(GLOBALS.Input);
 
 		// Skipping
-		_ctx->text->SetSkipStatus(!bIsBack);
+		_ctx->text->setSkipStatus(!bIsBack);
 
 		// Alignment
-		_ctx->text->SetAlignType(RMText::HCENTER, RMText::VBOTTOM);
+		_ctx->text->setAlignType(RMText::HCENTER, RMText::VBOTTOM);
 
 		// Colour
-		_ctx->text->SetColor(GLOBALS.Character[nChar].r, GLOBALS.Character[nChar].g, GLOBALS.Character[nChar].b);
+		_ctx->text->setColor(GLOBALS.Character[nChar].r, GLOBALS.Character[nChar].g, GLOBALS.Character[nChar].b);
 
 		// Write the text
-		_ctx->text->WriteText((*_ctx->msg)[_ctx->i], 0);
+		_ctx->text->writeText((*_ctx->msg)[_ctx->i], 0);
 
 		// Set the position
-		_ctx->text->SetPosition(_ctx->pt);
+		_ctx->text->setPosition(_ctx->pt);
 
 		// Set the always display
 		if (GLOBALS.bAlwaysDisplay) {
-			_ctx->text->SetAlwaysDisplay();
-			_ctx->text->ForceTime();
+			_ctx->text->setAlwaysDisplay();
+			_ctx->text->forceTime();
 		}
 
 		// Record the text
@@ -1524,13 +1524,13 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 			_ctx->voice->SetLoop(false);
 			if (bIsBack) _ctx->voice->SetVolume(55);
 			_ctx->voice->Play();
-			_ctx->text->SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			_ctx->curOffset = _vm->_vdbFP.pos();
 		}
 
 		// Wait for the end of display
-		_ctx->text->SetCustomSkipHandle(GLOBALS.hSkipIdle);
-		CORO_INVOKE_0(_ctx->text->WaitForEndDisplay);
+		_ctx->text->setCustomSkipHandle(GLOBALS.hSkipIdle);
+		CORO_INVOKE_0(_ctx->text->waitForEndDisplay);
 
 		if (_ctx->curVoc) {
 			_ctx->voice->Stop();
@@ -1700,31 +1700,31 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		if (bIsBack) {
 			GLOBALS.curBackText = _ctx->text = new RMTextDialogScrolling(GLOBALS.Loc);
 			if (GLOBALS.bTonyIsSpeaking)
-				CORO_INVOKE_0(GLOBALS.curBackText->Hide);
+				CORO_INVOKE_0(GLOBALS.curBackText->hide);
 		} else
 			_ctx->text = new RMTextDialog;
 
-		_ctx->text->SetInput(GLOBALS.Input);
+		_ctx->text->setInput(GLOBALS.Input);
 
 		// Skipping
-		_ctx->text->SetSkipStatus(!bIsBack);
+		_ctx->text->setSkipStatus(!bIsBack);
 
 		// Alignment
-		_ctx->text->SetAlignType(RMText::HCENTER, RMText::VBOTTOM);
+		_ctx->text->setAlignType(RMText::HCENTER, RMText::VBOTTOM);
 
 		// Colour
-		_ctx->text->SetColor(GLOBALS.MCharacter[nChar].r, GLOBALS.MCharacter[nChar].g, GLOBALS.MCharacter[nChar].b);
+		_ctx->text->setColor(GLOBALS.MCharacter[nChar].r, GLOBALS.MCharacter[nChar].g, GLOBALS.MCharacter[nChar].b);
 
 		// Write the text
-		_ctx->text->WriteText((*_ctx->msg)[_ctx->i], nFont);
+		_ctx->text->writeText((*_ctx->msg)[_ctx->i], nFont);
 
 		// Set the position
-		_ctx->text->SetPosition(_ctx->pt);
+		_ctx->text->setPosition(_ctx->pt);
 
 		// Set the always display
 		if (GLOBALS.bAlwaysDisplay) {
-			_ctx->text->SetAlwaysDisplay();
-			_ctx->text->ForceTime();
+			_ctx->text->setAlwaysDisplay();
+			_ctx->text->forceTime();
 		}
 
 		// Record the text
@@ -1737,13 +1737,13 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 			_ctx->voice->SetLoop(false);
 			if (bIsBack) _ctx->voice->SetVolume(55);
 			_ctx->voice->Play();
-			_ctx->text->SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			_ctx->curOffset = _vm->_vdbFP.pos();
 		}
 
 		// Wait for the end of display
-		_ctx->text->SetCustomSkipHandle(GLOBALS.hSkipIdle);
-		CORO_INVOKE_0(_ctx->text->WaitForEndDisplay);
+		_ctx->text->setCustomSkipHandle(GLOBALS.hSkipIdle);
+		CORO_INVOKE_0(_ctx->text->waitForEndDisplay);
 
 		if (_ctx->curVoc) {
 			_ctx->voice->Stop();
@@ -1814,9 +1814,9 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 
 	if (nPers == 0) {
 		_ctx->text = new RMTextDialog;
-		_ctx->text->SetColor(0, 255, 0);
-		_ctx->text->SetPosition(GLOBALS.Tony->Position() - RMPoint(0, 130) - GLOBALS.Loc->ScrollPosition());
-		_ctx->text->WriteText(_ctx->string, 0);
+		_ctx->text->setColor(0, 255, 0);
+		_ctx->text->setPosition(GLOBALS.Tony->Position() - RMPoint(0, 130) - GLOBALS.Loc->ScrollPosition());
+		_ctx->text->writeText(_ctx->string, 0);
 
 		if (GLOBALS.dwTonyNumTexts > 0) {
 			if (!GLOBALS.bTonyInTexts) {
@@ -1849,9 +1849,9 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 
 		GLOBALS.Character[nPers].item->SetPattern(GLOBALS.Character[nPers].talkpattern);
 
-		_ctx->text->SetColor(GLOBALS.Character[nPers].r, GLOBALS.Character[nPers].g, GLOBALS.Character[nPers].b);
-		_ctx->text->WriteText(_ctx->string, 0);
-		_ctx->text->SetPosition(_ctx->pt);
+		_ctx->text->setColor(GLOBALS.Character[nPers].r, GLOBALS.Character[nPers].g, GLOBALS.Character[nPers].b);
+		_ctx->text->writeText(_ctx->string, 0);
+		_ctx->text->setPosition(_ctx->pt);
 	} else {
 		if (GLOBALS.MCharacter[nPers].x == -1)
 			_ctx->pt = GLOBALS.MCharacter[nPers].item->CalculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->ScrollPosition();
@@ -1881,35 +1881,35 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		if (GLOBALS.MCharacter[nPers].bAlwaysBack) {
 			_ctx->text = GLOBALS.curBackText = new RMTextDialogScrolling(GLOBALS.Loc);
 			if (GLOBALS.bTonyIsSpeaking)
-				CORO_INVOKE_0(GLOBALS.curBackText->Hide);
+				CORO_INVOKE_0(GLOBALS.curBackText->hide);
 
 			_ctx->bIsBack = true;
 		} else
 			_ctx->text = new RMTextDialog;
 
-		_ctx->text->SetSkipStatus(!GLOBALS.MCharacter[nPers].bAlwaysBack);
-		_ctx->text->SetColor(GLOBALS.MCharacter[nPers].r, GLOBALS.MCharacter[nPers].g, GLOBALS.MCharacter[nPers].b);
-		_ctx->text->WriteText(_ctx->string, 0);
-		_ctx->text->SetPosition(_ctx->pt);
+		_ctx->text->setSkipStatus(!GLOBALS.MCharacter[nPers].bAlwaysBack);
+		_ctx->text->setColor(GLOBALS.MCharacter[nPers].r, GLOBALS.MCharacter[nPers].g, GLOBALS.MCharacter[nPers].b);
+		_ctx->text->writeText(_ctx->string, 0);
+		_ctx->text->setPosition(_ctx->pt);
 	}
 
 	if (!GLOBALS.bSkipIdle) {
-		_ctx->text->SetInput(GLOBALS.Input);
+		_ctx->text->setInput(GLOBALS.Input);
 		if (GLOBALS.bAlwaysDisplay) {
-			_ctx->text->SetAlwaysDisplay();
-			_ctx->text->ForceTime();
+			_ctx->text->setAlwaysDisplay();
+			_ctx->text->forceTime();
 		}
-		_ctx->text->SetAlignType(RMText::HCENTER, RMText::VBOTTOM);
+		_ctx->text->setAlignType(RMText::HCENTER, RMText::VBOTTOM);
 		GLOBALS.LinkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
 			_ctx->voice->Play();
-			_ctx->text->SetCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 		}
 
 		// Wait for the end of display
-		_ctx->text->SetCustomSkipHandle(GLOBALS.hSkipIdle);
-		CORO_INVOKE_0(_ctx->text->WaitForEndDisplay);
+		_ctx->text->setCustomSkipHandle(GLOBALS.hSkipIdle);
+		CORO_INVOKE_0(_ctx->text->waitForEndDisplay);
 	}
 
 	if (_ctx->curVoc) {
@@ -1999,39 +1999,39 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 		// Making a choice for dialog
 		_ctx->dc.init();
-		_ctx->dc.SetNumChoices(_ctx->num);
+		_ctx->dc.setNumChoices(_ctx->num);
 
 		// Writeall the possible options
 		for (_ctx->i = 0; _ctx->i < _ctx->num; _ctx->i++) {
 			_ctx->string = mpalQueryDialogPeriod(_ctx->sl[_ctx->i]);
 			assert(_ctx->string != NULL);
-			_ctx->dc.AddChoice(_ctx->string);
+			_ctx->dc.addChoice(_ctx->string);
 			GlobalFree(_ctx->string);
 		}
 
 		// Activate the object
 		GLOBALS.LinkGraphicTask(&_ctx->dc);
-		CORO_INVOKE_0(_ctx->dc.Show);
+		CORO_INVOKE_0(_ctx->dc.show);
 
 		// Draw the pointer
 		GLOBALS.Pointer->setSpecialPointer(GLOBALS.Pointer->PTR_NONE);
 		mainShowMouse();
 
-		while (!(GLOBALS.Input->mouseLeftClicked() && ((_ctx->sel = _ctx->dc.GetSelection()) != -1))) {
+		while (!(GLOBALS.Input->mouseLeftClicked() && ((_ctx->sel = _ctx->dc.getSelection()) != -1))) {
 			CORO_INVOKE_0(GLOBALS.WaitFrame);
 			GLOBALS.Freeze();
-			CORO_INVOKE_1(_ctx->dc.DoFrame, GLOBALS.Input->mousePos());
+			CORO_INVOKE_1(_ctx->dc.doFrame, GLOBALS.Input->mousePos());
 			GLOBALS.Unfreeze();
 		}
 
 		// Hide the pointer
 		mainHideMouse();
 
-		CORO_INVOKE_0(_ctx->dc.Hide);
+		CORO_INVOKE_0(_ctx->dc.hide);
 		mpalQueryDialogSelectionDWORD(_ctx->nChoice, _ctx->sl[_ctx->sel]);
 
 		// Closes the choice
-		_ctx->dc.Close();
+		_ctx->dc.close();
 
 		GlobalFree(_ctx->sl);
 
@@ -2328,27 +2328,27 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 	_ctx->text = new RMTextDialog[_ctx->msg->NumPeriods()];
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods(); _ctx->i++)     {
-		_ctx->text[_ctx->i].SetInput(GLOBALS.Input);
+		_ctx->text[_ctx->i].setInput(GLOBALS.Input);
 
 		// Alignment
 		if ((*_ctx->msg)[_ctx->i][0] == '@') {
-			_ctx->text[_ctx->i].SetAlignType(RMText::HCENTER, RMText::VTOP);
-			_ctx->text[_ctx->i].WriteText(&(*_ctx->msg)[_ctx->i][1], 3);
-			_ctx->text[_ctx->i].SetPosition(RMPoint(414, 70 + _ctx->i * 26));  // 70
+			_ctx->text[_ctx->i].setAlignType(RMText::HCENTER, RMText::VTOP);
+			_ctx->text[_ctx->i].writeText(&(*_ctx->msg)[_ctx->i][1], 3);
+			_ctx->text[_ctx->i].setPosition(RMPoint(414, 70 + _ctx->i * 26));  // 70
 		} else {
-			_ctx->text[_ctx->i].SetAlignType(RMText::HLEFT, RMText::VTOP);
-			_ctx->text[_ctx->i].WriteText((*_ctx->msg)[_ctx->i], 3);
-			_ctx->text[_ctx->i].SetPosition(RMPoint(260, 70 + _ctx->i * 26));
+			_ctx->text[_ctx->i].setAlignType(RMText::HLEFT, RMText::VTOP);
+			_ctx->text[_ctx->i].writeText((*_ctx->msg)[_ctx->i], 3);
+			_ctx->text[_ctx->i].setPosition(RMPoint(260, 70 + _ctx->i * 26));
 		}
 
 
 		// Set the position
-		_ctx->text[_ctx->i].SetAlwaysDisplay();
-		_ctx->text[_ctx->i].SetForcedTime(dwTime * 1000);
-		_ctx->text[_ctx->i].SetNoTab();
+		_ctx->text[_ctx->i].setAlwaysDisplay();
+		_ctx->text[_ctx->i].setForcedTime(dwTime * 1000);
+		_ctx->text[_ctx->i].setNoTab();
 
 		// Wait for the end of display
-		_ctx->text[_ctx->i].SetCustomSkipHandle(_ctx->hDisable);
+		_ctx->text[_ctx->i].setCustomSkipHandle(_ctx->hDisable);
 
 		// Record the text
 		GLOBALS.LinkGraphicTask(&_ctx->text[_ctx->i]);

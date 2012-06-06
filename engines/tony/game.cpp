@@ -443,10 +443,10 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 		_ctx->title = new RMText;
 		if (_nState == MENULOAD) {
 			RMMessage msg(10);
-			_ctx->title->WriteText(msg[0], 1);
+			_ctx->title->writeText(msg[0], 1);
 		} else {
 			RMMessage msg(11);
-			_ctx->title->WriteText(msg[0], 1);
+			_ctx->title->writeText(msg[0], 1);
 		}
 
 		addPrim(new RMGfxPrimitive(_ctx->title, RMPoint(320, 10)));
@@ -520,8 +520,8 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 			}
 
 			_ctx->num[_ctx->i] = new RMText;
-			_ctx->num[_ctx->i]->SetAlignType(RMText::HLEFT, RMText::VTOP);
-			_ctx->num[_ctx->i]->WriteText(s, 2);
+			_ctx->num[_ctx->i]->setAlignType(RMText::HLEFT, RMText::VTOP);
+			_ctx->num[_ctx->i]->writeText(s, 2);
 		}
 
 		addPrim(new RMGfxPrimitive(_ctx->num[0], RMPoint(55 - 3, 180 + 14)));

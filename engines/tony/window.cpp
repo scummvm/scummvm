@@ -44,8 +44,8 @@ RMWindow::RMWindow() {
 }
 
 RMWindow::~RMWindow() {
-	Close();
-	RMText::Unload();
+	close();
+	RMText::unload();
 }
 
 /**
@@ -58,40 +58,40 @@ void RMWindow::init() {
 	// Inizializza i conteggi degli FPS
 	fps = lastfcount = fcount = lastsecond = 0;
 
-	m_bGrabScreenshot = false;
-	m_bGrabThumbnail = false;
-	m_bGrabMovie = false;
+	_bGrabScreenshot = false;
+	_bGrabThumbnail = false;
+	_bGrabMovie = false;
 }
 
 /**
  * Close the window
  */
-void RMWindow::Close(void) {
+void RMWindow::close(void) {
 }
 
-void RMWindow::GrabThumbnail(uint16 *thumbmem) {
-	m_bGrabThumbnail = true;
-	m_wThumbBuf = thumbmem;
+void RMWindow::grabThumbnail(uint16 *thumbmem) {
+	_bGrabThumbnail = true;
+	_wThumbBuf = thumbmem;
 }
 
 /**
  * Repaint the screen
  */
-void RMWindow::Repaint(void) {
+void RMWindow::repaint(void) {
 	g_system->updateScreen();
 }
 
-bool RMWindow::Lock() {
+bool RMWindow::lock() {
 	return true;
 }
 
-void RMWindow::Unlock() {
+void RMWindow::unlock() {
 }
 
 /**
  * Wipes an area of the screen
  */
-void RMWindow::WipeEffect(Common::Rect &rcBoundEllipse) {
+void RMWindow::wipeEffect(Common::Rect &rcBoundEllipse) {
 	if ((rcBoundEllipse.left == 0) && (rcBoundEllipse.top == 0) &&
 	        (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
 		// Full screen clear wanted, so use shortcut method
@@ -108,28 +108,28 @@ void RMWindow::WipeEffect(Common::Rect &rcBoundEllipse) {
 	}
 }
 
-void RMWindow::GetNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
+void RMWindow::getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
 	if (rcBoundEllipse != NULL) {
 		// Circular wipe effect
-		GetNewFrameWipe(lpBuf, *rcBoundEllipse);
+		getNewFrameWipe(lpBuf, *rcBoundEllipse);
 	} else {
 		// Standard screen copy
 		g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
 	}
 
-	if (m_bGrabThumbnail) {
+	if (_bGrabThumbnail) {
 		// Need to generate a thumbnail
 		RMSnapshot s;
 
-		s.GrabScreenshot(lpBuf, 4, m_wThumbBuf);
-		m_bGrabThumbnail = false;
+		s.grabScreenshot(lpBuf, 4, _wThumbBuf);
+		_bGrabThumbnail = false;
 	}
 }
 
 /**
  * Copies a section of the game frame in a circle bounded by the specified rectangle
  */
-void RMWindow::GetNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
+void RMWindow::getNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
 	// Clear the screen
 	g_system->fillScreen(0);
 
@@ -208,7 +208,7 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 
 byte RMSnapshot::rgb[RM_SX *RM_SY * 3];
 
-void RMSnapshot::GrabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
+void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	uint16 *src = (uint16 *)lpBuf;
 
 	int dimx = RM_SX / dezoom;
