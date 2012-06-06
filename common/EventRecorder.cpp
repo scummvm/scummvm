@@ -418,6 +418,10 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDes
 	initialized = true;
 }
 
+void EventRecorder::init(const ADGameDescription *desc) {
+	init(desc->gameid, desc);
+}
+
 /**
  * Opens or creates file depend of recording mode.
  *

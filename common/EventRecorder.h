@@ -72,6 +72,7 @@ class EventRecorder : private EventSource, private EventObserver, public Singlet
 	~EventRecorder();
 public:
 	void init();
+	void init(const ADGameDescription *desc);
 	void deinit();
 	/** Register random source so it can be serialized in game test purposes */
 	void RegisterEventSource();
