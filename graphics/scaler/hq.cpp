@@ -25,8 +25,7 @@
 void InitLUT(Graphics::PixelFormat format);
 
 HQPlugin::HQPlugin() {
-	_factor = 1;
-	_factors.push_back(1);
+	_factor = 2;
 	_factors.push_back(2);
 	_factors.push_back(3);
 }
@@ -47,9 +46,6 @@ void HQPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 		return;
 	}
 	switch (_factor) {
-	case 1:
-		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-		break;
 	case 2:
 		HQ2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 		break;
@@ -66,7 +62,7 @@ uint HQPlugin::increaseFactor() {
 }
 
 uint HQPlugin::decreaseFactor() {
-	if (_factor > 1)
+	if (_factor > 2)
 		--_factor;
 	return _factor;
 }
