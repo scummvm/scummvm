@@ -1744,10 +1744,15 @@ void Inter_v1::o1_writeData(OpFuncParams &params) {
 void Inter_v1::o1_manageDataFile(OpFuncParams &params) {
 	Common::String file = _vm->_game->_script->evalString();
 
-	if (!file.empty())
+	if (!file.empty()) {
 		_vm->_dataIO->openArchive(file, true);
-	else
+	} else {
 		_vm->_dataIO->closeArchive(true);
+
+		// NOTE: Lost in Time might close a data file without explicitely closing a video in it.
+		//       So we make sure that all open videos are still available.
+		_vm->_vidPlayer->reopenAll();
+	}
 }
 
 void Inter_v1::o1_setState(OpGobParams &params) {
