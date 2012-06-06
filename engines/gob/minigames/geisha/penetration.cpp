@@ -309,84 +309,88 @@ void Penetration::deinit() {
 	_soundKiss.free();
 	_soundShoot.free();
 
-	_mapAnims.clear();
-	_anims.clear();
-
-	_shields.clear();
-
-	_mouths.clear();
-
-	delete _sub;
+	clearMap();
 
 	delete _objects;
 	delete _sprites;
 
 	_objects = 0;
 	_sprites = 0;
+}
+
+void Penetration::clearMap() {
+	_mapAnims.clear();
+	_anims.clear();
+
+	_exits.clear();
+	_shields.clear();
+	_mouths.clear();
+
+	delete _sub;
 
 	_sub = 0;
+
+	_map->fill(kColorBlack);
 }
 
 void Penetration::createMap() {
 	if (_floor >= kFloorCount)
 		error("Geisha: Invalid floor %d in minigame penetration", _floor);
 
-	// Copy the correct map
-	memcpy(_mapTiles, kMaps[_testMode ? 1 : 0][_floor], kMapWidth * kMapHeight);
+	clearMap();
 
-	delete _sub;
-	_sub = 0;
+	const byte *mapTiles = kMaps[_testMode ? 1 : 0][_floor];
 
-	_shields.clear();
-	_mouths.clear();
-
-	_map->fill(kColorBlack);
+	bool exitWorks;
 
 	// Draw the map tiles
 	for (int y = 0; y < kMapHeight; y++) {
 		for (int x = 0; x < kMapWidth; x++) {
-			byte *mapTile = _mapTiles + (y * kMapWidth + x);
+			const byte mapTile = mapTiles[y * kMapWidth + x];
+
+			bool *walkMap = _walkMap + (y * kMapWidth + x);
 
 			const int posX = kPlayAreaBorderWidth  + x * kMapTileWidth;
 			const int posY = kPlayAreaBorderHeight + y * kMapTileHeight;
 
-			switch (*mapTile) {
+			*walkMap = true;
+
+			switch (mapTile) {
 			case 0: // Floor
 				_sprites->draw(*_map, kSpriteFloor, posX, posY);
 				break;
 
 			case 49: // Emergency exit (needs access pass)
 
-				if (_hasAccessPass) {
+				exitWorks = _hasAccessPass;
+				if (exitWorks) {
+					_exits.push_back(Position(x, y));
 					_sprites->draw(*_map, kSpriteExit, posX, posY);
-					*mapTile = 51; // Now works like a normal exit
-				} else
+				} else {
 					_sprites->draw(*_map, kSpriteWall, posX, posY);
+					*walkMap = false;
+				}
 
 				break;
 
 			case 50: // Wall
 				_sprites->draw(*_map, kSpriteWall, posX, posY);
+				*walkMap = false;
 				break;
 
 			case 51: // Regular exit
 
-				if (!_testMode) {
-					// When we're not in test mode, the last exit only works with an access pass
+				// A regular exit works always in test mode.
+				// But if we're in real mode, and on the last floor, it needs an access pass
+				exitWorks = _testMode || (_floor < 2) || _hasAccessPass;
 
-					if (_floor == 2) {
-						if (!_hasAccessPass) {
-							_sprites->draw(*_map, kSpriteWall, posX, posY);
-							*mapTile = 50; // It's now a wall
-						} else
-							_sprites->draw(*_map, kSpriteExit, posX, posY);
-
-					} else
-						_sprites->draw(*_map, kSpriteExit, posX, posY);
-
-				} else
-					// Always works in test mode
+				if (exitWorks) {
+					_exits.push_back(Position(x, y));
 					_sprites->draw(*_map, kSpriteExit, posX, posY);
+				} else {
+					_sprites->draw(*_map, kSpriteWall, posX, posY);
+					*walkMap = false;
+				}
 
 				break;
 
@@ -400,7 +404,6 @@ void Penetration::createMap() {
 				break;
 
 			case 53: // Right side of biting mouth
-				*mapTile = 0; // Works like a floor
 				break;
 
 			case 54: // Left side of kissing mouth
@@ -413,7 +416,6 @@ void Penetration::createMap() {
 				break;
 
 			case 55: // Right side of kissing mouth
-				*mapTile = 0; // Works like a floor
 				break;
 
 			case 56: // Shield lying on the floor
@@ -428,8 +430,6 @@ void Penetration::createMap() {
 
 			case 57: // Start position
 				_sprites->draw(*_map, kSpriteFloor, posX, posY);
-
-				*mapTile = 0;
 
 				delete _sub;
 
@@ -472,13 +472,11 @@ int16 Penetration::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseB
 	return _vm->_util->checkKey();
 }
 
-bool Penetration::isWalkable(byte tile) const {
-	// Only walls are nonwalkable
-
-	if (tile == 50)
+bool Penetration::isWalkable(int16 x, int16 y) const {
+	if ((x < 0) || (x >= kMapWidth) || (y < 0) || (y >= kMapHeight))
 		return false;
 
-	return true;
+	return _walkMap[y * kMapWidth + x];
 }
 
 void Penetration::handleSub(int16 key) {
@@ -501,19 +499,19 @@ void Penetration::subMove(int x, int y, Submarine::Direction direction) {
 	// Limit the movement to walkable tiles
 
 	int16 minX = 0;
-	if ((_sub->x > 0) && !isWalkable(_mapTiles[_sub->y * kMapWidth + (_sub->x - 1)]))
+	if (!isWalkable(_sub->x - 1, _sub->y))
 		minX = _sub->x * kMapTileWidth;
 
 	int16 maxX = kMapWidth * kMapTileWidth;
-	if ((_sub->x < (kMapWidth - 1)) && !isWalkable(_mapTiles[_sub->y * kMapWidth + (_sub->x + 1)]))
+	if (!isWalkable(_sub->x + 1, _sub->y))
 		maxX = _sub->x * kMapTileWidth;
 
 	int16 minY = 0;
-	if ((_sub->y > 0) && !isWalkable(_mapTiles[(_sub->y - 1) * kMapWidth + _sub->x]))
+	if (!isWalkable(_sub->x, _sub->y - 1))
 		minY = _sub->y * kMapTileHeight;
 
 	int16 maxY = kMapHeight * kMapTileHeight;
-	if ((_sub->y < (kMapHeight - 1)) && !isWalkable(_mapTiles[(_sub->y + 1) * kMapWidth + _sub->x]))
+	if (!isWalkable(_sub->x, _sub->y + 1))
 		maxY = _sub->y * kMapTileHeight;
 
 	_sub->mapX = CLIP<int16>(_sub->mapX + x, minX, maxX);

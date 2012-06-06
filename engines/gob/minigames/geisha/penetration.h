@@ -110,10 +110,11 @@ private:
 	uint8 _floor;
 
 	Surface *_map;
-	byte _mapTiles[kMapWidth * kMapHeight];
+	bool _walkMap[kMapWidth * kMapHeight];
 
 	ManagedSub *_sub;
 
+	Common::List<Position>     _exits;
 	Common::List<Position>     _shields;
 	Common::List<ManagedMouth> _mouths;
 
@@ -126,6 +127,7 @@ private:
 	void init();
 	void deinit();
 
+	void clearMap();
 	void createMap();
 
 	void initScreen();
@@ -138,7 +140,7 @@ private:
 	void subMove(int x, int y, Submarine::Direction direction);
 	void subShoot();
 
-	bool isWalkable(byte tile) const;
+	bool isWalkable(int16 x, int16 y) const;
 
 	void checkShields();
 	void checkMouths();
