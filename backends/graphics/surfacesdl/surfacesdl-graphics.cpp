@@ -2110,11 +2110,6 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
  */
 int findGraphicsMode(int factor, ScalerPlugin *plugin) {
 	for (uint i = 0; i < s_supportedGraphicsModesData->size(); ++i) {
-		warning("%s, %d == %s, %d",
-				(*s_supportedGraphicsModesData)[i].pluginName,
-				(*s_supportedGraphicsModesData)[i].scaleFactor,
-				(*plugin)->getName(),
-				factor);
 		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, (*plugin)->getName()) == 0
 				&& (*s_supportedGraphicsModesData)[i].scaleFactor == factor) {
 			return i;
