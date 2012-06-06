@@ -29,8 +29,11 @@ static const TonyGameDescription gameDescriptions[] = {
 			"tony",
 			0,
 			{
-				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
-				{"roasted.mpc", 0, "57c4a3860cf899443c357e0078ea6f49", 366773},
+				// TODO: AdvancedDetector seems to have a problem where it thinks data1.cab is unrecognised.
+				// Is it perhaps because the Agos engine also has detection entries for data1.cab?
+				{"data1.cab", 0, "ce82907242166bfb594d97bdb68f96d2", 4350},
+				/*{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
+				{"roasted.mpc", 0, "57c4a3860cf899443c357e0078ea6f49", 366773},*/
 				AD_LISTEND
 			},
 			Common::EN_ANY,

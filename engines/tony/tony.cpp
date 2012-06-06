@@ -48,6 +48,12 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	DebugMan.addDebugChannel(kTonyDebugSound, "sound", "Sound debugging");
 	DebugMan.addDebugChannel(kTonyDebugMusic, "music", "Music debugging");
 
+	// Add folders to the search directory list
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Roasted");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Music");
+
 	// Set up load slot number
 	_initialLoadSlotNumber = -1;
 	if (ConfMan.hasKey("save_slot")) {
@@ -435,10 +441,6 @@ void TonyEngine::loadState(CORO_PARAM, int n) {
 bool TonyEngine::openVoiceDatabase() {
 	char id[4];
 	uint32 numfiles;
-
-	// Add the voices folder to the search directory list
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
 
 	// Open the voices database
 	if (!_vdbFP.open("voices.vdb"))
