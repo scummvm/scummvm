@@ -57,6 +57,9 @@ private:
 	static const int kMapWidth  = 17;
 	static const int kMapHeight = 13;
 
+	static const int kPaletteSize = 16;
+
+	static const byte kPalettes[kFloorCount][3 * kPaletteSize];
 	static const byte kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight];
 
 	struct Position {
@@ -97,6 +100,8 @@ private:
 	bool _hasMaxEnergy;
 	bool _testMode;
 
+	bool _needFadeIn;
+
 	Surface *_background;
 	CMPFile *_sprites;
 	ANIFile *_objects;
@@ -132,6 +137,9 @@ private:
 	void createMap();
 
 	void initScreen();
+
+	void setPalette();
+	void fadeIn();
 
 	void updateAnims();
 
