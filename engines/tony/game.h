@@ -115,7 +115,7 @@ public:
 	void setSpecialPointer(POINTER ptr) {
 		_nCurSpecialPointer = ptr;
 		if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
-			_specialPointer[ptr - 1]->SetPattern(1);
+			_specialPointer[ptr - 1]->setPattern(1);
 	}
 	POINTER getSpecialPointer(void) {
 		return (POINTER)_nCurSpecialPointer;

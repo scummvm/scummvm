@@ -81,36 +81,36 @@ public:
 	};
 
 private:
-	bool m_bShow;
-	bool m_bShowOmbra;
-	bool m_bCorpoDavanti;
-	RMGfxSourceBuffer8AB m_ombra;
-	bool m_bActionPending;
-	RMItem *m_ActionItem;
-	int m_Action;
-	int m_ActionParm;
-	static bool m_bAction;
+	bool _bShow;
+	bool _bShowOmbra;
+	bool _bCorpoDavanti;
+	RMGfxSourceBuffer8AB _ombra;
+	bool _bActionPending;
+	RMItem *_ActionItem;
+	int _Action;
+	int _ActionParm;
+	static bool _bAction;
 
-	bool m_bPastorella;
+	bool _bPastorella;
 
-	bool m_bIsStaticTalk;
-	bool m_bIsTalking;
-	int m_nPatB4Talking;
-	TALKTYPE m_nTalkType;
-	DIRECTION m_TalkDirection;
-	RMPoint m_nBodyOffset;
+	bool _bIsStaticTalk;
+	bool _bIsTalking;
+	int _nPatB4Talking;
+	TALKTYPE _nTalkType;
+	DIRECTION _TalkDirection;
+	RMPoint _nBodyOffset;
 
-	int m_nTimeLastStep;
+	int _nTimeLastStep;
 
-	RMItem m_body;
+	RMItem _body;
 	uint32 hActionThread;
 
 protected:
 	// Overload of the allocation allocation of sprites
-	virtual RMGfxSourceBuffer *NewItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
+	virtual RMGfxSourceBuffer *newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
 
 	// Watch thread which waits for the end of an action
-	static void WaitEndOfAction(CORO_PARAM, const void *param);
+	static void waitEndOfAction(CORO_PARAM, const void *param);
 
 public:
 	enum PATTERNS {
@@ -365,87 +365,87 @@ public:
 	void init(void);
 
 	// Free all memory
-	void Close(void);
+	void close(void);
 
 	// Tony makes a frame, updating the movement, etc.
-	void DoFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc);
+	void doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc);
 
 	// Draw method, which controls chararacter display
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Show or hide
-	void Show(void);
-	void Hide(bool bShowOmbra = false);
+	void show(void);
+	void hide(bool bShowOmbra = false);
 
 	// Move and make an action, if necessary
-	void MoveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
+	void moveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
 
 	// Tony stops (on the right side with respect to any subject)
-	virtual void Stop(CORO_PARAM);
-	void StopNoAction(CORO_PARAM);
+	virtual void stop(CORO_PARAM);
+	void stopNoAction(CORO_PARAM);
 
 	// Set a pattern
-	void SetPattern(int npatt, bool bPlayP0 = false);
+	void setPattern(int npatt, bool bPlayP0 = false);
 
 	// Reads the current pattern
-	int GetCurPattern();
+	int getCurPattern();
 
 	// Waits until the end of a pattern
-	void WaitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) {
-		RMCharacter::WaitForEndPattern(coroParam, hCustomSkip);
+	void waitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) {
+		RMCharacter::waitForEndPattern(coroParam, hCustomSkip);
 	}
 
 	// Check if currently in an action
-	bool InAction() {
-		return (m_bActionPending && m_Action != 0) | m_bAction;
+	bool inAction() {
+		return (_bActionPending && _Action != 0) | _bAction;
 	}
 
 	// Check if there needs to be an update for scrolling movement
-	bool MustUpdateScrolling() {
-		return ((!InAction()) || (IsMoving()));
+	bool mustUpdateScrolling() {
+		return ((!inAction()) || (isMoving()));
 	}
 
 	// Returns Tony's position
-	RMPoint Position() {
-		return m_pos;
+	RMPoint position() {
+		return _pos;
 	}
 
 	// Set the scrolling position
-	void SetScrollPosition(const RMPoint &pt) {
-		RMCharacter::SetScrollPosition(pt);
+	void setScrollPosition(const RMPoint &pt) {
+		RMCharacter::setScrollPosition(pt);
 	}
 
 	// Set the take animation
-	void Take(int nWhere, int nPart);
-	void Put(int nWhere, int nPart);
+	void take(int nWhere, int nPart);
+	void put(int nWhere, int nPart);
 
 	// Start or End Talk
-	bool StartTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &bodyStartPat,
+	bool startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &bodyStartPat,
 	                        int &headLoopPat, int &bodyLoopPat);
-	void StartTalk(CORO_PARAM, TALKTYPE nTalkType);
-	bool EndTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic);
-	void EndTalk(CORO_PARAM);
+	void startTalk(CORO_PARAM, TALKTYPE nTalkType);
+	bool endTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic);
+	void endTalk(CORO_PARAM);
 
 	// Start or End Static
-	void StartStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat,
+	void startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat,
 	                          int &bodyStartPat, int &bodyLoopPat);
-	void StartStatic(CORO_PARAM, TALKTYPE nTalkType);
-	void EndStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
-	void EndStatic(CORO_PARAM, TALKTYPE nTalkType);
+	void startStatic(CORO_PARAM, TALKTYPE nTalkType);
+	void endStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
+	void endStatic(CORO_PARAM, TALKTYPE nTalkType);
 
 	// Tony disguises himself!
-	void SetPastorella(bool bIsPast) {
-		m_bPastorella = bIsPast;
+	void setPastorella(bool bIsPast) {
+		_bPastorella = bIsPast;
 	}
-	int GetPastorella(void) {
-		return m_bPastorella;
+	int getPastorella(void) {
+		return _bPastorella;
 	}
 
 	// Perform an action
-	void ExecuteAction(int nAction, int nActionItem, int nParm);
+	void executeAction(int nAction, int nActionItem, int nParm);
 
-	void PlaySfx(int nSfx) {
-		RMItem::PlaySfx(nSfx);
+	void playSfx(int nSfx) {
+		RMItem::playSfx(nSfx);
 	}
 };
 

@@ -2180,7 +2180,7 @@ RMTextDialogScrolling::RMTextDialogScrolling() {
 
 RMTextDialogScrolling::RMTextDialogScrolling(RMLocation *loc) {
 	curLoc = loc;
-	startScroll = loc->ScrollPosition();
+	startScroll = loc->scrollPosition();
 }
 
 RMTextDialogScrolling::~RMTextDialogScrolling() {
@@ -2196,7 +2196,7 @@ void RMTextDialogScrolling::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 	_ctx->curDst = dst;
 
 	if (curLoc != NULL)
-		dst -= curLoc->ScrollPosition() - startScroll;
+		dst -= curLoc->scrollPosition() - startScroll;
 
 	CORO_INVOKE_2(RMTextDialog::draw, bigBuf, prim);
 
@@ -2240,19 +2240,19 @@ void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 		bigBuf.addPrim(new RMGfxPrimitive(this));
 
 	// Update the scrolling co-ordinates
-	_curscroll = loc.ScrollPosition();
+	_curscroll = loc.scrollPosition();
 
 	// Check if we are on the inventory
 	if (inv.itemInFocus(_mpos))
 		_item = inv.whichItemIsIn(_mpos);
 	else
-		_item = loc.WhichItemIsIn(_mpos);
+		_item = loc.whichItemIsIn(_mpos);
 
 	itemName = "";
 
 	// If there an item, get its name
 	if (_item != NULL)
-		_item->GetName(itemName);
+		_item->getName(itemName);
 
 	// Write it
 	writeText(itemName, 1);
@@ -2262,7 +2262,7 @@ void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 		if (_item == NULL)
 			ptr.setSpecialPointer(RMPointer::PTR_NONE);
 		else {
-			_ctx->hThread = mpalQueryDoAction(20, _item->MpalCode(), 0);
+			_ctx->hThread = mpalQueryDoAction(20, _item->mpalCode(), 0);
 			if (_ctx->hThread == CORO_INVALID_PID_VALUE)
 				ptr.setSpecialPointer(RMPointer::PTR_NONE);
 			else
@@ -2296,7 +2296,7 @@ RMPoint RMTextItemName::getHotspot() {
 	if (_item == NULL)
 		return _mpos + _curscroll;
 	else
-		return _item->Hotspot();
+		return _item->hotspot();
 }
 
 RMItem *RMTextItemName::getSelectedItem() {
