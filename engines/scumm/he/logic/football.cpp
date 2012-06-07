@@ -45,6 +45,7 @@ private:
 	int op_1022(int32 *args);
 	int op_1023(int32 *args);
 	int op_1024(int32 *args);
+	int op_1028();
 };
 
 int LogicHEfootball::versionID() {
@@ -81,6 +82,11 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 
 	case 1024:
 		res = op_1024(args);
+		break;
+
+	case 1028:
+		// Backyard Football 2002 only
+		res = op_1028();
 		break;
 
 	case 8221968:
@@ -278,6 +284,12 @@ int LogicHEfootball::op_1024(int32 *args) {
 	writeScummVar(110, 0);
 	writeScummVar(111, 0);
 
+	return 1;
+}
+
+int LogicHEfootball::op_1028() {
+	// Backyard Football 2002 only
+	writeScummVar(108, 100000000);
 	return 1;
 }
 
