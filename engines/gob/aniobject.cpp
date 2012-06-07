@@ -76,6 +76,10 @@ void ANIObject::rewind() {
 	_frame = 0;
 }
 
+void ANIObject::setFrame(uint16 frame) {
+	_frame = frame % _ani->getAnimationInfo(_animation).frameCount;
+}
+
 void ANIObject::setPosition() {
 	// CMP "animations" have no default position
 	if (_cmp)

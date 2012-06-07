@@ -68,6 +68,9 @@ public:
 	/** Is the submarine dead? */
 	bool isDead() const;
 
+	/** Is the submarine shooting? */
+	bool isShooting() const;
+
 	/** Has the submarine finished exiting the level? */
 	bool hasExited() const;
 
@@ -91,6 +94,8 @@ private:
 	uint16 directionToShoot(Direction direction) const;
 	/** Map the directions to explode animation indices. */
 	uint16 directionToExplode(Direction direction) const;
+
+	void move();
 };
 
 } // End of namespace Geisha

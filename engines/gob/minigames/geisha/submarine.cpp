@@ -51,7 +51,7 @@ enum Animation {
 };
 
 
-Submarine::Submarine(const ANIFile &ani) : ANIObject(ani), _state(kStateNone) {
+Submarine::Submarine(const ANIFile &ani) : ANIObject(ani), _state(kStateMove) {
 	turn(kDirectionN);
 }
 
@@ -63,13 +63,21 @@ void Submarine::turn(Direction to) {
 	if ((to == kDirectionNone) || ((_state == kStateMove) && (_direction == to)))
 		return;
 
-	_state = kStateMove;
 	_direction = to;
 
-	setAnimation(directionToMove(_direction));
-	setMode(kModeContinuous);
+	move();
+}
+
+void Submarine::move() {
+	uint16 frame = getFrame();
+	uint16 anim  = (_state == kStateShoot) ? directionToShoot(_direction) : directionToMove(_direction);
+
+	setAnimation(anim);
+	setFrame(frame);
 	setPause(false);
 	setVisible(true);
+
+	setMode((_state == kStateShoot) ? kModeOnce : kModeContinuous);
 }
 
 void Submarine::shoot() {
@@ -104,8 +112,11 @@ void Submarine::advance() {
 
 	switch (_state) {
 	case kStateShoot:
-		if (isPaused())
-			turn(_direction);
+		if (isPaused()) {
+			_state = kStateMove;
+
+			move();
+		}
 		break;
 
 	case kStateExit:
@@ -130,6 +141,10 @@ bool Submarine::canMove() const {
 
 bool Submarine::isDead() const {
 	return _state == kStateDead;
+}
+
+bool Submarine::isShooting() const {
+	return _state == kStateShoot;
 }
 
 bool Submarine::hasExited() const {

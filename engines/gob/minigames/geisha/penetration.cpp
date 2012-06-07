@@ -823,7 +823,7 @@ void Penetration::subMove(int x, int y, Submarine::Direction direction) {
 }
 
 void Penetration::subShoot() {
-	if (!_sub->sub->canMove())
+	if (!_sub->sub->canMove() || _sub->sub->isShooting())
 		return;
 
 	_sub->sub->shoot();

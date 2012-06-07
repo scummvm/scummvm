@@ -84,6 +84,9 @@ public:
 	/** Rewind the current animation to the first frame. */
 	void rewind();
 
+	/** Set the animation to a specific frame. */
+	void setFrame(uint16 frame);
+
 	/** Return the current animation number. */
 	uint16 getAnimation() const;
 	/** Return the current frame number. */
