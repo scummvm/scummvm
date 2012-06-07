@@ -18,7 +18,7 @@
 
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/video/vidtheoraplayer.h"
+#include "engines/wintermute/video/VidTheoraPlayer.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BSurfaceSDL.h"

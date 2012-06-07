@@ -32,7 +32,12 @@ namespace WinterMute {
 
 class CVidTheoraPlayer : public CBBase {
 private:
-	enum { THEORA_STATE_NONE = 0, THEORA_STATE_PLAYING = 1, THEORA_STATE_PAUSED = 2, THEORA_STATE_FINISHED = 3 };
+	enum {
+		THEORA_STATE_NONE = 0,
+		THEORA_STATE_PLAYING = 1,
+		THEORA_STATE_PAUSED = 2,
+		THEORA_STATE_FINISHED = 3
+	};
 	Video::VideoDecoder *_theoraDecoder;
 	Graphics::Surface _surface;
 public:
@@ -140,7 +145,7 @@ private:
 
 	bool _frameRendered;
 
-	void getIsFrameReady() {
+	bool getIsFrameReady() {
 		return _videoFrameReady;
 	}
 private:

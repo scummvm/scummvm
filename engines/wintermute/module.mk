@@ -117,6 +117,7 @@ MODULE_OBJS := \
 	utils/utils.o \
 	video/VidPlayer.o \
 	video/VidTheoraPlayer.o \
+	video/decoders/theora_decoder.o \
 	wintermute.o
  
 MODULE_DIRS += \
