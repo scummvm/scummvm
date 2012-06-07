@@ -87,7 +87,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	}
 
 	int sceneNumber = strToInt(argv[1]);
-	if (sceneNumber >= _vm->_theBoxes.GetLocBoxesCount()) {
+	if (sceneNumber >= _vm->_theBoxes.getLocBoxesCount()) {
 		DebugPrintf("Invalid scene\n");
 		return true;
 	}
@@ -99,8 +99,8 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	} else {
 		// Get the box areas for the scene, and choose one so as to have a default
 		// position for Tony that will be in the walkable areas
-		RMBoxLoc *box = _vm->_theBoxes.GetBoxes(sceneNumber);
-		scenePos.Set(box->boxes[0].hotspot[0].hotx, box->boxes[0].hotspot[0].hoty);
+		RMBoxLoc *box = _vm->_theBoxes.getBoxes(sceneNumber);
+		scenePos.set(box->boxes[0].hotspot[0].hotx, box->boxes[0].hotspot[0].hoty);
 	}
 
 	// Set up a process to change the scene

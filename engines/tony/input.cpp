@@ -34,7 +34,7 @@ namespace Tony {
 RMInput::RMInput() {
 	// Setup mouse fields
 	_clampMouse = false;
-	_mousePos.Set(0, 0);
+	_mousePos.set(0, 0);
 	_leftButton = _rightButton = false;
 	_leftClickMouse = _leftReleaseMouse = false;
 	_rightClickMouse = _rightReleaseMouse = false;
@@ -60,7 +60,7 @@ void RMInput::poll(void) {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
-			_mousePos.Set(_event.mouse.x, _event.mouse.y);
+			_mousePos.set(_event.mouse.x, _event.mouse.y);
 
 			if (_event.type == Common::EVENT_LBUTTONDOWN) {
 				_leftButton = true;

@@ -97,47 +97,47 @@ void RMInventory::init(void) {
 		RMRes res(curres);
 		RMDataStream ds;
 
-		assert(res.IsValid());
+		assert(res.isValid());
 
 		// Initialise the MPAL inventory item by reading it in.
-		_items[i].icon.SetInitCurPattern(false);
-		ds.OpenBuffer(res);
+		_items[i].icon.setInitCurPattern(false);
+		ds.openBuffer(res);
 		ds >> _items[i].icon;
-		ds.Close();
+		ds.close();
 
 		// Puts in the default pattern 1
 		_items[i].pointer = NULL;
 		_items[i].status = 1;
-		_items[i].icon.SetPattern(1);
+		_items[i].icon.setPattern(1);
 		_items[i].icon.doFrame(this, false);
 
 		curres++;
 		if (i == 0 || i == 28 || i == 29)
 			continue;
 
-		_items[i].pointer = new RMGfxSourceBuffer8RLEByteAA[_items[i].icon.NumPattern()];
+		_items[i].pointer = new RMGfxSourceBuffer8RLEByteAA[_items[i].icon.numPattern()];
 
-		for (j = 0; j < _items[i].icon.NumPattern(); j++) {
+		for (j = 0; j < _items[i].icon.numPattern(); j++) {
 			RMResRaw raw(curres);
 
-			assert(raw.IsValid());
+			assert(raw.isValid());
 
-			_items[i].pointer[j].init((const byte *)raw, raw.Width(), raw.Height(), true);
+			_items[i].pointer[j].init((const byte *)raw, raw.width(), raw.height(), true);
 			curres++;
 		}
 	}
 
-	_items[28].icon.SetPattern(1);
-	_items[29].icon.SetPattern(1);
+	_items[28].icon.setPattern(1);
+	_items[29].icon.setPattern(1);
 
 	// Download interface
 	RMDataStream ds;
 	RMRes res(RES_I_MINIINTER);
-	assert(res.IsValid());
-	ds.OpenBuffer(res);
+	assert(res.isValid());
+	ds.openBuffer(res);
 	ds >> miniInterface;
-	miniInterface.SetPattern(1);
-	ds.Close();
+	miniInterface.setPattern(1);
+	ds.close();
 
 	// Create the text for hints on the mini interface
 	_hints[0].setAlignType(RMText::HCENTER, RMText::VTOP);
@@ -202,11 +202,11 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	if (_state == SELECTING) {
 
 		if (!GLOBALS.bCfgInvUp) {
-			_ctx->pos.Set((_nSelectObj + 1) * 64 - 20, RM_SY - 113);
-			_ctx->pos2.Set((_nSelectObj + 1) * 64 + 34, RM_SY - 150);
+			_ctx->pos.set((_nSelectObj + 1) * 64 - 20, RM_SY - 113);
+			_ctx->pos2.set((_nSelectObj + 1) * 64 + 34, RM_SY - 150);
 		} else {
-			_ctx->pos.Set((_nSelectObj + 1) * 64 - 20, 72 - 4); // The brown part is at the top :(
-			_ctx->pos2.Set((_nSelectObj + 1) * 64 + 34, 119 - 4);
+			_ctx->pos.set((_nSelectObj + 1) * 64 - 20, 72 - 4); // The brown part is at the top :(
+			_ctx->pos2.set((_nSelectObj + 1) * 64 + 34, 119 - 4);
 		}
 
 		_ctx->p = new RMGfxPrimitive(prim->_task, _ctx->pos);
@@ -264,7 +264,7 @@ void RMInventory::addItem(int code) {
 		g_system->lockMutex(_csModifyInterface);
 		if (_curPos + 8 == _nInv) {
 			// Break through the inventory! On the flashing pattern
-			_items[28].icon.SetPattern(2);
+			_items[28].icon.setPattern(2);
 		}
 
 		_inv[_nInv++] = code - 10000;
@@ -281,7 +281,7 @@ void RMInventory::changeItemStatus(uint32 code, uint32 dwStatus) {
 		error("Specified object code is not valid");
 	} else {
 		g_system->lockMutex(_csModifyInterface);
-		_items[code - 10000].icon.SetPattern(dwStatus);
+		_items[code - 10000].icon.setPattern(dwStatus);
 		_items[code - 10000].status = dwStatus;
 
 		prepare();
@@ -355,12 +355,12 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 
 		if (_curPos + 8 >= _nInv) {
 			_bBlinkingRight = false;
-			_items[28].icon.SetPattern(1);
+			_items[28].icon.setPattern(1);
 		}
 
 		if (_curPos > 0) {
 			_bBlinkingLeft = true;
-			_items[29].icon.SetPattern(2);
+			_items[29].icon.setPattern(2);
 		}
 
 		prepare();
@@ -376,12 +376,12 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 
 		if (_curPos == 0) {
 			_bBlinkingLeft = false;
-			_items[29].icon.SetPattern(1);
+			_items[29].icon.setPattern(1);
 		}
 
 		if (_curPos + 8 < _nInv) {
 			_bBlinkingRight = true;
-			_items[28].icon.SetPattern(2);
+			_items[28].icon.setPattern(2);
 		}
 
 		prepare();
@@ -420,12 +420,12 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 
 		if (_curPos + 8 <= _nInv) {
 			_bBlinkingRight = false;
-			_items[28].icon.SetPattern(1);
+			_items[28].icon.setPattern(1);
 		}
 
 		if (_curPos > 0) {
 			_bBlinkingLeft = true;
-			_items[29].icon.SetPattern(2);
+			_items[29].icon.setPattern(2);
 		}
 
 		prepare();
@@ -441,12 +441,12 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 
 		if (_curPos == 0) {
 			_bBlinkingLeft = false;
-			_items[29].icon.SetPattern(1);
+			_items[29].icon.setPattern(1);
 		}
 
 		if (_curPos + 8 < _nInv) {
 			_bBlinkingRight = true;
-			_items[28].icon.SetPattern(2);
+			_items[28].icon.setPattern(2);
 		}
 
 		prepare();
@@ -495,24 +495,24 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		if ((_state == CLOSING || _state == OPENING || _state == OPENED) && checkPointInside(mpos)) {
 			if (mpos.x > RM_SX - 64) {
 				if (_curPos + 8 < _nInv && !_bBlinkingRight) {
-					_items[28].icon.SetPattern(3);
+					_items[28].icon.setPattern(3);
 					_bBlinkingRight = true;
 					bNeedRedraw = true;
 				}
 			} else if (_bBlinkingRight) {
-				_items[28].icon.SetPattern(2);
+				_items[28].icon.setPattern(2);
 				_bBlinkingRight = false;
 				bNeedRedraw = true;
 			}
 
 			if (mpos.x < 64) {
 				if (_curPos > 0 && !_bBlinkingLeft) {
-					_items[29].icon.SetPattern(3);
+					_items[29].icon.setPattern(3);
 					_bBlinkingLeft = true;
 					bNeedRedraw = true;
 				}
 			} else if (_bBlinkingLeft) {
-				_items[29].icon.SetPattern(2);
+				_items[29].icon.setPattern(2);
 				_bBlinkingLeft = false;
 				bNeedRedraw = true;
 			}
@@ -633,28 +633,28 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		if (mpos.y > starty && mpos.y < starty + 45) {
 			if (mpos.x > startx && mpos.x < startx + 40) {
 				if (miniAction != 1) {
-					miniInterface.SetPattern(2);
+					miniInterface.setPattern(2);
 					miniAction = 1;
 					_vm->playUtilSFX(1);
 				}
 			} else if (mpos.x >= startx + 40 && mpos.x < startx + 80) {
 				if (miniAction != 2) {
-					miniInterface.SetPattern(3);
+					miniInterface.setPattern(3);
 					miniAction = 2;
 					_vm->playUtilSFX(1);
 				}
 			} else if (mpos.x >= startx + 80 && mpos.x < startx + 108) {
 				if (miniAction != 3) {
-					miniInterface.SetPattern(4);
+					miniInterface.setPattern(4);
 					miniAction = 3;
 					_vm->playUtilSFX(1);
 				}
 			} else {
-				miniInterface.SetPattern(1);
+				miniInterface.setPattern(1);
 				miniAction = 0;
 			}
 		} else  {
-			miniInterface.SetPattern(1);
+			miniInterface.setPattern(1);
 			miniAction = 0;
 		}
 
@@ -729,19 +729,19 @@ int RMInventory::loadState(byte *state) {
 
 		if (i < _nItems) {
 			_items[i].status = x;
-			_items[i].icon.SetPattern(x);
+			_items[i].icon.setPattern(x);
 		}
 	}
 
 	_curPos = 0;
 	_bCombining = false;
 	
-	_items[29].icon.SetPattern(1);
+	_items[29].icon.setPattern(1);
 
 	if (_nInv > 8)
-		_items[28].icon.SetPattern(2);
+		_items[28].icon.setPattern(2);
 	else
-		_items[28].icon.SetPattern(1);
+		_items[28].icon.setPattern(1);
 
 	prepare();
 	drawOT(Common::nullContext);
@@ -774,7 +774,7 @@ int RMInterface::onWhichBox(RMPoint pt) {
 
 	// Find the verb
 	for (i = 0; i < max; i++)
-		if (_hotbbox[i].PtInRect(pt))
+		if (_hotbbox[i].ptInRect(pt))
 			return i;
 
 	// Found no verb
@@ -788,13 +788,13 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 	CORO_BEGIN_CODE(_ctx);
 
-	prim->Dst().TopLeft() = _openStart;
+	prim->Dst().topLeft() = _openStart;
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLEByte::draw, bigBuf, prim);
 
 	// Check if there is a draw hot zone
 	_ctx->h = onWhichBox(_mpos);
 	if (_ctx->h != -1) {
-		prim->Dst().TopLeft() = _openStart;
+		prim->Dst().topLeft() = _openStart;
 		CORO_INVOKE_2(_hotzone[_ctx->h].draw, bigBuf, prim);
 
 		if (_lastHotZone != _ctx->h) {
@@ -803,7 +803,7 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 		}
 
 		if (GLOBALS.bCfgInterTips) {
-			prim->Dst().TopLeft() = _openStart + RMPoint(70, 177);
+			prim->Dst().topLeft() = _openStart + RMPoint(70, 177);
 			CORO_INVOKE_2(_hints[_ctx->h].draw, bigBuf, prim);
 		}
 	} else
@@ -896,21 +896,21 @@ void RMInterface::init(void) {
 
 	setPriority(191);
 
-	RMGfxSourceBuffer::init(inter, inter.Width(), inter.Height());
+	RMGfxSourceBuffer::init(inter, inter.width(), inter.height());
 	loadPaletteWA(RES_I_INTERPAL);
 
 	for (i = 0; i < 5; i++) {
 		RMResRaw part(RES_I_INTERP1 + i);
 
-		_hotzone[i].init(part, part.Width(), part.Height());
+		_hotzone[i].init(part, part.width(), part.height());
 		_hotzone[i].loadPaletteWA(pal);
 	}
 
-	_hotbbox[0].SetRect(126, 123, 159, 208);   // Take
-	_hotbbox[1].SetRect(90, 130, 125, 186);    // About
-	_hotbbox[2].SetRect(110, 60, 152, 125);
-	_hotbbox[3].SetRect(56, 51, 93, 99);
-	_hotbbox[4].SetRect(51, 105, 82, 172);
+	_hotbbox[0].setRect(126, 123, 159, 208);   // Take
+	_hotbbox[1].setRect(90, 130, 125, 186);    // About
+	_hotbbox[2].setRect(110, 60, 152, 125);
+	_hotbbox[3].setRect(56, 51, 93, 99);
+	_hotbbox[4].setRect(51, 105, 82, 172);
 
 	_hints[0].setAlignType(RMText::HRIGHT, RMText::VTOP);
 	_hints[1].setAlignType(RMText::HRIGHT, RMText::VTOP);

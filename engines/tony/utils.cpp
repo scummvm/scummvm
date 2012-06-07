@@ -40,17 +40,17 @@ namespace Tony {
  * Constructor
  */
 RMString::RMString() {
-	m_string = NULL;
-	m_length = 0;
-	m_realLength = 0;
+	_string = NULL;
+	_length = 0;
+	_realLength = 0;
 }
 
 /**
  * Destructor
  */
 RMString::~RMString() {
-	if (m_string != NULL)
-		delete[] m_string;
+	if (_string != NULL)
+		delete[] _string;
 }
 
 /**
@@ -58,9 +58,9 @@ RMString::~RMString() {
  */
 RMString::RMString(const RMString &str) {
 	// Richiama l'overload su '=' per copiare
-	m_string = NULL;
-	m_length = 0;
-	m_realLength = 0;
+	_string = NULL;
+	_length = 0;
+	_realLength = 0;
 	*this = str;
 }
 
@@ -69,9 +69,9 @@ RMString::RMString(const RMString &str) {
  */
 RMString::RMString(const char *str) {
 	// Use the overloaded '=' when copying
-	m_string = NULL;
-	m_length = 0;
-	m_realLength = 0;
+	_string = NULL;
+	_length = 0;
+	_realLength = 0;
 	*this = str;
 }
 
@@ -80,9 +80,9 @@ RMString::RMString(const char *str) {
  */
 RMString::RMString(const int ch) {
 	// Use the overloaded '=' when copying
-	m_string = NULL;
-	m_length = 0;
-	m_realLength = 0;
+	_string = NULL;
+	_length = 0;
+	_realLength = 0;
 	*this = ch;
 }
 
@@ -90,8 +90,8 @@ RMString::RMString(const int ch) {
  * Returns the length of the string
  * @returns                 Length
  */
-int RMString::Length() const {
-	return m_length;
+int RMString::length() const {
+	return _length;
 }
 
 /**
@@ -99,9 +99,9 @@ int RMString::Length() const {
  * @param nIndex            Position of the character to return
  * @returns                 Character
  */
-char RMString::GetAt(int nIndex) {
-	assert(nIndex < m_length);
-	return m_string[nIndex];
+char RMString::getAt(int nIndex) {
+	assert(nIndex < _length);
+	return _string[nIndex];
 }
 
 /**
@@ -109,9 +109,9 @@ char RMString::GetAt(int nIndex) {
  * @param nIndex            Position of the character to change
  * @param c                 Character
  */
-void RMString::SetAt(int nIndex, char c) {
-	assert(nIndex < m_length);
-	m_string[nIndex] = c;
+void RMString::setAt(int nIndex, char c) {
+	assert(nIndex < _length);
+	_string[nIndex] = c;
 }
 
 /**
@@ -120,8 +120,8 @@ void RMString::SetAt(int nIndex, char c) {
  * @params                  Reference to the character
  */
 char &RMString::operator[](int nIndex) {
-	assert(nIndex < m_length);
-	return m_string[nIndex];
+	assert(nIndex < _length);
+	return _string[nIndex];
 }
 
 /**
@@ -131,21 +131,21 @@ char &RMString::operator[](int nIndex) {
  */
 const RMString &RMString::operator=(const RMString &str) {
 	// Set the new length
-	m_length = str.m_length;
+	_length = str._length;
 
 	// If the source is empty, then destroy the current string buffer
-	if (m_length == 0) {
-		if (m_realLength > 0) {
-			delete[] m_string;
-			m_string = NULL;
-			m_realLength = 0;
+	if (_length == 0) {
+		if (_realLength > 0) {
+			delete[] _string;
+			_string = NULL;
+			_realLength = 0;
 		}
 	} else {
 		// Resize if necessary
-		Resize(m_length + 1);
+		resize(_length + 1);
 
 		// Copy the string
-		Common::copy(str.m_string, str.m_string + m_length + 1, m_string);
+		Common::copy(str._string, str._string + _length + 1, _string);
 	}
 
 	return *this;
@@ -159,20 +159,20 @@ const RMString &RMString::operator=(const RMString &str) {
 const RMString &RMString::operator=(const char *str) {
 	// If the source is empty, then destroy the current string buffer
 	if (str == NULL) {
-		if (m_realLength > 0) {
-			delete[] m_string;
-			m_string = NULL;
-			m_realLength = m_length = 0;
+		if (_realLength > 0) {
+			delete[] _string;
+			_string = NULL;
+			_realLength = _length = 0;
 		}
 	} else {
 		// Calculate the new length
-		m_length = strlen(str);
+		_length = strlen(str);
 
 		// Resize if necessary
-		Resize(m_length + 1);
+		resize(_length + 1);
 
 		// Copy the string
-		Common::copy(str, str + m_length + 1, m_string);
+		Common::copy(str, str + _length + 1, _string);
 	}
 
 	return *this;
@@ -186,18 +186,18 @@ const RMString &RMString::operator=(const char *str) {
 const RMString &RMString::operator=(const int ch) {
 	if (ch == '\0')  {
 		// Destroy the current string
-		if (m_realLength > 0) {
-			delete [] m_string;
-			m_string = NULL;
-			m_length = m_realLength = 0;
+		if (_realLength > 0) {
+			delete [] _string;
+			_string = NULL;
+			_length = _realLength = 0;
 		}
 	} else {
 		// Resize if necessary
-		Resize(2);
+		resize(2);
 
-		m_string[0] = ch;
-		m_string[1] = '\0';
-		m_length = 1;
+		_string[0] = ch;
+		_string[1] = '\0';
+		_length = 1;
 	}
 
 	return *this;
@@ -208,21 +208,21 @@ const RMString &RMString::operator=(const int ch) {
  * @param str               String to concatenate
  * @param size              Length of the string
  */
-void RMString::Connect(const char *str, int size) {
+void RMString::connect(const char *str, int size) {
 	int nlen;
 
 	if (size > 0) {
 		// Calculate the new lenght
-		nlen = m_length + size;
+		nlen = _length + size;
 
 		// Resize
-		Resize(nlen + 1, true);
+		resize(nlen + 1, true);
 
 		// Linkage with '\0'
-		Common::copy(str, str + size + 1, m_string + m_length);
+		Common::copy(str, str + size + 1, _string + _length);
 
 		// Save the new length
-		m_length = nlen;
+		_length = nlen;
 	}
 }
 
@@ -232,7 +232,7 @@ void RMString::Connect(const char *str, int size) {
  * @returns                 Refrence to our string
  */
 const RMString &RMString::operator+=(RMString &str) {
-	Connect(str, str.Length());
+	connect(str, str.length());
 	return *this;
 }
 
@@ -242,7 +242,7 @@ const RMString &RMString::operator+=(RMString &str) {
  * @returns                 Refrence to our string
  */
 const RMString &RMString::operator+=(const char *str) {
-	Connect(str, strlen(str));
+	connect(str, strlen(str));
 	return *this;
 }
 
@@ -258,7 +258,7 @@ const RMString &RMString::operator+=(const int ch) {
 	str[0] = ch;
 	str[1] = '\0';
 
-	Connect(str, 1);
+	connect(str, 1);
 	return *this;
 }
 
@@ -267,7 +267,7 @@ const RMString &RMString::operator+=(const int ch) {
  * @returns                 char * reference to string
  */
 RMString::operator char *() const {
-	return m_string;
+	return _string;
 }
 
 /**
@@ -276,21 +276,21 @@ RMString::operator char *() const {
  * @param bMaintain         If true we must keep the original string,
                             if false we can destroy.
  */
-void RMString::Resize(int size, bool bMantain) {
-	if (m_realLength == 0) {
-		m_string = new char[size];
-		m_realLength = size;
-	} else if (size > m_realLength) {
+void RMString::resize(int size, bool bMantain) {
+	if (_realLength == 0) {
+		_string = new char[size];
+		_realLength = size;
+	} else if (size > _realLength) {
 		if (bMantain) {
 			char *app;
 
 			app = new char[size];
-			Common::copy(m_string, m_string + m_length + 1, app);
-			delete[] m_string;
-			m_string = app;
+			Common::copy(_string, _string + _length + 1, app);
+			delete[] _string;
+			_string = app;
 		} else {
-			delete[] m_string;
-			m_string = new char[size];
+			delete[] _string;
+			_string = new char[size];
 		}
 	}
 }
@@ -298,15 +298,15 @@ void RMString::Resize(int size, bool bMantain) {
 /**
  * Compacts the string to occupy less memory if possible.
  */
-void RMString::Compact(void) {
-	if (m_realLength + 1 > m_length) {
+void RMString::compact(void) {
+	if (_realLength + 1 > _length) {
 		char *app;
 
-		app = new char[m_length + 1];
-		Common::copy(m_string, m_string + m_length + 1, app);
+		app = new char[_length + 1];
+		Common::copy(_string, _string + _length + 1, app);
 
-		delete[] m_string;
-		m_string = app;
+		delete[] _string;
+		_string = app;
 	}
 }
 
@@ -359,14 +359,14 @@ RMDataStream &operator>>(RMDataStream &df, RMString &var) {
 	int i;
 
 	df >> len;
-	var.Resize(len + 1);
-	var.m_length = len + 1;
+	var.resize(len + 1);
+	var._length = len + 1;
 
 	for (i = 0; i < len; i++)
 		df >> var[i];
 
 	var[i] = '\0';
-	var.m_length = len;
+	var._length = len;
 
 	return df;
 }
@@ -374,7 +374,7 @@ RMDataStream &operator>>(RMDataStream &df, RMString &var) {
 /**
  * Formats a string
  */
-void RMString::Format(const char *str, ...) {
+void RMString::format(const char *str, ...) {
 	static char buf[2048];
 	va_list argList;
 
@@ -393,29 +393,29 @@ RMFileStreamSlow::RMFileStreamSlow() : RMDataStream() {
 }
 
 RMFileStreamSlow::~RMFileStreamSlow() {
-	Close();
+	close();
 }
 
-void RMFileStreamSlow::Close() {
+void RMFileStreamSlow::close() {
 	delete _stream;
 }
 
-bool RMFileStreamSlow::OpenFile(Common::File &file) {
+bool RMFileStreamSlow::openFile(Common::File &file) {
 	_stream = file.readStream(file.size());
 
-	m_length = _stream->pos();
+	_length = _stream->pos();
 
 	return true;
 }
 
 
-bool RMFileStreamSlow::OpenFile(const char *lpFN) {
+bool RMFileStreamSlow::openFile(const char *lpFN) {
 	// Open file for reading
 	Common::File f;
 	if (!f.open(lpFN))
 		return false;
 
-	m_length = f.size();
+	_length = f.size();
 	_stream = f.readStream(f.size());
 
 	return true;
@@ -423,20 +423,20 @@ bool RMFileStreamSlow::OpenFile(const char *lpFN) {
 
 
 RMDataStream &RMFileStreamSlow::operator+=(int nBytes) {
-	Seek(nBytes);
+	seek(nBytes);
 	return *this;
 }
 
-int RMFileStreamSlow::Pos() {
+int RMFileStreamSlow::pos() {
 	return _stream->pos();
 }
 
-bool RMFileStreamSlow::IsEOF() {
-	return (Pos() >= m_length);
+bool RMFileStreamSlow::isEOF() {
+	return (pos() >= _length);
 }
 
 
-int RMFileStreamSlow::Seek(int nBytes, RMDSPos where) {
+int RMFileStreamSlow::seek(int nBytes, RMDSPos where) {
 	switch (where) {
 	case START:
 		return _stream->seek(nBytes);
@@ -453,7 +453,7 @@ int RMFileStreamSlow::Seek(int nBytes, RMDSPos where) {
 }
 
 
-bool RMFileStreamSlow::Read(void *buf, int size) {
+bool RMFileStreamSlow::read(void *buf, int size) {
 	uint32 dwRead;
 
 	dwRead = _stream->read(buf, size);
@@ -462,39 +462,39 @@ bool RMFileStreamSlow::Read(void *buf, int size) {
 
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, char &var) {
-	df.Read(&var, 1);
+	df.read(&var, 1);
 	return df;
 }
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, byte &var) {
-	df.Read(&var, 1);
+	df.read(&var, 1);
 	return df;
 }
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint16 &var) {
 	uint16 v;
-	df.Read(&v, 2);
+	df.read(&v, 2);
 	v = FROM_LE_16(v);
 	return df;
 }
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int16 &var) {
 	uint16 v;
-	df.Read(&v, 2);
+	df.read(&v, 2);
 	var = (int16)FROM_LE_16(v);
 	return df;
 }
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int &var) {
 	int v;
-	df.Read(&v, 4);
+	df.read(&v, 4);
 	var = FROM_LE_32(v);
 	return df;
 }
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint32 &var) {
 	uint32 v;
-	df.Read(&v, 4);
+	df.read(&v, 4);
 	var = FROM_LE_32(v);
 	return df;
 }
@@ -508,24 +508,24 @@ RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint32 &var) {
  * Constructor
  */
 RMDataStream::RMDataStream() {
-	m_length = 0;
-	m_pos = 0;
-	m_bError = false;
+	_length = 0;
+	_pos = 0;
+	_bError = false;
 }
 
 /**
  * Destructor
  */
 RMDataStream::~RMDataStream() {
-	Close();
+	close();
 }
 
 /**
  * Close a stream
  */
-void RMDataStream::Close(void) {
-	m_length = 0;
-	m_pos = 0;
+void RMDataStream::close(void) {
+	_length = 0;
+	_pos = 0;
 }
 
 /**
@@ -535,27 +535,27 @@ void RMDataStream::Close(void) {
  * @remarks             If the length of the buffer is not known, and cannot be
  *                      specified, then EOF() and Seek() to end won't work.
  */
-void RMDataStream::OpenBuffer(const byte *lpBuf, int size) {
-	m_length = size;
-	m_buf = lpBuf;
-	m_bError = false;
-	m_pos = 0;
+void RMDataStream::openBuffer(const byte *lpBuf, int size) {
+	_length = size;
+	_buf = lpBuf;
+	_bError = false;
+	_pos = 0;
 }
 
 /**
  * Returns the length of the stream
  * @returns             Stream length
  */
-int RMDataStream::Length() {
-	return m_length;
+int RMDataStream::length() {
+	return _length;
 }
 
 /**
  * Determines if the end of the stream has been reached
  * @returns             true if end of stream reached, false if not
  */
-bool RMDataStream::IsEOF() {
-	return (m_pos >= m_length);
+bool RMDataStream::isEOF() {
+	return (_pos >= _length);
 }
 
 /**
@@ -565,7 +565,7 @@ bool RMDataStream::IsEOF() {
  * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, char &var) {
-	df.Read(&var, 1);
+	df.read(&var, 1);
 	return df;
 }
 
@@ -576,7 +576,7 @@ RMDataStream &operator>>(RMDataStream &df, char &var) {
  * @returns                 Value read from the stream
  */
 RMDataStream &operator>>(RMDataStream &df, uint8 &var) {
-	df.Read(&var, 1);
+	df.read(&var, 1);
 	return df;
 }
 
@@ -588,7 +588,7 @@ RMDataStream &operator>>(RMDataStream &df, uint8 &var) {
  */
 RMDataStream &operator>>(RMDataStream &df, uint16 &var) {
 	uint16 v;
-	df.Read(&v, 2);
+	df.read(&v, 2);
 
 	var = FROM_LE_16(v);
 	return df;
@@ -602,7 +602,7 @@ RMDataStream &operator>>(RMDataStream &df, uint16 &var) {
  */
 RMDataStream &operator>>(RMDataStream &df, int16 &var) {
 	uint16 v;
-	df.Read(&v, 2);
+	df.read(&v, 2);
 
 	var = (int16)FROM_LE_16(v);
 	return df;
@@ -616,7 +616,7 @@ RMDataStream &operator>>(RMDataStream &df, int16 &var) {
  */
 RMDataStream &operator>>(RMDataStream &df, int &var) {
 	uint32 v;
-	df.Read(&v, 4);
+	df.read(&v, 4);
 
 	var = (int)FROM_LE_32(v);
 	return df;
@@ -630,7 +630,7 @@ RMDataStream &operator>>(RMDataStream &df, int &var) {
  */
 RMDataStream &operator>>(RMDataStream &df, uint32 &var) {
 	uint32 v;
-	df.Read(&v, 4);
+	df.read(&v, 4);
 
 	var = FROM_LE_32(v);
 	return df;
@@ -642,17 +642,17 @@ RMDataStream &operator>>(RMDataStream &df, uint32 &var) {
  * @param size              Size of the buffer
  * @returns                 true if we have reached the end, false if not
  */
-bool RMDataStream::Read(void *lpBuf, int size) {
+bool RMDataStream::read(void *lpBuf, int size) {
 	byte *dest = (byte *)lpBuf;
 
-	if ((m_pos + size) > m_length) {
-		Common::copy(m_buf + m_pos, m_buf + m_pos + (m_length - m_pos), dest);
+	if ((_pos + size) > _length) {
+		Common::copy(_buf + _pos, _buf + _pos + (_length - _pos), dest);
 
 		return true;
 	} else {
-		Common::copy(m_buf + m_pos, m_buf + m_pos + size, dest);
+		Common::copy(_buf + _pos, _buf + _pos + size, dest);
 
-		m_pos += size;
+		_pos += size;
 		return false;
 	}
 }
@@ -663,7 +663,7 @@ bool RMDataStream::Read(void *lpBuf, int size) {
  * @returns                 The stream
  */
 RMDataStream &RMDataStream::operator+=(int nBytes) {
-	m_pos += nBytes;
+	_pos += nBytes;
 	return *this;
 }
 
@@ -673,57 +673,57 @@ RMDataStream &RMDataStream::operator+=(int nBytes) {
  * @param origin            Origin to do offset from
  * @returns                 The absolute current position in bytes
  */
-int RMDataStream::Seek(int nBytes, RMDSPos origin) {
+int RMDataStream::seek(int nBytes, RMDSPos origin) {
 	switch (origin) {
 	case CUR:
 		break;
 
 	case START:
-		m_pos = 0;
+		_pos = 0;
 		break;
 
 	case END:
-		if (m_length == SIZENOTKNOWN)
-			return m_pos;
-		m_pos = m_length;
+		if (_length == SIZENOTKNOWN)
+			return _pos;
+		_pos = _length;
 		break;
 	}
 
-	m_pos += nBytes;
-	return m_pos;
+	_pos += nBytes;
+	return _pos;
 }
 
 /**
  * Returns the current position of the stream
  * @returns                 The current position
  */
-int RMDataStream::Pos() {
-	return m_pos;
+int RMDataStream::pos() {
+	return _pos;
 }
 
 /**
  * Check if an error occurred during reading the stream
  * @returns                 true if there was an error, false otherwise
  */
-bool RMDataStream::IsError() {
-	return m_bError;
+bool RMDataStream::isError() {
+	return _bError;
 }
 
 /**
  * Sets an error code for the stream
  * @param code              Error code
  */
-void RMDataStream::SetError(int code) {
-	m_bError = true;
-	m_ecode = code;
+void RMDataStream::setError(int code) {
+	_bError = true;
+	_ecode = code;
 }
 
 /**
  * Returns the error code for the stream
  * @returns                 Error code
  */
-int RMDataStream::GetError() {
-	return m_ecode;
+int RMDataStream::getError() {
+	return _ecode;
 }
 
 /****************************************************************************\
@@ -766,7 +766,7 @@ RMPoint &RMPoint::operator=(RMPoint p) {
 /**
  * Offsets the point by another point
  */
-void RMPoint::Offset(const RMPoint &p) {
+void RMPoint::offset(const RMPoint &p) {
 	x += p.x;
 	y += p.y;
 }
@@ -774,7 +774,7 @@ void RMPoint::Offset(const RMPoint &p) {
 /**
  * Offsets the point by a specified offset
  */
-void RMPoint::Offset(int xOff, int yOff) {
+void RMPoint::offset(int xOff, int yOff) {
 	x += xOff;
 	y += yOff;
 }
@@ -801,7 +801,7 @@ RMPoint operator-(RMPoint p1, RMPoint p2) {
  * Sum (offset) of a point
  */
 RMPoint &RMPoint::operator+=(RMPoint p) {
-	Offset(p);
+	offset(p);
 	return *this;
 }
 
@@ -809,7 +809,7 @@ RMPoint &RMPoint::operator+=(RMPoint p) {
  * Subtract (offset) of a point
  */
 RMPoint &RMPoint::operator-=(RMPoint p) {
-	Offset(-p);
+	offset(-p);
 	return *this;
 }
 
@@ -852,93 +852,93 @@ RMDataStream &operator>>(RMDataStream &ds, RMPoint &p) {
 \****************************************************************************/
 
 RMRect::RMRect() {
-	SetEmpty();
+	setEmpty();
 }
 
-void RMRect::SetEmpty(void) {
+void RMRect::setEmpty(void) {
 	x1 = y1 = x2 = y2 = 0;
 }
 
 RMRect::RMRect(const RMPoint &p1, const RMPoint &p2) {
-	SetRect(p1, p2);
+	setRect(p1, p2);
 }
 
 RMRect::RMRect(int X1, int Y1, int X2, int Y2) {
-	SetRect(X1, Y1, X2, Y2);
+	setRect(X1, Y1, X2, Y2);
 }
 
 RMRect::RMRect(const RMRect &rc) {
-	CopyRect(rc);
+	copyRect(rc);
 }
 
-void RMRect::SetRect(const RMPoint &p1, const RMPoint &p2) {
+void RMRect::setRect(const RMPoint &p1, const RMPoint &p2) {
 	x1 = p1.x;
 	y1 = p1.y;
 	x2 = p2.x;
 	y2 = p2.y;
 }
 
-void RMRect::SetRect(int X1, int Y1, int X2, int Y2) {
+void RMRect::setRect(int X1, int Y1, int X2, int Y2) {
 	x1 = X1;
 	y1 = Y1;
 	x2 = X2;
 	y2 = Y2;
 }
 
-void RMRect::SetRect(const RMRect &rc) {
-	CopyRect(rc);
+void RMRect::setRect(const RMRect &rc) {
+	copyRect(rc);
 }
 
-void RMRect::CopyRect(const RMRect &rc) {
+void RMRect::copyRect(const RMRect &rc) {
 	x1 = rc.x1;
 	y1 = rc.y1;
 	x2 = rc.x2;
 	y2 = rc.y2;
 }
 
-RMPoint &RMRect::TopLeft() {
+RMPoint &RMRect::topLeft() {
 	// FIXME: This seems very bad
 	return *((RMPoint *)this);
 }
 
-RMPoint &RMRect::BottomRight() {
+RMPoint &RMRect::bottomRight() {
 	// FIXME: This seems very bad
 	return *((RMPoint *)this + 1);
 }
 
-RMPoint RMRect::Center() {
+RMPoint RMRect::center() {
 	return RMPoint((x2 - x1) / 2, (y2 - y1) / 2);
 }
 
-int RMRect::Width() const {
+int RMRect::width() const {
 	return x2 - x1;
 }
 
-int RMRect::Height() const {
+int RMRect::height() const {
 	return y2 - y1;
 }
 
-int RMRect::Size() const {
-	return Width() * Height();
+int RMRect::size() const {
+	return width() * height();
 }
 
-bool RMRect::IsEmpty() const {
+bool RMRect::isEmpty() const {
 	return (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0);
 }
 
 const RMRect &RMRect::operator=(const RMRect &rc) {
-	CopyRect(rc);
+	copyRect(rc);
 	return *this;
 }
 
-void RMRect::Offset(int xOff, int yOff) {
+void RMRect::offset(int xOff, int yOff) {
 	x1 += xOff;
 	y1 += yOff;
 	x2 += xOff;
 	y2 += yOff;
 }
 
-void RMRect::Offset(const RMPoint &p) {
+void RMRect::offset(const RMPoint &p) {
 	x1 += p.x;
 	y1 += p.y;
 	x2 += p.x;
@@ -946,12 +946,12 @@ void RMRect::Offset(const RMPoint &p) {
 }
 
 const RMRect &RMRect::operator+=(RMPoint p) {
-	Offset(p);
+	offset(p);
 	return *this;
 }
 
 const RMRect &RMRect::operator-=(RMPoint p) {
-	Offset(-p);
+	offset(-p);
 	return *this;
 }
 
@@ -986,8 +986,8 @@ bool RMRect::operator!=(const RMRect &rc) {
 	return ((x1 != rc.x1) || (y1 != rc.y1) || (x2 != rc.x2) || (y2 != rc.y2));
 }
 
-void RMRect::NormalizeRect(void) {
-	SetRect(MIN(x1, x2), MIN(y1, y2), MAX(x1, x2), MAX(y1, y2));
+void RMRect::normalizeRect(void) {
+	setRect(MIN(x1, x2), MIN(y1, y2), MAX(x1, x2), MAX(y1, y2));
 }
 
 RMDataStream &operator>>(RMDataStream &ds, RMRect &rc) {
@@ -1014,7 +1014,7 @@ RMResUpdate::~RMResUpdate() {
 		_hFile.close();
 }
 
-void RMResUpdate::Init(const Common::String &fileName) {
+void RMResUpdate::init(const Common::String &fileName) {
 	// Open the resource update file
 	if (!_hFile.open(fileName))
 		// It doesn't exist, so exit immediately
@@ -1039,7 +1039,7 @@ void RMResUpdate::Init(const Common::String &fileName) {
 	}
 }
 
-HGLOBAL RMResUpdate::QueryResource(uint32 dwRes) {
+HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 	// If there isn't an update file, return NULL
 	if (!_hFile.isOpen())
 		return NULL;

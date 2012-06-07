@@ -146,7 +146,7 @@ int RMGfxSourceBuffer::init(const byte *buf, int dimx, int dimy, bool bLoadPalet
 
 void RMGfxSourceBuffer::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	create(dimx, dimy, Bpp());
-	ds.Read(_buf, dimx * dimy * Bpp() / 8);
+	ds.read(_buf, dimx * dimy * Bpp() / 8);
 
 	// Invokes the method for preparing the surface (inherited)
 	prepareImage();
@@ -448,7 +448,7 @@ void RMGfxSourceBufferPal::init(RMDataStream &ds, int dimx, int dimy, bool bLoad
 	// Load the palette if necessary
 	if (bLoadPalette) {
 		byte *suxpal = new byte[256 * 3];
-		ds.Read(suxpal, 256 * 3);
+		ds.read(suxpal, 256 * 3);
 		loadPaletteWA(suxpal);
 		delete[] suxpal;
 	}
@@ -512,8 +512,8 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 		u = prim->Src().x1;
 		v = prim->Src().y1;
 
-		width = prim->Src().Width();
-		height = prim->Src().Height();
+		width = prim->Src().width();
+		height = prim->Src().height();
 	}
 
 	if (!clip2D(dst.x1, dst.y1, u, v, width, height, prim->haveSrc(), &bigBuf))
@@ -620,8 +620,8 @@ void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 		u = prim->Src().x1;
 		v = prim->Src().y1;
 
-		width = prim->Src().Width();
-		height = prim->Src().Height();
+		width = prim->Src().width();
+		height = prim->Src().height();
 	}
 
 	if (!clip2D(dst.x1, dst.y1, u, v, width, height, prim->haveSrc(), &bigBuf))
@@ -702,7 +702,7 @@ void RMGfxSourceBuffer8RLE::init(RMDataStream &ds, int dimx, int dimy, bool bLoa
 
 		ds >> size;
 		_buf = new byte[size];
-		ds.Read(_buf, size);
+		ds.read(_buf, size);
 
 		_dimx = dimx;
 		_dimy = dimy;
@@ -1767,7 +1767,7 @@ void RMGfxSourceBuffer8RLEByteAA::init(RMDataStream &ds, int dimx, int dimy, boo
 	if (!bNeedRLECompress) {
 		// Load the anti-aliasing mask
 		_aabuf = new byte[dimx * dimy];
-		ds.Read(_aabuf, dimx * dimy);
+		ds.read(_aabuf, dimx * dimy);
 	}
 }
 
@@ -1805,7 +1805,7 @@ void RMGfxSourceBuffer8RLEWordAA::init(RMDataStream &ds, int dimx, int dimy, boo
 	if (!bNeedRLECompress) {
 		// Load the anti-aliasing mask
 		_aabuf = new byte[dimx * dimy];
-		ds.Read(_aabuf, dimx * dimy);
+		ds.read(_aabuf, dimx * dimy);
 	}
 }
 
@@ -1839,8 +1839,8 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 	if (prim->haveSrc()) {
 		u = prim->Src().x1;
 		v = prim->Src().y1;
-		dimx = prim->Src().Width();
-		dimy = prim->Src().Height();
+		dimx = prim->Src().width();
+		dimy = prim->Src().height();
 	}
 
 	if (prim->haveDst()) {
@@ -1932,11 +1932,11 @@ void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 	buf += rcDst.y1 * bigBuf.getDimx() + rcDst.x1;
 
 	// Loop through the pixels
-	for (j = 0; j < rcDst.Height(); j++) {
-		for (i = 0; i < rcDst.Width(); i++)
+	for (j = 0; j < rcDst.height(); j++) {
+		for (i = 0; i < rcDst.width(); i++)
 			*buf ++ = wFillColor;
 
-		buf += bigBuf.getDimx() - rcDst.Width();
+		buf += bigBuf.getDimx() - rcDst.width();
 	}
 }
 

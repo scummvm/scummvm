@@ -39,18 +39,18 @@ namespace Tony {
 
 #define INIT_GFX16_FROMRAW(dwRes, buf16)                 \
 	raw = new RMResRaw(dwRes);                             \
-	assert(raw->IsValid());                                \
+	assert(raw->isValid());                                \
 	assert((buf16) == NULL);                               \
 	(buf16) = new RMGfxSourceBuffer16(false);              \
-	(buf16)->init(*raw,raw->Width(),raw->Height());        \
+	(buf16)->init(*raw,raw->width(),raw->height());        \
 	delete raw;
 
 #define INIT_GFX8_FROMRAW(raw, dwRes, buf8)              \
 	raw = new RMResRaw(dwRes);                             \
-	assert(raw->IsValid());                                \
+	assert(raw->isValid());                                \
 	assert((buf8) == NULL);                                \
 	(buf8) = new RMGfxSourceBuffer8RLEByte();              \
-	(buf8)->init(*raw, raw->Width(), raw->Height(), true); \
+	(buf8)->init(*raw, raw->width(), raw->height(), true); \
 	delete raw;
 
 
@@ -115,7 +115,7 @@ public:
 	void setSpecialPointer(POINTER ptr) {
 		_nCurSpecialPointer = ptr;
 		if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
-			_specialPointer[ptr - 1]->SetPattern(1);
+			_specialPointer[ptr - 1]->setPattern(1);
 	}
 	POINTER getSpecialPointer(void) {
 		return (POINTER)_nCurSpecialPointer;

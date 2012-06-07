@@ -133,7 +133,7 @@ Common::ErrorCode TonyEngine::init() {
 		return Common::kUnknownError;
 
 	// Initialise the update resources
-	_resUpdate.Init("ROASTED.MPU");
+	_resUpdate.init("ROASTED.MPU");
 
 	// Initialise the music
 	initMusic();
@@ -143,7 +143,7 @@ Common::ErrorCode TonyEngine::init() {
 		return Common::kReadingFailed;
 
 	// Initialise the boxes
-	_theBoxes.Init();
+	_theBoxes.init();
 
 	// Link to the custom graphics engine
 	_theEngine.initCustomDll();
@@ -570,7 +570,7 @@ void TonyEngine::play(void) {
 void TonyEngine::close(void) {
 	closeMusic();
 	CoroScheduler.closeEvent(_hEndOfFrame);
-	_theBoxes.Close();
+	_theBoxes.close();
 	_theEngine.close();
 	_window.close();
 	delete[] _curThumbnail;

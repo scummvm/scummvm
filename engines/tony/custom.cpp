@@ -109,7 +109,7 @@ const char *staccFileNames[] = {
 void ReapplyChangedHotspot(void) {
 	int i;
 	for (i = 0; i < GLOBALS.curChangedHotspot; i++)
-		GLOBALS.Loc->GetItemFromCode(GLOBALS.ChangedHotspot[i].dwCode)->ChangeHotspot(RMPoint(GLOBALS.ChangedHotspot[i].nX, GLOBALS.ChangedHotspot[i].nY));
+		GLOBALS.Loc->getItemFromCode(GLOBALS.ChangedHotspot[i].dwCode)->changeHotspot(RMPoint(GLOBALS.ChangedHotspot[i].nX, GLOBALS.ChangedHotspot[i].nY));
 }
 
 void SaveChangedHotspot(Common::OutSaveFile *f) {
@@ -141,9 +141,9 @@ void LoadChangedHotspot(Common::InSaveFile *f) {
 */
 void MCharResetCodes(void) {
 	for (int i = 0; i < 10; i++)
-		GLOBALS.MCharacter[i].item = GLOBALS.Loc->GetItemFromCode(GLOBALS.MCharacter[i].code);
+		GLOBALS.MCharacter[i].item = GLOBALS.Loc->getItemFromCode(GLOBALS.MCharacter[i].code);
 	for (int i = 0; i < 10; i++)
-		GLOBALS.Character[i].item = GLOBALS.Loc->GetItemFromCode(GLOBALS.Character[i].code);
+		GLOBALS.Character[i].item = GLOBALS.Loc->getItemFromCode(GLOBALS.Character[i].code);
 }
 
 void CharsSaveAll(Common::OutSaveFile *f) {
@@ -168,19 +168,19 @@ void CharsLoadAll(Common::InSaveFile *f) {
 }
 
 DECLARE_CUSTOM_FUNCTION(FaceToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_STANDDOWN);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_STANDDOWN);
 }
 
 DECLARE_CUSTOM_FUNCTION(BackToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_STANDUP);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_STANDUP);
 }
 
 DECLARE_CUSTOM_FUNCTION(LeftToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_STANDLEFT);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_STANDLEFT);
 }
 
 DECLARE_CUSTOM_FUNCTION(RightToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_STANDRIGHT);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_STANDRIGHT);
 }
 
 
@@ -263,8 +263,8 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 	if (GLOBALS.bSkipIdle) return;
 
-	_ctx->msg.Load(dwMessage);
-	if (!_ctx->msg.IsValid()) {
+	_ctx->msg.load(dwMessage);
+	if (!_ctx->msg.isValid()) {
 		return;
 	}
 
@@ -285,15 +285,15 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 	}
 
 	if (GLOBALS.nTonyNextTalkType != GLOBALS.Tony->TALK_NORMAL) {
-		CORO_INVOKE_1(GLOBALS.Tony->StartTalk, GLOBALS.nTonyNextTalkType);
+		CORO_INVOKE_1(GLOBALS.Tony->startTalk, GLOBALS.nTonyNextTalkType);
 
 		if (!GLOBALS.bStaticTalk)
 			GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 	} else {
-		if (_ctx->msg.NumPeriods() > 1)
-			CORO_INVOKE_1(GLOBALS.Tony->StartTalk, GLOBALS.Tony->TALK_FIANCHI);
+		if (_ctx->msg.numPeriods() > 1)
+			CORO_INVOKE_1(GLOBALS.Tony->startTalk, GLOBALS.Tony->TALK_FIANCHI);
 		else
-			CORO_INVOKE_1(GLOBALS.Tony->StartTalk, GLOBALS.Tony->TALK_NORMAL);
+			CORO_INVOKE_1(GLOBALS.Tony->startTalk, GLOBALS.Tony->TALK_NORMAL);
 	}
 
 	if (GLOBALS.curBackText)
@@ -301,7 +301,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 	GLOBALS.bTonyIsSpeaking = true;
 
-	for (_ctx->i = 0; _ctx->i < _ctx->msg.NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg.numPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
 		_ctx->text.setInput(GLOBALS.Input);
 
 		// Alignment
@@ -315,9 +315,9 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 		// Set the position
 		if (nX == 0 && nY == 0)
-			_ctx->text.setPosition(GLOBALS.Tony->Position() - RMPoint(0, 130) - GLOBALS.Loc->ScrollPosition());
+			_ctx->text.setPosition(GLOBALS.Tony->position() - RMPoint(0, 130) - GLOBALS.Loc->scrollPosition());
 		else
-			_ctx->text.setPosition(RMPoint(nX, nY) - GLOBALS.Loc->ScrollPosition());
+			_ctx->text.setPosition(RMPoint(nX, nY) - GLOBALS.Loc->scrollPosition());
 
 		// Handling for always display
 		if (GLOBALS.bAlwaysDisplay) {
@@ -359,13 +359,13 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 	if (GLOBALS.curBackText)
 		GLOBALS.curBackText->show();
 
-	CORO_INVOKE_0(GLOBALS.Tony->EndTalk);
+	CORO_INVOKE_0(GLOBALS.Tony->endTalk);
 
 	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(ChangeBoxStatus)(CORO_PARAM, uint32 nLoc, uint32 nBox, uint32 nStatus, uint32) {
-	GLOBALS.Boxes->ChangeBoxStatus(nLoc, nBox, nStatus);
+	GLOBALS.Boxes->changeBoxStatus(nLoc, nBox, nStatus);
 }
 
 
@@ -408,16 +408,16 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 	_ctx->msg = new RMMessage(nMsg);
 
 	GLOBALS.SFM_nLoc = GLOBALS.Loc->TEMPGetNumLoc();
-	GLOBALS.SFM_pt = GLOBALS.Tony->Position();
+	GLOBALS.SFM_pt = GLOBALS.Tony->position();
 
 	if (GLOBALS.bSkipIdle)
 		return;
 
 	CORO_INVOKE_2(GLOBALS.UnloadLocation, false, NULL);
-	GLOBALS.Tony->Hide();
+	GLOBALS.Tony->hide();
 	GLOBALS.Unfreeze();
 
-	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
 		_ctx->text.setInput(GLOBALS.Input);
 
 		// Alignment
@@ -474,7 +474,7 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(CORO_PARAM, uint32 bNotEnableTony,
 	GLOBALS.Freeze();
 	GLOBALS.LoadLocation(GLOBALS.SFM_nLoc, RMPoint(GLOBALS.SFM_pt.x, GLOBALS.SFM_pt.y), RMPoint(-1, -1));
 	if (!bNotEnableTony)
-		GLOBALS.Tony->Show();
+		GLOBALS.Tony->show();
 	GLOBALS.Unfreeze();
 
 	MCharResetCodes();
@@ -574,11 +574,11 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 }
 
 DECLARE_CUSTOM_FUNCTION(SetLocStartPosition)(CORO_PARAM, uint32 nLoc, uint32 lX, uint32 lY, uint32) {
-	GLOBALS.StartLocPos[nLoc].Set(lX, lY);
+	GLOBALS.StartLocPos[nLoc].set(lX, lY);
 }
 
 DECLARE_CUSTOM_FUNCTION(SaveTonyPosition)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.saveTonyPos = GLOBALS.Tony->Position();
+	GLOBALS.saveTonyPos = GLOBALS.Tony->position();
 	GLOBALS.saveTonyLoc = GLOBALS.Loc->TEMPGetNumLoc();
 }
 
@@ -604,7 +604,7 @@ DECLARE_CUSTOM_FUNCTION(EnableInput)(CORO_PARAM, uint32, uint32, uint32, uint32)
 }
 
 DECLARE_CUSTOM_FUNCTION(StopTony)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.Tony->StopNoAction(coroParam);
+	GLOBALS.Tony->stopNoAction(coroParam);
 }
 
 DECLARE_CUSTOM_FUNCTION(CustEnableGUI)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -624,11 +624,11 @@ void TonyGenericTake1(CORO_PARAM, uint32 nDirection) {
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	GLOBALS.Tony->Take(nDirection, 0);
+	GLOBALS.Tony->take(nDirection, 0);
 	GLOBALS.Unfreeze();
 
 	if (!GLOBALS.bSkipIdle)
-		CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 
 	CORO_END_CODE;
 }
@@ -640,14 +640,14 @@ void TonyGenericTake2(CORO_PARAM, uint32 nDirection) {
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	GLOBALS.Tony->Take(nDirection, 1);
+	GLOBALS.Tony->take(nDirection, 1);
 	GLOBALS.Unfreeze();
 
 	if (!GLOBALS.bSkipIdle)
-		CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 
 	GLOBALS.Freeze();
-	GLOBALS.Tony->Take(nDirection, 2);
+	GLOBALS.Tony->take(nDirection, 2);
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -660,11 +660,11 @@ void TonyGenericPut1(CORO_PARAM, uint32 nDirection) {
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	GLOBALS.Tony->Put(nDirection, 0);
+	GLOBALS.Tony->put(nDirection, 0);
 	GLOBALS.Unfreeze();
 
 	if (!GLOBALS.bSkipIdle)
-		CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 
 	CORO_END_CODE;
 }
@@ -676,14 +676,14 @@ void TonyGenericPut2(CORO_PARAM, uint32 nDirection) {
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	GLOBALS.Tony->Put(nDirection, 1);
+	GLOBALS.Tony->put(nDirection, 1);
 	GLOBALS.Unfreeze();
 
 	if (!GLOBALS.bSkipIdle)
-		CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 
 	GLOBALS.Freeze();
-	GLOBALS.Tony->Put(nDirection, 2);
+	GLOBALS.Tony->put(nDirection, 2);
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -749,9 +749,9 @@ DECLARE_CUSTOM_FUNCTION(TonyPutDown2)(CORO_PARAM, uint32, uint32, uint32, uint32
 
 DECLARE_CUSTOM_FUNCTION(TonyPerTerra)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
 	if (dwParte == 0)
-		GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_PERTERRALEFT);
+		GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_PERTERRALEFT);
 	else
-		GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_PERTERRARIGHT);
+		GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_PERTERRARIGHT);
 }
 
 DECLARE_CUSTOM_FUNCTION(TonySiRialza)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
@@ -761,18 +761,18 @@ DECLARE_CUSTOM_FUNCTION(TonySiRialza)(CORO_PARAM, uint32 dwParte, uint32, uint32
 	CORO_BEGIN_CODE(_ctx);
 
 	if (dwParte == 0)
-		GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_SIRIALZALEFT);
+		GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_SIRIALZALEFT);
 	else
-		GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_SIRIALZARIGHT);
+		GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_SIRIALZARIGHT);
 
 	if (!GLOBALS.bSkipIdle)
-		CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 
 	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyPastorella)(CORO_PARAM, uint32 bIsPast, uint32, uint32, uint32) {
-	GLOBALS.Tony->SetPastorella(bIsPast);
+	GLOBALS.Tony->setPastorella(bIsPast);
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyFischietto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -781,11 +781,11 @@ DECLARE_CUSTOM_FUNCTION(TonyFischietto)(CORO_PARAM, uint32, uint32, uint32, uint
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_FISCHIETTORIGHT);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_FISCHIETTORIGHT);
 	if (!GLOBALS.bSkipIdle)
-		CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_STANDRIGHT);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_STANDRIGHT);
 
 	CORO_END_CODE;
 }
@@ -834,31 +834,31 @@ DECLARE_CUSTOM_FUNCTION(TonySpaventatoSenzaMani)(CORO_PARAM, uint32 dwText, uint
 DECLARE_CUSTOM_FUNCTION(TonyConMartello)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONMARTELLO;
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_CONMARTELLO);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_CONMARTELLO);
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyConBicchiere)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONBICCHIERE;
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_CONBICCHIERE);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_CONBICCHIERE);
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyConVerme)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONVERME;
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_CONVERME);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_CONVERME);
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyConCorda)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONCORDA;
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_CONCORDA);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_CONCORDA);
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyConSegretaria)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONSEGRETARIA;
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_CONSEGRETARIA);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_CONSEGRETARIA);
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyConConiglioANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
@@ -889,7 +889,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConPupazzoStart)(CORO_PARAM, uint32, uint32, uint32,
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONPUPAZZOSTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_CONPUPAZZOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONPUPAZZOSTATIC);
 
 	CORO_END_CODE;
 }
@@ -900,7 +900,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConPupazzoEnd)(CORO_PARAM, uint32, uint32, uint32, u
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_CONPUPAZZOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONPUPAZZOSTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -915,7 +915,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConConiglioStart)(CORO_PARAM, uint32, uint32, uint32
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONCONIGLIOSTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_CONCONIGLIOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONCONIGLIOSTATIC);
 
 	CORO_END_CODE;
 }
@@ -926,7 +926,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConConiglioEnd)(CORO_PARAM, uint32, uint32, uint32, 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_CONCONIGLIOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONCONIGLIOSTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -941,7 +941,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConRicettaStart)(CORO_PARAM, uint32, uint32, uint32,
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONRICETTASTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_CONRICETTASTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONRICETTASTATIC);
 
 	CORO_END_CODE;
 }
@@ -952,7 +952,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConRicettaEnd)(CORO_PARAM, uint32, uint32, uint32, u
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_CONRICETTASTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONRICETTASTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -967,7 +967,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConCarteStart)(CORO_PARAM, uint32, uint32, uint32, u
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONCARTESTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_CONCARTESTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONCARTESTATIC);
 
 	CORO_END_CODE;
 }
@@ -978,7 +978,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConCarteEnd)(CORO_PARAM, uint32, uint32, uint32, uin
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_CONCARTESTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONCARTESTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -993,7 +993,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoStart)(CORO_PARAM, uint32, uint32, uint32
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONTACCUINOSTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_CONTACCUINOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONTACCUINOSTATIC);
 
 	CORO_END_CODE;
 }
@@ -1004,7 +1004,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoEnd)(CORO_PARAM, uint32, uint32, uint32, 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_CONTACCUINOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONTACCUINOSTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -1019,7 +1019,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConMegafonoStart)(CORO_PARAM, uint32, uint32, uint32
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONMEGAFONOSTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_CONMEGAFONOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONMEGAFONOSTATIC);
 
 	CORO_END_CODE;
 }
@@ -1030,7 +1030,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConMegafonoEnd)(CORO_PARAM, uint32, uint32, uint32, 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_CONMEGAFONOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONMEGAFONOSTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -1045,7 +1045,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConBarbaStart)(CORO_PARAM, uint32, uint32, uint32, u
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONBARBASTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_CONBARBASTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONBARBASTATIC);
 
 	CORO_END_CODE;
 }
@@ -1056,7 +1056,7 @@ DECLARE_CUSTOM_FUNCTION(TonyConBarbaEnd)(CORO_PARAM, uint32, uint32, uint32, uin
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_CONBARBASTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONBARBASTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -1071,7 +1071,7 @@ DECLARE_CUSTOM_FUNCTION(TonySpaventatoStart)(CORO_PARAM, uint32, uint32, uint32,
 
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_SPAVENTATOSTATIC;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->StartStatic, GLOBALS.Tony->TALK_SPAVENTATOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_SPAVENTATOSTATIC);
 
 	CORO_END_CODE;
 }
@@ -1082,7 +1082,7 @@ DECLARE_CUSTOM_FUNCTION(TonySpaventatoEnd)(CORO_PARAM, uint32, uint32, uint32, u
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->EndStatic, GLOBALS.Tony->TALK_SPAVENTATOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_SPAVENTATOSTATIC);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -1101,8 +1101,8 @@ DECLARE_CUSTOM_FUNCTION(TonySniffaLeft)(CORO_PARAM, uint32, uint32, uint32, uint
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_SNIFFA_LEFT);
-	CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_SNIFFA_LEFT);
+	CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 	CORO_INVOKE_4(LeftToMe, 0, 0, 0, 0);
 
 	CORO_END_CODE;
@@ -1114,8 +1114,8 @@ DECLARE_CUSTOM_FUNCTION(TonySniffaRight)(CORO_PARAM, uint32, uint32, uint32, uin
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Tony->SetPattern(GLOBALS.Tony->PAT_SNIFFA_RIGHT);
-	CORO_INVOKE_0(GLOBALS.Tony->WaitForEndPattern);
+	GLOBALS.Tony->setPattern(GLOBALS.Tony->PAT_SNIFFA_RIGHT);
+	CORO_INVOKE_0(GLOBALS.Tony->waitForEndPattern);
 	CORO_INVOKE_4(RightToMe, 0, 0, 0, 0);
 
 	CORO_END_CODE;
@@ -1160,11 +1160,11 @@ DECLARE_CUSTOM_FUNCTION(TonyMacbeth)(CORO_PARAM, uint32 nPos, uint32, uint32, ui
 
 
 DECLARE_CUSTOM_FUNCTION(EnableTony)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.Tony->Show();
+	GLOBALS.Tony->show();
 }
 
 DECLARE_CUSTOM_FUNCTION(DisableTony)(CORO_PARAM, uint32 bShowOmbra, uint32, uint32, uint32) {
-	GLOBALS.Tony->Hide(bShowOmbra);
+	GLOBALS.Tony->hide(bShowOmbra);
 }
 
 DECLARE_CUSTOM_FUNCTION(WaitForPatternEnd)(CORO_PARAM, uint32 nItem, uint32, uint32, uint32) {
@@ -1174,17 +1174,17 @@ DECLARE_CUSTOM_FUNCTION(WaitForPatternEnd)(CORO_PARAM, uint32 nItem, uint32, uin
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->item = GLOBALS.Loc->GetItemFromCode(nItem);
+	_ctx->item = GLOBALS.Loc->getItemFromCode(nItem);
 
 	if (!GLOBALS.bSkipIdle && _ctx->item != NULL)
-		CORO_INVOKE_1(_ctx->item->WaitForEndPattern, GLOBALS.hSkipIdle);
+		CORO_INVOKE_1(_ctx->item->waitForEndPattern, GLOBALS.hSkipIdle);
 
 	CORO_END_CODE;
 }
 
 
 DECLARE_CUSTOM_FUNCTION(SetTonyPosition)(CORO_PARAM, uint32 nX, uint32 nY, uint32 nLoc, uint32) {
-	GLOBALS.Tony->SetPosition(RMPoint(nX, nY), nLoc);
+	GLOBALS.Tony->setPosition(RMPoint(nX, nY), nLoc);
 }
 
 DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint32) {
@@ -1193,16 +1193,16 @@ DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(CORO_PARAM, uint32 nX, uint32 nY, uint3
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->Move, RMPoint(nX, nY));
+	CORO_INVOKE_1(GLOBALS.Tony->move, RMPoint(nX, nY));
 
 	if (!GLOBALS.bSkipIdle)
-		CORO_INVOKE_0(GLOBALS.Tony->WaitForEndMovement);
+		CORO_INVOKE_0(GLOBALS.Tony->waitForEndMovement);
 
 	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(MoveTony)(CORO_PARAM, uint32 nX, uint32 nY, uint32, uint32) {
-	GLOBALS.Tony->Move(coroParam, RMPoint(nX, nY));
+	GLOBALS.Tony->move(coroParam, RMPoint(nX, nY));
 }
 
 DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) {
@@ -1217,34 +1217,34 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32
 	_ctx->lx = (int32)nX;
 	_ctx->ly = (int32)nY;
 
-	_ctx->pt = GLOBALS.Loc->ScrollPosition();
+	_ctx->pt = GLOBALS.Loc->scrollPosition();
 
 	while ((_ctx->lx != 0 || _ctx->ly != 0) && !GLOBALS.bSkipIdle) {
 		if (_ctx->lx > 0) {
 			_ctx->lx -= (int32)sX;
 			if (_ctx->lx < 0) _ctx->lx = 0;
-			_ctx->pt.Offset((int32)sX, 0);
+			_ctx->pt.offset((int32)sX, 0);
 		} else if (_ctx->lx < 0) {
 			_ctx->lx += (int32)sX;
 			if (_ctx->lx > 0) _ctx->lx = 0;
-			_ctx->pt.Offset(-(int32)sX, 0);
+			_ctx->pt.offset(-(int32)sX, 0);
 		}
 
 		if (_ctx->ly > 0) {
 			_ctx->ly -= sY;
 			if (_ctx->ly < 0) _ctx->ly = 0;
-			_ctx->pt.Offset(0, sY);
+			_ctx->pt.offset(0, sY);
 		} else if (_ctx->ly < 0) {
 			_ctx->ly += sY;
 			if (_ctx->ly > 0) _ctx->ly = 0;
-			_ctx->pt.Offset(0, -(int32)sY);
+			_ctx->pt.offset(0, -(int32)sY);
 		}
 
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
 		GLOBALS.Freeze();
-		GLOBALS.Loc->SetScrollPosition(_ctx->pt);
-		GLOBALS.Tony->SetScrollPosition(_ctx->pt);
+		GLOBALS.Loc->setScrollPosition(_ctx->pt);
+		GLOBALS.Tony->setScrollPosition(_ctx->pt);
 		GLOBALS.Unfreeze();
 	}
 
@@ -1276,7 +1276,7 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 	_ctx->stepX = sX;
 	_ctx->stepY = sY;
 
-	_ctx->startpt = GLOBALS.Loc->ScrollPosition();
+	_ctx->startpt = GLOBALS.Loc->scrollPosition();
 
 	_ctx->dwStartTime = _vm->getTime();
 
@@ -1308,8 +1308,8 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
 		GLOBALS.Freeze();
-		GLOBALS.Loc->SetScrollPosition(_ctx->pt);
-		GLOBALS.Tony->SetScrollPosition(_ctx->pt);
+		GLOBALS.Loc->setScrollPosition(_ctx->pt);
+		GLOBALS.Tony->setScrollPosition(_ctx->pt);
 		GLOBALS.Unfreeze();
 
 	}
@@ -1329,8 +1329,8 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 	}
 
 	GLOBALS.Freeze();
-	GLOBALS.Loc->SetScrollPosition(_ctx->pt);
-	GLOBALS.Tony->SetScrollPosition(_ctx->pt);
+	GLOBALS.Loc->setScrollPosition(_ctx->pt);
+	GLOBALS.Tony->setScrollPosition(_ctx->pt);
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -1354,7 +1354,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(CORO_PARAM, uint32 dwCode, uint32 nX, uin
 		GLOBALS.curChangedHotspot++;
 	}
 
-	GLOBALS.Loc->GetItemFromCode(dwCode)->ChangeHotspot(RMPoint(nX, nY));
+	GLOBALS.Loc->getItemFromCode(dwCode)->changeHotspot(RMPoint(nX, nY));
 }
 
 
@@ -1384,8 +1384,8 @@ DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
 		GLOBALS.Freeze();
-		GLOBALS.Loc->SetFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
-		GLOBALS.Tony->SetFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
+		GLOBALS.Loc->setFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
+		GLOBALS.Tony->setFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
 		GLOBALS.Unfreeze();
 
 		_ctx->i = _vm->_randomSource.getRandomNumber(2);
@@ -1397,8 +1397,8 @@ DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32
 	}
 
 	GLOBALS.Freeze();
-	GLOBALS.Loc->SetFixedScroll(RMPoint(0, 0));
-	GLOBALS.Tony->SetFixedScroll(RMPoint(0, 0));
+	GLOBALS.Loc->setFixedScroll(RMPoint(0, 0));
+	GLOBALS.Tony->setFixedScroll(RMPoint(0, 0));
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -1413,7 +1413,7 @@ DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32
 DECLARE_CUSTOM_FUNCTION(CharSetCode)(CORO_PARAM, uint32 nChar, uint32 nCode, uint32, uint32) {
 	assert(nChar < 16);
 	GLOBALS.Character[nChar].code = nCode;
-	GLOBALS.Character[nChar].item = GLOBALS.Loc->GetItemFromCode(nCode);
+	GLOBALS.Character[nChar].item = GLOBALS.Loc->getItemFromCode(nCode);
 	GLOBALS.Character[nChar].r = 255;
 	GLOBALS.Character[nChar].g = 255;
 	GLOBALS.Character[nChar].b = 255;
@@ -1461,18 +1461,18 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 	_ctx->curOffset = 0;
 
 	assert(nChar < 16);
-	_ctx->pt = GLOBALS.Character[nChar].item->CalculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->ScrollPosition();
+	_ctx->pt = GLOBALS.Character[nChar].item->calculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->scrollPosition();
 
 	if (GLOBALS.Character[nChar].starttalkpattern != 0) {
 		GLOBALS.Freeze();
-		GLOBALS.Character[nChar].item->SetPattern(GLOBALS.Character[nChar].starttalkpattern);
+		GLOBALS.Character[nChar].item->setPattern(GLOBALS.Character[nChar].starttalkpattern);
 		GLOBALS.Unfreeze();
 
-		CORO_INVOKE_0(GLOBALS.Character[nChar].item->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Character[nChar].item->waitForEndPattern);
 	}
 
 	GLOBALS.Freeze();
-	GLOBALS.Character[nChar].item->SetPattern(GLOBALS.Character[nChar].talkpattern);
+	GLOBALS.Character[nChar].item->setPattern(GLOBALS.Character[nChar].talkpattern);
 	GLOBALS.Unfreeze();
 
 	_ctx->curVoc = SearchVoiceHeader(0, dwMessage);
@@ -1483,7 +1483,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		_ctx->curOffset = _ctx->curVoc->_offset;
 	}
 
-	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
 		if (bIsBack) {
 			GLOBALS.curBackText = _ctx->text = new RMTextDialogScrolling(GLOBALS.Loc);
 			if (GLOBALS.bTonyIsSpeaking)
@@ -1545,13 +1545,13 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 
 	if (GLOBALS.Character[nChar].endtalkpattern != 0) {
 		GLOBALS.Freeze();
-		GLOBALS.Character[nChar].item->SetPattern(GLOBALS.Character[nChar].endtalkpattern);
+		GLOBALS.Character[nChar].item->setPattern(GLOBALS.Character[nChar].endtalkpattern);
 		GLOBALS.Unfreeze();
-		CORO_INVOKE_0(GLOBALS.Character[nChar].item->WaitForEndPattern);
+		CORO_INVOKE_0(GLOBALS.Character[nChar].item->waitForEndPattern);
 	}
 
 	GLOBALS.Freeze();
-	GLOBALS.Character[nChar].item->SetPattern(GLOBALS.Character[nChar].standpattern);
+	GLOBALS.Character[nChar].item->setPattern(GLOBALS.Character[nChar].standpattern);
 	GLOBALS.Unfreeze();
 	delete _ctx->msg;
 
@@ -1581,7 +1581,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSetCode)(CORO_PARAM, uint32 nChar, uint32 nCode, ui
 	if (nCode == 0)
 		GLOBALS.MCharacter[nChar].item = NULL;
 	else
-		GLOBALS.MCharacter[nChar].item = GLOBALS.Loc->GetItemFromCode(nCode);
+		GLOBALS.MCharacter[nChar].item = GLOBALS.Loc->getItemFromCode(nCode);
 	GLOBALS.MCharacter[nChar].r = 255;
 	GLOBALS.MCharacter[nChar].g = 255;
 	GLOBALS.MCharacter[nChar].b = 255;
@@ -1598,7 +1598,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSetCode)(CORO_PARAM, uint32 nChar, uint32 nCode, ui
 }
 
 DECLARE_CUSTOM_FUNCTION(MCharResetCode)(CORO_PARAM, uint32 nChar, uint32, uint32, uint32) {
-	GLOBALS.MCharacter[nChar].item = GLOBALS.Loc->GetItemFromCode(GLOBALS.MCharacter[nChar].code);
+	GLOBALS.MCharacter[nChar].item = GLOBALS.Loc->getItemFromCode(GLOBALS.MCharacter[nChar].code);
 }
 
 
@@ -1670,7 +1670,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 	// Calculates the position of the text according to the current frame
 	if (GLOBALS.MCharacter[nChar].x == -1)
-		_ctx->pt = GLOBALS.MCharacter[nChar].item->CalculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->ScrollPosition();
+		_ctx->pt = GLOBALS.MCharacter[nChar].item->calculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->scrollPosition();
 	else
 		_ctx->pt = RMPoint(GLOBALS.MCharacter[nChar].x, GLOBALS.MCharacter[nChar].y);
 
@@ -1680,7 +1680,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 	// Try to run the custom function to initialise the speech
 	if (GLOBALS.MCharacter[nChar].item) {
-		_ctx->h = mpalQueryDoAction(30, GLOBALS.MCharacter[nChar].item->MpalCode(), _ctx->parm);
+		_ctx->h = mpalQueryDoAction(30, GLOBALS.MCharacter[nChar].item->mpalCode(), _ctx->parm);
 		if (_ctx->h != CORO_INVALID_PID_VALUE) {
 			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 		}
@@ -1695,7 +1695,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		_ctx->curOffset = _ctx->curVoc->_offset;
 	}
 
-	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods() && !GLOBALS.bSkipIdle; _ctx->i++) {
 		// Create a different object depending on whether it's background or not
 		if (bIsBack) {
 			GLOBALS.curBackText = _ctx->text = new RMTextDialogScrolling(GLOBALS.Loc);
@@ -1759,18 +1759,13 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 	// Try to run the custom function to close the speech
 	if (GLOBALS.MCharacter[nChar].item) {
-		_ctx->h = mpalQueryDoAction(31, GLOBALS.MCharacter[nChar].item->MpalCode(), _ctx->parm);
+		_ctx->h = mpalQueryDoAction(31, GLOBALS.MCharacter[nChar].item->mpalCode(), _ctx->parm);
 		if (_ctx->h != CORO_INVALID_PID_VALUE)
 			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 	}
 
 	CORO_END_CODE;
 }
-
-
-
-
-
 
 /*
  *  Dialoghi
@@ -1815,46 +1810,46 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	if (nPers == 0) {
 		_ctx->text = new RMTextDialog;
 		_ctx->text->setColor(0, 255, 0);
-		_ctx->text->setPosition(GLOBALS.Tony->Position() - RMPoint(0, 130) - GLOBALS.Loc->ScrollPosition());
+		_ctx->text->setPosition(GLOBALS.Tony->position() - RMPoint(0, 130) - GLOBALS.Loc->scrollPosition());
 		_ctx->text->writeText(_ctx->string, 0);
 
 		if (GLOBALS.dwTonyNumTexts > 0) {
 			if (!GLOBALS.bTonyInTexts) {
 				if (GLOBALS.nTonyNextTalkType != GLOBALS.Tony->TALK_NORMAL) {
-					CORO_INVOKE_1(GLOBALS.Tony->StartTalk, GLOBALS.nTonyNextTalkType);
+					CORO_INVOKE_1(GLOBALS.Tony->startTalk, GLOBALS.nTonyNextTalkType);
 					if (!GLOBALS.bStaticTalk)
 						GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 				} else
-					CORO_INVOKE_1(GLOBALS.Tony->StartTalk, GLOBALS.Tony->TALK_NORMAL);
+					CORO_INVOKE_1(GLOBALS.Tony->startTalk, GLOBALS.Tony->TALK_NORMAL);
 
 				GLOBALS.bTonyInTexts = true;
 			}
 			GLOBALS.dwTonyNumTexts--;
 		} else {
-			CORO_INVOKE_1(GLOBALS.Tony->StartTalk, GLOBALS.nTonyNextTalkType);
+			CORO_INVOKE_1(GLOBALS.Tony->startTalk, GLOBALS.nTonyNextTalkType);
 			if (!GLOBALS.bStaticTalk)
 				GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 		}
 	} else if (!GLOBALS.IsMChar[nPers]) {
 		_ctx->text = new RMTextDialog;
 
-		_ctx->pt = GLOBALS.Character[nPers].item->CalculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->ScrollPosition();
+		_ctx->pt = GLOBALS.Character[nPers].item->calculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->scrollPosition();
 
 		if (GLOBALS.Character[nPers].starttalkpattern != 0) {
 			GLOBALS.Freeze();
-			GLOBALS.Character[nPers].item->SetPattern(GLOBALS.Character[nPers].starttalkpattern);
+			GLOBALS.Character[nPers].item->setPattern(GLOBALS.Character[nPers].starttalkpattern);
 			GLOBALS.Unfreeze();
-			CORO_INVOKE_0(GLOBALS.Character[nPers].item->WaitForEndPattern);
+			CORO_INVOKE_0(GLOBALS.Character[nPers].item->waitForEndPattern);
 		}
 
-		GLOBALS.Character[nPers].item->SetPattern(GLOBALS.Character[nPers].talkpattern);
+		GLOBALS.Character[nPers].item->setPattern(GLOBALS.Character[nPers].talkpattern);
 
 		_ctx->text->setColor(GLOBALS.Character[nPers].r, GLOBALS.Character[nPers].g, GLOBALS.Character[nPers].b);
 		_ctx->text->writeText(_ctx->string, 0);
 		_ctx->text->setPosition(_ctx->pt);
 	} else {
 		if (GLOBALS.MCharacter[nPers].x == -1)
-			_ctx->pt = GLOBALS.MCharacter[nPers].item->CalculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->ScrollPosition();
+			_ctx->pt = GLOBALS.MCharacter[nPers].item->calculatePos() - RMPoint(-60, 20) - GLOBALS.Loc->scrollPosition();
 		else
 			_ctx->pt = RMPoint(GLOBALS.MCharacter[nPers].x, GLOBALS.MCharacter[nPers].y);
 
@@ -1866,7 +1861,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			GLOBALS.MCharacter[nPers].numtexts--;
 		} else {
 			// Try to run the custom function to initialise the speech
-			_ctx->h = mpalQueryDoAction(30, GLOBALS.MCharacter[nPers].item->MpalCode(), _ctx->parm);
+			_ctx->h = mpalQueryDoAction(30, GLOBALS.MCharacter[nPers].item->mpalCode(), _ctx->parm);
 			if (_ctx->h != CORO_INVALID_PID_VALUE)
 				CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 
@@ -1922,18 +1917,18 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		if (!GLOBALS.IsMChar[nPers]) {
 			if (GLOBALS.Character[nPers].endtalkpattern != 0) {
 				GLOBALS.Freeze();
-				GLOBALS.Character[nPers].item->SetPattern(GLOBALS.Character[nPers].endtalkpattern);
+				GLOBALS.Character[nPers].item->setPattern(GLOBALS.Character[nPers].endtalkpattern);
 				GLOBALS.Unfreeze();
-				CORO_INVOKE_0(GLOBALS.Character[nPers].item->WaitForEndPattern);
+				CORO_INVOKE_0(GLOBALS.Character[nPers].item->waitForEndPattern);
 			}
 
-			GLOBALS.Character[nPers].item->SetPattern(GLOBALS.Character[nPers].standpattern);
+			GLOBALS.Character[nPers].item->setPattern(GLOBALS.Character[nPers].standpattern);
 			delete _ctx->text;
 		} else {
 			if ((GLOBALS.MCharacter[nPers].bInTexts && GLOBALS.MCharacter[nPers].numtexts == 0) || !GLOBALS.MCharacter[nPers].bInTexts) {
 				// Try to run the custom function to close the speech
 				GLOBALS.MCharacter[nPers].curTalk = (GLOBALS.MCharacter[nPers].curTalk % 10) + GLOBALS.MCharacter[nPers].curgroup * 10;
-				_ctx->h = mpalQueryDoAction(31, GLOBALS.MCharacter[nPers].item->MpalCode(), GLOBALS.MCharacter[nPers].curTalk);
+				_ctx->h = mpalQueryDoAction(31, GLOBALS.MCharacter[nPers].item->mpalCode(), GLOBALS.MCharacter[nPers].curTalk);
 				if (_ctx->h != CORO_INVALID_PID_VALUE)
 					CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 
@@ -1946,7 +1941,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		}
 	} else {
 		if ((GLOBALS.dwTonyNumTexts == 0 && GLOBALS.bTonyInTexts) || !GLOBALS.bTonyInTexts) {
-			CORO_INVOKE_0(GLOBALS.Tony->EndTalk);
+			CORO_INVOKE_0(GLOBALS.Tony->endTalk);
 			GLOBALS.dwTonyNumTexts = 0;
 			GLOBALS.bTonyInTexts = false;
 		}
@@ -2201,11 +2196,11 @@ DECLARE_CUSTOM_FUNCTION(PlayStacchetto)(CORO_PARAM, uint32 nMusic, uint32 nFX, u
 
 DECLARE_CUSTOM_FUNCTION(PlayItemSfx)(CORO_PARAM, uint32 nItem, uint32 nSFX, uint32, uint32) {
 	if (nItem == 0) {
-		GLOBALS.Tony->PlaySfx(nSFX);
+		GLOBALS.Tony->playSfx(nSFX);
 	} else {
-		RMItem *item = GLOBALS.Loc->GetItemFromCode(nItem);
+		RMItem *item = GLOBALS.Loc->getItemFromCode(nItem);
 		if (item)
-			item->PlaySfx(nSFX);
+			item->playSfx(nSFX);
 	}
 }
 
@@ -2325,9 +2320,9 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 	_ctx->msg = new RMMessage(nMsg);
 	_ctx->hDisable = CoroScheduler.createEvent(true, false);
 
-	_ctx->text = new RMTextDialog[_ctx->msg->NumPeriods()];
+	_ctx->text = new RMTextDialog[_ctx->msg->numPeriods()];
 
-	for (_ctx->i = 0; _ctx->i < _ctx->msg->NumPeriods(); _ctx->i++)     {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods(); _ctx->i++)     {
 		_ctx->text[_ctx->i].setInput(GLOBALS.Input);
 
 		// Alignment

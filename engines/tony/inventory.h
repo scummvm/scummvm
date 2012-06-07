@@ -123,11 +123,11 @@ public:
 	// Add an item to the inventory
 	void addItem(int code);
 	RMInventory &operator+=(RMItem *item) {
-		addItem(item->MpalCode());
+		addItem(item->mpalCode());
 		return *this;
 	}
 	RMInventory &operator+=(RMItem &item) {
-		addItem(item.MpalCode());
+		addItem(item.mpalCode());
 		return *this;
 	}
 	RMInventory &operator+=(int code) {

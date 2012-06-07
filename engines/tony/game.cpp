@@ -124,11 +124,11 @@ void mainSetPalesati(bool bPalesati) {
 
 RMOptionButton::RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState) {
 	RMResRaw raw(dwRes);
-	assert(raw.IsValid());
+	assert(raw.isValid());
 	_buf = new RMGfxSourceBuffer16(false);
-	_buf->init(raw, raw.Width(), raw.Height());
+	_buf->init(raw, raw.width(), raw.height());
 
-	_rect.SetRect(pt.x, pt.y, pt.x + raw.Width() - 1, pt.y + raw.Height() - 1);
+	_rect.setRect(pt.x, pt.y, pt.x + raw.width() - 1, pt.y + raw.height() - 1);
 	_bActive = false;
 	_bHasGfx = true;
 	_bDoubleState = bDoubleState;
@@ -149,7 +149,7 @@ RMOptionButton::~RMOptionButton() {
 
 bool RMOptionButton::doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick) {
 	if (!_bDoubleState) {
-		if (_rect.PtInRect(mousePos)) {
+		if (_rect.ptInRect(mousePos)) {
 			if (!_bActive) {
 				_bActive = true;
 				return true;
@@ -161,7 +161,7 @@ bool RMOptionButton::doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRig
 			}
 		}
 	} else {
-		if (bLeftClick && _rect.PtInRect(mousePos)) {
+		if (bLeftClick && _rect.ptInRect(mousePos)) {
 			_bActive = !_bActive;
 			return true;
 		}
@@ -511,12 +511,12 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 			RMString s;
 
 			if (_bEditSaveName && _nEditPos == _ctx->i)
-				s.Format("%02d)%s*", _statePos + _ctx->i, _EditName);
+				s.format("%02d)%s*", _statePos + _ctx->i, _EditName);
 			else {
 				if (_statePos == 0 && _ctx->i == 0)
-					s.Format("Autosave");
+					s.format("Autosave");
 				else
-					s.Format("%02d)%s", _statePos + _ctx->i, (const char *)_curThumbName[_ctx->i]);
+					s.format("%02d)%s", _statePos + _ctx->i, (const char *)_curThumbName[_ctx->i]);
 			}
 
 			_ctx->num[_ctx->i] = new RMText;
@@ -585,10 +585,10 @@ void RMOptionScreen::initState(CORO_PARAM) {
 		error("Invalid state");
 	}
 
-	assert(_ctx->raw->IsValid());
+	assert(_ctx->raw->isValid());
 	assert(_menu == NULL);
 	_menu = new RMGfxSourceBuffer16(false);
-	_menu->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+	_menu->init(*_ctx->raw, _ctx->raw->width(), _ctx->raw->height());
 	delete _ctx->raw;
 
 	if (_nState == MENULOAD || _nState == MENUSAVE) {
@@ -647,10 +647,10 @@ void RMOptionScreen::initState(CORO_PARAM) {
 		_ButtonSoundMenu = new RMOptionButton(RMRect(212, 32, 306, 64));
 
 		_ctx->raw = new RMResRaw(20021);
-		assert(_ctx->raw->IsValid());
+		assert(_ctx->raw->isValid());
 		assert(_QuitConfirm == NULL);
 		_QuitConfirm = new RMGfxSourceBuffer16(false);
-		_QuitConfirm->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+		_QuitConfirm->init(*_ctx->raw, _ctx->raw->width(), _ctx->raw->height());
 		delete _ctx->raw;
 
 		assert(_ButtonQuitYes == NULL);
@@ -662,10 +662,10 @@ void RMOptionScreen::initState(CORO_PARAM) {
 
 		if (_bNoLoadSave) {
 			_ctx->raw = new RMResRaw(20028);
-			assert(_ctx->raw->IsValid());
+			assert(_ctx->raw->isValid());
 			assert(_HideLoadSave == NULL);
 			_HideLoadSave = new RMGfxSourceBuffer16(false);
-			_HideLoadSave->init(*_ctx->raw, _ctx->raw->Width(), _ctx->raw->Height());
+			_HideLoadSave->init(*_ctx->raw, _ctx->raw->width(), _ctx->raw->height());
 			delete _ctx->raw;
 		}
 
@@ -1485,7 +1485,7 @@ void RMPointer::init(void) {
 		RMResRaw res(RES_P_GO + i);
 
 		_pointer[i] = new RMGfxSourceBuffer8RLEByteAA;
-		_pointer[i]->init(res, res.Width(), res.Height(), false);
+		_pointer[i]->init(res, res.width(), res.height(), false);
 		_pointer[i]->loadPaletteWA(RES_P_PAL);
 	}
 
@@ -1493,17 +1493,17 @@ void RMPointer::init(void) {
 		RMRes res(RES_P_PAP1 + i);
 		RMDataStream ds;
 
-		ds.OpenBuffer(res);
+		ds.openBuffer(res);
 		_specialPointer[i] = new RMItem;
 		ds >> *_specialPointer[i];
 	}
 
-	//m_hotspot[0].Set(19,5);
-	_hotspot[0].Set(5, 1);
-	_hotspot[1].Set(32, 28);
-	_hotspot[2].Set(45, 23);
-	_hotspot[3].Set(35, 25);
-	_hotspot[4].Set(32, 28);
+	//m_hotspot[0].set(19,5);
+	_hotspot[0].set(5, 1);
+	_hotspot[1].set(32, 28);
+	_hotspot[2].set(45, 23);
+	_hotspot[3].set(35, 25);
+	_hotspot[4].set(32, 28);
 
 	// Default=GO
 	_nCurPointer = 0;

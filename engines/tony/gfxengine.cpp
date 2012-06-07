@@ -126,7 +126,7 @@ void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
 		if (type == 1 || type == 2) {
 			GLOBALS.bIdleExited = true;
 		} else {
-			CORO_INVOKE_0(_tony.StopNoAction);
+			CORO_INVOKE_0(_tony.stopNoAction);
 
 			GLOBALS.bIdleExited = false;
 
@@ -170,7 +170,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 		_loc.doFrame(&_bigBuf);
 
 		// Check the mouse input
-		if (_bInput && !_tony.InAction()) {
+		if (_bInput && !_tony.inAction()) {
 			// If we are on the inventory, it is it who controls all input
 			if (_inv.haveFocus(_input.mousePos()) && !_inter.active()) {
 				// Left Click
@@ -197,7 +197,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 						// *************
 						if (_input.mouseRightReleased()) {
 							if (_inv.rightRelease(_input.mousePos(), _curAction)) {
-								CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
+								CORO_INVOKE_3(_tony.moveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
 
 								_curAction = TA_GOTO;
 								_point.setAction(_curAction);
@@ -207,7 +207,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 				// Options Menu
 				// ************
 				if (_bGUIOption) {
-					if (!_tony.InAction() && _bInput) {
+					if (!_tony.inAction() && _bInput) {
 						if ((_input.mouseLeftClicked() && _input.mousePos().x < 3 && _input.mousePos().y < 3)) {
 							CORO_INVOKE_1(openOptionScreen, 0);
 							goto SKIPCLICKSINISTRO;
@@ -229,9 +229,9 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 				if (_input.mouseLeftClicked() && !_inter.active()) {
 
 					if (_curAction != TA_COMBINE)
-						CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _point.curAction());
+						CORO_INVOKE_3(_tony.moveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _point.curAction());
 					else if (_itemName.getSelectedItem() != NULL)
-						CORO_INVOKE_4(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), TA_COMBINE, _curActionObj);
+						CORO_INVOKE_4(_tony.moveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), TA_COMBINE, _curActionObj);
 
 					if (_curAction == TA_COMBINE) {
 						_inv.endCombine();
@@ -271,7 +271,7 @@ SKIPCLICKSINISTRO:
 					if (_bGUIInterface) {
 						if (_inter.released(_input.mousePos(), _curAction)) {
 							_point.setAction(_curAction);
-							CORO_INVOKE_3(_tony.MoveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
+							CORO_INVOKE_3(_tony.moveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
 
 							_curAction = TA_GOTO;
 							_point.setAction(_curAction);
@@ -288,23 +288,23 @@ SKIPCLICKSINISTRO:
 
 		// Interface & Inventory
 		_inter.doFrame(_bigBuf, _input.mousePos());
-		_inv.doFrame(_bigBuf, _point, _input.mousePos(), (!_tony.InAction() && !_inter.active() && _bGUIInventory));
+		_inv.doFrame(_bigBuf, _point, _input.mousePos(), (!_tony.inAction() && !_inter.active() && _bGUIInventory));
 	}
 
 	// Animate Tony
-	CORO_INVOKE_2(_tony.DoFrame, &_bigBuf, _nCurLoc);
+	CORO_INVOKE_2(_tony.doFrame, &_bigBuf, _nCurLoc);
 
 	// Update screen scrolling to keep Tony in focus
-	if (_tony.MustUpdateScrolling() && _bLocationLoaded) {
-		RMPoint showThis = _tony.Position();
+	if (_tony.mustUpdateScrolling() && _bLocationLoaded) {
+		RMPoint showThis = _tony.position();
 		showThis.y -= 60;
-		_loc.UpdateScrolling(showThis);
+		_loc.updateScrolling(showThis);
 	}
 
 	if (_bLocationLoaded)
-		_tony.SetScrollPosition(_loc.ScrollPosition());
+		_tony.setScrollPosition(_loc.scrollPosition());
 
-	if ((!_tony.InAction() && _bInput) || _bAlwaysDrawMouse) {
+	if ((!_tony.inAction() && _bInput) || _bAlwaysDrawMouse) {
 		_point.setCoord(_input.mousePos());
 		_point.doFrame(&_bigBuf);
 	}
@@ -362,17 +362,17 @@ void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
 	assert(GLOBALS.GfxEngine);
 
 	if (GLOBALS.GfxEngine->_bLocationLoaded) {
-		item = GLOBALS.GfxEngine->_loc.GetItemFromCode(dwItem);
+		item = GLOBALS.GfxEngine->_loc.getItemFromCode(dwItem);
 		if (item != NULL) {
 			if (nPattern != -1) {
 				if (GLOBALS.bPatIrqFreeze)
 					mainFreeze();
-				item->SetPattern(nPattern, true);
+				item->setPattern(nPattern, true);
 				if (GLOBALS.bPatIrqFreeze)
 					mainUnfreeze();
 			}
 			if (nStatus != -1)
-				item->SetStatus(nStatus);
+				item->setStatus(nStatus);
 		}
 	}
 }
@@ -384,12 +384,12 @@ void RMGfxEngine::initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint star
 		start.y = ptTonyStart.y - RM_SY / 2;
 	}
 
-	_loc.SetScrollPosition(start);
+	_loc.setScrollPosition(start);
 
 	if (ptTonyStart.x == 0 && ptTonyStart.y == 0) {
 	} else {
-		_tony.SetPosition(ptTonyStart, nLoc);
-		_tony.SetScrollPosition(start);
+		_tony.setPosition(ptTonyStart, nLoc);
+		_tony.setScrollPosition(start);
 	}
 
 	_curAction = TA_GOTO;
@@ -412,10 +412,10 @@ uint32 RMGfxEngine::loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	for (i = 0; i < 5; i++) {
 		// Try the loading of the location
 		RMRes res(_nCurLoc);
-		if (!res.IsValid())
+		if (!res.isValid())
 			continue;
 
-		_loc.Load(res);
+		_loc.load(res);
 		initForNewLocation(nLoc, ptTonyStart, start);
 		bLoaded = true;
 		break;
@@ -455,7 +455,7 @@ void RMGfxEngine::unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 	_bLocationLoaded = false;
 
 	_bigBuf.clearOT();
-	_loc.Unload();
+	_loc.unload();
 
 	if (result != NULL)
 		*result = CORO_INVALID_PID_VALUE;
@@ -503,7 +503,7 @@ void RMGfxEngine::init() {
 
 	// Initialise Tony
 	_tony.init();
-	_tony.LinkToBoxes(&_vm->_theBoxes);
+	_tony.linkToBoxes(&_vm->_theBoxes);
 
 	// Initialise the inventory and the interface
 	_inv.init();
@@ -515,7 +515,7 @@ void RMGfxEngine::init() {
 	enableInput();
 
 	// Starting the game
-	_tony.ExecuteAction(20, 1, 0);
+	_tony.executeAction(20, 1, 0);
 }
 
 void RMGfxEngine::close(void) {
@@ -523,7 +523,7 @@ void RMGfxEngine::close(void) {
 
 	_inter.close();
 	_inv.close();
-	_tony.Close();
+	_tony.close();
 	_point.close();
 	_input.close();
 }
@@ -579,7 +579,7 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	uint size;
 	int i;
 	char buf[4];
-	RMPoint tp = _tony.Position();
+	RMPoint tp = _tony.position();
 
 	// Saving: MPAL variables, current location, and Tony inventory position
 
@@ -627,9 +627,9 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	delete[] state;
 
 	// boxes
-	size = _vm->_theBoxes.GetSaveStateSize();
+	size = _vm->_theBoxes.getSaveStateSize();
 	state = new byte[size];
-	_vm->_theBoxes.SaveState(state);
+	_vm->_theBoxes.saveState(state);
 	f->writeUint32LE(size);
 	f->write(state, size);
 	delete[] state;
@@ -638,7 +638,7 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	bool bStat;
 
 	// Saves the state of the shepherdess and show yourself
-	bStat = _tony.GetPastorella();
+	bStat = _tony.getPastorella();
 	f->writeByte(bStat);
 	bStat = _inter.getPalesati();
 	f->writeByte(bStat);
@@ -765,7 +765,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		_ctx->size = _ctx->f->readUint32LE();
 		_ctx->state = new byte[_ctx->size];
 		_ctx->f->read(_ctx->state, _ctx->size);
-		_vm->_theBoxes.LoadState(_ctx->state);
+		_vm->_theBoxes.loadState(_ctx->state);
 		delete[] _ctx->state;
 	}
 
@@ -774,7 +774,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		bool bStat = false;
 
 		bStat = _ctx->f->readByte();
-		_tony.SetPastorella(bStat);
+		_tony.setPastorella(bStat);
 		bStat = _ctx->f->readByte();
 		_inter.setPalesati(bStat);
 
@@ -813,7 +813,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 
 	CORO_INVOKE_2(unloadLocation, false, NULL);
 	loadLocation(_ctx->loc, _ctx->tp, RMPoint(-1, -1));
-	_tony.SetPattern(RMTony::PAT_STANDRIGHT);
+	_tony.setPattern(RMTony::PAT_STANDRIGHT);
 	mainUnfreeze();
 
 	// On older versions, need to an enter action
@@ -838,7 +838,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 
 void RMGfxEngine::pauseSound(bool bPause) {
 	if (_bLocationLoaded)
-		_loc.PauseSound(bPause);
+		_loc.pauseSound(bPause);
 }
 
 void RMGfxEngine::initWipe(int type) {
@@ -861,7 +861,7 @@ void RMGfxEngine::waitWipeEnd(CORO_PARAM) {
 }
 
 bool RMGfxEngine::canLoadSave() {
-	return _bInput && !_tony.InAction() && !_vm->getIsDemo();
+	return _bInput && !_tony.inAction() && !_vm->getIsDemo();
 }
 
 } // End of namespace Tony

@@ -33,17 +33,17 @@ namespace MPAL {
 
 class RMRes {
 protected:
-	HGLOBAL m_h;
-    byte *m_buf;
+	HGLOBAL _h;
+    byte *_buf;
 
 public:
 	RMRes(uint32 resID);
     virtual ~RMRes();
 
     // Attributes
-	unsigned int Size();
-    const byte *DataPointer();
-	bool IsValid() { return m_h != NULL; }
+	unsigned int size();
+    const byte *dataPointer();
+	bool isValid() { return _h != NULL; }
 
     // Casting for access to data
     operator const byte*();
@@ -57,8 +57,8 @@ public:
 	const byte *DataPointer();
 	operator const byte*();
 
-		int Width();
-		int Height();
+		int width();
+		int height();
 };
 
 } // end of namespace MPAL
