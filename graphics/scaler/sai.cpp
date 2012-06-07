@@ -37,11 +37,7 @@ void SAIPlugin::deinitialize() {
 
 void SAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	if (!_doScale) {
-		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-	} else {
-		_2xSaI(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	}
+	_2xSaI(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
 
 uint SAIPlugin::increaseFactor() {

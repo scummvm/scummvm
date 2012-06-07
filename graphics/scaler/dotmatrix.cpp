@@ -41,11 +41,7 @@ void DotMatrixPlugin::initialize(Graphics::PixelFormat format) {
 
 void DotMatrixPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	if (!_doScale) {
-		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-	} else {
-		scaleIntern(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
-	}
+	scaleIntern(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
 }
 
 uint DotMatrixPlugin::increaseFactor() {

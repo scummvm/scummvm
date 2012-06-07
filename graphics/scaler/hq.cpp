@@ -128,10 +128,6 @@ void HQPlugin::deinitialize() {
 
 void HQPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	if (!_doScale) {
-		scale1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height, _format.bytesPerPixel);
-		return;
-	}
 	switch (_factor) {
 	case 2:
 		HQ2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
