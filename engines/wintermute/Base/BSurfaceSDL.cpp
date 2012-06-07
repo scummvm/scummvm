@@ -26,22 +26,20 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/file/BFile.h"
+#include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSurfaceSDL.h"
 #include "engines/wintermute/Base/BRenderSDL.h"
-//#include "SdlUtil.h"
+#include "engines/wintermute/PlatformSDL.h"
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/bmp.h"
 #include "graphics/decoders/jpeg.h"
-#include "graphics/pixelformat.h"
-#include "graphics/surface.h"
 #include "engines/wintermute/graphics/transparentSurface.h"
 #include "engines/wintermute/graphics/tga.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "common/stream.h"
-#include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/PlatformSDL.h"
 #include "common/system.h"
 
 namespace WinterMute {
