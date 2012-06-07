@@ -104,8 +104,6 @@ endif
 ifdef USE_HQ_SCALERS
 MODULE_OBJS += \
 	scaler/hq.o \
-	scaler/hq2x.o \
-	scaler/hq3x.o
 
 ifdef USE_NASM
 MODULE_OBJS += \
