@@ -42,10 +42,10 @@ namespace MPAL {
 *       Funzioni statiche
 \****************************************************************************/
 
-static bool CompareCommands(struct command *cmd1, struct command *cmd2) {
+static bool compareCommands(struct command *cmd1, struct command *cmd2) {
 	if (cmd1->type == 2 && cmd2->type == 2) {
 		if (strcmp(cmd1->lpszVarName, cmd2->lpszVarName) == 0 &&
-			CompareExpressions(cmd1->expr, cmd2->expr))
+			compareExpressions(cmd1->expr, cmd2->expr))
 			return true;
 		else
 			return false;
@@ -80,32 +80,32 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 		lpBuf++;
 
 		for (j = 0; j < lpmsScript->Moment[i].nCmds; j++) {
-			lpmsScript->Command[curCmd].type = *lpBuf;
+			lpmsScript->_command[curCmd].type = *lpBuf;
 			lpBuf++;
-			switch (lpmsScript->Command[curCmd].type) {
+			switch (lpmsScript->_command[curCmd].type) {
 			case 1:
-				lpmsScript->Command[curCmd].nCf = READ_LE_UINT16(lpBuf);
+				lpmsScript->_command[curCmd].nCf = READ_LE_UINT16(lpBuf);
 				lpBuf += 2;
-				lpmsScript->Command[curCmd].arg1 = (int32)READ_LE_UINT32(lpBuf);
+				lpmsScript->_command[curCmd].arg1 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmsScript->Command[curCmd].arg2 = (int32)READ_LE_UINT32(lpBuf);
+				lpmsScript->_command[curCmd].arg2 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmsScript->Command[curCmd].arg3 = (int32)READ_LE_UINT32(lpBuf);
+				lpmsScript->_command[curCmd].arg3 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmsScript->Command[curCmd].arg4 = (int32)READ_LE_UINT32(lpBuf);
+				lpmsScript->_command[curCmd].arg4 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
 				break;
 
 			case 2:          // Variable assign
 				len = *lpBuf;
 				lpBuf++;
-				lpmsScript->Command[curCmd].lpszVarName = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
-				if (lpmsScript->Command[curCmd].lpszVarName == NULL)
+				lpmsScript->_command[curCmd].lpszVarName = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
+				if (lpmsScript->_command[curCmd].lpszVarName == NULL)
 					return NULL;
-				CopyMemory(lpmsScript->Command[curCmd].lpszVarName, lpBuf, len);
+				copyMemory(lpmsScript->_command[curCmd].lpszVarName, lpBuf, len);
 				lpBuf += len;
 
-				lpBuf = ParseExpression(lpBuf, &lpmsScript->Command[curCmd].expr);
+				lpBuf = parseExpression(lpBuf, &lpmsScript->_command[curCmd].expr);
 				if (lpBuf == NULL)
 					return NULL;
 				break;
@@ -129,7 +129,7 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
  * data of the dialog.
  * @returns		Pointer to the buffer after the item, or NULL on failure.
  */
-static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
+static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	uint32 i, j, z, kk;
 	uint32 num, num2, num3;
 	byte *lpLock;
@@ -147,17 +147,17 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 		error("Too much periods in dialog #%d", lpmdDialog->nObj);
 
 	for (i = 0; i < num; i++) {
-		lpmdDialog->PeriodNums[i] = READ_LE_UINT16(lpBuf);
+		lpmdDialog->_periodNums[i] = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
-		lpmdDialog->Periods[i] = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
-		lpLock = (byte *)GlobalLock(lpmdDialog->Periods[i]);
+		lpmdDialog->_periods[i] = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
+		lpLock = (byte *)globalLock(lpmdDialog->_periods[i]);
 		Common::copy(lpBuf + 1, lpBuf + 1 + *lpBuf, lpLock);
-		GlobalUnlock(lpmdDialog->Periods[i]);
+		globalUnlock(lpmdDialog->_periods[i]);
 		lpBuf += (*lpBuf) + 1;
 	}
 
-	lpmdDialog->PeriodNums[i] = 0;
-	lpmdDialog->Periods[i] = NULL;
+	lpmdDialog->_periodNums[i] = 0;
+	lpmdDialog->_periods[i] = NULL;
 
 	/* Gruppi */
 	num = READ_LE_UINT16(lpBuf);
@@ -168,29 +168,29 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 		error("Too much groups in dialog #%d", lpmdDialog->nObj);
 
 	for (i = 0; i < num; i++) {
-		lpmdDialog->Group[i].num = READ_LE_UINT16(lpBuf);
+		lpmdDialog->_group[i].num = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
-		lpmdDialog->Group[i].nCmds = *lpBuf; lpBuf++;
+		lpmdDialog->_group[i].nCmds = *lpBuf; lpBuf++;
 
-		if (lpmdDialog->Group[i].nCmds >= MAX_COMMANDS_PER_GROUP)
-			error("Too much commands in group #%d in dialog #%d",lpmdDialog->Group[i].num,lpmdDialog->nObj);
+		if (lpmdDialog->_group[i].nCmds >= MAX_COMMANDS_PER_GROUP)
+			error("Too much commands in group #%d in dialog #%d",lpmdDialog->_group[i].num,lpmdDialog->nObj);
 
-		for (j = 0; j < lpmdDialog->Group[i].nCmds; j++) {
-			lpmdDialog->Command[curCmd].type = *lpBuf;
+		for (j = 0; j < lpmdDialog->_group[i].nCmds; j++) {
+			lpmdDialog->_command[curCmd].type = *lpBuf;
 			lpBuf++;
 
-			switch (lpmdDialog->Command[curCmd].type) {
+			switch (lpmdDialog->_command[curCmd].type) {
 			// Call custom function
 			case 1:
-				lpmdDialog->Command[curCmd].nCf = READ_LE_UINT16(lpBuf);
+				lpmdDialog->_command[curCmd].nCf = READ_LE_UINT16(lpBuf);
 				lpBuf += 2;
-				lpmdDialog->Command[curCmd].arg1 = READ_LE_UINT32(lpBuf);
+				lpmdDialog->_command[curCmd].arg1 = READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmdDialog->Command[curCmd].arg2 = READ_LE_UINT32(lpBuf);
+				lpmdDialog->_command[curCmd].arg2 = READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmdDialog->Command[curCmd].arg3 = READ_LE_UINT32(lpBuf);
+				lpmdDialog->_command[curCmd].arg3 = READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmdDialog->Command[curCmd].arg4 = READ_LE_UINT32(lpBuf);
+				lpmdDialog->_command[curCmd].arg4 = READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
 				break;
 
@@ -198,21 +198,21 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			case 2:
 				len = *lpBuf;
 				lpBuf++;
-				lpmdDialog->Command[curCmd].lpszVarName = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
-				if (lpmdDialog->Command[curCmd].lpszVarName == NULL)
+				lpmdDialog->_command[curCmd].lpszVarName = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
+				if (lpmdDialog->_command[curCmd].lpszVarName == NULL)
 					return NULL;
 
-				Common::copy(lpBuf, lpBuf + len, lpmdDialog->Command[curCmd].lpszVarName);
+				Common::copy(lpBuf, lpBuf + len, lpmdDialog->_command[curCmd].lpszVarName);
 				lpBuf += len;
 
-				lpBuf = ParseExpression(lpBuf, &lpmdDialog->Command[curCmd].expr);
+				lpBuf = parseExpression(lpBuf, &lpmdDialog->_command[curCmd].expr);
 				if (lpBuf == NULL)
 					return NULL;
 				break;
 
 			// Do Choice
 			case 3:
-				lpmdDialog->Command[curCmd].nChoice = READ_LE_UINT16(lpBuf);
+				lpmdDialog->_command[curCmd].nChoice = READ_LE_UINT16(lpBuf);
 				lpBuf += 2;
 				break;
 
@@ -221,14 +221,14 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			}
 
 			for (kk = 0;kk < curCmd; kk++) {
-				if (CompareCommands(&lpmdDialog->Command[kk], &lpmdDialog->Command[curCmd])) {
-					lpmdDialog->Group[i].CmdNum[j] = kk;
+				if (compareCommands(&lpmdDialog->_command[kk], &lpmdDialog->_command[curCmd])) {
+					lpmdDialog->_group[i].CmdNum[j] = kk;
 					break;
 				}
 			}
 
 			if (kk == curCmd) {	
-				lpmdDialog->Group[i].CmdNum[j] = curCmd;
+				lpmdDialog->_group[i].CmdNum[j] = curCmd;
 				curCmd++;
 			}
 		}
@@ -245,23 +245,23 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 		error("Too much choices in dialog #%d",lpmdDialog->nObj);
 
 	for (i = 0; i < num; i++) {
-		lpmdDialog->Choice[i].nChoice = READ_LE_UINT16(lpBuf);
+		lpmdDialog->_choice[i].nChoice = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
 
 		num2 = *lpBuf++;
 
 		if (num2 >= MAX_SELECTS_PER_CHOICE)
-			error("Too much selects in choice #%d in dialog #%d",lpmdDialog->Choice[i].nChoice,lpmdDialog->nObj);
+			error("Too much selects in choice #%d in dialog #%d", lpmdDialog->_choice[i].nChoice, lpmdDialog->nObj);
 
 		for (j = 0; j < num2; j++) {
 			// When
 			switch (*lpBuf++) {
 			case 0:
-				lpmdDialog->Choice[i].Select[j].when = NULL;
+				lpmdDialog->_choice[i]._select[j].when = NULL;
 				break;
 
 			case 1:
-				lpBuf = ParseExpression(lpBuf,&lpmdDialog->Choice[i].Select[j].when);
+				lpBuf = parseExpression(lpBuf, &lpmdDialog->_choice[i]._select[j].when);
 				if (lpBuf == NULL)
 					return NULL;
 				break;
@@ -271,31 +271,31 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			}
 
 			// Attrib
-			lpmdDialog->Choice[i].Select[j].attr = *lpBuf++;
+			lpmdDialog->_choice[i]._select[j].attr = *lpBuf++;
 
 			// Data
-			lpmdDialog->Choice[i].Select[j].dwData = READ_LE_UINT32(lpBuf);
+			lpmdDialog->_choice[i]._select[j].dwData = READ_LE_UINT32(lpBuf);
 			lpBuf += 4;
 
 			// PlayGroup
 			num3 = *lpBuf++;
 
 			if (num3 >= MAX_PLAYGROUPS_PER_SELECT)
-				error("Too much playgroups in select #%d in choice #%d in dialog #%d", j, lpmdDialog->Choice[i].nChoice, lpmdDialog->nObj);
+				error("Too much playgroups in select #%d in choice #%d in dialog #%d", j, lpmdDialog->_choice[i].nChoice, lpmdDialog->nObj);
 
 			for (z = 0; z < num3; z++) {
-				lpmdDialog->Choice[i].Select[j].wPlayGroup[z] = READ_LE_UINT16(lpBuf);
+				lpmdDialog->_choice[i]._select[j].wPlayGroup[z] = READ_LE_UINT16(lpBuf);
 				lpBuf += 2;
 			}
 
-			lpmdDialog->Choice[i].Select[j].wPlayGroup[num3] = 0;
+			lpmdDialog->_choice[i]._select[j].wPlayGroup[num3] = 0;
 		}
 
 		// Mark the last selection
-		lpmdDialog->Choice[i].Select[num2].dwData = 0;
+		lpmdDialog->_choice[i]._select[num2].dwData = 0;
 	}
 
-	lpmdDialog->Choice[num].nChoice = 0;
+	lpmdDialog->_choice[num].nChoice = 0;
 
 	return lpBuf;
 }
@@ -311,7 +311,7 @@ static const byte *ParseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
  * @remarks		It's necessary that the structure that is passed  has been
  * completely initialised to 0 beforehand.
  */
-static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
+static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	byte len;
 	uint32 i, j, kk;
 	uint32 curCmd;
@@ -321,7 +321,7 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 
 	len = *lpBuf;
 	lpBuf++;
-	CopyMemory(lpmiItem->lpszDescribe, lpBuf, MIN((byte)127, len));
+	copyMemory(lpmiItem->lpszDescribe, lpBuf, MIN((byte)127, len));
 	lpBuf += len;
 
 	if (len >= MAX_DESCRIBE_SIZE)
@@ -332,7 +332,7 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 
 	/* Alloca le azioni */
 	if (lpmiItem->nActions > 0)
-		lpmiItem->Action = (ItemAction *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(struct ItemAction) * (int)lpmiItem->nActions);
+		lpmiItem->Action = (ItemAction *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(struct ItemAction) * (int)lpmiItem->nActions);
 
 	curCmd = 0;
 
@@ -357,7 +357,7 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 			lpmiItem->Action[i].when = NULL;
 		} else {
 			lpBuf++;
-			lpBuf = ParseExpression(lpBuf,&lpmiItem->Action[i].when);
+			lpBuf = parseExpression(lpBuf,&lpmiItem->Action[i].when);
 			if (lpBuf == NULL)
 				return NULL;
 		}
@@ -369,32 +369,32 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 			error("Too much commands in action #%d in item #%d",lpmiItem->Action[i].num,lpmiItem->nObj);
 
 		for (j = 0; j < lpmiItem->Action[i].nCmds; j++) {
-			lpmiItem->Command[curCmd].type = *lpBuf;
+			lpmiItem->_command[curCmd].type = *lpBuf;
 			lpBuf++;
-			switch (lpmiItem->Command[curCmd].type) {
+			switch (lpmiItem->_command[curCmd].type) {
 			case 1:          // Call custom function
-				lpmiItem->Command[curCmd].nCf  = READ_LE_UINT16(lpBuf);
+				lpmiItem->_command[curCmd].nCf  = READ_LE_UINT16(lpBuf);
 				lpBuf += 2;
-				lpmiItem->Command[curCmd].arg1 = (int32)READ_LE_UINT32(lpBuf);
+				lpmiItem->_command[curCmd].arg1 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmiItem->Command[curCmd].arg2 = (int32)READ_LE_UINT32(lpBuf);
+				lpmiItem->_command[curCmd].arg2 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmiItem->Command[curCmd].arg3 = (int32)READ_LE_UINT32(lpBuf);
+				lpmiItem->_command[curCmd].arg3 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
-				lpmiItem->Command[curCmd].arg4 = (int32)READ_LE_UINT32(lpBuf);
+				lpmiItem->_command[curCmd].arg4 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
 				break;
 
 			case 2:          // Variable assign
 				len = *lpBuf;
 				lpBuf++;
-				lpmiItem->Command[curCmd].lpszVarName = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
-				if (lpmiItem->Command[curCmd].lpszVarName == NULL)
+				lpmiItem->_command[curCmd].lpszVarName = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
+				if (lpmiItem->_command[curCmd].lpszVarName == NULL)
 					return NULL;
-				CopyMemory(lpmiItem->Command[curCmd].lpszVarName, lpBuf, len);
+				copyMemory(lpmiItem->_command[curCmd].lpszVarName, lpBuf, len);
 				lpBuf += len;
 
-				lpBuf=ParseExpression(lpBuf, &lpmiItem->Command[curCmd].expr);
+				lpBuf = parseExpression(lpBuf, &lpmiItem->_command[curCmd].expr);
 				if (lpBuf == NULL)
 					return NULL;
 				break;
@@ -404,7 +404,7 @@ static const byte *ParseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 			}
 
 			for (kk = 0; kk < curCmd; kk++) {
-				if (CompareCommands(&lpmiItem->Command[kk],&lpmiItem->Command[curCmd])) {
+				if (compareCommands(&lpmiItem->_command[kk], &lpmiItem->_command[curCmd])) {
 					lpmiItem->Action[i].CmdNum[j] = kk;
 					break;
 				}
@@ -478,16 +478,16 @@ bool ParseMpc(const byte *lpBuf) {
 	GLOBALS.nVars = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
-	GLOBALS.hVars = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALVAR) * (uint32)GLOBALS.nVars);
+	GLOBALS.hVars = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALVAR) * (uint32)GLOBALS.nVars);
 	if (GLOBALS.hVars == NULL)
 		return false;
 
-	GLOBALS.lpmvVars = (LPMPALVAR)GlobalLock(GLOBALS.hVars);
+	GLOBALS.lpmvVars = (LPMPALVAR)globalLock(GLOBALS.hVars);
 
 	for (i = 0; i < GLOBALS.nVars; i++) {
 		wLen = *(const byte *)lpBuf;
 		lpBuf++;
-		CopyMemory(GLOBALS.lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
+		copyMemory(GLOBALS.lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
 		lpBuf += wLen;
 		GLOBALS.lpmvVars->dwVal = READ_LE_UINT32(lpBuf);
 		lpBuf += 4;
@@ -496,7 +496,7 @@ bool ParseMpc(const byte *lpBuf) {
 		GLOBALS.lpmvVars++;
 	}
 
-	GlobalUnlock(GLOBALS.hVars);
+	globalUnlock(GLOBALS.hVars);
 
 	/* 2. Messages */
 	if (lpBuf[0] != 'M' || lpBuf[1] != 'S' || lpBuf[2] != 'G' || lpBuf[3] != 'S')
@@ -507,11 +507,11 @@ bool ParseMpc(const byte *lpBuf) {
 	lpBuf += 2;
 
 #ifdef NEED_LOCK_MSGS
-	GLOBALS.hMsgs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)GLOBALS.nMsgs);
+	GLOBALS.hMsgs = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)GLOBALS.nMsgs);
 	if (GLOBALS.hMsgs == NULL)
 		return false;
 
-	GLOBALS.lpmmMsgs = (LPMPALMSG)GlobalLock(GLOBALS.hMsgs);
+	GLOBALS.lpmmMsgs = (LPMPALMSG)globalLock(GLOBALS.hMsgs);
 #else
 	GLOBALS.lpmmMsgs=(LPMPALMSG)GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,sizeof(MPALMSG)*(uint32)GLOBALS.nMsgs);
 	if (GLOBALS.lpmmMsgs==NULL)
@@ -525,11 +525,11 @@ bool ParseMpc(const byte *lpBuf) {
 		for (j = 0; lpBuf[j] != 0;)
 			j += lpBuf[j] + 1;
 
-		GLOBALS.lpmmMsgs->hText = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
-		lpTemp2 = lpTemp = (byte *)GlobalLock(GLOBALS.lpmmMsgs->hText);
+		GLOBALS.lpmmMsgs->hText = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
+		lpTemp2 = lpTemp = (byte *)globalLock(GLOBALS.lpmmMsgs->hText);
 
 		for (j = 0; lpBuf[j] != 0;) {
-			CopyMemory(lpTemp, &lpBuf[j + 1], lpBuf[j]);
+			copyMemory(lpTemp, &lpBuf[j + 1], lpBuf[j]);
 			lpTemp += lpBuf[j];
 			*lpTemp ++= '\0';
 			j += lpBuf[j] + 1;
@@ -538,12 +538,12 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += j + 1;
 		*lpTemp = '\0';
 
-		GlobalUnlock(GLOBALS.lpmmMsgs->hText);
+		globalUnlock(GLOBALS.lpmmMsgs->hText);
 		GLOBALS.lpmmMsgs++;
 	}
 
 #ifdef NEED_LOCK_MSGS
-	GlobalUnlock(GLOBALS.hMsgs);
+	globalUnlock(GLOBALS.hMsgs);
 #endif
 
 	/* 3. Objects */
@@ -560,17 +560,17 @@ bool ParseMpc(const byte *lpBuf) {
 	if (*((const byte *)lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Dialog", 6) == 0) {
 		GLOBALS.nDialogs = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		GLOBALS.hDialogs = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nDialogs * sizeof(MPALDIALOG));
+		GLOBALS.hDialogs = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nDialogs * sizeof(MPALDIALOG));
 		if (GLOBALS.hDialogs == NULL)
 			return false;
 
-		GLOBALS.lpmdDialogs = (LPMPALDIALOG)GlobalLock(GLOBALS.hDialogs);
+		GLOBALS.lpmdDialogs = (LPMPALDIALOG)globalLock(GLOBALS.hDialogs);
 
 		for (i = 0;i < GLOBALS.nDialogs; i++)
-			if ((lpBuf = ParseDialog(lpBuf + 7, &GLOBALS.lpmdDialogs[i])) == NULL)
+			if ((lpBuf = parseDialog(lpBuf + 7, &GLOBALS.lpmdDialogs[i])) == NULL)
 				return false;
 
-		GlobalUnlock(GLOBALS.hDialogs);
+		globalUnlock(GLOBALS.hDialogs);
 	}
 
 	// Check the items
@@ -581,17 +581,17 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += 2;
 
 		// Allocate memory and read them in
-		GLOBALS.hItems = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nItems * sizeof(MPALITEM));
+		GLOBALS.hItems = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nItems * sizeof(MPALITEM));
 		if (GLOBALS.hItems == NULL)
 			return false;
 
-		GLOBALS.lpmiItems = (LPMPALITEM)GlobalLock(GLOBALS.hItems);
+		GLOBALS.lpmiItems = (LPMPALITEM)globalLock(GLOBALS.hItems);
 
 		for (i = 0; i < GLOBALS.nItems; i++)
-			if ((lpBuf = ParseItem(lpBuf + 5, &GLOBALS.lpmiItems[i])) == NULL)
+			if ((lpBuf = parseItem(lpBuf + 5, &GLOBALS.lpmiItems[i])) == NULL)
 				return false;
 
-		GlobalUnlock(GLOBALS.hItems);
+		globalUnlock(GLOBALS.hItems);
 	}
 
 	// Check the locations
@@ -602,17 +602,17 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += 2;
 
 		// Allocate memory and read them in
-		GLOBALS.hLocations=GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nLocations*sizeof(MPALLOCATION));
+		GLOBALS.hLocations = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nLocations*sizeof(MPALLOCATION));
 		if (GLOBALS.hLocations == NULL)
 			return false;
 
-		GLOBALS.lpmlLocations = (LPMPALLOCATION)GlobalLock(GLOBALS.hLocations);
+		GLOBALS.lpmlLocations = (LPMPALLOCATION)globalLock(GLOBALS.hLocations);
 
 		for (i = 0; i < GLOBALS.nLocations; i++)
 			if ((lpBuf = ParseLocation(lpBuf + 9, &GLOBALS.lpmlLocations[i])) == NULL)
 				return false;
 
-		GlobalUnlock(GLOBALS.hLocations);
+		globalUnlock(GLOBALS.hLocations);
 	}
 
 	// Check the scripts
@@ -623,11 +623,11 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += 2;
 
 		// Allocate memory
-		GLOBALS.hScripts = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nScripts * sizeof(MPALSCRIPT));
+		GLOBALS.hScripts = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nScripts * sizeof(MPALSCRIPT));
 		if (GLOBALS.hScripts == NULL)
 			return false;
 
-		GLOBALS.lpmsScripts = (LPMPALSCRIPT)GlobalLock(GLOBALS.hScripts);
+		GLOBALS.lpmsScripts = (LPMPALSCRIPT)globalLock(GLOBALS.hScripts);
 
 		for (i = 0; i < GLOBALS.nScripts; i++) {
 			if ((lpBuf = ParseScript(lpBuf + 7, &GLOBALS.lpmsScripts[i])) == NULL)
@@ -642,7 +642,7 @@ bool ParseMpc(const byte *lpBuf) {
 			//);
 		}
 
-		GlobalUnlock(GLOBALS.hScripts);
+		globalUnlock(GLOBALS.hScripts);
 	}
 
 	if (lpBuf[0] != 'E' || lpBuf[1] != 'N' || lpBuf[2] != 'D' || lpBuf[3] != '0')

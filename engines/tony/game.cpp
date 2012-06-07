@@ -328,7 +328,7 @@ RMOptionScreen::RMOptionScreen(void) {
 	_QuitConfirm = NULL;
 	_bQuitConfirm = false;
 
-	Create(RM_SX, RM_SY);
+	create(RM_SX, RM_SY);
 
 	_ButtonExit = NULL;
 	_ButtonLoad = NULL;
@@ -556,7 +556,7 @@ void RMOptionScreen::refreshThumbnails(void) {
 			delete _curThumb[i];
 
 		_curThumb[i] = new RMGfxSourceBuffer16;
-		_curThumb[i]->Create(640 / 4, 480 / 4);
+		_curThumb[i]->create(640 / 4, 480 / 4);
 		if (!loadThumbnailFromSaveState(_statePos + i, *_curThumb[i], _curThumbName[i], _curThumbDiff[i])) {
 			delete _curThumb[i];
 			_curThumb[i] = NULL;
@@ -1548,7 +1548,7 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 
 	if (_pos.x >= 0 && _pos.y >= 0 && _pos.x < RM_SX && _pos.y < RM_SY) {
 		// Call the Draw method of the poitner
-		prim->Dst() -= _hotspot[_ctx->n];
+		prim->getDst() -= _hotspot[_ctx->n];
 
 		if (_nCurSpecialPointer == 0) {
 			CORO_INVOKE_2(_pointer[_ctx->n]->draw, bigBuf, prim);

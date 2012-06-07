@@ -1069,8 +1069,8 @@ HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 	}
 
 	// Allocate space for the output resource
-	HGLOBAL destBuf = GlobalAllocate(info.size);
-	byte *lpDestBuf = (byte *)GlobalLock(destBuf);
+	HGLOBAL destBuf = globalAllocate(info.size);
+	byte *lpDestBuf = (byte *)globalLock(destBuf);
 	uint32 dwSize;
 
 	// Decompress the data
@@ -1080,7 +1080,7 @@ HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 	delete [] cmpBuf;
 
 	// Return the resource
-	GlobalUnlock(destBuf);
+	globalUnlock(destBuf);
 	return lpDestBuf;
 }
 

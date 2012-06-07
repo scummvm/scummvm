@@ -1890,7 +1890,7 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 	height = (numlines - 1) * font->letterHeight() + font->_fontDimy;
 
 	// Create the surface
-	Create(width, height);
+	create(width, height);
 	//AddPrim(new RMGfxPrimitive(&m_clear));
 	Common::fill(_buf, _buf + width * height * 2, 0);
 
@@ -1932,8 +1932,8 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 			}
 
 			prim = font->makeLetterPrimitive(*p, len);
-			prim->Dst().x1 = x;
-			prim->Dst().y1 = y;
+			prim->getDst().x1 = x;
+			prim->getDst().y1 = y;
 			addPrim(prim);
 
 			numchar++;
@@ -1951,14 +1951,14 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 
 void RMText::clipOnScreen(RMGfxPrimitive *prim) {
 	// Don't let it go outside the screen
-	if (prim->Dst().x1 < 5)
-		prim->Dst().x1 = 5;
-	if (prim->Dst().y1 < 5)
-		prim->Dst().y1 = 5;
-	if (prim->Dst().x1 + _dimx > 635)
-		prim->Dst().x1 = 635 - _dimx;
-	if (prim->Dst().y1 + _dimy > 475)
-		prim->Dst().y1 = 475 - _dimy;
+	if (prim->getDst().x1 < 5)
+		prim->getDst().x1 = 5;
+	if (prim->getDst().y1 < 5)
+		prim->getDst().y1 = 5;
+	if (prim->getDst().x1 + _dimx > 635)
+		prim->getDst().x1 = 635 - _dimx;
+	if (prim->getDst().y1 + _dimy > 475)
+		prim->getDst().y1 = 475 - _dimy;
 }
 
 void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -1968,19 +1968,19 @@ void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CODE(_ctx);
 	// Horizontally
 	if (aHorType == HCENTER)
-		prim->Dst().topLeft() -= RMPoint(_dimx / 2, 0);
+		prim->getDst().topLeft() -= RMPoint(_dimx / 2, 0);
 	else if (aHorType == HRIGHT)
-		prim->Dst().topLeft() -= RMPoint(_dimx, 0);
+		prim->getDst().topLeft() -= RMPoint(_dimx, 0);
 
 
 	// Vertically
 	if (aVerType == VTOP) {
 
 	} else if (aVerType == VCENTER) {
-		prim->Dst().y1 -= _dimy / 2;
+		prim->getDst().y1 -= _dimy / 2;
 
 	} else if (aVerType == VBOTTOM) {
-		prim->Dst().y1 -= _dimy;
+		prim->getDst().y1 -= _dimy;
 	}
 
 	clipOnScreen(prim);
@@ -2146,7 +2146,7 @@ void RMTextDialog::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 
 	if (_bShowed) {
 		if (GLOBALS.bCfgSottotitoli || _bAlwaysDisplay) {
-			prim->Dst().topLeft() = dst;
+			prim->getDst().topLeft() = dst;
 			CORO_INVOKE_2(RMText::draw, bigBuf, prim);
 		}
 	}
@@ -2285,7 +2285,7 @@ void RMTextItemName::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		return;
 
 	// Set the destination coordinates of the mouse
-	prim->Dst().topLeft() = _mpos - RMPoint(0, 30);
+	prim->getDst().topLeft() = _mpos - RMPoint(0, 30);
 
 	CORO_INVOKE_2(RMText::draw, bigBuf, prim);
 
@@ -2349,7 +2349,7 @@ void RMDialogChoice::init(void) {
 	_ptDrawStrings = NULL;
 	_curSelection = -1;
 
-	Create(640, 477);
+	create(640, 477);
 	setPriority(140);
 }
 
@@ -2437,7 +2437,7 @@ void RMDialogChoice::setSelected(CORO_PARAM, int pos) {
 	_ctx->box.setPriority(5);
 
 	if (_curSelection != -1) {
-		_ctx->box.SetColor(0xCC, 0xCC, 0xFF);
+		_ctx->box.setColor(0xCC, 0xCC, 0xFF);
 		_ctx->rc.topLeft() = RMPoint(18, _ptDrawStrings[_curSelection].y);
 		_ctx->rc.bottomRight() = _ctx->rc.topLeft() + RMPoint(597, _drawedStrings[_curSelection].getDimy());
 		addPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
@@ -2448,7 +2448,7 @@ void RMDialogChoice::setSelected(CORO_PARAM, int pos) {
 	}
 
 	if (pos != -1) {
-		_ctx->box.SetColor(100, 100, 100);
+		_ctx->box.setColor(100, 100, 100);
 		_ctx->rc.topLeft() = RMPoint(18, _ptDrawStrings[pos].y);
 		_ctx->rc.bottomRight() = _ctx->rc.topLeft() + RMPoint(597, _drawedStrings[pos].getDimy());
 		addPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));

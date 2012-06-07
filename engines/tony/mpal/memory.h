@@ -42,9 +42,9 @@ public:
 	MemoryItem(uint32 size);
 	virtual ~MemoryItem();
 	
-	uint32 Size() { return _size; }
-	void *DataPointer() { return (void *)_buffer; }
-	bool IsValid() { return _buffer != NULL; }
+	uint32 size() { return _size; }
+	void *dataPointer() { return (void *)_buffer; }
+	bool isValid() { return _buffer != NULL; }
 
     // Casting for access to data
     operator void *();
@@ -68,19 +68,19 @@ public:
 };
 
 // defines
-#define GlobalAlloc(flags, size)	_vm->_memoryManager.alloc(size, flags)
-#define GlobalAllocate(size)		_vm->_memoryManager.allocate(size, 0)
-#define GlobalFree(handle)			_vm->_memoryManager.erase(handle)
-#define GlobalLock(handle)			(_vm->_memoryManager.getItem(handle).DataPointer())
-#define GlobalUnlock(handle)		{}
-#define GlobalSize(handle)			(_vm->_memoryManager.getItem(handle).Size())
+#define globalAlloc(flags, size)	_vm->_memoryManager.alloc(size, flags)
+#define globalAllocate(size)		_vm->_memoryManager.allocate(size, 0)
+#define globalFree(handle)			_vm->_memoryManager.erase(handle)
+#define globalLock(handle)			(_vm->_memoryManager.getItem(handle).dataPointer())
+#define globalUnlock(handle)		{}
+#define globalSize(handle)			(_vm->_memoryManager.getItem(handle).size())
 
 #define GMEM_FIXED 1
 #define GMEM_MOVEABLE 2
 #define GMEM_ZEROINIT 4
 
 // Stand-alone methods
-extern void CopyMemory(void *dst, const void *first, int size);
+extern void copyMemory(void *dst, const void *first, int size);
 
 } // end of namespace MPAL
 

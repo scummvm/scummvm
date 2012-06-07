@@ -307,7 +307,7 @@ CODECADPCM::CODECADPCM(bool loop, byte *lpTempBuffer) : CODECRAW(loop) {
 	if (lpTempBuffer != NULL) {
 		lpTemp = lpTempBuffer;
 	} else {
-		lpTemp = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, MAXDECODESIZE);
+		lpTemp = (byte *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, MAXDECODESIZE);
 
 		if (lpTemp == NULL) {
 			error("Insufficient memory!");
@@ -344,7 +344,7 @@ CODECADPCMSTEREO::~CODECADPCMSTEREO() {
 \****************************************************************************/
 
 CODECADPCM::~CODECADPCM() {
-	GlobalFree(lpTemp);
+	globalFree(lpTemp);
 }
 
 
@@ -1148,7 +1148,7 @@ bool FPSFX::LoadFile(byte *lpBuf, uint32 dwCodec) {
 	}
 
 	/* Decomprime i dati dello stream direttamente dentro il buffer lockato */
-	CopyMemory(lpLock, lpBuf, dwSize);
+	copyMemory(lpLock, lpBuf, dwSize);
 
 	/* Unlocka il buffer */
 	lpDSBuffer->Unlock(lpLock, dwSize, NULL, NULL);
@@ -2111,7 +2111,7 @@ void FPSTREAM::PlayThread(FPSTREAM *This) {
 			This->lpDSBuffer->Lock(This->dwBufferSize / 2, This->dwBufferSize / 2, (void **)&lpLockBuf, &dwResult, (void **)&lpLockBuf2, &dwResult2, 0);
 			//     sprintf(buf, "LockedBuf: dwResult=%x, dwBufferSize/2=%x, lpLockBuf2=%x, dwResult2=%x\n", dwResult, This->dwBufferSize/2, lpLockBuf2, dwResult2);
 			//     warning(buf);
-			CopyMemory(lpLockBuf, This->lpTempBuffer, This->dwBufferSize / 2);
+			copyMemory(lpLockBuf, This->lpTempBuffer, This->dwBufferSize / 2);
 			This->lpDSBuffer->Unlock(lpLockBuf, This->dwBufferSize / 2, lpLockBuf2, 0);
 			bPrecache = true;
 		}
@@ -2124,7 +2124,7 @@ void FPSTREAM::PlayThread(FPSTREAM *This) {
 //			 sprintf(buf, "Seconda metà buffer: %x\n", This->lpDSBuffer);
 //			 warning(buf);
 			This->lpDSBuffer->Lock(0, This->dwBufferSize / 2, (void **)&lpLockBuf, &dwResult, NULL, NULL, 0);
-			CopyMemory(lpLockBuf, This->lpTempBuffer, This->dwBufferSize / 2);
+			copyMemory(lpLockBuf, This->lpTempBuffer, This->dwBufferSize / 2);
 			This->lpDSBuffer->Unlock(lpLockBuf, This->dwBufferSize / 2, NULL, NULL);
 			bPrecache = true;
 		}

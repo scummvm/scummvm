@@ -53,7 +53,7 @@ MemoryItem::~MemoryItem() {
  * Returns a pointer to the resource
  */
 MemoryItem::operator void *() {
-	return DataPointer();
+	return dataPointer();
 }
 
 /****************************************************************************\
@@ -81,7 +81,7 @@ MemoryManager::~MemoryManager() {
 MemoryItem &MemoryManager::allocate(uint32 size, uint flags) {
 	MemoryItem *newItem = new MemoryItem(size);
 	if ((flags & GMEM_ZEROINIT) != 0) {
-		byte *dataP = (byte *)newItem->DataPointer();
+		byte *dataP = (byte *)newItem->dataPointer();
 		Common::fill(dataP, dataP + size, 0);
 	}
 
@@ -96,7 +96,7 @@ MemoryItem &MemoryManager::allocate(uint32 size, uint flags) {
  */
 HGLOBAL MemoryManager::alloc(uint32 size, uint flags) {
 	MemoryItem &newItem = allocate(size, flags);
-	return (HGLOBAL)newItem.DataPointer();
+	return (HGLOBAL)newItem.dataPointer();
 }
 
 /**
@@ -107,7 +107,7 @@ MemoryItem &MemoryManager::getItem(HGLOBAL handle) {
 	Common::List<MemoryItem *>::iterator i;
 	for (i = _memoryBlocks.begin(); i != _memoryBlocks.end(); ++i) {
 		MemoryItem *item = *i;
-		if (item->DataPointer() == handle)
+		if (item->dataPointer() == handle)
 			return *item;
 	}
 
@@ -127,7 +127,7 @@ MemoryItem &MemoryManager::operator[](HGLOBAL handle) {
  */
 uint32 MemoryManager::getSize(HGLOBAL handle) {
 	MemoryItem &item = getItem(handle);
-	return item.Size();
+	return item.size();
 }
 
 /**
@@ -150,7 +150,7 @@ void MemoryManager::erase(HGLOBAL handle) {
 *       Stand-alone methods
 \****************************************************************************/
 
-void CopyMemory(void *dst, const void *first, int size) {
+void copyMemory(void *dst, const void *first, int size) {
 	Common::copy((const byte *)first, (const byte *)first + size, (byte *)dst);
 }
 

@@ -103,32 +103,32 @@ typedef EXPRESSION *LPEXPRESSION;
  * @param h				Handle to the original expression
  * @retruns		Pointer to the cloned expression
  */
-static byte *DuplicateExpression(HGLOBAL h) {
+static byte *duplicateExpression(HGLOBAL h) {
 	int i, num;
 	byte *orig, *clone;
 	LPEXPRESSION one, two;
 
-	orig = (byte *)GlobalLock(h);
+	orig = (byte *)globalLock(h);
 
 	num = *(byte *)orig;
 	one = (LPEXPRESSION)(orig+1);
 
-	clone = (byte *)GlobalAlloc(GMEM_FIXED, sizeof(EXPRESSION) * num + 1);
+	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(EXPRESSION) * num + 1);
 	two = (LPEXPRESSION)(clone + 1);
 
-	CopyMemory(clone, orig, sizeof(EXPRESSION) * num + 1);
+	copyMemory(clone, orig, sizeof(EXPRESSION) * num + 1);
 
 	for (i = 0; i < num; i++) {
 		if (one->type == ELT_PARENTH) {
 			two->type = ELT_PARENTH2;
-			two->val.pson = DuplicateExpression(two->val.son);
+			two->val.pson = duplicateExpression(two->val.son);
 		}
 
 		one++;
 		two++;
 	}
 
-	GlobalUnlock(h);
+	globalUnlock(h);
 	return clone;
 }
 
@@ -178,7 +178,7 @@ static int Compute(int a, int b, byte symbol) {
 	return 0;
 }
 
-static void Solve(LPEXPRESSION one, int num) {
+static void solve(LPEXPRESSION one, int num) {
 	LPEXPRESSION two, three;
 	int j;
 
@@ -186,7 +186,7 @@ static void Solve(LPEXPRESSION one, int num) {
 		two=one + 1;
 		if ((two->symbol == 0) || (one->symbol & 0xF0) <= (two->symbol & 0xF0)) {
 			two->val.num = Compute(one->val.num, two->val.num,one->symbol);
-			CopyMemory(one, two, (num - 1) * sizeof(EXPRESSION));
+			copyMemory(one, two, (num - 1) * sizeof(EXPRESSION));
 			num--;
 		} else {
 			j = 1;
@@ -198,7 +198,7 @@ static void Solve(LPEXPRESSION one, int num) {
 			}
 
 			three->val.num = Compute(two->val.num, three->val.num, two->symbol);
-			CopyMemory(two, three, (num - j - 1) * sizeof(EXPRESSION));
+			copyMemory(two, three, (num - j - 1) * sizeof(EXPRESSION));
 			num--;
 		}
 	}
@@ -212,7 +212,7 @@ static void Solve(LPEXPRESSION one, int num) {
  * @param expr				Pointer to an expression duplicated by DuplicateExpression
  * @returns		Value
  */
-static int EvaluateAndFreeExpression(byte *expr) {
+static int evaluateAndFreeExpression(byte *expr) {
 	int i,num,val;
 	LPEXPRESSION one,cur;
 
@@ -231,14 +231,14 @@ static int EvaluateAndFreeExpression(byte *expr) {
 	for (i = 0, cur = one; i < num; i++, cur++) {
 		if (cur->type == ELT_PARENTH2) {
 			cur->type = ELT_NUMBER;
-			cur->val.num = EvaluateAndFreeExpression(cur->val.pson);
+			cur->val.num = evaluateAndFreeExpression(cur->val.pson);
 		}
 	}
 
 	// 3) Risoluzione algebrica
-	Solve(one, num);
+	solve(one, num);
 	val = one->val.num;
-	GlobalFree(expr);
+	globalFree(expr);
 
 	return val;
 }
@@ -252,7 +252,7 @@ static int EvaluateAndFreeExpression(byte *expr) {
  * will point to the area of memory containing the parsed expression
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */
-const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
+const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
 	LPEXPRESSION cur;
 	byte *start;
 	uint32 num, i;
@@ -263,11 +263,11 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 	if (num == 0)
 		return NULL;
 
-	*h = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
+	*h = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
 	if (*h == NULL)
 		return NULL;
 
-	start = (byte *)GlobalLock(*h);
+	start = (byte *)globalLock(*h);
 	*start = (byte)num;
 
 	cur = (LPEXPRESSION)(start + 1);
@@ -283,15 +283,15 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
 			break;
 
 		case ELT_VAR:
-			cur->val.name = (char *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, (*lpBuf) + 1);
+			cur->val.name = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, (*lpBuf) + 1);
 			if (cur->val.name == NULL)
 				return NULL;
-			CopyMemory(cur->val.name, lpBuf + 1, *lpBuf);
+			copyMemory(cur->val.name, lpBuf + 1, *lpBuf);
 			lpBuf += *lpBuf + 1;
 			break;
 
 		case ELT_PARENTH:
-			lpBuf=ParseExpression(lpBuf, &cur->val.son);
+			lpBuf = parseExpression(lpBuf, &cur->val.son);
 			if (lpBuf == NULL)
 				return NULL;
 			break;
@@ -321,12 +321,12 @@ const byte *ParseExpression(const byte *lpBuf, HGLOBAL *h) {
  * @param h					Handle to the expression
  * @returns		Numeric value
  */
-int EvaluateExpression(HGLOBAL h) {
+int evaluateExpression(HGLOBAL h) {
 	int ret;
 
-	LockVar();
-	ret=EvaluateAndFreeExpression(DuplicateExpression(h));
-	UnlockVar();
+	lockVar();
+	ret = evaluateAndFreeExpression(duplicateExpression(h));
+	unlockVar();
 
 	return ret;
 }
@@ -337,20 +337,20 @@ int EvaluateExpression(HGLOBAL h) {
  * @param h1				Expression to be compared
  * @param h2				Expression to be compared
  */
-bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
+bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 	int i, num1, num2;
 	byte *e1, *e2;
 	LPEXPRESSION one, two;
 
-	e1 = (byte *)GlobalLock(h1);
-	e2 = (byte *)GlobalLock(h2);
+	e1 = (byte *)globalLock(h1);
+	e2 = (byte *)globalLock(h2);
 
 	num1 = *(byte *)e1;
 	num2 = *(byte *)e2;
 
 	if (num1 != num2) {
-		GlobalUnlock(h1);
-		GlobalUnlock(h2);
+		globalUnlock(h1);
+		globalUnlock(h2);
 		return false;
 	}
 
@@ -359,32 +359,32 @@ bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
 
 	for (i = 0; i < num1; i++) {
 		if (one->type != two->type || (i != num1 - 1 && one->symbol != two->symbol)) {
-			GlobalUnlock(h1);
-			GlobalUnlock(h2);
+			globalUnlock(h1);
+			globalUnlock(h2);
 			return false;
 		}
 
 		switch (one->type) {
 		case ELT_NUMBER:
 			if (one->val.num != two->val.num) {
-				GlobalUnlock(h1);
-				GlobalUnlock(h2);
+				globalUnlock(h1);
+				globalUnlock(h2);
 				return false;
 			}
 			break;
 		 
 		case ELT_VAR:
 			if (strcmp(one->val.name, two->val.name) != 0) {
-				GlobalUnlock(h1);
-				GlobalUnlock(h2);
+				globalUnlock(h1);
+				globalUnlock(h2);
 				return false;
 			}
 			break;
 	
 		case ELT_PARENTH:
-			if (!CompareExpressions(one->val.son, two->val.son)) {
-				GlobalUnlock(h1);
-				GlobalUnlock(h2);
+			if (!compareExpressions(one->val.son, two->val.son)) {
+				globalUnlock(h1);
+				globalUnlock(h2);
 				return false;
 			}
 			break;
@@ -394,8 +394,8 @@ bool CompareExpressions(HGLOBAL h1, HGLOBAL h2) {
 		two++;
 	}
 
-	GlobalUnlock(h1);
-	GlobalUnlock(h2);
+	globalUnlock(h1);
+	globalUnlock(h2);
  
 	return true;
 }

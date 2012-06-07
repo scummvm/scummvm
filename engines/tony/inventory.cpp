@@ -77,7 +77,7 @@ void RMInventory::init(void) {
 	int curres;
 
 	// Create the main buffer
-	Create(RM_SX, 68);
+	create(RM_SX, 68);
 	setPriority(185);
 
 	// Setup the inventory
@@ -788,13 +788,13 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 	CORO_BEGIN_CODE(_ctx);
 
-	prim->Dst().topLeft() = _openStart;
+	prim->getDst().topLeft() = _openStart;
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLEByte::draw, bigBuf, prim);
 
 	// Check if there is a draw hot zone
 	_ctx->h = onWhichBox(_mpos);
 	if (_ctx->h != -1) {
-		prim->Dst().topLeft() = _openStart;
+		prim->getDst().topLeft() = _openStart;
 		CORO_INVOKE_2(_hotzone[_ctx->h].draw, bigBuf, prim);
 
 		if (_lastHotZone != _ctx->h) {
@@ -803,7 +803,7 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 		}
 
 		if (GLOBALS.bCfgInterTips) {
-			prim->Dst().topLeft() = _openStart + RMPoint(70, 177);
+			prim->getDst().topLeft() = _openStart + RMPoint(70, 177);
 			CORO_INVOKE_2(_hints[_ctx->h].draw, bigBuf, prim);
 		}
 	} else

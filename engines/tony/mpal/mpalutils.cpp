@@ -41,7 +41,7 @@ RMRes::RMRes(uint32 resID) {
 	if (_h == NULL)
 		_h = mpalQueryResource(resID);
 	if (_h != NULL)
-		_buf = (byte *)GlobalLock(_h);
+		_buf = (byte *)globalLock(_h);
 }
 
 /**
@@ -49,8 +49,8 @@ RMRes::RMRes(uint32 resID) {
  */
 RMRes::~RMRes() {
 	if (_h != NULL) {
-		GlobalUnlock(_h);
-		GlobalFree(_h);
+		globalUnlock(_h);
+		globalFree(_h);
 	}
 }
 
@@ -72,7 +72,7 @@ RMRes::operator const byte *() {
  * Returns the size of the resource
  */
 unsigned int RMRes::size() {
-	return GlobalSize(_h);
+	return globalSize(_h);
 }
 
 /****************************************************************************\

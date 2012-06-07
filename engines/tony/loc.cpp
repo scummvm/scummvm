@@ -695,11 +695,11 @@ void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	prim->setFlag(_bCurFlag);
 
 	// Offset direction for scrolling
-	prim->Dst().offset(-_curScroll);
+	prim->getDst().offset(-_curScroll);
 
 	// We must offset the cordinates of the item inside the primitive
 	// It is estimated as nonno + (babbo + figlio)
-	prim->Dst().offset(calculatePos());
+	prim->getDst().offset(calculatePos());
 
 	// No stretching, please
 	prim->setStrecth(false);
@@ -1333,7 +1333,7 @@ void RMCharacter::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	CORO_BEGIN_CODE(_ctx);
 
 	if (bDrawNow) {
-		prim->Dst() += _fixedScroll;
+		prim->getDst() += _fixedScroll;
 
 		CORO_INVOKE_2(RMItem::draw, bigBuf, prim);
 	}
@@ -2305,7 +2305,7 @@ RMMessage::RMMessage() {
 
 RMMessage::~RMMessage() {
 	if (lpMessage)
-		GlobalFree(lpMessage);
+		globalFree(lpMessage);
 }
 
 void RMMessage::load(uint32 dwId) {

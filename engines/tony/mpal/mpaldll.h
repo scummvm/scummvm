@@ -144,7 +144,7 @@ struct command {
 struct MPALDIALOG {
 	uint32 nObj;                    // Dialog number
 
-	struct command Command[MAX_COMMANDS_PER_DIALOG];
+	struct command _command[MAX_COMMANDS_PER_DIALOG];
 
 	struct {
 		uint16 num;
@@ -152,7 +152,7 @@ struct MPALDIALOG {
 		byte nCmds;
 		uint16 CmdNum[MAX_COMMANDS_PER_GROUP];
 
-	} Group[MAX_GROUPS_PER_DIALOG];
+	} _group[MAX_GROUPS_PER_DIALOG];
 
 	struct {
 		// The last choice has nChoice == 0
@@ -170,12 +170,12 @@ struct MPALDIALOG {
 			// Modified at run-time: 0 if the select is currently disabled,
 			// and 1 if currently active
 			byte curActive;
-		} Select[MAX_SELECTS_PER_CHOICE];
+		} _select[MAX_SELECTS_PER_CHOICE];
 
-	} Choice[MAX_CHOICES_PER_DIALOG];
+	} _choice[MAX_CHOICES_PER_DIALOG];
 
-	uint16 PeriodNums[MAX_PERIODS_PER_DIALOG];
-	HGLOBAL Periods[MAX_PERIODS_PER_DIALOG];
+	uint16 _periodNums[MAX_PERIODS_PER_DIALOG];
+	HGLOBAL _periods[MAX_PERIODS_PER_DIALOG];
 
 } PACKED_STRUCT;
 typedef MPALDIALOG *LPMPALDIALOG;
@@ -204,7 +204,7 @@ struct MPALITEM {
 	byte nActions;				// Number of managed actions
 	uint32 dwRes;				// Resource that contains frames and patterns
 
-	struct command Command[MAX_COMMANDS_PER_ITEM];
+	struct command _command[MAX_COMMANDS_PER_ITEM];
 
 	// Pointer to array of structures containing various managed activities. In practice, of
 	// every action we know what commands to run, including those defined in structures above
@@ -223,7 +223,7 @@ struct MPALSCRIPT {
 
 	uint32 nMoments;
 
-	struct command Command[MAX_COMMANDS_PER_SCRIPT];
+	struct command _command[MAX_COMMANDS_PER_SCRIPT];
 
 	struct {
 		int32 dwTime;

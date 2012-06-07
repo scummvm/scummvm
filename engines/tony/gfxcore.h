@@ -189,14 +189,15 @@ public:
 	bool haveDst()                  {
 		return !_dst.isEmpty();
 	}
-	RMRect &Dst()                   {
+
+	RMRect &getDst()                {
 		return _dst;
 	}
 
 	bool haveSrc()                  {
 		return !_src.isEmpty();
 	}
-	RMRect &Src()                   {
+	RMRect &getSrc()                {
 		return _src;
 	}
 
@@ -268,12 +269,12 @@ public:
  */
 class RMGfxBox : public RMGfxTaskSetPrior {
 protected:
-	uint16 wFillColor;
+	uint16 _wFillColor;
 
 public:
 	virtual ~RMGfxBox() { }
 
-	void SetColor(byte r, byte g, byte b);
+	void setColor(byte r, byte g, byte b);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	virtual void removeThis(CORO_PARAM, bool &result);
 };
@@ -295,11 +296,11 @@ protected:
 	virtual void prepareImage(void);
 	bool clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf);
 	void offsetY(int nLines) {
-		RMGfxBuffer::offsetY(nLines, Bpp());
+		RMGfxBuffer::offsetY(nLines, getBpp());
 	}
 
 public:
-	virtual int Bpp() = 0;
+	virtual int getBpp() = 0;
 };
 
 
@@ -308,7 +309,7 @@ public:
  */
 class RMGfxSourceBuffer16 : public RMGfxSourceBuffer {
 protected:
-	virtual void PrepareImage(void);
+	virtual void prepareImage(void);
 	bool _bTrasp0;
 
 public:
@@ -317,9 +318,9 @@ public:
 	virtual ~RMGfxSourceBuffer16();
 
 	// Initialisation
-	void Create(int dimx, int dimy, bool bUseDDraw = false);
+	void create(int dimx, int dimy, bool bUseDDraw = false);
 
-	int Bpp();
+	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
@@ -364,7 +365,7 @@ public:
 	// Initialisation
 	void create(int dimx, int dimy, bool bUseDDraw = false);
 
-	int Bpp();
+	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
@@ -388,12 +389,12 @@ public:
 
 class RMGfxSourceBuffer8RLE : public virtual RMGfxSourceBuffer8 {
 protected:
-	int alphaBlendColor;
-	int alphaR, alphaB, alphaG;
-	bool bNeedRLECompress;
+	int _alphaBlendColor;
+	int _alphaR, _alphaB, _alphaG;
+	bool _bNeedRLECompress;
 
 protected:
-	static byte MegaRLEBuf[];
+	static byte _megaRLEBuf[];
 
 	virtual void RLEWriteTrasp(byte *&cur, int rep) = 0;
 	virtual void RLEWriteData(byte *&cur, int rep, byte *src) = 0;
@@ -468,8 +469,8 @@ public:
  */
 class RMGfxSourceBuffer8AA : public virtual RMGfxSourceBuffer8 {
 protected:
-	static byte MegaAABuf[];
-	static byte MegaAABuf2[];
+	static byte _megaAABuf[];
+	static byte _megaAABuf2[];
 	byte *_aabuf;
 
 	// Calculate the buffer for the anti-aliasing
@@ -528,9 +529,9 @@ public:
 	RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw = false);
 
 	// Initialisation
-	void Create(int dimx, int dimy, bool bUseDDraw = false);
+	void create(int dimx, int dimy, bool bUseDDraw = false);
 
-	int Bpp();
+	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
@@ -556,7 +557,7 @@ private:
 //	OSystem::MutexRef csModifyingOT;
 
 protected:
-	OTList *otlist;
+	OTList *_otlist;
 	int _otSize;
 
 public:

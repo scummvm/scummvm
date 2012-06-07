@@ -519,13 +519,13 @@ int mpalGetSaveStateSize(void);
 /**
  * Locks the variables for access
  */
-void LockVar(void);
+void lockVar(void);
 
 
 /**
  * Unlocks variables after use
  */
-void UnlockVar(void);
+void unlockVar(void);
 
 } // end of namespace MPAL
 

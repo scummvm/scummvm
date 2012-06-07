@@ -180,28 +180,28 @@ void RMTony::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	// Call the Draw() of the parent class if Tony is visible
 	if (_bShow && bDrawNow) {
 		if (_bCorpoDavanti) {
-			prim->Dst().setEmpty();
-			prim->Dst().offset(-44, -134);
+			prim->getDst().setEmpty();
+			prim->getDst().offset(-44, -134);
 			if (_bPastorella)
-				prim->Dst().offset(1, 4);
+				prim->getDst().offset(1, 4);
 			CORO_INVOKE_2(RMCharacter::draw, bigBuf, prim);
 		}
 
 		if (_bIsTalking || _bIsStaticTalk) {
 			// Offest direction from scrolling
-			prim->Dst().setEmpty();
-			prim->Dst().offset(-_curScroll);
-			prim->Dst().offset(_pos);
-			prim->Dst().offset(-44, -134);
-			prim->Dst() += _nBodyOffset;
+			prim->getDst().setEmpty();
+			prim->getDst().offset(-_curScroll);
+			prim->getDst().offset(_pos);
+			prim->getDst().offset(-44, -134);
+			prim->getDst() += _nBodyOffset;
 			CORO_INVOKE_2(_body.draw, bigBuf, prim);
 		}
 
 		if (!_bCorpoDavanti) {
-			prim->Dst().setEmpty();
-			prim->Dst().offset(-44, -134);
+			prim->getDst().setEmpty();
+			prim->getDst().offset(-44, -134);
 			if (_bPastorella)
-				prim->Dst().offset(0, 3);
+				prim->getDst().offset(0, 3);
 			CORO_INVOKE_2(RMCharacter::draw, bigBuf, prim);
 		}
 	}
