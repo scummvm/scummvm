@@ -168,7 +168,7 @@ void ToonEngine::waitForScriptStep() {
 	// Wait after a specified number of script steps when executing a script
 	// to lower CPU usage
 	if (++_scriptStep >= 40) {
-		g_system->delayMillis(1);
+		_system->delayMillis(1);
 		_scriptStep = 0;
 	}
 }
@@ -2979,8 +2979,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 		return false; // dialog aborted
 
 	Common::String savegameFile = getSavegameName(savegameId);
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::OutSaveFile *saveFile = saveMan->openForSaving(savegameFile);
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(savegameFile);
 	if (!saveFile)
 		return false;
 
@@ -3068,8 +3067,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		return false; // dialog aborted
 
 	Common::String savegameFile = getSavegameName(savegameId);
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *loadFile = saveMan->openForLoading(savegameFile);
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(savegameFile);
 	if (!loadFile)
 		return false;
 
