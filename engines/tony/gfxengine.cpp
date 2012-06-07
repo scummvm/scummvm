@@ -472,7 +472,12 @@ void RMGfxEngine::init() {
 	_bigBuf.drawOT(Common::nullContext);
 	_bigBuf.clearOT();
 	delete load;
+
+	// Display 'Loading' screen
+	// TODO: The loading screen isn't currently optimal, since the game doesn't respond to events
+	// whilst the mpalInit code is being executed. 
 	_vm->_window.getNewFrame(*this, NULL);
+	_vm->_window.repaint();
 
 	GLOBALS.bPatIrqFreeze = true;
 
