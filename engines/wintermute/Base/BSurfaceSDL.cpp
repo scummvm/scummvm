@@ -167,6 +167,7 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 		warning("Surface-textures not fully ported yet");
 		hasWarned = true;
 	}
+	delete imgDecoder;
 #if 0
 	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 	if (!_texture) {
