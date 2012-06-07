@@ -967,9 +967,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		width = _videoMode.overlayWidth;
 		height = _videoMode.overlayHeight;
 		scalerProc = Normal1x;
-		// The overlay does not need to be scaled
-		(*_scalerPlugin)->disableScaling();
-
 		scale1 = 1;
 	}
 
@@ -1029,8 +1026,16 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				assert(scalerProc != NULL);
 				//scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 				//  (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
-				(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-					(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
+				if (_overlayVisible) {
+					uint tmpFactor = (*_normalPlugin)->getFactor();
+					(*_normalPlugin)->setFactor(1);
+					(*_normalPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+						(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
+					(*_normalPlugin)->setFactor(tmpFactor);
+				} else {
+					(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+						(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
+				}
 			}
 
 			r->x = rx1;
@@ -1136,9 +1141,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	}
-
-	if (_overlayVisible)
-		(*_scalerPlugin)->enableScaling();
 
 	_numDirtyRects = 0;
 	_forceFull = false;
