@@ -53,6 +53,9 @@ public:
 	void saveLiveList(uint16 *dest); // for loading/saving
 	void loadLiveList(uint16 *src);
 private:
+	char *lockText(uint32 textId, uint8 language);
+	void unlockText(uint32 textId, uint8 language);
+
 	ResMan *_resMan;
 	static const uint32 _objectList[TOTAL_SECTIONS];    //a table of pointers to object files
 	static const uint32 _textList[TOTAL_SECTIONS][7];   //a table of pointers to text files

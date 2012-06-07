@@ -99,13 +99,27 @@ uint8 ObjectMan::fnCheckForTextLine(uint32 textId) {
 
 char *ObjectMan::lockText(uint32 textId) {
 	uint8 lang = SwordEngine::_systemVars.language;
+	char *text = lockText(textId, lang);
+	if (text == 0) {
+		if (lang != BS1_ENGLISH) {
+			text = lockText(textId, BS1_ENGLISH);
+			if (text != 0)
+				warning("Missing translation for textId %u (\"%s\")", textId, text);
+			unlockText(textId, BS1_ENGLISH);
+		}
+		return _missingSubTitleStr;
+	}
+	return text;
+}
+
+char *ObjectMan::lockText(uint32 textId, uint8 lang) {
 	char *addr = (char *)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]);
 	if (addr == 0)
-		return _missingSubTitleStr;
+		return NULL;
 	addr += sizeof(Header);
 	if ((textId & ITM_ID) >= _resMan->readUint32(addr)) {
 		warning("ObjectMan::lockText(%d): only %d texts in file", textId & ITM_ID, _resMan->readUint32(addr));
-		return _missingSubTitleStr;
+		return NULL;
 	}
 	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1) * 4);
 	if (offset == 0) {
@@ -115,13 +129,17 @@ char *ObjectMan::lockText(uint32 textId) {
 			return const_cast<char *>(_translationId2950145[lang]);
 
 		warning("ObjectMan::lockText(%d): text number has no text lines", textId);
-		return _missingSubTitleStr;
+		return NULL;
 	}
 	return addr + offset;
 }
 
 void ObjectMan::unlockText(uint32 textId) {
-	_resMan->resClose(_textList[textId / ITM_PER_SEC][SwordEngine::_systemVars.language]);
+	unlockText(textId, SwordEngine::_systemVars.language);
+}
+
+void ObjectMan::unlockText(uint32 textId, uint8 lang) {
+	_resMan->resClose(_textList[textId / ITM_PER_SEC][lang]);
 }
 
 uint32 ObjectMan::lastTextNumber(int section) {
