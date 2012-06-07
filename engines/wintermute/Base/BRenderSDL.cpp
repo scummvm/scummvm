@@ -238,8 +238,9 @@ HRESULT CBRenderSDL::Fill(byte  r, byte g, byte b, Common::Rect *rect) {
 		rect->setHeight(_renderSurface->h);
 		_renderSurface->fillRect(*rect, color);
 		delete rect;
+	} else {
+		_renderSurface->fillRect(*rect, color);
 	}
-	_renderSurface->fillRect(*rect, color);
 
 	return S_OK;
 }

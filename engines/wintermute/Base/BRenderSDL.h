@@ -47,7 +47,7 @@ public:
 
 	HRESULT InitRenderer(int width, int height, bool windowed);
 	HRESULT Flip();
-	HRESULT Fill(byte  r, byte g, byte b, Common::Rect *rect);
+	HRESULT Fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
 
 	HRESULT Fade(uint16 Alpha);
 	HRESULT FadeToColor(uint32 Color, Common::Rect *rect = NULL);
