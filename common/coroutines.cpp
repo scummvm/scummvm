@@ -34,7 +34,6 @@ CoroContext nullContext = NULL;
 
 DECLARE_SINGLETON(CoroutineScheduler);
 
-
 #ifdef COROUTINE_DEBUG
 namespace {
 /** Count of active coroutines */
@@ -63,13 +62,13 @@ static void displayCoroStats() {
 	if (!s_coroFuncs)
 		return;
 	for (CoroHashMap::const_iterator it = s_coroFuncs->begin();
-		it != s_coroFuncs->end(); ++it) {
+	        it != s_coroFuncs->end(); ++it) {
 		if (it->_value != 0)
 			debug("  %3d x %s", it->_value, it->_key.c_str());
 	}
 }
 
-}
+} // End of anonymous namespace
 #endif
 
 CoroBaseContext::CoroBaseContext(const char *func)
@@ -86,7 +85,7 @@ CoroBaseContext::~CoroBaseContext() {
 	s_coroCount--;
 	changeCoroStats(_funcName, -1);
 	debug("Deleting coro in %s at %p (subctx %p)",
-		_funcName, (void *)this, (void *)_subctx);
+	      _funcName, (void *)this, (void *)_subctx);
 	displayCoroStats();
 #endif
 	delete _subctx;
@@ -133,11 +132,10 @@ CoroutineScheduler::~CoroutineScheduler() {
 	// Clear the event list
 	Common::List<EVENT *>::iterator i;
 	for (i = _events.begin(); i != _events.end(); ++i)
-		delete (*i);
+		delete *i;
 }
 
 void CoroutineScheduler::reset() {
-
 #ifdef DEBUG
 	// clear number of process in use
 	numProcs = 0;
@@ -179,14 +177,14 @@ void CoroutineScheduler::reset() {
 }
 
 
-#ifdef	DEBUG
+#ifdef DEBUG
 void CoroutineScheduler::printStats() {
 	debug("%i process of %i used", maxProcs, CORO_NUM_PROCESS);
 }
 #endif
 
 #ifdef DEBUG
-void CoroutineScheduler::CheckStack() {
+void CoroutineScheduler::checkStack() {
 	Common::List<PROCESS *> pList;
 
 	// Check both the active and free process lists
@@ -354,7 +352,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 		// Presume it will expire
 		*expired = true;
 
-	// Outer loop for doing checks until expiry 
+	// Outer loop for doing checks until expiry
 	while (g_system->getMillis() <= _ctx->endTime) {
 		// Check to see if a process or event with the given Id exists
 		_ctx->pProcess = getProcess(pid);
@@ -368,7 +366,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 			break;
 		}
 
-		// If a process was found, don't go into the if statement, and keep waiting. 
+		// If a process was found, don't go into the if statement, and keep waiting.
 		// Likewise if it's an event that's not yet signalled
 		if ((_ctx->pEvent != NULL) && _ctx->pEvent->signalled) {
 			// Unless the event is flagged for manual reset, reset it now
@@ -390,8 +388,8 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 	CORO_END_CODE;
 }
 
-void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
-						   uint32 duration, bool *expired) {
+void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll,
+                                                uint32 duration, bool *expired) {
 	if (!pCurrent)
 		error("Called CoroutineScheduler::waitForMultipleObjects from the main process");
 
@@ -415,7 +413,7 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 		// Presume that delay will expire
 		*expired = true;
 
-	// Outer loop for doing checks until expiry 
+	// Outer loop for doing checks until expiry
 	while (g_system->getMillis() <= _ctx->endTime) {
 		_ctx->signalled = bWaitAll;
 
@@ -471,7 +469,7 @@ void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 
 	_ctx->endTime = g_system->getMillis() + duration;
 
-	// Outer loop for doing checks until expiry 
+	// Outer loop for doing checks until expiry
 	while (g_system->getMillis() < _ctx->endTime) {
 		// Sleep until the next cycle
 		CORO_SLEEP(1);
@@ -510,7 +508,7 @@ PROCESS *CoroutineScheduler::createProcess(uint32 pid, CORO_ADDR coroAddr, const
 		pCurrent->pNext = pProc;
 		pProc->pPrevious = pCurrent;
 
-	} else {	// no active processes, place process at head of list
+	} else { // no active processes, place process at head of list
 		pProc->pNext = active->pNext;
 		pProc->pPrevious = active;
 
@@ -604,7 +602,7 @@ int CoroutineScheduler::getCurrentPID() const {
 
 int CoroutineScheduler::killMatchingProcess(uint32 pidKill, int pidMask) {
 	int numKilled = 0;
-	PROCESS *pProc, *pPrev;	// process list pointers
+	PROCESS *pProc, *pPrev; // process list pointers
 
 	for (pProc = active->pNext, pPrev = active; pProc != NULL; pPrev = pProc, pProc = pProc->pNext) {
 		if ((pProc->pid & (uint32)pidMask) == pidKill) {
@@ -709,10 +707,10 @@ void CoroutineScheduler::pulseEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (!evt)
 		return;
-	
+
 	// Set the event as true
 	evt->signalled = true;
-	
+
 	// start dispatching active process list for any processes that are currently waiting
 	PROCESS *pOriginal = pCurrent;
 	PROCESS *pNext;
