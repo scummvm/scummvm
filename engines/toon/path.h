@@ -28,11 +28,6 @@
 namespace Toon {
 
 // binary heap system for fast A*
-struct HeapDataGrid {
-	int16 _x, _y;
-	int16 _weight;
-};
-
 class PathFindingHeap {
 public:
 	PathFindingHeap();
@@ -46,6 +41,11 @@ public:
 	int32 getCount() { return _count; }
 
 private:
+	struct HeapDataGrid {
+		int16 _x, _y;
+		int16 _weight;
+	};
+
 	HeapDataGrid *_data;
 
 	int32 _size;
@@ -54,7 +54,7 @@ private:
 
 class PathFinding {
 public:
-	PathFinding(ToonEngine *vm);
+	PathFinding();
 	~PathFinding();
 
 	void init(Picture *mask);
@@ -73,7 +73,8 @@ public:
 	int32 getPathNodeCount() const;
 	int32 getPathNodeX(int32 nodeId) const;
 	int32 getPathNodeY(int32 nodeId) const;
-protected:
+
+private:
 	Picture *_currentMask;
 
 	PathFindingHeap *_heap;
@@ -88,8 +89,6 @@ protected:
 	int32 _numBlockingRects;
 	int32 _allocatedGridPathCount;
 	int32 _gridPathCount;
-
-	ToonEngine *_vm;
 };
 
 } // End of namespace Toon

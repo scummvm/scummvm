@@ -146,7 +146,7 @@ void PathFindingHeap::pop(int16 *x, int16 *y, int32 *weight) {
 	}
 }
 
-PathFinding::PathFinding(ToonEngine *vm) : _vm(vm) {
+PathFinding::PathFinding() {
 	_width = 0;
 	_height = 0;
 	_heap = new PathFindingHeap();

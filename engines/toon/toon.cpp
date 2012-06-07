@@ -100,7 +100,7 @@ void ToonEngine::init() {
 
 	syncSoundSettings();
 
-	_pathFinding = new PathFinding(this);
+	_pathFinding = new PathFinding();
 
 	resources()->openPackage("LOCAL.PAK");
 	resources()->openPackage("ONETIME.PAK");
