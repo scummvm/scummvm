@@ -44,6 +44,16 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wintermute",
+		"Dirty Split",
+		AD_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
+	{
+		"wintermute",
 		"Five Magical Amulets",
 		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
 		Common::EN_ANY,
