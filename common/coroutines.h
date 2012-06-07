@@ -328,6 +328,18 @@ public:
 	typedef void (*VFPTRPP)(PROCESS *);
 
 private:
+	friend class Singleton<CoroutineScheduler>;
+
+	/**
+	 * Constructor
+	 */
+	CoroutineScheduler();
+
+	/**
+	 * Destructor
+	 */
+	~CoroutineScheduler();
+
 
 	/** list of all processes */
 	PROCESS *processList;
@@ -368,16 +380,6 @@ private:
 	PROCESS *getProcess(uint32 pid);
 	EVENT *getEvent(uint32 pid);
 public:
-	/**
-	 * Constructor
-	 */
-	CoroutineScheduler();
-
-	/**
-	 * Destructor
-	 */
-	~CoroutineScheduler();
-
 	/**
 	 * Kills all processes and places them on the free list.
 	 */
