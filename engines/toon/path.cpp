@@ -161,6 +161,18 @@ PathFinding::~PathFinding(void) {
 	delete[] _gridTemp;
 }
 
+void PathFinding::init(Picture *mask) {
+	debugC(1, kDebugPath, "init(mask)");
+
+	_width = mask->getWidth();
+	_height = mask->getHeight();
+	_currentMask = mask;
+	_heap->unload();
+	_heap->init(500);
+	delete[] _gridTemp;
+	_gridTemp = new int32[_width * _height];
+}
+
 bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
 	for (int32 i = 0; i < _numBlockingRects; i++) {
 		if (_blockingRects[i][4] == 0) {
@@ -180,12 +192,10 @@ bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
 bool PathFinding::isWalkable(int32 x, int32 y) {
 	debugC(2, kDebugPath, "isWalkable(%d, %d)", x, y);
 
-	bool maskWalk = (_currentMask->getData(x, y) & 0x1f) > 0;
-
-	return maskWalk;
+	return (_currentMask->getData(x, y) & 0x1f) > 0;
 }
 
-int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 *fyy, int origX, int origY) {
+bool PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 *fyy, int origX, int origY) {
 	debugC(1, kDebugPath, "findClosestWalkingPoint(%d, %d, fxx, fyy, %d, %d)", xx, yy, origX, origY);
 
 	int32 currentFound = -1;
@@ -214,11 +224,11 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 	if (currentFound != -1) {
 		*fxx = currentFound % _width;
 		*fyy = currentFound / _width;
-		return 1;
+		return true;
 	} else {
 		*fxx = 0;
 		*fyy = 0;
-		return 0;
+		return false;
 	}
 }
 
@@ -238,15 +248,13 @@ bool PathFinding::walkLine(int32 x, int32 y, int32 x2, int32 y2) {
 	int32 cdx = (dx << 16) / t;
 	int32 cdy = (dy << 16) / t;
 
-	int32 i = t;
 	_gridPathCount = 0;
-	while (i) {
+	for (int32 i = t; i > 0; i--) {
 		_tempPathX[i] = bx >> 16;
 		_tempPathY[i] = by >> 16;
 		_gridPathCount++;
 		bx += cdx;
 		by += cdy;
-		i--;
 	}
 
 	_tempPathX[0] = x2;
@@ -271,17 +279,16 @@ bool PathFinding::lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 	int32 cdx = (dx << 16) / t;
 	int32 cdy = (dy << 16) / t;
 
-	int32 i = t;
-	while (i) {
+	for (int32 i = t; i > 0; i--) {
 		if (!isWalkable(bx >> 16, by >> 16))
 			return false;
 		bx += cdx;
 		by += cdy;
-		i--;
 	}
 	return true;
 }
-int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
+
+bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	debugC(1, kDebugPath, "findPath(%d, %d, %d, %d)", x, y, destx, desty);
 
 	if (x == destx && y == desty) {
@@ -373,7 +380,7 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	numpath++;
 	int32 bestscore = sq[destx + desty * _width];
 
-	while (1) {
+	while (true) {
 		int32 bestX = -1;
 		int32 bestY = -1;
 
@@ -403,7 +410,7 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 			free(retPathX);
 			free(retPathY);
 
-			return 0;
+			return false;
 		}
 
 		retPathX[numpath] = bestX;
@@ -432,18 +439,6 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	return false;
 }
 
-void PathFinding::init(Picture *mask) {
-	debugC(1, kDebugPath, "init(mask)");
-
-	_width = mask->getWidth();
-	_height = mask->getHeight();
-	_currentMask = mask;
-	_heap->unload();
-	_heap->init(500);
-	delete[] _gridTemp;
-	_gridTemp = new int32[_width*_height];
-}
-
 void PathFinding::resetBlockingRects() {
 	_numBlockingRects = 0;
 }
@@ -460,7 +455,7 @@ void PathFinding::addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2) {
 }
 
 void PathFinding::addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h) {
-	debugC(1, kDebugPath, "addBlockingRect(%d, %d, %d, %d)", x1, y1, w, h);
+	debugC(1, kDebugPath, "addBlockingEllipse(%d, %d, %d, %d)", x1, y1, w, h);
 
 	_blockingRects[_numBlockingRects][0] = x1;
 	_blockingRects[_numBlockingRects][1] = y1;
