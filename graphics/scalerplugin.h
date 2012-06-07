@@ -28,8 +28,6 @@
 class ScalerPluginObject : public PluginObject {
 public:
 
-	ScalerPluginObject();
-
 	virtual ~ScalerPluginObject() {}
 	
 	/**
@@ -103,16 +101,10 @@ public:
 	static void scale1o5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 	                   uint32 dstPitch, int width, int height, int bytesPerPixel);
 
-	// temporary HACK
-	virtual void disableScaling();
-
-	virtual void enableScaling();
-
 protected:
 	uint _factor;
 	Common::Array<uint> _factors;
 	Graphics::PixelFormat _format;
-	bool _doScale; // < temporary
 };
 
 typedef PluginSubclass<ScalerPluginObject> ScalerPlugin;
