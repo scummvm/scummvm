@@ -57,8 +57,8 @@ private:
 	void plotLines(const byte *lpBuf, const Common::Point &center, int x, int y);
 
 protected:
-	void * /*LPDIRECTDRAWCLIPPER*/ m_MainClipper;
-	void * /*LPDIRECTDRAWCLIPPER*/ m_BackClipper;
+//	void * /*LPDIRECTDRAWCLIPPER*/ _MainClipper;
+//	void * /*LPDIRECTDRAWCLIPPER*/ _BackClipper;
 
 	int fps, fcount;
 	int lastsecond, lastfcount;

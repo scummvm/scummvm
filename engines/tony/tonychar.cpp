@@ -105,18 +105,18 @@ void RMTony::init(void) {
 	_bIsStaticTalk = false;
 
 	// Opens the buffer
-	ds.OpenBuffer(tony);
+	ds.openBuffer(tony);
 
 	// Reads his details from the stream
 	readFromStream(ds, true);
 
 	// Closes the buffer
-	ds.Close();
+	ds.close();
 
 	// Reads Tony's body
-	ds.OpenBuffer(body);
+	ds.openBuffer(body);
 	_body.readFromStream(ds, true);
-	ds.Close();
+	ds.close();
 	_body.setPattern(0);
 
 	_nTimeLastStep = _vm->getTime();
@@ -180,28 +180,28 @@ void RMTony::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	// Call the Draw() of the parent class if Tony is visible
 	if (_bShow && bDrawNow) {
 		if (_bCorpoDavanti) {
-			prim->Dst().SetEmpty();
-			prim->Dst().Offset(-44, -134);
+			prim->Dst().setEmpty();
+			prim->Dst().offset(-44, -134);
 			if (_bPastorella)
-				prim->Dst().Offset(1, 4);
+				prim->Dst().offset(1, 4);
 			CORO_INVOKE_2(RMCharacter::draw, bigBuf, prim);
 		}
 
 		if (_bIsTalking || _bIsStaticTalk) {
 			// Offest direction from scrolling
-			prim->Dst().SetEmpty();
-			prim->Dst().Offset(-_curScroll);
-			prim->Dst().Offset(_pos);
-			prim->Dst().Offset(-44, -134);
+			prim->Dst().setEmpty();
+			prim->Dst().offset(-_curScroll);
+			prim->Dst().offset(_pos);
+			prim->Dst().offset(-44, -134);
 			prim->Dst() += _nBodyOffset;
 			CORO_INVOKE_2(_body.draw, bigBuf, prim);
 		}
 
 		if (!_bCorpoDavanti) {
-			prim->Dst().SetEmpty();
-			prim->Dst().Offset(-44, -134);
+			prim->Dst().setEmpty();
+			prim->Dst().offset(-44, -134);
 			if (_bPastorella)
-				prim->Dst().Offset(0, 3);
+				prim->Dst().offset(0, 3);
 			CORO_INVOKE_2(RMCharacter::draw, bigBuf, prim);
 		}
 	}
@@ -630,25 +630,25 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case DOWN:
 			headLoopPat = PAT_TALK_DOWN;
 			bodyLoopPat = BPAT_STANDDOWN;
-			_nBodyOffset.Set(4, 53);
+			_nBodyOffset.set(4, 53);
 			break;
 
 		case LEFT:
 			headLoopPat = PAT_TALK_LEFT;
 			bodyLoopPat = BPAT_STANDLEFT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			break;
 
 		case RIGHT:
 			headLoopPat = PAT_TALK_RIGHT;
 			bodyLoopPat = BPAT_STANDRIGHT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			break;
 
 		case UP:
 			headLoopPat = PAT_TALK_UP;
 			bodyLoopPat = BPAT_STANDUP;
-			_nBodyOffset.Set(6, 53);
+			_nBodyOffset.set(6, 53);
 			break;
 		}
 		break;
@@ -657,7 +657,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		_bCorpoDavanti = false;
 		switch (_TalkDirection) {
 		case UP:
-			_nBodyOffset.Set(2, 42);
+			_nBodyOffset.set(2, 42);
 			headStartPat = PAT_TESTA_UP;
 			bodyStartPat = BPAT_FIANCHIUP_START;
 			headLoopPat = PAT_TALK_UP;
@@ -665,7 +665,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 
 		case DOWN:
-			_nBodyOffset.Set(2, 48);
+			_nBodyOffset.set(2, 48);
 			headStartPat = PAT_TESTA_DOWN;
 			bodyStartPat = BPAT_FIANCHIDOWN_START;
 			headLoopPat = PAT_TALK_DOWN;
@@ -673,7 +673,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 
 		case LEFT:
-			_nBodyOffset.Set(-3, 53);
+			_nBodyOffset.set(-3, 53);
 			headStartPat = PAT_TESTA_LEFT;
 			bodyStartPat = BPAT_FIANCHILEFT_START;
 			headLoopPat = PAT_TALK_LEFT;
@@ -681,7 +681,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 
 		case RIGHT:
-			_nBodyOffset.Set(2, 53);
+			_nBodyOffset.set(2, 53);
 			headStartPat = PAT_TESTA_RIGHT;
 			bodyStartPat = BPAT_FIANCHIRIGHT_START;
 			headLoopPat = PAT_TALK_RIGHT;
@@ -692,7 +692,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 
 	case TALK_CANTA:
-		_nBodyOffset.Set(-10, 25);
+		_nBodyOffset.set(-10, 25);
 		headStartPat = PAT_TESTA_LEFT;
 		bodyStartPat = BPAT_CANTALEFT_START;
 		headLoopPat = PAT_TALK_LEFT;
@@ -705,7 +705,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case UP:
 		case DOWN:
 		case LEFT:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_RIDELEFT_START;
 			bodyStartPat = BPAT_STANDLEFT;
 			headLoopPat = PAT_RIDELEFT_LOOP;
@@ -713,7 +713,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 
 		case RIGHT:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_RIDERIGHT_START;
 			bodyStartPat = BPAT_STANDRIGHT;
 			headLoopPat = PAT_RIDERIGHT_LOOP;
@@ -728,14 +728,14 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case UP:
 		case DOWN:
 		case LEFT:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_RIDELEFT_START;
 			bodyStartPat = BPAT_STANDLEFT;
 			headLoopPat = PAT_RIDELEFT_LOOP;
 			break;
 
 		case RIGHT:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_RIDERIGHT_START;
 			bodyStartPat = BPAT_STANDRIGHT;
 			headLoopPat = PAT_RIDERIGHT_LOOP;
@@ -750,13 +750,13 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case UP:
 		case DOWN:
 		case LEFT:
-			_nBodyOffset.Set(-4, 40);
+			_nBodyOffset.set(-4, 40);
 			headLoopPat = PAT_TALK_LEFT;
 			bodyLoopPat = BPAT_SIINDICALEFT;
 			break;
 
 		case RIGHT:
-			_nBodyOffset.Set(5, 40);
+			_nBodyOffset.set(5, 40);
 			headLoopPat = PAT_TALK_RIGHT;
 			bodyLoopPat = BPAT_SIINDICARIGHT;
 			break;
@@ -766,7 +766,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 	case TALK_SPAVENTATO:
 		switch (_TalkDirection) {
 		case UP:
-			_nBodyOffset.Set(-4, -11);
+			_nBodyOffset.set(-4, -11);
 			headStartPat = PAT_TESTA_UP;
 			bodyStartPat = BPAT_SPAVENTOUP_START;
 			headLoopPat = PAT_TALK_UP;
@@ -774,7 +774,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 
 		case DOWN:
-			_nBodyOffset.Set(-5, 45);
+			_nBodyOffset.set(-5, 45);
 			headStartPat = PAT_SPAVENTODOWN_START;
 			bodyStartPat = BPAT_SPAVENTODOWN_START;
 			headLoopPat = PAT_SPAVENTODOWN_LOOP;
@@ -782,7 +782,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 
 		case RIGHT:
-			_nBodyOffset.Set(-4, 41);
+			_nBodyOffset.set(-4, 41);
 			headStartPat = PAT_SPAVENTORIGHT_START;
 			bodyStartPat = BPAT_SPAVENTORIGHT_START;
 			headLoopPat = PAT_SPAVENTORIGHT_LOOP;
@@ -790,7 +790,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 			break;
 
 		case LEFT:
-			_nBodyOffset.Set(-10, 41);
+			_nBodyOffset.set(-10, 41);
 			headStartPat = PAT_SPAVENTOLEFT_START;
 			bodyStartPat = BPAT_SPAVENTOLEFT_START;
 			headLoopPat = PAT_SPAVENTOLEFT_LOOP;
@@ -805,7 +805,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case UP:
 			bodyStartPat = BPAT_STANDUP;
 			bodyLoopPat = BPAT_STANDUP;
-			_nBodyOffset.Set(6, 53);
+			_nBodyOffset.set(6, 53);
 
 			headStartPat = PAT_TESTA_UP;
 			headLoopPat = PAT_TALK_UP;
@@ -814,7 +814,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case DOWN:
 			bodyStartPat = BPAT_STANDDOWN;
 			bodyLoopPat = BPAT_STANDDOWN;
-			_nBodyOffset.Set(4, 53);
+			_nBodyOffset.set(4, 53);
 
 			headStartPat = PAT_SPAVENTODOWN_START;
 			headLoopPat = PAT_SPAVENTODOWN_LOOP;
@@ -823,7 +823,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case RIGHT:
 			bodyStartPat = BPAT_STANDRIGHT;
 			bodyLoopPat = BPAT_STANDRIGHT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 
 			headStartPat = PAT_SPAVENTORIGHT_START;
 			headLoopPat = PAT_SPAVENTORIGHT_LOOP;
@@ -832,7 +832,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case LEFT:
 			bodyStartPat = BPAT_STANDLEFT;
 			bodyLoopPat = BPAT_STANDLEFT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 
 			headStartPat = PAT_SPAVENTOLEFT_START;
 			headLoopPat = PAT_SPAVENTOLEFT_LOOP;
@@ -841,27 +841,27 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		break;
 
 	case TALK_CONBICCHIERE:
-		_nBodyOffset.Set(4, 53);
+		_nBodyOffset.set(4, 53);
 		headLoopPat = PAT_TALK_DOWN;
 		bodyLoopPat = BPAT_BICCHIERE;
 		break;
 	case TALK_CONVERME:
-		_nBodyOffset.Set(9, 56);
+		_nBodyOffset.set(9, 56);
 		headLoopPat = PAT_TALK_RIGHT;
 		bodyLoopPat = BPAT_VERME;
 		break;
 	case TALK_CONMARTELLO:
-		_nBodyOffset.Set(6, 56);
+		_nBodyOffset.set(6, 56);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MARTELLO;
 		break;
 	case TALK_CONCORDA:
-		_nBodyOffset.Set(-3, 38);
+		_nBodyOffset.set(-3, 38);
 		headLoopPat = PAT_TALK_RIGHT;
 		bodyLoopPat = BPAT_CORDA;
 		break;
 	case TALK_CONSEGRETARIA:
-		_nBodyOffset.Set(-17, 12);
+		_nBodyOffset.set(-17, 12);
 		headLoopPat = PAT_TALK_RIGHT;
 		bodyLoopPat = BPAT_CONSEGRETARIA;
 		break;
@@ -870,7 +870,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		switch (_TalkDirection) {
 		case LEFT:
 		case UP:
-			_nBodyOffset.Set(-21, -5);
+			_nBodyOffset.set(-21, -5);
 			bodyStartPat = BPAT_CONCONIGLIOLEFT_START;
 			headLoopPat = PAT_TALK_LEFT;
 			bodyLoopPat = BPAT_CONCONIGLIOLEFT_LOOP;
@@ -878,7 +878,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-4, -5);
+			_nBodyOffset.set(-4, -5);
 			bodyStartPat = BPAT_CONCONIGLIORIGHT_START;
 			headLoopPat = PAT_TALK_RIGHT;
 			bodyLoopPat = BPAT_CONCONIGLIORIGHT_LOOP;
@@ -890,7 +890,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		switch (_TalkDirection) {
 		case LEFT:
 		case UP:
-			_nBodyOffset.Set(-61, -7);
+			_nBodyOffset.set(-61, -7);
 			bodyStartPat = BPAT_CONRICETTALEFT_START;
 			headLoopPat = PAT_TALK_LEFT;
 			bodyLoopPat = BPAT_CONRICETTALEFT_LOOP;
@@ -898,7 +898,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-5, -7);
+			_nBodyOffset.set(-5, -7);
 			bodyStartPat = BPAT_CONRICETTARIGHT_START;
 			headLoopPat = PAT_TALK_RIGHT;
 			bodyLoopPat = BPAT_CONRICETTARIGHT_LOOP;
@@ -910,7 +910,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		switch (_TalkDirection) {
 		case LEFT:
 		case UP:
-			_nBodyOffset.Set(-34, -2);
+			_nBodyOffset.set(-34, -2);
 			bodyStartPat = BPAT_CONCARTELEFT_START;
 			headLoopPat = PAT_TALK_LEFT;
 			bodyLoopPat = BPAT_CONCARTELEFT_LOOP;
@@ -918,7 +918,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-4, -2);
+			_nBodyOffset.set(-4, -2);
 			bodyStartPat = BPAT_CONCARTERIGHT_START;
 			headLoopPat = PAT_TALK_RIGHT;
 			bodyLoopPat = BPAT_CONCARTERIGHT_LOOP;
@@ -930,7 +930,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		switch (_TalkDirection) {
 		case LEFT:
 		case UP:
-			_nBodyOffset.Set(-35, 2);
+			_nBodyOffset.set(-35, 2);
 			bodyStartPat = BPAT_CONPUPAZZOLEFT_START;
 			headLoopPat = PAT_TALK_LEFT;
 			bodyLoopPat = BPAT_CONPUPAZZOLEFT_LOOP;
@@ -938,7 +938,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-14, 2);
+			_nBodyOffset.set(-14, 2);
 			bodyStartPat = BPAT_CONPUPAZZORIGHT_START;
 			headLoopPat = PAT_TALK_RIGHT;
 			bodyLoopPat = BPAT_CONPUPAZZORIGHT_LOOP;
@@ -972,14 +972,14 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case UP:
 			headLoopPat = PAT_TALKBARBA_LEFT;
 			bodyLoopPat = BPAT_STANDLEFT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			break;
 
 		case DOWN:
 		case RIGHT:
 			headLoopPat = PAT_TALKBARBA_RIGHT;
 			bodyLoopPat = BPAT_STANDRIGHT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			break;
 		}
 		break;
@@ -988,7 +988,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		switch (_TalkDirection) {
 		case LEFT:
 		case UP:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_SCHIFATOLEFT_START;
 			bodyStartPat = BPAT_STANDLEFT;
 			headLoopPat = PAT_SCHIFATOLEFT_LOOP;
@@ -996,7 +996,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_SCHIFATORIGHT_START;
 			bodyStartPat = BPAT_STANDRIGHT;
 			headLoopPat = PAT_SCHIFATORIGHT_LOOP;
@@ -1008,7 +1008,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		switch (_TalkDirection) {
 		case LEFT:
 		case UP:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_NAAHLEFT_START;
 			bodyStartPat = BPAT_STANDLEFT;
 			headLoopPat = PAT_NAAHLEFT_LOOP;
@@ -1016,7 +1016,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			headStartPat = PAT_NAAHRIGHT_START;
 			bodyStartPat = BPAT_STANDRIGHT;
 			headLoopPat = PAT_NAAHRIGHT_LOOP;
@@ -1025,47 +1025,47 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		break;
 
 	case TALK_MACBETH1:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH1;
 		break;
 	case TALK_MACBETH2:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH2;
 		break;
 	case TALK_MACBETH3:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH3;
 		break;
 	case TALK_MACBETH4:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH4;
 		break;
 	case TALK_MACBETH5:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH5;
 		break;
 	case TALK_MACBETH6:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH6;
 		break;
 	case TALK_MACBETH7:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH7;
 		break;
 	case TALK_MACBETH8:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH8;
 		break;
 	case TALK_MACBETH9:
-		_nBodyOffset.Set(-33, -1);
+		_nBodyOffset.set(-33, -1);
 		headLoopPat = PAT_TALK_LEFT;
 		bodyLoopPat = BPAT_MACBETH9;
 		break;
@@ -1076,7 +1076,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case DOWN:
 			bodyStartPat = BPAT_STANDDOWN;
 			bodyLoopPat = BPAT_STANDDOWN;
-			_nBodyOffset.Set(4, 53);
+			_nBodyOffset.set(4, 53);
 
 			headStartPat = PAT_SPAVENTODOWN_STAND;
 			headLoopPat = PAT_SPAVENTODOWN_LOOP;
@@ -1085,7 +1085,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case RIGHT:
 			bodyStartPat = BPAT_STANDRIGHT;
 			bodyLoopPat = BPAT_STANDRIGHT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 
 			headStartPat = PAT_SPAVENTORIGHT_STAND;
 			headLoopPat = PAT_SPAVENTORIGHT_LOOP;
@@ -1094,7 +1094,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 		case LEFT:
 			bodyStartPat = BPAT_STANDLEFT;
 			bodyLoopPat = BPAT_STANDLEFT;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 
 			headStartPat = PAT_SPAVENTOLEFT_STAND;
 			headLoopPat = PAT_SPAVENTOLEFT_LOOP;
@@ -1450,10 +1450,10 @@ void RMTony::endTalk(CORO_PARAM) {
 			setPattern(0);
 			if (_TalkDirection == UP || _TalkDirection == LEFT) {
 				_body.setPattern(BPAT_CONBARBALEFT_STATIC);
-				_nBodyOffset.Set(-41, -14);
+				_nBodyOffset.set(-41, -14);
 			} else if (_TalkDirection == DOWN || _TalkDirection == RIGHT) {
 				_body.setPattern(BPAT_CONBARBARIGHT_STATIC);
-				_nBodyOffset.Set(-26, -14);
+				_nBodyOffset.set(-26, -14);
 			}
 			mainUnfreeze();
 		} else {
@@ -1564,14 +1564,14 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
-			_nBodyOffset.Set(-21, -5);
+			_nBodyOffset.set(-21, -5);
 			bodyStartPat = BPAT_CONCONIGLIOLEFT_START;
 			bodyLoopPat = BPAT_CONCONIGLIOLEFT_LOOP;
 			break;
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-4, -5);
+			_nBodyOffset.set(-4, -5);
 			bodyStartPat = BPAT_CONCONIGLIORIGHT_START;
 			bodyLoopPat = BPAT_CONCONIGLIORIGHT_LOOP;
 			break;
@@ -1582,14 +1582,14 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
-			_nBodyOffset.Set(-34, -2);
+			_nBodyOffset.set(-34, -2);
 			bodyStartPat = BPAT_CONCARTELEFT_START;
 			bodyLoopPat = BPAT_CONCARTELEFT_LOOP;
 			break;
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-4, -2);
+			_nBodyOffset.set(-4, -2);
 			bodyStartPat = BPAT_CONCARTERIGHT_START;
 			bodyLoopPat = BPAT_CONCARTERIGHT_LOOP;
 			break;
@@ -1600,14 +1600,14 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
-			_nBodyOffset.Set(-61, -7);
+			_nBodyOffset.set(-61, -7);
 			bodyStartPat = BPAT_CONRICETTALEFT_START;
 			bodyLoopPat = BPAT_CONRICETTALEFT_LOOP;
 			break;
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-5, -7);
+			_nBodyOffset.set(-5, -7);
 			bodyStartPat = BPAT_CONRICETTARIGHT_START;
 			bodyLoopPat = BPAT_CONRICETTARIGHT_LOOP;
 			break;
@@ -1618,14 +1618,14 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
-			_nBodyOffset.Set(-35, 2);
+			_nBodyOffset.set(-35, 2);
 			bodyStartPat = BPAT_CONPUPAZZOLEFT_START;
 			bodyLoopPat = BPAT_CONPUPAZZOLEFT_LOOP;
 			break;
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-14, 2);
+			_nBodyOffset.set(-14, 2);
 			bodyStartPat = BPAT_CONPUPAZZORIGHT_START;
 			bodyLoopPat = BPAT_CONPUPAZZORIGHT_LOOP;
 			break;
@@ -1636,14 +1636,14 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
-			_nBodyOffset.Set(-16, -9);
+			_nBodyOffset.set(-16, -9);
 			bodyStartPat = BPAT_CONTACCUINOLEFT_START;
 			bodyLoopPat = BPAT_CONTACCUINOLEFT_LOOP;
 			break;
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-6, -9);
+			_nBodyOffset.set(-6, -9);
 			bodyStartPat = BPAT_CONTACCUINORIGHT_START;
 			bodyLoopPat = BPAT_CONTACCUINORIGHT_LOOP;
 			break;
@@ -1654,14 +1654,14 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
-			_nBodyOffset.Set(-41, -8);
+			_nBodyOffset.set(-41, -8);
 			bodyStartPat = BPAT_CONMEGAFONOLEFT_START;
 			bodyLoopPat = BPAT_CONMEGAFONOLEFT_LOOP;
 			break;
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-14, -8);
+			_nBodyOffset.set(-14, -8);
 			bodyStartPat = BPAT_CONMEGAFONORIGHT_START;
 			bodyLoopPat = BPAT_CONMEGAFONORIGHT_LOOP;
 			break;
@@ -1672,7 +1672,7 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
-			_nBodyOffset.Set(-41, -14);
+			_nBodyOffset.set(-41, -14);
 			bodyStartPat = BPAT_CONBARBALEFT_START;
 			bodyLoopPat = BPAT_STANDLEFT;
 			headLoopPat = PAT_TALKBARBA_LEFT;
@@ -1681,7 +1681,7 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 
 		case DOWN:
 		case RIGHT:
-			_nBodyOffset.Set(-26, -14);
+			_nBodyOffset.set(-26, -14);
 			bodyStartPat = BPAT_CONBARBARIGHT_START;
 			bodyLoopPat = BPAT_STANDRIGHT;
 			headLoopPat = PAT_TALKBARBA_RIGHT;
@@ -1697,7 +1697,7 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 			bodyLoopPat = BPAT_STANDDOWN;
 			bodyStartPat = BPAT_STANDDOWN;
 			headLoopPat = PAT_SPAVENTODOWN_STAND;
-			_nBodyOffset.Set(4, 53);
+			_nBodyOffset.set(4, 53);
 			break;
 
 		case LEFT:
@@ -1705,7 +1705,7 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 			bodyLoopPat = BPAT_STANDLEFT;
 			bodyStartPat = BPAT_STANDLEFT;
 			headLoopPat = PAT_SPAVENTOLEFT_STAND;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			break;
 
 		case RIGHT:
@@ -1713,7 +1713,7 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 			bodyLoopPat = BPAT_STANDRIGHT;
 			bodyStartPat = BPAT_STANDRIGHT;
 			headLoopPat = PAT_SPAVENTORIGHT_STAND;
-			_nBodyOffset.Set(6, 56);
+			_nBodyOffset.set(6, 56);
 			break;
 
 		default:

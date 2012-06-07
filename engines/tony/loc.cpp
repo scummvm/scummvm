@@ -50,7 +50,7 @@ using namespace ::Tony::MPAL;
  * @returns     Reference to the data stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal) {
-	ds.Read(pal._data, 1024);
+	ds.read(pal._data, 1024);
 	return ds;
 }
 
@@ -129,7 +129,7 @@ void RMPattern::readFromStream(RMDataStream &ds, bool bLOX) {
 	// Create and read the slots
 	_slots = new RMSlot[_nSlots];
 
-	for (i = 0; i < _nSlots && !ds.IsError(); i++) {
+	for (i = 0; i < _nSlots && !ds.isError(); i++) {
 		if (bLOX)
 			_slots[i].readFromStream(ds, true);
 		else
@@ -319,20 +319,20 @@ void RMSprite::init(RMGfxSourceBuffer *buf) {
 }
 
 void RMSprite::LOXGetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy) {
-	int pos = ds.Pos();
+	int pos = ds.pos();
 
 	ds >> *dimx >> *dimy;
 
-	ds.Seek(pos, ds.START);
+	ds.seek(pos, ds.START);
 }
 
 void RMSprite::getSizeFromStream(RMDataStream &ds, int *dimx, int *dimy) {
-	int pos = ds.Pos();
+	int pos = ds.pos();
 
 	ds >> _name;
 	ds >> *dimx >> *dimy;
 
-	ds.Seek(pos, ds.START);
+	ds.seek(pos, ds.START);
 }
 
 void RMSprite::readFromStream(RMDataStream &ds, bool bLOX) {
@@ -404,7 +404,7 @@ void RMSfx::readFromStream(RMDataStream &ds, bool bLOX) {
 	ds >> size;
 
 	// Upload the sound effect identifier from the buffer
-	ds.Read(id, 4);
+	ds.read(id, 4);
 
 	// Ensure it's a RIFF
 	assert(id[0] == 'R' && id[1] == 'I' && id[2] == 'F' && id[3] == 'F');
@@ -414,7 +414,7 @@ void RMSfx::readFromStream(RMDataStream &ds, bool bLOX) {
 
 	// Read the raw WAV data
 	raw = new byte[size];
-	ds.Read(raw, size);
+	ds.read(raw, size);
 
 	// Create the sound effect
 	_fx = _vm->createSFX(raw);
@@ -522,18 +522,18 @@ bool RMItem::isIn(const RMPoint &pt, int *size)  {
 		return false;
 
 	// Search for the right bounding box to use - use the sprite's if it has one, otherwise use the generic one
-	if (_nCurPattern != 0 && !_sprites[_nCurSprite]._rcBox.IsEmpty())
+	if (_nCurPattern != 0 && !_sprites[_nCurSprite]._rcBox.isEmpty())
 		rc = _sprites[_nCurSprite]._rcBox + calculatePos();
-	else if (!_rcBox.IsEmpty())
+	else if (!_rcBox.isEmpty())
 		rc = _rcBox;
 	// If no box, return immediately
 	else
 		return false;
 
 	if (size != NULL)
-		*size = rc.Size();
+		*size = rc.size();
 
-	return rc.PtInRect(pt + _curScroll);
+	return rc.ptInRect(pt + _curScroll);
 }
 
 void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
@@ -592,8 +592,8 @@ void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
 	_patterns = new RMPattern[_nPatterns + 1];
 
 	// Read in class data
-	if (!ds.IsError())
-		for (i = 0; i < _nSprites && !ds.IsError(); i++) {
+	if (!ds.isError())
+		for (i = 0; i < _nSprites && !ds.isError(); i++) {
 			// Download the sprites
 			if (bLOX) {
 				_sprites[i].LOXGetSizeFromStream(ds, &dimx, &dimy);
@@ -609,8 +609,8 @@ void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
 				_sprites[i].setPalette(_pal._data);
 		}
 
-	if (!ds.IsError())
-		for (i = 0; i < _nSfx && !ds.IsError(); i++) {
+	if (!ds.isError())
+		for (i = 0; i < _nSfx && !ds.isError(); i++) {
 			if (bLOX)
 				_sfx[i].readFromStream(ds, true);
 			else
@@ -618,8 +618,8 @@ void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
 		}
 
 	// Read the pattern from pattern 1
-	if (!ds.IsError())
-		for (i = 1; i <= _nPatterns && !ds.IsError(); i++) {
+	if (!ds.isError())
+		for (i = 1; i <= _nPatterns && !ds.isError(); i++) {
 			if (bLOX)
 				_patterns[i].readFromStream(ds, true);
 			else
@@ -695,11 +695,11 @@ void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	prim->setFlag(_bCurFlag);
 
 	// Offset direction for scrolling
-	prim->Dst().Offset(-_curScroll);
+	prim->Dst().offset(-_curScroll);
 
 	// We must offset the cordinates of the item inside the primitive
 	// It is estimated as nonno + (babbo + figlio)
-	prim->Dst().Offset(calculatePos());
+	prim->Dst().offset(calculatePos());
 
 	// No stretching, please
 	prim->setStrecth(false);
@@ -781,7 +781,7 @@ RMItem::RMItem() {
 	_patterns = NULL;
 	_sprites = NULL;
 	_sfx = NULL;
-	_curScroll.Set(0, 0);
+	_curScroll.set(0, 0);
 	_bInitCurPattern = true;
 	_nCurPattern = 0;
 	_z = 0;
@@ -904,9 +904,9 @@ void RMWipe::initFade(int type) {
 	RMRes res(RES_W_CERCHIO);
 	RMDataStream ds;
 
-	ds.OpenBuffer(res);
+	ds.openBuffer(res);
 	ds >> _wip0r;
-	ds.Close();
+	ds.close();
 
 	_wip0r.setPattern(1);
 
@@ -1688,7 +1688,7 @@ RMCharacter::RMCharacter() {
 	bDrawNow = false;
 	bNeedToStop = false;
 
-	_pos.Set(0, 0);
+	_pos.set(0, 0);
 }
 
 RMCharacter::~RMCharacter() {
@@ -1824,14 +1824,14 @@ void RMGameBoxes::init(void) {
 	for (i = 1; i <= _nLocBoxes; i++) {
 		RMRes res(10000 + i);
 
-		ds.OpenBuffer(res);
+		ds.openBuffer(res);
 
 		_allBoxes[i] = new RMBoxLoc();
 		ds >> *_allBoxes[i];
 
 		_allBoxes[i]->recalcAllAdj();
 
-		ds.Close();
+		ds.close();
 	}
 }
 
@@ -1985,9 +1985,9 @@ bool RMLocation::load(Common::File &file) {
 
 	RMFileStreamSlow fs;
 
-	fs.OpenFile(file);
+	fs.openFile(file);
 	bRet = load(fs);
-	fs.Close();
+	fs.close();
 
 	return bRet;
 }
@@ -1997,9 +1997,9 @@ bool RMLocation::load(const byte *buf) {
 	RMDataStream ds;
 	bool bRet;
 
-	ds.OpenBuffer(buf);
+	ds.openBuffer(buf);
 	bRet = load(ds);
-	ds.Close();
+	ds.close();
 	return bRet;
 }
 
@@ -2045,7 +2045,7 @@ bool RMLocation::load(RMDataStream &ds) {
 
 	// Location dimensions
 	ds >> dimx >> dimy;
-	_curScroll.Set(0, 0);
+	_curScroll.set(0, 0);
 
 	// Read the colour mode
 	ds >> cm;
@@ -2081,11 +2081,11 @@ bool RMLocation::load(RMDataStream &ds) {
 
 
 	_vm->freezeTime();
-	for (i = 0; i < _nItems && !ds.IsError(); i++)
+	for (i = 0; i < _nItems && !ds.isError(); i++)
 		ds >> _items[i];
 	_vm->unfreezeTime();
 
-	return ds.IsError();
+	return ds.isError();
 }
 
 
@@ -2107,7 +2107,7 @@ bool RMLocation::loadLOX(RMDataStream &ds) {
 
 	// Dimensions
 	ds >> dimx >> dimy;
-	_curScroll.Set(0, 0);
+	_curScroll.set(0, 0);
 
 	// It's always 65K (16-bit) mode
 	_cmode = CM_65K;
@@ -2123,10 +2123,10 @@ bool RMLocation::loadLOX(RMDataStream &ds) {
 	if (_nItems > 0)
 		_items = new RMItem[_nItems];
 
-	for (i = 0; i < _nItems && !ds.IsError(); i++)
+	for (i = 0; i < _nItems && !ds.isError(); i++)
 		_items[i].readFromStream(ds, true);
 
-	return ds.IsError();
+	return ds.isError();
 }
 
 

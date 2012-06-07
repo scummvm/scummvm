@@ -97,13 +97,13 @@ void RMInventory::init(void) {
 		RMRes res(curres);
 		RMDataStream ds;
 
-		assert(res.IsValid());
+		assert(res.isValid());
 
 		// Initialise the MPAL inventory item by reading it in.
 		_items[i].icon.setInitCurPattern(false);
-		ds.OpenBuffer(res);
+		ds.openBuffer(res);
 		ds >> _items[i].icon;
-		ds.Close();
+		ds.close();
 
 		// Puts in the default pattern 1
 		_items[i].pointer = NULL;
@@ -120,9 +120,9 @@ void RMInventory::init(void) {
 		for (j = 0; j < _items[i].icon.numPattern(); j++) {
 			RMResRaw raw(curres);
 
-			assert(raw.IsValid());
+			assert(raw.isValid());
 
-			_items[i].pointer[j].init((const byte *)raw, raw.Width(), raw.Height(), true);
+			_items[i].pointer[j].init((const byte *)raw, raw.width(), raw.height(), true);
 			curres++;
 		}
 	}
@@ -133,11 +133,11 @@ void RMInventory::init(void) {
 	// Download interface
 	RMDataStream ds;
 	RMRes res(RES_I_MINIINTER);
-	assert(res.IsValid());
-	ds.OpenBuffer(res);
+	assert(res.isValid());
+	ds.openBuffer(res);
 	ds >> miniInterface;
 	miniInterface.setPattern(1);
-	ds.Close();
+	ds.close();
 
 	// Create the text for hints on the mini interface
 	_hints[0].setAlignType(RMText::HCENTER, RMText::VTOP);
@@ -202,11 +202,11 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	if (_state == SELECTING) {
 
 		if (!GLOBALS.bCfgInvUp) {
-			_ctx->pos.Set((_nSelectObj + 1) * 64 - 20, RM_SY - 113);
-			_ctx->pos2.Set((_nSelectObj + 1) * 64 + 34, RM_SY - 150);
+			_ctx->pos.set((_nSelectObj + 1) * 64 - 20, RM_SY - 113);
+			_ctx->pos2.set((_nSelectObj + 1) * 64 + 34, RM_SY - 150);
 		} else {
-			_ctx->pos.Set((_nSelectObj + 1) * 64 - 20, 72 - 4); // The brown part is at the top :(
-			_ctx->pos2.Set((_nSelectObj + 1) * 64 + 34, 119 - 4);
+			_ctx->pos.set((_nSelectObj + 1) * 64 - 20, 72 - 4); // The brown part is at the top :(
+			_ctx->pos2.set((_nSelectObj + 1) * 64 + 34, 119 - 4);
 		}
 
 		_ctx->p = new RMGfxPrimitive(prim->_task, _ctx->pos);
@@ -774,7 +774,7 @@ int RMInterface::onWhichBox(RMPoint pt) {
 
 	// Find the verb
 	for (i = 0; i < max; i++)
-		if (_hotbbox[i].PtInRect(pt))
+		if (_hotbbox[i].ptInRect(pt))
 			return i;
 
 	// Found no verb
@@ -788,13 +788,13 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 	CORO_BEGIN_CODE(_ctx);
 
-	prim->Dst().TopLeft() = _openStart;
+	prim->Dst().topLeft() = _openStart;
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLEByte::draw, bigBuf, prim);
 
 	// Check if there is a draw hot zone
 	_ctx->h = onWhichBox(_mpos);
 	if (_ctx->h != -1) {
-		prim->Dst().TopLeft() = _openStart;
+		prim->Dst().topLeft() = _openStart;
 		CORO_INVOKE_2(_hotzone[_ctx->h].draw, bigBuf, prim);
 
 		if (_lastHotZone != _ctx->h) {
@@ -803,7 +803,7 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 		}
 
 		if (GLOBALS.bCfgInterTips) {
-			prim->Dst().TopLeft() = _openStart + RMPoint(70, 177);
+			prim->Dst().topLeft() = _openStart + RMPoint(70, 177);
 			CORO_INVOKE_2(_hints[_ctx->h].draw, bigBuf, prim);
 		}
 	} else
@@ -896,21 +896,21 @@ void RMInterface::init(void) {
 
 	setPriority(191);
 
-	RMGfxSourceBuffer::init(inter, inter.Width(), inter.Height());
+	RMGfxSourceBuffer::init(inter, inter.width(), inter.height());
 	loadPaletteWA(RES_I_INTERPAL);
 
 	for (i = 0; i < 5; i++) {
 		RMResRaw part(RES_I_INTERP1 + i);
 
-		_hotzone[i].init(part, part.Width(), part.Height());
+		_hotzone[i].init(part, part.width(), part.height());
 		_hotzone[i].loadPaletteWA(pal);
 	}
 
-	_hotbbox[0].SetRect(126, 123, 159, 208);   // Take
-	_hotbbox[1].SetRect(90, 130, 125, 186);    // About
-	_hotbbox[2].SetRect(110, 60, 152, 125);
-	_hotbbox[3].SetRect(56, 51, 93, 99);
-	_hotbbox[4].SetRect(51, 105, 82, 172);
+	_hotbbox[0].setRect(126, 123, 159, 208);   // Take
+	_hotbbox[1].setRect(90, 130, 125, 186);    // About
+	_hotbbox[2].setRect(110, 60, 152, 125);
+	_hotbbox[3].setRect(56, 51, 93, 99);
+	_hotbbox[4].setRect(51, 105, 82, 172);
 
 	_hints[0].setAlignType(RMText::HRIGHT, RMText::VTOP);
 	_hints[1].setAlignType(RMText::HRIGHT, RMText::VTOP);

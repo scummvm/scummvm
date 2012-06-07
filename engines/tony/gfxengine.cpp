@@ -412,7 +412,7 @@ uint32 RMGfxEngine::loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	for (i = 0; i < 5; i++) {
 		// Try the loading of the location
 		RMRes res(_nCurLoc);
-		if (!res.IsValid())
+		if (!res.isValid())
 			continue;
 
 		_loc.load(res);

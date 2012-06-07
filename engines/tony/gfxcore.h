@@ -110,8 +110,8 @@ public:
 	RMGfxPrimitive() {
 		_bFlag = 0;
 		_task = NULL;
-		_src.SetEmpty();
-		_dst.SetEmpty();
+		_src.setEmpty();
+		_dst.setEmpty();
 	}
 
 	RMGfxPrimitive(RMGfxTask *task) {
@@ -124,41 +124,41 @@ public:
 		_src = src;
 		_dst = dst;
 		_bFlag = 0;
-		_bStretch = (src.Width() != dst.Width() || src.Height() != dst.Height());
+		_bStretch = (src.width() != dst.width() || src.height() != dst.height());
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMRect &dst) {
 		_task = task;
-		_src.TopLeft() = src;
+		_src.topLeft() = src;
 		_dst = dst;
 		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMPoint &dst) {
 		_task = task;
-		_src.TopLeft() = src;
-		_dst.TopLeft() = dst;
+		_src.topLeft() = src;
+		_dst.topLeft() = dst;
 		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMPoint &dst) {
 		_task = task;
 		_src = src;
-		_dst.TopLeft() = dst;
+		_dst.topLeft() = dst;
 		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &dst) {
 		_task = task;
 		_dst = dst;
-		_src.SetEmpty();
+		_src.setEmpty();
 		_bFlag = 0;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &dst) {
 		_task = task;
-		_dst.TopLeft() = dst;
-		_src.SetEmpty();
+		_dst.topLeft() = dst;
+		_src.setEmpty();
 		_bFlag = 0;
 	}
 
@@ -174,27 +174,27 @@ public:
 		_src = src;
 	}
 	void setSrc(const RMPoint &src)       {
-		_src.TopLeft() = src;
+		_src.topLeft() = src;
 	}
 	void setDst(const RMRect &dst)        {
 		_dst = dst;
 	}
 	void setDst(const RMPoint &dst)       {
-		_dst.TopLeft() = dst;
+		_dst.topLeft() = dst;
 	}
 	void setStrecth(bool bStretch)  {
 		_bStretch = bStretch;
 	}
 
 	bool haveDst()                  {
-		return !_dst.IsEmpty();
+		return !_dst.isEmpty();
 	}
 	RMRect &Dst()                   {
 		return _dst;
 	}
 
 	bool haveSrc()                  {
-		return !_src.IsEmpty();
+		return !_src.isEmpty();
 	}
 	RMRect &Src()                   {
 		return _src;

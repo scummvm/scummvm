@@ -44,11 +44,11 @@ using namespace ::Tony::MPAL;
  */
 class RMDataStream {
 protected:
-	const byte *m_buf;
-	int m_length;
-	int m_pos;
-	bool m_bError;
-	int m_ecode;
+	const byte *_buf;
+	int _length;
+	int _pos;
+	bool _bError;
+	int _ecode;
 
 public:
 	enum RMDSPos {
@@ -68,15 +68,15 @@ public:
 	virtual ~RMDataStream();
 
 	// Loading buffer
-	void OpenBuffer(const byte *buf, int size = SIZENOTKNOWN);
-	void Close(void);
+	void openBuffer(const byte *buf, int size = SIZENOTKNOWN);
+	void close(void);
 
 	// Attributei
-	int Length();
-	virtual int Pos();
+	int length();
+	virtual int pos();
 
 	// EOF
-	virtual bool IsEOF();
+	virtual bool isEOF();
 
 	// Read methods
 	friend RMDataStream &operator>>(RMDataStream &df, char &var);
@@ -87,16 +87,16 @@ public:
 	friend RMDataStream &operator>>(RMDataStream &df, uint32 &var);
 
 	// General read
-	virtual bool Read(void *buf, int size);
+	virtual bool read(void *buf, int size);
 
 	// Skipping & Seeking
 	virtual RMDataStream &operator+=(int nBytes);
-	virtual int Seek(int nBytes, RMDSPos origin = CUR);
+	virtual int seek(int nBytes, RMDSPos origin = CUR);
 
 	// Error handling
-	void SetError(int ecode);
-	int GetError();
-	bool IsError();
+	void setError(int ecode);
+	int getError();
+	bool isError();
 };
 
 
@@ -105,17 +105,17 @@ public:
  */
 class RMFileStream : public RMDataStream {
 private:
-	byte *m_buf;
+	byte *_buf;
 
 public:
 	RMFileStream();
 	virtual ~RMFileStream();
 
 	// Methods for opening file
-	bool OpenFile(const char *lpFN);
-	bool OpenFile(Common::File &file);
+	bool openFile(const char *lpFN);
+	bool openFile(Common::File &file);
 
-	void Close(void);
+	void close(void);
 };
 
 
@@ -126,18 +126,18 @@ public:
 	RMFileStreamSlow();
 	virtual ~RMFileStreamSlow();
 
-	bool OpenFile(const char *lpFN);
-	bool OpenFile(Common::File &file);
+	bool openFile(const char *lpFN);
+	bool openFile(Common::File &file);
 
-	void Close(void);
+	void close(void);
 
 	RMDataStream &operator+=(int nBytes);
-	int Seek(int nBytes, RMDSPos where = CUR);
+	int seek(int nBytes, RMDSPos where = CUR);
 
-	int Pos();
-	virtual bool IsEOF();
+	int pos();
+	virtual bool isEOF();
 
-	bool Read(void *buf, int size);
+	bool read(void *buf, int size);
 
 	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, char &var);
 	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, byte &var);
@@ -152,9 +152,9 @@ public:
  */
 class RMString {
 private:
-	char *m_string;
-	int m_length;
-	int m_realLength;
+	char *_string;
+	int _length;
+	int _realLength;
 
 public:
 	RMString();
@@ -166,12 +166,12 @@ public:
 	RMString(const int ch);
 
 	// General methods
-	int Length() const;
-	void Compact();
+	int length() const;
+	void compact();
 
 	// Access characters within string
-	char GetAt(int nIndex);
-	void SetAt(int nIndex, char c);
+	char getAt(int nIndex);
+	void setAt(int nIndex, char c);
 	char &operator[](int nIndex);
 
 	// String cast
@@ -200,11 +200,11 @@ public:
 	friend RMDataStream &operator>>(RMDataStream &df, RMString &var);
 
 	// String formatting
-	void Format(const char *str, ...);
+	void format(const char *str, ...);
 
 private:
-	void Resize(int size, bool bMantain = false);
-	void Connect(const char *str, int size);
+	void resize(int size, bool bMantain = false);
+	void connect(const char *str, int size);
 };
 
 /**
@@ -224,14 +224,14 @@ public:
 	RMPoint &operator=(RMPoint p);
 
 	// Set
-	void Set(int x1, int y1) {
+	void set(int x1, int y1) {
 		x = x1;
 		y = y1;
 	}
 
 	// Offset
-	void Offset(int xOff, int yOff);
-	void Offset(const RMPoint &p);
+	void offset(int xOff, int yOff);
+	void offset(const RMPoint &p);
 	friend RMPoint operator+(RMPoint p1, RMPoint p2);
 	friend RMPoint operator-(RMPoint p1, RMPoint p2);
 	RMPoint &operator+=(RMPoint p);
@@ -261,27 +261,27 @@ public:
 	RMRect(const RMRect &rc);
 
 	// Attributes
-	RMPoint &TopLeft();
-	RMPoint &BottomRight();
-	RMPoint Center();
-	int Width() const;
-	int Height() const;
-	bool IsEmpty() const;
-	int Size() const;
+	RMPoint &topLeft();
+	RMPoint &bottomRight();
+	RMPoint center();
+	int width() const;
+	int height() const;
+	bool isEmpty() const;
+	int size() const;
 
 	// Set
-	void SetRect(int x1, int y1, int x2, int y2);
-	void SetRect(const RMPoint &p1, const RMPoint &p2);
-	void SetEmpty(void);
+	void setRect(int x1, int y1, int x2, int y2);
+	void setRect(const RMPoint &p1, const RMPoint &p2);
+	void setEmpty(void);
 
 	// Copiers
-	void SetRect(const RMRect &rc);
-	void CopyRect(const RMRect &rc);
+	void setRect(const RMRect &rc);
+	void copyRect(const RMRect &rc);
 	const RMRect &operator=(const RMRect &rc);
 
 	// Offset
-	void Offset(int xOff, int yOff);
-	void Offset(const RMPoint &p);
+	void offset(int xOff, int yOff);
+	void offset(const RMPoint &p);
 	friend RMRect operator+(const RMRect &rc, RMPoint p);
 	friend RMRect operator-(const RMRect &rc, RMPoint p);
 	friend RMRect operator+(RMPoint p, const RMRect &rc);
@@ -294,10 +294,10 @@ public:
 	bool operator!=(const RMRect &rc);
 
 	// Normalise
-	void NormalizeRect();
+	void normalizeRect();
 
 	// Point in rect
-	bool PtInRect(const RMPoint &pt) {
+	bool ptInRect(const RMPoint &pt) {
 		return (pt.x >= x1 && pt.x <= x2 && pt.y >= y1 && pt.y <= y2);
 	}
 
@@ -324,8 +324,8 @@ public:
 	RMResUpdate();
 	~RMResUpdate();
 
-	void Init(const Common::String &fileName);
-	HGLOBAL QueryResource(uint32 dwRes);
+	void init(const Common::String &fileName);
+	HGLOBAL queryResource(uint32 dwRes);
 };
 
 } // End of namespace Tony

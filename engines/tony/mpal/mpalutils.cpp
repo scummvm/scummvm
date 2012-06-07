@@ -37,42 +37,42 @@ namespace MPAL {
  * @param resId					MPAL resource to open
  */
 RMRes::RMRes(uint32 resID) {
-	m_h = _vm->_resUpdate.QueryResource(resID);
-	if (m_h == NULL)
-		m_h = mpalQueryResource(resID);
-	if (m_h != NULL)
-		m_buf = (byte *)GlobalLock(m_h);
+	_h = _vm->_resUpdate.queryResource(resID);
+	if (_h == NULL)
+		_h = mpalQueryResource(resID);
+	if (_h != NULL)
+		_buf = (byte *)GlobalLock(_h);
 }
 
 /**
  * Destructor
  */
 RMRes::~RMRes() {
-	if (m_h != NULL) {
-		GlobalUnlock(m_h);
-		GlobalFree(m_h);
+	if (_h != NULL) {
+		GlobalUnlock(_h);
+		GlobalFree(_h);
 	}
 }
 
 /**
  * Returns a pointer to the resource
  */
-const byte *RMRes::DataPointer() {
-	return m_buf;
+const byte *RMRes::dataPointer() {
+	return _buf;
 }
 
 /**
  * Returns a pointer to the resource
  */
 RMRes::operator const byte *() {
-	return DataPointer();
+	return dataPointer();
 }
 
 /**
  * Returns the size of the resource
  */
-unsigned int RMRes::Size() {
-	return GlobalSize(m_h);
+unsigned int RMRes::size() {
+	return GlobalSize(_h);
 }
 
 /****************************************************************************\
@@ -86,19 +86,19 @@ RMResRaw::~RMResRaw() {
 }
 
 const byte *RMResRaw::DataPointer() {
-	return m_buf + 8;
+	return _buf + 8;
 }
 
 RMResRaw::operator const byte *() {
 	return DataPointer();
 }
 
-int RMResRaw::Width() {
-	return READ_LE_UINT16(m_buf + 4);
+int RMResRaw::width() {
+	return READ_LE_UINT16(_buf + 4);
 }
 
-int RMResRaw::Height() {
-	return READ_LE_UINT16(m_buf + 6);
+int RMResRaw::height() {
+	return READ_LE_UINT16(_buf + 6);
 }
 
 } // end of namespace MPAL

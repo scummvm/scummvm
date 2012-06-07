@@ -100,7 +100,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 		// Get the box areas for the scene, and choose one so as to have a default
 		// position for Tony that will be in the walkable areas
 		RMBoxLoc *box = _vm->_theBoxes.getBoxes(sceneNumber);
-		scenePos.Set(box->boxes[0].hotspot[0].hotx, box->boxes[0].hotspot[0].hoty);
+		scenePos.set(box->boxes[0].hotspot[0].hotx, box->boxes[0].hotspot[0].hoty);
 	}
 
 	// Set up a process to change the scene

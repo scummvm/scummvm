@@ -574,7 +574,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 }
 
 DECLARE_CUSTOM_FUNCTION(SetLocStartPosition)(CORO_PARAM, uint32 nLoc, uint32 lX, uint32 lY, uint32) {
-	GLOBALS.StartLocPos[nLoc].Set(lX, lY);
+	GLOBALS.StartLocPos[nLoc].set(lX, lY);
 }
 
 DECLARE_CUSTOM_FUNCTION(SaveTonyPosition)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -1223,21 +1223,21 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32
 		if (_ctx->lx > 0) {
 			_ctx->lx -= (int32)sX;
 			if (_ctx->lx < 0) _ctx->lx = 0;
-			_ctx->pt.Offset((int32)sX, 0);
+			_ctx->pt.offset((int32)sX, 0);
 		} else if (_ctx->lx < 0) {
 			_ctx->lx += (int32)sX;
 			if (_ctx->lx > 0) _ctx->lx = 0;
-			_ctx->pt.Offset(-(int32)sX, 0);
+			_ctx->pt.offset(-(int32)sX, 0);
 		}
 
 		if (_ctx->ly > 0) {
 			_ctx->ly -= sY;
 			if (_ctx->ly < 0) _ctx->ly = 0;
-			_ctx->pt.Offset(0, sY);
+			_ctx->pt.offset(0, sY);
 		} else if (_ctx->ly < 0) {
 			_ctx->ly += sY;
 			if (_ctx->ly > 0) _ctx->ly = 0;
-			_ctx->pt.Offset(0, -(int32)sY);
+			_ctx->pt.offset(0, -(int32)sY);
 		}
 
 		CORO_INVOKE_0(GLOBALS.WaitFrame);

@@ -127,7 +127,7 @@ Common::ErrorCode TonyEngine::init() {
 		return Common::kUnknownError;
 
 	// Initialise the update resources
-	_resUpdate.Init("ROASTED.MPU");
+	_resUpdate.init("ROASTED.MPU");
 
 	// Initialise the music
 	initMusic();
