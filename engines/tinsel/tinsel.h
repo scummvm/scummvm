@@ -53,7 +53,6 @@ class Config;
 class MidiDriver;
 class MidiMusicPlayer;
 class PCMMusicPlayer;
-class Scheduler;
 class SoundManager;
 
 typedef Common::List<Common::Rect> RectList;
@@ -154,7 +153,6 @@ class TinselEngine : public Engine {
 	Common::Point _mousePos;
 	uint8 _dosPlayerDir;
 	Console *_console;
-	Scheduler *_scheduler;
 
 	static const char *const _sampleIndices[][3];
 	static const char *const _sampleFiles[][3];
