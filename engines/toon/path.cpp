@@ -60,7 +60,7 @@ void PathFindingHeap::clear() {
 	memset(_data, 0, sizeof(HeapDataGrid) * _size);
 }
 
-void PathFindingHeap::push(int32 x, int32 y, int32 weight) {
+void PathFindingHeap::push(int16 x, int16 y, int32 weight) {
 	debugC(2, kDebugPath, "push(%d, %d, %d)", x, y, weight);
 
 	if (_count == _size) {
@@ -87,7 +87,7 @@ void PathFindingHeap::push(int32 x, int32 y, int32 weight) {
 	int32 lMax = _count-1;
 	int32 lT = 0;
 
-	while (1) {
+	while (true) {
 		if (lMax <= 0)
 			break;
 		lT = (lMax-1) / 2;
@@ -104,7 +104,7 @@ void PathFindingHeap::push(int32 x, int32 y, int32 weight) {
 	}
 }
 
-void PathFindingHeap::pop(int32 *x, int32 *y, int32 *weight) {
+void PathFindingHeap::pop(int16 *x, int16 *y, int32 *weight) {
 	debugC(2, kDebugPath, "pop(x, y, weight)");
 
 	if (!_count) {
@@ -123,7 +123,7 @@ void PathFindingHeap::pop(int32 *x, int32 *y, int32 *weight) {
 	int32 lMin = 0;
 	int32 lT = 0;
 
-	while (1) {
+	while (true) {
 		lT = (lMin << 1) + 1;
 		if (lT < _count) {
 			if (lT < _count-1) {
@@ -315,7 +315,9 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 
 	while (_heap->getCount()) {
 		wei = 0;
-		_heap->pop(&curX, &curY, &curWeight);
+		int16 tempCurX, tempCurY;
+		_heap->pop(&tempCurX, &tempCurY, &curWeight);
+		curX = tempCurX, curY = tempCurY; // FIXME - Bodge to match heap->pop types
 		int curNode = curX + curY * _width;
 
 		int32 endX = MIN<int32>(curX + 1, _width - 1);

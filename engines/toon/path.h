@@ -38,8 +38,8 @@ public:
 	PathFindingHeap();
 	~PathFindingHeap();
 
-	void push(int32 x, int32 y, int32 weight);
-	void pop(int32 *x, int32 *y, int32 *weight);
+	void push(int16 x, int16 y, int32 weight);
+	void pop(int16 *x, int16 *y, int32 *weight);
 	void init(int32 size);
 	void clear();
 	void unload();
