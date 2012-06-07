@@ -22,18 +22,6 @@
 #include "graphics/scalerplugin.h"
 #include "graphics/scaler.h"
 
-ScalerPluginObject::ScalerPluginObject() {
-	_doScale = true;
-}
-
-void ScalerPluginObject::disableScaling() {
-	_doScale = false;
-}
-
-void ScalerPluginObject::enableScaling() {
-	_doScale = true;
-}
-
 void ScalerPluginObject::scale1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 	                uint32 dstPitch, int width, int height, int bytesPerPixel) {
 	assert(bytesPerPixel == 2); // TODO add support for 4 bytes
