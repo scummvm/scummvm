@@ -22,6 +22,7 @@
 
 #include "math/matrix4.h"
 #include "math/vector4d.h"
+#include "math/squarematrix.h"
 
 namespace Math {
 
@@ -143,6 +144,19 @@ void Matrix<4, 4>::inverseRotate(Vector3d *v) {
 	
 	*v = temp;
 }
+
+void swap (float &a, float &b);
+
 	
+void Matrix<4, 4>::transpose() {
+	swap(operator ()(0,1), operator ()(1,0));
+	swap(operator ()(0,2), operator ()(2,0));
+	swap(operator ()(0,3), operator ()(3,0));
+
+	swap(operator ()(1,2), operator ()(2,1));
+	swap(operator ()(1,3), operator ()(3,1));
+	swap(operator ()(2,3), operator ()(3,2));
+}
+
 } // end of namespace Math
 

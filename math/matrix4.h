@@ -61,6 +61,8 @@ public:
      */
 	void invertAffineOrthonormal();
 
+	void transpose();
+
 };
 
 typedef Matrix<4, 4> Matrix4;
