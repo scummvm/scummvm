@@ -102,7 +102,7 @@ public:
 	virtual uint getScreenHeight() { return _screenHeight; }
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
-	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) = 0;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) = 0;
 
 	virtual void clearScreen() = 0;
 

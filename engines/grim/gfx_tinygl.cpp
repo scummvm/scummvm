@@ -284,7 +284,7 @@ void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	tglRotatef(roll, 0, 0, -1);
 }
 
-void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) {
+void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
 	Math::Vector3d up_vec(0, 0, 1);
 
 	// EMI only: transform XYZ to YXZ

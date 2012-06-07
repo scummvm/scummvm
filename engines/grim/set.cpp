@@ -474,7 +474,7 @@ void Set::Setup::setupCamera() const {
 	// zbuffer transformation in bitmap.cpp to take nclip_ and
 	// fclip_ into account.
 	g_driver->setupCamera(_fov, 0.01f, 3276.8f, _roll);
-	g_driver->positionCamera(_pos, _interest);
+	g_driver->positionCamera(_pos, _interest, _roll);
 }
 
 class Sorter {

@@ -219,11 +219,13 @@ void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glRotatef(roll, 0, 0, -1);
 }
 
-void GfxOpenGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) {
+void GfxOpenGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
 	Math::Vector3d up_vec(0, 0, 1);
+
+	if (g_grim->getGameType() != GType_MONKEY4)
+		glRotatef(roll, 0, 0, -1);
 
 	// EMI only: transform XYZ to YXZ
 	if (g_grim->getGameType() == GType_MONKEY4) {
