@@ -66,15 +66,17 @@ public:
 	bool lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2);
 	bool walkLine(int32 x, int32 y, int32 x2, int32 y2);
 
-	void resetBlockingRects();
+	void resetBlockingRects() { _numBlockingRects = 0; }
 	void addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2);
 	void addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h);
 
-	int32 getPathNodeCount() const;
-	int32 getPathNodeX(int32 nodeId) const;
-	int32 getPathNodeY(int32 nodeId) const;
+	int32 getPathNodeCount() const { return _gridPathCount; }
+	int32 getPathNodeX(int32 nodeId) const { return _tempPathX[ _gridPathCount - nodeId - 1]; }
+	int32 getPathNodeY(int32 nodeId) const { return _tempPathY[ _gridPathCount - nodeId - 1]; }
 
 private:
+	static const uint8 kMaxBlockingRects = 16;
+
 	Picture *_currentMask;
 
 	PathFindingHeap *_heap;
@@ -85,10 +87,10 @@ private:
 
 	int32 _tempPathX[4096];
 	int32 _tempPathY[4096];
-	int32 _blockingRects[16][5];
-	int32 _numBlockingRects;
-	int32 _allocatedGridPathCount;
 	int32 _gridPathCount;
+
+	int32 _blockingRects[kMaxBlockingRects][5];
+	uint8 _numBlockingRects;
 };
 
 } // End of namespace Toon

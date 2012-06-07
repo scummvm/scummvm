@@ -174,7 +174,7 @@ void PathFinding::init(Picture *mask) {
 }
 
 bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
-	for (int32 i = 0; i < _numBlockingRects; i++) {
+	for (uint8 i = 0; i < _numBlockingRects; i++) {
 		if (_blockingRects[i][4] == 0) {
 			if (x >= _blockingRects[i][0] && x <= _blockingRects[i][2] && y >= _blockingRects[i][1] && y < _blockingRects[i][3])
 				return false;
@@ -364,11 +364,11 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	curX = destx;
 	curY = desty;
 
-	int32 *retPathX = (int32 *)malloc(4096 * sizeof(int32));
-	int32 *retPathY = (int32 *)malloc(4096 * sizeof(int32));
+	int32 *retPathX = new int32[4096];
+	int32 *retPathY = new int32[4096];
 	if (!retPathX || !retPathY) {
-		free(retPathX);
-		free(retPathY);
+		delete retPathX;
+		delete retPathY;
 
 		error("[PathFinding::findPath] Cannot allocate pathfinding buffers");
 	}
@@ -380,6 +380,7 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	numpath++;
 	int32 bestscore = sq[destx + desty * _width];
 
+	bool retVal = false;
 	while (true) {
 		int32 bestX = -1;
 		int32 bestY = -1;
@@ -406,12 +407,8 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 			}
 		}
 
-		if (bestX < 0 || bestY < 0) {
-			free(retPathX);
-			free(retPathY);
-
-			return false;
-		}
+		if (bestX < 0 || bestY < 0)
+			break;
 
 		retPathX[numpath] = bestX;
 		retPathY[numpath] = bestY;
@@ -423,28 +420,26 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 			memcpy(_tempPathX, retPathX, sizeof(int32) * numpath);
 			memcpy(_tempPathY, retPathY, sizeof(int32) * numpath);
 
-			free(retPathX);
-			free(retPathY);
-
-			return true;
+			retVal = true;
+			break;
 		}
 
 		curX = bestX;
 		curY = bestY;
 	}
 
-	free(retPathX);
-	free(retPathY);
+	delete retPathX;
+	delete retPathY;
 
-	return false;
-}
-
-void PathFinding::resetBlockingRects() {
-	_numBlockingRects = 0;
+	return retVal;
 }
 
 void PathFinding::addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2) {
 	debugC(1, kDebugPath, "addBlockingRect(%d, %d, %d, %d)", x1, y1, x2, y2);
+	if (_numBlockingRects >= kMaxBlockingRects) {
+		warning("Maximum number of %d Blocking Rects reached!", kMaxBlockingRects);
+		return;
+	}
 
 	_blockingRects[_numBlockingRects][0] = x1;
 	_blockingRects[_numBlockingRects][1] = y1;
@@ -456,6 +451,10 @@ void PathFinding::addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2) {
 
 void PathFinding::addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h) {
 	debugC(1, kDebugPath, "addBlockingEllipse(%d, %d, %d, %d)", x1, y1, w, h);
+	if (_numBlockingRects >= kMaxBlockingRects) {
+		warning("Maximum number of %d Blocking Rects reached!", kMaxBlockingRects);
+		return;
+	}
 
 	_blockingRects[_numBlockingRects][0] = x1;
 	_blockingRects[_numBlockingRects][1] = y1;
@@ -463,18 +462,6 @@ void PathFinding::addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h) {
 	_blockingRects[_numBlockingRects][3] = h;
 	_blockingRects[_numBlockingRects][4] = 1;
 	_numBlockingRects++;
-}
-
-int32 PathFinding::getPathNodeCount() const {
-	return _gridPathCount;
-}
-
-int32 PathFinding::getPathNodeX(int32 nodeId) const {
-	return _tempPathX[ _gridPathCount - nodeId - 1];
-}
-
-int32 PathFinding::getPathNodeY(int32 nodeId) const {
-	return _tempPathY[ _gridPathCount - nodeId - 1];
 }
 
 } // End of namespace Toon
