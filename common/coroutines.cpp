@@ -72,9 +72,6 @@ static void displayCoroStats() {
 }
 #endif
 
-/**
- * Creates a coroutine context
- */
 CoroBaseContext::CoroBaseContext(const char *func)
 	: _line(0), _sleep(0), _subctx(0) {
 #ifdef COROUTINE_DEBUG
@@ -84,9 +81,6 @@ CoroBaseContext::CoroBaseContext(const char *func)
 #endif
 }
 
-/**
- * Destructor for coroutine context
- */
 CoroBaseContext::~CoroBaseContext() {
 #ifdef COROUTINE_DEBUG
 	s_coroCount--;
@@ -100,9 +94,6 @@ CoroBaseContext::~CoroBaseContext() {
 
 //--------------------- Scheduler Class ------------------------
 
-/**
- * Constructor
- */
 CoroutineScheduler::CoroutineScheduler() {
 	processList = NULL;
 	pFreeProcesses = NULL;
@@ -124,9 +115,6 @@ CoroutineScheduler::CoroutineScheduler() {
 	reset();
 }
 
-/**
- * Destructor
- */
 CoroutineScheduler::~CoroutineScheduler() {
 	// Kill all running processes (i.e. free memory allocated for their state).
 	PROCESS *pProc = active->pNext;
@@ -148,9 +136,6 @@ CoroutineScheduler::~CoroutineScheduler() {
 		delete (*i);
 }
 
-/**
- * Kills all processes and places them on the free list.
- */
 void CoroutineScheduler::reset() {
 
 #ifdef DEBUG
@@ -195,19 +180,12 @@ void CoroutineScheduler::reset() {
 
 
 #ifdef	DEBUG
-/**
- * Shows the maximum number of process used at once.
- */
 void CoroutineScheduler::printStats() {
 	debug("%i process of %i used", maxProcs, CORO_NUM_PROCESS);
 }
 #endif
 
 #ifdef DEBUG
-/**
- * Checks both the active and free process list to insure all the links are valid,
- * and that no processes have been lost
- */
 void CoroutineScheduler::CheckStack() {
 	Common::List<PROCESS *> pList;
 
@@ -242,9 +220,6 @@ void CoroutineScheduler::CheckStack() {
 }
 #endif
 
-/**
- * Give all active processes a chance to run
- */
 void CoroutineScheduler::schedule() {
 	// start dispatching active process list
 	PROCESS *pNext;
@@ -274,9 +249,6 @@ void CoroutineScheduler::schedule() {
 	}
 }
 
-/**
- * Reschedules all the processes to run again this query
- */
 void CoroutineScheduler::rescheduleAll() {
 	assert(pCurrent);
 
@@ -292,10 +264,6 @@ void CoroutineScheduler::rescheduleAll() {
 	pCurrent->pPrevious = active;
 }
 
-/**
- * If the specified process has already run on this tick, make it run
- * again on the current tick.
- */
 void CoroutineScheduler::reschedule(PPROCESS pReSchedProc) {
 	// If not currently processing the schedule list, then no action is needed
 	if (!pCurrent)
@@ -333,11 +301,6 @@ void CoroutineScheduler::reschedule(PPROCESS pReSchedProc) {
 	pReSchedProc->pNext = NULL;
 }
 
-/**
- * Moves the specified process to the end of the dispatch queue
- * allowing it to run again within the current game cycle.
- * @param pGiveProc		Which process
- */
 void CoroutineScheduler::giveWay(PPROCESS pReSchedProc) {
 	// If not currently processing the schedule list, then no action is needed
 	if (!pCurrent)
@@ -371,13 +334,6 @@ void CoroutineScheduler::giveWay(PPROCESS pReSchedProc) {
 	pReSchedProc->pNext = NULL;
 }
 
-/**
- * Continously makes a given process wait for another process to finish or event to signal.
- *
- * @param pid			Process/Event identifier
- * @param duration		Duration in milliseconds
- * @param expired		If specified, set to true if delay period expired
- */
 void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired) {
 	if (!pCurrent)
 		error("Called CoroutineScheduler::waitForSingleObject from the main process");
@@ -434,15 +390,6 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 	CORO_END_CODE;
 }
 
-/**
- * Continously makes a given process wait for given prcesses to finished or events to be set
- *
- * @param nCount		Number of Id's being passed
- * @param evtList		List of pids to wait for
- * @param bWaitAll		Specifies whether all or any of the processes/events 
- * @param duration		Duration in milliseconds
- * @param expired		Set to true if delay period expired
- */
 void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll, 
 						   uint32 duration, bool *expired) {
 	if (!pCurrent)
@@ -510,12 +457,6 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 	CORO_END_CODE;
 }
 
-/**
- * Make the active process sleep for the given duration in milliseconds
- * @param duration		Duration in milliseconds
- * @remarks		This duration won't be precise, since it relies on the frequency the
- * scheduler is called.
- */
 void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 	if (!pCurrent)
 		error("Called CoroutineScheduler::sleep from the main process");
@@ -539,14 +480,6 @@ void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 	CORO_END_CODE;
 }
 
-/**
- * Creates a new process.
- *
- * @param pid			process identifier
- * @param coroAddr		Coroutine start address
- * @param pParam		Process specific info
- * @param sizeParam		Size of process specific info
- */
 PROCESS *CoroutineScheduler::createProcess(uint32 pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc;
 
@@ -611,35 +544,15 @@ PROCESS *CoroutineScheduler::createProcess(uint32 pid, CORO_ADDR coroAddr, const
 	return pProc;
 }
 
-/**
- * Creates a new process with an auto-incrementing Process Id.
- *
- * @param coroAddr		Coroutine start address
- * @param pParam		Process specific info
- * @param sizeParam		Size of process specific info
- */
 uint32 CoroutineScheduler::createProcess(CORO_ADDR coroAddr, const void *pParam, int sizeParam) {
 	PROCESS *pProc = createProcess(++pidCounter, coroAddr, pParam, sizeParam);
 	return pProc->pid;
 }
 
-/**
- * Creates a new process with an auto-incrementing Process Id, and a single pointer parameter.
- *
- * @param coroAddr		Coroutine start address
- * @param pParam		Process specific info
- * @param sizeParam		Size of process specific info
- */
 uint32 CoroutineScheduler::createProcess(CORO_ADDR coroAddr, const void *pParam) {
 	return createProcess(coroAddr, &pParam, sizeof(void *));
 }
 
-
-/**
- * Kills the specified process.
- *
- * @param pKillProc		Which process to kill
- */
 void CoroutineScheduler::killProcess(PROCESS *pKillProc) {
 	// make sure a valid process pointer
 	assert(pKillProc >= processList && pKillProc <= processList + CORO_NUM_PROCESS - 1);
@@ -675,20 +588,10 @@ void CoroutineScheduler::killProcess(PROCESS *pKillProc) {
 	pFreeProcesses = pKillProc;
 }
 
-
-
-/**
- * Returns a pointer to the currently running process.
- */
 PROCESS *CoroutineScheduler::getCurrentProcess() {
 	return pCurrent;
 }
 
-/**
- * Returns the process identifier of the specified process.
- *
- * @param pProc			Which process
- */
 int CoroutineScheduler::getCurrentPID() const {
 	PROCESS *pProc = pCurrent;
 
@@ -699,14 +602,6 @@ int CoroutineScheduler::getCurrentPID() const {
 	return pProc->pid;
 }
 
-/**
- * Kills any process matching the specified PID. The current
- * process cannot be killed.
- *
- * @param pidKill		Process identifier of process to kill
- * @param pidMask		Mask to apply to process identifiers before comparison
- * @return		The number of processes killed is returned.
- */
 int CoroutineScheduler::killMatchingProcess(uint32 pidKill, int pidMask) {
 	int numKilled = 0;
 	PROCESS *pProc, *pPrev;	// process list pointers
@@ -756,15 +651,6 @@ int CoroutineScheduler::killMatchingProcess(uint32 pidKill, int pidMask) {
 	return numKilled;
 }
 
-/**
- * Set pointer to a function to be called by killProcess().
- *
- * May be called by a resource allocator, the function supplied is
- * called by killProcess() to allow the resource allocator to free
- * resources allocated to the dying process.
- *
- * @param pFunc			Function to be called by killProcess()
- */
 void CoroutineScheduler::setResourceCallback(VFPTRPP pFunc) {
 	pRCfunction = pFunc;
 }
@@ -789,12 +675,6 @@ EVENT *CoroutineScheduler::getEvent(uint32 pid) {
 }
 
 
-/**
- * Creates a new event object
- * @param bManualReset		Events needs to be manually reset. Otherwise, events
- * will be automatically reset after a process waits on the event finishes
- * @param bInitialState		Specifies whether the event is signalled or not initially
- */
 uint32 CoroutineScheduler::createEvent(bool bManualReset, bool bInitialState) {
 	EVENT *evt = new EVENT();
 	evt->pid = ++pidCounter;
@@ -805,10 +685,6 @@ uint32 CoroutineScheduler::createEvent(bool bManualReset, bool bInitialState) {
 	return evt->pid;
 }
 
-/**
- * Destroys the given event
- * @param pidEvent		Event Process Id
- */
 void CoroutineScheduler::closeEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (evt) {
@@ -817,33 +693,18 @@ void CoroutineScheduler::closeEvent(uint32 pidEvent) {
 	}
 }
 
-/**
- * Sets the event
- * @param pidEvent		Event Process Id
- */
 void CoroutineScheduler::setEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (evt)
 		evt->signalled = true;
 }
 
-/**
- * Resets the event
- * @param pidEvent		Event Process Id
- */
 void CoroutineScheduler::resetEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (evt)
 		evt->signalled = false;
 }
 
-/**
- * Temporarily sets a given event to true, and then runs all waiting processes, allowing any
- * processes waiting on the event to be fired. It then immediately resets the event again.
- * @param pidEvent		Event Process Id
- *
- * @remarks		Should not be run inside of another process
- */
 void CoroutineScheduler::pulseEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (!evt)
