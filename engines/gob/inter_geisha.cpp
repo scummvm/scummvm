@@ -55,7 +55,7 @@ Inter_Geisha::Inter_Geisha(GobEngine *vm) : Inter_v1(vm),
 	_diving      = new Geisha::Diving(vm);
 	_penetration = new Geisha::Penetration(vm);
 
-	_cheater = new Cheater_Geisha(vm, _diving);
+	_cheater = new Cheater_Geisha(vm, _diving, _penetration);
 
 	_vm->_console->registerCheater(_cheater);
 }

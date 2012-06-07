@@ -377,7 +377,7 @@ Penetration::ManagedSub::~ManagedSub() {
 
 
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
-	_shieldMeter(0), _healthMeter(0), _floor(0) {
+	_shieldMeter(0), _healthMeter(0), _floor(0), _isPlaying(false) {
 
 	_background = new Surface(320, 200, 1);
 
@@ -403,6 +403,8 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	_hasAccessPass = hasAccessPass;
 	_hasMaxEnergy  = hasMaxEnergy;
 	_testMode      = testMode;
+
+	_isPlaying = true;
 
 	init();
 	initScreen();
@@ -432,7 +434,17 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	deinit();
 	drawEndText();
 
+	_isPlaying = false;
+
 	return hasWon();
+}
+
+bool Penetration::isPlaying() const {
+	return _isPlaying;
+}
+
+void Penetration::cheatWin() {
+	_floor = 3;
 }
 
 void Penetration::init() {
@@ -748,6 +760,10 @@ void Penetration::checkInput() {
 				_keys[kKeyRight] = true;
 			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
 				_keys[kKeySpace] = true;
+			else if (event.kbd.keycode == Common::KEYCODE_d) {
+				_vm->getDebugger()->attach();
+				_vm->getDebugger()->onFrame();
+			}
 			break;
 
 		case Common::EVENT_KEYUP:

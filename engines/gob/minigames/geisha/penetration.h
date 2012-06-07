@@ -50,6 +50,9 @@ public:
 
 	bool play(bool hasAccessPass, bool hasMaxEnergy, bool testMode);
 
+	bool isPlaying() const;
+	void cheatWin();
+
 private:
 	static const int kModeCount  = 2;
 	static const int kFloorCount = 3;
@@ -140,6 +143,8 @@ private:
 	SoundDesc _soundKiss;
 	SoundDesc _soundShoot;
 	SoundDesc _soundExit;
+
+	bool _isPlaying;
 
 
 	void init();
