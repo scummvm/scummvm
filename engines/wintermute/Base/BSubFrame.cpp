@@ -222,10 +222,10 @@ HRESULT CBSubFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zo
 	if (_alpha != 0xFFFFFFFF) Alpha = _alpha;
 
 	if (Rotate != 0.0f) {
-		res = _surface->DisplayTransform((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _hotspotX, _hotspotY, _rect, ZoomX, ZoomY, Alpha, Rotate, BlendMode, _mirrorX, _mirrorY);
+		res = _surface->displayTransform((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _hotspotX, _hotspotY, _rect, ZoomX, ZoomY, Alpha, Rotate, BlendMode, _mirrorX, _mirrorY);
 	} else {
-		if (ZoomX == 100 && ZoomY == 100) res = _surface->DisplayTrans(X - _hotspotX, Y - _hotspotY, _rect, Alpha, BlendMode, _mirrorX, _mirrorY);
-		else res = _surface->DisplayTransZoom((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _rect, ZoomX, ZoomY, Alpha, BlendMode, _mirrorX, _mirrorY);
+		if (ZoomX == 100 && ZoomY == 100) res = _surface->displayTrans(X - _hotspotX, Y - _hotspotY, _rect, Alpha, BlendMode, _mirrorX, _mirrorY);
+		else res = _surface->displayTransZoom((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _rect, ZoomX, ZoomY, Alpha, BlendMode, _mirrorX, _mirrorY);
 	}
 
 	return res;
@@ -261,7 +261,7 @@ HRESULT CBSubFrame::SaveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 
 	RECT rect;
 	CBPlatform::SetRectEmpty(&rect);
-	if (_surface) CBPlatform::SetRect(&rect, 0, 0, _surface->GetWidth(), _surface->GetHeight());
+	if (_surface) CBPlatform::SetRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	if (!CBPlatform::EqualRect(&rect, &_rect))
 		Buffer->PutTextIndent(Indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
 
@@ -304,7 +304,7 @@ HRESULT CBSubFrame::SaveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 void CBSubFrame::SetDefaultRect() {
 	if (_surface) {
-		CBPlatform::SetRect(&_rect, 0, 0, _surface->GetWidth(), _surface->GetHeight());
+		CBPlatform::SetRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	} else CBPlatform::SetRectEmpty(&_rect);
 }
 

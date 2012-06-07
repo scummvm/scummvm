@@ -78,26 +78,26 @@ HRESULT CUITiledImage::Display(int X, int Y, int Width, int Height) {
 	Game->_renderer->StartSpriteBatch();
 
 	// top left/right
-	_image->_surface->DisplayTrans(X,                                                       Y, _upLeft);
-	_image->_surface->DisplayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y, _upRight);
+	_image->_surface->displayTrans(X,                                                       Y, _upLeft);
+	_image->_surface->displayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y, _upRight);
 
 	// bottom left/right
-	_image->_surface->DisplayTrans(X,                                                       Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downLeft);
-	_image->_surface->DisplayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downRight);
+	_image->_surface->displayTrans(X,                                                       Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downLeft);
+	_image->_surface->displayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downRight);
 
 	// left/right
 	int yyy = Y + (_upMiddle.bottom - _upMiddle.top);
 	for (row = 0; row < nu_rows; row++) {
-		_image->_surface->DisplayTrans(X,                                                       yyy, _middleLeft);
-		_image->_surface->DisplayTrans(X + (_middleLeft.right - _middleLeft.left) + nu_columns * tile_width, yyy, _middleRight);
+		_image->_surface->displayTrans(X,                                                       yyy, _middleLeft);
+		_image->_surface->displayTrans(X + (_middleLeft.right - _middleLeft.left) + nu_columns * tile_width, yyy, _middleRight);
 		yyy += tile_width;
 	}
 
 	// top/bottom
 	int xxx = X + (_upLeft.right - _upLeft.left);
 	for (col = 0; col < nu_columns; col++) {
-		_image->_surface->DisplayTrans(xxx, Y, _upMiddle);
-		_image->_surface->DisplayTrans(xxx, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downMiddle);
+		_image->_surface->displayTrans(xxx, Y, _upMiddle);
+		_image->_surface->displayTrans(xxx, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downMiddle);
 		xxx += tile_width;
 	}
 
@@ -106,7 +106,7 @@ HRESULT CUITiledImage::Display(int X, int Y, int Width, int Height) {
 	for (row = 0; row < nu_rows; row++) {
 		xxx = X + (_upLeft.right - _upLeft.left);
 		for (col = 0; col < nu_columns; col++) {
-			_image->_surface->DisplayTrans(xxx, yyy, _middleMiddle);
+			_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
 			xxx += tile_width;
 		}
 		yyy += tile_width;
@@ -287,8 +287,8 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 
 	// default
 	if (_image && _image->_surface) {
-		int Width = _image->_surface->GetWidth() / 3;
-		int Height = _image->_surface->GetHeight() / 3;
+		int Width = _image->_surface->getWidth() / 3;
+		int Height = _image->_surface->getHeight() / 3;
 
 		if (CBPlatform::IsRectEmpty(&_upLeft))   CBPlatform::SetRect(&_upLeft,   0,       0, Width,   Height);
 		if (CBPlatform::IsRectEmpty(&_upMiddle)) CBPlatform::SetRect(&_upMiddle, Width,   0, 2 * Width, Height);

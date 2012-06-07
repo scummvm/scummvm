@@ -225,7 +225,7 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 	// and paint it
 	if (Surface) {
 		RECT rc;
-		CBPlatform::SetRect(&rc, 0, 0, Surface->GetWidth(), Surface->GetHeight());
+		CBPlatform::SetRect(&rc, 0, 0, Surface->getWidth(), Surface->getHeight());
 		for (int i = 0; i < _layers.GetSize(); i++) {
 			uint32 Color = _layers[i]->_color;
 			uint32 OrigForceAlpha = _renderer->_forceAlphaColor;
@@ -233,7 +233,7 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 				Color = DRGBA(D3DCOLGetR(Color), D3DCOLGetG(Color), D3DCOLGetB(Color), D3DCOLGetA(_renderer->_forceAlphaColor));
 				_renderer->_forceAlphaColor = 0;
 			}
-			Surface->DisplayTransOffset(X, Y - textOffset, rc, Color, BLEND_NORMAL, false, false, _layers[i]->_offsetX, _layers[i]->_offsetY);
+			Surface->displayTransOffset(X, Y - textOffset, rc, Color, BLEND_NORMAL, false, false, _layers[i]->_offsetX, _layers[i]->_offsetY);
 
 			_renderer->_forceAlphaColor = OrigForceAlpha;
 		}
@@ -265,7 +265,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	}
 
 	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
-	retSurface->PutSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)));
+	retSurface->putSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)));
 	delete surface;
 	return retSurface;
 #if 0 //TODO

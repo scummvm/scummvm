@@ -40,35 +40,35 @@ public:
 	CBSurfaceSDL(CBGame *inGame);
 	~CBSurfaceSDL();
 
-	HRESULT Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
-	HRESULT Create(int Width, int Height);
+	HRESULT create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int lifeTime = -1, bool keepLoaded = false);
+	HRESULT create(int Width, int Height);
 
-	HRESULT CreateFromSDLSurface(Graphics::Surface *surface); //TODO: Rename function
+	HRESULT createFromSDLSurface(Graphics::Surface *surface); //TODO: Rename function
 
-	bool IsTransparentAt(int X, int Y);
-	bool IsTransparentAtLite(int X, int Y);
+	bool isTransparentAt(int x, int y);
+	bool isTransparentAtLite(int x, int y);
 
-	HRESULT StartPixelOp();
-	HRESULT EndPixelOp();
+	HRESULT startPixelOp();
+	HRESULT endPixelOp();
 
 
-	HRESULT DisplayTransZoom(int X, int Y, RECT rect, float ZoomX, float ZoomY, uint32 Alpha = 0xFFFFFFFF, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	HRESULT DisplayTrans(int X, int Y, RECT rect, uint32 Alpha = 0xFFFFFFFF, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	HRESULT DisplayTransOffset(int X, int Y, RECT rect, uint32 Alpha = 0xFFFFFFFF, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false, int offsetX = 0, int offsetY = 0);
-	HRESULT Display(int X, int Y, RECT rect, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	HRESULT DisplayZoom(int X, int Y, RECT rect, float ZoomX, float ZoomY, uint32 Alpha = 0xFFFFFFFF, bool Transparent = false, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	HRESULT DisplayTransform(int X, int Y, int HotX, int HotY, RECT Rect, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	virtual HRESULT PutSurface(const Graphics::Surface &surface);
+	HRESULT displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	HRESULT displayTrans(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	HRESULT displayTransOffset(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0);
+	HRESULT display(int x, int y, RECT rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	HRESULT displayZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, bool Transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	HRESULT displayTransform(int x, int y, int HotX, int HotY, RECT Rect, float zoomX, float zoomY, uint32 alpha, float Rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	virtual HRESULT putSurface(const Graphics::Surface &surface);
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
 	    static long DLL_CALLCONV TellProc(fi_handle handle);*/
-	virtual int GetWidth() {
+	virtual int getWidth() {
 		if (_surface) {
 			return _surface->w;
 		}
 		return _width;
 	}
-	virtual int GetHeight() {
+	virtual int getHeight() {
 		if (_surface) {
 			return _surface->h;
 		}
@@ -79,9 +79,9 @@ private:
 //	SDL_Texture *_texture;
 	Graphics::Surface *_surface;
 
-	HRESULT DrawSprite(int X, int Y, RECT *Rect, float ZoomX, float ZoomY, uint32 Alpha, bool AlphaDisable, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY, int offsetX = 0, int offsetY = 0);
-	void GenAlphaMask(Graphics::Surface *surface);
-	uint32 GetPixel(Graphics::Surface *surface, int x, int y);
+	HRESULT drawSprite(int x, int y, RECT *Rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
+	void genAlphaMask(Graphics::Surface *surface);
+	uint32 getPixel(Graphics::Surface *surface, int x, int y);
 
 	void *_lockPixels;
 	int _lockPitch;

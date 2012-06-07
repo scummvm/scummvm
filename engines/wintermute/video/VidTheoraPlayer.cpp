@@ -131,7 +131,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	// Additional setup.
 	_surface.create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight(), _theoraDecoder->getPixelFormat());
 	_texture = new CBSurfaceSDL(Game);
-	_texture->Create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight());
+	_texture->create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight());
 	_state = THEORA_STATE_PLAYING;
 	_playZoom = 100;
 	
@@ -581,10 +581,10 @@ int CVidTheoraPlayer::getMovieFrame() {
 HRESULT CVidTheoraPlayer::WriteVideo() {
 	if (!_texture) return E_FAIL;
 
-	_texture->StartPixelOp();
+	_texture->startPixelOp();
 	//RenderFrame(_texture, &yuv);
-	_texture->PutSurface(_surface);
-	_texture->EndPixelOp();
+	_texture->putSurface(_surface);
+	_texture->endPixelOp();
 
 	return S_OK;
 }
@@ -596,9 +596,9 @@ HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
 	HRESULT Res;
 
 	if (_texture) {
-		CBPlatform::SetRect(&rc, 0, 0, _texture->GetWidth(), _texture->GetHeight());
-		if (_playZoom == 100.0f) Res = _texture->DisplayTrans(_posX, _posY, rc, Alpha);
-		else Res = _texture->DisplayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, Alpha);
+		CBPlatform::SetRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
+		if (_playZoom == 100.0f) Res = _texture->displayTrans(_posX, _posY, rc, Alpha);
+		else Res = _texture->displayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, Alpha);
 	} else Res = E_FAIL;
 #if 0
 	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->Display();

@@ -36,8 +36,8 @@ namespace WinterMute {
 
 class CBSurface: public CBBase {
 public:
-	virtual HRESULT Invalidate();
-	virtual HRESULT PrepareToDraw();
+	virtual HRESULT invalidate();
+	virtual HRESULT prepareToDraw();
 	bool _cKDefault;
 	byte _cKRed;
 	byte _cKGreen;
@@ -52,34 +52,34 @@ public:
 	CBSurface(CBGame *inGame);
 	virtual ~CBSurface();
 
-	virtual HRESULT DisplayHalfTrans(int X, int Y, RECT rect);
-	virtual bool IsTransparentAt(int X, int Y);
-	virtual HRESULT DisplayTransZoom(int X, int Y, RECT rect, float ZoomX, float ZoomY, uint32 Alpha = 0xFFFFFFFF, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	virtual HRESULT DisplayTrans(int X, int Y, RECT rect, uint32 Alpha = 0xFFFFFFFF, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	virtual HRESULT DisplayTransOffset(int X, int Y, RECT rect, uint32 Alpha = 0xFFFFFFFF, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false, int offsetX = 0, int offsetY = 0);
-	virtual HRESULT Display(int X, int Y, RECT rect, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	virtual HRESULT DisplayZoom(int X, int Y, RECT rect, float ZoomX, float ZoomY, uint32 Alpha = 0xFFFFFFFF, bool Transparent = false, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	virtual HRESULT DisplayTransform(int X, int Y, int HotX, int HotY, RECT Rect, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode = BLEND_NORMAL, bool MirrorX = false, bool MirrorY = false);
-	virtual HRESULT Restore();
-	virtual HRESULT Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false);
-	virtual HRESULT Create(int Width, int Height);
-	virtual HRESULT PutSurface(const Graphics::Surface &surface) { return E_FAIL; }
-	virtual HRESULT PutPixel(int X, int Y, byte R, byte G, byte B, int A = -1);
-	virtual HRESULT GetPixel(int X, int Y, byte *R, byte *G, byte *B, byte *A = NULL);
-	virtual bool ComparePixel(int X, int Y, byte R, byte G, byte B, int A = -1);
-	virtual HRESULT StartPixelOp();
-	virtual HRESULT EndPixelOp();
-	virtual bool IsTransparentAtLite(int X, int Y);
-	void SetFilename(const char *Filename);
-	void SetSize(int Width, int Height);
+	virtual HRESULT displayHalfTrans(int x, int y, RECT rect);
+	virtual bool isTransparentAt(int x, int y);
+	virtual HRESULT displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual HRESULT displayTrans(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual HRESULT displayTransOffset(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
+	virtual HRESULT display(int x, int y, RECT rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool MirrorY = false) = 0;
+	virtual HRESULT displayZoom(int x, int y, RECT rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual HRESULT displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual HRESULT restore();
+	virtual HRESULT create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false) = 0;
+	virtual HRESULT create(int Width, int Height);
+	virtual HRESULT putSurface(const Graphics::Surface &surface) { return E_FAIL; }
+	virtual HRESULT putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
+	virtual HRESULT getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
+	virtual bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1);
+	virtual HRESULT startPixelOp();
+	virtual HRESULT endPixelOp();
+	virtual bool isTransparentAtLite(int x, int y);
+	void setFilename(const char *Filename);
+	void setSize(int width, int height);
 
 	int _referenceCount;
 	char *_filename;
 
-	virtual int GetWidth() {
+	virtual int getWidth() {
 		return _width;
 	}
-	virtual int GetHeight() {
+	virtual int getHeight() {
 		return _height;
 	}
 	//void SetWidth(int Width){ _width = Width;    }

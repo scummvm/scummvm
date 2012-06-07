@@ -54,141 +54,108 @@ CBSurface::CBSurface(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBSurface::~CBSurface() {
-	if (_pixelOpReady) EndPixelOp();
+	if (_pixelOpReady) endPixelOp();
 	if (_filename) delete [] _filename;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::Create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+HRESULT CBSurface::create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int lifeTime, bool keepLoaded) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::Restore() {
+HRESULT CBSurface::restore() {
+	return E_FAIL;
+}
+
+//////////////////////////////////////////////////////////////////////
+bool CBSurface::isTransparentAt(int x, int y) {
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////
+HRESULT CBSurface::displayHalfTrans(int x, int y, RECT rect) {
+	return E_FAIL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBSurface::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	return displayTransZoom(x, y, rect, zoomX, zoomY, alpha, blendMode, mirrorX, mirrorY);
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBSurface::create(int Width, int Height) {
 	return E_FAIL;
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBSurface::startPixelOp() {
+	return E_FAIL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBSurface::endPixelOp() {
+	return E_FAIL;
+}
 
 
-//////////////////////////////////////////////////////////////////////
-bool CBSurface::IsTransparentAt(int X, int Y) {
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
+	return E_FAIL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
+	return E_FAIL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBSurface::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::Display(int X, int Y, RECT rect, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY) {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::DisplayTrans(int X, int Y, RECT rect, uint32 Alpha, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY) {
-	return E_FAIL;
-}
-
-//////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::DisplayTransOffset(int X, int Y, RECT rect, uint32 Alpha, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY, int offsetX, int offsetY) {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::DisplayTransZoom(int X, int Y, RECT rect, float ZoomX, float ZoomY, uint32 Alpha, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY) {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::DisplayZoom(int X, int Y, RECT rect, float ZoomX, float ZoomY, uint32 Alpha, bool Transparent, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY) {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::DisplayHalfTrans(int X, int Y, RECT rect) {
-	return E_FAIL;
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::DisplayTransform(int X, int Y, int HotX, int HotY, RECT Rect, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode, bool MirrorX, bool MirrorY) {
-	return DisplayTransZoom(X, Y, Rect, ZoomX, ZoomY, Alpha, BlendMode, MirrorX, MirrorY);
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::Create(int Width, int Height) {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::StartPixelOp() {
-	return E_FAIL;
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::EndPixelOp() {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::GetPixel(int X, int Y, byte *R, byte *G, byte *B, byte *A) {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::PutPixel(int X, int Y, byte R, byte G, byte B, int A) {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool CBSurface::ComparePixel(int X, int Y, byte R, byte G, byte B, int A) {
-	return false;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-bool CBSurface::IsTransparentAtLite(int X, int Y) {
+bool CBSurface::isTransparentAtLite(int x, int y) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::Invalidate() {
+HRESULT CBSurface::invalidate() {
 	return E_FAIL;
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::PrepareToDraw() {
+HRESULT CBSurface::prepareToDraw() {
 	_lastUsedTime = Game->_liveTimer;
 
 	if (!_valid) {
 		//Game->LOG(0, "Reviving: %s", _filename);
-		return Create(_filename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
+		return create(_filename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
 	} else return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSurface::SetFilename(const char *Filename) {
+void CBSurface::setFilename(const char *filename) {
 	delete[] _filename;
 	_filename = NULL;
-	if (!Filename) return;
+	if (!filename) return;
 
-	_filename = new char[strlen(Filename) + 1];
-	if (_filename) strcpy(_filename, Filename);
+	_filename = new char[strlen(filename) + 1];
+	if (_filename) strcpy(_filename, filename);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBSurface::SetSize(int Width, int Height) {
+void CBSurface::setSize(int Width, int Height) {
 	_width = Width;
 	_height = Height;
 }

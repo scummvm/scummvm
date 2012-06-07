@@ -72,7 +72,7 @@ HRESULT CBSurfaceStorage::InitLoop() {
 
 			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && Game->_liveTimer - _surfaces[i]->_lastUsedTime >= _surfaces[i]->_lifeTime) {
 				//Game->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
-				_surfaces[i]->Invalidate();
+				_surfaces[i]->invalidate();
 			}
 		}
 	}
@@ -121,7 +121,7 @@ CBSurface *CBSurfaceStorage::AddSurface(const char *Filename, bool default_ck, b
 
 	if (!surface) return NULL;
 
-	if (FAILED(surface->Create(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded))) {
+	if (FAILED(surface->create(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded))) {
 		delete surface;
 		return NULL;
 	} else {
@@ -136,7 +136,7 @@ CBSurface *CBSurfaceStorage::AddSurface(const char *Filename, bool default_ck, b
 HRESULT CBSurfaceStorage::RestoreAll() {
 	HRESULT ret;
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
-		ret = _surfaces[i]->Restore();
+		ret = _surfaces[i]->restore();
 		if (ret != S_OK) {
 			Game->LOG(0, "CBSurfaceStorage::RestoreAll failed");
 			return ret;

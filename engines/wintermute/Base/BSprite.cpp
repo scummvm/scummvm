@@ -146,7 +146,7 @@ HRESULT CBSprite::LoadFile(const char *Filename, int LifeTime, TSpriteCacheType 
 			delete frame;
 			delete subframe;
 		} else {
-			CBPlatform::SetRect(&subframe->_rect, 0, 0, subframe->_surface->GetWidth(), subframe->_surface->GetHeight());
+			CBPlatform::SetRect(&subframe->_rect, 0, 0, subframe->_surface->getWidth(), subframe->_surface->getHeight());
 			frame->_subframes.Add(subframe);
 			_frames.Add(frame);
 			_currentFrame = 0;

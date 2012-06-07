@@ -3251,7 +3251,7 @@ HRESULT CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 		if (_saveImageName) {
 			_saveLoadImage = new CBSurfaceSDL(this);
 
-			if (!_saveLoadImage || FAILED(_saveLoadImage->Create(_saveImageName, true, 0, 0, 0))) {
+			if (!_saveLoadImage || FAILED(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
 				_saveLoadImage = NULL;
 			}
@@ -3301,7 +3301,7 @@ HRESULT CBGame::LoadGame(const char *Filename) {
 	if (_loadImageName) {
 		_saveLoadImage = new CBSurfaceSDL(this);
 
-		if (!_saveLoadImage || FAILED(_saveLoadImage->Create(_loadImageName, true, 0, 0, 0))) {
+		if (!_saveLoadImage || FAILED(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
 			delete _saveLoadImage;
 			_saveLoadImage = NULL;
 		}
@@ -4089,9 +4089,9 @@ HRESULT CBGame::DisplayContentSimple() {
 HRESULT CBGame::DisplayIndicator() {
 	if (_saveLoadImage) {
 		RECT rc;
-		CBPlatform::SetRect(&rc, 0, 0, _saveLoadImage->GetWidth(), _saveLoadImage->GetHeight());
-		if (_loadInProgress) _saveLoadImage->DisplayTrans(_loadImageX, _loadImageY, rc);
-		else _saveLoadImage->DisplayTrans(_saveImageX, _saveImageY, rc);
+		CBPlatform::SetRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
+		if (_loadInProgress) _saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
+		else _saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
 	}
 
 	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) return S_OK;

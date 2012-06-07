@@ -235,12 +235,12 @@ void CBFontBitmap::DrawChar(byte  c, int x, int y) {
 		_sprite->GetCurrentFrame();
 		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < _sprite->_frames.GetSize() && _sprite->_frames[_sprite->_currentFrame]) {
 			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.GetSize() > 0) {
-				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->_surface->DisplayTrans(x, y, rect);
+				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->_surface->displayTrans(x, y, rect);
 			}
 			Handled = true;
 		}
 	}
-	if (!Handled && _subframe) _subframe->_surface->DisplayTrans(x, y, rect);
+	if (!Handled && _subframe) _subframe->_surface->displayTrans(x, y, rect);
 }
 
 
@@ -500,7 +500,7 @@ HRESULT CBFontBitmap::GetWidths() {
 		}
 	}
 	if (surf == NULL && _subframe) surf = _subframe->_surface;
-	if (!surf || FAILED(surf->StartPixelOp())) return E_FAIL;
+	if (!surf || FAILED(surf->startPixelOp())) return E_FAIL;
 
 
 	for (int i = 0; i < NUM_CHARACTERS; i++) {
@@ -511,8 +511,8 @@ HRESULT CBFontBitmap::GetWidths() {
 		int min_col = -1;
 		for (int row = 0; row < _tileHeight; row++) {
 			for (int col = _tileWidth - 1; col >= min_col + 1; col--) {
-				if (xxx + col < 0 || xxx + col >= surf->GetWidth() || yyy + row < 0 || yyy + row >= surf->GetHeight()) continue;
-				if (!surf->IsTransparentAtLite(xxx + col, yyy + row)) {
+				if (xxx + col < 0 || xxx + col >= surf->getWidth() || yyy + row < 0 || yyy + row >= surf->getHeight()) continue;
+				if (!surf->isTransparentAtLite(xxx + col, yyy + row)) {
 					//min_col = col;
 					min_col = MAX(col, min_col);
 					break;
@@ -523,7 +523,7 @@ HRESULT CBFontBitmap::GetWidths() {
 
 		_widths[i] = min_col + 1;
 	}
-	surf->EndPixelOp();
+	surf->endPixelOp();
 	/*
 	Game->LOG(0, "----- %s ------", _filename);
 	for(int j=0; j<16; j++)

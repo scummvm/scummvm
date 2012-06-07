@@ -452,9 +452,9 @@ void CBRenderSDL::DumpData(const char *Filename) {
 		if (!Surf->_valid) continue;
 
 		fprintf(f, "%s;%d;", Surf->_filename, Surf->_referenceCount);
-		fprintf(f, "%dx%d;", Surf->GetWidth(), Surf->GetHeight());
+		fprintf(f, "%dx%d;", Surf->getWidth(), Surf->getHeight());
 
-		int kb = Surf->GetWidth() * Surf->GetHeight() * 4 / 1024;
+		int kb = Surf->getWidth() * Surf->getHeight() * 4 / 1024;
 
 		TotalKB += kb;
 		fprintf(f, "%d;", kb);
