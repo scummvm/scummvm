@@ -33,6 +33,7 @@ namespace Geisha {
 class Submarine : public ANIObject {
 public:
 	enum Direction {
+		kDirectionNone,
 		kDirectionN,
 		kDirectionNE,
 		kDirectionE,

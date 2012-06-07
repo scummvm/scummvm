@@ -94,6 +94,15 @@ private:
 		void setPosition(uint16 pX, uint16 pY);
 	};
 
+	enum Keys {
+		kKeyUp = 0,
+		kKeyDown,
+		kKeyLeft,
+		kKeyRight,
+		kKeySpace,
+		kKeyCount
+	};
+
 	GobEngine *_vm;
 
 	bool _hasAccessPass;
@@ -101,6 +110,9 @@ private:
 	bool _testMode;
 
 	bool _needFadeIn;
+
+	bool _quit;
+	bool _keys[kKeyCount];
 
 	Surface *_background;
 	CMPFile *_sprites;
@@ -146,11 +158,13 @@ private:
 
 	void updateAnims();
 
-	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+	void checkInput();
 
-	void handleSub(int16 key);
+	void handleSub();
 	void subMove(int x, int y, Submarine::Direction direction);
 	void subShoot();
+
+	Submarine::Direction getDirection(int &x, int &y) const;
 
 	bool isWalkable(int16 x, int16 y) const;
 

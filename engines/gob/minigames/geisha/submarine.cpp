@@ -60,7 +60,7 @@ Submarine::~Submarine() {
 
 void Submarine::turn(Direction to) {
 	// Nothing to do
-	if ((_state == kStateMove) && (_direction == to))
+	if ((to == kDirectionNone) || ((_state == kStateMove) && (_direction == to)))
 		return;
 
 	_state = kStateMove;

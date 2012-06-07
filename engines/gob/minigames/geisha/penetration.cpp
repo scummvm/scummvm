@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/events.h"
+
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/palanim.h"
@@ -410,7 +412,7 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
 
-	while (!_vm->shouldQuit() && !isDead() && !hasWon()) {
+	while (!_vm->shouldQuit() && !_quit && !isDead() && !hasWon()) {
 		updateAnims();
 
 		// Draw, fade in if necessary and wait for the end of the frame
@@ -418,19 +420,11 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 		fadeIn();
 		_vm->_util->waitEndFrame();
 
-		// Handle input
-		_vm->_util->processInput();
-
-		int16 mouseX, mouseY;
-		MouseButtons mouseButtons;
-
-		int16 key = checkInput(mouseX, mouseY, mouseButtons);
-		// Aborting the game
-		if (key == kKeyEscape)
-			break;
+		// Handle the input
+		checkInput();
 
 		// Handle the sub movement
-		handleSub(key);
+		handleSub();
 
 		checkExited();
 	}
@@ -448,6 +442,10 @@ void Penetration::init() {
 	_vm->_sound->sampleLoad(&_soundKiss  , SOUND_SND, "baise.snd");
 	_vm->_sound->sampleLoad(&_soundShoot , SOUND_SND, "tirgim.snd");
 	_vm->_sound->sampleLoad(&_soundExit  , SOUND_SND, "trouve.snd");
+
+	_quit = false;
+	for (int i = 0; i < kKeyCount; i++)
+		_keys[i] = false;
 
 	_background->clear();
 
@@ -731,10 +729,44 @@ void Penetration::initScreen() {
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
 }
 
-int16 Penetration::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons) {
-	_vm->_util->getMouseState(&mouseX, &mouseY, &mouseButtons);
+void Penetration::checkInput() {
+	Common::Event event;
+	Common::EventManager *eventMan = g_system->getEventManager();
 
-	return _vm->_util->checkKey();
+	while (eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if      (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				_quit = true;
+			else if (event.kbd.keycode == Common::KEYCODE_UP)
+				_keys[kKeyUp   ] = true;
+			else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+				_keys[kKeyDown ] = true;
+			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+				_keys[kKeyLeft ] = true;
+			else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+				_keys[kKeyRight] = true;
+			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
+				_keys[kKeySpace] = true;
+			break;
+
+		case Common::EVENT_KEYUP:
+			if      (event.kbd.keycode == Common::KEYCODE_UP)
+				_keys[kKeyUp   ] = false;
+			else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+				_keys[kKeyDown ] = false;
+			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+				_keys[kKeyLeft ] = false;
+			else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+				_keys[kKeyRight] = false;
+			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
+				_keys[kKeySpace] = false;
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 bool Penetration::isWalkable(int16 x, int16 y) const {
@@ -744,16 +776,13 @@ bool Penetration::isWalkable(int16 x, int16 y) const {
 	return _walkMap[y * kMapWidth + x];
 }
 
-void Penetration::handleSub(int16 key) {
-	if      (key == kKeyLeft)
-		subMove(-5,  0, Submarine::kDirectionW);
-	else if (key == kKeyRight)
-		subMove( 5,  0, Submarine::kDirectionE);
-	else if (key == kKeyUp)
-		subMove( 0, -5, Submarine::kDirectionN);
-	else if (key == kKeyDown)
-		subMove( 0,  5, Submarine::kDirectionS);
-	else if (key == kKeySpace)
+void Penetration::handleSub() {
+	int x, y;
+	Submarine::Direction direction = getDirection(x, y);
+
+	subMove(x, y, direction);
+
+	if (_keys[kKeySpace])
 		subShoot();
 }
 
@@ -800,6 +829,30 @@ void Penetration::subShoot() {
 	_sub->sub->shoot();
 
 	_vm->_sound->blasterPlay(&_soundShoot, 1, 0);
+}
+
+Submarine::Direction Penetration::getDirection(int &x, int &y) const {
+	x = _keys[kKeyRight] ? 3 : (_keys[kKeyLeft] ? -3 : 0);
+	y = _keys[kKeyDown ] ? 3 : (_keys[kKeyUp  ] ? -3 : 0);
+
+	if ((x > 0) && (y > 0))
+		return Submarine::kDirectionSE;
+	if ((x > 0) && (y < 0))
+		return Submarine::kDirectionNE;
+	if ((x < 0) && (y > 0))
+		return Submarine::kDirectionSW;
+	if ((x < 0) && (y < 0))
+		return Submarine::kDirectionNW;
+	if (x > 0)
+		return Submarine::kDirectionE;
+	if (x < 0)
+		return Submarine::kDirectionW;
+	if (y > 0)
+		return Submarine::kDirectionS;
+	if (y < 0)
+		return Submarine::kDirectionN;
+
+	return Submarine::kDirectionNone;
 }
 
 void Penetration::checkShields() {
