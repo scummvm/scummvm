@@ -49,9 +49,12 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 GfxText32::~GfxText32() {
 }
 
+reg_t GfxText32::createScrollTextBitmap(Common::String text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
+	return createTextBitmapInternal(text, textObject, maxWidth, maxHeight, prevHunk);
+
+}
 reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
-
 	// The object in the text selector of the item can be either a raw string
 	// or a Str object. In the latter case, we need to access the object's data
 	// selector to get the raw string.
@@ -59,6 +62,11 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 		stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
 
 	Common::String text = _segMan->getString(stringObject);
+
+	return createTextBitmapInternal(text, textObject, maxWidth, maxHeight, prevHunk);
+}
+
+reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	// HACK: The character offsets of the up and down arrow buttons are off by one
 	// in GK1, for some unknown reason. Fix them here.
 	if (text.size() == 1 && (text[0] == 29 || text[0] == 30)) {
@@ -91,7 +99,11 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	reg_t memoryId = NULL_REG;
 	if (prevHunk.isNull()) {
 		memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
-		writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
+
+		// Scroll text objects have no bitmap selector!
+		ObjVarRef varp;
+		if (lookupSelector(_segMan, textObject, SELECTOR(bitmap), &varp, NULL) == kSelectorVariable)
+			writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
 	} else {
 		memoryId = prevHunk;
 	}
@@ -175,6 +187,24 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 
 void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
+	drawTextBitmapInternal(x, y, planeRect, textObject, hunkId);
+}
+
+void GfxText32::drawScrollTextBitmap(reg_t textObject, reg_t hunkId, uint16 x, uint16 y) {
+	/*reg_t plane = readSelector(_segMan, textObject, SELECTOR(plane));
+	Common::Rect planeRect;
+	planeRect.top = readSelectorValue(_segMan, plane, SELECTOR(top));
+	planeRect.left = readSelectorValue(_segMan, plane, SELECTOR(left));
+	planeRect.bottom = readSelectorValue(_segMan, plane, SELECTOR(bottom));
+	planeRect.right = readSelectorValue(_segMan, plane, SELECTOR(right));
+
+	drawTextBitmapInternal(x, y, planeRect, textObject, hunkId);*/
+
+	// HACK: we pretty much ignore the plane rect and x, y...
+	drawTextBitmapInternal(0, 0, Common::Rect(20, 390, 600, 460), textObject, hunkId);
+}
+
+void GfxText32::drawTextBitmapInternal(int16 x, int16 y, Common::Rect planeRect, reg_t textObject, reg_t hunkId) {
 	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 	// Sanity check: Check if the hunk is set. If not, either the game scripts
 	// didn't set it, or an old saved game has been loaded, where it wasn't set.
@@ -188,8 +218,9 @@ void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t t
 	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
 
 	if (!memoryPtr) {
-		// Happens when restoring in some SCI32 games
-		warning("Attempt to draw an invalid text bitmap");
+		// Happens when restoring in some SCI32 games (e.g. SQ6).
+		// Commented out to reduce console spam
+		//warning("Attempt to draw an invalid text bitmap");
 		return;
 	}
 

@@ -308,103 +308,91 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
-	// Used by Phantasmagoria 1 and SQ6. In SQ6, it is used for the messages
-	// shown in the scroll window at the bottom of the screen.
+	// Used by SQ6 and LSL6 hires for the text area in the bottom of the
+	// screen. The relevant scripts also exist in Phantasmagoria 1, but they're
+	// unused. This is always called by scripts 64906 (ScrollerWindow) and
+	// 64907 (ScrollableWindow).
 
-	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-	kStub(s, argc, argv);
-
-	switch (argv[0].toUint16()) {
+	reg_t kWindow = argv[1];
+	uint16 op = argv[0].toUint16();
+	switch (op) {
 	case 0:	// Init
-		// 2 parameters
-		// argv[1] points to the scroll object (e.g. textScroller in SQ6)
-		// argv[2] is an integer (e.g. 0x32)
-		break;
-	case 1: // Show message
+		g_sci->_gfxFrameout->initScrollText(argv[2].toUint16());	// maxItems
+		g_sci->_gfxFrameout->clearScrollTexts();
+		return argv[1];	// kWindow
+	case 1: // Show message, called by ScrollableWindow::addString
+	case 14: // Modify message, called by ScrollableWindow::modifyString
 		// 5 or 6 parameters
 		// Seems to be called with 5 parameters when the narrator speaks, and
 		// with 6 when Roger speaks
-		// argv[1] unknown (usually 0)
-		// argv[2] the text to show
-		// argv[3] a small integer (e.g. 0x32)
-		// argv[4] a small integer (e.g. 0x54)
-		// argv[5] optional, unknown (usually 0)
-		warning("kScrollWindow: '%s'", s->_segMan->getString(argv[2]).c_str());
+		{
+		Common::String text = s->_segMan->getString(argv[2]);
+		uint16 x = 0;//argv[3].toUint16();	// TODO: can't be x (values are all wrong)
+		uint16 y = 0;//argv[4].toUint16();	// TODO: can't be y (values are all wrong)
+		// TODO: argv[5] is an optional unknown parameter (an integer set to 0)
+		g_sci->_gfxFrameout->addScrollTextEntry(text, kWindow, x, y, (op == 14));
+		}
 		break;
-	case 2: // Clear
-		// 2 parameters
-		// TODO
+	case 2: // Clear, called by ScrollableWindow::erase
+		g_sci->_gfxFrameout->clearScrollTexts();
 		break;
-	case 3: // Page up
-		// 2 parameters
+	case 3: // Page up, called by ScrollableWindow::scrollTo
 		// TODO
+		kStub(s, argc, argv);
 		break;
-	case 4: // Page down
-		// 2 parameters
+	case 4: // Page down, called by ScrollableWindow::scrollTo
 		// TODO
+		kStub(s, argc, argv);
 		break;
-	case 5: // Up arrow
-		// 2 parameters
-		// TODO
+	case 5: // Up arrow, called by ScrollableWindow::scrollTo
+		g_sci->_gfxFrameout->prevScrollText();
 		break;
-	case 6: // Down arrow
-		// 2 parameters
-		// TODO
+	case 6: // Down arrow, called by ScrollableWindow::scrollTo
+		g_sci->_gfxFrameout->nextScrollText();
 		break;
-	case 7: // Home
-		// 2 parameters
-		// TODO
+	case 7: // Home, called by ScrollableWindow::scrollTo
+		g_sci->_gfxFrameout->firstScrollText();
 		break;
-	case 8: // End
-		// 2 parameters
-		// TODO
+	case 8: // End, called by ScrollableWindow::scrollTo
+		g_sci->_gfxFrameout->lastScrollText();
 		break;
-	case 9: // Resize
-		// 3 parameters
+	case 9: // Resize, called by ScrollableWindow::resize and ScrollerWindow::resize
 		// TODO
+		kStub(s, argc, argv);
 		break;
-	case 10: // Where
-		// 3 parameters
+	case 10: // Where, called by ScrollableWindow::where
 		// TODO
+		// argv[2] is an unknown integer
+		kStub(s, argc, argv);
 		break;
-	case 11: // Go
-		// 4 parameters
+	case 11: // Go, called by ScrollableWindow::scrollTo
+		// 2 extra parameters here
 		// TODO
+		kStub(s, argc, argv);
 		break;
-	case 12: // Insert
-		// 7 parameters
+	case 12: // Insert, called by ScrollableWindow::insertString
+		// 3 extra parameters here
 		// TODO
+		kStub(s, argc, argv);
 		break;
-	case 13: // Delete
-		// 3 parameters
-		// TODO
+	// case 13 (Delete) is handled below
+	// case 14 (Modify) is handled above
+	case 15: // Hide, called by ScrollableWindow::hide
+		g_sci->_gfxFrameout->toggleScrollText(false);
 		break;
-	case 14: // Modify
-		// 7 or 8 parameters
-		// TODO
+	case 16: // Show, called by ScrollableWindow::show
+		g_sci->_gfxFrameout->toggleScrollText(true);
 		break;
-	case 15: // Hide
-		// 2 parameters
-		// TODO
+	case 17: // Destroy, called by ScrollableWindow::dispose
+		g_sci->_gfxFrameout->clearScrollTexts();
 		break;
-	case 16: // Show
-		// 2 parameters
-		// TODO
-		break;
-	case 17: // Destroy
-		// 2 parameters
-		// TODO
-		break;
-	case 18: // Text
-		// 2 parameters
-		// TODO
-		break;
-	case 19: // Reconstruct
-		// 3 parameters
-		// TODO
+	case 13: // Delete, unused
+	case 18: // Text, unused
+	case 19: // Reconstruct, unused
+		error("kScrollWindow: Unused subop %d invoked", op);
 		break;
 	default:
-		error("kScrollWindow: unknown subop %d", argv[0].toUint16());
+		error("kScrollWindow: unknown subop %d", op);
 		break;
 	}
 

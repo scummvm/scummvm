@@ -76,6 +76,15 @@ struct PlanePictureEntry {
 
 typedef Common::List<PlanePictureEntry> PlanePictureList;
 
+struct ScrollTextEntry {
+	reg_t bitmapHandle;
+	reg_t kWindow;
+	uint16 x;
+	uint16 y;
+};
+
+typedef Common::Array<ScrollTextEntry> ScrollTextList;
+
 class GfxCache;
 class GfxCoordAdjuster32;
 class GfxPaint32;
@@ -104,6 +113,18 @@ public:
 	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY = 0);
 	void deletePlanePictures(reg_t object);
 	void clear();
+
+	// Scroll text functions
+	void addScrollTextEntry(Common::String &text, reg_t kWindow, uint16 x, uint16 y, bool replace);
+	void showCurrentScrollText();
+	void initScrollText(uint16 maxItems) { _maxScrollTexts = maxItems; }
+	void clearScrollTexts();
+	void firstScrollText() { if (_scrollTexts.size() > 0) _curScrollText = 0; }
+	void lastScrollText() { if (_scrollTexts.size() > 0) _curScrollText = _scrollTexts.size() - 1; }
+	void prevScrollText() { if (_curScrollText > 0) _curScrollText--; }
+	void nextScrollText() { if (_curScrollText + 1 < (uint16)_scrollTexts.size()) _curScrollText++; }
+	void toggleScrollText(bool show) { _showScrollText = show; }
+
 	void printPlaneList(Console *con);
 	void printPlaneItemList(Console *con, reg_t planeObject);
 
@@ -127,6 +148,10 @@ private:
 	FrameoutList _screenItems;
 	PlaneList _planes;
 	PlanePictureList _planePictures;
+	ScrollTextList _scrollTexts;
+	int16 _curScrollText;
+	bool _showScrollText;
+	uint16 _maxScrollTexts;
 
 	void sortPlanes();
 

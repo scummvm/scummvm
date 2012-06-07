@@ -59,6 +59,9 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
 	_scriptsRunningWidth = 320;
 	_scriptsRunningHeight = 200;
+	_curScrollText = -1;
+	_showScrollText = false;
+	_maxScrollTexts = 0;
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -69,6 +72,46 @@ void GfxFrameout::clear() {
 	deletePlaneItems(NULL_REG);
 	_planes.clear();
 	deletePlanePictures(NULL_REG);
+	clearScrollTexts();
+}
+
+void GfxFrameout::clearScrollTexts() {
+	_scrollTexts.clear();
+	_curScrollText = -1;
+}
+
+void GfxFrameout::addScrollTextEntry(Common::String &text, reg_t kWindow, uint16 x, uint16 y, bool replace) {
+	//reg_t bitmapHandle = g_sci->_gfxText32->createScrollTextBitmap(text, kWindow);
+	// HACK: We set the container dimensions manually
+	reg_t bitmapHandle = g_sci->_gfxText32->createScrollTextBitmap(text, kWindow, 480, 70);
+	ScrollTextEntry textEntry;
+	textEntry.bitmapHandle = bitmapHandle;
+	textEntry.kWindow = kWindow;
+	textEntry.x = x;
+	textEntry.y = y;
+	if (!replace || _scrollTexts.size() == 0) {
+		if (_scrollTexts.size() > _maxScrollTexts) {
+			_scrollTexts.remove_at(0);
+			_curScrollText--;
+		}
+		_scrollTexts.push_back(textEntry);
+		_curScrollText++;
+	} else {
+		_scrollTexts.pop_back();
+		_scrollTexts.push_back(textEntry);
+	}
+}
+
+void GfxFrameout::showCurrentScrollText() {
+	if (!_showScrollText || _curScrollText < 0)
+		return;
+
+	uint16 size = (uint16)_scrollTexts.size();
+	if (size > 0) {
+		assert(_curScrollText < size);
+		ScrollTextEntry textEntry = _scrollTexts[_curScrollText];
+		g_sci->_gfxText32->drawScrollTextBitmap(textEntry.kWindow, textEntry.bitmapHandle, textEntry.x, textEntry.y);
+	}
 }
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
@@ -672,6 +715,8 @@ void GfxFrameout::kernelFrameout() {
 			}
 		}
 	}
+
+	showCurrentScrollText();
 
 	_screen->copyToScreen();
 
