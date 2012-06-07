@@ -116,7 +116,11 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	if (!_file) return E_FAIL;
 	
 	//if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
+#if defined (USE_THEORA)
 	_theoraDecoder = new TheoraDecoder();
+#else
+	return E_FAIL;
+#endif
 	_theoraDecoder->loadStream(_file);
 	
 	if (!_theoraDecoder->isVideoLoaded())
