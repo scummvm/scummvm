@@ -698,7 +698,7 @@ void GfxPalette::palVaryInit() {
 }
 
 bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
-	_palVaryResourceId = resourceId;
+	_palVaryResourceId = (resourceId != 65535) ? resourceId : -1;
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 	if (palResource) {
 		// Load and initialize destination palette
