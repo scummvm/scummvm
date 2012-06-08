@@ -85,16 +85,11 @@
 #include "common/coroutines.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "tony/mpal/memory.h"
 
 namespace Tony {
 
 namespace MPAL {
-
-/****************************************************************************\
-*       Type definitions
-\****************************************************************************/
-
-typedef void *HANDLE;
 
 /****************************************************************************\
 *       Macro definitions and structures

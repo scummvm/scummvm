@@ -149,7 +149,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	for (i = 0; i < num; i++) {
 		lpmdDialog->_periodNums[i] = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
-		lpmdDialog->_periods[i] = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
+		lpmdDialog->_periods[i] = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
 		lpLock = (byte *)globalLock(lpmdDialog->_periods[i]);
 		Common::copy(lpBuf + 1, lpBuf + 1 + *lpBuf, lpLock);
 		globalUnlock(lpmdDialog->_periods[i]);
@@ -478,7 +478,7 @@ bool ParseMpc(const byte *lpBuf) {
 	GLOBALS.nVars = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
-	GLOBALS.hVars = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALVAR) * (uint32)GLOBALS.nVars);
+	GLOBALS.hVars = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALVAR) * (uint32)GLOBALS.nVars);
 	if (GLOBALS.hVars == NULL)
 		return false;
 
@@ -507,7 +507,7 @@ bool ParseMpc(const byte *lpBuf) {
 	lpBuf += 2;
 
 #ifdef NEED_LOCK_MSGS
-	GLOBALS.hMsgs = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)GLOBALS.nMsgs);
+	GLOBALS.hMsgs = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)GLOBALS.nMsgs);
 	if (GLOBALS.hMsgs == NULL)
 		return false;
 
@@ -525,7 +525,7 @@ bool ParseMpc(const byte *lpBuf) {
 		for (j = 0; lpBuf[j] != 0;)
 			j += lpBuf[j] + 1;
 
-		GLOBALS.lpmmMsgs->hText = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
+		GLOBALS.lpmmMsgs->hText = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
 		lpTemp2 = lpTemp = (byte *)globalLock(GLOBALS.lpmmMsgs->hText);
 
 		for (j = 0; lpBuf[j] != 0;) {
@@ -560,7 +560,7 @@ bool ParseMpc(const byte *lpBuf) {
 	if (*((const byte *)lpBuf + 2) == 6 && strncmp((const char *)lpBuf + 3, "Dialog", 6) == 0) {
 		GLOBALS.nDialogs = READ_LE_UINT16(lpBuf); lpBuf += 2;
 
-		GLOBALS.hDialogs = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nDialogs * sizeof(MPALDIALOG));
+		GLOBALS.hDialogs = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nDialogs * sizeof(MPALDIALOG));
 		if (GLOBALS.hDialogs == NULL)
 			return false;
 
@@ -581,7 +581,7 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += 2;
 
 		// Allocate memory and read them in
-		GLOBALS.hItems = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nItems * sizeof(MPALITEM));
+		GLOBALS.hItems = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nItems * sizeof(MPALITEM));
 		if (GLOBALS.hItems == NULL)
 			return false;
 
@@ -602,7 +602,7 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += 2;
 
 		// Allocate memory and read them in
-		GLOBALS.hLocations = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nLocations*sizeof(MPALLOCATION));
+		GLOBALS.hLocations = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nLocations*sizeof(MPALLOCATION));
 		if (GLOBALS.hLocations == NULL)
 			return false;
 
@@ -623,7 +623,7 @@ bool ParseMpc(const byte *lpBuf) {
 		lpBuf += 2;
 
 		// Allocate memory
-		GLOBALS.hScripts = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nScripts * sizeof(MPALSCRIPT));
+		GLOBALS.hScripts = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, (uint32)GLOBALS.nScripts * sizeof(MPALSCRIPT));
 		if (GLOBALS.hScripts == NULL)
 			return false;
 

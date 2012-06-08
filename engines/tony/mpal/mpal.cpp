@@ -402,7 +402,7 @@ HGLOBAL resLoad(uint32 dwId) {
 			if (GLOBALS.hMpr.err())
 				return NULL;
 
-			h = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, nSizeDecomp + (nSizeDecomp / 1024) * 16);
+			h = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, nSizeDecomp + (nSizeDecomp / 1024) * 16);
 			buf = (byte *)globalLock(h);
 			temp = (byte *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT,nSizeComp);
 
@@ -414,7 +414,7 @@ HGLOBAL resLoad(uint32 dwId) {
 			if (nBytesRead != nSizeDecomp)
 				return NULL;
 
-			globalFree(temp);
+			globalDestroy(temp);
 			globalUnlock(h);
 			return h;
 		}
@@ -741,7 +741,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 		}
 	}
 
-	globalFree(item);
+	globalDestroy(item);
 	
 	debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d ended", CoroScheduler.getCurrentPID());
 
@@ -803,6 +803,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	} MYTHREAD;
 
 	CORO_BEGIN_CONTEXT;
+		// TODO: Requires endian fix
 		uint32 *il;
 		int i, j, k;
 		int numitems;
@@ -859,7 +860,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	/* If there is nothing left, we can exit */
 	if (_ctx->nRealItems == 0) {
-		globalFree(_ctx->il);
+		globalDestroy(_ctx->il);
 		CORO_KILL_SELF();
 		return;
 	}
@@ -1456,7 +1457,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		if (nBytesRead != dwSizeDecomp)
 			return false;
 
-		globalFree(cmpbuf);
+		globalDestroy(cmpbuf);
 	} else {
 		/* If the file is not compressed, we directly read in the data */
 		nBytesRead = hMpc.read(lpMpcImage, dwSizeDecomp);
@@ -1471,7 +1472,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	if (ParseMpc(lpMpcImage) == false)
 		return false;
 
-	globalFree(lpMpcImage);
+	globalDestroy(lpMpcImage);
 
 	/* Calculate memory usage */
 	/*
@@ -1529,7 +1530,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	if (nBytesRead != (uint32)GLOBALS.nResources * 8)
 		return false;
 
-	globalFree(cmpbuf);
+	globalDestroy(cmpbuf);
 
 	/* Reset back to the start of the file, leaving it open */
 	GLOBALS.hMpr.seek(0, SEEK_SET);

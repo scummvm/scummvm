@@ -2305,7 +2305,7 @@ RMMessage::RMMessage() {
 
 RMMessage::~RMMessage() {
 	if (lpMessage)
-		globalFree(lpMessage);
+		globalDestroy(lpMessage);
 }
 
 void RMMessage::load(uint32 dwId) {

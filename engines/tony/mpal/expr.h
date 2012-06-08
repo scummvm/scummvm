@@ -29,6 +29,8 @@
 #ifndef MPAL_EXPR_H
 #define MPAL_EXPR_H
 
+#include "tony/mpal/memory.h"
+
 namespace Tony {
 
 namespace MPAL {

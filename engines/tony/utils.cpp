@@ -1069,7 +1069,7 @@ HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 	}
 
 	// Allocate space for the output resource
-	HGLOBAL destBuf = globalAllocate(info.size);
+	HGLOBAL destBuf = globalAllocate(0, info.size);
 	byte *lpDestBuf = (byte *)globalLock(destBuf);
 	uint32 dwSize;
 
@@ -1081,7 +1081,7 @@ HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 
 	// Return the resource
 	globalUnlock(destBuf);
-	return lpDestBuf;
+	return destBuf;
 }
 
 } // End of namespace Tony

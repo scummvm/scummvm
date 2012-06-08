@@ -238,7 +238,7 @@ static int evaluateAndFreeExpression(byte *expr) {
 	// 3) Risoluzione algebrica
 	solve(one, num);
 	val = one->val.num;
-	globalFree(expr);
+	globalDestroy(expr);
 
 	return val;
 }
@@ -263,7 +263,7 @@ const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
 	if (num == 0)
 		return NULL;
 
-	*h = globalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
+	*h = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
 	if (*h == NULL)
 		return NULL;
 

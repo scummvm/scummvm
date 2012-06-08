@@ -34,46 +34,37 @@ namespace MPAL {
 typedef void *HANDLE;
 typedef HANDLE HGLOBAL;
 
-class MemoryItem {
-protected:
-    byte *_buffer;
+struct MemoryItem {
+	uint32 _id;
 	uint32 _size;
-public:
-	MemoryItem(uint32 size);
-	virtual ~MemoryItem();
-	
-	uint32 size() { return _size; }
-	void *dataPointer() { return (void *)_buffer; }
-	bool isValid() { return _buffer != NULL; }
+	int _lockCount;
+	byte _data[1];
 
-    // Casting for access to data
-    operator void *();
+	// Casting for access to data
+	operator void *() { return &_data[0]; }
 };
 
 class MemoryManager {
 private:
-	Common::List<MemoryItem *> _memoryBlocks;
+	static MemoryItem *getItem(HGLOBAL handle);
 public:
-	MemoryManager();
-	virtual ~MemoryManager();
-
-	MemoryItem &allocate(uint32 size, uint flags);
-	HGLOBAL alloc(uint32 size, uint flags);
-	MemoryItem &getItem(HGLOBAL handle);
-	MemoryItem &operator[](HGLOBAL handle);
-	void erase(MemoryItem *item);
-	void erase(HGLOBAL handle);
-
-	uint32 getSize(HANDLE handle);
+	static HANDLE allocate(uint32 size, uint flags);
+	static void *alloc(uint32 size, uint flags);
+	static void freeBlock(HANDLE handle);
+	static void destroyItem(HANDLE handle);
+	static uint32 getSize(HANDLE handle);
+	static byte *lockItem(HANDLE handle);
+	static void unlockItem(HANDLE handle);
 };
 
 // defines
-#define globalAlloc(flags, size)	_vm->_memoryManager.alloc(size, flags)
-#define globalAllocate(size)		_vm->_memoryManager.allocate(size, 0)
-#define globalFree(handle)			_vm->_memoryManager.erase(handle)
-#define globalLock(handle)			(_vm->_memoryManager.getItem(handle).dataPointer())
-#define globalUnlock(handle)		{}
-#define globalSize(handle)			(_vm->_memoryManager.getItem(handle).size())
+#define globalAlloc(flags, size)	MemoryManager::alloc(size, flags)
+#define globalAllocate(flags, size)	MemoryManager::allocate(size, flags)
+#define globalFree(handle)			MemoryManager::freeBlock(handle)
+#define globalDestroy(handle)		MemoryManager::destroyItem(handle)
+#define globalLock(handle)			MemoryManager::lockItem(handle)
+#define globalUnlock(handle)		MemoryManager::unlockItem(handle)
+#define globalSize(handle)			MemoryManager::getSize(handle)
 
 #define GMEM_FIXED 1
 #define GMEM_MOVEABLE 2

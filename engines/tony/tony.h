@@ -95,7 +95,6 @@ public:
 	LPCUSTOMFUNCTION _funcList[300];
 	Common::String _funcListStrings[300];
 	Common::RandomSource _randomSource;
-	MPAL::MemoryManager _memoryManager;
 	RMResUpdate _resUpdate;
 	uint32 _hEndOfFrame;
 	Common::File _vdbFP;

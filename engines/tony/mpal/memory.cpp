@@ -30,121 +30,99 @@ namespace Tony {
 namespace MPAL {
 
 /****************************************************************************\
-*       MemoryItem methods
-\****************************************************************************/
-
-/**
- * Constructor
- * @param					Data sizee
- */
-MemoryItem::MemoryItem(uint32 size) {
-	_size = size;
-	_buffer = (size == 0) ? NULL : new byte[size];
-}
-
-/**
- * Destructor
- */
-MemoryItem::~MemoryItem() {
-	delete[] _buffer;
-}
-
-/**
- * Returns a pointer to the resource
- */
-MemoryItem::operator void *() {
-	return dataPointer();
-}
-
-/****************************************************************************\
 *       MemoryManager methods
 \****************************************************************************/
 
-MemoryManager::MemoryManager() {
-}
-
-/**
- * Destructor
- */
-MemoryManager::~MemoryManager() {
-	Common::List<MemoryItem *>::iterator i;
-	for (i = _memoryBlocks.begin(); i != _memoryBlocks.end(); ++i) {
-		MemoryItem *item = *i;
-		delete item;
-	}
-}
+const int BLOCK_ID = 0x12345678;
 
 /**
  * Allocates a new memory block
- * @returns					Returns a MemoryItem instance for the new block
+ * @return					Returns a MemoryItem instance for the new block
  */
-MemoryItem &MemoryManager::allocate(uint32 size, uint flags) {
-	MemoryItem *newItem = new MemoryItem(size);
+HANDLE MemoryManager::allocate(uint32 size, uint flags) {
+	MemoryItem *newItem = (MemoryItem *)malloc(sizeof(MemoryItem) + size);
+	newItem->_id = BLOCK_ID;
+	newItem->_size = size;
+	newItem->_lockCount = 0;
+
+	// If requested, clear the allocated data block
 	if ((flags & GMEM_ZEROINIT) != 0) {
-		byte *dataP = (byte *)newItem->dataPointer();
+		byte *dataP = newItem->_data;
 		Common::fill(dataP, dataP + size, 0);
 	}
 
-	_memoryBlocks.push_back(newItem);
-
-	return *newItem;
+	return (HANDLE)newItem;
 }
 
 /**
  * Allocates a new memory block and returns its data pointer
- * @returns					Data pointer to allocated block
+ * @return					Data pointer to allocated block
  */
-HGLOBAL MemoryManager::alloc(uint32 size, uint flags) {
-	MemoryItem &newItem = allocate(size, flags);
-	return (HGLOBAL)newItem.dataPointer();
+void *MemoryManager::alloc(uint32 size, uint flags) {
+	MemoryItem *item = (MemoryItem *)allocate(size, flags);
+	++item->_lockCount;
+	return &item->_data[0];
 }
+
+#define OFFSETOF(type, field)    ((unsigned long) &(((type *) 0)->field))
 
 /**
  * Returns a reference to the MemoryItem for a gien byte pointer
  * @param block				Byte pointer
  */
-MemoryItem &MemoryManager::getItem(HGLOBAL handle) {
-	Common::List<MemoryItem *>::iterator i;
-	for (i = _memoryBlocks.begin(); i != _memoryBlocks.end(); ++i) {
-		MemoryItem *item = *i;
-		if (item->dataPointer() == handle)
-			return *item;
-	}
-
-	error("Could not locate a memory block");
-}
-
-/**
- * Square bracketes operator 
- * @param block				Byte pointer
- */
-MemoryItem &MemoryManager::operator[](HGLOBAL handle) {
-	return getItem(handle);
+MemoryItem *MemoryManager::getItem(HGLOBAL handle) {
+	MemoryItem *rec = (MemoryItem *)((byte *)handle - OFFSETOF(MemoryItem, _data));
+	assert(rec->_id == BLOCK_ID);
+	return rec;
 }
 
 /**
  * Returns a size of a memory block given its pointer
  */
-uint32 MemoryManager::getSize(HGLOBAL handle) {
-	MemoryItem &item = getItem(handle);
-	return item.size();
+uint32 MemoryManager::getSize(HANDLE handle) {
+	MemoryItem *item = (MemoryItem *)handle;
+	assert(item->_id == BLOCK_ID);
+	return item->_size;
 }
 
 /**
  * Erases a given item
  */
-void MemoryManager::erase(MemoryItem *item) {
-	delete item;
-	_memoryBlocks.remove(item);
+void MemoryManager::freeBlock(HANDLE handle) {
+	MemoryItem *item = (MemoryItem *)handle;
+	assert(item->_id == BLOCK_ID);
+	free(item);
 }
 
 /**
  * Erases a given item
  */
-void MemoryManager::erase(HGLOBAL handle) {
-	MemoryItem &item = getItem(handle);
-	erase(&item);
+void MemoryManager::destroyItem(HANDLE handle) {
+	MemoryItem *item = getItem(handle);
+	assert(item->_id == BLOCK_ID);
+	free(item);
 }
+
+/**
+ * Locks an item for access
+ */
+byte *MemoryManager::lockItem(HANDLE handle) {
+	MemoryItem *item = (MemoryItem *)handle;
+	assert(item->_id == BLOCK_ID);
+	++item->_lockCount;
+	return &item->_data[0];
+}
+
+/**
+ * Unlocks a locked item
+ */
+void MemoryManager::unlockItem(HANDLE handle) {
+	MemoryItem *item = (MemoryItem *)handle;
+	assert(item->_id == BLOCK_ID);
+	assert(item->_lockCount > 0);
+	--item->_lockCount;
+}
+
 
 /****************************************************************************\
 *       Stand-alone methods
