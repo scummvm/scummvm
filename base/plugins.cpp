@@ -141,9 +141,13 @@ public:
 
 		// Scaler plugins
 		LINK_PLUGIN(NORMAL)
+#ifdef USE_SCALERS
+#ifdef USE_HQ_SCALERS
 		LINK_PLUGIN(HQ)
+#endif
 		LINK_PLUGIN(SAI)
 		LINK_PLUGIN(DOTMATRIX)
+#endif
 
 		return pl;
 	}
