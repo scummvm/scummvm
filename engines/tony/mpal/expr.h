@@ -65,6 +65,13 @@ int evaluateExpression(HGLOBAL h);
  */
 bool compareExpressions(HGLOBAL h1, HGLOBAL h2);
 
+/**
+ * Frees an expression that was previously parsed
+ *
+ * @param h					Handle for the expression
+ */
+void freeExpression(HGLOBAL h);
+
 } // end of namespace MPAL
 
 } // end of namespace Tony

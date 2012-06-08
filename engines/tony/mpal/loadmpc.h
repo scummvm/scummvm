@@ -46,6 +46,10 @@ namespace MPAL {
  */
 bool ParseMpc(const byte *lpBuf);
 
+/**
+ * Frees any data allocated from the parsing of the MPC file
+ */
+void FreeMpc();
 
 } // end of namespace MPAL
 

@@ -803,7 +803,6 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	} MYTHREAD;
 
 	CORO_BEGIN_CONTEXT;
-		// TODO: Requires endian fix
 		uint32 *il;
 		int i, j, k;
 		int numitems;

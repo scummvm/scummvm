@@ -122,6 +122,21 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 }
 
 /**
+ * Frees a script allocated via a previous call to ParseScript
+ *
+ * @param lpmsScript		Pointer to a script structure
+ */
+static void FreeScript(LPMPALSCRIPT lpmsScript) {
+	for (int i = 0; i < MAX_COMMANDS_PER_SCRIPT && (lpmsScript->_command[i].type); ++i, ++lpmsScript) {
+		if (lpmsScript->_command[i].type == 2) {
+			// Variable Assign
+			globalDestroy(lpmsScript->_command[i].lpszVarName);
+			freeExpression(lpmsScript->_command[i].expr);
+		}
+	}
+}
+
+/**
  * Parses a dialog from the MPC file, and inserts its data into a structure
  *
  * @param lpBuf				Buffer containing the compiled dialog.
@@ -428,6 +443,25 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	return lpBuf;
 }
 
+/**
+ * Frees an item parsed from a prior call to ParseItem
+ *
+ * @param lpmiItem			Pointer to an item structure
+ */
+static void freeItem(LPMPALITEM lpmiItem) {
+	// Free the actions
+	if (lpmiItem->Action)
+		globalDestroy(lpmiItem->Action);
+
+	// Free the commands
+	for (int i = 0; i < MAX_COMMANDS_PER_ITEM && (lpmiItem->_command[i].type); ++i, ++lpmiItem) {
+		if (lpmiItem->_command[i].type == 2) {
+			// Variable Assign
+			globalDestroy(lpmiItem->_command[i].lpszVarName);
+			freeExpression(lpmiItem->_command[i].expr);
+		}
+	}
+}
 
 /**
  * Parses a location from the MPC file, and inserts its data into a structure
@@ -649,6 +683,80 @@ bool ParseMpc(const byte *lpBuf) {
 		return false;
 
 	return true;
+}
+
+/**
+ * Free the given dialog
+ */
+static void freeDialog(LPMPALDIALOG lpmdDialog) {
+	// Free the periods
+	int i;
+
+	for (i = 0; i < MAX_PERIODS_PER_DIALOG && (lpmdDialog->_periods[i]); ++i)
+		globalFree(lpmdDialog->_periods[i]);
+
+	for (i = 0; i < MAX_COMMANDS_PER_GROUP && (lpmdDialog->_command[i].type); i++) {
+		if (lpmdDialog->_command[i].type == 2) {
+			// Variable assign
+			globalDestroy(lpmdDialog->_command[i].lpszVarName);
+			freeExpression(lpmdDialog->_command[i].expr);
+		}
+	}
+}
+
+/**
+ * Frees any data allocated from the parsing of the MPC file
+ */
+void FreeMpc() {
+	int i;
+
+	// Free variables
+	globalFree(GLOBALS.hVars);
+
+	// Free messages
+	LPMPALMSG lpmmMsgs = (LPMPALMSG)globalLock(GLOBALS.hMsgs);
+	for (i = 0; i < GLOBALS.nMsgs; i++, ++lpmmMsgs)
+		globalFree(lpmmMsgs->hText);
+
+	globalUnlock(GLOBALS.hMsgs);
+	globalFree(GLOBALS.hMsgs);
+
+	// Free objects
+	if (GLOBALS.hDialogs) {
+		LPMPALDIALOG lpmdDialogs = (LPMPALDIALOG)globalLock(GLOBALS.hDialogs);
+
+		for (i = 0; i < GLOBALS.nDialogs; i++, ++lpmdDialogs)
+			freeDialog(lpmdDialogs);
+
+		globalFree(GLOBALS.hDialogs);
+	}
+
+	// Free items
+	if (GLOBALS.hItems) {
+		LPMPALITEM lpmiItems = (LPMPALITEM)globalLock(GLOBALS.hItems);
+
+		for (i = 0; i < GLOBALS.nItems; ++i, ++lpmiItems)
+			freeItem(lpmiItems);
+
+		globalUnlock(GLOBALS.hItems);
+		globalFree(GLOBALS.hItems);
+	}
+
+	// Free the locations
+	if (GLOBALS.hLocations) {
+		globalFree(GLOBALS.hLocations);
+	}
+
+	// Free the scripts
+	if (GLOBALS.hScripts) {
+		LPMPALSCRIPT lpmsScripts = (LPMPALSCRIPT)globalLock(GLOBALS.hScripts);
+
+		for (i = 0; i < GLOBALS.nScripts; ++i, ++lpmsScripts) {
+			FreeScript(lpmsScripts);
+		}
+
+		globalUnlock(GLOBALS.hScripts);
+	}
 }
 
 } // end of namespace MPAL

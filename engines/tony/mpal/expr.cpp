@@ -84,7 +84,7 @@ typedef struct {
 	byte type;						// Tipo di oggetto (vedi enum ExprListTypes)
 	byte unary;						// Unary operatore (NON SUPPORTATO)
 
-	union {
+	union { 
 		int num;                    // Numero (se type==ELT_NUMBER)
 		char *name;                 // Nome variabile (se type==ELT_VAR)
 		HGLOBAL son;                // Handle a espressione (type==ELT_PARENTH)
@@ -400,6 +400,34 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 	return true;
 }
 
+/**
+ * Frees an expression that was previously parsed
+ *
+ * @param h					Handle for the expression
+ */
+void freeExpression(HGLOBAL h) {
+	byte *data = (byte *)globalLock(h);
+	int num = *data;
+	LPEXPRESSION cur = (LPEXPRESSION)(data + 1);
+
+	for (int i = 0; i < num; ++i, ++cur) {
+		switch (cur->type) {
+		case ELT_VAR:
+			globalDestroy(cur->val.name);
+			break;
+
+		case ELT_PARENTH:
+			freeExpression(cur->val.son);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	globalUnlock(h);
+	globalFree(h);
+}
 
 } // end of namespace MPAL
 
