@@ -33,7 +33,7 @@ namespace MPAL {
 *       MemoryManager methods
 \****************************************************************************/
 
-const int BLOCK_ID = 0x12345678;
+const uint32 BLOCK_ID = 0x12345678;
 
 /**
  * Allocates a new memory block
