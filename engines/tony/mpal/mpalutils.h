@@ -54,7 +54,7 @@ public:
 	RMResRaw(uint32 resID);
 	virtual ~RMResRaw();
 		
-	const byte *DataPointer();
+	const byte *dataPointer();
 	operator const byte*();
 
 		int width();

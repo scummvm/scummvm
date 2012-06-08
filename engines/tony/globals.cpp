@@ -26,15 +26,15 @@
 namespace Tony {
 
 Globals::Globals() {
-	Common::fill(nextMusic, nextMusic + MAX_PATH, 0);
-	nextLoop = false;
-	nextChannel = 0;
-	nextSync = 0;
-	curChannel = 0;
-	flipflop = 0;
-	curBackText = NULL;
-	bTonyIsSpeaking = false;
-	curChangedHotspot = 0;
+	Common::fill(_nextMusic, _nextMusic + MAX_PATH, 0);
+	_nextLoop = false;
+	_nextChannel = 0;
+	_nextSync = 0;
+	_curChannel = 0;
+	_flipflop = 0;
+	_curBackText = NULL;
+	_bTonyIsSpeaking = false;
+	_curChangedHotspot = 0;
 	Tony = NULL;
 	Pointer = NULL;
 	Boxes = NULL;
@@ -72,7 +72,7 @@ Globals::Globals() {
 	bCfgDubbing = false;
 	bCfgMusic = false;
 	bCfgSFX = false;
-	bAlwaysDisplay = false;
+	_bAlwaysDisplay = false;
 	nCfgTonySpeed = 0;
 	nCfgTextSpeed = 0;
 	nCfgDubbingVolume = 0;
@@ -132,14 +132,14 @@ Globals::Globals() {
 	nExecutingChoice = 0;
 	nSelectedChoice = 0;
 	nTonyNextTalkType = RMTony::TALK_NORMAL;
-	saveTonyLoc = 0;
+	_saveTonyLoc = 0;
 
 	for (int i = 0; i < 16; ++i)
-		Common::fill((byte *)&Character[i], (byte *)&Character[i] + sizeof(CharacterStruct), 0);
+		Common::fill((byte *)&_character[i], (byte *)&_character[i] + sizeof(CharacterStruct), 0);
 	for (int i = 0; i < 10; ++i)
-		Common::fill((byte *)&MCharacter[i], (byte *)&MCharacter[i] + sizeof(MCharacterStruct), 0);
+		Common::fill((byte *)&_mCharacter[i], (byte *)&_mCharacter[i] + sizeof(MCharacterStruct), 0);
 	for (int i = 0; i < 256; ++i)
-		Common::fill((byte *)&ChangedHotspot[i], (byte *)&ChangedHotspot[i] + sizeof(ChangedHotspotStruct), 0);
+		Common::fill((byte *)&_changedHotspot[i], (byte *)&_changedHotspot[i] + sizeof(ChangedHotspotStruct), 0);
 }
 
 } // End of namespace Tony

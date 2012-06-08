@@ -85,12 +85,12 @@ RMResRaw::RMResRaw(uint32 resID) : RMRes(resID) {
 RMResRaw::~RMResRaw() {
 }
 
-const byte *RMResRaw::DataPointer() {
+const byte *RMResRaw::dataPointer() {
 	return _buf + 8;
 }
 
 RMResRaw::operator const byte *() {
-	return DataPointer();
+	return dataPointer();
 }
 
 int RMResRaw::width() {

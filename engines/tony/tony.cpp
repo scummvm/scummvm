@@ -191,7 +191,7 @@ void TonyEngine::playMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 //	g_system->lockMutex(csMusic);
 
 	if (nChannel < 4)
-		if (GLOBALS.flipflop)
+		if (GLOBALS._flipflop)
 			nChannel = nChannel + 1;
 
 	switch (nFX) {
@@ -287,7 +287,7 @@ void TonyEngine::stopMusic(int nChannel) {
 //	g_system->lockMutex(csMusic);
 
 	if (nChannel < 4)
-		_stream[nChannel + GLOBALS.flipflop]->Stop();
+		_stream[nChannel + GLOBALS._flipflop]->Stop();
 	else
 		_stream[nChannel]->Stop();
 

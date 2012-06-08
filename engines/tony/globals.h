@@ -48,101 +48,101 @@ namespace Tony {
 
 
 struct CharacterStruct {
-	uint32 code;
-	RMItem *item;
-	byte r, g, b;
-	int talkpattern;
-	int standpattern;
-	int starttalkpattern, endtalkpattern;
-	int numtexts;
+	uint32 _code;
+	RMItem *_item;
+	byte _r, _g, _b;
+	int _talkPattern;
+	int _standPattern;
+	int _startTalkPattern, _endTalkPattern;
+	int _numTexts;
 
-	void Save(Common::OutSaveFile *f) {
-		f->writeUint32LE(code);
+	void save(Common::OutSaveFile *f) {
+		f->writeUint32LE(_code);
 		f->writeUint32LE(0);
-		f->writeByte(r);
-		f->writeByte(g);
-		f->writeByte(b);
-		f->writeUint32LE(talkpattern);
-		f->writeUint32LE(standpattern);
-		f->writeUint32LE(starttalkpattern);
-		f->writeUint32LE(endtalkpattern);
-		f->writeUint32LE(numtexts);
+		f->writeByte(_r);
+		f->writeByte(_g);
+		f->writeByte(_b);
+		f->writeUint32LE(_talkPattern);
+		f->writeUint32LE(_standPattern);
+		f->writeUint32LE(_startTalkPattern);
+		f->writeUint32LE(_endTalkPattern);
+		f->writeUint32LE(_numTexts);
 	}
-	void Load(Common::InSaveFile *f) {
-		code = f->readUint32LE();
+	void load(Common::InSaveFile *f) {
+		_code = f->readUint32LE();
 		f->readUint32LE();
-		item = NULL;
-		r = f->readByte();
-		g = f->readByte();
-		b = f->readByte();
-		talkpattern = f->readUint32LE();
-		standpattern = f->readUint32LE();
-		starttalkpattern = f->readUint32LE();
-		endtalkpattern = f->readUint32LE();
-		numtexts = f->readUint32LE();
+		_item = NULL;
+		_r = f->readByte();
+		_g = f->readByte();
+		_b = f->readByte();
+		_talkPattern = f->readUint32LE();
+		_standPattern = f->readUint32LE();
+		_startTalkPattern = f->readUint32LE();
+		_endTalkPattern = f->readUint32LE();
+		_numTexts = f->readUint32LE();
 	}
 };
 
 struct MCharacterStruct {
-	uint32 code;
-	RMItem *item;
-	byte r, g, b;
-	int x, y;
-	int numtalks[10];
-	int curgroup;
-	int numtexts;
-	bool bInTexts;
-	int curTalk;
-	bool bAlwaysBack;
+	uint32 _code;
+	RMItem *_item;
+	byte _r, _g, _b;
+	int _x, _y;
+	int _numTalks[10];
+	int _curGroup;
+	int _numTexts;
+	bool _bInTexts;
+	int _curTalk;
+	bool _bAlwaysBack;
 
-	void Save(Common::OutSaveFile *f) {
-		f->writeUint32LE(code);
+	void save(Common::OutSaveFile *f) {
+		f->writeUint32LE(_code);
 		f->writeUint32LE(0);
-		f->writeByte(r);
-		f->writeByte(g);
-		f->writeByte(b);
-		f->writeUint32LE(x);
-		f->writeUint32LE(y);
+		f->writeByte(_r);
+		f->writeByte(_g);
+		f->writeByte(_b);
+		f->writeUint32LE(_x);
+		f->writeUint32LE(_y);
 		for (int i = 0; i < 10; ++i)
-			f->writeUint32LE(numtalks[i]);
-		f->writeUint32LE(curgroup);
-		f->writeUint32LE(numtexts);
-		f->writeByte(bInTexts);
-		f->writeUint32LE(curTalk);
-		f->writeByte(bAlwaysBack);
+			f->writeUint32LE(_numTalks[i]);
+		f->writeUint32LE(_curGroup);
+		f->writeUint32LE(_numTexts);
+		f->writeByte(_bInTexts);
+		f->writeUint32LE(_curTalk);
+		f->writeByte(_bAlwaysBack);
 	}
-	void Load(Common::InSaveFile *f) {
-		code = f->readUint32LE();
+	void load(Common::InSaveFile *f) {
+		_code = f->readUint32LE();
 		f->readUint32LE();
-		item = NULL;
-		r = f->readByte();
-		g = f->readByte();
-		b = f->readByte();
-		x = f->readUint32LE();
-		y = f->readUint32LE();
+		_item = NULL;
+		_r = f->readByte();
+		_g = f->readByte();
+		_b = f->readByte();
+		_x = f->readUint32LE();
+		_y = f->readUint32LE();
 		for (int i = 0; i < 10; ++i)
-			numtalks[i] = f->readUint32LE();
-		curgroup = f->readUint32LE();
-		numtexts = f->readUint32LE();
-		bInTexts = f->readByte();
-		curTalk = f->readUint32LE();
-		bAlwaysBack = f->readByte();
+			_numTalks[i] = f->readUint32LE();
+		_curGroup = f->readUint32LE();
+		_numTexts = f->readUint32LE();
+		_bInTexts = f->readByte();
+		_curTalk = f->readUint32LE();
+		_bAlwaysBack = f->readByte();
 	}
 };
 
 struct ChangedHotspotStruct {
-	uint32 dwCode;
-	uint32 nX, nY;
+	uint32 _dwCode;
+	uint32 _nX, _nY;
 
-	void Save(Common::OutSaveFile *f) {
-		f->writeUint32LE(dwCode);
-		f->writeUint32LE(nX);
-		f->writeUint32LE(nY);
+	void save(Common::OutSaveFile *f) {
+		f->writeUint32LE(_dwCode);
+		f->writeUint32LE(_nX);
+		f->writeUint32LE(_nY);
 	}
-	void Load(Common::InSaveFile *f) {
-		dwCode = f->readUint32LE();
-		nX = f->readUint32LE();
-		nY = f->readUint32LE();
+	void load(Common::InSaveFile *f) {
+		_dwCode = f->readUint32LE();
+		_nX = f->readUint32LE();
+		_nY = f->readUint32LE();
 	}
 };
 
@@ -170,23 +170,23 @@ class Globals {
 public:
 	Globals();
 
-	char nextMusic[MAX_PATH];
-	bool nextLoop;
-	int nextChannel;
-	int nextSync;
-	int curChannel;
-	int flipflop;
+	char _nextMusic[MAX_PATH];
+	bool _nextLoop;
+	int _nextChannel;
+	int _nextSync;
+	int _curChannel;
+	int _flipflop;
 	// OSystem::MutexRef csMusic;
-	CharacterStruct Character[16];
-	MCharacterStruct MCharacter[10];
-	ChangedHotspotStruct ChangedHotspot[256];
-	bool IsMChar[16];
-	bool bAlwaysDisplay;
-	RMPoint saveTonyPos;
-	int saveTonyLoc;
-	RMTextDialog *curBackText;
-	bool bTonyIsSpeaking;
-	int curChangedHotspot;
+	CharacterStruct _character[16];
+	MCharacterStruct _mCharacter[10];
+	ChangedHotspotStruct _changedHotspot[256];
+	bool _isMChar[16];
+	bool _bAlwaysDisplay;
+	RMPoint _saveTonyPos;
+	int _saveTonyLoc;
+	RMTextDialog *_curBackText;
+	bool _bTonyIsSpeaking;
+	int _curChangedHotspot;
 	bool bPatIrqFreeze;
 	bool bCfgInvLocked;
 	bool bCfgInvNoScroll;
