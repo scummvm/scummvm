@@ -195,6 +195,8 @@ static void scale4x_buf(void* void_dst, unsigned dst_slice, void* void_mid, unsi
 	mid[4] = mid[3] + mid_slice;
 	mid[5] = mid[4] + mid_slice;
 
+	stage_scale2x(SCMID(0), SCMID(1), SCSRC(0), SCSRC(1), SCSRC(2), pixel, width);
+	stage_scale2x(SCMID(2), SCMID(3), SCSRC(1), SCSRC(2), SCSRC(3), pixel, width);
 	while (count) {
 		unsigned char* tmp;
 
@@ -346,6 +348,7 @@ AdvMamePlugin::AdvMamePlugin() {
 	_factor = 2;
 	_factors.push_back(2);
 	_factors.push_back(3);
+	_factors.push_back(4);
 }
 
 void AdvMamePlugin::initialize(Graphics::PixelFormat format) {
@@ -357,11 +360,14 @@ void AdvMamePlugin::deinitialize() {
 
 void AdvMamePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	::scale(_factor, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, _format.bytesPerPixel, width, height);
+	if (_factor != 4)
+		::scale(_factor, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, _format.bytesPerPixel, width, height);
+	else
+		::scale(_factor, dstPtr, dstPitch, srcPtr - srcPitch * 2, srcPitch, _format.bytesPerPixel, width, height);
 }
 
 uint AdvMamePlugin::increaseFactor() {
-	if (_factor < 3)
+	if (_factor < 4)
 		++_factor;
 	return _factor;
 }
