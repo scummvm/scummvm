@@ -250,6 +250,15 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	Common::Array<Common::String> lines;
 	_font->wordWrapText(text, width, lines);
 
+	Graphics::TextAlign alignment = Graphics::kTextAlignInvalid;
+	if (align == TAL_LEFT) {
+		alignment = Graphics::kTextAlignLeft;
+	} else if (align == TAL_CENTER) {
+		alignment = Graphics::kTextAlignCenter;
+	} else if (align == TAL_RIGHT) {
+		alignment = Graphics::kTextAlignRight;
+	}
+
 	warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
 	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color),D3DCOLGetB(_layers[0]->_color),D3DCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
@@ -260,7 +269,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	Common::Array<Common::String>::iterator it;
 	int heightOffset = 0;
 	for (it = lines.begin(); it != lines.end(); it++) {
-		_font->drawString(surface, *it, 0, heightOffset, width, useColor);	
+		_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);	
 		heightOffset += _lineHeight;
 	}
 
