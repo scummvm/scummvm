@@ -26,7 +26,10 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <fstream>
+#include "engines/wintermute/tinyxml/tinyxml.h"
+#undef FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BRegistry.h"
 #include "engines/wintermute/utils/PathUtil.h"

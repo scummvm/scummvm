@@ -25,8 +25,17 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <time.h>
+#undef FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_srand
+#define FORBIDDEN_SYMBOL_EXCEPTION_time
+#define FORBIDDEN_SYMBOL_EXCEPTION_time
+#define FORBIDDEN_SYMBOL_EXCEPTION_localtime
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFader.h"

@@ -26,6 +26,11 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BRenderSDL.h"
 #include "engines/wintermute/Base/BRegistry.h"

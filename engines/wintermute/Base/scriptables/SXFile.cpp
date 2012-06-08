@@ -26,6 +26,14 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
+#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+#define FORBIDDEN_SYMBOL_EXCEPTION_ftell
+#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "engines/wintermute/Sys/SysClassRegistry.h"
 #include "engines/wintermute/Sys/SysClass.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
@@ -77,8 +85,8 @@ void CSXFile::Close() {
 		Game->_fileManager->CloseFile(_readFile);
 		_readFile = NULL;
 	}
-	if (_writeFile) {
-		fclose(_writeFile);
+	if ((FILE*)_writeFile) {
+		fclose((FILE*)_writeFile);
 		_writeFile = NULL;
 	}
 	_mode = 0;
@@ -300,9 +308,9 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			return S_OK;
 		}
 		if (strcmp(Name, "WriteLine") == 0)
-			fprintf(_writeFile, "%s\n", Line);
+			fprintf((FILE*)_writeFile, "%s\n", Line);
 		else
-			fprintf(_writeFile, "%s", Line);
+			fprintf((FILE*)_writeFile, "%s", Line);
 
 		Stack->PushBool(true);
 
@@ -449,7 +457,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Stack->PushBool(false);
 			return S_OK;
 		}
-		fwrite(&Val, sizeof(Val), 1, _writeFile);
+		fwrite(&Val, sizeof(Val), 1, (FILE*)_writeFile);
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -467,7 +475,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Stack->PushBool(false);
 			return S_OK;
 		}
-		fwrite(&Val, sizeof(Val), 1, _writeFile);
+		fwrite(&Val, sizeof(Val), 1, (FILE*)_writeFile);
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -485,7 +493,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Stack->PushBool(false);
 			return S_OK;
 		}
-		fwrite(&Val, sizeof(Val), 1, _writeFile);
+		fwrite(&Val, sizeof(Val), 1, (FILE*)_writeFile);
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -503,7 +511,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Stack->PushBool(false);
 			return S_OK;
 		}
-		fwrite(&Val, sizeof(Val), 1, _writeFile);
+		fwrite(&Val, sizeof(Val), 1, (FILE*)_writeFile);
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -521,7 +529,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Stack->PushBool(false);
 			return S_OK;
 		}
-		fwrite(&Val, sizeof(Val), 1, _writeFile);
+		fwrite(&Val, sizeof(Val), 1, (FILE*)_writeFile);
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -539,7 +547,7 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 			Stack->PushBool(false);
 			return S_OK;
 		}
-		fwrite(&Val, sizeof(Val), 1, _writeFile);
+		fwrite(&Val, sizeof(Val), 1, (FILE*)_writeFile);
 		Stack->PushBool(true);
 
 		return S_OK;
@@ -559,8 +567,8 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		}
 
 		uint32 Size = strlen(Val);
-		fwrite(&Size, sizeof(Size), 1, _writeFile);
-		fwrite(Val, Size, 1, _writeFile);
+		fwrite(&Size, sizeof(Size), 1, (FILE*)_writeFile);
+		fwrite(Val, Size, 1, (FILE*)_writeFile);
 
 		Stack->PushBool(true);
 
@@ -653,14 +661,14 @@ HRESULT CSXFile::ScSetProperty(const char *Name, CScValue *Value) {
 //////////////////////////////////////////////////////////////////////////
 uint32 CSXFile::GetPos() {
 	if (_mode == 1 && _readFile) return _readFile->pos();
-	else if ((_mode == 2 || _mode == 3) && _writeFile) return ftell(_writeFile);
+	else if ((_mode == 2 || _mode == 3) && _writeFile) return ftell((FILE*)_writeFile);
 	else return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CSXFile::SetPos(uint32 pos, TSeek origin) {
 	if (_mode == 1 && _readFile) return _readFile->seek(pos, origin);
-	else if ((_mode == 2 || _mode == 3) && _writeFile) return fseek(_writeFile, pos, (int)origin) == 0;
+	else if ((_mode == 2 || _mode == 3) && _writeFile) return fseek((FILE*)_writeFile, pos, (int)origin) == 0;
 	else return false;
 }
 
@@ -668,10 +676,10 @@ bool CSXFile::SetPos(uint32 pos, TSeek origin) {
 uint32 CSXFile::GetLength() {
 	if (_mode == 1 && _readFile) return _readFile->size();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) {
-		uint32 CurrentPos = ftell(_writeFile);
-		fseek(_writeFile, 0, SEEK_END);
-		int Ret = ftell(_writeFile);
-		fseek(_writeFile, CurrentPos, SEEK_SET);
+		uint32 CurrentPos = ftell((FILE*)_writeFile);
+		fseek((FILE*)_writeFile, 0, SEEK_END);
+		int Ret = ftell((FILE*)_writeFile);
+		fseek((FILE*)_writeFile, CurrentPos, SEEK_SET);
 		return Ret;
 	} else return 0;
 }

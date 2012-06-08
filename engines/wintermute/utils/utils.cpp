@@ -26,6 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
+
 #include "engines/wintermute/dcgf.h"
 #include "utils.h"
 #include "engines/wintermute/PlatformSDL.h"

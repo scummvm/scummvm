@@ -48,7 +48,7 @@ public:
 	virtual ~CSXFile();
 private:
 	Common::SeekableReadStream *_readFile;
-	FILE *_writeFile;
+	void *_writeFile;
 	int _mode; // 0..none, 1..read, 2..write, 3..append
 	bool _textMode;
 	void Close();

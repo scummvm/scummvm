@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_WINTYPES_H
 #define WINTERMUTE_WINTYPES_H
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 
 //namespace WinterMute {
+
 #ifndef __WIN32__
 
 #define WINAPI
@@ -81,8 +81,7 @@ typedef int32 HRESULT;
 //#define S_FALSE   ((HRESULT)1)
 #define E_FAIL   ((HRESULT)-1)
 
-
-#endif // !__WIN32__
+#endif __WIN32__
 
 //} // end of namespace WinterMute
 
