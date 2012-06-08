@@ -241,6 +241,7 @@ enum ScummGameId {
 	GID_PUTTRACE,
 	GID_FUNSHOP,	// Used for all three funshops
 	GID_FOOTBALL,
+	GID_FOOTBALL2002,
 	GID_SOCCER,
 	GID_SOCCERMLS,
 	GID_SOCCER2004,

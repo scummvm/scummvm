@@ -35,17 +35,16 @@ public:
 	LogicHEfootball(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
 	int versionID();
-	int32 dispatch(int op, int numArgs, int32 *args);
+	virtual int32 dispatch(int op, int numArgs, int32 *args);
 
-private:
+protected:
 	int lineEquation3D(int32 *args);
-	int translateWorldToScreen(int32 *args);
+	virtual int translateWorldToScreen(int32 *args);
 	int fieldGoalScreenTranslation(int32 *args);
-	int translateScreenToWorld(int32 *args);
+	virtual int translateScreenToWorld(int32 *args);
 	int nextPoint(int32 *args);
 	int computePlayerBallIntercepts(int32 *args);
 	int computeTwoCircleIntercepts(int32 *args);
-	int largestFreeBlock();
 };
 
 int LogicHEfootball::versionID() {
@@ -82,11 +81,6 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 
 	case 1024:
 		res = computeTwoCircleIntercepts(args);
-		break;
-
-	case 1028:
-		// Backyard Football 2002 only
-		res = largestFreeBlock();
 		break;
 
 	case 8221968:
@@ -288,8 +282,86 @@ int LogicHEfootball::computeTwoCircleIntercepts(int32 *args) {
 	return 1;
 }
 
-int LogicHEfootball::largestFreeBlock() {
-	// Backyard Football 2002 only
+class LogicHEfootball2002 : public LogicHEfootball {
+public:
+	LogicHEfootball2002(ScummEngine_v90he *vm) : LogicHEfootball(vm) {}
+
+	int32 dispatch(int op, int numArgs, int32 *args);
+
+private:
+	int translateWorldToScreen(int32 *args);
+	int translateScreenToWorld(int32 *args);
+	int getDayOfWeek();
+	int initScreenTranslations();
+	int getPlaybookFiles(int32 *args);
+	int largestFreeBlock();
+};
+
+int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
+	int32 res = 0;
+
+	switch (op) {
+	case 1025:
+		res = getDayOfWeek();
+		break;
+
+	case 1026:
+		res = initScreenTranslations();
+		break;
+
+	case 1027:
+		res = getPlaybookFiles(args);
+		break;
+
+	case 1028:
+		res = largestFreeBlock();
+		break;
+
+	case 1029:
+		// Clean-up off heap
+		// Dummied in the Windows U32
+		res = 1;
+		break;
+
+	case 1516:
+		// Start auto LAN game
+		break;
+
+	default:
+		res = LogicHEfootball::dispatch(op, numArgs, args);
+		break;
+	}
+
+	return res;
+}
+
+int LogicHEfootball2002::translateWorldToScreen(int32 *args) {
+	// TODO: Implement modified 2002 version
+	return LogicHEfootball::translateWorldToScreen(args);
+}
+
+int LogicHEfootball2002::translateScreenToWorld(int32 *args) {
+	// TODO: Implement modified 2002 version
+	return LogicHEfootball::translateScreenToWorld(args);
+}
+
+int LogicHEfootball2002::getDayOfWeek() {
+	// TODO: Get day of week, store in var 108
+	return 1;
+}
+
+int LogicHEfootball2002::initScreenTranslations() {
+	// TODO: Set values used by translateWorldToScreen/translateScreenToWorld
+	return 1;
+}
+
+int LogicHEfootball2002::getPlaybookFiles(int32 *args) {
+	// TODO: Get list of playbook files
+	error("STUB: LogicHEfootball2002::getPlaybookFiles()");
+	return 1;
+}
+
+int LogicHEfootball2002::largestFreeBlock() {
 	// The Windows version always sets the variable to this
 	// The Mac version actually checks for the largest free block
 	writeScummVar(108, 100000000);
@@ -298,6 +370,10 @@ int LogicHEfootball::largestFreeBlock() {
 
 LogicHE *makeLogicHEfootball(ScummEngine_v90he *vm) {
 	return new LogicHEfootball(vm);
+}
+
+LogicHE *makeLogicHEfootball2002(ScummEngine_v90he *vm) {
+	return new LogicHEfootball2002(vm);
 }
 
 } // End of namespace Scumm
