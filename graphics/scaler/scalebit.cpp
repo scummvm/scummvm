@@ -37,6 +37,7 @@
 
 #include "graphics/scaler/scale2x.h"
 #include "graphics/scaler/scale3x.h"
+#include "graphics/scaler/scalebit.h"
 
 #define DST(bits, num)	(scale2x_uint ## bits *)dst ## num
 #define SRC(bits, num)	(const scale2x_uint ## bits *)src ## num
@@ -348,3 +349,43 @@ void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_
 		break;
 	}
 }
+
+AdvMamePlugin::AdvMamePlugin() {
+	_factor = 2;
+	_factors.push_back(2);
+	_factors.push_back(3);
+}
+
+void AdvMamePlugin::initialize(Graphics::PixelFormat format) {
+	_format = format;
+}
+
+void AdvMamePlugin::deinitialize() {
+}
+
+void AdvMamePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
+	::scale(_factor, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, _format.bytesPerPixel, width, height);
+}
+
+uint AdvMamePlugin::increaseFactor() {
+	if (_factor < 3)
+		++_factor;
+	return _factor;
+}
+
+uint AdvMamePlugin::decreaseFactor() {
+	if (_factor > 2)
+		--_factor;
+	return _factor;
+}
+
+const char *AdvMamePlugin::getName() const {
+	return "advmame";
+}
+
+const char *AdvMamePlugin::getPrettyName() const {
+	return "AdvMame";
+}
+
+REGISTER_PLUGIN_STATIC(ADVMAME, PLUGIN_TYPE_SCALER, AdvMamePlugin);
