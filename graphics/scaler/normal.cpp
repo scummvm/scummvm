@@ -25,14 +25,17 @@
 NormalPlugin::NormalPlugin() {
 	_factor = 1;
 	_factors.push_back(1);
+#ifdef USE_SCALERS
 	_factors.push_back(2);
 	_factors.push_back(3);
 	_factors.push_back(4);
+#endif
 }
 
 void NormalPlugin::initialize(Graphics::PixelFormat format) {
 }
 
+#ifdef USE_SCALERS
 /**
  * Trivial nearest-neighbor 4x scaler.
  */
@@ -70,9 +73,11 @@ void Normal4x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 		dstPtr += dstPitch4;
 	}
 }
+#endif
 
 void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
+#ifdef USE_SCALERS
 	switch (_factor) {
 	case 1:
 		Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
@@ -87,17 +92,24 @@ void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 		Normal4x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 		break;
 	}
+#else
+	Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+#endif
 }
 
 uint NormalPlugin::increaseFactor() {
+#ifdef USE_SCALERS
 	if (_factor < 4)
 		++_factor;
+#endif
 	return _factor;
 }
 
 uint NormalPlugin::decreaseFactor() {
+#ifdef USE_SCALERS
 	if (_factor > 1)
 		--_factor;
+#endif
 	return _factor;
 }
 
