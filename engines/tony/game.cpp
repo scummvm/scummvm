@@ -673,57 +673,57 @@ void RMOptionScreen::initState(CORO_PARAM) {
 		if (_nState == MENUGAME) {
 			assert(_ButtonGame_Lock == NULL);
 			_ButtonGame_Lock = new RMOptionButton(20008, RMPoint(176, 262), true);
-			_ButtonGame_Lock->setActiveState(GLOBALS.bCfgInvLocked);
+			_ButtonGame_Lock->setActiveState(GLOBALS._bCfgInvLocked);
 			assert(_ButtonGame_TimerizedText == NULL);
 			_ButtonGame_TimerizedText = new RMOptionButton(20009, RMPoint(463, 273), true);
-			_ButtonGame_TimerizedText->setActiveState(!GLOBALS.bCfgTimerizedText);
+			_ButtonGame_TimerizedText->setActiveState(!GLOBALS._bCfgTimerizedText);
 			assert(_ButtonGame_Scrolling == NULL);
 			_ButtonGame_Scrolling = new RMOptionButton(20010, RMPoint(315, 263), true);
-			_ButtonGame_Scrolling->setActiveState(GLOBALS.bCfgInvNoScroll);
+			_ButtonGame_Scrolling->setActiveState(GLOBALS._bCfgInvNoScroll);
 			assert(_ButtonGame_InterUp == NULL);
 			_ButtonGame_InterUp = new RMOptionButton(20011, RMPoint(36, 258), true);
-			_ButtonGame_InterUp->setActiveState(GLOBALS.bCfgInvUp);
+			_ButtonGame_InterUp->setActiveState(GLOBALS._bCfgInvUp);
 
 			assert(_SlideTextSpeed == NULL);
-			_SlideTextSpeed = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgTextSpeed);
+			_SlideTextSpeed = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS._nCfgTextSpeed);
 			assert(_SlideTonySpeed == NULL);
-			_SlideTonySpeed = new RMOptionSlide(RMPoint(165, 226), 5, GLOBALS.nCfgTonySpeed);
+			_SlideTonySpeed = new RMOptionSlide(RMPoint(165, 226), 5, GLOBALS._nCfgTonySpeed);
 		}
 		// Menu Graphics
 		else if (_nState == MENUGFX) {
 			assert(_ButtonGfx_Anni30 == NULL);
 			_ButtonGfx_Anni30 = new RMOptionButton(20015, RMPoint(247, 178), true);
-			_ButtonGfx_Anni30->setActiveState(GLOBALS.bCfgAnni30);
+			_ButtonGfx_Anni30->setActiveState(GLOBALS._bCfgAnni30);
 			assert(_ButtonGfx_AntiAlias == NULL);
 			_ButtonGfx_AntiAlias = new RMOptionButton(20016, RMPoint(430, 83), true);
-			_ButtonGfx_AntiAlias->setActiveState(!GLOBALS.bCfgAntiAlias);
+			_ButtonGfx_AntiAlias->setActiveState(!GLOBALS._bCfgAntiAlias);
 			assert(_ButtonGfx_Sottotitoli == NULL);
 			_ButtonGfx_Sottotitoli = new RMOptionButton(20017, RMPoint(98, 82), true);
-			_ButtonGfx_Sottotitoli->setActiveState(!GLOBALS.bCfgSottotitoli);
+			_ButtonGfx_Sottotitoli->setActiveState(!GLOBALS._bCfgSottotitoli);
 			assert(_ButtonGfx_Tips == NULL);
 			_ButtonGfx_Tips = new RMOptionButton(20018, RMPoint(431, 246), true);
-			_ButtonGfx_Tips->setActiveState(GLOBALS.bCfgInterTips);
+			_ButtonGfx_Tips->setActiveState(GLOBALS._bCfgInterTips);
 			assert(_ButtonGfx_Trans == NULL);
 			_ButtonGfx_Trans = new RMOptionButton(20019, RMPoint(126, 271), true);
-			_ButtonGfx_Trans->setActiveState(!GLOBALS.bCfgTransparence);
+			_ButtonGfx_Trans->setActiveState(!GLOBALS._bCfgTransparence);
 
 		} else if (_nState == MENUSOUND) {
 			assert(_SliderSound_Dubbing == NULL);
-			_SliderSound_Dubbing = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS.nCfgDubbingVolume);
+			_SliderSound_Dubbing = new RMOptionSlide(RMPoint(165, 122), 10, GLOBALS._nCfgDubbingVolume);
 			assert(_SliderSound_Music == NULL);
-			_SliderSound_Music = new RMOptionSlide(RMPoint(165, 226), 10, GLOBALS.nCfgMusicVolume);
+			_SliderSound_Music = new RMOptionSlide(RMPoint(165, 226), 10, GLOBALS._nCfgMusicVolume);
 			assert(_SliderSound_SFX == NULL);
-			_SliderSound_SFX = new RMOptionSlide(RMPoint(165, 330), 10, GLOBALS.nCfgSFXVolume);
+			_SliderSound_SFX = new RMOptionSlide(RMPoint(165, 330), 10, GLOBALS._nCfgSFXVolume);
 
 			assert(_ButtonSound_DubbingOn == NULL);
 			_ButtonSound_DubbingOn = new RMOptionButton(20033, RMPoint(339, 75), true);
-			_ButtonSound_DubbingOn->setActiveState(GLOBALS.bCfgDubbing);
+			_ButtonSound_DubbingOn->setActiveState(GLOBALS._bCfgDubbing);
 			assert(_ButtonSound_MusicOn == NULL);
 			_ButtonSound_MusicOn = new RMOptionButton(20034, RMPoint(338, 179), true);
-			_ButtonSound_MusicOn->setActiveState(GLOBALS.bCfgMusic);
+			_ButtonSound_MusicOn->setActiveState(GLOBALS._bCfgMusic);
 			assert(_ButtonSound_SFXOn == NULL);
 			_ButtonSound_SFXOn = new RMOptionButton(20035, RMPoint(338, 283), true);
-			_ButtonSound_SFXOn->setActiveState(GLOBALS.bCfgSFX);
+			_ButtonSound_SFXOn->setActiveState(GLOBALS._bCfgSFX);
 		}
 	}
 
@@ -789,71 +789,71 @@ void RMOptionScreen::closeState(void) {
 		}
 
 		if (_nState == MENUGAME) {
-			GLOBALS.bCfgInvLocked = _ButtonGame_Lock->isActive();
+			GLOBALS._bCfgInvLocked = _ButtonGame_Lock->isActive();
 			delete _ButtonGame_Lock;
 			_ButtonGame_Lock = NULL;
 
-			GLOBALS.bCfgTimerizedText = !_ButtonGame_TimerizedText->isActive();
+			GLOBALS._bCfgTimerizedText = !_ButtonGame_TimerizedText->isActive();
 			delete _ButtonGame_TimerizedText;
 			_ButtonGame_TimerizedText = NULL;
 
-			GLOBALS.bCfgInvNoScroll = _ButtonGame_Scrolling->isActive();
+			GLOBALS._bCfgInvNoScroll = _ButtonGame_Scrolling->isActive();
 			delete _ButtonGame_Scrolling;
 			_ButtonGame_Scrolling = NULL;
 
-			GLOBALS.bCfgInvUp = _ButtonGame_InterUp->isActive();
+			GLOBALS._bCfgInvUp = _ButtonGame_InterUp->isActive();
 			delete _ButtonGame_InterUp;
 			_ButtonGame_InterUp = NULL;
 
-			GLOBALS.nCfgTextSpeed = _SlideTextSpeed->getValue();
+			GLOBALS._nCfgTextSpeed = _SlideTextSpeed->getValue();
 			delete _SlideTextSpeed;
 			_SlideTextSpeed = NULL;
 
-			GLOBALS.nCfgTonySpeed = _SlideTonySpeed->getValue();
+			GLOBALS._nCfgTonySpeed = _SlideTonySpeed->getValue();
 			delete _SlideTonySpeed;
 			_SlideTonySpeed = NULL;
 		} else if (_nState == MENUGFX) {
-			GLOBALS.bCfgAnni30 = _ButtonGfx_Anni30->isActive();
+			GLOBALS._bCfgAnni30 = _ButtonGfx_Anni30->isActive();
 			delete _ButtonGfx_Anni30;
 			_ButtonGfx_Anni30 = NULL;
 
-			GLOBALS.bCfgAntiAlias = !_ButtonGfx_AntiAlias->isActive();
+			GLOBALS._bCfgAntiAlias = !_ButtonGfx_AntiAlias->isActive();
 			delete _ButtonGfx_AntiAlias;
 			_ButtonGfx_AntiAlias = NULL;
 
-			GLOBALS.bCfgSottotitoli = !_ButtonGfx_Sottotitoli->isActive();
+			GLOBALS._bCfgSottotitoli = !_ButtonGfx_Sottotitoli->isActive();
 			delete _ButtonGfx_Sottotitoli;
 			_ButtonGfx_Sottotitoli = NULL;
 
-			GLOBALS.bCfgInterTips = _ButtonGfx_Tips->isActive();
+			GLOBALS._bCfgInterTips = _ButtonGfx_Tips->isActive();
 			delete _ButtonGfx_Tips;
 			_ButtonGfx_Tips = NULL;
 
-			GLOBALS.bCfgTransparence = !_ButtonGfx_Trans->isActive();
+			GLOBALS._bCfgTransparence = !_ButtonGfx_Trans->isActive();
 			delete _ButtonGfx_Trans;
 			_ButtonGfx_Trans = NULL;
 		} else if (_nState == MENUSOUND) {
-			GLOBALS.nCfgDubbingVolume = _SliderSound_Dubbing->getValue();
+			GLOBALS._nCfgDubbingVolume = _SliderSound_Dubbing->getValue();
 			delete _SliderSound_Dubbing;
 			_SliderSound_Dubbing = NULL;
 
-			GLOBALS.nCfgMusicVolume = _SliderSound_Music->getValue();
+			GLOBALS._nCfgMusicVolume = _SliderSound_Music->getValue();
 			delete _SliderSound_Music;
 			_SliderSound_Music = NULL;
 
-			GLOBALS.nCfgSFXVolume = _SliderSound_SFX->getValue();
+			GLOBALS._nCfgSFXVolume = _SliderSound_SFX->getValue();
 			delete _SliderSound_SFX;
 			_SliderSound_SFX = NULL;
 
-			GLOBALS.bCfgDubbing = _ButtonSound_DubbingOn->isActive();
+			GLOBALS._bCfgDubbing = _ButtonSound_DubbingOn->isActive();
 			delete _ButtonSound_DubbingOn;
 			_ButtonSound_DubbingOn = NULL;
 
-			GLOBALS.bCfgMusic = _ButtonSound_MusicOn->isActive();
+			GLOBALS._bCfgMusic = _ButtonSound_MusicOn->isActive();
 			delete _ButtonSound_MusicOn;
 			_ButtonSound_MusicOn = NULL;
 
-			GLOBALS.bCfgSFX = _ButtonSound_SFXOn->isActive();
+			GLOBALS._bCfgSFX = _ButtonSound_SFXOn->isActive();
 			delete _ButtonSound_SFXOn;
 			_ButtonSound_SFXOn = NULL;
 		}
@@ -1246,19 +1246,19 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 				if (_nState == MENUGFX) {
 					// These options take effect immediately
 					if (_ButtonGfx_Anni30->isActive())
-						GLOBALS.bCfgAnni30 = true;
+						GLOBALS._bCfgAnni30 = true;
 					else
-						GLOBALS.bCfgAnni30 = false;
+						GLOBALS._bCfgAnni30 = false;
 
 					if (_ButtonGfx_AntiAlias->isActive())
-						GLOBALS.bCfgAntiAlias = false;
+						GLOBALS._bCfgAntiAlias = false;
 					else
-						GLOBALS.bCfgAntiAlias = true;
+						GLOBALS._bCfgAntiAlias = true;
 
 					if (_ButtonGfx_Trans->isActive())
-						GLOBALS.bCfgTransparence = false;
+						GLOBALS._bCfgTransparence = false;
 					else
-						GLOBALS.bCfgTransparence = true;
+						GLOBALS._bCfgTransparence = true;
 				}
 			}
 		}

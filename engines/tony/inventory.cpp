@@ -65,7 +65,7 @@ RMInventory::~RMInventory() {
 }
 
 bool RMInventory::checkPointInside(const RMPoint &pt) {
-	if (!GLOBALS.bCfgInvUp)
+	if (!GLOBALS._bCfgInvUp)
 		return pt.y > RM_SY - 70;
 	else
 		return pt.y < 70;
@@ -201,7 +201,7 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 	if (_state == SELECTING) {
 
-		if (!GLOBALS.bCfgInvUp) {
+		if (!GLOBALS._bCfgInvUp) {
 			_ctx->pos.set((_nSelectObj + 1) * 64 - 20, RM_SY - 113);
 			_ctx->pos2.set((_nSelectObj + 1) * 64 + 34, RM_SY - 150);
 		} else {
@@ -215,7 +215,7 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 		// Draw the mini interface
 		CORO_INVOKE_2(miniInterface.draw, bigBuf, _ctx->p);
 
-		if (GLOBALS.bCfgInterTips) {
+		if (GLOBALS._bCfgInterTips) {
 			if (miniAction == 1) // Examine
 				CORO_INVOKE_2(_hints[0].draw, bigBuf, _ctx->p2);
 			else if (miniAction == 2) // Talk
@@ -531,7 +531,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 	}
 
 	if (_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_i)) {
-		GLOBALS.bCfgInvLocked = !GLOBALS.bCfgInvLocked;
+		GLOBALS._bCfgInvLocked = !GLOBALS._bCfgInvLocked;
 	}
 
 	if (_bCombining) {//m_state == COMBINING)
@@ -539,9 +539,9 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		ptr.setSpecialPointer(RMPointer::PTR_CUSTOM);
 	}
 
-	if (!GLOBALS.bCfgInvUp) {
-		if ((_state == CLOSED) && (mpos.y > RM_SY - 10 || GLOBALS.bCfgInvLocked) && bCanOpen) {
-			if (!GLOBALS.bCfgInvNoScroll) {
+	if (!GLOBALS._bCfgInvUp) {
+		if ((_state == CLOSED) && (mpos.y > RM_SY - 10 || GLOBALS._bCfgInvLocked) && bCanOpen) {
+			if (!GLOBALS._bCfgInvNoScroll) {
 				_state = OPENING;
 				_curPutY = RM_SY - 1;
 				_curPutTime = _vm->getTime();
@@ -550,8 +550,8 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				_curPutY = RM_SY - 68;
 			}
 		} else if (_state == OPENED) {
-			if ((mpos.y < RM_SY - 70 && !GLOBALS.bCfgInvLocked) || !bCanOpen) {
-				if (!GLOBALS.bCfgInvNoScroll) {
+			if ((mpos.y < RM_SY - 70 && !GLOBALS._bCfgInvLocked) || !bCanOpen) {
+				if (!GLOBALS._bCfgInvNoScroll) {
 					_state = CLOSING;
 					_curPutY = RM_SY - 68;
 					_curPutTime = _vm->getTime();
@@ -580,8 +580,8 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				_state = CLOSED;
 		}
 	} else {
-		if ((_state == CLOSED) && (mpos.y < 10 || GLOBALS.bCfgInvLocked) && bCanOpen) {
-			if (!GLOBALS.bCfgInvNoScroll) {
+		if ((_state == CLOSED) && (mpos.y < 10 || GLOBALS._bCfgInvLocked) && bCanOpen) {
+			if (!GLOBALS._bCfgInvNoScroll) {
 				_state = OPENING;
 				_curPutY = - 68;
 				_curPutTime = _vm->getTime();
@@ -590,8 +590,8 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				_curPutY = 0;
 			}
 		} else if (_state == OPENED) {
-			if ((mpos.y > 70 && !GLOBALS.bCfgInvLocked) || !bCanOpen) {
-				if (!GLOBALS.bCfgInvNoScroll) {
+			if ((mpos.y > 70 && !GLOBALS._bCfgInvLocked) || !bCanOpen) {
+				if (!GLOBALS._bCfgInvNoScroll) {
 					_state = CLOSING;
 					_curPutY = -2;
 					_curPutTime = _vm->getTime();
@@ -624,7 +624,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		int startx = (_nSelectObj + 1) * 64 - 20;
 		int starty;
 
-		if (!GLOBALS.bCfgInvUp)
+		if (!GLOBALS._bCfgInvUp)
 			starty = RM_SY - 109;
 		else
 			starty = 70;
@@ -802,7 +802,7 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 			_vm->playUtilSFX(1);
 		}
 
-		if (GLOBALS.bCfgInterTips) {
+		if (GLOBALS._bCfgInterTips) {
 			prim->getDst().topLeft() = _openStart + RMPoint(70, 177);
 			CORO_INVOKE_2(_hints[_ctx->h].draw, bigBuf, prim);
 		}

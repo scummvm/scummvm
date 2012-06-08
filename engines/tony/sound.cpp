@@ -1492,15 +1492,15 @@ void FPSFX::SetVolume(int dwVolume) {
 	lastVolume = dwVolume;
 
 	if (bIsVoice) {
-		if (!GLOBALS.bCfgDubbing) dwVolume = 0;
+		if (!GLOBALS._bCfgDubbing) dwVolume = 0;
 		else {
-			dwVolume -= (10 - GLOBALS.nCfgDubbingVolume) * 2;
+			dwVolume -= (10 - GLOBALS._nCfgDubbingVolume) * 2;
 			if (dwVolume < 0) dwVolume = 0;
 		}
 	} else {
-		if (!GLOBALS.bCfgSFX) dwVolume = 0;
+		if (!GLOBALS._bCfgSFX) dwVolume = 0;
 		else {
-			dwVolume -= (10 - GLOBALS.nCfgSFXVolume) * 2;
+			dwVolume -= (10 - GLOBALS._nCfgSFXVolume) * 2;
 			if (dwVolume < 0) dwVolume = 0;
 		}
 	}

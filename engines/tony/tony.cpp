@@ -153,23 +153,23 @@ Common::ErrorCode TonyEngine::init() {
 	_curThumbnail = new uint16[160 * 120];
 
 	// Set up global defaults
-	GLOBALS.bCfgInvLocked = false;
-	GLOBALS.bCfgInvNoScroll = false;
-	GLOBALS.bCfgTimerizedText = true;
-	GLOBALS.bCfgInvUp = false;
-	GLOBALS.bCfgAnni30 = false;
-	GLOBALS.bCfgAntiAlias = false;
-	GLOBALS.bCfgTransparence = true;
-	GLOBALS.bCfgInterTips = true;
-	GLOBALS.bCfgSottotitoli = true;
-	GLOBALS.nCfgTonySpeed = 3;
-	GLOBALS.nCfgTextSpeed = 5;
-	GLOBALS.bCfgDubbing = true;
-	GLOBALS.bCfgMusic = true;
-	GLOBALS.bCfgSFX = true;
-	GLOBALS.nCfgDubbingVolume = 10;
-	GLOBALS.nCfgMusicVolume = 7;
-	GLOBALS.nCfgSFXVolume = 10;
+	GLOBALS._bCfgInvLocked = false;
+	GLOBALS._bCfgInvNoScroll = false;
+	GLOBALS._bCfgTimerizedText = true;
+	GLOBALS._bCfgInvUp = false;
+	GLOBALS._bCfgAnni30 = false;
+	GLOBALS._bCfgAntiAlias = false;
+	GLOBALS._bCfgTransparence = true;
+	GLOBALS._bCfgInterTips = true;
+	GLOBALS._bCfgSottotitoli = true;
+	GLOBALS._nCfgTonySpeed = 3;
+	GLOBALS._nCfgTextSpeed = 5;
+	GLOBALS._bCfgDubbing = true;
+	GLOBALS._bCfgMusic = true;
+	GLOBALS._bCfgSFX = true;
+	GLOBALS._nCfgDubbingVolume = 10;
+	GLOBALS._nCfgMusicVolume = 7;
+	GLOBALS._nCfgSFXVolume = 10;
 	_bQuitNow = false;
 
 	return Common::kNoError;

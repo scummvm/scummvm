@@ -146,7 +146,7 @@ void RMPattern::stopSfx(RMSfx *sfx) {
 		if (_slots[i]._type == SOUND) {
 			if (sfx[_slots[i]._data]._name[0] == '_')
 				sfx[_slots[i]._data].stop();
-			else if (GLOBALS.bSkipSfxNoLoop)
+			else if (GLOBALS._bSkipSfxNoLoop)
 				sfx[_slots[i]._data].stop();
 		}
 	}

@@ -138,7 +138,7 @@ void RMTony::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 	if (!_nInList && _bShow)
 		bigBuf->addPrim(new RMGfxPrimitive(this));
 
-	setSpeed(GLOBALS.nCfgTonySpeed);
+	setSpeed(GLOBALS._nCfgTonySpeed);
 
 	// Runs the normal character movement
 	_ctx->time = _vm->getTime();

@@ -495,7 +495,7 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMessage)(CORO_PARAM, uint32 nMsg, uint32 n
 }
 
 DECLARE_CUSTOM_FUNCTION(NoOcchioDiBue)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.bNoOcchioDiBue = true;
+	GLOBALS._bNoOcchioDiBue = true;
 }
 
 DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -504,7 +504,7 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!GLOBALS.bNoOcchioDiBue) {
+	if (!GLOBALS._bNoOcchioDiBue) {
 		GLOBALS.InitWipe(1);
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 	}
@@ -526,7 +526,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!GLOBALS.bNoOcchioDiBue) {
+	if (!GLOBALS._bNoOcchioDiBue) {
 		GLOBALS.InitWipe(1);
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 	}
@@ -550,7 +550,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 			_vm->playMusic(4, tappetiFile[GLOBALS.lastTappeto], 0, true, 2000);
 	}
 
-	if (!GLOBALS.bNoOcchioDiBue) {
+	if (!GLOBALS._bNoOcchioDiBue) {
 		GLOBALS.InitWipe(2);
 	}
 
@@ -559,12 +559,12 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 
 	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
-	if (!GLOBALS.bNoOcchioDiBue) {
+	if (!GLOBALS._bNoOcchioDiBue) {
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 		GLOBALS.CloseWipe();
 	}
 
-	GLOBALS.bNoOcchioDiBue = false;
+	GLOBALS._bNoOcchioDiBue = false;
 
 	// On Enter?
 	if (_ctx->h != CORO_INVALID_PID_VALUE)
@@ -2102,14 +2102,14 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 
 	debug("Start FadeOut Music");
 
-	for (_ctx->i = 16; _ctx->i > 0 && !GLOBALS.bFadeOutStop; _ctx->i--) {
+	for (_ctx->i = 16; _ctx->i > 0 && !GLOBALS._bFadeOutStop; _ctx->i--) {
 		if (_ctx->i * 4 < _ctx->startVolume)
 			_vm->setMusicVolume(nChannel, _ctx->i * 4);
 
 		CORO_INVOKE_1(CoroScheduler.sleep, 100);
 	}
 
-	if (!GLOBALS.bFadeOutStop)
+	if (!GLOBALS._bFadeOutStop)
 		_vm->setMusicVolume(nChannel, 0);
 
 	// If there is a stacchetto, stop all
@@ -2124,16 +2124,16 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeInSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	CoroScheduler.createProcess(ThreadFadeInMusic, &GLOBALS.curSonoriz, sizeof(int));
+	CoroScheduler.createProcess(ThreadFadeInMusic, &GLOBALS._curSonoriz, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeOutSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.bFadeOutStop = false;
-	CoroScheduler.createProcess(ThreadFadeOutMusic, &GLOBALS.curSonoriz, sizeof(int));
+	GLOBALS._bFadeOutStop = false;
+	CoroScheduler.createProcess(ThreadFadeOutMusic, &GLOBALS._curSonoriz, sizeof(int));
 }
 
 DECLARE_CUSTOM_FUNCTION(FadeOutStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.bFadeOutStop = false;
+	GLOBALS._bFadeOutStop = false;
 	int channel = 2;
 	CoroScheduler.createProcess(ThreadFadeOutMusic, &channel, sizeof(int));
 }
@@ -2144,7 +2144,7 @@ DECLARE_CUSTOM_FUNCTION(FadeInStacchetto)(CORO_PARAM, uint32, uint32, uint32, ui
 }
 
 DECLARE_CUSTOM_FUNCTION(StopSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->stopMusic(GLOBALS.curSonoriz);
+	_vm->stopMusic(GLOBALS._curSonoriz);
 }
 
 DECLARE_CUSTOM_FUNCTION(StopStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -2152,12 +2152,12 @@ DECLARE_CUSTOM_FUNCTION(StopStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint
 }
 
 DECLARE_CUSTOM_FUNCTION(MuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->setMusicVolume(GLOBALS.curSonoriz, 0);
+	_vm->setMusicVolume(GLOBALS._curSonoriz, 0);
 }
 
 DECLARE_CUSTOM_FUNCTION(DemuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS.bFadeOutStop = true;
-	_vm->setMusicVolume(GLOBALS.curSonoriz, 64);
+	GLOBALS._bFadeOutStop = true;
+	_vm->setMusicVolume(GLOBALS._curSonoriz, 64);
 }
 
 DECLARE_CUSTOM_FUNCTION(MuteStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -2183,11 +2183,11 @@ void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int
 DECLARE_CUSTOM_FUNCTION(PlaySonoriz)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bNoLoop, uint32) {
 	if (nFX == 0 || nFX == 1 || nFX == 2) {
 		debug("PlaySonoriz stop fadeout");
-		GLOBALS.bFadeOutStop = true;
+		GLOBALS._bFadeOutStop = true;
 	}
 
 	GLOBALS.lastMusic = nMusic;
-	CustPlayMusic(GLOBALS.curSonoriz, musicFiles[nMusic].name, nFX, bNoLoop ? false : true, musicFiles[nMusic].sync);
+	CustPlayMusic(GLOBALS._curSonoriz, musicFiles[nMusic].name, nFX, bNoLoop ? false : true, musicFiles[nMusic].sync);
 }
 
 DECLARE_CUSTOM_FUNCTION(PlayStacchetto)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bLoop, uint32) {
@@ -2270,7 +2270,7 @@ DECLARE_CUSTOM_FUNCTION(MustSkipIdleEnd)(CORO_PARAM, uint32, uint32, uint32, uin
 }
 
 DECLARE_CUSTOM_FUNCTION(PatIrqFreeze)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
-	GLOBALS.bPatIrqFreeze = bStatus;
+	GLOBALS._bPatIrqFreeze = bStatus;
 }
 
 DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(CORO_PARAM, uint32, uint32, uint32, uint32) {

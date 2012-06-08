@@ -1390,7 +1390,7 @@ void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int
 	int i, n;
 	int r, g, b, r2, g2, b2;
 
-	if (!GLOBALS.bCfgTransparence) {
+	if (!GLOBALS._bCfgTransparence) {
 		RMGfxSourceBuffer8RLEWord::RLEDecompressLine(dst, src, nStartSkip, nLength);
 		return;
 	}
@@ -1751,7 +1751,7 @@ void RMGfxSourceBuffer8RLEByteAA::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 	CORO_BEGIN_CODE(_ctx);
 
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::draw, bigBuf, prim);
-	if (GLOBALS.bCfgAntiAlias)
+	if (GLOBALS._bCfgAntiAlias)
 		drawAA(bigBuf, prim);
 
 	CORO_END_CODE;
@@ -1789,7 +1789,7 @@ void RMGfxSourceBuffer8RLEWordAA::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 	CORO_BEGIN_CODE(_ctx);
 
 	CORO_INVOKE_2(RMGfxSourceBuffer8RLE::draw, bigBuf, prim);
-	if (GLOBALS.bCfgAntiAlias)
+	if (GLOBALS._bCfgAntiAlias)
 		drawAA(bigBuf, prim);
 
 	CORO_END_CODE;
