@@ -59,8 +59,12 @@ enum Sprite {
 };
 
 enum Animation {
-	kAnimationMouthKiss = 33,
-	kAnimationMouthBite = 34
+	kAnimationEnemyRound         =  0,
+	kAnimationEnemyRoundExplode  =  1,
+	kAnimationEnemySquare        =  2,
+	kAnimationEnemySquareExplode =  3,
+	kAnimationMouthKiss          = 33,
+	kAnimationMouthBite          = 34
 };
 
 static const int kMapTileWidth  = 24;
@@ -353,12 +357,55 @@ static const char *kStrings[kLanguageCount][kStringCount] = {
 	}
 };
 
-Penetration::Position::Position(uint16 pX, uint16 pY) : x(pX), y(pY) {
+
+Penetration::MapObject::MapObject(uint16 tX, uint16 tY, uint16 mX, uint16 mY, uint16 w, uint16 h) :
+	tileX(tX), tileY(tY), mapX(mX), mapY(mY), width(w), height(h) {
+
+	isBlocking = true;
+}
+
+Penetration::MapObject::MapObject(uint16 tX, uint16 tY, uint16 w, uint16 h) :
+	tileX(tX), tileY(tY), width(w), height(h) {
+
+	isBlocking = true;
+
+	setMapFromTilePosition();
+}
+
+void Penetration::MapObject::setTileFromMapPosition() {
+	tileX = (mapX + (width  / 2)) / kMapTileWidth;
+	tileY = (mapY + (height / 2)) / kMapTileHeight;
+}
+
+void Penetration::MapObject::setMapFromTilePosition() {
+	mapX = tileX * kMapTileWidth;
+	mapY = tileY * kMapTileHeight;
+}
+
+bool Penetration::MapObject::isIn(uint16 mX, uint16 mY) const {
+	if ((mX < mapX) || (mY < mapY))
+		return false;
+	if ((mX > (mapX + width - 1)) || (mY > (mapY + height - 1)))
+		return false;
+
+	return true;
+}
+
+bool Penetration::MapObject::isIn(uint16 mX, uint16 mY, uint16 w, uint16 h) const {
+	return isIn(mX        , mY        ) ||
+	       isIn(mX + w - 1, mY        ) ||
+	       isIn(mX        , mY + h - 1) ||
+	       isIn(mX + w - 1, mY + h - 1);
+}
+
+bool Penetration::MapObject::isIn(const MapObject &obj) const {
+	return isIn(obj.mapX, obj.mapY, obj.width, obj.height);
 }
 
 
-Penetration::ManagedMouth::ManagedMouth(uint16 pX, uint16 pY, MouthType t) :
-	Position(pX, pY), mouth(0), type(t) {
+Penetration::ManagedMouth::ManagedMouth(uint16 tX, uint16 tY, MouthType t) :
+	MapObject(tX, tY, 0, 0), mouth(0), type(t) {
+
 }
 
 Penetration::ManagedMouth::~ManagedMouth() {
@@ -366,13 +413,27 @@ Penetration::ManagedMouth::~ManagedMouth() {
 }
 
 
-Penetration::ManagedSub::ManagedSub(uint16 pX, uint16 pY) : Position(pX, pY), sub(0) {
-	mapX = x * kMapTileWidth;
-	mapY = y * kMapTileHeight;
+Penetration::ManagedSub::ManagedSub(uint16 tX, uint16 tY) :
+	MapObject(tX, tY, kMapTileWidth, kMapTileHeight), sub(0) {
+
 }
 
 Penetration::ManagedSub::~ManagedSub() {
 	delete sub;
+}
+
+
+Penetration::ManagedEnemy::ManagedEnemy() : MapObject(0, 0, 0, 0), enemy(0), dead(false) {
+}
+
+Penetration::ManagedEnemy::~ManagedEnemy() {
+	delete enemy;
+}
+
+void Penetration::ManagedEnemy::clear() {
+	delete enemy;
+
+	enemy = 0;
 }
 
 
@@ -415,6 +476,7 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	_vm->_video->retrace();
 
 	while (!_vm->shouldQuit() && !_quit && !isDead() && !hasWon()) {
+		enemiesCreate();
 		updateAnims();
 
 		// Draw, fade in if necessary and wait for the end of the frame
@@ -427,6 +489,9 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 
 		// Handle the sub movement
 		handleSub();
+
+		// Handle the enemies movement
+		enemiesMove();
 
 		checkExited();
 	}
@@ -449,11 +514,12 @@ void Penetration::cheatWin() {
 
 void Penetration::init() {
 	// Load sounds
-	_vm->_sound->sampleLoad(&_soundShield, SOUND_SND, "boucl.snd");
-	_vm->_sound->sampleLoad(&_soundBite  , SOUND_SND, "pervet.snd");
-	_vm->_sound->sampleLoad(&_soundKiss  , SOUND_SND, "baise.snd");
-	_vm->_sound->sampleLoad(&_soundShoot , SOUND_SND, "tirgim.snd");
-	_vm->_sound->sampleLoad(&_soundExit  , SOUND_SND, "trouve.snd");
+	_vm->_sound->sampleLoad(&_soundShield , SOUND_SND, "boucl.snd");
+	_vm->_sound->sampleLoad(&_soundBite   , SOUND_SND, "pervet.snd");
+	_vm->_sound->sampleLoad(&_soundKiss   , SOUND_SND, "baise.snd");
+	_vm->_sound->sampleLoad(&_soundShoot  , SOUND_SND, "tirgim.snd");
+	_vm->_sound->sampleLoad(&_soundExit   , SOUND_SND, "trouve.snd");
+	_vm->_sound->sampleLoad(&_soundExplode, SOUND_SND, "virmor.snd");
 
 	_quit = false;
 	for (int i = 0; i < kKeyCount; i++)
@@ -486,6 +552,7 @@ void Penetration::deinit() {
 	_soundKiss.free();
 	_soundShoot.free();
 	_soundExit.free();
+	_soundExplode.free();
 
 	clearMap();
 
@@ -500,9 +567,15 @@ void Penetration::clearMap() {
 	_mapAnims.clear();
 	_anims.clear();
 
+	_blockingObjects.clear();
+
+	_walls.clear();
 	_exits.clear();
 	_shields.clear();
 	_mouths.clear();
+
+	for (int i = 0; i < kEnemyCount; i++)
+		_enemies[i].clear();
 
 	delete _sub;
 
@@ -526,12 +599,8 @@ void Penetration::createMap() {
 		for (int x = 0; x < kMapWidth; x++) {
 			const byte mapTile = mapTiles[y * kMapWidth + x];
 
-			bool *walkMap = _walkMap + (y * kMapWidth + x);
-
 			const int posX = kPlayAreaBorderWidth  + x * kMapTileWidth;
 			const int posY = kPlayAreaBorderHeight + y * kMapTileHeight;
-
-			*walkMap = true;
 
 			switch (mapTile) {
 			case 0: // Floor
@@ -542,18 +611,18 @@ void Penetration::createMap() {
 
 				exitWorks = _hasAccessPass;
 				if (exitWorks) {
-					_exits.push_back(Position(x, y));
 					_sprites->draw(*_map, kSpriteExit, posX, posY);
+					_exits.push_back(MapObject(x, y, 0, 0));
 				} else {
 					_sprites->draw(*_map, kSpriteWall, posX, posY);
-					*walkMap = false;
+					_walls.push_back(MapObject(x, y, kMapTileWidth, kMapTileHeight));
 				}
 
 				break;
 
 			case 50: // Wall
 				_sprites->draw(*_map, kSpriteWall, posX, posY);
-				*walkMap = false;
+				_walls.push_back(MapObject(x, y, kMapTileWidth, kMapTileHeight));
 				break;
 
 			case 51: // Regular exit
@@ -563,11 +632,11 @@ void Penetration::createMap() {
 				exitWorks = _testMode || (_floor < 2) || _hasAccessPass;
 
 				if (exitWorks) {
-					_exits.push_back(Position(x, y));
 					_sprites->draw(*_map, kSpriteExit, posX, posY);
+					_exits.push_back(MapObject(x, y, 0, 0));
 				} else {
 					_sprites->draw(*_map, kSpriteWall, posX, posY);
-					*walkMap = false;
+					_walls.push_back(MapObject(x, y, kMapTileWidth, kMapTileHeight));
 				}
 
 				break;
@@ -603,7 +672,7 @@ void Penetration::createMap() {
 				_map->fillRect(posX +  4, posY + 8, posX +  7, posY + 18, kColorFloor); // Area left to shield
 				_map->fillRect(posX + 17, posY + 8, posX + 20, posY + 18, kColorFloor); // Area right to shield
 
-				_shields.push_back(Position(x, y));
+				_shields.push_back(MapObject(x, y, 0, 0));
 				break;
 
 			case 57: // Start position
@@ -623,10 +692,30 @@ void Penetration::createMap() {
 	if (!_sub)
 		error("Geisha: No starting position in floor %d (testmode: %d)", _floor, _testMode);
 
-	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); m++)
+	// Walls
+	for (Common::List<MapObject>::iterator w = _walls.begin(); w != _walls.end(); ++w)
+		_blockingObjects.push_back(&*w);
+
+	// Mouths
+	for (Common::List<ManagedMouth>::iterator m = _mouths.begin(); m != _mouths.end(); ++m)
 		_mapAnims.push_back(m->mouth);
 
+	// Sub
+	_blockingObjects.push_back(_sub);
 	_anims.push_back(_sub->sub);
+
+	// Moving enemies
+	for (int i = 0; i < kEnemyCount; i++) {
+		_enemies[i].enemy = new ANIObject(*_objects);
+
+		_enemies[i].enemy->setPause(true);
+		_enemies[i].enemy->setVisible(false);
+
+		_enemies[i].isBlocking = false;
+
+		_blockingObjects.push_back(&_enemies[i]);
+		_mapAnims.push_back(_enemies[i].enemy);
+	}
 }
 
 void Penetration::drawFloorText() {
@@ -741,6 +830,104 @@ void Penetration::initScreen() {
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
 }
 
+void Penetration::enemiesCreate() {
+	for (int i = 0; i < kEnemyCount; i++) {
+		ManagedEnemy &enemy = _enemies[i];
+
+		if (enemy.enemy->isVisible())
+			continue;
+
+		enemy.enemy->setAnimation((i & 1) ? kAnimationEnemySquare : kAnimationEnemyRound);
+		enemy.enemy->setMode(ANIObject::kModeContinuous);
+		enemy.enemy->setPause(false);
+		enemy.enemy->setVisible(true);
+
+		int16 width, height;
+		enemy.enemy->getFrameSize(width, height);
+
+		enemy.width  = width;
+		enemy.height = height;
+
+		do {
+			enemy.mapX = _vm->_util->getRandom(kMapWidth)  * kMapTileWidth  + 2;
+			enemy.mapY = _vm->_util->getRandom(kMapHeight) * kMapTileHeight + 4;
+			enemy.setTileFromMapPosition();
+		} while (isBlocked(enemy, enemy.mapX, enemy.mapY));
+
+		const int posX = kPlayAreaBorderWidth  + enemy.mapX;
+		const int posY = kPlayAreaBorderHeight + enemy.mapY;
+
+		enemy.enemy->setPosition(posX, posY);
+
+		enemy.isBlocking = true;
+		enemy.dead       = false;
+	}
+}
+
+void Penetration::enemyMove(ManagedEnemy &enemy, int x, int y) {
+	if ((x == 0) && (y == 0))
+		return;
+
+	bool touchedSub;
+	findPath(enemy, x, y, _sub, &touchedSub);
+
+	enemy.setTileFromMapPosition();
+
+	const int posX = kPlayAreaBorderWidth  + enemy.mapX;
+	const int posY = kPlayAreaBorderHeight + enemy.mapY;
+
+	enemy.enemy->setPosition(posX, posY);
+
+	if (touchedSub)
+		enemyAttack(enemy);
+}
+
+void Penetration::enemiesMove() {
+	for (int i = 0; i < kEnemyCount; i++) {
+		ManagedEnemy &enemy = _enemies[i];
+
+		if (!enemy.enemy->isVisible() || enemy.dead)
+			continue;
+
+		int x = 0, y = 0;
+
+		if      (enemy.mapX > _sub->mapX)
+			x = -8;
+		else if (enemy.mapX < _sub->mapX)
+			x =  8;
+
+		if      (enemy.mapY > _sub->mapY)
+			y = -8;
+		else if (enemy.mapY < _sub->mapY)
+			y =  8;
+
+		enemyMove(enemy, x, y);
+	}
+}
+
+void Penetration::enemyAttack(ManagedEnemy &enemy) {
+	// If we have shields, the enemy explodes at them, taking a huge chunk of energy with it.
+	// Otherwise, the enemy nibbles a small amount of health away.
+
+	if (_shieldMeter->getValue() > 0) {
+		enemyExplode(enemy);
+
+		healthLose(80);
+	} else
+		healthLose(5);
+}
+
+void Penetration::enemyExplode(ManagedEnemy &enemy) {
+	enemy.dead = true;
+
+	bool isSquare = enemy.enemy->getAnimation() == kAnimationEnemySquare;
+
+	enemy.enemy->setAnimation(isSquare ? kAnimationEnemySquareExplode : kAnimationEnemyRoundExplode);
+	enemy.enemy->setMode(ANIObject::kModeOnce);
+
+	_vm->_sound->blasterPlay(&_soundExplode, 1, 0);
+}
+
 void Penetration::checkInput() {
 	Common::Event event;
 	Common::EventManager *eventMan = g_system->getEventManager();
@@ -785,13 +972,6 @@ void Penetration::checkInput() {
 	}
 }
 
-bool Penetration::isWalkable(int16 x, int16 y) const {
-	if ((x < 0) || (x >= kMapWidth) || (y < 0) || (y >= kMapHeight))
-		return false;
-
-	return _walkMap[y * kMapWidth + x];
-}
-
 void Penetration::handleSub() {
 	int x, y;
 	Submarine::Direction direction = getDirection(x, y);
@@ -802,34 +982,90 @@ void Penetration::handleSub() {
 		subShoot();
 }
 
+bool Penetration::isBlocked(const MapObject &self, int16 x, int16 y,
+                            const MapObject *checkBlockedBy, bool *blockedBy) const {
+
+	if ((x < 0) || (y < 0))
+		return true;
+	if (((x + self.width  - 1) >= (kMapWidth  * kMapTileWidth)) ||
+	    ((y + self.height - 1) >= (kMapHeight * kMapTileHeight)))
+		return true;
+
+	MapObject checkSelf(0, 0, self.width, self.height);
+
+	checkSelf.mapX = x;
+	checkSelf.mapY = y;
+
+	bool blocked = false;
+	for (Common::List<MapObject *>::const_iterator o = _blockingObjects.begin(); o != _blockingObjects.end(); ++o) {
+		const MapObject &obj = **o;
+
+		if (&obj == &self)
+			continue;
+
+		if (!obj.isBlocking)
+			continue;
+
+		if (obj.isIn(checkSelf) || checkSelf.isIn(obj)) {
+			blocked = true;
+
+			if (checkBlockedBy && blockedBy && (&obj == checkBlockedBy))
+				*blockedBy = true;
+		}
+	}
+
+	return blocked;
+}
+
+void Penetration::findPath(MapObject &obj, int x, int y,
+                           const MapObject *checkBlockedBy, bool *blockedBy) const {
+
+	if (blockedBy)
+		*blockedBy = false;
+
+	while ((x != 0) || (y != 0)) {
+		uint16 oldX = obj.mapX;
+		uint16 oldY = obj.mapY;
+
+		uint16 newX = obj.mapX;
+		if        (x > 0) {
+			newX++;
+			x--;
+		} else if (x < 0) {
+			newX--;
+			x++;
+		}
+
+		if (!isBlocked(obj, newX, obj.mapY, checkBlockedBy, blockedBy))
+			obj.mapX = newX;
+
+		uint16 newY = obj.mapY;
+		if        (y > 0) {
+			newY++;
+			y--;
+		} else if (y < 0) {
+			newY--;
+			y++;
+		}
+
+		if (!isBlocked(obj, obj.mapX, newY, checkBlockedBy, blockedBy))
+			obj.mapY = newY;
+
+		if ((obj.mapX == oldX) && (obj.mapY == oldY))
+			break;
+	}
+}
+
 void Penetration::subMove(int x, int y, Submarine::Direction direction) {
 	if (!_sub->sub->canMove())
 		return;
 
-	// Limit the movement to walkable tiles
+	if ((x == 0) && (y == 0))
+		return;
 
-	int16 minX = 0;
-	if (!isWalkable(_sub->x - 1, _sub->y))
-		minX = _sub->x * kMapTileWidth;
+	findPath(*_sub, x, y);
 
-	int16 maxX = kMapWidth * kMapTileWidth;
-	if (!isWalkable(_sub->x + 1, _sub->y))
-		maxX = _sub->x * kMapTileWidth;
-
-	int16 minY = 0;
-	if (!isWalkable(_sub->x, _sub->y - 1))
-		minY = _sub->y * kMapTileHeight;
-
-	int16 maxY = kMapHeight * kMapTileHeight;
-	if (!isWalkable(_sub->x, _sub->y + 1))
-		maxY = _sub->y * kMapTileHeight;
-
-	_sub->mapX = CLIP<int16>(_sub->mapX + x, minX, maxX);
-	_sub->mapY = CLIP<int16>(_sub->mapY + y, minY, maxY);
-
-	// The tile the sub is on is where its mid-point is
-	_sub->x = (_sub->mapX + (kMapTileWidth  / 2)) / kMapTileWidth;
-	_sub->y = (_sub->mapY + (kMapTileHeight / 2)) / kMapTileHeight;
+	_sub->setTileFromMapPosition();
 
 	_sub->sub->turn(direction);
 
@@ -872,8 +1108,8 @@ Submarine::Direction Penetration::getDirection(int &x, int &y) const {
 }
 
 void Penetration::checkShields() {
-	for (Common::List<Position>::iterator pos = _shields.begin(); pos != _shields.end(); ++pos) {
-		if ((pos->x == _sub->x) && (pos->y == _sub->y)) {
+	for (Common::List<MapObject>::iterator s = _shields.begin(); s != _shields.end(); ++s) {
+		if ((s->tileX == _sub->tileX) && (s->tileY == _sub->tileY)) {
 			// Charge shields
 			_shieldMeter->setMaxValue();
 
@@ -881,11 +1117,8 @@ void Penetration::checkShields() {
 			_vm->_sound->blasterPlay(&_soundShield, 1, 0);
 
 			// Erase the shield from the map
-			const int mapX = kPlayAreaBorderWidth  + pos->x * kMapTileWidth;
-			const int mapY = kPlayAreaBorderHeight + pos->y * kMapTileHeight;
-			_sprites->draw(*_map, 30, mapX, mapY);
-
-			_shields.erase(pos);
+			_sprites->draw(*_map, 30, s->mapX + kPlayAreaBorderWidth, s->mapY + kPlayAreaBorderHeight);
+			_shields.erase(s);
 			break;
 		}
 	}
@@ -896,8 +1129,8 @@ void Penetration::checkMouths() {
 		if (!m->mouth->isDeactivated())
 			continue;
 
-		if ((( m->x      == _sub->x) && (m->y == _sub->y)) ||
-		    (((m->x + 1) == _sub->x) && (m->y == _sub->y))) {
+		if ((( m->tileX      == _sub->tileX) && (m->tileY == _sub->tileY)) ||
+		    (((m->tileX + 1) == _sub->tileX) && (m->tileY == _sub->tileY))) {
 
 			m->mouth->activate();
 
@@ -917,10 +1150,9 @@ void Penetration::checkExits() {
 	if (!_sub->sub->canMove())
 		return;
 
-	for (Common::List<Position>::iterator e = _exits.begin(); e != _exits.end(); ++e) {
-		if ((e->x == _sub->x) && (e->y == _sub->y)) {
-			_sub->mapX = e->x * kMapTileWidth;
-			_sub->mapY = e->y * kMapTileHeight;
+	for (Common::List<MapObject>::iterator e = _exits.begin(); e != _exits.end(); ++e) {
+		if ((e->tileX == _sub->tileX) && (e->tileY == _sub->tileY)) {
+			_sub->setMapFromTilePosition();
 
 			_sub->sub->leave();
 

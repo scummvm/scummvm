@@ -90,6 +90,9 @@ void Submarine::shoot() {
 }
 
 void Submarine::die() {
+	if (!canMove())
+		return;
+
 	_state = kStateDie;
 
 	setAnimation(directionToExplode(_direction));

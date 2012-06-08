@@ -65,11 +65,29 @@ private:
 	static const byte kPalettes[kFloorCount][3 * kPaletteSize];
 	static const byte kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight];
 
-	struct Position {
-		uint16 x;
-		uint16 y;
+	static const int kEnemyCount = 9;
 
-		Position(uint16 pX, uint16 pY);
+	struct MapObject {
+		uint16 tileX;
+		uint16 tileY;
+
+		uint16 mapX;
+		uint16 mapY;
+
+		uint16 width;
+		uint16 height;
+
+		bool isBlocking;
+
+		MapObject(uint16 tX, uint16 tY, uint16 mX, uint16 mY, uint16 w, uint16 h);
+		MapObject(uint16 tX, uint16 tY, uint16 w, uint16 h);
+
+		void setTileFromMapPosition();
+		void setMapFromTilePosition();
+
+		bool isIn(uint16 mX, uint16 mY) const;
+		bool isIn(uint16 mX, uint16 mY, uint16 w, uint16 h) const;
+		bool isIn(const MapObject &obj) const;
 	};
 
 	enum MouthType {
@@ -77,24 +95,31 @@ private:
 		kMouthTypeKiss
 	};
 
-	struct ManagedMouth : public Position {
+	struct ManagedMouth : public MapObject {
 		Mouth *mouth;
+
 		MouthType type;
 
-		ManagedMouth(uint16 pX, uint16 pY, MouthType t);
+		ManagedMouth(uint16 tX, uint16 tY, MouthType t);
 		~ManagedMouth();
 	};
 
-	struct ManagedSub : public Position {
+	struct ManagedSub : public MapObject {
 		Submarine *sub;
 
-		uint16 mapX;
-		uint16 mapY;
-
-		ManagedSub(uint16 pX, uint16 pY);
+		ManagedSub(uint16 tX, uint16 tY);
 		~ManagedSub();
+	};
 
-		void setPosition(uint16 pX, uint16 pY);
+	struct ManagedEnemy : public MapObject {
+		ANIObject *enemy;
+
+		bool dead;
+
+		ManagedEnemy();
+		~ManagedEnemy();
+
+		void clear();
 	};
 
 	enum Keys {
@@ -130,19 +155,24 @@ private:
 	uint8 _floor;
 
 	Surface *_map;
-	bool _walkMap[kMapWidth * kMapHeight];
 
 	ManagedSub *_sub;
 
-	Common::List<Position>     _exits;
-	Common::List<Position>     _shields;
+	Common::List<MapObject>    _walls;
+	Common::List<MapObject>    _exits;
+	Common::List<MapObject>    _shields;
 	Common::List<ManagedMouth> _mouths;
+
+	ManagedEnemy _enemies[kEnemyCount];
+
+	Common::List<MapObject *> _blockingObjects;
 
 	SoundDesc _soundShield;
 	SoundDesc _soundBite;
 	SoundDesc _soundKiss;
 	SoundDesc _soundShoot;
 	SoundDesc _soundExit;
+	SoundDesc _soundExplode;
 
 	bool _isPlaying;
 
@@ -161,17 +191,20 @@ private:
 	void drawFloorText();
 	void drawEndText();
 
+	bool isBlocked(const MapObject &self, int16 x, int16 y,
+	               const MapObject *checkBlockedBy = 0, bool *blockedBy = 0) const;
+	void findPath(MapObject &obj, int x, int y,
+	              const MapObject *checkBlockedBy = 0, bool *blockedBy = 0) const;
+
 	void updateAnims();
 
 	void checkInput();
 
+	Submarine::Direction getDirection(int &x, int &y) const;
+
 	void handleSub();
 	void subMove(int x, int y, Submarine::Direction direction);
 	void subShoot();
-
-	Submarine::Direction getDirection(int &x, int &y) const;
-
-	bool isWalkable(int16 x, int16 y) const;
 
 	void checkExits();
 	void checkShields();
@@ -181,6 +214,12 @@ private:
 	void healthLose(int amount);
 
 	void checkExited();
+
+	void enemiesCreate();
+	void enemiesMove();
+	void enemyMove(ManagedEnemy &enemy, int x, int y);
+	void enemyAttack(ManagedEnemy &enemy);
+	void enemyExplode(ManagedEnemy &enemy);
 
 	bool isDead() const;
 	bool hasWon() const;
