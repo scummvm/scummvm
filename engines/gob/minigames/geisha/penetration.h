@@ -65,7 +65,8 @@ private:
 	static const byte kPalettes[kFloorCount][3 * kPaletteSize];
 	static const byte kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight];
 
-	static const int kEnemyCount = 9;
+	static const int kEnemyCount     =  9;
+	static const int kMaxBulletCount = 10;
 
 	struct MapObject {
 		uint16 tileX;
@@ -122,6 +123,18 @@ private:
 		void clear();
 	};
 
+	struct ManagedBullet : public MapObject {
+		ANIObject *bullet;
+
+		int16 deltaX;
+		int16 deltaY;
+
+		ManagedBullet();
+		~ManagedBullet();
+
+		void clear();
+	};
+
 	enum Keys {
 		kKeyUp = 0,
 		kKeyDown,
@@ -163,9 +176,12 @@ private:
 	Common::List<MapObject>    _shields;
 	Common::List<ManagedMouth> _mouths;
 
-	ManagedEnemy _enemies[kEnemyCount];
+	ManagedEnemy  _enemies[kEnemyCount];
+	ManagedBullet _bullets[kMaxBulletCount];
 
 	Common::List<MapObject *> _blockingObjects;
+
+	uint8 _shotCoolDown;
 
 	SoundDesc _soundShield;
 	SoundDesc _soundBite;
@@ -191,10 +207,8 @@ private:
 	void drawFloorText();
 	void drawEndText();
 
-	bool isBlocked(const MapObject &self, int16 x, int16 y,
-	               const MapObject *checkBlockedBy = 0, bool *blockedBy = 0) const;
-	void findPath(MapObject &obj, int x, int y,
-	              const MapObject *checkBlockedBy = 0, bool *blockedBy = 0) const;
+	bool isBlocked(const MapObject &self, int16 x, int16 y, MapObject **blockedBy = 0);
+	void findPath(MapObject &obj, int x, int y, MapObject **blockedBy = 0);
 
 	void updateAnims();
 
@@ -205,6 +219,14 @@ private:
 	void handleSub();
 	void subMove(int x, int y, Submarine::Direction direction);
 	void subShoot();
+
+	int findEmptyBulletSlot() const;
+	uint16 directionToBullet(Submarine::Direction direction) const;
+	void setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet) const;
+
+	void bulletsMove();
+	void bulletMove(ManagedBullet &bullet);
+	void checkShotEnemy(MapObject &shotObject);
 
 	void checkExits();
 	void checkShields();

@@ -58,6 +58,10 @@ Submarine::Submarine(const ANIFile &ani) : ANIObject(ani), _state(kStateMove) {
 Submarine::~Submarine() {
 }
 
+Submarine::Direction Submarine::getDirection() const {
+	return _direction;
+}
+
 void Submarine::turn(Direction to) {
 	// Nothing to do
 	if ((to == kDirectionNone) || ((_state == kStateMove) && (_direction == to)))

@@ -47,6 +47,8 @@ public:
 	Submarine(const ANIFile &ani);
 	~Submarine();
 
+	Direction getDirection() const;
+
 	/** Turn to the specified direction. */
 	void turn(Direction to);
 

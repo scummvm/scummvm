@@ -55,7 +55,15 @@ enum Sprite {
 	kSpriteFloor       = 30,
 	kSpriteWall        = 31,
 	kSpriteMouthBite   = 32,
-	kSpriteMouthKiss   = 33
+	kSpriteMouthKiss   = 33,
+	kSpriteBulletN     = 65,
+	kSpriteBulletS     = 66,
+	kSpriteBulletW     = 67,
+	kSpriteBulletE     = 68,
+	kSpriteBulletSW    = 85,
+	kSpriteBulletSE    = 86,
+	kSpriteBulletNW    = 87,
+	kSpriteBulletNE    = 88
 };
 
 enum Animation {
@@ -437,6 +445,20 @@ void Penetration::ManagedEnemy::clear() {
 }
 
 
+Penetration::ManagedBullet::ManagedBullet() : MapObject(0, 0, 0, 0), bullet(0) {
+}
+
+Penetration::ManagedBullet::~ManagedBullet() {
+	delete bullet;
+}
+
+void Penetration::ManagedBullet::clear() {
+	delete bullet;
+
+	bullet = 0;
+}
+
+
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
 	_shieldMeter(0), _healthMeter(0), _floor(0), _isPlaying(false) {
 
@@ -477,6 +499,7 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 
 	while (!_vm->shouldQuit() && !_quit && !isDead() && !hasWon()) {
 		enemiesCreate();
+		bulletsMove();
 		updateAnims();
 
 		// Draw, fade in if necessary and wait for the end of the frame
@@ -494,6 +517,9 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 		enemiesMove();
 
 		checkExited();
+
+		if (_shotCoolDown > 0)
+			_shotCoolDown--;
 	}
 
 	deinit();
@@ -543,6 +569,8 @@ void Penetration::init() {
 
 	_floor = 0;
 
+	_shotCoolDown = 0;
+
 	createMap();
 }
 
@@ -576,6 +604,8 @@ void Penetration::clearMap() {
 
 	for (int i = 0; i < kEnemyCount; i++)
 		_enemies[i].clear();
+	for (int i = 0; i < kMaxBulletCount; i++)
+		_bullets[i].clear();
 
 	delete _sub;
 
@@ -715,6 +745,18 @@ void Penetration::createMap() {
 
 		_blockingObjects.push_back(&_enemies[i]);
 		_mapAnims.push_back(_enemies[i].enemy);
+	}
+
+	// Bullets
+	for (int i = 0; i < kMaxBulletCount; i++) {
+		_bullets[i].bullet = new ANIObject(*_sprites);
+
+		_bullets[i].bullet->setPause(true);
+		_bullets[i].bullet->setVisible(false);
+
+		_bullets[i].isBlocking = false;
+
+		_mapAnims.push_back(_bullets[i].bullet);
 	}
 }
 
@@ -868,8 +910,8 @@ void Penetration::enemyMove(ManagedEnemy &enemy, int x, int y) {
 	if ((x == 0) && (y == 0))
 		return;
 
-	bool touchedSub;
-	findPath(enemy, x, y, _sub, &touchedSub);
+	MapObject *blockedBy;
+	findPath(enemy, x, y, &blockedBy);
 
 	enemy.setTileFromMapPosition();
 
@@ -878,7 +920,7 @@ void Penetration::enemyMove(ManagedEnemy &enemy, int x, int y) {
 
 	enemy.enemy->setPosition(posX, posY);
 
-	if (touchedSub)
+	if (blockedBy == _sub)
 		enemyAttack(enemy);
 }
 
@@ -918,7 +960,8 @@ void Penetration::enemyAttack(ManagedEnemy &enemy) {
 }
 
 void Penetration::enemyExplode(ManagedEnemy &enemy) {
-	enemy.dead = true;
+	enemy.dead       = true;
+	enemy.isBlocking = false;
 
 	bool isSquare = enemy.enemy->getAnimation() == kAnimationEnemySquare;
 
@@ -982,8 +1025,7 @@ void Penetration::handleSub() {
 		subShoot();
 }
 
-bool Penetration::isBlocked(const MapObject &self, int16 x, int16 y,
-                            const MapObject *checkBlockedBy, bool *blockedBy) const {
+bool Penetration::isBlocked(const MapObject &self, int16 x, int16 y, MapObject **blockedBy) {
 
 	if ((x < 0) || (y < 0))
 		return true;
@@ -996,9 +1038,8 @@ bool Penetration::isBlocked(const MapObject &self, int16 x, int16 y,
 	checkSelf.mapX = x;
 	checkSelf.mapY = y;
 
-	bool blocked = false;
-	for (Common::List<MapObject *>::const_iterator o = _blockingObjects.begin(); o != _blockingObjects.end(); ++o) {
-		const MapObject &obj = **o;
+	for (Common::List<MapObject *>::iterator o = _blockingObjects.begin(); o != _blockingObjects.end(); ++o) {
+		MapObject &obj = **o;
 
 		if (&obj == &self)
 			continue;
@@ -1007,21 +1048,19 @@ bool Penetration::isBlocked(const MapObject &self, int16 x, int16 y,
 			continue;
 
 		if (obj.isIn(checkSelf) || checkSelf.isIn(obj)) {
-			blocked = true;
+			if (blockedBy && !*blockedBy)
+				*blockedBy = &obj;
 
-			if (checkBlockedBy && blockedBy && (&obj == checkBlockedBy))
-				*blockedBy = true;
+			return true;
 		}
 	}
 
-	return blocked;
+	return false;
 }
 
-void Penetration::findPath(MapObject &obj, int x, int y,
-                           const MapObject *checkBlockedBy, bool *blockedBy) const {
-
+void Penetration::findPath(MapObject &obj, int x, int y, MapObject **blockedBy) {
 	if (blockedBy)
-		*blockedBy = false;
+		*blockedBy = 0;
 
 	while ((x != 0) || (y != 0)) {
 		uint16 oldX = obj.mapX;
@@ -1036,7 +1075,7 @@ void Penetration::findPath(MapObject &obj, int x, int y,
 			x++;
 		}
 
-		if (!isBlocked(obj, newX, obj.mapY, checkBlockedBy, blockedBy))
+		if (!isBlocked(obj, newX, obj.mapY, blockedBy))
 			obj.mapX = newX;
 
 		uint16 newY = obj.mapY;
@@ -1048,7 +1087,7 @@ void Penetration::findPath(MapObject &obj, int x, int y,
 			y++;
 		}
 
-		if (!isBlocked(obj, obj.mapX, newY, checkBlockedBy, blockedBy))
+		if (!isBlocked(obj, obj.mapX, newY, blockedBy))
 			obj.mapY = newY;
 
 		if ((obj.mapX == oldX) && (obj.mapY == oldY))
@@ -1078,9 +1117,185 @@ void Penetration::subShoot() {
 	if (!_sub->sub->canMove() || _sub->sub->isShooting())
 		return;
 
-	_sub->sub->shoot();
+	if (_shotCoolDown > 0)
+		return;
 
+	// Creating a bullet
+	int slot = findEmptyBulletSlot();
+	if (slot < 0)
+		return;
+
+	ManagedBullet &bullet = _bullets[slot];
+
+	bullet.bullet->setAnimation(directionToBullet(_sub->sub->getDirection()));
+
+	setBulletPosition(*_sub, bullet);
+
+	const int posX = kPlayAreaBorderWidth  + bullet.mapX;
+	const int posY = kPlayAreaBorderHeight + bullet.mapY;
+
+	bullet.bullet->setPosition(posX, posY);
+	bullet.bullet->setVisible(true);
+
+	// Shooting
+	_sub->sub->shoot();
 	_vm->_sound->blasterPlay(&_soundShoot, 1, 0);
+
+	_shotCoolDown = 3;
+}
+
+void Penetration::setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet) const {
+	bullet.mapX = sub.mapX;
+	bullet.mapY= sub.mapY;
+
+	int16 sWidth, sHeight;
+	sub.sub->getFrameSize(sWidth, sHeight);
+
+	int16 bWidth, bHeight;
+	bullet.bullet->getFrameSize(bWidth, bHeight);
+
+	switch (sub.sub->getDirection()) {
+	case Submarine::kDirectionN:
+		bullet.mapX += sWidth / 2;
+		bullet.mapY -= bHeight;
+
+		bullet.deltaX =  0;
+		bullet.deltaY = -8;
+		break;
+
+	case Submarine::kDirectionNE:
+		bullet.mapX += sWidth;
+		bullet.mapY -= bHeight * 2;
+
+		bullet.deltaX =  8;
+		bullet.deltaY = -8;
+		break;
+
+	case Submarine::kDirectionE:
+		bullet.mapX += sWidth;
+		bullet.mapY += sHeight / 2 - bHeight;
+
+		bullet.deltaX =  8;
+		bullet.deltaY =  0;
+		break;
+
+	case Submarine::kDirectionSE:
+		bullet.mapX += sWidth;
+		bullet.mapY += sHeight;
+
+		bullet.deltaX =  8;
+		bullet.deltaY =  8;
+		break;
+
+	case Submarine::kDirectionS:
+		bullet.mapX += sWidth / 2;
+		bullet.mapY += sHeight;
+
+		bullet.deltaX =  0;
+		bullet.deltaY =  8;
+		break;
+
+	case Submarine::kDirectionSW:
+		bullet.mapX -= bWidth;
+		bullet.mapY += sHeight;
+
+		bullet.deltaX = -8;
+		bullet.deltaY =  8;
+		break;
+
+	case Submarine::kDirectionW:
+		bullet.mapX -= bWidth;
+		bullet.mapY += sHeight / 2 - bHeight;
+
+		bullet.deltaX = -8;
+		bullet.deltaY =  0;
+		break;
+
+	case Submarine::kDirectionNW:
+		bullet.mapX -= bWidth;
+		bullet.mapY -= bHeight;
+
+		bullet.deltaX = -8;
+		bullet.deltaY = -8;
+		break;
+
+	default:
+		break;
+	}
+}
+
+uint16 Penetration::directionToBullet(Submarine::Direction direction) const {
+	switch (direction) {
+	case Submarine::kDirectionN:
+		return kSpriteBulletN;
+
+	case Submarine::kDirectionNE:
+		return kSpriteBulletNE;
+
+	case Submarine::kDirectionE:
+		return kSpriteBulletE;
+
+	case Submarine::kDirectionSE:
+		return kSpriteBulletSE;
+
+	case Submarine::kDirectionS:
+		return kSpriteBulletS;
+
+	case Submarine::kDirectionSW:
+		return kSpriteBulletSW;
+
+	case Submarine::kDirectionW:
+		return kSpriteBulletW;
+
+	case Submarine::kDirectionNW:
+		return kSpriteBulletNW;
+
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+int Penetration::findEmptyBulletSlot() const {
+	for (int i = 0; i < kMaxBulletCount; i++)
+		if (!_bullets[i].bullet->isVisible())
+			return i;
+
+	return -1;
+}
+
+void Penetration::bulletsMove() {
+	for (int i = 0; i < kMaxBulletCount; i++)
+		if (_bullets[i].bullet->isVisible())
+			bulletMove(_bullets[i]);
+}
+
+void Penetration::bulletMove(ManagedBullet &bullet) {
+	MapObject *blockedBy;
+	findPath(bullet, bullet.deltaX, bullet.deltaY, &blockedBy);
+
+	if (blockedBy) {
+		checkShotEnemy(*blockedBy);
+		bullet.bullet->setVisible(false);
+		return;
+	}
+
+	const int posX = kPlayAreaBorderWidth  + bullet.mapX;
+	const int posY = kPlayAreaBorderHeight + bullet.mapY;
+
+	bullet.bullet->setPosition(posX, posY);
+}
+
+void Penetration::checkShotEnemy(MapObject &shotObject) {
+	for (int i = 0; i < kEnemyCount; i++) {
+		ManagedEnemy &enemy = _enemies[i];
+
+		if ((&enemy == &shotObject) && !enemy.dead && enemy.enemy->isVisible()) {
+			enemyExplode(enemy);
+			return;
+		}
+	}
 }
 
 Submarine::Direction Penetration::getDirection(int &x, int &y) const {
