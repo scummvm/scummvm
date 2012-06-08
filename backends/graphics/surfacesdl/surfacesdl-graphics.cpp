@@ -165,16 +165,16 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 	_scalerProc = Normal2x;
-	// HACK: just pick first scaler plugin
-	_normalPlugin = _scalerPlugin = _scalerPlugins.front();
-	_scalerIndex = 0;
-	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
 	_videoMode.aspectRatioCorrection = false;
 	_scalerProc = Normal1x;
 #endif
+	// HACK: just pick first scaler plugin
+	_normalPlugin = _scalerPlugin = _scalerPlugins.front();
+	_scalerIndex = 0;
+	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 	_scalerType = 0;
 
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
@@ -2097,12 +2097,15 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	// If possible, use the same scaler for the cursor as for the rest of
 	// the game. This only works well with the non-blurring scalers so we
 	// otherwise use the Normal scaler
+#ifdef USE_SCALERS
 	if (_cursorTargetScale == 1) {
 		if ((*_scalerPlugin)->canDrawCursor()) {
+#endif
 		(*_scalerPlugin)->scale(
 			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
 			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 			_mouseCurState.w, _mouseCurState.h, 0, 0);
+#ifdef USE_SCALERS
 		} else {
 			int tmpFactor = (*_normalPlugin)->getFactor();
 			(*_normalPlugin)->setFactor(_videoMode.scaleFactor);
@@ -2126,6 +2129,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 			_mouseCurState.w, _mouseCurState.h, bytesPerPixel);
 	}
+#endif
 
 #ifdef USE_SCALERS
 	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
