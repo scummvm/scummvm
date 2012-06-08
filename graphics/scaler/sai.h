@@ -42,5 +42,40 @@ private:
 	Graphics::PixelFormat _format;
 };
 
+class SuperSAIPlugin : public ScalerPluginObject {
+public:
+	SuperSAIPlugin();
+	virtual void initialize(Graphics::PixelFormat format);
+	virtual void deinitialize();
+	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
+	virtual uint increaseFactor();
+	virtual uint decreaseFactor();
+	virtual uint getFactor() const { return _factor; }
+	virtual bool canDrawCursor() const { return false; }
+	virtual uint extraPixels() const { return 2; }
+	virtual const char *getName() const;
+	virtual const char *getPrettyName() const;
+private:
+	Graphics::PixelFormat _format;
+};
+
+class SuperEaglePlugin : public ScalerPluginObject {
+public:
+	SuperEaglePlugin();
+	virtual void initialize(Graphics::PixelFormat format);
+	virtual void deinitialize();
+	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
+	virtual uint increaseFactor();
+	virtual uint decreaseFactor();
+	virtual uint getFactor() const { return _factor; }
+	virtual bool canDrawCursor() const { return false; }
+	virtual uint extraPixels() const { return 2; }
+	virtual const char *getName() const;
+	virtual const char *getPrettyName() const;
+private:
+	Graphics::PixelFormat _format;
+};
 
 #endif
