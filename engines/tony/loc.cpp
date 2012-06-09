@@ -1226,10 +1226,10 @@ short RMCharacter::scanLine(const RMPoint &punto) {
 		Lcount++;
 		if (Lstatus) {
 			Ldx = Lspeed * Lcount;
-			Ldy = Lslope * Ldx;
+			Ldy = (int)(Lslope * Ldx);
 		} else {
 			Ldy = Lspeed * Lcount;
-			Ldx = Lslope * Ldy;
+			Ldx = (int)(Lslope * Ldy);
 		}
 
 		Lscan.x = Lstart.x + Ldx;
@@ -1285,10 +1285,10 @@ RMPoint RMCharacter::invScanLine(const RMPoint &punto) {
 		Lcount++;
 		if (Lstatus) {
 			Ldx = Lspeed * Lcount;
-			Ldy = Lslope * Ldx;
+			Ldy = (int)(Lslope * Ldx);
 		} else {
 			Ldy = Lspeed * Lcount;
-			Ldx = Lslope * Ldy;
+			Ldx = (int)(Lslope * Ldy);
 		}
 		Lscan.x = Lstart.x + Ldx;
 		Lscan.y = Lstart.y + Ldy;
@@ -1402,7 +1402,7 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 		// If we are going horizontally
 		if (walkstatus == 1) {
 			dx = walkspeed * walkcount;
-			dy = slope * dx;
+			dy = (int)(slope * dx);
 			_pos.x = linestart.x + dx;
 			_pos.y = linestart.y + dy;
 
@@ -1417,7 +1417,7 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 		// If we are going vertical
 		if (walkstatus == 0) {
 			dy = walkspeed * walkcount;
-			dx = slope * dy;
+			dx = (int)(slope * dy);
 			_pos.x = linestart.x + dx;
 			_pos.y = linestart.y + dy;
 
