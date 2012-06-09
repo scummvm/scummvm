@@ -690,7 +690,7 @@ bool ParseMpc(const byte *lpBuf) {
  */
 static void freeDialog(LPMPALDIALOG lpmdDialog) {
 	// Free the periods
-	int i;
+	int i, j;
 
 	for (i = 0; i < MAX_PERIODS_PER_DIALOG && (lpmdDialog->_periods[i]); ++i)
 		globalFree(lpmdDialog->_periods[i]);
@@ -700,6 +700,14 @@ static void freeDialog(LPMPALDIALOG lpmdDialog) {
 			// Variable assign
 			globalDestroy(lpmdDialog->_command[i].lpszVarName);
 			freeExpression(lpmdDialog->_command[i].expr);
+		}
+	}
+
+	// Free the choices
+	for (i = 0; i < MAX_CHOICES_PER_DIALOG; ++i) {
+		for (j = 0; j < MAX_SELECTS_PER_CHOICE; j++) {
+			if (lpmdDialog->_choice[i]._select[j].when)
+				freeExpression(lpmdDialog->_choice[i]._select[j].when);
 		}
 	}
 }
