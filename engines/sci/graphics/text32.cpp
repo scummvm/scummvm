@@ -205,7 +205,7 @@ void GfxText32::drawScrollTextBitmap(reg_t textObject, reg_t hunkId, uint16 x, u
 }
 
 void GfxText32::drawTextBitmapInternal(int16 x, int16 y, Common::Rect planeRect, reg_t textObject, reg_t hunkId) {
-	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
+	int16 backColor = (int16)readSelectorValue(_segMan, textObject, SELECTOR(back));
 	// Sanity check: Check if the hunk is set. If not, either the game scripts
 	// didn't set it, or an old saved game has been loaded, where it wasn't set.
 	if (hunkId.isNull())
@@ -227,7 +227,7 @@ void GfxText32::drawTextBitmapInternal(int16 x, int16 y, Common::Rect planeRect,
 	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
-	uint16 skipColor = readSelectorValue(_segMan, textObject, SELECTOR(skip));
+	int16 skipColor = (int16)readSelectorValue(_segMan, textObject, SELECTOR(skip));
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
 	// Get totalWidth, totalHeight
@@ -240,10 +240,13 @@ void GfxText32::drawTextBitmapInternal(int16 x, int16 y, Common::Rect planeRect,
 		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
 	}
 
+	bool translucent = (skipColor == -1 && backColor == -1);
+
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			byte pixel = surface[curByte++];
-			if (pixel != skipColor && pixel != backColor)
+			if ((!translucent && pixel != skipColor && pixel != backColor) ||
+				(translucent && pixel != 0xFF))
 				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}

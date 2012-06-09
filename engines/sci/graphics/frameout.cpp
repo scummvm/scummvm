@@ -53,6 +53,11 @@ namespace Sci {
 
 // TODO/FIXME: This is all guesswork
 
+enum SciSpeciaPlanelPictureCodes {
+	kPlaneTranslucent  = 0xfffe,	// -2
+	kPlanePlainColored = 0xffff		// -1
+};
+
 GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
@@ -137,7 +142,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	newPlane.lastPriority = 0xFFFF; // hidden
 	newPlane.planeOffsetX = 0;
 	newPlane.planeOffsetY = 0;
-	newPlane.pictureId = 0xFFFF;
+	newPlane.pictureId = kPlanePlainColored;
 	newPlane.planePictureMirrored = false;
 	newPlane.planeBack = 0;
 	_planes.push_back(newPlane);
@@ -155,7 +160,8 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			if (lastPictureId != it->pictureId) {
 				// picture got changed, load new picture
 				deletePlanePictures(object);
-				if ((it->pictureId != 0xFFFF) && (it->pictureId != 0xFFFE)) {
+				// Draw the plane's picture if it's not a translucent/plane colored frame
+				if ((it->pictureId != kPlanePlainColored) && (it->pictureId != kPlaneTranslucent)) {
 					// SQ6 gives us a bad picture number for the control menu
 					if (_resMan->testResource(ResourceId(kResourceTypePic, it->pictureId)))
 						addPlanePicture(object, it->pictureId, 0);
@@ -248,6 +254,9 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 }
 
 void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY) {
+	if (pictureId == kPlanePlainColored || pictureId == kPlaneTranslucent)	// sanity check
+		return;
+
 	PlanePictureEntry newPicture;
 	newPicture.object = object;
 	newPicture.pictureId = pictureId;
@@ -574,20 +583,16 @@ void GfxFrameout::kernelFrameout() {
 		// There is a race condition lurking in SQ6, which causes the game to hang in the intro, when teleporting to Polysorbate LX.
 		// Since I first wrote the patch, the race has stopped occurring for me though.
 		// I'll leave this for investigation later, when someone can reproduce.
-		//if (it->pictureId == 0xffff)	// FIXME: This is what SSCI does, and fixes the intro of LSL7, but breaks the dialogs in GK1 (adds black boxes)
-		if (it->planeBack)
+		//if (it->pictureId == kPlanePlainColored)	// FIXME: This is what SSCI does, and fixes the intro of LSL7, but breaks the dialogs in GK1 (adds black boxes)
+		if (it->pictureId == kPlanePlainColored && it->planeBack)
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
-		GuiResourceId planeMainPictureId = it->pictureId;
-
 		_coordAdjuster->pictureSetDisplayArea(it->planeRect);
-		_palette->drewPicture(planeMainPictureId);
+		_palette->drewPicture(it->pictureId);
 
 		FrameoutList itemList;
 
 		createPlaneItemList(planeObject, itemList);
-
-//		warning("Plane %s", _segMan->getObjectName(planeObject));
 
 		for (FrameoutList::iterator listIterator = itemList.begin(); listIterator != itemList.end(); listIterator++) {
 			FrameoutEntry *itemEntry = *listIterator;
