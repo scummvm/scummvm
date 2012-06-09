@@ -316,6 +316,7 @@ struct EVENT {
 	uint32 pid;
 	bool manualReset;
 	bool signalled;
+	bool pulsing;
 };
 
 
