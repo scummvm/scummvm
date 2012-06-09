@@ -30,7 +30,8 @@
 
 #include "gob/sound/pcspeaker.h"
 #include "gob/sound/soundblaster.h"
-#include "gob/sound/adlib.h"
+#include "gob/sound/adlplayer.h"
+#include "gob/sound/musplayer.h"
 #include "gob/sound/infogrames.h"
 #include "gob/sound/protracker.h"
 #include "gob/sound/cdrom.h"
@@ -131,10 +132,7 @@ void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdLib, int index) {
 		if (noteAdLib) {
 			if (_adlPlayer)
 				if ((index == -1) || (_adlPlayer->getIndex() == index))
-					_adlPlayer->stopPlay();
-			if (_mdyPlayer)
-				if ((index == -1) || (_mdyPlayer->getIndex() == index))
-					_mdyPlayer->stopPlay();
+					_adlPlayer->unload();
 		}
 
 	} else {
@@ -235,7 +233,17 @@ bool Sound::adlibLoadADL(const char *fileName) {
 
 	debugC(1, kDebugSound, "AdLib: Loading ADL data (\"%s\")", fileName);
 
-	return _adlPlayer->load(fileName);
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fileName);
+	if (!stream) {
+		warning("Can't open ADL file \"%s\"", fileName);
+		return false;
+	}
+
+	bool loaded = _adlPlayer->load(*stream);
+
+	delete stream;
+
+	return loaded;
 }
 
 bool Sound::adlibLoadADL(byte *data, uint32 size, int index) {
@@ -267,7 +275,7 @@ bool Sound::adlibLoadMDY(const char *fileName) {
 		return false;
 
 	if (!_mdyPlayer)
-		_mdyPlayer = new MDYPlayer(*_vm->_mixer);
+		_mdyPlayer = new MUSPlayer(*_vm->_mixer);
 
 	debugC(1, kDebugSound, "AdLib: Loading MDY data (\"%s\")", fileName);
 
@@ -277,7 +285,7 @@ bool Sound::adlibLoadMDY(const char *fileName) {
 		return false;
 	}
 
-	bool loaded = _mdyPlayer->loadMDY(*stream);
+	bool loaded = _mdyPlayer->loadMUS(*stream);
 
 	delete stream;
 
@@ -289,7 +297,7 @@ bool Sound::adlibLoadTBR(const char *fileName) {
 		return false;
 
 	if (!_mdyPlayer)
-		_mdyPlayer = new MDYPlayer(*_vm->_mixer);
+		_mdyPlayer = new MUSPlayer(*_vm->_mixer);
 
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fileName);
 	if (!stream) {
@@ -299,7 +307,7 @@ bool Sound::adlibLoadTBR(const char *fileName) {
 
 	debugC(1, kDebugSound, "AdLib: Loading MDY instruments (\"%s\")", fileName);
 
-	bool loaded = _mdyPlayer->loadTBR(*stream);
+	bool loaded = _mdyPlayer->loadSND(*stream);
 
 	delete stream;
 
@@ -316,11 +324,8 @@ void Sound::adlibPlayTrack(const char *trackname) {
 	if (_adlPlayer->isPlaying())
 		return;
 
-	debugC(1, kDebugSound, "AdLib: Playing ADL track \"%s\"", trackname);
-
-	_adlPlayer->unload();
-	_adlPlayer->load(trackname);
-	_adlPlayer->startPlay();
+	if (adlibLoadADL(trackname))
+		adlibPlay();
 }
 
 void Sound::adlibPlayBgMusic() {
@@ -331,7 +336,7 @@ void Sound::adlibPlayBgMusic() {
 		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
 	static const char *const tracksMac[] = {
-//		"musmac1.adl", // TODO: This track isn't played correctly at all yet
+//		"musmac1.adl", // This track seems to be missing instruments...
 		"musmac2.adl",
 		"musmac3.adl",
 		"musmac4.adl",
@@ -398,13 +403,11 @@ int Sound::adlibGetIndex() const {
 
 	if (_adlPlayer)
 		return _adlPlayer->getIndex();
-	if (_mdyPlayer)
-		return _mdyPlayer->getIndex();
 
 	return -1;
 }
 
-bool Sound::adlibGetRepeating() const {
+int32 Sound::adlibGetRepeating() const {
 	if (!_hasAdLib)
 		return false;
 

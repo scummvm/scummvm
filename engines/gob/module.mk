@@ -103,6 +103,8 @@ MODULE_OBJS := \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \
 	sound/adlib.o \
+	sound/musplayer.o \
+	sound/adlplayer.o \
 	sound/infogrames.o \
 	sound/protracker.o \
 	sound/soundmixer.o \
