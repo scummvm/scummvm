@@ -2339,8 +2339,9 @@ void ScummEngine_v100he::o100_writeFile() {
 }
 
 void ScummEngine_v100he::o100_debugInput() {
-	// Backyard Basketball uses older code for this opcode
-	if (_game.id == GID_BASKETBALL) {
+	// Backyard Baseball 2003 / Basketball / Football 2002
+	// use older o72_debugInput code
+	if (_game.heversion == 101) {
 		ScummEngine_v72he::o72_debugInput();
 		return;
 	}
