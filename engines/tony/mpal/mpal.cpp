@@ -866,7 +866,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	_ctx->MyThreads = (MYTHREAD *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nRealItems * sizeof(MYTHREAD));
 	if (_ctx->MyThreads == NULL) {
-		globalFree(_ctx->il);
+		globalDestroy(_ctx->il);
 		CORO_KILL_SELF();
 		return;
 	}
@@ -876,8 +876,8 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	   Now we created the mirrored copies of the idle actions. */
 	_ctx->MyActions = (MYACTION *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nIdleActions * sizeof(MYACTION));
 	if (_ctx->MyActions == NULL) {
-		globalFree(_ctx->MyThreads);
-		globalFree(_ctx->il);
+		globalDestroy(_ctx->MyThreads);
+		globalDestroy(_ctx->il);
 		CORO_KILL_SELF();
 		return;
 	}
@@ -981,8 +981,8 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					/* Ok, we can perform the action. For convenience, we do it in a new process */
 					_ctx->newItem = (LPMPALITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
 					if (_ctx->newItem == false) {
-						globalFree(_ctx->MyThreads);
-						globalFree(_ctx->MyActions);
+						globalDestroy(_ctx->MyThreads);
+						globalDestroy(_ctx->MyActions);
 						
 						CORO_KILL_SELF();
 						return;
@@ -1006,9 +1006,9 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					// Create the process
 					if ((_ctx->MyThreads[_ctx->i].hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE) {
 					//if ((_ctx->MyThreads[_ctx->i].hThread = (void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem))= = (void*)-1)
-						globalFree(_ctx->newItem);
-						globalFree(_ctx->MyThreads);
-						globalFree(_ctx->MyActions);
+						globalDestroy(_ctx->newItem);
+						globalDestroy(_ctx->MyThreads);
+						globalDestroy(_ctx->MyActions);
 						
 						CORO_KILL_SELF();
 						return;
@@ -1039,8 +1039,8 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	CORO_INVOKE_4(GLOBALS.lplpFunctions[201], 0, 0, 0, 0);
 
 	/* We're finished */
-	globalFree(_ctx->MyThreads);
-	globalFree(_ctx->MyActions);
+	globalDestroy(_ctx->MyThreads);
+	globalDestroy(_ctx->MyActions);
 	
 	CORO_KILL_SELF();
 
