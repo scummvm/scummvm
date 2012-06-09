@@ -259,6 +259,15 @@ void CoroutineScheduler::schedule() {
 
 		pProc = pNext;
 	}
+
+	// Disable any events that were pulsed
+	Common::List<EVENT *>::iterator i;
+	for (i = _events.begin(); i != _events.end(); ++i) {
+		EVENT *evt = *i;
+		if (evt->pulsing) {
+			evt->pulsing = evt->signalled = false;
+		}
+	}
 }
 
 /**
@@ -787,6 +796,7 @@ uint32 CoroutineScheduler::createEvent(bool bManualReset, bool bInitialState) {
 	evt->pid = ++pidCounter;
 	evt->manualReset = bManualReset;
 	evt->signalled = bInitialState;
+	evt->pulsing = false;
 
 	_events.push_back(evt);
 	return evt->pid;
@@ -836,48 +846,14 @@ void CoroutineScheduler::pulseEvent(uint32 pidEvent) {
 	if (!evt)
 		return;
 	
-	// Set the event as true
+	// Set the event as signalled and pulsing
 	evt->signalled = true;
-	
-	// start dispatching active process list for any processes that are currently waiting
-	PROCESS *pOriginal = pCurrent;
-	PROCESS *pNext;
-	PROCESS *pProc = active->pNext;
-	while (pProc != NULL) {
-		pNext = pProc->pNext;
+	evt->pulsing = true;
 
-		// Only call processes that are currently waiting (either in waitForSingleObject or
-		// waitForMultipleObjects) for the given event Pid
-		for (int i = 0; i < CORO_MAX_PID_WAITING; ++i) {
-			if (pProc->pidWaiting[i] == pidEvent) {
-				// Dispatch the process
-				pCurrent = pProc;
-				pProc->coroAddr(pProc->state, pProc->param);
-
-				if (!pProc->state || pProc->state->_sleep <= 0) {
-					// Coroutine finished
-					pCurrent = pCurrent->pPrevious;
-					killProcess(pProc);
-				} else {
-					pProc->sleepTime = pProc->state->_sleep;
-				}
-
-				// pCurrent may have been changed
-				pNext = pCurrent->pNext;
-				pCurrent = NULL;
-
-				break;
-			}
-		}
-
-		pProc = pNext;
-	}
-
-	// Restore the original current process (if one was active)
-	pCurrent = pOriginal;
-
-	// Reset the event back to non-signalled
-	evt->signalled = false;
+	// If there's an active process, and it's not the first in the queue, then reschedule all 
+	// the other prcoesses in the queue to run again this frame
+	if (pCurrent && pCurrent != active->pNext)
+		rescheduleAll();
 }
 
 
