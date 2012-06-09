@@ -248,17 +248,19 @@ bool PathFinding::walkLine(int32 x, int32 y, int32 x2, int32 y2) {
 	int32 cdx = (dx << 16) / t;
 	int32 cdy = (dy << 16) / t;
 
-	_gridPathCount = 0;
+	_tempPath.clear();
+	i32Point p;
 	for (int32 i = t; i > 0; i--) {
-		_tempPathX[i] = bx >> 16;
-		_tempPathY[i] = by >> 16;
-		_gridPathCount++;
+		p.x = bx >> 16;
+		p.y = by >> 16;
+		_tempPath.insert_at(0, p);
 		bx += cdx;
 		by += cdy;
 	}
 
-	_tempPathX[0] = x2;
-	_tempPathY[0] = y2;
+	p.x = x2;
+	p.y = y2;
+	_tempPath.insert_at(0, p);
 
 	return true;
 }
@@ -292,13 +294,13 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	debugC(1, kDebugPath, "findPath(%d, %d, %d, %d)", x, y, destx, desty);
 
 	if (x == destx && y == desty) {
-		_gridPathCount = 0;
+		_tempPath.clear();
 		return true;
 	}
 
 	// ignore path finding if the character is outside the screen
 	if (x < 0 || x > 1280 || y < 0 || y > 400 || destx < 0 || destx > 1280 || desty < 0 || desty > 400) {
-		_gridPathCount = 0;
+		_tempPath.clear();
 		return true;
 	}
 
@@ -357,7 +359,7 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	// let's see if we found a result !
 	if (!_gridTemp[destx + desty * _width]) {
 		// didn't find anything
-		_gridPathCount = 0;
+		_tempPath.clear();
 		return false;
 	}
 
@@ -415,10 +417,13 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		numpath++;
 
 		if ((bestX == x && bestY == y)) {
-			_gridPathCount = numpath;
-
-			memcpy(_tempPathX, retPathX, sizeof(int32) * numpath);
-			memcpy(_tempPathY, retPathY, sizeof(int32) * numpath);
+			_tempPath.clear();
+			i32Point p;
+			for (int32 i = 0; i < numpath; i++) {
+				p.x = retPathX[i];
+				p.y = retPathY[i];
+				_tempPath.push_back(p);
+			}
 
 			retVal = true;
 			break;

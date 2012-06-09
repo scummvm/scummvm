@@ -23,6 +23,8 @@
 #ifndef TOON_PATH_H
 #define TOON_PATH_H
 
+#include "common/array.h"
+
 #include "toon/toon.h"
 
 namespace Toon {
@@ -70,9 +72,9 @@ public:
 	void addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2);
 	void addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h);
 
-	int32 getPathNodeCount() const { return _gridPathCount; }
-	int32 getPathNodeX(int32 nodeId) const { return _tempPathX[ _gridPathCount - nodeId - 1]; }
-	int32 getPathNodeY(int32 nodeId) const { return _tempPathY[ _gridPathCount - nodeId - 1]; }
+	int32 getPathNodeCount() const { return _tempPath.size(); }
+	int32 getPathNodeX(int32 nodeId) const { return _tempPath[ _tempPath.size() - nodeId - 1].x; }
+	int32 getPathNodeY(int32 nodeId) const { return _tempPath[ _tempPath.size() - nodeId - 1].y; }
 
 private:
 	static const uint8 kMaxBlockingRects = 16;
@@ -85,9 +87,11 @@ private:
 	int32 _width;
 	int32 _height;
 
-	int32 _tempPathX[4096];
-	int32 _tempPathY[4096];
-	int32 _gridPathCount;
+	struct i32Point {
+		int32 x, y;
+	};
+
+	Common::Array<i32Point> _tempPath;
 
 	int32 _blockingRects[kMaxBlockingRects][5];
 	uint8 _numBlockingRects;
