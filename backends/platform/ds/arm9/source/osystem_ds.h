@@ -114,7 +114,7 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, int targetCursorScale, const Graphics::PixelFormat *format);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
