@@ -568,6 +568,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
+	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "roiiiiiiiii",           NULL,            NULL },
+	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -613,9 +616,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SCI2.1 unmapped functions - TODO!
 
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// AddLine - used by Torin's Passage to highlight the chapter buttons
-	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
-	// UpdateLine - used by LSL6
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)

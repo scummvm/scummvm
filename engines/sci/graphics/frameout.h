@@ -27,6 +27,17 @@ namespace Sci {
 
 class GfxPicture;
 
+struct PlaneLineEntry {
+	reg_t hunkId;
+	Common::Point startPoint;
+	Common::Point endPoint;
+	byte color;
+	byte priority;
+	byte control;
+};
+
+typedef Common::List<PlaneLineEntry> PlaneLineList;
+
 struct PlaneEntry {
 	reg_t object;
 	uint16 priority;
@@ -40,6 +51,7 @@ struct PlaneEntry {
 	Common::Rect upscaledPlaneClipRect;
 	bool planePictureMirrored;
 	byte planeBack;
+	PlaneLineList lines;
 };
 
 typedef Common::List<PlaneEntry> PlaneList;
@@ -112,6 +124,9 @@ public:
 
 	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY = 0);
 	void deletePlanePictures(reg_t object);
+	reg_t addPlaneLine(reg_t object, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control);
+	void updatePlaneLine(reg_t object, reg_t hunkId, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control);
+	void deletePlaneLine(reg_t object, reg_t hunkId);
 	void clear();
 
 	// Scroll text functions

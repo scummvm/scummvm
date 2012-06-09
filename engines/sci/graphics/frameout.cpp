@@ -281,6 +281,56 @@ void GfxFrameout::deletePlanePictures(reg_t object) {
 	}
 }
 
+// Provides the same functionality as kGraph(DrawLine)
+reg_t GfxFrameout::addPlaneLine(reg_t object, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		if (it->object == object) {
+			PlaneLineEntry line;
+			line.hunkId = _segMan->allocateHunkEntry("PlaneLine()", 1);	// we basically use this for a unique ID
+			line.startPoint = startPoint;
+			line.endPoint = endPoint;
+			line.color = color;
+			line.priority = priority;
+			line.control = control;
+			it->lines.push_back(line);
+			return line.hunkId;
+		}
+	}
+
+	return NULL_REG;
+}
+
+void GfxFrameout::updatePlaneLine(reg_t object, reg_t hunkId, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		if (it->object == object) {
+			for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {
+				if (it2->hunkId == hunkId) {
+					it2->startPoint = startPoint;
+					it2->endPoint = endPoint;
+					it2->color = color;
+					it2->priority = priority;
+					it2->control = control;
+					return;
+				}
+			}
+		}
+	}
+}
+
+void GfxFrameout::deletePlaneLine(reg_t object, reg_t hunkId) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		if (it->object == object) {
+			for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {
+				if (it2->hunkId == hunkId) {
+					_segMan->freeHunkEntry(hunkId);
+					it2 = it->lines.erase(it2);
+					return;
+				}
+			}
+		}
+	}
+}
+
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	// Ignore invalid items
 	if (!_segMan->isObject(object))
@@ -567,6 +617,19 @@ void GfxFrameout::kernelFrameout() {
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = it->object;
+
+		// Draw any plane lines, if they exist
+		// These are drawn on invisible planes as well. (e.g. "invisiblePlane" in LSL6 hires)
+		// FIXME: Lines aren't always drawn (e.g. when the narrator speaks in LSL6 hires).
+		// Perhaps something is painted over them?
+		for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {
+			Common::Point startPoint = it2->startPoint;
+			Common::Point endPoint = it2->endPoint;
+			_coordAdjuster->kernelLocalToGlobal(startPoint.x, startPoint.y, it->object);
+			_coordAdjuster->kernelLocalToGlobal(endPoint.x, endPoint.y, it->object);
+			_screen->drawLine(startPoint, endPoint, it2->color, it2->priority, it2->control);
+		}
+
 		uint16 planeLastPriority = it->lastPriority;
 
 		// Update priority here, sq6 sets it w/o UpdatePlane

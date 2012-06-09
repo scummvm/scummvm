@@ -605,6 +605,38 @@ reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
+	reg_t plane = argv[0];
+	Common::Point startPoint(argv[1].toUint16(), argv[2].toUint16());
+	Common::Point endPoint(argv[3].toUint16(), argv[4].toUint16());
+	// argv[5] is unknown (a number, usually 200)
+	byte color = (byte)argv[6].toUint16();
+	byte priority = (byte)argv[7].toUint16();
+	byte control = (byte)argv[8].toUint16();
+	// argv[9] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
+	return g_sci->_gfxFrameout->addPlaneLine(plane, startPoint, endPoint, color, priority, control);
+}
+
+reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv) {
+	reg_t hunkId = argv[0];
+	reg_t plane = argv[1];
+	Common::Point startPoint(argv[2].toUint16(), argv[3].toUint16());
+	Common::Point endPoint(argv[4].toUint16(), argv[5].toUint16());
+	// argv[6] is unknown (a number, usually 200)
+	byte color = (byte)argv[7].toUint16();
+	byte priority = (byte)argv[8].toUint16();
+	byte control = (byte)argv[9].toUint16();
+	// argv[10] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
+	g_sci->_gfxFrameout->updatePlaneLine(plane, hunkId, startPoint, endPoint, color, priority, control);
+	return s->r_acc;
+}
+reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv) {
+	reg_t hunkId = argv[0];
+	reg_t plane = argv[1];
+	g_sci->_gfxFrameout->deletePlaneLine(plane, hunkId);
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci
