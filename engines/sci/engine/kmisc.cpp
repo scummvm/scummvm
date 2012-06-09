@@ -391,6 +391,8 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	return argv[1];
 }
 
+// Likely modelled after the Windows 3.1 function GetPrivateProfileInt:
+// http://msdn.microsoft.com/en-us/library/windows/desktop/ms724345%28v=vs.85%29.aspx
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
 	category.toLowercase();
@@ -402,8 +404,7 @@ reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 	if (setting != "videospeed")
 		error("GetSierraProfileInt: setting isn't 'videospeed', it's '%s'", setting.c_str());
 
-	// The game scripts pass 425 as the third parameter for some unknown reason,
-	// as after the call they compare the result to 425 anyway...
+	// The third parameter is 425 (the default if the configuration key is missing)
 
 	// We return the same fake value for videospeed as with kGetConfig
 	return make_reg(0, 500);
