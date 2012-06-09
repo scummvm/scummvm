@@ -188,7 +188,7 @@ public:
 	void playUtilSFX(int nSfx, int nFX = 0);
 	void stopUtilSFX(int nSfx);
 
-	FPSFX *createSFX(byte *buf);
+	FPSFX *createSFX(Common::SeekableReadStream *stream);
 
 	void preloadSFX(int nSfx, const char *fn);
 	void unloadAllSFX(void);

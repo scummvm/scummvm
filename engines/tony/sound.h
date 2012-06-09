@@ -50,8 +50,7 @@ class CODEC;
 
 enum CODECS {
 	FPCODEC_RAW,
-	FPCODEC_ADPCM,
-	FPCODEC_WAV
+	FPCODEC_ADPCM
 };
 
 
@@ -288,7 +287,7 @@ public:
 	\****************************************************************************/
 
 	bool LoadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW);
-	bool LoadFile(byte *lpBuf, uint32 dwCodec);
+	bool loadWave(Common::SeekableReadStream *stream);
 	bool LoadVoiceFromVDB(Common::File &vdbFP);
 
 

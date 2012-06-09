@@ -1062,7 +1062,7 @@ void FPSFX::Release() {
 
 /****************************************************************************\
 *
-* Function:     bool LoadFile(byte *lpBuf);
+* Function:     bool loadWave(Common::SeekableReadStream *stream);
 *
 * Description:  Apre un file di effetto sonoro e lo carica.
 *
@@ -1074,7 +1074,7 @@ void FPSFX::Release() {
 *
 \****************************************************************************/
 
-bool FPSFX::LoadFile(byte *lpBuf, uint32 dwCodec) {
+bool FPSFX::loadWave(Common::SeekableReadStream *stream) {
 #ifdef REFACTOR_ME
 	static PCMWAVEFORMAT pcmwf;
 	static DSBUFFERDESC dsbdesc;
@@ -1095,10 +1095,6 @@ bool FPSFX::LoadFile(byte *lpBuf, uint32 dwCodec) {
 
 	if (!bSoundSupported)
 		return true;
-
-	/* Nel buffer troviamo un file WAV completo, almeno per ora */
-	if (dwCodec != FPCODEC_WAV)
-		return false;
 
 	if (lpBuf[0] != 'W' || lpBuf[1] != 'A' || lpBuf[2] != 'V' || lpBuf[3] != 'E')
 		return false;
@@ -1158,6 +1154,8 @@ bool FPSFX::LoadFile(byte *lpBuf, uint32 dwCodec) {
 
 	bFileLoaded = true;
 #endif
+
+	delete stream; // Just so we don't leak it
 	return true;
 }
 

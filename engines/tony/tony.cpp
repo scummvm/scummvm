@@ -332,11 +332,11 @@ void TonyEngine::preloadSFX(int nChannel, const char *fn) {
 	_sfx[nChannel]->LoadFile(fn, FPCODEC_ADPCM);
 }
 
-FPSFX *TonyEngine::createSFX(byte *buf) {
+FPSFX *TonyEngine::createSFX(Common::SeekableReadStream *stream) {
 	FPSFX *sfx;
 
 	_theSound.CreateSfx(&sfx);
-	sfx->LoadFile(buf, FPCODEC_WAV);
+	sfx->loadWave(stream);
 	return sfx;
 }
 

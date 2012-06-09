@@ -26,6 +26,7 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
+#include "common/memstream.h"
 #include "common/scummsys.h"
 #include "tony/mpal/mpalutils.h"
 #include "tony/adv.h"
@@ -394,34 +395,21 @@ RMDataStream &operator>>(RMDataStream &ds, RMSfx &sfx) {
 }
 
 void RMSfx::readFromStream(RMDataStream &ds, bool bLOX) {
-	char id[4];
 	int size;
-	byte *raw;
 
 	// sfx name
 	ds >> _name;
 
 	ds >> size;
 
-	// Upload the sound effect identifier from the buffer
-	ds.read(id, 4);
-
-	// Ensure it's a RIFF
-	assert(id[0] == 'R' && id[1] == 'I' && id[2] == 'F' && id[3] == 'F');
-
-	// Read the size
-	ds >> size;
-
-	// Read the raw WAV data
-	raw = new byte[size];
-	ds.read(raw, size);
+	// Read the entire buffer into a MemoryReadStream
+	byte *buffer = (byte *)malloc(size);
+	ds.read(buffer, size);
+	Common::SeekableReadStream *stream = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 
 	// Create the sound effect
-	_fx = _vm->createSFX(raw);
+	_fx = _vm->createSFX(stream);
 	_fx->SetLoop(false);
-
-	// Close the read buffer which is no longer needed
-	delete[] raw;
 }
 
 RMSfx::RMSfx() {
