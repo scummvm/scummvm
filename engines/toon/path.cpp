@@ -366,20 +366,13 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	curX = destx;
 	curY = desty;
 
-	int32 *retPathX = new int32[4096];
-	int32 *retPathY = new int32[4096];
-	if (!retPathX || !retPathY) {
-		delete retPathX;
-		delete retPathY;
+	Common::Array<i32Point> retPath;
 
-		error("[PathFinding::findPath] Cannot allocate pathfinding buffers");
-	}
+	i32Point p;
+	p.x = curX;
+	p.y = curY;
+	retPath.push_back(p);
 
-	int32 numpath = 0;
-
-	retPathX[numpath] = curX;
-	retPathY[numpath] = curY;
-	numpath++;
 	int32 bestscore = sq[destx + desty * _width];
 
 	bool retVal = false;
@@ -412,18 +405,15 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		if (bestX < 0 || bestY < 0)
 			break;
 
-		retPathX[numpath] = bestX;
-		retPathY[numpath] = bestY;
-		numpath++;
+		i32Point pp;
+		pp.x = bestX;
+		pp.y = bestY;
+		retPath.push_back(pp);
 
 		if ((bestX == x && bestY == y)) {
 			_tempPath.clear();
-			i32Point p;
-			for (int32 i = 0; i < numpath; i++) {
-				p.x = retPathX[i];
-				p.y = retPathY[i];
-				_tempPath.push_back(p);
-			}
+			for (uint32 i = 0; i < retPath.size(); i++)
+				_tempPath.push_back(retPath[i]);
 
 			retVal = true;
 			break;
@@ -432,9 +422,6 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		curX = bestX;
 		curY = bestY;
 	}
-
-	delete retPathX;
-	delete retPathY;
 
 	return retVal;
 }
