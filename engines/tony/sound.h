@@ -36,17 +36,8 @@
 
 namespace Tony {
 
-// Dummy type declarations
-typedef void *LPDIRECTSOUND;
-typedef void *LPDIRECTSOUNDBUFFER;
-typedef uint32 HWND;
-struct DSCAPS {
-};
-
-
 class FPSTREAM;
 class FPSFX;
-class CODEC;
 
 enum CODECS {
 	FPCODEC_RAW,
@@ -67,10 +58,6 @@ class FPSOUND {
 private:
 
 	bool bSoundSupported;
-	LPDIRECTSOUND lpDS;
-	LPDIRECTSOUNDBUFFER lpDSBPrimary;
-	DSCAPS dscaps;
-	HWND hwnd;
 
 	/****************************************************************************\
 	*       Metodi
@@ -102,19 +89,17 @@ public:
 
 	/****************************************************************************\
 	*
-	* Function:     bool FPSOUND::Init(HWND hWnd);
+	* Function:     bool FPSOUND::Init();
 	*
 	* Description:  Inizializza l'oggetto, e prepara tutto il necessario per
 	*               creare stream e effetti sonori.
-	*
-	* Input:        HWND hWnd               Handle della finestra principale
 	*
 	* Return:       True se tutto OK, FALSE in caso di errore.
 	*
 	\****************************************************************************/
 
 
-	bool Init(/*HWND hWnd*/);
+	bool Init();
 
 
 	/****************************************************************************\
@@ -211,7 +196,6 @@ private:
 	bool b16bit;                                                    // TRUE se è 16 bit
 	uint32 dwFreq;                                                  // Frequenza originale di campionamento
 
-//  CODEC* lpCodec;                       // CODEC da utilizzare.
 	bool bIsPlaying;                      // TRUE se si sta playando l'effetto sonoro
 
 	bool bIsVoice;
@@ -233,14 +217,14 @@ public:
 
 	/****************************************************************************\
 	*
-	* Function:     FPSFX(LPDIRECTSOUND lpDS, bool bSoundOn);
+	* Function:     FPSFX(bool bSoundOn);
 	*
 	* Description:  Costruttore di default. *NON* bisogna dichiarare direttamente
 	*               un oggetto, ma crearlo piuttosto tramite FPSOUND::CreateSfx()
 	*
 	\****************************************************************************/
 
-	FPSFX(void * /*LPDIRECTSOUND */lpDS, uint32 /*HWND*/ hwnd, bool bSoundOn);
+	FPSFX(bool bSoundOn);
 
 
 	/****************************************************************************\
@@ -413,7 +397,6 @@ private:
 	FPSTREAM *SyncToPlay;
 //	DSBPOSITIONNOTIFY dspnHot[3];
 
-	CODEC *lpCodec;                       // CODEC da utilizzare.
 	bool CreateBuffer(int nBufSize);
 
 public:
@@ -431,14 +414,14 @@ public:
 
 	/****************************************************************************\
 	*
-	* Function:     FPSTREAM(LPDIRECTSOUND lpDS, bool bSoundOn);
+	* Function:     FPSTREAM(bool bSoundOn);
 	*
 	* Description:  Costruttore di default. *NON* bisogna dichiarare direttamente
 	*               un oggetto, ma crearlo piuttosto tramite FPSOUND::CreateStream()
 	*
 	\****************************************************************************/
 
-	FPSTREAM(void * /*LPDIRECTSOUND*/ lpDS, uint32 /*HWND hWnd */, bool bSoundOn);
+	FPSTREAM(bool bSoundOn);
 
 
 	/****************************************************************************\

@@ -26,6 +26,7 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
+#include "audio/mixer.h"
 #include "common/textconsole.h"
 #include "tony/game.h"
 #include "tony/tony.h"
@@ -52,109 +53,24 @@ namespace Tony {
 \****************************************************************************/
 
 FPSOUND::FPSOUND() {
-	lpDS = NULL;
-	lpDSBPrimary = NULL;
-	hwnd = 0;
 	bSoundSupported = false;
 }
 
 
 /****************************************************************************\
 *
-* Function:     bool FPSOUND::Init(HWND hWnd);
+* Function:     bool FPSOUND::Init();
 *
 * Description:  Inizializza l'oggetto, e prepara tutto il necessario per
 *               creare stream e effetti sonori.
-*
-* Input:        HWND hWnd               Handle della finestra principale
 *
 * Return:       True se tutto OK, false in caso di errore.
 *
 \****************************************************************************/
 
-bool FPSOUND::Init(/*HWND hWnd*/) {
-#ifdef REFACTOR_ME
-	HRESULT err;
-	static DSBUFFERDESC dsbdesc;
-	static PCMWAVEFORMAT pcmwf;
-	static char errbuf[128];
-
-	/* Salva l'handle della finestra nella variabile globale. DirectSound ha
-	   bisogno dell'handle per effetuare il multitasking sonoro. */
-	hwnd = hWnd;
-
-	/* Di default, disabilita il sonoro. Se non troveremo problemi, lo
-	   riabiliteremo alla fine della routine */
-	bSoundSupported = false;
-
-	/* Crea un oggetto DirectSound. Usiamo il driver sonoro settato di default.
-	   In realta' sarebbe possibile richiedere una lista delle schede sonore
-	   presenti, e lasciare scegliere all'utente quale utilizzare, ma mi sembra
-	   una perdita di tempo. */
-	if ((err = DirectSoundCreate(NULL, &lpDS, NULL)) != DS_OK) {
-		return false;
-	}
-
-	/* Richiede le caratteristiche del driver sonoro */
-	dscaps.dwSize = sizeof(dscaps);
-	lpDS->GetCaps(&dscaps);
-
-	/* Controlla se siamo in emulazione, e in caso affermativo avverte l'utente */
-	if ((dscaps.dwFlags & DSCAPS_EMULDRIVER))
-		error("The current sound driver is not directly supported by DirectSound. This will slow down sound performance of the game.");
-
-	/* Setta il livello di cooperazione a esclusivo. In questo modo il gioco
-	   sara' il solo ad accedere alla scheda sonora mentre e' in escuzione, ed
-	eventuali player in background saranno automaticamente stoppati.
-	Inoltre in questo modo e' possibile settare il formato di output sonoro
-	del primary buffer */
-	if ((err = lpDS->SetCooperativeLevel(hWnd, DSSCL_PRIORITY)) != DS_OK) {
-		MessageBox(hwnd, "Cannot set exclusive mode!", "soundInit()", MB_OK);
-		return false;
-	}
-
-
-	/* Crea il primary buffer. In realta' DirectSound la farebbe automaticamente,
-	   ma noi vogliamo il pointer al primary perche' dobbiamo settare il
-	   formato di output */
-	ZeroMemory(&dsbdesc, sizeof(dsbdesc));
-	dsbdesc.dwSize = sizeof(dsbdesc);
-	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_PRIMARYBUFFER;
-	if (lpDS->CreateSoundBuffer(&dsbdesc, &lpDSBPrimary, NULL) != DS_OK) {
-		MessageBox(hwnd, "Cannot create primary buffer!", "soundInit()", MB_OK);
-		return false;
-	}
-
-	/* Settiamo il formato del buffer primario. L'ideale sarebbe 16bit 44khz
-	   stereo, ma dobbiamo anche controllare che cio' sia permesso dalla scheda
-	   sonora, guardando nelle caratteristiche che abbiamo richiesto sopra.
-	   Inoltre in seguito sara' possibile lasciare scegliere all'utente il
-	   formato da utilizzare */
-	pcmwf.wBitsPerSample = ((dscaps.dwFlags & DSCAPS_PRIMARY16BIT) != 0 ? 16 : 8);
-	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
-	pcmwf.wf.nChannels = ((dscaps.dwFlags & DSCAPS_PRIMARYSTEREO) != 0 ? 2 : 1);
-	pcmwf.wf.nSamplesPerSec = 44100;
-	pcmwf.wf.nBlockAlign = (pcmwf.wBitsPerSample / 8) * pcmwf.wf.nChannels;
-	pcmwf.wf.nAvgBytesPerSec = (uint32)pcmwf.wf.nBlockAlign * (uint32)pcmwf.wf.nSamplesPerSec;
-
-	if ((err = lpDSBPrimary->SetFormat((LPWAVEFORMATEX) & pcmwf)) != DS_OK)  {
-		wsprintf(errbuf, "Error setting the output format (%lx)", err);
-		MessageBox(hwnd, errbuf, "soundInit()", MB_OK);
-		return false;
-	}
-
-	/* Controlla che il driver DirectSound supporti buffer secondari con
-	   play di stream 16bit, 44khz stereo */
-	if (dscaps.dwMaxSecondarySampleRate != 0 && dscaps.dwMaxSecondarySampleRate < 44100) {
-		wsprintf(errbuf, "Driver does not support 16bit 44khz stereo mixing! (%lu)", dscaps.dwMaxSecondarySampleRate);
-		MessageBox(hwnd, errbuf, "soundInit()", MB_OK);
-		return false;
-	}
-
-	/* Tutto OK. */
-	bSoundSupported = true;
-#endif
-	return true;
+bool FPSOUND::Init() {
+	bSoundSupported = g_system->getMixer()->isReady();
+	return bSoundSupported;
 }
 
 
@@ -167,10 +83,6 @@ bool FPSOUND::Init(/*HWND hWnd*/) {
 \****************************************************************************/
 
 FPSOUND::~FPSOUND() {
-#ifdef REFACTOR_ME
-	RELEASE(lpDSBPrimary);
-	RELEASE(lpDS);
-#endif
 }
 
 
@@ -197,7 +109,7 @@ FPSOUND::~FPSOUND() {
 \****************************************************************************/
 
 bool FPSOUND::CreateStream(FPSTREAM **lplpStream) {
-	(*lplpStream) = new FPSTREAM(lpDS, hwnd, bSoundSupported);
+	(*lplpStream) = new FPSTREAM(bSoundSupported);
 
 	return (*lplpStream != NULL);
 }
@@ -221,7 +133,7 @@ bool FPSOUND::CreateStream(FPSTREAM **lplpStream) {
 \****************************************************************************/
 
 bool FPSOUND::CreateSfx(FPSFX **lplpSfx) {
-	(*lplpSfx) = new FPSFX(lpDS, hwnd, bSoundSupported);
+	(*lplpSfx) = new FPSFX(bSoundSupported);
 
 	return (*lplpSfx != NULL);
 }
@@ -239,16 +151,10 @@ bool FPSOUND::CreateSfx(FPSFX **lplpSfx) {
 \****************************************************************************/
 
 void FPSOUND::SetMasterVolume(int dwVolume) {
-#ifdef REFACTOR_ME
-
 	if (!bSoundSupported)
 		return;
 
-	if (dwVolume > 63) dwVolume = 63;
-	if (dwVolume < 0) dwVolume = 0;
-
-	lpDSBPrimary->SetVolume(dwVolume * (DSBVOLUME_MAX - DSBVOLUME_MIN) / 64 + DSBVOLUME_MIN);
-#endif
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(dwVolume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
 
@@ -263,15 +169,10 @@ void FPSOUND::SetMasterVolume(int dwVolume) {
 \****************************************************************************/
 
 void FPSOUND::GetMasterVolume(int *lpdwVolume) {
-#ifdef REFACTOR_ME
 	if (!bSoundSupported)
 		return;
 
-	lpDSBPrimary->GetVolume((uint32 *)lpdwVolume);
-	*lpdwVolume -= (DSBVOLUME_MIN);
-	*lpdwVolume *= 64;
-	*lpdwVolume /= (DSBVOLUME_MAX - DSBVOLUME_MIN);
-#endif
+	*lpdwVolume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 63 / Audio::Mixer::kMaxChannelVolume;
 }
 
 
@@ -288,7 +189,7 @@ void FPSOUND::GetMasterVolume(int *lpdwVolume) {
 *
 \****************************************************************************/
 
-FPSFX::FPSFX(LPDIRECTSOUND lpds, HWND hWnd, bool bSoundOn) {
+FPSFX::FPSFX(bool bSoundOn) {
 #ifdef REFACTOR_ME
 
 	static char errbuf[128];
@@ -861,7 +762,7 @@ void FPSFX::GetVolume(int *lpdwVolume) {
 *
 \****************************************************************************/
 
-FPSTREAM::FPSTREAM(LPDIRECTSOUND LPDS, HWND hWnd, bool bSoundOn) {
+FPSTREAM::FPSTREAM(bool bSoundOn) {
 #ifdef REFACTOR_ME
 	//hwnd=hWnd;
 	lpDS = LPDS;
