@@ -470,11 +470,17 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
  */
 static void freeItem(LPMPALITEM lpmiItem) {
 	// Free the actions
-	if (lpmiItem->Action)
+	if (lpmiItem->Action) {
+		for (int i = 0; i < lpmiItem->nActions; ++i) {
+			if (lpmiItem->Action[i].when != 0)
+				freeExpression(lpmiItem->Action[i].when);
+		}
+
 		globalDestroy(lpmiItem->Action);
+	}
 
 	// Free the commands
-	for (int i = 0; i < MAX_COMMANDS_PER_ITEM && (lpmiItem->_command[i].type); ++i, ++lpmiItem) {
+	for (int i = 0; i < MAX_COMMANDS_PER_ITEM && (lpmiItem->_command[i].type); ++i) {
 		if (lpmiItem->_command[i].type == 2) {
 			// Variable Assign
 			globalDestroy(lpmiItem->_command[i].lpszVarName);
@@ -715,7 +721,7 @@ static void freeDialog(LPMPALDIALOG lpmdDialog) {
 	for (i = 0; i < MAX_PERIODS_PER_DIALOG && (lpmdDialog->_periods[i]); ++i)
 		globalFree(lpmdDialog->_periods[i]);
 
-	for (i = 0; i < MAX_COMMANDS_PER_GROUP && (lpmdDialog->_command[i].type); i++) {
+	for (i = 0; i < MAX_COMMANDS_PER_DIALOG && (lpmdDialog->_command[i].type); i++) {
 		if (lpmdDialog->_command[i].type == 2) {
 			// Variable assign
 			globalDestroy(lpmdDialog->_command[i].lpszVarName);

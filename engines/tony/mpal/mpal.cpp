@@ -1548,6 +1548,13 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	return true;
 }
 
+/**
+ * Frees resources allocated by the MPAL subsystem
+ */
+void mpalFree() {
+	// Free the resource list
+	globalDestroy(GLOBALS.lpResources);
+}
 
 /**
  * This is a general function to communicate with the library, to request information

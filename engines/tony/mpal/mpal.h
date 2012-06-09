@@ -402,6 +402,10 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 bool mpalInit(const char *lpszFileName, const char *lpszMprFileName,
 					 LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings);
 
+/**
+ * Frees resources allocated by the MPAL subsystem
+ */
+void mpalFree();
 
 /**
  * This is a general function to communicate with the library, to request information

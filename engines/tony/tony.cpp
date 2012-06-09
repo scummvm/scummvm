@@ -573,6 +573,7 @@ void TonyEngine::close(void) {
 	_theBoxes.close();
 	_theEngine.close();
 	_window.close();
+	mpalFree();
 	FreeMpc();
 	delete[] _curThumbnail;
 }
