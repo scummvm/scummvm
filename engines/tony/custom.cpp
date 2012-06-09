@@ -2043,12 +2043,25 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
  */
 
 DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-	CoroScheduler.waitForSingleObject(coroParam, GLOBALS.mut[num], CORO_INFINITE);
+	CORO_BEGIN_CONTEXT;
+		bool expired;
+	CORO_END_CONTEXT(_ctx);	
+
+	CORO_BEGIN_CODE(_ctx);
+
+	// The event is operating as a mutex, so if the event is already set, wait until it's reset
+	do {
+		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, GLOBALS.mut[num], 0, &_ctx->expired);
+	} while (!_ctx->expired);
+
+	// Set the event to flag ownership
+	CoroScheduler.setEvent(GLOBALS.mut[num]);
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-	CoroScheduler.pulseEvent(GLOBALS.mut[num]);
-	warning("TODO: Validate that the use of events in TakeOwnership/ReleaseOwnership match original");
+	CoroScheduler.resetEvent(GLOBALS.mut[num]);
 }
 
 /*
