@@ -238,6 +238,16 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 			for (kk = 0;kk < curCmd; kk++) {
 				if (compareCommands(&lpmdDialog->_command[kk], &lpmdDialog->_command[curCmd])) {
 					lpmdDialog->_group[i].CmdNum[j] = kk;
+
+					// Free any data allocated for the duplictaed command
+					if (lpmdDialog->_command[curCmd].type == 2) {
+						globalDestroy(lpmdDialog->_command[curCmd].lpszVarName);
+						freeExpression(lpmdDialog->_command[curCmd].expr);
+
+						lpmdDialog->_command[curCmd].lpszVarName = NULL;
+						lpmdDialog->_command[curCmd].expr = 0;
+						lpmdDialog->_command[curCmd].type = 0;
+					}
 					break;
 				}
 			}
