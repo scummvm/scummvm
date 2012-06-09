@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/savefile.h"
+
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 
@@ -356,8 +358,30 @@ int LogicHEfootball2002::initScreenTranslations() {
 }
 
 int LogicHEfootball2002::getPlaybookFiles(int32 *args) {
-	// TODO: Get list of playbook files
-	error("STUB: LogicHEfootball2002::getPlaybookFiles()");
+	// Get the pattern and then skip over the directory prefix ("*\" or "*:")
+	Common::String pattern = (const char *)_vm->getStringAddress(args[0] & ~0x33539000) + 2;
+
+	// Prepare a buffer to hold the file names
+	char buffer[1000];
+	buffer[0] = 0;
+
+	// Get the list of file names that match the pattern and iterate over it
+	Common::StringArray fileList = _vm->getSaveFileManager()->listSavefiles(pattern);
+
+	for (uint32 i = 0; i < fileList.size() && strlen(buffer) < 970; i++) {
+		// Isolate the base part of the filename and concatenate it to our buffer
+		Common::String fileName = Common::String(fileList[i].c_str(), fileList[i].size() - (pattern.size() - 1));
+		strcat(buffer, fileName.c_str());
+		strcat(buffer, ">"); // names separated by '>'
+	}
+
+	// Now store the result in an array
+	int array = _vm->setupStringArray(strlen(buffer));
+	strcpy((char *)_vm->getStringAddress(array), buffer);
+
+	// And store the array index in variable 108
+	writeScummVar(108, array);
+
 	return 1;
 }
 
