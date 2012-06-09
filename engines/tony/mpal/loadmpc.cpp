@@ -421,6 +421,16 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 			for (kk = 0; kk < curCmd; kk++) {
 				if (compareCommands(&lpmiItem->_command[kk], &lpmiItem->_command[curCmd])) {
 					lpmiItem->Action[i].CmdNum[j] = kk;
+
+					// Free any data allocated for the duplictaed command
+					if (lpmiItem->_command[curCmd].type == 2) {
+						globalDestroy(lpmiItem->_command[curCmd].lpszVarName);
+						freeExpression(lpmiItem->_command[curCmd].expr);
+
+						lpmiItem->_command[curCmd].lpszVarName = NULL;
+						lpmiItem->_command[curCmd].expr = 0;
+						lpmiItem->_command[curCmd].type = 0;
+					}
 					break;
 				}
 			}
