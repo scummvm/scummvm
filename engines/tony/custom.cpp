@@ -1949,7 +1949,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		delete _ctx->text;
 	}
 
-	globalFree(_ctx->string);
+	globalDestroy(_ctx->string);
 
 	CORO_END_CODE;
 }

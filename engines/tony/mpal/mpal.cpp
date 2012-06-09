@@ -911,7 +911,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	unlockItems();
 
 	/* We don't need the item list anymore */
-	globalFree(_ctx->il);
+	globalDestroy(_ctx->il);
 
 
 	/* Here's the main loop */
@@ -2108,7 +2108,7 @@ int mpalLoadState(byte *buf) {
 
 	GLOBALS.nVars = READ_LE_UINT32(buf);
 	
-	GLOBALS.hVars = globalAlloc(GMEM_ZEROINIT | GMEM_MOVEABLE, GLOBALS.nVars * sizeof(MPALVAR));
+	GLOBALS.hVars = globalAllocate(GMEM_ZEROINIT | GMEM_MOVEABLE, GLOBALS.nVars * sizeof(MPALVAR));
 	lockVar();
 	copyMemory((byte *)GLOBALS.lpmvVars, buf + 4, GLOBALS.nVars * sizeof(MPALVAR));
 	unlockVar();
