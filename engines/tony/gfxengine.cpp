@@ -216,10 +216,10 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 						else if (!_vm->getIsDemo()) {
 							if (_input.getAsyncKeyState(Common::KEYCODE_F3) || _input.getAsyncKeyState(Common::KEYCODE_F5))
 								// Save game screen
-								CORO_INVOKE_1(openOptionScreen, 3);
+								CORO_INVOKE_1(openOptionScreen, 4);
 							else if (_input.getAsyncKeyState(Common::KEYCODE_F2) || _input.getAsyncKeyState(Common::KEYCODE_F7))
 								// Load game screen
-								CORO_INVOKE_1(openOptionScreen, 4);
+								CORO_INVOKE_1(openOptionScreen, 3);
 						}
 					}
 				}
