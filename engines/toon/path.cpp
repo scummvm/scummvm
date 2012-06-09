@@ -150,7 +150,7 @@ PathFinding::PathFinding() {
 	_width = 0;
 	_height = 0;
 	_heap = new PathFindingHeap();
-	_gridTemp = NULL;
+	_sq = NULL;
 	_numBlockingRects = 0;
 }
 
@@ -158,7 +158,7 @@ PathFinding::~PathFinding(void) {
 	if (_heap)
 		_heap->unload();
 	delete _heap;
-	delete[] _gridTemp;
+	delete[] _sq;
 }
 
 void PathFinding::init(Picture *mask) {
@@ -169,8 +169,8 @@ void PathFinding::init(Picture *mask) {
 	_currentMask = mask;
 	_heap->unload();
 	_heap->init(500);
-	delete[] _gridTemp;
-	_gridTemp = new int32[_width * _height];
+	delete[] _sq;
+	_sq = new int32[_width * _height];
 }
 
 bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
@@ -311,23 +311,22 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	}
 
 	// no direct line, we use the standard A* algorithm
-	memset(_gridTemp , 0, _width * _height * sizeof(int32));
+	memset(_sq , 0, _width * _height * sizeof(int32));
 	_heap->clear();
 	int32 curX = x;
 	int32 curY = y;
 	int32 curWeight = 0;
-	int32 *sq = _gridTemp;
 
-	sq[curX + curY *_width] = 1;
+	_sq[curX + curY *_width] = 1;
 	_heap->push(curX, curY, abs(destx - x) + abs(desty - y));
-	int wei = 0;
+	int32 wei = 0;
 
 	while (_heap->getCount()) {
 		wei = 0;
 		int16 tempCurX, tempCurY;
 		_heap->pop(&tempCurX, &tempCurY, &curWeight);
 		curX = tempCurX, curY = tempCurY; // FIXME - Bodge to match heap->pop types
-		int curNode = curX + curY * _width;
+		int32 curNode = curX + curY * _width;
 
 		int32 endX = MIN<int32>(curX + 1, _width - 1);
 		int32 endY = MIN<int32>(curY + 1, _height - 1);
@@ -336,17 +335,17 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		bool next = false;
 
 		for (int32 px = startX; px <= endX && !next; px++) {
-			for (int py = startY; py <= endY && !next; py++) {
+			for (int32 py = startY; py <= endY && !next; py++) {
 				if (px != curX || py != curY) {
 					wei = ((abs(px - curX) + abs(py - curY)));
 
 					int32 curPNode = px + py * _width;
 					if (isWalkable(px, py)) { // walkable ?
-						int sum = sq[curNode] + wei * (1 + (isLikelyWalkable(px, py) ? 5 : 0));
-						if (sq[curPNode] > sum || !sq[curPNode]) {
-							int newWeight = abs(destx - px) + abs(desty - py);
-							sq[curPNode] = sum;
-							_heap->push(px, py, sq[curPNode] + newWeight);
+						int32 sum = _sq[curNode] + wei * (1 + (isLikelyWalkable(px, py) ? 5 : 0));
+						if (_sq[curPNode] > sum || !_sq[curPNode]) {
+							int32 newWeight = abs(destx - px) + abs(desty - py);
+							_sq[curPNode] = sum;
+							_heap->push(px, py, _sq[curPNode] + newWeight);
 							if (!newWeight)
 								next = true; // we found it !
 						}
@@ -357,7 +356,7 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	}
 
 	// let's see if we found a result !
-	if (!_gridTemp[destx + desty * _width]) {
+	if (!_sq[destx + desty * _width]) {
 		// didn't find anything
 		_tempPath.clear();
 		return false;
@@ -373,7 +372,7 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	p.y = curY;
 	retPath.push_back(p);
 
-	int32 bestscore = sq[destx + desty * _width];
+	int32 bestscore = _sq[destx + desty * _width];
 
 	bool retVal = false;
 	while (true) {
@@ -390,10 +389,10 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 				if (px != curX || py != curY) {
 					wei = abs(px - curX) + abs(py - curY);
 
-					int PNode = px + py * _width;
-					if (sq[PNode] && (isWalkable(px, py))) {
-						if (sq[PNode] < bestscore) {
-							bestscore = sq[PNode];
+					int32 PNode = px + py * _width;
+					if (_sq[PNode] && (isWalkable(px, py))) {
+						if (_sq[PNode] < bestscore) {
+							bestscore = _sq[PNode];
 							bestX = px;
 							bestY = py;
 						}

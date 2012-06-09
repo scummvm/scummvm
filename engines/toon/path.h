@@ -83,7 +83,7 @@ private:
 
 	PathFindingHeap *_heap;
 
-	int32 *_gridTemp;
+	int32 *_sq;
 	int32 _width;
 	int32 _height;
 
