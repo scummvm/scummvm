@@ -56,7 +56,7 @@ RMInventory::RMInventory() {
 	_nCombine = 0;
 	_bBlinkingRight = false;
 	_bBlinkingLeft = false;
-	miniAction = 0;
+	_miniAction = 0;
 }
 
 RMInventory::~RMInventory() {
@@ -100,43 +100,43 @@ void RMInventory::init(void) {
 		assert(res.isValid());
 
 		// Initialise the MPAL inventory item by reading it in.
-		_items[i].icon.setInitCurPattern(false);
+		_items[i]._icon.setInitCurPattern(false);
 		ds.openBuffer(res);
-		ds >> _items[i].icon;
+		ds >> _items[i]._icon;
 		ds.close();
 
 		// Puts in the default pattern 1
-		_items[i].pointer = NULL;
-		_items[i].status = 1;
-		_items[i].icon.setPattern(1);
-		_items[i].icon.doFrame(this, false);
+		_items[i]._pointer = NULL;
+		_items[i]._status = 1;
+		_items[i]._icon.setPattern(1);
+		_items[i]._icon.doFrame(this, false);
 
 		curres++;
 		if (i == 0 || i == 28 || i == 29)
 			continue;
 
-		_items[i].pointer = new RMGfxSourceBuffer8RLEByteAA[_items[i].icon.numPattern()];
+		_items[i]._pointer = new RMGfxSourceBuffer8RLEByteAA[_items[i]._icon.numPattern()];
 
-		for (j = 0; j < _items[i].icon.numPattern(); j++) {
+		for (j = 0; j < _items[i]._icon.numPattern(); j++) {
 			RMResRaw raw(curres);
 
 			assert(raw.isValid());
 
-			_items[i].pointer[j].init((const byte *)raw, raw.width(), raw.height(), true);
+			_items[i]._pointer[j].init((const byte *)raw, raw.width(), raw.height(), true);
 			curres++;
 		}
 	}
 
-	_items[28].icon.setPattern(1);
-	_items[29].icon.setPattern(1);
+	_items[28]._icon.setPattern(1);
+	_items[29]._icon.setPattern(1);
 
 	// Download interface
 	RMDataStream ds;
 	RMRes res(RES_I_MINIINTER);
 	assert(res.isValid());
 	ds.openBuffer(res);
-	ds >> miniInterface;
-	miniInterface.setPattern(1);
+	ds >> _miniInterface;
+	_miniInterface.setPattern(1);
 	ds.close();
 
 	// Create the text for hints on the mini interface
@@ -165,7 +165,7 @@ void RMInventory::close(void) {
 	if (_items != NULL) {
 		// Delete the item pointers
 		for (int i = 0; i <= _nItems; i++)
-			delete[] _items[i].pointer;
+			delete[] _items[i]._pointer;
 
 		// Delete the items array
 		delete[] _items;
@@ -213,14 +213,14 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 		_ctx->p2 = new RMGfxPrimitive(prim->_task, _ctx->pos2);
 
 		// Draw the mini interface
-		CORO_INVOKE_2(miniInterface.draw, bigBuf, _ctx->p);
+		CORO_INVOKE_2(_miniInterface.draw, bigBuf, _ctx->p);
 
 		if (GLOBALS._bCfgInterTips) {
-			if (miniAction == 1) // Examine
+			if (_miniAction == 1) // Examine
 				CORO_INVOKE_2(_hints[0].draw, bigBuf, _ctx->p2);
-			else if (miniAction == 2) // Talk
+			else if (_miniAction == 2) // Talk
 				CORO_INVOKE_2(_hints[1].draw, bigBuf, _ctx->p2);
-			else if (miniAction == 3) // Use
+			else if (_miniAction == 3) // Use
 				CORO_INVOKE_2(_hints[2].draw, bigBuf, _ctx->p2);
 		}
 
@@ -264,7 +264,7 @@ void RMInventory::addItem(int code) {
 		g_system->lockMutex(_csModifyInterface);
 		if (_curPos + 8 == _nInv) {
 			// Break through the inventory! On the flashing pattern
-			_items[28].icon.setPattern(2);
+			_items[28]._icon.setPattern(2);
 		}
 
 		_inv[_nInv++] = code - 10000;
@@ -281,8 +281,8 @@ void RMInventory::changeItemStatus(uint32 code, uint32 dwStatus) {
 		error("Specified object code is not valid");
 	} else {
 		g_system->lockMutex(_csModifyInterface);
-		_items[code - 10000].icon.setPattern(dwStatus);
-		_items[code - 10000].status = dwStatus;
+		_items[code - 10000]._icon.setPattern(dwStatus);
+		_items[code - 10000]._status = dwStatus;
 
 		prepare();
 		drawOT(Common::nullContext);
@@ -297,14 +297,14 @@ void RMInventory::prepare(void) {
 
 	for (i = 1; i < RM_SX / 64 - 1; i++) {
 		if (i - 1 + _curPos < _nInv)
-			addPrim(new RMGfxPrimitive(&_items[_inv[i - 1 + _curPos]].icon, RMPoint(i * 64, 0)));
+			addPrim(new RMGfxPrimitive(&_items[_inv[i - 1 + _curPos]]._icon, RMPoint(i * 64, 0)));
 		else
-			addPrim(new RMGfxPrimitive(&_items[0].icon, RMPoint(i * 64, 0)));
+			addPrim(new RMGfxPrimitive(&_items[0]._icon, RMPoint(i * 64, 0)));
 	}
 
 	// Frecce
-	addPrim(new RMGfxPrimitive(&_items[29].icon, RMPoint(0, 0)));
-	addPrim(new RMGfxPrimitive(&_items[28].icon, RMPoint(640 - 64, 0)));
+	addPrim(new RMGfxPrimitive(&_items[29]._icon, RMPoint(0, 0)));
+	addPrim(new RMGfxPrimitive(&_items[28]._icon, RMPoint(640 - 64, 0)));
 }
 
 bool RMInventory::miniActive(void) {
@@ -355,12 +355,12 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 
 		if (_curPos + 8 >= _nInv) {
 			_bBlinkingRight = false;
-			_items[28].icon.setPattern(1);
+			_items[28]._icon.setPattern(1);
 		}
 
 		if (_curPos > 0) {
 			_bBlinkingLeft = true;
-			_items[29].icon.setPattern(2);
+			_items[29]._icon.setPattern(2);
 		}
 
 		prepare();
@@ -376,12 +376,12 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 
 		if (_curPos == 0) {
 			_bBlinkingLeft = false;
-			_items[29].icon.setPattern(1);
+			_items[29]._icon.setPattern(1);
 		}
 
 		if (_curPos + 8 < _nInv) {
 			_bBlinkingRight = true;
-			_items[28].icon.setPattern(2);
+			_items[28]._icon.setPattern(2);
 		}
 
 		prepare();
@@ -405,7 +405,7 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 
 		if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0) {
 			_state = SELECTING;
-			miniAction = 0;
+			_miniAction = 0;
 			_nSelectObj = n - 1;
 
 			_vm->playUtilSFX(0);
@@ -420,12 +420,12 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 
 		if (_curPos + 8 <= _nInv) {
 			_bBlinkingRight = false;
-			_items[28].icon.setPattern(1);
+			_items[28]._icon.setPattern(1);
 		}
 
 		if (_curPos > 0) {
 			_bBlinkingLeft = true;
-			_items[29].icon.setPattern(2);
+			_items[29]._icon.setPattern(2);
 		}
 
 		prepare();
@@ -441,12 +441,12 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 
 		if (_curPos == 0) {
 			_bBlinkingLeft = false;
-			_items[29].icon.setPattern(1);
+			_items[29]._icon.setPattern(1);
 		}
 
 		if (_curPos + 8 < _nInv) {
 			_bBlinkingRight = true;
-			_items[28].icon.setPattern(2);
+			_items[28]._icon.setPattern(2);
 		}
 
 		prepare();
@@ -460,13 +460,13 @@ bool RMInventory::rightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 	if (_state == SELECTING) {
 		_state = OPENED;
 
-		if (miniAction == 1) { // Esamina
+		if (_miniAction == 1) { // Esamina
 			curAction = TA_EXAMINE;
 			return true;
-		} else if (miniAction == 2) { // Parla
+		} else if (_miniAction == 2) { // Parla
 			curAction = TA_TALK;
 			return true;
-		} else if (miniAction == 3) { // Usa
+		} else if (_miniAction == 3) { // Usa
 			curAction = TA_USE;
 			return true;
 		}
@@ -489,39 +489,39 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		// DoFrame makes all the objects currently in the inventory be displayed
 		// @@@ Maybe we should do all takeable objects? Please does not help
 		for (i = 0; i < _nInv; i++)
-			if (_items[_inv[i]].icon.doFrame(this, false) && (i >= _curPos && i <= _curPos + 7))
+			if (_items[_inv[i]]._icon.doFrame(this, false) && (i >= _curPos && i <= _curPos + 7))
 				bNeedRedraw = true;
 
 		if ((_state == CLOSING || _state == OPENING || _state == OPENED) && checkPointInside(mpos)) {
 			if (mpos.x > RM_SX - 64) {
 				if (_curPos + 8 < _nInv && !_bBlinkingRight) {
-					_items[28].icon.setPattern(3);
+					_items[28]._icon.setPattern(3);
 					_bBlinkingRight = true;
 					bNeedRedraw = true;
 				}
 			} else if (_bBlinkingRight) {
-				_items[28].icon.setPattern(2);
+				_items[28]._icon.setPattern(2);
 				_bBlinkingRight = false;
 				bNeedRedraw = true;
 			}
 
 			if (mpos.x < 64) {
 				if (_curPos > 0 && !_bBlinkingLeft) {
-					_items[29].icon.setPattern(3);
+					_items[29]._icon.setPattern(3);
 					_bBlinkingLeft = true;
 					bNeedRedraw = true;
 				}
 			} else if (_bBlinkingLeft) {
-				_items[29].icon.setPattern(2);
+				_items[29]._icon.setPattern(2);
 				_bBlinkingLeft = false;
 				bNeedRedraw = true;
 			}
 		}
 
-		if (_items[28].icon.doFrame(this, false))
+		if (_items[28]._icon.doFrame(this, false))
 			bNeedRedraw = true;
 
-		if (_items[29].icon.doFrame(this, false))
+		if (_items[29]._icon.doFrame(this, false))
 			bNeedRedraw = true;
 
 		if (bNeedRedraw)
@@ -535,7 +535,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 	}
 
 	if (_bCombining) {//m_state == COMBINING)
-		ptr.setCustomPointer(&_items[_nCombine].pointer[_items[_nCombine].status - 1]);
+		ptr.setCustomPointer(&_items[_nCombine]._pointer[_items[_nCombine]._status - 1]);
 		ptr.setSpecialPointer(RMPointer::PTR_CUSTOM);
 	}
 
@@ -632,34 +632,34 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		// Make sure it is on one of the verbs
 		if (mpos.y > starty && mpos.y < starty + 45) {
 			if (mpos.x > startx && mpos.x < startx + 40) {
-				if (miniAction != 1) {
-					miniInterface.setPattern(2);
-					miniAction = 1;
+				if (_miniAction != 1) {
+					_miniInterface.setPattern(2);
+					_miniAction = 1;
 					_vm->playUtilSFX(1);
 				}
 			} else if (mpos.x >= startx + 40 && mpos.x < startx + 80) {
-				if (miniAction != 2) {
-					miniInterface.setPattern(3);
-					miniAction = 2;
+				if (_miniAction != 2) {
+					_miniInterface.setPattern(3);
+					_miniAction = 2;
 					_vm->playUtilSFX(1);
 				}
 			} else if (mpos.x >= startx + 80 && mpos.x < startx + 108) {
-				if (miniAction != 3) {
-					miniInterface.setPattern(4);
-					miniAction = 3;
+				if (_miniAction != 3) {
+					_miniInterface.setPattern(4);
+					_miniAction = 3;
 					_vm->playUtilSFX(1);
 				}
 			} else {
-				miniInterface.setPattern(1);
-				miniAction = 0;
+				_miniInterface.setPattern(1);
+				_miniAction = 0;
 			}
 		} else  {
-			miniInterface.setPattern(1);
-			miniAction = 0;
+			_miniInterface.setPattern(1);
+			_miniAction = 0;
 		}
 
 		// Update the mini-interface
-		miniInterface.doFrame(&bigBuf, false);
+		_miniInterface.doFrame(&bigBuf, false);
 	}
 
 	if ((_state != CLOSED) && !_nInList) {
@@ -682,7 +682,7 @@ RMItem *RMInventory::whichItemIsIn(const RMPoint &mpt) {
 		if (checkPointInside(mpt)) {
 			n = mpt.x / 64;
 			if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0 && (!_bCombining || _inv[n - 1 + _curPos] != _nCombine))
-				return &_items[_inv[n - 1 + _curPos]].icon;
+				return &_items[_inv[n - 1 + _curPos]]._icon;
 		}
 	}
 
@@ -706,7 +706,7 @@ void RMInventory::saveState(byte *state) {
 
 	for (i = 0; i < 256; i++) {
 		if (i < _nItems)
-			x = _items[i].status;
+			x = _items[i]._status;
 		else
 			x = 0;
 
@@ -728,20 +728,20 @@ int RMInventory::loadState(byte *state) {
 		state += 4;
 
 		if (i < _nItems) {
-			_items[i].status = x;
-			_items[i].icon.setPattern(x);
+			_items[i]._status = x;
+			_items[i]._icon.setPattern(x);
 		}
 	}
 
 	_curPos = 0;
 	_bCombining = false;
 	
-	_items[29].icon.setPattern(1);
+	_items[29]._icon.setPattern(1);
 
 	if (_nInv > 8)
-		_items[28].icon.setPattern(2);
+		_items[28]._icon.setPattern(2);
 	else
-		_items[28].icon.setPattern(1);
+		_items[28]._icon.setPattern(1);
 
 	prepare();
 	drawOT(Common::nullContext);

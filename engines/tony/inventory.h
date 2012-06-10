@@ -39,9 +39,9 @@
 namespace Tony {
 
 struct RMInventoryItem {
-	RMItem icon;
-	RMGfxSourceBuffer8RLEByteAA *pointer;
-	int status;
+	RMItem _icon;
+	RMGfxSourceBuffer8RLEByteAA *_pointer;
+	int _status;
 };
 
 class RMInventory : public RMGfxWoodyBuffer {
@@ -72,8 +72,8 @@ protected:
 
 	bool _bBlinkingRight, _bBlinkingLeft;
 
-	int miniAction;
-	RMItem miniInterface;
+	int _miniAction;
+	RMItem _miniInterface;
 	RMText _hints[3];
 
 	OSystem::MutexRef _csModifyInterface;
