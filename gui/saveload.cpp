@@ -40,7 +40,7 @@ enum {
 
 };
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
 	: Dialog("SaveLoadChooser"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
@@ -51,7 +51,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	// Add choice list
 	_list = new GUI::ListWidget(this, "SaveLoadChooser.List");
 	_list->setNumberingMode(GUI::kListNumberingZero);
-	setSaveMode(false);
+	_list->setEditable(saveMode);
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
@@ -115,10 +115,6 @@ void SaveLoadChooser::open() {
 const Common::String &SaveLoadChooser::getResultString() const {
 	int selItem = _list->getSelected();
 	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
-}
-
-void SaveLoadChooser::setSaveMode(bool saveMode) {
-	_list->setEditable(saveMode);
 }
 
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

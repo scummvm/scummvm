@@ -161,8 +161,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 			const EnginePlugin *plugin = NULL;
 			Common::String gameId = ConfMan.get("gameid");
 			EngineMan.findGame(gameId, &plugin);
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
-			dialog->setSaveMode(false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 			delete dialog;
 		}
@@ -248,8 +247,7 @@ void DreamWebEngine::saveGame() {
 		const EnginePlugin *plugin = NULL;
 		Common::String gameId = ConfMan.get("gameid");
 		EngineMan.findGame(gameId, &plugin);
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-		dialog->setSaveMode(true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		int savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 		Common::String game_description = dialog->getResultString();
 		if (game_description.empty())

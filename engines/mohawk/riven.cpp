@@ -713,8 +713,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 }
 
 void MohawkEngine_Riven::runLoadDialog() {
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"));
-	slc.setSaveMode(false);
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 
 	Common::String gameId = ConfMan.get("gameid");
 

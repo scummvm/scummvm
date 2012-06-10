@@ -573,11 +573,9 @@ void Game::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName
 	EngineMan.findGame(g_vm->getGameId(), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	if (saveFlag)
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), saveFlag);
 	else
-		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
-
-	dialog->setSaveMode(saveFlag);
+		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), saveFlag);
 
 	saveSlot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 	saveName = dialog->getResultString();

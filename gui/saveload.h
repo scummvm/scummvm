@@ -62,7 +62,7 @@ protected:
 	void updateSaveList();
 	void updateSelection(bool redraw);
 public:
-	SaveLoadChooser(const String &title, const String &buttonLabel);
+	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
@@ -71,7 +71,6 @@ public:
 	void open();
 
 	const Common::String &getResultString() const;
-	void setSaveMode(bool saveMode);
 
 	virtual void reflowLayout();
 

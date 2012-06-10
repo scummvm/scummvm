@@ -73,8 +73,7 @@ bool Keyboard::getKey(Common::Event &event) {
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
 
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
-			dialog->setSaveMode(true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
 			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 			Common::String savegameDescription = dialog->getResultString();
 			delete dialog;
@@ -88,8 +87,7 @@ bool Keyboard::getKey(Common::Event &event) {
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
 
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
-			dialog->setSaveMode(false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
 			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 			delete dialog;
 

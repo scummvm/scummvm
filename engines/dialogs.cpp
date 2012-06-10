@@ -111,10 +111,8 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	_aboutDialog = new GUI::AboutDialog();
 	_optionsDialog = new ConfigDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
-	_loadDialog->setSaveMode(false);
-	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-	_saveDialog->setSaveMode(true);
+	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MainMenuDialog::~MainMenuDialog() {

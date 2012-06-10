@@ -802,8 +802,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-		dialog->setSaveMode(true);
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
 		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 		desc = dialog->getResultString();
@@ -824,8 +823,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 		if (desc.size() > 28)
 			desc = Common::String(desc.c_str(), 28);
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
-		dialog->setSaveMode(false);
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 	}
 
