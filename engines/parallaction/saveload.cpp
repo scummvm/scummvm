@@ -192,7 +192,6 @@ int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const 
 	int idx = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 	if (idx >= 0) {
 		selectedName = slc.getResultString();
-		slc.close();
 	}
 
 	return idx;
