@@ -152,19 +152,19 @@ enum QueryTypes {
  * Framework to manage the animation of an item
  */
 typedef struct {
-  char *frames[MAXFRAMES];
-  Common::Rect frameslocations[MAXFRAMES];
-  Common::Rect bbox[MAXFRAMES];
-  short pattern[MAXPATTERN][MAXFRAMES];
-  short speed;
-  char numframe;
-  char numpattern;
-  char curframe;
-  char curpattern;
-  short destX, destY;
-  signed char Zvalue;
-  short objectID;
-  char TAG;
+  char *_frames[MAXFRAMES];
+  Common::Rect _frameslocations[MAXFRAMES];
+  Common::Rect _bbox[MAXFRAMES];
+  short _pattern[MAXPATTERN][MAXFRAMES];
+  short _speed;
+  char _numframe;
+  char _numpattern;
+  char _curframe;
+  char _curpattern;
+  short _destX, _destY;
+  signed char _destZ;
+  short _objectID;
+//  char TAG;
 } ITEM;
 typedef ITEM *LPITEM;
 
@@ -247,7 +247,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		Size
  */
 #define mpalQueryLocationSize(nLoc,dwCoord)             \
-        mpalQueryDWORD(MPQ_LOCATION_SIZE,(uint32)(nLoc),(uint32)(dwCoord))
+        mpalQueryDWORD(MPQ_LOCATION_SIZE, (uint32)(nLoc), (uint32)(dwCoord))
 
 
 /**
@@ -258,7 +258,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 // TODO: Determine if this is endian safe
 #define mpalQueryItemList(nLoc)                         \
-        (uint32 *)mpalQueryHANDLE(MPQ_ITEM_LIST,(uint32)(nLoc))
+        (uint32 *)mpalQueryHANDLE(MPQ_ITEM_LIST, (uint32)(nLoc))
 
 
 /**
@@ -268,7 +268,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		Structure filled with requested information
  */
 #define mpalQueryItemData(nItem)                          \
-        (LPITEM)mpalQueryHANDLE(MPQ_ITEM_DATA,(uint32)(nItem))
+        (LPITEM)mpalQueryHANDLE(MPQ_ITEM_DATA, (uint32)(nItem))
 
 
 /**
@@ -279,7 +279,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @remarks		By default, the pattern of 0 indicates that we should do nothing.
  */
 #define mpalQueryItemPattern(nItem)                  \
-        mpalQueryDWORD(MPQ_ITEM_PATTERN,(uint32)(nItem))
+        mpalQueryDWORD(MPQ_ITEM_PATTERN, (uint32)(nItem))
 
 
 /**
@@ -289,7 +289,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		TRUE if the item is active, FALSE otherwise
  */
 #define mpalQueryItemIsActive(nItem)                  \
-        (bool)mpalQueryDWORD(MPQ_ITEM_IS_ACTIVE,(uint32)(nItem))
+        (bool)mpalQueryDWORD(MPQ_ITEM_IS_ACTIVE, (uint32)(nItem))
 
 
 /**
@@ -302,7 +302,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  *				is less than or equal to 0), the string will be empty.
  */
 #define mpalQueryItemName(nItem, lpszName)             \
-        mpalQueryHANDLE(MPQ_ITEM_NAME,(uint32)(nItem), (LPSTR)(lpszName))
+        mpalQueryHANDLE(MPQ_ITEM_NAME, (uint32)(nItem), (LPSTR)(lpszName))
 
 
 /**
@@ -337,7 +337,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * The pointer msut be freed after use using the memory memory.
  */
 #define mpalQueryDialogSelectList(nChoice)              \
-        (uint32 *)mpalQueryHANDLE(MPQ_DIALOG_SELECTLIST,(uint32)(nChoice))
+        (uint32 *)mpalQueryHANDLE(MPQ_DIALOG_SELECTLIST, (uint32)(nChoice))
 
 
 /**
@@ -351,11 +351,11 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * Groups according to the execution of the dialogue. And necessary so the game 
  * remains on hold again for another chosen by mpalQueryDialogWaitForChoice ().
  */
-#define mpalQueryDialogSelection(nChoice,dwData)        \
-        (bool)mpalQueryDWORD(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
+#define mpalQueryDialogSelection(nChoice, dwData)        \
+        (bool)mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
 
-#define mpalQueryDialogSelectionDWORD(nChoice,dwData)        \
-        mpalQueryDWORD(MPQ_DIALOG_SELECTION,(uint32)(nChoice),(uint32)(dwData))
+#define mpalQueryDialogSelectionDWORD(nChoice, dwData)        \
+        mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
 
 
 /**

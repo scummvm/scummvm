@@ -178,7 +178,7 @@ void RMTony::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// Call the Draw() of the parent class if Tony is visible
-	if (_bShow && bDrawNow) {
+	if (_bShow && _bDrawNow) {
 		if (_bCorpoDavanti) {
 			prim->getDst().setEmpty();
 			prim->getDst().offset(-44, -134);
@@ -317,8 +317,8 @@ void RMTony::stop(CORO_PARAM) {
 		if (_ctx->pid == CORO_INVALID_PID_VALUE)
 			CORO_INVOKE_0(RMCharacter::stop);
 		else {
-			bNeedToStop = false;    // If we make the OnWhichDirection, we don't need at least after the Stop().
-			bMoving = false;
+			_bNeedToStop = false;    // If we make the OnWhichDirection, we don't need at least after the Stop().
+			_bMoving = false;
 			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->pid, CORO_INFINITE); // @@@ Put an assert after 10 seconds
 		}
 	} else {

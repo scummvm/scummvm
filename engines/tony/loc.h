@@ -315,19 +315,19 @@ protected:
 class RMBox {
 public:
 	struct T_HOTSPOT {
-		int hotx, hoty;          // Hotspot coordinates
-		int destination;         // Hotspot destination
+		int _hotx, _hoty;        // Hotspot coordinates
+		int _destination;        // Hotspot destination
 	};
 
 public:
-	int left, top, right, bottom;   // Vertici bounding boxes
-	int adj[MAXBOXES];              // List of adjacent bounding boxes
-	int numhotspot;                 // Hotspot number
-	uint8 Zvalue;                   // Z value for the bounding box
-	T_HOTSPOT hotspot[MAXHOTSPOT];  // List of hotspots
+	int _left, _top, _right, _bottom; // Vertici bounding boxes
+	int _adj[MAXBOXES];               // List of adjacent bounding boxes
+	int _numHotspot;                  // Hotspot number
+	uint8 _destZ;                     // Z value for the bounding box
+	T_HOTSPOT _hotspot[MAXHOTSPOT];   // List of hotspots
 
-	bool attivo;
-	bool bReversed;
+	bool _attivo;
+	bool _bReversed;
 
 private:
 	void readFromStream(RMDataStream &ds);
@@ -340,7 +340,7 @@ public:
 class RMBoxLoc {
 public:
 	int numbbox;
-	RMBox *boxes;
+	RMBox *_boxes;
 
 private:
 	void readFromStream(RMDataStream &ds);
@@ -405,26 +405,26 @@ private:
 		WALK
 	};
 
-	signed short walkcount;
-	int dx, dy, olddx, olddy;
-	float fx, fy, slope;
-	RMPoint linestart, lineend, pathend;
-	signed char walkspeed, walkstatus;
-	char minpath;
-	short nextbox;
-	short path[MAXBOXES];
-	short pathlenght, pathcount;
-	int curbox;
+	signed short _walkCount;
+	int _dx, _dy, _olddx, _olddy;
+	float _fx, _fy, _slope;
+	RMPoint _lineStart, _lineEnd, _pathEnd;
+	signed char _walkSpeed, _walkStatus;
+	char _minPath;
+	short _nextBox;
+	short _path[MAXBOXES];
+	short _pathLength, _pathCount;
+	int _curBox;
 
-	STATUS status;
-	int curSpeed;
-	bool bEndOfPath;
-	uint32 hEndOfPath;
-	OSystem::MutexRef csMove;
-	int curLocation;
-	bool bRemoveFromOT;
-	bool bMovingWithoutMinpath;
-	RMGameBoxes *theBoxes;
+	STATUS _status;
+	int _curSpeed;
+	bool _bEndOfPath;
+	uint32 _hEndOfPath;
+	OSystem::MutexRef _csMove;
+	int _curLocation;
+	bool _bRemoveFromOT;
+	bool _bMovingWithoutMinpath;
+	RMGameBoxes *_theBoxes;
 
 	RMPoint _fixedScroll;
 
@@ -443,9 +443,9 @@ private:
 	void newBoxEntered(int nBox);
 
 protected:
-	bool bMoving;
-	bool bDrawNow;
-	bool bNeedToStop;
+	bool _bMoving;
+	bool _bDrawNow;
+	bool _bNeedToStop;
 //		virtual RMGfxPrimitive *NewItemPrimitive();
 
 public:
@@ -464,7 +464,7 @@ public:
 
 	// TRUE if you just stopped
 	bool endOfPath() {
-		return bEndOfPath;
+		return _bEndOfPath;
 	}
 
 	// Change the pattern of a character to STOP
@@ -472,7 +472,7 @@ public:
 
 	// Check if the character is moving
 	bool isMoving() {
-		return bMoving;
+		return _bMoving;
 	}
 
 	// Move the character to a certain position
@@ -488,7 +488,7 @@ public:
 		_fixedScroll = fix;
 	}
 	void setSpeed(int speed) {
-		curSpeed = speed;
+		_curSpeed = speed;
 	}
 };
 
@@ -601,9 +601,9 @@ public:
  */
 class RMMessage {
 private:
-	char *lpMessage;
-	char *lpPeriods[256];
-	int nPeriods;
+	char *_lpMessage;
+	char *_lpPeriods[256];
+	int _nPeriods;
 
 private:
 	void parseMessage(void);
@@ -615,16 +615,16 @@ public:
 
 	void load(uint32 dwId);
 	bool isValid() {
-		return lpMessage != NULL;
+		return _lpMessage != NULL;
 	}
 	int numPeriods() {
-		return nPeriods;
+		return _nPeriods;
 	}
 	char *period(int num) {
-		return lpPeriods[num];
+		return _lpPeriods[num];
 	}
 	char *operator[](int num) {
-		return lpPeriods[num];
+		return _lpPeriods[num];
 	}
 };
 

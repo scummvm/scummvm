@@ -951,19 +951,19 @@ short RMCharacter::findPath(short source, short destination) {
 	short i, j, k, costominimo, fine, errore = 0;
 	RMBoxLoc *cur;
 
-	g_system->lockMutex(csMove);
+	g_system->lockMutex(_csMove);
 
 	if (source == -1 || destination == -1) {
-		g_system->unlockMutex(csMove);
+		g_system->unlockMutex(_csMove);
 		return 0;
 	}
 
 	// Get the boxes
-	cur = theBoxes->getBoxes(curLocation);
+	cur = _theBoxes->getBoxes(_curLocation);
 
 	// Make a backup copy to work on
 	for (i = 0; i < cur->numbbox; i++)
-		memcpy(&BOX[i], &cur->boxes[i], sizeof(RMBox));
+		memcpy(&BOX[i], &cur->_boxes[i], sizeof(RMBox));
 
 	// Invalidate all nodes
 	for (i = 0; i < cur->numbbox; i++)
@@ -984,7 +984,7 @@ short RMCharacter::findPath(short source, short destination) {
 			if (VALIDO[i] == 1) {
 				errore = 0;                 // Failure de-bunked
 				j = 0;
-				while (((BOX[i].adj[j]) != 1) && (j < cur->numbbox))
+				while (((BOX[i]._adj[j]) != 1) && (j < cur->numbbox))
 					j++;
 
 				if (j >= cur->numbbox)
@@ -1002,12 +1002,12 @@ short RMCharacter::findPath(short source, short destination) {
 		// 2nd cycle: adding new nodes that were found, saturate old nodes
 		for (i = 0; i < cur->numbbox; i++)
 			if ((VALIDO[i] == 1) && ((COSTO[i] + 1) == costominimo)) {
-				BOX[i].adj[NEXT[i]] = 2;
+				BOX[i]._adj[NEXT[i]] = 2;
 				COSTO[NEXT[i]] = costominimo;
 				VALIDO[NEXT[i]] = 1;
 				for (j = 0; j < cur->numbbox; j++)
-					if (BOX[j].adj[NEXT[i]] == 1)
-						BOX[j].adj[NEXT[i]] = 0;
+					if (BOX[j]._adj[NEXT[i]] == 1)
+						BOX[j]._adj[NEXT[i]] = 0;
 
 				if (NEXT[i] == destination)
 					fine = 1;
@@ -1016,22 +1016,22 @@ short RMCharacter::findPath(short source, short destination) {
 
 	// Remove the path from the adjacent modified matrixes
 	if (!errore) {
-		pathlenght = COSTO[destination];
-		k = pathlenght;
-		path[k] = destination;
+		_pathLength = COSTO[destination];
+		k = _pathLength;
+		_path[k] = destination;
 
-		while (path[k] != source) {
+		while (_path[k] != source) {
 			i = 0;
-			while (BOX[i].adj[path[k]] != 2)
+			while (BOX[i]._adj[_path[k]] != 2)
 				i++;
 			k--;
-			path[k] = i;
+			_path[k] = i;
 		}
 
-		pathlenght++;
+		_pathLength++;
 	}
 
-	g_system->unlockMutex(csMove);
+	g_system->unlockMutex(_csMove);
 
 	return !errore;
 }
@@ -1044,24 +1044,24 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (_pos == destcoord) {
-		if (minpath == 0) {
+		if (_minPath == 0) {
 			CORO_INVOKE_0(stop);
-			CoroScheduler.pulseEvent(hEndOfPath);
+			CoroScheduler.pulseEvent(_hEndOfPath);
 			return;
 		}
 	}
 
-	status = WALK;
-	linestart = _pos;
-	lineend = destcoord;
-	dx = linestart.x - lineend.x;
-	dy = linestart.y - lineend.y;
-	fx = dx;
-	fy = dy;
-	dx = ABS(dx);
-	dy = ABS(dy);
-	walkspeed = curSpeed;
-	walkcount = 0;
+	_status = WALK;
+	_lineStart = _pos;
+	_lineEnd = destcoord;
+	_dx = _lineStart.x - _lineEnd.x;
+	_dy = _lineStart.y - _lineEnd.y;
+	_fx = _dx;
+	_fy = _dy;
+	_dx = ABS(_dx);
+	_dy = ABS(_dy);
+	_walkSpeed = _curSpeed;
+	_walkCount = 0;
 
 	if (bReversed) {
 		while (0) ;
@@ -1069,15 +1069,15 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 
 	int nPatt = getCurPattern();
 
-	if (dx > dy) {
-		slope = fy / fx;
-		if (lineend.x < linestart.x)
-			walkspeed = -walkspeed;
-		walkstatus = 1;
+	if (_dx > _dy) {
+		_slope = _fy / _fx;
+		if (_lineEnd.x < _lineStart.x)
+			_walkSpeed = -_walkSpeed;
+		_walkStatus = 1;
 
 		// Change the pattern for the new direction
-		bNeedToStop = true;
-		if ((walkspeed < 0 && !bReversed) || (walkspeed >= 0 && bReversed))  {
+		_bNeedToStop = true;
+		if ((_walkSpeed < 0 && !bReversed) || (_walkSpeed >= 0 && bReversed))  {
 			if (nPatt != PAT_WALKLEFT)
 				setPattern(PAT_WALKLEFT);
 		} else {
@@ -1085,13 +1085,13 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 				setPattern(PAT_WALKRIGHT);
 		}
 	} else {
-		slope = fx / fy;
-		if (lineend.y < linestart.y)
-			walkspeed = -walkspeed;
-		walkstatus = 0;
+		_slope = _fx / _fy;
+		if (_lineEnd.y < _lineStart.y)
+			_walkSpeed = -_walkSpeed;
+		_walkStatus = 0;
 
-		bNeedToStop = true;
-		if ((walkspeed < 0 && !bReversed) || (walkspeed >= 0 && bReversed)) {
+		_bNeedToStop = true;
+		if ((_walkSpeed < 0 && !bReversed) || (_walkSpeed >= 0 && bReversed)) {
 			if (nPatt != PAT_WALKUP)
 				setPattern(PAT_WALKUP);
 		} else {
@@ -1100,8 +1100,8 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 		}
 	}
 
-	olddx = dx;
-	olddy = dy;
+	_olddx = _dx;
+	_olddy = _dy;
 
 	CORO_END_CODE;
 }
@@ -1297,17 +1297,17 @@ RMPoint RMCharacter::nearestHotSpot(int sourcebox, int destbox) {
 	short cc;
 	int x, y, distanzaminima;
 	distanzaminima = 10000000;
-	RMBoxLoc *cur = theBoxes->getBoxes(curLocation);
+	RMBoxLoc *cur = _theBoxes->getBoxes(_curLocation);
 
-	for (cc = 0; cc < cur->boxes[sourcebox].numhotspot; cc++)
-		if ((cur->boxes[sourcebox].hotspot[cc].destination) == destbox) {
-			x = ABS(cur->boxes[sourcebox].hotspot[cc].hotx - _pos.x);
-			y = ABS(cur->boxes[sourcebox].hotspot[cc].hoty - _pos.y);
+	for (cc = 0; cc < cur->_boxes[sourcebox]._numHotspot; cc++)
+		if ((cur->_boxes[sourcebox]._hotspot[cc]._destination) == destbox) {
+			x = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hotx - _pos.x);
+			y = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hoty - _pos.y);
 
 			if ((x * x + y * y) < distanzaminima) {
 				distanzaminima = x * x + y * y;
-				puntocaldo.x = cur->boxes[sourcebox].hotspot[cc].hotx;
-				puntocaldo.y = cur->boxes[sourcebox].hotspot[cc].hoty;
+				puntocaldo.x = cur->_boxes[sourcebox]._hotspot[cc]._hotx;
+				puntocaldo.y = cur->_boxes[sourcebox]._hotspot[cc]._hoty;
 			}
 		}
 
@@ -1320,7 +1320,7 @@ void RMCharacter::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (bDrawNow) {
+	if (_bDrawNow) {
 		prim->getDst() += _fixedScroll;
 
 		CORO_INVOKE_2(RMItem::draw, bigBuf, prim);
@@ -1334,22 +1334,22 @@ void RMCharacter::newBoxEntered(int nBox) {
 	bool bOldReverse;
 
 	// Recall on ExitBox
-	mpalQueryDoAction(3, curLocation, curbox);
+	mpalQueryDoAction(3, _curLocation, _curBox);
 
-	cur = theBoxes->getBoxes(curLocation);
-	bOldReverse = cur->boxes[curbox].bReversed;
-	curbox = nBox;
+	cur = _theBoxes->getBoxes(_curLocation);
+	bOldReverse = cur->_boxes[_curBox]._bReversed;
+	_curBox = nBox;
 
 	// If Z is changed, we must remove it from the OT
-	if (cur->boxes[curbox].Zvalue != _z) {
-		bRemoveFromOT = true;
-		_z = cur->boxes[curbox].Zvalue;
+	if (cur->_boxes[_curBox]._destZ != _z) {
+		_bRemoveFromOT = true;
+		_z = cur->_boxes[_curBox]._destZ;
 	}
 
 	// Movement management is reversed, only if we are not in the shortest path. If we are in the shortest
 	// path, directly do the DoFrame
-	if (bMovingWithoutMinpath) {
-		if ((cur->boxes[curbox].bReversed && !bOldReverse) || (!cur->boxes[curbox].bReversed && bOldReverse)) {
+	if (_bMovingWithoutMinpath) {
+		if ((cur->_boxes[_curBox]._bReversed && !bOldReverse) || (!cur->_boxes[_curBox]._bReversed && bOldReverse)) {
 			switch (getCurPattern()) {
 			case PAT_WALKUP:
 				setPattern(PAT_WALKDOWN);
@@ -1368,7 +1368,7 @@ void RMCharacter::newBoxEntered(int nBox) {
 	}
 
 	// Recall On EnterBox
-	mpalQueryDoAction(2, curLocation, curbox);
+	mpalQueryDoAction(2, _curLocation, _curBox);
 }
 
 void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
@@ -1380,105 +1380,105 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->bEndNow = false;
-	bEndOfPath = false;
-	bDrawNow = (curLocation == loc);
+	_bEndOfPath = false;
+	_bDrawNow = (_curLocation == loc);
 
-	g_system->lockMutex(csMove);
+	g_system->lockMutex(_csMove);
 
 	// If we're walking..
-	if (status != STAND) {
+	if (_status != STAND) {
 		// If we are going horizontally
-		if (walkstatus == 1) {
-			dx = walkspeed * walkcount;
-			dy = (int)(slope * dx);
-			_pos.x = linestart.x + dx;
-			_pos.y = linestart.y + dy;
+		if (_walkStatus == 1) {
+			_dx = _walkSpeed * _walkCount;
+			_dy = (int)(_slope * _dx);
+			_pos.x = _lineStart.x + _dx;
+			_pos.y = _lineStart.y + _dy;
 
 			// Right
-			if (((walkspeed > 0) && (_pos.x > lineend.x)) || ((walkspeed < 0) && (_pos.x < lineend.x))) {
-				_pos = lineend;
-				status = STAND;
+			if (((_walkSpeed > 0) && (_pos.x > _lineEnd.x)) || ((_walkSpeed < 0) && (_pos.x < _lineEnd.x))) {
+				_pos = _lineEnd;
+				_status = STAND;
 				_ctx->bEndNow = true;
 			}
 		}
 
 		// If we are going vertical
-		if (walkstatus == 0) {
-			dy = walkspeed * walkcount;
-			dx = (int)(slope * dy);
-			_pos.x = linestart.x + dx;
-			_pos.y = linestart.y + dy;
+		if (_walkStatus == 0) {
+			_dy = _walkSpeed * _walkCount;
+			_dx = (int)(_slope * _dy);
+			_pos.x = _lineStart.x + _dx;
+			_pos.y = _lineStart.y + _dy;
 
 			// Down
-			if (((walkspeed > 0) && (_pos.y > lineend.y)) || ((walkspeed < 0) && (_pos.y < lineend.y))) {
-				_pos = lineend;
-				status = STAND;
+			if (((_walkSpeed > 0) && (_pos.y > _lineEnd.y)) || ((_walkSpeed < 0) && (_pos.y < _lineEnd.y))) {
+				_pos = _lineEnd;
+				_status = STAND;
 				_ctx->bEndNow = true;
 			}
 		}
 
 		// Check if the character came out of the BOX in error, in which case he returns immediately
 		if (inWhichBox(_pos) == -1) {
-			_pos.x = linestart.x + olddx;
-			_pos.y = linestart.y + olddy;
+			_pos.x = _lineStart.x + _olddx;
+			_pos.y = _lineStart.y + _olddy;
 		}
 
 		// If we have just moved to a temporary location, and is over the shortest path, we stop permanently
-		if (_ctx->bEndNow && minpath == 0) {
-			if (!bEndOfPath)
+		if (_ctx->bEndNow && _minPath == 0) {
+			if (!_bEndOfPath)
 				CORO_INVOKE_0(stop);
-			bEndOfPath = true;
-			CoroScheduler.pulseEvent(hEndOfPath);
+			_bEndOfPath = true;
+			CoroScheduler.pulseEvent(_hEndOfPath);
 		}
 
-		walkcount++;
+		_walkCount++;
 
 		// Update the character Z. @@@ Should remove only if the Z was changed
 
 		// Check if the box was changed
-		if (!theBoxes->isInBox(curLocation, curbox, _pos))
+		if (!_theBoxes->isInBox(_curLocation, _curBox, _pos))
 			newBoxEntered(inWhichBox(_pos));
 
 		// Update the old coordinates
-		olddx = dx;
-		olddy = dy;
+		_olddx = _dx;
+		_olddy = _dy;
 	}
 
 	// If we stop
-	if (status == STAND) {
+	if (_status == STAND) {
 		// Check if there is still the shortest path to calculate
-		if (minpath == 1) {
-			_ctx->cur = theBoxes->getBoxes(curLocation);
+		if (_minPath == 1) {
+			_ctx->cur = _theBoxes->getBoxes(_curLocation);
 
 			// If we still have to go through a box
-			if (pathcount < pathlenght) {
+			if (_pathCount < _pathLength) {
 				// Check if the box we're going into is active
-				if (_ctx->cur->boxes[path[pathcount - 1]].attivo) {
+				if (_ctx->cur->_boxes[_path[_pathCount - 1]]._attivo) {
 					// Move in a straight line towards the nearest hotspot, taking into account the reversing
 					// NEWBOX = path[pathcount-1]
-					CORO_INVOKE_2(goTo, nearestHotSpot(path[pathcount - 1], path[pathcount]), _ctx->cur->boxes[path[pathcount - 1]].bReversed);
-					pathcount++;
+					CORO_INVOKE_2(goTo, nearestHotSpot(_path[_pathCount - 1], _path[_pathCount]), _ctx->cur->_boxes[_path[_pathCount - 1]]._bReversed);
+					_pathCount++;
 				} else {
 					// If the box is off, we can only block all
 					// @@@ Whilst this should not happen, because have improved
 					// the search for the minimum path
-					minpath = 0;
-					if (!bEndOfPath)
+					_minPath = 0;
+					if (!_bEndOfPath)
 						CORO_INVOKE_0(stop);
-					bEndOfPath = true;
-					CoroScheduler.pulseEvent(hEndOfPath);
+					_bEndOfPath = true;
+					CoroScheduler.pulseEvent(_hEndOfPath);
 				}
 			} else {
 				// If we have already entered the last box, we just have to move in a straight line towards the
 				// point of arrival
 				// NEWBOX = InWhichBox(pathend)
-				minpath = 0;
-				CORO_INVOKE_2(goTo, pathend, _ctx->cur->boxes[inWhichBox(pathend)].bReversed);
+				_minPath = 0;
+				CORO_INVOKE_2(goTo, _pathEnd, _ctx->cur->_boxes[inWhichBox(_pathEnd)]._bReversed);
 			}
 		}
 	}
 
-	g_system->unlockMutex(csMove);
+	g_system->unlockMutex(_csMove);
 
 	// Invoke the DoFrame of the item
 	RMItem::doFrame(bigBuf);
@@ -1492,16 +1492,16 @@ void RMCharacter::stop(CORO_PARAM) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	bMoving = false;
+	_bMoving = false;
 
 	// You never know..
-	status = STAND;
-	minpath = 0;
+	_status = STAND;
+	_minPath = 0;
 
-	if (!bNeedToStop)
+	if (!_bNeedToStop)
 		return;
 
-	bNeedToStop = false;
+	_bNeedToStop = false;
 
 	switch (getCurPattern()) {
 	case PAT_WALKUP:
@@ -1529,7 +1529,7 @@ void RMCharacter::stop(CORO_PARAM) {
 }
 
 inline int RMCharacter::inWhichBox(const RMPoint &pt) {
-	return theBoxes->whichBox(curLocation, pt);
+	return _theBoxes->whichBox(_curLocation, pt);
 }
 
 
@@ -1542,12 +1542,12 @@ void RMCharacter::move(CORO_PARAM, RMPoint pt, bool *result) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	bMoving = true;
+	_bMoving = true;
 
 	// 0, 0 does not do anything, just stops the character
 	if (pt.x == 0 && pt.y == 0) {
-		minpath = 0;
-		status = STAND;
+		_minPath = 0;
+		_status = STAND;
 		CORO_INVOKE_0(stop);
 		if (result)
 			*result = true;
@@ -1568,18 +1568,18 @@ void RMCharacter::move(CORO_PARAM, RMPoint pt, bool *result) {
 		_ctx->numbox = inWhichBox(pt);
 	}
 
-	_ctx->cur = theBoxes->getBoxes(curLocation);
+	_ctx->cur = _theBoxes->getBoxes(_curLocation);
 
-	minpath = 0;
-	status = STAND;
-	bMovingWithoutMinpath = true;
+	_minPath = 0;
+	_status = STAND;
+	_bMovingWithoutMinpath = true;
 	if (scanLine(pt))
-		CORO_INVOKE_2(goTo, pt, _ctx->cur->boxes[_ctx->numbox].bReversed);
+		CORO_INVOKE_2(goTo, pt, _ctx->cur->_boxes[_ctx->numbox]._bReversed);
 	else if (findPath(inWhichBox(_pos), inWhichBox(pt))) {
-		bMovingWithoutMinpath = false;
-		minpath = 1;
-		pathcount = 1;
-		pathend = pt;
+		_bMovingWithoutMinpath = false;
+		_minPath = 1;
+		_pathCount = 1;
+		_pathEnd = pt;
 	} else {
 		// @@@ This case is whether a hotspot is inside a box, but there is
 		// a path to get there. We use the InvScanLine to search around a point
@@ -1587,12 +1587,12 @@ void RMCharacter::move(CORO_PARAM, RMPoint pt, bool *result) {
 		pt = _ctx->dest;
 
 		if (scanLine(pt))
-			CORO_INVOKE_2(goTo, pt, _ctx->cur->boxes[_ctx->numbox].bReversed);
+			CORO_INVOKE_2(goTo, pt, _ctx->cur->_boxes[_ctx->numbox]._bReversed);
 		else if (findPath(inWhichBox(_pos), inWhichBox(pt))) {
-			bMovingWithoutMinpath = false;
-			minpath = 1;
-			pathcount = 1;
-			pathend = pt;
+			_bMovingWithoutMinpath = false;
+			_minPath = 1;
+			_pathCount = 1;
+			_pathEnd = pt;
 			if (result)
 				*result = true;
 		} else {
@@ -1612,19 +1612,19 @@ void RMCharacter::move(CORO_PARAM, RMPoint pt, bool *result) {
 void RMCharacter::setPosition(const RMPoint &pt, int newloc) {
 	RMBoxLoc *box;
 
-	minpath = 0;
-	status = STAND;
+	_minPath = 0;
+	_status = STAND;
 	_pos = pt;
 
 	if (newloc != -1)
-		curLocation = newloc;
+		_curLocation = newloc;
 
 	// Update the character's Z value
-	box = theBoxes->getBoxes(curLocation);
-	curbox = inWhichBox(_pos);
-	assert(curbox != -1);
-	_z = box->boxes[curbox].Zvalue;
-	bRemoveFromOT = true;
+	box = _theBoxes->getBoxes(_curLocation);
+	_curBox = inWhichBox(_pos);
+	assert(_curBox != -1);
+	_z = box->_boxes[_curBox]._destZ;
+	_bRemoveFromOT = true;
 }
 
 void RMCharacter::waitForEndMovement(CORO_PARAM) {
@@ -1633,8 +1633,8 @@ void RMCharacter::waitForEndMovement(CORO_PARAM) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (bMoving)
-		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, hEndOfPath, CORO_INFINITE);
+	if (_bMoving)
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _hEndOfPath, CORO_INFINITE);
 
 	CORO_END_CODE;
 }
@@ -1645,7 +1645,7 @@ void RMCharacter::removeThis(CORO_PARAM, bool &result) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (bRemoveFromOT)
+	if (_bRemoveFromOT)
 		result = true;
 	else
 		CORO_INVOKE_1(RMItem::removeThis, result);
@@ -1654,38 +1654,38 @@ void RMCharacter::removeThis(CORO_PARAM, bool &result) {
 }
 
 RMCharacter::RMCharacter() {
-	csMove = g_system->createMutex();
-	hEndOfPath = CoroScheduler.createEvent(false, false);
-	minpath = 0;
-	curSpeed = 3;
-	bRemoveFromOT = false;
-	bMoving = false;
-	curLocation = 0;
-	curbox = 0;
-	dx = dy = 0;
-	olddx = olddy = 0;
-	fx = fy = slope = 0;
-	walkspeed = walkstatus = 0;
-	nextbox = 0;
-	pathlenght = pathcount = 0;
-	status = STAND;
-	theBoxes = NULL;
-	walkcount = 0;
-	bEndOfPath = false;
-	bMovingWithoutMinpath = false;
-	bDrawNow = false;
-	bNeedToStop = false;
+	_csMove = g_system->createMutex();
+	_hEndOfPath = CoroScheduler.createEvent(false, false);
+	_minPath = 0;
+	_curSpeed = 3;
+	_bRemoveFromOT = false;
+	_bMoving = false;
+	_curLocation = 0;
+	_curBox = 0;
+	_dx = _dy = 0;
+	_olddx = _olddy = 0;
+	_fx = _fy = _slope = 0;
+	_walkSpeed = _walkStatus = 0;
+	_nextBox = 0;
+	_pathLength = _pathCount = 0;
+	_status = STAND;
+	_theBoxes = NULL;
+	_walkCount = 0;
+	_bEndOfPath = false;
+	_bMovingWithoutMinpath = false;
+	_bDrawNow = false;
+	_bNeedToStop = false;
 
 	_pos.set(0, 0);
 }
 
 RMCharacter::~RMCharacter() {
-	g_system->deleteMutex(csMove);
-	CoroScheduler.closeEvent(hEndOfPath);
+	g_system->deleteMutex(_csMove);
+	CoroScheduler.closeEvent(_hEndOfPath);
 }
 
 void RMCharacter::linkToBoxes(RMGameBoxes *boxes) {
-	theBoxes = boxes;
+	_theBoxes = boxes;
 }
 
 /****************************************************************************\
@@ -1698,35 +1698,35 @@ void RMBox::readFromStream(RMDataStream &ds) {
 	byte b;
 
 	// Bbox
-	ds >> left;
-	ds >> top;
-	ds >> right;
-	ds >> bottom;
+	ds >> _left;
+	ds >> _top;
+	ds >> _right;
+	ds >> _bottom;
 
 	// Adjacency
 	for (i = 0; i < MAXBOXES; i++) {
-		ds >> adj[i];
+		ds >> _adj[i];
 	}
 
 	// Misc
-	ds >> numhotspot;
-	ds >> Zvalue;
+	ds >> _numHotspot;
+	ds >> _destZ;
 	ds >> b;
-	attivo = b;
+	_attivo = b;
 	ds >> b;
-	bReversed = b;
+	_bReversed = b;
 
 	// Reversed expansion space
 	ds += 30;
 
 	// Hotspots
-	for (i = 0; i < numhotspot; i++) {
+	for (i = 0; i < _numHotspot; i++) {
 		ds >> w;
-		hotspot[i].hotx = w;
+		_hotspot[i]._hotx = w;
 		ds >> w;
-		hotspot[i].hoty = w;
+		_hotspot[i]._hoty = w;
 		ds >> w;
-		hotspot[i].destination = w;
+		_hotspot[i]._destination = w;
 	}
 }
 
@@ -1741,11 +1741,11 @@ RMDataStream &operator>>(RMDataStream &ds, RMBox &box) {
 \****************************************************************************/
 
 RMBoxLoc::RMBoxLoc() {
-	boxes = NULL;
+	_boxes = NULL;
 }
 
 RMBoxLoc::~RMBoxLoc() {
-	delete[] boxes;
+	delete[] _boxes;
 }
 
 void RMBoxLoc::readFromStream(RMDataStream &ds) {
@@ -1762,11 +1762,11 @@ void RMBoxLoc::readFromStream(RMDataStream &ds) {
 	ds >> numbbox;
 
 	// Allocate memory for the boxes
-	boxes = new RMBox[numbbox];
+	_boxes = new RMBox[numbbox];
 
 	// Read in boxes
 	for (i = 0; i < numbbox; i++)
-		ds >> boxes[i];
+		ds >> _boxes[i];
 }
 
 
@@ -1774,11 +1774,11 @@ void RMBoxLoc::recalcAllAdj(void) {
 	int i, j;
 
 	for (i = 0; i < numbbox; i++) {
-		Common::fill(boxes[i].adj, boxes[i].adj + MAXBOXES, 0);
+		Common::fill(_boxes[i]._adj, _boxes[i]._adj + MAXBOXES, 0);
 
-		for (j = 0; j < boxes[i].numhotspot; j++)
-			if (boxes[boxes[i].hotspot[j].destination].attivo)
-				boxes[i].adj[boxes[i].hotspot[j].destination] = 1;
+		for (j = 0; j < _boxes[i]._numHotspot; j++)
+			if (_boxes[_boxes[i]._hotspot[j]._destination]._attivo)
+				_boxes[i]._adj[_boxes[i]._hotspot[j]._destination] = 1;
 	}
 }
 
@@ -1833,8 +1833,8 @@ RMBoxLoc *RMGameBoxes::getBoxes(int nLoc) {
 bool RMGameBoxes::isInBox(int nLoc, int nBox, const RMPoint &pt) {
 	RMBoxLoc *cur = getBoxes(nLoc);
 
-	if ((pt.x >= cur->boxes[nBox].left) && (pt.x <= cur->boxes[nBox].right) &&
-	        (pt.y >= cur->boxes[nBox].top)  && (pt.y <= cur->boxes[nBox].bottom))
+	if ((pt.x >= cur->_boxes[nBox]._left) && (pt.x <= cur->_boxes[nBox]._right) &&
+	        (pt.y >= cur->_boxes[nBox]._top)  && (pt.y <= cur->_boxes[nBox]._bottom))
 		return true;
 	else
 		return false;
@@ -1848,16 +1848,16 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 		return -1;
 
 	for (i = 0; i < cur->numbbox; i++)
-		if (cur->boxes[i].attivo)
-			if ((punto.x >= cur->boxes[i].left) && (punto.x <= cur->boxes[i].right) &&
-			        (punto.y >= cur->boxes[i].top)  && (punto.y <= cur->boxes[i].bottom))
+		if (cur->_boxes[i]._attivo)
+			if ((punto.x >= cur->_boxes[i]._left) && (punto.x <= cur->_boxes[i]._right) &&
+			        (punto.y >= cur->_boxes[i]._top)  && (punto.y <= cur->_boxes[i]._bottom))
 				return i;
 
 	return -1;
 }
 
 void RMGameBoxes::changeBoxStatus(int nLoc, int nBox, int status) {
-	_allBoxes[nLoc]->boxes[nBox].attivo = status;
+	_allBoxes[nLoc]->_boxes[nBox]._attivo = status;
 	_allBoxes[nLoc]->recalcAllAdj();
 }
 
@@ -1889,7 +1889,7 @@ void RMGameBoxes::saveState(byte *state) {
 		state += 4;
 
 		for (j = 0; j < _allBoxes[i]->numbbox; j++)
-			*state++ = _allBoxes[i]->boxes[j].attivo;
+			*state++ = _allBoxes[i]->_boxes[j]._attivo;
 	}
 }
 
@@ -1910,7 +1910,7 @@ void RMGameBoxes::loadState(byte *state) {
 
 		for (j = 0; j < nbox ; j++) {
 			if (j < _allBoxes[i]->numbbox)
-				_allBoxes[i]->boxes[j].attivo = *state;
+				_allBoxes[i]->_boxes[j]._attivo = *state;
 
 			state++;
 		}
@@ -2288,29 +2288,29 @@ RMMessage::RMMessage(uint32 dwId) {
 }
 
 RMMessage::RMMessage() {
-	lpMessage = NULL;
+	_lpMessage = NULL;
 }
 
 RMMessage::~RMMessage() {
-	if (lpMessage)
-		globalDestroy(lpMessage);
+	if (_lpMessage)
+		globalDestroy(_lpMessage);
 }
 
 void RMMessage::load(uint32 dwId) {
-	lpMessage = mpalQueryMessage(dwId);
-	assert(lpMessage != NULL);
+	_lpMessage = mpalQueryMessage(dwId);
+	assert(_lpMessage != NULL);
 
-	if (lpMessage)
+	if (_lpMessage)
 		parseMessage();
 }
 
 void RMMessage::parseMessage(void) {
 	char *p;
 
-	assert(lpMessage != NULL);
+	assert(_lpMessage != NULL);
 
-	nPeriods = 1;
-	p = lpPeriods[0] = lpMessage;
+	_nPeriods = 1;
+	p = _lpPeriods[0] = _lpMessage;
 
 	for (;;) {
 		// Find the end of the current period
@@ -2323,7 +2323,7 @@ void RMMessage::parseMessage(void) {
 			break;
 
 		// Otherwise there is another line, and remember it's start
-		lpPeriods[nPeriods++] = p;
+		_lpPeriods[_nPeriods++] = p;
 	}
 }
 

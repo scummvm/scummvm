@@ -490,7 +490,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 	ret = (LPITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(ITEM));
 	if (ret == NULL)
 		return NULL;
-	ret->speed = 150;
+	ret->_speed = 150;
 
 	hDat = resLoad(curitem->dwRes);
 	dat = (char *)globalLock(hDat);
@@ -500,65 +500,65 @@ static LPITEM getItemData(uint32 nOrdItem) {
 		dat += 4;
 
 		if (i >= 0x10) {	// From 1.0, there's a destination point for each object
-			ret->destX = (int16)READ_LE_UINT16(dat);
-			ret->destY = (int16)READ_LE_UINT16(dat + 2);
+			ret->_destX = (int16)READ_LE_UINT16(dat);
+			ret->_destY = (int16)READ_LE_UINT16(dat + 2);
 			dat += 4;
 		}
 
 		if (i >= 0x11) {	// From 1.1, there's animation speed
-			ret->speed = READ_LE_UINT16(dat);
+			ret->_speed = READ_LE_UINT16(dat);
 			dat += 2;
 		} else
-			ret->speed = 150;
+			ret->_speed = 150;
 	}
 
-	ret->numframe = *dat++;
-	ret->numpattern = *dat++;
-	ret->Zvalue = *dat++;
+	ret->_numframe = *dat++;
+	ret->_numpattern = *dat++;
+	ret->_destZ = *dat++;
 
 	// Upload the left & top co-ordinates of each frame
-	for (i = 0; i < ret->numframe; i++) {
-		ret->frameslocations[i].left = (int16)READ_LE_UINT16(dat);
-		ret->frameslocations[i].top = (int16)READ_LE_UINT16(dat + 2);
+	for (i = 0; i < ret->_numframe; i++) {
+		ret->_frameslocations[i].left = (int16)READ_LE_UINT16(dat);
+		ret->_frameslocations[i].top = (int16)READ_LE_UINT16(dat + 2);
 		dat += 4;
 	}
 
 	// Upload the size of each frame and calculate the right & bottom
-	for (i = 0; i < ret->numframe; i++) {
-		ret->frameslocations[i].right = (int16)READ_LE_UINT16(dat) + ret->frameslocations[i].left;
-		ret->frameslocations[i].bottom = (int16)READ_LE_UINT16(dat + 2) + ret->frameslocations[i].top;
+	for (i = 0; i < ret->_numframe; i++) {
+		ret->_frameslocations[i].right = (int16)READ_LE_UINT16(dat) + ret->_frameslocations[i].left;
+		ret->_frameslocations[i].bottom = (int16)READ_LE_UINT16(dat + 2) + ret->_frameslocations[i].top;
 		dat += 4;
 	}
 
 	// Upload the bounding boxes of each frame
-	for (i = 0; i < ret->numframe; i++) {
-		ret->bbox[i].left = (int16)READ_LE_UINT16(dat);
-		ret->bbox[i].top = (int16)READ_LE_UINT16(dat + 2);
-		ret->bbox[i].right = (int16)READ_LE_UINT16(dat + 4);
-		ret->bbox[i].bottom = (int16)READ_LE_UINT16(dat + 6);
+	for (i = 0; i < ret->_numframe; i++) {
+		ret->_bbox[i].left = (int16)READ_LE_UINT16(dat);
+		ret->_bbox[i].top = (int16)READ_LE_UINT16(dat + 2);
+		ret->_bbox[i].right = (int16)READ_LE_UINT16(dat + 4);
+		ret->_bbox[i].bottom = (int16)READ_LE_UINT16(dat + 6);
 		dat += 8;
 	}
 
 	// Load the animation pattern
 	patlength = dat;
-	dat += ret->numpattern;
+	dat += ret->_numpattern;
 
-	for (i = 1; i < ret->numpattern; i++) {
+	for (i = 1; i < ret->_numpattern; i++) {
 		for (j = 0; j < patlength[i]; j++)
-			ret->pattern[i][j] = dat[j];
-		ret->pattern[i][(int)patlength[i]] = 255;   // Terminate pattern
+			ret->_pattern[i][j] = dat[j];
+		ret->_pattern[i][(int)patlength[i]] = 255;   // Terminate pattern
 		dat += patlength[i];
 	}
 
 	// Upload the individual frames of animations
-	for (i = 1; i < ret->numframe; i++) {
-		dim = (uint32)(ret->frameslocations[i].right-ret->frameslocations[i].left) *
-			(uint32)(ret->frameslocations[i].bottom-ret->frameslocations[i].top);
-		ret->frames[i] = (char *)globalAlloc(GMEM_FIXED,dim);
+	for (i = 1; i < ret->_numframe; i++) {
+		dim = (uint32)(ret->_frameslocations[i].right - ret->_frameslocations[i].left) *
+			(uint32)(ret->_frameslocations[i].bottom - ret->_frameslocations[i].top);
+		ret->_frames[i] = (char *)globalAlloc(GMEM_FIXED,dim);
    
-		if (ret->frames[i] == NULL)
+		if (ret->_frames[i] == NULL)
 			return NULL;
-		copyMemory(ret->frames[i], dat, dim);
+		copyMemory(ret->_frames[i], dat, dim);
 		dat += dim;
 	}
 
