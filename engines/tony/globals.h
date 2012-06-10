@@ -151,9 +151,9 @@ struct ChangedHotspotStruct {
  * Description of a call to a custom function.
  */
 typedef struct {
-	int nCf;
+	int _nCf;
 
-	int arg1, arg2, arg3, arg4;
+	int _arg1, _arg2, _arg3, _arg4;
 } CFCALL;
 typedef CFCALL         *LPCFCALL;
 typedef LPCFCALL       *LPLPCFCALL;
@@ -212,13 +212,13 @@ public:
 	int _curSonoriz;
 	bool _bFadeOutStop;
 
-	RMTony *Tony;
-	RMPointer *Pointer;
-	RMGameBoxes *Boxes;
-	RMLocation *Loc;
-	RMInventory *Inventory;
-	RMInput *Input;
-	RMGfxEngine *GfxEngine;
+	RMTony *_tony;
+	RMPointer *_pointer;
+	RMGameBoxes *_boxes;
+	RMLocation *_loc;
+	RMInventory *_inventory;
+	RMInput *_input;
+	RMGfxEngine *_gfxEngine;
 
 	uint32(*LoadLocation)(int, RMPoint, RMPoint start);
 	void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, uint32 *result);
@@ -234,21 +234,21 @@ public:
 	void (*DisableGUI)(void);
 	void (*SetPalesati)(bool bpal);
 
-	uint32 dwTonyNumTexts;
-	bool bTonyInTexts;
-	bool bStaticTalk;
-	RMTony::TALKTYPE nTonyNextTalkType;
+	uint32 _dwTonyNumTexts;
+	bool _bTonyInTexts;
+	bool _bStaticTalk;
+	RMTony::TALKTYPE _nTonyNextTalkType;
 
-	RMPoint StartLocPos[256];
-	OSystem::MutexRef cs[10];
-	uint32 mut[10];
+	RMPoint _startLocPos[256];
+	OSystem::MutexRef _cs[10];
+	uint32 _mut[10];
 
-	bool bSkipIdle;
-	uint32 hSkipIdle;
+	bool _bSkipIdle;
+	uint32 _hSkipIdle;
 
-	int lastMusic, lastTappeto;
+	int _lastMusic, _lastTappeto;
 
-	int tappeti[200];
+	int _tappeti[200];
 	RMPoint SFM_pt;
 	int SFM_nLoc;
 
@@ -256,43 +256,43 @@ public:
 	 * @defgroup MPAL variables
 	 *
 	*/
-	uint32                  mpalError;
-	LPITEMIRQFUNCTION       lpiifCustom;
-	LPLPCUSTOMFUNCTION      lplpFunctions;
-	Common::String         *lplpFunctionStrings;
-	uint16                   nObjs;
-	uint16                   nVars;
-	HGLOBAL                  hVars;
-	LPMPALVAR                lpmvVars;
-	uint16                   nMsgs;
-	HGLOBAL                  hMsgs;
-	LPMPALMSG                lpmmMsgs;
-	uint16                   nDialogs;
-	HGLOBAL                  hDialogs;
-	LPMPALDIALOG             lpmdDialogs;
-	uint16                   nItems;
-	HGLOBAL                  hItems;
-	LPMPALITEM               lpmiItems;
-	uint16                   nLocations;
-	HGLOBAL                  hLocations;
-	LPMPALLOCATION           lpmlLocations;
-	uint16                   nScripts;
-	HGLOBAL                  hScripts;
-	LPMPALSCRIPT             lpmsScripts;
-	Common::File             hMpr;
-	uint16                   nResources;
-	uint32                  *lpResources;
-	bool                     bExecutingAction;
-	bool                     bExecutingDialog;
-	uint32                  nPollingLocations[MAXPOLLINGLOCATIONS];
-	uint32                  hEndPollingLocations[MAXPOLLINGLOCATIONS];
-	uint32                  PollingThreads[MAXPOLLINGLOCATIONS];
-	uint32                  hAskChoice;
-	uint32                  hDoneChoice;
-	uint32                    nExecutingAction;
-	uint32                    nExecutingDialog;
-	uint32                    nExecutingChoice;
-	uint32                    nSelectedChoice;
+	uint32                  _mpalError;
+	LPITEMIRQFUNCTION       _lpiifCustom;
+	LPLPCUSTOMFUNCTION      _lplpFunctions;
+	Common::String         *_lplpFunctionStrings;
+	uint16                  _nObjs;
+	uint16                  _nVars;
+	HGLOBAL                 _hVars;
+	LPMPALVAR               _lpmvVars;
+	uint16                  _nMsgs;
+	HGLOBAL                 _hMsgs;
+	LPMPALMSG               _lpmmMsgs;
+	uint16                  _nDialogs;
+	HGLOBAL                 _hDialogs;
+	LPMPALDIALOG            _lpmdDialogs;
+	uint16                  _nItems;
+	HGLOBAL                 _hItems;
+	LPMPALITEM              _lpmiItems;
+	uint16                  _nLocations;
+	HGLOBAL                 _hLocations;
+	LPMPALLOCATION          _lpmlLocations;
+	uint16                  _nScripts;
+	HGLOBAL                 _hScripts;
+	LPMPALSCRIPT            _lpmsScripts;
+	Common::File            _hMpr;
+	uint16                  _nResources;
+	uint32                 *_lpResources;
+	bool                    _bExecutingAction;
+	bool                    _bExecutingDialog;
+	uint32                  _nPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32                  _hEndPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32                  _pollingThreads[MAXPOLLINGLOCATIONS];
+	uint32                  _hAskChoice;
+	uint32                  _hDoneChoice;
+	uint32                  _nExecutingAction;
+	uint32                  _nExecutingDialog;
+	uint32                  _nExecutingChoice;
+	uint32                  _nSelectedChoice;
 };
 
 } // End of namespace Tony

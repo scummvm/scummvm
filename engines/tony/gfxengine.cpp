@@ -359,10 +359,10 @@ void RMGfxEngine::initCustomDll(void) {
 
 void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
 	RMItem *item;
-	assert(GLOBALS.GfxEngine);
+	assert(GLOBALS._gfxEngine);
 
-	if (GLOBALS.GfxEngine->_bLocationLoaded) {
-		item = GLOBALS.GfxEngine->_loc.getItemFromCode(dwItem);
+	if (GLOBALS._gfxEngine->_bLocationLoaded) {
+		item = GLOBALS._gfxEngine->_loc.getItemFromCode(dwItem);
 		if (item != NULL) {
 			if (nPattern != -1) {
 				if (GLOBALS._bPatIrqFreeze)
@@ -497,7 +497,7 @@ void RMGfxEngine::init() {
 	_csMainLoop = g_system->createMutex();
 
 	// Initialise the IRQ function for items for MPAL
-	GLOBALS.GfxEngine = this;
+	GLOBALS._gfxEngine = this;
 	mpalInstallItemIrq(itemIrq);
 
 	// Initialise the input

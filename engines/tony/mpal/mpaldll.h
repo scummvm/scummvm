@@ -89,8 +89,8 @@ typedef LPMPALVAR *LPLPMPALVAR;
  * MPAL Messages
  */
 struct MPALMSG {
-  HGLOBAL hText;				// Handle to the message text
-  uint16 wNum;					// Message number
+  HGLOBAL _hText;				// Handle to the message text
+  uint16 _wNum;					// Message number
 } PACKED_STRUCT;
 typedef MPALMSG *LPMPALMSG;
 typedef LPMPALMSG *LPLPMPALMSG;
@@ -124,17 +124,17 @@ struct command {
 	byte  type;						// Type of control
 
 	union {
-		int32 nCf;                  // Custom function call			[#1]
+		int32 _nCf;                 // Custom function call			[#1]
 		char *lpszVarName;			// Variable name				[#2]
 		int32 nChoice;              // Number of choice you make	[#3]
 	};
 
 	union {
-		int32 arg1;                 // Argument for custom function			[#1]
+		int32 _arg1;                // Argument for custom function			[#1]
 		HGLOBAL expr;				// Expression to assign to a variable	[#2]
 	};
 
-	int32 arg2, arg3, arg4;			// Arguments for custom function		[#1]
+	int32 _arg2, _arg3, _arg4;		// Arguments for custom function		[#1]
 } PACKED_STRUCT;
 
 

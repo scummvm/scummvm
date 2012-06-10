@@ -171,7 +171,7 @@ static int Compute(int a, int b, byte symbol) {
     case OP_OR:
 		return a || b;
     default:
-		GLOBALS.mpalError = 1;
+		GLOBALS._mpalError = 1;
 		break;
 	}
  

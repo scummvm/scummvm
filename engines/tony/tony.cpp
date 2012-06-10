@@ -517,9 +517,9 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 	// and kill the scheudler and all the processes, including this one
 	for (;;) {
 		// If a savegame needs to be loaded, then do so
-		if (_vm->_loadSlotNumber != -1 && GLOBALS.GfxEngine != NULL) {
+		if (_vm->_loadSlotNumber != -1 && GLOBALS._gfxEngine != NULL) {
 			_ctx->fn = getSaveStateFileName(_vm->_loadSlotNumber);
-			CORO_INVOKE_1(GLOBALS.GfxEngine->loadState, _ctx->fn);
+			CORO_INVOKE_1(GLOBALS._gfxEngine->loadState, _ctx->fn);
 			_vm->_loadSlotNumber = -1;
 		}
 
@@ -605,10 +605,10 @@ uint32 TonyEngine::getTime() {
 }
 
 bool TonyEngine::canLoadGameStateCurrently() {
-	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->canLoadSave();
+	return GLOBALS._gfxEngine != NULL && GLOBALS._gfxEngine->canLoadSave();
 }
 bool TonyEngine::canSaveGameStateCurrently() {
-	return GLOBALS.GfxEngine != NULL && GLOBALS.GfxEngine->canLoadSave();
+	return GLOBALS._gfxEngine != NULL && GLOBALS._gfxEngine->canLoadSave();
 }
 
 Common::Error TonyEngine::loadGameState(int slot) {
@@ -617,13 +617,13 @@ Common::Error TonyEngine::loadGameState(int slot) {
 }
 
 Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
-	if (!GLOBALS.GfxEngine)
+	if (!GLOBALS._gfxEngine)
 		return Common::kUnknownError;
 
 	RMSnapshot s;
-	s.grabScreenshot(*GLOBALS.GfxEngine, 4, _curThumbnail);
+	s.grabScreenshot(*GLOBALS._gfxEngine, 4, _curThumbnail);
 
-	GLOBALS.GfxEngine->saveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
+	GLOBALS._gfxEngine->saveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
 	return Common::kNoError;
 }
 
