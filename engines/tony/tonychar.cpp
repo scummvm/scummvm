@@ -950,7 +950,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 	case TALK_CONRICETTASTATIC:
 	case TALK_CONCONIGLIOSTATIC:
 	case TALK_CONCARTESTATIC:
-	case TALK_CONTACCUINOSTATIC:
+	case TALK_WITH_NOTEBOOK:
 	case TALK_CONMEGAFONOSTATIC:
 		switch (_TalkDirection) {
 		case LEFT:
@@ -1632,7 +1632,7 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 		}
 		break;
 
-	case TALK_CONTACCUINOSTATIC:
+	case TALK_WITH_NOTEBOOK:
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:
@@ -1736,6 +1736,9 @@ void RMTony::startStatic(CORO_PARAM, TALKTYPE nTalk) {
 	_ctx->headPat = _ctx->headLoopPat = 0;
 	_ctx->bodyStartPat = _ctx->bodyLoopPat = 0;
 
+	startStaticCalculate(nTalk, _ctx->headPat, _ctx->headLoopPat,
+		_ctx->bodyStartPat, _ctx->bodyLoopPat);
+
 	// e vai con i pattern
 	_bIsStaticTalk = true;
 
@@ -1827,7 +1830,7 @@ void RMTony::endStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, 
 		}
 		break;
 
-	case TALK_CONTACCUINOSTATIC:
+	case TALK_WITH_NOTEBOOK:
 		switch (_TalkDirection) {
 		case UP:
 		case LEFT:

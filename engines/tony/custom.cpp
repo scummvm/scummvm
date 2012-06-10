@@ -985,26 +985,26 @@ DECLARE_CUSTOM_FUNCTION(TonyConCarteEnd)(CORO_PARAM, uint32, uint32, uint32, uin
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithNotebookStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_CONTACCUINOSTATIC;
+	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_WITH_NOTEBOOK;
 	GLOBALS.bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_CONTACCUINOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->startStatic, GLOBALS.Tony->TALK_WITH_NOTEBOOK);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConTaccuinoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithNotebookEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_CONTACCUINOSTATIC);
+	CORO_INVOKE_1(GLOBALS.Tony->endStatic, GLOBALS.Tony->TALK_WITH_NOTEBOOK);
 	GLOBALS.bStaticTalk = false;
 	GLOBALS.nTonyNextTalkType = GLOBALS.Tony->TALK_NORMAL;
 
@@ -2459,8 +2459,8 @@ ASSIGN(98,      TonyConRicettaStart)
 ASSIGN(99,      TonyConRicettaEnd)
 ASSIGN(100,     TonyConCarteStart)
 ASSIGN(101,     TonyConCarteEnd)
-ASSIGN(102,   TonyConTaccuinoStart)
-ASSIGN(103,   TonyConTaccuinoEnd)
+ASSIGN(102,   TonyWithNotebookStart)
+ASSIGN(103,   TonyWithNotebookEnd)
 ASSIGN(104,   TonyConMegafonoStart)
 ASSIGN(105,   TonyConMegafonoEnd)
 ASSIGN(106,   TonyConBarbaStart)
