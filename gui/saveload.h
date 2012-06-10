@@ -27,45 +27,15 @@
 
 namespace GUI {
 
-class ListWidget;
-class GraphicsWidget;
-class ButtonWidget;
-class CommandSender;
-class ContainerWidget;
-class StaticTextWidget;
+class SaveLoadChooserImpl;
 
-class SaveLoadChooser : GUI::Dialog {
+class SaveLoadChooser {
 	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
 protected:
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::ButtonWidget	*_deleteButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::ContainerWidget	*_container;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
-
-	const EnginePlugin		*_plugin;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	String					_target;
-	SaveStateList			_saveList;
-	String					_resultString;
-
-	uint8 _fillR, _fillG, _fillB;
-
-	void updateSaveList();
-	void updateSelection(bool redraw);
+	SaveLoadChooserImpl *_impl;
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 	/**
 	 * Runs the save/load chooser with the currently active config manager
@@ -75,9 +45,8 @@ public:
 	 */
 	int runModalWithCurrentTarget();
 	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
-	void open();
 
-	const Common::String &getResultString() const;
+	Common::String getResultString() const;
 
 	/**
 	 * Creates a default save description for the specified slot. Depending
@@ -93,10 +62,6 @@ public:
 	 * @return The slot description.
 	 */
 	Common::String createDefaultSaveDescription(const int slot) const;
-
-	virtual void reflowLayout();
-
-	virtual void close();
 };
 
 } // End of namespace GUI

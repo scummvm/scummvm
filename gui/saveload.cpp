@@ -41,8 +41,52 @@ enum {
 
 };
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
-	: Dialog("SaveLoadChooser"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+class SaveLoadChooserImpl : GUI::Dialog {
+	typedef Common::String String;
+	typedef Common::Array<Common::String> StringArray;
+public:
+	SaveLoadChooserImpl(const String &title, const String &buttonLabel, bool saveMode);
+
+	int runModalWithCurrentTarget();
+	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+
+	const Common::String &getResultString() const;
+
+	virtual void open();
+
+	virtual void reflowLayout();
+
+	virtual void close();
+private:
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::ButtonWidget	*_deleteButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::ContainerWidget	*_container;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
+
+	const EnginePlugin		*_plugin;
+	bool					_delSupport;
+	bool					_metaInfoSupport;
+	bool					_thumbnailSupport;
+	bool					_saveDateSupport;
+	bool					_playTimeSupport;
+	String					_target;
+	SaveStateList			_saveList;
+	String					_resultString;
+
+	uint8 _fillR, _fillG, _fillB;
+
+	void updateSaveList();
+	void updateSelection(bool redraw);
+};
+
+SaveLoadChooserImpl::SaveLoadChooserImpl(const String &title, const String &buttonLabel, bool saveMode)
+	: Dialog("SaveLoadChooser"), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
@@ -74,10 +118,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 //	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
-SaveLoadChooser::~SaveLoadChooser() {
-}
-
-int SaveLoadChooser::runModalWithCurrentTarget() {
+int SaveLoadChooserImpl::runModalWithCurrentTarget() {
 	const Common::String gameId = ConfMan.get("gameid");
 
 	const EnginePlugin *plugin = 0;
@@ -86,7 +127,7 @@ int SaveLoadChooser::runModalWithCurrentTarget() {
 	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 }
 
-int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
+int SaveLoadChooserImpl::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 
@@ -114,7 +155,7 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	return ret;
 }
 
-void SaveLoadChooser::open() {
+void SaveLoadChooserImpl::open() {
 	Dialog::open();
 
 	// So that quitting ScummVM will not cause the dialog result to say a
@@ -122,24 +163,12 @@ void SaveLoadChooser::open() {
 	setResult(-1);
 }
 
-const Common::String &SaveLoadChooser::getResultString() const {
+const Common::String &SaveLoadChooserImpl::getResultString() const {
 	int selItem = _list->getSelected();
 	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
 }
 
-Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
-#if defined(USE_SAVEGAME_TIMESTAMP)
-	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
-	curTime.tm_year += 1900; // fixup year
-	curTime.tm_mon++; // fixup month
-	return Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
-#else
-	return Common::String::format("Save %d", slot + 1);
-#endif
-}
-
-void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void SaveLoadChooserImpl::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int selItem = _list->getSelected();
 
 	switch (cmd) {
@@ -189,7 +218,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	}
 }
 
-void SaveLoadChooser::reflowLayout() {
+void SaveLoadChooserImpl::reflowLayout() {
 	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && _thumbnailSupport) {
 		int16 x, y;
 		uint16 w, h;
@@ -246,7 +275,7 @@ void SaveLoadChooser::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-void SaveLoadChooser::updateSelection(bool redraw) {
+void SaveLoadChooserImpl::updateSelection(bool redraw) {
 	int selItem = _list->getSelected();
 
 	bool isDeletable = _delSupport;
@@ -329,7 +358,7 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	}
 }
 
-void SaveLoadChooser::close() {
+void SaveLoadChooserImpl::close() {
 	_plugin = 0;
 	_target.clear();
 	_saveList.clear();
@@ -338,7 +367,7 @@ void SaveLoadChooser::close() {
 	Dialog::close();
 }
 
-void SaveLoadChooser::updateSaveList() {
+void SaveLoadChooserImpl::updateSaveList() {
 	_saveList = (*_plugin)->listSaves(_target.c_str());
 
 	int curSlot = 0;
@@ -400,6 +429,50 @@ void SaveLoadChooser::updateSaveList() {
 	}
 
 	_list->setList(saveNames, &colors);
+}
+
+// --- SaveLoadChooser implementation ---
+
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode) {
+	_impl = new SaveLoadChooserImpl(title, buttonLabel, saveMode);
+}
+
+SaveLoadChooser::~SaveLoadChooser() {
+	delete _impl;
+	_impl = 0;
+}
+
+Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
+#if defined(USE_SAVEGAME_TIMESTAMP)
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+	curTime.tm_year += 1900; // fixup year
+	curTime.tm_mon++; // fixup month
+	return Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+#else
+	return Common::String::format("Save %d", slot + 1);
+#endif
+}
+
+int SaveLoadChooser::runModalWithCurrentTarget() {
+	if (_impl)
+		return _impl->runModalWithCurrentTarget();
+	else
+		return -1;
+}
+
+int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
+	if (_impl)
+		return _impl->runModalWithPluginAndTarget(plugin, target);
+	else
+		return -1;
+}
+
+Common::String SaveLoadChooser::getResultString() const {
+	if (_impl)
+		return _impl->getResultString();
+	else
+		return Common::String();
 }
 
 } // End of namespace GUI
