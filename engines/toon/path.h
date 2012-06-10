@@ -24,6 +24,7 @@
 #define TOON_PATH_H
 
 #include "common/array.h"
+#include "common/rect.h"
 
 #include "toon/toon.h"
 
@@ -66,7 +67,7 @@ public:
 	bool isWalkable(int16 x, int16 y);
 	bool isLikelyWalkable(int16 x, int16 y);
 	bool lineIsWalkable(int16 x, int16 y, int16 x2, int16 y2);
-	bool walkLine(int16 x, int16 y, int16 x2, int16 y2);
+	void walkLine(int16 x, int16 y, int16 x2, int16 y2);
 
 	void resetBlockingRects() { _numBlockingRects = 0; }
 	void addBlockingRect(int16 x1, int16 y1, int16 x2, int16 y2);
@@ -87,11 +88,7 @@ private:
 	int16 _width;
 	int16 _height;
 
-	struct i32Point {
-		int32 x, y;
-	};
-
-	Common::Array<i32Point> _tempPath;
+	Common::Array<Common::Point> _tempPath;
 
 	int16 _blockingRects[kMaxBlockingRects][5];
 	uint8 _numBlockingRects;

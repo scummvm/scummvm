@@ -232,7 +232,7 @@ bool PathFinding::findClosestWalkingPoint(int16 xx, int16 yy, int16 *fxx, int16 
 	}
 }
 
-bool PathFinding::walkLine(int16 x, int16 y, int16 x2, int16 y2) {
+void PathFinding::walkLine(int16 x, int16 y, int16 x2, int16 y2) {
 	uint32 bx = x << 16;
 	int32 dx = x2 - x;
 	uint32 by = y << 16;
@@ -249,20 +249,13 @@ bool PathFinding::walkLine(int16 x, int16 y, int16 x2, int16 y2) {
 	int32 cdy = (dy << 16) / t;
 
 	_tempPath.clear();
-	i32Point p;
 	for (int32 i = t; i > 0; i--) {
-		p.x = bx >> 16;
-		p.y = by >> 16;
-		_tempPath.insert_at(0, p);
+		_tempPath.insert_at(0, Common::Point(bx >> 16, by >> 16));
 		bx += cdx;
 		by += cdy;
 	}
 
-	p.x = x2;
-	p.y = y2;
-	_tempPath.insert_at(0, p);
-
-	return true;
+	_tempPath.insert_at(0, Common::Point(x2, y2));
 }
 
 bool PathFinding::lineIsWalkable(int16 x, int16 y, int16 x2, int16 y2) {
@@ -363,12 +356,8 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 	curX = destx;
 	curY = desty;
 
-	Common::Array<i32Point> retPath;
-
-	i32Point p;
-	p.x = curX;
-	p.y = curY;
-	retPath.push_back(p);
+	Common::Array<Common::Point> retPath;
+	retPath.push_back(Common::Point(curX, curY));
 
 	int32 bestscore = _sq[destx + desty * _width];
 
@@ -402,10 +391,7 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 		if (bestX < 0 || bestY < 0)
 			break;
 
-		i32Point pp;
-		pp.x = bestX;
-		pp.y = bestY;
-		retPath.push_back(pp);
+		retPath.push_back(Common::Point(bestX, bestY));
 
 		if ((bestX == x && bestY == y)) {
 			_tempPath.clear();
