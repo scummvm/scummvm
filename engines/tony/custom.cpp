@@ -1985,7 +1985,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		// If there is only one option, do it automatically, and wait for the next choice
 		if (_ctx->num == 1) {
 			mpalQueryDialogSelectionDWORD(_ctx->nChoice, _ctx->sl[0]);
-			globalFree(_ctx->sl);
+			globalDestroy(_ctx->sl);
 
 			// Wait for the next choice to be made
 			mpalQueryDialogWaitForChoice(&_ctx->nChoice);
@@ -2001,7 +2001,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 			_ctx->string = mpalQueryDialogPeriod(_ctx->sl[_ctx->i]);
 			assert(_ctx->string != NULL);
 			_ctx->dc.addChoice(_ctx->string);
-			globalFree(_ctx->string);
+			globalDestroy(_ctx->string);
 		}
 
 		// Activate the object
@@ -2028,7 +2028,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		// Closes the choice
 		_ctx->dc.close();
 
-		globalFree(_ctx->sl);
+		globalDestroy(_ctx->sl);
 
 		// Wait for the next choice to be made
 		mpalQueryDialogWaitForChoice(&_ctx->nChoice);
