@@ -723,8 +723,6 @@ void MohawkEngine_Riven::runLoadDialog() {
 	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 	if (slot >= 0)
 		loadGameState(slot);
-
-	slc.close();
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
