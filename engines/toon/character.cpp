@@ -173,7 +173,9 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		_vm->getPathFinding()->addBlockingEllipse(_vm->getDrew()->getFinalX(), _vm->getDrew()->getFinalY(), sizeX, sizeY);
 	}
 
-	_vm->getPathFinding()->findClosestWalkingPoint(newPosX, newPosY, &_finalX, &_finalY, _x, _y);
+	int16 tempFinalX, tempFinalY;
+	_vm->getPathFinding()->findClosestWalkingPoint(newPosX, newPosY, &tempFinalX, &tempFinalY, _x, _y);
+	_finalX = tempFinalX, _finalY = tempFinalY; // FIXME - Bodge to match types...
 	if (_x == _finalX && _y == _finalY)
 		return true;
 

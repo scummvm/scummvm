@@ -35,8 +35,8 @@ public:
 	PathFindingHeap();
 	~PathFindingHeap();
 
-	void push(int16 x, int16 y, int32 weight);
-	void pop(int16 *x, int16 *y, int32 *weight);
+	void push(int16 x, int16 y, int16 weight);
+	void pop(int16 *x, int16 *y, int16 *weight);
 	void init(int32 size);
 	void clear();
 	void unload();
@@ -61,16 +61,16 @@ public:
 
 	void init(Picture *mask);
 
-	bool findPath(int32 x, int32 y, int32 destX, int32 destY);
-	bool findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 *fyy, int origX = -1, int origY = -1);
-	bool isWalkable(int32 x, int32 y);
-	bool isLikelyWalkable(int32 x, int32 y);
-	bool lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2);
-	bool walkLine(int32 x, int32 y, int32 x2, int32 y2);
+	bool findPath(int16 x, int16 y, int16 destX, int16 destY);
+	bool findClosestWalkingPoint(int16 xx, int16 yy, int16 *fxx, int16 *fyy, int16 origX = -1, int16 origY = -1);
+	bool isWalkable(int16 x, int16 y);
+	bool isLikelyWalkable(int16 x, int16 y);
+	bool lineIsWalkable(int16 x, int16 y, int16 x2, int16 y2);
+	bool walkLine(int16 x, int16 y, int16 x2, int16 y2);
 
 	void resetBlockingRects() { _numBlockingRects = 0; }
-	void addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2);
-	void addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h);
+	void addBlockingRect(int16 x1, int16 y1, int16 x2, int16 y2);
+	void addBlockingEllipse(int16 x1, int16 y1, int16 w, int16 h);
 
 	int32 getPathNodeCount() const { return _tempPath.size(); }
 	int32 getPathNodeX(int32 nodeId) const { return _tempPath[ _tempPath.size() - nodeId - 1].x; }
@@ -84,8 +84,8 @@ private:
 	PathFindingHeap *_heap;
 
 	int32 *_sq;
-	int32 _width;
-	int32 _height;
+	int16 _width;
+	int16 _height;
 
 	struct i32Point {
 		int32 x, y;
@@ -93,7 +93,7 @@ private:
 
 	Common::Array<i32Point> _tempPath;
 
-	int32 _blockingRects[kMaxBlockingRects][5];
+	int16 _blockingRects[kMaxBlockingRects][5];
 	uint8 _numBlockingRects;
 };
 

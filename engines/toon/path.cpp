@@ -60,7 +60,7 @@ void PathFindingHeap::clear() {
 	memset(_data, 0, sizeof(HeapDataGrid) * _size);
 }
 
-void PathFindingHeap::push(int16 x, int16 y, int32 weight) {
+void PathFindingHeap::push(int16 x, int16 y, int16 weight) {
 	debugC(2, kDebugPath, "push(%d, %d, %d)", x, y, weight);
 
 	if (_count == _size) {
@@ -104,7 +104,7 @@ void PathFindingHeap::push(int16 x, int16 y, int32 weight) {
 	}
 }
 
-void PathFindingHeap::pop(int16 *x, int16 *y, int32 *weight) {
+void PathFindingHeap::pop(int16 *x, int16 *y, int16 *weight) {
 	debugC(2, kDebugPath, "pop(x, y, weight)");
 
 	if (!_count) {
@@ -173,14 +173,14 @@ void PathFinding::init(Picture *mask) {
 	_sq = new int32[_width * _height];
 }
 
-bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
+bool PathFinding::isLikelyWalkable(int16 x, int16 y) {
 	for (uint8 i = 0; i < _numBlockingRects; i++) {
 		if (_blockingRects[i][4] == 0) {
 			if (x >= _blockingRects[i][0] && x <= _blockingRects[i][2] && y >= _blockingRects[i][1] && y < _blockingRects[i][3])
 				return false;
 		} else {
-			int32 dx = abs(_blockingRects[i][0] - x);
-			int32 dy = abs(_blockingRects[i][1] - y);
+			int16 dx = abs(_blockingRects[i][0] - x);
+			int16 dy = abs(_blockingRects[i][1] - y);
 			if ((dx << 8) / _blockingRects[i][2] < (1 << 8) && (dy << 8) / _blockingRects[i][3] < (1 << 8)) {
 				return false;
 			}
@@ -189,13 +189,13 @@ bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
 	return true;
 }
 
-bool PathFinding::isWalkable(int32 x, int32 y) {
+bool PathFinding::isWalkable(int16 x, int16 y) {
 	debugC(2, kDebugPath, "isWalkable(%d, %d)", x, y);
 
 	return (_currentMask->getData(x, y) & 0x1f) > 0;
 }
 
-bool PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 *fyy, int origX, int origY) {
+bool PathFinding::findClosestWalkingPoint(int16 xx, int16 yy, int16 *fxx, int16 *fyy, int16 origX, int16 origY) {
 	debugC(1, kDebugPath, "findClosestWalkingPoint(%d, %d, fxx, fyy, %d, %d)", xx, yy, origX, origY);
 
 	int32 currentFound = -1;
@@ -207,8 +207,8 @@ bool PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 
 	if (origY == -1)
 		origY = yy;
 
-	for (int y = 0; y < _height; y++) {
-		for (int x = 0; x < _width; x++) {
+	for (int16 y = 0; y < _height; y++) {
+		for (int16 x = 0; x < _width; x++) {
 			if (isWalkable(x, y) && isLikelyWalkable(x, y)) {
 				int32 ndist = (x - xx) * (x - xx) + (y - yy) * (y - yy);
 				int32 ndist2 = (x - origX) * (x - origX) + (y - origY) * (y - origY);
@@ -232,7 +232,7 @@ bool PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 
 	}
 }
 
-bool PathFinding::walkLine(int32 x, int32 y, int32 x2, int32 y2) {
+bool PathFinding::walkLine(int16 x, int16 y, int16 x2, int16 y2) {
 	uint32 bx = x << 16;
 	int32 dx = x2 - x;
 	uint32 by = y << 16;
@@ -265,7 +265,7 @@ bool PathFinding::walkLine(int32 x, int32 y, int32 x2, int32 y2) {
 	return true;
 }
 
-bool PathFinding::lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2) {
+bool PathFinding::lineIsWalkable(int16 x, int16 y, int16 x2, int16 y2) {
 	uint32 bx = x << 16;
 	int32 dx = x2 - x;
 	uint32 by = y << 16;
@@ -290,7 +290,7 @@ bool PathFinding::lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 	return true;
 }
 
-bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
+bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 	debugC(1, kDebugPath, "findPath(%d, %d, %d, %d)", x, y, destx, desty);
 
 	if (x == destx && y == desty) {
@@ -313,9 +313,9 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	// no direct line, we use the standard A* algorithm
 	memset(_sq , 0, _width * _height * sizeof(int32));
 	_heap->clear();
-	int32 curX = x;
-	int32 curY = y;
-	int32 curWeight = 0;
+	int16 curX = x;
+	int16 curY = y;
+	int16 curWeight = 0;
 
 	_sq[curX + curY *_width] = 1;
 	_heap->push(curX, curY, abs(destx - x) + abs(desty - y));
@@ -323,19 +323,17 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 
 	while (_heap->getCount()) {
 		wei = 0;
-		int16 tempCurX, tempCurY;
-		_heap->pop(&tempCurX, &tempCurY, &curWeight);
-		curX = tempCurX, curY = tempCurY; // FIXME - Bodge to match heap->pop types
+		_heap->pop(&curX, &curY, &curWeight);
 		int32 curNode = curX + curY * _width;
 
-		int32 endX = MIN<int32>(curX + 1, _width - 1);
-		int32 endY = MIN<int32>(curY + 1, _height - 1);
-		int32 startX = MAX<int32>(curX - 1, 0);
-		int32 startY = MAX<int32>(curY - 1, 0);
+		int16 endX = MIN<int16>(curX + 1, _width - 1);
+		int16 endY = MIN<int16>(curY + 1, _height - 1);
+		int16 startX = MAX<int16>(curX - 1, 0);
+		int16 startY = MAX<int16>(curY - 1, 0);
 		bool next = false;
 
-		for (int32 px = startX; px <= endX && !next; px++) {
-			for (int32 py = startY; py <= endY && !next; py++) {
+		for (int16 px = startX; px <= endX && !next; px++) {
+			for (int16 py = startY; py <= endY && !next; py++) {
 				if (px != curX || py != curY) {
 					wei = ((abs(px - curX) + abs(py - curY)));
 
@@ -376,16 +374,16 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 
 	bool retVal = false;
 	while (true) {
-		int32 bestX = -1;
-		int32 bestY = -1;
+		int16 bestX = -1;
+		int16 bestY = -1;
 
-		int32 endX = MIN<int32>(curX + 1, _width - 1);
-		int32 endY = MIN<int32>(curY + 1, _height - 1);
-		int32 startX = MAX<int32>(curX - 1, 0);
-		int32 startY = MAX<int32>(curY - 1, 0);
+		int16 endX = MIN<int16>(curX + 1, _width - 1);
+		int16 endY = MIN<int16>(curY + 1, _height - 1);
+		int16 startX = MAX<int16>(curX - 1, 0);
+		int16 startY = MAX<int16>(curY - 1, 0);
 
-		for (int32 px = startX; px <= endX; px++) {
-			for (int32 py = startY; py <= endY; py++) {
+		for (int16 px = startX; px <= endX; px++) {
+			for (int16 py = startY; py <= endY; py++) {
 				if (px != curX || py != curY) {
 					wei = abs(px - curX) + abs(py - curY);
 
@@ -425,7 +423,7 @@ bool PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	return retVal;
 }
 
-void PathFinding::addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2) {
+void PathFinding::addBlockingRect(int16 x1, int16 y1, int16 x2, int16 y2) {
 	debugC(1, kDebugPath, "addBlockingRect(%d, %d, %d, %d)", x1, y1, x2, y2);
 	if (_numBlockingRects >= kMaxBlockingRects) {
 		warning("Maximum number of %d Blocking Rects reached!", kMaxBlockingRects);
@@ -440,7 +438,7 @@ void PathFinding::addBlockingRect(int32 x1, int32 y1, int32 x2, int32 y2) {
 	_numBlockingRects++;
 }
 
-void PathFinding::addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h) {
+void PathFinding::addBlockingEllipse(int16 x1, int16 y1, int16 w, int16 h) {
 	debugC(1, kDebugPath, "addBlockingEllipse(%d, %d, %d, %d)", x1, y1, w, h);
 	if (_numBlockingRects >= kMaxBlockingRects) {
 		warning("Maximum number of %d Blocking Rects reached!", kMaxBlockingRects);

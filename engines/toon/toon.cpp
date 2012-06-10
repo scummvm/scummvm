@@ -1488,7 +1488,7 @@ void ToonEngine::clickEvent() {
 	}
 
 	if (!currentHot) {
-		int32 xx, yy;
+		int16 xx, yy;
 
 		if (_gameState->_inCutaway || _gameState->_inInventory || _gameState->_inCloseUp)
 			return;
