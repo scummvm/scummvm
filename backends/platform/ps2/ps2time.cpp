@@ -120,4 +120,5 @@ void OSystem_PS2::getTimeAndDate(TimeDate &t) const {
 	t.tm_year = g_year + 100;
 	t.tm_mday = g_day;
 	t.tm_mon  = g_month - 1;
+	t.tm_wday = 0; // FIXME
 }

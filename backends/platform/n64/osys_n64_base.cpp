@@ -866,6 +866,7 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 	t.tm_mday = 1;
 	t.tm_mon  = 0;
 	t.tm_year = 110;
+	t.tm_wday = 0;
 
 	return;
 }

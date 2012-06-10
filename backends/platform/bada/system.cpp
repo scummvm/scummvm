@@ -399,6 +399,7 @@ void BadaSystem::getTimeAndDate(TimeDate &td) const {
 		td.tm_mday = currentTime.GetDay();
 		td.tm_mon = currentTime.GetMonth();
 		td.tm_year = currentTime.GetYear();
+		td.tm_wday = 0; // FIXME
 	}
 }
 
