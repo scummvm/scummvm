@@ -190,10 +190,10 @@ void OSystem_SDL::initBackend() {
 
 	if (_mixerManager == 0) {
 		_mixerManager = new SdlMixerManager();
-		g_eventRec.registerMixerManager(_mixerManager);
 		// Setup and start mixer
 		_mixerManager->init();
 	}
+	g_eventRec.registerMixerManager(_mixerManager);
 
 	if (_audiocdManager == 0) {
 		// Audio CD support was removed with SDL 1.3
@@ -468,6 +468,9 @@ void OSystem_SDL::setupIcon() {
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
+	if (!g_eventRec.isRecording()) {
+		return millis;
+	}
 	if (skipRecord) {
 		millis = g_eventRec.getTimer();
 		return millis;
