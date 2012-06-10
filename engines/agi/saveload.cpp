@@ -795,8 +795,6 @@ int AgiEngine::selectSlot() {
 }
 
 int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
-	const EnginePlugin *plugin = NULL;
-	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
 	int slot;
@@ -804,7 +802,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 	if (isSave) {
 		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
-		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
 
 		if (desc.empty()) {
@@ -824,7 +822,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 			desc = Common::String(desc.c_str(), 28);
 	} else {
 		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		slot = dialog->runModalWithCurrentTarget();
 	}
 
 	delete dialog;

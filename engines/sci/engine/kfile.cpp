@@ -562,10 +562,8 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 		// we are supposed to show a dialog for the user and let him choose where to save
 		g_sci->_soundCmd->pauseAll(true); // pause music
-		const EnginePlugin *plugin = NULL;
-		EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		savegameId = dialog->runModalWithCurrentTarget();
 		game_description = dialog->getResultString();
 		if (game_description.empty()) {
 			// create our own description for the saved game, the user didnt enter it
@@ -668,10 +666,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		if (savegameId == -1) {
 			// we are supposed to show a dialog for the user and let him choose a saved game
 			g_sci->_soundCmd->pauseAll(true); // pause music
-			const EnginePlugin *plugin = NULL;
-			EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-			savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 			if (savegameId < 0) {
 				g_sci->_soundCmd->pauseAll(false); // unpause music

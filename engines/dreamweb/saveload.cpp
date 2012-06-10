@@ -158,11 +158,8 @@ void DreamWebEngine::doLoad(int savegameId) {
 		if (savegameId == -1) {
 			// Open dialog to get savegameId
 
-			const EnginePlugin *plugin = NULL;
-			Common::String gameId = ConfMan.get("gameid");
-			EngineMan.findGame(gameId, &plugin);
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-			savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 		}
 
@@ -244,11 +241,8 @@ void DreamWebEngine::saveGame() {
 		}
 		return;
 	} else {
-		const EnginePlugin *plugin = NULL;
-		Common::String gameId = ConfMan.get("gameid");
-		EngineMan.findGame(gameId, &plugin);
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-		int savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		int savegameId = dialog->runModalWithCurrentTarget();
 		Common::String game_description = dialog->getResultString();
 		if (game_description.empty())
 			game_description = "Untitled";

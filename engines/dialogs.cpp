@@ -214,12 +214,7 @@ void MainMenuDialog::reflowLayout() {
 }
 
 void MainMenuDialog::save() {
-	const Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	int slot = _saveDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	int slot = _saveDialog->runModalWithCurrentTarget();
 
 	if (slot >= 0) {
 		Common::String result(_saveDialog->getResultString());
@@ -250,12 +245,7 @@ void MainMenuDialog::save() {
 }
 
 void MainMenuDialog::load() {
-	const Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	int slot = _loadDialog->runModalWithCurrentTarget();
 
 	_engine->setGameToLoadSlot(slot);
 

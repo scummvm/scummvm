@@ -67,6 +67,13 @@ public:
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void setList(const StringArray& list);
+	/**
+	 * Runs the save/load chooser with the currently active config manager
+	 * domain as target.
+	 *
+	 * @return The selcted save slot. -1 in case none is selected.
+	 */
+	int runModalWithCurrentTarget();
 	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
 	void open();
 

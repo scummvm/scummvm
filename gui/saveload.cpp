@@ -76,6 +76,15 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 SaveLoadChooser::~SaveLoadChooser() {
 }
 
+int SaveLoadChooser::runModalWithCurrentTarget() {
+	const Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+}
+
 int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);

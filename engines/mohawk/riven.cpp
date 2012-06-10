@@ -715,12 +715,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 void MohawkEngine_Riven::runLoadDialog() {
 	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 
-	Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	int slot = slc.runModalWithCurrentTarget();
 	if (slot >= 0)
 		loadGameState(slot);
 }

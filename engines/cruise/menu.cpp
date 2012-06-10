@@ -207,15 +207,13 @@ int processMenu(menuStruct *pMenu) {
 }
 
 static void handleSaveLoad(bool saveFlag) {
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(_vm->getGameId(), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	if (saveFlag)
 		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 	else
 		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 
-	int slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	int slot = dialog->runModalWithCurrentTarget();
 
 	if (slot >= 0) {
 		if (!saveFlag)

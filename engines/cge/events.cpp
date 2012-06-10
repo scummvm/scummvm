@@ -70,11 +70,8 @@ bool Keyboard::getKey(Common::Event &event) {
 		return false;
 	case Common::KEYCODE_F5:
 		if (_vm->canSaveGameStateCurrently()) {
-			const EnginePlugin *plugin = NULL;
-			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
-
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
-			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			int16 savegameId = dialog->runModalWithCurrentTarget();
 			Common::String savegameDescription = dialog->getResultString();
 			delete dialog;
 
@@ -84,11 +81,8 @@ bool Keyboard::getKey(Common::Event &event) {
 		return false;
 	case Common::KEYCODE_F7:
 		if (_vm->canLoadGameStateCurrently()) {
-			const EnginePlugin *plugin = NULL;
-			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
-
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
-			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			int16 savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
 			if (savegameId != -1)
