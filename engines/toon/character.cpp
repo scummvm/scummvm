@@ -186,7 +186,7 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		int32 smoothDx = 0;
 		int32 smoothDy = 0;
 
-		for (int32 a = 0; a < _vm->getPathFinding()->getPathNodeCount(); a++) {
+		for (uint32 a = 0; a < _vm->getPathFinding()->getPathNodeCount(); a++) {
 			_currentPathX[a] = _vm->getPathFinding()->getPathNodeX(a);
 			_currentPathY[a] = _vm->getPathFinding()->getPathNodeY(a);
 		}

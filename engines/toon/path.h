@@ -41,7 +41,7 @@ public:
 	void init(int32 size);
 	void clear();
 	void unload();
-	int32 getCount() { return _count; }
+	uint32 getCount() { return _count; }
 
 private:
 	struct HeapDataGrid {
@@ -51,8 +51,8 @@ private:
 
 	HeapDataGrid *_data;
 
-	int32 _size;
-	int32 _count;
+	uint32 _size;
+	uint32 _count;
 };
 
 class PathFinding {
@@ -73,9 +73,9 @@ public:
 	void addBlockingRect(int16 x1, int16 y1, int16 x2, int16 y2);
 	void addBlockingEllipse(int16 x1, int16 y1, int16 w, int16 h);
 
-	int32 getPathNodeCount() const { return _tempPath.size(); }
-	int32 getPathNodeX(int32 nodeId) const { return _tempPath[ _tempPath.size() - nodeId - 1].x; }
-	int32 getPathNodeY(int32 nodeId) const { return _tempPath[ _tempPath.size() - nodeId - 1].y; }
+	uint32 getPathNodeCount() const { return _tempPath.size(); }
+	int16 getPathNodeX(uint32 nodeId) const { return _tempPath[(_tempPath.size() - 1) - nodeId].x; }
+	int16 getPathNodeY(uint32 nodeId) const { return _tempPath[(_tempPath.size() - 1) - nodeId].y; }
 
 private:
 	static const uint8 kMaxBlockingRects = 16;

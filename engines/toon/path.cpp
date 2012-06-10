@@ -65,7 +65,7 @@ void PathFindingHeap::push(int16 x, int16 y, int16 weight) {
 
 	if (_count == _size) {
 		// Increase size by 50%
-		int newSize = _size + (_size >> 1) + 1;
+		uint32 newSize = _size + (_size / 2) + 1;
 		HeapDataGrid *newData;
 
 		newData = (HeapDataGrid *)realloc(_data, sizeof(HeapDataGrid) * newSize);
@@ -84,13 +84,13 @@ void PathFindingHeap::push(int16 x, int16 y, int16 weight) {
 	_data[_count]._weight = weight;
 	_count++;
 
-	int32 lMax = _count-1;
-	int32 lT = 0;
+	uint32 lMax = _count - 1;
+	uint32 lT = 0;
 
 	while (true) {
 		if (lMax <= 0)
 			break;
-		lT = (lMax-1) / 2;
+		lT = (lMax - 1) / 2;
 
 		if (_data[lT]._weight > _data[lMax]._weight) {
 			HeapDataGrid temp;
@@ -120,13 +120,13 @@ void PathFindingHeap::pop(int16 *x, int16 *y, int16 *weight) {
 	if (!_count)
 		return;
 
-	int32 lMin = 0;
-	int32 lT = 0;
+	uint32 lMin = 0;
+	uint32 lT = 0;
 
 	while (true) {
-		lT = (lMin << 1) + 1;
+		lT = (lMin * 2) + 1;
 		if (lT < _count) {
-			if (lT < _count-1) {
+			if (lT < _count - 1) {
 				if (_data[lT + 1]._weight < _data[lT]._weight)
 					lT++;
 			}
@@ -312,8 +312,8 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 
 	_sq[curX + curY *_width] = 1;
 	_heap->push(curX, curY, abs(destx - x) + abs(desty - y));
-	int32 wei = 0;
 
+	int16 wei;
 	while (_heap->getCount()) {
 		wei = 0;
 		_heap->pop(&curX, &curY, &curWeight);
@@ -328,7 +328,7 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 		for (int16 px = startX; px <= endX && !next; px++) {
 			for (int16 py = startY; py <= endY && !next; py++) {
 				if (px != curX || py != curY) {
-					wei = ((abs(px - curX) + abs(py - curY)));
+					wei = abs(px - curX) + abs(py - curY);
 
 					int32 curPNode = px + py * _width;
 					if (isWalkable(px, py)) { // walkable ?
