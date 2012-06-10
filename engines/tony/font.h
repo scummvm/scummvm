@@ -47,7 +47,7 @@ class RMPointer;
  */
 class RMFont : public RMGfxTaskSetPrior {
 protected:
-	int nLetters;
+	int _nLetters;
 	RMGfxSourceBuffer8RLEByte *_letter;
 public:
 	int _fontDimx, _fontDimy;
@@ -107,7 +107,7 @@ public:
 
 class RMFontColor : public virtual RMFont {
 private:
-	byte m_r, m_g, m_b;
+	byte _fontR, _fontG, _fontB;
 
 public:
 	RMFontColor();
@@ -118,24 +118,24 @@ public:
 
 class RMFontWithTables : public virtual RMFont {
 protected:
-	int cTable[256];
-	int lTable[256];
-	int lDefault;
-	int hDefault;
-	signed char l2Table[256][256];
+	int _cTable[256];
+	int _lTable[256];
+	int _lDefault;
+	int _hDefault;
+	signed char _l2Table[256][256];
 
 protected:
 	// Overloaded methods
 	int convertToLetter(byte nChar) {
-		return cTable[nChar];
+		return _cTable[nChar];
 	}
 	int letterLength(int nChar, int nNext = 0) {
-		return (nChar != -1 ? lTable[(byte)nChar] + l2Table[(byte)nChar][(byte)nNext] : lDefault);
+		return (nChar != -1 ? _lTable[(byte)nChar] + _l2Table[(byte)nChar][(byte)nNext] : _lDefault);
 	}
 
 public:
 	int letterHeight() {
-		return hDefault;
+		return _hDefault;
 	}
 	virtual ~RMFontWithTables() {}
 };
@@ -176,7 +176,7 @@ class RMText : public RMGfxWoodyBuffer {
 private:
 	static RMFontColor *_fonts[4];
 	static RMGfxClearTask _clear;
-	int maxLineLength;
+	int _maxLineLength;
 
 public:
 	enum HORALIGN {
@@ -193,9 +193,9 @@ public:
 	};
 
 private:
-	HORALIGN aHorType;
-	VERALIGN aVerType;
-	byte m_r, m_g, m_b;
+	HORALIGN _aHorType;
+	VERALIGN _aVerType;
+	byte _textR, _textG, _textB;
 
 protected:
 	virtual void clipOnScreen(RMGfxPrimitive *prim);
@@ -208,8 +208,8 @@ public:
 
 	// Set the alignment type
 	void setAlignType(HORALIGN aHor, VERALIGN aVer) {
-		aHorType = aHor;
-		aVerType = aVer;
+		_aHorType = aHor;
+		_aVerType = aVer;
 	}
 
 	// Sets the maximum length of a line in pixels (used to format the text)
@@ -227,9 +227,9 @@ public:
 
 	// Set the base colour
 	void setColor(byte r, byte g, byte b) {
-		m_r = r;
-		m_g = g;
-		m_b = b;
+		_textR = r;
+		_textG = g;
+		_textB = b;
 	}
 };
 
@@ -241,13 +241,13 @@ protected:
 	int _startTime;
 	int _time;
 	bool _bSkipStatus;
-	RMPoint dst;
-	uint32 hEndDisplay;
+	RMPoint _dst;
+	uint32 _hEndDisplay;
 	bool _bShowed;
 	bool _bForceTime;
 	bool _bForceNoTime;
-	uint32 hCustomSkip;
-	uint32 hCustomSkip2;
+	uint32 _hCustomSkip;
+	uint32 _hCustomSkip2;
 	RMInput *_input;
 	bool _bAlwaysDisplay;
 	bool _bNoTab;
@@ -271,7 +271,7 @@ public:
 
 	// Set the position
 	void setPosition(const RMPoint &pt) {
-		dst = pt;
+		_dst = pt;
 	}
 
 	// Waiting
@@ -294,8 +294,8 @@ public:
 
 class RMTextDialogScrolling : public RMTextDialog {
 protected:
-	RMLocation *curLoc;
-	RMPoint startScroll;
+	RMLocation *_curLoc;
+	RMPoint _startScroll;
 
 	virtual void clipOnScreen(RMGfxPrimitive *prim);
 
@@ -351,11 +351,11 @@ private:
 	RMPoint *_ptDrawStrings;
 	int _curAdded;
 	bool _bShow;
-	RMGfxSourceBuffer8 DlgText;
-	RMGfxSourceBuffer8 DlgTextLine;
+	RMGfxSourceBuffer8 _dlgText;
+	RMGfxSourceBuffer8 _dlgTextLine;
 	RMPoint _ptDrawPos;
-	uint32 hUnreg;
-	bool bRemoveFromOT;
+	uint32 _hUnreg;
+	bool _bRemoveFromOT;
 
 protected:
 	void prepare(CORO_PARAM);
