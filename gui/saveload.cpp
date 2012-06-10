@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/system.h"
 
 #include "gui/widgets/list.h"
 #include "gui/message.h"
@@ -124,6 +125,18 @@ void SaveLoadChooser::open() {
 const Common::String &SaveLoadChooser::getResultString() const {
 	int selItem = _list->getSelected();
 	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
+}
+
+Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
+#if defined(USE_SAVEGAME_TIMESTAMP)
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+	curTime.tm_year += 1900; // fixup year
+	curTime.tm_mon++; // fixup month
+	return Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+#else
+	return Common::String::format("Save %d", slot + 1);
+#endif
 }
 
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

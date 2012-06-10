@@ -79,6 +79,21 @@ public:
 
 	const Common::String &getResultString() const;
 
+	/**
+	 * Creates a default save description for the specified slot. Depending
+	 * on the ScummVM configuration this might be a simple "Slot #" description
+	 * or the current date and time.
+	 *
+	 * TODO: This might not be the best place to put this, since engines not
+	 * using this class might want to mimic the same behavior. Check whether
+	 * moving this to a better place makes sense and find what this place would
+	 * be.
+	 *
+	 * @param slot The slot number (must be >= 0).
+	 * @return The slot description.
+	 */
+	Common::String createDefaultSaveDescription(const int slot) const;
+
 	virtual void reflowLayout();
 
 	virtual void close();
