@@ -26,7 +26,10 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/adpcm.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
 #include "common/textconsole.h"
 #include "tony/game.h"
 #include "tony/tony.h"
@@ -182,7 +185,7 @@ void FPSOUND::GetMasterVolume(int *lpdwVolume) {
 
 /****************************************************************************\
 *
-* Function:     FPSFX(LPDIRECTSOUND lpDS, bool bSoundOn);
+* Function:     FPSFX(bool bSoundOn);
 *
 * Description:  Costruttore di default. *NON* bisogna dichiarare direttamente
 *               un oggetto, ma crearlo piuttosto tramite FPSOUND::CreateSfx()
@@ -190,40 +193,13 @@ void FPSOUND::GetMasterVolume(int *lpdwVolume) {
 \****************************************************************************/
 
 FPSFX::FPSFX(bool bSoundOn) {
-#ifdef REFACTOR_ME
-
-	static char errbuf[128];
-
-	//hwnd=hWnd;
 	bSoundSupported = bSoundOn;
 	bFileLoaded = false;
-	bIsPlaying = false;
-	bPaused = false;
-	lpDSBuffer = NULL;
-	lpDSNotify = NULL;
-	lpDS = lpds;
 	lastVolume = 63;
 	hEndOfBuffer = CORO_INVALID_PID_VALUE;
 	bIsVoice = false;
-
-	if (bSoundSupported == false)
-		return;
-
-	/* Poiché non abbiamo ancora nessun dato sull'effetto sonoro, non possiamo fare nulla */
-#else
-	bIsVoice = false;
-	lastVolume = 0;
-	dwFreq = 0;
-	hEndOfBuffer = CORO_INVALID_PID_VALUE;
-	bFileLoaded = false;
-	bSoundSupported = false;
-	bLoop = false;
+	_stream = 0;
 	bPaused = false;
-	bStereo = false;
-	b16bit = false;
-	bIsPlaying = false;
-	bIsVoice = false;
-#endif
 }
 
 
@@ -238,21 +214,16 @@ FPSFX::FPSFX(bool bSoundOn) {
 \****************************************************************************/
 
 FPSFX::~FPSFX() {
-#ifdef REFACTOR_ME
-
 	if (!bSoundSupported)
 		return;
 
-	if (bIsPlaying)
-		Stop();
+	g_system->getMixer()->stopHandle(_handle);
 
-	RELEASE(lpDSNotify);
+	delete _stream;
 
-	if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
-		CloseHandle(hEndOfBuffer);
-
-	RELEASE(lpDSBuffer);
-#endif
+	// FIXME
+	//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
+	//	CloseHandle(hEndOfBuffer);
 }
 
 
@@ -271,7 +242,6 @@ FPSFX::~FPSFX() {
 
 void FPSFX::Release() {
 	delete this;
-//	return NULL;
 }
 
 
@@ -291,87 +261,16 @@ void FPSFX::Release() {
 \****************************************************************************/
 
 bool FPSFX::loadWave(Common::SeekableReadStream *stream) {
-#ifdef REFACTOR_ME
-	static PCMWAVEFORMAT pcmwf;
-	static DSBUFFERDESC dsbdesc;
-	static HRESULT err;
-	static char errbuf[128];
-	uint32 dwHi;
-	struct WAVH {
-		int nChunckSize;
-		uint16 wFormatTag;
-		uint16 nChannels;
-		int nSamplesPerSec;
-		int nAvgBytesPerSec;
-		uint16 nBlockAlign;
-		uint16 nBitsPerSample;
-	} *WAVHeader;
-	uint32 dwSize;
-	void *lpLock;
-
-	if (!bSoundSupported)
-		return true;
-
-	if (lpBuf[0] != 'W' || lpBuf[1] != 'A' || lpBuf[2] != 'V' || lpBuf[3] != 'E')
-		return false;
-	if (lpBuf[4] != 'f' || lpBuf[5] != 'm' || lpBuf[6] != 't' || lpBuf[7] != ' ')
+	if (!stream)
 		return false;
 
-	WAVHeader = (WAVH *)(lpBuf + 8);
-	lpBuf += 8 + sizeof(WAVH);
+	_stream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
-	if (lpBuf[0] != 'd' || lpBuf[1] != 'a' || lpBuf[2] != 't' || lpBuf[3] != 'a')
+	if (!_stream)
 		return false;
-	lpBuf += 4;
-
-	dwSize = READ_LE_UINT32(lpBuf);
-	lpBuf += 4;
-
-	b16bit = (WAVHeader->nBitsPerSample == 16);
-	bStereo = (WAVHeader->nChannels == 2);
-	dwFreq = WAVHeader->nSamplesPerSec;
-
-	/* Setta le strutture necessarie per la creazione di un secondary buffer
-	   Attiviamo inoltre il controllo del volume, in modo da poter abbassare
-	   e alzare il volume della musica indipendentemente da quello generale.
-	   Proviamo a buttarlo in sound ram. */
-	pcmwf.wBitsPerSample = (b16bit ? 16 : 8);
-	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
-	pcmwf.wf.nChannels = (bStereo ? 2 : 1);
-	pcmwf.wf.nSamplesPerSec = dwFreq;
-	pcmwf.wf.nBlockAlign = (pcmwf.wBitsPerSample / 8) * pcmwf.wf.nChannels;
-	pcmwf.wf.nAvgBytesPerSec = (uint32)pcmwf.wf.nBlockAlign * (uint32)pcmwf.wf.nSamplesPerSec;
-
-	dsbdesc.dwSize = sizeof(dsbdesc);
-	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY;
-	dsbdesc.dwBufferBytes = dwSize;
-	dsbdesc.lpwfxFormat = (LPWAVEFORMATEX)&pcmwf;
-
-	if ((err = lpDS->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL)) != DS_OK) {
-		wsprintf(errbuf, "Error creating the secondary buffer (%lx)", err);
-		MessageBox(hwnd, errbuf, "FPSFX::FPSFX()", MB_OK);
-		return false;
-	}
-
-	// Riempie il buffer
-	if ((err = lpDSBuffer->Lock(0, dwSize, &lpLock, (uint32 *)&dwHi, NULL, NULL, 0)) != DS_OK) {
-		MessageBox(hwnd, "Cannot lock sfx buffer!", "FPSFX::LoadFile()", MB_OK);
-		return false;
-	}
-
-	/* Decomprime i dati dello stream direttamente dentro il buffer lockato */
-	copyMemory(lpLock, lpBuf, dwSize);
-
-	/* Unlocka il buffer */
-	lpDSBuffer->Unlock(lpLock, dwSize, NULL, NULL);
-
-	/* Setta volume iniziale */
-	SetVolume(lastVolume);
 
 	bFileLoaded = true;
-#endif
-
-	delete stream; // Just so we don't leak it
+	SetVolume(lastVolume);
 	return true;
 }
 
@@ -391,207 +290,59 @@ bool FPSFX::loadWave(Common::SeekableReadStream *stream) {
 \****************************************************************************/
 
 bool FPSFX::LoadVoiceFromVDB(Common::File &vdbFP) {
-#ifdef REFACTOR_ME
-	uint32 dwSize;
-	static PCMWAVEFORMAT pcmwf;
-	static DSBUFFERDESC dsbdesc;
-	byte *lpTempBuffer;
-	static HRESULT err;
-	uint32 dwHi;
-	void *lpBuf;
-	static char errbuf[128];
-
 	if (!bSoundSupported)
 		return true;
 
-	b16bit = true;
-	bStereo = false;
+	uint32 size = vdbFP.readUint32LE();
+	uint32 rate = vdbFP.readUint32LE();
 	bIsVoice = true;
 
-// fread(&dwSize,1,4,vdbFP);
-// fread(&dwFreq,1,4,vdbFP);
-	ReadFile(vdbFP, &dwSize, 4, &dwHi, NULL);
-	ReadFile(vdbFP, &dwFreq, 4, &dwHi, NULL);
+	_stream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
 
-	dwSize *= 4;
-
-	/* Setta le strutture necessarie per la creazione di un secondary buffer
-	   Attiviamo inoltre il controllo del volume, in modo da poter abbassare
-	   e alzare il volume della musica indipendentemente da quello generale.
-	   Proviamo a buttarlo in sound ram. */
-	pcmwf.wBitsPerSample = (b16bit ? 16 : 8);
-	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
-	pcmwf.wf.nChannels = (bStereo ? 2 : 1);
-	pcmwf.wf.nSamplesPerSec = dwFreq;
-	pcmwf.wf.nBlockAlign = (pcmwf.wBitsPerSample / 8) * pcmwf.wf.nChannels;
-	pcmwf.wf.nAvgBytesPerSec = (uint32)pcmwf.wf.nBlockAlign * (uint32)pcmwf.wf.nSamplesPerSec;
-
-	dsbdesc.dwSize = sizeof(dsbdesc);
-	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY;
-	dsbdesc.dwBufferBytes = dwSize;
-	dsbdesc.lpwfxFormat = (LPWAVEFORMATEX)&pcmwf;
-
-	if ((err = lpDS->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL)) != DS_OK) {
-		wsprintf(errbuf, "Error creating the secondary buffer (%lx)", err);
-		MessageBox(hwnd, errbuf, "FPSFX::FPSFX()", MB_OK);
-		return false;
-	}
-
-	/* Alloca un buffer temporaneo */
-	lpTempBuffer = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, dwSize);
-	if (lpTempBuffer == NULL)
-		return false;
-
-	lpCodec = new CODECADPCMMONO(bLoop, lpTempBuffer);
-
-	/* Riempie il buffer */
-	if ((err = lpDSBuffer->Lock(0, dwSize, &lpBuf, (uint32 *)&dwHi, NULL, NULL, 0)) != DS_OK) {
-		MessageBox(hwnd, "Cannot lock sfx buffer!", "FPSFX::LoadFile()", MB_OK);
-		return false;
-	}
-
-	/* Decomprime i dati dello stream direttamente dentro il buffer lockato */
-	lpCodec->Decompress(vdbFP, lpBuf, dwSize);
-
-	/* Unlocka il buffer */
-	lpDSBuffer->Unlock(lpBuf, dwSize, NULL, NULL);
-
-	delete lpCodec;
-
-	/* Crea il notify per avvertire quando raggiungiamo la fine della voce */
-	err = lpDSBuffer->QueryInterface(IID_IDirectSoundNotify, (void **)&lpDSNotify);
-	if (FAILED(err)) {
-		wsprintf(errbuf, "Error creating notify object! (%lx)", err);
-		MessageBox(hwnd, errbuf, "FPSFX::LoadVoiceFromVDB()", MB_OK);
-		return false;
-	}
-
-	hEndOfBuffer = CreateEvent(NULL, false, false, NULL);
-
-	dspnHot[0].dwOffset = DSBPN_OFFSETSTOP;
-	dspnHot[0].hEventNotify = hEndOfBuffer;
-
-	lpDSNotify->SetNotificationPositions(1, dspnHot);
-
-	/* Tutto a posto, possiamo uscire */
 	bFileLoaded = true;
 	SetVolume(62);
-
-#endif
 	return true;
 }
 
 
 bool FPSFX::LoadFile(const char *lpszFileName, uint32 dwCodec) {
-#ifdef REFACTOR_ME
-	static PCMWAVEFORMAT pcmwf;
-	static DSBUFFERDESC dsbdesc;
-	static HRESULT err;
-	static char errbuf[128];
-	Common::File file;
-	uint32 dwSize;
-	byte *lpTempBuffer;
-	void *lpBuf;
-	uint32 dwHi;
-	struct {
-		char id[4];
-		int freq;
-		int nChan;
-	} ADPHead;
-
 	if (!bSoundSupported)
 		return true;
 
-	/* Apre il file di stream in lettura */
+	Common::File file;
 	if (!file.open(lpszFileName)) {
-		warning("FPSFX::LoadFile() : Cannot open sfx file!");
+		warning("FPSFX::LoadFile(): Cannot open sfx file!");
 		return false;
 	}
 
-	/* Leggiamo l'header */
-	file.read(ADPHead.id, 4);
-	ADPHead.freq = file.readUint32LE();
-	ADPHead.nChan = file.readUint32LE();
-
-	if (ADPHead.id[0] != 'A' || ADPHead.id[1] != 'D' || ADPHead.id[2] != 'P' || ADPHead.id[3] != 0x10) {
-		warning("FPSFX::LoadFile() : Invalid ADP header!");
-		file.close();
+	if (file.readUint32BE() != MKTAG('A', 'D', 'P', 0x10)) {
+		warning("FPSFX::LoadFile(): Invalid ADP header!");
 		return false;
 	}
 
-	b16bit = true;
-	bStereo = (ADPHead.nChan == 2);
-	dwFreq = ADPHead.freq;
+	uint32 rate = file.readUint32LE();
+	uint32 channels = file.readUint32LE();
 
-	/* Si salva la lunghezza dello stream */
-	dwSize = file.size() - 12 /*sizeof(ADPHead)*/;
-	file.seek(0);
+	Common::SeekableReadStream *buffer = file.readStream(file.size() - file.pos());
+	Audio::RewindableAudioStream *stream;
 
-	if (dwCodec == FPCODEC_ADPCM)
-		dwSize *= 4;
+	if (dwCodec == FPCODEC_ADPCM) {
+		stream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, channels);
+	} else {
+		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
-	/* Setta le strutture necessarie per la creazione di un secondary buffer
-	   Attiviamo inoltre il controllo del volume, in modo da poter abbassare
-	   e alzare il volume della musica indipendentemente da quello generale.
-	   Proviamo a buttarlo in sound ram. */
-	pcmwf.wBitsPerSample = (b16bit ? 16 : 8);
-	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
-	pcmwf.wf.nChannels = (bStereo ? 2 : 1);
-	pcmwf.wf.nSamplesPerSec = dwFreq;
-	pcmwf.wf.nBlockAlign = (pcmwf.wBitsPerSample / 8) * pcmwf.wf.nChannels;
-	pcmwf.wf.nAvgBytesPerSec = (uint32)pcmwf.wf.nBlockAlign * (uint32)pcmwf.wf.nSamplesPerSec;
+		if (channels == 2)
+			flags |= Audio::FLAG_STEREO;
 
-	dsbdesc.dwSize = sizeof(dsbdesc);
-	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY;
-	dsbdesc.dwBufferBytes = dwSize;
-	dsbdesc.lpwfxFormat = (LPWAVEFORMATEX) & pcmwf;
-
-	if ((err = lpDS->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL)) != DS_OK) {
-		wsprintf(errbuf, "Error creating the secondary buffer (%lx)", err);
-		MessageBox(hwnd, errbuf, "FPSFX::FPSFX()", MB_OK);
-		return false;
+		stream = Audio::makeRawStream(buffer, rate, flags, DisposeAfterUse::YES);
 	}
 
-	/* Alloca un buffer temporaneo */
-	lpTempBuffer = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, dwSize);
-	if (lpTempBuffer == NULL)
-		return false;
+	if (bLoop)
+		_stream = Audio::makeLoopingAudioStream(stream, 0);
+	else
+		_stream = stream;
 
-	switch (dwCodec) {
-	case FPCODEC_RAW:
-		lpCodec = new CODECRAW(bLoop);
-		break;
-
-	case FPCODEC_ADPCM:
-		if (bStereo)
-			lpCodec = new CODECADPCMSTEREO(bLoop, lpTempBuffer);
-		else
-			lpCodec = new CODECADPCMMONO(bLoop, lpTempBuffer);
-		break;
-
-	default:
-		return false;
-		G
-	}
-
-	/* Riempie il buffer */
-	if ((err = lpDSBuffer->Lock(0, dwSize, &lpBuf, (uint32 *)&dwHi, NULL, NULL, 0)) != DS_OK) {
-		MessageBox(hwnd, "Cannot lock sfx buffer!", "FPSFX::LoadFile()", MB_OK);
-		return false;
-	}
-
-	/* Decomprime i dati dello stream direttamente dentro il buffer lockato */
-	lpCodec->Decompress(file, lpBuf, dwSize);
-
-	/* Unlocka il buffer */
-	lpDSBuffer->Unlock(lpBuf, dwSize, NULL, NULL);
-
-	delete lpCodec;
-	file.close();
-
-	/* Tutto a posto, possiamo uscire */
 	bFileLoaded = true;
-#endif
 	return true;
 }
 
@@ -607,19 +358,22 @@ bool FPSFX::LoadFile(const char *lpszFileName, uint32 dwCodec) {
 \****************************************************************************/
 
 bool FPSFX::Play() {
-#ifdef REFACTOR_ME
+	Stop(); // sanity check
+
 	if (bFileLoaded) {
-		if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
-			ResetEvent(hEndOfBuffer);
+		// FIXME
+		//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
+		//	ResetEvent(hEndOfBuffer);
 
-		lpDSBuffer->SetCurrentPosition(0);
-		bIsPlaying = true;
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, _stream, -1,
+				Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
-		if (!bPaused) {
-			lpDSBuffer->Play(0, 0, (bLoop ? DSBPLAY_LOOPING : 0));
-		}
+		SetVolume(lastVolume);
+
+		if (bPaused)
+			g_system->getMixer()->pauseHandle(_handle, true);
 	}
-#endif
+
 	return true;
 }
 
@@ -634,17 +388,12 @@ bool FPSFX::Play() {
 *
 \****************************************************************************/
 
-bool FPSFX::Stop(void) {
-#ifdef REFACTOR_ME
+bool FPSFX::Stop() {
 	if (bFileLoaded) {
-		if (bPaused || bIsPlaying) {
-			lpDSBuffer->Stop();
-		}
-
-		bIsPlaying = false;
+		g_system->getMixer()->stopHandle(_handle);
 		bPaused = false;
 	}
-#endif
+
 	return true;
 }
 
@@ -671,21 +420,12 @@ void FPSFX::SetLoop(bool bLop) {
 }
 
 void FPSFX::Pause(bool bPause) {
-#ifdef REFACTOR_ME
 	if (bFileLoaded) {
-		if (bPause && bIsPlaying) {
-			lpDSBuffer->Stop();
-		} else if (!bPause && bPaused) {
-			if (bIsPlaying && bLoop)
-				lpDSBuffer->Play(0, 0, (bLoop ? DSBPLAY_LOOPING : 0));
-		}
+		if (g_system->getMixer()->isSoundHandleActive(_handle) && (bPause ^ bPaused))
+			g_system->getMixer()->pauseHandle(_handle, bPause);
 
-		// Trucchetto per risettare il volume secondo le
-		// possibili nuove configurazioni sonore
-		SetVolume(lastVolume);
 		bPaused = bPause;
 	}
-#endif
 }
 
 
@@ -718,10 +458,9 @@ void FPSFX::SetVolume(int dwVolume) {
 			if (dwVolume < 0) dwVolume = 0;
 		}
 	}
-#ifdef REFACTOR_ME
-	if (bFileLoaded)
-		lpDSBuffer->SetVolume(dwVolume * (DSBVOLUME_MAX - DSBVOLUME_MIN) / 64 + DSBVOLUME_MIN);
-#endif
+
+	if (g_system->getMixer()->isSoundHandleActive(_handle))
+		g_system->getMixer()->setChannelVolume(_handle, dwVolume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
 
@@ -738,14 +477,10 @@ void FPSFX::SetVolume(int dwVolume) {
 \****************************************************************************/
 
 void FPSFX::GetVolume(int *lpdwVolume) {
-#ifdef REFACTOR_ME
-	if (bFileLoaded)
-		lpDSBuffer->GetVolume((uint32 *)lpdwVolume);
-
-	*lpdwVolume -= (DSBVOLUME_MIN);
-	*lpdwVolume *= 64;
-	*lpdwVolume /= (DSBVOLUME_MAX - DSBVOLUME_MIN);
-#endif
+	if (g_system->getMixer()->isSoundHandleActive(_handle))
+		*lpdwVolume = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
+	else
+		*lpdwVolume = 0;
 }
 
 

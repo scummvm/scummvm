@@ -29,10 +29,15 @@
 #ifndef TONY_SOUND_H
 #define TONY_SOUND_H
 
+#include "audio/mixer.h"
 #include "common/file.h"
 #include "tony/gfxcore.h"
 #include "tony/loc.h"
 #include "tony/utils.h"
+
+namespace Audio {
+class RewindableAudioStream;	
+}
 
 namespace Tony {
 
@@ -181,27 +186,16 @@ class FPSFX {
 	\****************************************************************************/
 
 private:
-	/*
-	    HWND hwnd;
-	    LPDIRECTSOUND lpDS;
-	  LPDIRECTSOUNDBUFFER lpDSBuffer;       // Buffer DirectSound
-	*/
 	bool bSoundSupported;                 // TRUE se il suono e' attivo
 	bool bFileLoaded;                     // TRUE se e' stato aperto un file
 	bool bLoop;                           // TRUE se bisogna loopare l'effetto sonoro
-	bool bPaused;
 	int lastVolume;
 
-	bool bStereo;                                                   // TRUE se è stereo
-	bool b16bit;                                                    // TRUE se è 16 bit
-	uint32 dwFreq;                                                  // Frequenza originale di campionamento
-
-	bool bIsPlaying;                      // TRUE se si sta playando l'effetto sonoro
-
 	bool bIsVoice;
+	bool bPaused;
 
-//  LPDIRECTSOUNDNOTIFY lpDSNotify;       // Notify degli hotspot nel buffer
-//  DSBPOSITIONNOTIFY dspnHot[2];
+	Audio::AudioStream *_stream;
+	Audio::SoundHandle _handle;
 
 public:
 	uint32 hEndOfBuffer;
