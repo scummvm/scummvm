@@ -100,6 +100,7 @@ public:
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
 	FPSOUND _theSound;
+	Common::List<FPSFX *> _activeSfx;
 	Globals _globals;
 	Debugger *_debugger;
 

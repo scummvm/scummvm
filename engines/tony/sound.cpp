@@ -201,6 +201,8 @@ FPSFX::FPSFX(bool bSoundOn) {
 	_stream = 0;
 	_rewindableStream = 0;
 	bPaused = false;
+
+	_vm->_activeSfx.push_back(this);
 }
 
 
@@ -219,6 +221,7 @@ FPSFX::~FPSFX() {
 		return;
 
 	g_system->getMixer()->stopHandle(_handle);
+	_vm->_activeSfx.remove(this);
 
 	delete _stream;
 	// _rewindableStream is deleted by deleting _stream
@@ -488,6 +491,38 @@ void FPSFX::GetVolume(int *lpdwVolume) {
 		*lpdwVolume = 0;
 }
 
+/**
+ * Returns true if the underlying sound has ended
+ */
+bool FPSFX::endOfBuffer() const {
+	return !g_system->getMixer()->isSoundHandleActive(_handle) && (!_stream || _stream->endOfData());
+}
+
+/**
+ * Continually checks to see if active sounds have finished playing
+ * Sets the event signalling the sound has ended
+ */
+void FPSFX::soundCheckProcess(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+		Common::List<FPSFX *>::iterator i;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	for (;;) {
+		// Check each active sound
+		for (_ctx->i = _vm->_activeSfx.begin(); _ctx->i != _vm->_activeSfx.end(); ++_ctx->i) {
+			FPSFX *sfx = *_ctx->i;
+			if (sfx->endOfBuffer())
+				CoroScheduler.setEvent(sfx->hEndOfBuffer);
+		}
+
+		// Delay until the next check is done
+		CORO_INVOKE_1(CoroScheduler.sleep, 50);
+	}
+
+	CORO_END_CODE;
+}
 
 /****************************************************************************\
 *       Metodi di FPSTREAM

@@ -209,6 +209,10 @@ private:
 	\****************************************************************************/
 
 public:
+	/**
+	 * Check process for whether sounds have finished playing
+	 */
+	static void soundCheckProcess(CORO_PARAM, const void *param);
 
 	/****************************************************************************\
 	*
@@ -353,6 +357,11 @@ public:
 	\****************************************************************************/
 
 	void GetVolume(int *lpdwVolume);
+
+	/**
+	 * Returns true if the sound has finished playing
+	 */
+	bool endOfBuffer() const;
 };
 
 class FPSTREAM {

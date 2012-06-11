@@ -371,6 +371,9 @@ void TonyEngine::initMusic() {
 	// Preload sound effects
 	preloadUtilSFX(0, "U01.ADP"); // Reversed!!
 	preloadUtilSFX(1, "U02.ADP");
+
+	// Start check processes for sound
+	CoroScheduler.createProcess(FPSFX::soundCheckProcess, NULL);
 }
 
 void TonyEngine::closeMusic() {
