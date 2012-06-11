@@ -45,6 +45,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  Cine:
    - Implemented Roland MT-32 output driver.
 
+ Gob:
+   - Fixed a crash in Lost in Time
+   - Rewrote the AdLib player. Enabled the now working MDY player in
+     Fascination and Geisha.
+
  SCUMM:
    - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
    - Added a difficulty selection dialog for Loom FM-TOWNS.
