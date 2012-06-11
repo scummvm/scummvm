@@ -509,18 +509,18 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 
 	// Clipping
 	if (prim->haveSrc()) {
-		u = prim->getSrc().x1;
-		v = prim->getSrc().y1;
+		u = prim->getSrc()._x1;
+		v = prim->getSrc()._y1;
 
 		width = prim->getSrc().width();
 		height = prim->getSrc().height();
 	}
 
-	if (!clip2D(dst.x1, dst.y1, u, v, width, height, prim->haveSrc(), &bigBuf))
+	if (!clip2D(dst._x1, dst._y1, u, v, width, height, prim->haveSrc(), &bigBuf))
 		return;
 
 	// Starting offset into the buffer
-	buf += dst.y1 * bufx + dst.x1;
+	buf += dst._y1 * bufx + dst._x1;
 
 	// Normal step
 	if (_bTrasp0) {
@@ -617,18 +617,18 @@ void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 
 	// Clipping
 	if (prim->haveSrc()) {
-		u = prim->getSrc().x1;
-		v = prim->getSrc().y1;
+		u = prim->getSrc()._x1;
+		v = prim->getSrc()._y1;
 
 		width = prim->getSrc().width();
 		height = prim->getSrc().height();
 	}
 
-	if (!clip2D(dst.x1, dst.y1, u, v, width, height, prim->haveSrc(), &bigBuf))
+	if (!clip2D(dst._x1, dst._y1, u, v, width, height, prim->haveSrc(), &bigBuf))
 		return;
 
 	// Starting offset into the buffer
-	buf += dst.y1 * bufx + dst.x1;
+	buf += dst._y1 * bufx + dst._x1;
 
 	// Passaggio normale
 	if (_bTrasp0) {
@@ -813,8 +813,8 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 	int x1, y1, u, v, width, height;
 
 	// Clipping
-	x1 = prim->getDst().x1;
-	y1 = prim->getDst().y1;
+	x1 = prim->getDst()._x1;
+	y1 = prim->getDst()._y1;
 	if (!clip2D(x1, y1, u, v, width, height, false, &bigBuf))
 		return;
 
@@ -834,7 +834,7 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 
 		// Clipping
 		u = _dimx - (width + u);
-		x1 = (prim->getDst().x1 + _dimx - 1) - u;
+		x1 = (prim->getDst()._x1 + _dimx - 1) - u;
 
 		for (y = 0; y < height; y++) {
 			// Decompressione
@@ -1611,8 +1611,8 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	int step;
 
 	// Clip the sprite
-	x1 = prim->getDst().x1;
-	y1 = prim->getDst().y1;
+	x1 = prim->getDst()._x1;
+	y1 = prim->getDst()._y1;
 	if (!clip2D(x1, y1, u, v, width, height, false, &bigBuf))
 		return;
 
@@ -1625,7 +1625,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 	if (prim->isFlipped()) {
 		u = _dimx - (width + u);
-		x1 = (prim->getDst().x1 + _dimx - 1) - u;
+		x1 = (prim->getDst()._x1 + _dimx - 1) - u;
 	}
 //	width = _dimx;
 //	x1 = prim->Dst().x1;
@@ -1837,15 +1837,15 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 	y1 = 0;
 
 	if (prim->haveSrc()) {
-		u = prim->getSrc().x1;
-		v = prim->getSrc().y1;
+		u = prim->getSrc()._x1;
+		v = prim->getSrc()._y1;
 		dimx = prim->getSrc().width();
 		dimy = prim->getSrc().height();
 	}
 
 	if (prim->haveDst()) {
-		x1 = prim->getDst().x1;
-		y1 = prim->getDst().y1;
+		x1 = prim->getDst()._x1;
+		y1 = prim->getDst()._y1;
 	}
 
 	if (!clip2D(x1, y1, u, v, dimx, dimy, true, &bigBuf))
@@ -1929,7 +1929,7 @@ void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 
 	// It takes the destination rectangle
 	rcDst = prim->getDst();
-	buf += rcDst.y1 * bigBuf.getDimx() + rcDst.x1;
+	buf += rcDst._y1 * bigBuf.getDimx() + rcDst._x1;
 
 	// Loop through the pixels
 	for (j = 0; j < rcDst.height(); j++) {

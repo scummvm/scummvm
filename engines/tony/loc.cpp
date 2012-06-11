@@ -183,23 +183,23 @@ int RMPattern::init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 		if (_slots[i]._type == SOUND) {
 			if (i == 0) {
 				if (sfx[_slots[i]._data]._name[0] == '_') {
-					sfx[_slots[i]._data].setVolume(_slots[i].pos().x);
+					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play(true);
 				} else {
-					sfx[_slots[i]._data].setVolume(_slots[i].pos().x);
+					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play();
 				}
 			} else if (_speed == 0) {
 				if (bPlayP0) {
-					sfx[_slots[i]._data].setVolume(_slots[i].pos().x);
+					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play();
 				} else if (sfx[_slots[i]._data]._name[0] == '_') {
-					sfx[_slots[i]._data].setVolume(_slots[i].pos().x);
+					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play(true);
 				}
 			} else {
 				if (_bLoop && sfx[_slots[i]._data]._name[0] == '_') {
-					sfx[_slots[i]._data].setVolume(_slots[i].pos().x);
+					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play(true);
 				}
 			}
@@ -251,7 +251,7 @@ int RMPattern::update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 
 			case SOUND:
 				if (sfx != NULL) {
-					sfx[_slots[_nCurSlot]._data].setVolume(_slots[_nCurSlot].pos().x);
+					sfx[_slots[_nCurSlot]._data].setVolume(_slots[_nCurSlot].pos()._x);
 
 					if (sfx[_slots[_nCurSlot]._data]._name[0] != '_')
 						sfx[_slots[_nCurSlot]._data].play(false);
@@ -1054,8 +1054,8 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	_status = WALK;
 	_lineStart = _pos;
 	_lineEnd = destcoord;
-	_dx = _lineStart.x - _lineEnd.x;
-	_dy = _lineStart.y - _lineEnd.y;
+	_dx = _lineStart._x - _lineEnd._x;
+	_dy = _lineStart._y - _lineEnd._y;
 	_fx = _dx;
 	_fy = _dy;
 	_dx = ABS(_dx);
@@ -1071,7 +1071,7 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 
 	if (_dx > _dy) {
 		_slope = _fy / _fx;
-		if (_lineEnd.x < _lineStart.x)
+		if (_lineEnd._x < _lineStart._x)
 			_walkSpeed = -_walkSpeed;
 		_walkStatus = 1;
 
@@ -1086,7 +1086,7 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 		}
 	} else {
 		_slope = _fx / _fy;
-		if (_lineEnd.y < _lineStart.y)
+		if (_lineEnd._y < _lineStart._y)
 			_walkSpeed = -_walkSpeed;
 		_walkStatus = 0;
 
@@ -1115,14 +1115,14 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (UP) {
 		nuovo = punto;
 		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo.y >= 0)) {
-			nuovo.y--;
+		while ((inWhichBox(nuovo) == -1) && (nuovo._y >= 0)) {
+			nuovo._y--;
 			passi++;
 		}
 		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
 		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
 			minimo = passi;
-			nuovo.y--;       // to avoid error?
+			nuovo._y--;       // to avoid error?
 			trovato = nuovo;
 		}
 	}
@@ -1130,14 +1130,14 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (DOWN) {
 		nuovo = punto;
 		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo.y < 480)) {
-			nuovo.y++;
+		while ((inWhichBox(nuovo) == -1) && (nuovo._y < 480)) {
+			nuovo._y++;
 			passi++;
 		}
 		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
 		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
 			minimo = passi;
-			nuovo.y++;     // to avoid error?
+			nuovo._y++;     // to avoid error?
 			trovato = nuovo;
 		}
 	}
@@ -1145,14 +1145,14 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (RIGHT) {
 		nuovo = punto;
 		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo.x < 640)) {
-			nuovo.x++;
+		while ((inWhichBox(nuovo) == -1) && (nuovo._x < 640)) {
+			nuovo._x++;
 			passi++;
 		}
 		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
 		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
 			minimo = passi;
-			nuovo.x++;     // to avoid error?
+			nuovo._x++;     // to avoid error?
 			trovato = nuovo;
 		}
 	}
@@ -1160,14 +1160,14 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	if (LEFT) {
 		nuovo = punto;
 		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo.x >= 0)) {
-			nuovo.x--;
+		while ((inWhichBox(nuovo) == -1) && (nuovo._x >= 0)) {
+			nuovo._x--;
 			passi++;
 		}
 		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
 		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
 			minimo = passi;
-			nuovo.x--;     // to avoid error?
+			nuovo._x--;     // to avoid error?
 			trovato = nuovo;
 		}
 	}
@@ -1190,8 +1190,8 @@ short RMCharacter::scanLine(const RMPoint &punto) {
 
 	Lstart = _pos;
 	Lend = punto;
-	Ldx = Lstart.x - Lend.x;
-	Ldy = Lstart.y - Lend.y;
+	Ldx = Lstart._x - Lend._x;
+	Ldy = Lstart._y - Lend._y;
 	Lfx = Ldx;
 	Lfy = Ldy;
 	Ldx = ABS(Ldx);
@@ -1201,11 +1201,11 @@ short RMCharacter::scanLine(const RMPoint &punto) {
 
 	if (Ldx > Ldy) {
 		Lslope = Lfy / Lfx;
-		if (Lend.x < Lstart.x) Lspeed = -Lspeed;
+		if (Lend._x < Lstart._x) Lspeed = -Lspeed;
 		Lstatus = 1;
 	} else {
 		Lslope = Lfx / Lfy;
-		if (Lend.y < Lstart.y) Lspeed = - Lspeed;
+		if (Lend._y < Lstart._y) Lspeed = - Lspeed;
 		Lstatus = 0;
 	}
 
@@ -1220,10 +1220,11 @@ short RMCharacter::scanLine(const RMPoint &punto) {
 			Ldx = (int)(Lslope * Ldy);
 		}
 
-		Lscan.x = Lstart.x + Ldx;
-		Lscan.y = Lstart.y + Ldy;
+		Lscan._x = Lstart._x + Ldx;
+		Lscan._y = Lstart._y + Ldy;
 
-		if ((ABS(Lscan.x - Lend.x) <= 1) && (ABS(Lscan.y - Lend.y) <= 1)) return 1;
+		if ((ABS(Lscan._x - Lend._x) <= 1) && (ABS(Lscan._y - Lend._y) <= 1))
+			return 1;
 	}
 
 	return 0;
@@ -1240,8 +1241,8 @@ RMPoint RMCharacter::invScanLine(const RMPoint &punto) {
 
 	Lstart = punto;      // Exchange!
 	Lend = _pos;    // :-)
-	Ldx = Lstart.x - Lend.x;
-	Ldy = Lstart.y - Lend.y;
+	Ldx = Lstart._x - Lend._x;
+	Ldy = Lstart._y - Lend._y;
 	Lfx = Ldx;
 	Lfy = Ldy;
 	Ldx = ABS(Ldx);
@@ -1251,11 +1252,13 @@ RMPoint RMCharacter::invScanLine(const RMPoint &punto) {
 
 	if (Ldx > Ldy) {
 		Lslope = Lfy / Lfx;
-		if (Lend.x < Lstart.x) Lspeed = -Lspeed;
+		if (Lend._x < Lstart._x)
+			Lspeed = -Lspeed;
 		Lstatus = 1;
 	} else {
 		Lslope = Lfx / Lfy;
-		if (Lend.y < Lstart.y) Lspeed = -Lspeed;
+		if (Lend._y < Lstart._y)
+			Lspeed = -Lspeed;
 		Lstatus = 0;
 	}
 	Lscan = Lstart;
@@ -1278,11 +1281,11 @@ RMPoint RMCharacter::invScanLine(const RMPoint &punto) {
 			Ldy = Lspeed * Lcount;
 			Ldx = (int)(Lslope * Ldy);
 		}
-		Lscan.x = Lstart.x + Ldx;
-		Lscan.y = Lstart.y + Ldy;
+		Lscan._x = Lstart._x + Ldx;
+		Lscan._y = Lstart._y + Ldy;
 
 		// WORKAROUND: Handles cases where the points never fall inside a bounding box
-		if (Lscan.x < -100 || Lscan.y < -100 || Lscan.x >= 1000 || Lscan.y >= 1000)
+		if (Lscan._x < -100 || Lscan._y < -100 || Lscan._x >= 1000 || Lscan._y >= 1000)
 			return punto;
 	}
 }
@@ -1301,13 +1304,13 @@ RMPoint RMCharacter::nearestHotSpot(int sourcebox, int destbox) {
 
 	for (cc = 0; cc < cur->_boxes[sourcebox]._numHotspot; cc++)
 		if ((cur->_boxes[sourcebox]._hotspot[cc]._destination) == destbox) {
-			x = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hotx - _pos.x);
-			y = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hoty - _pos.y);
+			x = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hotx - _pos._x);
+			y = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hoty - _pos._y);
 
 			if ((x * x + y * y) < distanzaminima) {
 				distanzaminima = x * x + y * y;
-				puntocaldo.x = cur->_boxes[sourcebox]._hotspot[cc]._hotx;
-				puntocaldo.y = cur->_boxes[sourcebox]._hotspot[cc]._hoty;
+				puntocaldo._x = cur->_boxes[sourcebox]._hotspot[cc]._hotx;
+				puntocaldo._y = cur->_boxes[sourcebox]._hotspot[cc]._hoty;
 			}
 		}
 
@@ -1391,11 +1394,11 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 		if (_walkStatus == 1) {
 			_dx = _walkSpeed * _walkCount;
 			_dy = (int)(_slope * _dx);
-			_pos.x = _lineStart.x + _dx;
-			_pos.y = _lineStart.y + _dy;
+			_pos._x = _lineStart._x + _dx;
+			_pos._y = _lineStart._y + _dy;
 
 			// Right
-			if (((_walkSpeed > 0) && (_pos.x > _lineEnd.x)) || ((_walkSpeed < 0) && (_pos.x < _lineEnd.x))) {
+			if (((_walkSpeed > 0) && (_pos._x > _lineEnd._x)) || ((_walkSpeed < 0) && (_pos._x < _lineEnd._x))) {
 				_pos = _lineEnd;
 				_status = STAND;
 				_ctx->bEndNow = true;
@@ -1406,11 +1409,11 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 		if (_walkStatus == 0) {
 			_dy = _walkSpeed * _walkCount;
 			_dx = (int)(_slope * _dy);
-			_pos.x = _lineStart.x + _dx;
-			_pos.y = _lineStart.y + _dy;
+			_pos._x = _lineStart._x + _dx;
+			_pos._y = _lineStart._y + _dy;
 
 			// Down
-			if (((_walkSpeed > 0) && (_pos.y > _lineEnd.y)) || ((_walkSpeed < 0) && (_pos.y < _lineEnd.y))) {
+			if (((_walkSpeed > 0) && (_pos._y > _lineEnd._y)) || ((_walkSpeed < 0) && (_pos._y < _lineEnd._y))) {
 				_pos = _lineEnd;
 				_status = STAND;
 				_ctx->bEndNow = true;
@@ -1419,8 +1422,8 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 
 		// Check if the character came out of the BOX in error, in which case he returns immediately
 		if (inWhichBox(_pos) == -1) {
-			_pos.x = _lineStart.x + _olddx;
-			_pos.y = _lineStart.y + _olddy;
+			_pos._x = _lineStart._x + _olddx;
+			_pos._y = _lineStart._y + _olddy;
 		}
 
 		// If we have just moved to a temporary location, and is over the shortest path, we stop permanently
@@ -1545,7 +1548,7 @@ void RMCharacter::move(CORO_PARAM, RMPoint pt, bool *result) {
 	_bMoving = true;
 
 	// 0, 0 does not do anything, just stops the character
-	if (pt.x == 0 && pt.y == 0) {
+	if (pt._x == 0 && pt._y == 0) {
 		_minPath = 0;
 		_status = STAND;
 		CORO_INVOKE_0(stop);
@@ -1833,8 +1836,8 @@ RMBoxLoc *RMGameBoxes::getBoxes(int nLoc) {
 bool RMGameBoxes::isInBox(int nLoc, int nBox, const RMPoint &pt) {
 	RMBoxLoc *cur = getBoxes(nLoc);
 
-	if ((pt.x >= cur->_boxes[nBox]._left) && (pt.x <= cur->_boxes[nBox]._right) &&
-	        (pt.y >= cur->_boxes[nBox]._top)  && (pt.y <= cur->_boxes[nBox]._bottom))
+	if ((pt._x >= cur->_boxes[nBox]._left) && (pt._x <= cur->_boxes[nBox]._right) &&
+	        (pt._y >= cur->_boxes[nBox]._top)  && (pt._y <= cur->_boxes[nBox]._bottom))
 		return true;
 	else
 		return false;
@@ -1849,8 +1852,8 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 
 	for (i = 0; i < cur->numbbox; i++)
 		if (cur->_boxes[i]._attivo)
-			if ((punto.x >= cur->_boxes[i]._left) && (punto.x <= cur->_boxes[i]._right) &&
-			        (punto.y >= cur->_boxes[i]._top)  && (punto.y <= cur->_boxes[i]._bottom))
+			if ((punto._x >= cur->_boxes[i]._left) && (punto._x <= cur->_boxes[i]._right) &&
+			        (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
 				return i;
 
 	return -1;
@@ -2025,7 +2028,7 @@ bool RMLocation::load(RMDataStream &ds) {
 
 	// Skip the MPAL bailouts (64 bytes)
 	ds >> TEMPNumLoc;
-	ds >> TEMPTonyStart.x >> TEMPTonyStart.y;
+	ds >> TEMPTonyStart._x >> TEMPTonyStart._y;
 	ds += 64 - 4 * 3;
 
 	// Skip flag associated with the background (?)
@@ -2091,7 +2094,7 @@ bool RMLocation::loadLOX(RMDataStream &ds) {
 
 	// Location number
 	ds >> TEMPNumLoc;
-	ds >> TEMPTonyStart.x >> TEMPTonyStart.y;
+	ds >> TEMPTonyStart._x >> TEMPTonyStart._y;
 
 	// Dimensions
 	ds >> dimx >> dimy;
@@ -2210,36 +2213,36 @@ void RMLocation::unload(void) {
 void RMLocation::updateScrolling(const RMPoint &ptShowThis) {
 	RMPoint oldScroll = _curScroll;
 
-	if (_curScroll.x + 250 > ptShowThis.x) {
-		_curScroll.x = ptShowThis.x - 250;
-	} else if (_curScroll.x + RM_SX - 250 < ptShowThis.x) {
-		_curScroll.x = ptShowThis.x + 250 - RM_SX;
-	} else if (ABS(_curScroll.x + RM_SX / 2 - ptShowThis.x) > 32 && _buf->getDimx() > RM_SX) {
-		if (_curScroll.x + RM_SX / 2 < ptShowThis.x)
-			_curScroll.x++;
+	if (_curScroll._x + 250 > ptShowThis._x) {
+		_curScroll._x = ptShowThis._x - 250;
+	} else if (_curScroll._x + RM_SX - 250 < ptShowThis._x) {
+		_curScroll._x = ptShowThis._x + 250 - RM_SX;
+	} else if (ABS(_curScroll._x + RM_SX / 2 - ptShowThis._x) > 32 && _buf->getDimx() > RM_SX) {
+		if (_curScroll._x + RM_SX / 2 < ptShowThis._x)
+			_curScroll._x++;
 		else
-			_curScroll.x--;
+			_curScroll._x--;
 	}
 
-	if (_curScroll.y + 180 > ptShowThis.y) {
-		_curScroll.y = ptShowThis.y - 180;
-	} else if (_curScroll.y + RM_SY - 180 < ptShowThis.y) {
-		_curScroll.y = ptShowThis.y + 180 - RM_SY;
-	} else if (ABS(_curScroll.y + RM_SY / 2 - ptShowThis.y) > 16 && _buf->getDimy() > RM_SY) {
-		if (_curScroll.y + RM_SY / 2 < ptShowThis.y)
-			_curScroll.y++;
+	if (_curScroll._y + 180 > ptShowThis._y) {
+		_curScroll._y = ptShowThis._y - 180;
+	} else if (_curScroll._y + RM_SY - 180 < ptShowThis._y) {
+		_curScroll._y = ptShowThis._y + 180 - RM_SY;
+	} else if (ABS(_curScroll._y + RM_SY / 2 - ptShowThis._y) > 16 && _buf->getDimy() > RM_SY) {
+		if (_curScroll._y + RM_SY / 2 < ptShowThis._y)
+			_curScroll._y++;
 		else
-			_curScroll.y--;
+			_curScroll._y--;
 	}
 
-	if (_curScroll.x < 0)
-		_curScroll.x = 0;
-	if (_curScroll.y < 0)
-		_curScroll.y = 0;
-	if (_curScroll.x + RM_SX > _buf->getDimx())
-		_curScroll.x = _buf->getDimx() - RM_SX;
-	if (_curScroll.y + RM_SY > _buf->getDimy())
-		_curScroll.y = _buf->getDimy() - RM_SY;
+	if (_curScroll._x < 0)
+		_curScroll._x = 0;
+	if (_curScroll._y < 0)
+		_curScroll._y = 0;
+	if (_curScroll._x + RM_SX > _buf->getDimx())
+		_curScroll._x = _buf->getDimx() - RM_SX;
+	if (_curScroll._y + RM_SY > _buf->getDimy())
+		_curScroll._y = _buf->getDimy() - RM_SY;
 
 	if (oldScroll != _curScroll)
 		for (int i = 0; i < _nItems; i++)
@@ -2255,14 +2258,14 @@ void RMLocation::setFixedScroll(const RMPoint &scroll) {
 
 void RMLocation::setScrollPosition(const RMPoint &scroll) {
 	RMPoint pt = scroll;
-	if (pt.x < 0)
-		pt.x = 0;
-	if (pt.y < 0)
-		pt.y = 0;
-	if (pt.x + RM_SX > _buf->getDimx())
-		pt.x = _buf->getDimx() - RM_SX;
-	if (pt.y + RM_SY > _buf->getDimy())
-		pt.y = _buf->getDimy() - RM_SY;
+	if (pt._x < 0)
+		pt._x = 0;
+	if (pt._y < 0)
+		pt._y = 0;
+	if (pt._x + RM_SX > _buf->getDimx())
+		pt._x = _buf->getDimx() - RM_SX;
+	if (pt._y + RM_SY > _buf->getDimy())
+		pt._y = _buf->getDimy() - RM_SY;
 
 	_curScroll = pt;
 

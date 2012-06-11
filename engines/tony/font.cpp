@@ -1930,8 +1930,8 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 			}
 
 			prim = font->makeLetterPrimitive(*p, len);
-			prim->getDst().x1 = x;
-			prim->getDst().y1 = y;
+			prim->getDst()._x1 = x;
+			prim->getDst()._y1 = y;
 			addPrim(prim);
 
 			numchar++;
@@ -1949,14 +1949,14 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 
 void RMText::clipOnScreen(RMGfxPrimitive *prim) {
 	// Don't let it go outside the screen
-	if (prim->getDst().x1 < 5)
-		prim->getDst().x1 = 5;
-	if (prim->getDst().y1 < 5)
-		prim->getDst().y1 = 5;
-	if (prim->getDst().x1 + _dimx > 635)
-		prim->getDst().x1 = 635 - _dimx;
-	if (prim->getDst().y1 + _dimy > 475)
-		prim->getDst().y1 = 475 - _dimy;
+	if (prim->getDst()._x1 < 5)
+		prim->getDst()._x1 = 5;
+	if (prim->getDst()._y1 < 5)
+		prim->getDst()._y1 = 5;
+	if (prim->getDst()._x1 + _dimx > 635)
+		prim->getDst()._x1 = 635 - _dimx;
+	if (prim->getDst()._y1 + _dimy > 475)
+		prim->getDst()._y1 = 475 - _dimy;
 }
 
 void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -1975,10 +1975,10 @@ void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	if (_aVerType == VTOP) {
 
 	} else if (_aVerType == VCENTER) {
-		prim->getDst().y1 -= _dimy / 2;
+		prim->getDst()._y1 -= _dimy / 2;
 
 	} else if (_aVerType == VBOTTOM) {
-		prim->getDst().y1 -= _dimy;
+		prim->getDst()._y1 -= _dimy;
 	}
 
 	clipOnScreen(prim);
@@ -2416,7 +2416,7 @@ void RMDialogChoice::prepare(CORO_PARAM) {
 	CORO_INVOKE_0(drawOT);
 	clearOT();
 
-	_ptDrawPos.set(0, 480 - _ctx->ptPos.y);
+	_ptDrawPos.set(0, 480 - _ctx->ptPos._y);
 
 	CORO_END_CODE;
 }
@@ -2436,7 +2436,7 @@ void RMDialogChoice::setSelected(CORO_PARAM, int pos) {
 
 	if (_curSelection != -1) {
 		_ctx->box.setColor(0xCC, 0xCC, 0xFF);
-		_ctx->rc.topLeft() = RMPoint(18, _ptDrawStrings[_curSelection].y);
+		_ctx->rc.topLeft() = RMPoint(18, _ptDrawStrings[_curSelection]._y);
 		_ctx->rc.bottomRight() = _ctx->rc.topLeft() + RMPoint(597, _drawedStrings[_curSelection].getDimy());
 		addPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
 
@@ -2447,7 +2447,7 @@ void RMDialogChoice::setSelected(CORO_PARAM, int pos) {
 
 	if (pos != -1) {
 		_ctx->box.setColor(100, 100, 100);
-		_ctx->rc.topLeft() = RMPoint(18, _ptDrawStrings[pos].y);
+		_ctx->rc.topLeft() = RMPoint(18, _ptDrawStrings[pos]._y);
 		_ctx->rc.bottomRight() = _ctx->rc.topLeft() + RMPoint(597, _drawedStrings[pos].getDimy());
 		addPrim(new RMGfxPrimitive(&_ctx->box, _ctx->rc));
 		addPrim(new RMGfxPrimitive(&_drawedStrings[pos], _ptDrawStrings[pos]));
@@ -2481,7 +2481,7 @@ void RMDialogChoice::show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 		_bShow = true;
 	} else {
 		_ctx->starttime = _vm->getTime();
-		_ctx->deltay = 480 - _ptDrawPos.y;
+		_ctx->deltay = 480 - _ptDrawPos._y;
 		_ctx->destpt = _ptDrawPos;
 		_ptDrawPos.set(0, 480);
 
@@ -2494,11 +2494,11 @@ void RMDialogChoice::show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 			CORO_INVOKE_0(mainWaitFrame);
 			mainFreeze();
 			_ctx->elaps = _vm->getTime() - _ctx->starttime;
-			_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
+			_ptDrawPos._y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
 			mainUnfreeze();
 		}
 
-		_ptDrawPos.y = _ctx->destpt.y;
+		_ptDrawPos._y = _ctx->destpt._y;
 	}
 
 	CORO_END_CODE;
@@ -2532,13 +2532,13 @@ void RMDialogChoice::hide(CORO_PARAM) {
 	if (1) {
 		_ctx->starttime = _vm->getTime();
 
-		_ctx->deltay = 480 - _ptDrawPos.y;
+		_ctx->deltay = 480 - _ptDrawPos._y;
 		_ctx->elaps = 0;
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(mainWaitFrame);
 			mainFreeze();
 			_ctx->elaps = _vm->getTime() - _ctx->starttime;
-			_ptDrawPos.y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
+			_ptDrawPos._y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
 			mainUnfreeze();
 		}
 	}
@@ -2562,9 +2562,9 @@ void RMDialogChoice::doFrame(CORO_PARAM, RMPoint ptMousePos) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (ptMousePos.y > _ptDrawPos.y) {
+	if (ptMousePos._y > _ptDrawPos._y) {
 		for (_ctx->i = 0; _ctx->i < _numChoices; _ctx->i++) {
-			if ((ptMousePos.y >= _ptDrawPos.y + _ptDrawStrings[_ctx->i].y) && (ptMousePos.y < _ptDrawPos.y + _ptDrawStrings[_ctx->i].y + _drawedStrings[_ctx->i].getDimy())) {
+			if ((ptMousePos._y >= _ptDrawPos._y + _ptDrawStrings[_ctx->i]._y) && (ptMousePos._y < _ptDrawPos._y + _ptDrawStrings[_ctx->i]._y + _drawedStrings[_ctx->i].getDimy())) {
 				CORO_INVOKE_1(setSelected, _ctx->i);
 				break;
 			}

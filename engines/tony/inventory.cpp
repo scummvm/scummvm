@@ -66,9 +66,9 @@ RMInventory::~RMInventory() {
 
 bool RMInventory::checkPointInside(const RMPoint &pt) {
 	if (!GLOBALS._bCfgInvUp)
-		return pt.y > RM_SY - 70;
+		return pt._y > RM_SY - 70;
 	else
-		return pt.y < 70;
+		return pt._y < 70;
 }
 
 
@@ -313,7 +313,7 @@ bool RMInventory::miniActive(void) {
 
 bool RMInventory::haveFocus(const RMPoint &mpos) {
 	// When we combine, have the focus only if we are on an arrow (to scroll)
-	if (_state == OPENED && _bCombining && checkPointInside(mpos) && (mpos.x < 64 || mpos.x > RM_SX - 64))
+	if (_state == OPENED && _bCombining && checkPointInside(mpos) && (mpos._x < 64 || mpos._x > RM_SX - 64))
 		return true;
 
 	// If the inventory is open, focus we we go over it
@@ -335,7 +335,7 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 	int n;
 
 	// The left click picks an item from your inventory to use it with the background
-	n = mpos.x / 64;
+	n = mpos._x / 64;
 
 	if (_state == OPENED) {
 		if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0) {
@@ -401,7 +401,7 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 
 	if (_state == OPENED && !_bCombining) {
 		// Open the context interface
-		n = mpos.x / 64;
+		n = mpos._x / 64;
 
 		if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0) {
 			_state = SELECTING;
@@ -493,7 +493,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				bNeedRedraw = true;
 
 		if ((_state == CLOSING || _state == OPENING || _state == OPENED) && checkPointInside(mpos)) {
-			if (mpos.x > RM_SX - 64) {
+			if (mpos._x > RM_SX - 64) {
 				if (_curPos + 8 < _nInv && !_bBlinkingRight) {
 					_items[28]._icon.setPattern(3);
 					_bBlinkingRight = true;
@@ -505,7 +505,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				bNeedRedraw = true;
 			}
 
-			if (mpos.x < 64) {
+			if (mpos._x < 64) {
 				if (_curPos > 0 && !_bBlinkingLeft) {
 					_items[29]._icon.setPattern(3);
 					_bBlinkingLeft = true;
@@ -540,7 +540,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 	}
 
 	if (!GLOBALS._bCfgInvUp) {
-		if ((_state == CLOSED) && (mpos.y > RM_SY - 10 || GLOBALS._bCfgInvLocked) && bCanOpen) {
+		if ((_state == CLOSED) && (mpos._y > RM_SY - 10 || GLOBALS._bCfgInvLocked) && bCanOpen) {
 			if (!GLOBALS._bCfgInvNoScroll) {
 				_state = OPENING;
 				_curPutY = RM_SY - 1;
@@ -550,7 +550,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				_curPutY = RM_SY - 68;
 			}
 		} else if (_state == OPENED) {
-			if ((mpos.y < RM_SY - 70 && !GLOBALS._bCfgInvLocked) || !bCanOpen) {
+			if ((mpos._y < RM_SY - 70 && !GLOBALS._bCfgInvLocked) || !bCanOpen) {
 				if (!GLOBALS._bCfgInvNoScroll) {
 					_state = CLOSING;
 					_curPutY = RM_SY - 68;
@@ -580,7 +580,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				_state = CLOSED;
 		}
 	} else {
-		if ((_state == CLOSED) && (mpos.y < 10 || GLOBALS._bCfgInvLocked) && bCanOpen) {
+		if ((_state == CLOSED) && (mpos._y < 10 || GLOBALS._bCfgInvLocked) && bCanOpen) {
 			if (!GLOBALS._bCfgInvNoScroll) {
 				_state = OPENING;
 				_curPutY = - 68;
@@ -590,7 +590,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				_curPutY = 0;
 			}
 		} else if (_state == OPENED) {
-			if ((mpos.y > 70 && !GLOBALS._bCfgInvLocked) || !bCanOpen) {
+			if ((mpos._y > 70 && !GLOBALS._bCfgInvLocked) || !bCanOpen) {
 				if (!GLOBALS._bCfgInvNoScroll) {
 					_state = CLOSING;
 					_curPutY = -2;
@@ -630,20 +630,20 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 			starty = 70;
 
 		// Make sure it is on one of the verbs
-		if (mpos.y > starty && mpos.y < starty + 45) {
-			if (mpos.x > startx && mpos.x < startx + 40) {
+		if (mpos._y > starty && mpos._y < starty + 45) {
+			if (mpos._x > startx && mpos._x < startx + 40) {
 				if (_miniAction != 1) {
 					_miniInterface.setPattern(2);
 					_miniAction = 1;
 					_vm->playUtilSFX(1);
 				}
-			} else if (mpos.x >= startx + 40 && mpos.x < startx + 80) {
+			} else if (mpos._x >= startx + 40 && mpos._x < startx + 80) {
 				if (_miniAction != 2) {
 					_miniInterface.setPattern(3);
 					_miniAction = 2;
 					_vm->playUtilSFX(1);
 				}
-			} else if (mpos.x >= startx + 80 && mpos.x < startx + 108) {
+			} else if (mpos._x >= startx + 80 && mpos._x < startx + 108) {
 				if (_miniAction != 3) {
 					_miniInterface.setPattern(4);
 					_miniAction = 3;
@@ -680,7 +680,7 @@ RMItem *RMInventory::whichItemIsIn(const RMPoint &mpt) {
 
 	if (_state == OPENED) {
 		if (checkPointInside(mpt)) {
-			n = mpt.x / 64;
+			n = mpt._x / 64;
 			if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0 && (!_bCombining || _inv[n - 1 + _curPos] != _nCombine))
 				return &_items[_inv[n - 1 + _curPos]]._icon;
 		}
@@ -830,14 +830,14 @@ void RMInterface::clicked(const RMPoint &mousepos) {
 	_lastHotZone = -1;
 
 	// Keep it inside the screen
-	if (_openStart.x < 0)
-		_openStart.x = 0;
-	if (_openStart.y < 0)
-		_openStart.y = 0;
-	if (_openStart.x + _dimx > RM_SX)
-		_openStart.x = RM_SX - _dimx;
-	if (_openStart.y + _dimy > RM_SY)
-		_openStart.y = RM_SY - _dimy;
+	if (_openStart._x < 0)
+		_openStart._x = 0;
+	if (_openStart._y < 0)
+		_openStart._y = 0;
+	if (_openStart._x + _dimx > RM_SX)
+		_openStart._x = RM_SX - _dimx;
+	if (_openStart._y + _dimy > RM_SY)
+		_openStart._y = RM_SY - _dimy;
 
 	// Play the sound effect
 	_vm->playUtilSFX(0);

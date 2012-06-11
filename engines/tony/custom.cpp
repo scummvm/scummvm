@@ -477,7 +477,7 @@ DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32)
 
 DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(CORO_PARAM, uint32 bNotEnableTony, uint32, uint32, uint32) {
 	GLOBALS.Freeze();
-	GLOBALS.LoadLocation(GLOBALS.SFM_nLoc, RMPoint(GLOBALS.SFM_pt.x, GLOBALS.SFM_pt.y), RMPoint(-1, -1));
+	GLOBALS.LoadLocation(GLOBALS.SFM_nLoc, RMPoint(GLOBALS.SFM_pt._x, GLOBALS.SFM_pt._y), RMPoint(-1, -1));
 	if (!bNotEnableTony)
 		GLOBALS._tony->show();
 	GLOBALS.Unfreeze();
@@ -593,7 +593,7 @@ DECLARE_CUSTOM_FUNCTION(RestoreTonyPosition)(CORO_PARAM, uint32, uint32, uint32,
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_4(ChangeLocation, GLOBALS._saveTonyLoc, GLOBALS._saveTonyPos.x, GLOBALS._saveTonyPos.y, 0);
+	CORO_INVOKE_4(ChangeLocation, GLOBALS._saveTonyLoc, GLOBALS._saveTonyPos._x, GLOBALS._saveTonyPos._y, 0);
 
 	MCharResetCodes();
 
@@ -1299,14 +1299,14 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 
 		if (sX) {
 			if (_ctx->lx > 0)
-				_ctx->pt.x += (_ctx->dimx * _ctx->dwCurTime) / _ctx->dwTotalTime;
+				_ctx->pt._x += (_ctx->dimx * _ctx->dwCurTime) / _ctx->dwTotalTime;
 			else
-				_ctx->pt.x -= (_ctx->dimx * _ctx->dwCurTime) / _ctx->dwTotalTime;
+				_ctx->pt._x -= (_ctx->dimx * _ctx->dwCurTime) / _ctx->dwTotalTime;
 		} else {
 			if (_ctx->ly > 0)
-				_ctx->pt.y += (_ctx->dimy * _ctx->dwCurTime) / _ctx->dwTotalTime;
+				_ctx->pt._y += (_ctx->dimy * _ctx->dwCurTime) / _ctx->dwTotalTime;
 			else
-				_ctx->pt.y -= (_ctx->dimy * _ctx->dwCurTime) / _ctx->dwTotalTime;
+				_ctx->pt._y -= (_ctx->dimy * _ctx->dwCurTime) / _ctx->dwTotalTime;
 
 		}
 
@@ -1323,14 +1323,14 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 	// Set the position finale
 	if (sX) {
 		if (_ctx->lx > 0)
-			_ctx->pt.x = _ctx->startpt.x + _ctx->dimx;
+			_ctx->pt._x = _ctx->startpt._x + _ctx->dimx;
 		else
-			_ctx->pt.x = _ctx->startpt.x - _ctx->dimx;
+			_ctx->pt._x = _ctx->startpt._x - _ctx->dimx;
 	} else {
 		if (_ctx->ly > 0)
-			_ctx->pt.y = _ctx->startpt.y + _ctx->dimy;
+			_ctx->pt._y = _ctx->startpt._y + _ctx->dimy;
 		else
-			_ctx->pt.y = _ctx->startpt.y - _ctx->dimy;
+			_ctx->pt._y = _ctx->startpt._y - _ctx->dimy;
 	}
 
 	GLOBALS.Freeze();
@@ -1345,12 +1345,13 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(CORO_PARAM, uint32 dwCode, uint32 nX, uint32 nY, uint32) {
 	int i;
 
-	for (i = 0; i < GLOBALS._curChangedHotspot; i++)
+	for (i = 0; i < GLOBALS._curChangedHotspot; i++) {
 		if (GLOBALS._changedHotspot[i]._dwCode == dwCode) {
 			GLOBALS._changedHotspot[i]._nX = nX;
 			GLOBALS._changedHotspot[i]._nY = nY;
 			break;
 		}
+	}
 
 	if (i == GLOBALS._curChangedHotspot) {
 		GLOBALS._changedHotspot[i]._dwCode = dwCode;

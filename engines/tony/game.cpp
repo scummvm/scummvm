@@ -128,7 +128,7 @@ RMOptionButton::RMOptionButton(uint32 dwRes, RMPoint pt, bool bDoubleState) {
 	_buf = new RMGfxSourceBuffer16(false);
 	_buf->init(raw, raw.width(), raw.height());
 
-	_rect.setRect(pt.x, pt.y, pt.x + raw.width() - 1, pt.y + raw.height() - 1);
+	_rect.setRect(pt._x, pt._y, pt._x + raw.width() - 1, pt._y + raw.height() - 1);
 	_bActive = false;
 	_bHasGfx = true;
 	_bDoubleState = bDoubleState;
@@ -215,8 +215,8 @@ RMOptionSlide::RMOptionSlide(const RMPoint &pt, int nRange, int nStartValue, int
 	INIT_GFX16_FROMRAW(20032, _SliderSingle);
 
 	// Buttons
-	_PushLeft = new RMOptionButton(RMRect(pt.x - 23, pt.y, pt.x - 23 + 22, pt.y + 26));
-	_PushRight = new RMOptionButton(RMRect(pt.x + _nSlideSize, pt.y, pt.x + _nSlideSize + 5 + 22, pt.y + 26));
+	_PushLeft = new RMOptionButton(RMRect(pt._x - 23, pt._y, pt._x - 23 + 22, pt._y + 26));
+	_PushRight = new RMOptionButton(RMRect(pt._x + _nSlideSize, pt._y, pt._x + _nSlideSize + 5 + 22, pt._y + 26));
 }
 
 
@@ -280,8 +280,8 @@ void RMOptionSlide::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->pos = _pos;
-	_ctx->pos.x += 4;
-	_ctx->pos.y += 4;
+	_ctx->pos._x += 4;
+	_ctx->pos._y += 4;
 
 	_ctx->val = _nValue * _nStep;
 	if (_ctx->val < 1)
@@ -295,17 +295,17 @@ void RMOptionSlide::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *
 	} else {
 		prim->setDst(_ctx->pos);
 		CORO_INVOKE_2(_SliderLeft->draw, bigBuf, prim);
-		_ctx->pos.x += 3;
+		_ctx->pos._x += 3;
 
 		for (_ctx->i = 1; _ctx->i < _ctx->val - 1; _ctx->i++) {
 			prim->setDst(_ctx->pos);
 			CORO_INVOKE_2(_SliderCenter->draw, bigBuf, prim);
-			_ctx->pos.x += 3;
+			_ctx->pos._x += 3;
 		}
 
 		prim->setDst(_ctx->pos);
 		CORO_INVOKE_2(_SliderRight->draw, bigBuf, prim);
-		_ctx->pos.x += 3;
+		_ctx->pos._x += 3;
 	}
 
 	CORO_END_CODE;
@@ -1546,7 +1546,7 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 	// Copy the destination coordinates in the primitive
 	prim->setDst(_pos);
 
-	if (_pos.x >= 0 && _pos.y >= 0 && _pos.x < RM_SX && _pos.y < RM_SY) {
+	if (_pos._x >= 0 && _pos._y >= 0 && _pos._x < RM_SX && _pos._y < RM_SY) {
 		// Call the Draw method of the poitner
 		prim->getDst() -= _hotspot[_ctx->n];
 

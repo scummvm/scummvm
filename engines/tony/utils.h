@@ -212,7 +212,7 @@ private:
  */
 class RMPoint {
 public:
-	int x, y;
+	int _x, _y;
 
 public:
 	// Constructor
@@ -225,8 +225,8 @@ public:
 
 	// Set
 	void set(int x1, int y1) {
-		x = x1;
-		y = y1;
+		_x = x1;
+		_y = y1;
 	}
 
 	// Offset
@@ -251,8 +251,8 @@ public:
 
 class RMRect {
 public:
-	int x1, y1;
-	int x2, y2;
+	int _x1, _y1;
+	int _x2, _y2;
 
 public:
 	RMRect();
@@ -298,7 +298,7 @@ public:
 
 	// Point in rect
 	bool ptInRect(const RMPoint &pt) {
-		return (pt.x >= x1 && pt.x <= x2 && pt.y >= y1 && pt.y <= y2);
+		return (pt._x >= _x1 && pt._x <= _x2 && pt._y >= _y1 && pt._y <= _y2);
 	}
 
 	// Extract from data stream
@@ -310,10 +310,10 @@ public:
  */
 class RMResUpdate {
 	struct ResUpdInfo {
-		uint32 dwRes;
-		uint32 offset;
-		uint32 size;
-		uint32 cmpSize;
+		uint32 _dwRes;
+		uint32 _offset;
+		uint32 _size;
+		uint32 _cmpSize;
 	};
 
 	uint32 _numUpd;

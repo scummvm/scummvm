@@ -734,31 +734,31 @@ int RMDataStream::getError() {
  * Constructor
  */
 RMPoint::RMPoint() {
-	x = y = 0;
+	_x = _y = 0;
 }
 
 /**
  * Copy constructor
  */
 RMPoint::RMPoint(const RMPoint &p) {
-	x = p.x;
-	y = p.y;
+	_x = p._x;
+	_y = p._y;
 }
 
 /**
  * Constructor with integer parameters
  */
 RMPoint::RMPoint(int x1, int y1) {
-	x = x1;
-	y = y1;
+	_x = x1;
+	_y = y1;
 }
 
 /**
  * Copy operator
  */
 RMPoint &RMPoint::operator=(RMPoint p) {
-	x = p.x;
-	y = p.y;
+	_x = p._x;
+	_y = p._y;
 
 	return *this;
 }
@@ -767,16 +767,16 @@ RMPoint &RMPoint::operator=(RMPoint p) {
  * Offsets the point by another point
  */
 void RMPoint::offset(const RMPoint &p) {
-	x += p.x;
-	y += p.y;
+	_x += p._x;
+	_y += p._y;
 }
 
 /**
  * Offsets the point by a specified offset
  */
 void RMPoint::offset(int xOff, int yOff) {
-	x += xOff;
-	y += yOff;
+	_x += xOff;
+	_y += yOff;
 }
 
 /**
@@ -819,8 +819,8 @@ RMPoint &RMPoint::operator-=(RMPoint p) {
 RMPoint RMPoint::operator-() {
 	RMPoint p;
 
-	p.x = -x;
-	p.y = -y;
+	p._x = -_x;
+	p._y = -_y;
 
 	return p;
 }
@@ -829,21 +829,21 @@ RMPoint RMPoint::operator-() {
  * Equality operator
  */
 bool RMPoint::operator==(RMPoint p) {
-	return ((x == p.x) && (y == p.y));
+	return ((_x == p._x) && (_y == p._y));
 }
 
 /**
  * Not equal operator
  */
 bool RMPoint::operator!=(RMPoint p) {
-	return ((x != p.x) || (y != p.y));
+	return ((_x != p._x) || (_y != p._y));
 }
 
 /**
  * Reads a point from a stream
  */
 RMDataStream &operator>>(RMDataStream &ds, RMPoint &p) {
-	ds >> p.x >> p.y;
+	ds >> p._x >> p._y;
 	return ds;
 }
 
@@ -856,7 +856,7 @@ RMRect::RMRect() {
 }
 
 void RMRect::setEmpty(void) {
-	x1 = y1 = x2 = y2 = 0;
+	_x1 = _y1 = _x2 = _y2 = 0;
 }
 
 RMRect::RMRect(const RMPoint &p1, const RMPoint &p2) {
@@ -872,17 +872,17 @@ RMRect::RMRect(const RMRect &rc) {
 }
 
 void RMRect::setRect(const RMPoint &p1, const RMPoint &p2) {
-	x1 = p1.x;
-	y1 = p1.y;
-	x2 = p2.x;
-	y2 = p2.y;
+	_x1 = p1._x;
+	_y1 = p1._y;
+	_x2 = p2._x;
+	_y2 = p2._y;
 }
 
 void RMRect::setRect(int X1, int Y1, int X2, int Y2) {
-	x1 = X1;
-	y1 = Y1;
-	x2 = X2;
-	y2 = Y2;
+	_x1 = X1;
+	_y1 = Y1;
+	_x2 = X2;
+	_y2 = Y2;
 }
 
 void RMRect::setRect(const RMRect &rc) {
@@ -890,10 +890,10 @@ void RMRect::setRect(const RMRect &rc) {
 }
 
 void RMRect::copyRect(const RMRect &rc) {
-	x1 = rc.x1;
-	y1 = rc.y1;
-	x2 = rc.x2;
-	y2 = rc.y2;
+	_x1 = rc._x1;
+	_y1 = rc._y1;
+	_x2 = rc._x2;
+	_y2 = rc._y2;
 }
 
 RMPoint &RMRect::topLeft() {
@@ -907,15 +907,15 @@ RMPoint &RMRect::bottomRight() {
 }
 
 RMPoint RMRect::center() {
-	return RMPoint((x2 - x1) / 2, (y2 - y1) / 2);
+	return RMPoint((_x2 - _x1) / 2, (_y2 - _y1) / 2);
 }
 
 int RMRect::width() const {
-	return x2 - x1;
+	return _x2 - _x1;
 }
 
 int RMRect::height() const {
-	return y2 - y1;
+	return _y2 - _y1;
 }
 
 int RMRect::size() const {
@@ -923,7 +923,7 @@ int RMRect::size() const {
 }
 
 bool RMRect::isEmpty() const {
-	return (x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0);
+	return (_x1 == 0 && _y1 == 0 && _x2 == 0 && _y2 == 0);
 }
 
 const RMRect &RMRect::operator=(const RMRect &rc) {
@@ -932,17 +932,17 @@ const RMRect &RMRect::operator=(const RMRect &rc) {
 }
 
 void RMRect::offset(int xOff, int yOff) {
-	x1 += xOff;
-	y1 += yOff;
-	x2 += xOff;
-	y2 += yOff;
+	_x1 += xOff;
+	_y1 += yOff;
+	_x2 += xOff;
+	_y2 += yOff;
 }
 
 void RMRect::offset(const RMPoint &p) {
-	x1 += p.x;
-	y1 += p.y;
-	x2 += p.x;
-	y2 += p.y;
+	_x1 += p._x;
+	_y1 += p._y;
+	_x2 += p._x;
+	_y2 += p._y;
 }
 
 const RMRect &RMRect::operator+=(RMPoint p) {
@@ -979,19 +979,19 @@ RMRect operator-(RMPoint p, const RMRect &rc) {
 }
 
 bool RMRect::operator==(const RMRect &rc) {
-	return ((x1 == rc.x1) && (y1 == rc.y1) && (x2 == rc.x2) && (y2 == rc.y2));
+	return ((_x1 == rc._x1) && (_y1 == rc._y1) && (_x2 == rc._x2) && (_y2 == rc._y2));
 }
 
 bool RMRect::operator!=(const RMRect &rc) {
-	return ((x1 != rc.x1) || (y1 != rc.y1) || (x2 != rc.x2) || (y2 != rc.y2));
+	return ((_x1 != rc._x1) || (_y1 != rc._y1) || (_x2 != rc._x2) || (_y2 != rc._y2));
 }
 
 void RMRect::normalizeRect(void) {
-	setRect(MIN(x1, x2), MIN(y1, y2), MAX(x1, x2), MAX(y1, y2));
+	setRect(MIN(_x1, _x2), MIN(_y1, _y2), MAX(_x1, _x2), MAX(_y1, _y2));
 }
 
 RMDataStream &operator>>(RMDataStream &ds, RMRect &rc) {
-	ds >> rc.x1 >> rc.y1 >> rc.x2 >> rc.y2;
+	ds >> rc._x1 >> rc._y1 >> rc._x2 >> rc._y2;
 	return ds;
 }
 
@@ -1032,10 +1032,10 @@ void RMResUpdate::init(const Common::String &fileName) {
 	for (i = 0; i < _numUpd; ++i) {
 		ResUpdInfo &info = _infos[i];
 
-		info.dwRes = _hFile.readUint32LE();
-		info.offset = _hFile.readUint32LE();
-		info.size = _hFile.readUint32LE();
-		info.cmpSize = _hFile.readUint32LE();
+		info._dwRes = _hFile.readUint32LE();
+		info._offset = _hFile.readUint32LE();
+		info._size = _hFile.readUint32LE();
+		info._cmpSize = _hFile.readUint32LE();
 	}
 }
 
@@ -1046,7 +1046,7 @@ HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 
 	uint32 i;
 	for (i = 0; i < _numUpd; ++i)
-		if (_infos[i].dwRes == dwRes)
+		if (_infos[i]._dwRes == dwRes)
 			// Found the index
 			break;
 
@@ -1055,26 +1055,26 @@ HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 		return NULL;
 
 	const ResUpdInfo &info = _infos[i];
-	byte *cmpBuf = new byte[info.cmpSize];
+	byte *cmpBuf = new byte[info._cmpSize];
 	uint32 dwRead;
 
 	// Move to the correct offset and read in the compressed data
-	_hFile.seek(info.offset);
-	dwRead = _hFile.read(cmpBuf, info.cmpSize);
+	_hFile.seek(info._offset);
+	dwRead = _hFile.read(cmpBuf, info._cmpSize);
 
-	if (info.cmpSize > dwRead) {
+	if (info._cmpSize > dwRead) {
 		// Error occurred reading data, so return NULL
 		delete[] cmpBuf;
 		return NULL;
 	}
 
 	// Allocate space for the output resource
-	HGLOBAL destBuf = globalAllocate(0, info.size);
+	HGLOBAL destBuf = globalAllocate(0, info._size);
 	byte *lpDestBuf = (byte *)globalLock(destBuf);
 	uint32 dwSize;
 
 	// Decompress the data
-	lzo1x_decompress(cmpBuf, info.cmpSize, lpDestBuf, &dwSize);
+	lzo1x_decompress(cmpBuf, info._cmpSize, lpDestBuf, &dwSize);
 
 	// Delete buffer for compressed data
 	delete [] cmpBuf;

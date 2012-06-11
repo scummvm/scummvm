@@ -208,7 +208,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 				// ************
 				if (_bGUIOption) {
 					if (!_tony.inAction() && _bInput) {
-						if ((_input.mouseLeftClicked() && _input.mousePos().x < 3 && _input.mousePos().y < 3)) {
+						if ((_input.mouseLeftClicked() && _input.mousePos()._x < 3 && _input.mousePos()._y < 3)) {
 							CORO_INVOKE_1(openOptionScreen, 0);
 							goto SKIPCLICKSINISTRO;
 						} else if (_input.getAsyncKeyState(Common::KEYCODE_ESCAPE))
@@ -297,7 +297,7 @@ SKIPCLICKSINISTRO:
 	// Update screen scrolling to keep Tony in focus
 	if (_tony.mustUpdateScrolling() && _bLocationLoaded) {
 		RMPoint showThis = _tony.position();
-		showThis.y -= 60;
+		showThis._y -= 60;
 		_loc.updateScrolling(showThis);
 	}
 
@@ -379,14 +379,14 @@ void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
 
 
 void RMGfxEngine::initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
-	if (start.x == -1 || start.y == -1) {
-		start.x = ptTonyStart.x - RM_SX / 2;
-		start.y = ptTonyStart.y - RM_SY / 2;
+	if (start._x == -1 || start._y == -1) {
+		start._x = ptTonyStart._x - RM_SX / 2;
+		start._y = ptTonyStart._y - RM_SY / 2;
 	}
 
 	_loc.setScrollPosition(start);
 
-	if (ptTonyStart.x == 0 && ptTonyStart.y == 0) {
+	if (ptTonyStart._x == 0 && ptTonyStart._y == 0) {
 	} else {
 		_tony.setPosition(ptTonyStart, nLoc);
 		_tony.setScrollPosition(start);
@@ -616,8 +616,8 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	f->writeByte(i);
 	f->write(name.c_str(), i);
 	f->writeUint32LE(_nCurLoc);
-	f->writeUint32LE(tp.x);
-	f->writeUint32LE(tp.y);
+	f->writeUint32LE(tp._x);
+	f->writeUint32LE(tp._y);
 
 	f->writeUint32LE(size);
 	f->write(state, size);
@@ -738,8 +738,8 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	}
 
 	_ctx->loc = _ctx->f->readUint32LE();
-	_ctx->tp.x = _ctx->f->readUint32LE();
-	_ctx->tp.y = _ctx->f->readUint32LE();
+	_ctx->tp._x = _ctx->f->readUint32LE();
+	_ctx->tp._y = _ctx->f->readUint32LE();
 	_ctx->size = _ctx->f->readUint32LE();
 
 	if ((_ctx->ver >= 0x5) && (_ctx->ver <= 7)) {

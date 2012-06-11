@@ -94,8 +94,8 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 
 	RMPoint scenePos;
 	if (argc >= 4) {
-		scenePos.x = strToInt(argv[2]);
-		scenePos.y = strToInt(argv[3]);
+		scenePos._x = strToInt(argv[2]);
+		scenePos._y = strToInt(argv[3]);
 	} else {
 		// Get the box areas for the scene, and choose one so as to have a default
 		// position for Tony that will be in the walkable areas
@@ -106,8 +106,8 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	// Set up a process to change the scene
 	ChangeSceneDetails details;
 	details.sceneNumber = sceneNumber;
-	details.x = scenePos.x;
-	details.y = scenePos.y;
+	details.x = scenePos._x;
+	details.y = scenePos._y;
 	CoroScheduler.createProcess(DebugChangeScene, &details, sizeof(ChangeSceneDetails));
 
 	return false;
