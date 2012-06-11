@@ -784,12 +784,6 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
 		effectiveScreenHeight() - 1);
 
-	// Distinguish 555 and 565 mode
-	if (_hwscreen->format->Rmask == 0x7C00)
-		InitScalers(555);
-	else
-		InitScalers(565);
-
 	return true;
 }
 
@@ -825,7 +819,6 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 		_osdSurface = NULL;
 	}
 #endif
-	DestroyScalers();
 }
 
 bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
