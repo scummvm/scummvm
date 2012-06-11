@@ -298,9 +298,8 @@ void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {
 }
 
 void Inter_Geisha::oGeisha_playMusic(OpGobParams &params) {
-	// TODO: The MDYPlayer is still broken!
-	warning("Geisha Stub: oGeisha_playMusic");
-	// _vm->_sound->adlibPlay();
+	_vm->_sound->adlibSetRepeating(-1);
+	_vm->_sound->adlibPlay();
 }
 
 void Inter_Geisha::oGeisha_stopMusic(OpGobParams &params) {
