@@ -26,15 +26,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
 #include "engines/wintermute/Base/BScriptable.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/SXMemBuffer.h"
+#include "common/file.h"
 
 namespace WinterMute {
 
@@ -391,9 +388,11 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "DEBUG_Dump") == 0) {
 		Stack->CorrectParams(0);
 		if (_buffer && _size) {
-			FILE *f = fopen("c:\\!!buffer.bin", "wb");
-			fwrite(_buffer, _size, 1, f);
-			fclose(f);
+			warning("SXMemBuffer::ScCallMethod - DEBUG_Dump");
+			Common::DumpFile f;
+			f.open("buffer.bin");
+			f.write(_buffer, _size);
+			f.close();
 		}
 		Stack->PushNULL();
 		return S_OK;

@@ -32,14 +32,10 @@
 #include "engines/wintermute/wintypes.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/persistent.h"
-//#include <set>
-//#include <map>
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/func.h"
 #include "common/stream.h"
-
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 namespace WinterMute {
 class CSysClass;
