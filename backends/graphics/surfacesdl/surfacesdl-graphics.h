@@ -284,8 +284,6 @@ protected:
 	uint8 _originalBitsPerPixel;
 #endif
 
-	ScalerProc *_scalerProc;
-	int _scalerType;
 	int _transactionMode;
 
 	// Indicates whether it is needed to free _hwSurface in destructor
