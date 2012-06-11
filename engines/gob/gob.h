@@ -50,6 +50,10 @@ class StaticTextWidget;
  * - Bargon Attack
  * - Lost in Time
  * - The Bizarre Adventures of Woodruff and the Schnibble
+ * - Fascination
+ * - Urban Runner
+ * - Bambou le sauveur de la jungle
+ * - Geisha
  */
 namespace Gob {
 
