@@ -1476,7 +1476,11 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			}
 			else Stack->PushBool(false);
 		}
-		else Stack->PushBool(false);
+		else {
+			Stack->PushBool(false);
+			delete _theoraPlayer;
+			_theoraPlayer = NULL;
+		}
 		
 		return S_OK;
 	}

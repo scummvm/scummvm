@@ -116,7 +116,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	if (!_file) return E_FAIL;
 	
 	//if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
-#if defined (USE_THEORA)
+#if defined (USE_THEORADEC)
 	_theoraDecoder = new TheoraDecoder();
 #else
 	return E_FAIL;
