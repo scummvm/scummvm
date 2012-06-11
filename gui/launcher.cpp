@@ -779,10 +779,9 @@ void LauncherDialog::updateListing() {
 }
 
 void LauncherDialog::addGame() {
-	int modifiers = g_system->getEventManager()->getModifierState();
 
 #ifndef DISABLE_MASS_ADD
-	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+	const bool massAdd = checkModifier(Common::KBD_SHIFT);
 
 	if (massAdd) {
 		MessageDialog alert(_("Do you really want to run the mass game detector? "
@@ -975,6 +974,20 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
+void LauncherDialog::loadGameButtonPressed(int item) {
+	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
+	if (shiftPressed) {
+		recordGame(item);
+	} else {
+		loadGame(item);
+	}
+	updateButtons();
+}
+
+void LauncherDialog::recordGame(int item) {
+
+}
+
 void LauncherDialog::loadGame(int item) {
 	String gameId = ConfMan.get("gameid", _domains[item]);
 	if (gameId.empty())
@@ -1039,7 +1052,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		editGame(item);
 		break;
 	case kLoadGameCmd:
-		loadGame(item);
+		loadGameButtonPressed(item);
 		break;
 	case kOptionsCmd: {
 		GlobalOptionsDialog options;
@@ -1109,19 +1122,25 @@ void LauncherDialog::updateButtons() {
 		_loadButton->setEnabled(en);
 		_loadButton->draw();
 	}
+	switchButtonsText(_addButton, "~A~dd Game...", "Mass Add...");
+	switchButtonsText(_loadButton, "~L~oad...", "Record...");
+}
 
-	// Update the label of the "Add" button depending on whether shift is pressed or not
-	int modifiers = g_system->getEventManager()->getModifierState();
-	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+// Update the label of the button depending on whether shift is pressed or not
+void LauncherDialog::switchButtonsText(ButtonWidget *button, char *normalText, char *shiftedText) {
+	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
 	const bool lowRes = g_system->getOverlayWidth() <= 320;
 
-	const char *newAddButtonLabel = massAdd
-		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
-		: (lowRes ? _c("~A~dd Game...", "lowres") : _("~A~dd Game..."));
+	const char *newAddButtonLabel = shiftPressed
+		? (lowRes ? _c(shiftedText, "lowres") : _(shiftedText))
+		: (lowRes ? _c(normalText, "lowres") : _(normalText));
 
-	if (_addButton->getLabel() != newAddButtonLabel)
-		_addButton->setLabel(newAddButtonLabel);
+	if (button->getLabel() != newAddButtonLabel)
+		button->setLabel(newAddButtonLabel);
 }
+
+
+
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
@@ -1184,6 +1203,11 @@ void LauncherDialog::reflowLayout() {
 	_h = g_system->getOverlayHeight();
 
 	Dialog::reflowLayout();
+}
+
+bool LauncherDialog::checkModifier(int checkedModifier) {
+	int modifiers = g_system->getEventManager()->getModifierState();
+	return (modifiers & checkedModifier) != 0;
 }
 
 } // End of namespace GUI
