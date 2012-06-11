@@ -161,15 +161,6 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 		}
 	}
 		break;
-	case 3: {
-		uint32 color;
-		byte *pixels = (byte *)thumb.pixels;
-		for (uint32 p = 0; p < (uint32)thumb.w * thumb.h; ++p, pixels+=3) {
-			color = pixels[2] << 16 | pixels[1] << 8 | pixels[0];
-			out.writeUint32BE(color);
-		}
-	}
-		break;
 	case 4:	{
 		uint32 *pixels = (uint32 *)thumb.pixels;
 		for (uint32 p = 0; p < (uint32)thumb.w * thumb.h; ++p, ++pixels) {
