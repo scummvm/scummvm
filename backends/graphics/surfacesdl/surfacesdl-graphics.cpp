@@ -509,7 +509,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	int newScaleFactor;
 
-	if (mode >= s_supportedGraphicsModes->size()) {
+	if (mode >= (int)s_supportedGraphicsModes->size()) {
 		warning("unknown gfx mode %d", mode);
 		return false;
 	}
@@ -1718,7 +1718,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 #else
 	byte color;
 #endif
-	int w, h, i, j;
+	uint w, h, i, j;
 
 	if (!_mouseOrigSurface || !_mouseData)
 		return;
@@ -2099,7 +2099,7 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
  * @param factor      The scale factor to match
  * @return            The graphics mode
  */
-int findGraphicsMode(int factor, ScalerPlugin *plugin) {
+int findGraphicsMode(uint factor, ScalerPlugin *plugin) {
 	for (uint i = 0; i < s_supportedGraphicsModesData->size(); ++i) {
 		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, (*plugin)->getName()) == 0
 				&& (*s_supportedGraphicsModesData)[i].scaleFactor == factor) {
@@ -2137,7 +2137,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 	}
 
 	bool needSwitch = false;
-	int factor = _videoMode.scaleFactor;
+	uint factor = _videoMode.scaleFactor;
 	SDLKey sdlKey = (SDLKey)key;
 
 	// Increase/decrease the scale factor
@@ -2152,10 +2152,10 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 	}
 
 	if (sdlKey == SDLK_LEFTBRACKET) {
-		_scalerIndex--;
-		if (_scalerIndex < 0) {
-			_scalerIndex = _scalerPlugins.size() - 1;
+		if (_scalerIndex == 0) {
+			_scalerIndex = _scalerPlugins.size();
 		}
+		_scalerIndex--;
 		needSwitch = true;
 		factor = (*_scalerPlugins[_scalerIndex])->getFactor();
 	}
