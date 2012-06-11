@@ -36,6 +36,8 @@
 //#include <map>
 #include "common/hashmap.h"
 #include "common/func.h"
+#include "common/stream.h"
+
 namespace Common {
 template<typename T> struct Hash;
 
@@ -93,7 +95,7 @@ public:
 
 	void ResetSavedIDs();
 
-	void Dump(void *stream);
+	void Dump(Common::WriteStream *stream);
 
 private:
 	int _numInst;

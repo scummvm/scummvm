@@ -37,6 +37,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/func.h"
+#include "common/stream.h"
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
@@ -75,7 +76,7 @@ public:
 	bool UnregisterClass(CSysClass *classObj);
 	bool RegisterInstance(const char *className, void *instance);
 	bool UnregisterInstance(const char *className, void *instance);
-	void DumpClasses(void *stream);
+	void DumpClasses(Common::WriteStream *stream);
 	int GetNextID();
 	void AddInstanceToTable(CSysInstance *instance, void *pointer);
 

@@ -25,17 +25,9 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include <time.h>
-#undef FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #define FORBIDDEN_SYMBOL_EXCEPTION_srand
-#define FORBIDDEN_SYMBOL_EXCEPTION_time
-#define FORBIDDEN_SYMBOL_EXCEPTION_time
-#define FORBIDDEN_SYMBOL_EXCEPTION_localtime
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFader.h"
@@ -81,6 +73,8 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/keyboard.h"
+#include "common/system.h"
+#include "common/file.h"
 
 #ifdef __IPHONEOS__
 #   include "ios_utils.h"
@@ -161,7 +155,7 @@ CBGame::CBGame(): CBObject(this) {
 
 	_useD3D = false;
 
-	srand((unsigned)time(NULL));
+	srand(g_system->getMillis());
 
 	_registry = new CBRegistry(this);
 	_stringTable = new CBStringTable(this);
@@ -530,18 +524,19 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 	_dEBUG_DebugMode = true;
 
 #ifndef __IPHONEOS__
-	if (Filename)_dEBUG_LogFile = fopen(Filename, "a+");
-	else _dEBUG_LogFile = fopen("./zz_debug.log", "a+");
+	//if (Filename)_dEBUG_LogFile = fopen(Filename, "a+");
+	//else _dEBUG_LogFile = fopen("./zz_debug.log", "a+");
 
 	if (!_dEBUG_LogFile) {
 		AnsiString safeLogFileName = PathUtil::GetSafeLogFileName();
-		_dEBUG_LogFile = fopen(safeLogFileName.c_str(), "a+");
+		//_dEBUG_LogFile = fopen(safeLogFileName.c_str(), "a+");
 	}
 
-	if (_dEBUG_LogFile != NULL) fprintf((FILE *)_dEBUG_LogFile, "\n");
+	//if (_dEBUG_LogFile != NULL) fprintf((FILE *)_dEBUG_LogFile, "\n");
+	warning("BGame::DEBUG_DebugEnable - No logfile is currently created"); //TODO: Use a dumpfile?
 #endif
 
-	time_t timeNow;
+/*	time_t timeNow;
 	time(&timeNow);
 	struct tm *tm = localtime(&timeNow);
 
@@ -549,6 +544,17 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Debug Build) *******************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
 #else
 	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Release Build) *****************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
+#endif*/
+	int secs = g_system->getMillis() / 1000;
+	int hours = secs % 3600;
+	secs -= hours * 3600;
+	int mins = secs / 60;
+	secs = secs % 60;
+	
+#ifdef _DEBUG
+	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%02d (Debug Build) *******************", hours, mins, secs);
+#else
+	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%02d (Release Build) *****************", hours, mins, secs);
 #endif
 
 	LOG(0, "%s ver %d.%d.%d%s, Compiled on " __DATE__ ", " __TIME__, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
@@ -564,7 +570,7 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 void CBGame::DEBUG_DebugDisable() {
 	if (_dEBUG_LogFile != NULL) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
-		fclose((FILE *)_dEBUG_LogFile);
+		//fclose((FILE *)_dEBUG_LogFile);
 		_dEBUG_LogFile = NULL;
 	}
 	_dEBUG_DebugMode = false;
@@ -576,9 +582,14 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 #ifndef __IPHONEOS__
 	if (!_dEBUG_DebugMode) return;
 #endif
-	time_t timeNow;
+/*	time_t timeNow;
 	time(&timeNow);
-	struct tm *tm = localtime(&timeNow);
+	struct tm *tm = localtime(&timeNow);*/
+	int secs = g_system->getMillis() / 1000;
+	int hours = secs % 3600;
+	secs -= hours * 3600;
+	int mins = secs / 60;
+	secs = secs % 60;
 
 	char buff[512];
 	va_list va;
@@ -599,9 +610,9 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 	}
 	if (_debugMgr) _debugMgr->OnLog(res, buff);
 
-	warning("%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
-	fprintf((FILE *)_dEBUG_LogFile, "%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, buff);
-	fflush((FILE *)_dEBUG_LogFile);
+	warning("%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
+	//fprintf((FILE *)_dEBUG_LogFile, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
+	//fflush((FILE *)_dEBUG_LogFile);
 #endif
 
 	//QuickMessage(buff);
@@ -1439,12 +1450,12 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PlayTheora") == 0) {
-	/*	Stack->CorrectParams(0);
+		Stack->CorrectParams(0);
 		Stack->PushBool(false);
 
 		return S_OK;
 		// TODO: ADDVIDEO
-		*/
+
 		Stack->CorrectParams(7);
 		const char* Filename = Stack->Pop()->GetString();
 		warning("PlayTheora: %s - not implemented yet", Filename);
@@ -1815,12 +1826,13 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 
 		CScValue *Val = Stack->Pop();
 
+		warning("BGame::ScCallMethod - Screenshot not reimplemented"); //TODO
 		int FileNum = 0;
+		
 		while (true) {
 			sprintf(Filename, "%s%03d.bmp", Val->IsNULL() ? _name : Val->GetString(), FileNum);
-			FILE *f = fopen(Filename, "rb");
-			if (!f) break;
-			else fclose(f);
+			if (!Common::File::exists(Filename))
+				break;
 			FileNum++;
 		}
 
@@ -4182,11 +4194,14 @@ HRESULT CBGame::ResetContent() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::DEBUG_DumpClassRegistry() {
-	FILE *f = fopen("./zz_class_reg_dump.log", "wt");
+	warning("DEBUG_DumpClassRegistry - untested");
+	Common::DumpFile *f = new Common::DumpFile;
+	f->open("zz_class_reg_dump.log");
 
 	CSysClassRegistry::GetInstance()->DumpClasses(f);
-
-	fclose(f);
+	
+	f->close();
+	delete f;
 	Game->QuickMessage("Classes dump completed.");
 }
 

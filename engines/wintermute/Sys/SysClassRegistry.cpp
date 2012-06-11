@@ -30,6 +30,7 @@
 #include "engines/wintermute/PlatformSDL.h"
 #include "SysInstance.h"
 #include "SysClassRegistry.h"
+#include "common/stream.h"
 
 namespace WinterMute {
 
@@ -279,7 +280,7 @@ HRESULT CSysClassRegistry::EnumInstances(SYS_INSTANCE_CALLBACK lpCallback, const
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClassRegistry::DumpClasses(void *stream) {
+void CSysClassRegistry::DumpClasses(Common::WriteStream *stream) {
 	Classes::iterator it;
 	for (it = _classes.begin(); it != _classes.end(); ++it)
 		(it->_value)->Dump(stream);
