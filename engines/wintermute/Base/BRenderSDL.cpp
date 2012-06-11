@@ -233,7 +233,7 @@ HRESULT CBRenderSDL::Flip() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::Fill(byte  r, byte g, byte b, Common::Rect *rect) {
+HRESULT CBRenderSDL::Fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
 	uint32 color = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
