@@ -51,17 +51,6 @@ static Common::Array<GraphicsModeData> *s_supportedGraphicsModesData = NULL;
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
-static const int s_gfxModeSwitchTable[][4] = {
-		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
-		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
-		{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
-		{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
-		{ GFX_NORMAL, GFX_TV2X, -1, -1 },
-		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
-	};
-
 #ifdef USE_SCALERS
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 #endif
@@ -107,7 +96,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
-	_scalerProc(0), _screenChangeCount(0),
+	_screenChangeCount(0),
 	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
 	_currentShakePos(0), _newShakePos(0),
@@ -154,18 +143,15 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.scaleFactor = 2;
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
-	_scalerProc = Normal2x;
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
 	_videoMode.aspectRatioCorrection = false;
-	_scalerProc = Normal1x;
 #endif
 	// HACK: just pick first scaler plugin
 	_normalPlugin = _scalerPlugin = _scalerPlugins.front();
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
-	_scalerType = 0;
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
@@ -288,11 +274,18 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsMode
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
-	return GFX_DOUBLESIZE;
+	for (uint i = 0; i < s_supportedGraphicsModes->size(); ++i) {
+		// if normal2x exists, it is the default
+		if (strcmp((*s_supportedGraphicsModes)[i].name, "normal2x") == 0)
+			return (*s_supportedGraphicsModes)[i].id;
+	}
+	// 0 should be the normal1x mode
+	return 0;
 }
 
 void SurfaceSdlGraphicsManager::resetGraphicsScale() {
-	setGraphicsMode(s_gfxModeSwitchTable[_scalerType][0]);
+	// 0 will currently always be Normal1x scaling
+	setGraphicsMode(0);
 }
 
 void SurfaceSdlGraphicsManager::beginGFXTransaction() {
@@ -898,7 +891,6 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
-	ScalerProc *scalerProc;
 	int scale1;
 
 	// definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
@@ -959,14 +951,12 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		srcSurf = _tmpscreen;
 		width = _videoMode.screenWidth;
 		height = _videoMode.screenHeight;
-		scalerProc = _scalerProc;
 		scale1 = _videoMode.scaleFactor;
 	} else {
 		origSurf = _overlayscreen;
 		srcSurf = _tmpscreen2;
 		width = _videoMode.overlayWidth;
 		height = _videoMode.overlayHeight;
-		scalerProc = Normal1x;
 		scale1 = 1;
 	}
 
@@ -1023,9 +1013,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
-				assert(scalerProc != NULL);
-				//scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-				//  (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				if (_overlayVisible) {
 					uint tmpFactor = (*_normalPlugin)->getFactor();
 					(*_normalPlugin)->setFactor(1);
@@ -1534,8 +1521,6 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
-	//_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
-	//(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight);
 	(*_scalerPlugin)->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
 
@@ -2166,19 +2151,6 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		needSwitch = true;
 	}
 
-	const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_9);
-	const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP9);
-	if (isNormalNumber || isKeypadNumber) {
-		_scalerType = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
-		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
-			return false;
-
-		while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
-			assert(factor > 0);
-			factor--;
-		}
-	}
-
 	if (sdlKey == SDLK_LEFTBRACKET) {
 		_scalerIndex--;
 		if (_scalerIndex < 0) {
@@ -2236,16 +2208,9 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 
 bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		const bool isNormalNumber = (Common::KEYCODE_1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_9);
-		const bool isKeypadNumber = (Common::KEYCODE_KP1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_KP9);
 		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
 			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
 
-		if (isNormalNumber || isKeypadNumber) {
-			int keyValue = event.kbd.keycode - (isNormalNumber ? Common::KEYCODE_1 : Common::KEYCODE_KP1);
-			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
-				return false;
-		}
 		return (isScaleKey || event.kbd.keycode == 'a');
 	}
 	return false;

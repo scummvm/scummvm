@@ -229,8 +229,6 @@ protected:
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 
-	ScalerProc *_scalerProc;
-	int _scalerType;
 	int _transactionMode;
 
 	const ScalerPlugin::List &_scalerPlugins;
