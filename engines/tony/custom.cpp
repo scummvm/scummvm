@@ -467,6 +467,11 @@ DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32)
 
 	CORO_INVOKE_0(GLOBALS.WaitFrame);
 
+	// WORKAROUND: This fixes a bug in the original source where the linked clear task
+	// didn't have time to be drawn and removed from the draw list before the method
+	// ended, thus remaining in the draw list and causing a later crash
+	CORO_INVOKE_0(GLOBALS.WaitFrame);
+
 	CORO_END_CODE;
 }
 
