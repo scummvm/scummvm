@@ -330,7 +330,7 @@ protected:
 	const ScalerPlugin::List &_scalerPlugins;
 	ScalerPlugin *_scalerPlugin;
 	ScalerPlugin *_normalPlugin;
-	int _scalerIndex;
+	uint _scalerIndex;
 	uint _maxExtraPixels;
 	uint _extraPixels;
 

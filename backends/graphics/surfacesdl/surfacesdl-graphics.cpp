@@ -634,6 +634,11 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) {
 
 	int newScaleFactor;
 
+	if (mode >= (int)s_supportedGraphicsModes->size()) {
+		warning("unknown gfx mode %d", mode);
+		return false;
+	}
+
 	const char *name = (*s_supportedGraphicsModesData)[mode].pluginName;
 	newScaleFactor = (*s_supportedGraphicsModesData)[mode].scaleFactor;
 
@@ -1902,8 +1907,8 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 }
 
 void SurfaceSdlGraphicsManager::blitCursor() {
-	const int w = _mouseCurState.w;
-	const int h = _mouseCurState.h;
+	const uint w = _mouseCurState.w;
+	const uint h = _mouseCurState.h;
 
 	if (!w || !h || !_mouseOrigSurface) {
 		return;
@@ -2421,7 +2426,7 @@ void SurfaceSdlGraphicsManager::handleResizeImpl(const int width, const int heig
  * @param factor      The scale factor to match
  * @return            The graphics mode
  */
-int findGraphicsMode(int factor, ScalerPlugin *plugin) {
+int findGraphicsMode(uint factor, ScalerPlugin *plugin) {
 	for (uint i = 0; i < s_supportedGraphicsModesData->size(); ++i) {
 		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, (*plugin)->getName()) == 0
 				&& (*s_supportedGraphicsModesData)[i].scaleFactor == factor) {
