@@ -2208,8 +2208,13 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 
 bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
-			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
+		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS ||
+				event.kbd.keycode == Common::KEYCODE_PLUS ||
+				event.kbd.keycode == Common::KEYCODE_MINUS ||
+				event.kbd.keycode == Common::KEYCODE_KP_PLUS ||
+				event.kbd.keycode == Common::KEYCODE_KP_MINUS ||
+				event.kbd.keycode == Common::KEYCODE_LEFTBRACKET ||
+				event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET);
 
 		return (isScaleKey || event.kbd.keycode == 'a');
 	}
