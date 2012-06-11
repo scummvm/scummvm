@@ -86,9 +86,9 @@ private:
 	bool _bCorpoDavanti;
 	RMGfxSourceBuffer8AB _ombra;
 	bool _bActionPending;
-	RMItem *_ActionItem;
-	int _Action;
-	int _ActionParm;
+	RMItem *_actionItem;
+	int _action;
+	int _actionParm;
 	static bool _bAction;
 
 	bool _bPastorella;
@@ -97,13 +97,13 @@ private:
 	bool _bIsTalking;
 	int _nPatB4Talking;
 	TALKTYPE _nTalkType;
-	DIRECTION _TalkDirection;
+	DIRECTION _talkDirection;
 	RMPoint _nBodyOffset;
 
 	int _nTimeLastStep;
 
 	RMItem _body;
-	uint32 hActionThread;
+	uint32 _hActionThread;
 
 protected:
 	// Overload of the allocation allocation of sprites
@@ -397,7 +397,7 @@ public:
 
 	// Check if currently in an action
 	bool inAction() {
-		return (_bActionPending && _Action != 0) | _bAction;
+		return (_bActionPending && _action != 0) | _bAction;
 	}
 
 	// Check if there needs to be an update for scrolling movement
