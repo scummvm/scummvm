@@ -67,7 +67,7 @@ int32 Meter::increase(int32 n) {
 	if (n < 0)
 		return decrease(-n);
 
-	int32 overflow = MAX(0, (_value + n) - _maxValue);
+	int32 overflow = MAX<int32>(0, (_value + n) - _maxValue);
 
 	int32 value = CLIP<int32>(_value + n, 0, _maxValue);
 	if (_value == value)
@@ -83,7 +83,7 @@ int32 Meter::decrease(int32 n) {
 	if (n < 0)
 		return increase(-n);
 
-	int32 underflow = -MIN(0, _value - n);
+	int32 underflow = -MIN<int32>(0, _value - n);
 
 	int32 value = CLIP<int32>(_value - n, 0, _maxValue);
 	if (_value == value)
