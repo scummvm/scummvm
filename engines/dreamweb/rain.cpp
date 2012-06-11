@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -50,7 +51,7 @@ void DreamWebEngine::showRain() {
 		}
 	}
 
-	if (_channel1Playing != 255)
+	if (_sound->isChannel1Playing())
 		return;
 	if (_realLocation == 2 && _vars._beenMugged != 1)
 		return;
@@ -61,11 +62,11 @@ void DreamWebEngine::showRain() {
 		return;
 
 	uint8 soundIndex;
-	if (_channel0Playing != 6)
+	if (_sound->getChannel0Playing() != 6)
 		soundIndex = 4;
 	else
 		soundIndex = 7;
-	playChannel1(soundIndex);
+	_sound->playChannel1(soundIndex);
 }
 
 uint8 DreamWebEngine::getBlockOfPixel(uint8 x, uint8 y) {

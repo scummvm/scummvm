@@ -79,6 +79,9 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~CoktelDecoder();
 
+	/** Replace the current video stream with this identical one. */
+	virtual bool reloadStream(Common::SeekableReadStream *stream) = 0;
+
 	virtual bool seek(int32 frame, int whence = SEEK_SET, bool restart = false) = 0;
 
 	/** Draw directly onto the specified video memory. */
@@ -237,6 +240,8 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~PreIMDDecoder();
 
+	bool reloadStream(Common::SeekableReadStream *stream);
+
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
 
@@ -268,6 +273,8 @@ public:
 	IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~IMDDecoder();
 
+	bool reloadStream(Common::SeekableReadStream *stream);
+
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
 	void setXY(uint16 x, uint16 y);
@@ -283,6 +290,11 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	Graphics::PixelFormat getPixelFormat() const;
+
+protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
 
 private:
 	enum Command {
@@ -359,6 +371,8 @@ public:
 	VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~VMDDecoder();
 
+	bool reloadStream(Common::SeekableReadStream *stream);
+
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
 	void setXY(uint16 x, uint16 y);
@@ -387,6 +401,11 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	Graphics::PixelFormat getPixelFormat() const;
+
+protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
 
 private:
 	enum PartType {

@@ -93,6 +93,7 @@ _flac=auto
 _mad=auto
 _alsa=auto
 _seq_midi=auto
+_sndio=auto
 _timidity=auto
 _zlib=auto
 _sparkle=auto
@@ -834,13 +835,13 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (MacOSX only - optional)
-  --disable-sparkle        disable sparkle automatic update support [MacOSX only - autodetect]
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (Mac OS X only - optional)
+  --disable-sparkle        disable sparkle automatic update support [Mac OS X only - autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
 
-  --with-freetype-prefix=DIR Prefix where the freetype-config script is
+  --with-freetype2-prefix=DIR Prefix where the freetype-config script is
                            installed (optional)
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
@@ -851,6 +852,9 @@ Optional Libraries:
 
   --with-libunity-prefix=DIR   Prefix where libunity is installed (optional)
   --disable-libunity           disable Unity launcher integration [autodetect]
+
+  --with-sndio-prefix=DIR  Prefix where sndio is installed (optional)
+  --disable-sndio          disable sndio MIDI driver [autodetect]
 
 Some influential environment variables:
   LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -877,6 +881,8 @@ for ac_option in $@; do
 	--disable-alsa)           _alsa=no        ;;
 	--enable-seq-midi)        _seq_midi=yes   ;;
 	--disable-seq-midi)       _seq_midi=no    ;;
+	--enable-sndio)           _sndio=yes      ;;
+	--disable-sndio)          _sndio=no       ;;
 	--enable-timidity)        _timidity=yes   ;;
 	--disable-timidity)       _timidity=no    ;;
 	--enable-vorbis)          _vorbis=yes     ;;
@@ -936,6 +942,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ALSA_CFLAGS="-I$arg/include"
 		ALSA_LIBS="-L$arg/lib"
+		;;
+	--with-sndio-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SNDIO_CFLAGS="-I$arg/include"
+		SNDIO_LIBS="-L$arg/lib"
 		;;
 	--with-ogg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1401,6 +1412,10 @@ ps2)
 ps3)
 	if test -z "$PS3DEV"; then
 		echo "Please set PS3DEV in your environment. export PS3DEV=<path to ps3 toolchain>"
+		exit 1
+	fi
+	if test -z "$PSL1GHT"; then
+		echo "Please set PSL1GHT in your environment. export PSL1GHT=<path to psl1ght>"
 		exit 1
 	fi
 	;;
@@ -2068,8 +2083,8 @@ case $_host_os in
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		DEFINES="$DEFINES -DPLAYSTATION3"
-		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
-		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
+		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
+		LDFLAGS="$LDFLAGS -L$PSL1GHT/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
@@ -3252,6 +3267,25 @@ if test "$_seq_midi" = auto ; then
 fi
 define_in_config_h_if_yes "$_seq_midi" 'USE_SEQ_MIDI'
 echo "$_seq_midi"
+
+#
+# Check for sndio
+#
+echocheck "sndio"
+if test "$_sndio" = auto ; then
+	_sndio=no
+	cat > $TMPC << EOF
+#include <sndio.h>
+int main(void) { struct sio_par par; sio_initpar(&par); return 0; }
+EOF
+	cc_check $SNDIO_CFLAGS $SNDIO_LIBS -lsndio && _sndio=yes
+fi
+if test "$_sndio" = yes ; then
+	LIBS="$LIBS $SNDIO_LIBS -lsndio"
+	INCLUDES="$INCLUDES $SNDIO_CFLAGS"
+fi
+define_in_config_h_if_yes "$_sndio" 'USE_SNDIO'
+echo "$_sndio"
 
 #
 # Check for TiMidity(++)

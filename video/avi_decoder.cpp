@@ -262,7 +262,7 @@ bool AviDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Initialize the video stuff too
 	_audStream = createAudioStream();
 	if (_audStream)
-		_mixer->playStream(_soundType, _audHandle, _audStream);
+		_mixer->playStream(_soundType, _audHandle, _audStream, -1, getVolume(), getBalance());
 
 	debug (0, "Frames = %d, Dimensions = %d x %d", _header.totalFrames, _header.width, _header.height);
 	debug (0, "Frame Rate = %d", _vidsHeader.rate / _vidsHeader.scale);
@@ -305,11 +305,11 @@ void AviDecoder::close() {
 	reset();
 }
 
-uint32 AviDecoder::getElapsedTime() const {
+uint32 AviDecoder::getTime() const {
 	if (_audStream)
 		return _mixer->getSoundElapsedTime(*_audHandle);
 
-	return FixedRateVideoDecoder::getElapsedTime();
+	return FixedRateVideoDecoder::getTime();
 }
 
 const Graphics::Surface *AviDecoder::decodeNextFrame() {
@@ -449,6 +449,16 @@ void AviDecoder::queueAudioBuffer(uint32 chunkSize) {
 	} else if (_wvInfo.tag == kWaveFormatDK3) {
 		_audStream->queueAudioStream(Audio::makeADPCMStream(stream, DisposeAfterUse::YES, chunkSize, Audio::kADPCMDK3, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign), DisposeAfterUse::YES);
 	}
+}
+
+void AviDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(*_audHandle))
+		g_system->getMixer()->setChannelVolume(*_audHandle, getVolume());
+}
+
+void AviDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(*_audHandle))
+		g_system->getMixer()->setChannelBalance(*_audHandle, getBalance());
 }
 
 } // End of namespace Video

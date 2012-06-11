@@ -98,7 +98,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_overlayscreen(0), _tmpscreen2(0),
 	_screenChangeCount(0),
 	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
-	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
+	_mouseOrigSurface(0), _cursorDontScale(false), _cursorPaletteDisabled(true),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
@@ -1646,7 +1646,7 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	}
 }
 
-void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (!format)
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -1667,7 +1667,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, 
 
 	_mouseKeyColor = keycolor;
 
-	_cursorTargetScale = cursorTargetScale;
+	_cursorDontScale = dontScale;
 
 	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
 		_mouseCurState.w = w;
@@ -1777,51 +1777,34 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	}
 
 	int rW, rH;
+	int cursorScale;
 
-	if (_cursorTargetScale >= _videoMode.scaleFactor) {
-		// The cursor target scale is greater or equal to the scale at
-		// which the rest of the screen is drawn. We do not downscale
-		// the cursor image, we draw it at its original size. It will
-		// appear too large on screen.
-
-		rW = w;
-		rH = h;
-		_mouseCurState.rHotX = _mouseCurState.hotX;
-		_mouseCurState.rHotY = _mouseCurState.hotY;
-
-		// The virtual dimensions may be larger than the original.
-
-		_mouseCurState.vW = w * _cursorTargetScale / _videoMode.scaleFactor;
-		_mouseCurState.vH = h * _cursorTargetScale / _videoMode.scaleFactor;
-		_mouseCurState.vHotX = _mouseCurState.hotX * _cursorTargetScale /
-			_videoMode.scaleFactor;
-		_mouseCurState.vHotY = _mouseCurState.hotY * _cursorTargetScale /
-			_videoMode.scaleFactor;
+	if (_cursorDontScale) {
+		// Don't scale the cursor at all if the user requests this behavior.
+		cursorScale = 1;
 	} else {
-		// The cursor target scale is smaller than the scale at which
-		// the rest of the screen is drawn. We scale up the cursor
-		// image to make it appear correct.
-
-		rW = w * _videoMode.scaleFactor / _cursorTargetScale;
-		rH = h * _videoMode.scaleFactor / _cursorTargetScale;
-		_mouseCurState.rHotX = _mouseCurState.hotX * _videoMode.scaleFactor /
-			_cursorTargetScale;
-		_mouseCurState.rHotY = _mouseCurState.hotY * _videoMode.scaleFactor /
-			_cursorTargetScale;
-
-		// The virtual dimensions will be the same as the original.
-
-		_mouseCurState.vW = w;
-		_mouseCurState.vH = h;
-		_mouseCurState.vHotX = _mouseCurState.hotX;
-		_mouseCurState.vHotY = _mouseCurState.hotY;
+		// Scale the cursor with the game screen scale factor.
+		cursorScale = _videoMode.scaleFactor;
 	}
+
+	// Adapt the real hotspot according to the scale factor.
+	rW = w * cursorScale;
+	rH = h * cursorScale;
+	_mouseCurState.rHotX = _mouseCurState.hotX * cursorScale;
+	_mouseCurState.rHotY = _mouseCurState.hotY * cursorScale;
+
+	// The virtual dimensions will be the same as the original.
+
+	_mouseCurState.vW = w;
+	_mouseCurState.vH = h;
+	_mouseCurState.vHotX = _mouseCurState.hotX;
+	_mouseCurState.vHotY = _mouseCurState.hotY;
 
 #ifdef USE_SCALERS
 	int rH1 = rH; // store original to pass to aspect-correction function later
 #endif
 
-	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1) {
+	if (!_cursorDontScale && _videoMode.aspectRatioCorrection) {
 		rH = real2Aspect(rH - 1) + 1;
 		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
 	}
@@ -1850,18 +1833,16 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	SDL_LockSurface(_mouseSurface);
 
-	// If possible, use the same scaler for the cursor as for the rest of
-	// the game. This only works well with the non-blurring scalers so we
-	// otherwise use the Normal scaler
-#ifdef USE_SCALERS
-	if (_cursorTargetScale == 1) {
+	// Only apply scaling, when the user allows it.
+	if (!_cursorDontScale) {
+		// If possible, use the same scaler for the cursor as for the rest of
+		// the game. This only works well with the non-blurring scalers so we
+		// otherwise use the Normal scaler
 		if ((*_scalerPlugin)->canDrawCursor()) {
-#endif
 		(*_scalerPlugin)->scale(
 			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
 			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 			_mouseCurState.w, _mouseCurState.h, 0, 0);
-#ifdef USE_SCALERS
 		} else {
 			int tmpFactor = (*_normalPlugin)->getFactor();
 			(*_normalPlugin)->setFactor(_videoMode.scaleFactor);
@@ -1871,7 +1852,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 				_mouseCurState.w, _mouseCurState.h, 0, 0);
 			(*_normalPlugin)->setFactor(tmpFactor);
 		}
-	} else if (_cursorTargetScale == 3 || _videoMode.scaleFactor < 3) {
+	} else {
 			int tmpFactor = (*_normalPlugin)->getFactor();
 			(*_normalPlugin)->setFactor(1);
 			(*_normalPlugin)->scale(
@@ -1879,16 +1860,10 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 				_mouseCurState.w, _mouseCurState.h, 0, 0);
 			(*_normalPlugin)->setFactor(tmpFactor);
-	} else {
-		ScalerPluginObject::scale1o5x(
-			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel ,
-			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-			_mouseCurState.w, _mouseCurState.h, bytesPerPixel);
 	}
-#endif
 
 #ifdef USE_SCALERS
-	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1)
+	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
 #endif
 

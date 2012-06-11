@@ -108,7 +108,7 @@ static void FettleEffectPolys(int x, int y, int index, PMOVER pActor) {
 			epi.hEpoly = hPoly;
 			epi.pMover = pActor;
 			epi.index = index;
-			g_scheduler->createProcess(PID_TCODE, EffectProcess, &epi, sizeof(epi));
+			CoroScheduler.createProcess(PID_TCODE, EffectProcess, &epi, sizeof(epi));
 		}
 	}
 }

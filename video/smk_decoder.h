@@ -69,7 +69,7 @@ public:
 	uint16 getWidth() const { return _surface->w; }
 	uint16 getHeight() const { return _surface->h; }
 	uint32 getFrameCount() const { return _frameCount; }
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	const Graphics::Surface *decodeNextFrame();
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
@@ -77,8 +77,14 @@ public:
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
 protected:
-	Common::Rational getFrameRate() const { return _frameRate; }
 	Common::SeekableReadStream *_fileStream;
+
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
+	// FixedRateVideoDecoder API
+	Common::Rational getFrameRate() const { return _frameRate; }
 
 protected:
 	void unpackPalette();

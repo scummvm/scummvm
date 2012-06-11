@@ -289,7 +289,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 
 		if (_audStream)
-			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _audHandle, _audStream);
+			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _audHandle, _audStream, -1, getVolume(), getBalance());
 	} else {
 		// tear down the partial vorbis setup
 		vorbis_info_clear(&_vorbisInfo);
@@ -507,7 +507,7 @@ uint32 TheoraDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _curFrame < 0)
 		return 0;
 
-	uint32 elapsedTime = getElapsedTime();
+	uint32 elapsedTime = getTime();
 	uint32 nextFrameStartTime = (uint32)(_nextFrameStartTime * 1000);
 
 	if (nextFrameStartTime <= elapsedTime)
@@ -516,11 +516,11 @@ uint32 TheoraDecoder::getTimeToNextFrame() const {
 	return nextFrameStartTime - elapsedTime;
 }
 
-uint32 TheoraDecoder::getElapsedTime() const {
+uint32 TheoraDecoder::getTime() const {
 	if (_audStream)
 		return g_system->getMixer()->getSoundElapsedTime(*_audHandle);
 
-	return VideoDecoder::getElapsedTime();
+	return VideoDecoder::getTime();
 }
 
 void TheoraDecoder::pauseVideoIntern(bool pause) {
@@ -548,6 +548,16 @@ void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer) {
 	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
 	Graphics::convertYUV420ToRGB(&_surface, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+}
+
+void TheoraDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(*_audHandle))
+		g_system->getMixer()->setChannelVolume(*_audHandle, getVolume());
+}
+
+void TheoraDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(*_audHandle))
+		g_system->getMixer()->setChannelBalance(*_audHandle, getBalance());
 }
 
 } // End of namespace Sword25

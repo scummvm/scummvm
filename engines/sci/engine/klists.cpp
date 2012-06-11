@@ -575,8 +575,11 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
-			// Can this happen with variable selectors?
-			error("kListFirstTrue: Attempted to access a variable selector");
+			// If it's a variable selector, check its value.
+			// Example: script 64893 in Torin, MenuHandler::isHilited checks
+			// all children for variable selector 0x03ba (bHilited).
+			if (!readSelector(s->_segMan, curObject, slc).isNull())
+				return curObject;
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
@@ -609,15 +612,15 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
-			// Can this happen with variable selectors?
-			error("kListAllTrue: Attempted to access a variable selector");
+			// If it's a variable selector, check its value
+			s->r_acc = readSelector(s->_segMan, curObject, slc);
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
-
-			// Check if the result isn't true
-			if (s->r_acc.isNull())
-				break;
 		}
+
+		// Check if the result isn't true
+		if (s->r_acc.isNull())
+			break;
 
 		curNode = s->_segMan->lookupNode(nextNode);
 	}

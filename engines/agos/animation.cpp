@@ -333,7 +333,7 @@ void MoviePlayerDXA::startSound() {
 
 	if (_bgSoundStream != NULL) {
 		_vm->_mixer->stopHandle(_bgSound);
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream, -1, getVolume(), getBalance());
 	}
 }
 
@@ -397,6 +397,16 @@ bool MoviePlayerDXA::processFrame() {
 
 	warning("dropped frame %i", getCurFrame());
 	return false;
+}
+
+void MoviePlayerDXA::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(_bgSound))
+		g_system->getMixer()->setChannelVolume(_bgSound, getVolume());
+}
+
+void MoviePlayerDXA::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(_bgSound))
+		g_system->getMixer()->setChannelBalance(_bgSound, getBalance());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

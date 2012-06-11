@@ -187,8 +187,8 @@
 
 	<!-- <defaults fill = 'gradient' fg_color = 'white'/> -->
 
-	<cursor file = 'cursor.bmp' hotspot = '0, 0' scale = '3'/>
-	<cursor resolution = 'y<400' file = 'cursor_small.bmp' hotspot = '0, 0' scale = '3'/>
+	<cursor file = 'cursor.bmp' hotspot = '0, 0'/>
+	<cursor resolution = 'y<400' file = 'cursor_small.bmp' hotspot = '0, 0'/>
 
 	<!-- Selection (text or list items) -->
 	<drawdata id = 'text_selection' cache = 'false'>
@@ -739,6 +739,27 @@
 					shadow = '3'
 		/>
 	</drawdata>
+
+	<!-- Pressed button -->
+	<drawdata id = 'button_pressed' cache = 'false'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '120, 40, 16'
+					gradient_start = '255, 0, 0'
+					gradient_end = '255, 0, 0'
+					bevel = '1'
+					bevel_color = 'black'
+		/>
+	</drawdata> 
 
 	<!-- Idle button -->
 	<drawdata id = 'button_idle' cache = 'false'>

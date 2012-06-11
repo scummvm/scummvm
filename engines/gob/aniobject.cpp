@@ -76,6 +76,10 @@ void ANIObject::rewind() {
 	_frame = 0;
 }
 
+void ANIObject::setFrame(uint16 frame) {
+	_frame = frame % _ani->getAnimationInfo(_animation).frameCount;
+}
+
 void ANIObject::setPosition() {
 	// CMP "animations" have no default position
 	if (_cmp)
@@ -167,19 +171,21 @@ bool ANIObject::isIn(const ANIObject &obj) const {
 	       obj.isIn(frameX + frameWidth - 1, frameY + frameHeight - 1);
 }
 
-void ANIObject::draw(Surface &dest, int16 &left, int16 &top,
+bool ANIObject::draw(Surface &dest, int16 &left, int16 &top,
                                     int16 &right, int16 &bottom) {
 
 	if (!_visible)
-		return;
+		return false;
 
 	if      (_cmp)
-		drawCMP(dest, left, top, right, bottom);
+		return drawCMP(dest, left, top, right, bottom);
 	else if (_ani)
-		drawANI(dest, left, top, right, bottom);
+		return drawANI(dest, left, top, right, bottom);
+
+	return false;
 }
 
-void ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
+bool ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
                                        int16 &right, int16 &bottom) {
 
 	if (!_background) {
@@ -209,9 +215,11 @@ void ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
 	top    = _backgroundTop;
 	right  = _backgroundRight;
 	bottom = _backgroundBottom;
+
+	return true;
 }
 
-void ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
+bool ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
                                        int16 &right, int16 &bottom) {
 
 	if (!_background) {
@@ -224,7 +232,7 @@ void ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
 
 	const ANIFile::Animation &animation = _ani->getAnimationInfo(_animation);
 	if (_frame >= animation.frameCount)
-		return;
+		return false;
 
 	const ANIFile::FrameArea &area = animation.frameAreas[_frame];
 
@@ -244,13 +252,15 @@ void ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
 	top    = _backgroundTop;
 	right  = _backgroundRight;
 	bottom = _backgroundBottom;
+
+	return true;
 }
 
-void ANIObject::clear(Surface &dest, int16 &left, int16 &top,
+bool ANIObject::clear(Surface &dest, int16 &left, int16 &top,
                                      int16 &right, int16 &bottom) {
 
 	if (!_drawn)
-		return;
+		return false;
 
 	const int16 bgRight  = _backgroundRight  - _backgroundLeft;
 	const int16 bgBottom = _backgroundBottom - _backgroundTop;
@@ -263,6 +273,8 @@ void ANIObject::clear(Surface &dest, int16 &left, int16 &top,
 	top    = _backgroundTop;
 	right  = _backgroundRight;
 	bottom = _backgroundBottom;
+
+	return true;
 }
 
 void ANIObject::advance() {

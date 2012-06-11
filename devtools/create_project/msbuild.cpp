@@ -235,7 +235,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	std::map<std::string, StringList>::iterator warningsIterator = _projectWarnings.find(name);
 
 	// Nothing to add here, move along!
-	if (!setup.devTools && name != setup.projectName && name != "sword25" && name != "tinsel" && name != "grim" && warningsIterator == _projectWarnings.end())
+	if (!setup.devTools && name != setup.projectName && name != "sword25" && name != "scummvm" && name != "grim" && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
@@ -250,7 +250,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	if (setup.devTools || name == setup.projectName || name == "sword25" || name == "grim") {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 	} else {
-		if (name == "tinsel" && !isRelease)
+		if (name == "scummvm" && !isRelease)
 			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 
 		if (warningsIterator != _projectWarnings.end())

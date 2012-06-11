@@ -381,7 +381,7 @@ void GuiManager::runLoop() {
 
 		if (tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis()) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
-			if (wdg && wdg->getTooltip()) {
+			if (wdg && wdg->getTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)) {
 				Tooltip *tooltip = new Tooltip();
 				tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
 				tooltip->runModal();
@@ -441,6 +441,11 @@ void GuiManager::restoreState() {
 }
 
 void GuiManager::openDialog(Dialog *dialog) {
+	dialog->receivedFocus();
+
+	if (!_dialogStack.empty())
+		getTopDialog()->lostFocus();
+
 	_dialogStack.push(dialog);
 	if (_redrawStatus != kRedrawFull)
 		_redrawStatus = kRedrawOpenDialog;
@@ -458,7 +463,11 @@ void GuiManager::closeTopDialog() {
 		return;
 
 	// Remove the dialog from the stack
-	_dialogStack.pop();
+	_dialogStack.pop()->lostFocus();
+
+	if (!_dialogStack.empty())
+		getTopDialog()->receivedFocus();
+
 	if (_redrawStatus != kRedrawFull)
 		_redrawStatus = kRedrawCloseDialog;
 

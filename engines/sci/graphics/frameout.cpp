@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
+#include "sci/console.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -52,12 +53,20 @@ namespace Sci {
 
 // TODO/FIXME: This is all guesswork
 
+enum SciSpeciaPlanelPictureCodes {
+	kPlaneTranslucent  = 0xfffe,	// -2
+	kPlanePlainColored = 0xffff		// -1
+};
+
 GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
 	_scriptsRunningWidth = 320;
 	_scriptsRunningHeight = 200;
+	_curScrollText = -1;
+	_showScrollText = false;
+	_maxScrollTexts = 0;
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -68,6 +77,46 @@ void GfxFrameout::clear() {
 	deletePlaneItems(NULL_REG);
 	_planes.clear();
 	deletePlanePictures(NULL_REG);
+	clearScrollTexts();
+}
+
+void GfxFrameout::clearScrollTexts() {
+	_scrollTexts.clear();
+	_curScrollText = -1;
+}
+
+void GfxFrameout::addScrollTextEntry(Common::String &text, reg_t kWindow, uint16 x, uint16 y, bool replace) {
+	//reg_t bitmapHandle = g_sci->_gfxText32->createScrollTextBitmap(text, kWindow);
+	// HACK: We set the container dimensions manually
+	reg_t bitmapHandle = g_sci->_gfxText32->createScrollTextBitmap(text, kWindow, 480, 70);
+	ScrollTextEntry textEntry;
+	textEntry.bitmapHandle = bitmapHandle;
+	textEntry.kWindow = kWindow;
+	textEntry.x = x;
+	textEntry.y = y;
+	if (!replace || _scrollTexts.size() == 0) {
+		if (_scrollTexts.size() > _maxScrollTexts) {
+			_scrollTexts.remove_at(0);
+			_curScrollText--;
+		}
+		_scrollTexts.push_back(textEntry);
+		_curScrollText++;
+	} else {
+		_scrollTexts.pop_back();
+		_scrollTexts.push_back(textEntry);
+	}
+}
+
+void GfxFrameout::showCurrentScrollText() {
+	if (!_showScrollText || _curScrollText < 0)
+		return;
+
+	uint16 size = (uint16)_scrollTexts.size();
+	if (size > 0) {
+		assert(_curScrollText < size);
+		ScrollTextEntry textEntry = _scrollTexts[_curScrollText];
+		g_sci->_gfxText32->drawScrollTextBitmap(textEntry.kWindow, textEntry.bitmapHandle, textEntry.x, textEntry.y);
+	}
 }
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
@@ -93,7 +142,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	newPlane.lastPriority = 0xFFFF; // hidden
 	newPlane.planeOffsetX = 0;
 	newPlane.planeOffsetY = 0;
-	newPlane.pictureId = 0xFFFF;
+	newPlane.pictureId = kPlanePlainColored;
 	newPlane.planePictureMirrored = false;
 	newPlane.planeBack = 0;
 	_planes.push_back(newPlane);
@@ -111,7 +160,8 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			if (lastPictureId != it->pictureId) {
 				// picture got changed, load new picture
 				deletePlanePictures(object);
-				if ((it->pictureId != 0xFFFF) && (it->pictureId != 0xFFFE)) {
+				// Draw the plane's picture if it's not a translucent/plane colored frame
+				if ((it->pictureId != kPlanePlainColored) && (it->pictureId != kPlaneTranslucent)) {
 					// SQ6 gives us a bad picture number for the control menu
 					if (_resMan->testResource(ResourceId(kResourceTypePic, it->pictureId)))
 						addPlanePicture(object, it->pictureId, 0);
@@ -204,6 +254,9 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 }
 
 void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY) {
+	if (pictureId == kPlanePlainColored || pictureId == kPlaneTranslucent)	// sanity check
+		return;
+
 	PlanePictureEntry newPicture;
 	newPicture.object = object;
 	newPicture.pictureId = pictureId;
@@ -228,6 +281,56 @@ void GfxFrameout::deletePlanePictures(reg_t object) {
 	}
 }
 
+// Provides the same functionality as kGraph(DrawLine)
+reg_t GfxFrameout::addPlaneLine(reg_t object, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		if (it->object == object) {
+			PlaneLineEntry line;
+			line.hunkId = _segMan->allocateHunkEntry("PlaneLine()", 1);	// we basically use this for a unique ID
+			line.startPoint = startPoint;
+			line.endPoint = endPoint;
+			line.color = color;
+			line.priority = priority;
+			line.control = control;
+			it->lines.push_back(line);
+			return line.hunkId;
+		}
+	}
+
+	return NULL_REG;
+}
+
+void GfxFrameout::updatePlaneLine(reg_t object, reg_t hunkId, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		if (it->object == object) {
+			for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {
+				if (it2->hunkId == hunkId) {
+					it2->startPoint = startPoint;
+					it2->endPoint = endPoint;
+					it2->color = color;
+					it2->priority = priority;
+					it2->control = control;
+					return;
+				}
+			}
+		}
+	}
+}
+
+void GfxFrameout::deletePlaneLine(reg_t object, reg_t hunkId) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		if (it->object == object) {
+			for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {
+				if (it2->hunkId == hunkId) {
+					_segMan->freeHunkEntry(hunkId);
+					it2 = it->lines.erase(it2);
+					return;
+				}
+			}
+		}
+	}
+}
+
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	// Ignore invalid items
 	if (!_segMan->isObject(object))
@@ -237,6 +340,7 @@ void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	memset(itemEntry, 0, sizeof(FrameoutEntry));
 	itemEntry->object = object;
 	itemEntry->givenOrderNr = _screenItems.size();
+	itemEntry->visible = true;
 	_screenItems.push_back(itemEntry);
 
 	kernelUpdateScreenItem(object);
@@ -266,6 +370,11 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 	itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
 	itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
 	itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+	itemEntry->visible = true;
+
+	// Check if the entry can be hidden
+	if (lookupSelector(_segMan, object, SELECTOR(visible), NULL, NULL) != kSelectorNone)
+		itemEntry->visible = readSelectorValue(_segMan, object, SELECTOR(visible));
 }
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
@@ -433,6 +542,7 @@ void GfxFrameout::createPlaneItemList(reg_t planeObject, FrameoutList &itemList)
 				picEntry->x = planePicture->getSci32celX(pictureCelNr);
 				picEntry->picStartX = pictureIt->startX;
 				picEntry->picStartY = pictureIt->startY;
+				picEntry->visible = true;
 
 				picEntry->priority = planePicture->getSci32celPriority(pictureCelNr);
 
@@ -507,6 +617,19 @@ void GfxFrameout::kernelFrameout() {
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = it->object;
+
+		// Draw any plane lines, if they exist
+		// These are drawn on invisible planes as well. (e.g. "invisiblePlane" in LSL6 hires)
+		// FIXME: Lines aren't always drawn (e.g. when the narrator speaks in LSL6 hires).
+		// Perhaps something is painted over them?
+		for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {
+			Common::Point startPoint = it2->startPoint;
+			Common::Point endPoint = it2->endPoint;
+			_coordAdjuster->kernelLocalToGlobal(startPoint.x, startPoint.y, it->object);
+			_coordAdjuster->kernelLocalToGlobal(endPoint.x, endPoint.y, it->object);
+			_screen->drawLine(startPoint, endPoint, it2->color, it2->priority, it2->control);
+		}
+
 		uint16 planeLastPriority = it->lastPriority;
 
 		// Update priority here, sq6 sets it w/o UpdatePlane
@@ -523,24 +646,23 @@ void GfxFrameout::kernelFrameout() {
 		// There is a race condition lurking in SQ6, which causes the game to hang in the intro, when teleporting to Polysorbate LX.
 		// Since I first wrote the patch, the race has stopped occurring for me though.
 		// I'll leave this for investigation later, when someone can reproduce.
-		//if (it->pictureId == 0xffff)	// FIXME: This is what SSCI does, and fixes the intro of LSL7, but breaks the dialogs in GK1 (adds black boxes)
-		if (it->planeBack)
+		//if (it->pictureId == kPlanePlainColored)	// FIXME: This is what SSCI does, and fixes the intro of LSL7, but breaks the dialogs in GK1 (adds black boxes)
+		if (it->pictureId == kPlanePlainColored && it->planeBack)
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
-		GuiResourceId planeMainPictureId = it->pictureId;
-
 		_coordAdjuster->pictureSetDisplayArea(it->planeRect);
-		_palette->drewPicture(planeMainPictureId);
+		_palette->drewPicture(it->pictureId);
 
 		FrameoutList itemList;
 
 		createPlaneItemList(planeObject, itemList);
 
-//		warning("Plane %s", _segMan->getObjectName(planeObject));
-
 		for (FrameoutList::iterator listIterator = itemList.begin(); listIterator != itemList.end(); listIterator++) {
 			FrameoutEntry *itemEntry = *listIterator;
 
+			if (!itemEntry->visible)
+				continue;
+			
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
 				itemEntry->x = upscaleHorizontalCoordinate(itemEntry->x);
@@ -662,9 +784,61 @@ void GfxFrameout::kernelFrameout() {
 		}
 	}
 
+	showCurrentScrollText();
+
 	_screen->copyToScreen();
 
 	g_sci->getEngineState()->_throttleTrigger = true;
+}
+
+void GfxFrameout::printPlaneList(Console *con) {
+	for (PlaneList::const_iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		PlaneEntry p = *it;
+		Common::String curPlaneName = _segMan->getObjectName(p.object);
+		Common::Rect r = p.upscaledPlaneRect;
+		Common::Rect cr = p.upscaledPlaneClipRect;
+
+		con->DebugPrintf("%04x:%04x (%s): prio %d, lastprio %d, offsetX %d, offsetY %d, pic %d, mirror %d, back %d\n",
+							PRINT_REG(p.object), curPlaneName.c_str(),
+							(int16)p.priority, (int16)p.lastPriority,
+							p.planeOffsetX, p.planeOffsetY, p.pictureId,
+							p.planePictureMirrored, p.planeBack);
+		con->DebugPrintf("  rect: (%d, %d, %d, %d), clip rect: (%d, %d, %d, %d)\n",
+							r.left, r.top, r.right, r.bottom,
+							cr.left, cr.top, cr.right, cr.bottom);
+
+		if (p.pictureId != 0xffff && p.pictureId != 0xfffe) {
+			con->DebugPrintf("Pictures:\n");
+
+			for (PlanePictureList::iterator pictureIt = _planePictures.begin(); pictureIt != _planePictures.end(); pictureIt++) {
+				if (pictureIt->object == p.object) {
+					con->DebugPrintf("    Picture %d: x %d, y %d\n", pictureIt->pictureId, pictureIt->startX, pictureIt->startY);
+				}
+			}
+		}
+	}
+}
+
+void GfxFrameout::printPlaneItemList(Console *con, reg_t planeObject) {
+	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
+		FrameoutEntry *e = *listIterator;
+		reg_t itemPlane = readSelector(_segMan, e->object, SELECTOR(plane));
+			
+		if (planeObject == itemPlane) {
+			Common::String curItemName = _segMan->getObjectName(e->object);
+			Common::Rect icr = e->celRect;
+			GuiResourceId picId = e->picture ? e->picture->getResourceId() : 0;
+
+			con->DebugPrintf("%d: %04x:%04x (%s), view %d, loop %d, cel %d, x %d, y %d, z %d, "
+							 "signal %d, scale signal %d, scaleX %d, scaleY %d, rect (%d, %d, %d, %d), "
+							 "pic %d, picX %d, picY %d, visible %d\n",
+							 e->givenOrderNr, PRINT_REG(e->object), curItemName.c_str(),
+							 e->viewId, e->loopNo, e->celNo, e->x, e->y, e->z,
+							 e->signal, e->scaleSignal, e->scaleX, e->scaleY,
+							 icr.left, icr.top, icr.right, icr.bottom,
+							 picId, e->picStartX, e->picStartY, e->visible);
+		}
+	}
 }
 
 } // End of namespace Sci

@@ -32,7 +32,7 @@ class GobEngine;
 class PCSpeaker;
 class SoundBlaster;
 class ADLPlayer;
-class MDYPlayer;
+class MUSPlayer;
 class Infogrames;
 class Protracker;
 class CDROM;
@@ -92,7 +92,7 @@ public:
 	bool adlibIsPlaying() const;
 
 	int adlibGetIndex() const;
-	bool adlibGetRepeating() const;
+	int32 adlibGetRepeating() const;
 
 	void adlibSetRepeating(int32 repCount);
 
@@ -142,17 +142,30 @@ private:
 	GobEngine *_vm;
 
 	bool _hasAdLib;
+	bool _hasAdLibBg;
 
 	SoundDesc _sounds[kSoundsCount];
 
+	// Speaker
 	PCSpeaker *_pcspeaker;
+
+	// PCM based
 	SoundBlaster *_blaster;
+	BackgroundAtmosphere *_bgatmos;
+
+	// AdLib
+	MUSPlayer *_mdyPlayer;
 	ADLPlayer *_adlPlayer;
-	MDYPlayer *_mdyPlayer;
+
+	// Amiga Paula
 	Infogrames *_infogrames;
 	Protracker *_protracker;
+
+	// Audio CD
 	CDROM *_cdrom;
-	BackgroundAtmosphere *_bgatmos;
+
+	void createMDYPlayer();
+	void createADLPlayer();
 };
 
 } // End of namespace Gob

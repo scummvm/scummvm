@@ -239,6 +239,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
 	{ SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
 	{ SIG_SCI32,          17, MAP_CALL(FileIOCreateSaveSlot),      "ir",                   NULL },
+	{ SIG_SCI32,          18, MAP_EMPTY(FileIOChangeDirectory),    "r",                    NULL }, // for SQ6, when changing the savegame directory in the save/load dialog
 	{ SIG_SCI32,          19, MAP_CALL(Stub),                      "r",                    NULL }, // for Torin / Torin demo
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
@@ -500,29 +501,26 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
 
 	// SetScroll - called by script 64909, Styler::doit()
 	// PalCycle - called by Game::newRoom. Related to RemapColors.
-	// VibrateMouse - used in QFG4
 
 	// SCI2 Empty functions
 	
 	// Debug function used to track resources
 	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
-	// SCI2 functions that are used in the original save/load menus. Marked as dummy, so
-	// that the engine errors out on purpose. TODO: Implement once the original save/load
-	// menus are implemented.
-
-	// Creates the name of the save catalogue/directory to save into.
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveCatName),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
-	// Creates the name of the save file to save into
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveFileName),    SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	// Future TODO: This call is used in the floppy version of QFG4 to add
+	// vibration to exotic mice with force feedback, such as the Logitech
+	// Cyberman and Wingman mice. Since this is only used for very exotic
+	// hardware and we have no direct and cross-platform way of communicating
+	// with them via SDL, plus we would probably need to make changes to common
+	// code, this call is mapped to an empty function for now as it's a rare
+	// feature not worth the effort.
+	{ MAP_EMPTY(VibrateMouse),      SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 
@@ -563,12 +561,16 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
+	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "io(.*)",                NULL,            NULL },
 	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
+	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "roiiiiiiiii",           NULL,            NULL },
+	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -581,11 +583,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
 	// the game window in Phantasmagoria 2. We ignore these settings completely.
 	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,             "ii",                  NULL,            NULL },
-
-	// Used by the Windows version of Phantasmagoria 1 to get the video speed setting. This is called after
-	// kGetConfig and overrides the setting obtained by it. It is a dummy function in the DOS Version. We can
-	// just use GetConfig and mark this one as empty, like the DOS version does.
-	{ MAP_EMPTY(GetSierraProfileInt), SIG_EVERYWHERE,        "(.*)",                  NULL,            NULL },
 
 	// Debug function called whenever the current room changes
 	{ MAP_EMPTY(NewRoom),           SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
@@ -619,9 +616,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SCI2.1 unmapped functions - TODO!
 
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// AddLine - used by Torin's Passage to highlight the chapter buttons
-	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
-	// UpdateLine - used by LSL6
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)

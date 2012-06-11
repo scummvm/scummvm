@@ -38,6 +38,7 @@ enum {
 	WIDGET_INVISIBLE	= 1 <<  1,
 	WIDGET_HILITED		= 1 <<  2,
 	WIDGET_BORDER		= 1 <<  3,
+	WIDGET_PRESSED		= 1 <<	4,
 	//WIDGET_INV_BORDER	= 1 <<  4,
 	WIDGET_CLEARBG		= 1 <<  5,
 	WIDGET_WANT_TICKLE	= 1 <<  7,
@@ -71,6 +72,10 @@ enum {
 
 enum {
 	kCaretBlinkTime = 300
+};
+
+enum {
+	kPressedButtonTime = 200
 };
 
 /* Widget */
@@ -189,11 +194,22 @@ public:
 	void setLabel(const Common::String &label);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
+	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); draw(); }
+	void handleTickle();
 
+	void setHighLighted(bool enable);
+	void setPressedState();
+	void startAnimatePressedState();
+	void stopAnimatePressedState();
+
+	void lostFocusWidget() { stopAnimatePressedState(); }
 protected:
 	void drawWidget();
+	void wantTickle(bool tickled);
+private:
+	uint32 _lastTime;
 };
 
 /* PicButtonWidget */

@@ -97,7 +97,7 @@ void QuickTimeDecoder::startAudio() {
 	updateAudioBuffer();
 
 	for (uint32 i = 0; i < _audioTracks.size(); i++) {
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandles[i], _audioTracks[i], -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandles[i], _audioTracks[i], -1, getVolume(), getBalance(), DisposeAfterUse::NO);
 
 		// Pause the audio again if we're still paused
 		if (isPaused())
@@ -185,7 +185,7 @@ bool QuickTimeDecoder::endOfVideo() const {
 	return true;
 }
 
-uint32 QuickTimeDecoder::getElapsedTime() const {
+uint32 QuickTimeDecoder::getTime() const {
 	// Try to base sync off an active audio track
 	for (uint32 i = 0; i < _audioHandles.size(); i++) {
 		if (g_system->getMixer()->isSoundHandleActive(_audioHandles[i])) {
@@ -196,7 +196,7 @@ uint32 QuickTimeDecoder::getElapsedTime() const {
 	}
 
 	// Just use time elapsed since the beginning
-	return SeekableVideoDecoder::getElapsedTime();
+	return SeekableVideoDecoder::getTime();
 }
 
 uint32 QuickTimeDecoder::getTimeToNextFrame() const {
@@ -211,7 +211,7 @@ uint32 QuickTimeDecoder::getTimeToNextFrame() const {
 
 		// TODO: Add support for rate modification
 
-		uint32 elapsedTime = getElapsedTime();
+		uint32 elapsedTime = getTime();
 
 		if (elapsedTime < nextFrameStartTime)
 			return nextFrameStartTime - elapsedTime;
@@ -234,6 +234,18 @@ bool QuickTimeDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	init();
 	return true;
+}
+
+void QuickTimeDecoder::updateVolume() {
+	for (uint32 i = 0; i < _audioHandles.size(); i++)
+		if (g_system->getMixer()->isSoundHandleActive(_audioHandles[i]))
+			g_system->getMixer()->setChannelVolume(_audioHandles[i], getVolume());
+}
+
+void QuickTimeDecoder::updateBalance() {
+	for (uint32 i = 0; i < _audioHandles.size(); i++)
+		if (g_system->getMixer()->isSoundHandleActive(_audioHandles[i]))
+			g_system->getMixer()->setChannelBalance(_audioHandles[i], getBalance());
 }
 
 void QuickTimeDecoder::init() {
@@ -406,7 +418,7 @@ void QuickTimeDecoder::freeAllTrackHandlers() {
 	_handlers.clear();
 }
 
-void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
+void QuickTimeDecoder::seekToTime(const Audio::Timestamp &time) {
 	stopAudio();
 	_audioStartOffset = time;
 

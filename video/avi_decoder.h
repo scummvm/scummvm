@@ -195,13 +195,18 @@ public:
 	uint16 getWidth() const { return _header.width; }
 	uint16 getHeight() const { return _header.height; }
 	uint32 getFrameCount() const { return _header.totalFrames; }
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	const Graphics::Surface *decodeNextFrame();
 	Graphics::PixelFormat getPixelFormat() const;
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
+	// FixedRateVideoDecoder API
 	Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
 private:

@@ -331,7 +331,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), virtualId, "__throwaway");
 		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-			error("kDeviceInfo(deleteSave): invalid savegame-id specified");
+			error("kDeviceInfo(deleteSave): invalid savegame ID specified");
 		uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 		Common::Array<SavegameDesc> saves;
 		listSavegames(saves);
@@ -526,7 +526,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	char *saveNamePtr = saveNames;
 
 	for (uint i = 0; i < totalSaves; i++) {
-		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame-id ffs. see above
+		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame ID ffs. see above
 		strcpy(saveNamePtr, saves[i].name);
 		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
 	}
@@ -562,23 +562,12 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 		// we are supposed to show a dialog for the user and let him choose where to save
 		g_sci->_soundCmd->pauseAll(true); // pause music
-		const EnginePlugin *plugin = NULL;
-		EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-		dialog->setSaveMode(true);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		savegameId = dialog->runModalWithCurrentTarget();
 		game_description = dialog->getResultString();
 		if (game_description.empty()) {
 			// create our own description for the saved game, the user didnt enter it
-			#if defined(USE_SAVEGAME_TIMESTAMP)
-			TimeDate curTime;
-			g_system->getTimeAndDate(curTime);
-			curTime.tm_year += 1900; // fixup year
-			curTime.tm_mon++; // fixup month
-			game_description = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
-			#else
-			game_description = Common::String::format("Save %d", savegameId + 1);
-			#endif
+			game_description = dialog->createDefaultSaveDescription(savegameId);
 		}
 		delete dialog;
 		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
@@ -669,11 +658,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		if (savegameId == -1) {
 			// we are supposed to show a dialog for the user and let him choose a saved game
 			g_sci->_soundCmd->pauseAll(true); // pause music
-			const EnginePlugin *plugin = NULL;
-			EngineMan.findGame(g_sci->getGameIdStr(), &plugin);
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
-			dialog->setSaveMode(false);
-			savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 			if (savegameId < 0) {
 				g_sci->_soundCmd->pauseAll(false); // unpause music
@@ -812,7 +798,11 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		bytesRead = f->_in->read(buf, size);
-		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
+		// TODO: What happens if less bytes are read than what has
+		// been requested? (i.e. if bytesRead is non-zero, but still
+		// less than size)
+		if (bytesRead > 0)
+			s->_segMan->memcpy(argv[1], (const byte*)buf, size);
 	}
 
 	delete[] buf;
@@ -862,6 +852,10 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		listSavegames(saves);
 		int savedir_nr = saves[slotNum].id;
 		name = g_sci->getSavegameName(savedir_nr);
+		result = saveFileMan->removeSavefile(name);
+	} else if (getSciVersion() >= SCI_VERSION_2) {
+		// We don't need to wrap the filename in SCI32 games, as it's already
+		// constructed here
 		result = saveFileMan->removeSavefile(name);
 	} else {
 		const Common::String wrappedName = g_sci->wrapFilename(name);
@@ -1168,6 +1162,35 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv) {
+	// Normally, this creates the name of the save catalogue/directory to save into.
+	// First parameter is the string to save the result into. Second is a string
+	// with game parameters. We don't have a use for this at all, as we have our own
+	// savegame directory management, thus we always return an empty string.
+	return argv[0];
+}
+
+reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
+	// Creates a savegame name from a slot number. Used when deleting saved games.
+	// Param 0: the output buffer (same as in kMakeSaveCatName)
+	// Param 1: a string with game parameters, ignored
+	// Param 2: the selected slot
+
+	SciString *resultString = s->_segMan->lookupString(argv[0]);
+	uint16 virtualId = argv[2].toUint16();
+	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+		error("kMakeSaveFileName: invalid savegame ID specified");
+	uint saveSlot = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	Common::String filename = g_sci->getSavegameName(saveSlot);
+	resultString->fromString(filename);
+
+	return argv[0];
+}
+
 reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case 0:
@@ -1181,12 +1204,9 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 	case 5:
 		return kGetSaveFiles(s, argc - 1, argv + 1);
 	case 6:
-		// This is used in Shivers to delete saved games, however it
-		// always passes the same file name (SHIVER), so it doesn't
-		// actually delete anything...
-		// TODO: Check why this happens
-		// argv[1] is a string (most likely the save game directory)
-		return kFileIOUnlink(s, argc - 2, argv + 2);
+		return kMakeSaveCatName(s, argc - 1, argv + 1);
+	case 7:
+		return kMakeSaveFileName(s, argc - 1, argv + 1);
 	case 8:
 		// TODO
 		// This is a timer callback, with 1 parameter: the timer object

@@ -338,7 +338,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::seek(const Timestamp &where) {
 	_queue = createStream();
 	_samplesQueued = 0;
 
-	if (where > getLength()) {
+	if (where >= getLength()) {
 		// We're done
 		_curEdit = _parentTrack->editCount;
 		return true;
@@ -449,7 +449,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::skipSamples(const Timestamp &le
 }
 
 void QuickTimeAudioDecoder::QuickTimeAudioTrack::findEdit(const Timestamp &position) {
-	for (_curEdit = 0; _curEdit < _parentTrack->editCount && position < Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale); _curEdit++)
+	for (_curEdit = 0; _curEdit < _parentTrack->editCount - 1 && position > Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale); _curEdit++)
 		;
 
 	enterNewEdit(position);

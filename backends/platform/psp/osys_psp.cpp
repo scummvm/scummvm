@@ -303,7 +303,7 @@ void OSystem_PSP::warpMouse(int x, int y) {
 	_cursor.setXY(x, y);
 }
 
-void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
@@ -314,7 +314,9 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	}
 
 	_cursor.setKeyColor(keycolor);
-	_cursor.setCursorTargetScale(cursorTargetScale);
+	// TODO: The old target scale was saved but never used. Should the new
+	// "do not scale" logic be implemented?
+	//_cursor.setCursorTargetScale(cursorTargetScale);
 	_cursor.setSizeAndScummvmPixelFormat(w, h, format);
 	_cursor.setHotspot(hotspotX, hotspotY);
 	_cursor.clearKeyColor();

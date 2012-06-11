@@ -75,11 +75,16 @@ public:
 	uint16 getWidth() const { return _surface->w; }
 	uint16 getHeight() const { return _surface->h; }
 	uint32 getFrameCount() const { return _frameCount; }
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	uint32 getTimeToNextFrame() const;
 	const Graphics::Surface *decodeNextFrame();
 	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
 	bool endOfVideo() const { return _stream->pos() >= _stream->size(); }
+
+protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
 
 private:
 	void initCommon();

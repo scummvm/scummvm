@@ -2373,8 +2373,8 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 	case 2001:
 		_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]);
 		break;
-	case 201102:
-		// Used in puttzoo iOS
+	case 201102: // Used in puttzoo iOS
+	case 20111014: // Used in spyfox iOS
 		break;
 	default:
 		error("o90_kernelSetFunctions: default case %d (param count %d)", args[0], num);

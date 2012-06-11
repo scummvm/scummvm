@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 #include "common/config-manager.h"
 
@@ -578,7 +579,7 @@ void DreamWebEngine::dreamweb() {
 	readSetData();
 	_wonGame = false;
 
-	loadSounds(0, "V99"); // basic sample
+	_sound->loadSounds(0, "V99"); // basic sample
 
 	bool firstLoop = true;
 
@@ -654,7 +655,7 @@ void DreamWebEngine::dreamweb() {
 			_vars._location = 255;
 			_vars._roomAfterDream = 1;
 			_newLocation = 35;
-			_volume = 7;
+			_sound->volumeSet(7);
 			loadRoom();
 			clearSprites();
 			initMan();
@@ -664,8 +665,7 @@ void DreamWebEngine::dreamweb() {
 			initialInv();
 			_lastFlag = 32;
 			startup1();
-			_volumeTo = 0;
-			_volumeDirection = -1;
+			_sound->volumeChange(0, -1);
 			_commandType = 255;
 		}
 
@@ -754,7 +754,7 @@ void DreamWebEngine::screenUpdate() {
 	showPointer();
 	if ((_vars._watchingTime == 0) && (_newLocation != 0xff))
 		return;
-	vSync();
+	waitForVSync();
 	uint16 mouseState = 0;
 	mouseState |= readMouseState();
 	dumpPointer();
@@ -769,7 +769,7 @@ void DreamWebEngine::screenUpdate() {
 	showPointer();
 	if (_wonGame)
 		return;
-	vSync();
+	waitForVSync();
 	mouseState |= readMouseState();
 	dumpPointer();
 
@@ -781,7 +781,7 @@ void DreamWebEngine::screenUpdate() {
 	afterNewRoom();
 
 	showPointer();
-	vSync();
+	waitForVSync();
 	mouseState |= readMouseState();
 	dumpPointer();
 
@@ -790,7 +790,7 @@ void DreamWebEngine::screenUpdate() {
 	delPointer();
 
 	showPointer();
-	vSync();
+	waitForVSync();
 	_oldButton = _mouseButton;
 	mouseState |= readMouseState();
 	_mouseButton = mouseState;
@@ -871,7 +871,7 @@ void DreamWebEngine::loadTextSegment(TextFile &file, Common::File &inFile, unsig
 void DreamWebEngine::hangOnCurs(uint16 frameCount) {
 	for (uint16 i = 0; i < frameCount; ++i) {
 		printCurs();
-		vSync();
+		waitForVSync();
 		delCurs();
 	}
 }
@@ -930,7 +930,7 @@ void DreamWebEngine::processTrigger() {
 void DreamWebEngine::useTimedText() {
 	if (_previousTimedTemp._string) {
 		// TODO: It might be nice to make subtitles wait for the speech
-		// to finish (_channel1Playing) when we're in speech+subtitles mode,
+		// to finish (_sound->isChannel1Playing()) when we're in speech+subtitles mode,
 		// instead of waiting the pre-specified amount of time.
 
 
@@ -967,9 +967,9 @@ void DreamWebEngine::useTimedText() {
 void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 
 	if (hasSpeech() && voiceIndex != 0) {
-		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
-			playChannel1(50+12);
-		}
+		_speechLoaded = _sound->loadSpeech('T', voiceIndex, 'T', textIndex);
+		if (_speechLoaded)
+			_sound->playChannel1(62);
 
 		if (_speechLoaded && !_subtitles)
 			return;
@@ -1634,7 +1634,7 @@ bool DreamWebEngine::checkIfSet(uint8 x, uint8 y) {
 
 void DreamWebEngine::hangOn(uint16 frameCount) {
 	while (frameCount) {
-		vSync();
+		waitForVSync();
 		--frameCount;
 		if (_quitRequested)
 			break;
@@ -1647,7 +1647,7 @@ void DreamWebEngine::hangOnW(uint16 frameCount) {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		--frameCount;
 		if (_quitRequested)
@@ -1665,7 +1665,7 @@ void DreamWebEngine::hangOnP(uint16 count) {
 	readMouse();
 	animPointer();
 	showPointer();
-	vSync();
+	waitForVSync();
 	dumpPointer();
 
 	count *= 3;
@@ -1674,7 +1674,7 @@ void DreamWebEngine::hangOnP(uint16 count) {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		if (_quitRequested)
 			break;
@@ -1846,7 +1846,7 @@ void DreamWebEngine::loadRoom() {
 	_vars._location = _newLocation;
 	const Room &room = g_roomData[_newLocation];
 	startLoading(room);
-	loadRoomsSample();
+	_sound->loadRoomsSample(_roomsSample);
 	switchRyanOn();
 	drawFlags();
 
@@ -2132,7 +2132,7 @@ void DreamWebEngine::workToScreenM() {
 	animPointer();
 	readMouse();
 	showPointer();
-	vSync();
+	waitForVSync();
 	workToScreen();
 	delPointer();
 }
@@ -2146,12 +2146,12 @@ void DreamWebEngine::atmospheres() {
 			continue;
 		if (a->_mapX != _mapX || a->_mapY != _mapY)
 			continue;
-		if (a->_sound != _channel0Playing) {
+		if (a->_sound != _sound->getChannel0Playing()) {
 
 			if (_vars._location == 45 && _vars._reelToWatch == 45)
 				continue; // "web"
 
-			playChannel0(a->_sound, a->_repeat);
+			_sound->playChannel0(a->_sound, a->_repeat);
 
 			// NB: The asm here reads
 			//	cmp reallocation,2
@@ -2161,21 +2161,21 @@ void DreamWebEngine::atmospheres() {
 			//  I'm interpreting this as if the cmp reallocation is below the jz
 
 			if (_mapY == 0) {
-				_volume = 0; // "fullvol"
+				_sound->volumeSet(0); // "fullvol"
 				return;
 			}
 
 			if (_realLocation == 2 && _mapX == 22 && _mapY == 10)
-				_volume = 5; // "louisvol"
+				_sound->volumeSet(5); // "louisvol"
 
 			if (hasSpeech() && _realLocation == 14) {
 				if (_mapX == 33) {
-					_volume = 0; // "ismad2"
+					_sound->volumeSet(0); // "ismad2"
 					return;
 				}
 
 				if (_mapX == 22) {
-					_volume = 5;
+					_sound->volumeSet(5);
 					return;
 				}
 
@@ -2184,19 +2184,19 @@ void DreamWebEngine::atmospheres() {
 
 		if (_realLocation == 2) {
 			if (_mapX == 22) {
-				_volume = 5; // "louisvol"
+				_sound->volumeSet(5); // "louisvol"
 				return;
 			}
 
 			if (_mapX == 11) {
-				_volume = 0; // "fullvol"
+				_sound->volumeSet(0); // "fullvol"
 				return;
 			}
 		}
 		return;
 	}
 
-	cancelCh0();
+	_sound->cancelCh0();
 }
 
 void DreamWebEngine::readKey() {
@@ -2607,7 +2607,7 @@ void DreamWebEngine::decide() {
 
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		delPointer();
@@ -2642,8 +2642,8 @@ void DreamWebEngine::showGun() {
 	_numToFade = 128;
 	hangOn(200);
 	_roomsSample = 34;
-	loadRoomsSample();
-	_volume = 0;
+	_sound->loadRoomsSample(_roomsSample);
+	_sound->volumeSet(0);
 	GraphicsFile graphics;
 	loadGraphicsFile(graphics, "G13");
 	createPanel2();
@@ -2653,7 +2653,7 @@ void DreamWebEngine::showGun() {
 	graphics.clear();
 	fadeScreenUp();
 	hangOn(160);
-	playChannel0(12, 0);
+	_sound->playChannel0(12, 0);
 	loadTempText("T83");
 	rollEndCreditsGameLost();
 	getRidOfTempText();

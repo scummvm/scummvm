@@ -1002,6 +1002,10 @@ void Inter_v2::o2_openItk() {
 
 void Inter_v2::o2_closeItk() {
 	_vm->_dataIO->closeArchive(false);
+
+	// NOTE: Lost in Time might close a data file without explicitely closing a video in it.
+	//       So we make sure that all open videos are still available.
+		_vm->_vidPlayer->reopenAll();
 }
 
 void Inter_v2::o2_setImdFrontSurf() {

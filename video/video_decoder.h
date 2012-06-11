@@ -125,15 +125,20 @@ public:
 	virtual uint32 getFrameCount() const = 0;
 
 	/**
-	 * Returns the time (in ms) that the video has been running.
-	 * This is based on the "wall clock" time as determined by
-	 * OSystem::getMillis, and takes pausing the video into account.
+	 * Returns the time position (in ms) of the current video.
+	 * This can be based on the "wall clock" time as determined by
+	 * OSystem::getMillis() or the current time of any audio track
+	 * running in the video, and takes pausing the video into account.
 	 *
-	 * As such, it can differ from what multiplying getCurFrame() by
+	 * As such, it will differ from what multiplying getCurFrame() by
 	 * some constant would yield, e.g. for a video with non-constant
 	 * frame rate.
+	 *
+	 * Due to the nature of the timing, this value may not always be
+	 * completely accurate (since our mixer does not have precise
+	 * timing).
 	 */
-	virtual uint32 getElapsedTime() const;
+	virtual uint32 getTime() const;
 
 	/**
 	 * Return the time (in ms) until the next frame should be displayed.
@@ -180,6 +185,40 @@ public:
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
 
+	/**
+	 * Get the current volume at which the audio in the video is being played
+	 * @return the current volume at which the audio in the video is being played
+	 */
+	virtual byte getVolume() const { return _audioVolume; }
+
+	/**
+	 * Set the volume at which the audio in the video should be played.
+	 * This setting remains until reset() is called (which may be called
+	 * from loadStream() or close()). The default volume is the maximum.
+	 *
+	 * @note This function calls updateVolume() by default.
+	 *
+	 * @param volume The volume at which to play the audio in the video
+	 */
+	virtual void setVolume(byte volume);
+
+	/**
+	 * Get the current balance at which the audio in the video is being played
+	 * @return the current balance at which the audio in the video is being played
+	 */
+	virtual int8 getBalance() const { return _audioBalance; }
+
+	/**
+	 * Set the balance at which the audio in the video should be played.
+	 * This setting remains until reset() is called (which may be called
+	 * from loadStream() or close()). The default balance is 0.
+	 *
+	 * @note This function calls updateBalance() by default.
+	 *
+	 * @param balance The balance at which to play the audio in the video
+	 */
+	virtual void setBalance(int8 balance);
+
 protected:
 	/**
 	 * Resets _curFrame and _startTime. Should be called from every close() function.
@@ -202,12 +241,24 @@ protected:
 	 */
 	void resetPauseStartTime();
 
+	/**
+	 * Update currently playing audio tracks with the new volume setting
+	 */
+	virtual void updateVolume() {}
+
+	/**
+	 * Update currently playing audio tracks with the new balance setting
+	 */
+	virtual void updateBalance() {}
+
 	int32 _curFrame;
 	int32 _startTime;
 
 private:
 	uint32 _pauseLevel;
 	uint32 _pauseStartTime;
+	byte _audioVolume;
+	int8 _audioBalance;
 };
 
 /**
@@ -247,13 +298,8 @@ class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
 public:
 	/**
 	 * Seek to the specified time.
-	 *
-	 * This will round to the previous frame showing. If the time would happen to
-	 * land while a frame is showing, this function will seek to the beginning of that
-	 * frame. In other words, there is *no* subframe accuracy. This may change in a
-	 * later revision of the API.
 	 */
-	virtual void seekToTime(Audio::Timestamp time) = 0;
+	virtual void seekToTime(const Audio::Timestamp &time) = 0;
 
 	/**
 	 * Seek to the specified time (in ms).

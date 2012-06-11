@@ -80,6 +80,8 @@ MODULE_OBJS := \
 	minigames/geisha/oko.o \
 	minigames/geisha/meter.o \
 	minigames/geisha/diving.o \
+	minigames/geisha/mouth.o \
+	minigames/geisha/submarine.o \
 	minigames/geisha/penetration.o \
 	save/savefile.o \
 	save/savehandler.o \
@@ -101,6 +103,8 @@ MODULE_OBJS := \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \
 	sound/adlib.o \
+	sound/musplayer.o \
+	sound/adlplayer.o \
 	sound/infogrames.o \
 	sound/protracker.o \
 	sound/soundmixer.o \

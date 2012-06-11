@@ -159,7 +159,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
-	{
+	{ // russian fan translation
 		{
 			"kyra1",
 			"Extracted",

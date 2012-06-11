@@ -116,7 +116,7 @@ bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (_header.hasSound) {
 		_audioStream = Audio::makeQueuingAudioStream(11025, false);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_audioHandle, _audioStream);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_audioHandle, _audioStream, -1, getVolume(), getBalance());
 	}
 
 	readPaletteChunk(_header.paletteDataSize);
@@ -359,6 +359,16 @@ void RobotDecoder::close() {
 	}
 
 	reset();
+}
+
+void RobotDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelVolume(_audioHandle, getVolume());
+}
+
+void RobotDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelBalance(_audioHandle, getBalance());
 }
 
 #endif

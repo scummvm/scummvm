@@ -126,21 +126,25 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 		textEntry.text = dialogue[i].i_str;
 		entry = _vm->_scene->_textList.addEntry(textEntry);
 
-		// Display text
-		event.type = kEvTOneshot;
-		event.code = kTextEvent;
-		event.op = kEventDisplay;
-		event.data = entry;
-		event.time = (i == 0) ? 0 : VOICE_PAD;
-		eventColumns = _vm->_events->chain(eventColumns, event);
+		if (_vm->_subtitlesEnabled) {
+			// Display text
+			event.type = kEvTOneshot;
+			event.code = kTextEvent;
+			event.op = kEventDisplay;
+			event.data = entry;
+			event.time = (i == 0) ? 0 : VOICE_PAD;
+			eventColumns = _vm->_events->chain(eventColumns, event);
+		}
 
-		// Play voice
-		event.type = kEvTOneshot;
-		event.code = kVoiceEvent;
-		event.op = kEventPlay;
-		event.param = dialogue[i].i_voice_rn;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
+		if (_vm->_voicesEnabled) {
+			// Play voice
+			event.type = kEvTOneshot;
+			event.code = kVoiceEvent;
+			event.op = kEventPlay;
+			event.param = dialogue[i].i_voice_rn;
+			event.time = 0;
+			_vm->_events->chain(eventColumns, event);
+		}
 
 		voice_len = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
 		if (voice_len < 0) {

@@ -644,7 +644,7 @@ void OSystem_Wii::warpMouse(int x, int y) {
 
 void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 									int hotspotY, uint32 keycolor,
-									int cursorTargetScale,
+									bool dontScale,
 									const Graphics::PixelFormat *format) {
 	gfx_tex_format_t tex_format = GFX_TF_PALETTE_RGB5A3;
 	uint tw, th;
@@ -742,7 +742,8 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
-	_cursorScale = cursorTargetScale;
+	// TODO: Adapt to new dontScale logic!
+	_cursorScale = 1;
 
 	if ((_texMouse.palette) && (oldKeycolor != _mouseKeyColor))
 		_cursorPaletteDirty = true;

@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -197,7 +198,7 @@ uint8 DreamWebEngine::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) 
 uint16 DreamWebEngine::waitFrames() {
 	readMouse();
 	showPointer();
-	vSync();
+	waitForVSync();
 	dumpPointer();
 	delPointer();
 	return _mouseButton;
@@ -231,7 +232,7 @@ const char *DreamWebEngine::monPrint(const char *string) {
 			_cursLocY = _monAdY;
 			_mainTimer = 1;
 			printCurs();
-			vSync();
+			waitForVSync();
 			lockMon();
 			delCurs();
 		} while (--count);
@@ -246,10 +247,9 @@ const char *DreamWebEngine::monPrint(const char *string) {
 }
 
 void DreamWebEngine::rollEndCreditsGameWon() {
-	playChannel0(16, 255);
-	_volume = 7;
-	_volumeTo = 0;
-	_volumeDirection = -1;
+	_sound->playChannel0(16, 255);
+	_sound->volumeSet(7);
+	_sound->volumeChange(0, -1);
 
 	multiGet(_mapStore, 75, 20, 160, 160);
 
@@ -261,9 +261,9 @@ void DreamWebEngine::rollEndCreditsGameWon() {
 		// then move it up one pixel until we shifted it by a complete
 		// line of text.
 		for (int j = 0; j < linespacing; ++j) {
-			vSync();
+			waitForVSync();
 			multiPut(_mapStore, 75, 20, 160, 160);
-			vSync();
+			waitForVSync();
 
 			// Output up to 18 lines of text
 			uint16 y = 10 - j;
@@ -273,7 +273,7 @@ void DreamWebEngine::rollEndCreditsGameWon() {
 				y += linespacing;
 			}
 
-			vSync();
+			waitForVSync();
 			multiDump(75, 20, 160, 160);
 		}
 
@@ -300,9 +300,9 @@ void DreamWebEngine::rollEndCreditsGameLost() {
 		// then move it up one pixel until we shifted it by a complete
 		// line of text.
 		for (int j = 0; j < linespacing; ++j) {
-			vSync();
+			waitForVSync();
 			multiPut(_mapStore, 25, 20, 160, 160);
-			vSync();
+			waitForVSync();
 
 			// Output up to 18 lines of text
 			uint16 y = 10 - j;
@@ -312,7 +312,7 @@ void DreamWebEngine::rollEndCreditsGameLost() {
 				y += linespacing;
 			}
 
-			vSync();
+			waitForVSync();
 			multiDump(25, 20, 160, 160);
 
 			if (_lastHardKey == 1)

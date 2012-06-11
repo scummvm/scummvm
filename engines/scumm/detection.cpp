@@ -156,6 +156,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 	case kGenHEMac:
 	case kGenHEMacNoParens:
 	case kGenHEPC:
+	case kGenHEIOS:
 		if (_game.heversion >= 98 && room >= 0) {
 			int disk = 0;
 			if (_heV7DiskOffsets)
@@ -168,7 +169,11 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 				break;
 			case 1:
 				id = 'a';
-				result = Common::String::format("%s.(a)", _filenamePattern.pattern);
+				// Some of the newer HE games for iOS use the ".hea" suffix instead
+				if (_filenamePattern.genMethod == kGenHEIOS)
+					result = Common::String::format("%s.hea", _filenamePattern.pattern);
+				else
+					result = Common::String::format("%s.(a)", _filenamePattern.pattern);
 				break;
 			default:
 				id = '0';
@@ -180,7 +185,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 			id = (room == 0) ? '0' : '1';
 		}
 
-		if (_filenamePattern.genMethod == kGenHEPC) {
+		if (_filenamePattern.genMethod == kGenHEPC || _filenamePattern.genMethod == kGenHEIOS) {
 			// For HE >= 98, we already called snprintf above.
 			if (_game.heversion < 98 || room < 0)
 				result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);
@@ -217,6 +222,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 		break;
 
 	case kGenHEPC:
+	case kGenHEIOS:
 		result = Common::String::format("%s.he0", pattern);
 		break;
 
@@ -589,11 +595,11 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 						file.c_str(), md5str.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid / variant at this point.
-					// If not, then there's a bug in our data tables...
-					assert(dr.game.gameid != 0);
-
-					// Add it to the list of detected games
-					results.push_back(dr);
+					// If not, we may have #ifdef'ed the entry out in our detection_tables.h because we
+					// don't have the required stuff compiled in, or there's a bug in our data tables...
+					if (dr.game.gameid != 0)
+						// Add it to the list of detected games
+						results.push_back(dr);
 				}
 			}
 
@@ -1073,6 +1079,14 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
 
+	// We don't support the "Lite" version off puttzoo iOS because it contains
+	// the full game.
+	if (!strcmp(res.game.gameid, "puttzoo") && !strcmp(res.extra, "Lite")) {
+		GUIErrorMessage("The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid piracy.\n"
+		                "The full version is available for purchase from the iTunes Store.");
+		return Common::kUnsupportedGameidError;
+	}
+
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
 	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));
@@ -1121,6 +1135,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		case 200:
 			*engine = new ScummEngine_vCUPhe(syst, res);
 			break;
+		case 101:
 		case 100:
 			*engine = new ScummEngine_v100he(syst, res);
 			break;

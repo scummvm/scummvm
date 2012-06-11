@@ -93,7 +93,7 @@ void Cursor::setStyle(CursorStyle style) {
 	Graphics::PixelFormat pf = g_system->getScreenFormat();
 	CursorMan.replaceCursor((const byte *)getCursorImage(style),
 	                        32, 32, _cursors[style].hotspotX, _cursors[style].hotspotY,
-	                        0, 1, &pf);
+	                        0, false, &pf);
 }
 
 const uint16 *Cursor::getCursorImage(CursorStyle style) const {

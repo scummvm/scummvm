@@ -289,11 +289,11 @@ SmackerDecoder::~SmackerDecoder() {
 	close();
 }
 
-uint32 SmackerDecoder::getElapsedTime() const {
+uint32 SmackerDecoder::getTime() const {
 	if (_audioStream && _audioStarted)
 		return _mixer->getSoundElapsedTime(_audioHandle);
 
-	return FixedRateVideoDecoder::getElapsedTime();
+	return FixedRateVideoDecoder::getTime();
 }
 
 bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
@@ -667,7 +667,7 @@ void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpac
 		}
 
 		if (!_audioStarted) {
-			_mixer->playStream(_soundType, &_audioHandle, _audioStream, -1, 255);
+			_mixer->playStream(_soundType, &_audioHandle, _audioStream, -1, getVolume(), getBalance());
 			_audioStarted = true;
 		}
 	} else {
@@ -817,6 +817,16 @@ void SmackerDecoder::unpackPalette() {
 
 	_fileStream->seek(startPos + len);
 	free(chunk);
+}
+
+void SmackerDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelVolume(_audioHandle, getVolume());
+}
+
+void SmackerDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelBalance(_audioHandle, getBalance());
 }
 
 } // End of namespace Video

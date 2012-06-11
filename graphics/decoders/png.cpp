@@ -99,7 +99,7 @@ enum PNGFilters {
 };
 
 PNGDecoder::PNGDecoder() : _compressedBuffer(0), _compressedBufferSize(0),
-			_transparentColorSpecified(false), _outputSurface(0) {
+			_transparentColorSpecified(false), _outputSurface(0), _paletteEntries(0) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -112,6 +112,8 @@ void PNGDecoder::destroy() {
 		delete _outputSurface;
 		_outputSurface = 0;
 	}
+
+	_paletteEntries = 0;
 }
 
 bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {

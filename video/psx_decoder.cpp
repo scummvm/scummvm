@@ -236,13 +236,13 @@ void PSXStreamDecoder::close() {
 	reset();
 }
 
-uint32 PSXStreamDecoder::getElapsedTime() const {
+uint32 PSXStreamDecoder::getTime() const {
 	// TODO: Currently, the audio is always after the video so using this
 	// can often lead to gaps in the audio...
 	//if (_audStream)
 	//	return _mixer->getSoundElapsedTime(_audHandle);
 
-	return VideoDecoder::getElapsedTime();
+	return VideoDecoder::getTime();
 }
 
 uint32 PSXStreamDecoder::getTimeToNextFrame() const {
@@ -250,7 +250,7 @@ uint32 PSXStreamDecoder::getTimeToNextFrame() const {
 		return 0;
 
 	uint32 nextTimeMillis = _nextFrameStartTime.msecs();
-	uint32 elapsedTime = getElapsedTime();
+	uint32 elapsedTime = getTime();
 
 	if (elapsedTime > nextTimeMillis)
 		return 0;
@@ -385,7 +385,7 @@ void PSXStreamDecoder::queueAudioFromSector(Common::SeekableReadStream *sector) 
 		uint rate = (format & (1 << 2)) ? 18900 : 37800;
 
 		_audStream = Audio::makeQueuingAudioStream(rate, stereo);
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream, -1, getVolume(), getBalance());
 	}
 
 	sector->seek(24);
@@ -692,6 +692,16 @@ void PSXStreamDecoder::decodeBlock(Common::BitStream *bits, byte *block, int pit
 		for (int x = 0; x < 8; x++)
 			*start++ = (int)CLIP<float>(idctData[y * 8 + x], -128.0f, 127.0f) + 128;
 	}
+}
+
+void PSXStreamDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(_audHandle))
+		g_system->getMixer()->setChannelVolume(_audHandle, getVolume());
+}
+
+void PSXStreamDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(_audHandle))
+		g_system->getMixer()->setChannelBalance(_audHandle, getBalance());
 }
 
 } // End of namespace Video

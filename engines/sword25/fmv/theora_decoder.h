@@ -81,12 +81,15 @@ public:
 	}
 
 	Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	uint32 getTimeToNextFrame() const;
 
 	bool endOfVideo() const;
 
 protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
 	void pauseVideoIntern(bool pause);
 
 private:

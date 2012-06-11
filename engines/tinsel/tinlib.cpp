@@ -28,11 +28,11 @@
 
 #define BODGE
 
+#include "common/coroutines.h"
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
 #include "tinsel/bmv.h"
 #include "tinsel/config.h"
-#include "tinsel/coroutine.h"
 #include "tinsel/cursor.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
@@ -1468,7 +1468,7 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 		++g_sceneCtr;
 
 	// Prevent code subsequent to this call running before scene changes
-	if (g_scheduler->getCurrentPID() != PID_MASTER_SCR)
+	if (CoroScheduler.getCurrentPID() != PID_MASTER_SCR)
 		CORO_KILL_SELF();
 	CORO_END_CODE;
 }
@@ -1626,7 +1626,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
  */
 static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	// FIXME: This is a workaround for the FIXME below
-	if (GetMidiVolume() == 0 || TinselV1PSX)
+	if (GetMidiVolume() == 0)
 		return;
 
 	CORO_BEGIN_CONTEXT;
@@ -2594,7 +2594,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 			sm.y = _ctx->y;
 			sm.thisScroll = g_scrollNumber;
 			sm.myEscape = myEscape;
-			g_scheduler->createProcess(PID_TCODE, ScrollMonitorProcess, &sm, sizeof(sm));
+			CoroScheduler.createProcess(PID_TCODE, ScrollMonitorProcess, &sm, sizeof(sm));
 		}
 	}
 	CORO_END_CODE;
@@ -2975,12 +2975,12 @@ static void StandTag(int actor, HPOLYGON hp) {
 				&& hFilm != TF_LEFT && hFilm != TF_RIGHT)
 			hFilm = 0;
 
-		Stand(nullContext, actor, pnodex, pnodey, hFilm);
+		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 
 	} else if (hFilm && (actor == LEAD_ACTOR || actor == GetLeadId()))
-		Stand(nullContext, actor, pnodex, pnodey, hFilm);
+		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 	else
-		Stand(nullContext, actor, pnodex, pnodey, 0);
+		Stand(Common::nullContext, actor, pnodex, pnodey, 0);
 }
 
 

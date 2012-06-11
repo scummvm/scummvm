@@ -132,7 +132,7 @@ public:
 
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 #ifdef USE_OSD
@@ -287,7 +287,7 @@ protected:
 #else
 	byte _mouseKeyColor;
 #endif
-	int _cursorTargetScale;
+	bool _cursorDontScale;
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
 	SDL_Surface *_mouseSurface;

@@ -250,7 +250,7 @@ void ScummEngine::stopScript(int script) {
 		if (vm.nest[i].number == script &&
 				(vm.nest[i].where == WIO_GLOBAL || vm.nest[i].where == WIO_LOCAL)) {
 			nukeArrays(vm.nest[i].slot);
-			vm.nest[i].number = 0xFF;
+			vm.nest[i].number = 0;
 			vm.nest[i].slot = 0xFF;
 			vm.nest[i].where = 0xFF;
 		}
@@ -284,7 +284,7 @@ void ScummEngine::stopObjectScript(int script) {
 		if (vm.nest[i].number == script &&
 				(vm.nest[i].where == WIO_ROOM || vm.nest[i].where == WIO_INVENTORY || vm.nest[i].where == WIO_FLOBJECT)) {
 			nukeArrays(vm.nest[i].slot);
-			vm.nest[i].number = 0xFF;
+			vm.nest[i].number = 0;
 			vm.nest[i].slot = 0xFF;
 			vm.nest[i].where = 0xFF;
 		}
@@ -318,7 +318,7 @@ void ScummEngine::runScriptNested(int script) {
 	nest = &vm.nest[vm.numNestedScripts];
 
 	if (_currentScript == 0xFF) {
-		nest->number = 0xFF;
+		nest->number = 0;
 		nest->where = 0xFF;
 	} else {
 		// Store information about the currently running script
@@ -338,7 +338,7 @@ void ScummEngine::runScriptNested(int script) {
 	if (vm.numNestedScripts != 0)
 		vm.numNestedScripts--;
 
-	if (nest->number != 0xFF) {
+	if (nest->number) {
 		// Try to resume the script which called us, if its status has not changed
 		// since it invoked us. In particular, we only resume it if it hasn't been
 		// stopped in the meantime, and if it did not already move on.

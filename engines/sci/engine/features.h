@@ -117,6 +117,12 @@ public:
 	 */
 	bool useAltWinGMSound();
 
+	/**
+	 * Forces DOS soundtracks in Windows CD versions when the user hasn't
+	 * selected a MIDI output device
+	 */
+	void forceDOSTracks() { _forceDOSTracks = true; }
+
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
@@ -137,6 +143,7 @@ private:
 
 	MoveCountType _moveCountType;
 	bool _usesCdTrack;
+	bool _forceDOSTracks;
 
 	SegManager *_segMan;
 	Kernel *_kernel;

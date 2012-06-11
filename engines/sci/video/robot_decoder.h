@@ -71,6 +71,11 @@ public:
 	Common::Point getPos() const { return _pos; }
 
 protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
+	// FixedRateVideoDecoder API
 	Common::Rational getFrameRate() const { return Common::Rational(60, 10); }
 
 private:

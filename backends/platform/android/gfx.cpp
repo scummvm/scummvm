@@ -687,10 +687,10 @@ bool OSystem_Android::showMouse(bool visible) {
 
 void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 										int hotspotX, int hotspotY,
-										uint32 keycolor, int cursorTargetScale,
+										uint32 keycolor, bool dontScale,
 										const Graphics::PixelFormat *format) {
 	ENTER("%p, %u, %u, %d, %d, %u, %d, %p", buf, w, h, hotspotX, hotspotY,
-			keycolor, cursorTargetScale, format);
+			keycolor, dontScale, format);
 
 	GLTHREADCHECK;
 
@@ -766,7 +766,8 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	}
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
-	_mouse_targetscale = cursorTargetScale;
+	// TODO: Adapt to the new "do not scale" cursor logic.
+	_mouse_targetscale = 1;
 }
 
 void OSystem_Android::setCursorPaletteInternal(const byte *colors,

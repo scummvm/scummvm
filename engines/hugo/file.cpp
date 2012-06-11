@@ -330,15 +330,12 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip.c_str());
 
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
 	Common::String savegameDescription;
-	EngineMan.findGame(_vm->getGameId(), &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
-		dialog->setSaveMode(true);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
 	} else {
@@ -436,14 +433,11 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 bool FileManager::restoreGame(const int16 slot) {
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
 
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
-	EngineMan.findGame(_vm->getGameId(), &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
-		dialog->setSaveMode(false);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {
 		savegameId = slot;

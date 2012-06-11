@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -97,7 +98,7 @@ void DreamWebEngine::useMon() {
 	_textFile3.clear();
 
 	_getBack = 1;
-	playChannel1(26);
+	_sound->playChannel1(26);
 	_manIsOffScreen = 0;
 	restoreAll();
 	redrawMainScrn();
@@ -180,7 +181,7 @@ void DreamWebEngine::monitorLogo() {
 		printLogo();
 		//fadeUpMon(); // FIXME: Commented out in ASM
 		printLogo();
-		playChannel1(26);
+		_sound->playChannel1(26);
 		randomAccess(20);
 	} else {
 		printLogo();
@@ -202,7 +203,7 @@ void DreamWebEngine::input() {
 	_cursLocY = _monAdY;
 	while (true) {
 		printCurs();
-		vSync();
+		waitForVSync();
 		delCurs();
 		readKey();
 		if (_quitRequested)
@@ -288,7 +289,7 @@ void DreamWebEngine::scrollMonitor() {
 	printLogo();
 	printUnderMonitor();
 	workToScreen();
-	playChannel1(25);
+	_sound->playChannel1(25);
 }
 
 void DreamWebEngine::showCurrentFile() {
@@ -318,8 +319,8 @@ void DreamWebEngine::accessLightOff() {
 
 void DreamWebEngine::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
-		vSync();
-		vSync();
+		waitForVSync();
+		waitForVSync();
 		uint16 v = _rnd.getRandomNumber(15);
 		if (v < 10)
 			accessLightOff();
@@ -626,15 +627,12 @@ void DreamWebEngine::signOn() {
 	_monAdX = prevX;
 	_monAdY = prevY;
 
-	inputLine = (const char *)_inputLine;
-	inputLine.toUppercase();
-
 	// The entered line has zeroes in-between each character
 	uint32 len = strlen(monitorKeyEntries[foundIndex].password);
 	bool found = true;
 
 	for (uint32 i = 0; i < len; i++) {
-		if (monitorKeyEntries[foundIndex].password[i] != inputLine[i * 2]) {
+		if (monitorKeyEntries[foundIndex].password[i] != _inputLine[i * 2]) {
 			found = false;
 			break;
 		}

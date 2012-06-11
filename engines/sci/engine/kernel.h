@@ -458,6 +458,8 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv);
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
+reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
+reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
 reg_t kText(EngineState *s, int argc, reg_t *argv);
@@ -473,12 +475,16 @@ reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv);
 reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv);
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv);
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv);
+reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv);
 reg_t kFont(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv);
+reg_t kAddLine(EngineState *s, int argc, reg_t *argv);
+reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv);
+reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv);
 
 // SCI3 Kernel functions
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);

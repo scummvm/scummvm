@@ -1917,6 +1917,13 @@ void ScummEngine::syncSoundSettings() {
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	}
+
+	// Backyard Baseball 2003 uses a unique subtitle variable,
+	// rather than VAR_SUBTITLES
+	if (_game.id == GID_BASEBALL2003) {
+		_scummVars[632] = ConfMan.getBool("subtitles");
+	}
+
 }
 
 void ScummEngine::setTalkSpeed(int talkspeed) {

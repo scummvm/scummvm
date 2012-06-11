@@ -20,7 +20,9 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+
 #include "engines/metaengine.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
@@ -136,7 +138,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 			delPointer();
 			readMouse();
 			showPointer();
-			vSync();
+			waitForVSync();
 			dumpPointer();
 			dumpTextLine();
 			RectWithCallback loadlist[] = {
@@ -156,12 +158,8 @@ void DreamWebEngine::doLoad(int savegameId) {
 		if (savegameId == -1) {
 			// Open dialog to get savegameId
 
-			const EnginePlugin *plugin = NULL;
-			Common::String gameId = ConfMan.get("gameid");
-			EngineMan.findGame(gameId, &plugin);
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
-			dialog->setSaveMode(false);
-			savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 		}
 
@@ -181,7 +179,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 	_saveGraphics.clear();
 
 	startLoading(g_madeUpRoomDat);
-	loadRoomsSample();
+	_sound->loadRoomsSample(_roomsSample);
 	_roomLoaded = 1;
 	_newLocation = 255;
 	clearSprites();
@@ -227,7 +225,7 @@ void DreamWebEngine::saveGame() {
 			checkInput();
 			readMouse();
 			showPointer();
-			vSync();
+			waitForVSync();
 			dumpPointer();
 			dumpTextLine();
 
@@ -243,12 +241,8 @@ void DreamWebEngine::saveGame() {
 		}
 		return;
 	} else {
-		const EnginePlugin *plugin = NULL;
-		Common::String gameId = ConfMan.get("gameid");
-		EngineMan.findGame(gameId, &plugin);
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-		dialog->setSaveMode(true);
-		int savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		int savegameId = dialog->runModalWithCurrentTarget();
 		Common::String game_description = dialog->getResultString();
 		if (game_description.empty())
 			game_description = "Untitled";
@@ -348,7 +342,7 @@ void DreamWebEngine::doSaveLoad() {
 
 			readMouse();
 			showPointer();
-			vSync();
+			waitForVSync();
 			dumpPointer();
 			dumpTextLine();
 			delPointer();
@@ -429,7 +423,7 @@ void DreamWebEngine::discOps() {
 		delPointer();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		checkCoords(discOpsList);
@@ -839,8 +833,9 @@ void DreamWebEngine::showOpBox() {
 
 	// This call displays half of the ops dialog in the CD version. It's not
 	// in the floppy version, and if it's called, a stray red dot is shown in
-	// the game dialogs.
-	if (isCD())
+	// the game dialogs. It is included in the early UK CD release, which had
+	// similar data files as the floppy release (bug #3528160).
+	if (isCD() && getLanguage() != Common::EN_GRB)
 		showFrame(_saveGraphics, kOpsx, kOpsy + 55, 4, 0);
 }
 

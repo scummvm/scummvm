@@ -88,6 +88,12 @@ void SciMusic::init() {
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
+	if (g_sci->_features->useAltWinGMSound() && _musicType != MT_GM) {
+		warning("A Windows CD version with an alternate MIDI soundtrack has been chosen, "
+				"but no MIDI music device has been selected. Reverting to the DOS soundtrack");
+		g_sci->_features->forceDOSTracks();
+	}
+
 	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib

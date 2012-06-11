@@ -3294,7 +3294,7 @@ void Scene3500::Action1::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_actor8.addMover(mover, &pt, this);
 
-		scene->_actor9.setPosition(Common::Point(160 + ((_field1E * 2) * 160), 73));;
+		scene->_actor9.setPosition(Common::Point(160 + ((_field1E * 2) * 160), 73));
 		scene->_actor9._moveDiff.x = 160 - scene->_field126E;
 		scene->_fieldB9E = 160;
 		Common::Point pt2(scene->_fieldB9E, 73);

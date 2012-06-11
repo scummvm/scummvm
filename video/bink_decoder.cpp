@@ -120,7 +120,7 @@ void BinkDecoder::startAudio() {
 		const AudioTrack &audio = _audioTracks[_audioTrack];
 
 		_audioStream = Audio::makeQueuingAudioStream(audio.outSampleRate, audio.outChannels == 2);
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream, -1, getVolume(), getBalance());
 	} // else no audio
 }
 
@@ -181,7 +181,7 @@ void BinkDecoder::close() {
 	_frames.clear();
 }
 
-uint32 BinkDecoder::getElapsedTime() const {
+uint32 BinkDecoder::getTime() const {
 	if (_audioStream && g_system->getMixer()->isSoundHandleActive(_audioHandle))
 		return g_system->getMixer()->getSoundElapsedTime(_audioHandle) + _audioStartOffset;
 
@@ -1645,6 +1645,16 @@ void BinkDecoder::IDCTPut(DecodeContext &ctx, int16 *block) {
 	for (i = 0; i < 8; i++) {
 		IDCT_ROW( (&ctx.dest[i*ctx.pitch]), (&temp[8*i]) );
 	}
+}
+
+void BinkDecoder::updateVolume() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelVolume(_audioHandle, getVolume());
+}
+
+void BinkDecoder::updateBalance() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
+		g_system->getMixer()->setChannelBalance(_audioHandle, getBalance());
 }
 
 } // End of namespace Video

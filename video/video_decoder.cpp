@@ -22,6 +22,8 @@
 
 #include "video/video_decoder.h"
 
+#include "audio/mixer.h" // for kMaxChannelVolume
+
 #include "common/rational.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -45,7 +47,7 @@ bool VideoDecoder::loadFile(const Common::String &filename) {
 	return loadStream(file);
 }
 
-uint32 VideoDecoder::getElapsedTime() const {
+uint32 VideoDecoder::getTime() const {
 	return g_system->getMillis() - _startTime;
 }
 
@@ -61,6 +63,8 @@ void VideoDecoder::reset() {
 	_curFrame = -1;
 	_startTime = 0;
 	_pauseLevel = 0;
+	_audioVolume = Audio::Mixer::kMaxChannelVolume;
+	_audioBalance = 0;
 }
 
 bool VideoDecoder::endOfVideo() const {
@@ -94,11 +98,21 @@ void VideoDecoder::resetPauseStartTime() {
 		_pauseStartTime = g_system->getMillis();
 }
 
+void VideoDecoder::setVolume(byte volume) {
+	_audioVolume = volume;
+	updateVolume();
+}
+
+void VideoDecoder::setBalance(int8 balance) {
+	_audioBalance = balance;
+	updateBalance();
+}
+
 uint32 FixedRateVideoDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _curFrame < 0)
 		return 0;
 
-	uint32 elapsedTime = getElapsedTime();
+	uint32 elapsedTime = getTime();
 	uint32 nextFrameStartTime = getFrameBeginTime(_curFrame + 1);
 
 	// If the time that the next frame should be shown has past

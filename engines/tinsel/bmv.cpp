@@ -529,7 +529,7 @@ int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 	if (cmd & CD_PRINT) {
 		PRINT_CMD *pCmd = (PRINT_CMD *)(bigBuffer + commandOffset);
 
-		MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
+		MovieText(Common::nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
 				(int16)READ_LE_UINT16(&pCmd->x),
 				(int16)READ_LE_UINT16(&pCmd->y),
 				pCmd->fontId,
@@ -542,7 +542,7 @@ int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 			TALK_CMD *pCmd = (TALK_CMD *)(bigBuffer + commandOffset);
 			talkColor = TINSEL_RGB(pCmd->r, pCmd->g, pCmd->b);
 
-			MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
+			MovieText(Common::nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
 					(int16)READ_LE_UINT16(&pCmd->x),
 					(int16)READ_LE_UINT16(&pCmd->y),
 					0,
