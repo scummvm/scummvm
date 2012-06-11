@@ -26,11 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BRenderSDL.h"
 #include "engines/wintermute/Base/BRegistry.h"
@@ -443,6 +438,8 @@ void CBRenderSDL::PointToScreen(POINT *point) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBRenderSDL::DumpData(const char *Filename) {
+	warning("CBRenderSDL::DumpData(%s) - not reimplemented yet", Filename); // TODO
+#if 0
 	FILE *f = fopen(Filename, "wt");
 	if (!f) return;
 
@@ -471,6 +468,7 @@ void CBRenderSDL::DumpData(const char *Filename) {
 	fclose(f);
 	Game->LOG(0, "Texture Stats Dump completed.");
 	Game->QuickMessage("Texture Stats Dump completed.");
+#endif
 }
 
 } // end of namespace WinterMute
