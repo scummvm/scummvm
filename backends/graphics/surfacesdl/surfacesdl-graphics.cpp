@@ -79,17 +79,6 @@ const OSystem::GraphicsMode s_supportedStretchModes[] = {
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
-static const int s_gfxModeSwitchTable[][4] = {
-		{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
-		{ GFX_NORMAL, GFX_ADVMAME2X, GFX_ADVMAME3X, -1 },
-		{ GFX_NORMAL, GFX_HQ2X, GFX_HQ3X, -1 },
-		{ GFX_NORMAL, GFX_2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPER2XSAI, -1, -1 },
-		{ GFX_NORMAL, GFX_SUPEREAGLE, -1, -1 },
-		{ GFX_NORMAL, GFX_TV2X, -1, -1 },
-		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
-	};
-
 AspectRatio::AspectRatio(int w, int h) {
 	// TODO : Validation and so on...
 	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
@@ -135,7 +124,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_overlayscreen(0), _tmpscreen2(0),
-	_scalerProc(0), _screenChangeCount(0),
+	_screenChangeCount(0),
 	_mouseData(nullptr), _mouseSurface(nullptr),
 	_mouseOrigSurface(nullptr), _cursorDontScale(false), _cursorPaletteDisabled(true),
 	_currentShakeXOffset(0), _currentShakeYOffset(0),
@@ -164,18 +153,15 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.scaleFactor = 2;
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
-	_scalerProc = Normal2x;
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
 	_videoMode.aspectRatioCorrection = false;
-	_scalerProc = Normal1x;
 #endif
 	// HACK: just pick first scaler plugin
 	_normalPlugin = _scalerPlugin = _scalerPlugins.front();
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
-	_scalerType = 0;
 
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
 	_videoMode.filtering = ConfMan.getBool("filtering");
@@ -300,11 +286,13 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsMode
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
-#ifdef USE_SCALERS
-	return GFX_DOUBLESIZE;
-#else
-	return GFX_NORMAL;
-#endif
+	for (uint i = 0; i < s_supportedGraphicsModes->size(); ++i) {
+		// if normal2x exists, it is the default
+		if (strcmp((*s_supportedGraphicsModes)[i].name, "normal2x") == 0)
+			return (*s_supportedGraphicsModes)[i].id;
+	}
+	// 0 should be the normal1x mode
+	return 0;
 }
 
 void SurfaceSdlGraphicsManager::beginGFXTransaction() {
@@ -778,7 +766,8 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
 		const bool useDefault = defaultGraphicsModeConfig();
 		if (useDefault && w > 320) {
-			setGraphicsMode(s_gfxModeSwitchTable[_scalerType][0]);
+			// 0 will currently always be Normal1x scaling
+			setGraphicsMode(0);
 		} else {
 			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
 		}
@@ -1112,7 +1101,6 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
-	ScalerProc *scalerProc;
 	int scale1;
 
 	// If there's an active debugger, update it
@@ -1169,14 +1157,12 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		srcSurf = _tmpscreen;
 		width = _videoMode.screenWidth;
 		height = _videoMode.screenHeight;
-		scalerProc = _scalerProc;
 		scale1 = _videoMode.scaleFactor;
 	} else {
 		origSurf = _overlayscreen;
 		srcSurf = _tmpscreen2;
 		width = _videoMode.overlayWidth;
 		height = _videoMode.overlayHeight;
-		scalerProc = Normal1x;
 		scale1 = 1;
 	}
 
@@ -1249,8 +1235,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
-				assert(scalerProc != NULL);
-				//  (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				if (_overlayVisible) {
 					uint tmpFactor = (*_normalPlugin)->getFactor();
 					(*_normalPlugin)->setFactor(1);
@@ -1730,8 +1714,6 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
-	//_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
-	//(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight);
 	(*_scalerPlugin)->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
 
