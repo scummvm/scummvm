@@ -962,11 +962,11 @@ short RMCharacter::findPath(short source, short destination) {
 	cur = _theBoxes->getBoxes(_curLocation);
 
 	// Make a backup copy to work on
-	for (i = 0; i < cur->numbbox; i++)
+	for (i = 0; i < cur->_numbBox; i++)
 		memcpy(&BOX[i], &cur->_boxes[i], sizeof(RMBox));
 
 	// Invalidate all nodes
-	for (i = 0; i < cur->numbbox; i++)
+	for (i = 0; i < cur->_numbBox; i++)
 		VALIDO[i] = 0;
 
 	// Prepare source and variables for the procedure
@@ -980,14 +980,14 @@ short RMCharacter::findPath(short source, short destination) {
 		errore = 1;                         // Possible error
 
 		// 1st cycle: explore possible new nodes
-		for (i = 0; i < cur->numbbox; i++)
+		for (i = 0; i < cur->_numbBox; i++)
 			if (VALIDO[i] == 1) {
 				errore = 0;                 // Failure de-bunked
 				j = 0;
-				while (((BOX[i]._adj[j]) != 1) && (j < cur->numbbox))
+				while (((BOX[i]._adj[j]) != 1) && (j < cur->_numbBox))
 					j++;
 
-				if (j >= cur->numbbox)
+				if (j >= cur->_numbBox)
 					VALIDO[i] = 2;                     // nodo saturated?
 				else {
 					NEXT[i] = j;
@@ -1000,12 +1000,12 @@ short RMCharacter::findPath(short source, short destination) {
 			fine = 1;                                 // All nodes saturated
 
 		// 2nd cycle: adding new nodes that were found, saturate old nodes
-		for (i = 0; i < cur->numbbox; i++)
+		for (i = 0; i < cur->_numbBox; i++)
 			if ((VALIDO[i] == 1) && ((COSTO[i] + 1) == costominimo)) {
 				BOX[i]._adj[NEXT[i]] = 2;
 				COSTO[NEXT[i]] = costominimo;
 				VALIDO[NEXT[i]] = 1;
-				for (j = 0; j < cur->numbbox; j++)
+				for (j = 0; j < cur->_numbBox; j++)
 					if (BOX[j]._adj[NEXT[i]] == 1)
 						BOX[j]._adj[NEXT[i]] = 0;
 
@@ -1762,13 +1762,13 @@ void RMBoxLoc::readFromStream(RMDataStream &ds) {
 	assert(ver == 3);
 
 	// Number of boxes
-	ds >> numbbox;
+	ds >> _numbBox;
 
 	// Allocate memory for the boxes
-	_boxes = new RMBox[numbbox];
+	_boxes = new RMBox[_numbBox];
 
 	// Read in boxes
-	for (i = 0; i < numbbox; i++)
+	for (i = 0; i < _numbBox; i++)
 		ds >> _boxes[i];
 }
 
@@ -1776,7 +1776,7 @@ void RMBoxLoc::readFromStream(RMDataStream &ds) {
 void RMBoxLoc::recalcAllAdj(void) {
 	int i, j;
 
-	for (i = 0; i < numbbox; i++) {
+	for (i = 0; i < _numbBox; i++) {
 		Common::fill(_boxes[i]._adj, _boxes[i]._adj + MAXBOXES, 0);
 
 		for (j = 0; j < _boxes[i]._numHotspot; j++)
@@ -1850,7 +1850,7 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 	if (!cur)
 		return -1;
 
-	for (i = 0; i < cur->numbbox; i++)
+	for (i = 0; i < cur->_numbBox; i++)
 		if (cur->_boxes[i]._attivo)
 			if ((punto._x >= cur->_boxes[i]._left) && (punto._x <= cur->_boxes[i]._right) &&
 			        (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
@@ -1873,7 +1873,7 @@ int RMGameBoxes::getSaveStateSize(void) {
 
 	for (i = 1; i <= _nLocBoxes; i++) {
 		size += 4;
-		size += _allBoxes[i]->numbbox;
+		size += _allBoxes[i]->_numbBox;
 	}
 
 	return size;
@@ -1888,10 +1888,10 @@ void RMGameBoxes::saveState(byte *state) {
 
 	// For each location, write out the number of boxes and their status
 	for (i = 1; i <= _nLocBoxes; i++) {
-		WRITE_LE_UINT32(state, _allBoxes[i]->numbbox);
+		WRITE_LE_UINT32(state, _allBoxes[i]->_numbBox);
 		state += 4;
 
-		for (j = 0; j < _allBoxes[i]->numbbox; j++)
+		for (j = 0; j < _allBoxes[i]->_numbBox; j++)
 			*state++ = _allBoxes[i]->_boxes[j]._attivo;
 	}
 }
@@ -1912,7 +1912,7 @@ void RMGameBoxes::loadState(byte *state) {
 		state += 4;
 
 		for (j = 0; j < nbox ; j++) {
-			if (j < _allBoxes[i]->numbbox)
+			if (j < _allBoxes[i]->_numbBox)
 				_allBoxes[i]->_boxes[j]._attivo = *state;
 
 			state++;

@@ -339,7 +339,7 @@ public:
 
 class RMBoxLoc {
 public:
-	int numbbox;
+	int _numbBox;
 	RMBox *_boxes;
 
 private:
