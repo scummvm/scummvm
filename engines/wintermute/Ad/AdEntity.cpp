@@ -507,7 +507,10 @@ HRESULT CAdEntity::Display() {
 		}
 
 		DisplaySpriteAttachments(true);
-		if (_currentSprite) {
+		if(_theora && (_theora->isPlaying() || _theora->isPaused()))
+		{
+			_theora->display(Alpha);
+		} else if (_currentSprite) {
 			_currentSprite->Display(_posX,
 			                        _posY,
 			                        (Reg || _editorAlwaysRegister) ? _registerAlias : NULL,
@@ -599,6 +602,20 @@ HRESULT CAdEntity::Update() {
 	UpdateBlockRegion();
 	_ready = (_state == STATE_READY);
 
+	if(_theora)
+	{
+		int OffsetX, OffsetY;
+		Game->GetOffset(&OffsetX, &OffsetY);
+		_theora->_posX = _posX - OffsetX;
+		_theora->_posY = _posY - OffsetY;
+		
+		_theora->update();
+		if(_theora->isFinished())
+		{
+			_theora->stop();
+			delete _theora;
+		}
+	}
 
 	UpdatePartEmitter();
 	UpdateSpriteAttachments();
