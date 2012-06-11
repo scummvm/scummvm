@@ -100,7 +100,7 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	if (!loadHeader(in, header, true))
 		return 0;
 
-	if (header.bpp != 2) {
+	if ((header.bpp == 1) || (header.bpp == 3)) {
 		warning("trying to load thumbnail with unsupported bit depth %d", header.bpp);
 		return 0;
 	}
@@ -108,18 +108,31 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	Graphics::Surface *const to = new Graphics::Surface();
 	to->create(header.width, header.height, format);
-
-	OverlayColor *pixels = (OverlayColor *)to->pixels;
 	for (int y = 0; y < to->h; ++y) {
 		for (int x = 0; x < to->w; ++x) {
+			OverlayColor *pixels2Bpp = (OverlayColor *)to->pixels;
+			uint32 *pixels4Bpp = (uint32 *)to->pixels;
+			uint8 a = 0xFF;
 			uint8 r, g, b;
-			colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
-
+			switch (header.bpp) {
+			case 2:
+				colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
+				break;
+			case 4:
+				colorToARGB<ColorMasks<8888> >(in.readUint32BE(), a, r, g, b);
+				break;
+			}
 			// converting to current OSystem Color
-			*pixels++ = format.RGBToColor(r, g, b);
+			switch (format.bytesPerPixel) {
+			case 2:
+				*pixels2Bpp++ = format.RGBToColor(r, g, b);
+				break;
+			case 4:
+				*pixels4Bpp++ = format.ARGBToColor(a, r, g, b);
+				break;
+			}
 		}
 	}
-
 	return to;
 }
 
