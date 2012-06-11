@@ -184,8 +184,8 @@ DECLARE_CUSTOM_FUNCTION(RightToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonySetPalesati)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
-	GLOBALS.SetPalesati(bStatus);
+DECLARE_CUSTOM_FUNCTION(TonySetPerorate)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
+	GLOBALS.SetPerorate(bStatus);
 }
 
 DECLARE_CUSTOM_FUNCTION(MySleep)(CORO_PARAM, uint32 dwTime, uint32, uint32, uint32) {
@@ -2529,7 +2529,7 @@ ASSIGN(134,     CustEnableGUI)
 ASSIGN(135,     CustDisableGUI)
 ASSIGN(136,     ClearScreen)
 ASSIGN(137,     PatIrqFreeze)
-ASSIGN(138,     TonySetPalesati)
+ASSIGN(138,     TonySetPerorate)
 ASSIGN(139,     OpenInitLoadMenu)
 ASSIGN(140,     OpenInitOptions)
 ASSIGN(141,     SyncScrollLocation)
@@ -2562,7 +2562,7 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS.WaitWipeEnd = mainWaitWipeEnd;
 	GLOBALS.DisableGUI = mainDisableGUI;
 	GLOBALS.EnableGUI = mainEnableGUI;
-	GLOBALS.SetPalesati = mainSetPalesati;
+	GLOBALS.SetPerorate = mainSetPerorate;
 
 	GLOBALS._bAlwaysDisplay = false;
 	int i;

@@ -326,7 +326,7 @@ public:
 	uint8 _destZ;                     // Z value for the bounding box
 	T_HOTSPOT _hotspot[MAXHOTSPOT];   // List of hotspots
 
-	bool _attivo;
+	bool _bActive;
 	bool _bReversed;
 
 private:

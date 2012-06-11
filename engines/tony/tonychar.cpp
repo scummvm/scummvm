@@ -272,7 +272,7 @@ void RMTony::executeAction(int nAction, int nActionItem, int nParm) {
 			_bAction = true;
 			CoroScheduler.createProcess(waitEndOfAction, &pid, sizeof(uint32));
 			_hActionThread = pid;
-		} else if (nAction == TA_PALESATI) {
+		} else if (nAction == TA_PERORATE) {
 			pid = mpalQueryDoAction(7, 1, 0);
 			_bAction = true;
 			CoroScheduler.createProcess(waitEndOfAction, &pid, sizeof(uint32));

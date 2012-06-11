@@ -114,8 +114,8 @@ void mainDisableGUI(void) {
 	_vm->getEngine()->_bGUIOption = false;
 }
 
-void mainSetPalesati(bool bPalesati) {
-	_vm->getEngine()->setPalesati(bPalesati);
+void mainSetPerorate(bool bPerorate) {
+	_vm->getEngine()->setPerorate(bPerorate);
 }
 
 /****************************************************************************\

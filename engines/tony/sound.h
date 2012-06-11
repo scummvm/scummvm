@@ -65,7 +65,7 @@ private:
 	bool bSoundSupported;
 
 	/****************************************************************************\
-	*       Metodi
+	*       Methods
 	\****************************************************************************/
 
 public:
@@ -74,105 +74,95 @@ public:
 	*
 	* Function:     FPSOUND::FPSOUND();
 	*
-	* Description:  Costruttore di default. Inizializza gli attributi.
+	* Description:  Default constructor. Initializes the attributes
 	*
 	\****************************************************************************/
 
 	FPSOUND();
 
-
 	/****************************************************************************\
 	*
 	* Function:     FPSOUND::~FPSOUND();
 	*
-	* Description:  Deinizializza l'oggetto, disallocando la memoria.
+	* Description:  Deinitialize the object, free memory
 	*
 	\****************************************************************************/
 
 	~FPSOUND();
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool FPSOUND::Init();
 	*
-	* Description:  Inizializza l'oggetto, e prepara tutto il necessario per
-	*               creare stream e effetti sonori.
+	* Description:  Initializes the objects, and prepare everything required to 
+	*               create streams and sound effects.
 	*
-	* Return:       True se tutto OK, FALSE in caso di errore.
+	* Return:       True if everything is OK, False otherwise.
 	*
 	\****************************************************************************/
 
-
 	bool Init();
-
 
 	/****************************************************************************\
 	*
 	* Function:     bool CreateStream(FPSTREAM** lplpStream);
 	*
-	* Description:  Alloca un oggetti di tipo FPSTREAM, e ritorna il suo
-	*               puntatore dopo averlo inizializzato.
+	* Description:  Allocates an object of type FPSTREAM, and return its 
+	*               pointer after it has been initialized.
 	*
-	* Input:        FPSTREAM** lplpStream   Conterra' il pointer all'oggetto
-	*                                       appena creato.
+	* Input:        FPSTREAM** lplpStream   Will contain the pointer of the 
+	*                                       object
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore
+	* Return:       True is everything i OK, False otherwise
 	*
-	* Note:         L'utilizzo di funzioni del tipo CreateStream(), CreateSfx(),
-	*               sono dovute al fatto che i costruttori delle classi FPSTREAM
-	*               e FPSFX richiedono che DirectSound sia gia' stato
-	*               inzializzato. In questo modo quindi si evitano dei bugs
-	*               che si verrebbero a creare se venisse dichiarata un oggetto
-	*               di tipo FPSTREAM o FPSFX globale (o cmq prima della
-	*               inizializzazione di DirectSound).
-	*
+	* Note:         The use of functions like CreateStream () and CreateSfx () 
+	*               are due to the fact that the class constructors and 
+	*               FPSTREAM FPSFX require that DirectSound is already initialized. 
+	*               In this way, you avoid the bugs that would be created if an 
+	*               object type is declared FPSTREAM FPSFX or global 
+	*               (or anyway before initializing DirectSound).
 	\****************************************************************************/
 
 	bool CreateStream(FPSTREAM **lplpStream);
-
-
 
 	/****************************************************************************\
 	*
 	* Function:     bool CreateSfx(FPSFX** lplpSfx);
 	*
-	* Description:  Alloca un oggetti di tipo FPSFX e ritorna il suo
-	*               puntatore dopo averlo inizializzato.
+	* Description:  Allocates an object of type FPSFX and returns a pointer 
+	*               pointing to it
 	*
-	* Input:        FPSFX** lplpSfx         Conterra' il pointer all'oggetto
-	*                                       appena creato.
+	* Input:        FPSFX** lplpSfx         Will contain the pointer of the 
+	*                                       object
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore
+	* Return:       True is everything i OK, False otherwise
 	*
-	* Note:         Vedi le note di CreateStream()
+	* Note:         See notes about CreateStream()
 	*
 	\****************************************************************************/
 
 	bool CreateSfx(FPSFX **lplpSfx);
 
-
-
 	/****************************************************************************\
 	*
 	* Function:     void SetMasterVolume(int dwVolume);
 	*
-	* Description:  Setta il volume generale
+	* Description:  Set main volume
 	*
-	* Input:        int dwVolume          Volume da settare (0-63)
+	* Input:        int dwVolume          Volume to be set (0-63)
 	*
 	\****************************************************************************/
 
 	void SetMasterVolume(int dwVolume);
 
-
 	/****************************************************************************\
 	*
 	* Function:     void GetMasterVolume(LPINT lpdwVolume);
 	*
-	* Description:  Richiede il volume generale
+	* Description:  Get main volume
 	*
-	* Input:        LPINT lpdwVolume        Variabile che conterra' il volume (0-63)
+	* Input:        LPINT lpdwVolume        This variable will contain the 
+	*                                       current volume (0-63)
 	*
 	\****************************************************************************/
 
@@ -182,13 +172,13 @@ public:
 class FPSFX {
 
 	/****************************************************************************\
-	*       Attributi
+	*       Attributes
 	\****************************************************************************/
 
 private:
-	bool bSoundSupported;                 // TRUE se il suono e' attivo
-	bool bFileLoaded;                     // TRUE se e' stato aperto un file
-	bool bLoop;                           // TRUE se bisogna loopare l'effetto sonoro
+	bool bSoundSupported;                 // True if the sound is active
+	bool bFileLoaded;                     // True is a file is opened
+	bool bLoop;                           // True is sound effect should loop
 	int lastVolume;
 
 	bool bIsVoice;
@@ -205,7 +195,7 @@ private:
 
 
 	/****************************************************************************\
-	*       Metodi
+	*       Methods
 	\****************************************************************************/
 
 public:
@@ -218,54 +208,49 @@ public:
 	*
 	* Function:     FPSFX(bool bSoundOn);
 	*
-	* Description:  Costruttore di default. *NON* bisogna dichiarare direttamente
-	*               un oggetto, ma crearlo piuttosto tramite FPSOUND::CreateSfx()
+	* Description:  Default constructor. *DO NOT* declare the object directly,
+	*               create it though FPSOUND::CreateSfx() instead
 	*
 	\****************************************************************************/
 
 	FPSFX(bool bSoundOn);
 
-
 	/****************************************************************************\
 	*
 	* Function:     ~FPSFX();
 	*
-	* Description:  Distruttore di default. Si preoccupa anche di fermare il sound
-	*                               effect eventualmente in esecuzione, e disallocare la memoria
-	*                               da esso occupata.
+	* Description:  Default destructor. It also stops the sound effect that 
+	*               may be running, and free the memory used.
 	*
 	\****************************************************************************/
 
 	~FPSFX();
 
-
 	/****************************************************************************\
 	*
 	* Function:     Release();
 	*
-	* Description:  Rilascia la memoria dell'oggetto. Deve essere richiamata quando
-	*               l'oggetto non serve piu' e **SOLO SE** l'oggetto e' stato
-	*               creato con la FPSOUND::CreateStream().
+	* Description:  Releases the memory object. Must be called when the object 
+	*               is no longer useful and **ONLY** when the object was created 
+	*               with the FPSOUND :: CreateStream ().
 	*
-	* Note:         Eventuali puntatori all'oggetto non sono piu' validi dopo
-	*               questa chiamata.
+	* Note:         Any object pointers are no longer valid after this call.
 	*
 	\****************************************************************************/
 
 	void Release();
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool LoadFile(char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
 	*
-	* Description:  Apre un file di effetto sonoro e lo carica.
+	* Description:  Opens a file and load sound effect
 	*
-	* Input:        char *lpszFile          Nome del file di sfx da aprire
-	*               uint32 dwCodec           CODEC da utilizzare per decomprimere
-	*                                       i campioni sonori
+	* Input:        char *lpszFile          SFX filename
+	*               uint32 dwCodec          CODEC to be used to decompress
+	*                                       the sound samples
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore
+	* Return:       True if everything is OK, False otherwise
 	*
 	\****************************************************************************/
 
@@ -273,43 +258,39 @@ public:
 	bool loadWave(Common::SeekableReadStream *stream);
 	bool LoadVoiceFromVDB(Common::File &vdbFP);
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool Play();
 	*
-	* Description:  Suona lo sfx caricato.
+	* Description:  Play the loaded FX.
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore.
+	* Return:       True if everything is OK, False otherwise
 	*
 	\****************************************************************************/
 
 	bool Play();
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool Stop();
 	*
-	* Description:  Ferma il play dello sfx.
+	* Description:  Stop a FX
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore.
+	* Return:       True if everything is OK, False otherwise
 	*
 	\****************************************************************************/
 
 	bool Stop();
 
-
 	/****************************************************************************\
 	*
 	* Function:     void Pause(bool bPause);
 	*
-	* Description:  Pause dell'effetto sonoro
+	* Description:  Pause a FX
 	*
 	\****************************************************************************/
 
 	void Pause(bool bPause);
-
 
 	/****************************************************************************\
 	*

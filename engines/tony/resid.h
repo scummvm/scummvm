@@ -68,6 +68,6 @@
 #define RES_F_CREDITS 10704
 #define RES_F_CPAL 10705
 
-#define RES_W_CERCHIO 10800
+#define RES_W_CIRCLE 10800
 
 #endif

@@ -889,7 +889,7 @@ void RMWipe::initFade(int type) {
 
 	_bMustRegister = true;
 
-	RMRes res(RES_W_CERCHIO);
+	RMRes res(RES_W_CIRCLE);
 	RMDataStream ds;
 
 	ds.openBuffer(res);
@@ -1456,7 +1456,7 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 			// If we still have to go through a box
 			if (_pathCount < _pathLength) {
 				// Check if the box we're going into is active
-				if (_ctx->cur->_boxes[_path[_pathCount - 1]]._attivo) {
+				if (_ctx->cur->_boxes[_path[_pathCount - 1]]._bActive) {
 					// Move in a straight line towards the nearest hotspot, taking into account the reversing
 					// NEWBOX = path[pathcount-1]
 					CORO_INVOKE_2(goTo, nearestHotSpot(_path[_pathCount - 1], _path[_pathCount]), _ctx->cur->_boxes[_path[_pathCount - 1]]._bReversed);
@@ -1715,7 +1715,7 @@ void RMBox::readFromStream(RMDataStream &ds) {
 	ds >> _numHotspot;
 	ds >> _destZ;
 	ds >> b;
-	_attivo = b;
+	_bActive = b;
 	ds >> b;
 	_bReversed = b;
 
@@ -1780,7 +1780,7 @@ void RMBoxLoc::recalcAllAdj(void) {
 		Common::fill(_boxes[i]._adj, _boxes[i]._adj + MAXBOXES, 0);
 
 		for (j = 0; j < _boxes[i]._numHotspot; j++)
-			if (_boxes[_boxes[i]._hotspot[j]._destination]._attivo)
+			if (_boxes[_boxes[i]._hotspot[j]._destination]._bActive)
 				_boxes[i]._adj[_boxes[i]._hotspot[j]._destination] = 1;
 	}
 }
@@ -1851,7 +1851,7 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 		return -1;
 
 	for (i = 0; i < cur->_numbBox; i++)
-		if (cur->_boxes[i]._attivo)
+		if (cur->_boxes[i]._bActive)
 			if ((punto._x >= cur->_boxes[i]._left) && (punto._x <= cur->_boxes[i]._right) &&
 			        (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
 				return i;
@@ -1860,7 +1860,7 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 }
 
 void RMGameBoxes::changeBoxStatus(int nLoc, int nBox, int status) {
-	_allBoxes[nLoc]->_boxes[nBox]._attivo = status;
+	_allBoxes[nLoc]->_boxes[nBox]._bActive = status;
 	_allBoxes[nLoc]->recalcAllAdj();
 }
 
@@ -1892,7 +1892,7 @@ void RMGameBoxes::saveState(byte *state) {
 		state += 4;
 
 		for (j = 0; j < _allBoxes[i]->_numbBox; j++)
-			*state++ = _allBoxes[i]->_boxes[j]._attivo;
+			*state++ = _allBoxes[i]->_boxes[j]._bActive;
 	}
 }
 
@@ -1913,7 +1913,7 @@ void RMGameBoxes::loadState(byte *state) {
 
 		for (j = 0; j < nbox ; j++) {
 			if (j < _allBoxes[i]->_numbBox)
-				_allBoxes[i]->_boxes[j]._attivo = *state;
+				_allBoxes[i]->_boxes[j]._bActive = *state;
 
 			state++;
 		}

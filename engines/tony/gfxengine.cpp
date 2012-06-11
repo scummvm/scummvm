@@ -645,7 +645,7 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	// Saves the state of the shepherdess and show yourself
 	bStat = _tony.getPastorella();
 	f->writeByte(bStat);
-	bStat = _inter.getPalesati();
+	bStat = _inter.getPerorate();
 	f->writeByte(bStat);
 
 	// Save the chars
@@ -781,7 +781,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		bStat = _ctx->f->readByte();
 		_tony.setPastorella(bStat);
 		bStat = _ctx->f->readByte();
-		_inter.setPalesati(bStat);
+		_inter.setPerorate(bStat);
 
 		CharsLoadAll(_ctx->f);
 	}

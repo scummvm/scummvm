@@ -770,7 +770,8 @@ int RMInterface::onWhichBox(RMPoint pt) {
 
 	// Check how many verbs you have to consider
 	max = 4;
-	if (_bPalesati) max = 5;
+	if (_bPerorate)
+		max = 5;
 
 	// Find the verb
 	for (i = 0; i < max; i++)
@@ -867,7 +868,7 @@ bool RMInterface::released(const RMPoint &mousepos, RMTonyAction &action) {
 		break;
 
 	case 4:
-		action = TA_PALESATI;
+		action = TA_PERORATE;
 		break;
 
 	default:        // No verb
@@ -881,12 +882,12 @@ void RMInterface::reset(void) {
 	_bActive = false;
 }
 
-void RMInterface::setPalesati(bool bOn) {
-	_bPalesati = bOn;
+void RMInterface::setPerorate(bool bOn) {
+	_bPerorate = bOn;
 }
 
-bool RMInterface::getPalesati(void) {
-	return _bPalesati;
+bool RMInterface::getPerorate(void) {
+	return _bPerorate;
 }
 
 void RMInterface::init(void) {
@@ -932,7 +933,7 @@ void RMInterface::init(void) {
 	_hints[4].writeText(msg4[0], 1);   // Show Yourself
 
 	_bActive = false;
-	_bPalesati = false;
+	_bPerorate = false;
 	_lastHotZone = 0;
 }
 

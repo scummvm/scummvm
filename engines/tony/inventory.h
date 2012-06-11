@@ -161,7 +161,7 @@ private:
 	RMText _hints[5];
 	RMGfxSourceBuffer8RLEByte _hotzone[5];
 	RMRect _hotbbox[5];
-	bool _bPalesati;
+	bool _bPerorate;
 	int _lastHotZone;
 
 protected:
@@ -189,8 +189,8 @@ public:
 	bool released(const RMPoint &mousepos, RMTonyAction &action);
 
 	// Enalbes or disables the fifth verb
-	void setPalesati(bool bOn);
-	bool getPalesati(void);
+	void setPerorate(bool bOn);
+	bool getPerorate(void);
 
 	// Overloaded Draw
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);

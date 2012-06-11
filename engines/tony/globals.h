@@ -232,7 +232,7 @@ public:
 	void (*InitWipe)(int type);
 	void (*EnableGUI)(void);
 	void (*DisableGUI)(void);
-	void (*SetPalesati)(bool bpal);
+	void (*SetPerorate)(bool bpal);
 
 	uint32 _dwTonyNumTexts;
 	bool _bTonyInTexts;

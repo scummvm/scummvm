@@ -47,7 +47,7 @@ private:
 	// Keyboard related fields
 	bool _keyDown[350];
 private:
-	// Deinizializza DirectInput
+	// Deinitialize DirectInput
 	void DIClose(void);
 
 public:

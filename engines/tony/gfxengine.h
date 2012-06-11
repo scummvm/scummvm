@@ -144,8 +144,8 @@ public:
 	void closeWipe(void);
 	void waitWipeEnd(CORO_PARAM);
 
-	void setPalesati(bool bpal) {
-		_inter.setPalesati(bpal);
+	void setPerorate(bool bpal) {
+		_inter.setPerorate(bpal);
 	}
 	bool canLoadSave();
 };

@@ -55,7 +55,7 @@ enum RMTonyAction {
 	TA_USE,
 	TA_EXAMINE,
 	TA_TALK,
-	TA_PALESATI,
+	TA_PERORATE,
 
 	TA_COMBINE = 10,
 	TA_RECEIVECOMBINE,
@@ -80,7 +80,7 @@ void mainCloseWipe(void);
 void mainWaitWipeEnd(CORO_PARAM);
 void mainEnableGUI(void);
 void mainDisableGUI(void);
-void mainSetPalesati(bool bPalesati);
+void mainSetPerorate(bool bPerorate);
 
 } // End of namespace Tony
 

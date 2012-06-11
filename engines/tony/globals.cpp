@@ -54,7 +54,7 @@ Globals::Globals() {
 	InitWipe = NULL;
 	EnableGUI = NULL;
 	DisableGUI = NULL;
-	SetPalesati = NULL;
+	SetPerorate = NULL;
 
 	_dwTonyNumTexts = 0;
 	_bTonyInTexts = false;
