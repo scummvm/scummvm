@@ -51,6 +51,8 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 
 	_hasAdLib = (!_vm->_noMusic && _vm->hasAdLib());
 
+	_hasAdLibBg = _hasAdLib;
+
 	if (!_vm->_noMusic && (_vm->getPlatform() == Common::kPlatformAmiga)) {
 		_infogrames = new Infogrames(*_vm->_mixer);
 		_protracker = new Protracker(*_vm->_mixer);
@@ -274,8 +276,7 @@ bool Sound::adlibLoadMDY(const char *fileName) {
 	if (!_hasAdLib)
 		return false;
 
-	if (!_mdyPlayer)
-		_mdyPlayer = new MUSPlayer(*_vm->_mixer);
+	createMDYPlayer();
 
 	debugC(1, kDebugSound, "AdLib: Loading MDY data (\"%s\")", fileName);
 
@@ -296,8 +297,7 @@ bool Sound::adlibLoadTBR(const char *fileName) {
 	if (!_hasAdLib)
 		return false;
 
-	if (!_mdyPlayer)
-		_mdyPlayer = new MUSPlayer(*_vm->_mixer);
+	createMDYPlayer();
 
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fileName);
 	if (!stream) {
@@ -318,8 +318,7 @@ void Sound::adlibPlayTrack(const char *trackname) {
 	if (!_hasAdLib)
 		return;
 
-	if (!_adlPlayer)
-		_adlPlayer = new ADLPlayer(*_vm->_mixer);
+	createADLPlayer();
 
 	if (_adlPlayer->isPlaying())
 		return;
@@ -329,11 +328,10 @@ void Sound::adlibPlayTrack(const char *trackname) {
 }
 
 void Sound::adlibPlayBgMusic() {
-	if (!_hasAdLib)
+	if (!_hasAdLib || _hasAdLibBg)
 		return;
 
-	if (!_adlPlayer)
-		_adlPlayer = new ADLPlayer(*_vm->_mixer);
+	createADLPlayer();
 
 	static const char *const tracksMac[] = {
 //		"musmac1.adl", // This track seems to be missing instruments...
@@ -352,13 +350,18 @@ void Sound::adlibPlayBgMusic() {
 		"musmac5.mid"
 	};
 
-	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		int track = _vm->_util->getRandom(ARRAYSIZE(tracksWin));
-		adlibPlayTrack(tracksWin[track]);
-	} else {
-		int track = _vm->_util->getRandom(ARRAYSIZE(tracksMac));
-		adlibPlayTrack(tracksMac[track]);
+	const char *track = 0;
+	if (_vm->getPlatform() == Common::kPlatformWindows)
+		track = tracksWin[ARRAYSIZE(tracksWin)];
+	else
+		track = tracksMac[_vm->_util->getRandom(ARRAYSIZE(tracksMac))];
+
+	if (!track || !_vm->_dataIO->hasFile(track)) {
+		_hasAdLibBg = false;
+		return;
 	}
+
+	adlibPlayTrack(track);
 }
 
 void Sound::adlibPlay() {
@@ -720,6 +723,26 @@ void Sound::bgUnshade() {
 	debugC(1, kDebugSound, "BackgroundAtmosphere: Unshading playback");
 
 	_bgatmos->unshade();
+}
+
+void Sound::createMDYPlayer() {
+	if (_mdyPlayer)
+		return;
+
+	delete _adlPlayer;
+	_adlPlayer = 0;
+
+	_mdyPlayer = new MUSPlayer(*_vm->_mixer);
+}
+
+void Sound::createADLPlayer() {
+	if (_adlPlayer)
+		return;
+
+	delete _mdyPlayer;
+	_mdyPlayer= 0;
+
+	_adlPlayer = new ADLPlayer(*_vm->_mixer);
 }
 
 } // End of namespace Gob

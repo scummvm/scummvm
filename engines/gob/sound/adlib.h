@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GOB_SOUND_NEWADLIB_H
-#define GOB_SOUND_NEWADLIB_H
+#ifndef GOB_SOUND_ADLIB_H
+#define GOB_SOUND_ADLIB_H
 
 #include "common/mutex.h"
 
@@ -303,4 +303,4 @@ private:
 
 } // End of namespace Gob
 
-#endif // GOB_SOUND_NEWADLIB_H
+#endif // GOB_SOUND_ADLIB_H

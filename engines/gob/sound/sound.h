@@ -142,6 +142,7 @@ private:
 	GobEngine *_vm;
 
 	bool _hasAdLib;
+	bool _hasAdLibBg;
 
 	SoundDesc _sounds[kSoundsCount];
 
@@ -162,6 +163,9 @@ private:
 
 	// Audio CD
 	CDROM *_cdrom;
+
+	void createMDYPlayer();
+	void createADLPlayer();
 };
 
 } // End of namespace Gob

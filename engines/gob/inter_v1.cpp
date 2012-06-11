@@ -286,10 +286,40 @@ void Inter_v1::o1_loadMult() {
 }
 
 void Inter_v1::o1_playMult() {
-	int16 checkEscape;
+	// NOTE: The EGA version of Gobliiins has an MDY tune.
+	//       While the original doesn't play it, we do.
+	bool isGob1EGAIntro = _vm->getGameType() == kGameTypeGob1  &&
+	                      _vm->isEGA()                         &&
+	                      _vm->_game->_script->pos() == 1010   &&
+	                      _vm->isCurrentTot("intro.tot")       &&
+	                      VAR(57) != 0xFFFFFFFF                &&
+	                      _vm->_dataIO->hasFile("goblins.mdy") &&
+	                      _vm->_dataIO->hasFile("goblins.tbr");
 
-	checkEscape = _vm->_game->_script->readInt16();
+	int16 checkEscape = _vm->_game->_script->readInt16();
+
+	if (isGob1EGAIntro) {
+		_vm->_sound->adlibLoadTBR("goblins.tbr");
+		_vm->_sound->adlibLoadMDY("goblins.mdy");
+		_vm->_sound->adlibSetRepeating(-1);
+
+		_vm->_sound->adlibPlay();
+	}
+
 	_vm->_mult->playMult(VAR(57), -1, checkEscape, 0);
+
+	if (isGob1EGAIntro) {
+
+		// User didn't escape the intro mult, wait for an escape here
+		if (VAR(57) != 0xFFFFFFFF) {
+			while (_vm->_util->getKey() != kKeyEscape) {
+				_vm->_util->processInput();
+				_vm->_util->longDelay(1);
+			}
+		}
+
+		_vm->_sound->adlibUnload();
+	}
 }
 
 void Inter_v1::o1_freeMultKeys() {
