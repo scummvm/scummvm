@@ -156,12 +156,12 @@ public:
 
 class RMOptionSlide : public RMGfxTaskSetPrior {
 private:
-	RMOptionButton *_PushLeft;
-	RMOptionButton *_PushRight;
-	RMGfxSourceBuffer16 *_SliderCenter;
-	RMGfxSourceBuffer16 *_SliderLeft;
-	RMGfxSourceBuffer16 *_SliderRight;
-	RMGfxSourceBuffer16 *_SliderSingle;
+	RMOptionButton *_pushLeft;
+	RMOptionButton *_pushRight;
+	RMGfxSourceBuffer16 *_sliderCenter;
+	RMGfxSourceBuffer16 *_sliderLeft;
+	RMGfxSourceBuffer16 *_sliderRight;
+	RMGfxSourceBuffer16 *_sliderSingle;
 	int _nSlideSize;
 	RMPoint _pos;
 	int _nValue;
@@ -184,65 +184,65 @@ public:
 class RMOptionScreen : public RMGfxWoodyBuffer {
 private:
 	RMGfxSourceBuffer16 *_menu;
-	RMGfxSourceBuffer16 *_QuitConfirm;
-	RMGfxSourceBuffer16 *_HideLoadSave;
-	RMOptionButton *_ButtonQuitYes;
-	RMOptionButton *_ButtonQuitNo;
-	RMOptionButton *_ButtonExit;
-	RMOptionButton *_ButtonQuit;
-	RMOptionButton *_ButtonLoad;
-	RMOptionButton *_ButtonSave;
-	RMOptionButton *_ButtonGameMenu;
-	RMOptionButton *_ButtonGfxMenu;
-	RMOptionButton *_ButtonSoundMenu;
-	RMGfxSourceBuffer8 *_SaveEasy;
-	RMGfxSourceBuffer8 *_SaveHard;
+	RMGfxSourceBuffer16 *_quitConfirm;
+	RMGfxSourceBuffer16 *_hideLoadSave;
+	RMOptionButton *_buttonQuitYes;
+	RMOptionButton *_buttonQuitNo;
+	RMOptionButton *_buttonExit;
+	RMOptionButton *_buttonQuit;
+	RMOptionButton *_buttonLoad;
+	RMOptionButton *_buttonSave;
+	RMOptionButton *_buttonGameMenu;
+	RMOptionButton *_buttonGfxMenu;
+	RMOptionButton *_buttonSoundMenu;
+	RMGfxSourceBuffer8 *_saveEasy;
+	RMGfxSourceBuffer8 *_saveHard;
 	RMGfxSourceBuffer16 *_curThumb[6];
 	RMString _curThumbName[6];
 	byte _curThumbDiff[6];
-	RMOptionButton *_ButtonSave_States[6];
-	RMOptionButton *_ButtonSave_ArrowLeft;
-	RMOptionButton *_ButtonSave_ArrowRight;
-	RMOptionButton *_ButtonGfx_Tips;
+	RMOptionButton *_buttonSave_States[6];
+	RMOptionButton *_buttonSave_ArrowLeft;
+	RMOptionButton *_buttonSave_ArrowRight;
+	RMOptionButton *_buttonGfx_Tips;
 
-	RMOptionButton *_ButtonSound_DubbingOn;
-	RMOptionButton *_ButtonSound_MusicOn;
-	RMOptionButton *_ButtonSound_SFXOn;
+	RMOptionButton *_buttonSound_DubbingOn;
+	RMOptionButton *_buttonSound_MusicOn;
+	RMOptionButton *_buttonSound_SFXOn;
 
-	RMOptionSlide *_SlideTonySpeed;
-	RMOptionSlide *_SlideTextSpeed;
+	RMOptionSlide *_slideTonySpeed;
+	RMOptionSlide *_slideTextSpeed;
 
 
 	int _statePos;
 	bool _bEditSaveName;
 	int _nEditPos;
-	char _EditName[256];
+	char _editName[256];
 
 	union {
-		RMOptionButton *_ButtonGame_Lock;
-		RMOptionButton *_ButtonGfx_Anni30;
-		RMOptionSlide *_SliderSound_Music;
+		RMOptionButton *_buttonGame_Lock;
+		RMOptionButton *_buttonGfx_Anni30;
+		RMOptionSlide *_sliderSound_Music;
 	};
 	union {
-		RMOptionButton *_ButtonGame_TimerizedText;
-		RMOptionButton *_ButtonGfx_AntiAlias;
-		RMOptionSlide *_SliderSound_SFX;
+		RMOptionButton *_buttonGame_TimerizedText;
+		RMOptionButton *_buttonGfx_AntiAlias;
+		RMOptionSlide *_sliderSound_SFX;
 	};
 	union {
-		RMOptionButton *_ButtonGame_Scrolling;
-		RMOptionButton *_ButtonGfx_Sottotitoli;
-		RMOptionSlide *_SliderSound_Dubbing;
+		RMOptionButton *_buttonGame_Scrolling;
+		RMOptionButton *_buttonGfx_Sottotitoli;
+		RMOptionSlide *_sliderSound_Dubbing;
 	};
 	union {
-		RMOptionButton *_ButtonGame_InterUp;
-		RMOptionButton *_ButtonGfx_Trans;
+		RMOptionButton *_buttonGame_InterUp;
+		RMOptionButton *_buttonGfx_Trans;
 	};
 
-	int _FadeStep;
+	int _fadeStep;
 	bool _bExit;
 	bool _bQuitConfirm;
-	int _FadeY;
-	int _FadeTime;
+	int _fadeY;
+	int _fadeTime;
 	bool _bLoadMenuOnly;
 	bool _bNoLoadSave;
 	bool _bAlterGfx;

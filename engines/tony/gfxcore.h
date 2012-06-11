@@ -544,12 +544,12 @@ private:
 	static RMGfxClearTask taskClear;
 
 	struct OTList {
-		RMGfxPrimitive *prim;
-		OTList *next;
+		RMGfxPrimitive *_prim;
+		OTList *_next;
 
 		OTList();
 		OTList(RMGfxPrimitive *pr) {
-			prim = pr;
+			_prim = pr;
 		}
 	};
 

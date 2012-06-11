@@ -272,9 +272,9 @@ void RMGfxTargetBuffer::clearOT(void) {
 	cur = _otlist;
 
 	while (cur != NULL) {
-		cur->prim->_task->Unregister();
-		delete cur->prim;
-		n = cur->next;
+		cur->_prim->_task->Unregister();
+		delete cur->_prim;
+		n = cur->_next;
 		delete cur;
 		cur = n;
 	}
@@ -304,19 +304,19 @@ void RMGfxTargetBuffer::drawOT(CORO_PARAM) {
 
 	while (_ctx->cur != NULL) {
 		// Call the task Draw method, passing it a copy of the original
-		_ctx->myprim = _ctx->cur->prim->duplicate();
-		CORO_INVOKE_2(_ctx->cur->prim->_task->draw, *this, _ctx->myprim);
+		_ctx->myprim = _ctx->cur->_prim->duplicate();
+		CORO_INVOKE_2(_ctx->cur->_prim->_task->draw, *this, _ctx->myprim);
 		delete _ctx->myprim;
 
 		// Check if it's time to remove the task from the OT list
-		CORO_INVOKE_1(_ctx->cur->prim->_task->removeThis, _ctx->result);
+		CORO_INVOKE_1(_ctx->cur->_prim->_task->removeThis, _ctx->result);
 		if (_ctx->result) {
 			// De-register the task
-			_ctx->cur->prim->_task->Unregister();
+			_ctx->cur->_prim->_task->Unregister();
 
 			// Delete task, freeing the memory
-			delete _ctx->cur->prim;
-			_ctx->next = _ctx->cur->next;
+			delete _ctx->cur->_prim;
+			_ctx->next = _ctx->cur->_next;
 			delete _ctx->cur;
 
 			// If it was the first item, update the list head
@@ -324,13 +324,13 @@ void RMGfxTargetBuffer::drawOT(CORO_PARAM) {
 				_otlist = _ctx->next;
 			// Otherwise update the next pinter of the previous item
 			else
-				_ctx->prev->next = _ctx->next;
+				_ctx->prev->_next = _ctx->next;
 
 			_ctx->cur = _ctx->next;
 		} else {
 			// Update the pointer to the previous item, and the current to the next
 			_ctx->prev = _ctx->cur;
-			_ctx->cur = _ctx->cur->next;
+			_ctx->cur = _ctx->cur->_next;
 		}
 	}
 
@@ -358,19 +358,19 @@ void RMGfxTargetBuffer::addPrim(RMGfxPrimitive *prim) {
 	// Empty list
 	if (_otlist == NULL) {
 		_otlist = n;
-		_otlist->next = NULL;
+		_otlist->_next = NULL;
 	}
 	// Inclusion in the head
-	else if (nPrior < _otlist->prim->_task->priority()) {
-		n->next = _otlist;
+	else if (nPrior < _otlist->_prim->_task->priority()) {
+		n->_next = _otlist;
 		_otlist = n;
 	} else {
 		cur = _otlist;
-		while (cur->next != NULL && nPrior > cur->next->prim->_task->priority())
-			cur = cur->next;
+		while (cur->_next != NULL && nPrior > cur->_next->_prim->_task->priority())
+			cur = cur->_next;
 
-		n->next = cur->next;
-		cur->next = n;
+		n->_next = cur->_next;
+		cur->_next = n;
 	}
 
 //	g_system->unlockMutex(csModifyingOT);
