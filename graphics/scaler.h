@@ -90,11 +90,9 @@ extern bool createThumbnailFromScreen(Graphics::Surface *surf);
 extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
 
 /**
- * Grabs framebuffer into surface
+ * Downscale screenshot to thumbnale size.
  *
- * @param surf	a surface
- * @return		false if a error occurred
  */
-extern bool createScreenShot(Graphics::Surface &surf);
+extern bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in);
 
 #endif

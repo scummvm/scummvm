@@ -134,7 +134,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	return true;
 }
 
-static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
+bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 	uint16 width = in.w;
 	uint16 inHeight = in.h;
 
@@ -217,6 +217,29 @@ bool createThumbnailFromScreen(Graphics::Surface* surf) {
 	return createThumbnail(*surf, screen);
 }
 
+bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette) {
+	assert(surf);
+
+	Graphics::Surface screen;
+	screen.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+
+	for (uint y = 0; y < screen.h; ++y) {
+		for (uint x = 0; x < screen.w; ++x) {
+			byte r, g, b;
+			r = palette[pixels[y * w + x] * 3];
+			g = palette[pixels[y * w + x] * 3 + 1];
+			b = palette[pixels[y * w + x] * 3 + 2];
+
+			((uint16 *)screen.pixels)[y * screen.w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+		}
+	}
+
+	return createThumbnail(*surf, screen);
+}
+
+// this is somewhat awkward, but createScreenShot should logically be in graphics,
+// but moving other functions in this file into that namespace breaks several engines
+namespace Graphics {
 bool createScreenShot(Graphics::Surface &surf) {
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 	//convert surface to 2 bytes pixel format to avoid problems with palette saving and loading
@@ -240,23 +263,4 @@ bool createScreenShot(Graphics::Surface &surf) {
 		return true;
 	}
 }
-
-bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette) {
-	assert(surf);
-
-	Graphics::Surface screen;
-	screen.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-
-	for (uint y = 0; y < screen.h; ++y) {
-		for (uint x = 0; x < screen.w; ++x) {
-			byte r, g, b;
-			r = palette[pixels[y * w + x] * 3];
-			g = palette[pixels[y * w + x] * 3 + 1];
-			b = palette[pixels[y * w + x] * 3 + 2];
-
-			((uint16 *)screen.pixels)[y * screen.w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
-		}
-	}
-
-	return createThumbnail(*surf, screen);
-}
+} // End of namespace Graphics

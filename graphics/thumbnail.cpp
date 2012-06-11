@@ -23,6 +23,7 @@
 #include "graphics/scaler.h"
 #include "graphics/colormasks.h"
 #include "common/endian.h"
+#include "common/algorithm.h"
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -108,10 +109,10 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	Graphics::Surface *const to = new Graphics::Surface();
 	to->create(header.width, header.height, format);
+	OverlayColor *pixels2Bpp = (OverlayColor *)to->pixels;
+	uint32 *pixels4Bpp = (uint32 *)to->pixels;
 	for (int y = 0; y < to->h; ++y) {
 		for (int x = 0; x < to->w; ++x) {
-			OverlayColor *pixels2Bpp = (OverlayColor *)to->pixels;
-			uint32 *pixels4Bpp = (uint32 *)to->pixels;
 			uint8 a = 0xFF;
 			uint8 r, g, b;
 			switch (header.bpp) {
@@ -184,6 +185,57 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	}
 
 	return true;
+}
+
+
+/**
+ * Returns an array indicating which pixels of a source image horizontally or vertically get
+ * included in a scaled image
+ */
+int *scaleLine(int size, int srcSize) {
+	int scale = 100 * size / srcSize;
+	assert(scale > 0);
+	int *v = new int[size];
+	Common::fill(v, &v[size], 0);
+
+	int distCtr = 0;
+	int *destP = v;
+	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
+		distCtr += scale;
+		while (distCtr >= 100) {
+			assert(destP < &v[size]);
+			*destP++ = distIndex;
+			distCtr -= 100;
+		}
+	}
+
+	return v;
+}
+
+Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(xSize, ySize, srcImage.format);
+
+	int *horizUsage = scaleLine(xSize, srcImage.w);
+	int *vertUsage = scaleLine(ySize, srcImage.h);
+
+	// Loop to create scaled version
+	for (int yp = 0; yp < ySize; ++yp) {
+		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
+		byte *destP = (byte *)s->getBasePtr(0, yp);
+
+		for (int xp = 0; xp < xSize; ++xp) {
+			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
+			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
+				*destP++ = *tempSrcP++;
+			}
+		}
+	}
+
+	// Delete arrays and return surface
+	delete[] horizUsage;
+	delete[] vertUsage;
+	return s;
 }
 
 } // End of namespace Graphics

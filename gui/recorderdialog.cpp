@@ -164,27 +164,6 @@ Common::String RecorderDialog::generateRecordFileName() {
 	return "";
 }
 
-Graphics::Surface *RecorderDialog::getScreenShot(int number) {
-	uint32 id = _playbackFile->readUint32LE();
-	_playbackFile->skip(4);
-	if(id != MKTAG('P','B','C','K')) {
-		return NULL;
-	}
-	int screenCount = 0;
-	while (skipToNextScreenshot()) {
-		if (screenCount == number) {
-			screenCount++;
-			_playbackFile->seek(-4, SEEK_CUR);
-			return Graphics::loadThumbnail(*_playbackFile);
-		} else {
-			uint32 size = _playbackFile->readUint32BE();
-			_playbackFile->skip(size-8);
-			screenCount++;
-		}
-	}
-	return NULL;
-}
-
 bool RecorderDialog::skipToNextScreenshot() {
 	while (true) {
 		uint32 id = _playbackFile->readUint32LE();
