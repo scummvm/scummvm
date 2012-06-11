@@ -979,12 +979,6 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_tmpscreen2 == NULL)
 		error("allocating _tmpscreen2 failed");
 
-	// Distinguish 555 and 565 mode
-	if (_hwScreen->format->Gmask == 0x3E0)
-		InitScalers(555);
-	else
-		InitScalers(565);
-
 	return true;
 }
 
@@ -1029,7 +1023,6 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 		_osdIconSurface = NULL;
 	}
 #endif
-	DestroyScalers();
 
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Reset video mode to original.
