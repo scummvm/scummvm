@@ -98,6 +98,8 @@ AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer), _opl(0),
 
 	_rate = _mixer->getOutputRate();
 
+	initFreqs();
+
 	createOPL();
 	initOPL();
 
@@ -295,7 +297,7 @@ void AdLib::initOPL() {
 	_opl->reset();
 
 	initOperatorVolumes();
-	initFreqs();
+	resetFreqs();
 
 	setPercussionMode(false);
 
@@ -581,6 +583,10 @@ void AdLib::initFreqs() {
 	for (int i = 0; i < kPitchStepCount; i++)
 		setFreqs(_freqs[i], i * numStep, 100);
 
+	resetFreqs();
+}
+
+void AdLib::resetFreqs() {
 	for (int i = 0; i < kMaxVoiceCount; i++) {
 		_freqPtr       [i] = _freqs[0];
 		_halfToneOffset[i] = 0;

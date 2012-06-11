@@ -295,6 +295,7 @@ private:
 	void initFreqs();
 	void setFreqs(uint16 *freqs, int32 num, int32 denom);
 	int32 calcFreq(int32 deltaDemiToneNum, int32 deltaDemiToneDenom);
+	void resetFreqs();
 
 	void changePitch(uint8 voice, uint16 pitchBend);
 
