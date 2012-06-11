@@ -396,18 +396,17 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
 	category.toLowercase();
-	if (category != "config")
-		error("GetSierraProfileInt: category isn't 'config', it's '%s'", category.c_str());
-
 	Common::String setting = s->_segMan->getString(argv[1]);
 	setting.toLowercase();
-	if (setting != "videospeed")
-		error("GetSierraProfileInt: setting isn't 'videospeed', it's '%s'", setting.c_str());
+	// The third parameter is the default value returned if the configuration key is missing
 
-	// The third parameter is 425 (the default if the configuration key is missing)
+	if (category == "config" && setting == "videospeed") {
+		// We return the same fake value for videospeed as with kGetConfig
+		return make_reg(0, 500);
+	}
 
-	// We return the same fake value for videospeed as with kGetConfig
-	return make_reg(0, 500);
+	warning("kGetSierraProfileInt: Returning default value %d for unknown setting %s.%s", argv[2].toSint16(), category.c_str(), setting.c_str());
+	return argv[2];
 }
 
 #endif
