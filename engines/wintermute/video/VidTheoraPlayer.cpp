@@ -446,7 +446,9 @@ HRESULT CVidTheoraPlayer::update() {
 	
 	int Counter = 0;
 	if (_theoraDecoder) {
-		if (_theoraDecoder->endOfVideo()) {
+		if (_theoraDecoder->endOfVideo() && _looping) {
+			warning("Should loop movie");
+		} else if (_theoraDecoder->endOfVideo() && !_looping) {
 			warning("Finished movie");
 			_state = THEORA_STATE_FINISHED;
 			_playbackStarted = false;
