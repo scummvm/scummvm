@@ -199,6 +199,7 @@ FPSFX::FPSFX(bool bSoundOn) {
 	hEndOfBuffer = CORO_INVALID_PID_VALUE;
 	bIsVoice = false;
 	_stream = 0;
+	_rewindableStream = 0;
 	bPaused = false;
 }
 
@@ -220,6 +221,7 @@ FPSFX::~FPSFX() {
 	g_system->getMixer()->stopHandle(_handle);
 
 	delete _stream;
+	// _rewindableStream is deleted by deleting _stream
 
 	// FIXME
 	//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
@@ -264,11 +266,12 @@ bool FPSFX::loadWave(Common::SeekableReadStream *stream) {
 	if (!stream)
 		return false;
 
-	_stream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	_rewindableStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
-	if (!_stream)
+	if (!_rewindableStream)
 		return false;
 
+	_stream = _rewindableStream;
 	bFileLoaded = true;
 	SetVolume(lastVolume);
 	return true;
@@ -297,7 +300,8 @@ bool FPSFX::LoadVoiceFromVDB(Common::File &vdbFP) {
 	uint32 rate = vdbFP.readUint32LE();
 	bIsVoice = true;
 
-	_stream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
+	_rewindableStream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
+	_stream = _rewindableStream;
 
 	bFileLoaded = true;
 	SetVolume(62);
@@ -324,23 +328,22 @@ bool FPSFX::LoadFile(const char *lpszFileName, uint32 dwCodec) {
 	uint32 channels = file.readUint32LE();
 
 	Common::SeekableReadStream *buffer = file.readStream(file.size() - file.pos());
-	Audio::RewindableAudioStream *stream;
 
 	if (dwCodec == FPCODEC_ADPCM) {
-		stream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, channels);
+		_rewindableStream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, channels);
 	} else {
 		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
 		if (channels == 2)
 			flags |= Audio::FLAG_STEREO;
 
-		stream = Audio::makeRawStream(buffer, rate, flags, DisposeAfterUse::YES);
+		_rewindableStream = Audio::makeRawStream(buffer, rate, flags, DisposeAfterUse::YES);
 	}
 
 	if (bLoop)
-		_stream = Audio::makeLoopingAudioStream(stream, 0);
+		_stream = Audio::makeLoopingAudioStream(_rewindableStream, 0);
 	else
-		_stream = stream;
+		_stream = _rewindableStream;
 
 	bFileLoaded = true;
 	return true;
@@ -364,6 +367,8 @@ bool FPSFX::Play() {
 		// FIXME
 		//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
 		//	ResetEvent(hEndOfBuffer);
+
+		_rewindableStream->rewind();
 
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, _stream, -1,
 				Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);

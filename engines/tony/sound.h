@@ -195,6 +195,7 @@ private:
 	bool bPaused;
 
 	Audio::AudioStream *_stream;
+	Audio::RewindableAudioStream *_rewindableStream;
 	Audio::SoundHandle _handle;
 
 public:
