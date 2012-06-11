@@ -175,7 +175,6 @@ public:
 class RMText : public RMGfxWoodyBuffer {
 private:
 	static RMFontColor *_fonts[4];
-	static RMGfxClearTask _clear;
 	int _maxLineLength;
 
 public:

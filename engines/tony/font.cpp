@@ -1760,7 +1760,6 @@ void RMFontObj::init(void) {
 \****************************************************************************/
 
 RMFontColor *RMText::_fonts[4] = { NULL, NULL, NULL, NULL };
-RMGfxClearTask RMText::_clear;
 
 void RMText::initStatics() {
 	Common::fill(&_fonts[0], &_fonts[4], (RMFontColor *)NULL);
@@ -1891,7 +1890,6 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 
 	// Create the surface
 	create(width, height);
-	//AddPrim(new RMGfxPrimitive(&m_clear));
 	Common::fill(_buf, _buf + width * height * 2, 0);
 
 	p = string;
