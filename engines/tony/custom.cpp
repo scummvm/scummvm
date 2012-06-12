@@ -786,7 +786,7 @@ DECLARE_CUSTOM_FUNCTION(TonyFischietto)(CORO_PARAM, uint32, uint32, uint32, uint
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_FISCHIETTORIGHT);
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_WHISTLERIGHT);
 	if (!GLOBALS._bSkipIdle)
 		CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
 
@@ -826,164 +826,164 @@ DECLARE_CUSTOM_FUNCTION(TonySiIndica)(CORO_PARAM, uint32 dwText, uint32, uint32,
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SIINDICA;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoConMani)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyScaredWithHands)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SPAVENTATO;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SCARED;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoSenzaMani)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyScaredWithoutHands)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SPAVENTATO2;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SCARED2;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConMartello)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithHammer)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONMARTELLO;
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_CONMARTELLO);
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHHAMMER;
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_WITHHAMMER);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConBicchiere)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithGlasses)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONBICCHIERE;
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_CONBICCHIERE);
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHGLASSES;
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_WITHGLASSES);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConVerme)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithWorm)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONVERME;
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_CONVERME);
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHWORM;
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_WITHWORM);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCorda)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithRope)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONCORDA;
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_CONCORDA);
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHROPE;
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_WITHROPE);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConSegretaria)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithSecretary)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONSEGRETARIA;
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_CONSEGRETARIA);
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHSECRETARY;
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_WITHSECRETARY);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConConiglioANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithRabbitANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONCONIGLIO;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHRABBIT;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConRicettaANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithRecipeANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONRICETTA;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHRECIPE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCarteANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithCardsANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONCARTE;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHCARDS;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConPupazzoANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithSnowmanANIM)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONPUPAZZO;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHSNOWMAN;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConPupazzoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithSnowmanStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONPUPAZZOSTATIC;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHSNOWMANSTATIC;
 	GLOBALS._bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_CONPUPAZZOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_WITHSNOWMANSTATIC);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConPupazzoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithSnowmanEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_CONPUPAZZOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_WITHSNOWMANSTATIC);
 	GLOBALS._bStaticTalk = false;
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConConiglioStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithRabbitStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONCONIGLIOSTATIC;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHRABBITSTATIC;
 	GLOBALS._bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_CONCONIGLIOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_WITHRABBITSTATIC);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConConiglioEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithRabbitEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_CONCONIGLIOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_WITHRABBITSTATIC);
 	GLOBALS._bStaticTalk = false;
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConRicettaStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithRecipeStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONRICETTASTATIC;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHRECIPESTATIC;
 	GLOBALS._bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_CONRICETTASTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_WITHRECIPESTATIC);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConRicettaEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithRecipeEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_CONRICETTASTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_WITHRECIPESTATIC);
 	GLOBALS._bStaticTalk = false;
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCarteStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithCardsStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONCARTESTATIC;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHCARDSSTATIC;
 	GLOBALS._bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_CONCARTESTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_WITHCARDSSTATIC);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConCarteEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithCardsEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_CONCARTESTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_WITHCARDSSTATIC);
 	GLOBALS._bStaticTalk = false;
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 
@@ -1016,78 +1016,78 @@ DECLARE_CUSTOM_FUNCTION(TonyWithNotebookEnd)(CORO_PARAM, uint32, uint32, uint32,
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConMegafonoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithMegaphoneStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONMEGAFONOSTATIC;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHMEGAPHONESTATIC;
 	GLOBALS._bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_CONMEGAFONOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_WITHMEGAPHONESTATIC);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConMegafonoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithMegaphoneEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_CONMEGAFONOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_WITHMEGAPHONESTATIC);
 	GLOBALS._bStaticTalk = false;
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConBarbaStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithBeardStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CONBARBASTATIC;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_WITHBEARDSTATIC;
 	GLOBALS._bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_CONBARBASTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_WITHBEARDSTATIC);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyConBarbaEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWithBeardEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_CONBARBASTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_WITHBEARDSTATIC);
 	GLOBALS._bStaticTalk = false;
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyScaredStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SPAVENTATOSTATIC;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SCAREDSTATIC;
 	GLOBALS._bStaticTalk = true;
-	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_SPAVENTATOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->startStatic, GLOBALS._tony->TALK_SCAREDSTATIC);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySpaventatoEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyScaredEnd)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_SPAVENTATOSTATIC);
+	CORO_INVOKE_1(GLOBALS._tony->endStatic, GLOBALS._tony->TALK_SCAREDSTATIC);
 	GLOBALS._bStaticTalk = false;
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 
@@ -2447,39 +2447,39 @@ ASSIGN(40,   TonyRide)
 ASSIGN(41,   TonyFianchi)
 ASSIGN(42,   TonyCanta)
 ASSIGN(43,   TonySiIndica)
-ASSIGN(44,      TonySpaventatoConMani)
-ASSIGN(49,    TonySpaventatoSenzaMani)
-ASSIGN(45,      TonyConBicchiere)
-ASSIGN(46,      TonyConVerme)
-ASSIGN(47,      TonyConMartello)
-ASSIGN(48,      TonyConCorda)
-ASSIGN(90,      TonyConConiglioANIM)
-ASSIGN(91,      TonyConRicettaANIM)
-ASSIGN(92,      TonyConCarteANIM)
-ASSIGN(93,      TonyConPupazzoANIM)
-ASSIGN(94,      TonyConPupazzoStart)
-ASSIGN(95,      TonyConPupazzoEnd)
-ASSIGN(96,      TonyConConiglioStart)
-ASSIGN(97,      TonyConConiglioEnd)
-ASSIGN(98,      TonyConRicettaStart)
-ASSIGN(99,      TonyConRicettaEnd)
-ASSIGN(100,     TonyConCarteStart)
-ASSIGN(101,     TonyConCarteEnd)
+ASSIGN(44,      TonyScaredWithHands)
+ASSIGN(49,    TonyScaredWithoutHands)
+ASSIGN(45,      TonyWithGlasses)
+ASSIGN(46,      TonyWithWorm)
+ASSIGN(47,      TonyWithHammer)
+ASSIGN(48,      TonyWithRope)
+ASSIGN(90,      TonyWithRabbitANIM)
+ASSIGN(91,      TonyWithRecipeANIM)
+ASSIGN(92,      TonyWithCardsANIM)
+ASSIGN(93,      TonyWithSnowmanANIM)
+ASSIGN(94,      TonyWithSnowmanStart)
+ASSIGN(95,      TonyWithSnowmanEnd)
+ASSIGN(96,      TonyWithRabbitStart)
+ASSIGN(97,      TonyWithRabbitEnd)
+ASSIGN(98,      TonyWithRecipeStart)
+ASSIGN(99,      TonyWithRecipeEnd)
+ASSIGN(100,     TonyWithCardsStart)
+ASSIGN(101,     TonyWithCardsEnd)
 ASSIGN(102,   TonyWithNotebookStart)
 ASSIGN(103,   TonyWithNotebookEnd)
-ASSIGN(104,   TonyConMegafonoStart)
-ASSIGN(105,   TonyConMegafonoEnd)
-ASSIGN(106,   TonyConBarbaStart)
-ASSIGN(107,   TonyConBarbaEnd)
+ASSIGN(104,   TonyWithMegaphoneStart)
+ASSIGN(105,   TonyWithMegaphoneEnd)
+ASSIGN(106,   TonyWithBeardStart)
+ASSIGN(107,   TonyWithBeardEnd)
 ASSIGN(108,   TonyRidacchia)
 ASSIGN(109,   TonySchifato)
 ASSIGN(110,   TonyNaah)
 ASSIGN(111,   TonyMacbeth)
 ASSIGN(112,   TonySniffaLeft)
 ASSIGN(113,   TonySniffaRight)
-ASSIGN(114,   TonySpaventatoStart)
-ASSIGN(115,   TonySpaventatoEnd)
-ASSIGN(116,   TonyConSegretaria)
+ASSIGN(114,   TonyScaredStart)
+ASSIGN(115,   TonyScaredEnd)
+ASSIGN(116,   TonyWithSecretary)
 
 ASSIGN(50,   CharSetCode)
 ASSIGN(51,      CharSetColor)
