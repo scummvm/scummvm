@@ -611,6 +611,7 @@ HRESULT CAdEntity::Update() {
 		if (_theora->isFinished()) {
 			_theora->stop();
 			delete _theora;
+			_theora = NULL;
 		}
 	}
 
