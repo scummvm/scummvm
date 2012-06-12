@@ -267,7 +267,7 @@ HRESULT CBPersistMgr::InitLoad(const char *Filename) {
 			}
 
 			/*
-			if( _savedVerMajor != DCGF_VER_MAJOR || _savedVerMinor != DCGF_VER_MINOR)
+			if ( _savedVerMajor != DCGF_VER_MAJOR || _savedVerMinor != DCGF_VER_MINOR)
 			{
 			    Game->LOG(0, "ERROR: Saved game is created by other WME version");
 			    goto init_fail;

@@ -507,8 +507,7 @@ HRESULT CAdEntity::Display() {
 		}
 
 		DisplaySpriteAttachments(true);
-		if(_theora && (_theora->isPlaying() || _theora->isPaused()))
-		{
+		if (_theora && (_theora->isPlaying() || _theora->isPaused())) {
 			_theora->display(Alpha);
 		} else if (_currentSprite) {
 			_currentSprite->Display(_posX,
@@ -602,16 +601,14 @@ HRESULT CAdEntity::Update() {
 	UpdateBlockRegion();
 	_ready = (_state == STATE_READY);
 
-	if(_theora)
-	{
+	if (_theora) {
 		int OffsetX, OffsetY;
 		Game->GetOffset(&OffsetX, &OffsetY);
 		_theora->_posX = _posX - OffsetX;
 		_theora->_posY = _posY - OffsetY;
 		
 		_theora->update();
-		if(_theora->isFinished())
-		{
+		if (_theora->isFinished()) {
 			_theora->stop();
 			delete _theora;
 		}
@@ -651,8 +648,8 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		
 		delete _theora;
 		_theora = new CVidTheoraPlayer(Game);
-		if(_theora && SUCCEEDED(_theora->initialize(Filename))) {
-			if(!ValAlpha->IsNULL())	_theora->setAlphaImage(ValAlpha->GetString());
+		if (_theora && SUCCEEDED(_theora->initialize(Filename))) {
+			if (!ValAlpha->IsNULL())	_theora->setAlphaImage(ValAlpha->GetString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, Looping, StartTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
 			Stack->PushBool(true);
@@ -669,13 +666,12 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "StopTheora") == 0) {
 		Stack->CorrectParams(0);
-		if(_theora) {
+		if (_theora) {
 			_theora->stop();
 			delete _theora;
 			_theora = NULL;
 			Stack->PushBool(true);
-		}
-		else Stack->PushBool(false);
+		} else Stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -685,7 +681,7 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsTheoraPlaying") == 0) {
 		Stack->CorrectParams(0);
-		if(_theora && _theora->isPlaying()) Stack->PushBool(true);
+		if (_theora && _theora->isPlaying()) Stack->PushBool(true);
 		else Stack->PushBool(false);
 
 		return S_OK;
@@ -696,11 +692,10 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PauseTheora") == 0) {
 		Stack->CorrectParams(0);
-		if(_theora && _theora->isPlaying()) {
+		if (_theora && _theora->isPlaying()) {
 			_theora->pause();
 			Stack->PushBool(true);
-		}
-		else Stack->PushBool(false);
+		} else Stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -710,11 +705,10 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ResumeTheora") == 0) {
 		Stack->CorrectParams(0);
-		if(_theora && _theora->isPaused()) {
+		if (_theora && _theora->isPaused()) {
 			_theora->resume();
 			Stack->PushBool(true);
-		}
-		else Stack->PushBool(false);
+		} else Stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -724,7 +718,7 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IsTheoraPaused") == 0) {
 		Stack->CorrectParams(0);
-		if(_theora && _theora->isPaused()) Stack->PushBool(true);
+		if (_theora && _theora->isPaused()) Stack->PushBool(true);
 		else Stack->PushBool(false);
 
 		return S_OK;
@@ -870,7 +864,6 @@ HRESULT CAdEntity::ScSetProperty(const char *Name, CScValue *Value) {
 		if (Dir >= 0 && Dir < NUM_DIRECTIONS) _walkToDir = (TDirection)Dir;
 		return S_OK;
 	}
-
 
 	else return CAdTalkHolder::ScSetProperty(Name, Value);
 }

@@ -93,8 +93,7 @@ HRESULT CBFrame::OneTimeDisplay(CBObject *Owner, bool Muted) {
 		if (Owner) Owner->UpdateOneSound(_sound);
 		_sound->Play();
 		/*
-		if(Game->_state==GAME_FROZEN)
-		{
+		if (Game->_state == GAME_FROZEN) {
 		    _sound->Pause(true);
 		}
 		*/

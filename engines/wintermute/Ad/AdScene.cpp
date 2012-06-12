@@ -340,7 +340,7 @@ bool CAdScene::IsBlockedAt(int X, int Y, bool CheckFreeObjects, CBObject *Reques
 		for (int i = 0; i < _mainLayer->_nodes.GetSize(); i++) {
 			CAdSceneNode *Node = _mainLayer->_nodes[i];
 			/*
-			if(Node->_type == OBJECT_REGION && Node->_region->_active && Node->_region->_blocked && Node->_region->PointInRegion(X, Y))
+			if (Node->_type == OBJECT_REGION && Node->_region->_active && Node->_region->_blocked && Node->_region->PointInRegion(X, Y))
 			{
 			    ret = true;
 			    break;
@@ -883,7 +883,7 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 	// *** adjust scroll offset
 	if (Update) {
 		/*
-		if(_autoScroll && Game->_mainObject != NULL)
+		if (_autoScroll && Game->_mainObject != NULL)
 		{
 		    ScrollToObject(Game->_mainObject);
 		}
@@ -2217,7 +2217,7 @@ HRESULT CAdScene::CorrectTargetPoint2(int StartX, int StartY, int *TargetX, int 
 
 	if (xLength > yLength) {
 		/*
-		if(X1 > X2)
+		if (X1 > X2)
 		{
 		    Swap(&X1, &X2);
 		    Swap(&Y1, &Y2);
@@ -2237,7 +2237,7 @@ HRESULT CAdScene::CorrectTargetPoint2(int StartX, int StartY, int *TargetX, int 
 		}
 	} else {
 		/*
-		if(Y1 > Y2) {
+		if (Y1 > Y2) {
 		    Swap(&X1, &X2);
 		    Swap(&Y1, &Y2);
 		}

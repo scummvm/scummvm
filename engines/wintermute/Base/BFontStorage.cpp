@@ -102,9 +102,9 @@ CBFont *CBFontStorage::AddFont(const char *Filename) {
 
 	/*
 	CBFont* font = new CBFont(Game);
-	if(!font) return NULL;
+	if (!font) return NULL;
 
-	if(FAILED(font->LoadFile(Filename))){
+	if (FAILED(font->LoadFile(Filename))) {
 	    delete font;
 	    return NULL;
 	}

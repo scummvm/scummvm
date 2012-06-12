@@ -1693,15 +1693,15 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 	if (!_editorMode) _renderer->SetScreenViewport();
 	
 	// playing exclusive video?
-	if(_videoPlayer->isPlaying()) {
-		if(Update) _videoPlayer->update();
+	if (_videoPlayer->isPlaying()) {
+		if (Update) _videoPlayer->update();
 		_videoPlayer->display();
-	} else if(_theoraPlayer) {
-		if(_theoraPlayer->isPlaying()) {
-			if(Update) _theoraPlayer->update();
+	} else if (_theoraPlayer) {
+		if (_theoraPlayer->isPlaying()) {
+			if (Update) _theoraPlayer->update();
 			_theoraPlayer->display();
 		}
-		if(_theoraPlayer->isFinished()) {
+		if (_theoraPlayer->isFinished()) {
 			delete _theoraPlayer;
 			_theoraPlayer = NULL;
 		}

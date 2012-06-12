@@ -459,7 +459,7 @@ HRESULT CBGame::Initialize1() {
 	if (_scEngine == NULL) goto init_fail;
 	
 	_videoPlayer = new CVidPlayer(this);
-	if(_videoPlayer==NULL) goto init_fail;
+	if (_videoPlayer==NULL) goto init_fail;
 
 	_transMgr = new CBTransitionMgr(this);
 	if (_transMgr == NULL) goto init_fail;
@@ -1420,7 +1420,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		warning("PlayVideo: %s - not implemented yet", Filename);
 		CScValue* valType = Stack->Pop();
 		int Type;
-		if(valType->IsNULL()) Type = (int)VID_PLAY_STRETCH;
+		if (valType->IsNULL()) Type = (int)VID_PLAY_STRETCH;
 		else Type = valType->GetInt();
 		
 		int X = Stack->Pop()->GetInt();
@@ -1430,12 +1430,11 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		CScValue* valSub = Stack->Pop();
 		const char* SubtitleFile = valSub->IsNULL()?NULL:valSub->GetString();
 		
-		if(Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
+		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) 
+			Type = (int)VID_PLAY_STRETCH;
 		
-		if(SUCCEEDED(Game->_videoPlayer->initialize(Filename, SubtitleFile)))
-		{
-			if(SUCCEEDED(Game->_videoPlayer->play((TVideoPlayback)Type, X, Y, FreezeMusic)))
-			{
+		if (SUCCEEDED(Game->_videoPlayer->initialize(Filename, SubtitleFile))) {
+			if (SUCCEEDED(Game->_videoPlayer->play((TVideoPlayback)Type, X, Y, FreezeMusic))) {
 				Stack->PushBool(true);
 				Script->Sleep(0);
 			}
@@ -1461,7 +1460,8 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		warning("PlayTheora: %s - not implemented yet", Filename);
 		CScValue* valType = Stack->Pop();
 		int Type;
-		if(valType->IsNULL()) Type = (int)VID_PLAY_STRETCH;
+		if (valType->IsNULL()) 
+			Type = (int)VID_PLAY_STRETCH;
 		else Type = valType->GetInt();
 		
 		int X = Stack->Pop()->GetInt();
@@ -1471,17 +1471,14 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		
 		CScValue* valSub = Stack->Pop();
 		const char* SubtitleFile = valSub->IsNULL()?NULL:valSub->GetString();
-		
-		
-		if(Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
+
+		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
 
 		delete _theoraPlayer;
 		_theoraPlayer = new CVidTheoraPlayer(this);
-		if(_theoraPlayer && SUCCEEDED(_theoraPlayer->initialize(Filename, SubtitleFile)))
-		{
+		if (_theoraPlayer && SUCCEEDED(_theoraPlayer->initialize(Filename, SubtitleFile))) {
 			_theoraPlayer->_dontDropFrames = !DropFrames;
-			if(SUCCEEDED(_theoraPlayer->play((TVideoPlayback)Type, X, Y, true, FreezeMusic)))
-			{
+			if (SUCCEEDED(_theoraPlayer->play((TVideoPlayback)Type, X, Y, true, FreezeMusic))) {
 				Stack->PushBool(true);
 				Script->Sleep(0);
 			}
@@ -4239,17 +4236,16 @@ HRESULT CBGame::SetWaitCursor(const char *Filename) {
 //////////////////////////////////////////////////////////////////////////
 bool CBGame::IsVideoPlaying()
 {
-	if(_videoPlayer->isPlaying()) return true;
-	if(_theoraPlayer && _theoraPlayer->isPlaying()) return true;
+	if (_videoPlayer->isPlaying()) return true;
+	if (_theoraPlayer && _theoraPlayer->isPlaying()) return true;
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::StopVideo()
 {
-	if(_videoPlayer->isPlaying()) _videoPlayer->stop();
-	if(_theoraPlayer && _theoraPlayer->isPlaying())
-	{
+	if (_videoPlayer->isPlaying()) _videoPlayer->stop();
+	if (_theoraPlayer && _theoraPlayer->isPlaying()) {
 		_theoraPlayer->stop();
 		delete _theoraPlayer;
 		_theoraPlayer = NULL;
@@ -4484,8 +4480,7 @@ void CBGame::GetMousePos(POINT *Pos) {
 	/*
 	// Windows can squish maximized window if it's larger than desktop
 	// so we need to modify mouse position appropriately (tnx mRax)
-	if(_renderer->_windowed && ::IsZoomed(_renderer->_window))
-	{
+	if (_renderer->_windowed && ::IsZoomed(_renderer->_window)) {
 	    RECT rc;
 	    ::GetClientRect(_renderer->_window, &rc);
 	    Pos->x *= Game->_renderer->_realWidth;

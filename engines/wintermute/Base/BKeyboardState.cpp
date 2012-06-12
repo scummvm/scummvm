@@ -163,9 +163,9 @@ HRESULT CBKeyboardState::ScSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if(strcmp(Name, "Name")==0){
+	if (strcmp(Name, "Name") == 0) {
 	    SetName(Value->GetString());
-	    if(_renderer) SetWindowText(_renderer->_window, _name);
+	    if (_renderer) SetWindowText(_renderer->_window, _name);
 	    return S_OK;
 	}
 

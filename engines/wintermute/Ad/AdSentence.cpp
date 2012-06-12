@@ -277,7 +277,7 @@ HRESULT CAdSentence::Update(TDirection Dir) {
 	// if sound is available, synchronize with sound, otherwise use timer
 
 	/*
-	if(_sound) CurrentTime = _sound->GetPositionTime();
+	if (_sound) CurrentTime = _sound->GetPositionTime();
 	else CurrentTime = Game->_timer - _startTime;
 	*/
 	CurrentTime = Game->_timer - _startTime;

@@ -221,8 +221,7 @@ CBImage *CBRenderer::TakeScreenshot() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderer::ClipCursor() {
 	/*
-	if(!_windowed)
-	{
+	if (!_windowed) {
 	    RECT rc;
 	    GetWindowRect(_window, &rc);
 
@@ -241,7 +240,7 @@ HRESULT CBRenderer::ClipCursor() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderer::UnclipCursor() {
 	/*
-	if(!_windowed) ::ClipCursor(NULL);
+	if (!_windowed) ::ClipCursor(NULL);
 	*/
 	return S_OK;
 }

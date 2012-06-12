@@ -226,7 +226,7 @@ HRESULT CAdRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	    //////////////////////////////////////////////////////////////////////////
 	    // SkipTo
 	    //////////////////////////////////////////////////////////////////////////
-	    if(strcmp(Name, "SkipTo")==0){
+	    if (strcmp(Name, "SkipTo")==0) {
 	        Stack->CorrectParams(2);
 	        _posX = Stack->Pop()->GetInt();
 	        _posY = Stack->Pop()->GetInt();

@@ -127,7 +127,7 @@ byte *CBFileManager::ReadWholeFile(const Common::String &Filename, uint32 *Size,
 	}
 
 	/*
-	if(File->GetSize()>MAX_FILE_SIZE){
+	if (File->GetSize() > MAX_FILE_SIZE) {
 	    Game->LOG(0, "File '%s' exceeds the maximum size limit (%d bytes)", Filename, MAX_FILE_SIZE);
 	    CloseFile(File);
 	    return NULL;
