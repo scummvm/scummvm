@@ -176,18 +176,24 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::Play(bool Looping, uint32 StartSample) {
-	// TODO: looping
+HRESULT CBSoundBuffer::Play(bool looping, uint32 startSample) {
+	if (startSample != 0) {
+		warning("BSoundBuffer::Play - Should start playback at %d, but currently we don't", startSample);
+	}
 	if (_stream) {
-		SetLooping(Looping);
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		if (looping) {
+			Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(_stream, 0);
+			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, loopStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+		} else {
+			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+		}
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBSoundBuffer::SetLooping(bool looping) {
-	warning("BSoundBuffer::SetLooping - not implemented yet");
+	warning("BSoundBuffer::SetLooping(%d) - not implemented yet", looping);
 #if 0
 	_looping = looping;
 
