@@ -112,6 +112,9 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 	}
 
 	_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::NO);
+	if (!_stream) {
+		return E_FAIL;
+	}
 	CBUtils::SetString(&_filename, Filename);
 
 	return S_OK;
@@ -182,10 +185,10 @@ HRESULT CBSoundBuffer::Play(bool looping, uint32 startSample) {
 	}
 	if (_stream) {
 		if (looping) {
-			Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(_stream, 0);
+			Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
 			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, loopStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 		} else {
-			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		}
 	}
 	return S_OK;
