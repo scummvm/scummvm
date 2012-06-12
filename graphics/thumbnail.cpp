@@ -108,10 +108,10 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	Graphics::Surface *const to = new Graphics::Surface();
 	to->create(header.width, header.height, format);
+	OverlayColor *pixels2Bpp = (OverlayColor *)to->pixels;
+	uint32 *pixels4Bpp = (uint32 *)to->pixels;
 	for (int y = 0; y < to->h; ++y) {
 		for (int x = 0; x < to->w; ++x) {
-			OverlayColor *pixels2Bpp = (OverlayColor *)to->pixels;
-			uint32 *pixels4Bpp = (uint32 *)to->pixels;
 			uint8 a = 0xFF;
 			uint8 r, g, b;
 			switch (header.bpp) {
