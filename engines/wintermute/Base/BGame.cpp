@@ -546,8 +546,8 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Release Build) *****************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
 #endif*/
 	int secs = g_system->getMillis() / 1000;
-	int hours = secs % 3600;
-	secs -= hours * 3600;
+	int hours = secs / 3600;
+	secs = secs % 3600;
 	int mins = secs / 60;
 	secs = secs % 60;
 	
@@ -586,8 +586,8 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 	time(&timeNow);
 	struct tm *tm = localtime(&timeNow);*/
 	int secs = g_system->getMillis() / 1000;
-	int hours = secs % 3600;
-	secs -= hours * 3600;
+	int hours = secs / 3600;
+	secs = secs % 3600;
 	int mins = secs / 60;
 	secs = secs % 60;
 
