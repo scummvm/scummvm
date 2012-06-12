@@ -57,7 +57,7 @@ RMString::~RMString() {
  * Copy constructor
  */
 RMString::RMString(const RMString &str) {
-	// Richiama l'overload su '=' per copiare
+	// Use the overloaded '=' when copying
 	_string = NULL;
 	_length = 0;
 	_realLength = 0;

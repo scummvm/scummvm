@@ -837,7 +837,7 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 		x1 = (prim->getDst()._x1 + _dimx - 1) - u;
 
 		for (y = 0; y < height; y++) {
-			// Decompressione
+			// Decompression
 			RLEDecompressLineFlipped(buf + x1, src + 2, u, width);
 
 			// Next line
@@ -1379,7 +1379,7 @@ RLEWordFlippedDoCopy2:
 }
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8RLEWord
+*               Methods for RMGfxSourceBuffer8RLEWord
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEWordAB::~RMGfxSourceBuffer8RLEWordAB() {
@@ -1526,7 +1526,7 @@ RLEWordDoCopy2:
 
 
 /****************************************************************************\
-*               Metodi di RMGfxSourceBuffer8AA
+*               Methods for RMGfxSourceBuffer8AA
 \****************************************************************************/
 
 byte RMGfxSourceBuffer8AA::_megaAABuf[256 * 1024];
@@ -1542,9 +1542,6 @@ void RMGfxSourceBuffer8AA::prepareImage(void) {
 
 
 void RMGfxSourceBuffer8AA::calculateAA(void) {
-	// I suck, you suck, he sucks, we suck, they all suck  ---> ANTI ALIASING SUX!
-	// ************************************************************
-
 	int x, y;
 	byte *src, *srcaa;
 
@@ -1631,7 +1628,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 //	x1 = prim->Dst().x1;
 
 
-	// Poisition into the destination buffer
+	// Position into the destination buffer
 	buf = bigBuf;
 	buf += y1 * bigBuf.getDimx();
 
@@ -1710,7 +1707,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
 
-		// Skippa alla linea successiva
+		// Skip to the next line
 		buf += bigBuf.getDimx();
 	}
 }

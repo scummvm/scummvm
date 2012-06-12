@@ -296,44 +296,37 @@ public:
 	*
 	* Function:     bool SetLoop(bool bLoop);
 	*
-	* Description:  Attiva o disattiva il loop dello sfx.
+	* Description:  Enables or disables SFX loop
 	*
-	* Input:        bool bLoop              TRUE per attivare il loop, FALSE per
-	*                                       disattivarlo
+	* Input:        bool bLoop              True to activate the loop, else False
 	*
-	* Note:         Il loop deve essere attivato PRIMA di eseguire il play
-	*               dello sfx. Qualsiasi modifica effettuata durante il play
-	*               non avra' effetto fino a che lo sfx non viene fermato,
-	*               e poi rimesso in play.
+	* Note:         The loop must be activated before the SFX starts to play, 
+	*               else the effect will only be noticable next time the SFX is 
+	*               played
 	*
 	\****************************************************************************/
 
 	void SetLoop(bool bLoop);
 
-
-
 	/****************************************************************************\
 	*
 	* Function:     void SetVolume(int dwVolume);
 	*
-	* Description:  Cambia il volume dello sfx
+	* Description:  Set SFX Volume
 	*
-	* Input:        int dwVolume            Volume da settare (0-63)
+	* Input:        int dwVolume            Volume to set (0-63)
 	*
 	\****************************************************************************/
 
 	void SetVolume(int dwVolume);
 
-
-
 	/****************************************************************************\
 	*
 	* Function:     void GetVolume(int * lpdwVolume);
 	*
-	* Description:  Chiede il volume dello sfx
+	* Description:  Get SFX volume
 	*
-	* Input:        int * lpdwVolume        Variabile in cui verra' inserito
-	*                                       il volume corrente
+	* Input:        int * lpdwVolume        Will contain the current volume
 	*
 	\****************************************************************************/
 
@@ -348,7 +341,7 @@ public:
 class FPSTREAM {
 
 	/****************************************************************************\
-	*       Attributi
+	*       Attributes
 	\****************************************************************************/
 
 private:
@@ -356,26 +349,26 @@ private:
 	/*
 	    HWND hwnd;
 	    LPDIRECTSOUND lpDS;
-	    LPDIRECTSOUNDBUFFER lpDSBuffer;       // Buffer DirectSound circolare
-	    LPDIRECTSOUNDNOTIFY lpDSNotify;       // Notify degli hotspot nel buffer
+	    LPDIRECTSOUNDBUFFER lpDSBuffer;    // DirectSound circular buffer
+	    LPDIRECTSOUNDNOTIFY lpDSNotify;    // Notify hotspots in the buffer
 	*/
-	byte *lpTempBuffer;                  // Buffer temporaneo per decompressione
+	byte *lpTempBuffer;                    // Temporary buffer use for decompression
 
-	uint32 dwBufferSize;                   // Dimensione del buffer in bytes
-	uint32 dwSize;                         // Dimensione dello stream in bytes
-	uint32 dwCodec;                        // CODEC utilizzato
+	uint32 dwBufferSize;                   // Buffer size (bytes)
+	uint32 dwSize;                         // Stream size (bytes)
+	uint32 dwCodec;                        // CODEC used
 
-	HANDLE hThreadEnd;                    // Evento per chiudere il thread
-	Common::File _file;                   // Handle del file di stream
-	HANDLE hPlayThread;                   // Handle del thread di play
-	HANDLE hHot1, hHot2, hHot3;           // Eventi settati da DirectSoundNotify
+	HANDLE hThreadEnd;                     // Event used to close thread
+	Common::File _file;                    // File handle used for the stream
+	HANDLE hPlayThread;                    // Handle of the Play thread
+	HANDLE hHot1, hHot2, hHot3;            // Events set by DirectSoundNotify
 	HANDLE hPlayThread_PlayFast;
 	HANDLE hPlayThread_PlayNormal;
 
-	bool bSoundSupported;                 // TRUE se il suono e' attivo
-	bool bFileLoaded;                     // TRUE se e' stato aperto un file
-	bool bLoop;                           // TRUE se bisogna loopare lo stream
-	bool bDoFadeOut;                      // TRUE se bisogna fare un fade out
+	bool bSoundSupported;                  // True if the sound is active
+	bool bFileLoaded;                      // True if the file is open 
+	bool bLoop;                            // True if the stream should loop
+	bool bDoFadeOut;                       // True if fade out is required
 	bool bSyncExit;
 	bool bPaused;
 	int lastVolume;
@@ -385,14 +378,14 @@ private:
 	bool CreateBuffer(int nBufSize);
 
 public:
-	bool bIsPlaying;                      // TRUE se si sta playando lo stream
+	bool bIsPlaying;                      // True if the stream is playing
 
 private:
 
 	static void PlayThread(FPSTREAM *This);
 
 	/****************************************************************************\
-	*       Metodi
+	*       Methods
 	\****************************************************************************/
 
 public:
@@ -401,84 +394,75 @@ public:
 	*
 	* Function:     FPSTREAM(bool bSoundOn);
 	*
-	* Description:  Costruttore di default. *NON* bisogna dichiarare direttamente
-	*               un oggetto, ma crearlo piuttosto tramite FPSOUND::CreateStream()
+	* Description:  Default contractor. *DO NOT* declare the object directly: use
+	*                                   FPSOUND::CreateStream() indtead
 	*
 	\****************************************************************************/
 
 	FPSTREAM(bool bSoundOn);
 
-
 	/****************************************************************************\
 	*
 	* Function:     ~FPSTREAM();
 	*
-	* Description:  Distruttore di default. Si preoccupa anche di fermare stream
-	*               eventualmente in esecuzione, e disallocare la memoria da
-	*               essi occupata.
+	* Description:  Destructor by default. Stops the playing stream (if any) and
+	*                                      frees the memory used by them
 	*
 	\****************************************************************************/
 
 	~FPSTREAM();
 
-
 	/****************************************************************************\
 	*
 	* Function:     Release();
 	*
-	* Description:  Rilascia la memoria dell'oggetto. Deve essere richiamata quando
-	*               l'oggetto non serve piu' e **SOLO SE** l'oggetto e' stato
-	*               creato con la FPSOUND::CreateStream().
+	* Description:  Releases memory used by object. Must be used when the object 
+	*               is no longer used. *ONLY*¨for objects created by 
+	*               FPSOUND::CreateStream().
 	*
-	* Note:         Eventuali puntatori all'oggetto non sono piu' validi dopo
-	*               questa chiamata.
+	* Note:         Object pointers are no longer valid after this call.
 	*
 	\****************************************************************************/
 
 	void Release();
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool LoadFile(char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
 	*
-	* Description:  Apre un file di stream.
+	* Description:  Open a file for a stream.
 	*
-	* Input:        char *lpszFile          Nome del file di stream da aprire
-	*               uint32 dwCodec           CODEC da utilizzare per decomprimere
-	*                                       i campioni sonori
+	* Input:        char *lpszFile          Filename to be opened
+	*               uint32 dwCodec          CODEC to be used to decompress
+	*                                       sound samples
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore
+	* Return:       True if everything is OK, False otherwise
 	*
 	\****************************************************************************/
 
 	bool LoadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
 
-
-
 	/****************************************************************************\
 	*
 	* Function:     UnloadFile();
 	*
-	* Description:  Chiude un file di stream eventualmente aperto. E' necessario
-	*               richiamare questa funzione per disallocare la memoria
-	*               occupata dallo stream.
+	* Description:  Close a file stream (if opened). This function must be
+	*               called to free the memory used by the stream
 	*
-	* Return:       Il distruttore della classe per sicurezza richiama la
-	*               UnloadFile() se non e' stata richiamata esplicitamente.
+	* Return:       Just to be sure, the destructor of this class calls
+	*               UnloadFile() if it has not been mentioned explicitly
 	*
 	\****************************************************************************/
 
 	bool UnloadFile();
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool Play();
 	*
-	* Description:  Suona lo stream caricato.
+	* Description:  Play the loaded stream.
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore.
+	* Return:       True if everything is OK, False otherwise
 	*
 	\****************************************************************************/
 
@@ -486,59 +470,52 @@ public:
 	void PlayFast(void);
 	void Prefetch(void);
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool Stop();
 	*
-	* Description:  Ferma il play dello stream.
+	* Description:  Stops the play of the stream.
 	*
-	* Return:       TRUE se tutto OK, FALSE in caso di errore.
+	* Return:       True if everything is OK, False otherwise
 	*
 	\****************************************************************************/
 
 	bool Stop(bool bSync = false);
 	void WaitForSync(FPSTREAM *toplay);
 
-
 	/****************************************************************************\
 	*
 	* Function:     void Pause(bool bPause);
 	*
-	* Description:  Pause dell'effetto sonoro
+	* Description:  Pause sound effect
 	*
 	\****************************************************************************/
 
 	void Pause(bool bPause);
 
-
 	/****************************************************************************\
 	*
 	* Function:     bool SetLoop(bool bLoop);
 	*
-	* Description:  Attiva o disattiva il loop dello stream.
+	* Description:  Enable of disable stream loop
 	*
-	* Input:        bool bLoop              TRUE per attivare il loop, FALSE per
-	*                                       disattivarlo
+	* Input:        bool bLoop              True to enable loop, false otherwise
 	*
-	* Note:         Il loop deve essere attivato PRIMA di eseguire il play
-	*               dello stream. Qualsiasi modifica effettuata durante il play
-	*               non avra' effetto fino a che lo stream non viene fermato,
-	*               e poi rimesso in play.
+	* Note:         The loop must be activated BEFORE you play back the stream. 
+	*               Any changes made during play will not have 'effect until
+	*               the stream is not stopped, and then comes back into play.
 	*
 	\****************************************************************************/
 
 	void SetLoop(bool bLoop);
 
-
-
 	/****************************************************************************\
 	*
 	* Function:     void SetVolume(int dwVolume);
 	*
-	* Description:  Cambia il volume dello stream
+	* Description:  Change stream colume
 	*
-	* Input:        int dwVolume            Volume da settare (0-63)
+	* Input:        int dwVolume            Volume to be set (0-63)
 	*
 	\****************************************************************************/
 
@@ -550,10 +527,9 @@ public:
 	*
 	* Function:     void GetVolume(LPINT lpdwVolume);
 	*
-	* Description:  Chiede il volume dello stream
+	* Description:  Get stream volume
 	*
-	* Input:        LPINT lpdwVolume        Variabile in cui verra' inserito
-	*                                       il volume corrente
+	* Input:        LPINT lpdwVolume        Will contain the current stream volume
 	*
 	\****************************************************************************/
 
