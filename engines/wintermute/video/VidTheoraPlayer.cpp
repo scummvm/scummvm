@@ -448,6 +448,7 @@ HRESULT CVidTheoraPlayer::update() {
 	if (_theoraDecoder) {
 		if (_theoraDecoder->endOfVideo() && _looping) {
 			warning("Should loop movie");
+			_theoraDecoder->rewind();
 		} else if (_theoraDecoder->endOfVideo() && !_looping) {
 			warning("Finished movie");
 			_state = THEORA_STATE_FINISHED;
@@ -576,7 +577,11 @@ int CVidTheoraPlayer::getMovieFrame() {
 
 	return Time / ((double)m_TheoraInfo.fps_denominator / m_TheoraInfo.fps_numerator);
 #endif
-	return 0;
+	if (_theoraDecoder) {
+		return _theoraDecoder->getTime();
+	} else {
+		return 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -593,7 +598,6 @@ HRESULT CVidTheoraPlayer::WriteVideo() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
-
 	RECT rc;
 	HRESULT Res;
 

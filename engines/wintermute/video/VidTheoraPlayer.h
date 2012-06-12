@@ -38,7 +38,7 @@ private:
 		THEORA_STATE_PAUSED = 2,
 		THEORA_STATE_FINISHED = 3
 	};
-	Video::VideoDecoder *_theoraDecoder;
+	Video::RewindableVideoDecoder *_theoraDecoder;
 	Graphics::Surface _surface;
 public:
 	//DECLARE_PERSISTENT(CVidTheoraPlayer, CBBase);

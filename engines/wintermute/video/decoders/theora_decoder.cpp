@@ -561,6 +561,10 @@ void TheoraDecoder::updateBalance() {
 		g_system->getMixer()->setChannelBalance(*_audHandle, getBalance());
 }
 
+void TheoraDecoder::rewind() {
+	reset();
+}
+
 } // End of namespace Sword25
 
 #endif

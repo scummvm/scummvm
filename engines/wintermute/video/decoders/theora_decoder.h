@@ -50,7 +50,7 @@ namespace WinterMute {
  *  - sword25
  *  - wintermute
  */
-class TheoraDecoder : public Video::VideoDecoder {
+class TheoraDecoder : public Video::RewindableVideoDecoder {
 public:
 	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();
@@ -86,6 +86,8 @@ public:
 	uint32 getTimeToNextFrame() const;
 
 	bool endOfVideo() const;
+
+	void rewind();
 
 protected:
 	// VideoDecoder API
