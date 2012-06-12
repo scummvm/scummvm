@@ -160,7 +160,6 @@ int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
-	warning("Draw text: %s", Text);
 	if (Text == NULL || strcmp((char *)Text, "") == 0) return;
 
 	WideString text = (char*)Text;
@@ -203,6 +202,7 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 
 	// not found, create one
 	if (!Surface) {
+		warning("Draw text: %s", Text);
 		Surface = RenderTextToTexture(text, Width, Align, MaxHeight, textOffset);
 		if (Surface) {
 			// write surface to cache
@@ -258,8 +258,12 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	} else if (align == TAL_RIGHT) {
 		alignment = Graphics::kTextAlignRight;
 	}
-
-	warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
+	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		hasWarned = true;
+		warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
+	}
 	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color),D3DCOLGetB(_layers[0]->_color),D3DCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -833,7 +837,12 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
 	//TextLineList lines;
-	warning("Todo: Test Mesuretext");
+	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
+	static bool hasWarned = false;
+	if (!hasWarned) {
+		hasWarned = true;
+		warning("Todo: Test Mesuretext");
+	}
 	if (maxWidth >= 0) {
 		Common::Array<Common::String> lines;
 		_font->wordWrapText(text, maxWidth, lines);

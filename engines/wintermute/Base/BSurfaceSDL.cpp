@@ -76,7 +76,6 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 	if (strFileName.hasSuffix(".png")) {
 		imgDecoder = new Graphics::PNGDecoder();
 	} else if (strFileName.hasSuffix(".bmp")) {
-		warning("Loaded BMP WITH FILENAME!!!! %s", filename);
 		imgDecoder = new Graphics::BitmapDecoder();
 	} else if (strFileName.hasSuffix(".tga")) {
 		imgDecoder = new WinterMute::TGA();

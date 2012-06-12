@@ -585,8 +585,8 @@ HRESULT CAdEntity::Update() {
 		}
 	}
 	break;
-	default:
-		warning("AdEntity::Update - Unhandled enum");
+	default: // Silence unhandled enum-warning
+		break;
 	}
 
 
