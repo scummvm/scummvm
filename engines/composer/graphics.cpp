@@ -57,9 +57,7 @@ Animation::Animation(Common::SeekableReadStream *stream, uint16 id, Common::Poin
 
 	// probably total size?
 	uint32 unknown = _stream->readUint32LE();
-#ifdef SAVING_ANYWHERE
 	_size = unknown;
-#endif
 
 	debug(8, "anim: size %d, state %08x, unknown %08x", size, _state, unknown);
 

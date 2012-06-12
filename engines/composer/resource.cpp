@@ -252,9 +252,7 @@ Pipe::Pipe(Common::SeekableReadStream *stream, uint16 id) {
 	_offset = 0;
 	_stream = stream;
 	_anim = NULL;
-#ifdef SAVING_ANYWHERE
 	_pipeId = id;
-#endif
 }
 
 Pipe::~Pipe() {
@@ -317,13 +315,11 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 			res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
 		if (buffering) {
 			_types[tag].erase(id);
-#ifdef SAVING_ANYWHERE
 			bool found = false;
 			for (Common::List<uint16>::const_iterator i = _bufferedResources[tag].begin(); !found && (i != _bufferedResources[tag].end()); i++)
 				if ((*i) == id) found = true;
 			if (!found)
 				_bufferedResources[tag].push_back(id);
-#endif
 		}
 		return stream;
 	}
@@ -343,13 +339,11 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	}
 	if (buffering) {
 		_types[tag].erase(id);
-#ifdef SAVING_ANYWHERE
 		bool found = false;
 		for (Common::List<uint16>::const_iterator i = _bufferedResources[tag].begin(); !found && (i != _bufferedResources[tag].end()); i++)
 			if ((*i) == id) found = true;
 		if (!found)
 			_bufferedResources[tag].push_back(id);
-#endif
 	}
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
