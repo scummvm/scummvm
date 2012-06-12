@@ -59,9 +59,7 @@ struct Animation {
 	uint32 _eventParam;
 
 	uint32 _state;
-#ifdef SAVING_ANYWHERE
 	uint32 _size;
-#endif
 
 	Common::Array<AnimationEntry> _entries;
 

@@ -373,9 +373,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	}
 
 	Common::String filename;
-#ifdef SAVING_ANYWHERE
 	Common::String oldGroup = _bookGroup;
-#endif
 	if (getGameType() == GType_ComposerV1) {
 		if (!id || _bookGroup.empty())
 			filename = getStringFromConfig("Common", "StartPage");
@@ -403,9 +401,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	Library library;
 
 	library._id = id;
-#ifdef SAVING_ANYWHERE
 	library._group = oldGroup;
-#endif
 	library._archive = new ComposerArchive();
 	if (!library._archive->openFile(filename))
 		error("failed to open '%s'", filename.c_str());

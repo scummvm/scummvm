@@ -20,7 +20,6 @@
  *
  */
 
-#ifdef SAVING_ANYWHERE
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
@@ -450,4 +449,3 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	return Common::kNoError;
 }
 }
-#endif

@@ -21,11 +21,9 @@
  */
 
 #include "base/plugins.h"
-#ifdef SAVING_ANYWHERE
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
-#endif // SAVING_ANYWHERE
 #include "engines/advancedDetector.h"
 
 #include "composer/composer.h"
@@ -419,14 +417,9 @@ bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
-#ifdef SAVING_ANYWHERE
-		return (f == kSupportsListSaves);
-#else
-	return false;
-#endif // SAVING_ANYWHERE
+	return (f == kSupportsListSaves);
 }
 
-#ifdef SAVING_ANYWHERE
 Common::String getSaveName(Common::InSaveFile *in) {
 	Common::Serializer ser(in, NULL);
 	Common::String name;
@@ -465,14 +458,11 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
-#endif // SAVING_ANYWHERE
 
 bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL 
-#ifdef SAVING_ANYWHERE
-			|| f == kSupportsSavingDuringRuntime || f == kSupportsLoadingDuringRuntime
-#endif // SAVING_ANYWHERE
-			);
+		|| f == kSupportsSavingDuringRuntime 
+		|| f == kSupportsLoadingDuringRuntime);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(COMPOSER)
