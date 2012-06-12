@@ -485,7 +485,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Clear the active config domain
 			ConfMan.setActiveDomain("");
 
-			PluginManager::instance().loadAllPlugins(); // only for cached manager
+			PluginManager::instance().loadAllPluginsOfType(PLUGIN_TYPE_ENGINE); // only for cached manager
 
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
