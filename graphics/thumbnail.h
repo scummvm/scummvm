@@ -66,14 +66,14 @@ bool saveThumbnail(Common::WriteStream &out);
  */
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb);
 
-} // End of namespace Graphics
-
 /**
  * Grabs framebuffer into surface
  *
  * @param surf	a surface
  * @return		false if a error occurred
  */
-extern bool createScreenShot(Graphics::Surface &surf);
+bool createScreenShot(Graphics::Surface &surf);
+
+} // End of namespace Graphics
 
 #endif
