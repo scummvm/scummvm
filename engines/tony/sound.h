@@ -184,7 +184,7 @@ private:
 	bool bIsVoice;
 	bool bPaused;
 
-	Audio::AudioStream *_stream;
+	Audio::AudioStream *_loopStream;
 	Audio::RewindableAudioStream *_rewindableStream;
 	Audio::SoundHandle _handle;
 

@@ -198,7 +198,7 @@ FPSFX::FPSFX(bool bSoundOn) {
 	lastVolume = 63;
 	hEndOfBuffer = CORO_INVALID_PID_VALUE;
 	bIsVoice = false;
-	_stream = 0;
+	_loopStream = 0;
 	_rewindableStream = 0;
 	bPaused = false;
 
@@ -223,8 +223,10 @@ FPSFX::~FPSFX() {
 	g_system->getMixer()->stopHandle(_handle);
 	_vm->_activeSfx.remove(this);
 
-	delete _stream;
-	// _rewindableStream is deleted by deleting _stream
+	if (_loopStream)
+		delete _loopStream; // _rewindableStream is deleted by deleting _loopStream
+	else
+		delete _rewindableStream;
 
 	// FIXME
 	//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
@@ -274,7 +276,6 @@ bool FPSFX::loadWave(Common::SeekableReadStream *stream) {
 	if (!_rewindableStream)
 		return false;
 
-	_stream = _rewindableStream;
 	bFileLoaded = true;
 	SetVolume(lastVolume);
 	return true;
@@ -304,7 +305,6 @@ bool FPSFX::LoadVoiceFromVDB(Common::File &vdbFP) {
 	bIsVoice = true;
 
 	_rewindableStream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
-	_stream = _rewindableStream;
 
 	bFileLoaded = true;
 	SetVolume(62);
@@ -343,11 +343,6 @@ bool FPSFX::LoadFile(const char *lpszFileName, uint32 dwCodec) {
 		_rewindableStream = Audio::makeRawStream(buffer, rate, flags, DisposeAfterUse::YES);
 	}
 
-	if (bLoop)
-		_stream = Audio::makeLoopingAudioStream(_rewindableStream, 0);
-	else
-		_stream = _rewindableStream;
-
 	bFileLoaded = true;
 	return true;
 }
@@ -373,7 +368,16 @@ bool FPSFX::Play() {
 
 		_rewindableStream->rewind();
 
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, _stream, -1,
+		Audio::AudioStream *stream = _rewindableStream;
+
+		if (bLoop) {
+			if (!_loopStream)
+				_loopStream = Audio::makeLoopingAudioStream(_rewindableStream, 0);
+
+			stream = _loopStream;
+		}
+
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, stream, -1,
 				Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 		SetVolume(lastVolume);
@@ -495,7 +499,7 @@ void FPSFX::GetVolume(int *lpdwVolume) {
  * Returns true if the underlying sound has ended
  */
 bool FPSFX::endOfBuffer() const {
-	return !g_system->getMixer()->isSoundHandleActive(_handle) && (!_stream || _stream->endOfData());
+	return !g_system->getMixer()->isSoundHandleActive(_handle) && (!_rewindableStream || _rewindableStream->endOfData());
 }
 
 /**
