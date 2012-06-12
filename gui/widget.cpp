@@ -643,14 +643,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 
 	_gfx.free();
 	_gfx.create(w, h, overlayFormat);
-
-	OverlayColor *dst = (OverlayColor *)_gfx.pixels;
-	OverlayColor fillCol = overlayFormat.RGBToColor(r, g, b);
-	while (h--) {
-		for (int i = 0; i < w; ++i) {
-			*dst++ = fillCol;
-		}
-	}
+	_gfx.fillRect(Common::Rect(0, 0, w, h), _gfx.format.RGBToColor(r, g, b));
 }
 
 void GraphicsWidget::drawWidget() {
