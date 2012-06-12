@@ -653,9 +653,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 1: // Size
 		return make_reg(0, s->_segMan->getString(argv[1]).size());
 	case 2: { // At (return value at an index)
-		// Note that values need to be truncated to bytes, otherwise
-		// 0xff (negative char -1) will incorrectly be changed to
-		// 0xffff (negative int16 -1)
+		// Note that values are put in bytes to avoid sign extension
 		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
 			SciString *string = s->_segMan->lookupString(argv[1]);
 			byte val = string->getRawData()[argv[2].toUint16()];
