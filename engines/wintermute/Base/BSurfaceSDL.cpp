@@ -47,6 +47,7 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
 	_surface = new Graphics::Surface();
+	_scaledSurface = NULL;
 	_alphaMask = NULL;
 
 	_lockPixels = NULL;
@@ -56,14 +57,41 @@ CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CBSurfaceSDL::~CBSurfaceSDL() {
 	//TODO
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = NULL;
+	}
+
+	if (_scaledSurface) {
+		_scaledSurface->free();
+		delete _scaledSurface;
+		_scaledSurface = NULL;
+	}
 #if 0
 	if (_texture) SDL_DestroyTexture(_texture);
 	delete[] _alphaMask;
 	_alphaMask = NULL;
-
-	Game->AddMem(-_width * _height * 4);
 #endif
+	Game->AddMem(-_width * _height * 4);
+}
+
+bool hasTransparency(Graphics::Surface *surf) {
+	if (surf->format.bytesPerPixel != 4) {
+		warning("hasTransparency:: non 32 bpp surface passed as argument");
+		return false;
+	}
+	uint8 r,g,b,a;
+	for (int i = 0; i < surf->h; i++) {
+		for (int j = 0; j < surf->w; j++) {
+			uint32 pix = *(uint32*)surf->getBasePtr(j, i);
+			surf->format.colorToARGB(pix, a, r, g, b);
+			if (a != 255) {
+				return true;
+			}	
+		}
+	}
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -154,6 +182,8 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 		_surface = new Graphics::Surface();
 		_surface->copyFrom(*surface);
 	}
+	
+	_hasAlpha = hasTransparency(_surface);
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
 	//_texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 
@@ -293,9 +323,9 @@ HRESULT CBSurfaceSDL::create(int width, int height) {
 #endif
 	_width = width;
 	_height = height;
-#if 0
+
 	Game->AddMem(_width * _height * 4);
-#endif
+
 	_valid = true;
 
 	return S_OK;
@@ -492,7 +522,38 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	position.left += offsetX;
 	position.top += offsetY;
 
-	renderer->drawFromSurface(_surface, &srcRect, &position, r, g, b, a, mirrorX, mirrorY);
+	// TODO: This actually requires us to have the SAME source-offsets every time,
+	// But no checking is in place for that yet.
+	Graphics::Surface drawSrc;
+	drawSrc.w = position.width();
+	drawSrc.h = position.height();
+	drawSrc.format = _surface->format;
+
+	if (position.width() != srcRect.width() || position.height() != srcRect.height()) {
+		if (_scaledSurface && position.width() == _scaledSurface->w && position.height() == _scaledSurface->h) {
+			drawSrc.pixels = _scaledSurface->pixels;
+			drawSrc.pitch = _scaledSurface->pitch;
+		} else {
+			delete _scaledSurface;
+			TransparentSurface src(*_surface, false);
+			_scaledSurface = src.scale(position.width(), position.height());
+			drawSrc.pixels = _scaledSurface->pixels;
+			drawSrc.pitch = _scaledSurface->pitch;
+		}
+	} else { // No scaling
+		drawSrc.pitch = _surface->pitch;
+		drawSrc.pixels = &((char *)_surface->pixels)[srcRect.top * _surface->pitch + srcRect.left * 4];
+	}
+	srcRect.left = 0;
+	srcRect.top = 0;
+	srcRect.setWidth(drawSrc.w);
+	srcRect.setHeight(drawSrc.h);
+
+	if (_hasAlpha && !AlphaDisable) {
+		renderer->drawFromSurface(&drawSrc, &srcRect, &position, r, g, b, a, mirrorX, mirrorY);
+	} else {
+		renderer->drawOpaqueFromSurface(&drawSrc, &srcRect, &position, r, g, b, a, mirrorX, mirrorY);
+	}
 #if 0
 	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
 #endif

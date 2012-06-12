@@ -301,6 +301,51 @@ void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect
 		mirror |= TransparentSurface::FLIP_H;
 	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, srcRect,BS_ARGB(a, r, g, b), dstRect->width(), dstRect->height() );
 }
+
+void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, byte r, byte g, byte b, byte a, bool mirrorX, bool mirrorY) {
+	TransparentSurface src(*surf, false);
+	TransparentSurface *img = NULL;
+	TransparentSurface *imgScaled = NULL;
+	byte *savedPixels = NULL;
+	if ((dstRect->width() != surf->w) || (dstRect->height() != surf->h)) {
+		img = imgScaled = src.scale(dstRect->width(), dstRect->height());
+		savedPixels = (byte *)img->pixels;
+	} else {
+		img = &src;
+	}
+
+	int posX = dstRect->left;	
+	int posY = dstRect->top;
+	
+	// Handle off-screen clipping
+	if (posY < 0) {
+		img->h = MAX(0, (int)img->h - -posY);
+		img->pixels = (byte *)img->pixels + img->pitch * -posY;
+		posY = 0;
+	}
+	
+	if (posX < 0) {
+		img->w = MAX(0, (int)img->w - -posX);
+		img->pixels = (byte *)img->pixels + (-posX * 4);
+		posX = 0;
+	}
+	
+	img->w = CLIP((int)img->w, 0, (int)MAX((int)_renderSurface->w - posX, 0));
+	img->h = CLIP((int)img->h, 0, (int)MAX((int)_renderSurface->h - posY, 0));
+	
+	for (int i = 0; i < img->h; i++) {
+		void *destPtr = _renderSurface->getBasePtr(posX, posY + i);
+		void *srcPtr = img->getBasePtr(0, i);
+		memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel * img->w);
+	}
+	
+	if (imgScaled) {
+		imgScaled->pixels = savedPixels;
+		imgScaled->free();
+		delete imgScaled;
+		imgScaled = NULL;
+	}
+}
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	static bool hasWarned = false;

@@ -34,7 +34,7 @@
 #include "graphics/surface.h"
 
 namespace WinterMute {
-
+class TransparentSurface;
 class CBSurfaceSDL : public CBSurface {
 public:
 	CBSurfaceSDL(CBGame *inGame);
@@ -78,11 +78,13 @@ public:
 private:
 //	SDL_Texture *_texture;
 	Graphics::Surface *_surface;
+	TransparentSurface *_scaledSurface;
 
 	HRESULT drawSprite(int x, int y, RECT *Rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
 	void genAlphaMask(Graphics::Surface *surface);
 	uint32 getPixel(Graphics::Surface *surface, int x, int y);
 
+	bool _hasAlpha;
 	void *_lockPixels;
 	int _lockPitch;
 	byte *_alphaMask;
