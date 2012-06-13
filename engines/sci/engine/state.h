@@ -45,6 +45,7 @@ namespace Sci {
 class EventManager;
 class MessageState;
 class SoundCommandParser;
+class VirtualIndexFile;
 
 enum AbortGameState {
 	kAbortNone = 0,
@@ -162,6 +163,10 @@ public:
 
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
+
+#ifdef ENABLE_SCI32
+	VirtualIndexFile *_virtualIndexFile;
+#endif
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 

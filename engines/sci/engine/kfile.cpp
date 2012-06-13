@@ -33,6 +33,7 @@
 #include "gui/saveload.h"
 
 #include "sci/sci.h"
+#include "sci/engine/file.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
@@ -72,8 +73,6 @@ struct SavegameDesc {
  * for reading only.
  */
 
-
-
 FileHandle::FileHandle() : _in(0), _out(0) {
 }
 
@@ -93,15 +92,14 @@ bool FileHandle::isOpen() const {
 	return _in || _out;
 }
 
-
-
 enum {
 	_K_FILE_MODE_OPEN_OR_CREATE = 0,
 	_K_FILE_MODE_OPEN_OR_FAIL = 1,
 	_K_FILE_MODE_CREATE = 2
 };
 
-
+#define VIRTUALFILE_HANDLE 200
+#define PHANTASMAGORIA_SAVEGAME_INDEX "phantsg.dir"
 
 reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
@@ -130,6 +128,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
 			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+		
 		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
 		// closes it immediately and opens it again with this here. Perhaps
 		// other games use this for read access as well. I guess changing this
@@ -171,8 +170,8 @@ reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 }
 
 static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
-	if (handle == 0) {
-		error("Attempt to use file handle 0");
+	if (handle == 0 || handle == VIRTUALFILE_HANDLE) {
+		error("Attempt to use invalid file handle (%d)", handle);
 		return 0;
 	}
 
@@ -738,6 +737,21 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 
+#ifdef ENABLE_SCI32
+	if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
+		if (s->_virtualIndexFile) {
+			return make_reg(0, VIRTUALFILE_HANDLE);
+		} else {
+			Common::String englishName = g_sci->getSciLanguageString(name, K_LANG_ENGLISH);
+			Common::String wrappedName = g_sci->wrapFilename(englishName);
+			if (!g_sci->getSaveFileManager()->listSavefiles(wrappedName).empty()) {
+				s->_virtualIndexFile = new VirtualIndexFile(wrappedName);
+				return make_reg(0, VIRTUALFILE_HANDLE);
+			}
+		}
+	}
+#endif
+
 	// SCI32 can call K_FILEIO_OPEN with only one argument. It seems to
 	// just be checking if it exists.
 	int mode = (argc < 2) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[1].toUint16();
@@ -780,7 +794,16 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFileIO(close): %d", argv[0].toUint16());
 
-	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	uint16 handle = argv[0].toUint16();
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE) {
+		s->_virtualIndexFile->close();
+		return SIGNAL_REG;
+	}
+#endif
+
+	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		f->close();
 		return SIGNAL_REG;
@@ -789,39 +812,56 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
-	int handle = argv[0].toUint16();
-	int size = argv[2].toUint16();
+	uint16 handle = argv[0].toUint16();
+	uint16 size = argv[2].toUint16();
 	int bytesRead = 0;
 	char *buf = new char[size];
 	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 
-	FileHandle *f = getFileFromHandle(s, handle);
-	if (f) {
-		bytesRead = f->_in->read(buf, size);
-		// TODO: What happens if less bytes are read than what has
-		// been requested? (i.e. if bytesRead is non-zero, but still
-		// less than size)
-		if (bytesRead > 0)
-			s->_segMan->memcpy(argv[1], (const byte*)buf, size);
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE) {
+		bytesRead = s->_virtualIndexFile->read(buf, size);
+	} else {
+#endif
+		FileHandle *f = getFileFromHandle(s, handle);
+		if (f)
+			bytesRead = f->_in->read(buf, size);
+#ifdef ENABLE_SCI32
 	}
+#endif
+
+	// TODO: What happens if less bytes are read than what has
+	// been requested? (i.e. if bytesRead is non-zero, but still
+	// less than size)
+	if (bytesRead > 0)
+		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
 
 	delete[] buf;
 	return make_reg(0, bytesRead);
 }
 
 reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
-	int handle = argv[0].toUint16();
-	int size = argv[2].toUint16();
+	uint16 handle = argv[0].toUint16();
+	uint16 size = argv[2].toUint16();
 	char *buf = new char[size];
 	bool success = false;
 	s->_segMan->memcpy((byte *)buf, argv[1], size);
 	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
-	FileHandle *f = getFileFromHandle(s, handle);
-	if (f) {
-		f->_out->write(buf, size);
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE) {
+		s->_virtualIndexFile->write(buf, size);
 		success = true;
+	} else {
+#endif
+		FileHandle *f = getFileFromHandle(s, handle);
+		if (f) {
+			f->_out->write(buf, size);
+			success = true;
+		}
+#ifdef ENABLE_SCI32
 	}
+#endif
 
 	delete[] buf;
 	if (success)
@@ -854,9 +894,19 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		name = g_sci->getSavegameName(savedir_nr);
 		result = saveFileMan->removeSavefile(name);
 	} else if (getSciVersion() >= SCI_VERSION_2) {
-		// We don't need to wrap the filename in SCI32 games, as it's already
-		// constructed here
+		// The file name may be already wrapped, so check both cases
 		result = saveFileMan->removeSavefile(name);
+		if (!result) {
+			const Common::String wrappedName = g_sci->wrapFilename(name);
+			result = saveFileMan->removeSavefile(wrappedName);
+		}
+
+#ifdef ENABLE_SCI32
+		if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
+			delete s->_virtualIndexFile;
+			s->_virtualIndexFile = 0;
+		}
+#endif
 	} else {
 		const Common::String wrappedName = g_sci->wrapFilename(name);
 		result = saveFileMan->removeSavefile(wrappedName);
@@ -869,21 +919,35 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
-	int size = argv[1].toUint16();
+	uint16 size = argv[1].toUint16();
 	char *buf = new char[size];
-	int handle = argv[2].toUint16();
+	uint16 handle = argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
+	uint32 bytesRead;
 
-	int readBytes = fgets_wrapper(s, buf, size, handle);
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE)
+		bytesRead = s->_virtualIndexFile->readLine(buf, size);
+	else
+#endif
+		bytesRead = fgets_wrapper(s, buf, size, handle);
+
 	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
 	delete[] buf;
-	return readBytes ? argv[0] : NULL_REG;
+	return bytesRead ? argv[0] : NULL_REG;
 }
 
 reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	Common::String str = s->_segMan->getString(argv[1]);
 	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE) {
+		s->_virtualIndexFile->write(str.c_str(), str.size());
+		return NULL_REG;
+	}
+#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
@@ -896,15 +960,31 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
-	int handle = argv[0].toUint16();
-	int offset = argv[1].toUint16();
-	int whence = argv[2].toUint16();
+	uint16 handle = argv[0].toUint16();
+	uint16 offset = ABS<int16>(argv[1].toSint16());	// can be negative
+	uint16 whence = argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE)
+		return make_reg(0, s->_virtualIndexFile->seek(offset, whence));
+#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
-	if (f)
-		s->r_acc = make_reg(0, f->_in->seek(offset, whence));
+	if (f && f->_in) {
+		// Backward seeking isn't supported in zip file streams, thus adapt the
+		// parameters accordingly if games ask for such a seek mode. A known
+		// case where this is requested is the save file manager in Phantasmagoria
+		if (whence == SEEK_END) {
+			whence = SEEK_SET;
+			offset = f->_in->size() - offset;
+		}
+
+		return make_reg(0, f->_in->seek(offset, whence));
+	} else if (f && f->_out) {
+		error("kFileIOSeek: Unsupported seek operation on a writeable stream (offset: %d, whence: %d)", offset, whence);
+	}
 
 	return SIGNAL_REG;
 }
@@ -1026,6 +1106,14 @@ reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
+
+#ifdef ENABLE_SCI32
+	// Cache the file existence result for the Phantasmagoria
+	// save index file, as the game scripts keep checking for
+	// its existence.
+	if (name == PHANTASMAGORIA_SAVEGAME_INDEX && s->_virtualIndexFile)
+		return TRUE_REG;
+#endif
 
 	bool exists = false;
 
