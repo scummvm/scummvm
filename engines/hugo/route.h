@@ -43,8 +43,8 @@ struct Point {
 };
 
 struct segment_t {                                  // Search segment
-	int16 y;                                        // y position
-	int16 x1, x2;                                   // Range of segment
+	int16 _y;                                        // y position
+	int16 _x1, _x2;                                   // Range of segment
 };
 
 class Route {

@@ -85,14 +85,14 @@ protected:
 	 * Structure of scenery file lookup entry
 	 */
 	struct sceneBlock_t {
-		uint32 _scene_off;
-		uint32 _scene_len;
-		uint32 _b_off;
-		uint32 _b_len;
-		uint32 _o_off;
-		uint32 _o_len;
-		uint32 _ob_off;
-		uint32 _ob_len;
+		uint32 _sceneOffset;
+		uint32 _sceneLength;
+		uint32 _boundaryOffset;
+		uint32 _boundaryLength;
+		uint32 _overlayOffset;
+		uint32 _overlayLength;
+		uint32 _baseOffset;
+		uint32 _baseLength;
 	};
 
 	struct _PCCHeader_t {                           // Structure of PCX file header

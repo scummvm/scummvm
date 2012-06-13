@@ -86,12 +86,12 @@ void intro_v1d::preNewGame() {
 
 void intro_v1d::introInit() {
 	_introState = 0;
-	introTicks = 0;
-	surf.w = 320;
-	surf.h = 200;
-	surf.pixels = _vm->_screen->getFrontBuffer();
-	surf.pitch = 320;
-	surf.format = Graphics::PixelFormat::createFormatCLUT8();
+	_introTicks = 0;
+	_surf.w = 320;
+	_surf.h = 200;
+	_surf.pixels = _vm->_screen->getFrontBuffer();
+	_surf.pitch = 320;
+	_surf.format = Graphics::PixelFormat::createFormatCLUT8();
 	_vm->_screen->displayList(kDisplayInit);
 }
 
@@ -101,7 +101,7 @@ bool intro_v1d::introPlay() {
 	if (_vm->getGameStatus()._skipIntroFl)
 		return true;
 
-	if (introTicks < introSize) {
+	if (_introTicks < introSize) {
 		switch (_introState++) {
 		case 0:
 			_vm->_screen->drawRectangle(true, 0, 0, 319, 199, _TMAGENTA);
@@ -113,7 +113,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawShape(250,92,_TLIGHTMAGENTA,_TMAGENTA);
 
 			// TROMAN, size 10-5
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 			char buffer[80];
@@ -126,19 +126,19 @@ bool intro_v1d::introPlay() {
 			else
 				error("Unknown registration flag in hugo.bsf: %d", _vm->_boot._registered);
 
-			font.drawString(&surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
-			font.drawString(&surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
 			if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 				sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
-				font.drawString(&surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+				_font.drawString(&_surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			}
 
 			// SCRIPT, size 24-16
 			strcpy(buffer, "Hugo's");
 
-			if (font.loadFromFON("SCRIPT.FON")) {
-				font.drawString(&surf, buffer, 0, 20, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			if (_font.loadFromFON("SCRIPT.FON")) {
+				_font.drawString(&_surf, buffer, 0, 20, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			} else {
 				// Workaround: SCRIPT.FON doesn't load properly at the moment
 				_vm->_screen->loadFont(2);
@@ -146,78 +146,78 @@ bool intro_v1d::introPlay() {
 			}
 
 			// TROMAN, size 30-24
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 24)))
+			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 24)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 24");
 
 			strcpy(buffer, "House of Horrors !");
-			font.drawString(&surf, buffer, 0, 50, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 50, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 2:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
+			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
 
 			strcpy(buffer, "S t a r r i n g :");
-			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 3:
 			// TROMAN, size 20-9
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
+			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
 
 			strcpy(buffer, "Hugo !");
-			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 4:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
+			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
 
 			strcpy(buffer, "P r o d u c e d  b y :");
-			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 5:
 			// TROMAN size 16-9
 			strcpy(buffer, "David P Gray !");
-			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 6:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
 			strcpy(buffer, "D i r e c t e d   b y :");
-			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 7:
 			// TROMAN, size 16-9
 			strcpy(buffer, "David P Gray !");
-			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 8:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
 			strcpy(buffer, "M u s i c   b y :");
-			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 9:
 			// TROMAN, size 16-9
 			strcpy(buffer, "David P Gray !");
-			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 10:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 20-14
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
+			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
 
 			strcpy(buffer, "E n j o y !");
-			font.drawString(&surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			_font.drawString(&_surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		}
 
@@ -226,7 +226,7 @@ bool intro_v1d::introPlay() {
 		g_system->delayMillis(1000);
 	}
 
-	return (++introTicks >= introSize);
+	return (++_introTicks >= introSize);
 }
 
 intro_v2d::intro_v2d(HugoEngine *vm) : IntroHandler(vm) {
@@ -241,16 +241,16 @@ void intro_v2d::preNewGame() {
 void intro_v2d::introInit() {
 	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
-	surf.w = 320;
-	surf.h = 200;
-	surf.pixels = _vm->_screen->getFrontBuffer();
-	surf.pitch = 320;
-	surf.format = Graphics::PixelFormat::createFormatCLUT8();
+	_surf.w = 320;
+	_surf.h = 200;
+	_surf.pixels = _vm->_screen->getFrontBuffer();
+	_surf.pitch = 320;
+	_surf.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	char buffer[128];
 
 	// TROMAN, size 10-5
-	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
 		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 	if (_vm->_boot._registered)
@@ -258,12 +258,12 @@ void intro_v2d::introInit() {
 	else
 		sprintf(buffer, "%s  Shareware Version", _vm->getCopyrightString());
 
-	font.drawString(&surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
+	_font.drawString(&_surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 		// TROMAN, size 10-5
 		sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
-		font.drawString(&surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
+		_font.drawString(&_surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 	}
 
 	_vm->_screen->displayBackground();
@@ -287,11 +287,11 @@ void intro_v3d::preNewGame() {
 void intro_v3d::introInit() {
 	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
-	surf.w = 320;
-	surf.h = 200;
-	surf.pixels = _vm->_screen->getFrontBuffer();
-	surf.pitch = 320;
-	surf.format = Graphics::PixelFormat::createFormatCLUT8();
+	_surf.w = 320;
+	_surf.h = 200;
+	_surf.pixels = _vm->_screen->getFrontBuffer();
+	_surf.pitch = 320;
+	_surf.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	char buffer[128];
 	if (_vm->_boot._registered)
@@ -300,14 +300,14 @@ void intro_v3d::introInit() {
 		sprintf(buffer,"%s  Shareware Version", _vm->getCopyrightString());
 
 	// TROMAN, size 10-5
-	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
 		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
-	font.drawString(&surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
+	_font.drawString(&_surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 		sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
-		font.drawString(&surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
+		_font.drawString(&_surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
 	}
 
 	_vm->_screen->displayBackground();
@@ -316,7 +316,7 @@ void intro_v3d::introInit() {
 
 	_vm->_file->readBackground(22); // display screen MAP_3d
 	_vm->_screen->displayBackground();
-	introTicks = 0;
+	_introTicks = 0;
 	_vm->_sound->_DOSSongPtr = _vm->_sound->_DOSIntroSong;
 }
 
@@ -328,12 +328,12 @@ bool intro_v3d::introPlay() {
 	if (_vm->getGameStatus()._skipIntroFl)
 		return true;
 
-	if (introTicks < getIntroSize()) {
-		font.drawString(&surf, ".", _introX[introTicks], _introY[introTicks] - kDibOffY, 320, _TBRIGHTWHITE);
+	if (_introTicks < getIntroSize()) {
+		_font.drawString(&_surf, ".", _introX[_introTicks], _introY[_introTicks] - kDibOffY, 320, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
-		switch (introTicks) {
+		switch (_introTicks) {
 		case 4:
 			Utils::notifyBox(_vm->_text->getTextIntro(kIntro1));
 			break;
@@ -346,7 +346,7 @@ bool intro_v3d::introPlay() {
 		}
 	}
 
-	return (++introTicks >= getIntroSize());
+	return (++_introTicks >= getIntroSize());
 }
 
 intro_v1w::intro_v1w(HugoEngine *vm) : IntroHandler(vm) {
@@ -407,7 +407,7 @@ void intro_v3w::introInit() {
 	g_system->delayMillis(3000);
 	_vm->_file->readBackground(22); // display screen MAP_3w
 	_vm->_screen->displayBackground();
-	introTicks = 0;
+	_introTicks = 0;
 	_vm->_screen->loadFont(0);
 }
 
@@ -419,13 +419,13 @@ bool intro_v3w::introPlay() {
 	if (_vm->getGameStatus()._skipIntroFl)
 		return true;
 
-	if (introTicks < getIntroSize()) {
+	if (_introTicks < getIntroSize()) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
-		_vm->_screen->writeStr(_introX[introTicks], _introY[introTicks] - kDibOffY, "x", _TBRIGHTWHITE);
+		_vm->_screen->writeStr(_introX[_introTicks], _introY[_introTicks] - kDibOffY, "x", _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
-		switch (introTicks) {
+		switch (_introTicks) {
 		case 4:
 			Utils::notifyBox(_vm->_text->getTextIntro(kIntro1));
 			break;
@@ -438,6 +438,6 @@ bool intro_v3w::introPlay() {
 		}
 	}
 
-	return (++introTicks >= getIntroSize());
+	return (++_introTicks >= getIntroSize());
 }
 } // End of namespace Hugo

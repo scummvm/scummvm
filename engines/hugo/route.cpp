@@ -286,9 +286,9 @@ void Route::segment(int16 x, int16 y) {
 		} else {
 			// Create segment
 			seg_p = &_segment[_segmentNumb];
-			seg_p->y  = y;
-			seg_p->x1 = x1;
-			seg_p->x2 = x2;
+			seg_p->_y  = y;
+			seg_p->_x1 = x1;
+			seg_p->_x2 = x2;
 			_segmentNumb++;
 		}
 	}
@@ -368,9 +368,9 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	_route[0].y = _destY;
 
 	// Make a final segment for hero's base (we left a spare)
-	_segment[_segmentNumb].y  = heroy;
-	_segment[_segmentNumb].x1 = herox1;
-	_segment[_segmentNumb].x2 = herox2;
+	_segment[_segmentNumb]._y  = heroy;
+	_segment[_segmentNumb]._x1 = herox1;
+	_segment[_segmentNumb]._x2 = herox2;
 	_segmentNumb++;
 
 	Point     *routeNode;                           // Ptr to route node
@@ -378,22 +378,22 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	for (i = 0, _routeListIndex = 0; i < _segmentNumb - 1; i++) {
 		if ((routeNode = newNode()) == 0)           // New node for new segment
 			return false;                           // Too many nodes
-		routeNode->y = _segment[i].y;
+		routeNode->y = _segment[i]._y;
 
 		// Look ahead for furthest straight line
 		for (int16 j = i + 1; j < _segmentNumb; j++) {
 			segment_t *seg_p = &_segment[j];
 			// Can we get to this segment from previous node?
-			if (seg_p->x1 <= routeNode->x && seg_p->x2 >= routeNode->x + _heroWidth - 1) {
-				routeNode->y = seg_p->y;            // Yes, keep updating node
+			if (seg_p->_x1 <= routeNode->x && seg_p->_x2 >= routeNode->x + _heroWidth - 1) {
+				routeNode->y = seg_p->_y;            // Yes, keep updating node
 			} else {
 				// No, create another node on previous segment to reach it
 				if ((routeNode = newNode()) == 0)   // Add new route node
 					return false;                   // Too many nodes
 
 				// Find overlap between old and new segments
-				int16 x1 = MAX(_segment[j - 1].x1, seg_p->x1);
-				int16 x2 = MIN(_segment[j - 1].x2, seg_p->x2);
+				int16 x1 = MAX(_segment[j - 1]._x1, seg_p->_x1);
+				int16 x2 = MIN(_segment[j - 1]._x2, seg_p->_x2);
 
 				// If room, add a little offset to reduce staircase effect
 				int16 dx = kHeroMaxWidth >> 1;
