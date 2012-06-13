@@ -517,6 +517,8 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	const char *name = (*s_supportedGraphicsModesData)[mode].pluginName;
 	newScaleFactor = (*s_supportedGraphicsModesData)[mode].scaleFactor;
 
+	// Find which plugin corresponds to the desired mode and set
+	// _scalerIndex accordingly. _scalerPlugin will be updated later.
 	while (strcmp(name, (*_scalerPlugins[_scalerIndex])->getName()) != 0) {
 		_scalerIndex++;
 		if (_scalerIndex >= _scalerPlugins.size()) {
@@ -542,6 +544,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	if (!_screen || !_hwscreen)
 		return;
 
+	// If the _scalerIndex has changed, change scaler plugins
 	if (_scalerPlugins[_scalerIndex] != _scalerPlugin) {
 		(*_scalerPlugin)->deinitialize();
 		_scalerPlugin = _scalerPlugins[_scalerIndex];
@@ -1007,10 +1010,12 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 					dst_y = real2Aspect(dst_y);
 
 				if (_overlayVisible) {
+					// Use the Normal plugin so the overlay is not scaled/filtered
 					uint tmpFactor = (*_normalPlugin)->getFactor();
 					(*_normalPlugin)->setFactor(1);
 					(*_normalPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
 						(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
+					// Revert state in case the normal plugin is used elsewhere
 					(*_normalPlugin)->setFactor(tmpFactor);
 				} else {
 					(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
