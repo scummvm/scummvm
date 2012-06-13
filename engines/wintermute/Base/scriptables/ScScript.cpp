@@ -764,7 +764,7 @@ HRESULT CScScript::ExecuteInstruction() {
 			char *tempStr = new char [strlen(op1->GetString()) + strlen(op2->GetString()) + 1];
 			strcpy(tempStr, op1->GetString());
 			strcat(tempStr, op2->GetString());
-			_operand->SetString(str);
+			_operand->SetString(tempStr);
 			delete [] tempStr;
 		} else if (op1->GetType() == VAL_INT && op2->GetType() == VAL_INT)
 			_operand->SetInt(op1->GetInt() + op2->GetInt());
