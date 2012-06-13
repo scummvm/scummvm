@@ -61,7 +61,7 @@ int16 Route::getRouteIndex() const {
 void Route::setDirection(const uint16 keyCode) {
 	debugC(1, kDebugRoute, "setDirection(%d)", keyCode);
 
-	object_t *obj = _vm->_hero;                     // Pointer to hero object
+	Object *obj = _vm->_hero;                     // Pointer to hero object
 
 	// Set first image in sequence
 	switch (keyCode) {
@@ -107,7 +107,7 @@ void Route::setDirection(const uint16 keyCode) {
 void Route::setWalk(const uint16 direction) {
 	debugC(1, kDebugRoute, "setWalk(%d)", direction);
 
-	object_t *obj = _vm->_hero;                     // Pointer to hero object
+	Object *obj = _vm->_hero;                     // Pointer to hero object
 
 	if (_vm->getGameStatus()._storyModeFl || obj->_pathType != kPathUser) // Make sure user has control
 		return;
@@ -188,8 +188,8 @@ void Route::segment(int16 x, int16 y) {
 	debugC(1, kDebugRoute, "segment(%d, %d)", x, y);
 
 	// Note: use of static - can't waste stack
-	static image_pt   p;                            // Ptr to _boundaryMap[y]
-	static segment_t *seg_p;                        // Ptr to segment
+	static ImagePtr  p;                             // Ptr to _boundaryMap[y]
+	static Segment  *segPtr;                        // Ptr to segment
 
 	// Bomb out if stack exhausted
 	// Vinterstum: Is this just a safeguard, or actually used?
@@ -285,10 +285,10 @@ void Route::segment(int16 x, int16 y) {
 			_fullSegmentFl = true;
 		} else {
 			// Create segment
-			seg_p = &_segment[_segmentNumb];
-			seg_p->_y  = y;
-			seg_p->_x1 = x1;
-			seg_p->_x2 = x2;
+			segPtr = &_segment[_segmentNumb];
+			segPtr->_y  = y;
+			segPtr->_x1 = x1;
+			segPtr->_x2 = x2;
 			_segmentNumb++;
 		}
 	}
@@ -332,7 +332,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	int16 heroy  = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2;        // Hero baseline
 
 	// Store all object baselines into objbound (except hero's = [0])
-	object_t  *obj;                                 // Ptr to object
+	Object  *obj;                                   // Ptr to object
 	int i;
 	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_object->_numObj; i++, obj++) {
 		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_cycling != kCycleInvisible) && (obj->_priority == kPriorityFloating))
@@ -382,18 +382,18 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 
 		// Look ahead for furthest straight line
 		for (int16 j = i + 1; j < _segmentNumb; j++) {
-			segment_t *seg_p = &_segment[j];
+			Segment *segPtr = &_segment[j];
 			// Can we get to this segment from previous node?
-			if (seg_p->_x1 <= routeNode->x && seg_p->_x2 >= routeNode->x + _heroWidth - 1) {
-				routeNode->y = seg_p->_y;            // Yes, keep updating node
+			if (segPtr->_x1 <= routeNode->x && segPtr->_x2 >= routeNode->x + _heroWidth - 1) {
+				routeNode->y = segPtr->_y;          // Yes, keep updating node
 			} else {
 				// No, create another node on previous segment to reach it
 				if ((routeNode = newNode()) == 0)   // Add new route node
 					return false;                   // Too many nodes
 
 				// Find overlap between old and new segments
-				int16 x1 = MAX(_segment[j - 1]._x1, seg_p->_x1);
-				int16 x2 = MIN(_segment[j - 1]._x2, seg_p->_x2);
+				int16 x1 = MAX(_segment[j - 1]._x1, segPtr->_x1);
+				int16 x2 = MIN(_segment[j - 1]._x2, segPtr->_x2);
 
 				// If room, add a little offset to reduce staircase effect
 				int16 dx = kHeroMaxWidth >> 1;
@@ -500,7 +500,7 @@ void Route::processRoute() {
  * go_for is the purpose, id indexes the exit or object to walk to
  * Returns FALSE if route not found
  */
-bool Route::startRoute(const go_t routeType, const int16 objId, int16 cx, int16 cy) {
+bool Route::startRoute(const RouteType routeType, const int16 objId, int16 cx, int16 cy) {
 	debugC(1, kDebugRoute, "startRoute(%d, %d, %d, %d)", routeType, objId, cx, cy);
 
 	// Don't attempt to walk if user does not have control

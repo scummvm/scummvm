@@ -37,11 +37,11 @@ namespace Hugo {
 /**
  * Purpose of an automatic route
  */
-enum go_t {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
+enum RouteType {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
 
-struct segment_t {                                  // Search segment
-	int16 _y;                                        // y position
-	int16 _x1, _x2;                                   // Range of segment
+struct Segment {                                    // Search segment
+	int16 _y;                                       // y position
+	int16 _x1, _x2;                                 // Range of segment
 };
 
 class Route {
@@ -52,7 +52,7 @@ public:
 	int16 getRouteIndex() const;
 
 	void processRoute();
-	bool startRoute(const go_t routeType, const int16 objId, int16 cx, int16 cy);
+	bool startRoute(const RouteType routeType, const int16 objId, int16 cx, int16 cy);
 	void setDirection(const uint16 keyCode);
 	void setWalk(const uint16 direction);
 
@@ -66,12 +66,12 @@ private:
 
 	uint16 _oldWalkDirection;                       // Last direction char
 
-	int16  _routeIndex;                             // Index into route list, or -1
-	go_t   _routeType;                              // Purpose of an automatic route
-	int16  _routeObjId;                             // Index of exit of object walking to
+	int16     _routeIndex;                          // Index into route list, or -1
+	RouteType _routeType;                           // Purpose of an automatic route
+	int16     _routeObjId;                          // Index of exit of object walking to
 
 	byte _boundaryMap[kYPix][kXPix];                // Boundary byte map
-	segment_t _segment[kMaxSeg];                    // List of points in fill-path
+	Segment _segment[kMaxSeg];                      // List of points in fill-path
 	Common::Point _route[kMaxNodes];                // List of nodes in route (global)
 	int16 _segmentNumb;                             // Count number of segments
 	int16 _routeListIndex;                          // Index into route list

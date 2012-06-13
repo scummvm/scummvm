@@ -78,7 +78,7 @@ const char *Parser_v1d::findNextNoun(const char *noun) const {
  * If object not near, return suitable string; may be similar object closer
  * If radius is -1, treat radius as infinity
  */
-bool Parser_v1d::isNear_v1(const char *verb, const char *noun, object_t *obj, char *comment) const {
+bool Parser_v1d::isNear_v1(const char *verb, const char *noun, Object *obj, char *comment) const {
 	debugC(1, kDebugParser, "isNear(%s, %s, obj, %s)", verb, noun, comment);
 
 	if (!noun && !obj->_verbOnlyFl) {                // No noun specified & object not context senesitive
@@ -140,8 +140,8 @@ bool Parser_v1d::isNear_v1(const char *verb, const char *noun, object_t *obj, ch
  * say_ok needed for special case of take/drop which may be handled not only
  * here but also in a cmd_list with a donestr string simultaneously
  */
-bool Parser_v1d::isGenericVerb_v1(const char *word, object_t *obj) {
-	debugC(1, kDebugParser, "isGenericVerb(%s, object_t *obj)", word);
+bool Parser_v1d::isGenericVerb_v1(const char *word, Object *obj) {
+	debugC(1, kDebugParser, "isGenericVerb(%s, Object *obj)", word);
 
 	if (!obj->_genericCmd)
 		return false;
@@ -181,8 +181,8 @@ bool Parser_v1d::isGenericVerb_v1(const char *word, object_t *obj) {
  * and if it passes, perform the actions in the action list.  If the verb
  * is catered for, return TRUE
  */
-bool Parser_v1d::isObjectVerb_v1(const char *word, object_t *obj) {
-	debugC(1, kDebugParser, "isObjectVerb(%s, object_t *obj)", word);
+bool Parser_v1d::isObjectVerb_v1(const char *word, Object *obj) {
+	debugC(1, kDebugParser, "isObjectVerb(%s, Object *obj)", word);
 
 	// First, find matching verb in cmd list
 	uint16 cmdIndex = obj->_cmdIndex;                // ptr to list of commands
@@ -231,7 +231,7 @@ bool Parser_v1d::isObjectVerb_v1(const char *word, object_t *obj) {
  * Print text for possible background object.  Return TRUE if match found
  * Only match if both verb and noun found.  Test_ca will match verb-only
  */
-bool Parser_v1d::isBackgroundWord_v1(const char *noun, const char *verb, objectList_t obj) const {
+bool Parser_v1d::isBackgroundWord_v1(const char *noun, const char *verb, ObjectList obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
 
 	if (!noun)
@@ -249,8 +249,8 @@ bool Parser_v1d::isBackgroundWord_v1(const char *noun, const char *verb, objectL
 /**
  * Do all things necessary to carry an object
  */
-void Parser_v1d::takeObject(object_t *obj) {
-	debugC(1, kDebugParser, "takeObject(object_t *obj)");
+void Parser_v1d::takeObject(Object *obj) {
+	debugC(1, kDebugParser, "takeObject(Object *obj)");
 
 	obj->_carriedFl = true;
 	if (obj->_seqNumb)                               // Don't change if no image to display
@@ -264,8 +264,8 @@ void Parser_v1d::takeObject(object_t *obj) {
 /**
  * Do all necessary things to drop an object
  */
-void Parser_v1d::dropObject(object_t *obj) {
-	debugC(1, kDebugParser, "dropObject(object_t *obj)");
+void Parser_v1d::dropObject(Object *obj) {
+	debugC(1, kDebugParser, "dropObject(Object *obj)");
 
 	obj->_carriedFl = false;
 	obj->_screenIndex = *_vm->_screen_p;
@@ -281,7 +281,7 @@ void Parser_v1d::dropObject(object_t *obj) {
  * Print text for possible background object.  Return TRUE if match found
  * If test_noun TRUE, must have a noun given
  */
-bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, const char *noun, const char *verb, objectList_t obj) const {
+bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
 	if (_vm->_maze._enabledFl)
@@ -305,7 +305,7 @@ bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, const char *noun, const char
 void Parser_v1d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
 	if (!strncmp(_vm->_line, "PPG", 3)) {
@@ -403,7 +403,7 @@ void Parser_v1d::lineHandler() {
 			noun = findNextNoun(noun);              // Find a noun in the line
 			// Must try at least once for objects allowing verb-context
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				object_t *obj = &_vm->_object->_objects[i];
+				Object *obj = &_vm->_object->_objects[i];
 				if (isNear_v1(verb, noun, obj, farComment)) {
 					if (isObjectVerb_v1(verb, obj)  // Foreground object
 					 || isGenericVerb_v1(verb, obj))// Common action type
@@ -424,7 +424,7 @@ void Parser_v1d::lineHandler() {
 }
 
 void Parser_v1d::showInventory() const {
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 	if (gameStatus._viewState == kViewPlay) {
 		if (gameStatus._gameOverFl)
 			_vm->gameOverMsg();

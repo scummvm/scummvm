@@ -64,8 +64,8 @@ void ObjectHandler_v3d::moveObjects() {
 	// and store all (visible) object baselines into the boundary file.
 	// Don't store foreground or background objects
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->_currImagePtr;       // Get ptr to current image
+		Object *obj = &_objects[i];               // Get pointer to object
+		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
 		if (obj->_screenIndex == *_vm->_screen_p) {
 			switch (obj->_pathType) {
 			case kPathChase:
@@ -166,13 +166,13 @@ void ObjectHandler_v3d::moveObjects() {
 
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];                         // Get pointer to object
+		Object *obj = &_objects[i];                         // Get pointer to object
 		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_vx || obj->_vy)) {
 			// Only process if it's moving
 
 			// Do object movement.  Delta_x,y return allowed movement in x,y
 			// to move as close to a boundary as possible without crossing it.
-			seq_t *currImage = obj->_currImagePtr;   // Get ptr to current image
+			Seq *currImage = obj->_currImagePtr;   // Get ptr to current image
 			// object coordinates
 			int x1 = obj->_x + currImage->_x1;        // Left edge of object
 			int x2 = obj->_x + currImage->_x2;        // Right edge
@@ -220,15 +220,15 @@ void ObjectHandler_v3d::moveObjects() {
 
 	// Clear all object baselines from the boundary file.
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->_currImagePtr;       // Get ptr to current image
+		Object *obj = &_objects[i];               // Get pointer to object
+		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
 		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
 			clearBoundary(obj->_oldx + currImage->_x1, obj->_oldx + currImage->_x2, obj->_oldy + currImage->_y2);
 	}
 
 	// If maze mode is enabled, do special maze processing
 	if (_vm->_maze._enabledFl) {
-		seq_t *currImage = _vm->_hero->_currImagePtr;// Get ptr to current image
+		Seq *currImage = _vm->_hero->_currImagePtr;// Get ptr to current image
 		// hero coordinates
 		int x1 = _vm->_hero->_x + currImage->_x1;     // Left edge of object
 		int x2 = _vm->_hero->_x + currImage->_x2;     // Right edge
@@ -249,8 +249,8 @@ void ObjectHandler_v3d::swapImages(int objIndex1, int objIndex2) {
 
 	saveSeq(&_objects[objIndex1]);
 
-	seqList_t tmpSeqList[kMaxSeqNumb];
-	int seqListSize = sizeof(seqList_t) * kMaxSeqNumb;
+	SeqList tmpSeqList[kMaxSeqNumb];
+	int seqListSize = sizeof(SeqList) * kMaxSeqNumb;
 
 	memmove(tmpSeqList, _objects[objIndex1]._seqList, seqListSize);
 	memmove(_objects[objIndex1]._seqList, _objects[objIndex2]._seqList, seqListSize);

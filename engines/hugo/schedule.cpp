@@ -83,12 +83,12 @@ void Scheduler::initEventQueue() {
 /**
  * Return a ptr to an event structure from the free list
  */
-event_t *Scheduler::getQueue() {
+Event *Scheduler::getQueue() {
 	debugC(4, kDebugSchedule, "getQueue");
 
 	if (!_freeEvent)                                // Error: no more events available
 		error("An error has occurred: %s", "getQueue");
-	event_t *resEvent = _freeEvent;
+	Event *resEvent = _freeEvent;
 	_freeEvent = _freeEvent->_nextEvent;
 	resEvent->_nextEvent = 0;
 	return resEvent;
@@ -175,8 +175,8 @@ void Scheduler::newScreen(const int screenIndex) {
 	}
 
 	// 1. Clear out all local events
-	event_t *curEvent = _headEvent;                 // The earliest event
-	event_t *wrkEvent;                              // Event ptr
+	Event *curEvent = _headEvent;                 // The earliest event
+	Event *wrkEvent;                              // Event ptr
 	while (curEvent) {                              // While mature events found
 		wrkEvent = curEvent->_nextEvent;             // Save p (becomes undefined after Del)
 		if (curEvent->_localActionFl)
@@ -259,7 +259,7 @@ void Scheduler::loadPoints(Common::SeekableReadStream &in) {
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			_numBonuses = numElem;
-			_points = (point_t *)malloc(sizeof(point_t) * _numBonuses);
+			_points = (Point *)malloc(sizeof(Point) * _numBonuses);
 			for (int i = 0; i < _numBonuses; i++) {
 				_points[i]._score = in.readByte();
 				_points[i]._scoredFl = false;
@@ -270,10 +270,10 @@ void Scheduler::loadPoints(Common::SeekableReadStream &in) {
 	}
 }
 
-void Scheduler::readAct(Common::ReadStream &in, act &curAct) {
+void Scheduler::readAct(Common::ReadStream &in, Act &curAct) {
 	uint16 numSubAct;
 
-	curAct._a0._actType = (action_t) in.readByte();
+	curAct._a0._actType = (Action) in.readByte();
 	switch (curAct._a0._actType) {
 	case ANULL:              // -1
 		break;
@@ -285,7 +285,7 @@ void Scheduler::readAct(Common::ReadStream &in, act &curAct) {
 		curAct._a1._timer = in.readSint16BE();
 		curAct._a1._objIndex = in.readSint16BE();
 		curAct._a1._cycleNumb = in.readSint16BE();
-		curAct._a1._cycle = (cycle_t) in.readByte();
+		curAct._a1._cycle = (Cycle) in.readByte();
 		break;
 	case INIT_OBJXY:         // 2
 		curAct._a2._timer = in.readSint16BE();
@@ -393,7 +393,7 @@ void Scheduler::readAct(Common::ReadStream &in, act &curAct) {
 		break;
 	case DEL_EVENTS:         // 20
 		curAct._a20._timer = in.readSint16BE();
-		curAct._a20._actTypeDel = (action_t) in.readByte();
+		curAct._a20._actTypeDel = (Action) in.readByte();
 		break;
 	case GAMEOVER:           // 21
 		curAct._a21._timer = in.readSint16BE();
@@ -553,20 +553,20 @@ void Scheduler::readAct(Common::ReadStream &in, act &curAct) {
 void Scheduler::loadActListArr(Common::ReadStream &in) {
 	debugC(6, kDebugSchedule, "loadActListArr(&in)");
 
-	act tmpAct;
+	Act tmpAct;
 
 	int numElem, numSubElem;
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			_actListArrSize = numElem;
-			_actListArr = (act **)malloc(sizeof(act *) * _actListArrSize);
+			_actListArr = (Act **)malloc(sizeof(Act *) * _actListArrSize);
 		}
 
 		for (int i = 0; i < numElem; i++) {
 			numSubElem = in.readUint16BE();
 			if (varnt == _vm->_gameVariant)
-				_actListArr[i] = (act *)malloc(sizeof(act) * (numSubElem + 1));
+				_actListArr[i] = (Act *)malloc(sizeof(Act) * (numSubElem + 1));
 			for (int j = 0; j < numSubElem; j++) {
 				if (varnt == _vm->_gameVariant) {
 					readAct(in, _actListArr[i][j]);
@@ -708,7 +708,7 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 
 	// Convert event ptrs to indexes
 	for (int16 i = 0; i < kMaxEvents; i++) {
-		event_t *wrkEvent = &_events[i];
+		Event *wrkEvent = &_events[i];
 
 		// fix up action pointer (to do better)
 		int16 index, subElem;
@@ -1039,7 +1039,7 @@ void Scheduler::saveActions(Common::WriteStream *f) const {
 /*
 * Find the index in the action list to be able to serialize the action to save game
 */
-void Scheduler::findAction(const act* action, int16* index, int16* subElem) {
+void Scheduler::findAction(const Act *action, int16 *index, int16 *subElem) {
 
 	assert(index && subElem);
 	if (!action) {
@@ -1104,7 +1104,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 		if ((index == -1) && (subElem == -1))
 			_events[i]._action = 0;
 		else
-			_events[i]._action = (act *)&_actListArr[index][subElem];
+			_events[i]._action = (Act *)&_actListArr[index][subElem];
 
 		_events[i]._localActionFl = (f->readByte() == 1) ? true : false;
 		_events[i]._time = f->readUint32BE();
@@ -1112,8 +1112,8 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 		int16 prevIndex = f->readSint16BE();
 		int16 nextIndex = f->readSint16BE();
 
-		_events[i]._prevEvent = (prevIndex == -1) ? (event_t *)0 : &_events[prevIndex];
-		_events[i]._nextEvent = (nextIndex == -1) ? (event_t *)0 : &_events[nextIndex];
+		_events[i]._prevEvent = (prevIndex == -1) ? (Event *)0 : &_events[prevIndex];
+		_events[i]._nextEvent = (nextIndex == -1) ? (Event *)0 : &_events[nextIndex];
 	}
 	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
 	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
@@ -1121,7 +1121,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 
 	// Adjust times to fit our time
 	uint32 curTime = getTicks();
-	event_t *wrkEvent = _headEvent;                 // The earliest event
+	Event *wrkEvent = _headEvent;                 // The earliest event
 	while (wrkEvent) {                              // While mature events found
 		wrkEvent->_time = wrkEvent->_time - saveTime + curTime;
 		wrkEvent = wrkEvent->_nextEvent;
@@ -1132,11 +1132,11 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
  * Insert the action pointed to by p into the timer event queue
  * The queue goes from head (earliest) to tail (latest) timewise
  */
-void Scheduler::insertAction(act *action) {
+void Scheduler::insertAction(Act *action) {
 	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->_a0._actType);
 
 	// First, get and initialize the event structure
-	event_t *curEvent = getQueue();
+	Event *curEvent = getQueue();
 	curEvent->_action = action;
 	switch (action->_a0._actType) {                   // Assign whether local or global
 	case AGSCHEDULE:
@@ -1158,7 +1158,7 @@ void Scheduler::insertAction(act *action) {
 		_tailEvent = _headEvent = curEvent;
 		curEvent->_nextEvent = curEvent->_prevEvent = 0;
 	} else {
-		event_t *wrkEvent = _tailEvent;             // Search from latest time back
+		Event *wrkEvent = _tailEvent;             // Search from latest time back
 		bool found = false;
 
 		while (wrkEvent && !found) {
@@ -1189,14 +1189,14 @@ void Scheduler::insertAction(act *action) {
  * It dequeues the event and returns it to the free list.  It returns a ptr
  * to the next action in the list, except special case of NEW_SCREEN
  */
-event_t *Scheduler::doAction(event_t *curEvent) {
+Event *Scheduler::doAction(Event *curEvent) {
 	debugC(1, kDebugSchedule, "doAction - Event action type : %d", curEvent->_action->_a0._actType);
 
-	status_t &gameStatus = _vm->getGameStatus();
-	act *action = curEvent->_action;
-	object_t *obj1;
-	int       dx, dy;
-	event_t  *wrkEvent;                             // Save ev_p->next_p for return
+	Status &gameStatus = _vm->getGameStatus();
+	Act    *action = curEvent->_action;
+	Object *obj1;
+	int     dx, dy;
+	Event  *wrkEvent;                             // Save ev_p->next_p for return
 
 	switch (action->_a0._actType) {
 	case ANULL:                                     // Big NOP from DEL_EVENTS
@@ -1236,7 +1236,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_object->_objects[action->_a9._objIndex]._state = action->_a9._newState;
 		break;
 	case INIT_PATH:                                 // act10: Initialize an object path and velocity
-		_vm->_object->setPath(action->_a10._objIndex, (path_t) action->_a10._newPathType, action->_a10._vxPath, action->_a10._vyPath);
+		_vm->_object->setPath(action->_a10._objIndex, (Path) action->_a10._newPathType, action->_a10._vxPath, action->_a10._vyPath);
 		break;
 	case COND_R:                                    // act11: action lists conditional on object state
 		if (_vm->_object->_objects[action->_a11._objIndex]._state == action->_a11._stateReq)
@@ -1441,7 +1441,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
  * was modified to allow deletes anywhere in the list, and the DEL_EVENT
  * action was modified to perform the actual delete.
  */
-void Scheduler::delQueue(event_t *curEvent) {
+void Scheduler::delQueue(Event *curEvent) {
 	debugC(4, kDebugSchedule, "delQueue()");
 
 	if (curEvent == _headEvent) {                   // If p was the head ptr
@@ -1468,10 +1468,10 @@ void Scheduler::delQueue(event_t *curEvent) {
 /**
  * Delete all the active events of a given type
  */
-void Scheduler::delEventType(const action_t _actTypeDel) {
+void Scheduler::delEventType(const Action _actTypeDel) {
 	// Note: actions are not deleted here, simply turned into NOPs!
-	event_t *wrkEvent = _headEvent;                 // The earliest event
-	event_t *saveEvent;
+	Event *wrkEvent = _headEvent;                 // The earliest event
+	Event *saveEvent;
 
 	while (wrkEvent) {                              // While events found in list
 		saveEvent = wrkEvent->_nextEvent;
@@ -1525,13 +1525,13 @@ void Scheduler_v1d::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 
 	uint32 ticker = getTicks();                     // The time now, in ticks
-	event_t *curEvent = _headEvent;                 // The earliest event
+	Event *curEvent = _headEvent;                 // The earliest event
 
 	while (curEvent && (curEvent->_time <= ticker))  // While mature events found
 		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
 }
 
-void Scheduler_v1d::promptAction(act *action) {
+void Scheduler_v1d::promptAction(Act *action) {
 	Common::String response;
 
 	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
@@ -1574,7 +1574,7 @@ const char *Scheduler_v2d::getCypher() const {
 	return "Copyright 1991, Gray Design Associates";
 }
 
-void Scheduler_v2d::promptAction(act *action) {
+void Scheduler_v2d::promptAction(Act *action) {
 	Common::String response;
 
 	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
@@ -1639,7 +1639,7 @@ void Scheduler_v1w::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 
 	uint32 ticker = getTicks();                     // The time now, in ticks
-	event_t *curEvent = _headEvent;                 // The earliest event
+	Event *curEvent = _headEvent;                 // The earliest event
 
 	while (curEvent && (curEvent->_time <= ticker)) // While mature events found
 		curEvent = doAction(curEvent);              // Perform the action (returns next_p)

@@ -64,7 +64,7 @@ struct cmd {
  * interesting ever happens with them.  Rather than just be dumb and say
  * "don't understand" we produce an interesting msg to keep user sane.
  */
-struct background_t {
+struct Background {
 	uint16 _verbIndex;
 	uint16 _nounIndex;
 	int    _commentIndex;                            // Index of comment produced on match
@@ -73,7 +73,7 @@ struct background_t {
 	byte   _bonusIndex;                              // Index of bonus score (0 = no bonus)
 };
 
-typedef background_t *objectList_t;
+typedef Background *ObjectList;
 
 class Parser {
 public:
@@ -97,7 +97,7 @@ public:
 
 	virtual void lineHandler() = 0;
 	virtual void showInventory() const = 0;
-	virtual void takeObject(object_t *obj) = 0;
+	virtual void takeObject(Object *obj) = 0;
 
 protected:
 	HugoEngine *_vm;
@@ -105,18 +105,18 @@ protected:
 	int16     _cmdLineIndex;                        // Index into line
 	uint32    _cmdLineTick;                         // For flashing cursor
 	char      _cmdLineCursor;
-	command_t _cmdLine;                             // Build command line
+	Command   _cmdLine;                             // Build command line
 	uint16    _backgroundObjectsSize;
 	uint16    _cmdListSize;
 
 	uint16       **_arrayReqs;
-	background_t **_backgroundObjects;
-	background_t  *_catchallList;
+	Background **_backgroundObjects;
+	Background  *_catchallList;
 	cmd          **_cmdList;
 
 	const char *findNoun() const;
 	const char *findVerb() const;
-	void  readBG(Common::ReadStream &in, background_t &curBG);
+	void  readBG(Common::ReadStream &in, Background &curBG);
 	void  readCmd(Common::ReadStream &in, cmd &curCmd);
 	void  showDosInventory() const;
 
@@ -136,17 +136,17 @@ public:
 
 	virtual void lineHandler();
 	virtual void showInventory() const;
-	virtual void takeObject(object_t *obj);
+	virtual void takeObject(Object *obj);
 
 protected:
-	virtual void dropObject(object_t *obj);
+	virtual void dropObject(Object *obj);
 
 	const char *findNextNoun(const char *noun) const;
-	bool  isBackgroundWord_v1(const char *noun, const char *verb, objectList_t obj) const;
-	bool  isCatchallVerb_v1(bool testNounFl, const char *noun, const char *verb, objectList_t obj) const;
-	bool  isGenericVerb_v1(const char *word, object_t *obj);
-	bool  isNear_v1(const char *verb, const char *noun, object_t *obj, char *comment) const;
-	bool  isObjectVerb_v1(const char *word, object_t *obj);
+	bool  isBackgroundWord_v1(const char *noun, const char *verb, ObjectList obj) const;
+	bool  isCatchallVerb_v1(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const;
+	bool  isGenericVerb_v1(const char *word, Object *obj);
+	bool  isNear_v1(const char *verb, const char *noun, Object *obj, char *comment) const;
+	bool  isObjectVerb_v1(const char *word, Object *obj);
 };
 
 class Parser_v2d : public Parser_v1d {
@@ -164,13 +164,13 @@ public:
 
 	virtual void lineHandler();
 protected:
-	void  dropObject(object_t *obj);
-	bool  isBackgroundWord_v3(objectList_t obj) const;
-	bool  isCatchallVerb_v3(objectList_t obj) const;
-	bool  isGenericVerb_v3(object_t *obj, char *comment);
-	bool  isNear_v3(object_t *obj, const char *verb, char *comment) const;
-	bool  isObjectVerb_v3(object_t *obj, char *comment);
-	void  takeObject(object_t *obj);
+	void  dropObject(Object *obj);
+	bool  isBackgroundWord_v3(ObjectList obj) const;
+	bool  isCatchallVerb_v3(ObjectList obj) const;
+	bool  isGenericVerb_v3(Object *obj, char *comment);
+	bool  isNear_v3(Object *obj, const char *verb, char *comment) const;
+	bool  isObjectVerb_v3(Object *obj, char *comment);
+	void  takeObject(Object *obj);
 };
 
 class Parser_v1w : public Parser_v3d {

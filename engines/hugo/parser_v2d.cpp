@@ -55,7 +55,7 @@ Parser_v2d::~Parser_v2d() {
 void Parser_v2d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
 	if (!strncmp(_vm->_line, "PPG", 3)) {
@@ -153,7 +153,7 @@ void Parser_v2d::lineHandler() {
 			noun = findNextNoun(noun);              // Find a noun in the line
 			// Must try at least once for objects allowing verb-context
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				object_t *obj = &_vm->_object->_objects[i];
+				Object *obj = &_vm->_object->_objects[i];
 				if (isNear_v1(verb, noun, obj, farComment)) {
 					if (isObjectVerb_v1(verb, obj)  // Foreground object
 					 || isGenericVerb_v1(verb, obj))// Common action type

@@ -56,7 +56,7 @@ Parser_v1w::~Parser_v1w() {
 void Parser_v1w::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
 	if (!strncmp(_vm->_line, "PPG", 3)) {
@@ -147,7 +147,7 @@ void Parser_v1w::lineHandler() {
 
 	// Test for nearby objects referenced explicitly
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
-		object_t *obj = &_vm->_object->_objects[i];
+		Object *obj = &_vm->_object->_objects[i];
 		if (isWordPresent(_vm->_text->getNounArray(obj->_nounIndex))) {
 			if (isObjectVerb_v3(obj, farComment) || isGenericVerb_v3(obj, farComment))
 				return;
@@ -157,7 +157,7 @@ void Parser_v1w::lineHandler() {
 	// Test for nearby objects that only require a verb
 	// Note comment is unused if not near.
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
-		object_t *obj = &_vm->_object->_objects[i];
+		Object *obj = &_vm->_object->_objects[i];
 		if (obj->_verbOnlyFl) {
 			char contextComment[kCompLineSize * 5] = ""; // Unused comment for context objects
 			if (isObjectVerb_v3(obj, contextComment) || isGenericVerb_v3(obj, contextComment))
@@ -200,8 +200,8 @@ void Parser_v1w::lineHandler() {
 }
 
 void Parser_v1w::showInventory() const {
-	status_t &gameStatus = _vm->getGameStatus();
-	istate_t inventState = _vm->_inventory->getInventoryState();
+	Status &gameStatus = _vm->getGameStatus();
+	Istate inventState = _vm->_inventory->getInventoryState();
 	if (gameStatus._gameOverFl) {
 		_vm->gameOverMsg();
 	} else if ((inventState == kInventoryOff) && (gameStatus._viewState == kViewPlay)) {

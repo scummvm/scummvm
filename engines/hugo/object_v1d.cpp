@@ -59,21 +59,21 @@ void ObjectHandler_v1d::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
 	// Initialize the index array to visible objects in current screen
-	int  num_objs = 0;
+	int  objNumb = 0;
 	byte objindex[kMaxObjNumb];                     // Array of indeces to objects
 
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];
+		Object *obj = &_objects[i];
 		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_cycling >= kCycleAlmostInvisible))
-			objindex[num_objs++] = i;
+			objindex[objNumb++] = i;
 	}
 
 	// Sort the objects into increasing y+y2 (painter's algorithm)
-	qsort(objindex, num_objs, sizeof(objindex[0]), y2comp);
+	qsort(objindex, objNumb, sizeof(objindex[0]), y2comp);
 
 	// Add each visible object to display list
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
+	for (int i = 0; i < objNumb; i++) {
+		Object *obj = &_objects[objindex[i]];
 		// Count down inter-frame timer
 		if (obj->_frameTimer)
 			obj->_frameTimer--;
@@ -90,7 +90,7 @@ void ObjectHandler_v1d::updateImages() {
 					_vm->_screen->displayFrame(obj->_x, obj->_y, obj->_currImagePtr->_nextSeqPtr, false);
 				break;
 			case kCycleBackward: {
-				seq_t *seqPtr = obj->_currImagePtr;
+				Seq *seqPtr = obj->_currImagePtr;
 				if (!obj->_frameTimer) {             // Show next frame
 					while (seqPtr->_nextSeqPtr != obj->_currImagePtr)
 						seqPtr = seqPtr->_nextSeqPtr;
@@ -107,8 +107,8 @@ void ObjectHandler_v1d::updateImages() {
 	_vm->_scheduler->waitForRefresh();
 
 	// Cycle any animating objects
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
+	for (int i = 0; i < objNumb; i++) {
+		Object *obj = &_objects[objindex[i]];
 		if (obj->_cycling != kCycleInvisible) {
 			// Only if it's visible
 			if (obj->_cycling == kCycleAlmostInvisible)
@@ -140,7 +140,7 @@ void ObjectHandler_v1d::updateImages() {
 			case kCycleBackward: {
 				if (!obj->_frameTimer) {
 					// Time to step to prev frame
-					seq_t *seqPtr = obj->_currImagePtr;
+					Seq *seqPtr = obj->_currImagePtr;
 					while (obj->_currImagePtr->_nextSeqPtr != seqPtr)
 						obj->_currImagePtr = obj->_currImagePtr->_nextSeqPtr;
 					// Find out if this is first frame of sequence
@@ -183,8 +183,8 @@ void ObjectHandler_v1d::moveObjects() {
 	// and store all (visible) object baselines into the boundary file.
 	// Don't store foreground or background objects
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->_currImagePtr;       // Get ptr to current image
+		Object *obj = &_objects[i];               // Get pointer to object
+		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
 		if (obj->_screenIndex == *_vm->_screen_p) {
 			switch (obj->_pathType) {
 			case kPathChase: {
@@ -271,13 +271,13 @@ void ObjectHandler_v1d::moveObjects() {
 
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
+		Object *obj = &_objects[i];               // Get pointer to object
 		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_vx || obj->_vy)) {
 			// Only process if it's moving
 
 			// Do object movement.  Delta_x,y return allowed movement in x,y
 			// to move as close to a boundary as possible without crossing it.
-			seq_t *currImage = obj->_currImagePtr;   // Get ptr to current image
+			Seq *currImage = obj->_currImagePtr;   // Get ptr to current image
 			// object coordinates
 			int x1 = obj->_x + currImage->_x1;        // Left edge of object
 			int x2 = obj->_x + currImage->_x2;        // Right edge
@@ -325,15 +325,15 @@ void ObjectHandler_v1d::moveObjects() {
 
 	// Clear all object baselines from the boundary file.
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->_currImagePtr;       // Get ptr to current image
+		Object *obj = &_objects[i];               // Get pointer to object
+		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
 		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
 			clearBoundary(obj->_oldx + currImage->_x1, obj->_oldx + currImage->_x2, obj->_oldy + currImage->_y2);
 	}
 
 	// If maze mode is enabled, do special maze processing
 	if (_vm->_maze._enabledFl) {
-		seq_t *currImage = _vm->_hero->_currImagePtr;// Get ptr to current image
+		Seq *currImage = _vm->_hero->_currImagePtr;// Get ptr to current image
 		// hero coordinates
 		int x1 = _vm->_hero->_x + currImage->_x1;     // Left edge of object
 		int x2 = _vm->_hero->_x + currImage->_x2;     // Right edge
@@ -352,8 +352,8 @@ void ObjectHandler_v1d::moveObjects() {
 void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2) {
 	debugC(1, kDebugObject, "swapImages(%d, %d)", objIndex1, objIndex2);
 
-	seqList_t tmpSeqList[kMaxSeqNumb];
-	int seqListSize = sizeof(seqList_t) * kMaxSeqNumb;
+	SeqList tmpSeqList[kMaxSeqNumb];
+	int seqListSize = sizeof(SeqList) * kMaxSeqNumb;
 
 	memmove(tmpSeqList, _objects[objIndex1]._seqList, seqListSize);
 	memmove(_objects[objIndex1]._seqList, _objects[objIndex2]._seqList, seqListSize);
@@ -365,8 +365,8 @@ void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2) {
 
 void ObjectHandler_v1d::homeIn(int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy) {
 	// object obj1 will home in on object obj2
-	object_t *obj1 = &_objects[objIndex1];
-	object_t *obj2 = &_objects[objIndex2];
+	Object *obj1 = &_objects[objIndex1];
+	Object *obj2 = &_objects[objIndex2];
 	obj1->_pathType = kPathAuto;
 	int dx = obj1->_x + obj1->_currImagePtr->_x1 - obj2->_x - obj2->_currImagePtr->_x1;
 	int dy = obj1->_y + obj1->_currImagePtr->_y1 - obj2->_y - obj2->_currImagePtr->_y1;

@@ -45,13 +45,13 @@ FileManager_v1w::~FileManager_v1w() {
 /**
  * Open and read in an overlay file, close file
  */
-void FileManager_v1w::readOverlay(const int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v1w::readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
-	image_pt tmpImage = image;                      // temp ptr to overlay file
-	_sceneryArchive1.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
+	ImagePtr tmpImage = image;                      // temp ptr to overlay file
+	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), SEEK_SET);
 
-	sceneBlock_t sceneBlock;                        // Database header entry
+	SceneBlock sceneBlock;                          // Database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._sceneLength = _sceneryArchive1.readUint32LE();
 	sceneBlock._boundaryOffset = _sceneryArchive1.readUint32LE();

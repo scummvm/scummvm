@@ -108,7 +108,7 @@ int16 MouseHandler::getHotspotActIndex(const int16 hotspotId) const {
 /**
  * Shadow-blit supplied string into dib_a at cx,cy and add to display list
  */
-void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy, const uif_t fontId, const int16 color) {
+void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy, const Uif fontId, const int16 color) {
 	debugC(1, kDebugMouse, "cursorText(%s, %d, %d, %d, %d)", buffer, cx, cy, fontId, color);
 
 	_vm->_screen->loadFont(fontId);
@@ -152,7 +152,7 @@ int16 MouseHandler::findExit(const int16 cx, const int16 cy, byte screenId) {
 void MouseHandler::processRightClick(const int16 objId, const int16 cx, const int16 cy) {
 	debugC(1, kDebugMouse, "ProcessRightClick(%d, %d, %d)", objId, cx, cy);
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	if (gameStatus._storyModeFl || _vm->_hero->_pathType == kPathQuiet) // Make sure user has control
 		return;
@@ -168,7 +168,7 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 		else
 			_vm->_object->useObject(objId);         // Use status.objid on object
 	} else {                                        // Clicked over viewport object
-		object_t *obj = &_vm->_object->_objects[objId];
+		Object *obj = &_vm->_object->_objects[objId];
 		int16 x, y;
 		switch (obj->_viewx) {                       // Where to walk to
 		case -1:                                    // Walk to object position
@@ -203,9 +203,9 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 	debugC(1, kDebugMouse, "ProcessLeftClick(%d, %d, %d)", objId, cx, cy);
 
 	int16 i, x, y;
-	object_t *obj;
+	Object *obj;
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	if (gameStatus._storyModeFl || _vm->_hero->_pathType == kPathQuiet) // Make sure user has control
 		return;
@@ -284,8 +284,8 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 void MouseHandler::mouseHandler() {
 	debugC(2, kDebugMouse, "mouseHandler");
 
-	status_t &gameStatus = _vm->getGameStatus();
-	istate_t inventState = _vm->_inventory->getInventoryState();
+	Status &gameStatus = _vm->getGameStatus();
+	Istate inventState = _vm->_inventory->getInventoryState();
 	if ((gameStatus._viewState != kViewPlay) && (inventState != kInventoryActive))
 		return;
 
@@ -343,7 +343,7 @@ void MouseHandler::mouseHandler() {
 	resetRightButton();
 }
 
-void MouseHandler::readHotspot(Common::ReadStream &in, hotspot_t &hotspot) {
+void MouseHandler::readHotspot(Common::ReadStream &in, Hotspot &hotspot) {
 	hotspot._screenIndex = in.readSint16BE();
 	hotspot._x1 = in.readSint16BE();
 	hotspot._y1 = in.readSint16BE();
@@ -359,13 +359,13 @@ void MouseHandler::readHotspot(Common::ReadStream &in, hotspot_t &hotspot) {
  * Load hotspots data from hugo.dat
  */
 void MouseHandler::loadHotspots(Common::ReadStream &in) {
-	hotspot_t *wrkHotspots = 0;
-	hotspot_t tmp;
+	Hotspot *wrkHotspots = 0;
+	Hotspot tmp;
 	memset(&tmp, 0, sizeof(tmp));
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		int numRows = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)
-			_hotspots = wrkHotspots = (hotspot_t *)malloc(sizeof(hotspot_t) * numRows);
+			_hotspots = wrkHotspots = (Hotspot *)malloc(sizeof(Hotspot) * numRows);
 
 		for (int i = 0; i < numRows; i++)
 			readHotspot(in, (varnt == _vm->_gameVariant) ? wrkHotspots[i] : tmp);
@@ -377,7 +377,7 @@ void MouseHandler::loadHotspots(Common::ReadStream &in) {
  */
 void MouseHandler::drawHotspots() const {
 	for (int i = 0; _hotspots[i]._screenIndex >= 0; i++) {
-		hotspot_t *hotspot = &_hotspots[i];
+		Hotspot *hotspot = &_hotspots[i];
 		if (hotspot->_screenIndex == _vm->_hero->_screenIndex)
 			_vm->_screen->drawRectangle(false, hotspot->_x1, hotspot->_y1, hotspot->_x2, hotspot->_y2, _TLIGHTRED);
 	}

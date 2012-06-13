@@ -106,7 +106,7 @@ GUI::Debugger *HugoEngine::getDebugger() {
 	return _console;
 }
 
-status_t &HugoEngine::getGameStatus() {
+Status &HugoEngine::getGameStatus() {
 	return _status;
 }
 
@@ -323,7 +323,7 @@ void HugoEngine::initMachine() {
  * Hugo game state machine - called during onIdle
  */
 void HugoEngine::runMachine() {
-	status_t &gameStatus = getGameStatus();
+	Status &gameStatus = getGameStatus();
 
 	// Don't process if gameover
 	if (gameStatus._gameOverFl)
@@ -639,10 +639,10 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer())); // Make a copy
 
 	// Workaround for graphic glitches in DOS versions. Cleaning the overlays fix the problem
-	memset(_object->_objBound, '\0', sizeof(overlay_t));
-	memset(_object->_boundary, '\0', sizeof(overlay_t));
-	memset(_object->_overlay,  '\0', sizeof(overlay_t));
-	memset(_object->_ovlBase,  '\0', sizeof(overlay_t));
+	memset(_object->_objBound, '\0', sizeof(Overlay));
+	memset(_object->_boundary, '\0', sizeof(Overlay));
+	memset(_object->_overlay,  '\0', sizeof(Overlay));
+	memset(_object->_ovlBase,  '\0', sizeof(Overlay));
 
 	_file->readOverlay(screenNum, _object->_boundary, kOvlBoundary); // Boundary file
 	_file->readOverlay(screenNum, _object->_overlay, kOvlOverlay);   // Overlay file

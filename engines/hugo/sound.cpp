@@ -174,8 +174,8 @@ void SoundHandler::toggleSound() {
 	_vm->_config._soundFl = !_vm->_config._soundFl;
 }
 
-void SoundHandler::playMIDI(sound_pt seq_p, uint16 size) {
-	_midiPlayer->play(seq_p, size);
+void SoundHandler::playMIDI(sound_pt seqPtr, uint16 size) {
+	_midiPlayer->play(seqPtr, size);
 }
 
 /**

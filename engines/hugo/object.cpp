@@ -48,10 +48,10 @@ ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0), _uses(0) {
 	_numObj = 0;
 	_objCount = 0;
 	_usesSize = 0;
-	memset(_objBound, '\0', sizeof(overlay_t));
-	memset(_boundary, '\0', sizeof(overlay_t));
-	memset(_overlay,  '\0', sizeof(overlay_t));
-	memset(_ovlBase,  '\0', sizeof(overlay_t));
+	memset(_objBound, '\0', sizeof(Overlay));
+	memset(_boundary, '\0', sizeof(Overlay));
+	memset(_overlay,  '\0', sizeof(Overlay));
+	memset(_ovlBase,  '\0', sizeof(Overlay));
 }
 
 ObjectHandler::~ObjectHandler() {
@@ -86,7 +86,7 @@ void ObjectHandler::setVelocity(int objIndex, int8 vx, int8 vy) {
 	_objects[objIndex]._vy = vy;
 }
 
-void ObjectHandler::setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath) {
+void ObjectHandler::setPath(int objIndex, Path pathType, int16 vxPath, int16 vyPath) {
 	_objects[objIndex]._pathType = pathType;
 	_objects[objIndex]._vxPath = vxPath;
 	_objects[objIndex]._vyPath = vyPath;
@@ -95,12 +95,12 @@ void ObjectHandler::setPath(int objIndex, path_t pathType, int16 vxPath, int16 v
 /**
  * Save sequence number and image number in given object
  */
-void ObjectHandler::saveSeq(object_t *obj) {
+void ObjectHandler::saveSeq(Object *obj) {
 	debugC(1, kDebugObject, "saveSeq");
 
 	bool found = false;
 	for (int i = 0; !found && (i < obj->_seqNumb); i++) {
-		seq_t *q = obj->_seqList[i]._seqPtr;
+		Seq *q = obj->_seqList[i]._seqPtr;
 		for (int j = 0; !found && (j < obj->_seqList[i]._imageNbr); j++) {
 			if (obj->_currImagePtr == q) {
 				found = true;
@@ -114,12 +114,12 @@ void ObjectHandler::saveSeq(object_t *obj) {
 }
 
 /**
- * Set up cur_seq_p from stored sequence and image number in object
+ * Set up cur_seqPtr from stored sequence and image number in object
  */
-void ObjectHandler::restoreSeq(object_t *obj) {
+void ObjectHandler::restoreSeq(Object *obj) {
 	debugC(1, kDebugObject, "restoreSeq");
 
-	seq_t *q = obj->_seqList[obj->_curSeqNum]._seqPtr;
+	Seq *q = obj->_seqList[obj->_curSeqNum]._seqPtr;
 	for (int j = 0; j < obj->_curImageNum; j++)
 		q = q->_nextSeqPtr;
 	obj->_currImagePtr = q;
@@ -134,7 +134,7 @@ void ObjectHandler::useObject(int16 objId) {
 
 	const char *verb;                               // Background verb to use directly
 	int16 inventObjId = _vm->_inventory->getInventoryObjId();
-	object_t *obj = &_objects[objId];               // Ptr to object
+	Object *obj = &_objects[objId];               // Ptr to object
 	if (inventObjId == -1) {
 		// Get or use objid directly
 		if ((obj->_genericCmd & TAKE) || obj->_objValue)  // Get collectible item
@@ -153,12 +153,12 @@ void ObjectHandler::useObject(int16 objId) {
 			                       _vm->_text->getNoun(obj->_nounIndex, 0));
 
 		// Check valid use of objects and override verb if necessary
-		for (uses_t *use = _uses; use->_objId != _numObj; use++) {
+		for (Uses *use = _uses; use->_objId != _numObj; use++) {
 			if (inventObjId == use->_objId) {
 				// Look for secondary object, if found use matching verb
 				bool foundFl = false;
 
-				for (target_t *target = use->_targets; target->_nounIndex != 0; target++)
+				for (Target *target = use->_targets; target->_nounIndex != 0; target++)
 					if (target->_nounIndex == obj->_nounIndex) {
 						foundFl = true;
 						sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(target->_verbIndex, 0),
@@ -195,12 +195,12 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 
 	int16     objIndex = -1;                        // Index of found object
 	uint16    y2Max = 0;                            // Greatest y2
-	object_t *obj = _objects;
+	Object *obj = _objects;
 	// Check objects on screen
 	for (int i = 0; i < _numObj; i++, obj++) {
 		// Object must be in current screen and "useful"
 		if (obj->_screenIndex == *_vm->_screen_p && (obj->_genericCmd || obj->_objValue || obj->_cmdIndex)) {
-			seq_t *curImage = obj->_currImagePtr;
+			Seq *curImage = obj->_currImagePtr;
 			// Object must have a visible image...
 			if (curImage != 0 && obj->_cycling != kCycleInvisible) {
 				// If cursor inside object
@@ -233,7 +233,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
  * Issue "Look at <object>" command
  * Note special case of swapped hero image
  */
-void ObjectHandler::lookObject(object_t *obj) {
+void ObjectHandler::lookObject(Object *obj) {
 	debugC(1, kDebugObject, "lookObject");
 
 	if (obj == _vm->_hero)
@@ -252,10 +252,10 @@ void ObjectHandler::freeObjects() {
 	if (_vm->_hero != 0 && _vm->_hero->_seqList[0]._seqPtr != 0) {
 		// Free all sequence lists and image data
 		for (int16 i = 0; i < _numObj; i++) {
-			object_t *obj = &_objects[i];
+			Object *obj = &_objects[i];
 			for (int16 j = 0; j < obj->_seqNumb; j++) {
-				seq_t *seq = obj->_seqList[j]._seqPtr;
-				seq_t *next;
+				Seq *seq = obj->_seqList[j]._seqPtr;
+				Seq *next;
 				if (seq == 0) // Failure during database load
 					break;
 				if (seq->_imagePtr != 0) {
@@ -300,8 +300,8 @@ void ObjectHandler::freeObjects() {
 int ObjectHandler::y2comp(const void *a, const void *b) {
 	debugC(6, kDebugObject, "y2comp");
 
-	const object_t *p1 = &HugoEngine::get()._object->_objects[*(const byte *)a];
-	const object_t *p2 = &HugoEngine::get()._object->_objects[*(const byte *)b];
+	const Object *p1 = &HugoEngine::get()._object->_objects[*(const byte *)a];
+	const Object *p2 = &HugoEngine::get()._object->_objects[*(const byte *)b];
 
 	if (p1 == p2)
 		// Why does qsort try the same indexes?
@@ -345,7 +345,7 @@ void ObjectHandler::showTakeables() {
 	debugC(1, kDebugObject, "showTakeables");
 
 	for (int j = 0; j < _numObj; j++) {
-		object_t *obj = &_objects[j];
+		Object *obj = &_objects[j];
 		if ((obj->_cycling != kCycleInvisible) &&
 		    (obj->_screenIndex == *_vm->_screen_p) &&
 		    (((TAKE & obj->_genericCmd) == TAKE) || obj->_objValue)) {
@@ -357,10 +357,10 @@ void ObjectHandler::showTakeables() {
 /**
  * Find a clear space around supplied object that hero can walk to
  */
-bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
+bool ObjectHandler::findObjectSpace(Object *obj, int16 *destx, int16 *desty) {
 	debugC(1, kDebugObject, "findObjectSpace(obj, %d, %d)", *destx, *desty);
 
-	seq_t *curImage = obj->_currImagePtr;
+	Seq *curImage = obj->_currImagePtr;
 	int16 y = obj->_y + curImage->_y2 - 1;
 
 	bool foundFl = true;
@@ -399,11 +399,11 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	return foundFl;
 }
 
-void ObjectHandler::readUse(Common::ReadStream &in, uses_t &curUse) {
+void ObjectHandler::readUse(Common::ReadStream &in, Uses &curUse) {
 	curUse._objId = in.readSint16BE();
 	curUse._dataIndex = in.readUint16BE();
 	uint16 numSubElem = in.readUint16BE();
-	curUse._targets = (target_t *)malloc(sizeof(target_t) * numSubElem);
+	curUse._targets = (Target *)malloc(sizeof(Target) * numSubElem);
 	for (int j = 0; j < numSubElem; j++) {
 		curUse._targets[j]._nounIndex = in.readUint16BE();
 		curUse._targets[j]._verbIndex = in.readUint16BE();
@@ -413,7 +413,7 @@ void ObjectHandler::readUse(Common::ReadStream &in, uses_t &curUse) {
  * Load _uses from Hugo.dat
  */
 void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
-	uses_t tmpUse;
+	Uses tmpUse;
 	tmpUse._targets = 0;
 
 	//Read _uses
@@ -421,7 +421,7 @@ void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			_usesSize = numElem;
-			_uses = (uses_t *)malloc(sizeof(uses_t) * numElem);
+			_uses = (Uses *)malloc(sizeof(Uses) * numElem);
 		}
 
 		for (int i = 0; i < numElem; i++) {
@@ -436,7 +436,7 @@ void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
 	}
 }
 
-void ObjectHandler::readObject(Common::ReadStream &in, object_t &curObject) {
+void ObjectHandler::readObject(Common::ReadStream &in, Object &curObject) {
 	curObject._nounIndex = in.readUint16BE();
 	curObject._dataIndex = in.readUint16BE();
 	uint16 numSubElem = in.readUint16BE();
@@ -448,7 +448,7 @@ void ObjectHandler::readObject(Common::ReadStream &in, object_t &curObject) {
 	for (int j = 0; j < numSubElem; j++)
 		curObject._stateDataIndex[j] = in.readUint16BE();
 
-	curObject._pathType = (path_t) in.readSint16BE();
+	curObject._pathType = (Path) in.readSint16BE();
 	curObject._vxPath = in.readSint16BE();
 	curObject._vyPath = in.readSint16BE();
 	curObject._actIndex = in.readUint16BE();
@@ -465,7 +465,7 @@ void ObjectHandler::readObject(Common::ReadStream &in, object_t &curObject) {
 		curObject._seqList[j]._seqPtr = 0;
 	}
 
-	curObject._cycling = (cycle_t)in.readByte();
+	curObject._cycling = (Cycle)in.readByte();
 	curObject._cycleNumb = in.readByte();
 	curObject._frameInterval = in.readByte();
 	curObject._frameTimer = in.readByte();
@@ -497,7 +497,7 @@ void ObjectHandler::readObject(Common::ReadStream &in, object_t &curObject) {
  */
 void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
-	object_t tmpObject;
+	Object tmpObject;
 	tmpObject._stateDataIndex = 0;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
@@ -505,7 +505,7 @@ void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
 
 		if (varnt == _vm->_gameVariant) {
 			_objCount = numElem;
-			_objects = (object_t *)malloc(sizeof(object_t) * numElem);
+			_objects = (Object *)malloc(sizeof(Object) * numElem);
 		}
 
 		for (int i = 0; i < numElem; i++) {
@@ -559,7 +559,7 @@ void ObjectHandler::restoreAllSeq() {
  */
 void ObjectHandler::saveObjects(Common::WriteStream *out) {
 	for (int i = 0; i < _numObj; i++) {
-		// Save where curr_seq_p is pointing to
+		// Save where curr_seqPtr is pointing to
 		saveSeq(&_objects[i]);
 
 		out->writeByte(_objects[i]._pathType);
@@ -594,10 +594,10 @@ void ObjectHandler::saveObjects(Common::WriteStream *out) {
  */
 void ObjectHandler::restoreObjects(Common::SeekableReadStream *in) {
 	for (int i = 0; i < _numObj; i++) {
-		_objects[i]._pathType = (path_t) in->readByte();
+		_objects[i]._pathType = (Path) in->readByte();
 		_objects[i]._vxPath = in->readSint16BE();
 		_objects[i]._vyPath = in->readSint16BE();
-		_objects[i]._cycling = (cycle_t) in->readByte();
+		_objects[i]._cycling = (Cycle) in->readByte();
 		_objects[i]._cycleNumb = in->readByte();
 		_objects[i]._frameTimer = in->readByte();
 		_objects[i]._screenIndex = in->readByte();
@@ -782,7 +782,7 @@ void ObjectHandler::clearScreenBoundary(const int x1, const int x2, const int y)
 /**
  * An object has collided with a boundary. See if any actions are required
  */
-void ObjectHandler::boundaryCollision(object_t *obj) {
+void ObjectHandler::boundaryCollision(Object *obj) {
 	debugC(1, kDebugEngine, "boundaryCollision");
 
 	if (obj == _vm->_hero) {

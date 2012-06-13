@@ -45,7 +45,7 @@ namespace Hugo {
 enum {LOOK_NAME = 1, TAKE_NAME};                    // Index of name used in showing takeables and in confirming take
 
 // Definitions of 'generic' commands: Max # depends on size of gencmd in
-// the object_t record since each requires 1 bit.  Currently up to 16
+// the Object record since each requires 1 bit.  Currently up to 16
 enum {LOOK = 1, TAKE = 2, DROP = 4, LOOK_S = 8};
 
 enum TEXTCOLORS {
@@ -55,25 +55,25 @@ enum TEXTCOLORS {
 	_TLIGHTRED, _TLIGHTMAGENTA, _TLIGHTYELLOW, _TBRIGHTWHITE
 };
 
-enum uif_t {U_FONT5, U_FONT6, U_FONT8, UIF_IMAGES, NUM_UIF_ITEMS};
+enum Uif {U_FONT5, U_FONT6, U_FONT8, UIF_IMAGES, NUM_UIF_ITEMS};
 static const int kFirstFont = U_FONT5;
 
 /**
  * Enumerate ways of cycling a sequence of frames
  */
-enum cycle_t {kCycleInvisible, kCycleAlmostInvisible, kCycleNotCycling, kCycleForward, kCycleBackward};
+enum Cycle {kCycleInvisible, kCycleAlmostInvisible, kCycleNotCycling, kCycleForward, kCycleBackward};
 
 /**
  * Enumerate sequence index matching direction of travel
  */
 enum {SEQ_RIGHT, SEQ_LEFT, SEQ_DOWN, SEQ_UP};
 
-enum font_t {LARGE_ROMAN, MED_ROMAN, NUM_GDI_FONTS, INIT_FONTS, DEL_FONTS};
+enum Font {LARGE_ROMAN, MED_ROMAN, NUM_GDI_FONTS, INIT_FONTS, DEL_FONTS};
 
 /**
  * Enumerate the different path types for an object
  */
-enum path_t {
+enum Path {
 	kPathUser,                                      // User has control of object via cursor keys
 	kPathAuto,                                      // Computer has control, controlled by action lists
 	kPathQuiet,                                     // Computer has control and no commands allowed
@@ -83,7 +83,7 @@ enum path_t {
 	kPathWander2                                    // Same as WANDER, except keeps cycling when stationary
 };
 
-struct hugo_boot_t {                                // Common HUGO boot file
+struct hugoBoot {                                   // Common HUGO boot file
 	char _checksum;                                 // Checksum for boot structure (not exit text)
 	char _registered;                               // TRUE if registered version, else FALSE
 	char _pbswitch[8];                              // Playback switch string
@@ -94,13 +94,13 @@ struct hugo_boot_t {                                // Common HUGO boot file
 /**
  * Game specific type definitions
  */
-typedef byte *image_pt;                             // ptr to an object image (sprite)
+typedef byte *ImagePtr;                             // ptr to an object image (sprite)
 typedef byte *sound_pt;                             // ptr to sound (or music) data
 
 /**
  * Structure for initializing maze processing
  */
-struct maze_t {
+struct Maze {
 	bool _enabledFl;                                // TRUE when maze processing enabled
 	byte _size;                                     // Size of (square) maze matrix
 	int  _x1, _y1, _x2, _y2;                        // maze hotspot bounding box
@@ -112,24 +112,24 @@ struct maze_t {
  * The following is a linked list of images in an animation sequence
  * The image data is in 8-bit DIB format, i.e. 1 byte = 1 pixel
  */
-struct seq_t {                                      // Linked list of images
+struct Seq {                                        // Linked list of images
 	byte   *_imagePtr;                              // ptr to image
 	uint16  _bytesPerLine8;                         // bytes per line (8bits)
 	uint16  _lines;                                 // lines
 	uint16  _x1, _x2, _y1, _y2;                     // Offsets from x,y: data bounding box
-	seq_t  *_nextSeqPtr;                            // ptr to next record
+	Seq  *_nextSeqPtr;                              // ptr to next record
 };
 
 /**
  * The following is an array of structures of above sequences
  */
-struct seqList_t {
+struct SeqList {
 	uint16 _imageNbr;                               // Number of images in sequence
-	seq_t *_seqPtr;                                 // Ptr to sequence structure
+	Seq *_seqPtr;                                   // Ptr to sequence structure
 };
 
 #include "common/pack-start.h"                      // START STRUCT PACKING
-struct sound_hdr_t {                                // Sound file lookup entry
+struct SoundHdr {                                   // Sound file lookup entry
 	uint16 _size;                                   // Size of sound data in bytes
 	uint32 _offset;                                 // Offset of sound data in file
 } PACKED_STRUCT;
@@ -140,17 +140,17 @@ static const int kMaxSeqNumb = 4;                   // Number of sequences of im
 /**
  * Following is definition of object attributes
  */
-struct object_t {
+struct Object {
 	uint16     _nounIndex;                           // String identifying object
 	uint16     _dataIndex;                           // String describing the object
-	uint16     *_stateDataIndex;                     // Added by Strangerke to handle the LOOK_S state-dependant descriptions
-	path_t     _pathType;                            // Describe path object follows
+	uint16    *_stateDataIndex;                      // Added by Strangerke to handle the LOOK_S state-dependant descriptions
+	Path       _pathType;                            // Describe path object follows
 	int        _vxPath, _vyPath;                     // Delta velocities (e.g. for CHASE)
 	uint16     _actIndex;                            // Action list to do on collision with hero
 	byte       _seqNumb;                             // Number of sequences in list
-	seq_t     *_currImagePtr;                        // Sequence image currently in use
-	seqList_t  _seqList[kMaxSeqNumb];                // Array of sequence structure ptrs and lengths
-	cycle_t    _cycling;                             // Whether cycling, forward or backward
+	Seq       *_currImagePtr;                        // Sequence image currently in use
+	SeqList    _seqList[kMaxSeqNumb];                // Array of sequence structure ptrs and lengths
+	Cycle      _cycling;                             // Whether cycling, forward or backward
 	byte       _cycleNumb;                           // No. of times to cycle
 	byte       _frameInterval;                       // Interval (in ticks) between frames
 	byte       _frameTimer;                          // Decrementing timer for above

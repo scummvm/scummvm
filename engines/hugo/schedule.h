@@ -37,7 +37,7 @@ namespace Hugo {
 /**
  * Following defines the action types and action list
  */
-enum action_t {                                     // Parameters:
+enum Action {                                       // Parameters:
 	ANULL              = 0xff,                      // Special NOP used to 'delete' events in DEL_EVENTS
 	ASCHEDULE          = 0,                         //  0 - Ptr to action list to be rescheduled
 	START_OBJ,                                      //  1 - Object number
@@ -56,7 +56,7 @@ enum action_t {                                     // Parameters:
 	SWAP_IMAGES,                                    // 13 - Swap 2 object images
 	COND_SCR,                                       // 14 - Conditional on current screen
 	AUTOPILOT,                                      // 15 - Set object to home in on another (stationary) object
-	INIT_OBJ_SEQ,                                   // 16 - Object number, sequence index to set curr_seq_p to
+	INIT_OBJ_SEQ,                                   // 16 - Object number, sequence index to set curr_seqPtr to
 	SET_STATE_BITS,                                 // 17 - Objnum, mask to OR with obj states word
 	CLEAR_STATE_BITS,                               // 18 - Objnum, mask to ~AND with obj states word
 	TEST_STATE_BITS,                                // 19 - Objnum, mask to test obj states word
@@ -88,33 +88,33 @@ enum action_t {                                     // Parameters:
 	COND_ROUTE,                                     // 45 - Conditional on route in progress
 	INIT_JUMPEXIT,                                  // 46 - Initialize status.jumpexit
 	INIT_VIEW,                                      // 47 - Initialize viewx, viewy, dir
-	INIT_OBJ_FRAME,                                 // 48 - Object number, seq,frame to set curr_seq_p to
+	INIT_OBJ_FRAME,                                 // 48 - Object number, seq,frame to set curr_seqPtr to
 	OLD_SONG           = 49                         // Added by Strangerke - Set currently playing sound, old way: that is, using a string index instead of a reference in a file
 };
 
 struct act0 {                                       // Type 0 - Schedule
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	uint16   _actIndex;                             // Ptr to an action list
 };
 
 struct act1 {                                       // Type 1 - Start an object
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _cycleNumb;                            // Number of times to cycle
-	cycle_t  _cycle;                                // Direction to start cycling
+	Cycle    _cycle;                                // Direction to start cycling
 };
 
 struct act2 {                                       // Type 2 - Initialize an object coords
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _x, _y;                                // Coordinates
 };
 
 struct act3 {                                       // Type 3 - Prompt user for text
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	uint16   _promptIndex;                          // Index of prompt string
 	int     *_responsePtr;                          // Array of indexes to valid response string(s) (terminate list with -1)
@@ -124,54 +124,54 @@ struct act3 {                                       // Type 3 - Prompt user for 
 };
 
 struct act4 {                                       // Type 4 - Set new background color
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	long     _newBackgroundColor;                   // New color
 };
 
 struct act5 {                                       // Type 5 - Initialize an object velocity
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _vx, _vy;                              // velocity
 };
 
 struct act6 {                                       // Type 6 - Initialize an object carrying
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	bool     _carriedFl;                            // carrying
 };
 
 struct act7 {                                       // Type 7 - Initialize an object to hero's coords
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 };
 
 struct act8 {                                       // Type 8 - switch to new screen
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _screenIndex;                          // The new screen number
 };
 
 struct act9 {                                       // Type 9 - Initialize an object state
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	byte     _newState;                             // New state
 };
 
 struct act10 {                                      // Type 10 - Initialize an object path type
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _newPathType;                          // New path type
-	int8     _vxPath, _vyPath;                       // Max delta velocities e.g. for CHASE
+	int8     _vxPath, _vyPath;                      // Max delta velocities e.g. for CHASE
 };
 
 struct act11 {                                      // Type 11 - Conditional on object's state
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	byte     _stateReq;                             // Required state
@@ -180,20 +180,20 @@ struct act11 {                                      // Type 11 - Conditional on 
 };
 
 struct act12 {                                      // Type 12 - Simple text box
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _stringIndex;                          // Index (enum) of string in strings.dat
 };
 
 struct act13 {                                      // Type 13 - Swap first object image with second
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex1;                            // Index of first object
 	int      _objIndex2;                            // 2nd
 };
 
 struct act14 {                                      // Type 14 - Conditional on current screen
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The required object
 	int      _screenReq;                            // The required screen number
@@ -202,7 +202,7 @@ struct act14 {                                      // Type 14 - Conditional on 
 };
 
 struct act15 {                                      // Type 15 - Home in on an object
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex1;                            // The object number homing in
 	int      _objIndex2;                            // The object number to home in on
@@ -211,29 +211,29 @@ struct act15 {                                      // Type 15 - Home in on an o
 
 // Note: Don't set a sequence at time 0 of a new screen, it causes
 // problems clearing the boundary bits of the object!  timer > 0 is safe
-struct act16 {                                      // Type 16 - Set curr_seq_p to seq
-	action_t _actType;                              // The type of action
+struct act16 {                                      // Type 16 - Set curr_seqPtr to seq
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _seqIndex;                             // The index of seq array to set to
 };
 
 struct act17 {                                      // Type 17 - SET obj individual state bits
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _stateMask;                            // The mask to OR with current obj state
 };
 
 struct act18 {                                      // Type 18 - CLEAR obj individual state bits
-	action_t _actType;                              // The type of action
+	Action _actType;                                // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _stateMask;                            // The mask to ~AND with current obj state
 };
 
 struct act19 {                                      // Type 19 - TEST obj individual state bits
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _stateMask;                            // The mask to AND with current obj state
@@ -242,35 +242,35 @@ struct act19 {                                      // Type 19 - TEST obj indivi
 };
 
 struct act20 {                                      // Type 20 - Remove all events with this type of action
-	action_t _actType;                              // The type of action
-	int      _timer;                                // Time to set off the action
-	action_t _actTypeDel;                           // The action type to remove
+	Action _actType;                                // The type of action
+	int    _timer;                                  // Time to set off the action
+	Action _actTypeDel;                             // The action type to remove
 };
 
 struct act21 {                                      // Type 21 - Gameover.  Disable hero & commands
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 };
 
 struct act22 {                                      // Type 22 - Initialize an object to hero's coords
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 };
 
 struct act23 {                                      // Type 23 - Exit game back to DOS
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 };
 
 struct act24 {                                      // Type 24 - Get bonus score
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _pointIndex;                           // Index into points array
 };
 
 struct act25 {                                      // Type 25 - Conditional on bounding box
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The required object number
 	int      _x1, _y1, _x2, _y2;                    // The bounding box
@@ -279,25 +279,25 @@ struct act25 {                                      // Type 25 - Conditional on 
 };
 
 struct act26 {                                      // Type 26 - Play a sound
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int16    _soundIndex;                           // Sound index in data file
 };
 
 struct act27 {                                      // Type 27 - Add object's value to score
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // object number
 };
 
 struct act28 {                                      // Type 28 - Subtract object's value from score
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // object number
 };
 
 struct act29 {                                      // Type 29 - Conditional on object carried
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The required object number
 	uint16   _actPassIndex;                         // Ptr to action list if success
@@ -305,7 +305,7 @@ struct act29 {                                      // Type 29 - Conditional on 
 };
 
 struct act30 {                                      // Type 30 - Start special maze processing
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	byte     _mazeSize;                             // Size of (square) maze
 	int      _x1, _y1, _x2, _y2;                    // Bounding box of maze
@@ -314,39 +314,39 @@ struct act30 {                                      // Type 30 - Start special m
 };
 
 struct act31 {                                      // Type 31 - Exit special maze processing
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 };
 
 struct act32 {                                      // Type 32 - Init fbg field of object
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	byte     _priority;                             // Value of foreground/background field
 };
 
 struct act33 {                                      // Type 33 - Init screen field of object
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _screenIndex;                          // Screen number
 };
 
 struct act34 {                                      // Type 34 - Global Schedule
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	uint16   _actIndex;                             // Ptr to an action list
 };
 
 struct act35 {                                      // Type 35 - Remappe palette
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int16    _oldColorIndex;                        // Old color index, 0..15
 	int16    _newColorIndex;                        // New color index, 0..15
 };
 
 struct act36 {                                      // Type 36 - Conditional on noun mentioned
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	uint16   _nounIndex;                            // The required noun (list)
 	uint16   _actPassIndex;                         // Ptr to action list if success
@@ -354,14 +354,14 @@ struct act36 {                                      // Type 36 - Conditional on 
 };
 
 struct act37 {                                      // Type 37 - Set new screen state
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _screenIndex;                          // The screen number
 	byte     _newState;                             // The new state
 };
 
 struct act38 {                                      // Type 38 - Position lips
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _lipsObjIndex;                         // The LIPS object
 	int      _objIndex;                             // The object to speak
@@ -370,19 +370,19 @@ struct act38 {                                      // Type 38 - Position lips
 };
 
 struct act39 {                                      // Type 39 - Init story mode
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	bool     _storyModeFl;                          // New state of story_mode flag
 };
 
 struct act40 {                                      // Type 40 - Unsolicited text box
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _stringIndex;                          // Index (enum) of string in strings.dat
 };
 
 struct act41 {                                      // Type 41 - Conditional on bonus scored
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _bonusIndex;                           // Index into bonus list
 	uint16   _actPassIndex;                         // Index of the action list if scored for the first time
@@ -390,13 +390,13 @@ struct act41 {                                      // Type 41 - Conditional on 
 };
 
 struct act42 {                                      // Type 42 - Text box with "take" string
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object taken
 };
 
 struct act43 {                                      // Type 43 - Prompt user for Yes or No
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _promptIndex;                          // index of prompt string
 	uint16   _actYesIndex;                          // Ptr to action list if YES
@@ -404,12 +404,12 @@ struct act43 {                                      // Type 43 - Prompt user for
 };
 
 struct act44 {                                      // Type 44 - Stop any route in progress
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 };
 
 struct act45 {                                      // Type 45 - Conditional on route in progress
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _routeIndex;                           // Must be >= current status.rindex
 	uint16   _actPassIndex;                         // Ptr to action list if en-route
@@ -417,13 +417,13 @@ struct act45 {                                      // Type 45 - Conditional on 
 };
 
 struct act46 {                                      // Type 46 - Init status.jumpexit
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	bool     _jumpExitFl;                           // New state of jumpexit flag
 };
 
 struct act47 {                                      // Type 47 - Init viewx,viewy,dir
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object
 	int16    _viewx;                                // object.viewx
@@ -431,8 +431,8 @@ struct act47 {                                      // Type 47 - Init viewx,view
 	int16    _direction;                            // object.dir
 };
 
-struct act48 {                                      // Type 48 - Set curr_seq_p to frame n
-	action_t _actType;                              // The type of action
+struct act48 {                                      // Type 48 - Set curr_seqPtr to frame n
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	int      _objIndex;                             // The object number
 	int      _seqIndex;                             // The index of seq array to set to
@@ -440,12 +440,12 @@ struct act48 {                                      // Type 48 - Set curr_seq_p 
 };
 
 struct act49 {                                      // Added by Strangerke - Type 49 - Play a song (DOS way)
-	action_t _actType;                              // The type of action
+	Action   _actType;                              // The type of action
 	int      _timer;                                // Time to set off the action
 	uint16   _songIndex;                            // Song index in string array
 };
 
-union act {
+union Act {
 	act0     _a0;
 	act1     _a1;
 	act2     _a2;
@@ -498,18 +498,18 @@ union act {
 	act49    _a49;
 };
 
-struct event_t {
-	act            *_action;                        // Ptr to action to perform
-	bool            _localActionFl;                 // true if action is only for this screen
-	uint32          _time;                          // (absolute) time to perform action
-	struct event_t *_prevEvent;                     // Chain to previous event
-	struct event_t *_nextEvent;                     // Chain to next event
+struct Event {
+	Act           *_action;                         // Ptr to action to perform
+	bool           _localActionFl;                  // true if action is only for this screen
+	uint32         _time;                           // (absolute) time to perform action
+	struct Event  *_prevEvent;                      // Chain to previous event
+	struct Event  *_nextEvent;                      // Chain to next event
 };
 
 /**
  * Following are points for achieving certain actions.
  */
-struct point_t {
+struct Point {
 	byte _score;                                    // The value of the point
 	bool _scoredFl;                                 // Whether scored yet
 };
@@ -554,36 +554,36 @@ protected:
 	uint16 **_screenActs;
 
 	byte     _numBonuses;
-	point_t *_points;
+	Point   *_points;
 
 	uint32 _curTick;                                // Current system time in ticks
 	uint32 _oldTime;                                // The previous wall time in ticks
 	uint32 _refreshTimeout;
 
-	event_t *_freeEvent;                            // Free list of event structures
-	event_t *_headEvent;                            // Head of list (earliest time)
-	event_t *_tailEvent;                            // Tail of list (latest time)
-	event_t  _events[kMaxEvents];                   // Statically declare event structures
+	Event *_freeEvent;                            // Free list of event structures
+	Event *_headEvent;                            // Head of list (earliest time)
+	Event *_tailEvent;                            // Tail of list (latest time)
+	Event  _events[kMaxEvents];                   // Statically declare event structures
 
-	act    **_actListArr;
+	Act    **_actListArr;
 
 	virtual const char *getCypher() const = 0;
 
 	virtual uint32 getTicks() = 0;
 
-	virtual void promptAction(act *action) = 0;
+	virtual void promptAction(Act *action) = 0;
 
-	event_t *doAction(event_t *curEvent);
-	event_t *getQueue();
+	Event *doAction(Event *curEvent);
+	Event *getQueue();
 
 	uint32 getDosTicks(const bool updateFl);
 	uint32 getWinTicks() const;
 
-	void delEventType(const action_t actTypeDel);
-	void delQueue(event_t *curEvent);
-	void findAction(const act* action, int16* index, int16* subElem);
-	void insertAction(act *action);
-	void readAct(Common::ReadStream &in, act &curAct);
+	void delEventType(const Action actTypeDel);
+	void delQueue(Event *curEvent);
+	void findAction(const Act* action, int16* index, int16* subElem);
+	void insertAction(Act *action);
+	void readAct(Common::ReadStream &in, Act &curAct);
 	void restoreActions(Common::ReadStream *f);
 	void restoreEvents(Common::ReadStream *f);
 	void restorePoints(Common::ReadStream *in);
@@ -605,7 +605,7 @@ public:
 protected:
 	virtual const char *getCypher() const;
 	virtual uint32 getTicks();
-	virtual void promptAction(act *action);
+	virtual void promptAction(Act *action);
 };
 
 class Scheduler_v2d : public Scheduler_v1d {
@@ -618,7 +618,7 @@ public:
 protected:
 	virtual const char *getCypher() const;
 
-	void promptAction(act *action);
+	void promptAction(Act *action);
 };
 
 class Scheduler_v3d : public Scheduler_v2d {

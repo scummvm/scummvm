@@ -99,7 +99,7 @@ void Parser::loadCmdList(Common::ReadStream &in) {
 }
 
 
-void Parser::readBG(Common::ReadStream &in, background_t &curBG) {
+void Parser::readBG(Common::ReadStream &in, Background &curBG) {
 	curBG._verbIndex = in.readUint16BE();
 	curBG._nounIndex = in.readUint16BE();
 	curBG._commentIndex = in.readSint16BE();
@@ -112,7 +112,7 @@ void Parser::readBG(Common::ReadStream &in, background_t &curBG) {
  * Read _backgrounObjects from Hugo.dat
  */
 void Parser::loadBackgroundObjects(Common::ReadStream &in) {
-	background_t tmpBG;
+	Background tmpBG;
 	memset(&tmpBG, 0, sizeof(tmpBG));
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
@@ -120,13 +120,13 @@ void Parser::loadBackgroundObjects(Common::ReadStream &in) {
 
 		if (varnt == _vm->_gameVariant) {
 			_backgroundObjectsSize = numElem;
-			_backgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
+			_backgroundObjects = (Background **)malloc(sizeof(Background *) * numElem);
 		}
 
 		for (int i = 0; i < numElem; i++) {
 			uint16 numSubElem = in.readUint16BE();
 			if (varnt == _vm->_gameVariant)
-				_backgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
+				_backgroundObjects[i] = (Background *)malloc(sizeof(Background) * numSubElem);
 
 			for (int j = 0; j < numSubElem; j++)
 				readBG(in, (varnt == _vm->_gameVariant) ? _backgroundObjects[i][j] : tmpBG);
@@ -138,15 +138,15 @@ void Parser::loadBackgroundObjects(Common::ReadStream &in) {
  * Read _catchallList from Hugo.dat
  */
 void Parser::loadCatchallList(Common::ReadStream &in) {
-	background_t *wrkCatchallList = 0;
-	background_t tmpBG;
+	Background *wrkCatchallList = 0;
+	Background tmpBG;
 	memset(&tmpBG, 0, sizeof(tmpBG));
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 
 		if (varnt == _vm->_gameVariant)
-			_catchallList = wrkCatchallList = (background_t *)malloc(sizeof(background_t) * numElem);
+			_catchallList = wrkCatchallList = (Background *)malloc(sizeof(Background) * numElem);
 
 		for (int i = 0; i < numElem; i++)
 			readBG(in, (varnt == _vm->_gameVariant) ? wrkCatchallList[i] : tmpBG);
@@ -164,7 +164,7 @@ void Parser::loadArrayReqs(Common::SeekableReadStream &in) {
 const char *Parser::useBG(const char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
-	objectList_t p = _backgroundObjects[*_vm->_screen_p];
+	ObjectList p = _backgroundObjects[*_vm->_screen_p];
 	for (int i = 0; p[i]._verbIndex != 0; i++) {
 		if ((name == _vm->_text->getNoun(p[i]._nounIndex, 0) &&
 		     p[i]._verbIndex != _vm->_look) &&
@@ -208,7 +208,7 @@ void Parser::switchTurbo() {
 void Parser::charHandler() {
 	debugC(4, kDebugParser, "charHandler");
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	// Check for one or more characters in ring buffer
 	while (_getIndex != _putIndex) {
@@ -268,7 +268,7 @@ void Parser::charHandler() {
 void Parser::keyHandler(Common::Event event) {
 	debugC(1, kDebugParser, "keyHandler(%d)", event.kbd.keycode);
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 	uint16 nChar = event.kbd.keycode;
 
 	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_SCRL))

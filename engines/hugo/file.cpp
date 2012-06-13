@@ -91,8 +91,8 @@ const char *FileManager::getUifFilename() const {
  * Convert 4 planes (RGBI) data to 8-bit DIB format
  * Return original plane data ptr
  */
-byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const {
-	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, image_pt data_p)", y, bpl);
+byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, ImagePtr dataPtr) const {
+	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, ImagePtr data_p)", y, bpl);
 
 	dataPtr += y * bpl * 8;                         // Point to correct DIB line
 	for (int16 r = 0, g = bpl, b = g + bpl, i = b + bpl; r < bpl; r++, g++, b++, i++) { // Each byte in all planes
@@ -107,11 +107,11 @@ byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_p
 }
 
 /**
- * Read a pcx file of length len.  Use supplied seq_p and image_p or
- * allocate space if NULL.  Name used for errors.  Returns address of seq_p
+ * Read a pcx file of length len.  Use supplied seqPtr and image_p or
+ * allocate space if NULL.  Name used for errors.  Returns address of seqPtr
  * Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
  */
-seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
+Seq *FileManager::readPCX(Common::ReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Read in the PCC header and check consistency
@@ -134,9 +134,9 @@ seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr
 	if (_PCCHeader._mfctr != 10)
 		error("Bad data file format: %s", name);
 
-	// Allocate memory for seq_t if 0
+	// Allocate memory for Seq if 0
 	if (seqPtr == 0) {
-		if ((seqPtr = (seq_t *)malloc(sizeof(seq_t))) == 0)
+		if ((seqPtr = (Seq *)malloc(sizeof(Seq))) == 0)
 			error("Insufficient memory to run game.");
 	}
 
@@ -182,8 +182,8 @@ seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr
 /**
  * Read object file of PCC images into object supplied
  */
-void FileManager::readImage(const int objNum, object_t *objPtr) {
-	debugC(1, kDebugFile, "readImage(%d, object_t *objPtr)", objNum);
+void FileManager::readImage(const int objNum, Object *objPtr) {
+	debugC(1, kDebugFile, "readImage(%d, Object *objPtr)", objNum);
 
 	/**
 	 * Structure of object file lookup entry
@@ -215,7 +215,7 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 	}
 
 	bool  firstImgFl = true;                        // Initializes pcx read function
-	seq_t *seqPtr = 0;                              // Ptr to sequence structure
+	Seq *seqPtr = 0;                              // Ptr to sequence structure
 
 	// Now read the images into an images list
 	for (int j = 0; j < objPtr->_seqNumb; j++) {     // for each sequence
@@ -239,7 +239,7 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 			seqPtr->_y1 = seqPtr->_lines;
 			seqPtr->_y2 = 0;
 
-			image_pt dibPtr = seqPtr->_imagePtr;
+			ImagePtr dibPtr = seqPtr->_imagePtr;
 			for (int y = 0; y < seqPtr->_lines; y++, dibPtr += seqPtr->_bytesPerLine8 - x2) {
 				for (int x = 0; x < x2; x++) {
 					if (*dibPtr++) {                // Some data found
@@ -382,7 +382,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 
 	_vm->_object->saveObjects(out);
 
-	const status_t &gameStatus = _vm->getGameStatus();
+	const Status &gameStatus = _vm->getGameStatus();
 
 	// Save whether hero image is swapped
 	out->writeByte(_vm->_heroImage);
@@ -486,7 +486,7 @@ bool FileManager::restoreGame(const int16 slot) {
 		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage);
 	_vm->_heroImage = heroImg;
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	int score = in->readSint16BE();
 	_vm->setScore(score);
@@ -514,7 +514,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->_maze._firstScreenIndex = in->readByte();
 
 	_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-	if ((_vm->getGameStatus()._viewState = (vstate_t) in->readByte()) != kViewPlay)
+	if ((_vm->getGameStatus()._viewState = (Vstate) in->readByte()) != kViewPlay)
 		_vm->_screen->hideCursor();
 
 
@@ -624,8 +624,8 @@ void FileManager::readBootFile() {
  * This file contains, between others, the bitmaps of the fonts used in the application
  * UIF means User interface database (Windows Only)
  */
-uif_hdr_t *FileManager::get_UIFHeader(const uif_t id) {
-	debugC(1, kDebugFile, "get_UIFHeader(%d)", id);
+UifHdr *FileManager::getUIFHeader(const Uif id) {
+	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
 
 	// Initialize offset lookup if not read yet
 	if (_firstUIFFl) {
@@ -660,11 +660,11 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 		error("File not found: %s", getUifFilename());
 
 	// Seek to data
-	uif_hdr_t *_UIFHeaderPtr = get_UIFHeader((uif_t)id);
+	UifHdr *_UIFHeaderPtr = getUIFHeader((Uif)id);
 	ip.seek(_UIFHeaderPtr->_offset, SEEK_SET);
 
 	// We support pcx images and straight data
-	seq_t *dummySeq;                                // Dummy seq_t for image data
+	Seq *dummySeq;                                // Dummy Seq for image data
 	switch (id) {
 	case UIF_IMAGES:                                // Read uif images file
 		dummySeq = readPCX(ip, 0, buf, true, getUifFilename());

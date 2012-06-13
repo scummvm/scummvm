@@ -105,23 +105,23 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 Screen::~Screen() {
 }
 
-icondib_t &Screen::getIconBuffer() {
+Icondib &Screen::getIconBuffer() {
 	return _iconBuffer;
 }
 
-viewdib_t &Screen::getBackBuffer() {
+Viewdib &Screen::getBackBuffer() {
 	return _backBuffer;
 }
 
-viewdib_t &Screen::getBackBufferBackup() {
+Viewdib &Screen::getBackBufferBackup() {
 	return _backBufferBackup;
 }
 
-viewdib_t &Screen::getFrontBuffer() {
+Viewdib &Screen::getFrontBuffer() {
 	return _frontBuffer;
 }
 
-viewdib_t &Screen::getGUIBuffer() {
+Viewdib &Screen::getGUIBuffer() {
 	return _GUIBuffer;
 }
 
@@ -149,7 +149,7 @@ void Screen::initDisplay() {
 /**
  * Move an image from source to destination
  */
-void Screen::moveImage(image_pt srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, image_pt dstImage, const int16 x2, const int16 y2, const int16 width2) {
+void Screen::moveImage(ImagePtr srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, ImagePtr dstImage, const int16 x2, const int16 y2, const int16 width2) {
 	debugC(3, kDebugDisplay, "moveImage(srcImage, %d, %d, %d, %d, %d, dstImage, %d, %d, %d)", x1, y1, dx, dy, width1, x2, y2, width2);
 
 	int16 wrap_src = width1 - dx;                   // Wrap to next src row
@@ -236,14 +236,14 @@ void Screen::setBackgroundColor(const uint16 color) {
  * Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
  * If fore TRUE, force object above any overlay
  */
-void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool foreFl) {
+void Screen::displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) {
 	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
 
-	image_pt image = seq->_imagePtr;                 // Ptr to object image data
-	image_pt subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
+	ImagePtr image = seq->_imagePtr;                 // Ptr to object image data
+	ImagePtr subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
 	int16 frontBufferwrap = kXPix - seq->_x2 - 1;     // Wraps dest_p after each line
 	int16 imageWrap = seq->_bytesPerLine8 - seq->_x2 - 1;
-	overlayState_t overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
+	OverlayState overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
 	for (uint16 y = 0; y < seq->_lines; y++) {       // Each line in object
 		for (uint16 x = 0; x <= seq->_x2; x++) {
 			if (*image) {                           // Non-transparent
@@ -271,7 +271,7 @@ void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool for
 /**
  * Merge rectangles A,B leaving result in B
  */
-void Screen::merge(const rect_t *rectA, rect_t *rectB) {
+void Screen::merge(const Rect *rectA, Rect *rectB) {
 	debugC(6, kDebugDisplay, "merge()");
 
 	int16 xa = rectA->_x + rectA->_dx;               // Find x2,y2 for each rectangle
@@ -291,7 +291,7 @@ void Screen::merge(const rect_t *rectA, rect_t *rectB) {
  * of blist.  bmax is the max size of the blist.  Note that blist can
  * have holes, in which case dx = 0.  Returns used length of blist.
  */
-int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 blen) {
+int16 Screen::mergeLists(Rect *list, Rect *blist, const int16 len, int16 blen) {
 	debugC(4, kDebugDisplay, "mergeLists()");
 
 	int16   coalesce[kBlitListSize];                // List of overlapping rects
@@ -299,7 +299,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
 	for (int16 a = 0; a < len; a++, list++) {
 		// Compile list of overlapping rectangles in blit list
 		int16 c = 0;
-		rect_t *bp = blist;
+		Rect *bp = blist;
 		for (int16 b = 0; b < blen; b++, bp++) {
 			if (bp->_dx)                            // blist entry used
 				if (isOverlapping(list, bp))
@@ -316,7 +316,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
 
 			// Merge any more blist entries
 			while (--c) {
-				rect_t *cp = &blist[coalesce[c]];
+				Rect *cp = &blist[coalesce[c]];
 				merge(cp, bp);
 				cp->_dx = 0;                         // Delete entry
 			}
@@ -329,12 +329,12 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
  * Process the display list
  * Trailing args are int16 x,y,dx,dy for the D_ADD operation
  */
-void Screen::displayList(dupdate_t update, ...) {
+void Screen::displayList(Dupdate update, ...) {
 	debugC(6, kDebugDisplay, "displayList()");
 
 	int16         blitLength = 0;                   // Length of blit list
 	va_list       marker;                           // Args used for D_ADD operation
-	rect_t       *p;                                // Ptr to dlist entry
+	Rect       *p;                                // Ptr to dlist entry
 
 	switch (update) {
 	case kDisplayInit:                              // Init lists, restore whole screen
@@ -627,18 +627,18 @@ void Screen::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
-bool Screen::isInX(const int16 x, const rect_t *rect) const {
+bool Screen::isInX(const int16 x, const Rect *rect) const {
 	return (x >= rect->_x) && (x <= rect->_x + rect->_dx);
 }
 
-bool Screen::isInY(const int16 y, const rect_t *rect) const {
+bool Screen::isInY(const int16 y, const Rect *rect) const {
 	return (y >= rect->_y) && (y <= rect->_y + rect->_dy);
 }
 
 /**
  * Check if two rectangles are overlapping
  */
-bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
+bool Screen::isOverlapping(const Rect *rectA, const Rect *rectB) const {
 	return (isInX(rectA->_x, rectB) || isInX(rectA->_x + rectA->_dx, rectB) || isInX(rectB->_x, rectA) || isInX(rectB->_x + rectB->_dx, rectA)) &&
 		   (isInY(rectA->_y, rectB) || isInY(rectA->_y + rectA->_dy, rectB) || isInY(rectB->_y, rectA) || isInY(rectB->_y + rectB->_dy, rectA));
 }
@@ -656,7 +656,7 @@ void Screen::drawBoundaries() {
 	_vm->_mouse->drawHotspots();
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
-		object_t *obj = &_vm->_object->_objects[i]; // Get pointer to object
+		Object *obj = &_vm->_object->_objects[i]; // Get pointer to object
 		if (obj->_screenIndex == *_vm->_screen_p) {
 			if ((obj->_currImagePtr != 0) && (obj->_cycling != kCycleInvisible))
 				drawRectangle(false, obj->_x + obj->_currImagePtr->_x1, obj->_y + obj->_currImagePtr->_y1,
@@ -730,12 +730,12 @@ void Screen_v1d::loadFontArr(Common::ReadStream &in) {
  * processed object by looking down the current column for an overlay
  * base byte set (in which case the object is foreground).
  */
-overlayState_t Screen_v1d::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
+OverlayState Screen_v1d::findOvl(Seq *seqPtr, ImagePtr dst_p, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
 	uint16 index = (uint16)(dst_p - _frontBuffer) >> 3;
 
-	for (int i = 0; i < seq_p->_lines-y; i++) {      // Each line in object
+	for (int i = 0; i < seqPtr->_lines-y; i++) {      // Each line in object
 		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back.
 			return kOvlForeground;
 		index += kCompLineSize;
@@ -799,10 +799,10 @@ void Screen_v1w::loadFontArr(Common::ReadStream &in) {
  * processed object by looking down the current column for an overlay
  * base bit set (in which case the object is foreground).
  */
-overlayState_t Screen_v1w::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
+OverlayState Screen_v1w::findOvl(Seq *seqPtr, ImagePtr dst_p, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
-	for (; y < seq_p->_lines; y++) {                 // Each line in object
+	for (; y < seqPtr->_lines; y++) {                 // Each line in object
 		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
 		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
 			return kOvlForeground;                  // Found a bit - must be foreground
