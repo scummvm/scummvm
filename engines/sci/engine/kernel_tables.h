@@ -245,6 +245,18 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+static const SciKernelMapSubEntry kSave_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r)",         NULL },
+	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
+	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r*)",                 NULL },
+	{ SIG_SCI32,           3, MAP_CALL(CheckSaveGame),             ".*",                   NULL },
+	// Subop 4 hasn't been encountered yet
+	{ SIG_SCI32,           5, MAP_CALL(GetSaveFiles),              "rrr",                  NULL },
+	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
+	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
+	{ SIG_SCI32,           8, MAP_CALL(AutoSave),                  "[o0]",                 NULL },
+};
+
 #ifdef ENABLE_SCI32
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
@@ -555,7 +567,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
 	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
 	{ MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },

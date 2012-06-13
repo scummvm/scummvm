@@ -946,35 +946,21 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	return argv[0];
 }
 
-reg_t kSave(EngineState *s, int argc, reg_t *argv) {
-	switch (argv[0].toUint16()) {
-	case 0:
-		return kSaveGame(s, argc - 1,argv + 1);
-	case 1:
-		return kRestoreGame(s, argc - 1,argv + 1);
-	case 2:
-		return kGetSaveDir(s, argc - 1, argv + 1);
-	case 3:
-		return kCheckSaveGame(s, argc - 1, argv + 1);
-	case 5:
-		return kGetSaveFiles(s, argc - 1, argv + 1);
-	case 6:
-		return kMakeSaveCatName(s, argc - 1, argv + 1);
-	case 7:
-		return kMakeSaveFileName(s, argc - 1, argv + 1);
-	case 8:
-		// TODO
-		// This is a timer callback, with 1 parameter: the timer object
-		// (e.g. "timers").
-		// It's used for auto-saving (i.e. save every X minutes, by checking
-		// the elapsed time from the timer object)
+reg_t kAutoSave(EngineState *s, int argc, reg_t *argv) {
+	// TODO
+	// This is a timer callback, with 1 parameter: the timer object
+	// (e.g. "timers").
+	// It's used for auto-saving (i.e. save every X minutes, by checking
+	// the elapsed time from the timer object)
 
-		// This function has to return something other than 0 to proceed
-		return s->r_acc;
-	default:
-		kStub(s, argc, argv);
-		return NULL_REG;
-	}
+	// This function has to return something other than 0 to proceed
+	return s->r_acc;
+}
+
+reg_t kSave(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
 }
 
 #endif
