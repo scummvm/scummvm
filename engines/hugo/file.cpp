@@ -54,7 +54,7 @@ static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
 
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
 	_hasReadHeader = false;
-	firstUIFFl = true;
+	_firstUIFFl = true;
 }
 
 FileManager::~FileManager() {
@@ -624,28 +624,28 @@ void FileManager::readBootFile() {
  * This file contains, between others, the bitmaps of the fonts used in the application
  * UIF means User interface database (Windows Only)
  */
-uif_hdr_t *FileManager::getUIFHeader(const uif_t id) {
-	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
+uif_hdr_t *FileManager::get_UIFHeader(const uif_t id) {
+	debugC(1, kDebugFile, "get_UIFHeader(%d)", id);
 
 	// Initialize offset lookup if not read yet
-	if (firstUIFFl) {
-		firstUIFFl = false;
+	if (_firstUIFFl) {
+		_firstUIFFl = false;
 		// Open unbuffered to do far read
 		Common::File ip;                            // Image data file
 		if (!ip.open(getUifFilename()))
 			error("File not found: %s", getUifFilename());
 
-		if (ip.size() < (int32)sizeof(UIFHeader))
+		if (ip.size() < (int32)sizeof(_UIFHeader))
 			error("Wrong UIF file format");
 
 		for (int i = 0; i < kMaxUifs; ++i) {
-			UIFHeader[i]._size = ip.readUint16LE();
-			UIFHeader[i]._offset = ip.readUint32LE();
+			_UIFHeader[i]._size = ip.readUint16LE();
+			_UIFHeader[i]._offset = ip.readUint32LE();
 		}
 
 		ip.close();
 	}
-	return &UIFHeader[id];
+	return &_UIFHeader[id];
 }
 
 /**
@@ -660,8 +660,8 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 		error("File not found: %s", getUifFilename());
 
 	// Seek to data
-	uif_hdr_t *UIFHeaderPtr = getUIFHeader((uif_t)id);
-	ip.seek(UIFHeaderPtr->_offset, SEEK_SET);
+	uif_hdr_t *_UIFHeaderPtr = get_UIFHeader((uif_t)id);
+	ip.seek(_UIFHeaderPtr->_offset, SEEK_SET);
 
 	// We support pcx images and straight data
 	seq_t *dummySeq;                                // Dummy seq_t for image data
@@ -671,7 +671,7 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 		free(dummySeq);
 		break;
 	default:                                        // Read file data into supplied array
-		if (ip.read(buf, UIFHeaderPtr->_size) != UIFHeaderPtr->_size)
+		if (ip.read(buf, _UIFHeaderPtr->_size) != _UIFHeaderPtr->_size)
 			error("Wrong UIF file format");
 		break;
 	}

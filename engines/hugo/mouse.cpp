@@ -98,11 +98,11 @@ int MouseHandler::getMouseY() const {
 }
 
 int16 MouseHandler::getDirection(const int16 hotspotId) const {
-	return _hotspots[hotspotId].direction;
+	return _hotspots[hotspotId]._direction;
 }
 
 int16 MouseHandler::getHotspotActIndex(const int16 hotspotId) const {
-	return _hotspots[hotspotId].actIndex;
+	return _hotspots[hotspotId]._actIndex;
 }
 
 /**
@@ -137,9 +137,9 @@ void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy
 int16 MouseHandler::findExit(const int16 cx, const int16 cy, byte screenId) {
 	debugC(2, kDebugMouse, "findExit(%d, %d, %d)", cx, cy, screenId);
 
-	for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
-		if (_hotspots[i].screenIndex == screenId) {
-			if (cx >= _hotspots[i].x1 && cx <= _hotspots[i].x2 && cy >= _hotspots[i].y1 && cy <= _hotspots[i].y2)
+	for (int i = 0; _hotspots[i]._screenIndex >= 0; i++) {
+		if (_hotspots[i]._screenIndex == screenId) {
+			if (cx >= _hotspots[i]._x1 && cx <= _hotspots[i]._x2 && cy >= _hotspots[i]._y1 && cy <= _hotspots[i]._y2)
 				return i;
 		}
 	}
@@ -224,19 +224,19 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 		break;
 	case kExitHotspot:                              // Walk to exit hotspot
 		i = findExit(cx, cy, *_vm->_screen_p);
-		x = _hotspots[i].viewx;
-		y = _hotspots[i].viewy;
+		x = _hotspots[i]._viewx;
+		y = _hotspots[i]._viewy;
 		if (x >= 0) {                               // Hotspot refers to an exit
 			// Special case of immediate exit
 			if (_jumpExitFl) {
 				// Get rid of iconbar if necessary
 				if (_vm->_inventory->getInventoryState() != kInventoryOff)
 					_vm->_inventory->setInventoryState(kInventoryUp);
-				_vm->_scheduler->insertActionList(_hotspots[i].actIndex);
+				_vm->_scheduler->insertActionList(_hotspots[i]._actIndex);
 			} else {    // Set up route to exit spot
-				if (_hotspots[i].direction == Common::KEYCODE_RIGHT)
+				if (_hotspots[i]._direction == Common::KEYCODE_RIGHT)
 					x -= kHeroMaxWidth;
-				else if (_hotspots[i].direction == Common::KEYCODE_LEFT)
+				else if (_hotspots[i]._direction == Common::KEYCODE_LEFT)
 					x += kHeroMaxWidth;
 				if (!_vm->_route->startRoute(kRouteExit, i, x, y))
 					Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
@@ -328,7 +328,7 @@ void MouseHandler::mouseHandler() {
 		// Process cursor over an exit hotspot
 		if (objId == -1) {
 			int i = findExit(cx, cy, *_vm->_screen_p);
-			if (i != -1 && _hotspots[i].viewx >= 0) {
+			if (i != -1 && _hotspots[i]._viewx >= 0) {
 				objId = kExitHotspot;
 				cursorText(_vm->_text->getTextMouse(kMsExit), cx, cy, U_FONT8, _TBRIGHTWHITE);
 			}
@@ -344,15 +344,15 @@ void MouseHandler::mouseHandler() {
 }
 
 void MouseHandler::readHotspot(Common::ReadStream &in, hotspot_t &hotspot) {
-	hotspot.screenIndex = in.readSint16BE();
-	hotspot.x1 = in.readSint16BE();
-	hotspot.y1 = in.readSint16BE();
-	hotspot.x2 = in.readSint16BE();
-	hotspot.y2 = in.readSint16BE();
-	hotspot.actIndex = in.readUint16BE();
-	hotspot.viewx = in.readSint16BE();
-	hotspot.viewy = in.readSint16BE();
-	hotspot.direction = in.readSint16BE();
+	hotspot._screenIndex = in.readSint16BE();
+	hotspot._x1 = in.readSint16BE();
+	hotspot._y1 = in.readSint16BE();
+	hotspot._x2 = in.readSint16BE();
+	hotspot._y2 = in.readSint16BE();
+	hotspot._actIndex = in.readUint16BE();
+	hotspot._viewx = in.readSint16BE();
+	hotspot._viewy = in.readSint16BE();
+	hotspot._direction = in.readSint16BE();
 }
 
 /**
@@ -376,10 +376,10 @@ void MouseHandler::loadHotspots(Common::ReadStream &in) {
  * Display hotspot boundaries for the current screen
  */
 void MouseHandler::drawHotspots() const {
-	for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
+	for (int i = 0; _hotspots[i]._screenIndex >= 0; i++) {
 		hotspot_t *hotspot = &_hotspots[i];
-		if (hotspot->screenIndex == _vm->_hero->_screenIndex)
-			_vm->_screen->drawRectangle(false, hotspot->x1, hotspot->y1, hotspot->x2, hotspot->y2, _TLIGHTRED);
+		if (hotspot->_screenIndex == _vm->_hero->_screenIndex)
+			_vm->_screen->drawRectangle(false, hotspot->_x1, hotspot->_y1, hotspot->_x2, hotspot->_y2, _TLIGHTRED);
 	}
 }
 } // End of namespace Hugo

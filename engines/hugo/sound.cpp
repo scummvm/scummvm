@@ -162,16 +162,16 @@ void SoundHandler::stopMusic() {
  * Turn music on and off
  */
 void SoundHandler::toggleMusic() {
-	_vm->_config.musicFl = !_vm->_config.musicFl;
+	_vm->_config._musicFl = !_vm->_config._musicFl;
 
-	_midiPlayer->pause(!_vm->_config.musicFl);
+	_midiPlayer->pause(!_vm->_config._musicFl);
 }
 
 /**
  * Turn digitized sound on and off
  */
 void SoundHandler::toggleSound() {
-	_vm->_config.soundFl = !_vm->_config.soundFl;
+	_vm->_config._soundFl = !_vm->_config._soundFl;
 }
 
 void SoundHandler::playMIDI(sound_pt seq_p, uint16 size) {
@@ -185,7 +185,7 @@ void SoundHandler::playMusic(int16 tune) {
 	sound_pt seqPtr;                                // Sequence data from file
 	uint16 size;                                    // Size of sequence data
 
-	if (_vm->_config.musicFl) {
+	if (_vm->_config._musicFl) {
 		_vm->getGameStatus()._song = tune;
 		seqPtr = _vm->_file->getSound(tune, &size);
 		playMIDI(seqPtr, size);
@@ -203,7 +203,7 @@ void SoundHandler::playSound(int16 sound, const byte priority) {
 	uint16 size;                                    // Size of data
 
 	// Sound disabled
-	if (!_vm->_config.soundFl || !_vm->_mixer->isReady())
+	if (!_vm->_config._soundFl || !_vm->_mixer->isReady())
 		return;
 
 	syncVolume();
@@ -270,7 +270,7 @@ void SoundHandler::pcspkr_player() {
 	static const uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
 
 	// Does the user not want any sound?
-	if (!_vm->_config.soundFl || !_vm->_mixer->isReady())
+	if (!_vm->_config._soundFl || !_vm->_mixer->isReady())
 		return;
 
 	// Is there no song?

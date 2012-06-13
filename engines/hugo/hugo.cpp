@@ -562,10 +562,10 @@ void HugoEngine::initStatus() {
 void HugoEngine::initConfig() {
 	debugC(1, kDebugEngine, "initConfig()");
 
-	_config.musicFl = true;                            // Music state initially on
-	_config.soundFl = true;                            // Sound state initially on
-	_config.turboFl = false;                           // Turbo state initially off
-	initPlaylist(_config.playlist);                    // Initialize default tune playlist
+	_config._musicFl = true;                            // Music state initially on
+	_config._soundFl = true;                            // Sound state initially on
+	_config._turboFl = false;                           // Turbo state initially off
+	initPlaylist(_config._playlist);                    // Initialize default tune playlist
 	_file->readBootFile();                             // Read startup structure
 }
 
@@ -577,7 +577,7 @@ void HugoEngine::resetConfig() {
 
 	// Find first tune and play it
 	for (int16 i = 0; i < kMaxTunes; i++) {
-		if (_config.playlist[i]) {
+		if (_config._playlist[i]) {
 			_sound->playMusic(i);
 			break;
 		}
@@ -694,7 +694,7 @@ bool HugoEngine::canSaveGameStateCurrently() {
 }
 
 int8 HugoEngine::getTPS() const {
-	return ((_config.turboFl) ? kTurboTps : _normalTPS);
+	return ((_config._turboFl) ? kTurboTps : _normalTPS);
 }
 
 void HugoEngine::syncSoundSettings() {

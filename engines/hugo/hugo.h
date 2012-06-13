@@ -83,10 +83,10 @@ static const int kHeroMinWidth = 16;                // Minimum width of hero
 typedef char command_t[kMaxLineSize + 8];           // Command line (+spare for prompt,cursor)
 
 struct config_t {                                   // User's config (saved)
-	bool musicFl;                                   // State of Music button/menu item
-	bool soundFl;                                   // State of Sound button/menu item
-	bool turboFl;                                   // State of Turbo button/menu item
-	bool playlist[kMaxTunes];                       // Tune playlist
+	bool _musicFl;                                  // State of Music button/menu item
+	bool _soundFl;                                  // State of Sound button/menu item
+	bool _turboFl;                                  // State of Turbo button/menu item
+	bool _playlist[kMaxTunes];                      // Tune playlist
 };
 
 typedef byte icondib_t[kXPix * kInvDy];             // Icon bar dib
@@ -185,32 +185,16 @@ struct status_t {                                   // Game status (not saved)
 	uint32   _tick;                                  // Current time in ticks
 	vstate_t _viewState;                             // View state machine
 	int16    _song;                                  // Current song
-
-// Strangerke - Suppress as related to playback
-//	bool     playbackFl;                            // Game is in playback mode
-//	bool     recordFl;                              // Game is in record mode
-// Strangerke - Not used ?
-//	bool     helpFl;                                // Calling WinHelp (don't disable music)
-//	bool     mmtimeFl;                              // Multimedia timer supported
-//	bool     demoFl;                                // Game is in demo mode
-//	bool     textBoxFl;                             // Game is (halted) in text box
-//	int16    screenWidth;                           // Desktop screen width
-//	int16    saveSlot;                              // Current slot to save/restore game
-//	int16    cx, cy;                                // Cursor position (dib coords)
-//	uint32   saveTick;                              // Time of last save in ticks
-//
-//	typedef char fpath_t[kMaxPath];                 // File path
-//	fpath_t  path;                                  // Alternate path for saved files
 };
 
 /**
  * Structure to define an EXIT or other collision-activated hotspot
  */
 struct hotspot_t {
-	int        screenIndex;                         // Screen in which hotspot appears
-	int        x1, y1, x2, y2;                      // Bounding box of hotspot
-	uint16     actIndex;                            // Actions to carry out if a 'hit'
-	int16      viewx, viewy, direction;             // Used in auto-route mode
+	int        _screenIndex;                        // Screen in which hotspot appears
+	int        _x1, _y1, _x2, _y2;                  // Bounding box of hotspot
+	uint16     _actIndex;                           // Actions to carry out if a 'hit'
+	int16      _viewx, _viewy, _direction;          // Used in auto-route mode
 };
 
 class FileManager;

@@ -109,12 +109,12 @@ void TopMenu::reflowLayout() {
 
 	// Set the graphics to the 'on' buttons, except for the variable ones
 	_whatButton->setGfx(_arrayBmp[4 * kMenuWhat + scale - 1]);
-	_musicButton->setGfx(_arrayBmp[4 * kMenuMusic + scale - 1 + ((_vm->_config.musicFl) ? 0 : 2)]);
-	_soundFXButton->setGfx(_arrayBmp[4 * kMenuSoundFX + scale - 1 + ((_vm->_config.soundFl) ? 0 : 2)]);
+	_musicButton->setGfx(_arrayBmp[4 * kMenuMusic + scale - 1 + ((_vm->_config._musicFl) ? 0 : 2)]);
+	_soundFXButton->setGfx(_arrayBmp[4 * kMenuSoundFX + scale - 1 + ((_vm->_config._soundFl) ? 0 : 2)]);
 	_saveButton->setGfx(_arrayBmp[4 * kMenuSave + scale - 1]);
 	_loadButton->setGfx(_arrayBmp[4 * kMenuLoad + scale - 1]);
 	_recallButton->setGfx(_arrayBmp[4 * kMenuRecall + scale - 1]);
-	_turboButton->setGfx(_arrayBmp[4 * kMenuTurbo + scale - 1 + ((_vm->_config.turboFl) ? 0 : 2)]);
+	_turboButton->setGfx(_arrayBmp[4 * kMenuTurbo + scale - 1 + ((_vm->_config._turboFl) ? 0 : 2)]);
 	_lookButton->setGfx(_arrayBmp[4 * kMenuLook + scale - 1]);
 	_inventButton->setGfx(_arrayBmp[4 * kMenuInventory + scale - 1]);
 }
@@ -176,7 +176,7 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 		break;
 	case kCmdMusic:
 		_vm->_sound->toggleMusic();
-		_musicButton->setGfx(_arrayBmp[4 * kMenuMusic + (g_system->getOverlayWidth() > 320 ? 2 : 1) - 1 + ((_vm->_config.musicFl) ? 0 : 2)]);
+		_musicButton->setGfx(_arrayBmp[4 * kMenuMusic + (g_system->getOverlayWidth() > 320 ? 2 : 1) - 1 + ((_vm->_config._musicFl) ? 0 : 2)]);
 		_musicButton->draw();
 		g_gui.theme()->updateScreen();
 		g_system->updateScreen();

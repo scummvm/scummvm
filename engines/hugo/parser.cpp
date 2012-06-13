@@ -198,7 +198,7 @@ void Parser::freeParser() {
 }
 
 void Parser::switchTurbo() {
-	_vm->_config.turboFl = !_vm->_config.turboFl;
+	_vm->_config._turboFl = !_vm->_config._turboFl;
 }
 
 /**
@@ -256,7 +256,7 @@ void Parser::charHandler() {
 	}
 
 	sprintf(_vm->_statusLine, ">%s%c", _cmdLine, _cmdLineCursor);
-	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config.turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config.soundFl) ? "On" : "Off");
+	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed
 	if (gameStatus._lookFl) {

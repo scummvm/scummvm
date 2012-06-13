@@ -105,8 +105,8 @@ protected:
 		byte   _fill2[60];
 	};                                              // Header of a PCC file
 
-	bool firstUIFFl;
-	uif_hdr_t UIFHeader[kMaxUifs];                  // Lookup for uif fonts/images
+	bool _firstUIFFl;
+	uif_hdr_t _UIFHeader[kMaxUifs];                 // Lookup for uif fonts/images
 
 	Common::File _stringArchive;                    // Handle for string file
 	Common::File _sceneryArchive1;                  // Handle for scenery file
@@ -122,7 +122,7 @@ protected:
 
 private:
 	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const;
-	uif_hdr_t *getUIFHeader(const uif_t id);
+	uif_hdr_t *get_UIFHeader(const uif_t id);
 
 //Strangerke : Not used?
 	void     printBootText();
