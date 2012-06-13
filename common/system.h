@@ -380,15 +380,15 @@ public:
 	 *
 	 *
 	 * The next layer is the overlay. It is composed over the game
-	 * graphics. By default, it has exactly the same size and
-	 * resolution as the game graphics. However, client code can
-	 * specify an overlay scale (as an additional parameter to
-	 * initSize()). This is meant to increase the resolution of the
-	 * overlay while keeping its size the same as that of the game
-	 * graphics. For example, if the overlay scale is 2, and the game
-	 * graphics have a resolution of 320x200; then the overlay shall
-	 * have a resolution of 640x400, but it still has the same
-	 * physical size as the game graphics.
+	 * graphics. Historically the overlay size had always been a
+	 * multiple of the game resolution, for example when the game
+	 * resolution was 320x200 and the user selected a 2x scaler and did
+	 * not enable aspect ratio correction it had a size of 640x400.
+	 * An exception was the aspect ratio correction, which did allow
+	 * for non multiples of the vertical resolution of the game screen.
+	 * Nowadays the overlay size does not need to have any relation to
+	 * the game resolution though, for example the overlay resolution
+	 * might be the same as the physical screen resolution.
 	 * The overlay is forced to a 16bpp mode right now.
 	 *
 	 * Finally, there is the mouse layer. This layer doesn't have to
