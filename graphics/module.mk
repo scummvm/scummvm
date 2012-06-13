@@ -31,7 +31,6 @@ MODULE_OBJS := \
 	primitives.o \
 	renderer.o \
 	scaler.o \
-	scalerplugin.o \
 	scaler/thumbnail_intern.o \
 	screen.o \
 	scaler/normal.o \
