@@ -171,20 +171,20 @@ enum seqTextEngine {
 struct HugoGameDescription;
 
 struct status_t {                                   // Game status (not saved)
-	bool     storyModeFl;                           // Game is telling story - no commands
-	bool     gameOverFl;                            // Game is over - hero knobbled
-	bool     lookFl;                                // Toolbar "look" button pressed
-	bool     recallFl;                              // Toolbar "recall" button pressed
-	bool     newScreenFl;                           // New screen just loaded in dib_a
-	bool     godModeFl;                             // Allow DEBUG features in live version
-	bool     showBoundariesFl;                      // Flag used to show and hide boundaries,
+	bool     _storyModeFl;                           // Game is telling story - no commands
+	bool     _gameOverFl;                            // Game is over - hero knobbled
+	bool     _lookFl;                                // Toolbar "look" button pressed
+	bool     _recallFl;                              // Toolbar "recall" button pressed
+	bool     _newScreenFl;                           // New screen just loaded in dib_a
+	bool     _godModeFl;                             // Allow DEBUG features in live version
+	bool     _showBoundariesFl;                      // Flag used to show and hide boundaries,
 	                                                // used by the console
-	bool     doQuitFl;
-	bool     skipIntroFl;
-	bool     helpFl;
-	uint32   tick;                                  // Current time in ticks
-	vstate_t viewState;                             // View state machine
-	int16    song;                                  // Current song
+	bool     _doQuitFl;
+	bool     _skipIntroFl;
+	bool     _helpFl;
+	uint32   _tick;                                  // Current time in ticks
+	vstate_t _viewState;                             // View state machine
+	int16    _song;                                  // Current song
 
 // Strangerke - Suppress as related to playback
 //	bool     playbackFl;                            // Game is in playback mode

@@ -239,13 +239,13 @@ void Screen::setBackgroundColor(const uint16 color) {
 void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool foreFl) {
 	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
 
-	image_pt image = seq->imagePtr;                 // Ptr to object image data
+	image_pt image = seq->_imagePtr;                 // Ptr to object image data
 	image_pt subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
-	int16 frontBufferwrap = kXPix - seq->x2 - 1;     // Wraps dest_p after each line
-	int16 imageWrap = seq->bytesPerLine8 - seq->x2 - 1;
+	int16 frontBufferwrap = kXPix - seq->_x2 - 1;     // Wraps dest_p after each line
+	int16 imageWrap = seq->_bytesPerLine8 - seq->_x2 - 1;
 	overlayState_t overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
-	for (uint16 y = 0; y < seq->lines; y++) {       // Each line in object
-		for (uint16 x = 0; x <= seq->x2; x++) {
+	for (uint16 y = 0; y < seq->_lines; y++) {       // Each line in object
+		for (uint16 x = 0; x <= seq->_x2; x++) {
 			if (*image) {                           // Non-transparent
 				byte ovlBound = _vm->_object->getFirstOverlay((uint16)(subFrontBuffer - _frontBuffer) >> 3); // Ptr into overlay bits
 				if (ovlBound & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) { // Overlay bit is set
@@ -265,7 +265,7 @@ void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool for
 	}
 
 	// Add this rectangle to the display list
-	displayList(kDisplayAdd, sx, sy, seq->x2 + 1, seq->lines);
+	displayList(kDisplayAdd, sx, sy, seq->_x2 + 1, seq->_lines);
 }
 
 /**
@@ -359,8 +359,8 @@ void Screen::displayList(dupdate_t update, ...) {
 		// Don't blit if newscreen just loaded because _frontBuffer will
 		// get blitted via InvalidateRect() at end of this cycle
 		// and blitting here causes objects to appear too soon.
-		if (_vm->getGameStatus().newScreenFl) {
-			_vm->getGameStatus().newScreenFl = false;
+		if (_vm->getGameStatus()._newScreenFl) {
+			_vm->getGameStatus()._newScreenFl = false;
 			break;
 		}
 
@@ -563,7 +563,7 @@ void Screen::initNewScreenDisplay() {
 	displayBackground();
 
 	// Stop premature object display in Display_list(D_DISPLAY)
-	_vm->getGameStatus().newScreenFl = true;
+	_vm->getGameStatus()._newScreenFl = true;
 }
 
 /**
@@ -650,19 +650,19 @@ bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
  * White       = Fix objects, parts of background
  */
 void Screen::drawBoundaries() {
-	if (!_vm->getGameStatus().showBoundariesFl)
+	if (!_vm->getGameStatus()._showBoundariesFl)
 		return;
 
 	_vm->_mouse->drawHotspots();
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i]; // Get pointer to object
-		if (obj->screenIndex == *_vm->_screen_p) {
-			if ((obj->currImagePtr != 0) && (obj->cycling != kCycleInvisible))
-				drawRectangle(false, obj->x + obj->currImagePtr->x1, obj->y + obj->currImagePtr->y1,
-				                     obj->x + obj->currImagePtr->x2, obj->y + obj->currImagePtr->y2, _TLIGHTGREEN);
-			else if ((obj->currImagePtr == 0) && (obj->vxPath != 0) && !obj->carriedFl)
-				drawRectangle(false, obj->oldx, obj->oldy, obj->oldx + obj->vxPath, obj->oldy + obj->vyPath, _TBRIGHTWHITE);
+		if (obj->_screenIndex == *_vm->_screen_p) {
+			if ((obj->_currImagePtr != 0) && (obj->_cycling != kCycleInvisible))
+				drawRectangle(false, obj->_x + obj->_currImagePtr->_x1, obj->_y + obj->_currImagePtr->_y1,
+				                     obj->_x + obj->_currImagePtr->_x2, obj->_y + obj->_currImagePtr->_y2, _TLIGHTGREEN);
+			else if ((obj->_currImagePtr == 0) && (obj->_vxPath != 0) && !obj->_carriedFl)
+				drawRectangle(false, obj->_oldx, obj->_oldy, obj->_oldx + obj->_vxPath, obj->_oldy + obj->_vyPath, _TBRIGHTWHITE);
 		}
 	}
 	g_system->copyRectToScreen(_frontBuffer, 320, 0, 0, 320, 200);
@@ -735,7 +735,7 @@ overlayState_t Screen_v1d::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 
 	uint16 index = (uint16)(dst_p - _frontBuffer) >> 3;
 
-	for (int i = 0; i < seq_p->lines-y; i++) {      // Each line in object
+	for (int i = 0; i < seq_p->_lines-y; i++) {      // Each line in object
 		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back.
 			return kOvlForeground;
 		index += kCompLineSize;
@@ -802,7 +802,7 @@ void Screen_v1w::loadFontArr(Common::ReadStream &in) {
 overlayState_t Screen_v1w::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
-	for (; y < seq_p->lines; y++) {                 // Each line in object
+	for (; y < seq_p->_lines; y++) {                 // Each line in object
 		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
 		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
 			return kOvlForeground;                  // Found a bit - must be foreground

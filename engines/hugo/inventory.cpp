@@ -231,7 +231,7 @@ void InventoryHandler::runInventory() {
 			_vm->_screen->moveImage(_vm->_screen->getBackBuffer(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getFrontBuffer(), 0, 0, kXPix);
 			_vm->_object->updateImages();           // Add objects back into display list for restore
 			_inventoryState = kInventoryOff;
-			gameStatus.viewState = kViewPlay;
+			gameStatus._viewState = kViewPlay;
 		}
 		break;
 	case kInventoryDown:                            // Icon bar moving down

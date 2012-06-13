@@ -112,7 +112,7 @@ void Scheduler::insertActionList(const uint16 actIndex) {
 uint32 Scheduler::getWinTicks() const {
 	debugC(5, kDebugSchedule, "getWinTicks()");
 
-	return _vm->getGameStatus().tick;
+	return _vm->getGameStatus()._tick;
 }
 
 /**
@@ -656,32 +656,32 @@ void Scheduler::screenActions(const int screenNum) {
 void Scheduler::processMaze(const int x1, const int x2, const int y1, const int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
 
-	if (x1 < _vm->_maze.x1) {
+	if (x1 < _vm->_maze._x1) {
 		// Exit west
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - 1;
-		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x2 - kShiftSize - (x2 - x1);
-		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze._x2 - kShiftSize - (x2 - x1);
+		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->_y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (x2 > _vm->_maze.x2) {
+	} else if (x2 > _vm->_maze._x2) {
 		// Exit east
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + 1;
-		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x1 + kShiftSize;
-		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze._x1 + kShiftSize;
+		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->_y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y1 < _vm->_maze.y1 - kShiftSize) {
+	} else if (y1 < _vm->_maze._y1 - kShiftSize) {
 		// Exit north
-		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - _vm->_maze.size;
-		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x3;
-		_actListArr[_alNewscrIndex][0].a2.y = _vm->_maze.y2 - kShiftSize - (y2 - y1);
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - _vm->_maze._size;
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze._x3;
+		_actListArr[_alNewscrIndex][0].a2.y = _vm->_maze._y2 - kShiftSize - (y2 - y1);
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y2 > _vm->_maze.y2 - kShiftSize / 2) {
+	} else if (y2 > _vm->_maze._y2 - kShiftSize / 2) {
 		// Exit south
-		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + _vm->_maze.size;
-		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x4;
-		_actListArr[_alNewscrIndex][0].a2.y = _vm->_maze.y1 + kShiftSize;
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + _vm->_maze._size;
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze._x4;
+		_actListArr[_alNewscrIndex][0].a2.y = _vm->_maze._y1 + kShiftSize;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	}
@@ -1144,7 +1144,7 @@ void Scheduler::insertAction(act *action) {
 		break;
 	// Workaround: When dying, switch to storyMode in order to block the keyboard.
 	case GAMEOVER:
-		_vm->getGameStatus().storyModeFl = true;
+		_vm->getGameStatus()._storyModeFl = true;
 	// No break on purpose
 	default:
 		curEvent->localActionFl = true;             // Rest are for current screen only
@@ -1205,12 +1205,12 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		insertActionList(action->a0.actIndex);
 		break;
 	case START_OBJ:                                 // act1: Start an object cycling
-		_vm->_object->_objects[action->a1.objIndex].cycleNumb = action->a1.cycleNumb;
-		_vm->_object->_objects[action->a1.objIndex].cycling = action->a1.cycle;
+		_vm->_object->_objects[action->a1.objIndex]._cycleNumb = action->a1.cycleNumb;
+		_vm->_object->_objects[action->a1.objIndex]._cycling = action->a1.cycle;
 		break;
 	case INIT_OBJXY:                                // act2: Initialize an object
-		_vm->_object->_objects[action->a2.objIndex].x = action->a2.x;          // Coordinates
-		_vm->_object->_objects[action->a2.objIndex].y = action->a2.y;
+		_vm->_object->_objects[action->a2.objIndex]._x = action->a2.x;          // Coordinates
+		_vm->_object->_objects[action->a2.objIndex]._y = action->a2.y;
 		break;
 	case PROMPT:                                    // act3: Prompt user for key phrase
 		promptAction(action);
@@ -1225,21 +1225,21 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_object->setCarry(action->a6.objIndex, action->a6.carriedFl);  // carried status
 		break;
 	case INIT_HF_COORD:                             // act7: Initialize an object to hero's "feet" coords
-		_vm->_object->_objects[action->a7.objIndex].x = _vm->_hero->x - 1;
-		_vm->_object->_objects[action->a7.objIndex].y = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - 1;
-		_vm->_object->_objects[action->a7.objIndex].screenIndex = *_vm->_screen_p;  // Don't forget screen!
+		_vm->_object->_objects[action->a7.objIndex]._x = _vm->_hero->_x - 1;
+		_vm->_object->_objects[action->a7.objIndex]._y = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2 - 1;
+		_vm->_object->_objects[action->a7.objIndex]._screenIndex = *_vm->_screen_p;  // Don't forget screen!
 		break;
 	case NEW_SCREEN:                                // act8: Start new screen
 		newScreen(action->a8.screenIndex);
 		break;
 	case INIT_OBJSTATE:                             // act9: Initialize an object state
-		_vm->_object->_objects[action->a9.objIndex].state = action->a9.newState;
+		_vm->_object->_objects[action->a9.objIndex]._state = action->a9.newState;
 		break;
 	case INIT_PATH:                                 // act10: Initialize an object path and velocity
 		_vm->_object->setPath(action->a10.objIndex, (path_t) action->a10.newPathType, action->a10.vxPath, action->a10.vyPath);
 		break;
 	case COND_R:                                    // act11: action lists conditional on object state
-		if (_vm->_object->_objects[action->a11.objIndex].state == action->a11.stateReq)
+		if (_vm->_object->_objects[action->a11.objIndex]._state == action->a11.stateReq)
 			insertActionList(action->a11.actPassIndex);
 		else
 			insertActionList(action->a11.actFailIndex);
@@ -1251,7 +1251,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_object->swapImages(action->a13.objIndex1, action->a13.objIndex2);
 		break;
 	case COND_SCR:                                  // act14: Conditional on current screen
-		if (_vm->_object->_objects[action->a14.objIndex].screenIndex == action->a14.screenReq)
+		if (_vm->_object->_objects[action->a14.objIndex]._screenIndex == action->a14.screenReq)
 			insertActionList(action->a14.actPassIndex);
 		else
 			insertActionList(action->a14.actFailIndex);
@@ -1262,16 +1262,16 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 	case INIT_OBJ_SEQ:                              // act16: Set sequence number to use
 		// Note: Don't set a sequence at time 0 of a new screen, it causes
 		// problems clearing the boundary bits of the object!  t>0 is safe
-		_vm->_object->_objects[action->a16.objIndex].currImagePtr = _vm->_object->_objects[action->a16.objIndex].seqList[action->a16.seqIndex].seqPtr;
+		_vm->_object->_objects[action->a16.objIndex]._currImagePtr = _vm->_object->_objects[action->a16.objIndex]._seqList[action->a16.seqIndex]._seqPtr;
 		break;
 	case SET_STATE_BITS:                            // act17: OR mask with curr obj state
-		_vm->_object->_objects[action->a17.objIndex].state |= action->a17.stateMask;
+		_vm->_object->_objects[action->a17.objIndex]._state |= action->a17.stateMask;
 		break;
 	case CLEAR_STATE_BITS:                          // act18: AND ~mask with curr obj state
-		_vm->_object->_objects[action->a18.objIndex].state &= ~action->a18.stateMask;
+		_vm->_object->_objects[action->a18.objIndex]._state &= ~action->a18.stateMask;
 		break;
 	case TEST_STATE_BITS:                           // act19: If all bits set, do apass else afail
-		if ((_vm->_object->_objects[action->a19.objIndex].state & action->a19.stateMask) == action->a19.stateMask)
+		if ((_vm->_object->_objects[action->a19.objIndex]._state & action->a19.stateMask) == action->a19.stateMask)
 			insertActionList(action->a19.actPassIndex);
 		else
 			insertActionList(action->a19.actFailIndex);
@@ -1282,12 +1282,12 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 	case GAMEOVER:                                  // act21: Game over!
 		// NOTE: Must wait at least 1 tick before issuing this action if
 		// any objects are to be made invisible!
-		gameStatus.gameOverFl = true;
+		gameStatus._gameOverFl = true;
 		break;
 	case INIT_HH_COORD:                             // act22: Initialize an object to hero's actual coords
-		_vm->_object->_objects[action->a22.objIndex].x = _vm->_hero->x;
-		_vm->_object->_objects[action->a22.objIndex].y = _vm->_hero->y;
-		_vm->_object->_objects[action->a22.objIndex].screenIndex = *_vm->_screen_p;// Don't forget screen!
+		_vm->_object->_objects[action->a22.objIndex]._x = _vm->_hero->_x;
+		_vm->_object->_objects[action->a22.objIndex]._y = _vm->_hero->_y;
+		_vm->_object->_objects[action->a22.objIndex]._screenIndex = *_vm->_screen_p;// Don't forget screen!
 		break;
 	case EXIT:                                      // act23: Exit game back to DOS
 		_vm->endGame();
@@ -1297,8 +1297,8 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		break;
 	case COND_BOX:                                  // act25: Conditional on bounding box
 		obj1 = &_vm->_object->_objects[action->a25.objIndex];
-		dx = obj1->x + obj1->currImagePtr->x1;
-		dy = obj1->y + obj1->currImagePtr->y2;
+		dx = obj1->_x + obj1->_currImagePtr->_x1;
+		dy = obj1->_y + obj1->_currImagePtr->_y2;
 		if ((dx >= action->a25.x1) && (dx <= action->a25.x2) &&
 		        (dy >= action->a25.y1) && (dy <= action->a25.y2))
 			insertActionList(action->a25.actPassIndex);
@@ -1312,10 +1312,10 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			_vm->_sound->playSound(action->a26.soundIndex, kSoundPriorityMedium);
 		break;
 	case ADD_SCORE:                                 // act27: Add object's value to score
-		_vm->adjustScore(_vm->_object->_objects[action->a27.objIndex].objValue);
+		_vm->adjustScore(_vm->_object->_objects[action->a27.objIndex]._objValue);
 		break;
 	case SUB_SCORE:                                 // act28: Subtract object's value from score
-		_vm->adjustScore(-_vm->_object->_objects[action->a28.objIndex].objValue);
+		_vm->adjustScore(-_vm->_object->_objects[action->a28.objIndex]._objValue);
 		break;
 	case COND_CARRY:                                // act29: Conditional on object being carried
 		if (_vm->_object->isCarried(action->a29.objIndex))
@@ -1324,24 +1324,24 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a29.actFailIndex);
 		break;
 	case INIT_MAZE:                                 // act30: Enable and init maze structure
-		_vm->_maze.enabledFl = true;
-		_vm->_maze.size = action->a30.mazeSize;
-		_vm->_maze.x1 = action->a30.x1;
-		_vm->_maze.y1 = action->a30.y1;
-		_vm->_maze.x2 = action->a30.x2;
-		_vm->_maze.y2 = action->a30.y2;
-		_vm->_maze.x3 = action->a30.x3;
-		_vm->_maze.x4 = action->a30.x4;
-		_vm->_maze.firstScreenIndex = action->a30.firstScreenIndex;
+		_vm->_maze._enabledFl = true;
+		_vm->_maze._size = action->a30.mazeSize;
+		_vm->_maze._x1 = action->a30.x1;
+		_vm->_maze._y1 = action->a30.y1;
+		_vm->_maze._x2 = action->a30.x2;
+		_vm->_maze._y2 = action->a30.y2;
+		_vm->_maze._x3 = action->a30.x3;
+		_vm->_maze._x4 = action->a30.x4;
+		_vm->_maze._firstScreenIndex = action->a30.firstScreenIndex;
 		break;
 	case EXIT_MAZE:                                 // act31: Disable maze mode
-		_vm->_maze.enabledFl = false;
+		_vm->_maze._enabledFl = false;
 		break;
 	case INIT_PRIORITY:
-		_vm->_object->_objects[action->a32.objIndex].priority = action->a32.priority;
+		_vm->_object->_objects[action->a32.objIndex]._priority = action->a32.priority;
 		break;
 	case INIT_SCREEN:
-		_vm->_object->_objects[action->a33.objIndex].screenIndex = action->a33.screenIndex;
+		_vm->_object->_objects[action->a33.objIndex]._screenIndex = action->a33.screenIndex;
 		break;
 	case AGSCHEDULE:                                // act34: Schedule a (global) action list
 		insertActionList(action->a34.actIndex);
@@ -1359,15 +1359,15 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_screenStates[action->a37.screenIndex] = action->a37.newState;
 		break;
 	case INIT_LIPS:                                 // act38: Position lips on object
-		_vm->_object->_objects[action->a38.lipsObjIndex].x = _vm->_object->_objects[action->a38.objIndex].x + action->a38.dxLips;
-		_vm->_object->_objects[action->a38.lipsObjIndex].y = _vm->_object->_objects[action->a38.objIndex].y + action->a38.dyLips;
-		_vm->_object->_objects[action->a38.lipsObjIndex].screenIndex = *_vm->_screen_p; // Don't forget screen!
-		_vm->_object->_objects[action->a38.lipsObjIndex].cycling = kCycleForward;
+		_vm->_object->_objects[action->a38.lipsObjIndex]._x = _vm->_object->_objects[action->a38.objIndex]._x + action->a38.dxLips;
+		_vm->_object->_objects[action->a38.lipsObjIndex]._y = _vm->_object->_objects[action->a38.objIndex]._y + action->a38.dyLips;
+		_vm->_object->_objects[action->a38.lipsObjIndex]._screenIndex = *_vm->_screen_p; // Don't forget screen!
+		_vm->_object->_objects[action->a38.lipsObjIndex]._cycling = kCycleForward;
 		break;
 	case INIT_STORY_MODE:                           // act39: Init story_mode flag
 		// This is similar to the QUIET path mode, except that it is
 		// independant of it and it additionally disables the ">" prompt
-		gameStatus.storyModeFl = action->a39.storyModeFl;
+		gameStatus._storyModeFl = action->a39.storyModeFl;
 		break;
 	case WARN:                                      // act40: Text box (CF TEXT)
 		Utils::notifyBox(_vm->_file->fetchString(action->a40.stringIndex));
@@ -1379,7 +1379,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a41.actFailIndex);
 		break;
 	case TEXT_TAKE:                                 // act42: Text box with "take" message
-		Utils::notifyBox(Common::String::format(TAKE_TEXT, _vm->_text->getNoun(_vm->_object->_objects[action->a42.objIndex].nounIndex, TAKE_NAME)));
+		Utils::notifyBox(Common::String::format(TAKE_TEXT, _vm->_text->getNoun(_vm->_object->_objects[action->a42.objIndex]._nounIndex, TAKE_NAME)));
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
 		if (Utils::yesNoBox(_vm->_file->fetchString(action->a43.promptIndex)))
@@ -1403,16 +1403,16 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_mouse->setJumpExitFl(action->a46.jumpExitFl);
 		break;
 	case INIT_VIEW:                                 // act47: Init object.viewx, viewy, dir
-		_vm->_object->_objects[action->a47.objIndex].viewx = action->a47.viewx;
-		_vm->_object->_objects[action->a47.objIndex].viewy = action->a47.viewy;
-		_vm->_object->_objects[action->a47.objIndex].direction = action->a47.direction;
+		_vm->_object->_objects[action->a47.objIndex]._viewx = action->a47.viewx;
+		_vm->_object->_objects[action->a47.objIndex]._viewy = action->a47.viewy;
+		_vm->_object->_objects[action->a47.objIndex]._direction = action->a47.direction;
 		break;
 	case INIT_OBJ_FRAME:                            // act48: Set seq,frame number to use
 		// Note: Don't set a sequence at time 0 of a new screen, it causes
 		// problems clearing the boundary bits of the object!  t>0 is safe
-		_vm->_object->_objects[action->a48.objIndex].currImagePtr = _vm->_object->_objects[action->a48.objIndex].seqList[action->a48.seqIndex].seqPtr;
+		_vm->_object->_objects[action->a48.objIndex]._currImagePtr = _vm->_object->_objects[action->a48.objIndex]._seqList[action->a48.seqIndex]._seqPtr;
 		for (dx = 0; dx < action->a48.frameIndex; dx++)
-			_vm->_object->_objects[action->a48.objIndex].currImagePtr = _vm->_object->_objects[action->a48.objIndex].currImagePtr->nextSeqPtr;
+			_vm->_object->_objects[action->a48.objIndex]._currImagePtr = _vm->_object->_objects[action->a48.objIndex]._currImagePtr->_nextSeqPtr;
 		break;
 	case OLD_SONG:
 		// Replaces ACT26 for DOS games.
@@ -1644,6 +1644,6 @@ void Scheduler_v1w::runScheduler() {
 	while (curEvent && (curEvent->time <= ticker))  // While mature events found
 		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
 
-	_vm->getGameStatus().tick++;                    // Accessed elsewhere via getTicks()
+	_vm->getGameStatus()._tick++;                    // Accessed elsewhere via getTicks()
 }
 } // End of namespace Hugo

@@ -154,7 +154,7 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 
 	status_t &gameStatus = _vm->getGameStatus();
 
-	if (gameStatus.storyModeFl || _vm->_hero->pathType == kPathQuiet) // Make sure user has control
+	if (gameStatus._storyModeFl || _vm->_hero->_pathType == kPathQuiet) // Make sure user has control
 		return;
 
 	int16 inventObjId = _vm->_inventory->getInventoryObjId();
@@ -170,7 +170,7 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 	} else {                                        // Clicked over viewport object
 		object_t *obj = &_vm->_object->_objects[objId];
 		int16 x, y;
-		switch (obj->viewx) {                       // Where to walk to
+		switch (obj->_viewx) {                       // Where to walk to
 		case -1:                                    // Walk to object position
 			if (_vm->_object->findObjectSpace(obj, &x, &y))
 				foundFl = _vm->_route->startRoute(kRouteGet, objId, x, y);
@@ -181,8 +181,8 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 			_vm->_object->useObject(objId);         // Pick up or use object
 			break;
 		default:                                    // Walk to view point if possible
-			if (!_vm->_route->startRoute(kRouteGet, objId, obj->viewx, obj->viewy)) {
-				if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
+			if (!_vm->_route->startRoute(kRouteGet, objId, obj->_viewx, obj->_viewy)) {
+				if (_vm->_hero->_cycling == kCycleInvisible) // If invisible do
 					_vm->_object->useObject(objId); // immediate use
 				else
 					Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
@@ -207,7 +207,7 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 
 	status_t &gameStatus = _vm->getGameStatus();
 
-	if (gameStatus.storyModeFl || _vm->_hero->pathType == kPathQuiet) // Make sure user has control
+	if (gameStatus._storyModeFl || _vm->_hero->_pathType == kPathQuiet) // Make sure user has control
 		return;
 
 	switch (objId) {
@@ -254,7 +254,7 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 			_vm->_object->lookObject(obj);
 		} else {
 			bool foundFl = false;                   // TRUE if route found to object
-			switch (obj->viewx) {                   // Clicked over viewport object
+			switch (obj->_viewx) {                   // Clicked over viewport object
 			case -1:                                // Walk to object position
 				if (_vm->_object->findObjectSpace(obj, &x, &y))
 					foundFl = _vm->_route->startRoute(kRouteLook, objId, x, y);
@@ -265,8 +265,8 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 				_vm->_object->lookObject(obj);
 				break;
 			default:                                // Walk to view point if possible
-				if (!_vm->_route->startRoute(kRouteLook, objId, obj->viewx, obj->viewy)) {
-					if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
+				if (!_vm->_route->startRoute(kRouteLook, objId, obj->_viewx, obj->_viewy)) {
+					if (_vm->_hero->_cycling == kCycleInvisible) // If invisible do
 						_vm->_object->lookObject(obj);          // immediate decription
 					else
 						Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText));  // Can't get there
@@ -286,14 +286,14 @@ void MouseHandler::mouseHandler() {
 
 	status_t &gameStatus = _vm->getGameStatus();
 	istate_t inventState = _vm->_inventory->getInventoryState();
-	if ((gameStatus.viewState != kViewPlay) && (inventState != kInventoryActive))
+	if ((gameStatus._viewState != kViewPlay) && (inventState != kInventoryActive))
 		return;
 
 	int16 cx = getMouseX();
 	int16 cy = getMouseY();
 
-//	gameStatus.cx = cx;                             // Save cursor coords
-//	gameStatus.cy = cy;
+//	gameStatus._cx = cx;                             // Save cursor coords
+//	gameStatus._cy = cy;
 
 	// Don't process if outside client area
 	if ((cx < 0) || (cx > kXPix) || (cy < kDibOffY) || (cy > kViewSizeY + kDibOffY))
@@ -309,14 +309,14 @@ void MouseHandler::mouseHandler() {
 		}
 	}
 
-	if (!gameStatus.gameOverFl) {
+	if (!gameStatus._gameOverFl) {
 		if (objId == -1)                            // No match, check rest of view
 			objId = _vm->_object->findObject(cx, cy);
 
 		if (objId >= 0) {                           // Got a match
 			// Display object name next to cursor (unless CURSOR_NOCHAR)
 			// Note test for swapped hero name
-			const char *name = _vm->_text->getNoun(_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId].nounIndex, kCursorNameIndex);
+			const char *name = _vm->_text->getNoun(_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId]._nounIndex, kCursorNameIndex);
 			if (name[0] != kCursorNochar)
 				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 
@@ -378,7 +378,7 @@ void MouseHandler::loadHotspots(Common::ReadStream &in) {
 void MouseHandler::drawHotspots() const {
 	for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
 		hotspot_t *hotspot = &_hotspots[i];
-		if (hotspot->screenIndex == _vm->_hero->screenIndex)
+		if (hotspot->screenIndex == _vm->_hero->_screenIndex)
 			_vm->_screen->drawRectangle(false, hotspot->x1, hotspot->y1, hotspot->x2, hotspot->y2, _TLIGHTRED);
 	}
 }

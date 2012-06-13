@@ -58,21 +58,21 @@ Parser::~Parser() {
 }
 
 uint16 Parser::getCmdDefaultVerbIdx(const uint16 index) const {
-	return _cmdList[index][0].verbIndex;
+	return _cmdList[index][0]._verbIndex;
 }
 
 /**
  * Read a cmd structure from Hugo.dat
  */
 void Parser::readCmd(Common::ReadStream &in, cmd &curCmd) {
-	curCmd.verbIndex = in.readUint16BE();
-	curCmd.reqIndex = in.readUint16BE();
-	curCmd.textDataNoCarryIndex = in.readUint16BE();
-	curCmd.reqState = in.readByte();
-	curCmd.newState = in.readByte();
-	curCmd.textDataWrongIndex = in.readUint16BE();
-	curCmd.textDataDoneIndex = in.readUint16BE();
-	curCmd.actIndex = in.readUint16BE();
+	curCmd._verbIndex = in.readUint16BE();
+	curCmd._reqIndex = in.readUint16BE();
+	curCmd._textDataNoCarryIndex = in.readUint16BE();
+	curCmd._reqState = in.readByte();
+	curCmd._newState = in.readByte();
+	curCmd._textDataWrongIndex = in.readUint16BE();
+	curCmd._textDataDoneIndex = in.readUint16BE();
+	curCmd._actIndex = in.readUint16BE();
 }
 
 /**
@@ -100,12 +100,12 @@ void Parser::loadCmdList(Common::ReadStream &in) {
 
 
 void Parser::readBG(Common::ReadStream &in, background_t &curBG) {
-	curBG.verbIndex = in.readUint16BE();
-	curBG.nounIndex = in.readUint16BE();
-	curBG.commentIndex = in.readSint16BE();
-	curBG.matchFl = (in.readByte() != 0);
-	curBG.roomState = in.readByte();
-	curBG.bonusIndex = in.readByte();
+	curBG._verbIndex = in.readUint16BE();
+	curBG._nounIndex = in.readUint16BE();
+	curBG._commentIndex = in.readSint16BE();
+	curBG._matchFl = (in.readByte() != 0);
+	curBG._roomState = in.readByte();
+	curBG._bonusIndex = in.readByte();
 }
 
 /**
@@ -165,11 +165,11 @@ const char *Parser::useBG(const char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
 	objectList_t p = _backgroundObjects[*_vm->_screen_p];
-	for (int i = 0; p[i].verbIndex != 0; i++) {
-		if ((name == _vm->_text->getNoun(p[i].nounIndex, 0) &&
-		     p[i].verbIndex != _vm->_look) &&
-		    ((p[i].roomState == kStateDontCare) || (p[i].roomState == _vm->_screenStates[*_vm->_screen_p])))
-			return _vm->_text->getVerb(p[i].verbIndex, 0);
+	for (int i = 0; p[i]._verbIndex != 0; i++) {
+		if ((name == _vm->_text->getNoun(p[i]._nounIndex, 0) &&
+		     p[i]._verbIndex != _vm->_look) &&
+		    ((p[i]._roomState == kStateDontCare) || (p[i]._roomState == _vm->_screenStates[*_vm->_screen_p])))
+			return _vm->_text->getVerb(p[i]._verbIndex, 0);
 	}
 
 	return 0;
@@ -222,7 +222,7 @@ void Parser::charHandler() {
 				_cmdLine[--_cmdLineIndex] = '\0';
 			break;
 		case Common::KEYCODE_RETURN:                // EOL, pass line to line handler
-			if (_cmdLineIndex && (_vm->_hero->pathType != kPathQuiet)) {
+			if (_cmdLineIndex && (_vm->_hero->_pathType != kPathQuiet)) {
 				// Remove inventory bar if active
 				if (_vm->_inventory->getInventoryState() == kInventoryActive)
 					_vm->_inventory->setInventoryState(kInventoryUp);
@@ -248,9 +248,9 @@ void Parser::charHandler() {
 		_cmdLineCursor = (_cmdLineCursor == '_') ? ' ' : '_';
 
 	// See if recall button pressed
-	if (gameStatus.recallFl) {
+	if (gameStatus._recallFl) {
 		// Copy previous line to current cmdline
-		gameStatus.recallFl = false;
+		gameStatus._recallFl = false;
 		strcpy(_cmdLine, _vm->_line);
 		_cmdLineIndex = strlen(_cmdLine);
 	}
@@ -259,9 +259,9 @@ void Parser::charHandler() {
 	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config.turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config.soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed
-	if (gameStatus.lookFl) {
+	if (gameStatus._lookFl) {
 		command("look around");
-		gameStatus.lookFl = false;
+		gameStatus._lookFl = false;
 	}
 }
 
@@ -288,8 +288,8 @@ void Parser::keyHandler(Common::Event event) {
 				_vm->_file->restoreGame(0);
 			break;
 		case Common::KEYCODE_s:
-			if (gameStatus.viewState == kViewPlay) {
-				if (gameStatus.gameOverFl)
+			if (gameStatus._viewState == kViewPlay) {
+				if (gameStatus._gameOverFl)
 					_vm->gameOverMsg();
 				else
 					_vm->_file->saveGame(-1, Common::String());
@@ -304,8 +304,8 @@ void Parser::keyHandler(Common::Event event) {
 	// Process key down event - called from OnKeyDown()
 	switch (nChar) {                                // Set various toggle states
 	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
-		if (gameStatus.viewState == kViewIntro)
-			gameStatus.skipIntroFl = true;
+		if (gameStatus._viewState == kViewIntro)
+			gameStatus._skipIntroFl = true;
 		else {
 			if (_vm->_inventory->getInventoryState() == kInventoryActive) // Remove inventory, if displayed
 				_vm->_inventory->setInventoryState(kInventoryUp);
@@ -333,7 +333,7 @@ void Parser::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
 		if (_checkDoubleF1Fl)
-			gameStatus.helpFl = true;
+			gameStatus._helpFl = true;
 		else
 			_vm->_screen->userHelp();
 		_checkDoubleF1Fl = !_checkDoubleF1Fl;
@@ -343,11 +343,11 @@ void Parser::keyHandler(Common::Event event) {
 		_vm->_sound->toggleMusic();
 		break;
 	case Common::KEYCODE_F3:                        // Repeat last line
-		gameStatus.recallFl = true;
+		gameStatus._recallFl = true;
 		break;
 	case Common::KEYCODE_F4:                        // Save game
-		if (gameStatus.viewState == kViewPlay) {
-			if (gameStatus.gameOverFl)
+		if (gameStatus._viewState == kViewPlay) {
+			if (gameStatus._gameOverFl)
 				_vm->gameOverMsg();
 			else
 				_vm->_file->saveGame(-1, Common::String());
@@ -366,7 +366,7 @@ void Parser::keyHandler(Common::Event event) {
 		warning("STUB: F9 (DOS) - BossKey");
 		break;
 	default:                                        // Any other key
-		if (!gameStatus.storyModeFl) {              // Keyboard disabled
+		if (!gameStatus._storyModeFl) {              // Keyboard disabled
 			// Add printable keys to ring buffer
 			uint16 bnext = _putIndex + 1;
 			if (bnext >= sizeof(_ringBuffer))
@@ -452,7 +452,7 @@ void Parser::showDosInventory() const {
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
-			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2));
+			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2));
 			if (index++ & 1)                        // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
@@ -473,9 +473,9 @@ void Parser::showDosInventory() const {
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Assign strings
 		if (_vm->_object->isCarried(i)) {
 			if (index++ & 1)
-				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)) + "\n";
+				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + "\n";
 			else
-				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)) + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)));
+				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)));
 		}
 	}
 	if (index & 1)

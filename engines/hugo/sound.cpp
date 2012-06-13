@@ -186,7 +186,7 @@ void SoundHandler::playMusic(int16 tune) {
 	uint16 size;                                    // Size of sequence data
 
 	if (_vm->_config.musicFl) {
-		_vm->getGameStatus().song = tune;
+		_vm->getGameStatus()._song = tune;
 		seqPtr = _vm->_file->getSound(tune, &size);
 		playMIDI(seqPtr, size);
 		free(seqPtr);
@@ -245,7 +245,7 @@ void SoundHandler::checkMusic() {
 		return;
 
 	for (int i = 0; _vm->_defltTunes[i] != -1; i++) {
-		if (_vm->_defltTunes[i] == _vm->getGameStatus().song) {
+		if (_vm->_defltTunes[i] == _vm->getGameStatus()._song) {
 			if (_vm->_defltTunes[i + 1] != -1)
 				playMusic(_vm->_defltTunes[i + 1]);
 			else
