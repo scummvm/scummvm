@@ -81,7 +81,7 @@ Character::~Character(void) {
 void Character::init() {
 }
 
-void Character::forceFacing( int32 facing ) {
+void Character::forceFacing(int32 facing) {
 	debugC(4, kDebugCharacter, "forceFacing(%d)", facing);
 	_facing = facing;
 }
@@ -136,8 +136,7 @@ void Character::setFacing(int32 facing) {
 	_facing = facing;
 }
 
-void Character::forcePosition(int32 x, int32 y) {
-
+void Character::forcePosition(int16 x, int16 y) {
 	debugC(5, kDebugCharacter, "forcePosition(%d, %d)", x, y);
 
 	setPosition(x, y);
@@ -145,7 +144,7 @@ void Character::forcePosition(int32 x, int32 y) {
 	_finalY = y;
 }
 
-void Character::setPosition(int32 x, int32 y) {
+void Character::setPosition(int16 x, int16 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
 
 	_x = x;
@@ -155,7 +154,7 @@ void Character::setPosition(int32 x, int32 y) {
 	return;
 }
 
-bool Character::walkTo(int32 newPosX, int32 newPosY) {
+bool Character::walkTo(int16 newPosX, int16 newPosY) {
 	debugC(1, kDebugCharacter, "walkTo(%d, %d)", newPosX, newPosY);
 
 	if (!_visible)
@@ -168,21 +167,19 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 
 	// don't allow flux to go at the same position as drew
 	if (_id == 1 ) {
-		int32 sizeX = MAX<int32>(5, 30 * _vm->getDrew()->getScale() / 1024);
-		int32 sizeY = MAX<int32>(2, 20 * _vm->getDrew()->getScale() / 1024);
+		int16 sizeX = MAX<int16>(5, 30 * _vm->getDrew()->getScale() / 1024);
+		int16 sizeY = MAX<int16>(2, 20 * _vm->getDrew()->getScale() / 1024);
 		_vm->getPathFinding()->addBlockingEllipse(_vm->getDrew()->getFinalX(), _vm->getDrew()->getFinalY(), sizeX, sizeY);
 	}
 
-	int16 tempFinalX, tempFinalY;
-	_vm->getPathFinding()->findClosestWalkingPoint(newPosX, newPosY, &tempFinalX, &tempFinalY, _x, _y);
-	_finalX = tempFinalX, _finalY = tempFinalY; // FIXME - Bodge to match types...
+	_vm->getPathFinding()->findClosestWalkingPoint(newPosX, newPosY, &_finalX, &_finalY, _x, _y);
 	if (_x == _finalX && _y == _finalY)
 		return true;
 
 	if (_vm->getPathFinding()->findPath(_x, _y, _finalX, _finalY)) {
 
-		int32 localFinalX = _finalX;
-		int32 localFinalY = _finalY;
+		int16 localFinalX = _finalX;
+		int16 localFinalY = _finalY;
 		int32 smoothDx = 0;
 		int32 smoothDy = 0;
 
@@ -266,10 +263,11 @@ int32 Character::getFlag() {
 	return _flags;
 }
 
-int32 Character::getX() {
+int16 Character::getX() {
 	return _x;
 }
-int32 Character::getY() {
+
+int16 Character::getY() {
 	return _y;
 }
 
@@ -529,7 +527,7 @@ void Character::update(int32 timeIncrement) {
 }
 
 // adapted from Kyra
-int32 Character::getFacingFromDirection(int32 dx, int32 dy) {
+int32 Character::getFacingFromDirection(int16 dx, int16 dy) {
 	debugC(4, kDebugCharacter, "getFacingFromDirection(%d, %d)", dx, dy);
 
 	static const int facingTable[] = {
@@ -640,7 +638,7 @@ void Character::load(Common::ReadStream *stream) {
 	// "not visible" flag.
 	if (_flags & 0x100) {
 		_flags &= ~0x100;
-		setVisible(false);	
+		setVisible(false);
 	}
 }
 
@@ -1080,11 +1078,11 @@ void Character::setDefaultSpecialAnimationId(int32 defaultAnimationId) {
 	_animSpecialDefaultId = defaultAnimationId;
 }
 
-int32 Character::getFinalX() {
+int16 Character::getFinalX() {
 	return _finalX;
 }
 
-int32 Character::getFinalY() {
+int16 Character::getFinalY() {
 	return _finalY;
 }
 
