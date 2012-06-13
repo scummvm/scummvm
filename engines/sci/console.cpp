@@ -373,6 +373,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" animate_list / al - Shows the current list of objects in kAnimate's draw list (SCI0 - SCI1.1)\n");
 	DebugPrintf(" window_list / wl - Shows a list of all the windows (ports) in the draw list (SCI0 - SCI1.1)\n");
 	DebugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
+	DebugPrintf(" plane_items / pi - Shows a list of all items for a plane (SCI2+)\n");
 	DebugPrintf(" saved_bits - List saved bits on the hunk\n");
 	DebugPrintf(" show_saved_bits - Display saved bits\n");
 	DebugPrintf("\n");
