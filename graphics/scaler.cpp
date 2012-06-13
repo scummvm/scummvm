@@ -79,39 +79,6 @@ void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 	scale(3, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, 2, width, height);
 }
 
-template<typename ColorMask>
-void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-					int width, int height) {
-	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
-	const uint16 *p = (const uint16 *)srcPtr;
-
-	const uint32 nextlineDst = dstPitch / sizeof(uint16);
-	uint16 *q = (uint16 *)dstPtr;
-
-	while (height--) {
-		for (int i = 0, j = 0; i < width; ++i, j += 2) {
-			uint16 p1 = *(p + i);
-			uint32 pi;
-
-			pi = (((p1 & ColorMask::kRedBlueMask) * 7) >> 3) & ColorMask::kRedBlueMask;
-			pi |= (((p1 & ColorMask::kGreenMask) * 7) >> 3) & ColorMask::kGreenMask;
-
-			*(q + j) = p1;
-			*(q + j + 1) = p1;
-			*(q + j + nextlineDst) = (uint16)pi;
-			*(q + j + nextlineDst + 1) = (uint16)pi;
-		}
-		p += nextlineSrc;
-		q += nextlineDst << 1;
-	}
-}
-
-void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	if (gBitFormat == 565)
-		TV2xTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else
-		TV2xTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-}
 
 static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
 	return c - ((c >> 2) & dotmatrix[((j & 3) << 2) + (i & 3)]);
