@@ -54,11 +54,11 @@ namespace Tony {
 	delete raw;
 
 
-class RMPointer : public RMGfxTask {
+class RMPointer {
 private:
 	RMGfxSourceBuffer8 *_pointer[16];
 	RMPoint _hotspot[16];
-	RMPoint _pos;
+	RMPoint _cursorHotspot;
 
 	RMItem *_specialPointer[16];
 
@@ -66,6 +66,8 @@ private:
 	int _nCurSpecialPointer;
 
 	RMGfxSourceBuffer8 *_nCurCustomPointer;
+
+	void updateCursor();
 
 public:
 	enum POINTER {
@@ -95,20 +97,13 @@ public:
 	// Overloading of priorities
 	int priority();
 
-	// Overloading draw method
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-
-	// Sets the current co-ordinates
-	void setCoord(const RMPoint &pt) {
-		_pos = pt;
-	}
-
-	// Overloading of the method to see if rising from the list
-	virtual void removeThis(CORO_PARAM, bool &result);
+	// draw method
+	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Sets a new action as current
 	void setAction(RMTonyAction action) {
 		_nCurPointer = action;
+		updateCursor();
 	}
 
 	// Sets a new pointer
@@ -116,6 +111,8 @@ public:
 		_nCurSpecialPointer = ptr;
 		if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
 			_specialPointer[ptr - 1]->setPattern(1);
+
+		updateCursor();
 	}
 	POINTER getSpecialPointer(void) {
 		return (POINTER)_nCurSpecialPointer;
@@ -124,10 +121,17 @@ public:
 	// Set the new custom pointer
 	void setCustomPointer(RMGfxSourceBuffer8 *ptr) {
 		_nCurCustomPointer = ptr;
+		updateCursor();
 	}
 
 	// Return the current action to be applied according to the pointer
 	int curAction(void);
+
+	/** Show the cursor */
+	void showCursor();
+
+	/** Hide the cursor */
+	void hideCursor();
 };
 
 class RMOptionButton: public RMGfxTaskSetPrior {

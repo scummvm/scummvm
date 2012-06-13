@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "graphics/cursorman.h"
 #include "tony/mpal/lzo.h"
 #include "tony/mpal/memory.h"
 #include "tony/mpal/mpal.h"
@@ -1543,39 +1544,20 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 	_ctx->n = _nCurPointer;
 	if (_ctx->n == TA_COMBINE) _ctx->n = TA_USE;
 
-	// Copy the destination coordinates in the primitive
-	prim->setDst(_pos);
+	_cursorHotspot = _hotspot[_ctx->n];
 
-	if (_pos._x >= 0 && _pos._y >= 0 && _pos._x < RM_SX && _pos._y < RM_SY) {
-		// Call the Draw method of the poitner
-		prim->getDst() -= _hotspot[_ctx->n];
-
-		if (_nCurSpecialPointer == 0) {
-			CORO_INVOKE_2(_pointer[_ctx->n]->draw, bigBuf, prim);
-		} else {
-			if (_nCurSpecialPointer == PTR_CUSTOM)
-				CORO_INVOKE_2(_nCurCustomPointer->draw, bigBuf, prim);
-			else
-				// Call the draw on the special pointer
-				CORO_INVOKE_2(_specialPointer[_nCurSpecialPointer - 1]->draw, bigBuf, prim);
-		}
+	// Call the Draw method of the pointer
+	if (_nCurSpecialPointer == 0) {
+		CORO_INVOKE_2(_pointer[_ctx->n]->draw, bigBuf, prim);
+	} else {
+		if (_nCurSpecialPointer == PTR_CUSTOM)
+			CORO_INVOKE_2(_nCurCustomPointer->draw, bigBuf, prim);
+		else
+			// Call the draw on the special pointer
+			CORO_INVOKE_2(_specialPointer[_nCurSpecialPointer - 1]->draw, bigBuf, prim);
 	}
 
 	CORO_END_CODE;
-}
-
-void RMPointer::doFrame(RMGfxTargetBuffer *bigBuf) {
-	// Add it to the list of primitives
-	bigBuf->addPrim(new RMGfxPrimitive(this));
-
-	// If there is a special pointer, does DoFrame
-	if (_nCurSpecialPointer != 0 && _nCurSpecialPointer != PTR_CUSTOM)
-		_specialPointer[_nCurSpecialPointer - 1]->doFrame(bigBuf, false);
-}
-
-void RMPointer::removeThis(CORO_PARAM, bool &result) {
-	// Always remove from the OT list, to support disabling the pointer
-	result = true;
 }
 
 int RMPointer::curAction(void) {
@@ -1583,6 +1565,41 @@ int RMPointer::curAction(void) {
 		return 0;
 
 	return _nCurPointer;
+}
+
+/** 
+ * Show the cursor 
+ */
+void RMPointer::showCursor() {
+	if (!CursorMan.isVisible()) {
+		CursorMan.showMouse(true);
+
+		updateCursor();
+	}
+}
+
+/** 
+ * Hide the cursor 
+ */
+void RMPointer::hideCursor() {
+	if (CursorMan.isVisible()) {
+		CursorMan.showMouse(false);
+	}
+}
+
+
+void RMPointer::updateCursor() {
+	// Create an intermediate buffer and draw the cursor onto it
+	RMGfxTargetBuffer buf;
+	buf.create(64, 64, 16);
+	RMGfxPrimitive prim;
+	
+	draw(Common::nullContext, buf, &prim);
+
+	// Get the raw pixel data and set the cursor to it
+	const byte *cursorData = buf;
+	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	CursorMan.replaceCursor(cursorData, 64, 64, _cursorHotspot._x, _cursorHotspot._y, 0, 1, &pixelFormat);
 }
 
 } // End of namespace Tony

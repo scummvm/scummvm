@@ -305,8 +305,9 @@ SKIPCLICKSINISTRO:
 		_tony.setScrollPosition(_loc.scrollPosition());
 
 	if ((!_tony.inAction() && _bInput) || _bAlwaysDrawMouse) {
-		_point.setCoord(_input.mousePos());
-		_point.doFrame(&_bigBuf);
+		_point.showCursor();
+	} else {
+		_point.hideCursor();
 	}
 
 	// **********************
