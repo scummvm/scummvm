@@ -152,18 +152,6 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
-#ifdef ENABLE_SCI32
-	// SCI32 uses a parameter here. It is used to modify a string, stored in a
-	// global variable, so that game scripts store the save directory. We
-	// don't really set a save game directory, thus not setting the string to
-	// anything is the correct thing to do here.
-	//if (argc > 0)
-	//	warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
-#endif
-		return s->_segMan->getSaveDirPtr();
-}
-
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 	if (argc > 1) {
 		// SCI1.1/SCI32
@@ -194,255 +182,6 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
-reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->_segMan->getString(argv[0]);
-	uint16 virtualId = argv[1].toUint16();
-
-	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), virtualId);
-
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-
-	// we allow 0 (happens in QfG2 when trying to restore from an empty saved game list) and return false in that case
-	if (virtualId == 0)
-		return NULL_REG;
-
-	// Find saved-game
-	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-		error("kCheckSaveGame: called with invalid savegameId");
-	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-	int savegameNr = findSavegame(saves, savegameId);
-	if (savegameNr == -1)
-		return NULL_REG;
-
-	// Check for compatible savegame version
-	int ver = saves[savegameNr].version;
-	if (ver < MINIMUM_SAVEGAME_VERSION || ver > CURRENT_SAVEGAME_VERSION)
-		return NULL_REG;
-
-	// Otherwise we assume the savegame is OK
-	return TRUE_REG;
-}
-
-reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->_segMan->getString(argv[0]);
-
-	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
-
-	// Scripts ask for current save files, we can assume that if afterwards they ask us to create a new slot they really
-	//  mean new slot instead of overwriting the old one
-	s->_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
-
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-	uint totalSaves = MIN<uint>(saves.size(), MAX_SAVEGAME_NR);
-
-	reg_t *slot = s->_segMan->derefRegPtr(argv[2], totalSaves);
-
-	if (!slot) {
-		warning("kGetSaveFiles: %04X:%04X invalid or too small to hold slot data", PRINT_REG(argv[2]));
-		totalSaves = 0;
-	}
-
-	const uint bufSize = (totalSaves * SCI_MAX_SAVENAME_LENGTH) + 1;
-	char *saveNames = new char[bufSize];
-	char *saveNamePtr = saveNames;
-
-	for (uint i = 0; i < totalSaves; i++) {
-		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame ID ffs. see above
-		strcpy(saveNamePtr, saves[i].name);
-		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
-	}
-
-	*saveNamePtr = 0; // Terminate list
-
-	s->_segMan->memcpy(argv[1], (byte *)saveNames, bufSize);
-	delete[] saveNames;
-
-	return make_reg(0, totalSaves);
-}
-
-reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id;
- 	int16 virtualId = argv[1].toSint16();
-	int16 savegameId = -1;
-	Common::String game_description;
-	Common::String version;
-
-	if (argc > 3)
-		version = s->_segMan->getString(argv[3]);
-
-	// We check here, we don't want to delete a users save in case we are within a kernel function
-	if (s->executionStackBase) {
-		warning("kSaveGame - won't save from within kernel function");
-		return NULL_REG;
-	}
-
-	if (argv[0].isNull()) {
-		// Direct call, from a patched Game::save
-		if ((argv[1] != SIGNAL_REG) || (!argv[2].isNull()))
-			error("kSaveGame: assumed patched call isn't accurate");
-
-		// we are supposed to show a dialog for the user and let him choose where to save
-		g_sci->_soundCmd->pauseAll(true); // pause music
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-		savegameId = dialog->runModalWithCurrentTarget();
-		game_description = dialog->getResultString();
-		if (game_description.empty()) {
-			// create our own description for the saved game, the user didnt enter it
-			game_description = dialog->createDefaultSaveDescription(savegameId);
-		}
-		delete dialog;
-		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
-		if (savegameId < 0)
-			return NULL_REG;
-
-	} else {
-		// Real call from script
-		game_id = s->_segMan->getString(argv[0]);
-		if (argv[2].isNull())
-			error("kSaveGame: called with description being NULL");
-		game_description = s->_segMan->getString(argv[2]);
-
-		debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
-
-		Common::Array<SavegameDesc> saves;
-		listSavegames(saves);
-
-		if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
-			// savegameId is an actual Id, so search for it just to make sure
-			savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-			if (findSavegame(saves, savegameId) == -1)
-				return NULL_REG;
-		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
-			// virtualId is low, we assume that scripts expect us to create new slot
-			if (virtualId == s->_lastSaveVirtualId) {
-				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
-				savegameId = s->_lastSaveNewId;
-			} else {
-				uint savegameNr;
-				// savegameId is in lower range, scripts expect us to create a new slot
-				for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
-					for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
-						if (savegameId == saves[savegameNr].id)
-							break;
-					}
-					if (savegameNr == saves.size())
-						break;
-				}
-				if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
-					error("kSavegame: no more savegame slots available");
-			}
-		} else {
-			error("kSaveGame: invalid savegameId used");
-		}
-
-		// Save in case caller wants to overwrite last newly created save
-		s->_lastSaveVirtualId = virtualId;
-		s->_lastSaveNewId = savegameId;
-	}
-
-	s->r_acc = NULL_REG;
-
-	Common::String filename = g_sci->getSavegameName(savegameId);
-	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-	Common::OutSaveFile *out;
-
-	out = saveFileMan->openForSaving(filename);
-	if (!out) {
-		warning("Error opening savegame \"%s\" for writing", filename.c_str());
-	} else {
-		if (!gamestate_save(s, out, game_description, version)) {
-			warning("Saving the game failed");
-		} else {
-			s->r_acc = TRUE_REG; // save successful
-		}
-
-		out->finalize();
-		if (out->err()) {
-			warning("Writing the savegame failed");
-			s->r_acc = NULL_REG; // write failure
-		}
-		delete out;
-	}
-
-	return s->r_acc;
-}
-
-reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
-	int16 savegameId = argv[1].toSint16();
-	bool pausedMusic = false;
-
-	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
-
-	if (argv[0].isNull()) {
-		// Direct call, either from launcher or from a patched Game::restore
-		if (savegameId == -1) {
-			// we are supposed to show a dialog for the user and let him choose a saved game
-			g_sci->_soundCmd->pauseAll(true); // pause music
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-			savegameId = dialog->runModalWithCurrentTarget();
-			delete dialog;
-			if (savegameId < 0) {
-				g_sci->_soundCmd->pauseAll(false); // unpause music
-				return s->r_acc;
-			}
-			pausedMusic = true;
-		}
-		// don't adjust ID of the saved game, it's already correct
-	} else {
-		if (argv[2].isNull())
-			error("kRestoreGame: called with parameter 2 being NULL");
-		// Real call from script, we need to adjust ID
-		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
-			warning("Savegame ID %d is not allowed", savegameId);
-			return TRUE_REG;
-		}
-		savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
-	}
-
-	s->r_acc = NULL_REG; // signals success
-
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-	if (findSavegame(saves, savegameId) == -1) {
-		s->r_acc = TRUE_REG;
-		warning("Savegame ID %d not found", savegameId);
-	} else {
-		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-		Common::String filename = g_sci->getSavegameName(savegameId);
-		Common::SeekableReadStream *in;
-
-		in = saveFileMan->openForLoading(filename);
-		if (in) {
-			// found a savegame file
-
-			gamestate_restore(s, in);
-			delete in;
-
-			if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
-				// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
-				//  saving a previously restored game.
-				// We set the current savedgame-id directly and remove the script
-				//  code concerning this via script patch.
-				s->variables[VAR_GLOBAL][0xB3].offset = SAVEGAMEID_OFFICIALRANGE_START + savegameId;
-			}
-		} else {
-			s->r_acc = TRUE_REG;
-			warning("Savegame #%d not found", savegameId);
-		}
-	}
-
-	if (!s->r_acc.isNull()) {
-		// no success?
-		if (pausedMusic)
-			g_sci->_soundCmd->pauseAll(false); // unpause music
-	}
-
-	return s->r_acc;
-}
-
 reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 	Common::String path = s->_segMan->getString(argv[0]);
 
@@ -451,6 +190,25 @@ reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 	// Always return true
 	return make_reg(0, 1);
 }
+
+#ifdef ENABLE_SCI32
+
+reg_t kCD(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Stub
+	switch (argv[0].toUint16()) {
+	case 0:
+		// Return whether the contents of disc argv[1] is available.
+		return TRUE_REG;
+	default:
+		warning("CD(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+#endif
+
+// ---- FileIO operations -----------------------------------------------------
 
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
@@ -601,51 +359,6 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 6); // DOS - invalid handle
 }
 
-reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
-	uint16 maxsize = argv[1].toUint16();
-	char *buf = new char[maxsize];
-	uint16 handle = argv[2].toUint16();
-	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, maxsize);
-	uint32 bytesRead;
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE)
-		bytesRead = s->_virtualIndexFile->readLine(buf, maxsize);
-	else
-#endif
-		bytesRead = fgets_wrapper(s, buf, maxsize, handle);
-
-	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
-	delete[] buf;
-	return bytesRead ? argv[0] : NULL_REG;
-}
-
-reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
-	int handle = argv[0].toUint16();
-	Common::String str = s->_segMan->getString(argv[1]);
-	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
-		s->_virtualIndexFile->write(str.c_str(), str.size());
-		return NULL_REG;
-	}
-#endif
-
-	FileHandle *f = getFileFromHandle(s, handle);
-
-	if (f) {
-		f->_out->write(str.c_str(), str.size());
-		if (getSciVersion() <= SCI_VERSION_0_LATE)
-			return s->r_acc;	// SCI0 semantics: no value returned
-		return NULL_REG;
-	}
-
-	if (getSciVersion() <= SCI_VERSION_0_LATE)
-		return s->r_acc;	// SCI0 semantics: no value returned
-	return make_reg(0, 6); // DOS - invalid handle
-}
-
 reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
@@ -693,6 +406,51 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 	if (result)
 		return NULL_REG;
 	return make_reg(0, 2); // DOS - file not found error code
+}
+
+reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
+	uint16 maxsize = argv[1].toUint16();
+	char *buf = new char[maxsize];
+	uint16 handle = argv[2].toUint16();
+	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, maxsize);
+	uint32 bytesRead;
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE)
+		bytesRead = s->_virtualIndexFile->readLine(buf, maxsize);
+	else
+#endif
+		bytesRead = fgets_wrapper(s, buf, maxsize, handle);
+
+	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
+	delete[] buf;
+	return bytesRead ? argv[0] : NULL_REG;
+}
+
+reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	Common::String str = s->_segMan->getString(argv[1]);
+	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE) {
+		s->_virtualIndexFile->write(str.c_str(), str.size());
+		return NULL_REG;
+	}
+#endif
+
+	FileHandle *f = getFileFromHandle(s, handle);
+
+	if (f) {
+		f->_out->write(str.c_str(), str.size());
+		if (getSciVersion() <= SCI_VERSION_0_LATE)
+			return s->r_acc;	// SCI0 semantics: no value returned
+		return NULL_REG;
+	}
+
+	if (getSciVersion() <= SCI_VERSION_0_LATE)
+		return s->r_acc;	// SCI0 semantics: no value returned
+	return make_reg(0, 6); // DOS - invalid handle
 }
 
 reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
@@ -875,18 +633,282 @@ reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv) {
 	return TRUE_REG;	// slot creation was successful
 }
 
-reg_t kCD(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Stub
-	switch (argv[0].toUint16()) {
-	case 0:
-		// Return whether the contents of disc argv[1] is available.
-		return TRUE_REG;
-	default:
-		warning("CD(%d)", argv[0].toUint16());
+#endif
+
+// ---- Save operations -------------------------------------------------------
+
+#ifdef ENABLE_SCI32
+
+reg_t kSave(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+#endif
+
+reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
+	Common::String game_id;
+ 	int16 virtualId = argv[1].toSint16();
+	int16 savegameId = -1;
+	Common::String game_description;
+	Common::String version;
+
+	if (argc > 3)
+		version = s->_segMan->getString(argv[3]);
+
+	// We check here, we don't want to delete a users save in case we are within a kernel function
+	if (s->executionStackBase) {
+		warning("kSaveGame - won't save from within kernel function");
+		return NULL_REG;
 	}
 
-	return NULL_REG;
+	if (argv[0].isNull()) {
+		// Direct call, from a patched Game::save
+		if ((argv[1] != SIGNAL_REG) || (!argv[2].isNull()))
+			error("kSaveGame: assumed patched call isn't accurate");
+
+		// we are supposed to show a dialog for the user and let him choose where to save
+		g_sci->_soundCmd->pauseAll(true); // pause music
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		savegameId = dialog->runModalWithCurrentTarget();
+		game_description = dialog->getResultString();
+		if (game_description.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+			game_description = dialog->createDefaultSaveDescription(savegameId);
+		}
+		delete dialog;
+		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
+		if (savegameId < 0)
+			return NULL_REG;
+
+	} else {
+		// Real call from script
+		game_id = s->_segMan->getString(argv[0]);
+		if (argv[2].isNull())
+			error("kSaveGame: called with description being NULL");
+		game_description = s->_segMan->getString(argv[2]);
+
+		debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
+
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
+
+		if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
+			// savegameId is an actual Id, so search for it just to make sure
+			savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+			if (findSavegame(saves, savegameId) == -1)
+				return NULL_REG;
+		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
+			// virtualId is low, we assume that scripts expect us to create new slot
+			if (virtualId == s->_lastSaveVirtualId) {
+				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
+				savegameId = s->_lastSaveNewId;
+			} else {
+				uint savegameNr;
+				// savegameId is in lower range, scripts expect us to create a new slot
+				for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
+					for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
+						if (savegameId == saves[savegameNr].id)
+							break;
+					}
+					if (savegameNr == saves.size())
+						break;
+				}
+				if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
+					error("kSavegame: no more savegame slots available");
+			}
+		} else {
+			error("kSaveGame: invalid savegameId used");
+		}
+
+		// Save in case caller wants to overwrite last newly created save
+		s->_lastSaveVirtualId = virtualId;
+		s->_lastSaveNewId = savegameId;
+	}
+
+	s->r_acc = NULL_REG;
+
+	Common::String filename = g_sci->getSavegameName(savegameId);
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+	Common::OutSaveFile *out;
+
+	out = saveFileMan->openForSaving(filename);
+	if (!out) {
+		warning("Error opening savegame \"%s\" for writing", filename.c_str());
+	} else {
+		if (!gamestate_save(s, out, game_description, version)) {
+			warning("Saving the game failed");
+		} else {
+			s->r_acc = TRUE_REG; // save successful
+		}
+
+		out->finalize();
+		if (out->err()) {
+			warning("Writing the savegame failed");
+			s->r_acc = NULL_REG; // write failure
+		}
+		delete out;
+	}
+
+	return s->r_acc;
 }
+
+reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
+	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
+	int16 savegameId = argv[1].toSint16();
+	bool pausedMusic = false;
+
+	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
+
+	if (argv[0].isNull()) {
+		// Direct call, either from launcher or from a patched Game::restore
+		if (savegameId == -1) {
+			// we are supposed to show a dialog for the user and let him choose a saved game
+			g_sci->_soundCmd->pauseAll(true); // pause music
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			savegameId = dialog->runModalWithCurrentTarget();
+			delete dialog;
+			if (savegameId < 0) {
+				g_sci->_soundCmd->pauseAll(false); // unpause music
+				return s->r_acc;
+			}
+			pausedMusic = true;
+		}
+		// don't adjust ID of the saved game, it's already correct
+	} else {
+		if (argv[2].isNull())
+			error("kRestoreGame: called with parameter 2 being NULL");
+		// Real call from script, we need to adjust ID
+		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
+			warning("Savegame ID %d is not allowed", savegameId);
+			return TRUE_REG;
+		}
+		savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
+	}
+
+	s->r_acc = NULL_REG; // signals success
+
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+	if (findSavegame(saves, savegameId) == -1) {
+		s->r_acc = TRUE_REG;
+		warning("Savegame ID %d not found", savegameId);
+	} else {
+		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+		Common::String filename = g_sci->getSavegameName(savegameId);
+		Common::SeekableReadStream *in;
+
+		in = saveFileMan->openForLoading(filename);
+		if (in) {
+			// found a savegame file
+
+			gamestate_restore(s, in);
+			delete in;
+
+			if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
+				// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
+				//  saving a previously restored game.
+				// We set the current savedgame-id directly and remove the script
+				//  code concerning this via script patch.
+				s->variables[VAR_GLOBAL][0xB3].offset = SAVEGAMEID_OFFICIALRANGE_START + savegameId;
+			}
+		} else {
+			s->r_acc = TRUE_REG;
+			warning("Savegame #%d not found", savegameId);
+		}
+	}
+
+	if (!s->r_acc.isNull()) {
+		// no success?
+		if (pausedMusic)
+			g_sci->_soundCmd->pauseAll(false); // unpause music
+	}
+
+	return s->r_acc;
+}
+
+reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
+#ifdef ENABLE_SCI32
+	// SCI32 uses a parameter here. It is used to modify a string, stored in a
+	// global variable, so that game scripts store the save directory. We
+	// don't really set a save game directory, thus not setting the string to
+	// anything is the correct thing to do here.
+	//if (argc > 0)
+	//	warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
+#endif
+		return s->_segMan->getSaveDirPtr();
+}
+
+reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
+	Common::String game_id = s->_segMan->getString(argv[0]);
+	uint16 virtualId = argv[1].toUint16();
+
+	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), virtualId);
+
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	// we allow 0 (happens in QfG2 when trying to restore from an empty saved game list) and return false in that case
+	if (virtualId == 0)
+		return NULL_REG;
+
+	// Find saved-game
+	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+		error("kCheckSaveGame: called with invalid savegameId");
+	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	int savegameNr = findSavegame(saves, savegameId);
+	if (savegameNr == -1)
+		return NULL_REG;
+
+	// Check for compatible savegame version
+	int ver = saves[savegameNr].version;
+	if (ver < MINIMUM_SAVEGAME_VERSION || ver > CURRENT_SAVEGAME_VERSION)
+		return NULL_REG;
+
+	// Otherwise we assume the savegame is OK
+	return TRUE_REG;
+}
+
+reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
+	Common::String game_id = s->_segMan->getString(argv[0]);
+
+	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
+
+	// Scripts ask for current save files, we can assume that if afterwards they ask us to create a new slot they really
+	//  mean new slot instead of overwriting the old one
+	s->_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
+
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+	uint totalSaves = MIN<uint>(saves.size(), MAX_SAVEGAME_NR);
+
+	reg_t *slot = s->_segMan->derefRegPtr(argv[2], totalSaves);
+
+	if (!slot) {
+		warning("kGetSaveFiles: %04X:%04X invalid or too small to hold slot data", PRINT_REG(argv[2]));
+		totalSaves = 0;
+	}
+
+	const uint bufSize = (totalSaves * SCI_MAX_SAVENAME_LENGTH) + 1;
+	char *saveNames = new char[bufSize];
+	char *saveNamePtr = saveNames;
+
+	for (uint i = 0; i < totalSaves; i++) {
+		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame ID ffs. see above
+		strcpy(saveNamePtr, saves[i].name);
+		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
+	}
+
+	*saveNamePtr = 0; // Terminate list
+
+	s->_segMan->memcpy(argv[1], (byte *)saveNames, bufSize);
+	delete[] saveNames;
+
+	return make_reg(0, totalSaves);
+}
+
+#ifdef ENABLE_SCI32
 
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv) {
 	// Normally, this creates the name of the save catalogue/directory to save into.
@@ -926,12 +948,6 @@ reg_t kAutoSave(EngineState *s, int argc, reg_t *argv) {
 
 	// This function has to return something other than 0 to proceed
 	return s->r_acc;
-}
-
-reg_t kSave(EngineState *s, int argc, reg_t *argv) {
-	if (!s)
-		return make_reg(0, getSciVersion());
-	error("not supposed to call this");
 }
 
 #endif
