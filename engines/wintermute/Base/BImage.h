@@ -32,29 +32,37 @@
 
 //#include "FreeImage.h"
 #include "engines/wintermute/Base/BBase.h"
+#include "graphics/surface.h"
+#include "graphics/pixelformat.h"
+#include "graphics/decoders/image_decoder.h"
 #include "common/endian.h"
+#include "common/str.h"
 
 struct FIBITMAP;
 
 namespace WinterMute {
-
+class CBSurface;
 class CBImage: CBBase {
 
 public:
 	CBImage(CBGame *inGame, FIBITMAP *bitmap = NULL);
 	~CBImage();
 
-
+	HRESULT loadFile(const Common::String &filename);
+	const Graphics::Surface *getSurface() const { return _surface; };
+	const byte *getPalette() const { return _palette; }
+	byte getAlphaAt(int x, int y);
 	byte *CreateBMPBuffer(uint32 *BufferSize = NULL);
 	HRESULT Resize(int NewWidth, int NewHeight);
 	HRESULT SaveBMPFile(const char *Filename);
 	HRESULT CopyFrom(CBImage *OrigImage, int NewWidth = 0, int NewHeight = 0);
 
-	FIBITMAP *GetBitmap() const {
-		return _bitmap;
-	}
 private:
+	Common::String _filename;
+	Graphics::ImageDecoder *_decoder;
 	FIBITMAP *_bitmap;
+	const Graphics::Surface *_surface;
+	const byte *_palette;
 };
 
 } // end of namespace WinterMute

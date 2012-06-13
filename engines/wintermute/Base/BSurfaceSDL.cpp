@@ -31,6 +31,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSurfaceSDL.h"
 #include "engines/wintermute/Base/BRenderSDL.h"
+#include "engines/wintermute/Base/BImage.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/bmp.h"
@@ -99,28 +100,10 @@ bool hasTransparency(Graphics::Surface *surf) {
 HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int lifeTime, bool keepLoaded) {
 /*	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
 	Common::String strFileName(filename);
-
-	Graphics::ImageDecoder *imgDecoder;
-
-	if (strFileName.hasSuffix(".png")) {
-		imgDecoder = new Graphics::PNGDecoder();
-	} else if (strFileName.hasSuffix(".bmp")) {
-		imgDecoder = new Graphics::BitmapDecoder();
-	} else if (strFileName.hasSuffix(".tga")) {
-		imgDecoder = new WinterMute::TGA();
-	} else if (strFileName.hasSuffix(".jpg")) {
-		imgDecoder = new Graphics::JPEGDecoder();
-	} else {
-		error("CBSurfaceSDL::Create : Unsupported fileformat %s", filename);
-	}
-
-	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(filename);
-	if (!file) return E_FAIL;
-
-	imgDecoder->loadStream(*file);
-	const Graphics::Surface *surface = imgDecoder->getSurface();
-	const byte* palette = imgDecoder->getPalette();
-	Game->_fileManager->CloseFile(file);
+	warning("CBSurfaceSDL::create(%s, %d, %d, %d, %d, %d, %d", filename, default_ck, ck_red, ck_green, ck_blue, lifeTime, keepLoaded);
+	CBImage *image = new CBImage(Game);
+	image->loadFile(strFileName);
+//	const Graphics::Surface *surface = image->getSurface();
 
 	if (default_ck) {
 		ck_red   = 255;
@@ -128,8 +111,8 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 		ck_blue  = 255;
 	}
 
-	_width = surface->w;
-	_height = surface->h;
+	_width = image->getSurface()->w;
+	_height = image->getSurface()->h;
 
 	bool isSaveGameGrayscale = scumm_strnicmp(filename, "savegame:", 9) == 0 && (filename[strFileName.size() - 1] == 'g' || filename[strFileName.size() - 1] == 'G');
 	if (isSaveGameGrayscale) {
@@ -169,19 +152,19 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 
 	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
 	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
-	if (strFileName.hasSuffix(".bmp") && surface->format.bytesPerPixel == 4) {
-		_surface = surface->convertTo(g_system->getScreenFormat(), palette);
+	if (strFileName.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);
 		trans.applyColorKey(ck_red, ck_green, ck_blue);
-	} else if (surface->format.bytesPerPixel == 1 && palette) {
-		_surface = surface->convertTo(g_system->getScreenFormat(), palette);
+	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);
 		trans.applyColorKey(ck_red, ck_green, ck_blue, true);
-	} else if (surface->format.bytesPerPixel == 4 && surface->format != g_system->getScreenFormat()) {
-		_surface = surface->convertTo(g_system->getScreenFormat());
+	} else if (image->getSurface()->format.bytesPerPixel == 4 && image->getSurface()->format != g_system->getScreenFormat()) {
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
 	} else {
 		_surface = new Graphics::Surface();
-		_surface->copyFrom(*surface);
+		_surface->copyFrom(*image->getSurface());
 	}
 	
 	_hasAlpha = hasTransparency(_surface);
@@ -195,7 +178,7 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 		warning("Surface-textures not fully ported yet");
 		hasWarned = true;
 	}
-	delete imgDecoder;
+	//delete imgDecoder;
 #if 0
 	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
 	if (!_texture) {
@@ -226,9 +209,10 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 	if (_keepLoaded) _lifeTime = -1;
 
 	_valid = true;
-#if 0
+
 	Game->AddMem(_width * _height * 4);
-#endif
+	
+	delete image;
 
 	return S_OK;
 }
@@ -493,6 +477,9 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	byte g = D3DCOLGetG(Alpha);
 	byte b = D3DCOLGetB(Alpha);
 	byte a = D3DCOLGetA(Alpha);
+	
+	renderer->setAlphaMod(a);
+	renderer->setColorMod(r, g, b);
 #if 0
 	SDL_SetTextureColorMod(_texture, r, g, b);
 	SDL_SetTextureAlphaMod(_texture, a);
@@ -551,9 +538,9 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	srcRect.setHeight(drawSrc.h);
 
 	if (_hasAlpha && !AlphaDisable) {
-		renderer->drawFromSurface(&drawSrc, &srcRect, &position, r, g, b, a, mirrorX, mirrorY);
+		renderer->drawFromSurface(&drawSrc, &srcRect, &position, mirrorX, mirrorY);
 	} else {
-		renderer->drawOpaqueFromSurface(&drawSrc, &srcRect, &position, r, g, b, a, mirrorX, mirrorY);
+		renderer->drawOpaqueFromSurface(&drawSrc, &srcRect, &position, mirrorX, mirrorY);
 	}
 #if 0
 	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
@@ -562,8 +549,9 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	return S_OK;
 }
 
-HRESULT CBSurfaceSDL::putSurface(const Graphics::Surface &surface) {
+HRESULT CBSurfaceSDL::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_surface->copyFrom(surface);
+	_hasAlpha = hasAlpha;
 	return S_OK;
 }
 

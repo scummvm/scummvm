@@ -50,6 +50,8 @@ CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
+	setAlphaMod(255);
+	setColorMod(255, 255, 255);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -178,6 +180,18 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	return S_OK;
 }
 
+void CBRenderSDL::setAlphaMod(byte alpha) {
+	byte r = D3DCOLGetR(_colorMod);
+	byte g = D3DCOLGetB(_colorMod);
+	byte b = D3DCOLGetB(_colorMod);
+	_colorMod = BS_ARGB(alpha, r, g, b);
+}
+
+void CBRenderSDL::setColorMod(byte r, byte g, byte b) {
+	byte alpha = D3DCOLGetA(_colorMod);
+	_colorMod = BS_ARGB(alpha, r, g, b);
+}
+
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::Flip() {
 
@@ -296,17 +310,17 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, byte r, byte g, byte b, byte a, bool mirrorX, bool mirrorY) {
+void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
 	TransparentSurface src(*surf, false);
 	int mirror = TransparentSurface::FLIP_NONE;
 	if (mirrorX)
 		mirror |= TransparentSurface::FLIP_V;
 	if (mirrorY)
 		mirror |= TransparentSurface::FLIP_H;
-	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, srcRect,BS_ARGB(a, r, g, b), dstRect->width(), dstRect->height() );
+	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, srcRect, _colorMod, dstRect->width(), dstRect->height() );
 }
 
-void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, byte r, byte g, byte b, byte a, bool mirrorX, bool mirrorY) {
+void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
 	TransparentSurface src(*surf, false);
 	TransparentSurface *img = NULL;
 	TransparentSurface *imgScaled = NULL;

@@ -278,7 +278,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	}
 
 	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
-	retSurface->putSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)));
+	retSurface->putSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)), true);
 	delete surface;
 	return retSurface;
 #if 0 //TODO

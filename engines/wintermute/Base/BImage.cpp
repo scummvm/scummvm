@@ -28,6 +28,18 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BImage.h"
+#include "engines/wintermute/Base/BSurfaceSDL.h"
+#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/Base/BFileManager.h"
+#include "engines/wintermute/graphics/transparentSurface.h"
+#include "graphics/decoders/png.h"
+#include "graphics/decoders/jpeg.h"
+#include "graphics/decoders/bmp.h"
+#include "graphics/surface.h"
+#include "engines/wintermute/graphics/tga.h"
+#include "common/textconsole.h"
+#include "common/stream.h"
+#include "common/system.h"
 //#include "FreeImage.h"
 
 namespace WinterMute {
@@ -38,16 +50,55 @@ CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
 	_bitmap = bitmap;
 #endif
 	_bitmap = NULL;
+	_palette = NULL;
+	_surface = NULL;
+	_decoder = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 CBImage::~CBImage() {
+	delete _bitmap;
+	delete _decoder;
 #if 0
 	if (_bitmap) FreeImage_Unload(_bitmap);
 #endif
 }
 
+HRESULT CBImage::loadFile(const Common::String &filename) {
+	_filename = filename;
+	Graphics::ImageDecoder *imgDecoder;
+	
+	if (filename.hasSuffix(".png")) {
+		imgDecoder = new Graphics::PNGDecoder();
+	} else if (filename.hasSuffix(".bmp")) {
+		imgDecoder = new Graphics::BitmapDecoder();
+	} else if (filename.hasSuffix(".tga")) {
+		imgDecoder = new WinterMute::TGA();
+	} else if (filename.hasSuffix(".jpg")) {
+		imgDecoder = new Graphics::JPEGDecoder();
+	} else {
+		error("CBImage::loadFile : Unsupported fileformat %s", filename.c_str());
+	}
+	
+	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(filename.c_str());
+	if (!file) return E_FAIL;
+	
+	imgDecoder->loadStream(*file);
+	_surface = imgDecoder->getSurface();
+	_palette = imgDecoder->getPalette();
+	Game->_fileManager->CloseFile(file);
+	
+	return S_OK;
+}
+
+byte CBImage::getAlphaAt(int x, int y) {
+	if (!_surface) return 0xFF;
+	uint32 color = *(uint32*)_surface->getBasePtr(x, y);
+	byte r, g, b, a;
+	_surface->format.colorToARGB(color, a, r, g, b);
+	return a;
+}
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBImage::SaveBMPFile(const char *Filename) {

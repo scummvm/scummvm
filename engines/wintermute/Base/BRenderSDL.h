@@ -58,8 +58,10 @@ public:
 
 	CBImage *TakeScreenshot();
 
-	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, byte r = 255, byte g = 255, byte b = 255, byte a = 255, bool mirrorX = false, bool mirrorY = false);
-	void drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, byte r = 255, byte g = 255, byte b = 255, byte a = 255, bool mirrorX = false, bool mirrorY = false);
+	void setAlphaMod(byte alpha);
+	void setColorMod(byte r, byte g, byte b);
+	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
+	void drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
 
 	HRESULT SetViewport(int left, int top, int right, int bottom);
 
@@ -89,6 +91,7 @@ private:
 
 	float _ratioX;
 	float _ratioY;
+	uint32 _colorMod;
 };
 
 } // end of namespace WinterMute
