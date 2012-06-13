@@ -53,7 +53,7 @@ static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
 
 
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
-	has_read_header = false;
+	_hasReadHeader = false;
 	firstUIFFl = true;
 }
 
@@ -115,23 +115,23 @@ seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Read in the PCC header and check consistency
-	PCC_header.mfctr = f.readByte();
-	PCC_header.vers = f.readByte();
-	PCC_header.enc = f.readByte();
-	PCC_header.bpx = f.readByte();
-	PCC_header.x1 = f.readUint16LE();
-	PCC_header.y1 = f.readUint16LE();
-	PCC_header.x2 = f.readUint16LE();
-	PCC_header.y2 = f.readUint16LE();
-	PCC_header.xres = f.readUint16LE();
-	PCC_header.yres = f.readUint16LE();
-	f.read(PCC_header.palette, sizeof(PCC_header.palette));
-	PCC_header.vmode = f.readByte();
-	PCC_header.planes = f.readByte();
-	PCC_header.bytesPerLine = f.readUint16LE();
-	f.read(PCC_header.fill2, sizeof(PCC_header.fill2));
+	_PCCHeader._mfctr = f.readByte();
+	_PCCHeader._vers = f.readByte();
+	_PCCHeader._enc = f.readByte();
+	_PCCHeader._bpx = f.readByte();
+	_PCCHeader._x1 = f.readUint16LE();
+	_PCCHeader._y1 = f.readUint16LE();
+	_PCCHeader._x2 = f.readUint16LE();
+	_PCCHeader._y2 = f.readUint16LE();
+	_PCCHeader._xres = f.readUint16LE();
+	_PCCHeader._yres = f.readUint16LE();
+	f.read(_PCCHeader._palette, sizeof(_PCCHeader._palette));
+	_PCCHeader._vmode = f.readByte();
+	_PCCHeader._planes = f.readByte();
+	_PCCHeader._bytesPerLine = f.readUint16LE();
+	f.read(_PCCHeader._fill2, sizeof(_PCCHeader._fill2));
 
-	if (PCC_header.mfctr != 10)
+	if (_PCCHeader._mfctr != 10)
 		error("Bad data file format: %s", name);
 
 	// Allocate memory for seq_t if 0
@@ -142,10 +142,10 @@ seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr
 
 	// Find size of image data in 8-bit DIB format
 	// Note save of x2 - marks end of valid data before garbage
-	uint16 bytesPerLine4 = PCC_header.bytesPerLine * 4; // 4-bit bpl
+	uint16 bytesPerLine4 = _PCCHeader._bytesPerLine * 4; // 4-bit bpl
 	seqPtr->_bytesPerLine8 = bytesPerLine4 * 2;      // 8-bit bpl
-	seqPtr->_lines = PCC_header.y2 - PCC_header.y1 + 1;
-	seqPtr->_x2 = PCC_header.x2 - PCC_header.x1 + 1;
+	seqPtr->_lines = _PCCHeader._y2 - _PCCHeader._y1 + 1;
+	seqPtr->_x2 = _PCCHeader._x2 - _PCCHeader._x1 + 1;
 	// Size of the image
 	uint16 size = seqPtr->_lines * seqPtr->_bytesPerLine8;
 
@@ -168,12 +168,12 @@ seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr
 			for (int i = 0; i < (c & kLengthMask); i++) {
 				*p++ = d;
 				if ((uint16)(p - pline) == bytesPerLine4)
-					p = convertPCC(pline, y++, PCC_header.bytesPerLine, imagePtr);
+					p = convertPCC(pline, y++, _PCCHeader._bytesPerLine, imagePtr);
 			}
 		} else {
 			*p++ = c;
 			if ((uint16)(p - pline) == bytesPerLine4)
-				p = convertPCC(pline, y++, PCC_header.bytesPerLine, imagePtr);
+				p = convertPCC(pline, y++, _PCCHeader._bytesPerLine, imagePtr);
 		}
 	}
 	return seqPtr;
@@ -296,27 +296,27 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 		return 0;
 	}
 
-	if (!has_read_header) {
+	if (!_hasReadHeader) {
 		for (int i = 0; i < kMaxSounds; i++) {
-			s_hdr[i]._size = fp.readUint16LE();
-			s_hdr[i]._offset = fp.readUint32LE();
+			_s_hdr[i]._size = fp.readUint16LE();
+			_s_hdr[i]._offset = fp.readUint32LE();
 		}
 		if (fp.err())
 			error("Wrong sound file format");
-		has_read_header = true;
+		_hasReadHeader = true;
 	}
 
-	*size = s_hdr[sound]._size;
+	*size = _s_hdr[sound]._size;
 	if (*size == 0)
 		error("Wrong sound file format or missing sound %d", sound);
 
 	// Allocate memory for sound or music, if possible
-	sound_pt soundPtr = (byte *)malloc(s_hdr[sound]._size); // Ptr to sound data
+	sound_pt soundPtr = (byte *)malloc(_s_hdr[sound]._size); // Ptr to sound data
 	assert(soundPtr);
 
 	// Seek to data and read it
-	fp.seek(s_hdr[sound]._offset, SEEK_SET);
-	if (fp.read(soundPtr, s_hdr[sound]._size) != s_hdr[sound]._size)
+	fp.seek(_s_hdr[sound]._offset, SEEK_SET);
+	if (fp.read(soundPtr, _s_hdr[sound]._size) != _s_hdr[sound]._size)
 		error("Wrong sound file format");
 
 	fp.close();
@@ -639,8 +639,8 @@ uif_hdr_t *FileManager::getUIFHeader(const uif_t id) {
 			error("Wrong UIF file format");
 
 		for (int i = 0; i < kMaxUifs; ++i) {
-			UIFHeader[i].size = ip.readUint16LE();
-			UIFHeader[i].offset = ip.readUint32LE();
+			UIFHeader[i]._size = ip.readUint16LE();
+			UIFHeader[i]._offset = ip.readUint32LE();
 		}
 
 		ip.close();
@@ -661,7 +661,7 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 
 	// Seek to data
 	uif_hdr_t *UIFHeaderPtr = getUIFHeader((uif_t)id);
-	ip.seek(UIFHeaderPtr->offset, SEEK_SET);
+	ip.seek(UIFHeaderPtr->_offset, SEEK_SET);
 
 	// We support pcx images and straight data
 	seq_t *dummySeq;                                // Dummy seq_t for image data
@@ -671,7 +671,7 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 		free(dummySeq);
 		break;
 	default:                                        // Read file data into supplied array
-		if (ip.read(buf, UIFHeaderPtr->size) != UIFHeaderPtr->size)
+		if (ip.read(buf, UIFHeaderPtr->_size) != UIFHeaderPtr->_size)
 			error("Wrong UIF file format");
 		break;
 	}

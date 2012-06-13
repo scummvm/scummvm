@@ -85,20 +85,20 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 		fontLoadedFl[i] = false;
 	}
 	for (int i = 0; i < kBlitListSize; i++) {
-		_dlBlistList[i].x = 0;
-		_dlBlistList[i].y = 0;
-		_dlBlistList[i].dx = 0;
-		_dlBlistList[i].dy = 0;
+		_dlBlistList[i]._x = 0;
+		_dlBlistList[i]._y = 0;
+		_dlBlistList[i]._dx = 0;
+		_dlBlistList[i]._dy = 0;
 	}
 	for (int i = 0; i < kRectListSize; i++) {
-		_dlAddList[i].x = 0;
-		_dlAddList[i].y = 0;
-		_dlAddList[i].dx = 0;
-		_dlAddList[i].dy = 0;
-		_dlRestoreList[i].x = 0;
-		_dlRestoreList[i].y = 0;
-		_dlRestoreList[i].dx = 0;
-		_dlRestoreList[i].dy = 0;
+		_dlAddList[i]._x = 0;
+		_dlAddList[i]._y = 0;
+		_dlAddList[i]._dx = 0;
+		_dlAddList[i]._dy = 0;
+		_dlRestoreList[i]._x = 0;
+		_dlRestoreList[i]._y = 0;
+		_dlRestoreList[i]._dx = 0;
+		_dlRestoreList[i]._dy = 0;
 	}
 }
 
@@ -274,15 +274,15 @@ void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool for
 void Screen::merge(const rect_t *rectA, rect_t *rectB) {
 	debugC(6, kDebugDisplay, "merge()");
 
-	int16 xa = rectA->x + rectA->dx;                // Find x2,y2 for each rectangle
-	int16 xb = rectB->x + rectB->dx;
-	int16 ya = rectA->y + rectA->dy;
-	int16 yb = rectB->y + rectB->dy;
+	int16 xa = rectA->_x + rectA->_dx;               // Find x2,y2 for each rectangle
+	int16 xb = rectB->_x + rectB->_dx;
+	int16 ya = rectA->_y + rectA->_dy;
+	int16 yb = rectB->_y + rectB->_dy;
 
-	rectB->x = MIN(rectA->x, rectB->x);             // Minimum x,y
-	rectB->y = MIN(rectA->y, rectB->y);
-	rectB->dx = MAX(xa, xb) - rectB->x;             // Maximum dx,dy
-	rectB->dy = MAX(ya, yb) - rectB->y;
+	rectB->_x = MIN(rectA->_x, rectB->_x);           // Minimum x,y
+	rectB->_y = MIN(rectA->_y, rectB->_y);
+	rectB->_dx = MAX(xa, xb) - rectB->_x;            // Maximum dx,dy
+	rectB->_dy = MAX(ya, yb) - rectB->_y;
 }
 
 /**
@@ -301,7 +301,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
 		int16 c = 0;
 		rect_t *bp = blist;
 		for (int16 b = 0; b < blen; b++, bp++) {
-			if (bp->dx)                             // blist entry used
+			if (bp->_dx)                            // blist entry used
 				if (isOverlapping(list, bp))
 					coalesce[c++] = b;
 		}
@@ -318,7 +318,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
 			while (--c) {
 				rect_t *cp = &blist[coalesce[c]];
 				merge(cp, bp);
-				cp->dx = 0;                         // Delete entry
+				cp->_dx = 0;                         // Delete entry
 			}
 		}
 	}
@@ -348,10 +348,10 @@ void Screen::displayList(dupdate_t update, ...) {
 		}
 		va_start(marker, update);                   // Initialize variable arguments
 		p = &_dlAddList[_dlAddIndex];
-		p->x  = va_arg(marker, int);                // x
-		p->y  = va_arg(marker, int);                // y
-		p->dx = va_arg(marker, int);                // dx
-		p->dy = va_arg(marker, int);                // dy
+		p->_x  = va_arg(marker, int);               // x
+		p->_y  = va_arg(marker, int);               // y
+		p->_dx = va_arg(marker, int);               // dx
+		p->_dy = va_arg(marker, int);               // dy
 		va_end(marker);                             // Reset variable arguments
 		_dlAddIndex++;
 		break;
@@ -370,15 +370,15 @@ void Screen::displayList(dupdate_t update, ...) {
 
 		// Blit the combined blit-list
 		for (_dlRestoreIndex = 0, p = _dlBlistList; _dlRestoreIndex < blitLength; _dlRestoreIndex++, p++) {
-			if (p->dx)                              // Marks a used entry
-				displayRect(p->x, p->y, p->dx, p->dy);
+			if (p->_dx)                              // Marks a used entry
+				displayRect(p->_x, p->_y, p->_dx, p->_dy);
 		}
 		break;
 	case kDisplayRestore:                           // Restore each rectangle
 		for (_dlRestoreIndex = 0, p = _dlAddList; _dlRestoreIndex < _dlAddIndex; _dlRestoreIndex++, p++) {
 			// Restoring from _backBuffer to _frontBuffer
 			_dlRestoreList[_dlRestoreIndex] = *p;   // Copy add-list to restore-list
-			moveImage(_backBuffer, p->x, p->y, p->dx, p->dy, kXPix, _frontBuffer, p->x, p->y, kXPix);
+			moveImage(_backBuffer, p->_x, p->_y, p->_dx, p->_dy, kXPix, _frontBuffer, p->_x, p->_y, kXPix);
 		}
 		_dlAddIndex = 0;                            // Reset add-list
 		break;
@@ -628,19 +628,19 @@ void Screen::hideCursor() {
 }
 
 bool Screen::isInX(const int16 x, const rect_t *rect) const {
-	return (x >= rect->x) && (x <= rect->x + rect->dx);
+	return (x >= rect->_x) && (x <= rect->_x + rect->_dx);
 }
 
 bool Screen::isInY(const int16 y, const rect_t *rect) const {
-	return (y >= rect->y) && (y <= rect->y + rect->dy);
+	return (y >= rect->_y) && (y <= rect->_y + rect->_dy);
 }
 
 /**
  * Check if two rectangles are overlapping
  */
 bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
-	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) &&
-		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
+	return (isInX(rectA->_x, rectB) || isInX(rectA->_x + rectA->_dx, rectB) || isInX(rectB->_x, rectA) || isInX(rectB->_x + rectB->_dx, rectA)) &&
+		   (isInY(rectA->_y, rectB) || isInY(rectA->_y + rectA->_dy, rectB) || isInY(rectB->_y, rectA) || isInY(rectB->_y + rectB->_dy, rectA));
 }
 
 /**

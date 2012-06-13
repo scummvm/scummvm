@@ -39,10 +39,10 @@ static const int kCenter = -1;                      // Used to center text in x
 class Screen {
 public:
 	struct rect_t {                                 // Rectangle used in Display list
-		int16 x;                                    // Position in dib
-		int16 y;                                    // Position in dib
-		int16 dx;                                   // width
-		int16 dy;                                   // height
+		int16 _x;                                    // Position in dib
+		int16 _y;                                    // Position in dib
+		int16 _dx;                                   // width
+		int16 _dy;                                   // height
 	};
 
 	Screen(HugoEngine *vm);

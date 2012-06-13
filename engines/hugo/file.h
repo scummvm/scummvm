@@ -37,8 +37,8 @@ namespace Hugo {
 enum ovl_t {kOvlBoundary, kOvlOverlay, kOvlBase};
 
 struct uif_hdr_t {                                  // UIF font/image look up
-	uint16  size;                                   // Size of uif item
-	uint32  offset;                                 // Offset of item in file
+	uint16  _size;                                   // Size of uif item
+	uint32  _offset;                                 // Offset of item in file
 };
 
 
@@ -85,24 +85,24 @@ protected:
 	 * Structure of scenery file lookup entry
 	 */
 	struct sceneBlock_t {
-		uint32 scene_off;
-		uint32 scene_len;
-		uint32 b_off;
-		uint32 b_len;
-		uint32 o_off;
-		uint32 o_len;
-		uint32 ob_off;
-		uint32 ob_len;
+		uint32 _scene_off;
+		uint32 _scene_len;
+		uint32 _b_off;
+		uint32 _b_len;
+		uint32 _o_off;
+		uint32 _o_len;
+		uint32 _ob_off;
+		uint32 _ob_len;
 	};
 
-	struct PCC_header_t {                           // Structure of PCX file header
-		byte   mfctr, vers, enc, bpx;
-		uint16  x1, y1, x2, y2;                     // bounding box
-		uint16  xres, yres;
-		byte   palette[3 * kNumColors];             // EGA color palette
-		byte   vmode, planes;
-		uint16 bytesPerLine;                        // Bytes per line
-		byte   fill2[60];
+	struct _PCCHeader_t {                           // Structure of PCX file header
+		byte   _mfctr, _vers, _enc, _bpx;
+		uint16 _x1, _y1, _x2, _y2;                  // bounding box
+		uint16 _xres, _yres;
+		byte   _palette[3 * kNumColors];            // EGA color palette
+		byte   _vmode, _planes;
+		uint16 _bytesPerLine;                       // Bytes per line
+		byte   _fill2[60];
 	};                                              // Header of a PCC file
 
 	bool firstUIFFl;
@@ -112,13 +112,13 @@ protected:
 	Common::File _sceneryArchive1;                  // Handle for scenery file
 	Common::File _objectsArchive;                   // Handle for objects file
 
-	PCC_header_t PCC_header;
+	_PCCHeader_t _PCCHeader;
 
 	seq_t *readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
 
 	// If this is the first call, read the lookup table
-	bool has_read_header;
-	sound_hdr_t s_hdr[kMaxSounds];                  // Sound lookup table
+	bool _hasReadHeader;
+	sound_hdr_t _s_hdr[kMaxSounds];                  // Sound lookup table
 
 private:
 	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const;

@@ -52,28 +52,28 @@ void FileManager_v1w::readOverlay(const int screenNum, image_pt image, ovl_t ove
 	_sceneryArchive1.seek((uint32)screenNum * sizeof(sceneBlock_t), SEEK_SET);
 
 	sceneBlock_t sceneBlock;                        // Database header entry
-	sceneBlock.scene_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.scene_len = _sceneryArchive1.readUint32LE();
-	sceneBlock.b_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.b_len = _sceneryArchive1.readUint32LE();
-	sceneBlock.o_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.o_len = _sceneryArchive1.readUint32LE();
-	sceneBlock.ob_off = _sceneryArchive1.readUint32LE();
-	sceneBlock.ob_len = _sceneryArchive1.readUint32LE();
+	sceneBlock._scene_off = _sceneryArchive1.readUint32LE();
+	sceneBlock._scene_len = _sceneryArchive1.readUint32LE();
+	sceneBlock._b_off = _sceneryArchive1.readUint32LE();
+	sceneBlock._b_len = _sceneryArchive1.readUint32LE();
+	sceneBlock._o_off = _sceneryArchive1.readUint32LE();
+	sceneBlock._o_len = _sceneryArchive1.readUint32LE();
+	sceneBlock._ob_off = _sceneryArchive1.readUint32LE();
+	sceneBlock._ob_len = _sceneryArchive1.readUint32LE();
 
 	uint32 i = 0;
 	switch (overlayType) {
 	case kOvlBoundary:
-		_sceneryArchive1.seek(sceneBlock.b_off, SEEK_SET);
-		i = sceneBlock.b_len;
+		_sceneryArchive1.seek(sceneBlock._b_off, SEEK_SET);
+		i = sceneBlock._b_len;
 		break;
 	case kOvlOverlay:
-		_sceneryArchive1.seek(sceneBlock.o_off, SEEK_SET);
-		i = sceneBlock.o_len;
+		_sceneryArchive1.seek(sceneBlock._o_off, SEEK_SET);
+		i = sceneBlock._o_len;
 		break;
 	case kOvlBase:
-		_sceneryArchive1.seek(sceneBlock.ob_off, SEEK_SET);
-		i = sceneBlock.ob_len;
+		_sceneryArchive1.seek(sceneBlock._ob_off, SEEK_SET);
+		i = sceneBlock._ob_len;
 		break;
 	default:
 		error("Bad overlayType: %d", overlayType);
