@@ -38,7 +38,8 @@ MODULE_OBJS += \
 	scaler/downscaler.o \
 	scaler/scale2x.o \
 	scaler/scale3x.o \
-	scaler/scalebit.o
+	scaler/scalebit.o \
+	scaler/tv.o
 
 ifdef USE_ARM_SCALER_ASM
 MODULE_OBJS += \
