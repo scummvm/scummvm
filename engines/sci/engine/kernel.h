@@ -276,9 +276,6 @@ private:
 	const Common::String _invalid;
 };
 
-/* Maximum length of a savegame name (including terminator character). */
-#define SCI_MAX_SAVENAME_LENGTH 0x24
-
 /******************** Kernel functions ********************/
 
 reg_t kStrLen(EngineState *s, int argc, reg_t *argv);
@@ -326,10 +323,6 @@ reg_t kTimesCot(EngineState *s, int argc, reg_t *argv);
 reg_t kCosDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kSinDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kValidPath(EngineState *s, int argc, reg_t *argv);
-reg_t kFOpen(EngineState *s, int argc, reg_t *argv);
-reg_t kFPuts(EngineState *s, int argc, reg_t *argv);
-reg_t kFGets(EngineState *s, int argc, reg_t *argv);
-reg_t kFClose(EngineState *s, int argc, reg_t *argv);
 reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv);
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv);
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv);
@@ -464,6 +457,7 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 // SCI2.1 Kernel Functions
 reg_t kText(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
+reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
 reg_t kRobot(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);

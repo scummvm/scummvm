@@ -1216,6 +1216,27 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 	return Cmd_Exit(0, 0);
 }
 
+// The scripts get IDs ranging from 100->199, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
+//  SAVES and the scripts also use "saves-count + 1" to create a new savedgame slot.
+//  SCI1.1 actually recycles ids, in that case we will currently get "0".
+// This behavior is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
+//  the last-used id for that feature. If we don't assign sticky ids, the feature will overwrite different saves all the
+//  time. And sadly we can't just use the actual filename ids directly, because of the creation method for new slots.
+
+extern void listSavegames(Common::Array<SavegameDesc> &saves);
+
+bool Console::cmdListSaves(int argc, const char **argv) {
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	for (uint i = 0; i < saves.size(); i++) {
+		Common::String filename = g_sci->getSavegameName(saves[i].id);
+		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
+	}
+
+	return true;
+}
+
 bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes (parse a parameter to filter the table by a specific class):\n");
 
