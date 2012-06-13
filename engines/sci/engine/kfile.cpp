@@ -47,47 +47,6 @@ extern int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle);
 extern void listSavegames(Common::Array<SavegameDesc> &saves);
 extern int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId);
 
-reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
-	Common::String name = s->_segMan->getString(argv[0]);
-	int mode = argv[1].toUint16();
-
-	debugC(kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
-	return file_open(s, name, mode, true);
-}
-
-reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
-	debugC(kDebugLevelFile, "kFClose(%d)", argv[0].toUint16());
-	if (argv[0] != SIGNAL_REG) {
-		FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
-		if (f)
-			f->close();
-	}
-	return s->r_acc;
-}
-
-reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
-	int handle = argv[0].toUint16();
-	Common::String data = s->_segMan->getString(argv[1]);
-
-	FileHandle *f = getFileFromHandle(s, handle);
-	if (f)
-		f->_out->write(data.c_str(), data.size());
-
-	return s->r_acc;
-}
-
-reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
-	int maxsize = argv[1].toUint16();
-	char *buf = new char[maxsize];
-	int handle = argv[2].toUint16();
-
-	debugC(kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
-	int readBytes = fgets_wrapper(s, buf, maxsize, handle);
-	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
-	delete[] buf;
-	return readBytes ? argv[0] : NULL_REG;
-}
-
 /**
  * Writes the cwd to the supplied address and returns the address in acc.
  */
@@ -559,6 +518,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFileIO(close): %d", argv[0].toUint16());
 
+	if (argv[0] == SIGNAL_REG)
+		return s->r_acc;
+	
 	uint16 handle = argv[0].toUint16();
 
 #ifdef ENABLE_SCI32
@@ -571,8 +533,13 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		f->close();
+		if (getSciVersion() <= SCI_VERSION_0_LATE)
+			return s->r_acc;	// SCI0 semantics: no value returned
 		return SIGNAL_REG;
 	}
+
+	if (getSciVersion() <= SCI_VERSION_0_LATE)
+		return s->r_acc;	// SCI0 semantics: no value returned
 	return NULL_REG;
 }
 
@@ -635,20 +602,20 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
-	uint16 size = argv[1].toUint16();
-	char *buf = new char[size];
+	uint16 maxsize = argv[1].toUint16();
+	char *buf = new char[maxsize];
 	uint16 handle = argv[2].toUint16();
-	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
+	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, maxsize);
 	uint32 bytesRead;
 
 #ifdef ENABLE_SCI32
 	if (handle == VIRTUALFILE_HANDLE)
-		bytesRead = s->_virtualIndexFile->readLine(buf, size);
+		bytesRead = s->_virtualIndexFile->readLine(buf, maxsize);
 	else
 #endif
-		bytesRead = fgets_wrapper(s, buf, size, handle);
+		bytesRead = fgets_wrapper(s, buf, maxsize, handle);
 
-	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
+	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	delete[] buf;
 	return bytesRead ? argv[0] : NULL_REG;
 }
@@ -669,9 +636,13 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 
 	if (f) {
 		f->_out->write(str.c_str(), str.size());
+		if (getSciVersion() <= SCI_VERSION_0_LATE)
+			return s->r_acc;	// SCI0 semantics: no value returned
 		return NULL_REG;
 	}
 
+	if (getSciVersion() <= SCI_VERSION_0_LATE)
+		return s->r_acc;	// SCI0 semantics: no value returned
 	return make_reg(0, 6); // DOS - invalid handle
 }
 
