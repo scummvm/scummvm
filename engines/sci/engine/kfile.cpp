@@ -199,6 +199,9 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 	case 0:
 		// Return whether the contents of disc argv[1] is available.
 		return TRUE_REG;
+	case 1:
+		// Return the current CD number
+		return make_reg(0, 1);
 	default:
 		warning("CD(%d)", argv[0].toUint16());
 	}
@@ -218,21 +221,6 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
-
-#ifdef ENABLE_SCI32
-	if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
-		if (s->_virtualIndexFile) {
-			return make_reg(0, VIRTUALFILE_HANDLE);
-		} else {
-			Common::String englishName = g_sci->getSciLanguageString(name, K_LANG_ENGLISH);
-			Common::String wrappedName = g_sci->wrapFilename(englishName);
-			if (!g_sci->getSaveFileManager()->listSavefiles(wrappedName).empty()) {
-				s->_virtualIndexFile = new VirtualIndexFile(wrappedName);
-				return make_reg(0, VIRTUALFILE_HANDLE);
-			}
-		}
-	}
-#endif
 
 	// SCI32 can call K_FILEIO_OPEN with only one argument. It seems to
 	// just be checking if it exists.
@@ -260,6 +248,73 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 	debugC(kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
+
+#ifdef ENABLE_SCI32
+	if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
+		if (s->_virtualIndexFile) {
+			return make_reg(0, VIRTUALFILE_HANDLE);
+		} else {
+			Common::String englishName = g_sci->getSciLanguageString(name, K_LANG_ENGLISH);
+			Common::String wrappedName = g_sci->wrapFilename(englishName);
+			if (!g_sci->getSaveFileManager()->listSavefiles(wrappedName).empty()) {
+				s->_virtualIndexFile = new VirtualIndexFile(wrappedName);
+				return make_reg(0, VIRTUALFILE_HANDLE);
+			}
+		}
+	}
+
+	// Shivers is trying to store savegame descriptions and current spots in
+	// separate .SG files, which are hardcoded in the scripts.
+	// Essentially, there is a normal save file, created by the executable
+	// and an extra hardcoded save file, created by the game scripts, probably
+	// because they didn't want to modify the save/load code to add the extra
+	// information.
+	// Each slot in the book then has two strings, the save description and a
+	// description of the current spot that the player is at. Currently, the
+	// spot strings are always empty (probably related to the unimplemented
+	// kString subop 14, which gets called right before this call).
+	// For now, we don't allow the creation of these files, which means that
+	// all the spot descriptions next to each slot description will be empty
+	// (they are empty anyway). Until a viable solution is found to handle these
+	// extra files and until the spot description strings are initialized
+	// correctly, we resort to virtual files in order to make the load screen
+	// useable. Without this code it is unusable, as the extra information is
+	// always saved to 0.SG for some reason, but on restore the correct file is
+	// used. Perhaps the virtual ID is not taken into account when saving.
+	//
+	// Future TODO: maintain spot descriptions and show them too, ideally without
+	// having to return to this logic of extra hardcoded files.
+	if (g_sci->getGameId() == GID_SHIVERS && name.hasSuffix(".SG")) {
+		if (mode == _K_FILE_MODE_OPEN_OR_CREATE || mode == _K_FILE_MODE_CREATE) {
+			// Game scripts are trying to create a file with the save
+			// description, stop them here
+			debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
+			return SIGNAL_REG;
+		} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
+			// Create a virtual file containing the save game description
+			// and slot number, as the game scripts expect.
+			int slotNumber;
+			sscanf(name.c_str(), "%d.SG", &slotNumber);
+
+			Common::Array<SavegameDesc> saves;
+			listSavegames(saves);
+			int savegameNr = findSavegame(saves, slotNumber - SAVEGAMEID_OFFICIALRANGE_START);
+
+			if (!s->_virtualIndexFile) {
+				// Make the virtual file buffer big enough to avoid having it grow dynamically.
+				// 50 bytes should be more than enough.
+				s->_virtualIndexFile = new VirtualIndexFile(50);
+			}
+
+			s->_virtualIndexFile->seek(0, SEEK_SET);
+			s->_virtualIndexFile->write(saves[savegameNr].name, strlen(saves[savegameNr].name));
+			s->_virtualIndexFile->write("\0", 1);
+			s->_virtualIndexFile->write("\0", 1);	// Spot description (empty)
+			s->_virtualIndexFile->seek(0, SEEK_SET);
+			return make_reg(0, VIRTUALFILE_HANDLE);
+		}
+	}
+#endif
 
 	// QFG import rooms get a virtual filelisting instead of an actual one
 	if (g_sci->inQfGImportRoom()) {

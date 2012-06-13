@@ -346,6 +346,12 @@ VirtualIndexFile::VirtualIndexFile(Common::String fileName) : _fileName(fileName
 	delete inFile;
 }
 
+VirtualIndexFile::VirtualIndexFile(uint32 initialSize) : _changed(false) {
+	_bufferSize = initialSize;
+	_buffer = new char[_bufferSize];
+	_ptr = _buffer;
+}
+
 VirtualIndexFile::~VirtualIndexFile() {
 	close();
 
@@ -430,7 +436,7 @@ bool VirtualIndexFile::seek(int32 offset, int whence) {
 }
 
 void VirtualIndexFile::close() {
-	if (_changed) {
+	if (_changed && !_fileName.empty()) {
 		Common::WriteStream *outFile = g_sci->getSaveFileManager()->openForSaving(_fileName);
 		outFile->write(_buffer, _bufferSize);
 		delete outFile;

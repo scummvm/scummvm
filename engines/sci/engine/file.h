@@ -115,6 +115,7 @@ private:
 class VirtualIndexFile {
 public:
 	VirtualIndexFile(Common::String fileName);
+	VirtualIndexFile(uint32 initialSize);
 	~VirtualIndexFile();
 
 	uint32 read(char *buffer, uint32 size);
