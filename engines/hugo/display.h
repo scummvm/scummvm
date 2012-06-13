@@ -114,7 +114,7 @@ protected:
 	inline bool isInY(const int16 y, const Rect *rect) const;
 	inline bool isOverlapping(const Rect *rectA, const Rect *rectB) const;
 
-	virtual OverlayState findOvl(Seq *seqPtr, ImagePtr dst_p, uint16 y) = 0;
+	virtual OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) = 0;
 
 private:
 	byte     *_curPalette;
@@ -150,7 +150,7 @@ public:
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
 protected:
-	OverlayState findOvl(Seq *seqPtr, ImagePtr dst_p, uint16 y);
+	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };
 
 class Screen_v1w : public Screen {
@@ -161,7 +161,7 @@ public:
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
 protected:
-	OverlayState findOvl(Seq *seqPtr, ImagePtr dst_p, uint16 y);
+	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };
 
 } // End of namespace Hugo

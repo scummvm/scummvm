@@ -223,7 +223,7 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 		_vm->_screen->displayList(kDisplayAdd, 0, kDibOffY, kXPix, kInvDy);
 		break;
 	case kExitHotspot:                              // Walk to exit hotspot
-		i = findExit(cx, cy, *_vm->_screen_p);
+		i = findExit(cx, cy, *_vm->_screenPtr);
 		x = _hotspots[i]._viewx;
 		y = _hotspots[i]._viewy;
 		if (x >= 0) {                               // Hotspot refers to an exit
@@ -327,7 +327,7 @@ void MouseHandler::mouseHandler() {
 
 		// Process cursor over an exit hotspot
 		if (objId == -1) {
-			int i = findExit(cx, cy, *_vm->_screen_p);
+			int i = findExit(cx, cy, *_vm->_screenPtr);
 			if (i != -1 && _hotspots[i]._viewx >= 0) {
 				objId = kExitHotspot;
 				cursorText(_vm->_text->getTextMouse(kMsExit), cx, cy, U_FONT8, _TBRIGHTWHITE);

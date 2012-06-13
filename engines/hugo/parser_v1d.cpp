@@ -87,7 +87,7 @@ bool Parser_v1d::isNear_v1(const char *verb, const char *noun, Object *obj, char
 		return false;
 	} else if (obj->_carriedFl) {                    // Object is being carried
 		return true;
-	} else if (obj->_screenIndex != *_vm->_screen_p) { // Not in same screen
+	} else if (obj->_screenIndex != *_vm->_screenPtr) { // Not in same screen
 		if (obj->_objValue)
 			strcpy (comment, _vm->_text->getTextParser(kCmtAny4));
 		return false;
@@ -268,7 +268,7 @@ void Parser_v1d::dropObject(Object *obj) {
 	debugC(1, kDebugParser, "dropObject(Object *obj)");
 
 	obj->_carriedFl = false;
-	obj->_screenIndex = *_vm->_screen_p;
+	obj->_screenIndex = *_vm->_screenPtr;
 	if (obj->_seqNumb)                               // Don't change if no image to display
 		obj->_cycling = kCycleNotCycling;
 	obj->_x = _vm->_hero->_x - 1;
@@ -410,7 +410,7 @@ void Parser_v1d::lineHandler() {
 						return;
 				}
 			}
-			if ((*farComment == '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screen_p]))
+			if ((*farComment == '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screenPtr]))
 				return;
 		} while (noun);
 	}
@@ -418,7 +418,7 @@ void Parser_v1d::lineHandler() {
 	if (*farComment != '\0')                        // An object matched but not near enough
 		Utils::notifyBox(farComment);
 	else if (!isCatchallVerb_v1(true, noun, verb, _catchallList) &&
-		     !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screen_p])  &&
+		     !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])  &&
 		     !isCatchallVerb_v1(false, noun, verb, _catchallList))
 		Utils::notifyBox(_vm->_text->getTextParser(kTBEh_1d));
 }

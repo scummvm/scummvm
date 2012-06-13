@@ -66,12 +66,12 @@ void Scheduler::initCypher() {
 void Scheduler::initEventQueue() {
 	debugC(1, kDebugSchedule, "initEventQueue");
 
-	// Chain next_p from first to last
+	// Chain nextEvent from first to last
 	for (int i = kMaxEvents; --i;)
 		_events[i - 1]._nextEvent = &_events[i];
 	_events[kMaxEvents - 1]._nextEvent = 0;
 
-	// Chain prev_p from last to first
+	// Chain prevEvent from last to first
 	for (int i = 1; i < kMaxEvents; i++)
 		_events[i]._prevEvent = &_events[i - 1];
 	_events[0]._prevEvent = 0;
@@ -658,28 +658,28 @@ void Scheduler::processMaze(const int x1, const int x2, const int y1, const int 
 
 	if (x1 < _vm->_maze._x1) {
 		// Exit west
-		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screen_p - 1;
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - 1;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x2 - kShiftSize - (x2 - x1);
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	} else if (x2 > _vm->_maze._x2) {
 		// Exit east
-		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screen_p + 1;
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + 1;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x1 + kShiftSize;
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	} else if (y1 < _vm->_maze._y1 - kShiftSize) {
 		// Exit north
-		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screen_p - _vm->_maze._size;
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - _vm->_maze._size;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x3;
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y2 - kShiftSize - (y2 - y1);
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	} else if (y2 > _vm->_maze._y2 - kShiftSize / 2) {
 		// Exit south
-		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screen_p + _vm->_maze._size;
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + _vm->_maze._size;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x4;
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y1 + kShiftSize;
 		_vm->_route->resetRoute();
@@ -1090,10 +1090,10 @@ void Scheduler::restoreSchedulerData(Common::ReadStream *in) {
 void Scheduler::restoreEvents(Common::ReadStream *f) {
 	debugC(1, kDebugSchedule, "restoreEvents");
 
-	uint32 saveTime = f->readUint32BE();            // time of save
-	int16 freeIndex = f->readSint16BE();            // Free list index
-	int16 headIndex = f->readSint16BE();            // Head of list index
-	int16 tailIndex = f->readSint16BE();            // Tail of list index
+	uint32 saveTime = f->readUint32BE();              // time of save
+	int16 freeIndex = f->readSint16BE();              // Free list index
+	int16 headIndex = f->readSint16BE();              // Head of list index
+	int16 tailIndex = f->readSint16BE();              // Tail of list index
 
 	// Restore events indexes to pointers
 	for (int i = 0; i < kMaxEvents; i++) {
@@ -1121,8 +1121,8 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 
 	// Adjust times to fit our time
 	uint32 curTime = getTicks();
-	Event *wrkEvent = _headEvent;                 // The earliest event
-	while (wrkEvent) {                              // While mature events found
+	Event *wrkEvent = _headEvent;                     // The earliest event
+	while (wrkEvent) {                                // While mature events found
 		wrkEvent->_time = wrkEvent->_time - saveTime + curTime;
 		wrkEvent = wrkEvent->_nextEvent;
 	}
@@ -1140,31 +1140,31 @@ void Scheduler::insertAction(Act *action) {
 	curEvent->_action = action;
 	switch (action->_a0._actType) {                   // Assign whether local or global
 	case AGSCHEDULE:
-		curEvent->_localActionFl = false;            // Lasts over a new screen
+		curEvent->_localActionFl = false;               // Lasts over a new screen
 		break;
 	// Workaround: When dying, switch to storyMode in order to block the keyboard.
 	case GAMEOVER:
 		_vm->getGameStatus()._storyModeFl = true;
 	// No break on purpose
 	default:
-		curEvent->_localActionFl = true;             // Rest are for current screen only
+		curEvent->_localActionFl = true;                // Rest are for current screen only
 		break;
 	}
 
 	curEvent->_time = action->_a0._timer + getTicks(); // Convert rel to abs time
 
 	// Now find the place to insert the event
-	if (!_tailEvent) {                              // Empty queue
+	if (!_tailEvent) {                                // Empty queue
 		_tailEvent = _headEvent = curEvent;
 		curEvent->_nextEvent = curEvent->_prevEvent = 0;
 	} else {
-		Event *wrkEvent = _tailEvent;             // Search from latest time back
+		Event *wrkEvent = _tailEvent;                   // Search from latest time back
 		bool found = false;
 
 		while (wrkEvent && !found) {
-			if (wrkEvent->_time <= curEvent->_time) { // Found if new event later
+			if (wrkEvent->_time <= curEvent->_time) {     // Found if new event later
 				found = true;
-				if (wrkEvent == _tailEvent)         // New latest in list
+				if (wrkEvent == _tailEvent)                 // New latest in list
 					_tailEvent = curEvent;
 				else
 					wrkEvent->_nextEvent->_prevEvent = curEvent;
@@ -1175,8 +1175,8 @@ void Scheduler::insertAction(Act *action) {
 			wrkEvent = wrkEvent->_prevEvent;
 		}
 
-		if (!found) {                               // Must be earliest in list
-			_headEvent->_prevEvent = curEvent;       // So insert as new head
+		if (!found) {                                   // Must be earliest in list
+			_headEvent->_prevEvent = curEvent;            // So insert as new head
 			curEvent->_nextEvent = _headEvent;
 			curEvent->_prevEvent = 0;
 			_headEvent = curEvent;
@@ -1196,106 +1196,106 @@ Event *Scheduler::doAction(Event *curEvent) {
 	Act    *action = curEvent->_action;
 	Object *obj1;
 	int     dx, dy;
-	Event  *wrkEvent;                             // Save ev_p->next_p for return
+	Event  *wrkEvent;                                 // Save ev_p->nextEvent for return
 
 	switch (action->_a0._actType) {
-	case ANULL:                                     // Big NOP from DEL_EVENTS
+	case ANULL:                                       // Big NOP from DEL_EVENTS
 		break;
-	case ASCHEDULE:                                 // act0: Schedule an action list
+	case ASCHEDULE:                                   // act0: Schedule an action list
 		insertActionList(action->_a0._actIndex);
 		break;
-	case START_OBJ:                                 // act1: Start an object cycling
+	case START_OBJ:                                   // act1: Start an object cycling
 		_vm->_object->_objects[action->_a1._objIndex]._cycleNumb = action->_a1._cycleNumb;
 		_vm->_object->_objects[action->_a1._objIndex]._cycling = action->_a1._cycle;
 		break;
-	case INIT_OBJXY:                                // act2: Initialize an object
+	case INIT_OBJXY:                                  // act2: Initialize an object
 		_vm->_object->_objects[action->_a2._objIndex]._x = action->_a2._x;          // Coordinates
 		_vm->_object->_objects[action->_a2._objIndex]._y = action->_a2._y;
 		break;
-	case PROMPT:                                    // act3: Prompt user for key phrase
+	case PROMPT:                                      // act3: Prompt user for key phrase
 		promptAction(action);
 		break;
-	case BKGD_COLOR:                                // act4: Set new background color
+	case BKGD_COLOR:                                  // act4: Set new background color
 		_vm->_screen->setBackgroundColor(action->_a4._newBackgroundColor);
 		break;
-	case INIT_OBJVXY:                               // act5: Initialize an object velocity
+	case INIT_OBJVXY:                                 // act5: Initialize an object velocity
 		_vm->_object->setVelocity(action->_a5._objIndex, action->_a5._vx, action->_a5._vy);
 		break;
-	case INIT_CARRY:                                // act6: Initialize an object
+	case INIT_CARRY:                                  // act6: Initialize an object
 		_vm->_object->setCarry(action->_a6._objIndex, action->_a6._carriedFl);  // carried status
 		break;
-	case INIT_HF_COORD:                             // act7: Initialize an object to hero's "feet" coords
+	case INIT_HF_COORD:                               // act7: Initialize an object to hero's "feet" coords
 		_vm->_object->_objects[action->_a7._objIndex]._x = _vm->_hero->_x - 1;
 		_vm->_object->_objects[action->_a7._objIndex]._y = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2 - 1;
-		_vm->_object->_objects[action->_a7._objIndex]._screenIndex = *_vm->_screen_p;  // Don't forget screen!
+		_vm->_object->_objects[action->_a7._objIndex]._screenIndex = *_vm->_screenPtr;  // Don't forget screen!
 		break;
-	case NEW_SCREEN:                                // act8: Start new screen
+	case NEW_SCREEN:                                  // act8: Start new screen
 		newScreen(action->_a8._screenIndex);
 		break;
-	case INIT_OBJSTATE:                             // act9: Initialize an object state
+	case INIT_OBJSTATE:                               // act9: Initialize an object state
 		_vm->_object->_objects[action->_a9._objIndex]._state = action->_a9._newState;
 		break;
-	case INIT_PATH:                                 // act10: Initialize an object path and velocity
+	case INIT_PATH:                                   // act10: Initialize an object path and velocity
 		_vm->_object->setPath(action->_a10._objIndex, (Path) action->_a10._newPathType, action->_a10._vxPath, action->_a10._vyPath);
 		break;
-	case COND_R:                                    // act11: action lists conditional on object state
+	case COND_R:                                      // act11: action lists conditional on object state
 		if (_vm->_object->_objects[action->_a11._objIndex]._state == action->_a11._stateReq)
 			insertActionList(action->_a11._actPassIndex);
 		else
 			insertActionList(action->_a11._actFailIndex);
 		break;
-	case TEXT:                                      // act12: Text box (CF WARN)
+	case TEXT:                                        // act12: Text box (CF WARN)
 		Utils::notifyBox(_vm->_file->fetchString(action->_a12._stringIndex));   // Fetch string from file
 		break;
-	case SWAP_IMAGES:                               // act13: Swap 2 object images
+	case SWAP_IMAGES:                                 // act13: Swap 2 object images
 		_vm->_object->swapImages(action->_a13._objIndex1, action->_a13._objIndex2);
 		break;
-	case COND_SCR:                                  // act14: Conditional on current screen
+	case COND_SCR:                                    // act14: Conditional on current screen
 		if (_vm->_object->_objects[action->_a14._objIndex]._screenIndex == action->_a14._screenReq)
 			insertActionList(action->_a14._actPassIndex);
 		else
 			insertActionList(action->_a14._actFailIndex);
 		break;
-	case AUTOPILOT:                                 // act15: Home in on a (stationary) object
+	case AUTOPILOT:                                   // act15: Home in on a (stationary) object
 		_vm->_object->homeIn(action->_a15._objIndex1, action->_a15._objIndex2, action->_a15._dx, action->_a15._dy);
 		break;
-	case INIT_OBJ_SEQ:                              // act16: Set sequence number to use
+	case INIT_OBJ_SEQ:                                // act16: Set sequence number to use
 		// Note: Don't set a sequence at time 0 of a new screen, it causes
 		// problems clearing the boundary bits of the object!  t>0 is safe
 		_vm->_object->_objects[action->_a16._objIndex]._currImagePtr = _vm->_object->_objects[action->_a16._objIndex]._seqList[action->_a16._seqIndex]._seqPtr;
 		break;
-	case SET_STATE_BITS:                            // act17: OR mask with curr obj state
+	case SET_STATE_BITS:                              // act17: OR mask with curr obj state
 		_vm->_object->_objects[action->_a17._objIndex]._state |= action->_a17._stateMask;
 		break;
-	case CLEAR_STATE_BITS:                          // act18: AND ~mask with curr obj state
+	case CLEAR_STATE_BITS:                            // act18: AND ~mask with curr obj state
 		_vm->_object->_objects[action->_a18._objIndex]._state &= ~action->_a18._stateMask;
 		break;
-	case TEST_STATE_BITS:                           // act19: If all bits set, do apass else afail
+	case TEST_STATE_BITS:                             // act19: If all bits set, do apass else afail
 		if ((_vm->_object->_objects[action->_a19._objIndex]._state & action->_a19._stateMask) == action->_a19._stateMask)
 			insertActionList(action->_a19._actPassIndex);
 		else
 			insertActionList(action->_a19._actFailIndex);
 		break;
-	case DEL_EVENTS:                                // act20: Remove all events of this action type
+	case DEL_EVENTS:                                  // act20: Remove all events of this action type
 		delEventType(action->_a20._actTypeDel);
 		break;
-	case GAMEOVER:                                  // act21: Game over!
+	case GAMEOVER:                                    // act21: Game over!
 		// NOTE: Must wait at least 1 tick before issuing this action if
 		// any objects are to be made invisible!
 		gameStatus._gameOverFl = true;
 		break;
-	case INIT_HH_COORD:                             // act22: Initialize an object to hero's actual coords
+	case INIT_HH_COORD:                               // act22: Initialize an object to hero's actual coords
 		_vm->_object->_objects[action->_a22._objIndex]._x = _vm->_hero->_x;
 		_vm->_object->_objects[action->_a22._objIndex]._y = _vm->_hero->_y;
-		_vm->_object->_objects[action->_a22._objIndex]._screenIndex = *_vm->_screen_p;// Don't forget screen!
+		_vm->_object->_objects[action->_a22._objIndex]._screenIndex = *_vm->_screenPtr;// Don't forget screen!
 		break;
-	case EXIT:                                      // act23: Exit game back to DOS
+	case EXIT:                                        // act23: Exit game back to DOS
 		_vm->endGame();
 		break;
-	case BONUS:                                     // act24: Get bonus score for action
+	case BONUS:                                       // act24: Get bonus score for action
 		processBonus(action->_a24._pointIndex);
 		break;
-	case COND_BOX:                                  // act25: Conditional on bounding box
+	case COND_BOX:                                    // act25: Conditional on bounding box
 		obj1 = &_vm->_object->_objects[action->_a25._objIndex];
 		dx = obj1->_x + obj1->_currImagePtr->_x1;
 		dy = obj1->_y + obj1->_currImagePtr->_y2;
@@ -1305,25 +1305,25 @@ Event *Scheduler::doAction(Event *curEvent) {
 		else
 			insertActionList(action->_a25._actFailIndex);
 		break;
-	case SOUND:                                     // act26: Play a sound (or tune)
+	case SOUND:                                       // act26: Play a sound (or tune)
 		if (action->_a26._soundIndex < _vm->_tunesNbr)
 			_vm->_sound->playMusic(action->_a26._soundIndex);
 		else
 			_vm->_sound->playSound(action->_a26._soundIndex, kSoundPriorityMedium);
 		break;
-	case ADD_SCORE:                                 // act27: Add object's value to score
+	case ADD_SCORE:                                   // act27: Add object's value to score
 		_vm->adjustScore(_vm->_object->_objects[action->_a27._objIndex]._objValue);
 		break;
-	case SUB_SCORE:                                 // act28: Subtract object's value from score
+	case SUB_SCORE:                                   // act28: Subtract object's value from score
 		_vm->adjustScore(-_vm->_object->_objects[action->_a28._objIndex]._objValue);
 		break;
-	case COND_CARRY:                                // act29: Conditional on object being carried
+	case COND_CARRY:                                  // act29: Conditional on object being carried
 		if (_vm->_object->isCarried(action->_a29._objIndex))
 			insertActionList(action->_a29._actPassIndex);
 		else
 			insertActionList(action->_a29._actFailIndex);
 		break;
-	case INIT_MAZE:                                 // act30: Enable and init maze structure
+	case INIT_MAZE:                                   // act30: Enable and init maze structure
 		_vm->_maze._enabledFl = true;
 		_vm->_maze._size = action->_a30._mazeSize;
 		_vm->_maze._x1 = action->_a30._x1;
@@ -1334,7 +1334,7 @@ Event *Scheduler::doAction(Event *curEvent) {
 		_vm->_maze._x4 = action->_a30._x4;
 		_vm->_maze._firstScreenIndex = action->_a30._firstScreenIndex;
 		break;
-	case EXIT_MAZE:                                 // act31: Disable maze mode
+	case EXIT_MAZE:                                   // act31: Disable maze mode
 		_vm->_maze._enabledFl = false;
 		break;
 	case INIT_PRIORITY:
@@ -1343,71 +1343,71 @@ Event *Scheduler::doAction(Event *curEvent) {
 	case INIT_SCREEN:
 		_vm->_object->_objects[action->_a33._objIndex]._screenIndex = action->_a33._screenIndex;
 		break;
-	case AGSCHEDULE:                                // act34: Schedule a (global) action list
+	case AGSCHEDULE:                                  // act34: Schedule a (global) action list
 		insertActionList(action->_a34._actIndex);
 		break;
-	case REMAPPAL:                                  // act35: Remap a palette color
+	case REMAPPAL:                                    // act35: Remap a palette color
 		_vm->_screen->remapPal(action->_a35._oldColorIndex, action->_a35._newColorIndex);
 		break;
-	case COND_NOUN:                                 // act36: Conditional on noun mentioned
+	case COND_NOUN:                                   // act36: Conditional on noun mentioned
 		if (_vm->_parser->isWordPresent(_vm->_text->getNounArray(action->_a36._nounIndex)))
 			insertActionList(action->_a36._actPassIndex);
 		else
 			insertActionList(action->_a36._actFailIndex);
 		break;
-	case SCREEN_STATE:                              // act37: Set new screen state
+	case SCREEN_STATE:                                // act37: Set new screen state
 		_vm->_screenStates[action->_a37._screenIndex] = action->_a37._newState;
 		break;
-	case INIT_LIPS:                                 // act38: Position lips on object
+	case INIT_LIPS:                                   // act38: Position lips on object
 		_vm->_object->_objects[action->_a38._lipsObjIndex]._x = _vm->_object->_objects[action->_a38._objIndex]._x + action->_a38._dxLips;
 		_vm->_object->_objects[action->_a38._lipsObjIndex]._y = _vm->_object->_objects[action->_a38._objIndex]._y + action->_a38._dyLips;
-		_vm->_object->_objects[action->_a38._lipsObjIndex]._screenIndex = *_vm->_screen_p; // Don't forget screen!
+		_vm->_object->_objects[action->_a38._lipsObjIndex]._screenIndex = *_vm->_screenPtr; // Don't forget screen!
 		_vm->_object->_objects[action->_a38._lipsObjIndex]._cycling = kCycleForward;
 		break;
-	case INIT_STORY_MODE:                           // act39: Init story_mode flag
+	case INIT_STORY_MODE:                             // act39: Init story_mode flag
 		// This is similar to the QUIET path mode, except that it is
 		// independant of it and it additionally disables the ">" prompt
 		gameStatus._storyModeFl = action->_a39._storyModeFl;
 		break;
-	case WARN:                                      // act40: Text box (CF TEXT)
+	case WARN:                                        // act40: Text box (CF TEXT)
 		Utils::notifyBox(_vm->_file->fetchString(action->_a40._stringIndex));
 		break;
-	case COND_BONUS:                                // act41: Perform action if got bonus
+	case COND_BONUS:                                  // act41: Perform action if got bonus
 		if (_points[action->_a41._bonusIndex]._scoredFl)
 			insertActionList(action->_a41._actPassIndex);
 		else
 			insertActionList(action->_a41._actFailIndex);
 		break;
-	case TEXT_TAKE:                                 // act42: Text box with "take" message
+	case TEXT_TAKE:                                   // act42: Text box with "take" message
 		Utils::notifyBox(Common::String::format(TAKE_TEXT, _vm->_text->getNoun(_vm->_object->_objects[action->_a42._objIndex]._nounIndex, TAKE_NAME)));
 		break;
-	case YESNO:                                     // act43: Prompt user for Yes or No
+	case YESNO:                                       // act43: Prompt user for Yes or No
 		if (Utils::yesNoBox(_vm->_file->fetchString(action->_a43._promptIndex)))
 			insertActionList(action->_a43._actYesIndex);
 		else
 			insertActionList(action->_a43._actNoIndex);
 		break;
-	case STOP_ROUTE:                                // act44: Stop any route in progress
+	case STOP_ROUTE:                                  // act44: Stop any route in progress
 		_vm->_route->resetRoute();
 		break;
-	case COND_ROUTE:                                // act45: Conditional on route in progress
+	case COND_ROUTE:                                  // act45: Conditional on route in progress
 		if (_vm->_route->getRouteIndex() >= action->_a45._routeIndex)
 			insertActionList(action->_a45._actPassIndex);
 		else
 			insertActionList(action->_a45._actFailIndex);
 		break;
-	case INIT_JUMPEXIT:                             // act46: Init status.jumpexit flag
+	case INIT_JUMPEXIT:                               // act46: Init status.jumpexit flag
 		// This is to allow left click on exit to get there immediately
 		// For example the plane crash in Hugo2 where hero is invisible
 		// Couldn't use INVISIBLE flag since conflicts with boat in Hugo1
 		_vm->_mouse->setJumpExitFl(action->_a46._jumpExitFl);
 		break;
-	case INIT_VIEW:                                 // act47: Init object._viewx, viewy, dir
+	case INIT_VIEW:                                   // act47: Init object._viewx, viewy, dir
 		_vm->_object->_objects[action->_a47._objIndex]._viewx = action->_a47._viewx;
 		_vm->_object->_objects[action->_a47._objIndex]._viewy = action->_a47._viewy;
 		_vm->_object->_objects[action->_a47._objIndex]._direction = action->_a47._direction;
 		break;
-	case INIT_OBJ_FRAME:                            // act48: Set seq,frame number to use
+	case INIT_OBJ_FRAME:                              // act48: Set seq,frame number to use
 		// Note: Don't set a sequence at time 0 of a new screen, it causes
 		// problems clearing the boundary bits of the object!  t>0 is safe
 		_vm->_object->_objects[action->_a48._objIndex]._currImagePtr = _vm->_object->_objects[action->_a48._objIndex]._seqList[action->_a48._seqIndex]._seqPtr;
@@ -1424,11 +1424,11 @@ Event *Scheduler::doAction(Event *curEvent) {
 	}
 
 	if (action->_a0._actType == NEW_SCREEN) {         // New_screen() deletes entire list
-		return 0;                                   // next_p = 0 since list now empty
+		return 0;                                       // nextEvent = 0 since list now empty
 	} else {
 		wrkEvent = curEvent->_nextEvent;
-		delQueue(curEvent);                         // Return event to free list
-		return wrkEvent;                            // Return next event ptr
+		delQueue(curEvent);                             // Return event to free list
+		return wrkEvent;                                // Return next event ptr
 	}
 }
 
@@ -1444,9 +1444,9 @@ Event *Scheduler::doAction(Event *curEvent) {
 void Scheduler::delQueue(Event *curEvent) {
 	debugC(4, kDebugSchedule, "delQueue()");
 
-	if (curEvent == _headEvent) {                   // If p was the head ptr
-		_headEvent = curEvent->_nextEvent;           // then make new head_p
-	} else {                                        // Unlink p
+	if (curEvent == _headEvent) {                     // If p was the head ptr
+		_headEvent = curEvent->_nextEvent;              // then make new head_p
+	} else {                                          // Unlink p
 		curEvent->_prevEvent->_nextEvent = curEvent->_nextEvent;
 		if (curEvent->_nextEvent)
 			curEvent->_nextEvent->_prevEvent = curEvent->_prevEvent;
@@ -1455,12 +1455,12 @@ void Scheduler::delQueue(Event *curEvent) {
 	}
 
 	if (_headEvent)
-		_headEvent->_prevEvent = 0;                  // Mark end of list
+		_headEvent->_prevEvent = 0;                     // Mark end of list
 	else
-		_tailEvent = 0;                             // Empty queue
+		_tailEvent = 0;                                 // Empty queue
 
-	curEvent->_nextEvent = _freeEvent;               // Return p to free list
-	if (_freeEvent)                                 // Special case, if free list was empty
+	curEvent->_nextEvent = _freeEvent;                // Return p to free list
+	if (_freeEvent)                                   // Special case, if free list was empty
 		_freeEvent->_prevEvent = curEvent;
 	_freeEvent = curEvent;
 }
@@ -1470,10 +1470,10 @@ void Scheduler::delQueue(Event *curEvent) {
  */
 void Scheduler::delEventType(const Action _actTypeDel) {
 	// Note: actions are not deleted here, simply turned into NOPs!
-	Event *wrkEvent = _headEvent;                 // The earliest event
+	Event *wrkEvent = _headEvent;                     // The earliest event
 	Event *saveEvent;
 
-	while (wrkEvent) {                              // While events found in list
+	while (wrkEvent) {                                // While events found in list
 		saveEvent = wrkEvent->_nextEvent;
 		if (wrkEvent->_action->_a20._actType == _actTypeDel)
 			delQueue(wrkEvent);
@@ -1524,11 +1524,11 @@ uint32 Scheduler_v1d::getTicks() {
 void Scheduler_v1d::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 
-	uint32 ticker = getTicks();                     // The time now, in ticks
-	Event *curEvent = _headEvent;                 // The earliest event
+	uint32 ticker = getTicks();                       // The time now, in ticks
+	Event *curEvent = _headEvent;                     // The earliest event
 
-	while (curEvent && (curEvent->_time <= ticker))  // While mature events found
-		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
+	while (curEvent && (curEvent->_time <= ticker))   // While mature events found
+		curEvent = doAction(curEvent);                  // Perform the action (returns nextEvent)
 }
 
 void Scheduler_v1d::promptAction(Act *action) {
@@ -1583,7 +1583,7 @@ void Scheduler_v2d::promptAction(Act *action) {
 	debug(1, "doAction(act3), expecting answer %s", _vm->_file->fetchString(action->_a3._responsePtr[0]));
 
 	bool  found = false;
-	const char *tmpStr;                                   // General purpose string ptr
+	const char *tmpStr;                               // General purpose string ptr
 
 	for (int dx = 0; !found && (action->_a3._responsePtr[dx] != -1); dx++) {
 		tmpStr = _vm->_file->fetchString(action->_a3._responsePtr[dx]);
@@ -1638,12 +1638,12 @@ uint32 Scheduler_v1w::getTicks() {
 void Scheduler_v1w::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 
-	uint32 ticker = getTicks();                     // The time now, in ticks
-	Event *curEvent = _headEvent;                 // The earliest event
+	uint32 ticker = getTicks();                       // The time now, in ticks
+	Event *curEvent = _headEvent;                     // The earliest event
 
-	while (curEvent && (curEvent->_time <= ticker)) // While mature events found
-		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
+	while (curEvent && (curEvent->_time <= ticker))   // While mature events found
+		curEvent = doAction(curEvent);                  // Perform the action (returns nextEvent)
 
-	_vm->getGameStatus()._tick++;                   // Accessed elsewhere via getTicks()
+	_vm->getGameStatus()._tick++;                     // Accessed elsewhere via getTicks()
 }
 } // End of namespace Hugo

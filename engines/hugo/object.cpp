@@ -199,7 +199,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 	// Check objects on screen
 	for (int i = 0; i < _numObj; i++, obj++) {
 		// Object must be in current screen and "useful"
-		if (obj->_screenIndex == *_vm->_screen_p && (obj->_genericCmd || obj->_objValue || obj->_cmdIndex)) {
+		if (obj->_screenIndex == *_vm->_screenPtr && (obj->_genericCmd || obj->_objValue || obj->_cmdIndex)) {
 			Seq *curImage = obj->_currImagePtr;
 			// Object must have a visible image...
 			if (curImage != 0 && obj->_cycling != kCycleInvisible) {
@@ -347,7 +347,7 @@ void ObjectHandler::showTakeables() {
 	for (int j = 0; j < _numObj; j++) {
 		Object *obj = &_objects[j];
 		if ((obj->_cycling != kCycleInvisible) &&
-		    (obj->_screenIndex == *_vm->_screen_p) &&
+		    (obj->_screenIndex == *_vm->_screenPtr) &&
 		    (((TAKE & obj->_genericCmd) == TAKE) || obj->_objValue)) {
 			Utils::notifyBox(Common::String::format("You can also see:\n%s.", _vm->_text->getNoun(obj->_nounIndex, LOOK_NAME)));
 		}

@@ -166,9 +166,9 @@ void Parser_v1w::lineHandler() {
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screenPtr]))
 		return;
-	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screenPtr]))
 		return;
 
 	if (isBackgroundWord_v3(_catchallList))

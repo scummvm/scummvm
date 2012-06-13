@@ -657,7 +657,7 @@ void Screen::drawBoundaries() {
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		Object *obj = &_vm->_object->_objects[i]; // Get pointer to object
-		if (obj->_screenIndex == *_vm->_screen_p) {
+		if (obj->_screenIndex == *_vm->_screenPtr) {
 			if ((obj->_currImagePtr != 0) && (obj->_cycling != kCycleInvisible))
 				drawRectangle(false, obj->_x + obj->_currImagePtr->_x1, obj->_y + obj->_currImagePtr->_y1,
 				                     obj->_x + obj->_currImagePtr->_x2, obj->_y + obj->_currImagePtr->_y2, _TLIGHTGREEN);
@@ -730,10 +730,10 @@ void Screen_v1d::loadFontArr(Common::ReadStream &in) {
  * processed object by looking down the current column for an overlay
  * base byte set (in which case the object is foreground).
  */
-OverlayState Screen_v1d::findOvl(Seq *seqPtr, ImagePtr dst_p, uint16 y) {
+OverlayState Screen_v1d::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
-	uint16 index = (uint16)(dst_p - _frontBuffer) >> 3;
+	uint16 index = (uint16)(dstPtr - _frontBuffer) >> 3;
 
 	for (int i = 0; i < seqPtr->_lines-y; i++) {      // Each line in object
 		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back.
@@ -799,14 +799,14 @@ void Screen_v1w::loadFontArr(Common::ReadStream &in) {
  * processed object by looking down the current column for an overlay
  * base bit set (in which case the object is foreground).
  */
-OverlayState Screen_v1w::findOvl(Seq *seqPtr, ImagePtr dst_p, uint16 y) {
+OverlayState Screen_v1w::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
 	for (; y < seqPtr->_lines; y++) {                 // Each line in object
-		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
-		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
+		byte ovb = _vm->_object->getBaseBoundary((uint16)(dstPtr - _frontBuffer) >> 3); // Ptr into overlay bits
+		if (ovb & (0x80 >> ((uint16)(dstPtr - _frontBuffer) & 7))) // Overlay bit is set
 			return kOvlForeground;                  // Found a bit - must be foreground
-		dst_p += kXPix;
+		dstPtr += kXPix;
 	}
 
 	return kOvlBackground;                          // No bits set, must be background

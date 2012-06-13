@@ -335,7 +335,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	Object  *obj;                                   // Ptr to object
 	int i;
 	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_object->_numObj; i++, obj++) {
-		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_cycling != kCycleInvisible) && (obj->_priority == kPriorityFloating))
+		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling != kCycleInvisible) && (obj->_priority == kPriorityFloating))
 			_vm->_object->storeBoundary(obj->_oldx + obj->_currImagePtr->_x1, obj->_oldx + obj->_currImagePtr->_x2, obj->_oldy + obj->_currImagePtr->_y2);
 	}
 
@@ -350,7 +350,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 
 	// Clear all object baselines from objbound
 	for (i = 0, obj = _vm->_object->_objects; i < _vm->_object->_numObj; i++, obj++) {
-		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_cycling != kCycleInvisible) && (obj->_priority == kPriorityFloating))
+		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling != kCycleInvisible) && (obj->_priority == kPriorityFloating))
 			_vm->_object->clearBoundary(obj->_oldx + obj->_currImagePtr->_x1, obj->_oldx + obj->_currImagePtr->_x2, obj->_oldy + obj->_currImagePtr->_y2);
 	}
 

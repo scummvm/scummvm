@@ -47,7 +47,7 @@ public:
 	FileManager(HugoEngine *vm);
 	virtual ~FileManager();
 
-	sound_pt getSound(const int16 sound, uint16 *size);
+	SoundPtr getSound(const int16 sound, uint16 *size);
 
 	void     readBootFile();
 	void     readImage(const int objNum, Object *objPtr);
@@ -118,7 +118,7 @@ protected:
 
 	// If this is the first call, read the lookup table
 	bool _hasReadHeader;
-	SoundHdr _s_hdr[kMaxSounds];                    // Sound lookup table
+	SoundHdr _soundHdr[kMaxSounds];                    // Sound lookup table
 
 private:
 	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, ImagePtr dataPtr) const;

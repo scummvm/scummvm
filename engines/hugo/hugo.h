@@ -226,7 +226,7 @@ public:
 	int8   _normalTPS;                              // Number of ticks (frames) per second.
 	                                                // 8 for Win versions, 9 for DOS versions
 	Object *_hero;
-	byte  *_screen_p;
+	byte  *_screenPtr;
 	byte  _heroImage;
 	byte  *_screenStates;
 	Command _line;                                  // Line of user text input

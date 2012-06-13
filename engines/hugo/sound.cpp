@@ -174,7 +174,7 @@ void SoundHandler::toggleSound() {
 	_vm->_config._soundFl = !_vm->_config._soundFl;
 }
 
-void SoundHandler::playMIDI(sound_pt seqPtr, uint16 size) {
+void SoundHandler::playMIDI(SoundPtr seqPtr, uint16 size) {
 	_midiPlayer->play(seqPtr, size);
 }
 
@@ -182,7 +182,7 @@ void SoundHandler::playMIDI(sound_pt seqPtr, uint16 size) {
  * Read a tune sequence from the sound database and start playing it
  */
 void SoundHandler::playMusic(int16 tune) {
-	sound_pt seqPtr;                                // Sequence data from file
+	SoundPtr seqPtr;                                // Sequence data from file
 	uint16 size;                                    // Size of sequence data
 
 	if (_vm->_config._musicFl) {
@@ -198,9 +198,9 @@ void SoundHandler::playMusic(int16 tune) {
  * Override currently playing sound only if lower or same priority
  */
 void SoundHandler::playSound(int16 sound, const byte priority) {
-	// uint32 dwVolume;                             // Left, right volume of sound
-	sound_pt sound_p;                               // Sound data
-	uint16 size;                                    // Size of data
+	// uint32 dwVolume;                               // Left, right volume of sound
+	SoundPtr soundPtr;                                // Sound data
+	uint16 size;                                      // Size of data
 
 	// Sound disabled
 	if (!_vm->_config._soundFl || !_vm->_mixer->isReady())
@@ -210,10 +210,10 @@ void SoundHandler::playSound(int16 sound, const byte priority) {
 	_curPriority = priority;
 
 	// Get sound data
-	if ((sound_p = _vm->_file->getSound(sound, &size)) == 0)
+	if ((soundPtr = _vm->_file->getSound(sound, &size)) == 0)
 		return;
 
-	Audio::AudioStream *stream = Audio::makeRawStream(sound_p, size, 11025, Audio::FLAG_UNSIGNED);
+	Audio::AudioStream *stream = Audio::makeRawStream(soundPtr, size, 11025, Audio::FLAG_UNSIGNED);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
 }
 

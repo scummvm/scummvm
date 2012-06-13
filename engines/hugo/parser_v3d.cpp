@@ -168,9 +168,9 @@ void Parser_v3d::lineHandler() {
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screenPtr]))
 		return;
-	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screenPtr]))
 		return;
 
 	if (isBackgroundWord_v3(_catchallList))
@@ -319,7 +319,7 @@ bool Parser_v3d::isNear_v3(Object *obj, const char *verb, char *comment) const {
 	if (obj->_carriedFl)                             // Object is being carried
 		return true;
 
-	if (obj->_screenIndex != *_vm->_screen_p) {
+	if (obj->_screenIndex != *_vm->_screenPtr) {
 		// Not in same screen
 		if (obj->_objValue)
 			strcpy(comment, _vm->_text->getTextParser(kCmtAny1));
@@ -389,7 +389,7 @@ void Parser_v3d::dropObject(Object *obj) {
 	debugC(1, kDebugParser, "dropObject(Object *obj)");
 
 	obj->_carriedFl = false;
-	obj->_screenIndex = *_vm->_screen_p;
+	obj->_screenIndex = *_vm->_screenPtr;
 	if ((obj->_seqNumb > 1) || (obj->_seqList[0]._imageNbr > 1))
 		obj->_cycling = kCycleForward;
 	else
@@ -417,7 +417,7 @@ bool Parser_v3d::isCatchallVerb_v3(ObjectList obj) const {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i]._verbIndex)) && obj[i]._nounIndex == 0 &&
 		   (!obj[i]._matchFl || !findNoun()) &&
 		   ((obj[i]._roomState == kStateDontCare) ||
-		    (obj[i]._roomState == _vm->_screenStates[*_vm->_screen_p]))) {
+		    (obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr]))) {
 			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
 			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
 
@@ -445,7 +445,7 @@ bool Parser_v3d::isBackgroundWord_v3(ObjectList obj) const {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i]._verbIndex)) &&
 		    isWordPresent(_vm->_text->getNounArray(obj[i]._nounIndex)) &&
 		    ((obj[i]._roomState == kStateDontCare) ||
-		     (obj[i]._roomState == _vm->_screenStates[*_vm->_screen_p]))) {
+		     (obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr]))) {
 			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
 			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
 			return true;

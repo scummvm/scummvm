@@ -66,7 +66,7 @@ void ObjectHandler_v3d::moveObjects() {
 	for (int i = 0; i < _numObj; i++) {
 		Object *obj = &_objects[i];               // Get pointer to object
 		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
-		if (obj->_screenIndex == *_vm->_screen_p) {
+		if (obj->_screenIndex == *_vm->_screenPtr) {
 			switch (obj->_pathType) {
 			case kPathChase:
 			case kPathChase2: {
@@ -167,7 +167,7 @@ void ObjectHandler_v3d::moveObjects() {
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
 		Object *obj = &_objects[i];                         // Get pointer to object
-		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_vx || obj->_vy)) {
+		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_vx || obj->_vy)) {
 			// Only process if it's moving
 
 			// Do object movement.  Delta_x,y return allowed movement in x,y
@@ -222,7 +222,7 @@ void ObjectHandler_v3d::moveObjects() {
 	for (int i = 0; i < _numObj; i++) {
 		Object *obj = &_objects[i];               // Get pointer to object
 		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
-		if ((obj->_screenIndex == *_vm->_screen_p) && (obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
+		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
 			clearBoundary(obj->_oldx + currImage->_x1, obj->_oldx + currImage->_x2, obj->_oldy + currImage->_y2);
 	}
 

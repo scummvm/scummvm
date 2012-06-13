@@ -95,7 +95,7 @@ struct hugoBoot {                                   // Common HUGO boot file
  * Game specific type definitions
  */
 typedef byte *ImagePtr;                             // ptr to an object image (sprite)
-typedef byte *sound_pt;                             // ptr to sound (or music) data
+typedef byte *SoundPtr;                             // ptr to sound (or music) data
 
 /**
  * Structure for initializing maze processing

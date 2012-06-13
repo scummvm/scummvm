@@ -92,7 +92,7 @@ const char *FileManager::getUifFilename() const {
  * Return original plane data ptr
  */
 byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, ImagePtr dataPtr) const {
-	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, ImagePtr data_p)", y, bpl);
+	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, ImagePtr dataPtr)", y, bpl);
 
 	dataPtr += y * bpl * 8;                         // Point to correct DIB line
 	for (int16 r = 0, g = bpl, b = g + bpl, i = b + bpl; r < bpl; r++, g++, b++, i++) { // Each byte in all planes
@@ -282,7 +282,7 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
  * Read sound (or music) file data.  Call with SILENCE to free-up
  * any allocated memory.  Also returns size of data
  */
-sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
+SoundPtr FileManager::getSound(const int16 sound, uint16 *size) {
 	debugC(1, kDebugFile, "getSound(%d)", sound);
 
 	// No more to do if SILENCE (called for cleanup purposes)
@@ -298,25 +298,25 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 
 	if (!_hasReadHeader) {
 		for (int i = 0; i < kMaxSounds; i++) {
-			_s_hdr[i]._size = fp.readUint16LE();
-			_s_hdr[i]._offset = fp.readUint32LE();
+			_soundHdr[i]._size = fp.readUint16LE();
+			_soundHdr[i]._offset = fp.readUint32LE();
 		}
 		if (fp.err())
 			error("Wrong sound file format");
 		_hasReadHeader = true;
 	}
 
-	*size = _s_hdr[sound]._size;
+	*size = _soundHdr[sound]._size;
 	if (*size == 0)
 		error("Wrong sound file format or missing sound %d", sound);
 
 	// Allocate memory for sound or music, if possible
-	sound_pt soundPtr = (byte *)malloc(_s_hdr[sound]._size); // Ptr to sound data
+	SoundPtr soundPtr = (byte *)malloc(_soundHdr[sound]._size); // Ptr to sound data
 	assert(soundPtr);
 
 	// Seek to data and read it
-	fp.seek(_s_hdr[sound]._offset, SEEK_SET);
-	if (fp.read(soundPtr, _s_hdr[sound]._size) != _s_hdr[sound]._size)
+	fp.seek(_soundHdr[sound]._offset, SEEK_SET);
+	if (fp.read(soundPtr, _soundHdr[sound]._size) != _soundHdr[sound]._size)
 		error("Wrong sound file format");
 
 	fp.close();
@@ -513,7 +513,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->_maze._x4 = in->readSint16BE();
 	_vm->_maze._firstScreenIndex = in->readByte();
 
-	_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+	_vm->_scheduler->restoreScreen(*_vm->_screenPtr);
 	if ((_vm->getGameStatus()._viewState = (Vstate) in->readByte()) != kViewPlay)
 		_vm->_screen->hideCursor();
 

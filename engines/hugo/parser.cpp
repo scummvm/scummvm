@@ -164,11 +164,11 @@ void Parser::loadArrayReqs(Common::SeekableReadStream &in) {
 const char *Parser::useBG(const char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
-	ObjectList p = _backgroundObjects[*_vm->_screen_p];
+	ObjectList p = _backgroundObjects[*_vm->_screenPtr];
 	for (int i = 0; p[i]._verbIndex != 0; i++) {
 		if ((name == _vm->_text->getNoun(p[i]._nounIndex, 0) &&
 		     p[i]._verbIndex != _vm->_look) &&
-		    ((p[i]._roomState == kStateDontCare) || (p[i]._roomState == _vm->_screenStates[*_vm->_screen_p])))
+		    ((p[i]._roomState == kStateDontCare) || (p[i]._roomState == _vm->_screenStates[*_vm->_screenPtr])))
 			return _vm->_text->getVerb(p[i]._verbIndex, 0);
 	}
 

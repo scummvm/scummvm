@@ -427,7 +427,7 @@ bool HugoEngine::loadHugoDat() {
 	_scheduler->loadActListArr(in);
 	_scheduler->loadAlNewscrIndex(in);
 	_hero = &_object->_objects[kHeroIndex];         // This always points to hero
-	_screen_p = &(_object->_objects[kHeroIndex]._screenIndex); // Current screen is hero's
+	_screenPtr = &(_object->_objects[kHeroIndex]._screenIndex); // Current screen is hero's
 	_heroImage = kHeroIndex;                        // Current in use hero image
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
@@ -660,7 +660,7 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 void HugoEngine::setNewScreen(const int screenNum) {
 	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
 
-	*_screen_p = screenNum;                         // HERO object
+	*_screenPtr = screenNum;                        // HERO object
 	_object->setCarriedScreen(screenNum);           // Carried objects
 }
 

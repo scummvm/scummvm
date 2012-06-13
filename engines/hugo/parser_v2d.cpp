@@ -160,15 +160,15 @@ void Parser_v2d::lineHandler() {
 						return;
 				}
 			}
-			if ((*farComment != '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screen_p]))
+			if ((*farComment != '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screenPtr]))
 				return;
 		} while (noun);
 	}
 
 	noun = findNextNoun(noun);
-	if (   !isCatchallVerb_v1(true, noun, verb, _backgroundObjects[*_vm->_screen_p])
+	if (   !isCatchallVerb_v1(true, noun, verb, _backgroundObjects[*_vm->_screenPtr])
 		&& !isCatchallVerb_v1(true, noun, verb, _catchallList)
-		&& !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screen_p])
+		&& !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])
 		&& !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::notifyBox(farComment);
