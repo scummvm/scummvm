@@ -49,6 +49,7 @@ CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_scaledSurface = NULL;
 	_alphaMask = NULL;
+	_hasAlpha = true;
 
 	_lockPixels = NULL;
 	_lockPitch = 0;

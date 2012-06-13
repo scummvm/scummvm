@@ -46,7 +46,7 @@ namespace WinterMute {
 CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
 	/*  _renderer = NULL;
 	    _win = NULL;*/
-	_renderSurface = NULL;
+	_renderSurface = new Graphics::Surface();
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
@@ -54,6 +54,8 @@ CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBRenderSDL::~CBRenderSDL() {
+	_renderSurface->free();
+	delete _renderSurface;
 #if 0
 	if (_renderer) SDL_DestroyRenderer(_renderer);
 	if (_win) SDL_DestroyWindow(_win);
@@ -156,8 +158,7 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	if (!_win) return E_FAIL;
 #endif
 
-	warning("TODO: Hide cursor");
-	//SDL_ShowCursor(SDL_DISABLE);
+	g_system->showMouse(false);
 
 #ifdef __IPHONEOS__
 	// SDL defaults to OGL ES2, which doesn't work on old devices
@@ -170,7 +171,6 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 
 	if (!_renderer) return E_FAIL;
 #endif
-	_renderSurface = new Graphics::Surface();
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_active = true;
 
@@ -261,21 +261,21 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
 		warning("Implement CBRenderSDL::FadeToColor"); // TODO.
 		hasWarned = true;
 	}
-#if 0
-	SDL_Rect fillRect;
+	
+	Common::Rect fillRect;
 
 	if (rect) {
-		fillRect.x = rect->left;
-		fillRect.y = rect->top;
-		fillRect.w = rect->right - rect->left;
-		fillRect.h = rect->bottom - rect->top;
+		fillRect.left = rect->left;
+		fillRect.top = rect->top;
+		fillRect.setWidth(rect->width());
+		fillRect.setHeight(rect->height());
 	} else {
 		RECT rc;
 		Game->GetCurrentViewportRect(&rc);
-		fillRect.x = rc.left;
-		fillRect.y = rc.top;
-		fillRect.w = rc.right - rc.left;
-		fillRect.h = rc.bottom - rc.top;
+		fillRect.left = rc.left;
+		fillRect.top = rc.top;
+		fillRect.setWidth(rc.right - rc.left);
+		fillRect.setHeight(rc.bottom - rc.top);
 	}
 	ModTargetRect(&fillRect);
 
@@ -284,10 +284,14 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
 	byte b = D3DCOLGetB(Color);
 	byte a = D3DCOLGetA(Color);
 
+	//TODO: This is only here until I'm sure about the final pixelformat
+	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
+	_renderSurface->fillRect(fillRect, col);
+
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 	//SDL_RenderFillRect(_renderer, &fillRect);
-#endif
+
 	return S_OK;
 }
 
@@ -353,10 +357,10 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 		warning("CBRenderSDL::DrawLine - not fully ported yet");
 		hasWarned = true;
 	}
-/*	byte r = D3DCOLGetR(Color);
+	byte r = D3DCOLGetR(Color);
 	byte g = D3DCOLGetG(Color);
 	byte b = D3DCOLGetB(Color);
-	byte a = D3DCOLGetA(Color);*/
+	byte a = D3DCOLGetA(Color);
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
@@ -370,7 +374,9 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	point2.y = Y2;
 	PointToScreen(&point2);
 
-
+	// TODO: This thing is mostly here until I'm sure about the final color-format.
+	uint32 color = _renderSurface->format.ARGBToColor(a, r, g, b);
+	_renderSurface->drawLine(point1.x, point1.y, point2.x, point2.y, color);
 	//SDL_RenderDrawLine(_renderer, point1.x, point1.y, point2.x, point2.y);
 	return S_OK;
 }
@@ -378,6 +384,7 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 //////////////////////////////////////////////////////////////////////////
 CBImage *CBRenderSDL::TakeScreenshot() {
 // TODO: Fix this
+	warning("CBRenderSDL::TakeScreenshot() - not ported yet");
 #if 0
 	SDL_Rect viewport;
 
