@@ -169,6 +169,7 @@ protected:
 	int onWhichBox(RMPoint pt);
 
 public:
+	RMInterface();
 	virtual ~RMInterface();
 
 	// The usual DoFrame (poll the graphics engine)

@@ -42,6 +42,7 @@ namespace Tony {
 
 RMFont::RMFont() {
 	_letter = NULL;
+	_nLetters = _fontDimx = _fontDimy = _dimx = _dimy = 0;
 }
 
 RMFont::~RMFont() {
@@ -1993,7 +1994,7 @@ void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 \****************************************************************************/
 
 RMTextDialog::RMTextDialog() : RMText() {
-	_startTime = 0;
+	_time = _startTime = 0;
 	_dst = RMPoint(0, 0);
 
 	_bSkipStatus = true;
@@ -2327,6 +2328,9 @@ RMDialogChoice::RMDialogChoice() {
 
 	_hUnreg = CoroScheduler.createEvent(false, false);
 	_bRemoveFromOT = false;
+	
+	_curAdded = 0;
+	_bShow = false;
 }
 
 RMDialogChoice::~RMDialogChoice() {

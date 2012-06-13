@@ -390,16 +390,15 @@ RMGfxSourceBufferPal::~RMGfxSourceBufferPal() {
 }
 
 int RMGfxSourceBufferPal::loadPaletteWA(const byte *buf, bool bSwapped) {
-	int i;
-
-	if (bSwapped)
-		for (i = 0; i < (1 << getBpp()); i++) {
+	if (bSwapped) {
+		for (int i = 0; i < (1 << getBpp()); i++) {
 			_pal[i * 3 + 0] = buf[i * 3 + 2];
 			_pal[i * 3 + 1] = buf[i * 3 + 1];
 			_pal[i * 3 + 2] = buf[i * 3 + 0];
 		}
-	else
+	} else {
 		copyMemory(_pal, buf, (1 << getBpp()) * 3);
+	}
 
 	preparePalette();
 
@@ -1819,7 +1818,6 @@ RMGfxSourceBuffer16::~RMGfxSourceBuffer16() {
 }
 
 void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int x, y;
 	uint16 *buf = bigBuf;
 	uint16 *raw = (uint16 *)_buf;
 	int dimx, dimy;
@@ -1852,8 +1850,8 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 	buf += y1 * bigBuf.getDimx() + x1;
 
 	if (_bTrasp0) {
-		for (y = 0; y < dimy; y++) {
-			for (x = 0; x < dimx;) {
+		for (int y = 0; y < dimy; y++) {
+			for (int x = 0; x < dimx;) {
 				while (x < dimx && raw[x] == 0)
 					x++;
 
@@ -1867,7 +1865,7 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 			buf += bigBuf.getDimx();
 		}
 	} else {
-		for (y = 0; y < dimy; y++) {
+		for (int y = 0; y < dimy; y++) {
 			Common::copy(raw, raw + dimx, buf);
 			buf += bigBuf.getDimx();
 			raw += _dimx;

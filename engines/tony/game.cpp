@@ -1473,6 +1473,9 @@ bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 RMPointer::RMPointer() {
 	Common::fill(_pointer, _pointer + 16, (RMGfxSourceBuffer8 *)NULL);
 	Common::fill(_specialPointer, _specialPointer + 16, (RMItem *)NULL);
+
+	_nCurPointer = _nCurSpecialPointer = 0;
+	_nCurCustomPointer = NULL;
 }
 
 RMPointer::~RMPointer() {

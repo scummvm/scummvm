@@ -755,6 +755,11 @@ int RMInventory::loadState(byte *state) {
 *           RMInterface methods
 \****************************************************************************/
 
+RMInterface::RMInterface() : RMGfxSourceBuffer8RLEByte() {
+	_bActive = _bPerorate = false;
+	_lastHotZone = -1;
+}
+
 RMInterface::~RMInterface() {
 
 }
