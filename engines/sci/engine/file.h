@@ -23,9 +23,73 @@
 #ifndef SCI_ENGINE_FILE_H
 #define SCI_ENGINE_FILE_H
 
-#include "common/scummsys.h"
+#include "common/str-array.h"
+#include "common/stream.h"
 
 namespace Sci {
+
+enum {
+	_K_FILE_MODE_OPEN_OR_CREATE = 0,
+	_K_FILE_MODE_OPEN_OR_FAIL = 1,
+	_K_FILE_MODE_CREATE = 2
+};
+
+/* Maximum length of a savegame name (including terminator character). */
+#define SCI_MAX_SAVENAME_LENGTH 0x24
+
+enum {
+	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+};
+
+#define VIRTUALFILE_HANDLE 200
+#define PHANTASMAGORIA_SAVEGAME_INDEX "phantsg.dir"
+
+struct SavegameDesc {
+	int16 id;
+	int virtualId; // straight numbered, according to id but w/o gaps
+	int date;
+	int time;
+	int version;
+	char name[SCI_MAX_SAVENAME_LENGTH];
+};
+
+class FileHandle {
+public:
+	Common::String _name;
+	Common::SeekableReadStream *_in;
+	Common::WriteStream *_out;
+
+public:
+	FileHandle();
+	~FileHandle();
+
+	void close();
+	bool isOpen() const;
+};
+
+
+class DirSeeker {
+protected:
+	reg_t _outbuffer;
+	Common::StringArray _files;
+	Common::StringArray _virtualFiles;
+	Common::StringArray::const_iterator _iter;
+
+public:
+	DirSeeker() {
+		_outbuffer = NULL_REG;
+		_iter = _files.begin();
+	}
+
+	reg_t firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan);
+	reg_t nextFile(SegManager *segMan);
+
+	Common::String getVirtualFilename(uint fileNumber);
+
+private:
+	void addAsVirtualFiles(Common::String title, Common::String fileMask);
+};
+
 
 #ifdef ENABLE_SCI32
 

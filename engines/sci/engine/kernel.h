@@ -276,9 +276,6 @@ private:
 	const Common::String _invalid;
 };
 
-/* Maximum length of a savegame name (including terminator character). */
-#define SCI_MAX_SAVENAME_LENGTH 0x24
-
 /******************** Kernel functions ********************/
 
 reg_t kStrLen(EngineState *s, int argc, reg_t *argv);
