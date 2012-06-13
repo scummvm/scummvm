@@ -89,20 +89,6 @@ public:
 	 */
 	virtual const char *getPrettyName() const = 0;
 
-	/**
-	 * Usable for any scaler when 1x scaling is desired
-	 */
-	static void scale1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
-	                   uint32 dstPitch, int width, int height, int bytesPerPixel);
-
-#ifdef USE_SCALERS
-	/**
-	 * Useful for scaling the mouse
-	 */
-	static void scale1o5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
-	                   uint32 dstPitch, int width, int height, int bytesPerPixel);
-#endif
-
 protected:
 	uint _factor;
 	Common::Array<uint> _factors;
