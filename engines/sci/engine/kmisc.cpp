@@ -384,6 +384,10 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	} else if (setting == "language") {
 		Common::String languageId = Common::String::format("%d", g_sci->getSciLanguage());
 		s->_segMan->strcpy(data, languageId.c_str());
+	} else if (setting == "torindebug") {
+		// Used to enable the debug mode in Torin's Passage (French).
+		// If true, the debug mode is enabled.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
