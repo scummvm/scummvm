@@ -1844,10 +1844,10 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		// the game. This only works well with the non-blurring scalers so we
 		// otherwise use the Normal scaler
 		if ((*_scalerPlugin)->canDrawCursor()) {
-		(*_scalerPlugin)->scale(
-			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
-			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-			_mouseCurState.w, _mouseCurState.h, 0, 0);
+			(*_scalerPlugin)->scale(
+				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+				_mouseCurState.w, _mouseCurState.h, 0, 0);
 		} else {
 			int tmpFactor = (*_normalPlugin)->getFactor();
 			(*_normalPlugin)->setFactor(_videoMode.scaleFactor);
@@ -1858,13 +1858,13 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 			(*_normalPlugin)->setFactor(tmpFactor);
 		}
 	} else {
-			int tmpFactor = (*_normalPlugin)->getFactor();
-			(*_normalPlugin)->setFactor(1);
-			(*_normalPlugin)->scale(
-				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
-				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-				_mouseCurState.w, _mouseCurState.h, 0, 0);
-			(*_normalPlugin)->setFactor(tmpFactor);
+		int tmpFactor = (*_normalPlugin)->getFactor();
+		(*_normalPlugin)->setFactor(1);
+		(*_normalPlugin)->scale(
+			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+			_mouseCurState.w, _mouseCurState.h, 0, 0);
+		(*_normalPlugin)->setFactor(tmpFactor);
 	}
 
 #ifdef USE_SCALERS
