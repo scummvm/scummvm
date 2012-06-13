@@ -528,7 +528,11 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 			drawSrc.pixels = _scaledSurface->pixels;
 			drawSrc.pitch = _scaledSurface->pitch;
 		} else {
-			delete _scaledSurface;
+			if (_scaledSurface) {
+				_scaledSurface->free();
+				delete _scaledSurface;
+				_scaledSurface = NULL;
+			}
 			TransparentSurface src(*_surface, false);
 			_scaledSurface = src.scale(position.width(), position.height());
 			drawSrc.pixels = _scaledSurface->pixels;

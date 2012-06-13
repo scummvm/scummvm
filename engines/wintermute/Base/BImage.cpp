@@ -67,16 +67,15 @@ CBImage::~CBImage() {
 
 HRESULT CBImage::loadFile(const Common::String &filename) {
 	_filename = filename;
-	Graphics::ImageDecoder *imgDecoder;
 	
 	if (filename.hasSuffix(".png")) {
-		imgDecoder = new Graphics::PNGDecoder();
+		_decoder = new Graphics::PNGDecoder();
 	} else if (filename.hasSuffix(".bmp")) {
-		imgDecoder = new Graphics::BitmapDecoder();
+		_decoder = new Graphics::BitmapDecoder();
 	} else if (filename.hasSuffix(".tga")) {
-		imgDecoder = new WinterMute::TGA();
+		_decoder = new WinterMute::TGA();
 	} else if (filename.hasSuffix(".jpg")) {
-		imgDecoder = new Graphics::JPEGDecoder();
+		_decoder = new Graphics::JPEGDecoder();
 	} else {
 		error("CBImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
@@ -84,9 +83,9 @@ HRESULT CBImage::loadFile(const Common::String &filename) {
 	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(filename.c_str());
 	if (!file) return E_FAIL;
 	
-	imgDecoder->loadStream(*file);
-	_surface = imgDecoder->getSurface();
-	_palette = imgDecoder->getPalette();
+	_decoder->loadStream(*file);
+	_surface = _decoder->getSurface();
+	_palette = _decoder->getPalette();
 	Game->_fileManager->CloseFile(file);
 	
 	return S_OK;

@@ -278,8 +278,12 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	}
 
 	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
-	retSurface->putSurface(*surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0)), true);
+	Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0));
+	retSurface->putSurface(*convertedSurface, true);
+	convertedSurface->free();
+	surface->free();
 	delete surface;
+	delete convertedSurface;
 	return retSurface;
 #if 0 //TODO
 	int textHeight = lines.size() * (_maxCharHeight + _ascender);

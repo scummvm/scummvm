@@ -74,6 +74,7 @@ void CVidTheoraPlayer::SetDefaults() {
 	_savedState = THEORA_STATE_NONE;
 	_savedPos = 0;
 	_volume = 100;
+	_theoraDecoder = NULL;
 #if 0
 	_vorbisStreams = _theoraStreams = 0;
 
@@ -96,6 +97,13 @@ CVidTheoraPlayer::~CVidTheoraPlayer(void) {
 
 //////////////////////////////////////////////////////////////////////////
 void CVidTheoraPlayer::cleanup() {
+	_surface.free();
+	delete _theoraDecoder;
+	_theoraDecoder = NULL;
+	delete _alphaImage;
+	_alphaImage = NULL;
+	delete _texture;
+	_texture = NULL;
 #if 0
 	if (m_Sound) {
 		Game->m_SoundMgr->RemoveSound(m_Sound);
