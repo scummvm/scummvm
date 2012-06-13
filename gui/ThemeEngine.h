@@ -276,6 +276,11 @@ public:
 	void disable();
 
 	/**
+	 * Query the set up pixel format.
+	 */
+	const Graphics::PixelFormat getPixelFormat() const { return _overlayFormat; }
+
+	/**
 	 * Implementation of the GUI::Theme API. Called when a
 	 * new dialog is opened. Note that the boolean parameter
 	 * meaning has been changed.
