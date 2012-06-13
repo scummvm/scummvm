@@ -50,7 +50,7 @@ namespace Sword25 {
    be variables. They can also be pstruct->el lvalues. */
 #define art_expand(p, type, max) \
 			do { \
-				if(max) {\
+				if (max) {\
 					type *tmp = art_renew(p, type, max <<= 1); \
 					if (!tmp) error("Cannot reallocate memory for art data"); \
 					p = tmp; \

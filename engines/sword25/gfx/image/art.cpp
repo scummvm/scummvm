@@ -2367,38 +2367,30 @@ ArtSVPRenderAAIter *art_svp_render_aa_iter(const ArtSVP *svp,
 	return iter;
 }
 
-#define ADD_STEP(xpos, xdelta)                          \
+#define ADD_STEP(xpos, xdelta)                            \
 	/* stereotype code fragment for adding a step */      \
-	if (n_steps == 0 || steps[n_steps - 1].x < xpos)      \
-	{                                                   \
+	if (n_steps == 0 || steps[n_steps - 1].x < xpos) {    \
 		sx = n_steps;                                     \
 		steps[sx].x = xpos;                               \
 		steps[sx].delta = xdelta;                         \
 		n_steps++;                                        \
-	}                                                   \
-	else                                                  \
-	{                                                   \
-		for (sx = n_steps; sx > 0; sx--)                  \
-		{                                               \
-			if (steps[sx - 1].x == xpos)                  \
-			{                                           \
+	} else {                                              \
+		for (sx = n_steps; sx > 0; sx--) {                \
+			if (steps[sx - 1].x == xpos) {                \
 				steps[sx - 1].delta += xdelta;            \
 				sx = n_steps;                             \
 				break;                                    \
-			}                                           \
-			else if (steps[sx - 1].x < xpos)              \
-			{                                           \
+			} else if (steps[sx - 1].x < xpos) {          \
 				break;                                    \
-			}                                           \
-		}                                               \
-		if (sx < n_steps)                                 \
-		{                                               \
+			}                                             \
+		}                                                 \
+		if (sx < n_steps) {                               \
 			memmove (&steps[sx + 1], &steps[sx],          \
 			         (n_steps - sx) * sizeof(steps[0]));  \
 			steps[sx].x = xpos;                           \
 			steps[sx].delta = xdelta;                     \
 			n_steps++;                                    \
-		}                                               \
+		}                                                 \
 	}
 
 void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
