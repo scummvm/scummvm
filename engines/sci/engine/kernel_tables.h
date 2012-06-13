@@ -245,6 +245,8 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
+
 static const SciKernelMapSubEntry kSave_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r)",         NULL },
 	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
@@ -255,9 +257,9 @@ static const SciKernelMapSubEntry kSave_subops[] = {
 	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
 	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
 	{ SIG_SCI32,           8, MAP_CALL(AutoSave),                  "[o0]",                 NULL },
+	SCI_SUBOPENTRY_TERMINATOR
 };
 
-#ifdef ENABLE_SCI32
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SCI21,           0, MAP_CALL(NewList),                   "",                     NULL },
