@@ -105,15 +105,11 @@ void GUI_v2::processButton(Button *button) {
 
 	switch (val1 - 1) {
 	case 0:
-		_screen->hideMouse();
 		_screen->drawShape(_screen->_curPage, dataPtr, x, y, button->dimTableIndex, 0x10);
-		_screen->showMouse();
 		break;
 
 	case 1:
-		_screen->hideMouse();
 		_screen->printText((const char *)dataPtr, x, y, val2, val3);
-		_screen->showMouse();
 		break;
 
 	case 3:
@@ -122,22 +118,16 @@ void GUI_v2::processButton(Button *button) {
 		break;
 
 	case 4:
-		_screen->hideMouse();
 		_screen->drawBox(x, y, x2, y2, val2);
-		_screen->showMouse();
 		break;
 
 	case 5:
-		_screen->hideMouse();
 		_screen->fillRect(x, y, x2, y2, val2, -1, true);
-		_screen->showMouse();
 		break;
 
 	default:
 		break;
 	}
-
-	_screen->updateScreen();
 }
 
 int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWheel) {

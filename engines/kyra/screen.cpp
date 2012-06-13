@@ -1128,8 +1128,6 @@ void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 
 void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
 	assert(x1 >= 0 && y1 >= 0);
-	hideMouse();
-
 	fillRect(x1, y1, x2, y1 + 1, color1);
 	fillRect(x2 - 1, y1, x2, y2, color1);
 
@@ -1137,8 +1135,6 @@ void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color
 	drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
 	drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
 	drawClippedLine(x1, y2, x2, y2, color2);
-
-	showMouse();
 }
 
 void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
