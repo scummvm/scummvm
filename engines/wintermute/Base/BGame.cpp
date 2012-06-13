@@ -1449,15 +1449,14 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PlayTheora") == 0) {
-		Stack->CorrectParams(0);
+/*		Stack->CorrectParams(0);
 		Stack->PushBool(false);
 
-		return S_OK;
+		return S_OK;*/
 		// TODO: ADDVIDEO
 
 		Stack->CorrectParams(7);
 		const char* Filename = Stack->Pop()->GetString();
-		warning("PlayTheora: %s - not implemented yet", Filename);
 		CScValue* valType = Stack->Pop();
 		int Type;
 		if (valType->IsNULL()) 

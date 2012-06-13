@@ -416,6 +416,12 @@ bool CBSurfaceSDL::isTransparentAtLite(int x, int y) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSurfaceSDL::startPixelOp() {
 	//SDL_LockTexture(_texture, NULL, &_lockPixels, &_lockPitch);
+	// Any pixel-op makes the caching useless:
+	if (_scaledSurface) {
+		_scaledSurface->free();
+		delete _scaledSurface;
+		_scaledSurface = NULL;
+	}
 	return S_OK;
 }
 

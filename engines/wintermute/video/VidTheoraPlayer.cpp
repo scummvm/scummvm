@@ -458,10 +458,9 @@ HRESULT CVidTheoraPlayer::update() {
 		if (_state == THEORA_STATE_PLAYING) {
 			if (_theoraDecoder->getTimeToNextFrame() == 0) {
 				_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
-				_videoFrameReady = true;
-			}
-			if (_texture && _videoFrameReady) {
-				WriteVideo();
+				if (_texture) {
+					WriteVideo();
+				}
 			}
 			return S_OK;
 		}
@@ -600,7 +599,7 @@ HRESULT CVidTheoraPlayer::WriteVideo() {
 	//RenderFrame(_texture, &yuv);
 
 	_texture->endPixelOp();
-
+	_videoFrameReady = true;
 	return S_OK;
 }
 
@@ -626,7 +625,7 @@ HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
 	RECT rc;
 	HRESULT Res;
 
-	if (_texture) {
+	if (_texture && _videoFrameReady) {
 		CBPlatform::SetRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
 		if (_playZoom == 100.0f) Res = _texture->displayTrans(_posX, _posY, rc, Alpha);
 		else Res = _texture->displayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, Alpha);
