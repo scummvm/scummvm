@@ -752,23 +752,23 @@ DECLARE_CUSTOM_FUNCTION(TonyPutDown2)(CORO_PARAM, uint32, uint32, uint32, uint32
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonyPerTerra)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyOnTheFloor)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
 	if (dwParte == 0)
-		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_PERTERRALEFT);
+		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_ONTHEFLOORLEFT);
 	else
-		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_PERTERRARIGHT);
+		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_ONTHEFLOORRIGHT);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySiRialza)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyGetUp)(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	if (dwParte == 0)
-		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_SIRIALZALEFT);
+		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_GETUPLEFT);
 	else
-		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_SIRIALZARIGHT);
+		GLOBALS._tony->setPattern(GLOBALS._tony->PAT_GETUPRIGHT);
 
 	if (!GLOBALS._bSkipIdle)
 		CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
@@ -776,11 +776,11 @@ DECLARE_CUSTOM_FUNCTION(TonySiRialza)(CORO_PARAM, uint32 dwParte, uint32, uint32
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyPastorella)(CORO_PARAM, uint32 bIsPast, uint32, uint32, uint32) {
-	GLOBALS._tony->setPastorella(bIsPast);
+DECLARE_CUSTOM_FUNCTION(TonyShepherdess)(CORO_PARAM, uint32 bIsPast, uint32, uint32, uint32) {
+	GLOBALS._tony->setShepherdess(bIsPast);
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyFischietto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyWhistle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -806,7 +806,7 @@ DECLARE_CUSTOM_FUNCTION(TonyRide)(CORO_PARAM, uint32 dwText, uint32, uint32, uin
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_RIDE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyRidacchia)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyGiggle)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_RIDE2;
 }
@@ -816,14 +816,14 @@ DECLARE_CUSTOM_FUNCTION(TonyFianchi)(CORO_PARAM, uint32 dwText, uint32, uint32, 
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_FIANCHI;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyCanta)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySing)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_CANTA;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SING;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySiIndica)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyIndicate)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SIINDICA;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_INDICATE;
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyScaredWithHands)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
@@ -1095,31 +1095,31 @@ DECLARE_CUSTOM_FUNCTION(TonyScaredEnd)(CORO_PARAM, uint32, uint32, uint32, uint3
 }
 
 
-DECLARE_CUSTOM_FUNCTION(TonySchifato)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyDisgusted)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SCHIFATO;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_DISGUSTED;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySniffaLeft)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySniffLeft)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_SNIFFA_LEFT);
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_SNIFF_LEFT);
 	CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
 	CORO_INVOKE_4(LeftToMe, 0, 0, 0, 0);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonySniffaRight)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySniffRight)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_SNIFFA_RIGHT);
+	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_SNIFF_RIGHT);
 	CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
 	CORO_INVOKE_4(RightToMe, 0, 0, 0, 0);
 
@@ -1168,8 +1168,8 @@ DECLARE_CUSTOM_FUNCTION(EnableTony)(CORO_PARAM, uint32, uint32, uint32, uint32) 
 	GLOBALS._tony->show();
 }
 
-DECLARE_CUSTOM_FUNCTION(DisableTony)(CORO_PARAM, uint32 bShowOmbra, uint32, uint32, uint32) {
-	GLOBALS._tony->hide(bShowOmbra);
+DECLARE_CUSTOM_FUNCTION(DisableTony)(CORO_PARAM, uint32 bShowShadow, uint32, uint32, uint32) {
+	GLOBALS._tony->hide(bShowShadow);
 }
 
 DECLARE_CUSTOM_FUNCTION(WaitForPatternEnd)(CORO_PARAM, uint32 nItem, uint32, uint32, uint32) {
@@ -2438,63 +2438,63 @@ ASSIGN(75,      TonyPutUp2)
 ASSIGN(76,      TonyPutMid2)
 ASSIGN(77,      TonyPutDown2)
 
-ASSIGN(36,   TonyPerTerra)
-ASSIGN(37,   TonySiRialza)
-ASSIGN(38,      TonyPastorella)
-ASSIGN(39,      TonyFischietto)
+ASSIGN(36,   TonyOnTheFloor)
+ASSIGN(37,   TonyGetUp)
+ASSIGN(38,   TonyShepherdess)
+ASSIGN(39,   TonyWhistle)
 
 ASSIGN(40,   TonyRide)
 ASSIGN(41,   TonyFianchi)
-ASSIGN(42,   TonyCanta)
-ASSIGN(43,   TonySiIndica)
-ASSIGN(44,      TonyScaredWithHands)
-ASSIGN(49,    TonyScaredWithoutHands)
-ASSIGN(45,      TonyWithGlasses)
-ASSIGN(46,      TonyWithWorm)
-ASSIGN(47,      TonyWithHammer)
-ASSIGN(48,      TonyWithRope)
-ASSIGN(90,      TonyWithRabbitANIM)
-ASSIGN(91,      TonyWithRecipeANIM)
-ASSIGN(92,      TonyWithCardsANIM)
-ASSIGN(93,      TonyWithSnowmanANIM)
-ASSIGN(94,      TonyWithSnowmanStart)
-ASSIGN(95,      TonyWithSnowmanEnd)
-ASSIGN(96,      TonyWithRabbitStart)
-ASSIGN(97,      TonyWithRabbitEnd)
-ASSIGN(98,      TonyWithRecipeStart)
-ASSIGN(99,      TonyWithRecipeEnd)
-ASSIGN(100,     TonyWithCardsStart)
-ASSIGN(101,     TonyWithCardsEnd)
-ASSIGN(102,   TonyWithNotebookStart)
-ASSIGN(103,   TonyWithNotebookEnd)
-ASSIGN(104,   TonyWithMegaphoneStart)
-ASSIGN(105,   TonyWithMegaphoneEnd)
-ASSIGN(106,   TonyWithBeardStart)
-ASSIGN(107,   TonyWithBeardEnd)
-ASSIGN(108,   TonyRidacchia)
-ASSIGN(109,   TonySchifato)
-ASSIGN(110,   TonyNaah)
-ASSIGN(111,   TonyMacbeth)
-ASSIGN(112,   TonySniffaLeft)
-ASSIGN(113,   TonySniffaRight)
-ASSIGN(114,   TonyScaredStart)
-ASSIGN(115,   TonyScaredEnd)
-ASSIGN(116,   TonyWithSecretary)
+ASSIGN(42,   TonySing)
+ASSIGN(43,   TonyIndicate)
+ASSIGN(44,   TonyScaredWithHands)
+ASSIGN(49,   TonyScaredWithoutHands)
+ASSIGN(45,   TonyWithGlasses)
+ASSIGN(46,   TonyWithWorm)
+ASSIGN(47,   TonyWithHammer)
+ASSIGN(48,   TonyWithRope)
+ASSIGN(90,   TonyWithRabbitANIM)
+ASSIGN(91,   TonyWithRecipeANIM)
+ASSIGN(92,   TonyWithCardsANIM)
+ASSIGN(93,   TonyWithSnowmanANIM)
+ASSIGN(94,   TonyWithSnowmanStart)
+ASSIGN(95,   TonyWithSnowmanEnd)
+ASSIGN(96,   TonyWithRabbitStart)
+ASSIGN(97,   TonyWithRabbitEnd)
+ASSIGN(98,   TonyWithRecipeStart)
+ASSIGN(99,   TonyWithRecipeEnd)
+ASSIGN(100,  TonyWithCardsStart)
+ASSIGN(101,  TonyWithCardsEnd)
+ASSIGN(102,  TonyWithNotebookStart)
+ASSIGN(103,  TonyWithNotebookEnd)
+ASSIGN(104,  TonyWithMegaphoneStart)
+ASSIGN(105,  TonyWithMegaphoneEnd)
+ASSIGN(106,  TonyWithBeardStart)
+ASSIGN(107,  TonyWithBeardEnd)
+ASSIGN(108,  TonyGiggle)
+ASSIGN(109,  TonyDisgusted)
+ASSIGN(110,  TonyNaah)
+ASSIGN(111,  TonyMacbeth)
+ASSIGN(112,  TonySniffLeft)
+ASSIGN(113,  TonySniffRight)
+ASSIGN(114,  TonyScaredStart)
+ASSIGN(115,  TonyScaredEnd)
+ASSIGN(116,  TonyWithSecretary)
 
 ASSIGN(50,   CharSetCode)
-ASSIGN(51,      CharSetColor)
+ASSIGN(51,   CharSetColor)
 ASSIGN(52,   CharSetTalkPattern)
 ASSIGN(53,   CharSendMessage)
 ASSIGN(54,   CharSetStartEndTalkPattern)
 
 ASSIGN(60,   MCharSetCode)
 ASSIGN(61,   MCharSetColor)
-ASSIGN(62,    MCharSetCurrentGroup)
-ASSIGN(63,      MCharSetNumTalksInGroup)
-ASSIGN(64,      MCharSetNumTexts)
-ASSIGN(65,      MCharSendMessage)
-ASSIGN(66,      MCharSetPosition)
-ASSIGN(67,      MCharSetAlwaysBack)
+ASSIGN(62,   MCharSetCurrentGroup)
+ASSIGN(63,   MCharSetNumTalksInGroup)
+ASSIGN(64,   MCharSetNumTexts)
+ASSIGN(65,   MCharSendMessage)
+ASSIGN(66,   MCharSetPosition)
+ASSIGN(67,   MCharSetAlwaysBack)
 ASSIGN(68,   MCharResetCode)
 
 ASSIGN(70,      StartDialog)

@@ -44,9 +44,9 @@ public:
 	enum TALKTYPE {
 		TALK_NORMAL,
 		TALK_FIANCHI,
-		TALK_CANTA,
+		TALK_SING,
 		TALK_RIDE,
-		TALK_SIINDICA,
+		TALK_INDICATE,
 		TALK_SCARED,
 		TALK_SCARED2,
 		TALK_WITHGLASSES,
@@ -65,7 +65,7 @@ public:
 		TALK_WITHMEGAPHONESTATIC,
 		TALK_WITHBEARDSTATIC,
 		TALK_RIDE2,
-		TALK_SCHIFATO,
+		TALK_DISGUSTED,
 		TALK_NAAH,
 		TALK_MACBETH1,
 		TALK_MACBETH2,
@@ -82,16 +82,17 @@ public:
 
 private:
 	bool _bShow;
-	bool _bShowOmbra;
-	bool _bCorpoDavanti;
-	RMGfxSourceBuffer8AB _ombra;
+	bool _bShowShadow;
+	bool _bBodyFront;
+	// Useless variable?
+	// RMGfxSourceBuffer8AB _shadow;
 	bool _bActionPending;
 	RMItem *_actionItem;
 	int _action;
 	int _actionParm;
 	static bool _bAction;
 
-	bool _bPastorella;
+	bool _bShepherdess;
 
 	bool _bIsStaticTalk;
 	bool _bIsTalking;
@@ -135,10 +136,10 @@ public:
 		PAT_TAKERIGHT_DOWN1,
 		PAT_TAKERIGHT_DOWN2,
 
-		PAT_SIRIALZALEFT,
-		PAT_PERTERRALEFT,
-		PAT_SIRIALZARIGHT,
-		PAT_PERTERRARIGHT,
+		PAT_GETUPLEFT,
+		PAT_ONTHEFLOORLEFT,
+		PAT_GETUPRIGHT,
+		PAT_ONTHEFLOORRIGHT,
 
 		// Sheperdess!
 		PAT_PAST_WALKUP,
@@ -158,10 +159,10 @@ public:
 		PAT_TALK_RIGHT,
 
 		// Static head
-		PAT_TESTA_UP,
-		PAT_TESTA_DOWN,
-		PAT_TESTA_LEFT,
-		PAT_TESTA_RIGHT,
+		PAT_HEAD_UP,
+		PAT_HEAD_DOWN,
+		PAT_HEAD_LEFT,
+		PAT_HEAD_RIGHT,
 
 		// Laugh
 		PAT_RIDELEFT_START,
@@ -202,16 +203,16 @@ public:
 		PAT_TALKBEARD_RIGHT,
 
 		// Sniff
-		PAT_SNIFFA_LEFT,
-		PAT_SNIFFA_RIGHT,
+		PAT_SNIFF_LEFT,
+		PAT_SNIFF_RIGHT,
 
 		// Disgusted
-		PAT_SCHIFATOLEFT_START,
-		PAT_SCHIFATOLEFT_LOOP,
-		PAT_SCHIFATOLEFT_END,
-		PAT_SCHIFATORIGHT_START,
-		PAT_SCHIFATORIGHT_LOOP,
-		PAT_SCHIFATORIGHT_END,
+		PAT_DISGUSTEDLEFT_START,
+		PAT_DISGUSTEDLEFT_LOOP,
+		PAT_DISGUSTEDLEFT_END,
+		PAT_DISGUSTEDRIGHT_START,
+		PAT_DISGUSTEDRIGHT_LOOP,
+		PAT_DISGUSTEDRIGHT_END,
 		PAT_NAAHLEFT_START,
 		PAT_NAAHLEFT_LOOP,
 		PAT_NAAHLEFT_END,
@@ -257,9 +258,9 @@ public:
 		BPAT_WORM,
 		BPAT_GLASS,
 
-		BPAT_CANTALEFT_START,
-		BPAT_CANTALEFT_LOOP,
-		BPAT_CANTALEFT_END,
+		BPAT_SINGLEFT_START,
+		BPAT_SINGLEFT_LOOP,
+		BPAT_SINGLEFT_END,
 
 		BPAT_FIANCHILEFT_START,
 		BPAT_FIANCHILEFT_LOOP,
@@ -277,8 +278,8 @@ public:
 		BPAT_RIDELEFT,
 		BPAT_RIDERIGHT,
 
-		BPAT_SIINDICALEFT,
-		BPAT_SIINDICARIGHT,
+		BPAT_INDICATELEFT,
+		BPAT_INDICATERIGHT,
 
 		BPAT_SCAREDDOWN_START,
 		BPAT_SCAREDDOWN_LOOP,
@@ -375,7 +376,7 @@ public:
 
 	// Show or hide
 	void show(void);
-	void hide(bool bShowOmbra = false);
+	void hide(bool bShowShadow = false);
 
 	// Move and make an action, if necessary
 	void moveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
@@ -434,11 +435,11 @@ public:
 	void endStatic(CORO_PARAM, TALKTYPE nTalkType);
 
 	// Tony disguises himself!
-	void setPastorella(bool bIsPast) {
-		_bPastorella = bIsPast;
+	void setShepherdess(bool bIsPast) {
+		_bShepherdess = bIsPast;
 	}
-	int getPastorella(void) {
-		return _bPastorella;
+	int getShepherdess(void) {
+		return _bShepherdess;
 	}
 
 	// Perform an action
