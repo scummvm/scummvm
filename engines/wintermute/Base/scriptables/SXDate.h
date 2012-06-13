@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_SXDATE_H
 #define WINTERMUTE_SXDATE_H
 
-
+#include "common/system.h"
 #include "engines/wintermute/Base/BScriptable.h"
 
 namespace WinterMute {
@@ -45,7 +45,9 @@ public:
 	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
 	const char *ScToString();
 	char *_string;
-	//struct tm _tm; // TODO!
+	TimeDate _tm;
+private:
+	Common::String _strRep;
 };
 
 } // end of namespace WinterMute

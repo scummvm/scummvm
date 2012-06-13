@@ -37,25 +37,20 @@ IMPLEMENT_PERSISTENT(CSXDate, false)
 //////////////////////////////////////////////////////////////////////////
 CSXDate::CSXDate(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	Stack->CorrectParams(6);
-#if 0
+
 	memset(&_tm, 0, sizeof(_tm));
 
 	CScValue *valYear = Stack->Pop();
-	_tm.t_year = valYear->GetInt() - 1900;
-	_tm.t_mon = Stack->Pop()->GetInt() - 1;
-	_tm.t_mday = Stack->Pop()->GetInt();
-	_tm.t_hour = Stack->Pop()->GetInt();
-	_tm.t_min = Stack->Pop()->GetInt();
-	_tm.t_sec = Stack->Pop()->GetInt();
+	_tm.tm_year = valYear->GetInt() - 1900;
+	_tm.tm_mon = Stack->Pop()->GetInt() - 1;
+	_tm.tm_mday = Stack->Pop()->GetInt();
+	_tm.tm_hour = Stack->Pop()->GetInt();
+	_tm.tm_min = Stack->Pop()->GetInt();
+	_tm.tm_sec = Stack->Pop()->GetInt();
 
 	if (valYear->IsNULL()) {
-		time_t TimeNow;
-		time(&TimeNow);
-		memcpy(&_tm, localtime(&TimeNow), sizeof(_tm));
+		g_system->getTimeAndDate(_tm);
 	}
-
-	mktime(&_tm);
-#endif
 }
 
 
@@ -64,25 +59,25 @@ CSXDate::~CSXDate() {
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *CSXDate::ScToString() {
+	// TODO: Make this more stringy, and less ISO 8601-like
+	_strRep.format("%04d-%02d-%02d - %02d:%02d:%02d", _tm.tm_year, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec);
+	return _strRep.c_str();
 #if 0
 	return asctime(&_tm);
 #endif
-	return "";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
-#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "GetYear") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_tm.t_year + 1900);
+		Stack->PushInt(_tm.tm_year + 1900);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -90,7 +85,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetMonth") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_tm.t_mon + 1);
+		Stack->PushInt(_tm.tm_mon + 1);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -98,7 +93,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetDate") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_tm.t_mday);
+		Stack->PushInt(_tm.tm_mday);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -106,7 +101,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetHours") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_tm.t_hour);
+		Stack->PushInt(_tm.tm_hour);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -114,7 +109,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetMinutes") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_tm.t_min);
+		Stack->PushInt(_tm.tm_min);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -122,7 +117,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetSeconds") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_tm.t_sec);
+		Stack->PushInt(_tm.tm_sec);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -130,7 +125,8 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetWeekday") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_tm.t_wday);
+		warning("GetWeekday returns a wrong value on purpose");
+		Stack->PushInt(_tm.tm_mday % 7);
 		return S_OK;
 	}
 
@@ -140,8 +136,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetYear") == 0) {
 		Stack->CorrectParams(1);
-		_tm.t_year = Stack->Pop()->GetInt() - 1900;
-		mktime(&_tm);
+		_tm.tm_year = Stack->Pop()->GetInt() - 1900;
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -150,8 +145,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetMonth") == 0) {
 		Stack->CorrectParams(1);
-		_tm.t_mon = Stack->Pop()->GetInt() - 1;
-		mktime(&_tm);
+		_tm.tm_mon = Stack->Pop()->GetInt() - 1;
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -160,8 +154,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetDate") == 0) {
 		Stack->CorrectParams(1);
-		_tm.t_mday = Stack->Pop()->GetInt();
-		mktime(&_tm);
+		_tm.tm_mday = Stack->Pop()->GetInt();
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -170,8 +163,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetHours") == 0) {
 		Stack->CorrectParams(1);
-		_tm.t_hour = Stack->Pop()->GetInt();
-		mktime(&_tm);
+		_tm.tm_hour = Stack->Pop()->GetInt();
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -180,8 +172,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetMinutes") == 0) {
 		Stack->CorrectParams(1);
-		_tm.t_min = Stack->Pop()->GetInt();
-		mktime(&_tm);
+		_tm.tm_min = Stack->Pop()->GetInt();
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -190,8 +181,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetSeconds") == 0) {
 		Stack->CorrectParams(1);
-		_tm.t_sec = Stack->Pop()->GetInt();
-		mktime(&_tm);
+		_tm.tm_sec = Stack->Pop()->GetInt();
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -202,16 +192,12 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetCurrentTime") == 0) {
 		Stack->CorrectParams(0);
-		time_t TimeNow;
-		time(&TimeNow);
-		memcpy(&_tm, localtime(&TimeNow), sizeof(_tm));
-		mktime(&_tm);
+		g_system->getTimeAndDate(_tm);
 		Stack->PushNULL();
 		return S_OK;
 	}
 
 	else
-#endif
 		return E_FAIL;
 }
 
@@ -251,27 +237,55 @@ HRESULT CSXDate::ScSetProperty(const char *Name, CScValue *Value) {
 HRESULT CSXDate::Persist(CBPersistMgr *PersistMgr) {
 
 	CBScriptable::Persist(PersistMgr);
-#if 0
 	if (PersistMgr->_saving)
 		PersistMgr->PutBytes((byte *)&_tm, sizeof(_tm));
 	else
 		PersistMgr->GetBytes((byte *)&_tm, sizeof(_tm));
-#endif
 	return S_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int CSXDate::ScCompare(CBScriptable *Value) {
-#if 0
-	time_t time1 = mktime(&_tm);
-	time_t time2 = mktime(&((CSXDate *)Value)->_tm);
+	TimeDate time1 = _tm;
+	TimeDate time2 = ((CSXDate *)Value)->_tm;
 
-	if (time1 < time2) return -1;
-	else if (time1 > time2) return 1;
-	else
-#endif
-		return 0;
+	if (time1.tm_year < time2.tm_year) {
+		return -1;
+	} else if (time1.tm_year == time2.tm_year) {
+		if (time1.tm_mon < time2.tm_mon) {
+			return -1;
+		} else if (time1.tm_mon == time2.tm_mon) {
+			if (time1.tm_mday < time2.tm_mday) {
+				return -1;
+			} else if (time1.tm_mday == time2.tm_mday) {
+				if (time1.tm_hour < time2.tm_hour) {
+					return -1;
+				} else if (time1.tm_hour == time2.tm_hour) {
+					if (time1.tm_min < time2.tm_min) {
+						return -1;
+					} else if (time1.tm_min == time2.tm_min) {
+						if (time1.tm_sec < time2.tm_sec) {
+							return -1;
+						} else if (time1.tm_sec == time2.tm_sec) {
+							return 0; // Equal
+						} else {
+							return 1; // Sec
+						}
+					} else {
+						return 1; // Minute
+					}
+				} else {
+					return 1; // Hour
+				}
+			} else {
+				return 1; // Day
+			}
+		} else {
+			return 1; // Month
+		}
+	} else {
+		return 1; // Year
+	}
 }
 
 } // end of namespace WinterMute
