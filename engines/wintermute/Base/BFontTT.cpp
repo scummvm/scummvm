@@ -267,7 +267,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color),D3DCOLGetB(_layers[0]->_color),D3DCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(width, _fontHeight * lines.size(), Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+	surface->create(width, _lineHeight * lines.size(), Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 
 	uint16 useColor = 0xffff;
 	Common::Array<Common::String>::iterator it;
