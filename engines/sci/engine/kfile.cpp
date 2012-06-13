@@ -869,6 +869,47 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 6); // DOS - invalid handle
 }
 
+reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
+	uint16 size = argv[1].toUint16();
+	char *buf = new char[size];
+	uint16 handle = argv[2].toUint16();
+	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
+	uint32 bytesRead;
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE)
+		bytesRead = s->_virtualIndexFile->readLine(buf, size);
+	else
+#endif
+		bytesRead = fgets_wrapper(s, buf, size, handle);
+
+	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
+	delete[] buf;
+	return bytesRead ? argv[0] : NULL_REG;
+}
+
+reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	Common::String str = s->_segMan->getString(argv[1]);
+	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE) {
+		s->_virtualIndexFile->write(str.c_str(), str.size());
+		return NULL_REG;
+	}
+#endif
+
+	FileHandle *f = getFileFromHandle(s, handle);
+
+	if (f) {
+		f->_out->write(str.c_str(), str.size());
+		return NULL_REG;
+	}
+
+	return make_reg(0, 6); // DOS - invalid handle
+}
+
 reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
@@ -916,47 +957,6 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 	if (result)
 		return NULL_REG;
 	return make_reg(0, 2); // DOS - file not found error code
-}
-
-reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
-	uint16 size = argv[1].toUint16();
-	char *buf = new char[size];
-	uint16 handle = argv[2].toUint16();
-	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
-	uint32 bytesRead;
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE)
-		bytesRead = s->_virtualIndexFile->readLine(buf, size);
-	else
-#endif
-		bytesRead = fgets_wrapper(s, buf, size, handle);
-
-	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
-	delete[] buf;
-	return bytesRead ? argv[0] : NULL_REG;
-}
-
-reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
-	int handle = argv[0].toUint16();
-	Common::String str = s->_segMan->getString(argv[1]);
-	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
-		s->_virtualIndexFile->write(str.c_str(), str.size());
-		return NULL_REG;
-	}
-#endif
-
-	FileHandle *f = getFileFromHandle(s, handle);
-
-	if (f) {
-		f->_out->write(str.c_str(), str.size());
-		return NULL_REG;
-	}
-
-	return make_reg(0, 6); // DOS - invalid handle
 }
 
 reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
