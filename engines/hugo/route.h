@@ -30,17 +30,14 @@
 #ifndef HUGO_ROUTE_H
 #define HUGO_ROUTE_H
 
+#include "common/rect.h"
+
 namespace Hugo {
 
 /**
  * Purpose of an automatic route
  */
 enum go_t {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
-
-struct Point {
-	int x;
-	int y;
-};
 
 struct segment_t {                                  // Search segment
 	int16 _y;                                        // y position
@@ -75,7 +72,7 @@ private:
 
 	byte _boundaryMap[kYPix][kXPix];                // Boundary byte map
 	segment_t _segment[kMaxSeg];                    // List of points in fill-path
-	Point _route[kMaxNodes];                        // List of nodes in route (global)
+	Common::Point _route[kMaxNodes];                // List of nodes in route (global)
 	int16 _segmentNumb;                             // Count number of segments
 	int16 _routeListIndex;                          // Index into route list
 	int16 _destX;
@@ -87,7 +84,7 @@ private:
 
 	void segment(int16 x, int16 y);
 	bool findRoute(const int16 cx, const int16 cy);
-	Point *newNode();
+	Common::Point *newNode();
 };
 
 } // End of namespace Hugo

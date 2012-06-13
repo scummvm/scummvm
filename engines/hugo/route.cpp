@@ -298,7 +298,7 @@ void Route::segment(int16 x, int16 y) {
  * Create and return ptr to new node.  Initialize with previous node.
  * Returns 0 if MAX_NODES exceeded
  */
-Point *Route::newNode() {
+Common::Point *Route::newNode() {
 	debugC(1, kDebugRoute, "newNode");
 
 	_routeListIndex++;
@@ -373,7 +373,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	_segment[_segmentNumb]._x2 = herox2;
 	_segmentNumb++;
 
-	Point     *routeNode;                           // Ptr to route node
+	Common::Point *routeNode;                       // Ptr to route node
 	// Look in segments[] for straight lines from destination to hero
 	for (i = 0, _routeListIndex = 0; i < _segmentNumb - 1; i++) {
 		if ((routeNode = newNode()) == 0)           // New node for new segment
@@ -435,7 +435,7 @@ void Route::processRoute() {
 	// Current hero position
 	int16 herox = _vm->_hero->_x + _vm->_hero->_currImagePtr->_x1;
 	int16 heroy = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2;
-	Point *routeNode = &_route[_routeIndex];
+	Common::Point *routeNode = &_route[_routeIndex];
 
 	// Arrived at node?
 	if (abs(herox - routeNode->x) < kStepDx + 1 && abs(heroy - routeNode->y) < kStepDy) {
