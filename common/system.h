@@ -389,10 +389,7 @@ public:
 	 * graphics have a resolution of 320x200; then the overlay shall
 	 * have a resolution of 640x400, but it still has the same
 	 * physical size as the game graphics.
-	 * The overlay usually uses 16bpp, but on some ports, only 8bpp
-	 * are availble, so that is supported, too, via a compile time
-	 * switch (see also the OverlayColor typedef in scummsys.h).
-	 *
+	 * The overlay is forced to a 16bpp mode right now.
 	 *
 	 * Finally, there is the mouse layer. This layer doesn't have to
 	 * actually exist within the backend -- it all depends on how a
@@ -758,13 +755,11 @@ public:
 	 * In order to be able to display dialogs atop the game graphics, backends
 	 * must provide an overlay mode.
 	 *
-	 * The overlay can be 8 or 16 bpp. Depending on which it is, OverlayColor
-	 * is 8 or 16 bit.
+	 * The overlay is currently forced at 16 bpp.
 	 *
 	 * For 'coolness' we usually want to have an overlay which is blended over
 	 * the game graphics. On backends which support alpha blending, this is
-	 * no issue; but on other systems (in particular those which only support
-	 * 8bpp), this needs some trickery.
+	 * no issue; but on other systems this needs some trickery.
 	 *
 	 * Essentially, we fake (alpha) blending on these systems by copying the
 	 * current game graphics into the overlay buffer when activating the overlay,
