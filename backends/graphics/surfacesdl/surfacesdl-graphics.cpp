@@ -2086,10 +2086,10 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	if (_cursorTargetScale == 1) {
 		if ((*_scalerPlugin)->canDrawCursor()) {
 #endif
-		(*_scalerPlugin)->scale(
-			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
-			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-			_mouseCurState.w, _mouseCurState.h, 0, 0);
+            (*_scalerPlugin)->scale(
+                    (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+                    _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+                    _mouseCurState.w, _mouseCurState.h, 0, 0);
 #ifdef USE_SCALERS
 		} else {
 			int tmpFactor = (*_normalPlugin)->getFactor();
@@ -2100,19 +2100,14 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 				_mouseCurState.w, _mouseCurState.h, 0, 0);
 			(*_normalPlugin)->setFactor(tmpFactor);
 		}
-	} else if (_cursorTargetScale == 3 || _videoMode.scaleFactor < 3) {
-			int tmpFactor = (*_normalPlugin)->getFactor();
-			(*_normalPlugin)->setFactor(1);
-			(*_normalPlugin)->scale(
-				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
-				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-				_mouseCurState.w, _mouseCurState.h, 0, 0);
-			(*_normalPlugin)->setFactor(tmpFactor);
 	} else {
-		ScalerPluginObject::scale1o5x(
-			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel ,
-			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-			_mouseCurState.w, _mouseCurState.h, bytesPerPixel);
+        int tmpFactor = (*_normalPlugin)->getFactor();
+        (*_normalPlugin)->setFactor(1);
+        (*_normalPlugin)->scale(
+                (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+                _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+                _mouseCurState.w, _mouseCurState.h, 0, 0);
+        (*_normalPlugin)->setFactor(tmpFactor);
 	}
 #endif
 
