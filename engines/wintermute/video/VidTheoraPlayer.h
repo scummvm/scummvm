@@ -115,9 +115,10 @@ public:
 
 	// alpha related
 	CBImage *_alphaImage;
-	char *_alphaFilename;
-	HRESULT setAlphaImage(const char *Filename);
+	Common::String _alphaFilename;
+	HRESULT setAlphaImage(const Common::String &filename);
 	__inline byte getAlphaAt(int X, int Y);
+	void writeAlpha();
 
 	HRESULT SeekToTime(uint32 Time);
 

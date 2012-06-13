@@ -60,7 +60,7 @@ void CVidTheoraPlayer::SetDefaults() {
 
 	_texture = NULL;
 	_alphaImage = NULL;
-	_alphaFilename = NULL;
+	_alphaFilename = "";
 
 	_frameRendered = false;
 
@@ -589,11 +589,36 @@ HRESULT CVidTheoraPlayer::WriteVideo() {
 	if (!_texture) return E_FAIL;
 
 	_texture->startPixelOp();
+	
+	writeAlpha();
+	if (_alphaImage) {
+		_texture->putSurface(_surface, true);
+	} else {
+		_texture->putSurface(_surface, false);
+	}
+
 	//RenderFrame(_texture, &yuv);
-	_texture->putSurface(_surface);
+
 	_texture->endPixelOp();
 
 	return S_OK;
+}
+
+void CVidTheoraPlayer::writeAlpha() {
+	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
+		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
+		assert(_surface.format.bytesPerPixel == 4);
+		const byte *alphaData = (byte*)_alphaImage->getSurface()->getBasePtr(0, 0);
+		int alphaPlace = (_alphaImage->getSurface()->format.aShift / 8);
+		alphaData += alphaPlace;
+		byte *imgData = (byte*)_surface.getBasePtr(0,0);
+		imgData += (_surface.format.aShift / 8);
+		for (int i = 0; i < _surface.w * _surface.h; i++) {
+			*imgData = *alphaData;
+			alphaData += 4;
+			imgData += 4;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -613,8 +638,22 @@ HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::setAlphaImage(const char *filename) {
-	warning("CVidTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename);
+HRESULT CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
+	warning("CVidTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename.c_str());
+	
+	delete _alphaImage;
+	_alphaImage = new CBImage(Game);
+	if (!_alphaImage || FAILED(_alphaImage->loadFile(filename))) {
+		delete _alphaImage;
+		_alphaImage = NULL;
+		_alphaFilename = "";
+		return E_FAIL;
+	}
+	
+	if (_alphaFilename != filename) {
+		_alphaFilename = filename;
+	}
+	//TODO: Conversion.
 #if 0
 	SAFE_DELETE(m_AlphaImage);
 	m_AlphaImage = new CBImage(Game);
@@ -631,11 +670,8 @@ HRESULT CVidTheoraPlayer::setAlphaImage(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 byte CVidTheoraPlayer::getAlphaAt(int X, int Y) {
-#if 0
-	if (_alphaImage) return _alphaImage->GetAlphaAt(X, Y);
+	if (_alphaImage) return _alphaImage->getAlphaAt(X, Y);
 	else return 0xFF;
-#endif
-	return 0;
 }
 
 
@@ -770,7 +806,7 @@ HRESULT CVidTheoraPlayer::resume() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::initializeSimple() {
 	if (SUCCEEDED(initialize(_filename))) {
-		if (_alphaFilename) setAlphaImage(_alphaFilename);
+		if (_alphaFilename != "") setAlphaImage(_alphaFilename);
 		play(_playbackType, _posX, _posY, false, false, _looping, _savedPos, _playZoom);
 	} else _state = THEORA_STATE_FINISHED;
 
