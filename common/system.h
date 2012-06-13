@@ -396,14 +396,6 @@ public:
 	 * backend chooses to implement mouse cursors, but in the default
 	 * SDL backend, it really is a separate layer. The mouse can
 	 * have a palette of its own, if the backend supports it.
-	 * The scale of the mouse cursor is called 'cursorTargetScale'.
-	 * This is meant as a hint to the backend. For example, let us
-	 * assume the overlay is not visible, and the game graphics are
-	 * displayed using a 2x scaler. If a mouse cursor with a
-	 * cursorTargetScale of 1 is set, then it should be scaled by
-	 * factor 2x, too, just like the game graphics. But if it has a
-	 * cursorTargetScale of 2, then it shouldn't be scaled again by
-	 * the game graphics scaler.
 	 *
 	 * On a note for OSystem users here. We do not require our graphics
 	 * to be thread safe and in fact most/all backends using OpenGL are
