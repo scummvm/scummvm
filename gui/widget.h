@@ -227,7 +227,7 @@ public:
 protected:
 	void drawWidget();
 
-	Graphics::Surface _gfx;
+	Graphics::Surface *_gfx;
 	int _alpha;
 	bool _transparency;
 };
@@ -355,7 +355,7 @@ public:
 protected:
 	void drawWidget();
 
-	Graphics::Surface _gfx;
+	Graphics::Surface *_gfx;
 	int _alpha;
 	bool _transparency;
 };
