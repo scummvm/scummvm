@@ -467,7 +467,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 				break;
 		} while (1);
 
- 	} else {
+ 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
 		// Strings in SCI1.1 come after the object instances
 		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 
@@ -477,6 +477,8 @@ void Script::syncStringHeap(Common::Serializer &s) {
 
 		// Now, sync everything till the end of the buffer
 		s.syncBytes(buf, _heapSize - (buf - _heapStart));
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		warning("TODO: syncStringHeap(): Implement SCI3 variant");
 	}
 }
 
