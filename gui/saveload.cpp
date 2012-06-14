@@ -47,8 +47,7 @@ class SaveLoadChooserImpl : GUI::Dialog {
 public:
 	SaveLoadChooserImpl(const String &title, const String &buttonLabel, bool saveMode);
 
-	int runModalWithCurrentTarget();
-	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
+	int run(const String &target, const MetaEngine *metaEngine);
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
@@ -69,7 +68,7 @@ private:
 	GUI::StaticTextWidget	*_time;
 	GUI::StaticTextWidget	*_playtime;
 
-	const EnginePlugin		*_plugin;
+	const MetaEngine		*_metaEngine;
 	bool					_delSupport;
 	bool					_metaInfoSupport;
 	bool					_thumbnailSupport;
@@ -118,41 +117,22 @@ SaveLoadChooserImpl::SaveLoadChooserImpl(const String &title, const String &butt
 //	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
-int SaveLoadChooserImpl::runModalWithCurrentTarget() {
-	const Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
-}
-
-int SaveLoadChooserImpl::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
+int SaveLoadChooserImpl::run(const String &target, const MetaEngine *metaEngine) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 
-	// Set up the game domain as newly active domain, so
-	// target specific savepath will be checked
-	String oldDomain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain(target);
-
-	_plugin = plugin;
+	_metaEngine = metaEngine;
 	_target = target;
-	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
-	_metaInfoSupport = (*_plugin)->hasFeature(MetaEngine::kSavesSupportMetaInfo);
-	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportThumbnail);
-	_saveDateSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportCreationDate);
-	_playTimeSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportPlayTime);
+	_delSupport = _metaEngine->hasFeature(MetaEngine::kSupportsDeleteSave);
+	_metaInfoSupport = _metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo);
+	_thumbnailSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail);
+	_saveDateSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportCreationDate);
+	_playTimeSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportPlayTime);
 	_resultString.clear();
 	reflowLayout();
 	updateSaveList();
 
-	int ret = Dialog::runModal();
-
-	// Revert to the old active domain
-	ConfMan.setActiveDomain(oldDomain);
-
-	return ret;
+	return Dialog::runModal();
 }
 
 void SaveLoadChooserImpl::open() {
@@ -201,7 +181,7 @@ void SaveLoadChooserImpl::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			MessageDialog alert(_("Do you really want to delete this savegame?"),
 								_("Delete"), _("Cancel"));
 			if (alert.runModal() == GUI::kMessageOK) {
-				(*_plugin)->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
+				_metaEngine->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
 
 				setResult(-1);
 				_list->setSelected(-1);
@@ -288,7 +268,7 @@ void SaveLoadChooserImpl::updateSelection(bool redraw) {
 	_playtime->setLabel(_("No playtime saved"));
 
 	if (selItem >= 0 && _metaInfoSupport) {
-		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot());
+		SaveStateDescriptor desc = _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot());
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;
 		isWriteProtected = desc.getWriteProtectedFlag();
@@ -359,7 +339,7 @@ void SaveLoadChooserImpl::updateSelection(bool redraw) {
 }
 
 void SaveLoadChooserImpl::close() {
-	_plugin = 0;
+	_metaEngine = 0;
 	_target.clear();
 	_saveList.clear();
 	_list->setList(StringArray());
@@ -368,7 +348,7 @@ void SaveLoadChooserImpl::close() {
 }
 
 void SaveLoadChooserImpl::updateSaveList() {
-	_saveList = (*_plugin)->listSaves(_target.c_str());
+	_saveList = _metaEngine->listSaves(_target.c_str());
 
 	int curSlot = 0;
 	int saveSlot = 0;
@@ -410,7 +390,7 @@ void SaveLoadChooserImpl::updateSaveList() {
 
 	// Fill the rest of the save slots with empty saves
 
-	int maximumSaveSlots = (*_plugin)->getMaximumSaveSlot();
+	int maximumSaveSlots = _metaEngine->getMaximumSaveSlot();
 
 #ifdef __DS__
 	// Low memory on the DS means too many save slots are impractical, so limit
@@ -455,17 +435,32 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 }
 
 int SaveLoadChooser::runModalWithCurrentTarget() {
-	if (_impl)
-		return _impl->runModalWithCurrentTarget();
-	else
+	if (!_impl)
 		return -1;
+
+	const Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 }
 
 int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
-	if (_impl)
-		return _impl->runModalWithPluginAndTarget(plugin, target);
-	else
+	if (!_impl)
 		return -1;
+
+	// Set up the game domain as newly active domain, so
+	// target specific savepath will be checked
+	String oldDomain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain(target);
+
+	int ret = _impl->run(target, &(**plugin));
+
+	// Revert to the old active domain
+	ConfMan.setActiveDomain(oldDomain);
+
+	return ret;
 }
 
 Common::String SaveLoadChooser::getResultString() const {
