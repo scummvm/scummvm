@@ -33,6 +33,7 @@
 #include "engines/wintermute/Base/scriptables/SXString.h"
 #include "engines/wintermute/Base/scriptables/SXArray.h"
 #include "engines/wintermute/utils/StringUtil.h"
+#include "common/tokenizer.h"
 
 namespace WinterMute {
 
@@ -268,7 +269,14 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		size_t start, pos;
 		start = 0;
-		do {
+		
+		Common::StringTokenizer tokenizer(str, delims);
+		while (!tokenizer.empty()) {
+			Common::String str2 = tokenizer.nextToken();
+			parts.push_back(str2);
+		}
+		// TODO: Clean this up
+		/*do {
 			pos = StringUtil::IndexOf(Common::String(str.c_str() + start), delims, start);
 			//pos = str.find_first_of(delims, start);
 			if (pos == start) {
@@ -283,7 +291,7 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			//start = str.find_first_not_of(delims, start);
 			start = StringUtil::LastIndexOf(Common::String(str.c_str() + start), delims, start) + 1;
 
-		} while (pos != str.size());
+		} while (pos != str.size());*/
 
 		for (Common::Array<WideString>::iterator it = parts.begin(); it != parts.end(); ++it) {
 			WideString &part = (*it);
@@ -294,7 +302,7 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 				Val = new CScValue(Game, StringUtil::WideToAnsi(part).c_str());
 
 			Array->Push(Val);
-			delete[] Val;
+			delete Val;
 			Val = NULL;
 		}
 
