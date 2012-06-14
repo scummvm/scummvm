@@ -247,6 +247,9 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 	case Common::EVENT_KEYDOWN:
 		if (Game) Game->HandleKeypress(event);
 		break;
+	case Common::EVENT_KEYUP:
+		if (Game) Game->handleKeyRelease(event);
+		break;
 		/*#ifdef __IPHONEOS__
 		        {
 		            CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);

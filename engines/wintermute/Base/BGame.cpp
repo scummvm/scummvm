@@ -3794,6 +3794,11 @@ HRESULT CBGame::Unfreeze() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBGame::HandleKeypress(Common::Event *event) {
+	if(IsVideoPlaying()) {
+		if(event->kbd.keycode == Common::KEYCODE_ESCAPE) 
+			StopVideo();
+		return true;
+	}
 #ifdef __WIN32__
 	// TODO: Do we really need to handle this in-engine?
 	// handle Alt+F4 on windows
@@ -3811,7 +3816,7 @@ bool CBGame::HandleKeypress(Common::Event *event) {
 	}
 
 
-
+	_keyboardState->handleKeyPress(event);
 	_keyboardState->ReadKey(event);
 // TODO
 
@@ -3833,7 +3838,9 @@ bool CBGame::HandleKeypress(Common::Event *event) {
 	return false;
 }
 
-
+bool CBGame::handleKeyRelease(Common::Event *event) {
+	_keyboardState->handleKeyRelease(event);
+}
 
 
 //////////////////////////////////////////////////////////////////////////

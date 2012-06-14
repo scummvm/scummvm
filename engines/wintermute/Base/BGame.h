@@ -261,6 +261,7 @@ public:
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
 
 	virtual bool HandleKeypress(Common::Event *event);
+	virtual bool handleKeyRelease(Common::Event *event);
 	int _freezeLevel;
 	HRESULT Unfreeze();
 	HRESULT Freeze(bool IncludingMusic = true);

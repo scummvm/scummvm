@@ -46,14 +46,29 @@ CBKeyboardState::CBKeyboardState(CBGame *inGame): CBScriptable(inGame) {
 	_currentShift = false;
 	_currentAlt = false;
 	_currentControl = false;
+	
+	_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
+	for (int i = 0; i < 323; i++) {
+		_keyStates[i] = false;
+	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 CBKeyboardState::~CBKeyboardState() {
-
+	delete[] _keyStates;
 }
 
+void CBKeyboardState::handleKeyPress(Common::Event *event) {
+	if (event->type == Common::EVENT_KEYDOWN) {
+		_keyStates[event->kbd.keycode] = true;
+	}
+}
+
+void CBKeyboardState::handleKeyRelease(Common::Event *event) {
+	if (event->type == Common::EVENT_KEYUP) {
+		_keyStates[event->kbd.keycode] = false;	
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -74,12 +89,12 @@ HRESULT CBKeyboardState::ScCallMethod(CScScript *Script, CScStack *Stack, CScSta
 			vKey = (int)temp;
 		} else vKey = val->GetInt();
 
-		warning("BKeyboardState doesnt yet have state-support"); //TODO;
+		warning("BKeyboardState doesnt yet have state-support %d", vKey); //TODO;
 //		Uint8 *state = SDL_GetKeyboardState(NULL);
 //		SDL_Scancode scanCode = SDL_GetScancodeFromKey(VKeyToKeyCode(vKey));
-//		bool isDown = state[scanCode] > 0;
+		bool isDown = _keyStates[VKeyToKeyCode(vKey)];
 
-//		Stack->PushBool(isDown);
+		Stack->PushBool(isDown);
 		return S_OK;
 	}
 
@@ -183,6 +198,10 @@ const char *CBKeyboardState::ScToString() {
 HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = KeyCodeToVKey(event);
+	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) || 
+		(_currentCharCode <= Common::KEYCODE_9 && _currentCharCode >= Common::KEYCODE_0)) {
+		_currentPrintable = true;
+	}
 	//_currentKeyData = KeyData;
 
 	_currentControl = IsControlDown();

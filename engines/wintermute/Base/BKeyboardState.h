@@ -52,6 +52,8 @@ public:
 	virtual ~CBKeyboardState();
 	HRESULT ReadKey(Common::Event *event);
 
+	void handleKeyPress(Common::Event *event);
+	void handleKeyRelease(Common::Event *event);
 	static bool IsShiftDown();
 	static bool IsControlDown();
 	static bool IsAltDown();
@@ -63,6 +65,7 @@ public:
 	virtual const char *ScToString();
 
 private:
+	uint8 *_keyStates;
 	uint32 KeyCodeToVKey(Common::Event *event);
 	Common::KeyCode VKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
