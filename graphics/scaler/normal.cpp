@@ -32,27 +32,55 @@ NormalPlugin::NormalPlugin() {
 }
 
 void NormalPlugin::initialize(Graphics::PixelFormat format) {
+	_format = format;
 }
 
 /**
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
  * source to the destination.
  */
+template<typename pixel>
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	// Spot the case when it can all be done in 1 hit
-	if ((srcPitch == sizeof(OverlayColor) * (uint)width) && (dstPitch == sizeof(OverlayColor) * (uint)width)) {
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width * height);
+	int BytesPerPixel = sizeof(pixel);
+	if ((srcPitch == BytesPerPixel * (uint)width) && (dstPitch == BytesPerPixel * (uint)width)) {
+		memcpy(dstPtr, srcPtr, BytesPerPixel * width * height);
 		return;
 	}
 	while (height--) {
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+		memcpy(dstPtr, srcPtr, BytesPerPixel * width);
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;
 	}
 }
 
 #ifdef USE_SCALERS
+
+/**
+ * Trivial nearest-neighbor 2x scaler.
+ */
+template<typename pixel>
+void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+							int width, int height) {
+	uint8 *r;
+	int b = sizeof(pixel);
+
+	assert(IS_ALIGNED(dstPtr, 2));
+	while (height--) {
+		r = dstPtr;
+		for (int i = 0; i < width; ++i, r += b * 2) {
+			pixel color = *(((const pixel*)srcPtr) + i);
+
+			*(pixel *)(r) = color;
+			*(pixel *)(r + b) = color;
+			*(pixel *)(r + dstPitch) = color;
+			*(pixel *)(r + b + dstPitch) = color;
+		}
+		srcPtr += srcPitch;
+		dstPtr += dstPitch << 1;
+	}
+}
 
 
 #ifdef USE_ARM_SCALER_ASM
@@ -63,29 +91,20 @@ extern "C" void Normal2xARM(const uint8  *srcPtr,
                                   int     width,
                                   int     height);
 
-void Normal2x(const uint8  *srcPtr,
-                    uint32  srcPitch,
-                    uint8  *dstPtr,
-                    uint32  dstPitch,
-                    int     width,
-                    int     height) {
-	Normal2xARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-}
-
 #else
 /**
- * Trivial nearest-neighbor 2x scaler.
+ * Template Specialization that writes 2 pixels at a time.
  */
-void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+template<>
+void Normal2x<uint16>(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 
 	assert(IS_ALIGNED(dstPtr, 4));
-	assert(sizeof(OverlayColor) == 2);
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 4) {
-			uint32 color = *(((const OverlayColor *)srcPtr) + i);
+			uint32 color = *(((const uint16*)srcPtr) + i);
 
 			color |= color << 16;
 
@@ -101,27 +120,29 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 /**
  * Trivial nearest-neighbor 3x scaler.
  */
+template<typename pixel>
 void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
+	int b = sizeof(pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
 		r = dstPtr;
-		for (int i = 0; i < width; ++i, r += 6) {
-			uint16 color = *(((const uint16 *)srcPtr) + i);
+		for (int i = 0; i < width; ++i, r += b * 3) {
+			pixel color = *(((const pixel *)srcPtr) + i);
 
-			*(uint16 *)(r + 0) = color;
-			*(uint16 *)(r + 2) = color;
-			*(uint16 *)(r + 4) = color;
-			*(uint16 *)(r + 0 + dstPitch) = color;
-			*(uint16 *)(r + 2 + dstPitch) = color;
-			*(uint16 *)(r + 4 + dstPitch) = color;
-			*(uint16 *)(r + 0 + dstPitch2) = color;
-			*(uint16 *)(r + 2 + dstPitch2) = color;
-			*(uint16 *)(r + 4 + dstPitch2) = color;
+			*(pixel *)(r + b * 0) = color;
+			*(pixel *)(r + b * 1) = color;
+			*(pixel *)(r + b * 2) = color;
+			*(pixel *)(r + b * 0 + dstPitch) = color;
+			*(pixel *)(r + b * 1 + dstPitch) = color;
+			*(pixel *)(r + b * 2 + dstPitch) = color;
+			*(pixel *)(r + b * 0 + dstPitch2) = color;
+			*(pixel *)(r + b * 1 + dstPitch2) = color;
+			*(pixel *)(r + b * 2 + dstPitch2) = color;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch3;
@@ -131,35 +152,37 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 /**
  * Trivial nearest-neighbor 4x scaler.
  */
+template<typename pixel>
 void Normal4x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
 	const uint32 dstPitch4 = dstPitch * 4;
+	int b = sizeof(pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
 		r = dstPtr;
-		for (int i = 0; i < width; ++i, r += 8) {
-			uint16 color = *(((const uint16 *)srcPtr) + i);
+		for (int i = 0; i < width; ++i, r += b * 4) {
+			pixel color = *(((const pixel *)srcPtr) + i);
 
-			*(uint16 *)(r + 0) = color;
-			*(uint16 *)(r + 2) = color;
-			*(uint16 *)(r + 4) = color;
-			*(uint16 *)(r + 6) = color;
-			*(uint16 *)(r + 0 + dstPitch) = color;
-			*(uint16 *)(r + 2 + dstPitch) = color;
-			*(uint16 *)(r + 4 + dstPitch) = color;
-			*(uint16 *)(r + 6 + dstPitch) = color;
-			*(uint16 *)(r + 0 + dstPitch2) = color;
-			*(uint16 *)(r + 2 + dstPitch2) = color;
-			*(uint16 *)(r + 4 + dstPitch2) = color;
-			*(uint16 *)(r + 6 + dstPitch2) = color;
-			*(uint16 *)(r + 0 + dstPitch3) = color;
-			*(uint16 *)(r + 2 + dstPitch3) = color;
-			*(uint16 *)(r + 4 + dstPitch3) = color;
-			*(uint16 *)(r + 6 + dstPitch3) = color;
+			*(pixel *)(r + b * 0) = color;
+			*(pixel *)(r + b * 1) = color;
+			*(pixel *)(r + b * 2) = color;
+			*(pixel *)(r + b * 3) = color;
+			*(pixel *)(r + b * 0 + dstPitch) = color;
+			*(pixel *)(r + b * 1 + dstPitch) = color;
+			*(pixel *)(r + b * 2 + dstPitch) = color;
+			*(pixel *)(r + b * 3 + dstPitch) = color;
+			*(pixel *)(r + b * 0 + dstPitch2) = color;
+			*(pixel *)(r + b * 1 + dstPitch2) = color;
+			*(pixel *)(r + b * 2 + dstPitch2) = color;
+			*(pixel *)(r + b * 3 + dstPitch2) = color;
+			*(pixel *)(r + b * 0 + dstPitch3) = color;
+			*(pixel *)(r + b * 1 + dstPitch3) = color;
+			*(pixel *)(r + b * 2 + dstPitch3) = color;
+			*(pixel *)(r + b * 3 + dstPitch3) = color;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch4;
@@ -170,22 +193,44 @@ void Normal4x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 #ifdef USE_SCALERS
-	switch (_factor) {
-	case 1:
-		Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-		break;
-	case 2:
-		Normal2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-		break;
-	case 3:
-		Normal3x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-		break;
-	case 4:
-		Normal4x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-		break;
+	if (_format.bytesPerPixel == 2) {
+		switch (_factor) {
+		case 1:
+			Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 2:
+#ifdef USE_ARM_SCALER_ASM
+			Normal2xARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+#else
+			Normal2x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+#endif
+			break;
+		case 3:
+			Normal3x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 4:
+			Normal4x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		}
+	} else {
+		assert(_format.bytesPerPixel == 4);
+		switch (_factor) {
+		case 1:
+			Normal1x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 2:
+			Normal2x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 3:
+			Normal3x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 4:
+			Normal4x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		}
 	}
 #else
-	Normal1x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 #endif
 }
 
