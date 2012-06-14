@@ -263,4 +263,4 @@ bool createScreenShot(Graphics::Surface &surf) {
 		return true;
 	}
 }
-}; // End of namespace Graphics
+} // End of namespace Graphics
