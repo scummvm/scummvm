@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef GUI_SAVELOAD_DIALOG_H
-#define GUI_SAVELOAD_DIALOG_H
+#ifndef GUI_SAVELOAD_H
+#define GUI_SAVELOAD_H
 
 #include "gui/dialog.h"
 #include "engines/metaengine.h"
