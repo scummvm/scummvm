@@ -23,6 +23,9 @@
 #ifndef TOON_CHARACTER_H
 #define TOON_CHARACTER_H
 
+#include "common/array.h"
+#include "common/rect.h"
+
 #include "toon/toon.h"
 
 namespace Toon {
@@ -137,10 +140,8 @@ protected:
 	Animation *_shadowAnim;
 	Animation *_specialAnim;
 
-	int16 _currentPathX[4096];
-	int16 _currentPathY[4096];
-	int32 _currentPathNodeCount;
-	int32 _currentPathNode;
+	Common::Array<Common::Point> _currentPath;
+	uint32 _currentPathNode;
 	int32 _currentWalkStamp;
 };
 
