@@ -656,7 +656,7 @@ HRESULT CBFontTT::InitFont() {
 
 	if (file) {
 #ifdef USE_FREETYPE2
-		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight);
+		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight * 4/3); // Compensate for the difference in dpi (96 vs 72).
 		_font = _deletableFont;
 #endif
 	} 
