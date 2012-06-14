@@ -1565,7 +1565,7 @@ void mpalFree() {
  * method that returns numeric results.
  */
 uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
-	int x, y, z;
+	int x, y;
 	Common::String buf;
 	uint32 dwRet = 0;
 	char *n;
@@ -1718,7 +1718,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		lockItems();
 		lockVar();
 		x = GETARG(uint32);
-		z = GETARG(uint32);
+		int z = GETARG(uint32);
 		y = itemGetOrderFromNum(z);
 		if (y != -1) {
 			dwRet = doAction(x, y, GETARG(uint32));

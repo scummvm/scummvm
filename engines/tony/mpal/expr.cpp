@@ -124,8 +124,8 @@ static byte *duplicateExpression(HGLOBAL h) {
 			two->val.pson = duplicateExpression(two->val.son);
 		}
 
-		one++;
-		two++;
+		++one;
+		++two;
 	}
 
 	globalUnlock(h);
@@ -183,23 +183,23 @@ static void solve(LPEXPRESSION one, int num) {
 	int j;
 
 	while (num > 1) {
-		two=one + 1;
+		two = one + 1;
 		if ((two->symbol == 0) || (one->symbol & 0xF0) <= (two->symbol & 0xF0)) {
-			two->val.num = Compute(one->val.num, two->val.num,one->symbol);
+			two->val.num = Compute(one->val.num, two->val.num, one->symbol);
 			copyMemory(one, two, (num - 1) * sizeof(EXPRESSION));
-			num--;
+			--num;
 		} else {
 			j = 1;
 			three = two + 1;
 			while ((three->symbol != 0) && (two->symbol & 0xF0) > (three->symbol & 0xF0)) {
-				two++;
-				three++;
-				j++;
+				++two;
+				++three;
+				++j;
 			}
 
 			three->val.num = Compute(two->val.num, three->val.num, two->symbol);
 			copyMemory(two, three, (num - j - 1) * sizeof(EXPRESSION));
-			num--;
+			--num;
 		}
 	}
 }
@@ -390,8 +390,8 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 			break;
 		}
 
-		one++; 
-		two++;
+		++one; 
+		++two;
 	}
 
 	globalUnlock(h1);

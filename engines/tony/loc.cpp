@@ -710,14 +710,13 @@ void RMItem::setStatus(int nStatus) {
 }
 
 void RMItem::setPattern(int nPattern, bool bPlayP0) {
-	int i;
-
 	assert(nPattern >= 0 && nPattern <= _nPatterns);
 
-	if (_sfx)
+	if (_sfx) {
 		if (_nCurPattern > 0)
 			_patterns[_nCurPattern].stopSfx(_sfx);
-
+	}
+	
 	// Remember the current pattern
 	_nCurPattern = nPattern;
 
@@ -728,10 +727,12 @@ void RMItem::setPattern(int nPattern, bool bPlayP0) {
 		_nCurSprite = -1;
 
 		// Look for the sound effect for pattern 0
-		if (bPlayP0)
-			for (i = 0; i < _nSfx; i++)
+		if (bPlayP0) {
+			for (int i = 0; i < _nSfx; i++) {
 				if (strcmp(_sfx[i]._name, "p0") == 0)
 					_sfx[i].play();
+			}
+		}
 	}
 }
 
@@ -782,6 +783,8 @@ RMItem::RMItem() {
 	_nPatterns = 0;
 	_bPal = 0;
 	_nCurSprite = 0;
+
+	_bIsActive = false;
 
 	_hEndPattern = CoroScheduler.createEvent(false, false);
 }
@@ -1967,11 +1970,8 @@ bool RMLocation::load(const char *lpszFileName) {
  * @returns     True if succeeded OK, false in case of error.
  */
 bool RMLocation::load(Common::File &file) {
-	int size;
 	bool bRet;
 
-	// Get the file size
-	size = file.size();
 	file.seek(0);
 
 	RMFileStreamSlow fs;

@@ -214,10 +214,7 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	int dimx = RM_SX / dezoom;
 	int dimy = RM_SY / dezoom;
 
-	int u, v, curv;
-
 	uint32 k = 0;
-	int sommar, sommab, sommag;
 	uint16 *cursrc;
 
 	if (lpDestBuf == NULL)
@@ -247,10 +244,11 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 		for (int y = 0; y < dimy; y++) {
 			for (int x = 0; x < dimx; x++) {
 				cursrc = &src[RM_SKIPX + x * dezoom];
+				int sommar, sommab, sommag, curv;
 				sommar = sommab = sommag = 0;
 
-				for (v = 0; v < dezoom; v++) {
-					for (u = 0; u < dezoom; u++) {
+				for (int v = 0; v < dezoom; v++) {
+					for (int u = 0; u < dezoom; u++) {
 						if (lpDestBuf == NULL)
 							curv = -v;
 						else

@@ -112,11 +112,13 @@ public:
 		_task = NULL;
 		_src.setEmpty();
 		_dst.setEmpty();
+		_bStretch = false;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task) {
 		_task = task;
 		_bFlag = 0;
+		_bStretch = false;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMRect &dst) {
@@ -132,6 +134,7 @@ public:
 		_src.topLeft() = src;
 		_dst = dst;
 		_bFlag = 0;
+		_bStretch = false;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMPoint &dst) {
@@ -139,6 +142,7 @@ public:
 		_src.topLeft() = src;
 		_dst.topLeft() = dst;
 		_bFlag = 0;
+		_bStretch = false;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMPoint &dst) {
@@ -146,6 +150,7 @@ public:
 		_src = src;
 		_dst.topLeft() = dst;
 		_bFlag = 0;
+		_bStretch = false;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMRect &dst) {
@@ -153,6 +158,7 @@ public:
 		_dst = dst;
 		_src.setEmpty();
 		_bFlag = 0;
+		_bStretch = false;
 	}
 
 	RMGfxPrimitive(RMGfxTask *task, const RMPoint &dst) {
@@ -160,6 +166,7 @@ public:
 		_dst.topLeft() = dst;
 		_src.setEmpty();
 		_bFlag = 0;
+		_bStretch = false;
 	}
 
 	virtual ~RMGfxPrimitive() { }
