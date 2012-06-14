@@ -113,6 +113,8 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 
 	_c_zzz = -1;
 	_caff = -1;
+
+	memset(_mem, 0, sizeof(_mem));
 }
 
 MortevielleEngine::~MortevielleEngine() {
