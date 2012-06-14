@@ -56,7 +56,6 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_animScriptId = -1;
 	_animSpecialId = -1;
 	_animSpecialDefaultId = 0;
-	_currentPathNodeCount = 0;
 	_currentPathNode = 0;
 	_currentWalkStamp = 0;
 	_visible = true;
@@ -81,7 +80,7 @@ Character::~Character(void) {
 void Character::init() {
 }
 
-void Character::forceFacing( int32 facing ) {
+void Character::forceFacing(int32 facing) {
 	debugC(4, kDebugCharacter, "forceFacing(%d)", facing);
 	_facing = facing;
 }
@@ -123,7 +122,7 @@ void Character::setFacing(int32 facing) {
 				_lastWalkTime = _vm->getOldMilli();
 			}
 
-			if	(_currentPathNode == 0)
+			if (_currentPathNode == 0)
 				playStandingAnim();
 			else
 				playWalkAnim(0, 0);
@@ -136,8 +135,7 @@ void Character::setFacing(int32 facing) {
 	_facing = facing;
 }
 
-void Character::forcePosition(int32 x, int32 y) {
-
+void Character::forcePosition(int16 x, int16 y) {
 	debugC(5, kDebugCharacter, "forcePosition(%d, %d)", x, y);
 
 	setPosition(x, y);
@@ -145,7 +143,7 @@ void Character::forcePosition(int32 x, int32 y) {
 	_finalY = y;
 }
 
-void Character::setPosition(int32 x, int32 y) {
+void Character::setPosition(int16 x, int16 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
 
 	_x = x;
@@ -155,7 +153,7 @@ void Character::setPosition(int32 x, int32 y) {
 	return;
 }
 
-bool Character::walkTo(int32 newPosX, int32 newPosY) {
+bool Character::walkTo(int16 newPosX, int16 newPosY) {
 	debugC(1, kDebugCharacter, "walkTo(%d, %d)", newPosX, newPosY);
 
 	if (!_visible)
@@ -167,9 +165,9 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 	_vm->getPathFinding()->resetBlockingRects();
 
 	// don't allow flux to go at the same position as drew
-	if (_id == 1 ) {
-		int32 sizeX = MAX<int32>(5, 30 * _vm->getDrew()->getScale() / 1024);
-		int32 sizeY = MAX<int32>(2, 20 * _vm->getDrew()->getScale() / 1024);
+	if (_id == 1) {
+		int16 sizeX = MAX<int16>(5, 30 * _vm->getDrew()->getScale() / 1024);
+		int16 sizeY = MAX<int16>(2, 20 * _vm->getDrew()->getScale() / 1024);
 		_vm->getPathFinding()->addBlockingEllipse(_vm->getDrew()->getFinalX(), _vm->getDrew()->getFinalY(), sizeX, sizeY);
 	}
 
@@ -179,16 +177,14 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 
 	if (_vm->getPathFinding()->findPath(_x, _y, _finalX, _finalY)) {
 
-		int32 localFinalX = _finalX;
-		int32 localFinalY = _finalY;
+		int16 localFinalX = _finalX;
+		int16 localFinalY = _finalY;
 		int32 smoothDx = 0;
 		int32 smoothDy = 0;
 
-		for (int32 a = 0; a < _vm->getPathFinding()->getPathNodeCount(); a++) {
-			_currentPathX[a] = _vm->getPathFinding()->getPathNodeX(a);
-			_currentPathY[a] = _vm->getPathFinding()->getPathNodeY(a);
-		}
-		_currentPathNodeCount = _vm->getPathFinding()->getPathNodeCount();
+		_currentPath.clear();
+		for (uint32 a = 0; a < _vm->getPathFinding()->getPathNodeCount(); a++)
+			_currentPath.push_back(Common::Point(_vm->getPathFinding()->getPathNodeX(a), _vm->getPathFinding()->getPathNodeY(a)));
 		_currentPathNode = 0;
 		stopSpecialAnim();
 
@@ -203,12 +199,12 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		int32 localWalkStamp = _currentWalkStamp;
 
 		if (_blockingWalk) {
-			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPathNodeCount && !_vm->shouldQuitGame()) {
-				if (_currentPathNode < _currentPathNodeCount - 4) {
-					int32 delta = MIN<int32>(4, _currentPathNodeCount - _currentPathNode);
+			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPath.size() && !_vm->shouldQuitGame()) {
+				if (_currentPathNode < _currentPath.size() - 4) {
+					int32 delta = MIN<int32>(4, _currentPath.size() - _currentPathNode);
 
-					int32 dx = _currentPathX[_currentPathNode+delta] - _x;
-					int32 dy = _currentPathY[_currentPathNode+delta] - _y;
+					int16 dx = _currentPath[_currentPathNode+delta].x - _x;
+					int16 dy = _currentPath[_currentPathNode+delta].y - _y;
 
 					// smooth the facing computation. It prevents some ugly flickering from happening
 					if (!smoothDx && !smoothDy) {
@@ -227,9 +223,9 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 				_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;
 				_lastWalkTime =  _vm->getSystem()->getMillis();
 
-				while (_numPixelToWalk >= 1000 && _currentPathNode < _currentPathNodeCount) {
-					_x = _currentPathX[_currentPathNode];
-					_y = _currentPathY[_currentPathNode];
+				while (_numPixelToWalk >= 1000 && _currentPathNode < _currentPath.size()) {
+					_x = _currentPath[_currentPathNode].x;
+					_y = _currentPath[_currentPathNode].y;
 					_currentPathNode += 1;
 					_numPixelToWalk -= 1000;
 				}
@@ -245,7 +241,7 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 			playStandingAnim();
 			_flags &= ~0x1;
 			_currentPathNode = 0;
-			_currentPathNodeCount = 0;
+			_currentPath.clear();
 
 			if (_x != localFinalX || _y != localFinalY) {
 				return false;
@@ -264,10 +260,11 @@ int32 Character::getFlag() {
 	return _flags;
 }
 
-int32 Character::getX() {
+int16 Character::getX() {
 	return _x;
 }
-int32 Character::getY() {
+
+int16 Character::getY() {
 	return _y;
 }
 
@@ -348,12 +345,12 @@ void Character::stopSpecialAnim() {
 
 void Character::update(int32 timeIncrement) {
 	debugC(5, kDebugCharacter, "update(%d)", timeIncrement);
-	if ((_flags & 0x1) && _currentPathNodeCount > 0) {
-		if (_currentPathNode < _currentPathNodeCount) {
-			if (_currentPathNode < _currentPathNodeCount - 10) {
-				int32 delta = MIN<int32>(10, _currentPathNodeCount - _currentPathNode);
-				int32 dx = _currentPathX[_currentPathNode+delta] - _x;
-				int32 dy = _currentPathY[_currentPathNode+delta] - _y;
+	if ((_flags & 0x1) && _currentPath.size() > 0) {
+		if (_currentPathNode < _currentPath.size()) {
+			if (_currentPathNode < _currentPath.size() - 10) {
+				int32 delta = MIN<int32>(10, _currentPath.size() - _currentPathNode);
+				int16 dx = _currentPath[_currentPathNode+delta].x - _x;
+				int16 dy = _currentPath[_currentPathNode+delta].y - _y;
 				setFacing(getFacingFromDirection(dx, dy));
 				playWalkAnim(0, 0);
 			}
@@ -362,9 +359,9 @@ void Character::update(int32 timeIncrement) {
 			_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;
 			_lastWalkTime =  _vm->getSystem()->getMillis();
 
-			while (_numPixelToWalk > 1000 && _currentPathNode < _currentPathNodeCount) {
-				_x = _currentPathX[_currentPathNode];
-				_y = _currentPathY[_currentPathNode];
+			while (_numPixelToWalk > 1000 && _currentPathNode < _currentPath.size()) {
+				_x = _currentPath[_currentPathNode].x;
+				_y = _currentPath[_currentPathNode].y;
 				_currentPathNode += 1;
 				_numPixelToWalk -= 1000;
 			}
@@ -372,7 +369,7 @@ void Character::update(int32 timeIncrement) {
 		} else {
 			playStandingAnim();
 			_flags &= ~0x1;
-			_currentPathNodeCount = 0;
+			_currentPath.clear();
 		}
 	}
 
@@ -527,7 +524,7 @@ void Character::update(int32 timeIncrement) {
 }
 
 // adapted from Kyra
-int32 Character::getFacingFromDirection(int32 dx, int32 dy) {
+int32 Character::getFacingFromDirection(int16 dx, int16 dy) {
 	debugC(4, kDebugCharacter, "getFacingFromDirection(%d, %d)", dx, dy);
 
 	static const int facingTable[] = {
@@ -638,7 +635,7 @@ void Character::load(Common::ReadStream *stream) {
 	// "not visible" flag.
 	if (_flags & 0x100) {
 		_flags &= ~0x100;
-		setVisible(false);	
+		setVisible(false);
 	}
 }
 
@@ -664,7 +661,7 @@ void Character::stopWalk() {
 	_finalY = _y;
 	_flags &= ~0x1;
 	_currentPathNode = 0;
-	_currentPathNodeCount = 0;
+	_currentPath.clear();
 }
 
 const SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterId, int32 animationId) {
@@ -996,8 +993,8 @@ bool Character::loadShadowAnimation(const Common::String &animName) {
 }
 
 void Character::plotPath(Graphics::Surface& surface) {
-	for (int i = 0; i < _currentPathNodeCount; i++) {
-		 *(byte *)surface.getBasePtr(_currentPathX[i], _currentPathY[i]) = ( i < _currentPathNode);
+	for (uint32 i = 0; i < _currentPath.size(); i++) {
+		 *(byte *)surface.getBasePtr(_currentPath[i].x, _currentPath[i].y) = (i < _currentPathNode);
 	}
 }
 
@@ -1078,11 +1075,11 @@ void Character::setDefaultSpecialAnimationId(int32 defaultAnimationId) {
 	_animSpecialDefaultId = defaultAnimationId;
 }
 
-int32 Character::getFinalX() {
+int16 Character::getFinalX() {
 	return _finalX;
 }
 
-int32 Character::getFinalY() {
+int16 Character::getFinalY() {
 	return _finalY;
 }
 
