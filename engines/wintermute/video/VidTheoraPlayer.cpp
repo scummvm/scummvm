@@ -1,20 +1,30 @@
-// Copyright 2009, 2010 Jan Nedoma
-//
-// This file is part of Wintermute Engine.
-//
-// Wintermute Engine is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Wintermute Engine is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Wintermute Engine.  If not, see <http://www.gnu.org/licenses/>.
-//////////////////////////////////////////////////////////////////////////
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME Lite.
+ * http://dead-code.org/redir.php?target=wmelite
+ * Copyright (c) 2011 Jan Nedoma
+ */
 
 
 #include "engines/wintermute/dcgf.h"
@@ -318,6 +328,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::resetStream() {
+	warning("VidTheoraPlayer::resetStream - stubbed");
 #if 0
 	if (_sound) _sound->Stop();
 
@@ -329,59 +340,59 @@ HRESULT CVidTheoraPlayer::resetStream() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeGame, bool FreezeMusic, bool Looping, uint32 StartTime, float ForceZoom, int Volume) {
-	if (ForceZoom < 0.0f) 
-		ForceZoom = 100.0f;
-	if (Volume < 0) 
+HRESULT CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame, bool freezeMusic, bool looping, uint32 startTime, float forceZoom, int volume) {
+	if (forceZoom < 0.0f) 
+		forceZoom = 100.0f;
+	if (volume < 0) 
 		_volume = Game->_soundMgr->getVolumePercent(SOUND_SFX);
-	else _volume = Volume;
+	else _volume = volume;
 	
-	_freezeGame = FreezeGame;
+	_freezeGame = freezeGame;
 	
 	if (!_playbackStarted && _freezeGame) 
-		Game->Freeze(FreezeMusic);
+		Game->Freeze(freezeMusic);
 	
 	_playbackStarted = false;
-	float Width, Height;
+	float width, height;
 	if (_theoraDecoder) {
 		_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
 		_state = THEORA_STATE_PLAYING;
-		_looping = Looping;
-		_playbackType = Type;
+		_looping = looping;
+		_playbackType = type;
 
-		_startTime = StartTime;
-		_volume = Volume;
-		_posX = X;
-		_posY = Y;
-		_playZoom = ForceZoom;
+		_startTime = startTime;
+		_volume = volume;
+		_posX = x;
+		_posY = y;
+		_playZoom = forceZoom;
 		
-		Width = (float)_theoraDecoder->getWidth();
-		Height = (float)_theoraDecoder->getHeight();
+		width = (float)_theoraDecoder->getWidth();
+		height = (float)_theoraDecoder->getHeight();
 	} else {
-		Width = (float)Game->_renderer->_width;
-		Height = (float)Game->_renderer->_height;
+		width = (float)Game->_renderer->_width;
+		height = (float)Game->_renderer->_height;
 	}
 
-	switch (Type) {
+	switch (type) {
 		case VID_PLAY_POS:
-			_playZoom = ForceZoom;
-			_posX = X;
-			_posY = Y;
+			_playZoom = forceZoom;
+			_posX = x;
+			_posY = y;
 			break;
 			
 		case VID_PLAY_STRETCH: {
-			float ZoomX = (float)((float)Game->_renderer->_width / Width * 100);
-			float ZoomY = (float)((float)Game->_renderer->_height / Height * 100);
+			float ZoomX = (float)((float)Game->_renderer->_width / width * 100);
+			float ZoomY = (float)((float)Game->_renderer->_height / height * 100);
 			_playZoom = MIN(ZoomX, ZoomY);
-			_posX = (Game->_renderer->_width - Width * (_playZoom / 100)) / 2;
-			_posY = (Game->_renderer->_height - Height * (_playZoom / 100)) / 2;
+			_posX = (Game->_renderer->_width - width * (_playZoom / 100)) / 2;
+			_posY = (Game->_renderer->_height - height * (_playZoom / 100)) / 2;
 		}
 			break;
 			
 		case VID_PLAY_CENTER:
 			_playZoom = 100.0f;
-			_posX = (Game->_renderer->_width - Width) / 2;
-			_posY = (Game->_renderer->_height - Height) / 2;
+			_posX = (Game->_renderer->_width - width) / 2;
+			_posY = (Game->_renderer->_height - height) / 2;
 			break;
 	}
 	return S_OK;
@@ -633,19 +644,19 @@ void CVidTheoraPlayer::writeAlpha() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::display(uint32 Alpha) {
+HRESULT CVidTheoraPlayer::display(uint32 alpha) {
 	RECT rc;
-	HRESULT Res;
+	HRESULT res;
 
 	if (_texture && _videoFrameReady) {
 		CBPlatform::SetRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
-		if (_playZoom == 100.0f) Res = _texture->displayTrans(_posX, _posY, rc, Alpha);
-		else Res = _texture->displayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, Alpha);
-	} else Res = E_FAIL;
+		if (_playZoom == 100.0f) res = _texture->displayTrans(_posX, _posY, rc, alpha);
+		else res = _texture->displayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, alpha);
+	} else res = E_FAIL;
 #if 0
 	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->Display();
 #endif
-	return Res;
+	return res;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -680,8 +691,8 @@ HRESULT CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-byte CVidTheoraPlayer::getAlphaAt(int X, int Y) {
-	if (_alphaImage) return _alphaImage->getAlphaAt(X, Y);
+byte CVidTheoraPlayer::getAlphaAt(int x, int y) {
+	if (_alphaImage) return _alphaImage->getAlphaAt(x, y);
 	else return 0xFF;
 }
 

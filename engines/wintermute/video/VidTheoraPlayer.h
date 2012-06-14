@@ -1,21 +1,30 @@
-// Copyright 2009, 2010 Jan Nedoma
-//
-// This file is part of Wintermute Engine.
-//
-// Wintermute Engine is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Wintermute Engine is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Wintermute Engine.  If not, see <http://www.gnu.org/licenses/>.
-//////////////////////////////////////////////////////////////////////////
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
+/*
+ * This file is based on WME Lite.
+ * http://dead-code.org/redir.php?target=wmelite
+ * Copyright (c) 2011 Jan Nedoma
+ */
 
 #ifndef WINTERMUTE_VIDTHEORAPLAYER_H
 #define WINTERMUTE_VIDTHEORAPLAYER_H
@@ -26,7 +35,6 @@
 #include "engines/wintermute/Base/BImage.h"
 #include "video/video_decoder.h"
 #include "common/stream.h"
-//#include <theora/theora.h>
 
 namespace WinterMute {
 
@@ -46,35 +54,9 @@ public:
 	CVidTheoraPlayer(CBGame *inGame);
 	virtual ~CVidTheoraPlayer(void);
 
-	// Vorbis/Theora structs
-	/*ogg_sync_state   m_OggSyncState;
-	ogg_page         m_OggPage;
-	ogg_stream_state m_VorbisStreamState;
-	ogg_stream_state m_TheoraStreamState;
-
-	theora_info      m_TheoraInfo;
-	theora_comment   m_TheoraComment;
-	theora_state     m_TheoraState;
-
-	vorbis_info      m_VorbisInfo;
-	vorbis_dsp_state m_VorbisDSPState;
-	vorbis_block     m_VorbisBlock;
-	vorbis_comment   m_VorbisComment;
-
-	int _theoraStreams;
-	int _vorbisStreams;*/
-
-	//ogg_int64_t m_AudiobufGranulepos; //time position of last sample
-
-
 	// external objects
 	Common::SeekableReadStream *_file;
 	Common::String _filename;
-
-	//CBSoundTheora *_sound;
-	//ogg_int16_t *_audioBuf;
-	/*int _audioBufSize;
-	int _audioBufFill;*/
 
 	CBSurface *_texture;
 	//CVidSubtitler *_subtitler;
@@ -83,9 +65,9 @@ public:
 	HRESULT initialize(const Common::String &filename, const Common::String &subtitleFile = NULL);
 	HRESULT initializeSimple();
 	HRESULT update();
-	HRESULT play(TVideoPlayback Type = VID_PLAY_CENTER, int X = 0, int Y = 0, bool FreezeGame = false, bool FreezeMusic = true, bool Looping = false, uint32 StartTime = 0, float ForceZoom = -1.0f, int Volume = -1);
+	HRESULT play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool Looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
 	HRESULT stop();
-	HRESULT display(uint32 Alpha = 0xFFFFFFFF);
+	HRESULT display(uint32 alpha = 0xFFFFFFFF);
 	//HRESULT RenderFrame(CBSurface *Texture, yuv_buffer *yuv);
 
 	HRESULT pause();
@@ -117,7 +99,7 @@ public:
 	CBImage *_alphaImage;
 	Common::String _alphaFilename;
 	HRESULT setAlphaImage(const Common::String &filename);
-	__inline byte getAlphaAt(int X, int Y);
+	__inline byte getAlphaAt(int x, int y);
 	void writeAlpha();
 
 	HRESULT SeekToTime(uint32 Time);
