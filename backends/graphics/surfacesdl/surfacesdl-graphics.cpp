@@ -159,7 +159,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.aspectRatioCorrection = false;
 #endif
 	// HACK: just pick first scaler plugin
-	_normalPlugin = _scalerPlugin = _scalerPlugins.front();
+	_normalPlugin = _scalerPlugins.front();
+	_scalerPlugin = NULL;
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 
@@ -671,7 +672,8 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 
 	// If the _scalerIndex has changed, change scaler plugins
 	if (_scalerPlugins[_scalerIndex] != _scalerPlugin) {
-		(*_scalerPlugin)->deinitialize();
+		if (_scalerPlugin)
+			(*_scalerPlugin)->deinitialize();
 		_scalerPlugin = _scalerPlugins[_scalerIndex];
 		Graphics::PixelFormat format;
 		convertSDLPixelFormat(_hwscreen->format, &format);
