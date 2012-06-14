@@ -36,6 +36,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
 #include "common/system.h"
 
 namespace WinterMute {
@@ -110,8 +111,15 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 		Game->LOG(0, "Error opening sound file '%s'", Filename);
 		return E_FAIL;
 	}
-
-	_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::NO);
+	Common::String strFilename(Filename);
+	if (strFilename.hasSuffix(".ogg")) {
+		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::NO);
+	} else if (strFilename.hasSuffix(".wav")) {
+		warning("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s", Filename);
+		//_stream = Audio::makeWAVStream(_file, DisposeAfterUse::NO);
+	} else {
+		warning("BSoundBuffer::LoadFromFile - Unknown filetype for %s", Filename);
+	}
 	if (!_stream) {
 		return E_FAIL;
 	}
