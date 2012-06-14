@@ -511,7 +511,7 @@ static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 }
 #endif
 
-static void convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) {
+void SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) {
 	*out = Graphics::PixelFormat(in->BytesPerPixel,
 		8 - in->Rloss, 8 - in->Gloss,
 		8 - in->Bloss, 8 - in->Aloss,
