@@ -128,9 +128,7 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 		Buffer = params;
 	}
 
-	int i;
-
-	for (i = 0; i < _points.GetSize(); i++) delete _points[i];
+	for (int i = 0; i < _points.GetSize(); i++) delete _points[i];
 	_points.RemoveAll();
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
@@ -163,9 +161,9 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_ZOOM:
 		case TOKEN_SCALE: {
-			int i;
-			parser.ScanStr((char *)params, "%d", &i);
-			_zoom = (float)i;
+			int j;
+			parser.ScanStr((char *)params, "%d", &j);
+			_zoom = (float)j;
 		}
 		break;
 

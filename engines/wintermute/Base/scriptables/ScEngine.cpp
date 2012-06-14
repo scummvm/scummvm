@@ -684,7 +684,7 @@ HRESULT CScEngine::AddBreakpoint(const char *ScriptFilename, int Line) {
 		Bp = new CScBreakpoint(ScriptFilename);
 		_breakpoints.Add(Bp);
 	}
-	bool Found = false;
+
 	for (int i = 0; i < Bp->_lines.GetSize(); i++) {
 		if (Bp->_lines[i] == Line) return S_OK;
 	}

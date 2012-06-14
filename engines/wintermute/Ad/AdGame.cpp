@@ -1566,15 +1566,14 @@ HRESULT CAdGame::EndDlgBranch(const char *BranchName, const char *ScriptName, co
 
 
 	int StartIndex = -1;
-	int i;
-	for (i = _dlgPendingBranches.GetSize() - 1; i >= 0; i--) {
+	for (int i = _dlgPendingBranches.GetSize() - 1; i >= 0; i--) {
 		if (scumm_stricmp(Name, _dlgPendingBranches[i]) == 0) {
 			StartIndex = i;
 			break;
 		}
 	}
 	if (StartIndex >= 0) {
-		for (i = StartIndex; i < _dlgPendingBranches.GetSize(); i++) {
+		for (int i = StartIndex; i < _dlgPendingBranches.GetSize(); i++) {
 			//ClearBranchResponses(_dlgPendingBranches[i]);
 			delete [] _dlgPendingBranches[i];
 			_dlgPendingBranches[i] = NULL;

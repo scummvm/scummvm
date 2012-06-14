@@ -342,15 +342,12 @@ HRESULT CBFileManager::RegisterPackages() {
 	Game->LOG(0, "Scanning packages...");
 	warning("Scanning packages");
 
-// TODO: Actually scan the folder, for now we just hardcode the files for Dirty Split.
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.dcp");
-	int size = files.size();
+
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
 		RegisterPackage((*it)->getName().c_str());
 	}
-/*	RegisterPackage("data.dcp");
-	RegisterPackage("english.dcp");*/
 #if 0
 	AnsiString extension = AnsiString(PACKAGE_EXTENSION);
 
@@ -378,10 +375,10 @@ HRESULT CBFileManager::RegisterPackages() {
 			}
 		}
 	}
-
+#endif
 	warning("  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
 	Game->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
-#endif
+
 	warning("  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
 	return S_OK;
 }

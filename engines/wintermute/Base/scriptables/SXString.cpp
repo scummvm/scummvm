@@ -267,8 +267,6 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Common::Array<WideString> parts;
 
 
-		size_t start, pos;
-		start = 0;
 		
 		Common::StringTokenizer tokenizer(str, delims);
 		while (!tokenizer.empty()) {

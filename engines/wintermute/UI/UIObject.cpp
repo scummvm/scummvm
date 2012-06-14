@@ -163,7 +163,7 @@ HRESULT CUIObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 		CScValue *Val = Stack->Pop();
 
-		const char *Filename = Val->GetString();
+		/* const char *Filename = */ Val->GetString();
 
 		delete _image;
 		_image = NULL;

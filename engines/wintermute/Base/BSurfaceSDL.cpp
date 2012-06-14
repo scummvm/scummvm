@@ -229,7 +229,7 @@ void CBSurfaceSDL::genAlphaMask(Graphics::Surface *surface) {
 	SDL_LockSurface(surface);
 #endif
 	bool hasColorKey;
-	uint32 colorKey;
+	/* uint32 colorKey; */
 	uint8 ckRed, ckGreen, ckBlue;
 	/*  if (SDL_GetColorKey(surface, &colorKey) == 0) {
 	        hasColorKey = true;

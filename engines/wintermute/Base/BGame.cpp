@@ -353,15 +353,13 @@ CBGame::~CBGame() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::Cleanup() {
-	int i;
-
 	delete _loadingIcon;
 	_loadingIcon = NULL;
 
 	_engineLogCallback = NULL;
 	_engineLogCallbackData = NULL;
 
-	for (i = 0; i < NUM_MUSIC_CHANNELS; i++) {
+	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
 		delete _music[i];
 		_music[i] = NULL;
 		_musicStartTime[i] = 0;
@@ -373,7 +371,7 @@ HRESULT CBGame::Cleanup() {
 	UnregisterObject(_fader);
 	_fader = NULL;
 
-	for (i = 0; i < _regObjects.GetSize(); i++) {
+	for (int i = 0; i < _regObjects.GetSize(); i++) {
 		delete _regObjects[i];
 		_regObjects[i] = NULL;
 	}
@@ -399,7 +397,7 @@ HRESULT CBGame::Cleanup() {
 	_scValue = NULL;
 	_sFX = NULL;
 
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.GetSize(); i++) {
 		_scripts[i]->_owner = NULL;
 		_scripts[i]->Finish();
 	}
@@ -411,7 +409,7 @@ HRESULT CBGame::Cleanup() {
 	_fontStorage->RemoveFont(_videoFont);
 	_videoFont = NULL;
 
-	for (i = 0; i < _quickMessages.GetSize(); i++) delete _quickMessages[i];
+	for (int i = 0; i < _quickMessages.GetSize(); i++) delete _quickMessages[i];
 	_quickMessages.RemoveAll();
 
 	_viewportStack.RemoveAll();
@@ -2063,8 +2061,8 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AccOutputText") == 0) {
 		Stack->CorrectParams(2);
-		const char *Str = Stack->Pop()->GetString();
-		int Type = Stack->Pop()->GetInt();
+		/* const char *Str = */ Stack->Pop()->GetString();
+		/* int Type = */ Stack->Pop()->GetInt();
 		// do nothing
 		Stack->PushNULL();
 
@@ -3838,7 +3836,7 @@ bool CBGame::HandleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
-bool CBGame::handleKeyRelease(Common::Event *event) {
+void CBGame::handleKeyRelease(Common::Event *event) {
 	_keyboardState->handleKeyRelease(event);
 }
 
@@ -4098,7 +4096,7 @@ void CBGame::SetResourceModule(HMODULE ResModule) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::DisplayContent(bool Update, bool DisplayAll) {
+HRESULT CBGame::DisplayContent(bool update, bool displayAll) {
 	return S_OK;
 }
 
@@ -4133,7 +4131,7 @@ HRESULT CBGame::DisplayIndicator() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::UpdateMusicCrossfade() {
-	byte GlobMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC);
+	/* byte GlobMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
 
 	if (!_musicCrossfadeRunning) return S_OK;
 	if (_state == GAME_FROZEN) return S_OK;

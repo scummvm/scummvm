@@ -537,9 +537,9 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 				}
 			}
 		} else {
-			const char *Name = Val->GetString();
+			const char *attachmentName = Val->GetString();
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
-				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, Name) == 0) {
+				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					Found = true;
 					Game->UnregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.RemoveAt(i);
@@ -547,7 +547,7 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 				}
 			}
 			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
-				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, Name) == 0) {
+				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
 					Found = true;
 					Game->UnregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.RemoveAt(i);
@@ -580,16 +580,16 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 				CurrIndex++;
 			}
 		} else {
-			const char *Name = Val->GetString();
+			const char *attachmentName = Val->GetString();
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
-				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, Name) == 0) {
+				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					Ret = _attachmentsPre[i];
 					break;
 				}
 			}
 			if (!Ret) {
 				for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
-					if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, Name) == 0) {
+					if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
 						Ret = _attachmentsPre[i];
 						break;
 					}

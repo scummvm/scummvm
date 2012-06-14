@@ -519,11 +519,11 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddGlobalForce") == 0) {
 		Stack->CorrectParams(3);
-		const char *Name = Stack->Pop()->GetString();
+		const char *forceName = Stack->Pop()->GetString();
 		float Angle = Stack->Pop()->GetFloat();
 		float Strength = Stack->Pop()->GetFloat();
 
-		Stack->PushBool(SUCCEEDED(AddForce(Name, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
+		Stack->PushBool(SUCCEEDED(AddForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -533,13 +533,13 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AddPointForce") == 0) {
 		Stack->CorrectParams(5);
-		const char *Name = Stack->Pop()->GetString();
+		const char *forceName = Stack->Pop()->GetString();
 		int PosX = Stack->Pop()->GetInt();
 		int PosY = Stack->Pop()->GetInt();
 		float Angle = Stack->Pop()->GetFloat();
 		float Strength = Stack->Pop()->GetFloat();
 
-		Stack->PushBool(SUCCEEDED(AddForce(Name, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
+		Stack->PushBool(SUCCEEDED(AddForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -549,9 +549,9 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "RemoveForce") == 0) {
 		Stack->CorrectParams(1);
-		const char *Name = Stack->Pop()->GetString();
+		const char *forceName = Stack->Pop()->GetString();
 
-		Stack->PushBool(SUCCEEDED(RemoveForce(Name)));
+		Stack->PushBool(SUCCEEDED(RemoveForce(forceName)));
 
 		return S_OK;
 	}

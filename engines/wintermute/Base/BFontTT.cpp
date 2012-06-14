@@ -876,9 +876,10 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 
 //////////////////////////////////////////////////////////////////////////
 float CBFontTT::GetKerning(wchar_t leftChar, wchar_t rightChar) {
+#if 0
 	GlyphInfo *infoLeft = _glyphCache->GetGlyph(leftChar);
 	GlyphInfo *infoRight = _glyphCache->GetGlyph(rightChar);
-#if 0
+
 	if (!infoLeft || !infoRight) return 0;
 
 	FT_Vector delta;

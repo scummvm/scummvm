@@ -626,7 +626,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 
 	int ar, ag, ab, aa;
 	char camera[MAX_PATH] = "";
-	float WaypointHeight = -1.0f;
+	/* float WaypointHeight = -1.0f; */
 
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -1386,9 +1386,9 @@ HRESULT CAdScene::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetNode") == 0) {
 		Stack->CorrectParams(1);
-		const char *Name = Stack->Pop()->GetString();
+		const char *nodeName = Stack->Pop()->GetString();
 
-		CBObject *node = GetNodeByName(Name);
+		CBObject *node = GetNodeByName(nodeName);
 		if (node) Stack->PushNative((CBScriptable *)node, true);
 		else Stack->PushNULL();
 
@@ -1407,9 +1407,9 @@ HRESULT CAdScene::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			int Index = Val->GetInt();
 			if (Index >= 0 && Index < _objects.GetSize()) Ret = _objects[Index];
 		} else {
-			const char *Name = Val->GetString();
+			const char *nodeName = Val->GetString();
 			for (int i = 0; i < _objects.GetSize(); i++) {
-				if (_objects[i] && _objects[i]->_name && scumm_stricmp(_objects[i]->_name, Name) == 0) {
+				if (_objects[i] && _objects[i]->_name && scumm_stricmp(_objects[i]->_name, nodeName) == 0) {
 					Ret = _objects[i];
 					break;
 				}
@@ -2115,8 +2115,8 @@ float CAdScene::GetScaleAt(int Y) {
 	CAdScaleLevel *next = NULL;
 
 	for (int i = 0; i < _scaleLevels.GetSize(); i++) {
-		CAdScaleLevel *xxx = _scaleLevels[i];
-		int j = _scaleLevels.GetSize();
+		/* CAdScaleLevel *xxx = _scaleLevels[i];*/
+		/* int j = _scaleLevels.GetSize(); */
 		if (_scaleLevels[i]->_posY < Y) prev = _scaleLevels[i];
 		else {
 			next = _scaleLevels[i];
@@ -2556,8 +2556,8 @@ float CAdScene::GetRotationAt(int X, int Y) {
 	CAdRotLevel *next = NULL;
 
 	for (int i = 0; i < _rotLevels.GetSize(); i++) {
-		CAdRotLevel *xxx = _rotLevels[i];
-		int j = _rotLevels.GetSize();
+	/*	CAdRotLevel *xxx = _rotLevels[i];
+		int j = _rotLevels.GetSize();*/
 		if (_rotLevels[i]->_posX < X) prev = _rotLevels[i];
 		else {
 			next = _rotLevels[i];

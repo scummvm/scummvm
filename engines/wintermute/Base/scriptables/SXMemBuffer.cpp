@@ -366,7 +366,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "SetPointer") == 0) {
 		Stack->CorrectParams(2);
 		int Start = Stack->Pop()->GetInt();
-		CScValue *Val = Stack->Pop();
+		/* CScValue *Val = */ Stack->Pop();
 
 		if (!CheckBounds(Script, Start, sizeof(void *))) Stack->PushBool(false);
 		else {

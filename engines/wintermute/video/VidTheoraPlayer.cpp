@@ -450,14 +450,13 @@ HRESULT CVidTheoraPlayer::stop() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::update() {
 	_currentTime = _freezeGame ? Game->_liveTimer : Game->_timer;
-	
+
 	if (!isPlaying()) return S_OK;
-	
+
 	if (_playbackStarted /*&& m_Sound && !m_Sound->IsPlaying()*/) return S_OK;
-	
+
 	if (_playbackStarted && !_freezeGame && Game->_state == GAME_FROZEN) return S_OK;
-	
-	int Counter = 0;
+
 	if (_theoraDecoder) {
 		if (_theoraDecoder->endOfVideo() && _looping) {
 			warning("Should loop movie");
