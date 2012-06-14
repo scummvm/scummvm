@@ -57,7 +57,7 @@ private:
 	int _lockers; /**< Number of classes and objects that require this script */
 	size_t _scriptSize;
 	size_t _heapSize;
-	uint16 _bufSize;
+	size_t _bufSize;
 
 	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	uint16 _numExports; /**< Number of entries in the exports table */
