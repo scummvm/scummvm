@@ -33,8 +33,6 @@
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/dcscript.h"   // Added by ClassView
-//#include <map>
-//#include <string>
 #include "engines/wintermute/wme_debugger.h"
 #include "common/str.h"
 

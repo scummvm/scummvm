@@ -34,8 +34,6 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-//#include <map>
-//#include <string>
 
 namespace WinterMute {
 

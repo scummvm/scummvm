@@ -30,10 +30,7 @@
 #define WINTERMUTE_BGAME_H
 
 #include "engines/wintermute/Base/BDebugger.h"
-//#include "engines/wintermute/Base/BSaveThumbHelper.h"
-//#include "engines/wintermute/Base/BFader.h"
 #include "engines/wintermute/Base/BRenderer.h"
-//#include "engines/wintermute/Base/BSurfaceStorage.h"
 #include "engines/wintermute/Base/BObject.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"

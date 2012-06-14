@@ -29,8 +29,6 @@
 #ifndef WINTERMUTE_BIMAGE_H
 #define WINTERMUTE_BIMAGE_H
 
-
-//#include "FreeImage.h"
 #include "engines/wintermute/Base/BBase.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"

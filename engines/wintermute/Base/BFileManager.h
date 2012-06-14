@@ -29,8 +29,6 @@
 #ifndef WINTERMUTE_BFILEMANAGER_H
 #define WINTERMUTE_BFILEMANAGER_H
 
-
-//#include <map>
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BFileEntry.h"
 #include "common/archive.h"

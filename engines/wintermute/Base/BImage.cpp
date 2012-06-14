@@ -40,7 +40,6 @@
 #include "common/textconsole.h"
 #include "common/stream.h"
 #include "common/system.h"
-//#include "FreeImage.h"
 
 namespace WinterMute {
 

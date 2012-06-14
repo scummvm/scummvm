@@ -39,8 +39,6 @@
 #include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
-//#include <cmath>
-
 
 namespace WinterMute {
 

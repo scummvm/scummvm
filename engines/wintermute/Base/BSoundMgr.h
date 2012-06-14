@@ -32,7 +32,6 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/Base/BSoundBuffer.h"
-//#include "bass.h"
 
 namespace WinterMute {
 
