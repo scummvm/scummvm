@@ -29,7 +29,7 @@
 #include "FontGlyphCache.h"
 
 namespace WinterMute {
-
+#if 0
 //////////////////////////////////////////////////////////////////////////
 FontGlyphCache::FontGlyphCache() {
 }
@@ -98,5 +98,5 @@ void GlyphInfo::SetGlyphImage(size_t width, size_t height, size_t stride, byte *
 	SDL_UnlockSurface(_image);
 #endif
 }
-
+#endif
 } // end of namespace WinterMute

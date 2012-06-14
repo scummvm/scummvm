@@ -34,7 +34,7 @@
 #include "graphics/surface.h"
 
 namespace WinterMute {
-
+#if 0
 //////////////////////////////////////////////////////////////////////////
 class GlyphInfo {
 public:
@@ -119,7 +119,7 @@ private:
 	typedef Common::HashMap<char, GlyphInfo *> GlyphInfoMap; // TODO
 	GlyphInfoMap _glyphs;
 };
-
+#endif
 } // end of namespace WinterMute
 
 #endif // WINTERMUTE_FONTGLYPHCACHE_H

@@ -756,7 +756,7 @@ void CBFontTT::FTCloseProc(FT_Stream stream) {
 }*/
 
 
-
+#if 0
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, TextLineList &lines) {
 	int currWidth = 0;
@@ -837,7 +837,7 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 		currWidth += charWidth;
 	}
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
 	//TextLineList lines;
@@ -873,10 +873,10 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 	}*/
 }
 
-
+#if 0
 //////////////////////////////////////////////////////////////////////////
 float CBFontTT::GetKerning(wchar_t leftChar, wchar_t rightChar) {
-#if 0
+
 	GlyphInfo *infoLeft = _glyphCache->GetGlyph(leftChar);
 	GlyphInfo *infoRight = _glyphCache->GetGlyph(rightChar);
 
@@ -887,23 +887,25 @@ float CBFontTT::GetKerning(wchar_t leftChar, wchar_t rightChar) {
 	if (error) return 0;
 
 	return delta.x * (1.0f / 64.0f);
-#endif
+
 	return 0;
 }
-
-
+#endif
+#if 0
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::PrepareGlyphs(const WideString &text) {
+
 	// make sure we have all the glyphs we need
 	for (size_t i = 0; i < text.size(); i++) {
 		wchar_t ch = text[i];
 		if (!_glyphCache->HasGlyph(ch)) CacheGlyph(ch);
 	}
-}
 
+}
+#endif
+#if 0
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::CacheGlyph(wchar_t ch) {
-#if 0
 	FT_UInt glyphIndex = FT_Get_Char_Index(_fTFace, ch);
 	if (!glyphIndex) return;
 
@@ -939,7 +941,6 @@ void CBFontTT::CacheGlyph(wchar_t ch) {
 	_glyphCache->AddGlyph(ch, glyphIndex, _fTFace->glyph, _fTFace->glyph->bitmap.width, _fTFace->glyph->bitmap.rows, pixels, stride);
 
 	if (tempBuffer) delete [] tempBuffer;
-#endif
 }
-
+#endif
 } // end of namespace WinterMute

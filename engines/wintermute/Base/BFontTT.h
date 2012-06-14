@@ -120,16 +120,13 @@ public:
 	CBFontTT(CBGame *inGame);
 	virtual ~CBFontTT(void);
 
-	virtual int GetTextWidth(byte  *text, int MaxLenght = -1);
+	virtual int GetTextWidth(byte  *text, int maxLenght = -1);
 	virtual int GetTextHeight(byte  *text, int width);
-	virtual void DrawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int MaxLenght = -1);
+	virtual void DrawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLenght = -1);
 	virtual int GetLetterHeight();
 
-	HRESULT LoadBuffer(byte  *Buffer);
-	HRESULT LoadFile(const char *Filename);
-
-	/*  static unsigned long FTReadSeekProc(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count);
-	    static void FTCloseProc(FT_Stream stream);*/
+	HRESULT LoadBuffer(byte *buffer);
+	HRESULT LoadFile(const char *filename);
 
 	FontGlyphCache *GetGlyphCache() {
 		return _glyphCache;
@@ -143,13 +140,10 @@ public:
 	void InitLoop();
 
 private:
-	HRESULT ParseLayer(CBTTFontLayer *Layer, byte *Buffer);
+	HRESULT ParseLayer(CBTTFontLayer *layer, byte *buffer);
 
 	void WrapText(const WideString &text, int maxWidth, int maxHeight, TextLineList &lines);
 	void MeasureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
-	float GetKerning(wchar_t leftChar, wchar_t rightChar);
-	void PrepareGlyphs(const WideString &text);
-	void CacheGlyph(wchar_t ch);
 
 	CBSurface *RenderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
 	void BlitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect);
@@ -158,8 +152,7 @@ private:
 	CBCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
 
 	HRESULT InitFont();
-	//FT_Stream _fTStream;
-	//FT_Face _fTFace;
+
 	Graphics::Font *_deletableFont;
 	const Graphics::Font *_font;
 	const Graphics::Font *_fallbackFont;
