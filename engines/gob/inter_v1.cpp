@@ -1584,14 +1584,13 @@ void Inter_v1::o1_waitEndPlay(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_playComposition(OpFuncParams &params) {
-	int16 composition[50];
-	int16 dataVar;
-	int16 freqVal;
+	int16 dataVar = _vm->_game->_script->readVarIndex();
+	int16 freqVal = _vm->_game->_script->readValExpr();
 
-	dataVar = _vm->_game->_script->readVarIndex();
-	freqVal = _vm->_game->_script->readValExpr();
+	int16 composition[50];
+	int maxEntries = MIN<int>(50, (_variables->getSize() - dataVar) / 4);
 	for (int i = 0; i < 50; i++)
-		composition[i] = (int16) VAR_OFFSET(dataVar + i * 4);
+		composition[i] = (i < maxEntries) ? ((int16) VAR_OFFSET(dataVar + i * 4)) : -1;
 
 	_vm->_sound->blasterPlayComposition(composition, freqVal);
 }
