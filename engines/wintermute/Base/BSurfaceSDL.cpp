@@ -504,8 +504,8 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	srcRect.setHeight(Rect->bottom - Rect->top);
 
 	Common::Rect position;
-	position.left = x;
-	position.top = y;
+	position.left = x + offsetX;
+	position.top = y + offsetY;
 	// TODO: Scaling...
 	
 	position.setWidth((float)srcRect.width() * ZoomX / 100.f);
@@ -513,8 +513,8 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 
 	renderer->ModTargetRect(&position);
 
-	position.left += offsetX;
-	position.top += offsetY;
+/*	position.left += offsetX;
+	position.top += offsetY;*/
 
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.
