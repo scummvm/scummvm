@@ -513,6 +513,17 @@ protected:
 	void oFascin_setWinFlags();
 };
 
+class Inter_LittleRed : public Inter_v2 {
+public:
+	Inter_LittleRed(GobEngine *vm);
+	virtual ~Inter_LittleRed() {}
+
+protected:
+	virtual void setupOpcodesDraw();
+	virtual void setupOpcodesFunc();
+	virtual void setupOpcodesGob();
+};
+
 class Inter_v3 : public Inter_v2 {
 public:
 	Inter_v3(GobEngine *vm);
