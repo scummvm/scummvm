@@ -388,6 +388,12 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 		// Used to enable the debug mode in Torin's Passage (French).
 		// If true, the debug mode is enabled.
 		s->_segMan->strcpy(data, "");
+	} else if (setting == "leakdump") {
+		// An unknown setting in LSL7. Likely used for debugging.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "startroom") {
+		// Debug setting in LSL7, specifies the room to start from.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
