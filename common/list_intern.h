@@ -30,138 +30,174 @@ template<typename T> class List;
 
 
 namespace ListInternal {
-	struct NodeBase {
-		NodeBase *_prev;
-		NodeBase *_next;
-	};
+struct NodeBase {
+	NodeBase *_prev;
+	NodeBase *_next;
+};
 
-	template<typename T>
-	struct Node : public NodeBase {
-		T _data;
+template<typename T>
+struct Node : public NodeBase {
+	T _data;
 
-		Node(const T &x) : _data(x) {}
-	};
+	Node(const T &x) : _data(x) {}
+};
 
-	template<typename T> struct ConstIterator;
+template<typename T> struct ConstIterator;
 
-	template<typename T>
-	struct Iterator {
-		typedef Iterator<T>	Self;
-		typedef Node<T> *	NodePtr;
-		typedef T &			ValueRef;
-		typedef T *			ValuePtr;
-		typedef T			ValueType;
+template<typename T>
+struct Iterator {
+	typedef Iterator<T> Self;
+	typedef Node<T> *   NodePtr;
+	typedef T          &ValueRef;
+	typedef T          *ValuePtr;
+	typedef T           ValueType;
 
-		NodeBase *_node;
+	template <typename TT>
+	friend bool operator==(const Iterator<TT>& a, const ConstIterator<TT>& b);
+	template <typename TT>
+	friend bool operator!=(const Iterator<TT>& a, const ConstIterator<TT>& b);
+	friend class ConstIterator<T>;
+	friend class List<T>;
+private:
+	NodeBase *_node;
+	bool _forward;
+public:
 
-		Iterator() : _node(0) {}
-		explicit Iterator(NodeBase *node) : _node(node) {}
+	Iterator() : _node(0) {}
+	explicit Iterator(NodeBase *node) : _node(node), _forward(true)  {}
+	explicit Iterator(NodeBase *node, bool forward) : _node(node), _forward(forward) {}
 
-		// Prefix inc
-		Self &operator++() {
-			if (_node)
+	// Prefix inc
+	Self &operator++() {
+		if (_node) {
+			if (_forward)
 				_node = _node->_next;
-			return *this;
-		}
-		// Postfix inc
-		Self operator++(int) {
-			Self tmp(_node);
-			++(*this);
-			return tmp;
-		}
-		// Prefix dec
-		Self &operator--() {
-			if (_node)
+			else
 				_node = _node->_prev;
-			return *this;
 		}
-		// Postfix dec
-		Self operator--(int) {
-			Self tmp(_node);
-			--(*this);
-			return tmp;
-		}
-		ValueRef operator*() const {
-			assert(_node);
-			return static_cast<NodePtr>(_node)->_data;
-		}
-		ValuePtr operator->() const {
-			return &(operator*());
-		}
-
-		bool operator==(const Self &x) const {
-			return _node == x._node;
-		}
-
-		bool operator!=(const Self &x) const {
-			return _node != x._node;
-		}
-	};
-
-	template<typename T>
-	struct ConstIterator {
-		typedef ConstIterator<T>	Self;
-		typedef const Node<T> *	NodePtr;
-		typedef const T &		ValueRef;
-		typedef const T *		ValuePtr;
-
-		const NodeBase *_node;
-
-		ConstIterator() : _node(0) {}
-		explicit ConstIterator(const NodeBase *node) : _node(node) {}
-		ConstIterator(const Iterator<T> &x) : _node(x._node) {}
-
-		// Prefix inc
-		Self &operator++() {
-			if (_node)
+		return *this;
+	}
+	// Postfix inc
+	Self operator++(int) {
+		Self tmp(_node);
+		++(*this);
+		return tmp;
+	}
+	// Prefix dec
+	Self &operator--() {
+		if (_node) {
+			if (_forward)
+				_node = _node->_prev;
+			else
 				_node = _node->_next;
-			return *this;
 		}
-		// Postfix inc
-		Self operator++(int) {
-			Self tmp(_node);
-			++(*this);
-			return tmp;
-		}
-		// Prefix dec
-		Self &operator--() {
-			if (_node)
-				_node = _node->_prev;
-			return *this;
-		}
-		// Postfix dec
-		Self operator--(int) {
-			Self tmp(_node);
-			--(*this);
-			return tmp;
-		}
-		ValueRef operator*() const {
-			assert(_node);
-			return static_cast<NodePtr>(_node)->_data;
-		}
-		ValuePtr operator->() const {
-			return &(operator*());
-		}
-
-		bool operator==(const Self &x) const {
-			return _node == x._node;
-		}
-
-		bool operator!=(const Self &x) const {
-			return _node != x._node;
-		}
-	};
-
-
-	template<typename T>
-	bool operator==(const Iterator<T>& a, const ConstIterator<T>& b) {
-		return a._node == b._node;
+		return *this;
+	}
+	// Postfix dec
+	Self operator--(int) {
+		Self tmp(_node);
+		--(*this);
+		return tmp;
+	}
+	ValueRef operator*() const {
+		assert(_node);
+		return static_cast<NodePtr>(_node)->_data;
+	}
+	ValuePtr operator->() const {
+		return &(operator*());
 	}
 
-	template<typename T>
-	bool operator!=(const Iterator<T>& a, const ConstIterator<T>& b) {
-		return a._node != b._node;
+	bool operator==(const Self &x) const {
+		return _node == x._node;
 	}
+
+	bool operator!=(const Self &x) const {
+		return _node != x._node;
+	}
+};
+
+
+template<typename T>
+struct ConstIterator {
+	typedef ConstIterator<T>    Self;
+	typedef const Node<T> * NodePtr;
+	typedef const T        &ValueRef;
+	typedef const T        *ValuePtr;
+
+	template <typename TT>
+	friend bool operator==(const Iterator<TT>& a, const ConstIterator<TT>& b);
+	template <typename TT>
+	friend bool operator!=(const Iterator<TT>& a, const ConstIterator<TT>& b);
+	friend class List<T>;
+private:
+	const NodeBase *_node;
+	bool _forward;
+public:
+	ConstIterator() : _node(0), _forward(true) {}
+	explicit ConstIterator(const NodeBase *node) : _node(node), _forward(true) {}
+	explicit ConstIterator(const NodeBase *node, bool forward) : _node(node), _forward(true) {}
+	ConstIterator(const Iterator<T> &x) : _node(x._node), _forward(x._forward) {}
+
+	// Prefix inc
+	Self &operator++() {
+		if (_node) {
+			if (_forward)
+				_node = _node->_next;
+			else
+				_node = _node->_prev;
+		}
+		return *this;
+	}
+	// Postfix inc
+	Self operator++(int) {
+		Self tmp(_node);
+		++(*this);
+		return tmp;
+	}
+	// Prefix dec
+	Self &operator--() {
+		if (_node) {
+			if (_forward)
+				_node = _node->_prev;
+			else
+				_node = _node->_next;
+		}
+		return *this;
+	}
+	// Postfix dec
+	Self operator--(int) {
+		Self tmp(_node);
+		--(*this);
+		return tmp;
+	}
+	ValueRef operator*() const {
+		assert(_node);
+		return static_cast<NodePtr>(_node)->_data;
+	}
+	ValuePtr operator->() const {
+		return &(operator*());
+	}
+
+	bool operator==(const Self &x) const {
+		return _node == x._node;
+	}
+
+	bool operator!=(const Self &x) const {
+		return _node != x._node;
+	}
+};
+
+
+
+template<typename T>
+bool operator==(const Iterator<T>& a, const ConstIterator<T>& b) {
+	return a._node == b._node;
+}
+
+template<typename T>
+bool operator!=(const Iterator<T>& a, const ConstIterator<T>& b) {
+	return a._node != b._node;
+}
 }
 
 

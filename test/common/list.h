@@ -2,9 +2,8 @@
 
 #include "common/list.h"
 
-class ListTestSuite : public CxxTest::TestSuite
-{
-	public:
+class ListTestSuite : public CxxTest::TestSuite {
+public:
 	void test_empty_clear() {
 		Common::List<int> container;
 		TS_ASSERT(container.empty());
@@ -15,7 +14,7 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(container.empty());
 	}
 
-	public:
+public:
 	void test_size() {
 		Common::List<int> container;
 		TS_ASSERT_EQUALS(container.size(), (unsigned int)0);
@@ -208,26 +207,49 @@ class ListTestSuite : public CxxTest::TestSuite
 		Common::List<int> container;
 		Common::List<int>::iterator iter;
 
+		TS_ASSERT(container.empty());
+		TS_ASSERT_EQUALS(container.reverse_begin(), container.reverse_begin());
+		TS_ASSERT_EQUALS(container.reverse_begin(), container.legacy_reverse_begin());
 		// Fill the container with some random data
 		container.push_back(17);
 		container.push_back(33);
 		container.push_back(-11);
 
 		iter = container.reverse_begin();
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 
 		TS_ASSERT_EQUALS(*iter, -11);
-		--iter;
+		++iter;
 		TS_ASSERT_DIFFERS(iter, container.end());
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
 
 		TS_ASSERT_EQUALS(*iter, 33);
-		--iter;
+		++iter;
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 		TS_ASSERT_EQUALS(*iter, 17);
-		--iter;
+		++iter;
+		TS_ASSERT_EQUALS(iter, container.reverse_end());
 		TS_ASSERT_EQUALS(iter, container.end());
+
+		iter = container.reverse_begin();
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
+
+
+		TS_ASSERT_EQUALS(*iter, -11);
+		iter++;
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
+
+		TS_ASSERT_EQUALS(*iter, 33);
+		iter++;
+		TS_ASSERT_DIFFERS(iter, container.reverse_end());
+
+		TS_ASSERT_EQUALS(*iter, 17);
+		iter++;
+		TS_ASSERT_EQUALS(iter, container.reverse_end());
 
 		iter = container.reverse_begin();
 
@@ -249,7 +271,7 @@ class ListTestSuite : public CxxTest::TestSuite
 	void test_front_back_push_pop() {
 		Common::List<int> container;
 
-		container.push_back( 42);
+		container.push_back(42);
 		container.push_back(-23);
 
 		TS_ASSERT_EQUALS(container.front(), 42);
@@ -271,5 +293,19 @@ class ListTestSuite : public CxxTest::TestSuite
 		container.pop_back();
 		TS_ASSERT_EQUALS(container.front(), 99);
 		TS_ASSERT_EQUALS(container.back(),  99);
+	}
+	/** Test equality opertors between Iterators ans ConstIterators*/
+	void test_iterator_equality() {
+		Common::List<int> container;
+		Common::List<int>::iterator iter;
+		Common::List<int>::const_iterator cIter;
+		container.push_back(17);
+		iter = container.begin();
+		cIter = container.begin();
+		TS_ASSERT(iter == cIter);
+		TS_ASSERT(cIter == iter);
+		TS_ASSERT(!(iter != cIter));
+		TS_ASSERT(!(cIter != iter));
+
 	}
 };

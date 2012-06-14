@@ -606,7 +606,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 		_items[i]->update();
 
 	if (_needsRedraw) {
-		for (Common::List<LBItem *>::const_iterator i = _orderedItems.reverse_begin(); i != _orderedItems.end(); --i)
+		for (Common::List<LBItem *>::const_iterator i = _orderedItems.legacy_reverse_begin(); i != _orderedItems.end(); --i)
 			(*i)->draw();
 
 		_needsRedraw = false;

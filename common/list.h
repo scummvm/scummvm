@@ -33,14 +33,14 @@ namespace Common {
 template<typename t_T>
 class List {
 protected:
-	typedef ListInternal::NodeBase		NodeBase;
-	typedef ListInternal::Node<t_T>		Node;
+	typedef ListInternal::NodeBase      NodeBase;
+	typedef ListInternal::Node<t_T>     Node;
 
 	NodeBase _anchor;
 
 public:
-	typedef ListInternal::Iterator<t_T>		iterator;
-	typedef ListInternal::ConstIterator<t_T>	const_iterator;
+	typedef ListInternal::Iterator<t_T>     iterator;
+	typedef ListInternal::ConstIterator<t_T>    const_iterator;
 
 	typedef t_T value_type;
 	typedef uint size_type;
@@ -169,7 +169,7 @@ public:
 			const_iterator i2;
 			const_iterator e2 = list.end();
 
-			for (i = begin(), i2 = list.begin();  (i != e) && (i2 != e2) ; ++i, ++i2) {
+			for (i = begin(), i2 = list.begin(); (i != e) && (i2 != e2) ; ++i, ++i2) {
 				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(i2._node)->_data;
 			}
 
@@ -206,28 +206,44 @@ public:
 	}
 
 
-	iterator		begin() {
+	iterator        begin() {
 		return iterator(_anchor._next);
 	}
 
-	iterator		reverse_begin() {
+	iterator        reverse_begin() {
+		return iterator(_anchor._prev, false);
+	}
+	iterator        reverse_end() {
+		return iterator(&_anchor, false);
+	}
+
+	/**FIXME DEPRACATED This is the old  version of reverse_begin(), use reverse_begin() instead, witch gets an actual backwartsiterator */
+	iterator legacy_reverse_begin() {
 		return iterator(_anchor._prev);
 	}
 
-	iterator		end() {
+	iterator        end() {
 		return iterator(&_anchor);
 	}
 
-	const_iterator	begin() const {
+	const_iterator  begin() const {
 		return const_iterator(_anchor._next);
 	}
 
-	const_iterator	reverse_begin() const {
+	/**FIXME DEPRACATED This is the old  version of reverse_begin(), use reverse_begin() instead*/
+	const_iterator  legacy_reverse_begin() const {
 		return const_iterator(_anchor._prev);
 	}
 
-	const_iterator	end() const {
+	const_iterator  reverse_begin() const {
+		return const_iterator(_anchor._prev, false);
+	}
+
+	const_iterator  end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
+	}
+	const_iterator  reverse_end() const {
+		return const_iterator(const_cast<NodeBase *>(&_anchor), false);
 	}
 
 protected:

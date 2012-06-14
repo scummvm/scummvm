@@ -630,7 +630,7 @@ bool Button::contains(const Common::Point &pos) const {
 
 const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::Point &pos) {
 	for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
-		for (Common::List<Button>::iterator i = l->_buttons.reverse_begin(); i != l->_buttons.end(); --i) {
+		for (Common::List<Button>::iterator i = l->_buttons.legacy_reverse_begin(); i != l->_buttons.end(); --i) {
 			if (!i->_active)
 				continue;
 
