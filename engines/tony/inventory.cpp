@@ -190,11 +190,7 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (_state == OPENING || _state == CLOSING)
-		prim->setDst(RMPoint(0, _curPutY));
-	else
-		prim->setDst(RMPoint(0, _curPutY));
-
+	prim->setDst(RMPoint(0, _curPutY));
 	g_system->lockMutex(_csModifyInterface);
 	CORO_INVOKE_2(RMGfxWoodyBuffer::draw, bigBuf, prim);
 	g_system->unlockMutex(_csModifyInterface);
@@ -257,9 +253,9 @@ void RMInventory::removeItem(int code) {
 }
 
 void RMInventory::addItem(int code) {
-	if (code <= 10000 && code >= 10101) {
+	if (code <= 10000 || code >= 10101) {
 		// If we are here, it means that we are adding an item that should not be in the inventory
-		warning("Cannot find a valid icon for this item, and then it will not be added to the inventory");
+		warning("RMInventory::addItem(%d) - Cannot find a valid icon for this item, and then it will not be added to the inventory", code);
 	} else {
 		g_system->lockMutex(_csModifyInterface);
 		if (_curPos + 8 == _nInv) {
@@ -277,8 +273,8 @@ void RMInventory::addItem(int code) {
 }
 
 void RMInventory::changeItemStatus(uint32 code, uint32 dwStatus) {
-	if (code <= 10000 && code >= 10101) {
-		error("Specified object code is not valid");
+	if (code <= 10000 || code >= 10101) {
+		error("RMInventory::changeItemStatus(%d) - Specified object code is not valid", code);
 	} else {
 		g_system->lockMutex(_csModifyInterface);
 		_items[code - 10000]._icon.setPattern(dwStatus);
