@@ -39,6 +39,10 @@ namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CSXString, false)
 
+CBScriptable *makeSXString(CBGame *inGame, CScStack *stack) {
+	return new CSXString(inGame, stack);
+}
+
 //////////////////////////////////////////////////////////////////////////
 CSXString::CSXString(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	_string = NULL;

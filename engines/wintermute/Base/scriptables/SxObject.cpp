@@ -38,6 +38,10 @@ namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CSXObject, false)
 
+CBScriptable *makeSXObject(CBGame *inGame, CScStack *stack) {
+	return new CSXObject(inGame, stack);
+}
+
 //////////////////////////////////////////////////////////////////////////
 CSXObject::CSXObject(CBGame *inGame, CScStack *Stack): CBObject(inGame) {
 	int NumParams = Stack->Pop()->GetInt(0);

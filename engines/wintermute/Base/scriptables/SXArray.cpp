@@ -36,6 +36,10 @@ namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CSXArray, false)
 
+CBScriptable *makeSXArray(CBGame *inGame, CScStack *stack) {
+	return new CSXArray(inGame, stack);
+}
+
 //////////////////////////////////////////////////////////////////////////
 CSXArray::CSXArray(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	_length = 0;

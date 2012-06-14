@@ -60,14 +60,8 @@
 #include "engines/wintermute/Base/scriptables/ScEngine.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
-#include "engines/wintermute/Base/scriptables/SXArray.h"
-#include "engines/wintermute/Base/scriptables/SXDate.h"
-#include "engines/wintermute/Base/scriptables/SXFile.h"
-#include "engines/wintermute/Base/scriptables/SXMemBuffer.h"
-#include "engines/wintermute/Base/scriptables/SxObject.h"
 #include "engines/wintermute/Base/scriptables/SXMath.h"
 #include "engines/wintermute/Base/scriptables/SXStore.h"
-#include "engines/wintermute/Base/scriptables/SXString.h"
 #include "engines/wintermute/video/VidPlayer.h"
 #include "engines/wintermute/video/VidTheoraPlayer.h"
 #include "common/textconsole.h"
@@ -2966,7 +2960,7 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "String") == 0) {
 		this_obj = ThisStack->GetTop();
 
-		this_obj->SetNative(new CSXString(Game, Stack));
+		this_obj->SetNative(makeSXString(Game, Stack));
 		Stack->PushNULL();
 	}
 
@@ -2976,7 +2970,7 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "MemBuffer") == 0) {
 		this_obj = ThisStack->GetTop();
 
-		this_obj->SetNative(new CSXMemBuffer(Game, Stack));
+		this_obj->SetNative(makeSXMemBuffer(Game, Stack));
 		Stack->PushNULL();
 	}
 
@@ -2986,7 +2980,7 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "File") == 0) {
 		this_obj = ThisStack->GetTop();
 
-		this_obj->SetNative(new CSXFile(Game, Stack));
+		this_obj->SetNative(makeSXFile(Game, Stack));
 		Stack->PushNULL();
 	}
 
@@ -2996,7 +2990,7 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "Date") == 0) {
 		this_obj = ThisStack->GetTop();
 
-		this_obj->SetNative(new CSXDate(Game, Stack));
+		this_obj->SetNative(makeSXDate(Game, Stack));
 		Stack->PushNULL();
 	}
 
@@ -3006,7 +3000,7 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "Array") == 0) {
 		this_obj = ThisStack->GetTop();
 
-		this_obj->SetNative(new CSXArray(Game, Stack));
+		this_obj->SetNative(makeSXArray(Game, Stack));
 		Stack->PushNULL();
 	}
 
@@ -3016,7 +3010,7 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "Object") == 0) {
 		this_obj = ThisStack->GetTop();
 
-		this_obj->SetNative(new CSXObject(Game, Stack));
+		this_obj->SetNative(makeSXObject(Game, Stack));
 		Stack->PushNULL();
 	}
 

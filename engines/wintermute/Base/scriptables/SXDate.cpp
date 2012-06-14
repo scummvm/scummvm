@@ -34,6 +34,10 @@ namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CSXDate, false)
 
+CBScriptable *makeSXDate(CBGame *inGame, CScStack *stack) {
+	return new CSXDate(inGame, stack);	
+}
+
 //////////////////////////////////////////////////////////////////////////
 CSXDate::CSXDate(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	Stack->CorrectParams(6);

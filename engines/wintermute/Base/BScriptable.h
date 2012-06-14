@@ -75,6 +75,16 @@ public:
 
 };
 
+// Implemented in their respective .cpp-files
+CBScriptable *makeSXArray(CBGame *inGame, CScStack *stack);
+CBScriptable *makeSXDate(CBGame *inGame, CScStack *stack);
+CBScriptable *makeSXFile(CBGame *inGame, CScStack *stack);
+CBScriptable *makeSXMath(CBGame *inGame);
+CBScriptable *makeSXMemBuffer(CBGame *inGame, CScStack *stack);
+CBScriptable *makeSXObject(CBGame *inGame, CScStack *stack);
+CBScriptable *makeSXStore(CBGame *inGame);
+CBScriptable *makeSXString(CBGame *inGame, CScStack *stack);
+
 } // end of namespace WinterMute
 
 #endif

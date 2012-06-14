@@ -37,6 +37,10 @@ namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CSXMemBuffer, false)
 
+CBScriptable *makeSXMemBuffer(CBGame *inGame, CScStack *stack) {
+	return new CSXMemBuffer(inGame, stack);
+}
+
 //////////////////////////////////////////////////////////////////////////
 CSXMemBuffer::CSXMemBuffer(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	Stack->CorrectParams(1);

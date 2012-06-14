@@ -50,6 +50,10 @@ namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CSXFile, false)
 
+CBScriptable *makeSXFile(CBGame *inGame, CScStack *stack) {
+	return new CSXFile(inGame, stack);
+}
+
 //////////////////////////////////////////////////////////////////////////
 CSXFile::CSXFile(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 	Stack->CorrectParams(1);

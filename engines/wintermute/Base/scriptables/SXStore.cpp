@@ -42,6 +42,10 @@ namespace WinterMute {
 
 IMPLEMENT_PERSISTENT(CSXStore, false)
 
+CBScriptable *makeSXStore(CBGame *inGame, CScStack *stack) {
+	return new CSXStore(inGame);
+}
+
 //////////////////////////////////////////////////////////////////////////
 CSXStore::CSXStore(CBGame *inGame) : CBObject(inGame) {
 #ifdef __IPHONEOS__
