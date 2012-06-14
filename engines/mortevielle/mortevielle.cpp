@@ -112,7 +112,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_place = -1;
 
 	_c_zzz = -1;
-
+	_caff = -1;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -489,6 +489,8 @@ static byte CURSOR_ARROW_DATA[16 * 16] = {
 void MortevielleEngine::initMouse() {
 	CursorMan.replaceCursor(CURSOR_ARROW_DATA, 16, 16, 0, 0, 0xff);
 	CursorMan.showMouse(true);
+
+	_mouse.initMouse();
 }
 
 /**
