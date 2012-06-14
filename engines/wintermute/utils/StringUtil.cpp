@@ -176,6 +176,19 @@ Utf8String StringUtil::WideToUtf8(const WideString &WideStr) {
 	return "";
 }
 
+// Currently this only does Ansi->ISO 8859, and only for carets.
+char simpleAnsiToWide(const AnsiString &str, int &offset) {
+	char c = str[offset];
+
+	if (c == 92) {
+		offset++;
+		return '\'';
+	} else {
+		offset++;
+		return c;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::AnsiToWide(const AnsiString &str) {
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
@@ -183,6 +196,11 @@ WideString StringUtil::AnsiToWide(const AnsiString &str) {
 	if (!hasWarned) {
 		hasWarned = true;
 		warning("StringUtil::AnsiToWide - WideString not supported yet");
+	}
+	Common::String converted = "";
+	int index = 0;
+	while (index != str.size()) {
+		converted += simpleAnsiToWide(str, index);
 	}
 	// using default os locale!
 
@@ -193,7 +211,7 @@ WideString StringUtil::AnsiToWide(const AnsiString &str) {
 	    WideString ResultString(wstr);
 	    delete [] wstr;
 	    return ResultString;*/
-	return WideString(str);
+	return WideString(converted);
 }
 
 //////////////////////////////////////////////////////////////////////////
