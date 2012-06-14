@@ -201,7 +201,7 @@ bool Character::walkTo(int16 newPosX, int16 newPosY) {
 		if (_blockingWalk) {
 			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPath.size() && !_vm->shouldQuitGame()) {
 				if (_currentPathNode < _currentPath.size() - 4) {
-					int32 delta = MIN<int32>(4, _currentPath.size() - _currentPathNode);
+					int32 delta = MIN<int32>(4, _currentPath.size() - 1 - _currentPathNode);
 
 					int16 dx = _currentPath[_currentPathNode+delta].x - _x;
 					int16 dy = _currentPath[_currentPathNode+delta].y - _y;
@@ -348,7 +348,7 @@ void Character::update(int32 timeIncrement) {
 	if ((_flags & 0x1) && _currentPath.size() > 0) {
 		if (_currentPathNode < _currentPath.size()) {
 			if (_currentPathNode < _currentPath.size() - 10) {
-				int32 delta = MIN<int32>(10, _currentPath.size() - _currentPathNode);
+				int32 delta = MIN<int32>(10, _currentPath.size() - 1 - _currentPathNode);
 				int16 dx = _currentPath[_currentPathNode+delta].x - _x;
 				int16 dy = _currentPath[_currentPathNode+delta].y - _y;
 				setFacing(getFacingFromDirection(dx, dy));
