@@ -27,12 +27,12 @@
 
 namespace GUI {
 
-class SaveLoadChooserImpl;
+class SaveLoadChooserDialog;
 
 class SaveLoadChooser {
 	typedef Common::String String;
 protected:
-	SaveLoadChooserImpl *_impl;
+	SaveLoadChooserDialog *_impl;
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
