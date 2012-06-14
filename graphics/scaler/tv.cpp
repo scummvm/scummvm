@@ -57,7 +57,7 @@ const char *TVPlugin::getPrettyName() const {
 	return "TV";
 }
 
-template <typename ColorMask>
+template<typename ColorMask>
 void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height) {
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
