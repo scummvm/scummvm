@@ -115,6 +115,13 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 		// scheme. We need an overlaying mechanism, or a mechanism to split script parts
 		// in different segments to handle these. For now, simply stop when such a script
 		// is found.
+		//
+		// Known large SCI 3 scripts are:
+		// Lighthouse: 9, 220, 270, 351, 360, 490, 760, 765, 800
+		// LSL7: 240, 511, 550
+		// Phantasmagoria 2: none (hooray!)
+		// RAMA: 70
+		//
 		// TODO: Remove this once such a mechanism is in place
 		if (script->size > 65535)
 			error("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
