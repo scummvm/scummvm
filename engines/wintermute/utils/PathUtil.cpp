@@ -25,25 +25,11 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_ifstream
 #include "engines/wintermute/dcgf.h"
-#include <algorithm>
 #include <fstream>
 #include "PathUtil.h"
 #include "StringUtil.h"
-
-
-#ifdef __WIN32__
-#   include <shlobj.h>
-#endif
-
-#ifdef __MACOSX__
-#   include <CoreServices/CoreServices.h>
-#endif
-
-#ifdef __IPHONEOS__
-#   include "ios_utils.h"
-#endif
 
 namespace WinterMute {
 
@@ -155,6 +141,8 @@ bool PathUtil::MatchesMask(const AnsiString &fileName, const AnsiString &mask) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PathUtil::FileExists(const AnsiString &fileName) {
+	warning("PathUtil::FileExists(%s)", fileName.c_str());
+
 	std::ifstream stream;
 
 	stream.open(fileName.c_str());
@@ -167,8 +155,9 @@ bool PathUtil::FileExists(const AnsiString &fileName) {
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::GetUserDirectory() {
+	warning("PathUtil::GetUserDirectory - stubbed");
 	AnsiString userDir = "./";
-
+#if 0
 #ifdef __WIN32__
 	char buffer[MAX_PATH];
 	buffer[0] = '\0';
@@ -197,7 +186,7 @@ AnsiString PathUtil::GetUserDirectory() {
 	IOS_GetDataDir(path);
 	userDir = AnsiString(path);
 #endif
-
+#endif // 0
 	return userDir;
 }
 

@@ -33,7 +33,7 @@
 #include "engines/wintermute/Base/BFader.h"
 #include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/Base/BFontTT.h"
+#include "engines/wintermute/Base/BFont.h"
 #include "engines/wintermute/Base/BFontStorage.h"
 #include "engines/wintermute/Base/BImage.h"
 #include "engines/wintermute/Base/BKeyboardState.h"
@@ -3397,7 +3397,7 @@ void CBGame::AfterLoadSound(void *Sound, void *Data) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::AfterLoadFont(void *Font, void *Data) {
-	((CBFontTT *)Font)->AfterLoad();
+	((CBFont*)Font)->AfterLoad();
 }
 
 //////////////////////////////////////////////////////////////////////////

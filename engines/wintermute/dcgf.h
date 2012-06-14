@@ -54,8 +54,6 @@
 
 // macros
 #define RELEASE(obj) if(obj) { obj->Release(); obj = NULL; } else 0
-#define SAFE_DELETE(obj)  if(obj) { delete obj; obj = NULL; } else 0
-#define SAFE_DELETE_ARRAY(obj)  if(obj) { delete [] obj; obj = NULL; } else 0
 #define DegToRad(_val) (_val*PI*(1.0f/180.0f))
 #define RadToDeg(_val) (_val*(180/PI))
 

@@ -44,7 +44,7 @@ public:
 	virtual int GetLetterHeight();
 
 	virtual void InitLoop() {};
-
+	virtual void AfterLoad() {};
 	CBFont(CBGame *inGame);
 	virtual ~CBFont();
 

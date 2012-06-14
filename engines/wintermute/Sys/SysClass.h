@@ -31,9 +31,6 @@
 
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/dctypes.h"
-
-//#include <set>
-//#include <map>
 #include "common/hashmap.h"
 #include "common/func.h"
 #include "common/stream.h"
