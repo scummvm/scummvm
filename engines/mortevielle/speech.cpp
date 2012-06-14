@@ -60,11 +60,11 @@ SpeechManager::SpeechManager() {
 	_phonemeNumb = 0;
 
 	for (int i = 0; i < 3; i++) {
-		_queue[i]._val;
-		_queue[i]._code;
-		_queue[i]._acc;
-		_queue[i]._freq;
-		_queue[i]._rep;
+		_queue[i]._val = 0;
+		_queue[i]._code = 0;
+		_queue[i]._acc = 0;
+		_queue[i]._freq = 0;
+		_queue[i]._rep = 0;
 	}
 }
 
