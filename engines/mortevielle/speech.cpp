@@ -58,6 +58,14 @@ const byte _tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4,
 SpeechManager::SpeechManager() {
 	_typlec = 0;
 	_phonemeNumb = 0;
+
+	for (int i = 0; i < 3; i++) {
+		_queue[i]._val;
+		_queue[i]._code;
+		_queue[i]._acc;
+		_queue[i]._freq;
+		_queue[i]._rep;
+	}
 }
 
 void SpeechManager::spfrac(int wor) {
