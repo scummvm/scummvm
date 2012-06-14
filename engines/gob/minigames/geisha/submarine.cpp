@@ -51,7 +51,7 @@ enum Animation {
 };
 
 
-Submarine::Submarine(const ANIFile &ani) : ANIObject(ani), _state(kStateMove) {
+Submarine::Submarine(const ANIFile &ani) : ANIObject(ani), _state(kStateMove), _direction(kDirectionNone) {
 	turn(kDirectionN);
 }
 
