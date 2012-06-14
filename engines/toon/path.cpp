@@ -60,7 +60,7 @@ void PathFindingHeap::clear() {
 	memset(_data, 0, sizeof(HeapDataGrid) * _size);
 }
 
-void PathFindingHeap::push(int16 x, int16 y, int16 weight) {
+void PathFindingHeap::push(int16 x, int16 y, uint16 weight) {
 	debugC(2, kDebugPath, "push(%d, %d, %d)", x, y, weight);
 
 	if (_count == _size) {
@@ -104,7 +104,7 @@ void PathFindingHeap::push(int16 x, int16 y, int16 weight) {
 	}
 }
 
-void PathFindingHeap::pop(int16 *x, int16 *y, int16 *weight) {
+void PathFindingHeap::pop(int16 *x, int16 *y, uint16 *weight) {
 	debugC(2, kDebugPath, "pop(x, y, weight)");
 
 	if (!_count) {
@@ -170,7 +170,7 @@ void PathFinding::init(Picture *mask) {
 	_heap->unload();
 	_heap->init(500);
 	delete[] _sq;
-	_sq = new int32[_width * _height];
+	_sq = new uint16[_width * _height];
 }
 
 bool PathFinding::isLikelyWalkable(int16 x, int16 y) {
@@ -304,18 +304,16 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 	}
 
 	// no direct line, we use the standard A* algorithm
-	memset(_sq , 0, _width * _height * sizeof(int32));
+	memset(_sq , 0, _width * _height * sizeof(uint16));
 	_heap->clear();
 	int16 curX = x;
 	int16 curY = y;
-	int16 curWeight = 0;
+	uint16 curWeight = 0;
 
 	_sq[curX + curY *_width] = 1;
 	_heap->push(curX, curY, abs(destx - x) + abs(desty - y));
 
-	int16 wei;
 	while (_heap->getCount()) {
-		wei = 0;
 		_heap->pop(&curX, &curY, &curWeight);
 		int32 curNode = curX + curY * _width;
 
@@ -328,15 +326,23 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 		for (int16 px = startX; px <= endX && !next; px++) {
 			for (int16 py = startY; py <= endY && !next; py++) {
 				if (px != curX || py != curY) {
-					wei = abs(px - curX) + abs(py - curY);
+					uint16 wei = abs(px - curX) + abs(py - curY);
 
-					int32 curPNode = px + py * _width;
 					if (isWalkable(px, py)) { // walkable ?
-						int32 sum = _sq[curNode] + wei * (1 + (isLikelyWalkable(px, py) ? 5 : 0));
+						int32 curPNode = px + py * _width;
+						uint32 sum = _sq[curNode] + wei * (1 + (isLikelyWalkable(px, py) ? 5 : 0));
+						if (sum > (uint32)0xFFFF) {
+							warning("PathFinding::findPath sum exceeds maximum representable!");
+							sum = (uint32)0xFFFF;
+						}
 						if (_sq[curPNode] > sum || !_sq[curPNode]) {
-							int32 newWeight = abs(destx - px) + abs(desty - py);
 							_sq[curPNode] = sum;
-							_heap->push(px, py, _sq[curPNode] + newWeight);
+							uint32 newWeight = _sq[curPNode] + abs(destx - px) + abs(desty - py);
+							if (newWeight > (uint32)0xFFFF) {
+								warning("PathFinding::findPath newWeight exceeds maximum representable!");
+								newWeight = (uint16)0xFFFF;
+							}
+							_heap->push(px, py, newWeight);
 							if (!newWeight)
 								next = true; // we found it !
 						}
@@ -359,7 +365,7 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 	Common::Array<Common::Point> retPath;
 	retPath.push_back(Common::Point(curX, curY));
 
-	int32 bestscore = _sq[destx + desty * _width];
+	uint16 bestscore = _sq[destx + desty * _width];
 
 	bool retVal = false;
 	while (true) {
@@ -374,8 +380,6 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 		for (int16 px = startX; px <= endX; px++) {
 			for (int16 py = startY; py <= endY; py++) {
 				if (px != curX || py != curY) {
-					wei = abs(px - curX) + abs(py - curY);
-
 					int32 PNode = px + py * _width;
 					if (_sq[PNode] && (isWalkable(px, py))) {
 						if (_sq[PNode] < bestscore) {

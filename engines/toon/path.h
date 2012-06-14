@@ -36,8 +36,8 @@ public:
 	PathFindingHeap();
 	~PathFindingHeap();
 
-	void push(int16 x, int16 y, int16 weight);
-	void pop(int16 *x, int16 *y, int16 *weight);
+	void push(int16 x, int16 y, uint16 weight);
+	void pop(int16 *x, int16 *y, uint16 *weight);
 	void init(int32 size);
 	void clear();
 	void unload();
@@ -46,7 +46,7 @@ public:
 private:
 	struct HeapDataGrid {
 		int16 _x, _y;
-		int16 _weight;
+		uint16 _weight;
 	};
 
 	HeapDataGrid *_data;
@@ -84,7 +84,7 @@ private:
 
 	PathFindingHeap *_heap;
 
-	int32 *_sq;
+	uint16 *_sq;
 	int16 _width;
 	int16 _height;
 
