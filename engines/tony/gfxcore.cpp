@@ -251,8 +251,6 @@ RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
 *       RMGfxTargetBuffer Methods
 \****************************************************************************/
 
-RMGfxClearTask RMGfxTargetBuffer::taskClear;
-
 RMGfxTargetBuffer::RMGfxTargetBuffer() {
 	_otlist = NULL;
 	_otSize = 0;
@@ -375,11 +373,6 @@ void RMGfxTargetBuffer::addPrim(RMGfxPrimitive *prim) {
 
 //	g_system->unlockMutex(csModifyingOT);
 }
-
-void RMGfxTargetBuffer::addClearTask(void) {
-	addPrim(new RMGfxPrimitive(&taskClear));
-}
-
 
 /****************************************************************************\
 *               RMGfxSourceBufferPal Methods

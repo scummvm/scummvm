@@ -548,8 +548,6 @@ public:
  */
 class RMGfxTargetBuffer : public virtual RMGfxBuffer {
 private:
-	static RMGfxClearTask taskClear;
-
 	struct OTList {
 		RMGfxPrimitive *_prim;
 		OTList *_next;
@@ -575,9 +573,6 @@ public:
 	void clearOT(void);
 	void drawOT(CORO_PARAM);
 	void addPrim(RMGfxPrimitive *prim); // The pointer must be delted
-
-	// Adds a task to clear the screen
-	void addClearTask(void);
 
 	operator byte *() {
 		return _buf;
