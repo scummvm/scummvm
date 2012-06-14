@@ -25,7 +25,7 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/persistent.h"
