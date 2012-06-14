@@ -70,7 +70,7 @@ public:
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
 	CUIWindow(CBGame *inGame);
 	virtual ~CUIWindow();
-	virtual bool HandleKeypress(Common::Event *event);
+	virtual bool HandleKeypress(Common::Event *event, bool printable = false);
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
 	HRESULT LoadFile(const char *Filename);

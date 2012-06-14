@@ -260,7 +260,7 @@ public:
 	bool _quitting;
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
 
-	virtual bool HandleKeypress(Common::Event *event);
+	virtual bool HandleKeypress(Common::Event *event, bool printable = false);
 	virtual bool handleKeyRelease(Common::Event *event);
 	int _freezeLevel;
 	HRESULT Unfreeze();

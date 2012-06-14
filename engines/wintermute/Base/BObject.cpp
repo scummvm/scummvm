@@ -960,7 +960,7 @@ HRESULT CBObject::HandleMouse(TMouseEvent Event, TMouseButton Button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::HandleKeypress(Common::Event *event) {
+bool CBObject::HandleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 

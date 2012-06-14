@@ -686,10 +686,10 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::HandleKeypress(Common::Event *event) {
+bool CUIEdit::HandleKeypress(Common::Event *event, bool printable) {
 	bool Handled = false;
 
-	if (event->type == Common::EVENT_KEYDOWN) {
+	if (event->type == Common::EVENT_KEYDOWN && !printable) {
 		switch (event->kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
 		case Common::KEYCODE_TAB:
@@ -769,12 +769,11 @@ bool CUIEdit::HandleKeypress(Common::Event *event) {
 			break;
 		}
 		return Handled;
-	}
-#if 0
-	else if (event->type == SDL_TEXTINPUT) {
+	} else if (event->type == Common::EVENT_KEYDOWN && printable) {
 		if (_selStart != _selEnd) DeleteChars(_selStart, _selEnd);
 
-		WideString wstr = StringUtil::Utf8ToWide(event->text.text);
+		//WideString wstr = StringUtil::Utf8ToWide(event->kbd.ascii);
+		WideString wstr; wstr += (char)event->kbd.ascii;
 		_selEnd += InsertChars(_selEnd, (byte *)StringUtil::WideToAnsi(wstr).c_str(), 1);
 
 		if (Game->_textRTL) _selEnd = _selStart;
@@ -782,7 +781,7 @@ bool CUIEdit::HandleKeypress(Common::Event *event) {
 
 		return true;
 	}
-#endif
+
 	return false;
 }
 

@@ -81,7 +81,7 @@ public:
 
 	virtual bool HandleMouseWheel(int Delta);
 	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
-	virtual bool HandleKeypress(Common::Event *event);
+	virtual bool HandleKeypress(Common::Event *event, bool printable = false);
 	virtual int GetHeight();
 	HRESULT SetCursor(const char *Filename);
 	HRESULT SetActiveCursor(const char *Filename);

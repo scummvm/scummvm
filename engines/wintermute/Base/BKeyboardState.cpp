@@ -201,6 +201,8 @@ HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) || 
 		(_currentCharCode <= Common::KEYCODE_9 && _currentCharCode >= Common::KEYCODE_0)) {
 		_currentPrintable = true;
+	} else {
+		_currentPrintable = false;
 	}
 	//_currentKeyData = KeyData;
 

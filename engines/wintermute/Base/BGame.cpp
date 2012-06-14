@@ -3793,7 +3793,7 @@ HRESULT CBGame::Unfreeze() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::HandleKeypress(Common::Event *event) {
+bool CBGame::HandleKeypress(Common::Event *event, bool printable) {
 	if(IsVideoPlaying()) {
 		if(event->kbd.keycode == Common::KEYCODE_ESCAPE) 
 			StopVideo();
@@ -3821,7 +3821,7 @@ bool CBGame::HandleKeypress(Common::Event *event) {
 // TODO
 
 	if (_focusedWindow) {
-		if (!Game->_focusedWindow->HandleKeypress(event)) {
+		if (!Game->_focusedWindow->HandleKeypress(event, _keyboardState->_currentPrintable)) {
 			/*if (event->type != SDL_TEXTINPUT) {*/
 				if (Game->_focusedWindow->CanHandleEvent("Keypress"))
 					Game->_focusedWindow->ApplyEvent("Keypress");
