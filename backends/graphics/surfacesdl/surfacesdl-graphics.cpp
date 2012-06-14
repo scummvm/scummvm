@@ -2152,20 +2152,13 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		endGFXTransaction();
 #ifdef USE_OSD
 		if (_osdSurface) {
-			const char *newScalerName = (*_scalerPlugin)->getName();
-			//const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
-			//while (g->name) {
-			//	if (g->id == _videoMode.mode) {
-			//		newScalerName = g->description;
-			//		break;
-			//	}
-			//	g++;
-			//}
+			const char *newScalerName = (*_scalerPlugin)->getPrettyName();
 			if (newScalerName) {
 				char buffer[128];
-				sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
+				sprintf(buffer, "%s %s%dx\n%d x %d -> %d x %d",
 					_("Active graphics filter:"),
 					newScalerName,
+					(*_scalerPlugin)->getFactor(),
 					_videoMode.screenWidth, _videoMode.screenHeight,
 					_hwscreen->w, _hwscreen->h
 					);
