@@ -413,7 +413,7 @@ Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedForma
 	return _supportedFormats;
 }
 
-static void convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) {
+void SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) const {
 	*out = Graphics::PixelFormat(in->BytesPerPixel,
 		8 - in->Rloss, 8 - in->Gloss,
 		8 - in->Bloss, 8 - in->Aloss,

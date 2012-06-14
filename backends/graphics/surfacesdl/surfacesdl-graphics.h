@@ -111,6 +111,12 @@ protected:
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void grabPalette(byte *colors, uint start, uint num);
 
+	/** 
+	 * Convert from the SDL pixel format to Graphics::PixelFormat
+	 * @param in    The SDL pixel format to convert
+	 * @param out   A pixel format to be written to
+	 */
+	void convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) const;
 public:
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual Graphics::Surface *lockScreen();
