@@ -434,6 +434,11 @@ HRESULT CVidTheoraPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeGam
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::stop() {
+	_theoraDecoder->close();
+	_state = THEORA_STATE_FINISHED;
+	if (_freezeGame) {
+		Game->Unfreeze();
+	}
 #if 0
 	if (m_Sound) m_Sound->Stop();
 	m_State = THEORA_STATE_FINISHED;
