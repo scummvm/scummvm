@@ -51,6 +51,9 @@ void Inter_LittleRed::setupOpcodesFunc() {
 }
 
 void Inter_LittleRed::setupOpcodesGob() {
+	OPCODEGOB(1, o_gobNOP); // Sets some sound timer interrupt
+	OPCODEGOB(2, o_gobNOP); // Sets some sound timer interrupt
+
 	OPCODEGOB(500, o2_playProtracker);
 	OPCODEGOB(501, o2_stopProtracker);
 }
