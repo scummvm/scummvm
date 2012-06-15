@@ -49,6 +49,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_array129A5[2] = 2;
 	_array129A5[3] = 3;
 	_savedBuffer215Ptr = NULL;
+	_word1825E = Common::Point(0, 0);
 
 	for (int i = 0; i < 20; i++) {
 		_interfaceHotspotStatus[i] = kHotspotOff;
@@ -2940,7 +2941,36 @@ void LilliputScript::OC_sub18252() {
 }
 
 void LilliputScript::OC_sub18260() {
-	warning("OC_sub18260()");
+	debugC(1, kDebugScriptTBC, "OC_sub18260()");
+	
+	int index = getValue1();
+	Common::Point var4 = getPosFromScript();
+
+	Common::Point pt = var4 + _viewportPos;
+	byte *isoMapBuf = getMapPtr(pt);
+
+	if (isoMapBuf[1] != 0xFF) {
+		int byte1825D = 255;
+		for (int var2 = 7; var2 >= 0; var2--) {
+			for (int var3 = 7; var3 >= 0; var3--) {
+				Common::Point(_viewportPos.x + var2, _viewportPos.y + var3);
+				isoMapBuf = getMapPtr(pt);
+
+				if (isoMapBuf[1] == 0xFF) {
+					int x = abs(var2 - var4.x);
+					int y = abs(var3 - var4.y);
+					if (x + y < byte1825D) {
+						byte1825D = x + y;
+						_word1825E = Common::Point(var2, var3);
+					}
+				}
+			}
+		}
+		var4 = _word1825E;
+	}
+
+	_vm->_characterPositionX[index] = (var4.x + _viewportPos.x) * 8;
+	_vm->_characterPositionY[index] = (var4.y + _viewportPos.y) * 8;
 }
 
 void LilliputScript::OC_CharacterVariableAddOrRemoveFlag() {
