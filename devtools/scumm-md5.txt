@@ -632,9 +632,9 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	a095e33061606d231ff37dca4c64c8ac	-1	de	All	HE 99	-	-	Joachim Eberhard
 	898eaa21f79cf8d4f08db856244689ff	66505	en	Windows	HE 99	Updated	-	Joachim Eberhard
 	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
-	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 100	Updated	-	Jonathan
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
-	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 100	-	-	sanguinehearts
+	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 101	Updated	-	Jonathan
+	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 101	-	-	sanguinehearts
 
 	f237bf8a5ef9af78b2a6a4f3901da341	18354	en	All	-	Demo	-	khalek, sev
 	7f945525abcd48015adf1632637a44a1	-1	fr	All	-	Demo	-	Kirben
@@ -841,7 +841,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
 	3de99ef0523f8ca7958faa3afccd035a	-1	us	All	HE 100	Updated	-	Kirben
 	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan
-	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 100	-	-	sanguinehearts
+	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts
 	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727
 
 	53e94115b55dd51d4b8ff0871aa1df1e	20103	en	All	-	Demo	-	khalek, sev
