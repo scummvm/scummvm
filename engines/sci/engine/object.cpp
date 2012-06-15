@@ -153,7 +153,7 @@ void Object::initSpecies(SegManager *segMan, reg_t addr) {
 	if (speciesOffset == 0xffff)		// -1
 		setSpeciesSelector(NULL_REG);	// no species
 	else
-		setSpeciesSelector(segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr));
+		setSpeciesSelector(segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr.segment));
 }
 
 void Object::initSuperClass(SegManager *segMan, reg_t addr) {
@@ -162,7 +162,7 @@ void Object::initSuperClass(SegManager *segMan, reg_t addr) {
 	if (superClassOffset == 0xffff)			// -1
 		setSuperClassSelector(NULL_REG);	// no superclass
 	else
-		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr));
+		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr.segment));
 }
 
 bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass) {

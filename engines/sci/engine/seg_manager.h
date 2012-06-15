@@ -125,7 +125,7 @@ private:
 
 public:
 	// TODO: document this
-	reg_t getClassAddress(int classnr, ScriptLoadType lock, reg_t caller);
+	reg_t getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment);
 
 	/**
 	 * Return a pointer to the specified script.

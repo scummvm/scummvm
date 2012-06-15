@@ -653,7 +653,7 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
-			segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+			segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, 0));
 
 		// If object is instance, get -propDict- from class and set it for this
 		// object. This is needed for ::isMemberOf() to work.
@@ -686,7 +686,7 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 		reg_t reg = make_reg(segmentId, seeker - _buf);
 		Object *obj = scriptObjInit(reg);
 
-		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, 0));
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
 	}
 

@@ -996,7 +996,7 @@ void run_vm(EngineState *s) {
 		case op_class: // 0x28 (40)
 			// Get class address
 			s->r_acc = s->_segMan->getClassAddress((unsigned)opparams[0], SCRIPT_GET_LOCK,
-											s->xs->addr.pc);
+											s->xs->addr.pc.segment);
 			break;
 
 		case 0x29: // (41)
@@ -1021,7 +1021,7 @@ void run_vm(EngineState *s) {
 
 		case op_super: // 0x2b (43)
 			// Send to any class
-			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, s->xs->addr.pc);
+			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, s->xs->addr.pc.segment);
 
 			if (!r_temp.isPointer())
 				error("[VM]: Invalid superclass in object");

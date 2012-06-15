@@ -939,7 +939,7 @@ void SegManager::createClassTable() {
 	_resMan->unlockResource(vocab996);
 }
 
-reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {
+reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment) {
 	if (classnr == 0xffff)
 		return NULL_REG;
 
@@ -956,7 +956,7 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 				return NULL_REG;
 			}
 		} else
-			if (caller.segment != the_class->reg.segment)
+			if (callerSegment != the_class->reg.segment)
 				getScript(the_class->reg.segment)->incrementLockers();
 
 		return the_class->reg;
