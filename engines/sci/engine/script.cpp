@@ -546,7 +546,7 @@ void Script::initializeClasses(SegManager *segMan) {
 
 	uint16 marker;
 	bool isClass = false;
-	uint16 classpos;
+	uint32 classpos;
 	int16 species = 0;
 
 	while (true) {

@@ -112,7 +112,7 @@ bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSiz
 	return relocateBlock(_variables, getPos().offset, segment, location, scriptSize);
 }
 
-bool Object::relocateSci3(SegmentId segment, int location, int offset, size_t scriptSize) {
+bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize) {
 	assert(_propertyOffsetsSci3);
 
 	for (uint i = 0; i < _variables.size(); ++i) {
@@ -286,7 +286,7 @@ void Object::initSelectorsSci3(const byte *buf) {
 	_variables.resize(properties);
 	uint16 *propertyIds = (uint16 *)malloc(sizeof(uint16) * properties);
 //	uint16 *methodOffsets = (uint16 *)malloc(sizeof(uint16) * 2 * methods);
-	uint16 *propertyOffsets = (uint16 *)malloc(sizeof(uint16) * properties);
+	uint32 *propertyOffsets = (uint32 *)malloc(sizeof(uint32) * properties);
 	int propertyCounter = 0;
 	int methodCounter = 0;
 
@@ -314,7 +314,8 @@ void Object::initSelectorsSci3(const byte *buf) {
 					WRITE_SCI11ENDIAN_UINT16(&propertyIds[propertyCounter],
 					                         groupBaseId + bit);
 					_variables[propertyCounter] = make_reg(0, value);
-					propertyOffsets[propertyCounter] = (seeker + bit * 2) - buf;
+					uint32 propertyOffset = (seeker + bit * 2) - buf;
+					propertyOffsets[propertyCounter] = propertyOffset;
 					++propertyCounter;
 				} else if (value != 0xffff) { // Method
 					_baseMethod.push_back(groupBaseId + bit);
