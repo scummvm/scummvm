@@ -241,6 +241,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	//int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
 	//uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
 	//uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
+#if 0
 	int16 divisions;
 
 	// If the game has the pFadeArray selector, another parameter is used here,
@@ -252,7 +253,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	} else {
 		divisions = (argc >= 8) ? argv[7].toSint16() : -1;	// divisions (transition steps?)
 	}
-
+#endif
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
 		return s->r_acc;

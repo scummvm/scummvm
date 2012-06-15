@@ -427,7 +427,7 @@ bool VirtualIndexFile::seek(int32 offset, int whence) {
 		_ptr = _buffer + offset;
 		break;
 	case SEEK_END:
-		assert(_bufferSize - offset >= 0);
+		assert((int32)_bufferSize - offset >= 0);
 		_ptr = _buffer + (_bufferSize - offset);
 		break;
 	}
