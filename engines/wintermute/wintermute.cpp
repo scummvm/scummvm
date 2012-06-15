@@ -294,4 +294,8 @@ int WinterMuteEngine::messageLoop() {
 	return 0;
 }
 
+uint32 WinterMuteEngine::randInt(int from, int to) {
+	return _rnd->getRandomNumberRng(from, to);
+}
+
 } // End of namespace WinterMute

@@ -26,8 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_rand
-
 #include "engines/wintermute/dcgf.h"
 #include "utils.h"
 #include "engines/wintermute/PlatformSDL.h"
@@ -36,6 +34,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "wintermute.h"
 
 namespace WinterMute {
 
@@ -164,19 +163,21 @@ char *CBUtils::StrEntry(int Entry, const char *Str, const char Delim) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBUtils::RandomInt(int From, int To) {
-	if (To < From) {
-		int i = To;
-		To = From;
-		From = i;
+int CBUtils::RandomInt(int from, int to) {
+	if (to < from) {
+		int i = to;
+		to = from;
+		from = i;
 	}
-	return (rand() % (To - From + 1)) + From;
+	return g_wintermute->randInt(from, to);
+//	return (rand() % (to - from + 1)) + from;
 }
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::RandomFloat(float From, float To) {
-	float RandNum = (float)rand() / (float)RAND_MAX;
-	return From + (To - From) * RandNum;
+float CBUtils::RandomFloat(float from, float to) {
+	const uint32 randMax = RAND_MAX;
+	float randNum = (float)g_wintermute->randInt(0, randMax) / (float)randMax;
+	return from + (to - from) * randNum;
 }
 
 //////////////////////////////////////////////////////////////////////////

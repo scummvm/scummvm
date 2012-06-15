@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_rand
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Ad/AdTalkHolder.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
@@ -36,6 +35,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 
 namespace WinterMute {
@@ -106,7 +106,7 @@ CBSprite *CAdTalkHolder::GetTalkStance(const char *Stance) {
 		if (_talkSprites.GetSize() < 1) ret = _sprite;
 		else {
 			// TODO: remember last
-			int rnd = rand() % _talkSprites.GetSize();
+			int rnd = g_wintermute->randInt(0, _talkSprites.GetSize() - 1);
 			ret = _talkSprites[rnd];
 		}
 	}

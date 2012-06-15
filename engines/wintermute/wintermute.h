@@ -46,6 +46,7 @@ public:
 
 	virtual Common::Error run();
 
+	uint32 randInt(int from, int to);
 private:
 	int init();
 	int messageLoop();

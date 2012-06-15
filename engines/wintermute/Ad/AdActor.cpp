@@ -25,7 +25,7 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#define FORBIDDEN_SYMBOL_EXCEPTION_rand
+
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/persistent.h"
@@ -48,7 +48,7 @@
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
-#include <math.h>
+#include "engines/wintermute/wintermute.h"
 
 namespace WinterMute {
 
@@ -1159,7 +1159,7 @@ CBSprite *CAdActor::GetTalkStance(const char *Stance) {
 		}
 
 		if (TalkAnims.GetSize() > 0) {
-			int rnd = rand() % TalkAnims.GetSize();
+			int rnd = g_wintermute->randInt(0, TalkAnims.GetSize() - 1);
 			Ret = TalkAnims[rnd]->GetSprite(_dir);
 		} else {
 			if (_standSprite) Ret = _standSprite->GetSprite(_dir);
@@ -1200,7 +1200,7 @@ CBSprite *CAdActor::GetTalkStanceOld(const char *Stance) {
 		if (_talkSprites.GetSize() < 1) ret = _standSprite->GetSprite(_dir);
 		else {
 			// TODO: remember last
-			int rnd = rand() % _talkSprites.GetSize();
+			int rnd = g_wintermute->randInt(0, _talkSprites.GetSize() - 1);
 			ret = _talkSprites[rnd]->GetSprite(_dir);
 		}
 	}

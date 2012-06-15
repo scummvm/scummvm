@@ -26,8 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_srand
-
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFader.h"
@@ -147,8 +145,6 @@ CBGame::CBGame(): CBObject(this) {
 	_cursorNoninteractive = NULL;
 
 	_useD3D = false;
-
-	srand(g_system->getMillis());
 
 	_registry = new CBRegistry(this);
 	_stringTable = new CBStringTable(this);
