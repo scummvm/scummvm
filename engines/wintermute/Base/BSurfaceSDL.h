@@ -31,7 +31,6 @@
 
 #include "graphics/surface.h"
 #include "engines/wintermute/Base/BSurface.h"
-#include "graphics/surface.h"
 
 namespace WinterMute {
 class TransparentSurface;

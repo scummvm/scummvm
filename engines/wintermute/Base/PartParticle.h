@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_PATRPARTICLE_H
-#define WINTERMUTE_PATRPARTICLE_H
+#ifndef WINTERMUTE_PARTPARTICLE_H
+#define WINTERMUTE_PARTPARTICLE_H
 
 
 #include "engines/wintermute/Base/BBase.h"

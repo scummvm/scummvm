@@ -31,12 +31,11 @@
 
 
 #include "engines/wintermute/Base/BObject.h"
-#include "engines/wintermute/Base/PartParticle.h"
 #include "engines/wintermute/Base/PartForce.h"
 
 namespace WinterMute {
 class CBRegion;
-
+class CPartParticle;
 class CPartEmitter : public CBObject {
 public:
 	DECLARE_PERSISTENT(CPartEmitter, CBObject)

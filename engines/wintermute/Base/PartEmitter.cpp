@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/PartEmitter.h"
+#include "engines/wintermute/Base/PartParticle.h"
 #include "engines/wintermute/math/Vector2.h"
 #include "engines/wintermute/math/Matrix4.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"

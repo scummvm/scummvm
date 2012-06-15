@@ -33,6 +33,7 @@
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
+#include "engines/wintermute/Base/BSoundBuffer.h"
 
 namespace WinterMute {
 
