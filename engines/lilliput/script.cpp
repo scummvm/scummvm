@@ -3105,9 +3105,11 @@ void LilliputScript::OC_disableInterfaceHotspot() {
 void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	debugC(1, kDebugScriptTBC, "OC_loadFile_AERIAL_GFX()");
 	
-	int var1 = _currScript->readUint16LE() & 0xFF;
-//	unused variable
+//	Unused variable
+//	int var1 = _currScript->readUint16LE() & 0xFF;
 //	byte _byte15EAD = var1;
+	_currScript->readUint16LE();
+//
 
 	_vm->_refreshScreenFlag = true;
 	_talkingCharacter = -1;
@@ -3125,7 +3127,12 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 }
 
 void LilliputScript::OC_sub17E22_speech1IfSoundOff() {
-	warning("OC_sub17E22_speech1IfSoundOff");
+	debugC(1, kDebugScriptTBC, "OC_sub17E22_speech1IfSoundOff()");
+
+	// HACK: In the original, OC_sub17E22_speech1IfSoundOff() only calls 
+	// OC_startSpeech if sound is off. For the moment, it's always called
+
+	OC_startSpeech();
 }
 
 void LilliputScript::OC_sub1844A() {
