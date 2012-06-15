@@ -209,11 +209,9 @@ const RMString &RMString::operator=(const int ch) {
  * @param size              Length of the string
  */
 void RMString::connect(const char *str, int size) {
-	int nlen;
-
 	if (size > 0) {
 		// Calculate the new lenght
-		nlen = _length + size;
+		int nlen = _length + size;
 
 		// Resize
 		resize(nlen + 1, true);
@@ -511,6 +509,9 @@ RMDataStream::RMDataStream() {
 	_length = 0;
 	_pos = 0;
 	_bError = false;
+
+	_buf = NULL;
+	_ecode = 0;
 }
 
 /**
@@ -1002,6 +1003,7 @@ RMDataStream &operator>>(RMDataStream &ds, RMRect &rc) {
 
 RMResUpdate::RMResUpdate() {
 	_infos = NULL;
+	_numUpd = 0;
 }
 
 RMResUpdate::~RMResUpdate() {

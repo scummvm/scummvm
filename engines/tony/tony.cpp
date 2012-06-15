@@ -61,6 +61,21 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 		if (slotNumber >= 0 && slotNumber <= 99)
 			_initialLoadSlotNumber = slotNumber;
 	}
+
+	_hEndOfFrame = 0;
+	for (int i = 0; i < 6; i++)
+		_stream[i] = NULL;
+	for (int i = 0; i < MAX_SFX_CHANNELS; i++) {
+		_sfx[i] = NULL;
+		_utilSfx[i] = NULL;
+	}
+	_bPaused = false;
+	_bDrawLocation = false;
+	_startTime = 0;
+	_curThumbnail = NULL;
+	_bQuitNow = false;
+	_bTimeFreezed = false;
+	_nTimeFreezed = 0;
 }
 
 TonyEngine::~TonyEngine() {
