@@ -227,7 +227,7 @@ Object *SegManager::getObject(reg_t pos) const {
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 			if (pos.offset <= scr->getBufSize() && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-			        && RAW_IS_OBJECT(scr->getBuf(pos.offset))) {
+			        && scr->offsetIsObject(pos.offset)) {
 				obj = scr->getObject(pos.offset);
 			}
 		}

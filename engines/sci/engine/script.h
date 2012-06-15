@@ -89,6 +89,7 @@ public:
 	void syncLocalsBlock(SegManager *segMan);
 	ObjMap &getObjectMap() { return _objects; }
 	const ObjMap &getObjectMap() const { return _objects; }
+	bool offsetIsObject(uint16 offset) const;
 
 public:
 	Script();
