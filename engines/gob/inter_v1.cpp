@@ -1189,26 +1189,15 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_keyFunc(OpFuncParams &params) {
-	static uint32 lastCalled = 0;
-	int16 cmd;
-	int16 key;
-	uint32 now;
-
 	if (!_vm->_vidPlayer->isPlayingLive()) {
 		_vm->_draw->forceBlit();
 		_vm->_video->retrace();
 	}
 
-	cmd = _vm->_game->_script->readInt16();
 	animPalette();
 	_vm->_draw->blitInvalidated();
 
-	now = _vm->_util->getTimeKey();
-	if (!_noBusyWait)
-		if ((now - lastCalled) <= 20)
-			_vm->_util->longDelay(1);
-	lastCalled = now;
-	_noBusyWait = false;
+	handleBusyWait();
 
 	// WORKAROUND for bug #1726130: Ween busy-waits in the intro for a counter
 	// to become 5000. We deliberately slow down busy-waiting, so we shorten
@@ -1216,6 +1205,9 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	if ((_vm->getGameType() == kGameTypeWeen) && (VAR(59) < 4000) &&
 	    (_vm->_game->_script->pos() == 729) && _vm->isCurrentTot("intro5.tot"))
 		WRITE_VAR(59, 4000);
+
+	int16 cmd = _vm->_game->_script->readInt16();
+	int16 key;
 
 	switch (cmd) {
 	case -1:

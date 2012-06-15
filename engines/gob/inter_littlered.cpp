@@ -22,6 +22,13 @@
 
 #include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/global.h"
+#include "gob/util.h"
+#include "gob/draw.h"
+#include "gob/game.h"
+#include "gob/script.h"
+#include "gob/hotspots.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -39,11 +46,62 @@ void Inter_LittleRed::setupOpcodesDraw() {
 
 void Inter_LittleRed::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
+
+	OPCODEFUNC(0x14, oLittleRed_keyFunc);
 }
 
 void Inter_LittleRed::setupOpcodesGob() {
 	OPCODEGOB(500, o2_playProtracker);
 	OPCODEGOB(501, o2_stopProtracker);
+}
+
+void Inter_LittleRed::oLittleRed_keyFunc(OpFuncParams &params) {
+	animPalette();
+	_vm->_draw->blitInvalidated();
+
+	handleBusyWait();
+
+	int16 cmd = _vm->_game->_script->readInt16();
+	int16 key;
+	uint32 keyState;
+
+	switch (cmd) {
+	case -1:
+		break;
+
+	case 0:
+		_vm->_draw->_showCursor &= ~2;
+		_vm->_util->longDelay(1);
+		key = _vm->_game->_hotspots->check(0, 0);
+		storeKey(key);
+
+		_vm->_util->clearKeyBuf();
+		break;
+
+	case 1:
+		_vm->_util->forceMouseUp(true);
+		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
+				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
+		storeKey(key);
+		break;
+
+	case 2:
+		_vm->_util->processInput(true);
+		keyState = _vm->_util->getKeyState();
+
+		WRITE_VAR(0, keyState);
+		_vm->_util->clearKeyBuf();
+		break;
+
+	default:
+		_vm->_sound->speakerOnUpdate(cmd);
+		if (cmd < 20) {
+			_vm->_util->delay(cmd);
+			_noBusyWait = true;
+		} else
+			_vm->_util->longDelay(cmd);
+		break;
+	}
 }
 
 } // End of namespace Gob
