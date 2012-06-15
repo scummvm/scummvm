@@ -229,37 +229,26 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	uint8 *curRow = (uint8 *)surface.pixels;
 	uint8 *curRowMask = mask->getDataPtr();
 
-	if (strstr(_name, "SHADOW")) {
-		for (int y = yy1; y < yy2; y++) {
-			for (int x = xx1; x < xx2; x++) {
-				if (x < 0 || x >= 1280 || y < 0 || y >= 400)
-					continue;
+	bool shadowFlag = false;
+	if (strstr(_name, "SHADOW"))
+		shadowFlag = true;
 
-				uint8 *cur = curRow + x + y * destPitch;
-				uint8 *curMask = curRowMask + x + y * destPitchMask;
+	for (int32 y = yy1; y < yy2; y++) {
+		for (int32 x = xx1; x < xx2; x++) {
+			if (x < 0 || x >= 1280 || y < 0 || y >= 400)
+				continue;
 
-				// find the good c
-				int32 xs = (x - xx1) * 1024 / scale;
-				int32 ys = (y - yy1) * 1024 / scale;
-				uint8 *cc = &c[ys * w + xs];
-				if (*cc && ((*curMask) >= zz))
+			uint8 *cur = curRow + x + y * destPitch;
+			uint8 *curMask = curRowMask + x + y * destPitchMask;
+
+			// find the good c
+			int32 xs = (x - xx1) * 1024 / scale;
+			int32 ys = (y - yy1) * 1024 / scale;
+			uint8 *cc = &c[ys * w + xs];
+			if (*cc && ((*curMask) >= zz)) {
+				if (shadowFlag)
 					*cur = _vm->getShadowLUT()[*cur];
-			}
-		}
-	} else {
-		for (int y = yy1; y < yy2; y++) {
-			for (int x = xx1; x < xx2; x++) {
-				if (x < 0 || x >= 1280 || y < 0 || y >= 400)
-					continue;
-
-				uint8 *cur = curRow + x + y * destPitch;
-				uint8 *curMask = curRowMask + x + y * destPitchMask;
-
-				// find the good c
-				int32 xs = (x - xx1) * 1024 / scale;
-				int32 ys = (y - yy1) * 1024 / scale;
-				uint8 *cc = &c[ys * w + xs];
-				if (*cc && ((*curMask) >= zz))
+				else
 					*cur = *cc;
 			}
 		}
