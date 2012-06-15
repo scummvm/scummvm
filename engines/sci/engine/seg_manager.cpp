@@ -977,8 +977,7 @@ int SegManager::instantiateScript(int scriptNum) {
 		scr = allocateScript(scriptNum, &segmentId);
 	}
 
-	scr->init(scriptNum, _resMan);
-	scr->load(_resMan);
+	scr->load(scriptNum, _resMan);
 	scr->initializeLocals(this);
 	scr->initializeClasses(this);
 	scr->initializeObjects(this, segmentId);

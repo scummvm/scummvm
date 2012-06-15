@@ -95,8 +95,7 @@ public:
 	~Script();
 
 	void freeScript();
-	void init(int script_nr, ResourceManager *resMan);
-	void load(ResourceManager *resMan);
+	void load(int script_nr, ResourceManager *resMan);
 
 	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
 	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);

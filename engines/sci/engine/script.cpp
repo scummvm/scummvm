@@ -32,12 +32,21 @@
 
 namespace Sci {
 
-Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
+Script::Script() : SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
+	freeScript();
+}
+
+Script::~Script() {
+	freeScript();
+}
+
+void Script::freeScript() {
 	_nr = 0;
+
+	free(_buf);
 	_buf = NULL;
 	_bufSize = 0;
 	_scriptSize = 0;
-
 	_heapStart = NULL;
 	_heapSize = 0;
 
@@ -52,23 +61,13 @@ Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
 	_localsCount = 0;
 
 	_lockers = 1;
-
 	_markedAsDeleted = false;
-}
-
-Script::~Script() {
-	freeScript();
-}
-
-void Script::freeScript() {
-	free(_buf);
-	_buf = NULL;
-	_bufSize = 0;
-
 	_objects.clear();
 }
 
-void Script::init(int script_nr, ResourceManager *resMan) {
+void Script::load(int script_nr, ResourceManager *resMan) {
+	freeScript();
+
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	if (!script)
 		error("Script %d not found", script_nr);
@@ -118,11 +117,6 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 			error("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
 			      "be handled at the moment, thus stopping", script_nr, script->size);
 	}
-}
-
-void Script::load(ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
-	assert(script != 0);
 
 	uint extraLocalsWorkaround = 0;
 	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size == 11140) {
