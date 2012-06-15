@@ -35,7 +35,6 @@
 #define PACKAGE_VERSION   0x00000200
 #define PACKAGE_EXTENSION "dcp"
 
-#include <time.h>
 #include "common/stream.h"
 
 namespace WinterMute {
@@ -48,11 +47,7 @@ struct TPackageHeader {
 	byte Priority;
 	byte CD;
 	bool MasterIndex;
-#ifdef __WIN32__
-	__time32_t CreationTime;
-#else
-	time_t CreationTime;
-#endif
+	uint32 CreationTime;
 	char Desc[100];
 	uint32 NumDirs;
 	// TODO: Move this out of the header.

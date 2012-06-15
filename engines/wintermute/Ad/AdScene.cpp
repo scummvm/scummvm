@@ -58,7 +58,6 @@
 #include "engines/wintermute/Base/scriptables/ScScript.h"
 #include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/utils/utils.h"
-#include <math.h>
 #include <limits.h>
 
 namespace WinterMute {

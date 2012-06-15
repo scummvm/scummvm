@@ -34,9 +34,6 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 
-/*#include <ft2build.h>
-#include FT_FREETYPE_H*/
-
 namespace WinterMute {
 
 class CBFont;
