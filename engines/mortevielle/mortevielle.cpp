@@ -113,8 +113,10 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 
 	_c_zzz = -1;
 	_caff = -1;
+	_day = 0;
 
 	memset(_mem, 0, sizeof(_mem));
+	_anyone = false;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -2483,11 +2485,12 @@ void MortevielleEngine::loadCFIEC() {
 	}
 
 	_cfiecBufferSize = ((f.size() / 128) + 1) * 128;
+	int32 fileSize = f.size();
 
 	if (!_reloadCFIEC)
 		_cfiecBuffer = (byte *)malloc(sizeof(byte) * _cfiecBufferSize);
 
-	for (int i = 0; i < _cfiecBufferSize; ++i)
+	for (int32 i = 0; i < fileSize; ++i)
 		_cfiecBuffer[i] = f.readByte();
 
 	f.close();
