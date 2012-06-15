@@ -37,16 +37,21 @@ Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
 	_buf = NULL;
 	_bufSize = 0;
 	_scriptSize = 0;
+
+	_heapStart = NULL;
 	_heapSize = 0;
 
-	_synonyms = NULL;
-	_heapStart = NULL;
 	_exportTable = NULL;
+	_numExports = 0;
+	_synonyms = NULL;
+	_numSynonyms = 0;
 
 	_localsOffset = 0;
 	_localsSegment = 0;
 	_localsBlock = NULL;
 	_localsCount = 0;
+
+	_lockers = 1;
 
 	_markedAsDeleted = false;
 }
@@ -65,25 +70,11 @@ void Script::freeScript() {
 
 void Script::init(int script_nr, ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-
 	if (!script)
 		error("Script %d not found", script_nr);
 
-	_localsOffset = 0;
-	_localsBlock = NULL;
-	_localsCount = 0;
-
-	_markedAsDeleted = false;
-
 	_nr = script_nr;
-	_buf = 0;
-	_heapStart = 0;
-
-	_scriptSize = script->size;
-	_bufSize = script->size;
-	_heapSize = 0;
-
-	_lockers = 1;
+	_bufSize = _scriptSize = script->size;
 
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		_bufSize += READ_LE_UINT16(script->data) * 2;
@@ -162,11 +153,6 @@ void Script::load(ResourceManager *resMan) {
 		assert(_bufSize - _scriptSize <= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
 	}
-
-	_exportTable = 0;
-	_numExports = 0;
-	_synonyms = 0;
-	_numSynonyms = 0;
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
