@@ -77,21 +77,11 @@ CAdActor::CAdActor(CBGame *inGame): CAdTalkHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdActor::SetDefaultAnimNames() {
-	_talkAnimName = NULL;
-	CBUtils::SetString(&_talkAnimName, "talk");
-
-	_idleAnimName = NULL;
-	CBUtils::SetString(&_idleAnimName, "idle");
-
-	_walkAnimName = NULL;
-	CBUtils::SetString(&_walkAnimName, "walk");
-
-	_turnLeftAnimName = NULL;
-	CBUtils::SetString(&_turnLeftAnimName, "turnleft");
-
-	_turnRightAnimName = NULL;
-	CBUtils::SetString(&_turnRightAnimName, "turnright");
-
+	_talkAnimName = "talk";
+	_idleAnimName = "idle";
+	_walkAnimName = "walk";
+	_turnLeftAnimName = "turnleft";
+	_turnRightAnimName = "turnright";
 	return S_OK;
 }
 
@@ -122,18 +112,6 @@ CAdActor::~CAdActor() {
 		delete _talkSpritesEx[i];
 	}
 	_talkSpritesEx.RemoveAll();
-
-
-	delete[] _talkAnimName;
-	delete[] _idleAnimName;
-	delete[] _walkAnimName;
-	delete[] _turnLeftAnimName;
-	delete[] _turnRightAnimName;
-	_talkAnimName = NULL;
-	_idleAnimName = NULL;
-	_walkAnimName = NULL;
-	_turnLeftAnimName = NULL;
-	_turnRightAnimName = NULL;
 
 	for (int i = 0; i < _anims.GetSize(); i++) {
 		delete _anims[i];
@@ -1071,8 +1049,8 @@ HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TalkAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&_talkAnimName, "talk");
-		else CBUtils::SetString(&_talkAnimName, Value->GetString());
+		if (Value->IsNULL()) _talkAnimName = "talk";
+		else _talkAnimName = Value->GetString();
 		return S_OK;
 	}
 
@@ -1080,8 +1058,8 @@ HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "WalkAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&_walkAnimName, "walk");
-		else CBUtils::SetString(&_walkAnimName, Value->GetString());
+		if (Value->IsNULL()) _walkAnimName = "walk";
+		else _walkAnimName = Value->GetString();
 		return S_OK;
 	}
 
@@ -1089,8 +1067,8 @@ HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "IdleAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&_idleAnimName, "idle");
-		else CBUtils::SetString(&_idleAnimName, Value->GetString());
+		if (Value->IsNULL()) _idleAnimName = "idle";
+		else _idleAnimName = Value->GetString();
 		return S_OK;
 	}
 
@@ -1098,8 +1076,8 @@ HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TurnLeftAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&_turnLeftAnimName, "turnleft");
-		else CBUtils::SetString(&_turnLeftAnimName, Value->GetString());
+		if (Value->IsNULL()) _turnLeftAnimName = "turnleft";
+		else _turnLeftAnimName = Value->GetString();
 		return S_OK;
 	}
 
@@ -1107,8 +1085,8 @@ HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TurnRightAnimName") == 0) {
-		if (Value->IsNULL()) CBUtils::SetString(&_turnRightAnimName, "turnright");
-		else CBUtils::SetString(&_turnRightAnimName, Value->GetString());
+		if (Value->IsNULL()) _turnRightAnimName = "turnright";
+		else _turnRightAnimName = Value->GetString();
 		return S_OK;
 	}
 
@@ -1154,7 +1132,7 @@ CBSprite *CAdActor::GetTalkStance(const char *Stance) {
 	if (!Ret) {
 		CBArray<CAdSpriteSet *, CAdSpriteSet *> TalkAnims;
 		for (int i = 0; i < _anims.GetSize(); i++) {
-			if (scumm_stricmp(_anims[i]->_name, _talkAnimName) == 0)
+			if (_talkAnimName.compareToIgnoreCase(_anims[i]->_name) == 0)
 				TalkAnims.Add(_anims[i]);
 		}
 
@@ -1275,11 +1253,10 @@ int CAdActor::GetHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSpriteSet *CAdActor::GetAnimByName(const char *AnimName) {
-	if (!AnimName) return NULL;
-
+CAdSpriteSet *CAdActor::GetAnimByName(const Common::String &animName) {
 	for (int i = 0; i < _anims.GetSize(); i++) {
-		if (scumm_stricmp(_anims[i]->_name, AnimName) == 0) return _anims[i];
+		if (animName.compareToIgnoreCase(_anims[i]->_name) == 0) 
+			return _anims[i];
 	}
 	return NULL;
 }

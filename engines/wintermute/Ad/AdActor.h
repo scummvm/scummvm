@@ -71,14 +71,14 @@ public:
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 
 	// new anim system
-	char *_talkAnimName;
-	char *_idleAnimName;
-	char *_walkAnimName;
-	char *_turnLeftAnimName;
-	char *_turnRightAnimName;
+	Common::String _talkAnimName;
+	Common::String _idleAnimName;
+	Common::String _walkAnimName;
+	Common::String _turnLeftAnimName;
+	Common::String _turnRightAnimName;
 	CBArray<CAdSpriteSet *, CAdSpriteSet *> _anims;
 	virtual HRESULT PlayAnim(const char *Filename);
-	CAdSpriteSet *GetAnimByName(const char *AnimName);
+	CAdSpriteSet *GetAnimByName(const Common::String &animName);
 
 	// scripting interface
 	virtual CScValue *ScGetProperty(const char *Name);

@@ -407,6 +407,9 @@ void CScValue::SetString(const char *Val) {
 	else _type = VAL_NULL;
 }
 
+void CScValue::SetString(const Common::String &Val) {
+	SetString(Val.c_str());
+}
 
 //////////////////////////////////////////////////////////////////////////
 void CScValue::SetStringVal(const char *Val) {

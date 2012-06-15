@@ -72,6 +72,7 @@ public:
 	void SetInt(int Val);
 	void SetFloat(double Val);
 	void SetString(const char *Val);
+	void SetString(const Common::String &Val);
 	void SetNULL();
 	void SetNative(CBScriptable *Val, bool Persistent = false);
 	void SetObject();
