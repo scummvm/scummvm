@@ -62,6 +62,8 @@ public:
 	virtual ~Console(void) {}
 };
 
+extern WinterMuteEngine *g_wintermute;
+
 } // End of namespace Wintermute
 
 #endif

@@ -41,6 +41,8 @@
 
 namespace WinterMute {
 
+WinterMuteEngine *g_wintermute;
+
 WinterMuteEngine::WinterMuteEngine(OSystem *syst)
 	: Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -62,6 +64,8 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst)
 
 	debug("WinterMuteEngine::WinterMuteEngine");
 	_game = NULL;
+	
+	g_wintermute = this;
 }
 
 WinterMuteEngine::~WinterMuteEngine() {
