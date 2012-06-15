@@ -240,7 +240,6 @@ public:
 	RMTony::TALKTYPE _nTonyNextTalkType;
 
 	RMPoint _startLocPos[256];
-	OSystem::MutexRef _cs[10];
 	uint32 _mut[10];
 
 	bool _bSkipIdle;

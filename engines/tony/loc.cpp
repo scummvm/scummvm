@@ -785,6 +785,7 @@ RMItem::RMItem() {
 	_nCurSprite = 0;
 
 	_bIsActive = false;
+	memset(_pal._data, 0, sizeof(_pal._data));
 
 	_hEndPattern = CoroScheduler.createEvent(false, false);
 }
@@ -841,6 +842,13 @@ void RMItem::pauseSound(bool bPause) {
 RMWipe::RMWipe() {
 	_hUnregistered = CoroScheduler.createEvent(false, false);
 	_hEndOfFade = CoroScheduler.createEvent(false, false);
+
+	_bMustRegister = false;
+	_bUnregister = false;
+	_bEndFade = false;
+	_bFading = false;
+	_nFadeStep = 0;
+
 }
 
 RMWipe::~RMWipe() {
@@ -1681,6 +1689,8 @@ RMCharacter::RMCharacter() {
 	_bMovingWithoutMinpath = false;
 	_bDrawNow = false;
 	_bNeedToStop = false;
+	
+	memset(_path, 0, sizeof(_path));
 
 	_pos.set(0, 0);
 }
@@ -1748,6 +1758,7 @@ RMDataStream &operator>>(RMDataStream &ds, RMBox &box) {
 
 RMBoxLoc::RMBoxLoc() {
 	_boxes = NULL;
+	_numbBox = 0;
 }
 
 RMBoxLoc::~RMBoxLoc() {
@@ -1936,6 +1947,8 @@ RMLocation::RMLocation() {
 	_nItems = 0;
 	_items = NULL;
 	_buf = NULL;
+	TEMPNumLoc = 0;
+	_cmode = CM_256;
 }
 
 
@@ -2292,6 +2305,9 @@ RMMessage::RMMessage(uint32 dwId) {
 
 RMMessage::RMMessage() {
 	_lpMessage = NULL;
+	_nPeriods = 0;
+	for (int i = 0; i < 256; i++)
+		_lpPeriods[i] = 0;
 }
 
 RMMessage::~RMMessage() {

@@ -548,6 +548,7 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
 	: RMGfxBuffer(dimx, dimy, 8, bUseDDraw) {
 	setPriority(0);
+	_bTrasp0 = false;
 }
 
 RMGfxSourceBuffer8::RMGfxSourceBuffer8(bool bTrasp0) {
@@ -672,6 +673,8 @@ RMGfxSourceBuffer8RLE::RMGfxSourceBuffer8RLE() {
 	_alphaBlendColor = -1;
 	_bNeedRLECompress = true;
 	_buf = NULL;
+
+	_alphaR = _alphaG = _alphaB = 0;
 }
 
 RMGfxSourceBuffer8RLE::~RMGfxSourceBuffer8RLE() {
@@ -1879,6 +1882,7 @@ void RMGfxSourceBuffer16::prepareImage(void) {
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
 	: RMGfxBuffer(dimx, dimy, 16, bUseDDraw) {
 	setPriority(0);
+	_bTrasp0 = false;
 }
 
 

@@ -391,13 +391,11 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 }
 
 void RMInventory::rightClick(const RMPoint &mpos) {
-	int n;
-
 	assert(checkPointInside(mpos));
 
 	if (_state == OPENED && !_bCombining) {
 		// Open the context interface
-		n = mpos._x / 64;
+		int n = mpos._x / 64;
 
 		if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0) {
 			_state = SELECTING;
@@ -456,13 +454,13 @@ bool RMInventory::rightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 	if (_state == SELECTING) {
 		_state = OPENED;
 
-		if (_miniAction == 1) { // Esamina
+		if (_miniAction == 1) { // Examine
 			curAction = TA_EXAMINE;
 			return true;
-		} else if (_miniAction == 2) { // Parla
+		} else if (_miniAction == 2) { // Talk
 			curAction = TA_TALK;
 			return true;
-		} else if (_miniAction == 3) { // Usa
+		} else if (_miniAction == 3) { // Use
 			curAction = TA_USE;
 			return true;
 		}
@@ -474,7 +472,6 @@ bool RMInventory::rightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 #define INVSPEED    20
 
 void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
-	int i;
 	bool bNeedRedraw = false;
 
 	if (_state != CLOSED) {
@@ -484,9 +481,10 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 
 		// DoFrame makes all the objects currently in the inventory be displayed
 		// @@@ Maybe we should do all takeable objects? Please does not help
-		for (i = 0; i < _nInv; i++)
+		for (int i = 0; i < _nInv; i++) {
 			if (_items[_inv[i]]._icon.doFrame(this, false) && (i >= _curPos && i <= _curPos + 7))
 				bNeedRedraw = true;
+		}
 
 		if ((_state == CLOSING || _state == OPENING || _state == OPENED) && checkPointInside(mpos)) {
 			if (mpos._x > RM_SX - 64) {
@@ -672,11 +670,9 @@ bool RMInventory::itemInFocus(const RMPoint &mpt) {
 }
 
 RMItem *RMInventory::whichItemIsIn(const RMPoint &mpt) {
-	int n;
-
 	if (_state == OPENED) {
 		if (checkPointInside(mpt)) {
-			n = mpt._x / 64;
+			int n = mpt._x / 64;
 			if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0 && (!_bCombining || _inv[n - 1 + _curPos] != _nCombine))
 				return &_items[_inv[n - 1 + _curPos]]._icon;
 		}

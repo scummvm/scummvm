@@ -134,8 +134,11 @@ Globals::Globals() {
 	_nTonyNextTalkType = RMTony::TALK_NORMAL;
 	_saveTonyLoc = 0;
 
-	for (int i = 0; i < 16; ++i)
+	for (int i = 0; i < 16; ++i) {
 		Common::fill((byte *)&_character[i], (byte *)&_character[i] + sizeof(CharacterStruct), 0);
+		_isMChar[i] = false;
+	}
+
 	for (int i = 0; i < 10; ++i)
 		Common::fill((byte *)&_mCharacter[i], (byte *)&_mCharacter[i] + sizeof(MCharacterStruct), 0);
 	for (int i = 0; i < 256; ++i)
