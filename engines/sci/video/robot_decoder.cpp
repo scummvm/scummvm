@@ -93,6 +93,10 @@ bool RobotDecoder::load(GuiResourceId id) {
 	// videos. Skip it for now.
 	if (g_sci->getGameId() == GID_RAMA && id == 1003)
 		return false;
+	
+	// TODO: The robot video in the Lighthouse demo gets stuck
+	if (g_sci->getGameId() == GID_LIGHTHOUSE && id == 16)
+		return false;
 
 	Common::String fileName = Common::String::format("%d.rbt", id);
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
