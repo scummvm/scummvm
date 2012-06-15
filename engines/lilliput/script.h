@@ -109,6 +109,7 @@ private:
 	int _currentSpeechId;
 	int _word18821;
 	int _word129A3;
+	Common::Point _word1825E;
 
 	char _array129A5[4];
 
