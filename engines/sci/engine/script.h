@@ -118,8 +118,8 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
-	Object *getObject(reg_t pos);
-	const Object *getObject(reg_t pos) const;
+	Object *getObject(uint16 offset);
+	const Object *getObject(uint16 offset) const;
 
 	/**
 	 * Initializes an object within the segment manager

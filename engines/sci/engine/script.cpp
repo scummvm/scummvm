@@ -223,16 +223,16 @@ const byte *Script::getSci3ObjectsPointer() {
 	return ptr;
 }
 
-Object *Script::getObject(reg_t pos) {
-	if (_objects.contains(pos.offset))
-		return &_objects[pos.offset];
+Object *Script::getObject(uint16 offset) {
+	if (_objects.contains(offset))
+		return &_objects[offset];
 	else
 		return 0;
 }
 
-const Object *Script::getObject(reg_t pos) const {
-	if (_objects.contains(pos.offset))
-		return &_objects[pos.offset];
+const Object *Script::getObject(uint16 offset) const {
+	if (_objects.contains(offset))
+		return &_objects[offset];
 	else
 		return 0;
 }
@@ -726,7 +726,7 @@ Common::Array<reg_t> Script::listAllDeallocatable(SegmentId segId) const {
 Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
 	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
-		const Object *obj = getObject(addr);
+		const Object *obj = getObject(addr.offset);
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
 			if (_localsSegment)
