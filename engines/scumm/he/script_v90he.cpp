@@ -244,6 +244,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.right = pop();
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 134: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -253,6 +254,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.right = pop();
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 135: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -260,6 +262,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 136: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -267,6 +270,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 137: // HE99+
 		_wizParams.processFlags |= kWPFDstResNum;
@@ -1488,6 +1492,7 @@ void ScummEngine_v90he::o90_floodFill() {
 		_floodFillParams.box.top = 0;
 		_floodFillParams.box.right = 639;
 		_floodFillParams.box.bottom = 479;
+		adjustRect(_floodFillParams.box);
 		break;
 	case 65:
 		_floodFillParams.y = pop();
@@ -1501,6 +1506,7 @@ void ScummEngine_v90he::o90_floodFill() {
 		_floodFillParams.box.right = pop();
 		_floodFillParams.box.top = pop();
 		_floodFillParams.box.left = pop();
+		adjustRect(_floodFillParams.box);
 		break;
 	case 255:
 		floodFill(&_floodFillParams, this);
