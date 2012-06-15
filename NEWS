@@ -53,6 +53,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
    - Added a difficulty selection dialog for Loom FM-TOWNS.
+   - Fixed graphical glitches in HE98 version of Pajama Sam's Lost & Found.
 
  iPhone port:
    - Changed "F5 (menu)" gesture to open up the global main menu instead.
