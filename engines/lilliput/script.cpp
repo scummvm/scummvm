@@ -1261,12 +1261,13 @@ void LilliputScript::startSpeech(int speechId) {
 
 	int i = 0;
 	if (count != 0) {
-		int tmpVal = _vm->_rnd->getRandomNumber(count + 1);
+		int tmpVal = _vm->_rnd->getRandomNumber(count);
 		if (tmpVal != 0) {
 			for (int j = 0; j < tmpVal; j++) {
 				do
 					++i;
 				while (_vm->_packedStrings[index + count + i] != ']');
+				++i;
 			}
 		}
 	}
