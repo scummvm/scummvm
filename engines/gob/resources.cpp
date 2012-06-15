@@ -716,7 +716,7 @@ byte *Resources::getIMData(TOTResourceItem &totItem) const {
 	return _imData + offset;
 }
 
-byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 size) const {
+byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 &size) const {
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_extFile);
 	if (!stream)
 		return 0;
@@ -725,6 +725,10 @@ byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 size) const {
 		delete stream;
 		return 0;
 	}
+
+	// If that workaround is active, limit the resource size instead of throwing an error
+	if (_vm->hasResourceSizeWorkaround())
+		size = MIN<int>(size, stream->size() - extItem.offset);
 
 	byte *data = new byte[extItem.packed ? (size + 2) : size];
 	if (stream->read(data, size) != size) {
@@ -737,7 +741,7 @@ byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 size) const {
 	return data;
 }
 
-byte *Resources::getEXData(EXTResourceItem &extItem, uint32 size) const {
+byte *Resources::getEXData(EXTResourceItem &extItem, uint32 &size) const {
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_exFile);
 	if (!stream)
 		return 0;
@@ -746,6 +750,10 @@ byte *Resources::getEXData(EXTResourceItem &extItem, uint32 size) const {
 		delete stream;
 		return 0;
 	}
+
+	// If that workaround is active, limit the resource size instead of throwing an error
+	if (_vm->hasResourceSizeWorkaround())
+		size = MIN<int>(size, stream->size() - extItem.offset);
 
 	byte *data = new byte[extItem.packed ? (size + 2) : size];
 	if (stream->read(data, size) != size) {

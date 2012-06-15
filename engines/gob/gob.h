@@ -200,6 +200,8 @@ public:
 
 	GobConsole *_console;
 
+	bool _resourceSizeWorkaround;
+
 	Global *_global;
 	Util *_util;
 	DataIO *_dataIO;
@@ -235,6 +237,8 @@ public:
 	bool is800x600() const;
 	bool isTrueColor() const;
 	bool isDemo() const;
+
+	bool hasResourceSizeWorkaround() const;
 
 	bool isCurrentTot(const Common::String &tot) const;
 

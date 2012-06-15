@@ -233,6 +233,10 @@ bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
 
+bool GobEngine::hasResourceSizeWorkaround() const {
+	return _resourceSizeWorkaround;
+}
+
 bool GobEngine::isCurrentTot(const Common::String &tot) const {
 	return _game->_curTotFile.equalsIgnoreCase(tot);
 }
@@ -389,6 +393,8 @@ void GobEngine::pauseGame() {
 }
 
 bool GobEngine::initGameParts() {
+	_resourceSizeWorkaround = false;
+
 	// just detect some devices some of which will be always there if the music is not disabled
 	_noMusic = MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB)) == MT_NULL ? true : false;
 	_saveLoad = 0;
@@ -471,6 +477,10 @@ bool GobEngine::initGameParts() {
 		_map      = new Map_v2(this);
 		_goblin   = new Goblin_v2(this);
 		_scenery  = new Scenery_v2(this);
+
+		// WORKAROUND: Little Red Riding Hood has a small resource size glitch in the
+		//             screen where Little Red needs to find the animals' homes.
+		_resourceSizeWorkaround = true;
 		break;
 
 	case kGameTypeGob3:
