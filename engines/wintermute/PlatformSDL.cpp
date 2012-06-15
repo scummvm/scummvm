@@ -81,6 +81,10 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 	case Common::EVENT_KEYUP:
 		if (Game) Game->handleKeyRelease(event);
 		break;
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
+		if (Game) Game->HandleMouseWheel(event->mouse.y);
+		break;
 		/*#ifdef __IPHONEOS__
 		        {
 		            CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
