@@ -1672,7 +1672,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		{
 			Common::Rect r2;
 			_sprite->getSpriteBounds(args2[0], false, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
+			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
@@ -1717,7 +1717,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		{
 			Common::Rect r2;
 			_sprite->getSpriteBounds(args2[0], true, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
+			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
