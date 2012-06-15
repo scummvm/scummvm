@@ -42,7 +42,6 @@ class CBGame;
 class CBPlatform {
 public:
 	static int Initialize(CBGame *inGame, int argc, char *argv[]);
-	static int MessageLoop();
 	static void HandleEvent(Common::Event *event);
 
 	static AnsiString GetSystemFontPath();

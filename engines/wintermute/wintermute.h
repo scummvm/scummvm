@@ -30,7 +30,7 @@
 namespace WinterMute {
 
 class Console;
-
+class CBGame;
 // our engine debug channels
 enum {
     kWinterMuteDebugExample = 1 << 0,
@@ -47,8 +47,10 @@ public:
 	virtual Common::Error run();
 
 private:
+	int init();
+	int messageLoop();
 	Console *_console;
-
+	CBGame *_game;
 	// We need random numbers
 	Common::RandomSource *_rnd;
 };

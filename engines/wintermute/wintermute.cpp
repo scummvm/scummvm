@@ -34,6 +34,10 @@
 #include "engines/wintermute/Ad/AdGame.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/Base/BRegistry.h"
+
+#include "engines/wintermute/Base/BSoundMgr.h"
+#include "engines/wintermute/Base/scriptables/ScEngine.h"
 
 namespace WinterMute {
 
@@ -57,6 +61,7 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst)
 	_rnd = new Common::RandomSource("WinterMute");
 
 	debug("WinterMuteEngine::WinterMuteEngine");
+	_game = NULL;
 }
 
 WinterMuteEngine::~WinterMuteEngine() {
@@ -106,16 +111,183 @@ Common::Error WinterMuteEngine::run() {
 	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
 	debugC(3, kWinterMuteDebugExample | kWinterMuteDebugExample2, "Example debug call two");
 
-	CAdGame *game = new CAdGame;
-
 	int ret = 1;
-
-	ret = CBPlatform::Initialize(game, NULL, 0);
+	
+	ret = init();
 
 	if (ret == 0) {
-		ret = CBPlatform::MessageLoop();
+		ret = messageLoop();
 	}
 	return Common::kNoError;
+}
+
+int WinterMuteEngine::init() {
+	char argv[1] = { ' ' };
+	int argc = 0;
+	_game = new CAdGame;
+	if (!_game) return 1;
+
+	bool windowedMode = true;
+	
+	// parse command line
+	char *SaveGame = NULL;
+	char param[MAX_PATH];
+/*	for (int i = 0; i < argc; i++) {
+		strcpy(param, argv[i]);
+		
+		if (scumm_stricmp(param, "-project") == 0) {
+			if (argc > i) strcpy(param, argv[i + 1]);
+			else param[0] = '\0';
+			
+			if (strcmp(param, "") != 0) {
+				char *IniDir = CBUtils::GetPath(param);
+				char *IniName = CBUtils::GetFilename(param);
+				
+				// switch to ini's dir
+				warning("TODO: Place ini-files somewhere");
+				//				chdir(IniDir);
+				
+				// set ini name
+				sprintf(param, "./%s", IniName);
+				_game->_registry->SetIniName(param);
+				
+				delete [] IniDir;
+				delete [] IniName;
+			}
+		} else if (scumm_stricmp(param, "-windowed") == 0) windowedMode = true;
+	}*/
+	
+	
+	if (_game->_registry->ReadBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
+	
+	_game->_dEBUG_ShowFPS = _game->_registry->ReadBool("Debug", "ShowFPS");
+	
+	if (_game->_registry->ReadBool("Debug", "DisableSmartCache")) {
+		_game->LOG(0, "Smart cache is DISABLED");
+		_game->_smartCache = false;
+	}
+	
+	/*	bool AllowDirectDraw = _game->_registry->ReadBool("Debug", "AllowDirectDraw", false);*/
+	
+	// load general game settings
+	_game->Initialize1();
+	
+	
+	if (FAILED(_game->LoadSettings("startup.settings"))) {
+		_game->LOG(0, "Error loading game settings.");
+		delete _game;
+		_game = NULL;
+		
+		warning("Some of the essential files are missing. Please reinstall.");
+		return 2;
+	}
+	
+	_game->Initialize2();
+	
+	_game->GetDebugMgr()->OnGameInit();
+	_game->_scEngine->LoadBreakpoints();
+	
+	
+	
+	HRESULT ret;
+	
+	// initialize the renderer
+	ret = _game->_renderer->InitRenderer(_game->_settingsResWidth, _game->_settingsResHeight, windowedMode);
+	if (FAILED(ret)) {
+		_game->LOG(ret, "Error initializing renderer. Exiting.");
+		
+		delete _game;
+		_game = NULL;
+		return 3;
+	}
+	
+	_game->Initialize3();
+	
+#ifdef __IPHONEOS__
+	SDL_AddEventWatch(CBPlatform::SDLEventWatcher, NULL);
+#endif
+	
+	// initialize sound manager (non-fatal if we fail)
+	ret = _game->_soundMgr->initialize();
+	if (FAILED(ret)) {
+		_game->LOG(ret, "Sound is NOT available.");
+	}
+	
+	
+	// load game
+	uint32 DataInitStart = CBPlatform::GetTime();
+	
+	if (FAILED(_game->LoadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
+		_game->LOG(ret, "Error loading game file. Exiting.");
+		delete _game;
+		_game = NULL;
+		return false;
+	}
+	_game->SetWindowTitle();
+	_game->_renderer->_ready = true;
+	_game->_miniUpdateEnabled = true;
+	
+	_game->LOG(0, "Engine initialized in %d ms", CBPlatform::GetTime() - DataInitStart);
+	_game->LOG(0, "");
+	
+	
+	if (SaveGame) {
+		_game->LoadGame(SaveGame);
+		delete [] SaveGame;
+	}
+	
+	CBPlatform::Initialize(_game, 0, NULL);
+	
+	// all set, ready to go
+	return 0;
+}
+
+int WinterMuteEngine::messageLoop() {
+	bool done = false;
+	
+	while (!done) {
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event)) {
+			CBPlatform::HandleEvent(&event);
+		}
+		
+		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {
+			
+			_game->DisplayContent();
+			_game->DisplayQuickMsg();
+			
+			_game->DisplayDebugInfo();
+			
+			// ***** flip
+			if (!_game->_suspendedRendering) _game->_renderer->Flip();
+			if (_game->_loading) _game->LoadGame(_game->_scheduledLoadSlot);
+		}
+		if (_game->_quitting) break;
+		
+	}
+	
+	if (_game) {
+		// remember previous window position
+		/*
+		 if(_game->_renderer && _game->_renderer->_windowed)
+		 {
+		 if(!::IsIconic(_game->_renderer->_window))
+		 {
+		 int PosX = _game->_renderer->_windowRect.left;
+		 int PosY = _game->_renderer->_windowRect.top;
+		 PosX -= _game->_renderer->_monitorRect.left;
+		 PosY -= _game->_renderer->_monitorRect.top;
+		 
+		 _game->_registry->WriteInt("Video", "WindowPosX", PosX);
+		 _game->_registry->WriteInt("Video", "WindowPosY", PosY);
+		 }
+		 }
+		 */
+		
+		delete _game;
+		_game = NULL;
+	}
+	return 0;
 }
 
 } // End of namespace WinterMute
