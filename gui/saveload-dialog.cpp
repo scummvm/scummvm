@@ -377,4 +377,196 @@ void SaveLoadChooserSimple::updateSaveList() {
 	_list->setList(saveNames, &colors);
 }
 
+// LoadChooserThumbnailed implementation
+
+enum {
+	kNextCmd = 'NEXT',
+	kPrevCmd = 'PREV'
+};
+
+LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title)
+	: SaveLoadChooserDialog("SaveLoadChooser"), _lines(0), _columns(0), _entriesPerPage(0),
+	_curPage(0), _buttons() {
+	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
+
+	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
+
+	// Buttons
+	new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), 0, kCloseCmd);
+	_nextButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), 0, kNextCmd);
+	_nextButton->setEnabled(false);
+
+	_prevButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), 0, kPrevCmd);
+	_prevButton->setEnabled(false);
+}
+
+const Common::String &LoadChooserThumbnailed::getResultString() const {
+	// FIXME: This chooser is only for loading, thus the result is never used
+	// anyway. But this is still an ugly hack.
+	return _target;
+}
+
+void LoadChooserThumbnailed::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	if (cmd <= _entriesPerPage) {
+		setResult(_saveList[cmd - 1 + _curPage * _entriesPerPage].getSaveSlot());
+		close();
+	}
+
+	switch (cmd) {
+	case kNextCmd:
+		++_curPage;
+		updateSaves();
+		draw();
+		break;
+
+	case kPrevCmd:
+		--_curPage;
+		updateSaves();
+		draw();
+		break;
+
+	case kCloseCmd:
+		setResult(-1);
+	default:
+		SaveLoadChooserDialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void LoadChooserThumbnailed::handleMouseWheel(int x, int y, int direction) {
+	if (direction > 0) {
+		if (_nextButton->isEnabled()) {
+			++_curPage;
+			updateSaves();
+			draw();
+		}
+	} else {
+		if (_prevButton->isEnabled()) {
+			--_curPage;
+			updateSaves();
+			draw();
+		}
+	}
+}
+
+void LoadChooserThumbnailed::open() {
+	SaveLoadChooserDialog::open();
+
+	_curPage = 0;
+	updateSaves();
+}
+
+void LoadChooserThumbnailed::reflowLayout() {
+	SaveLoadChooserDialog::reflowLayout();
+	destroyButtons();
+
+	const uint16 availableWidth = getWidth() - 20;
+	uint16 availableHeight;
+
+	int16 x, y;
+	uint16 w;
+	g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight);
+
+	const int16 buttonWidth = kThumbnailWidth + 6;
+	const int16 buttonHeight = kThumbnailHeight2 + 6;
+
+	const int16 containerFrameWidthAdd = 10;
+	const int16 containerFrameHeightAdd = 0;
+	const int16 containerWidth = buttonWidth + containerFrameWidthAdd;
+	const int16 containerHeight = buttonHeight + kLineHeight + containerFrameHeightAdd;
+
+	const int16 defaultSpacingHorizontal = 4;
+	const int16 defaultSpacingVertical = 4;
+	const int16 slotAreaWidth = containerWidth + defaultSpacingHorizontal;
+	const int16 slotAreaHeight = containerHeight + defaultSpacingHorizontal;
+
+	const uint oldEntriesPerPage = _entriesPerPage;
+	_columns = MAX<uint>(1, availableWidth / slotAreaWidth);
+	_lines = MAX<uint>(1, availableHeight / slotAreaHeight);
+	_entriesPerPage = _columns * _lines;
+	// Recalculate the page number
+	if (!_saveList.empty() && oldEntriesPerPage != 0) {
+		_curPage = (_curPage * oldEntriesPerPage) / _entriesPerPage;
+	}
+
+	const uint addX = _columns > 1 ? (availableWidth % slotAreaWidth) / (_columns - 1) : 0;
+	const uint addY = _lines > 1 ? (availableHeight % slotAreaHeight) / (_lines - 1) : 0;
+
+	_buttons.reserve(_lines * _columns);
+	y += defaultSpacingVertical / 2;
+	for (uint curLine = 0; curLine < _lines; ++curLine, y += slotAreaHeight + addY) {
+		for (uint curColumn = 0, curX = x + defaultSpacingHorizontal / 2; curColumn < _columns; ++curColumn, curX += slotAreaWidth + addX) {
+			ContainerWidget *container = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
+			container->setVisible(false);
+	
+			int dstY = y + containerFrameHeightAdd / 2;
+			int dstX = curX + containerFrameWidthAdd / 2;
+
+			PicButtonWidget *button = new PicButtonWidget(this, dstX, dstY, buttonWidth, buttonHeight, 0, curLine * _columns + curColumn + 1);
+			button->setVisible(false);
+			dstY += buttonHeight;
+
+			StaticTextWidget *description = new StaticTextWidget(this, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignLeft);
+			description->setVisible(false);
+
+			_buttons.push_back(SlotButton(container, button, description));
+		}
+	}
+
+	if (!_target.empty())
+		updateSaves();
+}
+
+void LoadChooserThumbnailed::close() {
+	SaveLoadChooserDialog::close();
+	hideButtons();
+}
+
+int LoadChooserThumbnailed::runIntern() {
+	return SaveLoadChooserDialog::runModal();
+}
+
+void LoadChooserThumbnailed::destroyButtons() {
+	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
+		removeWidget(i->container);
+		removeWidget(i->button);
+		removeWidget(i->description);
+	}
+
+	_buttons.clear();
+}
+
+void LoadChooserThumbnailed::hideButtons() {
+	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
+		i->button->setGfx(0);
+		i->setVisible(false);
+	}
+
+}
+
+void LoadChooserThumbnailed::updateSaves() {
+	hideButtons();
+
+	_saveList = _metaEngine->listSaves(_target.c_str());
+
+	for (uint i = _curPage * _entriesPerPage, curNum = 0; i < _saveList.size() && curNum < _entriesPerPage; ++i, ++curNum) {
+		const uint saveSlot = _saveList[i].getSaveSlot();
+
+		SaveStateDescriptor desc = _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot);
+		SlotButton &curButton = _buttons[curNum];
+		curButton.setVisible(true);
+		curButton.button->setGfx(desc.getThumbnail());
+		curButton.description->setLabel(Common::String::format("%d. %s", saveSlot, desc.getDescription().c_str()));
+	}
+
+	if (_curPage > 0)
+		_prevButton->setEnabled(true);
+	else
+		_prevButton->setEnabled(false);
+
+	if ((_curPage + 1) * _entriesPerPage < _saveList.size())
+		_nextButton->setEnabled(true);
+	else
+		_nextButton->setEnabled(false);
+}
+
 } // End of namespace GUI

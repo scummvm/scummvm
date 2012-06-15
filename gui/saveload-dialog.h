@@ -85,6 +85,52 @@ private:
 	void updateSelection(bool redraw);
 };
 
+class LoadChooserThumbnailed : public SaveLoadChooserDialog {
+public:
+	LoadChooserThumbnailed(const Common::String &title);
+
+	virtual const Common::String &getResultString() const;
+
+	virtual void open();
+
+	virtual void reflowLayout();
+
+	virtual void close();
+protected:
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleMouseWheel(int x, int y, int direction);
+private:
+	virtual int runIntern();
+
+	uint _columns, _lines;
+	uint _entriesPerPage;
+	uint _curPage;
+	SaveStateList _saveList;
+
+	GUI::ButtonWidget *_nextButton;
+	GUI::ButtonWidget *_prevButton;
+
+	struct SlotButton {
+		SlotButton() : container(0), button(0), description(0) {}
+		SlotButton(ContainerWidget *c, PicButtonWidget *b, StaticTextWidget *d) : container(c), button(b), description(d) {}
+
+		ContainerWidget  *container;
+		PicButtonWidget  *button;
+		StaticTextWidget *description;
+
+		void setVisible(bool state) {
+			container->setVisible(state);
+			button->setVisible(state);
+			description->setVisible(state);
+		}
+	};
+	typedef Common::Array<SlotButton> ButtonArray;
+	ButtonArray _buttons;
+	void destroyButtons();
+	void hideButtons();
+	void updateSaves();
+};
+
 } // End of namespace GUI
 
 #endif
