@@ -647,7 +647,7 @@ void GfxFrameout::kernelFrameout() {
 		// Since I first wrote the patch, the race has stopped occurring for me though.
 		// I'll leave this for investigation later, when someone can reproduce.
 		//if (it->pictureId == kPlanePlainColored)	// FIXME: This is what SSCI does, and fixes the intro of LSL7, but breaks the dialogs in GK1 (adds black boxes)
-		if (it->pictureId == kPlanePlainColored && it->planeBack)
+		if (it->pictureId == kPlanePlainColored && (it->planeBack || g_sci->getGameId() != GID_GK1))
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		_coordAdjuster->pictureSetDisplayArea(it->planeRect);
