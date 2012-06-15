@@ -342,6 +342,12 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	case 6:	// Play
 		videoDecoder = new Video::VMDDecoder(g_system->getMixer());
 
+		if (s->_videoState.fileName.empty()) {
+			// Happens in Lighthouse
+			warning("kPlayVMD: Empty filename passed");
+			return s->r_acc;
+		}
+
 		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
 			warning("Could not open VMD %s", s->_videoState.fileName.c_str());
 			break;
