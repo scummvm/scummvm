@@ -33,6 +33,12 @@ class SaveLoadChooser {
 	typedef Common::String String;
 protected:
 	SaveLoadChooserDialog *_impl;
+
+	const String _title;
+	const String _buttonLabel;
+	const bool _saveMode;
+
+	void selectChooser(const MetaEngine &engine);
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();

@@ -24,18 +24,32 @@
 
 #include "gui/saveload.h"
 #include "gui/saveload-dialog.h"
+#include "gui/gui-manager.h"
 
 #include "engines/metaengine.h"
 
 namespace GUI {
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode) {
-	_impl = new SaveLoadChooserSimple(title, buttonLabel, saveMode);
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
+	: _impl(0), _title(title), _buttonLabel(buttonLabel), _saveMode(saveMode) {
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
 	delete _impl;
 	_impl = 0;
+}
+
+void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
+	delete _impl;
+	_impl = 0;
+
+	if (!_saveMode && g_gui.getWidth() > 320 && g_gui.getHeight() > 200
+	    && engine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
+	    && engine.hasFeature(MetaEngine::kSavesSupportThumbnail)) {
+		_impl = new LoadChooserThumbnailed(_title);
+	} else {
+		_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
+	}
 }
 
 Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
@@ -51,9 +65,6 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 }
 
 int SaveLoadChooser::runModalWithCurrentTarget() {
-	if (!_impl)
-		return -1;
-
 	const Common::String gameId = ConfMan.get("gameid");
 
 	const EnginePlugin *plugin = 0;
@@ -63,6 +74,7 @@ int SaveLoadChooser::runModalWithCurrentTarget() {
 }
 
 int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
+	selectChooser(**plugin);
 	if (!_impl)
 		return -1;
 
