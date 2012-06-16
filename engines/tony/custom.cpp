@@ -331,7 +331,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		if (_ctx->curVoc) {
 			if (_ctx->i == 0) {
 				_ctx->voice->play();
-				_ctx->text.setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+				_ctx->text.setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
 			} else {
 				_vm->_vdbFP.seek(_ctx->curOffset);
 				_vm->_theSound.createSfx(&_ctx->voice);
@@ -340,7 +340,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 				_ctx->curOffset = _vm->_vdbFP.pos();
 				_ctx->voice->setLoop(false);
 				_ctx->voice->play();
-				_ctx->text.setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+				_ctx->text.setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
 			}
 		}
 
@@ -1535,7 +1535,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 			_ctx->voice->setLoop(false);
 			if (bIsBack) _ctx->voice->setVolume(55);
 			_ctx->voice->play();
-			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+			_ctx->text->setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
 			_ctx->curOffset = _vm->_vdbFP.pos();
 		}
 
@@ -1749,7 +1749,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 			if (bIsBack)
 				_ctx->voice->setVolume(55);
 			_ctx->voice->play();
-			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+			_ctx->text->setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
 			_ctx->curOffset = _vm->_vdbFP.pos();
 		}
 
@@ -1912,7 +1912,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 
 		if (_ctx->curVoc) {
 			_ctx->voice->play();
-			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
+			_ctx->text->setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
 		}
 
 		// Wait for the end of display

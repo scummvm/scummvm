@@ -62,7 +62,7 @@ class FPSound {
 
 private:
 
-	bool bSoundSupported;
+	bool _bSoundSupported;
 
 	/****************************************************************************\
 	*       Methods
@@ -176,20 +176,20 @@ class FPSfx {
 	\****************************************************************************/
 
 private:
-	bool bSoundSupported;                 // True if the sound is active
-	bool bFileLoaded;                     // True is a file is opened
-	bool bLoop;                           // True is sound effect should loop
-	int lastVolume;
+	bool _bSoundSupported;                 // True if the sound is active
+	bool _bFileLoaded;                     // True is a file is opened
+	bool _bLoop;                           // True is sound effect should loop
+	int  _lastVolume;
 
-	bool bIsVoice;
-	bool bPaused;
+	bool _bIsVoice;
+	bool _bPaused;
 
 	Audio::AudioStream *_loopStream;
 	Audio::RewindableAudioStream *_rewindableStream;
 	Audio::SoundHandle _handle;
 
 public:
-	uint32 hEndOfBuffer;
+	uint32 _hEndOfBuffer;
 
 private:
 
@@ -352,33 +352,33 @@ private:
 	    LPDIRECTSOUNDBUFFER lpDSBuffer;    // DirectSound circular buffer
 	    LPDIRECTSOUNDNOTIFY lpDSNotify;    // Notify hotspots in the buffer
 	*/
-	byte *lpTempBuffer;                    // Temporary buffer use for decompression
+	byte  *_lpTempBuffer;                  // Temporary buffer use for decompression
 
-	uint32 dwBufferSize;                   // Buffer size (bytes)
-	uint32 dwSize;                         // Stream size (bytes)
-	uint32 dwCodec;                        // CODEC used
+	uint32 _dwBufferSize;                  // Buffer size (bytes)
+	uint32 _dwSize;                        // Stream size (bytes)
+	uint32 _dwCodec;                       // CODEC used
 
-	HANDLE hThreadEnd;                     // Event used to close thread
+	HANDLE _hThreadEnd;                    // Event used to close thread
 	Common::File _file;                    // File handle used for the stream
-	HANDLE hPlayThread;                    // Handle of the Play thread
-	HANDLE hHot1, hHot2, hHot3;            // Events set by DirectSoundNotify
-	HANDLE hPlayThread_PlayFast;
-	HANDLE hPlayThread_PlayNormal;
+	HANDLE _hPlayThread;                   // Handle of the Play thread
+	HANDLE _hHot1, _hHot2, _hHot3;         // Events set by DirectSoundNotify
+	HANDLE _hPlayThreadPlayFast;
+	HANDLE _hPlayThreadPlayNormal;
 
-	bool bSoundSupported;                  // True if the sound is active
-	bool bFileLoaded;                      // True if the file is open 
-	bool bLoop;                            // True if the stream should loop
-	bool bDoFadeOut;                       // True if fade out is required
-	bool bSyncExit;
-	bool bPaused;
-	int lastVolume;
-	FPStream *SyncToPlay;
+	bool _bSoundSupported;                 // True if the sound is active
+	bool _bFileLoaded;                     // True if the file is open 
+	bool _bLoop;                           // True if the stream should loop
+	bool _bDoFadeOut;                      // True if fade out is required
+	bool _bSyncExit;
+	bool _bPaused;
+	int  _lastVolume;
+	FPStream *_syncToPlay;
 //	DSBPOSITIONNOTIFY dspnHot[3];
 
 	bool createBuffer(int nBufSize);
 
 public:
-	bool bIsPlaying;                      // True if the stream is playing
+	bool _bIsPlaying;                      // True if the stream is playing
 
 private:
 
@@ -521,8 +521,6 @@ public:
 
 	void setVolume(int dwVolume);
 
-
-
 	/****************************************************************************\
 	*
 	* Function:     void getVolume(LPINT lpdwVolume);
@@ -535,7 +533,6 @@ public:
 
 	void getVolume(int *lpdwVolume);
 };
-
 
 } // End of namespace Tony
 

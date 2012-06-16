@@ -56,7 +56,7 @@ namespace Tony {
 \****************************************************************************/
 
 FPSound::FPSound() {
-	bSoundSupported = false;
+	_bSoundSupported = false;
 }
 
 
@@ -72,8 +72,8 @@ FPSound::FPSound() {
 \****************************************************************************/
 
 bool FPSound::init() {
-	bSoundSupported = g_system->getMixer()->isReady();
-	return bSoundSupported;
+	_bSoundSupported = g_system->getMixer()->isReady();
+	return _bSoundSupported;
 }
 
 
@@ -112,7 +112,7 @@ FPSound::~FPSound() {
 \****************************************************************************/
 
 bool FPSound::createStream(FPStream **lplpStream) {
-	(*lplpStream) = new FPStream(bSoundSupported);
+	(*lplpStream) = new FPStream(_bSoundSupported);
 
 	return (*lplpStream != NULL);
 }
@@ -136,7 +136,7 @@ bool FPSound::createStream(FPStream **lplpStream) {
 \****************************************************************************/
 
 bool FPSound::createSfx(FPSfx **lplpSfx) {
-	(*lplpSfx) = new FPSfx(bSoundSupported);
+	(*lplpSfx) = new FPSfx(_bSoundSupported);
 
 	return (*lplpSfx != NULL);
 }
@@ -154,7 +154,7 @@ bool FPSound::createSfx(FPSfx **lplpSfx) {
 \****************************************************************************/
 
 void FPSound::setMasterVolume(int dwVolume) {
-	if (!bSoundSupported)
+	if (!_bSoundSupported)
 		return;
 
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(dwVolume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
@@ -172,7 +172,7 @@ void FPSound::setMasterVolume(int dwVolume) {
 \****************************************************************************/
 
 void FPSound::getMasterVolume(int *lpdwVolume) {
-	if (!bSoundSupported)
+	if (!_bSoundSupported)
 		return;
 
 	*lpdwVolume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 63 / Audio::Mixer::kMaxChannelVolume;
@@ -193,14 +193,14 @@ void FPSound::getMasterVolume(int *lpdwVolume) {
 \****************************************************************************/
 
 FPSfx::FPSfx(bool bSoundOn) {
-	bSoundSupported = bSoundOn;
-	bFileLoaded = false;
-	lastVolume = 63;
-	hEndOfBuffer = CORO_INVALID_PID_VALUE;
-	bIsVoice = false;
+	_bSoundSupported = bSoundOn;
+	_bFileLoaded = false;
+	_lastVolume = 63;
+	_hEndOfBuffer = CORO_INVALID_PID_VALUE;
+	_bIsVoice = false;
 	_loopStream = 0;
 	_rewindableStream = 0;
-	bPaused = false;
+	_bPaused = false;
 
 	_vm->_activeSfx.push_back(this);
 }
@@ -217,7 +217,7 @@ FPSfx::FPSfx(bool bSoundOn) {
 \****************************************************************************/
 
 FPSfx::~FPSfx() {
-	if (!bSoundSupported)
+	if (!_bSoundSupported)
 		return;
 
 	g_system->getMixer()->stopHandle(_handle);
@@ -276,8 +276,8 @@ bool FPSfx::loadWave(Common::SeekableReadStream *stream) {
 	if (!_rewindableStream)
 		return false;
 
-	bFileLoaded = true;
-	setVolume(lastVolume);
+	_bFileLoaded = true;
+	setVolume(_lastVolume);
 	return true;
 }
 
@@ -297,23 +297,23 @@ bool FPSfx::loadWave(Common::SeekableReadStream *stream) {
 \****************************************************************************/
 
 bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
-	if (!bSoundSupported)
+	if (!_bSoundSupported)
 		return true;
 
 	uint32 size = vdbFP.readUint32LE();
 	uint32 rate = vdbFP.readUint32LE();
-	bIsVoice = true;
+	_bIsVoice = true;
 
 	_rewindableStream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
 
-	bFileLoaded = true;
+	_bFileLoaded = true;
 	setVolume(62);
 	return true;
 }
 
 
 bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
-	if (!bSoundSupported)
+	if (!_bSoundSupported)
 		return true;
 
 	Common::File file;
@@ -343,7 +343,7 @@ bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 		_rewindableStream = Audio::makeRawStream(buffer, rate, flags, DisposeAfterUse::YES);
 	}
 
-	bFileLoaded = true;
+	_bFileLoaded = true;
 	return true;
 }
 
@@ -361,7 +361,7 @@ bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 bool FPSfx::play() {
 	stop(); // sanity check
 
-	if (bFileLoaded) {
+	if (_bFileLoaded) {
 		// FIXME
 		//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
 		//	ResetEvent(hEndOfBuffer);
@@ -370,7 +370,7 @@ bool FPSfx::play() {
 
 		Audio::AudioStream *stream = _rewindableStream;
 
-		if (bLoop) {
+		if (_bLoop) {
 			if (!_loopStream)
 				_loopStream = Audio::makeLoopingAudioStream(_rewindableStream, 0);
 
@@ -380,9 +380,9 @@ bool FPSfx::play() {
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, stream, -1,
 				Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
-		setVolume(lastVolume);
+		setVolume(_lastVolume);
 
-		if (bPaused)
+		if (_bPaused)
 			g_system->getMixer()->pauseHandle(_handle, true);
 	}
 
@@ -401,9 +401,9 @@ bool FPSfx::play() {
 \****************************************************************************/
 
 bool FPSfx::stop() {
-	if (bFileLoaded) {
+	if (_bFileLoaded) {
 		g_system->getMixer()->stopHandle(_handle);
-		bPaused = false;
+		_bPaused = false;
 	}
 
 	return true;
@@ -428,15 +428,15 @@ bool FPSfx::stop() {
 \****************************************************************************/
 
 void FPSfx::setLoop(bool bLop) {
-	bLoop = bLop;
+	_bLoop = bLop;
 }
 
 void FPSfx::pause(bool bPause) {
-	if (bFileLoaded) {
-		if (g_system->getMixer()->isSoundHandleActive(_handle) && (bPause ^ bPaused))
+	if (_bFileLoaded) {
+		if (g_system->getMixer()->isSoundHandleActive(_handle) && (bPause ^ _bPaused))
 			g_system->getMixer()->pauseHandle(_handle, bPause);
 
-		bPaused = bPause;
+		_bPaused = bPause;
 	}
 }
 
@@ -457,9 +457,9 @@ void FPSfx::setVolume(int dwVolume) {
 	if (dwVolume < 0)
 		dwVolume = 0;
 
-	lastVolume = dwVolume;
+	_lastVolume = dwVolume;
 
-	if (bIsVoice) {
+	if (_bIsVoice) {
 		if (!GLOBALS._bCfgDubbing)
 			dwVolume = 0;
 		else {
@@ -523,7 +523,7 @@ void FPSfx::soundCheckProcess(CORO_PARAM, const void *param) {
 		for (_ctx->i = _vm->_activeSfx.begin(); _ctx->i != _vm->_activeSfx.end(); ++_ctx->i) {
 			FPSfx *sfx = *_ctx->i;
 			if (sfx->endOfBuffer())
-				CoroScheduler.setEvent(sfx->hEndOfBuffer);
+				CoroScheduler.setEvent(sfx->_hEndOfBuffer);
 		}
 
 		// Delay until the next check is done
@@ -1035,7 +1035,7 @@ void FPStream::waitForSync(FPStream *toplay) {
 	/* Disalloca e chiude il CODEC */
 	delete lpCodec;
 #endif
-	bIsPlaying = false;
+	_bIsPlaying = false;
 }
 
 /****************************************************************************\
@@ -1178,7 +1178,7 @@ void FPStream::playThread(FPStream *This) {
 \****************************************************************************/
 
 void FPStream::setLoop(bool loop) {
-	bLoop = loop;
+	_bLoop = loop;
 }
 
 
