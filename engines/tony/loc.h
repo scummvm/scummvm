@@ -314,7 +314,7 @@ protected:
 
 class RMBox {
 public:
-	struct T_HOTSPOT {
+	struct Hotspot {
 		int _hotx, _hoty;        // Hotspot coordinates
 		int _destination;        // Hotspot destination
 	};
@@ -324,7 +324,7 @@ public:
 	int _adj[MAXBOXES];               // List of adjacent bounding boxes
 	int _numHotspot;                  // Hotspot number
 	uint8 _destZ;                     // Z value for the bounding box
-	T_HOTSPOT _hotspot[MAXHOTSPOT];   // List of hotspots
+	Hotspot _hotspot[MAXHOTSPOT];     // List of hotspots
 
 	bool _bActive;
 	bool _bReversed;
@@ -388,7 +388,7 @@ public:
 
 class RMCharacter : protected RMItem {
 public:
-	enum PATTERNS {
+	enum Patterns {
 		PAT_STANDUP = 1,
 		PAT_STANDDOWN,
 		PAT_STANDLEFT,
@@ -400,7 +400,7 @@ public:
 	};
 
 private:
-	enum STATUS {
+	enum CharacterStatus {
 		STAND,
 		WALK
 	};
@@ -416,7 +416,7 @@ private:
 	short _pathLength, _pathCount;
 	int _curBox;
 
-	STATUS _status;
+	CharacterStatus _status;
 	int _curSpeed;
 	bool _bEndOfPath;
 	uint32 _hEndOfPath;

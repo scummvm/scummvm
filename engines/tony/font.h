@@ -178,22 +178,22 @@ private:
 	int _maxLineLength;
 
 public:
-	enum HORALIGN {
+	enum HorAlign {
 	    HLEFT,
 	    HLEFTPAR,
 	    HCENTER,
 	    HRIGHT
 	};
 
-	enum VERALIGN {
+	enum VerAlign {
 	    VTOP,
 	    VCENTER,
 	    VBOTTOM
 	};
 
 private:
-	HORALIGN _aHorType;
-	VERALIGN _aVerType;
+	HorAlign _aHorType;
+	VerAlign _aVerType;
 	byte _textR, _textG, _textB;
 
 protected:
@@ -206,7 +206,7 @@ public:
 	static void unload();
 
 	// Set the alignment type
-	void setAlignType(HORALIGN aHor, VERALIGN aVer) {
+	void setAlignType(HorAlign aHor, VerAlign aVer) {
 		_aHorType = aHor;
 		_aVerType = aVer;
 	}

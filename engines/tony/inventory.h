@@ -46,7 +46,7 @@ struct RMInventoryItem {
 
 class RMInventory : public RMGfxWoodyBuffer {
 private:
-	enum STATE {
+	enum InventoryState {
 		CLOSED,
 		OPENING,
 		OPENED,
@@ -64,7 +64,7 @@ protected:
 	uint32 _curPutTime;
 
 	int _curPos;
-	STATE _state;
+	InventoryState _state;
 	bool _bHasFocus;
 	int _nSelectObj;
 	int _nCombine;

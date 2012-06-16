@@ -36,12 +36,12 @@ namespace Tony {
 
 class RMTony : public RMCharacter {
 private:
-	enum DIRECTION {
+	enum CharacterDirection {
 		UP, DOWN, LEFT, RIGHT
 	};
 
 public:
-	enum TALKTYPE {
+	enum CharacterTalkType {
 		TALK_NORMAL,
 		TALK_FIANCHI,
 		TALK_SING,
@@ -97,8 +97,8 @@ private:
 	bool _bIsStaticTalk;
 	bool _bIsTalking;
 	int _nPatB4Talking;
-	TALKTYPE _nTalkType;
-	DIRECTION _talkDirection;
+	CharacterTalkType _nTalkType;
+	CharacterDirection _talkDirection;
 	RMPoint _nBodyOffset;
 
 	int _nTimeLastStep;
@@ -114,7 +114,7 @@ protected:
 	static void waitEndOfAction(CORO_PARAM, const void *param);
 
 public:
-	enum PATTERNS {
+	enum CharacterPatterns {
 		PAT_TAKEUP_UP1 = 9,
 		PAT_TAKEUP_UP2,
 		PAT_TAKEUP_MID1,
@@ -247,7 +247,7 @@ public:
 		PAT_WITHSECRETARY
 	};
 
-	enum BODYPATTERNS {
+	enum CharacterBodyPatterns {
 		BPAT_STANDUP = 1,
 		BPAT_STANDDOWN,
 		BPAT_STANDLEFT,
@@ -421,18 +421,18 @@ public:
 	void put(int nWhere, int nPart);
 
 	// Start or End Talk
-	bool startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &bodyStartPat,
+	bool startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, int &bodyStartPat,
 	                        int &headLoopPat, int &bodyLoopPat);
-	void startTalk(CORO_PARAM, TALKTYPE nTalkType);
+	void startTalk(CORO_PARAM, CharacterTalkType nTalkType);
 	bool endTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic);
 	void endTalk(CORO_PARAM);
 
 	// Start or End Static
-	void startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat,
+	void startStaticCalculate(CharacterTalkType nTalk, int &headPat, int &headLoopPat,
 	                          int &bodyStartPat, int &bodyLoopPat);
-	void startStatic(CORO_PARAM, TALKTYPE nTalkType);
-	void endStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
-	void endStatic(CORO_PARAM, TALKTYPE nTalkType);
+	void startStatic(CORO_PARAM, CharacterTalkType nTalkType);
+	void endStaticCalculate(CharacterTalkType nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
+	void endStatic(CORO_PARAM, CharacterTalkType nTalkType);
 
 	// Tony disguises himself!
 	void setShepherdess(bool bIsPast) {

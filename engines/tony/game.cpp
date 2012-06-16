@@ -1003,7 +1003,7 @@ int RMOptionScreen::priority() {
 	return 190;
 }
 
-void RMOptionScreen::changeState(CORO_PARAM, STATE newState) {
+void RMOptionScreen::changeState(CORO_PARAM, OptionScreenState newState) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 

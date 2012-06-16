@@ -550,7 +550,7 @@ void RMTony::put(int nWhere, int nPart) {
 }
 
 
-bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &bodyStartPat,
+bool RMTony::startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, int &bodyStartPat,
                                 int &headLoopPat, int &bodyLoopPat) {
 	assert(!_bIsTalking);
 
@@ -1109,7 +1109,7 @@ bool RMTony::startTalkCalculate(TALKTYPE nTalkType, int &headStartPat, int &body
 	return true;
 }
 
-void RMTony::startTalk(CORO_PARAM, TALKTYPE nTalkType) {
+void RMTony::startTalk(CORO_PARAM, CharacterTalkType nTalkType) {
 	CORO_BEGIN_CONTEXT;
 	int headStartPat, bodyStartPat;
 	int headLoopPat, bodyLoopPat;
@@ -1518,7 +1518,7 @@ void RMTony::endTalk(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat,
+void RMTony::startStaticCalculate(CharacterTalkType nTalk, int &headPat, int &headLoopPat,
                                   int &bodyStartPat, int &bodyLoopPat) {
 	int nPat = getCurPattern();
 
@@ -1725,7 +1725,7 @@ void RMTony::startStaticCalculate(TALKTYPE nTalk, int &headPat, int &headLoopPat
 	}
 }
 
-void RMTony::startStatic(CORO_PARAM, TALKTYPE nTalk) {
+void RMTony::startStatic(CORO_PARAM, CharacterTalkType nTalk) {
 	CORO_BEGIN_CONTEXT;
 	int headPat, headLoopPat;
 	int bodyStartPat, bodyLoopPat;
@@ -1760,7 +1760,7 @@ void RMTony::startStatic(CORO_PARAM, TALKTYPE nTalk) {
 }
 
 
-void RMTony::endStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, int &headEndPat) {
+void RMTony::endStaticCalculate(CharacterTalkType nTalk, int &bodyEndPat, int &finalPat, int &headEndPat) {
 	switch (_talkDirection) {
 	case UP:
 	case LEFT:
@@ -1896,7 +1896,7 @@ void RMTony::endStaticCalculate(TALKTYPE nTalk, int &bodyEndPat, int &finalPat, 
 	}
 }
 
-void RMTony::endStatic(CORO_PARAM, TALKTYPE nTalk) {
+void RMTony::endStatic(CORO_PARAM, CharacterTalkType nTalk) {
 	CORO_BEGIN_CONTEXT;
 	int bodyEndPat;
 	int finalPat;

@@ -80,9 +80,9 @@ Globals::Globals() {
 	_nCfgSFXVolume = 0;
 	_bIdleExited = false;
 	_bSkipSfxNoLoop = false;
-	_bNoOcchioDiBue = false;
+	_bNoBullsEye = false;
 	_curDialog = 0;
-	_curSonoriz = 0;
+	_curSoundEffect = 0;
 	_bFadeOutStop = false;
 
 //	OSystem::MutexRef vdb;

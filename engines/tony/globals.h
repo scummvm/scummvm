@@ -35,13 +35,13 @@
 
 namespace Tony {
 
-#define T_GRILLI 1
-#define T_GRILLIOV 2
-#define T_GRILLIVENTO 3
-#define T_GRILLIVENTO1 4
-#define T_VENTO 5
-#define T_MARE 6
-#define T_MAREMETA 7
+#define TAPPETI_GRILLI 1
+#define TAPPETI_GRILLIOV 2
+#define TAPPETI_GRILLIVENTO 3
+#define TAPPETI_GRILLIVENTO1 4
+#define TAPPETI_VENTO 5
+#define TAPPETI_MARE 6
+#define TAPPETI_MAREMETA 7
 
 
 #define MAX_PATH    255
@@ -207,9 +207,9 @@ public:
 	int  _nCfgSFXVolume;
 	bool _bSkipSfxNoLoop;
 	bool _bIdleExited;
-	bool _bNoOcchioDiBue;
+	bool _bNoBullsEye;
 	int _curDialog;
-	int _curSonoriz;
+	int _curSoundEffect;
 	bool _bFadeOutStop;
 
 	RMTony *_tony;
@@ -237,7 +237,7 @@ public:
 	uint32 _dwTonyNumTexts;
 	bool _bTonyInTexts;
 	bool _bStaticTalk;
-	RMTony::TALKTYPE _nTonyNextTalkType;
+	RMTony::CharacterTalkType _nTonyNextTalkType;
 
 	RMPoint _startLocPos[256];
 	uint32 _mut[10];

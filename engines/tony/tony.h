@@ -104,7 +104,7 @@ public:
 	Globals _globals;
 	Debugger *_debugger;
 
-	enum DATADIR {
+	enum DataDir {
 		DD_BASE = 1,
 		DD_SAVE,
 		DD_SHOTS,
@@ -161,7 +161,7 @@ public:
 	void close();
 	void abortGame();
 
-	void getDataDirectory(DATADIR dir, char *path);
+	void getDataDirectory(DataDir dir, char *path);
 
 	void switchFullscreen(bool bFull);
 	void optionScreen(void);

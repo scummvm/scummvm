@@ -70,7 +70,7 @@ private:
 	void updateCursor();
 
 public:
-	enum POINTER {
+	enum PointerType {
 		PTR_NONE = 0,
 		PTR_FRECCIASU,
 		PTR_FRECCIAGIU,
@@ -107,15 +107,15 @@ public:
 	}
 
 	// Sets a new pointer
-	void setSpecialPointer(POINTER ptr) {
+	void setSpecialPointer(PointerType ptr) {
 		_nCurSpecialPointer = ptr;
 		if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
 			_specialPointer[ptr - 1]->setPattern(1);
 
 		updateCursor();
 	}
-	POINTER getSpecialPointer(void) {
-		return (POINTER)_nCurSpecialPointer;
+	PointerType getSpecialPointer(void) {
+		return (PointerType)_nCurSpecialPointer;
 	}
 
 	// Set the new custom pointer
@@ -251,17 +251,17 @@ private:
 	bool _bNoLoadSave;
 	bool _bAlterGfx;
 
-	enum STATE {
-	    MENUGAME,
-	    MENUGFX,
-	    MENUSOUND,
-	    MENULOAD,
-	    MENUSAVE,
+	enum OptionScreenState {
+		MENUGAME,
+		MENUGFX,
+		MENUSOUND,
+		MENULOAD,
+		MENUSAVE,
 		MENUNONE
 	};
 
-	STATE _nState;
-	STATE _nLastState;
+	OptionScreenState _nState;
+	OptionScreenState _nLastState;
 
 public:
 	RMOptionScreen();
@@ -291,7 +291,7 @@ protected:
 	// Initialisation and state change
 	void initState(CORO_PARAM);
 	void closeState(void);
-	void changeState(CORO_PARAM, STATE newState);
+	void changeState(CORO_PARAM, OptionScreenState newState);
 
 	// Repaint the options menu
 	void refreshAll(CORO_PARAM);

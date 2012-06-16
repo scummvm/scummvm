@@ -44,7 +44,7 @@ namespace Tony {
 class FPSTREAM;
 class FPSFX;
 
-enum CODECS {
+enum SoundCodecs {
 	FPCODEC_RAW,
 	FPCODEC_ADPCM
 };

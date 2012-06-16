@@ -92,7 +92,7 @@ const MusicFileEntry musicFiles[] =  {
 };
 
 
-const char *staccFileNames[] = {
+const char *jingleFileNames[] = {
 	"S00.ADP", "S01.ADP",
 	"S02.ADP", "S03.ADP",
 	"S04.ADP", "S05.ADP",
@@ -499,8 +499,8 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMessage)(CORO_PARAM, uint32 nMsg, uint32 n
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(NoOcchioDiBue)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	GLOBALS._bNoOcchioDiBue = true;
+DECLARE_CUSTOM_FUNCTION(NoBullsEye)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	GLOBALS._bNoBullsEye = true;
 }
 
 DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -509,7 +509,7 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!GLOBALS._bNoOcchioDiBue) {
+	if (!GLOBALS._bNoBullsEye) {
 		GLOBALS.InitWipe(1);
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 	}
@@ -531,7 +531,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!GLOBALS._bNoOcchioDiBue) {
+	if (!GLOBALS._bNoBullsEye) {
 		GLOBALS.InitWipe(1);
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 	}
@@ -555,7 +555,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 			_vm->playMusic(4, tappetiFile[GLOBALS._lastTappeto], 0, true, 2000);
 	}
 
-	if (!GLOBALS._bNoOcchioDiBue) {
+	if (!GLOBALS._bNoBullsEye) {
 		GLOBALS.InitWipe(2);
 	}
 
@@ -564,12 +564,12 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 
 	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
-	if (!GLOBALS._bNoOcchioDiBue) {
+	if (!GLOBALS._bNoBullsEye) {
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 		GLOBALS.CloseWipe();
 	}
 
-	GLOBALS._bNoOcchioDiBue = false;
+	GLOBALS._bNoBullsEye = false;
 
 	// On Enter?
 	if (_ctx->h != CORO_INVALID_PID_VALUE)
@@ -1372,7 +1372,7 @@ DECLARE_CUSTOM_FUNCTION(AbortGame)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->abortGame();
 }
 
-DECLARE_CUSTOM_FUNCTION(TremaSchermo)(CORO_PARAM, uint32 nScosse, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	uint32 i;
 	uint32 curTime;
@@ -2131,7 +2131,7 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 	if (!GLOBALS._bFadeOutStop)
 		_vm->setMusicVolume(nChannel, 0);
 
-	// If there is a stacchetto, stop all
+	// If a jingle is played, stop it
 	if (nChannel == 2)
 		_vm->stopMusic(2);
 
@@ -2142,54 +2142,50 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeInSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	CoroScheduler.createProcess(ThreadFadeInMusic, &GLOBALS._curSonoriz, sizeof(int));
+DECLARE_CUSTOM_FUNCTION(FadeInSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	CoroScheduler.createProcess(ThreadFadeInMusic, &GLOBALS._curSoundEffect, sizeof(int));
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeOutSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FadeOutSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS._bFadeOutStop = false;
-	CoroScheduler.createProcess(ThreadFadeOutMusic, &GLOBALS._curSonoriz, sizeof(int));
+	CoroScheduler.createProcess(ThreadFadeOutMusic, &GLOBALS._curSoundEffect, sizeof(int));
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeOutStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FadeOutJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS._bFadeOutStop = false;
 	int channel = 2;
 	CoroScheduler.createProcess(ThreadFadeOutMusic, &channel, sizeof(int));
 }
 
-DECLARE_CUSTOM_FUNCTION(FadeInStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(FadeInJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	int channel = 2;
 	CoroScheduler.createProcess(ThreadFadeInMusic, &channel, sizeof(int));
 }
 
-DECLARE_CUSTOM_FUNCTION(StopSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->stopMusic(GLOBALS._curSonoriz);
+DECLARE_CUSTOM_FUNCTION(StopSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	_vm->stopMusic(GLOBALS._curSoundEffect);
 }
 
-DECLARE_CUSTOM_FUNCTION(StopStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(StopJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->stopMusic(2);
 }
 
-DECLARE_CUSTOM_FUNCTION(MuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->setMusicVolume(GLOBALS._curSonoriz, 0);
+DECLARE_CUSTOM_FUNCTION(MuteSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+	_vm->setMusicVolume(GLOBALS._curSoundEffect, 0);
 }
 
-DECLARE_CUSTOM_FUNCTION(DemuteSonoriz)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(DemuteSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS._bFadeOutStop = true;
-	_vm->setMusicVolume(GLOBALS._curSonoriz, 64);
+	_vm->setMusicVolume(GLOBALS._curSoundEffect, 64);
 }
 
-DECLARE_CUSTOM_FUNCTION(MuteStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(MuteJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->setMusicVolume(2, 0);
 }
 
-DECLARE_CUSTOM_FUNCTION(DemuteStacchetto)(CORO_PARAM, uint32, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(DemuteJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	_vm->setMusicVolume(2, 64);
 }
-
-
-
-
 
 void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int nSync = 0) {
 	if (nSync == 0)
@@ -2199,18 +2195,18 @@ void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int
 	debug("End CustPlayMusic");
 }
 
-DECLARE_CUSTOM_FUNCTION(PlaySonoriz)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bNoLoop, uint32) {
+DECLARE_CUSTOM_FUNCTION(PlaySoundEffect)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bNoLoop, uint32) {
 	if (nFX == 0 || nFX == 1 || nFX == 2) {
-		debug("PlaySonoriz stop fadeout");
+		debug("PlaySoundEffect stop fadeout");
 		GLOBALS._bFadeOutStop = true;
 	}
 
 	GLOBALS._lastMusic = nMusic;
-	CustPlayMusic(GLOBALS._curSonoriz, musicFiles[nMusic].name, nFX, bNoLoop ? false : true, musicFiles[nMusic].sync);
+	CustPlayMusic(GLOBALS._curSoundEffect, musicFiles[nMusic].name, nFX, bNoLoop ? false : true, musicFiles[nMusic].sync);
 }
 
-DECLARE_CUSTOM_FUNCTION(PlayStacchetto)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bLoop, uint32) {
-	CustPlayMusic(2, staccFileNames[nMusic], nFX, bLoop);
+DECLARE_CUSTOM_FUNCTION(PlayJingle)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bLoop, uint32) {
+	CustPlayMusic(2, jingleFileNames[nMusic], nFX, bLoop);
 }
 
 DECLARE_CUSTOM_FUNCTION(PlayItemSfx)(CORO_PARAM, uint32 nItem, uint32 nSFX, uint32, uint32) {
@@ -2230,7 +2226,7 @@ void RestoreMusic(CORO_PARAM) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_4(PlaySonoriz, GLOBALS._lastMusic, 0, 0, 0);
+	CORO_INVOKE_4(PlaySoundEffect, GLOBALS._lastMusic, 0, 0, 0);
 
 	if (GLOBALS._lastTappeto != 0)
 		CustPlayMusic(4, tappetiFile[GLOBALS._lastTappeto], 0, true);
@@ -2249,28 +2245,28 @@ void LoadMusic(Common::InSaveFile *f) {
 }
 
 
-DECLARE_CUSTOM_FUNCTION(StacchettoFadeStart)(CORO_PARAM, uint32 nStacc, uint32 bLoop, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(JingleFadeStart)(CORO_PARAM, uint32 nJingle, uint32 bLoop, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_4(FadeOutSonoriz, 0, 0, 0, 0);
-	CORO_INVOKE_4(MuteStacchetto, 0, 0, 0, 0);
-	CORO_INVOKE_4(PlayStacchetto, nStacc, 0, bLoop, 0);
-	CORO_INVOKE_4(FadeInStacchetto, 0, 0, 0, 0);
+	CORO_INVOKE_4(FadeOutSoundEffect, 0, 0, 0, 0);
+	CORO_INVOKE_4(MuteJingle, 0, 0, 0, 0);
+	CORO_INVOKE_4(PlayJingle, nJingle, 0, bLoop, 0);
+	CORO_INVOKE_4(FadeInJingle, 0, 0, 0, 0);
 
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(StacchettoFadeEnd)(CORO_PARAM, uint32 nStacc, uint32 bLoop, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(JingleFadeEnd)(CORO_PARAM, uint32 nJingle, uint32 bLoop, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_4(FadeOutStacchetto, 0, 0, 0, 0);
-	CORO_INVOKE_4(FadeInSonoriz, 0, 0, 0, 0);
+	CORO_INVOKE_4(FadeOutJingle, 0, 0, 0, 0);
+	CORO_INVOKE_4(FadeInSoundEffect, 0, 0, 0, 0);
 
 	CORO_END_CODE;
 }
@@ -2396,146 +2392,146 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 BEGIN_CUSTOM_FUNCTION_MAP()
 
 ASSIGN(1,   CustLoadLocation)
-ASSIGN(2,       MySleep)
+ASSIGN(2,   MySleep)
 ASSIGN(3,   SetPointer)
 ASSIGN(5,   MoveTony)
-ASSIGN(6,       FaceToMe)
-ASSIGN(7,       BackToMe)
-ASSIGN(8,       LeftToMe)
-ASSIGN(9,       RightToMe)
-ASSIGN(10,   SendTonyMessage)
-ASSIGN(11,      ChangeBoxStatus)
-ASSIGN(12,      ChangeLocation)
-ASSIGN(13,      DisableTony)
-ASSIGN(14,      EnableTony)
-ASSIGN(15,      WaitForPatternEnd)
-ASSIGN(16,   SetLocStartPosition)
-ASSIGN(17,   ScrollLocation)
-ASSIGN(18,   MoveTonyAndWait)
-ASSIGN(19,      ChangeHotspot)
-ASSIGN(20,   AddInventory)
-ASSIGN(21,   RemoveInventory)
-ASSIGN(22,      ChangeInventoryStatus)
-ASSIGN(23,      SetTonyPosition)
-ASSIGN(24,      SendFullscreenMessage)
-ASSIGN(25,      SaveTonyPosition)
-ASSIGN(26,      RestoreTonyPosition)
-ASSIGN(27,      DisableInput)
-ASSIGN(28,      EnableInput)
-ASSIGN(29,      StopTony)
+ASSIGN(6,   FaceToMe)
+ASSIGN(7,   BackToMe)
+ASSIGN(8,   LeftToMe)
+ASSIGN(9,   RightToMe)
+ASSIGN(10,  SendTonyMessage)
+ASSIGN(11,  ChangeBoxStatus)
+ASSIGN(12,  ChangeLocation)
+ASSIGN(13,  DisableTony)
+ASSIGN(14,  EnableTony)
+ASSIGN(15,  WaitForPatternEnd)
+ASSIGN(16,  SetLocStartPosition)
+ASSIGN(17,  ScrollLocation)
+ASSIGN(18,  MoveTonyAndWait)
+ASSIGN(19,  ChangeHotspot)
+ASSIGN(20,  AddInventory)
+ASSIGN(21,  RemoveInventory)
+ASSIGN(22,  ChangeInventoryStatus)
+ASSIGN(23,  SetTonyPosition)
+ASSIGN(24,  SendFullscreenMessage)
+ASSIGN(25,  SaveTonyPosition)
+ASSIGN(26,  RestoreTonyPosition)
+ASSIGN(27,  DisableInput)
+ASSIGN(28,  EnableInput)
+ASSIGN(29,  StopTony)
 
-ASSIGN(30,      TonyTakeUp1)
-ASSIGN(31,      TonyTakeMid1)
-ASSIGN(32,      TonyTakeDown1)
-ASSIGN(33,      TonyTakeUp2)
-ASSIGN(34,      TonyTakeMid2)
-ASSIGN(35,      TonyTakeDown2)
+ASSIGN(30,  TonyTakeUp1)
+ASSIGN(31,  TonyTakeMid1)
+ASSIGN(32,  TonyTakeDown1)
+ASSIGN(33,  TonyTakeUp2)
+ASSIGN(34,  TonyTakeMid2)
+ASSIGN(35,  TonyTakeDown2)
 
-ASSIGN(72,      TonyPutUp1)
-ASSIGN(73,      TonyPutMid1)
-ASSIGN(74,      TonyPutDown1)
-ASSIGN(75,      TonyPutUp2)
-ASSIGN(76,      TonyPutMid2)
-ASSIGN(77,      TonyPutDown2)
+ASSIGN(72,  TonyPutUp1)
+ASSIGN(73,  TonyPutMid1)
+ASSIGN(74,  TonyPutDown1)
+ASSIGN(75,  TonyPutUp2)
+ASSIGN(76,  TonyPutMid2)
+ASSIGN(77,  TonyPutDown2)
 
-ASSIGN(36,   TonyOnTheFloor)
-ASSIGN(37,   TonyGetUp)
-ASSIGN(38,   TonyShepherdess)
-ASSIGN(39,   TonyWhistle)
+ASSIGN(36,  TonyOnTheFloor)
+ASSIGN(37,  TonyGetUp)
+ASSIGN(38,  TonyShepherdess)
+ASSIGN(39,  TonyWhistle)
 
-ASSIGN(40,   TonyRide)
-ASSIGN(41,   TonyFianchi)
-ASSIGN(42,   TonySing)
-ASSIGN(43,   TonyIndicate)
-ASSIGN(44,   TonyScaredWithHands)
-ASSIGN(49,   TonyScaredWithoutHands)
-ASSIGN(45,   TonyWithGlasses)
-ASSIGN(46,   TonyWithWorm)
-ASSIGN(47,   TonyWithHammer)
-ASSIGN(48,   TonyWithRope)
-ASSIGN(90,   TonyWithRabbitANIM)
-ASSIGN(91,   TonyWithRecipeANIM)
-ASSIGN(92,   TonyWithCardsANIM)
-ASSIGN(93,   TonyWithSnowmanANIM)
-ASSIGN(94,   TonyWithSnowmanStart)
-ASSIGN(95,   TonyWithSnowmanEnd)
-ASSIGN(96,   TonyWithRabbitStart)
-ASSIGN(97,   TonyWithRabbitEnd)
-ASSIGN(98,   TonyWithRecipeStart)
-ASSIGN(99,   TonyWithRecipeEnd)
-ASSIGN(100,  TonyWithCardsStart)
-ASSIGN(101,  TonyWithCardsEnd)
-ASSIGN(102,  TonyWithNotebookStart)
-ASSIGN(103,  TonyWithNotebookEnd)
-ASSIGN(104,  TonyWithMegaphoneStart)
-ASSIGN(105,  TonyWithMegaphoneEnd)
-ASSIGN(106,  TonyWithBeardStart)
-ASSIGN(107,  TonyWithBeardEnd)
-ASSIGN(108,  TonyGiggle)
-ASSIGN(109,  TonyDisgusted)
-ASSIGN(110,  TonyNaah)
-ASSIGN(111,  TonyMacbeth)
-ASSIGN(112,  TonySniffLeft)
-ASSIGN(113,  TonySniffRight)
-ASSIGN(114,  TonyScaredStart)
-ASSIGN(115,  TonyScaredEnd)
-ASSIGN(116,  TonyWithSecretary)
+ASSIGN(40,  TonyRide)
+ASSIGN(41,  TonyFianchi)
+ASSIGN(42,  TonySing)
+ASSIGN(43,  TonyIndicate)
+ASSIGN(44,  TonyScaredWithHands)
+ASSIGN(49,  TonyScaredWithoutHands)
+ASSIGN(45,  TonyWithGlasses)
+ASSIGN(46,  TonyWithWorm)
+ASSIGN(47,  TonyWithHammer)
+ASSIGN(48,  TonyWithRope)
+ASSIGN(90,  TonyWithRabbitANIM)
+ASSIGN(91,  TonyWithRecipeANIM)
+ASSIGN(92,  TonyWithCardsANIM)
+ASSIGN(93,  TonyWithSnowmanANIM)
+ASSIGN(94,  TonyWithSnowmanStart)
+ASSIGN(95,  TonyWithSnowmanEnd)
+ASSIGN(96,  TonyWithRabbitStart)
+ASSIGN(97,  TonyWithRabbitEnd)
+ASSIGN(98,  TonyWithRecipeStart)
+ASSIGN(99,  TonyWithRecipeEnd)
+ASSIGN(100, TonyWithCardsStart)
+ASSIGN(101, TonyWithCardsEnd)
+ASSIGN(102, TonyWithNotebookStart)
+ASSIGN(103, TonyWithNotebookEnd)
+ASSIGN(104, TonyWithMegaphoneStart)
+ASSIGN(105, TonyWithMegaphoneEnd)
+ASSIGN(106, TonyWithBeardStart)
+ASSIGN(107, TonyWithBeardEnd)
+ASSIGN(108, TonyGiggle)
+ASSIGN(109, TonyDisgusted)
+ASSIGN(110, TonyNaah)
+ASSIGN(111, TonyMacbeth)
+ASSIGN(112, TonySniffLeft)
+ASSIGN(113, TonySniffRight)
+ASSIGN(114, TonyScaredStart)
+ASSIGN(115, TonyScaredEnd)
+ASSIGN(116, TonyWithSecretary)
 
-ASSIGN(50,   CharSetCode)
-ASSIGN(51,   CharSetColor)
-ASSIGN(52,   CharSetTalkPattern)
-ASSIGN(53,   CharSendMessage)
-ASSIGN(54,   CharSetStartEndTalkPattern)
+ASSIGN(50,  CharSetCode)
+ASSIGN(51,  CharSetColor)
+ASSIGN(52,  CharSetTalkPattern)
+ASSIGN(53,  CharSendMessage)
+ASSIGN(54,  CharSetStartEndTalkPattern)
 
-ASSIGN(60,   MCharSetCode)
-ASSIGN(61,   MCharSetColor)
-ASSIGN(62,   MCharSetCurrentGroup)
-ASSIGN(63,   MCharSetNumTalksInGroup)
-ASSIGN(64,   MCharSetNumTexts)
-ASSIGN(65,   MCharSendMessage)
-ASSIGN(66,   MCharSetPosition)
-ASSIGN(67,   MCharSetAlwaysBack)
-ASSIGN(68,   MCharResetCode)
+ASSIGN(60,  MCharSetCode)
+ASSIGN(61,  MCharSetColor)
+ASSIGN(62,  MCharSetCurrentGroup)
+ASSIGN(63,  MCharSetNumTalksInGroup)
+ASSIGN(64,  MCharSetNumTexts)
+ASSIGN(65,  MCharSendMessage)
+ASSIGN(66,  MCharSetPosition)
+ASSIGN(67,  MCharSetAlwaysBack)
+ASSIGN(68,  MCharResetCode)
 
-ASSIGN(70,      StartDialog)
-ASSIGN(71,      SendDialogMessage)
+ASSIGN(70,  StartDialog)
+ASSIGN(71,  SendDialogMessage)
 
-ASSIGN(80,      TakeOwnership)
-ASSIGN(81,      ReleaseOwnership)
+ASSIGN(80,  TakeOwnership)
+ASSIGN(81,  ReleaseOwnership)
 
-ASSIGN(86,      PlaySonoriz)
-ASSIGN(87,      PlayStacchetto)
-ASSIGN(88,      FadeInSonoriz)
-ASSIGN(89,      FadeOutSonoriz)
-ASSIGN(123,     FadeInStacchetto)
-ASSIGN(124,     FadeOutStacchetto)
-ASSIGN(125,     MuteSonoriz)
-ASSIGN(126,     DemuteSonoriz)
-ASSIGN(127,     MuteStacchetto)
-ASSIGN(128,     DemuteStacchetto)
-ASSIGN(84,      StopSonoriz)
-ASSIGN(85,      StopStacchetto)
-ASSIGN(83,      PlayItemSfx)
-ASSIGN(129,     StacchettoFadeStart)
-ASSIGN(130,     StacchettoFadeEnd)
+ASSIGN(86,  PlaySoundEffect)
+ASSIGN(87,  PlayJingle)
+ASSIGN(88,  FadeInSoundEffect)
+ASSIGN(89,  FadeOutSoundEffect)
+ASSIGN(123, FadeInJingle)
+ASSIGN(124, FadeOutJingle)
+ASSIGN(125, MuteSoundEffect)
+ASSIGN(126, DemuteSoundEffect)
+ASSIGN(127, MuteJingle)
+ASSIGN(128, DemuteJingle)
+ASSIGN(84,  StopSoundEffect)
+ASSIGN(85,  StopJingle)
+ASSIGN(83,  PlayItemSfx)
+ASSIGN(129, JingleFadeStart)
+ASSIGN(130, JingleFadeEnd)
 
-ASSIGN(120,     TremaSchermo)
-ASSIGN(121,     AutoSave)
-ASSIGN(122,     AbortGame)
-ASSIGN(131,     NoOcchioDiBue)
-ASSIGN(132,     SendFullscreenMsgStart)
-ASSIGN(133,     SendFullscreenMsgEnd)
-ASSIGN(134,     CustEnableGUI)
-ASSIGN(135,     CustDisableGUI)
-ASSIGN(136,     ClearScreen)
-ASSIGN(137,     PatIrqFreeze)
-ASSIGN(138,     TonySetPerorate)
-ASSIGN(139,     OpenInitLoadMenu)
-ASSIGN(140,     OpenInitOptions)
-ASSIGN(141,     SyncScrollLocation)
-ASSIGN(142,     CloseLocation)
-ASSIGN(143,     SetAlwaysDisplay)
-ASSIGN(144,     DoCredits)
+ASSIGN(120, ShakeScreen)
+ASSIGN(121, AutoSave)
+ASSIGN(122, AbortGame)
+ASSIGN(131, NoBullsEye)
+ASSIGN(132, SendFullscreenMsgStart)
+ASSIGN(133, SendFullscreenMsgEnd)
+ASSIGN(134, CustEnableGUI)
+ASSIGN(135, CustDisableGUI)
+ASSIGN(136, ClearScreen)
+ASSIGN(137, PatIrqFreeze)
+ASSIGN(138, TonySetPerorate)
+ASSIGN(139, OpenInitLoadMenu)
+ASSIGN(140, OpenInitOptions)
+ASSIGN(141, SyncScrollLocation)
+ASSIGN(142, CloseLocation)
+ASSIGN(143, SetAlwaysDisplay)
+ASSIGN(144, DoCredits)
 
 ASSIGN(200, MustSkipIdleStart);
 ASSIGN(201, MustSkipIdleEnd);
@@ -2573,37 +2569,37 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	for (i = 0; i < 200; i++)
 		GLOBALS._tappeti[i] = 0;
 
-	GLOBALS._tappeti[6] = T_GRILLI;
-	GLOBALS._tappeti[7] = T_GRILLI;
-	GLOBALS._tappeti[8] = T_GRILLIOV;
-	GLOBALS._tappeti[10] = T_GRILLI;
-	GLOBALS._tappeti[12] = T_GRILLI;
-	GLOBALS._tappeti[13] = T_GRILLIOV;
-	GLOBALS._tappeti[15] = T_GRILLI;
-	GLOBALS._tappeti[16] = T_GRILLIVENTO;
-	GLOBALS._tappeti[18] = T_GRILLI;
-	GLOBALS._tappeti[19] = T_GRILLIVENTO;
-	GLOBALS._tappeti[20] = T_GRILLI;
-	GLOBALS._tappeti[23] = T_GRILLI;
-	GLOBALS._tappeti[26] = T_MAREMETA;
-	GLOBALS._tappeti[27] = T_GRILLI;
-	GLOBALS._tappeti[28] = T_GRILLIVENTO;
-	GLOBALS._tappeti[31] = T_GRILLI;
-	GLOBALS._tappeti[33] = T_MARE;
-	GLOBALS._tappeti[35] = T_MARE;
-	GLOBALS._tappeti[36] = T_GRILLI;
-	GLOBALS._tappeti[37] = T_GRILLI;
-	GLOBALS._tappeti[40] = T_GRILLI;
-	GLOBALS._tappeti[41] = T_GRILLI;
-	GLOBALS._tappeti[42] = T_GRILLI;
-	GLOBALS._tappeti[45] = T_GRILLI;
-	GLOBALS._tappeti[51] = T_GRILLI;
-	GLOBALS._tappeti[52] = T_GRILLIVENTO1;
-	GLOBALS._tappeti[53] = T_GRILLI;
-	GLOBALS._tappeti[54] = T_GRILLI;
-	GLOBALS._tappeti[57] = T_VENTO;
-	GLOBALS._tappeti[58] = T_VENTO;
-	GLOBALS._tappeti[60] = T_VENTO;
+	GLOBALS._tappeti[6] =  TAPPETI_GRILLI;
+	GLOBALS._tappeti[7] =  TAPPETI_GRILLI;
+	GLOBALS._tappeti[8] =  TAPPETI_GRILLIOV;
+	GLOBALS._tappeti[10] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[12] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[13] = TAPPETI_GRILLIOV;
+	GLOBALS._tappeti[15] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[16] = TAPPETI_GRILLIVENTO;
+	GLOBALS._tappeti[18] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[19] = TAPPETI_GRILLIVENTO;
+	GLOBALS._tappeti[20] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[23] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[26] = TAPPETI_MAREMETA;
+	GLOBALS._tappeti[27] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[28] = TAPPETI_GRILLIVENTO;
+	GLOBALS._tappeti[31] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[33] = TAPPETI_MARE;
+	GLOBALS._tappeti[35] = TAPPETI_MARE;
+	GLOBALS._tappeti[36] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[37] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[40] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[41] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[42] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[45] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[51] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[52] = TAPPETI_GRILLIVENTO1;
+	GLOBALS._tappeti[53] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[54] = TAPPETI_GRILLI;
+	GLOBALS._tappeti[57] = TAPPETI_VENTO;
+	GLOBALS._tappeti[58] = TAPPETI_VENTO;
+	GLOBALS._tappeti[60] = TAPPETI_VENTO;
 
 
 
