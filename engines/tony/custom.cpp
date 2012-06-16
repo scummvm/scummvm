@@ -1198,6 +1198,11 @@ DECLARE_CUSTOM_FUNCTION(MoveTonyAndWait)(CORO_PARAM, uint32 nX, uint32 nY, uint3
 
 	CORO_BEGIN_CODE(_ctx);
 
+	// WORKAROUND: Delay for a frame before starting the move to give any previous move time to finish.
+	// This fixes a bug in the first scene where if you immediately 'Use Door', Tony moves to the door,
+	// and then floats to the right rather than properly walking.
+	CORO_SLEEP(1);
+
 	CORO_INVOKE_1(GLOBALS._tony->move, RMPoint(nX, nY));
 
 	if (!GLOBALS._bSkipIdle)
