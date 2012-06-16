@@ -31,9 +31,15 @@
  * Interpolate two 16 bit pixel *pairs* at once with equal weights 1.
  * In particular, p1 and p2 can contain two pixels each in the upper
  * and lower halves.
+ *
+ * This also works for 32 bit pixels.
  */
 template<typename ColorMask>
 static inline uint32 interpolate32_1_1(uint32 p1, uint32 p2) {
+	// Clear the low bit of each channel,
+	// divide each channel by 2,
+	// add the two pixels together,
+	// add 1 to each channel if the lowbits would have added to 2
 	return (((p1 & ColorMask::kHighBitsMask) >> 1) +
 	        ((p2 & ColorMask::kHighBitsMask) >> 1) +
 	         (p1 & p2 & ColorMask::kLowBitsMask));
@@ -43,15 +49,179 @@ static inline uint32 interpolate32_1_1(uint32 p1, uint32 p2) {
  * Interpolate two 16 bit pixel *pairs* at once with weights 3 resp. 1.
  * In particular, p1 and p2 can contain two pixels/each in the upper
  * and lower halves.
+ *
+ * This also works for 32 bit pixels.
  */
 template<typename ColorMask>
 static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
+	// Clear the 2 lowest bits of each channel,
+	// divide each channel by 4, multiply p1 by 3
+	// add the two pixels together,
 	uint32 x = ((p1 & ColorMask::qhighBits) >> 2) * 3 + ((p2 & ColorMask::qhighBits) >> 2);
+	// Get 2 lowest bits of each channel,
+	// multiply p1 by 3, add them together, then divide by 4
 	uint32 y = ((p1 & ColorMask::qlowBits) * 3 + (p2 & ColorMask::qlowBits)) >> 2;
 
+	// Use only the low bits of the second result to add to the first result
 	y &= ColorMask::qlowBits;
 	return x + y;
 }
+
+/**
+ * Interpolate two 32 bit pixels with weights 5 and 3 and 1, i.e., (5*p1+3*p2)/8.
+ * @see interpolate_32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_5_3(uint32 p1, uint32 p2) {
+	uint32 x = ((p1 & ~ColorMask::kLow3Bits) >> 3) * 5 + ((p2 & ~ColorMask::kLow3Bits) >> 3) * 3;
+	uint32 y = ((p1 & ColorMask::kLow3Bits) * 5 + (p2 & ColorMask::kLow3Bits) * 3) >> 3;
+
+	y &= ColorMask::kLow3Bits;
+	return x + y;
+}
+
+/**
+ * Interpolate two 32 bit pixels with weights 7 and 1, i.e., (7*p1+p2)/8.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_7_1(uint32 p1, uint32 p2) {
+	uint32 x = ((p1 & ~ColorMask::kLow3Bits) >> 3) * 7 + ((p2 & ~ColorMask::kLow3Bits) >> 3);
+	uint32 y = ((p1 & ColorMask::kLow3Bits) * 7 + (p2 & ColorMask::kLow3Bits)) >> 3;
+
+	y &= ColorMask::kLow3Bits;
+	return x + y;
+}
+
+/**
+ * Interpolate three 32 bit pixels with weights 2, 1, and 1, i.e., (2*p1+p2+p3)/4.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_2_1_1(uint32 p1, uint32 p2, uint32 p3) {
+	uint32 x = ((p1 & ColorMask::qHighBitsMask) >> 1)
+		              + ((p2 & ColorMask::qHighBitsMask) >> 2)
+		              + ((p3 & ColorMask::qHighBitsMask) >> 2);
+	uint32 y = ((p1 & ColorMask::qLowBitsMask) <<  1)
+			          +  (p2 & ColorMask::qLowBitsMask)
+			          +  (p2 & ColorMask::qLowBitsMask);
+	y >>= 2;
+	y &= ColorMask::qLowBits;
+	return x + y;
+}
+
+/**
+ * Interpolate three 32 bit pixels with weights 5, 2, and 1, i.e., (5*p1+2*p2+p3)/8.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_5_2_1(uint32 p1, uint32 p2, uint32 p3) {
+	uint32 x = ((p1 & ~ColorMask::kLow3Bits) >> 3) * 5
+		              + ((p2 & ~ColorMask::kLow3Bits) >> 3) * 2
+		              + ((p3 & ~ColorMask::kLow3Bits) >> 3);
+	uint32 y = (p1 & ColorMask::kLow3Bits) * 5
+			          + (p2 & ColorMask::kLow3Bits) * 2
+			          + (p2 & ColorMask::kLow3Bits);
+	y >>= 3;
+	y &= ColorMask::kLow3Bits;
+	return x + y;
+}
+
+/**
+ * Interpolate three 32 bit pixels with weights 6, 1, and 1, i.e., (6*p1+p2+p3)/8.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_6_1_1(uint32 p1, uint32 p2, uint32 p3) {
+	uint32 x = ((p1 & ~ColorMask::kLow3Bits) >> 3) * 6
+		              + ((p2 & ~ColorMask::kLow3Bits) >> 3)
+		              + ((p3 & ~ColorMask::kLow3Bits) >> 3);
+	uint32 y = (p1 & ColorMask::kLow3Bits) * 6
+			          + (p2 & ColorMask::kLow3Bits)
+			          + (p2 & ColorMask::kLow3Bits);
+	y >>= 3;
+	y &= ColorMask::kLow3Bits;
+	return x + y;
+}
+
+/**
+ * Interpolate three 32 bit pixels with weights 2, 3, and 3, i.e., (2*p1+3*(p2+p3))/8.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_2_3_3(uint32 p1, uint32 p2, uint32 p3) {
+	uint32 x = ((p1 & ~ColorMask::kLow3Bits) >> 2)
+		              + (((p2 & ~ColorMask::kLow3Bits) >> 3)
+		              + ((p3 & ~ColorMask::kLow3Bits) >> 3)) * 3;
+	uint32 y = (p1 & ColorMask::kLow3Bits) * 2
+			          + ((p2 & ColorMask::kLow3Bits)
+			          + (p2 & ColorMask::kLow3Bits)) * 3;
+	y >>= 3;
+	y &= ColorMask::kLow3Bits;
+	return x + y;
+}
+
+/**
+ * Interpolate three 32 bit pixels with weights 2, 7, and 7, i.e., (2*p1+7*(p2+p3))/16.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_2_7_7(uint32 p1, uint32 p2, uint32 p3) {
+	uint32 x = ((p1 & ~ColorMask::kLow4Bits) >> 3)
+		              + (((p2 & ~ColorMask::kLow4Bits) >> 4)
+		              +  ((p3 & ~ColorMask::kLow4Bits) >> 4)) * 7;
+	uint32 y = (p1 & ColorMask::kLow4Bits) * 2
+			          + ((p2 & ColorMask::kLow4Bits)
+			          + (p2 & ColorMask::kLow4Bits)) * 7;
+	y >>= 4;
+	y &= ColorMask::kLow4Bits;
+	return x + y;
+}
+
+/**
+ * Interpolate three 32 bit pixels with weights 14, 1, and 1, i.e., (14*p1+p2+p3)/16.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_14_1_1(uint32 p1, uint32 p2, uint32 p3) {
+	uint32 x = ((p1 & ~ColorMask::kLow4Bits) >> 4) * 14
+		              + ((p2 & ~ColorMask::kLow4Bits) >> 4)
+		              + ((p3 & ~ColorMask::kLow4Bits) >> 4);
+	uint32 y = (p1 & ColorMask::kLow4Bits) * 14;
+			          + (p2 & ColorMask::kLow4Bits)
+			          + (p2 & ColorMask::kLow4Bits);
+	y >>= 4;
+	y &= ColorMask::kLow4Bits;
+	return x + y;
+}
+
+/**
+ * Interpolate four 32 bit pixels with weights 1, 1, 1, and 1, i.e., (p1+p2+p3+p4)/4.
+ *
+ * @see interpolate32_3_1 for similar method
+ */
+template<typename ColorMask>
+static inline uint32 interpolate32_1_1_1_1(uint32 p1, uint32 p2, uint32 p3, uint32 p4) {
+	uint32 x = ((p1 & ~ColorMask::kLow2Bits) >> 2)
+		              + ((p2 & ~ColorMask::kLow2Bits) >> 2)
+		              + ((p3 & ~ColorMask::kLow2Bits) >> 2)
+		              + ((p4 & ~ColorMask::kLow2Bits) >> 2);
+	uint32 y = (p1 & ColorMask::kLow2Bits)
+			          + (p2 & ColorMask::kLow2Bits)
+			          + (p3 & ColorMask::kLow2Bits)
+			          + (p4 & ColorMask::kLow2Bits);
+	y >>= 2;
+	y &= ColorMask::kLow2Bits;
+	return x + y;
+}
+
 
 /**
  * Interpolate two 16 bit pixels with weights 1 and 1, i.e., (p1+p2)/2.
