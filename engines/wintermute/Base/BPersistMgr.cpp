@@ -576,8 +576,12 @@ HRESULT CBPersistMgr::Transfer(const char *Name, Common::String *val) {
 			delete[] str;
 			return E_FAIL;
 		}
-		*val = str;
-		delete[] str;
+		if (str) {
+			*val = str;
+			delete[] str;
+		} else {
+			*val = "";
+		}
 		/*		if (str) {
 		 
 		 char *ret = new char[strlen(str) + 1];
