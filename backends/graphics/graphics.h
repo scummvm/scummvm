@@ -73,8 +73,8 @@ public:
 	virtual void hideOverlay() = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
 	virtual void clearOverlay() = 0;
-	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h)= 0;
+	virtual void grabOverlay(void *buf, int pitch) = 0;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h)= 0;
 	virtual int16 getOverlayHeight() = 0;
 	virtual int16 getOverlayWidth() = 0;
 

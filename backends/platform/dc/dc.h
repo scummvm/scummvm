@@ -172,8 +172,8 @@ public:
   void showOverlay();
   void hideOverlay();
   void clearOverlay();
-  void grabOverlay(OverlayColor *buf, int pitch);
-  void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+  void grabOverlay(void *buf, int pitch);
+  void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
   virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
 
   // Mutex handling

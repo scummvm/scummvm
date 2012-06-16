@@ -171,11 +171,11 @@ void ModularBackend::clearOverlay() {
 	_graphicsManager->clearOverlay();
 }
 
-void ModularBackend::grabOverlay(OverlayColor *buf, int pitch) {
+void ModularBackend::grabOverlay(void *buf, int pitch) {
 	_graphicsManager->grabOverlay(buf, pitch);
 }
 
-void ModularBackend::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void ModularBackend::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	_graphicsManager->copyRectToOverlay(buf, pitch, x, y, w, h);
 }
 

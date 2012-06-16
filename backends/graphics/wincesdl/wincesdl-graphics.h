@@ -74,7 +74,7 @@ public:
 	void undrawMouse();
 	bool showMouse(bool visible);
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format); // overloaded by CE backend
-	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
 	Graphics::Surface *lockScreen();
 	void unlockScreen();

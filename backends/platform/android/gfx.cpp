@@ -636,7 +636,7 @@ void OSystem_Android::clearOverlay() {
 	_overlay_texture->fillBuffer(0);
 }
 
-void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_Android::grabOverlay(void *buf, int pitch) {
 	ENTER("%p, %d", buf, pitch);
 
 	GLTHREADCHECK;
@@ -644,25 +644,24 @@ void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
 	const Graphics::Surface *surface = _overlay_texture->surface_const();
 	assert(surface->format.bytesPerPixel == sizeof(buf[0]));
 
+	byte *dst = (byte *)buf;
 	const byte *src = (const byte *)surface->pixels;
 	uint h = surface->h;
 
 	do {
-		memcpy(buf, src, surface->w * surface->format.bytesPerPixel);
+		memcpy(dst, src, surface->w * surface->format.bytesPerPixel);
 		src += surface->pitch;
-		// This 'pitch' is pixels not bytes
-		buf += pitch;
+		dst += pitch;
 	} while (--h);
 }
 
-void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
+void OSystem_Android::copyRectToOverlay(const void *buf, int pitch,
 										int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 
 	GLTHREADCHECK;
 
-	// This 'pitch' is pixels not bytes
-	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch * sizeof(buf[0]));
+	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch);
 }
 
 int16 OSystem_Android::getOverlayHeight() {

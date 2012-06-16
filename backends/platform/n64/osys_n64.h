@@ -171,8 +171,8 @@ public:
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void grabOverlay(void *buf, int pitch);
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 	virtual Graphics::PixelFormat getOverlayFormat() const {

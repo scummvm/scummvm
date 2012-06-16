@@ -790,20 +790,14 @@ public:
 	 * Copy the content of the overlay into a buffer provided by the caller.
 	 * This is only used to implement fake alpha blending.
 	 */
-	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
+	virtual void grabOverlay(void *buf, int pitch) = 0;
 
 	/**
 	 * Blit a graphics buffer to the overlay.
 	 * In a sense, this is the reverse of grabOverlay.
 	 *
-	 * @note The pitch parameter actually contains the 'pixel pitch', i.e.,
-	 * the number of pixels per scanline, and not as usual the number of bytes
-	 * per scanline.
-	 *
-	 * @todo Change 'pitch' to be byte and not pixel based
-	 *
 	 * @param buf		the buffer containing the graphics data source
-	 * @param pitch		the pixel pitch of the buffer (number of pixels in a scanline)
+	 * @param pitch		the pitch of the buffer (number of bytes in a scanline)
 	 * @param x			the x coordinate of the destination rectangle
 	 * @param y			the y coordinate of the destination rectangle
 	 * @param w			the width of the destination rectangle
@@ -812,7 +806,7 @@ public:
 	 * @see copyRectToScreen
 	 * @see grabOverlay
 	 */
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	/**
 	 * Return the height of the overlay.

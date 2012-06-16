@@ -634,12 +634,12 @@ void OSystem_PS2::clearOverlay(void) {
 	_screen->clearOverlay();
 }
 
-void OSystem_PS2::grabOverlay(OverlayColor *buf, int pitch) {
-	_screen->grabOverlay((uint16 *)buf, (uint16)pitch);
+void OSystem_PS2::grabOverlay(void *buf, int pitch) {
+	_screen->grabOverlay((byte *)buf, (uint16)pitch);
 }
 
-void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	_screen->copyOverlayRect((const uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+void OSystem_PS2::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
+	_screen->copyOverlayRect((const byte *)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
 }
 
 Graphics::PixelFormat OSystem_PS2::getOverlayFormat(void) const {

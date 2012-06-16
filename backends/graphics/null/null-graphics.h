@@ -71,8 +71,8 @@ public:
 	void hideOverlay() {}
 	Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(); }
 	void clearOverlay() {}
-	void grabOverlay(OverlayColor *buf, int pitch) {}
-	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {}
+	void grabOverlay(void *buf, int pitch) {}
+	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {}
 	int16 getOverlayHeight() { return 0; }
 	int16 getOverlayWidth() { return 0; }
 

@@ -571,28 +571,30 @@ void OSystem_Wii::clearOverlay() {
 	_overlayDirty = true;
 }
 
-void OSystem_Wii::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_Wii::grabOverlay(void *buf, int pitch) {
 	int h = _overlayHeight;
 	OverlayColor *src = _overlayPixels;
+	byte *dst = (byte *)buf;
 
 	do {
-		memcpy(buf, src, _overlayWidth * sizeof(OverlayColor));
+		memcpy(dst, src, _overlayWidth * sizeof(OverlayColor));
 		src += _overlayWidth;
-		buf += pitch;
+		dst += pitch;
 	} while (--h);
 }
 
-void OSystem_Wii::copyRectToOverlay(const OverlayColor *buf, int pitch, int x,
+void OSystem_Wii::copyRectToOverlay(const void *buf, int pitch, int x,
 									int y, int w, int h) {
+	const byte *src = (const byte *)buf;
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * sizeof(OverlayColor);
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -607,11 +609,11 @@ void OSystem_Wii::copyRectToOverlay(const OverlayColor *buf, int pitch, int x,
 
 	OverlayColor *dst = _overlayPixels + (y * _overlayWidth + x);
 	if (_overlayWidth == pitch && pitch == w) {
-		memcpy(dst, buf, h * w * sizeof(OverlayColor));
+		memcpy(dst, src, h * w * sizeof(OverlayColor));
 	} else {
 		do {
-			memcpy(dst, buf, w * sizeof(OverlayColor));
-			buf += pitch;
+			memcpy(dst, src, w * sizeof(OverlayColor));
+			src += pitch;
 			dst += _overlayWidth;
 		} while (--h);
 	}

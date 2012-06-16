@@ -1023,22 +1023,24 @@ bool WINCESdlGraphicsManager::saveScreenshot(const char *filename) {
 	return true;
 }
 
-void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void WINCESdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
 
+	const byte *src = (const byte *)buf;
+
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * 2;
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -1063,9 +1065,9 @@ void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pit
 
 	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * 2;
 	do {
-		memcpy(dst, buf, w * 2);
+		memcpy(dst, src, w * 2);
 		dst += _overlayscreen->pitch;
-		buf += pitch;
+		src += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);

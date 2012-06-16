@@ -467,33 +467,35 @@ void OpenGLGraphicsManager::clearOverlay() {
 	_overlayNeedsRedraw = true;
 }
 
-void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
-	assert(_overlayData.format.bytesPerPixel == sizeof(buf[0]));
+void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) {
 	const byte *src = (byte *)_overlayData.pixels;
+	byte *dst = (byte *)buf;
 	for (int i = 0; i < _overlayData.h; i++) {
 		// Copy overlay data to buffer
-		memcpy(buf, src, _overlayData.pitch);
-		buf += pitch;
+		memcpy(dst, src, _overlayData.pitch);
+		dst += pitch;
 		src += _overlayData.pitch;
 	}
 }
 
-void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OpenGLGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayTexture == NULL)
 		return;
 
+	const byte *src = (const byte *)buf;
+
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * 2;
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -507,11 +509,10 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 		return;
 
 	// Copy buffer data to internal overlay surface
-	const byte *src = (const byte *)buf;
 	byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
 	for (int i = 0; i < h; i++) {
 		memcpy(dst + x * _overlayData.format.bytesPerPixel, src, w * _overlayData.format.bytesPerPixel);
-		src += pitch * sizeof(buf[0]);
+		src += pitch;
 		dst += _overlayData.pitch;
 	}
 

@@ -509,13 +509,13 @@ void OSystem_DS::clearOverlay() {
 //	consolePrintf("clearovl\n");
 }
 
-void OSystem_DS::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_DS::grabOverlay(void *buf, int pitch) {
 //	consolePrintf("grabovl\n")
 	u16 *start = DS::get16BitBackBuffer();
 
 	for (int y = 0; y < 200; y++) {
 		u16 *src = start + (y * 320);
-		u16 *dest = ((u16 *) (buf)) + (y * pitch);
+		u16 *dest = (u16 *)((u8 *)buf + (y * pitch));
 
 		for (int x = 0; x < 320; x++) {
 			*dest++ =  *src++;
@@ -524,9 +524,9 @@ void OSystem_DS::grabOverlay(OverlayColor *buf, int pitch) {
 
 }
 
-void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	u16 *bg = (u16 *) DS::get16BitBackBuffer();
-	const u16 *src = (const u16 *) buf;
+	const u8 *source = (const u8 *)buf;
 
 //	if (x + w > 256) w = 256 - x;
 	//if (x + h > 256) h = 256 - y;
@@ -536,7 +536,7 @@ void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, in
 
 
 	for (int dy = y; dy < y + h; dy++) {
-
+		const u16 *src = (const u16 *)source;
 
 		// Slow but save copy:
 		for (int dx = x; dx < x + w; dx++) {
@@ -546,7 +546,7 @@ void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, in
 			//consolePrintf("%d,", *src);
 			src++;
 		}
-		src += (pitch - w);
+		source += pitch;
 
 		// Fast but broken copy: (why?)
 		/*

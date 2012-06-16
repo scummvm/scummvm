@@ -124,8 +124,8 @@ public:
 	virtual void hideOverlay();
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
 	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void grabOverlay(void *buf, int pitch);
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight() { return _videoMode.overlayHeight; }
 	virtual int16 getOverlayWidth() { return _videoMode.overlayWidth; }
 

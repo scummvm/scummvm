@@ -1597,7 +1597,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_forceFull = true;
 }
 
-void SurfaceSdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
+void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
@@ -1607,31 +1607,35 @@ void SurfaceSdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	byte *src = (byte *)_overlayscreen->pixels;
+	byte *dst = (byte *)buf;
 	int h = _videoMode.overlayHeight;
 	do {
-		memcpy(buf, src, _videoMode.overlayWidth * 2);
+		memcpy(dst, src, _videoMode.overlayWidth * 2);
 		src += _overlayscreen->pitch;
-		buf += pitch;
+		dst += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
 
+	const byte *src = (const byte *)buf;
+
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * 2;
 		x = 0;
 	}
 
 	if (y < 0) {
-		h += y; buf -= y * pitch;
+		h += y;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -1654,9 +1658,9 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int p
 
 	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * 2;
 	do {
-		memcpy(dst, buf, w * 2);
+		memcpy(dst, src, w * 2);
 		dst += _overlayscreen->pitch;
-		buf += pitch;
+		src += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);

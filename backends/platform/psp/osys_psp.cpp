@@ -260,12 +260,12 @@ void OSystem_PSP::clearOverlay() {
 	_overlay.clearBuffer();
 }
 
-void OSystem_PSP::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_PSP::grabOverlay(void *buf, int pitch) {
 	DEBUG_ENTER_FUNC();
 	_overlay.copyToArray(buf, pitch);
 }
 
-void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PSP::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
