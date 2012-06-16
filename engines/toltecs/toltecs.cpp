@@ -300,7 +300,7 @@ void ToltecsEngine::drawScreen() {
 
 	if (_screen->_guiRefresh && _guiHeight > 0 && _cameraHeight > 0) {
 		// Update the GUI when needed and it's visible
-		_system->copyRectToScreen((const byte *)_screen->_frontScreen + _cameraHeight * 640,
+		_system->copyRectToScreen(_screen->_frontScreen + _cameraHeight * 640,
 			640, 0, _cameraHeight, 640, _guiHeight);
 		_screen->_guiRefresh = false;
 	}
