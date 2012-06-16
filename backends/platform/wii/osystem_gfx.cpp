@@ -395,7 +395,7 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 	_cursorPaletteDirty = true;
 }
 
-void OSystem_Wii::copyRectToScreen(const byte *buf, int pitch, int x, int y,
+void OSystem_Wii::copyRectToScreen(const void *buf, int pitch, int x, int y,
 									int w, int h) {
 	assert(x >= 0 && x < _gameWidth);
 	assert(y >= 0 && y < _gameHeight);
@@ -407,7 +407,7 @@ void OSystem_Wii::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 		if (!Graphics::crossBlit(_gamePixels +
 									y * _gameWidth * _pfGame.bytesPerPixel +
 									x * _pfGame.bytesPerPixel,
-									buf, _gameWidth * _pfGame.bytesPerPixel,
+									(const byte *)buf, _gameWidth * _pfGame.bytesPerPixel,
 									pitch, w, h, _pfGameTexture, _pfGame)) {
 			printf("crossBlit failed\n");
 			::abort();
@@ -418,9 +418,10 @@ void OSystem_Wii::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 		if (_gameWidth == pitch && pitch == w) {
 			memcpy(dst, buf, h * w);
 		} else {
+			const byte *src = (const byte *)buf;
 			do {
-				memcpy(dst, buf, w);
-				buf += pitch;
+				memcpy(dst, src, w);
+				src += pitch;
 				dst += _gameWidth;
 			} while (--h);
 		}

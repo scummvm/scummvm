@@ -260,7 +260,7 @@ void OSystem_Dreamcast::initSize(uint w, uint h, const Graphics::PixelFormat *fo
   _devpoll = Timer();
 }
 
-void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int y,
+void OSystem_Dreamcast::copyRectToScreen(const void *buf, int pitch, int x, int y,
 					 int w, int h)
 {
   if (w<1 || h<1)
@@ -269,10 +269,11 @@ void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int 
     x<<=1; w<<=1;
   }
   unsigned char *dst = screen + y*SCREEN_W*2 + x;
+  const byte *src = (const byte *)buf;
   do {
-    memcpy(dst, buf, w);
+    memcpy(dst, src, w);
     dst += SCREEN_W*2;
-    buf += pitch;
+    src += pitch;
   } while (--h);
   _screen_dirty = true;
 }

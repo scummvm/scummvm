@@ -280,7 +280,7 @@ void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
 
 #define MISALIGNED16(ptr) (((u32) (ptr) & 1) != 0)
 
-void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	if (!_graphicsEnable) return;
 	if (w <= 1) return;
 	if (h < 0) return;

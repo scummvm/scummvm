@@ -349,14 +349,14 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 	memcpy(colors, _gamePalette + start * 3, num * 3);
 }
 
-void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OpenGLGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(x >= 0 && x < _screenData.w);
 	assert(y >= 0 && y < _screenData.h);
 	assert(h > 0 && y + h <= _screenData.h);
 	assert(w > 0 && x + w <= _screenData.w);
 
 	// Copy buffer data to game screen internal buffer
-	const byte *src = buf;
+	const byte *src = (const byte *)buf;
 	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch + x * _screenData.format.bytesPerPixel;
 	for (int i = 0; i < h; i++) {
 		memcpy(dst, src, w * _screenData.format.bytesPerPixel);

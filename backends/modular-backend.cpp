@@ -124,7 +124,7 @@ PaletteManager *ModularBackend::getPaletteManager() {
 	return _graphicsManager;
 }
 
-void ModularBackend::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void ModularBackend::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	_graphicsManager->copyRectToScreen(buf, pitch, x, y, w, h);
 }
 

@@ -99,7 +99,7 @@ public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
 
 	// Screen related
-	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
 	void updateScreen();

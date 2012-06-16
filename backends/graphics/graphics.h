@@ -60,7 +60,7 @@ public:
 	virtual int16 getWidth() = 0;
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual Graphics::Surface *lockScreen() = 0;
 	virtual void unlockScreen() = 0;
 	virtual void fillScreen(uint32 col) = 0;

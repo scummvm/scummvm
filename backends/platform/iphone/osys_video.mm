@@ -161,18 +161,19 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
 	}
 }
 
-void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_IPHONE::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	//printf("copyRectToScreen(%p, %d, %i, %i, %i, %i)\n", buf, pitch, x, y, w, h);
 	//Clip the coordinates
+	const byte *src = (const byte *)buf;
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x;
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -193,11 +194,11 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 
 	byte *dst = (byte *)_framebuffer.getBasePtr(x, y);
 	if (_framebuffer.pitch == pitch && _framebuffer.w == w) {
-		memcpy(dst, buf, h * pitch);
+		memcpy(dst, src, h * pitch);
 	} else {
 		do {
-			memcpy(dst, buf, w * _framebuffer.format.bytesPerPixel);
-			buf += pitch;
+			memcpy(dst, src, w * _framebuffer.format.bytesPerPixel);
+			src += pitch;
 			dst += _framebuffer.pitch;
 		} while (--h);
 	}

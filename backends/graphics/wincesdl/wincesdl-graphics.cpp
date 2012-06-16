@@ -1071,15 +1071,16 @@ void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pit
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void WINCESdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+void WINCESdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
-	assert(src);
+	assert(buf);
 
 	if (_screen == NULL)
 		return;
 
 	Common::StackLock lock(_graphicsMutex); // Lock the mutex until this function ends
 
+	const byte *src = (const byte *)buf;
 	/* Clip the coordinates */
 	if (x < 0) {
 		w += x;

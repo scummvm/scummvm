@@ -204,11 +204,11 @@ void OSystem_PSP::setCursorPalette(const byte *colors, uint start, uint num) {
 	_cursor.clearKeyColor();	// Do we need this?
 }
 
-void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PSP::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
-	_screen.copyFromRect(buf, pitch, x, y, w, h);
+	_screen.copyFromRect((const byte *)buf, pitch, x, y, w, h);
 }
 
 Graphics::Surface *OSystem_PSP::lockScreen() {

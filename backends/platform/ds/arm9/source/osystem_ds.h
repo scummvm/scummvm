@@ -98,7 +98,7 @@ protected:
 public:
 	void restoreHardwarePalette();
 
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
 

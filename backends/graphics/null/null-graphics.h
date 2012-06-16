@@ -58,7 +58,7 @@ public:
 	int16 getWidth() { return 0; }
 	void setPalette(const byte *colors, uint start, uint num) {}
 	void grabPalette(byte *colors, uint start, uint num) {}
-	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {}
+	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {}
 	Graphics::Surface *lockScreen() { return NULL; }
 	void unlockScreen() {}
 	void fillScreen(uint32 col) {}

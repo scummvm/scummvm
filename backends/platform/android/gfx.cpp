@@ -421,7 +421,7 @@ void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 		pf.colorToRGB(READ_UINT16(p), colors[0], colors[1], colors[2]);
 }
 
-void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
+void OSystem_Android::copyRectToScreen(const void *buf, int pitch,
 										int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 

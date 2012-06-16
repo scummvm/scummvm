@@ -554,7 +554,7 @@ void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
 	_screen->grabPalette(colors, (uint8)start, (uint16)num);
 }
 
-void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PS2::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
 }
 

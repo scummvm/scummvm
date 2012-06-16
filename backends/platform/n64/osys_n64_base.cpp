@@ -442,17 +442,18 @@ void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
 	_dirtyOffscreen = true;
 }
 
-void OSystem_N64::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_N64::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	//Clip the coordinates
+	const byte *src = (const byte *)buf;
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x;
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -472,14 +473,14 @@ void OSystem_N64::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 
 	do {
 		for (int hor = 0; hor < w; hor++) {
-			if (dst_pal[hor] != buf[hor]) {
-				uint16 color = _screenPalette[buf[hor]];
+			if (dst_pal[hor] != src[hor]) {
+				uint16 color = _screenPalette[src[hor]];
 				dst_hicol[hor] = color;  // Save image converted to 16-bit
-				dst_pal[hor] = buf[hor]; // Save palettized display
+				dst_pal[hor] = src[hor]; // Save palettized display
 			}
 		}
 
-		buf += pitch;
+		src += pitch;
 		dst_pal += _screenWidth;
 		dst_hicol += _screenWidth;
 	} while (--h);

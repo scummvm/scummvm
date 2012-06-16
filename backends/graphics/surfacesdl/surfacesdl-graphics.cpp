@@ -1227,9 +1227,9 @@ void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	}
 }
 
-void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
-	assert(src);
+	assert(buf);
 
 	if (_screen == NULL) {
 		warning("SurfaceSdlGraphicsManager::copyRectToScreen: _screen == NULL");
@@ -1252,8 +1252,9 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int
 #ifdef USE_RGB_COLOR
 	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x * _screenFormat.bytesPerPixel;
 	if (_videoMode.screenWidth == w && pitch == _screen->pitch) {
-		memcpy(dst, src, h*pitch);
+		memcpy(dst, buf, h*pitch);
 	} else {
+		const byte *src = (const byte *)buf;
 		do {
 			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
 			src += pitch;
@@ -1263,8 +1264,9 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int
 #else
 	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x;
 	if (_screen->pitch == pitch && pitch == w) {
-		memcpy(dst, src, h*w);
+		memcpy(dst, buf, h*w);
 	} else {
+		const byte *src = (const byte *)buf;
 		do {
 			memcpy(dst, src, w);
 			src += pitch;
