@@ -348,8 +348,6 @@ Common::Error PegasusEngine::showLoadDialog() {
 		result = Common::kUserCanceled;
 	}
 
-	slc.close();
-
 	return result;
 }
 
@@ -373,8 +371,6 @@ Common::Error PegasusEngine::showSaveDialog() {
 	} else {
 		result = Common::kUserCanceled;
 	}
-
-	slc.close();
 
 	return result;
 }
