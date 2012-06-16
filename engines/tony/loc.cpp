@@ -409,7 +409,7 @@ void RMSfx::readFromStream(RMDataStream &ds, bool bLOX) {
 
 	// Create the sound effect
 	_fx = _vm->createSFX(stream);
-	_fx->SetLoop(false);
+	_fx->setLoop(false);
 }
 
 RMSfx::RMSfx() {
@@ -419,15 +419,15 @@ RMSfx::RMSfx() {
 
 RMSfx::~RMSfx() {
 	if (_fx) {
-		_fx->Release();
+		_fx->release();
 		_fx = NULL;
 	}
 }
 
 void RMSfx::play(bool bLoop) {
 	if (_fx && !_bPlayingLoop) {
-		_fx->SetLoop(bLoop);
-		_fx->Play();
+		_fx->setLoop(bLoop);
+		_fx->play();
 
 		if (bLoop)
 			_bPlayingLoop = true;
@@ -436,19 +436,19 @@ void RMSfx::play(bool bLoop) {
 
 void RMSfx::setVolume(int vol) {
 	if (_fx) {
-		_fx->SetVolume(vol);
+		_fx->setVolume(vol);
 	}
 }
 
 void RMSfx::pause(bool bPause) {
 	if (_fx) {
-		_fx->Pause(bPause);
+		_fx->pause(bPause);
 	}
 }
 
 void RMSfx::stop(void) {
 	if (_fx) {
-		_fx->Stop();
+		_fx->stop();
 		_bPlayingLoop = false;
 	}
 }

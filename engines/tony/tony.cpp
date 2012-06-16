@@ -213,8 +213,8 @@ void TonyEngine::playMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 	case 0:
 	case 1:
 	case 2:
-		_stream[nChannel]->Stop();
-		_stream[nChannel]->UnloadFile();
+		_stream[nChannel]->stop();
+		_stream[nChannel]->unloadFile();
 		break;
 
 	case 22:
@@ -287,30 +287,30 @@ void TonyEngine::playSFX(int nChannel, int nFX) {
 
 	switch (nFX) {
 	case 0:
-		_sfx[nChannel]->SetLoop(false);
+		_sfx[nChannel]->setLoop(false);
 		break;
 
 	case 1:
-		_sfx[nChannel]->SetLoop(true);
+		_sfx[nChannel]->setLoop(true);
 		break;
 	}
 
-	_sfx[nChannel]->Play();
+	_sfx[nChannel]->play();
 }
 
 void TonyEngine::stopMusic(int nChannel) {
 //	g_system->lockMutex(csMusic);
 
 	if (nChannel < 4)
-		_stream[nChannel + GLOBALS._flipflop]->Stop();
+		_stream[nChannel + GLOBALS._flipflop]->stop();
 	else
-		_stream[nChannel]->Stop();
+		_stream[nChannel]->stop();
 
 //	g_system->unlockMutex(csMusic);
 }
 
 void TonyEngine::stopSFX(int nChannel) {
-	_sfx[nChannel]->Stop();
+	_sfx[nChannel]->stop();
 }
 
 void TonyEngine::playUtilSFX(int nChannel, int nFX) {
@@ -319,38 +319,38 @@ void TonyEngine::playUtilSFX(int nChannel, int nFX) {
 
 	switch (nFX) {
 	case 0:
-		_utilSfx[nChannel]->SetLoop(false);
+		_utilSfx[nChannel]->setLoop(false);
 		break;
 
 	case 1:
-		_utilSfx[nChannel]->SetLoop(true);
+		_utilSfx[nChannel]->setLoop(true);
 		break;
 	}
 
-	_utilSfx[nChannel]->SetVolume(52);
-	_utilSfx[nChannel]->Play();
+	_utilSfx[nChannel]->setVolume(52);
+	_utilSfx[nChannel]->play();
 }
 
 void TonyEngine::stopUtilSFX(int nChannel) {
-	_utilSfx[nChannel]->Stop();
+	_utilSfx[nChannel]->stop();
 }
 
 void TonyEngine::preloadSFX(int nChannel, const char *fn) {
 	if (_sfx[nChannel] != NULL) {
-		_sfx[nChannel]->Stop();
-		_sfx[nChannel]->Release();
+		_sfx[nChannel]->stop();
+		_sfx[nChannel]->release();
 		_sfx[nChannel] = NULL;
 	}
 
-	_theSound.CreateSfx(&_sfx[nChannel]);
+	_theSound.createSfx(&_sfx[nChannel]);
 
-	_sfx[nChannel]->LoadFile(fn, FPCODEC_ADPCM);
+	_sfx[nChannel]->loadFile(fn, FPCODEC_ADPCM);
 }
 
-FPSFX *TonyEngine::createSFX(Common::SeekableReadStream *stream) {
-	FPSFX *sfx;
+FPSfx *TonyEngine::createSFX(Common::SeekableReadStream *stream) {
+	FPSfx *sfx;
 
-	_theSound.CreateSfx(&sfx);
+	_theSound.createSfx(&sfx);
 	sfx->loadWave(stream);
 	return sfx;
 }
@@ -370,11 +370,11 @@ void TonyEngine::unloadAllUtilSFX(void) {
 void TonyEngine::initMusic() {
 	int i;
 
-	_theSound.Init(/*_window*/);
-	_theSound.SetMasterVolume(63);
+	_theSound.init(/*_window*/);
+	_theSound.setMasterVolume(63);
 
 	for (i = 0; i < 6; i++)
-		_theSound.CreateStream(&_stream[i]);
+		_theSound.createStream(&_stream[i]);
 
 	for (i = 0; i < MAX_SFX_CHANNELS; i++) {
 		_sfx[i] = _utilSfx[i] = NULL;
@@ -388,14 +388,14 @@ void TonyEngine::initMusic() {
 	preloadUtilSFX(1, "U02.ADP");
 
 	// Start check processes for sound
-	CoroScheduler.createProcess(FPSFX::soundCheckProcess, NULL);
+	CoroScheduler.createProcess(FPSfx::soundCheckProcess, NULL);
 }
 
 void TonyEngine::closeMusic() {
 	for (int i = 0; i < 6; i++) {
-		_stream[i]->Stop();
-		_stream[i]->UnloadFile();
-		_stream[i]->Release();
+		_stream[i]->stop();
+		_stream[i]->unloadFile();
+		_stream[i]->release();
 	}
 
 //	g_system->deleteMutex(csMusic);

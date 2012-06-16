@@ -99,8 +99,8 @@ public:
 	uint32 _hEndOfFrame;
 	Common::File _vdbFP;
 	Common::Array<VoiceHeader> _voices;
-	FPSOUND _theSound;
-	Common::List<FPSFX *> _activeSfx;
+	FPSound _theSound;
+	Common::List<FPSfx *> _activeSfx;
 	Globals _globals;
 	Debugger *_debugger;
 
@@ -115,9 +115,9 @@ public:
 		DD_BASE2
 	};
 
-	FPSTREAM *_stream[6];
-	FPSFX *_sfx[MAX_SFX_CHANNELS];
-	FPSFX *_utilSfx[MAX_SFX_CHANNELS];
+	FPStream *_stream[6];
+	FPSfx *_sfx[MAX_SFX_CHANNELS];
+	FPSfx *_utilSfx[MAX_SFX_CHANNELS];
 //	RMFont *_fonts[2];
 	bool _bPaused;
 	bool _bDrawLocation;
@@ -189,7 +189,7 @@ public:
 	void playUtilSFX(int nSfx, int nFX = 0);
 	void stopUtilSFX(int nSfx);
 
-	FPSFX *createSFX(Common::SeekableReadStream *stream);
+	FPSfx *createSFX(Common::SeekableReadStream *stream);
 
 	void preloadSFX(int nSfx, const char *fn);
 	void unloadAllSFX(void);

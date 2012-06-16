@@ -72,7 +72,7 @@ public:
 class RMSfx {
 public:
 	RMString _name;
-	FPSFX *_fx;
+	FPSfx *_fx;
 	bool _bPlayingLoop;
 
 public:

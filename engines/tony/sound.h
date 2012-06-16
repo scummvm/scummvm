@@ -41,8 +41,8 @@ class RewindableAudioStream;
 
 namespace Tony {
 
-class FPSTREAM;
-class FPSFX;
+class FPStream;
+class FPSfx;
 
 enum SoundCodecs {
 	FPCODEC_RAW,
@@ -58,7 +58,7 @@ enum SoundCodecs {
 *****************************************************************************
 \****************************************************************************/
 
-class FPSOUND {
+class FPSound {
 
 private:
 
@@ -72,27 +72,27 @@ public:
 
 	/****************************************************************************\
 	*
-	* Function:     FPSOUND::FPSOUND();
+	* Function:     FPSound::FPSound();
 	*
 	* Description:  Default constructor. Initializes the attributes
 	*
 	\****************************************************************************/
 
-	FPSOUND();
+	FPSound();
 
 	/****************************************************************************\
 	*
-	* Function:     FPSOUND::~FPSOUND();
+	* Function:     FPSound::~FPSound();
 	*
 	* Description:  Deinitialize the object, free memory
 	*
 	\****************************************************************************/
 
-	~FPSOUND();
+	~FPSound();
 
 	/****************************************************************************\
 	*
-	* Function:     bool FPSOUND::Init();
+	* Function:     bool FPSound::Init();
 	*
 	* Description:  Initializes the objects, and prepare everything required to 
 	*               create streams and sound effects.
@@ -101,38 +101,38 @@ public:
 	*
 	\****************************************************************************/
 
-	bool Init();
+	bool init();
 
 	/****************************************************************************\
 	*
-	* Function:     bool CreateStream(FPSTREAM** lplpStream);
+	* Function:     bool CreateStream(FPStream** lplpStream);
 	*
-	* Description:  Allocates an object of type FPSTREAM, and return its 
+	* Description:  Allocates an object of type FPStream, and return its 
 	*               pointer after it has been initialized.
 	*
-	* Input:        FPSTREAM** lplpStream   Will contain the pointer of the 
+	* Input:        FPStream** lplpStream   Will contain the pointer of the 
 	*                                       object
 	*
 	* Return:       True is everything i OK, False otherwise
 	*
 	* Note:         The use of functions like CreateStream () and CreateSfx () 
 	*               are due to the fact that the class constructors and 
-	*               FPSTREAM FPSFX require that DirectSound is already initialized. 
+	*               FPStream FPSfx require that DirectSound is already initialized. 
 	*               In this way, you avoid the bugs that would be created if an 
-	*               object type is declared FPSTREAM FPSFX or global 
+	*               object type is declared FPStream FPSfx or global 
 	*               (or anyway before initializing DirectSound).
 	\****************************************************************************/
 
-	bool CreateStream(FPSTREAM **lplpStream);
+	bool createStream(FPStream **lplpStream);
 
 	/****************************************************************************\
 	*
-	* Function:     bool CreateSfx(FPSFX** lplpSfx);
+	* Function:     bool CreateSfx(FPSfx** lplpSfx);
 	*
-	* Description:  Allocates an object of type FPSFX and returns a pointer 
+	* Description:  Allocates an object of type FPSfx and returns a pointer 
 	*               pointing to it
 	*
-	* Input:        FPSFX** lplpSfx         Will contain the pointer of the 
+	* Input:        FPSfx** lplpSfx         Will contain the pointer of the 
 	*                                       object
 	*
 	* Return:       True is everything i OK, False otherwise
@@ -141,7 +141,7 @@ public:
 	*
 	\****************************************************************************/
 
-	bool CreateSfx(FPSFX **lplpSfx);
+	bool createSfx(FPSfx **lplpSfx);
 
 	/****************************************************************************\
 	*
@@ -153,7 +153,7 @@ public:
 	*
 	\****************************************************************************/
 
-	void SetMasterVolume(int dwVolume);
+	void setMasterVolume(int dwVolume);
 
 	/****************************************************************************\
 	*
@@ -166,10 +166,10 @@ public:
 	*
 	\****************************************************************************/
 
-	void GetMasterVolume(int *lpdwVolume);
+	void getMasterVolume(int *lpdwVolume);
 };
 
-class FPSFX {
+class FPSfx {
 
 	/****************************************************************************\
 	*       Attributes
@@ -206,43 +206,43 @@ public:
 
 	/****************************************************************************\
 	*
-	* Function:     FPSFX(bool bSoundOn);
+	* Function:     FPSfx(bool bSoundOn);
 	*
 	* Description:  Default constructor. *DO NOT* declare the object directly,
-	*               create it though FPSOUND::CreateSfx() instead
+	*               create it though FPSound::CreateSfx() instead
 	*
 	\****************************************************************************/
 
-	FPSFX(bool bSoundOn);
+	FPSfx(bool bSoundOn);
 
 	/****************************************************************************\
 	*
-	* Function:     ~FPSFX();
+	* Function:     ~FPSfx();
 	*
 	* Description:  Default destructor. It also stops the sound effect that 
 	*               may be running, and free the memory used.
 	*
 	\****************************************************************************/
 
-	~FPSFX();
+	~FPSfx();
 
 	/****************************************************************************\
 	*
-	* Function:     Release();
+	* Function:     release();
 	*
 	* Description:  Releases the memory object. Must be called when the object 
 	*               is no longer useful and **ONLY** when the object was created 
-	*               with the FPSOUND :: CreateStream ().
+	*               with the FPSound :: CreateStream ().
 	*
 	* Note:         Any object pointers are no longer valid after this call.
 	*
 	\****************************************************************************/
 
-	void Release();
+	void release();
 
 	/****************************************************************************\
 	*
-	* Function:     bool LoadFile(char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
+	* Function:     bool loadFile(char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
 	*
 	* Description:  Opens a file and load sound effect
 	*
@@ -254,13 +254,13 @@ public:
 	*
 	\****************************************************************************/
 
-	bool LoadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW);
+	bool loadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW);
 	bool loadWave(Common::SeekableReadStream *stream);
-	bool LoadVoiceFromVDB(Common::File &vdbFP);
+	bool loadVoiceFromVDB(Common::File &vdbFP);
 
 	/****************************************************************************\
 	*
-	* Function:     bool Play();
+	* Function:     bool play();
 	*
 	* Description:  Play the loaded FX.
 	*
@@ -268,11 +268,11 @@ public:
 	*
 	\****************************************************************************/
 
-	bool Play();
+	bool play();
 
 	/****************************************************************************\
 	*
-	* Function:     bool Stop();
+	* Function:     bool stop();
 	*
 	* Description:  Stop a FX
 	*
@@ -280,21 +280,21 @@ public:
 	*
 	\****************************************************************************/
 
-	bool Stop();
+	bool stop();
 
 	/****************************************************************************\
 	*
-	* Function:     void Pause(bool bPause);
+	* Function:     void pause(bool bPause);
 	*
 	* Description:  Pause a FX
 	*
 	\****************************************************************************/
 
-	void Pause(bool bPause);
+	void pause(bool bPause);
 
 	/****************************************************************************\
 	*
-	* Function:     bool SetLoop(bool bLoop);
+	* Function:     bool setLoop(bool bLoop);
 	*
 	* Description:  Enables or disables SFX loop
 	*
@@ -306,11 +306,11 @@ public:
 	*
 	\****************************************************************************/
 
-	void SetLoop(bool bLoop);
+	void setLoop(bool bLoop);
 
 	/****************************************************************************\
 	*
-	* Function:     void SetVolume(int dwVolume);
+	* Function:     void setVolume(int dwVolume);
 	*
 	* Description:  Set SFX Volume
 	*
@@ -318,11 +318,11 @@ public:
 	*
 	\****************************************************************************/
 
-	void SetVolume(int dwVolume);
+	void setVolume(int dwVolume);
 
 	/****************************************************************************\
 	*
-	* Function:     void GetVolume(int * lpdwVolume);
+	* Function:     void getVolume(int * lpdwVolume);
 	*
 	* Description:  Get SFX volume
 	*
@@ -330,7 +330,7 @@ public:
 	*
 	\****************************************************************************/
 
-	void GetVolume(int *lpdwVolume);
+	void getVolume(int *lpdwVolume);
 
 	/**
 	 * Returns true if the sound has finished playing
@@ -338,7 +338,7 @@ public:
 	bool endOfBuffer() const;
 };
 
-class FPSTREAM {
+class FPStream {
 
 	/****************************************************************************\
 	*       Attributes
@@ -372,17 +372,17 @@ private:
 	bool bSyncExit;
 	bool bPaused;
 	int lastVolume;
-	FPSTREAM *SyncToPlay;
+	FPStream *SyncToPlay;
 //	DSBPOSITIONNOTIFY dspnHot[3];
 
-	bool CreateBuffer(int nBufSize);
+	bool createBuffer(int nBufSize);
 
 public:
 	bool bIsPlaying;                      // True if the stream is playing
 
 private:
 
-	static void PlayThread(FPSTREAM *This);
+	static void playThread(FPStream *This);
 
 	/****************************************************************************\
 	*       Methods
@@ -392,43 +392,43 @@ public:
 
 	/****************************************************************************\
 	*
-	* Function:     FPSTREAM(bool bSoundOn);
+	* Function:     FPStream(bool bSoundOn);
 	*
 	* Description:  Default contractor. *DO NOT* declare the object directly: use
-	*                                   FPSOUND::CreateStream() indtead
+	*                                   FPSound::CreateStream() indtead
 	*
 	\****************************************************************************/
 
-	FPSTREAM(bool bSoundOn);
+	FPStream(bool bSoundOn);
 
 	/****************************************************************************\
 	*
-	* Function:     ~FPSTREAM();
+	* Function:     ~FPStream();
 	*
 	* Description:  Destructor by default. Stops the playing stream (if any) and
 	*                                      frees the memory used by them
 	*
 	\****************************************************************************/
 
-	~FPSTREAM();
+	~FPStream();
 
 	/****************************************************************************\
 	*
-	* Function:     Release();
+	* Function:     release();
 	*
 	* Description:  Releases memory used by object. Must be used when the object 
 	*               is no longer used. *ONLY*¨for objects created by 
-	*               FPSOUND::CreateStream().
+	*               FPSound::CreateStream().
 	*
 	* Note:         Object pointers are no longer valid after this call.
 	*
 	\****************************************************************************/
 
-	void Release();
+	void release();
 
 	/****************************************************************************\
 	*
-	* Function:     bool LoadFile(char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
+	* Function:     bool loadFile(char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
 	*
 	* Description:  Open a file for a stream.
 	*
@@ -440,11 +440,11 @@ public:
 	*
 	\****************************************************************************/
 
-	bool LoadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
+	bool loadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
 
 	/****************************************************************************\
 	*
-	* Function:     UnloadFile();
+	* Function:     unloadFile();
 	*
 	* Description:  Close a file stream (if opened). This function must be
 	*               called to free the memory used by the stream
@@ -454,11 +454,11 @@ public:
 	*
 	\****************************************************************************/
 
-	bool UnloadFile();
+	bool unloadFile();
 
 	/****************************************************************************\
 	*
-	* Function:     bool Play();
+	* Function:     bool play();
 	*
 	* Description:  Play the loaded stream.
 	*
@@ -466,13 +466,13 @@ public:
 	*
 	\****************************************************************************/
 
-	bool Play();
-	void PlayFast(void);
-	void Prefetch(void);
+	bool play();
+	void playFast(void);
+	void prefetch(void);
 
 	/****************************************************************************\
 	*
-	* Function:     bool Stop();
+	* Function:     bool stop();
 	*
 	* Description:  Stops the play of the stream.
 	*
@@ -480,22 +480,22 @@ public:
 	*
 	\****************************************************************************/
 
-	bool Stop(bool bSync = false);
-	void WaitForSync(FPSTREAM *toplay);
+	bool stop(bool bSync = false);
+	void waitForSync(FPStream *toplay);
 
 	/****************************************************************************\
 	*
-	* Function:     void Pause(bool bPause);
+	* Function:     void pause(bool bPause);
 	*
 	* Description:  Pause sound effect
 	*
 	\****************************************************************************/
 
-	void Pause(bool bPause);
+	void pause(bool bPause);
 
 	/****************************************************************************\
 	*
-	* Function:     bool SetLoop(bool bLoop);
+	* Function:     bool setLoop(bool bLoop);
 	*
 	* Description:  Enable of disable stream loop
 	*
@@ -507,11 +507,11 @@ public:
 	*
 	\****************************************************************************/
 
-	void SetLoop(bool bLoop);
+	void setLoop(bool bLoop);
 
 	/****************************************************************************\
 	*
-	* Function:     void SetVolume(int dwVolume);
+	* Function:     void setVolume(int dwVolume);
 	*
 	* Description:  Change stream colume
 	*
@@ -519,13 +519,13 @@ public:
 	*
 	\****************************************************************************/
 
-	void SetVolume(int dwVolume);
+	void setVolume(int dwVolume);
 
 
 
 	/****************************************************************************\
 	*
-	* Function:     void GetVolume(LPINT lpdwVolume);
+	* Function:     void getVolume(LPINT lpdwVolume);
 	*
 	* Description:  Get stream volume
 	*
@@ -533,7 +533,7 @@ public:
 	*
 	\****************************************************************************/
 
-	void GetVolume(int *lpdwVolume);
+	void getVolume(int *lpdwVolume);
 };
 
 

@@ -253,7 +253,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 	int i;
 	int curOffset;
 	VoiceHeader *curVoc;
-	FPSFX *voice;
+	FPSfx *voice;
 	RMTextDialog text;
 	CORO_END_CONTEXT(_ctx);
 
@@ -276,12 +276,12 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 		// First time allocation
 		_vm->_vdbFP.seek(_ctx->curOffset);
-		_vm->_theSound.CreateSfx(&_ctx->voice);
+		_vm->_theSound.createSfx(&_ctx->voice);
 
-		_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
+		_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
 		_ctx->curOffset = _vm->_vdbFP.pos();
 
-		_ctx->voice->SetLoop(false);
+		_ctx->voice->setLoop(false);
 	}
 
 	if (GLOBALS._nTonyNextTalkType != GLOBALS._tony->TALK_NORMAL) {
@@ -330,16 +330,16 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 
 		if (_ctx->curVoc) {
 			if (_ctx->i == 0) {
-				_ctx->voice->Play();
+				_ctx->voice->play();
 				_ctx->text.setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			} else {
 				_vm->_vdbFP.seek(_ctx->curOffset);
-				_vm->_theSound.CreateSfx(&_ctx->voice);
-				_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
+				_vm->_theSound.createSfx(&_ctx->voice);
+				_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
 
 				_ctx->curOffset = _vm->_vdbFP.pos();
-				_ctx->voice->SetLoop(false);
-				_ctx->voice->Play();
+				_ctx->voice->setLoop(false);
+				_ctx->voice->play();
 				_ctx->text.setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			}
 		}
@@ -349,8 +349,8 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		CORO_INVOKE_0(_ctx->text.waitForEndDisplay);
 
 		if (_ctx->curVoc) {
-			_ctx->voice->Stop();
-			_ctx->voice->Release();
+			_ctx->voice->stop();
+			_ctx->voice->release();
 			_ctx->voice = NULL;
 		}
 	}
@@ -1458,7 +1458,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 	RMTextDialog *text;
 	int curOffset;
 	VoiceHeader *curVoc;
-	FPSFX *voice;
+	FPSfx *voice;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1524,12 +1524,12 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		GLOBALS.LinkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
-			_vm->_theSound.CreateSfx(&_ctx->voice);
+			_vm->_theSound.createSfx(&_ctx->voice);
 			_vm->_vdbFP.seek(_ctx->curOffset);
-			_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
-			_ctx->voice->SetLoop(false);
-			if (bIsBack) _ctx->voice->SetVolume(55);
-			_ctx->voice->Play();
+			_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
+			_ctx->voice->setLoop(false);
+			if (bIsBack) _ctx->voice->setVolume(55);
+			_ctx->voice->play();
 			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			_ctx->curOffset = _vm->_vdbFP.pos();
 		}
@@ -1539,8 +1539,8 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		CORO_INVOKE_0(_ctx->text->waitForEndDisplay);
 
 		if (_ctx->curVoc) {
-			_ctx->voice->Stop();
-			_ctx->voice->Release();
+			_ctx->voice->stop();
+			_ctx->voice->release();
 			_ctx->voice = NULL;
 		}
 
@@ -1662,7 +1662,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 	RMTextDialog *text;
 	int curOffset;
 	VoiceHeader *curVoc;
-	FPSFX *voice;
+	FPSfx *voice;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1737,12 +1737,13 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		GLOBALS.LinkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
-			_vm->_theSound.CreateSfx(&_ctx->voice);
+			_vm->_theSound.createSfx(&_ctx->voice);
 			_vm->_vdbFP.seek(_ctx->curOffset);
-			_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
-			_ctx->voice->SetLoop(false);
-			if (bIsBack) _ctx->voice->SetVolume(55);
-			_ctx->voice->Play();
+			_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
+			_ctx->voice->setLoop(false);
+			if (bIsBack)
+				_ctx->voice->setVolume(55);
+			_ctx->voice->play();
 			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 			_ctx->curOffset = _vm->_vdbFP.pos();
 		}
@@ -1752,8 +1753,8 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		CORO_INVOKE_0(_ctx->text->waitForEndDisplay);
 
 		if (_ctx->curVoc) {
-			_ctx->voice->Stop();
-			_ctx->voice->Release();
+			_ctx->voice->stop();
+			_ctx->voice->release();
 			_ctx->voice = NULL;
 		}
 
@@ -1787,7 +1788,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	uint32 h;
 	bool bIsBack;
 	VoiceHeader *curVoc;
-	FPSFX *voice;
+	FPSfx *voice;
 	RMPoint pt;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1805,10 +1806,11 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
 		_vm->_vdbFP.seek(_ctx->curVoc->_offset);
-		_vm->_theSound.CreateSfx(&_ctx->voice);
-		_ctx->voice->LoadVoiceFromVDB(_vm->_vdbFP);
-		_ctx->voice->SetLoop(false);
-		if (_ctx->bIsBack) _ctx->voice->SetVolume(55);
+		_vm->_theSound.createSfx(&_ctx->voice);
+		_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
+		_ctx->voice->setLoop(false);
+		if (_ctx->bIsBack)
+			_ctx->voice->setVolume(55);
 	}
 
 	_ctx->string = mpalQueryDialogPeriod(nMsg);
@@ -1904,7 +1906,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		GLOBALS.LinkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
-			_ctx->voice->Play();
+			_ctx->voice->play();
 			_ctx->text->setCustomSkipHandle2(_ctx->voice->hEndOfBuffer);
 		}
 
@@ -1914,8 +1916,8 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	}
 
 	if (_ctx->curVoc) {
-		_ctx->voice->Stop();
-		_ctx->voice->Release();
+		_ctx->voice->stop();
+		_ctx->voice->release();
 		_ctx->voice = NULL;
 	}
 
