@@ -54,6 +54,7 @@ class StaticTextWidget;
  * - Urban Runner
  * - Bambou le sauveur de la jungle
  * - Geisha
+ * - Once Upon A Time: Little Red Riding Hood
  */
 namespace Gob {
 
