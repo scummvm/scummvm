@@ -64,6 +64,7 @@ protected:
 	int lastsecond, lastfcount;
 
 	int mskRed, mskGreen, mskBlue;
+	bool _wiping;
 
 	bool _bGrabScreenshot;
 	bool _bGrabThumbnail;
@@ -90,7 +91,7 @@ public:
 	void switchFullscreen(bool bFull) {}
 
 	// Reads the next frame
-	void getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
+	void getNewFrame(RMGfxTargetBuffer &lpBuf, Common::Rect *rcBoundEllipse);
 
 	// Request a thumbnail be grabbed during the next frame
 	void grabThumbnail(uint16 *buf);

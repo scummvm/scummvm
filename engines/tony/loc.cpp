@@ -710,14 +710,13 @@ void RMItem::setStatus(int nStatus) {
 }
 
 void RMItem::setPattern(int nPattern, bool bPlayP0) {
-	int i;
-
 	assert(nPattern >= 0 && nPattern <= _nPatterns);
 
-	if (_sfx)
+	if (_sfx) {
 		if (_nCurPattern > 0)
 			_patterns[_nCurPattern].stopSfx(_sfx);
-
+	}
+	
 	// Remember the current pattern
 	_nCurPattern = nPattern;
 
@@ -728,10 +727,12 @@ void RMItem::setPattern(int nPattern, bool bPlayP0) {
 		_nCurSprite = -1;
 
 		// Look for the sound effect for pattern 0
-		if (bPlayP0)
-			for (i = 0; i < _nSfx; i++)
+		if (bPlayP0) {
+			for (int i = 0; i < _nSfx; i++) {
 				if (strcmp(_sfx[i]._name, "p0") == 0)
 					_sfx[i].play();
+			}
+		}
 	}
 }
 
@@ -782,6 +783,8 @@ RMItem::RMItem() {
 	_nPatterns = 0;
 	_bPal = 0;
 	_nCurSprite = 0;
+
+	_bIsActive = false;
 
 	_hEndPattern = CoroScheduler.createEvent(false, false);
 }
@@ -1933,6 +1936,8 @@ RMLocation::RMLocation() {
 	_nItems = 0;
 	_items = NULL;
 	_buf = NULL;
+	_prevScroll.set(-1, -1);
+	_prevFixedScroll.set(-1, -1);
 }
 
 
@@ -1967,11 +1972,8 @@ bool RMLocation::load(const char *lpszFileName) {
  * @returns     True if succeeded OK, false in case of error.
  */
 bool RMLocation::load(Common::File &file) {
-	int size;
 	bool bRet;
 
-	// Get the file size
-	size = file.size();
 	file.seek(0);
 
 	RMFileStreamSlow fs;
@@ -2126,6 +2128,8 @@ bool RMLocation::loadLOX(RMDataStream &ds) {
  */
 void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
+		bool priorTracking;
+		bool hasChanges;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2137,8 +2141,20 @@ void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 	prim->setDst(_fixedScroll);
 
+	// Check whether dirty rects are being tracked, and if there are changes, leave tracking
+	// turned on so a dirty rect will be added for the entire background
+	_ctx->priorTracking = bigBuf.getTrackDirtyRects();
+	_ctx->hasChanges = (_prevScroll != _curScroll) || (_prevFixedScroll != _fixedScroll);
+	bigBuf.setTrackDirtyRects(_ctx->priorTracking && _ctx->hasChanges);
+
 	// Invoke the drawing method fo the image class, which will draw the location background
 	CORO_INVOKE_2(_buf->draw, bigBuf, prim);
+
+	if (_ctx->hasChanges) {
+		_prevScroll = _curScroll;
+		_prevFixedScroll = _fixedScroll;
+	}
+	bigBuf.setTrackDirtyRects(_ctx->priorTracking);
 
 	CORO_END_CODE;
 }

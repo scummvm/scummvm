@@ -623,8 +623,9 @@ Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
 	if (!GLOBALS._gfxEngine)
 		return Common::kUnknownError;
 
+	RMGfxTargetBuffer &bigBuf = *GLOBALS._gfxEngine;
 	RMSnapshot s;
-	s.grabScreenshot(*GLOBALS._gfxEngine, 4, _curThumbnail);
+	s.grabScreenshot(bigBuf, 4, _curThumbnail);
 
 	GLOBALS._gfxEngine->saveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
 	return Common::kNoError;

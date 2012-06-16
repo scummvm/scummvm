@@ -40,7 +40,6 @@ namespace Tony {
 \****************************************************************************/
 
 RMWindow::RMWindow() {
-
 }
 
 RMWindow::~RMWindow() {
@@ -61,6 +60,7 @@ void RMWindow::init() {
 	_bGrabScreenshot = false;
 	_bGrabThumbnail = false;
 	_bGrabMovie = false;
+	_wiping = false;
 }
 
 /**
@@ -108,13 +108,29 @@ void RMWindow::wipeEffect(Common::Rect &rcBoundEllipse) {
 	}
 }
 
-void RMWindow::getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
+void RMWindow::getNewFrame(RMGfxTargetBuffer &bigBuf, Common::Rect *rcBoundEllipse) {
+	// Get a pointer to the bytes of the source buffer
+	byte *lpBuf = bigBuf;
+
 	if (rcBoundEllipse != NULL) {
 		// Circular wipe effect
 		getNewFrameWipe(lpBuf, *rcBoundEllipse);
-	} else {
-		// Standard screen copy
+		_wiping = true;
+	} else if (_wiping) {
+		// Just finished a wiping effect, so copy the full screen
 		g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
+		_wiping = false;
+
+	} else {
+		// Standard screen copy - iterate through the dirty rects
+		Common::List<Common::Rect> dirtyRects = bigBuf.getDirtyRects();
+		Common::List<Common::Rect>::iterator i;
+
+		for (i = dirtyRects.begin(); i != dirtyRects.end(); ++i) {
+			Common::Rect &r = *i;
+			const byte *lpSrc = lpBuf + (RM_SX * 2) * r.top + (r.left * 2);
+			g_system->copyRectToScreen(lpSrc, RM_SX * 2, r.left, r.top, r.width(), r.height());
+		}
 	}
 
 	if (_bGrabThumbnail) {
@@ -124,6 +140,9 @@ void RMWindow::getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
 		s.grabScreenshot(lpBuf, 4, _wThumbBuf);
 		_bGrabThumbnail = false;
 	}
+
+	// Clear the dirty rect list
+	bigBuf.clearDirtyRects();
 }
 
 /**
@@ -214,10 +233,7 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	int dimx = RM_SX / dezoom;
 	int dimy = RM_SY / dezoom;
 
-	int u, v, curv;
-
 	uint32 k = 0;
-	int sommar, sommab, sommag;
 	uint16 *cursrc;
 
 	if (lpDestBuf == NULL)
@@ -247,10 +263,11 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 		for (int y = 0; y < dimy; y++) {
 			for (int x = 0; x < dimx; x++) {
 				cursrc = &src[RM_SKIPX + x * dezoom];
+				int sommar, sommab, sommag, curv;
 				sommar = sommab = sommag = 0;
 
-				for (v = 0; v < dezoom; v++) {
-					for (u = 0; u < dezoom; u++) {
+				for (int v = 0; v < dezoom; v++) {
+					for (int u = 0; u < dezoom; u++) {
 						if (lpDestBuf == NULL)
 							curv = -v;
 						else

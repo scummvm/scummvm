@@ -109,8 +109,8 @@ public:
 	void enableMouse(void);
 	void disableMouse(void);
 
-	operator byte *() {
-		return (byte *)_bigBuf;
+	operator RMGfxTargetBuffer &() {
+		return _bigBuf;
 	}
 	RMInput &getInput() {
 		return _input;
