@@ -131,7 +131,7 @@ void LoadChangedHotspot(Common::InSaveFile *f) {
 
 
 /**
- * @defgroup Classes required for custom functions
+ * Classes required for custom functions
  *
  * Tony (To Move him)     -> You can do MPAL through the animation? I really think so
  *
@@ -139,6 +139,7 @@ void LoadChangedHotspot(Common::InSaveFile *f) {
  * ChangeLocation -> theEngine.ChangeLocation()
  * AddInventory -> theEngine.AddInventory()
 */
+
 void MCharResetCodes(void) {
 	for (int i = 0; i < 10; i++)
 		GLOBALS._mCharacter[i]._item = GLOBALS._loc->getItemFromCode(GLOBALS._mCharacter[i]._code);

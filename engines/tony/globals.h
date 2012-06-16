@@ -253,8 +253,8 @@ public:
 
 	/**
 	 * @defgroup MPAL variables
-	 *
-	*/
+	 */
+	//@{
 	uint32                  _mpalError;
 	LPITEMIRQFUNCTION       _lpiifCustom;
 	LPLPCUSTOMFUNCTION      _lplpFunctions;
@@ -292,6 +292,8 @@ public:
 	uint32                  _nExecutingDialog;
 	uint32                  _nExecutingChoice;
 	uint32                  _nSelectedChoice;
+
+	//@}
 };
 
 } // End of namespace Tony

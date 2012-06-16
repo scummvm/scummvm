@@ -187,6 +187,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  *
  * The following are defines used for simplifying calling the mpalQuery variants
  */
+//@{
 
 /**
  * Gets the current version of MPAL
@@ -386,11 +387,12 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryDoDialog(nDialog,nGroup)               \
         mpalQueryDWORD(MPQ_DO_DIALOG, (uint32)(nDialog),(uint32)(nGroup))
 
+//@}
 
 /**
  * @defgroup Functions exported to the main game
  */
-
+//@{
 
 /**
  * Initializes the MPAL library, and opens an .MPC file, which will be 'used for all queries
@@ -525,6 +527,8 @@ void lockVar(void);
  * Unlocks variables after use
  */
 void unlockVar(void);
+
+//@}
 
 } // end of namespace MPAL
 

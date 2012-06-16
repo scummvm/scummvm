@@ -1395,6 +1395,7 @@ bool doSelection(uint32 i, uint32 dwData) {
 /**
  * @defgroup Exported functions
  */
+//@{
 
 /**
  * Initialises the MPAL library and opens the .MPC file, which will be used for all queries.
@@ -2917,6 +2918,8 @@ void mpalDumpDialogs(void) {
 
 	unlockDialogs();
 }
+
+//@}
 
 } // end of namespace MPAL
 

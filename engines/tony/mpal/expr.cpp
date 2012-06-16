@@ -42,6 +42,7 @@ namespace MPAL {
 /**
  * @defgroup Mathamatical operations
  */
+//@{
 
 #define OP_MUL     ((1  << 4) | 0)
 #define OP_DIV     ((1  << 4) | 1)
@@ -73,9 +74,12 @@ enum ExprListTypes {
 	ELT_PARENTH2 = 4
 };
 
+//@}
+
 /**
  * @defgroup Structures
  */
+//@{
 
 /**
  * Mathamatical framework to manage operations
@@ -96,6 +100,7 @@ typedef struct {
 } EXPRESSION;
 typedef EXPRESSION *LPEXPRESSION;
 
+//@}
 
 /**
  * Duplicate a mathematical expression.

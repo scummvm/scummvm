@@ -517,6 +517,7 @@ static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation)
 /**
  * @defgroup Exported functions
  */
+//@{
 
 /**
  * Reads and interprets the MPC file, and create structures for various directives 
@@ -795,6 +796,8 @@ void FreeMpc() {
 		globalUnlock(GLOBALS._hScripts);
 	}
 }
+
+//@}
 
 } // end of namespace MPAL
 
