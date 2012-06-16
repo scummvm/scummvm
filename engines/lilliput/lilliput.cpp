@@ -2050,11 +2050,10 @@ void LilliputEngine::sub131B2(Common::Point pos, bool &forceReturnFl) {
 			if (_byte12FCE)
 				_byte16F07_menuId = 3;
 
+			forceReturnFl = true;
 			return;
 		}
 	}
-	forceReturnFl = true;
-	return;
 }
 
 void LilliputEngine::checkInterfaceHotspots(bool &forceReturnFl) {
