@@ -303,7 +303,7 @@ void OSystem_PSP::warpMouse(int x, int y) {
 	_cursor.setXY(x, y);
 }
 
-void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
@@ -320,7 +320,7 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	_cursor.setSizeAndScummvmPixelFormat(w, h, format);
 	_cursor.setHotspot(hotspotX, hotspotY);
 	_cursor.clearKeyColor();
-	_cursor.copyFromArray(buf);
+	_cursor.copyFromArray((const byte *)buf);
 }
 
 bool OSystem_PSP::pollEvent(Common::Event &event) {

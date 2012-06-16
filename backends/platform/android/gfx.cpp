@@ -685,7 +685,7 @@ bool OSystem_Android::showMouse(bool visible) {
 	return true;
 }
 
-void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
+void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 										int hotspotX, int hotspotY,
 										uint32 keycolor, bool dontScale,
 										const Graphics::PixelFormat *format) {
@@ -741,7 +741,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 		byte *tmp = new byte[pitch * h];
 
 		// meh, a 16bit cursor without alpha bits... this is so silly
-		if (!crossBlit(tmp, buf, pitch, w * 2, w, h,
+		if (!crossBlit(tmp, (const byte *)buf, pitch, w * 2, w, h,
 						_mouse_texture->getPixelFormat(),
 						*format)) {
 			LOGE("crossblit failed");

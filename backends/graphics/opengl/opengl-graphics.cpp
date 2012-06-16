@@ -591,7 +591,7 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 	setInternalMousePosition(scaledX, scaledY);
 }
 
-void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (format)
 		_cursorFormat = *format;

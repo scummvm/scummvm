@@ -580,7 +580,7 @@ bool OSystem_DS::showMouse(bool visible) {
 void OSystem_DS::warpMouse(int x, int y) {
 }
 
-void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	if ((w > 0) && (w < 64) && (h > 0) && (h < 64)) {
 		memcpy(_cursorImage, buf, w * h);
 		_cursorW = w;

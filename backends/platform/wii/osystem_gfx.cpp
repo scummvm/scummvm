@@ -643,7 +643,7 @@ void OSystem_Wii::warpMouse(int x, int y) {
 	_mouseY = y;
 }
 
-void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
+void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 									int hotspotY, uint32 keycolor,
 									bool dontScale,
 									const Graphics::PixelFormat *format) {
@@ -686,7 +686,7 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 		tmpBuf = true;
 
 	if (!tmpBuf) {
-		gfx_tex_convert(&_texMouse, buf);
+		gfx_tex_convert(&_texMouse, (const byte *)buf);
 	} else {
 		u8 bpp = _texMouse.bpp >> 3;
 		byte *tmp = (byte *) malloc(tw * th * bpp);
@@ -703,7 +703,7 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 
 #ifdef USE_RGB_COLOR
 		if (bpp > 1) {
-			if (!Graphics::crossBlit(tmp, buf,
+			if (!Graphics::crossBlit(tmp, (const byte *)buf,
 										tw * _pfRGB3444.bytesPerPixel,
 										w * _pfCursor.bytesPerPixel,
 										tw, th, _pfRGB3444, _pfCursor)) {
@@ -727,10 +727,10 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 		} else {
 #endif
 			byte *dst = tmp;
-
+			const byte *src = (const byte *)buf;
 			do {
-				memcpy(dst, buf, w * bpp);
-				buf += w * bpp;
+				memcpy(dst, src, w * bpp);
+				src += w * bpp;
 				dst += tw * bpp;
 			} while (--h);
 #ifdef USE_RGB_COLOR
