@@ -33,6 +33,7 @@
 #include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BSurface.h"
 #include "engines/wintermute/Base/BImage.h"
+#include "engines/wintermute/persistent.h"
 #include "video/video_decoder.h"
 #include "common/stream.h"
 
@@ -49,7 +50,7 @@ private:
 	Video::RewindableVideoDecoder *_theoraDecoder;
 	Graphics::Surface _surface;
 public:
-	//DECLARE_PERSISTENT(CVidTheoraPlayer, CBBase);
+	DECLARE_PERSISTENT(CVidTheoraPlayer, CBBase);
 
 	CVidTheoraPlayer(CBGame *inGame);
 	virtual ~CVidTheoraPlayer(void);

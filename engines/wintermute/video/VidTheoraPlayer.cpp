@@ -29,6 +29,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/video/VidTheoraPlayer.h"
+#include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BSurfaceSDL.h"
@@ -41,7 +42,7 @@
 
 namespace WinterMute {
 
-//IMPLEMENT_PERSISTENT(CVidTheoraPlayer, false);
+IMPLEMENT_PERSISTENT(CVidTheoraPlayer, false);
 
 //////////////////////////////////////////////////////////////////////////
 CVidTheoraPlayer::CVidTheoraPlayer(CBGame *inGame): CBBase(inGame) {
@@ -795,36 +796,35 @@ HRESULT CVidTheoraPlayer::resume() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-/*HRESULT CVidTheoraPlayer::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CVidTheoraPlayer::Persist(CBPersistMgr *PersistMgr) {
 	//CBBase::Persist(PersistMgr);
-#if 0
-	if (PersistMgr->m_Saving) {
-		m_SavedPos = GetMovieTime() * 1000;
-		m_SavedState = m_State;
+
+	if (PersistMgr->_saving) {
+		_savedPos = getMovieTime() * 1000;
+		_savedState = _state;
 	} else {
 		SetDefaults();
 	}
 
 	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(m_SavedPos));
-	PersistMgr->Transfer(TMEMBER(m_SavedState));
-	PersistMgr->Transfer(TMEMBER(m_Filename));
-	PersistMgr->Transfer(TMEMBER(m_AlphaFilename));
-	PersistMgr->Transfer(TMEMBER(m_PosX));
-	PersistMgr->Transfer(TMEMBER(m_PosY));
-	PersistMgr->Transfer(TMEMBER(m_PlayZoom));
-	PersistMgr->Transfer(TMEMBER_INT(m_PlaybackType));
-	PersistMgr->Transfer(TMEMBER(m_Looping));
+	PersistMgr->Transfer(TMEMBER(_savedPos));
+	PersistMgr->Transfer(TMEMBER(_savedState));
+	PersistMgr->Transfer(TMEMBER(_filename));
+	PersistMgr->Transfer(TMEMBER(_alphaFilename));
+	PersistMgr->Transfer(TMEMBER(_posX));
+	PersistMgr->Transfer(TMEMBER(_posY));
+	PersistMgr->Transfer(TMEMBER(_playZoom));
+	PersistMgr->Transfer(TMEMBER_INT(_playbackType));
+	PersistMgr->Transfer(TMEMBER(_looping));
 
 	if (PersistMgr->CheckVersion(1, 7, 3)) {
-		PersistMgr->Transfer(TMEMBER(m_Volume));
+		PersistMgr->Transfer(TMEMBER(_volume));
 	} else {
-		m_Volume = 100;
+		_volume = 100;
 	}
-#endif
 	return S_OK;
 }
-*/
+
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::initializeSimple() {
 	if (SUCCEEDED(initialize(_filename))) {
