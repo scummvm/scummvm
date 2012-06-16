@@ -61,6 +61,8 @@
 #include "engines/wintermute/Base/scriptables/SXStore.h"
 #include "engines/wintermute/video/VidPlayer.h"
 #include "engines/wintermute/video/VidTheoraPlayer.h"
+#include "engines/wintermute/wintermute.h"
+#include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/keyboard.h"
@@ -3950,10 +3952,10 @@ bool CBGame::IsSaveSlotUsed(int Slot) {
 	char Filename[MAX_PATH + 1];
 	GetSaveSlotFilename(Slot, Filename);
 
-	Common::SeekableReadStream *File = _fileManager->OpenFile(Filename, false);
+	warning("CBGame::IsSaveSlotUsed(%d) - FIXME, ugly solution", Slot);
+	Common::SeekableReadStream *File = g_wintermute->getSaveFileMan()->openForLoading(Filename);
 	if (!File) return false;
-
-	_fileManager->CloseFile(File);
+	delete File;
 	return true;
 }
 
