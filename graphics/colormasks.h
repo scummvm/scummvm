@@ -59,8 +59,8 @@ The meaning of these is masks is the following:
  To be specific: They pack the masks for two 16 bit pixels at once. The pixels
  are split into "high" and "low" bits, which are then separately interpolated
  and finally re-composed. That way, 2x2 pixels or even 4x2 pixels can
- be interpolated in one go.
-
+ be interpolated in one go. They are also included in 888 and 8888 to make
+ the same functions compatible when interpolating 2 32-bit pixels.
 */
 
 
@@ -239,7 +239,18 @@ struct ColorMasks<888> {
 		kGreenMask = ((1 << kGreenBits) - 1) << kGreenShift,
 		kBlueMask  = ((1 << kBlueBits) - 1) << kBlueShift,
 
-		kRedBlueMask = kRedMask | kBlueMask
+		kRedBlueMask = kRedMask | kBlueMask,
+
+		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift),
+		kLow2Bits   = (3 << kRedShift) | (3 << kGreenShift) | (3 << kBlueShift),
+		kLow3Bits   = (7 << kRedShift) | (7 << kGreenShift) | (7 << kBlueShift),
+		kLow4Bits   = (15 << kRedShift) | (15 << kGreenShift) | (15 << kBlueShift),
+
+		kLowBitsMask = kLowBits,
+		// Prevent mask from including padding byte
+		kHighBitsMask = (~kLowBits) & (kRedMask | kBlueMask | kGreenMask),
+		qLowBitsMask = kLow2Bits,
+		qHighBitsMask = (~kLowBits) & (kRedMask | kBlueMask | kGreenMask)
 	};
 };
 
@@ -263,7 +274,17 @@ struct ColorMasks<8888> {
 		kGreenMask = ((1 << kGreenBits) - 1) << kGreenShift,
 		kBlueMask  = ((1 << kBlueBits) - 1) << kBlueShift,
 
-		kRedBlueMask = kRedMask | kBlueMask
+		kRedBlueMask = kRedMask | kBlueMask,
+
+		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift) | (1 << kAlphaShift),
+		kLow2Bits   = (3 << kRedShift) | (3 << kGreenShift) | (3 << kBlueShift) | (3 << kAlphaShift),
+		kLow3Bits   = (7 << kRedShift) | (7 << kGreenShift) | (7 << kBlueShift) | (7 << kAlphaShift),
+		kLow4Bits   = (15 << kRedShift) | (15 << kGreenShift) | (15 << kBlueShift) | (15 << kAlphaShift),
+
+		kLowBitsMask = kLowBits,
+		kHighBitsMask = ~kLowBits,
+		qLowBitsMask = kLow2Bits,
+		qHighBitsMask = ~kLow2Bits
 	};
 };
 
