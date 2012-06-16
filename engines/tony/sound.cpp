@@ -44,14 +44,14 @@ namespace Tony {
 #define RELEASE(x)             {if ((x) != NULL) { (x)->release(); x = NULL; }}
 
 /****************************************************************************\
-*       Metodi per FPSound
+*       Methods for FPSound
 \****************************************************************************/
 
 /****************************************************************************\
 *
 * Function:     FPSound::FPSound();
 *
-* Description:  Costruttore di default. Inizializza gli attributi.
+* Description:  Default constructor. Initializes the attributes.
 *
 \****************************************************************************/
 
@@ -62,12 +62,12 @@ FPSound::FPSound() {
 
 /****************************************************************************\
 *
-* Function:     bool FPSound::Init();
+* Function:     bool FPSound::init();
 *
-* Description:  Inizializza l'oggetto, e prepara tutto il necessario per
-*               creare stream e effetti sonori.
+* Description:  Initializes the object, and prepare everything you need to
+                create streams and sound effects.
 *
-* Return:       True se tutto OK, false in caso di errore.
+* Return:       True if everything's OK, False otherwise.
 *
 \****************************************************************************/
 
@@ -81,7 +81,7 @@ bool FPSound::init() {
 *
 * Function:     FPSound::~FPSound();
 *
-* Description:  Deinizializza l'oggetto, disallocando la memoria.
+* Description:  Destroy the object and free the memory.
 *
 \****************************************************************************/
 
@@ -93,21 +93,12 @@ FPSound::~FPSound() {
 *
 * Function:     bool CreateStream(FPStream** lplpStream);
 *
-* Description:  Alloca un oggetti di tipo FPStream, e ritorna il suo
-*               puntatore dopo averlo inizializzato.
+* Description:  Allocates an object of type FPStream, and return its pointer
 *
-* Input:        FPStream** lplpStream   Conterra' il pointer all'oggetto
-*                                       appena creato.
+* Input:        FPStream** lplpStream   Will contain a pointer to the object
+*                                       you just created.
 *
-* Return:       true se tutto OK, false in caso di errore
-*
-* Note:         L'utilizzo di funzioni del tipo CreateStream(), CreateSfx(),
-*               sono dovute al fatto che i costruttori delle classi FPStream
-*               e FPSfx richiedono che DirectSound sia gia' stato
-*               inzializzato. In questo modo quindi si evitano dei bugs
-*               che si verrebbero a creare se venisse dichiarata un oggetto
-*               di tipo FPStream o FPSfx globale (o cmq prima della
-*               inizializzazione di DirectSound).
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -117,21 +108,16 @@ bool FPSound::createStream(FPStream **lplpStream) {
 	return (*lplpStream != NULL);
 }
 
-
-
 /****************************************************************************\
 *
 * Function:     bool CreateSfx(FPSfx** lplpSfx);
 *
-* Description:  Alloca un oggetti di tipo FPSfx e ritorna il suo
-*               puntatore dopo averlo inizializzato.
+* Description:  Allocates an object of type FpSfx, and return its pointer
 *
-* Input:        FPSfx** lplpSfx         Conterra' il pointer all'oggetto
-*                                       appena creato.
+* Input:        FPSfx** lplpSfx         Will contain a pointer to the object
+*                                       you just created.
 *
-* Return:       true se tutto OK, false in caso di errore
-*
-* Note:         Vedi le note di CreateStream()
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -141,15 +127,13 @@ bool FPSound::createSfx(FPSfx **lplpSfx) {
 	return (*lplpSfx != NULL);
 }
 
-
-
 /****************************************************************************\
 *
-* Function:     void SetMasterVolume(int dwVolume);
+* Function:     void setMasterVolume(int dwVolume);
 *
-* Description:  Setta il volume generale
+* Description:  Set the general volume
 *
-* Input:        int dwVolume          Volume da settare (0-63)
+* Input:        int dwVolume          Volume to set (0-63)
 *
 \****************************************************************************/
 
@@ -160,14 +144,14 @@ void FPSound::setMasterVolume(int dwVolume) {
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(dwVolume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
-
 /****************************************************************************\
 *
-* Function:     void GetMasterVolume(int *lpdwVolume);
+* Function:     void getMasterVolume(int *lpdwVolume);
 *
-* Description:  Richiede il volume generale
+* Description:  Get the general volume
 *
-* Input:        int *lpdwVolume        Variabile che conterra' il volume (0-63)
+* Input:        int *lpdwVolume        Variable that will contain the 
+*                                      volume (0-63)
 *
 \****************************************************************************/
 
@@ -178,17 +162,16 @@ void FPSound::getMasterVolume(int *lpdwVolume) {
 	*lpdwVolume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 63 / Audio::Mixer::kMaxChannelVolume;
 }
 
-
 /****************************************************************************\
-*       Metodi di FPSfx
+*       Methods for FPSfx
 \****************************************************************************/
 
 /****************************************************************************\
 *
 * Function:     FPSfx(bool bSoundOn);
 *
-* Description:  Costruttore di default. *NON* bisogna dichiarare direttamente
-*               un oggetto, ma crearlo piuttosto tramite FPSound::CreateSfx()
+* Description:  Default constructor. Do *NOT* declare an object directly, 
+*               but rather create it using FPSound::CreateSfx()
 *
 \****************************************************************************/
 
@@ -210,9 +193,8 @@ FPSfx::FPSfx(bool bSoundOn) {
 *
 * Function:     ~FPSfx();
 *
-* Description:  Distruttore di default. Si preoccupa anche di fermare il sound
-*                               effect eventualmente in esecuzione, e disallocare la memoria
-*                               da esso occupata.
+* Description:  Default Destructor. It is also stops the sound effect that 
+*               may be currently played, and free the memory it uses.
 *
 \****************************************************************************/
 
@@ -233,17 +215,15 @@ FPSfx::~FPSfx() {
 	//	CloseHandle(hEndOfBuffer);
 }
 
-
 /****************************************************************************\
 *
-* Function:     Release();
+* Function:     release();
 *
-* Description:  Rilascia la memoria dell'oggetto. Deve essere richiamata quando
-*               l'oggetto non serve piu' e **SOLO SE** l'oggetto e' stato
-*               creato con la FPSound::CreateStream().
+* Description:  Releases the memory used by the object.
+*               Must be called when the object is no longer used and 
+*               **ONLY** if the object was created by FPSound::CreateStream()
 *
-* Note:         Eventuali puntatori all'oggetto non sono piu' validi dopo
-*               questa chiamata.
+* Note:         Object pointers are no longer valid after this call.
 *
 \****************************************************************************/
 
@@ -251,19 +231,16 @@ void FPSfx::release() {
 	delete this;
 }
 
-
-
 /****************************************************************************\
 *
 * Function:     bool loadWave(Common::SeekableReadStream *stream);
 *
-* Description:  Apre un file di effetto sonoro e lo carica.
+* Description:  Opens a file and loads a sound effect.
 *
-* Input:        byte *lpBuf            Buffer dove si trova l'sfx
-*               uint32 dwCoded           CODEC da utilizzare per decomprimere
-*                                       i campioni sonori
+* Input:        byte *lpBuf            Buffer containing the Sfx
+*               uint32 dwCodec         CODEC used to uncompress the samples
 *
-* Return:       true se tutto OK, false in caso di errore
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -284,15 +261,14 @@ bool FPSfx::loadWave(Common::SeekableReadStream *stream) {
 
 /****************************************************************************\
 *
-* Function:     bool LoadFile(LPSTR lpszFileName, uint32 dwCodec=FPCODEC_RAW);
+* Function:     bool LoadFile(const char * lpszFileName, uint32 dwCodec=FPCODEC_RAW);
 *
-* Description:  Apre un file di effetto sonoro e lo carica.
+* Description:  Opens a file and loads a sound effect.
 *
-* Input:        LPSTR lpszFile          Nome del file di sfx da aprire
-*               uint32 dwCodec           CODEC da utilizzare per decomprimere
-*                                       i campioni sonori
+* Input:        LPSTR lpszFile         Sfx filename
+*               uint32 dwCodec         CODEC used to uncompress the samples
 *
-* Return:       true se tutto OK, false in caso di errore
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -350,11 +326,11 @@ bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 
 /****************************************************************************\
 *
-* Function:     bool Play();
+* Function:     bool play();
 *
-* Description:  Suona lo sfx caricato.
+* Description:  Play the Sfx in memory.
 *
-* Return:       true se tutto OK, false in caso di errore.
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -392,11 +368,11 @@ bool FPSfx::play() {
 
 /****************************************************************************\
 *
-* Function:     bool Stop(void);
+* Function:     bool stop(void);
 *
-* Description:  Ferma il play dello sfx.
+* Description:  Stop an sfx.
 *
-* Return:       true se tutto OK, false in caso di errore.
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -413,17 +389,15 @@ bool FPSfx::stop() {
 
 /****************************************************************************\
 *
-* Function:     bool SetLoop(bool bLoop);
+* Function:     bool setLoop(bool bLoop);
 *
-* Description:  Attiva o disattiva il loop dello sfx.
+* Description:  Enables or disables the Sfx loop.
 *
-* Input:        bool bLoop              true per attivare il loop, false per
-*                                       disattivarlo
+* Input:        bool bLoop          True to enable the loop, False to disable
 *
-* Note:         Il loop deve essere attivato PRIMA di eseguire il play
-*               dello sfx. Qualsiasi modifica effettuata durante il play
-*               non avra' effetto fino a che lo sfx non viene fermato,
-*               e poi rimesso in play.
+* Note:         The loop must be activated BEFORE the sfx starts playing. 
+*               Any changes made during the play will have no effect until 
+*               the sfx is stopped then played again.
 *
 \****************************************************************************/
 
@@ -440,14 +414,13 @@ void FPSfx::pause(bool bPause) {
 	}
 }
 
-
 /****************************************************************************\
 *
-* Function:     void SetVolume(int dwVolume);
+* Function:     void setVolume(int dwVolume);
 *
-* Description:  Cambia il volume dello sfx
+* Description:  Change the volume of Sfx
 *
-* Input:        int dwVolume            Volume da settare (0-63)
+* Input:        int dwVolume            Volume to be set (0-63)
 *
 \****************************************************************************/
 
@@ -486,10 +459,9 @@ void FPSfx::setVolume(int dwVolume) {
 *
 * Function:     void GetVolume(int *lpdwVolume);
 *
-* Description:  Chiede il volume dello sfx
+* Description:  Gets the Sfx volume
 *
-* Input:        int *lpdwVolume        Variabile in cui verra' inserito
-*                                       il volume corrente
+* Input:        int *lpdwVolume        Will contain the current Sfx volume
 *
 \****************************************************************************/
 
@@ -534,15 +506,15 @@ void FPSfx::soundCheckProcess(CORO_PARAM, const void *param) {
 }
 
 /****************************************************************************\
-*       Metodi di FPStream
+*       Methods for FPStream
 \****************************************************************************/
 
 /****************************************************************************\
 *
 * Function:     FPStream(LPDIRECTSOUND lpDS, bool bSoundOn);
 *
-* Description:  Costruttore di default. *NON* bisogna dichiarare direttamente
-*               un oggetto, ma crearlo piuttosto tramite FPSound::CreateStream()
+* Description:  Default constructor. Do *NOT* declare an object directly, 
+*               but rather create it using FPSound::CreateStream()
 *
 \****************************************************************************/
 
@@ -571,11 +543,10 @@ bool FPStream::createBuffer(int nBufSize) {
 	if (bSoundSupported == false)
 		return true;
 
-	/* Setta le strutture necessarie per la creazione di un secondary buffer
-	   per lo stream lungo esattamente 1 secondo di musica. Attiviamo inoltre
-	   il controllo del volume, in modo da poter abbassare e alzare il volume
-	   della musica indipendentemente da quello generale. Ovviamente si tratta
-	   di un buffer in RAM */
+	/* Set the required structures for the creation of a secondary buffer for the stream containing exactly 1 second of music. 
+	   Also activate the volume control, in order to lower and raise the volume of the music regardless of the general volume. 
+	   Obviously it is a buffer in RAM */
+
 	pcmwf.wBitsPerSample = 16;
 	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
 	pcmwf.wf.nChannels = 2;
@@ -597,9 +568,9 @@ bool FPStream::createBuffer(int nBufSize) {
 	SetVolume(63);
 
 
-	/* Crea il notify per avvertire quando vengono raggiunte le posizioni chiave
-	   all'interno dello stream. Le posizioni chiave si trovano rispettivamente
-	   subito dopo l'inizio e subito dopo la meta' del buffer */
+	/* Create an alert when key positions are reached in the stream. 
+	   Key positions are located, respectively, immediately after 
+	   the start and immediately after the middle of the buffer */
 	err = lpDSBuffer->QueryInterface(IID_IDirectSoundNotify, (void **)&lpDSNotify);
 
 	if (FAILED(err)) {
@@ -633,8 +604,7 @@ bool FPStream::createBuffer(int nBufSize) {
 *
 * Function:     ~FPStream();
 *
-* Description:  Distruttore di default. Richiama anche la CloseFile() se ce
-*               ne e' bisogno.
+* Description:  Default destructor. It calls CloseFile() if needed.
 *
 \****************************************************************************/
 
@@ -681,14 +651,13 @@ FPStream::~FPStream() {
 
 /****************************************************************************\
 *
-* Function:     Release();
+* Function:     release();
 *
-* Description:  Rilascia la memoria dell'oggetto. Deve essere richiamata quando
-*               l'oggetto non serve piu' e **SOLO SE** l'oggetto e' stato
-*               creato con la FPSound::CreateStream().
+* Description:  Releases the memory object. Must be called when the object 
+*               is no longer used and **ONLY** if the object was created by
+*               FPSound::CreateStream().
 *
-* Note:         Eventuali puntatori all'oggetto non sono piu' validi dopo
-*               questa chiamata.
+* Note:         Object pointers are no longer valid after this call.
 *
 \****************************************************************************/
 
@@ -700,15 +669,14 @@ void FPStream::release() {
 
 /****************************************************************************\
 *
-* Function:     bool LoadFile(LPSTREAM lpszFileName, uint32 dwCodec=FPCODEC_RAW);
+* Function:     bool loadFile(const char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
 *
-* Description:  Apre un file di stream.
+* Description:  Opens a file stream.
 *
-* Input:        LPSTR lpszFile          Nome del file di stream da aprire
-*               uint32 dwCodec           CODEC da utilizzare per decomprimere
-*                                       i campioni sonori
+* Input:        LPSTR lpszFile          Filename to be opened
+*               uint32 dwCodec          CODEC to be used to uncompress samples
 *
-* Return:       true se tutto OK, false in caso di errore
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -749,14 +717,13 @@ return true;
 
 /****************************************************************************\
 *
-* Function:     UnloadFile();
+* Function:     unloadFile();
 *
-* Description:  Chiude un file di stream eventualmente aperto. E' necessario
-*               richiamare questa funzione per disallocare la memoria
-*               occupata dallo stream.
+* Description:  Closes a file stream (opened or not). It is necessary to call
+*               this function to free the memory used by the stream.
 *
-* Return:       Il distruttore della classe per sicurezza richiama la
-*               UnloadFile() se non e' stata richiamata esplicitamente.
+* Return:       For safety, the destructor calls unloadFile() if it has not
+*               been mentioned explicitly.
 *
 \****************************************************************************/
 
@@ -766,13 +733,13 @@ bool FPStream::unloadFile() {
 	if (!bSoundSupported || !bFileLoaded)
 		return true;
 
-	/* Chiude gli handle del file di stream */
+	/* Closes the file handle stream */
 	_file.close();
 
 	RELEASE(lpDSNotify);
 	RELEASE(lpDSBuffer);
 
-	/* Si ricorda che non c'e' piu' nessun file in memoria */
+	/* Remember no more file is loaded in memory */
 	bFileLoaded = false;
 #endif
 	return true;
@@ -782,9 +749,9 @@ bool FPStream::unloadFile() {
 *
 * Function:     bool Play();
 *
-* Description:  Suona lo stream caricato.
+* Description:  Play the stream.
 *
-* Return:       true se tutto OK, false in caso di errore.
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -798,7 +765,7 @@ void FPStream::prefetch(void) {
 	if (!bSoundSupported || !bFileLoaded)
 		return;
 
-	/* Alloca un buffer temporaneo */
+	/* Allocates a temporary buffer */
 	lpTempBuffer = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, dwBufferSize / 2);
 	if (lpTempBuffer == NULL)
 		return;
@@ -816,27 +783,27 @@ void FPStream::prefetch(void) {
 		return;
 	}
 
-	/* Posiziona lo stream file all'inizio */
+	/* reset the file position */
 	_file.seek(0);
 
-	/* Riempie il buffer per avere i dati gia' pronti */
+	/* Fills the buffer for the data already ready */
 	if ((err = lpDSBuffer->Lock(0, dwBufferSize / 2, &lpBuf, (uint32 *)&dwHi, NULL, NULL, 0)) != DS_OK) {
 		MessageBox(hwnd, "Cannot lock stream buffer!", "soundLoadStream()", MB_OK);
 		return;
 	}
 
-	/* Decomprime i dati dello stream direttamente dentro il buffer lockato */
+	/* Uncompress the data from the stream directly into the locked buffer */
 	lpCodec->Decompress(hFile, lpBuf, dwBufferSize / 2);
 
-	/* Unlocka il buffer */
+	/* Unlock the buffer */
 	lpDSBuffer->Unlock(lpBuf, dwBufferSize / 2, NULL, NULL);
 
-	/* Crea il thread che fa il play dello stream */
+	/* Create a thread to play the stream */
 	hThreadEnd = CreateEvent(NULL, false, false, NULL);
 	hPlayThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)PlayThread, (void *)this, 0, &dwId);
 	SetThreadPriority(hPlayThread, THREAD_PRIORITY_HIGHEST);
 
-	/* Start il play del buffer DirectSound */
+	/* Start to play the buffer */
 	lpDSBuffer->SetCurrentPosition(0);
 	bIsPlaying = true;
 
@@ -888,7 +855,7 @@ bool FPStream::play() {
 	if (!bSoundSupported || !bFileLoaded)
 		return false;
 
-	/* Alloca un buffer temporaneo */
+	/* Allocate a temporary buffer */
 	lpTempBuffer = (byte *)GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, dwBufferSize / 2);
 	if (lpTempBuffer == NULL)
 		return false;
@@ -906,23 +873,23 @@ bool FPStream::play() {
 		return false;
 	}
 
-	/* Posiziona lo stream file all'inizio */
+	/* Reset the file position */
 	_file.seek(0);
 	lpDSBuffer->Stop();
 	lpDSBuffer->SetCurrentPosition(0);
 
-	/* Riempie il buffer per avere i dati gia' pronti */
+	/* Fills the buffer for the data already ready */
 	if ((err = lpDSBuffer->Lock(0, dwBufferSize / 2, &lpBuf, (uint32 *)&dwHi, NULL, NULL, 0)) != DS_OK) {
 		error("Cannot lock stream buffer!", "soundLoadStream()");
 	}
 
-	/* Decomprime i dati dello stream direttamente dentro il buffer lockato */
+	/* Uncompress the data from the stream directly into the locked buffer */
 	lpCodec->Decompress(hFile, lpBuf, dwBufferSize / 2);
 
-	/* Unlocka il buffer */
+	/* Unlock the buffer */
 	lpDSBuffer->Unlock(lpBuf, dwBufferSize / 2, NULL, NULL);
 
-	/* Crea il thread che fa il play dello stream */
+	/* Create a thread to play the stream */
 	hThreadEnd = CreateEvent(NULL, false, false, NULL);
 	hPlayThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)PlayThread, (void *)this, 0, &dwId);
 	SetThreadPriority(hPlayThread, THREAD_PRIORITY_HIGHEST);
@@ -930,7 +897,7 @@ bool FPStream::play() {
 	SetEvent(hPlayThread_PlayFast);
 
 #if 0
-	/* Start il play del buffer DirectSound */
+	/* Start to play the buffer */
 	lpDSBuffer->SetCurrentPosition(0);
 
 	dspnHot[0].dwOffset = 32;
@@ -958,11 +925,11 @@ bool FPStream::play() {
 
 /****************************************************************************\
 *
-* Function:     bool Stop(bool bSync);
+* Function:     bool stop(bool bSync);
 *
-* Description:  Ferma il play dello stream.
+* Description:  Closes the stream.
 *
-* Return:       true se tutto OK, false in caso di errore.
+* Return:       True is everything is OK, False otherwise
 *
 \****************************************************************************/
 
@@ -984,19 +951,19 @@ bool FPStream::stop(bool bSync) {
 //	 lpDSBuffer->Play(0, 0, 0);
 		return true;
 	} else {
-		/* Ferma il buffer DirectSound */
+		/* Close the DirectSound buffer */
 		lpDSBuffer->Stop();
 
-		/* Avverte il thread che deve uscire e aspetta che si chiuda */
+		/* Notify the thread is should stop */
 		SetEvent(hThreadEnd);
 		WaitForSingleObject(hPlayThread, CORO_INFINITE);
 
-		/* Chiude l'handle del thread e disalloca la memoria temporanea */
+		/* Closes the handle used by the stream and free its memory */
 		CloseHandle(hPlayThread);
 		CloseHandle(hThreadEnd);
 		GlobalFree(lpTempBuffer);
 
-		/* Disalloca e chiude il CODEC */
+		/* Close and free the CODEC */
 		delete lpCodec;
 
 		bIsPlaying = false;
@@ -1027,12 +994,12 @@ void FPStream::waitForSync(FPStream *toplay) {
 
 	WaitForSingleObject(hPlayThread, CORO_INFINITE);
 
-	/* Chiude l'handle del thread e disalloca la memoria temporanea */
+	/* Closes the handle used by the stream and free its memory */
 	CloseHandle(hPlayThread);
 	CloseHandle(hThreadEnd);
 	GlobalFree(lpTempBuffer);
 
-	/* Disalloca e chiude il CODEC */
+	/* Close and free the CODEC */
 	delete lpCodec;
 #endif
 	_bIsPlaying = false;
@@ -1042,7 +1009,7 @@ void FPStream::waitForSync(FPStream *toplay) {
 *
 * Function:     void FPStream::PlayThread();
 *
-* Description:  Thread che si occupa del play dello stream
+* Description:  Thread playing the stream
 *
 \****************************************************************************/
 
@@ -1057,7 +1024,7 @@ void FPStream::playThread(FPStream *This) {
 	bool bPrecache;
 	char buf[1024];
 
-	/* Eventi che segnalano quando bisogna eseguire qualcosa */
+	/* Events that signal when you need to do something */
 	HANDLE hList[5] = { This->hThreadEnd, This->hHot1, This->hHot2, This->hHot3, This->hPlayThread_PlayFast };
 
 	bPrecache = true;
@@ -1069,7 +1036,7 @@ void FPStream::playThread(FPStream *This) {
 				break;
 		}
 
-		/* Decomprime i dati che stanno per essere scritti dentro il buffer temporaneo */
+		/* Uncompresses the data being written into the temporary buffer */
 		if (This->lastVolume == 0)
 			ZeroMemory(This->lpTempBuffer, This->dwBufferSize / 2);
 		else if (bPrecache)
@@ -1077,8 +1044,7 @@ void FPStream::playThread(FPStream *This) {
 
 		bPrecache = false;
 
-		/* Attende il set di un evento. Dato che sono tutti in automatic reset,
-		  non c'e' bisogno di resettarlo dopo */
+		/* Waits for an event. Since they are all in automatic reset, there is no need to reset it after */
 
 //	 uint32 dwBufStatus;
 //	 This->lpDSBuffer->GetStatus(&dwBufStatus);
@@ -1093,15 +1059,15 @@ void FPStream::playThread(FPStream *This) {
 		    sprintf(buf, "CP Play: %u, Write: %u\n", dwPlay, dwWrite);
 		    warning(buf); */
 
-		/* Fa uno switch per stabilire quale evento e' stato settato */
+		/* Make a switch to determine which event has been set */
 		switch (dwResult - WAIT_OBJECT_0) {
 		case 0:
-			/* Bisogna uscire dal thread */
+			/* Must leave the thread */
 			cicla = false;
 			break;
 
 		case 1:
-			/* Bisogna riempire la seconda meta' del buffer */
+			/* Must fill the second half of the buffer */
 //	   if (dwPlay >= This->dspnHot[0].dwOffset && dwPlay <= This->dspnHot[0].dwOffset+1024 )
 		{
 //		   sprintf(buf, "Prima metà buffer: %x\n", This->lpDSBuffer);
@@ -1116,7 +1082,7 @@ void FPStream::playThread(FPStream *This) {
 		break;
 
 		case 2:
-			/* Bisogna riempire la prima meta' del buffer */
+			/* Must fill the first half of the buffer */
 //		 if (dwPlay >= This->dspnHot[1].dwOffset && dwPlay <= This->dspnHot[1].dwOffset+1024 )
 		{
 //			 sprintf(buf, "Seconda metà buffer: %x\n", This->lpDSBuffer);
@@ -1151,7 +1117,7 @@ void FPStream::playThread(FPStream *This) {
 		}
 	}
 
-	/* Ferma il buffer DirectSound */
+	/* Close the DirectSound buffer */
 // sprintf(buf, "Exiting thread. Buffer = %x, MyThread = 0x%x\n", This->lpDSBuffer, GetCurrentThreadId());
 // warning(buf);
 	This->lpDSBuffer->Stop();
@@ -1163,17 +1129,15 @@ void FPStream::playThread(FPStream *This) {
 
 /****************************************************************************\
 *
-* Function:     bool SetLoop(bool bLoop);
+* Function:     bool setLoop(bool bLoop);
 *
-* Description:  Attiva o disattiva il loop dello stream.
+* Description:  Unables or disables stream loop.
 *
-* Input:        bool bLoop              true per attivare il loop, false per
-*                                       disattivarlo
+* Input:        bool bLoop              True enable loop, False disables it
 *
-* Note:         Il loop deve essere attivato PRIMA di eseguire il play
-*               dello stream. Qualsiasi modifica effettuata durante il play
-*               non avra' effetto fino a che lo stream non viene fermato,
-*               e poi rimesso in play.
+* Note:         The loop must be activated BEFORE the stream starts playing. 
+*               Any changes made during the play will have no effect until 
+*               the stream is stopped then played again.
 *
 \****************************************************************************/
 
@@ -1208,8 +1172,7 @@ void FPStream::pause(bool bPause) {
 			bIsPlaying = true;
 			bPaused = false;
 
-			// Trucchetto per risettare il volume secondo le
-			// possibili nuove configurazioni sonore
+			// Trick to reset the volume after a possible new sound configuration
 			SetVolume(lastVolume);
 		}
 	}
@@ -1221,9 +1184,9 @@ void FPStream::pause(bool bPause) {
 *
 * Function:     void SetVolume(int dwVolume);
 *
-* Description:  Cambia il volume dello stream
+* Description:  Change the volume of the stream
 *
-* Input:        int dwVolume            Volume da settare (0-63)
+* Input:        int dwVolume            Volume to be set (0-63)
 *
 \****************************************************************************/
 
@@ -1245,16 +1208,14 @@ void FPStream::setVolume(int dwVolume) {
 #endif
 }
 
-
-
 /****************************************************************************\
 *
 * Function:     void GetVolume(int *lpdwVolume);
 *
-* Description:  Chiede il volume dello stream
+* Description:  Gets the vgolume of the stream
 *
-* Input:        int *lpdwVolume        Variabile in cui verra' inserito
-*                                       il volume corrente
+* Input:        int *lpdwVolume        Variable that will contain the 
+*                                      current volume
 *
 \****************************************************************************/
 
