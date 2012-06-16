@@ -359,6 +359,9 @@ void Inter::allocateVars(uint32 count) {
 }
 
 void Inter::delocateVars() {
+	if (_vm->_game)
+		_vm->_game->deletedVars(_variables);
+
 	delete _variables;
 	_variables = 0;
 }
