@@ -46,6 +46,8 @@ public:
 	void stopComposition();
 	void endComposition();
 
+	void repeatComposition(int32 repCount);
+
 protected:
 	Common::Mutex _mutex;
 
@@ -53,6 +55,8 @@ protected:
 	int8 _compositionSampleCount;
 	int16 _composition[50];
 	int8 _compositionPos;
+
+	int32 _compositionRepCount;
 
 	SoundDesc *_curSoundDesc;
 

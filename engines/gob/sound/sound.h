@@ -63,6 +63,7 @@ public:
 	void blasterPlayComposition(int16 *composition, int16 freqVal,
 			SoundDesc *sndDescs = 0, int8 sndCount = kSoundsCount);
 	void blasterStopComposition();
+	void blasterRepeatComposition(int32 repCount);
 
 	char blasterPlayingSound() const;
 

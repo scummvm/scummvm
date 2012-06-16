@@ -48,6 +48,8 @@ void Inter_LittleRed::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 
 	OPCODEFUNC(0x14, oLittleRed_keyFunc);
+
+	OPCODEFUNC(0x3D, oLittleRed_playComposition);
 }
 
 void Inter_LittleRed::setupOpcodesGob() {
@@ -105,6 +107,12 @@ void Inter_LittleRed::oLittleRed_keyFunc(OpFuncParams &params) {
 			_vm->_util->longDelay(cmd);
 		break;
 	}
+}
+
+void Inter_LittleRed::oLittleRed_playComposition(OpFuncParams &params) {
+	_vm->_sound->blasterRepeatComposition(-1);
+
+	o1_playComposition(params);
 }
 
 } // End of namespace Gob

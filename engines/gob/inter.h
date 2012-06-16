@@ -527,6 +527,7 @@ protected:
 	virtual void setupOpcodesGob();
 
 	void oLittleRed_keyFunc(OpFuncParams &params);
+	void oLittleRed_playComposition(OpFuncParams &params);
 };
 
 class Inter_v3 : public Inter_v2 {
