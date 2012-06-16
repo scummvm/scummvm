@@ -4675,7 +4675,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeAJWorld,
 		kFeaturesAdLib,
 		0, 0, 0
 	},

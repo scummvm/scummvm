@@ -129,7 +129,8 @@ enum GameType {
 	kGameTypeAdi4,
 	kGameTypeAdibou2,
 	kGameTypeAdibou1,
-	kGameTypeLittleRed
+	kGameTypeLittleRed,
+	kGameTypeAJWorld
 };
 
 enum Features {
