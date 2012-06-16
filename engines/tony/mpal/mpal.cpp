@@ -699,38 +699,45 @@ void ActionThread(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		int j, k;
-	CORO_END_CONTEXT(_ctx);
+		LPMPALITEM item;
 
-	const LPMPALITEM item = *(const LPMPALITEM *)param;
+		~CoroContextTag() {
+			if (item) globalDestroy(item);
+		}
+	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS._mpalError = 0;
-	for (_ctx->j = 0; _ctx->j < item->Action[item->dwRes].nCmds; _ctx->j++) {
-		_ctx->k = item->Action[item->dwRes].CmdNum[_ctx->j];
+	// The ActionThread owns the data block pointed to, so we need to make sure it's
+	// freed when the process exits
+	_ctx->item = *(LPMPALITEM *)param;
 
-		if (item->_command[_ctx->k].type == 1) {
+	GLOBALS._mpalError = 0;
+	for (_ctx->j = 0; _ctx->j < _ctx->item->Action[_ctx->item->dwRes].nCmds; _ctx->j++) {
+		_ctx->k = _ctx->item->Action[_ctx->item->dwRes].CmdNum[_ctx->j];
+
+		if (_ctx->item->_command[_ctx->k].type == 1) {
 			// Custom function
 			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Call=%s params=%d,%d,%d,%d",
-				CoroScheduler.getCurrentPID(), GLOBALS._lplpFunctionStrings[item->_command[_ctx->k]._nCf].c_str(),
-				item->_command[_ctx->k]._arg1, item->_command[_ctx->k]._arg2,
-				item->_command[_ctx->k]._arg3, item->_command[_ctx->k]._arg4
+				CoroScheduler.getCurrentPID(), GLOBALS._lplpFunctionStrings[_ctx->item->_command[_ctx->k]._nCf].c_str(),
+				_ctx->item->_command[_ctx->k]._arg1, _ctx->item->_command[_ctx->k]._arg2,
+				_ctx->item->_command[_ctx->k]._arg3, _ctx->item->_command[_ctx->k]._arg4
 			);
 
-			CORO_INVOKE_4(GLOBALS._lplpFunctions[item->_command[_ctx->k]._nCf],
-				item->_command[_ctx->k]._arg1,
-				item->_command[_ctx->k]._arg2,
-				item->_command[_ctx->k]._arg3,
-				item->_command[_ctx->k]._arg4
+			CORO_INVOKE_4(GLOBALS._lplpFunctions[_ctx->item->_command[_ctx->k]._nCf],
+				_ctx->item->_command[_ctx->k]._arg1,
+				_ctx->item->_command[_ctx->k]._arg2,
+				_ctx->item->_command[_ctx->k]._arg3,
+				_ctx->item->_command[_ctx->k]._arg4
 
 			);
-		} else if (item->_command[_ctx->k].type == 2) {
+		} else if (_ctx->item->_command[_ctx->k].type == 2) {
 			// Variable assign
 			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Variable=%s",
-				CoroScheduler.getCurrentPID(), item->_command[_ctx->k].lpszVarName);
+				CoroScheduler.getCurrentPID(), _ctx->item->_command[_ctx->k].lpszVarName);
 
 			lockVar();
-			varSetValue(item->_command[_ctx->k].lpszVarName, evaluateExpression(item->_command[_ctx->k].expr));
+			varSetValue(_ctx->item->_command[_ctx->k].lpszVarName, evaluateExpression(_ctx->item->_command[_ctx->k].expr));
 			unlockVar();
 
 		} else {
@@ -739,7 +746,8 @@ void ActionThread(CORO_PARAM, const void *param) {
 		}
 	}
 
-	globalDestroy(item);
+	globalDestroy(_ctx->item);
+	_ctx->item = NULL;
 	
 	debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d ended", CoroScheduler.getCurrentPID());
 
