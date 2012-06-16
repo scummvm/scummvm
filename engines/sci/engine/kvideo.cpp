@@ -100,7 +100,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
 					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
 				} else {
-					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
+					g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, width, height);
 				}
 
 				if (videoDecoder->hasDirtyPalette())
