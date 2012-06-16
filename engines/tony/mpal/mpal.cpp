@@ -1937,6 +1937,12 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
 		 */
 		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, GLOBALS._hAskChoice, CORO_INFINITE);
 
+		// WORKAROUND: Introduce a single frame delay so that if there are multiple actions running, 
+		// they all have time to be signalled before resetting the event. This fixes a problem where
+		// if you try to use the 'shrimp' on the parrot a second time after trying to first use it 
+		// whilst the parrot was talking, the cursor wouldn't be re-enabled afterwards
+		CORO_SLEEP(1);
+
 		CoroScheduler.resetEvent(GLOBALS._hAskChoice);
 
 		if (GLOBALS._bExecutingDialog)
