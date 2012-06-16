@@ -540,8 +540,8 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	4f580a021eee026f3b4589e17d130d78	-1	All	All	-	-	-	Kirben, sev
 	14d48c95b43ddeb983254cf6c43851f1	-1	nl	All	-	-	-	adutchguy, daniel9
+	3b832f4a90740bf22e9b8ed42ca0128c	-1	gb	All	HE 99	-	-	Reckless
 	d74122362a77ec24525fdd50297dfd82	-1	fr	Mac	-	-	-	ThierryFR
-	3b832f4a90740bf22e9b8ed42ca0128c	-1	gb	Windows	HE 99	-	-	Reckless
 	07b810e37be7489263f7bc7627d4765d	-1	ru	Windows	unenc	Unencrypted	-	sev
 	a336134914eaab4892d35625aa15ad1d	-1	ru	Windows	HE 99	-	-	George Kormendi
 	b5298a5c15ffbe8b381d51ea4e26d35c	-1	de	All	HE 99	-	-	Joachim Eberhard
@@ -632,9 +632,9 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	a095e33061606d231ff37dca4c64c8ac	-1	de	All	HE 99	-	-	Joachim Eberhard
 	898eaa21f79cf8d4f08db856244689ff	66505	en	Windows	HE 99	Updated	-	Joachim Eberhard
 	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
-	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 100	Updated	-	Jonathan
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
-	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 100	-	-	sanguinehearts
+	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 101	Updated	-	Jonathan
+	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 101	-	-	sanguinehearts
 
 	f237bf8a5ef9af78b2a6a4f3901da341	18354	en	All	-	Demo	-	khalek, sev
 	7f945525abcd48015adf1632637a44a1	-1	fr	All	-	Demo	-	Kirben
@@ -776,6 +776,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	f3d55aea441e260e9e9c7d2a187097e0	14337	en	Windows	-	Demo	-	khalek
 	65fa23d6884e8ca23d5d2406d70de7e8	-1	fr	Windows	-	Demo	-	gist974
 	2a446817ffcabfef8716e0c456ecaf81	-1	de	Windows	-	Demo	-	Joachim Eberhard
+	4e859d3ef1e146b41e7d93c35cd6cc62	-1	en	iOS	HE 100	Lite	-	clone2727
 
 PuttTime	Putt-Putt Travels Through Time
 	fcb78ebecab2757264c590890c319cc5	-1	nl	All	HE 85	-	-	adutchguy, daniel9
@@ -840,7 +841,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
 	3de99ef0523f8ca7958faa3afccd035a	-1	us	All	HE 100	Updated	-	Kirben
 	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan
-	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 100	-	-	sanguinehearts
+	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts
 	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727
 
 	53e94115b55dd51d4b8ff0871aa1df1e	20103	en	All	-	Demo	-	khalek, sev

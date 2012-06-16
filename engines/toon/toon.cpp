@@ -100,7 +100,7 @@ void ToonEngine::init() {
 
 	syncSoundSettings();
 
-	_pathFinding = new PathFinding(this);
+	_pathFinding = new PathFinding();
 
 	resources()->openPackage("LOCAL.PAK");
 	resources()->openPackage("ONETIME.PAK");
@@ -168,7 +168,7 @@ void ToonEngine::waitForScriptStep() {
 	// Wait after a specified number of script steps when executing a script
 	// to lower CPU usage
 	if (++_scriptStep >= 40) {
-		g_system->delayMillis(1);
+		_system->delayMillis(1);
 		_scriptStep = 0;
 	}
 }
@@ -1488,7 +1488,7 @@ void ToonEngine::clickEvent() {
 	}
 
 	if (!currentHot) {
-		int32 xx, yy;
+		int16 xx, yy;
 
 		if (_gameState->_inCutaway || _gameState->_inInventory || _gameState->_inCloseUp)
 			return;
@@ -2955,15 +2955,12 @@ Common::String ToonEngine::getSavegameName(int nr) {
 }
 
 bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
 	Common::String savegameDescription;
-	EngineMan.findGame(_gameDescription->gameid, &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
-		dialog->setSaveMode(true);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
 	} else {
@@ -2979,8 +2976,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 		return false; // dialog aborted
 
 	Common::String savegameFile = getSavegameName(savegameId);
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::OutSaveFile *saveFile = saveMan->openForSaving(savegameFile);
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(savegameFile);
 	if (!saveFile)
 		return false;
 
@@ -3052,14 +3048,11 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 }
 
 bool ToonEngine::loadGame(int32 slot) {
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
-	EngineMan.findGame(_gameDescription->gameid, &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
-		dialog->setSaveMode(false);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {
 		savegameId = slot;
@@ -3068,8 +3061,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		return false; // dialog aborted
 
 	Common::String savegameFile = getSavegameName(savegameId);
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *loadFile = saveMan->openForLoading(savegameFile);
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(savegameFile);
 	if (!loadFile)
 		return false;
 

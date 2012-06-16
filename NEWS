@@ -3,14 +3,17 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.5.0 (????-??-??)
  New Games:
+   - Added support for Backyard Baseball 2003.
    - Added support for Blue Force.
    - Added support for Darby the Dragon.
    - Added support for Dreamweb.
+   - Added support for Geisha.
    - Added support for Gregory and the Hot Air Balloon.
    - Added support for Magic Tales: Baba Yaga and the Magic Geese.
    - Added support for Magic Tales: Imo and the King.
    - Added support for Magic Tales: Liam Finds a Story.
    - Added support for Magic Tales: The Little Samurai.
+   - Added support for Once Upon A Time: Little Red Riding Hood
    - Added support for Sleeping Cub's Test of Courage.
    - Added support for Soltys.
    - Added support for The Princess and the Crab.
@@ -27,7 +30,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Engine tab when adding or editing a configuration for a game. In most
      cases, you will have to run each game once or readd them all in ScummVM's
      launcher in order to get the custom options tab.
-   - Improved predicitve dialog look.
+   - Improved predictive dialog look.
    - Various GUI improvements.
 
  SDL ports:
@@ -43,9 +46,15 @@ For a more comprehensive changelog of the latest experimental code, see:
  Cine:
    - Implemented Roland MT-32 output driver.
 
+ Gob:
+   - Fixed a crash in Lost in Time
+   - Rewrote the AdLib player. Enabled the now working MDY player in
+     Fascination and Geisha.
+
  SCUMM:
    - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
    - Added a difficulty selection dialog for Loom FM-TOWNS.
+   - Fixed graphical glitches in HE98 version of Pajama Sam's Lost & Found.
 
  iPhone port:
    - Changed "F5 (menu)" gesture to open up the global main menu instead.

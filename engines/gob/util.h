@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "common/keyboard.h"
+#include "common/events.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -110,6 +111,8 @@ public:
 	bool checkKey(int16 &key);
 	bool keyPressed();
 
+	uint32 getKeyState() const;
+
 	void getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons);
 	void setMousePos(int16 x, int16 y);
 	void waitMouseUp();
@@ -155,6 +158,8 @@ protected:
 	int16 _frameWaitTime;
 	uint32 _startFrameTime;
 
+	uint32 _keyState;
+
 	GobEngine *_vm;
 
 	bool keyBufferEmpty();
@@ -162,6 +167,9 @@ protected:
 	bool getKeyFromBuffer(Common::KeyState &key);
 	int16 translateKey(const Common::KeyState &key);
 	void checkJoystick();
+
+	void keyDown(const Common::Event &event);
+	void keyUp(const Common::Event &event);
 };
 
 } // End of namespace Gob

@@ -140,8 +140,12 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			         ((argv[3].toUint16() & 0xff) << 16) |
 			         ((argv[4].toUint16() & 0xff) <<  8) |
 			          (argv[5].toUint16() & 0xff);
-			if (argc == 8)
-				warning("kDoAudio: Play called with SQ6 extra parameters");
+			if (argc == 8) {
+				// argv[6] is always 1
+				// argv[7] is the contents of global 229 (0xE5)
+				warning("kDoAudio: Play called with SCI2.1 extra parameters: %04x:%04x and %04x:%04x",
+						PRINT_REG(argv[6]), PRINT_REG(argv[7]));
+			}
 		} else {
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
 			return NULL_REG;

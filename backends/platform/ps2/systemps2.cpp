@@ -618,7 +618,7 @@ void OSystem_PS2::warpMouse(int x, int y) {
 	_screen->setMouseXy(x, y);
 }
 
-void OSystem_PS2::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void OSystem_PS2::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	_screen->setMouseOverlay(buf, w, h, hotspot_x, hotspot_y, keycolor);
 }
 

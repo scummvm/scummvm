@@ -328,8 +328,7 @@ void PegasusEngine::runIntro() {
 }
 
 Common::Error PegasusEngine::showLoadDialog() {
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"));
-	slc.setSaveMode(false);
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 
 	Common::String gameId = ConfMan.get("gameid");
 
@@ -355,8 +354,7 @@ Common::Error PegasusEngine::showLoadDialog() {
 }
 
 Common::Error PegasusEngine::showSaveDialog() {
-	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"));
-	slc.setSaveMode(true);
+	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
 
 	Common::String gameId = ConfMan.get("gameid");
 

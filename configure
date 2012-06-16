@@ -835,8 +835,8 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (MacOSX only - optional)
-  --disable-sparkle        disable sparkle automatic update support [MacOSX only - autodetect]
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (Mac OS X only - optional)
+  --disable-sparkle        disable sparkle automatic update support [Mac OS X only - autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)

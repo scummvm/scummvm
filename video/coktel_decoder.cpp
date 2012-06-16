@@ -646,6 +646,21 @@ PreIMDDecoder::~PreIMDDecoder() {
 	close();
 }
 
+bool PreIMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
+	if (!_stream)
+		return false;
+
+	if (!stream->seek(_stream->pos())) {
+		close();
+		return false;
+	}
+
+	delete _stream;
+	_stream = stream;
+
+	return true;
+}
+
 bool PreIMDDecoder::seek(int32 frame, int whence, bool restart) {
 	if (!evaluateSeekFrame(frame, whence))
 		return false;
@@ -838,6 +853,21 @@ IMDDecoder::IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 
 IMDDecoder::~IMDDecoder() {
 	close();
+}
+
+bool IMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
+	if (!_stream)
+		return false;
+
+	if (!stream->seek(_stream->pos())) {
+		close();
+		return false;
+	}
+
+	delete _stream;
+	_stream = stream;
+
+	return true;
 }
 
 bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
@@ -1534,6 +1564,21 @@ VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 
 VMDDecoder::~VMDDecoder() {
 	close();
+}
+
+bool VMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
+	if (!_stream)
+		return false;
+
+	if (!stream->seek(_stream->pos())) {
+		close();
+		return false;
+	}
+
+	delete _stream;
+	_stream = stream;
+
+	return true;
 }
 
 bool VMDDecoder::seek(int32 frame, int whence, bool restart) {

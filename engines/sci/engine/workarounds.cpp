@@ -167,6 +167,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ6,            -1,     0,  0,                "SQ6", "init",           -1,    2, { WORKAROUND_FAKE,   0 } }, // Demo and full version: called when the game starts (demo: room 0, full: room 100)
 	{ GID_SQ6,           100, 64950,  0,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // called when pressing "Start game" in the main menu
 	{ GID_SQ6,            -1, 64964,  0,              "DPath", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // during the game
+	{ GID_TORIN,          -1, 64017,  0,             "oFlags", "clear",          -1,    0, { WORKAROUND_FAKE,   0 } }, // entering Torin's home in the French version
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

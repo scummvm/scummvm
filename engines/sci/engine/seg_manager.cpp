@@ -227,7 +227,7 @@ Object *SegManager::getObject(reg_t pos) const {
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 			if (pos.offset <= scr->getBufSize() && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-			        && RAW_IS_OBJECT(scr->getBuf(pos.offset))) {
+			        && scr->offsetIsObject(pos.offset)) {
 				obj = scr->getObject(pos.offset);
 			}
 		}
@@ -939,7 +939,7 @@ void SegManager::createClassTable() {
 	_resMan->unlockResource(vocab996);
 }
 
-reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {
+reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment) {
 	if (classnr == 0xffff)
 		return NULL_REG;
 
@@ -956,7 +956,7 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 				return NULL_REG;
 			}
 		} else
-			if (caller.segment != the_class->reg.segment)
+			if (callerSegment != the_class->reg.segment)
 				getScript(the_class->reg.segment)->incrementLockers();
 
 		return the_class->reg;
@@ -977,8 +977,7 @@ int SegManager::instantiateScript(int scriptNum) {
 		scr = allocateScript(scriptNum, &segmentId);
 	}
 
-	scr->init(scriptNum, _resMan);
-	scr->load(_resMan);
+	scr->load(scriptNum, _resMan);
 	scr->initializeLocals(this);
 	scr->initializeClasses(this);
 	scr->initializeObjects(this, segmentId);

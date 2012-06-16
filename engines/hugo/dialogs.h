@@ -94,8 +94,8 @@ protected:
 	GUI::PicButtonWidget *_lookButton;
 	GUI::PicButtonWidget *_inventButton;
 
-	Graphics::Surface **arrayBmp;
-	uint16 arraySize;
+	Graphics::Surface **_arrayBmp;
+	uint16 _arraySize;
 };
 
 class EntryDialog : public GUI::Dialog {

@@ -50,6 +50,11 @@ class StaticTextWidget;
  * - Bargon Attack
  * - Lost in Time
  * - The Bizarre Adventures of Woodruff and the Schnibble
+ * - Fascination
+ * - Urban Runner
+ * - Bambou le sauveur de la jungle
+ * - Geisha
+ * - Once Upon A Time: Little Red Riding Hood
  */
 namespace Gob {
 
@@ -123,7 +128,8 @@ enum GameType {
 	kGameTypeAdi2,
 	kGameTypeAdi4,
 	kGameTypeAdibou2,
-	kGameTypeAdibou1
+	kGameTypeAdibou1,
+	kGameTypeLittleRed
 };
 
 enum Features {
@@ -195,6 +201,8 @@ public:
 
 	GobConsole *_console;
 
+	bool _resourceSizeWorkaround;
+
 	Global *_global;
 	Util *_util;
 	DataIO *_dataIO;
@@ -230,6 +238,8 @@ public:
 	bool is800x600() const;
 	bool isTrueColor() const;
 	bool isDemo() const;
+
+	bool hasResourceSizeWorkaround() const;
 
 	bool isCurrentTot(const Common::String &tot) const;
 

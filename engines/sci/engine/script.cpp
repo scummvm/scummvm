@@ -32,23 +32,8 @@
 
 namespace Sci {
 
-Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
-	_nr = 0;
-	_buf = NULL;
-	_bufSize = 0;
-	_scriptSize = 0;
-	_heapSize = 0;
-
-	_synonyms = NULL;
-	_heapStart = NULL;
-	_exportTable = NULL;
-
-	_localsOffset = 0;
-	_localsSegment = 0;
-	_localsBlock = NULL;
-	_localsCount = 0;
-
-	_markedAsDeleted = false;
+Script::Script() : SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
+	freeScript();
 }
 
 Script::~Script() {
@@ -56,34 +41,39 @@ Script::~Script() {
 }
 
 void Script::freeScript() {
+	_nr = 0;
+
 	free(_buf);
 	_buf = NULL;
 	_bufSize = 0;
+	_scriptSize = 0;
+	_heapStart = NULL;
+	_heapSize = 0;
 
-	_objects.clear();
-}
-
-void Script::init(int script_nr, ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-
-	if (!script)
-		error("Script %d not found", script_nr);
+	_exportTable = NULL;
+	_numExports = 0;
+	_synonyms = NULL;
+	_numSynonyms = 0;
 
 	_localsOffset = 0;
+	_localsSegment = 0;
 	_localsBlock = NULL;
 	_localsCount = 0;
 
+	_lockers = 1;
 	_markedAsDeleted = false;
+	_objects.clear();
+}
+
+void Script::load(int script_nr, ResourceManager *resMan) {
+	freeScript();
+
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	if (!script)
+		error("Script %d not found", script_nr);
 
 	_nr = script_nr;
-	_buf = 0;
-	_heapStart = 0;
-
-	_scriptSize = script->size;
-	_bufSize = script->size;
-	_heapSize = 0;
-
-	_lockers = 1;
+	_bufSize = _scriptSize = script->size;
 
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		_bufSize += READ_LE_UINT16(script->data) * 2;
@@ -115,16 +105,18 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 		// scheme. We need an overlaying mechanism, or a mechanism to split script parts
 		// in different segments to handle these. For now, simply stop when such a script
 		// is found.
+		//
+		// Known large SCI 3 scripts are:
+		// Lighthouse: 9, 220, 270, 351, 360, 490, 760, 765, 800
+		// LSL7: 240, 511, 550
+		// Phantasmagoria 2: none (hooray!)
+		// RAMA: 70
+		//
 		// TODO: Remove this once such a mechanism is in place
 		if (script->size > 65535)
 			error("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
 			      "be handled at the moment, thus stopping", script_nr, script->size);
 	}
-}
-
-void Script::load(ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
-	assert(script != 0);
 
 	uint extraLocalsWorkaround = 0;
 	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size == 11140) {
@@ -155,11 +147,6 @@ void Script::load(ResourceManager *resMan) {
 		assert(_bufSize - _scriptSize <= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
 	}
-
-	_exportTable = 0;
-	_numExports = 0;
-	_synonyms = 0;
-	_numSynonyms = 0;
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
@@ -212,7 +199,7 @@ void Script::load(ResourceManager *resMan) {
 			_localsOffset = 0;
 
 		if (_localsOffset + _localsCount * 2 + 1 >= (int)_bufSize) {
-			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, _bufSize);
+			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_bufSize);
 			//_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
 	}
@@ -553,7 +540,7 @@ void Script::initializeClasses(SegManager *segMan) {
 
 	uint16 marker;
 	bool isClass = false;
-	uint16 classpos;
+	uint32 classpos;
 	int16 species = 0;
 
 	while (true) {
@@ -666,7 +653,7 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
-			segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+			segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, 0));
 
 		// If object is instance, get -propDict- from class and set it for this
 		// object. This is needed for ::isMemberOf() to work.
@@ -699,7 +686,7 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 		reg_t reg = make_reg(segmentId, seeker - _buf);
 		Object *obj = scriptObjInit(reg);
 
-		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, 0));
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
 	}
 
@@ -738,7 +725,7 @@ Common::Array<reg_t> Script::listAllDeallocatable(SegmentId segId) const {
 
 Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
-	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
+	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && offsetIsObject(addr.offset)) {
 		const Object *obj = getObject(addr.offset);
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
@@ -772,6 +759,10 @@ Common::Array<reg_t> Script::listObjectReferences() const {
 	}
 
 	return tmp;
+}
+
+bool Script::offsetIsObject(uint16 offset) const {
+	return (READ_SCI11ENDIAN_UINT16((const byte *)_buf + offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER);
 }
 
 } // End of namespace Sci

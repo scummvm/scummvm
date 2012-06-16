@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
 
@@ -32,38 +33,36 @@ void DreamWebEngine::endGame() {
 		return;
 	gettingShot();
 	getRidOfTempText();
-	_volumeTo = 7;
-	_volumeDirection = 1;
+	_sound->volumeChange(7, 1);
 	hangOn(200);
 }
 
 void DreamWebEngine::monkSpeaking() {
 	_roomsSample = 35;
-	loadRoomsSample();
+	_sound->loadRoomsSample(_roomsSample);
 	GraphicsFile graphics;
 	loadGraphicsFile(graphics, "G15");
 	clearWork();
 	showFrame(graphics, 160, 72, 0, 128);	// show monk
 	workToScreen();
-	_volume = 7;
-	_volumeDirection = -1;
-	_volumeTo = hasSpeech() ? 5 : 0;
-	playChannel0(12, 255);
+	_sound->volumeSet(7);
+	_sound->volumeChange(hasSpeech() ? 5 : 0, -1);
+	_sound->playChannel0(12, 255);
 	fadeScreenUps();
 	hangOn(300);
 
 	// TODO: Subtitles+speech mode
 	if (hasSpeech()) {
 		for (int i = 40; i < 48; i++) {
-			loadSpeech('T', 83, 'T', i);
+			_speechLoaded = _sound->loadSpeech('T', 83, 'T', i);
 
-			playChannel1(50 + 12);
+			_sound->playChannel1(62);
 
 			do {
 				waitForVSync();
 				if (_quitRequested)
 					return;
-			} while (_channel1Playing != 255);
+			} while (_sound->isChannel1Playing());
 		}
 	} else {
 		for (int i = 40; i <= 44; i++) {
@@ -83,8 +82,7 @@ void DreamWebEngine::monkSpeaking() {
 		}
 	}
 
-	_volumeDirection = 1;
-	_volumeTo = 7;
+	_sound->volumeChange(7, 1);
 	fadeScreenDowns();
 	hangOn(300);
 	graphics.clear();
@@ -95,8 +93,7 @@ void DreamWebEngine::gettingShot() {
 	clearPalette();
 	loadIntroRoom();
 	fadeScreenUps();
-	_volumeTo = 0;
-	_volumeDirection = -1;
+	_sound->volumeChange(0, -1);
 	runEndSeq();
 	clearBeforeLoad();
 }
@@ -127,14 +124,14 @@ void DreamWebEngine::bibleQuote() {
 		return; // "biblequotearly"
 	}
 
-	cancelCh0();
+	_sound->cancelCh0();
 
 	_lastHardKey = 0;
 }
 
 void DreamWebEngine::hangOne(uint16 delay) {
 	do {
-		vSync();
+		waitForVSync();
 		if (_lastHardKey == 1)
 			return; // "hangonearly"
 	} while	(--delay);
@@ -147,10 +144,9 @@ void DreamWebEngine::intro() {
 	_newLocation = 50;
 	clearPalette();
 	loadIntroRoom();
-	_volume = 7;
-	_volumeDirection = -1;
-	_volumeTo = hasSpeech() ? 4 : 0;
-	playChannel0(12, 255);
+	_sound->volumeSet(7);
+	_sound->volumeChange(hasSpeech() ? 4 : 0, -1);
+	_sound->playChannel0(12, 255);
 	fadeScreenUps();
 	runIntroSeq();
 
@@ -200,13 +196,13 @@ void DreamWebEngine::runIntroSeq() {
 	_getBack = 0;
 
 	do {
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
 
 		spriteUpdate();
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
@@ -216,14 +212,14 @@ void DreamWebEngine::runIntroSeq() {
 		reelsOnScreen();
 		afterIntroRoom();
 		useTimedText();
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
 
 		dumpMap();
 		dumpTimedText();
-		vSync();
+		waitForVSync();
 
 		if (_lastHardKey == 1)
 			break;
@@ -247,18 +243,18 @@ void DreamWebEngine::runEndSeq() {
 	_getBack = 0;
 
 	do {
-		vSync();
+		waitForVSync();
 		spriteUpdate();
-		vSync();
+		waitForVSync();
 		delEverything();
 		printSprites();
 		reelsOnScreen();
 		afterIntroRoom();
 		useTimedText();
-		vSync();
+		waitForVSync();
 		dumpMap();
 		dumpTimedText();
-		vSync();
+		waitForVSync();
 	} while (_getBack != 1 && !_quitRequested);
 }
 
@@ -286,14 +282,14 @@ void DreamWebEngine::set16ColPalette() {
 
 void DreamWebEngine::realCredits() {
 	_roomsSample = 33;
-	loadRoomsSample();
-	_volume = 0;
+	_sound->loadRoomsSample(_roomsSample);
+	_sound->volumeSet(0);
 
 	initGraphics(640, 480, true);
 	hangOn(35);
 
 	showPCX("I01");
-	playChannel0(12, 0);
+	_sound->playChannel0(12, 0);
 
 	hangOne(2);
 
@@ -319,7 +315,7 @@ void DreamWebEngine::realCredits() {
 	}
 
 	showPCX("I02");
-	playChannel0(12, 0);
+	_sound->playChannel0(12, 0);
 	hangOne(2);
 
 	if (_lastHardKey == 1) {
@@ -344,7 +340,7 @@ void DreamWebEngine::realCredits() {
 	}
 
 	showPCX("I03");
-	playChannel0(12, 0);
+	_sound->playChannel0(12, 0);
 	hangOne(2);
 
 	if (_lastHardKey == 1) {
@@ -369,7 +365,7 @@ void DreamWebEngine::realCredits() {
 	}
 
 	showPCX("I04");
-	playChannel0(12, 0);
+	_sound->playChannel0(12, 0);
 	hangOne(2);
 
 	if (_lastHardKey == 1) {
@@ -394,7 +390,7 @@ void DreamWebEngine::realCredits() {
 	}
 
 	showPCX("I05");
-	playChannel0(12, 0);
+	_sound->playChannel0(12, 0);
 	hangOne(2);
 
 	if (_lastHardKey == 1) {
@@ -427,7 +423,7 @@ void DreamWebEngine::realCredits() {
 		return; // "realcreditsearly"
 	}
 
-	playChannel0(13, 0);
+	_sound->playChannel0(13, 0);
 	hangOne(350);
 
 	if (_lastHardKey == 1) {

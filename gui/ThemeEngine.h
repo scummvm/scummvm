@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.12"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.13"
 
 class OSystem;
 
@@ -276,6 +276,11 @@ public:
 	void disable();
 
 	/**
+	 * Query the set up pixel format.
+	 */
+	const Graphics::PixelFormat getPixelFormat() const { return _overlayFormat; }
+
+	/**
 	 * Implementation of the GUI::Theme API. Called when a
 	 * new dialog is opened. Note that the boolean parameter
 	 * meaning has been changed.
@@ -495,9 +500,8 @@ public:
 	 * @param filename File name of the bitmap to load.
 	 * @param hotspotX X Coordinate of the bitmap which does the cursor click.
 	 * @param hotspotY Y Coordinate of the bitmap which does the cursor click.
-	 * @param scale    Scale at which the bitmap is supposed to be used.
 	 */
-	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale);
+	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY);
 
 	/**
 	 * Wrapper for restoring data from the Back Buffer to the screen.
@@ -669,7 +673,6 @@ protected:
 
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
-	int _cursorTargetScale;
 	enum {
 		MAX_CURS_COLORS = 255
 	};

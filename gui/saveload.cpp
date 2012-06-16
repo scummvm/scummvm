@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/system.h"
 
 #include "gui/widgets/list.h"
 #include "gui/message.h"
@@ -40,7 +41,7 @@ enum {
 
 };
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
 	: Dialog("SaveLoadChooser"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
@@ -51,7 +52,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	// Add choice list
 	_list = new GUI::ListWidget(this, "SaveLoadChooser.List");
 	_list->setNumberingMode(GUI::kListNumberingZero);
-	setSaveMode(false);
+	_list->setEditable(saveMode);
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
@@ -74,6 +75,15 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
+}
+
+int SaveLoadChooser::runModalWithCurrentTarget() {
+	const Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 }
 
 int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
@@ -117,8 +127,16 @@ const Common::String &SaveLoadChooser::getResultString() const {
 	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
 }
 
-void SaveLoadChooser::setSaveMode(bool saveMode) {
-	_list->setEditable(saveMode);
+Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
+#if defined(USE_SAVEGAME_TIMESTAMP)
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+	curTime.tm_year += 1900; // fixup year
+	curTime.tm_mon++; // fixup month
+	return Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+#else
+	return Common::String::format("Save %d", slot + 1);
+#endif
 }
 
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

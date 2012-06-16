@@ -87,6 +87,17 @@ RobotDecoder::~RobotDecoder() {
 }
 
 bool RobotDecoder::load(GuiResourceId id) {
+	// TODO: RAMA's robot 1003 cannot be played (shown at the menu screen) - 
+	// its drawn at odd coordinates. SV can't play it either (along with some
+	// others), so it must be some new functionality added in RAMA's robot
+	// videos. Skip it for now.
+	if (g_sci->getGameId() == GID_RAMA && id == 1003)
+		return false;
+	
+	// TODO: The robot video in the Lighthouse demo gets stuck
+	if (g_sci->getGameId() == GID_LIGHTHOUSE && id == 16)
+		return false;
+
 	Common::String fileName = Common::String::format("%d.rbt", id);
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
 

@@ -21,7 +21,6 @@
  */
 
 #include "common/stream.h"
-#include "common/events.h"
 
 #include "graphics/palette.h"
 
@@ -45,6 +44,8 @@ Util::Util(GobEngine *vm) : _vm(vm) {
 	_frameRate      = 12;
 	_frameWaitTime  = 0;
 	_startFrameTime = 0;
+
+	_keyState = 0;
 }
 
 uint32 Util::getTimeKey() {
@@ -116,6 +117,8 @@ void Util::processInput(bool scroll) {
 			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
 			break;
 		case Common::EVENT_KEYDOWN:
+			keyDown(event);
+
 			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_f)
 					_fastMode ^= 1;
@@ -132,6 +135,7 @@ void Util::processInput(bool scroll) {
 			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:
+			keyUp(event);
 			break;
 		default:
 			break;
@@ -574,6 +578,40 @@ Common::String Util::readString(Common::SeekableReadStream &stream, int n) {
 /* NOT IMPLEMENTED */
 void Util::checkJoystick() {
 	_vm->_global->_useJoystick = 0;
+}
+
+uint32 Util::getKeyState() const {
+	return _keyState;
+}
+
+void Util::keyDown(const Common::Event &event) {
+	if      (event.kbd.keycode == Common::KEYCODE_UP)
+		_keyState |= 0x0001;
+	else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+		_keyState |= 0x0002;
+	else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+		_keyState |= 0x0004;
+	else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+		_keyState |= 0x0008;
+	else if (event.kbd.keycode == Common::KEYCODE_SPACE)
+		_keyState |= 0x0020;
+	else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+		_keyState |= 0x0040;
+}
+
+void Util::keyUp(const Common::Event &event) {
+	if      (event.kbd.keycode == Common::KEYCODE_UP)
+		_keyState &= ~0x0001;
+	else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+		_keyState &= ~0x0002;
+	else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+		_keyState &= ~0x0004;
+	else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+		_keyState &= ~0x0008;
+	else if (event.kbd.keycode == Common::KEYCODE_SPACE)
+		_keyState &= ~0x0020;
+	else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+		_keyState &= ~0x0040;
 }
 
 } // End of namespace Gob

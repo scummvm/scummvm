@@ -117,6 +117,15 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 		_cursorAnimDelays[i] = 0;
 	}
 
+	_cursorCount         = 0;
+	_doCursorPalettes    = 0;
+	_cursorPalettes      = 0;
+	_cursorKeyColors     = 0;
+	_cursorPaletteStarts = 0;
+	_cursorPaletteCounts = 0;
+	_cursorHotspotsX     = 0;
+	_cursorHotspotsY     = 0;
+
 	_palLoadData1[0] = 0;
 	_palLoadData1[1] = 17;
 	_palLoadData1[2] = 34;
@@ -134,6 +143,14 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 }
 
 Draw::~Draw() {
+	delete[] _cursorPalettes;
+	delete[] _doCursorPalettes;
+	delete[] _cursorKeyColors;
+	delete[] _cursorPaletteStarts;
+	delete[] _cursorPaletteCounts;
+	delete[] _cursorHotspotsX;
+	delete[] _cursorHotspotsY;
+
 	for (int i = 0; i < kFontCount; i++)
 		delete _fonts[i];
 }

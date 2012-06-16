@@ -156,6 +156,8 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 }
 
 uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
+	if (ch < SPACE)
+		ch = 64;
 	FrameHeader *chFrame = _resMan->fetchFrame(_font, ch - SPACE);
 	uint8 *chData = ((uint8 *)chFrame) + sizeof(FrameHeader);
 	uint8 *dest = sprPtr;

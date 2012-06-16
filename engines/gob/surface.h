@@ -122,6 +122,7 @@ private:
 class Surface {
 public:
 	Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem = 0);
+	Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem);
 	~Surface();
 
 	uint16 getWidth () const;

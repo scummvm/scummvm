@@ -373,6 +373,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" animate_list / al - Shows the current list of objects in kAnimate's draw list (SCI0 - SCI1.1)\n");
 	DebugPrintf(" window_list / wl - Shows a list of all the windows (ports) in the draw list (SCI0 - SCI1.1)\n");
 	DebugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
+	DebugPrintf(" plane_items / pi - Shows a list of all items for a plane (SCI2+)\n");
 	DebugPrintf(" saved_bits - List saved bits on the hunk\n");
 	DebugPrintf(" show_saved_bits - Display saved bits\n");
 	DebugPrintf("\n");
@@ -1214,6 +1215,27 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
 	return Cmd_Exit(0, 0);
+}
+
+// The scripts get IDs ranging from 100->199, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
+//  SAVES and the scripts also use "saves-count + 1" to create a new savedgame slot.
+//  SCI1.1 actually recycles ids, in that case we will currently get "0".
+// This behavior is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
+//  the last-used id for that feature. If we don't assign sticky ids, the feature will overwrite different saves all the
+//  time. And sadly we can't just use the actual filename ids directly, because of the creation method for new slots.
+
+extern void listSavegames(Common::Array<SavegameDesc> &saves);
+
+bool Console::cmdListSaves(int argc, const char **argv) {
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	for (uint i = 0; i < saves.size(); i++) {
+		Common::String filename = g_sci->getSavegameName(saves[i].id);
+		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
+	}
+
+	return true;
 }
 
 bool Console::cmdClassTable(int argc, const char **argv) {

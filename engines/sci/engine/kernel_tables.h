@@ -246,6 +246,20 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 };
 
 #ifdef ENABLE_SCI32
+
+static const SciKernelMapSubEntry kSave_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r)",         NULL },
+	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
+	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r*)",                 NULL },
+	{ SIG_SCI32,           3, MAP_CALL(CheckSaveGame),             ".*",                   NULL },
+	// Subop 4 hasn't been encountered yet
+	{ SIG_SCI32,           5, MAP_CALL(GetSaveFiles),              "rrr",                  NULL },
+	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
+	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
+	{ SIG_SCI32,           8, MAP_CALL(AutoSave),                  "[o0]",                 NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SCI21,           0, MAP_CALL(NewList),                   "",                     NULL },
@@ -338,10 +352,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(EditControl),       SIG_EVERYWHERE,           "[o0][o0]",              NULL,            NULL },
 	{ MAP_CALL(Empty),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                     NULL,            NULL },
-	{ MAP_CALL(FClose),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
-	{ MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
-	{ MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
+	{ "FClose", kFileIOClose,      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+	{ "FGets", kFileIOReadString,  SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
+	{ "FOpen", kFileIOOpen,        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
+	{ "FPuts", kFileIOWriteString, SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
 	{ MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                 kFileIO_subops,  NULL },
 	{ MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            kFindKey_workarounds },
 	{ MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
@@ -555,7 +569,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
 	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
 	{ MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
@@ -564,10 +578,13 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "io(.*)",                NULL,            NULL },
 	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
+	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "roiiiiiiiii",           NULL,            NULL },
+	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -613,9 +630,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SCI2.1 unmapped functions - TODO!
 
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// AddLine - used by Torin's Passage to highlight the chapter buttons
-	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
-	// UpdateLine - used by LSL6
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)

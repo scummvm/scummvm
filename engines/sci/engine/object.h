@@ -223,7 +223,7 @@ public:
 	}
 
 	bool relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize);
-	bool relocateSci3(SegmentId segment, int location, int offset, size_t scriptSize);
+	bool relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize);
 
 	int propertyOffsetToId(SegManager *segMan, int propertyOffset) const;
 
@@ -238,7 +238,7 @@ private:
 	const byte *_baseObj; /**< base + object offset within base */
 	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
 	Common::Array<uint16> _baseMethod; /**< Pointer to the method selector area for this object */
-	uint16 *_propertyOffsetsSci3; /**< This is used to enable relocation of property valuesa in SCI3 */
+	uint32 *_propertyOffsetsSci3; /**< This is used to enable relocation of property valuesa in SCI3 */
 
 	Common::Array<reg_t> _variables;
 	uint16 _methodCount;

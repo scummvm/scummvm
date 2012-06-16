@@ -259,6 +259,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 		warning("kRobot(%d)", subop);
 		break;
 	case 8: // sync
+		//if (false) {	// debug: automatically skip all robot videos
 		if ((uint32)g_sci->_robotDecoder->getCurFrame() !=  g_sci->_robotDecoder->getFrameCount() - 1) {
 			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
 		} else {

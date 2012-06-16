@@ -280,6 +280,18 @@ Surface::Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem) :
 		_ownVidMem = false;
 }
 
+Surface::Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem) :
+	_width(width), _height(height), _bpp(bpp), _vidMem(0) {
+
+	assert((_width > 0) && (_height > 0));
+	assert((_bpp == 1) || (_bpp == 2));
+
+	_vidMem    = new byte[_bpp * _width * _height];
+	_ownVidMem = true;
+
+	memcpy(_vidMem, vidMem, _bpp * _width * _height);
+}
+
 Surface::~Surface() {
 	if (_ownVidMem)
 		delete[] _vidMem;

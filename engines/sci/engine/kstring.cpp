@@ -653,10 +653,16 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 1: // Size
 		return make_reg(0, s->_segMan->getString(argv[1]).size());
 	case 2: { // At (return value at an index)
-		if (argv[1].segment == s->_segMan->getStringSegmentId())
-			return make_reg(0, s->_segMan->lookupString(argv[1])->getRawData()[argv[2].toUint16()]);
-
-		return make_reg(0, s->_segMan->getString(argv[1])[argv[2].toUint16()]);
+		// Note that values are put in bytes to avoid sign extension
+		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
+			SciString *string = s->_segMan->lookupString(argv[1]);
+			byte val = string->getRawData()[argv[2].toUint16()];
+			return make_reg(0, val);
+		} else {
+			Common::String string = s->_segMan->getString(argv[1]);
+			byte val = string[argv[2].toUint16()];
+			return make_reg(0, val);
+		}
 	}
 	case 3: { // Atput (put value at an index)
 		SciString *string = s->_segMan->lookupString(argv[1]);

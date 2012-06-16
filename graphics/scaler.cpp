@@ -167,12 +167,12 @@ void DestroyScalers(){
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	// Spot the case when it can all be done in 1 hit
-	if ((srcPitch == sizeof(OverlayColor) * (uint)width) && (dstPitch == sizeof(OverlayColor) * (uint)width)) {
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width * height);
+	if ((srcPitch == sizeof(uint16) * (uint)width) && (dstPitch == sizeof(uint16) * (uint)width)) {
+		memcpy(dstPtr, srcPtr, sizeof(uint16) * width * height);
 		return;
 	}
 	while (height--) {
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+		memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;
 	}
@@ -207,11 +207,10 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	uint8 *r;
 
 	assert(IS_ALIGNED(dstPtr, 4));
-	assert(sizeof(OverlayColor) == 2);
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 4) {
-			uint32 color = *(((const OverlayColor *)srcPtr) + i);
+			uint32 color = *(((const uint16 *)srcPtr) + i);
 
 			color |= color << 16;
 

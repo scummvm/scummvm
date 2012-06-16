@@ -189,7 +189,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		assert(mobj);
 
-		// Let the object sync custom data
+		// Let the object sync custom data. Scripts are loaded at this point.
 		mobj->saveLoadWithSerializer(s);
 
 		if (type == SEG_TYPE_SCRIPT) {
@@ -199,9 +199,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			if (s.isLoading()) {
 				// Hook the script up in the script->segment map
 				_scriptSegMap[scr->getScriptNumber()] = i;
-
-				// Now, load the script itself
-				scr->load(g_sci->getResMan());
 
 				ObjMap objects = scr->getObjectMap();
 				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
@@ -467,7 +464,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 				break;
 		} while (1);
 
- 	} else {
+ 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
 		// Strings in SCI1.1 come after the object instances
 		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 
@@ -477,6 +474,8 @@ void Script::syncStringHeap(Common::Serializer &s) {
 
 		// Now, sync everything till the end of the buffer
 		s.syncBytes(buf, _heapSize - (buf - _heapStart));
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		warning("TODO: syncStringHeap(): Implement SCI3 variant");
 	}
 }
 
@@ -484,7 +483,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_nr);
 
 	if (s.isLoading())
-		init(_nr, g_sci->getResMan());
+		load(_nr, g_sci->getResMan());
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _bufSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _scriptSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _heapSize

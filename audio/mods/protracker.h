@@ -25,6 +25,7 @@
  * Sound decoder used in engines:
  *  - agos
  *  - parallaction
+ *  - gob
  */
 
 #ifndef AUDIO_MODS_PROTRACKER_H

@@ -34,7 +34,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
 		kGameTypeGob1,
-		kFeaturesEGA,
+		kFeaturesEGA | kFeaturesAdLib,
 		0, 0, 0
 	},
 	{
@@ -48,7 +48,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
 		kGameTypeGob1,
-		kFeaturesEGA,
+		kFeaturesEGA | kFeaturesAdLib,
 		0, 0, 0
 	},
 	{ // Supplied by Theruler76 in bug report #1201233
@@ -1615,7 +1615,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1629,7 +1629,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1643,7 +1643,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1657,7 +1657,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1671,7 +1671,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1689,7 +1689,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesNone,
 		0, 0, 0
 	},
@@ -1703,7 +1703,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1717,7 +1717,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1731,7 +1731,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1745,7 +1745,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1759,7 +1759,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1773,7 +1773,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1787,7 +1787,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1801,7 +1801,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1815,7 +1815,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},
@@ -1829,7 +1829,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
-		kGameTypeGob2,
+		kGameTypeLittleRed,
 		kFeaturesAdLib | kFeaturesEGA,
 		0, 0, 0
 	},

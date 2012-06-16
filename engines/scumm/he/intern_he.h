@@ -187,6 +187,8 @@ public:
 
 	Wiz *_wiz;
 
+	virtual int setupStringArray(int size);
+
 protected:
 	virtual void setupOpcodes();
 
@@ -201,7 +203,6 @@ protected:
 	virtual void clearDrawQueues();
 
 	int getStringCharWidth(byte chr);
-	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
 	void adjustRect(Common::Rect &rect);
 
@@ -258,6 +259,9 @@ public:
 
 	virtual void resetScumm();
 
+	virtual byte *getStringAddress(ResId idx);
+	virtual int setupStringArray(int size);
+
 protected:
 	virtual void setupOpcodes();
 
@@ -265,7 +269,6 @@ protected:
 	virtual void resetScummVars();
 	virtual void readArrayFromIndexFile();
 
-	virtual byte *getStringAddress(ResId idx);
 	virtual void readMAXS(int blockSize);
 
 	virtual void redrawBGAreas();
@@ -280,7 +283,6 @@ protected:
 	void copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
 					int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end);
 	void copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num);
-	virtual int setupStringArray(int size);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int32 resID);
 

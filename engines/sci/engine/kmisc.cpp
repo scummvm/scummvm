@@ -371,6 +371,8 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	// Anything below that makes Phantasmagoria awfully sluggish, so we're
 	// setting everything to 500, which makes the game playable.
 
+	setting.toLowercase();
+
 	if (setting == "videospeed") {
 		s->_segMan->strcpy(data, "500");
 	} else if (setting == "cpu") {
@@ -379,6 +381,19 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(data, "586");
 	} else if (setting == "cpuspeed") {
 		s->_segMan->strcpy(data, "500");
+	} else if (setting == "language") {
+		Common::String languageId = Common::String::format("%d", g_sci->getSciLanguage());
+		s->_segMan->strcpy(data, languageId.c_str());
+	} else if (setting == "torindebug") {
+		// Used to enable the debug mode in Torin's Passage (French).
+		// If true, the debug mode is enabled.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "leakdump") {
+		// An unknown setting in LSL7. Likely used for debugging.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "startroom") {
+		// Debug setting in LSL7, specifies the room to start from.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
@@ -386,20 +401,22 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	return argv[1];
 }
 
+// Likely modelled after the Windows 3.1 function GetPrivateProfileInt:
+// http://msdn.microsoft.com/en-us/library/windows/desktop/ms724345%28v=vs.85%29.aspx
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
-	if (category != "config")
-		error("GetSierraProfileInt: category isn't 'config', it's '%s'", category.c_str());
-
+	category.toLowercase();
 	Common::String setting = s->_segMan->getString(argv[1]);
-	if (setting != "videospeed")
-		error("GetSierraProfileInt: setting isn't 'videospeed', it's '%s'", setting.c_str());
+	setting.toLowercase();
+	// The third parameter is the default value returned if the configuration key is missing
 
-	// The game scripts pass 425 as the third parameter for some unknown reason,
-	// as after the call they compare the result to 425 anyway...
+	if (category == "config" && setting == "videospeed") {
+		// We return the same fake value for videospeed as with kGetConfig
+		return make_reg(0, 500);
+	}
 
-	// We return the same fake value for videospeed as with kGetConfig
-	return make_reg(0, 500);
+	warning("kGetSierraProfileInt: Returning default value %d for unknown setting %s.%s", argv[2].toSint16(), category.c_str(), setting.c_str());
+	return argv[2];
 }
 
 #endif

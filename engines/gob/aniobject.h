@@ -61,9 +61,9 @@ public:
 	void setMode(Mode mode);
 
 	/** Set the current position to the animation's default. */
-	void setPosition();
+	virtual void setPosition();
 	/** Set the current position. */
-	void setPosition(int16 x, int16 y);
+	virtual void setPosition(int16 x, int16 y);
 
 	/** Return the current position. */
 	void getPosition(int16 &x, int16 &y) const;
@@ -84,6 +84,9 @@ public:
 	/** Rewind the current animation to the first frame. */
 	void rewind();
 
+	/** Set the animation to a specific frame. */
+	void setFrame(uint16 frame);
+
 	/** Return the current animation number. */
 	uint16 getAnimation() const;
 	/** Return the current frame number. */
@@ -93,9 +96,9 @@ public:
 	bool lastFrame() const;
 
 	/** Draw the current frame onto the surface and return the affected rectangle. */
-	void draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	virtual bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 	/** Draw the current frame from the surface and return the affected rectangle. */
-	void clear(Surface &dest, int16 &left , int16 &top, int16 &right, int16 &bottom);
+	virtual bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	/** Advance the animation to the next frame. */
 	virtual void advance();
@@ -123,8 +126,8 @@ private:
 	int16 _backgroundRight;  ///< The right position of the saved background.
 	int16 _backgroundBottom; ///< The bottom position of the saved background.
 
-	void drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
-	void drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 };
 
 } // End of namespace Gob

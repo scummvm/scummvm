@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -298,7 +299,7 @@ void DreamWebEngine::doDoor(Sprite *sprite, SetObject *objData, Common::Rect che
 				soundIndex = 13;
 			else
 				soundIndex = 0;
-			playChannel1(soundIndex);
+			_sound->playChannel1(soundIndex);
 		}
 		if (objData->frames[sprite->animFrame] == 255)
 			--sprite->animFrame;
@@ -315,7 +316,7 @@ void DreamWebEngine::doDoor(Sprite *sprite, SetObject *objData, Common::Rect che
 				soundIndex = 13;
 			else
 				soundIndex = 1;
-			playChannel1(soundIndex);
+			_sound->playChannel1(soundIndex);
 		}
 		if (sprite->animFrame != 0)
 			--sprite->animFrame;
@@ -346,7 +347,7 @@ void DreamWebEngine::lockedDoorway(Sprite *sprite, SetObject *objData) {
 	if (openDoor) {
 
 		if (sprite->animFrame == 1) {
-			playChannel1(0);
+			_sound->playChannel1(0);
 		}
 
 		if (sprite->animFrame == 6)
@@ -367,7 +368,7 @@ void DreamWebEngine::lockedDoorway(Sprite *sprite, SetObject *objData) {
 		// shut door
 
 		if (sprite->animFrame == 5) {
-			playChannel1(1);
+			_sound->playChannel1(1);
 		}
 
 		if (sprite->animFrame != 0)
@@ -505,7 +506,7 @@ void DreamWebEngine::intro1Text() {
 	if (_introCount != 2 && _introCount != 4 && _introCount != 6)
 		return;
 
-	if (hasSpeech() && _channel1Playing != 255) {
+	if (hasSpeech() && _sound->isChannel1Playing()) {
 		_introCount--;
 	} else {
 		if (_introCount == 2)
@@ -578,7 +579,7 @@ void DreamWebEngine::textForEnd() {
 }
 
 void DreamWebEngine::textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
-	if (hasSpeech() && _channel1Playing != 255)
+	if (hasSpeech() && _sound->isChannel1Playing())
 		_introCount--;
 	else
 		setupTimedTemp(textIndex, voiceIndex, x, y, countToTimed, timeCount);
@@ -614,8 +615,7 @@ void DreamWebEngine::textForMonk() {
 	else if (_introCount == 53) {
 		fadeScreenDowns();
 		if (hasSpeech()) {
-			_volumeTo = 7;
-			_volumeDirection = 1;
+			_sound->volumeChange(7, 1);
 		}
 	}
 }
@@ -905,14 +905,14 @@ void DreamWebEngine::soundOnReels(uint16 reelPointer) {
 			continue;
 		_lastSoundReel = r->_reelPointer;
 		if (r->_sample < 64) {
-			playChannel1(r->_sample);
+			_sound->playChannel1(r->_sample);
 			return;
 		}
 		if (r->_sample < 128) {
-			playChannel0(r->_sample & 63, 0);
+			_sound->playChannel0(r->_sample & 63, 0);
 			return;
 		}
-		playChannel0(r->_sample & 63, 255);
+		_sound->playChannel0(r->_sample & 63, 255);
 	}
 
 	if (_lastSoundReel != reelPointer)
@@ -955,9 +955,9 @@ void DreamWebEngine::getRidOfReels() {
 
 void DreamWebEngine::liftNoise(uint8 index) {
 	if (_realLocation == 5 || _realLocation == 21)
-		playChannel1(13);	// hiss noise
+		_sound->playChannel1(13);	// hiss noise
 	else
-		playChannel1(index);
+		_sound->playChannel1(index);
 }
 
 void DreamWebEngine::checkForExit(Sprite *sprite) {

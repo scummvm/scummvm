@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	inter_v2.o \
 	inter_bargon.o \
 	inter_fascin.o \
+	inter_littlered.o \
 	inter_inca2.o \
 	inter_playtoons.o \
 	inter_v3.o \
@@ -80,6 +81,8 @@ MODULE_OBJS := \
 	minigames/geisha/oko.o \
 	minigames/geisha/meter.o \
 	minigames/geisha/diving.o \
+	minigames/geisha/mouth.o \
+	minigames/geisha/submarine.o \
 	minigames/geisha/penetration.o \
 	save/savefile.o \
 	save/savehandler.o \
@@ -101,6 +104,8 @@ MODULE_OBJS := \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \
 	sound/adlib.o \
+	sound/musplayer.o \
+	sound/adlplayer.o \
 	sound/infogrames.o \
 	sound/protracker.o \
 	sound/soundmixer.o \

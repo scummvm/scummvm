@@ -105,7 +105,7 @@ char *ObjectMan::lockText(uint32 textId) {
 	addr += sizeof(Header);
 	if ((textId & ITM_ID) >= _resMan->readUint32(addr)) {
 		warning("ObjectMan::lockText(%d): only %d texts in file", textId & ITM_ID, _resMan->readUint32(addr));
-		textId = 0; // get first line instead
+		return _missingSubTitleStr;
 	}
 	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1) * 4);
 	if (offset == 0) {

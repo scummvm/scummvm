@@ -1002,6 +1002,10 @@ void Inter_v2::o2_openItk() {
 
 void Inter_v2::o2_closeItk() {
 	_vm->_dataIO->closeArchive(false);
+
+	// NOTE: Lost in Time might close a data file without explicitely closing a video in it.
+	//       So we make sure that all open videos are still available.
+		_vm->_vidPlayer->reopenAll();
 }
 
 void Inter_v2::o2_setImdFrontSurf() {
@@ -1244,7 +1248,7 @@ void Inter_v2::o2_checkData(OpFuncParams &params) {
 		file = "EMAP2011.TOT";
 
 	int32 size = -1;
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
+	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(file.c_str()) : SaveLoad::kSaveModeNone;
 	if (mode == SaveLoad::kSaveModeNone) {
 
 		size = _vm->_dataIO->fileSize(file);
@@ -1273,7 +1277,7 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			file, dataVar, size, offset);
 
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(file) : SaveLoad::kSaveModeNone;
 	if (mode == SaveLoad::kSaveModeSave) {
 
 		WRITE_VAR(1, 1);
@@ -1345,7 +1349,7 @@ void Inter_v2::o2_writeData(OpFuncParams &params) {
 
 	WRITE_VAR(1, 1);
 
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(file) : SaveLoad::kSaveModeNone;
 	if (mode == SaveLoad::kSaveModeSave) {
 
 		if (!_vm->_saveLoad->save(file, dataVar, size, offset)) {

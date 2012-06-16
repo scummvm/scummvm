@@ -57,7 +57,7 @@ private:
 	int _lockers; /**< Number of classes and objects that require this script */
 	size_t _scriptSize;
 	size_t _heapSize;
-	uint16 _bufSize;
+	size_t _bufSize;
 
 	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	uint16 _numExports; /**< Number of entries in the exports table */
@@ -89,14 +89,14 @@ public:
 	void syncLocalsBlock(SegManager *segMan);
 	ObjMap &getObjectMap() { return _objects; }
 	const ObjMap &getObjectMap() const { return _objects; }
+	bool offsetIsObject(uint16 offset) const;
 
 public:
 	Script();
 	~Script();
 
 	void freeScript();
-	void init(int script_nr, ResourceManager *resMan);
-	void load(ResourceManager *resMan);
+	void load(int script_nr, ResourceManager *resMan);
 
 	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
 	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);

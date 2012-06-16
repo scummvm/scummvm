@@ -147,7 +147,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		delPointer();
