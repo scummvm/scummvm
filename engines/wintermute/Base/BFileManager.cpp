@@ -43,6 +43,7 @@
 #include "engines/wintermute/dcpackage.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -50,6 +51,7 @@
 #include "common/system.h"
 #include "common/fs.h"
 #include "common/file.h"
+#include "common/savefile.h"
 
 namespace WinterMute {
 
@@ -156,11 +158,23 @@ byte *CBFileManager::ReadWholeFile(const Common::String &Filename, uint32 *Size,
 	return buffer;
 }
 
+Common::SeekableReadStream *CBFileManager::loadSaveGame(const Common::String &filename) {
+	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
+	Common::InSaveFile *file = saveMan->openForLoading(filename);
+	return file;
+}
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::SaveFile(const Common::String &Filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
 	// TODO
 	warning("Implement SaveFile");
+	
+	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
+	Common::OutSaveFile *file = saveMan->openForSaving(Filename);
+	file->write(PrefixBuffer, PrefixSize);
+	file->write(Buffer, BufferSize);
+	file->finalize();
+	delete file;
 #if 0
 	RestoreCurrentDir();
 

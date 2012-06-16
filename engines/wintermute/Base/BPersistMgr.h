@@ -31,6 +31,7 @@
 
 
 #include "engines/wintermute/Base/BBase.h"
+#include "common/stream.h"
 
 namespace WinterMute {
 
@@ -49,15 +50,19 @@ public:
 	uint32 GetDWORD();
 	void PutDWORD(uint32 Val);
 	char *GetString();
-	void PutString(const char *Val);
+	void PutString(const Common::String &Val);
+	float getFloat();
+	void putFloat(float val);
+	double getDouble();
+	void putDouble(double val);
 	void Cleanup();
 	HRESULT InitLoad(const char *Filename);
 	HRESULT InitSave(const char *Desc);
 	HRESULT GetBytes(byte  *Buffer, uint32 Size);
 	HRESULT PutBytes(byte  *Buffer, uint32 Size);
 	uint32 _offset;
-	uint32 _bufferSize;
-	byte *_buffer;
+	//uint32 _bufferSize;
+	//byte *_buffer;
 	bool _saving;
 
 	uint32 _richBufferSize;
@@ -72,7 +77,9 @@ public:
 	HRESULT Transfer(const char *Name, byte *Val);
 	HRESULT Transfer(const char *Name, RECT *Val);
 	HRESULT Transfer(const char *Name, POINT *Val);
+	HRESULT Transfer(const char *Name, const char **Val);
 	HRESULT Transfer(const char *Name, char **Val);
+	HRESULT Transfer(const char *Name, Common::String *val);
 	HRESULT Transfer(const char *Name, Vector2 *Val);
 	HRESULT Transfer(const char *Name, AnsiStringArray &Val);
 	CBPersistMgr(CBGame *inGame = NULL);
@@ -81,7 +88,9 @@ public:
 
 	uint32 _thumbnailDataSize;
 	byte *_thumbnailData;
-
+private:
+	Common::WriteStream *_saveStream;
+	Common::SeekableReadStream *_loadStream;
 };
 
 } // end of namespace WinterMute

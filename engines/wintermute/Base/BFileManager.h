@@ -62,6 +62,7 @@ public:
 	} TPathType;
 	HRESULT AddPath(TPathType Type, const Common::String &path);
 	HRESULT RequestCD(int CD, char *PackageFile, char *Filename);
+	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
 	HRESULT SaveFile(const Common::String &filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
 	byte *ReadWholeFile(const Common::String &filename, uint32 *Size = NULL, bool MustExist = true);
 	CBFileManager(CBGame *inGame = NULL);

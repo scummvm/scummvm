@@ -46,6 +46,7 @@ public:
 
 	virtual Common::Error run();
 
+	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	uint32 randInt(int from, int to);
 private:
 	int init();
