@@ -446,7 +446,7 @@ void Sound::blasterPlay(SoundDesc *sndDesc, int16 repCount,
 }
 
 void Sound::blasterRepeatComposition(int32 repCount) {
-	_blaster->repeatComposition(repCount);;
+	_blaster->repeatComposition(repCount);
 }
 
 void Sound::blasterStop(int16 fadeLength, SoundDesc *sndDesc) {
