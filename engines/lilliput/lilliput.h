@@ -295,7 +295,7 @@ public:
 	void sub1305C(byte index, byte var2);
 	void checkInterfaceHotspots(bool &forceReturnFl);
 	bool isMouseOverHotspot(Common::Point mousePos, Common::Point hotspotPos);
-	void sub131B2(Common::Point pos, bool &forceReturnFl);
+	void checkClickOnCharacter(Common::Point pos, bool &forceReturnFl);
 	void sub131FC(Common::Point pos);
 	void displaySpeechBubbleTail(Common::Point displayPos);
 	void displaySpeechBubbleTailLine(Common::Point pos, int var2);
@@ -348,7 +348,7 @@ public:
 
 	byte _byte16F07_menuId;
 	bool _byte12FCE;
-	int8 _byte129A0;
+	int8 _selectedCharacterId;
 	byte _numCharactersToDisplay;
 	int16 _word10804;
 	bool _shouldQuit;

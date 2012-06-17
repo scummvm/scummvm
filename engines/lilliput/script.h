@@ -186,7 +186,7 @@ private:
 	byte OC_CurrentCharacterVar3Equals1();
 	byte OC_checkCharacterDirection();
 	byte OC_checkLastInterfaceHotspotIndex();
-	byte OC_checkSavedMousePos();
+	byte OC_checkSelectedCharacter();
 	byte OC_sub179AE();
 	byte OC_sub179C2();
 	byte OC_checkFunctionKeyPressed();

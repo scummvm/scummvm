@@ -217,7 +217,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_checkLastInterfaceHotspotIndex();
 		break;
 	case 0x2C:
-		return OC_checkSavedMousePos();
+		return OC_checkSelectedCharacter();
 		break;
 	case 0x2D:
 		return OC_sub179AE();
@@ -600,7 +600,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_CurrentCharacterVar3Equals1", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_checkSavedMousePos", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_checkSelectedCharacter", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179AE", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_checkFunctionKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
@@ -726,7 +726,7 @@ Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& 
 		} else if (val > 1004) { 
 			str = Common::String::format("getValue1(0x%x)", val);
 		} else if (val == 1000) {
-			str = Common::String("_byte129A0");
+			str = Common::String("_selectedCharacterId");
 		} else if (val == 1001) {
 			str = Common::String("characterIndex");
 		} else if (val == 1002) {
@@ -1284,7 +1284,7 @@ int16 LilliputScript::getValue1() {
 
 	switch (curWord) {
 	case 1000:
-		return _vm->_byte129A0;
+		return _vm->_selectedCharacterId;
 	case 1001:
 		return _vm->_currentScriptCharacter;
 	case 1002:
@@ -2026,10 +2026,10 @@ byte LilliputScript::OC_checkLastInterfaceHotspotIndex() {
 	return 0;
 }
 
-byte LilliputScript::OC_checkSavedMousePos() {
-	debugC(1, kDebugScript, "OC_checkSavedMousePos()");
+byte LilliputScript::OC_checkSelectedCharacter() {
+	debugC(1, kDebugScript, "OC_checkSelectedCharacter()");
 
-	if ((_vm->_byte129A0 != -1) || (_vm->_savedMousePosDivided == Common::Point(-1, -1)))
+	if ((_vm->_selectedCharacterId != -1) || (_vm->_savedMousePosDivided == Common::Point(-1, -1)))
 		return 0;
 
 	return 1;
@@ -2038,7 +2038,7 @@ byte LilliputScript::OC_checkSavedMousePos() {
 byte LilliputScript::OC_sub179AE() {
 	debugC(1, kDebugScript, "OC_sub179AE()");
 
-	if (_vm->_byte12FCE || (_vm->_byte129A0 == -1))
+	if (_vm->_byte12FCE || (_vm->_selectedCharacterId == -1))
 		return 0;
 
 	return 1;
