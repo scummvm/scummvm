@@ -114,7 +114,7 @@ typedef LPMPALLOCATION *LPLPMPALLOCATION;
  */
 struct command {
   /*
-   * Types of commands that are recognised
+   * Types of commands that are recognized
    *
    *   #1 -> Custom function call		(ITEM, SCRIPT, DIALOG)
    *   #2 -> Variable assignment		(ITEM, SCRIPT, DIALOG)

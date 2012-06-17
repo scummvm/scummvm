@@ -29,7 +29,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			"tony",
 			0,
 			{
-				// TODO: AdvancedDetector seems to have a problem where it thinks data1.cab is unrecognised.
+				// TODO: AdvancedDetector seems to have a problem where it thinks data1.cab is unrecognized.
 				// Is it perhaps because the Agos engine also has detection entries for data1.cab?
 				{"data1.cab", 0, "ce82907242166bfb594d97bdb68f96d2", 4350},
 				/*{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
