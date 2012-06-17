@@ -167,24 +167,6 @@ Common::ErrorCode TonyEngine::init() {
 	// Allocate space for thumbnails when saving the game
 	_curThumbnail = new uint16[160 * 120];
 
-	// Set up global defaults
-	GLOBALS._bCfgInvLocked = false;
-	GLOBALS._bCfgInvNoScroll = false;
-	GLOBALS._bCfgTimerizedText = true;
-	GLOBALS._bCfgInvUp = false;
-	GLOBALS._bCfgAnni30 = false;
-	GLOBALS._bCfgAntiAlias = false;
-	GLOBALS._bCfgTransparence = true;
-	GLOBALS._bCfgInterTips = true;
-	GLOBALS._bCfgSottotitoli = true;
-	GLOBALS._nCfgTonySpeed = 3;
-	GLOBALS._nCfgTextSpeed = 5;
-	GLOBALS._bCfgDubbing = true;
-	GLOBALS._bCfgMusic = true;
-	GLOBALS._bCfgSFX = true;
-	GLOBALS._nCfgDubbingVolume = 10;
-	GLOBALS._nCfgMusicVolume = 7;
-	GLOBALS._nCfgSFXVolume = 10;
 	_bQuitNow = false;
 
 	return Common::kNoError;

@@ -60,24 +60,7 @@ Globals::Globals() {
 	_bTonyInTexts = false;
 	_bStaticTalk = false;
 	_bPatIrqFreeze = false;
-	_bCfgInvLocked = false;
-	_bCfgInvNoScroll = false;
-	_bCfgTimerizedText = false;
-	_bCfgInvUp = false;
-	_bCfgAnni30 = false;
-	_bCfgAntiAlias = false;
-	_bCfgSottotitoli = false;
-	_bCfgTransparence = false;
-	_bCfgInterTips = false;
-	_bCfgDubbing = false;
-	_bCfgMusic = false;
-	_bCfgSFX = false;
 	_bAlwaysDisplay = false;
-	_nCfgTonySpeed = 0;
-	_nCfgTextSpeed = 0;
-	_nCfgDubbingVolume = 0;
-	_nCfgMusicVolume = 0;
-	_nCfgSFXVolume = 0;
 	_bIdleExited = false;
 	_bSkipSfxNoLoop = false;
 	_bNoBullsEye = false;
@@ -85,7 +68,6 @@ Globals::Globals() {
 	_curSoundEffect = 0;
 	_bFadeOutStop = false;
 
-//	OSystem::MutexRef vdb;
 	Common::fill(&_mut[0], &_mut[10], 0);
 	_bSkipIdle = false;
 	_hSkipIdle = 0;
@@ -143,6 +125,25 @@ Globals::Globals() {
 		Common::fill((byte *)&_mCharacter[i], (byte *)&_mCharacter[i] + sizeof(MCharacterStruct), 0);
 	for (int i = 0; i < 256; ++i)
 		Common::fill((byte *)&_changedHotspot[i], (byte *)&_changedHotspot[i] + sizeof(ChangedHotspotStruct), 0);
+
+	// Set up globals that have explicit initial values
+	_bCfgInvLocked = false;
+	_bCfgInvNoScroll = false;
+	_bCfgTimerizedText = true;
+	_bCfgInvUp = false;
+	_bCfgAnni30 = false;
+	_bCfgAntiAlias = false;
+	_bCfgTransparence = true;
+	_bCfgInterTips = true;
+	_bCfgSottotitoli = true;
+	_nCfgTonySpeed = 3;
+	_nCfgTextSpeed = 5;
+	_bCfgDubbing = true;
+	_bCfgMusic = true;
+	_bCfgSFX = true;
+	_nCfgDubbingVolume = 10;
+	_nCfgMusicVolume = 7;
+	_nCfgSFXVolume = 10;
 }
 
 } // End of namespace Tony
