@@ -497,21 +497,21 @@ void RMGfxEngine::init() {
 	// Create the freeze event
 	_csMainLoop = g_system->createMutex();
 
-	// Initialise the IRQ function for items for MPAL
+	// Initialize the IRQ function for items for MPAL
 	GLOBALS._gfxEngine = this;
 	mpalInstallItemIrq(itemIrq);
 
-	// Initialise the input
+	// Initialize the input
 	_input.init();
 
-	// Initialise the mouse pointer
+	// Initialize the mouse pointer
 	_point.init();
 
-	// Initialise Tony
+	// Initialize Tony
 	_tony.init();
 	_tony.linkToBoxes(&_vm->_theBoxes);
 
-	// Initialise the inventory and the interface
+	// Initialize the inventory and the interface
 	_inv.init();
 	_inter.init();
 

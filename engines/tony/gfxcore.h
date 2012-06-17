@@ -272,7 +272,7 @@ public:
 
 
 /**
- * Task that draws a coloured box
+ * Task that draws a colored box
  */
 class RMGfxBox : public RMGfxTaskSetPrior {
 protected:
@@ -312,7 +312,7 @@ public:
 
 
 /**
- * 16-bit colour source
+ * 16-bit color source
  */
 class RMGfxSourceBuffer16 : public RMGfxSourceBuffer {
 protected:
@@ -358,7 +358,7 @@ public:
 
 
 /**
- * Buffer source with a 256 colour palette
+ * Buffer source with a 256 color palette
  */
 class RMGfxSourceBuffer8 : public RMGfxSourceBufferPal {
 protected:
@@ -378,7 +378,7 @@ public:
 
 
 /**
- * Buffer source with a 256 colour palette, and alpha blending
+ * Buffer source with a 256 color palette, and alpha blending
  */
 class RMGfxSourceBuffer8AB : public RMGfxSourceBuffer8 {
 protected:
@@ -391,7 +391,7 @@ public:
 
 
 /**
- * Buffer source with a 256 colour palette, RLE compressed
+ * Buffer source with a 256 color palette, RLE compressed
  */
 
 class RMGfxSourceBuffer8RLE : public virtual RMGfxSourceBuffer8 {
@@ -528,7 +528,7 @@ public:
 
 
 /**
- * Source buffer with 16 colours
+ * Source buffer with 16 colors
  */
 class RMGfxSourceBuffer4 : public RMGfxSourceBufferPal {
 public:

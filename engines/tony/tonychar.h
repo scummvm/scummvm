@@ -362,7 +362,7 @@ public:
 	static void initStatics();
 	RMTony();
 
-	// Initialise Tony
+	// Initialize Tony
 	void init(void);
 
 	// Free all memory

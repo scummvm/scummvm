@@ -224,7 +224,7 @@ public:
 	// Overloading of the Draw to center the text, if necessary
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Set the base colour
+	// Set the base color
 	void setColor(byte r, byte g, byte b) {
 		_textR = r;
 		_textG = g;

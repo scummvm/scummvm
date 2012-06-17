@@ -334,7 +334,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
  * data of the item.
  * @returns		Pointer to the buffer after the item, or NULL on failure.
  * @remarks		It's necessary that the structure that is passed  has been
- * completely initialised to 0 beforehand.
+ * completely initialized to 0 beforehand.
  */
 static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	byte len;

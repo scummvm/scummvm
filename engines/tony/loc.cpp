@@ -614,7 +614,7 @@ void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
 				_patterns[i].readFromStream(ds, false);
 		}
 
-	// Initialise the current pattern
+	// Initialize the current pattern
 	if (_bInitCurPattern)
 		setPattern(mpalQueryItemPattern(_mpalCode));
 
@@ -2051,11 +2051,11 @@ bool RMLocation::load(RMDataStream &ds) {
 	ds >> dimx >> dimy;
 	_curScroll.set(0, 0);
 
-	// Read the colour mode
+	// Read the color mode
 	ds >> cm;
 	_cmode = (RMColorMode)cm;
 
-	// Initialise the source buffer and read the location
+	// Initialize the source buffer and read the location
 	switch (_cmode)     {
 	case CM_256:
 		_buf = new RMGfxSourceBuffer8;
@@ -2070,7 +2070,7 @@ bool RMLocation::load(RMDataStream &ds) {
 		break;
 	};
 
-	// Initialise the surface, loading the palette if necessary
+	// Initialize the surface, loading the palette if necessary
 	_buf->init(ds, dimx, dimy, true);
 
 	// Check the size of the location
@@ -2117,7 +2117,7 @@ bool RMLocation::loadLOX(RMDataStream &ds) {
 	_cmode = CM_65K;
 	_buf = new RMGfxSourceBuffer16;
 
-	// Initialise the surface, loading in the palette if necessary
+	// Initialize the surface, loading in the palette if necessary
 	_buf->init(ds, dimx, dimy, true);
 
 	// Number of items

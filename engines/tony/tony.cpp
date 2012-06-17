@@ -107,7 +107,7 @@ Common::Error TonyEngine::run() {
 }
 
 /**
- * Initialise the game
+ * Initialize the game
  */
 Common::ErrorCode TonyEngine::init() {
 	if (isCompressed()) {
@@ -135,10 +135,10 @@ Common::ErrorCode TonyEngine::init() {
 	// Reset the scheduler
 	CoroScheduler.reset();
 
-	// Initialise the graphics window
+	// Initialize the graphics window
 	_window.init();
 
-	// Initialise the function list
+	// Initialize the function list
 	Common::fill(_funcList, _funcList + 300, (LPCUSTOMFUNCTION)NULL);
 	initCustomFunctionMap();
 
@@ -151,17 +151,17 @@ Common::ErrorCode TonyEngine::init() {
 	if (!mpalInit("ROASTED.MPC", "ROASTED.MPR", _funcList, _funcListStrings))
 		return Common::kUnknownError;
 
-	// Initialise the update resources
+	// Initialize the update resources
 	_resUpdate.init("ROASTED.MPU");
 
-	// Initialise the music
+	// Initialize the music
 	initMusic();
 
-	// Initialise the voices database
+	// Initialize the voices database
 	if (!openVoiceDatabase())
 		return Common::kReadingFailed;
 
-	// Initialise the boxes
+	// Initialize the boxes
 	_theBoxes.init();
 
 	// Link to the custom graphics engine

@@ -86,7 +86,7 @@ public:
 	// Draw the next frame
 	void doFrame(CORO_PARAM, bool bDrawLocation);
 
-	// Initialises the graphics engine
+	// Initializes the graphics engine
 	void init();
 
 	// Closes the graphics engine

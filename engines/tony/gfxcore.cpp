@@ -204,7 +204,7 @@ bool RMGfxSourceBuffer::clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 
 
 /**
- * Initialises a surface by resource Id
+ * Initializes a surface by resource Id
  *
  * @param resID                 Resource ID
  * @param dimx                  Buffer X dimension
@@ -1870,7 +1870,7 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 }
 
 void RMGfxSourceBuffer16::prepareImage(void) {
-	// Colour space conversion if necessary!
+	// Color space conversion if necessary!
 	int i;
 	uint16 *buf = (uint16 *)_buf;
 

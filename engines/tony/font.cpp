@@ -67,9 +67,9 @@ void DumpFontBMP(const char *filename, const byte *buf, int nChars, int charX, i
 void RMFont::load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID) {
 	_letter = new RMGfxSourceBuffer8RLEByte[nChars];
 
-	// Initialise the fonts
+	// Initialize the fonts
 	for (int i = 0; i < nChars; i++) {
-		// Initialise the buffer with the letters
+		// Initialize the buffer with the letters
 		_letter[i].init(buf + i * (dimx * dimy + 8) + 8, dimx, dimy);
 		_letter[i].loadPaletteWA(palResID);
 	}
@@ -172,7 +172,7 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 	int i;
 	byte pal[768 * 3];
 
-	// Check if we are already on the right colour
+	// Check if we are already on the right color
 	if (_fontR == r1 && _fontG == g1 && _fontB == b1)
 		return;
 
@@ -219,7 +219,7 @@ void RMFontParla::init(void) {
 
 	load(RES_F_PARL, nchars, 20, 20);
 
-	// Initialise the f**king table
+	// Initialize the f**king table
 	_lDefault = 13;
 	_hDefault = 18;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
@@ -1456,7 +1456,7 @@ void RMFontObj::init(void) {
 
 	load(RES_F_OBJ, nchars, 25, 30);
 
-	// Initialise the f**king table
+	// Initialize the f**king table
 	_lDefault = 26;
 	_hDefault = 30;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
@@ -1767,7 +1767,7 @@ void RMText::initStatics() {
 }
 
 RMText::RMText() {
-	// Default colour: white
+	// Default color: white
 	_textR = _textG = _textB = 255;
 
 	// Default length
@@ -1804,7 +1804,7 @@ void RMText::removeThis(CORO_PARAM, bool &result) {
 
 
 void RMText::writeText(const RMString &text, int nFont, int *time) {
-	// Initialises the font (only once)
+	// Initializes the font (only once)
 	if (_fonts[0] == NULL) {
 		_fonts[0] = new RMFontParla;
 		_fonts[0]->init();
@@ -1830,7 +1830,7 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 	char *string;
 	int numlines;
 
-	// Set the base colour
+	// Set the base color
 	font->setBaseColor(_textR, _textG, _textB);
 
 	// Destroy the buffer before starting

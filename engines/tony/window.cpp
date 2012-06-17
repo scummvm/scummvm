@@ -49,7 +49,7 @@ RMWindow::~RMWindow() {
 }
 
 /**
- * Initialises the graphics window
+ * Initializes the graphics window
  */
 void RMWindow::init() {
 	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);

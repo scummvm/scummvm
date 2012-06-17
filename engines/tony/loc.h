@@ -42,7 +42,7 @@ namespace Tony {
 \****************************************************************************/
 
 /**
- * Valid colour modes
+ * Valid color modes
  */
 typedef enum {
 	CM_256,

@@ -99,7 +99,7 @@ void RMInventory::init(void) {
 
 		assert(res.isValid());
 
-		// Initialise the MPAL inventory item by reading it in.
+		// Initialize the MPAL inventory item by reading it in.
 		_items[i]._icon.setInitCurPattern(false);
 		ds.openBuffer(res);
 		ds >> _items[i]._icon;

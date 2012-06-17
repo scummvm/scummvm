@@ -293,7 +293,7 @@ public:
 	bool operator==(const RMRect &rc);
 	bool operator!=(const RMRect &rc);
 
-	// Normalise
+	// Normalize
 	void normalizeRect();
 
 	// Point in rect

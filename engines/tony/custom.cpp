@@ -308,7 +308,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		// Alignment
 		_ctx->text.setAlignType(RMText::HCENTER, RMText::VBOTTOM);
 
-		// Colour
+		// Color
 		_ctx->text.setColor(0, 255, 0);
 
 		// Writes the text
@@ -427,7 +427,7 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 		// Forces the text to disappear in time
 		_ctx->text.forceTime();
 
-		// Colour
+		// Color
 		_ctx->text.setColor(255, 255, 255);
 
 		// Write the text
@@ -1511,7 +1511,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		// Alignment
 		_ctx->text->setAlignType(RMText::HCENTER, RMText::VBOTTOM);
 
-		// Colour
+		// Color
 		_ctx->text->setColor(GLOBALS._character[nChar]._r, GLOBALS._character[nChar]._g, GLOBALS._character[nChar]._b);
 
 		// Write the text
@@ -1690,7 +1690,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 	_ctx->parm = (GLOBALS._mCharacter[nChar]._curGroup * 10) + _vm->_randomSource.getRandomNumber(
 	                 GLOBALS._mCharacter[nChar]._numTalks[GLOBALS._mCharacter[nChar]._curGroup] - 1) + 1;
 
-	// Try to run the custom function to initialise the speech
+	// Try to run the custom function to initialize the speech
 	if (GLOBALS._mCharacter[nChar]._item) {
 		_ctx->h = mpalQueryDoAction(30, GLOBALS._mCharacter[nChar]._item->mpalCode(), _ctx->parm);
 		if (_ctx->h != CORO_INVALID_PID_VALUE) {
@@ -1724,7 +1724,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		// Alignment
 		_ctx->text->setAlignType(RMText::HCENTER, RMText::VBOTTOM);
 
-		// Colour
+		// Color
 		_ctx->text->setColor(GLOBALS._mCharacter[nChar]._r, GLOBALS._mCharacter[nChar]._g, GLOBALS._mCharacter[nChar]._b);
 
 		// Write the text
@@ -1874,7 +1874,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		if (GLOBALS._mCharacter[nPers]._numTexts != 0 && GLOBALS._mCharacter[nPers]._bInTexts) {
 			GLOBALS._mCharacter[nPers]._numTexts--;
 		} else {
-			// Try to run the custom function to initialise the speech
+			// Try to run the custom function to initialize the speech
 			_ctx->h = mpalQueryDoAction(30, GLOBALS._mCharacter[nPers]._item->mpalCode(), _ctx->parm);
 			if (_ctx->h != CORO_INVALID_PID_VALUE)
 				CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);

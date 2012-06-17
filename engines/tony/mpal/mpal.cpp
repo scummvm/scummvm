@@ -838,7 +838,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	/* Initialise data pointers */
+	/* Initialize data pointers */
 	_ctx->MyActions = NULL;
 	_ctx->MyThreads = NULL;
 
@@ -1404,7 +1404,7 @@ bool doSelection(uint32 i, uint32 dwData) {
 //@{
 
 /**
- * Initialises the MPAL library and opens the .MPC file, which will be used for all queries.
+ * Initializes the MPAL library and opens the .MPC file, which will be used for all queries.
  *
  * @param lpszMpcFileName   Name of the MPC file
  * @param lpszMprFileName   Name of the MPR file
