@@ -824,11 +824,23 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		MYACTION *MyActions;
 		MYTHREAD *MyThreads;
+
+		~CoroContextTag() {
+			// Free data blocks
+			if (MyThreads)
+				globalDestroy(MyThreads);
+			if (MyActions)
+				globalDestroy(MyActions);
+		}
 	CORO_END_CONTEXT(_ctx);
 
 	uint32 id = *((const uint32 *)param);
 
 	CORO_BEGIN_CODE(_ctx);
+
+	/* Initialise data pointers */
+	_ctx->MyActions = NULL;
+	_ctx->MyThreads = NULL;
 
 	/* To begin with, we need to request the item list from the location */
 	_ctx->il = mpalQueryItemList(GLOBALS._nPollingLocations[id]);
@@ -1044,12 +1056,6 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	// Set idle skip off
 	CORO_INVOKE_4(GLOBALS._lplpFunctions[201], 0, 0, 0, 0);
-
-	/* We're finished */
-	globalDestroy(_ctx->MyThreads);
-	globalDestroy(_ctx->MyActions);
-	
-	CORO_KILL_SELF();
 
 	CORO_END_CODE;
 }
