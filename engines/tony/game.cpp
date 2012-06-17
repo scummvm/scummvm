@@ -888,7 +888,7 @@ void RMOptionScreen::init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result) {
 
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 
-	if (_nState == MENULOAD || _nState == MENUSAVE)
+	if (_nState == MENULOAD || _nState == MENUSAVE || _nState == MENUNONE)
 		_nState = MENUGAME;
 
 	CORO_INVOKE_0(initState);
