@@ -2144,7 +2144,7 @@ void RMTextDialog::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 		_startTime = _vm->getTime();
 
 	if (_bShowed) {
-		if (GLOBALS._bCfgSottotitoli || _bAlwaysDisplay) {
+		if (GLOBALS._bShowSubtitles || _bAlwaysDisplay) {
 			prim->getDst().topLeft() = _dst;
 			CORO_INVOKE_2(RMText::draw, bigBuf, prim);
 		}

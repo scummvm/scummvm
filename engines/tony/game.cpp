@@ -700,7 +700,7 @@ void RMOptionScreen::initState(CORO_PARAM) {
 			_buttonGfx_AntiAlias->setActiveState(!GLOBALS._bCfgAntiAlias);
 			assert(_buttonGfx_Sottotitoli == NULL);
 			_buttonGfx_Sottotitoli = new RMOptionButton(20017, RMPoint(98, 82), true);
-			_buttonGfx_Sottotitoli->setActiveState(!GLOBALS._bCfgSottotitoli);
+			_buttonGfx_Sottotitoli->setActiveState(!GLOBALS._bShowSubtitles);
 			assert(_buttonGfx_Tips == NULL);
 			_buttonGfx_Tips = new RMOptionButton(20018, RMPoint(431, 246), true);
 			_buttonGfx_Tips->setActiveState(GLOBALS._bCfgInterTips);
@@ -822,7 +822,7 @@ void RMOptionScreen::closeState(void) {
 			delete _buttonGfx_AntiAlias;
 			_buttonGfx_AntiAlias = NULL;
 
-			GLOBALS._bCfgSottotitoli = !_buttonGfx_Sottotitoli->isActive();
+			GLOBALS._bShowSubtitles = !_buttonGfx_Sottotitoli->isActive();
 			delete _buttonGfx_Sottotitoli;
 			_buttonGfx_Sottotitoli = NULL;
 
@@ -858,6 +858,9 @@ void RMOptionScreen::closeState(void) {
 			delete _buttonSound_SFXOn;
 			_buttonSound_SFXOn = NULL;
 		}
+
+		// Save the new settings to ScummVM
+		_vm->saveSoundSettings();
 	}
 
 	_nState = MENUNONE;

@@ -135,7 +135,7 @@ Globals::Globals() {
 	_bCfgAntiAlias = false;
 	_bCfgTransparence = true;
 	_bCfgInterTips = true;
-	_bCfgSottotitoli = true;
+	_bShowSubtitles = true;
 	_nCfgTonySpeed = 3;
 	_nCfgTextSpeed = 5;
 	_bCfgDubbing = true;

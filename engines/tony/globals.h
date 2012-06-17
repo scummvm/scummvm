@@ -194,7 +194,7 @@ public:
 	bool _bCfgInvUp;
 	bool _bCfgAnni30;
 	bool _bCfgAntiAlias;
-	bool _bCfgSottotitoli;
+	bool _bShowSubtitles;
 	bool _bCfgTransparence;
 	bool _bCfgInterTips;
 	bool _bCfgDubbing;

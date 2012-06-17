@@ -221,6 +221,9 @@ public:
 
 	void openInitLoadMenu(CORO_PARAM);
 	void openInitOptions(CORO_PARAM);
+
+	virtual void syncSoundSettings();
+	void saveSoundSettings();
 };
 
 // Global reference to the TonyEngine object

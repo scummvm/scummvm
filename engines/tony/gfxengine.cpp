@@ -659,7 +659,7 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	f->writeByte(GLOBALS._bCfgInvUp);
 	f->writeByte(GLOBALS._bCfgAnni30);
 	f->writeByte(GLOBALS._bCfgAntiAlias);
-	f->writeByte(GLOBALS._bCfgSottotitoli);
+	f->writeByte(GLOBALS._bShowSubtitles);
 	f->writeByte(GLOBALS._bCfgTransparence);
 	f->writeByte(GLOBALS._bCfgInterTips);
 	f->writeByte(GLOBALS._bCfgDubbing);
@@ -795,7 +795,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		GLOBALS._bCfgInvUp = _ctx->f->readByte();
 		GLOBALS._bCfgAnni30 = _ctx->f->readByte();
 		GLOBALS._bCfgAntiAlias = _ctx->f->readByte();
-		GLOBALS._bCfgSottotitoli = _ctx->f->readByte();
+		GLOBALS._bShowSubtitles = _ctx->f->readByte();
 		GLOBALS._bCfgTransparence = _ctx->f->readByte();
 		GLOBALS._bCfgInterTips = _ctx->f->readByte();
 		GLOBALS._bCfgDubbing = _ctx->f->readByte();

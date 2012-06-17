@@ -42,6 +42,7 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	_vm = this;
 	_loadSlotNumber = -1;
 
+	// Set the up the debugger
 	_debugger = new Debugger();
 	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTonyDebugActions, "actions", "Actions debugging");
@@ -61,6 +62,9 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 		if (slotNumber >= 0 && slotNumber <= 99)
 			_initialLoadSlotNumber = slotNumber;
 	}
+
+	// Load the ScummVM sound settings
+	syncSoundSettings();
 
 	_hEndOfFrame = 0;
 	for (int i = 0; i < 6; i++)
@@ -625,6 +629,34 @@ Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
 
 	GLOBALS._gfxEngine->saveState(getSaveStateFileName(slot), (byte *)_curThumbnail, desc);
 	return Common::kNoError;
+}
+
+void TonyEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	GLOBALS._bCfgDubbing = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute");
+	GLOBALS._bCfgSFX = !ConfMan.getBool("mute") && !ConfMan.getBool("sfx_mute");
+	GLOBALS._bCfgMusic = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
+
+	GLOBALS._nCfgDubbingVolume = ConfMan.getInt("speech_volume") * 10 / 256;
+	GLOBALS._nCfgSFXVolume = ConfMan.getInt("sfx_volume") * 10 / 256;
+	GLOBALS._nCfgMusicVolume = ConfMan.getInt("music_volume") * 10 / 256;
+
+	GLOBALS._bShowSubtitles = ConfMan.getBool("subtitles");
+	GLOBALS._nCfgTextSpeed = ConfMan.getInt("talkspeed") * 10 / 256;
+}
+
+void TonyEngine::saveSoundSettings() {
+	ConfMan.setBool("speech_mute", GLOBALS._bCfgDubbing);
+	ConfMan.setBool("sfx_mute", GLOBALS._bCfgSFX);
+	ConfMan.setBool("music_mute", GLOBALS._bCfgMusic);
+
+	ConfMan.setInt("speech_volume", GLOBALS._nCfgDubbingVolume * 256 / 10);
+	ConfMan.setInt("sfx_volume", GLOBALS._nCfgSFXVolume * 256 / 10);
+	ConfMan.setInt("music_volume", GLOBALS._nCfgMusicVolume * 256 / 10);
+
+	ConfMan.setBool("subtitles", GLOBALS._bShowSubtitles);
+	ConfMan.setBool("talkspeed", GLOBALS._nCfgTextSpeed);
 }
 
 } // End of namespace Tony
