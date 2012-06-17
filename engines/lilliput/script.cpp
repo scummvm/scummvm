@@ -689,7 +689,7 @@ static const OpCode opCodes2[] = {
 /* 0x4c */	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4d */	{ "OC_waitForEvent", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4e */	{ "OC_disableInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
-/* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x50 */	{ "OC_sub17E22_speech1IfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x52 */	{ "OC_displayNumericCharacterVariable", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
@@ -3109,7 +3109,7 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 //	Unused variable
 //	int var1 = _currScript->readUint16LE() & 0xFF;
 //	byte _byte15EAD = var1;
-	_currScript->readUint16LE();
+//	_currScript->readUint16LE();   // di is restored afterwards so do nothing
 //
 
 	_vm->_refreshScreenFlag = true;
