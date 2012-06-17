@@ -3105,12 +3105,11 @@ void LilliputScript::OC_disableInterfaceHotspot() {
 
 void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	debugC(1, kDebugScriptTBC, "OC_loadFile_AERIAL_GFX()");
-	
-//	Unused variable
-//	int var1 = _currScript->readUint16LE() & 0xFF;
-//	byte _byte15EAD = var1;
-//	_currScript->readUint16LE();   // di is restored afterwards so do nothing
-//
+
+	// Unused variable, and the script position is restored afterwards
+	// TODO: Check if this part of the code is present in Rome, else remove it
+	// int var1 = _currScript->readUint16LE() & 0xFF;
+	// byte _byte15EAD = var1;
 
 	_vm->_refreshScreenFlag = true;
 	_talkingCharacter = -1;
