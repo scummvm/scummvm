@@ -44,7 +44,9 @@ private:
 	// Buffer used to convert to RGB
 	static byte rgb[RM_SX *RM_SY * 3];
 public:
-	// Take a screenshot
+	/**
+	 * Take a screenshot
+	 */
 	void grabScreenshot(byte *lpBuf, int dezoom = 1, uint16 *lpDestBuf = NULL);
 };
 
@@ -78,21 +80,31 @@ public:
 	RMWindow();
 	~RMWindow();
 
-	// Initialisation
+	/**
+	 * Initialization
+	 */
 	void init(/*HINSTANCE hInst*/);
 	void initDirectDraw(void);
 	void close(void);
 
-	// Drawing
+	/**
+	 * Drawing
+	 */
 	void repaint(void);
 
-	// Switch between windowed and fullscreen
+	/**
+	 * Switch between windowed and fullscreen
+	 */
 	void switchFullscreen(bool bFull) {}
 
-	// Reads the next frame
+	/**
+	 * Reads the next frame
+	 */
 	void getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
 
-	// Request a thumbnail be grabbed during the next frame
+	/**
+	 * Request a thumbnail be grabbed during the next frame
+	 */
 	void grabThumbnail(uint16 *buf);
 
 	int getFps() const {

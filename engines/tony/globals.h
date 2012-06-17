@@ -43,9 +43,7 @@ namespace Tony {
 #define TAPPETI_MARE 6
 #define TAPPETI_MAREMETA 7
 
-
 #define MAX_PATH    255
-
 
 struct CharacterStruct {
 	uint32 _code;
@@ -254,7 +252,6 @@ public:
 	/**
 	 * @defgroup MPAL variables
 	 */
-	//@{
 	uint32                  _mpalError;
 	LPITEMIRQFUNCTION       _lpiifCustom;
 	LPLPCUSTOMFUNCTION      _lplpFunctions;
@@ -292,8 +289,6 @@ public:
 	uint32                  _nExecutingDialog;
 	uint32                  _nExecutingChoice;
 	uint32                  _nSelectedChoice;
-
-	//@}
 };
 
 } // End of namespace Tony

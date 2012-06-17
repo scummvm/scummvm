@@ -324,7 +324,7 @@ public:
 	RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw = false);
 	virtual ~RMGfxSourceBuffer16();
 
-	// Initialisation
+	// Initialization
 	void create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int getBpp();
@@ -369,7 +369,7 @@ public:
 	RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw = false);
 	virtual ~RMGfxSourceBuffer8();
 
-	// Initialisation
+	// Initialization
 	void create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int getBpp();
@@ -414,7 +414,7 @@ protected:
 	void compressRLE(void);
 
 protected:
-	// Overriding initialisation methods
+	// Overriding initialization methods
 	virtual void prepareImage(void);
 	virtual void preparePalette(void);
 
@@ -422,7 +422,7 @@ public:
 	RMGfxSourceBuffer8RLE();
 	virtual ~RMGfxSourceBuffer8RLE();
 
-	// Overload of the initialisation method
+	// Overload of the initialization method
 	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
@@ -505,7 +505,7 @@ protected:
 public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Overloaded initialisation methods
+	// Overloaded initialization methods
 	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
@@ -519,7 +519,7 @@ protected:
 public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Overloaded initialisation methods
+	// Overloaded initialization methods
 	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
@@ -535,7 +535,7 @@ public:
 	RMGfxSourceBuffer4();
 	RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw = false);
 
-	// Initialisation
+	// Initialization
 	void create(int dimx, int dimy, bool bUseDDraw = false);
 
 	int getBpp();

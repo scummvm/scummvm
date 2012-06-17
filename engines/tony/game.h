@@ -81,32 +81,48 @@ public:
 	};
 
 public:
-	// Constructor & destructor
+	/**
+	 * Constructor & destructor
+	 */
 	RMPointer();
 	virtual ~RMPointer();
 
-	// Initialisation
+	/**
+	 * Initialization
+	 */
 	void init(void);
 
-	// Deinitialisation
+	/**
+	 * Deinitialization
+	 */
 	void close(void);
 
-	// Process a frame
+	/**
+	 * Process a frame
+	 */
 	void doFrame(RMGfxTargetBuffer *bigBuf);
 
-	// Overloading of priorities
+	/**
+	 * Overloading of priorities
+	 */
 	int priority();
 
-	// draw method
+	/**
+	 * draw method
+	 */
 	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Sets a new action as current
+	/**
+	 * Sets a new action as current
+	 */
 	void setAction(RMTonyAction action) {
 		_nCurPointer = action;
 		updateCursor();
 	}
 
-	// Sets a new pointer
+	/**
+	 * Sets a new pointer
+	 */
 	void setSpecialPointer(PointerType ptr) {
 		_nCurSpecialPointer = ptr;
 		if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
@@ -118,19 +134,27 @@ public:
 		return (PointerType)_nCurSpecialPointer;
 	}
 
-	// Set the new custom pointer
+	/**
+	 * Set the new custom pointer
+	 */
 	void setCustomPointer(RMGfxSourceBuffer8 *ptr) {
 		_nCurCustomPointer = ptr;
 		updateCursor();
 	}
 
-	// Return the current action to be applied according to the pointer
+	/**
+	 * Return the current action to be applied according to the pointer
+	 */
 	int curAction(void);
 
-	/** Show the cursor */
+	/**
+	 * Show the cursor
+	 */
 	void showCursor();
 
-	/** Hide the cursor */
+	/**
+	 * Hide the cursor
+	 */
 	void hideCursor();
 };
 
@@ -280,15 +304,19 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	virtual void removeThis(CORO_PARAM, bool &result);
 
-	// Polling for the option screen
+	/**
+	 * Polling for the option screen
+	 */
 	void doFrame(CORO_PARAM, RMInput *m_input);
 
-	// Retrieves a savegame's thumbnail, description, and difficulty level
+	/**
+	 * Retrieves a savegame's thumbnail, description, and difficulty level
+	 */
 	static bool loadThumbnailFromSaveState(int numState, byte *lpDestBuf, RMString &name, byte &diff);
 
 protected:
 
-	// Initialisation and state change
+	// Initialization and state change
 	void initState(CORO_PARAM);
 	void closeState(void);
 	void changeState(CORO_PARAM, OptionScreenState newState);

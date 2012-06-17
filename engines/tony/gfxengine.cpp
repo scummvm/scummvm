@@ -353,7 +353,6 @@ SKIPCLICKSINISTRO:
 	CORO_END_CODE;
 }
 
-
 void RMGfxEngine::initCustomDll(void) {
 	setupGlobalVars(&_tony, &_point, &_vm->_theBoxes, &_loc, &_inv, &_input);
 }
@@ -377,7 +376,6 @@ void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
 		}
 	}
 }
-
 
 void RMGfxEngine::initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	if (start._x == -1 || start._y == -1) {

@@ -118,7 +118,6 @@ public:
 	FPStream *_stream[6];
 	FPSfx *_sfx[MAX_SFX_CHANNELS];
 	FPSfx *_utilSfx[MAX_SFX_CHANNELS];
-//	RMFont *_fonts[2];
 	bool _bPaused;
 	bool _bDrawLocation;
 	int _startTime;
@@ -154,7 +153,9 @@ public:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
-	// Warn when are being controlled by the GDI
+	/**
+	 * Warn when are being controlled by the GDI
+	 */
 	void GDIControl(bool bCon);
 
 	void play();
@@ -173,7 +174,9 @@ public:
 		_bDrawLocation = false;
 	}
 
-	// Reads the time
+	/**
+	 * Reads the time
+	 */
 	uint32 getTime(void);
 	void freezeTime(void);
 	void unfreezeTime(void);
@@ -197,19 +200,25 @@ public:
 	void preloadUtilSFX(int nSfx, const char *fn);
 	void unloadAllUtilSFX(void);
 
-	// Stop all the audio
+	/**
+	 * Stop all the audio
+	 */
 	void pauseSound(bool bPause);
 
 	void setMusicVolume(int nChannel, int volume);
 	int getMusicVolume(int nChannel);
 
-	// Handle saving
+	/**
+	 * Handle saving
+	 */
 	void autoSave(CORO_PARAM);
 	void saveState(int n, const char *name);
 	void loadState(CORO_PARAM, int n);
 	static Common::String getSaveStateFileName(int n);
 
-	// Get a thumbnail
+	/**
+	 * Get a thumbnail
+	 */
 	void grabThumbnail(void);
 	uint16 *getThumbnail(void) {
 		return _curThumbnail;

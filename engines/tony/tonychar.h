@@ -107,10 +107,14 @@ private:
 	uint32 _hActionThread;
 
 protected:
-	// Overload of the allocation allocation of sprites
+	/**
+	 * Overload of the allocation allocation of sprites
+	 */
 	virtual RMGfxSourceBuffer *newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
 
-	// Watch thread which waits for the end of an action
+	/**
+	 * Watch thread which waits for the end of an action
+	 */
 	static void waitEndOfAction(CORO_PARAM, const void *param);
 
 public:
@@ -362,79 +366,115 @@ public:
 	static void initStatics();
 	RMTony();
 
-	// Initialize Tony
+	/**
+	 * Initialize Tony
+	 */
 	void init(void);
 
-	// Free all memory
+	/**
+	 * Free all memory
+	 */
 	void close(void);
 
-	// Tony makes a frame, updating the movement, etc.
+	/**
+	 * Tony makes a frame, updating the movement, etc.
+	 */
 	void doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc);
 
-	// Draw method, which controls chararacter display
+	/**
+	 * Draw method, which controls chararacter display
+	 */
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Show or hide
+	/**
+	 * Show or hide
+	 */
 	void show(void);
 	void hide(bool bShowShadow = false);
 
-	// Move and make an action, if necessary
+	/**
+	 * Move and make an action, if necessary
+	 */
 	void moveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction, int nActionParm = 0);
 
-	// Tony stops (on the right side with respect to any subject)
+	/**
+	 * Tony stops (on the right side with respect to any subject)
+	 */
 	virtual void stop(CORO_PARAM);
 	void stopNoAction(CORO_PARAM);
 
-	// Set a pattern
+	/**
+	 * Set a pattern
+	 */
 	void setPattern(int npatt, bool bPlayP0 = false);
 
-	// Reads the current pattern
+	/**
+	 * Reads the current pattern
+	 */
 	int getCurPattern();
 
-	// Waits until the end of a pattern
+	/**
+	 * Waits until the end of a pattern
+	 */
 	void waitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) {
 		RMCharacter::waitForEndPattern(coroParam, hCustomSkip);
 	}
 
-	// Check if currently in an action
+	/**
+	 * Check if currently in an action
+	 */
 	bool inAction() {
 		return (_bActionPending && _action != 0) | _bAction;
 	}
 
-	// Check if there needs to be an update for scrolling movement
+	/**
+	 * Check if there needs to be an update for scrolling movement
+	 */
 	bool mustUpdateScrolling() {
 		return ((!inAction()) || (isMoving()));
 	}
 
-	// Returns Tony's position
+	/**
+	 * Returns Tony's position
+	 */
 	RMPoint position() {
 		return _pos;
 	}
 
-	// Set the scrolling position
+	/**
+	 * Set the scrolling position
+	 */
 	void setScrollPosition(const RMPoint &pt) {
 		RMCharacter::setScrollPosition(pt);
 	}
 
-	// Set the take animation
+	/**
+	 * Set the take animation
+	 */
 	void take(int nWhere, int nPart);
 	void put(int nWhere, int nPart);
 
-	// Start or End Talk
+	/**
+	 * Start or End Talk
+	 */
 	bool startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, int &bodyStartPat,
 	                        int &headLoopPat, int &bodyLoopPat);
 	void startTalk(CORO_PARAM, CharacterTalkType nTalkType);
 	bool endTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic);
 	void endTalk(CORO_PARAM);
 
-	// Start or End Static
+	/**
+	 * Start or End Static
+	 */
 	void startStaticCalculate(CharacterTalkType nTalk, int &headPat, int &headLoopPat,
 	                          int &bodyStartPat, int &bodyLoopPat);
 	void startStatic(CORO_PARAM, CharacterTalkType nTalkType);
 	void endStaticCalculate(CharacterTalkType nTalk, int &bodyEndPat, int &finalPat, int &headEndPat);
 	void endStatic(CORO_PARAM, CharacterTalkType nTalkType);
 
-	// Tony disguises himself!
+	/**
+	 * Tony disguises himself!
+	 */
 	void setShepherdess(bool bIsPast) {
 		_bShepherdess = bIsPast;
 	}
@@ -442,7 +482,9 @@ public:
 		return _bShepherdess;
 	}
 
-	// Perform an action
+	/**
+	 * Perform an action
+	 */
 	void executeAction(int nAction, int nActionItem, int nParm);
 
 	void playSfx(int nSfx) {

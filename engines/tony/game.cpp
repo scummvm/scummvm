@@ -316,8 +316,6 @@ void RMOptionSlide::addToList(RMGfxTargetBuffer &bigBuf) {
 	bigBuf.addPrim(new RMGfxPrimitive(this));
 }
 
-
-
 /****************************************************************************\
 *       RMOptionScreen Methods
 \****************************************************************************/
@@ -378,7 +376,6 @@ RMOptionScreen::RMOptionScreen(void) {
 	_nEditPos = 0;
 	_nLastState = MENUGAME;
 }
-
 
 RMOptionScreen::~RMOptionScreen(void) {
 	closeState();
@@ -566,7 +563,6 @@ void RMOptionScreen::refreshThumbnails(void) {
 		}
 	}
 }
-
 
 void RMOptionScreen::initState(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
@@ -1097,7 +1093,6 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 				_ctx->bRefresh |= _buttonSave_ArrowLeft->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 			if (_statePos < 90)
 				_ctx->bRefresh |= _buttonSave_ArrowRight->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
-
 		}
 	}
 
@@ -1195,7 +1190,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 					if (_buttonSave_States[_ctx->i]->isActive()) {
 						// There by saving or loading!!!
 						if (_nState == MENULOAD && _curThumb[_ctx->i] != NULL) {
-							// Caricamento
+							// Loading
 							CORO_INVOKE_1(_vm->loadState, _statePos + _ctx->i);
 							close();
 						} else if (_nState == MENUSAVE && (_statePos != 0 || _ctx->i != 0)) {
@@ -1467,7 +1462,6 @@ bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 	delete f;
 	return true;
 }
-
 
 /****************************************************************************\
 *       RMPointer Methods

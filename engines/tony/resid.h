@@ -26,9 +26,7 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-/*
-    Da 10500 in poi ci sono gli .OGG per l'inventario e i ritagli
-*/
+// From 10500 onwards there are .OGG for inventory and scrap
 #ifndef TONY_RESID_H
 #define TONY_RESID_H
 

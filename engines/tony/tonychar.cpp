@@ -34,10 +34,6 @@
 
 namespace Tony {
 
-/****************************************************************************\
-*       Metodi di RMTony
-\****************************************************************************/
-
 bool RMTony::_bAction = false;
 
 void RMTony::initStatics() {
@@ -124,7 +120,7 @@ void RMTony::init(void) {
 
 
 void RMTony::close(void) {
-	// Disalloca @@@ Deallocation of missing item
+	// Deallocation of missing item
 //	_shadow.destroy();
 }
 
@@ -479,7 +475,6 @@ void RMTony::put(int nWhere, int nPart) {
 	if (nPart == 0) {
 		switch (getCurPattern()) {
 		case PAT_STANDDOWN:
-			//assert(0);
 			break;
 
 		case PAT_STANDUP:
@@ -690,7 +685,6 @@ bool RMTony::startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, 
 		}
 		break;
 
-
 	case TALK_SING:
 		_nBodyOffset.set(-10, 25);
 		headStartPat = PAT_HEAD_LEFT;
@@ -743,7 +737,6 @@ bool RMTony::startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, 
 			break;
 		}
 		break;
-
 
 	case TALK_INDICATE:
 		switch (_talkDirection) {
@@ -1180,7 +1173,6 @@ bool RMTony::endTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPa
 		_bIsTalking = false;
 		return false;
 	}
-
 
 	bStatic = false;
 	switch (_nTalkType) {
@@ -1758,7 +1750,6 @@ void RMTony::startStatic(CORO_PARAM, CharacterTalkType nTalk) {
 
 	CORO_END_CODE;
 }
-
 
 void RMTony::endStaticCalculate(CharacterTalkType nTalk, int &bodyEndPat, int &finalPat, int &headEndPat) {
 	switch (_talkDirection) {

@@ -47,32 +47,46 @@ private:
 	// Keyboard related fields
 	bool _keyDown[350];
 private:
-	// Deinitialize DirectInput
+	/**
+	 * Deinitialize DirectInput
+	 */
 	void DIClose(void);
 
 public:
 	RMInput();
 	~RMInput();
 
-	// Class initialisation
+	/**
+	 * Class initialization
+	 */
 	void init(/*uint32 hInst*/);
 
-	// Closes the class
+	/**
+	 * Closes the class
+	 */
 	void close(void);
 
-	// Polling (must be performed once per frame)
+	/**
+	 * Polling (must be performed once per frame)
+	 */
 	void poll(void);
 
-	// Reading of the mouse
+	/**
+	 * Reading of the mouse
+	 */
 	RMPoint mousePos() {
 		return _mousePos;
 	}
 
-	// Current status of the mouse buttons
+	/**
+	 * Current status of the mouse buttons
+	 */
 	bool mouseLeft();
 	bool mouseRight();
 
-	// Events of mouse clicks
+	/**
+	 * Events of mouse clicks
+	 */
 	bool mouseLeftClicked() {
 		return _leftClickMouse;
 	}
@@ -92,7 +106,9 @@ public:
 		return _leftReleaseMouse && _rightReleaseMouse;
 	}
 
-	// Returns true if the given key is pressed
+	/**
+	 * Returns true if the given key is pressed
+	 */
 	bool getAsyncKeyState(Common::KeyCode kc);
 };
 

@@ -89,7 +89,7 @@ public:
 	RMFont();
 	virtual ~RMFont();
 
-	// Initialisation and closing
+	// Initialization and closing
 	virtual void init(void) = 0;
 	virtual void close(void);
 
@@ -366,11 +366,11 @@ public:
 	void Unregister(void);
 
 public:
-	// Initialisation
+	// Initialization
 	RMDialogChoice();
 	virtual ~RMDialogChoice();
 
-	// Initialisation and closure
+	// Initialization and closure
 	void init(void);
 	void close(void);
 

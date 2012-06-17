@@ -2380,7 +2380,7 @@ void RMDialogChoice::setNumChoices(int num) {
 	_drawedStrings = new RMText[num];
 	_ptDrawStrings = new RMPoint[num];
 
-	// Initialisation
+	// Initialization
 	for (i = 0; i < _numChoices; i++) {
 		_drawedStrings[i].setColor(0, 255, 0);
 		_drawedStrings[i].setAlignType(RMText::HLEFTPAR, RMText::VTOP);

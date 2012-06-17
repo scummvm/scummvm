@@ -79,48 +79,72 @@ protected:
 	OSystem::MutexRef _csModifyInterface;
 
 protected:
-	// Prepare the image inventory. It should be recalled whenever the inventory changes
+	/**
+	 * Prepare the image inventory. It should be recalled whenever the inventory changes
+	 */
 	void prepare(void);
 
-	// Check if the mouse Y position is conrrect, even under the inventory portion of the screen
+	/**
+	 * Check if the mouse Y position is conrrect, even under the inventory portion of the screen
+	 */
 	bool checkPointInside(const RMPoint &pt);
 
 public:
 	RMInventory();
 	virtual ~RMInventory();
 
-	// Prepare a frame
+	/**
+	 * Prepare a frame
+	 */
 	void doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen);
 
-	// Initialisation and closing
+	/**
+	 * Initialization and closing
+	 */
 	void init(void);
 	void close(void);
 	void reset(void);
 
-	// Overload test for removal from OT list
+	/**
+	 * Overload test for removal from OT list
+	 */
 	virtual void removeThis(CORO_PARAM, bool &result);
 
-	// Overload the drawing of the inventory
+	/**
+	 * Overload the drawing of the inventory
+	 */
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
-	// Method for determining whether the inventory currently has the focus
+	/**
+	 * Method for determining whether the inventory currently has the focus
+	 */
 	bool haveFocus(const RMPoint &mpos);
 
-	// Method for determining if the mini interface is active
+	/**
+	 * Method for determining if the mini interface is active
+	 */
 	bool miniActive(void);
 
-	// Handle the left mouse click (only when the inventory has the focus)
+	/**
+	 * Handle the left mouse click (only when the inventory has the focus)
+	 */
 	bool leftClick(const RMPoint &mpos, int &nCombineObj);
 
-	// Handle the right mouse button (only when the inventory has the focus)
+	/**
+	 * Handle the right mouse button (only when the inventory has the focus)
+	 */
 	void rightClick(const RMPoint &mpos);
 	bool rightRelease(const RMPoint &mpos, RMTonyAction &curAction);
 
-	// Warn that an item combine is over
+	/**
+	 * Warn that an item combine is over
+	 */
 	void endCombine(void);
 
 public:
-	// Add an item to the inventory
+	/**
+	 * Add an item to the inventory
+	 */
 	void addItem(int code);
 	RMInventory &operator+=(RMItem *item) {
 		addItem(item->mpalCode());
@@ -135,17 +159,25 @@ public:
 		return *this;
 	}
 
-	// Removes an item
+	/**
+	 * Removes an item
+	 */
 	void removeItem(int code);
 
-	// We are on an object?
+	/**
+	 * We are on an object?
+	 */
 	RMItem *whichItemIsIn(const RMPoint &mpt);
 	bool itemInFocus(const RMPoint &mpt);
 
-	// Change the icon of an item
+	/**
+	 * Change the icon of an item
+	 */
 	void changeItemStatus(uint32 dwCode, uint32 dwStatus);
 
-	// Save methods
+	/**
+	 * Save methods
+	 */
 	int getSaveStateSize(void);
 	void saveState(byte *state);
 	int loadState(byte *state);
@@ -165,35 +197,51 @@ private:
 	int _lastHotZone;
 
 protected:
-	// Return which box a given point is in
+	/**
+	 * Return which box a given point is in
+	 */
 	int onWhichBox(RMPoint pt);
 
 public:
 	RMInterface();
 	virtual ~RMInterface();
 
-	// The usual DoFrame (poll the graphics engine)
+	/**
+	 * The usual DoFrame (poll the graphics engine)
+	 */
 	void doFrame(RMGfxTargetBuffer &bigBuf, RMPoint mousepos);
 
-	// TRUE if it is active (you can select items)
+	/**
+	 * TRUE if it is active (you can select items)
+	 */
 	bool active();
 
-	// Initialisation
+	/**
+	 * Initialization
+	 */
 	void init(void);
 	void close(void);
 
-	// Reset the interface
+	/**
+	 * Reset the interface
+	 */
 	void reset(void);
 
-	// Warns of mouse clicks and releases
+	/**
+	 * Warns of mouse clicks and releases
+	 */
 	void clicked(const RMPoint &mousepos);
 	bool released(const RMPoint &mousepos, RMTonyAction &action);
 
-	// Enalbes or disables the fifth verb
+	/**
+	 * Enables or disables the fifth verb
+	 */
 	void setPerorate(bool bOn);
 	bool getPerorate(void);
 
-	// Overloaded Draw
+	/**
+	 * Overloaded Draw
+	 */
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 

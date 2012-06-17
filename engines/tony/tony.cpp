@@ -422,12 +422,10 @@ void TonyEngine::autoSave(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-
 void TonyEngine::saveState(int n, const char *name) {
 	Common::String buf = getSaveStateFileName(n);
 	_theEngine.saveState(buf.c_str(), (byte *)_curThumbnail, name);
 }
-
 
 void TonyEngine::loadState(CORO_PARAM, int n) {
 	CORO_BEGIN_CONTEXT;
@@ -599,7 +597,6 @@ void TonyEngine::freezeTime(void) {
 void TonyEngine::unfreezeTime(void) {
 	_bTimeFreezed = false;
 }
-
 
 /**
  * Returns the millisecond timer
