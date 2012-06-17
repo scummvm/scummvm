@@ -418,7 +418,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_setInterfaceHotspot();
 		break;
 	case 0x3A:
-		OC_sub180C3();
+		OC_scrollViewPort();
 		break;
 	case 0x3B:
 		OC_setViewPortPos();
@@ -668,7 +668,7 @@ static const OpCode opCodes2[] = {
 /* 0x37 */	{ "OC_sub18074", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x38 */	{ "OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x39 */	{ "OC_setInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
-/* 0x3a */	{ "OC_sub180C3", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x3a */	{ "OC_scrollViewPort", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x3b */	{ "OC_setViewPortPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone }, 
 /* 0x3c */	{ "OC_setCurrentCharacterAltitude", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x3d */	{ "OC_sub1817F", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, 
@@ -2803,30 +2803,21 @@ void LilliputScript::OC_setInterfaceHotspot() {
 	_vm->displayInterfaceHotspots();
 }
 
-void LilliputScript::OC_sub180C3() {
-	debugC(1, kDebugScriptTBC, "OC_sub180C3()");
+void LilliputScript::OC_scrollViewPort() {
+	debugC(1, kDebugScriptTBC, "OC_scrollViewPort()");
 
 	_viewportCharacterTarget = -1;
 
-	int var1 = _currScript->readUint16LE();
+	int direction = _currScript->readUint16LE();
 	
-	static const char _byte180B3[] = { 6, 0, 0, -6 };
-	static const char _byte180BB[] = { 0, -6, 6, 0 };
+	static const char scrollValX[] = { 6, 0, 0, -6 };
+	static const char scrollValY[] = { 0, -6, 6, 0 };
 	
-	int x = _viewportPos.x + _byte180B3[var1];
-	int y = _viewportPos.y + _byte180BB[var1];
+	int x = _viewportPos.x + scrollValX[direction];
+	int y = _viewportPos.y + scrollValY[direction];
 
-	if (x < 0)
-		x = 0;
-
-	if (y < 0)
-		y = 0;
-	
-	if (x > 56)
-		x = 56;
-
-	if (y > 56)
-		y = 56;
+	CLIP(x, 0, 56);
+	CLIP(y, 0, 56);
 
 	_vm->_refreshScreenFlag = true;
 	_vm->viewportScrollTo(Common::Point(x, y));

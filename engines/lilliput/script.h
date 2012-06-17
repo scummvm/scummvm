@@ -252,7 +252,7 @@ private:
 	void OC_sub18074();
 	void OC_setCurrentCharacterDirection();
 	void OC_setInterfaceHotspot();
-	void OC_sub180C3();
+	void OC_scrollViewPort();
 	void OC_setViewPortPos();
 	void OC_setCurrentCharacterAltitude();
 	void OC_sub1817F();
