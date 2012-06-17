@@ -37,70 +37,43 @@
 namespace Tony {
 
 
-/****************************************************************************\
-*       Defines
-\****************************************************************************/
-
 #define RELEASE(x)             {if ((x) != NULL) { (x)->release(); x = NULL; }}
 
-/****************************************************************************\
-*       Methods for FPSound
-\****************************************************************************/
-
-/****************************************************************************\
-*
-* Function:     FPSound::FPSound();
-*
-* Description:  Default constructor. Initializes the attributes.
-*
-\****************************************************************************/
+/**
+ * Default constructor. Initializes the attributes.
+ *
+ */
 
 FPSound::FPSound() {
 	_bSoundSupported = false;
 }
 
-
-/****************************************************************************\
-*
-* Function:     bool FPSound::init();
-*
-* Description:  Initializes the object, and prepare everything you need to
-                create streams and sound effects.
-*
-* Return:       True if everything's OK, False otherwise.
-*
-\****************************************************************************/
+/**
+ * Initializes the object, and prepare everything you need to create streams and sound effects.
+ *
+ * @returns     True is everything is OK, False otherwise
+ */
 
 bool FPSound::init() {
 	_bSoundSupported = g_system->getMixer()->isReady();
 	return _bSoundSupported;
 }
 
-
-/****************************************************************************\
-*
-* Function:     FPSound::~FPSound();
-*
-* Description:  Destroy the object and free the memory.
-*
-\****************************************************************************/
+/**
+ * Destroy the object and free the memory
+ *
+ */
 
 FPSound::~FPSound() {
 }
 
-
-/****************************************************************************\
-*
-* Function:     bool CreateStream(FPStream** lplpStream);
-*
-* Description:  Allocates an object of type FPStream, and return its pointer
-*
-* Input:        FPStream** lplpStream   Will contain a pointer to the object
-*                                       you just created.
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
+/**
+ * Allocates an object of type FPStream, and return its pointer
+ *
+ * @param lplpStream   Will contain a pointer to the object you just created.
+ *
+ * @returns     True is everything is OK, False otherwise
+ */
 
 bool FPSound::createStream(FPStream **lplpStream) {
 	(*lplpStream) = new FPStream(_bSoundSupported);
@@ -108,18 +81,13 @@ bool FPSound::createStream(FPStream **lplpStream) {
 	return (*lplpStream != NULL);
 }
 
-/****************************************************************************\
-*
-* Function:     bool CreateSfx(FPSfx** lplpSfx);
-*
-* Description:  Allocates an object of type FpSfx, and return its pointer
-*
-* Input:        FPSfx** lplpSfx         Will contain a pointer to the object
-*                                       you just created.
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
+/**
+ * Allocates an object of type FpSfx, and return its pointer
+ *
+ * @param lplpSfx         Will contain a pointer to the object you just created.
+ *
+ * @returns     True is everything is OK, False otherwise
+ */
 
 bool FPSound::createSfx(FPSfx **lplpSfx) {
 	(*lplpSfx) = new FPSfx(_bSoundSupported);
@@ -127,15 +95,11 @@ bool FPSound::createSfx(FPSfx **lplpSfx) {
 	return (*lplpSfx != NULL);
 }
 
-/****************************************************************************\
-*
-* Function:     void setMasterVolume(int dwVolume);
-*
-* Description:  Set the general volume
-*
-* Input:        int dwVolume          Volume to set (0-63)
-*
-\****************************************************************************/
+/**
+ * Set the general volume
+ *
+ * @param dwVolume          Volume to set (0-63)
+ */
 
 void FPSound::setMasterVolume(int dwVolume) {
 	if (!_bSoundSupported)
@@ -144,16 +108,11 @@ void FPSound::setMasterVolume(int dwVolume) {
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(dwVolume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
-/****************************************************************************\
-*
-* Function:     void getMasterVolume(int *lpdwVolume);
-*
-* Description:  Get the general volume
-*
-* Input:        int *lpdwVolume        Variable that will contain the 
-*                                      volume (0-63)
-*
-\****************************************************************************/
+/**
+ * Get the general volume
+ *
+ * @param lpdwVolume          Variable that will contain the volume (0-63)
+ */
 
 void FPSound::getMasterVolume(int *lpdwVolume) {
 	if (!_bSoundSupported)
@@ -162,18 +121,13 @@ void FPSound::getMasterVolume(int *lpdwVolume) {
 	*lpdwVolume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 63 / Audio::Mixer::kMaxChannelVolume;
 }
 
-/****************************************************************************\
-*       Methods for FPSfx
-\****************************************************************************/
-
-/****************************************************************************\
-*
-* Function:     FPSfx(bool bSoundOn);
-*
-* Description:  Default constructor. Do *NOT* declare an object directly, 
-*               but rather create it using FPSound::CreateSfx()
-*
-\****************************************************************************/
+/**
+ * Default constructor.
+ *
+ * @remarks                   Do *NOT* declare an object directly, but rather
+ *                            create it using FPSound::CreateSfx()
+ *
+ */
 
 FPSfx::FPSfx(bool bSoundOn) {
 	_bSoundSupported = bSoundOn;
@@ -188,15 +142,13 @@ FPSfx::FPSfx(bool bSoundOn) {
 	_vm->_activeSfx.push_back(this);
 }
 
-
-/****************************************************************************\
-*
-* Function:     ~FPSfx();
-*
-* Description:  Default Destructor. It is also stops the sound effect that 
-*               may be currently played, and free the memory it uses.
-*
-\****************************************************************************/
+/**
+ * Default Destructor.
+ *
+ * @remarks                   It is also stops the sound effect that may be
+ *                            currently played, and free the memory it uses.
+ *
+ */
 
 FPSfx::~FPSfx() {
 	if (!_bSoundSupported)
@@ -215,34 +167,18 @@ FPSfx::~FPSfx() {
 	//	CloseHandle(hEndOfBuffer);
 }
 
-/****************************************************************************\
-*
-* Function:     release();
-*
-* Description:  Releases the memory used by the object.
-*               Must be called when the object is no longer used and 
-*               **ONLY** if the object was created by FPSound::CreateStream()
-*
-* Note:         Object pointers are no longer valid after this call.
-*
-\****************************************************************************/
+/**
+ * Releases the memory used by the object.
+ *
+ * @remarks                Must be called when the object is no longer used and
+ *                         **ONLY** if the object was created by
+ *                         FPSound::CreateStream().
+ *                         Object pointers are no longer valid after this call.
+ */
 
 void FPSfx::release() {
 	delete this;
 }
-
-/****************************************************************************\
-*
-* Function:     bool loadWave(Common::SeekableReadStream *stream);
-*
-* Description:  Opens a file and loads a sound effect.
-*
-* Input:        byte *lpBuf            Buffer containing the Sfx
-*               uint32 dwCodec         CODEC used to uncompress the samples
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
 
 bool FPSfx::loadWave(Common::SeekableReadStream *stream) {
 	if (!stream)
@@ -257,20 +193,6 @@ bool FPSfx::loadWave(Common::SeekableReadStream *stream) {
 	setVolume(_lastVolume);
 	return true;
 }
-
-
-/****************************************************************************\
-*
-* Function:     bool LoadFile(const char * lpszFileName, uint32 dwCodec=FPCODEC_RAW);
-*
-* Description:  Opens a file and loads a sound effect.
-*
-* Input:        LPSTR lpszFile         Sfx filename
-*               uint32 dwCodec         CODEC used to uncompress the samples
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
 
 bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
 	if (!_bSoundSupported)
@@ -287,6 +209,14 @@ bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
 	return true;
 }
 
+/**
+ * Opens a file and loads a sound effect.
+ *
+ * @param lpszFileName     Sfx filename
+ * @param dwCodec          CODEC used to uncompress the samples
+ *
+ * @returns                True is everything is OK, False otherwise
+ */
 
 bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 	if (!_bSoundSupported)
@@ -323,16 +253,11 @@ bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 	return true;
 }
 
-
-/****************************************************************************\
-*
-* Function:     bool play();
-*
-* Description:  Play the Sfx in memory.
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
+/**
+ * Play the Sfx in memory.
+ *
+ * @returns                True is everything is OK, False otherwise
+ */
 
 bool FPSfx::play() {
 	stop(); // sanity check
@@ -365,16 +290,11 @@ bool FPSfx::play() {
 	return true;
 }
 
-
-/****************************************************************************\
-*
-* Function:     bool stop(void);
-*
-* Description:  Stop an sfx.
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
+/**
+ * Stops a Sfx.
+ *
+ * @returns                True is everything is OK, False otherwise
+ */
 
 bool FPSfx::stop() {
 	if (_bFileLoaded) {
@@ -385,25 +305,24 @@ bool FPSfx::stop() {
 	return true;
 }
 
-
-
-/****************************************************************************\
-*
-* Function:     bool setLoop(bool bLoop);
-*
-* Description:  Enables or disables the Sfx loop.
-*
-* Input:        bool bLoop          True to enable the loop, False to disable
-*
-* Note:         The loop must be activated BEFORE the sfx starts playing. 
-*               Any changes made during the play will have no effect until 
-*               the sfx is stopped then played again.
-*
-\****************************************************************************/
+/**
+ * Enables or disables the Sfx loop.
+ *
+ * @param bLoop         True to enable the loop, False to disable
+ *
+ * @remarks             The loop must be activated BEFORE the sfx starts
+ *                      playing. Any changes made during the play will have
+ *                      no effect until the sfx is stopped then played again.
+ */
 
 void FPSfx::setLoop(bool bLop) {
 	_bLoop = bLop;
 }
+
+/**
+ * Pauses a Sfx.
+ *
+ */
 
 void FPSfx::pause(bool bPause) {
 	if (_bFileLoaded) {
@@ -414,15 +333,12 @@ void FPSfx::pause(bool bPause) {
 	}
 }
 
-/****************************************************************************\
-*
-* Function:     void setVolume(int dwVolume);
-*
-* Description:  Change the volume of Sfx
-*
-* Input:        int dwVolume            Volume to be set (0-63)
-*
-\****************************************************************************/
+/**
+ * Change the volume of Sfx
+ *
+ * @param dwVolume      Volume to be set (0-63)
+ *
+ */
 
 void FPSfx::setVolume(int dwVolume) {
 	if (dwVolume > 63)
@@ -453,17 +369,12 @@ void FPSfx::setVolume(int dwVolume) {
 		g_system->getMixer()->setChannelVolume(_handle, dwVolume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
-
-
-/****************************************************************************\
-*
-* Function:     void GetVolume(int *lpdwVolume);
-*
-* Description:  Gets the Sfx volume
-*
-* Input:        int *lpdwVolume        Will contain the current Sfx volume
-*
-\****************************************************************************/
+/**
+ * Gets the Sfx volume
+ *
+ * @param lpdwVolume    Will contain the current Sfx volume
+ *
+ */
 
 void FPSfx::getVolume(int *lpdwVolume) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
@@ -475,6 +386,7 @@ void FPSfx::getVolume(int *lpdwVolume) {
 /**
  * Returns true if the underlying sound has ended
  */
+
 bool FPSfx::endOfBuffer() const {
 	return !g_system->getMixer()->isSoundHandleActive(_handle) && (!_rewindableStream || _rewindableStream->endOfData());
 }
@@ -505,18 +417,12 @@ void FPSfx::soundCheckProcess(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
-/****************************************************************************\
-*       Methods for FPStream
-\****************************************************************************/
-
-/****************************************************************************\
-*
-* Function:     FPStream(LPDIRECTSOUND lpDS, bool bSoundOn);
-*
-* Description:  Default constructor. Do *NOT* declare an object directly, 
-*               but rather create it using FPSound::CreateStream()
-*
-\****************************************************************************/
+/**
+ * Default constructor. 
+ *
+ * @remarks             Do *NOT* declare an object directly, but rather
+ *                      create it using FPSound::CreateStream()
+ */
 
 FPStream::FPStream(bool bSoundOn) {
 #ifdef REFACTOR_ME
@@ -599,14 +505,11 @@ bool FPStream::createBuffer(int nBufSize) {
 	return true;
 }
 
-
-/****************************************************************************\
-*
-* Function:     ~FPStream();
-*
-* Description:  Default destructor. It calls CloseFile() if needed.
-*
-\****************************************************************************/
+/**
+ * Default destructor. 
+ *
+ * @remarks             It calls CloseFile() if needed.
+ */
 
 FPStream::~FPStream() {
 #ifdef REFACTOR_ME
@@ -648,37 +551,27 @@ FPStream::~FPStream() {
 #endif
 }
 
-
-/****************************************************************************\
-*
-* Function:     release();
-*
-* Description:  Releases the memory object. Must be called when the object 
-*               is no longer used and **ONLY** if the object was created by
-*               FPSound::CreateStream().
-*
-* Note:         Object pointers are no longer valid after this call.
-*
-\****************************************************************************/
+/**
+ * Releases the memory object. 
+ *
+ * @remarks             Must be called when the object is no longer used 
+ *                      and **ONLY** if the object was created by
+ *                      FPSound::CreateStream().
+ *                      Object pointers are no longer valid after this call.
+ */
 
 void FPStream::release() {
 	delete this;
-//	return NULL;
 }
 
-
-/****************************************************************************\
-*
-* Function:     bool loadFile(const char *lpszFileName, uint32 dwCodec=FPCODEC_RAW);
-*
-* Description:  Opens a file stream.
-*
-* Input:        LPSTR lpszFile          Filename to be opened
-*               uint32 dwCodec          CODEC to be used to uncompress samples
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
+/**
+ * Opens a file stream
+ *
+ * @param lpszFile      Filename to be opened
+ * @param dwCodec       CODEC to be used to uncompress samples
+ *
+ * @returns             True is everything is OK, False otherwise
+ */
 
 bool FPStream::loadFile(const char *lpszFileName, uint32 dwCodType, int nBufSize) {
 #ifdef REFACTOR_ME
@@ -714,18 +607,15 @@ bPaused = false;
 return true;
 }
 
-
-/****************************************************************************\
-*
-* Function:     unloadFile();
-*
-* Description:  Closes a file stream (opened or not). It is necessary to call
-*               this function to free the memory used by the stream.
-*
-* Return:       For safety, the destructor calls unloadFile() if it has not
-*               been mentioned explicitly.
-*
-\****************************************************************************/
+/**
+ * Closes a file stream (opened or not).
+ *
+ * @returns             For safety, the destructor calls unloadFile() if it has not
+ *                      been mentioned explicitly.
+ * 
+ * @remarks             It is necessary to call this function to free the 
+ *                      memory used by the stream.
+ */
 
 bool FPStream::unloadFile() {
 #ifdef REFACTOR_ME
@@ -744,16 +634,6 @@ bool FPStream::unloadFile() {
 #endif
 	return true;
 }
-
-/****************************************************************************\
-*
-* Function:     bool Play();
-*
-* Description:  Play the stream.
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
 
 void FPStream::prefetch(void) {
 #ifdef REFACTOR_ME
@@ -845,6 +725,12 @@ void FPStream::playFast(void) {
 #endif
 }
 
+/**
+ * Play the stream.
+ *
+ * @returns             True is everything is OK, False otherwise
+ */
+
 bool FPStream::play() {
 #ifdef REFACTOR_ME
 	uint32 dwId;
@@ -922,16 +808,12 @@ bool FPStream::play() {
 	return true;
 }
 
-
-/****************************************************************************\
-*
-* Function:     bool stop(bool bSync);
-*
-* Description:  Closes the stream.
-*
-* Return:       True is everything is OK, False otherwise
-*
-\****************************************************************************/
+/**
+ * Closes the stream.
+ *
+ * @returns             True is everything is OK, False otherwise
+ * 
+ */
 
 bool FPStream::stop(bool bSync) {
 #ifdef REFACTOR_ME
@@ -1005,13 +887,10 @@ void FPStream::waitForSync(FPStream *toplay) {
 	_bIsPlaying = false;
 }
 
-/****************************************************************************\
-*
-* Function:     void FPStream::PlayThread();
-*
-* Description:  Thread playing the stream
-*
-\****************************************************************************/
+/**
+ * Thread playing the stream
+ *
+ */
 
 void FPStream::playThread(FPStream *This) {
 #ifdef REFACTOR_ME
@@ -1126,25 +1005,26 @@ void FPStream::playThread(FPStream *This) {
 #endif
 }
 
-
-/****************************************************************************\
-*
-* Function:     bool setLoop(bool bLoop);
-*
-* Description:  Unables or disables stream loop.
-*
-* Input:        bool bLoop              True enable loop, False disables it
-*
-* Note:         The loop must be activated BEFORE the stream starts playing. 
-*               Any changes made during the play will have no effect until 
-*               the stream is stopped then played again.
-*
-\****************************************************************************/
+/**
+ * Unables or disables stream loop.
+ *
+ * @param bLoop         True enable loop, False disables it
+ *
+ * @remarks             The loop must be activated BEFORE the stream starts
+ *                      playing. Any changes made during the play will have no
+ *                      effect until the stream is stopped then played again.
+ */
 
 void FPStream::setLoop(bool loop) {
 	_bLoop = loop;
 }
 
+
+/**
+ * Pause sound effect
+ *
+ * @param bPause        True enables pause, False disables it
+ */
 
 void FPStream::pause(bool bPause) {
 #ifdef REFACTOR_ME
@@ -1179,16 +1059,12 @@ void FPStream::pause(bool bPause) {
 #endif
 }
 
-
-/****************************************************************************\
-*
-* Function:     void SetVolume(int dwVolume);
-*
-* Description:  Change the volume of the stream
-*
-* Input:        int dwVolume            Volume to be set (0-63)
-*
-\****************************************************************************/
+/**
+ * Change the volume of the stream
+ *
+ * @param dwVolume      Volume to be set (0-63)
+ *
+ */
 
 void FPStream::setVolume(int dwVolume) {
 #ifdef REFACTOR_ME
@@ -1208,16 +1084,12 @@ void FPStream::setVolume(int dwVolume) {
 #endif
 }
 
-/****************************************************************************\
-*
-* Function:     void GetVolume(int *lpdwVolume);
-*
-* Description:  Gets the vgolume of the stream
-*
-* Input:        int *lpdwVolume        Variable that will contain the 
-*                                      current volume
-*
-\****************************************************************************/
+/**
+ * Gets the vgolume of the stream
+ *
+ * @param lpdwVolume    Variable that will contain the current volume
+ *
+ */
 
 void FPStream::getVolume(int *lpdwVolume) {
 #ifdef REFACTOR_ME
