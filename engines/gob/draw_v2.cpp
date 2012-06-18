@@ -805,6 +805,10 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_PRINTTEXT:
+		// WORKAROUND: There's mistakes in Little Red's animal names.
+		//             See this function for details.
+		fixLittleRedStrings();
+
 		len = strlen(_textToPrint);
 		left = _destSpriteX;
 
@@ -929,6 +933,41 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if (_destSurface == kBackSurface) {
 			_destSpriteX -= _backDeltaX;
 			_destSpriteY -= _backDeltaY;
+		}
+	}
+}
+
+/* WORKAROUND: Fix wrong German animal names in Once Upon A Time: Little Red Riding Hood.
+ *
+ * The DOS, Amiga and Atari version of Little Red come with a small screen, accessible
+ * through the main menu, that lets children read and listen to animal names in 5
+ * languages: French, German, English, Spanish and Italian.
+ * Unfortunately, the German names are partially wrong. This is especially tragic
+ * because this is a game for small children and they're supposed to learn something
+ * here. We fix this.
+ *
+ * However, there's also problems with the recorded spoken German names:
+ * - "Der Rabe" has a far too short "a", sounding more like "Rabbe"
+ * - The wrong article for "Schmetterling" is very audible
+ * - In general, the words are way too overpronounced
+ * These are, of course, way harder to fix.
+ */
+
+static const char *kLittleRedStrings[][2] = {
+	{"die Heule"          , "die Eule"},
+	{"das Schmetterling"  , "der Schmetterling"},
+	{"die Vespe"          , "die Wespe"},
+	{"das Eich\224rnchen" , "das Eichh\224rnchen"}
+};
+
+void Draw_v2::fixLittleRedStrings() {
+	if (!_textToPrint || (_vm->getGameType() != kGameTypeLittleRed))
+		return;
+
+	for (int i = 0; i < ARRAYSIZE(kLittleRedStrings); i++) {
+		if (!strcmp(_textToPrint, kLittleRedStrings[i][0])) {
+			_textToPrint = kLittleRedStrings[i][1];
+			return;
 		}
 	}
 }

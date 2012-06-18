@@ -258,6 +258,8 @@ public:
 
 private:
 	uint8 _mayorWorkaroundStatus;
+
+	void fixLittleRedStrings();
 };
 
 class Draw_Bargon: public Draw_v2 {
