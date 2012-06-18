@@ -247,10 +247,23 @@ public:
 	friend RMDataStream &operator>>(RMDataStream &ds, RMPoint &p);
 };
 
+class RMPointReference {
+public:
+	int &_x;
+	int &_y;
+
+	RMPointReference(int &x, int &y): _x(x), _y(y) {}
+	RMPointReference &operator=(const RMPoint &p);
+	RMPointReference &operator-=(const RMPoint &p);
+	operator RMPoint() const { return RMPoint(_x, _y); }
+};
+
 class RMRect {
 public:
 	int _x1, _y1;
 	int _x2, _y2;
+	RMPointReference _topLeft;
+	RMPointReference _bottomRight;
 
 public:
 	RMRect();
@@ -259,8 +272,8 @@ public:
 	RMRect(const RMRect &rc);
 
 	// Attributes
-	RMPoint &topLeft();
-	RMPoint &bottomRight();
+	RMPointReference &topLeft() { return _topLeft; }
+	RMPointReference &bottomRight() { return _bottomRight; }
 	RMPoint center();
 	int width() const;
 	int height() const;

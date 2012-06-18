@@ -843,10 +843,24 @@ RMDataStream &operator>>(RMDataStream &ds, RMPoint &p) {
 }
 
 /****************************************************************************\
+*       RMPointReference methods
+\****************************************************************************/
+
+RMPointReference &RMPointReference::operator=(const RMPoint &p) { 
+	_x = p._x; _y = p._y; 
+	return *this;
+}
+
+RMPointReference &RMPointReference::operator-=(const RMPoint &p) {
+	_x -= p._x; _y -= p._y; 
+	return *this;
+}
+
+/****************************************************************************\
 *       RMRect methods
 \****************************************************************************/
 
-RMRect::RMRect() {
+RMRect::RMRect(): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
 	setEmpty();
 }
 
@@ -854,15 +868,15 @@ void RMRect::setEmpty() {
 	_x1 = _y1 = _x2 = _y2 = 0;
 }
 
-RMRect::RMRect(const RMPoint &p1, const RMPoint &p2) {
+RMRect::RMRect(const RMPoint &p1, const RMPoint &p2): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
 	setRect(p1, p2);
 }
 
-RMRect::RMRect(int X1, int Y1, int X2, int Y2) {
+RMRect::RMRect(int X1, int Y1, int X2, int Y2): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
 	setRect(X1, Y1, X2, Y2);
 }
 
-RMRect::RMRect(const RMRect &rc) {
+RMRect::RMRect(const RMRect &rc): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
 	copyRect(rc);
 }
 
@@ -889,16 +903,6 @@ void RMRect::copyRect(const RMRect &rc) {
 	_y1 = rc._y1;
 	_x2 = rc._x2;
 	_y2 = rc._y2;
-}
-
-RMPoint &RMRect::topLeft() {
-	// FIXME: This seems very bad
-	return *((RMPoint *)this);
-}
-
-RMPoint &RMRect::bottomRight() {
-	// FIXME: This seems very bad
-	return *((RMPoint *)this + 1);
 }
 
 RMPoint RMRect::center() {
