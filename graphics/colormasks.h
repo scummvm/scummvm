@@ -249,8 +249,8 @@ struct ColorMasks<888> {
 		kLowBitsMask = kLowBits,
 		// Prevent mask from including padding byte
 		kHighBitsMask = (~kLowBits) & (kRedMask | kBlueMask | kGreenMask),
-		qLowBitsMask = kLow2Bits,
-		qHighBitsMask = (~kLowBits) & (kRedMask | kBlueMask | kGreenMask)
+		qlowBits = kLow2Bits,
+		qhighBits = (~kLowBits) & (kRedMask | kBlueMask | kGreenMask)
 	};
 };
 
@@ -283,8 +283,8 @@ struct ColorMasks<8888> {
 
 		kLowBitsMask = kLowBits,
 		kHighBitsMask = ~kLowBits,
-		qLowBitsMask = kLow2Bits,
-		qHighBitsMask = ~kLow2Bits
+		qlowBits = kLow2Bits,
+		qhighBits = ~kLow2Bits
 	};
 };
 
