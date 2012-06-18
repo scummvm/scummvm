@@ -488,7 +488,7 @@ void Screen::userHelp() const {
 	           "F5  - Restore game\n"
 	           "F6  - Inventory\n"
 	           "F8  - Turbo button\n"
-	           "F9  - Boss button\n\n"
+	           "\n"
 	           "ESC - Return to game");
 }
 

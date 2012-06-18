@@ -362,9 +362,6 @@ void Parser::keyHandler(Common::Event event) {
 	case Common::KEYCODE_F8:                        // Turbo mode
 		switchTurbo();
 		break;
-	case Common::KEYCODE_F9:                        // Boss button
-		warning("STUB: F9 (DOS) - BossKey");
-		break;
 	default:                                        // Any other key
 		if (!gameStatus._storyModeFl) {              // Keyboard disabled
 			// Add printable keys to ring buffer
