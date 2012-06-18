@@ -2630,7 +2630,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 #endif
 				default: {
 					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-					uint16 size = block.maxSize;
+					uint32 size = block.maxSize;
 
 					DebugPrintf("raw data\n");
 
@@ -2936,7 +2936,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	uint opCount = 1;
 	bool printBWTag = false;
 	bool printBytes = false;
-	uint16 size;
+	uint32 size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
 		DebugPrintf("Invalid address passed.\n");

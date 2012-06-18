@@ -72,7 +72,7 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	const byte *scr;
-	uint scr_size;
+	uint32 scr_size;
 	reg_t retval = make_reg(pos.getSegment(), pos.getOffset() + 1);
 	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
 	uint i = 0;
@@ -344,7 +344,7 @@ void SciEngine::scriptDebug() {
 			if (mobj) {
 				Script *scr = (Script *)mobj;
 				const byte *code_buf = scr->getBuf();
-				uint16 code_buf_size = scr->getBufSize();
+				uint32 code_buf_size = scr->getBufSize();
 				int opcode = pc.getOffset() >= code_buf_size ? 0 : code_buf[pc.getOffset()];
 				int op = opcode >> 1;
 				int paramb1 = pc.getOffset() + 1 >= code_buf_size ? 0 : code_buf[pc.getOffset() + 1];
