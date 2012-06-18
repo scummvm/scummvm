@@ -32,6 +32,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/graphics/transparentSurface.h"
+#include "engines/wintermute/utils/StringUtil.h"
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/jpeg.h"
 #include "graphics/decoders/bmp.h"
@@ -52,6 +53,7 @@ CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
 	_palette = NULL;
 	_surface = NULL;
 	_decoder = NULL;
+	_deletableSurface = NULL;
 }
 
 
@@ -59,6 +61,7 @@ CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
 CBImage::~CBImage() {
 /*	delete _bitmap; */
 	delete _decoder;
+	delete _deletableSurface;
 #if 0
 	if (_bitmap) FreeImage_Unload(_bitmap);
 #endif
@@ -66,8 +69,10 @@ CBImage::~CBImage() {
 
 HRESULT CBImage::loadFile(const Common::String &filename) {
 	_filename = filename;
-	
-	if (filename.hasSuffix(".png")) {
+
+	if (StringUtil::StartsWith(filename, "savegame:", true)) {
+		_decoder = new Graphics::BitmapDecoder();
+	} else if (filename.hasSuffix(".png")) {
 		_decoder = new Graphics::PNGDecoder();
 	} else if (filename.hasSuffix(".bmp")) {
 		_decoder = new Graphics::BitmapDecoder();
@@ -96,6 +101,11 @@ byte CBImage::getAlphaAt(int x, int y) {
 	byte r, g, b, a;
 	_surface->format.colorToARGB(color, a, r, g, b);
 	return a;
+}
+
+void CBImage::copyFrom(Graphics::Surface *surface) {
+	_surface = _deletableSurface = new Graphics::Surface();
+	_deletableSurface->copyFrom(*surface);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,8 +141,81 @@ HRESULT CBImage::Resize(int NewWidth, int NewHeight) {
 
 
 //////////////////////////////////////////////////////////////////////////
-byte *CBImage::CreateBMPBuffer(uint32 *BufferSize) {
-	if (!_bitmap) return NULL;
+bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
+	if (!_surface) return NULL;
+
+	/* The following is just copied over and inverted to write-ops from the BMP-decoder */
+	stream->writeByte('B');
+	stream->writeByte('M');
+
+	/* Since we don't care during reads, we don't care during writes: */
+	/* uint32 fileSize = */ stream->writeUint32LE(0);
+	/* uint16 res1 = */ stream->writeUint16LE(0);
+	/* uint16 res2 = */ stream->writeUint16LE(0);
+	const uint32 imageOffset = 54;
+	stream->writeUint32LE(imageOffset);
+
+	const uint32 infoSize = 40; /* Windows v3 BMP */
+	stream->writeUint32LE(infoSize);
+
+	uint32 width = _surface->w;
+	int32 height = _surface->h;
+	stream->writeUint32LE(width);
+	stream->writeUint32LE(height);
+
+	if (width == 0 || height == 0)
+		return false;
+	
+	if (height < 0) {
+		warning("Right-side up bitmaps not supported");
+		return false;
+	}
+	
+	/* uint16 planes = */ stream->writeUint16LE(0);
+	const uint16 bitsPerPixel = 24;
+	stream->writeUint16LE(bitsPerPixel);
+
+	const uint32 compression = 0;
+	stream->writeUint32LE(compression);
+
+	/* uint32 imageSize = */ stream->writeUint32LE(0);
+	/* uint32 pixelsPerMeterX = */ stream->writeUint32LE(0);
+	/* uint32 pixelsPerMeterY = */ stream->writeUint32LE(0);
+	const uint32 paletteColorCount = 0;
+	stream->writeUint32LE(paletteColorCount);
+	/* uint32 colorsImportant = */ stream->writeUint32LE(0);
+
+	// Start us at the beginning of the image (54 bytes in)
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+
+	// BGRA for 24bpp
+	if (bitsPerPixel == 24)
+		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+
+	Graphics::Surface *surface = _surface->convertTo(format);
+
+	int srcPitch = width * (bitsPerPixel >> 3);
+	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
+
+	for (int32 i = height - 1; i >= 0; i--) {
+		for (uint32 j = 0; j < width; j++) {
+			byte b,g,r;
+			uint32 color = *(uint32*)surface->getBasePtr(j, i);
+			surface->format.colorToRGB(color, r, g, b);
+			stream->writeByte(b);
+			stream->writeByte(g);
+			stream->writeByte(r);
+		}
+		
+		for (int k = 0; k < extraDataLength; k++) {
+			stream->writeByte(0);
+		}
+	}
+	surface->free();
+	delete surface;
+	return true;
+
+	//*BufferSize = 0;
 #if 0
 	FIMEMORY *fiMem = FreeImage_OpenMemory();
 	FreeImage_SaveToMemory(FIF_PNG, _bitmap, fiMem);
@@ -164,6 +247,13 @@ HRESULT CBImage::CopyFrom(CBImage *OrigImage, int NewWidth, int NewHeight) {
 
 	_bitmap = FreeImage_Rescale(OrigImage->GetBitmap(), NewWidth, NewHeight, FILTER_BILINEAR);
 #endif
+	TransparentSurface temp(*OrigImage->_surface, false);
+	if (_deletableSurface) {
+		_deletableSurface->free();
+		delete _deletableSurface;
+		_deletableSurface = NULL;
+	}
+	_surface = _deletableSurface = temp.scale(NewWidth, NewHeight);
 	return S_OK;
 }
 

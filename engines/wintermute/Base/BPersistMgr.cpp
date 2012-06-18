@@ -165,11 +165,17 @@ HRESULT CBPersistMgr::InitSave(const char *Desc) {
 		if (Game->_cachedThumbnail) {
 			if (Game->_cachedThumbnail->_thumbnail) {
 				uint32 Size = 0;
-				byte *Buffer = Game->_cachedThumbnail->_thumbnail->CreateBMPBuffer(&Size);
+				Common::MemoryWriteStreamDynamic thumbStream(DisposeAfterUse::YES);
+				if (Game->_cachedThumbnail->_thumbnail->writeBMPToStream(&thumbStream)) {
+					_saveStream->writeUint32LE(thumbStream.size());
+					_saveStream->write(thumbStream.getData(), thumbStream.size());
+				} else {
+					_saveStream->writeUint32LE(0);
+				}
 
-				PutDWORD(Size);
+/*				PutDWORD(Size);
 				if (Size > 0) _saveStream->write(Buffer, Size);
-				delete [] Buffer;
+				delete [] Buffer;*/
 				ThumbnailOK = true;
 			}
 		}

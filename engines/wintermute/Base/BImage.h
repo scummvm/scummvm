@@ -35,6 +35,7 @@
 #include "graphics/decoders/image_decoder.h"
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 struct FIBITMAP;
 
@@ -50,16 +51,17 @@ public:
 	const Graphics::Surface *getSurface() const { return _surface; };
 	const byte *getPalette() const { return _palette; }
 	byte getAlphaAt(int x, int y);
-	byte *CreateBMPBuffer(uint32 *BufferSize = NULL);
+	bool writeBMPToStream(Common::WriteStream *stream);
 	HRESULT Resize(int NewWidth, int NewHeight);
 	HRESULT SaveBMPFile(const char *Filename);
 	HRESULT CopyFrom(CBImage *OrigImage, int NewWidth = 0, int NewHeight = 0);
-
+	void copyFrom(Graphics::Surface *surface);
 private:
 	Common::String _filename;
 	Graphics::ImageDecoder *_decoder;
 	FIBITMAP *_bitmap;
 	const Graphics::Surface *_surface;
+	Graphics::Surface *_deletableSurface;
 	const byte *_palette;
 };
 

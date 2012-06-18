@@ -399,6 +399,9 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 CBImage *CBRenderSDL::TakeScreenshot() {
 // TODO: Fix this
 	warning("CBRenderSDL::TakeScreenshot() - not ported yet");
+	CBImage *screenshot = new CBImage(Game);
+	screenshot->copyFrom(_renderSurface);
+	return screenshot;
 #if 0
 	SDL_Rect viewport;
 
