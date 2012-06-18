@@ -506,19 +506,6 @@ lookbehind_overrun:
 #endif
 }
 
-int lzo1x_1_compress(const byte *src, uint32 src_len, byte *dst, uint32 *dst_len, void *wrkmem) {
-	warning("TODO: lzo1x_1_compress");
-	return 0;
-}
-
-/**
- * better compression ratio at the cost of more memory and time
- */
-int lzo1x_999_compress(const byte *src, uint32 src_len, byte *dst, uint32 *dst_len, void *wrkmem) {
-	warning("TODO: lzo1x_999_compress");
-	return 0;
-}
-
 } // end of namespace MPAL
 
 } // end of namespace Tony
