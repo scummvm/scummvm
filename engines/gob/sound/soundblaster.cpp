@@ -49,6 +49,8 @@ void SoundBlaster::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	if (sndDesc && (sndDesc != _curSoundDesc))
 		return;
 
+	_compositionRepCount = 0;
+
 	if (fadeLength <= 0)
 		_curSoundDesc = 0;
 
@@ -64,6 +66,7 @@ void SoundBlaster::stopComposition() {
 
 void SoundBlaster::endComposition() {
 	_compositionPos = -1;
+	_compositionRepCount = 0;
 }
 
 void SoundBlaster::nextCompositionPos() {
