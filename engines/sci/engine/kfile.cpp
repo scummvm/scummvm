@@ -185,7 +185,7 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 	Common::String path = s->_segMan->getString(argv[0]);
 
-	debug(3, "kValidPath(%s) -> %d", path.c_str(), s->r_acc.offset);
+	debug(3, "kValidPath(%s) -> %d", path.c_str(), s->r_acc.getOffset());
 
 	// Always return true
 	return make_reg(0, 1);
@@ -866,7 +866,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 				//  saving a previously restored game.
 				// We set the current savedgame-id directly and remove the script
 				//  code concerning this via script patch.
-				s->variables[VAR_GLOBAL][0xB3].offset = SAVEGAMEID_OFFICIALRANGE_START + savegameId;
+				s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
 			}
 		} else {
 			s->r_acc = TRUE_REG;

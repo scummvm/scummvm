@@ -1243,7 +1243,7 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 
 	for (uint i = 0; i < _engine->_gamestate->_segMan->classTableSize(); i++) {
 		Class temp = _engine->_gamestate->_segMan->_classTable[i];
-		if (temp.reg.segment) {
+		if (temp.reg.getSegment()) {
 			const char *className = _engine->_gamestate->_segMan->getObjectName(temp.reg);
 			if (argc == 1 || (argc == 2 && !strcmp(className, argv[1]))) {
 				DebugPrintf(" Class 0x%x (%s) at %04x:%04x (script %d)\n", i,
@@ -1688,7 +1688,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 	Common::Array<reg_t> entries = hunks->listAllDeallocatable(id);
 
 	for (uint i = 0; i < entries.size(); ++i) {
-		uint16 offset = entries[i].offset;
+		uint16 offset = entries[i].getOffset();
 		const Hunk& h = hunks->_table[offset];
 		if (strcmp(h.type, "SaveBits()") == 0) {
 			byte* memoryPtr = (byte *)h.mem;
@@ -1751,12 +1751,12 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 		return true;
 	}
 
-	if (memoryHandle.segment != id || !hunks->isValidOffset(memoryHandle.offset)) {
+	if (memoryHandle.getSegment() != id || !hunks->isValidOffset(memoryHandle.getOffset())) {
 		DebugPrintf("Invalid address.\n");
 		return true;
 	}
 
-	const Hunk& h = hunks->_table[memoryHandle.offset];
+	const Hunk& h = hunks->_table[memoryHandle.getOffset()];
 
 	if (strcmp(h.type, "SaveBits()") != 0) {
 		DebugPrintf("Invalid address.\n");
@@ -2266,16 +2266,16 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 		return true;
 	}
 
-	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegmentObj(addr.segment);
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegmentObj(addr.getSegment());
 	if (!mobj) {
-		DebugPrintf("Unknown segment : %x\n", addr.segment);
+		DebugPrintf("Unknown segment : %x\n", addr.getSegment());
 		return 1;
 	}
 
 	DebugPrintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
 	const Common::Array<reg_t> tmp = mobj->listAllOutgoingReferences(addr);
 	for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
-		if (it->segment)
+		if (it->getSegment())
 			g_sci->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(*it));
 
 	return true;
@@ -2298,16 +2298,16 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 		return true;
 	}
 
-	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegmentObj(addr.segment);
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegmentObj(addr.getSegment());
 	if (!mobj) {
-		DebugPrintf("Unknown segment : %x\n", addr.segment);
+		DebugPrintf("Unknown segment : %x\n", addr.getSegment());
 		return true;
 	}
 
-	DebugPrintf("Freeable in segment %04x:\n", addr.segment);
-	const Common::Array<reg_t> tmp = mobj->listAllDeallocatable(addr.segment);
+	DebugPrintf("Freeable in segment %04x:\n", addr.getSegment());
+	const Common::Array<reg_t> tmp = mobj->listAllDeallocatable(addr.getSegment());
 	for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
-		if (it->segment)
+		if (it->getSegment())
 			g_sci->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(*it));
 
 	return true;
@@ -2331,9 +2331,9 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 		return true;
 	}
 
-	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegmentObj(addr.segment);
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegmentObj(addr.getSegment());
 	if (!mobj) {
-		DebugPrintf("Unknown segment : %x\n", addr.segment);
+		DebugPrintf("Unknown segment : %x\n", addr.getSegment());
 		return true;
 	}
 
@@ -2572,12 +2572,12 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 
 	DebugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
 
-	if (reg.segment == 0 && reg.offset == 0) {
+	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
 		DebugPrintf("Null.\n");
 		return true;
 	}
 
-	if (reg_end.segment != reg.segment && reg_end != NULL_REG) {
+	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
 		DebugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
 		reg_end = NULL_REG;
 	}
@@ -2613,7 +2613,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			printObject(reg);
 			break;
 		case SIG_TYPE_REFERENCE: {
-			switch (_engine->_gamestate->_segMan->getSegmentType(reg.segment)) {
+			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
 				case SEG_TYPE_STRING: {
 					DebugPrintf("SCI32 string\n");
@@ -2629,21 +2629,20 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 				}
 #endif
 				default: {
-					int size;
 					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-					size = block.maxSize;
+					uint16 size = block.maxSize;
 
 					DebugPrintf("raw data\n");
 
-					if (reg_end.segment != 0 && size < reg_end.offset - reg.offset) {
+					if (reg_end.getSegment() != 0 && size < reg_end.getOffset() - reg.getOffset()) {
 						DebugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
 						reg_end = NULL_REG;
 					}
 
-					if (reg_end.segment != 0 && (size >= reg_end.offset - reg.offset))
-						size = reg_end.offset - reg.offset;
+					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
+						size = reg_end.getOffset() - reg.getOffset();
 
-					if (reg_end.segment != 0)
+					if (reg_end.getSegment() != 0)
 						DebugPrintf("Block size less than or equal to %d\n", size);
 
 					if (block.isRaw)
@@ -2655,7 +2654,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		}
 		case SIG_TYPE_INTEGER:
-			DebugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.offset, reg.offset);
+			DebugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
 			break;
 		default:
 			DebugPrintf("unknown type %d.\n", type);
@@ -2725,7 +2724,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		switch (call.type) {
 		case EXEC_STACK_TYPE_CALL: // Normal function
 			if (call.type == EXEC_STACK_TYPE_CALL)
-			DebugPrintf(" %x: script %d - ", i, (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.segment]).getScriptNumber());
+			DebugPrintf(" %x: script %d - ", i, (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.getSegment()]).getScriptNumber());
 			if (call.debugSelector != -1) {
 				DebugPrintf("%s::%s(", objname, _engine->getKernel()->getSelectorName(call.debugSelector).c_str());
 			} else if (call.debugExportId != -1) {
@@ -2917,7 +2916,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		addr = disassemble(_engine->_gamestate, addr, printBWTag, printBytecode);
 		if (addr.isNull() && prevAddr < farthestTarget)
 			addr = prevAddr + 1; // skip past the ret
-	} while (addr.offset > 0);
+	} while (addr.getOffset() > 0);
 
 	return true;
 }
@@ -2934,10 +2933,10 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	reg_t vpc = NULL_REG;
-	int opCount = 1;
+	uint opCount = 1;
 	bool printBWTag = false;
 	bool printBytes = false;
-	int size;
+	uint16 size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
 		DebugPrintf("Invalid address passed.\n");
@@ -2946,7 +2945,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	SegmentRef ref = _engine->_gamestate->_segMan->dereference(vpc);
-	size = ref.maxSize + vpc.offset; // total segment size
+	size = ref.maxSize + vpc.getOffset(); // total segment size
 
 	for (int i = 2; i < argc; i++) {
 		if (!scumm_stricmp(argv[i], "bwt"))
@@ -2968,7 +2967,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 
 	do {
 		vpc = disassemble(_engine->_gamestate, vpc, printBWTag, printBytes);
-	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--opCount));
+	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
 	return true;
 }
@@ -3011,7 +3010,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 			// Now dissassemble each method of the script object
 			for (uint16 i = 0; i < obj->getMethodCount(); i++) {
 				reg_t fptr = obj->getFunction(i);
-				uint16 offset = fptr.offset;
+				uint16 offset = fptr.getOffset();
 				int16 opparams[4];
 				byte extOpcode;
 				byte opcode;
@@ -3699,8 +3698,8 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 			return 1;
 
 		// Now lookup the script's segment
-		dest->segment = s->_segMan->getScriptSegment(script_nr);
-		if (!dest->segment) {
+		dest->setSegment(s->_segMan->getScriptSegment(script_nr));
+		if (!dest->getSegment()) {
 			return 1;
 		}
 
@@ -3782,19 +3781,19 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 				offsetStr = colon + 1;
 
 				Common::String segmentStr(str, colon);
-				dest->segment = strtol(segmentStr.c_str(), &endptr, 16);
+				dest->setSegment(strtol(segmentStr.c_str(), &endptr, 16));
 				if (*endptr)
 					return 1;
 			} else {
 				int val = 0;
-				dest->segment = 0;
+				dest->setSegment(0);
 
 				if (charsCountNumber == charsCount) {
 					// Only numbers in input, assume decimal value
 					val = strtol(str, &endptr, 10);
 					if (*endptr)
 						return 1; // strtol failed?
-					dest->offset = val;
+					dest->setOffset(val);
 					return 0;
 				} else {
 					// We also got letters, check if there were only hexadecimal letters and '0x' at the start or 'h' at the end
@@ -3802,7 +3801,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 						val = strtol(str, &endptr, 16);
 						if ((*endptr != 'h') && (*endptr != 0))
 							return 1;
-						dest->offset = val;
+						dest->setOffset(val);
 						return 0;
 					} else {
 						// Something else was in input, assume object name
@@ -3851,9 +3850,9 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 		int val = strtol(offsetStr, &endptr, 16);
 
 		if (relativeOffset)
-			dest->offset += val;
+			dest->incOffset(val);
 		else
-			dest->offset = val;
+			dest->setOffset(val);
 
 		if (*endptr)
 			return 1;
@@ -3933,15 +3932,15 @@ void Console::printList(List *list) {
 
 	while (!pos.isNull()) {
 		Node *node;
-		NodeTable *nt = (NodeTable *)_engine->_gamestate->_segMan->getSegment(pos.segment, SEG_TYPE_NODES);
+		NodeTable *nt = (NodeTable *)_engine->_gamestate->_segMan->getSegment(pos.getSegment(), SEG_TYPE_NODES);
 
-		if (!nt || !nt->isValidEntry(pos.offset)) {
+		if (!nt || !nt->isValidEntry(pos.getOffset())) {
 			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
 			          PRINT_REG(pos));
 			return;
 		}
 
-		node = &(nt->_table[pos.offset]);
+		node = &(nt->_table[pos.getOffset()]);
 
 		DebugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
@@ -3960,37 +3959,37 @@ void Console::printList(List *list) {
 }
 
 int Console::printNode(reg_t addr) {
-	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(addr.segment, SEG_TYPE_LISTS);
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(addr.getSegment(), SEG_TYPE_LISTS);
 
 	if (mobj) {
 		ListTable *lt = (ListTable *)mobj;
 		List *list;
 
-		if (!lt->isValidEntry(addr.offset)) {
+		if (!lt->isValidEntry(addr.getOffset())) {
 			DebugPrintf("Address does not contain a list\n");
 			return 1;
 		}
 
-		list = &(lt->_table[addr.offset]);
+		list = &(lt->_table[addr.getOffset()]);
 
 		DebugPrintf("%04x:%04x : first x last = (%04x:%04x, %04x:%04x)\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
 		NodeTable *nt;
 		Node *node;
-		mobj = _engine->_gamestate->_segMan->getSegment(addr.segment, SEG_TYPE_NODES);
+		mobj = _engine->_gamestate->_segMan->getSegment(addr.getSegment(), SEG_TYPE_NODES);
 
 		if (!mobj) {
-			DebugPrintf("Segment #%04x is not a list or node segment\n", addr.segment);
+			DebugPrintf("Segment #%04x is not a list or node segment\n", addr.getSegment());
 			return 1;
 		}
 
 		nt = (NodeTable *)mobj;
 
-		if (!nt->isValidEntry(addr.offset)) {
+		if (!nt->isValidEntry(addr.getOffset())) {
 			DebugPrintf("Address does not contain a node\n");
 			return 1;
 		}
-		node = &(nt->_table[addr.offset]);
+		node = &(nt->_table[addr.getOffset()]);
 
 		DebugPrintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
 		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
@@ -4028,8 +4027,8 @@ int Console::printObject(reg_t pos) {
 		reg_t val = obj->getVariable(i);
 		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
-		if (!val.segment)
-			DebugPrintf(" (%d)", val.offset);
+		if (!val.getSegment())
+			DebugPrintf(" (%d)", val.getOffset());
 
 		const Object *ref = s->_segMan->getObject(val);
 		if (ref)
@@ -4042,8 +4041,8 @@ int Console::printObject(reg_t pos) {
 		reg_t fptr = obj->getFunction(i);
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), _engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), PRINT_REG(fptr));
 	}
-	if (s->_segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
-		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.segment)->getScriptNumber());
+	if (s->_segMan->_heap[pos.getSegment()]->getType() == SEG_TYPE_SCRIPT)
+		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.getSegment())->getScriptNumber());
 
 	return 0;
 }

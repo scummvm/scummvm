@@ -135,7 +135,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 	Video::VideoDecoder *videoDecoder = 0;
 
-	if (argv[0].segment != 0) {
+	if (argv[0].getSegment() != 0) {
 		Common::String filename = s->_segMan->getString(argv[0]);
 
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
@@ -303,7 +303,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		// with subfx 21. The subtleness has to do with creation of temporary
 		// planes and positioning relative to such planes.
 
-		uint16 flags = argv[3].offset;
+		uint16 flags = argv[3].getOffset();
 		Common::String flagspec;
 
 		if (argc > 3) {
@@ -331,12 +331,12 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 			s->_videoState.flags = flags;
 		}
 
-		warning("x, y: %d, %d", argv[1].offset, argv[2].offset);
-		s->_videoState.x = argv[1].offset;
-		s->_videoState.y = argv[2].offset;
+		warning("x, y: %d, %d", argv[1].getOffset(), argv[2].getOffset());
+		s->_videoState.x = argv[1].getOffset();
+		s->_videoState.y = argv[2].getOffset();
 
 		if (argc > 4 && flags & 16)
-			warning("gammaBoost: %d%% between palette entries %d and %d", argv[4].offset, argv[5].offset, argv[6].offset);
+			warning("gammaBoost: %d%% between palette entries %d and %d", argv[4].getOffset(), argv[5].getOffset(), argv[6].getOffset());
 		break;
 	}
 	case 6:	// Play

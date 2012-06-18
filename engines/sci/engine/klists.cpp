@@ -409,10 +409,14 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 	const sort_temp_t *st1 = (const sort_temp_t *)p1;
 	const sort_temp_t *st2 = (const sort_temp_t *)p2;
 
-	if (st1->order.segment < st2->order.segment || (st1->order.segment == st2->order.segment && st1->order.offset < st2->order.offset))
+	if (st1->order.getSegment() < st2->order.getSegment() ||
+		(st1->order.getSegment() == st2->order.getSegment() &&
+		st1->order.getOffset() < st2->order.getOffset()))
 		return -1;
 
-	if (st1->order.segment > st2->order.segment || (st1->order.segment == st2->order.segment && st1->order.offset > st2->order.offset))
+	if (st1->order.getSegment() > st2->order.getSegment() ||
+		(st1->order.getSegment() == st2->order.getSegment() &&
+		st1->order.getOffset() > st2->order.getOffset()))
 		return 1;
 
 	return 0;
@@ -665,15 +669,15 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		if (argv[2].toUint16() == 3)
 			return kString(s, argc, argv);
 	} else {
-		if (s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_STRING ||
-			s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_SCRIPT) {
+		if (s->_segMan->getSegmentType(argv[1].getSegment()) == SEG_TYPE_STRING ||
+			s->_segMan->getSegmentType(argv[1].getSegment()) == SEG_TYPE_SCRIPT) {
 			return kString(s, argc, argv);
 		}
 
 #if 0
 		if (op == 6) {
-			if (s->_segMan->getSegmentType(argv[3].segment) == SEG_TYPE_STRING ||
-				s->_segMan->getSegmentType(argv[3].segment) == SEG_TYPE_SCRIPT) {
+			if (s->_segMan->getSegmentType(argv[3].getSegment()) == SEG_TYPE_STRING ||
+				s->_segMan->getSegmentType(argv[3].getSegment()) == SEG_TYPE_SCRIPT) {
 				return kString(s, argc, argv);
 			}
 		}
@@ -792,7 +796,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 #endif
 			return NULL_REG;
 		}
-		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY)
+		if (s->_segMan->getSegmentObj(argv[1].getSegment())->getType() != SEG_TYPE_ARRAY)
 			error("kArray(Dup): Request to duplicate a segment which isn't an array");
 
 		reg_t arrayHandle;

@@ -357,27 +357,27 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 
 uint16 Kernel::findRegType(reg_t reg) {
 	// No segment? Must be integer
-	if (!reg.segment)
-		return SIG_TYPE_INTEGER | (reg.offset ? 0 : SIG_TYPE_NULL);
+	if (!reg.getSegment())
+		return SIG_TYPE_INTEGER | (reg.getOffset() ? 0 : SIG_TYPE_NULL);
 
-	if (reg.segment == 0xFFFF)
+	if (reg.getSegment() == 0xFFFF)
 		return SIG_TYPE_UNINITIALIZED;
 
 	// Otherwise it's an object
-	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
+	SegmentObj *mobj = _segMan->getSegmentObj(reg.getSegment());
 	if (!mobj)
 		return SIG_TYPE_ERROR;
 
 	uint16 result = 0;
-	if (!mobj->isValidOffset(reg.offset))
+	if (!mobj->isValidOffset(reg.getOffset()))
 		result |= SIG_IS_INVALID;
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
-		if (reg.offset <= (*(Script *)mobj).getBufSize() &&
-			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
-			(*(Script *)mobj).offsetIsObject(reg.offset)) {
-			result |= ((Script *)mobj)->getObject(reg.offset) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
+		if (reg.getOffset() <= (*(Script *)mobj).getBufSize() &&
+			reg.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET &&
+			(*(Script *)mobj).offsetIsObject(reg.getOffset())) {
+			result |= ((Script *)mobj)->getObject(reg.getOffset()) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
 		} else
 			result |= SIG_TYPE_REFERENCE;
 		break;
@@ -608,7 +608,7 @@ void Kernel::mapFunctions() {
 			_kernelFuncs[id].workarounds = kernelMap->workarounds;
 			if (kernelMap->subFunctions) {
 				// Get version for subfunction identification
-				SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).offset;
+				SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).getOffset();
 				// Now check whats the highest subfunction-id for this version
 				const SciKernelMapSubEntry *kernelSubMap = kernelMap->subFunctions;
 				uint16 subFunctionCount = 0;
@@ -885,15 +885,15 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 	char *seeker;
 	Resource *textres;
 
-	if (address.segment)
+	if (address.getSegment())
 		return _segMan->getString(address);
 
 	int textlen;
 	int _index = index;
-	textres = _resMan->findResource(ResourceId(kResourceTypeText, address.offset), 0);
+	textres = _resMan->findResource(ResourceId(kResourceTypeText, address.getOffset()), 0);
 
 	if (!textres) {
-		error("text.%03d not found", address.offset);
+		error("text.%03d not found", address.getOffset());
 		return NULL; /* Will probably segfault */
 	}
 
@@ -907,7 +907,7 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 	if (textlen)
 		return seeker;
 
-	error("Index %d out of bounds in text.%03d", _index, address.offset);
+	error("Index %d out of bounds in text.%03d", _index, address.getOffset());
 	return NULL;
 }
 

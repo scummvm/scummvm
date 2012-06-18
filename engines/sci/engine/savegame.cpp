@@ -115,8 +115,9 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 
 template<>
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	s.syncAsUint16LE(obj.segment);
-	s.syncAsUint16LE(obj.offset);
+	// Segment and offset are accessed directly here
+	s.syncAsUint16LE(obj._segment);
+	s.syncAsUint16LE(obj._offset);
 }
 
 template<>
@@ -202,7 +203,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 				ObjMap objects = scr->getObjectMap();
 				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
-					it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().offset));
+					it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().getOffset()));
 
 			}
 
@@ -507,7 +508,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		Object tmp;
 		for (uint i = 0; i < numObjs; ++i) {
 			syncWithSerializer(s, tmp);
-			_objects[tmp.getPos().offset] = tmp;
+			_objects[tmp.getPos().getOffset()] = tmp;
 		}
 	} else {
 		ObjMap::iterator it;
@@ -816,7 +817,7 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 
 	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
 	meta.script0Size = script0->size;
-	meta.gameObjectOffset = g_sci->getGameObject().offset;
+	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
 
 	// Checking here again
 	if (s->executionStackBase) {
@@ -867,7 +868,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
 		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-		if (script0->size != meta.script0Size || g_sci->getGameObject().offset != meta.gameObjectOffset) {
+		if (script0->size != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
 			//warning("This saved game was created with a different version of the game, unable to load it");
 
 			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");

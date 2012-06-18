@@ -337,7 +337,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 
 	Common::String sep_str;
 	const char *sep = NULL;
-	if ((argc > 4) && (argv[4].segment)) {
+	if ((argc > 4) && (argv[4].getSegment())) {
 		sep_str = s->_segMan->getString(argv[4]);
 		sep = sep_str.c_str();
 	}
@@ -789,7 +789,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	Common::Rect rect;
 	TextAlignment alignment;
 	int16 mode, maxChars, cursorPos, upperPos, listCount, i;
-	int16 upperOffset, cursorOffset;
+	uint16 upperOffset, cursorOffset;
 	GuiResourceId viewId;
 	int16 loopNo;
 	int16 celNo;
@@ -871,7 +871,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		listCount = 0; listSeeker = textReference;
 		while (s->_segMan->strlen(listSeeker) > 0) {
 			listCount++;
-			listSeeker.offset += maxChars;
+			listSeeker.incOffset(maxChars);
 		}
 
 		// TODO: This is rather convoluted... It would be a lot cleaner
@@ -885,11 +885,11 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			for (i = 0; i < listCount; i++) {
 				listStrings[i] = s->_segMan->getString(listSeeker);
 				listEntries[i] = listStrings[i].c_str();
-				if (listSeeker.offset == upperOffset)
+				if (listSeeker.getOffset() == upperOffset)
 					upperPos = i;
-				if (listSeeker.offset == cursorOffset)
+				if (listSeeker.getOffset() == cursorOffset)
 					cursorPos = i;
-				listSeeker.offset += maxChars;
+				listSeeker.incOffset(maxChars);
 			}
 		}
 
@@ -1104,7 +1104,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
 
 	Common::String title;
-	if (argv[4 + argextra].segment) {
+	if (argv[4 + argextra].getSegment()) {
 		title = s->_segMan->getString(argv[4 + argextra]);
 		title = g_sci->strSplit(title.c_str(), NULL);
 	}
@@ -1143,7 +1143,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 
 	Common::String text;
 
-	if (textp.segment) {
+	if (textp.getSegment()) {
 		argc--; argv++;
 		text = s->_segMan->getString(textp);
 	} else {

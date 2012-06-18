@@ -269,7 +269,7 @@ Common::String DirSeeker::getVirtualFilename(uint fileNumber) {
 
 reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
 	// Verify that we are given a valid buffer
-	if (!buffer.segment) {
+	if (!buffer.getSegment()) {
 		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
 		return NULL_REG;
 	}

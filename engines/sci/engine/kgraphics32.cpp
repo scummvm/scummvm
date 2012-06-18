@@ -140,7 +140,7 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 x = argv[0].toUint16();
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
-	uint16 illegalBits = argv[3].offset;
+	uint16 illegalBits = argv[3].getOffset();
 	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject, true);
 
 	// we assume that x, y are local coordinates

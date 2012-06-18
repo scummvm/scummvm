@@ -128,7 +128,7 @@ reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
 	// fragmented
 	const uint16 size = 0x7fea;
 
-	switch (argv[0].offset) {
+	switch (argv[0].getOffset()) {
 	case K_MEMORYINFO_LARGEST_HEAP_BLOCK:
 		// In order to prevent "Memory fragmented" dialogs from
 		// popping up in some games, we must return FREE_HEAP - 2 here.
@@ -140,7 +140,7 @@ reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, size);
 
 	default:
-		error("Unknown MemoryInfo operation: %04x", argv[0].offset);
+		error("Unknown MemoryInfo operation: %04x", argv[0].getOffset());
 	}
 
 	return NULL_REG;
@@ -304,7 +304,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_PEEK : {
-		if (!argv[1].segment) {
+		if (!argv[1].getSegment()) {
 			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
@@ -334,11 +334,11 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (ref.isRaw) {
-			if (argv[2].segment) {
+			if (argv[2].getSegment()) {
 				error("Attempt to poke memory reference %04x:%04x to %04x:%04x", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 			}
-			WRITE_SCIENDIAN_UINT16(ref.raw, argv[2].offset);		// Amiga versions are BE
+			WRITE_SCIENDIAN_UINT16(ref.raw, argv[2].getOffset());		// Amiga versions are BE
 		} else {
 			if (ref.skipByte)
 				error("Attempt to poke memory at odd offset %04X:%04X", PRINT_REG(argv[1]));

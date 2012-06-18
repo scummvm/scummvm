@@ -116,7 +116,7 @@ struct ExecStack {
 		if (localsSegment_ != 0xFFFF)
 			local_segment = localsSegment_;
 		else
-			local_segment = pc_.segment;
+			local_segment = pc_.getSegment();
 		debugSelector = debugSelector_;
 		debugExportId = debugExportId_;
 		debugLocalCallOffset = debugLocalCallOffset_;

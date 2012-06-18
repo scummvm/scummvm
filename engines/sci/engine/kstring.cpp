@@ -33,7 +33,7 @@ namespace Sci {
 
 reg_t kStrEnd(EngineState *s, int argc, reg_t *argv) {
 	reg_t address = argv[0];
-	address.offset += s->_segMan->strlen(address);
+	address.incOffset(s->_segMan->strlen(address));
 
 	return address;
 }
@@ -123,18 +123,22 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 			oddOffset = !oddOffset;
 
 		if (!oddOffset) {
-			value = tmp.offset & 0x00ff;
+			value = tmp.getOffset() & 0x00ff;
 			if (argc > 2) { /* Request to modify this char */
-				tmp.offset &= 0xff00;
-				tmp.offset |= newvalue;
-				tmp.segment = 0;
+				uint16 offset = tmp.toUint16();
+				offset &= 0xff00;
+				offset |= newvalue;
+				tmp.setOffset(offset);
+				tmp.setSegment(0);
 			}
 		} else {
-			value = tmp.offset >> 8;
+			value = tmp.getOffset() >> 8;
 			if (argc > 2)  { /* Request to modify this char */
-				tmp.offset &= 0x00ff;
-				tmp.offset |= newvalue << 8;
-				tmp.segment = 0;
+				uint16 offset = tmp.toUint16();
+				offset &= 0x00ff;
+				offset |= newvalue << 8;
+				tmp.setOffset(offset);
+				tmp.setSegment(0);
 			}
 		}
 	}
@@ -204,7 +208,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	int strLength = 0; /* Used for stuff like "%13s" */
 	bool unsignedVar = false;
 
-	if (position.segment)
+	if (position.getSegment())
 		startarg = 2;
 	else {
 		// WORKAROUND: QFG1 VGA Mac calls this without the first parameter (dest). It then
@@ -291,7 +295,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				if (extralen < 0)
 					extralen = 0;
 
-				if (reg.segment) /* Heap address? */
+				if (reg.getSegment()) /* Heap address? */
 					paramindex++;
 				else
 					paramindex += 2; /* No, text resource address */
@@ -654,7 +658,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, s->_segMan->getString(argv[1]).size());
 	case 2: { // At (return value at an index)
 		// Note that values are put in bytes to avoid sign extension
-		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
+		if (argv[1].getSegment() == s->_segMan->getStringSegmentId()) {
 			SciString *string = s->_segMan->lookupString(argv[1]);
 			byte val = string->getRawData()[argv[2].toUint16()];
 			return make_reg(0, val);
@@ -705,7 +709,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		uint32 string2Size = 0;
 		Common::String string;
 
-		if (argv[3].segment == s->_segMan->getStringSegmentId()) {
+		if (argv[3].getSegment() == s->_segMan->getStringSegmentId()) {
 			SciString *sstr;
 			sstr = s->_segMan->lookupString(argv[3]);
 			string2 = sstr->getRawData();
@@ -755,7 +759,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 
 		SciString *dupString = s->_segMan->allocateString(&stringHandle);
 
-		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
+		if (argv[1].getSegment() == s->_segMan->getStringSegmentId()) {
 			*dupString = *s->_segMan->lookupString(argv[1]);
 		} else {
 			dupString->fromString(s->_segMan->getString(argv[1]));
