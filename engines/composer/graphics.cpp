@@ -83,17 +83,7 @@ void Animation::seekToCurrPos() {
 	_stream->seek(_offset, SEEK_SET);
 }
 
-void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventParam) {
-	// First, we check if this animation is already playing,
-	// and if it is, we sabotage that running one first.
-	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
-		Animation *anim = *i;
-		if (anim->_id != animId)
-			continue;
-
-		stopAnimation(*i);
-	}
-
+void ComposerEngine::loadAnimation(Animation *&anim, uint16 animId, int16 x, int16 y, int16 eventParam, int32 size) {
 	Common::SeekableReadStream *stream = NULL;
 	Pipe *newPipe = NULL;
 
@@ -103,7 +93,10 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		if (!pipe->hasResource(ID_ANIM, animId))
 			continue;
 		stream = pipe->getResource(ID_ANIM, animId, false);
-		break;
+
+		// When loading from savegame, make sure we have the correct stream
+		if ((!size) || (stream->size() >= size)) break;
+		stream = NULL;
 	}
 
 	// If we didn't find it, try the libraries.
@@ -112,14 +105,16 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 			warning("ignoring attempt to play invalid anim %d", animId);
 			return;
 		}
-		stream = getResource(ID_ANIM, animId);
+		Common::List<Library>::iterator j;
+		for (j = _libraries.begin(); j != _libraries.end(); j++) {
+			stream = j->_archive->getResource(ID_ANIM, animId);
 
-		uint32 type = 0;
-		for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
-			if (i->_archive->hasResource(ID_ANIM, animId)) {
-				type = i->_archive->getResourceFlags(ID_ANIM, animId);
-				break;
-			}
+			// When loading from savegame, make sure we have the correct stream
+			if ((!size) || (stream->size() >= size)) break;
+			stream = NULL;
+		}
+
+		uint32 type = j->_archive->getResourceFlags(ID_ANIM, animId);
 
 		// If the resource is a pipe itself, then load the pipe
 		// and then fish the requested animation out of it.
@@ -132,11 +127,26 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		}
 	}
 
-	Animation *anim = new Animation(stream, animId, Common::Point(x, y), eventParam);
-	_anims.push_back(anim);
-	runEvent(kEventAnimStarted, animId, eventParam, 0);
+	anim = new Animation(stream, animId, Common::Point(x, y), eventParam);
 	if (newPipe)
 		newPipe->_anim = anim;
+}
+
+void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventParam) {
+	// First, we check if this animation is already playing,
+	// and if it is, we sabotage that running one first.
+	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
+		Animation *anim = *i;
+		if (anim->_id != animId)
+			continue;
+
+		stopAnimation(*i);
+	}
+
+	Animation *anim = NULL;
+	loadAnimation(anim, animId, x, y, eventParam);
+	_anims.push_back(anim);
+	runEvent(kEventAnimStarted, animId, eventParam, 0);
 }
 
 void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOnly) {
