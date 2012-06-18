@@ -28,6 +28,7 @@
 #include <FUi.h>
 #include <FSystem.h>
 #include <FBase.h>
+#include <FLocales.h>
 #include <FIoFile.h>
 
 #include "config.h"
