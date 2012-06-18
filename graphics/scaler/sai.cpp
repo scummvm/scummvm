@@ -36,20 +36,20 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	return (y>>1) - (x>>1);
 }
 
-#define interpolate_1_1		interpolate16_1_1<ColorMask>
-#define interpolate_3_1		interpolate16_3_1<ColorMask>
-#define interpolate_6_1_1	interpolate16_6_1_1<ColorMask>
-#define interpolate_1_1_1_1	interpolate16_1_1_1_1<ColorMask>
+#define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
+#define interpolate_3_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_3_1<ColorMask>(a,b) : interpolate32_3_1<ColorMask>(a,b))
+#define interpolate_6_1_1(a,b,c)     (ColorMask::kBytesPerPixel == 2 ? interpolate16_6_1_1<ColorMask>(a,b,c) : interpolate32_6_1_1<ColorMask>(a,b,c))
+#define interpolate_1_1_1_1(a,b,c,d) (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1_1_1<ColorMask>(a,b,c,d) : interpolate32_1_1_1_1<ColorMask>(a,b,c,d))
 
-template<typename ColorMask>
+template<typename ColorMask, typename pixel>
 void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	const uint16 *bP;
-	uint16 *dP;
-	const uint32 nextlineSrc = srcPitch >> 1;
+	const pixel *bP;
+	pixel *dP;
+	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
 
 	while (height--) {
-		bP = (const uint16 *)srcPtr;
-		dP = (uint16 *)dstPtr;
+		bP = (const pixel *)srcPtr;
+		dP = (pixel *)dstPtr;
 
 		for (int i = 0; i < width; ++i) {
 			unsigned color4, color5, color6;
@@ -134,10 +134,10 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 			else
 				product1a = color5;
 
-			*(dP + 0) = (uint16) product1a;
-			*(dP + 1) = (uint16) product1b;
-			*(dP + dstPitch/2 + 0) = (uint16) product2a;
-			*(dP + dstPitch/2 + 1) = (uint16) product2b;
+			*(dP + 0) = (pixel) product1a;
+			*(dP + 1) = (pixel) product1b;
+			*(dP + dstPitch / sizeof(pixel) + 0) = (pixel) product2a;
+			*(dP + dstPitch / sizeof(pixel) + 1) = (pixel) product2b;
 
 			bP += 1;
 			dP += 2;
@@ -148,15 +148,15 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	}
 }
 
-template<typename ColorMask>
+template<typename ColorMask, typename pixel>
 void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	const uint16 *bP;
-	uint16 *dP;
-	const uint32 nextlineSrc = srcPitch >> 1;
+	const pixel *bP;
+	pixel *dP;
+	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
 
 	while (height--) {
-		bP = (const uint16 *)srcPtr;
-		dP = (uint16 *)dstPtr;
+		bP = (const pixel *)srcPtr;
+		dP = (pixel *)dstPtr;
 		for (int i = 0; i < width; ++i) {
 			unsigned color4, color5, color6;
 			unsigned color1, color2, color3;
@@ -237,10 +237,10 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 				}
 			}
 
-			*(dP + 0) = (uint16) product1a;
-			*(dP + 1) = (uint16) product1b;
-			*(dP + dstPitch/2 + 0) = (uint16) product2a;
-			*(dP + dstPitch/2 + 1) = (uint16) product2b;
+			*(dP + 0) = (pixel) product1a;
+			*(dP + 1) = (pixel) product1b;
+			*(dP + dstPitch / sizeof(pixel) + 0) = (pixel) product2a;
+			*(dP + dstPitch / sizeof(pixel) + 1) = (pixel) product2b;
 
 			bP += 1;
 			dP += 2;
@@ -251,24 +251,15 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	}
 }
 
-
-void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	extern int gBitFormat;
-	if (gBitFormat == 565)
-		SuperEagleTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else
-		SuperEagleTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-}
-
-template<typename ColorMask>
+template<typename ColorMask, typename pixel>
 void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	const uint16 *bP;
-	uint16 *dP;
-	const uint32 nextlineSrc = srcPitch >> 1;
+	const pixel *bP;
+	pixel *dP;
+	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
 
 	while (height--) {
-		bP = (const uint16 *)srcPtr;
-		dP = (uint16 *)dstPtr;
+		bP = (const pixel *)srcPtr;
+		dP = (pixel *)dstPtr;
 
 		for (int i = 0; i < width; ++i) {
 
@@ -379,10 +370,10 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 				}
 			}
 
-			*(dP + 0) = (uint16) colorA;
-			*(dP + 1) = (uint16) product;
-			*(dP + dstPitch/2 + 0) = (uint16) product1;
-			*(dP + dstPitch/2 + 1) = (uint16) product2;
+			*(dP + 0) = (pixel) colorA;
+			*(dP + 1) = (pixel) product;
+			*(dP + dstPitch / sizeof(pixel) + 0) = (pixel) product1;
+			*(dP + dstPitch / sizeof(pixel) + 1) = (pixel) product2;
 
 			bP += 1;
 			dP += 2;
@@ -409,10 +400,17 @@ void SAIPlugin::deinitialize() {
 
 void SAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	if (_format.gLoss == 2)
-		_2xSaITemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else
-		_2xSaITemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	if (_format.bytesPerPixel == 2) {
+		if (_format.gLoss == 2)
+			_2xSaITemplate<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		else
+			_2xSaITemplate<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	} else {
+		if (_format.aLoss == 0)
+			_2xSaITemplate<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		else
+			_2xSaITemplate<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	}
 }
 
 uint SAIPlugin::increaseFactor() {
@@ -449,10 +447,17 @@ void SuperSAIPlugin::deinitialize() {
 
 void SuperSAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	if (_format.gLoss == 2)
-		Super2xSaITemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else
-		Super2xSaITemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	if (_format.bytesPerPixel == 2) {
+		if (_format.gLoss == 2)
+			Super2xSaITemplate<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		else
+			Super2xSaITemplate<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	} else {
+		if (_format.aLoss == 0)
+			Super2xSaITemplate<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		else
+			Super2xSaITemplate<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	}
 }
 
 uint SuperSAIPlugin::increaseFactor() {
@@ -489,10 +494,17 @@ void SuperEaglePlugin::deinitialize() {
 
 void SuperEaglePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	if (_format.gLoss == 2)
-		SuperEagleTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else
-		SuperEagleTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	if (_format.bytesPerPixel == 2) {
+		if (_format.gLoss == 2)
+			SuperEagleTemplate<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		else
+			SuperEagleTemplate<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	} else {
+		if (_format.aLoss == 0)
+			SuperEagleTemplate<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		else
+			SuperEagleTemplate<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	}
 }
 
 uint SuperEaglePlugin::increaseFactor() {
