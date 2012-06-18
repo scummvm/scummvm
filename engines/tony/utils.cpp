@@ -127,7 +127,7 @@ char &RMString::operator[](int nIndex) {
 /**
  * Copies a string
  * @param str               String to copy
- * @returns                 Refrence to our string
+ * @returns                 Reference to our string
  */
 const RMString &RMString::operator=(const RMString &str) {
 	// Set the new length
@@ -154,7 +154,7 @@ const RMString &RMString::operator=(const RMString &str) {
 /**
  * Copies a char * string
  * @param str               String to copy
- * @returns                 Refrence to our string
+ * @returns                 Reference to our string
  */
 const RMString &RMString::operator=(const char *str) {
 	// If the source is empty, then destroy the current string buffer
@@ -181,7 +181,7 @@ const RMString &RMString::operator=(const char *str) {
 /**
  * Forms a string from a passed character
  * @param ch                Character to copy
- * @returns                 Refrence to our string
+ * @returns                 Reference to our string
  */
 const RMString &RMString::operator=(const int ch) {
 	if (ch == '\0')  {
@@ -227,7 +227,7 @@ void RMString::connect(const char *str, int size) {
 /**
  * Concatenate a string
  * @param str               String to concatenate
- * @returns                 Refrence to our string
+ * @returns                 Reference to our string
  */
 const RMString &RMString::operator+=(RMString &str) {
 	connect(str, str.length());
@@ -237,7 +237,7 @@ const RMString &RMString::operator+=(RMString &str) {
 /**
  * Concatenate a string
  * @param str               String to concatenate
- * @returns                 Refrence to our string
+ * @returns                 Reference to our string
  */
 const RMString &RMString::operator+=(const char *str) {
 	connect(str, strlen(str));
@@ -247,7 +247,7 @@ const RMString &RMString::operator+=(const char *str) {
 /**
  * Concatenate a character
  * @param ch                Character to concatenate
- * @returns                 Refrence to our string
+ * @returns                 Reference to our string
  */
 const RMString &RMString::operator+=(const int ch) {
 	char str[2];
@@ -406,7 +406,6 @@ bool RMFileStreamSlow::openFile(Common::File &file) {
 	return true;
 }
 
-
 bool RMFileStreamSlow::openFile(const char *lpFN) {
 	// Open file for reading
 	Common::File f;
@@ -418,7 +417,6 @@ bool RMFileStreamSlow::openFile(const char *lpFN) {
 
 	return true;
 }
-
 
 RMDataStream &RMFileStreamSlow::operator+=(int nBytes) {
 	seek(nBytes);
@@ -432,7 +430,6 @@ int RMFileStreamSlow::pos() {
 bool RMFileStreamSlow::isEOF() {
 	return (pos() >= _length);
 }
-
 
 int RMFileStreamSlow::seek(int nBytes, RMDSPos where) {
 	switch (where) {
@@ -450,14 +447,12 @@ int RMFileStreamSlow::seek(int nBytes, RMDSPos where) {
 	}
 }
 
-
 bool RMFileStreamSlow::read(void *buf, int size) {
 	uint32 dwRead;
 
 	dwRead = _stream->read(buf, size);
 	return ((int)dwRead == size);
 }
-
 
 RMFileStreamSlow &operator>>(RMFileStreamSlow &df, char &var) {
 	df.read(&var, 1);
@@ -496,7 +491,6 @@ RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint32 &var) {
 	var = FROM_LE_32(v);
 	return df;
 }
-
 
 /****************************************************************************\
 *       RMDataStream methods
@@ -995,7 +989,6 @@ RMDataStream &operator>>(RMDataStream &ds, RMRect &rc) {
 	ds >> rc._x1 >> rc._y1 >> rc._x2 >> rc._y2;
 	return ds;
 }
-
 
 /****************************************************************************\
 *       Resource Update
