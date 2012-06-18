@@ -72,7 +72,7 @@ protected:
 	bool _bGrabMovie;
 	uint16 *_wThumbBuf;
 
-	void createBWPrecalcTable(void);
+	void createBWPrecalcTable();
 	void wipeEffect(Common::Rect &rcBoundEllipse);
 	void getNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse);
 
@@ -84,13 +84,13 @@ public:
 	 * Initialization
 	 */
 	void init(/*HINSTANCE hInst*/);
-	void initDirectDraw(void);
-	void close(void);
+	void initDirectDraw();
+	void close();
 
 	/**
 	 * Drawing
 	 */
-	void repaint(void);
+	void repaint();
 
 	/**
 	 * Switch between windowed and fullscreen

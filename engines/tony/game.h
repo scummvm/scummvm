@@ -90,12 +90,12 @@ public:
 	/**
 	 * Initialization
 	 */
-	void init(void);
+	void init();
 
 	/**
 	 * Deinitialization
 	 */
-	void close(void);
+	void close();
 
 	/**
 	 * Process a frame
@@ -130,7 +130,7 @@ public:
 
 		updateCursor();
 	}
-	PointerType getSpecialPointer(void) {
+	PointerType getSpecialPointer() {
 		return (PointerType)_nCurSpecialPointer;
 	}
 
@@ -145,7 +145,7 @@ public:
 	/**
 	 * Return the current action to be applied according to the pointer
 	 */
-	int curAction(void);
+	int curAction();
 
 	/**
 	 * Show the cursor
@@ -318,12 +318,12 @@ protected:
 
 	// Initialization and state change
 	void initState(CORO_PARAM);
-	void closeState(void);
+	void closeState();
 	void changeState(CORO_PARAM, OptionScreenState newState);
 
 	// Repaint the options menu
 	void refreshAll(CORO_PARAM);
-	void refreshThumbnails(void);
+	void refreshThumbnails();
 };
 
 } // End of namespace Tony

@@ -66,7 +66,7 @@ void RMWindow::init() {
 /**
  * Close the window
  */
-void RMWindow::close(void) {
+void RMWindow::close() {
 }
 
 void RMWindow::grabThumbnail(uint16 *thumbmem) {
@@ -77,7 +77,7 @@ void RMWindow::grabThumbnail(uint16 *thumbmem) {
 /**
  * Repaint the screen
  */
-void RMWindow::repaint(void) {
+void RMWindow::repaint() {
 	g_system->updateScreen();
 }
 

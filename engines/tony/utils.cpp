@@ -296,7 +296,7 @@ void RMString::resize(int size, bool bMantain) {
 /**
  * Compacts the string to occupy less memory if possible.
  */
-void RMString::compact(void) {
+void RMString::compact() {
 	if (_realLength + 1 > _length) {
 		char *app;
 
@@ -518,7 +518,7 @@ RMDataStream::~RMDataStream() {
 /**
  * Close a stream
  */
-void RMDataStream::close(void) {
+void RMDataStream::close() {
 	_length = 0;
 	_pos = 0;
 }
@@ -850,7 +850,7 @@ RMRect::RMRect() {
 	setEmpty();
 }
 
-void RMRect::setEmpty(void) {
+void RMRect::setEmpty() {
 	_x1 = _y1 = _x2 = _y2 = 0;
 }
 
@@ -981,7 +981,7 @@ bool RMRect::operator!=(const RMRect &rc) {
 	return ((_x1 != rc._x1) || (_y1 != rc._y1) || (_x2 != rc._x2) || (_y2 != rc._y2));
 }
 
-void RMRect::normalizeRect(void) {
+void RMRect::normalizeRect() {
 	setRect(MIN(_x1, _x2), MIN(_y1, _y2), MAX(_x1, _x2), MAX(_y1, _y2));
 }
 

@@ -369,12 +369,12 @@ public:
 	/**
 	 * Initialize Tony
 	 */
-	void init(void);
+	void init();
 
 	/**
 	 * Free all memory
 	 */
-	void close(void);
+	void close();
 
 	/**
 	 * Tony makes a frame, updating the movement, etc.
@@ -389,7 +389,7 @@ public:
 	/**
 	 * Show or hide
 	 */
-	void show(void);
+	void show();
 	void hide(bool bShowShadow = false);
 
 	/**
@@ -478,7 +478,7 @@ public:
 	void setShepherdess(bool bIsPast) {
 		_bShepherdess = bIsPast;
 	}
-	int getShepherdess(void) {
+	int getShepherdess() {
 		return _bShepherdess;
 	}
 

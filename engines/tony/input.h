@@ -50,7 +50,7 @@ private:
 	/**
 	 * Deinitialize DirectInput
 	 */
-	void DIClose(void);
+	void DIClose();
 
 public:
 	RMInput();
@@ -64,12 +64,12 @@ public:
 	/**
 	 * Closes the class
 	 */
-	void close(void);
+	void close();
 
 	/**
 	 * Polling (must be performed once per frame)
 	 */
-	void poll(void);
+	void poll();
 
 	/**
 	 * Reading of the mouse

@@ -78,11 +78,11 @@ public:
 
 	// Creation
 	virtual void create(int dimx, int dimy, int nBpp, bool bUseDDraw = false);
-	virtual void destroy(void);
+	virtual void destroy();
 
 	// Buffer access
-	void lock(void);
-	void unlock(void);
+	void lock();
+	void unlock();
 
 	// These are valid only if the buffer is locked
 	operator byte *();
@@ -238,10 +238,10 @@ public:
 	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Registration
-	virtual void Register(void) {
+	virtual void Register() {
 		_nInList++;
 	}
-	virtual void Unregister(void) {
+	virtual void Unregister() {
 		_nInList--;
 		assert(_nInList >= 0);
 	}
@@ -300,7 +300,7 @@ public:
 	virtual ~RMGfxSourceBuffer();
 
 protected:
-	virtual void prepareImage(void);
+	virtual void prepareImage();
 	bool clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf);
 	void offsetY(int nLines) {
 		RMGfxBuffer::offsetY(nLines, getBpp());
@@ -316,7 +316,7 @@ public:
  */
 class RMGfxSourceBuffer16 : public RMGfxSourceBuffer {
 protected:
-	virtual void prepareImage(void);
+	virtual void prepareImage();
 	bool _bTrasp0;
 
 public:
@@ -342,7 +342,7 @@ protected:
 	uint16 _palFinal[256];
 
 	// Post process to prepare the palette for drawing
-	virtual void preparePalette(void);
+	virtual void preparePalette();
 
 public:
 	virtual ~RMGfxSourceBufferPal();
@@ -411,12 +411,12 @@ protected:
 	virtual void RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) = 0;
 
 	// Perform image compression in RLE
-	void compressRLE(void);
+	void compressRLE();
 
 protected:
 	// Overriding initialization methods
-	virtual void prepareImage(void);
-	virtual void preparePalette(void);
+	virtual void prepareImage();
+	virtual void preparePalette();
 
 public:
 	RMGfxSourceBuffer8RLE();
@@ -433,7 +433,7 @@ public:
 	void setAlphaBlendColor(int color);
 
 	// Warn if the data is already compressed
-	void setAlreadyCompressed(void);
+	void setAlreadyCompressed();
 };
 
 class RMGfxSourceBuffer8RLEByte : public RMGfxSourceBuffer8RLE {
@@ -481,13 +481,13 @@ protected:
 	byte *_aabuf;
 
 	// Calculate the buffer for the anti-aliasing
-	void calculateAA(void);
+	void calculateAA();
 
 	// Draw the AA
 	void drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 protected:
-	void prepareImage(void);
+	void prepareImage();
 
 public:
 	RMGfxSourceBuffer8AA();
@@ -500,7 +500,7 @@ public:
 
 class RMGfxSourceBuffer8RLEByteAA : public RMGfxSourceBuffer8RLEByte, public RMGfxSourceBuffer8AA {
 protected:
-	void prepareImage(void);
+	void prepareImage();
 
 public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -514,7 +514,7 @@ public:
 
 class RMGfxSourceBuffer8RLEWordAA : public RMGfxSourceBuffer8RLEWord, public RMGfxSourceBuffer8AA {
 protected:
-	void prepareImage(void);
+	void prepareImage();
 
 public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -570,7 +570,7 @@ public:
 	virtual ~RMGfxTargetBuffer();
 
 	// management of the OT list
-	void clearOT(void);
+	void clearOT();
 	void drawOT(CORO_PARAM);
 	void addPrim(RMGfxPrimitive *prim); // The pointer must be delted
 

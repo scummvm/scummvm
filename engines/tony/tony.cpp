@@ -345,11 +345,11 @@ void TonyEngine::preloadUtilSFX(int nChannel, const char *fn) {
 	warning("TonyEngine::preloadUtilSFX");
 }
 
-void TonyEngine::unloadAllSFX(void) {
+void TonyEngine::unloadAllSFX() {
 	warning("TonyEngine::unloadAllSFX");
 }
 
-void TonyEngine::unloadAllUtilSFX(void) {
+void TonyEngine::unloadAllUtilSFX() {
 	warning("TonyEngine::unloadAllUtilSFX");
 }
 
@@ -480,11 +480,11 @@ void TonyEngine::closeVoiceDatabase() {
 		_voices.clear();
 }
 
-void TonyEngine::grabThumbnail(void) {
+void TonyEngine::grabThumbnail() {
 	_window.grabThumbnail(_curThumbnail);
 }
 
-void TonyEngine::optionScreen(void) {
+void TonyEngine::optionScreen() {
 }
 
 void TonyEngine::openInitLoadMenu(CORO_PARAM) {
@@ -495,7 +495,7 @@ void TonyEngine::openInitOptions(CORO_PARAM) {
 	_theEngine.openOptionScreen(coroParam, 2);
 }
 
-void TonyEngine::abortGame(void) {
+void TonyEngine::abortGame() {
 	_bQuitNow = true;
 }
 
@@ -555,7 +555,7 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 /**
  * Play the game
  */
-void TonyEngine::play(void) {
+void TonyEngine::play() {
 	// Create the game player process
 	CoroScheduler.createProcess(playProcess, NULL);
 
@@ -569,7 +569,7 @@ void TonyEngine::play(void) {
 	}
 }
 
-void TonyEngine::close(void) {
+void TonyEngine::close() {
 	closeMusic();
 	CoroScheduler.closeEvent(_hEndOfFrame);
 	_theBoxes.close();
@@ -589,12 +589,12 @@ void TonyEngine::GDIControl(bool bCon) {
 	_theEngine.GDIControl(bCon);
 }
 
-void TonyEngine::freezeTime(void) {
+void TonyEngine::freezeTime() {
 	_bTimeFreezed = true;
 	_nTimeFreezed = getTime() - _startTime;
 }
 
-void TonyEngine::unfreezeTime(void) {
+void TonyEngine::unfreezeTime() {
 	_bTimeFreezed = false;
 }
 

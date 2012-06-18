@@ -91,7 +91,7 @@ void RMGfxBuffer::create(int dimx, int dimy, int nBpp, bool bUseDDraw) {
 	}
 }
 
-void RMGfxBuffer::destroy(void) {
+void RMGfxBuffer::destroy() {
 	if (!_bUseDDraw) {
 		if (_origBuf != NULL && _origBuf == _buf) {
 			delete[] _origBuf;
@@ -100,13 +100,13 @@ void RMGfxBuffer::destroy(void) {
 	}
 }
 
-void RMGfxBuffer::lock(void) {
+void RMGfxBuffer::lock() {
 	if (_bUseDDraw) {
 		// Manages acceleration
 	}
 }
 
-void RMGfxBuffer::unlock(void) {
+void RMGfxBuffer::unlock() {
 	if (_bUseDDraw) {
 		// Manages acceleration
 	}
@@ -143,7 +143,6 @@ int RMGfxSourceBuffer::init(const byte *buf, int dimx, int dimy, bool bLoadPalet
 	return dimx * dimy * getBpp() / 8;
 }
 
-
 void RMGfxSourceBuffer::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	create(dimx, dimy, getBpp());
 	ds.read(_buf, dimx * dimy * getBpp() / 8);
@@ -155,7 +154,7 @@ void RMGfxSourceBuffer::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPal
 RMGfxSourceBuffer::~RMGfxSourceBuffer() {
 }
 
-void RMGfxSourceBuffer::prepareImage(void) {
+void RMGfxSourceBuffer::prepareImage() {
 	// Do nothing. Can be overloaded if necessary
 }
 
@@ -243,9 +242,7 @@ RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
 
 RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
 	: RMGfxBuffer(dimx, dimy, 16, bUseDDraw) {
-
 }
-
 
 /****************************************************************************\
 *       RMGfxTargetBuffer Methods
@@ -262,7 +259,7 @@ RMGfxTargetBuffer::~RMGfxTargetBuffer() {
 //	g_system->deleteMutex(csModifyingOT);
 }
 
-void RMGfxTargetBuffer::clearOT(void) {
+void RMGfxTargetBuffer::clearOT() {
 	OTList *cur, *n;
 
 //	g_system->lockMutex(csModifyingOT);
@@ -409,8 +406,7 @@ int RMGfxSourceBufferPal::loadPalette(const byte *buf) {
 	return (1 << getBpp()) * 4;
 }
 
-
-void RMGfxSourceBufferPal::preparePalette(void) {
+void RMGfxSourceBufferPal::preparePalette() {
 	int i;
 
 	for (i = 0; i < 256; i++) {
@@ -704,7 +700,7 @@ void RMGfxSourceBuffer8RLE::init(RMDataStream &ds, int dimx, int dimy, bool bLoa
 	}
 }
 
-void RMGfxSourceBuffer8RLE::preparePalette(void) {
+void RMGfxSourceBuffer8RLE::preparePalette() {
 	// Invoke the parent method
 	RMGfxSourceBuffer8::preparePalette();
 
@@ -716,7 +712,7 @@ void RMGfxSourceBuffer8RLE::preparePalette(void) {
 	}
 }
 
-void RMGfxSourceBuffer8RLE::prepareImage(void) {
+void RMGfxSourceBuffer8RLE::prepareImage() {
 	// Invoke the parent method
 	RMGfxSourceBuffer::prepareImage();
 
@@ -724,12 +720,11 @@ void RMGfxSourceBuffer8RLE::prepareImage(void) {
 	compressRLE();
 }
 
-void RMGfxSourceBuffer8RLE::setAlreadyCompressed(void) {
+void RMGfxSourceBuffer8RLE::setAlreadyCompressed() {
 	_bNeedRLECompress = false;
 }
 
-
-void RMGfxSourceBuffer8RLE::compressRLE(void) {
+void RMGfxSourceBuffer8RLE::compressRLE() {
 	int x, y;
 	byte *startline;
 	byte *cur;
@@ -1515,10 +1510,8 @@ RLEWordDoCopy2:
 			return;
 
 		assert(nLength > 0);
-
 	}
 }
-
 
 /****************************************************************************\
 *               Methods for RMGfxSourceBuffer8AA
@@ -1527,7 +1520,7 @@ RLEWordDoCopy2:
 byte RMGfxSourceBuffer8AA::_megaAABuf[256 * 1024];
 byte RMGfxSourceBuffer8AA::_megaAABuf2[64 * 1024];
 
-void RMGfxSourceBuffer8AA::prepareImage(void) {
+void RMGfxSourceBuffer8AA::prepareImage() {
 	// Invoke the parent method
 	RMGfxSourceBuffer::prepareImage();
 
@@ -1535,8 +1528,7 @@ void RMGfxSourceBuffer8AA::prepareImage(void) {
 	calculateAA();
 }
 
-
-void RMGfxSourceBuffer8AA::calculateAA(void) {
+void RMGfxSourceBuffer8AA::calculateAA() {
 	int x, y;
 	byte *src, *srcaa;
 
@@ -1721,16 +1713,14 @@ void RMGfxSourceBuffer8AA::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 	CORO_END_CODE;
 }
 
-
 /****************************************************************************\
 *               RMGfxSourceBuffer8RLEAA Methods
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEByteAA::~RMGfxSourceBuffer8RLEByteAA() {
-
 }
 
-void RMGfxSourceBuffer8RLEByteAA::prepareImage(void) {
+void RMGfxSourceBuffer8RLEByteAA::prepareImage() {
 	RMGfxSourceBuffer::prepareImage();
 	calculateAA();
 	compressRLE();
@@ -1763,12 +1753,10 @@ void RMGfxSourceBuffer8RLEByteAA::init(RMDataStream &ds, int dimx, int dimy, boo
 	}
 }
 
-
 RMGfxSourceBuffer8RLEWordAA::~RMGfxSourceBuffer8RLEWordAA() {
-
 }
 
-void RMGfxSourceBuffer8RLEWordAA::prepareImage(void) {
+void RMGfxSourceBuffer8RLEWordAA::prepareImage() {
 	RMGfxSourceBuffer::prepareImage();
 	calculateAA();
 	compressRLE();
@@ -1869,7 +1857,7 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 	}
 }
 
-void RMGfxSourceBuffer16::prepareImage(void) {
+void RMGfxSourceBuffer16::prepareImage() {
 	// Color space conversion if necessary!
 	int i;
 	uint16 *buf = (uint16 *)_buf;
@@ -1878,13 +1866,11 @@ void RMGfxSourceBuffer16::prepareImage(void) {
 		WRITE_LE_UINT16(&buf[i], FROM_LE_16(buf[i]) & 0x7FFF);
 }
 
-
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
 	: RMGfxBuffer(dimx, dimy, 16, bUseDDraw) {
 	setPriority(0);
 	_bTrasp0 = false;
 }
-
 
 /**
  * Returns the number of bits per pixel of the surface

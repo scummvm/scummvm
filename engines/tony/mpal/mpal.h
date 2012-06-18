@@ -327,7 +327,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryDialogWaitForChoice(dwRet)                  \
         CORO_INVOKE_2(mpalQueryCORO, MPQ_DIALOG_WAITFORCHOICE, dwRet)
 
-
 /**
  * Requires a list of various options for some choice within the current dialog.
  *
@@ -339,7 +338,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 #define mpalQueryDialogSelectList(nChoice)              \
         (uint32 *)mpalQueryHANDLE(MPQ_DIALOG_SELECTLIST, (uint32)(nChoice))
-
 
 /**
  * Warns the library that the user has selected, in a certain choice of the current dialog, 
@@ -358,7 +356,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryDialogSelectionDWORD(nChoice, dwData)        \
         mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
 
-
 /**
  * Warns the library an action was performed on a Object. 
  * The library will call custom functions, if necessary.
@@ -375,7 +372,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryDoAction(nAction, nItem, dwParam)      \
         mpalQueryDWORD(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
 
-
 /**
  * Warns the library a dialogue was required.
  *
@@ -386,8 +382,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 #define mpalQueryDoDialog(nDialog,nGroup)               \
         mpalQueryDWORD(MPQ_DO_DIALOG, (uint32)(nDialog),(uint32)(nGroup))
-
-//@}
 
 /**
  * @defgroup Functions exported to the main game
@@ -442,7 +436,6 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...);
  */
 void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...);
 
-
 /**
  * Execute a script. The script runs on multitasking by a thread.
  *
@@ -451,14 +444,12 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...);
  */
 bool mpalExecuteScript(int nScript);
 
-
 /**
  * Returns the current MPAL error code
  *
  * @returns		Error code
  */
-uint32 mpalGetError(void);
-
+uint32 mpalGetError();
 
 /**
  * Install a custom routine That will be called by MPAL every time the pattern 
@@ -467,7 +458,6 @@ uint32 mpalGetError(void);
  * @param lpiifCustom		Custom function to install
  */
 void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCustom);
-
 
 /**
  * Process the idle actions of the items on one location.
@@ -479,7 +469,6 @@ void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCustom);
  * simultaneously is defined defined by MAXPOLLINGFUNCIONS
  */
 bool mpalStartIdlePoll(int nLoc);
-
 
 /**
  * Stop processing the idle actions of the items on one location.
@@ -499,7 +488,6 @@ void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result);
  */
 int mpalLoadState(byte *buf);
 
-
 /**
  * Store the save state into a buffer. The buffer must be
  * length at least the size specified with mpalGetSaveStateSize
@@ -508,27 +496,22 @@ int mpalLoadState(byte *buf);
  */
 void mpalSaveState(byte *buf);
 
-
 /**
  * Retrieve the length of a save state
  *
  * @returns		Length in bytes
  */
-int mpalGetSaveStateSize(void);
-
+int mpalGetSaveStateSize();
 
 /**
  * Locks the variables for access
  */
-void lockVar(void);
-
+void lockVar();
 
 /**
  * Unlocks variables after use
  */
-void unlockVar(void);
-
-//@}
+void unlockVar();
 
 } // end of namespace MPAL
 

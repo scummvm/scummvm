@@ -353,7 +353,7 @@ SKIPCLICKSINISTRO:
 	CORO_END_CODE;
 }
 
-void RMGfxEngine::initCustomDll(void) {
+void RMGfxEngine::initCustomDll() {
 	setupGlobalVars(&_tony, &_point, &_vm->_theBoxes, &_loc, &_inv, &_input);
 }
 
@@ -522,7 +522,7 @@ void RMGfxEngine::init() {
 	_tony.executeAction(20, 1, 0);
 }
 
-void RMGfxEngine::close(void) {
+void RMGfxEngine::close() {
 	_bigBuf.clearOT();
 
 	_inter.close();
@@ -538,37 +538,37 @@ void RMGfxEngine::switchFullscreen(bool bFull) {
 void RMGfxEngine::GDIControl(bool bCon) {
 }
 
-void RMGfxEngine::enableInput(void) {
+void RMGfxEngine::enableInput() {
 	_bInput = true;
 }
 
-void RMGfxEngine::disableInput(void) {
+void RMGfxEngine::disableInput() {
 	_bInput = false;
 	_inter.reset();
 }
 
-void RMGfxEngine::enableMouse(void) {
+void RMGfxEngine::enableMouse() {
 	_bAlwaysDrawMouse = true;
 }
 
-void RMGfxEngine::disableMouse(void) {
+void RMGfxEngine::disableMouse() {
 	_bAlwaysDrawMouse = false;
 }
 
-void RMGfxEngine::freeze(void) {
+void RMGfxEngine::freeze() {
 	g_system->lockMutex(_csMainLoop);
 }
 
-void RMGfxEngine::unfreeze(void) {
+void RMGfxEngine::unfreeze() {
 	g_system->unlockMutex(_csMainLoop);
 }
 
 void CharsSaveAll(Common::OutSaveFile *f);
 void CharsLoadAll(Common::InSaveFile *f);
-void MCharResetCodes(void);
+void MCharResetCodes();
 void SaveChangedHotspot(Common::OutSaveFile *f);
 void LoadChangedHotspot(Common::InSaveFile *f);
-void ReapplyChangedHotspot(void);
+void ReapplyChangedHotspot();
 
 void RestoreMusic(CORO_PARAM);
 void SaveMusic(Common::OutSaveFile *f);
@@ -856,7 +856,7 @@ void RMGfxEngine::initWipe(int type) {
 		_rcWipeEllipse = Common::Rect(320 - FSTEP, 240 - FSTEP, 320 + FSTEP, 240 + FSTEP);
 }
 
-void RMGfxEngine::closeWipe(void) {
+void RMGfxEngine::closeWipe() {
 	_bWiping = false;
 }
 

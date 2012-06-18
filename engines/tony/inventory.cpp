@@ -72,7 +72,7 @@ bool RMInventory::checkPointInside(const RMPoint &pt) {
 }
 
 
-void RMInventory::init(void) {
+void RMInventory::init() {
 	int i, j;
 	int curres;
 
@@ -160,7 +160,7 @@ void RMInventory::init(void) {
 	clearOT();
 }
 
-void RMInventory::close(void) {
+void RMInventory::close() {
 	// Has memory
 	if (_items != NULL) {
 		// Delete the item pointers
@@ -175,7 +175,7 @@ void RMInventory::close(void) {
 	destroy();
 }
 
-void RMInventory::reset(void) {
+void RMInventory::reset() {
 	_state = CLOSED;
 	endCombine();
 }
@@ -288,7 +288,7 @@ void RMInventory::changeItemStatus(uint32 code, uint32 dwStatus) {
 }
 
 
-void RMInventory::prepare(void) {
+void RMInventory::prepare() {
 	int i;
 
 	for (i = 1; i < RM_SX / 64 - 1; i++) {
@@ -303,7 +303,7 @@ void RMInventory::prepare(void) {
 	addPrim(new RMGfxPrimitive(&_items[28]._icon, RMPoint(640 - 64, 0)));
 }
 
-bool RMInventory::miniActive(void) {
+bool RMInventory::miniActive() {
 	return _state == SELECTING;
 }
 
@@ -323,7 +323,7 @@ bool RMInventory::haveFocus(const RMPoint &mpos) {
 	return false;
 }
 
-void RMInventory::endCombine(void) {
+void RMInventory::endCombine() {
 	_bCombining = false;
 }
 
@@ -661,7 +661,6 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 	}
 }
 
-
 bool RMInventory::itemInFocus(const RMPoint &mpt) {
 	if ((_state == OPENED || _state == OPENING) && checkPointInside(mpt))
 		return true;
@@ -681,9 +680,7 @@ RMItem *RMInventory::whichItemIsIn(const RMPoint &mpt) {
 	return NULL;
 }
 
-
-
-int RMInventory::getSaveStateSize(void) {
+int RMInventory::getSaveStateSize() {
 	//     m_inv   pattern   m_nInv
 	return 256 * 4 + 256 * 4   +  4     ;
 }
@@ -742,7 +739,6 @@ int RMInventory::loadState(byte *state) {
 	return getSaveStateSize();
 }
 
-
 /****************************************************************************\
 *           RMInterface methods
 \****************************************************************************/
@@ -753,7 +749,6 @@ RMInterface::RMInterface() : RMGfxSourceBuffer8RLEByte() {
 }
 
 RMInterface::~RMInterface() {
-
 }
 
 bool RMInterface::active() {
@@ -809,7 +804,6 @@ void RMInterface::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 	CORO_END_CODE;
 }
-
 
 void RMInterface::doFrame(RMGfxTargetBuffer &bigBuf, RMPoint mousepos) {
 	// If needed, add to the OT schedule list
@@ -875,7 +869,7 @@ bool RMInterface::released(const RMPoint &mousepos, RMTonyAction &action) {
 	return true;
 }
 
-void RMInterface::reset(void) {
+void RMInterface::reset() {
 	_bActive = false;
 }
 
@@ -883,11 +877,11 @@ void RMInterface::setPerorate(bool bOn) {
 	_bPerorate = bOn;
 }
 
-bool RMInterface::getPerorate(void) {
+bool RMInterface::getPerorate() {
 	return _bPerorate;
 }
 
-void RMInterface::init(void) {
+void RMInterface::init() {
 	int i;
 	RMResRaw inter(RES_I_INTERFACE);
 	RMRes pal(RES_I_INTERPPAL);
@@ -934,7 +928,7 @@ void RMInterface::init(void) {
 	_lastHotZone = 0;
 }
 
-void RMInterface::close(void) {
+void RMInterface::close() {
 	int i;
 
 	destroy();

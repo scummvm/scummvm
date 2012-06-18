@@ -84,7 +84,7 @@ RMGfxSourceBuffer *RMTony::newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 	return spr;
 }
 
-void RMTony::init(void) {
+void RMTony::init() {
 	RMRes tony(0);
 	RMRes body(9999);
 	RMDataStream ds;
@@ -119,7 +119,7 @@ void RMTony::init(void) {
 }
 
 
-void RMTony::close(void) {
+void RMTony::close() {
 	// Deallocation of missing item
 //	_shadow.destroy();
 }
@@ -156,7 +156,7 @@ void RMTony::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 	CORO_END_CODE;
 }
 
-void RMTony::show(void) {
+void RMTony::show() {
 	_bShow = true;
 	_bShowShadow = true;
 }
@@ -334,7 +334,7 @@ void RMTony::stop(CORO_PARAM) {
 }
 
 
-int RMTony::getCurPattern(void) {
+int RMTony::getCurPattern() {
 	int nPatt = RMCharacter::getCurPattern();
 
 	if (!_bShepherdess)

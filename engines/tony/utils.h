@@ -69,7 +69,7 @@ public:
 
 	// Loading buffer
 	void openBuffer(const byte *buf, int size = SIZENOTKNOWN);
-	void close(void);
+	void close();
 
 	// Attributei
 	int length();
@@ -99,7 +99,6 @@ public:
 	bool isError();
 };
 
-
 /**
  * Data stream per lettura di dati aperto da file
  */
@@ -115,9 +114,8 @@ public:
 	bool openFile(const char *lpFN);
 	bool openFile(Common::File &file);
 
-	void close(void);
+	void close();
 };
-
 
 class RMFileStreamSlow : public RMDataStream {
 private:
@@ -129,7 +127,7 @@ public:
 	bool openFile(const char *lpFN);
 	bool openFile(Common::File &file);
 
-	void close(void);
+	void close();
 
 	RMDataStream &operator+=(int nBytes);
 	int seek(int nBytes, RMDSPos where = CUR);
@@ -272,7 +270,7 @@ public:
 	// Set
 	void setRect(int x1, int y1, int x2, int y2);
 	void setRect(const RMPoint &p1, const RMPoint &p2);
-	void setEmpty(void);
+	void setEmpty();
 
 	// Copiers
 	void setRect(const RMRect &rc);

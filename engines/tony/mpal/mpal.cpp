@@ -59,100 +59,90 @@ const char *mpalCopyright =
 /**
  * Locks the variables for access
  */
-void lockVar(void) {
+void lockVar() {
 	GLOBALS._lpmvVars = (LPMPALVAR)globalLock(GLOBALS._hVars);
 }
 
 /**
  * Unlocks variables after use
  */
-void unlockVar(void) {
+void unlockVar() {
 	globalUnlock(GLOBALS._hVars);
 }
 
 /**
  * Locks the messages for access
  */
-static void LockMsg(void) {
+static void LockMsg() {
 #ifdef NEED_LOCK_MSGS
 	GLOBALS._lpmmMsgs = (LPMPALMSG)globalLock(GLOBALS._hMsgs);
 #endif
 }
 
-
 /**
  * Unlocks the messages after use
  */
-static void UnlockMsg(void) {
+static void UnlockMsg() {
 #ifdef NEED_LOCK_MSGS
 	globalUnlock(GLOBALS._hMsgs);
 #endif
 }
 
-
 /**
  * Locks the dialogs for access
  */
-static void lockDialogs(void) {
+static void lockDialogs() {
 	GLOBALS._lpmdDialogs = (LPMPALDIALOG)globalLock(GLOBALS._hDialogs);
 }
-
 
 /**
  * Unlocks the dialogs after use
  */
-static void unlockDialogs(void) {
+static void unlockDialogs() {
 	globalUnlock(GLOBALS._hDialogs);
 }
-
 
 /**
  * Locks the location data structures for access
  */
-static void lockLocations(void) {
+static void lockLocations() {
 	GLOBALS._lpmlLocations = (LPMPALLOCATION)globalLock(GLOBALS._hLocations);
 }
-
 
 /**
  * Unlocks the location structures after use
  */
-static void unlockLocations(void) {
+static void unlockLocations() {
 	globalUnlock(GLOBALS._hLocations);
 }
-
 
 /**
  * Locks the items structures for use
  */
-static void lockItems(void) {
+static void lockItems() {
 	GLOBALS._lpmiItems = (LPMPALITEM)globalLock(GLOBALS._hItems);
 }
-
 
 /**
  * Unlocks the items structures after use
  */
-static void unlockItems(void) {
+static void unlockItems() {
 	globalUnlock(GLOBALS._hItems);
 }
-
 
 /**
  * Locks the script data structures for use
  */
-static void LockScripts(void) {
+static void LockScripts() {
 	GLOBALS._lpmsScripts = (LPMPALSCRIPT)globalLock(GLOBALS._hScripts);
 }
-
 
 /**
  * Unlocks the script data structures after use
  */
-static void unlockScripts(void) {
+static void unlockScripts() {
 	globalUnlock(GLOBALS._hScripts);
 }
-
 
 /**
  * Returns the current value of a global variable
@@ -174,7 +164,6 @@ int32 varGetValue(const char *lpszVarName) {
 	GLOBALS._mpalError = 1;
 	return 0;
 }
-
 
 /**
  * Sets the value of a MPAL global variable
@@ -203,7 +192,6 @@ void varSetValue(const char *lpszVarName, int32 val) {
 	GLOBALS._mpalError = 1;
 	return;
 }
-
 
 /**
  * Find the index of a location within the location array. Remember to call LockLoc() beforehand.
@@ -1973,16 +1961,14 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
 	va_end(v);
 }
 
-
 /**
  * Returns the current MPAL error code
  *
  * @returns		Error code
  */
-uint32 mpalGetError(void) {
+uint32 mpalGetError() {
 	return GLOBALS._mpalError;
 }
-
 
 /**
  * Execute a script. The script runs on multitasking by a thread.
@@ -2091,16 +2077,14 @@ void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result) {
 	CORO_END_CODE;
 }
 
-
 /**
  * Retrieve the length of a save state
  *
  * @returns		Length in bytes
  */
-int mpalGetSaveStateSize(void) {
+int mpalGetSaveStateSize() {
 	return GLOBALS._nVars * sizeof(MPALVAR) + 4;
 }
-
 
 /**
  * Store the save state into a buffer. The buffer must be
@@ -2251,7 +2235,6 @@ int OutputStartOther(uint16 wNum, Common::OutSaveFile *f) {
 	return 0;
 }
 
-
 void outputEndOther(uint16 wNum, Common::OutSaveFile *f) {
 	int i;
 
@@ -2262,8 +2245,7 @@ void outputEndOther(uint16 wNum, Common::OutSaveFile *f) {
 		}
 }
 
-
-void mpalDumpMessages(void) {
+void mpalDumpMessages() {
 	int i, j;
 	char *lpMessage;
 	char *p;
@@ -2354,9 +2336,7 @@ void mpalDumpMessages(void) {
 	UnlockMsg();
 }
 
-
-
-void mpalDumpOthers(void) {
+void mpalDumpOthers() {
 	int i,j;
 	char *lpMessage;
 	char *p;
@@ -2914,7 +2894,7 @@ void mpalDumpDialog(LPMPALDIALOG dlg) {
 	delete v1;
 }
 
-void mpalDumpDialogs(void) {
+void mpalDumpDialogs() {
 	int i;
 
 	lockDialogs();
@@ -2924,8 +2904,6 @@ void mpalDumpDialogs(void) {
 
 	unlockDialogs();
 }
-
-//@}
 
 } // end of namespace MPAL
 

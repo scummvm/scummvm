@@ -82,7 +82,7 @@ protected:
 	/**
 	 * Prepare the image inventory. It should be recalled whenever the inventory changes
 	 */
-	void prepare(void);
+	void prepare();
 
 	/**
 	 * Check if the mouse Y position is conrrect, even under the inventory portion of the screen
@@ -101,9 +101,9 @@ public:
 	/**
 	 * Initialization and closing
 	 */
-	void init(void);
-	void close(void);
-	void reset(void);
+	void init();
+	void close();
+	void reset();
 
 	/**
 	 * Overload test for removal from OT list
@@ -123,7 +123,7 @@ public:
 	/**
 	 * Method for determining if the mini interface is active
 	 */
-	bool miniActive(void);
+	bool miniActive();
 
 	/**
 	 * Handle the left mouse click (only when the inventory has the focus)
@@ -139,7 +139,7 @@ public:
 	/**
 	 * Warn that an item combine is over
 	 */
-	void endCombine(void);
+	void endCombine();
 
 public:
 	/**
@@ -178,7 +178,7 @@ public:
 	/**
 	 * Save methods
 	 */
-	int getSaveStateSize(void);
+	int getSaveStateSize();
 	void saveState(byte *state);
 	int loadState(byte *state);
 };
@@ -219,13 +219,13 @@ public:
 	/**
 	 * Initialization
 	 */
-	void init(void);
-	void close(void);
+	void init();
+	void close();
 
 	/**
 	 * Reset the interface
 	 */
-	void reset(void);
+	void reset();
 
 	/**
 	 * Warns of mouse clicks and releases
@@ -237,7 +237,7 @@ public:
 	 * Enables or disables the fifth verb
 	 */
 	void setPerorate(bool bOn);
-	bool getPerorate(void);
+	bool getPerorate();
 
 	/**
 	 * Overloaded Draw

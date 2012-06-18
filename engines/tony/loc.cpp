@@ -138,7 +138,7 @@ void RMPattern::readFromStream(RMDataStream &ds, bool bLOX) {
 	}
 }
 
-void RMPattern::updateCoord(void) {
+void RMPattern::updateCoord() {
 	_curPos = _pos + _slots[_nCurSlot].pos();
 }
 
@@ -446,7 +446,7 @@ void RMSfx::pause(bool bPause) {
 	}
 }
 
-void RMSfx::stop(void) {
+void RMSfx::stop() {
 	if (_fx) {
 		_fx->stop();
 		_bPlayingLoop = false;
@@ -665,7 +665,7 @@ bool RMItem::doFrame(RMGfxTargetBuffer *bigBuf, bool bAddToList) {
 	return oldSprite != _nCurSprite;
 }
 
-RMPoint RMItem::calculatePos(void) {
+RMPoint RMItem::calculatePos() {
 	return _pos + _patterns[_nCurPattern].pos();
 }
 
@@ -736,7 +736,6 @@ void RMItem::setPattern(int nPattern, bool bPlayP0) {
 	}
 }
 
-
 bool RMItem::getName(RMString &name) {
 	char buf[256];
 
@@ -747,8 +746,7 @@ bool RMItem::getName(RMString &name) {
 	return true;
 }
 
-
-void RMItem::unload(void) {
+void RMItem::unload() {
 	if (_patterns != NULL) {
 		delete[] _patterns;
 		_patterns = NULL;
@@ -856,11 +854,11 @@ RMWipe::~RMWipe() {
 	CoroScheduler.closeEvent(_hEndOfFade);
 }
 
-int RMWipe::priority(void) {
+int RMWipe::priority() {
 	return 200;
 }
 
-void RMWipe::Unregister(void) {
+void RMWipe::Unregister() {
 	RMGfxTask::Unregister();
 	assert(_nInList == 0);
 	CoroScheduler.setEvent(_hUnregistered);
@@ -887,7 +885,7 @@ void RMWipe::waitForFadeEnd(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-void RMWipe::closeFade(void) {
+void RMWipe::closeFade() {
 	_wip0r.unload();
 }
 
@@ -1786,8 +1784,7 @@ void RMBoxLoc::readFromStream(RMDataStream &ds) {
 		ds >> _boxes[i];
 }
 
-
-void RMBoxLoc::recalcAllAdj(void) {
+void RMBoxLoc::recalcAllAdj() {
 	int i, j;
 
 	for (i = 0; i < _numbBox; i++) {
@@ -1819,7 +1816,7 @@ RMGameBoxes::~RMGameBoxes() {
 		delete _allBoxes[i];
 }
 
-void RMGameBoxes::init(void) {
+void RMGameBoxes::init() {
 	int i;
 	RMString fn;
 	RMDataStream ds;
@@ -1840,7 +1837,7 @@ void RMGameBoxes::init(void) {
 	}
 }
 
-void RMGameBoxes::close(void) {
+void RMGameBoxes::close() {
 }
 
 RMBoxLoc *RMGameBoxes::getBoxes(int nLoc) {
@@ -1878,8 +1875,7 @@ void RMGameBoxes::changeBoxStatus(int nLoc, int nBox, int status) {
 	_allBoxes[nLoc]->recalcAllAdj();
 }
 
-
-int RMGameBoxes::getSaveStateSize(void) {
+int RMGameBoxes::getSaveStateSize() {
 	int size;
 	int i;
 
@@ -2204,12 +2200,11 @@ RMItem *RMLocation::whichItemIsIn(const RMPoint &pt) {
 		return &_items[found];
 }
 
-
 RMLocation::~RMLocation() {
 	unload();
 }
 
-void RMLocation::unload(void) {
+void RMLocation::unload() {
 	// Clear memory
 	if (_items) {
 		delete[] _items;
@@ -2323,7 +2318,7 @@ void RMMessage::load(uint32 dwId) {
 		parseMessage();
 }
 
-void RMMessage::parseMessage(void) {
+void RMMessage::parseMessage() {
 	char *p;
 
 	assert(_lpMessage != NULL);

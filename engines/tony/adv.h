@@ -67,19 +67,19 @@ enum RMTonyAction {
 uint32 mainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
 void mainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 void mainLinkGraphicTask(RMGfxTask *task);
-void mainFreeze(void);
-void mainUnfreeze(void);
+void mainFreeze();
+void mainUnfreeze();
 void mainWaitFrame(CORO_PARAM);
-void mainShowMouse(void);
-void mainHideMouse(void);
-void mainEnableInput(void);
-void mainDisableInput(void);
+void mainShowMouse();
+void mainHideMouse();
+void mainEnableInput();
+void mainDisableInput();
 void mainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync);
 void mainInitWipe(int type);
-void mainCloseWipe(void);
+void mainCloseWipe();
 void mainWaitWipeEnd(CORO_PARAM);
-void mainEnableGUI(void);
-void mainDisableGUI(void);
+void mainEnableGUI();
+void mainDisableGUI();
 void mainSetPerorate(bool bPerorate);
 
 } // End of namespace Tony

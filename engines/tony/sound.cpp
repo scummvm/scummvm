@@ -635,7 +635,7 @@ bool FPStream::unloadFile() {
 	return true;
 }
 
-void FPStream::prefetch(void) {
+void FPStream::prefetch() {
 #ifdef REFACTOR_ME
 	uint32 dwId;
 	void *lpBuf;
@@ -702,7 +702,7 @@ void FPStream::prefetch(void) {
 #endif
 }
 
-void FPStream::playFast(void) {
+void FPStream::playFast() {
 #ifdef REFACTOR_ME
 	dspnHot[0].dwOffset = 32;
 	dspnHot[0].hEventNotify = hHot1;

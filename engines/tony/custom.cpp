@@ -106,7 +106,7 @@ const char *jingleFileNames[] = {
 };
 
 
-void ReapplyChangedHotspot(void) {
+void ReapplyChangedHotspot() {
 	int i;
 	for (i = 0; i < GLOBALS._curChangedHotspot; i++)
 		GLOBALS._loc->getItemFromCode(GLOBALS._changedHotspot[i]._dwCode)->changeHotspot(RMPoint(GLOBALS._changedHotspot[i]._nX, GLOBALS._changedHotspot[i]._nY));
@@ -140,7 +140,7 @@ void LoadChangedHotspot(Common::InSaveFile *f) {
  * AddInventory -> theEngine.AddInventory()
 */
 
-void MCharResetCodes(void) {
+void MCharResetCodes() {
 	for (int i = 0; i < 10; i++)
 		GLOBALS._mCharacter[i]._item = GLOBALS._loc->getItemFromCode(GLOBALS._mCharacter[i]._code);
 	for (int i = 0; i < 10; i++)

@@ -73,7 +73,7 @@ protected:
 	void load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID = RES_F_PAL);
 
 	// Remove the font
-	void unload(void);
+	void unload();
 
 protected:
 	// Conversion form character to font index
@@ -83,15 +83,15 @@ protected:
 	virtual int letterLength(int nChar, int nNext = 0) = 0;
 
 public:
-	virtual int letterHeight(void) = 0;
+	virtual int letterHeight() = 0;
 
 public:
 	RMFont();
 	virtual ~RMFont();
 
 	// Initialization and closing
-	virtual void init(void) = 0;
-	virtual void close(void);
+	virtual void init() = 0;
+	virtual void close();
 
 	// Drawing
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBug, RMGfxPrimitive *prim);
@@ -143,7 +143,7 @@ public:
 
 class RMFontParla : public RMFontColor, public RMFontWithTables {
 public:
-	void init(void);
+	void init();
 	virtual ~RMFontParla() {}
 };
 
@@ -152,19 +152,19 @@ private:
 	void setBothCase(int nChar, int nNext, signed char spiazz);
 
 public:
-	void init(void);
+	void init();
 	virtual ~RMFontObj() {}
 };
 
 class RMFontMacc : public RMFontColor, public RMFontWithTables {
 public:
-	void init(void);
+	void init();
 	virtual ~RMFontMacc() {}
 };
 
 class RMFontCredits : public RMFontColor, public RMFontWithTables {
 public:
-	void init(void);
+	void init();
 	virtual ~RMFontCredits() {}
 	virtual void setBaseColor(byte r, byte g, byte b) {}
 };
@@ -263,7 +263,7 @@ public:
 	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Overloaded de-registration
-	virtual void Unregister(void);
+	virtual void Unregister();
 
 	// Overloading of the Draw to center the text, if necessary
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -279,15 +279,15 @@ public:
 	void setCustomSkipHandle2(uint32 hCustomSkip);
 	void setSkipStatus(bool bEnabled);
 	void setForcedTime(uint32 dwTime);
-	void setNoTab(void);
-	void forceTime(void);
-	void forceNoTime(void);
-	void setAlwaysDisplay(void);
+	void setNoTab();
+	void forceTime();
+	void forceNoTime();
+	void setAlwaysDisplay();
 
 	// Set the input device, to allow skip from mouse
 	void setInput(RMInput *input);
 
-	void show(void);
+	void show();
 	void hide(CORO_PARAM);
 };
 
@@ -363,7 +363,7 @@ protected:
 public:
 	virtual void removeThis(CORO_PARAM, bool &result);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	void Unregister(void);
+	void Unregister();
 
 public:
 	// Initialization
@@ -371,8 +371,8 @@ public:
 	virtual ~RMDialogChoice();
 
 	// Initialization and closure
-	void init(void);
-	void close(void);
+	void init();
+	void close();
 
 	// Sets the number of possible sentences, which then be added with AddChoice()
 	void setNumChoices(int num);
@@ -390,7 +390,7 @@ public:
 	void doFrame(CORO_PARAM, RMPoint ptMousePos);
 
 	// Returns the currently selected item, or -1 if none is selected
-	int getSelection(void);
+	int getSelection();
 };
 
 } // End of namespace Tony

@@ -84,7 +84,7 @@ public:
 	void play(bool bLoop = false);
 	void setVolume(int vol);
 	void pause(bool bPause);
-	void stop(void);
+	void stop();
 
 	void readFromStream(RMDataStream &ds, bool bLOX = false);
 };
@@ -165,7 +165,7 @@ public:
 	void readFromStream(RMDataStream &ds, bool bLOX = false);
 
 private:
-	void updateCoord(void);
+	void updateCoord();
 };
 
 
@@ -235,7 +235,7 @@ private:
 	bool _bInitCurPattern;
 
 public:
-	RMPoint calculatePos(void);
+	RMPoint calculatePos();
 
 public:
 	RMItem();
@@ -282,7 +282,7 @@ public:
 	}
 
 	// Unload
-	void unload(void);
+	void unload();
 
 	// Wait for the end of the current pattern
 	void waitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE);
@@ -350,7 +350,7 @@ public:
 	virtual ~RMBoxLoc();
 
 	friend RMDataStream &operator >>(RMDataStream &ds, RMBoxLoc &bl);
-	void recalcAllAdj(void);
+	void recalcAllAdj();
 };
 
 #define GAME_BOXES_SIZE 200
@@ -364,8 +364,8 @@ public:
 	RMGameBoxes();
 	~RMGameBoxes();
 
-	void init(void);
-	void close(void);
+	void init();
+	void close();
 
 	// Get binding boxes for a given location
 	RMBoxLoc *getBoxes(int nLoc);
@@ -381,7 +381,7 @@ public:
 	void changeBoxStatus(int nLoc, int nBox, int status);
 
 	// Save state handling
-	int getSaveStateSize(void);
+	int getSaveStateSize();
 	void saveState(byte *buf);
 	void loadState(byte *buf);
 };
@@ -513,12 +513,12 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	void initFade(int type);
-	void closeFade(void);
+	void closeFade();
 	void waitForFadeEnd(CORO_PARAM);
 
-	virtual void Unregister(void);
+	virtual void Unregister();
 	virtual void removeThis(CORO_PARAM, bool &result);
-	virtual int priority(void);
+	virtual int priority();
 };
 
 
@@ -563,7 +563,7 @@ public:
 	bool loadLOX(RMDataStream &ds);
 
 	// Unload
-	void unload(void);
+	void unload();
 
 	// Overloaded draw
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -606,7 +606,7 @@ private:
 	int _nPeriods;
 
 private:
-	void parseMessage(void);
+	void parseMessage();
 
 public:
 	RMMessage();

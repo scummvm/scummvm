@@ -46,10 +46,9 @@ RMInput::RMInput() {
 }
 
 RMInput::~RMInput() {
-
 }
 
-void RMInput::poll(void) {
+void RMInput::poll() {
 	_leftClickMouse = _leftReleaseMouse = _rightClickMouse = _rightReleaseMouse = false;
 
 	// Get pending events
@@ -105,7 +104,7 @@ void RMInput::poll(void) {
 void RMInput::init() {
 }
 
-void RMInput::close(void) {
+void RMInput::close() {
 }
 
 bool RMInput::mouseLeft() {

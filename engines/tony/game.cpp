@@ -59,11 +59,11 @@ void mainLinkGraphicTask(RMGfxTask *task) {
 	_vm->getEngine()->linkGraphicTask(task);
 }
 
-void mainFreeze(void) {
+void mainFreeze() {
 	_vm->getEngine()->freeze();
 }
 
-void mainUnfreeze(void) {
+void mainUnfreeze() {
 	_vm->getEngine()->unfreeze();
 }
 
@@ -71,11 +71,11 @@ void mainWaitFrame(CORO_PARAM) {
 	CoroScheduler.waitForSingleObject(coroParam, _vm->_hEndOfFrame, CORO_INFINITE);
 }
 
-void mainShowMouse(void) {
+void mainShowMouse() {
 	_vm->getEngine()->enableMouse();
 }
 
-void mainHideMouse(void) {
+void mainHideMouse() {
 	_vm->getEngine()->disableMouse();
 }
 
@@ -83,11 +83,11 @@ void mainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int 
 	_vm->playMusic(nChannel, filename, nFX, bLoop, nSync);
 }
 
-void mainDisableInput(void) {
+void mainDisableInput() {
 	_vm->getEngine()->disableInput();
 }
 
-void mainEnableInput(void) {
+void mainEnableInput() {
 	_vm->getEngine()->enableInput();
 }
 
@@ -95,7 +95,7 @@ void mainInitWipe(int type) {
 	_vm->getEngine()->initWipe(type);
 }
 
-void mainCloseWipe(void) {
+void mainCloseWipe() {
 	_vm->getEngine()->closeWipe();
 }
 
@@ -103,13 +103,13 @@ void mainWaitWipeEnd(CORO_PARAM) {
 	_vm->getEngine()->waitWipeEnd(coroParam);
 }
 
-void mainEnableGUI(void) {
+void mainEnableGUI() {
 	_vm->getEngine()->_bGUIInterface = true;
 	_vm->getEngine()->_bGUIInventory = true;
 	_vm->getEngine()->_bGUIOption = true;
 }
 
-void mainDisableGUI(void) {
+void mainDisableGUI() {
 	_vm->getEngine()->_bGUIInterface = false;
 	_vm->getEngine()->_bGUIInventory = false;
 	_vm->getEngine()->_bGUIOption = false;
@@ -320,7 +320,7 @@ void RMOptionSlide::addToList(RMGfxTargetBuffer &bigBuf) {
 *       RMOptionScreen Methods
 \****************************************************************************/
 
-RMOptionScreen::RMOptionScreen(void) {
+RMOptionScreen::RMOptionScreen() {
 	_nState = MENUNONE;
 	_menu = NULL;
 	_hideLoadSave = NULL;
@@ -377,7 +377,7 @@ RMOptionScreen::RMOptionScreen(void) {
 	_nLastState = MENUGAME;
 }
 
-RMOptionScreen::~RMOptionScreen(void) {
+RMOptionScreen::~RMOptionScreen() {
 	closeState();
 }
 
@@ -546,7 +546,7 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::refreshThumbnails(void) {
+void RMOptionScreen::refreshThumbnails() {
 	int i;
 
 	for (i = 0; i < 6; i++) {
@@ -729,7 +729,7 @@ void RMOptionScreen::initState(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-void RMOptionScreen::closeState(void) {
+void RMOptionScreen::closeState() {
 	delete _menu;
 	_menu = NULL;
 
@@ -983,7 +983,7 @@ void RMOptionScreen::initNoLoadSave(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool 
 	CORO_END_CODE;
 }
 
-bool RMOptionScreen::close(void) {
+bool RMOptionScreen::close() {
 	if (_fadeStep != 6)
 		return false;
 
@@ -993,7 +993,7 @@ bool RMOptionScreen::close(void) {
 	return true;
 }
 
-bool RMOptionScreen::isClosing(void) {
+bool RMOptionScreen::isClosing() {
 	return _bExit;
 }
 
@@ -1479,7 +1479,7 @@ RMPointer::~RMPointer() {
 	close();
 }
 
-void RMPointer::init(void) {
+void RMPointer::init() {
 	int i;
 
 	for (i = 0; i < 5; i++) {
@@ -1511,7 +1511,7 @@ void RMPointer::init(void) {
 	_nCurSpecialPointer = 0;
 }
 
-void RMPointer::close(void) {
+void RMPointer::close() {
 	int i;
 
 	for (i = 0; i < 5; i++) {
@@ -1560,7 +1560,7 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 	CORO_END_CODE;
 }
 
-int RMPointer::curAction(void) {
+int RMPointer::curAction() {
 	if (_nCurSpecialPointer != 0)
 		return 0;
 

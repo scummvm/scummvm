@@ -165,21 +165,21 @@ public:
 	void getDataDirectory(DataDir dir, char *path);
 
 	void switchFullscreen(bool bFull);
-	void optionScreen(void);
+	void optionScreen();
 
-	void showLocation(void) {
+	void showLocation() {
 		_bDrawLocation = true;
 	}
-	void hideLocation(void) {
+	void hideLocation() {
 		_bDrawLocation = false;
 	}
 
 	/**
 	 * Reads the time
 	 */
-	uint32 getTime(void);
-	void freezeTime(void);
-	void unfreezeTime(void);
+	uint32 getTime();
+	void freezeTime();
+	void unfreezeTime();
 
 	// Music
 	// ******
@@ -195,10 +195,10 @@ public:
 	FPSfx *createSFX(Common::SeekableReadStream *stream);
 
 	void preloadSFX(int nSfx, const char *fn);
-	void unloadAllSFX(void);
+	void unloadAllSFX();
 
 	void preloadUtilSFX(int nSfx, const char *fn);
-	void unloadAllUtilSFX(void);
+	void unloadAllUtilSFX();
 
 	/**
 	 * Stop all the audio
@@ -219,12 +219,12 @@ public:
 	/**
 	 * Get a thumbnail
 	 */
-	void grabThumbnail(void);
-	uint16 *getThumbnail(void) {
+	void grabThumbnail();
+	uint16 *getThumbnail() {
 		return _curThumbnail;
 	}
 
-	void quitGame(void) {
+	void quitGame() {
 		_bQuitNow = true;
 	}
 

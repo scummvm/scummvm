@@ -90,7 +90,7 @@ public:
 	void init();
 
 	// Closes the graphics engine
-	void close(void);
+	void close();
 
 	// Warns when changing
 	void switchFullscreen(bool bFull);
@@ -102,12 +102,12 @@ public:
 	void openOptionScreen(CORO_PARAM, int type);
 
 	// Enables or disables mouse input
-	void enableInput(void);
-	void disableInput(void);
+	void enableInput();
+	void disableInput();
 
 	// Enables and disables mouse draw
-	void enableMouse(void);
-	void disableMouse(void);
+	void enableMouse();
+	void disableMouse();
 
 	operator byte *() {
 		return (byte *)_bigBuf;
@@ -117,7 +117,7 @@ public:
 	}
 
 	// Link to the custom function list
-	void initCustomDll(void);
+	void initCustomDll();
 
 	// Link to graphic task
 	void linkGraphicTask(RMGfxTask *task) {
@@ -129,8 +129,8 @@ public:
 	void unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 
 	// Freeze and unfreeze
-	void freeze(void);
-	void unfreeze(void);
+	void freeze();
+	void unfreeze();
 
 	// State management
 	void saveState(const Common::String &fn, byte *curThumb, const Common::String &name);
@@ -141,7 +141,7 @@ public:
 
 	// Wipe
 	void initWipe(int type);
-	void closeWipe(void);
+	void closeWipe();
 	void waitWipeEnd(CORO_PARAM);
 
 	void setPerorate(bool bpal) {

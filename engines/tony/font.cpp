@@ -89,7 +89,7 @@ void RMFont::load(uint32 resID, int nChars, int dimx, int dimy, uint32 palResID)
 	load(res, nChars, dimx, dimy, palResID);
 }
 
-void RMFont::unload(void) {
+void RMFont::unload() {
 	if (_letter != NULL) {
 		delete[] _letter;
 		_letter = NULL;
@@ -130,7 +130,7 @@ void RMFont::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim2) 
 	CORO_END_CODE;
 }
 
-void RMFont::close(void) {
+void RMFont::close() {
 	unload();
 }
 
@@ -200,12 +200,11 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 		_letter[i].loadPaletteWA(pal);
 }
 
-
 /***************************************************************************\
 *       RMFontParla Methods
 \****************************************************************************/
 
-void RMFontParla::init(void) {
+void RMFontParla::init() {
 	int i;
 
 	// bernie: Number of characters in the font
@@ -612,7 +611,7 @@ void RMFontParla::init(void) {
 *       RMFontMacc Methods
 \****************************************************************************/
 
-void RMFontMacc::init(void) {
+void RMFontMacc::init() {
 	int i;
 
 	// bernie: Number of characters in the font
@@ -976,7 +975,7 @@ void RMFontMacc::init(void) {
 *       RMFontCredits Methods
 \****************************************************************************/
 
-void RMFontCredits::init(void) {
+void RMFontCredits::init() {
 	int i;
 
 	// bernie: Number of characters in the font
@@ -1441,7 +1440,7 @@ void RMFontObj::setBothCase(int nChar, int nNext, signed char spiazz) {
 }
 
 
-void RMFontObj::init(void) {
+void RMFontObj::init() {
 	int i;
 
 	//bernie: Number of characters in the font (solo maiuscolo)
@@ -2015,7 +2014,7 @@ RMTextDialog::~RMTextDialog() {
 	CoroScheduler.closeEvent(_hEndDisplay);
 }
 
-void RMTextDialog::show(void) {
+void RMTextDialog::show() {
 	_bShowed = true;
 }
 
@@ -2042,15 +2041,15 @@ void RMTextDialog::setSkipStatus(bool bEnabled) {
 	_bSkipStatus = bEnabled;
 }
 
-void RMTextDialog::forceTime(void) {
+void RMTextDialog::forceTime() {
 	_bForceTime = true;
 }
 
-void RMTextDialog::forceNoTime(void) {
+void RMTextDialog::forceNoTime() {
 	_bForceNoTime = true;
 }
 
-void RMTextDialog::setNoTab(void) {
+void RMTextDialog::setNoTab() {
 	_bNoTab = true;
 }
 
@@ -2058,7 +2057,7 @@ void RMTextDialog::setForcedTime(uint32 dwTime) {
 	_time = dwTime;
 }
 
-void RMTextDialog::setAlwaysDisplay(void) {
+void RMTextDialog::setAlwaysDisplay() {
 	_bAlwaysDisplay = true;
 }
 
@@ -2128,7 +2127,7 @@ void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 	CORO_END_CODE;
 }
 
-void RMTextDialog::Unregister(void) {
+void RMTextDialog::Unregister() {
 	RMGfxTask::Unregister();
 	assert(_nInList == 0);
 	CoroScheduler.setEvent(_hEndDisplay);
@@ -2337,7 +2336,7 @@ RMDialogChoice::~RMDialogChoice() {
 	CoroScheduler.closeEvent(_hUnreg);
 }
 
-void RMDialogChoice::Unregister(void) {
+void RMDialogChoice::Unregister() {
 	RMGfxWoodyBuffer::Unregister();
 	assert(!_nInList);
 	CoroScheduler.pulseEvent(_hUnreg);
@@ -2345,7 +2344,7 @@ void RMDialogChoice::Unregister(void) {
 	_bRemoveFromOT = false;
 }
 
-void RMDialogChoice::init(void) {
+void RMDialogChoice::init() {
 	_numChoices = 0;
 	_drawedStrings = NULL;
 	_ptDrawStrings = NULL;
@@ -2356,7 +2355,7 @@ void RMDialogChoice::init(void) {
 }
 
 
-void RMDialogChoice::close(void) {
+void RMDialogChoice::close() {
 	if (_drawedStrings != NULL) {
 		delete[] _drawedStrings;
 		_drawedStrings = NULL;
@@ -2581,7 +2580,7 @@ void RMDialogChoice::doFrame(CORO_PARAM, RMPoint ptMousePos) {
 	CORO_END_CODE;
 }
 
-int RMDialogChoice::getSelection(void) {
+int RMDialogChoice::getSelection() {
 	return _curSelection;
 }
 

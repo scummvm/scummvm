@@ -348,8 +348,8 @@ public:
 	 */
 
 	bool play();
-	void playFast(void);
-	void prefetch(void);
+	void playFast();
+	void prefetch();
 
 	/**
 	 * Closes the stream.
