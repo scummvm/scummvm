@@ -246,8 +246,8 @@ public:
 	int _lastMusic, _lastTappeto;
 
 	int _tappeti[200];
-	RMPoint SFM_pt;
-	int SFM_nLoc;
+	RMPoint _fullScreenMessagePt;
+	int _fullScreenMessageLoc;
 
 	/**
 	 * @defgroup MPAL variables

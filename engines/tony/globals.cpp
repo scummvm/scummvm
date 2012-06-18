@@ -74,7 +74,7 @@ Globals::Globals() {
 	_lastMusic = 0;
 	_lastTappeto = 0;
 	Common::fill(&_tappeti[0], &_tappeti[200], 0);
-	SFM_nLoc = 0;
+	_fullScreenMessageLoc = 0;
 
 	// MPAL global variables
 	_mpalError = 0;

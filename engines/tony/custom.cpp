@@ -408,8 +408,8 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 
 	_ctx->msg = new RMMessage(nMsg);
 
-	GLOBALS.SFM_nLoc = GLOBALS._loc->TEMPGetNumLoc();
-	GLOBALS.SFM_pt = GLOBALS._tony->position();
+	GLOBALS._fullScreenMessageLoc = GLOBALS._loc->TEMPGetNumLoc();
+	GLOBALS._fullScreenMessagePt = GLOBALS._tony->position();
 
 	if (GLOBALS._bSkipIdle)
 		return;
@@ -478,7 +478,7 @@ DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32)
 
 DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(CORO_PARAM, uint32 bNotEnableTony, uint32, uint32, uint32) {
 	GLOBALS.Freeze();
-	GLOBALS.LoadLocation(GLOBALS.SFM_nLoc, RMPoint(GLOBALS.SFM_pt._x, GLOBALS.SFM_pt._y), RMPoint(-1, -1));
+	GLOBALS.LoadLocation(GLOBALS._fullScreenMessageLoc, RMPoint(GLOBALS._fullScreenMessagePt._x, GLOBALS._fullScreenMessagePt._y), RMPoint(-1, -1));
 	if (!bNotEnableTony)
 		GLOBALS._tony->show();
 	GLOBALS.Unfreeze();
