@@ -201,10 +201,10 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 }
 
 /***************************************************************************\
-*       RMFontParla Methods
+*       RMFontDialog Methods
 \****************************************************************************/
 
-void RMFontParla::init() {
+void RMFontDialog::init() {
 	int i;
 
 	// bernie: Number of characters in the font
@@ -1801,11 +1801,10 @@ void RMText::removeThis(CORO_PARAM, bool &result) {
 	result = true;
 }
 
-
 void RMText::writeText(const RMString &text, int nFont, int *time) {
 	// Initializes the font (only once)
 	if (_fonts[0] == NULL) {
-		_fonts[0] = new RMFontParla;
+		_fonts[0] = new RMFontDialog;
 		_fonts[0]->init();
 		_fonts[1] = new RMFontObj;
 		_fonts[1]->init();
@@ -1817,7 +1816,6 @@ void RMText::writeText(const RMString &text, int nFont, int *time) {
 
 	writeText(text, _fonts[nFont], time);
 }
-
 
 void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 	RMGfxPrimitive *prim;

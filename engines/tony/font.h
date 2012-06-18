@@ -141,10 +141,10 @@ public:
 };
 
 
-class RMFontParla : public RMFontColor, public RMFontWithTables {
+class RMFontDialog : public RMFontColor, public RMFontWithTables {
 public:
 	void init();
-	virtual ~RMFontParla() {}
+	virtual ~RMFontDialog() {}
 };
 
 class RMFontObj : public RMFontColor, public RMFontWithTables {
