@@ -29,6 +29,8 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+=======
+#include "common/serializer.h"
 #include "common/textconsole.h"
 #include "common/rect.h"
 
@@ -148,6 +150,8 @@ struct OldScript {
 };
 
 class ComposerEngine : public Engine {
+	template <typename T>
+	friend void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
 protected:
 	Common::Error run();
 
@@ -238,6 +242,7 @@ private:
 	void tickOldScripts();
 	bool tickOldScript(OldScript *script);
 
+	void loadAnimation(Animation *&anim, uint16 animId, int16 x, int16 y, int16 eventParam, int32 size = 0);
 	void playAnimation(uint16 animId, int16 param1, int16 param2, int16 param3);
 	void stopAnimation(Animation *anim, bool localOnly = false, bool pipesOnly = false);
 	void playWaveForAnim(uint16 id, uint16 priority, bool bufferingOnly);

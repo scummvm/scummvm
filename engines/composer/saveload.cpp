@@ -34,11 +34,249 @@
 #include "composer/graphics.h"
 
 namespace Composer {
+ComposerEngine *vm = NULL;
+uint32 timeDelta; 
+
+template <class T>
+void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+template <class T>
+void syncArray(Common::Serializer &ser, Common::Array<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
+	if (ser.isSaving()) {
+		uint32 size = data.size();
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (Common::Array<T>::iterator i = data.begin(); i != data.end(); i++) {
+			sync<T>(ser, *i, minVersion, maxVersion);
+		}
+	} else {
+		uint32 size;
+		data.clear();
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (uint32 i = 0; i < size; i++) {
+			T item;
+			sync<T>(ser, item, minVersion, maxVersion);
+			data.push_back(item);
+		}
+	}
+}
+template <class T>
+void syncList(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
+	if (ser.isSaving()) {
+		uint32 size = data.size();
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (Common::List<T>::iterator i = data.begin(); i != data.end(); i++) {
+			sync<T>(ser, *i, minVersion, maxVersion);
+		}
+	} else {
+		uint32 size;
+		data.clear();
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (uint32 i = 0; i < size; i++) {
+			T item;
+			sync<T>(ser, item, minVersion, maxVersion);
+			data.push_back(item);
+		}
+	}
+}
+template <class T>
+void syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
+	if (ser.isSaving()) {
+		uint32 size = data.size();
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (Common::List<T>::iterator i = data.reverse_begin(); i != data.end(); i--) {
+			sync<T>(ser, *i, minVersion, maxVersion);
+		}
+	} else {
+		uint32 size;
+		data.clear();
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (uint32 i = 0; i < size; i++) {
+			T item;
+			sync<T>(ser, item, minVersion, maxVersion);
+			data.push_front(item);
+		}
+	}
+}
+template<>
+void sync<uint16> (Common::Serializer &ser, uint16 &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	ser.syncAsUint16LE(data, minVersion, maxVersion);
+}
+template<>
+void sync<uint32> (Common::Serializer &ser, uint32 &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	ser.syncAsUint32LE(data, minVersion, maxVersion);
+}
+template<>
+void sync<Library> (Common::Serializer &ser, Library &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	if (ser.isSaving()) {
+		ser.syncAsUint16LE(data._id, minVersion, maxVersion);
+		ser.syncString(data._group, minVersion, maxVersion);
+	} else {
+		uint16 id;
+		ComposerEngine *vm = (ComposerEngine *)g_engine;
+		ser.syncAsUint16LE(id, minVersion, maxVersion);
+		ser.syncString(vm->_bookGroup, minVersion, maxVersion);
+		vm->loadLibrary(id);
+	}
+}
+template <>
+void syncListReverse<Library> (Common::Serializer &ser, Common::List<Library> &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	if (ser.isSaving()) {
+		uint32 size = data.size();
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (Common::List<Library>::iterator i = data.reverse_begin(); i != data.end(); i--) {
+			sync<Library>(ser, *i, minVersion, maxVersion);
+		}
+	} else {
+		uint32 size;
+		ser.syncAsUint32LE(size, minVersion, maxVersion);
+		for (uint32 i = 0; i < size; i++) {
+			Library item;
+			sync<Library>(ser, item, minVersion, maxVersion);
+		}
+	}
+}
+template<>
+void sync<PendingPageChange> (Common::Serializer &ser, PendingPageChange &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	ser.syncAsUint16LE(data._pageId, minVersion, maxVersion);
+	ser.syncAsByte(data._remove, minVersion, maxVersion);
+}
+template<>
+void sync<OldScript *> (Common::Serializer &ser, OldScript *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	uint16 id;
+	uint32 pos, delay;
+	if (ser.isSaving()) {
+		pos = data->_stream->pos();
+		id = data->_id;
+		delay = data->_currDelay;
+	}
+	ser.syncAsUint32LE(pos);
+	ser.syncAsUint16LE(id);
+	ser.syncAsUint32LE(delay);
+	if (ser.isLoading()) {
+		data = new OldScript(id, vm->getResource(ID_SCRP, id));
+		data->_currDelay = delay;
+		data->_stream->seek(pos, SEEK_SET);
+	}
+}
+template<>
+void sync<QueuedScript> (Common::Serializer &ser, QueuedScript &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	ser.syncAsUint32LE(data._baseTime);
+	ser.syncAsUint32LE(data._duration);	
+	ser.syncAsUint32LE(data._count);
+	ser.syncAsUint16LE(data._scriptId);
+	if (ser.isLoading()) data._baseTime += timeDelta;
+}
+template<>
+void sync<Pipe *> (Common::Serializer &ser, Pipe *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	uint16 id;
+	uint32 offset, tmp;
+	if (ser.isSaving()) {
+		id = data->getPipeId();
+		offset = data->getOffset();
+		tmp = data->_bufferedResources.size();
+	}
+	ser.syncAsUint16LE(id);
+	ser.syncAsUint32LE(offset);
+
+	if (ser.isLoading()) {
+		// On load, get and initialize streams
+		Common::SeekableReadStream *stream;
+		if (vm->getGameType() == GType_ComposerV1) {
+			stream = vm->getResource(ID_PIPE, id);
+			data = new OldPipe(stream, id);
+		} else {
+			stream = vm->getResource(ID_ANIM, id);
+			data = new Pipe(stream, id);
+		}
+		vm->_pipeStreams.push_back(stream);
+		data->setOffset(offset);
+		ser.syncAsUint32LE(tmp);
+		for (uint32 j = tmp; j > 0; j--) {
+			uint32 tag;
+			ser.syncAsUint32LE(tag);
+			ser.syncAsUint32LE(tmp);
+			for (uint32 k = tmp; k > 0; k--) {
+				ser.syncAsUint16LE(id);
+				if (data->hasResource(tag, id))
+					data->getResource(tag, id, true);
+			}
+		}
+	} else {
+		ser.syncAsUint32LE(tmp);
+		for (Pipe::DelMap::iterator i = data->_bufferedResources.begin(); i != data->_bufferedResources.end(); i++) {
+			uint32 key = (*i)._key;
+			ser.syncAsUint32LE(key);
+			syncList<uint16> (ser, (*i)._value, minVersion, maxVersion);
+		}
+	}
+}
+template<>
+void sync<AnimationEntry> (Common::Serializer &ser, AnimationEntry &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	ser.syncAsUint32LE(data.state);
+	ser.syncAsUint16LE(data.counter);
+	ser.syncAsUint16LE(data.prevValue);
+}
+template<>
+void sync<Animation *> (Common::Serializer &ser, Animation *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	uint16 animId, x, y;
+	uint32 offset, state, param;
+	int32 size;
+	if (ser.isSaving()) {
+		animId = data->_id;
+		offset = data->_offset;
+		x = data->_basePos.x;
+		y = data->_basePos.x;
+		state = data->_state;
+		param = data->_eventParam;
+		size = data->_size;
+	}
+	ser.syncAsUint16LE(animId);
+	ser.syncAsUint32LE(offset);
+	ser.syncAsUint16LE(x);
+	ser.syncAsUint16LE(y);
+	ser.syncAsUint32LE(state);
+	ser.syncAsUint32LE(param);
+	ser.syncAsUint32LE(size);
+	if (ser.isLoading()) {
+		// On load, get and initialize streams
+		vm->loadAnimation(data, animId, x, y, param, size);
+		data->_offset = offset;
+		data->_state = state;
+		uint32 tmp;
+		ser.syncAsUint32LE(tmp);
+		for (uint32 i = 0; i < tmp; i++) {
+			sync<AnimationEntry> (ser, data->_entries[i], minVersion, maxVersion);
+		}
+	} else {
+		syncArray<AnimationEntry> (ser, data->_entries, minVersion, maxVersion);
+	}
+}
+template<>
+void sync<Sprite> (Common::Serializer &ser, Sprite &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+		ser.syncAsUint16LE(data._id);
+		ser.syncAsUint16LE(data._animId);
+		ser.syncAsSint16LE(data._pos.x);
+		ser.syncAsSint16LE(data._pos.y);
+		ser.syncAsUint16LE(data._surface.w);
+		ser.syncAsUint16LE(data._surface.h);
+		ser.syncAsUint16LE(data._surface.pitch);
+		ser.syncAsUint16LE(data._zorder);
+		if (ser.isLoading())
+			data._surface.pixels = malloc(data._surface.h * data._surface.pitch);
+		byte *pix = static_cast<byte *>(data._surface.pixels);
+		for (uint16 y = 0; y < data._surface.h; y++) {
+			for (uint16 x = 0; x < data._surface.w; x++) {
+				ser.syncAsByte(pix[x]);
+			}
+			pix += data._surface.pitch;
+		}
+
+}
 Common::String ComposerEngine::makeSaveGameName(int slot) {
 	return (_targetName + Common::String::format(".%02d", slot));
 }
 
 Common::Error ComposerEngine::loadGameState(int slot) {
+	vm = this;
 	Common::String filename = makeSaveGameName(slot);
 	Common::InSaveFile *in;
 	if (!(in = _saveFileMan->openForLoading(filename)))
@@ -57,214 +295,62 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	ser.syncAsUint32LE(tmp);
 	_rnd->setSeed(tmp);
 	ser.syncAsUint32LE(_currentTime);
-	uint32 timeDelta = _system->getMillis() - _currentTime;
+	timeDelta = _system->getMillis() - _currentTime;
 	_currentTime += timeDelta;
 	ser.syncAsUint32LE(_lastTime);
 	_lastTime += timeDelta;
+
+	// Unload all Libraries
 	Common::Array<uint16> libIds;
 	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++) 
 		libIds.push_back((*i)._id);
 	for (uint32 i = 0; i < libIds.size(); i++) 
 		unloadLibrary(libIds[i]);
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 id;
-		ser.syncAsUint16LE(id);
-		ser.syncString(_bookGroup);
-		loadLibrary(id);
-	}
+
+	syncListReverse<Library> (ser, _libraries);
 	ser.syncString(_bookGroup);
 
-	_pendingPageChanges.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 id;
-		bool remove;
-		ser.syncAsUint16LE(id);
-		ser.syncAsByte(remove);
-		_pendingPageChanges.push_back(PendingPageChange(id, remove));
-	}
-	_stack.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 svar;
-		ser.syncAsUint16LE(svar);
-		_stack.push_back(svar);
-	}
-	_vars.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 var;
-		ser.syncAsUint16LE(var);
-		_vars.push_back(var);
-	}
+	syncArray<PendingPageChange> (ser, _pendingPageChanges);
+	syncArray<uint16> (ser, _stack);
+	syncArray<uint16> (ser, _vars);
 
+	// Free outdated pointers
 	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
 		delete *i;
 	}
-	_oldScripts.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 id;
-		uint32 pos, delay;
-		ser.syncAsUint32LE(pos);
-		ser.syncAsUint16LE(id);
-		ser.syncAsUint32LE(delay);
-		OldScript *oTmp = new OldScript(id, getResource(ID_SCRP, id));
-		oTmp->_currDelay = delay;
-		oTmp->_stream->seek(pos, SEEK_SET);
-		_oldScripts.push_back(oTmp);
-	}
-	_queuedScripts.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		QueuedScript qTmp;
-		ser.syncAsUint32LE(qTmp._baseTime);
-		qTmp._baseTime += timeDelta;
-		ser.syncAsUint32LE(qTmp._duration);
-		ser.syncAsUint32LE(qTmp._count);
-		if(qTmp._count != 0) {
-			assert(qTmp._count != 0);
-		}
-		ser.syncAsUint16LE(qTmp._scriptId);
-		_queuedScripts.push_back(qTmp);
-	}
+
+	syncList<OldScript *> (ser, _oldScripts);
+	syncArray<QueuedScript> (ser, _queuedScripts);
+
 	ser.syncAsSint16LE(_lastMousePos.x);
 	ser.syncAsSint16LE(_lastMousePos.y);
+	g_system->warpMouse(_lastMousePos.x, _lastMousePos.y);
 	ser.syncAsByte(_mouseEnabled);
 	ser.syncAsByte(_mouseVisible);
 	ser.syncAsUint16LE(_mouseSpriteId);
 
+	// Free outdated pointers
 	for (Common::List<Pipe *>::iterator i = _pipes.begin(); i != _pipes.end(); i++) {
 		delete *i;
 	}
-	_pipes.clear();
 	for (Common::Array<Common::SeekableReadStream *>::iterator i = _pipeStreams.begin(); i != _pipeStreams.end(); i++) {
 		delete *i;
 	}
+
 	_pipeStreams.clear();
+	syncListReverse<Pipe *> (ser, _pipes);
 
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 id;
-		uint32 offset;
-		ser.syncAsUint16LE(id);
-		ser.syncAsUint32LE(offset);
-		Pipe *pipe;
-		Common::SeekableReadStream *stream;
-		if (getGameType() == GType_ComposerV1) {
-			stream = getResource(ID_PIPE, id);
-			pipe = new OldPipe(stream, id);
-		} else {
-			stream = getResource(ID_ANIM, id);
-			pipe = new Pipe(stream, id);
-		}
-		_pipes.push_front(pipe);
-		_pipeStreams.push_back(stream);
-		pipe->setOffset(offset);
-		ser.syncAsUint32LE(tmp);
-		for (uint32 j = tmp; j > 0; j--) {
-			uint32 tag;
-			ser.syncAsUint32LE(tag);
-			ser.syncAsUint32LE(tmp);
-			for (uint32 k = tmp; k > 0; k--) {
-				ser.syncAsUint16LE(id);
-				if (pipe->hasResource(tag, id))
-					pipe->getResource(tag, id, true);
-			}
-		}
-	}
-
+	// Free outdated pointers
 	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
 		delete *i;
 	}
-	_anims.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		uint16 animId, x, y;
-		uint32 offset, state, param;
-		int32 size;
-		ser.syncAsUint16LE(animId);
-		ser.syncAsUint32LE(offset);
-		ser.syncAsUint16LE(x);
-		ser.syncAsUint16LE(y);
-		ser.syncAsUint32LE(state);
-		ser.syncAsUint32LE(param);
-		ser.syncAsUint32LE(size);
-		Common::SeekableReadStream *stream = NULL;
 
-		//TODO: extract following out into "loadAnim"
-		// First, check the existing pipes.
-		for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
-			Pipe *pipe = *j;
-			if (!pipe->hasResource(ID_ANIM, animId))
-				continue;
-			stream = pipe->getResource(ID_ANIM, animId, false);
-			if (stream->size() >= size) break;
-			stream = NULL;
-		}
-		// If we didn't find it, try the libraries.
-		if (!stream) {
-			Common::List<Library>::iterator j;
-			for (j = _libraries.begin(); j != _libraries.end(); j++) {
-				if (!hasResource(ID_ANIM, animId)) continue;
-				stream = getResource(ID_ANIM, animId);
-				if (stream->size() >= size) break;
-				stream = NULL;
-			}
-			if (!stream) {
-				warning("ignoring attempt to play invalid anim %d", animId);
-				continue;
-			}
+	syncList<Animation *> (ser, _anims);
+	syncList<Sprite> (ser, _sprites);
 
-			uint32 type = j->_archive->getResourceFlags(ID_ANIM, animId);
-
-			// If the resource is a pipe itself, then load the pipe
-			// and then fish the requested animation out of it.
-			if (type != 1) {
-				_pipeStreams.push_back(stream);
-				Pipe *newPipe = new Pipe(stream, animId);
-				_pipes.push_front(newPipe);
-				newPipe->nextFrame();
-				stream = newPipe->getResource(ID_ANIM, animId, false);
-			}
-		}
-
-		Animation *anim = new Animation(stream, animId, Common::Point(x, y), param);
-		anim->_offset = offset;
-		anim->_state = state;
-		uint32 tmp2;
-		ser.syncAsUint32LE(tmp2);
-		for (uint32 j = 0; j < tmp2; j++) {
-			ser.syncAsUint32LE(anim->_entries[j].state);
-			ser.syncAsUint16LE(anim->_entries[j].counter);
-			ser.syncAsUint16LE(anim->_entries[j].prevValue);
-		}
-		_anims.push_back(anim);
-	}
-	_sprites.clear();
-	ser.syncAsUint32LE(tmp);
-	for (uint32 i = tmp; i > 0; i--) {
-		Sprite sprite;
-		ser.syncAsUint16LE(sprite._id);
-		ser.syncAsUint16LE(sprite._animId);
-		ser.syncAsSint16LE(sprite._pos.x);
-		ser.syncAsSint16LE(sprite._pos.y);
-		ser.syncAsUint16LE(sprite._surface.w);
-		ser.syncAsUint16LE(sprite._surface.h);
-		ser.syncAsUint16LE(sprite._surface.pitch);
-		ser.syncAsUint16LE(sprite._zorder);
-		sprite._surface.pixels = malloc(sprite._surface.h * sprite._surface.pitch);
-		byte *dest = static_cast<byte *>(sprite._surface.pixels);
-		for (uint16 y = 0; y < sprite._surface.h; y++) {
-			for (uint16 x = 0; x < sprite._surface.w; x++) {
-				ser.syncAsByte(dest[x]);
-			}
-			dest += sprite._surface.pitch;
-		}
-		_sprites.push_back(sprite);
-	}
 	_dirtyRects.clear();
+
+	// Redraw the whole screen
 	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	byte palbuf[256 * 3];
 	ser.syncBytes(palbuf, 256 * 3);
@@ -274,6 +360,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	_mixer->stopAll();
 	_audioStream = NULL;
 
+	// Restore the buffered audio
 	ser.syncAsSint16LE(_currSoundPriority);
 	int32 numSamples;
 	ser.syncAsSint32LE(numSamples);
@@ -291,6 +378,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::String filename = makeSaveGameName(slot);
 	Common::OutSaveFile *out;
+	vm = this;
 	if (!(out = _saveFileMan->openForSaving(filename)))
 		return Common::kWritingFailed;
 
@@ -304,135 +392,26 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	ser.syncAsUint32LE(tmp);
 	ser.syncAsUint32LE(_currentTime);
 	ser.syncAsUint32LE(_lastTime);
-	tmp = _libraries.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::List<Library>::const_iterator i = _libraries.reverse_begin(); i != _libraries.end(); i--) {
-		uint16 tmp16 = (*i)._id;
-		Common::String tmps = (*i)._group;
-		ser.syncAsUint16LE(tmp16);
-		ser.syncString(tmps);
-	}
+
+	syncListReverse<Library> (ser, _libraries);
 	ser.syncString(_bookGroup);
-	tmp = _pendingPageChanges.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::Array<PendingPageChange>::const_iterator i = _pendingPageChanges.begin(); i != _pendingPageChanges.end(); i++) {
-		uint16 tmp16 = (*i)._pageId;
-		bool tmpb = (*i)._remove;
-		ser.syncAsUint16LE(tmp16);
-		ser.syncAsByte(tmpb);
-	}
-	tmp = _stack.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::Array<uint16>::const_iterator i = _stack.begin(); i != _stack.end(); i++) {
-		uint16 tmp16 = (*i);
-		ser.syncAsUint16LE(tmp16);
-	}
-	tmp = _vars.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::Array<uint16>::const_iterator i = _vars.begin(); i != _vars.end(); i++) {
-		uint16 tmp16 = (*i);
-		ser.syncAsUint16LE(tmp16);
-	}
-	tmp = _oldScripts.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::List<OldScript *>::const_iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
-		tmp = (*i)->_stream->pos();
-		ser.syncAsUint32LE(tmp);
-		uint16 tmp16 = (*i)->_id;
-		tmp = (*i)->_currDelay;
-		ser.syncAsUint16LE(tmp16);
-		ser.syncAsUint32LE(tmp);
-	}
-	tmp = _queuedScripts.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::Array<QueuedScript>::const_iterator i = _queuedScripts.begin(); i != _queuedScripts.end(); i++) {
-		tmp = (*i)._baseTime;
-		ser.syncAsUint32LE(tmp);
-		tmp = (*i)._duration;
-		ser.syncAsUint32LE(tmp);
-		tmp = (*i)._count;
-		if(tmp != 0) {
-			assert(tmp != 0);
-		}
-		uint16 tmp16 = (*i)._scriptId;
-		ser.syncAsUint32LE(tmp);
-		ser.syncAsUint16LE(tmp16);
-	}
+
+	syncArray<PendingPageChange> (ser, _pendingPageChanges);
+	syncArray<uint16> (ser, _stack);
+	syncArray<uint16> (ser, _vars);
+	syncList<OldScript *> (ser, _oldScripts);
+	syncArray<QueuedScript> (ser, _queuedScripts);
+
 	ser.syncAsSint16LE(_lastMousePos.x);
 	ser.syncAsSint16LE(_lastMousePos.y);
 	ser.syncAsByte(_mouseEnabled);
 	ser.syncAsByte(_mouseVisible);
 	ser.syncAsUint16LE(_mouseSpriteId);
 
-	tmp = _pipes.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::List<Pipe *>::const_iterator i = _pipes.reverse_begin(); i != _pipes.end(); i--) {
-		uint16 tmp16 = (*i)->getPipeId();
-		tmp = (*i)->getOffset();
-		ser.syncAsUint16LE(tmp16);
-		ser.syncAsUint32LE(tmp);
-		tmp = (*i)->_bufferedResources.size();
-		ser.syncAsUint32LE(tmp);
-		for (Pipe::DelMap::const_iterator j = (*i)->_bufferedResources.begin(); j != (*i)->_bufferedResources.end(); j++) {
-			tmp = (*j)._key;
-			ser.syncAsUint32LE(tmp);
-			tmp = (*j)._value.size();
-			ser.syncAsUint32LE(tmp);
-			for (Common::List<uint16>::const_iterator k = (*j)._value.begin(); k != (*j)._value.end(); k++) {
-				tmp16 = (*k);
-				ser.syncAsUint16LE(tmp16);
-			}
-		}
-	}
+	syncListReverse<Pipe *> (ser, _pipes);
+	syncList<Animation *> (ser, _anims);
+	syncList<Sprite> (ser, _sprites);
 
-	tmp = _anims.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::List<Animation *>::const_iterator i = _anims.begin(); i != _anims.end(); i++) {
-		uint16 tmp16 = (*i)->_id;
-		tmp = (*i)->_offset;
-		ser.syncAsUint16LE(tmp16);
-		ser.syncAsUint32LE(tmp);
-		tmp16 = (*i)->_basePos.x;
-		ser.syncAsUint16LE(tmp16);
-		tmp16 = (*i)->_basePos.y;
-		ser.syncAsUint16LE(tmp16);
-		tmp = (*i)->_state;
-		ser.syncAsUint32LE(tmp);
-		tmp = (*i)->_eventParam;
-		ser.syncAsUint32LE(tmp);
-		tmp = (*i)->_size;
-		ser.syncAsUint32LE(tmp);
-		tmp = (*i)->_entries.size();
-		ser.syncAsUint32LE(tmp);
-		for (Common::Array<AnimationEntry>::const_iterator j = (*i)->_entries.begin(); j != (*i)->_entries.end(); j++) {
-			tmp = (*j).state;
-			tmp16 = (*j).counter;
-			ser.syncAsUint32LE(tmp);
-			ser.syncAsUint16LE(tmp16);
-			tmp16 = (*j).prevValue;
-			ser.syncAsUint16LE(tmp16);
-		}
-	}
-	tmp = _sprites.size();
-	ser.syncAsUint32LE(tmp);
-	for (Common::List<Sprite>::const_iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		Sprite sprite(*i);
-		ser.syncAsUint16LE(sprite._id);
-		ser.syncAsUint16LE(sprite._animId);
-		ser.syncAsSint16LE(sprite._pos.x);
-		ser.syncAsSint16LE(sprite._pos.y);
-		ser.syncAsUint16LE(sprite._surface.w);
-		ser.syncAsUint16LE(sprite._surface.h);
-		ser.syncAsUint16LE(sprite._surface.pitch);
-		ser.syncAsUint16LE(sprite._zorder);
-		byte *src = static_cast<byte *>((*i)._surface.pixels);
-		for (uint16 y = 0; y < sprite._surface.h; y++) {
-			for (uint x = 0; x < sprite._surface.w; x++) {
-				ser.syncAsByte(src[x]);
-			}
-			src += (*i)._surface.pitch;
-		}
-	}
 	byte paletteBuffer[256 * 3];
 	_system->getPaletteManager()->grabPalette(paletteBuffer, 0, 256);
 	ser.syncBytes(paletteBuffer, 256 * 3);
@@ -448,4 +427,4 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	out->finalize();
 	return Common::kNoError;
 }
-}
+} // End of namespace Composer
