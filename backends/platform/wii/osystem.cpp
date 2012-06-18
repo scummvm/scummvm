@@ -269,6 +269,7 @@ void OSystem_Wii::getTimeAndDate(TimeDate &td) const {
 	td.tm_mday = t.tm_mday;
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
+	td.tm_wday = t.tm_wday;
 }
 
 void OSystem_Wii::showOptionsDialog() {

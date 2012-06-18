@@ -399,6 +399,11 @@ void BadaSystem::getTimeAndDate(TimeDate &td) const {
 		td.tm_mday = currentTime.GetDay();
 		td.tm_mon = currentTime.GetMonth();
 		td.tm_year = currentTime.GetYear();
+#ifdef RELEASE_BUILD
+		#error getTimeAndDate() is not setting the day of the week
+#else
+		td.tm_wday = 0; // FIXME
+#endif
 	}
 }
 
