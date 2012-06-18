@@ -255,7 +255,7 @@ bool StringUtil::StartsWith(const AnsiString &str, const AnsiString &pattern, bo
 			return false;
 
 		AnsiString startPart(str.c_str(), patternLength);
-		uint32 likeness = str.compareToIgnoreCase(pattern.c_str());
+		uint32 likeness = startPart.compareToIgnoreCase(pattern.c_str());
 		return (likeness == 0);
 	}
 }
