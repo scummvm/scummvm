@@ -101,14 +101,14 @@ static inline uint32 interpolate32_7_1(uint32 p1, uint32 p2) {
  */
 template<typename ColorMask>
 static inline uint32 interpolate32_2_1_1(uint32 p1, uint32 p2, uint32 p3) {
-	uint32 x = ((p1 & ColorMask::qHighBitsMask) >> 1)
-		              + ((p2 & ColorMask::qHighBitsMask) >> 2)
-		              + ((p3 & ColorMask::qHighBitsMask) >> 2);
-	uint32 y = ((p1 & ColorMask::qLowBitsMask) <<  1)
-			          +  (p2 & ColorMask::qLowBitsMask)
-			          +  (p2 & ColorMask::qLowBitsMask);
+	uint32 x = ((p1 & ColorMask::qhighBits) >> 1)
+		              + ((p2 & ColorMask::qhighBits) >> 2)
+		              + ((p3 & ColorMask::qhighBits) >> 2);
+	uint32 y = ((p1 & ColorMask::qlowBits) <<  1)
+			          +  (p2 & ColorMask::qlowBits)
+			          +  (p2 & ColorMask::qlowBits);
 	y >>= 2;
-	y &= ColorMask::qLowBits;
+	y &= ColorMask::qlowBits;
 	return x + y;
 }
 
@@ -172,7 +172,7 @@ static inline uint32 interpolate32_2_3_3(uint32 p1, uint32 p2, uint32 p3) {
  * @see interpolate32_3_1 for similar method
  */
 template<typename ColorMask>
-static inline uint32 interpolate32_2_7_7(uint32 p1, uint32 p2, uint32 p3) {
+inline uint32 interpolate32_2_7_7(uint32 p1, uint32 p2, uint32 p3) {
 	uint32 x = ((p1 & ~ColorMask::kLow4Bits) >> 3)
 		              + (((p2 & ~ColorMask::kLow4Bits) >> 4)
 		              +  ((p3 & ~ColorMask::kLow4Bits) >> 4)) * 7;
@@ -184,22 +184,45 @@ static inline uint32 interpolate32_2_7_7(uint32 p1, uint32 p2, uint32 p3) {
 	return x + y;
 }
 
+// Dummy specializations.
+template<>
+inline uint32 interpolate32_2_7_7<Graphics::ColorMasks<555> >(uint32 p1, uint32 p2, uint32 p3) {
+	assert(0);
+}
+
+template<>
+inline uint32 interpolate32_2_7_7<Graphics::ColorMasks<565> >(uint32 p1, uint32 p2, uint32 p3) {
+	assert(0);
+}
+
 /**
  * Interpolate three 32 bit pixels with weights 14, 1, and 1, i.e., (14*p1+p2+p3)/16.
  *
  * @see interpolate32_3_1 for similar method
  */
 template<typename ColorMask>
-static inline uint32 interpolate32_14_1_1(uint32 p1, uint32 p2, uint32 p3) {
+inline uint32 interpolate32_14_1_1(uint32 p1, uint32 p2, uint32 p3) {
 	uint32 x = ((p1 & ~ColorMask::kLow4Bits) >> 4) * 14
 		              + ((p2 & ~ColorMask::kLow4Bits) >> 4)
 		              + ((p3 & ~ColorMask::kLow4Bits) >> 4);
-	uint32 y = (p1 & ColorMask::kLow4Bits) * 14;
+	uint32 y = (p1 & ColorMask::kLow4Bits) * 14
 			          + (p2 & ColorMask::kLow4Bits)
 			          + (p2 & ColorMask::kLow4Bits);
 	y >>= 4;
 	y &= ColorMask::kLow4Bits;
 	return x + y;
+}
+
+
+// Dummy specializations.
+template<>
+inline uint32 interpolate32_14_1_1<Graphics::ColorMasks<555> >(uint32 p1, uint32 p2, uint32 p3) {
+	assert(0);
+}
+
+template<>
+inline uint32 interpolate32_14_1_1<Graphics::ColorMasks<565> >(uint32 p1, uint32 p2, uint32 p3) {
+	assert(0);
 }
 
 /**
