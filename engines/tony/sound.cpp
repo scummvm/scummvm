@@ -1053,7 +1053,8 @@ void FPStream::prefetch() {
 		return;
 	}
 #else
-	error("lpBuf isn't set");
+	// Return, since lpBuf hasn't been set
+	return;
 #endif
 
 	// Uncompress the data from the stream directly into the locked buffer

@@ -43,8 +43,6 @@ namespace Tony {
 #define TAPPETI_MARE 6
 #define TAPPETI_MAREMETA 7
 
-#define MAX_PATH    255
-
 struct CharacterStruct {
 	uint32 _code;
 	RMItem *_item;
@@ -168,7 +166,7 @@ class Globals {
 public:
 	Globals();
 
-	char _nextMusic[MAX_PATH];
+	Common::String _nextMusic;
 	bool _nextLoop;
 	int _nextChannel;
 	int _nextSync;

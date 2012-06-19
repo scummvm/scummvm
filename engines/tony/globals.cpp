@@ -26,7 +26,6 @@
 namespace Tony {
 
 Globals::Globals() {
-	Common::fill(_nextMusic, _nextMusic + MAX_PATH, 0);
 	_nextLoop = false;
 	_nextChannel = 0;
 	_nextSync = 0;

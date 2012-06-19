@@ -208,12 +208,14 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 		GLOBALS._curChannel = nChannel;
 		GLOBALS._nextLoop = bLoop;
 		GLOBALS._nextSync = nSync;
+		GLOBALS._nextMusic = fname;
+
 		if (GLOBALS._flipflop)
 			GLOBALS._nextChannel = nChannel - 1;
 		else
 			GLOBALS._nextChannel = nChannel + 1;
 
-		uint32 hThread = CoroScheduler.createProcess(doNextMusic, &_stream, sizeof(FPStream ***));
+		uint32 hThread = CoroScheduler.createProcess(doNextMusic, NULL, 0);
 		assert(hThread != CORO_INVALID_PID_VALUE);
 
 	} else if (nFX == 44) { // Cambia canale e lascia finire il primo
@@ -254,7 +256,7 @@ void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
 	Common::String fn;
 	CORO_END_CONTEXT(_ctx);
 
-	FPStream **streams = *(FPStream ***)param;
+	FPStream **streams = _vm->_stream;
 
 	CORO_BEGIN_CODE(_ctx);
 
