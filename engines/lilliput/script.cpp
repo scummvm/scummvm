@@ -253,16 +253,16 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_startSpeech();
 		break;
 	case 0x3:
-		OC_sub17D7F_speech2();
+		OC_getComputedVariantSpeech();
 		break;
 	case 0x4:
-		OC_sub17DB9_speech3();
+		OC_getRotatingVariantSpeech();
 		break;
 	case 0x5:
 		OC_startSpeechIfMute();
 		break;
 	case 0x6:
-		OC_sub17E07_speech4param();
+		OC_getComputedVariantSpeechIfMute();
 		break;
 	case 0x7:
 		OC_startSpeechIfSilent();
@@ -286,7 +286,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub17B93();
 		break;
 	case 0xE:
-		OC_sub17E37_speech4();
+		OC_startSpeech5();
 		break;
 	case 0xF:
 		OC_resetByte1714E();
@@ -484,7 +484,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_loadFile_AERIAL_GFX();
 		break;
 	case 0x50:
-		OC_sub17E22_speech1IfSoundOff();
+		OC_startSpeechIfSoundOff();
 		break;
 	case 0x51:
 		OC_sub1844A();
@@ -613,10 +613,10 @@ static const OpCode opCodes2[] = {
 /* 0x00 */	{ "OC_setWord18821", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x01 */	{ "OC_ChangeIsoMap", 3, kgetPosFromScript, kImmediateValue, kImmediateValue, kNone, kNone },
 /* 0x02 */	{ "OC_startSpeech", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x03 */	{ "OC_sub17D7F_speech2", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x04 */	{ "OC_sub17DB9_speech3", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, // todo
+/* 0x03 */	{ "OC_getComputedVariantSpeech", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x04 */	{ "OC_getRotatingVariantSpeech", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, // todo
 /* 0x05 */	{ "OC_startSpeechIfMute", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x06 */	{ "OC_sub17E07_speech4param", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
+/* 0x06 */	{ "OC_getComputedVariantSpeechIfMute", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
 /* 0x07 */	{ "OC_startSpeechIfSilent", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x08 */	{ "OC_ComputeCharacterVariable", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
 /* 0x09 */	{ "OC_getRandom_type2", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
@@ -624,7 +624,7 @@ static const OpCode opCodes2[] = {
 /* 0x0b */	{ "OC_DisableCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x0c */	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x0d */	{ "OC_sub17B93", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
-/* 0x0e */	{ "OC_sub17E37_speech4", 0, kNone, kNone, kNone, kNone, kNone },  // todo
+/* 0x0e */	{ "OC_startSpeech5", 0, kNone, kNone, kNone, kNone, kNone },  // todo
 /* 0x0f */	{ "OC_resetByte1714E", 0, kNone, kNone, kNone, kNone, kNone },  
 /* 0x10 */	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },  
 /* 0x11 */	{ "OC_incByte16F04", 0, kNone, kNone, kNone, kNone, kNone },  
@@ -690,7 +690,7 @@ static const OpCode opCodes2[] = {
 /* 0x4d */	{ "OC_waitForEvent", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4e */	{ "OC_disableInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
 /* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kNone, kNone, kNone, kNone, kNone }, 
-/* 0x50 */	{ "OC_sub17E22_speech1IfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
+/* 0x50 */	{ "OC_startSpeechIfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x52 */	{ "OC_displayNumericCharacterVariable", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
 /* 0x53 */	{ "OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
@@ -1156,6 +1156,7 @@ void LilliputScript::sub189B8() {
 void LilliputScript::decodePackedText(char *buf) {
 	debugC(2, kDebugScript, "decodePackedText(buf)");
 
+	// All the languages use the English dictionnary
 	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |is the |is a |in a |To the |to the |by |going |here |The|the|and |some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|have |you|I've |can't |up |to |he |she |down |what|What|with|are |and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|'s |'t |re|gg|tt|pp|nn|ay|ar|wh|";
 
 	_vm->_displayStringIndex = 0;
@@ -1208,8 +1209,8 @@ void LilliputScript::decodePackedText(char *buf) {
 	sub189B8();
 }
 
-int LilliputScript::sub18BB7(int index) {
-	debugC(2, kDebugScriptTBC, "sub18BB7(%d)", index);
+int LilliputScript::getPackedStringStartRelativeIndex(int index) {
+	debugC(2, kDebugScript, "getPackedStringStartRelativeIndex(%d)", index);
 	
 	int chunk4Index = _vm->_packedStringIndex[index];
 	int result = 0;
@@ -1219,9 +1220,9 @@ int LilliputScript::sub18BB7(int index) {
 	return result + 1;
 }
 
+// Part of the script decompiler
 void LilliputScript::listAllTexts() {
-	
-	debugC(1, kDebugScriptTBC, "All Game Texts :");
+	debugC(1, kDebugScript, "listAllTexts");
 
 	for (int i = 0; i < _vm->_packedStringNumb; i++) {
 		int index = _vm->_packedStringIndex[i];
@@ -2144,20 +2145,29 @@ void LilliputScript::OC_startSpeech() {
 	startSpeech(curWord);
 }
 
-void LilliputScript::sub18B7C(int var1, int var3) {
-	debugC(2, kDebugScriptTBC, "sub18B7C(%d, %d)", var1, var3);
+void LilliputScript::getSpeechVariant(int speechIndex, int speechVariant) {
+	debugC(2, kDebugScriptTBC, "getSpeechVariant(%d, %d)", speechIndex, speechVariant);
 
-	if (var1 == 0xFFFF) 
+	// The packed strings are stored by variants, enclosed by imbricated brackets.
+	// So the different possibilities are:
+	// text
+	// [text1]text2
+	// [[text1]text2]text3
+	// etc etc
+
+	if (speechIndex == -1) 
 		return;
 
-	_currentSpeechId = var1;
-	int index = _vm->_packedStringIndex[var1];
+	_currentSpeechId = speechIndex;
+	int index = _vm->_packedStringIndex[speechIndex];
 
+	// Skip the speech variant opening characters
 	while (_vm->_packedStrings[index] == '[')
 		++index;
 
-	for (int i = 0; i < var3; i++) {
+	for (int i = 0; i < speechVariant; i++) {
 		byte tmpVal = ' ';
+		// Skip a speech variant
 		while (tmpVal != ']') {
 			tmpVal = _vm->_packedStrings[index];
 			++index;
@@ -2170,14 +2180,14 @@ void LilliputScript::sub18B7C(int var1, int var3) {
 	decodePackedText(&_vm->_packedStrings[index]);
 }
 
-void LilliputScript::OC_sub17D7F_speech2() {
-	debugC(1, kDebugScriptTBC, "OC_sub17D7F_speech2()");
+void LilliputScript::OC_getComputedVariantSpeech() {
+	debugC(1, kDebugScriptTBC, "OC_getComputedVariantSpeech()");
 
-	int var1 = getCharacterVariablePtr()[0];
-	int var2 = (_currScript->readUint16LE() & 0xFF);
-	int var3 = var1 / var2;
+	int tmpVal1 = getCharacterVariablePtr()[0];
+	int tmpVal2 = (_currScript->readUint16LE() & 0xFF);
+	int speechVariant = tmpVal1 / tmpVal2;
 	
-	var1 = _currScript->readUint16LE();
+	int speechIndex = _currScript->readUint16LE();
 
 	bool forceReturnFl = false;
 	checkSpeechAllowed(forceReturnFl);
@@ -2185,21 +2195,20 @@ void LilliputScript::OC_sub17D7F_speech2() {
 		return;
 
 	_talkingCharacter = _vm->_currentScriptCharacter;
-
-	sub18B7C(var1, var3);
+	getSpeechVariant(speechIndex, speechVariant);
 }
 
-void LilliputScript::OC_sub17DB9_speech3() {
-	debugC(1, kDebugScriptTBC, "OC_sub17DB9_speech3()");
+void LilliputScript::OC_getRotatingVariantSpeech() {
+	debugC(1, kDebugScriptTBC, "OC_getRotatingVariantSpeech()");
 
 	int index = _currScript->readUint16LE();
-	int maxValue = sub18BB7(index);
+	int maxValue = getPackedStringStartRelativeIndex(index);
 	
-	int tmpVal = _currScript->readUint16LE() + 1;
-	int oldVal = tmpVal;
-	if (tmpVal >= maxValue)
-		tmpVal = 0;
-	_currScript->writeUint16LE(tmpVal, -2); 
+	int currVariant = _currScript->readUint16LE();
+	int nextVariant = currVariant + 1;
+	if (nextVariant >= maxValue)
+		nextVariant = 0;
+	_currScript->writeUint16LE(nextVariant, -2); 
 
 	bool forceReturnFl = false;
 	checkSpeechAllowed(forceReturnFl);
@@ -2208,7 +2217,7 @@ void LilliputScript::OC_sub17DB9_speech3() {
 
 	_talkingCharacter = _vm->_currentScriptCharacter;
 
-	sub18B7C(index, oldVal);
+	getSpeechVariant(index, currVariant);
 	
 }
 
@@ -2223,11 +2232,11 @@ void LilliputScript::OC_startSpeechIfMute() {
 	_currScript->readUint16LE();
 }
 
-void LilliputScript::OC_sub17E07_speech4param() {
-	debugC(1, kDebugScriptTBC, "OC_sub17E07_speech4param()");
+void LilliputScript::OC_getComputedVariantSpeechIfMute() {
+	debugC(1, kDebugScriptTBC, "OC_getComputedVariantSpeechIfMute()");
 
 	if (_talkingCharacter == -1) {
-		OC_sub17D7F_speech2();
+		OC_getComputedVariantSpeech();
 		return;
 	}
 	_currScript->readUint16LE();
@@ -2241,7 +2250,7 @@ void LilliputScript::OC_startSpeechIfSilent() {
 	debugC(1, kDebugScript, "OC_startSpeechIfSilent()");
 
 	if (_talkingCharacter == -1) {
-		OC_sub17DB9_speech3();
+		OC_getRotatingVariantSpeech();
 		return;
 	}
 	_currScript->readUint16LE();
@@ -2306,8 +2315,8 @@ void LilliputScript::OC_sub17B93() {
 	sub17B6C(var1);
 }
 
-void LilliputScript::OC_sub17E37_speech4() {
-	debugC(1, kDebugScriptTBC, "OC_sub17E37_speech4()");
+void LilliputScript::OC_startSpeech5() {
+	debugC(1, kDebugScriptTBC, "OC_startSpeech5()");
 
 	bool forceReturnFl = false;
 	checkSpeechAllowed(forceReturnFl);
@@ -3117,10 +3126,10 @@ void LilliputScript::OC_loadFile_AERIAL_GFX() {
 	_vm->_refreshScreenFlag = false;
 }
 
-void LilliputScript::OC_sub17E22_speech1IfSoundOff() {
-	debugC(1, kDebugScriptTBC, "OC_sub17E22_speech1IfSoundOff()");
+void LilliputScript::OC_startSpeechIfSoundOff() {
+	debugC(1, kDebugScriptTBC, "OC_startSpeechIfSoundOff()");
 
-	// HACK: In the original, OC_sub17E22_speech1IfSoundOff() only calls 
+	// HACK: In the original, OC_startSpeechIfSoundOff() only calls 
 	// OC_startSpeech if sound is off. For the moment, it's always called
 
 	OC_startSpeech();
