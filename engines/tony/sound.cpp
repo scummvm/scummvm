@@ -266,7 +266,7 @@ uint32 CODECADPCMMONO::decompress(Common::SeekableReadStream *stream, void *buf,
 	uint16 *lpBuf = (uint16 *)buf;
 	byte *inp;
 	int bufferstep;
-	int cache;
+	int cache = 0;
 	int delta;
 	int sign;
 	 int vpdiff;
@@ -348,7 +348,7 @@ uint32 CODECADPCMSTEREO::decompress(Common::SeekableReadStream *stream, void *bu
 	uint16 *lpBuf=(uint16 *)buf;
 	byte *inp;
 	int bufferstep;
-	int cache;
+	int cache = 0;
 	int delta;
 	int sign;
 	int vpdiff;
@@ -1015,7 +1015,7 @@ bool FPStream::unloadFile() {
 }
 
 void FPStream::prefetch() {
-	void *lpBuf;
+	void *lpBuf = NULL;
 
 	if (!_bSoundSupported || !_bFileLoaded)
 		return;
@@ -1042,6 +1042,8 @@ void FPStream::prefetch() {
 		_vm->GUIError("Cannot lock stream buffer!", "soundLoadStream()");
 		return;
 	}
+#else
+	error("lpBuf isn't set");
 #endif
 
 	// Uncompress the data from the stream directly into the locked buffer
