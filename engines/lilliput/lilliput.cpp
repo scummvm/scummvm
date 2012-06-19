@@ -1850,7 +1850,7 @@ void LilliputEngine::sub16EBC() {
 
 	for (int index1 = _numCharacters - 1; index1 >= 0; index1--) {
 		// Hack: The original doesn't check if it's disabled, which looks wrong
-		if (_scriptHandler->_array1614BPosY[index1] == -1)
+		if ((_scriptHandler->_array16123PosX[index1] == -1) || (_scriptHandler->_array1614BPosY[index1] == -1))
 			continue;
 		//
 
