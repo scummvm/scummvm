@@ -2198,14 +2198,14 @@ DECLARE_CUSTOM_FUNCTION(DemuteJingle)(CORO_PARAM, uint32, uint32, uint32, uint32
 void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int nSync = 0) {
 	if (nSync == 0)
 		nSync = 2000;
-	debug("Start CustPlayMusic");
+	debugC(DEBUG_INTERMEDIATE, kTonyDebugMusic, "Start CustPlayMusic");
 	GLOBALS.PlayMusic(nChannel, mFN, nFX, bLoop, nSync);
-	debug("End CustPlayMusic");
+	debugC(DEBUG_INTERMEDIATE, kTonyDebugMusic, "End CustPlayMusic");
 }
 
 DECLARE_CUSTOM_FUNCTION(PlaySoundEffect)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bNoLoop, uint32) {
 	if (nFX == 0 || nFX == 1 || nFX == 2) {
-		debug("PlaySoundEffect stop fadeout");
+		debugC(DEBUG_INTERMEDIATE, kTonyDebugSound, "PlaySoundEffect stop fadeout");
 		GLOBALS._bFadeOutStop = true;
 	}
 

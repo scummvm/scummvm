@@ -187,10 +187,7 @@ void TonyEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
 }
 
-void TonyEngine::playMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync) {
-	warning("TODO: TonyEngine::playMusic");
-//	g_system->lockMutex(csMusic);
-
+void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, bool bLoop, int nSync) {
 	if (nChannel < 4)
 		if (GLOBALS._flipflop)
 			nChannel = nChannel + 1;
@@ -207,64 +204,78 @@ void TonyEngine::playMusic(int nChannel, const char *fn, int nFX, bool bLoop, in
 		break;
 	}
 
-#ifdef REFACTOR_ME
-	// Mette il path giusto
-	if (nChannel < 4)
-		GetDataDirectory(DD_MUSIC, path_buffer);
-	else
-		GetDataDirectory(DD_LAYER, path_buffer);
-	_splitpath(path_buffer, drive, dir, NULL, NULL);
-	_splitpath(fn, NULL, NULL, fname, ext);
-	_makepath(path_buffer, drive, dir, fname, ext);
-
-	_makepath(path_buffer, drive, dir, fname, ext);
-
 	if (nFX == 22) { // Sync a tempo
-		curChannel = nChannel;
-		strcpy(nextMusic, path_buffer);
-		nextLoop = bLoop;
-		nextSync = nSync;
-		if (flipflop)
-			nextChannel = nChannel - 1;
+		GLOBALS._curChannel = nChannel;
+		GLOBALS._nextLoop = bLoop;
+		GLOBALS._nextSync = nSync;
+		if (GLOBALS._flipflop)
+			GLOBALS._nextChannel = nChannel - 1;
 		else
-			nextChannel = nChannel + 1;
-		DWORD id;
-		HANDLE hThread = CreateThread(NULL, 10240, (LPTHREAD_START_ROUTINE)DoNextMusic, _stream, 0, &id);
-		SetThreadPriority(hThread, THREAD_PRIORITY_HIGHEST);
-	} else if (nFX == 44) { // Cambia canale e lascia finire il primo
-		if (flipflop)
-			nextChannel = nChannel - 1;
-		else
-			nextChannel = nChannel + 1;
+			GLOBALS._nextChannel = nChannel + 1;
 
-		_stream[nextChannel]->Stop();
-		_stream[nextChannel]->UnloadFile();
+		uint32 hThread = CoroScheduler.createProcess(doNextMusic, &_stream, sizeof(FPStream ***));
+		assert(hThread != CORO_INVALID_PID_VALUE);
+
+	} else if (nFX == 44) { // Cambia canale e lascia finire il primo
+		if (GLOBALS._flipflop)
+			GLOBALS._nextChannel = nChannel - 1;
+		else
+			GLOBALS._nextChannel = nChannel + 1;
+
+		_stream[GLOBALS._nextChannel]->stop();
+		_stream[GLOBALS._nextChannel]->unloadFile();
 
 		if (!getIsDemo()) {
-			if (!_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
-				theGame.Abort();
+			if (!_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
+				_vm->abortGame();
 		} else {
-			_stream[nextChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
+			_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
 		}
 
-		_stream[nextChannel]->SetLoop(bLoop);
-		_stream[nextChannel]->Play();
+		_stream[GLOBALS._nextChannel]->setLoop(bLoop);
+		_stream[GLOBALS._nextChannel]->play();
 
-		flipflop = 1 - flipflop;
+		GLOBALS._flipflop = 1 - GLOBALS._flipflop;
 	} else {
 		if (!getIsDemo()) {
-			if (!_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync))
-				theGame.Abort();
+			if (!_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
+				_vm->abortGame();
 		} else {
-			_stream[nChannel]->LoadFile(path_buffer, FPCODEC_ADPCM, nSync);
+			_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
 		}
 
-		_stream[nChannel]->SetLoop(bLoop);
-		_stream[nChannel]->Play();
+		_stream[nChannel]->setLoop(bLoop);
+		_stream[nChannel]->play();
 	}
-#endif
+}
 
-//	g_system->unlockMutex(csMusic);
+void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+	Common::String fn;
+	CORO_END_CONTEXT(_ctx);
+
+	FPStream **streams = *(FPStream ***)param;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (!_vm->getIsDemo()) {
+		if (!streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync))
+			_vm->abortGame();
+	} else {
+		streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync);
+	}
+
+	streams[GLOBALS._nextChannel]->setLoop(GLOBALS._nextLoop);
+	streams[GLOBALS._nextChannel]->prefetch();
+
+	streams[GLOBALS._curChannel]->stop(true);
+	streams[GLOBALS._curChannel]->waitForSync(streams[GLOBALS._nextChannel]);
+
+	streams[GLOBALS._curChannel]->unloadFile();
+
+	GLOBALS._flipflop = 1 - GLOBALS._flipflop;
+
+	CORO_END_CODE;
 }
 
 void TonyEngine::playSFX(int nChannel, int nFX) {

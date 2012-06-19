@@ -245,6 +245,24 @@ public:
 	bool endOfBuffer() const;
 };
 
+/**
+ * Codec base class
+ */
+class CODEC {
+protected:
+	bool _bEndReached;
+
+public:
+	bool _bLoop;
+
+	CODEC(bool _bLoop = true);
+	virtual ~CODEC();
+	virtual uint32 decompress(Common::SeekableReadStream *stream, void *lpBuf, uint32 dwSize) = 0;
+	virtual void loopReset() = 0;
+	bool endOfStream();
+};
+
+
 class FPStream {
 private:
 	// HWND hwnd;
@@ -258,12 +276,12 @@ private:
 	uint32 _dwSize;                        // Stream size (bytes)
 	uint32 _dwCodec;                       // CODEC used
 
-	HANDLE _hThreadEnd;                    // Event used to close thread
+	uint32 _hThreadEnd;                    // Event used to close thread
 	Common::File _file;                    // File handle used for the stream
-	HANDLE _hPlayThread;                   // Handle of the Play thread
-	HANDLE _hHot1, _hHot2, _hHot3;         // Events set by DirectSoundNotify
-	HANDLE _hPlayThreadPlayFast;
-	HANDLE _hPlayThreadPlayNormal;
+	uint32 _hPlayThread;                   // Handle of the Play thread
+	uint32 _hHot1, _hHot2, _hHot3;         // Events set by DirectSoundNotify
+	uint32 _hPlayThreadPlayFast;
+	uint32 _hPlayThreadPlayNormal;
 
 	bool _bSoundSupported;                 // True if the sound is active
 	bool _bFileLoaded;                     // True if the file is open 
@@ -273,6 +291,7 @@ private:
 	bool _bPaused;
 	int  _lastVolume;
 	FPStream *_syncToPlay;
+	CODEC *_codec;
 
 	// DSBPOSITIONNOTIFY dspnHot[3];
 
@@ -286,7 +305,7 @@ private:
 	 * Thread playing the stream
 	 *
 	 */
-	static void playThread(FPStream *This);
+	static void playThread(CORO_PARAM, const void *param);
 
 public:
 
@@ -321,13 +340,13 @@ public:
 	/**
 	 * Opens a file stream
 	 *
-	 * @param lpszFile      Filename to be opened
+	 * @param fileName      Filename to be opened
 	 * @param dwCodec       CODEC to be used to uncompress samples
 	 *
 	 * @returns             True is everything is OK, False otherwise
 	 */
 
-	bool loadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
+	bool loadFile(const Common::String &fileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
 
 	/**
 	 * Closes a file stream (opened or not).

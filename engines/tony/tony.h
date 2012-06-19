@@ -87,6 +87,8 @@ private:
 	void closeVoiceDatabase();
 	void initCustomFunctionMap();
 	static void playProcess(CORO_PARAM, const void *param);
+	static void doNextMusic(CORO_PARAM, const void *param);
+
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -183,7 +185,7 @@ public:
 
 	// Music
 	// ******
-	void playMusic(int nChannel, const char *fn, int nFX, bool bLoop, int nSync);
+	void playMusic(int nChannel, const Common::String &fn, int nFX, bool bLoop, int nSync);
 	void stopMusic(int nChannel);
 
 	void playSFX(int nSfx, int nFX = 0);
