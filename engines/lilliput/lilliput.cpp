@@ -662,7 +662,7 @@ void LilliputEngine::restoreMapPoints() {
 
 	byte *buf = (byte *)_mainSurface->getPixels();
 	for (byte index = 0; index < _numCharacters; index++) {
-		buf[_word15E5D[index]] = _byte15E35[index];
+		buf[_mapSavedPixelIndex[index]] = _mapSavedPixel[index];
 	}
 
 	displayMousePointer();
@@ -677,12 +677,12 @@ void LilliputEngine::displayCharactersOnMap() {
 	byte *buf = (byte *)_mainSurface->getPixels();
 	for (int index = _numCharacters - 1; index >= 0; index--) {
 		if (((_rulesBuffer2_11[index] & 2) == 0) && (_scriptHandler->_array1614BPosY[index] != -1)) {
-			int y = (3 * _scriptHandler->_array1614BPosY[index]) + 1;
-			int x = (_scriptHandler->_array16123PosX[index] * 4) + 1;
+			// FIXME: This is still wrong, but less. The values in both arrays should be verified now!
+			int pixIndex = 320 + ((15 * _scriptHandler->_array1614BPosY[index]) / 4) + (_scriptHandler->_array16123PosX[index] * 4) + 1;
 
-			_word15E5D[index] = y * 320 + x;
-			_byte15E35[index] = buf[y * 320 + x];
-			buf[y * 320 + x] = _scriptHandler->_array128EF[index];
+			_mapSavedPixelIndex[index] = pixIndex;
+			_mapSavedPixel[index] = buf[pixIndex];
+			buf[pixIndex] = _scriptHandler->_characterMapPixelColor[index];
 		}
 	}
 	displayMousePointer();

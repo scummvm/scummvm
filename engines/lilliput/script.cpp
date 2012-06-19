@@ -61,7 +61,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 
 	for (int i = 0; i < 40; i++) {
 		_characterScriptEnabled[i] = 1;
-		_array128EF[i] = 15;
+		_characterMapPixelColor[i] = 15;
 		_array10AB1[i] = 0;
 		_array12811[i] = 16;
 		_array12839[i] = -1;
@@ -481,7 +481,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_disableInterfaceHotspot();
 		break;
 	case 0x4F:
-		OC_loadFile_AERIAL_GFX();
+		OC_loadFileAerial();
 		break;
 	case 0x50:
 		OC_startSpeechIfSoundOff();
@@ -689,7 +689,7 @@ static const OpCode opCodes2[] = {
 /* 0x4c */	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4d */	{ "OC_waitForEvent", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4e */	{ "OC_disableInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
-/* 0x4f */	{ "OC_loadFile_AERIAL_GFX", 1, kNone, kNone, kNone, kNone, kNone }, 
+/* 0x4f */	{ "OC_loadFileAerial", 1, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x50 */	{ "OC_startSpeechIfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x52 */	{ "OC_displayNumericCharacterVariable", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue }, 
@@ -2146,7 +2146,7 @@ void LilliputScript::OC_startSpeech() {
 }
 
 void LilliputScript::getSpeechVariant(int speechIndex, int speechVariant) {
-	debugC(2, kDebugScriptTBC, "getSpeechVariant(%d, %d)", speechIndex, speechVariant);
+	debugC(2, kDebugScript, "getSpeechVariant(%d, %d)", speechIndex, speechVariant);
 
 	// The packed strings are stored by variants, enclosed by imbricated brackets.
 	// So the different possibilities are:
@@ -2199,7 +2199,7 @@ void LilliputScript::OC_getComputedVariantSpeech() {
 }
 
 void LilliputScript::OC_getRotatingVariantSpeech() {
-	debugC(1, kDebugScriptTBC, "OC_getRotatingVariantSpeech()");
+	debugC(1, kDebugScript, "OC_getRotatingVariantSpeech()");
 
 	int index = _currScript->readUint16LE();
 	int maxValue = getPackedStringStartRelativeIndex(index);
@@ -3103,8 +3103,8 @@ void LilliputScript::OC_disableInterfaceHotspot() {
 	_vm->displayInterfaceHotspots();
 }
 
-void LilliputScript::OC_loadFile_AERIAL_GFX() {
-	debugC(1, kDebugScriptTBC, "OC_loadFile_AERIAL_GFX()");
+void LilliputScript::OC_loadFileAerial() {
+	debugC(1, kDebugScript, "OC_loadFileAerial()");
 
 	// Unused variable, and the script position is restored afterwards
 	// TODO: Check if this part of the code is present in Rome, else remove it
@@ -3387,7 +3387,7 @@ void LilliputScript::OC_setArray128EF() {
 	int val = _currScript->readUint16LE();
 
 	assert(index < 40);
-	_array128EF[index] = val & 0xFF;
+	_characterMapPixelColor[index] = val & 0xFF;
 }
 
 } // End of namespace

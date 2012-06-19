@@ -150,8 +150,8 @@ public:
 	int _word1289D;
 	Common::Point _word16937Pos;
 
-	short _word15E5D[40];
-	byte _byte15E35[40];
+	int16 _mapSavedPixelIndex[40];
+	byte _mapSavedPixel[40];
 	int16 _array11D49[40];
 	int16 _array1289F[40];
 	int16 _array12861[30];
