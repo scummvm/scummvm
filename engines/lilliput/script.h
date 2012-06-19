@@ -79,7 +79,7 @@ public:
 	int _heroismBarBottomY;
 
 	Common::Point _array12311[640];
-	byte _array128EF[40];
+	byte _characterMapPixelColor[40];
 	int8 _array12839[40];
 	Common::Point _array1813BPos[32];
 
@@ -274,7 +274,7 @@ private:
 	void OC_setByte14837();
 	void OC_waitForEvent();
 	void OC_disableInterfaceHotspot();
-	void OC_loadFile_AERIAL_GFX();
+	void OC_loadFileAerial();
 	void OC_startSpeechIfSoundOff();
 	void OC_sub1844A();
 	void OC_displayNumericCharacterVariable();
