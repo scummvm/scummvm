@@ -78,6 +78,16 @@ WinterMuteEngine::~WinterMuteEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
+bool WinterMuteEngine::hasFeature(EngineFeature f) const { 
+	switch (f) {
+		case kSupportsRTL:
+			return true;
+		default:
+			return false;
+	}
+	return false;
+}
+
 Common::Error WinterMuteEngine::run() {
 	// Initialize graphics using following:
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);

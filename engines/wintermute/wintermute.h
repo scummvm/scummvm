@@ -45,7 +45,7 @@ public:
 	~WinterMuteEngine();
 
 	virtual Common::Error run();
-
+	virtual bool hasFeature(EngineFeature f) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	uint32 randInt(int from, int to);
 private:

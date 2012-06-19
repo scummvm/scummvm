@@ -131,6 +131,7 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 		        break;
 		*/
 	case Common::EVENT_QUIT:
+	case Common::EVENT_RTL:
 #ifdef __IPHONEOS__
 		if (Game) {
 			Game->AutoSaveOnExit();
