@@ -52,7 +52,7 @@ void RMInput::poll() {
 	_leftClickMouse = _leftReleaseMouse = _rightClickMouse = _rightReleaseMouse = false;
 
 	// Get pending events
-	while (g_system->getEventManager()->pollEvent(_event)) {
+	while (g_system->getEventManager()->pollEvent(_event) && !_vm->shouldQuit()) {
 		switch (_event.type) {
 		case Common::EVENT_MOUSEMOVE:
 		case Common::EVENT_LBUTTONDOWN:
