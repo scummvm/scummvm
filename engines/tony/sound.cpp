@@ -828,8 +828,18 @@ FPStream::FPStream(bool bSoundOn) {
 	_bFileLoaded = false;
 	_bIsPlaying = false;
 	_bPaused = false;
+	_bLoop = false;
+	_bDoFadeOut = false;
 	_bSyncExit = false;
-	_hHot1 = _hHot2 = _hHot3 = _hPlayThreadPlayFast = _hPlayThreadPlayNormal = CORO_INVALID_PID_VALUE;
+	_hHot1 = _hHot2 = _hHot3 = CORO_INVALID_PID_VALUE;
+	_hPlayThread = _hPlayThreadPlayFast = _hPlayThreadPlayNormal = CORO_INVALID_PID_VALUE;
+	_hThreadEnd = CORO_INVALID_PID_VALUE;
+	_dwBufferSize = _dwSize = 0;
+	_dwCodec = 0;
+	_lastVolume = 0;
+	_lpTempBuffer = NULL;
+	_syncToPlay = NULL;
+	_codec = NULL;
 }
 
 bool FPStream::createBuffer(int nBufSize) {
