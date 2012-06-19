@@ -36,8 +36,11 @@
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/Base/BImage.h"
 #include "engines/wintermute/Base/BSound.h"
-#include "commoN/memstream.h"
+#include "graphics/decoders/bmp.h"
+#include "common/memstream.h"
 #include "common/str.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 namespace WinterMute {
 
@@ -60,7 +63,7 @@ CBPersistMgr::CBPersistMgr(CBGame *inGame): CBBase(inGame) {
 	_richBufferSize = 0;
 
 	_savedDescription = NULL;
-	_savedTimestamp = 0;
+//	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
 
@@ -91,7 +94,7 @@ void CBPersistMgr::Cleanup() {
 	_richBufferSize = 0;
 
 	_savedDescription = NULL; // ref to buffer
-	_savedTimestamp = 0;
+//	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
 
@@ -112,6 +115,64 @@ uint32 makeUint32(byte first, byte second, byte third, byte fourth) {
 	uint32 retVal = first;
 	retVal = retVal & second << 8 & third << 16 & fourth << 24;
 	return retVal;
+}
+
+Common::String CBPersistMgr::getFilenameForSlot(int slot) {
+	// TODO: Temporary solution until I have the namespacing sorted out
+	return Common::String::format("save%03d.DirtySplitSav", slot);
+}
+
+void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor& desc) {
+	Common::String filename = getFilenameForSlot(slot);
+	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
+	if (FAILED(readHeader(filename))) {
+		warning("getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
+		return;
+	}
+	desc.setSaveSlot(slot);
+	desc.setDescription(_savedDescription);
+	desc.setDeletableFlag(true);
+	desc.setWriteProtectedFlag(false);
+	
+	if (_thumbnailDataSize > 0) {
+		Common::MemoryReadStream thumbStream(_thumbnailData, _thumbnailDataSize);
+		Graphics::BitmapDecoder bmpDecoder;
+		if (bmpDecoder.loadStream(thumbStream)) {
+			Graphics::Surface *surf = new Graphics::Surface;
+			surf = bmpDecoder.getSurface()->convertTo(g_system->getOverlayFormat());
+			desc.setThumbnail(surf);
+		}
+	}
+
+	desc.setSaveDate(_savedTimestamp.tm_year, _savedTimestamp.tm_mon, _savedTimestamp.tm_mday);
+	desc.setSaveTime(_savedTimestamp.tm_hour, _savedTimestamp.tm_min);
+	desc.setPlayTime(0);
+}
+
+void CBPersistMgr::deleteSaveSlot(int slot) {
+	Common::String filename = getFilenameForSlot(slot);
+	g_system->getSavefileManager()->removeSavefile(filename);
+}
+
+uint32 CBPersistMgr::getMaxUsedSlot() {
+	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles("save???.DirtySplitSav");
+	Common::StringArray::iterator it = saves.begin();
+	int ret = -1;
+	for (; it != saves.end(); it++) {
+		int num = -1;
+		sscanf(it->c_str(), "save%d", &num);
+		ret = MAX(ret, num);
+	}
+	return ret;
+}
+
+bool CBPersistMgr::getSaveExists(int slot) {
+	Common::String filename = getFilenameForSlot(slot);
+	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
+	if (FAILED(readHeader(filename))) {
+		return false;
+	}
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -192,11 +253,11 @@ HRESULT CBPersistMgr::InitSave(const char *Desc) {
 
 		PutDWORD(DataOffset);
 		PutString(Desc);
-// TODO: Add usefull timestamps, we can't use ctime...
-/*		time_t Timestamp;
-		time(&Timestamp);
-		PutDWORD((uint32)Timestamp);*/
-		PutDWORD(0);
+
+		g_system->getTimeAndDate(_savedTimestamp);
+		putTimeDate(_savedTimestamp);
+		_savedPlayTime = g_system->getMillis();
+		_saveStream->writeUint32LE(_savedPlayTime);
 	}
 	return S_OK;
 }
@@ -224,18 +285,21 @@ uint16 getHighWord(uint32 dword) {
 	return dword >> 16;
 }
 
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::InitLoad(const char *Filename) {
+HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 	Cleanup();
-
+	
 	_saving = false;
-
-	_loadStream = Game->_fileManager->loadSaveGame(Filename);
+	
+	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
 	//_buffer = Game->_fileManager->ReadWholeFile(Filename, &_bufferSize);
 	if (_loadStream) {
 		uint32 Magic;
 		Magic = GetDWORD();
-		if (Magic != DCGF_MAGIC) goto init_fail;
+
+		if (Magic != DCGF_MAGIC) {
+			Cleanup();
+			return E_FAIL;
+		}
 
 		Magic = GetDWORD();
 
@@ -244,14 +308,10 @@ HRESULT CBPersistMgr::InitLoad(const char *Filename) {
 			_savedVerMinor = _loadStream->readByte();
 			_savedExtMajor = _loadStream->readByte();
 			_savedExtMinor = _loadStream->readByte();
-
+			
 			if (Magic == SAVE_MAGIC_2) {
 				_savedVerBuild = (byte)GetDWORD();
-				char *SavedName = GetString();
-				if (SavedName == NULL || scumm_stricmp(SavedName, Game->_name) != 0) {
-					Game->LOG(0, "ERROR: Saved game name doesn't match current game");
-					goto init_fail;
-				}
+				_savedName = GetString();
 
 				// load thumbnail
 				_thumbnailDataSize = GetDWORD();
@@ -263,48 +323,68 @@ HRESULT CBPersistMgr::InitLoad(const char *Filename) {
 				}
 			} else _savedVerBuild = 35; // last build with ver1 savegames
 
+			uint32 DataOffset = GetDWORD();
 
-			// if save is newer version than we are, fail
-			if (_savedVerMajor >  DCGF_VER_MAJOR ||
-			        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor >  DCGF_VER_MINOR) ||
-			        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
-			   ) {
-				Game->LOG(0, "ERROR: Saved game version is newer than current game");
-				goto init_fail;
-			}
+			_savedDescription = GetString();
+			_savedTimestamp = getTimeDate();
+			_savedPlayTime = _loadStream->readUint32LE();
 
-			// if save is older than the minimal version we support
-			if (_savedVerMajor <  SAVEGAME_VER_MAJOR ||
-			        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
-			        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
-			   ) {
-				Game->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
-				goto init_fail;
-			}
-
-			/*
-			if ( _savedVerMajor != DCGF_VER_MAJOR || _savedVerMinor != DCGF_VER_MINOR)
-			{
-			    Game->LOG(0, "ERROR: Saved game is created by other WME version");
-			    goto init_fail;
-			}
-			*/
-		} else goto init_fail;
-
-
-		uint32 DataOffset = GetDWORD();
-
-		_savedDescription = GetString();
-		_savedTimestamp = (time_t)GetDWORD();
-
-		_offset = DataOffset;
-
-		return S_OK;
+			_offset = DataOffset;
+			
+			return S_OK;
+		}
 	}
 
-init_fail:
 	Cleanup();
 	return E_FAIL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBPersistMgr::InitLoad(const char *Filename) {
+
+
+	if (FAILED(readHeader(Filename))) {
+		Cleanup();
+		return E_FAIL;
+	}
+	_saving = false;
+
+	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), Game->_name) != 0) {
+		Game->LOG(0, "ERROR: Saved game name doesn't match current game");
+		Cleanup();
+		return E_FAIL;
+	}
+
+	// if save is newer version than we are, fail
+	if (_savedVerMajor >  DCGF_VER_MAJOR ||
+		(_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor >  DCGF_VER_MINOR) ||
+		(_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
+		) {
+		Game->LOG(0, "ERROR: Saved game version is newer than current game");
+		Cleanup();
+		return E_FAIL;
+	}
+
+	// if save is older than the minimal version we support
+	if (_savedVerMajor <  SAVEGAME_VER_MAJOR ||
+		(_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
+		(_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
+		) {
+		Game->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
+		Cleanup();
+		return E_FAIL;
+
+	}
+
+	/*
+	 if ( _savedVerMajor != DCGF_VER_MAJOR || _savedVerMinor != DCGF_VER_MINOR)
+	 {
+	 Game->LOG(0, "ERROR: Saved game is created by other WME version");
+	 goto init_fail;
+	 }
+	 */
+
+	return S_OK;
 }
 
 
@@ -387,11 +467,38 @@ char *CBPersistMgr::GetString() {
 	ret[len] = '\0';
 /*	char *ret = (char *)(_buffer + _offset);
 	_offset += len;*/
-
+	warning("Read string %s with len %d", ret, len);
 	if (!strcmp(ret, "(null)")) { 
 		delete[] ret;
 		return NULL;
 	} else return ret;
+}
+
+HRESULT CBPersistMgr::putTimeDate(const TimeDate &t) {
+	_saveStream->writeSint32LE(t.tm_sec);
+	_saveStream->writeSint32LE(t.tm_min);
+	_saveStream->writeSint32LE(t.tm_hour);
+	_saveStream->writeSint32LE(t.tm_mday);
+	_saveStream->writeSint32LE(t.tm_mon);
+	_saveStream->writeSint32LE(t.tm_year);
+	// _saveStream->writeSint32LE(t.tm_wday); //TODO: Add this in when merging next
+	
+	if (_saveStream->err()) {
+		return E_FAIL;
+	}
+	return S_OK;
+}
+
+TimeDate CBPersistMgr::getTimeDate() {
+	TimeDate t;
+	t.tm_sec = _loadStream->readSint32LE();
+	t.tm_min = _loadStream->readSint32LE();
+	t.tm_hour = _loadStream->readSint32LE();
+	t.tm_mday = _loadStream->readSint32LE();
+	t.tm_mon = _loadStream->readSint32LE();
+	t.tm_year = _loadStream->readSint32LE();
+	// t.tm_wday = _loadStream->readSint32LE(); //TODO: Add this in when merging next
+	return t;
 }
 
 void CBPersistMgr::putFloat(float val) {

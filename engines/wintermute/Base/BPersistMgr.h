@@ -31,7 +31,10 @@
 
 
 #include "engines/wintermute/Base/BBase.h"
+#include "engines/savestate.h"
 #include "common/stream.h"
+#include "common/str.h"
+#include "common/system.h"
 
 namespace WinterMute {
 
@@ -40,12 +43,14 @@ class Vector2;
 class CBPersistMgr : public CBBase {
 public:
 	char *_savedDescription;
-	time_t _savedTimestamp;
+	TimeDate _savedTimestamp;
+	uint32 _savedPlayTime;
 	byte _savedVerMajor;
 	byte _savedVerMinor;
 	byte _savedVerBuild;
 	byte _savedExtMajor;
 	byte _savedExtMinor;
+	Common::String _savedName;
 	HRESULT SaveFile(const char *Filename);
 	uint32 GetDWORD();
 	void PutDWORD(uint32 Val);
@@ -56,6 +61,10 @@ public:
 	double getDouble();
 	void putDouble(double val);
 	void Cleanup();
+	void getSaveStateDesc(int slot, SaveStateDescriptor& desc);
+	void deleteSaveSlot(int slot);
+	uint32 getMaxUsedSlot();
+	bool getSaveExists(int slot);
 	HRESULT InitLoad(const char *Filename);
 	HRESULT InitSave(const char *Desc);
 	HRESULT GetBytes(byte  *Buffer, uint32 Size);
@@ -89,6 +98,10 @@ public:
 	uint32 _thumbnailDataSize;
 	byte *_thumbnailData;
 private:
+	Common::String getFilenameForSlot(int slot);
+	HRESULT readHeader(const Common::String &filename);
+	TimeDate getTimeDate();
+	HRESULT putTimeDate(const TimeDate &t);
 	Common::WriteStream *_saveStream;
 	Common::SeekableReadStream *_loadStream;
 };

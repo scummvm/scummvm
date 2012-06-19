@@ -130,6 +130,7 @@ int WinterMuteEngine::init() {
 	int argc = 0;
 	_game = new CAdGame;
 	if (!_game) return 1;
+	CBPlatform::Initialize(_game, 0, NULL);
 
 	bool windowedMode = true;
 	
@@ -234,13 +235,16 @@ int WinterMuteEngine::init() {
 	_game->LOG(0, "Engine initialized in %d ms", CBPlatform::GetTime() - DataInitStart);
 	_game->LOG(0, "");
 	
+	if (ConfMan.hasKey("save_slot")) {
+		int slot = ConfMan.getInt("save_slot");
+		Common::String str = Common::String::format("save00%d.DirtySplitSav", slot);
+		_game->LoadGame(str.c_str());
+	}
 	
 	if (SaveGame) {
 		_game->LoadGame(SaveGame);
 		delete [] SaveGame;
 	}
-	
-	CBPlatform::Initialize(_game, 0, NULL);
 	
 	// all set, ready to go
 	return 0;

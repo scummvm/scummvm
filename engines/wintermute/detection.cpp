@@ -22,6 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/Base/BPersistMgr.h"
 
 #include "common/config-manager.h"
 #include "common/error.h"
@@ -178,6 +179,56 @@ public:
 
 		// Failed to find any game data
 		return false;
+	}
+
+	bool hasFeature(MetaEngineFeature f) const {
+		switch (f) {
+			case MetaEngine::kSupportsListSaves:
+				return true;
+			case MetaEngine::kSupportsLoadingDuringStartup:
+				return true;
+			case MetaEngine::kSupportsDeleteSave:
+				return true;
+			case MetaEngine::kSavesSupportCreationDate:
+				return true;
+			case MetaEngine::kSavesSupportMetaInfo:			
+				return true;
+			case MetaEngine::kSavesSupportThumbnail:			
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	SaveStateList listSaves(const char *target) const {
+		SaveStateList saves;
+		WinterMute::CBPersistMgr pm;
+		for (int i = 0; i < getMaximumSaveSlot(); i++) {
+			if (pm.getSaveExists(i)) {
+				SaveStateDescriptor desc;
+				pm.getSaveStateDesc(i, desc);
+				saves.push_back(desc);
+			}
+		}
+		return saves;
+	}
+	
+	int getMaximumSaveSlot() const {
+		WinterMute::CBPersistMgr pm;
+		return pm.getMaxUsedSlot() + 1; // TODO: Since we use slot 0, this misses a bit.
+	}
+	
+	void removeSaveState(const char *target, int slot) const {
+		WinterMute::CBPersistMgr pm;
+		pm.deleteSaveSlot(slot);
+	}
+	
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+		WinterMute::CBPersistMgr pm;
+		SaveStateDescriptor retVal;
+		retVal.setDescription("Invalid savegame");
+		pm.getSaveStateDesc(slot, retVal);
+		return retVal;
 	}
 };
 
