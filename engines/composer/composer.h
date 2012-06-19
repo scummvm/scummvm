@@ -145,11 +145,17 @@ struct OldScript {
 };
 
 class ComposerEngine : public Engine {
-	template <typename T>
-	friend void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
 protected:
 	Common::Error run();
 
+	template <typename T>
+	void syncArray(Common::Serializer &ser, Common::Array<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+	template <typename T>
+	void syncList(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+	template <typename T>
+	void syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+	template <typename T>
+	void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
 	bool canLoadGameStateCurrently() { return true; }
 	Common::Error loadGameState(int slot);
 	bool canSaveGameStateCurrently() { return true; }
@@ -175,7 +181,7 @@ private:
 	Audio::QueuingAudioStream *_audioStream;
 	uint16 _currSoundPriority;
 
-	uint32 _currentTime, _lastTime;
+	uint32 _currentTime, _lastTime, _timeDelta;
 
 	bool _needsUpdate;
 	Common::Array<Common::Rect> _dirtyRects;
