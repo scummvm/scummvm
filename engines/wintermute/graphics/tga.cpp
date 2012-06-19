@@ -50,7 +50,7 @@ bool TGA::loadStream(Common::SeekableReadStream &tga) {
 		success = readHeader(tga, imageType, pixelDepth);
 		success = readData  (tga, imageType, pixelDepth);
 
-	if (tga.err()) {
+	if (tga.err() || !success) {
 		warning("Failed reading TGA-file");
 		return false;
 	}
