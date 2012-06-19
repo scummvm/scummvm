@@ -128,11 +128,11 @@ private:
 	byte *getMapPtr(Common::Point val);
 	byte *getCurrentCharacterVarFromScript();
 	void sub171AF(int16 var1, uint16 var2, int16 var4);
-	void sub18B7C(int var1, int var3);
+	void getSpeechVariant(int speechIndex, int speechVariant);
 	void sub189B8();
 	void formatSpeechString();
 	Common::Point getCharacterTilePos(int index);
-	int sub18BB7(int index);
+	int getPackedStringStartRelativeIndex(int index);
 
 	int16 getValue1();
 	Common::Point getPosFromScript();
@@ -197,10 +197,10 @@ private:
 	void OC_setWord18821();
 	void OC_ChangeIsoMap();
 	void OC_startSpeech();
-	void OC_sub17D7F_speech2();
-	void OC_sub17DB9_speech3();
+	void OC_getComputedVariantSpeech();
+	void OC_getRotatingVariantSpeech();
 	void OC_startSpeechIfMute();
-	void OC_sub17E07_speech4param();
+	void OC_getComputedVariantSpeechIfMute();
 	void OC_startSpeechIfSilent();
 	void OC_ComputeCharacterVariable();
 	void OC_getRandom_type2();
@@ -208,7 +208,7 @@ private:
 	void OC_DisableCharacter();
 	void OC_saveAndQuit();
 	void OC_sub17B93();
-	void OC_sub17E37_speech4();
+	void OC_startSpeech5();
 	void OC_resetByte1714E();
 	void OC_deleteSavegameAndQuit();
 	void OC_incByte16F04();
@@ -275,7 +275,7 @@ private:
 	void OC_waitForEvent();
 	void OC_disableInterfaceHotspot();
 	void OC_loadFile_AERIAL_GFX();
-	void OC_sub17E22_speech1IfSoundOff();
+	void OC_startSpeechIfSoundOff();
 	void OC_sub1844A();
 	void OC_displayNumericCharacterVariable();
 	void OC_displayVGAFile();
