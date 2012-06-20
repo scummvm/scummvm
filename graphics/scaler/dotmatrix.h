@@ -38,7 +38,9 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
 private:
-	uint16 lookup[16];
+	// Allocate enough for 32bpp formats
+	uint32 lookup[16];
+	template<typename pixel>
 	void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 			uint32 dstPitch, int width, int height, int x, int y);
 };
