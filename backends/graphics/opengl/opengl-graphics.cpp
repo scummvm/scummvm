@@ -349,14 +349,14 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 	memcpy(colors, _gamePalette + start * 3, num * 3);
 }
 
-void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OpenGLGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(x >= 0 && x < _screenData.w);
 	assert(y >= 0 && y < _screenData.h);
 	assert(h > 0 && y + h <= _screenData.h);
 	assert(w > 0 && x + w <= _screenData.w);
 
 	// Copy buffer data to game screen internal buffer
-	const byte *src = buf;
+	const byte *src = (const byte *)buf;
 	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch + x * _screenData.format.bytesPerPixel;
 	for (int i = 0; i < h; i++) {
 		memcpy(dst, src, w * _screenData.format.bytesPerPixel);
@@ -467,33 +467,35 @@ void OpenGLGraphicsManager::clearOverlay() {
 	_overlayNeedsRedraw = true;
 }
 
-void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
-	assert(_overlayData.format.bytesPerPixel == sizeof(buf[0]));
+void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) {
 	const byte *src = (byte *)_overlayData.pixels;
+	byte *dst = (byte *)buf;
 	for (int i = 0; i < _overlayData.h; i++) {
 		// Copy overlay data to buffer
-		memcpy(buf, src, _overlayData.pitch);
-		buf += pitch;
+		memcpy(dst, src, _overlayData.pitch);
+		dst += pitch;
 		src += _overlayData.pitch;
 	}
 }
 
-void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OpenGLGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayTexture == NULL)
 		return;
 
+	const byte *src = (const byte *)buf;
+
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * 2;
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -507,11 +509,10 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 		return;
 
 	// Copy buffer data to internal overlay surface
-	const byte *src = (const byte *)buf;
 	byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
 	for (int i = 0; i < h; i++) {
 		memcpy(dst + x * _overlayData.format.bytesPerPixel, src, w * _overlayData.format.bytesPerPixel);
-		src += pitch * sizeof(buf[0]);
+		src += pitch;
 		dst += _overlayData.pitch;
 	}
 
@@ -591,7 +592,7 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 	setInternalMousePosition(scaledX, scaledY);
 }
 
-void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (format)
 		_cursorFormat = *format;

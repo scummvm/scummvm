@@ -55,7 +55,7 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
-void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
 
 	cur->_visible = isVisible();
@@ -98,7 +98,7 @@ void CursorManager::popAllCursors() {
 	g_system->showMouse(isVisible());
 }
 
-void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 
 	if (_cursorStack.empty()) {
 		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
@@ -225,7 +225,7 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 	}
 }
 
-CursorManager::Cursor::Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (!format)
 		_format = Graphics::PixelFormat::createFormatCLUT8();

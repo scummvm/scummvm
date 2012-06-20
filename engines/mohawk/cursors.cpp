@@ -121,11 +121,11 @@ void MystCursorManager::setCursor(uint16 id) {
 
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->format.bytesPerPixel == 1) {
-		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursor(surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
 		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false, &pixelFormat);
+		CursorMan.replaceCursor(surface->pixels, surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false, &pixelFormat);
 	}
 
 	_vm->_needsUpdate = true;

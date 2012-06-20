@@ -116,17 +116,17 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 					}
 					_vm->getSystem()->unlockScreen();
 				} else {
-					_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+					_vm->getSystem()->copyRectToScreen(frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
 
 					// WORKAROUND: There is an encoding glitch in the first intro video. This hides this using the adjacent pixels.
 					if (isFirstIntroVideo) {
 						int32 currentFrame = _decoder->getCurFrame();
 						if (currentFrame >= 956 && currentFrame <= 1038) {
 							debugC(1, kDebugMovie, "Triggered workaround for glitch in first intro video...");
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(frame->w-188, 126), frame->pitch, frame->w-188, 125, 188, 1);
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(0, 125), frame->pitch, 0, 126, 64, 1);
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(0, 128), frame->pitch, 0, 127, 64, 1);
+							_vm->getSystem()->copyRectToScreen(frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
+							_vm->getSystem()->copyRectToScreen(frame->getBasePtr(frame->w-188, 126), frame->pitch, frame->w-188, 125, 188, 1);
+							_vm->getSystem()->copyRectToScreen(frame->getBasePtr(0, 125), frame->pitch, 0, 126, 64, 1);
+							_vm->getSystem()->copyRectToScreen(frame->getBasePtr(0, 128), frame->pitch, 0, 127, 64, 1);
 						}
 					}
 				}

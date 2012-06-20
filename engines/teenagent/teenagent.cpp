@@ -389,7 +389,7 @@ bool TeenAgentEngine::showLogo() {
 				return true;
 			}
 
-			_system->copyRectToScreen((const byte *)s.pixels, s.w, s.x, s.y, s.w, s.h);
+			_system->copyRectToScreen(s.pixels, s.w, s.x, s.y, s.w, s.h);
 			_system->updateScreen();
 
 			_system->delayMillis(100);

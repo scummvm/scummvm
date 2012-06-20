@@ -564,7 +564,7 @@ void Gs2dScreen::clearPrintfOverlay(void) {
 	free(tmpBuf);
 }
 
-void Gs2dScreen::copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h) {
+void Gs2dScreen::copyOverlayRect(const byte *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h) {
 	WaitSema(g_DmacSema);
 
 	// warning("_overlayBuf [dst] = %x", _overlayBuf);
@@ -601,7 +601,7 @@ void Gs2dScreen::clearOverlay(void) {
 	SignalSema(g_DmacSema);
 }
 
-void Gs2dScreen::grabOverlay(uint16 *buf, uint16 pitch) {
+void Gs2dScreen::grabOverlay(byte *buf, uint16 pitch) {
 	uint16 *src = _overlayBuf;
 	for (uint32 cnt = 0; cnt < _height; cnt++) {
 		memcpy(buf, src, _width * 2);

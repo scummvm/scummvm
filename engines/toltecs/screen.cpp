@@ -114,7 +114,7 @@ void Screen::loadMouseCursor(uint resIndex) {
 		}
 	}
 	// FIXME: Where's the cursor hotspot? Using 8, 8 seems good enough for now.
-	CursorMan.replaceCursor((const byte*)mouseCursor, 16, 16, 8, 8, 0);
+	CursorMan.replaceCursor(mouseCursor, 16, 16, 8, 8, 0);
 }
 
 void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
