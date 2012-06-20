@@ -128,7 +128,7 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	hq2x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch);
 }
 
-#else
+#endif
 
 #define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
 #define interpolate_3_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_3_1<ColorMask>(a,b) : interpolate32_3_1<ColorMask>(a,b))
@@ -2075,8 +2075,6 @@ static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 	}
 }
 
-#endif // Assembly version
-
 #ifdef USE_NASM
 // Assembly version of HQ3x
 
@@ -2095,7 +2093,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	hq3x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch);
 }
 
-#else
+#endif
 
 #define PIXEL00_1M  *(q) = interpolate_3_1(w5, w1);
 #define PIXEL00_1U  *(q) = interpolate_3_1(w5, w2);
@@ -4986,8 +4984,6 @@ static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 	}
 }
 
-#endif // Assembly version
-
 HQPlugin::HQPlugin() {
 	_factor = 2;
 	_factors.push_back(2);
@@ -5014,51 +5010,54 @@ void HQPlugin::deinitialize() {
 
 void HQPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
+	if (_format.bytesPerPixel == 2) {
+		switch (_factor) {
 #ifdef USE_NASM
-	switch (_factor) {
-	case 2:
-		HQ2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	case 3:
-		HQ3x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	}
+		case 2:
+			HQ2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 3:
+			HQ3x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
 #else
-	switch (_factor) {
-	case 2:
-		if (_format.bytesPerPixel == 2) {
+		case 2:
 			if (_format.gLoss == 2)
 				HQ2x_implementation<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			else
 				HQ2x_implementation<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
-		} else {
-			if (_format.gLoss == 0)
-				HQ2x_implementation<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
-			else
-				HQ2x_implementation<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
-		}
-		break;
-	case 3:
-		if (_format.bytesPerPixel == 2) {
+			break;
+		case 3:
 			if (_format.gLoss == 2)
 				HQ3x_implementation<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			else
 				HQ3x_implementation<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
-		} else {
-			if (_format.gLoss == 0)
+			break;
+#endif
+		}
+	} else {
+		switch (_factor) {
+		case 2:
+			if (_format.aLoss == 0)
+				HQ2x_implementation<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr,
+						dstPitch, width, height);
+			else
+				HQ2x_implementation<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr,
+						dstPitch, width, height);
+			break;
+		case 3:
+			if (_format.aLoss == 0)
 				HQ3x_implementation<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			else
 				HQ3x_implementation<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
+			break;
 		}
-		break;
 	}
-#endif
 }
 
 uint HQPlugin::increaseFactor() {
