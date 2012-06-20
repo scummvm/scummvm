@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
+	editrecorddialog.o \
 	error.o \
 	gui-manager.o \
 	launcher.o \
