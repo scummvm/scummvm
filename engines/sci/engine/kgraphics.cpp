@@ -1237,6 +1237,7 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		uint16 percent = argv[2].toUint16(); // 0 - 100
 		if (argc >= 4)
 			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		warning("kRemapColors: RemapByPercent color %d by %d percent", color, percent);
 		// TODO: It's not correct to set intensity here
 		//g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
 		}
