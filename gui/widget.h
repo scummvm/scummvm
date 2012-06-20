@@ -88,7 +88,7 @@ protected:
 	uint16		_id;
 	bool		_hasFocus;
 	ThemeEngine::WidgetStateInfo _state;
-	const char	*_tooltip;
+	Common::String _tooltip;
 
 private:
 	uint16		_flags;
@@ -142,7 +142,9 @@ public:
 	uint8 parseHotkey(const Common::String &label);
 	Common::String cleanupHotkey(const Common::String &label);
 
-	const char *getTooltip() const { return _tooltip; }
+	bool hasTooltip() const { return !_tooltip.empty(); }
+	const Common::String &getTooltip() const { return _tooltip; }
+	void setTooltip(const Common::String &tooltip) { _tooltip = tooltip; }
 
 protected:
 	void updateState(int oldFlags, int newFlags);
