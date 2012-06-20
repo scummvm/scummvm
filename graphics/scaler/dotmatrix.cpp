@@ -28,20 +28,37 @@ DotMatrixPlugin::DotMatrixPlugin() {
 }
 
 void DotMatrixPlugin::initialize(Graphics::PixelFormat format) {
-	lookup[0] = lookup[10] = format.RGBToColor(0, 63, 0);
-	lookup[1] = lookup[11] = format.RGBToColor(0, 0, 63);
-	lookup[2] = lookup[8] = format.RGBToColor(63, 0, 0);
-	lookup[4] = lookup[6] =
-		lookup[12] = lookup[14] = format.RGBToColor(63, 63, 63);
-	lookup[5] = lookup[7] =
-		lookup[9] = lookup[13] =
-		lookup[15] = lookup[16] = format.RGBToColor(0, 0, 0);
+	if (format.bytesPerPixel == 2) {
+		uint16 *lookup16 = (uint16 *)lookup;
+		lookup16[0] = lookup16[10] = format.RGBToColor(0, 63, 0);
+		lookup16[1] = lookup16[11] = format.RGBToColor(0, 0, 63);
+		lookup16[2] = lookup16[8] = format.RGBToColor(63, 0, 0);
+		lookup16[4] = lookup16[6] =
+			lookup16[12] = lookup16[14] = format.RGBToColor(63, 63, 63);
+		lookup16[5] = lookup16[7] =
+			lookup16[9] = lookup16[13] =
+			lookup16[15] = lookup16[16] = format.RGBToColor(0, 0, 0);
+	} else {
+		uint32 *lookup32 = (uint32 *)lookup;
+		lookup32[0] = lookup32[10] = format.ARGBToColor(0, 0, 63, 0);
+		lookup32[1] = lookup32[11] = format.ARGBToColor(0, 0, 0, 63);
+		lookup32[2] = lookup32[8] = format.ARGBToColor(0, 63, 0, 0);
+		lookup32[4] = lookup32[6] =
+			lookup32[12] = lookup32[14] = format.ARGBToColor(0, 63, 63, 63);
+		lookup[3] = lookup32[5] = lookup32[7] =
+			lookup32[9] = lookup32[13] =
+			lookup32[15] = lookup32[16] = format.ARGBToColor(0, 0, 0, 0);
+	}
 	_format = format;
 }
 
 void DotMatrixPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
-	scaleIntern(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
+	if (_format.bytesPerPixel == 2) {
+		scaleIntern<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
+	} else {
+		scaleIntern<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
+	}
 }
 
 uint DotMatrixPlugin::increaseFactor() {
@@ -60,31 +77,33 @@ const char *DotMatrixPlugin::getPrettyName() const {
 	return "DotMatrix";
 }
 
-static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
+template<typename pixel>
+static inline pixel DOT(const pixel *dotmatrix, pixel c, int j, int i) {
 	return c - ((c >> 2) & dotmatrix[((j & 3) << 2) + (i & 3)]);
 }
 
+template<typename pixel>
 void DotMatrixPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height, int x, int y) {
 
-	const uint16 *dotmatrix = lookup;
+	const pixel *dotmatrix = (pixel *)lookup;
 
-	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
-	const uint16 *p = (const uint16 *)srcPtr;
+	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
+	const pixel *p = (const pixel *)srcPtr;
 
-	const uint32 nextlineDst = dstPitch / sizeof(uint16);
-	uint16 *q = (uint16 *)dstPtr;
+	const uint32 nextlineDst = dstPitch / sizeof(pixel);
+	pixel *q = (pixel *)dstPtr;
 
 	int ja = (y * 2) & 3;
 	int ia = (x * 2) & 3;
 
 	for (int j = 0, jj = 0; j < height; ++j, jj += 2) {
 		for (int i = 0, ii = 0; i < width; ++i, ii += 2) {
-			uint16 c = *(p + i);
-			*(q + ii) = DOT_16(dotmatrix, c, jj + ja, ii + ia);
-			*(q + ii + 1) = DOT_16(dotmatrix, c, jj + ja, ii + ia + 1);
-			*(q + ii + nextlineDst) = DOT_16(dotmatrix, c, jj + ja + 1, ii + ia);
-			*(q + ii + nextlineDst + 1) = DOT_16(dotmatrix, c, jj + ja + 1, ii + ia+ 1);
+			pixel c = *(p + i);
+			*(q + ii) = DOT<pixel>(dotmatrix, c, jj + ja, ii + ia);
+			*(q + ii + 1) = DOT<pixel>(dotmatrix, c, jj + ja, ii + ia + 1);
+			*(q + ii + nextlineDst) = DOT<pixel>(dotmatrix, c, jj + ja + 1, ii + ia);
+			*(q + ii + nextlineDst + 1) = DOT<pixel>(dotmatrix, c, jj + ja + 1, ii + ia+ 1);
 		}
 		p += nextlineSrc;
 		q += nextlineDst << 1;
