@@ -1004,9 +1004,8 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 		return;
 
 	pollEvent();
-	if (_keyboard_checkKeyboard()) {
+	if (!_keyboard_checkKeyboard()) {
 		_keyboard_getch();
-		return;
 	} else {
 		if (_mouseButton != 1)
 			return;
