@@ -608,8 +608,8 @@ void OSystem_Wii::copyRectToOverlay(const void *buf, int pitch, int x,
 		return;
 
 	uint16 *dst = _overlayPixels + (y * _overlayWidth + x);
-	if (_overlayWidth == pitch && pitch == w) {
-		memcpy(dst, src, h * w * sizeof(uint16));
+	if (_overlayWidth == w && pitch == _overlayWidth * sizeof(uint16)) {
+		memcpy(dst, src, h * pitch);
 	} else {
 		do {
 			memcpy(dst, src, w * sizeof(uint16));
