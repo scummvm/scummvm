@@ -72,7 +72,7 @@ Globals::Globals() {
 	_hSkipIdle = 0;
 	_lastMusic = 0;
 	_lastTappeto = 0;
-	Common::fill(&_tappeti[0], &_tappeti[200], 0);
+	Common::fill(&_ambiance[0], &_ambiance[200], 0);
 	_fullScreenMessageLoc = 0;
 
 	// MPAL global variables

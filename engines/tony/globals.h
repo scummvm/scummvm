@@ -35,13 +35,13 @@
 
 namespace Tony {
 
-#define TAPPETI_GRILLI 1
-#define TAPPETI_GRILLIOV 2
-#define TAPPETI_GRILLIVENTO 3
-#define TAPPETI_GRILLIVENTO1 4
-#define TAPPETI_VENTO 5
-#define TAPPETI_MARE 6
-#define TAPPETI_MAREMETA 7
+#define AMBIANCE_CRICKETS 1
+#define AMBIANCE_CRICKETSMUFFLED 2
+#define AMBIANCE_CRICKETSWIND 3
+#define AMBIANCE_CRICKETSWIND1 4
+#define AMBIANCE_WIND 5
+#define AMBIANCE_SEA 6
+#define AMBIANCE_SEAHALFVOLUME 7
 
 struct CharacterStruct {
 	uint32 _code;
@@ -243,7 +243,7 @@ public:
 
 	int _lastMusic, _lastTappeto;
 
-	int _tappeti[200];
+	int _ambiance[200];
 	RMPoint _fullScreenMessagePt;
 	int _fullScreenMessageLoc;
 

@@ -42,7 +42,7 @@
 
 namespace Tony {
 
-const char *tappetiFile[] =  {
+const char *ambianceFile[] =  {
 	"None",
 	"1.ADP",    // Grilli.WAV
 	"2.ADP",    // Grilli-Ovattati.WAV
@@ -50,7 +50,7 @@ const char *tappetiFile[] =  {
 	"3.ADP",    // Grilli-Vento1.WAV
 	"5.ADP",    // Vento1.WAV
 	"4.ADP",    // Mare1.WAV
-	"6.ADP"     // Mare1.WAV metà volume
+	"6.ADP"     // Mare1.WAV half volume
 };
 
 struct MusicFileEntry {
@@ -210,19 +210,19 @@ DECLARE_CUSTOM_FUNCTION(SetAlwaysDisplay)(CORO_PARAM, uint32 val, uint32, uint32
 DECLARE_CUSTOM_FUNCTION(SetPointer)(CORO_PARAM, uint32 dwPointer, uint32, uint32, uint32) {
 	switch (dwPointer) {
 	case 1:
-		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_FRECCIASU);
+		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_ARROWUP);
 		break;
 	case 2:
-		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_FRECCIAGIU);
+		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_ARROWDOWN);
 		break;
 	case 3:
-		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_FRECCIASINISTRA);
+		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_ARROWLEFT);
 		break;
 	case 4:
-		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_FRECCIADESTRA);
+		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_ARROWRIGHT);
 		break;
 	case 5:
-		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_FRECCIAMAPPA);
+		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_ARROWMAP);
 		break;
 
 	default:
@@ -232,15 +232,12 @@ DECLARE_CUSTOM_FUNCTION(SetPointer)(CORO_PARAM, uint32 dwPointer, uint32, uint32
 }
 
 VoiceHeader *SearchVoiceHeader(uint32 codehi, uint32 codelo) {
-	uint i;
-	int code;
-
-	code = (codehi << 16) | codelo;
+	int code = (codehi << 16) | codelo;
 
 	if (_vm->_voices.size() == 0)
 		return NULL;
 
-	for (i = 0; i < _vm->_voices.size(); i++)
+	for (uint i = 0; i < _vm->_voices.size(); i++)
 		if (_vm->_voices[i]._code == code)
 			return &_vm->_voices[i];
 
@@ -292,7 +289,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 			GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NORMAL;
 	} else {
 		if (_ctx->msg.numPeriods() > 1)
-			CORO_INVOKE_1(GLOBALS._tony->startTalk, GLOBALS._tony->TALK_FIANCHI);
+			CORO_INVOKE_1(GLOBALS._tony->startTalk, GLOBALS._tony->TALK_HIPS);
 		else
 			CORO_INVOKE_1(GLOBALS._tony->startTalk, GLOBALS._tony->TALK_NORMAL);
 	}
@@ -537,7 +534,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 	}
 
-	if (GLOBALS._lastTappeto != GLOBALS._tappeti[nLoc]) {
+	if (GLOBALS._lastTappeto != GLOBALS._ambiance[nLoc]) {
 		_vm->stopMusic(4);
 	}
 
@@ -550,10 +547,10 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	else
 		GLOBALS.LoadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
 
-	if (GLOBALS._lastTappeto != GLOBALS._tappeti[nLoc]) {
-		GLOBALS._lastTappeto = GLOBALS._tappeti[nLoc];
+	if (GLOBALS._lastTappeto != GLOBALS._ambiance[nLoc]) {
+		GLOBALS._lastTappeto = GLOBALS._ambiance[nLoc];
 		if (GLOBALS._lastTappeto != 0)
-			_vm->playMusic(4, tappetiFile[GLOBALS._lastTappeto], 0, true, 2000);
+			_vm->playMusic(4, ambianceFile[GLOBALS._lastTappeto], 0, true, 2000);
 	}
 
 	if (!GLOBALS._bNoBullsEye) {
@@ -802,19 +799,19 @@ void TonySetNumTexts(uint32 dwText) {
 	GLOBALS._bTonyInTexts = false;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyRide)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyLaugh)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_RIDE;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_LAUGH;
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyGiggle)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_RIDE2;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_LAUGH2;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyFianchi)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonyHips)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_FIANCHI;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_HIPS;
 }
 
 DECLARE_CUSTOM_FUNCTION(TonySing)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
@@ -1127,9 +1124,9 @@ DECLARE_CUSTOM_FUNCTION(TonySniffRight)(CORO_PARAM, uint32, uint32, uint32, uint
 	CORO_END_CODE;
 }
 
-DECLARE_CUSTOM_FUNCTION(TonyNaah)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
+DECLARE_CUSTOM_FUNCTION(TonySarcastic)(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	TonySetNumTexts(dwText);
-	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_NAAH;
+	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_SARCASTIC;
 }
 
 DECLARE_CUSTOM_FUNCTION(TonyMacbeth)(CORO_PARAM, uint32 nPos, uint32, uint32, uint32) {
@@ -2237,7 +2234,7 @@ void RestoreMusic(CORO_PARAM) {
 	CORO_INVOKE_4(PlaySoundEffect, GLOBALS._lastMusic, 0, 0, 0);
 
 	if (GLOBALS._lastTappeto != 0)
-		CustPlayMusic(4, tappetiFile[GLOBALS._lastTappeto], 0, true);
+		CustPlayMusic(4, ambianceFile[GLOBALS._lastTappeto], 0, true);
 
 	CORO_END_CODE;
 }
@@ -2447,8 +2444,8 @@ ASSIGN(37,  TonyGetUp)
 ASSIGN(38,  TonyShepherdess)
 ASSIGN(39,  TonyWhistle)
 
-ASSIGN(40,  TonyRide)
-ASSIGN(41,  TonyFianchi)
+ASSIGN(40,  TonyLaugh)
+ASSIGN(41,  TonyHips)
 ASSIGN(42,  TonySing)
 ASSIGN(43,  TonyIndicate)
 ASSIGN(44,  TonyScaredWithHands)
@@ -2477,7 +2474,7 @@ ASSIGN(106, TonyWithBeardStart)
 ASSIGN(107, TonyWithBeardEnd)
 ASSIGN(108, TonyGiggle)
 ASSIGN(109, TonyDisgusted)
-ASSIGN(110, TonyNaah)
+ASSIGN(110, TonySarcastic)
 ASSIGN(111, TonyMacbeth)
 ASSIGN(112, TonySniffLeft)
 ASSIGN(113, TonySniffRight)
@@ -2575,39 +2572,39 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 		GLOBALS._mut[i] = CoroScheduler.createEvent(false, false);
 
 	for (i = 0; i < 200; i++)
-		GLOBALS._tappeti[i] = 0;
+		GLOBALS._ambiance[i] = 0;
 
-	GLOBALS._tappeti[6] =  TAPPETI_GRILLI;
-	GLOBALS._tappeti[7] =  TAPPETI_GRILLI;
-	GLOBALS._tappeti[8] =  TAPPETI_GRILLIOV;
-	GLOBALS._tappeti[10] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[12] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[13] = TAPPETI_GRILLIOV;
-	GLOBALS._tappeti[15] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[16] = TAPPETI_GRILLIVENTO;
-	GLOBALS._tappeti[18] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[19] = TAPPETI_GRILLIVENTO;
-	GLOBALS._tappeti[20] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[23] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[26] = TAPPETI_MAREMETA;
-	GLOBALS._tappeti[27] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[28] = TAPPETI_GRILLIVENTO;
-	GLOBALS._tappeti[31] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[33] = TAPPETI_MARE;
-	GLOBALS._tappeti[35] = TAPPETI_MARE;
-	GLOBALS._tappeti[36] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[37] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[40] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[41] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[42] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[45] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[51] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[52] = TAPPETI_GRILLIVENTO1;
-	GLOBALS._tappeti[53] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[54] = TAPPETI_GRILLI;
-	GLOBALS._tappeti[57] = TAPPETI_VENTO;
-	GLOBALS._tappeti[58] = TAPPETI_VENTO;
-	GLOBALS._tappeti[60] = TAPPETI_VENTO;
+	GLOBALS._ambiance[6] =  AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[7] =  AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[8] =  AMBIANCE_CRICKETSMUFFLED;
+	GLOBALS._ambiance[10] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[12] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[13] = AMBIANCE_CRICKETSMUFFLED;
+	GLOBALS._ambiance[15] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[16] = AMBIANCE_CRICKETSWIND;
+	GLOBALS._ambiance[18] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[19] = AMBIANCE_CRICKETSWIND;
+	GLOBALS._ambiance[20] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[23] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[26] = AMBIANCE_SEAHALFVOLUME;
+	GLOBALS._ambiance[27] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[28] = AMBIANCE_CRICKETSWIND;
+	GLOBALS._ambiance[31] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[33] = AMBIANCE_SEA;
+	GLOBALS._ambiance[35] = AMBIANCE_SEA;
+	GLOBALS._ambiance[36] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[37] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[40] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[41] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[42] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[45] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[51] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[52] = AMBIANCE_CRICKETSWIND1;
+	GLOBALS._ambiance[53] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[54] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[57] = AMBIANCE_WIND;
+	GLOBALS._ambiance[58] = AMBIANCE_WIND;
+	GLOBALS._ambiance[60] = AMBIANCE_WIND;
 
 
 
