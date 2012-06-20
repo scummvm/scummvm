@@ -165,7 +165,7 @@ reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject
 			warning("Invalid alignment %d used in TextBox()", alignment);
 		}
 
-		unsigned char curChar;
+		byte curChar;
 
 		for (int i = 0; i < charCount; i++) {
 			curChar = txt[i];
@@ -174,7 +174,6 @@ reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject
 			case 0x0A:
 			case 0x0D:
 			case 0:
-			case 0x9781: // this one is used by SQ4/japanese as line break as well
 				break;
 			case 0x7C:
 				warning("Code processing isn't implemented in SCI32");
@@ -317,7 +316,7 @@ void GfxText32::StringWidth(const char *str, GuiResourceId fontId, int16 &textWi
 }
 
 void GfxText32::Width(const char *text, int16 from, int16 len, GuiResourceId fontId, int16 &textWidth, int16 &textHeight, bool restoreFont) {
-	uint16 curChar;
+	byte curChar;
 	textWidth = 0; textHeight = 0;
 
 	GfxFont *font = _cache->getFont(fontId);
@@ -329,7 +328,6 @@ void GfxText32::Width(const char *text, int16 from, int16 len, GuiResourceId fon
 			switch (curChar) {
 			case 0x0A:
 			case 0x0D:
-			case 0x9781: // this one is used by SQ4/japanese as line break as well
 				textHeight = MAX<int16> (textHeight, font->getHeight());
 				break;
 			case 0x7C:
