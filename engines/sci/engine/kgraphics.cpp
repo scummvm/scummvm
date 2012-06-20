@@ -1237,7 +1237,8 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		uint16 percent = argv[2].toUint16(); // 0 - 100
 		if (argc >= 4)
 			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
+		// TODO: It's not correct to set intensity here
+		//g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
 		}
 		break;
 	case 3:	{ // remap to gray
@@ -1257,10 +1258,10 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		kStub(s, argc, argv);
 		}
 		break;
-	case 5:	{ // increment color
-		//int16 unk1 = argv[1].toSint16();
-		//uint16 unk2 = argv[2].toUint16();
-		kStub(s, argc, argv);
+	case 5:	{ // set color intensity
+		int16 color = argv[1].toSint16();
+		uint16 intensity = argv[2].toUint16();
+		g_sci->_gfxPalette->kernelSetIntensity(color, 255, intensity, true);
 		}
 		break;
 	default:
