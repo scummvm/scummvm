@@ -642,7 +642,7 @@ void OSystem_Android::grabOverlay(void *buf, int pitch) {
 	GLTHREADCHECK;
 
 	const Graphics::Surface *surface = _overlay_texture->surface_const();
-	assert(surface->format.bytesPerPixel == sizeof(buf[0]));
+	assert(surface->format.bytesPerPixel == sizeof(uint16));
 
 	byte *dst = (byte *)buf;
 	const byte *src = (const byte *)surface->pixels;
