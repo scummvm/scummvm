@@ -1260,9 +1260,16 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	case 5:	{ // set color intensity
-		int16 color = argv[1].toSint16();
+		// TODO: This isn't right, it should be setting a mapping table instead.
+		// For PQ4, we can emulate this with kernelSetIntensity(). In QFG4, this
+		// won't do.
+		//int16 mapping = argv[1].toSint16();
 		uint16 intensity = argv[2].toUint16();
-		g_sci->_gfxPalette->kernelSetIntensity(color, 255, intensity, true);
+		// HACK for PQ4
+		if (g_sci->getGameId() == GID_PQ4)
+			g_sci->_gfxPalette->kernelSetIntensity(0, 255, intensity, true);
+
+		kStub(s, argc, argv);
 		}
 		break;
 	default:
