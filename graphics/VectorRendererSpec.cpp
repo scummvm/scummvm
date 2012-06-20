@@ -317,9 +317,15 @@ setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
 	_gradientEnd = _format.RGBToColor(r2, g2, b2);
 	_gradientStart = _format.RGBToColor(r1, g1, b1);
 
-	_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
-	_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
-	_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
+	if (sizeof(PixelType) == 4) {
+		_gradientBytes[0] = ((_gradientEnd & _redMask) >> _format.rShift) - ((_gradientStart & _redMask) >> _format.rShift);
+		_gradientBytes[1] = ((_gradientEnd & _greenMask) >> _format.gShift) - ((_gradientStart & _greenMask) >> _format.gShift);
+		_gradientBytes[2] = ((_gradientEnd & _blueMask) >> _format.bShift) - ((_gradientStart & _blueMask) >> _format.bShift);
+	} else {
+		_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
+		_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
+		_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
+	}
 }
 
 template<typename PixelType>
@@ -328,9 +334,15 @@ calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
 	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 
-	output |= ((_gradientStart & _redMask) + ((_gradientBytes[0] * pos) >> 12)) & _redMask;
-	output |= ((_gradientStart & _greenMask) + ((_gradientBytes[1] * pos) >> 12)) & _greenMask;
-	output |= ((_gradientStart & _blueMask) + ((_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	if (sizeof(PixelType) == 4) {
+		output |= ((_gradientStart & _redMask) + (((_gradientBytes[0] * pos) >> 12) << _format.rShift)) & _redMask;
+		output |= ((_gradientStart & _greenMask) + (((_gradientBytes[1] * pos) >> 12) << _format.gShift)) & _greenMask;
+		output |= ((_gradientStart & _blueMask) + (((_gradientBytes[2] * pos) >> 12) << _format.bShift)) & _blueMask;
+	} else {
+		output |= ((_gradientStart & _redMask) + ((_gradientBytes[0] * pos) >> 12)) & _redMask;
+		output |= ((_gradientStart & _greenMask) + ((_gradientBytes[1] * pos) >> 12)) & _greenMask;
+		output |= ((_gradientStart & _blueMask) + ((_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	}
 	output |= _alphaMask;
 
 	return output;
@@ -537,20 +549,39 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 template<typename PixelType>
 inline void VectorRendererSpec<PixelType>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
-	int idst = *ptr;
-	int isrc = color;
+	if (sizeof(PixelType) == 4) {
+		const byte sR = (color & _redMask) >> _format.rShift;
+		const byte sG = (color & _greenMask) >> _format.gShift;
+		const byte sB = (color & _blueMask) >> _format.bShift;
 
-	*ptr = (PixelType)(
-		(_redMask & ((idst & _redMask) +
-		((int)(((int)(isrc & _redMask) -
-		(int)(idst & _redMask)) * alpha) >> 8))) |
-		(_greenMask & ((idst & _greenMask) +
-		((int)(((int)(isrc & _greenMask) -
-		(int)(idst & _greenMask)) * alpha) >> 8))) |
-		(_blueMask & ((idst & _blueMask) +
-		((int)(((int)(isrc & _blueMask) -
-		(int)(idst & _blueMask)) * alpha) >> 8))) |
-		(idst & _alphaMask));
+		byte dR = (*ptr & _redMask) >> _format.rShift;
+		byte dG = (*ptr & _greenMask) >> _format.gShift;
+		byte dB = (*ptr & _blueMask) >> _format.bShift;
+
+		dR += ((sR - dR) * alpha) >> 8;
+		dG += ((sG - dG) * alpha) >> 8;
+		dB += ((sB - dB) * alpha) >> 8;
+
+		*ptr = ((dR << _format.rShift) & _redMask)
+		     | ((dG << _format.gShift) & _greenMask)
+		     | ((dB << _format.bShift) & _blueMask)
+		     | (*ptr & _alphaMask);
+	} else {
+		int idst = *ptr;
+		int isrc = color;
+
+		*ptr = (PixelType)(
+			(_redMask & ((idst & _redMask) +
+			((int)(((int)(isrc & _redMask) -
+			(int)(idst & _redMask)) * alpha) >> 8))) |
+			(_greenMask & ((idst & _greenMask) +
+			((int)(((int)(isrc & _greenMask) -
+			(int)(idst & _greenMask)) * alpha) >> 8))) |
+			(_blueMask & ((idst & _blueMask) +
+			((int)(((int)(isrc & _blueMask) -
+			(int)(idst & _blueMask)) * alpha) >> 8))) |
+			(idst & _alphaMask));
+	}
 }
 
 template<typename PixelType>
