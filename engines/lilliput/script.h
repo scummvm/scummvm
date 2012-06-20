@@ -61,8 +61,8 @@ public:
 
 	byte _characterScriptEnabled[40];
 	int8 _interfaceHotspotStatus[20];
-	int8 _array16123PosX[40];
-	int8 _array1614BPosY[40];
+	int8 _characterTilePosX[40];
+	int8 _characterTilePosY[40];
 	int8 _array12811[40];
 	int8 _array10AB1[40];
 	byte _array122FD[20];
@@ -295,7 +295,7 @@ private:
 	void OC_sub1873F_snd();
 	void OC_sub18746_snd();
 	void OC_sub1875D_snd();
-	void OC_setArray128EF();
+	void OC_setCharacterMapColor();
 };
 
 } // End of namespace Lilliput
