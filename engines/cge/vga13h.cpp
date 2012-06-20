@@ -834,7 +834,7 @@ void Vga::update() {
 		}
 	}
 
-	g_system->copyRectToScreen((const byte *)Vga::_page[0]->getBasePtr(0, 0), kScrWidth, 0, 0, kScrWidth, kScrHeight);
+	g_system->copyRectToScreen(Vga::_page[0]->getBasePtr(0, 0), kScrWidth, 0, 0, kScrWidth, kScrHeight);
 	g_system->updateScreen();
 }
 

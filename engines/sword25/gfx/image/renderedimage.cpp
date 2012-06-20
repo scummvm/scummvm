@@ -430,7 +430,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			ino += inoStep;
 		}
 
-		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY,
+		g_system->copyRectToScreen(_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY,
 			img->w, img->h);
 	}
 
