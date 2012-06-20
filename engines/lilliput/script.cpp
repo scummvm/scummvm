@@ -65,8 +65,8 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_array10AB1[i] = 0;
 		_array12811[i] = 16;
 		_array12839[i] = -1;
-		_array16123PosX[i] = 0;
-		_array1614BPosY[i] = 0;
+		_characterTilePosX[i] = 0;
+		_characterTilePosY[i] = 0;
 		_array122C1[i] = 0;
 	}
 
@@ -544,7 +544,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sub1875D_snd();
 		break;
 	case 0x64:
-		OC_setArray128EF();
+		OC_setCharacterMapColor();
 		break;
 	case 0x65:
 		OC_initGameAreaDisplay();
@@ -710,7 +710,7 @@ static const OpCode opCodes2[] = {
 /* 0x61 */	{ "OC_sub1873F_snd", 1, kgetPosFromScript, kNone, kNone, kNone, kNone }, 
 /* 0x62 */	{ "OC_sub18746_snd", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x63 */	{ "OC_sub1875D_snd", 0, kNone, kNone, kNone, kNone, kNone }, 
-/* 0x64 */	{ "OC_setArray128EF", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x64 */	{ "OC_setCharacterMapColor", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x65 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone }
 };
 
@@ -1381,8 +1381,8 @@ byte LilliputScript::OC_comparePos() {
 	debugC(2, kDebugScript, "OC_comparePos()");
 
 	int index = getValue1();
-	int8 d1 = _array16123PosX[index];
-	int8 d2 = _array1614BPosY[index];
+	int8 d1 = _characterTilePosX[index];
+	int8 d2 = _characterTilePosY[index];
 	Common::Point var1 = getPosFromScript();
 
 	if (var1 == Common::Point(d1, d2))
@@ -1552,7 +1552,7 @@ byte LilliputScript::OC_compareCoords_2() {
 	debugC(1, kDebugScript, "OC_compareCoords_2()");
 
 	int16 index = getValue1();
-	Common::Point var1 = Common::Point(_array16123PosX[index], _array1614BPosY[index]);
+	Common::Point var1 = Common::Point(_characterTilePosX[index], _characterTilePosY[index]);
 	index = _currScript->readUint16LE();
 	uint16 var3 = _vm->_rectXMinMax[index];
 	uint16 var4 = _vm->_rectYMinMax[index];
@@ -3326,7 +3326,7 @@ void LilliputScript::OC_sub186E5_snd() {
 	Common::Point var4 = Common::Point(0xFF, index & 0xFF);
 	int var1 = (_currScript->readUint16LE() & 0xFF);
 	
-	_vm->_soundHandler->contentFct2(var1, _viewportPos, Common::Point(_array16123PosX[index], _array1614BPosY[index]), var4);
+	_vm->_soundHandler->contentFct2(var1, _viewportPos, Common::Point(_characterTilePosX[index], _characterTilePosY[index]), var4);
 }
 
 void LilliputScript::OC_sub1870A_snd() {
@@ -3380,14 +3380,14 @@ void LilliputScript::OC_sub1875D_snd() {
 	_vm->_soundHandler->contentFct6();
 }
 
-void LilliputScript::OC_setArray128EF() {
-	debugC(1, kDebugScript, "OC_setArray128EF()");
+void LilliputScript::OC_setCharacterMapColor() {
+	debugC(1, kDebugScript, "OC_setCharacterMapColor()");
 
-	int index = getValue1();
-	int val = _currScript->readUint16LE();
+	byte index = (getValue1() & 0xFF);
+	int color = _currScript->readUint16LE();
 
 	assert(index < 40);
-	_characterMapPixelColor[index] = val & 0xFF;
+	_characterMapPixelColor[index] = (color & 0xFF);
 }
 
 } // End of namespace
