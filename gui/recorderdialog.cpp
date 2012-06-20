@@ -45,7 +45,8 @@ enum {
 	kRecordCmd = 'RCRD',
 	kPlaybackCmd = 'PBCK',
 	kDeleteCmd = 'DEL ',
-	kSwitchScreenshotCmd = 'SCRN'
+	kNextScreenshotCmd = 'NEXT',
+	kPrevScreenshotCmd = 'PREV'
 };
 
 RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentScreenshot(0), _playbackFile(0) {
@@ -60,6 +61,9 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentS
 	playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), 0, kPlaybackCmd);
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+	new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", 0, kPrevScreenshotCmd);
+	new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", 0, kNextScreenshotCmd);	
+	_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", "0/0");
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 }
@@ -96,8 +100,12 @@ void RecorderDialog::reflowLayout() {
 
 void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
-	case kSwitchScreenshotCmd:
+	case kNextScreenshotCmd:
 		++_currentScreenshot;
+		updateScreenshot();
+		break;
+	case kPrevScreenshotCmd:
+		--_currentScreenshot;
 		updateScreenshot();
 		break;
 	case kDeleteCmd:
@@ -160,13 +168,19 @@ RecorderDialog::~RecorderDialog() {
 
 void RecorderDialog::updateSelection(bool redraw) {
 	_gfxWidget->setGfx(-1, -1, 0, 0, 0);
+	_screenShotsCount = 0;
+	_currentScreenshot = 0;
+	updateScreenShotsText();
 	if (_list->getSelected() >= 0) {
 		if (_playbackFile != NULL) {
 			delete _playbackFile;
 			_playbackFile = NULL;
 		}
 		_playbackFile = wrapBufferedSeekableReadStream(g_system->getSavefileManager()->openForLoading(_list->getSelectedString()), 128 * 1024, DisposeAfterUse::YES);
-		_currentScreenshot = 2;
+		_screenShotsCount = calculateScreenshotsCount();
+		if ((_screenShotsCount) > 0) {
+			_currentScreenshot = 1;
+		}
 		updateScreenshot();
 	}
 }
@@ -185,12 +199,16 @@ Common::String RecorderDialog::generateRecordFileName() {
 }
 
 Graphics::Surface *RecorderDialog::getScreenShot(int number) {
+	if (_playbackFile == NULL) {
+		return NULL;
+	}
+	_playbackFile->seek(0);
 	uint32 id = _playbackFile->readUint32LE();
 	_playbackFile->skip(4);
 	if(id != MKTAG('P','B','C','K')) {
 		return NULL;
 	}
-	int screenCount = 0;
+	int screenCount = 1;
 	while (skipToNextScreenshot()) {
 		if (screenCount == number) {
 			screenCount++;
@@ -222,17 +240,44 @@ bool RecorderDialog::skipToNextScreenshot() {
 	return false;
 }
 
-void RecorderDialog::updateScreenshot() {	
+void RecorderDialog::updateScreenshot() {
+	if (_currentScreenshot < 1) {
+		_currentScreenshot = _screenShotsCount;
+	}
+	if (_currentScreenshot > _screenShotsCount) {
+		_currentScreenshot = 1;
+	}
 	Graphics::Surface *srcsf = getScreenShot(_currentScreenshot);
 	if (srcsf != NULL) {
 		Graphics::Surface *destsf = Graphics::scale(*srcsf, _gfxWidget->getWidth(), _gfxWidget->getHeight());
 		_gfxWidget->setGfx(destsf);
+		updateScreenShotsText();
 		delete destsf;
 		delete srcsf;
 	} else {
 		_gfxWidget->setGfx(-1, -1, 0, 0, 0);
 	}
 	_gfxWidget->draw();
+}
+
+int RecorderDialog::calculateScreenshotsCount() {
+	_playbackFile->seek(0);
+	uint32 id = _playbackFile->readUint32LE();
+	_playbackFile->skip(4);
+	if(id != MKTAG('P','B','C','K')) {
+		return 0;
+	}	
+	int result = 0;
+	while (skipToNextScreenshot()) {
+		uint32 size = _playbackFile->readUint32BE();
+		_playbackFile->skip(size-8);
+		++result;
+	}
+	return result;
+}
+
+void RecorderDialog::updateScreenShotsText() {
+	_currentScreenshotText->setLabel(Common::String::format("%d / %d", _currentScreenshot, _screenShotsCount));
 }
 
 } // End of namespace GUI

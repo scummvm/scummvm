@@ -880,10 +880,27 @@
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 16' spacing = '16'>
 				<widget name = 'List' />
-				<widget name = 'Thumbnail'
-						width = '180'
-						height = '200'
-				/>
+				<layout type = 'vertical' padding = '0, 0, 0, 0'>
+					<widget name = 'Thumbnail'
+							width = '180'
+							height = '150'
+					/>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0'>	
+						<widget name = 'NextScreenShotButton'
+								width = '25'
+								height = '25'
+						/>
+						<widget name = 'currentScreenshot'
+								width = '125'
+								height = '25'
+								textalign = 'center'
+						/>
+						<widget name = 'PreviousScreenShotButton'
+								width = '25'
+								height = '25'
+						/>
+					</layout>
+				</layout>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<space/>
