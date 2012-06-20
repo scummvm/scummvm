@@ -95,7 +95,7 @@ OSystem_N64::OSystem_N64() {
 	// Allocate memory for offscreen buffers
 	_offscreen_hic = (uint16 *)memalign(8, _screenWidth * _screenHeight * 2);
 	_offscreen_pal = (uint8 *)memalign(8, _screenWidth * _screenHeight);
-	_overlayBuffer = (uint16 *)memalign(8, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
+	_overlayBuffer = (uint16 *)memalign(8, _overlayWidth * _overlayHeight * sizeof(uint16));
 
 	_cursor_pal = NULL;
 	_cursor_hic = NULL;
@@ -108,7 +108,7 @@ OSystem_N64::OSystem_N64() {
 	// Clean offscreen buffers
 	memset(_offscreen_hic, 0, _screenWidth * _screenHeight * 2);
 	memset(_offscreen_pal, 0, _screenWidth * _screenHeight);
-	memset(_overlayBuffer, 0, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
+	memset(_overlayBuffer, 0, _overlayWidth * _overlayHeight * sizeof(uint16));
 
 	// Default graphic mode
 	_graphicMode = OVERS_NTSC_340X240;
@@ -667,7 +667,7 @@ void OSystem_N64::hideOverlay() {
 }
 
 void OSystem_N64::clearOverlay() {
-	memset(_overlayBuffer, 0, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
+	memset(_overlayBuffer, 0, _overlayWidth * _overlayHeight * sizeof(uint16));
 
 	uint8 skip_lines = (_screenHeight - _gameHeight) / 4;
 	uint8 skip_pixels = (_screenWidth - _gameWidth) / 2; // Center horizontally the image
@@ -685,11 +685,11 @@ void OSystem_N64::clearOverlay() {
 
 void OSystem_N64::grabOverlay(void *buf, int pitch) {
 	int h = _overlayHeight;
-	OverlayColor *src = _overlayBuffer;
+	uint16 *src = _overlayBuffer;
 	byte *dst = (byte *)buf;
 
 	do {
-		memcpy(dst, src, _overlayWidth * sizeof(OverlayColor));
+		memcpy(dst, src, _overlayWidth * sizeof(uint16));
 		src += _overlayWidth;
 		dst += pitch;
 	} while (--h);
@@ -700,7 +700,7 @@ void OSystem_N64::copyRectToOverlay(const void *buf, int pitch, int x, int y, in
 	//Clip the coordinates
 	if (x < 0) {
 		w += x;
-		src -= x * sizeof(OverlayColor);
+		src -= x * sizeof(uint16);
 		x = 0;
 	}
 
@@ -722,13 +722,13 @@ void OSystem_N64::copyRectToOverlay(const void *buf, int pitch, int x, int y, in
 		return;
 
 
-	OverlayColor *dst = _overlayBuffer + (y * _overlayWidth + x);
+	uint16 *dst = _overlayBuffer + (y * _overlayWidth + x);
 
 	if (_overlayWidth == pitch && pitch == w) {
-		memcpy(dst, src, h * w * sizeof(OverlayColor));
+		memcpy(dst, src, h * w * sizeof(uint16));
 	} else {
 		do {
-			memcpy(dst, src, w * sizeof(OverlayColor));
+			memcpy(dst, src, w * sizeof(uint16));
 			src += pitch;
 			dst += _overlayWidth;
 		} while (--h);

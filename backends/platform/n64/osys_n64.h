@@ -81,7 +81,7 @@ protected:
 
 	uint16 *_offscreen_hic; // Offscreen converted to 16bit surface
 	uint8  *_offscreen_pal; // Offscreen with palette indexes
-	OverlayColor *_overlayBuffer; // Offscreen for the overlay (16 bit)
+	uint16 *_overlayBuffer; // Offscreen for the overlay (16 bit)
 
 	uint16 *_screenPalette; // Array for palette entries (256 colors max)
 
