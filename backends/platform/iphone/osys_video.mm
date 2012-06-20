@@ -316,7 +316,7 @@ void OSystem_IPHONE::grabOverlay(void *buf, int pitch) {
 	byte *dst = (byte *)buf;
 	const byte *src = (const byte *)_videoContext->overlayTexture.getBasePtr(0, 0);
 	do {
-		memcpy(dst, src, _videoContext->overlayWidth * sizeof(OverlayColor));
+		memcpy(dst, src, _videoContext->overlayWidth * sizeof(uint16));
 		src += _videoContext->overlayTexture.pitch;
 		dst += pitch;
 	} while (--h);
@@ -329,7 +329,7 @@ void OSystem_IPHONE::copyRectToOverlay(const void *buf, int pitch, int x, int y,
 	//Clip the coordinates
 	if (x < 0) {
 		w += x;
-		src -= x * sizeof(OverlayColor);
+		src -= x * sizeof(uint16);
 		x = 0;
 	}
 
@@ -354,7 +354,7 @@ void OSystem_IPHONE::copyRectToOverlay(const void *buf, int pitch, int x, int y,
 
 	byte *dst = (byte *)_videoContext->overlayTexture.getBasePtr(x, y);
 	do { 
-		memcpy(dst, src, w * sizeof(OverlayColor));
+		memcpy(dst, src, w * sizeof(uint16));
 		src += pitch;
 		dst += _videoContext->overlayTexture.pitch;
 	} while (--h);
