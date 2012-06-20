@@ -556,6 +556,33 @@ void LoadChooserThumbnailed::updateSaves() {
 		curButton.setVisible(true);
 		curButton.button->setGfx(desc.getThumbnail());
 		curButton.description->setLabel(Common::String::format("%d. %s", saveSlot, desc.getDescription().c_str()));
+
+		Common::String tooltip(_("Name: "));
+		tooltip += desc.getDescription();
+
+		if (_saveDateSupport) {
+			const Common::String &saveDate = desc.getSaveDate();
+			if (!saveDate.empty()) {
+				tooltip += "\n";
+				tooltip +=  _("Date: ") + saveDate;
+			}
+
+			const Common::String &saveTime = desc.getSaveTime();
+			if (!saveTime.empty()) {
+				tooltip += "\n";
+				tooltip += _("Time: ") + saveTime;
+			}
+		}
+
+		if (_playTimeSupport) {
+			const Common::String &playTime = desc.getPlayTime();
+			if (!playTime.empty()) {
+				tooltip += "\n";
+				tooltip += _("Playtime: ") + playTime;
+			}
+		}
+
+		curButton.button->setTooltip(tooltip);
 	}
 
 	if (_curPage > 0)
