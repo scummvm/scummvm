@@ -49,7 +49,6 @@ enum SoundCodecs {
 	FPCODEC_ADPCM
 };
 
-
 //****************************************************************************
 //* class FPSound
 //* -------------
@@ -244,24 +243,6 @@ public:
 	 */
 	bool endOfBuffer() const;
 };
-
-/**
- * Codec base class
- */
-class CODEC {
-protected:
-	bool _bEndReached;
-
-public:
-	bool _bLoop;
-
-	CODEC(bool _bLoop = true);
-	virtual ~CODEC();
-	virtual uint32 decompress(Common::SeekableReadStream *stream, void *lpBuf, uint32 dwSize) = 0;
-	virtual void loopReset() = 0;
-	bool endOfStream();
-};
-
 
 class FPStream {
 private:
