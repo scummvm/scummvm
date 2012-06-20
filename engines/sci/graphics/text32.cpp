@@ -165,10 +165,25 @@ reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject
 			warning("Invalid alignment %d used in TextBox()", alignment);
 		}
 
+		unsigned char curChar;
+
 		for (int i = 0; i < charCount; i++) {
-			unsigned char curChar = txt[i];
-			font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, foreColor, dimmed, bitmap, width, height);
-			curX += font->getCharWidth(curChar);
+			curChar = txt[i];
+
+			switch (curChar) {
+			case 0x0A:
+			case 0x0D:
+			case 0:
+			case 0x9781: // this one is used by SQ4/japanese as line break as well
+				break;
+			case 0x7C:
+				warning("Code processing isn't implemented in SCI32");
+				break;
+			default:
+				font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, foreColor, dimmed, bitmap, width, height);
+				curX += font->getCharWidth(curChar);
+				break;
+			}
 		}
 
 		curX = 0;
