@@ -265,23 +265,11 @@ public:
 
 class FPStream {
 private:
-	// HWND hwnd;
-	// LPDIRECTSOUND lpDS;
-	// LPDIRECTSOUNDBUFFER lpDSBuffer;     // DirectSound circular buffer
-	// LPDIRECTSOUNDNOTIFY lpDSNotify;     // Notify hotspots in the buffer
-
-	byte  *_lpTempBuffer;                  // Temporary buffer use for decompression
-
 	uint32 _dwBufferSize;                  // Buffer size (bytes)
 	uint32 _dwSize;                        // Stream size (bytes)
 	uint32 _dwCodec;                       // CODEC used
 
-	uint32 _hThreadEnd;                    // Event used to close thread
 	Common::File _file;                    // File handle used for the stream
-	uint32 _hPlayThread;                   // Handle of the Play thread
-	uint32 _hHot1, _hHot2, _hHot3;         // Events set by DirectSoundNotify
-	uint32 _hPlayThreadPlayFast;
-	uint32 _hPlayThreadPlayNormal;
 
 	bool _bSoundSupported;                 // True if the sound is active
 	bool _bFileLoaded;                     // True if the file is open 
@@ -291,21 +279,10 @@ private:
 	bool _bPaused;
 	int  _lastVolume;
 	FPStream *_syncToPlay;
-	CODEC *_codec;
 
-	// DSBPOSITIONNOTIFY dspnHot[3];
-
-	bool createBuffer(int nBufSize);
-
-public:
-	bool _bIsPlaying;                      // True if the stream is playing
-
-private:
-	/**
-	 * Thread playing the stream
-	 *
-	 */
-	static void playThread(CORO_PARAM, const void *param);
+	Audio::AudioStream *_loopStream;
+	Audio::RewindableAudioStream *_rewindableStream;
+	Audio::SoundHandle _handle;
 
 public:
 
@@ -368,7 +345,6 @@ public:
 
 	bool play();
 	void playFast();
-	void prefetch();
 
 	/**
 	 * Closes the stream.
@@ -408,7 +384,7 @@ public:
 	void setVolume(int dwVolume);
 
 	/**
-	 * Gets the vgolume of the stream
+	 * Gets the volume of the stream
 	 *
 	 * @param lpdwVolume    Variable that will contain the current volume
 	 *

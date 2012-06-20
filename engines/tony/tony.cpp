@@ -268,7 +268,7 @@ void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
 	}
 
 	streams[GLOBALS._nextChannel]->setLoop(GLOBALS._nextLoop);
-	streams[GLOBALS._nextChannel]->prefetch();
+	//streams[GLOBALS._nextChannel]->prefetch();
 
 	streams[GLOBALS._curChannel]->stop(true);
 	streams[GLOBALS._curChannel]->waitForSync(streams[GLOBALS._nextChannel]);
