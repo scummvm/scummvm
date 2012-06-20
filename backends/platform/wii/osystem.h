@@ -72,7 +72,7 @@ private:
 	bool _overlayVisible;
 	u16 _overlayWidth, _overlayHeight;
 	u32 _overlaySize;
-	OverlayColor *_overlayPixels;
+	uint16 *_overlayPixels;
 	gfx_screen_coords_t _coordsOverlay;
 	gfx_tex_t _texOverlay;
 	bool _overlayDirty;

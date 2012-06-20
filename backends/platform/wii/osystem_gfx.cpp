@@ -74,7 +74,7 @@ void OSystem_Wii::initGfx() {
 #endif
 
 	_overlaySize = _overlayWidth * _overlayHeight * 2;
-	_overlayPixels = (OverlayColor *) memalign(32, _overlaySize);
+	_overlayPixels = (uint16 *) memalign(32, _overlaySize);
 
 	memset(&_texMouse, 0, sizeof(gfx_tex_t));
 	memset(&_texOverlay, 0, sizeof(gfx_tex_t));
@@ -573,11 +573,11 @@ void OSystem_Wii::clearOverlay() {
 
 void OSystem_Wii::grabOverlay(void *buf, int pitch) {
 	int h = _overlayHeight;
-	OverlayColor *src = _overlayPixels;
+	uint16 *src = _overlayPixels;
 	byte *dst = (byte *)buf;
 
 	do {
-		memcpy(dst, src, _overlayWidth * sizeof(OverlayColor));
+		memcpy(dst, src, _overlayWidth * sizeof(uint16));
 		src += _overlayWidth;
 		dst += pitch;
 	} while (--h);
@@ -588,7 +588,7 @@ void OSystem_Wii::copyRectToOverlay(const void *buf, int pitch, int x,
 	const byte *src = (const byte *)buf;
 	if (x < 0) {
 		w += x;
-		src -= x * sizeof(OverlayColor);
+		src -= x * sizeof(uint16);
 		x = 0;
 	}
 
@@ -607,12 +607,12 @@ void OSystem_Wii::copyRectToOverlay(const void *buf, int pitch, int x,
 	if (w <= 0 || h <= 0)
 		return;
 
-	OverlayColor *dst = _overlayPixels + (y * _overlayWidth + x);
+	uint16 *dst = _overlayPixels + (y * _overlayWidth + x);
 	if (_overlayWidth == pitch && pitch == w) {
-		memcpy(dst, src, h * w * sizeof(OverlayColor));
+		memcpy(dst, src, h * w * sizeof(uint16));
 	} else {
 		do {
-			memcpy(dst, src, w * sizeof(OverlayColor));
+			memcpy(dst, src, w * sizeof(uint16));
 			src += pitch;
 			dst += _overlayWidth;
 		} while (--h);
