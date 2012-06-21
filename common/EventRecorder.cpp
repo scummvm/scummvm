@@ -167,6 +167,9 @@ EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize),
 	_recordMode = kPassthrough;
 	_timerManager = NULL;
 	_bitmapBuff = NULL;
+	_playbackFile = NULL;
+	_recordFile = NULL;
+	_screenshotsFile = NULL;
 	initialized = false;
 }
 
@@ -477,11 +480,11 @@ SdlMixerManager *EventRecorder::getMixerManager() {
 }
 
 Common::String EventRecorder::getAuthor() {
-	return "Unknown Author";
+	return _author;
 }
 
 Common::String EventRecorder::getComment() {
-	return "Empty\ncomment";
+	return _notes;
 }
 
 bool EventRecorder::parsePlaybackFile() {
@@ -927,6 +930,18 @@ void EventRecorder::processGameDescription(const ADGameDescription *desc) {
 
 void EventRecorder::deleteRecord(const String& fileName) {
 	g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+void EventRecorder::setAuthor(const Common::String &author) {
+	_author = author;
+}
+
+void EventRecorder::setNotes(const Common::String &desc) {
+	_notes = desc;
+}
+
+void EventRecorder::setName(const Common::String &name) {
+	_name = name;
 }
 
 } // End of namespace Common
