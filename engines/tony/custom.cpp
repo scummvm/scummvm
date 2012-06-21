@@ -1413,10 +1413,8 @@ DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32,
 	CORO_END_CODE;
 }
 
-
-
 /*
- *  Personaggi
+ *  Characters
  */
 
 DECLARE_CUSTOM_FUNCTION(CharSetCode)(CORO_PARAM, uint32 nChar, uint32 nCode, uint32, uint32) {
@@ -1778,7 +1776,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 }
 
 /*
- *  Dialoghi
+ *  Dialogs
  */
 
 int curDialog;
