@@ -2925,7 +2925,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "ccf5dba33e5cab6d5872838c0f8db44c", 500039},
 		{"resource.007", 0, "4c9fc1587545879295cb9627f56a2cb8", 575056},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 2 - English (supplied by ssburnout in bug report #3049193)
 	// 1.000 5x5.25" (label: INT#10.31.90)
@@ -2937,7 +2937,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "0790f67d87642132be515cab05026baa", 972144},
 		{"resource.004", 0, "2ac1e6fea9aa1f5b91a06693a67b9766", 982830},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 2 - English (supplied by ssburnout in bug report #3049193)
 	// 1.000 9x3.5" (label: INT#10.31.90)
@@ -2952,7 +2952,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "5e9deacbdb17198ad844988e04833520", 498593},
 		{"resource.007", 0, "2ac1e6fea9aa1f5b91a06693a67b9766", 490151},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 2 - English (from FRG)
 	// Executable scanning reports "1.000.072"
@@ -2964,7 +2964,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "b192607c42f6960ecdf2ad2e4f90e9bc", 972804},
 		{"resource.004", 0, "cd2de58e27665d5853530de93fae7cd6", 983617},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 2 - English DOS
 	// Executable scanning reports "1.000.072"
@@ -2979,7 +2979,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
 		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 2 - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.000.046"
@@ -2987,7 +2987,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "e75eb86bdd517b3ef709058249986a87", 906},
 		{"resource.001", 0, "9b098f9e1008abe30e56c93b896494e6", 362123},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 3 - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "1.001.021", VERSION file reports "1.000, 0.001.059, 6.12.92"
