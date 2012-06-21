@@ -534,35 +534,33 @@ int32 Character::getFacingFromDirection(int16 dx, int16 dy) {
 	dx = -dx;
 
 	int32 facingEntry = 0;
-	int32 ydiff = dy;
+	int16 ydiff = dy;
 	if (ydiff < 0) {
 		++facingEntry;
 		ydiff = -ydiff;
 	}
-	facingEntry <<= 1;
+	facingEntry *= 2;
 
-	int32 xdiff = dx;
+	int16 xdiff = dx;
 	if (xdiff < 0) {
 		++facingEntry;
 		xdiff = -xdiff;
 	}
 
-	facingEntry <<= 1;
+	facingEntry *= 2;
 
 	if (xdiff >= ydiff) {
-		int32 temp = ydiff;
+		// Swap xdiff and ydiff
+		int16 temp = ydiff;
 		ydiff = xdiff;
 		xdiff = temp;
-	} else {
-		facingEntry += 1;
-	}
+	} else
+		facingEntry++;
 
-	facingEntry <<= 1;
+	facingEntry *= 2;
 
-	int32 temp = (ydiff + 1) >> 1;
-
-	if (xdiff < temp)
-		facingEntry += 1;
+	if (xdiff < ((ydiff + 1) / 2))
+		facingEntry++;
 
 	return facingTable[facingEntry];
 }

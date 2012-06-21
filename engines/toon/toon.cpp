@@ -1588,12 +1588,12 @@ void ToonEngine::clickEvent() {
 }
 
 void ToonEngine::selectHotspot() {
-	int32 x1 = 0;
-	int32 x2 = 0;
-	int32 y1 = 0;
-	int32 y2 = 0;
+	int16 x1 = 0;
+	int16 x2 = 0;
+	int16 y1 = 0;
+	int16 y2 = 0;
 
-	int32 mouseX = _mouseX;
+	int16 mouseX = _mouseX;
 
 	if (_gameState->_inCutaway)
 		mouseX += TOON_BACKBUFFER_WIDTH;
@@ -1693,7 +1693,6 @@ void ToonEngine::selectHotspot() {
 }
 
 void ToonEngine::exitScene() {
-
 	fadeOut(5);
 
 	// disable all scene animation
@@ -2831,7 +2830,6 @@ void ToonEngine::playSoundWrong() {
 }
 
 void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
-
 	if (characterId < 0)
 		characterId = 0;
 
@@ -2852,8 +2850,8 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		}
 	} else if (characterId == 1) {
 		// flux
-		int32 x = _flux->getX();
-		int32 y = _flux->getY();
+		int16 x = _flux->getX();
+		int16 y = _flux->getY();
 		if (x >= _gameState->_currentScrollValue && x <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
 			if (!_gameState->_inCutaway) {
 				*retX = x;
@@ -2885,7 +2883,7 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		if (character && !_gameState->_inCutaway) {
 			if (character->getAnimationInstance()) {
 				if (character->getX() >= _gameState->_currentScrollValue && character->getX() <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
-					int32 x1, y1, x2, y2;
+					int16 x1, y1, x2, y2;
 					character->getAnimationInstance()->getRect(&x1, &y1, &x2, &y2);
 					*retX = (x1 + x2) / 2;
 					*retY = y1;
@@ -2896,7 +2894,6 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 }
 
 Character *ToonEngine::getCharacterById(int32 charId) {
-
 	for (int32 i = 0; i < 8; i++) {
 		if (_characters[i] && _characters[i]->getId() == charId)
 			return _characters[i];
