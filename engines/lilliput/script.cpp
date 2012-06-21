@@ -1089,7 +1089,7 @@ void LilliputScript::checkSpeechAllowed(bool &forceReturnFl) {
 	debugC(1, kDebugScript, "checkSpeechAllowed()");
 
 	forceReturnFl = false;
-	if ((!_vm->_displayMap) && (_vm->_characterRelativePositionX[_vm->_currentScriptCharacter] != 0xFF))
+	if ((!_vm->_displayMap) && (_vm->_characterRelativePositionX[_vm->_currentScriptCharacter] != -1))
 		return;
 
 	forceReturnFl = true;
