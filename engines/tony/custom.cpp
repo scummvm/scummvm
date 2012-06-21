@@ -1761,9 +1761,9 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 
 		GLOBALS._curBackText = NULL;
 		delete _ctx->text;
-		delete _ctx->msg;
 	}
 
+	delete _ctx->msg;
 
 	// Try to run the custom function to close the speech
 	if (GLOBALS._mCharacter[nChar]._item) {
