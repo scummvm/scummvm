@@ -900,6 +900,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 		u = _dimx - (width + u);
 		x1 = (prim->getDst()._x1 + _dimx - 1) - u;
 
+		// Specify the drawn area
+		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1, y1 + height));
+
 		for (y = 0; y < height; y++) {
 			// Decompression
 			RLEDecompressLineFlipped(buf + x1, src + 2, u, width);
@@ -911,6 +914,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 			buf += bigBuf.getDimx();
 		}
 	} else {
+		// Specify the drawn area
+		bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
+
 		for (y = 0; y < height; y++) {
 			// Decompression
 			RLEDecompressLine(buf + x1, src + 2, u, width);
@@ -922,9 +928,6 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 			buf += bigBuf.getDimx();
 		}
 	}
-
-	// Specify the drawn area
-	bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
 }
 
 
