@@ -533,8 +533,9 @@ void Hotspots::leave(uint16 index) {
 }
 
 int16 Hotspots::curWindow(int16 &dx, int16 &dy) const {
-	if ((_vm->_draw->_renderFlags & 0x80)==0)
-		return(0);
+	if (!(_vm->_draw->_renderFlags & RENDERFLAG_HASWINDOWS))
+		return 0;
+
 	for (int i = 0; i < 10; i++) {
 		if (_vm->_draw->_fascinWin[i].id != -1) {
 			if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left &&
