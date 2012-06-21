@@ -656,7 +656,7 @@ void LilliputEngine::displayGameArea() {
 }
 
 void LilliputEngine::restoreMapPoints() {
-	debugC(2, kDebugEngineTBC, "restoreMapPoints()");
+	debugC(2, kDebugEngine, "restoreMapPoints()");
 
 	restoreSurfaceUnderMousePointer();
 
@@ -725,10 +725,10 @@ void LilliputEngine::moveCharacters() {
 
 		_scriptHandler->_characterTilePosX[i] = (_characterPositionX[i] >> 3);
 		_scriptHandler->_characterTilePosY[i] = (_characterPositionY[i] >> 3);
-		_characterRelativePositionX[i] = 0xFF;
-		_characterRelativePositionY[i] = 0xFF;
-		_characterDisplayX[i] = 0xFF;
-		_characterDisplayY[i] = 0xFF;
+		_characterRelativePositionX[i] = -1;
+		_characterRelativePositionY[i] = -1;
+		_characterDisplayX[i] = -1;
+		_characterDisplayY[i] = -1;
 
 		int tmpVal2 = (_characterPositionX[i] >> 3) - _scriptHandler->_viewportPos.x;
 		int tmpVal3 = (_characterPositionY[i] >> 3) - _scriptHandler->_viewportPos.y;
