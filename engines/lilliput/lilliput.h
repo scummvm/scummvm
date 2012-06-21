@@ -141,7 +141,7 @@ public:
 	byte _numCharacters;
 	Common::Point _currentScriptCharacterPos;
 	int _nextCharacterIndex;
-	int _word16EFE;
+	int16 _word16EFE;
 	uint16 _word1817B;
 	Common::Point _savedSurfaceUnderMousePos;
 	int _word15AC2;

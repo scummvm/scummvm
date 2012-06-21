@@ -154,7 +154,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_currentScriptCharacterPos = Common::Point(0, 0);
 	_word10804 = 0;
 	_nextCharacterIndex = 0;
-	_word16EFE = 0xFFFF;
+	_word16EFE = -1;
 	_word1817B = 0;
 	_savedSurfaceUnderMousePos = Common::Point(0, 0);
 	_word15AC2 = 0;

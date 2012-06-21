@@ -127,7 +127,7 @@ private:
 	void displayNumber(byte var1, Common::Point pos);
 	byte *getMapPtr(Common::Point val);
 	byte *getCurrentCharacterVarFromScript();
-	void sub171AF(int16 var1, uint16 var2, int16 var4);
+	void sub171AF(int16 var1, byte var2h, byte characterId, int16 var4);
 	void getSpeechVariant(int speechIndex, int speechVariant);
 	void sub189B8();
 	void formatSpeechString();
