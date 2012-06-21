@@ -142,7 +142,7 @@ int WinterMuteEngine::init() {
 	if (!_game) return 1;
 	CBPlatform::Initialize(_game, 0, NULL);
 
-	bool windowedMode = true;
+	bool windowedMode = !ConfMan.getBool("fullscreen");
 	
 	// parse command line
 	char *SaveGame = NULL;
