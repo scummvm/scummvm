@@ -626,6 +626,7 @@ HRESULT CBFontTT::Persist(CBPersistMgr *PersistMgr) {
 	if (!PersistMgr->_saving) {
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
 		_glyphCache = NULL;
+		_fallbackFont = _font = _deletableFont = NULL;
 	}
 
 	return S_OK;
