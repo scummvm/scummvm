@@ -104,9 +104,32 @@ public:
 	virtual String popErrorDesc();
 
 	/**
-	 * Open the savefile with the specified name in the given directory for saving.
+	 * Open the savefile with the specified name in the given directory for
+	 * saving.
+	 *
+	 * Saved games are always compressed using ZIP compression on platforms
+	 * where the zlib library is included (i.e. almost all platforms except the
+	 * NDS). Engines are expected to always create compressed saved games.
+	 * A notable exception is when the created saved games are compatible with
+	 * the ones that the original interpreters create, and they are then used
+	 * with later game versions in a game series which are not supported by
+	 * ScummVM. An example is the characters exported in the Quest for Glory
+	 * games: these saved states actually contain simple text strings with
+	 * character attributes, which can then be used with later games in the
+	 * Quest for Glory Series. Currently, ScummVM supports Quest for Glory
+	 * 1, 2 and 3. These exported heroes can also be read by the AGS VGA fan
+	 * made version of Quest for Glory 2 and the SCI32 game Quest for Glory IV,
+	 * none of which is supported by ScummVM yet. Moreover, these heroes can
+	 * also be imported into Quest for Glory V, which is a 3D game and thus
+	 * outside of ScummVM's scope. For these reasons, in such cases engines can
+	 * create uncompressed saved games to help users import them in other games
+	 * not supported by ScummVM. Users only need to know that such saved games
+	 * exported by ScummVM are compatible with later unsupported games, without
+	 * needing to explain how to uncompress them.
+	 * 
 	 * @param name		the name of the savefile
-	 * @param compress	toggles whether to compress the resulting save file (default) or not.
+	 * @param compress	toggles whether to compress the resulting save file
+	 * 					(default) or not.
 	 * @return pointer to an OutSaveFile, or NULL if an error occurred.
 	 */
 	virtual OutSaveFile *openForSaving(const String &name, bool compress = true) = 0;
