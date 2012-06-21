@@ -1269,7 +1269,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	type &= 0x7F;
 
 	// Draw a border around the hotspot
-	if (_vm->_draw->_renderFlags & 64) {
+	if (_vm->_draw->_renderFlags & RENDERFLAG_BORDERHOTSPOTS) {
 		Surface &surface = *_vm->_draw->_spritesArray[_vm->_draw->_destSurface];
 
 		_vm->_video->dirtyRectsAll();
