@@ -50,9 +50,14 @@ private:
 	void updateScreenshot();
 	int calculateScreenshotsCount();
 	Common::String generateRecordFileName();
+	void readHeaderInfoFromFile(Common::String& author, Common::String& name, Common::String& notes);
 	Graphics::Surface *getScreenShot(int number);
 	bool skipToNextScreenshot();
+	Common::String readString(int len);
 public:
+	Common::String _author;
+	Common::String _name;
+	Common::String _notes;
 	enum DialogResult {
 		kRecordDialogClose,
 		kRecordDialogRecord,

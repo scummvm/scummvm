@@ -46,7 +46,8 @@ enum {
 	kPlaybackCmd = 'PBCK',
 	kDeleteCmd = 'DEL ',
 	kNextScreenshotCmd = 'NEXT',
-	kPrevScreenshotCmd = 'PREV'
+	kPrevScreenshotCmd = 'PREV',
+	kEditRecordCmd = 'EDIT'
 };
 
 RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentScreenshot(0), _playbackFile(0) {
@@ -126,10 +127,23 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case GUI::kListSelectionChangedCmd:
 		updateSelection(true);
 		break;
-	case kRecordCmd:
+	case kRecordCmd: {
+		const EnginePlugin *plugin = 0;
+		TimeDate t;
+		Common::String gameId = ConfMan.get("gameid", _target);
+		GameDescriptor desc = EngineMan.findGame(gameId, &plugin);
+		g_system->getTimeAndDate(t);
+		EditRecordDialog editDlg(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description(), "Unknown Author", "");
+		if (editDlg.runModal() != kOKCmd) {
+			return;
+		}
+		_author = editDlg.getAuthor();
+		_name = editDlg.getName();
+		_notes = editDlg.getNotes();
 		_filename = generateRecordFileName();
 		setResult(kRecordDialogRecord);
 		close();
+		}
 		break;
 	case kPlaybackCmd:
 		if (_list->getSelected() >= 0) {
@@ -278,6 +292,68 @@ int RecorderDialog::calculateScreenshotsCount() {
 
 void RecorderDialog::updateScreenShotsText() {
 	_currentScreenshotText->setLabel(Common::String::format("%d / %d", _currentScreenshot, _screenShotsCount));
+}
+
+void RecorderDialog::readHeaderInfoFromFile(Common::String& author, Common::String& name, Common::String& notes) {
+	_playbackFile->seek(0);
+	uint32 id = _playbackFile->readUint32LE();
+	_playbackFile->skip(4);
+	if(id != MKTAG('P','B','C','K')) {
+		return;
+	}
+	int tagsCount = 0;
+	uint32 size = 0;
+	while (true) {
+		id = _playbackFile->readUint32LE();
+		switch(id) {
+		case MKTAG('B','M','H','T'):
+			size = _playbackFile->readUint32BE();
+			_playbackFile->skip(size);
+			break;
+		case MKTAG('H','E','A','D'):
+			_playbackFile->skip(4);
+			break;
+		case MKTAG('H','A','U','T'):
+			++tagsCount;
+			size = _playbackFile->readUint32LE();
+			author = readString(size);
+			break;
+		case MKTAG('H','C','M','T'):
+			++tagsCount;
+			size = _playbackFile->readUint32LE();
+			notes = readString(size);
+			break;
+		case MKTAG('H','N','A','M'):
+			++tagsCount;
+			size = _playbackFile->readUint32LE();
+			name = readString(size);
+			break;
+		default:
+			++tagsCount;
+			size = _playbackFile->readUint32LE();
+			_playbackFile->skip(size);
+			break;
+		}
+		if (_playbackFile->eos() || (tagsCount == 3)) {
+			break;
+		}
+	}
+}
+
+Common::String RecorderDialog::readString(int len) {
+	Common::String result;
+	char buf[50];
+	int readSize = 49;
+	while (len > 0)	{
+		if (len <= 49) {
+			readSize = len;
+		}
+		_playbackFile->read(buf, readSize);
+		buf[readSize] = 0;
+		result += buf;
+		len -= readSize;
+	}
+	return result;
 }
 
 } // End of namespace GUI
