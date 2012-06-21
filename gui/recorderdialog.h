@@ -50,6 +50,8 @@ private:
 	void updateScreenshot();
 	int calculateScreenshotsCount();
 	Common::String generateRecordFileName();
+	Graphics::Surface *getScreenShot(int number);
+	bool skipToNextScreenshot();
 public:
 	enum DialogResult {
 		kRecordDialogClose,
@@ -58,8 +60,6 @@ public:
 	};
 	RecorderDialog();
 	~RecorderDialog();
-	Graphics::Surface *getScreenShot(int number);
-	bool skipToNextScreenshot();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	int runModal(Common::String &target);
 	virtual void reflowLayout();
@@ -69,4 +69,4 @@ public:
 }  // End of namespace GUI
 
 
-#endif GUI_RECORDER_DIALOG_H
+#endif

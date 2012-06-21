@@ -35,7 +35,7 @@ void EditRecordDialog::setAuthor(const Common::String &author) {
 	_authorEdit->setEditString(author);
 }
 
-const Common::String EditRecordDialog::getDescription() {
+const Common::String EditRecordDialog::getNotes() {
 	return _notesEdit->getEditString();
 } 
 
@@ -51,17 +51,37 @@ void EditRecordDialog::setName(const Common::String &name) {
 	_nameEdit->setEditString(name);
 }
 
-GUI::EditRecordDialog::EditRecordDialog() : Dialog("EditRecordDialog") {
+EditRecordDialog::~EditRecordDialog() {
+}
+
+EditRecordDialog::EditRecordDialog(const Common::String author, const Common::String name, const Common::String notes) : Dialog("EditRecordDialog") {
 	new StaticTextWidget(this,"EditRecordDialog.AuthorLable",_("Author:"));
 	new StaticTextWidget(this,"EditRecordDialog.NameLable",_("Name:"));
 	new StaticTextWidget(this,"EditRecordDialog.NotesLable",_("Notes:"));
 	_authorEdit = new EditTextWidget(this, "EditRecordDialog.AuthorEdit","");
 	_notesEdit = new EditTextWidget(this, "EditRecordDialog.NotesEdit","");
 	_nameEdit = new EditTextWidget(this, "EditRecordDialog.NameEdit","");
+	_authorEdit->setEditString(author);
+	_notesEdit->setEditString(notes);
+	_nameEdit->setEditString(name);
+	new GUI::ButtonWidget(this, "EditRecordDialog.Cancel", _("Cancel"), 0, kCloseCmd);
+	new GUI::ButtonWidget(this, "EditRecordDialog.OK", _("Ok"), 0, kOKCmd);
 }
 
-EditRecordDialog::~EditRecordDialog() {
-
+void EditRecordDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch(cmd) {
+	case kCloseCmd:
+		setResult(kCloseCmd);
+		close();
+		break;
+	case kOKCmd:
+		setResult(kOKCmd);
+		close();
+		break;
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+		break;
+	}
 }
 
 }

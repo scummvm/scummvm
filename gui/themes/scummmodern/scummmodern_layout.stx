@@ -936,17 +936,7 @@
 						height = '25'
 				/>		
 				<widget name = 'AuthorEdit'
-						width = '200'
-						height = '25'
-				/>		
-			</layout>
-			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
-				<widget name = 'NotesLable'
-						width = '60'
-						height = '25'
-				/>		
-				<widget name = 'NotesEdit'
-						width = '200'
+						width = '240'
 						height = '25'
 				/>		
 			</layout>
@@ -956,8 +946,26 @@
 						height = '25'
 				/>		
 				<widget name = 'NameEdit'
-						width = '200'
+						width = '240'
 						height = '25'
+				/>
+			</layout>
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
+				<widget name = 'NotesLable'
+						width = '60'
+						height = '25'
+				/>
+				<widget name = 'NotesEdit'
+						width = '240'
+						height = '25'
+				/>
+			</layout>
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'OK'
+						type = 'Button'
 				/>			
 			</layout>
 		</layout>
