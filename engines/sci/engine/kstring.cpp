@@ -96,7 +96,7 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 
 	byte value;
 	byte newvalue = 0;
-	unsigned int offset = argv[1].toUint16();
+	uint16 offset = argv[1].toUint16();
 	if (argc > 2)
 		newvalue = argv[2].toSint16();
 
@@ -125,19 +125,19 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 		if (!oddOffset) {
 			value = tmp.getOffset() & 0x00ff;
 			if (argc > 2) { /* Request to modify this char */
-				uint16 offset = tmp.toUint16();
+				uint16 tmpOffset = tmp.toUint16();
 				offset &= 0xff00;
 				offset |= newvalue;
-				tmp.setOffset(offset);
+				tmp.setOffset(tmpOffset);
 				tmp.setSegment(0);
 			}
 		} else {
 			value = tmp.getOffset() >> 8;
 			if (argc > 2)  { /* Request to modify this char */
-				uint16 offset = tmp.toUint16();
+				uint16 tmpOffset = tmp.toUint16();
 				offset &= 0x00ff;
 				offset |= newvalue << 8;
-				tmp.setOffset(offset);
+				tmp.setOffset(tmpOffset);
 				tmp.setSegment(0);
 			}
 		}

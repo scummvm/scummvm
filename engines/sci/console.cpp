@@ -2630,11 +2630,11 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 #endif
 				default: {
 					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-					uint32 size = block.maxSize;
+					uint16 size = block.maxSize;
 
 					DebugPrintf("raw data\n");
 
-					if (reg_end.getSegment() != 0 && size < reg_end.getOffset() - reg.getOffset()) {
+					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
 						DebugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
 						reg_end = NULL_REG;
 					}
@@ -2936,7 +2936,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	uint opCount = 1;
 	bool printBWTag = false;
 	bool printBytes = false;
-	uint32 size;
+	uint16 size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
 		DebugPrintf("Invalid address passed.\n");
@@ -2958,11 +2958,6 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 			DebugPrintf("Invalid option '%s'\n", argv[i]);
 			return true;
 		}
-	}
-
-	if (opCount < 0) {
-		DebugPrintf("Invalid op_count\n");
-		return true;
 	}
 
 	do {

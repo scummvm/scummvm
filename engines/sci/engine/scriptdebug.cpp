@@ -344,11 +344,11 @@ void SciEngine::scriptDebug() {
 			if (mobj) {
 				Script *scr = (Script *)mobj;
 				const byte *code_buf = scr->getBuf();
-				uint32 code_buf_size = scr->getBufSize();
+				uint16 code_buf_size = scr->getBufSize();	// TODO: change to a 32-bit integer for large SCI3 scripts
 				int opcode = pc.getOffset() >= code_buf_size ? 0 : code_buf[pc.getOffset()];
 				int op = opcode >> 1;
-				int paramb1 = pc.getOffset() + 1 >= code_buf_size ? 0 : code_buf[pc.getOffset() + 1];
-				int paramf1 = (opcode & 1) ? paramb1 : (pc.getOffset() + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + pc.getOffset() + 1));
+				uint16 paramb1 = pc.getOffset() + 1 >= code_buf_size ? 0 : code_buf[pc.getOffset() + 1];
+				uint16 paramf1 = (opcode & 1) ? paramb1 : (pc.getOffset() + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + pc.getOffset() + 1));
 
 				switch (_debugState.seeking) {
 				case kDebugSeekSpecialCallk:
