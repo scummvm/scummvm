@@ -315,7 +315,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
 		kGameTypeFascination,
-		kFeaturesNone,
+		kFeaturesAdLib,
 		"disk0.stk", 0, 0
 	},
 	{ //21
@@ -329,7 +329,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
 		kGameTypeGeisha,
-		kFeaturesEGA,
+		kFeaturesEGA | kFeaturesAdLib,
 		"disk1.stk", "intro.tot", 0
 	},
 	{ //22
